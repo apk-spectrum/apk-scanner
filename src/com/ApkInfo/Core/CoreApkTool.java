@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 import com.ApkInfo.UI.MyProgressBarDemo;
 
@@ -24,8 +26,18 @@ public class CoreApkTool {
 		String apkToolPath = CoreApkTool.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		apkToolPath = (new File(apkToolPath)).getParentFile().getPath();
 		apkToolPath += File.separator + "apktool.jar";
-		apkToolPath = apkToolPath.replaceAll("%20", " ");
+		try {
+			apkToolPath = URLDecoder.decode(apkToolPath, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println("apkToolPath : " + apkToolPath);
+
+		if(!(new File(apkToolPath)).exists()) {
+			System.out.println("apktool.jar 파일이 존재 하지 않습니다 :");
+			return;
+		}
 
 		String[] cmd = {"java","-jar",apkToolPath,"d","-s","-f","-o",solvePath,"-p",solvePath, APKFilePath};
 		
