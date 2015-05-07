@@ -22,6 +22,8 @@ import javax.swing.JButton;
 
 import com.ApkInfo.UIUtil.PlasticTabbedPaneUI;
 import com.ApkInfo.Core.MyApkInfo;
+import com.Apkinfo.TabUI.MyTabUIbasicInfo;
+
 
 public class MyTabUI extends JPanel{
 	    public MyTabUI() {
@@ -30,9 +32,8 @@ public class MyTabUI extends JPanel{
 	        JTabbedPane tabbedPane = new JTabbedPane();
 	        tabbedPane.setUI(new PlasticTabbedPaneUI()); 
 	        
-	        //ImageIcon icon = createImageIcon("images/middle.gif");
+	        JComponent panel1 = new MyTabUIbasicInfo(MainUI.mApkInfo);
 	        
-	        JComponent panel1 = makeTab1();
 	        tabbedPane.addTab("APK Info", null, panel1,
 	                "APK Info");
 	        tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
@@ -74,8 +75,8 @@ public class MyTabUI extends JPanel{
 	        //The following line enables to use scrolling tabs.
 	        tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 	    }
-	     
-	    protected JComponent makeTextPanel(String text) {
+
+		protected JComponent makeTextPanel(String text) {
 	        JPanel panel = new JPanel(false);
 	        JLabel filler = new JLabel(text);
 	        filler.setHorizontalAlignment(JLabel.CENTER);
@@ -84,99 +85,4 @@ public class MyTabUI extends JPanel{
 	        	        
 	        return panel;
 	    }
-	    
-	    protected JComponent makeTab1() {
-	        
-	    	JPanel panelparent = new JPanel();
-	    	JPanel panel = new JPanel(true);
-	        	        
-	    	JTextArea apkinform = new JTextArea();
-	        JTextArea apkpermission = new JTextArea();
-	        
-			JScrollPane jsp = new JScrollPane(apkpermission);
-			JScrollBar jsb;
-			
-			String strTabInfo = "";
-			
-			jsb = jsp.getVerticalScrollBar();
-	        
-	        apkinform.setEditable(false);
-	        
-	        //for test//
-	        
-	        strTabInfo += "Package : " + MainUI.mApkInfo.strPackageName +"\n";
-	        strTabInfo += "VersionName : " +MainUI.mApkInfo.strVersionName +"\n";
-	        strTabInfo += "VersionCode : " +MainUI.mApkInfo.strVersionCode +"\n";
-	        
-
-	        
-	        apkinform.setText(strTabInfo+"Package : com.iloen.melon\nPackage : com.iloen.melon\nPackage : com.iloen.melon\nPackage : com.iloen.melon\nPackage : com.iloen.melon");
-	                
-	        
-	        apkinform.setBackground(panel.getBackground());
-	        
-	        //for test//
-	        for(int i=0; i<100; i++)
-	        apkpermission.setText(apkpermission.getText()+"\n" + "android.permission.WRITE_EXTERNAL_STORAGE");
-	        //
-	          
-	        apkpermission.setEditable(false);
-	        
-	        //for test
-	        MyImagePanel imagepanel = new MyImagePanel("res/icon.png");
-	        	        
-	        panel.add(imagepanel);
-	        panel.add(apkinform);
-	        	        
-	        panel.setLayout(new GridLayout(1, 2));
-	        
-	        panelparent.add(panel);
-	        //panelparent.add(apkpermission);
-	        panelparent.add(jsp);
-	        
-	        panelparent.setLayout(new GridLayout(2, 1));
-	        
-	        return panelparent;
-	    }
-	     
-	    /** Returns an ImageIcon, or null if the path was invalid. */
-	    protected static ImageIcon createImageIcon(String path) {
-	        java.net.URL imgURL = MyTabUI.class.getResource(path);
-	        if (imgURL != null) {
-	            return new ImageIcon(imgURL);
-	        } else {
-	            System.err.println("Couldn't find file: " + path);
-	            return null;
-	        }
-	    }
-	     
-	    /**
-	     * Create the GUI and show it.  For thread safety,
-	     * this method should be invoked from
-	     * the event dispatch thread.
-	     */
-	    private static void createAndShowGUI() {
-	        //Create and set up the window.
-	        JFrame frame = new JFrame("TabbedPaneDemo");
-	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	         
-	        //Add content to the window.
-	        frame.getContentPane().add(new MyTabUI(), BorderLayout.CENTER);
-	        
-	        //Display the window.
-	        frame.pack();
-	        frame.setVisible(true);
-	    }
-	     
-//	    public static void main(String[] args) {
-//	        //Schedule a job for the event dispatch thread:
-//	        //creating and showing this application's GUI.
-//	        SwingUtilities.invokeLater(new Runnable() {
-//	            public void run() {
-//	                //Turn off metal's use of bold fonts
-//		        UIManager.put("swing.boldMetal", Boolean.FALSE);
-//		        createAndShowGUI();
-//	            }
-//	        });
-//	    }
 	}
