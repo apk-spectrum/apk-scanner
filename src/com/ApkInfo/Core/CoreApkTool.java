@@ -20,8 +20,13 @@ public class CoreApkTool {
 		return false;
 	}
 	
-	public static void solveAPK(String APKFilePath, String solvePath) {		
-		String[] cmd = {"java","-jar","apktool.jar","d","-s","-o",  solvePath, APKFilePath};
+	public static void solveAPK(String APKFilePath, String solvePath) {
+		String apkToolPath = CoreApkTool.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		apkToolPath = (new File(apkToolPath)).getParentFile().getPath();
+		apkToolPath += File.separator + "apktool.jar";
+		System.out.println("apkToolPath : " + apkToolPath);
+
+		String[] cmd = {"java","-jar",apkToolPath,"d","-s","-f","-o",solvePath,"-p",solvePath, APKFilePath};
 		
 		exc(cmd,true);
 		
