@@ -60,7 +60,7 @@ public class CoreApkTool {
 		    
 		    if(showLog) {
 			    while ((s =   stdOut.readLine()) != null) {
-			  
+			    	progressBarDemo.addProgress(10,s + "\n");
 			    	System.out.println(s);
 			    	buffer += s;
 			    }
