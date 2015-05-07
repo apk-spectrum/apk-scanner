@@ -40,12 +40,26 @@ public class MainUI extends Frame implements WindowListener{
 				//OS 분기
 				Osname = System.getProperty("os.name");
 				System.out.println("OS : " + Osname);
-				
-				if(Osname.indexOf("Windows") ==-1) { //for linux
-					FolderDefault = "/tmp/ApkInfo" + apkFilePath.substring(0,apkFilePath.lastIndexOf("."));
-				} else { //for windows
-					
+				File apkFile = new File(apkFilePath);
+				System.out.println("target file :" + apkFile.getAbsolutePath());
+				if(!apkFile.exists()) {
+					System.out.println("파일이 존재 하지 않습니다 :");
+				} else {
+					apkFilePath = apkFile.getAbsolutePath();
 				}
+				
+				//if(Osname.indexOf("Windows") ==-1) { //for linux
+					//FolderDefault = "/tmp/ApkInfo" + apkFilePath.substring(0,apkFilePath.lastIndexOf("."));
+				//} else { //for windows
+				System.out.println("File.separator : " + File.separator);
+				System.out.println("java.io.tmpdir : " + System.getProperty("java.io.tmpdir"));
+				System.out.println("user.dir : " + System.getProperty("user.dir"));
+
+				FolderDefault = System.getProperty("java.io.tmpdir") 
+						+ File.separator + "ApkInfo" + File.separator 
+						+ apkFilePath.substring(apkFilePath.indexOf(File.separator),apkFilePath.lastIndexOf("."));
+				FolderDefault = FolderDefault.replaceAll(File.separator+File.separator+File.separator+File.separator, File.separator+File.separator);
+				//}
 				
 				System.out.println("DefaultFolderName : " +FolderDefault);
 				//APK 풀기 
