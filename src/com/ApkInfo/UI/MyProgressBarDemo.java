@@ -34,9 +34,6 @@ public class MyProgressBarDemo extends JPanel
                     Thread.sleep(100);
                 } catch (InterruptedException ignore) {}
                 //Make random progress.
-                
-                System.out.println(progress);
-                
                 setProgress(Math.min(progress, 100));
             }
             return null;
