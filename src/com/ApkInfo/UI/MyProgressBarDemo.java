@@ -3,36 +3,40 @@ package com.ApkInfo.UI;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
+
 import java.beans.*;
-import java.util.Random;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class MyProgressBarDemo extends JPanel
-                             implements ActionListener, 
-                                        PropertyChangeListener {
+                             implements PropertyChangeListener {
 
     private JProgressBar progressBar;
-    private JButton startButton;
     private JTextArea taskOutput;
     private Task task;
-
+    private static int progress;
+    private static String strAddText;
+    private JLabel GifLabel;
     class Task extends SwingWorker<Void, Void> {
         /*
          * Main task. Executed in background thread.
          */
         @Override
-        public Void doInBackground() {
-            Random random = new Random();
-            int progress = 0;
+        public Void doInBackground() {            
+            progress = 0;
             //Initialize progress property.
             setProgress(0);
             while (progress < 100) {
                 //Sleep for up to one second.
                 try {
-                    Thread.sleep(random.nextInt(1000));
+                    Thread.sleep(100);
                 } catch (InterruptedException ignore) {}
                 //Make random progress.
-                progress += random.nextInt(10);
+                
+                System.out.println(progress);
+                
                 setProgress(Math.min(progress, 100));
             }
             return null;
@@ -43,8 +47,7 @@ public class MyProgressBarDemo extends JPanel
          */
         @Override
         public void done() {
-            Toolkit.getDefaultToolkit().beep();
-            startButton.setEnabled(true);
+            Toolkit.getDefaultToolkit().beep();            
             setCursor(null); //turn off the wait cursor
             taskOutput.append("Done!\n");
         }
@@ -54,32 +57,32 @@ public class MyProgressBarDemo extends JPanel
         super(new BorderLayout());
 
         //Create the demo's UI.
-        startButton = new JButton("Start");
-        startButton.setActionCommand("start");
-        startButton.addActionListener(this);
-
+        
         progressBar = new JProgressBar(0, 100);
         progressBar.setValue(0);
         progressBar.setStringPainted(true);
 
-        taskOutput = new JTextArea(5, 20);
+        taskOutput = new JTextArea(5, 50);
         taskOutput.setEditable(false);
 
         JPanel panel = new JPanel();
-        panel.add(startButton);
+        ImageIcon icon = new ImageIcon("res/loading.gif");        
+        GifLabel = new JLabel(icon);
+        
+        
+        panel.add(GifLabel);
         panel.add(progressBar);
 
         add(panel, BorderLayout.PAGE_START);
         add(new JScrollPane(taskOutput), BorderLayout.CENTER);
-        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
+        //setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        starttask();
     }
 
     /**
      * Invoked when the user presses the start button.
      */
-    public void actionPerformed(ActionEvent evt) {
-        startButton.setEnabled(false);
+    public void starttask() {        
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         //Instances of javax.swing.SwingWorker are not reusuable, so
         //we create new instances as needed.
@@ -94,13 +97,18 @@ public class MyProgressBarDemo extends JPanel
     public void propertyChange(PropertyChangeEvent evt) {
         if ("progress" == evt.getPropertyName()) {
             int progress = (Integer) evt.getNewValue();
+            
             progressBar.setValue(progress);
-            taskOutput.append(String.format(
-                    "Completed %d%% of task.\n", task.getProgress()));
+            taskOutput.append(strAddText);
         } 
     }
 
-
+    public void addProgress(int addValue, String addtext) {
+    	progress +=addValue;
+    	
+    	strAddText = addtext;
+    	
+    }
     /**
      * Create the GUI and show it. As with all GUI code, this must run
      * on the event-dispatching thread.
@@ -118,8 +126,7 @@ public class MyProgressBarDemo extends JPanel
         //Display the window.
         frame.setResizable( false );
         frame.pack();
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        frame.setLocation(dim.width/2-frame.getSize().width/2, dim.height/2-frame.getSize().height/2);
+        frame.setLocation(200, 200);
         
         frame.setVisible(true);
         return frame;

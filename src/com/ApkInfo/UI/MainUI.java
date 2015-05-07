@@ -87,22 +87,21 @@ public class MainUI extends Frame implements WindowListener{
 	public static void main(final String[] args) {
 		
 		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-	
-					//args = file path					
-					apkFilePath = args[0];
-					System.out.println("Target APK : " + args[0]);
-					
-					//CoreApkTool.makeFolder("temp");
-					
-					ProgressBarDlg = new MyProgressBarDemo();
-					
-					WaitingDlg = MyProgressBarDemo.createAndShowGUI();
-					
-					CoreApkTool.setProgressBarDlg(ProgressBarDlg);
-					CoreXmlTool.setProgressBarDlg(ProgressBarDlg);
-					
-					MainUI window = new MainUI();
+			public void run() {	
+				//args = file path					
+				apkFilePath = args[0];
+				System.out.println("Target APK : " + args[0]);
+				
+				//CoreApkTool.makeFolder("temp");
+				
+				ProgressBarDlg = new MyProgressBarDemo();
+				
+				WaitingDlg = MyProgressBarDemo.createAndShowGUI();
+				
+				CoreApkTool.setProgressBarDlg(ProgressBarDlg);
+				CoreXmlTool.setProgressBarDlg(ProgressBarDlg);
+				
+				MainUI window = new MainUI();
 			}
 		});
 	}
