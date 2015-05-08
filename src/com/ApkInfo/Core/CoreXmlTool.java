@@ -48,17 +48,18 @@ public class CoreXmlTool {
 		  
         // NodeList 가져오기 : row 아래에 있는 모든 col1 을 선택
         Node cols = (Node)xpath.evaluate("//manifest", document, XPathConstants.NODE);
-        
-        System.out.println("package = " + cols.getAttributes().getNamedItem("package").getTextContent());
-        System.out.println("platformBuildVersionCode = " +cols.getAttributes().getNamedItem("platformBuildVersionCode").getTextContent());
-        System.out.println("platformBuildVersionName = " +cols.getAttributes().getNamedItem("platformBuildVersionName").getTextContent());
-        
         temp.strPackageName = cols.getAttributes().getNamedItem("package").getTextContent();
-        temp.strVersionCode = cols.getAttributes().getNamedItem("platformBuildVersionCode").getTextContent();
-        temp.strVersionName = cols.getAttributes().getNamedItem("platformBuildVersionName").getTextContent();
-    
-	        
-	       
+        
+        cols = (Node)xpath.evaluate("//manifest/application", document, XPathConstants.NODE);
+        temp.strLabelname = cols.getAttributes().getNamedItem("android:label").getTextContent();
+        temp.strIconPath = cols.getAttributes().getNamedItem("android:icon").getTextContent();
+
+        System.out.println("Package = " + temp.strPackageName);
+        System.out.println("Label = " + temp.strLabelname);
+        System.out.println("Icon = " + temp.strIconPath);
+        System.out.println("Icon = " + cols.getAttributes().getNamedItem("android:icon").getTextContent());
+        
+
 		return temp;
 	}
 
