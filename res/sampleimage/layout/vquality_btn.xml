@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:gravity="center" android:layout_gravity="center" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="2.0dip" android:layout_marginRight="2.0dip" android:layout_weight="1.0"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <ToggleButton android:gravity="center" android:layout_gravity="center" android:id="@id/button" android:background="@drawable/shape_vquality_btn" android:layout_width="fill_parent" android:layout_height="fill_parent" android:scaleType="fitCenter" android:textOn="" android:textOff="" />
+    <LinearLayout android:gravity="center" android:layout_gravity="center" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent">
+        <TextView android:textSize="20.0dip" android:textStyle="bold" android:id="@id/label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+        <TextView android:textSize="10.0dip" android:id="@id/desc" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+    </LinearLayout>
+</FrameLayout>

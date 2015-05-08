@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/videoseekbar_batvolt_0" android:maxLevel="4" />
+    <item android:drawable="@drawable/videoseekbar_batvolt_15" android:maxLevel="15" />
+    <item android:drawable="@drawable/videoseekbar_batvolt_28" android:maxLevel="35" />
+    <item android:drawable="@drawable/videoseekbar_batvolt_43" android:maxLevel="49" />
+    <item android:drawable="@drawable/videoseekbar_batvolt_57" android:maxLevel="60" />
+    <item android:drawable="@drawable/videoseekbar_batvolt_71" android:maxLevel="75" />
+    <item android:drawable="@drawable/videoseekbar_batvolt_85" android:maxLevel="90" />
+    <item android:drawable="@drawable/videoseekbar_batvolt_100" android:maxLevel="100" />
+</level-list>

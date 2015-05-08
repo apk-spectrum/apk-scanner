@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:id="@id/frameLayout" style="@style/fill_vertical"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout android:id="@layout/mainframe_view_pager" style="@style/fill_vertical">
+        <LinearLayout android:id="@id/quick_bar" android:focusable="false" android:layout_below="@id/titlebar" style="@style/fill_width">
+            <com.nttdocomo.android.mediaplayer.view.QuickPlayBar style="@style/fill_width" />
+        </LinearLayout>
+        <LinearLayout android:id="@id/tablay" android:focusable="false" android:layout_below="@id/quick_bar" style="@style/fill_width">
+            <include layout="@layout/tabbar" />
+        </LinearLayout>
+        <com.nttdocomo.android.mediaplayer.view.swipe.SwipeControlViewPager android:id="@id/pager" android:layout_below="@id/tablay" style="@style/fill_width" />
+    </RelativeLayout>
+    <RelativeLayout android:id="@id/dmarketlayout" style="@style/fill_vertical">
+        <LinearLayout android:gravity="right" android:orientation="horizontal" android:layout_marginRight="6.0dip" android:layout_marginBottom="6.0dip" android:layout_alignParentRight="true" android:layout_alignParentBottom="true" style="@style/wrap">
+            <ToggleButton android:id="@id/dmarket_button" android:background="@drawable/selector_popup_dmarket" android:focusable="false" android:textOn="" android:textOff="" style="@style/wrap" />
+        </LinearLayout>
+    </RelativeLayout>
+</FrameLayout>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_marginEnd="@id/artist" style="@style/adapter_large"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView android:id="@id/is_play" android:background="@drawable/playmark" android:layout_marginLeft="6.5dip" android:layout_alignParentLeft="true" android:layout_centerVertical="true" style="@style/wrap" />
+    <LinearLayout android:layout_marginLeft="3.0dip" android:layout_toLeftOf="@id/longmenu_btn" android:layout_toRightOf="@id/is_play" android:layout_centerVertical="true" style="@style/wrap_equal_width_vertical">
+        <TextView android:textStyle="bold" android:id="@id/title" android:layout_marginLeft="6.5dip" android:layout_marginRight="6.5dip" style="@style/wrap_text" />
+        <TextView android:id="@id/artist" android:layout_marginLeft="6.5dip" android:layout_marginRight="6.5dip" style="@style/wrap_text" />
+    </LinearLayout>
+    <ImageView android:id="@id/longmenu_btn" android:background="@drawable/shortcut_menu_button" android:layout_width="wrap_content" android:layout_height="fill_parent" android:layout_marginRight="4.0dip" android:layout_toLeftOf="@id/duration" />
+    <TextView android:id="@id/duration" android:layout_marginRight="10.5dip" android:layout_alignParentRight="true" android:layout_centerVertical="true" style="@style/wrap_text" />
+</RelativeLayout>

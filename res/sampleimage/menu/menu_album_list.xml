@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@id/option_menu_setting" android:title="@string/menu_item_settings" />
+    <item android:id="@id/option_menu_sort" android:title="@string/menu_item_order" />
+    <item android:id="@id/option_menu_switch_list" android:title="@string/menu_item_showgrid" />
+    <item android:id="@id/option_menu_search" android:title="@string/menu_item_search" />
+    <item android:id="@id/option_menu_contents_delete" android:title="@string/menu_item_contents_delete" />
+    <item android:id="@id/option_menu_help" android:title="@string/menu_item_help" />
+    <item android:id="@id/option_menu_guidance" android:title="@string/menu_item_guidance" />
+    <item android:id="@id/option_menu_app_info" android:title="@string/menu_item_about" />
+    <item android:id="@id/option_menu_exit_app" android:title="@string/menu_item_exit" />
+    <item android:icon="@drawable/miracast_btn_off" android:id="@id/option_menu_miracast_settings" android:title="@string/menu_item_miracast_settings" android:showAsAction="ifRoom" android:actionViewClass="android.widget.ImageView" />
+    <item android:icon="@drawable/search_btn" android:id="@id/option_menu_contents_search" android:title="@string/menu_item_contents_search" android:showAsAction="ifRoom" android:actionViewClass="android.widget.ImageView" />
+</menu>

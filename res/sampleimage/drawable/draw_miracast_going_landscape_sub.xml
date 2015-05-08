@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list android:oneshot="false"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:duration="500" android:drawable="@drawable/auxiliary_button_mira_going1_sub" />
+    <item android:duration="500" android:drawable="@drawable/auxiliary_button_mira_going2_sub" />
+    <item android:duration="500" android:drawable="@drawable/auxiliary_button_mira_going3_sub" />
+    <item android:duration="500" android:drawable="@drawable/auxiliary_button_mira_off_sub" />
+</animation-list>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list android:oneshot="false"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:duration="500" android:drawable="@drawable/miracast_btn_going1" />
+    <item android:duration="500" android:drawable="@drawable/miracast_btn_going2" />
+    <item android:duration="500" android:drawable="@drawable/miracast_btn_going3" />
+    <item android:duration="500" android:drawable="@drawable/miracast_btn_off" />
+</animation-list>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@id/dlg_movie_background" android:background="@color/movie_background_back" style="@style/fill_width_vertical"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:background="@color/movie_background_border" android:paddingBottom="1.0dip" style="@style/fill_width">
+        <TextView android:textSize="18.0dip" android:textColor="@color/font_black" android:background="@color/movie_background_back" android:padding="12.0dip" android:text="@string/dlg_background_playback_caution" style="@style/fill_width" />
+    </LinearLayout>
+    <RadioGroup android:orientation="vertical" android:id="@id/movie_background_radio" style="@style/fill_width">
+        <LinearLayout android:background="@color/movie_background_border" android:paddingBottom="1.0dip" style="@style/fill_width">
+            <LinearLayout android:id="@id/movie_background_enable_layout" android:background="@drawable/selector_movie_background_back" android:clickable="true" style="@style/fill_width_horizontal">
+                <TextView android:textSize="18.0dip" android:textColor="@color/font_black" android:padding="12.0dip" android:layout_marginLeft="3.0dip" android:text="@string/dlg_background_playback_enable" android:layout_weight="1.0" style="@style/fill_height" />
+                <RadioButton android:gravity="center|right" android:id="@id/movie_background_enable" android:paddingRight="16.0dip" android:text="" style="@style/fill_height" />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout android:id="@id/movie_background_disable_layout" android:background="@drawable/selector_movie_background_back" android:clickable="true" style="@style/fill_width_horizontal">
+            <TextView android:textSize="18.0dip" android:textColor="@color/font_black" android:padding="12.0dip" android:layout_marginLeft="3.0dip" android:text="@string/dlg_background_playback_disable" android:layout_weight="1.0" style="@style/fill_height" />
+            <RadioButton android:gravity="center|right" android:id="@id/movie_background_disable" android:paddingRight="16.0dip" android:text="" style="@style/fill_height" />
+        </LinearLayout>
+    </RadioGroup>
+</LinearLayout>

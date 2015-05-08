@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="dnd_list_item_height">45.0dip</dimen>
+    <dimen name="thumnail_small">50.0dip</dimen>
+    <dimen name="thumnail_large">160.0dip</dimen>
+    <dimen name="grid_height">165.0dip</dimen>
+</resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@layout/delete_contents" style="@style/fill_vertical"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:orientation="horizontal" style="@style/subtitlebar_bg">
+        <LinearLayout android:layout_width="wrap_content" style="@style/subtitle_bg">
+            <TextView android:id="@id/remove_view_title" android:text="@string/remove_view_title" style="@style/subtitle" />
+        </LinearLayout>
+        <LinearLayout style="@style/subtitle_edit_bnt_bg">
+            <Button android:id="@id/delete_contents_button" android:focusable="false" android:text="@string/app_button_delete" style="@style/subtitle_edit_bnt" />
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout android:id="@id/list_delete_contents" style="@style/fill_equal_width_vertical">
+        <include android:id="@id/list_delete_contents_all" layout="@layout/adapter_delete_contents" />
+        <FrameLayout style="@style/fill">
+            <ListView android:scrollbarThumbVertical="@drawable/scrollbar_thumb" android:id="@id/list_delete_contents_list" android:nextFocusLeft="@id/list_delete_contents_list" android:nextFocusRight="@id/list_delete_contents_list" android:nextFocusUp="@id/list_delete_contents_list" android:nextFocusDown="@id/list_delete_contents_list" android:fadeScrollbars="false" style="@style/list_item" />
+            <include layout="@layout/list_indexer" />
+        </FrameLayout>
+    </LinearLayout>
+</LinearLayout>

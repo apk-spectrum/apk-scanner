@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.nttdocomo.android.mediaplayer.view.VideoPlayerViewLayout android:id="@id/videoPlayerView" style="@style/fill_vertical"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:id="@id/layer_portrait" style="@style/fill_vertical">
+        <FrameLayout android:id="@id/view" style="@style/equal_width">
+            <ImageView android:id="@id/thumbnail" android:background="@android:color/black" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="fill_parent" />
+            <LinearLayout android:id="@id/surfaceViewHolder" style="@style/equal_width">
+                <SurfaceView android:id="@id/surfaceView" android:background="@android:color/black" android:layout_width="1.0dip" android:layout_height="1.0dip" />
+            </LinearLayout>
+            <include android:visibility="gone" layout="@layout/player_video_title_sub_portrait" />
+            <include layout="@layout/player_brightness_bar" />
+            <include layout="@layout/replayback" />
+            <include android:visibility="gone" layout="@layout/player_video_option_sub_portrait" />
+            <include android:visibility="gone" layout="@layout/player_video_chainviewing_sub_portrait" />
+        </FrameLayout>
+    </LinearLayout>
+    <LinearLayout android:id="@id/layer_landscape" style="@style/fill_vertical">
+        <FrameLayout android:id="@id/view" style="@style/equal_width">
+            <ImageView android:id="@id/thumbnail" android:background="@android:color/black" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="fill_parent" />
+            <LinearLayout android:id="@id/surfaceViewHolder" style="@style/equal_width">
+                <SurfaceView android:id="@id/surfaceView" android:background="@android:color/black" android:layout_width="1.0dip" android:layout_height="1.0dip" />
+            </LinearLayout>
+            <include android:visibility="gone" layout="@layout/player_video_ctrl_seek_landscape" />
+            <include android:visibility="gone" layout="@layout/player_video_title_sub_landscape" />
+            <include android:visibility="gone" layout="@layout/player_video_option_sub_landscape" />
+            <include android:visibility="gone" layout="@layout/player_video_chainviewing_sub_landscape" />
+        </FrameLayout>
+    </LinearLayout>
+</com.nttdocomo.android.mediaplayer.view.VideoPlayerViewLayout>

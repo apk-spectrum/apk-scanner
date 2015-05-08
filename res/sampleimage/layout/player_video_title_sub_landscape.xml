@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@layout/player_video_title_sub_landscape" style="@style/fill_width_horizontal"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:layout_gravity="center_horizontal" android:id="@id/trackInfoViewer" android:paddingLeft="7.0dip" android:paddingTop="10.0dip" android:paddingRight="7.0dip" style="@style/wrap_equal_width_horizontal">
+        <TextView android:textSize="20.0dip" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:layout_gravity="left" android:id="@id/title" android:focusable="true" android:focusableInTouchMode="true" android:layout_height="30.0dip" android:singleLine="true" android:shadowColor="#ff888888" android:shadowDx="1.5" android:shadowDy="1.5" android:shadowRadius="1.5" android:marqueeRepeatLimit="marquee_forever" style="@style/wrap" />
+    </LinearLayout>
+    <include android:visibility="visible" layout="@layout/player_video_option_sub_landscape" />
+</LinearLayout>

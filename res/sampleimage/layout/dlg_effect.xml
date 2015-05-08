@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@id/dlg_effect" style="@style/fill_width_vertical"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <ScrollView android:fadeScrollbars="false" style="@style/fill_width">
+        <LinearLayout style="@style/fill_width_vertical">
+            <LinearLayout android:id="@id/layout_eq" android:layout_height="60.0dip" style="@style/fill_width_horizontal">
+                <TextView android:textSize="16.0dip" android:textColor="@color/font_black" android:gravity="center|left" android:id="@id/text_eq" android:layout_margin="6.5dip" android:text="@string/dlg_effect_equalizer" style="@style/fill_height" />
+                <Spinner android:textSize="16.0dip" android:gravity="center|right" android:id="@id/spinner_eq" android:layout_height="45.0dip" android:layout_margin="6.5dip" android:drawSelectorOnTop="true" style="@style/wrap_equal_width" />
+            </LinearLayout>
+            <LinearLayout android:background="@color/list_item_odd_bg_highlight" android:layout_width="fill_parent" android:layout_height="1.0dip" />
+            <LinearLayout android:id="@id/layout_emphasis_bass" android:layout_height="60.0dip" android:layout_marginTop="1.0dip" style="@style/fill_width_horizontal">
+                <TextView android:textSize="16.0dip" android:textColor="@color/font_black" android:gravity="center|left" android:id="@id/text_bass" android:layout_margin="6.5dip" android:text="@string/dlg_effect_bass_emphasis" style="@style/fill_height_equal_width" />
+                <CheckBox android:gravity="center|right" android:id="@id/chk_bass" android:layout_margin="6.5dip" style="@style/wrap" />
+            </LinearLayout>
+            <LinearLayout android:background="@color/list_item_odd_bg_highlight" android:layout_width="fill_parent" android:layout_height="1.0dip" />
+            <LinearLayout android:id="@id/layout_emphasis_vocal" android:layout_height="60.0dip" android:layout_marginTop="1.0dip" style="@style/fill_width_horizontal">
+                <TextView android:textSize="16.0dip" android:textColor="@color/font_black" android:gravity="center|left" android:id="@id/text_vocal" android:layout_margin="6.5dip" android:text="@string/dlg_effect_vocal_emphasis" style="@style/fill_height_equal_width" />
+                <CheckBox android:gravity="center|right" android:id="@id/chk_vocal" android:layout_margin="6.5dip" style="@style/wrap" />
+            </LinearLayout>
+            <LinearLayout android:background="@color/list_item_odd_bg_highlight" android:layout_width="fill_parent" android:layout_height="1.0dip" />
+            <LinearLayout android:id="@id/layout_deq" android:layout_height="60.0dip" android:layout_marginTop="1.0dip" style="@style/fill_width_horizontal">
+                <TextView android:textSize="16.0dip" android:textColor="@color/font_black" android:gravity="center|left" android:layout_margin="6.5dip" android:text="@string/dlg_effect_deq" style="@style/fill_height_equal_width" />
+                <CheckBox android:gravity="center|right" android:id="@id/chk_deq" android:layout_margin="6.5dip" style="@style/wrap" />
+            </LinearLayout>
+            <LinearLayout android:layout_height="wrap_content" style="@style/fill_width_horizontal">
+                <TextView android:textSize="16.0dip" android:textColor="@color/font_black" android:gravity="center|left" android:id="@id/text_bass" android:layout_margin="6.5dip" android:text="@string/dlg_effect_deq_msg" style="@style/fill_height_equal_width" />
+            </LinearLayout>
+            <LinearLayout android:gravity="center" android:layout_height="wrap_content" style="@style/fill_width_horizontal">
+                <ImageView android:layout_gravity="center" android:id="@id/deq_rogo" android:layout_height="50.0dip" android:layout_margin="6.5dip" android:src="@drawable/audyssey_deq_rogo" style="@style/wrap" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout style="@style/edit_playlist_adapter_layer"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout android:id="@id/list_item_layer" android:clickable="false" style="@style/adapter_middle">
+        <CheckBox android:id="@id/delete_checkbox" android:focusable="false" android:button="@drawable/selector_delete_checkbox" android:layout_alignParentLeft="true" android:layout_centerVertical="true" style="@style/wrap" />
+        <ImageView android:id="@id/mark" android:layout_marginLeft="6.5dip" android:layout_toRightOf="@id/delete_checkbox" android:layout_centerVertical="true" style="@style/wrap" />
+        <TextView android:textStyle="bold" android:id="@id/title" android:layout_marginLeft="9.5dip" android:layout_marginRight="6.5dip" android:layout_toLeftOf="@id/move_icon" android:layout_toRightOf="@id/mark" android:layout_centerVertical="true" style="@style/fill_width_text" />
+        <ImageView android:id="@id/move_icon" android:background="@drawable/playlist_icon_replace" android:layout_marginRight="6.5dip" android:layout_alignParentRight="true" android:layout_centerVertical="true" style="@style/wrap" />
+    </RelativeLayout>
+</LinearLayout>

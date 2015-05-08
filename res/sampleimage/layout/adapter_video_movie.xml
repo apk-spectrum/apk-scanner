@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:ignoreGravity="@id/frame_thumbnail" style="@style/adapter_large"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <FrameLayout android:id="@id/frame_thumbnail" style="@style/list_thumbnail">
+        <ImageView android:background="@color/black" style="@style/fill" />
+        <ImageView android:id="@id/thumbnail" style="@style/fill" />
+    </FrameLayout>
+    <ImageView android:id="@id/is_play" android:background="@drawable/playmark" android:layout_width="20.0dip" android:layout_height="20.0dip" android:layout_marginLeft="4.0dip" android:layout_toRightOf="@id/frame_thumbnail" />
+    <TextView android:textStyle="bold" android:id="@id/title" android:layout_marginLeft="4.0dip" android:layout_marginRight="10.5dip" android:layout_toRightOf="@id/is_play" style="@style/wrap_text" />
+    <TextView android:id="@id/artist" android:layout_marginLeft="4.0dip" android:layout_toLeftOf="@id/duration" android:layout_toRightOf="@id/is_play" android:layout_below="@id/title" style="@style/wrap_text" />
+    <TextView android:id="@id/duration" android:layout_marginRight="10.5dip" android:layout_below="@id/title" android:layout_alignParentRight="true" style="@style/wrap_text" />
+</RelativeLayout>

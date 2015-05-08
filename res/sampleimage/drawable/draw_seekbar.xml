@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <bitmap android:src="@drawable/seekbar_right" />
+    </item>
+    <item android:id="@android:id/secondaryProgress">
+        <clip>
+            <shape>
+                <solid android:color="@color/docomo_red" />
+                <corners android:radius="5.0dip" />
+                <gradient android:startColor="#ff484848" android:endColor="#ff484848" android:angle="270.0" android:centerY="0.2" android:centerColor="#ff646464" />
+            </shape>
+        </clip>
+    </item>
+    <item android:id="@android:id/progress">
+        <clip>
+            <bitmap android:gravity="left" android:src="@drawable/seekbar_left" android:antialias="true" android:filter="false" />
+        </clip>
+    </item>
+</layer-list>

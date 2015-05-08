@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@layout/mainframe_playlist_add_artist" style="@style/fill_vertical"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:id="@id/edit_bar" android:focusable="false" android:layout_below="@id/titlebar" style="@style/fill_width">
+        <include layout="@layout/editbar_add_playlist" />
+    </LinearLayout>
+    <LinearLayout android:id="@id/tab_bar" android:focusable="false" android:layout_below="@id/edit_bar" style="@style/fill_width">
+        <include layout="@layout/tabbar_add_playlist" />
+    </LinearLayout>
+    <ViewFlipper android:id="@id/flipper_body" android:layout_below="@id/tab_bar" style="@style/fill_equal_width">
+        <LinearLayout android:id="@id/body_artist" style="@style/fill_vertical">
+            <LinearLayout android:id="@id/no_list_item" style="@style/fill">
+                <include layout="@layout/no_item_list" />
+            </LinearLayout>
+            <FrameLayout style="@style/fill">
+                <ListView android:scrollbarThumbVertical="@drawable/scrollbar_thumb" android:id="@id/list" android:nextFocusLeft="@id/list" android:nextFocusRight="@id/list" android:nextFocusUp="@id/list" android:nextFocusDown="@id/list" android:fadeScrollbars="false" style="@style/list_item">
+                    <requestFocus />
+                </ListView>
+                <include layout="@layout/list_indexer" />
+            </FrameLayout>
+        </LinearLayout>
+        <LinearLayout android:id="@id/body_album" style="@style/fill_vertical">
+            <LinearLayout android:id="@id/no_item_list_album" style="@style/fill">
+                <include layout="@layout/no_item_list" />
+            </LinearLayout>
+            <LinearLayout android:id="@id/breadcrumbs_album" style="@style/fill_width">
+                <include layout="@layout/breadcrumbs_playlist_add_song" />
+            </LinearLayout>
+            <LinearLayout android:id="@id/button_playlist_add_all" android:focusable="true" android:nextFocusLeft="@id/button_playlist_add_all" android:nextFocusRight="@id/button_playlist_add_all" android:nextFocusUp="@id/button_playlist_add_all" android:nextFocusDown="@id/list_album" style="@style/fill_width">
+                <include layout="@layout/adapter_playlist_add_all" />
+            </LinearLayout>
+            <ListView android:scrollbarThumbVertical="@drawable/scrollbar_thumb" android:id="@id/list_album" android:nextFocusLeft="@id/list_album" android:nextFocusRight="@id/list_album" android:nextFocusUp="@id/button_playlist_add_all" android:nextFocusDown="@id/list_album" android:fadeScrollbars="false" style="@style/list_item" />
+        </LinearLayout>
+        <LinearLayout android:id="@id/body_song" style="@style/fill_vertical">
+            <LinearLayout android:id="@id/no_item_list_song" style="@style/fill">
+                <include layout="@layout/no_item_list" />
+            </LinearLayout>
+            <LinearLayout android:id="@id/breadcrumbs_song" style="@style/fill_width">
+                <include layout="@layout/breadcrumbs_playlist_add_song" />
+            </LinearLayout>
+            <include layout="@layout/menu_playlist_add_song" />
+            <ListView android:scrollbarThumbVertical="@drawable/scrollbar_thumb" android:id="@id/list_song" android:nextFocusLeft="@id/list_song" android:nextFocusRight="@id/list_song" android:nextFocusUp="@id/list_song" android:nextFocusDown="@id/list_song" android:fadeScrollbars="false" style="@style/list_item" />
+        </LinearLayout>
+    </ViewFlipper>
+</RelativeLayout>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.nttdocomo.android.mediaplayer.view.tabbar.TabBarImageButton android:gravity="center" android:layout_gravity="center" android:orientation="horizontal" android:id="@id/tabbar_btn" android:background="@drawable/selector_tabbar_btn" android:paddingBottom="4.0dip" android:focusable="false" style="@style/tabbar_btn"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView android:id="@id/tab_image" android:layout_alignParentLeft="true" android:layout_centerVertical="true" style="@style/wrap" />
+    <TextView android:textSize="17.0dip" android:textColor="@drawable/selector_tab_text_color" android:id="@id/tab_text" android:layout_marginLeft="7.0dip" android:layout_centerVertical="true" style="@style/wrap" />
+</com.nttdocomo.android.mediaplayer.view.tabbar.TabBarImageButton>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@id/layout_root" style="@style/fill"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <ScrollView android:id="@id/scrollView1" style="@style/fill">
+        <RelativeLayout android:id="@id/layout_continfo" android:padding="10.0dip" style="@style/fill">
+            <TextView android:id="@id/title_t" android:visibility="gone" android:text="@string/dlg_continfo_item_content_title" style="@style/text_label" />
+            <TextView android:id="@id/title" android:visibility="gone" android:singleLine="false" android:layout_below="@id/title_t" style="@style/text_data" />
+            <TextView android:id="@id/compilation_t" android:visibility="gone" android:text="@string/dlg_continfo_value_compilation" android:layout_below="@id/title" style="@style/text_label" />
+            <TextView android:id="@id/file_name_t" android:visibility="gone" android:layout_marginTop="10.0dip" android:text="@string/dlg_continfo_item_filename" android:layout_below="@id/compilation_t" style="@style/text_label" />
+            <TextView android:id="@id/file_name" android:visibility="gone" android:singleLine="false" android:layout_below="@id/file_name_t" style="@style/text_data" />
+            <TextView android:id="@id/file_size_t" android:visibility="gone" android:layout_marginTop="10.0dip" android:text="@string/dlg_continfo_item_filesize" android:layout_below="@id/file_name" style="@style/text_label" />
+            <TextView android:id="@id/file_size" android:visibility="gone" android:singleLine="false" android:layout_toRightOf="@id/file_size_t" android:layout_alignBaseline="@id/file_size_t" style="@style/text_data" />
+            <TextView android:id="@id/artist_t" android:visibility="gone" android:layout_marginTop="10.0dip" android:text="@string/dlg_continfo_item_artist" android:layout_below="@id/file_size_t" style="@style/text_label" />
+            <TextView android:id="@id/artist" android:visibility="gone" android:singleLine="false" android:layout_below="@id/artist_t" style="@style/text_data" />
+            <TextView android:id="@id/album_artist_t" android:visibility="gone" android:layout_marginTop="10.0dip" android:text="@string/dlg_continfo_item_album_artist" android:layout_below="@id/artist" style="@style/text_label" />
+            <TextView android:id="@id/album_artist" android:visibility="gone" android:singleLine="false" android:layout_below="@id/album_artist_t" style="@style/text_data" />
+            <TextView android:id="@id/talent_t" android:visibility="gone" android:layout_marginTop="10.0dip" android:text="@string/dlg_continfo_item_talent" android:layout_below="@id/album_artist" style="@style/text_label" />
+            <TextView android:id="@id/talent" android:visibility="gone" android:singleLine="false" android:layout_below="@id/talent_t" style="@style/text_data" />
+            <TextView android:id="@id/album_t" android:visibility="gone" android:layout_marginTop="10.0dip" android:text="@string/dlg_continfo_item_album" android:layout_below="@id/talent" style="@style/text_label" />
+            <TextView android:id="@id/album" android:visibility="gone" android:singleLine="false" android:layout_below="@id/album_t" style="@style/text_data" />
+            <TextView android:id="@id/track_number_t" android:visibility="gone" android:layout_marginTop="10.0dip" android:text="@string/dlg_continfo_item_track_number" android:layout_below="@id/album" style="@style/text_label" />
+            <TextView android:id="@id/track_number" android:visibility="gone" android:singleLine="false" android:layout_toRightOf="@id/track_number_t" android:layout_alignBaseline="@id/track_number_t" style="@style/text_data" />
+            <TextView android:id="@id/playtime_t" android:visibility="gone" android:layout_marginTop="10.0dip" android:text="@string/dlg_continfo_item_playtime" android:layout_below="@id/track_number_t" style="@style/text_label" />
+            <TextView android:id="@id/playtime" android:visibility="gone" android:singleLine="false" android:layout_toRightOf="@id/playtime_t" android:layout_alignBaseline="@id/playtime_t" style="@style/text_data" />
+            <TextView android:id="@id/timestamp_t" android:visibility="gone" android:layout_marginTop="10.0dip" android:text="@string/dlg_continfo_item_timestamp" android:layout_below="@id/playtime_t" style="@style/text_label" />
+            <TextView android:id="@id/timestamp" android:visibility="gone" android:singleLine="false" android:layout_below="@id/timestamp_t" style="@style/text_data" />
+            <TextView android:id="@id/genre_t" android:visibility="gone" android:layout_marginTop="10.0dip" android:text="@string/dlg_continfo_item_genre" android:layout_below="@id/timestamp" style="@style/text_label" />
+            <TextView android:id="@id/genre" android:visibility="gone" android:singleLine="false" android:layout_below="@id/genre_t" style="@style/text_data" />
+            <TextView android:id="@id/year_t" android:visibility="gone" android:layout_marginTop="10.0dip" android:text="@string/dlg_continfo_item_year" android:layout_below="@id/genre" style="@style/text_label" />
+            <TextView android:id="@id/year" android:visibility="gone" android:singleLine="false" android:layout_toRightOf="@id/year_t" android:layout_alignBaseline="@id/year_t" style="@style/text_data" />
+            <TextView android:id="@id/comment_t" android:visibility="gone" android:layout_marginTop="10.0dip" android:text="@string/dlg_continfo_item_comment" android:layout_below="@id/year_t" style="@style/text_label" />
+            <TextView android:id="@id/comment" android:visibility="gone" android:singleLine="false" android:layout_below="@id/comment_t" style="@style/text_data" />
+            <TextView android:id="@id/description_t" android:visibility="gone" android:layout_marginTop="10.0dip" android:text="@string/dlg_continfo_item_description" android:layout_below="@id/comment" style="@style/text_label" />
+            <TextView android:id="@id/description" android:visibility="gone" android:singleLine="false" android:layout_below="@id/description_t" style="@style/text_data" />
+            <TextView android:id="@id/ringtone_t" android:visibility="gone" android:layout_marginTop="10.0dip" android:text="@string/dlg_continfo_item_ringtone" android:layout_below="@id/description" style="@style/text_label" />
+            <TextView android:id="@id/ringtone" android:visibility="gone" android:singleLine="false" android:layout_toRightOf="@id/ringtone_t" android:layout_alignBaseline="@id/ringtone_t" style="@style/text_data" />
+            <TextView android:id="@id/bgplayable_t" android:visibility="gone" android:layout_marginTop="10.0dip" android:text="@string/dlg_continfo_item_background_playback" android:layout_below="@id/ringtone_t" style="@style/text_label" />
+            <TextView android:id="@id/bgplayable" android:visibility="gone" android:singleLine="false" android:layout_below="@id/bgplayable_t" style="@style/text_data" />
+            <TextView android:id="@id/copyright_t" android:visibility="gone" android:layout_marginTop="10.0dip" android:text="@string/dlg_continfo_item_copyright" android:layout_below="@id/bgplayable" style="@style/text_label" />
+            <TextView android:id="@id/copyright" android:visibility="gone" android:singleLine="false" android:layout_below="@id/copyright_t" style="@style/text_data" />
+            <TextView android:id="@id/protection_t" android:visibility="gone" android:layout_marginTop="10.0dip" android:text="@string/dlg_continfo_item_protection" android:layout_below="@id/copyright" style="@style/text_label" />
+            <TextView android:id="@id/protection" android:visibility="gone" android:singleLine="false" android:layout_toRightOf="@id/protection_t" android:layout_alignBaseline="@id/protection_t" style="@style/text_data" />
+            <TextView android:id="@id/license_t" android:visibility="gone" android:layout_marginLeft="10.0dip" android:text="@string/dlg_continfo_item_license" android:layout_below="@id/protection_t" style="@style/text_label" />
+            <TextView android:id="@id/license" android:visibility="gone" android:singleLine="false" android:layout_toRightOf="@id/license_t" android:layout_alignBaseline="@id/license_t" style="@style/text_data" />
+            <TextView android:id="@id/startdate_t" android:visibility="gone" android:layout_marginLeft="10.0dip" android:text="@string/dlg_continfo_item_start_date" android:layout_below="@id/license_t" style="@style/text_label" />
+            <TextView android:id="@id/startdate" android:visibility="gone" android:singleLine="false" android:layout_toRightOf="@id/startdate_t" android:layout_alignBaseline="@id/startdate_t" style="@style/text_data" />
+            <TextView android:id="@id/enddate_t" android:visibility="gone" android:layout_marginLeft="10.0dip" android:text="@string/dlg_continfo_item_end_date" android:layout_below="@id/startdate_t" style="@style/text_label" />
+            <TextView android:id="@id/enddate" android:visibility="gone" android:singleLine="false" android:layout_toRightOf="@id/enddate_t" android:layout_alignBaseline="@id/enddate_t" style="@style/text_data" />
+        </RelativeLayout>
+    </ScrollView>
+</LinearLayout>

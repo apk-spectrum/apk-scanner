@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@layout/player_video_ctrl_seek_portrait" android:background="#7f000000" style="@style/fill_width_vertical"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:layout_gravity="center_horizontal" android:layout_height="50.0dip" style="@style/fill_width_horizontal">
+        <ImageButton android:layout_gravity="center" android:id="@id/miracast_settings_button" android:background="#00000000" android:focusable="false" android:layout_width="50.0dip" android:src="@drawable/auxiliary_button_mira_off" style="@style/wrap" />
+        <View android:layout_width="0.0dip" android:layout_height="1.0dip" android:layout_weight="1.0" />
+        <ImageView android:layout_gravity="center" android:id="@id/batteryInfo" android:layout_width="40.0dip" android:src="@drawable/level_list_battery" android:fromDegrees="180.0" android:pivotX="50.0%" android:pivotY="50.0%" style="@style/wrap" />
+        <TextView android:textColor="#ffdddddd" android:gravity="center" android:layout_gravity="center" android:id="@id/timeInfo" android:layout_width="40.0dip" android:text="--:--" style="@style/text_label" />
+        <ImageButton android:layout_gravity="center" android:id="@id/menu_button" android:background="#00000000" android:focusable="true" android:layout_width="50.0dip" android:src="@drawable/selector_player_btn_menu" style="@style/wrap" />
+    </LinearLayout>
+    <LinearLayout android:layout_height="50.0dip" style="@style/fill_width_horizontal">
+        <TextView android:textColor="#ffdddddd" android:gravity="center" android:layout_gravity="center" android:id="@id/currentTime" android:layout_width="50.0dip" android:text="--:--:--" style="@style/text_label" />
+        <SeekBar android:layout_gravity="center" android:id="@id/seekBar" android:focusable="false" android:layout_width="wrap_content" android:layout_height="wrap_content" android:progressDrawable="@drawable/draw_seekbar" android:layout_weight="1.0" style="@style/SeekBar" />
+        <TextView android:textColor="#ffdddddd" android:gravity="center" android:layout_gravity="center" android:id="@id/totalTime" android:layout_width="50.0dip" android:text="--:--:--" style="@style/text_label" />
+    </LinearLayout>
+</LinearLayout>

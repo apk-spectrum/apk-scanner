@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout style="@style/fill_width_vertical"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <include layout="@layout/listdivider" />
+    <RelativeLayout android:clickable="false" style="@style/adapter_large">
+        <CheckBox android:id="@id/delete_checkbox" android:focusable="false" android:button="@drawable/selector_delete_checkbox" android:layout_below="@id/space" android:layout_alignParentLeft="true" android:layout_centerVertical="true" android:checkable="false" style="@style/wrap" />
+        <TextView android:textStyle="bold" android:id="@id/title" android:layout_marginLeft="6.5dip" android:layout_marginRight="22.0dip" android:layout_toRightOf="@id/delete_checkbox" android:layout_centerVertical="true" style="@style/wrap_text" />
+    </RelativeLayout>
+</LinearLayout>

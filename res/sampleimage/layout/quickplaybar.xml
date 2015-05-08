@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@id/quickplaybar" android:background="@drawable/draw_quickplaybar" style="@style/fill_equal_width_horizontal"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <FrameLayout android:background="@drawable/draw_quickplaybar" android:layout_weight="1.0" style="@style/fill">
+        <LinearLayout android:background="@drawable/draw_quickplaybar" android:layout_width="1000.0dip" android:layout_height="wrap_content" />
+        <Button android:id="@id/quickplaybar_btn" android:visibility="invisible" style="@style/fill" />
+        <LinearLayout android:layout_gravity="center_vertical" android:orientation="horizontal" android:paddingLeft="5.0dip" android:paddingRight="5.0dip" style="@style/fill">
+            <com.nttdocomo.android.mediaplayer.view.MarqueeTextView android:id="@id/marqueeView" app:text="" app:textColor="@color/white" app:textSize="16.0dip" style="@style/fill"
+              xmlns:app="http://schemas.android.com/apk/res/com.nttdocomo.android.mediaplayer" />
+        </LinearLayout>
+    </FrameLayout>
+    <LinearLayout android:orientation="horizontal" android:id="@id/quickplaybar_icon_layout" android:background="@drawable/quickplaybar_icon" android:layout_width="100.0dip" android:layout_height="30.0dip" android:layout_margin="5.0dip" />
+</LinearLayout>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <bitmap android:src="@drawable/volumebar_right" />
+    </item>
+    <item android:id="@android:id/progress">
+        <clip>
+            <bitmap android:gravity="left" android:src="@drawable/volumebar_left" android:antialias="true" android:filter="false" />
+        </clip>
+    </item>
+</layer-list>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:gravity="center" android:id="@id/replayback_layout" android:visibility="invisible" style="@style/fill_equal_width_horizontal"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:gravity="center" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="400.0dip">
+        <TextView android:textSize="20.0dip" android:textColor="@color/font_white" android:layout_gravity="center" android:id="@id/replay_text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/playback_once_again" />
+        <ImageView android:id="@id/replayback_image" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/replayback" />
+    </LinearLayout>
+</LinearLayout>

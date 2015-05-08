@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@id/dlg_albuminfo" style="@style/fill_width_vertical"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <include layout="@layout/dlg_albuminfo_title" />
+    <LinearLayout android:orientation="vertical" android:id="@id/divider" android:background="@color/gray" android:layout_width="fill_parent" android:layout_height="1.0dip" />
+    <LinearLayout android:baselineAligned="false" style="@style/fill_width_vertical">
+        <ListView android:id="@id/dlg_albuminfo_album_song_list" android:visibility="visible" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_weight="1.0" />
+    </LinearLayout>
+</LinearLayout>

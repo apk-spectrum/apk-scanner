@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@id/tabbar" android:layout_height="40.0dip" style="@style/fill_width_horizontal"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <Button android:id="@id/playlist_tab_song" android:focusable="false" android:text="@string/playlist_tab_songs" style="@style/tab_menu_button" />
+    <LinearLayout style="@style/tab_menu_divider" />
+    <Button android:id="@id/playlist_tab_artist" android:focusable="false" android:text="@string/playlist_tab_artists" style="@style/tab_menu_button" />
+    <LinearLayout style="@style/tab_menu_divider" />
+    <Button android:id="@id/playlist_tab_album" android:focusable="false" android:text="@string/playlist_tab_albums" style="@style/tab_menu_button" />
+</LinearLayout>

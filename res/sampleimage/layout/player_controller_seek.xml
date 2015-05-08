@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@id/seekController" android:background="#7f000000" android:layout_height="40.0dip" style="@style/fill_width_horizontal"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:textColor="#ffdddddd" android:gravity="center" android:layout_gravity="center" android:id="@id/currentTime" android:layout_width="58.0dip" android:text="--:--" android:singleLine="true" style="@style/text_label" />
+    <SeekBar android:layout_gravity="center" android:id="@id/seekBar" android:focusable="false" android:layout_width="wrap_content" android:layout_height="wrap_content" android:progressDrawable="@drawable/draw_seekbar" android:layout_weight="1.0" style="@style/SeekBar" />
+    <TextView android:textColor="#ffdddddd" android:gravity="center" android:layout_gravity="center" android:id="@id/totalTime" android:layout_width="58.0dip" android:text="--:--" android:singleLine="true" style="@style/text_label" />
+    <ImageButton android:layout_gravity="center" android:id="@id/menu_button" android:background="#00000000" android:focusable="true" android:src="@drawable/selector_player_btn_menu" style="@style/wrap" />
+</LinearLayout>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@layout/mainframe_audio_album" style="@style/fill_vertical"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <ViewFlipper android:id="@id/flipper_body" android:layout_below="@id/titlebar" style="@style/fill_equal_width">
+        <LinearLayout android:id="@id/body_album" style="@style/fill_vertical">
+            <LinearLayout android:id="@id/no_list_item" style="@style/fill">
+                <include layout="@layout/no_item_list" />
+            </LinearLayout>
+            <FrameLayout style="@style/fill">
+                <ListView android:scrollbarThumbVertical="@drawable/scrollbar_thumb" android:id="@id/list" android:scrollbars="none" android:nextFocusLeft="@id/list" android:nextFocusRight="@id/list" android:nextFocusUp="@id/list" android:nextFocusDown="@id/list" android:fadeScrollbars="true" style="@style/list_item" />
+                <include android:id="@id/lock_album" android:visibility="gone" layout="@layout/adapter_audio_album" />
+                <LinearLayout android:gravity="right" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent">
+                    <ImageView android:id="@id/scrollbar_space" android:background="#00000000" android:layout_width="10.0dip" android:layout_height="10.0dip" />
+                    <ImageView android:id="@id/scrollbar" android:background="@drawable/scrollbar_thumb" android:layout_width="10.0dip" android:layout_height="0.0dip" />
+                </LinearLayout>
+                <include layout="@layout/list_indexer" />
+                <GridView android:scrollbarThumbVertical="@drawable/scrollbar_thumb" android:id="@id/grid" android:nextFocusLeft="@id/grid" android:nextFocusRight="@id/grid" android:nextFocusUp="@id/grid" android:nextFocusDown="@id/grid" android:fadeScrollbars="false" style="@style/grid_item" />
+            </FrameLayout>
+        </LinearLayout>
+        <LinearLayout android:id="@id/body_song" style="@style/fill_vertical">
+            <include layout="@layout/album_info" />
+            <LinearLayout android:id="@id/no_item_list_song" style="@style/fill">
+                <include layout="@layout/no_item_list" />
+            </LinearLayout>
+            <ListView android:scrollbarThumbVertical="@drawable/scrollbar_thumb" android:id="@id/list_song" android:nextFocusLeft="@id/list_song" android:nextFocusRight="@id/list_song" android:nextFocusUp="@id/list_song" android:nextFocusDown="@id/list_song" android:fadeScrollbars="false" style="@style/list_item" />
+        </LinearLayout>
+    </ViewFlipper>
+</RelativeLayout>

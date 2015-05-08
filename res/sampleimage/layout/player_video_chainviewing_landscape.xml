@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@layout/player_video_chainviewing_landscape" android:background="#cc000000" android:visibility="invisible" style="@style/fill_horizontal"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <FrameLayout android:layout_width="fill_parent" android:layout_height="fill_parent" style="@style/wrap_vertical">
+        <LinearLayout android:orientation="horizontal" android:id="@id/chain_info" android:visibility="invisible" android:layout_width="fill_parent" android:layout_height="fill_parent">
+            <ImageView android:layout_gravity="center" android:id="@id/chain_left" android:focusable="false" android:visibility="invisible" android:layout_width="30.0dip" android:layout_height="fill_parent" android:layout_marginLeft="5.0dip" android:layout_marginRight="5.0dip" android:src="@drawable/selector_chain_left" />
+            <LinearLayout android:orientation="horizontal" android:id="@id/chain_value" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="1.0">
+                <LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="1.0">
+                    <FrameLayout android:gravity="center" android:layout_gravity="center" android:id="@id/chainviewing" android:background="@drawable/noimage_movie_medium" android:focusable="false" android:layout_width="75.0dip" android:layout_height="75.0dip">
+                        <ImageView android:id="@id/img_chainviewing" android:background="#00000000" android:layout_width="fill_parent" android:layout_height="fill_parent" />
+                        <ImageView android:id="@id/img_flash1" android:background="#ffffffff" android:visibility="invisible" android:layout_width="fill_parent" android:layout_height="fill_parent" />
+                        <ImageView android:layout_gravity="center" android:padding="15.0dip" android:layout_width="fill_parent" android:layout_height="fill_parent" android:src="@drawable/selector_streaming_play" />
+                    </FrameLayout>
+                    <ScrollView android:id="@id/chain_scroll" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_margin="10.0dip">
+                        <LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent">
+                            <TextView android:textSize="14.0dip" android:textColor="#ffffffff" android:gravity="left" android:id="@id/movie_explanation" android:layout_width="fill_parent" android:layout_height="fill_parent" />
+                        </LinearLayout>
+                    </ScrollView>
+                </LinearLayout>
+                <LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="1.0">
+                    <FrameLayout android:gravity="center" android:layout_gravity="center" android:id="@id/chainviewing2" android:background="@drawable/noimage_movie_medium" android:focusable="false" android:layout_width="75.0dip" android:layout_height="75.0dip">
+                        <ImageView android:id="@id/img_chainviewing2" android:background="#00000000" android:layout_width="fill_parent" android:layout_height="fill_parent" />
+                        <ImageView android:id="@id/img_flash2" android:background="#ffffffff" android:visibility="invisible" android:layout_width="fill_parent" android:layout_height="fill_parent" />
+                        <ImageView android:layout_gravity="center" android:padding="15.0dip" android:layout_width="fill_parent" android:layout_height="fill_parent" android:src="@drawable/selector_streaming_play" />
+                    </FrameLayout>
+                    <ScrollView android:id="@id/chain_scroll2" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_margin="10.0dip">
+                        <LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent">
+                            <TextView android:textSize="14.0dip" android:textColor="#ffffffff" android:gravity="left" android:id="@id/movie_explanation2" android:layout_width="fill_parent" android:layout_height="fill_parent" />
+                        </LinearLayout>
+                    </ScrollView>
+                </LinearLayout>
+            </LinearLayout>
+            <ImageView android:layout_gravity="center" android:id="@id/chain_right" android:focusable="false" android:visibility="invisible" android:layout_width="30.0dip" android:layout_height="fill_parent" android:layout_marginLeft="5.0dip" android:layout_marginRight="5.0dip" android:src="@drawable/selector_chain_right" />
+        </LinearLayout>
+        <TextView android:textSize="14.0dip" android:textColor="#ffffffff" android:gravity="center" android:id="@id/chain_msg" android:visibility="invisible" android:layout_width="fill_parent" android:layout_height="fill_parent" />
+    </FrameLayout>
+</LinearLayout>

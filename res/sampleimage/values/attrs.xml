@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="scale" format="float" />
+    <attr name="text" format="string" />
+    <attr name="textColor" format="color" />
+    <attr name="background" format="color" />
+    <attr name="textSize" format="dimension" />
+</resources>

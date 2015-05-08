@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:divider="?android:dividerHorizontal" android:showDividers="middle" style="@style/fill_width_vertical"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:textSize="20.0dip" android:gravity="center" android:background="@color/subtitlebar_bg" android:clickable="false" android:layout_width="fill_parent" android:layout_height="40.0dip" android:text="@string/dmarket_context_arrivals" />
+    <Button android:textSize="18.0dip" android:gravity="center_vertical" android:id="@id/new_dmusic" android:paddingLeft="25.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/dmarket_context_dmusic" style="?android:attr/buttonBarButtonStyle" />
+    <Button android:textSize="18.0dip" android:gravity="center_vertical" android:id="@id/new_dvideo" android:paddingLeft="25.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/dmarket_context_dvideo" style="?android:attr/buttonBarButtonStyle" />
+    <Button android:textSize="18.0dip" android:gravity="center_vertical" android:id="@id/new_danime" android:paddingLeft="25.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/dmarket_context_danime" style="?android:attr/buttonBarButtonStyle" />
+    <TextView android:textSize="20.0dip" android:gravity="center" android:background="@color/subtitlebar_bg" android:clickable="false" android:layout_width="fill_parent" android:layout_height="40.0dip" android:text="@string/dmarket_context_ranking" />
+    <Button android:textSize="18.0dip" android:gravity="center_vertical" android:id="@id/ranking_dmusic" android:paddingLeft="25.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/dmarket_context_dmusic" style="?android:attr/buttonBarButtonStyle" />
+    <Button android:textSize="18.0dip" android:gravity="center_vertical" android:id="@id/ranking_dvideo" android:paddingLeft="25.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/dmarket_context_dvideo" style="?android:attr/buttonBarButtonStyle" />
+    <Button android:textSize="18.0dip" android:gravity="center_vertical" android:id="@id/ranking_danime" android:paddingLeft="25.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/dmarket_context_danime" style="?android:attr/buttonBarButtonStyle" />
+</LinearLayout>

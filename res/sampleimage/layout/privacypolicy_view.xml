@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@id/privacypolicyview" style="@style/fill_vertical"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <WebView android:id="@id/webview" android:nextFocusLeft="@id/webview" android:nextFocusRight="@id/webview" android:nextFocusUp="@id/webview" android:nextFocusDown="@id/webview" style="@style/fill_equal_width" />
+    <LinearLayout android:id="@id/chk_agree_layout" android:visibility="invisible" android:divider="?android:dividerHorizontal" android:showDividers="beginning" style="@style/fill_width_vertical">
+        <LinearLayout android:gravity="center_vertical" android:background="@color/white" android:paddingTop="10.0dip" android:paddingBottom="10.0dip" style="@style/fill_width_horizontal">
+            <CheckBox android:gravity="center|left" android:id="@id/chk_agree" android:layout_margin="6.5dip" style="@style/wrap" />
+            <TextView android:textSize="16.0dip" android:layout_marginRight="6.5dip" android:text="@string/msg_check_privacy_policy_agree" style="@style/fill_width" />
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout android:divider="?android:dividerHorizontal" android:showDividers="beginning" style="@style/fill_width_vertical">
+        <LinearLayout android:orientation="horizontal" android:background="@color/white" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_alignParentBottom="true" style="?android:attr/buttonBarStyle">
+            <Button android:textSize="18.0dip" android:layout_gravity="center" android:id="@id/back" android:visibility="invisible" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/app_button_close" android:layout_weight="1.0" style="?android:attr/buttonBarButtonStyle" />
+            <Button android:textSize="18.0dip" android:layout_gravity="left" android:id="@id/exit" android:visibility="invisible" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/app_button_exit" android:layout_weight="1.0" style="?android:attr/buttonBarButtonStyle" />
+            <Button android:enabled="false" android:textSize="18.0dip" android:layout_gravity="right" android:id="@id/start" android:visibility="invisible" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/app_button_start" android:layout_weight="1.0" style="?android:attr/buttonBarButtonStyle" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

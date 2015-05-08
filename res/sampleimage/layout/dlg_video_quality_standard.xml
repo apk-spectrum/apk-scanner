@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="horizontal" android:id="@id/cMainLayout" android:focusable="false" android:layout_width="fill_parent" android:layout_height="fill_parent" android:minWidth="400.0dip"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <Button android:textSize="12.0dip" android:id="@id/cLow" android:focusable="true" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="ふつう" android:layout_weight="1.0" />
+    <Button android:textSize="12.0dip" android:id="@id/cMiddle" android:focusable="true" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="きれい" android:layout_weight="1.0" />
+    <Button android:textSize="12.0dip" android:id="@id/cHigh" android:focusable="true" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="すごくきれい" android:layout_weight="1.0" />
+</LinearLayout>

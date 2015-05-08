@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout style="@style/fill_vertical"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <FrameLayout style="@style/equal_width_vertical">
+        <LinearLayout android:id="@id/top_wrapper" style="@style/fill_vertical">
+            <include layout="@layout/player_controller_seek" />
+            <FrameLayout android:id="@id/albumArtViewer" style="@style/equal_width">
+                <LinearLayout android:layout_gravity="center_horizontal" android:id="@id/back_shadow_lay" style="@style/wrap">
+                    <ImageView android:id="@id/back_shadow" android:background="@drawable/thumb_shadow" android:visibility="gone" android:layout_width="20.0dip" android:layout_height="20.0dip" />
+                </LinearLayout>
+                <ImageView android:gravity="center" android:layout_gravity="center" android:id="@id/albumArt" android:padding="20.0dip" android:layout_alignParentLeft="true" android:layout_centerVertical="true" style="@style/fill_equal_width" />
+            </FrameLayout>
+            <LinearLayout android:id="@id/InfoWrapper" android:padding="2.0dip" style="@style/fill_width_horizontal">
+                <LinearLayout android:layout_gravity="center" android:paddingLeft="20.0dip" android:paddingRight="10.0dip" android:focusable="false" style="@style/wrap_vertical">
+                    <ImageButton android:id="@id/back" android:background="#00000000" android:focusable="false" android:src="@drawable/selector_player_btn_back" style="@style/wrap" />
+                </LinearLayout>
+                <LinearLayout android:id="@id/trackInfoViewer" android:background="@drawable/outline_image" style="@style/wrap_equal_width_vertical">
+                    <FrameLayout android:layout_width="fill_parent" android:layout_height="wrap_content">
+                        <LinearLayout android:orientation="horizontal" android:id="@id/trackInfotext" android:paddingLeft="5.0dip" android:paddingRight="5.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_weight="1.0">
+                            <ImageView android:layout_gravity="center_vertical" android:id="@id/linkImage" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="5.0dip" android:src="@drawable/artist_link_icon" />
+                            <LinearLayout android:layout_gravity="center|left" android:orientation="vertical" android:paddingLeft="5.0dip" android:paddingRight="5.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_weight="1.0">
+                                <com.nttdocomo.android.mediaplayer.view.MarqueeTextView android:textStyle="bold" android:layout_gravity="left" android:id="@id/title" android:paddingTop="6.0dip" android:layout_height="30.0dip" android:text="" android:singleLine="true" app:text="" app:textColor="@color/font_black" app:textSize="16.0dip" style="@style/fill"
+                                  xmlns:app="http://schemas.android.com/apk/res/com.nttdocomo.android.mediaplayer" />
+                                <TextView android:textSize="16.0dip" android:textColor="@color/font_black" android:id="@id/artist" android:paddingBottom="4.0dip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:singleLine="true" />
+                                <TextView android:textSize="16.0dip" android:textColor="@color/font_black" android:layout_gravity="left" android:id="@id/album" android:paddingBottom="2.0dip" android:text="" android:singleLine="true" style="@style/text_label" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </FrameLayout>
+                </LinearLayout>
+                <LinearLayout android:layout_gravity="center" android:paddingLeft="10.0dip" android:paddingRight="20.0dip" style="@style/wrap_vertical">
+                    <ImageButton android:id="@id/repeat" android:background="#00000000" android:focusable="false" android:src="@drawable/selector_player_btn_repeat" style="@style/wrap" />
+                    <ImageButton android:id="@id/shuffle" android:background="#00000000" android:focusable="false" android:src="@drawable/selector_player_btn_shuffle" style="@style/wrap" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+    <include layout="@layout/player_controller_trickplay" />
+</LinearLayout>

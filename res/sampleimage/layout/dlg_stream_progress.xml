@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:gravity="top" android:layout_width="fill_parent" style="@style/fill"
+  xmlns:android="http://schemas.android.com/apk/res/android">	xmlns:android="http://schemas.android.com/apk/res/android"
+	style="@style/fill"
+	android:id="@+id/layout_root">
+<ProgressBar android:id="@id/stream_progress_image" android:visibility="gone" android:layout_width="90.0dip" android:layout_height="90.0dip" android:layout_centerHorizontal="true" />
+    <TextView android:id="@id/cancel_msg" android:visibility="gone" android:text="@string/msg_alert_license_cancel_now" android:layout_below="@id/stream_progress_image" style="@style/text_label" />
+    <TextView android:id="@id/buffering_msg" android:visibility="gone" android:text="@string/msg_notice_buffering_now" android:layout_below="@id/stream_progress_image" android:layout_centerHorizontal="true" style="@style/text_label" />
+    <TextView android:id="@id/showalbuminfo_msg" android:visibility="gone" android:text="@string/msg_show_albuminfo" android:layout_below="@id/stream_progress_image" android:layout_centerHorizontal="true" style="@style/showalbuminfo" />
+</RelativeLayout>

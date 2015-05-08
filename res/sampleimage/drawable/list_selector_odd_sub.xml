@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="false" android:drawable="@drawable/list_item_odd_bg_sub" />
+    <item android:state_pressed="true" android:drawable="@drawable/list_item_odd_selected_bg_layer" />
+    <item android:state_selected="true" android:drawable="@drawable/list_item_odd_focused_bg_layer" />
+    <item android:state_focused="true" android:drawable="@drawable/list_item_odd_focused_bg_layer" />
+    <item android:drawable="@drawable/list_item_odd_bg_sub" />
+</selector>

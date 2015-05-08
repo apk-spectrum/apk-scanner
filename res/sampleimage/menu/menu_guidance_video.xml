@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@id/option_menu_brightness" android:title="@string/menu_item_brightness" />
+    <item android:id="@id/option_menu_move_to_guidance" android:title="@string/menu_item_move_to_guidance" />
+    <item android:id="@id/option_menu_exit_app" android:title="@string/menu_item_exit" />
+</menu>

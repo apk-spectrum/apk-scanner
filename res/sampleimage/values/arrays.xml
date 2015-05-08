@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="contents_longtap_array">
+        <item>@string/longtap_set_ringtone</item>
+        <item>@string/longtap_addto_playlist</item>
+        <item>@string/longtap_delete_contents</item>
+    </string-array>
+    <string-array name="contents_no_ringtone_longtap_array">
+        <item>@string/longtap_addto_playlist</item>
+        <item>@string/longtap_delete_contents</item>
+    </string-array>
+    <string-array name="playlist_longtap_array">
+        <item>@string/longtap_delete_playlist</item>
+        <item>@string/longtap_edit_title</item>
+    </string-array>
+    <string-array name="playlist_detail_longtap_array">
+        <item>@string/longtap_delete_from_playlist</item>
+    </string-array>
+    <string-array name="delete_longtap_array">
+        <item>@string/longtap_delete_contents</item>
+    </string-array>
+    <string-array name="group_unit_longtap_array">
+        <item>@string/longtap_addto_playlist</item>
+        <item>@string/longtap_delete_contents</item>
+    </string-array>
+    <string-array name="ringtone_contents_longtap_array">
+        <item>@string/longtap_set_ringtone</item>
+        <item>@string/longtap_delete_contents</item>
+    </string-array>
+    <string-array name="dmarket_context_array">
+        <item>@string/dmarket_context_musicstore</item>
+        <item>@string/dmarket_context_videostore</item>
+        <item>@string/dmarket_context_animestore</item>
+    </string-array>
+    <string-array name="tablelist_master_resume">
+        <item>audio_resumeinfo</item>
+        <item>audio_contentinfo</item>
+        <item>video_resumeinfo</item>
+        <item>video_contentinfo</item>
+    </string-array>
+    <string-array name="createdb_master_resume">
+        <item>CREATE TABLE audio_resumeinfo ( _id INTEGER PRIMARY KEY, service_id TEXT DEFAULT NULL, content_id TEXT NOT NULL, resume_point INTEGER DEFAULT (-1), resume_point_lastupdate INTEGER DEFAULT (-1), resume_info_url TEXT DEFAULT NULL, resume_info_url_expiration INTEGER DEFAULT (-1), resume_info_send_mode INTEGER DEFAULT (-1), keep_alive_interval INTEGER DEFAULT (-1), UNIQUE(service_id, content_id) )</item>
+        <item>CREATE TABLE audio_contentinfo ( _id INTEGER PRIMARY KEY, uri TEXT NOT NULL UNIQUE, service_id TEXT DEFAULT NULL, content_id TEXT DEFAULT NULL, resume_point INTEGER DEFAULT (-1), resume_point_lastupdate INTEGER DEFAULT (-1) )</item>
+        <item>CREATE TABLE video_resumeinfo ( _id INTEGER PRIMARY KEY, service_id TEXT DEFAULT NULL, content_id TEXT NOT NULL, resume_point INTEGER DEFAULT (-1), resume_point_lastupdate INTEGER DEFAULT (-1), resume_info_url TEXT DEFAULT NULL, resume_info_url_expiration INTEGER DEFAULT (-1), keep_alive_interval INTEGER DEFAULT (-1), resume_info_send_mode INTEGER DEFAULT (-1), background_play INTEGER DEFAULT (0), recommended_url TEXT DEFAULT NULL, UNIQUE(service_id, content_id) )</item>
+        <item>CREATE TABLE video_contentinfo ( _id INTEGER PRIMARY KEY, uri TEXT NOT NULL UNIQUE, service_id TEXT DEFAULT NULL, content_id TEXT DEFAULT NULL, resume_point INTEGER DEFAULT (-1), resume_point_lastupdate INTEGER DEFAULT (-1) )</item>
+    </string-array>
+    <string-array name="deletedb_master_resume">
+        <item>DROP TABLE IF EXISTS audio_resumeinfo</item>
+        <item>DROP TABLE IF EXISTS audio_contentinfo</item>
+        <item>DROP TABLE IF EXISTS video_resumeinfo</item>
+        <item>DROP TABLE IF EXISTS video_contentinfo</item>
+    </string-array>
+    <string-array name="refreshdb_master_resume">
+        <item>DELETE FROM audio_resumeinfo</item>
+        <item>DELETE FROM audio_contentinfo</item>
+        <item>DELETE FROM video_resumeinfo</item>
+        <item>DELETE FROM video_contentinfo</item>
+    </string-array>
+    <string-array name="upgrade_20to30_master_resume">
+        <item>ALTER TABLE video_resumeinfo ADD COLUMN background_play INTEGER DEFAULT (0)</item>
+        <item>ALTER TABLE video_resumeinfo ADD COLUMN recommended_url TEXT DEFAULT NULL</item>
+    </string-array>
+    <string-array name="tablelist_mediaplayer">
+        <item>media</item>
+        <item>playlist</item>
+        <item>tmp_playlist</item>
+        <item>playlist_media</item>
+        <item>tmp_playlist_media</item>
+        <item>current_audio_playlist</item>
+        <item>current_video_playlist</item>
+        <item>media_album_info</item>
+        <item>uncopyable_media</item>
+    </string-array>
+    <string-array name="createdb_mediaplayer">
+        <item>"CREATE TABLE media ( _id INTEGER PRIMARY KEY, title TEXT, title_search TEXT, title_sort BLOB, album TEXT, album_search TEXT, compilation INTEGER DEFAULT (1), compilation_type INTEGER DEFAULT (0), album_sort BLOB, artist TEXT, artist_search TEXT, artist_sort BLOB, album_artist TEXT, album_artist_search TEXT, album_artist_sort BLOB, genre TEXT, genre_sort BLOB, year INTEGER, track_num INTEGER, duration INTEGER, media_type INTEGER NOT NULL, storage INTEGER NOT NULL, mime_type TEXT NOT NULL, drm_type INTEGER NOT NULL, playable INTEGER DEFAULT (1), drm_useringtone INTEGER, uri TEXT NOT NULL, mediastore_id INTEGER, file_modified INTEGER NOT NULL, video_position INTEGER DEFAULT (0), times INTEGER DEFAULT (0), lastplaydate INTEGER, registdate INTEGER NOT NULL DEFAULT (strftime('%%s','now')), uncopyable_id INTEGER DEFAULT (0) )"</item>
+        <item>CREATE INDEX idx_media_album ON media(album)</item>
+        <item>CREATE INDEX idx_media_artist ON media(artist)</item>
+        <item>CREATE INDEX idx_media_title_sort ON media(title_sort)</item>
+        <item>CREATE INDEX idx_media_album_sort ON media(album_sort)</item>
+        <item>CREATE INDEX idx_media_artist_sort ON media(artist_sort)</item>
+        <item>CREATE INDEX idx_media_album_artist_sort ON media(album_artist_sort)</item>
+        <item>"CREATE TABLE playlist ( _id INTEGER PRIMARY KEY, name TEXT NOT NULL, position INTEGER NOT NULL, type INTEGER NOT NULL, registdate INTEGER NOT NULL DEFAULT (strftime('%%s','now')), lastupdate INTEGER NOT NULL DEFAULT (strftime('%%s','now')) )"</item>
+        <item>CREATE TABLE tmp_playlist ( _id INTEGER PRIMARY KEY, name TEXT NOT NULL, position INTEGER NOT NULL, type INTEGER NOT NULL, delete_flag INTEGER NOT NULL DEFAULT (1) )</item>
+        <item>"CREATE TABLE playlist_media ( _id INTEGER PRIMARY KEY, playlist_id INTEGER NOT NULL REFERENCES playlist(_id), media_id INTEGER NOT NULL REFERENCES media(_id), position INTEGER NOT NULL, registdate INTEGER NOT NULL DEFAULT (strftime('%%s','now')), lastupdate INTEGER NOT NULL DEFAULT (strftime('%%s','now')) )"</item>
+        <item>CREATE INDEX idx_playlist_media_playlist_id ON playlist_media(playlist_id)</item>
+        <item>CREATE TABLE tmp_playlist_media ( _id INTEGER PRIMARY KEY, playlist_id INTEGER NOT NULL REFERENCES playlist(_id), media_id INTEGER NOT NULL REFERENCES media(_id), position INTEGER NOT NULL, delete_flag INTEGER NOT NULL DEFAULT (1) )</item>
+        <item>CREATE INDEX idx_tmp_playlist_media_playlist_id ON tmp_playlist_media(playlist_id)</item>
+        <item>"CREATE TABLE current_audio_playlist ( list_order INTEGER PRIMARY KEY, play_order INTEGER NOT NULL, media_id INTEGER NOT NULL REFERENCES media(_id), registdate INTEGER NOT NULL DEFAULT (strftime('%%s','now')) )"</item>
+        <item>"CREATE TABLE current_video_playlist ( list_order INTEGER PRIMARY KEY, play_order INTEGER NOT NULL, media_id INTEGER NOT NULL REFERENCES media(_id), registdate INTEGER NOT NULL DEFAULT (strftime('%%s','now')) )"</item>
+        <item>CREATE TABLE media_album_info ( media_id INTEGER PRIMARY KEY REFERENCES media(_id), album_id INTEGER NOT NULL, album_uri TEXT NOT NULL, total_duration INTEGER NOT NULL, total_songs INTEGER NOT NULL )</item>
+        <item>CREATE TABLE IF NOT EXISTS uncopyable_media ( _id INTEGER PRIMARY KEY, file_name TEXT NOT NULL, media_type INTEGER NOT NULL, sync_flag INTEGER NOT NULL DEFAULT(0), registdate INTEGER, lastupdate INTEGER )</item>
+        <item>"INSERT INTO playlist ( name, position, type ) VALUES ( '&lt;recently_added>', 0, 1 )"</item>
+        <item>"INSERT INTO playlist ( name, position, type ) VALUES ( '&lt;recently_played>', 1, 1 )"</item>
+        <item>"INSERT INTO playlist ( name, position, type ) VALUES ( '&lt;my_top_rated>', 2, 1 )"</item>
+        <item>CREATE VIEW media_song_list_nomal_album AS SELECT M._id, MA.album_id, MA.album_uri, MA.total_duration, MA.total_songs, M.title AS title, M.title_sort AS title_sort, M.album AS album, M.album_sort AS album_sort, M.artist AS display_artist, M.artist_sort AS display_artist_sort, M.album_artist AS album_artist, M.album_artist_sort AS album_artist_sort, M.compilation AS compilation, M.compilation_type AS compilation_type, M.artist AS artist, M.artist_sort AS artist_sort, M.media_type AS media_type, M.mediastore_id AS mediastore_id, M.duration AS duration, M.drm_type AS drm_type, M.playable AS playable, M.drm_useringtone AS drm_useringtone, M.track_num AS track_num, ( CASE WHEN M.track_num = 0 THEN 1000 ELSE M.track_num END ) AS track_num_sort, M.uri AS uri, M.genre AS genre FROM media M INNER JOIN media_album_info MA ON ( M._id = MA.media_id ) WHERE M.compilation_type = 1;</item>
+        <item>CREATE VIEW media_song_list_compilation_on_album AS SELECT M._id, MA.album_id, MA.album_uri, MA.total_duration, MA.total_songs, M.title AS title, M.title_sort AS title_sort, M.album AS album, M.album_sort AS album_sort, M.album_artist AS display_artist, M.album_artist_sort AS display_artist_sort, M.album_artist AS album_artist, M.album_artist_sort AS album_artist_sort, M.compilation AS compilation, M.compilation_type AS compilation_type, M.artist AS artist, M.artist_sort AS artist_sort, M.media_type AS media_type, M.mediastore_id AS mediastore_id, M.duration AS duration, M.drm_type AS drm_type, M.playable AS playable, M.drm_useringtone AS drm_useringtone, M.track_num AS track_num, ( CASE WHEN M.track_num = 0 THEN 1000 ELSE M.track_num END ) AS track_num_sort, M.uri AS uri, M.genre AS genre FROM media M INNER JOIN media_album_info MA ON ( M._id = MA.media_id ) WHERE M.compilation_type = 2;</item>
+        <item>CREATE VIEW media_song_list_compilation_off_album AS SELECT M._id, MA.album_id, MA.album_uri, MA.total_duration, MA.total_songs, M.title AS title, M.title_sort AS title_sort, M.album AS album, M.album_sort AS album_sort, M.album_artist AS display_artist, M.album_artist_sort AS display_artist_sort, M.album_artist AS album_artist, M.album_artist_sort AS album_artist_sort, M.compilation AS compilation, M.compilation_type AS compilation_type, M.artist AS artist, M.artist_sort AS artist_sort, M.media_type AS media_type, M.mediastore_id AS mediastore_id, M.duration AS duration, M.drm_type AS drm_type, M.playable AS playable, M.drm_useringtone AS drm_useringtone, M.track_num AS track_num, ( CASE WHEN M.track_num = 0 THEN 1000 ELSE M.track_num END ) AS track_num_sort, M.uri AS uri, M.genre AS genre FROM media M INNER JOIN media_album_info MA ON ( M._id = MA.media_id ) WHERE M.compilation_type = 3;</item>
+    </string-array>
+    <string-array name="deletedb_mediaplayer">
+        <item>DROP VIEW IF EXISTS media_song_list_nomal_album</item>
+        <item>DROP VIEW IF EXISTS media_song_list_compilation_on_album</item>
+        <item>DROP VIEW IF EXISTS media_song_list_compilation_off_album</item>
+        <item>DROP TABLE IF EXISTS media</item>
+        <item>DROP TABLE IF EXISTS playlist</item>
+        <item>DROP TABLE IF EXISTS tmp_playlist</item>
+        <item>DROP TABLE IF EXISTS playlist_media</item>
+        <item>DROP TABLE IF EXISTS tmp_playlist_media</item>
+        <item>DROP TABLE IF EXISTS current_audio_playlist</item>
+        <item>DROP TABLE IF EXISTS current_video_playlist</item>
+        <item>DROP TABLE IF EXISTS local_audio_playlist</item>
+        <item>DROP TABLE IF EXISTS local_video_playlist</item>
+        <item>DROP TABLE IF EXISTS resume_stream_audio</item>
+        <item>DROP TABLE IF EXISTS resume_stream_video</item>
+        <item>DROP TABLE IF EXISTS resume_local_audio</item>
+        <item>DROP TABLE IF EXISTS resume_local_video</item>
+        <item>DROP TABLE IF EXISTS media_album_info</item>
+    </string-array>
+    <string-array name="refreshdb_mediaplayer">
+        <item>DELETE FROM media</item>
+        <item>DELETE FROM playlist</item>
+        <item>DELETE FROM tmp_playlist</item>
+        <item>DELETE FROM playlist_media</item>
+        <item>DELETE FROM tmp_playlist_media</item>
+        <item>DELETE FROM current_audio_playlist</item>
+        <item>DELETE FROM current_video_playlist</item>
+        <item>DELETE FROM media_album_info</item>
+        <item>"INSERT INTO playlist ( name, position, type ) VALUES ( '&lt;recently_added>', 0, 1 )"</item>
+        <item>"INSERT INTO playlist ( name, position, type ) VALUES ( '&lt;recently_played>', 1, 1 )"</item>
+        <item>"INSERT INTO playlist ( name, position, type ) VALUES ( '&lt;my_top_rated>', 2, 1 )"</item>
+    </string-array>
+    <string-array name="tablelist_preference">
+        <item>db_preferences</item>
+    </string-array>
+    <string-array name="createdb_preference">
+        <item>"CREATE TABLE db_preferences ( _id INTEGER PRIMARY KEY, player_type INTEGER DEFAULT (0), listview_current_playlist INTEGER DEFAULT (-1), current_playlist_id INTEGER DEFAULT (-1), sd_card_id INTEGER DEFAULT (-1), db_last_update TEXT DEFAULT '-1', db_audio_last_update TEXT DEFAULT '-1', db_video_last_update TEXT DEFAULT '-1', audio_media_store_count INTEGER DEFAULT (-1), video_media_store_count INTEGER DEFAULT (-1), audio_contents_db_count INTEGER DEFAULT (-1), video_contents_db_count INTEGER DEFAULT (-1), resync_suspended INTEGER DEFAULT (0), resync_processing INTEGER DEFAULT (0), resync_control INTEGER DEFAULT (0), player_receive_media_eject INTEGER DEFAULT (0), receive_media_eject INTEGER DEFAULT (0), shuffle_mode INTEGER DEFAULT (-1), repeat_mode INTEGER DEFAULT (-1), is_player_service_dead INTEGER DEFAULT (0), player_on_back_key INTEGER DEFAULT (0), drm_licence_sts INTEGER DEFAULT (-1), last_play_media_id INTEGER DEFAULT (-1), last_play_position INTEGER DEFAULT (-1), last_play_order INTEGER DEFAULT (-1), vocal_boost INTEGER DEFAULT (0), bass_boost INTEGER DEFAULT (0), equalizer_mode INTEGER DEFAULT (-1), dequalizer_mode INTEGER DEFAULT (0), audio_effect_status INTEGER DEFAULT (-1), toolbar_1st_button INTEGER DEFAULT (0), toolbar_2nd_button INTEGER DEFAULT (1), toolbar_3rd_button INTEGER DEFAULT (2), toolbar_4th_button INTEGER DEFAULT (7), toolbar_5th_button INTEGER DEFAULT (6), toolbar_6th_button INTEGER DEFAULT (9), toolbar_7th_button INTEGER DEFAULT (0), toolbar_8th_button INTEGER DEFAULT (0), toolbar_9th_button INTEGER DEFAULT (0), toolbar_10th_button INTEGER DEFAULT (0), error_info TEXT DEFAULT '-1', auto_play_possible_count INTEGER DEFAULT (-1), auto_play_current_index INTEGER DEFAULT (0), player_service_video_status INTEGER DEFAULT (0), audio_current_uri TEXT DEFAULT '-1', video_current_uri TEXT DEFAULT '-1', global_data_communication INTEGER DEFAULT (0), miracast_resume_position INTEGER DEFAULT (0), miracast_resume_uri TEXT DEFAULT '-1' )"</item>
+        <item>"INSERT INTO db_preferences ( player_type, listview_current_playlist, current_playlist_id, sd_card_id, db_last_update, db_audio_last_update, db_video_last_update, audio_media_store_count, video_media_store_count, audio_contents_db_count, video_contents_db_count, resync_suspended, resync_processing, resync_control, player_receive_media_eject, receive_media_eject, shuffle_mode, repeat_mode, is_player_service_dead, player_on_back_key, drm_licence_sts, last_play_media_id, last_play_position, last_play_order, vocal_boost, bass_boost, equalizer_mode, dequalizer_mode, audio_effect_status, toolbar_1st_button, toolbar_2nd_button, toolbar_3rd_button, toolbar_4th_button, toolbar_5th_button, toolbar_6th_button, toolbar_7th_button, toolbar_8th_button, toolbar_9th_button, toolbar_10th_button, error_info, auto_play_possible_count, auto_play_current_index, player_service_video_status, audio_current_uri, video_current_uri, global_data_communication, miracast_resume_position, miracast_resume_uri ) VALUES ( 0, -1, -1, -1, '-1', '-1', '-1', -1, -1, -1, -1, 0, 0, 0, 0, 0, -1, -1, 0, 0, -1, -1, -1, -1, 0, 0, -1, 0, -1, 0, 1, 2, 7, 6, 9, 0, 0, 0, 0, '-1', -1, 0, 0, '-1', '-1', 0, 0, '-1' )"</item>
+    </string-array>
+    <string-array name="deletedb_preference">
+        <item>DROP TABLE IF EXISTS db_preferences</item>
+    </string-array>
+    <string-array name="refreshdb_preference">
+        <item>DELETE FROM db_preferences</item>
+        <item>"INSERT INTO db_preferences ( player_type, listview_current_playlist, current_playlist_id, sd_card_id, db_last_update, db_audio_last_update, db_video_last_update, audio_media_store_count, video_media_store_count, audio_contents_db_count, video_contents_db_count, resync_suspended, resync_processing, resync_control, player_receive_media_eject, receive_media_eject, shuffle_mode, repeat_mode, is_player_service_dead, player_on_back_key, drm_licence_sts, last_play_media_id, last_play_position, last_play_order, vocal_boost, bass_boost, equalizer_mode, dequalizer_mode, audio_effect_status, toolbar_1st_button, toolbar_2nd_button, toolbar_3rd_button, toolbar_4th_button, toolbar_5th_button, toolbar_6th_button, toolbar_7th_button, toolbar_8th_button, toolbar_9th_button, toolbar_10th_button, error_info, auto_play_possible_count, auto_play_current_index, player_service_video_status, audio_current_uri, video_current_uri, global_data_communication, miracast_resume_position, miracast_resume_uri ) VALUES ( 0, -1, -1, -1, '-1', '-1', '-1', -1, -1, -1, -1, 0, 0, 0, 0, 0, -1, -1, 0, 0, -1, -1, -1, -1, 0, 0, -1, 0, -1, 0, 1, 2, 7, 6, 9, 0, 0, 0, 0, '-1', -1, 0, 0, '-1', '-1', 0, 0, '-1' )"</item>
+    </string-array>
+    <string-array name="resetdb_preference">
+        <item>UPDATE db_preferences SET shuffle_mode = 0, repeat_mode = 0, vocal_boost = 0, bass_boost = 0, equalizer_mode = -1, dequalizer_mode = 0, toolbar_1st_button = 0, toolbar_2nd_button = 1, toolbar_3rd_button = 2, toolbar_4th_button = 7, toolbar_5th_button = 6, toolbar_6th_button = 9, toolbar_7th_button = 0, toolbar_8th_button = 0, toolbar_9th_button = 0, toolbar_10th_button = 0</item>
+    </string-array>
+    <string-array name="upgrade_1_2to17_preference">
+        <item>ALTER TABLE db_preferences ADD COLUMN dequalizer_mode INTEGER DEFAULT (0)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN audio_effect_status INTEGER DEFAULT (-1)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN toolbar_1st_button INTEGER DEFAULT (0)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN toolbar_2nd_button INTEGER DEFAULT (1)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN toolbar_3rd_button INTEGER DEFAULT (2)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN toolbar_4th_button INTEGER DEFAULT (7)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN toolbar_5th_button INTEGER DEFAULT (6)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN toolbar_6th_button INTEGER DEFAULT (9)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN toolbar_7th_button INTEGER DEFAULT (0)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN toolbar_8th_button INTEGER DEFAULT (0)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN toolbar_9th_button INTEGER DEFAULT (0)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN toolbar_10th_button INTEGER DEFAULT (0)</item>
+        <item>"ALTER TABLE db_preferences ADD COLUMN error_info TEXT DEFAULT '-1'"</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN auto_play_possible_count INTEGER DEFAULT (-1)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN auto_play_current_index INTEGER DEFAULT (0)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN player_service_video_status INTEGER DEFAULT (0)</item>
+        <item>"ALTER TABLE db_preferences ADD COLUMN audio_current_uri TEXT DEFAULT '-1'"</item>
+        <item>"ALTER TABLE db_preferences ADD COLUMN video_current_uri TEXT DEFAULT '-1'"</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN global_data_communication INTEGER DEFAULT (0)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN miracast_resume_position INTEGER DEFAULT (0)</item>
+        <item>"ALTER TABLE db_preferences ADD COLUMN miracast_resume_uri TEXT DEFAULT '-1'"</item>
+    </string-array>
+    <string-array name="upgrade_3_4to17_preference">
+        <item>ALTER TABLE db_preferences ADD COLUMN toolbar_1st_button INTEGER DEFAULT (0)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN toolbar_2nd_button INTEGER DEFAULT (1)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN toolbar_3rd_button INTEGER DEFAULT (2)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN toolbar_4th_button INTEGER DEFAULT (7)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN toolbar_5th_button INTEGER DEFAULT (6)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN toolbar_6th_button INTEGER DEFAULT (9)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN toolbar_7th_button INTEGER DEFAULT (0)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN toolbar_8th_button INTEGER DEFAULT (0)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN toolbar_9th_button INTEGER DEFAULT (0)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN toolbar_10th_button INTEGER DEFAULT (0)</item>
+        <item>"ALTER TABLE db_preferences ADD COLUMN error_info TEXT DEFAULT '-1'"</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN auto_play_possible_count INTEGER DEFAULT (-1)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN auto_play_current_index INTEGER DEFAULT (0)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN player_service_video_status INTEGER DEFAULT (0)</item>
+        <item>"ALTER TABLE db_preferences ADD COLUMN audio_current_uri TEXT DEFAULT '-1'"</item>
+        <item>"ALTER TABLE db_preferences ADD COLUMN video_current_uri TEXT DEFAULT '-1'"</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN global_data_communication INTEGER DEFAULT (0)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN miracast_resume_position INTEGER DEFAULT (0)</item>
+        <item>"ALTER TABLE db_preferences ADD COLUMN miracast_resume_uri TEXT DEFAULT '-1'"</item>
+    </string-array>
+    <string-array name="upgrade_5_6to17_preference">
+        <item>UPDATE db_preferences SET toolbar_1st_button = 0, toolbar_2nd_button = 1, toolbar_3rd_button = 2, toolbar_4th_button = 7, toolbar_5th_button = 6, toolbar_6th_button = 9, toolbar_7th_button = 0, toolbar_8th_button = 0, toolbar_9th_button = 0, toolbar_10th_button = 0</item>
+        <item>"ALTER TABLE db_preferences ADD COLUMN error_info TEXT DEFAULT '-1'"</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN auto_play_possible_count INTEGER DEFAULT (-1)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN auto_play_current_index INTEGER DEFAULT (0)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN player_service_video_status INTEGER DEFAULT (0)</item>
+        <item>"ALTER TABLE db_preferences ADD COLUMN audio_current_uri TEXT DEFAULT '-1'"</item>
+        <item>"ALTER TABLE db_preferences ADD COLUMN video_current_uri TEXT DEFAULT '-1'"</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN global_data_communication INTEGER DEFAULT (0)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN miracast_resume_position INTEGER DEFAULT (0)</item>
+        <item>"ALTER TABLE db_preferences ADD COLUMN miracast_resume_uri TEXT DEFAULT '-1'"</item>
+    </string-array>
+    <string-array name="upgrade_7_8to17_preference">
+        <item>UPDATE db_preferences SET toolbar_1st_button = 0, toolbar_2nd_button = 1, toolbar_3rd_button = 2, toolbar_4th_button = 7, toolbar_5th_button = 6, toolbar_6th_button = 9, toolbar_7th_button = 0, toolbar_8th_button = 0, toolbar_9th_button = 0, toolbar_10th_button = 0</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN auto_play_possible_count INTEGER DEFAULT (-1)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN auto_play_current_index INTEGER DEFAULT (0)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN player_service_video_status INTEGER DEFAULT (0)</item>
+        <item>"ALTER TABLE db_preferences ADD COLUMN audio_current_uri TEXT DEFAULT '-1'"</item>
+        <item>"ALTER TABLE db_preferences ADD COLUMN video_current_uri TEXT DEFAULT '-1'"</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN global_data_communication INTEGER DEFAULT (0)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN miracast_resume_position INTEGER DEFAULT (0)</item>
+        <item>"ALTER TABLE db_preferences ADD COLUMN miracast_resume_uri TEXT DEFAULT '-1'"</item>
+    </string-array>
+    <string-array name="upgrade_9_10to17_preference">
+        <item>UPDATE db_preferences SET toolbar_1st_button = 0, toolbar_2nd_button = 1, toolbar_3rd_button = 2, toolbar_4th_button = 7, toolbar_5th_button = 6, toolbar_6th_button = 9, toolbar_7th_button = 0, toolbar_8th_button = 0, toolbar_9th_button = 0, toolbar_10th_button = 0</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN auto_play_possible_count INTEGER DEFAULT (-1)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN auto_play_current_index INTEGER DEFAULT (0)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN player_service_video_status INTEGER DEFAULT (0)</item>
+        <item>"ALTER TABLE db_preferences ADD COLUMN audio_current_uri TEXT DEFAULT '-1'"</item>
+        <item>"ALTER TABLE db_preferences ADD COLUMN video_current_uri TEXT DEFAULT '-1'"</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN global_data_communication INTEGER DEFAULT (0)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN miracast_resume_position INTEGER DEFAULT (0)</item>
+        <item>"ALTER TABLE db_preferences ADD COLUMN miracast_resume_uri TEXT DEFAULT '-1'"</item>
+    </string-array>
+    <string-array name="upgrade_11_12to17_preference">
+        <item>UPDATE db_preferences SET toolbar_1st_button = 0, toolbar_2nd_button = 1, toolbar_3rd_button = 2, toolbar_4th_button = 7, toolbar_5th_button = 6, toolbar_6th_button = 9, toolbar_7th_button = 0, toolbar_8th_button = 0, toolbar_9th_button = 0, toolbar_10th_button = 0</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN global_data_communication INTEGER DEFAULT (0)</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN miracast_resume_position INTEGER DEFAULT (0)</item>
+        <item>"ALTER TABLE db_preferences ADD COLUMN miracast_resume_uri TEXT DEFAULT '-1'"</item>
+    </string-array>
+    <string-array name="upgrade_13_14to17_preference">
+        <item>UPDATE db_preferences SET toolbar_1st_button = 0, toolbar_2nd_button = 1, toolbar_3rd_button = 2, toolbar_4th_button = 7, toolbar_5th_button = 6, toolbar_6th_button = 9, toolbar_7th_button = 0, toolbar_8th_button = 0, toolbar_9th_button = 0, toolbar_10th_button = 0</item>
+        <item>ALTER TABLE db_preferences ADD COLUMN miracast_resume_position INTEGER DEFAULT (0)</item>
+        <item>"ALTER TABLE db_preferences ADD COLUMN miracast_resume_uri TEXT DEFAULT '-1'"</item>
+    </string-array>
+    <string-array name="upgrade_15_16to17_preference">
+        <item>UPDATE db_preferences SET toolbar_1st_button = 0, toolbar_2nd_button = 1, toolbar_3rd_button = 2, toolbar_4th_button = 7, toolbar_5th_button = 6, toolbar_6th_button = 9, toolbar_7th_button = 0, toolbar_8th_button = 0, toolbar_9th_button = 0, toolbar_10th_button = 0</item>
+    </string-array>
+    <string-array name="tablelist_public_resume">
+        <item>resumeinfo</item>
+        <item>contentinfo</item>
+        <item>multidevice</item>
+    </string-array>
+    <string-array name="createdb_public_resume">
+        <item>CREATE TABLE resumeinfo ( _id INTEGER PRIMARY KEY, service_id TEXT NOT NULL, content_id TEXT NOT NULL, resume_point INTEGER DEFAULT (-1), resume_point_lastupdate INTEGER DEFAULT (-1), resume_info_url TEXT DEFAULT NULL, resume_info_url_expiration INTEGER DEFAULT (-1), background_play INTEGER DEFAULT NULL, recommended_url TEXT DEFAULT NULL, content_site_url TEXT DEFAULT NULL, UNIQUE(service_id, content_id) )</item>
+        <item>CREATE TABLE contentinfo ( _id INTEGER PRIMARY KEY, uri TEXT NOT NULL UNIQUE, service_id TEXT NOT NULL, content_id TEXT NOT NULL )</item>
+        <item>"CREATE TABLE multidevice ( _id INTEGER PRIMARY KEY, service_id TEXT NOT NULL UNIQUE, send_setting INTEGER NOT NULL DEFAULT (0), lastupdate INTEGER NOT NULL DEFAULT (strftime('%%s','now')) )"</item>
+    </string-array>
+    <string-array name="deletedb_public_resume">
+        <item>DROP TABLE IF EXISTS resumeinfo</item>
+        <item>DROP TABLE IF EXISTS contentinfo</item>
+        <item>DROP TABLE IF EXISTS multidevice</item>
+    </string-array>
+    <string-array name="refreshdb_public_resume">
+        <item>DELETE FROM resumeinfo</item>
+        <item>DELETE FROM contentinfo</item>
+        <item>DELETE FROM multidevice</item>
+    </string-array>
+    <string-array name="upgrade_20to30_public_resume">
+        <item>ALTER TABLE resumeinfo ADD COLUMN background_play INTEGER DEFAULT NULL</item>
+        <item>ALTER TABLE resumeinfo ADD COLUMN recommended_url TEXT DEFAULT NULL</item>
+        <item>ALTER TABLE resumeinfo ADD COLUMN content_site_url TEXT DEFAULT NULL</item>
+    </string-array>
+    <string-array name="tablelist_temp_recommend_info">
+        <item>video_recommendinfo</item>
+    </string-array>
+    <string-array name="createdb_temp_recommend_info">
+        <item>CREATE TABLE video_recommendinfo ( _id INTEGER PRIMARY KEY, service_id TEXT NOT NULL, content_id TEXT NOT NULL, play_kind INTEGER DEFAULT (-1), main_url TEXT DEFAULT NULL, play_title TEXT DEFAULT NULL, url TEXT DEFAULT NULL, url1 TEXT DEFAULT NULL, url2 TEXT DEFAULT NULL, url3 TEXT DEFAULT NULL, label1 TEXT DEFAULT NULL, label2 TEXT DEFAULT NULL, label3 TEXT DEFAULT NULL, desc1 TEXT DEFAULT NULL, desc2 TEXT DEFAULT NULL, desc3 TEXT DEFAULT NULL, default_play INTEGER DEFAULT (-1), start_status TEXT DEFAULT NULL, content_type TEXT DEFAULT NULL, custom_data TEXT DEFAULT NULL, background_play INTEGER DEFAULT (-1), resume_point INTEGER DEFAULT (-1), resume_point_lastupdate INTEGER DEFAULT (-1), resume_info_url TEXT DEFAULT NULL, resume_info_url_expiration INTEGER DEFAULT (-1), resume_info_send_mode INTEGER DEFAULT (-1), license_request_url TEXT DEFAULT NULL, keep_alive_interval INTEGER DEFAULT (-1), recommend_server TEXT DEFAULT NULL, content_site_url TEXT DEFAULT NULL, title TEXT DEFAULT NULL, thumbnail_url TEXT DEFAULT NULL, thumbnail_image_path TEXT DEFAULT NULL )</item>
+    </string-array>
+    <string-array name="deletedb_temp_recommend_info">
+        <item>DROP TABLE IF EXISTS video_recommendinfo</item>
+    </string-array>
+    <string-array name="refreshdb_temp_recommend_info">
+        <item>DELETE FROM video_recommendinfo</item>
+    </string-array>
+</resources>

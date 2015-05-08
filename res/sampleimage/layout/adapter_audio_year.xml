@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout style="@style/adapter_large"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:textStyle="bold" android:id="@id/year" android:layout_marginLeft="6.5dip" android:layout_marginRight="6.5dip" android:layout_toLeftOf="@id/icon" android:layout_alignParentLeft="true" android:layout_centerVertical="true" style="@style/fill_width_text" />
+    <ImageView android:id="@id/icon" android:background="@drawable/list_next" android:layout_marginRight="6.5dip" android:layout_alignParentRight="true" android:layout_centerVertical="true" style="@style/wrap" />
+</RelativeLayout>

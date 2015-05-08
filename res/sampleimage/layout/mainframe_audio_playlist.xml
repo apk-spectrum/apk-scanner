@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@layout/mainframe_audio_playlist" style="@style/fill_vertical"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:id="@id/subtitlebar" android:focusable="false" android:layout_below="@id/titlebar" style="@style/fill_width">
+        <include layout="@layout/subtitlebar_playlist" />
+    </LinearLayout>
+    <ViewFlipper android:id="@id/flipper_body" android:layout_below="@id/subtitlebar" style="@style/fill_equal_width">
+        <LinearLayout android:id="@id/body_playlist" style="@style/fill_vertical">
+            <LinearLayout android:id="@id/no_list_item" style="@style/fill">
+                <include layout="@layout/no_item_list" />
+            </LinearLayout>
+            <ListView android:scrollbarThumbVertical="@drawable/scrollbar_thumb" android:id="@id/list" android:nextFocusLeft="@id/list" android:nextFocusRight="@id/list" android:nextFocusUp="@id/list" android:nextFocusDown="@id/list" android:fadeScrollbars="false" style="@style/list_item">
+                <requestFocus />
+            </ListView>
+        </LinearLayout>
+        <LinearLayout android:id="@id/body_song" style="@style/fill_vertical">
+            <LinearLayout android:id="@id/no_item_list_song" style="@style/fill">
+                <include layout="@layout/no_item_list" />
+            </LinearLayout>
+            <ListView android:scrollbarThumbVertical="@drawable/scrollbar_thumb" android:id="@id/list_song" android:nextFocusLeft="@id/list_song" android:nextFocusRight="@id/list_song" android:nextFocusUp="@id/list_song" android:nextFocusDown="@id/list_song" android:fadeScrollbars="false" style="@style/list_item" />
+        </LinearLayout>
+    </ViewFlipper>
+</RelativeLayout>

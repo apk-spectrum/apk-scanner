@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:background="@color/list_item_even_bg_highlight" style="@style/fill_vertical"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:orientation="horizontal" style="@style/subtitlebar_bg">
+        <LinearLayout android:layout_width="wrap_content" style="@style/subtitle_bg">
+            <TextView android:id="@id/settingmenu" style="@style/subtitle" />
+        </LinearLayout>
+    </LinearLayout>
+    <ListView android:id="@id/settingmenulist" style="@style/list_item" />
+</LinearLayout>

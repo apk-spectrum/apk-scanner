@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:id="@id/sub_view_layout" android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:layout_gravity="center" android:orientation="horizontal" android:id="@id/sub_view_layout_landscape" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_marginLeft="20.0dip" android:layout_marginRight="20.0dip">
+        <TextView android:textColor="#ffdddddd" android:gravity="center" android:layout_gravity="center" android:id="@id/currentTime" android:layout_width="50.0dip" android:layout_marginRight="10.0dip" android:text="--:--:--" android:scrollHorizontally="true" style="@style/text_label" />
+        <FrameLayout android:gravity="center" android:layout_gravity="center" style="@style/equal_width_vertical">
+            <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent">
+                <com.nttdocomo.android.mediaplayer.view.seekbar.CustomSeekBarSecondary android:layout_gravity="center" android:id="@id/seekBarSecondary" android:background="#ff333333" android:layout_width="fill_parent" android:layout_height="20.0dip" android:layout_weight="1.0" />
+            </LinearLayout>
+            <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent">
+                <com.nttdocomo.android.mediaplayer.view.seekbar.CustomSeekBar android:layout_gravity="center" android:id="@id/seekBar" android:layout_width="fill_parent" android:layout_height="20.0dip" android:layout_weight="1.0" />
+            </LinearLayout>
+        </FrameLayout>
+        <TextView android:textColor="#ffdddddd" android:gravity="center" android:layout_gravity="center" android:id="@id/totalTime" android:layout_width="50.0dip" android:layout_marginLeft="10.0dip" android:layout_marginRight="10.0dip" android:text="--:--:--" style="@style/text_label" />
+        <ImageButton android:layout_gravity="center" android:id="@id/previous" android:background="#00000000" android:focusable="false" android:layout_width="40.0dip" android:layout_height="40.0dip" android:layout_marginTop="5.0dip" android:layout_marginBottom="5.0dip" android:src="@drawable/selector_player_btn_prev_sub" android:scaleType="fitXY" style="@style/wrap" />
+        <ImageButton android:layout_gravity="center" android:id="@id/pback" android:background="#00000000" android:focusable="false" android:layout_width="40.0dip" android:layout_height="40.0dip" android:layout_marginLeft="10.0dip" android:layout_marginTop="5.0dip" android:layout_marginBottom="5.0dip" android:src="@drawable/selector_player_btn_pback_sub" android:scaleType="fitXY" style="@style/wrap" />
+        <ToggleButton android:layout_gravity="center" android:id="@id/play" android:background="@drawable/selector_player_btn_play_sub" android:focusable="false" android:layout_width="40.0dip" android:layout_height="40.0dip" android:layout_marginLeft="10.0dip" android:layout_marginTop="5.0dip" android:layout_marginBottom="5.0dip" android:scaleType="fitXY" android:textOn="" android:textOff="" style="@style/wrap" />
+        <ImageButton android:layout_gravity="center" android:id="@id/pskip" android:background="#00000000" android:focusable="false" android:layout_width="40.0dip" android:layout_height="40.0dip" android:layout_marginLeft="10.0dip" android:layout_marginTop="5.0dip" android:layout_marginBottom="5.0dip" android:src="@drawable/selector_player_btn_pskip_sub" android:scaleType="fitXY" style="@style/wrap" />
+        <ImageButton android:layout_gravity="center" android:id="@id/next" android:background="#00000000" android:focusable="false" android:layout_width="40.0dip" android:layout_height="40.0dip" android:layout_marginLeft="10.0dip" android:layout_marginTop="5.0dip" android:layout_marginBottom="5.0dip" android:src="@drawable/selector_player_btn_next_sub" android:scaleType="fitXY" style="@style/wrap" />
+    </LinearLayout>
+    <LinearLayout android:orientation="vertical" android:id="@id/sub_view_layout_portrait" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_marginTop="5.0dip">
+        <TextView android:textColor="#ffdddddd" android:gravity="center" android:layout_gravity="center" android:id="@id/currentTime" android:layout_width="50.0dip" android:layout_marginTop="30.0dip" android:layout_marginBottom="25.0dip" android:text="--:--:--" android:scrollHorizontally="true" android:rotation="90.0" style="@style/text_label" />
+        <FrameLayout style="@style/equal_width_vertical">
+            <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent">
+                <com.nttdocomo.android.mediaplayer.view.seekbar.CustomSeekBarSecondary android:layout_gravity="center" android:id="@id/seekBarSecondary" android:background="#ff333333" android:layout_width="20.0dip" android:layout_height="fill_parent" android:layout_weight="1.0" />
+            </LinearLayout>
+            <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent">
+                <com.nttdocomo.android.mediaplayer.view.seekbar.CustomSeekBar android:layout_gravity="center" android:id="@id/seekBar" android:layout_width="20.0dip" android:layout_height="fill_parent" android:layout_weight="1.0" />
+            </LinearLayout>
+        </FrameLayout>
+        <TextView android:textColor="#ffdddddd" android:gravity="center" android:layout_gravity="center" android:id="@id/totalTime" android:layout_width="50.0dip" android:layout_marginTop="30.0dip" android:layout_marginBottom="20.0dip" android:text="--:--:--" android:rotation="90.0" style="@style/text_label" />
+        <ImageButton android:id="@id/previous" android:background="#00000000" android:focusable="false" android:layout_width="40.0dip" android:layout_height="40.0dip" android:layout_marginLeft="5.0dip" android:layout_marginTop="20.0dip" android:src="@drawable/selector_player_btn_prev_sub" android:scaleType="fitXY" style="@style/wrap" />
+        <ImageButton android:id="@id/pback" android:background="#00000000" android:focusable="false" android:layout_width="40.0dip" android:layout_height="40.0dip" android:layout_marginLeft="5.0dip" android:layout_marginTop="10.0dip" android:src="@drawable/selector_player_btn_pback_sub" android:scaleType="fitXY" style="@style/wrap" />
+        <ToggleButton android:id="@id/play" android:background="@drawable/selector_player_btn_play_sub" android:focusable="false" android:layout_width="40.0dip" android:layout_height="40.0dip" android:layout_marginLeft="5.0dip" android:layout_marginTop="10.0dip" android:scaleType="fitXY" android:textOn="" android:textOff="" style="@style/wrap" />
+        <ImageButton android:id="@id/pskip" android:background="#00000000" android:focusable="false" android:layout_width="40.0dip" android:layout_height="40.0dip" android:layout_marginLeft="5.0dip" android:layout_marginTop="10.0dip" android:src="@drawable/selector_player_btn_pskip_sub" android:scaleType="fitXY" style="@style/wrap" />
+        <ImageButton android:id="@id/next" android:background="#00000000" android:focusable="false" android:layout_width="40.0dip" android:layout_height="40.0dip" android:layout_marginLeft="5.0dip" android:layout_marginTop="10.0dip" android:layout_marginBottom="20.0dip" android:src="@drawable/selector_player_btn_next_sub" android:scaleType="fitXY" style="@style/wrap" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout style="@style/subtitlebar_bg"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout style="@style/subtitle_edit_bnt_bg">
+        <Button android:id="@id/playlist_regist" android:focusable="false" android:layout_width="120.0dip" android:text="@string/app_button_new" style="@style/subtitle_edit_bnt" />
+        <Button android:id="@id/playlist_edit" android:focusable="false" android:layout_width="180.0dip" android:text="@string/app_button_reorder" style="@style/subtitle_edit_bnt" />
+    </LinearLayout>
+</FrameLayout>
