@@ -70,6 +70,8 @@ public class MainUI extends Frame implements WindowListener{
 				
 				System.out.println(FolderDefault);
 				mApkInfo = CoreXmlTool.XmlToMyApkinfo(FolderDefault);
+				mApkInfo.lApkSize = apkFile.length();
+				System.out.println("APK size : " + mApkInfo.lApkSize + " byte");
 				
 				
 				//progress 삭제 
