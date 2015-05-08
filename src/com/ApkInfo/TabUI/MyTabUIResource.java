@@ -1,4 +1,4 @@
-package com.Apkinfo.TabUI;
+package com.ApkInfo.TabUI;
 
 public class MyTabUIResource {
 

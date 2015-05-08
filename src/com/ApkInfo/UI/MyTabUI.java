@@ -10,9 +10,9 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import com.ApkInfo.UIUtil.PlasticTabbedPaneUI;
-import com.Apkinfo.TabUI.MyTabUILib;
-import com.Apkinfo.TabUI.MyTabUIWidget;
-import com.Apkinfo.TabUI.MyTabUIbasicInfo;
+import com.ApkInfo.TabUI.MyTabUILib;
+import com.ApkInfo.TabUI.MyTabUIWidget;
+import com.ApkInfo.TabUI.MyTabUIbasicInfo;
 
 
 public class MyTabUI extends JPanel{
