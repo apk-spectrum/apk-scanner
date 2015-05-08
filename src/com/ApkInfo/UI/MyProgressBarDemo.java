@@ -123,9 +123,9 @@ public class MyProgressBarDemo extends JPanel
         //Display the window.
         frame.setResizable( false );
         frame.pack();
-        frame.setLocation(200, 200);
-        
+        frame.setLocation(200, 200);        
         frame.setVisible(true);
+        
         return frame;
     }
 
