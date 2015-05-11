@@ -34,12 +34,13 @@ public class MyTabUIbasicInfo extends JComponent{
         apkinform.setFont(font);
         
         //for test//
+        DecimalFormat df = new DecimalFormat("#,##0");
 
         strTabInfo += "Label : " + ApkInfo.strLabelname +"\n";
         strTabInfo += "Package : " + ApkInfo.strPackageName +"\n";
         strTabInfo += "VersionName : " +ApkInfo.strVersionName +"\n";
         strTabInfo += "VersionCode : " +ApkInfo.strVersionCode +"\n";
-        strTabInfo += "Size : " + CoreApkTool.getFileLength(ApkInfo.lApkSize) + " (" + ApkInfo.lApkSize +" byte)\n";
+        strTabInfo += "Size : " + CoreApkTool.getFileLength(ApkInfo.lApkSize) + " (" + df.format(ApkInfo.lApkSize) +" Bytes)\n";
                 
         apkinform.setText(strTabInfo+"Package : com.iloen.melon\nPackage : com.iloen.melon\nPackage : com.iloen.melon\nPackage : com.iloen.melon\nPackage : com.iloen.melon");
         

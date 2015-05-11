@@ -1,6 +1,8 @@
 package com.ApkInfo.Core;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -23,15 +25,20 @@ import com.ApkInfo.UI.MyProgressBarDemo;
 public class CoreXmlTool {
 	
 	static MyProgressBarDemo progressBarDemo;
+	static String APkworkPath;
+	static MyApkInfo apkInfo;
 	
-	public static MyApkInfo XmlToMyApkinfo(String APkworkPath) throws XPathExpressionException {
+	public static MyApkInfo XmlToMyApkinfo(String workPath) throws XPathExpressionException {
 		
-		MyApkInfo temp = new MyApkInfo();
+		apkInfo = new MyApkInfo();
+		APkworkPath = new String(workPath);
+		
+		YmlToMyApkinfo();
 		
 		InputSource is = null;
 		Document document = null;
 		try {
-			is = new InputSource(new FileReader(APkworkPath+"/AndroidManifest.xml"));
+			is = new InputSource(new FileReader(APkworkPath + File.separator + "AndroidManifest.xml"));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -49,24 +56,26 @@ public class CoreXmlTool {
 		  
         // NodeList 가져오기 : row 아래에 있는 모든 col1 을 선택
         Node cols = (Node)xpath.evaluate("//manifest", document, XPathConstants.NODE);
-        temp.strPackageName = cols.getAttributes().getNamedItem("package").getTextContent();
+        apkInfo.strPackageName = cols.getAttributes().getNamedItem("package").getTextContent();
         
         cols = (Node)xpath.evaluate("//manifest/application", document, XPathConstants.NODE);
 
-        temp.strLabelname = cols.getAttributes().getNamedItem("android:label").getTextContent();
-        temp.strLabelname = getResourceInfo(APkworkPath,temp.strLabelname);
+        apkInfo.strLabelname = cols.getAttributes().getNamedItem("android:label").getTextContent();
+        apkInfo.strLabelname = getResourceInfo(apkInfo.strLabelname);
 
-        temp.strIconPath = cols.getAttributes().getNamedItem("android:icon").getTextContent();
-        temp.strIconPath = getResourceInfo(APkworkPath,temp.strIconPath);
+        apkInfo.strIconPath = cols.getAttributes().getNamedItem("android:icon").getTextContent();
+        apkInfo.strIconPath = getResourceInfo(apkInfo.strIconPath);
 
-        System.out.println("Package = " + temp.strPackageName);
-        System.out.println("Label = " + temp.strLabelname);
-        System.out.println("Icon = " + temp.strIconPath);
+        System.out.println("Package = " + apkInfo.strPackageName);
+        System.out.println("Label = " + apkInfo.strLabelname);
+        System.out.println("VersionName = " + apkInfo.strVersionName);
+        System.out.println("VersionCode = " + apkInfo.strVersionCode);
+        System.out.println("Icon = " + apkInfo.strIconPath);
 
-		return temp;
+		return apkInfo;
 	}
 	
-	public static String getResourceInfo(String APkworkPath, String id) throws XPathExpressionException {
+	private static String getResourceInfo(String id) throws XPathExpressionException {
 		
 		String result = null;
 		String resXmlPath = new String(APkworkPath + File.separator + "res" + File.separator);
@@ -132,6 +141,35 @@ public class CoreXmlTool {
     	System.out.println("string " + cols.getTextContent());
 
 		return result;
+	}
+	
+	@SuppressWarnings("resource")
+	private static void YmlToMyApkinfo() {
+		String ymlPath = new String(APkworkPath + File.separator + "apktool.yml");
+		File ymlFile = new File(ymlPath);
+
+		if(!ymlFile.exists()) {
+			return;
+		}
+		
+		try {
+		    BufferedReader inFile;
+		    String sLine = null;
+			inFile = new BufferedReader(new FileReader(ymlFile));
+			while( (sLine = inFile.readLine()) != null ) {
+				if(sLine.matches("^\\s*versionCode:.*")) {
+					apkInfo.strVersionCode = sLine.replaceFirst("\\s*versionCode:\\s*(.*)\\s*$", "$1");
+				} else if(sLine.matches("^\\s*versionName:.*")) {
+					apkInfo.strVersionName = sLine.replaceFirst("\\s*versionName:\\s*(.*)\\s*$", "$1");
+				}
+			}
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public static void setProgressBarDlg(MyProgressBarDemo progressBarDlg) {
