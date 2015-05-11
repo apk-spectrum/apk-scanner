@@ -14,7 +14,7 @@ import com.ApkInfo.UI.MyProgressBarDemo;
 public class CoreApkTool {
 	static MyProgressBarDemo progressBarDemo;
 	static ArrayList<String> temp = new ArrayList<String>();
-	
+	public static String DefaultPath;
 	public static Boolean makeFolder(String FilePath) {
 		File newDirectory = new File(FilePath);
 		if(!newDirectory.exists()) {
@@ -25,26 +25,19 @@ public class CoreApkTool {
 	}
 	
 	public static 	ArrayList<String> findfile(File f) {
-		
 		File[] list = f.listFiles();
-		
-		
-		
 		if(list==null) {
 			System.err.println("list null");
 			return null;
 		}
-
 		for (int i=0; i<list.length; i++) {
 			if (list[i].isDirectory()) {
 				
-	   			if(list[i].getAbsolutePath().indexOf("drawable") > 0) {
-	   				System.out.println("folder : = "+list[i].getAbsolutePath());
+	   			if(list[i].getAbsolutePath().indexOf("drawable") > 0) {	   				
 	   				findfile(list[i]);
 	   			}
 			} else {
-				if(list[i].getName().endsWith(".png")) {
-					System.out.println("root : = "+list[i].getAbsolutePath());
+				if(list[i].getName().endsWith(".png")) {					
 					temp.add(list[i].getAbsolutePath());
 					try {
 
@@ -60,6 +53,8 @@ public class CoreApkTool {
 	
 	public static void solveAPK(String APKFilePath, String solvePath) {
 		String apkToolPath = CoreApkTool.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		DefaultPath = solvePath;
+		
 		apkToolPath = (new File(apkToolPath)).getParentFile().getPath();
 		apkToolPath += File.separator + "apktool.jar";
 		try {

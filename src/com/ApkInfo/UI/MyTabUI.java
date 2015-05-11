@@ -3,6 +3,7 @@ package com.ApkInfo.UI;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
+import java.io.File;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -10,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import com.ApkInfo.UIUtil.PlasticTabbedPaneUI;
+import com.ApkInfo.Core.CoreApkTool;
 import com.ApkInfo.TabUI.MyTabUILib;
 import com.ApkInfo.TabUI.MyTabUIResource;
 import com.ApkInfo.TabUI.MyTabUIWidget;
@@ -38,7 +40,7 @@ public class MyTabUI extends JPanel{
 	        tabbedPane.addTab("Lib", null, panel3, "Lib");
 	        tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 	         
-	        JComponent panel4 = new MyTabUIResource("res/sampleimage/");
+	        JComponent panel4 = new MyTabUIResource(CoreApkTool.DefaultPath + File.separator + "res");
 	        tabbedPane.addTab("Resource", null, panel4, "Resource");
 	        tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 

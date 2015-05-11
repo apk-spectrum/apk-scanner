@@ -67,11 +67,10 @@ public class MyTabUIResource extends JPanel{
     	
     	nameList = new ArrayList<String>();
     	 
-    	nameList = CoreApkTool.findfile(new File("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/"));
+    	nameList = CoreApkTool.findfile(new File(DefaultFilePath));
     	 
-    	 for(int i=0;i < nameList.size(); i++) {
-    		 System.out.println(nameList.get(i));
-    	 }
+    	System.out.println("Resource(*.png) Count : " + nameList.size());
+    	 
     	
         imageMap = createImageMap(nameList);
         
@@ -87,19 +86,11 @@ public class MyTabUIResource extends JPanel{
         photographLabel.setHorizontalTextPosition(JLabel.CENTER);
         photographLabel.setHorizontalAlignment(JLabel.CENTER);
         photographLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        
-
-        //JFrame frame = new JFrame();
 
         this.setLayout(new GridLayout(1, 2));
         
         this.add(scroll);
         this.add(photographLabel);
-
-        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //frame.pack();
-        //frame.setLocationRelativeTo(null);
-        //frame.setVisible(true);        
     }
 
     public class MarioListRenderer extends DefaultListCellRenderer {
@@ -123,24 +114,9 @@ public class MyTabUIResource extends JPanel{
     private Map<String, ImageIcon> createImageMap(ArrayList<String> list) {
         Map<String, ImageIcon> map = new HashMap<>();
         try {        	
-            //map.put("Mario", new ImageIcon(getScaledImage("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/button_dmarket_off.png")));
-           //map.put("Luigi", new ImageIcon(getScaledImage("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/artist_link_icon.png")));
-            //map.put("Bowser", new ImageIcon(getScaledImage("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/button_dmarket_off.png")));
-            //map.put("Koopa", new ImageIcon(getScaledImage("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/button_dmarket_off.png")));
-        	
         	for(int i=0; i< list.size(); i++) {
         		map.put(list.get(i), new ImageIcon(getScaledImage(new ImageIcon(list.get(i)),32,32)));
         	}
-        	
-        	
-//            map.put("Mario", new ImageIcon(getScaledImage(new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/popup_dmusic_norm.png"),32,32)));
-//            map.put("Luigi", new ImageIcon(getScaledImage(new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/button_dmarket_off.png"),32,32)));
-//            map.put("Bowser", new ImageIcon(getScaledImage(new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/popup_dvideo_norm.png"),32,32)));
-//            map.put("Koopa", new ImageIcon(getScaledImage(new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/popup_dmarket_logo.png"),32,32)));
-//            map.put("Princess", new ImageIcon(getScaledImage(new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/button_dmarket_off.png"),32,32)));
-//            map.put("Princesswwd", new ImageIcon(getScaledImage(new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/button_dmarket_off.png"),32,32)));
-//            map.put("Princess2d", new ImageIcon(getScaledImage(new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/button_dmarket_off.png"),32,32)));
-            
         } catch (Exception ex) {
             ex.printStackTrace();
         }
