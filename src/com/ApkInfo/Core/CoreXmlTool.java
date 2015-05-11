@@ -2,7 +2,6 @@ package com.ApkInfo.Core;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -28,7 +27,7 @@ public class CoreXmlTool {
 	static String APkworkPath;
 	static MyApkInfo apkInfo;
 	
-	public static MyApkInfo XmlToMyApkinfo(String workPath) throws XPathExpressionException {
+	public static MyApkInfo XmlToMyApkinfo(String workPath) {
 		
 		apkInfo = new MyApkInfo();
 		APkworkPath = new String(workPath);
@@ -55,33 +54,39 @@ public class CoreXmlTool {
 
 		  
         // NodeList 가져오기 : row 아래에 있는 모든 col1 을 선택
-        Node cols = (Node)xpath.evaluate("/manifest", document, XPathConstants.NODE);
-        apkInfo.strPackageName = cols.getAttributes().getNamedItem("package").getTextContent();
-        
-        cols = (Node)xpath.evaluate("/manifest/application", document, XPathConstants.NODE);
+        Node cols;
+		try {
+			cols = (Node)xpath.evaluate("/manifest", document, XPathConstants.NODE);
+	        apkInfo.strPackageName = cols.getAttributes().getNamedItem("package").getTextContent();
+	        
+	        cols = (Node)xpath.evaluate("/manifest/application", document, XPathConstants.NODE);
+	
+	        apkInfo.strLabelname = cols.getAttributes().getNamedItem("android:label").getTextContent();
+	        apkInfo.strLabelname = getResourceInfo(apkInfo.strLabelname);
+	
+	        apkInfo.strIconPath = cols.getAttributes().getNamedItem("android:icon").getTextContent();
+	        apkInfo.strIconPath = getResourceInfo(apkInfo.strIconPath);
+	
+	        cols = (Node)xpath.evaluate("//category[@name='android.intent.category.LAUNCHER']", document, XPathConstants.NODE);
+	        if(cols != null){
+	        	apkInfo.strHidden = "X - LAUNCHER";
+	        }else{
+	        	apkInfo.strHidden = "O - HIDDEN";
+	        }
+	
+	        NodeList colsList = (NodeList)xpath.evaluate("//uses-permission", document, XPathConstants.NODESET);
+	        for( int idx=0; idx<colsList.getLength(); idx++ ){
+	        	apkInfo.strPermissions += (idx==0 ? "":"\n") + colsList.item(idx).getAttributes().getNamedItem("android:name").getTextContent();
+	        }
+	        colsList = (NodeList)xpath.evaluate("//permission", document, XPathConstants.NODESET);
+	        for( int idx=0; idx<colsList.getLength(); idx++ ){
+	        	apkInfo.strPermissions += (apkInfo.strPermissions=="" ? "":"\n") + colsList.item(idx).getAttributes().getNamedItem("android:name").getTextContent();
+	        }
 
-        apkInfo.strLabelname = cols.getAttributes().getNamedItem("android:label").getTextContent();
-        apkInfo.strLabelname = getResourceInfo(apkInfo.strLabelname);
-
-        apkInfo.strIconPath = cols.getAttributes().getNamedItem("android:icon").getTextContent();
-        apkInfo.strIconPath = getResourceInfo(apkInfo.strIconPath);
-
-        cols = (Node)xpath.evaluate("//category[@name='android.intent.category.LAUNCHER']", document, XPathConstants.NODE);
-        if(cols != null){
-        	apkInfo.strHidden = "X - LAUNCHER";
-        }else{
-        	apkInfo.strHidden = "O - HIDDEN";
-        }
-
-        NodeList colsList = (NodeList)xpath.evaluate("//uses-permission", document, XPathConstants.NODESET);
-        for( int idx=0; idx<colsList.getLength(); idx++ ){
-        	apkInfo.strPermissions += (idx==0 ? "":"\n") + colsList.item(idx).getAttributes().getNamedItem("android:name").getTextContent();
-        }
-        colsList = (NodeList)xpath.evaluate("//permission", document, XPathConstants.NODESET);
-        for( int idx=0; idx<colsList.getLength(); idx++ ){
-        	apkInfo.strPermissions += (apkInfo.strPermissions=="" ? "":"\n") + colsList.item(idx).getAttributes().getNamedItem("android:name").getTextContent();
-        }
-
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         System.out.println("Package = " + apkInfo.strPackageName);
         System.out.println("Label = " + apkInfo.strLabelname);
         System.out.println("VersionName = " + apkInfo.strVersionName);
@@ -95,7 +100,7 @@ public class CoreXmlTool {
 		return apkInfo;
 	}
 	
-	private static String getResourceInfo(String id) throws XPathExpressionException {
+	private static String getResourceInfo(String id) {
 		
 		String result = null;
 		String resXmlPath = new String(APkworkPath + File.separator + "res" + File.separator);
@@ -156,15 +161,21 @@ public class CoreXmlTool {
 		String idName = new String(id.substring(id.indexOf("/")+1));
 		  
         // NodeList 가져오기 : row 아래에 있는 모든 col1 을 선택
-        Node cols = (Node)xpath.evaluate("//resources/string[@name='"+idName+"']", document, XPathConstants.NODE);
-        result = new String(cols.getTextContent());
-    	System.out.println("string " + cols.getTextContent());
+        Node cols;
+		try {
+			cols = (Node)xpath.evaluate("//resources/string[@name='"+idName+"']", document, XPathConstants.NODE);
+	        result = new String(cols.getTextContent());
+	    	System.out.println("string " + cols.getTextContent());
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		return result;
 	}
 	
 	@SuppressWarnings("resource")
-	private static void YmlToMyApkinfo() throws XPathExpressionException {
+	private static void YmlToMyApkinfo() {
 		String ymlPath = new String(APkworkPath + File.separator + "apktool.yml");
 		File ymlFile = new File(ymlPath);
 
