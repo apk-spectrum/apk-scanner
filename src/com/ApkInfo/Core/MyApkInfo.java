@@ -14,6 +14,7 @@ public class MyApkInfo {
 	public String strSigning;
 	public String strHidden;
 	public String strIconPath;
+	public String strPermissions;
 	public Long lApkSize;
 	
 	
@@ -31,6 +32,7 @@ public class MyApkInfo {
 		strSigning="unkown";
 		strHidden="unkown";
 		strIconPath="unkown";
+		strPermissions="";
 		lApkSize = (long) 0;
 	}
 	public MyApkInfo(String Path) {		

@@ -51,8 +51,7 @@ public class MyTabUIbasicInfo extends JComponent{
         apkinform.setBackground(panel.getBackground());
         
         //for test//
-        for(int i=0; i<100; i++)
-        apkpermission.setText(apkpermission.getText()+"\n" + "android.permission.WRITE_EXTERNAL_STORAGE");
+        apkpermission.setText(ApkInfo.strPermissions);
         //
           
         apkpermission.setEditable(false);

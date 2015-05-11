@@ -55,10 +55,10 @@ public class CoreXmlTool {
 
 		  
         // NodeList 가져오기 : row 아래에 있는 모든 col1 을 선택
-        Node cols = (Node)xpath.evaluate("//manifest", document, XPathConstants.NODE);
+        Node cols = (Node)xpath.evaluate("/manifest", document, XPathConstants.NODE);
         apkInfo.strPackageName = cols.getAttributes().getNamedItem("package").getTextContent();
         
-        cols = (Node)xpath.evaluate("//manifest/application", document, XPathConstants.NODE);
+        cols = (Node)xpath.evaluate("/manifest/application", document, XPathConstants.NODE);
 
         apkInfo.strLabelname = cols.getAttributes().getNamedItem("android:label").getTextContent();
         apkInfo.strLabelname = getResourceInfo(apkInfo.strLabelname);
@@ -66,10 +66,30 @@ public class CoreXmlTool {
         apkInfo.strIconPath = cols.getAttributes().getNamedItem("android:icon").getTextContent();
         apkInfo.strIconPath = getResourceInfo(apkInfo.strIconPath);
 
+        cols = (Node)xpath.evaluate("//category[@name='android.intent.category.LAUNCHER']", document, XPathConstants.NODE);
+        if(cols != null){
+        	apkInfo.strHidden = "X - LAUNCHER";
+        }else{
+        	apkInfo.strHidden = "O - HIDDEN";
+        }
+
+        NodeList colsList = (NodeList)xpath.evaluate("//uses-permission", document, XPathConstants.NODESET);
+        for( int idx=0; idx<colsList.getLength(); idx++ ){
+        	apkInfo.strPermissions += (idx==0 ? "":"\n") + colsList.item(idx).getAttributes().getNamedItem("android:name").getTextContent();
+        }
+        colsList = (NodeList)xpath.evaluate("//permission", document, XPathConstants.NODESET);
+        for( int idx=0; idx<colsList.getLength(); idx++ ){
+        	apkInfo.strPermissions += (apkInfo.strPermissions=="" ? "":"\n") + colsList.item(idx).getAttributes().getNamedItem("android:name").getTextContent();
+        }
+
         System.out.println("Package = " + apkInfo.strPackageName);
         System.out.println("Label = " + apkInfo.strLabelname);
         System.out.println("VersionName = " + apkInfo.strVersionName);
         System.out.println("VersionCode = " + apkInfo.strVersionCode);
+        System.out.println("minSdkVersion = " + apkInfo.strMinSDKversion);
+        System.out.println("targetSdkVersion = " + apkInfo.strTargerSDKversion);
+        System.out.println("Hidden = " + apkInfo.strHidden);
+        System.out.println("Hidden = " + apkInfo.strPermissions);
         System.out.println("Icon = " + apkInfo.strIconPath);
 
 		return apkInfo;
