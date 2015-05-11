@@ -29,7 +29,8 @@ public class MyTabUIbasicInfo extends JComponent{
         apkinform.setEditable(false);
         
         //for test//
-        
+
+        strTabInfo += "Label : " + ApkInfo.strLabelname +"\n";
         strTabInfo += "Package : " + ApkInfo.strPackageName +"\n";
         strTabInfo += "VersionName : " +ApkInfo.strVersionName +"\n";
         strTabInfo += "VersionCode : " +ApkInfo.strVersionCode +"\n";
@@ -46,7 +47,12 @@ public class MyTabUIbasicInfo extends JComponent{
         apkpermission.setEditable(false);
         
         //for test
-        MyImagePanel imagepanel = new MyImagePanel("res/icon.png");
+        MyImagePanel imagepanel;
+        if(ApkInfo.strIconPath != null){
+            imagepanel = new MyImagePanel(ApkInfo.strIconPath);
+        } else {
+            imagepanel = new MyImagePanel("res/icon.png");
+        }
         	        
         panel.add(imagepanel);
         panel.add(apkinform);
