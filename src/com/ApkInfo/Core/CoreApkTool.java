@@ -7,12 +7,13 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 import com.ApkInfo.UI.MyProgressBarDemo;
 
 public class CoreApkTool {
 	static MyProgressBarDemo progressBarDemo;
-	
+	static ArrayList<String> temp = new ArrayList<String>();
 	
 	public static Boolean makeFolder(String FilePath) {
 		File newDirectory = new File(FilePath);
@@ -21,6 +22,40 @@ public class CoreApkTool {
 			return true;
 		}
 		return false;
+	}
+	
+	public static 	ArrayList<String> findfile(File f) {
+		
+		File[] list = f.listFiles();
+		
+		
+		
+		if(list==null) {
+			System.err.println("list null");
+			return null;
+		}
+
+		for (int i=0; i<list.length; i++) {
+			if (list[i].isDirectory()) {
+				
+	   			if(list[i].getAbsolutePath().indexOf("drawable") > 0) {
+	   				System.out.println("folder : = "+list[i].getAbsolutePath());
+	   				findfile(list[i]);
+	   			}
+			} else {
+				if(list[i].getName().endsWith(".png")) {
+					System.out.println("root : = "+list[i].getAbsolutePath());
+					temp.add(list[i].getAbsolutePath());
+					try {
+
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}		    	  
+			}
+		}
+		return temp;
 	}
 	
 	public static void solveAPK(String APKFilePath, String solvePath) {

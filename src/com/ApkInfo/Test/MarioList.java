@@ -9,7 +9,9 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,18 +27,29 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.ApkInfo.Core.CoreApkTool;
+
 public class MarioList extends JPanel{
 
     private final Map<String, ImageIcon> imageMap;
     
     private JLabel photographLabel;
-    String[] nameList = {"Mario", "Luigi", "Bowser", "Koopa", "Princess"};
+    ArrayList<String> nameList;
     JList list;
     
-    public MarioList() {    	
+    public MarioList(String DefaultFilePath) {
+    	
+    	nameList = new ArrayList<String>();
+    	 
+    	nameList = CoreApkTool.findfile(new File("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/"));
+    	 
+    	 for(int i=0;i < nameList.size(); i++) {
+    		 System.out.println(nameList.get(i));
+    	 }
+    	
         imageMap = createImageMap(nameList);
         
-        list = new JList(nameList);
+        list = new JList(nameList.toArray());
         list.setCellRenderer(new MarioListRenderer());
         list.addListSelectionListener(new JListHandler());
         
@@ -81,20 +94,26 @@ public class MarioList extends JPanel{
         }
     }
 
-    private Map<String, ImageIcon> createImageMap(String[] list) {
+    private Map<String, ImageIcon> createImageMap(ArrayList<String> list) {
         Map<String, ImageIcon> map = new HashMap<>();
         try {        	
             //map.put("Mario", new ImageIcon(getScaledImage("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/button_dmarket_off.png")));
            //map.put("Luigi", new ImageIcon(getScaledImage("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/artist_link_icon.png")));
             //map.put("Bowser", new ImageIcon(getScaledImage("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/button_dmarket_off.png")));
             //map.put("Koopa", new ImageIcon(getScaledImage("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/button_dmarket_off.png")));
-            map.put("Mario", new ImageIcon(getScaledImage(new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/popup_dmusic_norm.png"),32,32)));
-            map.put("Luigi", new ImageIcon(getScaledImage(new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/button_dmarket_off.png"),32,32)));
-            map.put("Bowser", new ImageIcon(getScaledImage(new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/popup_dvideo_norm.png"),32,32)));
-            map.put("Koopa", new ImageIcon(getScaledImage(new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/popup_dmarket_logo.png"),32,32)));
-            map.put("Princess", new ImageIcon(getScaledImage(new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/button_dmarket_off.png"),32,32)));
-            map.put("Princesswwd", new ImageIcon(getScaledImage(new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/button_dmarket_off.png"),32,32)));
-            map.put("Princess2d", new ImageIcon(getScaledImage(new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/button_dmarket_off.png"),32,32)));
+        	
+        	for(int i=0; i< list.size(); i++) {
+        		map.put(list.get(i), new ImageIcon(getScaledImage(new ImageIcon(list.get(i)),32,32)));
+        	}
+        	
+        	
+//            map.put("Mario", new ImageIcon(getScaledImage(new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/popup_dmusic_norm.png"),32,32)));
+//            map.put("Luigi", new ImageIcon(getScaledImage(new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/button_dmarket_off.png"),32,32)));
+//            map.put("Bowser", new ImageIcon(getScaledImage(new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/popup_dvideo_norm.png"),32,32)));
+//            map.put("Koopa", new ImageIcon(getScaledImage(new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/popup_dmarket_logo.png"),32,32)));
+//            map.put("Princess", new ImageIcon(getScaledImage(new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/button_dmarket_off.png"),32,32)));
+//            map.put("Princesswwd", new ImageIcon(getScaledImage(new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/button_dmarket_off.png"),32,32)));
+//            map.put("Princess2d", new ImageIcon(getScaledImage(new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/button_dmarket_off.png"),32,32)));
             
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -111,9 +130,9 @@ public class MarioList extends JPanel{
     		System.out.println("valueChanged : " + list.getSelectedIndex() + " event : "+ event.getSource());
     		    		
     		
-    		System.out.println(" " + nameList[list.getSelectedIndex()]);
+    		System.out.println(" " + nameList.get(list.getSelectedIndex()));
     		
-    		photographLabel.setIcon(new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/button_dmarket_off.png"));
+    		photographLabel.setIcon(new ImageIcon(getScaledImage(new ImageIcon(nameList.get(list.getSelectedIndex())),200,200)));
     		
 	    }
     }
@@ -132,7 +151,7 @@ public class MarioList extends JPanel{
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                new MarioList();
+                new MarioList("res/sampleimage/");
             }
         });
     }

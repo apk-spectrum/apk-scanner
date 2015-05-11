@@ -38,7 +38,7 @@ public class MyTabUI extends JPanel{
 	        tabbedPane.addTab("Lib", null, panel3, "Lib");
 	        tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 	         
-	        JComponent panel4 = new MyTabUIResource();
+	        JComponent panel4 = new MyTabUIResource("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/");
 	        tabbedPane.addTab("Resource", null, panel4, "Resource");
 	        tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
