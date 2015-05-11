@@ -1,4 +1,4 @@
-package com.ApkInfo.UI;
+package com.ApkInfo.Test;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -7,6 +7,8 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -106,14 +108,30 @@ public class SimpleImageBrowser {
             setBackground(Color.BLACK);
         }
 
+        public ImageIcon resizeImageIcon(ImageIcon temp) {
+        	 
+        	Image img = temp.getImage();
+        	BufferedImage bi = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        	Graphics g = bi.createGraphics();
+        	g.drawImage(img, 0, 0, 50, 50, null, null);
+        	ImageIcon newIcon = new ImageIcon(bi); 	
+        	
+			return newIcon;        	
+        }
+        
         public void addImage(File file) throws IOException {
             BufferedImage bi1 = ImageIO.read(file);
             ImageIcon icon1 = new ImageIcon(bi1);
+            icon1 = resizeImageIcon(icon1);
+            
             JPanel imgPane = new JPanel(new BorderLayout());
+            
+            
+            
             imgPane.setOpaque(false);
             JLabel label = new JLabel(icon1);
             imgPane.add(label);
-            JTextField field = new JTextField(file.getPath(), 20);
+            JTextField field = new JTextField(file.getPath(), 10);
             field.setEditable(false);
             imgPane.add(field, BorderLayout.SOUTH);
             add(imgPane);
