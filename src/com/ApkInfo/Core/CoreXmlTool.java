@@ -144,7 +144,7 @@ public class CoreXmlTool {
 	}
 	
 	@SuppressWarnings("resource")
-	private static void YmlToMyApkinfo() {
+	private static void YmlToMyApkinfo() throws XPathExpressionException {
 		String ymlPath = new String(APkworkPath + File.separator + "apktool.yml");
 		File ymlFile = new File(ymlPath);
 
@@ -158,9 +158,15 @@ public class CoreXmlTool {
 			inFile = new BufferedReader(new FileReader(ymlFile));
 			while( (sLine = inFile.readLine()) != null ) {
 				if(sLine.matches("^\\s*versionCode:.*")) {
-					apkInfo.strVersionCode = sLine.replaceFirst("\\s*versionCode:\\s*(.*)\\s*$", "$1");
+					apkInfo.strVersionCode = sLine.replaceFirst("\\s*versionCode:\\s*['\"]?([^'\"].*[^'\"])['\"]?\\s*$", "$1");
+					apkInfo.strVersionCode = getResourceInfo(apkInfo.strVersionCode);
 				} else if(sLine.matches("^\\s*versionName:.*")) {
-					apkInfo.strVersionName = sLine.replaceFirst("\\s*versionName:\\s*(.*)\\s*$", "$1");
+					apkInfo.strVersionName = sLine.replaceFirst("\\s*versionName:\\s*['\"]?([^'\"].*[^'\"])['\"]?\\s*$", "$1");
+					apkInfo.strVersionName = getResourceInfo(apkInfo.strVersionName);
+				} else if(sLine.matches("^\\s*minSdkVersion:.*")) {
+					apkInfo.strMinSDKversion = sLine.replaceFirst("\\s*minSdkVersion:\\s*['\"]?([^'\"].*[^'\"])['\"]?\\s*$", "$1");
+				} else if(sLine.matches("^\\s*targetSdkVersion:.*")) {
+					apkInfo.strTargerSDKversion = sLine.replaceFirst("\\s*targetSdkVersion:\\s*['\"]?([^'\"].*[^'\"])['\"]?\\s*$", "$1");
 				}
 			}
 		} catch (FileNotFoundException e1) {

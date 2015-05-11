@@ -38,11 +38,15 @@ public class MyTabUIbasicInfo extends JComponent{
 
         strTabInfo += "Label : " + ApkInfo.strLabelname +"\n";
         strTabInfo += "Package : " + ApkInfo.strPackageName +"\n";
-        strTabInfo += "VersionName : " +ApkInfo.strVersionName +"\n";
-        strTabInfo += "VersionCode : " +ApkInfo.strVersionCode +"\n";
+        strTabInfo += "VersionName : " + ApkInfo.strVersionName +"\n";
+        strTabInfo += "VersionCode : " + ApkInfo.strVersionCode +"\n";
+        strTabInfo += "MinSdkVersion : " + ApkInfo.strMinSDKversion +"\n";
+        strTabInfo += "TargetSdkVersion : " + ApkInfo.strTargerSDKversion +"\n";
+        strTabInfo += "Signing : " + ApkInfo.strSigning +"\n";
+        strTabInfo += "Hidden : " + ApkInfo.strHidden +"\n";
         strTabInfo += "Size : " + CoreApkTool.getFileLength(ApkInfo.lApkSize) + " (" + df.format(ApkInfo.lApkSize) +" Bytes)\n";
                 
-        apkinform.setText(strTabInfo+"Package : com.iloen.melon\nPackage : com.iloen.melon\nPackage : com.iloen.melon\nPackage : com.iloen.melon\nPackage : com.iloen.melon");
+        apkinform.setText(strTabInfo);
         
         apkinform.setBackground(panel.getBackground());
         
