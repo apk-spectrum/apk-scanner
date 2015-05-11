@@ -1,5 +1,6 @@
 package com.ApkInfo.TabUI;
 
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.text.DecimalFormat;
 
@@ -29,6 +30,8 @@ public class MyTabUIbasicInfo extends JComponent{
 		jsb = jsp.getVerticalScrollBar();
         
         apkinform.setEditable(false);
+        Font font = new Font("helvitica", Font.BOLD, 15);
+        apkinform.setFont(font);
         
         //for test//
 
@@ -58,8 +61,7 @@ public class MyTabUIbasicInfo extends JComponent{
         }
         	        
         panel.add(imagepanel);
-        panel.add(apkinform);
-        	        
+        panel.add(apkinform);        	        
         panel.setLayout(new GridLayout(1, 2));
         
         this.add(panel);
