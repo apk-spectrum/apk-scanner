@@ -9,6 +9,7 @@ public class MyApkInfo {
 	public String strPackageName;
 	public String strVersionName;
 	public String strVersionCode;
+	public String strMinSDKversion;
 	public String strTargerSDKversion;
 	public String strSigning;
 	public String strHidden;
@@ -25,6 +26,7 @@ public class MyApkInfo {
 		strPackageName="unkown";
 		strVersionName="unkown";
 		strVersionCode="unkown";
+		strMinSDKversion="unkown";
 		strTargerSDKversion="unkown";
 		strSigning="unkown";
 		strHidden="unkown";
