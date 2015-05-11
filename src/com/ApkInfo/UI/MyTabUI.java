@@ -11,6 +11,7 @@ import javax.swing.JTabbedPane;
 
 import com.ApkInfo.UIUtil.PlasticTabbedPaneUI;
 import com.ApkInfo.TabUI.MyTabUILib;
+import com.ApkInfo.TabUI.MyTabUIResource;
 import com.ApkInfo.TabUI.MyTabUIWidget;
 import com.ApkInfo.TabUI.MyTabUIbasicInfo;
 
@@ -37,7 +38,7 @@ public class MyTabUI extends JPanel{
 	        tabbedPane.addTab("Lib", null, panel3, "Lib");
 	        tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 	         
-	        JComponent panel4 = makeTextPanel("Panel #4 (has a preferred size of 410 x 50).");
+	        JComponent panel4 = new MyTabUIResource();
 	        tabbedPane.addTab("Resource", null, panel4, "Resource");
 	        tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
