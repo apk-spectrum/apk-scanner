@@ -27,19 +27,46 @@ public class MyButtonPanel extends JPanel{
 		
 		this.add(btnInstall = new StandardButton("설치",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED),BorderLayout.EAST);
 		
-		btnShowManifest.addActionListener(new ActionListener()
-		{
-		  public void actionPerformed(ActionEvent e)
-		  {
+		btnShowManifest.addActionListener(new ActionListener() {
+		  public void actionPerformed(ActionEvent e) {
 		    // display/center the jdialog when the button is pressed
 		    try {
-				Desktop.getDesktop().open(new File(CoreApkTool.DefaultPath+File.separator+"AndroidManifest.xml"));
+				Desktop.getDesktop().open(new File(CoreApkTool.DefaultPath+File.separator+"AndroidManifest.xml"));				
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		  }
 		});
+		btnShowBrowser.addActionListener(new ActionListener() {
+			  public void actionPerformed(ActionEvent e) {
+			    // display/center the jdialog when the button is pressed
+				  
+				  if(System.getProperty("os.name").indexOf("Window") >0) {
+					  try {
+						Process oProcess = new ProcessBuilder("explorer", CoreApkTool.DefaultPath).start();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+				  } else {  //for linux
+					  try {
+						  Process oProcess = new ProcessBuilder("nautilus", CoreApkTool.DefaultPath).start();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+				  }
+			  }
+		});
+		btnInstall.addActionListener(new ActionListener() {
+			  public void actionPerformed(ActionEvent e) {
+				    // display/center the jdialog when the button is pressed
+				  System.out.println("click install");
+				  }
+			});
 		
 	}
 }
