@@ -4,6 +4,7 @@ package com.ApkInfo.TabUI;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -19,64 +20,14 @@ import javax.swing.table.TableModel;
  * both cells and column headers.
  */
 public class MyTabUILib extends JPanel {
-  private boolean DEBUG = false;
-
-  protected String[] columnToolTips = { null, null,
-      "The person's favorite sport to participate in",
-      "The number of years the person has played the sport",
-      "If checked, the person eats no meat" };
-
   public MyTabUILib() {
     super(new GridLayout(1, 0));
 
-    JTable table = new JTable(new MyTableModel()) {
-
-      //Implement table cell tool tips.
-      public String getToolTipText(MouseEvent e) {
-        String tip = null;
-        java.awt.Point p = e.getPoint();
-        int rowIndex = rowAtPoint(p);
-        int colIndex = columnAtPoint(p);
-        int realColumnIndex = convertColumnIndexToModel(colIndex);
-
-        if (realColumnIndex == 2) { //Sport column
-          tip = "This person's favorite sport to "
-              + "participate in is: "
-              + getValueAt(rowIndex, colIndex);
-        } else if (realColumnIndex == 4) { //Veggie column
-          TableModel model = getModel();
-          String firstName = (String) model.getValueAt(rowIndex, 0);
-          String lastName = (String) model.getValueAt(rowIndex, 1);
-          Boolean veggie = (Boolean) model.getValueAt(rowIndex, 4);
-          if (Boolean.TRUE.equals(veggie)) {
-            tip = firstName + " " + lastName + " is a vegetarian";
-          } else {
-            tip = firstName + " " + lastName
-                + " is not a vegetarian";
-          }
-        } else {
-          //You can omit this part if you know you don't
-          //have any renderers that supply their own tool
-          //tips.
-          tip = super.getToolTipText(e);
-        }
-        return tip;
-      }
-
-      //Implement table header tool tips.
-      protected JTableHeader createDefaultTableHeader() {
-        return new JTableHeader(columnModel) {
-          public String getToolTipText(MouseEvent e) {
-            String tip = null;
-            java.awt.Point p = e.getPoint();
-            int index = columnModel.getColumnIndexAtX(p.x);
-            int realIndex = columnModel.getColumn(index)
-                .getModelIndex();
-            return columnToolTips[realIndex];
-          }
-        };
-      }
-    };
+    ArrayList<String> LibList = new ArrayList<String>();
+        
+    
+    
+    JTable table = new JTable(new MyTableModel());
 
     table.setPreferredScrollableViewportSize(new Dimension(500, 70));
 
@@ -133,11 +84,8 @@ public class MyTabUILib extends JPanel {
     public boolean isCellEditable(int row, int col) {
       //Note that the data/cell address is constant,
       //no matter where the cell appears onscreen.
-      if (col < 2) {
         return false;
-      } else {
-        return true;
-      }
+      
     }
 
     /*
@@ -145,19 +93,9 @@ public class MyTabUILib extends JPanel {
      * change.
      */
     public void setValueAt(Object value, int row, int col) {
-      if (DEBUG) {
-        System.out.println("Setting value at " + row + "," + col
-            + " to " + value + " (an instance of "
-            + value.getClass() + ")");
-      }
 
       data[row][col] = value;
       fireTableCellUpdated(row, col);
-
-      if (DEBUG) {
-        System.out.println("New value of data:");
-        printDebugData();
-      }
     }
 
     private void printDebugData() {
@@ -174,26 +112,4 @@ public class MyTabUILib extends JPanel {
       System.out.println("--------------------------");
     }
   }
-
-  /**
-   * Create the GUI and show it. For thread safety, this method should be
-   * invoked from the event-dispatching thread.
-   */
-  private static void createAndShowGUI() {
-    //Make sure we have nice window decorations.
-    JFrame.setDefaultLookAndFeelDecorated(true);
-
-    //Create and set up the window.
-    JFrame frame = new JFrame("TableToolTipsDemo");
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-    //Create and set up the content pane.
-    JComponent newContentPane = new MyTabUIWidget();
-    newContentPane.setOpaque(true); //content panes must be opaque
-    frame.setContentPane(newContentPane);
-
-    //Display the window.
-    frame.pack();
-    frame.setVisible(true);
-  }  
 }

@@ -67,7 +67,7 @@ public class MyTabUIResource extends JPanel{
     	
     	nameList = new ArrayList<String>();
     	 
-    	nameList = CoreApkTool.findfile(new File(DefaultFilePath));
+    	nameList = CoreApkTool.findfileforResource(new File(DefaultFilePath));
     	 
     	System.out.println("Resource(*.png) Count : " + nameList.size());
     	 

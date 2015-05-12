@@ -24,7 +24,7 @@ public class CoreApkTool {
 		return false;
 	}
 	
-	public static 	ArrayList<String> findfile(File f) {
+	public static 	ArrayList<String> findfileforResource(File f) {
 		File[] list = f.listFiles();
 		if(list==null) {
 			System.err.println("list null");
@@ -34,7 +34,7 @@ public class CoreApkTool {
 			if (list[i].isDirectory()) {
 				
 	   			if(list[i].getAbsolutePath().indexOf("drawable") > 0) {	   				
-	   				findfile(list[i]);
+	   				findfileforResource(list[i]);
 	   			}
 			} else {
 				if(list[i].getName().endsWith(".png")) {					

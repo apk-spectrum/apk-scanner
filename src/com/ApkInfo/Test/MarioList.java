@@ -41,7 +41,7 @@ public class MarioList extends JPanel{
     	
     	nameList = new ArrayList<String>();
     	 
-    	nameList = CoreApkTool.findfile(new File("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/"));
+    	nameList = CoreApkTool.findfileforResource(new File("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/"));
     	 
     	 for(int i=0;i < nameList.size(); i++) {
     		 System.out.println(nameList.get(i));
