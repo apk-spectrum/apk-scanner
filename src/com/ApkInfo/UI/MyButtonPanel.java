@@ -42,7 +42,7 @@ public class MyButtonPanel extends JPanel{
 			  public void actionPerformed(ActionEvent e) {
 			    // display/center the jdialog when the button is pressed
 				  
-				  if(System.getProperty("os.name").indexOf("Window") >0) {
+				  if(System.getProperty("os.name").indexOf("Window") > -1) {
 					  try {
 						Process oProcess = new ProcessBuilder("explorer", CoreApkTool.DefaultPath).start();
 					} catch (IOException e1) {
