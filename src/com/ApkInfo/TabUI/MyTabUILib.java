@@ -4,6 +4,7 @@ package com.ApkInfo.TabUI;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.JComponent;
@@ -15,15 +16,16 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
 
+import com.ApkInfo.Core.CoreApkTool;
+
 /**
  * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for
  * both cells and column headers.
  */
 public class MyTabUILib extends JPanel {
+	
   public MyTabUILib() {
     super(new GridLayout(1, 0));
-
-    ArrayList<String> LibList = new ArrayList<String>();
         
     
     
@@ -39,26 +41,31 @@ public class MyTabUILib extends JPanel {
   }
 
   class MyTableModel extends AbstractTableModel {
-    private String[] columnNames = { "First Name", "Last Name", "Sport",
-        "# of Years", "Vegetarian" };
+	  
+	  private String[] columnNames = { "Index", "Path"};
 
-    private Object[][] data = {
-        { "Mary", "Campione", "Snowboarding", new Integer(5),
-            new Boolean(false) },
-        { "Alison", "Huml", "Rowing", new Integer(3), new Boolean(true) },
-        { "Kathy", "Walrath", "Knitting", new Integer(2),
-            new Boolean(false) },
-        { "Sharon", "Zakhour", "Speed reading", new Integer(20),
-            new Boolean(true) },
-        { "Philip", "Milne", "Pool", new Integer(10),
-            new Boolean(false) } };
-
+	    private ArrayList<Object[]> data;
+		 
+	    ArrayList<String> LibList;  
+		
+	    MyTableModel() {
+		LibList = CoreApkTool.findfileforLib(new File(CoreApkTool.DefaultPath+File.separator+"lib"));
+		  
+		data = new ArrayList<Object[]>();
+		
+		for(int i=0; i< LibList.size(); i++) {
+			Object[] temp = { i, LibList.get(i)};
+			data.add(temp);
+		}		
+		System.out.println(" data size : " + data.size());  
+	  }
+	
     public int getColumnCount() {
       return columnNames.length;
     }
 
     public int getRowCount() {
-      return data.length;
+      return data.size();
     }
 
     public String getColumnName(int col) {
@@ -66,7 +73,9 @@ public class MyTabUILib extends JPanel {
     }
 
     public Object getValueAt(int row, int col) {
-      return data[row][col];
+    	System.out.printf("row : " + row + "col : "+col);
+    	
+      return data.get(row)[col];
     }
 
     /*
@@ -94,7 +103,7 @@ public class MyTabUILib extends JPanel {
      */
     public void setValueAt(Object value, int row, int col) {
 
-      data[row][col] = value;
+    	data.get(row)[col] = value;
       fireTableCellUpdated(row, col);
     }
 
@@ -105,7 +114,7 @@ public class MyTabUILib extends JPanel {
       for (int i = 0; i < numRows; i++) {
         System.out.print("    row " + i + ":");
         for (int j = 0; j < numCols; j++) {
-          System.out.print("  " + data[i][j]);
+          System.out.print("  " + data.get(i)[j]);
         }
         System.out.println();
       }

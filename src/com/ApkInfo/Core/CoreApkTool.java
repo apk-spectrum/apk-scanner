@@ -13,7 +13,9 @@ import com.ApkInfo.UI.MyProgressBarDemo;
 
 public class CoreApkTool {
 	static MyProgressBarDemo progressBarDemo;
-	static ArrayList<String> temp = new ArrayList<String>();
+	static ArrayList<String> tempResource = new ArrayList<String>();
+	static ArrayList<String> tempLib = new ArrayList<String>();
+	
 	public static String DefaultPath;
 	public static Boolean makeFolder(String FilePath) {
 		File newDirectory = new File(FilePath);
@@ -38,7 +40,7 @@ public class CoreApkTool {
 	   			}
 			} else {
 				if(list[i].getName().endsWith(".png")) {					
-					temp.add(list[i].getAbsolutePath());
+					tempResource.add(list[i].getAbsolutePath());
 					try {
 
 					} catch (Exception e) {
@@ -48,7 +50,31 @@ public class CoreApkTool {
 				}		    	  
 			}
 		}
-		return temp;
+		return tempResource;
+	}
+	
+	public static 	ArrayList<String> findfileforLib(File f) {
+		File[] list = f.listFiles();
+		if(list==null) {
+			System.err.println("list null");
+			return null;
+		}
+		for (int i=0; i<list.length; i++) {
+			if (list[i].isDirectory()) {				
+				findfileforLib(list[i]);   			
+			} else {
+				if(list[i].getName().endsWith(".so")) {					
+					tempLib.add(list[i].getAbsolutePath());
+					try {
+
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}		    	  
+			}
+		}
+		return tempLib;
 	}
 	
 	public static void solveAPK(String APKFilePath, String solvePath) {
