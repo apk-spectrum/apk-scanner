@@ -30,19 +30,32 @@ public class MyButtonPanel extends JPanel{
 		btnShowManifest.addActionListener(new ActionListener() {
 		  public void actionPerformed(ActionEvent e) {
 		    // display/center the jdialog when the button is pressed
-		    try {
-				Desktop.getDesktop().open(new File(CoreApkTool.DefaultPath+File.separator+"AndroidManifest.xml"));				
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+		    
+				//Desktop.getDesktop().open(new File(CoreApkTool.DefaultPath+File.separator+"AndroidManifest.xml"));
+			  if(System.getProperty("os.name").indexOf("Window") >-1) {
+				  try {
+					Process oProcess = new ProcessBuilder("notepad", CoreApkTool.DefaultPath).start();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			  } else {  //for linux
+				  try {
+					  Process oProcess = new ProcessBuilder("gedit", CoreApkTool.DefaultPath).start();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			  }
 		  }
 		});
 		btnShowBrowser.addActionListener(new ActionListener() {
 			  public void actionPerformed(ActionEvent e) {
 			    // display/center the jdialog when the button is pressed
 				  
-				  if(System.getProperty("os.name").indexOf("Window") > -1) {
+				  if(System.getProperty("os.name").indexOf("Window") >-1) {
 					  try {
 						Process oProcess = new ProcessBuilder("explorer", CoreApkTool.DefaultPath).start();
 					} catch (IOException e1) {
