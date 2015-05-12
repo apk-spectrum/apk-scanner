@@ -80,18 +80,20 @@ public class CoreApkTool {
 	static String exc(String[] cmd, boolean showLog) {
 		try {
 			String s = "";
+			String e = "";
 			
-			Process oProcess = new ProcessBuilder(cmd).start();
+			Process oProcess = new ProcessBuilder(cmd).redirectErrorStream(true).start();
 			
 			String buffer = "";
 		    // 외부 프로그램 출력 읽기
 		    BufferedReader stdOut   = new BufferedReader(new InputStreamReader(oProcess.getInputStream()));
-		    BufferedReader stdError = new BufferedReader(new InputStreamReader(oProcess.getErrorStream()));
+		    //BufferedReader stdError = new BufferedReader(new InputStreamReader(oProcess.getErrorStream()));
 		    
 		    
 		    if(showLog) {
-			    while ((s =   stdOut.readLine()) != null) {
-			    	progressBarDemo.addProgress(10,s + "\n");
+			    while ((s = stdOut.readLine()) != null) {
+			    	if(s.matches("^I:.*"))
+			    		progressBarDemo.addProgress(10,s + "\n");
 			    	System.out.println(s);
 			    	buffer += s;
 			    }
