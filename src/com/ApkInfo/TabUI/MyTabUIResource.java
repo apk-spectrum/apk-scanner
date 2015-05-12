@@ -132,7 +132,7 @@ public class MyTabUIResource extends JPanel{
     		System.out.println("valueChanged : " + list.getSelectedIndex() + " event : "+ event.getSource());
     		    		
     		
-    		System.out.println(" " + nameList.get(list.getSelectedIndex()));
+    		System.out.println("valueChanged : " + list.getSelectedIndex());
     		
     		photographLabel.setIcon(new ImageIcon(getScaledImage(new ImageIcon(nameList.get(list.getSelectedIndex())),200,200)));
     		
