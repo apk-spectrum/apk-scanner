@@ -12,6 +12,7 @@ import javax.swing.JTabbedPane;
 
 import com.ApkInfo.UIUtil.PlasticTabbedPaneUI;
 import com.ApkInfo.Core.CoreApkTool;
+import com.ApkInfo.TabUI.MyTabUIActivity;
 import com.ApkInfo.TabUI.MyTabUILib;
 import com.ApkInfo.TabUI.MyTabUIResource;
 import com.ApkInfo.TabUI.MyTabUIWidget;
@@ -44,7 +45,7 @@ public class MyTabUI extends JPanel{
 	        tabbedPane.addTab("Resource", null, panel4, "Resource");
 	        tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
-	        JComponent panel5 = makeTextPanel("Panel #4 (has a preferred size of 410 x 50).");
+	        JComponent panel5 = new MyTabUIActivity();
 	        
 	        tabbedPane.addTab("Activity", null, panel5, "Activity");
 	        tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
