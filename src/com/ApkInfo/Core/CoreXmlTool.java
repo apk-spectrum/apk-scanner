@@ -114,9 +114,9 @@ public class CoreXmlTool {
 	        	System.out.println("widget Title = " + widgetTitle);
 	        	System.out.println("widget Size = " + widgetExtraInfo[1]);
 	        	System.out.println("widget Activity = " + widgetActivity);
-	        	System.out.println("widget Type = " + widgetExtraInfo[2]);
+	        	System.out.println("widget Type = Normal");
 
-	        	apkInfo.arrWidgets.add(new Object[] {widgetExtraInfo[0], widgetTitle, widgetExtraInfo[1], widgetActivity, widgetExtraInfo[2]});
+	        	apkInfo.arrWidgets.add(new Object[] {widgetExtraInfo[0], widgetTitle, widgetExtraInfo[1], widgetActivity, "Normal"});
 	        }
 
 		} catch (XPathExpressionException e) {
@@ -222,8 +222,6 @@ public class CoreXmlTool {
 
 		String Size = "Unknown";
 		String IconPath = "Unknown";
-		String Type = "Unknown";
-		String Activity = "Unknown";
 		
 		if(!resource.matches("^@xml/.*")) {
 			return null;
@@ -287,8 +285,7 @@ public class CoreXmlTool {
     	
 		return new Object[] { 
     			IconPath,
-    			Size,
-    			Type
+    			Size
 			};
 		/*
 		String result = null;
