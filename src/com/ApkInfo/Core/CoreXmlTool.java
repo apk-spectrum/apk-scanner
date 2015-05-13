@@ -86,12 +86,17 @@ public class CoreXmlTool {
 	        NodeList widgetList = (NodeList)xpath.evaluate("//meta-data[@name='android.appwidget.provider']", document, XPathConstants.NODESET);
 	        System.out.println("widgetList cnt = " + widgetList.getLength());
 	        for( int idx=0; idx<widgetList.getLength(); idx++ ){
-	        	String widgetTitle = "Unknown"; 
+	        	String widgetTitle = "Unknown";
+	        	String widgetActivity = "Unknown";
 	        	Object[] widgetExtraInfo = null;
 	        	Node parent = widgetList.item(idx).getParentNode().getAttributes().getNamedItem("android:label");
+	        	Node activity = widgetList.item(idx).getParentNode().getAttributes().getNamedItem("android:name");
 	        	Node res = widgetList.item(idx).getAttributes().getNamedItem("android:resource");
 	        	if(parent != null) {
 		        	widgetTitle = getResourceInfo(parent.getTextContent());
+	        	}
+	        	if(activity != null) {
+		        	widgetActivity = getResourceInfo(activity.getTextContent());
 	        	}
 	        	if(res != null) {
 	        		widgetExtraInfo = getWidgetInfo(res.getTextContent());
@@ -100,10 +105,10 @@ public class CoreXmlTool {
 	        	System.out.println("widget Icon = " + widgetExtraInfo[0]);
 	        	System.out.println("widget Title = " + widgetTitle);
 	        	System.out.println("widget Size = " + widgetExtraInfo[1]);
-	        	System.out.println("widget Activity = " + widgetExtraInfo[2]);
-	        	System.out.println("widget Type = " + widgetExtraInfo[3]);
+	        	System.out.println("widget Activity = " + widgetActivity);
+	        	System.out.println("widget Type = " + widgetExtraInfo[2]);
 
-	        	apkInfo.arrWidgets.add(new Object[] {widgetExtraInfo[0], widgetTitle, widgetExtraInfo[1], widgetExtraInfo[2], widgetExtraInfo[3]});
+	        	apkInfo.arrWidgets.add(new Object[] {widgetExtraInfo[0], widgetTitle, widgetExtraInfo[1], widgetActivity, widgetExtraInfo[2]});
 	        }
 
 		} catch (XPathExpressionException e) {
@@ -275,7 +280,6 @@ public class CoreXmlTool {
 		return new Object[] { 
     			IconPath,
     			Size,
-    			Activity,
     			Type,
 			};
 		/*
