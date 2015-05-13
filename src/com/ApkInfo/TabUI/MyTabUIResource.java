@@ -131,19 +131,9 @@ public class MyTabUIResource extends JPanel{
     		String imagepath;
     		System.out.println("valueChanged : " + list.getSelectedIndex() + " event : "+ event.getSource());
     		
-    		photographLabel.setIcon(new ImageIcon(getScaledImage(new ImageIcon(nameList.get(list.getSelectedIndex())),200,200)));
+    		photographLabel.setIcon(new ImageIcon(CoreApkTool.getMaxScaledImage(
+    				new ImageIcon(nameList.get(list.getSelectedIndex())),photographLabel.getWidth(),photographLabel.getHeight())));
     		
 	    }
-    }
-    
-    private Image getScaledImage(ImageIcon temp, int w, int h){
-    	
-    	Image srcImg = temp.getImage();
-        BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2 = resizedImg.createGraphics();
-        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2.drawImage(srcImg, 0, 0, w, h, null);
-        g2.dispose();
-        return resizedImg;
     }
 }
