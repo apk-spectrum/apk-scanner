@@ -97,8 +97,11 @@ public class CoreXmlTool {
 	        		widgetExtraInfo = getWidgetInfo(res.getTextContent());
 	        	}
 
-	        	System.out.println("widgetTitle = " + widgetTitle);
-	        	System.out.println("widget = " + res.getTextContent());
+	        	System.out.println("widget Icon = " + widgetExtraInfo[0]);
+	        	System.out.println("widget Title = " + widgetTitle);
+	        	System.out.println("widget Size = " + widgetExtraInfo[1]);
+	        	System.out.println("widget Activity = " + widgetExtraInfo[2]);
+	        	System.out.println("widget Type = " + widgetExtraInfo[3]);
 
 	        	apkInfo.arrWidgets.add(new Object[] {widgetExtraInfo[0], widgetTitle, widgetExtraInfo[1], widgetExtraInfo[2], widgetExtraInfo[3]});
 	        }
@@ -258,7 +261,8 @@ public class CoreXmlTool {
 
 				if(IconPath.equals("Unknown") && cols.getAttributes().getNamedItem("android:previewImage") != null) {
 					String icon = cols.getAttributes().getNamedItem("android:previewImage").getTextContent();
-			    	System.out.println("icon " + getResourceInfo(icon));
+					IconPath = getResourceInfo(icon);
+					System.out.println("icon " + IconPath);
 				}
 				//cols.getAttributes().getNamedItem("android:label").getTextContent();
 		    	//System.out.println("string " + cols.getTextContent());
