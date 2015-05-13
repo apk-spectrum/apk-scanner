@@ -27,6 +27,10 @@ public class CoreXmlTool {
 	static String APkworkPath;
 	static MyApkInfo apkInfo;
 	
+	public static MyApkInfo GetMyApkInfo(){
+		return apkInfo;
+	}
+	
 	public static MyApkInfo XmlToMyApkinfo(String workPath) {
 		
 		apkInfo = new MyApkInfo();

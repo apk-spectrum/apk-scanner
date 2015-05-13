@@ -28,7 +28,10 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import com.ApkInfo.Core.CoreApkTool;
+import com.ApkInfo.Core.CoreXmlTool;
+import com.ApkInfo.Core.MyApkInfo;
 import com.ApkInfo.TabUI.MyTabUILib.MyTableModel;
+import com.ApkInfo.UI.MainUI;
 
 /**
  * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for
@@ -39,26 +42,29 @@ public class MyTabUIWidget extends JPanel {
 	 public MyTabUIWidget() {
 	    super(new GridLayout(1, 0));
 	    
-	    JTable table = new JTable(new MyTableModel());
 	    arrWidgets = new ArrayList<Object[]>(); 
+	    
+	    JTable table = new JTable(new MyTableModel());
+	    ArrayList<Object[]> temparray = CoreXmlTool.GetMyApkInfo().arrWidgets;
+	    
 	    //table.setPreferredScrollableViewportSize(new Dimension(500, 70));
 	    
-	    for(int i=0; i< 5; i++) {
+	    for(int i=0; i< temparray.size(); i++) {
 	    	
-	    	ImageIcon myimageicon = new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/res/sampleimage/drawable-xxxhdpi/popup_dvideo_norm.png");
+	    	ImageIcon myimageicon = new ImageIcon((String)temparray.get(i)[0]);
 	    	
 	    	myimageicon.setImage(getScaledImage(myimageicon,100,100));
 	    	
-	    	Object[] temp = {myimageicon,
-					"2X2","com.google.android.apps.gmm.appwidget.CreateDirectionsShortcutActivity", "ANDROID" };
+	    	Object[] temp = { myimageicon , temparray.get(i)[1], temparray.get(i)[2], temparray.get(i)[3], temparray.get(i)[4]};
 	    	arrWidgets.add(temp);
 	    	
 	    }
-	    for(int i=0; i< 5; i++) {
+	    
+	    for(int i=0; i< arrWidgets.size(); i++) {
 	    	table.setRowHeight(i, 100);
 	    }
 	    
-	    setJTableColumnsWidth(table, 500, 20,5,65,10);
+	    setJTableColumnsWidth(table, 500, 20,15,7,60,10);
 	    
 	    
 	    //Create the scroll pane and add the table to it.
@@ -87,7 +93,7 @@ public class MyTabUIWidget extends JPanel {
 	  
 	  class MyTableModel extends AbstractTableModel {
 		  
-		  private String[] columnNames = { "Image", "Size", "Activity", "Type"};
+		  private String[] columnNames = { "Image","Label", "Size", "Activity", "Type"};
 		      
 		    MyTableModel() {
 		  }

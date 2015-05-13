@@ -130,32 +130,20 @@ public class MyTabUIResource extends JPanel{
     	
     		String imagepath;
     		System.out.println("valueChanged : " + list.getSelectedIndex() + " event : "+ event.getSource());
-    		    		
     		
-    		System.out.println("valueChanged : " + list.getSelectedIndex());
-    		
-    		photographLabel.setIcon(new ImageIcon(getScaledImage(new ImageIcon(nameList.get(list.getSelectedIndex())),photographLabel.getWidth(),photographLabel.getHeight())));
+    		photographLabel.setIcon(new ImageIcon(getScaledImage(new ImageIcon(nameList.get(list.getSelectedIndex())),200,200)));
     		
 	    }
     }
     
-	private Image getScaledImage(ImageIcon temp, int Maxw, int Maxh){
-		
-		Image srcImg = temp.getImage();
-		
-		int width = temp.getIconWidth();
-		int height = temp.getIconHeight();
-		
-		float scalex = Maxw / width;
-		float scaley = Maxh / height;
-		
-		float scale = (scalex < scaley) ? scalex : scaley;
-		
-	    BufferedImage resizedImg = new BufferedImage((int)scale * width, (int)scale * height, BufferedImage.TYPE_INT_ARGB);
-	    Graphics2D g2 = resizedImg.createGraphics();
-	    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-	    g2.drawImage(srcImg, 0, 0, (int)scale * width, (int)scale * height, null);
-	    g2.dispose();
-	    return resizedImg;
-	}
+    private Image getScaledImage(ImageIcon temp, int w, int h){
+    	
+    	Image srcImg = temp.getImage();
+        BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = resizedImg.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.drawImage(srcImg, 0, 0, w, h, null);
+        g2.dispose();
+        return resizedImg;
+    }
 }
