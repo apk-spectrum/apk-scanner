@@ -101,6 +101,10 @@ public class CoreXmlTool {
 	        	if(res != null) {
 	        		widgetExtraInfo = getWidgetInfo(res.getTextContent());
 	        	}
+	        	
+	        	if (widgetExtraInfo[0].equals("Unknown")) {
+	        		widgetExtraInfo[0] = apkInfo.strIconPath;
+	        	}
 
 	        	System.out.println("widget Icon = " + widgetExtraInfo[0]);
 	        	System.out.println("widget Title = " + widgetTitle);
@@ -280,7 +284,7 @@ public class CoreXmlTool {
 		return new Object[] { 
     			IconPath,
     			Size,
-    			Type,
+    			Type
 			};
 		/*
 		String result = null;
