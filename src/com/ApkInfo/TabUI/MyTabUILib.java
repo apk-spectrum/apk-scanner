@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.JComponent;
@@ -42,7 +43,7 @@ public class MyTabUILib extends JPanel {
 
   class MyTableModel extends AbstractTableModel {
 	  
-	  private String[] columnNames = { "Index", "Path"};
+	  private String[] columnNames = { "Index", "Path", "Size"};
 
 	    private ArrayList<Object[]> data;
 		 
@@ -53,8 +54,14 @@ public class MyTabUILib extends JPanel {
 		  
 		data = new ArrayList<Object[]>();
 		
+		DecimalFormat df = new DecimalFormat("#,##0");
 		for(int i=0; i< LibList.size(); i++) {
-			Object[] temp = { i, LibList.get(i)};
+			long size = (new File(LibList.get(i))).length();
+			Object[] temp = { 
+				i+1, 
+				LibList.get(i).replaceAll("^.*"+File.separator+File.separator+"lib"+File.separator+File.separator,"lib"+File.separator+File.separator), 
+				CoreApkTool.getFileLength(size) + " ("+ df.format(size) + " Byte)"
+			};
 			data.add(temp);
 		}		
 		System.out.println(" data size : " + data.size());  
