@@ -33,7 +33,7 @@ public class MyTabUILib extends JPanel {
 
     //table.setPreferredScrollableViewportSize(new Dimension(500, 70));
     
-    setJTableColumnsWidth(table, 500, 2,65,33);
+    setJTableColumnsWidth(table, 500, 4,65,31);
     
     //Create the scroll pane and add the table to it.
     
@@ -59,7 +59,7 @@ public class MyTabUILib extends JPanel {
   
   class MyTableModel extends AbstractTableModel {
 	  
-	  private String[] columnNames = { "Index", "Path", "size"};
+	  private String[] columnNames = { "Index", "Path", "Size"};
 
 	    private ArrayList<Object[]> data;
 		 
@@ -114,8 +114,9 @@ public class MyTabUILib extends JPanel {
     public boolean isCellEditable(int row, int col) {
       //Note that the data/cell address is constant,
       //no matter where the cell appears onscreen.
-        return false;
-      
+    	if(col>0) {
+    		return true;
+    	} else return false;
     }
 
     /*
