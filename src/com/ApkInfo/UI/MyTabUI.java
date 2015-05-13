@@ -15,6 +15,7 @@ import com.ApkInfo.Core.CoreApkTool;
 import com.ApkInfo.TabUI.MyTabUIActivity;
 import com.ApkInfo.TabUI.MyTabUILib;
 import com.ApkInfo.TabUI.MyTabUIResource;
+import com.ApkInfo.TabUI.MyTabUISign;
 import com.ApkInfo.TabUI.MyTabUIWidget;
 import com.ApkInfo.TabUI.MyTabUIbasicInfo;
 
@@ -50,10 +51,15 @@ public class MyTabUI extends JPanel{
 	        tabbedPane.addTab("Activity", null, panel5, "Activity");
 	        tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
 
+	        JComponent panelsign = new MyTabUISign();
+	        
+	        tabbedPane.addTab("Sign", null, panelsign, "Sign");
+	        tabbedPane.setMnemonicAt(4, KeyEvent.VK_6);
+	        
 	        JComponent panel6 = makeTextPanel("Panel #4 (has a preferred size of 410 x 50).");
 	        panel6.setPreferredSize(new Dimension(700, 500));
 	        tabbedPane.addTab("Device", null, panel6, "Device");
-	        tabbedPane.setMnemonicAt(5, KeyEvent.VK_6);
+	        tabbedPane.setMnemonicAt(5, KeyEvent.VK_7);
 	        
 	        //Add the tabbed pane to this panel.
 	        add(tabbedPane);
