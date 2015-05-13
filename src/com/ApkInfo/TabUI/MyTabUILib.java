@@ -15,6 +15,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import com.ApkInfo.Core.CoreApkTool;
@@ -33,9 +34,10 @@ public class MyTabUILib extends JPanel {
     JTable table = new JTable(new MyTableModel());
 
     //table.setPreferredScrollableViewportSize(new Dimension(500, 70));
-    table.getColumnModel().getColumn(0).setPreferredWidth(10);
-    table.getColumnModel().getColumn(1).setPreferredWidth(this.getSize().width-10-30);
-    table.getColumnModel().getColumn(2).setPreferredWidth(30);
+    
+    setJTableColumnsWidth(table, 500, 2,65,33);
+    
+    
     
     
     //Create the scroll pane and add the table to it.
@@ -46,8 +48,23 @@ public class MyTabUILib extends JPanel {
     add(scrollPane);
   }
 
+  public static void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
+	        double... percentages) {
+	    double total = 0;
+	    for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
+	        total += percentages[i];
+	    }
+	 
+	    for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
+	        TableColumn column = table.getColumnModel().getColumn(i);
+	        column.setPreferredWidth((int)
+	                (tablePreferredWidth * (percentages[i] / total)));
+	    }
+	}
+  
   class MyTableModel extends AbstractTableModel {
-	  private String[] columnNames = { "Index", "Path", "Size"};
+	  
+	  private String[] columnNames = { "Index", "Path", "size"};
 
 	    private ArrayList<Object[]> data;
 		 
@@ -68,7 +85,7 @@ public class MyTabUILib extends JPanel {
 			};
 			data.add(temp);
 		}		
-		System.out.println(" Lib Count : " + data.size());  
+		System.out.println("Lib Count : " + data.size());  
 	  }
 	
     public int getColumnCount() {
