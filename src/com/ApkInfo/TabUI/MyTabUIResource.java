@@ -115,7 +115,7 @@ public class MyTabUIResource extends JPanel{
         Map<String, ImageIcon> map = new HashMap<>();
         try {        	
         	for(int i=0; i< list.size(); i++) {
-        		map.put(list.get(i), new ImageIcon(getScaledImage(new ImageIcon(list.get(i)),32,32)));
+        		map.put(list.get(i), new ImageIcon(CoreApkTool.getScaledImage(new ImageIcon(list.get(i)),32,32)));
         	}
         } catch (Exception ex) {
             ex.printStackTrace();
