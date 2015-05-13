@@ -246,7 +246,7 @@ public class CoreXmlTool {
 		String resXmlPath = new String(APkworkPath + File.separator + "res" + File.separator);
 
 		String Size = "Unknown";
-		String IconPath = apkInfo.strIconPath;
+		String IconPath = "Unknown";
 		
 		if(!resource.matches("^@xml/.*")) {
 			return null;
