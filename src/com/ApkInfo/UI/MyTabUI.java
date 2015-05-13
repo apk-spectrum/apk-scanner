@@ -54,12 +54,12 @@ public class MyTabUI extends JPanel{
 	        JComponent panelsign = new MyTabUISign();
 	        
 	        tabbedPane.addTab("Sign", null, panelsign, "Sign");
-	        tabbedPane.setMnemonicAt(4, KeyEvent.VK_6);
+	        tabbedPane.setMnemonicAt(5, KeyEvent.VK_6);
 	        
 	        JComponent panel6 = makeTextPanel("Panel #4 (has a preferred size of 410 x 50).");
 	        panel6.setPreferredSize(new Dimension(700, 500));
 	        tabbedPane.addTab("Device", null, panel6, "Device");
-	        tabbedPane.setMnemonicAt(5, KeyEvent.VK_7);
+	        tabbedPane.setMnemonicAt(6, KeyEvent.VK_7);
 	        
 	        //Add the tabbed pane to this panel.
 	        add(tabbedPane);
