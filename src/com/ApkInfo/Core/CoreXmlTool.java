@@ -82,6 +82,26 @@ public class CoreXmlTool {
 	        for( int idx=0; idx<colsList.getLength(); idx++ ){
 	        	apkInfo.strPermissions += (apkInfo.strPermissions=="" ? "":"\n") + colsList.item(idx).getAttributes().getNamedItem("android:name").getTextContent();
 	        }
+	        
+	        NodeList widgetList = (NodeList)xpath.evaluate("//meta-data[@name='android.appwidget.provider']", document, XPathConstants.NODESET);
+	        System.out.println("widgetList cnt = " + widgetList.getLength());
+	        for( int idx=0; idx<widgetList.getLength(); idx++ ){
+	        	String widgetTitle = "Unknown"; 
+	        	Object[] widgetExtraInfo = null;
+	        	Node parent = widgetList.item(idx).getParentNode().getAttributes().getNamedItem("android:label");
+	        	Node res = widgetList.item(idx).getAttributes().getNamedItem("android:resource");
+	        	if(parent != null) {
+		        	widgetTitle = getResourceInfo(parent.getTextContent());
+	        	}
+	        	if(res != null) {
+	        		widgetExtraInfo = getWidgetInfo(res.getTextContent());
+	        	}
+
+	        	System.out.println("widgetTitle = " + widgetTitle);
+	        	System.out.println("widget = " + res.getTextContent());
+
+	        	apkInfo.arrWidgets.add(new Object[] {widgetExtraInfo[0], widgetTitle, widgetExtraInfo[1], widgetExtraInfo[2], widgetExtraInfo[3]});
+	        }
 
 		} catch (XPathExpressionException e) {
 			// TODO Auto-generated catch block
@@ -104,6 +124,7 @@ public class CoreXmlTool {
 		
 		String result = null;
 		String resXmlPath = new String(APkworkPath + File.separator + "res" + File.separator);
+		String query = "//";
 		
 		if(!id.matches("^@.*")) {
 			System.out.println("id is start without @");
@@ -132,9 +153,14 @@ public class CoreXmlTool {
 		} else if(id.matches("^@string/.*")) {
 			System.out.println("@stirng");
 			resXmlPath += "values" + File.separator + "strings.xml";
+			query = "//resources/string[@name='"+id.substring(id.indexOf("/")+1)+"']";
 		} else if(id.matches("^@xml/.*")) {
 			System.out.println("@xml");
 			resXmlPath += id.substring(1);
+		} else if(id.matches("^@dimen/.*")) {
+			System.out.println("@dimen");
+			resXmlPath += "values" + File.separator + "dimens.xml";
+			query = "//resources/dimen[@name='"+id.substring(id.indexOf("/")+1)+"']";
 		} else {
 			System.out.println("Unknown id " + id);
 			return result;
@@ -158,20 +184,102 @@ public class CoreXmlTool {
 		// xpath 생성
 		XPath  xpath = XPathFactory.newInstance().newXPath();
 		
-		String idName = new String(id.substring(id.indexOf("/")+1));
 		  
         // NodeList 가져오기 : row 아래에 있는 모든 col1 을 선택
         Node cols;
 		try {
-			cols = (Node)xpath.evaluate("//resources/string[@name='"+idName+"']", document, XPathConstants.NODE);
+			cols = (Node)xpath.evaluate(query, document, XPathConstants.NODE);
 	        result = new String(cols.getTextContent());
-	    	System.out.println("string " + cols.getTextContent());
+	    	System.out.println(">> " + cols.getTextContent());
 		} catch (XPathExpressionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		return result;
+	}
+	
+	private static Object[] getWidgetInfo(String resource) {
+
+		System.out.println("getWidgetInfo() " + resource);
+		String resXmlPath = new String(APkworkPath + File.separator + "res" + File.separator);
+
+		String Size = "Unknown";
+		String IconPath = "Unknown";
+		String Type = "Unknown";
+		String Activity = "Unknown";
+		
+		if(!resource.matches("^@xml/.*")) {
+			return null;
+		}
+
+		String widgetXml = new String(resource.substring(5));
+		System.out.println("widgetXml : " + widgetXml);
+
+		for (String s : (new File(resXmlPath)).list()) {
+			if(!s.matches("^xml.*")) continue;
+
+			File xmlFile = new File(resXmlPath + s + File.separator + widgetXml + ".xml");
+			if(!xmlFile.exists()) continue;
+			
+			System.out.println("xmlFile " + xmlFile.getAbsolutePath());
+
+			
+			InputSource is = null;
+			Document document = null;
+			try {
+				is = new InputSource(new FileReader(xmlFile.getAbsolutePath()));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			try {
+				document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
+			} catch (SAXException | IOException | ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			// xpath 생성
+			XPath  xpath = XPathFactory.newInstance().newXPath();
+	        Node cols;
+			try {
+				cols = (Node)xpath.evaluate("//appwidget-provider", document, XPathConstants.NODE);
+		        
+				if(Size.equals("Unknown") && cols.getAttributes().getNamedItem("android:minWidth") != null
+						&& cols.getAttributes().getNamedItem("android:minHeight") != null) {
+					String width = cols.getAttributes().getNamedItem("android:minWidth").getTextContent();
+					String Height = cols.getAttributes().getNamedItem("android:minHeight").getTextContent();
+					width = getResourceInfo(width).replaceAll("^([0-9]*).*", "$1");
+					Height = getResourceInfo(Height).replaceAll("^([0-9]*).*", "$1");
+					Size = (int)Math.ceil(Float.parseFloat(width) / 74) + " X " + (int)Math.ceil(Float.parseFloat(Height) / 74);
+			    	System.out.println("Size " + Size);
+				}
+
+				if(IconPath.equals("Unknown") && cols.getAttributes().getNamedItem("android:previewImage") != null) {
+					String icon = cols.getAttributes().getNamedItem("android:previewImage").getTextContent();
+			    	System.out.println("icon " + getResourceInfo(icon));
+				}
+				//cols.getAttributes().getNamedItem("android:label").getTextContent();
+		    	//System.out.println("string " + cols.getTextContent());
+			} catch (XPathExpressionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+    	
+		return new Object[] { 
+    			IconPath,
+    			Size,
+    			Activity,
+    			Type,
+			};
+		/*
+		String result = null;
+		String resXmlPath = new String(APkworkPath + File.separator + "res" + File.separator);
+
+
+*/
 	}
 	
 	@SuppressWarnings("resource")
