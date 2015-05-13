@@ -67,8 +67,9 @@ public class MyTabUILib extends JPanel {
 		
 	    MyTableModel() {
 		LibList = CoreApkTool.findfileforLib(new File(CoreApkTool.DefaultPath+File.separator+"lib"));
-		  
+
 		data = new ArrayList<Object[]>();
+		if(LibList == null) return;
 		
 		DecimalFormat df = new DecimalFormat("#,##0");
 		String separator = File.separator + (File.separator.equals("\\") ? File.separator : "");		
