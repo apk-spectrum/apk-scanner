@@ -84,9 +84,9 @@ public class CoreXmlTool {
 	        }
 	        
 	        NodeList widgetList = (NodeList)xpath.evaluate("//meta-data[@name='android.appwidget.provider']", document, XPathConstants.NODESET);
-	        System.out.println("widgetList cnt = " + widgetList.getLength());
+	        System.out.println("Normal widgetList cnt = " + widgetList.getLength());
 	        for( int idx=0; idx<widgetList.getLength(); idx++ ){
-	        	String widgetTitle = "Unknown";
+	        	String widgetTitle = apkInfo.strLabelname;
 	        	String widgetActivity = "Unknown";
 	        	Object[] widgetExtraInfo = null;
 	        	Node parent = widgetList.item(idx).getParentNode().getAttributes().getNamedItem("android:label");
@@ -105,6 +105,9 @@ public class CoreXmlTool {
 	        	if (widgetExtraInfo[0].equals("Unknown")) {
 	        		widgetExtraInfo[0] = apkInfo.strIconPath;
 	        	}
+	        	if(widgetActivity.matches("^\\..*")) {
+	        		widgetActivity = apkInfo.strPackageName + widgetActivity;
+	        	}
 
 	        	System.out.println("widget Icon = " + widgetExtraInfo[0]);
 	        	System.out.println("widget Title = " + widgetTitle);
@@ -113,6 +116,32 @@ public class CoreXmlTool {
 	        	System.out.println("widget Type = Normal");
 
 	        	apkInfo.arrWidgets.add(new Object[] {widgetExtraInfo[0], widgetTitle, widgetExtraInfo[1], widgetActivity, "Normal"});
+	        }
+	        
+	        widgetList = (NodeList)xpath.evaluate("//action[@name='android.intent.action.CREATE_SHORTCUT']", document, XPathConstants.NODESET);
+	        System.out.println("Shortcut widgetList cnt = " + widgetList.getLength());
+	        for( int idx=0; idx<widgetList.getLength(); idx++ ){
+	        	String widgetTitle = apkInfo.strLabelname;
+	        	String widgetActivity = apkInfo.strPackageName;
+	        	Node parent = widgetList.item(idx).getParentNode().getParentNode().getAttributes().getNamedItem("android:label");
+	        	Node activity = widgetList.item(idx).getParentNode().getParentNode().getAttributes().getNamedItem("android:name");
+	        	if(parent != null) {
+		        	widgetTitle = getResourceInfo(parent.getTextContent());
+	        	}
+	        	if(activity != null) {
+		        	widgetActivity = getResourceInfo(activity.getTextContent());
+	        	}
+	        	if(widgetActivity.matches("^\\..*")) {
+	        		widgetActivity = apkInfo.strPackageName + widgetActivity;
+	        	}
+
+	        	System.out.println("widget Icon = " + apkInfo.strIconPath);
+	        	System.out.println("widget Title = " + widgetTitle);
+	        	System.out.println("widget Size = 1 X 1");
+	        	System.out.println("widget Activity = " + widgetActivity);
+	        	System.out.println("widget Type = Shortcut");
+
+	        	apkInfo.arrWidgets.add(new Object[] {apkInfo.strIconPath, widgetTitle, "1 X 1", widgetActivity, "Shortcut"});
 	        }
 
 		} catch (XPathExpressionException e) {
@@ -217,7 +246,7 @@ public class CoreXmlTool {
 		String resXmlPath = new String(APkworkPath + File.separator + "res" + File.separator);
 
 		String Size = "Unknown";
-		String IconPath = "Unknown";
+		String IconPath = apkInfo.strIconPath;
 		
 		if(!resource.matches("^@xml/.*")) {
 			return null;
