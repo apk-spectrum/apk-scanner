@@ -34,7 +34,7 @@ public class MyButtonPanel extends JPanel{
 				//Desktop.getDesktop().open(new File(CoreApkTool.DefaultPath+File.separator+"AndroidManifest.xml"));
 			  if(System.getProperty("os.name").indexOf("Window") >-1) {
 				  try {
-					Process oProcess = new ProcessBuilder("notepad", CoreApkTool.DefaultPath).start();
+					Process oProcess = new ProcessBuilder("notepad", CoreApkTool.DefaultPath + File.separator + "AndroidManifest.xml").start();
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -42,7 +42,7 @@ public class MyButtonPanel extends JPanel{
 
 			  } else {  //for linux
 				  try {
-					  Process oProcess = new ProcessBuilder("gedit", CoreApkTool.DefaultPath).start();
+					  Process oProcess = new ProcessBuilder("gedit", CoreApkTool.DefaultPath+ File.separator + "AndroidManifest.xml").start();
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
