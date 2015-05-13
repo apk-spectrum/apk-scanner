@@ -32,9 +32,14 @@ public class MyTabUILib extends JPanel {
     
     JTable table = new JTable(new MyTableModel());
 
-    table.setPreferredScrollableViewportSize(new Dimension(500, 70));
-
+    //table.setPreferredScrollableViewportSize(new Dimension(500, 70));
+    table.getColumnModel().getColumn(0).setPreferredWidth(10);
+    table.getColumnModel().getColumn(1).setPreferredWidth(this.getSize().width-10-30);
+    table.getColumnModel().getColumn(2).setPreferredWidth(30);
+    
+    
     //Create the scroll pane and add the table to it.
+    
     JScrollPane scrollPane = new JScrollPane(table);
 
     //Add the scroll pane to this panel.
@@ -42,7 +47,6 @@ public class MyTabUILib extends JPanel {
   }
 
   class MyTableModel extends AbstractTableModel {
-	  
 	  private String[] columnNames = { "Index", "Path", "Size"};
 
 	    private ArrayList<Object[]> data;
@@ -64,7 +68,7 @@ public class MyTabUILib extends JPanel {
 			};
 			data.add(temp);
 		}		
-		System.out.println(" data size : " + data.size());  
+		System.out.println(" Lib Count : " + data.size());  
 	  }
 	
     public int getColumnCount() {
@@ -79,9 +83,7 @@ public class MyTabUILib extends JPanel {
       return columnNames[col];
     }
 
-    public Object getValueAt(int row, int col) {
-    	System.out.printf("row : " + row + "col : "+col);
-    	
+    public Object getValueAt(int row, int col) {    	
       return data.get(row)[col];
     }
 
