@@ -33,6 +33,9 @@ public class MainUI extends Frame implements WindowListener{
 	/**
 	 * Launch the application.
 	 */
+	public static MyApkInfo GetMyApkInfo(){
+		return mApkInfo;
+	}	
 	
 	class MyCoreThead extends Thread {
 		public void run() {

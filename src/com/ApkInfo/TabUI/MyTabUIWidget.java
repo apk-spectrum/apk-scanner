@@ -45,7 +45,7 @@ public class MyTabUIWidget extends JPanel {
 	    arrWidgets = new ArrayList<Object[]>(); 
 	    
 	    JTable table = new JTable(new MyTableModel());
-	    ArrayList<Object[]> temparray = CoreXmlTool.GetMyApkInfo().arrWidgets;
+	    ArrayList<Object[]> temparray = MainUI.GetMyApkInfo().arrWidgets;
 	    
 	    //table.setPreferredScrollableViewportSize(new Dimension(500, 70));
 	    
@@ -53,7 +53,7 @@ public class MyTabUIWidget extends JPanel {
 	    	
 	    	ImageIcon myimageicon = new ImageIcon((String)temparray.get(i)[0]);
 	    	
-	    	myimageicon.setImage(getScaledImage(myimageicon,100,100));
+	    	myimageicon.setImage(CoreApkTool.getMaxScaledImage(myimageicon,100,100));
 	    	
 	    	Object[] temp = { myimageicon , temparray.get(i)[1], temparray.get(i)[2], temparray.get(i)[3], temparray.get(i)[4]};
 	    	arrWidgets.add(temp);
@@ -64,8 +64,7 @@ public class MyTabUIWidget extends JPanel {
 	    	table.setRowHeight(i, 100);
 	    }
 	    
-	    setJTableColumnsWidth(table, 500, 20,15,7,60,10);
-	    
+	    setJTableColumnsWidth(table, 500, 20,15,7,60,10);	    
 	    
 	    //Create the scroll pane and add the table to it.
 	    
@@ -76,7 +75,7 @@ public class MyTabUIWidget extends JPanel {
 	    //Add the scroll pane to this panel.
 	    add(scrollPane);
 	  }
-
+	  
 	  public static void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
 		        double... percentages) {
 		    double total = 0;
@@ -158,16 +157,6 @@ public class MyTabUIWidget extends JPanel {
 	      System.out.println("--------------------------");
 	    }
 	  }
-	private Image getScaledImage(ImageIcon temp, int w, int h){
-		
-		Image srcImg = temp.getImage();
-	    BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-	    Graphics2D g2 = resizedImg.createGraphics();
-	    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-	    g2.drawImage(srcImg, 0, 0, w, h, null);
-	    g2.dispose();
-	    return resizedImg;
-	}
 	    
 	  class MultiLineCellRenderer extends JTextArea implements TableCellRenderer {
 
