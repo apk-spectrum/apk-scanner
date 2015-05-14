@@ -1,6 +1,9 @@
 package com.ApkInfo.TabUI;
 
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.text.DecimalFormat;
 
@@ -19,6 +22,9 @@ public class MyTabUIbasicInfo extends JComponent{
     	JPanel panelparent = new JPanel();
     	JPanel panel = new JPanel(true);
         	        
+        GridBagConstraints c = new GridBagConstraints();
+        panel.setLayout(new GridBagLayout());
+        
     	JTextArea apkinform = new JTextArea();
         JTextArea apkpermission = new JTextArea();
         
@@ -64,9 +70,20 @@ public class MyTabUIbasicInfo extends JComponent{
             imagepanel = new MyImagePanel("res/icon.png");
         }
         	        
-        panel.add(imagepanel);
-        panel.add(apkinform);        	        
-        panel.setLayout(new GridLayout(1, 2));
+        //panel.add(imagepanel);
+        //panel.add(apkinform);        	        
+        
+        imagepanel.setPreferredSize(new Dimension(100, 100));
+        
+        c.weightx = 0.1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        
+        panel.add(imagepanel, c);
+        c.weightx = 0.5;
+        c.gridx = 1;
+        panel.add(apkinform, c);
         
         this.add(panel);
         //panelparent.add(apkpermission);
