@@ -59,6 +59,8 @@ public class MyProgressBarDemo extends JPanel
         progressBar.setValue(0);
         progressBar.setStringPainted(true);
 
+        progressBar.setPreferredSize(new Dimension(500,50));
+        
         taskOutput = new JTextArea(5, 50);
         taskOutput.setEditable(false);
 
