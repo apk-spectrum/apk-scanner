@@ -68,6 +68,7 @@ public class MyTabUIResource extends JPanel{
     	
     	nameList = new ArrayList<String>();
     	 
+    	MainUI.ProgressBarDlg.addProgress(25,"check resource(*.png)...\n");
     	nameList = CoreApkTool.findfileforResource(new File(DefaultFilePath));
     	 
     	System.out.println("Resource(*.png) Count : " + nameList.size());
@@ -86,7 +87,7 @@ public class MyTabUIResource extends JPanel{
         photographLabel.setHorizontalTextPosition(JLabel.CENTER);
         photographLabel.setHorizontalAlignment(JLabel.CENTER);
         photographLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
+                
         MainUI.WaitingDlg.setVisible(false);
         
         this.setLayout(new GridLayout(1, 2));        
