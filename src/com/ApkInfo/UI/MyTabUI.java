@@ -1,5 +1,6 @@
 package com.ApkInfo.UI;
 
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
@@ -51,7 +52,7 @@ public class MyTabUI extends JPanel{
 	        tabbedPane.addTab("Activity", null, panel5, "Activity");
 	        tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
 
-	        JComponent panelsign = new MyTabUISign();
+	        Container panelsign = new MyTabUISign();
 	        
 	        tabbedPane.addTab("CERT", null, panelsign, "CERT");
 	        tabbedPane.setMnemonicAt(5, KeyEvent.VK_6);

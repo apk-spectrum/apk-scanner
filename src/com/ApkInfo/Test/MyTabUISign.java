@@ -1,4 +1,4 @@
-package com.ApkInfo.TabUI;
+package com.ApkInfo.Test;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -12,11 +12,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
 import javax.swing.JList;
 import javax.swing.JTextPane;
+
 
 
 
@@ -50,10 +52,10 @@ public class MyTabUISign extends Container{
         GridBagConstraints c = new GridBagConstraints();
         this.setLayout(new GridBagLayout());
         JScrollPane scrollPane1 = new JScrollPane(jlist);
-        scrollPane1.setPreferredSize(new Dimension(50, 400));
+        scrollPane1.setPreferredSize(new Dimension(50, 200));
         
         c.weightx = 0.1;
-        c.fill = GridBagConstraints.HORIZONTAL;
+        c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
         c.gridy = 0;
         
@@ -62,16 +64,28 @@ public class MyTabUISign extends Container{
         textArea = new JTextArea();
         textArea.setEditable(false);
         JScrollPane scrollPane2 = new JScrollPane(textArea);
-        scrollPane2.setPreferredSize(new Dimension(50, 400));
+        scrollPane2.setPreferredSize(new Dimension(50, 200));
         c.weightx = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
+        c.fill = GridBagConstraints.BOTH;
         c.gridx = 1;
         c.gridy = 0;
         
         this.add(scrollPane2, c);
-        
         //this.setLayout(new GridLayout(1,2));
+        
+        
+        JFrame frame = new JFrame();
 
+        //frame.setLayout(new GridLayout(1, 2));
+        
+        frame.add(this);
+        
+        frame.setBounds(100, 100, 550, 500);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);        
+        
         ListSelectionListener listSelectionListener = new ListSelectionListener() {
           public void valueChanged(ListSelectionEvent listSelectionEvent) {
             System.out.print("First index: " + listSelectionEvent.getFirstIndex());
@@ -110,5 +124,13 @@ public class MyTabUISign extends Container{
         };
         jlist.addMouseListener(mouseListener);
     }
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new MyTabUISign();
+            }
+        });
+    }
 }
+
 
