@@ -27,7 +27,7 @@ public class MainUI extends Frame implements WindowListener{
 	
 	
 	//for waiting
-	static JFrame WaitingDlg;
+	static public JFrame WaitingDlg;
 	static MyProgressBarDemo ProgressBarDlg;
 	
 	/**
@@ -78,7 +78,6 @@ public class MainUI extends Frame implements WindowListener{
 				
 				
 				//progress 삭제 
-				WaitingDlg.setVisible(false);
 				
 				initialize();				
 			} catch (Exception e) {

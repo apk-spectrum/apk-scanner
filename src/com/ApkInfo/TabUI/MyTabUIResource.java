@@ -54,6 +54,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.ApkInfo.Core.CoreApkTool;
+import com.ApkInfo.UI.MainUI;
 
 public class MyTabUIResource extends JPanel{
 
@@ -70,7 +71,6 @@ public class MyTabUIResource extends JPanel{
     	nameList = CoreApkTool.findfileforResource(new File(DefaultFilePath));
     	 
     	System.out.println("Resource(*.png) Count : " + nameList.size());
-    	 
     	
         imageMap = createImageMap(nameList);
         
@@ -87,8 +87,9 @@ public class MyTabUIResource extends JPanel{
         photographLabel.setHorizontalAlignment(JLabel.CENTER);
         photographLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        this.setLayout(new GridLayout(1, 2));
+        MainUI.WaitingDlg.setVisible(false);
         
+        this.setLayout(new GridLayout(1, 2));        
         this.add(scroll);
         this.add(photographLabel);
     }
