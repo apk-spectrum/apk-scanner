@@ -19,11 +19,11 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.ApkInfo.UI.MainUI;
 import com.ApkInfo.UI.MyProgressBarDemo;
 
 public class CoreXmlTool {
 	
-	static MyProgressBarDemo progressBarDemo;
 	static String APkworkPath;
 	static MyApkInfo apkInfo;
 	
@@ -31,6 +31,8 @@ public class CoreXmlTool {
 		
 		apkInfo = new MyApkInfo();
 		APkworkPath = new String(workPath);
+		
+		MainUI.ProgressBarDlg.addProgress(5,"Check Yml....\n");
 		
 		YmlToMyApkinfo();
 		
@@ -53,6 +55,9 @@ public class CoreXmlTool {
 		  XPath  xpath = XPathFactory.newInstance().newXPath();
 
 		  
+		  
+		 MainUI.ProgressBarDlg.addProgress(5,"parsing AndroidManifest....\n");
+		  
         // NodeList 가져오기 : row 아래에 있는 모든 col1 을 선택
         Node cols;
 		try {
@@ -74,6 +79,8 @@ public class CoreXmlTool {
 	        	apkInfo.strHidden = "O - HIDDEN";
 	        }
 	
+	        MainUI.ProgressBarDlg.addProgress(5,"parsing permission...\n");
+	        
 	        NodeList colsList = (NodeList)xpath.evaluate("//uses-permission", document, XPathConstants.NODESET);
 	        for( int idx=0; idx<colsList.getLength(); idx++ ){
 	        	apkInfo.strPermissions += (idx==0 ? "":"\n") + colsList.item(idx).getAttributes().getNamedItem("android:name").getTextContent();
@@ -82,6 +89,8 @@ public class CoreXmlTool {
 	        for( int idx=0; idx<colsList.getLength(); idx++ ){
 	        	apkInfo.strPermissions += (apkInfo.strPermissions=="" ? "":"\n") + colsList.item(idx).getAttributes().getNamedItem("android:name").getTextContent();
 	        }
+	        
+	        MainUI.ProgressBarDlg.addProgress(5,"parsing widget...\n");
 	        
 	        NodeList widgetList = (NodeList)xpath.evaluate("//meta-data[@name='android.appwidget.provider']", document, XPathConstants.NODESET);
 	        System.out.println("Normal widgetList cnt = " + widgetList.getLength());
@@ -117,7 +126,6 @@ public class CoreXmlTool {
 
 	        	apkInfo.arrWidgets.add(new Object[] {widgetExtraInfo[0], widgetTitle, widgetExtraInfo[1], widgetActivity, "Normal"});
 	        }
-	        
 	        widgetList = (NodeList)xpath.evaluate("//action[@name='android.intent.action.CREATE_SHORTCUT']", document, XPathConstants.NODESET);
 	        System.out.println("Shortcut widgetList cnt = " + widgetList.getLength());
 	        for( int idx=0; idx<widgetList.getLength(); idx++ ){
@@ -140,7 +148,7 @@ public class CoreXmlTool {
 	        	System.out.println("widget Size = 1 X 1");
 	        	System.out.println("widget Activity = " + widgetActivity);
 	        	System.out.println("widget Type = Shortcut");
-
+	        	
 	        	apkInfo.arrWidgets.add(new Object[] {apkInfo.strIconPath, widgetTitle, "1 X 1", widgetActivity, "Shortcut"});
 	        }
 
@@ -354,10 +362,4 @@ public class CoreXmlTool {
 			e.printStackTrace();
 		}
 	}
-
-	public static void setProgressBarDlg(MyProgressBarDemo progressBarDlg) {
-		// TODO Auto-generated method stub
-		progressBarDemo = progressBarDlg;
-	}	
-	
 }

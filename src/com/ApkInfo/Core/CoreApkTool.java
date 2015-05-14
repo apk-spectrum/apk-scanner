@@ -15,10 +15,10 @@ import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 
+import com.ApkInfo.UI.MainUI;
 import com.ApkInfo.UI.MyProgressBarDemo;
 
 public class CoreApkTool {
-	static MyProgressBarDemo progressBarDemo;
 	static ArrayList<String> tempResource = new ArrayList<String>();
 	static ArrayList<String> tempLib = new ArrayList<String>();
 	
@@ -125,7 +125,7 @@ public class CoreApkTool {
 		    if(showLog) {
 			    while ((s = stdOut.readLine()) != null) {
 			    	if(s.matches("^I:.*"))
-			    		progressBarDemo.addProgress(10,s + "\n");
+			    		MainUI.ProgressBarDlg.addProgress(5,s + "\n");
 			    	System.out.println(s);
 			    	buffer += s;
 			    }
@@ -143,11 +143,6 @@ public class CoreApkTool {
 	    }
 		return null;
 		
-	}
-
-	public static void setProgressBarDlg(MyProgressBarDemo progressBarDlg) {
-		// TODO Auto-generated method stub
-		progressBarDemo = progressBarDlg;
 	}
 	
     public static boolean deleteDirectory(File path) {

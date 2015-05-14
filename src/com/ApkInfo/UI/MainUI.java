@@ -28,7 +28,7 @@ public class MainUI extends Frame implements WindowListener{
 	
 	//for waiting
 	static public JFrame WaitingDlg;
-	static MyProgressBarDemo ProgressBarDlg;
+	static public MyProgressBarDemo ProgressBarDlg;
 	
 	/**
 	 * Launch the application.
@@ -101,9 +101,6 @@ public class MainUI extends Frame implements WindowListener{
 				ProgressBarDlg = new MyProgressBarDemo();
 				
 				WaitingDlg = MyProgressBarDemo.createAndShowGUI();
-				
-				CoreApkTool.setProgressBarDlg(ProgressBarDlg);
-				CoreXmlTool.setProgressBarDlg(ProgressBarDlg);
 				
 				MainUI window = new MainUI();
 			}

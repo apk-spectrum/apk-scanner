@@ -59,13 +59,14 @@ public class MyProgressBarDemo extends JPanel
         progressBar.setValue(0);
         progressBar.setStringPainted(true);
 
-        progressBar.setPreferredSize(new Dimension(500,50));
+        progressBar.setPreferredSize(new Dimension(500,35));
         
         taskOutput = new JTextArea(5, 50);
         taskOutput.setEditable(false);
 
         JPanel panel = new JPanel();
-        ImageIcon icon = new ImageIcon("res/loading.gif");        
+        ImageIcon icon = new ImageIcon("res/loading.gif"); 
+        
         GifLabel = new JLabel(icon);
         
         
