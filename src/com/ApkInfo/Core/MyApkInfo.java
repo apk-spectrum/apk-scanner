@@ -21,6 +21,7 @@ public class MyApkInfo {
 	public ArrayList<String> LibPathList = new ArrayList<String>();
 
 	public ArrayList<Object[]> ActivityList = new ArrayList<Object[]>();
+	public ArrayList<Object[]> CertList = null;
 	
 	public ArrayList<String> ListPermission;
 	
