@@ -63,7 +63,7 @@ public class CoreApkTool {
 		File[] list = f.listFiles();
 		if(list==null) {
 			System.err.println("list null");
-			return null;
+			return tempLib;
 		}
 		for (int i=0; i<list.length; i++) {
 			if (list[i].isDirectory()) {				
