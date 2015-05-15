@@ -120,4 +120,18 @@ public class MyXPath {
 	public int getLength() {
 		return (QType == XPathConstants.NODESET ? ((NodeList)objNode).getLength() : 0);
 	}
+	
+	public MyXPath getParentNode() {
+		Node parent = null;
+		if(getNode() != null)
+			parent = getNode().getParentNode();
+		return new MyXPath(parent);
+	}
+	
+	public MyXPath getParentNode(int idx) {
+		Node parent = null;
+		if(getNodeList() != null && getNodeList().item(idx) != null) 
+			parent = getNodeList().item(idx).getParentNode();
+		return new MyXPath(parent);
+	}
 }

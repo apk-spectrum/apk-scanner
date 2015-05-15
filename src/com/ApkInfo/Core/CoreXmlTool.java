@@ -78,10 +78,10 @@ public class CoreXmlTool {
         	String widgetActivity = "Unknown";
         	Object[] widgetExtraInfo = {apkInfo.strIconPath, "Unknown"};
         	
-        	Node parent = xmlAndroidManifest.getNodeList().item(idx).getParentNode();
-        	if(parent != null) {
-       			widgetTitle = getResourceInfo(new MyXPath(parent).getAttributes("android:label"));
-    			widgetActivity = getResourceInfo(new MyXPath(parent).getAttributes("android:name"));
+        	MyXPath parent = xmlAndroidManifest.getParentNode(idx);
+        	if(parent.getNode() != null) {
+       			widgetTitle = getResourceInfo(parent.getAttributes("android:label"));
+    			widgetActivity = getResourceInfo(parent.getAttributes("android:name"));
 
 	        	if(widgetActivity.matches("^\\..*")) {
 	        		widgetActivity = apkInfo.strPackageName + widgetActivity;
@@ -111,11 +111,10 @@ public class CoreXmlTool {
         	String widgetTitle = apkInfo.strLabelname;
         	String widgetActivity = apkInfo.strPackageName;
 
-        	Node parent = xmlAndroidManifest.getNodeList().item(idx).getParentNode();
-        	if(parent != null) parent = parent.getParentNode();
+        	MyXPath parent = xmlAndroidManifest.getParentNode(idx).getParentNode();
         	
-   			widgetTitle = getResourceInfo(new MyXPath(parent).getAttributes("android:label"));
-   			widgetActivity = getResourceInfo(new MyXPath(parent).getAttributes("android:name"));
+   			widgetTitle = getResourceInfo(parent.getAttributes("android:label"));
+   			widgetActivity = getResourceInfo(parent.getAttributes("android:name"));
         	if(widgetActivity.matches("^\\..*")) {
         		widgetActivity = apkInfo.strPackageName + widgetActivity;
         	}
