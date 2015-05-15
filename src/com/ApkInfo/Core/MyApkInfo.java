@@ -17,8 +17,10 @@ public class MyApkInfo {
 	public String strPermissions;
 	public Long lApkSize;
 	
-	public ArrayList<Object[]> arrWidgets = new ArrayList<Object[]>();
 	
+	public ArrayList<Object[]> arrWidgets = new ArrayList<Object[]>();
+	public ArrayList<String> ImagePathList = new ArrayList<String>();
+	public ArrayList<String> LibPathList = new ArrayList<String>();
 	
 	public ArrayList<String> ListPermission;
 	

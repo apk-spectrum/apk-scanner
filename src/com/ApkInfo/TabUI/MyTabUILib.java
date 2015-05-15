@@ -19,6 +19,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import com.ApkInfo.Core.CoreApkTool;
+import com.ApkInfo.UI.MainUI;
 
 /**
  * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for
@@ -66,7 +67,7 @@ public class MyTabUILib extends JPanel {
 	    ArrayList<String> LibList;  
 		
 	    MyTableModel() {
-		LibList = CoreApkTool.findfileforLib(new File(CoreApkTool.DefaultPath+File.separator+"lib"));
+		LibList = MainUI.GetMyApkInfo().LibPathList;
 
 		data = new ArrayList<Object[]>();
 		if(LibList == null) return;
@@ -81,10 +82,8 @@ public class MyTabUILib extends JPanel {
 				CoreApkTool.getFileLength(size) + " ("+ df.format(size) + " Byte)"
 			};
 			data.add(temp);
-		}		
-		System.out.println("Lib Count : " + data.size());  
+		}
 	  }
-	
     public int getColumnCount() {
       return columnNames.length;
     }

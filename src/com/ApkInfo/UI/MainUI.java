@@ -11,6 +11,7 @@ import java.awt.event.HierarchyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.util.ArrayList;
 
 import com.ApkInfo.Core.*;
 
@@ -35,7 +36,6 @@ public class MainUI extends JFrame implements WindowListener{
 	//for waiting
 	static public JFrame WaitingDlg;
 	static public MyProgressBarDemo ProgressBarDlg;
-	
 	/**
 	 * Launch the application.
 	 */
@@ -82,8 +82,13 @@ public class MainUI extends JFrame implements WindowListener{
 				mApkInfo.lApkSize = apkFile.length();
 				System.out.println("APK size : " + mApkInfo.lApkSize + " byte");
 				
+				//iamge 찾기
+				mApkInfo.ImagePathList = CoreApkTool.findfileforResource(new File(CoreApkTool.DefaultPath + File.separator + "res"));
+				System.out.println("Resource(*.png) Count :  : " + mApkInfo.ImagePathList.size());
 				
-				//progress 삭제 
+				//lib 찾기
+				mApkInfo.LibPathList = CoreApkTool.findfileforLib(new File(CoreApkTool.DefaultPath+File.separator+"lib"));
+				System.out.println("Lib Count : " + mApkInfo.LibPathList.size());
 				
 				initialize();				
 			} catch (Exception e) {
@@ -109,9 +114,6 @@ public class MainUI extends JFrame implements WindowListener{
 				WaitingDlg = MyProgressBarDemo.createAndShowGUI();
 				
 				window = new MainUI();
-				
-				
-				
 			}
 		});
 	}

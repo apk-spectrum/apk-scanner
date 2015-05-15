@@ -64,14 +64,10 @@ public class MyTabUIResource extends JPanel{
     ArrayList<String> nameList;
     JList list;
     
-    public MyTabUIResource(String DefaultFilePath) {
-    	
-    	nameList = new ArrayList<String>();
+    public MyTabUIResource() {
     	 
     	MainUI.ProgressBarDlg.addProgress(25,"check resource(*.png)...\n");
-    	nameList = CoreApkTool.findfileforResource(new File(DefaultFilePath));
-    	 
-    	System.out.println("Resource(*.png) Count : " + nameList.size());
+    	nameList = MainUI.GetMyApkInfo().ImagePathList;
     	
         imageMap = createImageMap(nameList);
         

@@ -43,8 +43,9 @@ public class MyTabUI extends JPanel{
 	        tabbedPane.addTab("Lib", null, panel3, "Lib");
 	        tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 	         
-	        JComponent panel4 = new MyTabUIResource(CoreApkTool.DefaultPath + File.separator + "res");
-	        tabbedPane.addTab("Resource", null, panel4, "Resource");
+	        JComponent panel4 = new MyTabUIResource();
+	        tabbedPane.addTab("Image", null, panel4, "Image");
+	        
 	        tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
 	        JComponent panel5 = new MyTabUIActivity();
@@ -64,7 +65,17 @@ public class MyTabUI extends JPanel{
 	        
 	        //Add the tabbed pane to this panel.
 	        add(tabbedPane);
-	         
+	        
+	        
+	        //widget
+	        tabbedPane.setTitleAt(1,tabbedPane.getTitleAt(1) + "(" + MainUI.GetMyApkInfo().arrWidgets.size() + ")");
+
+		      //Lib
+	        tabbedPane.setTitleAt(2,tabbedPane.getTitleAt(2) + "(" + MainUI.GetMyApkInfo().LibPathList.size()  + ")");
+
+	        //Image
+	        tabbedPane.setTitleAt(3,tabbedPane.getTitleAt(3) + "(" + MainUI.GetMyApkInfo().ImagePathList.size()  + ")");
+	        
 	        //The following line enables to use scrolling tabs.
 	        tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 	    }
