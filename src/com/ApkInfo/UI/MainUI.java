@@ -25,6 +25,7 @@ public class MainUI extends Frame implements WindowListener{
 	
 	static MyCoreThead startCore;
 	
+	static MainUI window;
 	
 	//for waiting
 	static public JFrame WaitingDlg;
@@ -102,7 +103,7 @@ public class MainUI extends Frame implements WindowListener{
 				
 				WaitingDlg = MyProgressBarDemo.createAndShowGUI();
 				
-				MainUI window = new MainUI();
+				window = new MainUI();
 			}
 		});
 	}

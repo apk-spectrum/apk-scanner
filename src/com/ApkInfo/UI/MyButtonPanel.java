@@ -76,9 +76,9 @@ public class MyButtonPanel extends JPanel{
 		btnInstall.addActionListener(new ActionListener() {
 			  public void actionPerformed(ActionEvent e) {
 				    // display/center the jdialog when the button is pressed
-				  System.out.println("click install");
+				  ADBDialog dt = new ADBDialog(MainUI.window);
+				  dt.showPlease();
 				  }
 			});
-		
 	}
 }
