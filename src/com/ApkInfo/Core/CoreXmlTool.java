@@ -81,16 +81,10 @@ public class CoreXmlTool {
         	apkInfo.arrWidgets.add(new Object[] {apkInfo.strIconPath, widgetTitle, "1 X 1", widgetActivity, "Shortcut"});
         }
         
-        // Activity
+        // Activity/Service/Receiver/provider intent-filter
         getActivityInfo(xmlAndroidManifest, "activity");
-
-        // Service
         getActivityInfo(xmlAndroidManifest, "service");
-
-        // Receiver
         getActivityInfo(xmlAndroidManifest, "receiver");
-
-        // provider
         getActivityInfo(xmlAndroidManifest, "provider");
         
         apkInfo.verify();

@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
 import com.ApkInfo.UI.MainUI;
-import com.ApkInfo.UI.MyProgressBarDemo;
 
 public class CoreApkTool {
 	static ArrayList<String> tempResource = new ArrayList<String>();
@@ -36,7 +35,7 @@ public class CoreApkTool {
 		File[] list = f.listFiles();
 		if(list==null) {
 			System.err.println("list null");
-			return tempLib;
+			return null;
 		}
 		for (int i=0; i<list.length; i++) {
 			if (list[i].isDirectory()) {
@@ -108,11 +107,10 @@ public class CoreApkTool {
 		
 	}
 	
-	
 	static String exc(String[] cmd, boolean showLog) {
 		try {
 			String s = "";
-			String e = "";
+			//String e = "";
 			
 			Process oProcess = new ProcessBuilder(cmd).redirectErrorStream(true).start();
 			
