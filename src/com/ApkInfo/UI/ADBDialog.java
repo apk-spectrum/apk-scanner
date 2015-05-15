@@ -32,21 +32,18 @@ class ADBDialog extends Dialog implements ActionListener
 		add(tf2);
 		add(btnInstall);
 		setSize(225,125);
-		this.setLocation(100, 100);
-		
-		
-		
-		
+		this.setLocation(MainUI.nPositionX+100, MainUI.nPositionY+100);
 		
 		}
 	public void actionPerformed(ActionEvent e)
 	{		
 		setVisible(false);
+		
 	}
 	public void showPlease() {
 		setVisible(true);
 		
-		System.out.println(mainui.getLocation().y);
+		
 		
 	}
 }

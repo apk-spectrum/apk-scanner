@@ -73,7 +73,11 @@ public class MarioList extends JPanel{
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setLocationRelativeTo(null);
-        frame.setVisible(true);        
+        frame.setVisible(true);
+        
+        System.out.println(frame.getLocationOnScreen().y);
+        System.out.println(frame.getLocation().y);
+        
     }
 
     public class MarioListRenderer extends DefaultListCellRenderer {

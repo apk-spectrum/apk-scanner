@@ -6,6 +6,8 @@ import java.awt.Frame;
 import javax.swing.JFrame;
 
 import java.awt.BorderLayout;
+import java.awt.event.HierarchyBoundsListener;
+import java.awt.event.HierarchyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
@@ -13,7 +15,7 @@ import java.io.File;
 import com.ApkInfo.Core.*;
 
 
-public class MainUI extends Frame implements WindowListener{
+public class MainUI extends JFrame implements WindowListener{
 
 	private JFrame frame;
 	static MyApkInfo mApkInfo;
@@ -26,6 +28,9 @@ public class MainUI extends Frame implements WindowListener{
 	static MyCoreThead startCore;
 	
 	static MainUI window;
+	
+	//window position
+	static public int nPositionX,nPositionY;
 	
 	//for waiting
 	static public JFrame WaitingDlg;
@@ -104,6 +109,9 @@ public class MainUI extends Frame implements WindowListener{
 				WaitingDlg = MyProgressBarDemo.createAndShowGUI();
 				
 				window = new MainUI();
+				
+				
+				
 			}
 		});
 	}
@@ -136,8 +144,27 @@ public class MainUI extends Frame implements WindowListener{
 		
 		frame.setVisible(true);
 		
-	}
+		nPositionX = frame.getLocationOnScreen().x;
+		nPositionY = frame.getLocationOnScreen().y;
+		
+		frame.getContentPane().addHierarchyBoundsListener(new HierarchyBoundsListener(){
+			@Override
+			public void ancestorMoved(HierarchyEvent e) {
+				// TODO Auto-generated method stub
+				
+				nPositionX = frame.getLocationOnScreen().x;
+				nPositionY = frame.getLocationOnScreen().y;
+			}
 
+			@Override
+			public void ancestorResized(HierarchyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+	}
+	
+	
 	@Override
 	public void windowOpened(WindowEvent e) {
 		// TODO Auto-generated method stub
