@@ -65,7 +65,7 @@ public class MyProgressBarDemo extends JPanel
         taskOutput.setEditable(false);
 
         JPanel panel = new JPanel();
-        ImageIcon icon = new ImageIcon("res/loading.gif"); 
+        ImageIcon icon = new ImageIcon("loading.gif"); 
         
         GifLabel = new JLabel(icon);
         
