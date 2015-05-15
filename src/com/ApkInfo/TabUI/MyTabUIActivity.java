@@ -1,22 +1,33 @@
 package com.ApkInfo.TabUI;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 public class MyTabUIActivity extends JPanel {
 	  private boolean DEBUG = false;
 	  JTextArea textArea;
+	  JPanel IntentPanel;
+	  JLabel IntentLabel;
 	  protected String[] columnToolTips = { null, null,
 	      "The person's favorite sport to participate in",
 	      "The number of years the person has played the sport",
@@ -25,7 +36,7 @@ public class MyTabUIActivity extends JPanel {
 	  public MyTabUIActivity() {
 	    super(new GridLayout(2, 0));
 
-	    JTable table = new JTable(new MyTableModel()) {
+	    final JTable table = new JTable(new MyTableModel()) {
 
 	      //Implement table cell tool tips.
 	      public String getToolTipText(MouseEvent e) {
@@ -74,34 +85,67 @@ public class MyTabUIActivity extends JPanel {
 	      }
 	    };
 
-	    table.setPreferredScrollableViewportSize(new Dimension(500, 70));
-
+	    ListSelectionModel cellSelectionModel = table.getSelectionModel();
+	    
+	cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
+	    public void valueChanged(ListSelectionEvent e) {
+	      String selectedData = null;
+	      if(e.getValueIsAdjusting()) {
+		      System.out.println("Selected: " + table.getSelectedRow());
+		      System.out.println("Selected: " + table.getValueAt(table.getSelectedRow(),table.getSelectedColumn()));
+	      }
+	    }
+	
+	  });
+		
+		setJTableColumnsWidth(table, 500, 4,60,18,18);
 	    //Create the scroll pane and add the table to it.
 	    JScrollPane scrollPane = new JScrollPane(table);
-
+	    
         textArea = new JTextArea();
         textArea.setEditable(false);
         JScrollPane scrollPane2 = new JScrollPane(textArea);
-	    
+        //scrollPane2.setPreferredSize(new Dimension(300, 500));
+        
+        textArea.setText("\nasdassdasd\nasdas\nasdassdasd\na\nasdassdasdsadasd\nasdasdasdasdsadasd\nasdassd\nasdasdasdasdsadasd\nasdasdasdasdsadasd\nasdasdasdasdsadasd\nasdasdasdasdsadasd\nasdasdasdasdsadasd\n");
+        
+        IntentPanel = new JPanel();
+        IntentLabel = new JLabel("Intent filter");
+        
+        IntentPanel.setLayout(new BorderLayout());
+        
+        //IntentLabel.setPreferredSize(new Dimension(300, 100));
+        IntentPanel.add(IntentLabel, BorderLayout.NORTH);
+        IntentPanel.add(scrollPane2, BorderLayout.CENTER);
+        
 	    //Add the scroll pane to this panel.
 	    add(scrollPane);
-	    add(scrollPane2);
+	    add(IntentPanel);
 	  }
 
+	   public void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
+		        double... percentages) {
+		    double total = 0;
+		    for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
+		        total += percentages[i];
+		    }
+		 
+		    for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
+		        TableColumn column = table.getColumnModel().getColumn(i);
+		        column.setPreferredWidth((int)
+		                (tablePreferredWidth * (percentages[i] / total)));
+		    }
+		}
 	  class MyTableModel extends AbstractTableModel {
-	    private String[] columnNames = { "First Name", "Last Name", "Sport",
-	        "# of Years", "Vegetarian" };
+	    private String[] columnNames = { "Index", "Class", "Type",
+	        "Startup" };
 
 	    private Object[][] data = {
-	        { "Mary", "Campione", "Snowboarding", new Integer(5),
-	            new Boolean(false) },
-	        { "Alison", "Huml", "Rowing", new Integer(3), new Boolean(true) },
-	        { "Kathy", "Walrath", "Knitting", new Integer(2),
-	            new Boolean(false) },
-	        { "Sharon", "Zakhour", "Speed reading", new Integer(20),
-	            new Boolean(true) },
-	        { "Philip", "Milne", "Pool", new Integer(10),
-	            new Boolean(false) } };
+	        { "0","Mary", "Campione", "Snowboarding"},
+	        { "1","Alison", "Huml", "Rowing"},
+	        { "2","Kathy", "Walrath", "Knitting"},
+	        { "3","Sharon", "Zakhour", "Speed reading"},
+	        { "4","Philip", "Milne", "Pool"} };
 
 	    public int getColumnCount() {
 	      return columnNames.length;
@@ -160,7 +204,7 @@ public class MyTabUIActivity extends JPanel {
 	        printDebugData();
 	      }
 	    }
-
+	    
 	    private void printDebugData() {
 	      int numRows = getRowCount();
 	      int numCols = getColumnCount();
@@ -176,25 +220,4 @@ public class MyTabUIActivity extends JPanel {
 	    }
 	  }
 
-	  /**
-	   * Create the GUI and show it. For thread safety, this method should be
-	   * invoked from the event-dispatching thread.
-	   */
-	  private static void createAndShowGUI() {
-	    //Make sure we have nice window decorations.
-	    JFrame.setDefaultLookAndFeelDecorated(true);
-
-	    //Create and set up the window.
-	    JFrame frame = new JFrame("TableToolTipsDemo");
-	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-	    //Create and set up the content pane.
-	    JComponent newContentPane = new MyTabUIWidget();
-	    newContentPane.setOpaque(true); //content panes must be opaque
-	    frame.setContentPane(newContentPane);
-
-	    //Display the window.
-	    frame.pack();
-	    frame.setVisible(true);
-	  }  
 	}
