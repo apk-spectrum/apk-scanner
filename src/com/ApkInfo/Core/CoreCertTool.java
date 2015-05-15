@@ -10,17 +10,27 @@ public class CoreCertTool {
 	
 	public static ArrayList<Object[]> CertList = new ArrayList<Object[]>();
 	
-	public static ArrayList<Object[]> solveCert(String CertFilePath) {
+	public static ArrayList<Object[]> solveCert(String CertPath) {
 
-		if(!(new File(CertFilePath)).exists()) {
-			System.out.println("CERT.RSA 파일이 존재 하지 않습니다 :");
+		if(!(new File(CertPath)).exists()) {
+			System.out.println("META-INFO 폴더가 존재 하지 않습니다 :");
 			return CertList;
 		}
+		
+		for (String s : (new File(CertPath)).list()) {
+			if(!s.matches(".*\\.RSA")) continue;
 
-		String[] cmd = {"java","-Dfile.encoding=utf8","sun.security.tools.KeyTool","-printcert","-v","-file", CertFilePath};
-		String[] cmd2 = {"java","-Dfile.encoding=utf8","sun.security.tools.KeyTool","-printcert","-rfc","-file", CertFilePath};
-		exc(cmd);
-		exc(cmd2);
+			File rsaFile = new File(CertPath + s);
+			if(!rsaFile.exists()) continue;
+
+			String[] cmd = {"java","-Dfile.encoding=utf8","sun.security.tools.KeyTool","-printcert","-v","-file", rsaFile.getAbsolutePath()};
+			exc(cmd);
+		}
+
+		//String[] cmd = {"java","-Dfile.encoding=utf8","sun.security.tools.KeyTool","-printcert","-v","-file", CertFilePath};
+		//String[] cmd2 = {"java","-Dfile.encoding=utf8","sun.security.tools.KeyTool","-printcert","-rfc","-file", CertFilePath};
+		//exc(cmd);
+		//exc(cmd2);
 		return CertList;
 	}
 	
@@ -38,7 +48,7 @@ public class CoreCertTool {
 		    while ((s = stdOut.readLine()) != null) {
 	    		if(!certContent.isEmpty() && s.matches("^.*\\[[0-9]*\\]:$")){
 	    			if(cmd[4].equals("-v")) {
-	    				CertList.add(new Object[] { "Certificate[" + (++certCnt) + "]", certContent });
+	    				CertList.add(new Object[] { "Certificate[" + (CertList.size() + 1) + "]", certContent });
 				    	certContent = "";
 	    			} else {
 	    				CertList.get(certCnt++)[1] += "\n\n[RFC output]\n" + certContent;
@@ -50,7 +60,7 @@ public class CoreCertTool {
 		    	buffer += s;
 		    }
 			if(cmd[4].equals("-v")) {
-				CertList.add(new Object[] { "Certificate[" + (++certCnt) + "]", certContent });
+				CertList.add(new Object[] { "Certificate[" + (CertList.size() + 1) + "]", certContent });
 			} else {
 				CertList.get(certCnt++)[1] += "\n\n[RFC]\n" + certContent;
 			}

@@ -89,7 +89,7 @@ public class MainUI extends JFrame implements WindowListener{
 				mApkInfo.LibPathList = CoreApkTool.findfileforLib(new File(CoreApkTool.DefaultPath+File.separator+"lib"));
 				System.out.println("Lib Count : " + mApkInfo.LibPathList.size());
 				
-				mApkInfo.CertList = CoreCertTool.solveCert(FolderDefault + File.separator + "original" + File.separator + "META-INF" + File.separator + "CERT.RSA");
+				mApkInfo.CertList = CoreCertTool.solveCert(FolderDefault + File.separator + "original" + File.separator + "META-INF" + File.separator);
 				
 				initialize();				
 			} catch (Exception e) {
