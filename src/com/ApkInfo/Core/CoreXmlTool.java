@@ -2,25 +2,10 @@ package com.ApkInfo.Core;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
 import com.ApkInfo.UI.MainUI;
-import com.ApkInfo.UI.MyProgressBarDemo;
 
 public class CoreXmlTool {
 	
@@ -33,7 +18,6 @@ public class CoreXmlTool {
 		APkworkPath = new String(workPath);
 		
 		MainUI.ProgressBarDlg.addProgress(5,"Check Yml....\n");
-		
 		YmlToMyApkinfo();
 
 		MainUI.ProgressBarDlg.addProgress(5,"parsing AndroidManifest....\n");
@@ -79,33 +63,16 @@ public class CoreXmlTool {
         	Object[] widgetExtraInfo = {apkInfo.strIconPath, "Unknown"};
         	
         	MyXPath parent = xmlAndroidManifest.getParentNode(idx);
-        	if(parent.getNode() != null) {
-       			widgetTitle = getResourceInfo(parent.getAttributes("android:label"));
-    			if(widgetTitle == null) {
-    				widgetTitle = apkInfo.strLabelname;
-    			}
+   			widgetTitle = getResourceInfo(parent.getAttributes("android:label"));
+   			widgetActivity = getResourceInfo(parent.getAttributes("android:name"));
 
-    			widgetActivity = getResourceInfo(parent.getAttributes("android:name"));
-    			if(widgetActivity == null) {
-    				widgetActivity = "Unknown";
-    			} else if(widgetActivity.matches("^\\..*")) {
-	        		widgetActivity = apkInfo.strPackageName + widgetActivity;
-	        	}
-        	}
-
-    		Object[] extraInfo = getWidgetInfo(xmlAndroidManifest.getAttributes(idx, "android:resource"));
+   			Object[] extraInfo = getWidgetInfo(xmlAndroidManifest.getAttributes(idx, "android:resource"));
         	if(extraInfo != null) {
         		widgetExtraInfo = extraInfo;
-	        	if (widgetExtraInfo[0] == null || widgetExtraInfo[0].equals("Unknown")) {
-	        		widgetExtraInfo[0] = apkInfo.strIconPath;
-	        	}
         	}
         	
-        	System.out.println("widget Icon = " + widgetExtraInfo[0]);
-        	System.out.println("widget Title = " + widgetTitle);
-        	System.out.println("widget Size = " + widgetExtraInfo[1]);
-        	System.out.println("widget Activity = " + widgetActivity);
-        	System.out.println("widget Type = Normal");
+        	//System.out.println("widget Icon = " + widgetExtraInfo[0] + ", Title " + widgetTitle 
+        	//					+ ", Size " + widgetExtraInfo[1] + ", " + widgetActivity + ", Type Normarl");
 
         	apkInfo.arrWidgets.add(new Object[] {widgetExtraInfo[0], widgetTitle, widgetExtraInfo[1], widgetActivity, "Normal"});
         }
@@ -119,33 +86,16 @@ public class CoreXmlTool {
         	MyXPath parent = xmlAndroidManifest.getParentNode(idx).getParentNode();
         	
    			widgetTitle = getResourceInfo(parent.getAttributes("android:label"));
-			if(widgetTitle == null) {
-				widgetTitle = apkInfo.strLabelname;
-			}
-
    			widgetActivity = getResourceInfo(parent.getAttributes("android:name"));
-        	if(widgetActivity.matches("^\\..*")) {
-        		widgetActivity = apkInfo.strPackageName + widgetActivity;
-        	}
 
-        	System.out.println("widget Icon = " + apkInfo.strIconPath);
-        	System.out.println("widget Title = " + widgetTitle);
-        	System.out.println("widget Size = 1 X 1");
-        	System.out.println("widget Activity = " + widgetActivity);
-        	System.out.println("widget Type = Shortcut");
+        	//System.out.println("widget Icon = " + apkInfo.strIconPath + ", Title " + widgetTitle 
+        	//					+ ", Size 1 X 1, " + widgetActivity + ", Type Shortcut");
         	
         	apkInfo.arrWidgets.add(new Object[] {apkInfo.strIconPath, widgetTitle, "1 X 1", widgetActivity, "Shortcut"});
         }
-
-        System.out.println("Package = " + apkInfo.strPackageName);
-        System.out.println("Label = " + apkInfo.strLabelname);
-        System.out.println("VersionName = " + apkInfo.strVersionName);
-        System.out.println("VersionCode = " + apkInfo.strVersionCode);
-        System.out.println("minSdkVersion = " + apkInfo.strMinSDKversion);
-        System.out.println("targetSdkVersion = " + apkInfo.strTargerSDKversion);
-        System.out.println("Hidden = " + apkInfo.strHidden);
-        System.out.println("Hidden = " + apkInfo.strPermissions);
-        System.out.println("Icon = " + apkInfo.strIconPath);
+        
+        apkInfo.verify();
+        apkInfo.dump();
 
 		return apkInfo;
 	}
@@ -155,6 +105,10 @@ public class CoreXmlTool {
 		String result = null;
 		String resXmlPath = new String(APkworkPath + File.separator + "res" + File.separator);
 		String query = "//";
+		String filter = "";
+		String fileName = "";
+		String type = "string";
+		long maxImgSize = 0;
 		
 		if(id == null) return null;
 		if(!id.matches("^@.*")) {
@@ -163,58 +117,47 @@ public class CoreXmlTool {
 			return result;
 		} else if(id.matches("^@drawable/.*")) {
 			System.out.println("@drawable");
-			String imgName = new String(id.substring(10));
-			long maxImgSize = 0;
-			System.out.println(id + "->" +imgName);
 
-			for (String s : (new File(resXmlPath)).list()) {
-				//System.out.println("dir " + s);
-				if(!s.matches("^drawable.*")) continue;
-
-				File imgFile = new File(resXmlPath + s + File.separator + imgName + ".png");
-				if(!imgFile.exists()) continue;
-
-				if(imgFile.length() > maxImgSize) {
-					System.out.println(imgFile.getPath() + ", " + maxImgSize);
-					result = new String(imgFile.getPath());
-					maxImgSize = imgFile.length();
-				}
-			}
-			return result;
+			filter = "^drawable.*";
+			fileName = new String(id.substring(10)) + ".png";
+			type = "image";
 		} else if(id.matches("^@string/.*")) {
 			System.out.println("@stirng");
-
+			
+			filter = "^values.*";
 			query = "//resources/string[@name='"+id.substring(id.indexOf("/")+1)+"']";
-			for (String s : (new File(resXmlPath)).list()) {
-				if(!s.matches("^values.*")) continue;
-
-				File dimensFile = new File(resXmlPath + s + File.separator + "strings.xml");
-				if(!dimensFile.exists()) continue;
-				
-		        result = new MyXPath(dimensFile.getAbsolutePath()).getNode(query).getTextContent();
-		        if(result != null) break;; 
-			}
-	        System.out.println(">> " + result);
-			return result;
+			fileName = "strings.xml";
 		} else if(id.matches("^@dimen/.*")) {
 			System.out.println("string@dimen");
 
+			filter = "^values.*";
 			query = "//resources/dimen[@name='"+id.substring(id.indexOf("/")+1)+"']";
-			for (String s : (new File(resXmlPath)).list()) {
-				if(!s.matches("^values.*")) continue;
-
-				File dimensFile = new File(resXmlPath + s + File.separator + "dimens.xml");
-				if(!dimensFile.exists()) continue;
-				
-		        result = new MyXPath(dimensFile.getAbsolutePath()).getNode(query).getTextContent();
-		        if(result != null) break;; 
-			}
-	        System.out.println(">> " + result);
-			return result;
+			fileName = "dimens.xml";
 		} else {
 			System.out.println("Unknown id " + id);
 			return new String(id);
 		}
+		
+		for (String s : (new File(resXmlPath)).list()) {
+			if(!s.matches(filter)) continue;
+
+			File resFile = new File(resXmlPath + s + File.separator + fileName);
+			if(!resFile.exists()) continue;
+
+	        System.out.println(" - " + resFile.getAbsolutePath() + ", " + type);
+			if(type.equals("image")) {
+				if(resFile.length() > maxImgSize) {
+					System.out.println(resFile.getPath() + ", " + maxImgSize);
+					result = new String(resFile.getPath());
+					maxImgSize = resFile.length();
+				}
+			} else {
+		        result = new MyXPath(resFile.getAbsolutePath()).getNode(query).getTextContent();
+		        if(result != null) break;;
+			}
+		}
+        System.out.println(">> " + result);
+		return result;
 
 	}
 	
