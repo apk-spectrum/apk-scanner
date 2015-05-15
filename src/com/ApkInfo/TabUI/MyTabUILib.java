@@ -73,7 +73,7 @@ public class MyTabUILib extends JPanel {
 		if(LibList == null) return;
 		
 		DecimalFormat df = new DecimalFormat("#,##0");
-		String separator = File.separator + (File.separator.equals("\\") ? File.separator : "");		
+		String separator = File.separator + (File.separator.equals("\\") ? File.separator : "");
 		for(int i=0; i< LibList.size(); i++) {
 			long size = (new File(LibList.get(i))).length();
 			Object[] temp = { 
