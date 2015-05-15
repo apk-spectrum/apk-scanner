@@ -44,13 +44,13 @@ public class CoreXmlTool {
         MainUI.ProgressBarDlg.addProgress(5,"parsing permission...\n");
         xmlAndroidManifest.getNodeList("//uses-permission");
         for( int idx=0; idx < xmlAndroidManifest.getLength(); idx++ ){
-        	apkInfo.strPermissions += (idx==0 ? "":"\n");
-        	apkInfo.strPermissions += xmlAndroidManifest.getAttributes(idx, "android:name");
+        	if(idx==0) apkInfo.strPermissions = "<uses-permission> [" + xmlAndroidManifest.getLength() + "]";
+        	apkInfo.strPermissions += "\n" + xmlAndroidManifest.getAttributes(idx, "android:name");
         }
         xmlAndroidManifest.getNodeList("//permission");
         for( int idx=0; idx < xmlAndroidManifest.getLength(); idx++ ){
-        	apkInfo.strPermissions += (apkInfo.strPermissions=="" ? "":"\n");
-        	apkInfo.strPermissions += xmlAndroidManifest.getAttributes(idx, "android:name");
+        	if(idx==0) apkInfo.strPermissions += "\n\n<permission> [" + xmlAndroidManifest.getLength() + "]";
+        	apkInfo.strPermissions += "\n" + xmlAndroidManifest.getAttributes(idx, "android:name");
         }
 
         // widget
@@ -58,39 +58,26 @@ public class CoreXmlTool {
         xmlAndroidManifest.getNodeList("//meta-data[@name='android.appwidget.provider']");
         System.out.println("Normal widgetList cnt = " + xmlAndroidManifest.getLength());
         for( int idx=0; idx < xmlAndroidManifest.getLength(); idx++ ){
-        	String widgetTitle = apkInfo.strLabelname;
-        	String widgetActivity = "Unknown";
         	Object[] widgetExtraInfo = {apkInfo.strIconPath, "Unknown"};
         	
         	MyXPath parent = xmlAndroidManifest.getParentNode(idx);
-   			widgetTitle = getResourceInfo(parent.getAttributes("android:label"));
-   			widgetActivity = getResourceInfo(parent.getAttributes("android:name"));
-
+        	String widgetTitle = getResourceInfo(parent.getAttributes("android:label"));
+        	String widgetActivity = getResourceInfo(parent.getAttributes("android:name"));
    			Object[] extraInfo = getWidgetInfo(xmlAndroidManifest.getAttributes(idx, "android:resource"));
         	if(extraInfo != null) {
         		widgetExtraInfo = extraInfo;
         	}
         	
-        	//System.out.println("widget Icon = " + widgetExtraInfo[0] + ", Title " + widgetTitle 
-        	//					+ ", Size " + widgetExtraInfo[1] + ", " + widgetActivity + ", Type Normarl");
-
         	apkInfo.arrWidgets.add(new Object[] {widgetExtraInfo[0], widgetTitle, widgetExtraInfo[1], widgetActivity, "Normal"});
         }
         
         xmlAndroidManifest.getNodeList("//action[@name='android.intent.action.CREATE_SHORTCUT']");
         System.out.println("Shortcut widgetList cnt = " + xmlAndroidManifest.getLength());
         for( int idx=0; idx < xmlAndroidManifest.getLength(); idx++ ){
-        	String widgetTitle = apkInfo.strLabelname;
-        	String widgetActivity = apkInfo.strPackageName;
-
         	MyXPath parent = xmlAndroidManifest.getParentNode(idx).getParentNode();
-        	
-   			widgetTitle = getResourceInfo(parent.getAttributes("android:label"));
-   			widgetActivity = getResourceInfo(parent.getAttributes("android:name"));
+        	String widgetTitle = getResourceInfo(parent.getAttributes("android:label"));
+        	String widgetActivity = getResourceInfo(parent.getAttributes("android:name"));
 
-        	//System.out.println("widget Icon = " + apkInfo.strIconPath + ", Title " + widgetTitle 
-        	//					+ ", Size 1 X 1, " + widgetActivity + ", Type Shortcut");
-        	
         	apkInfo.arrWidgets.add(new Object[] {apkInfo.strIconPath, widgetTitle, "1 X 1", widgetActivity, "Shortcut"});
         }
         
@@ -101,7 +88,9 @@ public class CoreXmlTool {
 	}
 	
 	private static String getResourceInfo(String id) {
-		
+
+		if(id == null) return null;
+
 		String result = null;
 		String resXmlPath = new String(APkworkPath + File.separator + "res" + File.separator);
 		String query = "//";
@@ -110,7 +99,6 @@ public class CoreXmlTool {
 		String type = "string";
 		long maxImgSize = 0;
 		
-		if(id == null) return null;
 		if(!id.matches("^@.*")) {
 			//System.out.println("id is start without @");
 			result = new String(id);
@@ -144,7 +132,7 @@ public class CoreXmlTool {
 			File resFile = new File(resXmlPath + s + File.separator + fileName);
 			if(!resFile.exists()) continue;
 
-	        System.out.println(" - " + resFile.getAbsolutePath() + ", " + type);
+	        //System.out.println(" - " + resFile.getAbsolutePath() + ", " + type);
 			if(type.equals("image")) {
 				if(resFile.length() > maxImgSize) {
 					System.out.println(resFile.getPath() + ", " + maxImgSize);
