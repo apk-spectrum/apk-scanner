@@ -90,11 +90,6 @@ public class MainUI extends JFrame implements WindowListener{
 				System.out.println("Lib Count : " + mApkInfo.LibPathList.size());
 				
 				mApkInfo.CertList = CoreCertTool.solveCert(FolderDefault + File.separator + "original" + File.separator + "META-INF" + File.separator + "CERT.RSA");
-				for(int i = 0; i < mApkInfo.CertList.size(); i++){
-					Object[] tmp = mApkInfo.CertList.get(i);
-					System.out.println("cert : " + tmp[0]);
-					System.out.println("cert content : " + tmp[1]);
-				}
 				
 				initialize();				
 			} catch (Exception e) {

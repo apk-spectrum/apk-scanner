@@ -21,6 +21,8 @@ import javax.swing.JTextPane;
 
 
 
+
+
 /**
  * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for
  * both cells and column headers.
@@ -30,6 +32,7 @@ import java.awt.Container;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -37,15 +40,26 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.ApkInfo.UI.MainUI;
+
 public class MyTabUISign extends JPanel{
 	JTextArea textArea;
 	
+	ArrayList<Object[]> mCertList;
+	
     public MyTabUISign() {
-        String labels[] = { "Asadasd", "B22222", "C3333", "D44444", "E123123", "F234324", "G234234", "H234", "234I", "23423J" };
+    	
+    	mCertList = MainUI.GetMyApkInfo().CertList;
+    	
+        String[] labels = new String[mCertList.size()];
         //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-
-        JList jlist = new JList(labels);
+        
+        for(int i=0; i< labels.length; i++) {
+        	labels[i] = (String)mCertList.get(i)[0];        	
+        }
+        
+        final JList jlist = new JList(labels);
         
         GridBagConstraints c = new GridBagConstraints();
         this.setLayout(new GridBagLayout());
@@ -60,7 +74,7 @@ public class MyTabUISign extends JPanel{
         this.add(scrollPane1, c);        
         textArea = new JTextArea();
         textArea.setEditable(false);
-        JScrollPane scrollPane2 = new JScrollPane(textArea);
+        final JScrollPane scrollPane2 = new JScrollPane(textArea);
         scrollPane2.setPreferredSize(new Dimension(50, 400));
         c.weightx = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -73,24 +87,8 @@ public class MyTabUISign extends JPanel{
 
         ListSelectionListener listSelectionListener = new ListSelectionListener() {
           public void valueChanged(ListSelectionEvent listSelectionEvent) {
-            System.out.print("First index: " + listSelectionEvent.getFirstIndex());
-            System.out.print(", Last index: " + listSelectionEvent.getLastIndex());
-            boolean adjust = listSelectionEvent.getValueIsAdjusting();
-            System.out.println(", Adjusting? " + adjust);
-            if (!adjust) {
-              JList list = (JList) listSelectionEvent.getSource();
-              int selections[] = list.getSelectedIndices();
-              Object selectionValues[] = list.getSelectedValues();
-              for (int i = 0, n = selections.length; i < n; i++) {
-                if (i == 0) {
-                  System.out.print("  Selections: ");
-                }
-                System.out.print(selections[i] + "/" + selectionValues[i] + " ");
-                textArea.append(selectionValues[i].toString()+"\n");
-                
-              }
-              System.out.println();
-            }
+        	          	  
+              textArea.setText((String)mCertList.get(jlist.getSelectedIndex())[1]);                
           }
         };
         jlist.addListSelectionListener(listSelectionListener);
