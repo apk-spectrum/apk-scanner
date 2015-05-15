@@ -62,16 +62,23 @@ public class MyTabUIResource extends JPanel{
     
     private JLabel photographLabel;
     ArrayList<String> nameList;
+    ArrayList<String> ShownameList;
+    
     JList list;
     
     public MyTabUIResource() {
     	 
     	MainUI.ProgressBarDlg.addProgress(25,"check resource(*.png)...\n");
     	nameList = MainUI.GetMyApkInfo().ImagePathList;
+    	ShownameList = new ArrayList<String>();
     	
+    	for(int i=0; i < nameList.size(); i++) {
+    		ShownameList.add(nameList.get(i).substring(CoreApkTool.DefaultPath.length()));
+    		
+    	}
         imageMap = createImageMap(nameList);
         
-        list = new JList(nameList.toArray());
+        list = new JList(ShownameList.toArray());
         list.setCellRenderer(new MarioListRenderer());
         list.addListSelectionListener(new JListHandler());
         
@@ -90,7 +97,7 @@ public class MyTabUIResource extends JPanel{
         this.add(scroll);
         this.add(photographLabel);
     }
-
+    
     public class MarioListRenderer extends DefaultListCellRenderer {
 
         //Font font = new Font("helvitica", Font.BOLD, 10);
@@ -102,7 +109,8 @@ public class MyTabUIResource extends JPanel{
 
             JLabel label = (JLabel) super.getListCellRendererComponent(
                     list, value, index, isSelected, cellHasFocus);
-            label.setIcon(imageMap.get((String) value));
+            
+            label.setIcon(imageMap.get(CoreApkTool.DefaultPath+(String)value));
             label.setHorizontalTextPosition(JLabel.RIGHT);
             //label.setFont(font);            
             return label;
