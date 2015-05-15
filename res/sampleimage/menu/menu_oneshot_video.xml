@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@id/option_menu_setting_item_effect" android:title="@string/menu_item_effect" />
-    <item android:id="@id/option_menu_brightness" android:title="@string/menu_item_brightness" />
-    <item android:id="@id/option_menu_contents_info" android:title="@string/menu_item_cont_info" />
-    <item android:id="@id/option_menu_exit_app" android:title="@string/menu_item_exit" />
-    <item android:icon="@drawable/miracast_btn_off" android:id="@id/option_menu_miracast_settings" android:title="@string/menu_item_miracast_settings" android:showAsAction="ifRoom" android:actionViewClass="android.widget.ImageView" />
-</menu>

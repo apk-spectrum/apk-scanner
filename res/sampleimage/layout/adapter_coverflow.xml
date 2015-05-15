@@ -1,3 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<com.nttdocomo.android.mediaplayer.view.coverflow.CoverFlowImageView android:gravity="center" android:layout_gravity="center" android:id="@id/thumbnail" android:src="@drawable/icon" android:scaleType="fitCenter" android:adjustViewBounds="true" style="@style/fill"
-  xmlns:android="http://schemas.android.com/apk/res/android" />

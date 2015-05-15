@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<level-list
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/auxiliary_button_shuffle_norm_sub" android:maxLevel="0" />
-    <item android:drawable="@drawable/auxiliary_button_shuffle_push_sub" android:maxLevel="1" />
-    <item android:drawable="@drawable/auxiliary_button_shuffle_disable" android:maxLevel="255" />
-</level-list>

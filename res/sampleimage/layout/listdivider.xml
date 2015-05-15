@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@id/divider_layout" android:background="@drawable/divider" android:paddingLeft="10.0dip" android:visibility="gone" android:clickable="false" android:layout_height="31.0dip" style="@style/fill_width_vertical"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <TextView android:textSize="18.0dip" android:textStyle="bold" android:textColor="@color/font_black" android:ellipsize="end" android:id="@id/listView_initial" android:paddingTop="3.0dip" android:clickable="false" android:text="-----" android:singleLine="true" style="@style/fill_width" />
-</LinearLayout>

@@ -87,7 +87,7 @@ public class MyTabUISign extends JPanel{
 
         ListSelectionListener listSelectionListener = new ListSelectionListener() {
           public void valueChanged(ListSelectionEvent listSelectionEvent) {
-        	          	  
+        	    
               textArea.setText((String)mCertList.get(jlist.getSelectedIndex())[1]);                
           }
         };

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:gravity="center_vertical" android:id="@id/edit_menu_add_media" android:background="@drawable/list_selector_odd" android:focusable="false" android:layout_height="60.0dip" style="@style/fill_width"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <ImageView android:id="@id/added_icon" android:background="@drawable/selector_playlist_added_icon" android:duplicateParentState="true" android:layout_marginLeft="6.5dip" android:layout_marginRight="6.5dip" android:layout_alignParentLeft="true" android:layout_centerVertical="true" style="@style/wrap" />
-    <TextView android:textSize="16.0dip" android:textStyle="bold" android:textColor="@color/font_black" android:ellipsize="end" android:id="@id/title" android:layout_marginRight="6.5dip" android:text="@string/playlist_add_all_contents" android:singleLine="true" android:layout_toRightOf="@id/added_icon" android:layout_alignParentRight="true" android:layout_centerVertical="true" style="@style/fill_width" />
-</RelativeLayout>

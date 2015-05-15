@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="horizontal" android:id="@id/titlebar" style="@style/titlebar"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <ImageView android:layout_width="40.0dip" android:layout_height="36.0dip" android:src="@drawable/titlebar_icon" />
-    <TextView android:textStyle="bold" android:id="@id/titlebar" android:text="@string/app_title" style="@style/wrap_text" />
-</LinearLayout>

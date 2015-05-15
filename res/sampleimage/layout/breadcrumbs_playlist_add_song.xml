@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:gravity="center_vertical" android:id="@id/divider_layout" android:background="@drawable/divider" android:paddingLeft="10.0dip" android:paddingRight="6.5dip" style="@style/fill_width_vertical"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <TextView android:textSize="16.0dip" android:textStyle="bold" android:textColor="@color/font_black" android:ellipsize="end" android:id="@id/breadcrumbs" android:singleLine="true" style="@style/fill_width" />
-</LinearLayout>

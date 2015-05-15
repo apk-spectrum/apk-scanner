@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@layout/search_title_list" android:layout_width="fill_parent" android:layout_height="wrap_content"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <RelativeLayout android:id="@id/layout1" android:layout_width="fill_parent" android:layout_height="60.0dip">
-        <ImageView android:id="@id/imageView1" android:layout_width="60.0dip" android:layout_height="60.0dip" android:layout_alignParentTop="true" android:layout_alignParentBottom="true" />
-        <TextView android:textSize="16.0dip" android:gravity="center_vertical" android:id="@id/text_search_title_name" android:layout_width="wrap_content" android:layout_height="30.0dip" android:layout_toRightOf="@id/imageView1" android:layout_alignParentTop="true" android:layout_alignParentRight="true" style="@style/wrap_text" />
-        <TextView android:textSize="16.0dip" android:gravity="center_vertical" android:id="@id/text_search_artist_name" android:layout_width="wrap_content" android:layout_height="30.0dip" android:layout_toRightOf="@id/imageView1" android:layout_below="@id/text_voiceagent" android:layout_alignParentRight="true" android:layout_alignParentBottom="true" style="@style/wrap_text" />
-    </RelativeLayout>
-</LinearLayout>

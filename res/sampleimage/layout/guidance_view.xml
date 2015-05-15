@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:id="@id/guidanceview" style="@style/fill_vertical"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <WebView android:id="@id/webview" android:nextFocusLeft="@id/webview" android:nextFocusRight="@id/webview" android:nextFocusUp="@id/webview" android:nextFocusDown="@id/webview" style="@style/fill" />
-    <FrameLayout android:id="@id/playview" android:visibility="gone" style="@style/equal_width_vertical" />
-</RelativeLayout>

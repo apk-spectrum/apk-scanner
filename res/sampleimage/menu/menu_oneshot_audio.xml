@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@id/option_menu_setting_item_effect" android:title="@string/menu_item_effect" />
-    <item android:id="@id/option_menu_contents_info" android:title="@string/menu_item_cont_info" />
-    <item android:id="@id/option_menu_exit_app" android:title="@string/menu_item_exit" />
-</menu>
