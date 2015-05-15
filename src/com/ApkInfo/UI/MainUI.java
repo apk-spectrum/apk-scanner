@@ -67,7 +67,7 @@ public class MainUI extends JFrame implements WindowListener{
 				FolderDefault = System.getProperty("java.io.tmpdir") 
 						+ File.separator + "ApkInfo" + File.separator 
 						+ apkFilePath.substring(apkFilePath.indexOf(File.separator),apkFilePath.lastIndexOf("."));
-				FolderDefault = FolderDefault.replaceAll(File.separator+File.separator+File.separator+File.separator, File.separator+File.separator);
+				FolderDefault = FolderDefault.replaceAll(File.separator+File.separator, File.separator);
 				//}
 				
 				System.out.println("DefaultFolderName : " +FolderDefault);
