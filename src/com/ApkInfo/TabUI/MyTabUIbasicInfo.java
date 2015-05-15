@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.text.DecimalFormat;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
@@ -80,6 +81,7 @@ public class MyTabUIbasicInfo extends JComponent{
         c.gridx = 0;
         c.gridy = 0;
         
+        panel.setBorder(BorderFactory.createEmptyBorder(0 , 30 , 0 , 0));        
         panel.add(imagepanel, c);
         c.weightx = 0.5;
         c.gridx = 1;

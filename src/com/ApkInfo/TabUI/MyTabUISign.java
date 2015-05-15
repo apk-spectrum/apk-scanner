@@ -57,7 +57,6 @@ public class MyTabUISign extends JPanel{
         c.gridx = 0;
         c.gridy = 0;
         
-        
         this.add(scrollPane1, c);        
         textArea = new JTextArea();
         textArea.setEditable(false);
