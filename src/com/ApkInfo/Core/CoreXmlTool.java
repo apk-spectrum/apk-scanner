@@ -81,9 +81,14 @@ public class CoreXmlTool {
         	MyXPath parent = xmlAndroidManifest.getParentNode(idx);
         	if(parent.getNode() != null) {
        			widgetTitle = getResourceInfo(parent.getAttributes("android:label"));
-    			widgetActivity = getResourceInfo(parent.getAttributes("android:name"));
+    			if(widgetTitle == null) {
+    				widgetTitle = apkInfo.strLabelname;
+    			}
 
-	        	if(widgetActivity.matches("^\\..*")) {
+    			widgetActivity = getResourceInfo(parent.getAttributes("android:name"));
+    			if(widgetActivity == null) {
+    				widgetActivity = "Unknown";
+    			} else if(widgetActivity.matches("^\\..*")) {
 	        		widgetActivity = apkInfo.strPackageName + widgetActivity;
 	        	}
         	}
@@ -114,6 +119,10 @@ public class CoreXmlTool {
         	MyXPath parent = xmlAndroidManifest.getParentNode(idx).getParentNode();
         	
    			widgetTitle = getResourceInfo(parent.getAttributes("android:label"));
+			if(widgetTitle == null) {
+				widgetTitle = apkInfo.strLabelname;
+			}
+
    			widgetActivity = getResourceInfo(parent.getAttributes("android:name"));
         	if(widgetActivity.matches("^\\..*")) {
         		widgetActivity = apkInfo.strPackageName + widgetActivity;
@@ -242,8 +251,9 @@ public class CoreXmlTool {
 				String Height = xpath.getAttributes("android:minHeight");
 				width = getResourceInfo(width).replaceAll("^([0-9]*).*", "$1");
 				Height = getResourceInfo(Height).replaceAll("^([0-9]*).*", "$1");
-				Size = (int)Math.ceil(Float.parseFloat(width) / 75) + " X " + (int)Math.ceil(Float.parseFloat(Height) / 75);
-		    	System.out.println("Size " + Size);
+				//Size = ((Integer.parseInt(width) - 40) / 70 + 1) + " X " + ((Integer.parseInt(Height) - 40) / 70 + 1);
+				Size = (int)Math.ceil((Float.parseFloat(width) - 40) / 76 + 1) + " X " + (int)Math.ceil((Float.parseFloat(Height) - 40) / 76 + 1);
+		    	System.out.println("Size " + Size + ", width " + width + ", height " + Height);
 			}
 
 			if(IconPath.equals("Unknown") && xpath.getAttributes("android:previewImage") != null) {
