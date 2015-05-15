@@ -37,7 +37,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-public class MyTabUISign extends Container{
+public class MyTabUISign extends JPanel{
 	JTextArea textArea;
 	
     public MyTabUISign() {

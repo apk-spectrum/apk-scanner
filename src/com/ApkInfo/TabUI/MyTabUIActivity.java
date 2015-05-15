@@ -1,196 +1,97 @@
 package com.ApkInfo.TabUI;
 
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
 
-import com.ApkInfo.TabUI.MyTabUIActivity.MyTableModel;
-
 public class MyTabUIActivity extends JPanel {
-	  private boolean DEBUG = false;
+	JTextArea textArea;
+	
+    public MyTabUIActivity() {
+        String labels[] = { "Asadasd", "B22222", "C3333", "D44444", "E123123", "F234324", "G234234", "H234", "234I", "23423J" };
+        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
 
-	  protected String[] columnToolTips = { null, null,
-	      "The person's favorite sport to participate in",
-	      "The number of years the person has played the sport",
-	      "If checked, the person eats no meat" };
+        JList jlist = new JList(labels);
+        
+        GridBagConstraints c = new GridBagConstraints();
+        this.setLayout(new GridBagLayout());
+        JScrollPane scrollPane1 = new JScrollPane(jlist);
+        scrollPane1.setPreferredSize(new Dimension(50, 400));
+        
+        c.weightx = 0.1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        
+        
+        this.add(scrollPane1, c);        
+        textArea = new JTextArea();
+        textArea.setEditable(false);
+        JScrollPane scrollPane2 = new JScrollPane(textArea);
+        scrollPane2.setPreferredSize(new Dimension(50, 400));
+        c.weightx = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 0;
+        
+        this.add(scrollPane2, c);
+        
+        //this.setLayout(new GridLayout(1,2));
 
-	  public MyTabUIActivity() {
-	    super(new GridLayout(1, 0));
+        ListSelectionListener listSelectionListener = new ListSelectionListener() {
+          public void valueChanged(ListSelectionEvent listSelectionEvent) {
+            System.out.print("First index: " + listSelectionEvent.getFirstIndex());
+            System.out.print(", Last index: " + listSelectionEvent.getLastIndex());
+            boolean adjust = listSelectionEvent.getValueIsAdjusting();
+            System.out.println(", Adjusting? " + adjust);
+            if (!adjust) {
+              JList list = (JList) listSelectionEvent.getSource();
+              int selections[] = list.getSelectedIndices();
+              Object selectionValues[] = list.getSelectedValues();
+              for (int i = 0, n = selections.length; i < n; i++) {
+                if (i == 0) {
+                  System.out.print("  Selections: ");
+                }
+                System.out.print(selections[i] + "/" + selectionValues[i] + " ");
+                textArea.append(selectionValues[i].toString()+"\n");
+                
+              }
+              System.out.println();
+            }
+          }
+        };
+        jlist.addListSelectionListener(listSelectionListener);
 
-	    JTable table = new JTable(new MyTableModel()) {
-
-	      //Implement table cell tool tips.
-	      public String getToolTipText(MouseEvent e) {
-	        String tip = null;
-	        java.awt.Point p = e.getPoint();
-	        int rowIndex = rowAtPoint(p);
-	        int colIndex = columnAtPoint(p);
-	        int realColumnIndex = convertColumnIndexToModel(colIndex);
-
-	        if (realColumnIndex == 2) { //Sport column
-	          tip = "This person's favorite sport to "
-	              + "participate in is: "
-	              + getValueAt(rowIndex, colIndex);
-	        } else if (realColumnIndex == 4) { //Veggie column
-	          TableModel model = getModel();
-	          String firstName = (String) model.getValueAt(rowIndex, 0);
-	          String lastName = (String) model.getValueAt(rowIndex, 1);
-	          Boolean veggie = (Boolean) model.getValueAt(rowIndex, 4);
-	          if (Boolean.TRUE.equals(veggie)) {
-	            tip = firstName + " " + lastName + " is a vegetarian";
-	          } else {
-	            tip = firstName + " " + lastName
-	                + " is not a vegetarian";
-	          }
-	        } else {
-	          //You can omit this part if you know you don't
-	          //have any renderers that supply their own tool
-	          //tips.
-	          tip = super.getToolTipText(e);
-	        }
-	        return tip;
-	      }
-
-	      //Implement table header tool tips.
-	      protected JTableHeader createDefaultTableHeader() {
-	        return new JTableHeader(columnModel) {
-	          public String getToolTipText(MouseEvent e) {
-	            String tip = null;
-	            java.awt.Point p = e.getPoint();
-	            int index = columnModel.getColumnIndexAtX(p.x);
-	            int realIndex = columnModel.getColumn(index)
-	                .getModelIndex();
-	            return columnToolTips[realIndex];
-	          }
-	        };
-	      }
-	    };
-
-	    table.setPreferredScrollableViewportSize(new Dimension(500, 70));
-
-	    //Create the scroll pane and add the table to it.
-	    JScrollPane scrollPane = new JScrollPane(table);
-
-	    //Add the scroll pane to this panel.
-	    add(scrollPane);
-	  }
-
-	  class MyTableModel extends AbstractTableModel {
-	    private String[] columnNames = { "First Name", "Last Name", "Sport",
-	        "# of Years", "Vegetarian" };
-
-	    private Object[][] data = {
-	        { "Mary", "Campione", "Snowboarding", new Integer(5),
-	            new Boolean(false) },
-	        { "Alison", "Huml", "Rowing", new Integer(3), new Boolean(true) },
-	        { "Kathy", "Walrath", "Knitting", new Integer(2),
-	            new Boolean(false) },
-	        { "Sharon", "Zakhour", "Speed reading", new Integer(20),
-	            new Boolean(true) },
-	        { "Philip", "Milne", "Pool", new Integer(10),
-	            new Boolean(false) } };
-
-	    public int getColumnCount() {
-	      return columnNames.length;
-	    }
-
-	    public int getRowCount() {
-	      return data.length;
-	    }
-
-	    public String getColumnName(int col) {
-	      return columnNames[col];
-	    }
-
-	    public Object getValueAt(int row, int col) {
-	      return data[row][col];
-	    }
-
-	    /*
-	     * JTable uses this method to determine the default renderer/ editor for
-	     * each cell. If we didn't implement this method, then the last column
-	     * would contain text ("true"/"false"), rather than a check box.
-	     */
-	    public Class getColumnClass(int c) {
-	      return getValueAt(0, c).getClass();
-	    }
-
-	    /*
-	     * Don't need to implement this method unless your table's editable.
-	     */
-	    public boolean isCellEditable(int row, int col) {
-	      //Note that the data/cell address is constant,
-	      //no matter where the cell appears onscreen.
-	      if (col < 2) {
-	        return false;
-	      } else {
-	        return true;
-	      }
-	    }
-
-	    /*
-	     * Don't need to implement this method unless your table's data can
-	     * change.
-	     */
-	    public void setValueAt(Object value, int row, int col) {
-	      if (DEBUG) {
-	        System.out.println("Setting value at " + row + "," + col
-	            + " to " + value + " (an instance of "
-	            + value.getClass() + ")");
-	      }
-
-	      data[row][col] = value;
-	      fireTableCellUpdated(row, col);
-
-	      if (DEBUG) {
-	        System.out.println("New value of data:");
-	        printDebugData();
-	      }
-	    }
-
-	    private void printDebugData() {
-	      int numRows = getRowCount();
-	      int numCols = getColumnCount();
-
-	      for (int i = 0; i < numRows; i++) {
-	        System.out.print("    row " + i + ":");
-	        for (int j = 0; j < numCols; j++) {
-	          System.out.print("  " + data[i][j]);
-	        }
-	        System.out.println();
-	      }
-	      System.out.println("--------------------------");
-	    }
-	  }
-
-	  /**
-	   * Create the GUI and show it. For thread safety, this method should be
-	   * invoked from the event-dispatching thread.
-	   */
-	  private static void createAndShowGUI() {
-	    //Make sure we have nice window decorations.
-	    JFrame.setDefaultLookAndFeelDecorated(true);
-
-	    //Create and set up the window.
-	    JFrame frame = new JFrame("TableToolTipsDemo");
-	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-	    //Create and set up the content pane.
-	    JComponent newContentPane = new MyTabUIWidget();
-	    newContentPane.setOpaque(true); //content panes must be opaque
-	    frame.setContentPane(newContentPane);
-
-	    //Display the window.
-	    frame.pack();
-	    frame.setVisible(true);
-	  }  
+        MouseListener mouseListener = new MouseAdapter() {
+          public void mouseClicked(MouseEvent mouseEvent) {
+            JList theList = (JList) mouseEvent.getSource();
+            if (mouseEvent.getClickCount() == 2) {
+              int index = theList.locationToIndex(mouseEvent.getPoint());
+              if (index >= 0) {
+                Object o = theList.getModel().getElementAt(index);
+                System.out.println("Double-clicked on: " + o.toString());
+              }
+            }
+          }
+        };
+        jlist.addMouseListener(mouseListener);
+    }
 	}
