@@ -23,6 +23,13 @@ public class MyXPath {
 	private Object objNode = null;
 	private QName QType = null;
 	
+	public MyXPath(MyXPath clone) {
+		document = clone.document;
+		xpath = clone.xpath;
+		objNode = clone.objNode;
+		QType = clone.QType;
+	}
+	
 	public MyXPath(String xmlPath) {
 		try {
 			InputSource is = new InputSource(new FileReader(xmlPath));
@@ -53,7 +60,7 @@ public class MyXPath {
 	public Object evaluate(String expression, QName returnType) {
 		if(xpath == null) return null;
 
-    	System.out.println("evaluate() " + expression + ", " + document + ", " + returnType);
+    	//System.out.println("evaluate() " + expression + ", " + document + ", " + returnType);
 		try {
 			objNode = xpath.evaluate(expression, document, returnType);
 			QType = objNode != null ? returnType : null;
@@ -133,5 +140,19 @@ public class MyXPath {
 		if(getNodeList() != null && getNodeList().item(idx) != null) 
 			parent = getNodeList().item(idx).getParentNode();
 		return new MyXPath(parent);
+	}
+	
+	public MyXPath getChildNodes() {
+		NodeList child = null;
+		if(getNode() != null)
+			child = getNode().getChildNodes();
+		return new MyXPath(child);
+	}
+	
+	public MyXPath getChildNodes(int idx) {
+		NodeList child = null;
+		if(getNodeList() != null && getNodeList().item(idx) != null) 
+			child = getNodeList().item(idx).getChildNodes();
+		return new MyXPath(child);
 	}
 }

@@ -81,6 +81,18 @@ public class CoreXmlTool {
         	apkInfo.arrWidgets.add(new Object[] {apkInfo.strIconPath, widgetTitle, "1 X 1", widgetActivity, "Shortcut"});
         }
         
+        // Activity
+        getActivityInfo(xmlAndroidManifest, "activity");
+
+        // Service
+        getActivityInfo(xmlAndroidManifest, "service");
+
+        // Receiver
+        getActivityInfo(xmlAndroidManifest, "receiver");
+
+        // provider
+        getActivityInfo(xmlAndroidManifest, "provider");
+        
         apkInfo.verify();
         apkInfo.dump();
 
@@ -146,7 +158,26 @@ public class CoreXmlTool {
 		}
         System.out.println(">> " + result);
 		return result;
+	}
+	
+	private static void getActivityInfo(MyXPath xmlAndroidManifest, String tag) {
+        xmlAndroidManifest.getNodeList("//"+tag);
+        for( int idx=0; idx < xmlAndroidManifest.getLength(); idx++ ){
+        	String name = xmlAndroidManifest.getAttributes(idx, "android:name");
+        	String startup = "X";
+        	String intents = "";
 
+        	MyXPath intentsNode = new MyXPath(xmlAndroidManifest);
+        	intentsNode.getNodeList("//"+tag+"[@name='" + name + "']/intent-filter/action");
+        	for( int i=0; i < intentsNode.getLength(); i++ ){
+        		String act = intentsNode.getAttributes(i, "android:name");
+        		if(i==0) intents += "<intent-filter> [" + intentsNode.getLength() + "]";
+        		intents += "\n" + act;
+        		if(act.equals("android.intent.action.BOOT_COMPLETED"))
+        			startup = "O";
+        	}
+        	apkInfo.ActivityList.add(new Object[] { name, tag, startup, intents });
+        }
 	}
 	
 	private static Object[] getWidgetInfo(String resource) {

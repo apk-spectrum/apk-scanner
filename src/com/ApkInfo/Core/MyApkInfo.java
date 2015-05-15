@@ -18,6 +18,8 @@ public class MyApkInfo {
 	public ArrayList<Object[]> arrWidgets = new ArrayList<Object[]>();
 	public ArrayList<String> ImagePathList = new ArrayList<String>();
 	public ArrayList<String> LibPathList = new ArrayList<String>();
+
+	public ArrayList<Object[]> ActivityList = new ArrayList<Object[]>();
 	
 	public ArrayList<String> ListPermission;
 	
@@ -53,15 +55,27 @@ public class MyApkInfo {
 		strPermissions = strPermissions != null ? strPermissions : "";
 		
 		for(int i = 0; i < arrWidgets.size(); i++){
-			Object[] widgetInfo = (Object[])arrWidgets.get(i);
-			widgetInfo[0] = widgetInfo[0] != null && !((String)widgetInfo[0]).matches("unkown") ? widgetInfo[0] : strIconPath;
-			widgetInfo[1] = widgetInfo[1] != null && !((String)widgetInfo[1]).matches("unkown") ? widgetInfo[1] : strLabelname;
-			widgetInfo[2] = widgetInfo[2] != null && !((String)widgetInfo[2]).matches("unkown") ? widgetInfo[2] : "1 X 1";
-			widgetInfo[3] = widgetInfo[3] != null && !((String)widgetInfo[3]).matches("unkown") ? widgetInfo[3] : strPackageName;
-			widgetInfo[4] = widgetInfo[4] != null && !((String)widgetInfo[4]).matches("unkown") ? widgetInfo[4] : "unkown";
+			Object[] info = (Object[])arrWidgets.get(i);
+			info[0] = info[0] != null && !((String)info[0]).matches("unkown") ? info[0] : strIconPath;
+			info[1] = info[1] != null && !((String)info[1]).matches("unkown") ? info[1] : strLabelname;
+			info[2] = info[2] != null && !((String)info[2]).matches("unkown") ? info[2] : "1 X 1";
+			info[3] = info[3] != null && !((String)info[3]).matches("unkown") ? info[3] : strPackageName;
+			info[4] = info[4] != null && !((String)info[4]).matches("unkown") ? info[4] : "unkown";
 			
-			if(((String)widgetInfo[3]).matches("^\\..*")) {
-				widgetInfo[3] = strPackageName + (String)widgetInfo[3];
+			if(((String)info[3]).matches("^\\..*")) {
+				info[3] = strPackageName + (String)info[3];
+        	}
+		}
+
+		for(int i = 0; i < ActivityList.size(); i++){
+			Object[] info = (Object[])ActivityList.get(i);
+			info[0] = info[0] != null && !((String)info[0]).matches("unkown") ? info[0] : strPackageName;
+			info[1] = info[1] != null && !((String)info[1]).matches("unkown") ? info[1] : "unkown";
+			info[2] = info[2] != null && !((String)info[2]).matches("unkown") ? info[2] : "X";
+			info[3] = info[3] != null && !((String)info[3]).matches("unkown") ? info[3] : "";
+
+			if(((String)info[0]).matches("^\\..*")) {
+				info[0] = strPackageName + (String)info[0];
         	}
 		}
 	}
@@ -78,9 +92,15 @@ public class MyApkInfo {
         System.out.println("Icon = " + strIconPath);
 
 		for(int i = 0; i < arrWidgets.size(); i++){
-			Object[] widgetInfo = (Object[])arrWidgets.get(i);
-        	System.out.println("widget Icon = " + widgetInfo[0] + ", Title " + widgetInfo[1] 
-					+ ", Size " + widgetInfo[2] + ", Activity " + widgetInfo[3] + ", Type " + widgetInfo[4]);
+			Object[] info = (Object[])arrWidgets.get(i);
+        	System.out.println("widget Icon = " + info[0] + ", Title " + info[1] 
+					+ ", Size " + info[2] + ", Activity " + info[3] + ", Type " + info[4]);
+		}
+
+		for(int i = 0; i < ActivityList.size(); i++){
+			Object[] info = (Object[])ActivityList.get(i);
+        	System.out.println("Activity name = " + info[0] + ", tag " + info[1] 
+					+ ", startup " + info[2] + ", Intents " + info[3]);
 		}
 	}
 }
