@@ -69,6 +69,7 @@ public class MyApkInfo {
 
 		for(int i = 0; i < ActivityList.size(); i++){
 			Object[] info = (Object[])ActivityList.get(i);
+			
 			info[0] = info[0] != null && !((String)info[0]).matches("unkown") ? info[0] : strPackageName;
 			info[1] = info[1] != null && !((String)info[1]).matches("unkown") ? info[1] : "unkown";
 			info[2] = info[2] != null && !((String)info[2]).matches("unkown") ? info[2] : "X";
