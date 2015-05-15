@@ -54,11 +54,11 @@ public class MyApkInfo {
 		
 		for(int i = 0; i < arrWidgets.size(); i++){
 			Object[] widgetInfo = (Object[])arrWidgets.get(i);
-			widgetInfo[0] = widgetInfo[0] != null || !((String)widgetInfo[0]).matches("unkown") ? widgetInfo[0] : strIconPath;
-			widgetInfo[1] = widgetInfo[1] != null || !((String)widgetInfo[1]).matches("unkown") ? widgetInfo[1] : strLabelname;
-			widgetInfo[2] = widgetInfo[2] != null || !((String)widgetInfo[2]).matches("unkown") ? widgetInfo[2] : "1 X 1";
-			widgetInfo[3] = widgetInfo[3] != null || !((String)widgetInfo[3]).matches("unkown") ? widgetInfo[3] : strPackageName;
-			widgetInfo[4] = widgetInfo[4] != null || !((String)widgetInfo[4]).matches("unkown") ? widgetInfo[4] : "unkown";
+			widgetInfo[0] = widgetInfo[0] != null && !((String)widgetInfo[0]).matches("unkown") ? widgetInfo[0] : strIconPath;
+			widgetInfo[1] = widgetInfo[1] != null && !((String)widgetInfo[1]).matches("unkown") ? widgetInfo[1] : strLabelname;
+			widgetInfo[2] = widgetInfo[2] != null && !((String)widgetInfo[2]).matches("unkown") ? widgetInfo[2] : "1 X 1";
+			widgetInfo[3] = widgetInfo[3] != null && !((String)widgetInfo[3]).matches("unkown") ? widgetInfo[3] : strPackageName;
+			widgetInfo[4] = widgetInfo[4] != null && !((String)widgetInfo[4]).matches("unkown") ? widgetInfo[4] : "unkown";
 			
 			if(((String)widgetInfo[3]).matches("^\\..*")) {
 				widgetInfo[3] = strPackageName + (String)widgetInfo[3];
