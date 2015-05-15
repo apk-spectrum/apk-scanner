@@ -76,19 +76,12 @@ public class MyTabUIActivity extends JPanel {
 	    
 	    cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
 	    public void valueChanged(ListSelectionEvent e) {
-	      
-	          System.out.println("Selected: " + table.getSelectedRow());
-		      System.out.println("Selected: " + table.getValueAt(table.getSelectedRow(),table.getSelectedColumn()));
-		      
-		      
+	          
 		      textArea.setText((String) ActivityList.get(table.getSelectedRow())[3]);
-		      
-	      
 	    }
-	
 	  });
 		
-		setJTableColumnsWidth(table, 500, 64,18,18);
+		setJTableColumnsWidth(table, 500, 80,10,10);
 	    //Create the scroll pane and add the table to it.
 	    JScrollPane scrollPane = new JScrollPane(table);
 	    
@@ -165,11 +158,7 @@ public class MyTabUIActivity extends JPanel {
 	    public boolean isCellEditable(int row, int col) {
 	      //Note that the data/cell address is constant,
 	      //no matter where the cell appears onscreen.
-	      if (col < 2) {
-	        return false;
-	      } else {
-	        return true;
-	      }
+	    	return true;
 	    }
 	  }
 	}
