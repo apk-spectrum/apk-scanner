@@ -203,8 +203,9 @@ public class MainUI extends JFrame implements WindowListener{
 		this.setVisible(false);
 		
 		CloseThead temp = new CloseThead();
-		temp.start();
-		
+		//temp.start();
+		System.out.println("delete Folder : "  + FolderDefault);		
+		if(FolderDefault.length()>0) CoreApkTool.deleteDirectory(new File(FolderDefault));
 		
 		
 	}
