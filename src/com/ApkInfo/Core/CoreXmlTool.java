@@ -35,9 +35,16 @@ public class CoreXmlTool {
         
         // hidden
         if(xmlAndroidManifest.isNode("//category[@name='android.intent.category.LAUNCHER']")) {
-        	apkInfo.strHidden = "X - LAUNCHER";
+        	apkInfo.strHidden = "LAUNCHER";
         } else {
-        	apkInfo.strHidden = "O - HIDDEN";
+        	apkInfo.strHidden = "HIDDEN";
+        }
+        
+        // startup
+        if(xmlAndroidManifest.isNode("//uses-permission[@name='android.permission.RECEIVE_BOOT_COMPLETED']")) {
+        	apkInfo.strStartup = "O - RECEIVE_BOOT_COMPLETED";
+        } else {
+        	apkInfo.strStartup = "X";
         }
 
         // permission

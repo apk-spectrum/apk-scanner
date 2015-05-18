@@ -49,8 +49,9 @@ public class MyTabUIbasicInfo extends JComponent{
         strTabInfo += "VersionCode : " + ApkInfo.strVersionCode +"\n";
         strTabInfo += "MinSdkVersion : " + ApkInfo.strMinSDKversion +"\n";
         strTabInfo += "TargetSdkVersion : " + ApkInfo.strTargerSDKversion +"\n";
-        strTabInfo += "Signing : " + ApkInfo.strSigning +"\n";
-        strTabInfo += "Hidden : " + ApkInfo.strHidden +"\n";
+        //strTabInfo += "Signing : " + ApkInfo.CertList.size() +"\n";
+        strTabInfo += "Type : " + ApkInfo.strHidden +"\n";
+        strTabInfo += "Startup : " + ApkInfo.strStartup + "\n";
         strTabInfo += "Size : " + CoreApkTool.getFileLength(ApkInfo.lApkSize) + " (" + df.format(ApkInfo.lApkSize) +" Bytes)\n";
                 
         apkinform.setText(strTabInfo);
