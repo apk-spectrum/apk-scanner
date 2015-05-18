@@ -6,7 +6,10 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import com.ApkInfo.Core.CoreApkTool;
+
 import java.beans.*;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -65,7 +68,11 @@ public class MyProgressBarDemo extends JPanel
         taskOutput.setEditable(false);
 
         JPanel panel = new JPanel();
-        ImageIcon icon = new ImageIcon("loading.gif"); 
+        
+        System.out.println(CoreApkTool.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+        
+        
+        ImageIcon icon = new ImageIcon(CoreApkTool.class.getProtectionDomain().getCodeSource().getLocation().getPath()+File.separator + "loading.gif"); 
         
         GifLabel = new JLabel(icon);
         

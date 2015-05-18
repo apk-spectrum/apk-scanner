@@ -32,7 +32,7 @@ public class MyDeviceInfo {
 	
 	public MyDeviceInfo() {
 		
-		String[] cmd = {"adb", "devices"};
+		String[] cmd = {"/home/leejinhyeong/workspace/APKInfoDlgv2/adb"};
 		
 		
 		exc(cmd,true);
