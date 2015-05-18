@@ -37,40 +37,7 @@ public class MyTabUIActivity extends JPanel {
 	  public MyTabUIActivity() {
 	    super(new GridLayout(2, 0));
 
-	    final JTable table = new JTable(new MyTableModel()) {
-
-	      //Implement table cell tool tips.
-	      public String getToolTipText(MouseEvent e) {
-	        String tip = null;
-	        java.awt.Point p = e.getPoint();
-	        int rowIndex = rowAtPoint(p);
-	        int colIndex = columnAtPoint(p);
-	        int realColumnIndex = convertColumnIndexToModel(colIndex);
-
-	        if (realColumnIndex == 2) { //Sport column
-	          tip = "This person's favorite sport to "
-	              + "participate in is: "
-	              + getValueAt(rowIndex, colIndex);
-	        } else if (realColumnIndex == 4) { //Veggie column
-	          TableModel model = getModel();
-	          String firstName = (String) model.getValueAt(rowIndex, 0);
-	          String lastName = (String) model.getValueAt(rowIndex, 1);
-	          Boolean veggie = (Boolean) model.getValueAt(rowIndex, 4);
-	          if (Boolean.TRUE.equals(veggie)) {
-	            tip = firstName + " " + lastName + " is a vegetarian";
-	          } else {
-	            tip = firstName + " " + lastName
-	                + " is not a vegetarian";
-	          }
-	        } else {
-	          //You can omit this part if you know you don't
-	          //have any renderers that supply their own tool
-	          //tips.
-	          tip = super.getToolTipText(e);
-	        }
-	        return tip;
-	      }
-	    };
+	    final JTable table = new JTable(new MyTableModel());
 
 	    ListSelectionModel cellSelectionModel = table.getSelectionModel();
 	    

@@ -63,7 +63,7 @@ public class MyDeviceInfo {
 		return null;
 		
 	}
-	class Device {
+	public class Device {
 		//app--------------------------------------------------------------------------------------------------------
 		String strPakage;
 		String strVersion;
