@@ -151,18 +151,14 @@ public class CoreApkTool {
 	}
 	
     public static boolean deleteDirectory(File path) {
-    	
-    	System.out.println("delete Folder : " + path.getAbsolutePath());
-    	
-        if(!path.exists()) {
+    	if(!path.exists()) {
             return false;
         }
         File[] files = path.listFiles();
         for (File file : files) {
             if (file.isDirectory()) {
                 deleteDirectory(file);
-            } else {
-            	System.out.println("delete File : " + file.getAbsolutePath());
+            } else {            	
                 file.delete();
             }
         }         
