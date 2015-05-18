@@ -1,6 +1,7 @@
 package com.ApkInfo.Core;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -32,7 +33,10 @@ public class MyDeviceInfo {
 	
 	public MyDeviceInfo() {
 		
-		String[] cmd = {"/home/leejinhyeong/workspace/APKInfoDlgv2/adb"};
+		String workingDir = System.getProperty("user.dir");
+		
+		System.out.println(workingDir);
+		String[] cmd = {workingDir + File.separator + "adb", "devices"};
 		
 		
 		exc(cmd,true);
