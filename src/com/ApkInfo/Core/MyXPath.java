@@ -74,7 +74,7 @@ public class MyXPath {
 	}
 	
 	public boolean isNode(String expression) {
-		return getNode(expression) != null;
+		return (getNode(expression).getNode() != null);
 	}
 	
 	public Node getNode() {
