@@ -200,10 +200,12 @@ public class MainUI extends JFrame implements WindowListener{
 	@Override
 	public void windowClosing(WindowEvent e) {
 		// TODO Auto-generated method stub		
+		this.setVisible(false);
+		
 		CloseThead temp = new CloseThead();
 		temp.start();
 		
-		this.setVisible(false);
+		
 		
 	}
 

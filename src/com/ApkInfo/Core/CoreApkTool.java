@@ -98,7 +98,7 @@ public class CoreApkTool {
 	
 	
 	public static void solveAPK(String APKFilePath, String solvePath) {
-		String apkToolPath = GetUTF8Path();
+		String apkToolPath = GetUTF8Path()+File.separator+"apktool.jar";
 		DefaultPath = solvePath;
 		
 		System.out.println("apkToolPath : " + apkToolPath);
@@ -151,14 +151,18 @@ public class CoreApkTool {
 	}
 	
     public static boolean deleteDirectory(File path) {
+    	
+    	System.out.println("delete Folder : " + path.getAbsolutePath());
+    	
         if(!path.exists()) {
             return false;
-        }         
+        }
         File[] files = path.listFiles();
         for (File file : files) {
             if (file.isDirectory()) {
                 deleteDirectory(file);
             } else {
+            	System.out.println("delete File : " + file.getAbsolutePath());
                 file.delete();
             }
         }         
