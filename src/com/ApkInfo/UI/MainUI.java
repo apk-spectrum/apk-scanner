@@ -2,7 +2,9 @@ package com.ApkInfo.UI;
 
 import java.awt.EventQueue;
 import java.awt.Frame;
+import java.awt.Image;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import java.awt.BorderLayout;
@@ -11,6 +13,8 @@ import java.awt.event.HierarchyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 
 import com.ApkInfo.Core.*;
@@ -158,6 +162,21 @@ public class MainUI extends JFrame implements WindowListener{
 		nPositionX = frame.getLocationOnScreen().x;
 		nPositionY = frame.getLocationOnScreen().y;
 		
+		
+		String ImgPath = MyProgressBarDemo.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		ImgPath = (new File(ImgPath)).getParentFile().getPath();
+		ImgPath += File.separator + "AppIcon.png";
+		try {
+			ImgPath = URLDecoder.decode(ImgPath, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        Image icon = (new ImageIcon(ImgPath)).getImage();
+        
+		
+        frame.setIconImage(icon);
+        
 		frame.getContentPane().addHierarchyBoundsListener(new HierarchyBoundsListener(){
 			@Override
 			public void ancestorMoved(HierarchyEvent e) {
