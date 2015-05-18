@@ -28,17 +28,17 @@ public class MyApkInfo {
 	public String strWorkAPKPath;
 	
 	public MyApkInfo() {
-		strLabelname="unkown";
-		strPackageName="unkown";
-		strVersionName="unkown";
-		strVersionCode="unkown";
-		strMinSDKversion="unkown";
-		strTargerSDKversion="unkown";
-		strSigning="unkown";
-		strHidden="unkown";
-		strIconPath="unkown";
+		strLabelname="Unknown";
+		strPackageName="Unknown";
+		strVersionName="Unknown";
+		strVersionCode="Unknown";
+		strMinSDKversion="Unknown";
+		strTargerSDKversion="Unknown";
+		strSigning="Unknown";
+		strHidden="Unknown";
+		strIconPath="Unknown";
 		strPermissions="";
-		strStartup="unkown";
+		strStartup="Unknown";
 		lApkSize = (long) 0;
 	}
 	public MyApkInfo(String Path) {		
@@ -46,25 +46,25 @@ public class MyApkInfo {
 	}
 	
 	public void verify() {
-		strLabelname = strLabelname != null ? strLabelname : "unkown";
-		strPackageName = strPackageName != null ? strPackageName : "unkown";
-		strVersionName = strVersionName != null ? strVersionName : "unkown";
-		strVersionCode = strVersionCode != null ? strVersionCode : "unkown";
-		strMinSDKversion = strMinSDKversion != null ? strMinSDKversion : "unkown";
-		strTargerSDKversion = strTargerSDKversion != null ? strTargerSDKversion : "unkown";
-		strSigning = strSigning != null ? strSigning : "unkown";
-		strHidden = strHidden != null ? strHidden : "unkown";
-		strIconPath = strIconPath != null ? strIconPath : "unkown";
+		strLabelname = strLabelname != null ? strLabelname : "Unknown";
+		strPackageName = strPackageName != null ? strPackageName : "Unknown";
+		strVersionName = strVersionName != null ? strVersionName : "Unknown";
+		strVersionCode = strVersionCode != null ? strVersionCode : "Unknown";
+		strMinSDKversion = strMinSDKversion != null ? strMinSDKversion : "Unknown";
+		strTargerSDKversion = strTargerSDKversion != null ? strTargerSDKversion : "Unknown";
+		strSigning = strSigning != null ? strSigning : "Unknown";
+		strHidden = strHidden != null ? strHidden : "Unknown";
+		strIconPath = strIconPath != null ? strIconPath : "Unknown";
 		strPermissions = strPermissions != null ? strPermissions : "";
-		strStartup = strStartup != null ? strStartup : "unkown";
+		strStartup = strStartup != null ? strStartup : "Unknown";
 		
 		for(int i = 0; i < arrWidgets.size(); i++){
 			Object[] info = (Object[])arrWidgets.get(i);
-			info[0] = info[0] != null && !((String)info[0]).matches("unkown") ? info[0] : strIconPath;
-			info[1] = info[1] != null && !((String)info[1]).matches("unkown") ? info[1] : strLabelname;
-			info[2] = info[2] != null && !((String)info[2]).matches("unkown") ? info[2] : "1 X 1";
-			info[3] = info[3] != null && !((String)info[3]).matches("unkown") ? info[3] : strPackageName;
-			info[4] = info[4] != null && !((String)info[4]).matches("unkown") ? info[4] : "unkown";
+			info[0] = info[0] != null && !((String)info[0]).matches("Unknown") ? info[0] : strIconPath;
+			info[1] = info[1] != null && !((String)info[1]).matches("Unknown") ? info[1] : strLabelname;
+			info[2] = info[2] != null && !((String)info[2]).matches("Unknown") ? info[2] : "1 X 1";
+			info[3] = info[3] != null && !((String)info[3]).matches("Unknown") ? info[3] : strPackageName;
+			info[4] = info[4] != null && !((String)info[4]).matches("Unknown") ? info[4] : "Unknown";
 			
 			if(((String)info[3]).matches("^\\..*")) {
 				info[3] = strPackageName + (String)info[3];
@@ -74,10 +74,10 @@ public class MyApkInfo {
 		for(int i = 0; i < ActivityList.size(); i++){
 			Object[] info = (Object[])ActivityList.get(i);
 			
-			info[0] = info[0] != null && !((String)info[0]).matches("unkown") ? info[0] : strPackageName;
-			info[1] = info[1] != null && !((String)info[1]).matches("unkown") ? info[1] : "unkown";
-			info[2] = info[2] != null && !((String)info[2]).matches("unkown") ? info[2] : "X";
-			info[3] = info[3] != null && !((String)info[3]).matches("unkown") ? info[3] : "";
+			info[0] = info[0] != null && !((String)info[0]).matches("Unknown") ? info[0] : strPackageName;
+			info[1] = info[1] != null && !((String)info[1]).matches("Unknown") ? info[1] : "Unknown";
+			info[2] = info[2] != null && !((String)info[2]).matches("Unknown") ? info[2] : "X";
+			info[3] = info[3] != null && !((String)info[3]).matches("Unknown") ? info[3] : "";
 
 			if(((String)info[0]).matches("^\\..*")) {
 				info[0] = strPackageName + (String)info[0];
