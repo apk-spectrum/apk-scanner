@@ -26,7 +26,8 @@ import com.ApkInfo.UIUtil.Theme;
 class ADBDialog extends Dialog implements ActionListener 
 {
 	
-	StandardButton btnInstall;
+	StandardButton btnshowDeiveInfo;
+	StandardButton btnrefresh;
 	Frame mainui;
 	
 	Label AppInfo;
@@ -39,23 +40,31 @@ class ADBDialog extends Dialog implements ActionListener
 		super(f1, "ADB Install", true);
 		mainui = f1;
 		setLayout(new BorderLayout());
-		this.add(btnInstall = new StandardButton("ADB Install",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED),BorderLayout.WEST);
+		
+		Panel ButtonPanel = new Panel(new GridLayout(1,2));
+		
+		
+		
+		ButtonPanel.add(btnshowDeiveInfo = new StandardButton("Refresh Device List",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED));
+		ButtonPanel.add(btnrefresh = new StandardButton("설치 및 Device 정보",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED));
 		
         WindowAdapter wa = new WindowAdapter(){
             public void windowClosing(WindowEvent e){
                 System.exit(0);
             }
-        };       
+        };
         this.addWindowListener(wa);
 		
         textPanel = new Panel(new GridLayout(1,2));
         
 		setResizable( false );
-		btnInstall.addActionListener(this);
+		btnshowDeiveInfo.addActionListener(this);
+		btnrefresh.addActionListener(this);
+		
 		textPanel.add(AppInfo = new Label("App Infomation"));
 		textPanel.add(DeviceInfo = new Label("Device Information"));
 		add(textPanel, BorderLayout.NORTH);
-		add(btnInstall,BorderLayout.SOUTH);
+		add(ButtonPanel,BorderLayout.SOUTH);
 		setSize(400,300);
 		this.setLocation(MainUI.nPositionX+100, MainUI.nPositionY+100);	
 			
@@ -65,7 +74,15 @@ class ADBDialog extends Dialog implements ActionListener
 	}
 	public void actionPerformed(ActionEvent e)
 	{		
-		setVisible(false);	
+		
+		String str=e.getActionCommand();
+		
+		if(str == "Refresh Device List") {
+			System.out.println("click  :" + str);
+			setVisible(false);
+		} else if(str == "설치 및 Device 정보") {
+			System.out.println("click  :" + str);	
+		}		
 	}
 	public void showPlease() {
 		setVisible(true);

@@ -4,43 +4,31 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import com.ApkInfo.UI.MainUI;
 
 public class MyDeviceInfo {
-	
-	
-	//app--------------------------------------------------------------------------------------------------------
-	String strPakage;
-	String strVersion;
-	String strVersionCode;
-	String strCodeFolderPath;
-	String strlegacyNativeLibraryDir;
-	String strKeySet;
-	
-	//device--------------------------------------------------------------------------------------------------------
-	String strDeviceName;
-	String strkeys;
-	String strBuildType;
-	
-	//device for adb--------------------------------------------------------------------------------------------------------
-	Boolean bisDeviceConnect;
-	Boolean bisPossibleRemount;
+	public static ArrayList<Device> DeviceList;
 	
 	public String strAppinfo;
 	public String strDeviceinfo;
-	
+	public int DeviceCount;
 	
 	public MyDeviceInfo() {
+		DeviceList = new ArrayList<Device>();	
 		
-		String workingDir = System.getProperty("user.dir");
-		
+		String workingDir = CoreApkTool.GetUTF8Path() + File.separator + "adb";
 		System.out.println(workingDir);
-		String[] cmd = {workingDir + File.separator + "adb", "devices"};
 		
-		
+		String[] cmd = {workingDir, "devices"};
+				
 		exc(cmd,true);
 	}
+	
+	
+	
+	
 	
 	static String exc(String[] cmd, boolean showLog) {
 		try {
@@ -74,5 +62,24 @@ public class MyDeviceInfo {
 	    }
 		return null;
 		
+	}
+	class Device {
+		//app--------------------------------------------------------------------------------------------------------
+		String strPakage;
+		String strVersion;
+		String strVersionCode;
+		String strCodeFolderPath;
+		String strlegacyNativeLibraryDir;
+		String strKeySet;
+		
+		//device--------------------------------------------------------------------------------------------------------
+		String strADBDeviceNumber;
+		String strDeviceName;
+		String strkeys;
+		String strBuildType;
+		
+		//device for adb--------------------------------------------------------------------------------------------------------
+		Boolean bisDeviceConnect;
+		Boolean bisPossibleRemount;
 	}
 }

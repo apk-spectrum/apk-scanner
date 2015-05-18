@@ -140,6 +140,7 @@ public class MyProgressBarDemo extends JPanel
         
 		String ImgPath = CoreApkTool.GetUTF8Path();
         ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
+                
         
         frame.setIconImage(Appicon.getImage());
         
