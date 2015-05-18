@@ -224,8 +224,6 @@ public class MainUI extends JFrame implements WindowListener{
 	@Override
 	public void windowClosed(WindowEvent e) {
 		// TODO Auto-generated method stub
-		System.out.println("closed");
-
 	}
 
 	@Override
@@ -248,8 +246,7 @@ public class MainUI extends JFrame implements WindowListener{
 
 	@Override
 	public void windowDeactivated(WindowEvent e) {
-		// TODO Auto-generated method stub
-		System.out.println("deactive");
+		// TODO Auto-generated method stub		
 	}
 
 }
