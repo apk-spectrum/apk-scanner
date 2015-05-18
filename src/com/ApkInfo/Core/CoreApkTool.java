@@ -82,18 +82,25 @@ public class CoreApkTool {
 		return tempLib;
 	}
 	
-	public static void solveAPK(String APKFilePath, String solvePath) {
-		String apkToolPath = CoreApkTool.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-		DefaultPath = solvePath;
+	public static String GetUTF8Path() {
+		String tempapkToolPath = CoreApkTool.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		tempapkToolPath = (new File(tempapkToolPath)).getParentFile().getPath();
 		
-		apkToolPath = (new File(apkToolPath)).getParentFile().getPath();
-		apkToolPath += File.separator + "apktool.jar";
 		try {
-			apkToolPath = URLDecoder.decode(apkToolPath, "UTF-8");
+			tempapkToolPath = URLDecoder.decode(tempapkToolPath, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		return tempapkToolPath;
+	}
+	
+	
+	public static void solveAPK(String APKFilePath, String solvePath) {
+		String apkToolPath = GetUTF8Path();
+		DefaultPath = solvePath;
+		
 		System.out.println("apkToolPath : " + apkToolPath);
 
 		if(!(new File(apkToolPath)).exists()) {

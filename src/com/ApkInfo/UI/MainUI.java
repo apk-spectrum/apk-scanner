@@ -110,7 +110,12 @@ public class MainUI extends JFrame implements WindowListener{
 			
 		}
 	}
-	
+	class CloseThead extends Thread {
+		public void run() {
+			System.out.println("delete Folder : "  + FolderDefault);		
+			if(FolderDefault.length()>0) CoreApkTool.deleteDirectory(new File(FolderDefault));
+		}
+	}
 	
 	public static void main(final String[] args) {
 		
@@ -157,25 +162,16 @@ public class MainUI extends JFrame implements WindowListener{
 		
 		//frame.add(new MyButtonPanel(), BorderLayout.NORTH);
 		
+        
+		String ImgPath = CoreApkTool.GetUTF8Path();
+        ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
+        
+        frame.setIconImage(Appicon.getImage());
+		
 		frame.setVisible(true);
 		
 		nPositionX = frame.getLocationOnScreen().x;
 		nPositionY = frame.getLocationOnScreen().y;
-		
-		
-		String ImgPath = MyProgressBarDemo.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-		ImgPath = (new File(ImgPath)).getParentFile().getPath();
-		ImgPath += File.separator + "AppIcon.png";
-		try {
-			ImgPath = URLDecoder.decode(ImgPath, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        Image icon = (new ImageIcon(ImgPath)).getImage();
-        
-		
-        frame.setIconImage(icon);
         
 		frame.getContentPane().addHierarchyBoundsListener(new HierarchyBoundsListener(){
 			@Override
@@ -204,8 +200,11 @@ public class MainUI extends JFrame implements WindowListener{
 	@Override
 	public void windowClosing(WindowEvent e) {
 		// TODO Auto-generated method stub		
-		System.out.println("delete Folder : "  + FolderDefault);		
-		if(FolderDefault.length()>0)CoreApkTool.deleteDirectory(new File(FolderDefault));
+		CloseThead temp = new CloseThead();
+		temp.start();
+		
+		
+		
 	}
 
 	@Override

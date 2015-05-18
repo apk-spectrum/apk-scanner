@@ -24,6 +24,7 @@ public class MyProgressBarDemo extends JPanel
     private static int progress;
     private static String strAddText;
     private JLabel GifLabel;
+    static JFrame frame;
     class Task extends SwingWorker<Void, Void> {
         /*
          * Main task. Executed in background thread.
@@ -72,16 +73,9 @@ public class MyProgressBarDemo extends JPanel
         JPanel panel = new JPanel();
         
         
-		String ImgPath = MyProgressBarDemo.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-		ImgPath = (new File(ImgPath)).getParentFile().getPath();
-		ImgPath += File.separator + "loading.gif";
-		try {
-			ImgPath = URLDecoder.decode(ImgPath, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        ImageIcon icon = new ImageIcon(ImgPath);
+		String ImgPath = CoreApkTool.GetUTF8Path();
+        ImageIcon icon = new ImageIcon(ImgPath+File.separator+"loading.gif");
+        ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
         
         System.out.println("loding img " + ImgPath);
         System.out.println("loding icon : " + icon);
@@ -135,7 +129,7 @@ public class MyProgressBarDemo extends JPanel
      */
     static JFrame createAndShowGUI(MyProgressBarDemo temp) {
         //Create and set up the window.
-        JFrame frame = new JFrame("ProgressBarDemo");
+        frame = new JFrame("ProgressBarDemo");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Create and set up the content pane.
@@ -143,6 +137,12 @@ public class MyProgressBarDemo extends JPanel
         newContentPane.setOpaque(true); //content panes must be opaque
         frame.setContentPane(newContentPane);
 
+        
+		String ImgPath = CoreApkTool.GetUTF8Path();
+        ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
+        
+        frame.setIconImage(Appicon.getImage());
+        
         //Display the window.
         frame.setResizable( false );
         frame.pack();
