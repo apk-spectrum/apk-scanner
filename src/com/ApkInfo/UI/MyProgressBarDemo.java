@@ -10,8 +10,10 @@ import com.ApkInfo.Core.CoreApkTool;
 
 import java.beans.*;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 
 public class MyProgressBarDemo extends JPanel
                              implements PropertyChangeListener {
@@ -73,7 +75,12 @@ public class MyProgressBarDemo extends JPanel
 		String ImgPath = MyProgressBarDemo.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		ImgPath = (new File(ImgPath)).getParentFile().getPath();
 		ImgPath += File.separator + "loading.gif";
-        
+		try {
+			ImgPath = URLDecoder.decode(ImgPath, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         ImageIcon icon = new ImageIcon(ImgPath);
         
         System.out.println("loding img " + ImgPath);
