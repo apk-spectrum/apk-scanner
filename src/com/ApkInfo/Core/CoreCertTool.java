@@ -62,7 +62,7 @@ public class CoreCertTool {
 				    	continue;
 	    			}
 	    		}
-	    		if(s.matches("^.*:( [COS]?[NUOLTC]{1}+=[^,]*,?)+$")) {
+	    		if(s.matches("^.*:( [^ ,]+=(\".*\")?[^,]*,?)+$")) {
 	    			CertSummary += s + "\n";
 	    		}
 	    		certContent += (certContent.isEmpty() ? "" : "\n") + s;
