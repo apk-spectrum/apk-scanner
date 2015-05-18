@@ -69,10 +69,14 @@ public class MyProgressBarDemo extends JPanel
 
         JPanel panel = new JPanel();
         
-        System.out.println(CoreApkTool.class.getProtectionDomain().getCodeSource().getLocation().getPath());
         
         
-        ImageIcon icon = new ImageIcon(CoreApkTool.class.getProtectionDomain().getCodeSource().getLocation().getPath()+File.separator + "loading.gif"); 
+        
+        ImageIcon icon = new ImageIcon(CoreApkTool.class.getProtectionDomain().getCodeSource().getLocation().getPath()+File.separator + "loading.gif");
+        
+        System.out.println("apk local Path " + CoreApkTool.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+        System.out.println("loding icon : " + icon);
+        
         
         GifLabel = new JLabel(icon);
         
