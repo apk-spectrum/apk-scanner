@@ -203,7 +203,7 @@ public class MainUI extends JFrame implements WindowListener{
 		CloseThead temp = new CloseThead();
 		temp.start();
 		
-		
+		this.setVisible(false);
 		
 	}
 
