@@ -72,7 +72,7 @@ public class MyProgressBarDemo extends JPanel
         
         
         
-        ImageIcon icon = new ImageIcon(CoreApkTool.class.getProtectionDomain().getCodeSource().getLocation().getPath()+File.separator + "loading.gif");
+        ImageIcon icon = new ImageIcon(CoreApkTool.class.getProtectionDomain().getCodeSource().getLocation().getPath()+"loading.gif");
         
         System.out.println("apk local Path " + CoreApkTool.class.getProtectionDomain().getCodeSource().getLocation().getPath());
         System.out.println("loding icon : " + icon);
@@ -124,13 +124,13 @@ public class MyProgressBarDemo extends JPanel
      * Create the GUI and show it. As with all GUI code, this must run
      * on the event-dispatching thread.
      */
-    static JFrame createAndShowGUI() {
+    static JFrame createAndShowGUI(MyProgressBarDemo temp) {
         //Create and set up the window.
         JFrame frame = new JFrame("ProgressBarDemo");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Create and set up the content pane.
-        JComponent newContentPane = new MyProgressBarDemo();
+        JComponent newContentPane = temp;
         newContentPane.setOpaque(true); //content panes must be opaque
         frame.setContentPane(newContentPane);
 
@@ -148,7 +148,7 @@ public class MyProgressBarDemo extends JPanel
         //creating and showing this application's GUI.
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                createAndShowGUI();
+                createAndShowGUI(new MyProgressBarDemo());
             }
         });
     }

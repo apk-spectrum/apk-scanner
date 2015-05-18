@@ -78,7 +78,10 @@ public class MyTabUI extends JPanel{
 	        
 	      //activity
 	        tabbedPane.setTitleAt(4,tabbedPane.getTitleAt(4) + "(" + MainUI.GetMyApkInfo().ActivityList.size()  + ")");
-	        	        
+	      
+	      //activity
+	        tabbedPane.setTitleAt(5,tabbedPane.getTitleAt(5) + "(" + MainUI.GetMyApkInfo().CertList.size()  + ")");
+	        
 	        //The following line enables to use scrolling tabs.
 	        tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 	    }

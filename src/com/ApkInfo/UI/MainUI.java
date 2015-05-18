@@ -89,8 +89,15 @@ public class MainUI extends JFrame implements WindowListener{
 				mApkInfo.LibPathList = CoreApkTool.findfileforLib(new File(CoreApkTool.DefaultPath+File.separator+"lib"));
 				System.out.println("Lib Count : " + mApkInfo.LibPathList.size());
 				
+				
 				mApkInfo.CertList = CoreCertTool.solveCert(FolderDefault + File.separator + "original" + File.separator + "META-INF" + File.separator);
-				mApkInfo.strPermissions = CoreCertTool.getCertSummary() + "\n" + mApkInfo.strPermissions;
+				
+				
+				
+				mApkInfo.strPermissions =  "■■■■■■■■■■■■■■■■■  Cert  ■■■■■■■■■■■■■■■■■■■■\n" + CoreCertTool.getCertSummary() +
+						
+														"\n■■■■■■■■■■■■■■■■ Permissions ■■■■■■■■■■■■■■■■■■"+
+														"\n" + mApkInfo.strPermissions;
 				
 				initialize();				
 			} catch (Exception e) {
@@ -113,7 +120,7 @@ public class MainUI extends JFrame implements WindowListener{
 				
 				ProgressBarDlg = new MyProgressBarDemo();
 				
-				WaitingDlg = MyProgressBarDemo.createAndShowGUI();
+				WaitingDlg = MyProgressBarDemo.createAndShowGUI(ProgressBarDlg);
 				
 				window = new MainUI();
 			}
