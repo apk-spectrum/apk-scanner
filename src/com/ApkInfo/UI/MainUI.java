@@ -112,7 +112,13 @@ public class MainUI extends JFrame implements WindowListener{
 	}
 	class CloseThead extends Thread {
 		public void run() {
-			System.out.println("delete Folder : "  + FolderDefault);		
+			System.out.println("delete Folder : "  + FolderDefault);
+			try {
+				sleep(3000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			if(FolderDefault.length()>0) CoreApkTool.deleteDirectory(new File(FolderDefault));
 		}
 	}
@@ -180,6 +186,7 @@ public class MainUI extends JFrame implements WindowListener{
 				
 				nPositionX = frame.getLocationOnScreen().x;
 				nPositionY = frame.getLocationOnScreen().y;
+				
 			}
 
 			@Override
@@ -200,20 +207,15 @@ public class MainUI extends JFrame implements WindowListener{
 	@Override
 	public void windowClosing(WindowEvent e) {
 		// TODO Auto-generated method stub		
-		this.setVisible(false);
-		
+		frame.setVisible(false);
 		CloseThead temp = new CloseThead();
-		temp.start();
-		
+		temp.start();		
 		try {
 			temp.join();
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		//System.out.println("delete Folder : "  + FolderDefault);
-		
-		
 		//if(FolderDefault.length()>0) CoreApkTool.deleteDirectory(new File(FolderDefault));
 		
 		
@@ -222,6 +224,7 @@ public class MainUI extends JFrame implements WindowListener{
 	@Override
 	public void windowClosed(WindowEvent e) {
 		// TODO Auto-generated method stub
+		System.out.println("closed");
 
 	}
 
@@ -246,7 +249,7 @@ public class MainUI extends JFrame implements WindowListener{
 	@Override
 	public void windowDeactivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+		System.out.println("deactive");
 	}
 
 }
