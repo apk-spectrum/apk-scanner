@@ -17,6 +17,8 @@ if [ "$java_ver" == "" ] || [ "$java_ver" != "$(echo $java_ver | awk '{ if($1 >=
     exit
 fi
 
+sudo chmod 755 APKInfoDlg.sh
+
 sudo rm -rf $APP_PATH
 
 sudo mkdir -p $APP_PATH
