@@ -48,7 +48,7 @@ rem copy /Y .\tool\* "%APP_PATH%\tool\"
 rem --- 연결프로그램 지정 ---
 assoc .apk=vnd.android.package-archive
 rem ftype vnd.android.package-archive=javaw -jar "-Dfile.encoding=utf-8" "%APP_PATH%\%APP_FILE%" %%1 %%*
-ftype vnd.android.package-archive="%APP_PATH%/apktool.bat" %%1 %%*
+ftype vnd.android.package-archive="%APP_PATH%/APKInfoDlg.bat" %%1 %%*
 
 echo Complete
 
