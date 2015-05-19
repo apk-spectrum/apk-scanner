@@ -1,5 +1,5 @@
 @echo off
-
+cd
 set APP_PATH=C:\Program Files\APKInfo
 set APP_FILE=ApkInfo.exe
 
@@ -41,14 +41,18 @@ if not exist "%APP_PATH%" (
 )
 
 rem --- 파일 복사 ---
-copy /Y .\* "%APP_PATH%"
+copy /Y .\ApkInfo.exe "%APP_PATH%"
+copy /Y .\APKInfoDlg.jar "%APP_PATH%"
+copy /Y .\apktool.jar "%APP_PATH%"
+copy /Y .\AppIcon.png "%APP_PATH%"
+copy /Y .\loading.gif "%APP_PATH%"
 rem copy /Y .\tool\* "%APP_PATH%\tool\"
 
 
 rem --- 연결프로그램 지정 ---
 assoc .apk=vnd.android.package-archive
 rem ftype vnd.android.package-archive=javaw -jar "-Dfile.encoding=utf-8" "%APP_PATH%\%APP_FILE%" %%1 %%*
-ftype vnd.android.package-archive="%APP_PATH%\%APP_FILE%" %%1 %%*
+ftype vnd.android.package-archive="%APP_PATH%\%APP_FILE%" "%%1"
 
 echo Complete
 
