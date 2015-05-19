@@ -1,5 +1,5 @@
 @echo off
-
+cd
 set APP_PATH=C:\Program Files\APKInfo
 set APP_FILE=APKInfoDlg.jar
 
