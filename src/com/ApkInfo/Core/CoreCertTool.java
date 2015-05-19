@@ -34,7 +34,7 @@ public class CoreCertTool {
 		}
 		
 		for (String s : (new File(CertPath)).list()) {
-			if(!s.matches(".*\\.RSA")) continue;
+			if(!s.matches(".*\\.RSA") && !s.matches(".*\\.DSA") ) continue;
 
 			File rsaFile = new File(CertPath + s);
 			if(!rsaFile.exists()) continue;
