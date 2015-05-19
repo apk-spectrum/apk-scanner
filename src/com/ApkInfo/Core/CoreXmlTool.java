@@ -177,6 +177,11 @@ public class CoreXmlTool {
         		if(act.equals("android.intent.action.BOOT_COMPLETED"))
         			startup = "O";
         	}
+        	
+        	if(intentsNode.isNode("//"+tag+"[@name='" + name + "']/intent-filter/category[@name='android.intent.category.LAUNCHER']")) {
+        		name += " - LAUNCHER";
+        	}
+        	
         	apkInfo.ActivityList.add(new Object[] { name, tag, startup, intents });
         }
 	}
