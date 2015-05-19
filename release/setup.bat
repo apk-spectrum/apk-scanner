@@ -29,12 +29,12 @@ rem --- 폴더 생성 ---
 if not exist "%APP_PATH%" (
     echo Create folder : %APP_PATH%
     mkdir "%APP_PATH%"
-    mkdir "%APP_PATH%/tool"
+    rem mkdir "%APP_PATH%/tool"
 )
-if not exist "%APP_PATH%/tool" (
-    echo Create folder : %APP_PATH%/tool
-    mkdir "%APP_PATH%/tool"
-)
+rem if not exist "%APP_PATH%/tool" (
+rem     echo Create folder : %APP_PATH%/tool
+rem     mkdir "%APP_PATH%/tool"
+rem )
 if not exist "%APP_PATH%" (
     echo Fail : Not create the folder : %APP_PATH%
     goto exit
@@ -42,13 +42,13 @@ if not exist "%APP_PATH%" (
 
 rem --- 파일 복사 ---
 copy /Y .\* "%APP_PATH%"
-copy /Y .\tool\* "%APP_PATH%\tool\"
+rem copy /Y .\tool\* "%APP_PATH%\tool\"
 
 
 rem --- 연결프로그램 지정 ---
 assoc .apk=vnd.android.package-archive
-ftype vnd.android.package-archive=javaw -jar "-Dfile.encoding=utf-8" "%APP_PATH%\%APP_FILE%" %%1 %%*
-rem ftype vnd.android.package-archive="%APP_PATH%/apktool.bat" %%1 %%*
+rem ftype vnd.android.package-archive=javaw -jar "-Dfile.encoding=utf-8" "%APP_PATH%\%APP_FILE%" %%1 %%*
+ftype vnd.android.package-archive="%APP_PATH%/apktool.bat" %%1 %%*
 
 echo Complete
 

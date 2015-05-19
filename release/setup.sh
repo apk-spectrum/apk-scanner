@@ -20,21 +20,21 @@ fi
 sudo rm -rf $APP_PATH
 
 sudo mkdir -p $APP_PATH
-sudo mkdir -p $APP_PATH/tool
+#sudo mkdir -p $APP_PATH/tool
 if [ ! -d $APP_PATH ]; then
     echo Fail : Not create the folder : %APP_PATH%
     exit
 fi
 sudo cp -rf ./* $APP_PATH
 
-keytool_path=$(which java)
-keytool_path=$(readlink -f $keytool_path)
-keytool_path=$(echo $keytool_path | sed 's/\/java$/\/keytool/')
-if [ -x "$keytool_path" ]; then
-    sudo ln -sf $keytool_path $APP_PATH/tool/keytool
-else
-    echo "keytool 을 찾을수 없습니다."
-fi
+#keytool_path=$(which java)
+#keytool_path=$(readlink -f $keytool_path)
+#keytool_path=$(echo $keytool_path | sed 's/\/java$/\/keytool/')
+#if [ -x "$keytool_path" ]; then
+#    sudo ln -sf $keytool_path $APP_PATH/tool/keytool
+#else
+#    echo "keytool 을 찾을수 없습니다."
+#fi
 
 cat << EOF > ./apkchecker.desktop
 [Desktop Entry]
@@ -61,7 +61,7 @@ cat ~/.local/share/applications/mimeapps_old.list | sed '/application\/vnd\.andr
 echo -e "\napplication/vnd.android.package-archive=apkchecker.desktop;" >> ~/.local/share/applications/mimeapps.list
 
 if [ -e ~/.p4qt/ApplicationSettings.xml ]; then
-    cat ~/.p4qt/ApplicationSettings.xml | sed '/EditorMappings/,/StringList/{/<String>apk/d; s/.*<\/StringList>.*/  <String>apk\|default\|\/opt\/APKInfo\/apktool\.sh<\/String>\n <\/StringList>/}' > .ApplicationSettings.xml
+    cat ~/.p4qt/ApplicationSettings.xml | sed '/EditorMappings/,/StringList/{/<String>apk/d; s/.*<\/StringList>.*/  <String>apk\|default\|\/opt\/APKInfo\/APKInfoDlg\.sh<\/String>\n <\/StringList>/}' > .ApplicationSettings.xml
     mv .ApplicationSettings.xml ~/.p4qt/ApplicationSettings.xml
 fi
 

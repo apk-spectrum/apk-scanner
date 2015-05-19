@@ -3,10 +3,7 @@ package com.ApkInfo.Core;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 public class CoreCertTool {
@@ -15,8 +12,14 @@ public class CoreCertTool {
 	public static String CertSummary = "";
 	
 	public static ArrayList<Object[]> solveCert(String CertPath) {
+		Double javaVersion = Double.parseDouble(System.getProperty("java.specification.version"));
+		String keytoolPackage = "sun.security.tools.KeyTool";
+		if(javaVersion >= 1.8) {
+			keytoolPackage = "sun.security.tools.keytool.Main";
+		}
+
+/*
 		String keyToolPath = CoreApkTool.GetUTF8Path()+File.separator+"tool"+File.separator+"keytool";
-		
 		if(keyToolPath.matches("^C:.*")) {
 			keyToolPath += ".exe";
 		}
@@ -24,17 +27,10 @@ public class CoreCertTool {
 			System.out.println("keytool이 존재 하지 않습니다 :" + keyToolPath);
 			keyToolPath = "";
 		}
+*/
 		if(!(new File(CertPath)).exists()) {
 			System.out.println("META-INFO 폴더가 존재 하지 않습니다 :");
 			return CertList;
-		}
-		System.setProperty("file.encoding", "UTF-8");
-		try {
-			System.setOut(new PrintStream(System.out, true, "utf-8"));
-			//System.setIn(new InputStream(System.in,""));
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		
 		for (String s : (new File(CertPath)).list()) {
@@ -43,11 +39,14 @@ public class CoreCertTool {
 			File rsaFile = new File(CertPath + s);
 			if(!rsaFile.exists()) continue;
 
+			exc(new String[]{"java","-Dfile.encoding=utf8",keytoolPackage,"-printcert","-v","-file", rsaFile.getAbsolutePath()});
+/*
 			if(keyToolPath.isEmpty()) {
 				exc(new String[]{"java","-Dfile.encoding=utf8","sun.security.tools.KeyTool","-printcert","-v","-file", rsaFile.getAbsolutePath()});
 			} else {
 				exc(new String[]{keyToolPath,"-printcert","-v","-file", rsaFile.getAbsolutePath()});
 			}
+*/
 		}
 		return CertList;
 	}
@@ -60,21 +59,21 @@ public class CoreCertTool {
 		try {
 			String s = "";
 			Process oProcess = new ProcessBuilder(cmd).redirectErrorStream(true).start();
+			/*
 			String encoding = "UTF-8";
-			
 			if(cmd[0].matches("^C:.*")) {
 				encoding = "EUC-KR";
 			}
-			
+			*/
 			String buffer = "";
-		    BufferedReader stdOut = new BufferedReader(new InputStreamReader(oProcess.getInputStream(), encoding));
+		    BufferedReader stdOut = new BufferedReader(new InputStreamReader(oProcess.getInputStream()/*, encoding*/));
 		    
 		    String certContent = "";
 		    CertSummary = "<certificate[1]>\n";
 		    int certCnt = 0;
 		    while ((s = stdOut.readLine()) != null) {
 	    		if(!certContent.isEmpty() && s.matches("^.*\\[[0-9]*\\]:$")){
-	    			if((cmd[0].equals("java") && cmd[4].equals("-v")) || (!cmd[0].equals("java") && cmd[2].equals("-v"))) {
+	    			if((cmd[0].equals("java") && cmd[4].equals("-v"))/* || (!cmd[0].equals("java") && cmd[2].equals("-v"))*/) {
 	    				CertList.add(new Object[] { "Certificate[" + (CertList.size() + 1) + "]", certContent });
 	    				CertSummary += "<certificate[" + (CertList.size() + 1) + "]>\n";
 				    	certContent = "";
@@ -90,7 +89,7 @@ public class CoreCertTool {
 	    		certContent += (certContent.isEmpty() ? "" : "\n") + s;
 		    	buffer += s;
 		    }
-		    if((cmd[0].equals("java") && cmd[4].equals("-v")) || (!cmd[0].equals("java") && cmd[2].equals("-v"))) {
+		    if((cmd[0].equals("java") && cmd[4].equals("-v"))/* || (!cmd[0].equals("java") && cmd[2].equals("-v"))*/) {
 				CertList.add(new Object[] { "Certificate[" + (CertList.size() + 1) + "]", certContent });
 			} else {
 				CertList.get(certCnt++)[1] += "\n\n[RFC]\n" + certContent;
