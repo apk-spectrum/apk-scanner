@@ -47,6 +47,7 @@ Exec=java -jar $APP_PATH/$APP_FILE %f
 Name=APK Checker
 Comment=APK Checker
 NoDisplay=true
+Icon=$APP_PATH/AppIcon.png
 MimeType=application/vnd.android.package-archive;
 EOF
 
@@ -59,8 +60,9 @@ if [ ! -e /usr/share/mime/application/vnd.android.package-archive.xml ]; then
 fi
 
 cp -f ~/.local/share/applications/mimeapps.list ~/.local/share/applications/mimeapps_old.list
-cat ~/.local/share/applications/mimeapps_old.list | sed '/application\/vnd\.android\.package-archive\=/d;/^$/d' > ~/.local/share/applications/mimeapps.list
-echo -e "\napplication/vnd.android.package-archive=apkchecker.desktop;" >> ~/.local/share/applications/mimeapps.list
+cat ~/.local/share/applications/mimeapps_old.list \
+	| sed '/application\/vnd\.android\.package-archive\=/d;/^$/d' \
+	| sed 's/^\s*\[.*\]\s*$/&\napplication\/vnd.android.package-archive=apkchecker.desktop;/' > ~/.local/share/applications/mimeapps.list
 
 if [ -e ~/.p4qt/ApplicationSettings.xml ]; then
     cat ~/.p4qt/ApplicationSettings.xml | sed '/EditorMappings/,/StringList/{/<String>apk/d; s/.*<\/StringList>.*/  <String>apk\|default\|\/opt\/APKInfo\/APKInfoDlg\.sh<\/String>\n <\/StringList>/}' > .ApplicationSettings.xml
