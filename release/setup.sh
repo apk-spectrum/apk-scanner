@@ -48,7 +48,7 @@ Name=APK Checker
 Comment=APK Checker
 NoDisplay=true
 Icon=$APP_PATH/AppIcon.png
-MimeType=application/vnd.android.package-archive;
+MimeType=application/apk;application/vnd.android.package-archive;
 EOF
 
 sudo mv -f ./apkchecker.desktop /usr/share/applications/apkchecker.desktop

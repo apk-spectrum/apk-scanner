@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import com.ApkInfo.UI.MainUI;
-
 public class MyDeviceInfo {
 	public static ArrayList<Device> DeviceList;
 	

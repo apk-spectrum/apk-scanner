@@ -194,7 +194,7 @@ public class CoreXmlTool {
 		String Size = "Unknown";
 		String IconPath = "Unknown";
 		
-		if(!resource.matches("^@xml/.*")) {
+		if(resource == null || !resource.matches("^@xml/.*")) {
 			return new Object[] { IconPath, Size };
 		}
 
