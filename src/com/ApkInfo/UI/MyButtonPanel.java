@@ -81,6 +81,6 @@ public class MyButtonPanel extends JPanel{
 				  }
 			});
 		
-		btnInstall.setEnabled(false);
+		//btnInstall.setEnabled(false);
 	}
 }

@@ -2,9 +2,11 @@ package com.ApkInfo.UI;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
+import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.Label;
@@ -16,9 +18,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -37,15 +41,19 @@ class ADBDialog extends Dialog implements ActionListener
 	StandardButton btnrefresh;
 	Frame mainui;
 	
-	Label AppInfo;
-	Label DeviceInfo;	
+	JTextArea AppInfo;
+	JTextArea DeviceInfo;	
 	Panel textPanel;
 	
 	MyDeviceInfo mMyDeviceInfo;
 	ArrayList<MyDeviceInfo.Device> DeviceList;
 	
-	JTable table;
-	
+    String[] petStrings = { "97920989(IM-G920S)", "31445989(SC-04F)"};
+    
+    //Create the combo box, select the item at index 4.
+    //Indices start at 0, so 4 specifies the pig.
+    JComboBox petList;
+		
 	public ADBDialog(Frame f1) {
 		super(f1, "ADB Install", true);
 		mainui = f1;
@@ -53,22 +61,13 @@ class ADBDialog extends Dialog implements ActionListener
 		
 		Panel ButtonPanel = new Panel(new GridLayout(1,2));
 		
-		table = new JTable(new MyTableModel());
+		petList = new JComboBox(petStrings);
 		
-	    ListSelectionModel cellSelectionModel = table.getSelectionModel();
-	    
-	    cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
-		@Override
-		public void valueChanged(ListSelectionEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-	  });
-		
-	    JScrollPane scrollPane = new JScrollPane(table);
-	    
+        petList.setSelectedIndex(0);
+        petList.addActionListener(this);		
+	    	    
 		ButtonPanel.add(btnshowDeiveInfo = new StandardButton("Refresh Device List",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED));
-		ButtonPanel.add(btnrefresh = new StandardButton("설치 및 Device 정보",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED));
+		ButtonPanel.add(btnrefresh = new StandardButton("설치",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED));
 		
         WindowAdapter wa = new WindowAdapter(){
             public void windowClosing(WindowEvent e){
@@ -77,25 +76,43 @@ class ADBDialog extends Dialog implements ActionListener
         };
         this.addWindowListener(wa);
 		
-        //textPanel = new Panel(new GridLayout(1,2));
+        textPanel = new Panel(new GridLayout(1,2));
         
 		setResizable( false );
 		btnshowDeiveInfo.addActionListener(this);
 		btnrefresh.addActionListener(this);
 		
-		textPanel.add(AppInfo = new Label("App Infomation"));
-		textPanel.add(DeviceInfo = new Label("Device Information"));
-		//add(textPanel, BorderLayout.NORTH);
-		//add(ButtonPanel,BorderLayout.SOUTH);
+		AppInfo = new JTextArea("-Source Apk\nPakage : Com.iloen.melon\nVersion 3.2.2\n"
+				+ "\n-Target Apk\nPakage : Com.iloen.melon\nVersion : 3.1\nCodePath : /system/priv-app/Melon\nlegacyNativeLibDir : /system/priv-app/Melon/lib\n"
+				+ "\n-Device\nModel : IM-G920S\n"+"build TAG : release-key\nbuild type : user");
 		
-		add(scrollPane,BorderLayout.NORTH);
+		AppInfo.setEditable(false);
+        Font font = new Font("helvitica", Font.BOLD, 15);
+        AppInfo.setFont(font);        
+		AppInfo.setBackground(textPanel.getBackground());
+        
+        
+		textPanel.add(AppInfo);
 		
-		setSize(400,300);
+		
+		//textPanel.add(DeviceInfo = new JTextArea("Device Information"));
+		
+		
+		add(petList,BorderLayout.NORTH);
+		add(textPanel, BorderLayout.CENTER);
+		add(ButtonPanel,BorderLayout.SOUTH);
+		
+		//add(scrollPane,BorderLayout.NORTH);
+		
+		setSize(400,380);
 		this.setLocation(MainUI.nPositionX+100, MainUI.nPositionY+100);	
 		
 		mMyDeviceInfo = new MyDeviceInfo();
 		
 		DeviceList = mMyDeviceInfo.DeviceList;
+		
+				
+		
 	}
 	public void actionPerformed(ActionEvent e)
 	{		
@@ -105,7 +122,7 @@ class ADBDialog extends Dialog implements ActionListener
 		if(str == "Refresh Device List") {
 			System.out.println("click  :" + str);
 			setVisible(false);
-		} else if(str == "설치 및 Device 정보") {
+		} else if(str == "설치") {
 			System.out.println("click  :" + str);	
 		}		
 	}
@@ -113,45 +130,7 @@ class ADBDialog extends Dialog implements ActionListener
 		setVisible(true);
 		
 	}
-  class MyTableModel extends AbstractTableModel {
-	    private String[] columnNames = { "Class", "Type",
-        "Startup" };
-
-
-    public int getColumnCount() {
-      return columnNames.length;
-    }
-
-    public int getRowCount() {
-      return DeviceList.size();
-    }
-
-    public String getColumnName(int col) {
-      return columnNames[col];
-    }
-
-    public Object getValueAt(int row, int col) {
-      return table.getValueAt(row, col);
-    }
-
-    /*
-     * JTable uses this method to determine the default renderer/ editor for
-     * each cell. If we didn't implement this method, then the last column
-     * would contain text ("true"/"false"), rather than a check box.
-     */
-    public Class getColumnClass(int c) {
-      return getValueAt(0, c).getClass();
-    }
-
-    /*
-     * Don't need to implement this method unless your table's editable.
-     */
-    public boolean isCellEditable(int row, int col) {
-      //Note that the data/cell address is constant,
-      //no matter where the cell appears onscreen.
-	    	return true;
-	    }
-  }
+  
 		  
 public static void main(final String[] args) {
 		
