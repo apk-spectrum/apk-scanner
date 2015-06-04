@@ -26,6 +26,14 @@ public class CoreXmlTool {
 		// package
 		xmlAndroidManifest.getNode("/manifest");
 		apkInfo.strPackageName = xmlAndroidManifest.getAttributes("package");
+		
+		if(apkInfo.strVersionCode == "Unknown") {
+			apkInfo.strVersionCode = xmlAndroidManifest.getAttributes("android:versionCode");
+		}
+		
+		if(apkInfo.strVersionName == "Unknown") {
+			apkInfo.strVersionName = xmlAndroidManifest.getAttributes("android:versionName");
+		}
 
 		// label & icon
 		xmlAndroidManifest.getNode("/manifest/application");
@@ -221,6 +229,7 @@ public class CoreXmlTool {
 				Height = getResourceInfo(Height).replaceAll("^([0-9]*).*", "$1");
 				//Size = ((Integer.parseInt(width) - 40) / 70 + 1) + " X " + ((Integer.parseInt(Height) - 40) / 70 + 1);
 				Size = (int)Math.ceil((Float.parseFloat(width) - 40) / 76 + 1) + " X " + (int)Math.ceil((Float.parseFloat(Height) - 40) / 76 + 1);
+				Size += "\n(" + width + " X " + Height + ")";
 		    	System.out.println("Size " + Size + ", width " + width + ", height " + Height);
 			}
 

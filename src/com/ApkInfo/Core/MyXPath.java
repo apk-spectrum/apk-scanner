@@ -100,10 +100,11 @@ public class MyXPath {
 			return null;
 		}
 		if(getNode().getAttributes().getNamedItem(name) == null) {
+			if(name.indexOf(":") == -1) return null;
 			String shortName = name.substring(name.indexOf(":"));
 			//System.out.println("getAttributes() shortName " + shortName);
 			for(int i=0; i < getNode().getAttributes().getLength(); i++) {
-				//System.out.println("getAttributes() " + i + " : " + getNodeList().item(idx).getAttributes().item(i).getNodeName());
+				System.out.println("getAttributes() " + i + " : " + getNode().getAttributes().item(i).getNodeName());
 				if(getNode().getAttributes().item(i).getNodeName().matches(".*"+shortName)) {
 					//System.out.println("getAttributes() maybe...... ");
 					return getNode().getAttributes().item(i).getTextContent();
@@ -121,6 +122,7 @@ public class MyXPath {
 			return null;
 		}
 		if(getNodeList().item(idx).getAttributes().getNamedItem(name) == null) {
+			if(name.indexOf(":") == -1) return null;
 			String shortName = name.substring(name.indexOf(":"));
 			//System.out.println("getAttributes() shortName " + shortName);
 			for(int i=0; i < getNodeList().item(idx).getAttributes().getLength(); i++) {
