@@ -71,6 +71,7 @@ class ADBDialog extends Dialog implements ActionListener
 		
         WindowAdapter wa = new WindowAdapter(){
             public void windowClosing(WindowEvent e){
+            	//setVisible(false);
                 System.exit(0);
             }
         };
@@ -84,7 +85,7 @@ class ADBDialog extends Dialog implements ActionListener
 		
 		AppInfo = new JTextArea("-Source Apk\nPakage : Com.iloen.melon\nVersion 3.2.2\n"
 				+ "\n-Target Apk\nPakage : Com.iloen.melon\nVersion : 3.1\nCodePath : /system/priv-app/Melon\nlegacyNativeLibDir : /system/priv-app/Melon/lib\n"
-				+ "\n-Device\nModel : IM-G920S\n"+"build TAG : release-key\nbuild type : user");
+				+ "\n-Device\nModel : IM-G920S\n"+"build TAG : release-key\n Binary Version : SC04FOMU1WOEA\nbuild type : user");
 		
 		AppInfo.setEditable(false);
         Font font = new Font("helvitica", Font.BOLD, 15);

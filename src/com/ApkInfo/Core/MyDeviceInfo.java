@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import com.ApkInfo.UI.MainUI;
+
 public class MyDeviceInfo {
 	public static ArrayList<Device> DeviceList;
 	
@@ -15,16 +17,60 @@ public class MyDeviceInfo {
 	
 	public MyDeviceInfo() {
 		DeviceList = new ArrayList<Device>();	
-		
+		String TargetInfo = new String();
 		String workingDir = CoreApkTool.GetUTF8Path() + File.separator + "adb";
 		System.out.println(workingDir);
 		
 		String[] cmd = {workingDir, "devices"};
-				
 		exc(cmd,true);
+		
+		//adb shell dumpsys package my.package | grep versionName
+		String[] cmd1 = {workingDir, "shell", "dumpsys","package","com.nttdocomo.android.ictrw"};
+				
+		TargetInfo = exc(cmd1,true);
+		
+		Device newDivceInfo = new Device();
+		
+		
+		//newDivceInfo.strVersion = TargetInfo(TargetInfo.("versionName=")
+		
+		System.out.println(selectString(TargetInfo,"versionName="));
+		System.out.println(selectString(TargetInfo,"versionCode="));
+		System.out.println(selectString(TargetInfo,"codePath="));
+		System.out.println(selectString(TargetInfo,"legacyNativeLibraryDir="));
+		
+		
+		
+		//adb shell getprop ro.build.version.release
+		
+		String[] cmd2 = {workingDir, "shell", "getprop","ro.factory.model"};
+		TargetInfo = exc(cmd2,true);
+		
+		String[] cmd3 = {workingDir, "shell", "getprop","ro.build.PDA"};
+		TargetInfo = exc(cmd3,true);
+	
+		String[] cmd4 = {workingDir, "shell", "getprop","ro.build.tags"};
+		TargetInfo = exc(cmd4,true);
+		
+		String[] cmd5 = {workingDir, "shell", "getprop","ro.build.type"};
+		TargetInfo = exc(cmd5,true);
+		
+		String[] cmd6 = {workingDir, "-s", "97920989","install", "-d","-r", "/home/leejinhyeong/Desktop/dhome_phone_test_signed_on.apk"};
+		TargetInfo = exc(cmd6,true);		
+		
 	}
 	
-	
+	public String selectString(String source, String key)
+	{
+		String temp = null;
+		
+		int startindex = source.indexOf(key);
+		temp = source.substring(startindex);
+
+		int endindex = temp.indexOf(" ");
+		temp = temp.substring(key.length(),endindex);
+		return temp; 
+	}
 	
 	
 	
@@ -67,17 +113,12 @@ public class MyDeviceInfo {
 		String strVersion;
 		String strVersionCode;
 		String strCodeFolderPath;
-		String strlegacyNativeLibraryDir;
-		String strKeySet;
-		
+				
 		//device--------------------------------------------------------------------------------------------------------
 		String strADBDeviceNumber;
 		String strDeviceName;
 		String strkeys;
 		String strBuildType;
-		
-		//device for adb--------------------------------------------------------------------------------------------------------
-		Boolean bisDeviceConnect;
-		Boolean bisPossibleRemount;
+				
 	}
 }
