@@ -14,51 +14,75 @@ public class MyDeviceInfo {
 	public String strAppinfo;
 	public String strDeviceinfo;
 	public int DeviceCount;
-	
+	String workingDir;
 	public MyDeviceInfo() {
 		DeviceList = new ArrayList<Device>();	
-		String TargetInfo = new String();
-		String workingDir = CoreApkTool.GetUTF8Path() + File.separator + "adb";
+		
+		workingDir = CoreApkTool.GetUTF8Path() + File.separator + "adb";
 		System.out.println(workingDir);
 		
-		String[] cmd = {workingDir, "devices"};
-		exc(cmd,true);
+		Refresh();
+
 		
-		//adb shell dumpsys package my.package | grep versionName
-		String[] cmd1 = {workingDir, "shell", "dumpsys","package","com.nttdocomo.android.ictrw"};
-				
-		TargetInfo = exc(cmd1,true);
 		
 		Device newDivceInfo = new Device();
 		
 		
 		//newDivceInfo.strVersion = TargetInfo(TargetInfo.("versionName=")
 		
-		System.out.println(selectString(TargetInfo,"versionName="));
-		System.out.println(selectString(TargetInfo,"versionCode="));
-		System.out.println(selectString(TargetInfo,"codePath="));
-		System.out.println(selectString(TargetInfo,"legacyNativeLibraryDir="));
+
 		
 		
 		
 		//adb shell getprop ro.build.version.release
 		
-		String[] cmd2 = {workingDir, "shell", "getprop","ro.factory.model"};
-		TargetInfo = exc(cmd2,true);
-		
-		String[] cmd3 = {workingDir, "shell", "getprop","ro.build.PDA"};
-		TargetInfo = exc(cmd3,true);
-	
-		String[] cmd4 = {workingDir, "shell", "getprop","ro.build.tags"};
-		TargetInfo = exc(cmd4,true);
-		
-		String[] cmd5 = {workingDir, "shell", "getprop","ro.build.type"};
-		TargetInfo = exc(cmd5,true);
-		
-		String[] cmd6 = {workingDir, "-s", "97920989","install", "-d","-r", "/home/leejinhyeong/Desktop/dhome_phone_test_signed_on.apk"};
-		TargetInfo = exc(cmd6,true);		
+
 		
 	}
+	
+	public void Refresh()
+	{
+		
+		
+		String[] cmd = {workingDir, "devices"};
+		exc(cmd,true);
+		//adb shell dumpsys package my.package | grep versionName
+				
+	}
+	
+	public Device SetTarget(String DeviceADBNumber)
+	{
+		Device Devicetemp = new Device();
+		String TargetInfo = new String();
+		
+		String[] cmd1 = {workingDir,"-s",DeviceADBNumber, "shell", "dumpsys","package","com.nttdocomo.android.ictrw"};
+		
+		TargetInfo = exc(cmd1,true);
+		
+		System.out.println(selectString(TargetInfo,"versionName="));
+		System.out.println(selectString(TargetInfo,"versionCode="));
+		System.out.println(selectString(TargetInfo,"codePath="));
+		System.out.println(selectString(TargetInfo,"legacyNativeLibraryDir="));		
+		
+		String[] cmd2 = {workingDir, "-s",DeviceADBNumber, "shell", "getprop","ro.factory.model"};
+		TargetInfo = exc(cmd2,true);
+		
+		String[] cmd3 = {workingDir, "-s",DeviceADBNumber, "shell", "getprop","ro.build.PDA"};
+		TargetInfo = exc(cmd3,true);
+	
+		String[] cmd4 = {workingDir, "-s",DeviceADBNumber, "shell", "getprop","ro.build.tags"};
+		TargetInfo = exc(cmd4,true);
+		
+		String[] cmd5 = {workingDir, "-s",DeviceADBNumber, "shell", "getprop","ro.build.type"};
+		TargetInfo = exc(cmd5,true);		
+	
+		return Devicetemp;
+	}
+	public void InstallApk(String sourcePath, String DeviceADBNumber) {
+		String TargetInfo = new String();
+		String[] cmd6 = {workingDir, "-s", DeviceADBNumber,"install", "-d","-r", "/home/leejinhyeong/Desktop/dhome_phone_test_signed_on.apk"};
+		TargetInfo = exc(cmd6,true);
+	}	
 	
 	public String selectString(String source, String key)
 	{
