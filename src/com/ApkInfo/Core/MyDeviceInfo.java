@@ -21,38 +21,48 @@ public class MyDeviceInfo {
 		workingDir = CoreApkTool.GetUTF8Path() + File.separator + "adb";
 		System.out.println(workingDir);
 		
-		Refresh();
-
-		
-		
-		Device newDivceInfo = new Device();
-		
-		
+		Refresh();		
 		//newDivceInfo.strVersion = TargetInfo(TargetInfo.("versionName=")
-		
-
-		
-		
-		
 		//adb shell getprop ro.build.version.release
 		
-
-		
 	}
 	
-	public void Refresh()
+	public Boolean Refresh()
 	{
-		
-		
+		String strDeviceList;
 		String[] cmd = {workingDir, "devices"};
-		exc(cmd,true);
+		strDeviceList = exc(cmd,true);
 		//adb shell dumpsys package my.package | grep versionName
-				
+		
+		strDeviceList = strDeviceList.substring("List of devices attached ".length());
+		
+		DeviceList.clear();
+		
+		for(; strDeviceList.indexOf("device") !=-1;) {
+			Device temp = new Device();
+			String strTemp;
+			
+			strTemp = strDeviceList.substring(0, strDeviceList.indexOf("device"));
+			
+			strTemp.replaceAll(" ", "");
+			strTemp.replaceAll("\t", "");
+			
+			temp.strADBDeviceNumber =strTemp;
+			
+			System.out.println(temp.strADBDeviceNumber);
+			
+			strDeviceList = strDeviceList.substring( strDeviceList.indexOf("device")+ "device".length());
+			
+			SetTarget(temp, "a7614df3");
+			
+			DeviceList.add(temp);
+		}
+		
+		return true;
 	}
 	
-	public Device SetTarget(String DeviceADBNumber)
+	public void SetTarget(Device Devicetemp, String DeviceADBNumber)
 	{
-		Device Devicetemp = new Device();
 		String TargetInfo = new String();
 		
 		String[] cmd1 = {workingDir,"-s",DeviceADBNumber, "shell", "dumpsys","package","com.nttdocomo.android.ictrw"};
@@ -64,24 +74,38 @@ public class MyDeviceInfo {
 		System.out.println(selectString(TargetInfo,"codePath="));
 		System.out.println(selectString(TargetInfo,"legacyNativeLibraryDir="));		
 		
+		
+		Devicetemp.strVersion = selectString(TargetInfo,"versionName=");
+		Devicetemp.strVersionCode = selectString(TargetInfo,"versionCode=");
+		Devicetemp.strCodeFolderPath = selectString(TargetInfo,"codePath=");
+		//Devicetemp.str = selectString(TargetInfo,"legacyNativeLibraryDir=");
+		
+		
+		
+		
+		
 		String[] cmd2 = {workingDir, "-s",DeviceADBNumber, "shell", "getprop","ro.factory.model"};
 		TargetInfo = exc(cmd2,true);
 		
+		Devicetemp.strDeviceName = TargetInfo;
+		
 		String[] cmd3 = {workingDir, "-s",DeviceADBNumber, "shell", "getprop","ro.build.PDA"};
 		TargetInfo = exc(cmd3,true);
-	
+		
+		
 		String[] cmd4 = {workingDir, "-s",DeviceADBNumber, "shell", "getprop","ro.build.tags"};
 		TargetInfo = exc(cmd4,true);
 		
 		String[] cmd5 = {workingDir, "-s",DeviceADBNumber, "shell", "getprop","ro.build.type"};
-		TargetInfo = exc(cmd5,true);		
-	
-		return Devicetemp;
+		TargetInfo = exc(cmd5,true);			
 	}
+	
 	public void InstallApk(String sourcePath, String DeviceADBNumber) {
 		String TargetInfo = new String();
 		String[] cmd6 = {workingDir, "-s", DeviceADBNumber,"install", "-d","-r", "/home/leejinhyeong/Desktop/dhome_phone_test_signed_on.apk"};
 		TargetInfo = exc(cmd6,true);
+		
+		
 	}	
 	
 	public String selectString(String source, String key)
@@ -101,31 +125,18 @@ public class MyDeviceInfo {
 	static String exc(String[] cmd, boolean showLog) {
 		try {
 			String s = "";
-			//String e = "";
-			
 			Process oProcess = new ProcessBuilder(cmd).redirectErrorStream(true).start();
-			
 			String buffer = "";
-		    // 외부 프로그램 출력 읽기
 		    BufferedReader stdOut   = new BufferedReader(new InputStreamReader(oProcess.getInputStream()));
-		    //BufferedReader stdError = new BufferedReader(new InputStreamReader(oProcess.getErrorStream()));
 		    
-		    
-		    if(showLog) {
-			    while ((s = stdOut.readLine()) != null) {
-			    	System.out.println(s);
-			    	buffer += s;
-			    }
+		    while ((s = stdOut.readLine()) != null) {
+		    	if(showLog) System.out.println(s);
+		    	buffer += s;
 		    }
-		    // 외부 프로그램 반환값 출력 (이 부분은 필수가 아님)
-		    //System.out.println("Exit Code: " + oProcess.exitValue());
-		    //System.exit(oProcess.exitValue()); // 외부 프로그램의 반환값을, 이 자바 프로그램 자체의 반환값으로 삼기
-		    
 		    return buffer;
 
 		    } catch (IOException e) { // 에러 처리
-		      System.err.println("에러! 외부 명령 실행에 실패했습니다.\n" + e.getMessage());
-		      
+		      System.err.println("에러! 외부 명령 실행에 실패했습니다.\n" + e.getMessage());		      
 		      System.exit(-1);
 	    }
 		return null;
@@ -133,16 +144,16 @@ public class MyDeviceInfo {
 	}
 	public class Device {
 		//app--------------------------------------------------------------------------------------------------------
-		String strPakage;
-		String strVersion;
-		String strVersionCode;
-		String strCodeFolderPath;
+		public String strPakage;
+		public String strVersion;
+		public String strVersionCode;
+		public String strCodeFolderPath;
 				
 		//device--------------------------------------------------------------------------------------------------------
-		String strADBDeviceNumber;
-		String strDeviceName;
-		String strkeys;
-		String strBuildType;
+		public String strADBDeviceNumber;
+		public String strDeviceName;
+		public String strkeys;
+		public String strBuildType;
 				
 	}
 }

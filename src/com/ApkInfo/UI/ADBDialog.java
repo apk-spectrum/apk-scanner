@@ -29,6 +29,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
 import com.ApkInfo.Core.MyDeviceInfo;
+import com.ApkInfo.Core.MyDeviceInfo.Device;
 import com.ApkInfo.UIUtil.ButtonType;
 import com.ApkInfo.UIUtil.StandardButton;
 import com.ApkInfo.UIUtil.Theme;
@@ -61,7 +62,17 @@ class ADBDialog extends Dialog implements ActionListener
 		
 		Panel ButtonPanel = new Panel(new GridLayout(1,2));
 		
-		petList = new JComboBox(petStrings);
+		mMyDeviceInfo = new MyDeviceInfo();
+		DeviceList = mMyDeviceInfo.DeviceList;
+		
+		petList = new JComboBox();
+		
+		for(int i=0; i<DeviceList.size(); i++) {
+			
+			Device temp = DeviceList.get(i);
+			
+			petList.addItem(temp.strADBDeviceNumber);
+		}		
 		
         petList.setSelectedIndex(0);
         petList.addActionListener(this);		
@@ -108,9 +119,7 @@ class ADBDialog extends Dialog implements ActionListener
 		setSize(400,380);
 		this.setLocation(MainUI.nPositionX+100, MainUI.nPositionY+100);	
 		
-		mMyDeviceInfo = new MyDeviceInfo();
-		
-		DeviceList = mMyDeviceInfo.DeviceList;
+
 		
 				
 		
@@ -122,7 +131,9 @@ class ADBDialog extends Dialog implements ActionListener
 		
 		if(str == "Refresh Device List") {
 			System.out.println("click  :" + str);
-			setVisible(false);
+			
+			mMyDeviceInfo.Refresh();
+			//setVisible(false);
 		} else if(str == "설치") {
 			System.out.println("click  :" + str);	
 		}		
