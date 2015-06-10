@@ -62,6 +62,12 @@ class ADBDialog extends Dialog implements ActionListener
 		
 		Panel ButtonPanel = new Panel(new GridLayout(1,2));
 		
+		//AppInfo = new JTextArea("-Source Apk\nPakage : Com.iloen.melon\nVersion 3.2.2\n"
+		//		+ "\n-Target Apk\nPakage : Com.iloen.melon\nVersion : 3.1\nCodePath : /system/priv-app/Melon\nlegacyNativeLibDir : /system/priv-app/Melon/lib\n"
+		//		+ "\n-Device\nModel : IM-G920S\n"+"build TAG : release-key\n Binary Version : SC04FOMU1WOEA\nbuild type : user");
+		
+		AppInfo = new JTextArea();
+				
 		mMyDeviceInfo = new MyDeviceInfo();
 		DeviceList = mMyDeviceInfo.DeviceList;
 		
@@ -71,11 +77,12 @@ class ADBDialog extends Dialog implements ActionListener
 			
 			Device temp = DeviceList.get(i);
 			
-			petList.addItem(temp.strADBDeviceNumber);
+			petList.addItem(temp.strADBDeviceNumber+"("+temp.strDeviceName+")");
 		}		
 		
         if(DeviceList.size() > 0) {
         	petList.setSelectedIndex(0);
+        	AppInfo.setText(DeviceList.get(0).strLabelText);
         } else {
 			petList.addItem("null");
         }
@@ -98,9 +105,7 @@ class ADBDialog extends Dialog implements ActionListener
 		btnshowDeiveInfo.addActionListener(this);
 		btnInstall.addActionListener(this);
 		
-		AppInfo = new JTextArea("-Source Apk\nPakage : Com.iloen.melon\nVersion 3.2.2\n"
-				+ "\n-Target Apk\nPakage : Com.iloen.melon\nVersion : 3.1\nCodePath : /system/priv-app/Melon\nlegacyNativeLibDir : /system/priv-app/Melon/lib\n"
-				+ "\n-Device\nModel : IM-G920S\n"+"build TAG : release-key\n Binary Version : SC04FOMU1WOEA\nbuild type : user");
+		
 		
 		AppInfo.setEditable(false);
         Font font = new Font("helvitica", Font.BOLD, 15);
