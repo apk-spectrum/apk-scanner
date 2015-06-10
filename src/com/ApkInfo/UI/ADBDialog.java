@@ -39,7 +39,7 @@ class ADBDialog extends Dialog implements ActionListener
 {
 	
 	StandardButton btnshowDeiveInfo;
-	StandardButton btnrefresh;
+	StandardButton btnInstall;
 	Frame mainui;
 	
 	JTextArea AppInfo;
@@ -74,11 +74,15 @@ class ADBDialog extends Dialog implements ActionListener
 			petList.addItem(temp.strADBDeviceNumber);
 		}		
 		
-        petList.setSelectedIndex(0);
+        if(DeviceList.size() > 0) {
+        	petList.setSelectedIndex(0);
+        } else {
+			petList.addItem("null");
+        }
         petList.addActionListener(this);		
 	    	    
 		ButtonPanel.add(btnshowDeiveInfo = new StandardButton("Refresh Device List",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED));
-		ButtonPanel.add(btnrefresh = new StandardButton("설치",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED));
+		ButtonPanel.add(btnInstall = new StandardButton("설치",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED));
 		
         WindowAdapter wa = new WindowAdapter(){
             public void windowClosing(WindowEvent e){
@@ -92,7 +96,7 @@ class ADBDialog extends Dialog implements ActionListener
         
 		setResizable( false );
 		btnshowDeiveInfo.addActionListener(this);
-		btnrefresh.addActionListener(this);
+		btnInstall.addActionListener(this);
 		
 		AppInfo = new JTextArea("-Source Apk\nPakage : Com.iloen.melon\nVersion 3.2.2\n"
 				+ "\n-Target Apk\nPakage : Com.iloen.melon\nVersion : 3.1\nCodePath : /system/priv-app/Melon\nlegacyNativeLibDir : /system/priv-app/Melon/lib\n"
@@ -135,12 +139,13 @@ class ADBDialog extends Dialog implements ActionListener
 			mMyDeviceInfo.Refresh();
 			//setVisible(false);
 		} else if(str == "설치") {
-			System.out.println("click  :" + str);	
-		}		
+			btnInstall.setEnabled(false);
+			mMyDeviceInfo.InstallApk("/home/leejinhyeong/Desktop/dhome_phone_test_signed_on.apk"/*MainUI.apkFilePath*/, DeviceList.get(petList.getSelectedIndex()).strADBDeviceNumber);
+			System.out.println("click  :" + str);
+		}
 	}
 	public void showPlease() {
 		setVisible(true);
-		
 	}
   
 		  

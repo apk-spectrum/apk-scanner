@@ -15,6 +15,9 @@ public class MyDeviceInfo {
 	public String strDeviceinfo;
 	public int DeviceCount;
 	String workingDir;
+	
+	static MyCoreThead startCore;
+	
 	public MyDeviceInfo() {
 		DeviceList = new ArrayList<Device>();	
 		
@@ -38,14 +41,15 @@ public class MyDeviceInfo {
 		
 		DeviceList.clear();
 		
+		System.out.println(strDeviceList.indexOf("device"));
+		
 		for(; strDeviceList.indexOf("device") !=-1;) {
 			Device temp = new Device();
 			String strTemp;
 			
 			strTemp = strDeviceList.substring(0, strDeviceList.indexOf("device"));
 			
-			strTemp.replaceAll(" ", "");
-			strTemp.replaceAll("\t", "");
+			strTemp = strTemp.trim();
 			
 			temp.strADBDeviceNumber =strTemp;
 			
@@ -53,7 +57,7 @@ public class MyDeviceInfo {
 			
 			strDeviceList = strDeviceList.substring( strDeviceList.indexOf("device")+ "device".length());
 			
-			SetTarget(temp, "a7614df3");
+			SetTarget(temp, temp.strADBDeviceNumber);
 			
 			DeviceList.add(temp);
 		}
@@ -67,7 +71,7 @@ public class MyDeviceInfo {
 		
 		String[] cmd1 = {workingDir,"-s",DeviceADBNumber, "shell", "dumpsys","package","com.nttdocomo.android.ictrw"};
 		
-		TargetInfo = exc(cmd1,true);
+		TargetInfo = exc(cmd1,false);
 		
 		System.out.println(selectString(TargetInfo,"versionName="));
 		System.out.println(selectString(TargetInfo,"versionCode="));
@@ -78,11 +82,7 @@ public class MyDeviceInfo {
 		Devicetemp.strVersion = selectString(TargetInfo,"versionName=");
 		Devicetemp.strVersionCode = selectString(TargetInfo,"versionCode=");
 		Devicetemp.strCodeFolderPath = selectString(TargetInfo,"codePath=");
-		//Devicetemp.str = selectString(TargetInfo,"legacyNativeLibraryDir=");
-		
-		
-		
-		
+		//Devicetemp.str = selectString(TargetInfo,"legacyNativeLibraryDir=");		
 		
 		String[] cmd2 = {workingDir, "-s",DeviceADBNumber, "shell", "getprop","ro.factory.model"};
 		TargetInfo = exc(cmd2,true);
@@ -101,12 +101,30 @@ public class MyDeviceInfo {
 	}
 	
 	public void InstallApk(String sourcePath, String DeviceADBNumber) {
-		String TargetInfo = new String();
-		String[] cmd6 = {workingDir, "-s", DeviceADBNumber,"install", "-d","-r", "/home/leejinhyeong/Desktop/dhome_phone_test_signed_on.apk"};
-		TargetInfo = exc(cmd6,true);
+
+		System.out.println("sourcePath : " + sourcePath + "DeviceADBNumber: " + DeviceADBNumber);
 		
+		startCore = new MyCoreThead(sourcePath,DeviceADBNumber);
+		startCore.start();	
 		
-	}	
+	}
+	
+	class MyCoreThead extends Thread {
+		
+		String DeviceADBNumber;
+		String sourcePath;
+		
+		MyCoreThead(String sourcePath, String DeviceADBNumber) {
+			this.DeviceADBNumber = DeviceADBNumber;
+			this.sourcePath = sourcePath;
+		}
+		
+		public void run() {
+			String TargetInfo = new String();
+			String[] cmd6 = {workingDir, "-s", this.DeviceADBNumber,"install", "-d","-r", 	this.sourcePath};
+			TargetInfo = exc(cmd6,true);
+		}
+	}
 	
 	public String selectString(String source, String key)
 	{
@@ -118,6 +136,7 @@ public class MyDeviceInfo {
 		int endindex = temp.indexOf(" ");
 		temp = temp.substring(key.length(),endindex);
 		return temp; 
+
 	}
 	
 	
