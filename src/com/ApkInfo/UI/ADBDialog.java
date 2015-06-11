@@ -69,25 +69,14 @@ class ADBDialog extends Dialog implements ActionListener
 		AppInfo = new JTextArea();
 				
 		mMyDeviceInfo = new MyDeviceInfo();
-		DeviceList = mMyDeviceInfo.DeviceList;
+		
+		
 		
 		petList = new JComboBox();
+		petList.addActionListener(this);		
+	    
+		refreshUI();
 		
-		for(int i=0; i<DeviceList.size(); i++) {
-			
-			Device temp = DeviceList.get(i);
-			
-			petList.addItem(temp.strADBDeviceNumber+"("+temp.strDeviceName+")");
-		}		
-		
-        if(DeviceList.size() > 0) {
-        	petList.setSelectedIndex(0);
-        	AppInfo.setText(DeviceList.get(0).strLabelText);
-        } else {
-			petList.addItem("null");
-        }
-        petList.addActionListener(this);		
-	    	    
 		ButtonPanel.add(btnshowDeiveInfo = new StandardButton("Refresh Device List",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED));
 		ButtonPanel.add(btnInstall = new StandardButton("설치",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED));
 		
@@ -127,26 +116,43 @@ class ADBDialog extends Dialog implements ActionListener
 		
 		setSize(400,380);
 		this.setLocation(MainUI.nPositionX+100, MainUI.nPositionY+100);	
+	}
+	
+	public void refreshUI() {
+		DeviceList = mMyDeviceInfo.DeviceList;
 		
-
+		for(int i=0; i<DeviceList.size(); i++) {
+			
+			Device temp = DeviceList.get(i);
+			
+			petList.addItem(temp.strADBDeviceNumber+"("+temp.strDeviceName+")");
+		}		
 		
-				
-		
+        if(DeviceList.size() > 0) {
+        	petList.setSelectedIndex(0);
+        	AppInfo.setText(DeviceList.get(0).strLabelText);
+        } else {
+			petList.addItem("null");
+        }
 	}
 	public void actionPerformed(ActionEvent e)
-	{		
-		
+	{	
 		String str=e.getActionCommand();
+		
+		System.out.println(e);
 		
 		if(str == "Refresh Device List") {
 			System.out.println("click  :" + str);
 			
 			mMyDeviceInfo.Refresh();
+			refreshUI();
 			//setVisible(false);
 		} else if(str == "설치") {
 			btnInstall.setEnabled(false);
-			mMyDeviceInfo.InstallApk("/home/leejinhyeong/Desktop/dhome_phone_test_signed_on.apk"/*MainUI.apkFilePath*/, DeviceList.get(petList.getSelectedIndex()).strADBDeviceNumber);
+			mMyDeviceInfo.InstallApk(MainUI.apkFilePath, DeviceList.get(petList.getSelectedIndex()).strADBDeviceNumber);
 			System.out.println("click  :" + str);
+		} else {
+			AppInfo.setText(DeviceList.get(petList.getSelectedIndex()).strLabelText);
 		}
 	}
 	public void showPlease() {

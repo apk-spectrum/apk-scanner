@@ -24,7 +24,7 @@ public class MyDeviceInfo {
 		workingDir = CoreApkTool.GetUTF8Path() + File.separator + "adb";
 		System.out.println(workingDir);
 		
-		Refresh();		
+		Refresh();
 		//newDivceInfo.strVersion = TargetInfo(TargetInfo.("versionName=")
 		//adb shell getprop ro.build.version.release
 		
@@ -57,7 +57,7 @@ public class MyDeviceInfo {
 			
 			strDeviceList = strDeviceList.substring( strDeviceList.indexOf("device")+ "device".length());
 			
-			SetTarget(temp, temp.strADBDeviceNumber, "com.nttdocomo.android.ictrw"/*MainUI.GetMyApkInfo().strPackageName*/);
+			SetTarget(temp, temp.strADBDeviceNumber, MainUI.GetMyApkInfo().strPackageName);
 			
 			DeviceList.add(temp);
 		}
@@ -72,7 +72,7 @@ public class MyDeviceInfo {
 
 		Devicetemp.strLabelText = "-Target Apk\n";
 		
-		String[] cmd1 = {workingDir,"-s",DeviceADBNumber, "shell", "dumpsys","package","com.nttdocomo.android.ictrw"/*PackageName*/};
+		String[] cmd1 = {workingDir,"-s",DeviceADBNumber, "shell", "dumpsys","package",PackageName};
 		TargetInfo = exc(cmd1,false);
 		
 		System.out.println(selectString(TargetInfo,"versionName="));
