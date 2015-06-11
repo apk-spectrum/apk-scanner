@@ -55,7 +55,7 @@ public class MyDeviceInfo {
 				temp.strADBDeviceNumber = strDeviceList[i].replaceAll("^\\s*([^\\s]*)\\s*device\\s*$", "$1");
 				System.out.println("device number : '" + temp.strADBDeviceNumber + "'");
 
-				SetTarget(temp, temp.strADBDeviceNumber, MainUI.GetMyApkInfo().strPackageName);
+				SetTarget(temp, MainUI.GetMyApkInfo().strPackageName);
 				
 				DeviceList.add(temp);
 			}
@@ -64,12 +64,10 @@ public class MyDeviceInfo {
 		return true;
 	}
 	
-	public void SetTarget(Device Devicetemp, String DeviceADBNumber, String PackageName)
+	public void SetTarget(Device Devicetemp, String PackageName)
 	{
 		String[] TargetInfo;
-		
-
-		Devicetemp.strLabelText = "-Target Apk\n";
+		String DeviceADBNumber = Devicetemp.strADBDeviceNumber;
 		
 		String[] cmd1 = {workingDir,"-s",DeviceADBNumber, "shell", "dumpsys","package",PackageName};
 		TargetInfo = exc(cmd1,false);
@@ -78,35 +76,35 @@ public class MyDeviceInfo {
 		Devicetemp.strVersionCode = selectString(TargetInfo,"versionCode=");
 		Devicetemp.strCodeFolderPath = selectString(TargetInfo,"codePath=");
 		//Devicetemp.str = selectString(TargetInfo,"legacyNativeLibraryDir=");		
+		
+		Devicetemp.strDeviceName = getSystemProp(DeviceADBNumber, "ro.product.device");
+		Devicetemp.strModelName = getSystemProp(DeviceADBNumber, "ro.product.model");
+		Devicetemp.strOsVersion = getSystemProp(DeviceADBNumber, "ro.build.version.release");
+		Devicetemp.strBuildVersion = getSystemProp(DeviceADBNumber, "ro.build.version.incremental");
+		Devicetemp.strSdkVersion = getSystemProp(DeviceADBNumber, "ro.build.version.sdk");
+		Devicetemp.strBuildType = getSystemProp(DeviceADBNumber, "ro.build.type");
 
-		System.out.println(Devicetemp.strVersion);
-		System.out.println(Devicetemp.strVersionCode);
-		System.out.println(Devicetemp.strCodeFolderPath);
-		//System.out.println(selectString(TargetInfo,"legacyNativeLibraryDir="));		
+		
+		System.out.println("VersionName : " + Devicetemp.strVersion);
+		System.out.println("VersionCode : " + Devicetemp.strVersionCode);
+		System.out.println("CodePath : " + Devicetemp.strCodeFolderPath);
+		//System.out.println(selectString(TargetInfo,"legacyNativeLibraryDir="));
+		System.out.println("Device : " + Devicetemp.strDeviceName);
+		System.out.println("Model : " + Devicetemp.strModelName);
+		System.out.println("BuildType : " + Devicetemp.strBuildType);
+		System.out.println("model : " + getSystemProp(DeviceADBNumber, "ro.build.PDA"));
+		System.out.println("model : " + getSystemProp(DeviceADBNumber, "ro.build.tags"));
 
+
+		Devicetemp.strLabelText = "-Device Info\n";
+		Devicetemp.strLabelText += "Model : " + Devicetemp.strModelName + " / " + Devicetemp.strDeviceName + "\n";
+		Devicetemp.strLabelText += "Version : " + Devicetemp.strBuildVersion + "(" + Devicetemp.strBuildType + ") / ";
+		Devicetemp.strLabelText += "OS " + Devicetemp.strOsVersion + ", SDK " + Devicetemp.strSdkVersion + "\n";
+		Devicetemp.strLabelText += "\n";
+		Devicetemp.strLabelText += "-Target Apk\n";
 		Devicetemp.strLabelText += "Pakage : " + PackageName +"\n";
-		Devicetemp.strLabelText += "VersionName : " + Devicetemp.strVersion +"\n";
-		Devicetemp.strLabelText += "VersionCode : " + Devicetemp.strVersionCode +"\n";
+		Devicetemp.strLabelText += "Version : " + Devicetemp.strVersion + " / " + Devicetemp.strVersionCode +"\n";
 		Devicetemp.strLabelText += "CodePath : " + Devicetemp.strCodeFolderPath +"\n";
-		
-		
-		String[] cmd2 = {workingDir, "-s",DeviceADBNumber, "shell", "getprop","ro.factory.model"}; //SGH-N045
-		TargetInfo = exc(cmd2,true);
-		Devicetemp.strDeviceName = TargetInfo[0];
-		System.out.println("model : " + TargetInfo[0]);
-		
-		
-		String[] cmd3 = {workingDir, "-s",DeviceADBNumber, "shell", "getprop","ro.build.PDA"}; //SC04EOMEFOF1
-		TargetInfo = exc(cmd3,true);
-		System.out.println("model : " + TargetInfo[0]);
-		
-		String[] cmd4 = {workingDir, "-s",DeviceADBNumber, "shell", "getprop","ro.build.tags"}; //test-keys
-		TargetInfo = exc(cmd4,true);
-		System.out.println("model : " + TargetInfo[0]);
-		
-		String[] cmd5 = {workingDir, "-s",DeviceADBNumber, "shell", "getprop","ro.build.type"};//eng
-		TargetInfo = exc(cmd5,true);
-		System.out.println("model : " + TargetInfo[0]);
 	}
 	
 	public void InstallApk(String sourcePath, String DeviceADBNumber) {
@@ -140,13 +138,20 @@ public class MyDeviceInfo {
 		
 		for(int i=0; i < source.length; i++) {
 			if(source[i].matches("^\\s*"+key+".*$")) {
-				temp = source[i].replaceAll("^\\s*"+key+"\\s*(.*)\\s*$", "$1");
+				temp = source[i].replaceAll("^\\s*"+key+"\\s*([^\\s]*).*$", "$1");
 				break;
 			}
 		}
 		return temp;
 	}
 	
+	private String getSystemProp(String device, String tag) {
+		String[] TargetInfo;
+		String[] cmd = {workingDir, "-s", device, "shell", "getprop", tag}; //SGH-N045
+
+		TargetInfo = exc(cmd,true);
+		return TargetInfo[0];
+	}
 	
 	static String[] exc(String[] cmd, boolean showLog) {
 		String s = "";
@@ -178,6 +183,10 @@ public class MyDeviceInfo {
 		//device--------------------------------------------------------------------------------------------------------
 		public String strADBDeviceNumber;
 		public String strDeviceName;
+		public String strModelName;
+		public String strOsVersion;
+		public String strBuildVersion;
+		public String strSdkVersion;
 		public String strkeys;
 		public String strBuildType;
 		public String strLabelText;
