@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ApkInfo.UI.MainUI;
+import com.ApkInfo.UIUtil.StandardButton;
 
 public class MyDeviceInfo {
 	public static ArrayList<Device> DeviceList;
@@ -107,11 +108,11 @@ public class MyDeviceInfo {
 		Devicetemp.strLabelText += "CodePath : " + Devicetemp.strCodeFolderPath +"\n";
 	}
 	
-	public void InstallApk(String sourcePath, String DeviceADBNumber) {
+	public void InstallApk(StandardButton btnInstall, String sourcePath, String DeviceADBNumber) {
 
 		System.out.println("sourcePath : " + sourcePath + "DeviceADBNumber: " + DeviceADBNumber);
 		
-		startCore = new MyCoreThead(sourcePath,DeviceADBNumber);
+		startCore = new MyCoreThead(sourcePath,DeviceADBNumber,btnInstall);
 		startCore.start();	
 		
 	}
@@ -120,15 +121,18 @@ public class MyDeviceInfo {
 		
 		String DeviceADBNumber;
 		String sourcePath;
-		
-		MyCoreThead(String sourcePath, String DeviceADBNumber) {
+		StandardButton btnInstall;
+		MyCoreThead(String sourcePath, String DeviceADBNumber, StandardButton btnInstall) {
 			this.DeviceADBNumber = DeviceADBNumber;
 			this.sourcePath = sourcePath;
+			this.btnInstall = btnInstall;
 		}
 		
 		public void run() {
 			String[] cmd6 = {workingDir, "-s", this.DeviceADBNumber,"install", "-d","-r", 	this.sourcePath};
 			exc(cmd6,true);
+			
+			this.btnInstall.setEnabled(true);
 		}
 	}
 	

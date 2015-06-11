@@ -82,8 +82,8 @@ class ADBDialog extends Dialog implements ActionListener
 		
         WindowAdapter wa = new WindowAdapter(){
             public void windowClosing(WindowEvent e){
-            	//setVisible(false);
-                System.exit(0);
+            	setVisible(false);
+                //System.exit(0);
             }
         };
         this.addWindowListener(wa);
@@ -121,12 +121,16 @@ class ADBDialog extends Dialog implements ActionListener
 	public void refreshUI() {
 		DeviceList = mMyDeviceInfo.DeviceList;
 		
+		petList.removeAllItems();
+		
 		for(int i=0; i<DeviceList.size(); i++) {
 			
 			Device temp = DeviceList.get(i);
 			
 			petList.addItem(temp.strADBDeviceNumber+"("+temp.strDeviceName+")");
-		}		
+		}
+		
+		
 		
         if(DeviceList.size() > 0) {
         	petList.setSelectedIndex(0);
@@ -149,7 +153,7 @@ class ADBDialog extends Dialog implements ActionListener
 			//setVisible(false);
 		} else if(str == "설치") {
 			btnInstall.setEnabled(false);
-			mMyDeviceInfo.InstallApk(MainUI.apkFilePath, DeviceList.get(petList.getSelectedIndex()).strADBDeviceNumber);
+			mMyDeviceInfo.InstallApk(btnInstall, MainUI.apkFilePath, DeviceList.get(petList.getSelectedIndex()).strADBDeviceNumber);
 			System.out.println("click  :" + str);
 		} else {
 			AppInfo.setText(DeviceList.get(petList.getSelectedIndex()).strLabelText);
