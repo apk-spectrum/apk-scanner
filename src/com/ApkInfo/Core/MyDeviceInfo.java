@@ -22,6 +22,15 @@ public class MyDeviceInfo {
 		DeviceList = new ArrayList<Device>();	
 		
 		workingDir = CoreApkTool.GetUTF8Path() + File.separator + "adb";
+
+		if(workingDir.matches("^C:.*")) {
+			workingDir += ".exe";
+		}
+		if(!(new File(workingDir)).exists()) {
+			System.out.println("adb tool이 존재 하지 않습니다 :" + workingDir);
+			workingDir = "";
+		}
+		
 		System.out.println(workingDir);
 		
 		Refresh();
