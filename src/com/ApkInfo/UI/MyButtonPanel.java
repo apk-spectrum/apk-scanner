@@ -3,6 +3,7 @@ package com.ApkInfo.UI;
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Desktop;
+import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -19,13 +20,13 @@ public class MyButtonPanel extends JPanel{
 	StandardButton btnShowManifest;
 	StandardButton btnShowBrowser;
 	StandardButton btnInstall;
-	
+	Label lbVersion;
 	
 	MyButtonPanel() {
 		this.add(btnShowManifest = new StandardButton("Manifest 보기",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED),BorderLayout.WEST);
 		this.add(btnShowBrowser = new StandardButton("탐색기",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED),BorderLayout.WEST);		
 		this.add(btnInstall = new StandardButton("설치",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED),BorderLayout.EAST);
-		
+		this.add(lbVersion = new Label("Version : 0.5 beta"));		
 		btnShowManifest.addActionListener(new ActionListener() {
 		  public void actionPerformed(ActionEvent e) {
 		    // display/center the jdialog when the button is pressed
