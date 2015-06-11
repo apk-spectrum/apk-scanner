@@ -16,10 +16,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -28,6 +32,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
+import com.ApkInfo.Core.CoreApkTool;
 import com.ApkInfo.Core.MyDeviceInfo;
 import com.ApkInfo.Core.MyDeviceInfo.Device;
 import com.ApkInfo.UIUtil.ButtonType;
@@ -49,7 +54,8 @@ class ADBDialog extends Dialog implements ActionListener
 	MyDeviceInfo mMyDeviceInfo;
 	ArrayList<MyDeviceInfo.Device> DeviceList;
 	
-    String[] petStrings = { "97920989(IM-G920S)", "31445989(SC-04F)"};
+	JLabel GifLabel;
+	
     
     //Create the combo box, select the item at index 4.
     //Indices start at 0, so 4 specifies the pig.
@@ -82,13 +88,13 @@ class ADBDialog extends Dialog implements ActionListener
 		
         WindowAdapter wa = new WindowAdapter(){
             public void windowClosing(WindowEvent e){
-            	setVisible(false);
-                //System.exit(0);
+            	//setVisible(false);
+                System.exit(0);
             }
         };
         this.addWindowListener(wa);
 		
-        textPanel = new Panel(new GridLayout(1,2));
+        textPanel = new Panel(new GridLayout(2,1));
         
 		setResizable( false );
 		btnshowDeiveInfo.addActionListener(this);
@@ -101,8 +107,14 @@ class ADBDialog extends Dialog implements ActionListener
         AppInfo.setFont(font);        
 		AppInfo.setBackground(textPanel.getBackground());
         
-        
 		textPanel.add(AppInfo);
+		
+		String ImgPath = CoreApkTool.GetUTF8Path();
+        ImageIcon icon = new ImageIcon(ImgPath+File.separator+"install_wait.gif");
+        
+        GifLabel = new JLabel(icon);
+		
+        textPanel.add(GifLabel);
 		
 		
 		//textPanel.add(DeviceInfo = new JTextArea("Device Information"));
@@ -111,6 +123,8 @@ class ADBDialog extends Dialog implements ActionListener
 		add(petList,BorderLayout.NORTH);
 		add(textPanel, BorderLayout.CENTER);
 		add(ButtonPanel,BorderLayout.SOUTH);
+		
+
 		
 		//add(scrollPane,BorderLayout.NORTH);
 		
@@ -130,8 +144,6 @@ class ADBDialog extends Dialog implements ActionListener
 			petList.addItem(temp.strADBDeviceNumber+"("+temp.strDeviceName+")");
 		}
 		
-		
-		
         if(DeviceList.size() > 0) {
         	petList.setSelectedIndex(0);
         	AppInfo.setText(DeviceList.get(0).strLabelText);
@@ -143,20 +155,19 @@ class ADBDialog extends Dialog implements ActionListener
 	{	
 		String str=e.getActionCommand();
 		
-		System.out.println(e);
-		
 		if(str == "Refresh Device List") {
-			System.out.println("click  :" + str);
-			
 			mMyDeviceInfo.Refresh();
 			refreshUI();
+
 			//setVisible(false);
 		} else if(str == "설치") {
 			btnInstall.setEnabled(false);
 			mMyDeviceInfo.InstallApk(btnInstall, MainUI.apkFilePath, DeviceList.get(petList.getSelectedIndex()).strADBDeviceNumber);
-			System.out.println("click  :" + str);
+
 		} else {
+			if(petList.getSelectedIndex() != -1) {
 			AppInfo.setText(DeviceList.get(petList.getSelectedIndex()).strLabelText);
+			}
 		}
 	}
 	public void showPlease() {

@@ -7,6 +7,10 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import com.ApkInfo.UI.MainUI;
 import com.ApkInfo.UIUtil.StandardButton;
 
@@ -56,7 +60,9 @@ public class MyDeviceInfo {
 				temp.strADBDeviceNumber = strDeviceList[i].replaceAll("^\\s*([^\\s]*)\\s*device\\s*$", "$1");
 				System.out.println("device number : '" + temp.strADBDeviceNumber + "'");
 
-				SetTarget(temp, MainUI.GetMyApkInfo().strPackageName);
+				
+				//SetTarget(temp, MainUI.GetMyApkInfo().strPackageName);
+				SetTarget(temp, "com.nttdocomo.android.mediaplayer");
 				
 				DeviceList.add(temp);
 			}
@@ -130,9 +136,12 @@ public class MyDeviceInfo {
 		
 		public void run() {
 			String[] cmd6 = {workingDir, "-s", this.DeviceADBNumber,"install", "-d","-r", 	this.sourcePath};
-			exc(cmd6,true);
+			String[] result;
+			result = exc(cmd6,true);
 			
 			this.btnInstall.setEnabled(true);
+			JOptionPane.showMessageDialog(null,
+					result[2]);			
 		}
 	}
 	
