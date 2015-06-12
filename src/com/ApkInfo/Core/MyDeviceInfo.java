@@ -17,6 +17,10 @@ public class MyDeviceInfo
 	public String strDeviceinfo;
 	String adbCmd;
 	
+	enum INSTALL_TYPE {
+		INSTALL,
+		PUSH
+	}
 	static MyCoreThead startCore;
 	
 	public MyDeviceInfo()
@@ -32,10 +36,6 @@ public class MyDeviceInfo
 		}
 		
 		System.out.println(adbCmd);
-		
-		//scanDevices();
-		//newDivceInfo.strVersion = TargetInfo(TargetInfo.("versionName=")
-		//adb shell getprop ro.build.version.release
 	}
 	
 	public ArrayList<Device> scanDevices()
@@ -59,36 +59,59 @@ public class MyDeviceInfo
 		return DeviceList;
 	}
 	
-	public void InstallApk(StandardButton btnInstall, String sourcePath, String DeviceADBNumber)
+	public void PushApk(Device device, String sourcePath, StandardButton btnInstall)
 	{
-		System.out.println("sourcePath : " + sourcePath + "DeviceADBNumber: " + DeviceADBNumber);
+		System.out.println("sourcePath : " + sourcePath + "DeviceADBNumber: " + device.strADBDeviceNumber);
 
-		startCore = new MyCoreThead(sourcePath,DeviceADBNumber,btnInstall);
+		startCore = new MyCoreThead(INSTALL_TYPE.PUSH, device, sourcePath, btnInstall);
 		startCore.start();	
+	}
+	
+	public void InstallApk(Device device, String sourcePath, StandardButton btnInstall)
+	{
+		System.out.println("sourcePath : " + sourcePath + "DeviceADBNumber: " + device.strADBDeviceNumber);
+
+		startCore = new MyCoreThead(INSTALL_TYPE.INSTALL, device, sourcePath, btnInstall);
+		startCore.start();
 	}
 	
 	class MyCoreThead extends Thread
 	{
+		INSTALL_TYPE type;
 		String DeviceADBNumber;
 		String sourcePath;
 		StandardButton btnInstall;
 
-		MyCoreThead(String sourcePath, String DeviceADBNumber, StandardButton btnInstall)
+		MyCoreThead(INSTALL_TYPE type, Device device, String sourcePath, StandardButton btnInstall)
 		{
-			this.DeviceADBNumber = DeviceADBNumber;
+			this.type = type;
+			this.DeviceADBNumber = device.strADBDeviceNumber;
 			this.sourcePath = sourcePath;
 			this.btnInstall = btnInstall;
 		}
 		
 		public void run()
 		{
-			String[] cmd6 = {adbCmd, "-s", this.DeviceADBNumber,"install", "-d","-r", 	this.sourcePath};
 			String[] result;
-			result = exc(cmd6,true);
-			
-			this.btnInstall.setEnabled(true);
-			JOptionPane.showMessageDialog(null,
-					result[2]);			
+			if(type == INSTALL_TYPE.INSTALL) {
+				String[] cmd = {adbCmd, "-s", this.DeviceADBNumber, "install", "-d","-r", this.sourcePath};
+				result = exc(cmd,true);
+			} else {
+				String[] cmd1 = {adbCmd, "-s", this.DeviceADBNumber, "remount"};
+				result = exc(cmd1,true);
+				String[] cmd2 = {adbCmd, "-s", this.DeviceADBNumber, "root"};
+				result = exc(cmd2,true);
+				String[] cmd3 = {adbCmd, "-s", this.DeviceADBNumber, "shell", "su", "-c", "setenforce", "0"};
+				result = exc(cmd3,true);
+				String[] cmd4 = {adbCmd, "-s", this.DeviceADBNumber, "push", this.sourcePath, ""};
+				result = exc(cmd4,true);
+				String[] cmd5 = {adbCmd, "-s", this.DeviceADBNumber, "reboot"};
+				result = exc(cmd5,true);
+			}
+			if(this.btnInstall != null) {
+				this.btnInstall.setEnabled(true);
+			}
+			JOptionPane.showMessageDialog(null, result[2]);			
 		}
 	}
 	
@@ -120,6 +143,7 @@ public class MyDeviceInfo
 		public String strVersion;
 		public String strVersionCode;
 		public String strCodeFolderPath;
+		public boolean isSystemApp;
 
 		//device--------------------------------------------------------------------------------------------------------
 		public String strADBDeviceNumber;
@@ -166,6 +190,7 @@ public class MyDeviceInfo
 			strVersion = null;
 			strVersionCode = null;
 			strCodeFolderPath = null;
+			isSystemApp = false;
 			if(packageName == null) return false;
 			
 			System.out.println("ckeckPackage() " + packageName);
@@ -178,6 +203,10 @@ public class MyDeviceInfo
 				strVersion = selectString(TargetInfo,"versionName=");
 				strVersionCode = selectString(TargetInfo,"versionCode=");
 				strCodeFolderPath = selectString(TargetInfo,"codePath=");
+				
+				if(strCodeFolderPath.matches("^/system/.*")) {
+					isSystemApp = true;
+				}
 				return true;
 			}
 			return false;

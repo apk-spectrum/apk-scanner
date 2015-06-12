@@ -167,10 +167,14 @@ class ADBDialog extends Dialog implements ActionListener
 				device.makeLabel();
 				AppInfo.setText(device.strLabelText);
 				JOptionPane.showMessageDialog(null, "패지키가 존재 합니다.");
+				if(device.isSystemApp) {
+					JOptionPane.showMessageDialog(null, "시스템 영역에 설치되어 있습니다.");
+				}
 			} else {
 				JOptionPane.showMessageDialog(null, "패지키가 존재 하지 않습니다.");
 			}
-			mMyDeviceInfo.InstallApk(btnInstall, MainUI.apkFilePath, device.strADBDeviceNumber);
+			JOptionPane.showMessageDialog(null, MainUI.apkFilePath);
+			mMyDeviceInfo.InstallApk(device, MainUI.apkFilePath, btnInstall);
 
 		} else {
 			if(petList.getSelectedIndex() != -1 && DeviceList.size() >0) {
