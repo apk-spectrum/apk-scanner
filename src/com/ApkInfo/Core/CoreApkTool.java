@@ -4,10 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.DecimalFormat;
@@ -49,7 +46,6 @@ public class CoreApkTool {
 					try {
 
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}		    	  
@@ -73,7 +69,6 @@ public class CoreApkTool {
 					try {
 
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}		    	  
@@ -89,7 +84,6 @@ public class CoreApkTool {
 		try {
 			tempapkToolPath = URLDecoder.decode(tempapkToolPath, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -110,43 +104,13 @@ public class CoreApkTool {
 
 		String[] cmd = {"java","-jar",apkToolPath,"d","-s","-f","-o",solvePath,"-p",solvePath, APKFilePath};
 		
-		exc(cmd,true);
-		
-	}
-	
-	static String exc(String[] cmd, boolean showLog) {
-		try {
-			String s = "";
-			//String e = "";
-			
-			Process oProcess = new ProcessBuilder(cmd).redirectErrorStream(true).start();
-			
-			String buffer = "";
-		    // 외부 프로그램 출력 읽기
-		    BufferedReader stdOut   = new BufferedReader(new InputStreamReader(oProcess.getInputStream()));
-		    //BufferedReader stdError = new BufferedReader(new InputStreamReader(oProcess.getErrorStream()));
-		    
-		    
-		    if(showLog) {
-			    while ((s = stdOut.readLine()) != null) {
-			    	if(s.matches("^I:.*"))
-			    		MainUI.ProgressBarDlg.addProgress(5,s + "\n");
-			    	System.out.println(s);
-			    	buffer += s;
-			    }
-		    }
-		    // 외부 프로그램 반환값 출력 (이 부분은 필수가 아님)
-		    //System.out.println("Exit Code: " + oProcess.exitValue());
-		    //System.exit(oProcess.exitValue()); // 외부 프로그램의 반환값을, 이 자바 프로그램 자체의 반환값으로 삼기
-		    
-		    return buffer;
-
-		    } catch (IOException e) { // 에러 처리
-		      System.err.println("에러! 외부 명령 실행에 실패했습니다.\n" + e.getMessage());
-		      
-		      System.exit(-1);
-	    }
-		return null;
+		MyConsolCmd.exc(cmd, true, new MyConsolCmd.OutputObserver() {
+			@Override
+			public void ConsolOutput(String output) {
+		    	if(output.matches("^I:.*"))
+		    		MainUI.ProgressBarDlg.addProgress(5,output + "\n");
+			}
+		});
 		
 	}
 	

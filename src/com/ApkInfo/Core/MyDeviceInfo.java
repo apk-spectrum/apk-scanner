@@ -1,17 +1,13 @@
 package com.ApkInfo.Core;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JOptionPane;
 
 import com.ApkInfo.UIUtil.StandardButton;
 
-public class MyDeviceInfo
+public class MyDeviceInfo implements MyConsolCmd.OutputObserver
 {
 	public String strAppinfo;
 	public String strDeviceinfo;
@@ -21,6 +17,7 @@ public class MyDeviceInfo
 		INSTALL,
 		PUSH
 	}
+
 	static MyCoreThead startCore;
 	
 	public MyDeviceInfo()
@@ -46,7 +43,7 @@ public class MyDeviceInfo
 		DeviceList.clear();
 
 		String[] cmd = {adbCmd, "devices"};
-		strDeviceList = exc(cmd,true);
+		strDeviceList = MyConsolCmd.exc(cmd,true,null);
 
 		for(int i=0; i<strDeviceList.length; i++) {
 			if(strDeviceList[i].matches("^.*\\s*device\\s*$")){
@@ -74,8 +71,13 @@ public class MyDeviceInfo
 		startCore = new MyCoreThead(INSTALL_TYPE.INSTALL, device, sourcePath, btnInstall);
 		startCore.start();
 	}
+
+	@Override
+	public void ConsolOutput(String output) {
+
+	}
 	
-	class MyCoreThead extends Thread
+	class MyCoreThead extends Thread implements MyConsolCmd.OutputObserver
 	{
 		INSTALL_TYPE type;
 		String DeviceADBNumber;
@@ -95,45 +97,29 @@ public class MyDeviceInfo
 			String[] result;
 			if(type == INSTALL_TYPE.INSTALL) {
 				String[] cmd = {adbCmd, "-s", this.DeviceADBNumber, "install", "-d","-r", this.sourcePath};
-				result = exc(cmd,true);
+				result = MyConsolCmd.exc(cmd,true,null);
 			} else {
 				String[] cmd1 = {adbCmd, "-s", this.DeviceADBNumber, "remount"};
-				result = exc(cmd1,true);
+				result = MyConsolCmd.exc(cmd1,true,null);
 				String[] cmd2 = {adbCmd, "-s", this.DeviceADBNumber, "root"};
-				result = exc(cmd2,true);
+				result = MyConsolCmd.exc(cmd2,true,null);
 				String[] cmd3 = {adbCmd, "-s", this.DeviceADBNumber, "shell", "su", "-c", "setenforce", "0"};
-				result = exc(cmd3,true);
+				result = MyConsolCmd.exc(cmd3,true,null);
 				String[] cmd4 = {adbCmd, "-s", this.DeviceADBNumber, "push", this.sourcePath, ""};
-				result = exc(cmd4,true);
+				result = MyConsolCmd.exc(cmd4,true,null);
 				String[] cmd5 = {adbCmd, "-s", this.DeviceADBNumber, "reboot"};
-				result = exc(cmd5,true);
+				result = MyConsolCmd.exc(cmd5,true,null);
 			}
 			if(this.btnInstall != null) {
 				this.btnInstall.setEnabled(true);
 			}
-			JOptionPane.showMessageDialog(null, result[2]);			
+			JOptionPane.showMessageDialog(null, result[2]);	
 		}
-	}
-	
-	static String[] exc(String[] cmd, boolean showLog)
-	{
-		String s = "";
-		List<String> buffer = new ArrayList<String>(); 
 
-		try {
-			Process oProcess = new ProcessBuilder(cmd).redirectErrorStream(true).start();
-		    BufferedReader stdOut   = new BufferedReader(new InputStreamReader(oProcess.getInputStream()));
-		    
-		    while ((s = stdOut.readLine()) != null) {
-		    	if(showLog) System.out.println(s);
-		    	buffer.add(s);
-		    }
-		} catch (IOException e) { // 에러 처리
-		      System.err.println("에러! 외부 명령 실행에 실패했습니다.\n" + e.getMessage());		      
-		      System.exit(-1);
-	    }
+		@Override
+		public void ConsolOutput(String output) {
 
-		return buffer.toArray(new String[0]);
+		}
 	}
 
 	public class Device
@@ -196,7 +182,7 @@ public class MyDeviceInfo
 			System.out.println("ckeckPackage() " + packageName);
 
 			String[] cmd = {adbCmd,"-s",strADBDeviceNumber, "shell", "dumpsys","package",packageName};
-			TargetInfo = exc(cmd,false);
+			TargetInfo = MyConsolCmd.exc(cmd,false,null);
 			
 			if(TargetInfo.length > 1) {
 				strPakage = packageName;
@@ -255,7 +241,7 @@ public class MyDeviceInfo
 			String[] TargetInfo;
 			String[] cmd = {adbCmd, "-s", device, "shell", "getprop", tag}; //SGH-N045
 
-			TargetInfo = exc(cmd,true);
+			TargetInfo = MyConsolCmd.exc(cmd,false,null);
 			return TargetInfo[0];
 		}
 	}
