@@ -14,30 +14,32 @@ import javax.swing.JOptionPane;
 import com.ApkInfo.UI.MainUI;
 import com.ApkInfo.UIUtil.StandardButton;
 
-public class MyDeviceInfo {
+public class MyDeviceInfo
+{
 	public static ArrayList<Device> DeviceList;
 	
 	public String strAppinfo;
 	public String strDeviceinfo;
 	public int DeviceCount;
-	String workingDir;
+	String adbCmd;
 	
 	static MyCoreThead startCore;
 	
-	public MyDeviceInfo() {
+	public MyDeviceInfo()
+	{
 		DeviceList = new ArrayList<Device>();	
 		
-		workingDir = CoreApkTool.GetUTF8Path() + File.separator + "adb";
+		adbCmd = CoreApkTool.GetUTF8Path() + File.separator + "adb";
 
-		if(workingDir.matches("^C:.*")) {
-			workingDir += ".exe";
+		if(adbCmd.matches("^C:.*")) {
+			adbCmd += ".exe";
 		}
-		if(!(new File(workingDir)).exists()) {
-			System.out.println("adb tool이 존재 하지 않습니다 :" + workingDir);
-			workingDir = "";
+		if(!(new File(adbCmd)).exists()) {
+			System.out.println("adb tool이 존재 하지 않습니다 :" + adbCmd);
+			adbCmd = "";
 		}
 		
-		System.out.println(workingDir);
+		System.out.println(adbCmd);
 		
 		Refresh();
 		//newDivceInfo.strVersion = TargetInfo(TargetInfo.("versionName=")
@@ -49,7 +51,7 @@ public class MyDeviceInfo {
 		String[] strDeviceList;
 		List<String> devices = new ArrayList<String>(); 
 
-		String[] cmd = {workingDir, "devices"};
+		String[] cmd = {adbCmd, "devices"};
 		strDeviceList = exc(cmd,true);
 
 		for(int i=0; i<strDeviceList.length; i++) {
@@ -62,6 +64,13 @@ public class MyDeviceInfo {
 		}
 		return devices.toArray(new String[0]);
 	}
+	
+	public Device setDevice(String deviceName)
+	{
+		Device dev = new Device(deviceName);
+		DeviceList.add(dev);
+		return dev;
+	}
 
 	public Boolean Refresh()
 	{
@@ -69,36 +78,39 @@ public class MyDeviceInfo {
 		DeviceList.clear();
 
 		for(int i=0; i<strDeviceList.length; i++) {
-			Device temp = new Device(strDeviceList[i], MainUI.GetMyApkInfo().strPackageName);
-			temp.dump();
-			DeviceList.add(temp);
+			Device dev = setDevice(strDeviceList[i]);
+			dev.ckeckPackage(MainUI.GetMyApkInfo().strPackageName);
+			dev.makeLabel();
+			dev.dump();
 		}
 		
 		return true;
 	}
 	
-	public void InstallApk(StandardButton btnInstall, String sourcePath, String DeviceADBNumber) {
-
+	public void InstallApk(StandardButton btnInstall, String sourcePath, String DeviceADBNumber)
+	{
 		System.out.println("sourcePath : " + sourcePath + "DeviceADBNumber: " + DeviceADBNumber);
-		
+
 		startCore = new MyCoreThead(sourcePath,DeviceADBNumber,btnInstall);
 		startCore.start();	
-		
 	}
 	
-	class MyCoreThead extends Thread {
-		
+	class MyCoreThead extends Thread
+	{
 		String DeviceADBNumber;
 		String sourcePath;
 		StandardButton btnInstall;
-		MyCoreThead(String sourcePath, String DeviceADBNumber, StandardButton btnInstall) {
+
+		MyCoreThead(String sourcePath, String DeviceADBNumber, StandardButton btnInstall)
+		{
 			this.DeviceADBNumber = DeviceADBNumber;
 			this.sourcePath = sourcePath;
 			this.btnInstall = btnInstall;
 		}
 		
-		public void run() {
-			String[] cmd6 = {workingDir, "-s", this.DeviceADBNumber,"install", "-d","-r", 	this.sourcePath};
+		public void run()
+		{
+			String[] cmd6 = {adbCmd, "-s", this.DeviceADBNumber,"install", "-d","-r", 	this.sourcePath};
 			String[] result;
 			result = exc(cmd6,true);
 			
@@ -108,7 +120,8 @@ public class MyDeviceInfo {
 		}
 	}
 	
-	static String[] exc(String[] cmd, boolean showLog) {
+	static String[] exc(String[] cmd, boolean showLog)
+	{
 		String s = "";
 		List<String> buffer = new ArrayList<String>(); 
 
@@ -128,7 +141,8 @@ public class MyDeviceInfo {
 		return buffer.toArray(new String[0]);
 	}
 
-	public class Device {
+	public class Device
+	{
 		//app--------------------------------------------------------------------------------------------------------
 		public String strPakage;
 		public String strVersion;
@@ -175,20 +189,23 @@ public class MyDeviceInfo {
 		public void ckeckPackage(String packageName)
 		{
 			String[] TargetInfo;
+
+			strPakage = null;
+			strVersion = null;
+			strVersionCode = null;
+			strCodeFolderPath = null;
+			if(packageName == null) return;
 			
-			String[] cmd1 = {workingDir,"-s",strADBDeviceNumber, "shell", "dumpsys","package",packageName};
-			TargetInfo = exc(cmd1,false);
+			System.out.println("ckeckPackage() " + packageName);
+
+			String[] cmd = {adbCmd,"-s",strADBDeviceNumber, "shell", "dumpsys","package",packageName};
+			TargetInfo = exc(cmd,false);
 			
 			if(TargetInfo.length > 1) {
 				strPakage = packageName;
 				strVersion = selectString(TargetInfo,"versionName=");
 				strVersionCode = selectString(TargetInfo,"versionCode=");
 				strCodeFolderPath = selectString(TargetInfo,"codePath=");
-			} else {
-				strPakage = null;
-				strVersion = null;
-				strVersionCode = null;
-				strCodeFolderPath = null;
 			}
 		}
 		
@@ -230,9 +247,10 @@ public class MyDeviceInfo {
 			return temp;
 		}
 		
-		private String getSystemProp(String device, String tag) {
+		private String getSystemProp(String device, String tag)
+		{
 			String[] TargetInfo;
-			String[] cmd = {workingDir, "-s", device, "shell", "getprop", tag}; //SGH-N045
+			String[] cmd = {adbCmd, "-s", device, "shell", "getprop", tag}; //SGH-N045
 
 			TargetInfo = exc(cmd,true);
 			return TargetInfo[0];
