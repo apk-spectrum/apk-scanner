@@ -11,7 +11,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
-import com.ApkInfo.UI.MainUI;
 import com.ApkInfo.UIUtil.StandardButton;
 
 public class MyDeviceInfo
@@ -161,7 +160,7 @@ public class MyDeviceInfo
 			strBuildType = getSystemProp(deviceName, "ro.build.type");
 		}
 		
-		public void ckeckPackage(String packageName)
+		public boolean ckeckPackage(String packageName)
 		{
 			String[] TargetInfo;
 
@@ -169,7 +168,7 @@ public class MyDeviceInfo
 			strVersion = null;
 			strVersionCode = null;
 			strCodeFolderPath = null;
-			if(packageName == null) return;
+			if(packageName == null) return false;
 			
 			System.out.println("ckeckPackage() " + packageName);
 
@@ -181,7 +180,9 @@ public class MyDeviceInfo
 				strVersion = selectString(TargetInfo,"versionName=");
 				strVersionCode = selectString(TargetInfo,"versionCode=");
 				strCodeFolderPath = selectString(TargetInfo,"codePath=");
+				return true;
 			}
+			return false;
 		}
 		
 		public void makeLabel()

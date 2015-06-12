@@ -161,7 +161,14 @@ class ADBDialog extends Dialog implements ActionListener
 			//setVisible(false);
 		} else if(str == "설치") {
 			btnInstall.setEnabled(false);
-			mMyDeviceInfo.InstallApk(btnInstall, MainUI.apkFilePath, DeviceList.get(petList.getSelectedIndex()).strADBDeviceNumber);
+			MyDeviceInfo.Device device = DeviceList.get(petList.getSelectedIndex());
+
+			if(device.ckeckPackage(MainUI.GetMyApkInfo().strPackageName)){
+				// 패키지 존재
+			} else {
+				
+			}
+			mMyDeviceInfo.InstallApk(btnInstall, MainUI.apkFilePath, device.strADBDeviceNumber);
 
 		} else {
 			if(petList.getSelectedIndex() != -1 && DeviceList.size() >0) {
