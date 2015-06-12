@@ -12,6 +12,7 @@ import java.io.IOException;
 import javax.swing.JPanel;
 
 import com.ApkInfo.Core.CoreApkTool;
+import com.ApkInfo.Core.MyDeviceInfo;
 import com.ApkInfo.UIUtil.ButtonType;
 import com.ApkInfo.UIUtil.StandardButton;
 import com.ApkInfo.UIUtil.Theme;
@@ -79,6 +80,8 @@ public class MyButtonPanel extends JPanel{
 				    // display/center the jdialog when the button is pressed
 				  ADBDialog dt = new ADBDialog(MainUI.window);
 				  dt.showPlease();
+				  //DeviceUIManager mMyDeviceManager = new DeviceUIManager(MainUI.GetMyApkInfo().strPackageName);
+				  
 				  }
 			});
 		
