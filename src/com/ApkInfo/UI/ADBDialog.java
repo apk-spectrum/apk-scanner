@@ -133,7 +133,7 @@ class ADBDialog extends Dialog implements ActionListener
 	}
 	
 	public void refreshUI() {
-		DeviceList = mMyDeviceInfo.DeviceList;
+		DeviceList = mMyDeviceInfo.scanDevices();
 		
 		petList.removeAllItems();
 		
@@ -156,7 +156,6 @@ class ADBDialog extends Dialog implements ActionListener
 		String str=e.getActionCommand();
 		
 		if(str == "Refresh Device List") {
-			mMyDeviceInfo.Refresh();
 			refreshUI();
 
 			//setVisible(false);

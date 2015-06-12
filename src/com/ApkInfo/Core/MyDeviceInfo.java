@@ -16,19 +16,14 @@ import com.ApkInfo.UIUtil.StandardButton;
 
 public class MyDeviceInfo
 {
-	public static ArrayList<Device> DeviceList;
-	
 	public String strAppinfo;
 	public String strDeviceinfo;
-	public int DeviceCount;
 	String adbCmd;
 	
 	static MyCoreThead startCore;
 	
 	public MyDeviceInfo()
 	{
-		DeviceList = new ArrayList<Device>();	
-		
 		adbCmd = CoreApkTool.GetUTF8Path() + File.separator + "adb";
 
 		if(adbCmd.matches("^C:.*")) {
@@ -41,15 +36,17 @@ public class MyDeviceInfo
 		
 		System.out.println(adbCmd);
 		
-		Refresh();
+		//scanDevices();
 		//newDivceInfo.strVersion = TargetInfo(TargetInfo.("versionName=")
 		//adb shell getprop ro.build.version.release
 	}
 	
-	public String[] scanDevices()
+	public ArrayList<Device> scanDevices()
 	{
+		ArrayList<Device> DeviceList = new ArrayList<Device>();
 		String[] strDeviceList;
-		List<String> devices = new ArrayList<String>(); 
+
+		DeviceList.clear();
 
 		String[] cmd = {adbCmd, "devices"};
 		strDeviceList = exc(cmd,true);
@@ -57,34 +54,12 @@ public class MyDeviceInfo
 		for(int i=0; i<strDeviceList.length; i++) {
 			if(strDeviceList[i].matches("^.*\\s*device\\s*$")){
 				String name = strDeviceList[i].replaceAll("^\\s*([^\\s]*)\\s*device\\s*$", "$1");
-				System.out.println("device number : '" + name + "'");
-				
-				devices.add(name);
+				Device dev = new Device(name);
+				dev.dump();
+				DeviceList.add(dev);
 			}
 		}
-		return devices.toArray(new String[0]);
-	}
-	
-	public Device setDevice(String deviceName)
-	{
-		Device dev = new Device(deviceName);
-		DeviceList.add(dev);
-		return dev;
-	}
-
-	public Boolean Refresh()
-	{
-		String[] strDeviceList = scanDevices();
-		DeviceList.clear();
-
-		for(int i=0; i<strDeviceList.length; i++) {
-			Device dev = setDevice(strDeviceList[i]);
-			dev.ckeckPackage(MainUI.GetMyApkInfo().strPackageName);
-			dev.makeLabel();
-			dev.dump();
-		}
-		
-		return true;
+		return DeviceList;
 	}
 	
 	public void InstallApk(StandardButton btnInstall, String sourcePath, String DeviceADBNumber)
