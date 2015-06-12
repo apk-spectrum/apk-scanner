@@ -61,8 +61,8 @@ public class MyDeviceInfo {
 				System.out.println("device number : '" + temp.strADBDeviceNumber + "'");
 
 				
-				//SetTarget(temp, MainUI.GetMyApkInfo().strPackageName);
-				SetTarget(temp, "com.nttdocomo.android.mediaplayer");
+				SetTarget(temp, MainUI.GetMyApkInfo().strPackageName);
+				//SetTarget(temp, "com.nttdocomo.android.mediaplayer");
 				
 				DeviceList.add(temp);
 			}

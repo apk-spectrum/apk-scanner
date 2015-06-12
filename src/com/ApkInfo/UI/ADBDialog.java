@@ -88,8 +88,8 @@ class ADBDialog extends Dialog implements ActionListener
 		
         WindowAdapter wa = new WindowAdapter(){
             public void windowClosing(WindowEvent e){
-            	//setVisible(false);
-                System.exit(0);
+            	setVisible(false);
+                //System.exit(0);
             }
         };
         this.addWindowListener(wa);
@@ -165,7 +165,7 @@ class ADBDialog extends Dialog implements ActionListener
 			mMyDeviceInfo.InstallApk(btnInstall, MainUI.apkFilePath, DeviceList.get(petList.getSelectedIndex()).strADBDeviceNumber);
 
 		} else {
-			if(petList.getSelectedIndex() != -1) {
+			if(petList.getSelectedIndex() != -1 && DeviceList.size() >0) {
 			AppInfo.setText(DeviceList.get(petList.getSelectedIndex()).strLabelText);
 			}
 		}
