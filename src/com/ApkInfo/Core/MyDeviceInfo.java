@@ -2,6 +2,8 @@ package com.ApkInfo.Core;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
@@ -9,7 +11,7 @@ import javax.swing.JTextArea;
 import com.ApkInfo.UI.MainUI;
 import com.ApkInfo.UIUtil.StandardButton;
 
-public class MyDeviceInfo implements MyConsolCmd.OutputObserver
+public class MyDeviceInfo
 {
 	public String strAppinfo;
 	public String strDeviceinfo;
@@ -32,7 +34,7 @@ public class MyDeviceInfo implements MyConsolCmd.OutputObserver
 		}
 		if(!(new File(adbCmd)).exists()) {
 			System.out.println("adb tool이 존재 하지 않습니다 :" + adbCmd);
-			adbCmd = "";
+			adbCmd = null;
 		}
 		
 		System.out.println(adbCmd);
@@ -44,6 +46,10 @@ public class MyDeviceInfo implements MyConsolCmd.OutputObserver
 		String[] strDeviceList;
 
 		DeviceList.clear();
+		
+		if(adbCmd == null) {
+			return DeviceList;
+		}
 
 		String[] cmd = {adbCmd, "devices"};
 		strDeviceList = MyConsolCmd.exc(cmd,true,null);
@@ -59,38 +65,50 @@ public class MyDeviceInfo implements MyConsolCmd.OutputObserver
 		return DeviceList;
 	}
 	
-	public void PushApk(Device device, String sourcePath, JTextArea LogTextArea)
+	public boolean PushApk(Device device, String sourcePath, JTextArea LogTextArea)
 	{
 		System.out.println("sourcePath : " + sourcePath + "DeviceADBNumber: " + device.strADBDeviceNumber);
-
+		if(adbCmd == null || adbCmd.isEmpty() 
+				|| device.strADBDeviceNumber == null || device.strADBDeviceNumber.isEmpty()
+				|| sourcePath == null || sourcePath.isEmpty()
+				|| device.strApkPath == null || device.strApkPath.isEmpty()) {
+			return false;
+		}
+		
 		startCore = new MyCoreThead(INSTALL_TYPE.PUSH, device, sourcePath, LogTextArea);
-		startCore.start();	
+		startCore.start();
+
+		return true;
 	}
 	
-	public void InstallApk(Device device, String sourcePath, JTextArea LogTextArea)
+	public boolean InstallApk(Device device, String sourcePath, JTextArea LogTextArea)
 	{
 		System.out.println("sourcePath : " + sourcePath + "DeviceADBNumber: " + device.strADBDeviceNumber);
-
+		if(adbCmd == null || adbCmd.isEmpty() 
+			|| device.strADBDeviceNumber == null || device.strADBDeviceNumber.isEmpty()
+			|| sourcePath == null || sourcePath.isEmpty()) {
+			return false;
+		}
+		
 		startCore = new MyCoreThead(INSTALL_TYPE.INSTALL, device, sourcePath, LogTextArea);
 		startCore.start();
-	}
-
-	@Override
-	public void ConsolOutput(String output) {
-
+		
+		return true;
 	}
 	
-	class MyCoreThead extends Thread implements MyConsolCmd.OutputObserver
+	class MyCoreThead extends Thread
 	{
 		INSTALL_TYPE type;
 		String DeviceADBNumber;
 		String sourcePath;
 		StandardButton btnInstall;
+		Device device;
 		JTextArea LogTextArea;
-		
+
 		MyCoreThead(INSTALL_TYPE type, Device device, String sourcePath, StandardButton btnInstall)
 		{
 			this.type = type;
+			this.device = device;
 			this.DeviceADBNumber = device.strADBDeviceNumber;
 			this.sourcePath = sourcePath;
 			this.btnInstall = btnInstall;
@@ -106,44 +124,66 @@ public class MyDeviceInfo implements MyConsolCmd.OutputObserver
 		
 		public void run()
 		{
-			String[] result;
 			if(type == INSTALL_TYPE.INSTALL) {
+				String[] result;
 				String[] cmd = {adbCmd, "-s", this.DeviceADBNumber, "install", "-d","-r", this.sourcePath};
-				result = MyConsolCmd.exc(cmd, true, new MyConsolCmd.OutputObserver() {
+				result = MyConsolCmd.exc(cmd,true,null);
+				JOptionPane.showMessageDialog(null, result[2]);	
+			} else {
+				String[][] result;
+				List<String[]> cmd = new ArrayList<String[]>();
+				cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "remount"});
+				cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "root"});
+				cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "shell", "su", "-c", "setenforce", "0"});
+				cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "push", this.sourcePath, device.strApkPath});
+				System.out.println(this.sourcePath + " to " + device.strApkPath);
+
+				String LibSourcePath = MainUI.GetMyApkInfo().strWorkAPKPath + File.separator + "lib" + File.separator;
+				Iterator<String> libPaths = MainUI.GetMyApkInfo().LibPathList.iterator();
+				while(libPaths.hasNext()) {
+					String path = libPaths.next();
+					if(path.matches(LibSourcePath.replace("\\", "\\\\")+"arm64.*")) {
+						if(device.isAbi64) {
+							if((new File(path)).exists()) {
+								cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "push", path, "/system/lib64/"});
+								System.out.println("push " + path + " " + "/system/lib64/");
+							} else {
+								System.out.println("no such file : " + path);
+							}
+						} else {
+							System.out.println("ignored lib64 : " + path);
+						}
+					} else {
+						if(!device.isAbi64) {
+							if((new File(path)).exists()) {
+								cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "push", path, "/system/lib/"});
+								System.out.println("push " + path + " " + "/system/lib/");
+							} else {
+								System.out.println("no such file : " + path);
+							}
+						} else {
+							System.out.println("ignored lib32 path : " + path);
+						}
+					}
+				}
+				cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "reboot"});
+				
+				result = MyConsolCmd.exc(cmd.toArray(new String[0][0]),true,new MyConsolCmd.OutputObserver() {
 					@Override
-					public void ConsolOutput(String output) {
-						LogTextArea.append(output + "\n");				    	
+					public boolean ConsolOutput(String output) {
+				    	if(output.equals("* failed to start daemon *")
+				    		|| output.equals("error: device not found")
+				    	) {
+				    		return false;
+				    	}
+				    	return true;
 					}
 				});
-				JOptionPane.showMessageDialog(null, result[2]);
-				
-			} else {
-				String[] cmd1 = {adbCmd, "-s", this.DeviceADBNumber, "remount"};
-				result = MyConsolCmd.exc(cmd1,true,null);
-				String[] cmd2 = {adbCmd, "-s", this.DeviceADBNumber, "root"};
-				result = MyConsolCmd.exc(cmd2,true,null);
-				String[] cmd3 = {adbCmd, "-s", this.DeviceADBNumber, "shell", "su", "-c", "setenforce", "0"};
-				result = MyConsolCmd.exc(cmd3,true,null);
-				String[] cmd4 = {adbCmd, "-s", this.DeviceADBNumber, "push", this.sourcePath, ""};
-				result = MyConsolCmd.exc(cmd4,true,null);
-				String[] cmd5 = {adbCmd, "-s", this.DeviceADBNumber, "reboot"};
-				result = MyConsolCmd.exc(cmd5,true,null);
-				
-				JOptionPane.showMessageDialog(null, result[2]);
+				JOptionPane.showMessageDialog(null, result);	
 			}
 			if(this.btnInstall != null) {
 				this.btnInstall.setEnabled(true);
 			}
-			
-			if(this.LogTextArea != null) {
-				
-			}
-			
-		}
-
-		@Override
-		public void ConsolOutput(String output) {
-
 		}
 	}
 
@@ -154,6 +194,7 @@ public class MyDeviceInfo implements MyConsolCmd.OutputObserver
 		public String strVersion;
 		public String strVersionCode;
 		public String strCodeFolderPath;
+		public String strApkPath;
 		public boolean isSystemApp;
 
 		//device--------------------------------------------------------------------------------------------------------
@@ -166,6 +207,7 @@ public class MyDeviceInfo implements MyConsolCmd.OutputObserver
 		public String strkeys;
 		public String strBuildType;
 		public String strLabelText;
+		public boolean isAbi64;
 
 		public Device() { }
 		
@@ -191,6 +233,7 @@ public class MyDeviceInfo implements MyConsolCmd.OutputObserver
 			strBuildVersion = getSystemProp(deviceName, "ro.build.version.incremental");
 			strSdkVersion = getSystemProp(deviceName, "ro.build.version.sdk");
 			strBuildType = getSystemProp(deviceName, "ro.build.type");
+			isAbi64 = !getSystemProp(deviceName, "ro.product.cpu.abilist64").isEmpty();
 		}
 		
 		public boolean ckeckPackage(String packageName)
@@ -218,6 +261,21 @@ public class MyDeviceInfo implements MyConsolCmd.OutputObserver
 				if(strCodeFolderPath.matches("^/system/.*")) {
 					isSystemApp = true;
 				}
+				
+				strApkPath = null;
+				if(strCodeFolderPath != null && !strCodeFolderPath.isEmpty()) {
+					String[] cmd2 = {adbCmd,"-s",strADBDeviceNumber, "shell", "ls",strCodeFolderPath};
+					MyConsolCmd.exc(cmd2,false,new MyConsolCmd.OutputObserver() {
+						@Override
+						public boolean ConsolOutput(String output) {
+					    	if(output.matches("^.*apk")) {
+					    		strApkPath = strCodeFolderPath + "/" + output;
+					    	}
+					    	return true;
+						}
+					});
+				}
+				
 				return true;
 			}
 			return false;

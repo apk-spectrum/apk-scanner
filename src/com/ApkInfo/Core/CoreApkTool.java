@@ -106,9 +106,10 @@ public class CoreApkTool {
 		
 		MyConsolCmd.exc(cmd, true, new MyConsolCmd.OutputObserver() {
 			@Override
-			public void ConsolOutput(String output) {
+			public boolean ConsolOutput(String output) {
 		    	if(output.matches("^I:.*"))
 		    		MainUI.ProgressBarDlg.addProgress(5,output + "\n");
+		    	return true;
 			}
 		});
 		

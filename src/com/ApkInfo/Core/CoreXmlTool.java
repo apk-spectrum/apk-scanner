@@ -14,7 +14,7 @@ public class CoreXmlTool {
 	
 	public static MyApkInfo XmlToMyApkinfo(String workPath) {
 		
-		apkInfo = new MyApkInfo();
+		apkInfo = new MyApkInfo(workPath);
 		APkworkPath = new String(workPath);
 		
 		MainUI.ProgressBarDlg.addProgress(5,"Check Yml....\n");

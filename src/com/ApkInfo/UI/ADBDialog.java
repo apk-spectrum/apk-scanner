@@ -174,7 +174,6 @@ class ADBDialog extends Dialog implements ActionListener
 				JOptionPane.showMessageDialog(null, "패지키가 존재 하지 않습니다.");
 			}
 			JOptionPane.showMessageDialog(null, MainUI.apkFilePath);
-			//mMyDeviceInfo.InstallApk(device, MainUI.apkFilePath, btnInstall);
 
 		} else {
 			if(petList.getSelectedIndex() != -1 && DeviceList.size() >0) {

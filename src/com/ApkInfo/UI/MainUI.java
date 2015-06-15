@@ -78,7 +78,7 @@ public class MainUI extends JFrame implements WindowListener{
 				CoreApkTool.solveAPK(apkFilePath,FolderDefault);
 				
 				int index = apkFilePath.lastIndexOf(File.separator);					
-				Title = "APK Info - "+ apkFilePath.substring(index+1);
+				Title = "APK Scanner - "+ apkFilePath.substring(index+1);
 				
 				System.out.println(FolderDefault);
 				mApkInfo = CoreXmlTool.XmlToMyApkinfo(FolderDefault);

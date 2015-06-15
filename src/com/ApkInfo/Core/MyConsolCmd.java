@@ -8,17 +8,38 @@ import java.util.List;
 
 public class MyConsolCmd
 {
+	private boolean multiCmdExit;
+
 	public interface OutputObserver
 	{
-		public void ConsolOutput(String output);
+		public boolean ConsolOutput(String output);
 	}
 	
-	private MyConsolCmd() { }
+	private MyConsolCmd()
+	{
+		multiCmdExit = false;
+	}
+
+	static public String[] exc(String[] cmd) {
+		return (new MyConsolCmd()).exc_i(cmd, false, null);
+	}
+
+	static public String[] exc(String[] cmd, boolean showLog) {
+		return (new MyConsolCmd()).exc_i(cmd, showLog, null);
+	}
+
+	static public String[] exc(String[] cmd, boolean showLog, OutputObserver observer) {
+		return (new MyConsolCmd()).exc_i(cmd, showLog, observer);
+	}
 	
-	static public String[] exc(String[] cmd, boolean showLog, OutputObserver observer)
+	private String[] exc_i(String[] cmd, boolean showLog, OutputObserver observer)
 	{
 		String s = "";
 		List<String> buffer = new ArrayList<String>(); 
+		
+		if(showLog) {
+			buffer.add(echoCmd(cmd));
+		}
 
 		try {
 			Process oProcess = new ProcessBuilder(cmd).redirectErrorStream(true).start();
@@ -26,7 +47,9 @@ public class MyConsolCmd
 		    
 		    while ((s = stdOut.readLine()) != null) {
 		    	if(showLog) System.out.println(s);
-		    	if(observer != null) observer.ConsolOutput(s);
+		    	if(observer != null) {
+		    		multiCmdExit = !observer.ConsolOutput(s);
+		    	}
 		    	buffer.add(s);
 		    }
 		} catch (IOException e) { // 에러 처리
@@ -35,5 +58,39 @@ public class MyConsolCmd
 	    }
 
 		return buffer.toArray(new String[0]);
+	}
+
+	static public String[][] exc(String[][] cmd)
+	{
+		return (new MyConsolCmd()).exc_i(cmd, false, null);
+	}
+
+	static public String[][] exc(String[][] cmd, boolean showLog)
+	{
+		return (new MyConsolCmd()).exc_i(cmd, showLog, null);
+	}
+
+	static public String[][] exc(String[][] cmd, boolean showLog, final OutputObserver observer)
+	{
+		return (new MyConsolCmd()).exc_i(cmd, showLog, observer);
+	}
+	
+	private String[][] exc_i(String[][] cmd, boolean showLog, final OutputObserver observer) {
+		List<String[]> buffer = new ArrayList<String[]>();
+
+		for(int i = 0; i < cmd.length; i++) {
+			buffer.add(exc_i(cmd[i], showLog, observer));
+			if(multiCmdExit) break;
+		}
+
+		return buffer.toArray(new String[0][0]);
+	}
+	
+	private String echoCmd(String[] cmd) {
+		String echo = "";
+		for(int i = 0; i < cmd.length; i++){
+			echo += (i==0?"":" ") + cmd[i];
+		}
+		return echo;
 	}
 }
