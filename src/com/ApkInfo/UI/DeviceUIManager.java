@@ -68,6 +68,10 @@ public class DeviceUIManager {
 	    					JOptionPane.showMessageDialog(null, DialogPanel,"설치중...", JOptionPane.DEFAULT_OPTION);
 	    				} 
 						
+			} else {
+				JPanel DialogPanel = makeLodingDialog();						
+				mMyDeviceInfo.InstallApk(DeviceList.get(0),strSourcePath , dialogLogArea);
+				JOptionPane.showMessageDialog(null, DialogPanel,"설치중...", JOptionPane.DEFAULT_OPTION);
 			}
 		} else if(DeviceList.size() >1) {
             int selectedValue = MyListDialog.showDialog(null, null, "Select Device", "Device List", names, 0, "Cosmo  ");
