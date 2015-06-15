@@ -43,33 +43,17 @@ public class DeviceUIManager {
 		System.out.println("Device count : " + DeviceList.size());
 		
 		if(DeviceList.size() ==0) {
-			JOptionPane.showMessageDialog(null,"Device not found!\nplease check Connected","Warning",JOptionPane.WARNING_MESSAGE);
-			
+			JOptionPane.showMessageDialog(null,"Device not found!\nplease check Connected","Warning",JOptionPane.WARNING_MESSAGE);			
 		} else if(DeviceList.size() ==1) {
 			Object[] options = {"Push",
                     "Install"};
-			int n = JOptionPane.showOptionDialog(null,
-			    "동일 package가 설치되어있습니다.\n"
-			    + "Push or Install ?",
-			    "warning",
-			    JOptionPane.YES_NO_CANCEL_OPTION,
-			    JOptionPane.QUESTION_MESSAGE,
-			    null,
-			    options,
-			    options[1]);
+			int n = JOptionPane.showOptionDialog(null, "동일 package가 설치되어있습니다.\n"  + "Push or Install?",
+			    "warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 				System.out.println("Seltected index : " + n);
 				
 		} else if(DeviceList.size() >1) {
-            int selectedValue = MyListDialog.showDialog(
-                    null,
-                    null,
-                    "Select Device",
-                    "Device List",
-                    names,
-                    0,
-                    "Cosmo  ");
-            System.out.println("Seltected index : " + selectedValue);
-            System.exit(0);
+            int selectedValue = MyListDialog.showDialog(null, null, "Select Device", "Device List", names, 0, "Cosmo  ");
+            System.out.println("Seltected index : " + selectedValue);            
 		}
 		
 	}
