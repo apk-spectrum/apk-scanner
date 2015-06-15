@@ -69,7 +69,7 @@ public class MyDeviceInfo
 	public boolean PushApk(Device device, String sourcePath, JTextArea LogTextArea)
 	{
 		System.out.println("sourcePath : " + sourcePath + "DeviceADBNumber: " + device.strADBDeviceNumber);
-		if(adbCmd == null || adbCmd.isEmpty() 
+		if(adbCmd == null || adbCmd.isEmpty() || device == null
 				|| device.strADBDeviceNumber == null || device.strADBDeviceNumber.isEmpty()
 				|| sourcePath == null || sourcePath.isEmpty()
 				|| device.strApkPath == null || device.strApkPath.isEmpty()) {
@@ -85,7 +85,7 @@ public class MyDeviceInfo
 	public boolean InstallApk(Device device, String sourcePath, JTextArea LogTextArea)
 	{
 		System.out.println("sourcePath : " + sourcePath + "DeviceADBNumber: " + device.strADBDeviceNumber);
-		if(adbCmd == null || adbCmd.isEmpty() 
+		if(adbCmd == null || adbCmd.isEmpty() || device == null
 			|| device.strADBDeviceNumber == null || device.strADBDeviceNumber.isEmpty()
 			|| sourcePath == null || sourcePath.isEmpty()) {
 			return false;
@@ -120,11 +120,11 @@ public class MyDeviceInfo
 				String[] result;
 				String[] cmd = {adbCmd, "-s", this.DeviceADBNumber, "install", "-d","-r", this.sourcePath};
 				
-				LogTextArea.append(adbCmd + "\n");
+				//LogTextArea.append(adbCmd + "\n");
 				result = MyConsolCmd.exc(cmd,true,new MyConsolCmd.OutputObserver() {
 					@Override
 					public boolean ConsolOutput(String output) {
-						LogTextArea.append(output + "\n");
+						LogTextArea.append(output.replaceAll("^.*adb(\\.exe)?", "adb") + "\n");
 						return true;
 					}
 				});
@@ -142,35 +142,32 @@ public class MyDeviceInfo
 				Iterator<String> libPaths = MainUI.GetMyApkInfo().LibPathList.iterator();
 				while(libPaths.hasNext()) {
 					String path = libPaths.next();
+					if(!(new File(path)).exists()) {
+						System.out.println("no such file : " + path);
+						continue;
+					}
 					if(path.matches(LibSourcePath.replace("\\", "\\\\")+"arm64.*")) {
 						if(device.isAbi64) {
-							if((new File(path)).exists()) {
-								cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "push", path, "/system/lib64/"});
-								System.out.println("push " + path + " " + "/system/lib64/");
-							} else {
-								System.out.println("no such file : " + path);
-							}
+							cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "push", path, "/system/lib64/"});
+							System.out.println("push " + path + " " + "/system/lib64/");
 						} else {
 							System.out.println("ignored lib64 : " + path);
 						}
 					} else {
 						if(!device.isAbi64) {
-							if((new File(path)).exists()) {
-								cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "push", path, "/system/lib/"});
-								System.out.println("push " + path + " " + "/system/lib/");
-							} else {
-								System.out.println("no such file : " + path);
-							}
+							cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "push", path, "/system/lib/"});
+							System.out.println("push " + path + " " + "/system/lib/");
 						} else {
 							System.out.println("ignored lib32 path : " + path);
 						}
 					}
 				}
-				cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "reboot"});
+				//cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "reboot"});
 				
 				result = MyConsolCmd.exc(cmd.toArray(new String[0][0]),true,new MyConsolCmd.OutputObserver() {
 					@Override
 					public boolean ConsolOutput(String output) {
+						LogTextArea.append(output.replaceAll("^.*adb(\\.exe)?", "adb") + "\n");
 				    	if(output.equals("* failed to start daemon *")
 				    		|| output.equals("error: device not found")
 				    	) {
@@ -179,7 +176,8 @@ public class MyDeviceInfo
 				    	return true;
 					}
 				});
-				JOptionPane.showMessageDialog(null, result);	
+				LogTextArea.append("Compleated...\n");
+				JOptionPane.showMessageDialog(null, "Compleated...");
 			}
 
 			MyButtonPanel.btnInstall.setEnabled(true);

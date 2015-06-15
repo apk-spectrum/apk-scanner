@@ -39,6 +39,9 @@ public class MyConsolCmd
 		
 		if(showLog) {
 			buffer.add(echoCmd(cmd));
+	    	if(observer != null) {
+	    		observer.ConsolOutput(echoCmd(cmd));
+	    	}
 		}
 
 		try {
