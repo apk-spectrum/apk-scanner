@@ -127,8 +127,14 @@ public class MyDeviceInfo
 			if(type == INSTALL_TYPE.INSTALL) {
 				String[] result;
 				String[] cmd = {adbCmd, "-s", this.DeviceADBNumber, "install", "-d","-r", this.sourcePath};
-				result = MyConsolCmd.exc(cmd,true,null);
-				JOptionPane.showMessageDialog(null, result[2]);	
+				result = MyConsolCmd.exc(cmd,true,new MyConsolCmd.OutputObserver() {
+					@Override
+					public boolean ConsolOutput(String output) {
+						LogTextArea.append(output + "\n");
+						return true;
+					}
+				});
+				JOptionPane.showMessageDialog(null, result[3]);	
 			} else {
 				String[][] result;
 				List<String[]> cmd = new ArrayList<String[]>();
