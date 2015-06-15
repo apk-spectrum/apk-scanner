@@ -78,9 +78,9 @@ public class MyButtonPanel extends JPanel{
 		btnInstall.addActionListener(new ActionListener() {
 			  public void actionPerformed(ActionEvent e) {
 				    // display/center the jdialog when the button is pressed
-				  ADBDialog dt = new ADBDialog(MainUI.window);
-				  dt.showPlease();
-				  //DeviceUIManager mMyDeviceManager = new DeviceUIManager(MainUI.GetMyApkInfo().strPackageName);
+				  //ADBDialog dt = new ADBDialog(MainUI.window);
+				  //dt.showPlease();
+				  DeviceUIManager mMyDeviceManager = new DeviceUIManager(MainUI.GetMyApkInfo().strPackageName);
 				  
 				  }
 			});

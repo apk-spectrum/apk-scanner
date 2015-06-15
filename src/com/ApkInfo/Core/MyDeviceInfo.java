@@ -4,13 +4,16 @@ import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 
+import com.ApkInfo.UI.MainUI;
 import com.ApkInfo.UIUtil.StandardButton;
 
 public class MyDeviceInfo implements MyConsolCmd.OutputObserver
 {
 	public String strAppinfo;
 	public String strDeviceinfo;
+	public JTextArea LogTextArea;
 	String adbCmd;
 	
 	enum INSTALL_TYPE {
@@ -56,19 +59,19 @@ public class MyDeviceInfo implements MyConsolCmd.OutputObserver
 		return DeviceList;
 	}
 	
-	public void PushApk(Device device, String sourcePath, StandardButton btnInstall)
+	public void PushApk(Device device, String sourcePath, JTextArea LogTextArea)
 	{
 		System.out.println("sourcePath : " + sourcePath + "DeviceADBNumber: " + device.strADBDeviceNumber);
 
-		startCore = new MyCoreThead(INSTALL_TYPE.PUSH, device, sourcePath, btnInstall);
+		startCore = new MyCoreThead(INSTALL_TYPE.PUSH, device, sourcePath, LogTextArea);
 		startCore.start();	
 	}
 	
-	public void InstallApk(Device device, String sourcePath, StandardButton btnInstall)
+	public void InstallApk(Device device, String sourcePath, JTextArea LogTextArea)
 	{
 		System.out.println("sourcePath : " + sourcePath + "DeviceADBNumber: " + device.strADBDeviceNumber);
 
-		startCore = new MyCoreThead(INSTALL_TYPE.INSTALL, device, sourcePath, btnInstall);
+		startCore = new MyCoreThead(INSTALL_TYPE.INSTALL, device, sourcePath, LogTextArea);
 		startCore.start();
 	}
 
@@ -83,7 +86,8 @@ public class MyDeviceInfo implements MyConsolCmd.OutputObserver
 		String DeviceADBNumber;
 		String sourcePath;
 		StandardButton btnInstall;
-
+		JTextArea LogTextArea;
+		
 		MyCoreThead(INSTALL_TYPE type, Device device, String sourcePath, StandardButton btnInstall)
 		{
 			this.type = type;
@@ -92,12 +96,27 @@ public class MyDeviceInfo implements MyConsolCmd.OutputObserver
 			this.btnInstall = btnInstall;
 		}
 		
+		MyCoreThead(INSTALL_TYPE type, Device device, String sourcePath, JTextArea LogTextArea)
+		{
+			this.type = type;
+			this.DeviceADBNumber = device.strADBDeviceNumber;
+			this.sourcePath = sourcePath;
+			this.LogTextArea = LogTextArea;
+		}
+		
 		public void run()
 		{
 			String[] result;
 			if(type == INSTALL_TYPE.INSTALL) {
 				String[] cmd = {adbCmd, "-s", this.DeviceADBNumber, "install", "-d","-r", this.sourcePath};
-				result = MyConsolCmd.exc(cmd,true,null);
+				result = MyConsolCmd.exc(cmd, true, new MyConsolCmd.OutputObserver() {
+					@Override
+					public void ConsolOutput(String output) {
+						LogTextArea.append(output + "\n");				    	
+					}
+				});
+				JOptionPane.showMessageDialog(null, result[2]);
+				
 			} else {
 				String[] cmd1 = {adbCmd, "-s", this.DeviceADBNumber, "remount"};
 				result = MyConsolCmd.exc(cmd1,true,null);
@@ -109,11 +128,17 @@ public class MyDeviceInfo implements MyConsolCmd.OutputObserver
 				result = MyConsolCmd.exc(cmd4,true,null);
 				String[] cmd5 = {adbCmd, "-s", this.DeviceADBNumber, "reboot"};
 				result = MyConsolCmd.exc(cmd5,true,null);
+				
+				JOptionPane.showMessageDialog(null, result[2]);
 			}
 			if(this.btnInstall != null) {
 				this.btnInstall.setEnabled(true);
 			}
-			JOptionPane.showMessageDialog(null, result[2]);	
+			
+			if(this.LogTextArea != null) {
+				
+			}
+			
 		}
 
 		@Override
