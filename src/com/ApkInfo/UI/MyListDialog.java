@@ -49,9 +49,9 @@ public class MyListDialog extends JDialog implements ActionListener {
 		super(frame, title, true);
 		
 		String ImgPath = CoreApkTool.GetUTF8Path();
-        //ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
+        ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
 		
-		ImageIcon Appicon = new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/AppIcon.png");
+		//ImageIcon Appicon = new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/AppIcon.png");
 		
 		this.setResizable( false );
 		this.setIconImage(Appicon.getImage());
