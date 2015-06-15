@@ -141,7 +141,7 @@ public class MyDeviceInfo
 				});
 				  MyButtonPanel.btnInstall.setEnabled(true);
 				  MyButtonPanel.GifLabel.setVisible(false);
-				JOptionPane.showMessageDialog(null, result[3]);				
+				JOptionPane.showMessageDialog(null, result[2]);				
 			} else {
 				String[][] result;
 				List<String[]> cmd = new ArrayList<String[]>();
