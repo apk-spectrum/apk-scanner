@@ -145,7 +145,7 @@ public class MyDeviceInfo
 			} else {
 				String[][] result;
 				List<String[]> cmd = new ArrayList<String[]>();
-				//cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "root"});
+				cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "root"});
 				cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "remount"});
 				cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "shell", "su", "-c", "setenforce", "0"});
 				cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "push", this.sourcePath, device.strApkPath});
@@ -183,21 +183,25 @@ public class MyDeviceInfo
 						LogTextArea.append(output.replaceAll("^.*adb(\\.exe)?", "adb") + "\n");
 				    	if(output.equals("* failed to start daemon *")
 				    		|| output.equals("error: device not found")
+				    		|| output.equals("adbd cannot run as root in production builds")
 				    		|| output.matches(".*Permission denied.*")
 				    	) {
 				    		System.out.println(">>>>>>>>>>>> fail : " + output);
 				    		return false;
 				    	}
-				    	LogTextArea.append(output + "\n");
 				    	return true;
 					}
 				});
 				MyButtonPanel.btnInstall.setEnabled(true);
 				MyButtonPanel.GifLabel.setVisible(false);
-				JOptionPane.showMessageDialog(null, result);	
-				LogTextArea.append("Compleated...\n");
-				JOptionPane.showMessageDialog(null, "Compleated...");
-
+				//JOptionPane.showMessageDialog(null, result);
+				if(cmd.size() == result.length) {
+					LogTextArea.append("Compleated...\n");
+					JOptionPane.showMessageDialog(null, "Compleated...");
+				} else {
+					LogTextArea.append("failure...\n");
+					JOptionPane.showMessageDialog(null, "failure...");
+				}
 			}
 		}
 	}
