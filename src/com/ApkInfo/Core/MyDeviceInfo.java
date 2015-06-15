@@ -125,6 +125,8 @@ public class MyDeviceInfo
 		
 		public void run()
 		{
+			MyButtonPanel.GifLabel.setVisible(true);
+			
 			if(type == INSTALL_TYPE.INSTALL) {
 				String[] result;
 				String[] cmd = {adbCmd, "-s", this.DeviceADBNumber, "install", "-d","-r", this.sourcePath};
@@ -137,6 +139,8 @@ public class MyDeviceInfo
 						return true;
 					}
 				});
+				  MyButtonPanel.btnInstall.setEnabled(true);
+				  MyButtonPanel.GifLabel.setVisible(false);
 				JOptionPane.showMessageDialog(null, result[3]);				
 			} else {
 				String[][] result;
@@ -184,14 +188,17 @@ public class MyDeviceInfo
 				    		System.out.println(">>>>>>>>>>>> fail : " + output);
 				    		return false;
 				    	}
+				    	LogTextArea.append(output + "\n");
 				    	return true;
 					}
 				});
+				MyButtonPanel.btnInstall.setEnabled(true);
+				MyButtonPanel.GifLabel.setVisible(false);
+				JOptionPane.showMessageDialog(null, result);	
 				LogTextArea.append("Compleated...\n");
 				JOptionPane.showMessageDialog(null, "Compleated...");
-			}
 
-			MyButtonPanel.btnInstall.setEnabled(true);
+			}
 		}
 	}
 
