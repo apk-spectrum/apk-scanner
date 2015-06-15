@@ -170,7 +170,9 @@ public class MyDeviceInfo
 						LogTextArea.append(output.replaceAll("^.*adb(\\.exe)?", "adb") + "\n");
 				    	if(output.equals("* failed to start daemon *")
 				    		|| output.equals("error: device not found")
+				    		|| output.matches(".*Permission denied.*")
 				    	) {
+				    		System.out.println(">>>>>>>>>>>> fail : " + output);
 				    		return false;
 				    	}
 				    	return true;

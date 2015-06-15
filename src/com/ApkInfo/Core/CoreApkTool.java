@@ -109,6 +109,8 @@ public class CoreApkTool {
 			public boolean ConsolOutput(String output) {
 		    	if(output.matches("^I:.*"))
 		    		MainUI.ProgressBarDlg.addProgress(5,output + "\n");
+		    	else
+		    		MainUI.ProgressBarDlg.addProgress(0,output + "\n");
 		    	return true;
 			}
 		});

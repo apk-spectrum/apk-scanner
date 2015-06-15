@@ -51,7 +51,7 @@ public class MyConsolCmd
 		    while ((s = stdOut.readLine()) != null) {
 		    	if(showLog) System.out.println(s);
 		    	if(observer != null) {
-		    		multiCmdExit = !observer.ConsolOutput(s);
+		    		multiCmdExit = !observer.ConsolOutput(s) || multiCmdExit;
 		    	}
 		    	buffer.add(s);
 		    }
