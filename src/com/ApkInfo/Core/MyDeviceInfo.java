@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
 import com.ApkInfo.UI.MainUI;
+import com.ApkInfo.UI.MyButtonPanel;
 import com.ApkInfo.UIUtil.StandardButton;
 
 public class MyDeviceInfo
@@ -101,22 +102,13 @@ public class MyDeviceInfo
 		INSTALL_TYPE type;
 		String DeviceADBNumber;
 		String sourcePath;
-		StandardButton btnInstall;
 		Device device;
 		JTextArea LogTextArea;
-
-		MyCoreThead(INSTALL_TYPE type, Device device, String sourcePath, StandardButton btnInstall)
-		{
-			this.type = type;
-			this.device = device;
-			this.DeviceADBNumber = device.strADBDeviceNumber;
-			this.sourcePath = sourcePath;
-			this.btnInstall = btnInstall;
-		}
 		
 		MyCoreThead(INSTALL_TYPE type, Device device, String sourcePath, JTextArea LogTextArea)
 		{
 			this.type = type;
+			this.device = device;
 			this.DeviceADBNumber = device.strADBDeviceNumber;
 			this.sourcePath = sourcePath;
 			this.LogTextArea = LogTextArea;
@@ -136,7 +128,7 @@ public class MyDeviceInfo
 						return true;
 					}
 				});
-				JOptionPane.showMessageDialog(null, result[3]);	
+				JOptionPane.showMessageDialog(null, result[3]);				
 			} else {
 				String[][] result;
 				List<String[]> cmd = new ArrayList<String[]>();
@@ -189,9 +181,8 @@ public class MyDeviceInfo
 				});
 				JOptionPane.showMessageDialog(null, result);	
 			}
-			if(this.btnInstall != null) {
-				this.btnInstall.setEnabled(true);
-			}
+
+			MyButtonPanel.btnInstall.setEnabled(true);
 		}
 	}
 

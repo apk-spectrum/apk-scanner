@@ -97,8 +97,13 @@ public class DeviceUIManager {
 					JOptionPane.showMessageDialog(null, DialogPanel,"설치중...", JOptionPane.DEFAULT_OPTION);
             	}
 		}
-		
 	}
+	public void ShowSetupDialog(int selected) {
+		JPanel DialogPanel = makeLodingDialog();
+		mMyDeviceInfo.InstallApk(DeviceList.get(selected), strSourcePath , dialogLogArea);
+		JOptionPane.showMessageDialog(null, DialogPanel,"설치중...", JOptionPane.DEFAULT_OPTION);
+	}
+	
 	public JPanel makeLodingDialog() {
 		JPanel DiaPanel = new JPanel(new BorderLayout(3,3));
 		

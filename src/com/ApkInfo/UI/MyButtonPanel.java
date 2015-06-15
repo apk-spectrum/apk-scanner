@@ -20,7 +20,7 @@ import com.ApkInfo.UIUtil.Theme;
 public class MyButtonPanel extends JPanel{
 	StandardButton btnShowManifest;
 	StandardButton btnShowBrowser;
-	StandardButton btnInstall;
+	static public StandardButton btnInstall;
 	Label lbVersion;
 	
 	MyButtonPanel() {
@@ -81,7 +81,7 @@ public class MyButtonPanel extends JPanel{
 				  //ADBDialog dt = new ADBDialog(MainUI.window);
 				  //dt.showPlease();
 				  DeviceUIManager mMyDeviceManager = new DeviceUIManager(MainUI.GetMyApkInfo().strPackageName, MainUI.apkFilePath);
-				  
+				  btnInstall.setEnabled(false);
 				  }
 			});
 		
