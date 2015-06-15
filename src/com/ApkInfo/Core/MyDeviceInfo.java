@@ -34,13 +34,22 @@ public class MyDeviceInfo
 			adbCmd += ".exe";
 		}
 		if(!(new File(adbCmd)).exists()) {
-			System.out.println("adb tool이 존재 하지 않습니다 :" + adbCmd);
+			System.out.println("no such adb tool" + adbCmd);
 			adbCmd = null;
 		}
 		
 		System.out.println(adbCmd);
 	}
-	
+
+	public boolean ckeckAdbTool() {
+		if(adbCmd == null || !(new File(adbCmd)).exists())
+			return false;
+
+		MyConsolCmd.exc(new String[] {adbCmd, "kill-server"}, false, null);
+		String[] result = MyConsolCmd.exc(new String[] {adbCmd, "start-server"}, false, null);
+		return result[1].matches(".*daemon started successfully.*");
+	}
+
 	public ArrayList<Device> scanDevices()
 	{
 		ArrayList<Device> DeviceList = new ArrayList<Device>();
@@ -132,8 +141,8 @@ public class MyDeviceInfo
 			} else {
 				String[][] result;
 				List<String[]> cmd = new ArrayList<String[]>();
+				//cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "root"});
 				cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "remount"});
-				cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "root"});
 				cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "shell", "su", "-c", "setenforce", "0"});
 				cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "push", this.sourcePath, device.strApkPath});
 				System.out.println(this.sourcePath + " to " + device.strApkPath);
@@ -207,6 +216,7 @@ public class MyDeviceInfo
 		public String strBuildType;
 		public String strLabelText;
 		public boolean isAbi64;
+		public boolean hasRootPermission;
 
 		public Device() { }
 		
@@ -233,6 +243,13 @@ public class MyDeviceInfo
 			strSdkVersion = getSystemProp(deviceName, "ro.build.version.sdk");
 			strBuildType = getSystemProp(deviceName, "ro.build.type");
 			isAbi64 = !getSystemProp(deviceName, "ro.product.cpu.abilist64").isEmpty();
+			
+			hasRootPermission = true;
+			String[] cmd = {adbCmd,"-s",strADBDeviceNumber, "root"};
+			String[] result = MyConsolCmd.exc(cmd, false, null);
+			if(result[0].equals("adbd cannot run as root in production builds")) {
+				hasRootPermission = false;
+			}
 		}
 		
 		public boolean ckeckPackage(String packageName)
@@ -321,7 +338,7 @@ public class MyDeviceInfo
 		private String getSystemProp(String device, String tag)
 		{
 			String[] TargetInfo;
-			String[] cmd = {adbCmd, "-s", device, "shell", "getprop", tag}; //SGH-N045
+			String[] cmd = {adbCmd, "-s", device, "shell", "getprop", tag};
 
 			TargetInfo = MyConsolCmd.exc(cmd,false,null);
 			return TargetInfo[0];
