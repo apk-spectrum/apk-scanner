@@ -9,6 +9,8 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import com.ApkInfo.Core.CoreApkTool;
@@ -21,13 +23,24 @@ public class MyButtonPanel extends JPanel{
 	StandardButton btnShowManifest;
 	StandardButton btnShowBrowser;
 	static public StandardButton btnInstall;
+	static public JLabel GifLabel;
 	Label lbVersion;
 	
 	MyButtonPanel() {
+		String ImgPath = CoreApkTool.GetUTF8Path();
+        ImageIcon icon = new ImageIcon(ImgPath+File.separator+"loading.gif");
+        ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
+        GifLabel = new JLabel(icon);
+        
+        
 		this.add(btnShowManifest = new StandardButton("Manifest 보기",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED),BorderLayout.WEST);
 		this.add(btnShowBrowser = new StandardButton("탐색기",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED),BorderLayout.WEST);		
+		this.add(GifLabel,BorderLayout.EAST);
 		this.add(btnInstall = new StandardButton("설치",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED),BorderLayout.EAST);
-		this.add(lbVersion = new Label("Version : 0.5 beta"));		
+		this.add(lbVersion = new Label("Version : 0.5 beta"));
+		
+		
+		GifLabel.setVisible(false);
 		btnShowManifest.addActionListener(new ActionListener() {
 		  public void actionPerformed(ActionEvent e) {
 		    // display/center the jdialog when the button is pressed
@@ -80,8 +93,8 @@ public class MyButtonPanel extends JPanel{
 				    // display/center the jdialog when the button is pressed
 				  //ADBDialog dt = new ADBDialog(MainUI.window);
 				  //dt.showPlease();
-				  DeviceUIManager mMyDeviceManager = new DeviceUIManager(MainUI.GetMyApkInfo().strPackageName, MainUI.apkFilePath);
 				  btnInstall.setEnabled(false);
+				  DeviceUIManager mMyDeviceManager = new DeviceUIManager(MainUI.GetMyApkInfo().strPackageName, MainUI.apkFilePath);
 				  }
 			});
 		

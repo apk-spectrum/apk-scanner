@@ -129,7 +129,7 @@ public class MyProgressBarDemo extends JPanel
      */
     static JFrame createAndShowGUI(MyProgressBarDemo temp) {
         //Create and set up the window.
-        frame = new JFrame("ProgressBarDemo");
+        frame = new JFrame("APK Scanner");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Create and set up the content pane.
@@ -140,7 +140,6 @@ public class MyProgressBarDemo extends JPanel
         
 		String ImgPath = CoreApkTool.GetUTF8Path();
         ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
-                
         
         frame.setIconImage(Appicon.getImage());
         

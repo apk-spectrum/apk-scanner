@@ -18,6 +18,7 @@ public class MyListDialog extends JDialog implements ActionListener {
 	private static MyListDialog dialog;
 	private static int value = 0;
 	private JList list;
+	private static Boolean clicked = false;
 
 	/**
 	 * Set up and show the dialog. The first Component argument determines which
@@ -34,7 +35,8 @@ public class MyListDialog extends JDialog implements ActionListener {
 		dialog = new MyListDialog(frame, locationComp, labelText, title,
 				possibleValues, initialValue, longValue);
 		dialog.setVisible(true);
-		return value;
+		if(clicked) return value;
+		else return -1;		
 	}
 
 	private void setValue(int newValue) {
@@ -159,11 +161,9 @@ public class MyListDialog extends JDialog implements ActionListener {
 		    
 		    for(int i=0; i<DeviceList.size(); i++) {
 		    	names[i] = DeviceList.get(i).strADBDeviceNumber + "(" + DeviceList.get(i).strDeviceName + ")";
-		    }
-			
-			
+		    }			
 			list.setListData(names);			
 		}
-		
+		clicked = true;
 	}
 }
