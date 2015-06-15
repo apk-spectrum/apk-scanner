@@ -30,11 +30,14 @@ public class DeviceUIManager {
 	ArrayList<Device> DeviceList;
 	String strPackageName;
 	JTextArea dialogLogArea;
-	public DeviceUIManager(String PackageName) {
+	String strSourcePath;
+	public DeviceUIManager(String PackageName, String sourcePath) {
 		// TODO Auto-generated constructor stub
 		Object[] options = {"Push", "Install"};
 		
 		strPackageName = PackageName;
+		strSourcePath = sourcePath;
+		
 		mMyDeviceInfo = new MyDeviceInfo();
 		DeviceList = mMyDeviceInfo.scanDevices();
 
@@ -57,11 +60,11 @@ public class DeviceUIManager {
 						System.out.println("Seltected index : " + n);				
 	    				if(n==0) {
 	    					JPanel DialogPanel = makeLodingDialog();						
-	    					mMyDeviceInfo.PushApk(DeviceList.get(0),/*MainUI.apkFilePath*/"/home/leejinhyeong/workspace/APKInfoDlgv2/CloudMailer_sign_zipaligned.apk" , dialogLogArea);
+	    					mMyDeviceInfo.PushApk(DeviceList.get(0),strSourcePath , dialogLogArea);
 	    					JOptionPane.showMessageDialog(null, DialogPanel,"설치중...", JOptionPane.DEFAULT_OPTION);
 	    				} else if(n==1){
 	    					JPanel DialogPanel = makeLodingDialog();						
-	    					mMyDeviceInfo.InstallApk(DeviceList.get(0),/*MainUI.apkFilePath*/"/home/leejinhyeong/workspace/APKInfoDlgv2/CloudMailer_sign_zipaligned.apk" , dialogLogArea);
+	    					mMyDeviceInfo.InstallApk(DeviceList.get(0),strSourcePath , dialogLogArea);
 	    					JOptionPane.showMessageDialog(null, DialogPanel,"설치중...", JOptionPane.DEFAULT_OPTION);
 	    				} 
 						
@@ -76,17 +79,17 @@ public class DeviceUIManager {
     						System.out.println("Seltected index : " + n);
     				if(n==0) {
     					JPanel DialogPanel = makeLodingDialog();						
-    					mMyDeviceInfo.PushApk(DeviceList.get(selectedValue),/*MainUI.apkFilePath*/"/home/leejinhyeong/workspace/APKInfoDlgv2/CloudMailer_sign_zipaligned.apk" , dialogLogArea);
+    					mMyDeviceInfo.PushApk(DeviceList.get(selectedValue),strSourcePath , dialogLogArea);
     					JOptionPane.showMessageDialog(null, DialogPanel,"설치중...", JOptionPane.DEFAULT_OPTION);
     				} else if(n==1){
     					JPanel DialogPanel = makeLodingDialog();						
-    					mMyDeviceInfo.InstallApk(DeviceList.get(selectedValue),/*MainUI.apkFilePath*/"/home/leejinhyeong/workspace/APKInfoDlgv2/CloudMailer_sign_zipaligned.apk" , dialogLogArea);
+    					mMyDeviceInfo.InstallApk(DeviceList.get(selectedValue),strSourcePath , dialogLogArea);
     					JOptionPane.showMessageDialog(null, DialogPanel,"설치중...", JOptionPane.DEFAULT_OPTION);
     				} 
 
             	} else {
             		JPanel DialogPanel = makeLodingDialog();						
-					mMyDeviceInfo.InstallApk(DeviceList.get(selectedValue),/*MainUI.apkFilePath*/"/home/leejinhyeong/workspace/APKInfoDlgv2/CloudMailer_sign_zipaligned.apk" , dialogLogArea);
+					mMyDeviceInfo.InstallApk(DeviceList.get(selectedValue), strSourcePath , dialogLogArea);
 					JOptionPane.showMessageDialog(null, DialogPanel,"설치중...", JOptionPane.DEFAULT_OPTION);
             	}
 		}
@@ -116,7 +119,7 @@ public class DeviceUIManager {
 				//args = file path
 	
 			 
-				DeviceUIManager mMyDeviceManager = new DeviceUIManager("com.nextbit.app");
+				DeviceUIManager mMyDeviceManager = new DeviceUIManager("com.nextbit.app", "/home/leejinhyeong/workspace/APKInfoDlgv2/CloudMailer_sign_zipaligned.apk");
 				
 			}
 		});

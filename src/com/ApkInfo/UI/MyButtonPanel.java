@@ -80,7 +80,7 @@ public class MyButtonPanel extends JPanel{
 				    // display/center the jdialog when the button is pressed
 				  //ADBDialog dt = new ADBDialog(MainUI.window);
 				  //dt.showPlease();
-				  DeviceUIManager mMyDeviceManager = new DeviceUIManager(MainUI.GetMyApkInfo().strPackageName);
+				  DeviceUIManager mMyDeviceManager = new DeviceUIManager(MainUI.GetMyApkInfo().strPackageName, MainUI.apkFilePath);
 				  
 				  }
 			});
