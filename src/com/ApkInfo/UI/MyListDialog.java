@@ -47,7 +47,7 @@ public class MyListDialog extends JDialog implements ActionListener {
 	private MyListDialog(Frame frame, Component locationComp, String labelText,
 			String title, Object[] data, int initialValue, String longValue) {
 		super(frame, title, true);
-		
+		clicked = false;
 		String ImgPath = CoreApkTool.GetUTF8Path();
         ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
 		
