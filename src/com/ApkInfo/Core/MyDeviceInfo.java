@@ -42,6 +42,7 @@ public class MyDeviceInfo
 	}
 
 	public boolean ckeckAdbTool() {
+		System.out.println("ckeckAdbTool()");
 		if(adbCmd == null || !(new File(adbCmd)).exists())
 			return false;
 
@@ -139,9 +140,9 @@ public class MyDeviceInfo
 						return true;
 					}
 				});
-				  MyButtonPanel.btnInstall.setEnabled(true);
-				  MyButtonPanel.GifLabel.setVisible(false);
-				JOptionPane.showMessageDialog(null, result[2]);				
+				MyButtonPanel.btnInstall.setEnabled(true);
+				MyButtonPanel.GifLabel.setVisible(false);
+				JOptionPane.showMessageDialog(null, result[2]);
 			} else {
 				String[][] result;
 				List<String[]> cmd = new ArrayList<String[]>();
@@ -294,7 +295,7 @@ public class MyDeviceInfo
 				strVersionCode = selectString(TargetInfo,"versionCode=");
 				strCodeFolderPath = selectString(TargetInfo,"codePath=");
 				
-				if(strCodeFolderPath.matches("^/system/.*")) {
+				if(strCodeFolderPath != null && strCodeFolderPath.matches("^/system/.*")) {
 					isSystemApp = true;
 				}
 				
