@@ -37,9 +37,9 @@ public class MyConsolCmd
 		String s = "";
 		List<String> buffer = new ArrayList<String>(); 
 		
-		//if(showLog) {
-			//buffer.add(echoCmd(cmd));
-		//}
+		if(showLog) {
+			System.out.println(echoCmd(cmd));
+		}
     	if(observer != null) {
     		observer.ConsolOutput(echoCmd(cmd));
     	}

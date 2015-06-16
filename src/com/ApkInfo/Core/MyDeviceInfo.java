@@ -176,6 +176,7 @@ public class MyDeviceInfo
 					}
 				}
 				//cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "reboot"});
+				cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "shell", "echo", "Compleated..."});
 				
 				result = MyConsolCmd.exc(cmd.toArray(new String[0][0]),true,new MyConsolCmd.OutputObserver() {
 					@Override
@@ -192,15 +193,23 @@ public class MyDeviceInfo
 				    	return true;
 					}
 				});
+
 				MyButtonPanel.btnInstall.setEnabled(true);
 				MyButtonPanel.GifLabel.setVisible(false);
 				//JOptionPane.showMessageDialog(null, result);
+
+				System.out.println("cmd.size() " + cmd.size() + ", result.length " + result.length);
 				if(cmd.size() == result.length) {
-					LogTextArea.append("Compleated...\n");
-					JOptionPane.showMessageDialog(null, "Compleated...");
+					LogTextArea.append("Success...\n");
+					int reboot = JOptionPane.showConfirmDialog(null, "Success download..\nRestart device now?", "APK Push", JOptionPane.YES_NO_OPTION);
+					if(reboot == 0){
+						LogTextArea.append("Wait for reboot...\n");
+						MyConsolCmd.exc(new String[] {adbCmd, "-s", this.DeviceADBNumber, "reboot"});
+						LogTextArea.append("Reboot\n");
+					}
 				} else {
-					LogTextArea.append("failure...\n");
-					JOptionPane.showMessageDialog(null, "failure...");
+					LogTextArea.append("Failure...\n");
+					JOptionPane.showMessageDialog(null, "Failure...");
 				}
 			}
 		}
