@@ -46,8 +46,9 @@ public class MyTabUIbasicInfo extends JComponent{
         strTabInfo += "" + ApkInfo.strLabelname +" - ";
         strTabInfo += "" + ApkInfo.strPackageName +"\n";
         strTabInfo += "Ver. " + ApkInfo.strVersionName +" / ";
-        strTabInfo += "" + ApkInfo.strVersionCode + "    ";
+        strTabInfo += "" + ApkInfo.strVersionCode + "\n";
 
+        strTabInfo += "\n" + CoreApkTool.getFileLength(ApkInfo.lApkSize) + " (" + df.format(ApkInfo.lApkSize) +" Bytes)\n";
         strTabInfo += "@SDK Ver. ";
         if(!ApkInfo.strMinSDKversion.equals("Unknown")) {
         	strTabInfo += "" + ApkInfo.strMinSDKversion +" (Min)";
@@ -61,10 +62,8 @@ public class MyTabUIbasicInfo extends JComponent{
         if(ApkInfo.strMinSDKversion.equals("Unknown") && ApkInfo.strTargerSDKversion.equals("Unknown")) {
         	strTabInfo += "Unknown"; 
         }
-        strTabInfo += "\n";
-
-        strTabInfo += "" + CoreApkTool.getFileLength(ApkInfo.lApkSize) + " (" + df.format(ApkInfo.lApkSize) +" Bytes)\n\n";
-
+        strTabInfo += "\n\n";
+        
         strTabInfo += "[Feature]\n";
         //strTabInfo += "Signing : " + ApkInfo.CertList.size() +"\n";
         strTabInfo += "" + ApkInfo.strHidden +"";
