@@ -172,6 +172,9 @@ public class DeviceUIManager {
 		    });
 		  t.start();
 		}
+		else if(dlgDialog.isVisible() == false) {
+			dlgDialog.setVisible(true);
+		}
 	}
 	
 
@@ -182,7 +185,7 @@ public class DeviceUIManager {
 		DiaPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 0));
 		
 		
-		dialogLogArea = new JTextArea(5,30); 
+		dialogLogArea = new JTextArea(10,30); 
 		
 		DefaultCaret caret = (DefaultCaret) dialogLogArea.getCaret(); // ←
 		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE); 

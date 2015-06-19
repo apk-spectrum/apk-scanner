@@ -145,8 +145,10 @@ public class MyDeviceInfo
 						return true;
 					}
 				});
-				MyButtonPanel.btnInstall.setEnabled(true);				
+				if(MyButtonPanel.btnInstall != null) {
+				MyButtonPanel.btnInstall.setEnabled(true);
 				JOptionPane.showMessageDialog(null, result[2]);
+				}
 			} else {
 				String[][] result;
 				List<String[]> cmd = new ArrayList<String[]>();
