@@ -131,8 +131,7 @@ public class MyDeviceInfo
 		}
 		
 		public void run()
-		{
-			MyButtonPanel.GifLabel.setVisible(true);
+		{			
 			
 			if(type == INSTALL_TYPE.INSTALL) {
 				String[] result;
@@ -146,8 +145,7 @@ public class MyDeviceInfo
 						return true;
 					}
 				});
-				MyButtonPanel.btnInstall.setEnabled(true);
-				MyButtonPanel.GifLabel.setVisible(false);
+				MyButtonPanel.btnInstall.setEnabled(true);				
 				JOptionPane.showMessageDialog(null, result[2]);
 			} else {
 				String[][] result;
@@ -201,8 +199,7 @@ public class MyDeviceInfo
 					}
 				});
 
-				MyButtonPanel.btnInstall.setEnabled(true);
-				MyButtonPanel.GifLabel.setVisible(false);
+				MyButtonPanel.btnInstall.setEnabled(true);				
 				//JOptionPane.showMessageDialog(null, result);
 
 				System.out.println("cmd.size() " + cmd.size() + ", result.length " + result.length);

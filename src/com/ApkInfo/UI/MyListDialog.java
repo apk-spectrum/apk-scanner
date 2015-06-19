@@ -154,15 +154,18 @@ public class MyListDialog extends JDialog implements ActionListener {
 			MyListDialog.dialog.setVisible(false);
 		} else if("Refresh".equals(e.getActionCommand())) {
 			System.out.println("Refresh");
-			
-			ArrayList<Device> DeviceList = DeviceUIManager.mMyDeviceInfo.scanDevices();
-
-		    String[] names = new String[DeviceList.size()];
-		    
-		    for(int i=0; i<DeviceList.size(); i++) {
-		    	names[i] = DeviceList.get(i).strADBDeviceNumber + "(" + DeviceList.get(i).strDeviceName + ")";
-		    }			
-			list.setListData(names);			
+			  Thread t = new Thread(new Runnable(){
+			        public void run(){
+			        	ArrayList<Device> DeviceList = DeviceUIManager.mMyDeviceInfo.scanDevices();
+			        	String[] names = new String[DeviceList.size()];
+					    
+					    for(int i=0; i<DeviceList.size(); i++) {
+					    	names[i] = DeviceList.get(i).strADBDeviceNumber + "(" + DeviceList.get(i).strDeviceName + ")";
+					    }			
+						list.setListData(names);
+			        }
+			  });
+			  t.start();	    			
 		}
 		clicked = true;
 	}

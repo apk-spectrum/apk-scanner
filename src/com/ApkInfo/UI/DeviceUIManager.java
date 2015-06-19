@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.text.DefaultCaret;
 
 import com.ApkInfo.Core.CoreApkTool;
 import com.ApkInfo.Core.MyConsolCmd;
@@ -37,6 +38,9 @@ public class DeviceUIManager {
 	static public JTextArea dialogLogArea;
 	String strSourcePath;
 	String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
+	public JDialog dlgDialog;
+	
+	
 	public DeviceUIManager(String PackageName, String sourcePath) {
 		// TODO Auto-generated constructor stub
 
@@ -146,13 +150,22 @@ public class DeviceUIManager {
 		        public void run(){
 		        	//JOptionPane.showMessageDialog(null, DialogPanel,"Log", JOptionPane.CANCEL_OPTION,Appicon);
 		        	
-		        	final JDialog dlgDialog = new JDialog();
+		        	
+		        	dlgDialog = new JDialog();
 		        	
 		        	dlgDialog.setTitle("Log");
 		        	dlgDialog.setModal(false);
 		        	dlgDialog.setDefaultCloseOperation(
-	                        JDialog.DO_NOTHING_ON_CLOSE);
+	                        JDialog.DISPOSE_ON_CLOSE);
+		        	//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		        	
+		        	JLabel GifLabel;
+		        	String ImgPath = CoreApkTool.GetUTF8Path();
+		        	ImageIcon icon = new ImageIcon(ImgPath+File.separator+"loading.gif");
+		            GifLabel = new JLabel(icon);
+		            
+		            DialogPanel.add(GifLabel);
+		            
 		        	dlgDialog.add(DialogPanel);
 		        	dlgDialog.pack();
 		        	dlgDialog.setLocationRelativeTo(null);
@@ -169,7 +182,11 @@ public class DeviceUIManager {
 		JPanel DiaPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		DiaPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 0));
 		
+		
 		dialogLogArea = new JTextArea(5,30); 
+		
+		DefaultCaret caret = (DefaultCaret) dialogLogArea.getCaret(); // ←
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE); 
 		
 		dialogLogArea.setWrapStyleWord(true);
 		dialogLogArea.setLineWrap(true);
