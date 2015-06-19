@@ -1,6 +1,6 @@
 @echo off
 cd
-set APP_PATH=C:\Program Files\APKInfo
+set APP_PATH=C:\Program Files\APKScanner
 set APP_FILE=ApkScanner.exe
 
 rem --- Java 버전확인 ---

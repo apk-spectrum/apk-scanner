@@ -1,6 +1,6 @@
 #!/bin/bash
 
-APP_PATH="/opt/APKInfo"
+APP_PATH="/opt/APKScanner"
 APP_FILE="APKInfoDlg.jar"
 
 
@@ -65,7 +65,7 @@ cat ~/.local/share/applications/mimeapps_old.list \
 	| sed 's/^\s*\[.*\]\s*$/&\napplication\/vnd.android.package-archive=apkchecker.desktop;/' > ~/.local/share/applications/mimeapps.list
 
 if [ -e ~/.p4qt/ApplicationSettings.xml ]; then
-    cat ~/.p4qt/ApplicationSettings.xml | sed '/EditorMappings/,/StringList/{/<String>apk/d; s/.*<\/StringList>.*/  <String>apk\|default\|\/opt\/APKInfo\/APKScanner\.sh<\/String>\n <\/StringList>/}' > .ApplicationSettings.xml
+    cat ~/.p4qt/ApplicationSettings.xml | sed '/EditorMappings/,/StringList/{/<String>apk/d; s/.*<\/StringList>.*/  <String>apk\|default\|\/opt\/APKScanner\/APKScanner\.sh<\/String>\n <\/StringList>/}' > .ApplicationSettings.xml
     mv .ApplicationSettings.xml ~/.p4qt/ApplicationSettings.xml
 fi
 
