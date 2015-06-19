@@ -3,6 +3,7 @@ package com.ApkInfo.UI;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,6 +16,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -32,85 +34,94 @@ public class DeviceUIManager {
 	public static MyDeviceInfo mMyDeviceInfo;
 	ArrayList<Device> DeviceList;
 	String strPackageName;
-	JTextArea dialogLogArea;
+	static public JTextArea dialogLogArea;
 	String strSourcePath;
 	String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
 	public DeviceUIManager(String PackageName, String sourcePath) {
 		// TODO Auto-generated constructor stub
 
 		String ImgPath = CoreApkTool.GetUTF8Path();
-		ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
+		final ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
         
 		
-		Object[] options = {"Push", "Install"};
+		final Object[] options = {"Push", "Install"};
 		strPackageName = PackageName;
 		strSourcePath = sourcePath;
 		
+		ShowSetupLogDialog();
+		
 		mMyDeviceInfo = new MyDeviceInfo();
-		DeviceList = mMyDeviceInfo.scanDevices();
+		
+		  Thread t = new Thread(new Runnable(){
+		        public void run(){
+		    		DeviceList = mMyDeviceInfo.scanDevices();
 
-	    String[] names = new String[DeviceList.size()];
-	    
-	    for(int i=0; i<DeviceList.size(); i++) {
-	    	names[i] = DeviceList.get(i).strADBDeviceNumber + "(" + DeviceList.get(i).strDeviceName + ")";
-	    }
-	    
-		System.out.println("Device count : " + DeviceList.size());
-		if(DeviceList.size() ==0) {
-			MyButtonPanel.btnInstall.setEnabled(true);
-			JOptionPane.showMessageDialog(null,"Device not found!\nplease check Connected","Warning",JOptionPane.WARNING_MESSAGE, Appicon);			
-		} else if(DeviceList.size() ==1) {
-			if(DeviceList.get(0).ckeckPackage(strPackageName)) {
-				if(DeviceList.get(0).isSystemApp == true && DeviceList.get(0).hasRootPermission == true){
-					int n = JOptionPane.showOptionDialog(null, "동일 package가 설치되어있습니다.\n"  +  strLine+ DeviceList.get(0).strLabelText +strLine+"Push or Install?",
-						    "warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, options, options[1]);
-							System.out.println("Seltected index : " + n);				
-		    				if(n==0) {
-		    					ShowSetupDialog(0, false);
-		    				} else if(n==1){
-		    					ShowSetupDialog(0,true);
+		    	    String[] names = new String[DeviceList.size()];
+		    	    
+		    	    for(int i=0; i<DeviceList.size(); i++) {
+		    	    	names[i] = DeviceList.get(i).strADBDeviceNumber + "(" + DeviceList.get(i).strDeviceName + ")";
+		    	    }
+		    	    
+		    		System.out.println("Device count : " + DeviceList.size());
+		    		if(DeviceList.size() ==0) {
+		    			MyButtonPanel.btnInstall.setEnabled(true);
+		    			JOptionPane.showMessageDialog(null,"Device not found!\nplease check Connected","Warning",JOptionPane.WARNING_MESSAGE, Appicon);			
+		    		} else if(DeviceList.size() ==1) {
+		    			if(DeviceList.get(0).ckeckPackage(strPackageName)) {
+		    				if(DeviceList.get(0).isSystemApp == true && DeviceList.get(0).hasRootPermission == true){
+		    					int n = JOptionPane.showOptionDialog(null, "동일 package가 설치되어있습니다.\n"  +  strLine+ DeviceList.get(0).strLabelText +strLine+"Push or Install?",
+		    						    "warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, options, options[1]);
+		    							System.out.println("Seltected index : " + n);				
+		    		    				if(n==0) {
+		    		    					ShowSetupDialog(0, false);
+		    		    				} else if(n==1){
+		    		    					ShowSetupDialog(0,true);
+		    		    				} else {
+		    		    		            if(n==-1) {
+		    		    		            	MyButtonPanel.btnInstall.setEnabled(true);
+		    		    		            	return;
+		    		    		            } 
+		    		    				}
 		    				} else {
-		    		            if(n==-1) {
-		    		            	MyButtonPanel.btnInstall.setEnabled(true);
-		    		            	return;
-		    		            } 
+		    					ShowSetupDialog(0, true);
 		    				}
-				} else {
-					ShowSetupDialog(0, true);
-				}
-			} else {
-				ShowSetupDialog(0, true);
-			}			
-		} else if(DeviceList.size() >1) {
-            int selectedValue = MyListDialog.showDialog(null, null, "Select Device", "Device List", names, 0, "Cosmo  ");
-            System.out.println("Seltected index : " + selectedValue);
-            
-            if(selectedValue==-1) {
-            	MyButtonPanel.btnInstall.setEnabled(true);
-            	return;
-            }            
-			if(DeviceList.get(selectedValue).ckeckPackage(strPackageName)) {
-				if(DeviceList.get(selectedValue).isSystemApp == true && DeviceList.get(selectedValue).hasRootPermission == true){
-					int n = JOptionPane.showOptionDialog(null, "동일 package가 설치되어있습니다.\n"  +  strLine+ DeviceList.get(selectedValue).strLabelText +strLine+"Push or Install?",
-						    "warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, options, options[1]);
-							System.out.println("Seltected index : " + n);				
-		    				if(n==0) {
-		    					ShowSetupDialog(selectedValue, false);
-		    				} else if(n==1){
-		    					ShowSetupDialog(selectedValue,true);
+		    			} else {
+		    				ShowSetupDialog(0, true);
+		    			}			
+		    		} else if(DeviceList.size() >1) {
+		                int selectedValue = MyListDialog.showDialog(null, null, "Select Device", "Device List", names, 0, "Cosmo  ");
+		                System.out.println("Seltected index : " + selectedValue);
+		                
+		                if(selectedValue==-1) {
+		                	MyButtonPanel.btnInstall.setEnabled(true);
+		                	return;
+		                }            
+		    			if(DeviceList.get(selectedValue).ckeckPackage(strPackageName)) {
+		    				if(DeviceList.get(selectedValue).isSystemApp == true && DeviceList.get(selectedValue).hasRootPermission == true){
+		    					int n = JOptionPane.showOptionDialog(null, "동일 package가 설치되어있습니다.\n"  +  strLine+ DeviceList.get(selectedValue).strLabelText +strLine+"Push or Install?",
+		    						    "warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, options, options[1]);
+		    							System.out.println("Seltected index : " + n);				
+		    		    				if(n==0) {
+		    		    					ShowSetupDialog(selectedValue, false);
+		    		    				} else if(n==1){
+		    		    					ShowSetupDialog(selectedValue,true);
+		    		    				} else {
+		    		    		            if(n==-1) {
+		    		    		            	MyButtonPanel.btnInstall.setEnabled(true);
+		    		    		            	return;
+		    		    		            } 
+		    		    				}						
 		    				} else {
-		    		            if(n==-1) {
-		    		            	MyButtonPanel.btnInstall.setEnabled(true);
-		    		            	return;
-		    		            } 
-		    				}						
-				} else {
-					ShowSetupDialog(selectedValue, true);
-				}
-			} else {
-				ShowSetupDialog(selectedValue, true);
-			}
-		}
+		    					ShowSetupDialog(selectedValue, true);
+		    				}
+		    			} else {
+		    				ShowSetupDialog(selectedValue, true);
+		    			}
+		    		}
+		        	
+		        }
+		    });
+		  t.start();
 	}
 	public void ShowSetupDialog(int selected, Boolean isInstall) {
 		String ImgPath = CoreApkTool.GetUTF8Path();
@@ -123,20 +134,48 @@ public class DeviceUIManager {
 			mMyDeviceInfo.PushApk(DeviceList.get(selected), strSourcePath , dialogLogArea);
 		}
 		
-		JOptionPane.showMessageDialog(null, DialogPanel,"설치중...", JOptionPane.DEFAULT_OPTION,Appicon);
+		//JOptionPane.showMessageDialog(null, DialogPanel,"설치중...", JOptionPane.DEFAULT_OPTION,Appicon);
 	}
+	
+	public void ShowSetupLogDialog() {
+		String ImgPath = CoreApkTool.GetUTF8Path();
+		final ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
+		
+		final JPanel DialogPanel = makeLodingDialog();
+		  Thread t = new Thread(new Runnable(){
+		        public void run(){
+		        	//JOptionPane.showMessageDialog(null, DialogPanel,"Log", JOptionPane.CANCEL_OPTION,Appicon);
+		        	
+		        	final JDialog dlgDialog = new JDialog();
+		        	
+		        	dlgDialog.setTitle("Log");
+		        	dlgDialog.setModal(false);
+		        	dlgDialog.setDefaultCloseOperation(
+	                        JDialog.DO_NOTHING_ON_CLOSE);
+		        	
+		        	dlgDialog.add(DialogPanel);
+		        	dlgDialog.pack();
+		        	dlgDialog.setLocationRelativeTo(null);
+		        	dlgDialog.setVisible(true);		        	
+		        }
+		    });
+		  t.start();
+	}
+	
 
 	public JPanel makeLodingDialog() {
-		JPanel DiaPanel = new JPanel(new BorderLayout(3,3));
+		//JPanel DiaPanel = new JPanel(new BorderLayout(3,3));
+		
+		JPanel DiaPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		DiaPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 0));
 		
 		dialogLogArea = new JTextArea(5,30); 
 		
 		dialogLogArea.setWrapStyleWord(true);
 		dialogLogArea.setLineWrap(true);
 		dialogLogArea.setEditable(false);
-		dialogLogArea.setFocusable(false);
 		
-		DiaPanel.add(new JScrollPane(dialogLogArea), BorderLayout.CENTER);
+		DiaPanel.add(new JScrollPane(dialogLogArea));
 
 		
 		return DiaPanel;

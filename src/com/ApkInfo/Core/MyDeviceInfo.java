@@ -8,6 +8,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
+import com.ApkInfo.UI.DeviceUIManager;
 import com.ApkInfo.UI.MainUI;
 import com.ApkInfo.UI.MyButtonPanel;
 import com.ApkInfo.UIUtil.StandardButton;
@@ -64,10 +65,11 @@ public class MyDeviceInfo
 
 		String[] cmd = {adbCmd, "devices"};
 		strDeviceList = MyConsolCmd.exc(cmd,true,null);
-
+		
 		for(int i=0; i<strDeviceList.length; i++) {
 			if(strDeviceList[i].matches("^.*\\s*device\\s*$")){
 				String name = strDeviceList[i].replaceAll("^\\s*([^\\s]*)\\s*device\\s*$", "$1");
+				addLogText(name);
 				Device dev = new Device(name);
 				dev.dump();
 				DeviceList.add(dev);
@@ -107,53 +109,8 @@ public class MyDeviceInfo
 		return true;
 	}
 	
-	public String[]	selectAbi(Device device)
-	{
-		String LibSourcePath = MainUI.GetMyApkInfo().strWorkAPKPath + File.separator + "lib" + File.separator;
-		String abi64 = null;
-		String abi32 = null;
-		for (String s : (new File(LibSourcePath)).list()) {
-			if(s.matches("arm64.*")) {
-				if(device.strAbilist64.matches(".*" + s + ",.*")) {
-					System.out.println("device support this abi : " + s);
-					if(abi64 == null) {
-						abi64 = s;
-					} else {
-						int old_ver = Integer.parseInt(abi64.replaceAll("arm64[^0-9]*([0-9]*).*", "0$1"));
-						int new_ver = Integer.parseInt(s.replaceAll("arm64[^0-9]*([0-9]*).*", "0$1"));
-						if(old_ver < new_ver) {
-							abi64 = s;
-						} else {
-							System.out.println("The version is lower than previous versions. : " + s + " < " + abi64);
-						}
-					}
-				} else {
-					System.out.println("device not support this abi : " + s);
-				}
-			} else if(s.matches("armeabi.*")) {
-				if(device.strAbilist32.matches(".*" + s + ",.*")) {
-					System.out.println("device support this abi : " + s);
-					if(abi32 == null) {
-						abi32 = s;
-					} else {
-						int old_ver = Integer.parseInt(abi32.replaceAll("armeabi[^0-9]*([0-9]*).*", "0$1"));
-						int new_ver = Integer.parseInt(s.replaceAll("armeabi[^0-9]*([0-9]*).*", "0$1"));
-						if(old_ver < new_ver) {
-							abi32 = s;
-						} else {
-							System.out.println("The version is lower than previous versions. : " + s + " < " + abi32);
-						}
-					}
-				} else {
-					System.out.println("device not support this abi : " + s);
-				}
-			} else {
-				System.out.println("Unknown abi type : " + s);
-			}
-			System.out.println("LibSourcePath list = " + s.replaceAll("([^-]*)", "$1"));
-		}
-		System.out.println("abi64 : " + abi64 + ", abi32 : " + abi32);
-		return new String[] { abi32, abi64 };
+	private void addLogText(String str) {
+		DeviceUIManager.dialogLogArea.append(str+"\n");
 	}
 	
 	class MyCoreThead extends Thread
@@ -185,7 +142,7 @@ public class MyDeviceInfo
 				result = MyConsolCmd.exc(cmd,true,new MyConsolCmd.OutputObserver() {
 					@Override
 					public boolean ConsolOutput(String output) {
-						LogTextArea.append(output.replaceAll("^.*adb(\\.exe)?", "adb") + "\n");
+						addLogText(output.replaceAll("^.*adb(\\.exe)?", "adb") + "\n");
 						return true;
 					}
 				});
@@ -202,11 +159,6 @@ public class MyDeviceInfo
 				System.out.println(this.sourcePath + " to " + device.strApkPath);
 
 				String LibSourcePath = MainUI.GetMyApkInfo().strWorkAPKPath + File.separator + "lib" + File.separator;
-
-				String[] selAbi = selectAbi(device);
-				String abi32 = selAbi[0];
-				String abi64 = selAbi[1];
-				
 				Iterator<String> libPaths = MainUI.GetMyApkInfo().LibPathList.iterator();
 				while(libPaths.hasNext()) {
 					String path = libPaths.next();
@@ -214,18 +166,23 @@ public class MyDeviceInfo
 						System.out.println("no such file : " + path);
 						continue;
 					}
-					String abi = path.replaceAll(LibSourcePath.replace("\\", "\\\\")+"([^\\\\/]*).*","$1");
-					System.out.println("abi = " + abi);
-					if(abi32 != null && abi == abi32) {
-						cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "push", path, "/system/lib/"});
-						System.out.println("push " + path + " " + "/system/lib/");
-					} else if (abi64 != null && abi == abi64) {
-						cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "push", path, "/system/lib64/"});
-						System.out.println("push " + path + " " + "/system/lib64/");						
+					if(path.matches(LibSourcePath.replace("\\", "\\\\")+"arm64.*")) {
+						if(device.isAbi64) {
+							cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "push", path, "/system/lib64/"});
+							System.out.println("push " + path + " " + "/system/lib64/");
+						} else {
+							System.out.println("ignored lib64 : " + path);
+						}
 					} else {
-						System.out.println("ignored path : " + path);
+						if(!device.isAbi64) {
+							cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "push", path, "/system/lib/"});
+							System.out.println("push " + path + " " + "/system/lib/");
+						} else {
+							System.out.println("ignored lib32 path : " + path);
+						}
 					}
 				}
+				//cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "reboot"});
 				cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "shell", "echo", "Compleated..."});
 				
 				result = MyConsolCmd.exc(cmd.toArray(new String[0][0]),true,new MyConsolCmd.OutputObserver() {
@@ -285,8 +242,6 @@ public class MyDeviceInfo
 		public String strkeys;
 		public String strBuildType;
 		public String strLabelText;
-		public String strAbilist32;
-		public String strAbilist64;
 		public boolean isAbi64;
 		public boolean hasRootPermission;
 
@@ -315,11 +270,6 @@ public class MyDeviceInfo
 			strSdkVersion = getSystemProp(deviceName, "ro.build.version.sdk");
 			strBuildType = getSystemProp(deviceName, "ro.build.type");
 			isAbi64 = !getSystemProp(deviceName, "ro.product.cpu.abilist64").isEmpty();
-
-			strAbilist32 = getSystemProp(deviceName, "ro.product.cpu.abilist32");
-			strAbilist64 = getSystemProp(deviceName, "ro.product.cpu.abilist64");
-			if(!strAbilist32.isEmpty()) strAbilist32 += ",";
-			if(!strAbilist64.isEmpty()) strAbilist64 += ",";
 			
 			hasRootPermission = true;
 			String[] cmd = {adbCmd,"-s",strADBDeviceNumber, "root"};
@@ -368,7 +318,7 @@ public class MyDeviceInfo
 						}
 					});
 				}
-				makeLabel();
+				
 				return true;
 			}
 			return false;
@@ -418,7 +368,14 @@ public class MyDeviceInfo
 			String[] cmd = {adbCmd, "-s", device, "shell", "getprop", tag};
 
 			TargetInfo = MyConsolCmd.exc(cmd,false,null);
+			
+			addLogText(TargetInfo[0]);
+			
 			return TargetInfo[0];
 		}
+		private void addLogText(String str) {
+			DeviceUIManager.dialogLogArea.append(str+"\n");
+		}
+		
 	}
 }
