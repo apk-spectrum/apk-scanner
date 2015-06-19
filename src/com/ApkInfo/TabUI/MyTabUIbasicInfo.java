@@ -43,16 +43,36 @@ public class MyTabUIbasicInfo extends JComponent{
         //for test//
         DecimalFormat df = new DecimalFormat("#,##0");
 
-        strTabInfo += "Label : " + ApkInfo.strLabelname +"\n";
-        strTabInfo += "Package : " + ApkInfo.strPackageName +"\n";
-        strTabInfo += "VersionName : " + ApkInfo.strVersionName +"\n";
-        strTabInfo += "VersionCode : " + ApkInfo.strVersionCode +"\n";
-        strTabInfo += "MinSdkVersion : " + ApkInfo.strMinSDKversion +"\n";
-        strTabInfo += "TargetSdkVersion : " + ApkInfo.strTargerSDKversion +"\n";
+        strTabInfo += "" + ApkInfo.strLabelname +" - ";
+        strTabInfo += "" + ApkInfo.strPackageName +"\n";
+        strTabInfo += "Ver. " + ApkInfo.strVersionName +" / ";
+        strTabInfo += "" + ApkInfo.strVersionCode + "    ";
+
+        strTabInfo += "@SDK Ver. ";
+        if(!ApkInfo.strMinSDKversion.equals("Unknown")) {
+        	strTabInfo += "" + ApkInfo.strMinSDKversion +" (Min)";
+        }
+        if(!ApkInfo.strTargerSDKversion.equals("Unknown")) {
+        	if(!ApkInfo.strMinSDKversion.equals("Unknown")) {
+        		strTabInfo += ", "; 
+        	}
+        	strTabInfo += "" + ApkInfo.strTargerSDKversion +" (Target)";
+        }
+        if(ApkInfo.strMinSDKversion.equals("Unknown") && ApkInfo.strTargerSDKversion.equals("Unknown")) {
+        	strTabInfo += "Unknown"; 
+        }
+        strTabInfo += "\n";
+
+        strTabInfo += "" + CoreApkTool.getFileLength(ApkInfo.lApkSize) + " (" + df.format(ApkInfo.lApkSize) +" Bytes)\n\n";
+
+        strTabInfo += "[Feature]\n";
         //strTabInfo += "Signing : " + ApkInfo.CertList.size() +"\n";
-        strTabInfo += "Type : " + ApkInfo.strHidden +"\n";
-        strTabInfo += "Startup : " + ApkInfo.strStartup + "\n";
-        strTabInfo += "Size : " + CoreApkTool.getFileLength(ApkInfo.lApkSize) + " (" + df.format(ApkInfo.lApkSize) +" Bytes)\n";
+        strTabInfo += "" + ApkInfo.strHidden +"";
+        if(!ApkInfo.strStartup.equals("")) {
+        	strTabInfo += ", " + ApkInfo.strStartup + "";
+        }
+        //strTabInfo += "\n\n";
+        
                 
         apkinform.setText(strTabInfo);
         

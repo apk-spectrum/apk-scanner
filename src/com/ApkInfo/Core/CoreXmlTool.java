@@ -50,9 +50,9 @@ public class CoreXmlTool {
         
         // startup
         if(xmlAndroidManifest.isNode("//uses-permission[@name='android.permission.RECEIVE_BOOT_COMPLETED']")) {
-        	apkInfo.strStartup = "O - RECEIVE_BOOT_COMPLETED";
+        	apkInfo.strStartup = "START_UP";
         } else {
-        	apkInfo.strStartup = "X";
+        	apkInfo.strStartup = "";
         }
 
         // permission
