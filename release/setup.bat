@@ -1,7 +1,7 @@
 @echo off
 cd
 set APP_PATH=C:\Program Files\APKInfo
-set APP_FILE=ApkInfo.exe
+set APP_FILE=ApkScanner.exe
 
 rem --- Java 버전확인 ---
 java -version > javaver.txt 2>&1
@@ -41,11 +41,12 @@ if not exist "%APP_PATH%" (
 )
 
 rem --- 파일 복사 ---
-copy /Y .\ApkInfo.exe "%APP_PATH%"
+copy /Y .\ApkScanner.exe "%APP_PATH%"
 copy /Y .\APKInfoDlg.jar "%APP_PATH%"
 copy /Y .\apktool.jar "%APP_PATH%"
 copy /Y .\AppIcon.png "%APP_PATH%"
 copy /Y .\loading.gif "%APP_PATH%"
+copy /Y .\adb.exe "%APP_PATH%"
 rem copy /Y .\tool\* "%APP_PATH%\tool\"
 
 

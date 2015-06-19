@@ -17,7 +17,7 @@ if [ "$java_ver" == "" ] || [ "$java_ver" != "$(echo $java_ver | awk '{ if($1 >=
     exit
 fi
 
-sudo chmod 755 APKInfoDlg.sh
+sudo chmod 755 APKScanner.sh
 
 sudo rm -rf $APP_PATH
 
@@ -65,7 +65,7 @@ cat ~/.local/share/applications/mimeapps_old.list \
 	| sed 's/^\s*\[.*\]\s*$/&\napplication\/vnd.android.package-archive=apkchecker.desktop;/' > ~/.local/share/applications/mimeapps.list
 
 if [ -e ~/.p4qt/ApplicationSettings.xml ]; then
-    cat ~/.p4qt/ApplicationSettings.xml | sed '/EditorMappings/,/StringList/{/<String>apk/d; s/.*<\/StringList>.*/  <String>apk\|default\|\/opt\/APKInfo\/APKInfoDlg\.sh<\/String>\n <\/StringList>/}' > .ApplicationSettings.xml
+    cat ~/.p4qt/ApplicationSettings.xml | sed '/EditorMappings/,/StringList/{/<String>apk/d; s/.*<\/StringList>.*/  <String>apk\|default\|\/opt\/APKInfo\/APKScanner\.sh<\/String>\n <\/StringList>/}' > .ApplicationSettings.xml
     mv .ApplicationSettings.xml ~/.p4qt/ApplicationSettings.xml
 fi
 
