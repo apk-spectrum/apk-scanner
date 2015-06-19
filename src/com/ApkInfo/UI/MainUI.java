@@ -145,7 +145,7 @@ public class MainUI extends JFrame implements WindowListener{
 	public MainUI() {
 		//initialize();
 		startCore = new MyCoreThead();
-		startCore.start();	
+		startCore.start();
 	}
 
 	/**

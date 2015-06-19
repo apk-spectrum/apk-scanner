@@ -44,7 +44,7 @@ public class DeviceUIManager {
 	public DeviceUIManager(String PackageName, String sourcePath) {
 		// TODO Auto-generated constructor stub
 
-		String ImgPath = CoreApkTool.GetUTF8Path();
+		final String ImgPath = CoreApkTool.GetUTF8Path();
 		final ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
         
 		
@@ -69,7 +69,8 @@ public class DeviceUIManager {
 		    		System.out.println("Device count : " + DeviceList.size());
 		    		if(DeviceList.size() ==0) {
 		    			MyButtonPanel.btnInstall.setEnabled(true);
-		    			JOptionPane.showMessageDialog(null,"Device not found!\nplease check Connected","Warning",JOptionPane.WARNING_MESSAGE, Appicon);			
+		    			final ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"warring.png");		    			
+		    			JOptionPane.showMessageDialog(null,"Device not found!\nplease check Connected","Warning",JOptionPane.WARNING_MESSAGE, Appicon);		    			
 		    		} else if(DeviceList.size() ==1) {
 		    			if(DeviceList.get(0).ckeckPackage(strPackageName)) {
 		    				if(DeviceList.get(0).isSystemApp == true && DeviceList.get(0).hasRootPermission == true){
