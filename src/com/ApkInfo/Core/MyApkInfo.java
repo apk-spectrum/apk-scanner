@@ -14,6 +14,7 @@ public class MyApkInfo {
 	public String strIconPath;
 	public String strPermissions;
 	public String strStartup;
+	public String strProtectionLevel;
 	public Long lApkSize;
 	
 	public ArrayList<Object[]> arrWidgets = new ArrayList<Object[]>();
@@ -39,6 +40,7 @@ public class MyApkInfo {
 		strIconPath="Unknown";
 		strPermissions="";
 		strStartup="Unknown";
+		strProtectionLevel = "Unknown";
 		lApkSize = (long) 0;
 	}
 	public MyApkInfo(String Path) {		
@@ -57,6 +59,7 @@ public class MyApkInfo {
 		strIconPath = strIconPath != null ? strIconPath : "Unknown";
 		strPermissions = strPermissions != null ? strPermissions : "";
 		strStartup = strStartup != null ? strStartup : "Unknown";
+		strProtectionLevel = strProtectionLevel != null ? strProtectionLevel : "Unknown";
 		
 		for(int i = 0; i < arrWidgets.size(); i++){
 			Object[] info = (Object[])arrWidgets.get(i);

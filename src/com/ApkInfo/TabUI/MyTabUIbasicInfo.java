@@ -70,6 +70,9 @@ public class MyTabUIbasicInfo extends JComponent{
         if(!ApkInfo.strStartup.equals("")) {
         	strTabInfo += ", " + ApkInfo.strStartup + "";
         }
+        if(!ApkInfo.strProtectionLevel.equals("")) {
+        	strTabInfo += ", " + ApkInfo.strProtectionLevel + "";
+        }
         //strTabInfo += "\n\n";
         
                 

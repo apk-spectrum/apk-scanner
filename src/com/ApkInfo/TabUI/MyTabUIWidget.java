@@ -64,7 +64,7 @@ public class MyTabUIWidget extends JPanel {
 	    	table.setRowHeight(i, 100);
 	    }
 	    
-	    setJTableColumnsWidth(table, 500, 20,15,7,60,10);	    
+	    setJTableColumnsWidth(table, 500, 20,15,17,60,10);	    
 	    
 	    //Create the scroll pane and add the table to it.
 	    

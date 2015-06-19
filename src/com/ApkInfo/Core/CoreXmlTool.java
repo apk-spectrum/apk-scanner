@@ -56,16 +56,27 @@ public class CoreXmlTool {
         }
 
         // permission
+        apkInfo.strProtectionLevel = "";
         MainUI.ProgressBarDlg.addProgress(5,"parsing permission...\n");
         xmlAndroidManifest.getNodeList("//uses-permission");
         for( int idx=0; idx < xmlAndroidManifest.getLength(); idx++ ){
         	if(idx==0) apkInfo.strPermissions = "<uses-permission> [" + xmlAndroidManifest.getLength() + "]";
         	apkInfo.strPermissions += "\n" + xmlAndroidManifest.getAttributes(idx, "android:name");
+        	String sig = xmlAndroidManifest.getAttributes(idx, "android:protectionLevel");
+        	if(sig != null && sig.equals("signature")) {
+        		apkInfo.strPermissions += " - <SIGNATURE>";
+        		apkInfo.strProtectionLevel = "SIGNATURE";
+        	}
         }
         xmlAndroidManifest.getNodeList("//permission");
         for( int idx=0; idx < xmlAndroidManifest.getLength(); idx++ ){
         	if(idx==0) apkInfo.strPermissions += "\n\n<permission> [" + xmlAndroidManifest.getLength() + "]";
         	apkInfo.strPermissions += "\n" + xmlAndroidManifest.getAttributes(idx, "android:name");
+        	String sig = xmlAndroidManifest.getAttributes(idx, "android:protectionLevel");
+        	if(sig != null && sig.equals("signature")) {
+        		apkInfo.strPermissions += " - <SIGNATURE>";
+        		apkInfo.strProtectionLevel = "SIGNATURE";
+        	}
         }
 
         // widget
@@ -201,6 +212,7 @@ public class CoreXmlTool {
 
 		String Size = "Unknown";
 		String IconPath = "Unknown";
+		String ReSizeMode = "";
 		
 		if(resource == null || !resource.matches("^@xml/.*")) {
 			return new Object[] { IconPath, Size };
@@ -232,12 +244,20 @@ public class CoreXmlTool {
 				Size += "\n(" + width + " X " + Height + ")";
 		    	System.out.println("Size " + Size + ", width " + width + ", height " + Height);
 			}
+			
+			if(ReSizeMode.isEmpty() && xpath.getAttributes("android:resizeMode") != null) {
+				ReSizeMode = xpath.getAttributes("android:resizeMode");
+			}
 
 			if(IconPath.equals("Unknown") && xpath.getAttributes("android:previewImage") != null) {
 				String icon = xpath.getAttributes("android:previewImage");
 				IconPath = getResourceInfo(icon);
 				System.out.println("icon " + IconPath);
 			}
+		}
+		
+		if(!ReSizeMode.isEmpty()) {
+			Size += "\n\n[ReSizeMode]\n" + ReSizeMode.replaceAll("\\|", "\n");
 		}
     	
 		return new Object[] { IconPath, Size };
