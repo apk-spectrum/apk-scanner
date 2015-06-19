@@ -38,7 +38,7 @@ public class DeviceUIManager {
 	static public JTextArea dialogLogArea;
 	String strSourcePath;
 	String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
-	public JDialog dlgDialog;
+	public static JDialog dlgDialog = null;
 	
 	
 	public DeviceUIManager(String PackageName, String sourcePath) {
@@ -131,7 +131,7 @@ public class DeviceUIManager {
 		String ImgPath = CoreApkTool.GetUTF8Path();
 		ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
 		
-		JPanel DialogPanel = makeLodingDialog();
+		//JPanel DialogPanel = makeLodingDialog();
 		if(isInstall) {
 			mMyDeviceInfo.InstallApk(DeviceList.get(selected), strSourcePath , dialogLogArea);
 		} else {
@@ -144,13 +144,11 @@ public class DeviceUIManager {
 	public void ShowSetupLogDialog() {
 		String ImgPath = CoreApkTool.GetUTF8Path();
 		final ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
-		
+		if(dlgDialog ==null) {
 		final JPanel DialogPanel = makeLodingDialog();
 		  Thread t = new Thread(new Runnable(){
 		        public void run(){
 		        	//JOptionPane.showMessageDialog(null, DialogPanel,"Log", JOptionPane.CANCEL_OPTION,Appicon);
-		        	
-		        	
 		        	dlgDialog = new JDialog();
 		        	
 		        	dlgDialog.setTitle("Log");
@@ -161,7 +159,7 @@ public class DeviceUIManager {
 		        	
 		        	JLabel GifLabel;
 		        	String ImgPath = CoreApkTool.GetUTF8Path();
-		        	ImageIcon icon = new ImageIcon(ImgPath+File.separator+"loading.gif");
+		        	ImageIcon icon = new ImageIcon(ImgPath+File.separator+"install_wait.gif");
 		            GifLabel = new JLabel(icon);
 		            
 		            DialogPanel.add(GifLabel);
@@ -169,10 +167,11 @@ public class DeviceUIManager {
 		        	dlgDialog.add(DialogPanel);
 		        	dlgDialog.pack();
 		        	dlgDialog.setLocationRelativeTo(null);
-		        	dlgDialog.setVisible(true);		        	
+		        	dlgDialog.setVisible(true);
 		        }
 		    });
 		  t.start();
+		}
 	}
 	
 

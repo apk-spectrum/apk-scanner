@@ -214,8 +214,6 @@ public class MainUI extends JFrame implements WindowListener{
 			e1.printStackTrace();
 		}
 		//if(FolderDefault.length()>0) CoreApkTool.deleteDirectory(new File(FolderDefault));
-		
-		
 	}
 
 	@Override
