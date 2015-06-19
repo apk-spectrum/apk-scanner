@@ -117,6 +117,23 @@ public class CoreApkTool {
 		
 	}
 	
+	public static String makeTempPath(String apkFilePath)
+	{
+		String tempPath;
+		String separator = File.separator + (File.separator.equals("\\") ? File.separator : "");
+		tempPath = System.getProperty("java.io.tmpdir");
+		if(!tempPath.matches(".*"+separator+"$")) tempPath += File.separator;
+		tempPath += "ApkInfo" + apkFilePath.substring(apkFilePath.indexOf(File.separator),apkFilePath.lastIndexOf("."));
+		
+		if((new File(tempPath)).exists()) {
+			int n;
+			for(n=1; (new File(tempPath+"_"+n)).exists(); n++) ;
+			tempPath += "_" + n;
+		}
+		
+		return tempPath;
+	}
+	
     public static boolean deleteDirectory(File path) {
     	if(!path.exists()) {
             return false;

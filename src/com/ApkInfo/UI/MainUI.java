@@ -68,10 +68,7 @@ public class MainUI extends JFrame implements WindowListener{
 				System.out.println("java.io.tmpdir : " + System.getProperty("java.io.tmpdir"));
 				System.out.println("user.dir : " + System.getProperty("user.dir"));
 
-				String separator = File.separator + (File.separator.equals("\\") ? File.separator : "");
-				FolderDefault = System.getProperty("java.io.tmpdir");
-				if(!FolderDefault.matches(".*"+separator+"$")) FolderDefault += File.separator;
-				FolderDefault += "ApkInfo" + apkFilePath.substring(apkFilePath.indexOf(File.separator),apkFilePath.lastIndexOf("."));
+				FolderDefault = CoreApkTool.makeTempPath(apkFilePath);
 				
 				System.out.println("DefaultFolderName : " +FolderDefault);
 				//APK 풀기 
