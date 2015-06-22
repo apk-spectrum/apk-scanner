@@ -2,6 +2,17 @@
 cd
 set APP_PATH=C:\Program Files\APKScanner
 set APP_FILE=ApkScanner.exe
+set SRC_PATH=.
+
+if not exist "%SRC_PATH%\%APP_FILE%" (
+    set SRC_PATH=C:
+    if not exist "%SRC_PATH%\%APP_FILE%" (
+        echo Fail : No such %APP_FILE% file
+        echo Info : Please copy the APKScanner folder to the C:\ path.
+        echo Info : And run setup.bat as administrator.
+        goto exit
+    )
+)
 
 rem --- Java 버전확인 ---
 java -version > javaver.txt 2>&1
@@ -22,7 +33,6 @@ if not "%java_ver%" GEQ "1.7" (
     goto nosuch_java
 )
 
-
 del /q "%APP_PATH%"
 
 rem --- 폴더 생성 ---
@@ -41,19 +51,21 @@ if not exist "%APP_PATH%" (
 )
 
 rem --- 파일 복사 ---
-copy /Y .\ApkScanner.exe "%APP_PATH%"
-copy /Y .\APKInfoDlg.jar "%APP_PATH%"
-copy /Y .\apktool.jar "%APP_PATH%"
-copy /Y .\AppIcon.png "%APP_PATH%"
-copy /Y .\loading.gif "%APP_PATH%"
-copy /Y .\adb.exe "%APP_PATH%"
+copy /Y %SRC_PATH%\ApkScanner.exe "%APP_PATH%"
+copy /Y %SRC_PATH%\APKInfoDlg.jar "%APP_PATH%"
+copy /Y %SRC_PATH%\apktool.jar "%APP_PATH%"
+copy /Y %SRC_PATH%\AppIcon.png "%APP_PATH%"
+copy /Y %SRC_PATH%\warring.png "%APP_PATH%"
+copy /Y %SRC_PATH%\loading.gif "%APP_PATH%"
+copy /Y %SRC_PATH%\install_wait.gif "%APP_PATH%"
+copy /Y %SRC_PATH%\adb.exe "%APP_PATH%"
 rem copy /Y .\tool\* "%APP_PATH%\tool\"
 
 
 rem --- 연결프로그램 지정 ---
 assoc .apk=vnd.android.package-archive
 rem ftype vnd.android.package-archive=javaw -jar "-Dfile.encoding=utf-8" "%APP_PATH%\%APP_FILE%" %%1 %%*
-reg add "HKCR\vnd.android.package-archive\DefaultIcon" /t REG_SZ /d "%APP_PATH%\%APP_FILE%,0"
+reg add "HKCR\vnd.android.package-archive\DefaultIcon" /t REG_SZ /d "%APP_PATH%\%APP_FILE%,0" /f
 ftype vnd.android.package-archive="%APP_PATH%\%APP_FILE%" "%%1"
 
 rem attrib -h %USERPROFILE%\AppData\Local\IconCache.db
