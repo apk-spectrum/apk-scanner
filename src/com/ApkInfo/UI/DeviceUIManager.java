@@ -165,8 +165,9 @@ public class DeviceUIManager {
 		            
 		            DialogPanel.add(GifLabel);
 		            
+		            dlgDialog.setSize(new Dimension(450,200));
+		            dlgDialog.setResizable( false );
 		        	dlgDialog.add(DialogPanel);
-		        	dlgDialog.pack();
 		        	dlgDialog.setLocationRelativeTo(null);
 		        	dlgDialog.setVisible(true);
 		        }
