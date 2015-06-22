@@ -49,7 +49,7 @@ public class DeviceUIManager {
 		// TODO Auto-generated constructor stub
 
 		final String ImgPath = CoreApkTool.GetUTF8Path();
-		final ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
+		final ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"question.png");
         
 		
 		final Object[] options = {"Push", "Install"};
@@ -73,7 +73,7 @@ public class DeviceUIManager {
 		    		System.out.println("Device count : " + DeviceList.size());
 		    		if(DeviceList.size() ==0) {
 		    			MyButtonPanel.btnInstall.setEnabled(true);
-		    			final ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"warring.png");		    			
+		    			final ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"waring.png");		    			
 		    			JOptionPane.showMessageDialog(null,"Device not found!\nplease check Connected","Warning",JOptionPane.WARNING_MESSAGE, Appicon);		    			
 		    		} else if(DeviceList.size() ==1) {
 		    			if(DeviceList.get(0).ckeckPackage(strPackageName)) {
@@ -182,7 +182,7 @@ public class DeviceUIManager {
 			            
 			            DialogPanel.add(btnOK);
 			            
-			            dlgDialog.setSize(new Dimension(470,250));
+			            dlgDialog.setSize(new Dimension(480,250));
 			            dlgDialog.setResizable( false );
 			        	dlgDialog.add(DialogPanel);
 			        	dlgDialog.setLocationRelativeTo(null);
