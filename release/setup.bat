@@ -55,6 +55,10 @@ assoc .apk=vnd.android.package-archive
 rem ftype vnd.android.package-archive=javaw -jar "-Dfile.encoding=utf-8" "%APP_PATH%\%APP_FILE%" %%1 %%*
 ftype vnd.android.package-archive="%APP_PATH%\%APP_FILE%" "%%1"
 
+reg add "HKCR\vnd.android.package-archive\DefaultIcon" /t REG_SZ /d "C:\Program Files\APKScanner\ApkScanner.exe,0"
+attrib -h %USERPROFILE%\AppData\Local\IconCache.db
+del %USERPROFILE%\AppData\Local\IconCache.db
+
 echo Complete
 
 goto exit
