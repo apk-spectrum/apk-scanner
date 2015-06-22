@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Panel;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -29,6 +30,9 @@ import com.ApkInfo.Core.CoreApkTool;
 import com.ApkInfo.Core.MyConsolCmd;
 import com.ApkInfo.Core.MyDeviceInfo;
 import com.ApkInfo.Core.MyDeviceInfo.Device;
+import com.ApkInfo.UIUtil.ButtonType;
+import com.ApkInfo.UIUtil.StandardButton;
+import com.ApkInfo.UIUtil.Theme;
 
 public class DeviceUIManager {
 	
@@ -146,34 +150,55 @@ public class DeviceUIManager {
 		String ImgPath = CoreApkTool.GetUTF8Path();
 		final ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
 		if(dlgDialog ==null) {
-		final JPanel DialogPanel = makeLodingDialog();
-		  Thread t = new Thread(new Runnable(){
-		        public void run(){
-		        	//JOptionPane.showMessageDialog(null, DialogPanel,"Log", JOptionPane.CANCEL_OPTION,Appicon);
-		        	dlgDialog = new JDialog();
-		        	
-		        	dlgDialog.setTitle("Log");
-		        	dlgDialog.setModal(false);
-		        	dlgDialog.setDefaultCloseOperation(
-	                        JDialog.DISPOSE_ON_CLOSE);
-		        	//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		        	
-		        	JLabel GifLabel;
-		        	String ImgPath = CoreApkTool.GetUTF8Path();
-		        	ImageIcon icon = new ImageIcon(ImgPath+File.separator+"install_wait.gif");
-		            GifLabel = new JLabel(icon);
-		            
-		            DialogPanel.add(GifLabel);
-		            
-		            dlgDialog.setSize(new Dimension(450,200));
-		            dlgDialog.setResizable( false );
-		        	dlgDialog.add(DialogPanel);
-		        	dlgDialog.setLocationRelativeTo(null);
-		        	dlgDialog.setVisible(true);
-		        }
-		    });
-		  t.start();
-		}
+			final JPanel DialogPanel = makeLodingDialog();
+			  Thread t = new Thread(new Runnable(){
+			        public void run(){
+			        	//JOptionPane.showMessageDialog(null, DialogPanel,"Log", JOptionPane.CANCEL_OPTION,Appicon);
+			        	dlgDialog = new JDialog();
+			        	
+			        	dlgDialog.setTitle("Log");
+			        	dlgDialog.setModal(false);
+			        	
+			        	dlgDialog.setDefaultCloseOperation(
+		                        JDialog.DISPOSE_ON_CLOSE);
+			        	//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			        	
+			        	JLabel GifLabel;
+			        	String ImgPath = CoreApkTool.GetUTF8Path();
+			        	ImageIcon icon = new ImageIcon(ImgPath+File.separator+"install_wait.gif");
+			            GifLabel = new JLabel(icon);
+			            
+			            DialogPanel.add(GifLabel);
+			            
+			            
+			            StandardButton btnOK;
+			            btnOK = new StandardButton("닫기",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
+			            btnOK.addActionListener(new ActionListener() {
+			                public void actionPerformed(ActionEvent e) {		                    		                    		                    
+			                    dlgDialog.setVisible(false);		                    
+			                }
+			            });
+			            
+			            
+			            DialogPanel.add(btnOK);
+			            
+			            dlgDialog.setSize(new Dimension(450,230));
+			            dlgDialog.setResizable( false );
+			        	dlgDialog.add(DialogPanel);
+			        	dlgDialog.setLocationRelativeTo(null);
+			        	dlgDialog.setVisible(true);
+			        	
+			        	if(MainUI.window != null) {
+			        		Rectangle temp  = MainUI.window.getBounds();
+			        		
+			        		dlgDialog.setLocation(MainUI.nPositionX +600, MainUI.nPositionY);
+			        		
+			        	}
+			        	
+			        }
+			    });
+			  t.start();
+			}
 		else if(dlgDialog.isVisible() == false) {
 			dlgDialog.setVisible(true);
 		}
