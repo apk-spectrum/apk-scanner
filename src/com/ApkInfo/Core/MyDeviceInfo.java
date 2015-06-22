@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
@@ -19,6 +20,9 @@ public class MyDeviceInfo
 	public String strDeviceinfo;
 	public JTextArea LogTextArea;
 	String adbCmd;
+	final ImageIcon QuestionAppicon;
+	final ImageIcon WaringAppicon;
+	final ImageIcon SucAppicon;
 	
 	enum INSTALL_TYPE {
 		INSTALL,
@@ -29,6 +33,11 @@ public class MyDeviceInfo
 	
 	public MyDeviceInfo()
 	{
+		final String ImgPath = CoreApkTool.GetUTF8Path();
+		QuestionAppicon = new ImageIcon(ImgPath+File.separator+"question.png");
+		WaringAppicon = new ImageIcon(ImgPath+File.separator+"waring.png");
+		SucAppicon = new ImageIcon(ImgPath+File.separator+"Succes.png");
+		
 		adbCmd = CoreApkTool.GetUTF8Path() + File.separator + "adb";
 
 		if(adbCmd.matches("^C:.*")) {
@@ -147,7 +156,7 @@ public class MyDeviceInfo
 				});
 				if(MyButtonPanel.btnInstall != null) {
 				MyButtonPanel.btnInstall.setEnabled(true);
-				JOptionPane.showMessageDialog(null, result[2]);
+				JOptionPane.showMessageDialog(null, result[2], "Success", JOptionPane.INFORMATION_MESSAGE, SucAppicon);
 				}
 			} else {
 				String[][] result;
@@ -207,7 +216,8 @@ public class MyDeviceInfo
 				System.out.println("cmd.size() " + cmd.size() + ", result.length " + result.length);
 				if(cmd.size() == result.length) {
 					LogTextArea.append("Success...\n");
-					int reboot = JOptionPane.showConfirmDialog(null, "Success download..\nRestart device now?", "APK Push", JOptionPane.YES_NO_OPTION);
+					int reboot = JOptionPane.showConfirmDialog(null, "Success download..\nRestart device now?", "APK Push", JOptionPane.YES_NO_OPTION, 
+							JOptionPane.QUESTION_MESSAGE, QuestionAppicon);
 					if(reboot == 0){
 						LogTextArea.append("Wait for reboot...\n");
 						MyConsolCmd.exc(new String[] {adbCmd, "-s", this.DeviceADBNumber, "reboot"});
@@ -215,7 +225,7 @@ public class MyDeviceInfo
 					}
 				} else {
 					LogTextArea.append("Failure...\n");
-					JOptionPane.showMessageDialog(null, "Failure...");
+					JOptionPane.showMessageDialog(null, "Failure...", "Waring",JOptionPane.QUESTION_MESSAGE, WaringAppicon);
 				}
 			}
 		}

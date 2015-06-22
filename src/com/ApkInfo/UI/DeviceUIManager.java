@@ -79,7 +79,7 @@ public class DeviceUIManager {
 		    			if(DeviceList.get(0).ckeckPackage(strPackageName)) {
 		    				if(DeviceList.get(0).isSystemApp == true && DeviceList.get(0).hasRootPermission == true){
 		    					int n = JOptionPane.showOptionDialog(null, "동일 package가 설치되어있습니다.\n"  +  strLine+ DeviceList.get(0).strLabelText +strLine+"Push or Install?",
-		    						    "warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, options, options[1]);
+		    						    "Warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, options, options[1]);
 		    							System.out.println("Seltected index : " + n);				
 		    		    				if(n==0) {
 		    		    					ShowSetupDialog(0, false);
@@ -108,7 +108,7 @@ public class DeviceUIManager {
 		    			if(DeviceList.get(selectedValue).ckeckPackage(strPackageName)) {
 		    				if(DeviceList.get(selectedValue).isSystemApp == true && DeviceList.get(selectedValue).hasRootPermission == true){
 		    					int n = JOptionPane.showOptionDialog(null, "동일 package가 설치되어있습니다.\n"  +  strLine+ DeviceList.get(selectedValue).strLabelText +strLine+"Push or Install?",
-		    						    "warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, options, options[1]);
+		    						    "Warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, options, options[1]);
 		    							System.out.println("Seltected index : " + n);				
 		    		    				if(n==0) {
 		    		    					ShowSetupDialog(selectedValue, false);
@@ -147,8 +147,8 @@ public class DeviceUIManager {
 	}
 	
 	public void ShowSetupLogDialog() {
-		String ImgPath = CoreApkTool.GetUTF8Path();
-		final ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
+		System.out.println("aaaaaaaaaaaaa" + MainUI.nPositionX +600 + "      " + MainUI.nPositionY);
+		
 		if(dlgDialog ==null) {
 			final JPanel DialogPanel = makeLodingDialog();
 			  Thread t = new Thread(new Runnable(){
@@ -185,12 +185,10 @@ public class DeviceUIManager {
 			            dlgDialog.setSize(new Dimension(480,250));
 			            dlgDialog.setResizable( false );
 			        	dlgDialog.add(DialogPanel);
-			        	dlgDialog.setLocationRelativeTo(null);
+			        	//dlgDialog.setLocationRelativeTo(null);
 			        	dlgDialog.setVisible(true);
 			        	
 			        	if(MainUI.window != null) {
-			        		Rectangle temp  = MainUI.window.getBounds();
-			        		
 			        		dlgDialog.setLocation(MainUI.nPositionX +600, MainUI.nPositionY);
 			        		
 			        	}
