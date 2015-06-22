@@ -182,7 +182,7 @@ public class DeviceUIManager {
 			            
 			            DialogPanel.add(btnOK);
 			            
-			            dlgDialog.setSize(new Dimension(450,230));
+			            dlgDialog.setSize(new Dimension(460,240));
 			            dlgDialog.setResizable( false );
 			        	dlgDialog.add(DialogPanel);
 			        	dlgDialog.setLocationRelativeTo(null);
