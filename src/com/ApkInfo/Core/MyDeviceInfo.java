@@ -327,7 +327,7 @@ public class MyDeviceInfo
 						}
 					});
 				}
-				
+				makeLabel();
 				return true;
 			}
 			return false;
