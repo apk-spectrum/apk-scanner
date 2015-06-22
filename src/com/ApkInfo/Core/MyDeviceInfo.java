@@ -35,7 +35,7 @@ public class MyDeviceInfo
 	{
 		final String ImgPath = CoreApkTool.GetUTF8Path();
 		QuestionAppicon = new ImageIcon(ImgPath+File.separator+"question.png");
-		WaringAppicon = new ImageIcon(ImgPath+File.separator+"waring.png");
+		WaringAppicon = new ImageIcon(ImgPath+File.separator+"warning.png");
 		SucAppicon = new ImageIcon(ImgPath+File.separator+"Succes.png");
 		
 		adbCmd = CoreApkTool.GetUTF8Path() + File.separator + "adb";
