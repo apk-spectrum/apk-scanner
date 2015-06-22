@@ -110,12 +110,6 @@ public class MainUI extends JFrame implements WindowListener{
 	class CloseThead extends Thread {
 		public void run() {
 			System.out.println("delete Folder : "  + FolderDefault);
-			try {
-				sleep(3000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			if(FolderDefault.length()>0) CoreApkTool.deleteDirectory(new File(FolderDefault));
 		}
 	}
@@ -205,6 +199,9 @@ public class MainUI extends JFrame implements WindowListener{
 	public void windowClosing(WindowEvent e) {
 		// TODO Auto-generated method stub		
 		frame.setVisible(false);
+		if(DeviceUIManager.dlgDialog != null && DeviceUIManager.dlgDialog.isVisible()) {
+			DeviceUIManager.dlgDialog.setVisible(false);
+		}
 		CloseThead temp = new CloseThead();
 		temp.start();		
 		try {
