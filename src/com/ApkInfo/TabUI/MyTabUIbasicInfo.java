@@ -67,11 +67,15 @@ public class MyTabUIbasicInfo extends JComponent{
         strTabInfo += "[Feature]\n";
         //strTabInfo += "Signing : " + ApkInfo.CertList.size() +"\n";
         strTabInfo += "" + ApkInfo.strHidden +"";
-        if(!ApkInfo.strStartup.equals("")) {
+        if(!ApkInfo.strStartup.isEmpty()) {
         	strTabInfo += ", " + ApkInfo.strStartup + "";
         }
-        if(!ApkInfo.strProtectionLevel.equals("")) {
+        if(!ApkInfo.strProtectionLevel.isEmpty()) {
         	strTabInfo += ", " + ApkInfo.strProtectionLevel + "";
+        }
+        
+        if(!ApkInfo.strSharedUserId.isEmpty()) {
+        	strTabInfo += ", SHARED_USER_ID";
         }
         //strTabInfo += "\n\n";
         

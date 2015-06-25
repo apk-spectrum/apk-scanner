@@ -20,7 +20,9 @@ import java.util.ArrayList;
 import com.ApkInfo.Core.*;
 
 
-public class MainUI extends JFrame implements WindowListener{
+public class MainUI extends JFrame implements WindowListener
+{
+	static public String VERSION = "Ver. 1.01";
 
 	private JFrame frame;
 	static MyApkInfo mApkInfo;
@@ -94,12 +96,14 @@ public class MainUI extends JFrame implements WindowListener{
 				mApkInfo.CertList = CoreCertTool.solveCert(FolderDefault + File.separator + "original" + File.separator + "META-INF" + File.separator);
 				
 				
-				
-				mApkInfo.strPermissions =  "■■■■■■■■■■■■■■■■■  Cert  ■■■■■■■■■■■■■■■■■■■■\n" + CoreCertTool.getCertSummary() +
-						
-														"\n■■■■■■■■■■■■■■■■ Permissions ■■■■■■■■■■■■■■■■■■"+
-														"\n" + mApkInfo.strPermissions;
-				
+				mApkInfo.strPermissions = "■■■■■■■■■■■■■■■■■  Cert  ■■■■■■■■■■■■■■■■■■■■\n" + CoreCertTool.getCertSummary() +
+										"\n■■■■■■■■■■■■■■■■ Permissions ■■■■■■■■■■■■■■■■■■"+
+										"\n" + mApkInfo.strPermissions;
+
+				if(!mApkInfo.strSharedUserId.isEmpty()) {
+					mApkInfo.strPermissions = "SharedUserId : " + mApkInfo.strSharedUserId + "\n\n" + mApkInfo.strPermissions;
+				}
+
 				initialize();				
 			} catch (Exception e) {
 				e.printStackTrace();

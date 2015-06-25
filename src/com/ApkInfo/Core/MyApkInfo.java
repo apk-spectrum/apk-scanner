@@ -15,6 +15,7 @@ public class MyApkInfo {
 	public String strPermissions;
 	public String strStartup;
 	public String strProtectionLevel;
+	public String strSharedUserId;
 	public Long lApkSize;
 	
 	public ArrayList<Object[]> arrWidgets = new ArrayList<Object[]>();
@@ -41,6 +42,7 @@ public class MyApkInfo {
 		strPermissions="";
 		strStartup="Unknown";
 		strProtectionLevel = "Unknown";
+		strSharedUserId = "Unknown";
 		lApkSize = (long) 0;
 	}
 	public MyApkInfo(String Path) {		
@@ -60,6 +62,7 @@ public class MyApkInfo {
 		strPermissions = strPermissions != null ? strPermissions : "";
 		strStartup = strStartup != null ? strStartup : "Unknown";
 		strProtectionLevel = strProtectionLevel != null ? strProtectionLevel : "Unknown";
+		strSharedUserId = strSharedUserId != null ? strSharedUserId : "";
 		
 		for(int i = 0; i < arrWidgets.size(); i++){
 			Object[] info = (Object[])arrWidgets.get(i);

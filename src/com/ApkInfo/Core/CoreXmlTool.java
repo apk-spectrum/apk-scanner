@@ -26,6 +26,7 @@ public class CoreXmlTool {
 		// package
 		xmlAndroidManifest.getNode("/manifest");
 		apkInfo.strPackageName = xmlAndroidManifest.getAttributes("package");
+		apkInfo.strSharedUserId = xmlAndroidManifest.getAttributes("android:sharedUserId");
 		
 		if(apkInfo.strVersionCode == "Unknown") {
 			apkInfo.strVersionCode = xmlAndroidManifest.getAttributes("android:versionCode");
