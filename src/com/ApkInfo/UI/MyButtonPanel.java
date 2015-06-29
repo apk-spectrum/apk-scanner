@@ -43,7 +43,7 @@ public class MyButtonPanel extends JPanel{
 				//Desktop.getDesktop().open(new File(CoreApkTool.DefaultPath+File.separator+"AndroidManifest.xml"));
 			  if(System.getProperty("os.name").indexOf("Window") >-1) {
 				  try {
-					new ProcessBuilder("notepad", CoreApkTool.DefaultPath + File.separator + "AndroidManifest.xml").start();
+					new ProcessBuilder("notepad", MainUI.FolderDefault + File.separator + "AndroidManifest.xml").start();
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -51,7 +51,7 @@ public class MyButtonPanel extends JPanel{
 
 			  } else {  //for linux
 				  try {
-					  new ProcessBuilder("gedit", CoreApkTool.DefaultPath+ File.separator + "AndroidManifest.xml").start();
+					  new ProcessBuilder("gedit", MainUI.FolderDefault + File.separator + "AndroidManifest.xml").start();
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -66,7 +66,7 @@ public class MyButtonPanel extends JPanel{
 				  
 				  if(System.getProperty("os.name").indexOf("Window") >-1) {
 					  try {
-						Process oProcess = new ProcessBuilder("explorer", CoreApkTool.DefaultPath).start();
+						Process oProcess = new ProcessBuilder("explorer", MainUI.FolderDefault).start();
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -74,7 +74,7 @@ public class MyButtonPanel extends JPanel{
 
 				  } else {  //for linux
 					  try {
-						  Process oProcess = new ProcessBuilder("nautilus", CoreApkTool.DefaultPath).start();
+						  Process oProcess = new ProcessBuilder("nautilus", MainUI.FolderDefault).start();
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();

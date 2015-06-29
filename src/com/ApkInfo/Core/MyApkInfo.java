@@ -16,7 +16,7 @@ public class MyApkInfo {
 	public String strStartup;
 	public String strProtectionLevel;
 	public String strSharedUserId;
-	public Long lApkSize;
+	public String strApkSize;
 	
 	public ArrayList<Object[]> arrWidgets = new ArrayList<Object[]>();
 	public ArrayList<String> ImagePathList = new ArrayList<String>();
@@ -43,7 +43,7 @@ public class MyApkInfo {
 		strStartup="Unknown";
 		strProtectionLevel = "Unknown";
 		strSharedUserId = "Unknown";
-		lApkSize = (long) 0;
+		strApkSize = "0";
 	}
 	public MyApkInfo(String Path) {		
 		strWorkAPKPath  = Path;

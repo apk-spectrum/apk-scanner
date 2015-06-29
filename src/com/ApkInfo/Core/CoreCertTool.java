@@ -10,9 +10,11 @@ public class CoreCertTool {
 	
 	public static ArrayList<Object[]> solveCert(String CertPath) {
 		Double javaVersion = Double.parseDouble(System.getProperty("java.specification.version"));
-		String keytoolPackage = "sun.security.tools.KeyTool";
+		String keytoolPackage;
 		if(javaVersion >= 1.8) {
 			keytoolPackage = "sun.security.tools.keytool.Main";
+		} else {
+			keytoolPackage = "sun.security.tools.KeyTool";
 		}
 
 		if(!(new File(CertPath)).exists()) {

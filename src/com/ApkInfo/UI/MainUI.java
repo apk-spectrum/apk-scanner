@@ -18,6 +18,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 
 import com.ApkInfo.Core.*;
+import com.ApkInfo.Core.CoreApkTool.FSStyle;
 
 
 public class MainUI extends JFrame implements WindowListener
@@ -29,7 +30,7 @@ public class MainUI extends JFrame implements WindowListener
 	private static String Title = "";
 		
 	static String Osname ="";
-	static String FolderDefault = "";
+	static public String FolderDefault = "";
 	static String apkFilePath ="";
 	
 	static MyCoreThead startCore;
@@ -55,55 +56,32 @@ public class MainUI extends JFrame implements WindowListener
 				//OS 분기
 				Osname = System.getProperty("os.name");
 				System.out.println("OS : " + Osname);
+
 				File apkFile = new File(apkFilePath);
-				System.out.println("target file :" + apkFile.getAbsolutePath());
+
 				if(!apkFile.exists()) {
-					System.out.println("파일이 존재 하지 않습니다 :");
+					System.out.println("No Such APK file");
 				} else {
 					apkFilePath = apkFile.getAbsolutePath();
+					System.out.println("target file :" + apkFilePath);
 				}
-				
-				//if(Osname.indexOf("Windows") ==-1) { //for linux
-					//FolderDefault = "/tmp/ApkInfo" + apkFilePath.substring(0,apkFilePath.lastIndexOf("."));
-				//} else { //for windows
-				System.out.println("File.separator : " + File.separator);
-				System.out.println("java.io.tmpdir : " + System.getProperty("java.io.tmpdir"));
-				System.out.println("user.dir : " + System.getProperty("user.dir"));
+
+				Title = "APK Scanner - " + apkFilePath.substring(apkFilePath.lastIndexOf(File.separator)+1);
 
 				FolderDefault = CoreApkTool.makeTempPath(apkFilePath);
-				
-				System.out.println("DefaultFolderName : " +FolderDefault);
+				System.out.println("Temp path : " + FolderDefault);
+
 				//APK 풀기 
-				CoreApkTool.solveAPK(apkFilePath,FolderDefault);
+				CoreApkTool.solveAPK(apkFilePath, FolderDefault);
 				
-				int index = apkFilePath.lastIndexOf(File.separator);					
-				Title = "APK Scanner - "+ apkFilePath.substring(index+1);
-				
-				System.out.println(FolderDefault);
 				mApkInfo = CoreXmlTool.XmlToMyApkinfo(FolderDefault);
-				mApkInfo.lApkSize = apkFile.length();
-				System.out.println("APK size : " + mApkInfo.lApkSize + " byte");
+				mApkInfo.strApkSize = CoreApkTool.getFileSize(apkFile, FSStyle.FULL);
 				
-				//iamge 찾기
-				mApkInfo.ImagePathList = CoreApkTool.findfileforResource(new File(CoreApkTool.DefaultPath + File.separator + "res"));
-				System.out.println("Resource(*.png) Count :  : " + mApkInfo.ImagePathList.size());
-				
-				//lib 찾기
-				mApkInfo.LibPathList = CoreApkTool.findfileforLib(new File(CoreApkTool.DefaultPath+File.separator+"lib"));
-				System.out.println("Lib Count : " + mApkInfo.LibPathList.size());
-				
-				
+				mApkInfo.ImagePathList = CoreApkTool.findFiles(new File(FolderDefault + File.separator + "res"), ".png", ".*drawable.*");
+				mApkInfo.LibPathList = CoreApkTool.findFiles(new File(FolderDefault + File.separator + "lib"), ".so", null);
+
 				mApkInfo.CertList = CoreCertTool.solveCert(FolderDefault + File.separator + "original" + File.separator + "META-INF" + File.separator);
 				
-				
-				mApkInfo.strPermissions = "■■■■■■■■■■■■■■■■■  Cert  ■■■■■■■■■■■■■■■■■■■■\n" + CoreCertTool.getCertSummary() +
-										"\n■■■■■■■■■■■■■■■■ Permissions ■■■■■■■■■■■■■■■■■■"+
-										"\n" + mApkInfo.strPermissions;
-
-				if(!mApkInfo.strSharedUserId.isEmpty()) {
-					mApkInfo.strPermissions = "SharedUserId : " + mApkInfo.strSharedUserId + "\n\n" + mApkInfo.strPermissions;
-				}
-
 				initialize();				
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -111,6 +89,7 @@ public class MainUI extends JFrame implements WindowListener
 			
 		}
 	}
+
 	class CloseThead extends Thread {
 		public void run() {
 			System.out.println("delete Folder : "  + FolderDefault);

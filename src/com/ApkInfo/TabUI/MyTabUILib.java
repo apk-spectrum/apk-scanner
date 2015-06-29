@@ -19,6 +19,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import com.ApkInfo.Core.CoreApkTool;
+import com.ApkInfo.Core.CoreApkTool.FSStyle;
 import com.ApkInfo.UI.MainUI;
 
 /**
@@ -72,14 +73,12 @@ public class MyTabUILib extends JPanel {
 		data = new ArrayList<Object[]>();
 		if(LibList == null) return;
 		
-		DecimalFormat df = new DecimalFormat("#,##0");
 		String separator = File.separator + (File.separator.equals("\\") ? File.separator : "");
 		for(int i=0; i< LibList.size(); i++) {
-			long size = (new File(LibList.get(i))).length();
 			Object[] temp = { 
 				i+1,
 				LibList.get(i).replaceAll("^.*"+separator+"lib"+separator,"lib"+separator), 
-				CoreApkTool.getFileLength(size) + " ("+ df.format(size) + " Byte)"
+				CoreApkTool.getFileSize((new File(LibList.get(i))), FSStyle.FULL)
 			};
 			data.add(temp);
 		}

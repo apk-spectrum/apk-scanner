@@ -16,7 +16,9 @@ import javax.swing.JTextArea;
 
 import com.ApkInfo.UI.MyImagePanel;
 import com.ApkInfo.Core.CoreApkTool;
+import com.ApkInfo.Core.CoreCertTool;
 import com.ApkInfo.Core.MyApkInfo;
+import com.ApkInfo.Core.CoreApkTool.FSStyle;
 
 public class MyTabUIbasicInfo extends JComponent{
 	public MyTabUIbasicInfo(MyApkInfo ApkInfo) {
@@ -40,15 +42,12 @@ public class MyTabUIbasicInfo extends JComponent{
         Font font = new Font("helvitica", Font.BOLD, 15);
         apkinform.setFont(font);
         
-        //for test//
-        DecimalFormat df = new DecimalFormat("#,##0");
-
         strTabInfo += "" + ApkInfo.strLabelname +" - ";
         strTabInfo += "" + ApkInfo.strPackageName +"\n";
         strTabInfo += "Ver. " + ApkInfo.strVersionName +" / ";
         strTabInfo += "" + ApkInfo.strVersionCode + "\n";
 
-        strTabInfo += "\n" + CoreApkTool.getFileLength(ApkInfo.lApkSize) + " (" + df.format(ApkInfo.lApkSize) +" Bytes)\n";
+        strTabInfo += "\n" + ApkInfo.strApkSize + "\n";
         strTabInfo += "@SDK Ver. ";
         if(!ApkInfo.strMinSDKversion.equals("Unknown")) {
         	strTabInfo += "" + ApkInfo.strMinSDKversion +" (Min)";
@@ -84,9 +83,16 @@ public class MyTabUIbasicInfo extends JComponent{
         
         apkinform.setBackground(panel.getBackground());
         
-        //for test//
-        apkpermission.setText(ApkInfo.strPermissions);
-        //
+
+        String etcInfo = "■■■■■■■■■■■■■■■■■  Cert  ■■■■■■■■■■■■■■■■■■■■\n"
+        				+ CoreCertTool.getCertSummary()
+        				+ "\n■■■■■■■■■■■■■■■■ Permissions ■■■■■■■■■■■■■■■■■■"
+        				+ "\n" + ApkInfo.strPermissions;
+		if(!ApkInfo.strSharedUserId.isEmpty()) {
+			etcInfo = "SharedUserId : " + ApkInfo.strSharedUserId + "\n\n" + etcInfo;
+		}
+        apkpermission.setText(etcInfo);
+
           
         apkpermission.setEditable(false);
         
