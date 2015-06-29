@@ -12,7 +12,6 @@ import javax.swing.JTextArea;
 import com.ApkInfo.UI.DeviceUIManager;
 import com.ApkInfo.UI.MainUI;
 import com.ApkInfo.UI.MyButtonPanel;
-import com.ApkInfo.UIUtil.StandardButton;
 
 public class MyDeviceInfo
 {
@@ -40,7 +39,7 @@ public class MyDeviceInfo
 		
 		adbCmd = CoreApkTool.GetUTF8Path() + File.separator + "adb";
 
-		if(adbCmd.matches("^C:.*")) {
+		if(adbCmd.matches("^[A-Z]:.*")) {
 			adbCmd += ".exe";
 		}
 		if(!(new File(adbCmd)).exists()) {
@@ -89,7 +88,7 @@ public class MyDeviceInfo
 	
 	public boolean PushApk(Device device, String sourcePath, JTextArea LogTextArea)
 	{
-		System.out.println("sourcePath : " + sourcePath + "DeviceADBNumber: " + device.strADBDeviceNumber);
+		System.out.println("sourcePath : " + sourcePath + ", DeviceADBNumber: " + device.strADBDeviceNumber);
 		if(adbCmd == null || adbCmd.isEmpty() || device == null
 				|| device.strADBDeviceNumber == null || device.strADBDeviceNumber.isEmpty()
 				|| sourcePath == null || sourcePath.isEmpty()
@@ -105,7 +104,7 @@ public class MyDeviceInfo
 	
 	public boolean InstallApk(Device device, String sourcePath, JTextArea LogTextArea)
 	{
-		System.out.println("sourcePath : " + sourcePath + "DeviceADBNumber: " + device.strADBDeviceNumber);
+		System.out.println("sourcePath : " + sourcePath + ", DeviceADBNumber: " + device.strADBDeviceNumber);
 		if(adbCmd == null || adbCmd.isEmpty() || device == null
 			|| device.strADBDeviceNumber == null || device.strADBDeviceNumber.isEmpty()
 			|| sourcePath == null || sourcePath.isEmpty()) {
@@ -144,7 +143,7 @@ public class MyDeviceInfo
 			
 			if(type == INSTALL_TYPE.INSTALL) {
 				String[] result;
-				String[] cmd = {adbCmd, "-s", this.DeviceADBNumber, "install", "-d","-r", this.sourcePath};
+				String[] cmd = {adbCmd, "-s", "\"" + this.DeviceADBNumber + "\"", "install", "-d","-r", this.sourcePath};
 				
 				//LogTextArea.append(adbCmd + "\n");
 				result = MyConsolCmd.exc(cmd,true,new MyConsolCmd.OutputObserver() {
