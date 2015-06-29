@@ -30,6 +30,7 @@ import com.ApkInfo.Core.CoreApkTool;
 import com.ApkInfo.Core.MyConsolCmd;
 import com.ApkInfo.Core.MyDeviceInfo;
 import com.ApkInfo.Core.MyDeviceInfo.Device;
+import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UIUtil.ButtonType;
 import com.ApkInfo.UIUtil.StandardButton;
 import com.ApkInfo.UIUtil.Theme;
@@ -48,8 +49,7 @@ public class DeviceUIManager {
 	public DeviceUIManager(String PackageName, String sourcePath) {
 		// TODO Auto-generated constructor stub
 
-		final String ImgPath = CoreApkTool.GetUTF8Path();
-		final ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"question.png");
+		final ImageIcon Appicon = Resource.QUESTION.getImageIcon();
         
 		
 		final Object[] options = {"Push", "Install"};
@@ -73,7 +73,7 @@ public class DeviceUIManager {
 		    		System.out.println("Device count : " + DeviceList.size());
 		    		if(DeviceList.size() ==0) {
 		    			MyButtonPanel.btnInstall.setEnabled(true);
-		    			final ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"warning.png");		    			
+		    			final ImageIcon Appicon = Resource.WARNING.getImageIcon();		    			
 		    			JOptionPane.showMessageDialog(null,"Device not found!\nplease check Connected","Warning",JOptionPane.WARNING_MESSAGE, Appicon);		    			
 		    		} else if(DeviceList.size() ==1) {
 		    			if(DeviceList.get(0).ckeckPackage(strPackageName)) {
@@ -133,8 +133,7 @@ public class DeviceUIManager {
 		  t.start();
 	}
 	public void ShowSetupDialog(int selected, Boolean isInstall) {
-		String ImgPath = CoreApkTool.GetUTF8Path();
-		ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
+		ImageIcon Appicon = Resource.APP_ICON.getImageIcon();
 		
 		//JPanel DialogPanel = makeLodingDialog();
 		if(isInstall) {
@@ -164,8 +163,7 @@ public class DeviceUIManager {
 			        	//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			        	
 			        	JLabel GifLabel;
-			        	String ImgPath = CoreApkTool.GetUTF8Path();
-			        	ImageIcon icon = new ImageIcon(ImgPath+File.separator+"install_wait.gif");
+			        	ImageIcon icon = Resource.INSTALL_WAIT.getImageIcon();
 			            GifLabel = new JLabel(icon);
 			            
 			            DialogPanel.add(GifLabel);

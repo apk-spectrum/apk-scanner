@@ -5,6 +5,7 @@ import javax.swing.*;
 import com.ApkInfo.Core.CoreApkTool;
 import com.ApkInfo.Core.MyDeviceInfo;
 import com.ApkInfo.Core.MyDeviceInfo.Device;
+import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UIUtil.ButtonType;
 import com.ApkInfo.UIUtil.StandardButton;
 import com.ApkInfo.UIUtil.Theme;
@@ -48,8 +49,8 @@ public class MyListDialog extends JDialog implements ActionListener {
 			String title, Object[] data, int initialValue, String longValue) {
 		super(frame, title, true);
 		clicked = false;
-		String ImgPath = CoreApkTool.GetUTF8Path();
-        ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
+
+        ImageIcon Appicon = Resource.APP_ICON.getImageIcon();
 		
 		//ImageIcon Appicon = new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/AppIcon.png");
 		

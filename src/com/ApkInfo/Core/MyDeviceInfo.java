@@ -9,6 +9,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
+import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UI.DeviceUIManager;
 import com.ApkInfo.UI.MainUI;
 import com.ApkInfo.UI.MyButtonPanel;
@@ -32,10 +33,9 @@ public class MyDeviceInfo
 	
 	public MyDeviceInfo()
 	{
-		final String ImgPath = CoreApkTool.GetUTF8Path();
-		QuestionAppicon = new ImageIcon(ImgPath+File.separator+"question.png");
-		WaringAppicon = new ImageIcon(ImgPath+File.separator+"warning.png");
-		SucAppicon = new ImageIcon(ImgPath+File.separator+"Succes.png");
+		QuestionAppicon = Resource.QUESTION.getImageIcon();
+		WaringAppicon = Resource.WARNING.getImageIcon();
+		SucAppicon = Resource.SUCCESS.getImageIcon();
 		
 		adbCmd = CoreApkTool.GetUTF8Path() + File.separator + "adb";
 

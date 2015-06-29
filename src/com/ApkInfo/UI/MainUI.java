@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import com.ApkInfo.Core.*;
 import com.ApkInfo.Core.CoreApkTool.FSStyle;
+import com.ApkInfo.Resource.Resource;
 
 
 public class MainUI extends JFrame implements WindowListener
@@ -105,8 +106,6 @@ public class MainUI extends JFrame implements WindowListener
 				apkFilePath = args[0];
 				System.out.println("Target APK : " + args[0]);
 				
-				//CoreApkTool.makeFolder("temp");
-				
 				ProgressBarDlg = new MyProgressBarDemo();
 				
 				WaitingDlg = MyProgressBarDemo.createAndShowGUI(ProgressBarDlg);
@@ -143,8 +142,7 @@ public class MainUI extends JFrame implements WindowListener
 		//frame.add(new MyButtonPanel(), BorderLayout.NORTH);
 		
         
-		String ImgPath = CoreApkTool.GetUTF8Path();
-        ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
+        ImageIcon Appicon = Resource.APP_ICON.getImageIcon();
         
         frame.setIconImage(Appicon.getImage());
 		

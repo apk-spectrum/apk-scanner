@@ -7,6 +7,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import com.ApkInfo.Core.CoreApkTool;
+import com.ApkInfo.Resource.Resource;
 
 import java.beans.*;
 import java.io.File;
@@ -73,11 +74,9 @@ public class MyProgressBarDemo extends JPanel
         JPanel panel = new JPanel();
         
         
-		String ImgPath = CoreApkTool.GetUTF8Path();
-        ImageIcon icon = new ImageIcon(ImgPath+File.separator+"loading.gif");
-        ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
+        ImageIcon icon = Resource.LOADING.getImageIcon();
+        ImageIcon Appicon = Resource.APP_ICON.getImageIcon();
         
-        System.out.println("loding img " + ImgPath);
         System.out.println("loding icon : " + icon);
         
         
@@ -138,8 +137,7 @@ public class MyProgressBarDemo extends JPanel
         frame.setContentPane(newContentPane);
 
         
-		String ImgPath = CoreApkTool.GetUTF8Path();
-		ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
+		ImageIcon Appicon = Resource.APP_ICON.getImageIcon();;
         frame.setIconImage(Appicon.getImage());
         
         //Display the window.

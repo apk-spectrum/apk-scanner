@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 
 import com.ApkInfo.Core.CoreApkTool;
 import com.ApkInfo.Core.MyDeviceInfo;
+import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UIUtil.ButtonType;
 import com.ApkInfo.UIUtil.StandardButton;
 import com.ApkInfo.UIUtil.Theme;
@@ -26,9 +27,8 @@ public class MyButtonPanel extends JPanel{
 	Label lbVersion;
 	
 	MyButtonPanel() {
-		String ImgPath = CoreApkTool.GetUTF8Path();
-        ImageIcon icon = new ImageIcon(ImgPath+File.separator+"loading.gif");
-        ImageIcon Appicon = new ImageIcon(ImgPath+File.separator+"AppIcon.png");
+        ImageIcon icon = Resource.LOADING.getImageIcon();
+        ImageIcon Appicon = Resource.APP_ICON.getImageIcon();
         
 		this.add(btnShowManifest = new StandardButton("Manifest 보기",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED),BorderLayout.WEST);
 		this.add(btnShowBrowser = new StandardButton("탐색기",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED),BorderLayout.WEST);		
