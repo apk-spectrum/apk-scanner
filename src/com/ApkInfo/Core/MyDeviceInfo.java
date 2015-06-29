@@ -33,9 +33,9 @@ public class MyDeviceInfo
 	
 	public MyDeviceInfo()
 	{
-		QuestionAppicon = Resource.QUESTION.getImageIcon();
-		WaringAppicon = Resource.WARNING.getImageIcon();
-		SucAppicon = Resource.SUCCESS.getImageIcon();
+		QuestionAppicon = Resource.IMG_QUESTION.getImageIcon();
+		WaringAppicon = Resource.IMG_WARNING.getImageIcon();
+		SucAppicon = Resource.IMG_SUCCESS.getImageIcon();
 		
 		adbCmd = CoreApkTool.GetUTF8Path() + File.separator + "adb";
 

@@ -74,8 +74,8 @@ public class MyProgressBarDemo extends JPanel
         JPanel panel = new JPanel();
         
         
-        ImageIcon icon = Resource.LOADING.getImageIcon();
-        ImageIcon Appicon = Resource.APP_ICON.getImageIcon();
+        ImageIcon icon = Resource.IMG_LOADING.getImageIcon();
+        ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon();
         
         System.out.println("loding icon : " + icon);
         
@@ -137,7 +137,7 @@ public class MyProgressBarDemo extends JPanel
         frame.setContentPane(newContentPane);
 
         
-		ImageIcon Appicon = Resource.APP_ICON.getImageIcon();;
+		ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon();;
         frame.setIconImage(Appicon.getImage());
         
         //Display the window.

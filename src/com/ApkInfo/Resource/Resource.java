@@ -8,17 +8,24 @@ import com.ApkInfo.Core.CoreApkTool;
 
 public enum Resource
 {
-	APP_ICON("AppIcon.png"),
-	QUESTION("question.png"),
-	WARNING("warning.png"),
-	SUCCESS("Succes.png"),
-	INSTALL_WAIT("install_wait.gif"),
-	LOADING("loading.gif");
+	IMG_APP_ICON		(Type.IMAGE, "AppIcon.png"),
+	IMG_QUESTION		(Type.IMAGE, "question.png"),
+	IMG_WARNING			(Type.IMAGE, "warning.png"),
+	IMG_SUCCESS			(Type.IMAGE, "Succes.png"),
+	IMG_INSTALL_WAIT	(Type.IMAGE, "install_wait.gif"),
+	IMG_LOADING			(Type.IMAGE, "loading.gif");
 	
+	private enum Type {
+		IMAGE,
+		BIN,
+		ETC
+	}
 
 	private String name;
-	private Resource(String name)
+	private Type type;
+	private Resource(Type type, String name)
 	{
+		this.type = type;
 		this.name = name;
 	}
 	
@@ -29,11 +36,24 @@ public enum Resource
 	
 	public String getPath()
 	{
-		return CoreApkTool.GetUTF8Path() + File.separator + name;
+		String subPath;
+		switch(type){
+		case IMAGE:
+			subPath = "";
+			break;
+		case BIN:
+			subPath = "";
+			break;
+		case ETC: default:
+			subPath = "";
+			break;
+		}
+		return CoreApkTool.GetUTF8Path() + File.separator + subPath + name;
 	}
 	
 	public ImageIcon getImageIcon()
 	{
+		if(type != Type.IMAGE) return null;
 		return new ImageIcon(getPath());
 	}
 }

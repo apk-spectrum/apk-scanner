@@ -27,8 +27,8 @@ public class MyButtonPanel extends JPanel{
 	Label lbVersion;
 	
 	MyButtonPanel() {
-        ImageIcon icon = Resource.LOADING.getImageIcon();
-        ImageIcon Appicon = Resource.APP_ICON.getImageIcon();
+        ImageIcon icon = Resource.IMG_LOADING.getImageIcon();
+        ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon();
         
 		this.add(btnShowManifest = new StandardButton("Manifest 보기",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED),BorderLayout.WEST);
 		this.add(btnShowBrowser = new StandardButton("탐색기",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED),BorderLayout.WEST);		

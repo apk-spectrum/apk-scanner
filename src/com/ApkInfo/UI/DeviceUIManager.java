@@ -49,7 +49,7 @@ public class DeviceUIManager {
 	public DeviceUIManager(String PackageName, String sourcePath) {
 		// TODO Auto-generated constructor stub
 
-		final ImageIcon Appicon = Resource.QUESTION.getImageIcon();
+		final ImageIcon Appicon = Resource.IMG_QUESTION.getImageIcon();
         
 		
 		final Object[] options = {"Push", "Install"};
@@ -73,7 +73,7 @@ public class DeviceUIManager {
 		    		System.out.println("Device count : " + DeviceList.size());
 		    		if(DeviceList.size() ==0) {
 		    			MyButtonPanel.btnInstall.setEnabled(true);
-		    			final ImageIcon Appicon = Resource.WARNING.getImageIcon();		    			
+		    			final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();		    			
 		    			JOptionPane.showMessageDialog(null,"Device not found!\nplease check Connected","Warning",JOptionPane.WARNING_MESSAGE, Appicon);		    			
 		    		} else if(DeviceList.size() ==1) {
 		    			if(DeviceList.get(0).ckeckPackage(strPackageName)) {
@@ -133,7 +133,7 @@ public class DeviceUIManager {
 		  t.start();
 	}
 	public void ShowSetupDialog(int selected, Boolean isInstall) {
-		ImageIcon Appicon = Resource.APP_ICON.getImageIcon();
+		ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon();
 		
 		//JPanel DialogPanel = makeLodingDialog();
 		if(isInstall) {
@@ -163,7 +163,7 @@ public class DeviceUIManager {
 			        	//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			        	
 			        	JLabel GifLabel;
-			        	ImageIcon icon = Resource.INSTALL_WAIT.getImageIcon();
+			        	ImageIcon icon = Resource.IMG_INSTALL_WAIT.getImageIcon();
 			            GifLabel = new JLabel(icon);
 			            
 			            DialogPanel.add(GifLabel);

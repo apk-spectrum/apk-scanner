@@ -50,7 +50,7 @@ public class MyListDialog extends JDialog implements ActionListener {
 		super(frame, title, true);
 		clicked = false;
 
-        ImageIcon Appicon = Resource.APP_ICON.getImageIcon();
+        ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon();
 		
 		//ImageIcon Appicon = new ImageIcon("/home/leejinhyeong/workspace/APKInfoDlgv2/AppIcon.png");
 		

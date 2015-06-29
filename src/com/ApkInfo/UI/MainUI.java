@@ -142,7 +142,7 @@ public class MainUI extends JFrame implements WindowListener
 		//frame.add(new MyButtonPanel(), BorderLayout.NORTH);
 		
         
-        ImageIcon Appicon = Resource.APP_ICON.getImageIcon();
+        ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon();
         
         frame.setIconImage(Appicon.getImage());
 		
