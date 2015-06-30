@@ -19,8 +19,7 @@ public enum Resource
 
 	BIN_ADB_LNX			(Type.BIN, "adb"),
 	BIN_ADB_WIN			(Type.BIN, "adb.exe"),
-
-	BIN_APKTOOL_JAR		(Type.ETC, "apktool.jar");
+	BIN_APKTOOL_JAR		(Type.BIN, "apktool.jar");
 	
 	private enum Type {
 		IMAGE,
