@@ -30,7 +30,7 @@ public class Example extends JPanel {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        int Iconsize = 50;
+        int Iconsize = 40;
         
         ImageIcon toolbar_open =  Resource.IMG_TOOLBAR_OPEN.getImageIcon(Iconsize,Iconsize);
         ImageIcon toolbar_show_manifest=  Resource.IMG_TOOLBAR_SHOW_MANIFEST.getImageIcon(Iconsize,Iconsize);
@@ -94,12 +94,19 @@ public class Example extends JPanel {
         toolbar1.addSeparator();
         
         toolbar1.add(btn_about);
-        
+
+        toolbar1.addSeparator();
+        toolbar1.addSeparator();
+        toolbar1.addSeparator();        toolbar1.addSeparator();
+        toolbar1.addSeparator();
+        toolbar1.addSeparator();        toolbar1.addSeparator();
+        toolbar1.addSeparator();
+        toolbar1.addSeparator();
         
         toolbar1.setAlignmentX(0);
         toolbar1.setFloatable(false);
 
-        panel.add(toolbar1);        
+        panel.add(toolbar1,BorderLayout.WEST);
         add(panel, BorderLayout.NORTH);
 
         //setTitle("Toolbars");
