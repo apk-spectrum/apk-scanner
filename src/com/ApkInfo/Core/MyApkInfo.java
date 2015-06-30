@@ -144,7 +144,7 @@ public class MyApkInfo {
         // widget
         progress(5,"parsing widget...\n");
         xmlAndroidManifest.getNodeList("//meta-data[@name='android.appwidget.provider']");
-        System.out.println("Normal widgetList cnt = " + xmlAndroidManifest.getLength());
+        //System.out.println("Normal widgetList cnt = " + xmlAndroidManifest.getLength());
         for( int idx=0; idx < xmlAndroidManifest.getLength(); idx++ ){
         	Object[] widgetExtraInfo = {strIconPath, "Unknown"};
         	
@@ -160,7 +160,7 @@ public class MyApkInfo {
         }
         
         xmlAndroidManifest.getNodeList("//action[@name='android.intent.action.CREATE_SHORTCUT']");
-        System.out.println("Shortcut widgetList cnt = " + xmlAndroidManifest.getLength());
+        //System.out.println("Shortcut widgetList cnt = " + xmlAndroidManifest.getLength());
         for( int idx=0; idx < xmlAndroidManifest.getLength(); idx++ ){
         	MyXPath parent = xmlAndroidManifest.getParentNode(idx).getParentNode();
         	String widgetTitle = getResourceInfo(parent.getAttributes("android:label"));
@@ -176,7 +176,6 @@ public class MyApkInfo {
         getActivityInfo(xmlAndroidManifest, "provider");
         
         verify();
-        dump();
 	}
 	
 	private String getResourceInfo(String id) {
@@ -196,25 +195,25 @@ public class MyApkInfo {
 			result = new String(id);
 			return result;
 		} else if(id.matches("^@drawable/.*")) {
-			System.out.println("@drawable");
+			//System.out.println("@drawable");
 
 			filter = "^drawable.*";
 			fileName = new String(id.substring(10)) + ".png";
 			type = "image";
 		} else if(id.matches("^@string/.*")) {
-			System.out.println("@stirng");
+			//System.out.println("@stirng");
 			
 			filter = "^values.*";
 			query = "//resources/string[@name='"+id.substring(id.indexOf("/")+1)+"']";
 			fileName = "strings.xml";
 		} else if(id.matches("^@dimen/.*")) {
-			System.out.println("string@dimen");
+			//System.out.println("string@dimen");
 
 			filter = "^values.*";
 			query = "//resources/dimen[@name='"+id.substring(id.indexOf("/")+1)+"']";
 			fileName = "dimens.xml";
 		} else {
-			System.out.println("Unknown id " + id);
+			System.out.println("getResourceInfo() Unknown id " + id);
 			return new String(id);
 		}
 		
@@ -227,7 +226,7 @@ public class MyApkInfo {
 	        //System.out.println(" - " + resFile.getAbsolutePath() + ", " + type);
 			if(type.equals("image")) {
 				if(resFile.length() > maxImgSize) {
-					System.out.println(resFile.getPath() + ", " + maxImgSize);
+					//System.out.println(resFile.getPath() + ", " + maxImgSize);
 					result = new String(resFile.getPath());
 					maxImgSize = resFile.length();
 				}
@@ -236,7 +235,7 @@ public class MyApkInfo {
 		        if(result != null) break;;
 			}
 		}
-        System.out.println(">> " + result);
+        //System.out.println(">> " + result);
 		return result;
 	}
 	
@@ -267,7 +266,7 @@ public class MyApkInfo {
 	
 	private Object[] getWidgetInfo(String resource) {
 
-		System.out.println("getWidgetInfo() " + resource);
+		//System.out.println("getWidgetInfo() " + resource);
 		String resXmlPath = new String(strWorkAPKPath + File.separator + "res" + File.separator);
 
 		String Size = "Unknown";
@@ -279,7 +278,7 @@ public class MyApkInfo {
 		}
 
 		String widgetXml = new String(resource.substring(5));
-		System.out.println("widgetXml : " + widgetXml);
+		//System.out.println("widgetXml : " + widgetXml);
 
 		for (String s : (new File(resXmlPath)).list()) {
 			if(!s.matches("^xml.*")) continue;
@@ -287,7 +286,7 @@ public class MyApkInfo {
 			File xmlFile = new File(resXmlPath + s + File.separator + widgetXml + ".xml");
 			if(!xmlFile.exists()) continue;
 			
-			System.out.println("xmlFile " + xmlFile.getAbsolutePath());
+			//System.out.println("xmlFile " + xmlFile.getAbsolutePath());
 
 			MyXPath xpath = new MyXPath(xmlFile.getAbsolutePath());
 			
@@ -302,7 +301,7 @@ public class MyApkInfo {
 				//Size = ((Integer.parseInt(width) - 40) / 70 + 1) + " X " + ((Integer.parseInt(Height) - 40) / 70 + 1);
 				Size = (int)Math.ceil((Float.parseFloat(width) - 40) / 76 + 1) + " X " + (int)Math.ceil((Float.parseFloat(Height) - 40) / 76 + 1);
 				Size += "\n(" + width + " X " + Height + ")";
-		    	System.out.println("Size " + Size + ", width " + width + ", height " + Height);
+		    	//System.out.println("Size " + Size + ", width " + width + ", height " + Height);
 			}
 			
 			if(ReSizeMode.isEmpty() && xpath.getAttributes("android:resizeMode") != null) {
@@ -312,7 +311,7 @@ public class MyApkInfo {
 			if(IconPath.equals("Unknown") && xpath.getAttributes("android:previewImage") != null) {
 				String icon = xpath.getAttributes("android:previewImage");
 				IconPath = getResourceInfo(icon);
-				System.out.println("icon " + IconPath);
+				//System.out.println("icon " + IconPath);
 			}
 		}
 		

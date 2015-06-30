@@ -104,7 +104,7 @@ public class MyXPath {
 			String shortName = name.substring(name.indexOf(":"));
 			//System.out.println("getAttributes() shortName " + shortName);
 			for(int i=0; i < getNode().getAttributes().getLength(); i++) {
-				System.out.println("getAttributes() " + i + " : " + getNode().getAttributes().item(i).getNodeName());
+				//System.out.println("getAttributes() " + i + " : " + getNode().getAttributes().item(i).getNodeName());
 				if(getNode().getAttributes().item(i).getNodeName().matches(".*"+shortName)) {
 					//System.out.println("getAttributes() maybe...... ");
 					return getNode().getAttributes().item(i).getTextContent();

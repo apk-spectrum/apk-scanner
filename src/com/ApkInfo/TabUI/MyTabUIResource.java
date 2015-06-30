@@ -73,7 +73,7 @@ public class MyTabUIResource extends JPanel{
     	ShownameList = new ArrayList<String>();
     	
     	for(int i=0; i < nameList.size(); i++) {
-    		ShownameList.add(nameList.get(i).substring(MainUI.FolderDefault.length()));
+    		ShownameList.add(nameList.get(i).substring(MainUI.GetMyApkInfo().strWorkAPKPath.length()));
     		
     	}
         imageMap = createImageMap(nameList);
@@ -110,7 +110,7 @@ public class MyTabUIResource extends JPanel{
             JLabel label = (JLabel) super.getListCellRendererComponent(
                     list, value, index, isSelected, cellHasFocus);
             
-            label.setIcon(imageMap.get(MainUI.FolderDefault+(String)value));
+            label.setIcon(imageMap.get(MainUI.GetMyApkInfo().strWorkAPKPath+(String)value));
             label.setHorizontalTextPosition(JLabel.RIGHT);
             //label.setFont(font);            
             return label;

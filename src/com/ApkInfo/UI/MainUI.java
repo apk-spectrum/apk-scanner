@@ -27,8 +27,7 @@ public class MainUI extends JFrame implements WindowListener
 	private static String Title = "";
 		
 	static String Osname = "";
-	static public String FolderDefault = "";
-	static String apkFilePath = null;
+	static private String apkFilePath = null;
 	
 	static MyCoreThead startCore;
 	
@@ -74,7 +73,7 @@ public class MainUI extends JFrame implements WindowListener
 						}
 					});
 					mApkInfo.strApkSize = CoreApkTool.getFileSize(apkFile, FSStyle.FULL);
-					FolderDefault = mApkInfo.strWorkAPKPath;
+					//mApkInfo.dump();
 				}
 				
 				initialize();				
@@ -87,8 +86,8 @@ public class MainUI extends JFrame implements WindowListener
 
 	class CloseThead extends Thread {
 		public void run() {
-			System.out.println("delete Folder : "  + FolderDefault);
-			if(FolderDefault.length()>0) CoreApkTool.deleteDirectory(new File(FolderDefault));
+			System.out.println("delete Folder : "  + mApkInfo.strWorkAPKPath);
+			if(mApkInfo.strWorkAPKPath.length()>0) CoreApkTool.deleteDirectory(new File(mApkInfo.strWorkAPKPath));
 		}
 	}
 	

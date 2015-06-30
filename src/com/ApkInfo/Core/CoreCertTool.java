@@ -29,7 +29,7 @@ public class CoreCertTool {
 			if(!rsaFile.exists()) continue;
 
 			String[] cmd = {"java","-Dfile.encoding=utf8",keytoolPackage,"-printcert","-v","-file", rsaFile.getAbsolutePath()};
-			String[] result = MyConsolCmd.exc(cmd, true, null);
+			String[] result = MyConsolCmd.exc(cmd, false, null);
 
 		    String certContent = "";
 		    CertSummary = "<certificate[1]>\n";
