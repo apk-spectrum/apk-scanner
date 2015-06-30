@@ -30,39 +30,58 @@ public class Example extends JPanel {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        ImageIcon newi =  Resource.IMG_SUCCESS.getImageIcon();
-        ImageIcon open =  Resource.IMG_QUESTION.getImageIcon();
-        ImageIcon save =  Resource.IMG_WARNING.getImageIcon();
-        ImageIcon exit  =  Resource.IMG_SUCCESS.getImageIcon();
-
-        JButton newb = new JButton("aaaaa",newi);
-        JButton openb = new JButton("bbbbbb",open);
-        JButton saveb = new JButton("cccccc", save);
-        JButton eeeeb = new JButton("cccccc", save);
-        JButton bbbbb = new JButton("cccccc", save);
+        int Iconsize = 60;
         
-        newb.setVerticalTextPosition(JLabel.BOTTOM);
-        newb.setHorizontalTextPosition(JLabel.CENTER);
+        ImageIcon toolbar_open =  Resource.IMG_TOOLBAR_OPEN.getImageIcon(Iconsize,Iconsize);
+        ImageIcon toolbar_show_manifest=  Resource.IMG_TOOLBAR_SHOW_MANIFEST.getImageIcon(Iconsize,Iconsize);
+        ImageIcon toolbar_show_explorer =  Resource.IMG_TOOLBAR_SHOW_EXPLORER.getImageIcon(Iconsize,Iconsize);
+        ImageIcon toolbar_unpack  =  Resource.IMG_TOOLBAR_UNPACK.getImageIcon(Iconsize,Iconsize);
+        ImageIcon toolbar_pack  =  Resource.IMG_TOOLBAR_PACK.getImageIcon(Iconsize,Iconsize);
+        ImageIcon toolbar_install  =  Resource.IMG_TOOLBAR_INSTALL.getImageIcon(Iconsize,Iconsize);
+        ImageIcon toolbar_about  =  Resource.IMG_TOOLBAR_ABOUT.getImageIcon(Iconsize,Iconsize);
         
-        openb.setVerticalTextPosition(JLabel.BOTTOM);
-        openb.setHorizontalTextPosition(JLabel.CENTER);
         
-        saveb.setVerticalTextPosition(JLabel.BOTTOM);
-        saveb.setHorizontalTextPosition(JLabel.CENTER);
+        JButton btn_open = new JButton("Open",toolbar_open);
+        JButton btn_show_manifest = new JButton("manifest",toolbar_show_manifest);
+        JButton btn_show_explorer = new JButton("탐색기", toolbar_show_explorer);
+        JButton btn_unpack = new JButton("unpack", toolbar_unpack);
+        JButton btn_pack = new JButton("pack", toolbar_pack);
+        JButton btn_install = new JButton("설치", toolbar_install);
+        JButton btn_about = new JButton("about", toolbar_about);
         
-        eeeeb.setVerticalTextPosition(JLabel.BOTTOM);
-        eeeeb.setHorizontalTextPosition(JLabel.CENTER);
+        btn_open.setVerticalTextPosition(JLabel.BOTTOM);
+        btn_open.setHorizontalTextPosition(JLabel.CENTER);
         
-        bbbbb.setVerticalTextPosition(JLabel.BOTTOM);
-        bbbbb.setHorizontalTextPosition(JLabel.CENTER);
+        btn_show_manifest.setVerticalTextPosition(JLabel.BOTTOM);
+        btn_show_manifest.setHorizontalTextPosition(JLabel.CENTER);
         
-        toolbar1.add(newb);
+        btn_show_explorer.setVerticalTextPosition(JLabel.BOTTOM);
+        btn_show_explorer.setHorizontalTextPosition(JLabel.CENTER);
+        
+        btn_unpack.setVerticalTextPosition(JLabel.BOTTOM);
+        btn_unpack.setHorizontalTextPosition(JLabel.CENTER);
+        
+        btn_pack.setVerticalTextPosition(JLabel.BOTTOM);
+        btn_pack.setHorizontalTextPosition(JLabel.CENTER);
+        
+        btn_install.setVerticalTextPosition(JLabel.BOTTOM);
+        btn_install.setHorizontalTextPosition(JLabel.CENTER);
+        
+        btn_about.setVerticalTextPosition(JLabel.BOTTOM);
+        btn_about.setHorizontalTextPosition(JLabel.CENTER);
+        
+        toolbar1.add(btn_open);
         toolbar1.addSeparator();
-        toolbar1.add(openb);
-        toolbar1.add(saveb);
+        toolbar1.add(btn_show_manifest);
+        toolbar1.add(btn_show_explorer);
         toolbar1.addSeparator();
-        toolbar1.add(eeeeb);
-        toolbar1.add(bbbbb);
+        toolbar1.add(btn_unpack);
+        toolbar1.add(btn_pack);
+        toolbar1.addSeparator();
+        toolbar1.add(btn_install);
+        toolbar1.addSeparator();
+        toolbar1.add(btn_about);
+        
         
         toolbar1.setAlignmentX(0);
         toolbar1.setFloatable(false);

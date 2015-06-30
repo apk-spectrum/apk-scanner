@@ -6,17 +6,26 @@ import java.net.URLDecoder;
 
 import javax.swing.ImageIcon;
 
+import com.ApkInfo.Core.CoreApkTool;
+
 public enum Resource
 {
 	STR_APP_VERSION		(Type.TEXT, "Ver. 1.01"),
 
+	IMG_TOOLBAR_ABOUT	(Type.IMAGE, "toolbar_about.png"),
+	IMG_TOOLBAR_INSTALL	(Type.IMAGE, "toolbar_install.png"),
+	IMG_TOOLBAR_OPEN	(Type.IMAGE, "toolbar_open.png"),
+	IMG_TOOLBAR_PACK	(Type.IMAGE, "toolbar_pack.png"),
+	IMG_TOOLBAR_SHOW_EXPLORER	(Type.IMAGE, "toolbar_show_explorer.png"),
+	IMG_TOOLBAR_SHOW_MANIFEST	(Type.IMAGE, "toolbar_show_manifast.png"),
+	IMG_TOOLBAR_UNPACK	(Type.IMAGE, "toolbar_unpack.png"),	
+	
 	IMG_APP_ICON		(Type.IMAGE, "AppIcon.png"),
 	IMG_QUESTION		(Type.IMAGE, "question.png"),
 	IMG_WARNING			(Type.IMAGE, "warning.png"),
 	IMG_SUCCESS			(Type.IMAGE, "Succes.png"),
 	IMG_INSTALL_WAIT	(Type.IMAGE, "install_wait.gif"),
 	IMG_LOADING			(Type.IMAGE, "loading.gif"),
-
 	BIN_ADB_LNX			(Type.BIN, "adb"),
 	BIN_ADB_WIN			(Type.BIN, "adb.exe"),
 	BIN_APKTOOL_JAR		(Type.BIN, "apktool.jar");
@@ -64,6 +73,14 @@ public enum Resource
 	{
 		if(type != Type.IMAGE) return null;
 		return new ImageIcon(getPath());
+	}
+	
+	public ImageIcon getImageIcon(int width, int height)
+	{
+		if(type != Type.IMAGE) return null;
+		ImageIcon tempImg = new ImageIcon(CoreApkTool.getScaledImage(new ImageIcon(getPath()),width,height));
+		
+		return tempImg;
 	}
 
 	private String getUTF8Path()
