@@ -1,8 +1,7 @@
 package com.ApkInfo.UI;
 
 import java.awt.EventQueue;
-import java.awt.Frame;
-import java.awt.Image;
+import java.awt.FileDialog;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -13,9 +12,6 @@ import java.awt.event.HierarchyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.ArrayList;
 
 import com.ApkInfo.Core.*;
 import com.ApkInfo.Core.CoreApkTool.FSStyle;
@@ -24,13 +20,15 @@ import com.ApkInfo.Resource.Resource;
 
 public class MainUI extends JFrame implements WindowListener
 {
+	private static final long serialVersionUID = 1L;
+	
 	private JFrame frame;
 	static MyApkInfo mApkInfo;
 	private static String Title = "";
 		
-	static String Osname ="";
+	static String Osname = "";
 	static public String FolderDefault = "";
-	static String apkFilePath ="";
+	static String apkFilePath = null;
 	
 	static MyCoreThead startCore;
 	
@@ -60,26 +58,24 @@ public class MainUI extends JFrame implements WindowListener
 
 				if(!apkFile.exists()) {
 					System.out.println("No Such APK file");
+					Title = "APK Scanner - None";
+					
+					mApkInfo = new MyApkInfo();
 				} else {
 					apkFilePath = apkFile.getAbsolutePath();
+
 					System.out.println("target file :" + apkFilePath);
+					Title = "APK Scanner - " + apkFilePath.substring(apkFilePath.lastIndexOf(File.separator)+1);
+
+					mApkInfo = new MyApkInfo(apkFilePath, new MyApkInfo.ProgressingMoniter() {
+						@Override
+						public void progress(int step, String msg) {
+							ProgressBarDlg.addProgress(step, msg);
+						}
+					});
+					mApkInfo.strApkSize = CoreApkTool.getFileSize(apkFile, FSStyle.FULL);
+					FolderDefault = mApkInfo.strWorkAPKPath;
 				}
-
-				Title = "APK Scanner - " + apkFilePath.substring(apkFilePath.lastIndexOf(File.separator)+1);
-
-				FolderDefault = CoreApkTool.makeTempPath(apkFilePath);
-				System.out.println("Temp path : " + FolderDefault);
-
-				//APK 풀기 
-				CoreApkTool.solveAPK(apkFilePath, FolderDefault);
-				
-				mApkInfo = CoreXmlTool.XmlToMyApkinfo(FolderDefault);
-				mApkInfo.strApkSize = CoreApkTool.getFileSize(apkFile, FSStyle.FULL);
-				
-				mApkInfo.ImagePathList = CoreApkTool.findFiles(new File(FolderDefault + File.separator + "res"), ".png", ".*drawable.*");
-				mApkInfo.LibPathList = CoreApkTool.findFiles(new File(FolderDefault + File.separator + "lib"), ".so", null);
-
-				mApkInfo.CertList = CoreCertTool.solveCert(FolderDefault + File.separator + "original" + File.separator + "META-INF" + File.separator);
 				
 				initialize();				
 			} catch (Exception e) {
@@ -100,9 +96,15 @@ public class MainUI extends JFrame implements WindowListener
 		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {	
-				//args = file path					
-				apkFilePath = args[0];
-				System.out.println("Target APK : " + args[0]);
+				//args = file path
+				if(args.length > 0) {
+					apkFilePath = args[0];
+					System.out.println("Target APK : " + args[0]);
+				} else {
+					// open file dialog
+				}
+
+				if(apkFilePath == null) return;
 				
 				ProgressBarDlg = new MyProgressBarDemo();
 				

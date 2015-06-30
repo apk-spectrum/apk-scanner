@@ -28,7 +28,6 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import com.ApkInfo.Core.CoreApkTool;
-import com.ApkInfo.Core.CoreXmlTool;
 import com.ApkInfo.Core.MyApkInfo;
 import com.ApkInfo.TabUI.MyTabUILib.MyTableModel;
 import com.ApkInfo.UI.MainUI;
