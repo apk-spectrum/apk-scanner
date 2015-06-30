@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.ApkInfo.Core.CoreApkTool.FSStyle;
+
 
 public class MyApkInfo {
 	public String strLabelname = "Unknown";
@@ -58,6 +60,8 @@ public class MyApkInfo {
 		
 		strWorkAPKPath = CoreApkTool.makeTempPath(path);
 		System.out.println("Temp path : " + strWorkAPKPath);
+		
+		strApkSize = CoreApkTool.getFileSize((new File(strAPKPath)), FSStyle.FULL);
 
 		//APK 풀기 
 		CoreApkTool.solveAPK(strAPKPath, strWorkAPKPath);

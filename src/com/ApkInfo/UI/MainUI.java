@@ -72,7 +72,6 @@ public class MainUI extends JFrame implements WindowListener
 							ProgressBarDlg.addProgress(step, msg);
 						}
 					});
-					mApkInfo.strApkSize = CoreApkTool.getFileSize(apkFile, FSStyle.FULL);
 					//mApkInfo.dump();
 				}
 				
