@@ -41,10 +41,14 @@ if not exist "%APP_PATH%" (
     mkdir "%APP_PATH%"
     rem mkdir "%APP_PATH%/tool"
 )
-rem if not exist "%APP_PATH%/tool" (
-rem     echo Create folder : %APP_PATH%/tool
-rem     mkdir "%APP_PATH%/tool"
-rem )
+if not exist "%APP_PATH%/tool" (
+     echo Create folder : %APP_PATH%/tool
+     mkdir "%APP_PATH%/tool"
+)
+if not exist "%APP_PATH%/res" (
+     echo Create folder : %APP_PATH%/res
+     mkdir "%APP_PATH%/res"
+)
 if not exist "%APP_PATH%" (
     echo Fail : Not create the folder : %APP_PATH%
     goto exit
@@ -53,13 +57,14 @@ if not exist "%APP_PATH%" (
 rem --- 파일 복사 ---
 copy /Y %SRC_PATH%\ApkScanner.exe "%APP_PATH%"
 copy /Y %SRC_PATH%\APKInfoDlg.jar "%APP_PATH%"
-copy /Y %SRC_PATH%\apktool.jar "%APP_PATH%"
-copy /Y %SRC_PATH%\AppIcon.png "%APP_PATH%"
-copy /Y %SRC_PATH%\warning.png "%APP_PATH%"
-copy /Y %SRC_PATH%\question.png "%APP_PATH%"
-copy /Y %SRC_PATH%\loading.gif "%APP_PATH%"
-copy /Y %SRC_PATH%\install_wait.gif "%APP_PATH%"
-copy /Y %SRC_PATH%\adb.exe "%APP_PATH%"
+copy /Y %SRC_PATH%\tool\apktool.jar "%APP_PATH%\tool"
+copy /Y %SRC_PATH%\tool\adb.exe "%APP_PATH%\tool"
+copy /Y %SRC_PATH%\res\AppIcon.png "%APP_PATH%\res"
+copy /Y %SRC_PATH%\res\warning.png "%APP_PATH%\res"
+copy /Y %SRC_PATH%\res\question.png "%APP_PATH%\res"
+copy /Y %SRC_PATH%\res\Succes.png "%APP_PATH%\res"
+copy /Y %SRC_PATH%\res\loading.gif "%APP_PATH%\res"
+copy /Y %SRC_PATH%\res\install_wait.gif "%APP_PATH%\res"
 rem copy /Y .\tool\* "%APP_PATH%\tool\"
 
 
