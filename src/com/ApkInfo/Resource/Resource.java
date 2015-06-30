@@ -20,7 +20,7 @@ public enum Resource
 	BIN_ADB_LNX			(Type.BIN, "adb"),
 	BIN_ADB_WIN			(Type.BIN, "adb.exe"),
 
-	ETC_APKTOOL_JAR		(Type.ETC, "apktool.jar");
+	BIN_APKTOOL_JAR		(Type.ETC, "apktool.jar");
 	
 	private enum Type {
 		IMAGE,
@@ -49,16 +49,16 @@ public enum Resource
 		String subPath;
 		switch(type){
 		case IMAGE:
-			subPath = "";
+			subPath = File.separator + "res";
 			break;
 		case BIN:
-			subPath = "";
+			subPath = File.separator + "tool";
 			break;
 		case ETC: default:
 			subPath = "";
 			break;
 		}
-		return getUTF8Path() + File.separator + subPath + value;
+		return getUTF8Path() + subPath + File.separator + value;
 	}
 	
 	public ImageIcon getImageIcon()

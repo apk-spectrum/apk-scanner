@@ -17,7 +17,7 @@ public class CoreApkTool
 {
 	public static void solveAPK(String APKFilePath, String solvePath)
 	{
-		String apkToolPath = Resource.ETC_APKTOOL_JAR.getPath();
+		String apkToolPath = Resource.BIN_APKTOOL_JAR.getPath();
 
 		
 		System.out.println("apkToolPath : " + apkToolPath);
