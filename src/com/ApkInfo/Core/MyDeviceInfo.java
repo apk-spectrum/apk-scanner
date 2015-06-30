@@ -382,6 +382,7 @@ public class MyDeviceInfo
 			
 			return TargetInfo[0];
 		}
+
 		private void addLogText(String str) {
 			DeviceUIManager.dialogLogArea.append(str+"\n");
 		}

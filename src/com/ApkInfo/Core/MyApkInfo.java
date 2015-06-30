@@ -326,17 +326,16 @@ public class MyApkInfo {
 		return new Object[] { IconPath, Size };
 	}
 	
-	@SuppressWarnings("resource")
 	private void YmlToMyApkinfo() {
 		String ymlPath = new String(strWorkAPKPath + File.separator + "apktool.yml");
 		File ymlFile = new File(ymlPath);
+	    BufferedReader inFile = null;
 
 		if(!ymlFile.exists()) {
 			return;
 		}
 		
 		try {
-		    BufferedReader inFile;
 		    String sLine = null;
 			inFile = new BufferedReader(new FileReader(ymlFile));
 			while( (sLine = inFile.readLine()) != null ) {
@@ -354,6 +353,12 @@ public class MyApkInfo {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				if(inFile != null) inFile.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

@@ -18,8 +18,6 @@ public class CoreApkTool
 	public static void solveAPK(String APKFilePath, String solvePath)
 	{
 		String apkToolPath = Resource.BIN_APKTOOL_JAR.getPath();
-
-		
 		System.out.println("apkToolPath : " + apkToolPath);
 
 		if(!(new File(apkToolPath)).exists()) {
@@ -28,7 +26,7 @@ public class CoreApkTool
 		}
 
 		String[] cmd = {"java", "-jar", apkToolPath, "d", "-s", "-f", "-o", solvePath, "-p", solvePath, APKFilePath};
-		
+
 		MyConsolCmd.exc(cmd, true, new MyConsolCmd.OutputObserver() {
 			@Override
 			public boolean ConsolOutput(String output) {
