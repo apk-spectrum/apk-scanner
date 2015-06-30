@@ -1,41 +1,51 @@
 package com.ApkInfo.Resource;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 import javax.swing.ImageIcon;
 
-import com.ApkInfo.Core.CoreApkTool;
-
 public enum Resource
 {
+	STR_APP_VERSION		(Type.TEXT, "Ver. 1.01"),
+
 	IMG_APP_ICON		(Type.IMAGE, "AppIcon.png"),
 	IMG_QUESTION		(Type.IMAGE, "question.png"),
 	IMG_WARNING			(Type.IMAGE, "warning.png"),
 	IMG_SUCCESS			(Type.IMAGE, "Succes.png"),
 	IMG_INSTALL_WAIT	(Type.IMAGE, "install_wait.gif"),
-	IMG_LOADING			(Type.IMAGE, "loading.gif");
+	IMG_LOADING			(Type.IMAGE, "loading.gif"),
+
+	BIN_ADB_LNX			(Type.BIN, "adb"),
+	BIN_ADB_WIN			(Type.BIN, "adb.exe"),
+
+	ETC_APKTOOL_JAR		(Type.ETC, "apktool.jar");
 	
 	private enum Type {
 		IMAGE,
+		TEXT,
 		BIN,
 		ETC
 	}
 
-	private String name;
+	private String value;
 	private Type type;
-	private Resource(Type type, String name)
+	private Resource(Type type, String value)
 	{
 		this.type = type;
-		this.name = name;
+		this.value = value;
 	}
 	
-	public String getName()
+	public String getValue()
 	{
-		return name;
+		return value;
 	}
 	
 	public String getPath()
 	{
+		if(type == Type.TEXT) return null;
+
 		String subPath;
 		switch(type){
 		case IMAGE:
@@ -48,12 +58,26 @@ public enum Resource
 			subPath = "";
 			break;
 		}
-		return CoreApkTool.GetUTF8Path() + File.separator + subPath + name;
+		return getUTF8Path() + File.separator + subPath + value;
 	}
 	
 	public ImageIcon getImageIcon()
 	{
 		if(type != Type.IMAGE) return null;
 		return new ImageIcon(getPath());
+	}
+
+	private String getUTF8Path()
+	{
+		String resourcePath = Resource.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		resourcePath = (new File(resourcePath)).getParentFile().getPath();
+		
+		try {
+			resourcePath = URLDecoder.decode(resourcePath, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		
+		return resourcePath;
 	}
 }

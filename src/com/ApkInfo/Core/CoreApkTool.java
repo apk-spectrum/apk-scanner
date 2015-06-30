@@ -5,34 +5,19 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 
+import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UI.MainUI;
 
 public class CoreApkTool
 {
-	public static String GetUTF8Path()
-	{
-		String tempapkToolPath = CoreApkTool.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-		tempapkToolPath = (new File(tempapkToolPath)).getParentFile().getPath();
-		
-		try {
-			tempapkToolPath = URLDecoder.decode(tempapkToolPath, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		
-		return tempapkToolPath;
-	}
-	
 	public static void solveAPK(String APKFilePath, String solvePath)
 	{
-		String apkToolPath = GetUTF8Path()+File.separator+"apktool.jar";
+		String apkToolPath = Resource.ETC_APKTOOL_JAR.getPath();
 
 		
 		System.out.println("apkToolPath : " + apkToolPath);

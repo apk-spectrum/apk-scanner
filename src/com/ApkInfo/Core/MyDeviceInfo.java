@@ -37,11 +37,12 @@ public class MyDeviceInfo
 		WaringAppicon = Resource.IMG_WARNING.getImageIcon();
 		SucAppicon = Resource.IMG_SUCCESS.getImageIcon();
 		
-		adbCmd = CoreApkTool.GetUTF8Path() + File.separator + "adb";
+		adbCmd = Resource.BIN_ADB_LNX.getPath();
 
 		if(adbCmd.matches("^[A-Z]:.*")) {
-			adbCmd += ".exe";
+			adbCmd = Resource.BIN_ADB_WIN.getPath();
 		}
+
 		if(!(new File(adbCmd)).exists()) {
 			System.out.println("no such adb tool" + adbCmd);
 			adbCmd = null;

@@ -24,8 +24,6 @@ import com.ApkInfo.Resource.Resource;
 
 public class MainUI extends JFrame implements WindowListener
 {
-	static public String VERSION = "Ver. 1.01";
-
 	private JFrame frame;
 	static MyApkInfo mApkInfo;
 	private static String Title = "";
