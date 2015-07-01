@@ -16,7 +16,6 @@ import java.io.File;
 import com.ApkInfo.Core.*;
 import com.ApkInfo.Core.CoreApkTool.FSStyle;
 import com.ApkInfo.Resource.Resource;
-import com.ApkInfo.UITEST.Example;
 
 
 public class MainUI extends JFrame implements WindowListener
@@ -133,7 +132,7 @@ public class MainUI extends JFrame implements WindowListener
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
 		
 		frame.add(new MyTabUI(), BorderLayout.CENTER);
-		frame.add(new Example(), BorderLayout.NORTH);
+		frame.add(new MyToolBarUI(), BorderLayout.NORTH);
 		
 		//frame.getContentPane().add(new MyButtonPanel(), BorderLayout.SOUTH);
 		frame.setResizable( false );
