@@ -2,6 +2,7 @@ package com.ApkInfo.UI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -68,71 +69,36 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         ImageIcon toolbar_install_hover  =  Resource.IMG_TOOLBAR_INSTALL_HOVER.getImageIcon(Iconsize,Iconsize);
         ImageIcon toolbar_about_hover  =  Resource.IMG_TOOLBAR_ABOUT_HOVER.getImageIcon(Iconsize,Iconsize);
         
-        btn_open = new ToolBarButton("Open",toolbar_open, toobar_open_hover);
-        btn_show_manifest = new ToolBarButton("manifest",toolbar_manifest, toolbar_manifest_hover);
-        btn_show_explorer = new ToolBarButton("탐색기", toolbar_explorer, toolbar_explorer_hover);
-        btn_unpack = new ToolBarButton("unpack", toolbar_unpack, toolbar_unpack_hover);
-        btn_pack = new ToolBarButton("pack", toolbar_pack, toolbar_pack_hover);
-        btn_install = new ToolBarButton("설치", toolbar_install, toolbar_install_hover);
-        btn_about = new ToolBarButton("about", toolbar_about, toolbar_about_hover);
-        
-        setToolbarButton(btn_open);
-        setToolbarButton(btn_show_manifest);
-        setToolbarButton(btn_show_explorer);
-        setToolbarButton(btn_unpack);
-        setToolbarButton(btn_pack);
-        setToolbarButton(btn_install);
-        setToolbarButton(btn_about);
- 
-        JSeparator temp = new JSeparator(JSeparator.VERTICAL);
-        temp.setBackground(Color.GRAY);
-                
+        btn_open = new ToolBarButton("Open",toolbar_open, toobar_open_hover, this);
+        btn_show_manifest = new ToolBarButton("manifest",toolbar_manifest, toolbar_manifest_hover, this);
+        btn_show_explorer = new ToolBarButton("탐색기", toolbar_explorer, toolbar_explorer_hover, this);
+        btn_unpack = new ToolBarButton("unpack", toolbar_unpack, toolbar_unpack_hover, this);
+        btn_pack = new ToolBarButton("pack", toolbar_pack, toolbar_pack_hover, this);
+        btn_install = new ToolBarButton("설치", toolbar_install, toolbar_install_hover, this);
+        btn_about = new ToolBarButton("about", toolbar_about, toolbar_about_hover, this);
+
+              
         toolbar1.add(btn_open);
-        toolbar1.add(temp);
+        toolbar1.add(getNewSeparator());
                 
         toolbar1.add(btn_show_manifest);
         toolbar1.add(btn_show_explorer);
         
-        temp = new JSeparator(JSeparator.VERTICAL);
-        temp.setBackground(Color.GRAY);
-        
-        toolbar1.add(temp);
+        toolbar1.add(getNewSeparator());
         
         toolbar1.add(btn_unpack);
         toolbar1.add(btn_pack);
         
-        temp = new JSeparator(JSeparator.VERTICAL);
-        temp.setBackground(Color.GRAY);
-        
-        toolbar1.add(temp);
+        toolbar1.add(getNewSeparator());
         
         toolbar1.add(btn_install);
-        
-        temp = new JSeparator(JSeparator.VERTICAL);
-        temp.setBackground(Color.GRAY);
-        
-        toolbar1.add(temp);
+    
+        toolbar1.add(getNewSeparator());
         
         toolbar1.add(btn_about);
-
-        toolbar1.addSeparator();
-        toolbar1.addSeparator();
-        toolbar1.addSeparator();
-        toolbar1.addSeparator();
-        toolbar1.addSeparator();
-        toolbar1.addSeparator();
-        toolbar1.addSeparator();
-        toolbar1.addSeparator();
-        toolbar1.addSeparator();
-        toolbar1.addSeparator();
-        toolbar1.addSeparator();
-        toolbar1.addSeparator();
-        toolbar1.addSeparator();
-        toolbar1.addSeparator();
-        toolbar1.addSeparator();
-        toolbar1.addSeparator();
-        toolbar1.addSeparator();
         
+        toolbar1.addSeparator(new Dimension(120,0));
+
         toolbar1.setAlignmentX(0);
         toolbar1.setFloatable(false);
         toolbar1.setOpaque(true);
@@ -147,14 +113,14 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         //setLocationRelativeTo(null);
         //setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
-
-    public void setToolbarButton(JButton temp) {
-    	temp.setVerticalTextPosition(JLabel.BOTTOM);
-    	temp.setHorizontalTextPosition(JLabel.CENTER);
-    	temp.setBorderPainted(false);
-    	temp.setOpaque(false);
-    	temp.setFocusable(false);
-    	temp.addActionListener(this);
+    
+    public JSeparator getNewSeparator()
+    {
+        JSeparator temp = new JSeparator(JSeparator.VERTICAL);
+        temp.setBackground(Color.gray);
+        temp.setForeground(Color.gray);
+        temp.setPreferredSize(new Dimension(1,0));
+    	return temp;
     }
     
     public static void main(String[] args) {
