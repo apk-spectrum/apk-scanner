@@ -13,8 +13,14 @@ public enum Resource
 	STR_APP_VERSION		(Type.TEXT, "Ver. 1.01"),
 
 	IMG_TOOLBAR_ABOUT	(Type.IMAGE, "toolbar_about.png"),
+	
 	IMG_TOOLBAR_INSTALL	(Type.IMAGE, "toolbar_install.png"),
 	IMG_TOOLBAR_OPEN	(Type.IMAGE, "toolbar_open.png"),
+	
+	IMG_TOOLBAR_INSTALL_BLUE	(Type.IMAGE, "toolbar_install_blue.png"),
+	IMG_TOOLBAR_OPEN_BLUE	(Type.IMAGE, "toolbar_open_blue.png"),
+	
+	
 	IMG_TOOLBAR_PACK	(Type.IMAGE, "toolbar_pack.png"),
 	IMG_TOOLBAR_SHOW_EXPLORER	(Type.IMAGE, "toolbar_show_explorer.png"),
 	IMG_TOOLBAR_SHOW_MANIFEST	(Type.IMAGE, "toolbar_show_manifast.png"),
