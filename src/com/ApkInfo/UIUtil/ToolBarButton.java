@@ -7,24 +7,24 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 public class ToolBarButton extends JButton{
-	public ImageIcon  mEntericon;
-	public ImageIcon  mExiticon;
+	public ImageIcon  mHoverIcon;
+	public ImageIcon  mIcon;
 
-	public ToolBarButton(String text, ImageIcon Entericon, ImageIcon Exiticon)
+	public ToolBarButton(String text, ImageIcon icon, ImageIcon hoverIcon)
 	{
-		super(text, Exiticon);
-		this.mEntericon = Entericon;
-		this.mExiticon = Exiticon;
+		super(text, icon);
+		this.mHoverIcon = hoverIcon;
+		this.mIcon = icon;
 		
         this.addMouseListener(new MouseAdapter()
         {
             public void mouseEntered(MouseEvent evt)
             {
-            	setIcon(mEntericon);
+            	setIcon(mHoverIcon);
             }
             public void mouseExited(MouseEvent evt)
             {
-            	setIcon(mExiticon);
+            	setIcon(mIcon);
             }
         });
 	}

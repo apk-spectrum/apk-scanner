@@ -10,21 +10,22 @@ import com.ApkInfo.Core.CoreApkTool;
 
 public enum Resource
 {
-	STR_APP_VERSION		(Type.TEXT, "Ver. 1.01"),
+	STR_APP_VERSION				(Type.TEXT, "Ver. 1.01"),
 
-	IMG_TOOLBAR_ABOUT	(Type.IMAGE, "toolbar_about.png"),
-	
-	IMG_TOOLBAR_INSTALL	(Type.IMAGE, "toolbar_install.png"),
-	IMG_TOOLBAR_OPEN	(Type.IMAGE, "toolbar_open.png"),
-	
-	IMG_TOOLBAR_INSTALL_BLUE	(Type.IMAGE, "toolbar_install_blue.png"),
-	IMG_TOOLBAR_OPEN_BLUE	(Type.IMAGE, "toolbar_open_blue.png"),
-	
-	
-	IMG_TOOLBAR_PACK	(Type.IMAGE, "toolbar_pack.png"),
-	IMG_TOOLBAR_SHOW_EXPLORER	(Type.IMAGE, "toolbar_show_explorer.png"),
-	IMG_TOOLBAR_SHOW_MANIFEST	(Type.IMAGE, "toolbar_show_manifast.png"),
-	IMG_TOOLBAR_UNPACK	(Type.IMAGE, "toolbar_unpack.png"),	
+	IMG_TOOLBAR_OPEN			(Type.IMAGE, "toolbar_open.png"),
+	IMG_TOOLBAR_OPEN_HOVER		(Type.IMAGE, "toolbar_open_hover.png"),
+	IMG_TOOLBAR_MANIFEST		(Type.IMAGE, "toolbar_manifast.png"),
+	IMG_TOOLBAR_MANIFEST_HOVER	(Type.IMAGE, "toolbar_manifast_hover.png"),
+	IMG_TOOLBAR_EXPLORER		(Type.IMAGE, "toolbar_explorer.png"),
+	IMG_TOOLBAR_EXPLORER_HOVER	(Type.IMAGE, "toolbar_explorer_hover.png"),
+	IMG_TOOLBAR_PACK			(Type.IMAGE, "toolbar_pack.png"),
+	IMG_TOOLBAR_PACK_HOVER		(Type.IMAGE, "toolbar_pack_hover.png"),
+	IMG_TOOLBAR_UNPACK			(Type.IMAGE, "toolbar_unpack.png"),
+	IMG_TOOLBAR_UNPACK_HOVER	(Type.IMAGE, "toolbar_unpack_hover.png"),
+	IMG_TOOLBAR_INSTALL			(Type.IMAGE, "toolbar_install.png"),
+	IMG_TOOLBAR_INSTALL_HOVER	(Type.IMAGE, "toolbar_install_hover.png"),
+	IMG_TOOLBAR_ABOUT			(Type.IMAGE, "toolbar_about.png"),
+	IMG_TOOLBAR_ABOUT_HOVER		(Type.IMAGE, "toolbar_about_hover.png"),
 	
 	IMG_APP_ICON		(Type.IMAGE, "AppIcon.png"),
 	IMG_QUESTION		(Type.IMAGE, "question.png"),
@@ -32,6 +33,7 @@ public enum Resource
 	IMG_SUCCESS			(Type.IMAGE, "Succes.png"),
 	IMG_INSTALL_WAIT	(Type.IMAGE, "install_wait.gif"),
 	IMG_LOADING			(Type.IMAGE, "loading.gif"),
+
 	BIN_ADB_LNX			(Type.BIN, "adb"),
 	BIN_ADB_WIN			(Type.BIN, "adb.exe"),
 	BIN_APKTOOL_JAR		(Type.BIN, "apktool.jar");
