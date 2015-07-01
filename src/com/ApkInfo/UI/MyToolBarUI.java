@@ -177,8 +177,8 @@ public class MyToolBarUI extends JPanel implements ActionListener{
 								
 				jfc.showOpenDialog(null);
 				File dir = jfc.getSelectedFile();
-					        		        	
-				JOptionPane.showMessageDialog(null, dir.getPath(), "Open", JOptionPane.INFORMATION_MESSAGE);
+
+				if(dir!=null) JOptionPane.showMessageDialog(null, dir.getPath(), "Open", JOptionPane.INFORMATION_MESSAGE);
 				
 	        } else if(b.getText().equals("manifest")) {
 				  if(System.getProperty("os.name").indexOf("Window") >-1) {
