@@ -55,36 +55,43 @@ public class Example extends JPanel {
         btn_open.setHorizontalTextPosition(JLabel.CENTER);
         btn_open.setBorderPainted(false);
         btn_open.setOpaque(false);
+        btn_open.setFocusable(false);
         
         btn_show_manifest.setVerticalTextPosition(JLabel.BOTTOM);
         btn_show_manifest.setHorizontalTextPosition(JLabel.CENTER);
         btn_show_manifest.setBorderPainted(false);
         btn_show_manifest.setOpaque(false);
+        btn_show_manifest.setFocusable(false);
         
         btn_show_explorer.setVerticalTextPosition(JLabel.BOTTOM);
         btn_show_explorer.setHorizontalTextPosition(JLabel.CENTER);
         btn_show_explorer.setBorderPainted(false);
         btn_show_explorer.setOpaque(false);
+        btn_show_explorer.setFocusable(false);
         
         btn_unpack.setVerticalTextPosition(JLabel.BOTTOM);
         btn_unpack.setHorizontalTextPosition(JLabel.CENTER);
         btn_unpack.setBorderPainted(false);
         btn_unpack.setOpaque(false);
+        btn_unpack.setFocusable(false);
         
         btn_pack.setVerticalTextPosition(JLabel.BOTTOM);
         btn_pack.setHorizontalTextPosition(JLabel.CENTER);
         btn_pack.setBorderPainted(false);
         btn_pack.setOpaque(false);
+        btn_pack.setFocusable(false);
         
         btn_install.setVerticalTextPosition(JLabel.BOTTOM);
         btn_install.setHorizontalTextPosition(JLabel.CENTER);
         btn_install.setBorderPainted(false);
         btn_install.setOpaque(false);
+        btn_install.setFocusable(false);
         
         btn_about.setVerticalTextPosition(JLabel.BOTTOM);
         btn_about.setHorizontalTextPosition(JLabel.CENTER);
         btn_about.setBorderPainted(false);
         btn_about.setOpaque(false);
+        btn_about.setFocusable(false);
         
         JSeparator temp = new JSeparator(JSeparator.VERTICAL);
         temp.setBackground(Color.GRAY);
