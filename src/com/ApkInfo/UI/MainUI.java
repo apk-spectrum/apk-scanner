@@ -102,7 +102,6 @@ public class MainUI extends JFrame implements WindowListener
 				} else {
 					// open file dialog
 				}
-
 				if(apkFilePath == null) return;
 				
 				ProgressBarDlg = new MyProgressBarDemo();
