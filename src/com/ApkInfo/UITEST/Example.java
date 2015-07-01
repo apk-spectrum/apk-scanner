@@ -86,20 +86,34 @@ public class Example extends JPanel {
         btn_about.setBorderPainted(false);
         btn_about.setOpaque(false);
         
+        JSeparator temp = new JSeparator(JSeparator.VERTICAL);
+        temp.setBackground(Color.GRAY);
+                
         toolbar1.add(btn_open);
-        toolbar1.add(new JSeparator(JSeparator.VERTICAL));
-        
+        toolbar1.add(temp);
+                
         toolbar1.add(btn_show_manifest);
         toolbar1.add(btn_show_explorer);
-        toolbar1.add(new JSeparator(JSeparator.VERTICAL));
+        
+        temp = new JSeparator(JSeparator.VERTICAL);
+        temp.setBackground(Color.GRAY);
+        
+        toolbar1.add(temp);
         
         toolbar1.add(btn_unpack);
         toolbar1.add(btn_pack);
         
-        toolbar1.add(new JSeparator(JSeparator.VERTICAL));
+        temp = new JSeparator(JSeparator.VERTICAL);
+        temp.setBackground(Color.GRAY);
+        
+        toolbar1.add(temp);
         
         toolbar1.add(btn_install);
-        toolbar1.add(new JSeparator(JSeparator.VERTICAL));
+        
+        temp = new JSeparator(JSeparator.VERTICAL);
+        temp.setBackground(Color.GRAY);
+        
+        toolbar1.add(temp);
         
         toolbar1.add(btn_about);
 
