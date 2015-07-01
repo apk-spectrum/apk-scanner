@@ -13,6 +13,7 @@ import java.io.IOException;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -168,7 +169,17 @@ public class MyToolBarUI extends JPanel implements ActionListener{
 	        System.out.println(b.getText());
 	        
 	        if (b.getText().equals("Open")) {
-	        	JOptionPane.showMessageDialog(null, "Open", "Open", JOptionPane.INFORMATION_MESSAGE);
+	        	
+	        	
+				JFileChooser jfc = new JFileChooser();
+				//jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("apk","apk"));
+								
+				jfc.showOpenDialog(null);
+				File dir = jfc.getSelectedFile();
+					        		        	
+				JOptionPane.showMessageDialog(null, dir.getPath(), "Open", JOptionPane.INFORMATION_MESSAGE);
+				
 	        } else if(b.getText().equals("manifest")) {
 				  if(System.getProperty("os.name").indexOf("Window") >-1) {
 					  try {
