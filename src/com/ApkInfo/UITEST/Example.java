@@ -2,6 +2,7 @@ package com.ApkInfo.UITEST;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -131,6 +132,8 @@ public class Example extends JPanel implements ActionListener{
 
         panel.add(toolbar1,BorderLayout.WEST);
         add(panel, BorderLayout.NORTH);
+
+        setLayout(new FlowLayout(FlowLayout.LEFT));
 
         //setTitle("Toolbars");
         //setSize(360, 250);
