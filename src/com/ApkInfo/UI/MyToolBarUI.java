@@ -97,7 +97,7 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         
         toolbar1.add(btn_about);
         
-        toolbar1.addSeparator(new Dimension(120,0));
+        toolbar1.addSeparator(new Dimension(138,0));
 
         toolbar1.setAlignmentX(0);
         toolbar1.setFloatable(false);

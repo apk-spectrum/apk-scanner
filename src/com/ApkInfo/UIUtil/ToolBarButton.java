@@ -27,7 +27,7 @@ public class ToolBarButton extends JButton{
     	setFocusable(false);
     	addActionListener(listener);
 
-		setPreferredSize(new Dimension(65,80));
+		setPreferredSize(new Dimension(63,65));
 		
         this.addMouseListener(new MouseAdapter()
         {
