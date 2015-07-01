@@ -129,7 +129,7 @@ public class MainUI extends JFrame implements WindowListener
 	private void initialize() {
 		frame = new JFrame();
 		frame.addWindowListener(this);
-		frame.setBounds(100, 100, 600, 700);
+		frame.setBounds(100, 100, 600, 580);
 		frame.setTitle(Title);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
 		

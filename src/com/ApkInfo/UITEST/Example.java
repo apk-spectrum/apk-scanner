@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
@@ -86,19 +87,19 @@ public class Example extends JPanel {
         btn_about.setOpaque(false);
         
         toolbar1.add(btn_open);
-        toolbar1.addSeparator();
+        toolbar1.add(new JSeparator(JSeparator.VERTICAL));
         
         toolbar1.add(btn_show_manifest);
         toolbar1.add(btn_show_explorer);
-        toolbar1.addSeparator();
+        toolbar1.add(new JSeparator(JSeparator.VERTICAL));
         
         toolbar1.add(btn_unpack);
         toolbar1.add(btn_pack);
         
-        toolbar1.addSeparator();
+        toolbar1.add(new JSeparator(JSeparator.VERTICAL));
         
         toolbar1.add(btn_install);
-        toolbar1.addSeparator();
+        toolbar1.add(new JSeparator(JSeparator.VERTICAL));
         
         toolbar1.add(btn_about);
 
