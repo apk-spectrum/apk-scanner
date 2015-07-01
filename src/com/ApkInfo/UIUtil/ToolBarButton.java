@@ -3,7 +3,6 @@ package com.ApkInfo.UIUtil;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
@@ -22,7 +21,6 @@ public class ToolBarButton extends JButton{
             public void mouseEntered(MouseEvent evt)
             {
             	setIcon(mEntericon);
-
             }
             public void mouseExited(MouseEvent evt)
             {

@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -18,10 +20,21 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
 import com.ApkInfo.Resource.Resource;
+import com.ApkInfo.UI.DeviceUIManager;
+import com.ApkInfo.UI.MainUI;
+import com.ApkInfo.UIUtil.ToolBarButton;
 
 
-public class Example extends JPanel {
+public class Example extends JPanel implements ActionListener{
 
+    ToolBarButton btn_open;
+    JButton btn_show_manifest;
+    JButton btn_show_explorer;
+    JButton btn_unpack;
+    JButton btn_pack;
+    JButton btn_install;
+    JButton btn_about;
+	
     public Example() {
         initUI();
     }
@@ -44,74 +57,25 @@ public class Example extends JPanel {
         ImageIcon toolbar_install  =  Resource.IMG_TOOLBAR_INSTALL.getImageIcon(Iconsize,Iconsize);
         ImageIcon toolbar_about  =  Resource.IMG_TOOLBAR_ABOUT.getImageIcon(Iconsize,Iconsize);
         
-        final ImageIcon toobar_blue_open  =  Resource.IMG_TOOLBAR_OPEN_BLUE.getImageIcon(Iconsize,Iconsize);
+        ImageIcon toobar_blue_open  =  Resource.IMG_TOOLBAR_OPEN_BLUE.getImageIcon(Iconsize,Iconsize);
         ImageIcon toobar_blue_install  =  Resource.IMG_TOOLBAR_INSTALL_BLUE.getImageIcon(Iconsize,Iconsize);
         
-        final JButton btn_open = new JButton("Open",toolbar_open);
-        JButton btn_show_manifest = new JButton("manifest",toolbar_show_manifest);
-        JButton btn_show_explorer = new JButton("탐색기", toolbar_show_explorer);
-        JButton btn_unpack = new JButton("unpack", toolbar_unpack);
-        JButton btn_pack = new JButton("pack", toolbar_pack);
-        JButton btn_install = new JButton("설치", toolbar_install);
-        JButton btn_about = new JButton("about", toolbar_about);
+        btn_open = new ToolBarButton("Open",toolbar_open, toobar_blue_open);
+        btn_show_manifest = new JButton("manifest",toolbar_show_manifest);
+        btn_show_explorer = new JButton("탐색기", toolbar_show_explorer);
+        btn_unpack = new JButton("unpack", toolbar_unpack);
+        btn_pack = new JButton("pack", toolbar_pack);
+        btn_install = new JButton("설치", toolbar_install);
+        btn_about = new JButton("about", toolbar_about);
         
-        btn_open.setVerticalTextPosition(JLabel.BOTTOM);
-        btn_open.setHorizontalTextPosition(JLabel.CENTER);
-        btn_open.setBorderPainted(false);
-        btn_open.setOpaque(false);
-        btn_open.setFocusable(false);
-        
-        btn_open.addMouseListener(new MouseAdapter()
-        {
-            public void mouseEntered(MouseEvent evt)
-            {
-            	btn_open.setIcon(toobar_blue_open);
-
-            }
-            public void mouseExited(MouseEvent evt)
-            {
-            	btn_open.setIcon(toolbar_open);
-
-            }
-        });
-        
-        
-        btn_show_manifest.setVerticalTextPosition(JLabel.BOTTOM);
-        btn_show_manifest.setHorizontalTextPosition(JLabel.CENTER);
-        btn_show_manifest.setBorderPainted(false);
-        btn_show_manifest.setOpaque(false);
-        btn_show_manifest.setFocusable(false);
-        
-        btn_show_explorer.setVerticalTextPosition(JLabel.BOTTOM);
-        btn_show_explorer.setHorizontalTextPosition(JLabel.CENTER);
-        btn_show_explorer.setBorderPainted(false);
-        btn_show_explorer.setOpaque(false);
-        btn_show_explorer.setFocusable(false);
-        
-        btn_unpack.setVerticalTextPosition(JLabel.BOTTOM);
-        btn_unpack.setHorizontalTextPosition(JLabel.CENTER);
-        btn_unpack.setBorderPainted(false);
-        btn_unpack.setOpaque(false);
-        btn_unpack.setFocusable(false);
-        
-        btn_pack.setVerticalTextPosition(JLabel.BOTTOM);
-        btn_pack.setHorizontalTextPosition(JLabel.CENTER);
-        btn_pack.setBorderPainted(false);
-        btn_pack.setOpaque(false);
-        btn_pack.setFocusable(false);
-        
-        btn_install.setVerticalTextPosition(JLabel.BOTTOM);
-        btn_install.setHorizontalTextPosition(JLabel.CENTER);
-        btn_install.setBorderPainted(false);
-        btn_install.setOpaque(false);
-        btn_install.setFocusable(false);
-        
-        btn_about.setVerticalTextPosition(JLabel.BOTTOM);
-        btn_about.setHorizontalTextPosition(JLabel.CENTER);
-        btn_about.setBorderPainted(false);
-        btn_about.setOpaque(false);
-        btn_about.setFocusable(false);
-        
+        setToolbarButton(btn_open);
+        setToolbarButton(btn_show_manifest);
+        setToolbarButton(btn_show_explorer);
+        setToolbarButton(btn_unpack);
+        setToolbarButton(btn_pack);
+        setToolbarButton(btn_install);
+        setToolbarButton(btn_about);
+ 
         JSeparator temp = new JSeparator(JSeparator.VERTICAL);
         temp.setBackground(Color.GRAY);
                 
@@ -174,6 +138,15 @@ public class Example extends JPanel {
         //setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
+    public void setToolbarButton(JButton temp) {
+    	temp.setVerticalTextPosition(JLabel.BOTTOM);
+    	temp.setHorizontalTextPosition(JLabel.CENTER);
+    	temp.setBorderPainted(false);
+    	temp.setOpaque(false);
+    	temp.setFocusable(false);
+    	temp.addActionListener(this);
+    }
+    
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -182,4 +155,62 @@ public class Example extends JPanel {
             }
         });
     }
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+	        JButton b = (JButton) e.getSource();
+	        
+	        System.out.println(b.getText());
+	        
+	        if (b.getText().equals("Open")) {
+	        	
+	        } else if(b.getText().equals("manifest")) {
+				  if(System.getProperty("os.name").indexOf("Window") >-1) {
+					  try {
+						new ProcessBuilder("notepad", MainUI.GetMyApkInfo().strWorkAPKPath + File.separator + "AndroidManifest.xml").start();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+	
+				  } else {  //for linux
+					  try {
+						  new ProcessBuilder("gedit", MainUI.GetMyApkInfo().strWorkAPKPath + File.separator + "AndroidManifest.xml").start();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+	
+				  }	
+	        } else if(b.getText().equals("탐색기")) { 
+				  if(System.getProperty("os.name").indexOf("Window") >-1) {
+					  try {
+						Process oProcess = new ProcessBuilder("explorer", MainUI.GetMyApkInfo().strWorkAPKPath).start();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+				  } else {  //for linux
+					  try {
+						  Process oProcess = new ProcessBuilder("nautilus", MainUI.GetMyApkInfo().strWorkAPKPath).start();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+				  }
+	        } else if(b.getText().equals("unpack")) {
+	        	
+	        } else if(b.getText().equals("pack")) {
+	        	
+	        } else if(b.getText().equals("설치")) {
+			  btn_install.setEnabled(false);
+			  DeviceUIManager mMyDeviceManager = new DeviceUIManager(MainUI.GetMyApkInfo().strPackageName, MainUI.GetMyApkInfo().strAPKPath);
+			  
+	        } else if(b.getText().equals("about")) {
+	        	
+	        }
+	}
 }
