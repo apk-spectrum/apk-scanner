@@ -137,11 +137,7 @@ public class MyToolBarUI extends JPanel implements ActionListener{
 		// TODO Auto-generated method stub
 	        JButton b = (JButton) e.getSource();
 	        
-	        System.out.println(b.getText());
-	        
 	        if (b.getText().equals("Open")) {
-	        	
-	        	
 				JFileChooser jfc = new JFileChooser();
 				//jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("apk","apk"));
