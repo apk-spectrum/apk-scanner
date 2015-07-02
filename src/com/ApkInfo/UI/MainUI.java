@@ -23,13 +23,13 @@ public class MainUI extends JFrame implements WindowListener
 	private static final long serialVersionUID = 1L;
 	
 	private JFrame frame;
-	static MyApkInfo mApkInfo;
-	private static String Title = "";
+	static private MyApkInfo mApkInfo;
+	static private String Title = "";
 		
-	static String Osname = "";
+	static private String Osname = "";
 	static private String apkFilePath = null;
 	
-	static MyCoreThead startCore;
+	static private MyCoreThead startCore;
 	
 	static MainUI window;
 	
@@ -44,7 +44,7 @@ public class MainUI extends JFrame implements WindowListener
 	 */
 	public static MyApkInfo GetMyApkInfo(){
 		return mApkInfo;
-	}	
+	}
 	
 	class MyCoreThead extends Thread {
 		public void run() {

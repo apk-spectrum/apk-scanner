@@ -29,7 +29,7 @@ public class MyTabUI extends JPanel{
 	        tabbedPane.setUI(new PlasticTabbedPaneUI());
 	        
 	        
-	        Container panel1 = new MyTabUIbasicInfo(MainUI.mApkInfo);	        
+	        Container panel1 = new MyTabUIbasicInfo(MainUI.GetMyApkInfo());	        
 	        tabbedPane.addTab("APK Info", null, panel1, "APK Info");
 	        tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 	         

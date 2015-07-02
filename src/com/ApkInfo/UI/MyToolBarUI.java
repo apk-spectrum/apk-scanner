@@ -114,7 +114,7 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         //setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
     
-    public JSeparator getNewSeparator()
+    private JSeparator getNewSeparator()
     {
         JSeparator temp = new JSeparator(JSeparator.VERTICAL);
         temp.setBackground(Color.gray);
