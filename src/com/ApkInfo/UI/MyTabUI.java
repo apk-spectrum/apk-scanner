@@ -85,7 +85,7 @@ public class MyTabUI extends JPanel{
 		((MyTabUIWidget) Panels[1]).setData(apkInfo.arrWidgets);
 		((MyTabUILib) Panels[2]).setData(apkInfo.LibPathList);
 		MainUI.ProgressBarDlg.addProgress(25,"check resource(*.png)...\n");
-        //((MyTabUIResource) Panels[3]).setData(apkInfo.strWorkAPKPath, apkInfo.ImagePathList);
+        ((MyTabUIResource) Panels[3]).setData(apkInfo.strWorkAPKPath, apkInfo.ImagePathList);
         ((MyTabUIActivity) Panels[4]).setData(apkInfo.ActivityList);
         ((MyTabUISign) Panels[5]).setData(apkInfo.CertList);
         

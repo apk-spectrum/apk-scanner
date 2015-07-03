@@ -18,16 +18,20 @@ import javax.swing.table.TableColumn;
 public class MyTabUIActivity extends JPanel {
 	private static final long serialVersionUID = 8325900007802212630L;
 
-	JTextArea textArea;
-	JPanel IntentPanel;
-	JLabel IntentLabel;
+	private JTextArea textArea;
+	private JPanel IntentPanel;
+	private JLabel IntentLabel;
+	
+	private MyTableModel TableModel; 
+	private JTable table;
   
 	public ArrayList<Object[]> ActivityList = new ArrayList<Object[]>();
   	  
 	public MyTabUIActivity() {
 		super(new GridLayout(2, 0));
 
-		final JTable table = new JTable(new MyTableModel());
+		TableModel = new MyTableModel();
+		table = new JTable(TableModel);
 
 		ListSelectionModel cellSelectionModel = table.getSelectionModel();
     
@@ -65,6 +69,9 @@ public class MyTabUIActivity extends JPanel {
 	{
 		ActivityList.clear();
 		ActivityList.addAll(data);
+		System.out.println("MyTabUIActivity setData() " + ActivityList.size());
+		//this.repaint();
+		//table.repaint();
 	}
 
 	public void setJTableColumnsWidth(JTable table, int tablePreferredWidth,

@@ -1,7 +1,6 @@
 package com.ApkInfo.UI;
 
 import java.awt.EventQueue;
-import java.awt.FileDialog;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -14,8 +13,6 @@ import java.awt.event.WindowListener;
 import java.io.File;
 
 import com.ApkInfo.Core.*;
-import com.ApkInfo.Core.ApkManager.SolveType;
-import com.ApkInfo.Core.CoreApkTool.FSStyle;
 import com.ApkInfo.Resource.Resource;
 
 
@@ -150,7 +147,7 @@ public class MainUI extends JFrame implements WindowListener
 		frame.add(mMyToolBarUI, BorderLayout.NORTH);
 		
 		//frame.getContentPane().add(new MyButtonPanel(), BorderLayout.SOUTH);
-		frame.setResizable( false );
+		frame.setResizable( true );
 		
 		//frame.add(new MyButtonPanel(), BorderLayout.NORTH);
 		
