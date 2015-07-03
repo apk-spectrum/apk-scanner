@@ -87,8 +87,9 @@ public class MyTabUISign extends JPanel{
 
         ListSelectionListener listSelectionListener = new ListSelectionListener() {
           public void valueChanged(ListSelectionEvent listSelectionEvent) {
-        	    
-              textArea.setText((String)mCertList.get(jlist.getSelectedIndex())[1]);                
+              textArea.setText((String)mCertList.get(jlist.getSelectedIndex())[1]);
+              textArea.setCaretPosition(0);
+              //textArea.requestFocus();
           }
         };
         jlist.addListSelectionListener(listSelectionListener);
@@ -106,6 +107,8 @@ public class MyTabUISign extends JPanel{
           }
         };
         jlist.addMouseListener(mouseListener);
+        
+        jlist.setSelectedIndex(0);
     }
 }
 
