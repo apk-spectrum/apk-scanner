@@ -1,20 +1,10 @@
 package com.ApkInfo.TabUI;
 
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -22,76 +12,74 @@ import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 
 import com.ApkInfo.Core.CoreApkTool;
-import com.ApkInfo.Core.MyApkInfo;
-import com.ApkInfo.TabUI.MyTabUILib.MyTableModel;
-import com.ApkInfo.UI.MainUI;
 
 /**
  * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for
  * both cells and column headers.
  */
 public class MyTabUIWidget extends JPanel {
-	public ArrayList<Object[]> arrWidgets;
-	 public MyTabUIWidget() {
-	    super(new GridLayout(1, 0));
-	    
-	    arrWidgets = new ArrayList<Object[]>(); 
-	    
-	    JTable table = new JTable(new MyTableModel());
-	    ArrayList<Object[]> temparray = MainUI.GetMyApkInfo().arrWidgets;
-	    
-	    //table.setPreferredScrollableViewportSize(new Dimension(500, 70));
-	    
-	    for(int i=0; i< temparray.size(); i++) {
-	    	
-	    	ImageIcon myimageicon = new ImageIcon((String)temparray.get(i)[0]);
-	    	
-	    	myimageicon.setImage(CoreApkTool.getMaxScaledImage(myimageicon,100,100));
-	    	
-	    	Object[] temp = { myimageicon , temparray.get(i)[1], temparray.get(i)[2], temparray.get(i)[3], temparray.get(i)[4]};
-	    	arrWidgets.add(temp);
-	    	
-	    }
-	    
-	    for(int i=0; i< arrWidgets.size(); i++) {
-	    	table.setRowHeight(i, 100);
-	    }
-	    
-	    setJTableColumnsWidth(table, 500, 20,15,17,60,10);	    
-	    
-	    //Create the scroll pane and add the table to it.
-	    
-	    table.setDefaultRenderer(String.class, new MultiLineCellRenderer());
-	    
-	    JScrollPane scrollPane = new JScrollPane(table);
+	private static final long serialVersionUID = 4881638983501664860L;
 
-	    //Add the scroll pane to this panel.
-	    add(scrollPane);
-	  }
-	  
-	  public static void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
-		        double... percentages) {
-		    double total = 0;
-		    for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
-		        total += percentages[i];
-		    }
-		 
-		    for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
-		        TableColumn column = table.getColumnModel().getColumn(i);		        
-		        column.setPreferredWidth((int)
-		                (tablePreferredWidth * (percentages[i] / total)));
-		    }
+	JTable table;
+	public ArrayList<Object[]> arrWidgets = new ArrayList<Object[]>();
+
+	public MyTabUIWidget() {
+		super(new GridLayout(1, 0));
+
+		table = new JTable(new MyTableModel());
+		
+		setJTableColumnsWidth(table, 500, 20,15,17,60,10);	    
+		
+		//Create the scroll pane and add the table to it.
+		
+		table.setDefaultRenderer(String.class, new MultiLineCellRenderer());
+		
+		JScrollPane scrollPane = new JScrollPane(table);
+		
+		//Add the scroll pane to this panel.
+		add(scrollPane);
+	}
+	
+	public void setData(ArrayList<Object[]> data)
+	{
+		//table.setPreferredScrollableViewportSize(new Dimension(500, 70));
+		arrWidgets.clear();
+		if(data == null) return;
+		for(int i=0; i< data.size(); i++) {
+			ImageIcon myimageicon = new ImageIcon((String)data.get(i)[0]);
+			
+			myimageicon.setImage(CoreApkTool.getMaxScaledImage(myimageicon,100,100));
+			
+			Object[] temp = { myimageicon , data.get(i)[1], data.get(i)[2], data.get(i)[3], data.get(i)[4]};
+			arrWidgets.add(temp);
 		}
+	    
+		for(int i=0; i< arrWidgets.size(); i++) {
+			table.setRowHeight(i, 100);
+		}
+	}
+
+	public static void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
+												double... percentages) {
+		double total = 0;
+		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
+			total += percentages[i];
+		}
+ 
+		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
+			TableColumn column = table.getColumnModel().getColumn(i);		        
+			column.setPreferredWidth((int)(tablePreferredWidth * (percentages[i] / total)));
+		}
+	}
 	  
 	  class MyTableModel extends AbstractTableModel {
-		  
-		  private String[] columnNames = { "Image","Label", "Size", "Activity", "Type"};
+		private static final long serialVersionUID = 2567370181372859791L;
+
+		private String[] columnNames = { "Image","Label", "Size", "Activity", "Type"};
 		      
 		    MyTableModel() {
 		  }
@@ -117,7 +105,7 @@ public class MyTabUIWidget extends JPanel {
 	     * each cell. If we didn't implement this method, then the last column
 	     * would contain text ("true"/"false"), rather than a check box.
 	     */
-	    public Class getColumnClass(int c) {
+		public Class<? extends Object> getColumnClass(int c) {
 	      return getValueAt(0, c).getClass();
 	    }
 
@@ -142,7 +130,8 @@ public class MyTabUIWidget extends JPanel {
 	      fireTableCellUpdated(row, col);
 	    }
 
-	    private void printDebugData() {
+	    @SuppressWarnings("unused")
+		private void printDebugData() {
 	      int numRows = getRowCount();
 	      int numCols = getColumnCount();
 
@@ -158,8 +147,9 @@ public class MyTabUIWidget extends JPanel {
 	  }
 	    
 	  class MultiLineCellRenderer extends JTextArea implements TableCellRenderer {
+		private static final long serialVersionUID = -4421652692115836378L;
 
-		  public MultiLineCellRenderer() {
+		public MultiLineCellRenderer() {
 		    setLineWrap(true);
 		    setWrapStyleWord(true);
 		    setOpaque(true);

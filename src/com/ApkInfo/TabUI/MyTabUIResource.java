@@ -3,87 +3,48 @@ package com.ApkInfo.TabUI;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import com.ApkInfo.Core.CoreApkTool;
 import com.ApkInfo.UI.MainUI;
 
 public class MyTabUIResource extends JPanel{
+	private static final long serialVersionUID = -934921813626224616L;
 
-    private final Map<String, ImageIcon> imageMap;
+	private Map<String, ImageIcon> imageMap = new HashMap<>();
     
     private JLabel photographLabel;
-    ArrayList<String> nameList;
-    ArrayList<String> ShownameList;
+    ArrayList<String> nameList = new ArrayList<String>();
+    ArrayList<String> ShownameList = new ArrayList<String>();
+    String path = null;
     
     JList list;
     
     public MyTabUIResource() {
-    	 
-    	MainUI.ProgressBarDlg.addProgress(25,"check resource(*.png)...\n");
-    	nameList = MainUI.GetMyApkInfo().ImagePathList;
-    	ShownameList = new ArrayList<String>();
-    	
-    	for(int i=0; i < nameList.size(); i++) {
-    		ShownameList.add(nameList.get(i).substring(MainUI.GetMyApkInfo().strWorkAPKPath.length()));
-    		
-    	}
-        imageMap = createImageMap(nameList);
-        
-        list = new JList(ShownameList.toArray());
-        list.setCellRenderer(new MarioListRenderer());
+    	list = new JList();
+    	setData(MainUI.GetMyApkInfo().strWorkAPKPath, MainUI.GetMyApkInfo().ImagePathList);
+    	list.setCellRenderer(new MarioListRenderer());
         list.addListSelectionListener(new JListHandler());
-        
         JScrollPane scroll = new JScrollPane(list);
+
+        
+
         scroll.setPreferredSize(new Dimension(300, 400));
+        scroll.repaint();
                 
         photographLabel = new JLabel();
         photographLabel.setVerticalTextPosition(JLabel.BOTTOM);
@@ -91,18 +52,36 @@ public class MyTabUIResource extends JPanel{
         photographLabel.setHorizontalAlignment(JLabel.CENTER);
         photographLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
                 
-        MainUI.WaitingDlg.setVisible(false);
-        
         this.setLayout(new GridLayout(1, 2));        
         this.add(scroll);
         this.add(photographLabel);
     }
+
+    public void setData(String path, ArrayList<String> data)
+    {
+    	nameList.clear();
+    	ShownameList.clear();
+    	imageMap.clear();
+    	list.clearSelection();
+    	
+    	this.path = path; 
+    	
+    	if(data == null) return;
+
+    	nameList.addAll(data);
+    	for(int i=0; i < nameList.size(); i++) {
+    		ShownameList.add(nameList.get(i).substring(path.length()));
+    	}
+        createImageMap(nameList);
+
+        list.setListData(ShownameList.toArray());
+    }
     
     public class MarioListRenderer extends DefaultListCellRenderer {
-
+		private static final long serialVersionUID = 2674069622264059360L;
         //Font font = new Font("helvitica", Font.BOLD, 10);
 
-        @Override
+		@Override
         public Component getListCellRendererComponent(
                 JList list, Object value, int index,
                 boolean isSelected, boolean cellHasFocus) {
@@ -110,7 +89,7 @@ public class MyTabUIResource extends JPanel{
             JLabel label = (JLabel) super.getListCellRendererComponent(
                     list, value, index, isSelected, cellHasFocus);
             
-            label.setIcon(imageMap.get(MainUI.GetMyApkInfo().strWorkAPKPath+(String)value));
+            label.setIcon(imageMap.get(path+(String)value));
             label.setHorizontalTextPosition(JLabel.RIGHT);
             //label.setFont(font);            
             return label;
@@ -118,23 +97,21 @@ public class MyTabUIResource extends JPanel{
     }
 
     private Map<String, ImageIcon> createImageMap(ArrayList<String> list) {
-        Map<String, ImageIcon> map = new HashMap<>();
+        //Map<String, ImageIcon> map = new HashMap<>();
         try {        	
         	for(int i=0; i< list.size(); i++) {
-        		map.put(list.get(i), new ImageIcon(CoreApkTool.getScaledImage(new ImageIcon(list.get(i)),32,32)));
+        		imageMap.put(list.get(i), new ImageIcon(CoreApkTool.getScaledImage(new ImageIcon(list.get(i)),32,32)));
         	}
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return map;
+        return imageMap;
     }
 
 
     private class JListHandler implements ListSelectionListener {
     // 리스트의 항목이 선택이 되면
     public void valueChanged(ListSelectionEvent event) {
-    	
-    		String imagepath;
     		System.out.println("valueChanged : " + list.getSelectedIndex() + " event : "+ event.getSource());
     		
     		photographLabel.setIcon(new ImageIcon(CoreApkTool.getMaxScaledImage(

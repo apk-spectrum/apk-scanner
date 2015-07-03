@@ -5,43 +5,80 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.text.DecimalFormat;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UI.MyImagePanel;
-import com.ApkInfo.Core.CoreApkTool;
 import com.ApkInfo.Core.CoreCertTool;
 import com.ApkInfo.Core.MyApkInfo;
-import com.ApkInfo.Core.CoreApkTool.FSStyle;
 
 public class MyTabUIbasicInfo extends JComponent{
-	public MyTabUIbasicInfo(MyApkInfo ApkInfo) {
-    	JPanel panelparent = new JPanel();
+	private static final long serialVersionUID = 6431995641984509482L;
+
+	private JTextArea apkinform;
+	private JTextArea apkpermission;
+	private MyImagePanel imagepanel;
+
+	public MyTabUIbasicInfo() {
+    	//JPanel panelparent = new JPanel();
     	JPanel panel = new JPanel(true);
         	        
         GridBagConstraints c = new GridBagConstraints();
         panel.setLayout(new GridBagLayout());
         
-    	JTextArea apkinform = new JTextArea();
-        JTextArea apkpermission = new JTextArea();
+    	apkinform = new JTextArea();
+        apkpermission = new JTextArea();
         
 		JScrollPane jsp = new JScrollPane(apkpermission);
-		JScrollBar jsb;
-		
-		String strTabInfo = "";
-		
-		jsb = jsp.getVerticalScrollBar();
+
+		//JScrollBar jsb;
+		//jsb = jsp.getVerticalScrollBar();
         
         apkinform.setEditable(false);
         Font font = new Font("helvitica", Font.BOLD, 15);
         apkinform.setFont(font);
+        apkinform.setBackground(panel.getBackground());
+
+        apkpermission.setEditable(false);
         
+        imagepanel = new MyImagePanel(Resource.IMG_APP_ICON.getPath());
+        //panel.add(imagepanel);
+        //panel.add(apkinform);        	        
+        imagepanel.setMinimumSize(new Dimension(150, 150));
+        imagepanel.setPreferredSize(new Dimension(150, 150));
+        
+        c.weightx = 0.1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        
+        panel.setBorder(BorderFactory.createEmptyBorder(0 , 30 , 0 , 0));        
+        panel.add(imagepanel, c);
+        c.weightx = 0.5;
+        c.gridx = 1;
+        panel.add(apkinform, c);
+        
+        this.add(panel);
+        //panelparent.add(apkpermission);
+        this.add(jsp);
+        
+        this.setLayout(new GridLayout(2, 1));
+        
+	}
+
+	public void setData(MyApkInfo ApkInfo)
+	{
+        if(ApkInfo.strIconPath != null) {
+            imagepanel.setData(ApkInfo.strIconPath);
+        }
+        
+		String strTabInfo = "";
+
         strTabInfo += "" + ApkInfo.strLabelname +" - ";
         strTabInfo += "" + ApkInfo.strPackageName +"\n";
         strTabInfo += "Ver. " + ApkInfo.strVersionName +" / ";
@@ -77,56 +114,16 @@ public class MyTabUIbasicInfo extends JComponent{
         	strTabInfo += ", SHARED_USER_ID";
         }
         //strTabInfo += "\n\n";
-        
-                
+
         apkinform.setText(strTabInfo);
         
-        apkinform.setBackground(panel.getBackground());
-        
-
         String etcInfo = "■■■■■■■■■■■■■■■■■  Cert  ■■■■■■■■■■■■■■■■■■■■\n"
-        				+ CoreCertTool.getCertSummary()
-        				+ "\n■■■■■■■■■■■■■■■■ Permissions ■■■■■■■■■■■■■■■■■■"
-        				+ "\n" + ApkInfo.strPermissions;
-		if(!ApkInfo.strSharedUserId.isEmpty()) {
-			etcInfo = "SharedUserId : " + ApkInfo.strSharedUserId + "\n\n" + etcInfo;
-		}
-        apkpermission.setText(etcInfo);
-
-          
-        apkpermission.setEditable(false);
-        
-        //for test
-        MyImagePanel imagepanel;
-        if(ApkInfo.strIconPath != null){
-            imagepanel = new MyImagePanel(ApkInfo.strIconPath);
-        } else {
-            imagepanel = new MyImagePanel("res/icon.png");
+				+ CoreCertTool.getCertSummary()
+				+ "\n■■■■■■■■■■■■■■■■ Permissions ■■■■■■■■■■■■■■■■■■"
+				+ "\n" + ApkInfo.strPermissions;
+        if(!ApkInfo.strSharedUserId.isEmpty()) {
+        	etcInfo = "SharedUserId : " + ApkInfo.strSharedUserId + "\n\n" + etcInfo;
         }
-        	        
-        //panel.add(imagepanel);
-        //panel.add(apkinform);        	        
-        
-        imagepanel.setPreferredSize(new Dimension(100, 100));
-        
-        c.weightx = 0.1;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 0;
-        
-        panel.setBorder(BorderFactory.createEmptyBorder(0 , 30 , 0 , 0));        
-        panel.add(imagepanel, c);
-        c.weightx = 0.5;
-        c.gridx = 1;
-        panel.add(apkinform, c);
-        
-        this.add(panel);
-        //panelparent.add(apkpermission);
-        this.add(jsp);
-        
-        this.setLayout(new GridLayout(2, 1));
-        
+        apkpermission.setText(etcInfo);
 	}
-
-
 }

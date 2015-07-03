@@ -3,64 +3,38 @@ package com.ApkInfo.TabUI;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableModel;
 import javax.swing.JList;
-import javax.swing.JTextPane;
-
-
-
-
 
 
 /**
  * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for
  * both cells and column headers.
  */
-import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
-import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.ApkInfo.UI.MainUI;
 
 public class MyTabUISign extends JPanel{
+	private static final long serialVersionUID = 4333997417315260023L;
+	final JList<String> jlist;
 	JTextArea textArea;
 	
-	ArrayList<Object[]> mCertList;
+	ArrayList<Object[]> mCertList = null;
 	
     public MyTabUISign() {
-    	
-    	mCertList = MainUI.GetMyApkInfo().CertList;
-    	
-        String[] labels = new String[mCertList.size()];
         //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        
-        for(int i=0; i< labels.length; i++) {
-        	labels[i] = (String)mCertList.get(i)[0];        	
-        }
-        
-        final JList jlist = new JList(labels);
-        
+        jlist = new JList<String>();
+
         GridBagConstraints c = new GridBagConstraints();
         this.setLayout(new GridBagLayout());
         JScrollPane scrollPane1 = new JScrollPane(jlist);
@@ -87,6 +61,7 @@ public class MyTabUISign extends JPanel{
 
         ListSelectionListener listSelectionListener = new ListSelectionListener() {
           public void valueChanged(ListSelectionEvent listSelectionEvent) {
+        	  if(mCertList == null) return;
               textArea.setText((String)mCertList.get(jlist.getSelectedIndex())[1]);
               textArea.setCaretPosition(0);
               //textArea.requestFocus();
@@ -95,8 +70,9 @@ public class MyTabUISign extends JPanel{
         jlist.addListSelectionListener(listSelectionListener);
 
         MouseListener mouseListener = new MouseAdapter() {
-          public void mouseClicked(MouseEvent mouseEvent) {
-            JList theList = (JList) mouseEvent.getSource();
+          @SuppressWarnings("unchecked")
+		public void mouseClicked(MouseEvent mouseEvent) {
+			JList<String> theList = (JList<String>) mouseEvent.getSource();
             if (mouseEvent.getClickCount() == 2) {
               int index = theList.locationToIndex(mouseEvent.getPoint());
               if (index >= 0) {
@@ -107,7 +83,16 @@ public class MyTabUISign extends JPanel{
           }
         };
         jlist.addMouseListener(mouseListener);
-        
+    }
+    
+    public void setData(ArrayList<Object[]> data) {
+    	mCertList = null;
+        String[] labels = new String[data.size()];        
+        for(int i=0; i< labels.length; i++) {
+        	labels[i] = (String)data.get(i)[0];        	
+        }
+        jlist.setListData(labels);
+    	mCertList = data;
         jlist.setSelectedIndex(0);
     }
 }

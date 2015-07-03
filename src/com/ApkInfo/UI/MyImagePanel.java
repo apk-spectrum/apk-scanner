@@ -4,23 +4,25 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 public class MyImagePanel extends JPanel{
+	private static final long serialVersionUID = -4668877323388291513L;
 
-    private BufferedImage image;
-    private int mwidth, mheight;
-    public MyImagePanel(String FilePath) {
-    	    	
-    	
-       try {                
-          image = ImageIO.read(new File(FilePath));
-       } catch (IOException ex) {
-            // handle exception...
-       }
+	private BufferedImage image;
+
+	public MyImagePanel(String FilePath) {
+    	setData(FilePath);
+    }
+    
+    public void setData(String FilePath)
+    {
+        try {                
+            image = ImageIO.read(new File(FilePath));
+         } catch (IOException ex) {
+              // handle exception...
+         }
     }
 
     @Override

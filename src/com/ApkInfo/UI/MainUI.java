@@ -14,6 +14,7 @@ import java.awt.event.WindowListener;
 import java.io.File;
 
 import com.ApkInfo.Core.*;
+import com.ApkInfo.Core.ApkManager.SolveType;
 import com.ApkInfo.Core.CoreApkTool.FSStyle;
 import com.ApkInfo.Resource.Resource;
 
@@ -25,6 +26,8 @@ public class MainUI extends JFrame implements WindowListener
 	private JFrame frame;
 	static private MyApkInfo mApkInfo;
 	static private String Title = "";
+	
+	//static private ApkManager mApkManager = null;
 		
 	static private String Osname = "";
 	static private String apkFilePath = null;
@@ -32,6 +35,8 @@ public class MainUI extends JFrame implements WindowListener
 	static private MyCoreThead startCore;
 	
 	static MainUI window;
+	static private MyTabUI mMyTabUI;
+	static private MyToolBarUI mMyToolBarUI;
 	
 	//window position
 	static public int nPositionX,nPositionY;
@@ -75,11 +80,13 @@ public class MainUI extends JFrame implements WindowListener
 					//mApkInfo.dump();
 				}
 				
-				initialize();				
+				initialize();
+
+				mMyTabUI.setData(mApkInfo);
+				WaitingDlg.setVisible(false);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
 		}
 	}
 
@@ -101,7 +108,12 @@ public class MainUI extends JFrame implements WindowListener
 				} else {
 					// open file dialog
 				}
-				if(apkFilePath == null) return;
+				/*
+				if(apkFilePath != null) {
+					mApkManager = new ApkManager(apkFilePath);
+					mApkManager.solve(SolveType.RESOURCE);
+				}
+				*/
 				
 				ProgressBarDlg = new MyProgressBarDemo();
 				
@@ -131,8 +143,11 @@ public class MainUI extends JFrame implements WindowListener
 		frame.setTitle(Title);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
 		
-		frame.add(new MyTabUI(), BorderLayout.CENTER);
-		frame.add(new MyToolBarUI(), BorderLayout.NORTH);
+		mMyTabUI = new MyTabUI();
+		mMyToolBarUI = new MyToolBarUI();
+
+		frame.add(mMyTabUI, BorderLayout.CENTER);
+		frame.add(mMyToolBarUI, BorderLayout.NORTH);
 		
 		//frame.getContentPane().add(new MyButtonPanel(), BorderLayout.SOUTH);
 		frame.setResizable( false );
