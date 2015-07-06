@@ -16,7 +16,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import com.ApkInfo.Core.CoreApkTool;
-import com.ApkInfo.TabUI.MyTabUIActivity.MyTableModel;
 
 /**
  * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for
