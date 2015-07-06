@@ -159,8 +159,10 @@ public class MainUI extends JFrame implements WindowListener
 		frame.getContentPane().addHierarchyBoundsListener(new HierarchyBoundsListener(){
 			@Override
 			public void ancestorMoved(HierarchyEvent e) {
-				nPositionX = frame.getLocationOnScreen().x;
-				nPositionY = frame.getLocationOnScreen().y;
+				if(frame.isVisible()) {
+					nPositionX = frame.getLocationOnScreen().x;
+					nPositionY = frame.getLocationOnScreen().y;
+				}
 			}
 
 			@Override
