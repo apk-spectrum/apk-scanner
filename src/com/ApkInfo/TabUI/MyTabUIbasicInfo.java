@@ -14,8 +14,8 @@ import javax.swing.JTextArea;
 
 import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UI.MyImagePanel;
+import com.ApkInfo.Core.ApkManager.ApkInfo;
 import com.ApkInfo.Core.CoreCertTool;
-import com.ApkInfo.Core.MyApkInfo;
 
 public class MyTabUIbasicInfo extends JComponent{
 	private static final long serialVersionUID = 6431995641984509482L;
@@ -71,46 +71,46 @@ public class MyTabUIbasicInfo extends JComponent{
         
 	}
 
-	public void setData(MyApkInfo ApkInfo)
+	public void setData(ApkInfo apkInfo)
 	{
-        if(ApkInfo.strIconPath != null) {
-            imagepanel.setData(ApkInfo.strIconPath);
+        if(apkInfo.IconPath != null) {
+            imagepanel.setData(apkInfo.IconPath);
         }
         
 		String strTabInfo = "";
 
-        strTabInfo += "" + ApkInfo.strLabelname +" - ";
-        strTabInfo += "" + ApkInfo.strPackageName +"\n";
-        strTabInfo += "Ver. " + ApkInfo.strVersionName +" / ";
-        strTabInfo += "" + ApkInfo.strVersionCode + "\n";
+        strTabInfo += "" + apkInfo.Labelname +" - ";
+        strTabInfo += "" + apkInfo.PackageName +"\n";
+        strTabInfo += "Ver. " + apkInfo.VersionName +" / ";
+        strTabInfo += "" + apkInfo.VersionCode + "\n";
 
-        strTabInfo += "\n" + ApkInfo.strApkSize + "\n";
+        strTabInfo += "\n" + apkInfo.ApkSize + "\n";
         strTabInfo += "@SDK Ver. ";
-        if(!ApkInfo.strMinSDKversion.equals("Unknown")) {
-        	strTabInfo += "" + ApkInfo.strMinSDKversion +" (Min)";
+        if(!apkInfo.MinSDKversion.isEmpty()) {
+        	strTabInfo += "" + apkInfo.MinSDKversion +" (Min)";
         }
-        if(!ApkInfo.strTargerSDKversion.equals("Unknown")) {
-        	if(!ApkInfo.strMinSDKversion.equals("Unknown")) {
+        if(!apkInfo.TargerSDKversion.isEmpty()) {
+        	if(!apkInfo.MinSDKversion.isEmpty()) {
         		strTabInfo += ", "; 
         	}
-        	strTabInfo += "" + ApkInfo.strTargerSDKversion +" (Target)";
+        	strTabInfo += "" + apkInfo.TargerSDKversion +" (Target)";
         }
-        if(ApkInfo.strMinSDKversion.equals("Unknown") && ApkInfo.strTargerSDKversion.equals("Unknown")) {
+        if(apkInfo.MinSDKversion.isEmpty() && apkInfo.TargerSDKversion.isEmpty()) {
         	strTabInfo += "Unknown"; 
         }
         strTabInfo += "\n\n";
         
         strTabInfo += "[Feature]\n";
         //strTabInfo += "Signing : " + ApkInfo.CertList.size() +"\n";
-        strTabInfo += "" + ApkInfo.strHidden +"";
-        if(!ApkInfo.strStartup.isEmpty()) {
-        	strTabInfo += ", " + ApkInfo.strStartup + "";
+        strTabInfo += "" + apkInfo.Hidden +"";
+        if(!apkInfo.Startup.isEmpty()) {
+        	strTabInfo += ", " + apkInfo.Startup + "";
         }
-        if(!ApkInfo.strProtectionLevel.isEmpty()) {
-        	strTabInfo += ", " + ApkInfo.strProtectionLevel + "";
+        if(!apkInfo.ProtectionLevel.isEmpty()) {
+        	strTabInfo += ", " + apkInfo.ProtectionLevel + "";
         }
         
-        if(!ApkInfo.strSharedUserId.isEmpty()) {
+        if(!apkInfo.SharedUserId.isEmpty()) {
         	strTabInfo += ", SHARED_USER_ID";
         }
         //strTabInfo += "\n\n";
@@ -120,9 +120,9 @@ public class MyTabUIbasicInfo extends JComponent{
         String etcInfo = "■■■■■■■■■■■■■■■■■  Cert  ■■■■■■■■■■■■■■■■■■■■\n"
 				+ CoreCertTool.getCertSummary()
 				+ "\n■■■■■■■■■■■■■■■■ Permissions ■■■■■■■■■■■■■■■■■■"
-				+ "\n" + ApkInfo.strPermissions;
-        if(!ApkInfo.strSharedUserId.isEmpty()) {
-        	etcInfo = "SharedUserId : " + ApkInfo.strSharedUserId + "\n\n" + etcInfo;
+				+ "\n" + apkInfo.Permissions;
+        if(!apkInfo.SharedUserId.isEmpty()) {
+        	etcInfo = "SharedUserId : " + apkInfo.SharedUserId + "\n\n" + etcInfo;
         }
         apkpermission.setText(etcInfo);
 	}

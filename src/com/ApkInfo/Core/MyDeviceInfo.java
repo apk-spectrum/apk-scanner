@@ -167,8 +167,8 @@ public class MyDeviceInfo
 				cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "push", this.sourcePath, device.strApkPath});
 				System.out.println(this.sourcePath + " to " + device.strApkPath);
 
-				String LibSourcePath = MainUI.GetMyApkInfo().strWorkAPKPath + File.separator + "lib" + File.separator;
-				Iterator<String> libPaths = MainUI.GetMyApkInfo().LibPathList.iterator();
+				String LibSourcePath = MainUI.GetMyApkInfo().WorkTempPath + File.separator + "lib" + File.separator;
+				Iterator<String> libPaths = MainUI.GetMyApkInfo().LibList.iterator();
 				while(libPaths.hasNext()) {
 					String path = libPaths.next();
 					if(!(new File(path)).exists()) {

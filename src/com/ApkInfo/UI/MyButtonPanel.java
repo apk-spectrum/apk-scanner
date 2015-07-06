@@ -43,7 +43,7 @@ public class MyButtonPanel extends JPanel{
 				//Desktop.getDesktop().open(new File(CoreApkTool.DefaultPath+File.separator+"AndroidManifest.xml"));
 			  if(System.getProperty("os.name").indexOf("Window") >-1) {
 				  try {
-					new ProcessBuilder("notepad", MainUI.GetMyApkInfo().strWorkAPKPath + File.separator + "AndroidManifest.xml").start();
+					new ProcessBuilder("notepad", MainUI.GetMyApkInfo().WorkTempPath + File.separator + "AndroidManifest.xml").start();
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -51,7 +51,7 @@ public class MyButtonPanel extends JPanel{
 
 			  } else {  //for linux
 				  try {
-					  new ProcessBuilder("gedit", MainUI.GetMyApkInfo().strWorkAPKPath + File.separator + "AndroidManifest.xml").start();
+					  new ProcessBuilder("gedit", MainUI.GetMyApkInfo().WorkTempPath + File.separator + "AndroidManifest.xml").start();
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -66,7 +66,7 @@ public class MyButtonPanel extends JPanel{
 				  
 				  if(System.getProperty("os.name").indexOf("Window") >-1) {
 					  try {
-						Process oProcess = new ProcessBuilder("explorer", MainUI.GetMyApkInfo().strWorkAPKPath).start();
+						Process oProcess = new ProcessBuilder("explorer", MainUI.GetMyApkInfo().WorkTempPath).start();
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -74,7 +74,7 @@ public class MyButtonPanel extends JPanel{
 
 				  } else {  //for linux
 					  try {
-						  Process oProcess = new ProcessBuilder("nautilus", MainUI.GetMyApkInfo().strWorkAPKPath).start();
+						  Process oProcess = new ProcessBuilder("nautilus", MainUI.GetMyApkInfo().WorkTempPath).start();
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -89,7 +89,7 @@ public class MyButtonPanel extends JPanel{
 				  //ADBDialog dt = new ADBDialog(MainUI.window);
 				  //dt.showPlease();
 				  btnInstall.setEnabled(false);
-				  DeviceUIManager mMyDeviceManager = new DeviceUIManager(MainUI.GetMyApkInfo().strPackageName, MainUI.GetMyApkInfo().strAPKPath);
+				  DeviceUIManager mMyDeviceManager = new DeviceUIManager(MainUI.GetMyApkInfo().PackageName, MainUI.GetMyApkInfo().ApkPath);
 				  }
 			});
 		

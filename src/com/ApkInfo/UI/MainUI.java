@@ -13,6 +13,10 @@ import java.awt.event.WindowListener;
 import java.io.File;
 
 import com.ApkInfo.Core.*;
+import com.ApkInfo.Core.ApkManager.ApkInfo;
+import com.ApkInfo.Core.ApkManager.ProcessCmd;
+import com.ApkInfo.Core.ApkManager.SolveType;
+import com.ApkInfo.Core.ApkManager.StatusListener;
 import com.ApkInfo.Resource.Resource;
 
 
@@ -20,17 +24,8 @@ public class MainUI extends JFrame implements WindowListener
 {
 	private static final long serialVersionUID = 1L;
 	
-	private JFrame frame;
-	static private MyApkInfo mApkInfo;
-	static private String Title = "";
-	
-	//static private ApkManager mApkManager = null;
+	private static JFrame frame;
 		
-	static private String Osname = "";
-	static private String apkFilePath = null;
-	
-	static private MyCoreThead startCore;
-	
 	static MainUI window;
 	static private MyTabUI mMyTabUI;
 	static private MyToolBarUI mMyToolBarUI;
@@ -41,82 +36,84 @@ public class MainUI extends JFrame implements WindowListener
 	//for waiting
 	static public JFrame WaitingDlg;
 	static public MyProgressBarDemo ProgressBarDlg;
+
+	static private ApkManager mApkManager;
+	
+	public static ApkInfo GetMyApkInfo(){
+		return mApkManager.getApkInfo();
+	}
+		
+	public static void openApk(final String apkPath) {
+		//System.out.println("target file :" + apkPath);
+		mApkManager = new ApkManager(apkPath, new StatusListener() {
+			@Override
+			public void OnStart(ProcessCmd cmd) {
+				System.out.println("ApkCore.OnStart()");
+				switch(cmd) {
+				case SOLVE_RESOURCE:
+					frame.setVisible(false);
+					ProgressBarDlg = new MyProgressBarDemo();
+					WaitingDlg = MyProgressBarDemo.createAndShowGUI(ProgressBarDlg);
+					break;
+				default:
+					break;
+				}
+			}
+
+			@Override
+			public void OnComplete(ProcessCmd cmd) {
+				System.out.println("ApkCore.OnComplete()");
+				switch(cmd) {
+				case SOLVE_RESOURCE:
+					String title = "APK Scanner - " + apkPath.substring(apkPath.lastIndexOf(File.separator)+1);
+					frame.setTitle(title);
+					frame.setVisible(true);
+					WaitingDlg.setVisible(false);
+					
+					mMyTabUI.setData(mApkManager.getApkInfo());
+					break;
+				default:
+					break;
+				}
+			}
+
+			@Override
+			public void OnProgress(int step, String msg) {
+				System.out.println("ApkCore.OnProgress() " + step + ",  " + msg);
+				ProgressBarDlg.addProgress(step, msg);
+			}
+
+			@Override
+			public void OnStateChange() {
+				System.out.println("ApkCore.OnStateChange()");
+			}
+			
+		});
+		mApkManager.solve(SolveType.RESOURCE);
+	}
+
 	/**
 	 * Launch the application.
 	 */
-	public static MyApkInfo GetMyApkInfo(){
-		return mApkInfo;
-	}
-	
-	class MyCoreThead extends Thread {
-		public void run() {
-			try {
-				//OS 분기
-				Osname = System.getProperty("os.name");
-				System.out.println("OS : " + Osname);
-
-				File apkFile = new File(apkFilePath);
-
-				if(!apkFile.exists()) {
-					System.out.println("No Such APK file");
-					Title = "APK Scanner - None";
-					
-					mApkInfo = new MyApkInfo();
-				} else {
-					apkFilePath = apkFile.getAbsolutePath();
-
-					System.out.println("target file :" + apkFilePath);
-					Title = "APK Scanner - " + apkFilePath.substring(apkFilePath.lastIndexOf(File.separator)+1);
-
-					mApkInfo = new MyApkInfo(apkFilePath, new MyApkInfo.ProgressingMoniter() {
-						@Override
-						public void progress(int step, String msg) {
-							ProgressBarDlg.addProgress(step, msg);
-						}
-					});
-					//mApkInfo.dump();
-				}
-				
-				initialize();
-
-				mMyTabUI.setData(mApkInfo);
-				WaitingDlg.setVisible(false);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	class CloseThead extends Thread {
-		public void run() {
-			System.out.println("delete Folder : "  + mApkInfo.strWorkAPKPath);
-			if(mApkInfo.strWorkAPKPath.length()>0) CoreApkTool.deleteDirectory(new File(mApkInfo.strWorkAPKPath));
-		}
-	}
-	
 	public static void main(final String[] args) {
 		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {	
-				//args = file path
-				if(args.length > 0) {
-					apkFilePath = args[0];
-					System.out.println("Target APK : " + args[0]);
-				} else {
-					// open file dialog
-				}
-				/*
-				if(apkFilePath != null) {
-					mApkManager = new ApkManager(apkFilePath);
-					mApkManager.solve(SolveType.RESOURCE);
-				}
-				*/
-				
-				ProgressBarDlg = new MyProgressBarDemo();
-				
-				WaitingDlg = MyProgressBarDemo.createAndShowGUI(ProgressBarDlg);
-				
 				window = new MainUI();
+				window.initialize("APK Scanner");
+				
+				String Osname = System.getProperty("os.name");
+				System.out.println("OS : " + Osname);
+				//System.out.println("java.io.tmpdir : " + System.getProperty("java.io.tmpdir"));
+				//System.out.println("user.dir : " + System.getProperty("user.dir"));
+				
+				String apkPath = null;
+				if(args.length > 0) {
+					apkPath = args[0];
+					System.out.println("Target APK : " + args[0]);
+					frame.setVisible(false);
+					openApk(apkPath);
+				}
 			}
 		});
 	}
@@ -126,18 +123,16 @@ public class MainUI extends JFrame implements WindowListener
 	 */
 	public MainUI() {
 		//initialize();
-		startCore = new MyCoreThead();
-		startCore.start();
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
+	private void initialize(String title) {
 		frame = new JFrame();
 		frame.addWindowListener(this);
 		frame.setBounds(100, 100, 600, 550);
-		frame.setTitle(Title);
+		frame.setTitle(title);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
 		
 		mMyTabUI = new MyTabUI();
@@ -164,16 +159,12 @@ public class MainUI extends JFrame implements WindowListener
 		frame.getContentPane().addHierarchyBoundsListener(new HierarchyBoundsListener(){
 			@Override
 			public void ancestorMoved(HierarchyEvent e) {
-				// TODO Auto-generated method stub
-				
 				nPositionX = frame.getLocationOnScreen().x;
 				nPositionY = frame.getLocationOnScreen().y;
-				
 			}
 
 			@Override
 			public void ancestorResized(HierarchyEvent e) {
-				// TODO Auto-generated method stub
 				
 			}
 		});
@@ -182,54 +173,42 @@ public class MainUI extends JFrame implements WindowListener
 	
 	@Override
 	public void windowOpened(WindowEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		// TODO Auto-generated method stub		
 		frame.setVisible(false);
 		if(DeviceUIManager.dlgDialog != null && DeviceUIManager.dlgDialog.isVisible()) {
 			DeviceUIManager.dlgDialog.setVisible(false);
 		}
-		CloseThead temp = new CloseThead();
-		temp.start();		
-		try {
-			temp.join();
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		//if(FolderDefault.length()>0) CoreApkTool.deleteDirectory(new File(FolderDefault));
+		if(mApkManager != null)
+			mApkManager.clear(true);
 	}
 
 	@Override
 	public void windowClosed(WindowEvent e) {
-		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void windowIconified(WindowEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void windowDeiconified(WindowEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void windowActivated(WindowEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void windowDeactivated(WindowEvent e) {
-		// TODO Auto-generated method stub		
+
 	}
 
 }

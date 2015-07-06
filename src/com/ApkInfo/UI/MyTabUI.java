@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import com.ApkInfo.UIUtil.PlasticTabbedPaneUI;
-import com.ApkInfo.Core.MyApkInfo;
+import com.ApkInfo.Core.ApkManager.ApkInfo;
 import com.ApkInfo.TabUI.MyTabUIActivity;
 import com.ApkInfo.TabUI.MyTabUILib;
 import com.ApkInfo.TabUI.MyTabUIResource;
@@ -79,20 +79,27 @@ public class MyTabUI extends JPanel{
         return panel;
     }
 	
-	public void setData(MyApkInfo apkInfo)
+	public void setData(ApkInfo apkInfo)
 	{
-		((MyTabUIbasicInfo) Panels[0]).setData(apkInfo);
-		((MyTabUIWidget) Panels[1]).setData(apkInfo.arrWidgets);
-		((MyTabUILib) Panels[2]).setData(apkInfo.LibPathList);
-		MainUI.ProgressBarDlg.addProgress(25,"check resource(*.png)...\n");
-        ((MyTabUIResource) Panels[3]).setData(apkInfo.strWorkAPKPath, apkInfo.ImagePathList);
-        ((MyTabUIActivity) Panels[4]).setData(apkInfo.ActivityList);
-        ((MyTabUISign) Panels[5]).setData(apkInfo.CertList);
+        tabbedPane.setTitleAt(3,"Image(...)");
         
-        tabbedPane.setTitleAt(1,"Widget(" + apkInfo.arrWidgets.size() + ")");
-        tabbedPane.setTitleAt(2,"Lib(" + apkInfo.LibPathList.size()  + ")");
-        tabbedPane.setTitleAt(3,"Image(" + apkInfo.ImagePathList.size()  + ")");
+		((MyTabUIbasicInfo) Panels[0]).setData(apkInfo);
+
+		((MyTabUIWidget) Panels[1]).setData(apkInfo.WidgetList);
+        tabbedPane.setTitleAt(1,"Widget(" + apkInfo.WidgetList.size() + ")");
+
+        ((MyTabUILib) Panels[2]).setData(apkInfo.LibList);
+        tabbedPane.setTitleAt(2,"Lib(" + apkInfo.LibList.size()  + ")");
+		
+        
+        ((MyTabUIActivity) Panels[4]).setData(apkInfo.ActivityList);
         tabbedPane.setTitleAt(4,"Activity(" + apkInfo.ActivityList.size()  + ")");
+
+        ((MyTabUISign) Panels[5]).setData(apkInfo.CertList);
         tabbedPane.setTitleAt(5,"CERT(" + apkInfo.CertList.size()  + ")");
+
+        MainUI.ProgressBarDlg.addProgress(25,"check resource(*.png)...\n");
+		((MyTabUIResource) Panels[3]).setData(apkInfo.WorkTempPath, apkInfo.ImageList);
+        tabbedPane.setTitleAt(3,"Image(" + apkInfo.ImageList.size()  + ")");
 	}
 }

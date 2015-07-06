@@ -145,19 +145,22 @@ public class MyToolBarUI extends JPanel implements ActionListener{
 				jfc.showOpenDialog(null);
 				File dir = jfc.getSelectedFile();
 
-				if(dir!=null) JOptionPane.showMessageDialog(null, dir.getPath(), "Open", JOptionPane.INFORMATION_MESSAGE);
+				if(dir!=null) {
+					//JOptionPane.showMessageDialog(null, dir.getPath(), "Open", JOptionPane.INFORMATION_MESSAGE);
+					MainUI.openApk(dir.getPath());
+				}
 				
 	        } else if(b.getText().equals("manifest")) {
 				  if(System.getProperty("os.name").indexOf("Window") >-1) {
 					  try {
-						new ProcessBuilder("notepad", MainUI.GetMyApkInfo().strWorkAPKPath + File.separator + "AndroidManifest.xml").start();
+						new ProcessBuilder("notepad", MainUI.GetMyApkInfo().WorkTempPath + File.separator + "AndroidManifest.xml").start();
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}	
 				  } else {  //for linux
 					  try {
-						  new ProcessBuilder("gedit", MainUI.GetMyApkInfo().strWorkAPKPath + File.separator + "AndroidManifest.xml").start();
+						  new ProcessBuilder("gedit", MainUI.GetMyApkInfo().WorkTempPath + File.separator + "AndroidManifest.xml").start();
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -167,14 +170,14 @@ public class MyToolBarUI extends JPanel implements ActionListener{
 	        } else if(b.getText().equals("탐색기")) { 
 				  if(System.getProperty("os.name").indexOf("Window") >-1) {
 					  try {
-						Process oProcess = new ProcessBuilder("explorer", MainUI.GetMyApkInfo().strWorkAPKPath).start();
+						Process oProcess = new ProcessBuilder("explorer", MainUI.GetMyApkInfo().WorkTempPath).start();
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				  } else {  //for linux
 					  try {
-						  Process oProcess = new ProcessBuilder("nautilus", MainUI.GetMyApkInfo().strWorkAPKPath).start();
+						  Process oProcess = new ProcessBuilder("nautilus", MainUI.GetMyApkInfo().WorkTempPath).start();
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -187,7 +190,7 @@ public class MyToolBarUI extends JPanel implements ActionListener{
 	        	JOptionPane.showMessageDialog(null, "pack", "pack", JOptionPane.INFORMATION_MESSAGE);
 	        } else if(b.getText().equals("설치")) {
 			  btn_install.setEnabled(false);
-			  DeviceUIManager mMyDeviceManager = new DeviceUIManager(MainUI.GetMyApkInfo().strPackageName, MainUI.GetMyApkInfo().strAPKPath);
+			  DeviceUIManager mMyDeviceManager = new DeviceUIManager(MainUI.GetMyApkInfo().PackageName, MainUI.GetMyApkInfo().ApkPath);
 			  
 	        } else if(b.getText().equals("about")) {
 	        	JOptionPane.showMessageDialog(null, "about", "about", JOptionPane.INFORMATION_MESSAGE);

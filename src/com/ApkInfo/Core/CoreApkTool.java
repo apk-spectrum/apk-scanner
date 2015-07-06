@@ -10,35 +10,8 @@ import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 
-import com.ApkInfo.Resource.Resource;
-import com.ApkInfo.UI.MainUI;
-
 public class CoreApkTool
 {
-	public static void solveAPK(String APKFilePath, String solvePath)
-	{
-		String apkToolPath = Resource.BIN_APKTOOL_JAR.getPath();
-		System.out.println("apkToolPath : " + apkToolPath);
-
-		if(!(new File(apkToolPath)).exists()) {
-			System.out.println("No such file : apktool.jar");
-			return;
-		}
-
-		String[] cmd = {"java", "-jar", apkToolPath, "d", "-s", "-f", "-o", solvePath, "-p", solvePath, APKFilePath};
-
-		MyConsolCmd.exc(cmd, true, new MyConsolCmd.OutputObserver() {
-			@Override
-			public boolean ConsolOutput(String output) {
-		    	if(output.matches("^I:.*"))
-		    		MainUI.ProgressBarDlg.addProgress(5,output + "\n");
-		    	else
-		    		MainUI.ProgressBarDlg.addProgress(0,output + "\n");
-		    	return true;
-			}
-		});
-	}
-	
 	public static ArrayList<String> findFiles(File f, String subffix, String filterRegex)
 	{
 		ArrayList<String> tempList = new ArrayList<String>();
@@ -66,9 +39,6 @@ public class CoreApkTool
 	{
 		String tempPath = System.getProperty("java.io.tmpdir");
 		String separator = File.separator + (File.separator.equals("\\") ? File.separator : "");
-
-		//System.out.println("java.io.tmpdir : " + System.getProperty("java.io.tmpdir"));
-		//System.out.println("user.dir : " + System.getProperty("user.dir"));
 
 		if(!tempPath.matches(".*"+separator+"$")) tempPath += File.separator;
 		tempPath += "ApkInfo" + apkFilePath.substring(apkFilePath.indexOf(File.separator),apkFilePath.lastIndexOf("."));
