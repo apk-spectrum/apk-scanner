@@ -164,7 +164,8 @@ public class MainUI extends JFrame implements WindowListener
 			  new DeviceUIManager(apkInfo.PackageName, apkInfo.ApkPath);
 			  
 	        } else if(b.getText().equals("about")) {
-	        	JOptionPane.showMessageDialog(null, "about", "about", JOptionPane.INFORMATION_MESSAGE);
+	        	final ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon(100,100);
+	        	JOptionPane.showMessageDialog(null, "APK Scanner \nVersion: 1.5\n\n", "About", JOptionPane.INFORMATION_MESSAGE,Appicon);	        	
 	        }
 		}
 	}
@@ -190,7 +191,7 @@ public class MainUI extends JFrame implements WindowListener
 				if(args.length > 0) {
 					apkPath = args[0];
 					System.out.println("Target APK : " + args[0]);
-					frame.setVisible(false);
+					//frame.setVisible(false);
 					openApk(apkPath);
 				}
 			}
@@ -230,10 +231,10 @@ public class MainUI extends JFrame implements WindowListener
         
         frame.setIconImage(Appicon.getImage());
 		
-		frame.setVisible(true);
+		frame.setVisible(false);
 		
-		nPositionX = frame.getLocationOnScreen().x;
-		nPositionY = frame.getLocationOnScreen().y;
+		//nPositionX = frame.getLocationOnScreen().x;
+		//nPositionY = frame.getLocationOnScreen().y;
         
 		frame.getContentPane().addHierarchyBoundsListener(new HierarchyBoundsListener(){
 			@Override
