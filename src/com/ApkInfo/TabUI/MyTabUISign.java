@@ -87,6 +87,7 @@ public class MyTabUISign extends JPanel{
     
     public void setData(ArrayList<Object[]> data) {
     	mCertList = null;
+    	jlist.removeAll();
         String[] labels = new String[data.size()];        
         for(int i=0; i< labels.length; i++) {
         	labels[i] = (String)data.get(i)[0];        	

@@ -17,6 +17,7 @@ public class CoreCertTool {
 			keytoolPackage = "sun.security.tools.KeyTool";
 		}
 
+		CertList.clear();
 		if(!(new File(CertPath)).exists()) {
 			System.out.println("META-INFO 폴더가 존재 하지 않습니다 :");
 			return CertList;
