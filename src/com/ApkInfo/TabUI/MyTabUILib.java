@@ -80,6 +80,7 @@ public class MyTabUILib extends JPanel {
 				};
 				data.add(temp);
 			}
+			fireTableDataChanged();
 		}
 
 		public int getColumnCount() {

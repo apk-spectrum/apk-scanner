@@ -10,6 +10,7 @@ import com.ApkInfo.Core.CoreApkTool;
 
 public enum Resource
 {
+	STR_APP_NAME				(Type.TEXT, "APK Scanner"),
 	STR_APP_VERSION				(Type.TEXT, "Ver. 1.01"),
 
 	IMG_TOOLBAR_OPEN			(Type.IMAGE, "toolbar_open.png"),

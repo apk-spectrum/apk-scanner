@@ -65,7 +65,7 @@ public class MainUI extends JFrame implements WindowListener
 				System.out.println("ApkCore.OnComplete()");
 				switch(cmd) {
 				case SOLVE_RESOURCE:
-					String title = "APK Scanner - " + apkPath.substring(apkPath.lastIndexOf(File.separator)+1);
+					String title = Resource.STR_APP_NAME.getValue() + " - " + apkPath.substring(apkPath.lastIndexOf(File.separator)+1);
 					frame.setTitle(title);
 					frame.setVisible(true);
 					WaitingDlg.setVisible(false);
@@ -100,7 +100,7 @@ public class MainUI extends JFrame implements WindowListener
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {	
 				window = new MainUI();
-				window.initialize("APK Scanner");
+				window.initialize(Resource.STR_APP_NAME.getValue());
 				
 				String Osname = System.getProperty("os.name");
 				System.out.println("OS : " + Osname);

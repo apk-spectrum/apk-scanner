@@ -70,8 +70,7 @@ public class MyTabUIActivity extends JPanel {
 		ActivityList.clear();
 		ActivityList.addAll(data);
 		System.out.println("MyTabUIActivity setData() " + ActivityList.size());
-		//this.repaint();
-		//table.repaint();
+		TableModel.fireTableDataChanged();
 	}
 
 	public void setJTableColumnsWidth(JTable table, int tablePreferredWidth,

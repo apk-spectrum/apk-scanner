@@ -16,6 +16,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import com.ApkInfo.Core.CoreApkTool;
+import com.ApkInfo.TabUI.MyTabUIActivity.MyTableModel;
 
 /**
  * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for
@@ -24,13 +25,15 @@ import com.ApkInfo.Core.CoreApkTool;
 public class MyTabUIWidget extends JPanel {
 	private static final long serialVersionUID = 4881638983501664860L;
 
-	JTable table;
-	public ArrayList<Object[]> arrWidgets = new ArrayList<Object[]>();
+	private MyTableModel TableModel; 
+	private JTable table;
+	private ArrayList<Object[]> arrWidgets = new ArrayList<Object[]>();
 
 	public MyTabUIWidget() {
 		super(new GridLayout(1, 0));
 
-		table = new JTable(new MyTableModel());
+		TableModel = new MyTableModel();
+		table = new JTable(TableModel);
 		
 		setJTableColumnsWidth(table, 500, 20,15,17,60,10);	    
 		
@@ -57,7 +60,8 @@ public class MyTabUIWidget extends JPanel {
 			Object[] temp = { myimageicon , data.get(i)[1], data.get(i)[2], data.get(i)[3], data.get(i)[4]};
 			arrWidgets.add(temp);
 		}
-	    
+
+		TableModel.fireTableDataChanged();
 		for(int i=0; i< arrWidgets.size(); i++) {
 			table.setRowHeight(i, 100);
 		}
