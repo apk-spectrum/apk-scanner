@@ -41,7 +41,7 @@ public class MyToolBarUI extends JPanel implements ActionListener{
     	INSTALL,
     	ABOUT,
     	ALL,
-    	ALL_WITHOUT_OPEN
+    	NEED_TARGET_APK
     }
 	
     public MyToolBarUI(ActionListener listener) {
@@ -145,7 +145,10 @@ public class MyToolBarUI extends JPanel implements ActionListener{
     	case OPEN:
     		btn_open.setEnabled(enabled);
     		if(buttonId != ButtonId.ALL) break;
-    	case ALL_WITHOUT_OPEN:
+    	case ABOUT:
+    		btn_about.setEnabled(enabled);
+    		if(buttonId != ButtonId.ALL) break;
+    	case NEED_TARGET_APK:
     		buttonId = ButtonId.ALL;
     	case MANIFEST:
     		btn_show_manifest.setEnabled(enabled);
@@ -161,9 +164,6 @@ public class MyToolBarUI extends JPanel implements ActionListener{
     		if(buttonId != ButtonId.ALL) break;
     	case INSTALL:
     		btn_install.setEnabled(enabled);
-    		if(buttonId != ButtonId.ALL) break;
-    	case ABOUT:
-    		btn_about.setEnabled(enabled);
     		if(buttonId != ButtonId.ALL) break;
     	default:
     		break;

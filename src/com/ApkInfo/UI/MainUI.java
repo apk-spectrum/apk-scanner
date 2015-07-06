@@ -74,6 +74,8 @@ public class MainUI extends JFrame implements WindowListener
 				case SOLVE_RESOURCE:
 					String title = Resource.STR_APP_NAME.getValue() + " - " + apkPath.substring(apkPath.lastIndexOf(File.separator)+1);
 					frame.setTitle(title);
+					
+					mMyToolBarUI.setEnabledAt(ButtonId.NEED_TARGET_APK, true);
 					frame.setVisible(true);
 					WaitingDlg.setVisible(false);
 					
@@ -104,7 +106,11 @@ public class MainUI extends JFrame implements WindowListener
 		@Override
 		public void actionPerformed(ActionEvent e) {
 	        JButton b = (JButton) e.getSource();
-	        ApkInfo apkInfo = mApkManager.getApkInfo();
+	        ApkInfo apkInfo = null;
+
+	        if(mApkManager != null) {
+	        	apkInfo = mApkManager.getApkInfo();
+	        }
 	        
 	        if (b.getText().equals("Open")) {
 				JFileChooser jfc = new JFileChooser();
@@ -154,7 +160,6 @@ public class MainUI extends JFrame implements WindowListener
 	        } else if(b.getText().equals("pack")) {
 	        	JOptionPane.showMessageDialog(null, "pack", "pack", JOptionPane.INFORMATION_MESSAGE);
 	        } else if(b.getText().equals("설치")) {
-			  //btn_install.setEnabled(false);
 	        	mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, false);
 			  new DeviceUIManager(apkInfo.PackageName, apkInfo.ApkPath);
 			  
@@ -174,6 +179,7 @@ public class MainUI extends JFrame implements WindowListener
 			public void run() {	
 				window = new MainUI();
 				window.initialize(Resource.STR_APP_NAME.getValue());
+				mMyToolBarUI.setEnabledAt(ButtonId.NEED_TARGET_APK, false);
 				
 				String Osname = System.getProperty("os.name");
 				System.out.println("OS : " + Osname);
