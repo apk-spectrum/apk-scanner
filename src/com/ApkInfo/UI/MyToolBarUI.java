@@ -6,17 +6,10 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
@@ -24,29 +17,42 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
 import com.ApkInfo.Resource.Resource;
-import com.ApkInfo.UI.DeviceUIManager;
-import com.ApkInfo.UI.MainUI;
+
 import com.ApkInfo.UIUtil.ToolBarButton;
 
 
 public class MyToolBarUI extends JPanel implements ActionListener{
+	private static final long serialVersionUID = 894134416480807167L;
 
-    ToolBarButton btn_open;
-    JButton btn_show_manifest;
-    JButton btn_show_explorer;
-    JButton btn_unpack;
-    JButton btn_pack;
-    JButton btn_install;
-    JButton btn_about;
+	private ToolBarButton btn_open;
+	private ToolBarButton btn_show_manifest;
+	private ToolBarButton btn_show_explorer;
+	private ToolBarButton btn_unpack;
+	private ToolBarButton btn_pack;
+	private ToolBarButton btn_install;
+	private ToolBarButton btn_about;
+    
+    public enum ButtonId {
+    	OPEN,
+    	MANIFEST,
+    	EXPLORER,
+    	UNPACK,
+    	PACK,
+    	INSTALL,
+    	ABOUT,
+    	ALL,
+    	ALL_WITHOUT_OPEN
+    }
 	
-    public MyToolBarUI() {
-        initUI();
+    public MyToolBarUI(ActionListener listener) {
+        initUI(listener);
     }
 
-    public final void initUI() {
+    public final void initUI(ActionListener listener) {
 
         JToolBar toolbar1 = new JToolBar();
         
+        if(listener == null) listener = this;
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -69,13 +75,13 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         ImageIcon toolbar_install_hover  =  Resource.IMG_TOOLBAR_INSTALL_HOVER.getImageIcon(Iconsize,Iconsize);
         ImageIcon toolbar_about_hover  =  Resource.IMG_TOOLBAR_ABOUT_HOVER.getImageIcon(Iconsize,Iconsize);
         
-        btn_open = new ToolBarButton("Open",toolbar_open, toobar_open_hover, this);
-        btn_show_manifest = new ToolBarButton("manifest",toolbar_manifest, toolbar_manifest_hover, this);
-        btn_show_explorer = new ToolBarButton("탐색기", toolbar_explorer, toolbar_explorer_hover, this);
-        btn_unpack = new ToolBarButton("unpack", toolbar_unpack, toolbar_unpack_hover, this);
-        btn_pack = new ToolBarButton("pack", toolbar_pack, toolbar_pack_hover, this);
-        btn_install = new ToolBarButton("설치", toolbar_install, toolbar_install_hover, this);
-        btn_about = new ToolBarButton("about", toolbar_about, toolbar_about_hover, this);
+        btn_open = new ToolBarButton("Open",toolbar_open, toobar_open_hover, listener);
+        btn_show_manifest = new ToolBarButton("manifest",toolbar_manifest, toolbar_manifest_hover, listener);
+        btn_show_explorer = new ToolBarButton("탐색기", toolbar_explorer, toolbar_explorer_hover, listener);
+        btn_unpack = new ToolBarButton("unpack", toolbar_unpack, toolbar_unpack_hover, listener);
+        btn_pack = new ToolBarButton("pack", toolbar_pack, toolbar_pack_hover, listener);
+        btn_install = new ToolBarButton("설치", toolbar_install, toolbar_install_hover, listener);
+        btn_about = new ToolBarButton("about", toolbar_about, toolbar_about_hover, listener);
 
               
         toolbar1.add(btn_open);
@@ -126,74 +132,48 @@ public class MyToolBarUI extends JPanel implements ActionListener{
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-            	MyToolBarUI ex = new MyToolBarUI();
+            	MyToolBarUI ex = new MyToolBarUI(null);
                 ex.setVisible(true);
             }
         });
     }
+    
+    public void setEnabledAt(ButtonId buttonId, boolean enabled)
+    {
+    	switch(buttonId) {
+    	case ALL:
+    	case OPEN:
+    		btn_open.setEnabled(enabled);
+    		if(buttonId != ButtonId.ALL) break;
+    	case ALL_WITHOUT_OPEN:
+    		buttonId = ButtonId.ALL;
+    	case MANIFEST:
+    		btn_show_manifest.setEnabled(enabled);
+    		if(buttonId != ButtonId.ALL) break;
+    	case EXPLORER:
+    		btn_show_explorer.setEnabled(enabled);
+    		if(buttonId != ButtonId.ALL) break;
+    	case UNPACK:
+    		btn_unpack.setEnabled(enabled);
+    		if(buttonId != ButtonId.ALL) break;
+    	case PACK:
+    		btn_pack.setEnabled(enabled);
+    		if(buttonId != ButtonId.ALL) break;
+    	case INSTALL:
+    		btn_install.setEnabled(enabled);
+    		if(buttonId != ButtonId.ALL) break;
+    	case ABOUT:
+    		btn_about.setEnabled(enabled);
+    		if(buttonId != ButtonId.ALL) break;
+    	default:
+    		break;
+    	}
+    }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-	        JButton b = (JButton) e.getSource();
-	        
-	        if (b.getText().equals("Open")) {
-				JFileChooser jfc = new JFileChooser();
-				//jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("apk","apk"));
-								
-				jfc.showOpenDialog(null);
-				File dir = jfc.getSelectedFile();
-
-				if(dir!=null) {
-					//JOptionPane.showMessageDialog(null, dir.getPath(), "Open", JOptionPane.INFORMATION_MESSAGE);
-					MainUI.openApk(dir.getPath());
-				}
-				
-	        } else if(b.getText().equals("manifest")) {
-				  if(System.getProperty("os.name").indexOf("Window") >-1) {
-					  try {
-						new ProcessBuilder("notepad", MainUI.GetMyApkInfo().WorkTempPath + File.separator + "AndroidManifest.xml").start();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}	
-				  } else {  //for linux
-					  try {
-						  new ProcessBuilder("gedit", MainUI.GetMyApkInfo().WorkTempPath + File.separator + "AndroidManifest.xml").start();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-	
-				  }	
-	        } else if(b.getText().equals("탐색기")) { 
-				  if(System.getProperty("os.name").indexOf("Window") >-1) {
-					  try {
-						Process oProcess = new ProcessBuilder("explorer", MainUI.GetMyApkInfo().WorkTempPath).start();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				  } else {  //for linux
-					  try {
-						  Process oProcess = new ProcessBuilder("nautilus", MainUI.GetMyApkInfo().WorkTempPath).start();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-
-				  }
-	        } else if(b.getText().equals("unpack")) {
-	        	JOptionPane.showMessageDialog(null, "unpack", "unpack", JOptionPane.INFORMATION_MESSAGE);
-	        } else if(b.getText().equals("pack")) {
-	        	JOptionPane.showMessageDialog(null, "pack", "pack", JOptionPane.INFORMATION_MESSAGE);
-	        } else if(b.getText().equals("설치")) {
-			  btn_install.setEnabled(false);
-			  DeviceUIManager mMyDeviceManager = new DeviceUIManager(MainUI.GetMyApkInfo().PackageName, MainUI.GetMyApkInfo().ApkPath);
-			  
-	        } else if(b.getText().equals("about")) {
-	        	JOptionPane.showMessageDialog(null, "about", "about", JOptionPane.INFORMATION_MESSAGE);
-	        }
+        JButton b = (JButton) e.getSource();
+        
+        JOptionPane.showMessageDialog(null, b.getText(), "ToolBar", JOptionPane.INFORMATION_MESSAGE);
 	}
 }

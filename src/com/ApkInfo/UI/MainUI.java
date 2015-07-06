@@ -3,14 +3,20 @@ package com.ApkInfo.UI;
 import java.awt.EventQueue;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.HierarchyBoundsListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.IOException;
 
 import com.ApkInfo.Core.*;
 import com.ApkInfo.Core.ApkManager.ApkInfo;
@@ -18,6 +24,7 @@ import com.ApkInfo.Core.ApkManager.ProcessCmd;
 import com.ApkInfo.Core.ApkManager.SolveType;
 import com.ApkInfo.Core.ApkManager.StatusListener;
 import com.ApkInfo.Resource.Resource;
+import com.ApkInfo.UI.MyToolBarUI.ButtonId;
 
 
 public class MainUI extends JFrame implements WindowListener
@@ -91,6 +98,72 @@ public class MainUI extends JFrame implements WindowListener
 		});
 		mApkManager.solve(SolveType.RESOURCE);
 	}
+	
+	class ToolBarListener implements ActionListener
+	{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+	        JButton b = (JButton) e.getSource();
+	        ApkInfo apkInfo = mApkManager.getApkInfo();
+	        
+	        if (b.getText().equals("Open")) {
+				JFileChooser jfc = new JFileChooser();
+				//jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("apk","apk"));
+								
+				jfc.showOpenDialog(null);
+				File dir = jfc.getSelectedFile();
+
+				if(dir!=null) {
+					//JOptionPane.showMessageDialog(null, dir.getPath(), "Open", JOptionPane.INFORMATION_MESSAGE);
+					MainUI.openApk(dir.getPath());
+				}
+				
+	        } else if(b.getText().equals("manifest")) {
+				  if(System.getProperty("os.name").indexOf("Window") >-1) {
+					  try {
+						new ProcessBuilder("notepad", apkInfo.WorkTempPath + File.separator + "AndroidManifest.xml").start();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}	
+				  } else {  //for linux
+					  try {
+						  new ProcessBuilder("gedit", apkInfo.WorkTempPath + File.separator + "AndroidManifest.xml").start();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+
+				  }	
+	        } else if(b.getText().equals("탐색기")) { 
+				  if(System.getProperty("os.name").indexOf("Window") >-1) {
+					  try {
+						new ProcessBuilder("explorer", apkInfo.WorkTempPath).start();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				  } else {  //for linux
+					  try {
+						  new ProcessBuilder("nautilus", apkInfo.WorkTempPath).start();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+
+				  }
+	        } else if(b.getText().equals("unpack")) {
+	        	JOptionPane.showMessageDialog(null, "unpack", "unpack", JOptionPane.INFORMATION_MESSAGE);
+	        } else if(b.getText().equals("pack")) {
+	        	JOptionPane.showMessageDialog(null, "pack", "pack", JOptionPane.INFORMATION_MESSAGE);
+	        } else if(b.getText().equals("설치")) {
+			  //btn_install.setEnabled(false);
+	        	mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, false);
+			  new DeviceUIManager(apkInfo.PackageName, apkInfo.ApkPath);
+			  
+	        } else if(b.getText().equals("about")) {
+	        	JOptionPane.showMessageDialog(null, "about", "about", JOptionPane.INFORMATION_MESSAGE);
+	        }
+		}
+	}
+
 
 	/**
 	 * Launch the application.
@@ -136,7 +209,7 @@ public class MainUI extends JFrame implements WindowListener
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
 		
 		mMyTabUI = new MyTabUI();
-		mMyToolBarUI = new MyToolBarUI();
+		mMyToolBarUI = new MyToolBarUI(new ToolBarListener());
 
 		frame.add(mMyTabUI, BorderLayout.CENTER);
 		frame.add(mMyToolBarUI, BorderLayout.NORTH);
