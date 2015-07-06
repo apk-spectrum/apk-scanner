@@ -72,14 +72,15 @@ public class MainUI extends JFrame implements WindowListener
 				System.out.println("ApkCore.OnComplete()");
 				switch(cmd) {
 				case SOLVE_RESOURCE:
-					String title = Resource.STR_APP_NAME.getValue() + " - " + apkPath.substring(apkPath.lastIndexOf(File.separator)+1);
-					frame.setTitle(title);
-					
 					mMyToolBarUI.setEnabledAt(ButtonId.NEED_TARGET_APK, true);
-					frame.setVisible(true);
-					WaitingDlg.setVisible(false);
-					
+					mMyToolBarUI.setEnabledAt(ButtonId.PACK, false);
+
 					mMyTabUI.setData(mApkManager.getApkInfo());
+					WaitingDlg.setVisible(false);
+
+					String title = Resource.STR_APP_NAME.getString() + " - " + apkPath.substring(apkPath.lastIndexOf(File.separator)+1);
+					frame.setTitle(title);
+					frame.setVisible(true);
 					break;
 				default:
 					break;
@@ -105,14 +106,16 @@ public class MainUI extends JFrame implements WindowListener
 	{
 		@Override
 		public void actionPerformed(ActionEvent e) {
-	        JButton b = (JButton) e.getSource();
 	        ApkInfo apkInfo = null;
 
 	        if(mApkManager != null) {
 	        	apkInfo = mApkManager.getApkInfo();
 	        }
 	        
-	        if (b.getText().equals("Open")) {
+	        JButton b = (JButton) e.getSource();
+	        String btn_label = b.getText();
+	        
+	        if (btn_label.equals(Resource.STR_BTN_OPEN.getString())) {
 				JFileChooser jfc = new JFileChooser();
 				//jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("apk","apk"));
@@ -125,7 +128,7 @@ public class MainUI extends JFrame implements WindowListener
 					MainUI.openApk(dir.getPath());
 				}
 				
-	        } else if(b.getText().equals("manifest")) {
+	        } else if(btn_label.equals(Resource.STR_BTN_MANIFEST.getString())) {
 				  if(System.getProperty("os.name").indexOf("Window") >-1) {
 					  try {
 						new ProcessBuilder("notepad", apkInfo.WorkTempPath + File.separator + "AndroidManifest.xml").start();
@@ -140,7 +143,7 @@ public class MainUI extends JFrame implements WindowListener
 					}
 
 				  }	
-	        } else if(b.getText().equals("탐색기")) { 
+	        } else if(btn_label.equals(Resource.STR_BTN_EXPLORER.getString())) { 
 				  if(System.getProperty("os.name").indexOf("Window") >-1) {
 					  try {
 						new ProcessBuilder("explorer", apkInfo.WorkTempPath).start();
@@ -155,17 +158,21 @@ public class MainUI extends JFrame implements WindowListener
 					}
 
 				  }
-	        } else if(b.getText().equals("unpack")) {
+	        } else if(btn_label.equals(Resource.STR_BTN_UNPACK.getString())) {
 	        	JOptionPane.showMessageDialog(null, "unpack", "unpack", JOptionPane.INFORMATION_MESSAGE);
-	        } else if(b.getText().equals("pack")) {
+	        } else if(btn_label.equals(Resource.STR_BTN_PACK.getString())) {
 	        	JOptionPane.showMessageDialog(null, "pack", "pack", JOptionPane.INFORMATION_MESSAGE);
-	        } else if(b.getText().equals("설치")) {
+	        } else if(btn_label.equals(Resource.STR_BTN_INSTALL.getString())) {
 	        	mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, false);
 			  new DeviceUIManager(apkInfo.PackageName, apkInfo.ApkPath);
 			  
-	        } else if(b.getText().equals("about")) {
+	        } else if(btn_label.equals(Resource.STR_BTN_ABOUT.getString())) {
 	        	final ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon(100,100);
-	        	JOptionPane.showMessageDialog(null, "APK Scanner \nVersion: 1.5\n\n", "About", JOptionPane.INFORMATION_MESSAGE,Appicon);	        	
+	        	String msg = "";
+	        	msg += Resource.STR_APP_NAME.getString() + "\n";
+	        	msg += Resource.STR_APP_VERSION.getString() + "\n\n";
+	        	msg += Resource.STR_APP_MAKER.getString();
+	        	JOptionPane.showMessageDialog(null, msg, Resource.STR_BTN_ABOUT.getString(), JOptionPane.INFORMATION_MESSAGE,Appicon);	        	
 	        }
 		}
 	}
@@ -179,7 +186,7 @@ public class MainUI extends JFrame implements WindowListener
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {	
 				window = new MainUI();
-				window.initialize(Resource.STR_APP_NAME.getValue());
+				window.initialize(Resource.STR_APP_NAME.getString());
 				mMyToolBarUI.setEnabledAt(ButtonId.NEED_TARGET_APK, false);
 				
 				String Osname = System.getProperty("os.name");
@@ -193,6 +200,8 @@ public class MainUI extends JFrame implements WindowListener
 					System.out.println("Target APK : " + args[0]);
 					//frame.setVisible(false);
 					openApk(apkPath);
+				} else {
+					frame.setVisible(true);
 				}
 			}
 		});

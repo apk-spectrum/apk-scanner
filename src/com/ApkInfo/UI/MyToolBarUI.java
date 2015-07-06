@@ -75,13 +75,13 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         ImageIcon toolbar_install_hover  =  Resource.IMG_TOOLBAR_INSTALL_HOVER.getImageIcon(Iconsize,Iconsize);
         ImageIcon toolbar_about_hover  =  Resource.IMG_TOOLBAR_ABOUT_HOVER.getImageIcon(Iconsize,Iconsize);
         
-        btn_open = new ToolBarButton("Open",toolbar_open, toobar_open_hover, listener);
-        btn_show_manifest = new ToolBarButton("manifest",toolbar_manifest, toolbar_manifest_hover, listener);
-        btn_show_explorer = new ToolBarButton("탐색기", toolbar_explorer, toolbar_explorer_hover, listener);
-        btn_unpack = new ToolBarButton("unpack", toolbar_unpack, toolbar_unpack_hover, listener);
-        btn_pack = new ToolBarButton("pack", toolbar_pack, toolbar_pack_hover, listener);
-        btn_install = new ToolBarButton("설치", toolbar_install, toolbar_install_hover, listener);
-        btn_about = new ToolBarButton("about", toolbar_about, toolbar_about_hover, listener);
+        btn_open = new ToolBarButton(Resource.STR_BTN_OPEN.getString(), toolbar_open, toobar_open_hover, listener);
+        btn_show_manifest = new ToolBarButton(Resource.STR_BTN_MANIFEST.getString(), toolbar_manifest, toolbar_manifest_hover, listener);
+        btn_show_explorer = new ToolBarButton(Resource.STR_BTN_EXPLORER.getString(), toolbar_explorer, toolbar_explorer_hover, listener);
+        btn_unpack = new ToolBarButton(Resource.STR_BTN_UNPACK.getString(), toolbar_unpack, toolbar_unpack_hover, listener);
+        btn_pack = new ToolBarButton(Resource.STR_BTN_PACK.getString(), toolbar_pack, toolbar_pack_hover, listener);
+        btn_install = new ToolBarButton(Resource.STR_BTN_INSTALL.getString(), toolbar_install, toolbar_install_hover, listener);
+        btn_about = new ToolBarButton(Resource.STR_BTN_ABOUT.getString(), toolbar_about, toolbar_about_hover, listener);
 
               
         toolbar1.add(btn_open);
@@ -107,7 +107,7 @@ public class MyToolBarUI extends JPanel implements ActionListener{
 
         toolbar1.setAlignmentX(0);
         toolbar1.setFloatable(false);
-        toolbar1.setOpaque(true);
+        toolbar1.setOpaque(false);
 
         panel.add(toolbar1,BorderLayout.WEST);
         add(panel, BorderLayout.NORTH);

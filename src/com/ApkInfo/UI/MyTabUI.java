@@ -11,6 +11,7 @@ import javax.swing.JTabbedPane;
 
 import com.ApkInfo.UIUtil.PlasticTabbedPaneUI;
 import com.ApkInfo.Core.ApkManager.ApkInfo;
+import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.TabUI.MyTabUIActivity;
 import com.ApkInfo.TabUI.MyTabUILib;
 import com.ApkInfo.TabUI.MyTabUIResource;
@@ -39,22 +40,28 @@ public class MyTabUI extends JPanel{
         tabbedPane = new JTabbedPane();
         tabbedPane.setUI(new PlasticTabbedPaneUI());
         
-        tabbedPane.addTab("APK Info", null, Panels[0], "APK Info");
+        String label = null;
+        label = Resource.STR_TAB_BASIC_INFO.getString();
+        tabbedPane.addTab(label, null, Panels[0], label);
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-        
-        tabbedPane.addTab("Widget", null, Panels[1], "Widget");
+
+        label = Resource.STR_TAB_WIDGET.getString();
+        tabbedPane.addTab(label, null, Panels[1], label);
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
-        
-        tabbedPane.addTab("Lib", null, Panels[2], "Lib");
+
+        label = Resource.STR_TAB_LIB.getString();
+        tabbedPane.addTab(label, null, Panels[2], label);
         tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
-        tabbedPane.addTab("Image", null, Panels[3], "Image");
+        label = Resource.STR_TAB_IMAGE.getString();
+        tabbedPane.addTab(label, null, Panels[3], label);
         tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
-        
-        tabbedPane.addTab("Activity", null, Panels[4], "Activity");
+
+        tabbedPane.addTab(label, null, Panels[4], label);
         tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
 
-        tabbedPane.addTab("CERT", null, Panels[5], "CERT");
+        label = Resource.STR_TAB_CERT.getString();
+        tabbedPane.addTab(label, null, Panels[5], label);
         tabbedPane.setMnemonicAt(5, KeyEvent.VK_6);
         
 //	        JComponent panel6 = makeTextPanel("Panel #4 (has a preferred size of 410 x 50).");
@@ -81,54 +88,60 @@ public class MyTabUI extends JPanel{
 	
 	public void setData(ApkInfo apkInfo)
 	{
-        tabbedPane.setTitleAt(3,"Image(...)");
+        String label = Resource.STR_TAB_IMAGE.getString();
+        tabbedPane.setTitleAt(3, label + "(...)");
 		tabbedPane.setEnabledAt(3, false);
         
 		((MyTabUIbasicInfo) Panels[0]).setData(apkInfo);
 
+        label = Resource.STR_TAB_WIDGET.getString();
 		if(apkInfo.WidgetList.size() > 0) {
 			((MyTabUIWidget) Panels[1]).setData(apkInfo.WidgetList);
-	        tabbedPane.setTitleAt(1,"Widget(" + apkInfo.WidgetList.size() + ")");
+	        tabbedPane.setTitleAt(1, label + "(" + apkInfo.WidgetList.size() + ")");
 	        tabbedPane.setEnabledAt(1, true);
 		} else {
-	        tabbedPane.setTitleAt(1,"Widget(0)");
+	        tabbedPane.setTitleAt(1, label + "(0)");
 			tabbedPane.setEnabledAt(1, false);
 		}
 
+        label = Resource.STR_TAB_LIB.getString();
 		if(apkInfo.LibList.size() > 0) {
 	        ((MyTabUILib) Panels[2]).setData(apkInfo.LibList);
-	        tabbedPane.setTitleAt(2,"Lib(" + apkInfo.LibList.size()  + ")");
+	        tabbedPane.setTitleAt(2, label + "(" + apkInfo.LibList.size()  + ")");
 			tabbedPane.setEnabledAt(2, true);
 		} else {
-	        tabbedPane.setTitleAt(2,"Lib(0)");
+	        tabbedPane.setTitleAt(2, label + "(0)");
 			tabbedPane.setEnabledAt(2, false);
 		}
 
+        label = Resource.STR_TAB_ACTIVITY.getString();
 		if(apkInfo.ActivityList.size() > 0) {
 	        ((MyTabUIActivity) Panels[4]).setData(apkInfo.ActivityList);
-	        tabbedPane.setTitleAt(4,"Activity(" + apkInfo.ActivityList.size()  + ")");
+	        tabbedPane.setTitleAt(4, label + "(" + apkInfo.ActivityList.size()  + ")");
 			tabbedPane.setEnabledAt(4, true);
 		} else {
-	        tabbedPane.setTitleAt(4,"Activity(0)");
+	        tabbedPane.setTitleAt(4, label + "(0)");
 			tabbedPane.setEnabledAt(4, false);
 		}
 
+        label = Resource.STR_TAB_CERT.getString();
 		if(apkInfo.CertList.size() > 0) {
 	        ((MyTabUISign) Panels[5]).setData(apkInfo.CertList);
-	        tabbedPane.setTitleAt(5,"CERT(" + apkInfo.CertList.size()  + ")");
+	        tabbedPane.setTitleAt(5, label + "(" + apkInfo.CertList.size()  + ")");
 			tabbedPane.setEnabledAt(5, true);
 		} else {
-	        tabbedPane.setTitleAt(5,"CERT(0)");
+	        tabbedPane.setTitleAt(5, label + "(0)");
 			tabbedPane.setEnabledAt(5, false);
 		}
 
         MainUI.ProgressBarDlg.addProgress(25,"check resource(*.png)...\n");
+        label = Resource.STR_TAB_IMAGE.getString();
 		if(apkInfo.ImageList.size() > 0) {
 			((MyTabUIResource) Panels[3]).setData(apkInfo.WorkTempPath, apkInfo.ImageList);
-	        tabbedPane.setTitleAt(3,"Image(" + apkInfo.ImageList.size()  + ")");
+	        tabbedPane.setTitleAt(3, label + "(" + apkInfo.ImageList.size()  + ")");
 			tabbedPane.setEnabledAt(3, true);
 		} else {
-	        tabbedPane.setTitleAt(3,"Image(0)");
+	        tabbedPane.setTitleAt(3, label + "(0)");
 			tabbedPane.setEnabledAt(3, false);
 		}
 		

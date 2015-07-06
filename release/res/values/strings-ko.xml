@@ -1,0 +1,54 @@
+<resources>
+    <string name="app_name">APK 스캐너</string>
+    <string name="app_version">Ver. </string>
+    
+    <string name="btn_open">열기</string>
+    <string name="btn_manifest">매니페스트</string>
+    <string name="btn_explorer">탐색기</string>
+    <string name="btn_unpack">디컴파일</string>
+    <string name="btn_pack">리컴파일</string>
+    <string name="btn_install">설치</string>
+    <string name="btn_setting">설정</string>
+    <string name="btn_about">정보</string>
+
+    <string name="tab_basic_info">APK 정보</string>
+    <string name="tab_widget">위젯</string>
+    <string name="tab_lib">라이브러리</string>
+    <string name="tab_image">이미지</string>
+    <string name="tab_activity">액티비티</string>
+    <string name="tab_cert">인증서</string>
+
+    <string name="feature">Feature</string>
+    <string name="feature_launcher">LAUNCHER</string>
+    <string name="feature_hidden">HIDDEN</string>
+    <string name="feature_startup">START_UP</string>
+    <string name="feature_signature">SIGNATURE</string>
+    <string name="feature_shared_user_id">SHARED_USER_ID</string>
+    
+    <string name="widget_column_image">Image</string>
+    <string name="widget_column_label">Label</string>
+    <string name="widget_column_size">Size</string>
+    <string name="widget_column_activity">Activity</string>
+    <string name="widget_column_type">Type</string>
+    <string name="widget_resize_mode">ReSizeMode</string>
+    <string name="widget_horizontal">horizontal</string>
+    <string name="widget_vertical">vertical</string>
+    <string name="widget_type_nomal">Normal</string>
+    <string name="widget_type_shortcut">Shortcut</string>
+    
+    <string name="activity_column_class">Class</string>
+    <string name="activity_column_type">Type</string>
+    <string name="activity_column_startup">Startup</string>
+    <string name="activity_type_activity">activity</string>
+    <string name="activity_type_service">service</string>
+    <string name="activity_type_receiver">receiver</string>
+    <string name="activity_label_intent_filter">Intent filter</string>
+    
+    <string name="cert_certificate">Certificate</string>
+    
+    <string name="file_size_Bytes">Bytes</string>
+    <string name="file_size_KB">KB</string>
+    <string name="file_size_MB">MB</string>
+    <string name="file_size_GB">GB</string>
+    <string name="file_size_TB">TB</string>
+</resources>
