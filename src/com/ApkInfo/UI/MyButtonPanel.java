@@ -89,7 +89,7 @@ public class MyButtonPanel extends JPanel{
 				  //ADBDialog dt = new ADBDialog(MainUI.window);
 				  //dt.showPlease();
 				  btnInstall.setEnabled(false);
-				  DeviceUIManager mMyDeviceManager = new DeviceUIManager(MainUI.GetMyApkInfo().PackageName, MainUI.GetMyApkInfo().ApkPath);
+				  //DeviceUIManager mMyDeviceManager = new DeviceUIManager(MainUI.GetMyApkInfo().PackageName, MainUI.GetMyApkInfo().ApkPath);
 				  }
 			});
 		

@@ -29,6 +29,7 @@ import javax.swing.text.DefaultCaret;
 import com.ApkInfo.Core.CoreApkTool;
 import com.ApkInfo.Core.MyConsolCmd;
 import com.ApkInfo.Core.MyDeviceInfo;
+import com.ApkInfo.Core.ApkManager.ProcessCmd;
 import com.ApkInfo.Core.MyDeviceInfo.Device;
 import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UIUtil.ButtonType;
@@ -45,20 +46,22 @@ public class DeviceUIManager {
 	String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
 	public static JDialog dlgDialog = null;
 	
+	public interface InstallButtonStatusListener
+	{
+		public void SetInstallButtonStatus(Boolean Flag);
+	}
 	
-	public DeviceUIManager(String PackageName, String sourcePath) {
+	public DeviceUIManager(String PackageName, String sourcePath, final InstallButtonStatusListener Listener) {
 		// TODO Auto-generated constructor stub
 
 		final ImageIcon Appicon = Resource.IMG_QUESTION.getImageIcon();
-        
-		
-		final Object[] options = {"Push", "Install"};
+        final Object[] options = {"Push", "Install"};
 		strPackageName = PackageName;
 		strSourcePath = sourcePath;
 		
 		ShowSetupLogDialog();
 		
-		mMyDeviceInfo = new MyDeviceInfo();
+		mMyDeviceInfo = new MyDeviceInfo(Listener);
 		
 		  Thread t = new Thread(new Runnable(){
 		        public void run(){
@@ -87,7 +90,7 @@ public class DeviceUIManager {
 		    		    					ShowSetupDialog(0,true);
 		    		    				} else {
 		    		    		            if(n==-1) {
-		    		    		            	MyButtonPanel.btnInstall.setEnabled(true);
+		    		    		            	Listener.SetInstallButtonStatus(true);
 		    		    		            	return;
 		    		    		            } 
 		    		    				}
@@ -96,13 +99,13 @@ public class DeviceUIManager {
 		    				}
 		    			} else {
 		    				ShowSetupDialog(0, true);
-		    			}			
+		    			}
 		    		} else if(DeviceList.size() >1) {
 		                int selectedValue = MyListDialog.showDialog(null, null, "Select Device", "Device List", names, 0, "Cosmo  ");
 		                System.out.println("Seltected index : " + selectedValue);
 		                
 		                if(selectedValue==-1) {
-		                	MyButtonPanel.btnInstall.setEnabled(true);
+		                	Listener.SetInstallButtonStatus(true);
 		                	return;
 		                }            
 		    			if(DeviceList.get(selectedValue).ckeckPackage(strPackageName)) {
@@ -116,7 +119,7 @@ public class DeviceUIManager {
 		    		    					ShowSetupDialog(selectedValue,true);
 		    		    				} else {
 		    		    		            if(n==-1) {
-		    		    		            	MyButtonPanel.btnInstall.setEnabled(true);
+		    		    		            	Listener.SetInstallButtonStatus(true);
 		    		    		            	return;
 		    		    		            } 
 		    		    				}						
@@ -132,7 +135,7 @@ public class DeviceUIManager {
 		    });
 		  t.start();
 	}
-	public void ShowSetupDialog(int selected, Boolean isInstall) {
+	private void ShowSetupDialog(int selected, Boolean isInstall) {
 		ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon();
 		
 		//JPanel DialogPanel = makeLodingDialog();
@@ -145,7 +148,7 @@ public class DeviceUIManager {
 		//JOptionPane.showMessageDialog(null, DialogPanel,"설치중...", JOptionPane.DEFAULT_OPTION,Appicon);
 	}
 	
-	public void ShowSetupLogDialog() {
+	private void ShowSetupLogDialog() {
 		System.out.println("aaaaaaaaaaaaa" + MainUI.nPositionX +600 + "      " + MainUI.nPositionY);
 		
 		if(dlgDialog ==null) {
@@ -201,7 +204,7 @@ public class DeviceUIManager {
 	}
 	
 
-	public JPanel makeLodingDialog() {
+	private JPanel makeLodingDialog() {
 		//JPanel DiaPanel = new JPanel(new BorderLayout(3,3));
 		
 		JPanel DiaPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));

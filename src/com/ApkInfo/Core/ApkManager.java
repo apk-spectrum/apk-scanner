@@ -119,7 +119,7 @@ public class ApkManager
 		SOLVE_RESOURCE,
 		SOLVE_CODE,
 		SOLVE_BOTH,
-		DELETE_TEMP_PATH
+		DELETE_TEMP_PATH,
 	}
 	
 	public enum SolveType {

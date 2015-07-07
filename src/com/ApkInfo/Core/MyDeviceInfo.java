@@ -13,6 +13,7 @@ import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UI.DeviceUIManager;
 import com.ApkInfo.UI.MainUI;
 import com.ApkInfo.UI.MyButtonPanel;
+import com.ApkInfo.UI.DeviceUIManager.InstallButtonStatusListener;
 
 public class MyDeviceInfo
 {
@@ -24,6 +25,8 @@ public class MyDeviceInfo
 	final ImageIcon WaringAppicon;
 	final ImageIcon SucAppicon;
 	
+	InstallButtonStatusListener mListener;
+	
 	enum INSTALL_TYPE {
 		INSTALL,
 		PUSH
@@ -31,7 +34,7 @@ public class MyDeviceInfo
 
 	static MyCoreThead startCore;
 	
-	public MyDeviceInfo()
+	public MyDeviceInfo(InstallButtonStatusListener Listener)
 	{
 		QuestionAppicon = Resource.IMG_QUESTION.getImageIcon();
 		WaringAppicon = Resource.IMG_WARNING.getImageIcon();
@@ -47,6 +50,7 @@ public class MyDeviceInfo
 			System.out.println("no such adb tool" + adbCmd);
 			adbCmd = null;
 		}
+		mListener = Listener;
 		
 		System.out.println(adbCmd);
 	}
@@ -154,10 +158,10 @@ public class MyDeviceInfo
 						return true;
 					}
 				});
-				if(MyButtonPanel.btnInstall != null) {
-				MyButtonPanel.btnInstall.setEnabled(true);
+				
+				mListener.SetInstallButtonStatus(true);
 				JOptionPane.showMessageDialog(null, result[2], "Success", JOptionPane.INFORMATION_MESSAGE, SucAppicon);
-				}
+				
 			} else {
 				String[][] result;
 				List<String[]> cmd = new ArrayList<String[]>();
@@ -210,9 +214,9 @@ public class MyDeviceInfo
 					}
 				});
 
-				MyButtonPanel.btnInstall.setEnabled(true);				
 				//JOptionPane.showMessageDialog(null, result);
-
+				mListener.SetInstallButtonStatus(true);
+				
 				System.out.println("cmd.size() " + cmd.size() + ", result.length " + result.length);
 				if(cmd.size() == result.length) {
 					LogTextArea.append("Success...\n");

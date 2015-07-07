@@ -24,6 +24,7 @@ import com.ApkInfo.Core.ApkManager.ProcessCmd;
 import com.ApkInfo.Core.ApkManager.SolveType;
 import com.ApkInfo.Core.ApkManager.StatusListener;
 import com.ApkInfo.Resource.Resource;
+import com.ApkInfo.UI.DeviceUIManager.InstallButtonStatusListener;
 import com.ApkInfo.UI.MyToolBarUI.ButtonId;
 
 
@@ -164,7 +165,13 @@ public class MainUI extends JFrame implements WindowListener
 	        	JOptionPane.showMessageDialog(null, "pack", "pack", JOptionPane.INFORMATION_MESSAGE);
 	        } else if(btn_label.equals(Resource.STR_BTN_INSTALL.getString())) {
 	        	mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, false);
-			  new DeviceUIManager(apkInfo.PackageName, apkInfo.ApkPath);
+			  new DeviceUIManager(apkInfo.PackageName, apkInfo.ApkPath, new InstallButtonStatusListener() {
+				@Override
+				public void SetInstallButtonStatus(Boolean Flag) {
+					// TODO Auto-generated method stub
+					mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, Flag);
+				}				  
+			  });
 			  
 	        } else if(btn_label.equals(Resource.STR_BTN_ABOUT.getString())) {
 	        	final ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon(100,100);
@@ -242,8 +249,8 @@ public class MainUI extends JFrame implements WindowListener
 		
 		frame.setVisible(false);
 		
-		//nPositionX = frame.getLocationOnScreen().x;
-		//nPositionY = frame.getLocationOnScreen().y;
+		nPositionX = 100;
+		nPositionY = 100;
         
 		frame.getContentPane().addHierarchyBoundsListener(new HierarchyBoundsListener(){
 			@Override
