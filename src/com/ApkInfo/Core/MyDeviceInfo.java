@@ -159,7 +159,7 @@ public class MyDeviceInfo
 				});
 				
 				mListener.SetInstallButtonStatus(true);
-				JOptionPane.showMessageDialog(null, result[2], "Success", JOptionPane.INFORMATION_MESSAGE, SucAppicon);
+				JOptionPane.showMessageDialog(null, result[2], "Complete", JOptionPane.INFORMATION_MESSAGE, SucAppicon);
 				
 			} else {
 				String[][] result;
