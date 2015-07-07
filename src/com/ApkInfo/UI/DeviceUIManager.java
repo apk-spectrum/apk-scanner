@@ -222,20 +222,6 @@ public class DeviceUIManager {
 		
 		return DiaPanel;
 	}
-	
-	
-	public static void main(final String[] args) {
-		
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {	
-				//args = file path
-	
-			 
-				DeviceUIManager mMyDeviceManager = new DeviceUIManager("com.nextbit.app", "/home/leejinhyeong/workspace/APKInfoDlgv2/CloudMailer_sign_zipaligned.apk");
-				
-			}
-		});
-	}
 }
 
 
