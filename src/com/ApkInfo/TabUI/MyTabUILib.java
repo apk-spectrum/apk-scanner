@@ -13,6 +13,7 @@ import javax.swing.table.TableColumn;
 
 import com.ApkInfo.Core.CoreApkTool;
 import com.ApkInfo.Core.CoreApkTool.FSStyle;
+import com.ApkInfo.Resource.Resource;
 
 /**
  * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for
@@ -22,16 +23,17 @@ public class MyTabUILib extends JPanel {
 	private static final long serialVersionUID = -8985157400085276691L;
 
 	private MyTableModel mMyTableModel;
+	private JTable table;
 	
 	public MyTabUILib() {
 		super(new GridLayout(1, 0));
 		
 		mMyTableModel = new MyTableModel();
-		JTable table = new JTable(mMyTableModel);
+		table = new JTable(mMyTableModel);
 		
 		//table.setPreferredScrollableViewportSize(new Dimension(500, 70));
 		
-		setJTableColumnsWidth(table, 500, 4,65,31);
+		setJTableColumnsWidth(table, 500, 4, 65, 31);
 		
 		//Create the scroll pane and add the table to it.
 		
@@ -44,6 +46,13 @@ public class MyTabUILib extends JPanel {
 	public void setData(ArrayList<String> data)
 	{
 		mMyTableModel.setData(data);
+	}
+	
+	public void reloadResource()
+	{
+		mMyTableModel.loadResource();
+		mMyTableModel.fireTableStructureChanged();
+		setJTableColumnsWidth(table, 500, 4, 65, 31);
 	}
 
 	public static void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
@@ -65,6 +74,11 @@ public class MyTabUILib extends JPanel {
 		private String[] columnNames = { "Index", "Path", "Size"};
 		
 		private ArrayList<Object[]> data = new ArrayList<Object[]>();
+		
+		public MyTableModel() 
+		{
+			loadResource();
+		}
 				
 		public void setData(ArrayList<String> libList)
 		{
@@ -81,6 +95,15 @@ public class MyTabUILib extends JPanel {
 				data.add(temp);
 			}
 			fireTableDataChanged();
+		}
+
+		public void loadResource()
+		{
+			columnNames = new String[] {
+				Resource.STR_LIB_COLUMN_INDEX.getString(),
+				Resource.STR_LIB_COLUMN_PATH.getString(),
+				Resource.STR_LIB_COLUMN_SIZE.getString()
+			};
 		}
 
 		public int getColumnCount() {

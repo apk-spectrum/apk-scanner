@@ -128,7 +128,7 @@ public class MyProgressBarDemo extends JPanel
      */
     static JFrame createAndShowGUI(MyProgressBarDemo temp) {
         //Create and set up the window.
-        frame = new JFrame(Resource.STR_APP_NAME.getString());
+        frame = new JFrame("APK Scanner - " + Resource.STR_APP_VERSION.getString());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Create and set up the content pane.

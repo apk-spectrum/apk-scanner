@@ -49,6 +49,10 @@ public enum Resource
 	STR_WIDGET_TYPE_NORMAL		(Type.TEXT, "@widget_type_nomal"),
 	STR_WIDGET_TYPE_SHORTCUT	(Type.TEXT, "@widget_type_shortcut"),
 	
+	STR_LIB_COLUMN_INDEX		(Type.TEXT, "@lib_column_index"),
+	STR_LIB_COLUMN_PATH			(Type.TEXT, "@lib_column_path"),
+	STR_LIB_COLUMN_SIZE			(Type.TEXT, "@lib_column_size"),
+	
 	STR_ACTIVITY_COLUME_CLASS	(Type.TEXT, "@activity_column_class"),
 	STR_ACTIVITY_COLUME_TYPE	(Type.TEXT, "@activity_column_type"),
 	STR_ACTIVITY_COLUME_STARTUP	(Type.TEXT, "@activity_column_startup"),
@@ -103,6 +107,7 @@ public enum Resource
 
 	private static String lang = null;
 	public static void setLanguage(String l) { lang = l; }
+	public static String getLanguage() { return lang; }
 
 	private Resource(Type type, String value)
 	{

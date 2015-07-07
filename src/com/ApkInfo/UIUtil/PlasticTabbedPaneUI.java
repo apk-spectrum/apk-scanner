@@ -1,7 +1,6 @@
 package com.ApkInfo.UIUtil;
 import java.util.*;
 import java.awt.*;
-import java.awt.geom.*;
 import javax.swing.*;
 import javax.swing.plaf.*;
 import javax.swing.plaf.basic.*;

@@ -22,13 +22,15 @@ import java.util.ArrayList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.ApkInfo.Resource.Resource;
+
 
 public class MyTabUISign extends JPanel{
 	private static final long serialVersionUID = 4333997417315260023L;
 	final JList<String> jlist;
 	JTextArea textArea;
 	
-	ArrayList<Object[]> mCertList = null;
+	ArrayList<String> mCertList = null;
 	
     public MyTabUISign() {
         //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -62,8 +64,10 @@ public class MyTabUISign extends JPanel{
         ListSelectionListener listSelectionListener = new ListSelectionListener() {
           public void valueChanged(ListSelectionEvent listSelectionEvent) {
         	  if(mCertList == null) return;
-              textArea.setText((String)mCertList.get(jlist.getSelectedIndex())[1]);
-              textArea.setCaretPosition(0);
+        	  if(jlist.getSelectedIndex() > -1) {
+	              textArea.setText(mCertList.get(jlist.getSelectedIndex()));
+	              textArea.setCaretPosition(0);
+        	  }
               //textArea.requestFocus();
           }
         };
@@ -85,16 +89,19 @@ public class MyTabUISign extends JPanel{
         jlist.addMouseListener(mouseListener);
     }
     
-    public void setData(ArrayList<Object[]> data) {
-    	mCertList = null;
+    public void setData(ArrayList<String> data) {
+    	mCertList = data;
+    	reloadResource();
+        jlist.setSelectedIndex(0);
+    }
+    
+    public void reloadResource() {
     	jlist.removeAll();
-        String[] labels = new String[data.size()];        
-        for(int i=0; i< labels.length; i++) {
-        	labels[i] = (String)data.get(i)[0];        	
+        String[] labels = new String[mCertList.size()];        
+        for(int i=0; i < labels.length; i++) {
+        	labels[i] = Resource.STR_CERT_CERTIFICATE.getString() + "[" + (i+1) + "]";
         }
         jlist.setListData(labels);
-    	mCertList = data;
-        jlist.setSelectedIndex(0);
     }
 }
 

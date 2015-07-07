@@ -15,6 +15,8 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
+import com.ApkInfo.Resource.Resource;
+
 public class MyTabUIActivity extends JPanel {
 	private static final long serialVersionUID = 8325900007802212630L;
 
@@ -72,6 +74,13 @@ public class MyTabUIActivity extends JPanel {
 		System.out.println("MyTabUIActivity setData() " + ActivityList.size());
 		TableModel.fireTableDataChanged();
 	}
+	
+	public void reloadResource()
+	{
+		TableModel.loadResource();
+		TableModel.fireTableStructureChanged();
+		setJTableColumnsWidth(table, 500, 80,10,10);
+	}
 
 	public void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
 										double... percentages) {
@@ -89,8 +98,22 @@ public class MyTabUIActivity extends JPanel {
 	class MyTableModel extends AbstractTableModel {
 		private static final long serialVersionUID = 5291910634830167294L;
 
-		private String[] columnNames = { "Class", "Type", "Startup" };
+		private String[] columnNames = null;
 
+		public MyTableModel()
+		{
+			loadResource();
+		}
+
+		public void loadResource()
+		{
+			columnNames = new String[] {
+				Resource.STR_ACTIVITY_COLUME_CLASS.getString(),
+				Resource.STR_ACTIVITY_COLUME_TYPE.getString(),
+				Resource.STR_ACTIVITY_COLUME_STARTUP.getString()
+			};
+		}
+		
 		public int getColumnCount() {
 			return columnNames.length;
 		}

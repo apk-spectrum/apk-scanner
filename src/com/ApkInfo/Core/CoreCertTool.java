@@ -5,10 +5,10 @@ import java.util.ArrayList;
 
 public class CoreCertTool {
 	
-	public static ArrayList<Object[]> CertList = new ArrayList<Object[]>();
+	public static ArrayList<String> CertList = new ArrayList<String>();
 	public static String CertSummary = "";
 	
-	public static ArrayList<Object[]> solveCert(String CertPath) {
+	public static ArrayList<String> solveCert(String CertPath) {
 		Double javaVersion = Double.parseDouble(System.getProperty("java.specification.version"));
 		String keytoolPackage;
 		if(javaVersion >= 1.8) {
@@ -36,7 +36,7 @@ public class CoreCertTool {
 		    CertSummary = "<certificate[1]>\n";
 		    for(int i=0; i < result.length; i++){
 	    		if(!certContent.isEmpty() && result[i].matches("^.*\\[[0-9]*\\]:$")){
-    				CertList.add(new Object[] { "Certificate[" + (CertList.size() + 1) + "]", certContent });
+    				CertList.add(certContent);
     				CertSummary += "<certificate[" + (CertList.size() + 1) + "]>\n";
 			    	certContent = "";
 	    		}
@@ -45,7 +45,7 @@ public class CoreCertTool {
 	    		}
 	    		certContent += (certContent.isEmpty() ? "" : "\n") + result[i];
 		    }
-			CertList.add(new Object[] { "Certificate[" + (CertList.size() + 1) + "]", certContent });
+			CertList.add(certContent);
 		}
 		return CertList;
 	}

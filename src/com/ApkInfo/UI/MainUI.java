@@ -160,7 +160,11 @@ public class MainUI extends JFrame implements WindowListener
 
 				  }
 	        } else if(btn_label.equals(Resource.STR_BTN_UNPACK.getString())) {
-	        	JOptionPane.showMessageDialog(null, "unpack", "unpack", JOptionPane.INFORMATION_MESSAGE);
+	        	//JOptionPane.showMessageDialog(null, "unpack", "unpack", JOptionPane.INFORMATION_MESSAGE);
+	        	if(Resource.getLanguage() == null)
+	        		setLanguage("ko");
+	        	else
+	        		setLanguage(null);
 	        } else if(btn_label.equals(Resource.STR_BTN_PACK.getString())) {
 	        	JOptionPane.showMessageDialog(null, "pack", "pack", JOptionPane.INFORMATION_MESSAGE);
 	        } else if(btn_label.equals(Resource.STR_BTN_INSTALL.getString())) {
@@ -179,11 +183,19 @@ public class MainUI extends JFrame implements WindowListener
 	        	msg += Resource.STR_APP_NAME.getString() + "\n";
 	        	msg += Resource.STR_APP_VERSION.getString() + "\n\n";
 	        	msg += Resource.STR_APP_MAKER.getString();
-	        	JOptionPane.showMessageDialog(null, msg, Resource.STR_BTN_ABOUT.getString(), JOptionPane.INFORMATION_MESSAGE,Appicon);	        	
+	        	JOptionPane.showMessageDialog(null, msg, Resource.STR_BTN_ABOUT.getString(), JOptionPane.INFORMATION_MESSAGE,Appicon);
 	        }
 		}
 	}
 
+	public static void setLanguage(String lang)
+	{
+		Resource.setLanguage(lang);
+		String title = Resource.STR_APP_NAME.getString() + " - " + mApkManager.getApkInfo().ApkPath.substring(mApkManager.getApkInfo().ApkPath.lastIndexOf(File.separator)+1);
+		frame.setTitle(title);
+		mMyToolBarUI.reloadResource();
+		mMyTabUI.reloadResource();
+	}
 
 	/**
 	 * Launch the application.
@@ -191,9 +203,10 @@ public class MainUI extends JFrame implements WindowListener
 	public static void main(final String[] args) {
 		
 		EventQueue.invokeLater(new Runnable() {
-			public void run() {	
+			public void run() {
+				//Resource.setLanguage("ko");
 				window = new MainUI();
-				window.initialize(Resource.STR_APP_NAME.getString());
+				window.initialize();
 				mMyToolBarUI.setEnabledAt(ButtonId.NEED_TARGET_APK, false);
 				
 				String Osname = System.getProperty("os.name");
@@ -224,11 +237,11 @@ public class MainUI extends JFrame implements WindowListener
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize(String title) {
+	private void initialize() {
 		frame = new JFrame();
 		frame.addWindowListener(this);
 		frame.setBounds(100, 100, 600, 550);
-		frame.setTitle(title);
+		frame.setTitle(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
 		
 		mMyTabUI = new MyTabUI();

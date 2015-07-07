@@ -25,28 +25,32 @@
     <string name="feature_signature">SIGNATURE</string>
     <string name="feature_shared_user_id">SHARED_USER_ID</string>
     
-    <string name="widget_column_image">Image</string>
-    <string name="widget_column_label">Label</string>
-    <string name="widget_column_size">Size</string>
-    <string name="widget_column_activity">Activity</string>
-    <string name="widget_column_type">Type</string>
-    <string name="widget_resize_mode">ReSizeMode</string>
-    <string name="widget_horizontal">horizontal</string>
-    <string name="widget_vertical">vertical</string>
-    <string name="widget_type_nomal">Normal</string>
-    <string name="widget_type_shortcut">Shortcut</string>
+    <string name="widget_column_image">이미지</string>
+    <string name="widget_column_label">이름</string>
+    <string name="widget_column_size">크기</string>
+    <string name="widget_column_activity">액티비티</string>
+    <string name="widget_column_type">종류</string>
+    <string name="widget_resize_mode">크기조정가능</string>
+    <string name="widget_horizontal">가로</string>
+    <string name="widget_vertical">세로</string>
+    <string name="widget_type_nomal">일반</string>
+    <string name="widget_type_shortcut">바로가기</string>
     
-    <string name="activity_column_class">Class</string>
-    <string name="activity_column_type">Type</string>
-    <string name="activity_column_startup">Startup</string>
-    <string name="activity_type_activity">activity</string>
-    <string name="activity_type_service">service</string>
-    <string name="activity_type_receiver">receiver</string>
-    <string name="activity_label_intent_filter">Intent filter</string>
+    <string name="lib_column_index">번호</string>
+    <string name="lib_column_path">경로</string>
+    <string name="lib_column_size">크기</string>
     
-    <string name="cert_certificate">Certificate</string>
+    <string name="activity_column_class">클래스</string>
+    <string name="activity_column_type">종류</string>
+    <string name="activity_column_startup">스타트업</string>
+    <string name="activity_type_activity">액티비티</string>
+    <string name="activity_type_service">서비스</string>
+    <string name="activity_type_receiver">리시버</string>
+    <string name="activity_label_intent_filter">인텐트 필터</string>
     
-    <string name="file_size_Bytes">Bytes</string>
+    <string name="cert_certificate">인증서</string>
+    
+    <string name="file_size_Bytes">바이트</string>
     <string name="file_size_KB">KB</string>
     <string name="file_size_MB">MB</string>
     <string name="file_size_GB">GB</string>

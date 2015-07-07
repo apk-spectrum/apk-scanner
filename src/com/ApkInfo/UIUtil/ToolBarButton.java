@@ -8,9 +8,10 @@ import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.border.BevelBorder;
 
 public class ToolBarButton extends JButton{
+	private static final long serialVersionUID = -6788392217820751244L;
+
 	public ImageIcon  mHoverIcon;
 	public ImageIcon  mIcon;
 

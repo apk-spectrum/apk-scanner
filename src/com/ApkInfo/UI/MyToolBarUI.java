@@ -75,13 +75,14 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         ImageIcon toolbar_install_hover  =  Resource.IMG_TOOLBAR_INSTALL_HOVER.getImageIcon(Iconsize,Iconsize);
         ImageIcon toolbar_about_hover  =  Resource.IMG_TOOLBAR_ABOUT_HOVER.getImageIcon(Iconsize,Iconsize);
         
-        btn_open = new ToolBarButton(Resource.STR_BTN_OPEN.getString(), toolbar_open, toobar_open_hover, listener);
-        btn_show_manifest = new ToolBarButton(Resource.STR_BTN_MANIFEST.getString(), toolbar_manifest, toolbar_manifest_hover, listener);
-        btn_show_explorer = new ToolBarButton(Resource.STR_BTN_EXPLORER.getString(), toolbar_explorer, toolbar_explorer_hover, listener);
-        btn_unpack = new ToolBarButton(Resource.STR_BTN_UNPACK.getString(), toolbar_unpack, toolbar_unpack_hover, listener);
-        btn_pack = new ToolBarButton(Resource.STR_BTN_PACK.getString(), toolbar_pack, toolbar_pack_hover, listener);
-        btn_install = new ToolBarButton(Resource.STR_BTN_INSTALL.getString(), toolbar_install, toolbar_install_hover, listener);
-        btn_about = new ToolBarButton(Resource.STR_BTN_ABOUT.getString(), toolbar_about, toolbar_about_hover, listener);
+        btn_open = new ToolBarButton(null, toolbar_open, toobar_open_hover, listener);
+        btn_show_manifest = new ToolBarButton(null, toolbar_manifest, toolbar_manifest_hover, listener);
+        btn_show_explorer = new ToolBarButton(null, toolbar_explorer, toolbar_explorer_hover, listener);
+        btn_unpack = new ToolBarButton(null, toolbar_unpack, toolbar_unpack_hover, listener);
+        btn_pack = new ToolBarButton(null, toolbar_pack, toolbar_pack_hover, listener);
+        btn_install = new ToolBarButton(null, toolbar_install, toolbar_install_hover, listener);
+        btn_about = new ToolBarButton(null, toolbar_about, toolbar_about_hover, listener);
+        reloadResource();
 
               
         toolbar1.add(btn_open);
@@ -168,6 +169,25 @@ public class MyToolBarUI extends JPanel implements ActionListener{
     	default:
     		break;
     	}
+    }
+    
+    public void reloadResource()
+    {
+        btn_open.setText(Resource.STR_BTN_OPEN.getString());
+        btn_show_manifest.setText(Resource.STR_BTN_MANIFEST.getString());
+        btn_show_explorer.setText(Resource.STR_BTN_EXPLORER.getString());
+        btn_unpack.setText(Resource.STR_BTN_UNPACK.getString());
+        btn_pack.setText(Resource.STR_BTN_PACK.getString());
+        btn_install.setText(Resource.STR_BTN_INSTALL.getString());
+        btn_about.setText(Resource.STR_BTN_ABOUT.getString());
+        
+        btn_open.setToolTipText(Resource.STR_BTN_OPEN.getString());
+        btn_show_manifest.setToolTipText(Resource.STR_BTN_MANIFEST.getString());
+        btn_show_explorer.setToolTipText(Resource.STR_BTN_EXPLORER.getString());
+        btn_unpack.setToolTipText(Resource.STR_BTN_UNPACK.getString());
+        btn_pack.setToolTipText(Resource.STR_BTN_PACK.getString());
+        btn_install.setToolTipText(Resource.STR_BTN_INSTALL.getString());
+        btn_about.setToolTipText(Resource.STR_BTN_ABOUT.getString());
     }
 
 	@Override

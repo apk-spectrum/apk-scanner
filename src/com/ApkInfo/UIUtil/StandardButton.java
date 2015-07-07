@@ -28,6 +28,7 @@ import javax.swing.JButton;
  * 
  */
 public class StandardButton extends JButton {
+	private static final long serialVersionUID = -7215763661682579113L;
 
 	private int buttonTheme = Theme.STANDARD_SILVER_THEME;
 	private int selectedButtonTheme = Theme.STANDARD_RED_THEME;

@@ -12,7 +12,6 @@ import javax.swing.JTextArea;
 import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UI.DeviceUIManager;
 import com.ApkInfo.UI.MainUI;
-import com.ApkInfo.UI.MyButtonPanel;
 import com.ApkInfo.UI.DeviceUIManager.InstallButtonStatusListener;
 
 public class MyDeviceInfo

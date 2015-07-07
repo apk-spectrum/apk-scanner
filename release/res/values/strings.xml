@@ -36,6 +36,10 @@
     <string name="widget_type_nomal">Normal</string>
     <string name="widget_type_shortcut">Shortcut</string>
     
+    <string name="lib_column_index">Index</string>
+    <string name="lib_column_path">Path</string>
+    <string name="lib_column_size">Size</string>
+    
     <string name="activity_column_class">Class</string>
     <string name="activity_column_type">Type</string>
     <string name="activity_column_startup">Startup</string>

@@ -45,7 +45,7 @@ public class ApkManager
 		public ArrayList<String> LibList = new ArrayList<String>();
 
 		public ArrayList<Object[]> ActivityList = new ArrayList<Object[]>();
-		public ArrayList<Object[]> CertList = new ArrayList<Object[]>();
+		public ArrayList<String> CertList = new ArrayList<String>();
 		
 		public ArrayList<String> PermissionList = new ArrayList<String>();
 
@@ -173,7 +173,6 @@ public class ApkManager
 		if(mApkInfo.ApkPath == null) return;
 		System.out.println("solve()....start ");
 		synchronized(this) {
-			
 			mProcess = new ProcessThead(this, ProcessCmd.SOLVE_RESOURCE);
 			mProcess.start();
 
