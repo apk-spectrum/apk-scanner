@@ -33,21 +33,25 @@ if not "%java_ver%" GEQ "1.7" (
     goto nosuch_java
 )
 
-del /q "%APP_PATH%"
+rmdir /s /q "%APP_PATH%"
 
 rem --- 폴더 생성 ---
 if not exist "%APP_PATH%" (
     echo Create folder : %APP_PATH%
     mkdir "%APP_PATH%"
-    rem mkdir "%APP_PATH%/tool"
+    rem mkdir "%APP_PATH%\tool"
 )
-if not exist "%APP_PATH%/tool" (
-     echo Create folder : %APP_PATH%/tool
-     mkdir "%APP_PATH%/tool"
+if not exist "%APP_PATH%\tool" (
+     echo Create folder : %APP_PATH%\tool
+     mkdir "%APP_PATH%\tool"
 )
-if not exist "%APP_PATH%/res" (
-     echo Create folder : %APP_PATH%/res
-     mkdir "%APP_PATH%/res"
+if not exist "%APP_PATH%\res" (
+     echo Create folder : %APP_PATH%\res
+     mkdir "%APP_PATH%\res"
+)
+if not exist "%APP_PATH%\res\values" (
+     echo Create folder : %APP_PATH%\res\values
+     mkdir "%APP_PATH%\res\values"
 )
 if not exist "%APP_PATH%" (
     echo Fail : Not create the folder : %APP_PATH%
@@ -79,6 +83,8 @@ copy /Y %SRC_PATH%\res\toolbar_manifast_hover.png "%APP_PATH%\res"
 copy /Y %SRC_PATH%\res\toolbar_unpack_hover.png "%APP_PATH%\res"
 copy /Y %SRC_PATH%\res\loading.gif "%APP_PATH%\res"
 copy /Y %SRC_PATH%\res\install_wait.gif "%APP_PATH%\res"
+copy /Y %SRC_PATH%\res\values\strings.xml "%APP_PATH%\res\values"
+copy /Y %SRC_PATH%\res\values\strings-ko.xml "%APP_PATH%\res\values"
 rem copy /Y .\tool\* "%APP_PATH%\tool\"
 
 
