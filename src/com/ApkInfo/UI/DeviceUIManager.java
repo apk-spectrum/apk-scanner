@@ -149,8 +149,6 @@ public class DeviceUIManager {
 	}
 	
 	private void ShowSetupLogDialog() {
-		System.out.println("aaaaaaaaaaaaa" + MainUI.nPositionX +600 + "      " + MainUI.nPositionY);
-		
 		if(dlgDialog ==null) {
 			final JPanel DialogPanel = makeLodingDialog();
 			  Thread t = new Thread(new Runnable(){
