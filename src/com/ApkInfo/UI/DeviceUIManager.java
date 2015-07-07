@@ -75,7 +75,7 @@ public class DeviceUIManager {
 		    	    
 		    		System.out.println("Device count : " + DeviceList.size());
 		    		if(DeviceList.size() ==0) {
-		    			//MyButtonPanel.btnInstall.setEnabled(true);
+		    			Listener.SetInstallButtonStatus(true);
 		    			final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();		    			
 		    			JOptionPane.showMessageDialog(null,"Device not found!\nplease check Connected","Warning",JOptionPane.WARNING_MESSAGE, Appicon);		    			
 		    		} else if(DeviceList.size() ==1) {
