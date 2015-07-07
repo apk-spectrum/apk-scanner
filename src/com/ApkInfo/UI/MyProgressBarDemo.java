@@ -92,6 +92,12 @@ public class MyProgressBarDemo extends JPanel
         starttask();
     }
 
+    public void init() {
+    	this.setVisible(true);
+    	progressBar.setValue(0);
+    	starttask();
+    }
+    
     /**
      * Invoked when the user presses the start button.
      */
@@ -144,7 +150,7 @@ public class MyProgressBarDemo extends JPanel
         frame.setResizable( false );
         frame.pack();
         frame.setLocation(200, 200);        
-        frame.setVisible(true);
+        //frame.setVisible(true);
         
         return frame;
     }

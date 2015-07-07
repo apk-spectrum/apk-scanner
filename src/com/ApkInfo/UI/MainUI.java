@@ -60,8 +60,7 @@ public class MainUI extends JFrame implements WindowListener
 				switch(cmd) {
 				case SOLVE_RESOURCE:
 					frame.setVisible(false);
-					ProgressBarDlg = new MyProgressBarDemo();
-					WaitingDlg = MyProgressBarDemo.createAndShowGUI(ProgressBarDlg);
+
 					break;
 				default:
 					break;
@@ -126,7 +125,11 @@ public class MainUI extends JFrame implements WindowListener
 
 				if(dir!=null) {
 					//JOptionPane.showMessageDialog(null, dir.getPath(), "Open", JOptionPane.INFORMATION_MESSAGE);
+					
+					ProgressBarDlg.init();
+					WaitingDlg.setVisible(true);
 					MainUI.openApk(dir.getPath());
+					
 				}
 				
 	        } else if(btn_label.equals(Resource.STR_BTN_MANIFEST.getString())) {
@@ -204,10 +207,6 @@ public class MainUI extends JFrame implements WindowListener
 		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				//Resource.setLanguage("ko");
-				window = new MainUI();
-				window.initialize();
-				mMyToolBarUI.setEnabledAt(ButtonId.NEED_TARGET_APK, false);
 				
 				String Osname = System.getProperty("os.name");
 				System.out.println("OS : " + Osname);
@@ -216,11 +215,27 @@ public class MainUI extends JFrame implements WindowListener
 				
 				String apkPath = null;
 				if(args.length > 0) {
+					ProgressBarDlg = new MyProgressBarDemo();
+					WaitingDlg = MyProgressBarDemo.createAndShowGUI(ProgressBarDlg);
+					WaitingDlg.setVisible(true);
+					//Resource.setLanguage("ko");
+					window = new MainUI();
+					window.initialize();
+					mMyToolBarUI.setEnabledAt(ButtonId.NEED_TARGET_APK, false);
+
 					apkPath = args[0];
 					System.out.println("Target APK : " + args[0]);
 					//frame.setVisible(false);
 					openApk(apkPath);
 				} else {
+					window = new MainUI();
+					window.initialize();
+					mMyToolBarUI.setEnabledAt(ButtonId.NEED_TARGET_APK, false);
+					
+					ProgressBarDlg = new MyProgressBarDemo();
+					WaitingDlg = MyProgressBarDemo.createAndShowGUI(ProgressBarDlg);
+					
+					WaitingDlg.setVisible(false);
 					frame.setVisible(true);
 				}
 			}
