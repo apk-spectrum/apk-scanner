@@ -11,6 +11,10 @@ import javax.swing.JTextArea;
 import javax.swing.JList;
 
 
+
+
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 /**
  * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for
  * both cells and column headers.
@@ -25,7 +29,7 @@ import javax.swing.event.ListSelectionListener;
 import com.ApkInfo.Resource.Resource;
 
 
-public class MyTabUISign extends JPanel{
+public class MyTabUISign extends JPanel implements ComponentListener{
 	private static final long serialVersionUID = 4333997417315260023L;
 	final JList<String> jlist;
 	JTextArea textArea;
@@ -43,7 +47,8 @@ public class MyTabUISign extends JPanel{
         scrollPane1.setPreferredSize(new Dimension(50, 400));
         
         c.weightx = 0.1;
-        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weighty = 1;
+        c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
         c.gridy = 0;
         
@@ -53,7 +58,8 @@ public class MyTabUISign extends JPanel{
         final JScrollPane scrollPane2 = new JScrollPane(textArea);
         scrollPane2.setPreferredSize(new Dimension(50, 400));
         c.weightx = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weighty = 1;
+        c.fill = GridBagConstraints.BOTH;
         c.gridx = 1;
         c.gridy = 0;
         
@@ -103,5 +109,29 @@ public class MyTabUISign extends JPanel{
         }
         jlist.setListData(labels);
     }
+
+	@Override
+	public void componentResized(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		System.out.printf("aaaa");
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentShown(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentHidden(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 }
 
