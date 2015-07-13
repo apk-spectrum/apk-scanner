@@ -15,7 +15,6 @@ import javax.swing.JTextArea;
 import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UI.MyImagePanel;
 import com.ApkInfo.Core.ApkManager.ApkInfo;
-import com.ApkInfo.Core.CoreCertTool;
 
 public class MyTabUIbasicInfo extends JComponent{
 	private static final long serialVersionUID = 6431995641984509482L;
