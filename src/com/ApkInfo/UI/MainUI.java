@@ -46,10 +46,6 @@ public class MainUI extends JFrame implements WindowListener
 	static public MyProgressBarDemo ProgressBarDlg;
 
 	static private ApkManager mApkManager;
-	
-	public static ApkInfo GetMyApkInfo(){
-		return mApkManager.getApkInfo();
-	}
 		
 	public static void openApk(final String apkPath) {
 		//System.out.println("target file :" + apkPath);
@@ -106,16 +102,16 @@ public class MainUI extends JFrame implements WindowListener
 	{
 		@Override
 		public void actionPerformed(ActionEvent e) {
-	        ApkInfo apkInfo = null;
+			ApkInfo apkInfo = null;
 
-	        if(mApkManager != null) {
-	        	apkInfo = mApkManager.getApkInfo();
-	        }
+			if(mApkManager != null) {
+				apkInfo = mApkManager.getApkInfo();
+			}
 	        
-	        JButton b = (JButton) e.getSource();
-	        String btn_label = b.getText();
+			JButton b = (JButton) e.getSource();
+			String btn_label = b.getText();
 	        
-	        if (btn_label.equals(Resource.STR_BTN_OPEN.getString())) {
+			if (btn_label.equals(Resource.STR_BTN_OPEN.getString())) {
 				JFileChooser jfc = new JFileChooser();
 				//jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("apk","apk"));
@@ -124,70 +120,55 @@ public class MainUI extends JFrame implements WindowListener
 				File dir = jfc.getSelectedFile();
 
 				if(dir!=null) {
-					//JOptionPane.showMessageDialog(null, dir.getPath(), "Open", JOptionPane.INFORMATION_MESSAGE);
-					
 					ProgressBarDlg.init();
 					WaitingDlg.setVisible(true);
-					MainUI.openApk(dir.getPath());
-					
+					openApk(dir.getPath());
 				}
-				
-	        } else if(btn_label.equals(Resource.STR_BTN_MANIFEST.getString())) {
-				  if(System.getProperty("os.name").indexOf("Window") >-1) {
-					  try {
+			} else if(btn_label.equals(Resource.STR_BTN_MANIFEST.getString())) {
+				try {
+					if(System.getProperty("os.name").indexOf("Window") >-1) {
 						new ProcessBuilder("notepad", apkInfo.WorkTempPath + File.separator + "AndroidManifest.xml").start();
-					} catch (IOException e1) {
-						e1.printStackTrace();
+					} else {  //for linux
+						new ProcessBuilder("gedit", apkInfo.WorkTempPath + File.separator + "AndroidManifest.xml").start();
 					}	
-				  } else {  //for linux
-					  try {
-						  new ProcessBuilder("gedit", apkInfo.WorkTempPath + File.separator + "AndroidManifest.xml").start();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-
-				  }	
-	        } else if(btn_label.equals(Resource.STR_BTN_EXPLORER.getString())) { 
-				  if(System.getProperty("os.name").indexOf("Window") >-1) {
-					  try {
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			} else if(btn_label.equals(Resource.STR_BTN_EXPLORER.getString())) {
+				try {
+					if(System.getProperty("os.name").indexOf("Window") >-1) {
 						new ProcessBuilder("explorer", apkInfo.WorkTempPath).start();
-					} catch (IOException e1) {
-						e1.printStackTrace();
+					} else {  //for linux
+						new ProcessBuilder("nautilus", apkInfo.WorkTempPath).start();
 					}
-				  } else {  //for linux
-					  try {
-						  new ProcessBuilder("nautilus", apkInfo.WorkTempPath).start();
-					} catch (IOException e1) {
-						e1.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			} else if(btn_label.equals(Resource.STR_BTN_UNPACK.getString())) {
+				//JOptionPane.showMessageDialog(null, "unpack", "unpack", JOptionPane.INFORMATION_MESSAGE);
+				if(Resource.getLanguage() == null)
+					setLanguage("ko");
+				else
+					setLanguage(null);
+			} else if(btn_label.equals(Resource.STR_BTN_PACK.getString())) {
+				JOptionPane.showMessageDialog(null, "pack", "pack", JOptionPane.INFORMATION_MESSAGE);
+			} else if(btn_label.equals(Resource.STR_BTN_INSTALL.getString())) {
+				mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, false);
+				String libPath = apkInfo.WorkTempPath + File.separator + "lib" + File.separator;
+				new DeviceUIManager(apkInfo.PackageName, apkInfo.ApkPath, libPath , new InstallButtonStatusListener() {
+					@Override
+					public void SetInstallButtonStatus(Boolean Flag) {
+						mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, Flag);
 					}
-
-				  }
-	        } else if(btn_label.equals(Resource.STR_BTN_UNPACK.getString())) {
-	        	//JOptionPane.showMessageDialog(null, "unpack", "unpack", JOptionPane.INFORMATION_MESSAGE);
-	        	if(Resource.getLanguage() == null)
-	        		setLanguage("ko");
-	        	else
-	        		setLanguage(null);
-	        } else if(btn_label.equals(Resource.STR_BTN_PACK.getString())) {
-	        	JOptionPane.showMessageDialog(null, "pack", "pack", JOptionPane.INFORMATION_MESSAGE);
-	        } else if(btn_label.equals(Resource.STR_BTN_INSTALL.getString())) {
-	        	mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, false);
-			  new DeviceUIManager(apkInfo.PackageName, apkInfo.ApkPath, new InstallButtonStatusListener() {
-				@Override
-				public void SetInstallButtonStatus(Boolean Flag) {
-					// TODO Auto-generated method stub
-					mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, Flag);
-				}				  
-			  });
-			  
-	        } else if(btn_label.equals(Resource.STR_BTN_ABOUT.getString())) {
-	        	final ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon(100,100);
-	        	String msg = "";
-	        	msg += Resource.STR_APP_NAME.getString() + "\n";
-	        	msg += Resource.STR_APP_VERSION.getString() + "\n\n";
-	        	msg += Resource.STR_APP_MAKER.getString();
-	        	JOptionPane.showMessageDialog(null, msg, Resource.STR_BTN_ABOUT.getString(), JOptionPane.INFORMATION_MESSAGE,Appicon);
-	        }
+				});
+			} else if(btn_label.equals(Resource.STR_BTN_ABOUT.getString())) {
+				final ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon(100,100);
+				String msg = "";
+				msg += Resource.STR_APP_NAME.getString() + "\n";
+				msg += Resource.STR_APP_VERSION.getString() + "\n\n";
+				msg += Resource.STR_APP_MAKER.getString();
+				JOptionPane.showMessageDialog(null, msg, Resource.STR_BTN_ABOUT.getString(), JOptionPane.INFORMATION_MESSAGE,Appicon);
+			}
 		}
 	}
 
@@ -305,9 +286,7 @@ public class MainUI extends JFrame implements WindowListener
 	@Override
 	public void windowClosing(WindowEvent e) {
 		frame.setVisible(false);
-		if(DeviceUIManager.dlgDialog != null && DeviceUIManager.dlgDialog.isVisible()) {
-			DeviceUIManager.dlgDialog.setVisible(false);
-		}
+		DeviceUIManager.setVisible(false);
 		if(mApkManager != null)
 			mApkManager.clear(true);
 	}

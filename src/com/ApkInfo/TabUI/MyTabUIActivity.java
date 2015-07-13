@@ -40,7 +40,9 @@ public class MyTabUIActivity extends JPanel {
 		cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				if(ActivityList == null) return;
-				textArea.setText((String) ActivityList.get(table.getSelectedRow())[3]);
+				if(table.getSelectedRow() > -1) {
+					textArea.setText((String) ActivityList.get(table.getSelectedRow())[3]);
+				}
 			}
 		});
 	
@@ -54,7 +56,7 @@ public class MyTabUIActivity extends JPanel {
 		//scrollPane2.setPreferredSize(new Dimension(300, 500));
 
 		IntentPanel = new JPanel();
-		IntentLabel = new JLabel("Intent filter");
+		IntentLabel = new JLabel(Resource.STR_ACTIVITY_LABEL_INTENT.getString());
 
 		IntentPanel.setLayout(new BorderLayout());
 
@@ -71,7 +73,6 @@ public class MyTabUIActivity extends JPanel {
 	{
 		ActivityList.clear();
 		ActivityList.addAll(data);
-		System.out.println("MyTabUIActivity setData() " + ActivityList.size());
 		TableModel.fireTableDataChanged();
 	}
 	
@@ -80,6 +81,7 @@ public class MyTabUIActivity extends JPanel {
 		TableModel.loadResource();
 		TableModel.fireTableStructureChanged();
 		setJTableColumnsWidth(table, 500, 80,10,10);
+		IntentLabel.setText(Resource.STR_ACTIVITY_LABEL_INTENT.getString());
 	}
 
 	public void setJTableColumnsWidth(JTable table, int tablePreferredWidth,

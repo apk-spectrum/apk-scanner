@@ -39,6 +39,7 @@ public class ApkManager
 		public String ProtectionLevel = null;
 		public String SharedUserId = null;
 		public String ApkSize = null;
+		public String CertSummary = null;
 		
 		public ArrayList<Object[]> WidgetList = new ArrayList<Object[]>();
 		public ArrayList<String> ImageList = new ArrayList<String>();
@@ -235,7 +236,7 @@ public class ApkManager
 			mApkInfo.ImageList = CoreApkTool.findFiles(new File(mApkInfo.WorkTempPath + File.separator + "res"), ".png", ".*drawable.*");
 			mApkInfo.LibList = CoreApkTool.findFiles(new File(mApkInfo.WorkTempPath + File.separator + "lib"), ".so", null);
 
-			mApkInfo.CertList = CoreCertTool.solveCert(mApkInfo.WorkTempPath + File.separator + "original" + File.separator + "META-INF" + File.separator);
+			solveCert(mApkInfo.WorkTempPath + File.separator + "original" + File.separator + "META-INF" + File.separator);
 		}
 		
 		private void solveAPK(String APKFilePath, String solvePath)
@@ -547,6 +548,48 @@ public class ApkManager
 					e.printStackTrace();
 				}
 			}
+		}
+		
+		public ArrayList<String> solveCert(String CertPath) {
+			Double javaVersion = Double.parseDouble(System.getProperty("java.specification.version"));
+			String keytoolPackage;
+			if(javaVersion >= 1.8) {
+				keytoolPackage = "sun.security.tools.keytool.Main";
+			} else {
+				keytoolPackage = "sun.security.tools.KeyTool";
+			}
+
+			mApkInfo.CertList.clear();
+			if(!(new File(CertPath)).exists()) {
+				System.out.println("META-INFO 폴더가 존재 하지 않습니다 :");
+				return mApkInfo.CertList;
+			}
+			
+			for (String s : (new File(CertPath)).list()) {
+				if(!s.matches(".*\\.RSA") && !s.matches(".*\\.DSA") ) continue;
+
+				File rsaFile = new File(CertPath + s);
+				if(!rsaFile.exists()) continue;
+
+				String[] cmd = {"java","-Dfile.encoding=utf8",keytoolPackage,"-printcert","-v","-file", rsaFile.getAbsolutePath()};
+				String[] result = MyConsolCmd.exc(cmd, false, null);
+
+			    String certContent = "";
+			    mApkInfo.CertSummary = "<certificate[1]>\n";
+			    for(int i=0; i < result.length; i++){
+		    		if(!certContent.isEmpty() && result[i].matches("^.*\\[[0-9]*\\]:$")){
+		    			mApkInfo.CertList.add(certContent);
+		    			mApkInfo.CertSummary += "<certificate[" + (mApkInfo.CertList.size() + 1) + "]>\n";
+				    	certContent = "";
+		    		}
+		    		if(result[i].matches("^.*:( [^ ,]+=(\".*\")?[^,]*,?)+$")) {
+		    			mApkInfo.CertSummary += result[i] + "\n";
+		    		}
+		    		certContent += (certContent.isEmpty() ? "" : "\n") + result[i];
+			    }
+			    mApkInfo.CertList.add(certContent);
+			}
+			return mApkInfo.CertList;
 		}
 
 		private void deleteTempPath()

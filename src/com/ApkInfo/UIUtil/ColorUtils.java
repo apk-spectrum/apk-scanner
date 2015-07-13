@@ -8,8 +8,6 @@ package com.ApkInfo.UIUtil;
  */
 import java.awt.Color;
 import java.awt.GradientPaint;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -21,7 +19,7 @@ import javax.swing.JComponent;
  */
 public class ColorUtils {
 
-	private Map<Integer, GradientPaint> colorMap = new HashMap<Integer, GradientPaint>();
+	//private Map<Integer, GradientPaint> colorMap = new HashMap<Integer, GradientPaint>();
 
 	private static ColorUtils colorUtils;
 

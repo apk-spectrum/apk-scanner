@@ -2,9 +2,9 @@ package com.ApkInfo.UI;
 
 import javax.swing.*;
 
-import com.ApkInfo.Core.CoreApkTool;
-import com.ApkInfo.Core.MyDeviceInfo;
-import com.ApkInfo.Core.MyDeviceInfo.Device;
+import com.ApkInfo.Core.AdbWrapper;
+import com.ApkInfo.Core.AdbWrapper.DeviceInfo;
+import com.ApkInfo.Core.AdbWrapper.DeviceStatus;
 import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UIUtil.ButtonType;
 import com.ApkInfo.UIUtil.StandardButton;
@@ -12,13 +12,14 @@ import com.ApkInfo.UIUtil.Theme;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 import java.util.ArrayList;
 
 public class MyListDialog extends JDialog implements ActionListener {
+	private static final long serialVersionUID = 662649457192939410L;
+
 	private static MyListDialog dialog;
 	private static int value = 0;
-	private JList list;
+	private JList<String> list;
 	private static Boolean clicked = false;
 
 	/**
@@ -68,7 +69,9 @@ public class MyListDialog extends JDialog implements ActionListener {
 		getRootPane().setDefaultButton(setButton);
 
 		// main part of the dialog
-		list = new JList(data) {
+		list = new JList<String>((String[])data) {
+			private static final long serialVersionUID = -1937264530524245731L;
+
 			// Subclass JList to workaround bug 4832765, which can cause the
 			// scroll pane to not let the user easily scroll up to the beginning
 			// of the list. An alternative would be to set the unitIncrement
@@ -157,12 +160,18 @@ public class MyListDialog extends JDialog implements ActionListener {
 			System.out.println("Refresh");
 			  Thread t = new Thread(new Runnable(){
 			        public void run(){
-			        	ArrayList<Device> DeviceList = DeviceUIManager.mMyDeviceInfo.scanDevices();
-			        	String[] names = new String[DeviceList.size()];
-					    
-					    for(int i=0; i<DeviceList.size(); i++) {
-					    	names[i] = DeviceList.get(i).strADBDeviceNumber + "(" + DeviceList.get(i).strDeviceName + ")";
-					    }			
+			        	ArrayList<DeviceStatus> DeviceList = AdbWrapper.scanDevices();
+						String[] names = new String[DeviceList.size()];
+
+						int i = 0;
+						for(DeviceStatus dev: DeviceList) {
+							if(dev.status.equals("device")) {
+								DeviceInfo devInfo = AdbWrapper.getDeviceInfo(dev.name);
+								names[i++] = dev.name + "(" + devInfo.deviceName + ")";
+							} else {
+								names[i++] = dev.name + "(Unknown) - " + dev.status; 
+							}
+						}
 						list.setListData(names);
 			        }
 			  });

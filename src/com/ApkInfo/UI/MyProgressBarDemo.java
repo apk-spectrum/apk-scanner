@@ -2,24 +2,17 @@ package com.ApkInfo.UI;
 
 
 import java.awt.*;
-import java.awt.event.*;
-
+import java.beans.*;
 import javax.swing.*;
 
-import com.ApkInfo.Core.CoreApkTool;
 import com.ApkInfo.Resource.Resource;
 
-import java.beans.*;
-import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
 
 public class MyProgressBarDemo extends JPanel
                              implements PropertyChangeListener {
+	private static final long serialVersionUID = -4581766331575300150L;
 
-    private JProgressBar progressBar;
+	private JProgressBar progressBar;
     private JTextArea taskOutput;
     private Task task;
     private static int progress;
@@ -75,7 +68,7 @@ public class MyProgressBarDemo extends JPanel
         
         
         ImageIcon icon = Resource.IMG_LOADING.getImageIcon();
-        ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon();
+        //ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon();
         
         System.out.println("loding icon : " + icon);
         
@@ -143,7 +136,7 @@ public class MyProgressBarDemo extends JPanel
         frame.setContentPane(newContentPane);
 
         
-		ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon();;
+		ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon();
         frame.setIconImage(Appicon.getImage());
         
         //Display the window.

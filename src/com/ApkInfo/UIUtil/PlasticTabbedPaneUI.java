@@ -8,7 +8,7 @@ import javax.swing.plaf.basic.*;
 public class PlasticTabbedPaneUI extends BasicTabbedPaneUI {
   private Color selectColor;
   private int inclTab = 12;
-  private int anchoFocoV = inclTab;
+  //private int anchoFocoV = inclTab;
   private int anchoFocoH = 4;
   private int anchoCarpetas = 18;
   

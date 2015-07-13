@@ -118,7 +118,7 @@ public class MyTabUIbasicInfo extends JComponent{
         apkinform.setText(strTabInfo);
         
         String etcInfo = "■■■■■■■■■■■■■■■■■  Cert  ■■■■■■■■■■■■■■■■■■■■\n"
-				+ CoreCertTool.getCertSummary()
+				+ apkInfo.CertSummary
 				+ "\n■■■■■■■■■■■■■■■■ Permissions ■■■■■■■■■■■■■■■■■■"
 				+ "\n" + apkInfo.Permissions;
         if(!apkInfo.SharedUserId.isEmpty()) {

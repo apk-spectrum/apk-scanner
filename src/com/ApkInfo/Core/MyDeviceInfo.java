@@ -10,8 +10,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
 import com.ApkInfo.Resource.Resource;
-import com.ApkInfo.UI.DeviceUIManager;
-import com.ApkInfo.UI.MainUI;
+//import com.ApkInfo.UI.DeviceUIManager;
 import com.ApkInfo.UI.DeviceUIManager.InstallButtonStatusListener;
 
 public class MyDeviceInfo
@@ -122,7 +121,7 @@ public class MyDeviceInfo
 	}
 	
 	private void addLogText(String str) {
-		DeviceUIManager.dialogLogArea.append(str+"\n");
+		//DeviceUIManager.dialogLogArea.append(str+"\n");
 	}
 	
 	class MyCoreThead extends Thread
@@ -170,8 +169,8 @@ public class MyDeviceInfo
 				cmd.add(new String[] {adbCmd, "-s", this.DeviceADBNumber, "push", this.sourcePath, device.strApkPath});
 				System.out.println(this.sourcePath + " to " + device.strApkPath);
 
-				String LibSourcePath = MainUI.GetMyApkInfo().WorkTempPath + File.separator + "lib" + File.separator;
-				Iterator<String> libPaths = MainUI.GetMyApkInfo().LibList.iterator();
+				String LibSourcePath = ""; //MainUI.GetMyApkInfo().WorkTempPath + File.separator + "lib" + File.separator;
+				Iterator<String> libPaths = null; //MainUI.GetMyApkInfo().LibList.iterator();
 				while(libPaths.hasNext()) {
 					String path = libPaths.next();
 					if(!(new File(path)).exists()) {
@@ -387,7 +386,7 @@ public class MyDeviceInfo
 		}
 
 		private void addLogText(String str) {
-			DeviceUIManager.dialogLogArea.append(str+"\n");
+			//DeviceUIManager.dialogLogArea.append(str+"\n");
 		}
 		
 	}
