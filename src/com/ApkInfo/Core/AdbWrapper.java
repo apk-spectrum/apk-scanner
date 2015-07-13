@@ -28,27 +28,35 @@ public class AdbWrapper
 	{
 		public final String name;
 		public final String status;
+		public final String usb;
+		public final String product;
+		public final String model;
+		public final String device;
 
-		public DeviceStatus(String name, String status)
+		public DeviceStatus(String name, String status, String usb, String product, String model, String device)
 		{
 			this.name = name;
 			this.status = status;
+			this.usb = usb;
+			this.product = product;
+			this.model = model;
+			this.device = device;
 		}
 	}
 	
 	static public class PackageInfo
 	{
 		public final String pkgName;
-		public final String apkName;
+		public final String apkPath;
 		public final String codePath;
 		public final String versionName;
 		public final String versionCode;
 		public final boolean isSystemApp;
 		
-		public PackageInfo(String pkgName, String apkName, String codePath, String versionName, String versionCode, boolean isSystemApp)
+		public PackageInfo(String pkgName, String apkPath, String codePath, String versionName, String versionCode, boolean isSystemApp)
 		{
 			this.pkgName = pkgName;
-			this.apkName = apkName;
+			this.apkPath = apkPath;
 			this.codePath = codePath;
 			this.versionName = versionName;
 			this.versionCode = versionCode;
@@ -136,16 +144,79 @@ public class AdbWrapper
 
 		if(adbCmd == null) return null;
 
-		String[] cmd = {adbCmd, "devices"};
+		String[] cmd = {adbCmd, "devices", "-l"};
 		cmdResult = MyConsolCmd.exc(cmd,true,null);
 		
 		for(String output: cmdResult) {
-			if(output.matches("^.*\\s*device\\s*$")){
-				String name = output.replaceAll("^\\s*([^\\s]*)\\s*device\\s*$", "$1");
-				deviceList.add(new DeviceStatus(name, "device"));
+			if(output.matches("^.*\\s*device:.*$")) {
+				output = output.replaceAll("^\\s*([^\\s]*)\\s*([^\\s]*)\\s*(usb:([^\\s]*))?\\s*product:([^\\s]*)\\s*model:([^\\s]*)\\s*device:([^\\s]*)\\s*$", "$1|$2|$4|$5|$6|$7");
+				String[] info = output.split("\\|");
+				deviceList.add(new DeviceStatus(info[0], info[1], info[2], info[3], info[4], info[5]));
 			}
 		}
 		return deviceList;
+	}
+	
+	static public String getSystemProp(String device, String tag)
+	{
+		if(adbCmd == null) return null;
+
+		String[] TargetInfo;
+		String[] cmd = {adbCmd, "-s", device, "shell", "getprop", tag};
+
+		TargetInfo = MyConsolCmd.exc(cmd,false,null);
+		
+		return TargetInfo[0];
+	}
+	
+	static public boolean hasRootPermission(String device)
+	{
+		if(adbCmd == null) return false;
+		boolean hasRoot = true;
+		String[] cmd = {adbCmd, "-s", device, "root"};
+		String[] result = MyConsolCmd.exc(cmd, false, null);
+		if(result[0].equals("adbd cannot run as root in production builds")) {
+			hasRoot = false;
+		}
+		return hasRoot;
+	}
+	
+	static public void reboot(String device)
+	{
+		if(adbCmd == null) return;
+		MyConsolCmd.exc(new String[] {adbCmd, "-s", device, "reboot"});
+	}
+	
+	static public void PushApk(String name, String srcApkPath, String destApkPath, String libPath, AdbWrapperListener listener)
+	{
+		System.out.println("PushApk() device : " + name + ", apkPath: " + srcApkPath);
+		if(adbCmd == null || name == null || destApkPath == null || srcApkPath == null || srcApkPath.isEmpty()) {
+			if(listener != null) {
+				listener.OnError();
+				listener.OnCompleted();
+			}
+			return;
+		}
+
+		new MyCoreThead(INSTALL_TYPE.INSTALL, name, srcApkPath, destApkPath, libPath, listener).start();
+
+		return;
+	}
+	
+	static public void InstallApk(String name, String apkPath, AdbWrapperListener listener)
+	{
+		System.out.println("InstallApk() device : " + name + ", apkPath: " + apkPath);
+		if(adbCmd == null || name == null || apkPath == null || apkPath.isEmpty()) {
+			if(listener != null) {
+				listener.OnError();
+				listener.OnCompleted();
+			}
+			return;
+		}
+
+		new MyCoreThead(INSTALL_TYPE.INSTALL, name, apkPath, null, null, listener).start();
+		
+		return;
 	}
 
 	static public DeviceInfo getDeviceInfo(String name)
@@ -160,27 +231,9 @@ public class AdbWrapper
 		String sdkVersion = null; // getSystemProp(name, "ro.build.version.sdk");
 		String buildType = null; // getSystemProp(name, "ro.build.type");
 		boolean isAbi64 = !getSystemProp(name, "ro.product.cpu.abilist64").isEmpty();
-		
-		boolean isRoot = true;
-		String[] cmd = {adbCmd, "-s", name, "root"};
-		String[] result = MyConsolCmd.exc(cmd, false, null);
-		if(result[0].equals("adbd cannot run as root in production builds")) {
-			isRoot = false;
-		}
+		boolean isRoot = hasRootPermission(name);
 		
 		return new DeviceInfo(serialNumber, deviceName, modelName, osVersion, buildVersion, sdkVersion, buildType, isAbi64, isRoot);
-	}
-	
-	static public String getSystemProp(String device, String tag)
-	{
-		if(adbCmd == null) return null;
-
-		String[] TargetInfo;
-		String[] cmd = {adbCmd, "-s", device, "shell", "getprop", tag};
-
-		TargetInfo = MyConsolCmd.exc(cmd,false,null);
-		
-		return TargetInfo[0];
 	}
 
 	static public PackageInfo getPackageInfo(String device, String pkgName)
@@ -232,61 +285,21 @@ public class AdbWrapper
 		return temp;
 	}
 	
-	static public void reboot(String device)
-	{
-		if(adbCmd == null) return;
-		MyConsolCmd.exc(new String[] {adbCmd, "-s", device, "reboot"});
-	}
-	
-	static public void PushApk(DeviceInfo devInfo, PackageInfo pkgInfo, String apkPath, String libPath, AdbWrapperListener listener)
-	{
-		System.out.println("PushApk() device : " + devInfo + ", apkPath: " + apkPath);
-		if(adbCmd == null || devInfo == null || pkgInfo == null || apkPath == null || apkPath.isEmpty()) {
-			if(listener != null) {
-				listener.OnError();
-				listener.OnCompleted();
-			}
-			return;
-		}
-
-		new MyCoreThead(INSTALL_TYPE.INSTALL, devInfo, pkgInfo, apkPath, libPath, listener).start();
-
-		return;
-	}
-	
-	static public void InstallApk(DeviceInfo devInfo, String apkPath, AdbWrapperListener listener)
-	{
-		System.out.println("InstallApk() device : " + devInfo + ", apkPath: " + apkPath);
-		if(adbCmd == null || devInfo == null || apkPath == null || apkPath.isEmpty()) {
-			if(listener != null) {
-				listener.OnError();
-				listener.OnCompleted();
-			}
-			return;
-		}
-
-		new MyCoreThead(INSTALL_TYPE.INSTALL, devInfo, null, apkPath, null, listener).start();
-		
-		return;
-	}
-	
 	static class MyCoreThead extends Thread
 	{
 		private INSTALL_TYPE type;
 		private String device;
-		private String apkPath;
+		private String srcApkPath;
+		private String destApkPath;
 		private String libPath;
-		private DeviceInfo devInfo;
-		private PackageInfo pkgInfo;
 		private AdbWrapperListener listener;
 		
-		MyCoreThead(INSTALL_TYPE type, DeviceInfo devInfo, PackageInfo pkgInfo, String apkPath, String libPath, AdbWrapperListener listener)
+		MyCoreThead(INSTALL_TYPE type, String name, String srcApkPath, String destApkPath, String libPath, AdbWrapperListener listener)
 		{
 			this.type = type;
-			this.devInfo = devInfo;
-			this.pkgInfo = pkgInfo;
-			this.device = devInfo.serialNumber;
-			this.apkPath = apkPath;
+			this.device = name;
+			this.srcApkPath = srcApkPath;
+			this.destApkPath = destApkPath;
 			this.libPath = libPath;
 			this.listener = listener;
 		}
@@ -295,7 +308,7 @@ public class AdbWrapper
 		{			
 			if(type == INSTALL_TYPE.INSTALL) {
 				String[] result;
-				String[] cmd = {adbCmd, "-s", this.device, "install", "-d","-r", this.apkPath};
+				String[] cmd = {adbCmd, "-s", this.device, "install", "-d","-r", this.srcApkPath};
 				
 				result = MyConsolCmd.exc(cmd,true,new MyConsolCmd.OutputObserver() {
 					@Override
@@ -319,7 +332,7 @@ public class AdbWrapper
 				cmd.add(new String[] {adbCmd, "-s", this.device, "root"});
 				cmd.add(new String[] {adbCmd, "-s", this.device, "remount"});
 				cmd.add(new String[] {adbCmd, "-s", this.device, "shell", "su", "-c", "setenforce", "0"});
-				cmd.add(new String[] {adbCmd, "-s", this.device, "push", this.apkPath, pkgInfo.apkName});
+				cmd.add(new String[] {adbCmd, "-s", this.device, "push", this.srcApkPath, this.destApkPath});
 				//System.out.println(this.sourcePath + " to " + device.strApkPath);
 
 				Iterator<String> libPaths = CoreApkTool.findFiles(new File(libPath), ".so", null).iterator();
@@ -329,15 +342,16 @@ public class AdbWrapper
 						System.out.println("no such file : " + path);
 						continue;
 					}
+					boolean isAbi64 = !getSystemProp(this.device, "ro.product.cpu.abilist64").isEmpty();
 					if(path.matches(libPath.replace("\\", "\\\\")+"arm64.*")) {
-						if(devInfo.isAbi64) {
+						if(isAbi64) {
 							cmd.add(new String[] {adbCmd, "-s", this.device, "push", path, "/system/lib64/"});
 							System.out.println("push " + path + " " + "/system/lib64/");
 						} else {
 							System.out.println("ignored lib64 : " + path);
 						}
 					} else {
-						if(!devInfo.isAbi64) {
+						if(!isAbi64) {
 							cmd.add(new String[] {adbCmd, "-s", this.device, "push", path, "/system/lib/"});
 							System.out.println("push " + path + " " + "/system/lib/");
 						} else {

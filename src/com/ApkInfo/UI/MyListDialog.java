@@ -3,7 +3,6 @@ package com.ApkInfo.UI;
 import javax.swing.*;
 
 import com.ApkInfo.Core.AdbWrapper;
-import com.ApkInfo.Core.AdbWrapper.DeviceInfo;
 import com.ApkInfo.Core.AdbWrapper.DeviceStatus;
 import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UIUtil.ButtonType;
@@ -166,8 +165,7 @@ public class MyListDialog extends JDialog implements ActionListener {
 						int i = 0;
 						for(DeviceStatus dev: DeviceList) {
 							if(dev.status.equals("device")) {
-								DeviceInfo devInfo = AdbWrapper.getDeviceInfo(dev.name);
-								names[i++] = dev.name + "(" + devInfo.deviceName + ")";
+								names[i++] = dev.name + "(" + dev.device + ")";
 							} else {
 								names[i++] = dev.name + "(Unknown) - " + dev.status; 
 							}

@@ -5,7 +5,6 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -19,7 +18,6 @@ import javax.swing.text.DefaultCaret;
 
 import com.ApkInfo.Core.AdbWrapper;
 import com.ApkInfo.Core.AdbWrapper.AdbWrapperListener;
-import com.ApkInfo.Core.AdbWrapper.DeviceInfo;
 import com.ApkInfo.Core.AdbWrapper.DeviceStatus;
 import com.ApkInfo.Core.AdbWrapper.PackageInfo;
 import com.ApkInfo.Resource.Resource;
@@ -58,7 +56,6 @@ public class DeviceUIManager
 			public void run(){
 				printlnLog("scan devices...");
 				ArrayList<DeviceStatus> DeviceList = AdbWrapper.scanDevices();
-				HashMap<String, DeviceInfo> deviceInfo = new HashMap<String, DeviceInfo>();
 
 				String[] names = new String[DeviceList.size()];
 
@@ -66,9 +63,7 @@ public class DeviceUIManager
 				for(DeviceStatus dev: DeviceList) {
 					if(dev.status.equals("device")) {
 						printlnLog("getDeviceInfo() " + dev.name);
-						DeviceInfo devInfo = AdbWrapper.getDeviceInfo(dev.name);
-						deviceInfo.put(dev.name, devInfo);
-						names[i++] = dev.name + "(" + devInfo.deviceName + ")";
+						names[i++] = dev.name + "(" + dev.device + ")";
 						activeDevice++;
 					} else {
 						names[i++] = dev.name + "(Unknown) - " + dev.status; 
@@ -100,9 +95,8 @@ public class DeviceUIManager
 
 				printlnLog("getPackageInfo() " + strPackageName);
 				PackageInfo pkgInfo = AdbWrapper.getPackageInfo(deviceName, strPackageName);
-				DeviceInfo devInfo = deviceInfo.get(deviceName);
 				if(pkgInfo != null) {
-					if(pkgInfo.isSystemApp == true && devInfo.isRoot == true){
+					if(pkgInfo.isSystemApp == true && AdbWrapper.hasRootPermission(deviceName)){
 						String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
 						int n = JOptionPane.showOptionDialog(null, "동일 package가 설치되어있습니다.\n"  +  strLine + pkgInfo.getSummary() + strLine + "Push or Install?",
 								"Warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, options, options[1]);
@@ -112,12 +106,12 @@ public class DeviceUIManager
 							return;
 						} 
 						if(n==0) {
-							AdbWrapper.PushApk(devInfo, pkgInfo, strSourcePath, strLibPath, new AdbWrapperObserver("push", deviceName));
+							AdbWrapper.PushApk(deviceName, strSourcePath, pkgInfo.apkPath, strLibPath, new AdbWrapperObserver("push", deviceName));
 							return;
 						}
 					}
 				}
-				AdbWrapper.InstallApk(devInfo, strSourcePath , new AdbWrapperObserver("install", null));
+				AdbWrapper.InstallApk(deviceName, strSourcePath , new AdbWrapperObserver("install", null));
 			}
 		});
 		t.start();
