@@ -1,18 +1,23 @@
 package com.ApkInfo.TabUI;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
+import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import com.ApkInfo.Resource.Resource;
@@ -33,7 +38,34 @@ public class MyTabUIActivity extends JPanel {
 		super(new GridLayout(2, 0));
 
 		TableModel = new MyTableModel();
-		table = new JTable(TableModel);
+		table = new JTable(TableModel) {
+			
+			public Component prepareRenderer(TableCellRenderer tcr, int row, int column) {
+			 Component c = super.prepareRenderer(tcr, row, column);
+			 Color temp = null;
+			 
+				if("activity".equals((String) ActivityList.get(row)[1])) {
+					String tempstr = (String)ActivityList.get(row)[0]; 
+					
+					if(tempstr.indexOf("LAUNCHER") != -1) {
+						temp = new Color(0x5D9657);
+					} else {
+						temp = new Color(0xB7F0B1);						
+					}					
+					
+				} else if("service".equals((String) ActivityList.get(row)[1])) {
+					temp = new Color(0xB2CCFF);
+				} else if("receiver".equals((String) ActivityList.get(row)[1])) {
+					temp = new Color(0xCEF279);
+				} else {
+					temp = new Color(0xFFE08C);
+				}
+			 
+				c.setBackground(temp);
+
+		        return c;
+		      }
+		};
 
 		ListSelectionModel cellSelectionModel = table.getSelectionModel();
     
