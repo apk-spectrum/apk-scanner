@@ -44,25 +44,26 @@ public class MyTabUIActivity extends JPanel {
 			 Component c = super.prepareRenderer(tcr, row, column);
 			 Color temp = null;
 			 
-				if("activity".equals((String) ActivityList.get(row)[1])) {
-					String tempstr = (String)ActivityList.get(row)[0]; 
-					
-					if(tempstr.indexOf("LAUNCHER") != -1) {
-						temp = new Color(0x5D9657);
+			 if(isRowSelected(row)) {
+		          //c.setForeground(getSelectionForeground());
+		          c.setBackground(Color.GRAY);
+		        }else{
+					if("activity".equals((String) ActivityList.get(row)[1])) {
+						String tempstr = (String)ActivityList.get(row)[0];
+						if(tempstr.indexOf("LAUNCHER") != -1) {
+							temp = new Color(0x5D9657);
+						} else {
+							temp = new Color(0xB7F0B1);						
+						}
+					} else if("service".equals((String) ActivityList.get(row)[1])) {
+						temp = new Color(0xB2CCFF);
+					} else if("receiver".equals((String) ActivityList.get(row)[1])) {
+						temp = new Color(0xCEF279);
 					} else {
-						temp = new Color(0xB7F0B1);						
-					}					
-					
-				} else if("service".equals((String) ActivityList.get(row)[1])) {
-					temp = new Color(0xB2CCFF);
-				} else if("receiver".equals((String) ActivityList.get(row)[1])) {
-					temp = new Color(0xCEF279);
-				} else {
-					temp = new Color(0xFFE08C);
-				}
-			 
-				c.setBackground(temp);
-
+						temp = new Color(0xFFE08C);
+					}
+					c.setBackground(temp);
+		        }
 		        return c;
 		      }
 		};
