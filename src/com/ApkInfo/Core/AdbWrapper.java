@@ -35,12 +35,23 @@ public class AdbWrapper
 
 		public DeviceStatus(String name, String status, String usb, String product, String model, String device)
 		{
-			this.name = name;
-			this.status = status;
-			this.usb = usb;
-			this.product = product;
-			this.model = model;
-			this.device = device;
+			this.name = name.trim();
+			this.status = status.trim();
+			this.usb = usb.trim();
+			this.product = product.trim();
+			this.model = model.trim();
+			this.device = device.trim();
+		}
+		
+		public String getSummary()
+		{
+			String s = "-Device info\n";
+			s += "name : " + name + "\n";
+			s += "status : " + status + "\n";
+			s += "product : " + product + "\n";
+			s += "model : " + model + "\n";
+			s += "device : " + device + "\n";
+			return s;
 		}
 	}
 	
@@ -65,7 +76,11 @@ public class AdbWrapper
 		
 		public String getSummary()
 		{
-			return null;
+			String s = "-Installed APK info\n";
+			s += "Pakage : " + pkgName +"\n";
+			s += "Version : " + versionName + " / " + versionCode +"\n";
+			s += "CodePath : " + codePath +"\n";
+			return s;
 		}
 	}
 	
@@ -105,7 +120,10 @@ public class AdbWrapper
 		
 		public String getSummary()
 		{
-			return null;
+			String s = "Model : " + modelName + " / " + deviceName + "\n";
+			s += "Version : " + buildVersion + "(" + buildType + ") / ";
+			s += "" + osVersion + "(" + sdkVersion + ")\n";
+			return s;
 		}
 	}
 
@@ -147,12 +165,16 @@ public class AdbWrapper
 		String[] cmd = {adbCmd, "devices", "-l"};
 		cmdResult = MyConsolCmd.exc(cmd,true,null);
 		
+		boolean startList = false;
 		for(String output: cmdResult) {
-			if(output.matches("^.*\\s*device:.*$")) {
-				output = output.replaceAll("^\\s*([^\\s]*)\\s*([^\\s]*)\\s*(usb:([^\\s]*))?\\s*product:([^\\s]*)\\s*model:([^\\s]*)\\s*device:([^\\s]*)\\s*$", "$1|$2|$4|$5|$6|$7");
-				String[] info = output.split("\\|");
-				deviceList.add(new DeviceStatus(info[0], info[1], info[2], info[3], info[4], info[5]));
+			if(!startList || output.matches("^\\s*$")) {
+				if(output.matches("^List.*"))
+					startList = true;
+				continue;
 			}
+			output = output.replaceAll("^\\s*([^\\s]*)\\s*([^\\s]*)(\\s*(usb:([^\\s]*))?\\s*product:([^\\s]*)\\s*model:([^\\s]*)\\s*device:([^\\s]*))?\\s*$", "$1 |$2 |$5 |$6 |$7 |$8 ");
+			String[] info = output.split("\\|");
+			deviceList.add(new DeviceStatus(info[0], info[1], info[2], info[3], info[4], info[5]));
 		}
 		return deviceList;
 	}
@@ -175,7 +197,7 @@ public class AdbWrapper
 		boolean hasRoot = true;
 		String[] cmd = {adbCmd, "-s", device, "root"};
 		String[] result = MyConsolCmd.exc(cmd, false, null);
-		if(result[0].equals("adbd cannot run as root in production builds")) {
+		if(!result[0].matches(".*running as root")) {
 			hasRoot = false;
 		}
 		return hasRoot;
@@ -226,10 +248,10 @@ public class AdbWrapper
 		String serialNumber = name;
 		String deviceName = getSystemProp(name, "ro.product.device");
 		String modelName = getSystemProp(name, "ro.product.model");
-		String osVersion = null; // getSystemProp(name, "ro.build.version.release");
-		String buildVersion = null; // getSystemProp(name, "ro.build.version.incremental");
-		String sdkVersion = null; // getSystemProp(name, "ro.build.version.sdk");
-		String buildType = null; // getSystemProp(name, "ro.build.type");
+		String osVersion = getSystemProp(name, "ro.build.version.release");
+		String buildVersion = getSystemProp(name, "ro.build.version.incremental");
+		String sdkVersion = getSystemProp(name, "ro.build.version.sdk");
+		String buildType = getSystemProp(name, "ro.build.type");
 		boolean isAbi64 = !getSystemProp(name, "ro.product.cpu.abilist64").isEmpty();
 		boolean isRoot = hasRootPermission(name);
 		
@@ -334,7 +356,11 @@ public class AdbWrapper
 				cmd.add(new String[] {adbCmd, "-s", this.device, "shell", "su", "-c", "setenforce", "0"});
 				cmd.add(new String[] {adbCmd, "-s", this.device, "push", this.srcApkPath, this.destApkPath});
 				//System.out.println(this.sourcePath + " to " + device.strApkPath);
-
+				
+				String[] selAbi = selectAbi(this.device, libPath);
+				String abi32 = selAbi[0];
+				String abi64 = selAbi[1];
+				
 				Iterator<String> libPaths = CoreApkTool.findFiles(new File(libPath), ".so", null).iterator();
 				while(libPaths.hasNext()) {
 					String path = libPaths.next();
@@ -342,21 +368,16 @@ public class AdbWrapper
 						System.out.println("no such file : " + path);
 						continue;
 					}
-					boolean isAbi64 = !getSystemProp(this.device, "ro.product.cpu.abilist64").isEmpty();
-					if(path.matches(libPath.replace("\\", "\\\\")+"arm64.*")) {
-						if(isAbi64) {
-							cmd.add(new String[] {adbCmd, "-s", this.device, "push", path, "/system/lib64/"});
-							System.out.println("push " + path + " " + "/system/lib64/");
-						} else {
-							System.out.println("ignored lib64 : " + path);
-						}
+					String abi = path.replaceAll(libPath.replace("\\", "\\\\")+"([^\\\\/]*).*","$1");
+					System.out.println("abi = " + abi);
+					if(abi.equals(abi32)) {
+						cmd.add(new String[] {adbCmd, "-s", this.device, "push", path, "/system/lib/"});
+						System.out.println("push " + path + " " + "/system/lib/");
+					} else if (abi.equals(abi64)) {
+						cmd.add(new String[] {adbCmd, "-s", this.device, "push", path, "/system/lib64/"});
+						System.out.println("push " + path + " " + "/system/lib64/");						
 					} else {
-						if(!isAbi64) {
-							cmd.add(new String[] {adbCmd, "-s", this.device, "push", path, "/system/lib/"});
-							System.out.println("push " + path + " " + "/system/lib/");
-						} else {
-							System.out.println("ignored lib32 path : " + path);
-						}
+						System.out.println("ignored path : " + path);
 					}
 				}
 				cmd.add(new String[] {adbCmd, "-s", this.device, "shell", "echo", "Compleated..."});
@@ -389,6 +410,59 @@ public class AdbWrapper
 					listener.OnCompleted();
 				}
 			}
+		}
+		
+		private String[] selectAbi(String device, String LibSourcePath)
+		{
+			String abiList32 = getSystemProp(device, "ro.product.cpu.abilist32");
+			String abiList64 = getSystemProp(device, "ro.product.cpu.abilist64");
+			if(!abiList32.isEmpty()) abiList32 += ",";
+			if(!abiList64.isEmpty()) abiList64 += ",";
+			
+			String abi64 = null;
+			String abi32 = null;
+			for (String s : (new File(LibSourcePath)).list()) {
+				if(s.matches("arm64.*")) {
+					if(abiList64.matches(".*" + s + ",.*")) {
+						System.out.println("device support this abi : " + s);
+						if(abi64 == null) {
+							abi64 = s;
+						} else {
+							int old_ver = Integer.parseInt(abi64.replaceAll("arm64[^0-9]*([0-9]*).*", "0$1"));
+							int new_ver = Integer.parseInt(s.replaceAll("arm64[^0-9]*([0-9]*).*", "0$1"));
+							if(old_ver < new_ver) {
+								abi64 = s;
+							} else {
+								System.out.println("The version is lower than previous versions. : " + s + " < " + abi64);
+							}
+						}
+					} else {
+						System.out.println("device not support this abi : " + s);
+					}
+				} else if(s.matches("armeabi.*")) {
+					if(abiList32.matches(".*" + s + ",.*")) {
+						System.out.println("device support this abi : " + s);
+						if(abi32 == null) {
+							abi32 = s;
+						} else {
+							int old_ver = Integer.parseInt(abi32.replaceAll("armeabi[^0-9]*([0-9]*).*", "0$1"));
+							int new_ver = Integer.parseInt(s.replaceAll("armeabi[^0-9]*([0-9]*).*", "0$1"));
+							if(old_ver < new_ver) {
+								abi32 = s;
+							} else {
+								System.out.println("The version is lower than previous versions. : " + s + " < " + abi32);
+							}
+						}
+					} else {
+						System.out.println("device not support this abi : " + s);
+					}
+				} else {
+					System.out.println("Unknown abi type : " + s);
+				}
+				System.out.println("LibSourcePath list = " + s.replaceAll("([^-]*)", "$1"));
+			}
+			System.out.println("abi64 : " + abi64 + ", abi32 : " + abi32);
+			return new String[] { abi32, abi64 };
 		}
 		
 		private void sendMessage(String msg) {

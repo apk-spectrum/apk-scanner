@@ -18,8 +18,9 @@ public class MyListDialog extends JDialog implements ActionListener {
 
 	private static MyListDialog dialog;
 	private static int value = 0;
-	private JList<String> list;
+	private static JList<String> list;
 	private static Boolean clicked = false;
+	private static ArrayList<DeviceStatus> DeviceList;
 
 	/**
 	 * Set up and show the dialog. The first Component argument determines which
@@ -29,15 +30,36 @@ public class MyListDialog extends JDialog implements ActionListener {
 	 * screen; otherwise, it should be the component on top of which the dialog
 	 * should appear.
 	 */
+	public static int showDialog() {
+		return showDialog(null, null, "Select Device", "Device List", null, 0, "Cosmo  ");
+	}
+	
 	public static int showDialog(Component frameComp,
 			Component locationComp, String labelText, String title,
 			String[] possibleValues, int initialValue, String longValue) {
 		Frame frame = JOptionPane.getFrameForComponent(frameComp);
-		dialog = new MyListDialog(frame, locationComp, labelText, title,
-				possibleValues, initialValue, longValue);
-		dialog.setVisible(true);
-		if(clicked) return value;
-		else return -1;		
+		do {
+			dialog = new MyListDialog(frame, locationComp, labelText, title,
+					possibleValues, initialValue, longValue);
+			dialog.setVisible(true);
+			if(clicked) {
+				if(value == -1) {
+				}else if(DeviceList.get(value).status.equals("device"))
+					return value;
+				else {
+					JOptionPane.showMessageDialog(null, "device unauthorized. Please check the confirmation dialog on your device.","Error", JOptionPane.ERROR_MESSAGE, null);
+				}
+				clicked = false;
+			}
+			else return -1;
+		} while (true);
+	}
+	
+	public static DeviceStatus getSelectedData()
+	{
+		if(value == -1)
+			return null;
+		return DeviceList.get(value);
 	}
 
 	private void setValue(int newValue) {
@@ -98,6 +120,7 @@ public class MyListDialog extends JDialog implements ActionListener {
 						orientation, direction);
 			}
 		};
+		refreshData();
 
 		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		if (longValue != null) {
@@ -159,22 +182,27 @@ public class MyListDialog extends JDialog implements ActionListener {
 			System.out.println("Refresh");
 			  Thread t = new Thread(new Runnable(){
 			        public void run(){
-			        	ArrayList<DeviceStatus> DeviceList = AdbWrapper.scanDevices();
-						String[] names = new String[DeviceList.size()];
-
-						int i = 0;
-						for(DeviceStatus dev: DeviceList) {
-							if(dev.status.equals("device")) {
-								names[i++] = dev.name + "(" + dev.device + ")";
-							} else {
-								names[i++] = dev.name + "(Unknown) - " + dev.status; 
-							}
-						}
-						list.setListData(names);
+			        	refreshData();
 			        }
 			  });
 			  t.start();	    			
 		}
 		clicked = true;
+	}
+	
+	private static void refreshData()
+	{
+    	DeviceList = AdbWrapper.scanDevices();
+		String[] names = new String[DeviceList.size()];
+
+		int i = 0;
+		for(DeviceStatus dev: DeviceList) {
+			if(dev.status.equals("device")) {
+				names[i++] = dev.name + "(" + dev.device + ")";
+			} else {
+				names[i++] = dev.name + "(Unknown) - " + dev.status; 
+			}
+		}
+		list.setListData(names);
 	}
 }

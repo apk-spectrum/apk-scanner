@@ -49,6 +49,7 @@ public class DeviceUIManager
 		strLibPath = libPath;
 		
 		ShowSetupLogDialog();
+		dialogLogArea.setText("");
 		
 		this.Listener = Listener; 
 		
@@ -57,61 +58,53 @@ public class DeviceUIManager
 				printlnLog("scan devices...");
 				ArrayList<DeviceStatus> DeviceList = AdbWrapper.scanDevices();
 
-				String[] names = new String[DeviceList.size()];
-
-				int i = 0, activeDevice = 0;
-				for(DeviceStatus dev: DeviceList) {
-					if(dev.status.equals("device")) {
-						printlnLog("getDeviceInfo() " + dev.name);
-						names[i++] = dev.name + "(" + dev.device + ")";
-						activeDevice++;
-					} else {
-						names[i++] = dev.name + "(Unknown) - " + dev.status; 
-					}
-					printlnLog(names[i-1]);
-				}
-
-				printlnLog("Device count : " + DeviceList.size());
 				if(DeviceList.size() == 0) {
+					printlnLog("Device not found!\nplease check device");
 					Listener.SetInstallButtonStatus(true);
 					final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
 					JOptionPane.showMessageDialog(null, "Device not found!\nplease check Connected","Warning", JOptionPane.WARNING_MESSAGE, Appicon);
+					setVisible(false);
 					return;
 				}
-				
-				String deviceName = null;
-				if(DeviceList.size() > 1 || (DeviceList.size() == 1 && activeDevice == 0)) {
-					int selectedValue = MyListDialog.showDialog(null, null, "Select Device", "Device List", names, 0, "Cosmo  ");
+
+				DeviceStatus dev = DeviceList.get(0);
+				if(DeviceList.size() > 1 || (DeviceList.size() == 1 && !dev.status.equals("device"))) {
+					int selectedValue = MyListDialog.showDialog();
 					System.out.println("Seltected index : " + selectedValue);
 					
 					if(selectedValue == -1) {
 						Listener.SetInstallButtonStatus(true);
+						setVisible(false);
 						return;
 					}
-					deviceName = DeviceList.get(selectedValue).name;
-				} else {
-					deviceName = DeviceList.get(0).name;
+					dev = MyListDialog.getSelectedData();
 				}
-
+				printlnLog(dev.getSummary());
+				
 				printlnLog("getPackageInfo() " + strPackageName);
-				PackageInfo pkgInfo = AdbWrapper.getPackageInfo(deviceName, strPackageName);
+				PackageInfo pkgInfo = AdbWrapper.getPackageInfo(dev.name, strPackageName);
 				if(pkgInfo != null) {
-					if(pkgInfo.isSystemApp == true && AdbWrapper.hasRootPermission(deviceName)){
+					boolean isRoot = AdbWrapper.hasRootPermission(dev.name);
+					printlnLog(pkgInfo.getSummary());
+					printlnLog("running as root : " + isRoot + "\n");
+					
+					if(pkgInfo.isSystemApp == true && isRoot == true){
 						String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
 						int n = JOptionPane.showOptionDialog(null, "동일 package가 설치되어있습니다.\n"  +  strLine + pkgInfo.getSummary() + strLine + "Push or Install?",
 								"Warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, options, options[1]);
 						System.out.println("Seltected index : " + n);
 						if(n==-1) {
 							Listener.SetInstallButtonStatus(true);
+							setVisible(false);
 							return;
 						} 
 						if(n==0) {
-							AdbWrapper.PushApk(deviceName, strSourcePath, pkgInfo.apkPath, strLibPath, new AdbWrapperObserver("push", deviceName));
+							AdbWrapper.PushApk(dev.name, strSourcePath, pkgInfo.apkPath, strLibPath, new AdbWrapperObserver("push", dev.name));
 							return;
 						}
 					}
 				}
-				AdbWrapper.InstallApk(deviceName, strSourcePath , new AdbWrapperObserver("install", null));
+				AdbWrapper.InstallApk(dev.name, strSourcePath , new AdbWrapperObserver("install", null));
 			}
 		});
 		t.start();
@@ -126,7 +119,9 @@ public class DeviceUIManager
 	
 	private void printlnLog(String msg)
 	{
-		dialogLogArea.append(msg+"\n");
+		if(dialogLogArea != null) {
+			dialogLogArea.append(msg+"\n");
+		}
 	}
 	
 	private class AdbWrapperObserver implements AdbWrapperListener
