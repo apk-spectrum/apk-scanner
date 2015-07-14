@@ -123,6 +123,19 @@ public class DeviceUIManager
 			dialogLogArea.append(msg+"\n");
 		}
 	}
+	public static void setLogWindowPosition(int x, int y) {
+		
+		if(dlgDialog != null) {
+			dlgDialog.setLocation(x +600, y);
+		}
+	}
+	
+	public static void setLogWindowToFront() {
+		if(dlgDialog != null) {
+			dlgDialog.toFront();
+			dlgDialog.repaint();
+		}
+	}
 	
 	private class AdbWrapperObserver implements AdbWrapperListener
 	{
@@ -228,6 +241,7 @@ public class DeviceUIManager
 		}
 		else if(dlgDialog.isVisible() == false) {
 			dlgDialog.setVisible(true);
+			dlgDialog.setLocation(MainUI.nPositionX +600, MainUI.nPositionY);
 		}
 	}
 
