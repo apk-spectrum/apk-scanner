@@ -84,26 +84,30 @@ public class DeviceUIManager
 				printlnLog("getPackageInfo() " + strPackageName);
 				PackageInfo pkgInfo = AdbWrapper.getPackageInfo(dev.name, strPackageName);
 				if(pkgInfo != null) {
-					boolean isRoot = AdbWrapper.hasRootPermission(dev.name);
 					printlnLog(pkgInfo.getSummary());
-					printlnLog("running as root : " + isRoot + "\n");
-					
-					if(pkgInfo.isSystemApp == true && isRoot == true){
-						String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
-						int n = JOptionPane.showOptionDialog(null, "동일 package가 설치되어있습니다.\n"  +  strLine + pkgInfo.getSummary() + strLine + "Push or Install?",
-								"Warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, options, options[1]);
-						System.out.println("Seltected index : " + n);
-						if(n==-1) {
-							Listener.SetInstallButtonStatus(true);
-							setVisible(false);
-							return;
-						} 
-						if(n==0) {
-							AdbWrapper.PushApk(dev.name, strSourcePath, pkgInfo.apkPath, strLibPath, new AdbWrapperObserver("push", dev.name));
-							return;
+					if(pkgInfo.isSystemApp == true) {
+						if(AdbWrapper.hasRootPermission(dev.name) == true) {
+							printlnLog("adbd is running as root");
+							String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
+							int n = JOptionPane.showOptionDialog(null, "동일 package가 설치되어있습니다.\n"  +  strLine + pkgInfo.getSummary() + strLine + "Push or Install?",
+									"Warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, options, options[1]);
+							System.out.println("Seltected index : " + n);
+							if(n==-1) {
+								Listener.SetInstallButtonStatus(true);
+								setVisible(false);
+								return;
+							} 
+							if(n==0) {
+								printlnLog("Start push APK");
+								AdbWrapper.PushApk(dev.name, strSourcePath, pkgInfo.apkPath, strLibPath, new AdbWrapperObserver("push", dev.name));
+								return;
+							}
+						} else {
+							printlnLog("adbd cannot run as root in production builds");
 						}
 					}
 				}
+				printlnLog("Start install APK");
 				AdbWrapper.InstallApk(dev.name, strSourcePath , new AdbWrapperObserver("install", null));
 			}
 		});
@@ -158,13 +162,13 @@ public class DeviceUIManager
 		
 		@Override
 		public void OnMessage(String msg) {
-			printlnLog(msg+"\n");
+			printlnLog(msg);
 		}
 
 		@Override
 		public void OnError() {
 			if(type.equals("push")) {
-				printlnLog("Failure...\n");
+				printlnLog("Failure...");
 				JOptionPane.showMessageDialog(null, "Failure...", "Waring",JOptionPane.QUESTION_MESSAGE, WaringAppicon);
 			} else {
 				JOptionPane.showMessageDialog(null, "Failure...", "Complete", JOptionPane.INFORMATION_MESSAGE, SucAppicon);
@@ -174,7 +178,6 @@ public class DeviceUIManager
 		@Override
 		public void OnSuccess() {
 			if(type.equals("push")) {
-				printlnLog("Success...\n");
 				int reboot = JOptionPane.showConfirmDialog(null, "Success download..\nRestart device now?", "APK Push", JOptionPane.YES_NO_OPTION, 
 						JOptionPane.QUESTION_MESSAGE, QuestionAppicon);
 				if(reboot == 0){
@@ -233,7 +236,6 @@ public class DeviceUIManager
 			        	
 					if(MainUI.window != null) {
 						dlgDialog.setLocation(MainUI.nPositionX +600, MainUI.nPositionY);
-			        		
 					}
 				}
 			});

@@ -220,7 +220,7 @@ public class AdbWrapper
 			return;
 		}
 
-		new MyCoreThead(INSTALL_TYPE.INSTALL, name, srcApkPath, destApkPath, libPath, listener).start();
+		new MyCoreThead(INSTALL_TYPE.PUSH, name, srcApkPath, destApkPath, libPath, listener).start();
 
 		return;
 	}
@@ -341,7 +341,7 @@ public class AdbWrapper
 				});
 				
 				if(listener != null) {
-					if(result[2].equals("Success")) {
+					if(result.length >= 3 && result[2].equals("Success")) {
 						listener.OnSuccess();
 					} else {
 						listener.OnError();
@@ -355,29 +355,32 @@ public class AdbWrapper
 				cmd.add(new String[] {adbCmd, "-s", this.device, "remount"});
 				cmd.add(new String[] {adbCmd, "-s", this.device, "shell", "su", "-c", "setenforce", "0"});
 				cmd.add(new String[] {adbCmd, "-s", this.device, "push", this.srcApkPath, this.destApkPath});
-				//System.out.println(this.sourcePath + " to " + device.strApkPath);
+				System.out.println(this.srcApkPath + " to " + this.destApkPath);
 				
-				String[] selAbi = selectAbi(this.device, libPath);
-				String abi32 = selAbi[0];
-				String abi64 = selAbi[1];
-				
-				Iterator<String> libPaths = CoreApkTool.findFiles(new File(libPath), ".so", null).iterator();
-				while(libPaths.hasNext()) {
-					String path = libPaths.next();
-					if(!(new File(path)).exists()) {
-						System.out.println("no such file : " + path);
-						continue;
-					}
-					String abi = path.replaceAll(libPath.replace("\\", "\\\\")+"([^\\\\/]*).*","$1");
-					System.out.println("abi = " + abi);
-					if(abi.equals(abi32)) {
-						cmd.add(new String[] {adbCmd, "-s", this.device, "push", path, "/system/lib/"});
-						System.out.println("push " + path + " " + "/system/lib/");
-					} else if (abi.equals(abi64)) {
-						cmd.add(new String[] {adbCmd, "-s", this.device, "push", path, "/system/lib64/"});
-						System.out.println("push " + path + " " + "/system/lib64/");						
-					} else {
-						System.out.println("ignored path : " + path);
+				System.out.println("libpath " + libPath);
+				if(libPath != null && (new File(libPath)).exists()) {
+					String[] selAbi = selectAbi(this.device, libPath);
+					String abi32 = selAbi[0];
+					String abi64 = selAbi[1];
+					
+					Iterator<String> libPaths = CoreApkTool.findFiles(new File(libPath), ".so", null).iterator();
+					while(libPaths.hasNext()) {
+						String path = libPaths.next();
+						if(!(new File(path)).exists()) {
+							System.out.println("no such file : " + path);
+							continue;
+						}
+						String abi = path.replaceAll(libPath.replace("\\", "\\\\")+"([^\\\\/]*).*","$1");
+						System.out.println("abi = " + abi);
+						if(abi.equals(abi32)) {
+							cmd.add(new String[] {adbCmd, "-s", this.device, "push", path, "/system/lib/"});
+							System.out.println("push " + path + " " + "/system/lib/");
+						} else if (abi.equals(abi64)) {
+							cmd.add(new String[] {adbCmd, "-s", this.device, "push", path, "/system/lib64/"});
+							System.out.println("push " + path + " " + "/system/lib64/");						
+						} else {
+							System.out.println("ignored path : " + path);
+						}
 					}
 				}
 				cmd.add(new String[] {adbCmd, "-s", this.device, "shell", "echo", "Compleated..."});

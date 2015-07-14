@@ -44,10 +44,12 @@ public class MyListDialog extends JDialog implements ActionListener {
 			dialog.setVisible(true);
 			if(clicked) {
 				if(value == -1) {
-				}else if(DeviceList.get(value).status.equals("device"))
+				} else if(DeviceList.get(value).status.equals("device")) {
 					return value;
-				else {
-					JOptionPane.showMessageDialog(null, "device unauthorized. Please check the confirmation dialog on your device.","Error", JOptionPane.ERROR_MESSAGE, null);
+				} else if(DeviceList.get(value).status.equals("unauthorized")) {
+					JOptionPane.showMessageDialog(null, "device unauthorized. Please check the confirmation dialog on your device.", "Error", JOptionPane.ERROR_MESSAGE, null);
+				} else {
+					JOptionPane.showMessageDialog(null, "device unknown. " + DeviceList.get(value).status, "Error", JOptionPane.ERROR_MESSAGE, null);
 				}
 				clicked = false;
 			}

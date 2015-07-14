@@ -6,14 +6,12 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
-import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -39,7 +37,8 @@ public class MyTabUIActivity extends JPanel {
 
 		TableModel = new MyTableModel();
 		table = new JTable(TableModel) {
-			
+			private static final long serialVersionUID = 1340713167587523626L;
+
 			public Component prepareRenderer(TableCellRenderer tcr, int row, int column) {
 			 Component c = super.prepareRenderer(tcr, row, column);
 			 Color temp = null;
