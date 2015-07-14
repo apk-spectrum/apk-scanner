@@ -12,6 +12,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.text.DefaultCaret;
@@ -216,8 +217,14 @@ public class DeviceUIManager
 					GifLabel = new JLabel(icon);
 			            
 					DialogPanel.add(GifLabel);
-			            
-			            
+					
+					JProgressBar progressBar;
+			        progressBar = new JProgressBar(0, 100);
+			        progressBar.setValue(0);
+			        progressBar.setStringPainted(true);
+			        progressBar.setString("설치중");
+			        progressBar.setPreferredSize(new Dimension(300,35));
+			        
 					StandardButton btnOK;
 					btnOK = new StandardButton("닫기",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
 					btnOK.addActionListener(new ActionListener() {
@@ -227,10 +234,11 @@ public class DeviceUIManager
 					});
 
 					DialogPanel.add(btnOK);
-			            
+					DialogPanel.add(progressBar);    
 					dlgDialog.setSize(new Dimension(480,250));
 					dlgDialog.setResizable( false );
 					dlgDialog.add(DialogPanel);
+					
 					//dlgDialog.setLocationRelativeTo(null);
 					dlgDialog.setVisible(true);
 			        	
