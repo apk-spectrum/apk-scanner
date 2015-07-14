@@ -90,6 +90,8 @@ public enum Resource
 	IMG_SUCCESS			(Type.IMAGE, "Succes.png"),
 	IMG_INSTALL_WAIT	(Type.IMAGE, "install_wait.gif"),
 	IMG_LOADING			(Type.IMAGE, "loading.gif"),
+	IMG_WAIT_BAR			(Type.IMAGE, "wait_bar.gif"),
+	
 
 	BIN_ADB_LNX			(Type.BIN, "adb"),
 	BIN_ADB_WIN			(Type.BIN, "adb.exe"),

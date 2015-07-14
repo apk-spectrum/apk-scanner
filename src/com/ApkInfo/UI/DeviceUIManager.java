@@ -1,5 +1,6 @@
 package com.ApkInfo.UI;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -31,6 +32,8 @@ public class DeviceUIManager
 	static private JTextArea dialogLogArea;
 	static private JDialog dlgDialog = null;
 
+	static private JPanel installPanel;
+	
 	private String strPackageName;
 	private String strSourcePath;
 	private String strLibPath;
@@ -100,6 +103,7 @@ public class DeviceUIManager
 							} 
 							if(n==0) {
 								printlnLog("Start push APK");
+								installPanel.setVisible(true);
 								AdbWrapper.PushApk(dev.name, strSourcePath, pkgInfo.apkPath, strLibPath, new AdbWrapperObserver("push", dev.name));
 								return;
 							}
@@ -109,6 +113,7 @@ public class DeviceUIManager
 					}
 				}
 				printlnLog("Start install APK");
+				installPanel.setVisible(true);
 				AdbWrapper.InstallApk(dev.name, strSourcePath , new AdbWrapperObserver("install", null));
 			}
 		});
@@ -194,6 +199,7 @@ public class DeviceUIManager
 		@Override
 		public void OnCompleted() {
 			Listener.SetInstallButtonStatus(true);
+			installPanel.setVisible(false);
 		}
 	}
 	
@@ -212,30 +218,45 @@ public class DeviceUIManager
 					dlgDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 					//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			        	
-					JLabel GifLabel;
+					JLabel GifLabel, waitbar, installlabel;
 					ImageIcon icon = Resource.IMG_INSTALL_WAIT.getImageIcon();
+					ImageIcon waitbaricon = Resource.IMG_WAIT_BAR.getImageIcon();
+					installPanel = new JPanel();
+					
 					GifLabel = new JLabel(icon);
-			            
+					waitbar = new JLabel(waitbaricon);
+					installlabel = new JLabel("설치중...");
+					
+					installPanel.add(installlabel);
+					installPanel.add(waitbar);
+					
+					installPanel.setVisible(false);
+					installPanel.setOpaque(true);
+					
+					
 					DialogPanel.add(GifLabel);
 					
-					JProgressBar progressBar;
-			        progressBar = new JProgressBar(0, 100);
-			        progressBar.setValue(0);
-			        progressBar.setStringPainted(true);
-			        progressBar.setString("설치중");
-			        progressBar.setPreferredSize(new Dimension(300,35));
+					
+			        JPanel containerPanel = new JPanel();
+			        containerPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 46, 150));
+			        containerPanel.setLayout(new BorderLayout());
 			        
 					StandardButton btnOK;
 					btnOK = new StandardButton("닫기",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
 					btnOK.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {		                    		                    		                    
-							dlgDialog.setVisible(false);		                    
+							dlgDialog.setVisible(false);
 						}
 					});
 
 					DialogPanel.add(btnOK);
-					DialogPanel.add(progressBar);    
-					dlgDialog.setSize(new Dimension(480,250));
+					DialogPanel.add(containerPanel);
+					DialogPanel.add(installPanel);
+					//DialogPanel.add(installlabel);
+					//DialogPanel.add(waitbar);
+					
+					
+					dlgDialog.setSize(new Dimension(480,210));
 					dlgDialog.setResizable( false );
 					dlgDialog.add(DialogPanel);
 					
@@ -263,7 +284,7 @@ public class DeviceUIManager
 		DiaPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 0));
 		
 		
-		dialogLogArea = new JTextArea(10,30); 
+		dialogLogArea = new JTextArea(7,30); 
 		
 		DefaultCaret caret = (DefaultCaret) dialogLogArea.getCaret(); // ←
 		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE); 

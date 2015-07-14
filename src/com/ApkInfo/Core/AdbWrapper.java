@@ -341,12 +341,12 @@ public class AdbWrapper
 				});
 				
 				if(listener != null) {
+					listener.OnCompleted();
 					if(result.length >= 3 && result[2].equals("Success")) {
 						listener.OnSuccess();
 					} else {
 						listener.OnError();
-					}
-					listener.OnCompleted();
+					}					
 				}
 			} else {
 				String[][] result;
@@ -403,14 +403,14 @@ public class AdbWrapper
 
 				System.out.println("cmd.size() " + cmd.size() + ", result.length " + result.length);
 				if(listener != null) {
+					listener.OnCompleted();
 					if(cmd.size() == result.length) {
 						sendMessage("Success...");
 						listener.OnSuccess();
 					} else {
 						sendMessage("Failure...");
 						listener.OnError();
-					}
-					listener.OnCompleted();
+					}					
 				}
 			}
 		}
