@@ -265,8 +265,12 @@ public class MainUI extends JFrame implements WindowListener
 			@Override
 			public void ancestorMoved(HierarchyEvent e) {
 				if(frame.isVisible()) {
+					
 					nPositionX = frame.getLocationOnScreen().x;
 					nPositionY = frame.getLocationOnScreen().y;
+										
+					DeviceUIManager.setLogWindowPosition(nPositionX,nPositionY);
+					DeviceUIManager.setLogWindowToFront();
 				}
 			}
 
@@ -275,6 +279,8 @@ public class MainUI extends JFrame implements WindowListener
 				
 			}
 		});
+		
+		
 	}
 	
 	
