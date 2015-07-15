@@ -20,7 +20,6 @@ import java.io.IOException;
 
 import com.ApkInfo.Core.*;
 import com.ApkInfo.Core.ApkManager.ApkInfo;
-import com.ApkInfo.Core.ApkManager.ProcessCmd;
 import com.ApkInfo.Core.ApkManager.SolveType;
 import com.ApkInfo.Core.ApkManager.StatusListener;
 import com.ApkInfo.Resource.Resource;
@@ -49,38 +48,39 @@ public class MainUI extends JFrame implements WindowListener
 		
 	public static void openApk(final String apkPath) {
 		//System.out.println("target file :" + apkPath);
-		mApkManager = new ApkManager(apkPath, new StatusListener() {
+		mApkManager = new ApkManager(apkPath);
+		mApkManager.solve(SolveType.RESOURCE, new StatusListener(){
 			@Override
-			public void OnStart(ProcessCmd cmd) {
+			public void OnStart() {
 				System.out.println("ApkCore.OnStart()");
-				switch(cmd) {
-				case SOLVE_RESOURCE:
-					frame.setVisible(false);
-
-					break;
-				default:
-					break;
-				}
+				frame.setVisible(false);
 			}
 
 			@Override
-			public void OnComplete(ProcessCmd cmd) {
+			public void OnSuccess() {
+				System.out.println("ApkCore.OnSuccess()");
+				mMyToolBarUI.setEnabledAt(ButtonId.NEED_TARGET_APK, true);
+				mMyToolBarUI.setEnabledAt(ButtonId.PACK, false);
+
+				mMyTabUI.setData(mApkManager.getApkInfo());
+				WaitingDlg.setVisible(false);
+
+				String title = Resource.STR_APP_NAME.getString() + " - " + apkPath.substring(apkPath.lastIndexOf(File.separator)+1);
+				frame.setTitle(title);
+				frame.setVisible(true);
+			}
+
+			@Override
+			public void OnError() {
+				WaitingDlg.setVisible(false);
+				frame.setVisible(true);
+				final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
+				JOptionPane.showMessageDialog(null, "Sorry, Can not open the APK", "Error", JOptionPane.ERROR_MESSAGE, Appicon);
+			}
+
+			@Override
+			public void OnComplete() {
 				System.out.println("ApkCore.OnComplete()");
-				switch(cmd) {
-				case SOLVE_RESOURCE:
-					mMyToolBarUI.setEnabledAt(ButtonId.NEED_TARGET_APK, true);
-					mMyToolBarUI.setEnabledAt(ButtonId.PACK, false);
-
-					mMyTabUI.setData(mApkManager.getApkInfo());
-					WaitingDlg.setVisible(false);
-
-					String title = Resource.STR_APP_NAME.getString() + " - " + apkPath.substring(apkPath.lastIndexOf(File.separator)+1);
-					frame.setTitle(title);
-					frame.setVisible(true);
-					break;
-				default:
-					break;
-				}
 			}
 
 			@Override
@@ -93,11 +93,9 @@ public class MainUI extends JFrame implements WindowListener
 			public void OnStateChange() {
 				System.out.println("ApkCore.OnStateChange()");
 			}
-			
 		});
-		mApkManager.solve(SolveType.RESOURCE);
 	}
-	
+		
 	class ToolBarListener implements ActionListener
 	{
 		@Override
@@ -294,7 +292,7 @@ public class MainUI extends JFrame implements WindowListener
 		frame.setVisible(false);
 		DeviceUIManager.setVisible(false);
 		if(mApkManager != null)
-			mApkManager.clear(true);
+			mApkManager.clear(true, null);
 	}
 
 	@Override

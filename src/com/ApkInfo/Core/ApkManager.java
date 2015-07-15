@@ -21,8 +21,6 @@ public class ApkManager
 	
 	private ProcessThead mProcess = null;
 	
-	private StatusListener mStatusListener = null;
-
 	public class ApkInfo
 	{
 		public String Labelname = null;
@@ -99,8 +97,10 @@ public class ApkManager
 	
 	public interface StatusListener
 	{
-		public void OnStart(ProcessCmd cmd);
-		public void OnComplete(ProcessCmd cmd);
+		public void OnStart();
+		public void OnSuccess();
+		public void OnError();
+		public void OnComplete();
 		public void OnProgress(int step, String msg);
 		public void OnStateChange();
 	}
@@ -148,7 +148,6 @@ public class ApkManager
 	{
 		mApkInfo = new ApkInfo();
 		setApkFile(apkPath);
-		setListener(listener);
 	}
 	
 	public void setApkFile(String apkPath) {
@@ -164,17 +163,13 @@ public class ApkManager
 			mApkInfo.ApkPath = apkPath;
 		}
 	}
-	
-	public void setListener(StatusListener listener) {
-		mStatusListener = listener;
-	}
-	
-	public void solve(SolveType type)
+		
+	public void solve(SolveType type, StatusListener listener)
 	{
 		if(mApkInfo.ApkPath == null) return;
 		System.out.println("solve()....start ");
 		synchronized(this) {
-			mProcess = new ProcessThead(this, ProcessCmd.SOLVE_RESOURCE);
+			mProcess = new ProcessThead(this, ProcessCmd.SOLVE_RESOURCE, listener);
 			mProcess.start();
 
 			try {
@@ -187,10 +182,10 @@ public class ApkManager
 		System.out.println("solve()....end ");
 	}
 
-	public void clear(boolean wait)
+	public void clear(boolean wait, StatusListener listener)
 	{
 		System.out.println("clear()....start ");
-		mProcess = new ProcessThead(this, ProcessCmd.DELETE_TEMP_PATH);
+		mProcess = new ProcessThead(this, ProcessCmd.DELETE_TEMP_PATH, listener);
 		synchronized(this) {
 			mProcess.start();
 			
@@ -217,41 +212,47 @@ public class ApkManager
 	class ProcessThead extends Thread {
 		Object mOwner;
 		ProcessCmd mCmd;
+		StatusListener mListener;
 		
-		ProcessThead(Object owner, ProcessCmd cmd) {
+		ProcessThead(Object owner, ProcessCmd cmd, StatusListener listener) {
 			mOwner = owner;
 			mCmd = cmd;
+			mListener = listener;
 		}
 		
-		private void solve()
+		private boolean solve()
 		{
 			mApkInfo.WorkTempPath = CoreApkTool.makeTempPath(mApkInfo.ApkPath);
 			System.out.println("Temp path : " + mApkInfo.WorkTempPath);
 
 			mApkInfo.ApkSize = CoreApkTool.getFileSize((new File(mApkInfo.ApkPath)), FSStyle.FULL);
 			
-			solveAPK(mApkInfo.ApkPath, mApkInfo.WorkTempPath);
-			XmlToMyApkinfo();
-			
-			mApkInfo.ImageList = CoreApkTool.findFiles(new File(mApkInfo.WorkTempPath + File.separator + "res"), ".png", ".*drawable.*");
-			mApkInfo.LibList = CoreApkTool.findFiles(new File(mApkInfo.WorkTempPath + File.separator + "lib"), ".so", null);
-
-			solveCert(mApkInfo.WorkTempPath + File.separator + "original" + File.separator + "META-INF" + File.separator);
+			boolean isSolve = solveAPK(mApkInfo.ApkPath, mApkInfo.WorkTempPath);
+			if(isSolve) {
+				XmlToMyApkinfo();
+				
+				mApkInfo.ImageList = CoreApkTool.findFiles(new File(mApkInfo.WorkTempPath + File.separator + "res"), ".png", ".*drawable.*");
+				mApkInfo.LibList = CoreApkTool.findFiles(new File(mApkInfo.WorkTempPath + File.separator + "lib"), ".so", null);
+	
+				solveCert(mApkInfo.WorkTempPath + File.separator + "original" + File.separator + "META-INF" + File.separator);
+			}
+			return isSolve;
 		}
 		
-		private void solveAPK(String APKFilePath, String solvePath)
+		private boolean solveAPK(String APKFilePath, String solvePath)
 		{
 			String apkToolPath = Resource.BIN_APKTOOL_JAR.getPath();
 			System.out.println("apkToolPath : " + apkToolPath);
 
 			if(!(new File(apkToolPath)).exists()) {
 				System.out.println("No such file : apktool.jar");
-				return;
+				return false;
 			}
 
+			boolean isSuccess = true;
 			String[] cmd = {"java", "-jar", apkToolPath, "d", "-s", "-f", "-o", solvePath, "-p", solvePath, APKFilePath};
 
-			MyConsolCmd.exc(cmd, true, new MyConsolCmd.OutputObserver() {
+			String[] result = MyConsolCmd.exc(cmd, true, new MyConsolCmd.OutputObserver() {
 				@Override
 				public boolean ConsolOutput(String output) {
 			    	if(output.matches("^I:.*"))
@@ -261,11 +262,20 @@ public class ApkManager
 			    	return true;
 				}
 			});
+			
+			for(String s: result) {
+				if(s.matches("^Exception.*")) {
+					isSuccess = false;
+					break;
+				}
+			}
+			
+			return isSuccess;
 		}
 
 		private void progress(int step, String msg)
 		{
-			if(mStatusListener != null) mStatusListener.OnProgress(step, msg);
+			if(mListener != null) mListener.OnProgress(step, msg);
 		}
 		
 		private void XmlToMyApkinfo()
@@ -612,18 +622,23 @@ public class ApkManager
 					e1.printStackTrace();
 				}
 				
-				if(mStatusListener != null) mStatusListener.OnStart(mCmd);
+				if(mListener != null) mListener.OnStart();
 				switch(mCmd) {
 				case SOLVE_RESOURCE:
 				case SOLVE_CODE:
 				case SOLVE_BOTH:
-					solve();
+					if (solve() == true) {
+						if(mListener != null) mListener.OnSuccess();
+					} else {
+						if(mListener != null) mListener.OnError();
+					}
 					break;
 				case DELETE_TEMP_PATH:
 					deleteTempPath();
+					if(mListener != null) mListener.OnSuccess();
 					break;
 				}
-				if(mStatusListener != null) mStatusListener.OnComplete(mCmd);
+				if(mListener != null) mListener.OnComplete();
 			}
 		}
 	}
