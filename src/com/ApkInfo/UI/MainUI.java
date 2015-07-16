@@ -177,9 +177,9 @@ public class MainUI extends JFrame implements WindowListener
 				body.append(Resource.STR_APP_VERSION.getString() + "</H1>");
 				body.append("With following tools,<br/>");
 				body.append("Apktool " + ApkManager.getApkToolVersion() + "<br/>");
-				body.append("(<a href=\"http://ibotpeaches.github.io/Apktool/\" title=\"Apktool Project Site\">http://ibotpeaches.github.io/Apktool/</a>)<br/>");
+				body.append("  - <a href=\"http://ibotpeaches.github.io/Apktool/\" title=\"Apktool Project Site\">http://ibotpeaches.github.io/Apktool/</a><br/>");
 				body.append("" + AdbWrapper.getVersion() + "<br/>");
-				body.append("(<a href=\"http://developer.android.com/tools/help/adb.html\" title=\"Android Developer Site\">http://developer.android.com/tools/help/adb.html</a>)<br/>");
+				body.append("  - <a href=\"http://developer.android.com/tools/help/adb.html\" title=\"Android Developer Site\">http://developer.android.com/tools/help/adb.html</a><br/>");
 				body.append("<br/><hr/>");
 				body.append("Programmed by <a href=\"mailto:" + Resource.STR_APP_MAKER_EMAIL.getString() + "\" title=\"" + Resource.STR_APP_MAKER_EMAIL.getString() + "\">" + Resource.STR_APP_MAKER.getString() + "</a>, 2015.<br/>");
 
