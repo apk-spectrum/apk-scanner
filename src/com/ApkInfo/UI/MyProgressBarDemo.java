@@ -119,7 +119,10 @@ public class MyProgressBarDemo extends JPanel
     	progress +=addValue;
     	
     	strAddText = addtext;
-    	
+    	if(addValue == 0 && taskOutput != null) {
+    		taskOutput.append(strAddText);
+    		taskOutput.setCaretPosition(taskOutput.getText().length());
+    	}
     }
     /**
      * Create the GUI and show it. As with all GUI code, this must run
