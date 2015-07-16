@@ -85,7 +85,7 @@ public class MainUI extends JFrame implements WindowListener
 
 			@Override
 			public void OnProgress(int step, String msg) {
-				System.out.println("ApkCore.OnProgress() " + step + ",  " + msg);
+				//System.out.println("ApkCore.OnProgress() " + step + ",  " + msg);
 				ProgressBarDlg.addProgress(step, msg);
 			}
 
