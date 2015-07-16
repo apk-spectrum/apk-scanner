@@ -17,6 +17,15 @@ if [ "$java_ver" == "" ] || [ "$java_ver" != "$(echo $java_ver | awk '{ if($1 >=
     exit
 fi
 
+cat << EOF > ./APKScanner.sh
+#!/bin/bash
+
+APP_PATH="/opt/APKScanner"
+APP_FILE="APKInfoDlg.jar"
+
+java -jar $APP_PATH/$APP_FILE \$* > /dev/null 2&>1
+EOF
+
 sudo chmod 755 tool/adb
 sudo chmod 755 APKScanner.sh
 
@@ -48,7 +57,6 @@ Type=Application
 Exec=java -jar $APP_PATH/$APP_FILE %f
 Name=APK Scanner
 Comment=APK Scanner
-NoDisplay=true
 Icon=$APP_PATH/res/AppIcon.png
 MimeType=application/apk;application/vnd.android.package-archive;
 EOF
