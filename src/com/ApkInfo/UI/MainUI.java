@@ -162,9 +162,13 @@ public class MainUI extends JFrame implements WindowListener
 			} else if(btn_label.equals(Resource.STR_BTN_ABOUT.getString())) {
 				final ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon(100,100);
 				String msg = "";
-				msg += Resource.STR_APP_NAME.getString() + "\n";
-				msg += Resource.STR_APP_VERSION.getString() + "\n\n";
-				msg += Resource.STR_APP_MAKER.getString();
+				msg += Resource.STR_APP_NAME.getString() + " ";
+				msg += Resource.STR_APP_VERSION.getString() + "\n";
+				msg += "  - Apktool " + ApkManager.getApkToolVersion() + "\n";
+				msg += "    (http://ibotpeaches.github.io/Apktool/)\n";
+				msg += "  - " + AdbWrapper.getVersion() + "\n";
+				msg += "    (http://developer.android.com/tools/help/adb.html)\n\n";
+				msg += "Programmed by " + Resource.STR_APP_MAKER.getString() + ", 2015.\n";
 				JOptionPane.showMessageDialog(null, msg, Resource.STR_BTN_ABOUT.getString(), JOptionPane.INFORMATION_MESSAGE,Appicon);
 			}
 		}

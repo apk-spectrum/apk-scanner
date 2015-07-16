@@ -12,6 +12,7 @@ import com.ApkInfo.Resource.Resource;
 public class ApkManager
 {
 	private ApkInfo mApkInfo = null;
+	static private final String ApktoolVer = getApkToolVersion();
 
 	//private String mApkPath = null;
 	//private String mWorkTempPath = null;
@@ -131,25 +132,15 @@ public class ApkManager
 	
 	public ApkManager()
 	{
-		this(null, null);
-	}
-	
-	public ApkManager(StatusListener listener)
-	{
-		this(null, listener);
-	}
-	
-	public ApkManager(String apkPath)
-	{
-		this(apkPath, null);
+		this(null);
 	}
 
-	public ApkManager(String apkPath, StatusListener listener)
+	public ApkManager(String apkPath)
 	{
 		mApkInfo = new ApkInfo();
 		setApkFile(apkPath);
 	}
-	
+
 	public void setApkFile(String apkPath) {
 		File apkFile = new File(apkPath);
 
@@ -163,7 +154,22 @@ public class ApkManager
 			mApkInfo.ApkPath = apkPath;
 		}
 	}
-		
+	
+	static public String getApkToolVersion()
+	{
+		if(ApktoolVer == null) {
+			String apkToolPath = Resource.BIN_APKTOOL_JAR.getPath();
+			if(!(new File(apkToolPath)).exists()) {
+				System.out.println("No such file : apktool.jar");
+				return null;
+			}
+			String[] result = MyConsolCmd.exc(new String[] {"java", "-jar", apkToolPath, "--version"}, true);
+	
+			return result[0];
+		}
+		return ApktoolVer;
+	}
+	
 	public void solve(SolveType type, StatusListener listener)
 	{
 		if(mApkInfo.ApkPath == null) return;

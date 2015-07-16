@@ -10,6 +10,7 @@ import com.ApkInfo.Resource.Resource;
 public class AdbWrapper
 {
 	static private final String adbCmd = getAdbCmd();
+	static private final String adbVersion = getVersion();
 	
 	static public interface AdbWrapperListener
 	{
@@ -143,6 +144,17 @@ public class AdbWrapper
 		}
 
 		return cmd;
+	}
+	
+	static public String getVersion()
+	{
+		if(adbVersion == null) {
+			String adb = getAdbCmd();
+			if(adb == null) return null;
+			String[] result = MyConsolCmd.exc(new String[] {adb, "version"});
+			return result[0];
+		}
+		return adbVersion;
 	}
 
 	static public boolean ckeckAdbTool()

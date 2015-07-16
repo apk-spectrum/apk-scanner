@@ -12,8 +12,8 @@ import com.ApkInfo.Core.MyXPath;
 public enum Resource
 {
 	STR_APP_NAME				(Type.TEXT, "@app_name"),
-	STR_APP_VERSION				(Type.TEXT, "Ver. 1.5"),
-	STR_APP_MAKER				(Type.TEXT, "jin_h.lee@samsung.com\nsunggyu.kam@samsung.com"),
+	STR_APP_VERSION				(Type.TEXT, "1.5"),
+	STR_APP_MAKER				(Type.TEXT, "jin_h.lee / sunggyu.kam"),
 
 	STR_BTN_OPEN				(Type.TEXT, "@btn_open"),
 	STR_BTN_MANIFEST			(Type.TEXT, "@btn_manifest"),
