@@ -172,29 +172,28 @@ public class MainUI extends JFrame implements WindowListener
 				});
 			} else if(btn_label.equals(Resource.STR_BTN_ABOUT.getString())) {
 				final ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon(100,100);
-				String msg = "";
-				msg += "<H1>" + Resource.STR_APP_NAME.getString() + " ";
-				msg += Resource.STR_APP_VERSION.getString() + "</H1>";
-				msg += "With following tools,\n";
-				msg += "Apktool " + ApkManager.getApkToolVersion() + "\n";
-				msg += "(<a href=\"http://ibotpeaches.github.io/Apktool/\" title=\"Apktool Project Site\">http://ibotpeaches.github.io/Apktool/</a>)\n";
-				msg += "" + AdbWrapper.getVersion() + "\n";
-				msg += "(<a href=\"http://developer.android.com/tools/help/adb.html\" title=\"Android Developer Site\">http://developer.android.com/tools/help/adb.html</a>)\n\n";
-				msg += "Programmed by <a href=\"mailto:" + Resource.STR_APP_MAKER_EMAIL.getString() + "\" title=\"" + Resource.STR_APP_MAKER_EMAIL.getString() + "\">" + Resource.STR_APP_MAKER.getString() + "</a>, 2015.\n";
-				//JOptionPane.showMessageDialog(null, msg, Resource.STR_BTN_ABOUT.getString(), JOptionPane.INFORMATION_MESSAGE,Appicon);
+				StringBuilder body = new StringBuilder();
+				body.append("<H1>" + Resource.STR_APP_NAME.getString() + " ");
+				body.append(Resource.STR_APP_VERSION.getString() + "</H1>");
+				body.append("With following tools,<br/>");
+				body.append("Apktool " + ApkManager.getApkToolVersion() + "<br/>");
+				body.append("(<a href=\"http://ibotpeaches.github.io/Apktool/\" title=\"Apktool Project Site\">http://ibotpeaches.github.io/Apktool/</a>)<br/>");
+				body.append("" + AdbWrapper.getVersion() + "<br/>");
+				body.append("(<a href=\"http://developer.android.com/tools/help/adb.html\" title=\"Android Developer Site\">http://developer.android.com/tools/help/adb.html</a>)<br/>");
+				body.append("<br/><hr/>");
+				body.append("Programmed by <a href=\"mailto:" + Resource.STR_APP_MAKER_EMAIL.getString() + "\" title=\"" + Resource.STR_APP_MAKER_EMAIL.getString() + "\">" + Resource.STR_APP_MAKER.getString() + "</a>, 2015.<br/>");
 
 				JLabel label = new JLabel();
 			    Font font = label.getFont();
 
 			    // create some css from the label's font
-			    StringBuffer style = new StringBuffer("font-family:" + font.getFamily() + ";");
+			    StringBuilder style = new StringBuilder("font-family:" + font.getFamily() + ";");
 			    style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
 			    style.append("font-size:" + font.getSize() + "pt;");
 
 			    // html content
-			    JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">" //
-			            + msg.replaceAll("\n", "<br/>")  //
-			            + "</body></html>");
+			    JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">"
+			            + body + "</body></html>");
 
 			    // handle link events
 			    ep.addHyperlinkListener(new HyperlinkListener()
