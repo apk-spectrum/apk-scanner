@@ -1,12 +1,21 @@
 package com.ApkInfo.UI;
 
+import java.awt.Desktop;
 import java.awt.EventQueue;
+import java.awt.Font;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.Element;
+import javax.swing.text.html.HTML;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -17,6 +26,8 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import com.ApkInfo.Core.*;
 import com.ApkInfo.Core.ApkManager.ApkInfo;
@@ -162,14 +173,67 @@ public class MainUI extends JFrame implements WindowListener
 			} else if(btn_label.equals(Resource.STR_BTN_ABOUT.getString())) {
 				final ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon(100,100);
 				String msg = "";
-				msg += Resource.STR_APP_NAME.getString() + " ";
-				msg += Resource.STR_APP_VERSION.getString() + "\n";
-				msg += "  - Apktool " + ApkManager.getApkToolVersion() + "\n";
-				msg += "    (http://ibotpeaches.github.io/Apktool/)\n";
-				msg += "  - " + AdbWrapper.getVersion() + "\n";
-				msg += "    (http://developer.android.com/tools/help/adb.html)\n\n";
-				msg += "Programmed by " + Resource.STR_APP_MAKER.getString() + ", 2015.\n";
-				JOptionPane.showMessageDialog(null, msg, Resource.STR_BTN_ABOUT.getString(), JOptionPane.INFORMATION_MESSAGE,Appicon);
+				msg += "<H1>" + Resource.STR_APP_NAME.getString() + " ";
+				msg += Resource.STR_APP_VERSION.getString() + "</H1>";
+				msg += "With following tools,\n";
+				msg += "Apktool " + ApkManager.getApkToolVersion() + "\n";
+				msg += "(<a href=\"http://ibotpeaches.github.io/Apktool/\" title=\"Apktool Project Site\">http://ibotpeaches.github.io/Apktool/</a>)\n";
+				msg += "" + AdbWrapper.getVersion() + "\n";
+				msg += "(<a href=\"http://developer.android.com/tools/help/adb.html\" title=\"Android Developer Site\">http://developer.android.com/tools/help/adb.html</a>)\n\n";
+				msg += "Programmed by <a href=\"mailto:" + Resource.STR_APP_MAKER_EMAIL.getString() + "\" title=\"" + Resource.STR_APP_MAKER_EMAIL.getString() + "\">" + Resource.STR_APP_MAKER.getString() + "</a>, 2015.\n";
+				//JOptionPane.showMessageDialog(null, msg, Resource.STR_BTN_ABOUT.getString(), JOptionPane.INFORMATION_MESSAGE,Appicon);
+
+				JLabel label = new JLabel();
+			    Font font = label.getFont();
+
+			    // create some css from the label's font
+			    StringBuffer style = new StringBuffer("font-family:" + font.getFamily() + ";");
+			    style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
+			    style.append("font-size:" + font.getSize() + "pt;");
+
+			    // html content
+			    JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">" //
+			            + msg.replaceAll("\n", "<br/>")  //
+			            + "</body></html>");
+
+			    // handle link events
+			    ep.addHyperlinkListener(new HyperlinkListener()
+			    {
+			    	private String tooltip;
+
+			        @Override
+			        public void hyperlinkUpdate(HyperlinkEvent e)
+			        {
+			        	JEditorPane editor = (JEditorPane) e.getSource();
+
+			            if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
+							try {
+								Desktop.getDesktop().browse(new URI(e.getURL().toString()));
+							} catch (IOException | URISyntaxException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+			            } else if (e.getEventType() == HyperlinkEvent.EventType.ENTERED) {
+			            	tooltip = editor.getToolTipText();
+			            	Element elem = e.getSourceElement();
+			            	if (elem != null) {
+			            		AttributeSet attr = elem.getAttributes();
+			            		AttributeSet a = (AttributeSet) attr.getAttribute(HTML.Tag.A);
+			            		if (a != null) {
+			            			editor.setToolTipText((String) a.getAttribute(HTML.Attribute.TITLE));
+			            		}
+			            	}
+			            } else if (e.getEventType() == HyperlinkEvent.EventType.EXITED) {
+			            	editor.setToolTipText(tooltip);
+			            }
+		                //ProcessHandler.launchUrl(e.getURL().toString()); // roll your own link launcher or use Desktop if J6+
+			        }
+			    });
+			    ep.setEditable(false);
+			    ep.setBackground(label.getBackground());
+
+			    // show
+			    JOptionPane.showMessageDialog(null, ep, Resource.STR_BTN_ABOUT.getString(), JOptionPane.INFORMATION_MESSAGE, Appicon);
 			}
 		}
 	}
