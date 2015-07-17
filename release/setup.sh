@@ -26,13 +26,16 @@ APP_FILE="APKInfoDlg.jar"
 java -jar $APP_PATH/$APP_FILE \$* > /dev/null 2&>1
 EOF
 
+jar -xf APKInfoDlg.jar icons/AppIcon.png
+
 sudo chmod 755 tool/adb
 sudo chmod 755 APKScanner.sh
 
 sudo rm -rf $APP_PATH
 
 sudo mkdir -p $APP_PATH
-sudo mkdir -p $APP_PATH/res
+sudo mkdir -p $APP_PATH/data
+sudo mkdir -p $APP_PATH/icons
 sudo mkdir -p $APP_PATH/tool
 if [ ! -d $APP_PATH ]; then
     echo Fail : Not create the folder : %APP_PATH%
@@ -57,7 +60,7 @@ Type=Application
 Exec=java -jar $APP_PATH/$APP_FILE %f
 Name=APK Scanner
 Comment=APK Scanner
-Icon=$APP_PATH/res/AppIcon.png
+Icon=$APP_PATH/icons/AppIcon.png
 MimeType=application/apk;application/vnd.android.package-archive;
 EOF
 
