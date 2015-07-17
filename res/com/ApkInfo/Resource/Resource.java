@@ -1,6 +1,7 @@
 package com.ApkInfo.Resource;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -182,9 +183,9 @@ public enum Resource
 			}
 			
 			if(value == null) {
-				URL lang_value_path = getClass().getResource("/values/strings-" + lang + ".xml");
-				if(lang_value_path != null) {
-					MyXPath xmlValue = new MyXPath(lang_value_path.getPath());
+				InputStream xml = getClass().getResourceAsStream("/values/strings-" + lang + ".xml");
+				if(xml != null) {
+					MyXPath xmlValue = new MyXPath(xml);
 					value = xmlValue.getNode("/resources/string[@name='" + id + "']").getTextContent();
 				}
 			}
@@ -198,9 +199,9 @@ public enum Resource
 			}
 			
 			if(value == null) {
-				URL default_value_path = getClass().getResource("/values/strings.xml");
-				if(default_value_path != null) {
-					MyXPath xmlValue = new MyXPath(default_value_path.getPath());
+				InputStream xml = getClass().getResourceAsStream("/values/strings.xml");
+				if(xml != null) {
+					MyXPath xmlValue = new MyXPath(xml);
 					value = xmlValue.getNode("/resources/string[@name='" + id + "']").getTextContent();
 				}
 			}

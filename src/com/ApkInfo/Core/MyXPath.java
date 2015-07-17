@@ -2,6 +2,7 @@ package com.ApkInfo.Core;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -34,6 +35,19 @@ public class MyXPath {
 		try {
 			InputSource is = new InputSource(new FileReader(xmlPath));
 			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
+			xpath = XPathFactory.newInstance().newXPath();
+		} catch (SAXException | IOException | ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			document = null;
+			xpath = null;
+		}
+	}
+	
+	public MyXPath(InputStream xml) {
+		try {
+			//InputSource is = ;
+			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xml);
 			xpath = XPathFactory.newInstance().newXPath();
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			// TODO Auto-generated catch block
