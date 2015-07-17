@@ -45,13 +45,9 @@ if not exist "%APP_PATH%\tool" (
      echo Create folder : %APP_PATH%\tool
      mkdir "%APP_PATH%\tool"
 )
-if not exist "%APP_PATH%\res" (
-     echo Create folder : %APP_PATH%\res
-     mkdir "%APP_PATH%\res"
-)
-if not exist "%APP_PATH%\res\values" (
-     echo Create folder : %APP_PATH%\res\values
-     mkdir "%APP_PATH%\res\values"
+if not exist "%APP_PATH%\data" (
+     echo Create folder : %APP_PATH%\data
+     mkdir "%APP_PATH%\data"
 )
 if not exist "%APP_PATH%" (
     echo Fail : Not create the folder : %APP_PATH%
@@ -63,28 +59,7 @@ copy /Y %SRC_PATH%\ApkScanner.exe "%APP_PATH%"
 copy /Y %SRC_PATH%\APKInfoDlg.jar "%APP_PATH%"
 copy /Y %SRC_PATH%\tool\apktool.jar "%APP_PATH%\tool"
 copy /Y %SRC_PATH%\tool\adb.exe "%APP_PATH%\tool"
-copy /Y %SRC_PATH%\res\AppIcon.png "%APP_PATH%\res"
-copy /Y %SRC_PATH%\res\warning.png "%APP_PATH%\res"
-copy /Y %SRC_PATH%\res\question.png "%APP_PATH%\res"
-copy /Y %SRC_PATH%\res\Succes.png "%APP_PATH%\res"
-copy /Y %SRC_PATH%\res\toolbar_about.png "%APP_PATH%\res"
-copy /Y %SRC_PATH%\res\toolbar_install.png "%APP_PATH%\res"
-copy /Y %SRC_PATH%\res\toolbar_open.png "%APP_PATH%\res"
-copy /Y %SRC_PATH%\res\toolbar_pack.png "%APP_PATH%\res"
-copy /Y %SRC_PATH%\res\toolbar_explorer.png "%APP_PATH%\res"
-copy /Y %SRC_PATH%\res\toolbar_manifast.png "%APP_PATH%\res"
-copy /Y %SRC_PATH%\res\toolbar_unpack.png "%APP_PATH%\res"
-copy /Y %SRC_PATH%\res\toolbar_about_hover.png "%APP_PATH%\res"
-copy /Y %SRC_PATH%\res\toolbar_install_hover.png "%APP_PATH%\res"
-copy /Y %SRC_PATH%\res\toolbar_open_hover.png "%APP_PATH%\res"
-copy /Y %SRC_PATH%\res\toolbar_pack_hover.png "%APP_PATH%\res"
-copy /Y %SRC_PATH%\res\toolbar_explorer_hover.png "%APP_PATH%\res"
-copy /Y %SRC_PATH%\res\toolbar_manifast_hover.png "%APP_PATH%\res"
-copy /Y %SRC_PATH%\res\toolbar_unpack_hover.png "%APP_PATH%\res"
-copy /Y %SRC_PATH%\res\loading.gif "%APP_PATH%\res"
-copy /Y %SRC_PATH%\res\install_wait.gif "%APP_PATH%\res"
-copy /Y %SRC_PATH%\res\values\strings.xml "%APP_PATH%\res\values"
-copy /Y %SRC_PATH%\res\values\strings-ko.xml "%APP_PATH%\res\values"
+copy /Y %SRC_PATH%\data\strings-ko.xml "%APP_PATH%\data"
 rem copy /Y .\tool\* "%APP_PATH%\tool\"
 
 
