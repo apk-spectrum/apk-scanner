@@ -1,5 +1,6 @@
 package com.ApkInfo.UI;
 
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 
@@ -264,13 +265,14 @@ public class MainUI extends JFrame implements WindowListener
 	private void initialize() {
 		frame = new JFrame();
 		frame.addWindowListener(this);
-		frame.setBounds(100, 100, 600, 550);
+		frame.setBounds(100, 100, 600, 650);
+		frame.setMinimumSize(new Dimension(600, 650));
 		frame.setTitle(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
 		
 		mMyTabUI = new MyTabUI();
 		mMyToolBarUI = new MyToolBarUI(new ToolBarListener());
-
+		
 		frame.add(mMyTabUI, BorderLayout.CENTER);
 		frame.add(mMyToolBarUI, BorderLayout.NORTH);
 		

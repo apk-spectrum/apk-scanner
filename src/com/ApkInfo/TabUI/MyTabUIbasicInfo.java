@@ -69,17 +69,31 @@ public class MyTabUIbasicInfo extends JComponent{
         c.gridx = 0;
         c.gridy = 0;
         
-        panel.setBorder(BorderFactory.createEmptyBorder(0 , 30 , 0 , 0));        
+        panel.setBorder(BorderFactory.createEmptyBorder(0 , 30 , 0 , 0));
         panel.add(imagepanel, c);
         c.weightx = 0.5;
         c.gridx = 1;
         panel.add(apkinform, c);
         
-        this.add(panel);
-        //panelparent.add(apkpermission);
-        this.add(jsp);
+        this.setLayout(new GridBagLayout());
         
-        this.setLayout(new GridLayout(2, 1));
+        c.weightx = 1;
+        c.weighty = 0.7;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.fill = GridBagConstraints.BOTH;
+        
+        this.add(panel,c);
+        //panelparent.add(apkpermission);
+        c.weightx = 1;
+        c.weighty = 0.3;
+        c.gridx = 0;
+        c.gridy = 1;
+        c.fill = GridBagConstraints.BOTH;
+        
+        this.add(jsp,c);
+        
+        //this.setLayout(new GridLayout(2, 1));
         
 	}
 
