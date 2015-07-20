@@ -78,7 +78,7 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         ImageIcon toolbar_install_hover  =  Resource.IMG_TOOLBAR_INSTALL_HOVER.getImageIcon(Iconsize,Iconsize);
         ImageIcon toolbar_about_hover  =  Resource.IMG_TOOLBAR_ABOUT_HOVER.getImageIcon(Iconsize,Iconsize);
         
-        ImageIcon toolbar_open_arrow  =  Resource.IMG_TOOLBAR_OPEN_ARROW.getImageIcon(5,5);
+        ImageIcon toolbar_open_arrow  =  Resource.IMG_TOOLBAR_OPEN_ARROW.getImageIcon(10,10);
         
         btn_open = new ToolBarButton(null, toolbar_open, toobar_open_hover, listener);
         btn_show_manifest = new ToolBarButton(null, toolbar_manifest, toolbar_manifest_hover, listener);
@@ -92,7 +92,7 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         
         btn_open_arrow.setMargin(new Insets(27,0,27,0));
         
-        //btn_open_arrow.setBorderPainted(false);
+        btn_open_arrow.setBorderPainted(false);
         btn_open_arrow.setOpaque(false);
         btn_open_arrow.setFocusable(false);
         
