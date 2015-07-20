@@ -41,10 +41,11 @@ public class MyTabUIbasicInfo extends JComponent{
 
 	public void setData(ApkInfo apkInfo)
 	{
-        
+        System.out.println(Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath());
+        System.out.println("\"file:/"+apkInfo.IconPath +"\"");
 		StringBuilder strTabInfo = new StringBuilder("");
-		strTabInfo.append("<table width=10000><tr><td width=150 height=250>");
-		strTabInfo.append("<image src=\"file:/"+apkInfo.IconPath +"\" width=150 height=150 />");
+		strTabInfo.append("<table width=10000><tr><td width=170 height=250>");
+		strTabInfo.append("<image src=\"file:/"+apkInfo.IconPath.replaceAll("^/", "") +"\" width=150 height=150 />");
 		strTabInfo.append("</td><td height=250><div id=\"basic-info\">");
         strTabInfo.append("<font style=\"font-size:20px; color:#548235; font-weight:bold\"><a href=\"\" title=\"App name\">" + apkInfo.Labelname +"</a></font><br/>");
         strTabInfo.append("<font style=\"font-size:15px; color:#4472C4\">[" + apkInfo.PackageName +"]</font><br/>");
