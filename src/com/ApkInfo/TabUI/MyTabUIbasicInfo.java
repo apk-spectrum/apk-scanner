@@ -14,12 +14,13 @@ import javax.swing.JTextArea;
 
 import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UI.MyImagePanel;
+import com.ApkInfo.UIUtil.JHtmlEditorPane;
 import com.ApkInfo.Core.ApkManager.ApkInfo;
 
 public class MyTabUIbasicInfo extends JComponent{
 	private static final long serialVersionUID = 6431995641984509482L;
 
-	private JTextArea apkinform;
+	private JHtmlEditorPane apkinform;
 	private JTextArea apkpermission;
 	private MyImagePanel imagepanel;
 
@@ -30,7 +31,7 @@ public class MyTabUIbasicInfo extends JComponent{
         GridBagConstraints c = new GridBagConstraints();
         panel.setLayout(new GridBagLayout());
         
-    	apkinform = new JTextArea();
+    	apkinform = new JHtmlEditorPane();
         apkpermission = new JTextArea();
         
 		JScrollPane jsp = new JScrollPane(apkpermission);
@@ -39,8 +40,20 @@ public class MyTabUIbasicInfo extends JComponent{
 		//jsb = jsp.getVerticalScrollBar();
         
         apkinform.setEditable(false);
-        Font font = new Font("helvitica", Font.BOLD, 15);
-        apkinform.setFont(font);
+        //Font font = new Font("helvitica", Font.BOLD, 15);
+        
+	    Font font = panel.getFont();
+
+	    // create some css from the label's font
+	    StringBuilder style = new StringBuilder("#basic-info {");
+	    style.append("font-family:" + font.getFamily() + ";");
+	    style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
+	    style.append("font-size:" + font.getSize() + "pt;}");
+	    style.append("#basic-info a {text-decoration:none; color:black;}");
+	    style.append("#perm-group a {text-decoration:none; color:#"+Integer.toHexString(panel.getBackground().getRGB() & 0xFFFFFF)+";}");
+	    //System.out.println(">>>>>>>>>>>>>>" + Integer.toHexString(panel.getForeground().getRGB() & 0xFFFFFF));
+	    
+        apkinform.setStyle(style.toString());
         apkinform.setBackground(panel.getBackground());
 
         apkpermission.setEditable(false);
@@ -76,45 +89,82 @@ public class MyTabUIbasicInfo extends JComponent{
             imagepanel.setData(apkInfo.IconPath);
         }
         
-		String strTabInfo = "";
+		StringBuilder strTabInfo = new StringBuilder("<div id=\"basic-info\">");
+        strTabInfo.append("<font style=\"font-size:20px;font-weight:bold\"><a href=\"\" title=\"App name\">" + apkInfo.Labelname +"</a></font>");
+        strTabInfo.append("<font style=\"font-size:12px\"> - Ver. " + apkInfo.VersionName +" / ");
+        strTabInfo.append("" + apkInfo.VersionCode + "</font><br/>");
+        strTabInfo.append("<font style=\"font-size:15px\">[" + apkInfo.PackageName +"]</font>");
 
-        strTabInfo += "" + apkInfo.Labelname +" - ";
-        strTabInfo += "" + apkInfo.PackageName +"\n";
-        strTabInfo += "Ver. " + apkInfo.VersionName +" / ";
-        strTabInfo += "" + apkInfo.VersionCode + "\n";
-
-        strTabInfo += "\n" + apkInfo.ApkSize + "\n";
-        strTabInfo += "@SDK Ver. ";
+        strTabInfo.append("<br/><br/>");
+        strTabInfo.append("<font style=\"font-size:12px\">");
+        strTabInfo.append(apkInfo.ApkSize + "<br/>");
+        strTabInfo.append("@SDK Ver. ");
         if(!apkInfo.MinSDKversion.isEmpty()) {
-        	strTabInfo += "" + apkInfo.MinSDKversion +" (Min)";
+        	strTabInfo.append("" + apkInfo.MinSDKversion +" (Min)");
         }
         if(!apkInfo.TargerSDKversion.isEmpty()) {
         	if(!apkInfo.MinSDKversion.isEmpty()) {
-        		strTabInfo += ", "; 
+        		strTabInfo.append(", "); 
         	}
-        	strTabInfo += "" + apkInfo.TargerSDKversion +" (Target)";
+        	strTabInfo.append("" + apkInfo.TargerSDKversion +" (Target)");
         }
         if(apkInfo.MinSDKversion.isEmpty() && apkInfo.TargerSDKversion.isEmpty()) {
-        	strTabInfo += "Unknown"; 
+        	strTabInfo.append("Unknown"); 
         }
-        strTabInfo += "\n\n";
-        
-        strTabInfo += "[Feature]\n";
-        //strTabInfo += "Signing : " + ApkInfo.CertList.size() +"\n";
-        strTabInfo += "" + apkInfo.Hidden +"";
+        strTabInfo.append("</font>");
+        strTabInfo.append("<br/><br/><hr/>");
+
+        strTabInfo.append("<font style=\"font-size:12px\">");
+        strTabInfo.append("[Feature] ");
+        //strTabInfo.append("Signing : " + ApkInfo.CertList.size() +"<BR/>";
+        strTabInfo.append("" + apkInfo.Hidden +"");
         if(!apkInfo.Startup.isEmpty()) {
-        	strTabInfo += ", " + apkInfo.Startup + "";
+        	strTabInfo.append(", " + apkInfo.Startup + "");
         }
         if(!apkInfo.ProtectionLevel.isEmpty()) {
-        	strTabInfo += ", " + apkInfo.ProtectionLevel + "";
+        	strTabInfo.append(", " + apkInfo.ProtectionLevel + "");
         }
         
         if(!apkInfo.SharedUserId.isEmpty()) {
-        	strTabInfo += ", SHARED_USER_ID";
+        	strTabInfo.append(", SHARED_USER_ID");
         }
-        //strTabInfo += "\n\n";
+        //strTabInfo.append("<BR/><BR/>");
+        strTabInfo.append("</font>");
+        strTabInfo.append("</div>");
+        strTabInfo.append("<div id=\"perm-group\" style=\"width:100px\">");
+        strTabInfo.append("<a href=\"\" title=\"call00jl\n11111111\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call01\nfjkdls\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call02\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call03\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call04\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call05\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call06\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call07\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call08\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call09\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call10\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call11\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call12\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call13\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call14\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<br/>");
+        strTabInfo.append("<a href=\"\" title=\"call15\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call16\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call17\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call18\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call19\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call20\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call21\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call22\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call23\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call24\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call25\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call26\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call27\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call28\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
+        strTabInfo.append("<a href=\"\" title=\"call29\"><image src=\""+Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()+"\"/></a>");
 
-        apkinform.setText(strTabInfo);
+        apkinform.setBody(strTabInfo.toString());
         
         String etcInfo = "■■■■■■■■■■■■■■■■■  Cert  ■■■■■■■■■■■■■■■■■■■■\n"
 				+ apkInfo.CertSummary
@@ -124,5 +174,6 @@ public class MyTabUIbasicInfo extends JComponent{
         	etcInfo = "SharedUserId : " + apkInfo.SharedUserId + "\n\n" + etcInfo;
         }
         apkpermission.setText(etcInfo);
+        //apkpermission.setText(apkinform.getText());
 	}
 }

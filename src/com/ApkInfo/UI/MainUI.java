@@ -1,21 +1,14 @@
 package com.ApkInfo.UI;
 
-import java.awt.Desktop;
 import java.awt.EventQueue;
 import java.awt.Font;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.Element;
-import javax.swing.text.html.HTML;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -26,8 +19,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import com.ApkInfo.Core.*;
 import com.ApkInfo.Core.ApkManager.ApkInfo;
@@ -36,6 +27,7 @@ import com.ApkInfo.Core.ApkManager.StatusListener;
 import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UI.DeviceUIManager.InstallButtonStatusListener;
 import com.ApkInfo.UI.MyToolBarUI.ButtonId;
+import com.ApkInfo.UIUtil.JHtmlEditorPane;
 
 
 public class MainUI extends JFrame implements WindowListener
@@ -173,6 +165,7 @@ public class MainUI extends JFrame implements WindowListener
 			} else if(btn_label.equals(Resource.STR_BTN_ABOUT.getString())) {
 				final ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon(100,100);
 				StringBuilder body = new StringBuilder();
+				body.append("<div id=\"about\">");
 				body.append("<H1>" + Resource.STR_APP_NAME.getString() + " ");
 				body.append(Resource.STR_APP_VERSION.getString() + "</H1>");
 				body.append("With following tools,<br/>");
@@ -182,57 +175,27 @@ public class MainUI extends JFrame implements WindowListener
 				body.append("  - <a href=\"http://developer.android.com/tools/help/adb.html\" title=\"Android Developer Site\">http://developer.android.com/tools/help/adb.html</a><br/>");
 				body.append("<br/><hr/>");
 				body.append("Programmed by <a href=\"mailto:" + Resource.STR_APP_MAKER_EMAIL.getString() + "\" title=\"" + Resource.STR_APP_MAKER_EMAIL.getString() + "\">" + Resource.STR_APP_MAKER.getString() + "</a>, 2015.<br/>");
+				body.append("</div>");
 
 				JLabel label = new JLabel();
 			    Font font = label.getFont();
 
 			    // create some css from the label's font
-			    StringBuilder style = new StringBuilder("font-family:" + font.getFamily() + ";");
+			    StringBuilder style = new StringBuilder("#about {");
+			    style.append("font-family:" + font.getFamily() + ";");
 			    style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-			    style.append("font-size:" + font.getSize() + "pt;");
+			    style.append("font-size:" + font.getSize() + "pt;}");
+			    style.append("#about a {text-decoration:none;}");
 
 			    // html content
-			    JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">"
-			            + body + "</body></html>");
+			    JHtmlEditorPane hep = new JHtmlEditorPane("", "", body.toString());
+			    hep.setStyle(style.toString());
 
-			    // handle link events
-			    ep.addHyperlinkListener(new HyperlinkListener()
-			    {
-			    	private String tooltip;
-
-			        @Override
-			        public void hyperlinkUpdate(HyperlinkEvent e)
-			        {
-			        	JEditorPane editor = (JEditorPane) e.getSource();
-
-			            if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
-							try {
-								Desktop.getDesktop().browse(new URI(e.getURL().toString()));
-							} catch (IOException | URISyntaxException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-			            } else if (e.getEventType() == HyperlinkEvent.EventType.ENTERED) {
-			            	tooltip = editor.getToolTipText();
-			            	Element elem = e.getSourceElement();
-			            	if (elem != null) {
-			            		AttributeSet attr = elem.getAttributes();
-			            		AttributeSet a = (AttributeSet) attr.getAttribute(HTML.Tag.A);
-			            		if (a != null) {
-			            			editor.setToolTipText((String) a.getAttribute(HTML.Attribute.TITLE));
-			            		}
-			            	}
-			            } else if (e.getEventType() == HyperlinkEvent.EventType.EXITED) {
-			            	editor.setToolTipText(tooltip);
-			            }
-		                //ProcessHandler.launchUrl(e.getURL().toString()); // roll your own link launcher or use Desktop if J6+
-			        }
-			    });
-			    ep.setEditable(false);
-			    ep.setBackground(label.getBackground());
+			    hep.setEditable(false);
+			    hep.setBackground(label.getBackground());
 
 			    // show
-			    JOptionPane.showMessageDialog(null, ep, Resource.STR_BTN_ABOUT.getString(), JOptionPane.INFORMATION_MESSAGE, Appicon);
+			    JOptionPane.showMessageDialog(null, hep, Resource.STR_BTN_ABOUT.getString(), JOptionPane.INFORMATION_MESSAGE, Appicon);
 			}
 		}
 	}
