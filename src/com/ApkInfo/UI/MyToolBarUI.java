@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -12,12 +14,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
 import com.ApkInfo.Resource.Resource;
-
 import com.ApkInfo.UIUtil.ToolBarButton;
 
 
@@ -32,6 +34,7 @@ public class MyToolBarUI extends JPanel implements ActionListener{
 	private ToolBarButton btn_install;
 	private ToolBarButton btn_about;
     
+	private JButton btn_open_arrow;
     public enum ButtonId {
     	OPEN,
     	MANIFEST,
@@ -75,6 +78,8 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         ImageIcon toolbar_install_hover  =  Resource.IMG_TOOLBAR_INSTALL_HOVER.getImageIcon(Iconsize,Iconsize);
         ImageIcon toolbar_about_hover  =  Resource.IMG_TOOLBAR_ABOUT_HOVER.getImageIcon(Iconsize,Iconsize);
         
+        ImageIcon toolbar_open_arrow  =  Resource.IMG_TOOLBAR_OPEN_ARROW.getImageIcon(5,10);
+        
         btn_open = new ToolBarButton(null, toolbar_open, toobar_open_hover, listener);
         btn_show_manifest = new ToolBarButton(null, toolbar_manifest, toolbar_manifest_hover, listener);
         btn_show_explorer = new ToolBarButton(null, toolbar_explorer, toolbar_explorer_hover, listener);
@@ -82,10 +87,26 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         btn_pack = new ToolBarButton(null, toolbar_pack, toolbar_pack_hover, listener);
         btn_install = new ToolBarButton(null, toolbar_install, toolbar_install_hover, listener);
         btn_about = new ToolBarButton(null, toolbar_about, toolbar_about_hover, listener);
-        reloadResource();
-
+        
+        btn_open_arrow = new JButton(toolbar_open_arrow);
+        
+        btn_open_arrow.setMargin(new Insets(25,0,25,0));
+        final JPopupMenu menu = new JPopupMenu("Menu");
+        menu.add("A");
+        menu.add("B");
+        menu.add("C");
+        btn_open_arrow.addActionListener( new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                menu.show(btn_open_arrow, btn_open_arrow.getWidth()/2, btn_open_arrow.getHeight()/2);
+            }
+        } );
+        
+        
+        reloadResource();       
               
         toolbar1.add(btn_open);
+        toolbar1.add(btn_open_arrow);        
+        
         toolbar1.add(getNewSeparator());
                 
         toolbar1.add(btn_show_manifest);
@@ -120,7 +141,7 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         //setLocationRelativeTo(null);
         //setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
-    
+
     private JSeparator getNewSeparator()
     {
         JSeparator temp = new JSeparator(JSeparator.VERTICAL);

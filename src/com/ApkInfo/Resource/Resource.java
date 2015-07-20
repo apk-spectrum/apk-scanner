@@ -87,6 +87,8 @@ public enum Resource
 	IMG_TOOLBAR_ABOUT			(Type.IMAGE, "toolbar_about.png"),
 	IMG_TOOLBAR_ABOUT_HOVER		(Type.IMAGE, "toolbar_about_hover.png"),
 	
+	IMG_TOOLBAR_OPEN_ARROW		(Type.IMAGE, "down_on.png"),
+	
 	IMG_APP_ICON		(Type.IMAGE, "AppIcon.png"),
 	IMG_QUESTION		(Type.IMAGE, "question.png"),
 	IMG_WARNING			(Type.IMAGE, "warning.png"),
