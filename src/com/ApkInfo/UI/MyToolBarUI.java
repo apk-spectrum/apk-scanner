@@ -102,7 +102,7 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         menu.add("CCCCCCCCC");
         btn_open_arrow.addActionListener( new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                menu.show(btn_open_arrow, btn_open_arrow.getWidth()/2, btn_open_arrow.getHeight()/2);
+                menu.show(btn_open_arrow, btn_open_arrow.getWidth()/2, btn_open_arrow.getHeight());
             }
         } );
         
@@ -119,8 +119,8 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         
         toolbar1.add(getNewSeparator());
         
-        toolbar1.add(btn_unpack);
-        toolbar1.add(btn_pack);
+        //toolbar1.add(btn_unpack);
+        //toolbar1.add(btn_pack);
         
         toolbar1.add(getNewSeparator());
         
