@@ -63,7 +63,8 @@ public enum Resource
 	STR_ACTIVITY_TYPE_SERVICE	(Type.TEXT, "@activity_type_service"),
 	STR_ACTIVITY_TYPE_RECEIVER	(Type.TEXT, "@activity_type_receiver"),
 	STR_ACTIVITY_LABEL_INTENT	(Type.TEXT, "@activity_label_intent_filter"),
-	
+
+	STR_CERT_SUMMURY			(Type.TEXT, "@cert_summury"),
 	STR_CERT_CERTIFICATE		(Type.TEXT, "@cert_certificate"),
 	
 	STR_FILE_SIZE_BYTES			(Type.TEXT, "@file_size_Bytes"),

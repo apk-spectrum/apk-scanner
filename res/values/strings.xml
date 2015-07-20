@@ -48,6 +48,7 @@
     <string name="activity_type_receiver">receiver</string>
     <string name="activity_label_intent_filter">Intent filter</string>
     
+    <string name="cert_summury">Summury</string>
     <string name="cert_certificate">Certificate</string>
     
     <string name="file_size_Bytes">Bytes</string>

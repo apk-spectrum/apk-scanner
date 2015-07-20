@@ -151,7 +151,7 @@ public class MyTabUI extends JPanel{
 		}
 
 		if(apkInfo.CertList.size() > 0) {
-	        ((MyTabUISign) Panels[5]).setData(apkInfo.CertList);
+	        ((MyTabUISign) Panels[5]).setData(apkInfo.CertSummary, apkInfo.CertList);
 	        tabbedPane.setTitleAt(5, labels[5] + "(" + apkInfo.CertList.size()  + ")");
 			tabbedPane.setEnabledAt(5, true);
 		} else {

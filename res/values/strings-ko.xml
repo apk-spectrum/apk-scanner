@@ -48,6 +48,7 @@
     <string name="activity_type_receiver">리시버</string>
     <string name="activity_label_intent_filter">인텐트 필터</string>
     
+    <string name="cert_summury">요약</string>
     <string name="cert_certificate">인증서</string>
     
     <string name="file_size_Bytes">바이트</string>

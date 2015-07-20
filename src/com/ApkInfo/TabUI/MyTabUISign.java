@@ -34,6 +34,7 @@ public class MyTabUISign extends JPanel implements ComponentListener{
 	final JList<String> jlist;
 	JTextArea textArea;
 	
+	String mCertSummary = null;
 	ArrayList<String> mCertList = null;
 	
     public MyTabUISign() {
@@ -71,7 +72,14 @@ public class MyTabUISign extends JPanel implements ComponentListener{
           public void valueChanged(ListSelectionEvent listSelectionEvent) {
         	  if(mCertList == null) return;
         	  if(jlist.getSelectedIndex() > -1) {
-	              textArea.setText(mCertList.get(jlist.getSelectedIndex()));
+        		  if(mCertList.size() > 1) {
+        			  if(jlist.getSelectedIndex() >= 1)
+        				  textArea.setText(mCertList.get(jlist.getSelectedIndex()-1));
+        			  else 
+        				  textArea.setText(mCertSummary);
+        		  } else {
+        			  textArea.setText(mCertList.get(jlist.getSelectedIndex()));
+        		  }
 	              textArea.setCaretPosition(0);
         	  }
               //textArea.requestFocus();
@@ -95,7 +103,8 @@ public class MyTabUISign extends JPanel implements ComponentListener{
         jlist.addMouseListener(mouseListener);
     }
     
-    public void setData(ArrayList<String> data) {
+    public void setData(String summury, ArrayList<String> data) {
+    	mCertSummary = summury;
     	mCertList = data;
     	reloadResource();
         jlist.setSelectedIndex(0);
@@ -103,10 +112,21 @@ public class MyTabUISign extends JPanel implements ComponentListener{
     
     public void reloadResource() {
     	jlist.removeAll();
-        String[] labels = new String[mCertList.size()];        
-        for(int i=0; i < labels.length; i++) {
-        	labels[i] = Resource.STR_CERT_CERTIFICATE.getString() + "[" + (i+1) + "]";
-        }
+    	int listSize = mCertList.size();
+    	String[] labels;
+    	if(listSize > 1) {
+    		listSize++;
+    		labels = new String[listSize];
+    		labels[0] = Resource.STR_CERT_SUMMURY.getString();
+	        for(int i=1; i < listSize; i++) {
+	        	labels[i] = Resource.STR_CERT_CERTIFICATE.getString() + "[" + i + "]";
+	        }
+    	} else if (listSize == 1) {
+    		labels = new String[listSize];
+    		labels[0] = Resource.STR_CERT_CERTIFICATE.getString() + "[1]";
+    	} else {
+    		labels = new String[] {};
+    	}
         jlist.setListData(labels);
     }
 
