@@ -1,5 +1,6 @@
 package com.ApkInfo.TabUI;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 
@@ -32,7 +33,7 @@ public class MyTabUIbasicInfo extends JComponent{
 	    style.append("#perm-group a {text-decoration:none; color:#"+Integer.toHexString(label.getBackground().getRGB() & 0xFFFFFF)+";}");
 	    
         apkinform.setStyle(style.toString());
-        apkinform.setBackground(label.getBackground());
+        apkinform.setBackground(Color.white);
 
         this.setLayout(new GridBagLayout());
         this.add(apkinform);
@@ -45,7 +46,7 @@ public class MyTabUIbasicInfo extends JComponent{
 		strTabInfo.append("<table width=10000><tr><td width=150 height=250>");
 		strTabInfo.append("<image src=\"file:/"+apkInfo.IconPath +"\" width=150 height=150 />");
 		strTabInfo.append("</td><td height=250><div id=\"basic-info\">");
-        strTabInfo.append("<font style=\"font-size:20px; color:#565723; font-weight:bold\"><a href=\"\" title=\"App name\">" + apkInfo.Labelname +"</a></font><br/>");
+        strTabInfo.append("<font style=\"font-size:20px; color:#548235; font-weight:bold\"><a href=\"\" title=\"App name\">" + apkInfo.Labelname +"</a></font><br/>");
         strTabInfo.append("<font style=\"font-size:15px; color:#4472C4\">[" + apkInfo.PackageName +"]</font><br/>");
         strTabInfo.append("<font style=\"font-size:15px; color:#ED7E31\">Ver. " + apkInfo.VersionName +" / ");
         strTabInfo.append("" + apkInfo.VersionCode + "</font><br/>");
