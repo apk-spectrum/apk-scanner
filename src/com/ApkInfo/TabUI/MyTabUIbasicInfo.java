@@ -91,7 +91,7 @@ public class MyTabUIbasicInfo extends JComponent{
         c.gridy = 1;
         c.fill = GridBagConstraints.BOTH;
         
-        this.add(jsp,c);
+        //this.add(jsp,c);
         
         //this.setLayout(new GridLayout(2, 1));
         
@@ -104,10 +104,10 @@ public class MyTabUIbasicInfo extends JComponent{
         }
         
 		StringBuilder strTabInfo = new StringBuilder("<div id=\"basic-info\">");
-        strTabInfo.append("<font style=\"font-size:20px;font-weight:bold\"><a href=\"\" title=\"App name\">" + apkInfo.Labelname +"</a></font>");
-        strTabInfo.append("<font style=\"font-size:12px\"> - Ver. " + apkInfo.VersionName +" / ");
+        strTabInfo.append("<font style=\"font-size:20px; color:#565723; font-weight:bold\"><a href=\"\" title=\"App name\">" + apkInfo.Labelname +"</a></font><br/>");
+        strTabInfo.append("<font style=\"font-size:15px; color:#4472C4\">[" + apkInfo.PackageName +"]</font><br/>");
+        strTabInfo.append("<font style=\"font-size:15px; color:#ED7E31\">Ver. " + apkInfo.VersionName +" / ");
         strTabInfo.append("" + apkInfo.VersionCode + "</font><br/>");
-        strTabInfo.append("<font style=\"font-size:15px\">[" + apkInfo.PackageName +"]</font>");
 
         strTabInfo.append("<br/><br/>");
         strTabInfo.append("<font style=\"font-size:12px\">");
