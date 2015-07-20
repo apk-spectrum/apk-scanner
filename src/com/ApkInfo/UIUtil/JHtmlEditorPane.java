@@ -1,0 +1,106 @@
+package com.ApkInfo.UIUtil;
+
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import javax.swing.JEditorPane;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.Element;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
+
+
+public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
+{
+	private static final long serialVersionUID = 7856109068620039501L;
+	
+	private String head = null;
+	private String body = null;
+
+	private String tooltip;
+	
+	private StyleSheet ssh;
+	
+	public JHtmlEditorPane()
+	{
+		this("", "", "");
+	}
+	
+	public JHtmlEditorPane(String head, String style, String body)
+	{
+		super("text/html", "");
+		addHyperlinkListener(this);
+
+		this.head = head;
+		this.body = body;
+		
+        HTMLEditorKit kit = new HTMLEditorKit();
+        setEditorKit(kit);
+        
+        ssh = kit.getStyleSheet();
+        ssh.addRule(style);
+
+        setHtml(head, body);
+	}
+	
+	public void setHtml(String head, String body) 
+	{
+		this.head = head;
+		this.body = body;
+
+		setText(makeHtml(head, body));
+	}
+	
+	public void setHead(String head)
+	{
+		setHtml(head, body);
+	}
+	
+	public void setStyle(String style)
+	{
+        ssh.addRule(style);
+	}
+	
+	public void setBody(String body)
+	{
+		setHtml(head, body);
+	}
+	
+	private static String makeHtml(String head, String body)
+	{
+		return "<html><head>" + head + "</head><body>" + body + "</body></html>";
+	}
+
+    @Override
+    public void hyperlinkUpdate(HyperlinkEvent e)
+    {
+    	JEditorPane editor = (JEditorPane) e.getSource();
+
+        if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
+        	if(e.getDescription().isEmpty()) return;
+        	try {
+				Desktop.getDesktop().browse(new URI(e.getURL().toString()));
+			} catch (IOException | URISyntaxException e1) {
+				e1.printStackTrace();
+			}
+        } else if (e.getEventType() == HyperlinkEvent.EventType.ENTERED) {
+        	tooltip = editor.getToolTipText();
+        	Element elem = e.getSourceElement();
+        	if (elem != null) {
+        		AttributeSet attr = elem.getAttributes();
+        		AttributeSet a = (AttributeSet) attr.getAttribute(HTML.Tag.A);
+        		if (a != null) {
+        			String htmlToolTip = "<html><body>" + ((String) a.getAttribute(HTML.Attribute.TITLE)).replaceAll("\n", "<br/>") + "</body></html>";
+        			editor.setToolTipText(htmlToolTip);
+        		}
+        	}
+        } else if (e.getEventType() == HyperlinkEvent.EventType.EXITED) {
+        	editor.setToolTipText(tooltip);
+        }
+    }
+}
