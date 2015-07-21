@@ -87,6 +87,7 @@ public enum Resource
 	IMG_TOOLBAR_INSTALL_HOVER	(Type.IMAGE, "toolbar_install_hover.png"),
 	IMG_TOOLBAR_ABOUT			(Type.IMAGE, "toolbar_about.png"),
 	IMG_TOOLBAR_ABOUT_HOVER		(Type.IMAGE, "toolbar_about_hover.png"),
+	IMG_TOOLBAR_SETTING		(Type.IMAGE, "toolbar_setting.png"),
 	
 	IMG_PERM_GROUP_PHONE_CALLS	(Type.IMAGE, "perm_group_phone_calls.png"),
 	

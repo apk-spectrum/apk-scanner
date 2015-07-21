@@ -163,6 +163,8 @@ public class MainUI extends JFrame implements WindowListener
 						mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, Flag);
 					}
 				});
+			} else if(btn_label.equals(Resource.STR_BTN_SETTING.getString())) {
+				JOptionPane.showMessageDialog(null, "Setting", "Setting", JOptionPane.INFORMATION_MESSAGE, null);
 			} else if(btn_label.equals(Resource.STR_BTN_ABOUT.getString())) {
 				final ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon(100,100);
 				StringBuilder body = new StringBuilder();

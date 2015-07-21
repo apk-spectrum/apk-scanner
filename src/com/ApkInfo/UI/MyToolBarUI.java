@@ -33,6 +33,7 @@ public class MyToolBarUI extends JPanel implements ActionListener{
 	private ToolBarButton btn_pack;
 	private ToolBarButton btn_install;
 	private ToolBarButton btn_about;
+	private ToolBarButton btn_setting;
     
 	private JButton btn_open_arrow;
     public enum ButtonId {
@@ -69,6 +70,7 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         ImageIcon toolbar_pack  =  Resource.IMG_TOOLBAR_PACK.getImageIcon(Iconsize,Iconsize);
         ImageIcon toolbar_install  =  Resource.IMG_TOOLBAR_INSTALL.getImageIcon(Iconsize,Iconsize);
         ImageIcon toolbar_about  =  Resource.IMG_TOOLBAR_ABOUT.getImageIcon(Iconsize,Iconsize);
+        ImageIcon toolbar_setting  =  Resource.IMG_TOOLBAR_SETTING.getImageIcon(Iconsize,Iconsize);
         
         ImageIcon toobar_open_hover  =  Resource.IMG_TOOLBAR_OPEN_HOVER.getImageIcon(Iconsize,Iconsize);
         ImageIcon toolbar_manifest_hover =  Resource.IMG_TOOLBAR_MANIFEST_HOVER.getImageIcon(Iconsize,Iconsize);
@@ -80,6 +82,7 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         
         ImageIcon toolbar_open_arrow  =  Resource.IMG_TOOLBAR_OPEN_ARROW.getImageIcon(10,10);
         
+        /*
         btn_open = new ToolBarButton(null, toolbar_open, toobar_open_hover, listener);
         btn_show_manifest = new ToolBarButton(null, toolbar_manifest, toolbar_manifest_hover, listener);
         btn_show_explorer = new ToolBarButton(null, toolbar_explorer, toolbar_explorer_hover, listener);
@@ -87,6 +90,15 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         btn_pack = new ToolBarButton(null, toolbar_pack, toolbar_pack_hover, listener);
         btn_install = new ToolBarButton(null, toolbar_install, toolbar_install_hover, listener);
         btn_about = new ToolBarButton(null, toolbar_about, toolbar_about_hover, listener);
+        */
+        btn_open = new ToolBarButton(null, toolbar_open, toolbar_open, listener);
+        btn_show_manifest = new ToolBarButton(null, toolbar_manifest, toolbar_manifest, listener);
+        btn_show_explorer = new ToolBarButton(null, toolbar_explorer, toolbar_explorer, listener);
+        btn_unpack = new ToolBarButton(null, toolbar_unpack, toolbar_unpack_hover, listener);
+        btn_pack = new ToolBarButton(null, toolbar_pack, toolbar_pack_hover, listener);
+        btn_install = new ToolBarButton(null, toolbar_install, toolbar_install, listener);
+        btn_about = new ToolBarButton(null, toolbar_about, toolbar_about, listener);
+        btn_setting = new ToolBarButton(null, toolbar_setting, toolbar_setting, listener);
         
         btn_open_arrow = new JButton(toolbar_open_arrow);
         
@@ -96,7 +108,10 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         btn_open_arrow.setOpaque(false);
         btn_open_arrow.setFocusable(false);
         
-        final JPopupMenu menu = new JPopupMenu("Menu");
+        final JPopupMenu menu = new JPopupMenu("Menu") {
+        	
+        };
+        
         menu.add("AAAAAAAAAAAAA");
         menu.add("BAAAAAAAA");
         menu.add("CCCCCCCCC");
@@ -113,6 +128,7 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         toolbar1.add(btn_open_arrow);        
         
         toolbar1.add(getNewSeparator());
+        toolbar1.add(getNewSeparator());
                 
         toolbar1.add(btn_show_manifest);
         toolbar1.add(btn_show_explorer);
@@ -126,6 +142,11 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         
         toolbar1.add(btn_install);
     
+        toolbar1.add(getNewSeparator());
+        toolbar1.add(getNewSeparator());
+        
+        toolbar1.add(btn_setting);
+        toolbar1.add(getNewSeparator());
         toolbar1.add(getNewSeparator());
         
         toolbar1.add(btn_about);
@@ -155,16 +176,7 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         temp.setPreferredSize(new Dimension(1,0));
     	return temp;
     }
-    
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-            	MyToolBarUI ex = new MyToolBarUI(null);
-                ex.setVisible(true);
-            }
-        });
-    }
-    
+        
     public void setEnabledAt(ButtonId buttonId, boolean enabled)
     {
     	switch(buttonId) {
@@ -206,6 +218,7 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         btn_pack.setText(Resource.STR_BTN_PACK.getString());
         btn_install.setText(Resource.STR_BTN_INSTALL.getString());
         btn_about.setText(Resource.STR_BTN_ABOUT.getString());
+        btn_setting.setText(Resource.STR_BTN_SETTING.getString());
         
         btn_open.setToolTipText(Resource.STR_BTN_OPEN.getString());
         btn_show_manifest.setToolTipText(Resource.STR_BTN_MANIFEST.getString());
@@ -214,6 +227,8 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         btn_pack.setToolTipText(Resource.STR_BTN_PACK.getString());
         btn_install.setToolTipText(Resource.STR_BTN_INSTALL.getString());
         btn_about.setToolTipText(Resource.STR_BTN_ABOUT.getString());
+        btn_setting.setToolTipText(Resource.STR_BTN_SETTING.getString());
+        
     }
 
 	@Override
