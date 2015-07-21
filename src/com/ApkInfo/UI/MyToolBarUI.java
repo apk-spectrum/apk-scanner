@@ -108,10 +108,7 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         btn_open_arrow.setOpaque(false);
         btn_open_arrow.setFocusable(false);
         
-        final JPopupMenu menu = new JPopupMenu("Menu") {
-        	
-        };
-        
+        final JPopupMenu menu = new JPopupMenu("Menu");      
         menu.add("AAAAAAAAAAAAA");
         menu.add("BAAAAAAAA");
         menu.add("CCCCCCCCC");
@@ -121,11 +118,10 @@ public class MyToolBarUI extends JPanel implements ActionListener{
             }
         } );
         
-        
         reloadResource();       
               
         toolbar1.add(btn_open);
-        toolbar1.add(btn_open_arrow);        
+        toolbar1.add(btn_open_arrow);
         
         toolbar1.add(getNewSeparator());
         toolbar1.add(getNewSeparator());
@@ -142,6 +138,25 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         
         toolbar1.add(btn_install);
     
+        btn_open_arrow = new JButton(toolbar_open_arrow);
+        
+        btn_open_arrow.setMargin(new Insets(27,0,27,0));
+        
+        btn_open_arrow.setBorderPainted(false);
+        btn_open_arrow.setOpaque(false);
+        btn_open_arrow.setFocusable(false);
+        
+        final JPopupMenu installmenu = new JPopupMenu("Menu");      
+        installmenu.add("111111");
+        installmenu.add("222222");
+        installmenu.add("333333333");
+        btn_open_arrow.addActionListener( new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                menu.show(btn_open_arrow, btn_open_arrow.getWidth()/2, btn_open_arrow.getHeight());
+            }
+        } );
+        toolbar1.add(btn_open_arrow);
+        
         toolbar1.add(getNewSeparator());
         toolbar1.add(getNewSeparator());
         

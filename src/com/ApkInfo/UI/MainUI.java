@@ -40,6 +40,7 @@ public class MainUI extends JFrame implements WindowListener
 	static MainUI window;
 	static private MyTabUI mMyTabUI;
 	static private MyToolBarUI mMyToolBarUI;
+	static SettingDlg SettingDlg;
 	
 	//window position
 	static public int nPositionX,nPositionY;
@@ -49,7 +50,7 @@ public class MainUI extends JFrame implements WindowListener
 	static public MyProgressBarDemo ProgressBarDlg;
 
 	static private ApkManager mApkManager;
-		
+	
 	public static void openApk(final String apkPath) {
 		//System.out.println("target file :" + apkPath);
 		mApkManager = new ApkManager(apkPath);
@@ -164,7 +165,11 @@ public class MainUI extends JFrame implements WindowListener
 					}
 				});
 			} else if(btn_label.equals(Resource.STR_BTN_SETTING.getString())) {
-				JOptionPane.showMessageDialog(null, "Setting", "Setting", JOptionPane.INFORMATION_MESSAGE, null);
+				
+				SettingDlg= new SettingDlg();
+				SettingDlg.makeDialog();
+				
+				//JOptionPane.showMessageDialog(null, "Setting", "Setting", JOptionPane.INFORMATION_MESSAGE, null);
 			} else if(btn_label.equals(Resource.STR_BTN_ABOUT.getString())) {
 				final ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon(100,100);
 				StringBuilder body = new StringBuilder();
@@ -226,6 +231,7 @@ public class MainUI extends JFrame implements WindowListener
 				//System.out.println("user.dir : " + System.getProperty("user.dir"));
 				
 				String apkPath = null;
+				SettingDlg = new SettingDlg();
 				if(args.length > 0) {
 					ProgressBarDlg = new MyProgressBarDemo();
 					WaitingDlg = MyProgressBarDemo.createAndShowGUI(ProgressBarDlg);
@@ -239,7 +245,7 @@ public class MainUI extends JFrame implements WindowListener
 					System.out.println("Target APK : " + args[0]);
 					//frame.setVisible(false);
 					openApk(apkPath);
-				} else {
+				} else {					
 					window = new MainUI();
 					window.initialize();
 					mMyToolBarUI.setEnabledAt(ButtonId.NEED_TARGET_APK, false);
@@ -249,6 +255,7 @@ public class MainUI extends JFrame implements WindowListener
 					
 					WaitingDlg.setVisible(false);
 					frame.setVisible(true);
+					
 				}
 			}
 		});
