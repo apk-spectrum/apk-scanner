@@ -26,6 +26,12 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 	
 	private StyleSheet ssh;
 	
+	public abstract interface HyperlinkClickListener {
+		public abstract void hyperlinkClick(String id);
+	}
+	
+	private HyperlinkClickListener hyperlinkClickListener;
+	
 	public JHtmlEditorPane()
 	{
 		this("", "", "");
@@ -75,6 +81,11 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 	{
 		return "<html><head>" + head + "</head><body>" + body + "</body></html>";
 	}
+	
+	public void setHyperlinkClickListener(HyperlinkClickListener listener)
+	{
+		hyperlinkClickListener = listener;
+	}
 
     @Override
     public void hyperlinkUpdate(HyperlinkEvent e)
@@ -83,11 +94,22 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 
         if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
         	if(e.getDescription().isEmpty()) return;
-        	try {
-				Desktop.getDesktop().browse(new URI(e.getURL().toString()));
-			} catch (IOException | URISyntaxException e1) {
-				e1.printStackTrace();
-			}
+        	if(!e.getDescription().matches("^@.*")) {
+	        	try {
+					Desktop.getDesktop().browse(new URI(e.getURL().toString()));
+				} catch (IOException | URISyntaxException e1) {
+					e1.printStackTrace();
+				}
+        	} else {
+        		Element elem = e.getSourceElement();
+        		if (elem != null) {
+            		AttributeSet attr = elem.getAttributes();
+            		AttributeSet a = (AttributeSet) attr.getAttribute(HTML.Tag.A);
+            		if (a != null && hyperlinkClickListener != null) {
+           				hyperlinkClickListener.hyperlinkClick((String) a.getAttribute(HTML.Attribute.ID));
+            		}
+        		}
+        	}
         } else if (e.getEventType() == HyperlinkEvent.EventType.ENTERED) {
         	tooltip = editor.getToolTipText();
         	Element elem = e.getSourceElement();
