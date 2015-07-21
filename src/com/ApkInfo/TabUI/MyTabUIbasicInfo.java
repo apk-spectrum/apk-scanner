@@ -3,6 +3,8 @@ package com.ApkInfo.TabUI;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagLayout;
+import java.util.HashMap;
+import java.util.Set;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -12,6 +14,8 @@ import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UIUtil.JHtmlEditorPane;
 import com.ApkInfo.UIUtil.JHtmlEditorPane.HyperlinkClickListener;
 import com.ApkInfo.Core.ApkManager.ApkInfo;
+import com.ApkInfo.Core.PermissionGroupManager.PermissionGroup;
+import com.ApkInfo.Core.PermissionGroupManager;
 
 public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListener
 {
@@ -111,7 +115,7 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
         strTabInfo.append("          " + makeHyperLink("@event","<u>Display the entire list</u>","Display the entire list","display-list"));
         strTabInfo.append("        </font><br/>");
         strTabInfo.append("        <font style=\"font-size:5px\"><br/></font>");
-        strTabInfo.append("        " + makeHyperLink("@event", makeImage(Resource.IMG_PERM_GROUP_PHONE_CALLS.getPath()), "call00jl\n11111111", "perm-gruop-phone"));
+        strTabInfo.append("        " + makePermGroup());
         strTabInfo.append("      </div>");
         strTabInfo.append("    </td>");
         strTabInfo.append("  </tr>");
@@ -121,6 +125,25 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
         strTabInfo.append("</table>");
         
         apkinform.setBody(strTabInfo.toString());
+	}
+	
+	private String makePermGroup()
+	{
+		StringBuilder permGroup = new StringBuilder("");
+		
+		for(String pgk: apkInfo.PermissionList) {
+			System.out.println(pgk);
+		}
+		PermissionGroupManager permGroupManager = new PermissionGroupManager(apkInfo.PermissionList.toArray(new String[0]));
+		HashMap<String, PermissionGroup> map = permGroupManager.getPermGroupMap();
+		Set<String> keys = map.keySet();
+		for(String key: keys) {
+			System.out.println("key - " + key);
+			PermissionGroup g = map.get(key);
+			permGroup.append(makeHyperLink("@event", makeImage(g.icon), g.permGroup, g.permGroup));			
+		}
+		
+		return permGroup.toString();
 	}
 	
 	private String makeHyperLink(String href, String text, String title, String id)

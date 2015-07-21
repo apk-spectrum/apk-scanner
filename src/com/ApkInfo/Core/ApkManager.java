@@ -332,6 +332,7 @@ public class ApkManager
 	        for( int idx=0; idx < xmlAndroidManifest.getLength(); idx++ ){
 	        	if(idx==0) mApkInfo.Permissions = "<uses-permission> [" + xmlAndroidManifest.getLength() + "]";
 	        	mApkInfo.Permissions += "\n" + xmlAndroidManifest.getAttributes(idx, "android:name");
+	        	mApkInfo.PermissionList.add(xmlAndroidManifest.getAttributes(idx, "android:name"));
 	        	String sig = xmlAndroidManifest.getAttributes(idx, "android:protectionLevel");
 	        	if(sig != null && sig.equals("signature")) {
 	        		mApkInfo.Permissions += " - <SIGNATURE>";
@@ -342,6 +343,7 @@ public class ApkManager
 	        for( int idx=0; idx < xmlAndroidManifest.getLength(); idx++ ){
 	        	if(idx==0) mApkInfo.Permissions += "\n\n<permission> [" + xmlAndroidManifest.getLength() + "]";
 	        	mApkInfo.Permissions += "\n" + xmlAndroidManifest.getAttributes(idx, "android:name");
+	        	mApkInfo.PermissionList.add(xmlAndroidManifest.getAttributes(idx, "android:name"));
 	        	String sig = xmlAndroidManifest.getAttributes(idx, "android:protectionLevel");
 	        	if(sig != null && sig.equals("signature")) {
 	        		mApkInfo.Permissions += " - <SIGNATURE>";
