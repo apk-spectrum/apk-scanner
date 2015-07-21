@@ -11,7 +11,7 @@ public class PlasticTabbedPaneUI extends BasicTabbedPaneUI {
   //private int anchoFocoV = inclTab;
   private int anchoFocoH = 4;
   private int anchoCarpetas = 18;
-  
+  private Stroke stroke = new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
   /**
    * En este poligono se guarda la forma de la pestaña. Es muy importante. 
    */
@@ -162,6 +162,7 @@ public class PlasticTabbedPaneUI extends BasicTabbedPaneUI {
       g2D.fill( shape);
     }
     
+    g2D.setStroke(stroke);
     // Y despues, le damos un sombreado que hace que parezca curbada (¿A que duele ver algunas faltas de ortografia?)
    
     g2D.fill( shape);
