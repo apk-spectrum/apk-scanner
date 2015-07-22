@@ -81,7 +81,7 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
         String permGorupImg = makePermGroup();
 		
         int infoHeight = 270;
-        if(permGroupManager.getPermGroupMap().keySet().size() > 15) infoHeight = 240;
+        if(permGroupManager.getPermGroupMap().keySet().size() > 15) infoHeight = 230;
 
         StringBuilder strTabInfo = new StringBuilder("");
 		strTabInfo.append("<table width=10000>");
@@ -148,7 +148,7 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 			System.out.println("key - " + key);
 			PermissionGroup g = map.get(key);
 			permGroup.append(makeHyperLink("@event", makeImage(g.icon), g.permSummary, g.permGroup));
-			if(++cnt % 15 == 0) permGroup.append("\n");
+			if(++cnt % 15 == 0) permGroup.append("<br/>");
 		}
 		
 		return permGroup.toString();
