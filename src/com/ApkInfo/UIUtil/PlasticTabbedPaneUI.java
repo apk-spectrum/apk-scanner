@@ -162,7 +162,7 @@ public class PlasticTabbedPaneUI extends BasicTabbedPaneUI {
       g2D.fill( shape);
     }
     
-    g2D.setStroke(stroke);
+    //g2D.setStroke(stroke);
     // Y despues, le damos un sombreado que hace que parezca curbada (¿A que duele ver algunas faltas de ortografia?)
    
     g2D.fill( shape);

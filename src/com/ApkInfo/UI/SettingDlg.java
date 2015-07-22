@@ -36,6 +36,9 @@ public class SettingDlg extends JDialog implements ActionListener{
 	JButton savebutton, exitbutton;
     JButton browser1,browser2;
 	
+    JComboBox comboBox;
+    JCheckBox chckbxNewCheckBox;
+    
 	SettingDlg() {
 		readSettingInfoFromFile();
 		
@@ -190,7 +193,7 @@ public class SettingDlg extends JDialog implements ActionListener{
 	    browser2.setFocusable(false);
 	    panel.add(browser2);
 	    
-	    JCheckBox chckbxNewCheckBox = new JCheckBox("설치시 동일 패키지 팝업 유무");
+	    chckbxNewCheckBox = new JCheckBox("설치시 동일 패키지 팝업 유무");
 	    
 	    if(strSamePackage.indexOf("true") >-1) {
 	    	chckbxNewCheckBox.setSelected(true);
@@ -206,7 +209,7 @@ public class SettingDlg extends JDialog implements ActionListener{
 	    label.setBounds(52, 106, 32, 25);
 	    panel.add(label);
 	    
-	    JComboBox comboBox = new JComboBox();
+	    comboBox = new JComboBox();
 	    comboBox.setBounds(87, 109, 94, 24);
 	    
 	    comboBox.addItem("ko");
@@ -236,6 +239,10 @@ public void actionPerformed(ActionEvent e) {
 			
 			this.strExcuteEditorPath = textExcutePath.getText();
 			this.strframeworkResPath = textframeworkResPath.getText();
+			
+			this.strSamePackage = String.valueOf(chckbxNewCheckBox.isSelected());
+			this.strLanguage = (String)comboBox.getSelectedItem();
+			
 			
 			WriteSettingInfoToFile();
 		} else if(e.getSource() == exitbutton) {
