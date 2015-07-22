@@ -41,7 +41,7 @@ public class CoreApkTool
 		String separator = File.separator + (File.separator.equals("\\") ? File.separator : "");
 
 		if(!tempPath.matches(".*"+separator+"$")) tempPath += File.separator;
-		tempPath += "ApkInfo" + apkFilePath.substring(apkFilePath.indexOf(File.separator),apkFilePath.lastIndexOf("."));
+		tempPath += "ApkInfo" + apkFilePath.substring(apkFilePath.indexOf(File.separator),apkFilePath.lastIndexOf(".")).replaceAll("#", "");
 		
 		if((new File(tempPath)).exists()) {
 			int n;
