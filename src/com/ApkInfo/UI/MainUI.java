@@ -20,6 +20,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 
 import com.ApkInfo.Core.*;
 import com.ApkInfo.Core.ApkManager.ApkInfo;
@@ -104,12 +105,7 @@ public class MainUI extends JFrame implements WindowListener
 	class ToolBarListener implements ActionListener
 	{
 		
-		private void newWindow(String apkfile)
-		{
-			
-		}
-		
-		private void openApkFile()
+		private String selectApkFile()
 		{
 			JFileChooser jfc = new JFileChooser();
 			//jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -117,12 +113,31 @@ public class MainUI extends JFrame implements WindowListener
 							
 			jfc.showOpenDialog(null);
 			File dir = jfc.getSelectedFile();
-
-			if(dir!=null) {
-				ProgressBarDlg.init();
-				WaitingDlg.setVisible(true);
-				openApk(dir.getPath());
+			
+			if(dir == null) return null;
+			return dir.getPath();
+		}
+		
+		private void newWindow(String apkFile)
+		{
+			if(apkFile == null) apkFile = "";
+			
+			try {
+				String classPath = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+				classPath = URLDecoder.decode(classPath, "UTF-8");
+				Runtime.getRuntime().exec(new String[] {"java", "-Dfile.encoding=utf-8", "-cp", classPath, MainUI.class.getName(), apkFile});
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
+		}
+		
+		private void openApkFile(String apkFile)
+		{
+			if(apkFile == null) return;
+
+			ProgressBarDlg.init();
+			WaitingDlg.setVisible(true);
+			openApk(apkFile);
 		}
 		
 		private void installApk()
@@ -191,7 +206,8 @@ public class MainUI extends JFrame implements WindowListener
 				String btn_label = b.getText();
 		        
 				if (btn_label.equals(Resource.STR_BTN_OPEN.getString())) {
-					openApkFile();
+					String file = selectApkFile();
+					openApkFile(file);
 				} else if(btn_label.equals(Resource.STR_BTN_MANIFEST.getString())) {
 					try {
 						if(System.getProperty("os.name").indexOf("Window") >-1) {
@@ -234,13 +250,15 @@ public class MainUI extends JFrame implements WindowListener
 			} if(e.getSource().getClass().getSimpleName().equals("JMenuItem")) {
 				String cmd = e.getActionCommand();
 				if(cmd.equals(Resource.STR_MENU_NEW_WINDOW.getString())) {
-					newWindow("");					
+					newWindow(null);
 				} else if(cmd.equals(Resource.STR_MENU_NEW_APK_FILE.getString())) {
-					
+					String file = selectApkFile();
+					newWindow(file);
 				} else if(cmd.equals(Resource.STR_MENU_NEW_PACKAGE.getString())) {
 					
 				} else if(cmd.equals(Resource.STR_MENU_APK_FILE.getString())) {
-					openApkFile();
+					String file = selectApkFile();
+					openApkFile(file);
 				} else if(cmd.equals(Resource.STR_MENU_PACKAGE.getString())) {
 					
 				} else if(cmd.equals(Resource.STR_MENU_INSTALL.getString())) {
@@ -276,7 +294,7 @@ public class MainUI extends JFrame implements WindowListener
 				
 				String apkPath = null;
 				SettingDlg = new SettingDlg();
-				if(args.length > 0) {
+				if(args.length > 0 && !args[0].isEmpty() && (new File(args[0])).exists()) {
 					ProgressBarDlg = new MyProgressBarDemo();
 					WaitingDlg = MyProgressBarDemo.createAndShowGUI(ProgressBarDlg);
 					WaitingDlg.setVisible(true);

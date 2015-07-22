@@ -1,603 +1,1077 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <permission-info>
-    <string name="permgrouplab_costMoney">요금이 부과되는 서비스</string>
-    <string name="permgroupdesc_costMoney">애플리케이션에서 유료 서비스를 이용할 수 있도록 허용합니다.</string>
-    <string name="permgrouplab_messages">내 메시지</string>
-    <string name="permgroupdesc_messages">문자 메시지나 이메일 또는 다른 메시지를 확인하거나 작성할 수 있습니다.</string>
-    <string name="permgrouplab_personalInfo">내 개인정보</string>
-    <string msgid="8426453129788861338" name="permgroupdesc_personalInfo">"연락처 카드에 저장된 내 개인 정보에 직접 액세스합니다."</string>
-    <string name="permgrouplab_socialInfo">소셜 정보 읽기</string>
-    <string msgid="7129842457611643493" name="permgroupdesc_socialInfo">"내 연락처 및 소셜 친구의 개인 정보에 직접 액세스합니다."</string>
-    <string name="permgrouplab_location">내 위치</string>
-    <string name="permgroupdesc_location">사용자의 위치를 감시합니다.</string>
-    <string name="permgrouplab_network">네트워크 통신</string>
-    <string name="permgroupdesc_network">애플리케이션에서 다양한 네트워크 기능을 사용할 수 있도록 허용합니다.</string>
-    <string name="permgrouplab_bluetoothNetwork">블루투스</string>
-    <string msgid="5625288577164282391" name="permgroupdesc_bluetoothNetwork">"블루투스를 통해 기기 및 네트워크에 액세스"</string>
-    <string name="permgrouplab_audioSettings">오디오 설정</string>
-    <string msgid="2641515403347568130" name="permgroupdesc_audioSettings">"오디오 설정을 변경합니다."</string>
-    <string name="permgrouplab_affectsBattery">진동 설정 관리</string>
-    <string msgid="6441275320638916947" name="permgroupdesc_affectsBattery">"배터리를 빨리 소모시킬 수 있는 기능을 사용합니다."</string>
-    <string name="permgrouplab_calendar">캘린더</string>
-    <string msgid="5777534316982184416" name="permgroupdesc_calendar">"캘린더 및 일정에 직접 액세스합니다."</string>
-    <string name="permgrouplab_dictionary">사용자 사전 읽기</string>
-    <string msgid="7921166355964764490" name="permgroupdesc_dictionary">"사용자 사전의 단어 읽기"</string>
-    <string name="permgrouplab_writeDictionary">사용자 사전 편집</string>
-    <string msgid="2711561994497361646" name="permgroupdesc_writeDictionary">"사용자 사전에 단어 추가"</string>
-    <string name="permgrouplab_bookmarks">인터넷 기록 및 북마크 읽기</string>
-    <string msgid="4169771606257963028" name="permgroupdesc_bookmarks">"북마크 및 브라우저 기록에 직접 액세스합니다."</string>
-    <string name="permgrouplab_deviceAlarms">알람</string>
-    <string msgid="4769356362251641175" name="permgroupdesc_deviceAlarms">"알람 시계를 설정합니다."</string>
-    <string name="permgrouplab_voicemail">음성 메시지</string>
-    <string msgid="2498403969862951393" name="permgroupdesc_voicemail">"음성사서함에 직접 액세스합니다."</string>
-    <string name="permgrouplab_microphone">마이크</string>
-    <string msgid="7106618286905738408" name="permgroupdesc_microphone">"오디오를 녹음하기 위해 마이크에 직접 액세스합니다."</string>
-    <string name="permgrouplab_camera">카메라</string>
-    <string msgid="2933667372289567714" name="permgroupdesc_camera">"이미지 및 동영상을 캡처하기 위해 카메라에 직접 액세스합니다."</string>
-    <string name="permgrouplab_screenlock">잠금화면</string>
-    <string msgid="7067497128925499401" name="permgroupdesc_screenlock">"기기의 잠금 화면 동작에 영향을 줄 수 있는 기능입니다."</string>
-    <string name="permgrouplab_appInfo">애플리케이션 정보 접근</string>
-    <string msgid="3950378538049625907" name="permgroupdesc_appInfo">"기기의 다른 애플리케이션의 작동에 영향을 줍니다."</string>
-    <string name="permgrouplab_wallpaper">배경화면</string>
-    <string msgid="5630417854750540154" name="permgroupdesc_wallpaper">"기기 배경화면 설정을 변경합니다."</string>
-    <string name="permgrouplab_systemClock">시계</string>
-    <string msgid="3944359833624094992" name="permgroupdesc_systemClock">"기기 시간 및 시간대를 변경합니다."</string>
-    <string name="permgrouplab_statusBar">상태표시줄</string>
-    <string msgid="6242593432226807171" name="permgroupdesc_statusBar">"기기 상태 표시줄 설정을 변경합니다."</string>
-    <string name="permgrouplab_syncSettings">동기화 설정</string>
-    <string msgid="7603195265129031797" name="permgroupdesc_syncSettings">"동기화 설정에 액세스합니다."</string>
-    <string name="permgrouplab_accounts">내 계정</string>
-    <string name="permgroupdesc_accounts">사용 가능한 계정에 접근합니다.</string>
-    <string name="permgrouplab_hardwareControls">하드웨어를 제어합니다.</string>
-    <string name="permgroupdesc_hardwareControls">디바이스의 하드웨어에 바로 접근합니다.</string>
-    <string name="permgrouplab_phoneCalls">통화</string>
-    <string name="permgroupdesc_phoneCalls">통화를 감시하고 녹음하고 처리합니다.</string>
-    <string name="permgrouplab_systemTools">시스템 도구</string>
-    <string name="permgroupdesc_systemTools">낮은 수준의 권한으로 시스템에 접근하거나 제어합니다.</string>
-    <string name="permgrouplab_developmentTools">개발 툴</string>
-    <string name="permgroupdesc_developmentTools">애플리케이션 개발자에게만 필요한 기능입니다.</string>
-    <string name="permgrouplab_display">다른 애플리케이션 실행</string>
-    <string msgid="6051002031933013714" name="permgroupdesc_display">"다른 애플리케이션의 UI에 영향을 줍니다."</string>
-    <string name="permgrouplab_storage">저장공간</string>
-    <string msgid="7442318502446874999" name="permgroupdesc_storage" product="nosdcard">"USB 저장소에 액세스합니다."</string>
-    <string msgid="9203302214915355774" name="permgroupdesc_storage" product="default">"SD 카드에 액세스합니다."</string>
-    <string name="permgrouplab_accessibilityFeatures">접근성 기능</string>
-    <string name="permgroupdesc_accessibilityFeatures">보조 기술 기능을 요청할 수 있습니다.</string>
-    <string name="permlab_statusBar">상태표시줄을 표시하지 않거나 수정합니다.</string>
-    <string name="permdesc_statusBar">애플리케이션에서 상태표시줄을 표시하지 않도록 하거나 시스템 아이콘을 추가 또는 제거할 수 있도록 허용합니다.</string>
-    <string name="permlab_statusBarService">상태표시줄</string>
-    <string name="permdesc_statusBarService">애플리케이션에서 상태표시줄에 알림을 표시할 수 있도록 허용합니다.</string>
-    <string name="permlab_expandStatusBar">상태표시줄을 확장하거나 축소합니다.</string>
-    <string name="permdesc_expandStatusBar">애플리케이션에서 아이콘 표시줄을 확장하거나 축소할 수 있도록 허용합니다.</string>
-    <string name="permlab_install_shortcut">새 바로가기 추가</string>
-    <string name="permdesc_install_shortcut">애플리케이션에서 바로가기를 만들어 홈 화면에 추가할 수 있도록 허용합니다.</string>
-    <string name="permlab_uninstall_shortcut">바로가기 삭제</string>
-    <string name="permdesc_uninstall_shortcut">애플리케이션에서 바로가기를 삭제하고 홈 화면에서 제거할 수 있도록 허용합니다.</string>
-    <string name="permlab_processOutgoingCalls">발신전화를 가로채기합니다.</string>
-    <string msgid="5156385005547315876" name="permdesc_processOutgoingCalls">"통화를 다른 번호로 리디렉션하거나 통화를 완전히 중단하는 옵션을 사용하여, 앱에서 발신 통화 중에 전화를 거는 번호를 볼 수 있게 허용합니다."</string>
-    <string name="permlab_receiveSms">문자 메시지를 받습니다.</string>
-    <string msgid="6424387754228766939" name="permdesc_receiveSms">"앱이 SMS 메시지를 수신하고 처리할 수 있도록 허용합니다. 이는 앱이 사용자에게 표시하지 않고 기기로 전송된 메시지를 모니터링 또는 삭제할 수도 있다는 것을 의미합니다."</string>
-    <string name="permlab_receiveMms">MMS를 받습니다.</string>
-    <string msgid="533019437263212260" name="permdesc_receiveMms">"앱이 MMS 메시지를 수신하고 처리할 수 있도록 허용합니다. 이는 앱이 사용자에게 표시하지 않고 기기로 전송된 메시지를 모니터링 또는 삭제할 수도 있다는 것을 의미합니다."</string>
-    <string name="permlab_receiveEmergencyBroadcast">긴급 방송 수신</string>
-    <string name="permdesc_receiveEmergencyBroadcast">애플리케이션에서 긴급 방송 메시지를 받거나 보내는 것을 허용합니다. 이 권한은 시스템 애플리케이션에만 적용됩니다.</string>
-    <string msgid="1598328843619646166" name="permlab_readCellBroadcasts">"셀 브로드캐스트 메시지 읽기"</string>
-    <string msgid="6361972776080458979" name="permdesc_readCellBroadcasts">"앱이 기기가 수신한 셀 브로드캐스트 메시지를 읽을 수 있도록 합니다. 비상 상황임을 알리기 위해 일부 지역에서 셀 브로드캐스트 경고가 전달됩니다. 비상 셀 브로드캐스트를 수신할 때 악성 앱이 기기의 성능이나 작동을 방해할 수 있습니다."</string>
-    <string name="permlab_sendSms">SMS 전송</string>
-    <string name="permdesc_sendSms">애플리케이션에서 문자 메시지를 보낼 수 있도록 허용합니다. 악성 애플리케이션에서 이를 이용해 사용자 동의없이 메시지를 보내 추가요금을 발생시킬 수 있습니다.</string>
-    <string name="permlab_sendSmsNoConfirmation">확인 없이 문자 메시지 전송</string>
-    <string name="permdesc_sendSmsNoConfirmation">앱에서 문자 메시지를 보낼 수 있도록 허용합니다. 이 경우 예상치 못한 통화 요금이 부과될 수 있습니다. 악성 앱에서 사용자의 확인 없이 메시지를 보내 요금이 부과될 수 있습니다.</string>
-    <string msgid="8713889105305943200" name="permlab_sendRespondViaMessageRequest">"메시지를 통한 응답 이벤트 보내기"</string>
-    <string msgid="7107648548468778734" name="permdesc_sendRespondViaMessageRequest">"앱에서 다른 메시징 앱에 요청을 보내어 수신 전화에 대해 메시지를 통한 응답 이벤트를 처리하도록 허용합니다."</string>
-    <string msgid="8745086572213270480" name="permlab_readSms">"내 문자 메시지 읽기(SMS 또는 MMS)"</string>
-    <string msgid="2467981548684735522" name="permdesc_readSms" product="tablet">"앱이 태블릿 또는 SIM 카드에 저장된 SMS 메시지를 읽을 수 있도록 허용합니다. 이렇게 하면 앱이 콘텐츠 또는 비밀유지와 관계 없이 모든 SMS 메시지를 읽을 수 있습니다."</string>
-    <string msgid="3695967533457240550" name="permdesc_readSms" product="default">"앱이 휴대전화 또는 SIM 카드에 저장된 SMS 메시지를 읽을 수 있도록 허용합니다. 이렇게 하면 앱이 콘텐츠 또는 비밀유지와 관계 없이 모든 SMS 메시지를 읽을 수 있습니다."</string>
-    <string name="permlab_writeSms">문자 메시지나 MMS를 편집합니다.</string>
-    <string name="permdesc_writeSms" product="tablet">애플리케이션에서 디바이스 저장공간 또는 SIM 카드에 저장된 문자 메시지를 추가, 삭제, 변경할 수 있도록 허용합니다. 악성 애플리케이션에서 이를 이용해 메시지를 삭제할 수 있습니다.</string>
-    <string name="permdesc_writeSms" product="default">애플리케이션에서 디바이스 저장공간 또는 SIM 카드에 저장된 문자 메시지를 추가, 삭제, 변경할 수 있도록 허용합니다. 악성 애플리케이션에서 이를 이용해 메시지를 삭제할 수 있습니다.</string>
-    <string name="permlab_receiveWapPush">인터넷에 연결합니다.</string>
-    <string msgid="748232190220583385" name="permdesc_receiveWapPush">"앱이 WAP 메시지를 수신하고 처리할 수 있도록 허용합니다. 이는 앱이 사용자에게 표시하지 않고 기기로 전송된 메시지를 모니터링 또는 삭제할 수도 있다는 것을 의미합니다."</string>
-    <string msgid="7593811487142360528" name="permlab_receiveBluetoothMap">"블루투스 메시지(MAP) 수신"</string>
-    <string name="permdesc_receiveBluetoothMap">이 애플리케이션은 블루투스 MAP 메시지를 받거나 보낼 수 있고, 디바이스로 받은 메시지를 사용자에게 표시하지 않고 모니터하거나 삭제할 수 있습니다.</string>
-    <string name="permlab_getTasks">실행 중인 애플리케이션을 가져옵니다.</string>
-    <string msgid="7454215995847658102" name="permdesc_getTasks">"앱이 현재 실행 중이거나 최근에 실행된 작업에 대한 정보를 검색할 수 있도록 허용합니다. 이 경우 앱이 기기에서 사용되는 다른 앱에 대한 정보를 검색할 수 있습니다."</string>
-    <string msgid="8990073877885690623" name="permlab_startTasksFromRecents">"최근 목록에서 작업 시작"</string>
-    <string name="permdesc_startTasksFromRecents">이 애플리케이션은 ActivityManager.getRecentTaskList()에서 되돌아온 디펑트(defunct) 작업을 다시 시작하기 위해 ActivityManager.RecentTaskInfo 오브젝트를 사용할 수 있습니다.</string>
-    <string msgid="7114255281944211682" name="permlab_interactAcrossUsers">"여러 사용자와의 상호작용"</string>
-    <string name="permdesc_interactAcrossUsers">앱에서 모든 사용자 영역에서 작업을 수행하는 것을 허용합니다. 악성 앱에서 다른 사용자의 보호 설정을 임의로 변경할 수 있습니다.</string>
-    <string msgid="2567734285545074105" name="permlab_interactAcrossUsersFull">"여러 사용자와의 상호작용을 위한 정식 라이선스"</string>
-    <string msgid="376841368395502366" name="permdesc_interactAcrossUsersFull">"여러 사용자와의 가능한 모든 상호작용을 허용합니다."</string>
-    <string msgid="1676150911672282428" name="permlab_manageUsers">"사용자 관리"</string>
-    <string msgid="8409306667645355638" name="permdesc_manageUsers">"앱이 기기에서 검색, 생성 및 삭제를 포함한 사용자 관리를 할 수 있도록 허용합니다."</string>
-    <string name="permlab_getDetailedTasks">실행 중인 앱 상세정보 가져오기</string>
-    <string msgid="153824741440717599" name="permdesc_getDetailedTasks">"앱이 현재 실행 중이거나 최근에 실행된 작업에 대한 상세한 정보를 검색할 수 있도록 허용합니다. 이 경우 악성 앱이 다른 앱에 대한 개인 정보를 검색할 수 있습니다."</string>
-    <string name="permlab_reorderTasks">실행 중인 애플리케이션의 순서를 다시 결정합니다.</string>
-    <string msgid="7734217754877439351" name="permdesc_reorderTasks">"앱이 사용자의 입력 없이 작업을 포그라운드나 백그라운드로 이동할 수 있도록 허용합니다."</string>
-    <string msgid="6821513401870377403" name="permlab_removeTasks">"실행 중인 앱 중지"</string>
-    <string msgid="1394714352062635493" name="permdesc_removeTasks">"애플리케이션이 작업을 삭제하거나 다른 애플리케이션을 중지시킬 수 있도록 허용합니다. 이 경우 악성 애플리케이션이 다른 애플리케이션의 동작을 멈추게 할 수 있습니다."</string>
-    <string name="permlab_manageActivityStacks">액티비티 모음 관리</string>
-    <string name="permdesc_manageActivityStacks">Allow the application to add to, remove from, and reorder activity stacks, including those in other apps. Malicious apps may use this to disrupt the behaviour of other apps</string>
-    <string msgid="2918768238045206456" name="permlab_startAnyActivity">"원하는 활동 시작"</string>
-    <string name="permdesc_startAnyActivity">권한 보호나 내보낸 상태에 관계없이 앱이 활동을 시작하도록 허용합니다.</string>
-    <string name="permlab_setScreenCompatibility">화면 호환성 설정</string>
-    <string msgid="692043618693917374" name="permdesc_setScreenCompatibility">"앱이 다른 애플리케이션의 화면 호환성 모드를 제어할 수 있도록 허용합니다. 이 경우 악성 애플리케이션이 다른 애플리케이션의 동작을 멈추게 할 수 있습니다."</string>
-    <string name="permlab_setDebugApp">애플리케이션 디버깅을 실행합니다.</string>
-    <string name="permdesc_setDebugApp">애플리케이션에서 다른 애플리케이션을 디버깅할 수 있도록 허용합니다. 악성 애플리케이션에서 이를 이용해 다른 애플리케이션을 폐기할 수 있습니다.</string>
-    <string msgid="4162092185124234480" name="permlab_changeConfiguration">"시스템 표시 설정 변경"</string>
-    <string name="permdesc_changeConfiguration">애플리케이션에서 표시 언어나 전체 글자 크기와 같은 현재 설정을 변경할 수 있도록 허용합니다.</string>
-    <string name="permlab_enableCarMode">자동차 모드 실행</string>
-    <string name="permdesc_enableCarMode">애플리케이션에서 [자동차 모드]를 실행할 수 있도록 허용합니다.</string>
-    <string name="permlab_killBackgroundProcesses">백그라운드 프로세스 종료</string>
-    <string name="permdesc_killBackgroundProcesses">애플리케이션에서 시스템 용량이 충분한 상태에서도 백그라운드에서 실행 중인 다른 애플리케이션의 프로세스를 종료할 수 있도록 허용합니다.</string>
-    <string name="permlab_forceStopPackages">다른 애플리케이션 강제 중지</string>
-    <string name="permdesc_forceStopPackages">애플리케이션에서 다른 애플리케이션을 중지할 수 있도록 허용합니다.</string>
-    <string name="permlab_forceBack">애플리케이션을 강제로 종료합니다.</string>
-    <string msgid="3892295830419513623" name="permdesc_forceBack">"앱이 포그라운드에 있는 작업을 강제로 닫고 되돌아갈 수 있도록 허용합니다. 일반 앱에는 필요하지 않습니다."</string>
-    <string name="permlab_dump">시스템의 내부 상태정보를 가져옵니다.</string>
-    <string name="permdesc_dump">애플리케이션에서 시스템의 내부 상태정보를 가져올 수 있도록 허용합니다. 악성 애플리케이션에서 이를 이용해 실행에 필요하지 않은 개인정보 또는 보안정보를 수집할 수 있습니다.</string>
-    <string name="permlab_retrieve_window_content">화면 컨텐츠 가져오기</string>
-    <string msgid="3193269069469700265" name="permdesc_retrieve_window_content">"앱이 활성 창의 콘텐츠를 검색할 수 있도록 허용합니다. 이 경우 악성 앱이 전체 창의 콘텐츠를 검색하여 비밀번호를 제외한 모든 텍스트를 살펴볼 수 있습니다."</string>
-    <string msgid="2312612135127310254" name="permlab_temporary_enable_accessibility">"일시적인 접근성 사용"</string>
-    <string msgid="8079456293182975464" name="permdesc_temporary_enable_accessibility">"애플리케이션이 기기에서 일시적으로 접근성을 사용하도록 허용합니다. 이 경우 악성 앱이 사용자의 동의 없이 접근성을 사용할 수 있습니다."</string>
-    <string msgid="7154762602367758602" name="permlab_retrieveWindowToken">"창 토큰 검색"</string>
-    <string name="permdesc_retrieveWindowToken">이 애플리케이션은 윈도우 토큰을 가져올 수 있습니다. 악성 애플리케이션에서 시스템을 가장하여 승인 없이 다른 애플리케이션과 상호작용할 수 있습니다.</string>
-    <string name="permlab_frameStats">프레임 속도정보 가져오기</string>
-    <string name="permdesc_frameStats">이 애플리케이션은 프레임 속도정보를 가져올 수 있습니다. 악성 애플리케이션에서 다른 애플리케이션 창의 프레임 속도를 모니터할 수 있습니다.</string>
-    <string msgid="8675535648807427389" name="permlab_filter_events">"일정 필터링"</string>
-    <string msgid="8006236315888347680" name="permdesc_filter_events">"애플리케이션에 입력 필터를 등록할 수 있도록 하여 모든 사용자 일정 스트림을 전달하기 전에 필터링합니다. 이 경우 사용자의 개입 없이 악성 앱이 시스템 UI를 제어할 수 있습니다."</string>
-    <string name="permlab_shutdown">부분 종료</string>
-    <string name="permdesc_shutdown">작업관리자를 끄기 상태로 전환합니다. 완전히 종료되지는 않습니다.</string>
-    <string name="permlab_stopAppSwitches">애플리케이션 전환 방지</string>
-    <string name="permdesc_stopAppSwitches">사용자가 다른 애플리케이션으로 전환할 수 없도록 제한합니다.</string>
-    <string name="permlab_getTopActivityInfo">현재 앱 정보 가져오기</string>
-    <string name="permdesc_getTopActivityInfo">권한 소유자가 화면의 포그라운드에서 실행 중인 현재 애플리케이션에 대한 개인정보를 가져올 수 있도록 허용합니다.</string>
-    <string name="permlab_runSetActivityWatcher">모든 애플리케이션 실행을 모니터하고 제어합니다.</string>
-    <string msgid="6003603162578577406" name="permdesc_runSetActivityWatcher">"앱이 시스템에서 활동이 시작되는 방식을 모니터링하고 관리할 수 있도록 허용합니다. 이 경우 악성 앱이 이 기능을 이용하여 시스템을 완전히 손상시킬 수 있습니다. 이 권한은 개발 과정에만 필요하며 일반 사용 시에는 필요하지 않습니다."</string>
+    <string name="permgrouplab_costMoney">Services that cost you money</string>
+    <string name="permgroupdesc_costMoney">Do things that can cost you money.</string>
+    <string name="permgrouplab_messages">Your messages</string>
+    <string name="permgroupdesc_messages">Read and write your SMS, email, and other messages.</string>
+    <string name="permgrouplab_personalInfo">Your personal information</string>
+    <string name="permgroupdesc_personalInfo">Direct access to information about you, stored in on your contact card.</string>
+    <string name="permgrouplab_socialInfo">Your social information</string>
+    <string name="permgroupdesc_socialInfo">Direct access to information about your contacts and social connections.</string>
+    <string name="permgrouplab_location">Your location</string>
+    <string name="permgroupdesc_location">Monitor your physical location.</string>
+    <string name="permgrouplab_network">Network communication</string>
+    <string name="permgroupdesc_network">Access various network features.</string>
+    <string name="permgrouplab_bluetoothNetwork">Bluetooth</string>
+    <string name="permgroupdesc_bluetoothNetwork">Access devices and networks through Bluetooth.</string>
+    <string name="permgrouplab_audioSettings">Audio Settings</string>
+    <string name="permgroupdesc_audioSettings">Change audio settings.</string>
+    <string name="permgrouplab_affectsBattery">Affects Battery</string>
+    <string name="permgroupdesc_affectsBattery">Use features that can quickly drain battery.</string>
+    <string name="permgrouplab_calendar">Calendar</string>
+    <string name="permgroupdesc_calendar">Direct access to calendar and events.</string>
+    <string name="permgrouplab_dictionary">Read User Dictionary</string>
+    <string name="permgroupdesc_dictionary">Read words in user dictionary.</string>
+    <string name="permgrouplab_writeDictionary">Write User Dictionary</string>
+    <string name="permgroupdesc_writeDictionary">Add words to the user dictionary.</string>
+    <string name="permgrouplab_bookmarks">Bookmarks and History</string>
+    <string name="permgroupdesc_bookmarks">Direct access to bookmarks and browser history.</string>
+    <string name="permgrouplab_deviceAlarms">Alarm</string>
+    <string name="permgroupdesc_deviceAlarms">Set the alarm clock.</string>
+    <string name="permgrouplab_voicemail">Voicemail</string>
+    <string name="permgroupdesc_voicemail">Direct access to voicemail.</string>
+    <string name="permgrouplab_microphone">Microphone</string>
+    <string name="permgroupdesc_microphone">Direct access to the microphone to record audio.</string>
+    <string name="permgrouplab_camera">Camera</string>
+    <string name="permgroupdesc_camera">Direct access to camera for image or video capture.</string>
+    <string name="permgrouplab_screenlock">Lock screen</string>
+    <string name="permgroupdesc_screenlock">Ability to affect behavior of the lock screen on your device.</string>
+    <string name="permgrouplab_appInfo">Your applications information</string>
+    <string name="permgroupdesc_appInfo">Ability to affect behavior of other applications on your device.</string>
+    <string name="permgrouplab_wallpaper">Wallpaper</string>
+    <string name="permgroupdesc_wallpaper">Change the device wallpaper settings.</string>
+    <string name="permgrouplab_systemClock">Clock</string>
+    <string name="permgroupdesc_systemClock">Change the device time or timezone.</string>
+    <string name="permgrouplab_statusBar">Status Bar</string>
+    <string name="permgroupdesc_statusBar">Change the device status bar settings.</string>
+    <string name="permgrouplab_syncSettings">Sync Settings</string>
+    <string name="permgroupdesc_syncSettings">Access to the sync settings.</string>
+    <string name="permgrouplab_accounts">Your accounts</string>
+    <string name="permgroupdesc_accounts">Access the available accounts.</string>
+    <string name="permgrouplab_hardwareControls">Hardware controls</string>
+    <string name="permgroupdesc_hardwareControls">Direct access to hardware on the handset.</string>
+    <string name="permgrouplab_phoneCalls">Phone calls</string>
+    <string name="permgroupdesc_phoneCalls">Monitor, record, and process phone calls.</string>
+    <string name="permgrouplab_systemTools">System tools</string>
+    <string name="permgroupdesc_systemTools">Lower-level access and control of the system.</string>
+    <string name="permgrouplab_developmentTools">Development tools</string>
+    <string name="permgroupdesc_developmentTools">Features only needed for app developers.</string>
+    <string name="permgrouplab_display">Other Application UI</string>
+    <string name="permgroupdesc_display">Effect the UI of other applications.</string>
+    <string name="permgrouplab_storage">Storage</string>
+    <string name="permgroupdesc_storage" product="nosdcard">Access the USB storage.</string>
+    <string name="permgroupdesc_storage" product="default">Access the SD card.</string>
+    <string name="permgrouplab_accessibilityFeatures">Accessibility features</string>
+    <string name="permgroupdesc_accessibilityFeatures">Features that assistive technology can request.</string>
+    <string name="permlab_statusBar">disable or modify status bar</string>
+    <string name="permdesc_statusBar">Allows the app to disable the status bar or add and remove system icons.</string>
+    <string name="permlab_statusBarService">status bar</string>
+    <string name="permdesc_statusBarService">Allows the app to be the status bar.</string>
+    <string name="permlab_expandStatusBar">expand/collapse status bar</string>
+    <string name="permdesc_expandStatusBar">Allows the app to expand or collapse the status bar.</string>
+    <string name="permlab_install_shortcut">install shortcuts</string>
+    <string name="permdesc_install_shortcut">Allows an application to add
+        Homescreen shortcuts without user intervention.</string>
+    <string name="permlab_uninstall_shortcut">uninstall shortcuts</string>
+    <string name="permdesc_uninstall_shortcut">Allows the application to remove
+        Homescreen shortcuts without user intervention.</string>
+    <string name="permlab_processOutgoingCalls">reroute outgoing calls</string>
+    <string name="permdesc_processOutgoingCalls">Allows the app to see the
+        number being dialed during an outgoing call with the option to redirect
+        the call to a different number or abort the call altogether.</string>
+    <string name="permlab_receiveSms">receive text messages (SMS)</string>
+    <string name="permdesc_receiveSms">Allows the app to receive and process SMS
+      messages. This means the app could monitor or delete messages sent to your
+      device without showing them to you.</string>
+    <string name="permlab_receiveMms">receive text messages (MMS)</string>
+    <string name="permdesc_receiveMms">Allows the app to receive and process MMS
+      messages. This means the app could monitor or delete messages sent to your
+      device without showing them to you.</string>
+    <string name="permlab_receiveEmergencyBroadcast">receive emergency broadcasts</string>
+    <string name="permdesc_receiveEmergencyBroadcast">Allows the app to receive
+      and process emergency broadcast messages. This permission is only available
+      to system apps.</string>
+    <string name="permlab_readCellBroadcasts">read cell broadcast messages</string>
+    <string name="permdesc_readCellBroadcasts">Allows the app to read
+      cell broadcast messages received by your device. Cell broadcast alerts
+      are delivered in some locations to warn you of emergency situations.
+      Malicious apps may interfere with the performance or operation of your
+      device when an emergency cell broadcast is received.</string>
+    <string name="permlab_sendSms">send SMS messages</string>
+    <string name="permdesc_sendSms">Allows the app to send SMS messages.
+     This may result in unexpected charges. Malicious apps may cost you money by
+     sending messages without your confirmation.</string>
+    <string name="permlab_sendRespondViaMessageRequest">send respond-via-message events</string>
+    <string name="permdesc_sendRespondViaMessageRequest">Allows the app to send
+      requests to other messaging apps to handle respond-via-message events for incoming
+      calls.</string>
+    <string name="permlab_readSms">read your text messages (SMS or MMS)</string>
+    <string name="permdesc_readSms" product="tablet">Allows the app to read SMS
+      messages stored on your tablet or SIM card. This allows the app to read all
+      SMS messages, regardless of content or confidentiality.</string>
+    <string name="permdesc_readSms" product="tv">Allows the app to read SMS
+      messages stored on your TV or SIM card. This allows the app to read all
+      SMS messages, regardless of content or confidentiality.</string>
+    <string name="permdesc_readSms" product="default">Allows the app to read SMS
+      messages stored on your phone or SIM card. This allows the app to read all
+      SMS messages, regardless of content or confidentiality.</string>
+    <string name="permlab_writeSms">edit your text messages (SMS or MMS)</string>
+    <string name="permdesc_writeSms" product="tablet">Allows the app to write
+      to SMS messages stored on your tablet or SIM card. Malicious apps
+      may delete your messages.</string>
+    <string name="permdesc_writeSms" product="tv">Allows the app to write
+      to SMS messages stored on your TV or SIM card. Malicious apps
+      may delete your messages.</string>
+    <string name="permdesc_writeSms" product="default">Allows the app to write
+      to SMS messages stored on your phone or SIM card. Malicious apps
+      may delete your messages.</string>
+    <string name="permlab_receiveWapPush">receive text messages (WAP)</string>
+    <string name="permdesc_receiveWapPush">Allows the app to receive and process
+     WAP messages.  This permission includes the ability to monitor or delete
+     messages sent to you without showing them to you.</string>
+    <string name="permlab_receiveBluetoothMap">receive Bluetooth messages (MAP)</string>
+    <string name="permdesc_receiveBluetoothMap">Allows the app to receive and process Bluetooth MAP
+      messages. This means the app could monitor or delete messages sent to your
+      device without showing them to you.</string>
+    <string name="permlab_getTasks">retrieve running apps</string>
+    <string name="permdesc_getTasks">Allows the app to retrieve information
+       about currently and recently running tasks.  This may allow the app to
+       discover information about which applications are used on the device.</string>
+    <string name="permlab_startTasksFromRecents">start a task from recents</string>
+    <string name="permdesc_startTasksFromRecents">Allows the app to use an ActivityManager.RecentTaskInfo
+        object to launch a defunct task that was returned from ActivityManager.getRecentTaskList().</string>
+    <string name="permlab_interactAcrossUsers">interact across users</string>
+    <string name="permdesc_interactAcrossUsers">Allows the app to perform actions
+        across different users on the device.  Malicious apps may use this to violate
+        the protection between users.</string>
+    <string name="permlab_interactAcrossUsersFull">full license to interact across users</string>
+    <string name="permdesc_interactAcrossUsersFull">Allows all possible interactions across
+        users.</string>
+    <string name="permlab_manageUsers">manage users</string>
+    <string name="permdesc_manageUsers">Allows apps to manage users on the device, including query, creation and deletion.</string>
+    <string name="permlab_getDetailedTasks">retrieve details of running apps</string>
+    <string name="permdesc_getDetailedTasks">Allows the app to retrieve
+        detailed information about currently and recently running tasks. Malicious apps may
+        discover private information about other apps.</string>
+    <string name="permlab_reorderTasks">reorder running apps</string>
+    <string name="permdesc_reorderTasks">Allows the app to move tasks to the
+      foreground and background.  The app may do this without your input.</string>
+    <string name="permlab_removeTasks">stop running apps</string>
+    <string name="permdesc_removeTasks">Allows the app to remove
+        tasks and kill their apps. Malicious apps may disrupt
+        the behavior of other apps.</string>
+    <string name="permlab_manageActivityStacks">manage activity stacks</string>
+    <string name="permdesc_manageActivityStacks">Allows the app to add, remove, and
+        modify the activity stacks in which other apps run.  Malicious apps may disrupt
+        the behavior of other apps.</string>
+    <string name="permlab_startAnyActivity">start any activity</string>
+    <string name="permdesc_startAnyActivity">Allows the app to start any activity, regardless of permission protection or exported state.</string>
+    <string name="permlab_setScreenCompatibility">set screen compatibility</string>
+    <string name="permdesc_setScreenCompatibility">Allows the app to control the
+        screen compatibility mode of other applications.  Malicious applications may
+        break the behavior of other applications.</string>
+    <string name="permlab_setDebugApp">enable app debugging</string>
+    <string name="permdesc_setDebugApp">Allows the app to turn
+        on debugging for another app. Malicious apps may use this
+        to kill other apps.</string>
+    <string name="permlab_changeConfiguration">change system display settings</string>
+    <string name="permdesc_changeConfiguration">Allows the app to
+        change the current configuration, such as the locale or overall font
+        size.</string>
+    <string name="permlab_enableCarMode">enable car mode</string>
+    <string name="permdesc_enableCarMode">Allows the app to
+        enable the car mode.</string>
+    <string name="permlab_killBackgroundProcesses">close other apps</string>
+    <string name="permdesc_killBackgroundProcesses">Allows the app to end
+      background processes of other apps.  This may cause other apps to stop
+      running.</string>
+    <string name="permlab_forceStopPackages">force stop other apps</string>
+    <string name="permdesc_forceStopPackages">Allows the app to forcibly stop other apps.</string>
+    <string name="permlab_forceBack">force app to close</string>
+    <string name="permdesc_forceBack">Allows the app to force any
+        activity that is in the foreground to close and go back.
+        Should never be needed for normal apps.</string>
+    <string name="permlab_dump">retrieve system internal state</string>
+    <string name="permdesc_dump">Allows the app to retrieve
+        internal state of the system. Malicious apps may retrieve
+        a wide variety of private and secure information that they should
+        never normally need.</string>
+    <string name="permlab_retrieve_window_content">retrieve screen content</string>
+    <string name="permdesc_retrieve_window_content">Allows the app to retrieve
+        the content of the active window. Malicious apps may retrieve
+        the entire window content and examine all its text except passwords.</string>
+    <string name="permlab_temporary_enable_accessibility">temporary enable accessibility</string>
+    <string name="permdesc_temporary_enable_accessibility">Allows an application to temporarily
+         enable accessibility on the device. Malicious apps may enable accessibility without
+         user consent.</string>
+    <string name="permlab_retrieveWindowToken">retrieve window token</string>
+    <string name="permdesc_retrieveWindowToken">Allows an application to retrieve
+        the window token. Malicious apps may perfrom unauthorized interaction with
+        the application window impersonating the system.</string>
+    <string name="permlab_frameStats">retrieve frame statistics</string>
+    <string name="permdesc_frameStats">Allows an application to collect
+        frame statistics. Malicious apps may observe the frame statistics
+        of windows from other apps.</string>
+    <string name="permlab_filter_events">filter events</string>
+    <string name="permdesc_filter_events">Allows an application to register an input filter
+            which filters the stream of all user events before they are dispatched. Malicious app
+            may control the system UI whtout user intervention.</string>
+    <string name="permlab_shutdown">partial shutdown</string>
+    <string name="permdesc_shutdown">Puts the activity manager into a shutdown
+        state.  Does not perform a complete shutdown.</string>
+    <string name="permlab_stopAppSwitches">prevent app switches</string>
+    <string name="permdesc_stopAppSwitches">Prevents the user from switching to
+        another app.</string>
+    <string name="permlab_getTopActivityInfo">get current app info</string>
+    <string name="permdesc_getTopActivityInfo">Allows the holder to retrieve private information
+        about the current application in the foreground of the screen.</string>
+    <string name="permlab_runSetActivityWatcher">monitor and control all app launching</string>
+    <string name="permdesc_runSetActivityWatcher">Allows the app to
+        monitor and control how the system launches activities.
+        Malicious apps may completely compromise the system. This
+        permission is only needed for development, never for normal
+        use.</string>
     <string name="permlab_broadcastPackageRemoved">send package removed broadcast</string>
-    <string name="permdesc_broadcastPackageRemoved">애플리케이션에서 애플리케이션 패키지 제거 알림을 표시할 수 있도록 허용합니다. 허용할 경우, 악성 애플리케이션에서 실행 중인 애플리케이션을 중지할 수 있습니다.</string>
-    <string name="permlab_broadcastSmsReceived">문자 메시지 수신 확인메시지를 보냅니다.</string>
-    <string name="permdesc_broadcastSmsReceived">애플리케이션에서 문자 메시지 수신 알림을 표시할 수 있도록 허용합니다. 허용할 경우, 악성 애플리케이션에서 문자 메시지 수신을 허위로 알릴 수 있습니다.</string>
-    <string name="permlab_broadcastWapPush">푸시 메시지 수신 시 확인 메시지를 보냅니다.</string>
-    <string name="permdesc_broadcastWapPush">애플리케이션에서 WAP 푸시 메시지 수신 알림을 표시할 수 있도록 허용합니다. 허용할 경우, 악성 애플리케이션에서 멀티미디어 메시지 수신을 허위로 알리거나 웹페이지 내용을 악의적인 것으로 대체할 수 있습니다.</string>
-    <string name="permlab_setProcessLimit">실행 중인 애플리케이션 수를 제한합니다.</string>
-    <string name="permdesc_setProcessLimit">애플리케이션에서 실행할 수 있는 최대 프로세스 수를 제어하는 것을 허용합니다. 일반 애플리케이션에서는 이 권한이 필요하지 않습니다.</string>
-    <string name="permlab_setAlwaysFinish">백그라운드에서 실행 중인 애플리케이션을 모두 종료합니다.</string>
-    <string name="permdesc_setAlwaysFinish">애플리케이션에서 백그라운드로 이동한 작업이 항상 중지되게 제어할 수 있도록 허용합니다. 일반 애플리케이션에서는 이 권한이 필요하지 않습니다.</string>
-    <string name="permlab_batteryStats">배터리 상태정보를 수정합니다.</string>
-    <string msgid="5897346582882915114" name="permdesc_batteryStats">"애플리케이션이 현재의 낮은 수준 배터리 사용 데이터를 읽을 수 있도록 합니다. 이 경우 애플리케이션이 내가 사용하는 앱에 대한 세부정보를 파악할 수도 있습니다."</string>
-    <string name="permlab_updateBatteryStats">배터리 상태정보를 수정합니다.</string>
-    <string msgid="6862817857178025002" name="permdesc_updateBatteryStats">"앱이 수집된 배터리 통계를 수정할 수 있도록 허용합니다. 일반 앱에서는 사용하지 않습니다."</string>
-    <string name="permlab_getAppOpsStats">앱 사용 통계 가져오기</string>
-    <string name="permdesc_getAppOpsStats">애플리케이션에서 수집한 애플리케이션 사용 통계를 가져올 수 있도록 허용합니다. 일반 애플리케이션에서 사용한 기록은 제외합니다.</string>
-    <string msgid="8829097373851521505" name="permlab_updateAppOpsStats">"앱 운영 통계 수정"</string>
-    <string msgid="50784596594403483" name="permdesc_updateAppOpsStats">"앱이 수집된 애플리케이션 운영 통계를 수정하도록 합니다. 일반 앱에서는 사용하지 않습니다."</string>
-    <string name="permlab_backup">제어 시스템을 백업 및 복원하였습니다.</string>
-    <string name="permdesc_backup">애플리케이션에서 시스템의 백업 및 복원 체제를 제어할 수 있도록 허용합니다. 일반 애플리케이션은 이 권한이 필요하지 않습니다.</string>
-    <string name="permlab_confirm_full_backup">전체 백업 또는 복원 작업 확인</string>
-    <string msgid="1748762171637699562" name="permdesc_confirm_full_backup">"앱이 전체 백업 확인 UI를 실행하도록 허용합니다. 다른 앱에는 사용할 수 없습니다."</string>
-    <string name="permlab_internalSystemWindow">인증되지 않은 창을 표시합니다.</string>
-    <string name="permdesc_internalSystemWindow">내부 시스템 UI에서 사용되는 창을 추가할 수 있도록 허용합니다. 일반 애플리케이션에서는 이 권한이 필요하지 않습니다.</string>
-    <string msgid="3543347980839518613" name="permlab_systemAlertWindow">"다른 앱 위에 그리기"</string>
-    <string name="permdesc_systemAlertWindow">애플리케이션에서 다른 애플리케이션의 앞에 표시되거나 해당 애플리케이션의 인터페이스를 편집할 수 있도록 허용합니다. 다른 애플리케이션을 사용하는 것을 방해하거나 애플리케이션 사용 중에 화면에 표시되는 내용이 변경될 수 있습니다.</string>
-    <string name="permlab_setAnimationScale">전체 애니메이션 속도를 변경합니다.</string>
-    <string name="permdesc_setAnimationScale">애플리케이션에서 언제든지 전체 애니메이션 속도(빠르게 또는 느리게)를 변경할 수 있도록 허용합니다.</string>
-    <string name="permlab_manageAppTokens">애플리케이션의 우선순위를 관리합니다.</string>
-    <string name="permdesc_manageAppTokens">애플리케이션에서 Z-ordering을 보내 자신의 토큰을 추가하거나 관리할 수 있도록 허용합니다. 일반 애플리케이션에서는 이 권한이 필요하지 않습니다.</string>
-    <string msgid="4708181184441880175" name="permlab_freezeScreen">"화면 고정"</string>
-    <string msgid="8558923789222670064" name="permdesc_freezeScreen">"앱이 전체 화면 전환을 위해 일시적으로 화면을 고정하도록 허용합니다."</string>
-    <string name="permlab_injectEvents">숫자 버튼 또는 기능 버튼을 누르세요.</string>
-    <string msgid="206352565599968632" name="permdesc_injectEvents" product="tablet">"앱이 입력 이벤트(예: 키 누름)를 다른 앱에 전달할 수 있도록 허용합니다. 이 경우 악성 앱이 태블릿을 완전히 제어할 수 있습니다."</string>
-    <string msgid="653128057572326253" name="permdesc_injectEvents" product="default">"앱이 입력 이벤트(예: 키 누름)를 다른 앱에 전달할 수 있도록 허용합니다. 이 경우 악성 앱이 휴대전화를 완전히 제어할 수 있습니다."</string>
-    <string name="permlab_readInputState">입력한 내용과 실행한 작업을 기록합니다.</string>
-    <string name="permdesc_readInputState">애플리케이션에서 다른 애플리케이션에서 입력하는 버튼정보(예: 비밀번호)를 수집하는 것을 허용합니다. 일반 애플리케이션에서는 이 권한이 필요하지 않습니다.</string>
-    <string name="permlab_bindInputMethod">입력 방식과 연동</string>
-    <string name="permdesc_bindInputMethod">애플리케이션에서 배경화면의 최상위 인터페이스로 나타날 수 있도록 허용합니다. 일반 애플리케이션에서는 필요하지 않습니다.</string>
-    <string name="permlab_bindAccessibilityService">접근성 서비스와 연결</string>
-    <string name="permdesc_bindAccessibilityService">권한을 가진 프로그램이 접근성 서비스에 대한 최상위 인터페이스를 사용하도록 허용합니다. 일반 앱에는 필요하지 않습니다.</string>
-    <string name="permlab_bindPrintService">인쇄 서비스에 연결</string>
-    <string name="permdesc_bindPrintService">애플리케이션에서 인쇄 서비스의 최상위 인터페이스에 연결할 수 있도록 허용합니다. 일반 애플리케이션에서는 필요하지 않습니다.</string>
-    <string name="permlab_bindPrintSpoolerService">인쇄 스풀러 서비스에 연결</string>
-    <string name="permdesc_bindPrintSpoolerService">애플리케이션에서 인쇄 스풀러 서비스의 최상위 인터페이스에 연결할 수 있도록 허용합니다. 일반 애플리케이션에서는 필요하지 않습니다.</string>
-    <string name="permlab_bindNfcService">NFC 서비스에 연결</string>
-    <string name="permdesc_bindNfcService">애플리케이션에서 NFC 카드를 에뮬레이팅하고 있는 애플리케이션에 연결할 수 있도록 허용합니다. 일반 애플리케이션에서는 필요하지 않습니다.</string>
-    <string name="permlab_bindTextService">텍스트 서비스와 연동</string>
-    <string msgid="8151968910973998670" name="permdesc_bindTextService">"권한을 가진 프로그램이 텍스트 서비스(예: SpellCheckerService)에 대한 최상위 인터페이스를 사용하도록 허용합니다. 일반 앱에는 필요하지 않습니다."</string>
-    <string name="permlab_bindVpnService">VPN 서비스와 연동</string>
-    <string msgid="2067845564581693905" name="permdesc_bindVpnService">"권한을 가진 프로그램이 VPN 서비스에 대한 최상위 인터페이스를 사용하도록 허용합니다. 일반 앱에는 필요하지 않습니다."</string>
-    <string name="permlab_bindWallpaper">배경화면 연결</string>
-    <string name="permdesc_bindWallpaper">애플리케이션에서 배경화면의 최상위 인터페이스에 나타날 수 있도록 허용합니다. 일반 애플리케이션에서는 이 권한이 필요하지 않습니다.</string>
-    <string name="permlab_bindVoiceInteraction">음성 상호작용 서비스에 연결</string>
-    <string name="permdesc_bindVoiceInteraction">이 애플리케이션은 음성 상호작용 서비스의 최상위 인터페이스에 연결할 수 있습니다. 일반 애플리케이션에서는 필요하지 않습니다.</string>
-    <string name="permlab_manageVoiceKeyphrases">음성 명령 관리</string>
-    <string name="permdesc_manageVoiceKeyphrases">이 애플리케이션은 음성 핫워드 인식을 위한 음성 명령을 관리할 수 있습니다. 일반 애플리케이션에서는 필요하지 않습니다.</string>
-    <string msgid="1782923938029941960" name="permlab_bindRemoteDisplay">"원격 디스플레이에 연결"</string>
-    <string msgid="1261242718727295981" name="permdesc_bindRemoteDisplay">"권한을 가진 프로그램이 원격 디스플레이에 대한 최상위 인터페이스를 사용하도록 허용합니다. 일반 앱에는 필요하지 않습니다."</string>
-    <string name="permlab_bindRemoteViews">위젯 서비스와 연동</string>
-    <string name="permdesc_bindRemoteViews">홀더가 위젯 서비스의 최상위 인터페이스와 연동하도록 허용합니다. 일반 애플리케이션에서는 이 권한이 필요하지 않습니다.</string>
-    <string name="permlab_bindDeviceAdmin">디바이스 관리자와 상호 연동</string>
-    <string name="permdesc_bindDeviceAdmin">애플리케이션에서 인텐트를 디바이스 관리자에게 보낼 수 있도록 허용합니다. 일반 애플리케이션에서는 필요하지 않습니다.</string>
-    <string name="permlab_bindTvInput">TV 입력 애플리케이션에 연결</string>
-    <string name="permdesc_bindTvInput">이 애플리케이션은 TV 입력 애플리케이션의 최상위 인터페이스에 연결할 수 있습니다. 일반 애플리케이션에서는 필요하지 않습니다.</string>
-    <string name="permlab_manageDeviceAdmins">디바이스 관리자 추가 또는 제거</string>
-    <string name="permdesc_manageDeviceAdmins">애플리케이션에서 현재 디바이스 관리자를 추가하거나 제거할 수 있도록 허용합니다. 일반 애플리케이션에서는 필요하지 않습니다.</string>
-    <string name="permlab_setOrientation">화면 방향을 변경합니다.</string>
-    <string name="permdesc_setOrientation">애플리케이션에서 언제든지 화면 방향을 변경할 수 있도록 허용합니다. 일반 애플리케이션에서는 이 권한이 필요하지 않습니다.</string>
-    <string name="permlab_setPointerSpeed">포인터 속도 변경</string>
-    <string msgid="6866563234274104233" name="permdesc_setPointerSpeed">"앱이 언제든지 마우스 또는 트랙패드 포인터의 속도를 변경할 수 있도록 허용합니다. 일반 앱에는 필요하지 않습니다."</string>
-    <string msgid="4778731703600909340" name="permlab_setKeyboardLayout">"키보드 레이아웃 변경"</string>
-    <string msgid="8480016771134175879" name="permdesc_setKeyboardLayout">"앱이 키보드 레이아웃을 변경할 수 있도록 허용합니다. 일반 앱에는 필요하지 않습니다."</string>
-    <string name="permlab_signalPersistentProcesses">애플리케이션에 리눅스 신호를 보냅니다.</string>
-    <string name="permdesc_signalPersistentProcesses">애플리케이션에서 항상 진행 중인 프로세스에 신호 전송을 요청할 수 있도록 허용합니다.</string>
-    <string name="permlab_persistentActivity">애플리케이션이 항상 실행되도록 합니다.</string>
-    <string msgid="8525189272329086137" name="permdesc_persistentActivity" product="tablet">"앱이 그 일부분을 영구적인 메모리로 만들 수 있도록 허용합니다. 이렇게 하면 다른 앱이 사용할 수 있는 메모리를 제한하여 태블릿의 속도를 저하시킬 수 있습니다."</string>
-    <string msgid="4384760047508278272" name="permdesc_persistentActivity" product="default">"앱이 그 일부분을 영구적인 메모리로 만들 수 있도록 허용합니다. 이렇게 하면 다른 앱이 사용할 수 있는 메모리를 제한하여 휴대전화의 속도를 저하시킬 수 있습니다."</string>
-    <string name="permlab_deletePackages">애플리케이션을 삭제합니다.</string>
-    <string name="permdesc_deletePackages">애플리케이션에서 안드로이드 패키지를 삭제할 수 있도록 허용합니다. 허용할 경우, 악성 애플리케이션에서 중요한 애플리케이션을 삭제할 수 있습니다.</string>
-    <string name="permlab_clearAppUserData">다른 애플리케이션의 데이터 삭제</string>
-    <string name="permdesc_clearAppUserData">애플리케이션에서 사용자 데이터를 삭제할 수 있도록 허용합니다.</string>
-    <string name="permlab_deleteCacheFiles">다른 애플리케이션의 캐시 삭제</string>
-    <string name="permdesc_deleteCacheFiles">애플리케이션에서 캐시를 삭제할 수 있도록 허용합니다.</string>
-    <string name="permlab_getPackageSize">애플리케이션의 저장공간을 측정합니다.</string>
-    <string name="permdesc_getPackageSize">애플리케이션에서 자신의 코드, 데이터, 캐시 파일을 가져갈 수 있도록 허용합니다.</string>
-    <string name="permlab_installPackages">바로 애플리케이션을 설치합니다.</string>
-    <string name="permdesc_installPackages">애플리케이션에서 안드로이드 패키지를 설치하거나 업데이트할 수 있도록 허용합니다. 악성 애플리케이션에서 이를 이용해 강력한 권한을 부여한 새 애플리케이션을 설치할 수 있습니다.</string>
-    <string name="permlab_clearAppCache">애플리케이션 캐시 데이터를 모두 삭제합니다.</string>
-    <string msgid="8974640871945434565" name="permdesc_clearAppCache" product="tablet">"앱이 다른 애플리케이션의 캐시 디렉토리에서 파일을 삭제하여 태블릿의 저장 공간을 늘릴 수 있도록 합니다. 이 경우 다른 애플리케이션이 해당 데이터를 다시 검색해야 하기 때문에 시작 속도가 느려질 수 있습니다."</string>
-    <string msgid="2459441021956436779" name="permdesc_clearAppCache" product="default">"앱이 다른 애플리케이션의 캐시 디렉토리에서 파일을 삭제하여 휴대전화의 저장 공간을 늘릴 수 있도록 합니다. 이 경우 다른 애플리케이션이 해당 데이터를 다시 검색해야 하기 때문에 시작 속도가 느려질 수 있습니다."</string>
-    <string name="permlab_movePackage">애플리케이션 위치 이동</string>
-    <string name="permdesc_movePackage">애플리케이션에서 디바이스 및 외부 저장매체 양방향으로 자원을 이동할 수 있도록 허용합니다.</string>
-    <string name="permlab_readLogs">중요한 로그정보 읽기</string>
-    <string name="permdesc_readLogs" product="tablet">애플리케이션에서 시스템의 다양한 로그 파일을 읽을 수 있도록 허용합니다. 태블릿으로 무엇을 하는지에 관한 일반정보를 얻을 수 있으며 개인정보도 포함될 수 있습니다.</string>
-    <string msgid="2063438140241560443" name="permdesc_readLogs" product="default">"앱이 시스템의 다양한 로그 파일을 읽을 수 있도록 허용합니다. 이렇게 되면 앱이 개인정보 또는 비공개 정보를 포함하여 휴대전화로 수행하는 작업에 대한 일반적인 정보를 검색할 수 있습니다."</string>
-    <string msgid="715805555823881818" name="permlab_anyCodecForPlayback">"재생에 모든 미디어 디코더 사용"</string>
-    <string msgid="8283912488433189010" name="permdesc_anyCodecForPlayback">"애플리케이션에서 설치된 모든 미디어 디코더를 사용하여 재생하는 데 디코딩할 수 있도록 허용합니다."</string>
-    <string name="permlab_manageCaCertificates">신뢰할 수 있는 인증서 관리</string>
-    <string name="permdesc_manageCaCertificates">애플리케이션에서 CA 인증서를 신뢰할 수 있는 인증서로 설치 또는 삭제할 수 있도록 허용합니다.</string>
-    <string name="permlab_bindJobService">계속 실행</string>
-    <string name="permdesc_bindJobService">이 애플리케이션은 요청할 경우 계속 실행할 수 있습니다.</string>
-    <string name="permlab_diagnostic">진단 애플리케이션이 사용하고 있는 데이터를 확인합니다.</string>
-    <string name="permdesc_diagnostic">애플리케이션에서 대화 그룹이 소유한 리소스(예: dev 폴더의 파일)를 읽거나 등록할 수 있도록 허용합니다. 이 설정은 시스템의 안정성과 보안에 영향을 미치므로 제조사나 사업자가 하드웨어를 진단할 때만 사용하세요.</string>
-    <string name="permlab_changeComponentState">애플리케이션 구성요소를 실행하거나 사용을 해제합니다.</string>
-    <string msgid="8887435740982237294" name="permdesc_changeComponentState" product="tablet">"앱이 다른 앱 구성요소 사용 여부를 변경할 수 있도록 허용합니다. 이 경우 악성 앱이 이 기능을 이용하여 중요한 태블릿 기능을 중지시킬 수 있습니다. 이 권한을 허용할 경우 앱 구성요소가 사용 불가능하게 되거나 일관성이 맞지 않거나 불안정해질 수 있으므로 주의해야 합니다."</string>
-    <string msgid="1827232484416505615" name="permdesc_changeComponentState" product="default">"앱이 다른 앱 구성요소 사용 여부를 변경할 수 있도록 허용합니다. 이 경우 악성 앱이 이 기능을 이용하여 중요한 휴대전화 기능을 중지시킬 수 있습니다. 이 권한을 허용할 경우 앱 구성요소가 사용 불가능하게 되거나 일관성이 맞지 않거나 불안정해질 수 있으므로 주의해야 합니다."</string>
-    <string name="permlab_grantRevokePermissions">권한 승인 또는 취소</string>
-    <string msgid="4088642654085850662" name="permdesc_grantRevokePermissions">"애플리케이션이 해당 애플리케이션 및 기타 애플리케이션에 대한 특정 권한을 승인 또는 취소하도록 허용합니다. 이 경우 악성 애플리케이션이 승인되지 않은 기능에 액세스할 수 있습니다."</string>
-    <string name="permlab_setPreferredApplications">즐겨 사용하는 애플리케이션을 설정합니다.</string>
-    <string msgid="4973986762241783712" name="permdesc_setPreferredApplications">"앱이 기본 앱을 수정할 수 있도록 허용합니다. 이 경우 악성 앱이 실행되는 앱을 몰래 변경하고 기존 앱으로 위장하여 사용자의 개인 정보를 수집할 수 있습니다."</string>
-    <string name="permlab_writeSettings">전체 시스템 설정을 변경합니다.</string>
-    <string name="permdesc_writeSettings">애플리케이션에서 시스템 설정을 수정할 수 있도록 허용합니다. 허용할 경우, 악성 애플리케이션에서 시스템 설정을 손상시킬 수 있습니다.</string>
-    <string name="permlab_writeSecureSettings">보안 시스템 설정을 변경합니다.</string>
-    <string name="permdesc_writeSecureSettings">애플리케이션에서 시스템의 보안 설정 데이터를 변경할 수 있도록 허용합니다. 일반 애플리케이션에서는 이 권한이 필요하지 않습니다.</string>
-    <string name="permlab_writeGservices">Google 서비스 구성을 수정합니다.</string>
-    <string name="permdesc_writeGservices">애플리케이션에서 Google 서비스 지도를 수정할 수 있도록 허용합니다. 일반 애플리케이션에서는 이 권한이 필요하지 않습니다.</string>
-    <string msgid="5312965565987800025" name="permlab_receiveBootCompleted">"시작할 때 실행"</string>
-    <string name="permdesc_receiveBootCompleted" product="tablet">시스템을 시작할 때 애플리케이션이 스스로 실행될 수 있도록 허용합니다. 태블릿이 켜지는 시간이 길어질 수 있으며 애플리케이션이 항상 실행되어 있어 태블릿이 전체적으로 느려질 수 있습니다.</string>
-    <string name="permdesc_receiveBootCompleted" product="default">시스템을 시작할 때 애플리케이션이 스스로 실행될 수 있도록 허용합니다. 휴대전화가 켜지는 시간이 길어질 수 있으며 애플리케이션이 항상 실행되어 디바이스가 전체적으로 느려질 수 있습니다.</string>
-    <string name="permlab_broadcastSticky">스티커 방송 메시지 전송</string>
-    <string name="permdesc_broadcastSticky" product="tablet">애플리케이션에서 방송 메시지 전송이 완료된 후에도 삭제되지 않는 스티커 방송 메시지를 보낼 수 있도록 허용합니다. 악성 애플리케이션에서 너무 많은 스티커 방송 메시지를 보내면 메모리 부족으로 태블릿이 느려지거나 불안정해질 수 있습니다.</string>
-    <string name="permdesc_broadcastSticky" product="default">애플리케이션에서 방송 메시지 전송이 완료된 후에도 삭제되지 않는 스티커 방송 메시지를 보낼 수 있도록 허용합니다. 악성 애플리케이션에서 너무 많은 스티커 방송 메시지를 보내면 메모리 부족으로 휴대전화가 느려지거나 불안정해질 수 있습니다.</string>
-    <string name="permlab_readContacts">연락처를 확인합니다.</string>
-    <string msgid="5294866856941149639" name="permdesc_readContacts" product="tablet">"특정인과 전화, 이메일 또는 기타 수단으로 연락한 빈도를 포함하여 사용자 태블릿에 저장된 연락처에 대한 데이터를 앱이 읽도록 허용합니다. 이 권한을 사용하면 앱이 연락처 데이터를 저장할 수 있으며, 악성 앱이 사용자 모르게 연락처 데이터를 공유할 수도 있습니다."</string>
-    <string msgid="8440654152457300662" name="permdesc_readContacts" product="default">"특정인과 전화, 이메일 또는 기타 수단으로 연락한 빈도를 포함하여 사용자 휴대전화에 저장된 연락처에 대한 데이터를 앱이 읽도록 허용합니다. 이 권한을 사용하면 앱이 연락처 데이터를 저장할 수 있으며, 악성 앱이 사용자 모르게 연락처 데이터를 공유할 수도 있습니다."</string>
-    <string name="permlab_writeContacts">연락처 데이터 수정</string>
-    <string msgid="897243932521953602" name="permdesc_writeContacts" product="tablet">"특정인과 전화, 이메일 또는 기타 수단으로 연락한 빈도를 포함하여 사용자 태블릿에 저장된 연락처에 대한 데이터를 앱이 수정할 수 있도록 허용합니다. 이 권한을 사용하면 앱이 연락처 데이터를 삭제할 수 있습니다."</string>
-    <string msgid="589869224625163558" name="permdesc_writeContacts" product="default">"특정인과 전화, 이메일 또는 기타 수단으로 연락한 빈도를 포함하여 사용자 휴대전화에 저장된 연락처에 대한 데이터를 앱이 수정할 수 있도록 허용합니다. 이 권한을 사용하면 앱이 연락처 데이터를 삭제할 수 있습니다."</string>
-    <string name="permlab_readCallLog">통화기록 읽기</string>
-    <string msgid="3700645184870760285" name="permdesc_readCallLog" product="tablet">"앱에서 수신 및 발신 통화 데이터를 포함하여 태블릿의 통화 기록을 읽을 수 있도록 허용합니다. 이 권한을 사용하면 앱이 통화 기록 데이터를 저장할 수 있으며, 악성 앱이 사용자 모르게 통화 기록 데이터를 공유할 수도 있습니다."</string>
-    <string msgid="5777725796813217244" name="permdesc_readCallLog" product="default">"앱에서 수신 및 발신 통화 데이터를 포함하여 휴대전화의 통화 기록을 읽을 수 있도록 허용합니다. 이 권한을 사용하면 앱이 통화 기록 데이터를 저장할 수 있으며, 악성 앱이 사용자 모르게 통화 기록 데이터를 공유할 수도 있습니다."</string>
-    <string name="permlab_writeCallLog">통화기록 쓰기</string>
-    <string msgid="6661806062274119245" name="permdesc_writeCallLog" product="tablet">"앱에서 수신 및 발신 통화 데이터를 포함하여 태블릿의 통화 기록을 수정할 수 있도록 허용합니다. 이 경우 악성 앱이 통화 기록을 지우거나 수정할 수 있습니다."</string>
-    <string name="permdesc_writeCallLog" product="default">앱에서 수신 및 발신통화 데이터를 포함한 디바이스의 통화기록을 수정할 수 있도록 허용합니다. 이 경우 악성 앱에서 통화기록을 지우거나 수정할 수 있습니다.</string>
-    <string msgid="4701889852612716678" name="permlab_readProfile">"나만의 연락처 카드 읽기"</string>
-    <string name="permdesc_readProfile" product="default">앱에서 내 이름 또는 연락처 정보 등의 디바이스에 저장된 개인 프로필 정보를 읽을 수 있도록 허용합니다. 앱에서 사용자를 확인하거나 내 프로필 정보를 다른 사람에게 보낼 수 있습니다.</string>
-    <string name="permlab_writeProfile">프로필 데이터 편집</string>
-    <string msgid="5552084294598465899" name="permdesc_writeProfile" product="default">"앱이 기기에 저장된 개인 프로필 정보(예: 사용자 이름, 연락처 정보 등)를 변경 또는 추가할 수 있도록 허용합니다. 이는 앱이 사용자를 확인하고 다른 사용자에게 해당 프로필 정보를 전송할 수 있다는 것을 의미합니다."</string>
-    <string name="permlab_bodySensors">신체 센서 접근(예: 심박수측정기)</string>
-    <string msgid="2998865085124153531" name="permdesc_bodySensors" product="default">"앱이 신체 변화(예: 심박수) 측정을 위해 사용하는 센서의 데이터에 액세스하도록 허용합니다."</string>
-    <string name="permlab_readSocialStream" product="default">소셜 스트림 읽기</string>
-    <string msgid="4255706027172050872" name="permdesc_readSocialStream" product="default">"앱이 사용자와 친구의 최신 소셜 소식에 액세스하고 동기화할 수 있도록 허용합니다. 이 경우 앱이 비밀유지와 관계 없이 소셜 네트워크에서 사용자와 친구가 주고받는 내용을 읽을 수 있으므로, 정보를 공유할 때 주의해야 합니다. 참고: 이 권한이 적용되지 않는 소셜 네트워크도 있습니다."</string>
-    <string name="permlab_writeSocialStream" product="default">소셜 스트림에 게시</string>
-    <string msgid="3086557552204114849" name="permdesc_writeSocialStream" product="default">"앱이 친구의 소셜 소식을 표시할 수 있도록 허용합니다. 이 경우 친구로부터 나온 것으로 보이는 메시지를 생성할 수 있으므로, 정보를 공유할 때 주의해야 합니다. 참고: 이 권한이 적용되지 않는 소셜 네트워크도 있습니다."</string>
-    <string name="permlab_readCalendar">캘린더 일정 및 비밀 정보 읽기</string>
-    <string msgid="4216462049057658723" name="permdesc_readCalendar" product="tablet">"앱이 친구나 동료의 일정을 포함하여 태블릿에 저장된 모든 캘린더 일정을 읽을 수 있도록 허용합니다. 이 경우 앱이 비밀유지 또는 기밀성을 무시하고 캘린더 데이터를 공유 또는 저장할 수도 있습니다."</string>
-    <string name="permdesc_readCalendar" product="default">애플리케이션에서 친구 또는 동료의 일정을 포함하여 디바이스에 저장된 모든 일정을 읽을 수 있도록 허용합니다. 애플리케이션에서 기밀 또는 중요한 정보를 포함한 캘린더 데이터를 공유하거나 저장할 수 있습니다.</string>
-    <string name="permlab_writeCalendar">주최자에게 알리지 않고 캘린더 일정을 추가 또는 수정한 후 게스트에게 이메일을 보냅니다.</string>
-    <string msgid="6679035520113668528" name="permdesc_writeCalendar" product="tablet">"앱이 친구나 동료의 일정을 포함하여 태블릿에서 수정할 수 있는 일정을 추가, 삭제, 변경할 수 있도록 허용합니다. 이 경우 앱이 캘린더 소유자가 보내는 것처럼 메시지를 전송하거나 소유자 모르게 일정을 수정할 수도 있습니다."</string>
-    <string name="permdesc_writeCalendar" product="default">애플리케이션에서 친구나 동료의 일정을 포함하여 디바이스에서 수정할 수 있는 일정을 추가, 제거, 변경할 수 있도록 허용합니다. 애플리케이션에서 캘린더 소유자가 보내는 것처럼 메시지를 전송하거나 소유자 모르게 일정을 수정할 수 있습니다.</string>
-    <string name="permlab_accessMockLocation">테스트를 위해 모의 위치 출처를 구성합니다.</string>
-    <string msgid="5808711039482051824" name="permdesc_accessMockLocation">"테스트용 가상 위치 소스를 만들거나 새로운 위치 정보 제공업체를 설치합니다. 이 경우 앱이 GPS 또는 위치 정보 제공업체 등 기타 위치 소스가 반환한 위치 또는 상태를 덮어쓸 수 있습니다."</string>
-    <string name="permlab_accessLocationExtraCommands">추가 위치 제공 명령을 사용합니다.</string>
-    <string name="permdesc_accessLocationExtraCommands">애플리케이션에서 추가 위치 제공 명령에 접근할 수 있도록 허용합니다. 악성 애플리케이션에서 이 기능을 사용하여 GPS 또는 다른 위치 출처의 기능을 방해할 수 있습니다.</string>
-    <string name="permlab_installLocationProvider">위치정보 공급자 설치 권한</string>
-    <string name="permdesc_installLocationProvider">애플리케이션에서 테스트를 위해 새 모의 위치 출처를 추가할 수 있도록 허용합니다. 허용할 경우, 악성 애플리케이션에서 GPS 또는 이동통신사가 전송한 실제 위치정보를 대체할 수 있으며 내 위치를 감시하여 불특정 웹사이트에 보고할 수 있습니다.</string>
-    <string msgid="1191898061965273372" name="permlab_accessFineLocation">"정확한 위치(GPS 및 네트워크 기반)"</string>
-    <string msgid="5295047563564981250" name="permdesc_accessFineLocation">"앱에서 GPS 또는 기지국 및 Wi-Fi와 같은 네트워크 위치 제공자를 사용하는 위치 서비스를 통해 내 정확한 위치를 알 수 있도록 합니다. 앱에서 이를 사용하도록 하려면 기기에서 이러한 위치 서비스는 사용하도록 설정해야 합니다. 앱에서 위치 서비스를 사용하여 내 위치를 파악할 수 있으며 배터리 소모량이 증가할 수 있습니다."</string>
-    <string msgid="4887895362354239628" name="permlab_accessCoarseLocation">"대략적인 위치(네트워크 기반)"</string>
-    <string msgid="2538200184373302295" name="permdesc_accessCoarseLocation">"앱에서 나의 대략적인 위치를 알 수 있게 합니다. 이 위치는 기지국 및 Wi-Fi와 같은 네트워크 위치 제공자를 사용하는 위치 서비스를 통해 알 수 있습니다. 앱에서 이를 사용하도록 하려면 기기에서 이러한 위치 서비스를 사용하도록 설정해야 합니다. 앱에서 이를 사용하여 나의 대략적인 위치를 파악할 수 있습니다."</string>
-    <string name="permlab_accessSurfaceFlinger">SurfaceFlinger 연결</string>
-    <string name="permdesc_accessSurfaceFlinger">애플리케이션에서 SurfaceFlinger의 낮은 수준 기능을 사용할 수 있도록 허용합니다.</string>
-    <string name="permlab_readFrameBuffer">프레임 버퍼 데이터를 확인합니다.</string>
-    <string name="permdesc_readFrameBuffer">애플리케이션에서 프레임 버퍼의 내용을 읽을 수 있도록 허용합니다.</string>
-    <string name="permlab_accessInputFlinger">InputFlinger 접근</string>
-    <string name="permdesc_accessInputFlinger">이 애플리케이션은 InputFlinger의 낮은 수준 기능을 사용할 수 있습니다.</string>
-    <string msgid="5595661694746742168" name="permlab_configureWifiDisplay">"Wi-Fi 디스플레이 설정"</string>
-    <string msgid="7916815158690218065" name="permdesc_configureWifiDisplay">"앱이 Wi-Fi 디스플레이를 설정하고 연결하도록 허용합니다."</string>
-    <string msgid="393641276723695496" name="permlab_controlWifiDisplay">"Wi-Fi 디스플레이 제어"</string>
-    <string msgid="4543912292681826986" name="permdesc_controlWifiDisplay">"앱이 Wi-Fi 디스플레이의 하위 수준 기능을 제어하도록 허용합니다."</string>
-    <string name="permlab_captureAudioOutput">오디오 출력 녹음</string>
-    <string name="permdesc_captureAudioOutput">애플리케이션에서 오디오 출력을 녹음하고 재생할 수 있도록 허용합니다.</string>
-    <string name="permlab_captureAudioHotword">Use Hotword detection</string>
-    <string name="permdesc_captureAudioHotword">Allow the app to record audio for Hotword detection. Recording will happen in the background and does not prevent other audio from being recorded (e.g. Camcorder recording)</string>
-    <string name="permlab_modifyAudioRouting">오디오 루팅 제어</string>
-    <string name="permdesc_modifyAudioRouting">이 애플리케이션에서 [오디오 루팅]을 직접 제어할 수 있고 오디오 정책사항을 무시할 수 있습니다.</string>
-    <string name="permlab_captureVideoOutput">비디오 출력 녹화</string>
-    <string name="permdesc_captureVideoOutput">애플리케이션에서 비디오 출력을 녹화하고 영상을 재생할 수 있도록 허용합니다.</string>
-    <string msgid="7815398969303382016" name="permlab_captureSecureVideoOutput">"안전한 동영상 출력 캡처"</string>
-    <string name="permdesc_captureSecureVideoOutput">애플리케이션에서 보안 비디오 출력을 녹화하고 재생할 수 있도록 허용합니다.</string>
-    <string name="permlab_mediaContentControl">미디어 재생 및 메타데이터 접근 제어</string>
-    <string name="permdesc_mediaContentControl">애플리케이션에서 미디어 재생을 제어하고 제목, 아티스트 등의 미디어 정보에 접근할 수 있도록 허용합니다.</string>
-    <string name="permlab_modifyAudioSettings">오디오 설정을 변경합니다.</string>
-    <string msgid="3522565366806248517" name="permdesc_modifyAudioSettings">"앱이 음량이나 출력을 위해 사용하는 스피커 등 전체 오디오 설정을 변경할 수 있도록 허용합니다."</string>
-    <string name="permlab_recordAudio">오디오 녹음</string>
-    <string name="permdesc_recordAudio">애플리케이션에서 오디오 녹음 경로에 접근할 수 있도록 허용합니다.</string>
-    <string name="permlab_sim_communication">SIM 카드 커뮤니케이션 접근</string>
-    <string name="permdesc_sim_communication">이 애플리케이션은 SIM 카드에 명령을 보낼 수 있습니다. 악성 애플리케이션에서 내 데이터를 재구성할 수 있으니 주의하세요.</string>
-    <string name="permlab_camera">사진 및 동영상 촬영</string>
-    <string name="permdesc_camera">애플리케이션에서 언제든 카메라를 사용하여 사진과 동영상을 촬영할 수 있도록 허용합니다.</string>
-    <string msgid="2651072630501126222" name="permlab_cameraDisableTransmitLed">"카메라를 사용할 때 전송 표시 LED 사용 중지"</string>
-    <string name="permdesc_cameraDisableTransmitLed">기본설치 시스템 애플리케이션에서 카메라의 LED 표시등 사용을 해제할 수 있도록 허용합니다.</string>
-    <string name="permlab_brick" product="tablet">영구적으로 태블릿이 작동하지 않도록 설정</string>
-    <string name="permlab_brick" product="default">디바이스를 영구적으로 작동하지 않도록 설정합니다.</string>
-    <string name="permdesc_brick" product="tablet">애플리케이션에서 태블릿을 영구적으로 작동하지 않게 설정할 수 있도록 허용합니다. 매우 위험한 권한이므로 주의하세요.</string>
-    <string name="permdesc_brick" product="default">애플리케이션에서 디바이스를 영구적으로 작동하지 않게 설정할 수 있도록 허용합니다. 매우 위험한 권한이므로 주의하세요.</string>
-    <string msgid="3436634972561795002" name="permlab_reboot" product="tablet">"태블릿 강제 재부팅"</string>
-    <string name="permlab_reboot" product="default">휴대전화를 강제로 다시 시작합니다.</string>
-    <string name="permdesc_reboot" product="tablet">애플리케이션에서 태블릿을 강제로 다시 시작할 수 있도록 허용합니다.</string>
-    <string name="permdesc_reboot" product="default">애플리케이션에서 디바이스를 강제로 다시 시작할 수 있도록 허용합니다.</string>
-    <string msgid="2927361537942591841" name="permlab_mount_unmount_filesystems" product="nosdcard">"USB 저장소 파일 시스템에 액세스"</string>
-    <string msgid="4402305049890953810" name="permlab_mount_unmount_filesystems" product="default">"SD 카드 파일 시스템에 액세스"</string>
-    <string name="permdesc_mount_unmount_filesystems">애플리케이션에서 이동식 저장공간의 파일시스템을 마운트하거나 마운트 해제할 수 있도록 허용합니다.</string>
-    <string msgid="6227819582624904972" name="permlab_mount_format_filesystems" product="nosdcard">"USB 저장소 지우기"</string>
-    <string msgid="262582698639274056" name="permlab_mount_format_filesystems" product="default">"SD 카드 지우기"</string>
-    <string name="permdesc_mount_format_filesystems">애플리케이션에서 이동식 저장공간을 포맷할 수 있도록 허용합니다.</string>
-    <string name="permlab_asec_access">디바이스 저장공간의 정보 가져오기</string>
-    <string name="permdesc_asec_access">애플리케이션에서 디바이스 저장공간에서 정보를 가져올 수 있도록 허용합니다.</string>
-    <string name="permlab_asec_create">새 시스템 저장공간 추가 권한</string>
-    <string name="permdesc_asec_create">애플리케이션에서 디바이스에 저장공간을 만들 수 있도록 허용합니다.</string>
-    <string name="permlab_asec_destroy">시스템 저장공간 삭제 권한</string>
-    <string name="permdesc_asec_destroy">애플리케이션에서 디바이스 저장공간의 파일을 삭제할 수 있도록 허용합니다.</string>
-    <string name="permlab_asec_mount_unmount">시스템 저장공간 연결 및 연결 해제 권한</string>
-    <string name="permdesc_asec_mount_unmount">애플리케이션에서 USB 저장공간에 연결 및 연결 해제할 수 있도록 허용합니다.</string>
-    <string name="permlab_asec_rename">시스템 저장공간 이름 변경 권한</string>
-    <string name="permdesc_asec_rename">애플리케이션에서 USB 저장공간의 이름을 바꿀 수 있도록 허용합니다.</string>
-    <string name="permlab_vibrate">진동을 조절합니다.</string>
-    <string name="permdesc_vibrate">애플리케이션에서 진동을 조절할 수 있도록 허용합니다.</string>
-    <string name="permlab_flashlight">플래시를 조절합니다.</string>
-    <string name="permdesc_flashlight">애플리케이션에서 플래시를 조절하는 것을 허용합니다.</string>
-    <string name="permlab_manageUsb">USB 디바이스의 설정 및 권한 관리</string>
-    <string name="permdesc_manageUsb">애플리케이션에서 USB 디바이스의 설정 및 권한을 관리할 수 있도록 허용합니다.</string>
-    <string name="permlab_accessMtp">MTP 프로토콜 실행</string>
-    <string name="permdesc_accessMtp">MTP USB 프로토콜을 실행하기 위해 커널의 MTP 드라이버에 접근할 수 있도록 허용합니다.</string>
-    <string name="permlab_hardware_test">하드웨어를 테스트합니다.</string>
-    <string name="permdesc_hardware_test">애플리케이션에서 하드웨어 테스트를 위해 여러 가지 부가 장치를 통제할 수 있도록 허용합니다.</string>
-    <string name="permlab_callPhone">바로 전화를 겁니다.</string>
-    <string name="permdesc_callPhone">애플리케이션에서 사용자의 승인 없이 전화를 연결할 수 있도록 허용합니다. 악성 애플리케이션에서 이를 이용해 추가요금을 발생시킬 수 있습니다. 이 권한으로는 긴급전화를 걸 수 없습니다.</string>
-    <string name="permlab_callPrivileged">바로 전화를 겁니다.</string>
-    <string name="permdesc_callPrivileged">애플리케이션에서 사용자의 허가 없이 전화(긴급전화 포함)를 걸 수 있도록 허용합니다. 악성 애플리케이션에서 이를 이용해 긴급 서비스에 불필요하게 전화를 걸 수 있습니다.</string>
-    <string name="permlab_performCdmaProvisioning" product="tablet">CDMA 태블릿 설정 바로 시작</string>
-    <string name="permlab_performCdmaProvisioning" product="default">직접 CDMA 전화 설정 시작</string>
-    <string name="permdesc_performCdmaProvisioning">애플리케이션에서 CDMA 네트워크를 사용할 수 있도록 허용합니다. 허용할 경우, 악성 애플리케이션에서 불필요하게 CDMA 네트워크를 사용할 수 있습니다.</string>
-    <string name="permlab_locationUpdates">위치 업데이트 알림을 조절합니다.</string>
-    <string name="permdesc_locationUpdates">FM 라디오에서 위치 업데이트 알림을 실행하거나 해제할 수 있도록 허용합니다. 일반 애플리케이션에서는 이 권한이 필요하지 않습니다.</string>
-    <string name="permlab_checkinProperties">체크인 속성을 확인하세요.</string>
-    <string name="permdesc_checkinProperties">체크인 서비스가 업로드한 속성을 읽거나 쓸 수 있도록 허용합니다. 일반 애플리케이션에서는 이 권한이 필요하지 않습니다.</string>
-    <string name="permlab_bindGadget">위젯을 선택하세요.</string>
-    <string name="permdesc_bindGadget">애플리케이션에서 시스템에 요청하여 개별 애플리케이션에서 사용할 위젯을 지정할 수 있도록 허용합니다. 이 권한이 허가된 애플리케이션은 다른 애플리케이션의 개인 데이터를 수집할 수 있습니다. 일반 애플리케이션에서는 이 권한이 필요하지 않습니다.</string>
-    <string name="permlab_modifyPhoneState">디바이스 상태정보를 수정합니다.</string>
-    <string name="permdesc_modifyPhoneState">애플리케이션에서 전화 기능을 제어할 수 있도록 허용합니다. 이 권한이 허가된 애플리케이션은 사용자의 허가 없이 네트워크를 전환하거나 FM 라디오를 켜고 끄는 등 여러 기능을 제어할 수 있습니다.</string>
-    <string name="permlab_readPhoneState">디바이스 상태 및 ID 읽기</string>
-    <string msgid="1639212771826125528" name="permdesc_readPhoneState">"앱이 기기의 휴대전화 기능에 액세스할 수 있도록 허용합니다. 이 권한을 사용하면 앱이 전화번호 및 기기의 ID, 활성 통화인지 여부, 통화가 연결된 원격 번호 등을 확인할 수 있습니다."</string>
-    <string name="permlab_readPrecisePhoneState">디바이스 상태 읽기</string>
-    <string name="permdesc_readPrecisePhoneState">이 애플리케이션은 전화 사용이 가능한지 확인하기 위해 디바이스 상태에 접근할 수 있습니다. 또한, 데이터 연결 상태 및 연결 실패 여부에도 접근할 수 있습니다.</string>
-    <string name="permlab_wakeLock" product="tablet">태블릿 취침 모드 진입 방지</string>
-    <string name="permlab_wakeLock" product="default">디바이스가 취침 모드로 전환되지 않게 합니다.</string>
-    <string name="permdesc_wakeLock" product="tablet">애플리케이션에서 태블릿이 대기 모드로 전환하는 것을 방지하는 것을 허용합니다.</string>
-    <string name="permdesc_wakeLock" product="default">애플리케이션에서 디바이스가 잠자기 모드로 전환하지 않게 설정하는 것을 허용합니다.</string>
-    <string name="permlab_transmitIr">적외선으로 데이터 전송</string>
-    <string name="permdesc_transmitIr" product="tablet">애플리케이션에서 디바이스의 적외선 통신을 사용할 수 있도록 허용합니다.</string>
-    <string msgid="7957763745020300725" name="permdesc_transmitIr" product="default">"앱에서 휴대전화의 적외선 송신기를 사용하도록 허용합니다."</string>
-    <string name="permlab_devicePower" product="tablet">태블릿 전원 켜기 및 끄기</string>
-    <string name="permlab_devicePower" product="default">디바이스 전원을 켜거나 끕니다.</string>
-    <string name="permdesc_devicePower" product="tablet">애플리케이션에서 태블릿의 전원을 켜거나 끌 수 있도록 허용합니다.</string>
-    <string name="permdesc_devicePower" product="default">애플리케이션에서 디바이스를 켜거나 끌 수 있도록 허용합니다.</string>
-    <string name="permlab_factoryTest">[기본 테스트 모드]에서 실행합니다.</string>
-    <string name="permdesc_factoryTest" product="tablet">낮은 수준의 제조사 테스트를 실행하여 태블릿 하드웨어를 완전히 제어할 수 있도록 허용합니다. 태블릿에서 [제조사 테스트 모드]를 실행 중인 경우에만 사용할 수 있습니다.</string>
-    <string msgid="8136644990319244802" name="permdesc_factoryTest" product="default">"휴대전화 하드웨어에 대한 완전한 액세스를 허용하는 하위 수준의 제조업체 테스트로 실행됩니다. 휴대전화가 제조업체 테스트 모드로 실행 중일 때만 사용할 수 있습니다."</string>
-    <string name="permlab_setWallpaper">배경화면 설정</string>
-    <string name="permdesc_setWallpaper">애플리케이션에서 디바이스 배경화면을 지정할 수 있도록 허용합니다.</string>
-    <string msgid="3278608165977736538" name="permlab_setWallpaperHints">"배경화면 크기 조정"</string>
-    <string name="permdesc_setWallpaperHints">애플리케이션에서 디바이스 배경화면 크기를 조절할 수 있도록 허용합니다.</string>
-    <string name="permlab_masterClear">시스템을 처음 구입했을 때의 기본으로 초기화합니다.</string>
-    <string name="permdesc_masterClear">애플리케이션에서 시스템을 출시 기본값으로 초기화하거나 모든 데이터, 설정, 설치된 애플리케이션을 삭제할 수 있도록 허용합니다.</string>
-    <string name="permlab_setTime">시간 설정</string>
-    <string name="permdesc_setTime" product="tablet">애플리케이션에서 태블릿의 시계 시간을 변경할 수 있도록 허용합니다.</string>
-    <string name="permdesc_setTime" product="default">애플리케이션에서 디바이스의 시간을 변경할 수 있도록 허용합니다.</string>
-    <string name="permlab_setTimeZone">시간대를 설정합니다.</string>
-    <string name="permdesc_setTimeZone" product="tablet">애플리케이션에서 태블릿의 표준 시간대를 변경할 수 있도록 허용합니다.</string>
-    <string name="permdesc_setTimeZone" product="default">애플리케이션에서 디바이스의 시간대를 변경할 수 있도록 허용합니다.</string>
-    <string name="permlab_accountManagerService">계정 관리 서비스 실행</string>
-    <string name="permdesc_accountManagerService">애플리케이션에서 계정 인증자에게 전화를 걸 수 있도록 허용합니다.</string>
-    <string msgid="1086795467760122114" name="permlab_getAccounts">"기기에서 계정 검색"</string>
-    <string msgid="2741496534769660027" name="permdesc_getAccounts" product="tablet">"앱이 태블릿이 알고 있는 계정 목록을 가져올 수 있도록 허용합니다. 이 경우 설치한 애플리케이션에 의해 만들어진 모든 계정을 포함할 수 있습니다."</string>
-    <string msgid="3448316822451807382" name="permdesc_getAccounts" product="default">"앱이 휴대전화가 알고 있는 계정 목록을 가져올 수 있도록 허용합니다. 이 경우 설치한 애플리케이션에 의해 만들어진 모든 계정을 포함할 수 있습니다."</string>
-    <string msgid="5265908481172736933" name="permlab_authenticateAccounts">"계정 만들기 및 비밀번호 설정"</string>
-    <string name="permdesc_authenticateAccounts">애플리케이션에서 계정 관리자의 계정 인증 기능을 사용할 수 있도록 허용합니다. 계정 추가 및 비밀번호 관리를 포함합니다.</string>
-    <string name="permlab_manageAccounts">계정 추가 또는 삭제</string>
-    <string name="permdesc_manageAccounts">애플리케이션에서 계정을 추가 및 삭제하고 비밀번호를 삭제할 수 있도록 허용합니다.</string>
-    <string name="permlab_useCredentials">계정 권한 인증서 사용</string>
-    <string name="permdesc_useCredentials">애플리케이션에서 인증 표시를 요청할 수 있도록 허용합니다.</string>
-    <string name="permlab_accessNetworkState">네트워크 연결 상태를 확인하세요.</string>
-    <string name="permdesc_accessNetworkState">애플리케이션에서 모든 네트워크의 상태를 볼 수 있도록 허용합니다.</string>
-    <string name="permlab_createNetworkSockets">모든 인터넷 기능을 사용할 수 있습니다.</string>
-    <string msgid="3403062187779724185" name="permdesc_createNetworkSockets">"앱이 네트워크 소켓을 만들고 맞춤 네트워크 프로토콜을 사용할 수 있도록 허용합니다. 브라우저 및 기타 앱이 데이터를 인터넷에 전송하는 수단을 제공하므로, 이 권한이 데이터를 인터넷에 전송하는 데 필요하지 않습니다."</string>
-    <string name="permlab_writeApnSettings">네트워크 설정 및 트래픽 변경/차단</string>
-    <string msgid="5333798886412714193" name="permdesc_writeApnSettings">"앱이 모든 네트워크 트래픽을 가로채고 검사하거나 네트워크 설정을 변경할 수 있도록 허용합니다. 예를 들어 프록시나 APN의 포트를 변경할 수 있습니다. 악성 앱이 사용자 모르게 네트워크 패킷을 모니터링, 리디렉션 및 수정할 수 있습니다."</string>
-    <string name="permlab_changeNetworkState">네트워크를 변경합니다.</string>
-    <string msgid="6789123912476416214" name="permdesc_changeNetworkState">"앱이 네트워크 연결 상태를 변경할 수 있도록 허용합니다."</string>
-    <string name="permlab_changeTetherState">테러링 연결 변경</string>
-    <string name="permdesc_changeTetherState">애플리케이션에서 테더링 네트워크의 연결 상태를 변경할 수 있도록 허용합니다.</string>
-    <string name="permlab_changeBackgroundDataSetting">백그라운드 데이터 사용 설정을 변경합니다.</string>
-    <string name="permdesc_changeBackgroundDataSetting">애플리케이션에서 백그라운드 데이터 사용 설정을 변경할 수 있도록 허용합니다.</string>
-    <string name="permlab_accessWifiState">Wi-Fi 연결 상태를 확인하세요.</string>
-    <string name="permdesc_accessWifiState">애플리케이션에서 Wi-Fi 상태정보를 볼 수 있도록 허용합니다.</string>
-    <string msgid="6550641188749128035" name="permlab_changeWifiState">"Wi-Fi 연결 및 연결 해제"</string>
-    <string name="permdesc_changeWifiState">애플리케이션에서 Wi-Fi 액세스 포인트에 연결 또는 연결 해제하거나 구성된 Wi-Fi 네트워크를 변경할 수 있도록 허용합니다.</string>
-    <string name="permlab_changeWifiMulticastState">Wi-Fi 멀티캐스트 수신 허용</string>
-    <string msgid="7969774021256336548" name="permdesc_changeWifiMulticastState" product="tablet">"앱이 사용자의 태블릿뿐 아니라 멀티캐스트 주소를 사용하여 Wi-Fi 네트워크에서 모든 기기로 전송된 패킷을 받도록 허용합니다. 이 경우 비멀티캐스트 모드보다 전력을 더 많이 소비합니다."</string>
-    <string msgid="6851949706025349926" name="permdesc_changeWifiMulticastState" product="default">"앱이 사용자의 휴대전화뿐 아니라 멀티캐스트 주소를 사용하여 Wi-Fi 네트워크에서 모든 기기로 전송된 패킷을 받을 수 있도록 허용합니다. 이 경우 비멀티캐스트 모드보다 전력을 더 많이 소비합니다."</string>
-    <string name="permlab_bluetoothAdmin">블루투스 설정</string>
-    <string name="permdesc_bluetoothAdmin" product="tablet">애플리케이션에서 태블릿의 블루투스 기능을 구성하고 다른 블루투스 디바이스를 찾아 등록할 수 있도록 허용합니다.</string>
-    <string name="permdesc_bluetoothAdmin" product="default">애플리케이션에서 블루투스 기능을 구성하고 다른 블루투스 디바이스를 찾아 등록할 수 있도록 허용합니다.</string>
-    <string msgid="4009494246009513828" name="permlab_bluetoothPriv">"애플리케이션에서 블루투스 페어링 허용"</string>
-    <string msgid="8045735193417468857" name="permdesc_bluetoothPriv" product="tablet">"앱이 사용자 상호작용 없이 원격 기기와 페어링할 수 있도록 허용합니다."</string>
-    <string msgid="8045735193417468857" name="permdesc_bluetoothPriv" product="default">"앱이 사용자 상호작용 없이 원격 기기와 페어링할 수 있도록 허용합니다."</string>
-    <string msgid="4195907010610205703" name="permlab_accessWimaxState">"WiMAX 연결 및 연결 해제"</string>
-    <string name="permdesc_accessWimaxState">앱에서 WiMAX를 실행한 상태인지 인식하여 연결된 WiMAX 네트워크에 대한 정보를 가져올 수 있도록 허용합니다.</string>
-    <string name="permlab_changeWimaxState">WiMAX 상태 변경</string>
-    <string msgid="3156456504084201805" name="permdesc_changeWimaxState" product="tablet">"앱이 태블릿을 WiMAX 네트워크에 연결하거나 연결을 끊을 수 있도록 허용합니다."</string>
-    <string name="permdesc_changeWimaxState" product="default">앱에서 디바이스를 WiMAX 네트워크에 연결하거나 연결을 해제할 수 있도록 허용합니다.</string>
-    <string name="permlab_scoreNetworks">네트워크 평가</string>
-    <string name="permdesc_scoreNetworks" product="tablet">이 애플리케이션은 디바이스에서 연결할 네트워크를 결정하기 위해 네트워크를 평가할 수 있습니다.</string>
-    <string msgid="1831501848178651379" name="permdesc_scoreNetworks" product="default">"앱이 네트워크 순위를 정하고 휴대전화에서 어떤 네트워크를 선호할지 영향을 주도록 허용합니다."</string>
-    <string msgid="6127769336339276828" name="permlab_bluetooth">"블루투스 기기와 페어링"</string>
-    <string name="permdesc_bluetooth" product="tablet">애플리케이션에서 태블릿의 블루투스 기능을 설정하고 등록된 디바이스와 연결할 수 있도록 허용합니다.</string>
-    <string name="permdesc_bluetooth" product="default">애플리케이션에서 블루투스 기능을 설정하고 등록된 디바이스와 연결할 수 있도록 허용합니다.</string>
-    <string name="permlab_nfc">NFC 제어</string>
-    <string name="permdesc_nfc">애플리케이션에서 근거리 통신(NFC) 태그, 카드, 리더와 연결할 수 있도록 허용합니다.</string>
-    <string msgid="3598496301486439258" name="permlab_disableKeyguard">"화면 잠금 사용 중지"</string>
-    <string name="permdesc_disableKeyguard">애플리케이션에서 버튼 잠금과 보안 기능을 해제할 수 있도록 허용합니다. 예들 들어, 전화를 받으면 버튼 잠금을 해제했다가 통화가 종료되면 버튼 잠금을 다시 실행할 수 있습니다.</string>
-    <string name="permlab_readSyncSettings">동기화 설정을 확인합니다.</string>
-    <string name="permdesc_readSyncSettings">애플리케이션에서 연락처 동기화 실행 등의 동기화 관련 설정을 인식하여 자동 실행할 수 있도록 허용합니다.</string>
-    <string name="permlab_writeSyncSettings">동기화 설정 수정</string>
-    <string msgid="8956262591306369868" name="permdesc_writeSyncSettings">"앱이 계정의 동기화 설정을 수정할 수 있도록 허용합니다. 예를 들어, 계정에서 주소록 앱을 동기화할 목적으로 앱이 사용될 수 있습니다."</string>
-    <string name="permlab_readSyncStats">동기화 정보를 확인합니다.</string>
-    <string name="permdesc_readSyncStats">애플리케이션에서 동기화 실행 날짜와 같은 동기화 정보를 읽을 수 있도록 허용합니다.</string>
-    <string name="permlab_subscribedFeedsRead">구독한 피드를 확인합니다.</string>
-    <string name="permdesc_subscribedFeedsRead">애플리케이션에서 현재 동기화된 피드에 관한 상세정보를 가져올 수 있도록 허용합니다.</string>
-    <string name="permlab_subscribedFeedsWrite">구독한 피드 수정</string>
-    <string name="permdesc_subscribedFeedsWrite">애플리케이션에서 현재 동기화된 피드를 수정할 수 있도록 허용합니다. 허용할 경우, 악성 애플리케이션에서 동기화된 피드를 변경할 수 있습니다.</string>
-    <string msgid="4107101525746035718" name="permlab_readDictionary">"사전에 추가한 단어 읽기"</string>
-    <string name="permdesc_readDictionary">애플리케이션에서 사용자 사전에 저장되어 있는 단어, 이름, 문구를 읽을 수 있도록 허용합니다.</string>
-    <string msgid="2183110402314441106" name="permlab_writeDictionary">"사용자 정의 사전에 단어 추가"</string>
-    <string name="permdesc_writeDictionary">애플리케이션에서 새 단어를 사용자의 사전에 추가할 수 있도록 허용합니다.</string>
-    <string msgid="367275095159405468" name="permlab_sdcardRead" product="nosdcard">"USB 저장소의 콘텐츠 읽기"</string>
-    <string msgid="2188156462934977940" name="permlab_sdcardRead" product="default">"SD 카드의 콘텐츠 읽기"</string>
-    <string msgid="3446988712598386079" name="permdesc_sdcardRead" product="nosdcard">"앱이 USB 저장소의 콘텐츠를 읽을 수 있도록 허용합니다."</string>
-    <string msgid="2607362473654975411" name="permdesc_sdcardRead" product="default">"앱이 SD 카드의 콘텐츠를 읽을 수 있도록 허용합니다."</string>
-    <string msgid="8485979062254666748" name="permlab_sdcardWrite" product="nosdcard">"USB 저장소의 콘텐츠 수정 또는 삭제"</string>
-    <string msgid="8805693630050458763" name="permlab_sdcardWrite" product="default">"SD 카드의 콘텐츠 수정 또는 삭제"</string>
-    <string msgid="6175406299445710888" name="permdesc_sdcardWrite" product="nosdcard">"앱이 USB 저장소에 쓸 수 있도록 허용합니다."</string>
-    <string msgid="4337417790936632090" name="permdesc_sdcardWrite" product="default">"앱이 SD 카드에 쓸 수 있도록 허용합니다."</string>
-    <string name="permlab_mediaStorageWrite" product="default">디바이스 미디어 저장공간 컨텐츠 수정 및 삭제</string>
-    <string name="permdesc_mediaStorageWrite" product="default">애플리케이션에서 디바이스 미디어 저장공간의 컨텐츠를 수정할 수 있도록 허용합니다.</string>
-    <string name="permlab_manageDocs" product="default">문서 저장소 관리</string>
-    <string name="permdesc_manageDocs" product="default">애플리케이션에서 문서 저장소를 관리할 수 있도록 허용합니다.</string>
-    <string msgid="8150613823900460576" name="permlab_sdcardAccessAll">"모든 사용자의 외부 저장소에 액세스"</string>
-    <string msgid="3215208357415891320" name="permdesc_sdcardAccessAll">"앱이 모든 사용자의 외부 저장소에 액세스하도록 허용합니다."</string>
-    <string name="permlab_cache_filesystem">캐시에 접속</string>
-    <string name="permdesc_cache_filesystem">애플리케이션에서 캐시 파일 시스템을 읽고 쓸 수 있도록 허용합니다</string>
-    <string name="permlab_readNetworkUsageHistory">과거 네트워크 사용량 보기</string>
-    <string msgid="7689060749819126472" name="permdesc_readNetworkUsageHistory">"앱이 특정 네트워크 및 앱에 대한 이전 네트워크 사용량을 읽을 수 있도록 허용합니다."</string>
-    <string name="permlab_manageNetworkPolicy">네트워크 정책 관리</string>
-    <string msgid="7537586771559370668" name="permdesc_manageNetworkPolicy">"앱이 네트워크 정책을 관리하고 앱별 규칙을 정의할 수 있도록 허용합니다."</string>
-    <string name="permlab_modifyNetworkAccounting">네트워크 사용량 계산 수정</string>
-    <string msgid="5443412866746198123" name="permdesc_modifyNetworkAccounting">"애플리케이션이 애플리케이션의 네트워크 사용량을 계산하는 방식을 수정할 수 있도록 허용합니다. 일반 애플리케이션에서는 사용하지 않습니다."</string>
-    <string name="permlab_accessNotifications">알림 접근</string>
-    <string msgid="458457742683431387" name="permdesc_accessNotifications">"앱이 다른 앱에서 게시한 알림을 비롯하여 알림을 검색하고 살펴보며 삭제할 수 있도록 허용합니다."</string>
-    <string msgid="7057764742211656654" name="permlab_bindNotificationListenerService">"알림 수신기 서비스 사용"</string>
-    <string msgid="985697918576902986" name="permdesc_bindNotificationListenerService">"권한을 가진 프로그램이 알림 수신기 서비스에 대한 최상위 인터페이스를 사용하도록 허용합니다. 일반 앱에는 필요하지 않습니다."</string>
-    <string name="permlab_bindConditionProviderService">컨디션 공급자 서비스에 연결</string>
-    <string name="permdesc_bindConditionProviderService">이 애플리케이션은 홀더를 컨디션 공급자 서비스의 최상위 인터페이스에 연결할 수 있습니다. 일반 애플리케이션에서는 필요하지 않습니다.</string>
-    <string name="permlab_bindDreamService">드림 서비스에 연결</string>
-    <string name="permdesc_bindDreamService">드림 서비스에 연결</string>
-    <string name="permlab_invokeCarrierSetup">서비스 공급자 구성 앱 실행</string>
-    <string name="permdesc_invokeCarrierSetup">애플리케이션에서 서비스 공급자 구성 앱을 실행할 수 있도록 허용합니다. 일반 애플리케이션에서는 필요하지 않습니다.</string>
-    <string name="permlab_accessNetworkConditions">Listen for changes to network connections</string>
-    <string name="permdesc_accessNetworkConditions">Allow an application to listen for changes to network connections</string>
-    <string name="permlab_setInputCalibration">입력 디바이스 보정 변경</string>
-    <string name="permdesc_setInputCalibration">이 애플리케이션은 터치 화면의 보정값을 수정할 수 있습니다. 일반 애플리케이션에서는 필요하지 않습니다.</string>
-    <string name="permlab_accessDrmCertificates">DRM 인증서 접근</string>
-    <string name="permdesc_accessDrmCertificates">이 애플리케이션은 DRM 인증서에 접근하고 사용할 수 있습니다. 일반 애플리케이션에서는 필요하지 않습니다.</string>
-    <string name="permlab_handoverStatus">Android Beam 전송 상태 받기</string>
-    <string name="permdesc_handoverStatus">이 애플리케이션은 현재 Android Beam 전송 관련 정보를 받을 수 있습니다.</string>
-    <string name="permlab_readHistoryBookmarks">인터넷 기록 및 북마크 읽기</string>
-    <string msgid="8462378226600439658" name="permdesc_readHistoryBookmarks">"앱이 브라우저가 방문한 모든 URL의 기록과 모든 브라우저 북마크를 읽을 수 있도록 허용합니다. 참고: 이 권한은 타사 브라우저 또는 브라우저 기능을 가진 기타 애플리케이션에 적용되지 않습니다."</string>
-    <string name="permlab_writeHistoryBookmarks">새 웹 북마크 및 기록을 추가합니다.</string>
-    <string msgid="6825527469145760922" name="permdesc_writeHistoryBookmarks" product="tablet">"앱이 태블릿에 저장된 브라우저 기록 또는 북마크를 수정할 수 있도록 허용합니다. 이 경우 앱이 브라우저 데이터를 삭제 또는 수정할 수 있습니다. 참고: 이 권한은 타사 브라우저 또는 브라우저 기능을 가진 기타 애플리케이션에 적용되지 않습니다."</string>
-    <string msgid="8497389531014185509" name="permdesc_writeHistoryBookmarks" product="default">"앱이 휴대전화에 저장된 브라우저 기록 또는 북마크를 수정할 수 있도록 허용합니다. 이 경우 앱이 브라우저 데이터를 삭제 또는 수정할 수 있습니다. 참고: 이 권한은 타사 브라우저 또는 브라우저 기능을 가진 기타 애플리케이션에 적용되지 않습니다."</string>
-    <string name="permlab_setAlarm">알람 설정</string>
-    <string name="permdesc_setAlarm">애플리케이션에서 설치된 알람 시계 애플리케이션에서 알람을 설정하는 것을 허용합니다. 일부 알람 시계 애플리케이션은 이 기능을 지원하지 않을 수 있습니다.</string>
-    <string name="permlab_writeVoicemail">음성 메시지 작성</string>
-    <string name="permdesc_writeVoicemail">이 애플리케이션은 음성 메시지함을 수정하고 메시지를 제거할 수 있습니다.</string>
-    <string name="permlab_addVoicemail">음성 메시지 추가</string>
-    <string msgid="6604508651428252437" name="permdesc_addVoicemail">"앱이 음성사서함에 메시지를 추가할 수 있도록 허용합니다."</string>
-    <string name="permlab_readVoicemail">음성 메시지 접근</string>
-    <string name="permdesc_readVoicemail">이 애플리케이션은 내 음성 메시지에 접근할 수 있습니다.</string>
-    <string name="permlab_writeGeolocationPermissions">브라우저 위치정보 수정 권한</string>
-    <string name="permdesc_writeGeolocationPermissions">애플리케이션에서 인터넷 위치정보 허용 옵션을 수정할 수 있도록 허용합니다. 악성 애플리케이션에서 위치정보를 다수의 웹사이트에 보낼 수 있습니다.</string>
-    <string name="permlab_packageVerificationAgent">패키지 확인</string>
-    <string msgid="8437590190990843381" name="permdesc_packageVerificationAgent">"앱이 패키지가 설치 가능한지 확인할 수 있도록 허용합니다."</string>
-    <string name="permlab_bindPackageVerifier">패키지 확인 프로그램과 연동</string>
-    <string msgid="3180741773233862126" name="permdesc_bindPackageVerifier">"권한을 가진 프로그램이 패키지 인증을 요청할 수 있도록 허용합니다. 일반 앱에는 필요하지 않습니다."</string>
-    <string name="permlab_serialPort">직렬 포트에 액세스</string>
-    <string msgid="2991639985224598193" name="permdesc_serialPort">"SerialManager API를 사용하여 권한을 가진 프로그램이 직렬 포트에 액세스할 수 있도록 합니다."</string>
-    <string name="permlab_accessContentProvidersExternally">외부에서 컨텐츠 제공자에 접근</string>
-    <string msgid="4544346486697853685" name="permdesc_accessContentProvidersExternally">"권한을 가진 프로그램이 셸에서 콘텐츠 제공자에 액세스하도록 허용합니다. 일반 앱에서는 필요하지 않습니다."</string>
-    <string name="permlab_updateLock">지금은 자동 디바이스 업데이트를 권장하지 않음</string>
-    <string msgid="1655625832166778492" name="permdesc_updateLock">"기기를 자동으로 다시 부팅하여 업그레이드해도 괜찮은 시간에 대한 정보를 사용자가 시스템에 제공할 수 있도록 허용합니다."</string>
-    <string msgid="8257740710754301407" name="perms_new_perm_prefix"><font fgcolor="#ff33b5e5" size="12">"신규: "</font></string>
-    <string name="perms_description_app">%s 제공</string>
-    <string msgid="4902470324142151116" name="perm_costs_money">"비용이 부과될 수 있습니다."</string>
-    <string name="permlab_pkgUsageStats">구성 요소의 사용 통계를 업데이트하세요.</string>
-    <string name="permdesc_pkgUsageStats">수집된 애플리케이션 사용현황 정보를 수정할 수 있도록 허용합니다. 일반 애플리케이션에서는 이 권한이 필요하지 않습니다.</string>
-    <string name="permlab_copyProtectedData">컨텐츠 복사</string>
-    <string name="permdesc_copyProtectedData">기본 컨테이너 서비스가 컨텐츠를 복사할 수 있도록 허용합니다. 일반 애플리케이션은 이 권한이 필요하지 않습니다.</string>
-    <string name="permlab_route_media_output">미디어 출력 연결</string>
-    <string name="permdesc_route_media_output">애플리케이션에서 기타 외부 디바이스에 연결하여 미디어 소리를 출력할 수 있도록 허용합니다.</string>
-    <string msgid="7565552237977815047" name="permlab_access_keyguard_secure_storage">"키가드 보안 저장소 액세스"</string>
-    <string name="permdesc_access_keyguard_secure_storage">애플리케이션에서 Keyguard 보안 저장공간에 접근할 수 있도록 허용합니다.</string>
-    <string name="permlab_control_keyguard">Keyguard 보안 저장공간의 컨텐츠 표시 및 숨기기</string>
-    <string name="permdesc_control_keyguard">애플리케이션에서 Keyguard를 제어할 수 있도록 허용합니다.</string>
-    <string name="permlab_trust_listener">트러스트 상태정보 읽기</string>
-    <string name="permdesc_trust_listener">이 애플리케이션은 트러스트 상태정보를 읽을 수 있습니다.</string>
-    <string name="permlab_provide_trust_agent">보안 관리자 공급</string>
-    <string name="permdesc_provide_trust_agent">이 애플리케이션은 보안 관리자를 제공할 수 있습니다.</string>
-    <string name="permlab_launch_trust_agent_settings">보안 관리자 설정 메뉴 열기</string>
-    <string name="permdesc_launch_trust_agent_settings">이 애플리케이션은 보안 관리자 설정 메뉴를 실행할 수 있습니다.</string>
-    <string name="permlab_bind_trust_agent_service">보안 관리자 서비스와 연동</string>
-    <string name="permdesc_bind_trust_agent_service">이 애플리케이션은 보안 관리자 서비스와 연동할 수 있습니다.</string>
-    <string name="permlab_recovery">업데이트 실행 및 이전 버전 복구</string>
-    <string name="permdesc_recovery">이 애플리케이션은 업데이트를 실행하고 이전 버전을 복구할 수 있습니다.</string>
-    <string name="permlab_readInstallSessions">설치정보 읽기</string>
-    <string name="permdesc_readInstallSessions">이 애플리케이션은 설치정보 및 진행 중인 설치의 상세정보를 읽을 수 있습니다.</string>
-    <string name="permission_request_notification_title">권한 요청</string>
-    <string name="permission_request_notification_with_subtitle">%s 계정에 대한\n권한 요청</string>
-    <string name="permlab_transaction_event">NFC 거래 정보 수신</string>
-    <string name="permdesc_transaction_event">앱에서 결제 과정 등의 NFC 거래 정보를 받을 수 있도록 허용합니다.</string>
-    <string name="permission_info_label_call_phone">전화걸기</string>
-    <string name="permission_info_label_read_call_log">통화기록 읽기</string>
-    <string name="permission_info_label_write_call_log">새 통화기록 추가 및 삭제</string>
-    <string name="permission_info_label_read_contacts">연락처 읽기</string>
-    <string name="permission_info_label_write_contacts">새 연락처 추가 및 삭제</string>
-    <string name="permission_info_label_send_sms">문자 메시지 전송</string>
-    <string name="permission_info_label_send_mms">MMS 전송</string>
-    <string name="permission_info_label_read_sms">SMS 및 MMS 읽기</string>
-    <string name="permission_info_label_write_sms">새 문자 메시지와 MMS 작성 및 삭제</string>
-    <string name="permission_info_label_camera">카메라 사용</string>
-    <string name="permission_info_label_record_audio">오디오 녹음</string>
-    <string name="permission_info_label_access_coarse_location">네트워크 사용</string>
-    <string name="permission_info_label_access_fine_location">GPS 위성 사용</string>
-    <string name="permission_info_label_access_location_extra_commands">위치 제공 명령 사용</string>
-    <string name="perm_blocked_sim_notification_text">SIM 카드를 영구적으로 차단하였습니다.</string>
+    <string name="permdesc_broadcastPackageRemoved">Allows the app to
+        broadcast a notification that an app package has been removed.
+        Malicious apps may use this to kill any other running
+        app.</string>
+    <string name="permlab_broadcastSmsReceived">send SMS-received broadcast</string>
+    <string name="permdesc_broadcastSmsReceived">Allows the app to
+        broadcast a notification that an SMS message has been received.
+        Malicious apps may use this to forge incoming SMS messages.</string>
+    <string name="permlab_broadcastWapPush">send WAP-PUSH-received broadcast</string>
+    <string name="permdesc_broadcastWapPush">Allows the app to
+        broadcast a notification that a WAP PUSH message has been received.
+        Malicious apps may use this to forge MMS message receipt or to
+        silently replace the content of any webpage with malicious variants.</string>
+    <string name="permlab_broadcastNetworkPrivileged" translatable="false">send privileged network broadcasts</string>
+    <string name="permdesc_broadcastNetworkPrivileged" translatable="false">Allows the app
+        to send privileged network broadcasts.
+        Never needed for normal apps.
+    </string>
+    <string name="permlab_setProcessLimit">limit number of running processes</string>
+    <string name="permdesc_setProcessLimit">Allows the app
+        to control the maximum number of processes that will run. Never
+        needed for normal apps.</string>
+    <string name="permlab_setAlwaysFinish">force background apps to close</string>
+    <string name="permdesc_setAlwaysFinish">Allows the app
+        to control whether activities are always finished as soon as they
+        go to the background. Never needed for normal apps.</string>
+    <string name="permlab_batteryStats">read battery statistics</string>
+    <string name="permdesc_batteryStats">Allows an application to read the current low-level
+        battery use data.  May allow the application to find out detailed information about
+        which apps you use.</string>
+    <string name="permlab_updateBatteryStats">modify battery statistics</string>
+    <string name="permdesc_updateBatteryStats">Allows the app to modify
+        collected battery statistics. Not for use by normal apps.</string>
+    <string name="permlab_getAppOpsStats">retrieve app ops statistics</string>
+    <string name="permdesc_getAppOpsStats">Allows the app to retrieve
+        collected application operation statistics. Not for use by normal apps.</string>
+    <string name="permlab_updateAppOpsStats">modify app ops statistics</string>
+    <string name="permdesc_updateAppOpsStats">Allows the app to modify
+        collected application operation statistics. Not for use by normal apps.</string>
+    <string name="permlab_backup">control system backup and restore</string>
+    <string name="permdesc_backup">Allows the app to control the system\'s backup and restore mechanism.  Not for use by normal apps.</string>
+    <string name="permlab_confirm_full_backup">confirm a full backup or restore operation</string>
+    <string name="permdesc_confirm_full_backup">Allows the app to launch the full backup confirmation UI.  Not to be used by any app.</string>
+    <string name="permlab_internalSystemWindow">display unauthorized windows</string>
+    <string name="permdesc_internalSystemWindow">Allows the app to create
+        windows that are intended to be used by the internal system
+        user interface. Not for use by normal apps.</string>
+    <string name="permlab_systemAlertWindow">draw over other apps</string>
+    <string name="permdesc_systemAlertWindow">Allows the app to draw on top of other
+        applications or parts of the user interface.  They may interfere with your
+        use of the interface in any application, or change what you think you are
+        seeing in other applications.</string>
+    <string name="permlab_setAnimationScale">modify global animation speed</string>
+    <string name="permdesc_setAnimationScale">Allows the app to change
+        the global animation speed (faster or slower animations) at any time.</string>
+    <string name="permlab_manageAppTokens">manage app tokens</string>
+    <string name="permdesc_manageAppTokens">Allows the app to
+        create and manage their own tokens, bypassing their normal
+        Z-ordering. Should never be needed for normal apps.</string>
+    <string name="permlab_freezeScreen">freeze screen</string>
+    <string name="permdesc_freezeScreen">Allows the application to temporarily freeze
+        the screen for a full-screen transition.</string>
+    <string name="permlab_injectEvents">press keys and control buttons</string>
+    <string name="permdesc_injectEvents" product="tablet">Allows the app to deliver
+        its own input events (key presses, etc.) to other apps. Malicious
+        apps may use this to take over the tablet.</string>
+    <string name="permdesc_injectEvents" product="tv">Allows the app to deliver
+        its own input events (key presses, etc.) to other apps. Malicious
+        apps may use this to take over the TV.</string>
+    <string name="permdesc_injectEvents" product="default">Allows the app to deliver
+        its own input events (key presses, etc.) to other apps. Malicious
+        apps may use this to take over the phone.</string>
+    <string name="permlab_readInputState">record what you type and actions you take</string>
+    <string name="permdesc_readInputState">Allows the app to watch the
+        keys you press even when interacting with another app (such
+        as typing a password). Should never be needed for normal apps.</string>
+    <string name="permlab_bindInputMethod">bind to an input method</string>
+    <string name="permdesc_bindInputMethod">Allows the holder to bind to the top-level
+        interface of an input method. Should never be needed for normal apps.</string>
+    <string name="permlab_bindAccessibilityService">bind to an accessibility service</string>
+    <string name="permdesc_bindAccessibilityService">Allows the holder to bind to the top-level
+        interface of an accessibility service. Should never be needed for normal apps.</string>
+    <string name="permlab_bindPrintService">bind to a print service</string>
+    <string name="permdesc_bindPrintService">Allows the holder to bind to the top-level
+        interface of a print service. Should never be needed for normal apps.</string>
+    <string name="permlab_bindPrintSpoolerService">bind to a print spooler service</string>
+    <string name="permdesc_bindPrintSpoolerService">Allows the holder to bind to the top-level
+        interface of a print spooler service. Should never be needed for normal apps.</string>
+    <string name="permlab_bindNfcService">bind to NFC service</string>
+    <string name="permdesc_bindNfcService">Allows the holder to bind to applications
+        that are emulating NFC cards. Should never be needed for normal apps.</string>
+    <string name="permlab_bindTextService">bind to a text service</string>
+    <string name="permdesc_bindTextService">Allows the holder to bind to the top-level
+        interface of a text service(e.g. SpellCheckerService). Should never be needed for normal apps.</string>
+    <string name="permlab_bindVpnService">bind to a VPN service</string>
+    <string name="permdesc_bindVpnService">Allows the holder to bind to the top-level
+        interface of a Vpn service. Should never be needed for normal apps.</string>
+    <string name="permlab_bindWallpaper">bind to a wallpaper</string>
+    <string name="permdesc_bindWallpaper">Allows the holder to bind to the top-level
+        interface of a wallpaper. Should never be needed for normal apps.</string>
+    <string name="permlab_bindVoiceInteraction">bind to a voice interactor</string>
+    <string name="permdesc_bindVoiceInteraction">Allows the holder to bind to the top-level
+        interface of a voice interaction service. Should never be needed for normal apps.</string>
+    <string name="permlab_manageVoiceKeyphrases">manage voice keyphrases</string>
+    <string name="permdesc_manageVoiceKeyphrases">Allows the holder to manage the keyphrases for voice hotword detection.
+        Should never be needed for normal apps.</string>
+    <string name="permlab_bindRemoteDisplay">bind to a remote display</string>
+    <string name="permdesc_bindRemoteDisplay">Allows the holder to bind to the top-level
+        interface of a remote display. Should never be needed for normal apps.</string>
+    <string name="permlab_bindRemoteViews">bind to a widget service</string>
+    <string name="permdesc_bindRemoteViews">Allows the holder to bind to the top-level
+        interface of a widget service. Should never be needed for normal apps.</string>
+    <string name="permlab_bindDeviceAdmin">interact with a device admin</string>
+    <string name="permdesc_bindDeviceAdmin">Allows the holder to send intents to
+        a device administrator. Should never be needed for normal apps.</string>
+    <string name="permlab_bindTvInput">bind to a TV input</string>
+    <string name="permdesc_bindTvInput">Allows the holder to bind to the top-level
+        interface of a TV input. Should never be needed for normal apps.</string>
+    <string name="permlab_modifyParentalControls">modify parental controls</string>
+    <string name="permdesc_modifyParentalControls">Allows the holder to modify the system\'s
+        parental controls data. Should never be needed for normal apps.</string>
+    <string name="permlab_manageDeviceAdmins">add or remove a device admin</string>
+    <string name="permdesc_manageDeviceAdmins">Allows the holder to add or remove active device
+        administrators. Should never be needed for normal apps.</string>
+    <string name="permlab_setOrientation">change screen orientation</string>
+    <string name="permdesc_setOrientation">Allows the app to change
+        the rotation of the screen at any time. Should never be needed for
+        normal apps.</string>
+    <string name="permlab_setPointerSpeed">change pointer speed</string>
+    <string name="permdesc_setPointerSpeed">Allows the app to change
+        the mouse or trackpad pointer speed at any time. Should never be needed for
+        normal apps.</string>
+    <string name="permlab_setKeyboardLayout">change keyboard layout</string>
+    <string name="permdesc_setKeyboardLayout">Allows the app to change
+        the keyboard layout. Should never be needed for normal apps.</string>
+    <string name="permlab_signalPersistentProcesses">send Linux signals to apps</string>
+    <string name="permdesc_signalPersistentProcesses">Allows the app to request that the
+        supplied signal be sent to all persistent processes.</string>
+    <string name="permlab_persistentActivity">make app always run</string>
+    <string name="permdesc_persistentActivity" product="tablet">Allows the app to make parts of itself persistent in memory.  This can limit memory available to other apps slowing down the tablet.</string>
+    <string name="permdesc_persistentActivity" product="tv">Allows the app to make parts of itself persistent in memory.  This can limit memory available to other apps slowing down the TV.</string>
+    <string name="permdesc_persistentActivity" product="default">Allows the app to make parts of itself persistent in memory.  This can limit memory available to other apps slowing down the phone.</string>
+    <string name="permlab_deletePackages">delete apps</string>
+    <string name="permdesc_deletePackages">Allows the app to delete
+        Android packages. Malicious apps may use this to delete important apps.</string>
+    <string name="permlab_clearAppUserData">delete other apps\' data</string>
+    <string name="permdesc_clearAppUserData">Allows the app to clear user data.</string>
+    <string name="permlab_deleteCacheFiles">delete other apps\' caches</string>
+    <string name="permdesc_deleteCacheFiles">Allows the app to delete
+        cache files.</string>
+    <string name="permlab_getPackageSize">measure app storage space</string>
+    <string name="permdesc_getPackageSize">Allows the app to retrieve its code, data, and cache sizes</string>
+    <string name="permlab_installPackages">directly install apps</string>
+    <string name="permdesc_installPackages">Allows the app to install new or updated
+        Android packages. Malicious apps may use this to add new apps with arbitrarily
+        powerful permissions.</string>
+    <string name="permlab_clearAppCache">delete all app cache data</string>
+    <string name="permdesc_clearAppCache" product="tablet">Allows the app to free tablet storage
+        by deleting files in the cache directories of other applications.  This may cause other
+        applications to start up more slowly as they need to re-retrieve their data.</string>
+    <string name="permdesc_clearAppCache" product="tv">Allows the app to free TV storage
+        by deleting files in the cache directories of other applications.  This may cause other
+        applications to start up more slowly as they need to re-retrieve their data.</string>
+    <string name="permdesc_clearAppCache" product="default">Allows the app to free phone storage
+        by deleting files in the cache directories of other applications.  This may cause other
+        applications to start up more slowly as they need to re-retrieve their data.</string>
+    <string name="permlab_movePackage">move app resources</string>
+    <string name="permdesc_movePackage">Allows the app to move app resources from internal to external media and vice versa.</string>
+    <string name="permlab_readLogs">read sensitive log data</string>
+    <string name="permdesc_readLogs" product="tablet">Allows the app to read from the
+        system\'s various log files.  This allows it to discover general
+        information about what you are doing with the tablet, potentially
+        including personal or private information.</string>
+    <string name="permdesc_readLogs" product="tv">Allows the app to read from the
+        system\'s various log files.  This allows it to discover general
+        information about what you are doing with the TV, potentially
+        including personal or private information.</string>
+    <string name="permdesc_readLogs" product="default">Allows the app to read from the
+        system\'s various log files.  This allows it to discover general
+        information about what you are doing with the phone, potentially
+        including personal or private information.</string>
+    <string name="permlab_anyCodecForPlayback">use any media decoder for playback</string>
+    <string name="permdesc_anyCodecForPlayback">Allows the app to use any installed
+        media decoder to decode for playback.</string>
+    <string name="permlab_manageCaCertificates">manage trusted credentials</string>
+    <string name="permdesc_manageCaCertificates">Allows the app to install and uninstall CA certificates as trusted credentials.</string>
+    <string name="permlab_bindJobService">run the application\'s scheduled background work</string>
+    <string name="permdesc_bindJobService">This permission allows the Android system to run the application in the background when requested.</string>
+    <string name="permlab_diagnostic">read/write to resources owned by diag</string>
+    <string name="permdesc_diagnostic">Allows the app to read and write to
+    any resource owned by the diag group; for example, files in /dev. This could
+    potentially affect system stability and security. This should be ONLY be used
+    for hardware-specific diagnostics by the manufacturer or operator.</string>
+    <string name="permlab_changeComponentState">enable or disable app components</string>
+    <string name="permdesc_changeComponentState" product="tablet">Allows the app to change whether a
+        component of another app is enabled or not. Malicious apps may use this
+        to disable important tablet capabilities. Care must be used with this permission, as it is
+        possible to get app components into an unusable, inconsistent, or unstable state.
+    </string>
+    <string name="permdesc_changeComponentState" product="tv">Allows the app to change whether a
+        component of another app is enabled or not. Malicious apps may use this
+        to disable important TV capabilities. Care must be used with this permission, as it is
+        possible to get app components into an unusable, inconsistent, or unstable state.
+    </string>
+    <string name="permdesc_changeComponentState" product="default">Allows the app to change whether a
+        component of another app is enabled or not. Malicious apps may use this
+        to disable important phone capabilities. Care must be used with this permission, as it is
+        possible to get app components into an unusable, inconsistent, or unstable state.
+    </string>
+    <string name="permlab_grantRevokePermissions">grant or revoke permissions</string>
+    <string name="permdesc_grantRevokePermissions">Allows an application to grant or revoke
+        specific permissions for it or other applications.  Malicious applications may use this
+        to access features you have not granted them.
+    </string>
+    <string name="permlab_setPreferredApplications">set preferred apps</string>
+    <string name="permdesc_setPreferredApplications">Allows the app to
+        modify your preferred apps. Malicious apps may
+        silently change the apps that are run, spoofing your
+        existing apps to collect private data from you.</string>
+    <string name="permlab_writeSettings">modify system settings</string>
+    <string name="permdesc_writeSettings">Allows the app to modify the
+        system\'s settings data. Malicious apps may corrupt your system\'s
+        configuration.</string>
+    <string name="permlab_writeSecureSettings">modify secure system settings</string>
+    <string name="permdesc_writeSecureSettings">Allows the app to modify the
+        system\'s secure settings data. Not for use by normal apps.</string>
+    <string name="permlab_writeGservices">modify the Google services map</string>
+    <string name="permdesc_writeGservices">Allows the app to modify the
+        Google services map.  Not for use by normal apps.</string>
+    <string name="permlab_receiveBootCompleted">run at startup</string>
+    <string name="permdesc_receiveBootCompleted" product="tablet">Allows the app to
+        have itself started as soon as the system has finished booting.
+        This can make it take longer to start the tablet and allow the
+        app to slow down the overall tablet by always running.</string>
+    <string name="permdesc_receiveBootCompleted" product="tv">Allows the app to
+        have itself started as soon as the system has finished booting.
+        This can make it take longer to start the TV and allow the
+        app to slow down the overall tablet by always running.</string>
+    <string name="permdesc_receiveBootCompleted" product="default">Allows the app to
+        have itself started as soon as the system has finished booting.
+        This can make it take longer to start the phone and allow the
+        app to slow down the overall phone by always running.</string>
+    <string name="permlab_broadcastSticky">send sticky broadcast</string>
+    <string name="permdesc_broadcastSticky" product="tablet">Allows the app to
+    send sticky broadcasts, which remain after the broadcast ends. Excessive use
+    may make the tablet slow or unstable by causing it to use too much memory.
+    </string>
+    <string name="permdesc_broadcastSticky" product="tv">Allows the app to
+    send sticky broadcasts, which remain after the broadcast ends. Excessive use
+    may make the TV slow or unstable by causing it to use too much memory.
+    </string>
+    <string name="permdesc_broadcastSticky" product="default">Allows the app to
+    send sticky broadcasts, which remain after the broadcast ends. Excessive
+    use may make the phone slow or unstable by causing it to use too
+    much memory.</string>
+    <string name="permlab_readContacts">read your contacts</string>
+    <string name="permdesc_readContacts" product="tablet">Allows the app to read
+      data about your contacts stored on your tablet, including the frequency
+      with which you\'ve called, emailed, or communicated in other ways with
+      specific individuals. This permission allows apps to save your contact
+      data, and malicious apps may share contact data without your
+      knowledge.</string>
+    <string name="permdesc_readContacts" product="tv">Allows the app to read
+      data about your contacts stored on your TV, including the frequency
+      with which you\'ve called, emailed, or communicated in other ways with
+      specific individuals. This permission allows apps to save your contact
+      data, and malicious apps may share contact data without your
+      knowledge.</string>
+    <string name="permdesc_readContacts" product="default">Allows the app to
+      read data about your contacts stored on your phone, including the
+      frequency with which you\'ve called, emailed, or communicated in other ways
+      with specific individuals. This permission allows apps to save your
+      contact data, and malicious apps may share contact data without your
+      knowledge.</string>
+    <string name="permlab_writeContacts">modify your contacts</string>
+    <string name="permdesc_writeContacts" product="tablet">Allows the app to
+      modify the data about your contacts stored on your tablet, including the
+      frequency with which you\'ve called, emailed, or communicated in other ways
+      with specific contacts. This permission allows apps to delete contact
+      data.</string>
+    <string name="permdesc_writeContacts" product="tv">Allows the app to
+      modify the data about your contacts stored on your TV, including the
+      frequency with which you\'ve called, emailed, or communicated in other ways
+      with specific contacts. This permission allows apps to delete contact
+      data.</string>
+    <string name="permdesc_writeContacts" product="default">Allows the app to
+    modify the data about your contacts stored on your phone, including the
+    frequency with which you\'ve called, emailed, or communicated in other ways
+    with specific contacts. This permission allows apps to delete contact
+    data.</string>
+    <string name="permlab_readCallLog">read call log</string>
+    <string name="permdesc_readCallLog" product="tablet">Allows the app to read
+     your tablet\'s call log, including data about incoming and outgoing calls.
+     This permission allows apps to save your call log data, and malicious apps
+     may share call log data without your knowledge.</string>
+    <string name="permdesc_readCallLog" product="tv">Allows the app to read
+     your TV\'s call log, including data about incoming and outgoing calls.
+     This permission allows apps to save your call log data, and malicious apps
+     may share call log data without your knowledge.</string>
+    <string name="permdesc_readCallLog" product="default">Allows the app to read
+      your phone\'s call log, including data about incoming and outgoing calls.
+      This permission allows apps to save your call log data, and malicious apps
+      may share call log data without your knowledge.</string>
+    <string name="permlab_writeCallLog">write call log</string>
+    <string name="permdesc_writeCallLog" product="tablet">Allows the app to modify your tablet\'s call log, including data about incoming and outgoing calls.
+        Malicious apps may use this to erase or modify your call log.</string>
+    <string name="permdesc_writeCallLog" product="tv">Allows the app to modify your TV\'s call log, including data about incoming and outgoing calls.
+        Malicious apps may use this to erase or modify your call log.</string>
+    <string name="permdesc_writeCallLog" product="default">Allows the app to modify your phone\'s call log, including data about incoming and outgoing calls.
+        Malicious apps may use this to erase or modify your call log.</string>
+    <string name="permlab_readProfile">read your own contact card</string>
+    <string name="permdesc_readProfile" product="default">Allows the app to read
+     personal profile information stored on your device, such as your name and
+     contact information. This means the app can identify you and may send your
+     profile information to others.</string>
+    <string name="permlab_writeProfile">modify your own contact card</string>
+    <string name="permdesc_writeProfile" product="default">Allows the app to
+      change or add to personal profile information stored on your device, such
+      as your name and contact information.  This means the app can identify you
+      and may send your profile information to others.</string>
+    <string name="permlab_bodySensors">body sensors (like heart rate monitors)
+    </string>
+    <string name="permdesc_bodySensors" product="default">Allows the app to access data from sensors
+    that monitor your physical condition, such as your heart rate.</string>
+    <string name="permlab_readSocialStream" product="default">read your social stream</string>
+    <string name="permdesc_readSocialStream" product="default">Allows the app
+      to access and sync social updates from you and your friends. Be careful
+      when sharing information -- this allows the app to read communications
+      between you and your friends on social networks, regardless of
+      confidentiality. Note: this permission may not be enforced on all social
+      networks.</string>
+    <string name="permlab_writeSocialStream" product="default">write to your social stream</string>
+    <string name="permdesc_writeSocialStream" product="default">Allows the app to
+     display social updates from your friends.  Be careful when sharing
+     information -- this allows the app to produce messages that may appear to
+     come from a friend. Note: this permission may not be enforced on all social
+     networks.</string>
+    <string name="permlab_readCalendar">read calendar events plus confidential information</string>
+    <string name="permdesc_readCalendar" product="tablet">Allows the app to read
+       all calendar events stored on your tablet, including those of friends or
+       co-workers. This may allow the app to share or save your calendar data,
+       regardless of confidentiality or sensitivity.</string>
+    <string name="permdesc_readCalendar" product="tv">Allows the app to read
+       all calendar events stored on your TV, including those of friends or
+       co-workers. This may allow the app to share or save your calendar data,
+       regardless of confidentiality or sensitivity.</string>
+    <string name="permdesc_readCalendar" product="default">Allows the app to
+       read all calendar events stored on your phone, including those of friends
+       or co-workers. This may allow the app to share or save your calendar data,
+       regardless of confidentiality or sensitivity.</string>
+    <string name="permlab_writeCalendar">add or modify calendar events and send email to guests without owners\' knowledge</string>
+    <string name="permdesc_writeCalendar" product="tablet">Allows the app to
+        add, remove, change events that you can modify on your tablet, including
+        those of friends or co-workers. This may allow the app to send messages
+        that appear to come from calendar owners, or modify events without the
+        owners\' knowledge.</string>
+    <string name="permdesc_writeCalendar" product="tv">Allows the app to
+        add, remove, change events that you can modify on your TV, including
+        those of friends or co-workers. This may allow the app to send messages
+        that appear to come from calendar owners, or modify events without the
+        owners\' knowledge.</string>
+    <string name="permdesc_writeCalendar" product="default">Allows the app to
+        add, remove, change events that you can modify on your phone, including
+        those of friends or co-workers. This may allow the app to send messages
+        that appear to come from calendar owners, or modify events without the
+        owners\' knowledge.</string>
+    <string name="permlab_accessMockLocation">mock location sources for testing</string>
+    <string name="permdesc_accessMockLocation">Create mock location sources for
+      testing or install a new location provider.  This allows the app to
+      override the location and/or status returned by other location sources
+      such as GPS or location providers.</string>
+    <string name="permlab_accessLocationExtraCommands">access extra location provider commands</string>
+    <string name="permdesc_accessLocationExtraCommands">Allows the app to access
+      extra location provider commands.  This may allow the app to interfere
+      with the operation of the GPS or other location sources.</string>
+    <string name="permlab_installLocationProvider">permission to install a location provider</string>
+    <string name="permdesc_installLocationProvider">Create mock location sources
+      for testing or install a new location provider.  This allows the app to
+      override the location and/or status returned by other location sources
+      such as GPS or location providers.</string>
+    <string name="permlab_accessFineLocation">precise location (GPS and
+      network-based)</string>
+    <string name="permdesc_accessFineLocation">Allows the app to get your
+      precise location using the Global Positioning System (GPS) or network
+      location sources such as cell towers and Wi-Fi. These location services
+      must be turned on and available to your device for the app to use them.
+      Apps may use this to determine where you are, and may consume additional
+      battery power.</string>
+    <string name="permlab_accessCoarseLocation">approximate location
+      (network-based)</string>
+    <string name="permdesc_accessCoarseLocation">Allows the app to get your
+      approximate location. This location is derived by location services using
+      network location sources such as cell towers and Wi-Fi. These location
+      services must be turned on and available to your device for the app to
+      use them. Apps may use this to determine approximately where you
+      are.</string>
+    <string name="permlab_accessSurfaceFlinger">access SurfaceFlinger</string>
+    <string name="permdesc_accessSurfaceFlinger">Allows the app to use SurfaceFlinger low-level features.</string>
+    <string name="permlab_readFrameBuffer">read frame buffer</string>
+    <string name="permdesc_readFrameBuffer">Allows the app to read the content of the frame buffer.</string>
+    <string name="permlab_accessInputFlinger">access InputFlinger</string>
+    <string name="permdesc_accessInputFlinger">Allows the app to use InputFlinger low-level features.</string>
+    <string name="permlab_configureWifiDisplay">configure Wifi displays</string>
+    <string name="permdesc_configureWifiDisplay">Allows the app to configure and connect to Wifi displays.</string>
+    <string name="permlab_controlWifiDisplay">control Wifi displays</string>
+    <string name="permdesc_controlWifiDisplay">Allows the app to control low-level features of Wifi displays.</string>
+    <string name="permlab_controlVpn">control Virtual Private Networks</string>
+    <string name="permdesc_controlVpn">Allows the app to control low-level features of Virtual Private Networks.</string>
+    <string name="permlab_captureAudioOutput">capture audio output</string>
+    <string name="permdesc_captureAudioOutput">Allows the app to capture and redirect audio output.</string>
+    <string name="permlab_captureAudioHotword">Hotword detection</string>
+    <string name="permdesc_captureAudioHotword">Allows the app to capture audio for Hotword detection. The capture can
+      happen in the background but does not prevent other audio capture (e.g. Camcorder).</string>
+    <string name="permlab_modifyAudioRouting">Audio Routing</string>
+    <string name="permdesc_modifyAudioRouting">Allows the app to directly control audio routing and
+      override audio policy decisions.</string>
+    <string name="permlab_captureVideoOutput">capture video output</string>
+    <string name="permdesc_captureVideoOutput">Allows the app to capture and redirect video output.</string>
+    <string name="permlab_captureSecureVideoOutput">capture secure video output</string>
+    <string name="permdesc_captureSecureVideoOutput">Allows the app to capture and redirect secure video output.</string>
+    <string name="permlab_mediaContentControl">control media playback and metadata access</string>
+    <string name="permdesc_mediaContentControl">Allows the app to control media playback and access the media information (title, author...).</string>
+    <string name="permlab_modifyAudioSettings">change your audio settings</string>
+    <string name="permdesc_modifyAudioSettings">Allows the app to modify global audio settings such as volume and which speaker is used for output.</string>
+    <string name="permlab_recordAudio">record audio</string>
+    <string name="permdesc_recordAudio">Allows the app to record audio with the
+      microphone.  This permission allows the app to record audio at any time
+      without your confirmation.</string>
+    <string name="permlab_sim_communication">sim communication</string>
+    <string name="permdesc_sim_communication">Allows the app to send commands to the SIM. This is very dangerous.</string>
+    <string name="permlab_camera">take pictures and videos</string>
+    <string name="permdesc_camera">Allows the app to take pictures and videos
+      with the camera.  This permission allows the app to use the camera at any
+      time without your confirmation.</string>
+    <string name="permlab_cameraDisableTransmitLed">disable transmit indicator LED when camera is in use</string>
+    <string name="permdesc_cameraDisableTransmitLed">Allows a pre-installed system application to disable the camera use indicator LED.</string>
+    <string name="permlab_brick" product="tablet">permanently disable tablet</string>
+    <string name="permlab_brick" product="tv">permanently disable TV</string>
+    <string name="permlab_brick" product="default">permanently disable phone</string>
+    <string name="permdesc_brick" product="tablet">Allows the app to
+        disable the entire tablet permanently. This is very dangerous.</string>
+    <string name="permdesc_brick" product="tv">Allows the app to
+        disable the entire TV permanently. This is very dangerous.</string>
+    <string name="permdesc_brick" product="default">Allows the app to
+        disable the entire phone permanently. This is very dangerous.</string>
+    <string name="permlab_reboot" product="tablet">force tablet reboot</string>
+    <string name="permlab_reboot" product="tv">force TV reboot</string>
+    <string name="permlab_reboot" product="default">force phone reboot</string>
+    <string name="permdesc_reboot" product="tablet">Allows the app to force the tablet to reboot.</string>
+    <string name="permdesc_reboot" product="tv">Allows the app to force the TV to reboot.</string>
+    <string name="permdesc_reboot" product="default">Allows the app to force the phone to reboot.</string>
+    <string name="permlab_mount_unmount_filesystems" product="nosdcard">access USB storage filesystem</string>
+    <string name="permlab_mount_unmount_filesystems" product="default">access SD Card filesystem</string>
+    <string name="permdesc_mount_unmount_filesystems">Allows the app to mount and
+        unmount filesystems for removable storage.</string>
+    <string name="permlab_mount_format_filesystems" product="nosdcard">erase USB storage</string>
+    <string name="permlab_mount_format_filesystems" product="default">erase SD Card</string>
+    <string name="permdesc_mount_format_filesystems">Allows the app to format removable storage.</string>
+    <string name="permlab_asec_access">get information on internal storage</string>
+    <string name="permdesc_asec_access">Allows the app to get information on internal storage.</string>
+    <string name="permlab_asec_create">create internal storage</string>
+    <string name="permdesc_asec_create">Allows the app to create internal storage.</string>
+    <string name="permlab_asec_destroy">destroy internal storage</string>
+    <string name="permdesc_asec_destroy">Allows the app to destroy internal storage.</string>
+    <string name="permlab_asec_mount_unmount">mount/unmount internal storage</string>
+    <string name="permdesc_asec_mount_unmount">Allows the app to mount/unmount internal storage.</string>
+    <string name="permlab_asec_rename">rename internal storage</string>
+    <string name="permdesc_asec_rename">Allows the app to rename internal storage.</string>
+    <string name="permlab_vibrate">control vibration</string>
+    <string name="permdesc_vibrate">Allows the app to control the vibrator.</string>
+    <string name="permlab_flashlight">control flashlight</string>
+    <string name="permdesc_flashlight">Allows the app to control the flashlight.</string>
+    <string name="permlab_manageUsb">manage preferences and permissions for USB devices</string>
+    <string name="permdesc_manageUsb">Allows the app to manage preferences and permissions for USB devices.</string>
+    <string name="permlab_accessMtp">implement MTP protocol</string>
+    <string name="permdesc_accessMtp">Allows access to the kernel MTP driver to implement the MTP USB protocol.</string>
+    <string name="permlab_hardware_test">test hardware</string>
+    <string name="permdesc_hardware_test">Allows the app to control
+        various peripherals for the purpose of hardware testing.</string>
+    <string name="permlab_fm">access FM radio</string>
+    <string name="permdesc_fm">Allows the app to access FM radio to listen to programs.</string>
+    <string name="permlab_callPhone">directly call phone numbers</string>
+    <string name="permdesc_callPhone">Allows the app to call phone numbers
+      without your intervention. This may result in unexpected charges or calls.
+      Note that this doesn\'t allow the app to call emergency numbers.
+      Malicious apps may cost you money by making calls without your
+      confirmation.</string>
+    <string name="permlab_callPrivileged">directly call any phone numbers</string>
+    <string name="permdesc_callPrivileged">Allows the app to call
+        any phone number, including emergency numbers, without your intervention.
+        Malicious apps may place unnecessary and illegal calls to emergency
+        services.</string>
+    <string name="permlab_performCdmaProvisioning" product="tablet">directly start CDMA tablet setup</string>
+    <string name="permlab_performCdmaProvisioning" product="tv">directly start CDMA TV setup</string>
+    <string name="permlab_performCdmaProvisioning" product="default">directly start CDMA phone setup</string>
+    <string name="permdesc_performCdmaProvisioning">Allows the app to start CDMA provisioning.
+        Malicious apps may unnecessarily start CDMA provisioning.</string>
+    <string name="permlab_locationUpdates">control location update notifications</string>
+    <string name="permdesc_locationUpdates">Allows the app to enable/disable location
+        update notifications from the radio.  Not for use by normal apps.</string>
+    <string name="permlab_checkinProperties">access checkin properties</string>
+    <string name="permdesc_checkinProperties">Allows the app read/write access to
+        properties uploaded by the checkin service.  Not for use by normal
+        apps.</string>
+    <string name="permlab_bindGadget">choose widgets</string>
+    <string name="permdesc_bindGadget">Allows the app to tell the system
+        which widgets can be used by which app. An app with this permission
+        can give access to personal data to other apps.
+        Not for use by normal apps.</string>
+    <string name="permlab_modifyPhoneState">modify phone state</string>
+    <string name="permdesc_modifyPhoneState">Allows the app to control the
+        phone features of the device. An app with this permission can switch
+        networks, turn the phone radio on and off and the like without ever notifying
+        you.</string>
+    <string name="permlab_readPhoneState">read phone status and identity</string>
+    <string name="permdesc_readPhoneState">Allows the app to access the phone
+      features of the device.  This permission allows the app to determine the
+      phone number and device IDs, whether a call is active, and the remote number
+      connected by a call.</string>
+    <string name="permlab_readPrecisePhoneState">read precise phone states</string>
+    <string name="permdesc_readPrecisePhoneState">Allows the app to access the precise
+      phone states.  This permission allows the app to determine the real
+      call status, whether a call is active or in the background, call fails,
+      precise data connection status and data connection fails.</string>
+    <string name="permlab_wakeLock" product="tablet">prevent tablet from sleeping</string>
+    <string name="permlab_wakeLock" product="tv">prevent TV from sleeping</string>
+    <string name="permlab_wakeLock" product="default">prevent phone from sleeping</string>
+    <string name="permdesc_wakeLock" product="tablet">Allows the app to prevent the tablet from going to sleep.</string>
+    <string name="permdesc_wakeLock" product="tv">Allows the app to prevent the TV from going to sleep.</string>
+    <string name="permdesc_wakeLock" product="default">Allows the app to prevent the phone from going to sleep.</string>
+    <string name="permlab_transmitIr">transmit infrared</string>
+    <string name="permdesc_transmitIr" product="tablet">Allows the app to use the tablet\'s infrared transmitter.</string>
+    <string name="permdesc_transmitIr" product="tv">Allows the app to use the TV\'s infrared transmitter.</string>
+    <string name="permdesc_transmitIr" product="default">Allows the app to use the phone\'s infrared transmitter.</string>
+    <string name="permlab_devicePower" product="tablet">power tablet on or off</string>
+    <string name="permlab_devicePower" product="tv">power TV on or off</string>
+    <string name="permlab_devicePower" product="default">power phone on or off</string>
+    <string name="permdesc_devicePower" product="tablet">Allows the app to turn the
+        tablet on or off.</string>
+    <string name="permdesc_devicePower" product="tv">Allows the app to turn the
+        TV on or off.</string>
+    <string name="permdesc_devicePower" product="default">Allows the app to turn the phone on or off.</string>
+    <string name="permlab_userActivity">reset display timeout</string>
+    <string name="permdesc_userActivity">Allows the app to reset the display timeout.</string>
+    <string name="permlab_factoryTest">run in factory test mode</string>
+    <string name="permdesc_factoryTest" product="tablet">Run as a low-level manufacturer test,
+        allowing complete access to the tablet hardware. Only available
+        when a tablet is running in manufacturer test mode.</string>
+    <string name="permdesc_factoryTest" product="tv">Run as a low-level manufacturer test,
+        allowing complete access to the TV hardware. Only available
+        when a TV is running in manufacturer test mode.</string>
+    <string name="permdesc_factoryTest" product="default">Run as a low-level manufacturer test,
+        allowing complete access to the phone hardware. Only available
+        when a phone is running in manufacturer test mode.</string>
+    <string name="permlab_setWallpaper">set wallpaper</string>
+    <string name="permdesc_setWallpaper">Allows the app to set the system wallpaper.</string>
+    <string name="permlab_setWallpaperHints">adjust your wallpaper size</string>
+    <string name="permdesc_setWallpaperHints">Allows the app to set the system wallpaper size hints.</string>
+    <string name="permlab_masterClear">reset system to factory defaults</string>
+    <string name="permdesc_masterClear">Allows the app to completely
+        reset the system to its factory settings, erasing all data,
+        configuration, and installed apps.</string>
+    <string name="permlab_setTime">set time</string>
+    <string name="permdesc_setTime" product="tablet">Allows the app to change the tablet\'s clock time.</string>
+    <string name="permdesc_setTime" product="tv">Allows the app to change the TV\'s clock time.</string>
+    <string name="permdesc_setTime" product="default">Allows the app to change the phone\'s clock time.</string>
+    <string name="permlab_setTimeZone">set time zone</string>
+    <string name="permdesc_setTimeZone" product="tablet">Allows the app to change the tablet\'s time zone.</string>
+    <string name="permdesc_setTimeZone" product="tv">Allows the app to change the TV\'s time zone.</string>
+    <string name="permdesc_setTimeZone" product="default">Allows the app to change the phone\'s time zone.</string>
+    <string name="permlab_accountManagerService">act as the AccountManagerService</string>
+    <string name="permdesc_accountManagerService">Allows the app to make calls to AccountAuthenticators.</string>
+    <string name="permlab_getAccounts">find accounts on the device</string>
+    <string name="permdesc_getAccounts" product="tablet">Allows the app to get
+      the list of accounts known by the tablet.  This may include any accounts
+      created by applications you have installed.</string>
+    <string name="permdesc_getAccounts" product="tv">Allows the app to get
+      the list of accounts known by the TV.  This may include any accounts
+      created by applications you have installed.</string>
+    <string name="permdesc_getAccounts" product="default">Allows the app to get
+      the list of accounts known by the phone.  This may include any accounts
+      created by applications you have installed.</string>
+    <string name="permlab_authenticateAccounts">create accounts and set passwords</string>
+    <string name="permdesc_authenticateAccounts">Allows the app
+    to use the account authenticator capabilities of the
+    AccountManager, including creating accounts and getting and
+    setting their passwords.</string>
+    <string name="permlab_manageAccounts">add or remove accounts</string>
+    <string name="permdesc_manageAccounts">Allows the app to
+    perform operations like adding and removing accounts, and deleting
+    their password.</string>
+    <string name="permlab_useCredentials">use accounts on the device</string>
+    <string name="permdesc_useCredentials">Allows the app to request authentication tokens.</string>
+    <string name="permlab_accessNetworkState">view network connections</string>
+    <string name="permdesc_accessNetworkState">Allows the app to view
+      information about network connections such as which networks exist and are
+      connected.</string>
+    <string name="permlab_createNetworkSockets">full network access</string>
+    <string name="permdesc_createNetworkSockets">Allows the app to create
+     network sockets and use custom network protocols. The browser and other
+     applications provide means to send data to the internet, so this
+     permission is not required to send data to the internet.</string>
+    <string name="permlab_writeApnSettings">change/intercept network settings and traffic</string>
+    <string name="permdesc_writeApnSettings">Allows the app to change network settings and to intercept and inspect all network traffic,
+      for example to change the proxy and port of any APN. Malicious apps may monitor, redirect, or modify network
+      packets without your knowledge.</string>
+    <string name="permlab_changeNetworkState">change network connectivity</string>
+    <string name="permdesc_changeNetworkState">Allows the app to change the state of network connectivity.</string>
+    <string name="permlab_changeTetherState">change tethered connectivity</string>
+    <string name="permdesc_changeTetherState">Allows the app to change the state of tethered network connectivity.</string>
+    <string name="permlab_changeBackgroundDataSetting">change background data usage setting</string>
+    <string name="permdesc_changeBackgroundDataSetting">Allows the app to change the background data usage setting.</string>
+    <string name="permlab_accessWifiState">view Wi-Fi connections</string>
+    <string name="permdesc_accessWifiState">Allows the app to view information
+      about Wi-Fi networking, such as whether Wi-Fi is enabled and name of
+      connected Wi-Fi devices.</string>
+    <string name="permlab_changeWifiState">connect and disconnect from Wi-Fi</string>
+    <string name="permdesc_changeWifiState">Allows the app to connect to and
+      disconnect from Wi-Fi access points and to make changes to device
+      configuration for Wi-Fi networks.</string>
+    <string name="permlab_changeWifiMulticastState">allow Wi-Fi Multicast reception</string>
+    <string name="permdesc_changeWifiMulticastState" product="tablet">Allows the app to receive
+      packets sent to all devices on a Wi-Fi network using multicast addresses,
+      not just your tablet.  It uses more power than the non-multicast mode.</string>
+    <string name="permdesc_changeWifiMulticastState" product="tv">Allows the app to receive
+      packets sent to all devices on a Wi-Fi network using multicast addresses,
+      not just your TV.  It uses more power than the non-multicast mode.</string>
+    <string name="permdesc_changeWifiMulticastState" product="default">Allows the app to receive
+      packets sent to all devices on a Wi-Fi network using multicast addresses,
+      not just your phone.  It uses more power than the non-multicast mode.</string>
+    <string name="permlab_bluetoothAdmin">access Bluetooth settings</string>
+    <string name="permdesc_bluetoothAdmin" product="tablet">Allows the app to
+      configure the local Bluetooth tablet, and to discover and pair with remote
+      devices.</string>
+    <string name="permdesc_bluetoothAdmin" product="tv">Allows the app to
+      configure the local Bluetooth TV, and to discover and pair with remote
+      devices.</string>
+    <string name="permdesc_bluetoothAdmin" product="default">Allows the app to configure
+      the local Bluetooth phone, and to discover and pair with remote devices.</string>
+    <string name="permlab_bluetoothPriv">allow Bluetooth pairing by Application</string>
+    <string name="permdesc_bluetoothPriv" product="tablet">Allows the app to
+      pair with remote devices without user interaction.</string>
+    <string name="permdesc_bluetoothPriv" product="tv">Allows the app to
+      pair with remote devices without user interaction.</string>
+    <string name="permdesc_bluetoothPriv" product="default">Allows the app to
+      pair with remote devices without user interaction.</string>
+    <string name="permlab_bluetoothMap">access Bluetooth MAP data</string>
+    <string name="permdesc_bluetoothMap" product="tablet">Allows the app to access Bluetooth MAP data.</string>
+    <string name="permdesc_bluetoothMap" product="tv">Allows the app to access Bluetooth MAP data.</string>
+    <string name="permdesc_bluetoothMap" product="default">Allows the app to access Bluetooth MAP data.</string>
+    <string name="permlab_accessWimaxState">connect and disconnect from WiMAX</string>
+    <string name="permdesc_accessWimaxState">Allows the app to determine whether
+     WiMAX is enabled and information about any WiMAX networks that are
+     connected. </string>
+    <string name="permlab_changeWimaxState">Change WiMAX state</string>
+    <string name="permdesc_changeWimaxState" product="tablet">Allows the app to
+      connect the tablet to and disconnect the tablet from WiMAX networks.</string>
+    <string name="permdesc_changeWimaxState" product="tv">Allows the app to
+      connect the TV to and disconnect the TV from WiMAX networks.</string>
+    <string name="permdesc_changeWimaxState" product="default">Allows the app to
+      connect the phone to and disconnect the phone from WiMAX networks.</string>
+    <string name="permlab_scoreNetworks">score networks</string>
+    <string name="permdesc_scoreNetworks" product="tablet">Allows the app to
+      rank networks and influence which networks the tablet should prefer.</string>
+    <string name="permdesc_scoreNetworks" product="tv">Allows the app to
+      rank networks and influence which networks the TV should prefer.</string>
+    <string name="permdesc_scoreNetworks" product="default">Allows the app to
+        rank networks and influence which networks the phone should prefer.</string>
+    <string name="permlab_bluetooth">pair with Bluetooth devices</string>
+    <string name="permdesc_bluetooth" product="tablet">Allows the app to view the
+      configuration of Bluetooth on the tablet, and to make and accept
+      connections with paired devices.</string>
+    <string name="permdesc_bluetooth" product="tv">Allows the app to view the
+      configuration of Bluetooth on the TV, and to make and accept
+      connections with paired devices.</string>
+    <string name="permdesc_bluetooth" product="default">Allows the app to view the
+      configuration of the Bluetooth on the phone, and to make and accept
+      connections with paired devices.</string>
+    <string name="permlab_nfc">control Near Field Communication</string>
+    <string name="permdesc_nfc">Allows the app to communicate
+      with Near Field Communication (NFC) tags, cards, and readers.</string>
+    <string name="permlab_disableKeyguard">disable your screen lock</string>
+    <string name="permdesc_disableKeyguard">Allows the app to disable the
+      keylock and any associated password security.  For example, the phone
+      disables the keylock when receiving an incoming phone call, then
+      re-enables the keylock when the call is finished.</string>
+    <string name="permlab_readSyncSettings">read sync settings</string>
+    <string name="permdesc_readSyncSettings">Allows the app to read the sync settings for an account. For example, this can determine whether the People app is synced with an account.</string>
+    <string name="permlab_writeSyncSettings">toggle sync on and off</string>
+    <string name="permdesc_writeSyncSettings">Allows an app to modify the sync settings for an account.  For example, this can be used to enable sync of the People app with an account.</string>
+    <string name="permlab_readSyncStats">read sync statistics</string>
+    <string name="permdesc_readSyncStats">Allows an app to read the sync stats for an account, including the history of sync events and how much data is synced. </string>
+    <string name="permlab_subscribedFeedsRead">read subscribed feeds</string>
+    <string name="permdesc_subscribedFeedsRead">Allows the app to get details about the currently synced feeds.</string>
+    <string name="permlab_subscribedFeedsWrite">write subscribed feeds</string>
+    <string name="permdesc_subscribedFeedsWrite">Allows the app to modify
+      your currently synced feeds. Malicious apps may change your synced feeds.</string>
+    <string name="permlab_readDictionary">read terms you added to the dictionary</string>
+    <string name="permdesc_readDictionary">Allows the app to read all words,
+       names and phrases that the user may have stored in the user dictionary.</string>
+    <string name="permlab_writeDictionary">add words to user-defined dictionary</string>
+    <string name="permdesc_writeDictionary">Allows the app to write new words into the
+      user dictionary.</string>
+    <string name="permlab_sdcardRead" product="nosdcard">read the contents of your USB storage</string>
+    <string name="permlab_sdcardRead" product="default">read the contents of your SD card</string>
+    <string name="permdesc_sdcardRead" product="nosdcard">Allows the app to read the contents of your USB storage.</string>
+    <string name="permdesc_sdcardRead" product="default">Allows the app to read the contents of your SD card.</string>
+    <string name="permlab_sdcardWrite" product="nosdcard">modify or delete the contents of your USB storage</string>
+    <string name="permlab_sdcardWrite" product="default">modify or delete the contents of your SD card</string>
+    <string name="permdesc_sdcardWrite" product="nosdcard">Allows the app to write to the USB storage.</string>
+    <string name="permdesc_sdcardWrite" product="default">Allows the app to write to the SD card.</string>
+    <string name="permlab_mediaStorageWrite" product="default">modify/delete internal media storage contents</string>
+    <string name="permdesc_mediaStorageWrite" product="default">Allows the app to modify the contents of the internal media storage.</string>
+    <string name="permlab_manageDocs" product="default">manage document storage</string>
+    <string name="permdesc_manageDocs" product="default">Allows the app to manage document storage.</string>
+    <string name="permlab_sdcardAccessAll">access external storage of all users</string>
+    <string name="permdesc_sdcardAccessAll">Allows the app to access external storage for all users.</string>
+    <string name="permlab_cache_filesystem">access the cache filesystem</string>
+    <string name="permdesc_cache_filesystem">Allows the app to read and write the cache filesystem.</string>
+    <string name="permlab_use_sip">make/receive SIP calls</string>
+    <string name="permdesc_use_sip">Allows the app to make and receive SIP calls.</string>
+    <string name="permlab_register_sim_subscription">register new telecom SIM connections</string>
+    <string name="permdesc_register_sim_subscription">Allows the app to register new telecom SIM connections.</string>
+    <string name="permlab_register_call_provider">register new telecom connections</string>
+    <string name="permdesc_register_call_provider">Allows the app to register new telecom connections.</string>
+    <string name="permlab_connection_manager">manage telecom connections</string>
+    <string name="permdesc_connection_manager">Allows the app to manage telecom connections.</string>
+    <string name="permlab_bind_incall_service">interact with in-call screen</string>
+    <string name="permdesc_bind_incall_service">Allows the app to control when and how the user sees the in-call screen.</string>
+    <string name="permlab_bind_connection_service">interact with telephony services</string>
+    <string name="permdesc_bind_connection_service">Allows the app to interact with telephony services to make/receive calls.</string>
+    <string name="permlab_control_incall_experience">provide an in-call user experience</string>
+    <string name="permdesc_control_incall_experience">Allows the app to provide an in-call user experience.</string>
+    <string name="permlab_readNetworkUsageHistory">read historical network usage</string>
+    <string name="permdesc_readNetworkUsageHistory">Allows the app to read historical network usage for specific networks and apps.</string>
+    <string name="permlab_manageNetworkPolicy">manage network policy</string>
+    <string name="permdesc_manageNetworkPolicy">Allows the app to manage network policies and define app-specific rules.</string>
+    <string name="permlab_modifyNetworkAccounting">modify network usage accounting</string>
+    <string name="permdesc_modifyNetworkAccounting">Allows the app to modify how network usage is accounted against apps. Not for use by normal apps.</string>
+    <string name="permlab_accessNotifications">access notifications</string>
+    <string name="permdesc_accessNotifications">Allows the app to retrieve, examine, and clear notifications, including those posted by other apps.</string>
+    <string name="permlab_bindNotificationListenerService">bind to a notification listener service</string>
+    <string name="permdesc_bindNotificationListenerService">Allows the holder to bind to the top-level interface of a notification listener service. Should never be needed for normal apps.</string>
+    <string name="permlab_bindConditionProviderService">bind to a condition provider service</string>
+    <string name="permdesc_bindConditionProviderService">Allows the holder to bind to the top-level interface of a condition provider service. Should never be needed for normal apps.</string>
+    <string name="permlab_bindDreamService">bind to a dream service</string>
+    <string name="permdesc_bindDreamService">Allows the holder to bind to the top-level interface of a dream service. Should never be needed for normal apps.</string>
+    <string name="permlab_invokeCarrierSetup">invoke the carrier-provided configuration app</string>
+    <string name="permdesc_invokeCarrierSetup">Allows the holder to invoke the carrier-provided configuration app. Should never be needed for normal apps.</string>
+    <string name="permlab_accessNetworkConditions">listen for observations on network conditions</string>
+    <string name="permdesc_accessNetworkConditions">Allows an application to listen for observations on network conditions. Should never be needed for normal apps.</string>
+    <string name="permlab_setInputCalibration">change input device calibration</string>
+    <string name="permdesc_setInputCalibration">Allows the app to modify the calibration parameters of the touch screen. Should never be needed for normal apps.</string>
+    <string name="permlab_accessDrmCertificates">access DRM certificates</string>
+    <string name="permdesc_accessDrmCertificates">Allows an application to provision and use DRM certficates. Should never be needed for normal apps.</string>
+    <string name="permlab_handoverStatus">Receive Android Beam transfer status</string>
+    <string name="permdesc_handoverStatus">Allows this application to receive information about current Android Beam transfers</string>
+    <string name="permlab_removeDrmCertificates">remove DRM certificates</string>
+    <string name="permdesc_removeDrmCertificates">Allows an application to remove DRM certficates. Should never be needed for normal apps.</string>
+    <string name="permlab_bindCarrierMessagingService">bind to a carrier messaging service</string>
+    <string name="permdesc_bindCarrierMessagingService">Allows the holder to bind to the top-level interface of a carrier messaging service. Should never be needed for normal apps.</string>
+    <string name="permlab_readHistoryBookmarks">read your Web bookmarks and history</string>
+    <string name="permdesc_readHistoryBookmarks">Allows the app to read the
+     history of all URLs that the Browser has visited, and all of the Browser\'s
+     bookmarks. Note: this permission may not be enforced by third-party
+     browsers or other  applications with web browsing capabilities.</string>
+    <string name="permlab_writeHistoryBookmarks">write web bookmarks and history</string>
+    <string name="permdesc_writeHistoryBookmarks" product="tablet">Allows the
+        app to modify the Browser\'s history or bookmarks stored on your tablet.
+        This may allow the app to erase or modify Browser data.  Note: this
+        permission may note be enforced by third-party browsers or other
+        applications with web browsing capabilities.</string>
+    <string name="permdesc_writeHistoryBookmarks" product="tv">Allows the
+        app to modify the Browser\'s history or bookmarks stored on your TV.
+        This may allow the app to erase or modify Browser data.  Note: this
+        permission may note be enforced by third-party browsers or other
+        applications with web browsing capabilities.</string>
+    <string name="permdesc_writeHistoryBookmarks" product="default">Allows the
+        app to modify the Browser\'s history or bookmarks stored on your phone.
+        This may allow the app to erase or modify Browser data.  Note:
+        this permission may note be enforced by third-party browsers or other
+        applications with web browsing capabilities.</string>
+    <string name="permlab_setAlarm">set an alarm</string>
+    <string name="permdesc_setAlarm">Allows the app to set an alarm in
+      an installed alarm clock app. Some alarm clock apps may
+      not implement this feature.</string>
+    <string name="permlab_writeVoicemail">write voicemails</string>
+    <string name="permdesc_writeVoicemail">Allows the app to modify and remove messages from your voicemail inbox.</string>
+    <string name="permlab_addVoicemail">add voicemail</string>
+    <string name="permdesc_addVoicemail">Allows the app to add messages
+      to your voicemail inbox.</string>
+    <string name="permlab_readVoicemail">read voicemail</string>
+    <string name="permdesc_readVoicemail">Allows the app to read your voicemails.</string>
+    <string name="permlab_writeGeolocationPermissions">modify Browser geolocation permissions</string>
+    <string name="permdesc_writeGeolocationPermissions">Allows the app to modify the
+        Browser\'s geolocation permissions. Malicious apps
+        may use this to allow sending location information to arbitrary web sites.</string>
+    <string name="permlab_packageVerificationAgent">verify packages</string>
+    <string name="permdesc_packageVerificationAgent">Allows the app to verify a package is
+        installable.</string>
+    <string name="permlab_bindPackageVerifier">bind to a package verifier</string>
+    <string name="permdesc_bindPackageVerifier">Allows the holder to make requests of
+        package verifiers. Should never be needed for normal apps.</string>
+    <string name="permlab_serialPort">access serial ports</string>
+    <string name="permdesc_serialPort">Allows the holder to access serial ports using the SerialManager API.</string>
+    <string name="permlab_accessContentProvidersExternally">access content providers externally</string>
+    <string name="permdesc_accessContentProvidersExternally">Allows the holder to access content
+     providers from the shell. Should never be needed for normal apps.</string>
+    <string name="permlab_updateLock">discourage automatic device updates</string>
+    <string name="permdesc_updateLock">Allows the holder to offer information to the system about when would be a good time for a noninteractive reboot to upgrade the device.</string>
+    <string name="perms_new_perm_prefix"><font size="12" fgcolor="#ff33b5e5">NEW: </font></string>
+    <string name="perms_description_app">Provided by <xliff:g id="app_name">%1$s</xliff:g>.</string>
+    <string name="perm_costs_money">this may cost you money</string>
+    <string name="permlab_pkgUsageStats">update component usage statistics</string>
+    <string name="permdesc_pkgUsageStats">Allows the app to modify collected component usage statistics. Not for use by normal apps.</string>
+    <string name="permlab_copyProtectedData">copy content</string>
+    <string name="permdesc_copyProtectedData">Allows the app to invoke default container service to copy content. Not for use by normal apps.</string>
+    <string name="permlab_route_media_output">Route media output</string>
+    <string name="permdesc_route_media_output">Allows an application to route media output to other external devices.</string>
+    <string name="permlab_access_keyguard_secure_storage">Access keyguard secure storage</string>
+    <string name="permdesc_access_keyguard_secure_storage">Allows an application to access keguard secure storage.</string>
+    <string name="permlab_control_keyguard">Control displaying and hiding keyguard</string>
+    <string name="permdesc_control_keyguard">Allows an application to control keguard.</string>
+    <string name="permlab_trust_listener">Listen to trust state changes.</string>
+    <string name="permdesc_trust_listener">Allows an application to listen for changes in trust state.</string>
+    <string name="permlab_provide_trust_agent">Provide a trust agent.</string>
+    <string name="permdesc_provide_trust_agent">Allows an application to provide a trust agent.</string>
+    <string name="permlab_launch_trust_agent_settings">Launch trust agent settings menu.</string>
+    <string name="permdesc_launch_trust_agent_settings">Allows an application to launch an activity that changes the trust agent behavior.</string>
+    <string name="permlab_bind_trust_agent_service">Bind to a trust agent service</string>
+    <string name="permdesc_bind_trust_agent_service">Allows an application to bind to a trust agent service.</string>
+    <string name="permlab_recovery">Interact with update and recovery system</string>
+    <string name="permdesc_recovery">Allows an application to interact with the recovery system and system updates.</string>
+    <string name="permlab_manageMediaProjection">Manage media projection sessions</string>
+    <string name="permdesc_manageMediaProjection">Allows an application to manage media projection sessions. These sessions can provide applications the ability to capture display and audio contents. Should never be needed by normal apps.</string>
+    <string name="permlab_readInstallSessions">Read install sessions</string>
+    <string name="permdesc_readInstallSessions">Allows an application to read install sessions. This allows it to see details about active package installations.</string>
+    <string name="permission_request_notification_title">Permission requested</string>
+    <string name="permission_request_notification_with_subtitle">Permission requested\nfor account <xliff:g id="account" example="foo@gmail.com">%s</xliff:g>.</string>
+    <string name="permission_remember_choice">Remember</string>
+    <string name="permission">Permission</string>
 </permission-info>
