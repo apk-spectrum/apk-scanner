@@ -20,6 +20,8 @@ public class ApkManager
  	
 	//private Status mState = Status.UNINITIALIZE;
 	
+	private ArrayList<String> mFrameworkResList;
+	
 	private ProcessThead mProcess = null;
 	
 	public class ApkInfo
@@ -132,13 +134,20 @@ public class ApkManager
 	
 	public ApkManager()
 	{
-		this(null);
+		this(null, null);
 	}
 
 	public ApkManager(String apkPath)
 	{
+		this(apkPath, null);
+	}
+
+	public ApkManager(String apkPath, String frameworkResPath)
+	{
 		mApkInfo = new ApkInfo();
+		mFrameworkResList = new ArrayList<String>();
 		setApkFile(apkPath);
+		addFameworkRes(frameworkResPath);
 	}
 
 	public void setApkFile(String apkPath) {
@@ -153,6 +162,18 @@ public class ApkManager
 		if(apkPath != null && (new File(apkPath)).exists()) {
 			mApkInfo.ApkPath = apkPath;
 		}
+	}
+
+	public void addFameworkRes(String resApkPath) {
+		if(resApkPath == null) return;
+		File resFile = new File(resApkPath);
+
+		if(!resFile.exists()) {
+			System.out.println("No Such res file");
+			return;
+		}
+
+		mFrameworkResList.add(resFile.getAbsolutePath());
 	}
 	
 	static public String getApkToolVersion()

@@ -55,6 +55,7 @@ public class MainUI extends JFrame implements WindowListener
 	public static void openApk(final String apkPath) {
 		//System.out.println("target file :" + apkPath);
 		mApkManager = new ApkManager(apkPath);
+		mApkManager.addFameworkRes(SettingDlg.getframeworkResPath());
 		mApkManager.solve(SolveType.RESOURCE, new StatusListener(){
 			@Override
 			public void OnStart() {
@@ -210,11 +211,7 @@ public class MainUI extends JFrame implements WindowListener
 					openApkFile(file);
 				} else if(btn_label.equals(Resource.STR_BTN_MANIFEST.getString())) {
 					try {
-						if(System.getProperty("os.name").indexOf("Window") >-1) {
-							new ProcessBuilder("notepad", apkInfo.WorkTempPath + File.separator + "AndroidManifest.xml").start();
-						} else {  //for linux
-							new ProcessBuilder("gedit", apkInfo.WorkTempPath + File.separator + "AndroidManifest.xml").start();
-						}	
+						new ProcessBuilder(SettingDlg.getExcuteEditorPath(), apkInfo.WorkTempPath + File.separator + "AndroidManifest.xml").start();
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -298,7 +295,7 @@ public class MainUI extends JFrame implements WindowListener
 					ProgressBarDlg = new MyProgressBarDemo();
 					WaitingDlg = MyProgressBarDemo.createAndShowGUI(ProgressBarDlg);
 					WaitingDlg.setVisible(true);
-					//Resource.setLanguage("ko");
+					Resource.setLanguage(SettingDlg.getLanguage());
 					window = new MainUI();
 					window.initialize();
 					mMyToolBarUI.setEnabledAt(ButtonId.NEED_TARGET_APK, false);

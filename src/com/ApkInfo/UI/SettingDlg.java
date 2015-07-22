@@ -25,6 +25,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JCheckBox;
 
 public class SettingDlg extends JDialog implements ActionListener{
+	private static final long serialVersionUID = -854353051241196941L;
+
 	private JTextField textframeworkResPath, textExcutePath;
 	
 	static private String strExcuteEditorPath;
