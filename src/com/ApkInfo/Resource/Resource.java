@@ -26,6 +26,15 @@ public enum Resource
 	STR_BTN_INSTALL				(Type.TEXT, "@btn_install"),
 	STR_BTN_SETTING				(Type.TEXT, "@btn_setting"),
 	STR_BTN_ABOUT				(Type.TEXT, "@btn_about"),
+	
+	STR_MENU_NEW				(Type.TEXT, "@menu_new"),
+	STR_MENU_NEW_WINDOW			(Type.TEXT, "@menu_new_window"),
+	STR_MENU_NEW_APK_FILE		(Type.TEXT, "@menu_new_apk_file"),
+	STR_MENU_NEW_PACKAGE		(Type.TEXT, "@menu_new_package"),
+	STR_MENU_APK_FILE			(Type.TEXT, "@menu_apk_file"),
+	STR_MENU_PACKAGE			(Type.TEXT, "@menu_package"),
+	STR_MENU_INSTALL			(Type.TEXT, "@menu_install"),
+	STR_MENU_CHECK_INSTALLED	(Type.TEXT, "@menu_check_installed"),
 
 	STR_TAB_BASIC_INFO			(Type.TEXT, "@tab_basic_info"),
 	STR_TAB_WIDGET				(Type.TEXT, "@tab_widget"),

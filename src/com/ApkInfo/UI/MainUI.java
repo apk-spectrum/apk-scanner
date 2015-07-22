@@ -104,6 +104,11 @@ public class MainUI extends JFrame implements WindowListener
 	class ToolBarListener implements ActionListener
 	{
 		
+		private void newWindow(String apkfile)
+		{
+			
+		}
+		
 		private void openApkFile()
 		{
 			JFileChooser jfc = new JFileChooser();
@@ -118,6 +123,23 @@ public class MainUI extends JFrame implements WindowListener
 				WaitingDlg.setVisible(true);
 				openApk(dir.getPath());
 			}
+		}
+		
+		private void installApk()
+		{
+			ApkInfo apkInfo = null;
+			if(mApkManager != null) {
+				apkInfo = mApkManager.getApkInfo();
+			}
+
+			mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, false);
+			String libPath = apkInfo.WorkTempPath + File.separator + "lib" + File.separator;
+			new DeviceUIManager(apkInfo.PackageName, apkInfo.ApkPath, libPath , new InstallButtonStatusListener() {
+				@Override
+				public void SetInstallButtonStatus(Boolean Flag) {
+					mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, Flag);
+				}
+			});
 		}
 		
 		private void showAbout()
@@ -199,14 +221,7 @@ public class MainUI extends JFrame implements WindowListener
 				} else if(btn_label.equals(Resource.STR_BTN_PACK.getString())) {
 					JOptionPane.showMessageDialog(null, "pack", "pack", JOptionPane.INFORMATION_MESSAGE);
 				} else if(btn_label.equals(Resource.STR_BTN_INSTALL.getString())) {
-					mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, false);
-					String libPath = apkInfo.WorkTempPath + File.separator + "lib" + File.separator;
-					new DeviceUIManager(apkInfo.PackageName, apkInfo.ApkPath, libPath , new InstallButtonStatusListener() {
-						@Override
-						public void SetInstallButtonStatus(Boolean Flag) {
-							mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, Flag);
-						}
-					});
+					installApk();
 				} else if(btn_label.equals(Resource.STR_BTN_SETTING.getString())) {
 					
 					SettingDlg = new SettingDlg();
@@ -218,8 +233,21 @@ public class MainUI extends JFrame implements WindowListener
 				}
 			} if(e.getSource().getClass().getSimpleName().equals("JMenuItem")) {
 				String cmd = e.getActionCommand();
-				
-				openApkFile();
+				if(cmd.equals(Resource.STR_MENU_NEW_WINDOW.getString())) {
+					newWindow("");					
+				} else if(cmd.equals(Resource.STR_MENU_NEW_APK_FILE.getString())) {
+					
+				} else if(cmd.equals(Resource.STR_MENU_NEW_PACKAGE.getString())) {
+					
+				} else if(cmd.equals(Resource.STR_MENU_APK_FILE.getString())) {
+					openApkFile();
+				} else if(cmd.equals(Resource.STR_MENU_PACKAGE.getString())) {
+					
+				} else if(cmd.equals(Resource.STR_MENU_INSTALL.getString())) {
+					installApk();
+				} else if(cmd.equals(Resource.STR_MENU_CHECK_INSTALLED.getString())) {
+					
+				}
 			}
 		}
 	}

@@ -111,14 +111,14 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         
         final JPopupMenu menu = new JPopupMenu("Menu");
         final JMenu new_submenu;
-        new_submenu = new JMenu("New");
-        new_submenu.add("New").addActionListener(listener);
-        new_submenu.add("Apk").addActionListener(listener);
-        new_submenu.add("Package on device").addActionListener(listener);
+        new_submenu = new JMenu(Resource.STR_MENU_NEW.getString());
+        new_submenu.add(Resource.STR_MENU_NEW_WINDOW.getString()).addActionListener(listener);
+        new_submenu.add(Resource.STR_MENU_NEW_APK_FILE.getString()).addActionListener(listener);
+        new_submenu.add(Resource.STR_MENU_NEW_PACKAGE.getString()).addActionListener(listener);
         menu.add(new_submenu);
         menu.add(getNewSeparator(JSeparator.HORIZONTAL, 1));
-        menu.add("APK").addActionListener(listener);
-        menu.add("Package on device").addActionListener(listener);
+        menu.add(Resource.STR_MENU_APK_FILE.getString()).addActionListener(listener);
+        menu.add(Resource.STR_MENU_PACKAGE.getString()).addActionListener(listener);
 
         btn_open_arrow.addActionListener( new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -153,8 +153,8 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         btn_install_arrow.setFocusable(false);
         
         final JPopupMenu installmenu = new JPopupMenu("Menu");      
-        installmenu.add("Install").addActionListener(listener);;
-        installmenu.add("Check installed").addActionListener(listener);;
+        installmenu.add(Resource.STR_MENU_INSTALL.getString()).addActionListener(listener);;
+        installmenu.add(Resource.STR_MENU_CHECK_INSTALLED.getString()).addActionListener(listener);;
         btn_install_arrow.addActionListener( new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
             	installmenu.show(btn_install_arrow, btn_install_arrow.getWidth()/2, btn_install_arrow.getHeight());
