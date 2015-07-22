@@ -3,12 +3,14 @@ package com.ApkInfo.TabUI;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
@@ -33,7 +35,7 @@ public class MyTabUIActivity extends JPanel {
 	public ArrayList<Object[]> ActivityList = new ArrayList<Object[]>();
   	  
 	public MyTabUIActivity() {
-		super(new GridLayout(2, 0));
+		super(new GridLayout(1, 0));
 
 		TableModel = new MyTableModel();
 		table = new JTable(TableModel) {
@@ -87,6 +89,9 @@ public class MyTabUIActivity extends JPanel {
 		JScrollPane scrollPane2 = new JScrollPane(textArea);
 		//scrollPane2.setPreferredSize(new Dimension(300, 500));
 
+		
+		
+		
 		IntentPanel = new JPanel();
 		IntentLabel = new JLabel(Resource.STR_ACTIVITY_LABEL_INTENT.getString());
 
@@ -97,8 +102,21 @@ public class MyTabUIActivity extends JPanel {
 		IntentPanel.add(scrollPane2, BorderLayout.CENTER);
 
 		//Add the scroll pane to this panel.
-		add(scrollPane);
-		add(IntentPanel);
+		//add(scrollPane);
+		//add(IntentPanel);
+		
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        splitPane.setTopComponent(scrollPane);
+        splitPane.setBottomComponent(IntentPanel);
+		
+        Dimension minimumSize = new Dimension(100, 50);
+        scrollPane.setMinimumSize(minimumSize);
+        IntentPanel.setMinimumSize(minimumSize);
+        splitPane.setDividerLocation(300);
+        //splitPane.setPreferredSize(new Dimension(500, 500));
+        
+        
+        add(splitPane);
 	}
 	
 	public void setData(ArrayList<Object[]> data)

@@ -11,7 +11,7 @@ public class PlasticTabbedPaneUI extends BasicTabbedPaneUI {
   //private int anchoFocoV = inclTab;
   private int anchoFocoH = 4;
   private int anchoCarpetas = 18;
-  private Stroke stroke = new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
+  private Stroke stroke = new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER);
   /**
    * En este poligono se guarda la forma de la pestaña. Es muy importante. 
    */
@@ -70,6 +70,7 @@ public class PlasticTabbedPaneUI extends BasicTabbedPaneUI {
           g.fillPolygon( carp);
           
           g.setColor( darkShadow.darker());
+          
           g.drawPolygon( carp);
         }
       }
@@ -90,11 +91,11 @@ public class PlasticTabbedPaneUI extends BasicTabbedPaneUI {
           g.fillPolygon( carp);
           
           g.setColor( darkShadow.darker());
+          
           g.drawPolygon( carp);
         }
       }
-    }
-    
+    }    
     super.paintTabArea( g, tabPlacement, selectedIndex);
   }
 
@@ -146,15 +147,17 @@ public class PlasticTabbedPaneUI extends BasicTabbedPaneUI {
     //	System.out.println("Tab is Selected");
       g2D.setColor( selectColor );
       g2D.setPaint( gradientShadow);
+      g2D.setStroke(stroke);
     }
     else {
     	// g2D.setPaint( gradientShadow);
       g2D.setColor( tabPane.getBackgroundAt( tabIndex));
-     g2D.setColor( selectColor );
+      g2D.setColor( selectColor );
     }
 
     // Encima, pintamos la pestaña con el color que sea
     g2D.fill( shape);
+    //g2D.drawPolygon(shape);
     
     // Encima, pintamos la pestaña con el color que le corresponde por profundidad
     if ( runCount > 1 ) {
