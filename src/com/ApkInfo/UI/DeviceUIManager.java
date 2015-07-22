@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -18,6 +19,7 @@ import javax.swing.JTextArea;
 import javax.swing.text.DefaultCaret;
 
 import com.ApkInfo.Core.AdbWrapper;
+import com.ApkInfo.Core.CoreApkTool;
 import com.ApkInfo.Core.AdbWrapper.AdbWrapperListener;
 import com.ApkInfo.Core.AdbWrapper.DeviceStatus;
 import com.ApkInfo.Core.AdbWrapper.PackageInfo;
@@ -36,17 +38,21 @@ public class DeviceUIManager
 	private String strPackageName;
 	private String strSourcePath;
 	private String strLibPath;
+	private String tmpApkPath;
 	
 	public interface InstallButtonStatusListener
 	{
 		public void SetInstallButtonStatus(Boolean Flag);
+		public void OnOpenApk(String path);
 	}
 	private InstallButtonStatusListener Listener;
 	
-	public DeviceUIManager(String PackageName, String apkPath, String libPath, final boolean checkPackage, final InstallButtonStatusListener Listener)
+	public DeviceUIManager(String PackageName, String apkPath, String libPath, 
+			final boolean samePackage, final boolean checkPackage, final InstallButtonStatusListener Listener)
 	{
 		final ImageIcon Appicon = Resource.IMG_QUESTION.getImageIcon();
         final Object[] options = {"Push", "Install"};
+        final Object[] checkPackOptions = {"Open", "Install", "Close"};
 		strPackageName = PackageName;
 		strSourcePath = apkPath;
 		strLibPath = libPath;
@@ -87,6 +93,34 @@ public class DeviceUIManager
 				boolean alreadyCheak = false;
 				printlnLog("getPackageInfo() " + strPackageName);
 				PackageInfo pkgInfo = AdbWrapper.getPackageInfo(dev.name, strPackageName);
+				
+				if(checkPackage) {
+					alreadyCheak = true;
+					if(pkgInfo != null) {
+						String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
+						int n = JOptionPane.showOptionDialog(null, "동일 package가 설치되어있습니다.\n"  +  strLine + pkgInfo.getSummary() + strLine + "Open or Install?",
+								"Warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, checkPackOptions, checkPackOptions[2]);
+						System.out.println("Seltected index : " + n);
+						if(n==-1 || n==2) {
+							Listener.SetInstallButtonStatus(true);
+							setVisible(false);
+							return;
+						} else if(n==0) {
+							String tmpPath = "/" + dev.name + pkgInfo.apkPath;
+							tmpPath = tmpPath.replaceAll("/", File.separator+File.separator).replaceAll("//", "/");
+							tmpPath = CoreApkTool.makeTempPath(tmpPath)+".apk";
+							tmpApkPath = tmpPath; 
+							System.out.println(tmpPath);
+							AdbWrapper.PullApk(dev.name, pkgInfo.apkPath, tmpPath, new AdbWrapperObserver("pull", dev.name));
+							return;
+						}
+					} else {
+						JOptionPane.showMessageDialog(null, "동일 패키지가 설치되어 있지 않습니다.", "Info", JOptionPane.INFORMATION_MESSAGE, Appicon);
+						Listener.SetInstallButtonStatus(true);
+						setVisible(false);
+						return;
+					}
+				}
 				if(pkgInfo != null) {
 					printlnLog(pkgInfo.getSummary());
 					if(pkgInfo.isSystemApp == true) {
@@ -112,7 +146,7 @@ public class DeviceUIManager
 							printlnLog("adbd cannot run as root in production builds");
 						}
 					}
-					if(checkPackage && !alreadyCheak) {
+					if(samePackage && !alreadyCheak) {
 						String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
 						int n = JOptionPane.showConfirmDialog(null, "동일 package가 설치되어있습니다.\n"  +  strLine + pkgInfo.getSummary() + strLine + "Continue install?",
 								"Warning", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon);
@@ -187,10 +221,12 @@ public class DeviceUIManager
 		public void OnError() {
 			if(type.equals("push")) {
 				printlnLog("Failure...");
-				JOptionPane.showMessageDialog(null, "Failure...", "Waring",JOptionPane.QUESTION_MESSAGE, WaringAppicon);
-			} else {
-				JOptionPane.showMessageDialog(null, "Failure...", "Complete", JOptionPane.INFORMATION_MESSAGE, SucAppicon);
-			}
+				JOptionPane.showMessageDialog(null, "Failure...", "Error",JOptionPane.ERROR_MESSAGE, WaringAppicon);
+			} else if(type.equals("install")) {
+				JOptionPane.showMessageDialog(null, "Failure...", "Error", JOptionPane.ERROR_MESSAGE, WaringAppicon);
+			} else if(type.equals("pull")) {
+				JOptionPane.showMessageDialog(null, "Failure...", "Error", JOptionPane.ERROR_MESSAGE, WaringAppicon);
+			} 
 		}
 
 		@Override
@@ -203,9 +239,12 @@ public class DeviceUIManager
 					AdbWrapper.reboot(device);
 					printlnLog("Reboot...");
 				}
-			} else {
+			} else if(type.equals("install")) {
 				JOptionPane.showMessageDialog(null, "Success", "Complete", JOptionPane.INFORMATION_MESSAGE, SucAppicon);
-			}
+			} else if(type.equals("pull")) {
+				setVisible(false);
+				if(Listener != null) Listener.OnOpenApk(tmpApkPath);
+			} 
 		}
 
 		@Override

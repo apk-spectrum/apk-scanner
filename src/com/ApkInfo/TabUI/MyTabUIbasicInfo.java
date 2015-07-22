@@ -187,15 +187,11 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 	{
 		StringBuilder permGroup = new StringBuilder("");
 		
-		for(String pgk: apkInfo.PermissionList) {
-			System.out.println(pgk);
-		}
 		permGroupManager = new PermissionGroupManager(apkInfo.PermissionList.toArray(new String[0]));
 		HashMap<String, PermissionGroup> map = permGroupManager.getPermGroupMap();
 		Set<String> keys = map.keySet();
 		int cnt = 0;
 		for(String key: keys) {
-			System.out.println("key - " + key);
 			PermissionGroup g = map.get(key);
 			permGroup.append(makeHyperLink("@event", makeImage(g.icon), g.permSummary, g.permGroup));
 			if(++cnt % 15 == 0) permGroup.append("<br/>");

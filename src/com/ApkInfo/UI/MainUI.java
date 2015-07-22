@@ -141,7 +141,7 @@ public class MainUI extends JFrame implements WindowListener
 			openApk(apkFile);
 		}
 		
-		private void installApk()
+		private void installApk(boolean checkPackage)
 		{
 			ApkInfo apkInfo = null;
 			if(mApkManager != null) {
@@ -151,10 +151,16 @@ public class MainUI extends JFrame implements WindowListener
 			mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, false);
 			String libPath = apkInfo.WorkTempPath + File.separator + "lib" + File.separator;
 			new DeviceUIManager(apkInfo.PackageName, apkInfo.ApkPath, libPath , 
-					SettingDlg.getSamePackage().equals("true"), new InstallButtonStatusListener() {
+					SettingDlg.getSamePackage().equals("true"), checkPackage, new InstallButtonStatusListener() {
 				@Override
 				public void SetInstallButtonStatus(Boolean Flag) {
 					mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, Flag);
+				}
+
+				@Override
+				public void OnOpenApk(String path) {
+					if((new File(path)).exists())
+						newWindow(path);
 				}
 			});
 		}
@@ -231,7 +237,7 @@ public class MainUI extends JFrame implements WindowListener
 				} else if(btn_label.equals(Resource.STR_BTN_PACK.getString())) {
 					JOptionPane.showMessageDialog(null, "pack", "pack", JOptionPane.INFORMATION_MESSAGE);
 				} else if(btn_label.equals(Resource.STR_BTN_INSTALL.getString())) {
-					installApk();
+					installApk(false);
 				} else if(btn_label.equals(Resource.STR_BTN_SETTING.getString())) {
 					
 					SettingDlg = new SettingDlg();
@@ -258,9 +264,9 @@ public class MainUI extends JFrame implements WindowListener
 				} else if(cmd.equals(Resource.STR_MENU_PACKAGE.getString())) {
 					
 				} else if(cmd.equals(Resource.STR_MENU_INSTALL.getString())) {
-					installApk();
+					installApk(false);
 				} else if(cmd.equals(Resource.STR_MENU_CHECK_INSTALLED.getString())) {
-					
+					installApk(true);
 				}
 			}
 		}

@@ -22,7 +22,8 @@ public class AdbWrapper
 
 	enum INSTALL_TYPE {
 		INSTALL,
-		PUSH
+		PUSH,
+		PULL
 	}
 	
 	static public class DeviceStatus
@@ -252,6 +253,22 @@ public class AdbWrapper
 		
 		return;
 	}
+	
+	static public void PullApk(String name, String srcApkPath, String destApkPath, AdbWrapperListener listener)
+	{
+		System.out.println("PullApk() device : " + name + ", apkPath: " + srcApkPath);
+		if(adbCmd == null || name == null || destApkPath == null || srcApkPath == null || srcApkPath.isEmpty()) {
+			if(listener != null) {
+				listener.OnError();
+				listener.OnCompleted();
+			}
+			return;
+		}
+
+		new MyCoreThead(INSTALL_TYPE.PULL, name, srcApkPath, destApkPath, null, listener).start();
+
+		return;
+	}
 
 	static public DeviceInfo getDeviceInfo(String name)
 	{
@@ -360,7 +377,28 @@ public class AdbWrapper
 						listener.OnError();
 					}					
 				}
-			} else {
+			} else if(type == INSTALL_TYPE.PULL) {
+				String[] result;
+				String[] cmd = {adbCmd, "-s", this.device, "pull", this.srcApkPath, this.destApkPath};
+
+				result = MyConsolCmd.exc(cmd,true,new MyConsolCmd.OutputObserver() {
+					@Override
+					public boolean ConsolOutput(String output) {
+						sendMessage(output.replaceAll("^.*adb(\\.exe)?", "adb"));
+						return true;
+					}
+				});
+				
+				if(listener != null) {
+					listener.OnCompleted();
+					if(result[0].matches(".*s\\)")) {
+						listener.OnSuccess();
+					} else {
+						listener.OnError();
+					}					
+				}
+				
+			} else if(type == INSTALL_TYPE.PUSH) {
 				String[][] result;
 				List<String[]> cmd = new ArrayList<String[]>();
 				cmd.add(new String[] {adbCmd, "-s", this.device, "root"});
