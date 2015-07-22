@@ -10,6 +10,15 @@
     <string name="btn_install">Install</string>
     <string name="btn_setting">Setting</string>
     <string name="btn_about">About</string>
+    
+    <string name="menu_new">New</string>
+    <string name="menu_new_window">New Window</string>
+    <string name="menu_new_apk_file">APK file by new window</string>
+    <string name="menu_new_package">Package on device by new window</string>
+    <string name="menu_apk_file">APK file</string>
+    <string name="menu_package">Package on device</string>
+    <string name="menu_install">Intsall</string>
+    <string name="menu_check_installed">Check installed</string>
 
     <string name="tab_basic_info">APK Info</string>
     <string name="tab_widget">Widget</string>
