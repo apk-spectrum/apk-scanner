@@ -78,8 +78,10 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
         	feature += ", " + makeHyperLink("", "SHARED_USER_ID", "SHARED_USER_ID", null);
         }
         
+        String permGorupImg = makePermGroup();
+		
         int infoHeight = 270;
-        if(apkInfo.PermissionList.size() > 15) infoHeight = 240;
+        if(permGroupManager.getPermGroupMap().keySet().size() > 15) infoHeight = 240;
 
         StringBuilder strTabInfo = new StringBuilder("");
 		strTabInfo.append("<table width=10000>");
@@ -119,7 +121,7 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
         strTabInfo.append("          " + makeHyperLink("@event","<u>Display the entire list</u>","Display the entire list","display-list"));
         strTabInfo.append("        </font><br/>");
         strTabInfo.append("        <font style=\"font-size:5px\"><br/></font>");
-        strTabInfo.append("        " + makePermGroup());
+        strTabInfo.append("        " + permGorupImg);
         strTabInfo.append("      </div>");
         strTabInfo.append("    </td>");
         strTabInfo.append("  </tr>");
