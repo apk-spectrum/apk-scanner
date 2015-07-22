@@ -33,7 +33,7 @@ public class ApkManager
 		public String MinSDKversion = null;
 		public String TargerSDKversion = null;
 		public String Signing = null;
-		public String Hidden = null;
+		public boolean isHidden = false;
 		public String IconPath = null;
 		public String Permissions = null;
 		public String Startup = null;
@@ -62,7 +62,6 @@ public class ApkManager
 			if(MinSDKversion == null) MinSDKversion = "";
 			if(TargerSDKversion == null) TargerSDKversion = "";
 			if(Signing == null) Signing = "";
-			if(Hidden == null) Hidden = "";
 			if(IconPath == null) IconPath = "";
 			if(Permissions == null) Permissions = "";
 			if(Startup == null) Startup = "";
@@ -333,10 +332,8 @@ public class ApkManager
 
 	        
 	        // hidden
-	        if(xmlAndroidManifest.isNode("//category[@name='android.intent.category.LAUNCHER']")) {
-	        	mApkInfo.Hidden = "LAUNCHER";
-	        } else {
-	        	mApkInfo.Hidden = "HIDDEN";
+	        if(!xmlAndroidManifest.isNode("//category[@name='android.intent.category.LAUNCHER']")) {
+	        	mApkInfo.isHidden = true;
 	        }
 	        
 	        // startup

@@ -26,13 +26,25 @@
     <string name="tab_image">이미지</string>
     <string name="tab_activity">액티비티</string>
     <string name="tab_cert">인증서</string>
+    
+    <string name="basic_permissions">권한</string>
+    <string name="basic_permlab_display_list">전체 리스트 보기</string>
+    <string name="basic_permdesc_display_list">앱이 추가한 전체 권한 목록을 확인 할 수 있습니다.</string>
+    <string name="basic_perm_list_title">전체 권한 목록</string>
+    <string name="basic_perm_display_title">권한정보 상세보기</string>
 
-    <string name="feature">Feature</string>
-    <string name="feature_launcher">LAUNCHER</string>
-    <string name="feature_hidden">HIDDEN</string>
-    <string name="feature_startup">START_UP</string>
-    <string name="feature_signature">SIGNATURE</string>
-    <string name="feature_shared_user_id">SHARED_USER_ID</string>
+    <string name="feature_lab">기능</string>
+    <string name="feature_desc">기능</string>
+    <string name="feature_launcher_lab">실행앱</string>
+    <string name="feature_launcher_desc">앱실행 아이콘이 있습니다.</string>
+    <string name="feature_hidden_lab">숨김앱</string>
+    <string name="feature_hidden_desc">앱의 실행 아이콘이 없습니다.</string>
+    <string name="feature_startup_lab">부팅시 실행</string>
+    <string name="feature_startup_desc">부팅시 실행 가능한 RECEIVE_BOOT_COMPLETED 권한을 사용합니다.</string>
+    <string name="feature_signature_lab">서명 권한</string>
+    <string name="feature_signature_desc">서명 권한</string>
+    <string name="feature_shared_user_id_lab">SHARED_USER_ID</string>
+    <string name="feature_shared_user_id_desc">SHARED_USER_ID 옵션이 설정되어 있습니다.</string>
     
     <string name="widget_column_image">이미지</string>
     <string name="widget_column_label">이름</string>

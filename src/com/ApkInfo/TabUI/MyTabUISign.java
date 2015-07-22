@@ -112,6 +112,7 @@ public class MyTabUISign extends JPanel implements ComponentListener{
     
     public void reloadResource() {
     	jlist.removeAll();
+    	if(mCertList == null) return;
     	int listSize = mCertList.size();
     	String[] labels;
     	if(listSize > 1) {

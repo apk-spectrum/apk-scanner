@@ -221,6 +221,7 @@ public class MyToolBarUI extends JPanel implements ActionListener{
     		if(buttonId != ButtonId.ALL) break;
     	case INSTALL:
     		btn_install.setEnabled(enabled);
+    		btn_install_arrow.setEnabled(enabled);
     		if(buttonId != ButtonId.ALL) break;
     	default:
     		break;

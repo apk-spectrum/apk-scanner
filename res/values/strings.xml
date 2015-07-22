@@ -26,13 +26,25 @@
     <string name="tab_image">Image</string>
     <string name="tab_activity">Activity</string>
     <string name="tab_cert">Cert</string>
+    
+    <string name="basic_permissions">Permissions</string>
+    <string name="basic_permlab_display_list">Display the entire list</string>
+    <string name="basic_permdesc_display_list">Display the entire list</string>
+    <string name="basic_perm_list_title">Permissions list</string>
+    <string name="basic_perm_display_title">Permissions description</string>
 
-    <string name="feature">Feature</string>
-    <string name="feature_launcher">LAUNCHER</string>
-    <string name="feature_hidden">HIDDEN</string>
-    <string name="feature_startup">START_UP</string>
-    <string name="feature_signature">SIGNATURE</string>
-    <string name="feature_shared_user_id">SHARED_USER_ID</string>
+    <string name="feature_lab">Feature</string>
+    <string name="feature_desc">Feature</string>
+    <string name="feature_launcher_lab">LAUNCHER</string>
+    <string name="feature_launcher_desc">LAUNCHER</string>
+    <string name="feature_hidden_lab">HIDDEN</string>
+    <string name="feature_hidden_desc">HIDDEN</string>
+    <string name="feature_startup_lab">START_UP</string>
+    <string name="feature_startup_desc">START_UP</string>
+    <string name="feature_signature_lab">SIGNATURE</string>
+    <string name="feature_signature_desc">SIGNATURE</string>
+    <string name="feature_shared_user_id_lab">SHARED_USER_ID</string>
+    <string name="feature_shared_user_id_desc">SHARED_USER_ID</string>
     
     <string name="widget_column_image">Image</string>
     <string name="widget_column_label">Label</string>

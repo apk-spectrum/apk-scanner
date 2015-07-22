@@ -98,7 +98,7 @@ public class MyTabUI extends JPanel{
     	tabbedPane.setTitleAt(5, tabbedPane.getTitleAt(5).replaceAll("^([^\\(]*)", labels[5]));
     	
 
-		//((MyTabUIbasicInfo) Panels[0]).reloadResource();
+		((MyTabUIbasicInfo) Panels[0]).reloadResource();
 		((MyTabUIWidget) Panels[1]).reloadResource();
         ((MyTabUILib) Panels[2]).reloadResource();
 		//((MyTabUIResource) Panels[3]).reloadResource();
@@ -118,12 +118,14 @@ public class MyTabUI extends JPanel{
 	
 	public void setData(ApkInfo apkInfo)
 	{
-        tabbedPane.setTitleAt(3, labels[3] + "(...)");
-		tabbedPane.setEnabledAt(3, false);
+		if(apkInfo != null) {
+	        tabbedPane.setTitleAt(3, labels[3] + "(...)");
+			tabbedPane.setEnabledAt(3, false);
+		}
         
 		((MyTabUIbasicInfo) Panels[0]).setData(apkInfo);
 
-		if(apkInfo.WidgetList.size() > 0) {
+		if(apkInfo != null && apkInfo.WidgetList.size() > 0) {
 			((MyTabUIWidget) Panels[1]).setData(apkInfo.WidgetList);
 	        tabbedPane.setTitleAt(1, labels[1] + "(" + apkInfo.WidgetList.size() + ")");
 	        tabbedPane.setEnabledAt(1, true);
@@ -132,7 +134,7 @@ public class MyTabUI extends JPanel{
 			tabbedPane.setEnabledAt(1, false);
 		}
 
-		if(apkInfo.LibList.size() > 0) {
+		if(apkInfo != null && apkInfo.LibList.size() > 0) {
 	        ((MyTabUILib) Panels[2]).setData(apkInfo.LibList);
 	        tabbedPane.setTitleAt(2, labels[2] + "(" + apkInfo.LibList.size()  + ")");
 			tabbedPane.setEnabledAt(2, true);
@@ -141,7 +143,7 @@ public class MyTabUI extends JPanel{
 			tabbedPane.setEnabledAt(2, false);
 		}
 
-		if(apkInfo.ActivityList.size() > 0) {
+		if(apkInfo != null && apkInfo.ActivityList.size() > 0) {
 	        ((MyTabUIActivity) Panels[4]).setData(apkInfo.ActivityList);
 	        tabbedPane.setTitleAt(4, labels[4] + "(" + apkInfo.ActivityList.size()  + ")");
 			tabbedPane.setEnabledAt(4, true);
@@ -150,7 +152,7 @@ public class MyTabUI extends JPanel{
 			tabbedPane.setEnabledAt(4, false);
 		}
 
-		if(apkInfo.CertList.size() > 0) {
+		if(apkInfo != null && apkInfo.CertList.size() > 0) {
 	        ((MyTabUISign) Panels[5]).setData(apkInfo.CertSummary, apkInfo.CertList);
 	        tabbedPane.setTitleAt(5, labels[5] + "(" + apkInfo.CertList.size()  + ")");
 			tabbedPane.setEnabledAt(5, true);
@@ -159,8 +161,8 @@ public class MyTabUI extends JPanel{
 			tabbedPane.setEnabledAt(5, false);
 		}
 
-        MainUI.ProgressBarDlg.addProgress(25,"check resource(*.png)...\n");
-		if(apkInfo.ImageList.size() > 0) {
+        if(apkInfo != null) MainUI.ProgressBarDlg.addProgress(25,"check resource(*.png)...\n");
+		if(apkInfo != null && apkInfo.ImageList.size() > 0) {
 			((MyTabUIResource) Panels[3]).setData(apkInfo.WorkTempPath, apkInfo.ImageList);
 	        tabbedPane.setTitleAt(3, labels[3] + "(" + apkInfo.ImageList.size()  + ")");
 			tabbedPane.setEnabledAt(3, true);

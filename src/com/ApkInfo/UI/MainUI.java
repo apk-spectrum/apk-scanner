@@ -227,10 +227,6 @@ public class MainUI extends JFrame implements WindowListener
 					}
 				} else if(btn_label.equals(Resource.STR_BTN_UNPACK.getString())) {
 					//JOptionPane.showMessageDialog(null, "unpack", "unpack", JOptionPane.INFORMATION_MESSAGE);
-					if(Resource.getLanguage() == null)
-						setLanguage("ko");
-					else
-						setLanguage(null);
 				} else if(btn_label.equals(Resource.STR_BTN_PACK.getString())) {
 					JOptionPane.showMessageDialog(null, "pack", "pack", JOptionPane.INFORMATION_MESSAGE);
 				} else if(btn_label.equals(Resource.STR_BTN_INSTALL.getString())) {
@@ -240,7 +236,9 @@ public class MainUI extends JFrame implements WindowListener
 					SettingDlg = new SettingDlg();
 					SettingDlg.makeDialog();
 					
-					//JOptionPane.showMessageDialog(null, "Setting", "Setting", JOptionPane.INFORMATION_MESSAGE, null);
+					if(!Resource.getLanguage().equals(SettingDlg.getLanguage())) {
+						setLanguage(SettingDlg.getLanguage());
+					}
 				} else if(btn_label.equals(Resource.STR_BTN_ABOUT.getString())) {
 					showAbout();
 				}
@@ -270,7 +268,10 @@ public class MainUI extends JFrame implements WindowListener
 	public static void setLanguage(String lang)
 	{
 		Resource.setLanguage(lang);
-		String title = Resource.STR_APP_NAME.getString() + " - " + mApkManager.getApkInfo().ApkPath.substring(mApkManager.getApkInfo().ApkPath.lastIndexOf(File.separator)+1);
+		String title = Resource.STR_APP_NAME.getString();
+		if(mApkManager != null) {
+			title += " - " + mApkManager.getApkInfo().ApkPath.substring(mApkManager.getApkInfo().ApkPath.lastIndexOf(File.separator)+1);
+		}
 		frame.setTitle(title);
 		mMyToolBarUI.reloadResource();
 		mMyTabUI.reloadResource();
@@ -313,6 +314,9 @@ public class MainUI extends JFrame implements WindowListener
 					WaitingDlg = MyProgressBarDemo.createAndShowGUI(ProgressBarDlg);
 					
 					WaitingDlg.setVisible(false);
+					
+					frame.setTitle(Resource.STR_APP_NAME.getString());
+					mMyTabUI.setData(null);
 					frame.setVisible(true);
 					
 				}
