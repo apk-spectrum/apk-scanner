@@ -1,6 +1,5 @@
 package com.ApkInfo.Core;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -63,9 +62,11 @@ public class PermissionGroupManager {
 				PermissionGroup g = permGroupMap.get(permInfo.permGroup);
 				if(g != null) {
 					g.permList.add(permInfo);
+					g.permSummary += "\n - " + permInfo.label;
 				} else {
 					g = getPermissionGroup(permInfo.permGroup);
 					g.permList.add(permInfo);
+					g.permSummary += "\n - " + permInfo.label;
 					permGroupMap.put(permInfo.permGroup, g);
 				}
 			}
@@ -83,6 +84,8 @@ public class PermissionGroupManager {
 				permInfo.permGroup = permXPath.getAttributes("android:permissionGroup");
 				permInfo.label = getInfoString(permXPath.getAttributes("android:label"));
 				permInfo.desc = getInfoString(permXPath.getAttributes("android:description"));
+				if(permInfo.label != null) permInfo.label = permInfo.label.replaceAll("\"", "");
+				if(permInfo.desc != null) permInfo.desc = permInfo.desc.replaceAll("\"", "");
 			}
 		}
 		System.out.println(permInfo.permission + ", " + permInfo.permGroup + ", " + permInfo.label + ", " + permInfo.desc);
@@ -92,7 +95,7 @@ public class PermissionGroupManager {
 	public PermissionGroup getPermissionGroup(String group)
 	{
 		PermissionGroup permGroup = new PermissionGroup();
-		permGroup.permGroup =  group;
+		permGroup.permGroup = group;
 		permGroup.permList = new ArrayList<PermissionInfo>();
 
 		if(xmlPermissions != null) {
@@ -101,8 +104,12 @@ public class PermissionGroupManager {
 				permGroup.icon = getIconPath(groupXPath.getAttributes("android:icon"));
 				permGroup.label = getInfoString(groupXPath.getAttributes("android:label"));
 				permGroup.desc = getInfoString(groupXPath.getAttributes("android:description"));
+				if(permGroup.label != null) permGroup.label = permGroup.label.replaceAll("\"", "");
+				if(permGroup.desc != null) permGroup.desc = permGroup.desc.replaceAll("\"", "");
 			}
 		}
+		permGroup.permSummary = "[" + permGroup.label + "] : " + permGroup.desc;
+		
 		System.out.println(permGroup.icon + ", " + permGroup.permGroup + ", " + permGroup.label + ", " + permGroup.desc);
 		return permGroup;
 	}

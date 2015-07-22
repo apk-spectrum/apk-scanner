@@ -10,12 +10,12 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
-import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UIUtil.JHtmlEditorPane;
 import com.ApkInfo.UIUtil.JHtmlEditorPane.HyperlinkClickListener;
 import com.ApkInfo.Core.ApkManager.ApkInfo;
 import com.ApkInfo.Core.PermissionGroupManager.PermissionGroup;
 import com.ApkInfo.Core.PermissionGroupManager;
+import com.ApkInfo.Core.PermissionGroupManager.PermissionInfo;
 
 public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListener
 {
@@ -23,6 +23,7 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 
 	private JHtmlEditorPane apkinform;
 	private ApkInfo apkInfo;
+	private PermissionGroupManager permGroupManager;
 
 	public MyTabUIbasicInfo() {
     	apkinform = new JHtmlEditorPane();
@@ -76,14 +77,17 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
         if(!apkInfo.SharedUserId.isEmpty()) {
         	feature += ", " + makeHyperLink("", "SHARED_USER_ID", "SHARED_USER_ID", null);
         }
+        
+        int infoHeight = 270;
+        if(apkInfo.PermissionList.size() > 15) infoHeight = 240;
 
         StringBuilder strTabInfo = new StringBuilder("");
 		strTabInfo.append("<table width=10000>");
 		strTabInfo.append("  <tr>");
-		strTabInfo.append("    <td width=170 height=230>");
-		strTabInfo.append("      <image src=\"file:/"+apkInfo.IconPath.replaceAll("^/", "") +"\" width=150 height=150 />");
+		strTabInfo.append("    <td width=170 height=" + infoHeight + ">");
+		strTabInfo.append("      <image src=\"file:/" + apkInfo.IconPath.replaceAll("^/", "") + "\" width=150 height=150 />");
 		strTabInfo.append("    </td>");
-		strTabInfo.append("    <td height=230>");
+		strTabInfo.append("    <td height=" + infoHeight + ">");
 		strTabInfo.append("      <div id=\"basic-info\">");
         strTabInfo.append("        <font style=\"font-size:20px; color:#548235; font-weight:bold\">");
         strTabInfo.append("          " + makeHyperLink("", apkInfo.Labelname, "App name", null));
@@ -134,13 +138,13 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 		for(String pgk: apkInfo.PermissionList) {
 			System.out.println(pgk);
 		}
-		PermissionGroupManager permGroupManager = new PermissionGroupManager(apkInfo.PermissionList.toArray(new String[0]));
+		permGroupManager = new PermissionGroupManager(apkInfo.PermissionList.toArray(new String[0]));
 		HashMap<String, PermissionGroup> map = permGroupManager.getPermGroupMap();
 		Set<String> keys = map.keySet();
 		for(String key: keys) {
 			System.out.println("key - " + key);
 			PermissionGroup g = map.get(key);
-			permGroup.append(makeHyperLink("@event", makeImage(g.icon), g.permGroup, g.permGroup));			
+			permGroup.append(makeHyperLink("@event", makeImage(g.icon), g.permSummary, g.permGroup));			
 		}
 		
 		return permGroup.toString();
@@ -169,6 +173,46 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 		System.out.println("click : "+id);
 		if(id.equals("display-list")) {
 			JOptionPane.showMessageDialog(null, apkInfo.Permissions, "Permissions list", JOptionPane.INFORMATION_MESSAGE);
+		} else {
+			showPermDetailDesc(id);
 		}
+	}
+	
+	public void showPermDetailDesc(String group)
+	{
+		HashMap<String, PermissionGroup> map = permGroupManager.getPermGroupMap();
+		PermissionGroup g = map.get(group);
+		
+		if(g == null) return;
+
+		StringBuilder body = new StringBuilder("");
+		body.append("<div id=\"perm-detail-desc\">");
+		body.append("■ " + g.label + " - " + "[" + group + "]\n");
+		body.append(" : " + g.desc + "\n<hr/>\n");
+		
+		for(PermissionInfo info: g.permList) {
+			body.append("▶ " + info.label + " [" + info.permission + "]\n");
+			body.append(" : " + info.desc + "\n");
+		}
+		body.append("</div>");
+		
+		JLabel label = new JLabel();
+	    Font font = label.getFont();
+
+	    // create some css from the label's font
+	    StringBuilder style = new StringBuilder("#perm-detail-desc {");
+	    style.append("font-family:" + font.getFamily() + ";");
+	    style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
+	    style.append("font-size:" + font.getSize() + "pt;}");
+	    style.append("#about a {text-decoration:none;}");
+
+	    // html content
+	    JHtmlEditorPane descPane = new JHtmlEditorPane("", "", body.toString().replaceAll("\n", "<br/>"));
+	    descPane.setStyle(style.toString());
+
+	    descPane.setEditable(false);
+	    descPane.setBackground(label.getBackground());
+	    
+		JOptionPane.showMessageDialog(null, descPane, "Permissions description", JOptionPane.INFORMATION_MESSAGE);
 	}
 }
