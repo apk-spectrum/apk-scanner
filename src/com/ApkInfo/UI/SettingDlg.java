@@ -55,7 +55,7 @@ public class SettingDlg extends JDialog implements ActionListener{
 	public String getLanguage() {
 		return strLanguage;
 	}
-	public String strSamePackage() {
+	public String getSamePackage() {
 		return strSamePackage;
 	}
 	
@@ -83,7 +83,8 @@ public class SettingDlg extends JDialog implements ActionListener{
 							strSamePackage = line;
 							break;
 						case 3:
-							strframeworkResPath = line;
+							if(!line.equals("null"))
+								strframeworkResPath = line;
 							break;						
 						}
 						index ++;
@@ -161,7 +162,10 @@ public class SettingDlg extends JDialog implements ActionListener{
 		panel.add(textExcutePath);		
 		
 		textframeworkResPath = new JTextField(20);
-		textframeworkResPath.setText(this.strframeworkResPath);
+		if(this.strframeworkResPath != null && !this.strframeworkResPath.equals("null"))
+			textframeworkResPath.setText(this.strframeworkResPath);
+		else
+			textframeworkResPath.setText("");
 		textframeworkResPath.setBounds(111, 40, 293, 25);
 	    panel.add(textframeworkResPath);
 
@@ -239,8 +243,16 @@ public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == savebutton) {
 			System.out.println("save");
 			
-			this.strExcuteEditorPath = textExcutePath.getText();
-			this.strframeworkResPath = textframeworkResPath.getText();
+			if((new File(textExcutePath.getText().trim()).exists())) {
+				this.strExcuteEditorPath = textExcutePath.getText().trim();					
+			} else {
+				textExcutePath.setText(this.strExcuteEditorPath);
+			}
+			if((new File(textframeworkResPath.getText().trim()).exists())) {
+				this.strframeworkResPath = textframeworkResPath.getText().trim();					
+			} else {
+				textframeworkResPath.setText(this.strframeworkResPath);
+			}
 			
 			this.strSamePackage = String.valueOf(chckbxNewCheckBox.isSelected());
 			this.strLanguage = (String)comboBox.getSelectedItem();

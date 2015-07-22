@@ -150,7 +150,8 @@ public class MainUI extends JFrame implements WindowListener
 
 			mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, false);
 			String libPath = apkInfo.WorkTempPath + File.separator + "lib" + File.separator;
-			new DeviceUIManager(apkInfo.PackageName, apkInfo.ApkPath, libPath , new InstallButtonStatusListener() {
+			new DeviceUIManager(apkInfo.PackageName, apkInfo.ApkPath, libPath , 
+					SettingDlg.getSamePackage().equals("true"), new InstallButtonStatusListener() {
 				@Override
 				public void SetInstallButtonStatus(Boolean Flag) {
 					mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, Flag);

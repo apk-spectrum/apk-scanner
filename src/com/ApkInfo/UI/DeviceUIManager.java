@@ -43,7 +43,7 @@ public class DeviceUIManager
 	}
 	private InstallButtonStatusListener Listener;
 	
-	public DeviceUIManager(String PackageName, String apkPath, String libPath, final InstallButtonStatusListener Listener)
+	public DeviceUIManager(String PackageName, String apkPath, String libPath, final boolean checkPackage, final InstallButtonStatusListener Listener)
 	{
 		final ImageIcon Appicon = Resource.IMG_QUESTION.getImageIcon();
         final Object[] options = {"Push", "Install"};
@@ -84,6 +84,7 @@ public class DeviceUIManager
 				}
 				printlnLog(dev.getSummary());
 				
+				boolean alreadyCheak = false;
 				printlnLog("getPackageInfo() " + strPackageName);
 				PackageInfo pkgInfo = AdbWrapper.getPackageInfo(dev.name, strPackageName);
 				if(pkgInfo != null) {
@@ -106,9 +107,21 @@ public class DeviceUIManager
 								AdbWrapper.PushApk(dev.name, strSourcePath, pkgInfo.apkPath, strLibPath, new AdbWrapperObserver("push", dev.name));
 								return;
 							}
+							alreadyCheak = true;
 						} else {
 							printlnLog("adbd cannot run as root in production builds");
 						}
+					}
+					if(checkPackage && !alreadyCheak) {
+						String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
+						int n = JOptionPane.showConfirmDialog(null, "동일 package가 설치되어있습니다.\n"  +  strLine + pkgInfo.getSummary() + strLine + "Continue install?",
+								"Warning", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon);
+						System.out.println("Seltected index : " + n);
+						if(n==1) {
+							Listener.SetInstallButtonStatus(true);
+							setVisible(false);
+							return;
+						} 
 					}
 				}
 				printlnLog("Start install APK");
