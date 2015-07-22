@@ -172,10 +172,37 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 	public void hyperlinkClick(String id) {
 		System.out.println("click : "+id);
 		if(id.equals("display-list")) {
-			JOptionPane.showMessageDialog(null, apkInfo.Permissions, "Permissions list", JOptionPane.INFORMATION_MESSAGE);
+			showPermList();
 		} else {
 			showPermDetailDesc(id);
 		}
+	}
+	
+	public void showPermList()
+	{
+		JLabel label = new JLabel();
+	    Font font = label.getFont();
+
+		StringBuilder body = new StringBuilder("");
+		body.append("<div id=\"perm-list\">");
+		body.append(apkInfo.Permissions.replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
+		body.append("</div>");
+		
+	    // create some css from the label's font
+	    StringBuilder style = new StringBuilder("#perm-list {");
+	    style.append("font-family:" + font.getFamily() + ";");
+	    style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
+	    style.append("font-size:" + font.getSize() + "pt;}");
+	    style.append("#about a {text-decoration:none;}");
+
+	    // html content
+	    JHtmlEditorPane descPane = new JHtmlEditorPane("", "", body.toString().replaceAll("\n", "<br/>"));
+	    descPane.setStyle(style.toString());
+
+	    descPane.setEditable(false);
+	    descPane.setBackground(label.getBackground());
+	    
+		JOptionPane.showMessageDialog(null, descPane, "Permissions list", JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	public void showPermDetailDesc(String group)
