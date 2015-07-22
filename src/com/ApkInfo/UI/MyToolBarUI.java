@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,12 +11,12 @@ import java.awt.event.ActionListener;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
-import javax.swing.SwingUtilities;
 
 import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UIUtil.ToolBarButton;
@@ -36,6 +35,8 @@ public class MyToolBarUI extends JPanel implements ActionListener{
 	private ToolBarButton btn_setting;
     
 	private JButton btn_open_arrow;
+	private JButton btn_install_arrow;
+	
     public enum ButtonId {
     	OPEN,
     	MANIFEST,
@@ -72,13 +73,13 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         ImageIcon toolbar_about  =  Resource.IMG_TOOLBAR_ABOUT.getImageIcon(Iconsize,Iconsize);
         ImageIcon toolbar_setting  =  Resource.IMG_TOOLBAR_SETTING.getImageIcon(Iconsize,Iconsize);
         
-        ImageIcon toobar_open_hover  =  Resource.IMG_TOOLBAR_OPEN_HOVER.getImageIcon(Iconsize,Iconsize);
-        ImageIcon toolbar_manifest_hover =  Resource.IMG_TOOLBAR_MANIFEST_HOVER.getImageIcon(Iconsize,Iconsize);
-        ImageIcon toolbar_explorer_hover =  Resource.IMG_TOOLBAR_EXPLORER_HOVER.getImageIcon(Iconsize,Iconsize);
+        //ImageIcon toobar_open_hover  =  Resource.IMG_TOOLBAR_OPEN_HOVER.getImageIcon(Iconsize,Iconsize);
+        //ImageIcon toolbar_manifest_hover =  Resource.IMG_TOOLBAR_MANIFEST_HOVER.getImageIcon(Iconsize,Iconsize);
+        //ImageIcon toolbar_explorer_hover =  Resource.IMG_TOOLBAR_EXPLORER_HOVER.getImageIcon(Iconsize,Iconsize);
         ImageIcon toolbar_unpack_hover  =  Resource.IMG_TOOLBAR_UNPACK_HOVER.getImageIcon(Iconsize,Iconsize);
         ImageIcon toolbar_pack_hover  =  Resource.IMG_TOOLBAR_PACK_HOVER.getImageIcon(Iconsize,Iconsize);
-        ImageIcon toolbar_install_hover  =  Resource.IMG_TOOLBAR_INSTALL_HOVER.getImageIcon(Iconsize,Iconsize);
-        ImageIcon toolbar_about_hover  =  Resource.IMG_TOOLBAR_ABOUT_HOVER.getImageIcon(Iconsize,Iconsize);
+        //ImageIcon toolbar_install_hover  =  Resource.IMG_TOOLBAR_INSTALL_HOVER.getImageIcon(Iconsize,Iconsize);
+        //ImageIcon toolbar_about_hover  =  Resource.IMG_TOOLBAR_ABOUT_HOVER.getImageIcon(Iconsize,Iconsize);
         
         ImageIcon toolbar_open_arrow  =  Resource.IMG_TOOLBAR_OPEN_ARROW.getImageIcon(10,10);
         
@@ -108,10 +109,17 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         btn_open_arrow.setOpaque(false);
         btn_open_arrow.setFocusable(false);
         
-        final JPopupMenu menu = new JPopupMenu("Menu");      
-        menu.add("AAAAAAAAAAAAA");
-        menu.add("BAAAAAAAA");
-        menu.add("CCCCCCCCC");
+        final JPopupMenu menu = new JPopupMenu("Menu");
+        final JMenu new_submenu;
+        new_submenu = new JMenu("New");
+        new_submenu.add("New").addActionListener(listener);
+        new_submenu.add("Apk").addActionListener(listener);
+        new_submenu.add("Package on device").addActionListener(listener);
+        menu.add(new_submenu);
+        menu.add(getNewSeparator(JSeparator.HORIZONTAL, 1));
+        menu.add("APK").addActionListener(listener);
+        menu.add("Package on device").addActionListener(listener);
+
         btn_open_arrow.addActionListener( new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 menu.show(btn_open_arrow, btn_open_arrow.getWidth()/2, btn_open_arrow.getHeight());
@@ -123,46 +131,41 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         toolbar1.add(btn_open);
         toolbar1.add(btn_open_arrow);
         
-        toolbar1.add(getNewSeparator());
-        toolbar1.add(getNewSeparator());
+        toolbar1.add(getNewSeparator(JSeparator.VERTICAL, 2));
                 
         toolbar1.add(btn_show_manifest);
         toolbar1.add(btn_show_explorer);
         
-        toolbar1.add(getNewSeparator());
+        toolbar1.add(getNewSeparator(JSeparator.VERTICAL, 2));
         
         //toolbar1.add(btn_unpack);
         //toolbar1.add(btn_pack);
-        
-        toolbar1.add(getNewSeparator());
+        //toolbar1.add(getNewSeparator(JSeparator.VERTICAL, 2));
         
         toolbar1.add(btn_install);
     
-        btn_open_arrow = new JButton(toolbar_open_arrow);
+        btn_install_arrow = new JButton(toolbar_open_arrow);
         
-        btn_open_arrow.setMargin(new Insets(27,0,27,0));
+        btn_install_arrow.setMargin(new Insets(27,0,27,0));
         
-        btn_open_arrow.setBorderPainted(false);
-        btn_open_arrow.setOpaque(false);
-        btn_open_arrow.setFocusable(false);
+        btn_install_arrow.setBorderPainted(false);
+        btn_install_arrow.setOpaque(false);
+        btn_install_arrow.setFocusable(false);
         
         final JPopupMenu installmenu = new JPopupMenu("Menu");      
-        installmenu.add("111111");
-        installmenu.add("222222");
-        installmenu.add("333333333");
-        btn_open_arrow.addActionListener( new ActionListener() {
+        installmenu.add("Install").addActionListener(listener);;
+        installmenu.add("Check installed").addActionListener(listener);;
+        btn_install_arrow.addActionListener( new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                menu.show(btn_open_arrow, btn_open_arrow.getWidth()/2, btn_open_arrow.getHeight());
+            	installmenu.show(btn_install_arrow, btn_install_arrow.getWidth()/2, btn_install_arrow.getHeight());
             }
         } );
-        toolbar1.add(btn_open_arrow);
+        toolbar1.add(btn_install_arrow);
         
-        toolbar1.add(getNewSeparator());
-        toolbar1.add(getNewSeparator());
+        toolbar1.add(getNewSeparator(JSeparator.VERTICAL, 2));
         
         toolbar1.add(btn_setting);
-        toolbar1.add(getNewSeparator());
-        toolbar1.add(getNewSeparator());
+        toolbar1.add(getNewSeparator(JSeparator.VERTICAL, 2));
         
         toolbar1.add(btn_about);
         
@@ -183,12 +186,12 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         //setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
-    private JSeparator getNewSeparator()
+    private JSeparator getNewSeparator(int orientation, int size)
     {
-        JSeparator temp = new JSeparator(JSeparator.VERTICAL);
+        JSeparator temp = new JSeparator(orientation);
         temp.setBackground(Color.gray);
         temp.setForeground(Color.gray);
-        temp.setPreferredSize(new Dimension(1,0));
+        temp.setPreferredSize(new Dimension(size,size));
     	return temp;
     }
         
@@ -243,7 +246,6 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         btn_install.setToolTipText(Resource.STR_BTN_INSTALL.getString());
         btn_about.setToolTipText(Resource.STR_BTN_ABOUT.getString());
         btn_setting.setToolTipText(Resource.STR_BTN_SETTING.getString());
-        
     }
 
 	@Override

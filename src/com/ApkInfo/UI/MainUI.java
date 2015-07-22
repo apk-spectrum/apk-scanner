@@ -103,6 +103,59 @@ public class MainUI extends JFrame implements WindowListener
 		
 	class ToolBarListener implements ActionListener
 	{
+		
+		private void openApkFile()
+		{
+			JFileChooser jfc = new JFileChooser();
+			//jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("apk","apk"));
+							
+			jfc.showOpenDialog(null);
+			File dir = jfc.getSelectedFile();
+
+			if(dir!=null) {
+				ProgressBarDlg.init();
+				WaitingDlg.setVisible(true);
+				openApk(dir.getPath());
+			}
+		}
+		
+		private void showAbout()
+		{
+			final ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon(100,100);
+			StringBuilder body = new StringBuilder();
+			body.append("<div id=\"about\">");
+			body.append("  <H1>" + Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString() + "</H1>");
+			body.append("  Using following tools,<br/>");
+			body.append("  Apktool " + ApkManager.getApkToolVersion() + "<br/>");
+			body.append("  - <a href=\"http://ibotpeaches.github.io/Apktool/\" title=\"Apktool Project Site\">http://ibotpeaches.github.io/Apktool/</a><br/>");
+			body.append("  " + AdbWrapper.getVersion() + "<br/>");
+			body.append("  - <a href=\"http://developer.android.com/tools/help/adb.html\" title=\"Android Developer Site\">http://developer.android.com/tools/help/adb.html</a><br/>");
+			body.append("  <br/><hr/>");
+			body.append("  Programmed by <a href=\"mailto:" + Resource.STR_APP_MAKER_EMAIL.getString() + "\" title=\"" + Resource.STR_APP_MAKER_EMAIL.getString() + "\">" + Resource.STR_APP_MAKER.getString() + "</a>, 2015.<br/>");
+			body.append("</div>");
+
+			JLabel label = new JLabel();
+		    Font font = label.getFont();
+
+		    // create some css from the label's font
+		    StringBuilder style = new StringBuilder("#about {");
+		    style.append("font-family:" + font.getFamily() + ";");
+		    style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
+		    style.append("font-size:" + font.getSize() + "pt;}");
+		    style.append("#about a {text-decoration:none;}");
+
+		    // html content
+		    JHtmlEditorPane hep = new JHtmlEditorPane("", "", body.toString());
+		    hep.setStyle(style.toString());
+
+		    hep.setEditable(false);
+		    hep.setBackground(label.getBackground());
+
+		    // show
+		    JOptionPane.showMessageDialog(null, hep, Resource.STR_BTN_ABOUT.getString(), JOptionPane.INFORMATION_MESSAGE, Appicon);
+		}
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			ApkInfo apkInfo = null;
@@ -111,99 +164,62 @@ public class MainUI extends JFrame implements WindowListener
 				apkInfo = mApkManager.getApkInfo();
 			}
 	        
-			JButton b = (JButton) e.getSource();
-			String btn_label = b.getText();
-	        
-			if (btn_label.equals(Resource.STR_BTN_OPEN.getString())) {
-				JFileChooser jfc = new JFileChooser();
-				//jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("apk","apk"));
-								
-				jfc.showOpenDialog(null);
-				File dir = jfc.getSelectedFile();
-
-				if(dir!=null) {
-					ProgressBarDlg.init();
-					WaitingDlg.setVisible(true);
-					openApk(dir.getPath());
-				}
-			} else if(btn_label.equals(Resource.STR_BTN_MANIFEST.getString())) {
-				try {
-					if(System.getProperty("os.name").indexOf("Window") >-1) {
-						new ProcessBuilder("notepad", apkInfo.WorkTempPath + File.separator + "AndroidManifest.xml").start();
-					} else {  //for linux
-						new ProcessBuilder("gedit", apkInfo.WorkTempPath + File.separator + "AndroidManifest.xml").start();
-					}	
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-			} else if(btn_label.equals(Resource.STR_BTN_EXPLORER.getString())) {
-				try {
-					if(System.getProperty("os.name").indexOf("Window") >-1) {
-						new ProcessBuilder("explorer", apkInfo.WorkTempPath).start();
-					} else {  //for linux
-						new ProcessBuilder("nautilus", apkInfo.WorkTempPath).start();
+			if(e.getSource().getClass().getSimpleName().equals("ToolBarButton")) {
+				JButton b = (JButton) e.getSource();
+				String btn_label = b.getText();
+		        
+				if (btn_label.equals(Resource.STR_BTN_OPEN.getString())) {
+					openApkFile();
+				} else if(btn_label.equals(Resource.STR_BTN_MANIFEST.getString())) {
+					try {
+						if(System.getProperty("os.name").indexOf("Window") >-1) {
+							new ProcessBuilder("notepad", apkInfo.WorkTempPath + File.separator + "AndroidManifest.xml").start();
+						} else {  //for linux
+							new ProcessBuilder("gedit", apkInfo.WorkTempPath + File.separator + "AndroidManifest.xml").start();
+						}	
+					} catch (IOException e1) {
+						e1.printStackTrace();
 					}
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-			} else if(btn_label.equals(Resource.STR_BTN_UNPACK.getString())) {
-				//JOptionPane.showMessageDialog(null, "unpack", "unpack", JOptionPane.INFORMATION_MESSAGE);
-				if(Resource.getLanguage() == null)
-					setLanguage("ko");
-				else
-					setLanguage(null);
-			} else if(btn_label.equals(Resource.STR_BTN_PACK.getString())) {
-				JOptionPane.showMessageDialog(null, "pack", "pack", JOptionPane.INFORMATION_MESSAGE);
-			} else if(btn_label.equals(Resource.STR_BTN_INSTALL.getString())) {
-				mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, false);
-				String libPath = apkInfo.WorkTempPath + File.separator + "lib" + File.separator;
-				new DeviceUIManager(apkInfo.PackageName, apkInfo.ApkPath, libPath , new InstallButtonStatusListener() {
-					@Override
-					public void SetInstallButtonStatus(Boolean Flag) {
-						mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, Flag);
+				} else if(btn_label.equals(Resource.STR_BTN_EXPLORER.getString())) {
+					try {
+						if(System.getProperty("os.name").indexOf("Window") >-1) {
+							new ProcessBuilder("explorer", apkInfo.WorkTempPath).start();
+						} else {  //for linux
+							new ProcessBuilder("nautilus", apkInfo.WorkTempPath).start();
+						}
+					} catch (IOException e1) {
+						e1.printStackTrace();
 					}
-				});
-			} else if(btn_label.equals(Resource.STR_BTN_SETTING.getString())) {
+				} else if(btn_label.equals(Resource.STR_BTN_UNPACK.getString())) {
+					//JOptionPane.showMessageDialog(null, "unpack", "unpack", JOptionPane.INFORMATION_MESSAGE);
+					if(Resource.getLanguage() == null)
+						setLanguage("ko");
+					else
+						setLanguage(null);
+				} else if(btn_label.equals(Resource.STR_BTN_PACK.getString())) {
+					JOptionPane.showMessageDialog(null, "pack", "pack", JOptionPane.INFORMATION_MESSAGE);
+				} else if(btn_label.equals(Resource.STR_BTN_INSTALL.getString())) {
+					mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, false);
+					String libPath = apkInfo.WorkTempPath + File.separator + "lib" + File.separator;
+					new DeviceUIManager(apkInfo.PackageName, apkInfo.ApkPath, libPath , new InstallButtonStatusListener() {
+						@Override
+						public void SetInstallButtonStatus(Boolean Flag) {
+							mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, Flag);
+						}
+					});
+				} else if(btn_label.equals(Resource.STR_BTN_SETTING.getString())) {
+					
+					SettingDlg = new SettingDlg();
+					SettingDlg.makeDialog();
+					
+					//JOptionPane.showMessageDialog(null, "Setting", "Setting", JOptionPane.INFORMATION_MESSAGE, null);
+				} else if(btn_label.equals(Resource.STR_BTN_ABOUT.getString())) {
+					showAbout();
+				}
+			} if(e.getSource().getClass().getSimpleName().equals("JMenuItem")) {
+				String cmd = e.getActionCommand();
 				
-				SettingDlg= new SettingDlg();
-				SettingDlg.makeDialog();
-				
-				//JOptionPane.showMessageDialog(null, "Setting", "Setting", JOptionPane.INFORMATION_MESSAGE, null);
-			} else if(btn_label.equals(Resource.STR_BTN_ABOUT.getString())) {
-				final ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon(100,100);
-				StringBuilder body = new StringBuilder();
-				body.append("<div id=\"about\">");
-				body.append("<H1>" + Resource.STR_APP_NAME.getString() + " ");
-				body.append(Resource.STR_APP_VERSION.getString() + "</H1>");
-				body.append("With following tools,<br/>");
-				body.append("Apktool " + ApkManager.getApkToolVersion() + "<br/>");
-				body.append("  - <a href=\"http://ibotpeaches.github.io/Apktool/\" title=\"Apktool Project Site\">http://ibotpeaches.github.io/Apktool/</a><br/>");
-				body.append("" + AdbWrapper.getVersion() + "<br/>");
-				body.append("  - <a href=\"http://developer.android.com/tools/help/adb.html\" title=\"Android Developer Site\">http://developer.android.com/tools/help/adb.html</a><br/>");
-				body.append("<br/><hr/>");
-				body.append("Programmed by <a href=\"mailto:" + Resource.STR_APP_MAKER_EMAIL.getString() + "\" title=\"" + Resource.STR_APP_MAKER_EMAIL.getString() + "\">" + Resource.STR_APP_MAKER.getString() + "</a>, 2015.<br/>");
-				body.append("</div>");
-
-				JLabel label = new JLabel();
-			    Font font = label.getFont();
-
-			    // create some css from the label's font
-			    StringBuilder style = new StringBuilder("#about {");
-			    style.append("font-family:" + font.getFamily() + ";");
-			    style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-			    style.append("font-size:" + font.getSize() + "pt;}");
-			    style.append("#about a {text-decoration:none;}");
-
-			    // html content
-			    JHtmlEditorPane hep = new JHtmlEditorPane("", "", body.toString());
-			    hep.setStyle(style.toString());
-
-			    hep.setEditable(false);
-			    hep.setBackground(label.getBackground());
-
-			    // show
-			    JOptionPane.showMessageDialog(null, hep, Resource.STR_BTN_ABOUT.getString(), JOptionPane.INFORMATION_MESSAGE, Appicon);
+				openApkFile();
 			}
 		}
 	}
