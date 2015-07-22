@@ -291,11 +291,11 @@ public class MainUI extends JFrame implements WindowListener
 				
 				String apkPath = null;
 				SettingDlg = new SettingDlg();
+				Resource.setLanguage(SettingDlg.getLanguage());
 				if(args.length > 0 && !args[0].isEmpty() && (new File(args[0])).exists()) {
 					ProgressBarDlg = new MyProgressBarDemo();
 					WaitingDlg = MyProgressBarDemo.createAndShowGUI(ProgressBarDlg);
 					WaitingDlg.setVisible(true);
-					Resource.setLanguage(SettingDlg.getLanguage());
 					window = new MainUI();
 					window.initialize();
 					mMyToolBarUI.setEnabledAt(ButtonId.NEED_TARGET_APK, false);
