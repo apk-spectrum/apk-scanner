@@ -11,15 +11,20 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+
+import com.ApkInfo.UIUtil.FilteredTreeModel;
 
 import java.net.URL;
 import java.io.IOException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
  
 public class TreeDemo extends JPanel
                       implements TreeSelectionListener {
@@ -45,7 +50,11 @@ public class TreeDemo extends JPanel
         createNodes(top);
  
         //Create a tree that allows one selection at a time.
-        tree = new JTree(top);
+                        
+        FilteredTreeModel model = new FilteredTreeModel(new DefaultTreeModel(top));
+        tree = new JTree(model);
+        
+        
         tree.getSelectionModel().setSelectionMode
                 (TreeSelectionModel.SINGLE_TREE_SELECTION);
  
@@ -68,7 +77,30 @@ public class TreeDemo extends JPanel
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         JButton searchButton = new JButton("search");
-        JTextField textFilField = new JTextField(30);
+        final JTextField textFilField = new JTextField(30);
+        
+        textFilField.addKeyListener(new KeyAdapter()
+        {
+            public void keyPressed(KeyEvent ke)
+            {
+                if(!(ke.getKeyChar()==27||ke.getKeyChar()==65535))//this section will execute only when user is editing the JTextField
+                {
+                	
+                    FilteredTreeModel filteredModel = (FilteredTreeModel) tree.getModel();
+                    filteredModel.setFilter(textFilField.getText());
+                     
+                    DefaultTreeModel treeModel = (DefaultTreeModel) filteredModel.getTreeModel();
+                    treeModel.reload();
+                     
+                    expandTree(tree);
+                }
+            }
+            private void expandTree(final JTree tree) {
+                for (int i = 0; i < tree.getRowCount(); i++) {
+                  tree.expandRow(i);
+                }
+              }
+        });
         
         JScrollPane htmlView = new JScrollPane(htmlPane);
  
@@ -107,11 +139,20 @@ public class TreeDemo extends JPanel
         add(splitPane);
     }
  
-    /** Required by TreeSelectionListener interface. */
+    protected void findTree(String KeyWord) {
+		// TODO Auto-generated method stub
+		
+    	
+    	
+    	
+	}
+
+	/** Required by TreeSelectionListener interface. */
     public void valueChanged(TreeSelectionEvent e) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)
                            tree.getLastSelectedPathComponent();
- 
+        
+        
         if (node == null) return;
  
         Object nodeInfo = node.getUserObject();
@@ -178,58 +219,29 @@ public class TreeDemo extends JPanel
         DefaultMutableTreeNode category = null;
         DefaultMutableTreeNode book = null;
  
-        category = new DefaultMutableTreeNode("Books for Java Programmers");        
+        category = new DefaultMutableTreeNode("system");        
         top.add(category);
- 
-        //original Tutorial
-        book = new DefaultMutableTreeNode(new BookInfo
-            ("The Java Tutorial: A Short Course on the Basics",
-            "tutorial.html"));
-        category.add(book);
- 
-        //Tutorial Continued
-        book = new DefaultMutableTreeNode(new BookInfo
-            ("The Java Tutorial Continued: The Rest of the JDK",
-            "tutorialcont.html"));
-        category.add(book);
- 
-        //JFC Swing Tutorial
-        book = new DefaultMutableTreeNode(new BookInfo
-            ("The JFC Swing Tutorial: A Guide to Constructing GUIs",
-            "swingtutorial.html"));
-        category.add(book);
         
-        //Bloch
-        book = new DefaultMutableTreeNode(new BookInfo
-            ("Effective Java Programming Language Guide",
-         "bloch.html"));
-        category.add(book);
- 
-        //Arnold/Gosling
-        book = new DefaultMutableTreeNode(new BookInfo
-            ("The Java Programming Language", "arnold.html"));
-        category.add(book);
- 
-        //Chan
-        book = new DefaultMutableTreeNode(new BookInfo
-            ("The Java Developers Almanac",
-             "chan.html"));
-        category.add(book);
- 
-        category = new DefaultMutableTreeNode("Books for Java Implementers");
+        category = new DefaultMutableTreeNode("data");        
         top.add(category);
+        
+        for(int i=0; i< 3000; i++) {
+        	
+        	
+        	DefaultMutableTreeNode temp = new DefaultMutableTreeNode("" + (Math.random()));
+        	category.add(temp);
+        }
+        
+        
+        
+// 
+//        //original Tutorial
+//        book = new DefaultMutableTreeNode(new BookInfo
+//            ("The Java Tutorial: A Short Course on the Basics",
+//            "tutorial.html"));
+//        category.add(book);
  
-        //VM
-        book = new DefaultMutableTreeNode(new BookInfo
-            ("The Java Virtual Machine Specification",
-             "vm.html"));
-        category.add(book);
- 
-        //Language Spec
-        book = new DefaultMutableTreeNode(new BookInfo
-            ("The Java Language Specification",
-             "jls.html"));
-        category.add(book);
+
     }
          
     /**
