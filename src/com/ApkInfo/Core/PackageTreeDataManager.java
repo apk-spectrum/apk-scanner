@@ -20,13 +20,18 @@ public class PackageTreeDataManager {
 	{
 		this.device = device;
 		if(device == null) return;
-		ArrayDataObject =  AdbWrapper.getPackageList(device);
+		ArrayDataObject = AdbWrapper.getPackageList(device);
+	}
+	
+	public String getApkPath(String device, String packageName)
+	{
+		return AdbWrapper.getPackageInfo(device, packageName).apkPath;
 	}
 	
 	public ArrayList<PackageListObject> getDataArray() {		
 		return ArrayDataObject;
-	}		
-	
+	}
+
 }
 
 
