@@ -178,7 +178,7 @@ public class TreeDemo extends JPanel
         DefaultMutableTreeNode category = null;
         DefaultMutableTreeNode book = null;
  
-        category = new DefaultMutableTreeNode("Books for Java Programmers");
+        category = new DefaultMutableTreeNode("Books for Java Programmers");        
         top.add(category);
  
         //original Tutorial
@@ -198,7 +198,7 @@ public class TreeDemo extends JPanel
             ("The JFC Swing Tutorial: A Guide to Constructing GUIs",
             "swingtutorial.html"));
         category.add(book);
- 
+        
         //Bloch
         book = new DefaultMutableTreeNode(new BookInfo
             ("Effective Java Programming Language Guide",
