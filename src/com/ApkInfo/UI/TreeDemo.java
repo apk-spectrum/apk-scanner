@@ -12,7 +12,11 @@ import javax.swing.UIManager;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
@@ -30,7 +34,7 @@ public class TreeDemo extends JPanel
                       implements TreeSelectionListener {
     private JEditorPane htmlPane;
     private JTree tree;
-    private URL helpURL;
+    
     private static boolean DEBUG = false;
  
     //Optionally play with line styles.  Possible values are
@@ -42,7 +46,7 @@ public class TreeDemo extends JPanel
     private static boolean useSystemLookAndFeel = false;
  
     public TreeDemo() {
-        super(new GridLayout(1,0));
+        super(new BorderLayout());
  
         //Create the nodes.
         DefaultMutableTreeNode top =
@@ -72,7 +76,6 @@ public class TreeDemo extends JPanel
         //Create the HTML viewing pane.
         htmlPane = new JEditorPane();
         htmlPane.setEditable(false);
-        initHelp();
         
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
@@ -85,10 +88,18 @@ public class TreeDemo extends JPanel
             {
                 if(!(ke.getKeyChar()==27||ke.getKeyChar()==65535))//this section will execute only when user is editing the JTextField
                 {
+                	System.out.println(textFilField.getText()+ "    : " + Integer.valueOf(ke.getKeyChar()));
                 	
                     FilteredTreeModel filteredModel = (FilteredTreeModel) tree.getModel();
-                    filteredModel.setFilter(textFilField.getText());
-                     
+                    
+                    if(Integer.valueOf(ke.getKeyChar())==8) {
+                    	filteredModel.setFilter(textFilField.getText().substring(0, textFilField.getText().length()-1));
+                    } else if(Integer.valueOf(ke.getKeyChar())==10) {
+                    	filteredModel.setFilter(textFilField.getText());
+                    } else {
+                    	filteredModel.setFilter(textFilField.getText() + ke.getKeyChar());
+                    }
+                    
                     DefaultTreeModel treeModel = (DefaultTreeModel) filteredModel.getTreeModel();
                     treeModel.reload();
                      
@@ -109,19 +120,20 @@ public class TreeDemo extends JPanel
         tpanel.add(textFilField);
         tpanel.add(searchButton);
         
-        panel.add(tpanel, BorderLayout.SOUTH);
-        panel.add(treeView,BorderLayout.CENTER);
-        
-        JPanel NorthPanel = new JPanel(new BorderLayout());
-        JPanel ButtonPanel = new JPanel();
+        panel.add(tpanel, BorderLayout.CENTER);
+        panel.add(treeView,BorderLayout.NORTH);
         
         JButton openbtn = new JButton("Open Package");
         JButton exitbtn = new JButton("Exit");
-        
+        JPanel ButtonPanel = new JPanel();
         ButtonPanel.add(openbtn);
         ButtonPanel.add(exitbtn);
+        panel.add(ButtonPanel, BorderLayout.SOUTH);
         
-        NorthPanel.add(ButtonPanel, BorderLayout.SOUTH);
+        
+        JPanel NorthPanel = new JPanel(new BorderLayout());
+                
+        
         NorthPanel.add(htmlView, BorderLayout.CENTER);
         
         //Add the scroll panes to a split pane.
@@ -136,7 +148,10 @@ public class TreeDemo extends JPanel
         splitPane.setPreferredSize(new Dimension(500, 500));
  
         //Add the split pane to this panel.
-        add(splitPane);
+        //add(splitPane);
+        add(NorthPanel,BorderLayout.NORTH);
+        add(panel, BorderLayout.SOUTH);
+        
     }
  
     protected void findTree(String KeyWord) {
@@ -156,18 +171,12 @@ public class TreeDemo extends JPanel
         if (node == null) return;
  
         Object nodeInfo = node.getUserObject();
-        if (node.isLeaf()) {
-            BookInfo book = (BookInfo)nodeInfo;
-            displayURL(book.bookURL);
-            if (DEBUG) {
-                System.out.print(book.bookURL + ":  \n    ");
-            }
-        } else {
-            displayURL(helpURL);
-        }
-        if (DEBUG) {
-            System.out.println(nodeInfo.toString());
-        }
+        
+        TreeNode [] treenode = node.getPath();
+        
+        TreePath path = new TreePath(treenode);
+
+        htmlPane.setText(path.toString());
     }
  
     private class BookInfo {
@@ -187,34 +196,7 @@ public class TreeDemo extends JPanel
             return bookName;
         }
     }
- 
-    private void initHelp() {
-        String s = "TreeDemoHelp.html";
-        helpURL = getClass().getResource(s);
-        if (helpURL == null) {
-            System.err.println("Couldn't open help file: " + s);
-        } else if (DEBUG) {
-            System.out.println("Help URL is " + helpURL);
-        }
- 
-        displayURL(helpURL);
-    }
- 
-    private void displayURL(URL url) {
-        try {
-            if (url != null) {
-                htmlPane.setPage(url);
-            } else { //null url
-        htmlPane.setText("File Not Found");
-                if (DEBUG) {
-                    System.out.println("Attempted to display a null URL.");
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Attempted to read a bad URL: " + url);
-        }
-    }
- 
+
     private void createNodes(DefaultMutableTreeNode top) {
         DefaultMutableTreeNode category = null;
         DefaultMutableTreeNode book = null;
