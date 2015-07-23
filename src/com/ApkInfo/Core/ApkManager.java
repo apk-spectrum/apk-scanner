@@ -275,6 +275,18 @@ public class ApkManager
 				return false;
 			}
 
+			for(String framework: mFrameworkResList) {
+				String[] cmd = {"java", "-jar", apkToolPath, "install-framework", "-p", solvePath, framework};
+				MyConsolCmd.exc(cmd, true, new MyConsolCmd.OutputObserver() {
+					@Override
+					public boolean ConsolOutput(String output) {
+				    	if(output.matches("^I:.*"))
+				    		progress(1,output + "\n");
+				    	return true;
+					}
+				});
+			}
+			
 			boolean isSuccess = true;
 			String[] cmd = {"java", "-jar", apkToolPath, "d", "-s", "-f", "-o", solvePath, "-p", solvePath, APKFilePath};
 

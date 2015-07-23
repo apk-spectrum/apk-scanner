@@ -80,6 +80,9 @@ public class MainUI extends JFrame implements WindowListener
 			@Override
 			public void OnError() {
 				WaitingDlg.setVisible(false);
+
+				frame.setTitle(Resource.STR_APP_NAME.getString());
+				mMyTabUI.setData(null);
 				frame.setVisible(true);
 				final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
 				JOptionPane.showMessageDialog(null, "Sorry, Can not open the APK", "Error", JOptionPane.ERROR_MESSAGE, Appicon);
