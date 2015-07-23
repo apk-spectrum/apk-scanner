@@ -58,9 +58,9 @@ public class AdbWrapper
 	}
 
 	static public class PackageListObject {
-		String label;
-		String pacakge;
-		String codePath;
+		public String label;
+		public String pacakge;
+		public String codePath;
 	}
 	
 	static public class PackageInfo
@@ -295,7 +295,7 @@ public class AdbWrapper
 	
 	static public ArrayList<PackageListObject> getPackageList(String device)
 	{
-		final ArrayList<PackageListObject> list = new ArrayList<PackageListObject>();
+		ArrayList<PackageListObject> list = new ArrayList<PackageListObject>();
 		
 		String[] cmd = {adbCmd, "-s", device, "shell", "dumpsys", "package"};
 		String[] result = MyConsolCmd.exc(cmd, true, null);
@@ -320,7 +320,8 @@ public class AdbWrapper
 				verName = null;
 				verCode = null;
 				pack.pacakge = line.replaceAll("^\\s*Package\\s*\\[(.*)\\].*:\\s*$", "$1");
-			} else if(pack.codePath == null && line.matches("^\\s*codePath=.*$")) {
+				pack.codePath = null;
+			} else if(pack != null && pack.codePath == null && line.matches("^\\s*codePath=.*$")) {
 				pack.codePath = line.replaceAll("^\\s*codePath=\\s*([^\\s]*).*$", "$1");
 			} else if(verName == null && line.matches("^\\s*versionName=.*$")) {
 				verName = line.replaceAll("^\\s*versionName=\\s*([^\\s]*).*$", "$1");
