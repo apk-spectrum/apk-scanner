@@ -2,26 +2,29 @@ package com.ApkInfo.Core;
 
 import java.util.ArrayList;
 
+import com.ApkInfo.Core.AdbWrapper.PackageListObject;
+
 public class PackageTreeDataManager {
-	ArrayList<PackageTreeDataObject> ArrayDataObject;
-	
-	
+	ArrayList<PackageListObject> ArrayDataObject;
+	String device;
+
 	public PackageTreeDataManager() {
-		// TODO Auto-generated constructor stub
-		ArrayDataObject = new ArrayList<PackageTreeDataObject>();
-		
-		
-		
+		this(null);
 	}
 	
-	public class PackageTreeDataObject {	
-		String strCodePath;
-		String strversionCode;
-		String strversionName;
-		String LibraryDir;
+	public PackageTreeDataManager(String device) {
+		 scanPackage(device);
 	}
 	
-	public ArrayList<PackageTreeDataObject> getDataArray() {		
+	public void scanPackage(String device)
+	{
+		ArrayDataObject.clear();
+		this.device = device;
+		if(device == null) return;
+		ArrayDataObject =  AdbWrapper.getPackageList(device);
+	}
+	
+	public ArrayList<PackageListObject> getDataArray() {		
 		return ArrayDataObject;
 	}		
 	

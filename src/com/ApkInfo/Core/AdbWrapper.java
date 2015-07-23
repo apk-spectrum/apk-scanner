@@ -56,6 +56,12 @@ public class AdbWrapper
 			return s;
 		}
 	}
+
+	static public class PackageListObject {
+		String label;
+		String pacakge;
+		String codePath;
+	}
 	
 	static public class PackageInfo
 	{
@@ -287,9 +293,47 @@ public class AdbWrapper
 		return new DeviceInfo(serialNumber, deviceName, modelName, osVersion, buildVersion, sdkVersion, buildType, isAbi64, isRoot);
 	}
 	
-	static public String[] getPackageList(String device)
+	static public ArrayList<PackageListObject> getPackageList(String device)
 	{
-		return null;
+		final ArrayList<PackageListObject> list = new ArrayList<PackageListObject>();
+		
+		String[] cmd = {adbCmd, "-s", device, "shell", "dumpsys", "package"};
+		String[] result = MyConsolCmd.exc(cmd, true, null);
+		
+		boolean start = false;
+		PackageListObject pack = null;
+		String verName = null;
+		String verCode = null;
+		for(String line: result) {
+			if(!start) {
+				if(line.matches("^Packages:")) {
+					start = true;
+				}
+				continue;
+			}
+			if(line.matches("^\\s*Package\\s*\\[.*")) {
+				if(pack != null) {
+					pack.label = pack.pacakge + " - " + verName + "/" + verCode;
+					list.add(pack);
+				}
+				pack = new PackageListObject();
+				verName = null;
+				verCode = null;
+				pack.pacakge = line.replaceAll("^\\s*Package\\s*\\[(.*)\\].*:\\s*$", "$1");
+			} else if(pack.codePath == null && line.matches("^\\s*codePath=.*$")) {
+				pack.codePath = line.replaceAll("^\\s*codePath=\\s*([^\\s]*).*$", "$1");
+			} else if(verName == null && line.matches("^\\s*versionName=.*$")) {
+				verName = line.replaceAll("^\\s*versionName=\\s*([^\\s]*).*$", "$1");
+			} else if(verCode == null && line.matches("^\\s*versionCode=.*$")) {
+				verCode = line.replaceAll("^\\s*versionCode=\\s*([^\\s]*).*$", "$1");
+			}
+		}
+		if(pack != null) {
+			pack.label = pack.pacakge + " - " + verName + "/" + verCode;
+			list.add(pack);
+		}
+
+		return list;
 	}
 
 	static public PackageInfo getPackageInfo(String device, String pkgName)
