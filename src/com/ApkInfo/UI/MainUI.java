@@ -258,7 +258,8 @@ public class MainUI extends JFrame implements WindowListener
 					newWindow(null);
 				} else if(cmd.equals(Resource.STR_MENU_NEW_APK_FILE.getString())) {
 					String file = selectApkFile();
-					newWindow(file);
+					if(file != null && (new File(file)).exists())
+						newWindow(file);
 				} else if(cmd.equals(Resource.STR_MENU_NEW_PACKAGE.getString())) {
 					
 				} else if(cmd.equals(Resource.STR_MENU_APK_FILE.getString())) {

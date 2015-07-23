@@ -286,6 +286,11 @@ public class AdbWrapper
 		
 		return new DeviceInfo(serialNumber, deviceName, modelName, osVersion, buildVersion, sdkVersion, buildType, isAbi64, isRoot);
 	}
+	
+	static public String[] getPackageList(String device)
+	{
+		return null;
+	}
 
 	static public PackageInfo getPackageInfo(String device, String pkgName)
 	{

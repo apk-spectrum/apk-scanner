@@ -37,6 +37,12 @@ public class MyToolBarUI extends JPanel implements ActionListener{
 	private JButton btn_open_arrow;
 	private JButton btn_install_arrow;
 	
+	private JPopupMenu openPopupMenu;
+	private JMenu openPopupSubMenu;
+	private JPopupMenu installPopupMenu;
+	
+	private ActionListener listener;
+	
     public enum ButtonId {
     	OPEN,
     	MANIFEST,
@@ -58,6 +64,7 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         JToolBar toolbar1 = new JToolBar();
         
         if(listener == null) listener = this;
+        this.listener = listener;
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -102,27 +109,34 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         btn_setting = new ToolBarButton(null, toolbar_setting, toolbar_setting, listener);
         
         btn_open_arrow = new JButton(toolbar_open_arrow);
-        
         btn_open_arrow.setMargin(new Insets(27,0,27,0));
-        
         btn_open_arrow.setBorderPainted(false);
         btn_open_arrow.setOpaque(false);
         btn_open_arrow.setFocusable(false);
         
-        final JPopupMenu menu = new JPopupMenu("Menu");
-        final JMenu new_submenu;
-        new_submenu = new JMenu(Resource.STR_MENU_NEW.getString());
-        new_submenu.add(Resource.STR_MENU_NEW_WINDOW.getString()).addActionListener(listener);
-        new_submenu.add(Resource.STR_MENU_NEW_APK_FILE.getString()).addActionListener(listener);
-        new_submenu.add(Resource.STR_MENU_NEW_PACKAGE.getString()).addActionListener(listener);
-        menu.add(new_submenu);
-        menu.add(getNewSeparator(JSeparator.HORIZONTAL, 1));
-        menu.add(Resource.STR_MENU_APK_FILE.getString()).addActionListener(listener);
-        menu.add(Resource.STR_MENU_PACKAGE.getString()).addActionListener(listener);
-
+        /*
+	private JPopupMenu openPopupMenu;
+	private JMenu openPopupSubMenu;
+	private JPopupMenu installPopupMenu;
+         */
+        openPopupMenu = new JPopupMenu("Menu");
+        openPopupSubMenu = new JMenu(Resource.STR_MENU_NEW.getString());
         btn_open_arrow.addActionListener( new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                menu.show(btn_open_arrow, btn_open_arrow.getWidth()/2, btn_open_arrow.getHeight());
+            	openPopupMenu.show(btn_open_arrow, btn_open_arrow.getWidth()/2, btn_open_arrow.getHeight());
+            }
+        } );
+
+        btn_install_arrow = new JButton(toolbar_open_arrow);
+        btn_install_arrow.setMargin(new Insets(27,0,27,0));
+        btn_install_arrow.setBorderPainted(false);
+        btn_install_arrow.setOpaque(false);
+        btn_install_arrow.setFocusable(false);
+        
+        installPopupMenu = new JPopupMenu("Menu");      
+        btn_install_arrow.addActionListener( new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+            	installPopupMenu.show(btn_install_arrow, btn_install_arrow.getWidth()/2, btn_install_arrow.getHeight());
             }
         } );
         
@@ -144,22 +158,7 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         
         toolbar1.add(btn_install);
     
-        btn_install_arrow = new JButton(toolbar_open_arrow);
-        
-        btn_install_arrow.setMargin(new Insets(27,0,27,0));
-        
-        btn_install_arrow.setBorderPainted(false);
-        btn_install_arrow.setOpaque(false);
-        btn_install_arrow.setFocusable(false);
-        
-        final JPopupMenu installmenu = new JPopupMenu("Menu");      
-        installmenu.add(Resource.STR_MENU_INSTALL.getString()).addActionListener(listener);;
-        installmenu.add(Resource.STR_MENU_CHECK_INSTALLED.getString()).addActionListener(listener);;
-        btn_install_arrow.addActionListener( new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-            	installmenu.show(btn_install_arrow, btn_install_arrow.getWidth()/2, btn_install_arrow.getHeight());
-            }
-        } );
+
         toolbar1.add(btn_install_arrow);
         
         toolbar1.add(getNewSeparator(JSeparator.VERTICAL, 2));
@@ -247,6 +246,21 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         btn_install.setToolTipText(Resource.STR_BTN_INSTALL.getString());
         btn_about.setToolTipText(Resource.STR_BTN_ABOUT.getString());
         btn_setting.setToolTipText(Resource.STR_BTN_SETTING.getString());
+        
+        openPopupSubMenu.removeAll();
+        openPopupSubMenu.add(Resource.STR_MENU_NEW_WINDOW.getString()).addActionListener(listener);
+        openPopupSubMenu.add(Resource.STR_MENU_NEW_APK_FILE.getString()).addActionListener(listener);
+        openPopupSubMenu.add(Resource.STR_MENU_NEW_PACKAGE.getString()).addActionListener(listener);
+
+        openPopupMenu.removeAll();
+        openPopupMenu.add(openPopupSubMenu);
+        openPopupMenu.add(getNewSeparator(JSeparator.HORIZONTAL, 1));
+        openPopupMenu.add(Resource.STR_MENU_APK_FILE.getString()).addActionListener(listener);
+        openPopupMenu.add(Resource.STR_MENU_PACKAGE.getString()).addActionListener(listener);
+      
+        installPopupMenu.removeAll();
+        installPopupMenu.add(Resource.STR_MENU_INSTALL.getString()).addActionListener(listener);
+        installPopupMenu.add(Resource.STR_MENU_CHECK_INSTALLED.getString()).addActionListener(listener);
     }
 
 	@Override
