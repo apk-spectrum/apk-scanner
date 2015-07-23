@@ -18,7 +18,6 @@ public class PackageTreeDataManager {
 	
 	public void scanPackage(String device)
 	{
-		ArrayDataObject.clear();
 		this.device = device;
 		if(device == null) return;
 		ArrayDataObject =  AdbWrapper.getPackageList(device);
