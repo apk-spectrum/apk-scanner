@@ -77,4 +77,9 @@
     <string name="file_size_MB">MB</string>
     <string name="file_size_GB">GB</string>
     <string name="file_size_TB">TB</string>
+    
+    <string name="tree_open_package">Open Package</string>
+    <string name="tree_Refresh">Refresh</string>
+    <string name="tree_Exit">Exit</string>
+    
 </resources>

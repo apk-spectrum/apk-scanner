@@ -298,7 +298,7 @@ public class AdbWrapper
 		ArrayList<PackageListObject> list = new ArrayList<PackageListObject>();
 		
 		String[] cmd = {adbCmd, "-s", device, "shell", "dumpsys", "package"};
-		String[] result = MyConsolCmd.exc(cmd, true, null);
+		String[] result = MyConsolCmd.exc(cmd, false, null);
 		
 		boolean start = false;
 		PackageListObject pack = null;

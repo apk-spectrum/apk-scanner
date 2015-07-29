@@ -1,6 +1,7 @@
 package com.ApkInfo.UI;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -265,7 +266,7 @@ public class DeviceUIManager
 			        	
 					dlgDialog.setTitle("Log");
 					dlgDialog.setModal(false);
-			        	
+					
 					dlgDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 					//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			        	

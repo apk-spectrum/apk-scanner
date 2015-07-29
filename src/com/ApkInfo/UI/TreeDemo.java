@@ -1,9 +1,11 @@
 package com.ApkInfo.UI;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -20,27 +22,39 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
+import com.ApkInfo.Core.AdbWrapper;
+import com.ApkInfo.Core.AdbWrapper.DeviceStatus;
+import com.ApkInfo.Core.AdbWrapper.PackageListObject;
+import com.ApkInfo.Core.PackageTreeDataManager;
+import com.ApkInfo.Resource.Resource;
+import com.ApkInfo.UIUtil.ButtonType;
 import com.ApkInfo.UIUtil.FilteredTreeModel;
+import com.ApkInfo.UIUtil.StandardButton;
+import com.ApkInfo.UIUtil.Theme;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.io.IOException;
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
  
 public class TreeDemo extends JPanel
-                      implements TreeSelectionListener {
-    private JEditorPane htmlPane;
+                      implements TreeSelectionListener, ActionListener{
+    private JTextField textFieldapkPath;
     private JTree tree;
-    
-    private static boolean DEBUG = false;
- 
+    private DefaultMutableTreeNode top;
+    private JPanel gifPanel;
+    static JFrame frame;
     //Optionally play with line styles.  Possible values are
     //"Angled" (the default), "Horizontal", and "None".
-    private static boolean playWithLineStyle = false;
-    private static String lineStyle = "Horizontal";
+    
+    
      
     //Optionally set the look and feel.
     private static boolean useSystemLookAndFeel = false;
@@ -48,10 +62,84 @@ public class TreeDemo extends JPanel
     public TreeDemo() {
         super(new BorderLayout());
  
+        makeTreeForm();
+        addTreeList();
+    }
+    
+    private void addTreeList() {
+    	
+    	top.removeAllChildren();
+    	tree.updateUI();
+    	Thread t = new Thread(new Runnable() {
+			public void run(){
+					ArrayList<DeviceStatus> DeviceList = AdbWrapper.scanDevices();
+				
+					System.out.println(DeviceList.size());
+					
+					if(DeviceList.size() == 0) {
+						final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
+						JOptionPane.showMessageDialog(null, "Device not found!\nplease check Connected","Warning", JOptionPane.WARNING_MESSAGE, Appicon);
+						return;
+					} else {
+						gifPanel.setVisible(true);
+						for(int i=0; i< DeviceList.size(); i++) {
+							PackageTreeDataManager PackageManager = new PackageTreeDataManager(DeviceList.get(i).name);
+							ArrayList<PackageListObject> ArrayDataObject = PackageManager.getDataArray();
+							
+							createDeviceNodes(top,DeviceList.get(i).name +"("+DeviceList.get(i).model + ")",ArrayDataObject);
+							
+						}
+						gifPanel.setVisible(false);
+					}
+					
+				
+				}
+		    private void createDeviceNodes(DefaultMutableTreeNode top, String DeviceName, ArrayList<PackageListObject> ArrayDataObject) {
+		        DefaultMutableTreeNode deviceName = new DefaultMutableTreeNode(DeviceName);;		        
+		        DefaultMutableTreeNode priv_app = new DefaultMutableTreeNode("priv-app");
+		        DefaultMutableTreeNode systemapp = new DefaultMutableTreeNode("app");
+		        DefaultMutableTreeNode system = new DefaultMutableTreeNode("system");
+		        DefaultMutableTreeNode dataapp = new DefaultMutableTreeNode("app");
+		        DefaultMutableTreeNode data = new DefaultMutableTreeNode("data");
+		        
+		        top.add(deviceName);
+		        
+		        deviceName.add(system);		        
+		        deviceName.add(data);
+		        	        
+		        system.add(priv_app);
+		        system.add(systemapp);
+		        
+		        data.add(dataapp);
+		        
+		        System.out.println("loading package List on device : " + DeviceName);
+		        
+		        for(int i=0; i< ArrayDataObject.size(); i++) {
+		        	//System.out.println(ArrayDataObject.get(i).codePath + " : " + ArrayDataObject.get(i).label);
+		        	
+		        	DefaultMutableTreeNode temp = new DefaultMutableTreeNode(ArrayDataObject.get(i).label);
+		        	
+		        	if(ArrayDataObject.get(i).codePath.indexOf("/system/priv-app/") >-1) {
+		        		priv_app.add(temp);		        		
+		        	} else if(ArrayDataObject.get(i).codePath.indexOf("/system/app/") >-1) {
+		        		systemapp.add(temp);
+		        	} else if(ArrayDataObject.get(i).codePath.indexOf("/data/app/") >-1) {
+		        		dataapp.add(temp);
+		        	}
+		        }
+		        tree.updateUI();
+		        
+		        System.out.println("end  loading package : " + DeviceName);
+		    }
+			});
+		t.start();     
+    }
+
+    private void makeTreeForm() {
         //Create the nodes.
-        DefaultMutableTreeNode top =
-            new DefaultMutableTreeNode("The Java Series");
-        createNodes(top);
+        top =
+            new DefaultMutableTreeNode("Device");
+        //createNodes(top);
  
         //Create a tree that allows one selection at a time.
                         
@@ -65,41 +153,29 @@ public class TreeDemo extends JPanel
         //Listen for when the selection changes.
         tree.addTreeSelectionListener(this);
  
-        if (playWithLineStyle) {
-            System.out.println("line style = " + lineStyle);
-            tree.putClientProperty("JTree.lineStyle", lineStyle);
-        }
- 
         //Create the scroll pane and add the tree to it.
         JScrollPane treeView = new JScrollPane(tree);
  
         //Create the HTML viewing pane.
-        htmlPane = new JEditorPane();
-        htmlPane.setEditable(false);
+        textFieldapkPath = new JTextField();
+        textFieldapkPath.setEditable(false);
         
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        JButton searchButton = new JButton("search");
-        final JTextField textFilField = new JTextField(30);
+        
+        final JTextField textFilField = new JTextField(50);
         
         textFilField.addKeyListener(new KeyAdapter()
         {
-            public void keyPressed(KeyEvent ke)
+            public void keyReleased(KeyEvent ke)
             {
                 if(!(ke.getKeyChar()==27||ke.getKeyChar()==65535))//this section will execute only when user is editing the JTextField
                 {
-                	System.out.println(textFilField.getText()+ "    : " + Integer.valueOf(ke.getKeyChar()));
+                	System.out.println(textFilField.getText()+ ":" + Integer.valueOf(ke.getKeyChar()));
                 	
                     FilteredTreeModel filteredModel = (FilteredTreeModel) tree.getModel();
-                    
-                    if(Integer.valueOf(ke.getKeyChar())==8) {
-                    	filteredModel.setFilter(textFilField.getText().substring(0, textFilField.getText().length()-1));
-                    } else if(Integer.valueOf(ke.getKeyChar())==10) {
-                    	filteredModel.setFilter(textFilField.getText());
-                    } else {
-                    	filteredModel.setFilter(textFilField.getText() + ke.getKeyChar());
-                    }
-                    
+
+                    filteredModel.setFilter(textFilField.getText());
                     DefaultTreeModel treeModel = (DefaultTreeModel) filteredModel.getTreeModel();
                     treeModel.reload();
                      
@@ -113,28 +189,51 @@ public class TreeDemo extends JPanel
               }
         });
         
-        JScrollPane htmlView = new JScrollPane(htmlPane);
  
         JPanel tpanel = new JPanel();
-        tpanel.add(new JLabel("search : "));
+        tpanel.add(new JLabel("Search : "));
         tpanel.add(textFilField);
-        tpanel.add(searchButton);
         
-        panel.add(tpanel, BorderLayout.CENTER);
-        panel.add(treeView,BorderLayout.NORTH);
+        panel.add(treeView,BorderLayout.CENTER);
         
-        JButton openbtn = new JButton("Open Package");
-        JButton exitbtn = new JButton("Exit");
+        
+        StandardButton openbtn = new StandardButton("Open Package",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);		
+        StandardButton refreshbtn = new StandardButton("Refresh",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
+        StandardButton exitbtn = new StandardButton("Exit",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
+
+        openbtn.addActionListener(this);
+        refreshbtn.addActionListener(this);
+        exitbtn.addActionListener(this);
+        
         JPanel ButtonPanel = new JPanel();
-        ButtonPanel.add(openbtn);
-        ButtonPanel.add(exitbtn);
-        panel.add(ButtonPanel, BorderLayout.SOUTH);
         
+        
+        gifPanel = new JPanel();
+        
+        ImageIcon icon = Resource.IMG_LOADING.getImageIcon();
+        JLabel GifLabel = new JLabel(icon);
+        
+        JLabel Loading = new JLabel("Loading...");
+        
+        gifPanel.add(Loading);
+        gifPanel.add(GifLabel);
+        
+        gifPanel.setVisible(false);
+        
+        JPanel tpanel2 = new JPanel(new BorderLayout());
+        
+        tpanel2.add(tpanel, BorderLayout.CENTER);
+        ButtonPanel.add(gifPanel);
+        ButtonPanel.add(openbtn);
+        ButtonPanel.add(refreshbtn);        
+        ButtonPanel.add(exitbtn);
+        tpanel2.add(ButtonPanel, BorderLayout.SOUTH);
+        panel.add(tpanel2,BorderLayout.SOUTH);
         
         JPanel NorthPanel = new JPanel(new BorderLayout());
                 
         
-        NorthPanel.add(htmlView, BorderLayout.CENTER);
+        NorthPanel.add(textFieldapkPath, BorderLayout.CENTER);
         
         //Add the scroll panes to a split pane.
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -142,7 +241,7 @@ public class TreeDemo extends JPanel
         splitPane.setBottomComponent(NorthPanel);
                 
         Dimension minimumSize = new Dimension(100, 50);
-        htmlView.setMinimumSize(minimumSize);
+        textFieldapkPath.setMinimumSize(minimumSize);
         treeView.setMinimumSize(minimumSize);
         splitPane.setDividerLocation(400);
         splitPane.setPreferredSize(new Dimension(500, 500));
@@ -150,80 +249,18 @@ public class TreeDemo extends JPanel
         //Add the split pane to this panel.
         //add(splitPane);
         add(NorthPanel,BorderLayout.NORTH);
-        add(panel, BorderLayout.SOUTH);
-        
+        add(panel, BorderLayout.CENTER);
     }
- 
-    protected void findTree(String KeyWord) {
-		// TODO Auto-generated method stub
-		
-    	
-    	
-    	
-	}
-
+    
 	/** Required by TreeSelectionListener interface. */
     public void valueChanged(TreeSelectionEvent e) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)
                            tree.getLastSelectedPathComponent();
-        
-        
         if (node == null) return;
- 
         Object nodeInfo = node.getUserObject();
-        
         TreeNode [] treenode = node.getPath();
-        
         TreePath path = new TreePath(treenode);
-
-        htmlPane.setText(path.toString());
-    }
- 
-    private class BookInfo {
-        public String bookName;
-        public URL bookURL;
- 
-        public BookInfo(String book, String filename) {
-            bookName = book;
-            bookURL = getClass().getResource(filename);
-            if (bookURL == null) {
-                System.err.println("Couldn't find file: "
-                                   + filename);
-            }
-        }
- 
-        public String toString() {
-            return bookName;
-        }
-    }
-
-    private void createNodes(DefaultMutableTreeNode top) {
-        DefaultMutableTreeNode category = null;
-        DefaultMutableTreeNode book = null;
- 
-        category = new DefaultMutableTreeNode("system");        
-        top.add(category);
-        
-        category = new DefaultMutableTreeNode("data");        
-        top.add(category);
-        
-        for(int i=0; i< 3000; i++) {
-        	
-        	
-        	DefaultMutableTreeNode temp = new DefaultMutableTreeNode("" + (Math.random()));
-        	category.add(temp);
-        }
-        
-        
-        
-// 
-//        //original Tutorial
-//        book = new DefaultMutableTreeNode(new BookInfo
-//            ("The Java Tutorial: A Short Course on the Basics",
-//            "tutorial.html"));
-//        category.add(book);
- 
-
+        textFieldapkPath.setText(path.toString());
     }
          
     /**
@@ -242,7 +279,7 @@ public class TreeDemo extends JPanel
         }
  
         //Create and set up the window.
-        JFrame frame = new JFrame("TreeDemo");
+        frame = new JFrame("TreeDemo");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
  
         //Add content to the window.
@@ -262,4 +299,21 @@ public class TreeDemo extends JPanel
             }
         });
     }
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub		
+		
+		if(e.getActionCommand().equals("Open Package")) {
+			System.out.println("open package");
+		} else if(e.getActionCommand().equals("Refresh")) {
+			System.out.println("refresh");
+			
+			addTreeList();
+			
+		} else if(e.getActionCommand().equals("Exit")) {
+			System.out.println("exit");
+			frame.dispose();
+		}
+	}
 }

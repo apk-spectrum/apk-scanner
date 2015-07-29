@@ -94,6 +94,12 @@ public enum Resource
 	STR_FILE_SIZE_GB			(Type.TEXT, "@file_size_GB"),
 	STR_FILE_SIZE_TB			(Type.TEXT, "@file_size_TB"),
 	
+	
+	STR_TREE_OPEN_PACKAGE			(Type.TEXT, "@tree_open_package"),
+	STR_TREE_REFRESH					(Type.TEXT, "@Refresh"),
+	STR_TREE_EXIT							(Type.TEXT, "@Exit"),
+
+	
 	IMG_TOOLBAR_OPEN			(Type.IMAGE, "toolbar_open.png"),
 	IMG_TOOLBAR_OPEN_HOVER		(Type.IMAGE, "toolbar_open_hover.png"),
 	IMG_TOOLBAR_MANIFEST		(Type.IMAGE, "toolbar_manifast.png"),
