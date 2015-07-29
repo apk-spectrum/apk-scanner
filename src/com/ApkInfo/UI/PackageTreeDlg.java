@@ -44,7 +44,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
  
-public class TreeDemo extends JPanel
+public class PackageTreeDlg extends JPanel
                       implements TreeSelectionListener, ActionListener{
     private JTextField textFieldapkPath;
     private JTree tree;
@@ -59,7 +59,7 @@ public class TreeDemo extends JPanel
     //Optionally set the look and feel.
     private static boolean useSystemLookAndFeel = false;
  
-    public TreeDemo() {
+    public PackageTreeDlg() {
         super(new BorderLayout());
  
         makeTreeForm();
@@ -283,7 +283,7 @@ public class TreeDemo extends JPanel
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
  
         //Add content to the window.
-        frame.add(new TreeDemo());
+        frame.add(new PackageTreeDlg());
  
         //Display the window.
         frame.pack();
