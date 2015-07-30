@@ -54,14 +54,8 @@ public class PackageTreeDlg extends JPanel
     //Optionally play with line styles.  Possible values are
     //"Angled" (the default), "Horizontal", and "None".
     
-    
-     
-    //Optionally set the look and feel.
-    private static boolean useSystemLookAndFeel = false;
- 
     public PackageTreeDlg() {
         super(new BorderLayout());
- 
         makeTreeForm();
         addTreeList();
     }
@@ -91,8 +85,6 @@ public class PackageTreeDlg extends JPanel
 						}
 						gifPanel.setVisible(false);
 					}
-					
-				
 				}
 		    private void createDeviceNodes(DefaultMutableTreeNode top, String DeviceName, ArrayList<PackageListObject> ArrayDataObject) {
 		        DefaultMutableTreeNode deviceName = new DefaultMutableTreeNode(DeviceName);;		        
@@ -269,17 +261,9 @@ public class PackageTreeDlg extends JPanel
      * event dispatch thread.
      */
     private static void createAndShowGUI() {
-        if (useSystemLookAndFeel) {
-            try {
-                UIManager.setLookAndFeel(
-                    UIManager.getSystemLookAndFeelClassName());
-            } catch (Exception e) {
-                System.err.println("Couldn't use system look and feel.");
-            }
-        }
  
         //Create and set up the window.
-        frame = new JFrame("TreeDemo");
+        frame = new JFrame("PackageTree");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
  
         //Add content to the window.
@@ -290,6 +274,19 @@ public class PackageTreeDlg extends JPanel
         frame.setVisible(true);
     }
  
+    public void showTreeDlg() {
+        //Create and set up the window.
+        frame = new JFrame("PackageTree");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+ 
+        //Add content to the window.
+        frame.add(this);
+ 
+        //Display the window.
+        frame.pack();
+        frame.setVisible(true);
+    }
+    
     public static void main(String[] args) {
         //Schedule a job for the event dispatch thread:
         //creating and showing this application's GUI.
