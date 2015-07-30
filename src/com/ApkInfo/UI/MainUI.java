@@ -355,6 +355,8 @@ public class MainUI extends JFrame implements WindowListener
 		frame.setMinimumSize(new Dimension(650, 520));
 		frame.setTitle(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
+        
+        frame.setLocationRelativeTo(null);
 		
 		mMyTabUI = new MyTabUI();
 		mMyToolBarUI = new MyToolBarUI(new ToolBarListener());

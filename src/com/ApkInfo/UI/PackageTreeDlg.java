@@ -282,6 +282,10 @@ public class PackageTreeDlg extends JPanel
         //Add content to the window.
         frame.add(this);
  
+        
+        frame.setResizable( false );
+        frame.setLocationRelativeTo(null);
+        
         //Display the window.
         frame.pack();
         frame.setVisible(true);
