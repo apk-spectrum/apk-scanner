@@ -1,5 +1,6 @@
 package com.ApkInfo.UI;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
@@ -17,12 +18,14 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
 import com.ApkInfo.Core.AdbWrapper;
+import com.ApkInfo.Core.CoreApkTool;
 import com.ApkInfo.Core.AdbWrapper.DeviceStatus;
 import com.ApkInfo.Core.AdbWrapper.PackageListObject;
 import com.ApkInfo.Core.PackageTreeDataManager;
@@ -34,6 +37,7 @@ import com.ApkInfo.UIUtil.Theme;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.io.File;
 import java.io.IOException;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
@@ -53,6 +57,17 @@ public class PackageTreeDlg extends JPanel
     static JFrame frame;
     //Optionally play with line styles.  Possible values are
     //"Angled" (the default), "Horizontal", and "None".
+    
+    class DeviceString {
+    	String Devicename;
+    	String Label;
+    	
+    	@Override
+    	public String toString() {
+    		return Label;
+    	}
+    	
+    }
     
     public PackageTreeDlg() {
         super(new BorderLayout());
@@ -80,14 +95,20 @@ public class PackageTreeDlg extends JPanel
 							PackageTreeDataManager PackageManager = new PackageTreeDataManager(DeviceList.get(i).name);
 							ArrayList<PackageListObject> ArrayDataObject = PackageManager.getDataArray();
 							
-							createDeviceNodes(top,DeviceList.get(i).name +"("+DeviceList.get(i).model + ")",ArrayDataObject);
+							DeviceString tempDeviceString = new DeviceString();
+							
+							tempDeviceString.Devicename = DeviceList.get(i).name;
+							tempDeviceString.Label = DeviceList.get(i).name +"("+ DeviceList.get(i).model + ")";
+							
+							createDeviceNodes(top, tempDeviceString, ArrayDataObject);
 							
 						}
 						gifPanel.setVisible(false);
 					}
 				}
-		    private void createDeviceNodes(DefaultMutableTreeNode top, String DeviceName, ArrayList<PackageListObject> ArrayDataObject) {
-		        DefaultMutableTreeNode deviceName = new DefaultMutableTreeNode(DeviceName);;		        
+		    private void createDeviceNodes(DefaultMutableTreeNode top, DeviceString DeviceString, ArrayList<PackageListObject> ArrayDataObject) {
+		        DefaultMutableTreeNode deviceName = new DefaultMutableTreeNode(DeviceString);
+		        
 		        DefaultMutableTreeNode priv_app = new DefaultMutableTreeNode("priv-app");
 		        DefaultMutableTreeNode systemapp = new DefaultMutableTreeNode("app");
 		        DefaultMutableTreeNode system = new DefaultMutableTreeNode("system");
@@ -104,12 +125,12 @@ public class PackageTreeDlg extends JPanel
 		        
 		        data.add(dataapp);
 		        
-		        System.out.println("loading package List on device : " + DeviceName);
-		        
 		        for(int i=0; i< ArrayDataObject.size(); i++) {
 		        	//System.out.println(ArrayDataObject.get(i).codePath + " : " + ArrayDataObject.get(i).label);
 		        	
-		        	DefaultMutableTreeNode temp = new DefaultMutableTreeNode(ArrayDataObject.get(i).label);
+		        	DefaultMutableTreeNode temp = new DefaultMutableTreeNode(ArrayDataObject.get(i));		        	
+		        			        	
+		        	//temp.setUserObject(ArrayDataObject.get(i));
 		        	
 		        	if(ArrayDataObject.get(i).codePath.indexOf("/system/priv-app/") >-1) {
 		        		priv_app.add(temp);		        		
@@ -121,7 +142,7 @@ public class PackageTreeDlg extends JPanel
 		        }
 		        tree.updateUI();
 		        
-		        System.out.println("end  loading package : " + DeviceName);
+		        System.out.println("end  loading package : " + DeviceString.Devicename);
 		    }
 			});
 		t.start();     
@@ -219,6 +240,7 @@ public class PackageTreeDlg extends JPanel
         ButtonPanel.add(openbtn);
         ButtonPanel.add(refreshbtn);        
         ButtonPanel.add(exitbtn);
+        
         tpanel2.add(ButtonPanel, BorderLayout.SOUTH);
         panel.add(tpanel2,BorderLayout.SOUTH);
         
@@ -253,6 +275,7 @@ public class PackageTreeDlg extends JPanel
         TreeNode [] treenode = node.getPath();
         TreePath path = new TreePath(treenode);
         textFieldapkPath.setText(path.toString());
+        
     }
          
     /**
@@ -301,12 +324,44 @@ public class PackageTreeDlg extends JPanel
         });
     }
 
+    
+    
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub		
 		
 		if(e.getActionCommand().equals("Open Package")) {
 			System.out.println("open package");
+			
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+                    tree.getLastSelectedPathComponent();
+			
+			PackageListObject tempObject = ((PackageListObject)node.getUserObject()); 
+			
+			System.out.println(tempObject.pacakge);
+			System.out.println(tempObject.label);
+			System.out.println(tempObject.codePath);
+			
+			DefaultMutableTreeNode deviceNode = null;
+			
+			
+			
+			for(deviceNode = node ; deviceNode.getUserObject() instanceof DeviceString==false; deviceNode = ((DefaultMutableTreeNode)deviceNode.getParent())) {
+				
+			}
+			
+			System.out.println(deviceNode.getUserObject());
+			
+//			String tmpPath = "/" + ((DeviceString)deviceNode.getUserObject()).Devicename + tempObject.codePath;
+//			tmpPath = tmpPath.replaceAll("/", File.separator+File.separator).replaceAll("//", "/");
+//			tmpPath = CoreApkTool.makeTempPath(tmpPath)+".apk";
+//			tmpApkPath = tmpPath; 
+//			System.out.println(tmpPath);
+//			AdbWrapper.PullApk(((DeviceString)deviceNode.getUserObject()).Devicename, tempObject.pacakge, tmpPath, new AdbWrapperObserver("pull", dev.name));			
+			
+			
+			
+			
 		} else if(e.getActionCommand().equals("Refresh")) {
 			System.out.println("refresh");
 			
