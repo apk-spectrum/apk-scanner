@@ -61,6 +61,11 @@ public class AdbWrapper
 		public String label;
 		public String pacakge;
 		public String codePath;
+		
+		@Override
+		public String toString() {
+		    return this.label;
+		}
 	}
 	
 	static public class PackageInfo
