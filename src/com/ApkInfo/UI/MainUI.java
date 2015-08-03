@@ -29,6 +29,7 @@ import com.ApkInfo.Core.ApkManager.StatusListener;
 import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UI.DeviceUIManager.InstallButtonStatusListener;
 import com.ApkInfo.UI.MyToolBarUI.ButtonId;
+import com.ApkInfo.UI.PackageTreeDlg.PackageSelectedListener;
 import com.ApkInfo.UIUtil.JHtmlEditorPane;
 
 
@@ -261,14 +262,25 @@ public class MainUI extends JFrame implements WindowListener
 					if(file != null && (new File(file)).exists())
 						newWindow(file);
 				} else if(cmd.equals(Resource.STR_MENU_NEW_PACKAGE.getString())) {
-					PackageTreeDlg Dlg = new PackageTreeDlg();
+					PackageTreeDlg Dlg = new PackageTreeDlg(new PackageSelectedListener() {
+						@Override
+						public void OnOpenApk(String path) {
+							if((new File(path)).exists())
+								newWindow(path);
+						}
+					});
 					Dlg.showTreeDlg();
-					
 				} else if(cmd.equals(Resource.STR_MENU_APK_FILE.getString())) {
 					String file = selectApkFile();
 					openApkFile(file);
 				} else if(cmd.equals(Resource.STR_MENU_PACKAGE.getString())) {
-					PackageTreeDlg Dlg = new PackageTreeDlg();
+					PackageTreeDlg Dlg = new PackageTreeDlg(new PackageSelectedListener() {
+						@Override
+						public void OnOpenApk(String path) {
+							if((new File(path)).exists())
+								openApkFile(path);
+						}
+					});
 					Dlg.showTreeDlg();
 				} else if(cmd.equals(Resource.STR_MENU_INSTALL.getString())) {
 					installApk(false);

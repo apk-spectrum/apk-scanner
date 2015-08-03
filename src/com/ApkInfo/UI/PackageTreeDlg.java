@@ -1,9 +1,6 @@
 package com.ApkInfo.UI;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -11,21 +8,18 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
-import javax.swing.UIManager;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
 import com.ApkInfo.Core.AdbWrapper;
 import com.ApkInfo.Core.CoreApkTool;
+import com.ApkInfo.Core.AdbWrapper.AdbWrapperListener;
 import com.ApkInfo.Core.AdbWrapper.DeviceStatus;
 import com.ApkInfo.Core.AdbWrapper.PackageListObject;
 import com.ApkInfo.Core.PackageTreeDataManager;
@@ -35,14 +29,10 @@ import com.ApkInfo.UIUtil.FilteredTreeModel;
 import com.ApkInfo.UIUtil.StandardButton;
 import com.ApkInfo.UIUtil.Theme;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.io.File;
-import java.io.IOException;
 import java.awt.BorderLayout;
-import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -50,7 +40,8 @@ import java.awt.event.KeyEvent;
  
 public class PackageTreeDlg extends JPanel
                       implements TreeSelectionListener, ActionListener{
-    private JTextField textFieldapkPath;
+	private static final long serialVersionUID = 813267847663868531L;
+	private JTextField textFieldapkPath;
     private JTree tree;
     private DefaultMutableTreeNode top;
     private JPanel gifPanel;
@@ -58,6 +49,13 @@ public class PackageTreeDlg extends JPanel
     //Optionally play with line styles.  Possible values are
     //"Angled" (the default), "Horizontal", and "None".
     
+	public interface PackageSelectedListener
+	{
+		public void OnOpenApk(String path);
+	}
+	private PackageSelectedListener Listener;
+	private String tmpApkPath;
+	
     class DeviceString {
     	String Devicename;
     	String Label;
@@ -69,10 +67,11 @@ public class PackageTreeDlg extends JPanel
     	
     }
     
-    public PackageTreeDlg() {
+    public PackageTreeDlg(PackageSelectedListener listener) {
         super(new BorderLayout());
         makeTreeForm();
         addTreeList();
+        this.Listener = listener;
     }
     
     private void addTreeList() {
@@ -271,7 +270,7 @@ public class PackageTreeDlg extends JPanel
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)
                            tree.getLastSelectedPathComponent();
         if (node == null) return;
-        Object nodeInfo = node.getUserObject();
+        //Object nodeInfo = node.getUserObject();
         TreeNode [] treenode = node.getPath();
         TreePath path = new TreePath(treenode);
         textFieldapkPath.setText(path.toString());
@@ -290,7 +289,7 @@ public class PackageTreeDlg extends JPanel
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
  
         //Add content to the window.
-        frame.add(new PackageTreeDlg());
+        frame.add(new PackageTreeDlg(null));
  
         //Display the window.
         frame.pack();
@@ -328,7 +327,6 @@ public class PackageTreeDlg extends JPanel
     
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub		
 		
 		if(e.getActionCommand().equals("Open Package")) {
 			System.out.println("open package");
@@ -352,16 +350,29 @@ public class PackageTreeDlg extends JPanel
 			
 			System.out.println(deviceNode.getUserObject());
 			
-//			String tmpPath = "/" + ((DeviceString)deviceNode.getUserObject()).Devicename + tempObject.codePath;
-//			tmpPath = tmpPath.replaceAll("/", File.separator+File.separator).replaceAll("//", "/");
-//			tmpPath = CoreApkTool.makeTempPath(tmpPath)+".apk";
-//			tmpApkPath = tmpPath; 
-//			System.out.println(tmpPath);
-//			AdbWrapper.PullApk(((DeviceString)deviceNode.getUserObject()).Devicename, tempObject.pacakge, tmpPath, new AdbWrapperObserver("pull", dev.name));			
 			
+			String apkPath = AdbWrapper.getPackageInfo(((DeviceString)deviceNode.getUserObject()).Devicename, tempObject.pacakge).apkPath;
+			String device = ((DeviceString)deviceNode.getUserObject()).Devicename;
 			
-			
-			
+			String tmpPath = "/" + device + apkPath;
+			tmpPath = tmpPath.replaceAll("/", File.separator+File.separator).replaceAll("//", "/");
+			tmpPath = CoreApkTool.makeTempPath(tmpPath)+".apk";
+			tmpApkPath = tmpPath; 
+			System.out.println(tmpPath);
+			AdbWrapper.PullApk(device, apkPath, tmpPath, new AdbWrapperListener() {
+				@Override
+				public void OnSuccess() {
+					if(Listener != null) Listener.OnOpenApk(tmpApkPath);
+				}
+
+				@Override public void OnCompleted() {
+					frame.dispose();
+				}
+				
+				@Override public void OnMessage(String msg) { }
+				@Override public void OnError() { }
+			});
+
 		} else if(e.getActionCommand().equals("Refresh")) {
 			System.out.println("refresh");
 			

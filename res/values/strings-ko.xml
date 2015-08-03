@@ -11,8 +11,8 @@
     <string name="btn_setting">설정</string>
     <string name="btn_about">정보</string>
 
-    <string name="menu_new">새창</string>
-    <string name="menu_new_window">새창</string>
+    <string name="menu_new">새창으로 열기...</string>
+    <string name="menu_new_window">빈창 열기</string>
     <string name="menu_new_apk_file">새창으로 APK 파일 열기</string>
     <string name="menu_new_package">새창으로 패키지 열기</string>
     <string name="menu_apk_file">APK 파일 열기</string>
@@ -33,8 +33,8 @@
     <string name="basic_perm_list_title">전체 권한 목록</string>
     <string name="basic_perm_display_title">권한정보 상세보기</string>
 
-    <string name="feature_lab">기능</string>
-    <string name="feature_desc">기능</string>
+    <string name="feature_lab">특징</string>
+    <string name="feature_desc">앱의 주요 특징 혹은 기능</string>
     <string name="feature_launcher_lab">실행앱</string>
     <string name="feature_launcher_desc">앱실행 아이콘이 있습니다.</string>
     <string name="feature_hidden_lab">숨김앱</string>
