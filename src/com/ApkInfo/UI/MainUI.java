@@ -29,7 +29,6 @@ import com.ApkInfo.Core.ApkManager.StatusListener;
 import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UI.DeviceUIManager.InstallButtonStatusListener;
 import com.ApkInfo.UI.MyToolBarUI.ButtonId;
-import com.ApkInfo.UI.PackageTreeDlg.PackageSelectedListener;
 import com.ApkInfo.UIUtil.JHtmlEditorPane;
 
 
@@ -118,6 +117,17 @@ public class MainUI extends JFrame implements WindowListener
 							
 			jfc.showOpenDialog(null);
 			File dir = jfc.getSelectedFile();
+			
+			if(dir == null) return null;
+			return dir.getPath();
+		}
+		
+		private String selectPackageFile()
+		{
+			PackageTreeDlg Dlg = new PackageTreeDlg();
+			Dlg.showTreeDlg();
+			
+			File dir = Dlg.getSelectedFile();
 			
 			if(dir == null) return null;
 			return dir.getPath();
@@ -262,26 +272,16 @@ public class MainUI extends JFrame implements WindowListener
 					if(file != null && (new File(file)).exists())
 						newWindow(file);
 				} else if(cmd.equals(Resource.STR_MENU_NEW_PACKAGE.getString())) {
-					PackageTreeDlg Dlg = new PackageTreeDlg(new PackageSelectedListener() {
-						@Override
-						public void OnOpenApk(String path) {
-							if((new File(path)).exists())
-								newWindow(path);
-						}
-					});
-					Dlg.showTreeDlg();
+					String file = selectPackageFile();
+					if(file != null && (new File(file)).exists())
+						newWindow(file);
 				} else if(cmd.equals(Resource.STR_MENU_APK_FILE.getString())) {
 					String file = selectApkFile();
 					openApkFile(file);
 				} else if(cmd.equals(Resource.STR_MENU_PACKAGE.getString())) {
-					PackageTreeDlg Dlg = new PackageTreeDlg(new PackageSelectedListener() {
-						@Override
-						public void OnOpenApk(String path) {
-							if((new File(path)).exists())
-								openApkFile(path);
-						}
-					});
-					Dlg.showTreeDlg();
+					String file = selectPackageFile();
+					if(file != null && (new File(file)).exists())
+						openApkFile(file);
 				} else if(cmd.equals(Resource.STR_MENU_INSTALL.getString())) {
 					installApk(false);
 				} else if(cmd.equals(Resource.STR_MENU_CHECK_INSTALLED.getString())) {

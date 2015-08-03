@@ -1,6 +1,7 @@
 package com.ApkInfo.UI;
 
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -45,16 +46,28 @@ public class PackageTreeDlg extends JPanel
     private JTree tree;
     private DefaultMutableTreeNode top;
     private JPanel gifPanel;
-    static JFrame frame;
+
+    static private JDialog dialog;
+    private String selDevice;
+    private String selPackage;
+    private String tmpApkPath;
+    
+    public String getSelectedDevice() {
+    	return selDevice;
+    }
+    
+    public String getSelectedPackage() {
+    	return selPackage;
+    }
+    
+    public File getSelectedFile() {
+    	if(tmpApkPath != null)
+    		return new File(tmpApkPath);
+    	return null;
+    }
+    
     //Optionally play with line styles.  Possible values are
     //"Angled" (the default), "Horizontal", and "None".
-    
-	public interface PackageSelectedListener
-	{
-		public void OnOpenApk(String path);
-	}
-	private PackageSelectedListener Listener;
-	private String tmpApkPath;
 	
     class DeviceString {
     	String Devicename;
@@ -67,11 +80,10 @@ public class PackageTreeDlg extends JPanel
     	
     }
     
-    public PackageTreeDlg(PackageSelectedListener listener) {
+    public PackageTreeDlg() {
         super(new BorderLayout());
         makeTreeForm();
         addTreeList();
-        this.Listener = listener;
     }
     
     private void addTreeList() {
@@ -285,32 +297,39 @@ public class PackageTreeDlg extends JPanel
     private static void createAndShowGUI() {
  
         //Create and set up the window.
-        frame = new JFrame("PackageTree");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	dialog = new JDialog(new JFrame(), "PackageTree", true);
+    	//dialog.setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
  
         //Add content to the window.
-        frame.add(new PackageTreeDlg(null));
+    	dialog.add(new PackageTreeDlg());
  
         //Display the window.
-        frame.pack();
-        frame.setVisible(true);
+    	dialog.pack();
+    	dialog.setVisible(true);
+    	
+    	System.out.println("package dialog closed");
     }
  
     public void showTreeDlg() {
+        selDevice = null;
+        selPackage = null;
+
         //Create and set up the window.
-        frame = new JFrame("PackageTree");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    	dialog = new JDialog(new JFrame(), "PackageTree", true);
+    	dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
  
         //Add content to the window.
-        frame.add(this);
+    	dialog.add(this);
  
         
-        frame.setResizable( false );
-        frame.setLocationRelativeTo(null);
+    	dialog.setResizable( false );
+    	dialog.setLocationRelativeTo(null);
         
         //Display the window.
-        frame.pack();
-        frame.setVisible(true);
+    	dialog.pack();
+    	dialog.setVisible(true);
+    	
+    	System.out.println("package dialog closed");
     }
     
     public static void main(String[] args) {
@@ -350,28 +369,29 @@ public class PackageTreeDlg extends JPanel
 			
 			System.out.println(deviceNode.getUserObject());
 			
+			selDevice = ((DeviceString)deviceNode.getUserObject()).Devicename;
+			selPackage = tempObject.pacakge;
+
+			String apkPath = AdbWrapper.getPackageInfo(selDevice, selPackage).apkPath;
 			
-			String apkPath = AdbWrapper.getPackageInfo(((DeviceString)deviceNode.getUserObject()).Devicename, tempObject.pacakge).apkPath;
-			String device = ((DeviceString)deviceNode.getUserObject()).Devicename;
-			
-			String tmpPath = "/" + device + apkPath;
+			String tmpPath = "/" + selDevice + apkPath;
 			tmpPath = tmpPath.replaceAll("/", File.separator+File.separator).replaceAll("//", "/");
 			tmpPath = CoreApkTool.makeTempPath(tmpPath)+".apk";
 			tmpApkPath = tmpPath; 
 			System.out.println(tmpPath);
-			AdbWrapper.PullApk(device, apkPath, tmpPath, new AdbWrapperListener() {
-				@Override
-				public void OnSuccess() {
-					if(Listener != null) Listener.OnOpenApk(tmpApkPath);
-				}
+			AdbWrapper.PullApk(selDevice, apkPath, tmpPath, new AdbWrapperListener() {
 
 				@Override public void OnCompleted() {
-					frame.dispose();
+					if(!(new File(tmpApkPath)).exists())
+						tmpApkPath = null;
+					dialog.dispose();
 				}
 				
 				@Override public void OnMessage(String msg) { }
 				@Override public void OnError() { }
+				@Override public void OnSuccess() { }
 			});
+
 
 		} else if(e.getActionCommand().equals("Refresh")) {
 			System.out.println("refresh");
@@ -380,7 +400,9 @@ public class PackageTreeDlg extends JPanel
 			
 		} else if(e.getActionCommand().equals("Exit")) {
 			System.out.println("exit");
-			frame.dispose();
+			selDevice = null;
+			selPackage = null;
+			dialog.dispose();
 		}
 	}
 }
