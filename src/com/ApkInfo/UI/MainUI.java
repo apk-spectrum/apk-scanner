@@ -30,6 +30,7 @@ import com.ApkInfo.Core.ApkManager.StatusListener;
 import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UI.DeviceUIManager.InstallButtonStatusListener;
 import com.ApkInfo.UI.MyToolBarUI.ButtonId;
+import com.ApkInfo.UIUtil.FileDrop;
 import com.ApkInfo.UIUtil.JHtmlEditorPane;
 
 
@@ -440,6 +441,26 @@ public class MainUI extends JFrame implements WindowListener
 		frame.setResizable( true );
 		
 		//frame.add(new MyButtonPanel(), BorderLayout.NORTH);
+		
+        new FileDrop(frame.getContentPane(), /*dragBorder,*/ new FileDrop.Listener()
+        {   public void filesDropped( java.io.File[] files )
+            {   for( int i = 0; i < files.length; i++ )
+                {   try
+                    {   
+                		//text.append( files[i].getCanonicalPath() + "\n" );
+                	
+                		System.out.println(files[i].getCanonicalPath() + "\n");
+                	
+                		ProgressBarDlg.init();
+            			WaitingDlg.setVisible(true);
+
+
+                		
+                    }   // end try
+                    catch( java.io.IOException e ) {}
+                }   // end for: through each dropped file
+            }   // end filesDropped
+        }); // end FileDrop.Listener
 		
         
         ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon();

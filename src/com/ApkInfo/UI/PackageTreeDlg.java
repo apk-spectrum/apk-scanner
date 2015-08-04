@@ -119,6 +119,7 @@ public class PackageTreeDlg extends JPanel
 							createDeviceNodes(top, tempDeviceString, ArrayDataObject);
 							
 						}
+						
 						gifPanel.setVisible(false);
 					}
 				}
@@ -157,7 +158,9 @@ public class PackageTreeDlg extends JPanel
 		        	}
 		        }
 		        tree.updateUI();
-		        
+                for (int i = 0; i < tree.getRowCount(); i++) {
+                    tree.expandRow(i);
+                  }
 		        System.out.println("end  loading package : " + DeviceString.Devicename);
 		    }
 			});
@@ -182,17 +185,32 @@ public class PackageTreeDlg extends JPanel
                 if(selRow != -1) {
                     if(e.getClickCount() == 1 && SwingUtilities.isRightMouseButton(e)) {
                         TreePath path = tree.getPathForLocation ( e.getX (), e.getY () );
+                        tree.setSelectionPath(selPath);
                         Rectangle pathBounds = tree.getUI ().getPathBounds ( tree, path );
                         if ( pathBounds != null && pathBounds.contains ( e.getX (), e.getY () ) )
                         {
-                            JPopupMenu menu = new JPopupMenu ();
-                            menu.add ( new JMenuItem ( "Test" ) );
-                            menu.add ( new JMenuItem ( "Test2" ) );
-                            menu.add ( new JMenuItem ( "Test3" ) );
+                        	DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+                                    tree.getLastSelectedPathComponent();
+                        	if(node.getChildCount()==0)
+                        	{
+	                            JPopupMenu menu = new JPopupMenu ();
+	                            
+	                            
+	                            menu.add ( new JMenuItem ( "Open" ) ).addActionListener(new ActionListener(){ 
+	                            	   public void actionPerformed(ActionEvent e) {
+	                            		   OpenPackage();
+	                            	   }});
+	                            menu.add ( new JMenuItem ( "Pull (로컬에 저장)" ) ).addActionListener(new ActionListener(){ 
+	                            	   public void actionPerformed(ActionEvent e) {
+	                            		   
+	                            	   }});
+	                            menu.add ( new JMenuItem ( "내보내기(미구현)" ) ).addActionListener(new ActionListener(){ 
+	                            	   public void actionPerformed(ActionEvent e) {
+	                            		   
+	                            	   }});
+	                            menu.show ( tree, e.getX (), e.getY () );
+                        	}
                             
-                            menu.show ( tree, e.getX (), e.getY () );
-                            
-                            tree.setSelectionPath(selPath);
                         }
                     }
                     else if(e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {                    	
@@ -222,7 +240,7 @@ public class PackageTreeDlg extends JPanel
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         
-        final JTextField textFilField = new JTextField(50);
+        final JTextField textFilField = new JTextField(80);
         
         textFilField.addKeyListener(new KeyAdapter()
         {
@@ -237,7 +255,7 @@ public class PackageTreeDlg extends JPanel
                     filteredModel.setFilter(textFilField.getText());
                     DefaultTreeModel treeModel = (DefaultTreeModel) filteredModel.getTreeModel();
                     treeModel.reload();
-                     
+                    
                     expandTree(tree);
                 }
             }
@@ -383,7 +401,7 @@ public class PackageTreeDlg extends JPanel
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
                 tree.getLastSelectedPathComponent();
 		
-		if(node.getUserObject() instanceof PackageListObject == false) {
+		if(node.getChildCount() != 0) {
 			System.out.println("not node!");
 			return ;
 		}
