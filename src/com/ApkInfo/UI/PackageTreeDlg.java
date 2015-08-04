@@ -12,6 +12,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -181,7 +182,7 @@ public class PackageTreeDlg extends JPanel
             	int selRow = tree.getRowForLocation(e.getX(), e.getY());
                 TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
                 if(selRow != -1) {
-                    if(e.getClickCount() == 1 && e.isPopupTrigger()) {
+                    if(e.getClickCount() == 1 && SwingUtilities.isRightMouseButton(e)) {
                         TreePath path = tree.getPathForLocation ( e.getX (), e.getY () );
                         Rectangle pathBounds = tree.getUI ().getPathBounds ( tree, path );
                         if ( pathBounds != null && pathBounds.contains ( e.getX (), e.getY () ) )
