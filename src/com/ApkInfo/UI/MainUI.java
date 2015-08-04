@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.URLDecoder;
 
 import com.ApkInfo.Core.*;
+import com.ApkInfo.Core.AdbWrapper.AdbWrapperListener;
 import com.ApkInfo.Core.ApkManager.ApkInfo;
 import com.ApkInfo.Core.ApkManager.SolveType;
 import com.ApkInfo.Core.ApkManager.StatusListener;
@@ -50,6 +51,40 @@ public class MainUI extends JFrame implements WindowListener
 	static public MyProgressBarDemo ProgressBarDlg;
 
 	static private ApkManager mApkManager;
+
+	static private class PackageOpen implements AdbWrapperListener
+	{
+		private String tempApkPath;
+		
+		public PackageOpen(String device, String packageName)
+		{
+			ProgressBarDlg.addProgress(1, "I: open package\n");
+			String apkPath = AdbWrapper.getPackageInfo(device, packageName).apkPath;
+			ProgressBarDlg.addProgress(1, "I: apk path in device : " + apkPath + "\n");
+			
+			String tmpPath = "/" + device + apkPath;
+			tmpPath = tmpPath.replaceAll("/", File.separator+File.separator).replaceAll("//", "/");
+			tmpPath = CoreApkTool.makeTempPath(tmpPath)+".apk";
+			tempApkPath = tmpPath; 
+			System.out.println(tmpPath);
+			ProgressBarDlg.addProgress(1, "I: start to pull apk " + apkPath + "\n");
+			AdbWrapper.PullApk(device, apkPath, tmpPath, this);
+		}
+
+		@Override public void OnCompleted() {
+			if(!(new File(tempApkPath)).exists())
+				tempApkPath = null;
+			System.out.println("Target APK : " + tempApkPath);
+			//frame.setVisible(false);
+			openApk(tempApkPath);
+		}
+		
+		@Override public void OnMessage(String msg) { }
+		@Override public void OnError() { }
+		@Override public void OnSuccess() { }
+	}
+	
+
 	
 	public static void openApk(final String apkPath) {
 		//System.out.println("target file :" + apkPath);
@@ -121,17 +156,6 @@ public class MainUI extends JFrame implements WindowListener
 			return dir.getPath();
 		}
 		
-		private String selectPackageFile()
-		{
-			PackageTreeDlg Dlg = new PackageTreeDlg();
-			Dlg.showTreeDlg();
-			
-			File dir = Dlg.getSelectedFile();
-			
-			if(dir == null) return null;
-			return dir.getPath();
-		}
-		
 		private void newWindow(String apkFile)
 		{
 			if(apkFile == null) apkFile = "";
@@ -145,6 +169,17 @@ public class MainUI extends JFrame implements WindowListener
 			}
 		}
 		
+		private void newWindow(String device, String packageName)
+		{
+			try {
+				String classPath = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+				classPath = URLDecoder.decode(classPath, "UTF-8");
+				Runtime.getRuntime().exec(new String[] {"java", "-Dfile.encoding=utf-8", "-cp", classPath, MainUI.class.getName(), "@package", device, packageName});
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
 		private void openApkFile(String apkFile)
 		{
 			if(apkFile == null) return;
@@ -152,6 +187,15 @@ public class MainUI extends JFrame implements WindowListener
 			ProgressBarDlg.init();
 			WaitingDlg.setVisible(true);
 			openApk(apkFile);
+		}
+		
+		private void openPackage(String device, String packageName)
+		{
+			ProgressBarDlg.init();
+			WaitingDlg.setVisible(true);
+			frame.setVisible(false);
+			
+			new PackageOpen(device, packageName);
 		}
 		
 		private void installApk(boolean checkPackage)
@@ -279,16 +323,20 @@ public class MainUI extends JFrame implements WindowListener
 					if(file != null && (new File(file)).exists())
 						newWindow(file);
 				} else if(cmd.equals(Resource.STR_MENU_NEW_PACKAGE.getString())) {
-					String file = selectPackageFile();
-					if(file != null && (new File(file)).exists())
-						newWindow(file);
+					PackageTreeDlg Dlg = new PackageTreeDlg();
+					Dlg.showTreeDlg();
+					
+					if(!Dlg.getSelectedDevice().isEmpty() && !Dlg.getSelectedPackage().isEmpty())
+						newWindow(Dlg.getSelectedDevice(), Dlg.getSelectedPackage());
 				} else if(cmd.equals(Resource.STR_MENU_APK_FILE.getString())) {
 					String file = selectApkFile();
 					openApkFile(file);
 				} else if(cmd.equals(Resource.STR_MENU_PACKAGE.getString())) {
-					String file = selectPackageFile();
-					if(file != null && (new File(file)).exists())
-						openApkFile(file);
+					PackageTreeDlg Dlg = new PackageTreeDlg();
+					Dlg.showTreeDlg();
+
+					if(!Dlg.getSelectedDevice().isEmpty() && !Dlg.getSelectedPackage().isEmpty())
+						openPackage(Dlg.getSelectedDevice(), Dlg.getSelectedPackage());
 				} else if(cmd.equals(Resource.STR_MENU_INSTALL.getString())) {
 					installApk(false);
 				} else if(cmd.equals(Resource.STR_MENU_CHECK_INSTALLED.getString())) {
@@ -324,9 +372,12 @@ public class MainUI extends JFrame implements WindowListener
 				//System.out.println("user.dir : " + System.getProperty("user.dir"));
 				
 				String apkPath = null;
+				if(args.length > 0)
+					apkPath = args[0];
 
 				Resource.setLanguage((String)Resource.PROP_LANGUAGE.getData(System.getProperty("user.language")));
-				if(args.length > 0 && !args[0].isEmpty() && (new File(args[0])).exists()) {
+				if((args.length > 0 && !apkPath.equals("@package") && (new File(apkPath)).exists())
+						|| (args.length > 2 && apkPath.equals("@package") && !args[1].isEmpty() && !args[2].isEmpty())) {
 					ProgressBarDlg = new MyProgressBarDemo();
 					WaitingDlg = MyProgressBarDemo.createAndShowGUI(ProgressBarDlg);
 					WaitingDlg.setVisible(true);
@@ -334,11 +385,14 @@ public class MainUI extends JFrame implements WindowListener
 					window.initialize();
 					mMyToolBarUI.setEnabledAt(ButtonId.NEED_TARGET_APK, false);
 
-					apkPath = args[0];
-					System.out.println("Target APK : " + args[0]);
-					//frame.setVisible(false);
-					openApk(apkPath);
-				} else {					
+					if(apkPath.equals("@package")) {
+						new PackageOpen(args[1], args[2]);
+					} else {
+						System.out.println("Target APK : " + apkPath);
+						//frame.setVisible(false);
+						openApk(apkPath);
+					}
+				} else {
 					window = new MainUI();
 					window.initialize();
 					mMyToolBarUI.setEnabledAt(ButtonId.NEED_TARGET_APK, false);
@@ -351,7 +405,6 @@ public class MainUI extends JFrame implements WindowListener
 					frame.setTitle(Resource.STR_APP_NAME.getString());
 					mMyTabUI.setData(null);
 					frame.setVisible(true);
-					
 				}
 			}
 		});

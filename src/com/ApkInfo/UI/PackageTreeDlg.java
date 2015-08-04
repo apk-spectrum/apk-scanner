@@ -22,8 +22,6 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
 import com.ApkInfo.Core.AdbWrapper;
-import com.ApkInfo.Core.CoreApkTool;
-import com.ApkInfo.Core.AdbWrapper.AdbWrapperListener;
 import com.ApkInfo.Core.AdbWrapper.DeviceStatus;
 import com.ApkInfo.Core.AdbWrapper.PackageListObject;
 import com.ApkInfo.Core.PackageTreeDataManager;
@@ -406,26 +404,8 @@ public class PackageTreeDlg extends JPanel
 		
 		selDevice = ((DeviceString)deviceNode.getUserObject()).Devicename;
 		selPackage = tempObject.pacakge;
-
-		String apkPath = AdbWrapper.getPackageInfo(selDevice, selPackage).apkPath;
 		
-		String tmpPath = "/" + selDevice + apkPath;
-		tmpPath = tmpPath.replaceAll("/", File.separator+File.separator).replaceAll("//", "/");
-		tmpPath = CoreApkTool.makeTempPath(tmpPath)+".apk";
-		tmpApkPath = tmpPath; 
-		System.out.println(tmpPath);
-		AdbWrapper.PullApk(selDevice, apkPath, tmpPath, new AdbWrapperListener() {
-
-			@Override public void OnCompleted() {
-				if(!(new File(tmpApkPath)).exists())
-					tmpApkPath = null;
-				dialog.dispose();
-			}
-			
-			@Override public void OnMessage(String msg) { }
-			@Override public void OnError() { }
-			@Override public void OnSuccess() { }
-		});
+		dialog.dispose();
     }
     
 	@Override
