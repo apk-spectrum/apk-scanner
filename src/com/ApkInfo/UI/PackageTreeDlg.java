@@ -38,6 +38,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
  
 public class PackageTreeDlg extends JPanel
                       implements TreeSelectionListener, ActionListener{
@@ -168,8 +171,26 @@ public class PackageTreeDlg extends JPanel
         //Create a tree that allows one selection at a time.
                         
         FilteredTreeModel model = new FilteredTreeModel(new DefaultTreeModel(top));
-        tree = new JTree(model);
         
+        MouseListener ml = new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+            	
+            	int selRow = tree.getRowForLocation(e.getX(), e.getY());
+                TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+                if(selRow != -1) {
+                    if(e.getClickCount() == 1 && e.isPopupTrigger()) {
+                        
+                    }
+                    else if(e.getClickCount() == 2) {                    	
+                    	OpenPackage();
+                    }
+                }
+            }
+        };
+        
+        
+        tree = new JTree(model);
+        tree.addMouseListener(ml);
         
         tree.getSelectionModel().setSelectionMode
                 (TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -342,56 +363,60 @@ public class PackageTreeDlg extends JPanel
         });
     }
 
-    
+    private void OpenPackage() {
+    	System.out.println("open package");
+		
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+                tree.getLastSelectedPathComponent();
+		
+		if(node.getUserObject() instanceof PackageListObject == false) {
+			System.out.println("not node!");
+			return ;
+		}
+		
+		PackageListObject tempObject = ((PackageListObject)node.getUserObject()); 
+		
+		System.out.println(tempObject.pacakge);
+		System.out.println(tempObject.label);
+		System.out.println(tempObject.codePath);
+		
+		DefaultMutableTreeNode deviceNode = null;
+		
+		for(deviceNode = node ; deviceNode.getUserObject() instanceof DeviceString==false; deviceNode = ((DefaultMutableTreeNode)deviceNode.getParent())) {
+			
+		}
+		
+		System.out.println(deviceNode.getUserObject());
+		
+		selDevice = ((DeviceString)deviceNode.getUserObject()).Devicename;
+		selPackage = tempObject.pacakge;
+
+		String apkPath = AdbWrapper.getPackageInfo(selDevice, selPackage).apkPath;
+		
+		String tmpPath = "/" + selDevice + apkPath;
+		tmpPath = tmpPath.replaceAll("/", File.separator+File.separator).replaceAll("//", "/");
+		tmpPath = CoreApkTool.makeTempPath(tmpPath)+".apk";
+		tmpApkPath = tmpPath; 
+		System.out.println(tmpPath);
+		AdbWrapper.PullApk(selDevice, apkPath, tmpPath, new AdbWrapperListener() {
+
+			@Override public void OnCompleted() {
+				if(!(new File(tmpApkPath)).exists())
+					tmpApkPath = null;
+				dialog.dispose();
+			}
+			
+			@Override public void OnMessage(String msg) { }
+			@Override public void OnError() { }
+			@Override public void OnSuccess() { }
+		});
+    }
     
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
 		if(e.getActionCommand().equals("Open Package")) {
-			System.out.println("open package");
-			
-			DefaultMutableTreeNode node = (DefaultMutableTreeNode)
-                    tree.getLastSelectedPathComponent();
-			
-			PackageListObject tempObject = ((PackageListObject)node.getUserObject()); 
-			
-			System.out.println(tempObject.pacakge);
-			System.out.println(tempObject.label);
-			System.out.println(tempObject.codePath);
-			
-			DefaultMutableTreeNode deviceNode = null;
-			
-			
-			
-			for(deviceNode = node ; deviceNode.getUserObject() instanceof DeviceString==false; deviceNode = ((DefaultMutableTreeNode)deviceNode.getParent())) {
-				
-			}
-			
-			System.out.println(deviceNode.getUserObject());
-			
-			selDevice = ((DeviceString)deviceNode.getUserObject()).Devicename;
-			selPackage = tempObject.pacakge;
-
-			String apkPath = AdbWrapper.getPackageInfo(selDevice, selPackage).apkPath;
-			
-			String tmpPath = "/" + selDevice + apkPath;
-			tmpPath = tmpPath.replaceAll("/", File.separator+File.separator).replaceAll("//", "/");
-			tmpPath = CoreApkTool.makeTempPath(tmpPath)+".apk";
-			tmpApkPath = tmpPath; 
-			System.out.println(tmpPath);
-			AdbWrapper.PullApk(selDevice, apkPath, tmpPath, new AdbWrapperListener() {
-
-				@Override public void OnCompleted() {
-					if(!(new File(tmpApkPath)).exists())
-						tmpApkPath = null;
-					dialog.dispose();
-				}
-				
-				@Override public void OnMessage(String msg) { }
-				@Override public void OnError() { }
-				@Override public void OnSuccess() { }
-			});
-
+			OpenPackage();
 
 		} else if(e.getActionCommand().equals("Refresh")) {
 			System.out.println("refresh");
