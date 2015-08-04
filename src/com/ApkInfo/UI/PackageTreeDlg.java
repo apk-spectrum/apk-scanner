@@ -197,7 +197,7 @@ public class PackageTreeDlg extends JPanel
                             tree.setSelectionPath(selPath);
                         }
                     }
-                    else if(e.getClickCount() == 2) {                    	
+                    else if(e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {                    	
                     	OpenPackage();
                     }
                 }
