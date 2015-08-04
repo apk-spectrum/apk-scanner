@@ -179,7 +179,7 @@ public class PackageTreeDlg extends JPanel
                 TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
                 if(selRow != -1) {
                     if(e.getClickCount() == 1 && e.isPopupTrigger()) {
-                        
+                         
                     }
                     else if(e.getClickCount() == 2) {                    	
                     	OpenPackage();
