@@ -24,8 +24,9 @@ public final class FilteredTreeModel implements TreeModel {
  
   private boolean recursiveMatch(final Object node, final String filter) {
  
-    boolean matches = node.toString().contains(filter);
- 
+    //boolean matches = node.toString().contains(filter);
+	boolean matches = node.toString().matches("(?i).*"+filter+".*");
+	
     int childCount = treeModel.getChildCount(node);
     for (int i = 0; i < childCount; i++) {
       Object child = treeModel.getChild(node, i);

@@ -1,4 +1,4 @@
 gedit
-en
+ko
 true
 null
