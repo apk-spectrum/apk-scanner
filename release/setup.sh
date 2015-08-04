@@ -28,6 +28,8 @@ EOF
 
 jar -xf APKInfoDlg.jar icons/AppIcon.png
 
+echo "{}" > settings.txt
+
 sudo chmod 755 tool/adb
 sudo chmod 755 APKScanner.sh
 
@@ -42,6 +44,9 @@ if [ ! -d $APP_PATH ]; then
     exit
 fi
 sudo cp -rf ./* $APP_PATH
+
+sudo chmod 666 $APP_PATH/settings.txt
+
 
 #keytool_path=$(which java)
 #keytool_path=$(readlink -f $keytool_path)
