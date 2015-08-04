@@ -41,7 +41,6 @@ public class MainUI extends JFrame implements WindowListener
 	static MainUI window;
 	static private MyTabUI mMyTabUI;
 	static private MyToolBarUI mMyToolBarUI;
-	static SettingDlg SettingDlg;
 	
 	//window position
 	static public int nPositionX,nPositionY;
@@ -55,7 +54,7 @@ public class MainUI extends JFrame implements WindowListener
 	public static void openApk(final String apkPath) {
 		//System.out.println("target file :" + apkPath);
 		mApkManager = new ApkManager(apkPath);
-		mApkManager.addFameworkRes(SettingDlg.getframeworkResPath());
+		mApkManager.addFameworkRes((String)Resource.PROP_WITH_FRAMEWORK_RES.getData());
 		mApkManager.solve(SolveType.RESOURCE, new StatusListener(){
 			@Override
 			public void OnStart() {
@@ -165,7 +164,7 @@ public class MainUI extends JFrame implements WindowListener
 			mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, false);
 			String libPath = apkInfo.WorkTempPath + File.separator + "lib" + File.separator;
 			new DeviceUIManager(apkInfo.PackageName, apkInfo.ApkPath, libPath , 
-					SettingDlg.getSamePackage().equals("true"), checkPackage, new InstallButtonStatusListener() {
+					(boolean)Resource.PROP_CHECK_INSTALLED.getData(false), checkPackage, new InstallButtonStatusListener() {
 				@Override
 				public void SetInstallButtonStatus(Boolean Flag) {
 					mMyToolBarUI.setEnabledAt(ButtonId.INSTALL, Flag);
@@ -231,8 +230,16 @@ public class MainUI extends JFrame implements WindowListener
 					String file = selectApkFile();
 					openApkFile(file);
 				} else if(btn_label.equals(Resource.STR_BTN_MANIFEST.getString())) {
+					String editor = (String)Resource.PROP_EDITOR.getData();
+					if(editor == null) {
+						if(System.getProperty("os.name").indexOf("Window") >-1) {
+							editor = "notepad";
+						} else {  //for linux
+							editor = "gedit";
+						}
+					}
 					try {
-						new ProcessBuilder(SettingDlg.getExcuteEditorPath(), apkInfo.WorkTempPath + File.separator + "AndroidManifest.xml").start();
+						new ProcessBuilder(editor, apkInfo.WorkTempPath + File.separator + "AndroidManifest.xml").start();
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -253,12 +260,12 @@ public class MainUI extends JFrame implements WindowListener
 				} else if(btn_label.equals(Resource.STR_BTN_INSTALL.getString())) {
 					installApk(false);
 				} else if(btn_label.equals(Resource.STR_BTN_SETTING.getString())) {
-					
-					SettingDlg = new SettingDlg();
-					SettingDlg.makeDialog();
-					
-					if(!Resource.getLanguage().equals(SettingDlg.getLanguage())) {
-						setLanguage(SettingDlg.getLanguage());
+					(new SettingDlg()).makeDialog();
+
+					String lang = (String)Resource.PROP_LANGUAGE.getData();
+					if(lang != null && Resource.getLanguage() != null 
+							&& !Resource.getLanguage().equals(lang)) {
+						setLanguage(lang);
 					}
 				} else if(btn_label.equals(Resource.STR_BTN_ABOUT.getString())) {
 					showAbout();
@@ -317,8 +324,8 @@ public class MainUI extends JFrame implements WindowListener
 				//System.out.println("user.dir : " + System.getProperty("user.dir"));
 				
 				String apkPath = null;
-				SettingDlg = new SettingDlg();
-				Resource.setLanguage(SettingDlg.getLanguage());
+
+				Resource.setLanguage((String)Resource.PROP_LANGUAGE.getData(System.getProperty("user.language")));
 				if(args.length > 0 && !args[0].isEmpty() && (new File(args[0])).exists()) {
 					ProgressBarDlg = new MyProgressBarDemo();
 					WaitingDlg = MyProgressBarDemo.createAndShowGUI(ProgressBarDlg);

@@ -1,12 +1,21 @@
 package com.ApkInfo.Resource;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 
 import javax.swing.ImageIcon;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.ApkInfo.Core.CoreApkTool;
 import com.ApkInfo.Core.MyXPath;
@@ -95,9 +104,9 @@ public enum Resource
 	STR_FILE_SIZE_TB			(Type.TEXT, "@file_size_TB"),
 	
 	
-	STR_TREE_OPEN_PACKAGE			(Type.TEXT, "@tree_open_package"),
-	STR_TREE_REFRESH					(Type.TEXT, "@Refresh"),
-	STR_TREE_EXIT							(Type.TEXT, "@Exit"),
+	STR_TREE_OPEN_PACKAGE		(Type.TEXT, "@tree_open_package"),
+	STR_TREE_REFRESH			(Type.TEXT, "@Refresh"),
+	STR_TREE_EXIT				(Type.TEXT, "@Exit"),
 
 	
 	IMG_TOOLBAR_OPEN			(Type.IMAGE, "toolbar_open.png"),
@@ -114,36 +123,46 @@ public enum Resource
 	IMG_TOOLBAR_INSTALL_HOVER	(Type.IMAGE, "toolbar_install_hover.png"),
 	IMG_TOOLBAR_ABOUT			(Type.IMAGE, "toolbar_about.png"),
 	IMG_TOOLBAR_ABOUT_HOVER		(Type.IMAGE, "toolbar_about_hover.png"),
-	IMG_TOOLBAR_SETTING		(Type.IMAGE, "toolbar_setting.png"),
+	IMG_TOOLBAR_SETTING			(Type.IMAGE, "toolbar_setting.png"),
 	
 	IMG_PERM_GROUP_PHONE_CALLS	(Type.IMAGE, "perm_group_phone_calls.png"),
 	
 	IMG_TOOLBAR_OPEN_ARROW		(Type.IMAGE, "down_on.png"),
 	
-	IMG_APP_ICON		(Type.IMAGE, "AppIcon.png"),
-	IMG_QUESTION		(Type.IMAGE, "question.png"),
-	IMG_WARNING			(Type.IMAGE, "warning.png"),
-	IMG_SUCCESS			(Type.IMAGE, "Succes.png"),
-	IMG_INSTALL_WAIT	(Type.IMAGE, "install_wait.gif"),
-	IMG_LOADING			(Type.IMAGE, "loading.gif"),
-	IMG_WAIT_BAR		(Type.IMAGE, "wait_bar.gif"),
-	
+	IMG_APP_ICON				(Type.IMAGE, "AppIcon.png"),
+	IMG_QUESTION				(Type.IMAGE, "question.png"),
+	IMG_WARNING					(Type.IMAGE, "warning.png"),
+	IMG_SUCCESS					(Type.IMAGE, "Succes.png"),
+	IMG_INSTALL_WAIT			(Type.IMAGE, "install_wait.gif"),
+	IMG_LOADING					(Type.IMAGE, "loading.gif"),
+	IMG_WAIT_BAR				(Type.IMAGE, "wait_bar.gif"),
 
-	BIN_ADB_LNX			(Type.BIN, "adb"),
-	BIN_ADB_WIN			(Type.BIN, "adb.exe"),
-	BIN_APKTOOL_JAR		(Type.BIN, "apktool.jar");
+	BIN_ADB_LNX					(Type.BIN, "adb"),
+	BIN_ADB_WIN					(Type.BIN, "adb.exe"),
+	BIN_APKTOOL_JAR				(Type.BIN, "apktool.jar"),
+
+	PROP_EDITOR					(Type.PROP, "editor"),
+	PROP_FRAMEWORK_RES			(Type.PROP, "framewokr-res"),
+	PROP_CHECK_INSTALLED		(Type.PROP, "check-installed"),
+	PROP_LANGUAGE				(Type.PROP, "language"),
+	PROP_WITH_FRAMEWORK_RES		(Type.PROP, "with-framework-res"),
+	
+	ETC_SETTINGS_FILE			(Type.ETC, "settings.txt");
 	
 	private enum Type {
 		IMAGE,
 		TEXT,
 		BIN,
+		PROP,
 		ETC
 	}
 
 	private String value;
 	private Type type;
 
+	private static JSONObject property;
 	private static String lang = null;
+
 	public static void setLanguage(String l) { lang = l; }
 	public static String getLanguage() { return lang; }
 
@@ -160,8 +179,6 @@ public enum Resource
 	
 	public String getPath()
 	{
-		if(type == Type.TEXT) return null;
-
 		String subPath;
 		switch(type){
 		case IMAGE:
@@ -169,9 +186,11 @@ public enum Resource
 		case BIN:
 			subPath = File.separator + "tool";
 			break;
-		case ETC: default:
+		case ETC:
 			subPath = "";
 			break;
+		default:
+			return null;
 		}
 		return getUTF8Path() + subPath + File.separator + value;
 	}
@@ -241,6 +260,79 @@ public enum Resource
 		}
 
 		return value;
+	}
+	
+	static private void loadProperty()
+	{
+		if(property == null) {
+			File file = new File(ETC_SETTINGS_FILE.getPath());
+			if(!file.exists()) return;
+			try {
+				FileReader fileReader = new FileReader(file);
+				JSONParser parser = new JSONParser();
+				property = (JSONObject)parser.parse(fileReader);
+
+				fileReader.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	static private void saveProperty()
+	{
+		if(property == null)
+			return;
+		
+		BufferedWriter writer;
+		try {
+			writer = new BufferedWriter(new FileWriter(ETC_SETTINGS_FILE.getPath()));
+			writer.write(property.toJSONString());
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public Object getData()
+	{
+		if(type != Type.PROP) return null;
+
+		loadProperty();
+		if(property == null)
+			return null;
+		
+		return property.get(getValue());
+	}
+	
+	public Object getData(Object ref)
+	{
+		if(type != Type.PROP) return null;
+		
+		Object result = getData();
+		if(result == null) return ref;
+		
+		return result;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void setData(Object value)
+	{
+		if(type != Type.PROP) return;
+		
+		loadProperty();
+		if(property == null) {
+			property = new JSONObject();
+		}
+		
+		if(!value.equals(property.get(getValue()))) {
+			property.put(getValue(), value);
+			saveProperty();
+		}
 	}
 
 	private String getUTF8Path()

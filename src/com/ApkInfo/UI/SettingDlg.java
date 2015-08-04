@@ -2,18 +2,10 @@ package com.ApkInfo.UI;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -21,114 +13,72 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
 import javax.swing.JCheckBox;
+
+import com.ApkInfo.Resource.Resource;
 
 public class SettingDlg extends JDialog implements ActionListener{
 	private static final long serialVersionUID = -854353051241196941L;
 
 	private JTextField textframeworkResPath, textExcutePath;
 	
-	static private String strExcuteEditorPath;
-	static private String strframeworkResPath;
+	private String strExcuteEditorPath;
+	private String strframeworkResPath;
 	
-	static private String strLanguage;
-	static private String strSamePackage;
+	private String strLanguage;
+	private String strSamePackage;
 	
 	JButton savebutton, exitbutton;
     JButton browser1,browser2;
 	
-    JComboBox comboBox;
+    JComboBox<String> comboBox;
     JCheckBox chckbxNewCheckBox;
     
 	SettingDlg() {
-		readSettingInfoFromFile();
-		
+		readSettings();
 	}
 	
-	public String getExcuteEditorPath() {
-		return strExcuteEditorPath;
-	}
-	public String getframeworkResPath() {
-		return strframeworkResPath;
-	}
-	public String getLanguage() {
-		return strLanguage;
-	}
-	public String getSamePackage() {
-		return strSamePackage;
-	}
-	
-	public void readSettingInfoFromFile() {
-		// TODO Auto-generated method stub
-		File f=new File("setting.txt");
-		if(f.exists()) {
-			System.out.println("found setting.txt");			
-			FileReader fileReader;
-			try {
-				fileReader = new FileReader(f);
-				BufferedReader reader = new BufferedReader(fileReader);				
-				String line = null;
-				int index=0;
-				try {
-					while ((line = reader.readLine()) != null) {						
-						switch(index) {
-						case 0:
-							strExcuteEditorPath = line;						
-							break;
-						case 1:
-							strLanguage = line;
-							break;
-						case 2:
-							strSamePackage = line;
-							break;
-						case 3:
-							if(!line.equals("null"))
-								strframeworkResPath = line;
-							break;						
-						}
-						index ++;
-					}
-					reader.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}			
-		} else {
-			System.out.println("not found setting.txt... make file...");
+	private void readSettings()
+	{
+		strExcuteEditorPath = (String)Resource.PROP_EDITOR.getData();
+		if(strExcuteEditorPath == null) {
 			if(System.getProperty("os.name").indexOf("Window") >-1) {				
 				strExcuteEditorPath = "notepad";
 			} else {  //for linux
 				strExcuteEditorPath = "gedit";
 			}
+			Resource.PROP_EDITOR.setData(strExcuteEditorPath);
+		}
+		
+		strLanguage = (String)Resource.PROP_LANGUAGE.getData();
+		if(strLanguage == null) {
 			if(System.getProperty("user.language").indexOf("ko") > -1) {
 				strLanguage = "ko";
 			} else {
 				strLanguage = "en";
 			}
-			strSamePackage = "true";
-			strframeworkResPath = "null";			
-
-			WriteSettingInfoToFile();
-		}		
-	}
-	public void WriteSettingInfoToFile() {
-		BufferedWriter writer;
-		try {
-			writer = new BufferedWriter(new FileWriter("setting.txt"));
-			writer.write(strExcuteEditorPath + "\n");
-			writer.write(strLanguage + "\n");
-			writer.write(strSamePackage + "\n");
-			writer.write(strframeworkResPath + "\n");
-			writer.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Resource.PROP_LANGUAGE.setData(strLanguage);
 		}
+		
+		strSamePackage = (String)Resource.PROP_CHECK_INSTALLED.getData();
+		if(strSamePackage == null) {
+			strSamePackage = "true";
+			Resource.PROP_CHECK_INSTALLED.setData(strSamePackage);
+		}
+		
+		strframeworkResPath = (String)Resource.PROP_FRAMEWORK_RES.getData();
+		if(strframeworkResPath == null) {
+			strframeworkResPath = "";
+			Resource.PROP_FRAMEWORK_RES.setData(strframeworkResPath);
+		}
+	}
+	
+	private void saveSettings()
+	{
+		Resource.PROP_EDITOR.setData(strExcuteEditorPath);
+		Resource.PROP_LANGUAGE.setData(strLanguage);
+		Resource.PROP_CHECK_INSTALLED.setData(strSamePackage);
+		Resource.PROP_FRAMEWORK_RES.setData(strframeworkResPath);
 	}
 
 	void makeDialog() {
@@ -156,14 +106,14 @@ public class SettingDlg extends JDialog implements ActionListener{
 		panel.add(userLabel);
 
 		textExcutePath = new JTextField(20);
-		textExcutePath.setText(this.strExcuteEditorPath);
+		textExcutePath.setText(strExcuteEditorPath);
 		
 		textExcutePath.setBounds(111, 10, 293, 25);
 		panel.add(textExcutePath);		
 		
 		textframeworkResPath = new JTextField(20);
-		if(this.strframeworkResPath != null && !this.strframeworkResPath.equals("null"))
-			textframeworkResPath.setText(this.strframeworkResPath);
+		if(strframeworkResPath != null && !strframeworkResPath.equals("null"))
+			textframeworkResPath.setText(strframeworkResPath);
 		else
 			textframeworkResPath.setText("");
 		textframeworkResPath.setBounds(111, 40, 293, 25);
@@ -215,7 +165,7 @@ public class SettingDlg extends JDialog implements ActionListener{
 	    label.setBounds(52, 106, 32, 25);
 	    panel.add(label);
 	    
-	    comboBox = new JComboBox();
+	    comboBox = new JComboBox<String>();
 	    comboBox.setBounds(87, 109, 94, 24);
 	    
 	    comboBox.addItem("ko");
@@ -228,37 +178,37 @@ public class SettingDlg extends JDialog implements ActionListener{
 		return panel;
 	}
 	
-public static void main(final String[] args) {
+	public static void main(final String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
+				@SuppressWarnings("unused")
 				SettingDlg dlg = new SettingDlg();
 			}
 		});
 	}
 
-@Override
-public void actionPerformed(ActionEvent e) {
-	// TODO Auto-generated method stub
+	@Override
+	public void actionPerformed(ActionEvent e) {
 	
 		if(e.getSource() == savebutton) {
 			System.out.println("save");
 			
 			if((new File(textExcutePath.getText().trim()).exists())) {
-				this.strExcuteEditorPath = textExcutePath.getText().trim();					
+				strExcuteEditorPath = textExcutePath.getText().trim();					
 			} else {
-				textExcutePath.setText(this.strExcuteEditorPath);
+				textExcutePath.setText(strExcuteEditorPath);
 			}
 			if((new File(textframeworkResPath.getText().trim()).exists())) {
-				this.strframeworkResPath = textframeworkResPath.getText().trim();					
+				strframeworkResPath = textframeworkResPath.getText().trim();					
 			} else {
-				textframeworkResPath.setText(this.strframeworkResPath);
+				textframeworkResPath.setText(strframeworkResPath);
 			}
 			
-			this.strSamePackage = String.valueOf(chckbxNewCheckBox.isSelected());
-			this.strLanguage = (String)comboBox.getSelectedItem();
+			strSamePackage = String.valueOf(chckbxNewCheckBox.isSelected());
+			strLanguage = (String)comboBox.getSelectedItem();
 			
+			saveSettings();
 			
-			WriteSettingInfoToFile();
 		} else if(e.getSource() == exitbutton) {
 			System.out.println("exit");
 			this.dispose();
@@ -269,7 +219,7 @@ public void actionPerformed(ActionEvent e) {
 			jfc.showOpenDialog(null);
 			File dir = jfc.getSelectedFile();
 			if(dir!=null) {
-				this.strExcuteEditorPath = dir.getPath();
+				strExcuteEditorPath = dir.getPath();
 				textExcutePath.setText(dir.getPath()); 
 			}
 		} else if(e.getSource() == browser2) {
@@ -278,10 +228,9 @@ public void actionPerformed(ActionEvent e) {
 			jfc.showOpenDialog(null);
 			File dir = jfc.getSelectedFile();			
 			if(dir!=null) {
-				this.strframeworkResPath = dir.getPath();
+				strframeworkResPath = dir.getPath();
 				textframeworkResPath.setText(dir.getPath());
 			}
 		}
-		
 	}
 }
