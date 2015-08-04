@@ -318,7 +318,7 @@ public class AdbWrapper
 			}
 			if(line.matches("^\\s*Package\\s*\\[.*")) {
 				if(pack != null) {
-					pack.label = pack.pacakge + " - " + verName + "/" + verCode;
+					pack.label = pack.codePath.replaceAll(".*/", "") + "/" + pack.pacakge + " - " + verName + "/" + verCode;
 					list.add(pack);
 				}
 				pack = new PackageListObject();
@@ -335,7 +335,7 @@ public class AdbWrapper
 			}
 		}
 		if(pack != null) {
-			pack.label = pack.pacakge + " - " + verName + "/" + verCode;
+			pack.label = pack.codePath.replaceAll(".*/", "") + "/" + pack.pacakge + " - " + verName + "/" + verCode;
 			list.add(pack);
 		}
 
