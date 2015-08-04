@@ -4,8 +4,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
@@ -34,6 +36,7 @@ import java.util.ArrayList;
 import java.io.File;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -179,7 +182,19 @@ public class PackageTreeDlg extends JPanel
                 TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
                 if(selRow != -1) {
                     if(e.getClickCount() == 1 && e.isPopupTrigger()) {
-                         
+                        TreePath path = tree.getPathForLocation ( e.getX (), e.getY () );
+                        Rectangle pathBounds = tree.getUI ().getPathBounds ( tree, path );
+                        if ( pathBounds != null && pathBounds.contains ( e.getX (), e.getY () ) )
+                        {
+                            JPopupMenu menu = new JPopupMenu ();
+                            menu.add ( new JMenuItem ( "Test" ) );
+                            menu.add ( new JMenuItem ( "Test2" ) );
+                            menu.add ( new JMenuItem ( "Test3" ) );
+                            
+                            menu.show ( tree, e.getX (), e.getY () );
+                            
+                            tree.setSelectionPath(selPath);
+                        }
                     }
                     else if(e.getClickCount() == 2) {                    	
                     	OpenPackage();
