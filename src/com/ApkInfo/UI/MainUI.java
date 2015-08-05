@@ -448,13 +448,11 @@ public class MainUI extends JFrame implements WindowListener
                 {   try
                     {   
                 		//text.append( files[i].getCanonicalPath() + "\n" );
-                	
                 		System.out.println(files[i].getCanonicalPath() + "\n");
                 	
                 		ProgressBarDlg.init();
             			WaitingDlg.setVisible(true);
-
-
+            			openApk(files[i].getCanonicalPath());
                 		
                     }   // end try
                     catch( java.io.IOException e ) {}
