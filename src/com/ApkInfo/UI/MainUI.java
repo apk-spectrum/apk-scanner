@@ -442,7 +442,7 @@ public class MainUI extends JFrame implements WindowListener
 		
 		//frame.add(new MyButtonPanel(), BorderLayout.NORTH);
 		
-        new FileDrop(frame.getContentPane(), /*dragBorder,*/ new FileDrop.Listener()
+        new FileDrop(frame, /*dragBorder,*/ new FileDrop.Listener()
         {   public void filesDropped( java.io.File[] files )
             {   for( int i = 0; i < files.length; i++ )
                 {   try
