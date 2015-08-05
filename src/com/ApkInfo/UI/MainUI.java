@@ -146,14 +146,16 @@ public class MainUI extends JFrame implements WindowListener
 		
 		private String selectApkFile()
 		{
-			JFileChooser jfc = new JFileChooser();
-			//jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			JFileChooser jfc = new JFileChooser((String)Resource.PROP_LAST_FILE_OPEN_PATH.getData(""));
+			jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 			jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("apk","apk"));
 							
 			jfc.showOpenDialog(null);
 			File dir = jfc.getSelectedFile();
 			
 			if(dir == null) return null;
+			Resource.PROP_LAST_FILE_OPEN_PATH.setData(dir.getParentFile().getAbsolutePath());
+
 			return dir.getPath();
 		}
 		

@@ -146,6 +146,7 @@ public enum Resource
 	PROP_CHECK_INSTALLED		(Type.PROP, "check-installed"),
 	PROP_LANGUAGE				(Type.PROP, "language"),
 	PROP_WITH_FRAMEWORK_RES		(Type.PROP, "with-framework-res"),
+	PROP_LAST_FILE_OPEN_PATH	(Type.PROP, "last_file_open_path"),
 	
 	ETC_SETTINGS_FILE			(Type.ETC, "settings.txt");
 	
