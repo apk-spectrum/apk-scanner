@@ -2,6 +2,7 @@ package com.ApkInfo.UI;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -202,7 +203,7 @@ public class PackageTreeDlg extends JPanel
 	                            	   }});
 	                            menu.add ( new JMenuItem ( "Pull (로컬에 저장)" ) ).addActionListener(new ActionListener(){ 
 	                            	   public void actionPerformed(ActionEvent e) {
-	                            		   
+	                            		   PullPackage();
 	                            	   }});
 	                            menu.add ( new JMenuItem ( "내보내기(미구현)" ) ).addActionListener(new ActionListener(){ 
 	                            	   public void actionPerformed(ActionEvent e) {
@@ -375,7 +376,7 @@ public class PackageTreeDlg extends JPanel
     	dialog.add(this);
  
         
-    	dialog.setResizable( false );
+    	//dialog.setResizable( false );
     	dialog.setLocationRelativeTo(null);
         
         //Display the window.
@@ -424,6 +425,62 @@ public class PackageTreeDlg extends JPanel
 		selPackage = tempObject.pacakge;
 		
 		dialog.dispose();
+    }
+
+    private void PullPackage() {
+    	System.out.println("PullPackage()");
+		
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+                tree.getLastSelectedPathComponent();
+		
+		if(node.getChildCount() != 0) {
+			System.out.println("not node!");
+			return ;
+		}
+
+		PackageListObject tempObject = ((PackageListObject)node.getUserObject()); 
+		
+		System.out.println(tempObject.pacakge);
+		System.out.println(tempObject.label);
+		System.out.println(tempObject.codePath);
+		
+		DefaultMutableTreeNode deviceNode = null;
+		for(deviceNode = node ; deviceNode.getUserObject() instanceof DeviceString==false; deviceNode = ((DefaultMutableTreeNode)deviceNode.getParent())) { }
+		
+		System.out.println(deviceNode.getUserObject());
+		
+		String device = ((DeviceString)deviceNode.getUserObject()).Devicename;
+		String packageName = tempObject.pacakge;
+		
+
+		String apkPath = AdbWrapper.getPackageInfo(device, packageName).apkPath;
+		if(apkPath == null) return;
+		
+		String saveFileName;
+		if(apkPath.endsWith("base.apk")) {
+			saveFileName = apkPath.replaceAll(".*/(.*)/base.apk", "$1.apk");
+		} else {
+			saveFileName = apkPath.replaceAll(".*/", "");
+		}
+
+		JFileChooser jfc = new JFileChooser((String)Resource.PROP_LAST_FILE_SAVE_PATH.getData(""));
+		jfc.setDialogType(JFileChooser.SAVE_DIALOG);
+		jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("vnd.android.package-archive(.apk)","apk"));
+		jfc.setSelectedFile(new File(saveFileName));
+						
+		jfc.showSaveDialog(null);
+		File dir = jfc.getSelectedFile();
+		
+		if(dir == null) return;
+		Resource.PROP_LAST_FILE_SAVE_PATH.setData(dir.getParentFile().getAbsolutePath());
+		
+		
+		AdbWrapper.PullApk(device, apkPath, dir.getAbsolutePath(), null);
+		//dir.isDirectory()
+		
+		//return dir.getPath();
+		
     }
     
 	@Override

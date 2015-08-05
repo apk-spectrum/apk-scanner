@@ -147,6 +147,7 @@ public enum Resource
 	PROP_LANGUAGE				(Type.PROP, "language"),
 	PROP_WITH_FRAMEWORK_RES		(Type.PROP, "with-framework-res"),
 	PROP_LAST_FILE_OPEN_PATH	(Type.PROP, "last_file_open_path"),
+	PROP_LAST_FILE_SAVE_PATH	(Type.PROP, "last_file_save_path"),
 	
 	ETC_SETTINGS_FILE			(Type.ETC, "settings.txt");
 	
