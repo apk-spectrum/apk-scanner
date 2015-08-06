@@ -263,12 +263,7 @@ public class PackageTreeDlg extends JPanel
         
         textFilField = new JTextField(80);
         
-        dialog.addWindowListener( new WindowAdapter() {
-        	   public void windowOpened( WindowEvent e ){
-        		   textFilField.requestFocus();
-        	     }
-        	   } );
-        
+
         textFilField.addKeyListener(new KeyAdapter()
         {
             public void keyReleased(KeyEvent ke)
@@ -420,7 +415,12 @@ public class PackageTreeDlg extends JPanel
         //Add content to the window.
     	dialog.add(this);
  
-        
+        dialog.addWindowListener( new WindowAdapter() {
+     	   public void windowOpened( WindowEvent e ){
+     		   textFilField.requestFocus();
+     	     }
+     	   } );
+         
     	//dialog.setResizable( false );
     	dialog.setLocationRelativeTo(null);
         
