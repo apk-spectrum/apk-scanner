@@ -26,7 +26,7 @@ public class SettingDlg extends JDialog implements ActionListener{
 	private String strframeworkResPath;
 	
 	private String strLanguage;
-	private String strSamePackage;
+	private boolean isSamePackage;
 	
 	JButton savebutton, exitbutton;
     JButton browser1,browser2;
@@ -60,11 +60,7 @@ public class SettingDlg extends JDialog implements ActionListener{
 			Resource.PROP_LANGUAGE.setData(strLanguage);
 		}
 		
-		strSamePackage = (String)Resource.PROP_CHECK_INSTALLED.getData();
-		if(strSamePackage == null) {
-			strSamePackage = "true";
-			Resource.PROP_CHECK_INSTALLED.setData(strSamePackage);
-		}
+		isSamePackage = (boolean)Resource.PROP_CHECK_INSTALLED.getData(false);
 		
 		strframeworkResPath = (String)Resource.PROP_FRAMEWORK_RES.getData();
 		if(strframeworkResPath == null) {
@@ -77,12 +73,12 @@ public class SettingDlg extends JDialog implements ActionListener{
 	{
 		Resource.PROP_EDITOR.setData(strExcuteEditorPath);
 		Resource.PROP_LANGUAGE.setData(strLanguage);
-		Resource.PROP_CHECK_INSTALLED.setData(strSamePackage);
+		Resource.PROP_CHECK_INSTALLED.setData(isSamePackage);
 		Resource.PROP_FRAMEWORK_RES.setData(strframeworkResPath);
 	}
 
 	void makeDialog() {
-		this.setTitle("Setting");
+		this.setTitle(Resource.STR_SETTINGS_TITLE.getString());
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		this.setSize(new Dimension(480,210));
 		this.setResizable( false );
@@ -101,7 +97,7 @@ public class SettingDlg extends JDialog implements ActionListener{
 
 		panel.setLayout(null);
 
-		JLabel userLabel = new JLabel("change Editor : ");
+		JLabel userLabel = new JLabel(Resource.STR_SETTINGS_EDITOR.getString());
 		userLabel.setBounds(10, 10, 116, 25);
 		panel.add(userLabel);
 
@@ -119,18 +115,18 @@ public class SettingDlg extends JDialog implements ActionListener{
 		textframeworkResPath.setBounds(111, 40, 293, 25);
 	    panel.add(textframeworkResPath);
 
-		JLabel frameworkLabel = new JLabel("framework res  : ");
+		JLabel frameworkLabel = new JLabel(Resource.STR_SETTINGS_RES.getString());
 		frameworkLabel.setBounds(10, 40, 114, 25);
 		panel.add(frameworkLabel);
 		
-		savebutton = new JButton("저장");
+		savebutton = new JButton(Resource.STR_BTN_SAVE.getString());
 		savebutton.setBounds(288, 145, 80, 25);
 		savebutton.addActionListener(this);
 		savebutton.setFocusable(false);
 		panel.add(savebutton);
 		
 		
-		exitbutton = new JButton("종료");
+		exitbutton = new JButton(Resource.STR_BTN_CLOSE.getString());
 		exitbutton.setBounds(380, 145, 80, 25);
 		exitbutton.addActionListener(this);
 		exitbutton.setFocusable(false);
@@ -149,19 +145,15 @@ public class SettingDlg extends JDialog implements ActionListener{
 	    browser2.setFocusable(false);
 	    panel.add(browser2);
 	    
-	    chckbxNewCheckBox = new JCheckBox("설치시 동일 패키지 팝업 유무");
+	    chckbxNewCheckBox = new JCheckBox(Resource.STR_SETTINGS_CHECK_INSTALLED.getString());
 	    
-	    if(strSamePackage.indexOf("true") >-1) {
-	    	chckbxNewCheckBox.setSelected(true);
-	    } else {
-	    	chckbxNewCheckBox.setSelected(false);
-	    }
+    	chckbxNewCheckBox.setSelected(isSamePackage);
 	    
 	    chckbxNewCheckBox.addActionListener(this);
 	    chckbxNewCheckBox.setBounds(10, 73, 236, 25);
 	    panel.add(chckbxNewCheckBox);
 	    
-	    JLabel label = new JLabel("언어");
+	    JLabel label = new JLabel(Resource.STR_SETTINGS_LANGUAGE.getString());
 	    label.setBounds(52, 106, 32, 25);
 	    panel.add(label);
 	    
@@ -204,7 +196,7 @@ public class SettingDlg extends JDialog implements ActionListener{
 				textframeworkResPath.setText(strframeworkResPath);
 			}
 			
-			strSamePackage = String.valueOf(chckbxNewCheckBox.isSelected());
+			isSamePackage = chckbxNewCheckBox.isSelected();
 			strLanguage = (String)comboBox.getSelectedItem();
 			
 			saveSettings();

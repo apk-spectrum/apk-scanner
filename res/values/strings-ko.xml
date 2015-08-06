@@ -10,6 +10,9 @@
     <string name="btn_install">설치</string>
     <string name="btn_setting">설정</string>
     <string name="btn_about">정보</string>
+    <string name="btn_save">저장</string>
+    <string name="btn_close">닫기</string>
+    <string name="btn_ok">확인</string>
 
     <string name="menu_new">새창으로 열기...</string>
     <string name="menu_new_window">빈창 열기</string>
@@ -78,8 +81,14 @@
     <string name="file_size_GB">GB</string>
     <string name="file_size_TB">TB</string>
     
-    <string name="tree_open_package">패키지 열기</string>
+    <string name="tree_open_package">열기</string>
     <string name="tree_Refresh">새로고침</string>
-    <string name="tree_Exit">종료</string>
+    <string name="tree_Exit">닫기</string>
+    
+    <string name="settings_title">환경설정</string>
+    <string name="settings_editor">편집기</string>
+    <string name="settings_res">프레임워크 리소스</string>
+    <string name="settings_check_installed">설치시 동일 패키지 팝업 유무</string>
+    <string name="settings_language">언어</string>
     
 </resources>

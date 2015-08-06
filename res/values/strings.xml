@@ -10,6 +10,9 @@
     <string name="btn_install">Install</string>
     <string name="btn_setting">Setting</string>
     <string name="btn_about">About</string>
+    <string name="btn_save">Save</string>
+    <string name="btn_close">Close</string>
+    <string name="btn_ok">Ok</string>
     
     <string name="menu_new">New</string>
     <string name="menu_new_window">New Window</string>
@@ -78,8 +81,14 @@
     <string name="file_size_GB">GB</string>
     <string name="file_size_TB">TB</string>
     
-    <string name="tree_open_package">Open Package</string>
+    <string name="tree_open_package">Open</string>
     <string name="tree_Refresh">Refresh</string>
-    <string name="tree_Exit">Exit</string>
+    <string name="tree_Exit">Close</string>
+    
+    <string name="settings_title">Settings</string>
+    <string name="settings_editor">Editor</string>
+    <string name="settings_res">Framework-res</string>
+    <string name="settings_check_installed">Check installed</string>
+    <string name="settings_language">Language</string>
     
 </resources>

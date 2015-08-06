@@ -35,6 +35,9 @@ public enum Resource
 	STR_BTN_INSTALL				(Type.TEXT, "@btn_install"),
 	STR_BTN_SETTING				(Type.TEXT, "@btn_setting"),
 	STR_BTN_ABOUT				(Type.TEXT, "@btn_about"),
+	STR_BTN_SAVE				(Type.TEXT, "@btn_save"),
+	STR_BTN_CLOSE				(Type.TEXT, "@btn_close"),
+	STR_BTN_OK					(Type.TEXT, "@btn_ok"),
 	
 	STR_MENU_NEW				(Type.TEXT, "@menu_new"),
 	STR_MENU_NEW_WINDOW			(Type.TEXT, "@menu_new_window"),
@@ -107,7 +110,19 @@ public enum Resource
 	STR_TREE_OPEN_PACKAGE		(Type.TEXT, "@tree_open_package"),
 	STR_TREE_REFRESH			(Type.TEXT, "@Refresh"),
 	STR_TREE_EXIT				(Type.TEXT, "@Exit"),
-
+    
+	STR_SETTINGS_TITLE			(Type.TEXT, "@settings_title"),
+	STR_SETTINGS_EDITOR			(Type.TEXT, "@settings_editor"),
+	STR_SETTINGS_RES			(Type.TEXT, "@settings_res"),
+	STR_SETTINGS_CHECK_INSTALLED(Type.TEXT, "@settings_check_installed"),
+	STR_SETTINGS_LANGUAGE		(Type.TEXT, "@settings_language"),
+	/*
+    <string name="settings_title">Settings</string>
+    <string name="settings_editor">Editor</string>
+    <string name="settings_res">Framework-res</string>
+    <string name="settings_check_installed">Check installed</string>
+    <string name="settings_language">Language</string>
+	 */
 	
 	IMG_TOOLBAR_OPEN			(Type.IMAGE, "toolbar_open.png"),
 	IMG_TOOLBAR_OPEN_HOVER		(Type.IMAGE, "toolbar_open_hover.png"),
