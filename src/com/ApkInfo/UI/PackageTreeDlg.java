@@ -33,6 +33,7 @@ import com.ApkInfo.UIUtil.StandardButton;
 import com.ApkInfo.UIUtil.Theme;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.io.File;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -44,6 +45,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
  
 public class PackageTreeDlg extends JPanel
                       implements TreeSelectionListener, ActionListener{
@@ -57,6 +60,7 @@ public class PackageTreeDlg extends JPanel
     private String selDevice;
     private String selPackage;
     private String tmpApkPath;
+    private JTextField textFilField;
     
     public String getSelectedDevice() {
     	return selDevice;
@@ -159,10 +163,26 @@ public class PackageTreeDlg extends JPanel
 		        	}
 		        }
 		        tree.updateUI();
-                for (int i = 0; i < tree.getRowCount(); i++) {
-                    tree.expandRow(i);
-                  }
+		        
+//                for (int i = 0; i < tree.getRowHeight(); i++) {
+//                    tree.expandRow(i);
+//                    System.out.println(i);
+//                  }
+                
+		        DefaultMutableTreeNode currentNode = top.getNextNode();
+		        do {
+		           if (currentNode.getLevel()==2)
+		                tree.expandPath(new TreePath(currentNode.getPath()));
+		           currentNode = currentNode.getNextNode();
+		           }
+		        while (currentNode != null);
+                
+                
 		        System.out.println("end  loading package : " + DeviceString.Devicename);
+		        
+		        if(textFilField != null) {
+		        	makefilter(textFilField.getText());
+		        }
 		    }
 			});
 		t.start();     
@@ -241,7 +261,13 @@ public class PackageTreeDlg extends JPanel
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         
-        final JTextField textFilField = new JTextField(80);
+        textFilField = new JTextField(80);
+        
+        dialog.addWindowListener( new WindowAdapter() {
+        	   public void windowOpened( WindowEvent e ){
+        		   textFilField.requestFocus();
+        	     }
+        	   } );
         
         textFilField.addKeyListener(new KeyAdapter()
         {
@@ -249,14 +275,8 @@ public class PackageTreeDlg extends JPanel
             {
                 if(!(ke.getKeyChar()==27||ke.getKeyChar()==65535))//this section will execute only when user is editing the JTextField
                 {
-                	System.out.println(textFilField.getText()+ ":" + Integer.valueOf(ke.getKeyChar()));
-                	
-                    FilteredTreeModel filteredModel = (FilteredTreeModel) tree.getModel();
-
-                    filteredModel.setFilter(textFilField.getText());
-                    DefaultTreeModel treeModel = (DefaultTreeModel) filteredModel.getTreeModel();
-                    treeModel.reload();
-                    
+                	//System.out.println(textFilField.getText()+ ":" + Integer.valueOf(ke.getKeyChar()));
+                	makefilter (textFilField.getText());
                     expandTree(tree);
                 }
             }
@@ -342,7 +362,22 @@ public class PackageTreeDlg extends JPanel
         textFieldapkPath.setText(path.toString());
         
     }
-         
+    
+    private void expandTree(final JTree tree) {
+        for (int i = 0; i < tree.getRowCount(); i++) {
+          tree.expandRow(i);
+        }
+      }
+    
+    private void makefilter (String temp){
+        FilteredTreeModel filteredModel = (FilteredTreeModel) tree.getModel();
+        filteredModel.setFilter(temp);
+        DefaultTreeModel treeModel = (DefaultTreeModel) filteredModel.getTreeModel();
+        treeModel.reload();
+        
+        expandTree(tree);    	
+	}
+    
     /**
      * Create the GUI and show it.  For thread safety,
      * this method should be invoked from the
