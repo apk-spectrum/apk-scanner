@@ -19,24 +19,24 @@
     <string name="btn_cancel">Cancel</string>
     <string name="btn_refresh">Refresh</string>
     
-    <string name="btn_open_lab">Open</string>
-    <string name="btn_manifest_lab">Manifest</string>
-    <string name="btn_explorer_lab">Explorer</string>
+    <string name="btn_open_lab">Open (Ctrl+O)</string>
+    <string name="btn_manifest_lab">Manifest (Ctrl+M)</string>
+    <string name="btn_explorer_lab">Explorer (Ctrl+E)</string>
     <string name="btn_unpack_lab">Decompile</string>
     <string name="btn_pack_lab">Recompile</string>
-    <string name="btn_install_lab">Install</string>
+    <string name="btn_install_lab">Install (Ctrl+I)</string>
     <string name="btn_push_lab">Push</string>
-    <string name="btn_setting_lab">Setting</string>
-    <string name="btn_about_lab">About</string>
+    <string name="btn_setting_lab">Setting (Ctrl+S)</string>
+    <string name="btn_about_lab">About (F1)</string>
     
     <string name="menu_new">New...</string>
-    <string name="menu_new_window">New Window</string>
+    <string name="menu_new_window">New Window (Ctrl+N)</string>
     <string name="menu_new_apk_file">APK file by new window</string>
     <string name="menu_new_package">Package on device by new window</string>
-    <string name="menu_apk_file">APK file</string>
-    <string name="menu_package">Package on device</string>
-    <string name="menu_install">Intsall</string>
-    <string name="menu_check_installed">Check installed</string>
+    <string name="menu_apk_file">Open APK file (Ctrl+O)</string>
+    <string name="menu_package">Open Package (Ctrl+P)</string>
+    <string name="menu_install">Intsall (Ctrl+I)</string>
+    <string name="menu_check_installed">Check installed (Ctrl+T)</string>
 
     <string name="tab_basic_info">APK Info</string>
     <string name="tab_widget">Widget</string>

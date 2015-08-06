@@ -19,23 +19,23 @@
     <string name="btn_cancel">취소</string>
     <string name="btn_refresh">새로고침</string>
     
-    <string name="btn_open_lab">APK 파일에서 정보를 가져옵니다.</string>
-    <string name="btn_manifest_lab">AndroidManifest.xml 전문을 편집기에서 확인 합니다.</string>
-    <string name="btn_explorer_lab">압축해제 된 임시 폴더로 이동합니다.</string>
+    <string name="btn_open_lab">APK 파일에서 정보를 가져옵니다. (Ctrl+O)</string>
+    <string name="btn_manifest_lab">AndroidManifest.xml 전문을 편집기에서 확인 합니다. (Ctrl+M)</string>
+    <string name="btn_explorer_lab">압축해제 된 임시 폴더로 이동합니다. (Ctrl+E)</string>
     <string name="btn_unpack_lab">소스코드를 디검파일 합니다.</string>
     <string name="btn_pack_lab">소스코드를 리컴파일합니다.</string>
-    <string name="btn_install_lab">연결된 디바이스에 APK를 설치합니다.</string>
-    <string name="btn_setting_lab">편집기, 언어 등의 설정을 변경합니다.</string>
-    <string name="btn_about_lab">APK 스캐너 정보를 확인합니다.</string>
+    <string name="btn_install_lab">연결된 디바이스에 APK를 설치합니다. (Ctrl+I)</string>
+    <string name="btn_setting_lab">편집기, 언어 등의 설정을 변경합니다. (Ctrl+S)</string>
+    <string name="btn_about_lab">APK 스캐너 정보를 확인합니다. (F1)</string>
     
     <string name="menu_new">새창으로 열기...</string>
-    <string name="menu_new_window">빈창 열기</string>
+    <string name="menu_new_window">빈창 열기 (Ctrl+N)</string>
     <string name="menu_new_apk_file">새창으로 APK 파일 열기</string>
     <string name="menu_new_package">새창으로 패키지 열기</string>
-    <string name="menu_apk_file">APK 파일 열기</string>
-    <string name="menu_package">패키지 열기</string>
-    <string name="menu_install">설치</string>
-    <string name="menu_check_installed">설치 유무 확인</string>
+    <string name="menu_apk_file">APK 파일 열기 (Ctrl+O)</string>
+    <string name="menu_package">패키지 열기 (Ctrl+P)</string>
+    <string name="menu_install">설치 (Ctrl+I)</string>
+    <string name="menu_check_installed">설치 유무 확인 (Ctrl+T)</string>
 
     <string name="tab_basic_info">APK 정보</string>
     <string name="tab_widget">위젯</string>
