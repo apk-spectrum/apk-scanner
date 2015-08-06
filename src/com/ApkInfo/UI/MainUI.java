@@ -333,7 +333,7 @@ public class MainUI extends JFrame implements WindowListener
 					PackageTreeDlg Dlg = new PackageTreeDlg();
 					Dlg.showTreeDlg();
 					
-					if(!Dlg.getSelectedDevice().isEmpty() && !Dlg.getSelectedPackage().isEmpty())
+					if(Dlg.getSelectedDevice() != null && !Dlg.getSelectedDevice().isEmpty() && !Dlg.getSelectedPackage().isEmpty())
 						newWindow(Dlg.getSelectedDevice(), Dlg.getSelectedPackage());
 				} else if(cmd.equals(Resource.STR_MENU_APK_FILE.getString())) {
 					String file = selectApkFile();
@@ -342,7 +342,7 @@ public class MainUI extends JFrame implements WindowListener
 					PackageTreeDlg Dlg = new PackageTreeDlg();
 					Dlg.showTreeDlg();
 
-					if(!Dlg.getSelectedDevice().isEmpty() && !Dlg.getSelectedPackage().isEmpty())
+					if(Dlg.getSelectedDevice() != null && !Dlg.getSelectedDevice().isEmpty() && !Dlg.getSelectedPackage().isEmpty())
 						openPackage(Dlg.getSelectedDevice(), Dlg.getSelectedPackage());
 				} else if(cmd.equals(Resource.STR_MENU_INSTALL.getString())) {
 					installApk(false);
