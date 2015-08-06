@@ -238,14 +238,14 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         btn_about.setText(Resource.STR_BTN_ABOUT.getString());
         btn_setting.setText(Resource.STR_BTN_SETTING.getString());
         
-        btn_open.setToolTipText(Resource.STR_BTN_OPEN.getString());
-        btn_show_manifest.setToolTipText(Resource.STR_BTN_MANIFEST.getString());
-        btn_show_explorer.setToolTipText(Resource.STR_BTN_EXPLORER.getString());
-        btn_unpack.setToolTipText(Resource.STR_BTN_UNPACK.getString());
-        btn_pack.setToolTipText(Resource.STR_BTN_PACK.getString());
-        btn_install.setToolTipText(Resource.STR_BTN_INSTALL.getString());
-        btn_about.setToolTipText(Resource.STR_BTN_ABOUT.getString());
-        btn_setting.setToolTipText(Resource.STR_BTN_SETTING.getString());
+        btn_open.setToolTipText(Resource.STR_BTN_OPEN_LAB.getString());
+        btn_show_manifest.setToolTipText(Resource.STR_BTN_MANIFEST_LAB.getString());
+        btn_show_explorer.setToolTipText(Resource.STR_BTN_EXPLORER_LAB.getString());
+        btn_unpack.setToolTipText(Resource.STR_BTN_UNPACK_LAB.getString());
+        btn_pack.setToolTipText(Resource.STR_BTN_PACK_LAB.getString());
+        btn_install.setToolTipText(Resource.STR_BTN_INSTALL_LAB.getString());
+        btn_about.setToolTipText(Resource.STR_BTN_ABOUT_LAB.getString());
+        btn_setting.setToolTipText(Resource.STR_BTN_SETTING_LAB.getString());
         
         openPopupSubMenu.setText(Resource.STR_MENU_NEW.getString());
         openPopupSubMenu.removeAll();

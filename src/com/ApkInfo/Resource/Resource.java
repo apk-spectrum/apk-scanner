@@ -42,6 +42,16 @@ public enum Resource
 	STR_BTN_YES					(Type.TEXT, "@btn_yes"),
 	STR_BTN_NO					(Type.TEXT, "@btn_no"),
 	STR_BTN_CANCEL				(Type.TEXT, "@btn_cancel"),
+
+	STR_BTN_OPEN_LAB			(Type.TEXT, "@btn_open_lab"),
+	STR_BTN_MANIFEST_LAB		(Type.TEXT, "@btn_manifest_lab"),
+	STR_BTN_EXPLORER_LAB		(Type.TEXT, "@btn_explorer_lab"),
+	STR_BTN_UNPACK_LAB			(Type.TEXT, "@btn_unpack_lab"),
+	STR_BTN_PACK_LAB			(Type.TEXT, "@btn_pack_lab"),
+	STR_BTN_INSTALL_LAB			(Type.TEXT, "@btn_install_lab"),
+	STR_BTN_PUSH_LAB			(Type.TEXT, "@btn_push_lab"),
+	STR_BTN_SETTING_LAB			(Type.TEXT, "@btn_setting_lab"),
+	STR_BTN_ABOUT_LAB			(Type.TEXT, "@btn_about_lab"),
 	
 	STR_MENU_NEW				(Type.TEXT, "@menu_new"),
 	STR_MENU_NEW_WINDOW			(Type.TEXT, "@menu_new_window"),
