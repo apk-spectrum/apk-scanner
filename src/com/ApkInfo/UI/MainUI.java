@@ -439,16 +439,22 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 						setLanguage(lang);
 					}
 					break;
+				default:
+					return false;
 				}
+				return true;
 			} else if(e.getModifiers() == 0) {
 				switch(e.getKeyCode()) {
 				case KeyEvent.VK_F1:
 					showAbout();
 					break;
+				default:
+					return false;
 				}
+				return true;
 			}
 		}
-		return  true;
+		return false;
 	}
 
 	@Override
