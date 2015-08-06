@@ -1,6 +1,7 @@
 package com.ApkInfo.TabUI;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.util.HashMap;
@@ -9,6 +10,8 @@ import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UIUtil.JHtmlEditorPane;
@@ -228,8 +231,22 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 		}
 	}
 	
+	private void showDialog(String content, String title)
+	{
+		JTextArea taskOutput = new JTextArea();
+		taskOutput.setText(content);
+		taskOutput.setEditable(false);
+		
+		JScrollPane scrollPane = new JScrollPane(taskOutput);
+		scrollPane.setPreferredSize(new Dimension(500, 200));
+
+		JOptionPane.showOptionDialog(null, scrollPane, title, JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, null,
+	    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
+	}
+	
 	public void showPermList()
 	{
+		/*
 		JLabel label = new JLabel();
 	    Font font = label.getFont();
 
@@ -251,10 +268,8 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 
 	    descPane.setEditable(false);
 	    descPane.setBackground(label.getBackground());
-	    
-		//JOptionPane.showMessageDialog(null, descPane, Resource.STR_BASIC_PERM_LIST_TITLE.getString(), JOptionPane.INFORMATION_MESSAGE);
-		JOptionPane.showOptionDialog(null, descPane, Resource.STR_BASIC_PERM_LIST_TITLE.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, null,
-	    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
+	    */
+	    showDialog(apkInfo.Permissions, Resource.STR_BASIC_PERM_LIST_TITLE.getString());
 	}
 	
 	public void showPermDetailDesc(String group)
@@ -265,16 +280,17 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 		if(g == null) return;
 
 		StringBuilder body = new StringBuilder("");
-		body.append("<div id=\"perm-detail-desc\">");
+		//body.append("<div id=\"perm-detail-desc\">");
 		body.append("■ " + g.label + " - " + "[" + group + "]\n");
-		body.append(" : " + g.desc + "\n<hr/>\n");
+		body.append(" : " + g.desc + "\n------------------------------------------------------------------------------------------------------------\n\n");
 		
 		for(PermissionInfo info: g.permList) {
 			body.append("▶ " + info.label + " [" + info.permission + "]\n");
 			body.append(" : " + info.desc + "\n");
 		}
-		body.append("</div>");
-		
+		//body.append("</div>");
+
+		/*
 		JLabel label = new JLabel();
 	    Font font = label.getFont();
 
@@ -291,10 +307,8 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 
 	    descPane.setEditable(false);
 	    descPane.setBackground(label.getBackground());
-	    
-		//JOptionPane.showMessageDialog(null, descPane, Resource.STR_BASIC_PERM_DISPLAY_TITLE.getString(), JOptionPane.INFORMATION_MESSAGE);
-		JOptionPane.showOptionDialog(null, descPane, Resource.STR_BASIC_PERM_DISPLAY_TITLE.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, null,
-	    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
+	    */
+	    showDialog(body.toString(), Resource.STR_BASIC_PERM_DISPLAY_TITLE.getString());
 	}
 
 	public void reloadResource() {
