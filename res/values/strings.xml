@@ -19,7 +19,7 @@
     <string name="btn_cancel">Cancel</string>
     <string name="btn_refresh">Refresh</string>
     
-    <string name="btn_open_lab)">Open</string>
+    <string name="btn_open_lab">Open</string>
     <string name="btn_manifest_lab">Manifest</string>
     <string name="btn_explorer_lab">Explorer</string>
     <string name="btn_unpack_lab">Decompile</string>
