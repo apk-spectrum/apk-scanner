@@ -252,7 +252,9 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 	    descPane.setEditable(false);
 	    descPane.setBackground(label.getBackground());
 	    
-		JOptionPane.showMessageDialog(null, descPane, Resource.STR_BASIC_PERM_LIST_TITLE.getString(), JOptionPane.INFORMATION_MESSAGE);
+		//JOptionPane.showMessageDialog(null, descPane, Resource.STR_BASIC_PERM_LIST_TITLE.getString(), JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showOptionDialog(null, descPane, Resource.STR_BASIC_PERM_LIST_TITLE.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, null,
+	    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
 	}
 	
 	public void showPermDetailDesc(String group)
@@ -290,7 +292,9 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 	    descPane.setEditable(false);
 	    descPane.setBackground(label.getBackground());
 	    
-		JOptionPane.showMessageDialog(null, descPane, Resource.STR_BASIC_PERM_DISPLAY_TITLE.getString(), JOptionPane.INFORMATION_MESSAGE);
+		//JOptionPane.showMessageDialog(null, descPane, Resource.STR_BASIC_PERM_DISPLAY_TITLE.getString(), JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showOptionDialog(null, descPane, Resource.STR_BASIC_PERM_DISPLAY_TITLE.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, null,
+	    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
 	}
 
 	public void reloadResource() {

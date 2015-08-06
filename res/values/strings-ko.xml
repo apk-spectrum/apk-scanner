@@ -8,12 +8,13 @@
     <string name="btn_unpack">디컴파일</string>
     <string name="btn_pack">리컴파일</string>
     <string name="btn_install">설치</string>
+    <string name="btn_push">교체</string>
     <string name="btn_setting">설정</string>
     <string name="btn_about">정보</string>
     <string name="btn_save">저장</string>
     <string name="btn_close">닫기</string>
     <string name="btn_ok">확인</string>
-
+    
     <string name="menu_new">새창으로 열기...</string>
     <string name="menu_new_window">빈창 열기</string>
     <string name="menu_new_apk_file">새창으로 APK 파일 열기</string>
@@ -43,7 +44,7 @@
     <string name="feature_hidden_lab">숨김앱</string>
     <string name="feature_hidden_desc">앱의 실행 아이콘이 없습니다.</string>
     <string name="feature_startup_lab">부팅시 실행</string>
-    <string name="feature_startup_desc">부팅시 실행 가능한 RECEIVE_BOOT_COMPLETED 권한을 사용합니다.</string>
+    <string name="feature_startup_desc">부팅시 자동실행 가능한 권한을 사용합니다.</string>
     <string name="feature_signature_lab">서명 권한</string>
     <string name="feature_signature_desc">서명 권한</string>
     <string name="feature_shared_user_id_lab">SHARED_USER_ID</string>
@@ -90,5 +91,24 @@
     <string name="settings_res">프레임워크 리소스</string>
     <string name="settings_check_installed">설치시 동일 패키지 팝업 유무</string>
     <string name="settings_language">언어</string>
+    
+    <string name="label_error">오류</string>
+    <string name="label_warning">경고</string>
+    <string name="label_info">정보</string>
+    <string name="label_question">질문</string>
+    <string name="label_log">로그</string>
+    <string name="label_installing">설치중..</string>
+    
+    <string name="msg_failure_open_apk">APK 파일을 열수 없습니다.</string>
+    <string name="msg_device_not_found">자치를 찾을 수 없습니다.
+연결상태를 확인 하세요.</string>
+    <string name="msg_already_installed">동일 패키지가 이미 설치되어 있습니다.</string>
+    <string name="msg_failure_installed">설치 실패...</string>
+    <string name="msg_success_installed">설치 성공...</string>
+
+    <string name="question_reboot_device">장치를 다시 시작 하시겠습니까?</string>
+    <string name="question_continue_install">설치를 계속 하시겠습니까?</string>
+    <string name="question_push_or_install">교체 또는 설치?</string>
+    <string name="question_open_or_install">열기 또는 설치?</string>
     
 </resources>

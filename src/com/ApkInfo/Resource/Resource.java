@@ -33,6 +33,7 @@ public enum Resource
 	STR_BTN_UNPACK				(Type.TEXT, "@btn_unpack"),
 	STR_BTN_PACK				(Type.TEXT, "@btn_pack"),
 	STR_BTN_INSTALL				(Type.TEXT, "@btn_install"),
+	STR_BTN_PUSH				(Type.TEXT, "@btn_push"),
 	STR_BTN_SETTING				(Type.TEXT, "@btn_setting"),
 	STR_BTN_ABOUT				(Type.TEXT, "@btn_about"),
 	STR_BTN_SAVE				(Type.TEXT, "@btn_save"),
@@ -106,7 +107,6 @@ public enum Resource
 	STR_FILE_SIZE_GB			(Type.TEXT, "@file_size_GB"),
 	STR_FILE_SIZE_TB			(Type.TEXT, "@file_size_TB"),
 	
-	
 	STR_TREE_OPEN_PACKAGE		(Type.TEXT, "@tree_open_package"),
 	STR_TREE_REFRESH			(Type.TEXT, "@Refresh"),
 	STR_TREE_EXIT				(Type.TEXT, "@Exit"),
@@ -116,14 +116,25 @@ public enum Resource
 	STR_SETTINGS_RES			(Type.TEXT, "@settings_res"),
 	STR_SETTINGS_CHECK_INSTALLED(Type.TEXT, "@settings_check_installed"),
 	STR_SETTINGS_LANGUAGE		(Type.TEXT, "@settings_language"),
-	/*
-    <string name="settings_title">Settings</string>
-    <string name="settings_editor">Editor</string>
-    <string name="settings_res">Framework-res</string>
-    <string name="settings_check_installed">Check installed</string>
-    <string name="settings_language">Language</string>
-	 */
+
+	STR_LABEL_ERROR				(Type.TEXT, "@label_error"),
+	STR_LABEL_WARNING			(Type.TEXT, "@label_warning"),
+	STR_LABEL_INFO				(Type.TEXT, "@label_info"),
+	STR_LABEL_QUESTION			(Type.TEXT, "@label_question"),
+	STR_LABEL_LOG				(Type.TEXT, "@label_log"),
+	STR_LABEL_INSTALLING		(Type.TEXT, "@label_installing"),
 	
+	STR_MSG_FAILURE_OPEN_APK	(Type.TEXT, "@msg_failure_open_apk"),
+	STR_MSG_DEVICE_NOT_FOUND	(Type.TEXT, "@msg_device_not_found"),
+	STR_MSG_ALREADY_INSTALLED	(Type.TEXT, "@msg_already_installed"),
+	STR_MSG_FAILURE_INSTALLED	(Type.TEXT, "@msg_failure_installed"),
+	STR_MSG_SUCCESS_INSTALLED	(Type.TEXT, "@msg_success_installed"),
+
+	STR_QUESTION_REBOOT_DEVICE	(Type.TEXT, "@question_reboot_device"),
+	STR_QUESTION_CONTINUE_INSTALL(Type.TEXT, "@question_continue_install"),
+	STR_QUESTION_OPEN_OR_INSTALL(Type.TEXT, "@question_open_or_install"),
+	STR_QUESTION_PUSH_OR_INSTALL(Type.TEXT, "@question_push_or_install"),
+
 	IMG_TOOLBAR_OPEN			(Type.IMAGE, "toolbar_open.png"),
 	IMG_TOOLBAR_OPEN_HOVER		(Type.IMAGE, "toolbar_open_hover.png"),
 	IMG_TOOLBAR_MANIFEST		(Type.IMAGE, "toolbar_manifast.png"),

@@ -51,8 +51,8 @@ public class DeviceUIManager
 			final boolean samePackage, final boolean checkPackage, final InstallButtonStatusListener Listener)
 	{
 		final ImageIcon Appicon = Resource.IMG_QUESTION.getImageIcon();
-        final Object[] options = {"Push", "Install"};
-        final Object[] checkPackOptions = {"Open", "Install", "Close"};
+        final Object[] options = {Resource.STR_BTN_PUSH.getString(), Resource.STR_BTN_INSTALL.getString()};
+        final Object[] checkPackOptions = {Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_CLOSE.getString()};
 		strPackageName = PackageName;
 		strSourcePath = apkPath;
 		strLibPath = libPath;
@@ -71,7 +71,9 @@ public class DeviceUIManager
 					printlnLog("Device not found!\nplease check device");
 					Listener.SetInstallButtonStatus(true);
 					final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
-					JOptionPane.showMessageDialog(null, "Device not found!\nplease check Connected","Warning", JOptionPane.WARNING_MESSAGE, Appicon);
+					//JOptionPane.showMessageDialog(null, "Device not found!\nplease check Connected","Warning", JOptionPane.WARNING_MESSAGE, Appicon);
+					JOptionPane.showOptionDialog(null, Resource.STR_MSG_DEVICE_NOT_FOUND.getString(), Resource.STR_LABEL_WARNING.getString(), JOptionPane.WARNING_MESSAGE, JOptionPane.WARNING_MESSAGE, Appicon,
+				    		new String[] {Resource.STR_BTN_CLOSE.getString()}, Resource.STR_BTN_CLOSE.getString());
 					setVisible(false);
 					return;
 				}
@@ -98,8 +100,8 @@ public class DeviceUIManager
 					alreadyCheak = true;
 					if(pkgInfo != null) {
 						String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
-						int n = JOptionPane.showOptionDialog(null, "동일 package가 설치되어있습니다.\n"  +  strLine + pkgInfo.getSummary() + strLine + "Open or Install?",
-								"Warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, checkPackOptions, checkPackOptions[2]);
+						int n = JOptionPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo.getSummary() + strLine + Resource.STR_QUESTION_OPEN_OR_INSTALL.getString(),
+								Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, checkPackOptions, checkPackOptions[2]);
 						System.out.println("Seltected index : " + n);
 						if(n==-1 || n==2) {
 							Listener.SetInstallButtonStatus(true);
@@ -115,7 +117,9 @@ public class DeviceUIManager
 							return;
 						}
 					} else {
-						JOptionPane.showMessageDialog(null, "동일 패키지가 설치되어 있지 않습니다.", "Info", JOptionPane.INFORMATION_MESSAGE, Appicon);
+						//JOptionPane.showMessageDialog(null, "동일 패키지가 설치되어 있지 않습니다.", "Info", JOptionPane.INFORMATION_MESSAGE, Appicon);
+						JOptionPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, Appicon,
+					    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
 						Listener.SetInstallButtonStatus(true);
 						setVisible(false);
 						return;
@@ -127,8 +131,8 @@ public class DeviceUIManager
 						if(AdbWrapper.hasRootPermission(dev.name) == true) {
 							printlnLog("adbd is running as root");
 							String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
-							int n = JOptionPane.showOptionDialog(null, "동일 package가 설치되어있습니다.\n"  +  strLine + pkgInfo.getSummary() + strLine + "Push or Install?",
-									"Warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, options, options[1]);
+							int n = JOptionPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo.getSummary() + strLine + Resource.STR_QUESTION_PUSH_OR_INSTALL.getString(),
+									Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, options, options[1]);
 							System.out.println("Seltected index : " + n);
 							if(n==-1) {
 								Listener.SetInstallButtonStatus(true);
@@ -148,8 +152,8 @@ public class DeviceUIManager
 					}
 					if(samePackage && !alreadyCheak) {
 						String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
-						int n = JOptionPane.showConfirmDialog(null, "동일 package가 설치되어있습니다.\n"  +  strLine + pkgInfo.getSummary() + strLine + "Continue install?",
-								"Warning", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon);
+						int n = JOptionPane.showConfirmDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo.getSummary() + strLine + Resource.STR_QUESTION_CONTINUE_INSTALL.getString(),
+								Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon);
 						System.out.println("Seltected index : " + n);
 						if(n==1) {
 							Listener.SetInstallButtonStatus(true);
@@ -221,18 +225,20 @@ public class DeviceUIManager
 		public void OnError() {
 			if(type.equals("push")) {
 				printlnLog("Failure...");
-				JOptionPane.showMessageDialog(null, "Failure...", "Error",JOptionPane.ERROR_MESSAGE, WaringAppicon);
+				//JOptionPane.showMessageDialog(null, "Failure...", "Error",JOptionPane.ERROR_MESSAGE, WaringAppicon);
 			} else if(type.equals("install")) {
-				JOptionPane.showMessageDialog(null, "Failure...", "Error", JOptionPane.ERROR_MESSAGE, WaringAppicon);
+				//JOptionPane.showMessageDialog(null, "Failure...", "Error", JOptionPane.ERROR_MESSAGE, WaringAppicon);
 			} else if(type.equals("pull")) {
-				JOptionPane.showMessageDialog(null, "Failure...", "Error", JOptionPane.ERROR_MESSAGE, WaringAppicon);
-			} 
+				//JOptionPane.showMessageDialog(null, "Failure...", "Error", JOptionPane.ERROR_MESSAGE, WaringAppicon);
+			}
+			JOptionPane.showOptionDialog(null, Resource.STR_MSG_FAILURE_INSTALLED.getString(), Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, WaringAppicon,
+		    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
 		}
 
 		@Override
 		public void OnSuccess() {
 			if(type.equals("push")) {
-				int reboot = JOptionPane.showConfirmDialog(null, "Success download..\nRestart device now?", "APK Push", JOptionPane.YES_NO_OPTION, 
+				int reboot = JOptionPane.showConfirmDialog(null, Resource.STR_MSG_SUCCESS_INSTALLED.getString() + "\n" + Resource.STR_QUESTION_REBOOT_DEVICE.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.YES_NO_OPTION, 
 						JOptionPane.QUESTION_MESSAGE, QuestionAppicon);
 				if(reboot == 0){
 					printlnLog("Wait for reboot...");
@@ -240,7 +246,9 @@ public class DeviceUIManager
 					printlnLog("Reboot...");
 				}
 			} else if(type.equals("install")) {
-				JOptionPane.showMessageDialog(null, "Success", "Complete", JOptionPane.INFORMATION_MESSAGE, SucAppicon);
+				//JOptionPane.showMessageDialog(null, "Success", "Complete", JOptionPane.INFORMATION_MESSAGE, SucAppicon);
+				JOptionPane.showOptionDialog(null, Resource.STR_MSG_SUCCESS_INSTALLED.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, SucAppicon,
+			    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
 			} else if(type.equals("pull")) {
 				setVisible(false);
 				if(Listener != null) Listener.OnOpenApk(tmpApkPath);
@@ -263,7 +271,7 @@ public class DeviceUIManager
 					//JOptionPane.showMessageDialog(null, DialogPanel,"Log", JOptionPane.CANCEL_OPTION,Appicon);
 					dlgDialog = new JDialog();
 			        	
-					dlgDialog.setTitle("Log");
+					dlgDialog.setTitle(Resource.STR_LABEL_LOG.getString());
 					dlgDialog.setModal(false);
 					
 					dlgDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -276,7 +284,7 @@ public class DeviceUIManager
 					
 					GifLabel = new JLabel(icon);
 					waitbar = new JLabel(waitbaricon);
-					installlabel = new JLabel("설치중...");
+					installlabel = new JLabel(Resource.STR_LABEL_INSTALLING.getString());
 					
 					installPanel.add(installlabel);
 					installPanel.add(waitbar);
@@ -293,7 +301,7 @@ public class DeviceUIManager
 			        containerPanel.setLayout(new BorderLayout());
 			        
 					StandardButton btnOK;
-					btnOK = new StandardButton("닫기",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
+					btnOK = new StandardButton(Resource.STR_BTN_CLOSE.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
 					btnOK.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {		                    		                    		                    
 							dlgDialog.setVisible(false);

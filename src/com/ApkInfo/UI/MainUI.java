@@ -120,7 +120,9 @@ public class MainUI extends JFrame implements WindowListener
 				mMyTabUI.setData(null);
 				frame.setVisible(true);
 				final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
-				JOptionPane.showMessageDialog(null, "Sorry, Can not open the APK", "Error", JOptionPane.ERROR_MESSAGE, Appicon);
+				//JOptionPane.showMessageDialog(null, "Sorry, Can not open the APK", "Error", JOptionPane.ERROR_MESSAGE, Appicon);
+			    JOptionPane.showOptionDialog(null, Resource.STR_MSG_FAILURE_OPEN_APK.getString(), Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, Appicon,
+			    		new String[] {Resource.STR_BTN_CLOSE.getString()}, Resource.STR_BTN_CLOSE.getString());
 			}
 
 			@Override
@@ -305,7 +307,7 @@ public class MainUI extends JFrame implements WindowListener
 				} else if(btn_label.equals(Resource.STR_BTN_UNPACK.getString())) {
 					//JOptionPane.showMessageDialog(null, "unpack", "unpack", JOptionPane.INFORMATION_MESSAGE);
 				} else if(btn_label.equals(Resource.STR_BTN_PACK.getString())) {
-					JOptionPane.showMessageDialog(null, "pack", "pack", JOptionPane.INFORMATION_MESSAGE);
+					//JOptionPane.showMessageDialog(null, "pack", "pack", JOptionPane.INFORMATION_MESSAGE);
 				} else if(btn_label.equals(Resource.STR_BTN_INSTALL.getString())) {
 					installApk(false);
 				} else if(btn_label.equals(Resource.STR_BTN_SETTING.getString())) {

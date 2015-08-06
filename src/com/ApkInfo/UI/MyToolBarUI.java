@@ -247,6 +247,7 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         btn_about.setToolTipText(Resource.STR_BTN_ABOUT.getString());
         btn_setting.setToolTipText(Resource.STR_BTN_SETTING.getString());
         
+        openPopupSubMenu.setText(Resource.STR_MENU_NEW.getString());
         openPopupSubMenu.removeAll();
         openPopupSubMenu.add(Resource.STR_MENU_NEW_WINDOW.getString()).addActionListener(listener);
         openPopupSubMenu.add(Resource.STR_MENU_NEW_APK_FILE.getString()).addActionListener(listener);

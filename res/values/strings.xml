@@ -8,13 +8,14 @@
     <string name="btn_unpack">Decompile</string>
     <string name="btn_pack">Recompile</string>
     <string name="btn_install">Install</string>
+    <string name="btn_push">Push</string>
     <string name="btn_setting">Setting</string>
     <string name="btn_about">About</string>
     <string name="btn_save">Save</string>
     <string name="btn_close">Close</string>
     <string name="btn_ok">Ok</string>
     
-    <string name="menu_new">New</string>
+    <string name="menu_new">New...</string>
     <string name="menu_new_window">New Window</string>
     <string name="menu_new_apk_file">APK file by new window</string>
     <string name="menu_new_package">Package on device by new window</string>
@@ -90,5 +91,24 @@
     <string name="settings_res">Framework-res</string>
     <string name="settings_check_installed">Check installed</string>
     <string name="settings_language">Language</string>
+    
+    <string name="label_error">Error</string>
+    <string name="label_warning">Warning</string>
+    <string name="label_info">Information</string>
+    <string name="label_question">Question</string>
+    <string name="label_log">Log</string>
+    <string name="label_installing">Installing..</string>
+    
+    <string name="msg_failure_open_apk">Sorry, Can not open the APK</string>
+    <string name="msg_device_not_found">Device not found!
+Please check device.</string>
+    <string name="msg_already_installed">This package was already installed.</string>
+    <string name="msg_failure_installed">Failure...</string>
+    <string name="msg_success_installed">Success...</string>
+
+    <string name="question_reboot_device">Restart device now?</string>
+    <string name="question_continue_install">Continue install?</string>
+    <string name="question_push_or_install">Push or Install?</string>
+    <string name="question_open_or_install">Open or Install?</string>
     
 </resources>
