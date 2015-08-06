@@ -14,6 +14,9 @@
     <string name="btn_save">Save</string>
     <string name="btn_close">Close</string>
     <string name="btn_ok">Ok</string>
+    <string name="btn_yes">Yes</string>
+    <string name="btn_no">No</string>
+    <string name="btn_cancel">Cancel</string>
     
     <string name="menu_new">New...</string>
     <string name="menu_new_window">New Window</string>

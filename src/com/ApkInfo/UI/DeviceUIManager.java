@@ -53,6 +53,7 @@ public class DeviceUIManager
 		final ImageIcon Appicon = Resource.IMG_QUESTION.getImageIcon();
         final Object[] options = {Resource.STR_BTN_PUSH.getString(), Resource.STR_BTN_INSTALL.getString()};
         final Object[] checkPackOptions = {Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_CLOSE.getString()};
+        final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
 		strPackageName = PackageName;
 		strSourcePath = apkPath;
 		strLibPath = libPath;
@@ -152,8 +153,8 @@ public class DeviceUIManager
 					}
 					if(samePackage && !alreadyCheak) {
 						String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
-						int n = JOptionPane.showConfirmDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo.getSummary() + strLine + Resource.STR_QUESTION_CONTINUE_INSTALL.getString(),
-								Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon);
+						int n = JOptionPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo.getSummary() + strLine + Resource.STR_QUESTION_CONTINUE_INSTALL.getString(),
+								Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, yesNoOptions, yesNoOptions[1]);
 						System.out.println("Seltected index : " + n);
 						if(n==1) {
 							Listener.SetInstallButtonStatus(true);
@@ -238,8 +239,9 @@ public class DeviceUIManager
 		@Override
 		public void OnSuccess() {
 			if(type.equals("push")) {
-				int reboot = JOptionPane.showConfirmDialog(null, Resource.STR_MSG_SUCCESS_INSTALLED.getString() + "\n" + Resource.STR_QUESTION_REBOOT_DEVICE.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.YES_NO_OPTION, 
-						JOptionPane.QUESTION_MESSAGE, QuestionAppicon);
+				final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
+				int reboot = JOptionPane.showOptionDialog(null, Resource.STR_MSG_SUCCESS_INSTALLED.getString() + "\n" + Resource.STR_QUESTION_REBOOT_DEVICE.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.YES_NO_OPTION, 
+						JOptionPane.QUESTION_MESSAGE, QuestionAppicon, yesNoOptions, yesNoOptions[1]);
 				if(reboot == 0){
 					printlnLog("Wait for reboot...");
 					AdbWrapper.reboot(device);

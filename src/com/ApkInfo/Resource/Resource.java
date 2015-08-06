@@ -39,6 +39,9 @@ public enum Resource
 	STR_BTN_SAVE				(Type.TEXT, "@btn_save"),
 	STR_BTN_CLOSE				(Type.TEXT, "@btn_close"),
 	STR_BTN_OK					(Type.TEXT, "@btn_ok"),
+	STR_BTN_YES					(Type.TEXT, "@btn_yes"),
+	STR_BTN_NO					(Type.TEXT, "@btn_no"),
+	STR_BTN_CANCEL				(Type.TEXT, "@btn_cancel"),
 	
 	STR_MENU_NEW				(Type.TEXT, "@menu_new"),
 	STR_MENU_NEW_WINDOW			(Type.TEXT, "@menu_new_window"),
