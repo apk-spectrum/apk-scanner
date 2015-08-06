@@ -17,6 +17,7 @@
     <string name="btn_yes">Yes</string>
     <string name="btn_no">No</string>
     <string name="btn_cancel">Cancel</string>
+    <string name="btn_refresh">Refresh</string>
     
     <string name="btn_open_lab)">Open</string>
     <string name="btn_manifest_lab">Manifest</string>
@@ -111,6 +112,8 @@
     <string name="label_question">Question</string>
     <string name="label_log">Log</string>
     <string name="label_installing">Installing..</string>
+    <string name="label_sel_device">Select Device</string>
+    <string name="label_device_list">Device list</string>
     
     <string name="msg_failure_open_apk">Sorry, Can not open the APK</string>
     <string name="msg_device_not_found">Device not found!
@@ -118,6 +121,8 @@ Please check device.</string>
     <string name="msg_already_installed">This package was already installed.</string>
     <string name="msg_failure_installed">Failure...</string>
     <string name="msg_success_installed">Success...</string>
+    <string name="msg_device_unauthorized">device unauthorized. Please check the confirmation dialog on your device.</string>
+    <string name="msg_device_unknown">device unknown</string>
 
     <string name="question_reboot_device">Restart device now?</string>
     <string name="question_continue_install">Continue install?</string>

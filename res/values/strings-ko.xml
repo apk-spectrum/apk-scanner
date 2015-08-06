@@ -17,6 +17,7 @@
     <string name="btn_yes">예</string>
     <string name="btn_no">아니요</string>
     <string name="btn_cancel">취소</string>
+    <string name="btn_refresh">새로고침</string>
     
     <string name="btn_open_lab">APK 파일에서 정보를 가져옵니다.</string>
     <string name="btn_manifest_lab">AndroidManifest.xml 전문을 편집기에서 확인 합니다.</string>
@@ -110,6 +111,8 @@
     <string name="label_question">질문</string>
     <string name="label_log">로그</string>
     <string name="label_installing">설치중..</string>
+    <string name="label_sel_device">디바이스 선택</string>
+    <string name="label_device_list">디바이스 목록</string>
     
     <string name="msg_failure_open_apk">APK 파일을 열수 없습니다.</string>
     <string name="msg_device_not_found">자치를 찾을 수 없습니다.
@@ -117,6 +120,8 @@
     <string name="msg_already_installed">동일 패키지가 이미 설치되어 있습니다.</string>
     <string name="msg_failure_installed">설치 실패...</string>
     <string name="msg_success_installed">설치 성공...</string>
+    <string name="msg_device_unauthorized">디바이스가 미인증 상태입니다. 디바이스에서 USB 디버깅 허용상태를 확인하세요.</string>
+    <string name="msg_device_unknown">디바이스 상태를 알수 없습니다.</string>
 
     <string name="question_reboot_device">장치를 다시 시작 하시겠습니까?</string>
     <string name="question_continue_install">설치를 계속 하시겠습니까?</string>

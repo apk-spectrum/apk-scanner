@@ -42,6 +42,7 @@ public enum Resource
 	STR_BTN_YES					(Type.TEXT, "@btn_yes"),
 	STR_BTN_NO					(Type.TEXT, "@btn_no"),
 	STR_BTN_CANCEL				(Type.TEXT, "@btn_cancel"),
+	STR_BTN_REFRESH				(Type.TEXT, "@btn_refresh"),
 
 	STR_BTN_OPEN_LAB			(Type.TEXT, "@btn_open_lab"),
 	STR_BTN_MANIFEST_LAB		(Type.TEXT, "@btn_manifest_lab"),
@@ -136,12 +137,16 @@ public enum Resource
 	STR_LABEL_QUESTION			(Type.TEXT, "@label_question"),
 	STR_LABEL_LOG				(Type.TEXT, "@label_log"),
 	STR_LABEL_INSTALLING		(Type.TEXT, "@label_installing"),
+	STR_LABEL_SELECT_DEVICE		(Type.TEXT, "@label_sel_device"),
+	STR_LABEL_DEVICE_LIST		(Type.TEXT, "@label_device_list"),
 	
 	STR_MSG_FAILURE_OPEN_APK	(Type.TEXT, "@msg_failure_open_apk"),
 	STR_MSG_DEVICE_NOT_FOUND	(Type.TEXT, "@msg_device_not_found"),
 	STR_MSG_ALREADY_INSTALLED	(Type.TEXT, "@msg_already_installed"),
 	STR_MSG_FAILURE_INSTALLED	(Type.TEXT, "@msg_failure_installed"),
 	STR_MSG_SUCCESS_INSTALLED	(Type.TEXT, "@msg_success_installed"),
+	STR_MSG_DEVICE_UNAUTHORIZED	(Type.TEXT, "@msg_device_unauthorized"),
+	STR_MSG_DEVICE_UNKNOWN		(Type.TEXT, "@msg_device_unknown"),
 
 	STR_QUESTION_REBOOT_DEVICE	(Type.TEXT, "@question_reboot_device"),
 	STR_QUESTION_CONTINUE_INSTALL(Type.TEXT, "@question_continue_install"),

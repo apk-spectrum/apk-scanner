@@ -31,7 +31,7 @@ public class MyListDialog extends JDialog implements ActionListener {
 	 * should appear.
 	 */
 	public static int showDialog() {
-		return showDialog(null, null, "Select Device", "Device List", null, 0, "Cosmo  ");
+		return showDialog(null, null, Resource.STR_LABEL_DEVICE_LIST.getString(), Resource.STR_LABEL_SELECT_DEVICE.getString(), null, 0, "Cosmo  ");
 	}
 	
 	public static int showDialog(Component frameComp,
@@ -47,9 +47,11 @@ public class MyListDialog extends JDialog implements ActionListener {
 				} else if(DeviceList.get(value).status.equals("device")) {
 					return value;
 				} else if(DeviceList.get(value).status.equals("unauthorized")) {
-					JOptionPane.showMessageDialog(null, "device unauthorized. Please check the confirmation dialog on your device.", "Error", JOptionPane.ERROR_MESSAGE, null);
+					JOptionPane.showOptionDialog(null, Resource.STR_MSG_DEVICE_UNAUTHORIZED.getString(), Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, null,
+				    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
 				} else {
-					JOptionPane.showMessageDialog(null, "device unknown. " + DeviceList.get(value).status, "Error", JOptionPane.ERROR_MESSAGE, null);
+					JOptionPane.showOptionDialog(null, Resource.STR_MSG_DEVICE_UNKNOWN.getString() + " " + DeviceList.get(value).status, Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, null,
+				    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
 				}
 				clicked = false;
 			}
@@ -82,11 +84,11 @@ public class MyListDialog extends JDialog implements ActionListener {
 		this.setIconImage(Appicon.getImage());
 				
 		// Create and initialize the buttons.
-		StandardButton cancelButton = new StandardButton("Device List 갱신",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);		
+		StandardButton cancelButton = new StandardButton(Resource.STR_BTN_REFRESH.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);		
 		cancelButton.setActionCommand("Refresh");
 		cancelButton.addActionListener(this);
 		//
-		final JButton setButton = new StandardButton("확인",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
+		final JButton setButton = new StandardButton(Resource.STR_BTN_OK.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
 		setButton.setActionCommand("Set");
 		setButton.addActionListener(this);
 		getRootPane().setDefaultButton(setButton);
