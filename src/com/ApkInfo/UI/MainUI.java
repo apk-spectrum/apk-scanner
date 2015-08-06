@@ -454,18 +454,15 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 	@Override
 	public void filesDropped(File[] files)
 	{
-		for( int i = 0; i < files.length; i++ ) {
-			try {   
-        		//text.append( files[i].getCanonicalPath() + "\n" );
-        		System.out.println(files[i].getCanonicalPath() + "\n");
-        	
-        		ProgressBarDlg.init();
-    			WaitingDlg.setVisible(true);
-    			openApk(files[i].getCanonicalPath());
-        		
-            }   // end try
-            catch( java.io.IOException e ) {}
-        }   // end for: through each dropped file
+		try {   
+    		//text.append( files[i].getCanonicalPath() + "\n" );
+    		System.out.println(files[0].getCanonicalPath() + "\n");
+
+    		ProgressBarDlg.init();
+			WaitingDlg.setVisible(true);
+			openApk(files[0].getCanonicalPath());
+        }   // end try
+        catch( java.io.IOException e ) {}
 	}
 	
 	public static void setLanguage(String lang)

@@ -1,6 +1,7 @@
 package com.ApkInfo.UIUtil;
 
 import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -123,7 +124,7 @@ public class FileDrop
     {   this( out,  // Logging stream
               c,    // Drop target
               javax.swing.BorderFactory.createMatteBorder( 2, 2, 2, 2, defaultBorderColor ), 
-              false, // Recursive
+              true, // Recursive
               listener );
     }   // end constructor
     
@@ -267,9 +268,22 @@ public class FileDrop
             dropListener = new java.awt.dnd.DropTargetListener()
             {   public void dragEnter( java.awt.dnd.DropTargetDragEvent evt )
                 {       log( out, "FileDrop: dragEnter event." );
-
+                	
+                	boolean isFileTypeOK = false;
+                	try {
+                    	java.awt.datatransfer.Transferable tr = evt.getTransferable();
+						java.util.List fileList = (java.util.List)
+						        tr.getTransferData(java.awt.datatransfer.DataFlavor.javaFileListFlavor);
+						if(fileList.size() == 1 && fileList.get(0).toString().endsWith(".apk")) {
+							if(new File(fileList.get(0).toString()).isFile())
+									isFileTypeOK = true;
+						}
+						fileList.get(0);
+					} catch (UnsupportedFlavorException | IOException e) {
+						e.printStackTrace();
+					}
                     // Is this an acceptable drag event?
-                    if( isDragOk( out, evt ) )
+                    if( isDragOk( out, evt ) && isFileTypeOK )
                     {
                         // If it's a Swing component, set its border
                         if( c instanceof javax.swing.JComponent )
