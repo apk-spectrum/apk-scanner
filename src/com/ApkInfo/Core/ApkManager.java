@@ -168,6 +168,7 @@ public class ApkManager
 		
 		
 		for(String file: resApkPath.split(";")) {
+			if(file.isEmpty()) continue;
 			File resFile = new File(file);
 			if(!resFile.exists()) {
 				System.out.println("No Such res file : " + file);
@@ -185,7 +186,7 @@ public class ApkManager
 				System.out.println("No such file : apktool.jar");
 				return null;
 			}
-			String[] result = MyConsolCmd.exc(new String[] {"java", "-jar", apkToolPath, "--version"}, true);
+			String[] result = MyConsolCmd.exc(new String[] {"java", "-jar", apkToolPath, "--version"}, false);
 	
 			return result[0];
 		}
@@ -195,7 +196,7 @@ public class ApkManager
 	public void solve(SolveType type, StatusListener listener)
 	{
 		if(mApkInfo.ApkPath == null) return;
-		System.out.println("solve()....start ");
+		//System.out.println("solve()....start ");
 		synchronized(this) {
 			mProcess = new ProcessThead(this, ProcessCmd.SOLVE_RESOURCE, listener);
 			mProcess.start();
@@ -207,12 +208,12 @@ public class ApkManager
 				e.printStackTrace();
 			}
 		}
-		System.out.println("solve()....end ");
+		//System.out.println("solve()....end ");
 	}
 
 	public void clear(boolean wait, StatusListener listener)
 	{
-		System.out.println("clear()....start ");
+		//System.out.println("clear()....start ");
 		mProcess = new ProcessThead(this, ProcessCmd.DELETE_TEMP_PATH, listener);
 		synchronized(this) {
 			mProcess.start();
@@ -229,7 +230,7 @@ public class ApkManager
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		System.out.println("clear()....end ");
+		//System.out.println("clear()....end ");
 	}
 	
 	public final ApkInfo getApkInfo()
@@ -690,7 +691,7 @@ public class ApkManager
 
 		public void run()
 		{
-			System.out.println("ProcessThead run()~~~");
+			//System.out.println("ProcessThead run()~~~");
 			synchronized(mOwner) {
 				mOwner.notify();
 				try {

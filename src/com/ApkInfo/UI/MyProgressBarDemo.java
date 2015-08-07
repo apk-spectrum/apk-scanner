@@ -70,7 +70,7 @@ public class MyProgressBarDemo extends JPanel
         ImageIcon icon = Resource.IMG_LOADING.getImageIcon();
         //ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon();
         
-        System.out.println("loding icon : " + icon);
+        //System.out.println("loding icon : " + icon);
         
         
         GifLabel = new JLabel(icon);

@@ -179,11 +179,11 @@ public class MyListDialog extends JDialog implements ActionListener {
 	// Handle clicks on the Set and Cancel buttons.
 	public void actionPerformed(ActionEvent e) {
 		if ("Set".equals(e.getActionCommand())) {
-			System.out.println("click set");
+			//System.out.println("click set");
 			MyListDialog.value = (int) (list.getSelectedIndex());
 			MyListDialog.dialog.setVisible(false);
 		} else if("Refresh".equals(e.getActionCommand())) {
-			System.out.println("Refresh");
+			//System.out.println("Refresh");
 			  Thread t = new Thread(new Runnable(){
 			        public void run(){
 			        	refreshData();
