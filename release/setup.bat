@@ -59,7 +59,7 @@ copy /Y %SRC_PATH%\ApkScanner.exe "%APP_PATH%"
 copy /Y %SRC_PATH%\APKInfoDlg.jar "%APP_PATH%"
 copy /Y %SRC_PATH%\tool\apktool.jar "%APP_PATH%\tool"
 copy /Y %SRC_PATH%\tool\adb.exe "%APP_PATH%\tool"
-copy /Y %SRC_PATH%\data\strings-ko.xml "%APP_PATH%\data"
+rem copy /Y %SRC_PATH%\data\strings-ko.xml "%APP_PATH%\data"
 rem copy /Y .\tool\* "%APP_PATH%\tool\"
 
 

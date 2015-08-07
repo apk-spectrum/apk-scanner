@@ -279,7 +279,7 @@ public class ApkManager
 
 			for(String framework: mFrameworkResList) {
 				if(!(new File(framework)).exists()) continue;
-				String[] cmd = {"java", "-jar", apkToolPath, "install-framework", "-p", solvePath, framework};
+				String[] cmd = {"java", "-jar", apkToolPath, "install-framework", "-p", solvePath+"-res", framework};
 				MyConsolCmd.exc(cmd, true, new MyConsolCmd.OutputObserver() {
 					@Override
 					public boolean ConsolOutput(String output) {
@@ -291,13 +291,7 @@ public class ApkManager
 			}
 			
 			boolean isSuccess = true;
-			String[] cmd;
-			if(mFrameworkResList.size() > 0) {
-				cmd = new String[] {"java", "-jar", apkToolPath, "d", "-s", "-f", "-o", solvePath, APKFilePath};
-			} else {
-				cmd = new String[] {"java", "-jar", apkToolPath, "d", "-s", "-f", "-o", solvePath, "-p", solvePath, APKFilePath};
-			}
-
+			String[] cmd = new String[] {"java", "-jar", apkToolPath, "d", "-s", "-f", "-o", solvePath, "-p", solvePath+"-res", APKFilePath};
 			String[] result = MyConsolCmd.exc(cmd, true, new MyConsolCmd.OutputObserver() {
 				@Override
 				public boolean ConsolOutput(String output) {
