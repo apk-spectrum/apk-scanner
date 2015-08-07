@@ -118,7 +118,7 @@
     <string name="label_app_name_list">App 이름 목록</string>
     
     <string name="msg_failure_open_apk">APK 파일을 열수 없습니다.</string>
-    <string name="msg_device_not_found">자치를 찾을 수 없습니다.
+    <string name="msg_device_not_found">장치를 찾을 수 없습니다.
 연결상태를 확인 하세요.</string>
     <string name="msg_already_installed">동일 패키지가 이미 설치되어 있습니다.</string>
     <string name="msg_failure_installed">설치 실패...</string>
