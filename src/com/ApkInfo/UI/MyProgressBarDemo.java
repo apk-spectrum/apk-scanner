@@ -144,11 +144,12 @@ public class MyProgressBarDemo extends JPanel
         
         //Display the window.
         frame.setResizable( false );
-        frame.setLocationRelativeTo(null);
+        
         
         frame.pack();
         //frame.setLocation(200, 200);        
         //frame.setVisible(true);
+        frame.setLocationRelativeTo(null);
         
         return frame;
     }
