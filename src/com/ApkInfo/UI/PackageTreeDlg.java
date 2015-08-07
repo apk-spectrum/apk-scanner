@@ -460,7 +460,7 @@ public class PackageTreeDlg extends JPanel
         selPackage = null;
 
         //Create and set up the window.
-    	dialog = new JDialog(new JFrame(), "PackageTree", false);
+    	dialog = new JDialog(new JFrame(), "PackageTree", true);
     	dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
  
         //Add content to the window.
