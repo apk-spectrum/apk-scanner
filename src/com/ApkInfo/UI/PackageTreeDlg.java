@@ -61,6 +61,7 @@ public class PackageTreeDlg extends JPanel
     private String selPackage;
     private String tmpApkPath;
     private JTextField textFilField;
+    private FilteredTreeModel filteredModel;
     
     public String getSelectedDevice() {
     	return selDevice;
@@ -171,9 +172,11 @@ public class PackageTreeDlg extends JPanel
                 
 		        DefaultMutableTreeNode currentNode = top.getNextNode();
 		        do {
-		           if (currentNode.getLevel()==2)
+		           if (currentNode.getLevel()==2) {
+		        	   System.out.println(new TreePath(currentNode.getPath()));
 		                tree.expandPath(new TreePath(currentNode.getPath()));
-		           currentNode = currentNode.getNextNode();
+		           }
+		           		currentNode = currentNode.getNextNode();
 		           }
 		        while (currentNode != null);
                 
@@ -270,19 +273,45 @@ public class PackageTreeDlg extends JPanel
             {
                 if(!(ke.getKeyChar()==27||ke.getKeyChar()==65535))//this section will execute only when user is editing the JTextField
                 {
-                	//System.out.println(textFilField.getText()+ ":" + Integer.valueOf(ke.getKeyChar()));
-                	
+                	System.out.println(textFilField.getText()+ ":" + Integer.valueOf(ke.getKeyChar()));
+
                 	if(ke.getKeyChar()==10) {
-                		
                 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
                                 tree.getLastSelectedPathComponent();
                 		if(node != null) {
                 			OpenPackage();
                 		}                		
+                	} else {
+                		makefilter (textFilField.getText());
+                        expandTree(tree);
+
+        		        DefaultMutableTreeNode currentNode = top.getNextNode();
+                                                
+		        		//DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode)filteredModel.getRoot();
+        		        do {
+        		        		//System.out.println(currentNode.getLevel());
+        		        		//System.out.println(currentNode.getUserObject());
+        		        		//System.out.println(filteredModel.getChildCount(currentNode));
+        		        		
+        		        		//System.out.println(tree.isCollapsed(new TreePath(currentNode.getPath())));
+        		        		
+        		        		if(currentNode.getLevel()==3 && filteredModel.getChildCount(currentNode) >0) {
+	                		        for(int i=0; i<filteredModel.getChildCount(currentNode); i++) {
+	            		        		tree.setSelectionPath(new TreePath(((DefaultMutableTreeNode)(filteredModel.getChild(currentNode, i))).getPath()));
+	            		        		return;
+	                		        }
+                		        }
+        		        		
+//	        		           if (currentNode.getLevel()==4 && tree.isVisible(new TreePath(currentNode.getPath())) == true) {
+//	        		        	   tree.setSelectionPath(new TreePath(currentNode.getPath()));	        		        	   
+//	        		        	   break;
+//	        		           }
+	        		           currentNode = currentNode.getNextNode();
+        		           }
+        		        while (currentNode != null);
+        		        
                 	}
-                	
-                	makefilter (textFilField.getText());
-                    expandTree(tree);
+                    
                 }
             }
             private void expandTree(final JTree tree) {
@@ -375,10 +404,11 @@ public class PackageTreeDlg extends JPanel
       }
     
     private void makefilter (String temp){
-        FilteredTreeModel filteredModel = (FilteredTreeModel) tree.getModel();
+        filteredModel = (FilteredTreeModel) tree.getModel();
         filteredModel.setFilter(temp);
         DefaultTreeModel treeModel = (DefaultTreeModel) filteredModel.getTreeModel();
         treeModel.reload();
+        
         
         expandTree(tree);    	
 	}
