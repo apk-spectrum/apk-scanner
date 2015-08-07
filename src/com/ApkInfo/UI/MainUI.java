@@ -56,20 +56,27 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 
 	static private ApkManager mApkManager;
 	
+	static private boolean exiting = false;
+	
 	public static void openApk(final String apkPath) {
 		//System.out.println("target file :" + apkPath);
+		if(mApkManager != null)
+			mApkManager.clear(false, null);
+
 		mApkManager = new ApkManager(apkPath);
 		mApkManager.addFameworkRes((String)Resource.PROP_FRAMEWORK_RES.getData());
 		mApkManager.solve(SolveType.RESOURCE, new StatusListener(){
 			@Override
 			public void OnStart() {
-				System.out.println("ApkCore.OnStart()");
+				//System.out.println("ApkCore.OnStart()");
 				frame.setVisible(false);
 			}
 
 			@Override
 			public void OnSuccess() {
-				System.out.println("ApkCore.OnSuccess()");
+				//System.out.println("ApkCore.OnSuccess()");
+				if(exiting) return;
+				
 				mMyToolBarUI.setEnabledAt(ButtonId.NEED_TARGET_APK, true);
 				mMyToolBarUI.setEnabledAt(ButtonId.PACK, false);
 
@@ -83,6 +90,8 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 
 			@Override
 			public void OnError() {
+				if(exiting) return;
+				
 				WaitingDlg.setVisible(false);
 
 				frame.setTitle(Resource.STR_APP_NAME.getString());
@@ -96,18 +105,20 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 
 			@Override
 			public void OnComplete() {
-				System.out.println("ApkCore.OnComplete()");
+				//System.out.println("ApkCore.OnComplete()");
 			}
 
 			@Override
 			public void OnProgress(int step, String msg) {
 				//System.out.println("ApkCore.OnProgress() " + step + ",  " + msg);
+				if(exiting) return;
+				
 				ProgressBarDlg.addProgress(step, msg);
 			}
 
 			@Override
 			public void OnStateChange() {
-				System.out.println("ApkCore.OnStateChange()");
+				//System.out.println("ApkCore.OnStateChange()");
 			}
 		});
 	}
@@ -126,7 +137,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 			tmpPath = tmpPath.replaceAll("/", File.separator+File.separator).replaceAll("//", "/");
 			tmpPath = CoreApkTool.makeTempPath(tmpPath)+".apk";
 			tempApkPath = tmpPath; 
-			System.out.println(tmpPath);
+			//System.out.println(tmpPath);
 			ProgressBarDlg.addProgress(1, "I: start to pull apk " + apkPath + "\n");
 			AdbWrapper.PullApk(device, apkPath, tmpPath, this);
 		}
@@ -134,7 +145,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 		@Override public void OnCompleted() {
 			if(!(new File(tempApkPath)).exists())
 				tempApkPath = null;
-			System.out.println("Target APK : " + tempApkPath);
+			//System.out.println("Target APK : " + tempApkPath);
 			//frame.setVisible(false);
 			openApk(tempApkPath);
 		}
@@ -460,7 +471,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 	{
 		try {   
     		//text.append( files[i].getCanonicalPath() + "\n" );
-    		System.out.println(files[0].getCanonicalPath() + "\n");
+    		//System.out.println(files[0].getCanonicalPath() + "\n");
 
     		ProgressBarDlg.init();
 			WaitingDlg.setVisible(true);
@@ -483,8 +494,10 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 
 	@Override
 	public void windowClosing(WindowEvent e) {
+		exiting = true;
 		frame.setVisible(false);
 		DeviceUIManager.setVisible(false);
+		WaitingDlg.setVisible(false);
 		if(mApkManager != null)
 			mApkManager.clear(true, null);
 	}
@@ -515,7 +528,9 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 					window = new MainUI();
 					window.initialize();
 					mMyToolBarUI.setEnabledAt(ButtonId.NEED_TARGET_APK, false);
-
+					
+					WaitingDlg.addWindowListener(window);
+					
 					if(apkPath.equals("@package")) {
 						new PackageOpen(args[1], args[2]);
 					} else {
@@ -530,7 +545,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 					
 					ProgressBarDlg = new MyProgressBarDemo();
 					WaitingDlg = MyProgressBarDemo.createAndShowGUI(ProgressBarDlg);
-					
+					WaitingDlg.addWindowListener(window);
 					WaitingDlg.setVisible(false);
 					
 					frame.setTitle(Resource.STR_APP_NAME.getString());
