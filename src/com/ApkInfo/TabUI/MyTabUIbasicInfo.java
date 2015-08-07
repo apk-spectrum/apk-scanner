@@ -236,6 +236,7 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 		JTextArea taskOutput = new JTextArea();
 		taskOutput.setText(content);
 		taskOutput.setEditable(false);
+		taskOutput.setCaretPosition(0);
 		
 		JScrollPane scrollPane = new JScrollPane(taskOutput);
 		scrollPane.setPreferredSize(new Dimension(500, 200));
