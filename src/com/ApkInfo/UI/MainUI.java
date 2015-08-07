@@ -150,10 +150,11 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 		JFileChooser jfc = new JFileChooser((String)Resource.PROP_LAST_FILE_OPEN_PATH.getData(""));
 		jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("apk","apk"));
-						
-		jfc.showOpenDialog(null);
-		File dir = jfc.getSelectedFile();
+
+		if(jfc.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
+			return null;
 		
+		File dir = jfc.getSelectedFile();
 		if(dir == null) return null;
 		Resource.PROP_LAST_FILE_OPEN_PATH.setData(dir.getParentFile().getAbsolutePath());
 

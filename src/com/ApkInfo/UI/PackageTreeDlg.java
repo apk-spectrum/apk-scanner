@@ -543,13 +543,14 @@ public class PackageTreeDlg extends JPanel
 		jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("vnd.android.package-archive(.apk)","apk"));
 		jfc.setSelectedFile(new File(saveFileName));
-						
-		jfc.showSaveDialog(null);
+
+
+		if(jfc.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
+			return;
+
 		File dir = jfc.getSelectedFile();
-		
 		if(dir == null) return;
 		Resource.PROP_LAST_FILE_SAVE_PATH.setData(dir.getParentFile().getAbsolutePath());
-		
 		
 		AdbWrapper.PullApk(device, apkPath, dir.getAbsolutePath(), null);
 		//dir.isDirectory()

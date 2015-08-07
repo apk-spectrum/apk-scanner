@@ -237,7 +237,9 @@ public class SettingDlg extends JDialog implements ActionListener
 			
 		} else if(e.getSource() == browser1) {
 			JFileChooser jfc = new JFileChooser();										
-			jfc.showOpenDialog(null);
+			if(jfc.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
+				return;
+			
 			File dir = jfc.getSelectedFile();
 			if(dir!=null) {
 				strExcuteEditorPath = dir.getPath();
@@ -246,9 +248,11 @@ public class SettingDlg extends JDialog implements ActionListener
 		} else if(e.getSource() == browser2) {
 			JFileChooser jfc = new JFileChooser();			
 			jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("apk","apk"));							
-			jfc.showOpenDialog(null);
-			File dir = jfc.getSelectedFile();
 			
+			if(jfc.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
+				return;
+			
+			File dir = jfc.getSelectedFile();
 			String file = null;
 			if(dir!=null) {
 				file = dir.getPath();
