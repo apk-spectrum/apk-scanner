@@ -338,6 +338,18 @@ public class AdbWrapper
 			pack.label = pack.codePath.replaceAll(".*/", "") + "/" + pack.pacakge + " - " + verName + "/" + verCode;
 			list.add(pack);
 		}
+		
+		cmd = new String[] {adbCmd, "-s", device, "shell", "ls", "/system/framework/*.apk"};
+		result = MyConsolCmd.exc(cmd, false, null);
+		for(String line: result) {
+			if(line.equals("/system/framework/framework-res.apk")
+					|| !line.endsWith(".apk")) continue;
+			pack = new PackageListObject();
+			pack.codePath = line;
+			pack.pacakge = line.replaceAll(".*/", "");
+			pack.label = pack.codePath.replaceAll(".*/", "") + "/" + pack.pacakge;
+			list.add(pack);
+		}
 
 		return list;
 	}
