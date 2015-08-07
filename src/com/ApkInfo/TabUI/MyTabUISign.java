@@ -94,7 +94,7 @@ public class MyTabUISign extends JPanel implements ComponentListener{
             if (mouseEvent.getClickCount() == 2) {
               int index = theList.locationToIndex(mouseEvent.getPoint());
               if (index >= 0) {
-                Object o = theList.getModel().getElementAt(index);
+                //Object o = theList.getModel().getElementAt(index);
                 //System.out.println("Double-clicked on: " + o.toString());
               }
             }
