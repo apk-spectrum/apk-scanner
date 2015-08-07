@@ -190,7 +190,7 @@ public enum Resource
 	PROP_FRAMEWORK_RES			(Type.PROP, "framewokr-res"),
 	PROP_CHECK_INSTALLED		(Type.PROP, "check-installed"),
 	PROP_LANGUAGE				(Type.PROP, "language"),
-	PROP_WITH_FRAMEWORK_RES		(Type.PROP, "with-framework-res"),
+	PROP_WITH_FRAMEWORK_RES		(Type.PROP, "with_framework_res"),
 	PROP_LAST_FILE_OPEN_PATH	(Type.PROP, "last_file_open_path"),
 	PROP_LAST_FILE_SAVE_PATH	(Type.PROP, "last_file_save_path"),
 	

@@ -165,14 +165,16 @@ public class ApkManager
 
 	public void addFameworkRes(String resApkPath) {
 		if(resApkPath == null) return;
-		File resFile = new File(resApkPath);
-
-		if(!resFile.exists()) {
-			System.out.println("No Such res file");
-			return;
+		
+		
+		for(String file: resApkPath.split(";")) {
+			File resFile = new File(file);
+			if(!resFile.exists()) {
+				System.out.println("No Such res file : " + file);
+				continue;
+			}
+			mFrameworkResList.add(resFile.getAbsolutePath());
 		}
-
-		mFrameworkResList.add(resFile.getAbsolutePath());
 	}
 	
 	static public String getApkToolVersion()
@@ -276,6 +278,7 @@ public class ApkManager
 			}
 
 			for(String framework: mFrameworkResList) {
+				if(!(new File(framework)).exists()) continue;
 				String[] cmd = {"java", "-jar", apkToolPath, "install-framework", "-p", solvePath, framework};
 				MyConsolCmd.exc(cmd, true, new MyConsolCmd.OutputObserver() {
 					@Override
@@ -288,7 +291,12 @@ public class ApkManager
 			}
 			
 			boolean isSuccess = true;
-			String[] cmd = {"java", "-jar", apkToolPath, "d", "-s", "-f", "-o", solvePath, "-p", solvePath, APKFilePath};
+			String[] cmd;
+			if(mFrameworkResList.size() > 0) {
+				cmd = new String[] {"java", "-jar", apkToolPath, "d", "-s", "-f", "-o", solvePath, APKFilePath};
+			} else {
+				cmd = new String[] {"java", "-jar", apkToolPath, "d", "-s", "-f", "-o", solvePath, "-p", solvePath, APKFilePath};
+			}
 
 			String[] result = MyConsolCmd.exc(cmd, true, new MyConsolCmd.OutputObserver() {
 				@Override

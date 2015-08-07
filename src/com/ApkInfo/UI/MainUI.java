@@ -59,7 +59,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 	public static void openApk(final String apkPath) {
 		//System.out.println("target file :" + apkPath);
 		mApkManager = new ApkManager(apkPath);
-		mApkManager.addFameworkRes((String)Resource.PROP_WITH_FRAMEWORK_RES.getData());
+		mApkManager.addFameworkRes((String)Resource.PROP_FRAMEWORK_RES.getData());
 		mApkManager.solve(SolveType.RESOURCE, new StatusListener(){
 			@Override
 			public void OnStart() {
