@@ -67,9 +67,6 @@ public class PackageTreeDlg extends JPanel
     private static JTextField textFilField;
     private FilteredTreeModel filteredModel;
     
-    private DefaultMutableTreeNode SelectedcurrentNode = null;
-    private int SelectedNodeIndex = -1;
-    
     public String getSelectedDevice() {
     	return selDevice;
     }
@@ -279,22 +276,32 @@ public class PackageTreeDlg extends JPanel
         textFilField.addKeyListener(new KeyAdapter()
         {
         	public void keyPressed(KeyEvent ke) {
-        		
-        		if(SelectedNodeIndex == -1 || SelectedcurrentNode ==null) return;
-        		
         		if(ke.getKeyCode() == KeyEvent.VK_DOWN) {
-        			
-        			if(SelectedNodeIndex < filteredModel.getChildCount(SelectedcurrentNode)) {
-        				SelectedNodeIndex++;
-        				tree.setSelectionPath(new TreePath(((DefaultMutableTreeNode)(filteredModel.getChild(SelectedcurrentNode, SelectedNodeIndex))).getPath()));
-        			}	        		
+            		KeyEvent key = new KeyEvent(tree, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_DOWN, KeyEvent.CHAR_UNDEFINED);
+            		tree.dispatchEvent(key);	        		
         		} else if (ke.getKeyCode() == KeyEvent.VK_UP) {
-        			
-        			if(SelectedNodeIndex > 0) {
-        				SelectedNodeIndex--;
-        				tree.setSelectionPath(new TreePath(((DefaultMutableTreeNode)(filteredModel.getChild(SelectedcurrentNode, SelectedNodeIndex))).getPath()));
-        			}
+            		KeyEvent key = new KeyEvent(tree, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_UP, KeyEvent.CHAR_UNDEFINED);
+            		tree.dispatchEvent(key);        			
         		}
+        		
+        		
+        		
+//        		
+//        		if(SelectedNodeIndex == -1 || SelectedcurrentNode ==null) return;
+//        		
+//        		if(ke.getKeyCode() == KeyEvent.VK_DOWN) {
+//        			
+//        			if(SelectedNodeIndex < filteredModel.getChildCount(SelectedcurrentNode)) {
+//        				SelectedNodeIndex++;
+//        				tree.setSelectionPath(new TreePath(((DefaultMutableTreeNode)(filteredModel.getChild(SelectedcurrentNode, SelectedNodeIndex))).getPath()));
+//        			}	        		
+//        		} else if (ke.getKeyCode() == KeyEvent.VK_UP) {
+//        			
+//        			if(SelectedNodeIndex > 0) {
+//        				SelectedNodeIndex--;
+//        				tree.setSelectionPath(new TreePath(((DefaultMutableTreeNode)(filteredModel.getChild(SelectedcurrentNode, SelectedNodeIndex))).getPath()));
+//        			}
+//        		}
         	}
         	
             public void keyReleased(KeyEvent ke) {
@@ -325,10 +332,6 @@ public class PackageTreeDlg extends JPanel
         		        		if(currentNode.getLevel()==3 && filteredModel.getChildCount(currentNode) >0) {
 	                		        for(int i=0; i<filteredModel.getChildCount(currentNode); i++) {
 	            		        		tree.setSelectionPath(new TreePath(((DefaultMutableTreeNode)(filteredModel.getChild(currentNode, i))).getPath()));
-	            		        		
-	            		        		SelectedcurrentNode = currentNode;
-	            		        		SelectedNodeIndex = i;
-	            		        		
 	            		        		return;
 	                		        }
                 		        }
