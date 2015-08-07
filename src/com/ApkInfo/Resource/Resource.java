@@ -139,6 +139,7 @@ public enum Resource
 	STR_LABEL_INSTALLING		(Type.TEXT, "@label_installing"),
 	STR_LABEL_SELECT_DEVICE		(Type.TEXT, "@label_sel_device"),
 	STR_LABEL_DEVICE_LIST		(Type.TEXT, "@label_device_list"),
+	STR_LABEL_APP_NAME_LIST		(Type.TEXT, "@label_app_name_list"),
 	
 	STR_MSG_FAILURE_OPEN_APK	(Type.TEXT, "@msg_failure_open_apk"),
 	STR_MSG_DEVICE_NOT_FOUND	(Type.TEXT, "@msg_device_not_found"),

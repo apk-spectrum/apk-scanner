@@ -30,6 +30,7 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 	private JHtmlEditorPane apkinform;
 	private ApkInfo apkInfo;
 	private PermissionGroupManager permGroupManager;
+	private String mutiLabels;
 
 	public MyTabUIbasicInfo() {
     	apkinform = new JHtmlEditorPane();
@@ -135,6 +136,11 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 		
         int infoHeight = 270;
         if(permGroupManager.getPermGroupMap().keySet().size() > 15) infoHeight = 230;
+        
+        mutiLabels = "";
+        for(String s: apkInfo.Labelname) {
+        	mutiLabels += s + "\n";
+        }
 
         StringBuilder strTabInfo = new StringBuilder("");
 		strTabInfo.append("<table width=10000>");
@@ -145,8 +151,14 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 		strTabInfo.append("    <td height=" + infoHeight + ">");
 		strTabInfo.append("      <div id=\"basic-info\">");
         strTabInfo.append("        <font style=\"font-size:20px; color:#548235; font-weight:bold\">");
-        strTabInfo.append("          " + makeHyperLink("", apkInfo.Labelname, "App name", null));
-        strTabInfo.append("        </font><br/>");
+        strTabInfo.append("          " + makeHyperLink("@event", apkInfo.Labelname[0], mutiLabels, "other-lang"));
+        strTabInfo.append("        </font>");
+        if(apkInfo.Labelname.length > 1) {
+        	strTabInfo.append("<font style=\"font-size:10px;\">");
+            strTabInfo.append(" " + makeHyperLink("@event", "["+apkInfo.Labelname.length+"]", mutiLabels, "other-lang"));
+            strTabInfo.append("</font>");
+        }
+        strTabInfo.append("        <br/>");
         strTabInfo.append("        <font style=\"font-size:15px; color:#4472C4\">");
         strTabInfo.append("          [" + makeHyperLink("", apkInfo.PackageName, "Package name", null) +"]");
         strTabInfo.append("        </font><br/>");
@@ -223,15 +235,19 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 	
 	@Override
 	public void hyperlinkClick(String id) {
-		System.out.println("click : "+id);
-		if(id.equals("display-list")) {
+
+		if(id.equals("other-lang")) {
+			if(mutiLabels == null || mutiLabels.isEmpty()
+					|| apkInfo.Labelname.length == 1) return;
+			showDialog(mutiLabels, Resource.STR_LABEL_APP_NAME_LIST.getString(), new Dimension(300, 200));
+		} else if(id.equals("display-list")) {
 			showPermList();
 		} else {
 			showPermDetailDesc(id);
 		}
 	}
 	
-	private void showDialog(String content, String title)
+	private void showDialog(String content, String title, Dimension size)
 	{
 		JTextArea taskOutput = new JTextArea();
 		taskOutput.setText(content);
@@ -239,7 +255,7 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 		taskOutput.setCaretPosition(0);
 		
 		JScrollPane scrollPane = new JScrollPane(taskOutput);
-		scrollPane.setPreferredSize(new Dimension(500, 200));
+		scrollPane.setPreferredSize(size);
 
 		JOptionPane.showOptionDialog(null, scrollPane, title, JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, null,
 	    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
@@ -270,7 +286,7 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 	    descPane.setEditable(false);
 	    descPane.setBackground(label.getBackground());
 	    */
-	    showDialog(apkInfo.Permissions, Resource.STR_BASIC_PERM_LIST_TITLE.getString());
+	    showDialog(apkInfo.Permissions, Resource.STR_BASIC_PERM_LIST_TITLE.getString(), new Dimension(500, 200));
 	}
 	
 	public void showPermDetailDesc(String group)
@@ -309,7 +325,7 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 	    descPane.setEditable(false);
 	    descPane.setBackground(label.getBackground());
 	    */
-	    showDialog(body.toString(), Resource.STR_BASIC_PERM_DISPLAY_TITLE.getString());
+	    showDialog(body.toString(), Resource.STR_BASIC_PERM_DISPLAY_TITLE.getString(), new Dimension(600, 200));
 	}
 
 	public void reloadResource() {

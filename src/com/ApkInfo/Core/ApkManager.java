@@ -26,7 +26,7 @@ public class ApkManager
 	
 	public class ApkInfo
 	{
-		public String Labelname = null;
+		public String[] Labelname = null;
 		public String PackageName = null;
 		public String VersionName = null;
 		public String VersionCode = null;
@@ -55,7 +55,7 @@ public class ApkManager
 		public String WorkTempPath = null;
 		
 		public void verify() {
-			if(Labelname == null) Labelname = "";
+			if(Labelname == null) Labelname = new String[] {""};
 			if(PackageName == null) PackageName = "";
 			if(VersionName == null) VersionName = "";
 			if(VersionCode == null) VersionCode = "";
@@ -339,7 +339,7 @@ public class ApkManager
 
 			// label & icon
 			xmlAndroidManifest.getNode("/manifest/application");
-			mApkInfo.Labelname = getResourceInfo(xmlAndroidManifest.getAttributes("android:label"));
+			mApkInfo.Labelname = getMutiLang(xmlAndroidManifest.getAttributes("android:label"));
 			mApkInfo.IconPath = getResourceInfo(xmlAndroidManifest.getAttributes("android:icon"));
 
 	        
@@ -418,8 +418,8 @@ public class ApkManager
 	        mApkInfo.verify();
 		}
 		
-		private String getResourceInfo(String id) {
-
+		private String getResourceInfo(String id)
+		{
 			if(id == null) return null;
 
 			String result = null;
@@ -477,6 +477,41 @@ public class ApkManager
 			}
 	        //System.out.println(">> " + result);
 			return result;
+		}
+		
+		private String[] getMutiLang(String id)
+		{
+			if(id == null || !id.matches("^@string/.*"))
+				return null;
+
+			ArrayList<String> result = new ArrayList<String>();
+
+			String resXmlPath = new String(mApkInfo.WorkTempPath + File.separator + "res" + File.separator);
+			String query = "//";
+			String filter = "";
+			String fileName = "";
+			
+			filter = "^values.*";
+			query = "//resources/string[@name='"+id.substring(id.indexOf("/")+1)+"']";
+			fileName = "strings.xml";
+			
+			for (String s : (new File(resXmlPath)).list()) {
+				if(!s.matches(filter)) continue;
+
+				File resFile = new File(resXmlPath + s + File.separator + fileName);
+				if(!resFile.exists()) continue;
+				String value = new MyXPath(resFile.getAbsolutePath()).getNode(query).getTextContent();
+		        if(value != null) {
+		        	String lang = s.replaceAll("values-?", "");
+		        	if(lang.isEmpty()) {
+		        		result.add(0, value);	
+		        	} else {
+		        		result.add(value + " - " + s.replaceAll("values-?", ""));	
+		        	}
+		        }
+			}
+
+			return result.toArray(new String[0]);
 		}
 		
 		private void getActivityInfo(MyXPath xmlAndroidManifest, String tag) {
