@@ -680,8 +680,10 @@ public class ApkManager
 		private void deleteTempPath()
 		{
 			System.out.println("delete Folder : "  + mApkInfo.WorkTempPath);
-			if(mApkInfo.WorkTempPath != null && !mApkInfo.WorkTempPath.isEmpty())
+			if(mApkInfo.WorkTempPath != null && !mApkInfo.WorkTempPath.isEmpty()) {
 				CoreApkTool.deleteDirectory(new File(mApkInfo.WorkTempPath));
+				CoreApkTool.deleteDirectory(new File(mApkInfo.WorkTempPath+"-res"));
+			}
 
 			mApkInfo = null;
 		}
