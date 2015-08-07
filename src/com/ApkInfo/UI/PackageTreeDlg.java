@@ -1,5 +1,6 @@
 package com.ApkInfo.UI;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -37,7 +38,10 @@ import java.util.Enumeration;
 import java.io.File;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -184,7 +188,9 @@ public class PackageTreeDlg extends JPanel
 		        System.out.println("end  loading package : " + DeviceString.Devicename);
 		        
 		        if(textFilField != null) {
-		        	makefilter(textFilField.getText());
+		        	if(textFilField.getText().length() >0){
+		        		makefilter(textFilField.getText());
+		        	}
 		        }
 		    }
 			});
@@ -264,7 +270,7 @@ public class PackageTreeDlg extends JPanel
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         
-        textFilField = new JTextField(80);
+        textFilField = new JTextField();
         
 
         textFilField.addKeyListener(new KeyAdapter()
@@ -322,12 +328,28 @@ public class PackageTreeDlg extends JPanel
         });
         
  
-        JPanel tpanel = new JPanel();
-        tpanel.add(new JLabel("Search : "));
-        tpanel.add(textFilField);
+        JPanel tpanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
         
-        panel.add(treeView,BorderLayout.CENTER);
         
+        
+        
+        gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.fill = GridBagConstraints.HORIZONTAL;		
+		
+		tpanel.add(new JLabel("Search : "),gbc);
+        
+		gbc.gridx = 1;
+		gbc.gridy = 0;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.weightx = 1.0;
+        
+		tpanel.add(textFilField,gbc);
+        
+        
+        
+        panel.add(treeView,BorderLayout.CENTER);        
         
         StandardButton openbtn = new StandardButton("Open Package",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);		
         StandardButton refreshbtn = new StandardButton("Refresh",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
@@ -338,11 +360,10 @@ public class PackageTreeDlg extends JPanel
         exitbtn.addActionListener(this);
         
         JPanel ButtonPanel = new JPanel();
-        
-        
+                
         gifPanel = new JPanel();
         
-        ImageIcon icon = Resource.IMG_LOADING.getImageIcon();
+        ImageIcon icon = Resource.IMG_WAIT_BAR.getImageIcon();
         JLabel GifLabel = new JLabel(icon);
         
         JLabel Loading = new JLabel("Loading...");
@@ -367,22 +388,18 @@ public class PackageTreeDlg extends JPanel
                 
         
         NorthPanel.add(textFieldapkPath, BorderLayout.CENTER);
-        
-        //Add the scroll panes to a split pane.
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        splitPane.setTopComponent(panel);
-        splitPane.setBottomComponent(NorthPanel);
+                
                 
         Dimension minimumSize = new Dimension(100, 50);
         textFieldapkPath.setMinimumSize(minimumSize);
         treeView.setMinimumSize(minimumSize);
-        splitPane.setDividerLocation(400);
-        splitPane.setPreferredSize(new Dimension(500, 500));
  
         //Add the split pane to this panel.
         //add(splitPane);
+        
         add(NorthPanel,BorderLayout.NORTH);
         add(panel, BorderLayout.CENTER);
+
     }
     
 	/** Required by TreeSelectionListener interface. */
@@ -439,7 +456,7 @@ public class PackageTreeDlg extends JPanel
         selPackage = null;
 
         //Create and set up the window.
-    	dialog = new JDialog(new JFrame(), "PackageTree", true);
+    	dialog = new JDialog(new JFrame(), "PackageTree", false);
     	dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
  
         //Add content to the window.
@@ -452,13 +469,17 @@ public class PackageTreeDlg extends JPanel
      	   } );
          
     	//dialog.setResizable( false );
-    	dialog.setLocationRelativeTo(null);
-        
+    	//dialog.setLocationRelativeTo(null);
+    	
         //Display the window.
     	dialog.pack();
+    	//dialog.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width)/2 - getWidth()/2, (Toolkit.getDefaultToolkit().getScreenSize().height)/2 - getHeight()/2);
+    	    	
+    	dialog.setBounds(100, 100, 650, 500);
+    	dialog.setMinimumSize(new Dimension(650, 500));
+		
+    	dialog.setLocationRelativeTo(null);
     	dialog.setVisible(true);
-    	
-    	System.out.println("package dialog closed");
     }
     
     public static void main(String[] args) {
