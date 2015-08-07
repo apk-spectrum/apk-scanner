@@ -18,6 +18,8 @@
     <string name="btn_no">No</string>
     <string name="btn_cancel">Cancel</string>
     <string name="btn_refresh">Refresh</string>
+    <string name="btn_del">Del</string>
+    <string name="btn_add">Add</string>
     
     <string name="btn_open_lab">Open (Ctrl+O)</string>
     <string name="btn_manifest_lab">Manifest (Ctrl+M)</string>

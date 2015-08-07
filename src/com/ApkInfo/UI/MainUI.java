@@ -360,9 +360,6 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 		if (e.getID()==KeyEvent.KEY_RELEASED) {
 			if((e.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
 				switch(e.getKeyCode()) {
-				case KeyEvent.VK_C:
-					System.out.println("Ctrl-C");
-					break;
 				case KeyEvent.VK_V:
 					break;
 				case KeyEvent.VK_O:

@@ -18,6 +18,8 @@
     <string name="btn_no">아니요</string>
     <string name="btn_cancel">취소</string>
     <string name="btn_refresh">새로고침</string>
+    <string name="btn_del">삭제</string>
+    <string name="btn_add">추가</string>
     
     <string name="btn_open_lab">APK 파일에서 정보를 가져옵니다. (Ctrl+O)</string>
     <string name="btn_manifest_lab">AndroidManifest.xml 전문을 편집기에서 확인 합니다. (Ctrl+M)</string>

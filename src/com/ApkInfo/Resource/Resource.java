@@ -43,6 +43,8 @@ public enum Resource
 	STR_BTN_NO					(Type.TEXT, "@btn_no"),
 	STR_BTN_CANCEL				(Type.TEXT, "@btn_cancel"),
 	STR_BTN_REFRESH				(Type.TEXT, "@btn_refresh"),
+	STR_BTN_ADD					(Type.TEXT, "@btn_add"),
+	STR_BTN_DEL					(Type.TEXT, "@btn_del"),
 
 	STR_BTN_OPEN_LAB			(Type.TEXT, "@btn_open_lab"),
 	STR_BTN_MANIFEST_LAB		(Type.TEXT, "@btn_manifest_lab"),

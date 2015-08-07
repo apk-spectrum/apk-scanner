@@ -346,8 +346,8 @@ public class AdbWrapper
 					|| !line.endsWith(".apk")) continue;
 			pack = new PackageListObject();
 			pack.codePath = line;
-			pack.pacakge = line.replaceAll(".*/", "");
-			pack.label = pack.codePath.replaceAll(".*/", "") + "/" + pack.pacakge;
+			pack.pacakge = line;
+			pack.label = line;
 			list.add(pack);
 		}
 
@@ -357,19 +357,26 @@ public class AdbWrapper
 	static public PackageInfo getPackageInfo(String device, String pkgName)
 	{
 		String[] TargetInfo;
+		String verName = null;
+		String verCode = null;
+		String codePath = null;
 
 		if(pkgName == null) return null;
 		
 		System.out.println("ckeckPackage() " + pkgName);
 
-		String[] cmd = {adbCmd,"-s", device, "shell", "dumpsys","package",pkgName};
-		TargetInfo = MyConsolCmd.exc(cmd,false,null);
-		
-		if(TargetInfo.length < 3) return null;
-		
-		String verName = selectString(TargetInfo,"versionName=");
-		String verCode = selectString(TargetInfo,"versionCode=");
-		String codePath = selectString(TargetInfo,"codePath=");
+		if(!pkgName.matches("/system/framework/.*apk")) {
+			String[] cmd = {adbCmd,"-s", device, "shell", "dumpsys","package",pkgName};
+			TargetInfo = MyConsolCmd.exc(cmd,false,null);
+			
+			if(TargetInfo.length < 3) return null;
+			
+			verName = selectString(TargetInfo,"versionName=");
+			verCode = selectString(TargetInfo,"versionCode=");
+			codePath = selectString(TargetInfo,"codePath=");
+		} else {
+			codePath = pkgName;
+		}
 
 		boolean isSystemApp = false;
 		if(codePath != null && codePath.matches("^/system/.*")) {
