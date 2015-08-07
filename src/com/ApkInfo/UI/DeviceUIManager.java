@@ -51,7 +51,7 @@ public class DeviceUIManager
 			final boolean samePackage, final boolean checkPackage, final InstallButtonStatusListener Listener)
 	{
 		final ImageIcon Appicon = Resource.IMG_QUESTION.getImageIcon();
-        final Object[] options = {Resource.STR_BTN_PUSH.getString(), Resource.STR_BTN_INSTALL.getString()};
+        final Object[] options = {Resource.STR_BTN_PUSH.getString(), Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_CANCEL.getString()};
         final Object[] checkPackOptions = {Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_CLOSE.getString()};
         final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
 		strPackageName = PackageName;
@@ -108,7 +108,8 @@ public class DeviceUIManager
 							Listener.SetInstallButtonStatus(true);
 							setVisible(false);
 							return;
-						} else if(n==0) {
+						}
+						if(n==0) {
 							String tmpPath = "/" + dev.name + pkgInfo.apkPath;
 							tmpPath = tmpPath.replaceAll("/", File.separator+File.separator).replaceAll("//", "/");
 							tmpPath = CoreApkTool.makeTempPath(tmpPath)+".apk";
@@ -135,7 +136,7 @@ public class DeviceUIManager
 							int n = JOptionPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo.getSummary() + strLine + Resource.STR_QUESTION_PUSH_OR_INSTALL.getString(),
 									Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, options, options[1]);
 							System.out.println("Seltected index : " + n);
-							if(n==-1) {
+							if(n==-1 || n==2) {
 								Listener.SetInstallButtonStatus(true);
 								setVisible(false);
 								return;
