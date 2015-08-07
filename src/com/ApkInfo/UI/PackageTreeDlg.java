@@ -446,6 +446,10 @@ public class PackageTreeDlg extends JPanel
  
         //Display the window.
     	dialog.pack();
+    	dialog.setBounds(100, 100, 650, 500);
+    	dialog.setMinimumSize(new Dimension(650, 500));
+		
+    	dialog.setLocationRelativeTo(null);
     	dialog.setVisible(true);
     	
     	System.out.println("package dialog closed");
