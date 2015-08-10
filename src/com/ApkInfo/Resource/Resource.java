@@ -139,6 +139,7 @@ public enum Resource
 	STR_LABEL_QUESTION			(Type.TEXT, "@label_question"),
 	STR_LABEL_LOG				(Type.TEXT, "@label_log"),
 	STR_LABEL_INSTALLING		(Type.TEXT, "@label_installing"),
+	STR_LABEL_UNINSTALLING		(Type.TEXT, "@label_uninstalling"),
 	STR_LABEL_SELECT_DEVICE		(Type.TEXT, "@label_sel_device"),
 	STR_LABEL_DEVICE_LIST		(Type.TEXT, "@label_device_list"),
 	STR_LABEL_APP_NAME_LIST		(Type.TEXT, "@label_app_name_list"),

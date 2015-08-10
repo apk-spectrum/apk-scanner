@@ -233,6 +233,18 @@ public class AdbWrapper
 		MyConsolCmd.exc(new String[] {adbCmd, "-s", device, "reboot"});
 	}
 	
+	static public void uninstallApk(String device, String packageName)
+	{
+		if(adbCmd == null) return;
+		MyConsolCmd.exc(new String[] {adbCmd, "-s", device, "uninstall", packageName});
+	}
+	
+	static public void removeApk(String device, String apkPath)
+	{
+		if(adbCmd == null) return;
+		MyConsolCmd.exc(new String[] {adbCmd, "-s", device, "shell", "rm", "-rf", apkPath});
+	}
+	
 	static public void PushApk(String name, String srcApkPath, String destApkPath, String libPath, AdbWrapperListener listener)
 	{
 		//System.out.println("PushApk() device : " + name + ", apkPath: " + srcApkPath);

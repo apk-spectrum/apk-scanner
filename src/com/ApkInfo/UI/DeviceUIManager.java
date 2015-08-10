@@ -38,6 +38,7 @@ public class DeviceUIManager
 	static private JDialog dlgDialog = null;
 
 	static private JPanel installPanel;
+	static private JPanel uninstallPanel;
 	
 	private String strPackageName;
 	private String strSourcePath;
@@ -57,6 +58,7 @@ public class DeviceUIManager
 		final ImageIcon Appicon = Resource.IMG_QUESTION.getImageIcon();
         final Object[] options = {Resource.STR_BTN_PUSH.getString(), Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_CANCEL.getString()};
         final Object[] checkPackOptions = {Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_CLOSE.getString()};
+        final Object[] checkPackDelOptions = {Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_DEL.getString(), Resource.STR_BTN_CLOSE.getString()};
         final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
 		strPackageName = PackageName;
 		strSourcePath = apkPath;
@@ -112,10 +114,20 @@ public class DeviceUIManager
 					alreadyCheak = true;
 					if(pkgInfo != null) {
 						String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
-						int n = JOptionPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo.getSummary() + strLine + Resource.STR_QUESTION_OPEN_OR_INSTALL.getString(),
-								Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, checkPackOptions, checkPackOptions[2]);
+						boolean isDeletePossible = true;
+						if(pkgInfo.isSystemApp == true && AdbWrapper.hasRootPermission(dev.name) != true) {
+							isDeletePossible = false;
+						}
+						int n;
+						if(isDeletePossible) {
+							n = JOptionPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo.getSummary() + strLine + Resource.STR_QUESTION_OPEN_OR_INSTALL.getString(),
+									Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, checkPackDelOptions, checkPackDelOptions[3]);
+						} else {
+							n = JOptionPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo.getSummary() + strLine + Resource.STR_QUESTION_OPEN_OR_INSTALL.getString(),
+									Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, checkPackOptions, checkPackOptions[2]);							
+						}
 						//System.out.println("Seltected index : " + n);
-						if(n==-1 || n==2) {
+						if(n==-1 || (!isDeletePossible && n==2) || (isDeletePossible && n==3)) {
 							Listener.SetInstallButtonStatus(true);
 							setVisible(false);
 							return;
@@ -127,6 +139,29 @@ public class DeviceUIManager
 							tmpApkPath = tmpPath; 
 							//System.out.println(tmpPath);
 							AdbWrapper.PullApk(dev.name, pkgInfo.apkPath, tmpPath, new AdbWrapperObserver("pull", dev.name));
+							return;
+						}
+						if(n==2) {
+							uninstallPanel.setVisible(true);
+							if(pkgInfo.isSystemApp) {
+								printlnLog("adb shell rm " + pkgInfo.codePath);
+								AdbWrapper.removeApk(dev.name, pkgInfo.codePath);
+								
+								final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
+								int reboot = JOptionPane.showOptionDialog(null, Resource.STR_QUESTION_REBOOT_DEVICE.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.YES_NO_OPTION, 
+										JOptionPane.QUESTION_MESSAGE, Appicon, yesNoOptions, yesNoOptions[1]);
+								if(reboot == 0){
+									printlnLog("Wait for reboot...");
+									AdbWrapper.reboot(dev.name);
+									printlnLog("Reboot...");
+								}
+							} else {
+								printlnLog("adb uninstall " + pkgInfo.pkgName);
+								AdbWrapper.uninstallApk(dev.name, pkgInfo.pkgName);
+							}
+							printlnLog("compleate");
+							uninstallPanel.setVisible(false);
+							Listener.SetInstallButtonStatus(true);
 							return;
 						}
 					} else {
@@ -316,7 +351,12 @@ public class DeviceUIManager
 					
 					installPanel.setVisible(false);
 					installPanel.setOpaque(true);
-					
+
+					uninstallPanel = new JPanel();
+					uninstallPanel.add(new JLabel(Resource.STR_LABEL_UNINSTALLING.getString()));
+					uninstallPanel.add(new JLabel(waitbaricon));
+					uninstallPanel.setVisible(false);
+					uninstallPanel.setOpaque(true);
 					
 					DialogPanel.add(GifLabel);
 					
@@ -336,6 +376,7 @@ public class DeviceUIManager
 					DialogPanel.add(btnOK);
 					DialogPanel.add(containerPanel);
 					DialogPanel.add(installPanel);
+					DialogPanel.add(uninstallPanel);
 					//DialogPanel.add(installlabel);
 					//DialogPanel.add(waitbar);
 					

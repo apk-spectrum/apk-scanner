@@ -114,6 +114,7 @@
     <string name="label_question">Question</string>
     <string name="label_log">Log</string>
     <string name="label_installing">Installing..</string>
+    <string name="label_uninstalling">Uninstalling..</string>
     <string name="label_sel_device">Select Device</string>
     <string name="label_device_list">Device list</string>
     <string name="label_app_name_list">App name list</string>
