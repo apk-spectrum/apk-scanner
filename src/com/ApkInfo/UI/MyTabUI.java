@@ -44,22 +44,22 @@ public class MyTabUI extends JPanel{
         
         loadResource();
         
-        tabbedPane.addTab(labels[0], null, Panels[0], labels[0]);
+        tabbedPane.addTab(labels[0], null, Panels[0], labels[0] + " (Alt+1)");
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-        tabbedPane.addTab(labels[1], null, Panels[1], labels[1]);
+        tabbedPane.addTab(labels[1], null, Panels[1], labels[1] + " (Alt+2)");
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
-        tabbedPane.addTab(labels[2], null, Panels[2], labels[2]);
+        tabbedPane.addTab(labels[2], null, Panels[2], labels[2] + " (Alt+3)");
         tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
-        tabbedPane.addTab(labels[3], null, Panels[3], labels[3]);
+        tabbedPane.addTab(labels[3], null, Panels[3], labels[3] + " (Alt+4)");
         tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
-        tabbedPane.addTab(labels[4], null, Panels[4], labels[4]);
+        tabbedPane.addTab(labels[4], null, Panels[4], labels[4] + " (Alt+5)");
         tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
 
-        tabbedPane.addTab(labels[5], null, Panels[5], labels[5]);
+        tabbedPane.addTab(labels[5], null, Panels[5], labels[5] + " (Alt+6)");
         tabbedPane.setMnemonicAt(5, KeyEvent.VK_6);
         
 //	        JComponent panel6 = makeTextPanel("Panel #4 (has a preferred size of 410 x 50).");

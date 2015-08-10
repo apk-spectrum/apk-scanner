@@ -5,17 +5,21 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
 import javax.swing.text.DefaultCaret;
 
 import com.ApkInfo.Core.AdbWrapper;
@@ -65,19 +69,26 @@ public class DeviceUIManager
 		
 		Thread t = new Thread(new Runnable() {
 			public void run(){
-				printlnLog("scan devices...");
-				ArrayList<DeviceStatus> DeviceList = AdbWrapper.scanDevices();
-
-				if(DeviceList.size() == 0) {
-					printlnLog("Device not found!\nplease check device");
-					Listener.SetInstallButtonStatus(true);
-					final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
-					//JOptionPane.showMessageDialog(null, "Device not found!\nplease check Connected","Warning", JOptionPane.WARNING_MESSAGE, Appicon);
-					JOptionPane.showOptionDialog(null, Resource.STR_MSG_DEVICE_NOT_FOUND.getString(), Resource.STR_LABEL_WARNING.getString(), JOptionPane.WARNING_MESSAGE, JOptionPane.WARNING_MESSAGE, Appicon,
-				    		new String[] {Resource.STR_BTN_CLOSE.getString()}, Resource.STR_BTN_CLOSE.getString());
-					setVisible(false);
-					return;
-				}
+				ArrayList<DeviceStatus> DeviceList;
+				do {
+					printlnLog("scan devices...");
+					DeviceList = AdbWrapper.scanDevices();
+	
+					if(DeviceList.size() == 0) {
+						printlnLog("Device not found!\nplease check device");
+						Listener.SetInstallButtonStatus(true);
+						final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
+						//JOptionPane.showMessageDialog(null, "Device not found!\nplease check Connected","Warning", JOptionPane.WARNING_MESSAGE, Appicon);
+						int n = JOptionPane.showOptionDialog(null, Resource.STR_MSG_DEVICE_NOT_FOUND.getString(), Resource.STR_LABEL_WARNING.getString(), JOptionPane.WARNING_MESSAGE, JOptionPane.WARNING_MESSAGE, Appicon,
+					    		new String[] {Resource.STR_BTN_REFRESH.getString(), Resource.STR_BTN_CLOSE.getString()}, Resource.STR_BTN_REFRESH.getString());
+						if(n==-1 || n==1) {
+							setVisible(false);
+							return;
+						}
+					} else {
+						break;
+					}
+				} while(true);
 
 				DeviceStatus dev = DeviceList.get(0);
 				if(DeviceList.size() > 1 || (DeviceList.size() == 1 && !dev.status.equals("device"))) {
@@ -157,11 +168,11 @@ public class DeviceUIManager
 						int n = JOptionPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo.getSummary() + strLine + Resource.STR_QUESTION_CONTINUE_INSTALL.getString(),
 								Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, yesNoOptions, yesNoOptions[1]);
 						//System.out.println("Seltected index : " + n);
-						if(n==1) {
+						if(n==-1 || n==1) {
 							Listener.SetInstallButtonStatus(true);
 							setVisible(false);
 							return;
-						} 
+						}
 					}
 				}
 				printlnLog("Start install APK");
@@ -279,6 +290,15 @@ public class DeviceUIManager
 					
 					dlgDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 					//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+					
+					KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+					dlgDialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
+					dlgDialog.getRootPane().getActionMap().put("ESCAPE", new AbstractAction() {
+						private static final long serialVersionUID = -1499175497935529270L;
+						public void actionPerformed(ActionEvent e) {
+							dlgDialog.dispose();
+					    }
+					});
 			        	
 					JLabel GifLabel, waitbar, installlabel;
 					ImageIcon icon = Resource.IMG_INSTALL_WAIT.getImageIcon();
