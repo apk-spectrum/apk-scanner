@@ -102,19 +102,6 @@ public class PackageTreeDlg extends JPanel
         super(new BorderLayout());
         makeTreeForm();
         addTreeList();
-        
-        /*
-		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
-		getRootPane().getActionMap().put("ESCAPE", new AbstractAction() {
-			private static final long serialVersionUID = -8988954049940512230L;
-			public void actionPerformed(ActionEvent e) {
-				selDevice = null;
-				selPackage = null;
-				dialog.dispose();
-		    }
-		});
-		*/
     }
     
     private void addTreeList() {
@@ -492,6 +479,15 @@ public class PackageTreeDlg extends JPanel
         //Create and set up the window.
     	dialog = new JDialog(new JFrame(), "PackageTree", true);
     	//dialog.setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
+    	
+		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+		dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
+		dialog.getRootPane().getActionMap().put("ESCAPE", new AbstractAction() {
+			private static final long serialVersionUID = 8368291008098324014L;
+			public void actionPerformed(ActionEvent e) {
+				dialog.dispose();
+		    }
+		});
  
         //Add content to the window.
     	dialog.add(new PackageTreeDlg());
@@ -520,6 +516,17 @@ public class PackageTreeDlg extends JPanel
         //Create and set up the window.
     	dialog = new JDialog(new JFrame(), "PackageTree", true);
     	dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+    	KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+		dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
+		dialog.getRootPane().getActionMap().put("ESCAPE", new AbstractAction() {
+			private static final long serialVersionUID = 8368291008098324014L;
+			public void actionPerformed(ActionEvent e) {
+				selDevice = null;
+				selPackage = null;
+				dialog.dispose();
+		    }
+		});
  
         //Add content to the window.
     	dialog.add(this);
@@ -542,6 +549,8 @@ public class PackageTreeDlg extends JPanel
 		
     	dialog.setLocationRelativeTo(null);
     	dialog.setVisible(true);
+    	
+
     }
     
     public static void main(String[] args) {
