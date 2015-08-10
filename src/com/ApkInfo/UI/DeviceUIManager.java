@@ -131,11 +131,13 @@ public class DeviceUIManager
 						}
 					} else {
 						//JOptionPane.showMessageDialog(null, "동일 패키지가 설치되어 있지 않습니다.", "Info", JOptionPane.INFORMATION_MESSAGE, Appicon);
-						JOptionPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, Appicon,
-					    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
-						Listener.SetInstallButtonStatus(true);
-						setVisible(false);
-						return;
+						int n = JOptionPane.showOptionDialog(null, Resource.STR_MSG_NO_SUCH_PACKAGE.getString() + "\n" + Resource.STR_QUESTION_CONTINUE_INSTALL.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, Appicon,
+								yesNoOptions, yesNoOptions[1]);
+						if(n==-1 || n==1) {
+							Listener.SetInstallButtonStatus(true);
+							setVisible(false);
+							return;
+						}
 					}
 				}
 				if(pkgInfo != null) {

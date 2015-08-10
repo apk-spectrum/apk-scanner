@@ -369,11 +369,11 @@ public class AdbWrapper
 			String[] cmd = {adbCmd,"-s", device, "shell", "dumpsys","package",pkgName};
 			TargetInfo = MyConsolCmd.exc(cmd,false,null);
 			
-			if(TargetInfo.length < 3) return null;
-			
 			verName = selectString(TargetInfo,"versionName=");
 			verCode = selectString(TargetInfo,"versionCode=");
 			codePath = selectString(TargetInfo,"codePath=");
+
+			if(codePath == null) return null;
 		} else {
 			codePath = pkgName;
 		}
