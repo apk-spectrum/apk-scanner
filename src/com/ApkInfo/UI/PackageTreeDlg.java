@@ -325,6 +325,8 @@ public class PackageTreeDlg extends JPanel
                 {
                 	System.out.println(textFilField.getText()+ ":" + Integer.valueOf(ke.getKeyChar()));
 
+                	
+                	
                 	if(ke.getKeyChar()==10) {
                 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
                                 tree.getLastSelectedPathComponent();
@@ -336,7 +338,9 @@ public class PackageTreeDlg extends JPanel
                         expandTree(tree);
 
         		        DefaultMutableTreeNode currentNode = top.getNextNode();
-                                                
+
+        		        
+        		        
 		        		//DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode)filteredModel.getRoot();
         		        do {
         		        		//System.out.println(currentNode.getLevel());
@@ -347,7 +351,11 @@ public class PackageTreeDlg extends JPanel
         		        		
         		        		if(currentNode.getLevel()==3 && filteredModel.getChildCount(currentNode) >0) {
 	                		        for(int i=0; i<filteredModel.getChildCount(currentNode); i++) {
-	            		        		tree.setSelectionPath(new TreePath(((DefaultMutableTreeNode)(filteredModel.getChild(currentNode, i))).getPath()));
+	                		        	
+	                		        	TreePath temptreePath = new TreePath(((DefaultMutableTreeNode)(filteredModel.getChild(currentNode, i))).getPath());
+	                		        	
+	            		        		tree.setSelectionPath(temptreePath);
+	            		        		tree.scrollPathToVisible(temptreePath);
 	            		        		return;
 	                		        }
                 		        }
