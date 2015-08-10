@@ -86,6 +86,12 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 				String title = Resource.STR_APP_NAME.getString() + " - " + apkPath.substring(apkPath.lastIndexOf(File.separator)+1);
 				frame.setTitle(title);
 				frame.setVisible(true);
+				
+				if(mApkManager.getApkInfo().PermGroupMap.keySet().size() > 30) {
+					frame.setSize(new Dimension(650, 570));
+				} else {
+					frame.setSize(new Dimension(650, 520));
+				}
 			}
 
 			@Override

@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
-import java.util.HashMap;
 import java.util.Set;
 
 import javax.swing.JComponent;
@@ -20,7 +19,6 @@ import com.ApkInfo.Core.ApkManager.ApkInfo;
 import com.ApkInfo.Core.PermissionGroupManager.PermissionGroup;
 import com.ApkInfo.Core.AdbWrapper;
 import com.ApkInfo.Core.ApkManager;
-import com.ApkInfo.Core.PermissionGroupManager;
 import com.ApkInfo.Core.PermissionGroupManager.PermissionInfo;
 
 public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListener
@@ -29,7 +27,6 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 
 	private JHtmlEditorPane apkinform;
 	private ApkInfo apkInfo;
-	private PermissionGroupManager permGroupManager;
 	private String mutiLabels;
 
 	public MyTabUIbasicInfo() {
@@ -135,7 +132,7 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
         String permGorupImg = makePermGroup();
 		
         int infoHeight = 270;
-        if(permGroupManager.getPermGroupMap().keySet().size() > 15) infoHeight = 230;
+        if(apkInfo.PermGroupMap.keySet().size() > 15) infoHeight = 230;
         
         mutiLabels = "";
         for(String s: apkInfo.Labelname) {
@@ -202,12 +199,10 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 	{
 		StringBuilder permGroup = new StringBuilder("");
 		
-		permGroupManager = new PermissionGroupManager(apkInfo.PermissionList.toArray(new String[0]));
-		HashMap<String, PermissionGroup> map = permGroupManager.getPermGroupMap();
-		Set<String> keys = map.keySet();
+		Set<String> keys = apkInfo.PermGroupMap.keySet();
 		int cnt = 0;
 		for(String key: keys) {
-			PermissionGroup g = map.get(key);
+			PermissionGroup g = apkInfo.PermGroupMap.get(key);
 			permGroup.append(makeHyperLink("@event", makeImage(g.icon), g.permSummary, g.permGroup));
 			if(++cnt % 15 == 0) permGroup.append("<br/>");
 		}
@@ -291,8 +286,7 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 	
 	public void showPermDetailDesc(String group)
 	{
-		HashMap<String, PermissionGroup> map = permGroupManager.getPermGroupMap();
-		PermissionGroup g = map.get(group);
+		PermissionGroup g = apkInfo.PermGroupMap.get(group);
 		
 		if(g == null) return;
 

@@ -5,8 +5,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.ApkInfo.Core.CoreApkTool.FSStyle;
+import com.ApkInfo.Core.PermissionGroupManager.PermissionGroup;
 import com.ApkInfo.Resource.Resource;
 
 public class ApkManager
@@ -48,6 +50,7 @@ public class ApkManager
 		public ArrayList<String> CertList = new ArrayList<String>();
 		
 		public ArrayList<String> PermissionList = new ArrayList<String>();
+		public HashMap<String, PermissionGroup> PermGroupMap;
 
 		public String ApkPath = null;
 		public String WorkTempPath = null;
@@ -392,6 +395,9 @@ public class ApkManager
 	        		mApkInfo.ProtectionLevel = "SIGNATURE";
 	        	}
 	        }
+	        
+	        PermissionGroupManager permGroupManager = new PermissionGroupManager(mApkInfo.PermissionList.toArray(new String[0]));
+	        mApkInfo.PermGroupMap = permGroupManager.getPermGroupMap();
 
 	        // widget
 	        progress(5,"parsing widget...\n");
