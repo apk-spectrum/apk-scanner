@@ -117,6 +117,7 @@
     <string name="label_sel_device">Select Device</string>
     <string name="label_device_list">Device list</string>
     <string name="label_app_name_list">App name list</string>
+    <string name="label_no_permission">No permissions</string>
     
     <string name="msg_failure_open_apk">Sorry, Can not open the APK</string>
     <string name="msg_device_not_found">Device not found!

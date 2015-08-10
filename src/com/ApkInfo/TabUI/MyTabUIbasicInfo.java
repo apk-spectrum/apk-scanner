@@ -131,8 +131,9 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
         
         String permGorupImg = makePermGroup();
 		
-        int infoHeight = 270;
+        int infoHeight = 300;
         if(apkInfo.PermGroupMap.keySet().size() > 15) infoHeight = 230;
+        else if(apkInfo.PermGroupMap.keySet().size() > 0) infoHeight = 270;
         
         mutiLabels = "";
         for(String s: apkInfo.Labelname) {
@@ -179,8 +180,13 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
         strTabInfo.append("    <td colspan=2>");
         strTabInfo.append("      <div id=\"perm-group\">");
         strTabInfo.append("        <hr/>");
-        strTabInfo.append("        <font style=\"font-size:12px;color:black;\">[" + Resource.STR_BASIC_PERMISSIONS.getString() + "] - ");
+        strTabInfo.append("        <font style=\"font-size:12px;color:black;\">");
+        if(apkInfo.PermissionList.size() > 0) {
+        strTabInfo.append("        [" + Resource.STR_BASIC_PERMISSIONS.getString() + "] - ");
         strTabInfo.append("          " + makeHyperLink("@event","<u>" + Resource.STR_BASIC_PERMLAB_DISPLAY.getString() + "</u>",Resource.STR_BASIC_PERMDESC_DISPLAY.getString(),"display-list"));
+        } else {
+        strTabInfo.append("          " + Resource.STR_LABEL_NO_PERMISSION.getString());
+        }
         strTabInfo.append("        </font><br/>");
         strTabInfo.append("        <font style=\"font-size:5px\"><br/></font>");
         strTabInfo.append("        " + permGorupImg);
