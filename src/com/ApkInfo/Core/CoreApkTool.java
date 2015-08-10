@@ -35,13 +35,22 @@ public class CoreApkTool
 		return tempList;
 	}
 	
-	public static String makeTempPath(String apkFilePath)
+	public static String getTempPath()
 	{
 		String tempPath = System.getProperty("java.io.tmpdir");
 		String separator = File.separator + (File.separator.equals("\\") ? File.separator : "");
 
 		if(!tempPath.matches(".*"+separator+"$")) tempPath += File.separator;
-		tempPath += "ApkScanner" + apkFilePath.substring(apkFilePath.indexOf(File.separator),apkFilePath.lastIndexOf(".")).replaceAll("#", "");
+		tempPath += "ApkScanner";
+		
+		return tempPath;
+	}
+	
+	public static String makeTempPath(String apkFilePath)
+	{
+		String tempPath = getTempPath();
+
+		tempPath += apkFilePath.substring(apkFilePath.indexOf(File.separator),apkFilePath.lastIndexOf(".")).replaceAll("#", "");
 		
 		if((new File(tempPath)).exists()) {
 			int n;
@@ -67,14 +76,16 @@ public class CoreApkTool
 		if(!path.exists()) {
 			return false;
 		}
-		File[] files = path.listFiles();
-		for (File file : files) {
-			if (file.isDirectory()) {
-				deleteDirectory(file);
-			} else {            	
-				file.delete();
+		if(path.isDirectory()) {
+			File[] files = path.listFiles();
+			for (File file : files) {
+				if (file.isDirectory()) {
+					deleteDirectory(file);
+				} else {            	
+					file.delete();
+				}
 			}
-		}         
+		}
 		return path.delete();
     }
 

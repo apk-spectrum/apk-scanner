@@ -14,9 +14,7 @@ public class ApkManager
 	private ApkInfo mApkInfo = null;
 	static private final String ApktoolVer = getApkToolVersion();
 
-	//private String mApkPath = null;
-	//private String mWorkTempPath = null;
-	//private String mWorkspacePath = null;
+	private boolean isPackageTempAPK = false;
  	
 	//private Status mState = Status.UNINITIALIZE;
 	
@@ -133,20 +131,31 @@ public class ApkManager
 	
 	public ApkManager()
 	{
-		this(null, null);
+		this(null, null, false);
 	}
 
 	public ApkManager(String apkPath)
 	{
-		this(apkPath, null);
+		this(apkPath, null, false);
+	}
+
+	public ApkManager(String apkPath, boolean isPackage)
+	{
+		this(apkPath, null, isPackage);
 	}
 
 	public ApkManager(String apkPath, String frameworkResPath)
+	{
+		this(apkPath, frameworkResPath, false);
+	}
+
+	public ApkManager(String apkPath, String frameworkResPath, boolean isPackage)
 	{
 		mApkInfo = new ApkInfo();
 		mFrameworkResList = new ArrayList<String>();
 		setApkFile(apkPath);
 		addFameworkRes(frameworkResPath);
+		isPackageTempAPK = isPackage;
 	}
 
 	public void setApkFile(String apkPath) {
@@ -682,10 +691,25 @@ public class ApkManager
 		{
 			System.out.println("delete Folder : "  + mApkInfo.WorkTempPath);
 			if(mApkInfo.WorkTempPath != null && !mApkInfo.WorkTempPath.isEmpty()) {
-				CoreApkTool.deleteDirectory(new File(mApkInfo.WorkTempPath));
 				CoreApkTool.deleteDirectory(new File(mApkInfo.WorkTempPath+"-res"));
-			}
 
+				File parent = new File(mApkInfo.WorkTempPath);
+				while(parent.getParentFile().listFiles().length == 1 
+						&& parent.getParentFile().getAbsolutePath().length() > CoreApkTool.getTempPath().length()) {
+					parent = parent.getParentFile();
+				}
+				CoreApkTool.deleteDirectory(parent);
+			}
+			if(isPackageTempAPK && mApkInfo.ApkPath != null && !mApkInfo.ApkPath.isEmpty()) {
+				System.out.println("delete temp APK : "  + mApkInfo.ApkPath);
+				File parent = new File(mApkInfo.ApkPath);
+				while(parent.getParentFile().listFiles().length == 1 
+						&& parent.getParentFile().getAbsolutePath().length() > CoreApkTool.getTempPath().length()) {
+					parent = parent.getParentFile();
+				}
+				
+				CoreApkTool.deleteDirectory(parent);
+			}
 			mApkInfo = null;
 		}
 
