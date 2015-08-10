@@ -111,12 +111,15 @@ public class MyProgressBarDemo extends JPanel
             int progress = (Integer) evt.getNewValue();
             
             progressBar.setValue(progress);
-            taskOutput.append(strAddText);
+            if(strAddText != null) {
+            	taskOutput.append(strAddText);
+            	strAddText = null;
+            }
         } 
     }
 
     public void addProgress(int addValue, String addtext) {
-    	progress +=addValue;
+    	progress += addValue;
     	
     	strAddText = addtext;
     	if(addValue == 0 && taskOutput != null) {
