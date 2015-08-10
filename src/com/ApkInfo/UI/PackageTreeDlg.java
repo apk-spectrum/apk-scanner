@@ -310,9 +310,7 @@ public class PackageTreeDlg extends JPanel
             public void keyReleased(KeyEvent ke) {
                 if(!(ke.getKeyChar()==27||ke.getKeyChar()==65535))//this section will execute only when user is editing the JTextField
                 {
-                	System.out.println(textFilField.getText()+ ":" + Integer.valueOf(ke.getKeyChar()));
-
-                	
+                	System.out.println(textFilField.getText()+ ":" + Integer.valueOf(ke.getKeyChar()));                	
                 	
                 	if(ke.getKeyChar()==10) {
                 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
@@ -332,13 +330,9 @@ public class PackageTreeDlg extends JPanel
                 }
               }
         });
-        
  
         JPanel tpanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        
-        
-        
         
         gbc.gridx = 0;
 		gbc.gridy = 0;
