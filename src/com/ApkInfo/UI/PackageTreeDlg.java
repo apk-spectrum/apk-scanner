@@ -192,7 +192,7 @@ public class PackageTreeDlg extends JPanel
 		        
 		        if(textFilField != null) {
 		        	if(textFilField.getText().length() >0){
-		        		makefilter(textFilField.getText());
+		        		makefilter(textFilField.getText());		        		
 		        	}
 		        }
 		    }
@@ -322,39 +322,6 @@ public class PackageTreeDlg extends JPanel
                 		}                		
                 	} else {
                 		makefilter (textFilField.getText());
-                        expandTree(tree);
-
-        		        DefaultMutableTreeNode currentNode = top.getNextNode();
-
-        		        
-        		        
-		        		//DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode)filteredModel.getRoot();
-        		        do {
-        		        		//System.out.println(currentNode.getLevel());
-        		        		//System.out.println(currentNode.getUserObject());
-        		        		//System.out.println(filteredModel.getChildCount(currentNode));
-        		        		
-        		        		//System.out.println(tree.isCollapsed(new TreePath(currentNode.getPath())));
-        		        		
-        		        		if(currentNode.getLevel()==3 && filteredModel.getChildCount(currentNode) >0) {
-	                		        for(int i=0; i<filteredModel.getChildCount(currentNode); i++) {
-	                		        	
-	                		        	TreePath temptreePath = new TreePath(((DefaultMutableTreeNode)(filteredModel.getChild(currentNode, i))).getPath());
-	                		        	
-	            		        		tree.setSelectionPath(temptreePath);
-	            		        		tree.scrollPathToVisible(temptreePath);
-	            		        		return;
-	                		        }
-                		        }
-        		        		
-//	        		           if (currentNode.getLevel()==4 && tree.isVisible(new TreePath(currentNode.getPath())) == true) {
-//	        		        	   tree.setSelectionPath(new TreePath(currentNode.getPath()));	        		        	   
-//	        		        	   break;
-//	        		           }
-	        		           currentNode = currentNode.getNextNode();
-        		           }
-        		        while (currentNode != null);
-        		        
                 	}
                     
                 }
@@ -441,6 +408,39 @@ public class PackageTreeDlg extends JPanel
 
     }
     
+    public void forselectionTree () {
+        DefaultMutableTreeNode currentNode = top.getNextNode();
+
+        
+        
+		//DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode)filteredModel.getRoot();
+        do {
+        		//System.out.println(currentNode.getLevel());
+        		//System.out.println(currentNode.getUserObject());
+        		//System.out.println(filteredModel.getChildCount(currentNode));
+        		
+        		//System.out.println(tree.isCollapsed(new TreePath(currentNode.getPath())));
+        		
+        		if(currentNode.getLevel()==3 && filteredModel.getChildCount(currentNode) >0) {
+    		        for(int i=0; i<filteredModel.getChildCount(currentNode); i++) {
+    		        	
+    		        	TreePath temptreePath = new TreePath(((DefaultMutableTreeNode)(filteredModel.getChild(currentNode, i))).getPath());
+    		        	
+		        		tree.setSelectionPath(temptreePath);
+		        		tree.scrollPathToVisible(temptreePath);
+		        		return;
+    		        }
+		        }
+        		
+//	           if (currentNode.getLevel()==4 && tree.isVisible(new TreePath(currentNode.getPath())) == true) {
+//	        	   tree.setSelectionPath(new TreePath(currentNode.getPath()));	        		        	   
+//	        	   break;
+//	           }
+	           currentNode = currentNode.getNextNode();
+           }
+        while (currentNode != null);
+    }
+    
 	/** Required by TreeSelectionListener interface. */
     public void valueChanged(TreeSelectionEvent e) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)
@@ -466,7 +466,8 @@ public class PackageTreeDlg extends JPanel
         treeModel.reload();
         
         
-        expandTree(tree);    	
+        expandTree(tree);
+        forselectionTree ();
 	}
     
     /**
