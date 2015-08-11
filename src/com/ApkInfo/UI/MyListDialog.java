@@ -12,6 +12,8 @@ import com.ApkInfo.UIUtil.Theme;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MyListDialog extends JDialog implements ActionListener {
 	private static final long serialVersionUID = 662649457192939410L;
@@ -42,16 +44,23 @@ public class MyListDialog extends JDialog implements ActionListener {
 			dialog = new MyListDialog(frame, locationComp, labelText, title,
 					possibleValues, initialValue, longValue);
 
+			final Object old = UIManager.get("Button.defaultButtonFollowsFocus");
+			UIManager.put("Button.defaultButtonFollowsFocus", Boolean.TRUE);
+			
 			KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
 			dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
 			dialog.getRootPane().getActionMap().put("ESCAPE", new AbstractAction() {
 				private static final long serialVersionUID = 3581700080322128746L;
 				public void actionPerformed(ActionEvent e) {
+					value = -1;
 					dialog.dispose();
 			    }
 			});
-			
 			dialog.setVisible(true);
+			dialog.dispose();
+
+			UIManager.put("Button.defaultButtonFollowsFocus", old);
+			
 			if(clicked) {
 				if(value == -1) {
 				} else if(DeviceList.get(value).status.equals("device")) {
@@ -97,11 +106,25 @@ public class MyListDialog extends JDialog implements ActionListener {
 		StandardButton cancelButton = new StandardButton(Resource.STR_BTN_REFRESH.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);		
 		cancelButton.setActionCommand("Refresh");
 		cancelButton.addActionListener(this);
+		cancelButton.setFocusable(true);
+		cancelButton.addKeyListener(new KeyAdapter() {
+        	public void keyPressed(KeyEvent ke) {
+        		if(ke.getKeyCode() == KeyEvent.VK_DOWN || ke.getKeyCode() == KeyEvent.VK_UP)
+            		list.dispatchEvent(ke);
+        	}
+        });
 		//
 		final JButton setButton = new StandardButton(Resource.STR_BTN_OK.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
 		setButton.setActionCommand("Set");
 		setButton.addActionListener(this);
 		getRootPane().setDefaultButton(setButton);
+		setButton.setFocusable(true);
+		setButton.addKeyListener(new KeyAdapter() {
+        	public void keyPressed(KeyEvent ke) {
+        		if(ke.getKeyCode() == KeyEvent.VK_DOWN || ke.getKeyCode() == KeyEvent.VK_UP)
+            		list.dispatchEvent(ke);
+        	}
+        });
 
 		// main part of the dialog
 		list = new JList<String>((String[])data) {
@@ -142,6 +165,7 @@ public class MyListDialog extends JDialog implements ActionListener {
 		}
 		list.setLayoutOrientation(JList.VERTICAL);
 		list.setVisibleRowCount(-1);
+		list.setFocusable(true);
 		list.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
@@ -179,6 +203,14 @@ public class MyListDialog extends JDialog implements ActionListener {
 		Container contentPane = getContentPane();
 		contentPane.add(listPane, BorderLayout.CENTER);
 		contentPane.add(buttonPane, BorderLayout.PAGE_END);
+		
+		Set<AWTKeyStroke> forwardKeys = new HashSet<AWTKeyStroke>(getFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS));
+		forwardKeys.add(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.VK_UNDEFINED));
+		setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, forwardKeys);
+		
+		Set<AWTKeyStroke> backwardKeys = new HashSet<AWTKeyStroke>(getFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS));
+		backwardKeys.add(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.VK_UNDEFINED));
+		setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, backwardKeys);
 
 		// Initialize values.
 		setValue(0);
@@ -218,5 +250,6 @@ public class MyListDialog extends JDialog implements ActionListener {
 			}
 		}
 		list.setListData(names);
+		if(names.length > 0) list.setSelectedIndex(0);
 	}
 }
