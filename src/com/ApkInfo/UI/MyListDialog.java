@@ -45,7 +45,7 @@ public class MyListDialog extends JDialog implements ActionListener {
 			KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
 			dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
 			dialog.getRootPane().getActionMap().put("ESCAPE", new AbstractAction() {
-				private static final long serialVersionUID = 8368291008098324014L;
+				private static final long serialVersionUID = 3581700080322128746L;
 				public void actionPerformed(ActionEvent e) {
 					dialog.dispose();
 			    }
