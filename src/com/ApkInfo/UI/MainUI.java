@@ -135,8 +135,23 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 		
 		public PackageOpen(String device, String packageName)
 		{
-			ProgressBarDlg.addProgress(1, "I: open package\n");
 			String apkPath = AdbWrapper.getPackageInfo(device, packageName).apkPath;
+			if(apkPath == null) {
+				if(exiting) return;
+				
+				WaitingDlg.setVisible(false);
+
+				frame.setTitle(Resource.STR_APP_NAME.getString());
+				mMyTabUI.setData(null);
+				frame.setVisible(true);
+				final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
+				//JOptionPane.showMessageDialog(null, "Sorry, Can not open the APK", "Error", JOptionPane.ERROR_MESSAGE, Appicon);
+			    JOptionPane.showOptionDialog(null, Resource.STR_MSG_FAILURE_OPEN_APK.getString(), Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, Appicon,
+			    		new String[] {Resource.STR_BTN_CLOSE.getString()}, Resource.STR_BTN_CLOSE.getString());
+			    return;
+			}
+
+			ProgressBarDlg.addProgress(1, "I: open package\n");
 			ProgressBarDlg.addProgress(1, "I: apk path in device : " + apkPath + "\n");
 			
 			String tmpPath = "/" + device + apkPath;

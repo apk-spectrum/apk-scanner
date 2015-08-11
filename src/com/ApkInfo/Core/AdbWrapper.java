@@ -61,6 +61,8 @@ public class AdbWrapper
 		public String label;
 		public String pacakge;
 		public String codePath;
+		public String apkPath;
+		public String installer;
 		
 		@Override
 		public String toString() {
@@ -76,8 +78,9 @@ public class AdbWrapper
 		public final String versionName;
 		public final String versionCode;
 		public final boolean isSystemApp;
+		public final String installer;
 		
-		public PackageInfo(String pkgName, String apkPath, String codePath, String versionName, String versionCode, boolean isSystemApp)
+		public PackageInfo(String pkgName, String apkPath, String codePath, String versionName, String versionCode, boolean isSystemApp, String installer)
 		{
 			this.pkgName = pkgName;
 			this.apkPath = apkPath;
@@ -85,6 +88,7 @@ public class AdbWrapper
 			this.versionName = versionName;
 			this.versionCode = versionCode;
 			this.isSystemApp = isSystemApp;
+			this.installer = installer;
 		}
 		
 		public String getSummary()
@@ -317,6 +321,9 @@ public class AdbWrapper
 		String[] cmd = {adbCmd, "-s", device, "shell", "dumpsys", "package"};
 		String[] result = MyConsolCmd.exc(cmd, false, null);
 		
+		cmd = new String[] {adbCmd, "-s", device, "shell", "pm", "list", "packages", "-f", "-i"};
+		String[] pmList = MyConsolCmd.exc(cmd, false, null);		
+		
 		boolean start = false;
 		PackageListObject pack = null;
 		String verName = null;
@@ -330,7 +337,10 @@ public class AdbWrapper
 			}
 			if(line.matches("^\\s*Package\\s*\\[.*")) {
 				if(pack != null) {
-					pack.label = pack.codePath.replaceAll(".*/", "") + "/" + pack.pacakge + " - " + verName + "/" + verCode;
+					if(pack.apkPath == null) {
+						pack.apkPath = pack.codePath;
+					}
+					pack.label = pack.apkPath.replaceAll(".*/", "") + " - [" + pack.pacakge + "] - " + verName + "/" + verCode;
 					list.add(pack);
 				}
 				pack = new PackageListObject();
@@ -338,6 +348,13 @@ public class AdbWrapper
 				verCode = null;
 				pack.pacakge = line.replaceAll("^\\s*Package\\s*\\[(.*)\\].*:\\s*$", "$1");
 				pack.codePath = null;
+				pack.apkPath = null;
+				for(String output: pmList) {
+			    	if(output.matches("^package:.*=" + pack.pacakge + "\\s*installer=.*")) {
+			    		pack.apkPath = output.replaceAll("^package:(.*)=" + pack.pacakge + "\\s*installer=(.*)", "$1");
+			    		//pack.installer = output.replaceAll("^package:(.*)=" + pack.pacakge + "\\s*installer=(.*)", "$2");
+			    	}
+				}
 			} else if(pack != null && pack.codePath == null && line.matches("^\\s*codePath=.*$")) {
 				pack.codePath = line.replaceAll("^\\s*codePath=\\s*([^\\s]*).*$", "$1");
 			} else if(verName == null && line.matches("^\\s*versionName=.*$")) {
@@ -347,7 +364,10 @@ public class AdbWrapper
 			}
 		}
 		if(pack != null) {
-			pack.label = pack.codePath.replaceAll(".*/", "") + "/" + pack.pacakge + " - " + verName + "/" + verCode;
+			if(pack.apkPath == null) {
+				pack.apkPath = pack.codePath;
+			}
+			pack.label = pack.apkPath.replaceAll(".*/", "") + " - [" + pack.pacakge + "] - " + verName + "/" + verCode;
 			list.add(pack);
 		}
 		
@@ -368,45 +388,66 @@ public class AdbWrapper
 
 	static public PackageInfo getPackageInfo(String device, String pkgName)
 	{
+		String[] cmd;
+		String[] result;
 		String[] TargetInfo;
 		String verName = null;
 		String verCode = null;
 		String codePath = null;
+		String apkPath = null;
+		String installer = null;
 
 		if(pkgName == null) return null;
 		
 		//System.out.println("ckeckPackage() " + pkgName);
 
 		if(!pkgName.matches("/system/framework/.*apk")) {
-			String[] cmd = {adbCmd,"-s", device, "shell", "dumpsys","package",pkgName};
+			cmd = new String[] {adbCmd, "-s", device, "shell", "pm", "list", "packages", "-f", "-i", pkgName};
+			result = MyConsolCmd.exc(cmd, false, null);		
+			for(String output: result) {
+		    	if(output.matches("^package:.*=" + pkgName + "\\s*installer=.*")) {
+		    		apkPath = output.replaceAll("^package:(.*)=" + pkgName + "\\s*installer=(.*)", "$1");
+		    		installer = output.replaceAll("^package:(.*)=" + pkgName + "\\s*installer=(.*)", "$2");
+		    	}
+			}
+			
+			cmd = new String[] {adbCmd,"-s", device, "shell", "dumpsys","package",pkgName};
 			TargetInfo = MyConsolCmd.exc(cmd,false,null);
 			
 			verName = selectString(TargetInfo,"versionName=");
 			verCode = selectString(TargetInfo,"versionCode=");
 			codePath = selectString(TargetInfo,"codePath=");
+			
+			if(installer == null)
+				installer = selectString(TargetInfo,"installerPackageName=");
 
-			if(codePath == null) return null;
+			if(installer.equals("null"))
+				installer = null;			
 		} else {
 			codePath = pkgName;
+			apkPath = pkgName;
 		}
 
 		boolean isSystemApp = false;
-		if(codePath != null && codePath.matches("^/system/.*")) {
+		if((apkPath != null && apkPath.matches("^/system/.*"))
+				|| (codePath != null && codePath.matches("^/system/.*"))) {
 			isSystemApp = true;
 		}
-
-		String apkPath = null;
-		if(codePath != null && !codePath.isEmpty()) {
-			String[] cmd2 = {adbCmd, "-s", device, "shell", "ls", codePath};
-			String[] result = MyConsolCmd.exc(cmd2, false, null);
+		
+		if(apkPath == null && codePath != null && !codePath.isEmpty() 
+				&& (isSystemApp || (!isSystemApp && hasRootPermission(device)))) {
+			cmd = new String[] {adbCmd, "-s", device, "shell", "ls", codePath};
+			result = MyConsolCmd.exc(cmd, false, null);
 			for(String output: result) {
 		    	if(output.matches("^.*apk")) {
 		    		apkPath = codePath + "/" + output;
 		    	}
 			}
 		}
+
+		if(apkPath == null) return null;
 		
-		return new PackageInfo(pkgName, apkPath, codePath, verName, verCode, isSystemApp);
+		return new PackageInfo(pkgName, apkPath, codePath, verName, verCode, isSystemApp, installer);
 	}
 	
 	static private String selectString(String[] source, String key)
