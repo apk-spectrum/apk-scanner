@@ -200,7 +200,7 @@ public class AdbWrapper
 					startList = true;
 				continue;
 			}
-			output = output.replaceAll("^\\s*([^\\s]*)\\s*([^\\s]*)(\\s*(usb:([^\\s]*))?\\s*product:([^\\s]*)\\s*model:([^\\s]*)\\s*device:([^\\s]*))?\\s*$", "$1 |$2 |$5 |$6 |$7 |$8 ");
+			output = output.replaceAll("^\\s*([^\\s]*)\\s*([^\\s]*)(\\s*(usb:([^\\s]*)))?(\\s*product:([^\\s]*)\\s*model:([^\\s]*)\\s*device:([^\\s]*))?\\s*$", "$1 |$2 |$5 |$7 |$8 |$9 ");
 			String[] info = output.split("\\|");
 			deviceList.add(new DeviceStatus(info[0], info[1], info[2], info[3], info[4], info[5]));
 		}
@@ -421,7 +421,7 @@ public class AdbWrapper
 			if(installer == null)
 				installer = selectString(TargetInfo,"installerPackageName=");
 
-			if(installer.equals("null"))
+			if(installer != null && installer.equals("null"))
 				installer = null;			
 		} else {
 			codePath = pkgName;
