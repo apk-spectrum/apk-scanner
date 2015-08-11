@@ -375,6 +375,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent e) {
 		ApkInfo apkInfo = null;
+		if(!frame.isFocused()) return false;
 		if (e.getID()==KeyEvent.KEY_RELEASED) {
 			if((e.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
 				switch(e.getKeyCode()) {
