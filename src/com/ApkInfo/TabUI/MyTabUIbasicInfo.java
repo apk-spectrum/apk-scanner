@@ -44,6 +44,11 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 	    style.append("font-size:" + font.getSize() + "pt;}");
 	    style.append("#basic-info a {text-decoration:none; color:black;}");
 	    style.append("#perm-group a {text-decoration:none; color:#"+Integer.toHexString(label.getBackground().getRGB() & 0xFFFFFF)+";}");
+	    style.append("#about {");
+	    style.append("font-family:" + font.getFamily() + ";");
+	    style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
+	    style.append("font-size:" + font.getSize() + "pt;}");
+	    style.append("#about a {text-decoration:none;}");
 	    
         apkinform.setStyle(style.toString());
         apkinform.setBackground(Color.white);
@@ -58,13 +63,13 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 		this.apkInfo = null;
 
         StringBuilder strTabInfo = new StringBuilder("");
-		strTabInfo.append("<table width=10000>");
+		strTabInfo.append("<table>");
 		strTabInfo.append("  <tr>");
         strTabInfo.append("    <td width=170>");
 		strTabInfo.append("      <image src=\"" + Resource.IMG_APP_ICON.getPath() + "\" width=150 height=150 />");
 		strTabInfo.append("    </td>");
 		strTabInfo.append("    <td>");
-		strTabInfo.append("<div id=\"basic-info\">");
+		strTabInfo.append("<div id=\"about\">");
 		strTabInfo.append("  <H1>" + Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString() + "</H1>");
 		strTabInfo.append("  Using following tools,<br/>");
 		strTabInfo.append("  Apktool " + ApkManager.getApkToolVersion() + "<br/>");
@@ -85,6 +90,7 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
         strTabInfo.append("    <td colspan=2 height=10000></td>");
         strTabInfo.append("  </tr>");
         strTabInfo.append("</table>");
+        strTabInfo.append("<div height=10000 width=10000></div>");
         
         apkinform.setBody(strTabInfo.toString());
 	}
@@ -141,7 +147,7 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
         }
 
         StringBuilder strTabInfo = new StringBuilder("");
-		strTabInfo.append("<table width=10000>");
+		strTabInfo.append("<table>");
 		strTabInfo.append("  <tr>");
 		strTabInfo.append("    <td width=170 height=" + infoHeight + ">");
 		strTabInfo.append("      <image src=\"file:/" + apkInfo.IconPath.replaceAll("^/", "") + "\" width=150 height=150 />");
@@ -176,27 +182,20 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
         strTabInfo.append("      </div>");
         strTabInfo.append("    </td>");
         strTabInfo.append("  </tr>");
-        strTabInfo.append("  <tr>");
-        strTabInfo.append("    <td colspan=2>");
-        strTabInfo.append("      <div id=\"perm-group\">");
-        strTabInfo.append("        <hr/>");
-        strTabInfo.append("        <font style=\"font-size:12px;color:black;\">");
-        if(apkInfo.PermissionList.size() > 0) {
-        strTabInfo.append("        [" + Resource.STR_BASIC_PERMISSIONS.getString() + "] - ");
-        strTabInfo.append("          " + makeHyperLink("@event","<u>" + Resource.STR_BASIC_PERMLAB_DISPLAY.getString() + "</u>",Resource.STR_BASIC_PERMDESC_DISPLAY.getString(),"display-list"));
-        } else {
-        strTabInfo.append("          " + Resource.STR_LABEL_NO_PERMISSION.getString());
-        }
-        strTabInfo.append("        </font><br/>");
-        strTabInfo.append("        <font style=\"font-size:5px\"><br/></font>");
-        strTabInfo.append("        " + permGorupImg);
-        strTabInfo.append("      </div>");
-        strTabInfo.append("    </td>");
-        strTabInfo.append("  </tr>");
-        strTabInfo.append("  <tr>");
-        strTabInfo.append("    <td colspan=2 height=10000></td>");
-        strTabInfo.append("  </tr>");
         strTabInfo.append("</table>");
+        strTabInfo.append("<div id=\"perm-group\" style=\"width:480px; padding-top:5px; border-top:1px; border-left:0px; border-right:0px; border-bottom:0px; border-style:solid;\">");
+        strTabInfo.append("  <font style=\"font-size:12px;color:black;\">");
+        if(apkInfo.PermissionList.size() > 0) {
+        strTabInfo.append("    [" + Resource.STR_BASIC_PERMISSIONS.getString() + "] - ");
+        strTabInfo.append("    " + makeHyperLink("@event","<u>" + Resource.STR_BASIC_PERMLAB_DISPLAY.getString() + "</u>",Resource.STR_BASIC_PERMDESC_DISPLAY.getString(),"display-list"));
+        } else {
+        strTabInfo.append("    " + Resource.STR_LABEL_NO_PERMISSION.getString());
+        }
+        strTabInfo.append("  </font><br/>");
+        strTabInfo.append("  <font style=\"font-size:5px\"><br/></font>");
+        strTabInfo.append("  " + permGorupImg);
+        strTabInfo.append("</div>");
+        strTabInfo.append("<div height=10000 width=10000></div>");
         
         apkinform.setBody(strTabInfo.toString());
 	}
