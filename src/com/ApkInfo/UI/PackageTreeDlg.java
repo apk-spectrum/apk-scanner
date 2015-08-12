@@ -3,6 +3,7 @@ package com.ApkInfo.UI;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -14,12 +15,16 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -62,7 +67,10 @@ public class PackageTreeDlg extends JPanel
     private JTree tree;
     private DefaultMutableTreeNode top;
     private JPanel gifPanel;
-
+    private JCheckBox checkboxUseframework;
+    private JPanel tpanel;
+    private JPanel ListPanel;
+    
     static private JDialog dialog;
     private String selDevice;
     private String selPackage;
@@ -177,16 +185,9 @@ public class PackageTreeDlg extends JPanel
 //                    System.out.println(i);
 //                  }
                 
-		        DefaultMutableTreeNode currentNode = top.getNextNode();
-		        do {
-		           if (currentNode.getLevel()==2) {
-		        	   System.out.println(new TreePath(currentNode.getPath()));
-		                tree.expandPath(new TreePath(currentNode.getPath()));
-		           }
-		           		currentNode = currentNode.getNextNode();
-		           }
-		        while (currentNode != null);
+		        //setSeeLevel(2);
                 
+		        expandOrCollapsePath(tree, new TreePath(top.getPath()),3,0, true);
                 
 		        System.out.println("end  loading package : " + DeviceString.Devicename);
 		        
@@ -200,6 +201,44 @@ public class PackageTreeDlg extends JPanel
 		t.start();     
     }
 
+    private void setSeeLevel(int level) {
+        DefaultMutableTreeNode currentNode = top.getNextNode();
+        do {
+        	if(currentNode.getLevel()>level) {
+        		break;
+        	}
+        	
+           if (currentNode.getLevel()==level) {
+        	   System.out.println(new TreePath(currentNode.getPath()));
+                tree.expandPath(new TreePath(currentNode.getPath()));
+           		}
+           		currentNode = currentNode.getNextNode();
+           } while (currentNode != null);
+    }
+    
+    public static void expandOrCollapsePath (JTree tree,TreePath treePath,int level,int currentLevel,boolean expand) {
+//      System.err.println("Exp level "+currentLevel+", exp="+expand);
+      if (expand && level<=currentLevel && level>0) return;
+
+      TreeNode treeNode = ( TreeNode ) treePath.getLastPathComponent();
+      TreeModel treeModel=tree.getModel();
+      if ( treeModel.getChildCount(treeNode) >= 0 ) {
+         for ( int i = 0; i < treeModel.getChildCount(treeNode); i++  ) {
+            TreeNode n = ( TreeNode )treeModel.getChild(treeNode, i);
+            TreePath path = treePath.pathByAddingChild( n );
+            expandOrCollapsePath(tree,path,level,currentLevel+1,expand);
+         }
+         if (!expand && currentLevel<level) return;
+      }      
+      if (expand) {
+         tree.expandPath( treePath );
+//         System.err.println("Path expanded at level "+currentLevel+"-"+treePath);
+      } else {
+         tree.collapsePath(treePath);
+//         System.err.println("Path collapsed at level "+currentLevel+"-"+treePath);
+      }
+   }
+    
     private void makeTreeForm() {
         //Create the nodes.
         top =
@@ -308,6 +347,13 @@ public class PackageTreeDlg extends JPanel
         	}
         	
             public void keyReleased(KeyEvent ke) {
+            	
+            	if(textFilField.getText().length() ==0) {
+            		collapseAll(tree);
+            		expandOrCollapsePath(tree, new TreePath(top.getPath()),3,0, true);            		
+            		return;
+            	}
+            	
                 if(!(ke.getKeyChar()==27||ke.getKeyChar()==65535))//this section will execute only when user is editing the JTextField
                 {
                 	System.out.println(textFilField.getText()+ ":" + Integer.valueOf(ke.getKeyChar()));                	
@@ -331,7 +377,7 @@ public class PackageTreeDlg extends JPanel
               }
         });
  
-        JPanel tpanel = new JPanel(new GridBagLayout());
+        tpanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         
         gbc.gridx = 0;
@@ -340,14 +386,51 @@ public class PackageTreeDlg extends JPanel
 		
 		tpanel.add(new JLabel(Resource.STR_LABEL_SEARCH.getString() + " : "), gbc);
         
-		gbc.gridx = 1;
+		gbc.gridx = 2;
 		gbc.gridy = 0;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.weightx = 1.0;
-        
+		gbc.gridwidth = 2; 
 		tpanel.add(textFilField,gbc);
         
-        
+		ListPanel = makeListTable();
+		ListPanel.setVisible(false);
+		
+		checkboxUseframework = new JCheckBox("use framework apk???");
+		checkboxUseframework.setSelected(false);
+		checkboxUseframework.addActionListener(new ActionListener() {
+			
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+            	
+            	if(checkboxUseframework.isSelected()) {
+            		ListPanel.setVisible(true);
+            	} else {
+            		ListPanel.setVisible(false);
+            	}    
+            }
+        });
+		
+		
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		gbc.fill = GridBagConstraints.LAST_LINE_START;
+		gbc.weightx = 0.0;
+		gbc.gridwidth = 3;
+		tpanel.add(checkboxUseframework,gbc);
+		
+		
+		gbc.gridx = 3;
+		gbc.gridy = 1;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.weightx = 1.0;
+		gbc.weighty = 0.1;
+		gbc.gridwidth = 3;
+		gbc.gridheight = 1;
+		
+		tpanel.add(ListPanel,gbc);
+		
         
         panel.add(treeView,BorderLayout.CENTER);        
         
@@ -664,4 +747,83 @@ public class PackageTreeDlg extends JPanel
 			dialog.dispose();
 		}
 	}
+	
+	public JPanel makeListTable ( ) {
+		
+		JPanel panel = new JPanel();
+		
+		JTable table = new JTable(new BooleanTableModel());
+		//table.setPreferredScrollableViewportSize(table.getPreferredSize());
+        //table.setFillsViewportHeight(true);
+        
+		
+        JScrollPane pane = new JScrollPane(table);
+        
+        pane.setPreferredSize(new Dimension(450, 80) );
+        
+        setJTableColumnsWidth(table,450,20,40,390);
+        
+        panel.add(pane);
+        
+        return panel;
+	}
+	
+	public void collapseAll(JTree tree) {
+	    int row = tree.getRowCount() - 1;
+	    while (row >= 0) {
+	      tree.collapseRow(row);
+	      row--;
+	      }
+	    }
+	
+	public static void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
+			double... percentages) {
+		double total = 0;
+		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
+		total += percentages[i];
+		}
+		
+		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
+		TableColumn column = table.getColumnModel().getColumn(i);
+		column.setPreferredWidth((int)(tablePreferredWidth * (percentages[i] / total)));
+		}
+	}
+	
+	
+	class BooleanTableModel extends AbstractTableModel {
+        String[] columns = {"use?", "local/device", "path"};
+        Object[][] data = {
+                {Boolean.TRUE, "local","/home/leejinhyeong/Desktop/framework.apk"},
+                {Boolean.TRUE, "device","/system/framework/twframework.apk"},
+                {Boolean.TRUE, "device","/system/framework/google_framework.apk"}
+        };
+         
+        public int getRowCount() {
+            return data.length;
+        }
+ 
+        public int getColumnCount() {
+            return columns.length;
+        }
+ 
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            return data[rowIndex][columnIndex];
+        }
+ 
+        @Override
+        public String getColumnName(int column) {
+            return columns[column];
+        }
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            return  getValueAt(0, c).getClass();
+        }
+
+        @Override
+        public void setValueAt(Object value, int row, int col) {
+            data[row][col] = value;
+            fireTableCellUpdated(row, col);
+        }
+    }
+	
 }
