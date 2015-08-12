@@ -96,7 +96,13 @@ public class MyTabUI extends JPanel{
     	tabbedPane.setTitleAt(3, tabbedPane.getTitleAt(3).replaceAll("^([^\\(]*)", labels[3]));
     	tabbedPane.setTitleAt(4, tabbedPane.getTitleAt(4).replaceAll("^([^\\(]*)", labels[4]));
     	tabbedPane.setTitleAt(5, tabbedPane.getTitleAt(5).replaceAll("^([^\\(]*)", labels[5]));
-    	
+
+    	tabbedPane.setToolTipTextAt(0, labels[0] + " (Alt+1)");
+    	tabbedPane.setToolTipTextAt(1, labels[1] + " (Alt+2)");
+    	tabbedPane.setToolTipTextAt(2, labels[2] + " (Alt+3)");
+    	tabbedPane.setToolTipTextAt(3, labels[3] + " (Alt+4)");
+    	tabbedPane.setToolTipTextAt(4, labels[4] + " (Alt+5)");
+    	tabbedPane.setToolTipTextAt(5, labels[5] + " (Alt+6)");
 
 		((MyTabUIbasicInfo) Panels[0]).reloadResource();
 		((MyTabUIWidget) Panels[1]).reloadResource();
