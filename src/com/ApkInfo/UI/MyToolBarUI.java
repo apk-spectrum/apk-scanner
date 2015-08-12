@@ -28,8 +28,8 @@ public class MyToolBarUI extends JPanel implements ActionListener{
 	private ToolBarButton btn_open;
 	private ToolBarButton btn_show_manifest;
 	private ToolBarButton btn_show_explorer;
-	private ToolBarButton btn_unpack;
-	private ToolBarButton btn_pack;
+	//private ToolBarButton btn_unpack;
+	//private ToolBarButton btn_pack;
 	private ToolBarButton btn_install;
 	private ToolBarButton btn_about;
 	private ToolBarButton btn_setting;
@@ -74,8 +74,8 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         ImageIcon toolbar_open =  Resource.IMG_TOOLBAR_OPEN.getImageIcon(Iconsize,Iconsize);
         ImageIcon toolbar_manifest=  Resource.IMG_TOOLBAR_MANIFEST.getImageIcon(Iconsize,Iconsize);
         ImageIcon toolbar_explorer =  Resource.IMG_TOOLBAR_EXPLORER.getImageIcon(Iconsize,Iconsize);
-        ImageIcon toolbar_unpack  =  Resource.IMG_TOOLBAR_UNPACK.getImageIcon(Iconsize,Iconsize);
-        ImageIcon toolbar_pack  =  Resource.IMG_TOOLBAR_PACK.getImageIcon(Iconsize,Iconsize);
+        //ImageIcon toolbar_unpack  =  Resource.IMG_TOOLBAR_UNPACK.getImageIcon(Iconsize,Iconsize);
+        //ImageIcon toolbar_pack  =  Resource.IMG_TOOLBAR_PACK.getImageIcon(Iconsize,Iconsize);
         ImageIcon toolbar_install  =  Resource.IMG_TOOLBAR_INSTALL.getImageIcon(Iconsize,Iconsize);
         ImageIcon toolbar_about  =  Resource.IMG_TOOLBAR_ABOUT.getImageIcon(Iconsize,Iconsize);
         ImageIcon toolbar_setting  =  Resource.IMG_TOOLBAR_SETTING.getImageIcon(Iconsize,Iconsize);
@@ -83,8 +83,8 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         //ImageIcon toobar_open_hover  =  Resource.IMG_TOOLBAR_OPEN_HOVER.getImageIcon(Iconsize,Iconsize);
         //ImageIcon toolbar_manifest_hover =  Resource.IMG_TOOLBAR_MANIFEST_HOVER.getImageIcon(Iconsize,Iconsize);
         //ImageIcon toolbar_explorer_hover =  Resource.IMG_TOOLBAR_EXPLORER_HOVER.getImageIcon(Iconsize,Iconsize);
-        ImageIcon toolbar_unpack_hover  =  Resource.IMG_TOOLBAR_UNPACK_HOVER.getImageIcon(Iconsize,Iconsize);
-        ImageIcon toolbar_pack_hover  =  Resource.IMG_TOOLBAR_PACK_HOVER.getImageIcon(Iconsize,Iconsize);
+        //ImageIcon toolbar_unpack_hover  =  Resource.IMG_TOOLBAR_UNPACK_HOVER.getImageIcon(Iconsize,Iconsize);
+        //ImageIcon toolbar_pack_hover  =  Resource.IMG_TOOLBAR_PACK_HOVER.getImageIcon(Iconsize,Iconsize);
         //ImageIcon toolbar_install_hover  =  Resource.IMG_TOOLBAR_INSTALL_HOVER.getImageIcon(Iconsize,Iconsize);
         //ImageIcon toolbar_about_hover  =  Resource.IMG_TOOLBAR_ABOUT_HOVER.getImageIcon(Iconsize,Iconsize);
         
@@ -102,8 +102,8 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         btn_open = new ToolBarButton(null, toolbar_open, toolbar_open, listener);
         btn_show_manifest = new ToolBarButton(null, toolbar_manifest, toolbar_manifest, listener);
         btn_show_explorer = new ToolBarButton(null, toolbar_explorer, toolbar_explorer, listener);
-        btn_unpack = new ToolBarButton(null, toolbar_unpack, toolbar_unpack_hover, listener);
-        btn_pack = new ToolBarButton(null, toolbar_pack, toolbar_pack_hover, listener);
+        //btn_unpack = new ToolBarButton(null, toolbar_unpack, toolbar_unpack_hover, listener);
+        //btn_pack = new ToolBarButton(null, toolbar_pack, toolbar_pack_hover, listener);
         btn_install = new ToolBarButton(null, toolbar_install, toolbar_install, listener);
         btn_about = new ToolBarButton(null, toolbar_about, toolbar_about, listener);
         btn_setting = new ToolBarButton(null, toolbar_setting, toolbar_setting, listener);
@@ -212,12 +212,12 @@ public class MyToolBarUI extends JPanel implements ActionListener{
     	case EXPLORER:
     		btn_show_explorer.setEnabled(enabled);
     		if(buttonId != ButtonId.ALL) break;
-    	case UNPACK:
-    		btn_unpack.setEnabled(enabled);
-    		if(buttonId != ButtonId.ALL) break;
-    	case PACK:
-    		btn_pack.setEnabled(enabled);
-    		if(buttonId != ButtonId.ALL) break;
+    	//case UNPACK:
+    	//	btn_unpack.setEnabled(enabled);
+    	//	if(buttonId != ButtonId.ALL) break;
+    	//case PACK:
+    	//	btn_pack.setEnabled(enabled);
+    	//	if(buttonId != ButtonId.ALL) break;
     	case INSTALL:
     		btn_install.setEnabled(enabled);
     		btn_install_arrow.setEnabled(enabled);
@@ -232,8 +232,8 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         btn_open.setText(Resource.STR_BTN_OPEN.getString());
         btn_show_manifest.setText(Resource.STR_BTN_MANIFEST.getString());
         btn_show_explorer.setText(Resource.STR_BTN_EXPLORER.getString());
-        btn_unpack.setText(Resource.STR_BTN_UNPACK.getString());
-        btn_pack.setText(Resource.STR_BTN_PACK.getString());
+        //btn_unpack.setText(Resource.STR_BTN_UNPACK.getString());
+        //btn_pack.setText(Resource.STR_BTN_PACK.getString());
         btn_install.setText(Resource.STR_BTN_INSTALL.getString());
         btn_about.setText(Resource.STR_BTN_ABOUT.getString());
         btn_setting.setText(Resource.STR_BTN_SETTING.getString());
@@ -241,8 +241,8 @@ public class MyToolBarUI extends JPanel implements ActionListener{
         btn_open.setToolTipText(Resource.STR_BTN_OPEN_LAB.getString());
         btn_show_manifest.setToolTipText(Resource.STR_BTN_MANIFEST_LAB.getString());
         btn_show_explorer.setToolTipText(Resource.STR_BTN_EXPLORER_LAB.getString());
-        btn_unpack.setToolTipText(Resource.STR_BTN_UNPACK_LAB.getString());
-        btn_pack.setToolTipText(Resource.STR_BTN_PACK_LAB.getString());
+        //btn_unpack.setToolTipText(Resource.STR_BTN_UNPACK_LAB.getString());
+        //btn_pack.setToolTipText(Resource.STR_BTN_PACK_LAB.getString());
         btn_install.setToolTipText(Resource.STR_BTN_INSTALL_LAB.getString());
         btn_about.setToolTipText(Resource.STR_BTN_ABOUT_LAB.getString());
         btn_setting.setToolTipText(Resource.STR_BTN_SETTING_LAB.getString());
