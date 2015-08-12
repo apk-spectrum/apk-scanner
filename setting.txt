@@ -1,4 +1,0 @@
-gedit
-ko
-true
-null
