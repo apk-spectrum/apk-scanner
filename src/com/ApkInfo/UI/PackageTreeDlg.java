@@ -229,18 +229,18 @@ public class PackageTreeDlg extends JPanel
 	                            JPopupMenu menu = new JPopupMenu ();
 	                            
 	                            
-	                            menu.add ( new JMenuItem ( "Open" ) ).addActionListener(new ActionListener(){ 
+	                            menu.add ( new JMenuItem ( Resource.STR_BTN_OPEN.getString() ) ).addActionListener(new ActionListener(){ 
 	                            	   public void actionPerformed(ActionEvent e) {
 	                            		   OpenPackage();
 	                            	   }});
-	                            menu.add ( new JMenuItem ( "Pull (로컬에 저장)" ) ).addActionListener(new ActionListener(){ 
+	                            menu.add ( new JMenuItem ( Resource.STR_BTN_SAVE.getString() ) ).addActionListener(new ActionListener(){ 
 	                            	   public void actionPerformed(ActionEvent e) {
 	                            		   PullPackage();
 	                            	   }});
-	                            menu.add ( new JMenuItem ( "내보내기(미구현)" ) ).addActionListener(new ActionListener(){ 
-	                            	   public void actionPerformed(ActionEvent e) {
-	                            		   
-	                            	   }});
+	                            //menu.add ( new JMenuItem ( Resource.STR_BTN_EXPORT.getString() ) ).addActionListener(new ActionListener(){ 
+	                            //	   public void actionPerformed(ActionEvent e) {
+	                            //		   
+	                            //	   }});
 	                            menu.show ( tree, e.getX (), e.getY () );
                         	}
                             
@@ -338,7 +338,7 @@ public class PackageTreeDlg extends JPanel
 		gbc.gridy = 0;
 		gbc.fill = GridBagConstraints.HORIZONTAL;		
 		
-		tpanel.add(new JLabel("Search : "),gbc);
+		tpanel.add(new JLabel(Resource.STR_LABEL_SEARCH.getString() + " : "), gbc);
         
 		gbc.gridx = 1;
 		gbc.gridy = 0;
@@ -351,9 +351,9 @@ public class PackageTreeDlg extends JPanel
         
         panel.add(treeView,BorderLayout.CENTER);        
         
-        StandardButton openbtn = new StandardButton("Open Package",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);		
-        StandardButton refreshbtn = new StandardButton("Refresh",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
-        StandardButton exitbtn = new StandardButton("Exit",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
+        StandardButton openbtn = new StandardButton(Resource.STR_BTN_OPEN.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);		
+        StandardButton refreshbtn = new StandardButton(Resource.STR_BTN_REFRESH.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
+        StandardButton exitbtn = new StandardButton(Resource.STR_BTN_CLOSE.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
 
         openbtn.addActionListener(this);
         refreshbtn.addActionListener(this);
@@ -366,7 +366,7 @@ public class PackageTreeDlg extends JPanel
         ImageIcon icon = Resource.IMG_WAIT_BAR.getImageIcon();
         JLabel GifLabel = new JLabel(icon);
         
-        JLabel Loading = new JLabel("Loading...");
+        JLabel Loading = new JLabel(Resource.STR_LABEL_LOADING.getString());
         
         gifPanel.add(Loading);
         gifPanel.add(GifLabel);
@@ -472,7 +472,7 @@ public class PackageTreeDlg extends JPanel
     private static void createAndShowGUI() {
  
         //Create and set up the window.
-    	dialog = new JDialog(new JFrame(), "PackageTree", true);
+    	dialog = new JDialog(new JFrame(), Resource.STR_TREE_OPEN_PACKAGE.getString(), true);
     	//dialog.setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
     	
 		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
@@ -509,7 +509,7 @@ public class PackageTreeDlg extends JPanel
         selPackage = null;
 
         //Create and set up the window.
-    	dialog = new JDialog(new JFrame(), "PackageTree", true);
+    	dialog = new JDialog(new JFrame(), Resource.STR_TREE_OPEN_PACKAGE.getString(), true);
     	dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
     	KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
@@ -628,7 +628,7 @@ public class PackageTreeDlg extends JPanel
 		JFileChooser jfc = new JFileChooser((String)Resource.PROP_LAST_FILE_SAVE_PATH.getData(""));
 		jfc.setDialogType(JFileChooser.SAVE_DIALOG);
 		jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("vnd.android.package-archive(.apk)","apk"));
+		jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(Resource.STR_LABEL_APK_FILE_DESC.getString(),"apk"));
 		jfc.setSelectedFile(new File(saveFileName));
 
 
@@ -649,16 +649,16 @@ public class PackageTreeDlg extends JPanel
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
-		if(e.getActionCommand().equals("Open Package")) {
+		if(e.getActionCommand().equals(Resource.STR_BTN_OPEN.getString())) {
 			OpenPackage();
 
-		} else if(e.getActionCommand().equals("Refresh")) {
-			System.out.println("refresh");
+		} else if(e.getActionCommand().equals(Resource.STR_BTN_REFRESH.getString())) {
+			//System.out.println("refresh");
 			
 			addTreeList();
 			
-		} else if(e.getActionCommand().equals("Exit")) {
-			System.out.println("exit");
+		} else if(e.getActionCommand().equals(Resource.STR_BTN_CLOSE.getString())) {
+			//System.out.println("exit");
 			selDevice = null;
 			selPackage = null;
 			dialog.dispose();

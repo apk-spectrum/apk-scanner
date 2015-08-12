@@ -20,6 +20,7 @@
     <string name="btn_refresh">Refresh</string>
     <string name="btn_del">Del</string>
     <string name="btn_add">Add</string>
+    <string name="btn_export">Export</string>
     
     <string name="btn_open_lab">Open (Ctrl+O)</string>
     <string name="btn_manifest_lab">Manifest (Ctrl+M)</string>
@@ -99,8 +100,6 @@
     <string name="file_size_TB">TB</string>
     
     <string name="tree_open_package">Open</string>
-    <string name="tree_Refresh">Refresh</string>
-    <string name="tree_Exit">Close</string>
     
     <string name="settings_title">Settings</string>
     <string name="settings_editor">Editor</string>
@@ -119,6 +118,9 @@
     <string name="label_device_list">Device list</string>
     <string name="label_app_name_list">App name list</string>
     <string name="label_no_permission">No permissions</string>
+    <string name="label_search">Search</string>
+    <string name="label_loading">Loading...</string>
+    <string name="label_apk_file_description">Android Package(.apk)</string>
     
     <string name="msg_failure_open_apk">Sorry, Can not open the APK</string>
     <string name="msg_device_not_found">Device not found!

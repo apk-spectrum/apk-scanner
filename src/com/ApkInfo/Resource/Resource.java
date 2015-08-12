@@ -45,6 +45,7 @@ public enum Resource
 	STR_BTN_REFRESH				(Type.TEXT, "@btn_refresh"),
 	STR_BTN_ADD					(Type.TEXT, "@btn_add"),
 	STR_BTN_DEL					(Type.TEXT, "@btn_del"),
+	STR_BTN_EXPORT				(Type.TEXT, "@btn_export"),
 
 	STR_BTN_OPEN_LAB			(Type.TEXT, "@btn_open_lab"),
 	STR_BTN_MANIFEST_LAB		(Type.TEXT, "@btn_manifest_lab"),
@@ -124,8 +125,6 @@ public enum Resource
 	STR_FILE_SIZE_TB			(Type.TEXT, "@file_size_TB"),
 	
 	STR_TREE_OPEN_PACKAGE		(Type.TEXT, "@tree_open_package"),
-	STR_TREE_REFRESH			(Type.TEXT, "@Refresh"),
-	STR_TREE_EXIT				(Type.TEXT, "@Exit"),
     
 	STR_SETTINGS_TITLE			(Type.TEXT, "@settings_title"),
 	STR_SETTINGS_EDITOR			(Type.TEXT, "@settings_editor"),
@@ -144,6 +143,9 @@ public enum Resource
 	STR_LABEL_DEVICE_LIST		(Type.TEXT, "@label_device_list"),
 	STR_LABEL_APP_NAME_LIST		(Type.TEXT, "@label_app_name_list"),
 	STR_LABEL_NO_PERMISSION		(Type.TEXT, "@label_no_permission"),
+	STR_LABEL_SEARCH			(Type.TEXT, "@label_search"),
+	STR_LABEL_LOADING			(Type.TEXT, "@label_loading"),
+	STR_LABEL_APK_FILE_DESC		(Type.TEXT, "@label_apk_file_description"),
 	
 	STR_MSG_FAILURE_OPEN_APK	(Type.TEXT, "@msg_failure_open_apk"),
 	STR_MSG_DEVICE_NOT_FOUND	(Type.TEXT, "@msg_device_not_found"),
