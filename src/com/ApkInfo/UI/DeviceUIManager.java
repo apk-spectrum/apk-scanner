@@ -121,10 +121,10 @@ public class DeviceUIManager
 						}
 						int n;
 						if(isDeletePossible) {
-							n = ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo.getSummary() + strLine + Resource.STR_QUESTION_OPEN_OR_INSTALL.getString(),
+							n = ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_OPEN_OR_INSTALL.getString(),
 									Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, checkPackDelOptions, checkPackDelOptions[3]);
 						} else {
-							n = ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo.getSummary() + strLine + Resource.STR_QUESTION_OPEN_OR_INSTALL.getString(),
+							n = ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_OPEN_OR_INSTALL.getString(),
 									Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, checkPackOptions, checkPackOptions[2]);							
 						}
 						//System.out.println("Seltected index : " + n);
@@ -177,12 +177,12 @@ public class DeviceUIManager
 					}
 				}
 				if(pkgInfo != null) {
-					printlnLog(pkgInfo.getSummary());
+					printlnLog(pkgInfo.toString());
 					if(pkgInfo.isSystemApp == true) {
 						if(AdbWrapper.hasRootPermission(dev.name) == true) {
 							printlnLog("adbd is running as root");
 							String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
-							int n = ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo.getSummary() + strLine + Resource.STR_QUESTION_PUSH_OR_INSTALL.getString(),
+							int n = ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_PUSH_OR_INSTALL.getString(),
 									Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, options, options[1]);
 							//System.out.println("Seltected index : " + n);
 							if(n==-1 || n==2) {
@@ -203,7 +203,7 @@ public class DeviceUIManager
 					}
 					if(samePackage && !alreadyCheak) {
 						String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
-						int n = ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo.getSummary() + strLine + Resource.STR_QUESTION_CONTINUE_INSTALL.getString(),
+						int n = ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_CONTINUE_INSTALL.getString(),
 								Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, yesNoOptions, yesNoOptions[1]);
 						//System.out.println("Seltected index : " + n);
 						if(n==-1 || n==1) {

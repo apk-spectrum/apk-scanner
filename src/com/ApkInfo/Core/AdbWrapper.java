@@ -91,12 +91,14 @@ public class AdbWrapper
 			this.installer = installer;
 		}
 		
-		public String getSummary()
+		@Override
+		public String toString()
 		{
 			String s = "-Installed APK info\n";
 			s += "Pakage : " + pkgName +"\n";
 			s += "Version : " + versionName + " / " + versionCode +"\n";
-			s += "CodePath : " + codePath +"\n";
+			s += "APK Path : " + apkPath +"\n";
+			s += "Installer : " + installer +"\n";
 			return s;
 		}
 	}
