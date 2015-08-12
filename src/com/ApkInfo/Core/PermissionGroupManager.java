@@ -62,11 +62,15 @@ public class PermissionGroupManager {
 				PermissionGroup g = permGroupMap.get(permInfo.permGroup);
 				if(g != null) {
 					g.permList.add(permInfo);
-					g.permSummary += "\n - " + permInfo.label;
+					if(permInfo.label != null) {
+						g.permSummary += "\n - " + permInfo.label;
+					}
 				} else {
 					g = getPermissionGroup(permInfo.permGroup);
 					g.permList.add(permInfo);
-					g.permSummary += "\n - " + permInfo.label;
+					if(permInfo.label != null) {
+						g.permSummary += "\n - " + permInfo.label;
+					}
 					permGroupMap.put(permInfo.permGroup, g);
 				}
 			}
@@ -108,7 +112,11 @@ public class PermissionGroupManager {
 				if(permGroup.desc != null) permGroup.desc = permGroup.desc.replaceAll("\"", "");
 			}
 		}
-		permGroup.permSummary = "[" + permGroup.label + "] : " + permGroup.desc;
+		if(permGroup.label != null) {
+			permGroup.permSummary = "[" + permGroup.label + "] : " + permGroup.desc;
+		} else {
+			permGroup.permSummary = "[" + permGroup.permGroup + "]";
+		}
 		
 		//System.out.println(permGroup.icon + ", " + permGroup.permGroup + ", " + permGroup.label + ", " + permGroup.desc);
 		return permGroup;
@@ -142,7 +150,7 @@ public class PermissionGroupManager {
 	public String getIconPath(String value)
 	{
 		if(value == null || !value.matches("^@drawable.*")) {
-			return value;
+			value = "@drawable/perm_group_unknown";
 		}
 		String path = value.replace("@drawable/", "");
 		

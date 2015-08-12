@@ -297,12 +297,25 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 
 		StringBuilder body = new StringBuilder("");
 		//body.append("<div id=\"perm-detail-desc\">");
-		body.append("■ " + g.label + " - " + "[" + group + "]\n");
-		body.append(" : " + g.desc + "\n------------------------------------------------------------------------------------------------------------\n\n");
+		body.append("■ ");
+		if(g.label != null) {
+			body.append(g.label + " - ");
+		}
+		body.append("[" + group + "]\n");
+		if(g.desc != null) {
+			body.append(" : " + g.desc + "\n");
+		}
+		body.append("------------------------------------------------------------------------------------------------------------\n\n");
 		
 		for(PermissionInfo info: g.permList) {
-			body.append("▶ " + info.label + " [" + info.permission + "]\n");
-			body.append(" : " + info.desc + "\n");
+			body.append("▶ ");
+			if(info.label != null) {
+				body.append(info.label + " ");
+			}
+			body.append("[" + info.permission + "]\n");
+			if(info.desc != null) {
+				body.append(" : " + info.desc + "\n");
+			}
 		}
 		//body.append("</div>");
 
