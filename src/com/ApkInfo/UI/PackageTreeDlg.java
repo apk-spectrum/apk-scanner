@@ -3,6 +3,7 @@ package com.ApkInfo.UI;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -336,25 +337,6 @@ public class PackageTreeDlg extends JPanel
             		KeyEvent key = new KeyEvent(tree, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_UP, KeyEvent.CHAR_UNDEFINED);
             		tree.dispatchEvent(key);        			
         		}
-        		
-        		
-        		
-//        		
-//        		if(SelectedNodeIndex == -1 || SelectedcurrentNode ==null) return;
-//        		
-//        		if(ke.getKeyCode() == KeyEvent.VK_DOWN) {
-//        			
-//        			if(SelectedNodeIndex < filteredModel.getChildCount(SelectedcurrentNode)) {
-//        				SelectedNodeIndex++;
-//        				tree.setSelectionPath(new TreePath(((DefaultMutableTreeNode)(filteredModel.getChild(SelectedcurrentNode, SelectedNodeIndex))).getPath()));
-//        			}	        		
-//        		} else if (ke.getKeyCode() == KeyEvent.VK_UP) {
-//        			
-//        			if(SelectedNodeIndex > 0) {
-//        				SelectedNodeIndex--;
-//        				tree.setSelectionPath(new TreePath(((DefaultMutableTreeNode)(filteredModel.getChild(SelectedcurrentNode, SelectedNodeIndex))).getPath()));
-//        			}
-//        		}
         	}
         	
             public void keyReleased(KeyEvent ke) {
@@ -805,7 +787,14 @@ public class PackageTreeDlg extends JPanel
 		JTable table = new JTable(new BooleanTableModel());
 		//table.setPreferredScrollableViewportSize(table.getPreferredSize());
         //table.setFillsViewportHeight(true);
-        
+		JButton addbtn= new JButton("add");
+		
+		addbtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	
+            	
+            }
+        });
 		
         JScrollPane pane = new JScrollPane(table);
         
@@ -814,6 +803,8 @@ public class PackageTreeDlg extends JPanel
         setJTableColumnsWidth(table,550,60,80,410);
         
         panel.add(pane);
+        panel.add(addbtn);
+        
         
         return panel;
 	}
