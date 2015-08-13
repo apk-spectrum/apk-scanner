@@ -110,7 +110,7 @@ public class PackageTreeDlg extends JPanel
     
     private void addTreeList() {
 
-    	if(!refreshbtn.isEnabled()) {
+    	if(!refreshbtn.isVisible()) {
     		System.out.println("Already refreshing...");
     		return;
     	}
@@ -120,7 +120,7 @@ public class PackageTreeDlg extends JPanel
     	Thread t = new Thread(new Runnable() {
 			public void run()
 			{
-		    	refreshbtn.setEnabled(false);
+		    	refreshbtn.setVisible(false);
 				ArrayList<DeviceStatus> DeviceList;
 				do {
 					DeviceList = AdbWrapper.scanDevices();
@@ -146,7 +146,7 @@ public class PackageTreeDlg extends JPanel
 					createDeviceNodes(top, DeviceList.get(i), ArrayDataObject);
 				}
 				gifPanel.setVisible(false);
-		    	refreshbtn.setEnabled(true);
+		    	refreshbtn.setVisible(true);
 			}
 
 			private void createDeviceNodes(DefaultMutableTreeNode top, DeviceStatus dev, ArrayList<PackageListObject> ArrayDataObject)
@@ -461,8 +461,8 @@ public class PackageTreeDlg extends JPanel
         
         tpanel2.add(tpanel, BorderLayout.CENTER);
         ButtonPanel.add(gifPanel);
-        ButtonPanel.add(openbtn);
-        ButtonPanel.add(refreshbtn);        
+        ButtonPanel.add(refreshbtn);
+        ButtonPanel.add(openbtn);     
         ButtonPanel.add(exitbtn);
         
         tpanel2.add(ButtonPanel, BorderLayout.SOUTH);
