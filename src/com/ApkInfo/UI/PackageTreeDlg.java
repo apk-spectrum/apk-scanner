@@ -432,8 +432,8 @@ public class PackageTreeDlg extends JPanel
 		tpanel.add(checkboxUseframework,gbc);
 		
 		
-		gbc.gridx = 3;
-		gbc.gridy = 1;
+		gbc.gridx = 1;
+		gbc.gridy = 2;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.weightx = 1.0;
 		gbc.weighty = 0.1;
@@ -453,7 +453,7 @@ public class PackageTreeDlg extends JPanel
         refreshbtn.addActionListener(this);
         exitbtn.addActionListener(this);
         
-        JPanel ButtonPanel = new JPanel();
+        JPanel ButtonPanel = new JPanel(new BorderLayout());
                 
         gifPanel = new JPanel();
         
@@ -467,13 +467,22 @@ public class PackageTreeDlg extends JPanel
         
         gifPanel.setVisible(false);
         
+        JPanel ButtonPanelWest = new JPanel();
+        ButtonPanelWest.add(gifPanel);
+        ButtonPanelWest.add(refreshbtn);
+        
+        JPanel ButtonPanelEast = new JPanel();
+        ButtonPanelEast.add(openbtn);
+        ButtonPanelEast.add(exitbtn);
+        
         JPanel tpanel2 = new JPanel(new BorderLayout());
         
         tpanel2.add(tpanel, BorderLayout.CENTER);
-        ButtonPanel.add(gifPanel);
-        ButtonPanel.add(refreshbtn);
-        ButtonPanel.add(openbtn);     
-        ButtonPanel.add(exitbtn);
+        
+        ButtonPanel.add(ButtonPanelWest, BorderLayout.WEST);
+        
+        ButtonPanel.add(ButtonPanelEast, BorderLayout.EAST);     
+        
         
         tpanel2.add(ButtonPanel, BorderLayout.SOUTH);
         panel.add(tpanel2,BorderLayout.SOUTH);
