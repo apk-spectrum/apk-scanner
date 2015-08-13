@@ -615,7 +615,7 @@ public class PackageTreeDlg extends JPanel
         //Display the window.
     	dialog.pack();
     	dialog.setBounds(100, 100, 600, 400);
-    	dialog.setMinimumSize(new Dimension(600, 400));
+    	dialog.setMinimumSize(new Dimension(700, 400));
 		
     	dialog.setLocationRelativeTo(null);
     	dialog.setVisible(true);
@@ -671,7 +671,7 @@ public class PackageTreeDlg extends JPanel
     	//dialog.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width)/2 - getWidth()/2, (Toolkit.getDefaultToolkit().getScreenSize().height)/2 - getHeight()/2);
     	    	
     	dialog.setBounds(100, 100, 600, 400);
-    	dialog.setMinimumSize(new Dimension(600, 400));
+    	dialog.setMinimumSize(new Dimension(700, 400));
 		
     	dialog.setLocationRelativeTo(null);
     	dialog.setVisible(true);
@@ -809,9 +809,9 @@ public class PackageTreeDlg extends JPanel
 		
         JScrollPane pane = new JScrollPane(table);
         
-        pane.setPreferredSize(new Dimension(450, 80) );
+        pane.setPreferredSize(new Dimension(550, 80) );
         
-        setJTableColumnsWidth(table,450,20,40,390);
+        setJTableColumnsWidth(table,550,60,80,410);
         
         panel.add(pane);
         
