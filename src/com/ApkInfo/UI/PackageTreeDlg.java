@@ -71,6 +71,7 @@ public class PackageTreeDlg extends JPanel
     private JCheckBox checkboxUseframework;
     private JPanel tpanel;
     private JPanel ListPanel;
+    private StandardButton refreshbtn;
     
     static private JDialog dialog;
     private String selDevice;
@@ -109,11 +110,17 @@ public class PackageTreeDlg extends JPanel
     
     private void addTreeList() {
 
+    	if(!refreshbtn.isEnabled()) {
+    		System.out.println("Already refreshing...");
+    		return;
+    	}
+    	
     	top.removeAllChildren();
     	tree.updateUI();
     	Thread t = new Thread(new Runnable() {
 			public void run()
 			{
+		    	refreshbtn.setEnabled(false);
 				ArrayList<DeviceStatus> DeviceList;
 				do {
 					DeviceList = AdbWrapper.scanDevices();
@@ -139,6 +146,7 @@ public class PackageTreeDlg extends JPanel
 					createDeviceNodes(top, DeviceList.get(i), ArrayDataObject);
 				}
 				gifPanel.setVisible(false);
+		    	refreshbtn.setEnabled(true);
 			}
 
 			private void createDeviceNodes(DefaultMutableTreeNode top, DeviceStatus dev, ArrayList<PackageListObject> ArrayDataObject)
@@ -193,7 +201,7 @@ public class PackageTreeDlg extends JPanel
 		        }
 		    }
     	});
-		t.start();     
+		t.start();
     }
 
     private void setSeeLevel(int level) {
@@ -428,7 +436,7 @@ public class PackageTreeDlg extends JPanel
         panel.add(treeView,BorderLayout.CENTER);        
         
         StandardButton openbtn = new StandardButton(Resource.STR_BTN_OPEN.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);		
-        StandardButton refreshbtn = new StandardButton(Resource.STR_BTN_REFRESH.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
+        refreshbtn = new StandardButton(Resource.STR_BTN_REFRESH.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
         StandardButton exitbtn = new StandardButton(Resource.STR_BTN_CANCEL.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
 
         openbtn.addActionListener(this);
@@ -552,6 +560,8 @@ public class PackageTreeDlg extends JPanel
      */
     private static void createAndShowGUI() {
  
+    	final PackageTreeDlg ptg = new PackageTreeDlg();
+    	
         //Create and set up the window.
     	dialog = new JDialog(new JFrame(), Resource.STR_TREE_OPEN_PACKAGE.getString(), true);
     	//dialog.setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
@@ -565,8 +575,17 @@ public class PackageTreeDlg extends JPanel
 		    }
 		});
  
+    	KeyStroke vk_f5 = KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, false);
+		dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(vk_f5, "VK_F5");
+		dialog.getRootPane().getActionMap().put("VK_F5", new AbstractAction() {
+			private static final long serialVersionUID = -5281980076592985530L;
+			public void actionPerformed(ActionEvent e) {
+				ptg.addTreeList();
+		    }
+		});
+ 
         //Add content to the window.
-    	dialog.add(new PackageTreeDlg());
+    	dialog.add(ptg);
  
         dialog.addWindowListener( new WindowAdapter() {
       	   public void windowOpened( WindowEvent e ){
@@ -607,6 +626,15 @@ public class PackageTreeDlg extends JPanel
 		    }
 		});
  
+    	KeyStroke vk_f5 = KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, false);
+		dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(vk_f5, "VK_F5");
+		dialog.getRootPane().getActionMap().put("VK_F5", new AbstractAction() {
+			private static final long serialVersionUID = -5281980076592985530L;
+			public void actionPerformed(ActionEvent e) {
+				addTreeList();
+		    }
+		});
+		
         //Add content to the window.
     	dialog.add(this);
  
