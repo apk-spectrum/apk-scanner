@@ -34,6 +34,7 @@ public class AdbWrapper
 		public final String product;
 		public final String model;
 		public final String device;
+		public final String label;
 
 		public DeviceStatus(String name, String status, String usb, String product, String model, String device)
 		{
@@ -43,6 +44,16 @@ public class AdbWrapper
 			this.product = product.trim();
 			this.model = model.trim();
 			this.device = device.trim();
+			
+			String label = this.name;
+			if(this.model != null && !this.model.isEmpty()) {
+				label += "(" + this.model + ")";
+			} else if(this.model != null && !this.model.isEmpty()) {
+				label += "(" + this.product + ")";
+			} else {
+				label += "(Unknown)";
+			}
+			this.label = label;
 		}
 		
 		public String getSummary()
@@ -54,6 +65,11 @@ public class AdbWrapper
 			s += "model : " + model + "\n";
 			s += "device : " + device + "\n";
 			return s;
+		}
+
+		@Override
+		public String toString() {
+		    return this.label;
 		}
 	}
 

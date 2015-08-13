@@ -36,6 +36,7 @@ import com.ApkInfo.Core.AdbWrapper.DeviceStatus;
 import com.ApkInfo.Core.AdbWrapper.PackageListObject;
 import com.ApkInfo.Core.PackageTreeDataManager;
 import com.ApkInfo.Resource.Resource;
+import com.ApkInfo.UIUtil.ArrowTraversalPane;
 import com.ApkInfo.UIUtil.ButtonType;
 import com.ApkInfo.UIUtil.FilteredTreeModel;
 import com.ApkInfo.UIUtil.StandardButton;
@@ -74,6 +75,7 @@ public class PackageTreeDlg extends JPanel
     static private JDialog dialog;
     private String selDevice;
     private String selPackage;
+    private String selFrameworkRes;
     private String tmpApkPath;
     private static JTextField textFilField;
     private FilteredTreeModel filteredModel;
@@ -86,6 +88,10 @@ public class PackageTreeDlg extends JPanel
     	return selPackage;
     }
     
+    public String getSelectedFrameworkRes() {
+    	return selFrameworkRes;
+    }
+    
     public File getSelectedFile() {
     	if(tmpApkPath != null)
     		return new File(tmpApkPath);
@@ -94,17 +100,6 @@ public class PackageTreeDlg extends JPanel
     
     //Optionally play with line styles.  Possible values are
     //"Angled" (the default), "Horizontal", and "None".
-	
-    class DeviceString {
-    	String Devicename;
-    	String Label;
-    	
-    	@Override
-    	public String toString() {
-    		return Label;
-    	}
-    	
-    }
     
     public PackageTreeDlg() {
         super(new BorderLayout());
@@ -113,83 +108,84 @@ public class PackageTreeDlg extends JPanel
     }
     
     private void addTreeList() {
-    	
+
     	top.removeAllChildren();
     	tree.updateUI();
     	Thread t = new Thread(new Runnable() {
-			public void run(){
-					ArrayList<DeviceStatus> DeviceList = AdbWrapper.scanDevices();
-				
-					System.out.println(DeviceList.size());
-					
+			public void run()
+			{
+				ArrayList<DeviceStatus> DeviceList;
+				do {
+					DeviceList = AdbWrapper.scanDevices();
+	
 					if(DeviceList.size() == 0) {
 						final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
-						JOptionPane.showMessageDialog(null, "Device not found!\nplease check Connected","Warning", JOptionPane.WARNING_MESSAGE, Appicon);
-						return;
-					} else {
-						gifPanel.setVisible(true);
-						for(int i=0; i< DeviceList.size(); i++) {
-							PackageTreeDataManager PackageManager = new PackageTreeDataManager(DeviceList.get(i).name);
-							ArrayList<PackageListObject> ArrayDataObject = PackageManager.getDataArray();
-							
-							DeviceString tempDeviceString = new DeviceString();
-							
-							tempDeviceString.Devicename = DeviceList.get(i).name;
-							tempDeviceString.Label = DeviceList.get(i).name +"("+ DeviceList.get(i).model + ")";
-							
-							createDeviceNodes(top, tempDeviceString, ArrayDataObject);
-							
+						//JOptionPane.showMessageDialog(null, "Device not found!\nplease check Connected","Warning", JOptionPane.WARNING_MESSAGE, Appicon);
+						int n = ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_DEVICE_NOT_FOUND.getString(), Resource.STR_LABEL_WARNING.getString(), JOptionPane.WARNING_MESSAGE, JOptionPane.WARNING_MESSAGE, Appicon,
+					    		new String[] {Resource.STR_BTN_REFRESH.getString(), Resource.STR_BTN_CLOSE.getString()}, Resource.STR_BTN_REFRESH.getString());
+						if(n==-1 || n==1) {
+							//setVisible(false);
+							return;
 						}
-						
-						gifPanel.setVisible(false);
+					} else {
+						break;
 					}
+				} while(true);
+				
+				gifPanel.setVisible(true);
+				for(int i=0; i< DeviceList.size(); i++) {
+					PackageTreeDataManager PackageManager = new PackageTreeDataManager(DeviceList.get(i).name);
+					ArrayList<PackageListObject> ArrayDataObject = PackageManager.getDataArray();
+
+					createDeviceNodes(top, DeviceList.get(i), ArrayDataObject);
 				}
-		    private void createDeviceNodes(DefaultMutableTreeNode top, DeviceString DeviceString, ArrayList<PackageListObject> ArrayDataObject) {
-		        DefaultMutableTreeNode deviceName = new DefaultMutableTreeNode(DeviceString);
-		        
-		        DefaultMutableTreeNode priv_app = new DefaultMutableTreeNode("priv-app");
-		        DefaultMutableTreeNode systemapp = new DefaultMutableTreeNode("app");
-		        DefaultMutableTreeNode system = new DefaultMutableTreeNode("system");
-		        DefaultMutableTreeNode dataapp = new DefaultMutableTreeNode("app");
-		        DefaultMutableTreeNode data = new DefaultMutableTreeNode("data");
-		        
+				gifPanel.setVisible(false);
+			}
+
+			private void createDeviceNodes(DefaultMutableTreeNode top, DeviceStatus dev, ArrayList<PackageListObject> ArrayDataObject)
+		    {
+		        DefaultMutableTreeNode deviceName = new DefaultMutableTreeNode(dev);
 		        top.add(deviceName);
-		        
-		        deviceName.add(system);		        
-		        deviceName.add(data);
-		        	        
-		        system.add(priv_app);
-		        system.add(systemapp);
-		        
-		        data.add(dataapp);
-		        
-		        for(int i=0; i< ArrayDataObject.size(); i++) {
-		        	//System.out.println(ArrayDataObject.get(i).codePath + " : " + ArrayDataObject.get(i).label);
-		        	
-		        	DefaultMutableTreeNode temp = new DefaultMutableTreeNode(ArrayDataObject.get(i));		        	
-		        			        	
-		        	//temp.setUserObject(ArrayDataObject.get(i));
-		        	
-		        	if(ArrayDataObject.get(i).codePath.indexOf("/system/priv-app/") >-1) {
-		        		priv_app.add(temp);		        		
-		        	} else if(ArrayDataObject.get(i).codePath.indexOf("/system/app/") >-1) {
-		        		systemapp.add(temp);
-		        	} else if(ArrayDataObject.get(i).codePath.indexOf("/data/app/") >-1) {
-		        		dataapp.add(temp);
-		        	}
+
+		        if(dev.status.equals("device")) {
+			        DefaultMutableTreeNode priv_app = new DefaultMutableTreeNode("priv-app");
+			        DefaultMutableTreeNode systemapp = new DefaultMutableTreeNode("app");
+			        DefaultMutableTreeNode framework_app = new DefaultMutableTreeNode("framework");
+			        DefaultMutableTreeNode system = new DefaultMutableTreeNode("system");
+			        DefaultMutableTreeNode dataapp = new DefaultMutableTreeNode("app");
+			        DefaultMutableTreeNode data = new DefaultMutableTreeNode("data");
+
+			        deviceName.add(system);		        
+			        deviceName.add(data);
+			        	        
+			        system.add(priv_app);
+			        system.add(systemapp);
+			        system.add(framework_app);
+			        
+			        data.add(dataapp);
+			        
+			        for(int i=0; i< ArrayDataObject.size(); i++) {
+			        	DefaultMutableTreeNode temp = new DefaultMutableTreeNode(ArrayDataObject.get(i));		        	
+			        	
+			        	if(ArrayDataObject.get(i).codePath.indexOf("/system/priv-app/") >-1) {
+			        		priv_app.add(temp);		        		
+			        	} else if(ArrayDataObject.get(i).codePath.indexOf("/system/app/") >-1) {
+			        		systemapp.add(temp);
+			        	} else if(ArrayDataObject.get(i).codePath.indexOf("/system/framework/") >-1) {
+			        		framework_app.add(temp);
+			        	} else if(ArrayDataObject.get(i).codePath.indexOf("/data/app/") >-1) {
+			        		dataapp.add(temp);
+			        	}
+			        }
+		        } else {
+		        	DefaultMutableTreeNode unauthorized = new DefaultMutableTreeNode(Resource.STR_MSG_DEVICE_UNAUTHORIZED.getString());
+		        	deviceName.add(unauthorized);
 		        }
 		        tree.updateUI();
 		        
-//                for (int i = 0; i < tree.getRowHeight(); i++) {
-//                    tree.expandRow(i);
-//                    System.out.println(i);
-//                  }
-                
-		        //setSeeLevel(2);
-                
 		        expandOrCollapsePath(tree, new TreePath(top.getPath()),3,0, true);
                 
-		        System.out.println("end  loading package : " + DeviceString.Devicename);
+		        System.out.println("end  loading package : " + dev.device);
 		        
 		        if(textFilField != null) {
 		        	if(textFilField.getText().length() >0){
@@ -197,7 +193,7 @@ public class PackageTreeDlg extends JPanel
 		        	}
 		        }
 		    }
-			});
+    	});
 		t.start();     
     }
 
@@ -524,10 +520,15 @@ public class PackageTreeDlg extends JPanel
                            tree.getLastSelectedPathComponent();
         if (node == null) return;
         //Object nodeInfo = node.getUserObject();
-        TreeNode [] treenode = node.getPath();
-        TreePath path = new TreePath(treenode);
-        textFieldapkPath.setText(path.toString());
-        
+
+		if(node.getDepth() > 0 || node.getLevel() < 3) {
+	        TreeNode [] treenode = node.getPath();
+	        TreePath path = new TreePath(treenode);
+	        textFieldapkPath.setText(path.toString());
+		} else {
+	        PackageListObject tempObject = ((PackageListObject)node.getUserObject()); 
+	        textFieldapkPath.setText(tempObject.apkPath + " - " + tempObject.pacakge);
+		}
     }
     
     private void expandTree(final JTree tree) {
@@ -583,6 +584,7 @@ public class PackageTreeDlg extends JPanel
 		
     	dialog.setLocationRelativeTo(null);
     	dialog.setVisible(true);
+    	dialog.dispose();
     	
     	System.out.println("package dialog closed");
     }
@@ -590,6 +592,7 @@ public class PackageTreeDlg extends JPanel
     public void showTreeDlg() {
         selDevice = null;
         selPackage = null;
+        selFrameworkRes = null;
 
         //Create and set up the window.
     	dialog = new JDialog(new JFrame(), Resource.STR_TREE_OPEN_PACKAGE.getString(), true);
@@ -602,6 +605,7 @@ public class PackageTreeDlg extends JPanel
 			public void actionPerformed(ActionEvent e) {
 				selDevice = null;
 				selPackage = null;
+				selFrameworkRes = null;
 				dialog.dispose();
 		    }
 		});
@@ -642,14 +646,14 @@ public class PackageTreeDlg extends JPanel
     }
 
     private void OpenPackage() {
+
     	System.out.println("open package");
-		
+    	
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
                 tree.getLastSelectedPathComponent();
 		
-		if(node.getChildCount() != 0) {
-			System.out.println("not node!");
-			return ;
+		if(node.getDepth() > 0 || node.getLevel() < 3) {
+			return;
 		}
 		
 		PackageListObject tempObject = ((PackageListObject)node.getUserObject()); 
@@ -660,14 +664,15 @@ public class PackageTreeDlg extends JPanel
 		
 		DefaultMutableTreeNode deviceNode = null;
 		
-		for(deviceNode = node ; deviceNode.getUserObject() instanceof DeviceString==false; deviceNode = ((DefaultMutableTreeNode)deviceNode.getParent())) {
+		for(deviceNode = node ; deviceNode.getUserObject() instanceof DeviceStatus==false; deviceNode = ((DefaultMutableTreeNode)deviceNode.getParent())) {
 			
 		}
 		
 		System.out.println(deviceNode.getUserObject());
 		
-		selDevice = ((DeviceString)deviceNode.getUserObject()).Devicename;
+		selDevice = ((DeviceStatus)deviceNode.getUserObject()).device;
 		selPackage = tempObject.pacakge;
+		//selFrameworkRes = null;
 		
 		dialog.dispose();
     }
@@ -690,11 +695,11 @@ public class PackageTreeDlg extends JPanel
 		System.out.println(tempObject.codePath);
 		
 		DefaultMutableTreeNode deviceNode = null;
-		for(deviceNode = node ; deviceNode.getUserObject() instanceof DeviceString==false; deviceNode = ((DefaultMutableTreeNode)deviceNode.getParent())) { }
+		for(deviceNode = node ; deviceNode.getUserObject() instanceof DeviceStatus==false; deviceNode = ((DefaultMutableTreeNode)deviceNode.getParent())) { }
 		
 		System.out.println(deviceNode.getUserObject());
 		
-		String device = ((DeviceString)deviceNode.getUserObject()).Devicename;
+		String device = ((DeviceStatus)deviceNode.getUserObject()).device;
 		String packageName = tempObject.pacakge;
 		
 
@@ -744,6 +749,7 @@ public class PackageTreeDlg extends JPanel
 			//System.out.println("exit");
 			selDevice = null;
 			selPackage = null;
+			selFrameworkRes = null;
 			dialog.dispose();
 		}
 	}
@@ -816,7 +822,7 @@ public class PackageTreeDlg extends JPanel
         }
         @Override
         public Class<?> getColumnClass(int columnIndex) {
-            return  getValueAt(0, c).getClass();
+        	return data[0][columnIndex].getClass();
         }
 
         @Override

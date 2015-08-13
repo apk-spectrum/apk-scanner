@@ -129,7 +129,7 @@ Please check device.</string>
     <string name="msg_no_such_package">No such package.</string>
     <string name="msg_failure_installed">Failure...</string>
     <string name="msg_success_installed">Success...</string>
-    <string name="msg_device_unauthorized">device unauthorized. Please check the confirmation dialog on your device.</string>
+    <string name="msg_device_unauthorized">Device unauthorized. Please check the confirmation dialog on your device.</string>
     <string name="msg_device_unknown">device unknown</string>
 
     <string name="question_reboot_device">Restart device now?</string>
