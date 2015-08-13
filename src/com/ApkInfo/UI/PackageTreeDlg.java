@@ -565,6 +565,7 @@ public class PackageTreeDlg extends JPanel
     	
         //Create and set up the window.
     	dialog = new JDialog(new JFrame(), Resource.STR_TREE_OPEN_PACKAGE.getString(), true);
+    	dialog.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
     	//dialog.setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
     	
 		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
