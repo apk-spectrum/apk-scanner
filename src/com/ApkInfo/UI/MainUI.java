@@ -140,7 +140,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 				mApkManager.clear(false, null);
 				mApkManager = null;
 			}
-			
+
 			if(apkPath == null) {
 				if(exiting) return;
 				

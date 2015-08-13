@@ -700,7 +700,8 @@ public class ApkManager
 				CoreApkTool.deleteDirectory(new File(mApkInfo.WorkTempPath+"-res"));
 
 				File parent = new File(mApkInfo.WorkTempPath);
-				while(parent.getParentFile().listFiles().length == 1 
+				while(parent != null && parent.exists() && parent.getParentFile() != null 
+						&& parent.getParentFile().listFiles().length == 1 
 						&& parent.getParentFile().getAbsolutePath().length() > CoreApkTool.getTempPath().length()) {
 					parent = parent.getParentFile();
 				}
@@ -709,7 +710,8 @@ public class ApkManager
 			if(isPackageTempAPK && mApkInfo.ApkPath != null && !mApkInfo.ApkPath.isEmpty()) {
 				System.out.println("delete temp APK : "  + mApkInfo.ApkPath);
 				File parent = new File(mApkInfo.ApkPath);
-				while(parent.getParentFile().listFiles().length == 1 
+				while(parent != null && parent.exists() && parent.getParentFile() != null 
+						&& parent.getParentFile().listFiles().length == 1 
 						&& parent.getParentFile().getAbsolutePath().length() > CoreApkTool.getTempPath().length()) {
 					parent = parent.getParentFile();
 				}
