@@ -795,7 +795,7 @@ public class PackageTreeDlg extends JPanel
     			
     			FrameworkTableObject temp = new FrameworkTableObject();
     			
-    			temp.buse = true;
+    			temp.buse = false;
     			temp.location = "device";
     			temp.path = "/system/framework/twframework-res.apk";
     			
