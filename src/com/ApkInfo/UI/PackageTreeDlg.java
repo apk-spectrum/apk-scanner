@@ -139,58 +139,68 @@ public class PackageTreeDlg extends JPanel
 				} while(true);
 				
 				gifPanel.setVisible(true);
-				for(int i=0; i< DeviceList.size(); i++) {
-					PackageTreeDataManager PackageManager = new PackageTreeDataManager(DeviceList.get(i).name);
-					ArrayList<PackageListObject> ArrayDataObject = PackageManager.getDataArray();
 
-					createDeviceNodes(top, DeviceList.get(i), ArrayDataObject);
-				}
+				createDeviceNodes(top, DeviceList.toArray(new DeviceStatus[0]));
+				
 				gifPanel.setVisible(false);
 		    	refreshbtn.setVisible(true);
 			}
 
-			private void createDeviceNodes(DefaultMutableTreeNode top, DeviceStatus dev, ArrayList<PackageListObject> ArrayDataObject)
+			private void createDeviceNodes(DefaultMutableTreeNode top, DeviceStatus[] devList)
 		    {
-		        DefaultMutableTreeNode deviceName = new DefaultMutableTreeNode(dev);
-		        top.add(deviceName);
+				DefaultMutableTreeNode[] devTree = new DefaultMutableTreeNode[devList.length];
 
-		        if(dev.status.equals("device")) {
-			        DefaultMutableTreeNode priv_app = new DefaultMutableTreeNode("priv-app");
-			        DefaultMutableTreeNode systemapp = new DefaultMutableTreeNode("app");
-			        DefaultMutableTreeNode framework_app = new DefaultMutableTreeNode("framework");
-			        DefaultMutableTreeNode system = new DefaultMutableTreeNode("system");
-			        DefaultMutableTreeNode dataapp = new DefaultMutableTreeNode("app");
-			        DefaultMutableTreeNode data = new DefaultMutableTreeNode("data");
+				for(int i = 0; i < devList.length; i++) {
+					devTree[i] = new DefaultMutableTreeNode(devList[i]);
+			        top.add(devTree[i]);
+					if(devList[i].status.equals("device")) {
+				        devTree[i].add(new DefaultMutableTreeNode(Resource.STR_LABEL_LOADING.getString()));
+					} else {
+			        	devTree[i].add(new DefaultMutableTreeNode(Resource.STR_MSG_DEVICE_UNAUTHORIZED.getString()));
+					}
+				}
+				tree.updateUI();
+				expandOrCollapsePath(tree, new TreePath(top.getPath()),3,0, true);
 
-			        deviceName.add(system);		        
-			        deviceName.add(data);
-			        	        
-			        system.add(priv_app);
-			        system.add(systemapp);
-			        system.add(framework_app);
-			        
-			        data.add(dataapp);
-			        
-			        for(int i=0; i< ArrayDataObject.size(); i++) {
-			        	DefaultMutableTreeNode temp = new DefaultMutableTreeNode(ArrayDataObject.get(i));		        	
-			        	
-			        	if(ArrayDataObject.get(i).apkPath.startsWith("/system/priv-app/")) {
-			        		priv_app.add(temp);		        		
-			        	} else if(ArrayDataObject.get(i).apkPath.startsWith("/system/app/")) {
-			        		systemapp.add(temp);
-			        	} else if(ArrayDataObject.get(i).apkPath.startsWith("/system/framework/")) {
-			        		framework_app.add(temp);
-			        	} else if(ArrayDataObject.get(i).apkPath.startsWith("/data/app/")) {
-			        		dataapp.add(temp);
-			        	}
-			        }
-		        } else {
-		        	DefaultMutableTreeNode unauthorized = new DefaultMutableTreeNode(Resource.STR_MSG_DEVICE_UNAUTHORIZED.getString());
-		        	deviceName.add(unauthorized);
-		        }
-		        tree.updateUI();
-		        
-		        expandOrCollapsePath(tree, new TreePath(top.getPath()),3,0, true);
+				for(int i = 0; i < devList.length; i++) {
+					if(devList[i].status.equals("device")) {
+				        DefaultMutableTreeNode priv_app = new DefaultMutableTreeNode("priv-app");
+				        DefaultMutableTreeNode systemapp = new DefaultMutableTreeNode("app");
+				        DefaultMutableTreeNode framework_app = new DefaultMutableTreeNode("framework");
+				        DefaultMutableTreeNode system = new DefaultMutableTreeNode("system");
+				        DefaultMutableTreeNode dataapp = new DefaultMutableTreeNode("app");
+				        DefaultMutableTreeNode data = new DefaultMutableTreeNode("data");
+				        	        
+				        system.add(priv_app);
+				        system.add(systemapp);
+				        system.add(framework_app);
+				        
+				        data.add(dataapp);
+
+						PackageTreeDataManager PackageManager = new PackageTreeDataManager(devList[i].name);
+						ArrayList<PackageListObject> ArrayDataObject = PackageManager.getDataArray();
+				        for(PackageListObject obj: ArrayDataObject) {
+				        	DefaultMutableTreeNode temp = new DefaultMutableTreeNode(obj);		        	
+				        	
+				        	if(obj.apkPath.startsWith("/system/priv-app/")) {
+				        		priv_app.add(temp);		        		
+				        	} else if(obj.apkPath.startsWith("/system/app/")) {
+				        		systemapp.add(temp);
+				        	} else if(obj.apkPath.startsWith("/system/framework/")) {
+				        		framework_app.add(temp);
+				        	} else if(obj.apkPath.startsWith("/data/app/")) {
+				        		dataapp.add(temp);
+				        	}
+				        }
+
+				        devTree[i].removeAllChildren();
+				        devTree[i].add(system);		        
+				        devTree[i].add(data);
+				        
+				        tree.updateUI();
+				        expandOrCollapsePath(tree, new TreePath(top.getPath()),3,0, true);
+					}
+				}
                 
 		        //System.out.println("end  loading package : " + dev.device);
 		        
