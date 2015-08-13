@@ -397,8 +397,8 @@ public class AdbWrapper
 			pack = new PackageListObject();
 			pack.apkPath = line;
 			pack.codePath = line;
-			pack.pacakge = line;
-			pack.label = line;
+			pack.pacakge = pack.apkPath.replaceAll(".*/(.*)\\.apk", "$1");
+			pack.label = pack.apkPath.replaceAll(".*/", "");
 			list.add(pack);
 		}
 

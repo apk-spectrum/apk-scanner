@@ -134,9 +134,13 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 		private String tempApkPath;
 		private String frameworkRes;
 		
-		public PackageOpen(String device, String packageName, String frameworkRes)
+		public PackageOpen(String device, String apkPath, String frameworkRes)
 		{
-			String apkPath = AdbWrapper.getPackageInfo(device, packageName).apkPath;
+			if(mApkManager != null) {
+				mApkManager.clear(false, null);
+				mApkManager = null;
+			}
+			
 			if(apkPath == null) {
 				if(exiting) return;
 				
@@ -170,8 +174,10 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 		}
 
 		@Override public void OnCompleted() {
-			if(!(new File(tempApkPath)).exists())
+			if(!(new File(tempApkPath)).exists()) {
 				tempApkPath = null;
+				return;
+			}
 			//System.out.println("Target APK : " + tempApkPath);
 			//frame.setVisible(false);
 			openApk(tempApkPath, frameworkRes, true);
@@ -232,13 +238,13 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 		openApk(apkFile, (String)Resource.PROP_FRAMEWORK_RES.getData(), false);
 	}
 	
-	private void openPackage(String device, String packageName, String frameworkRes)
+	private void openPackage(String device, String apkPath, String frameworkRes)
 	{
 		ProgressBarDlg.init();
 		WaitingDlg.setVisible(true);
 		frame.setVisible(false);
 		
-		new PackageOpen(device, packageName, frameworkRes);
+		new PackageOpen(device, apkPath, frameworkRes);
 	}
 	
 	private void installApk(boolean checkPackage)
@@ -382,8 +388,8 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 					PackageTreeDlg Dlg = new PackageTreeDlg();
 					Dlg.showTreeDlg();
 
-					if(Dlg.getSelectedDevice() != null && !Dlg.getSelectedDevice().isEmpty() && !Dlg.getSelectedPackage().isEmpty())
-						openPackage(Dlg.getSelectedDevice(), Dlg.getSelectedPackage(), Dlg.getSelectedFrameworkRes());
+					if(Dlg.getSelectedDevice() != null && !Dlg.getSelectedDevice().isEmpty() && !Dlg.getSelectedApkPath().isEmpty())
+						openPackage(Dlg.getSelectedDevice(), Dlg.getSelectedApkPath(), Dlg.getSelectedFrameworkRes());
 				} else if(cmd.equals(Resource.STR_MENU_INSTALL.getString())) {
 					installApk(false);
 				} else if(cmd.equals(Resource.STR_MENU_CHECK_INSTALLED.getString())) {
@@ -409,8 +415,8 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 					PackageTreeDlg Dlg = new PackageTreeDlg();
 					Dlg.showTreeDlg();
 
-					if(Dlg.getSelectedDevice() != null && !Dlg.getSelectedDevice().isEmpty() && !Dlg.getSelectedPackage().isEmpty())
-						openPackage(Dlg.getSelectedDevice(), Dlg.getSelectedPackage(), Dlg.getSelectedFrameworkRes());
+					if(Dlg.getSelectedDevice() != null && !Dlg.getSelectedDevice().isEmpty() && !Dlg.getSelectedApkPath().isEmpty())
+						openPackage(Dlg.getSelectedDevice(), Dlg.getSelectedApkPath(), Dlg.getSelectedFrameworkRes());
 					break;
 				case KeyEvent.VK_N:
 					newWindow(null);

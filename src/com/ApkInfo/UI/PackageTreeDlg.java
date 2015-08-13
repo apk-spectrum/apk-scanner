@@ -79,6 +79,7 @@ public class PackageTreeDlg extends JPanel
     static private JDialog dialog;
     private String selDevice;
     private String selPackage;
+    private String selApkPath;
     private String selFrameworkRes;
     private String tmpApkPath;
     private static JTextField textFilField;
@@ -90,6 +91,10 @@ public class PackageTreeDlg extends JPanel
     
     public String getSelectedPackage() {
     	return selPackage;
+    }
+    
+    public String getSelectedApkPath() {
+    	return selApkPath;
     }
     
     public String getSelectedFrameworkRes() {
@@ -582,6 +587,7 @@ public class PackageTreeDlg extends JPanel
     public void showTreeDlg() {
         selDevice = null;
         selPackage = null;
+        selApkPath = null;
         selFrameworkRes = null;
 
         //Create and set up the window.
@@ -595,6 +601,7 @@ public class PackageTreeDlg extends JPanel
 			public void actionPerformed(ActionEvent e) {
 				selDevice = null;
 				selPackage = null;
+				selApkPath = null;
 				selFrameworkRes = null;
 				dialog.dispose();
 		    }
@@ -640,6 +647,7 @@ public class PackageTreeDlg extends JPanel
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 createAndShowGUI();
+                System.exit(0);
             }
         });
     }
@@ -669,8 +677,9 @@ public class PackageTreeDlg extends JPanel
 		
 		System.out.println(deviceNode.getUserObject());
 		
-		selDevice = ((DeviceStatus)deviceNode.getUserObject()).device;
+		selDevice = ((DeviceStatus)deviceNode.getUserObject()).name;
 		selPackage = tempObject.pacakge;
+		selApkPath = tempObject.apkPath;
 		//selFrameworkRes = null;
 		
 		dialog.dispose();
@@ -742,6 +751,7 @@ public class PackageTreeDlg extends JPanel
 			//System.out.println("exit");
 			selDevice = null;
 			selPackage = null;
+			selApkPath = null;
 			selFrameworkRes = null;
 			dialog.dispose();
 		} else if(e.getSource() == refreshbtn) {
