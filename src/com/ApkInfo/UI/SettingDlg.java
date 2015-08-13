@@ -142,14 +142,14 @@ public class SettingDlg extends JDialog implements ActionListener
         panel.add(scrollPane1);
 		jlist.setListData(resList.toArray(new String[0]));
 		
-		savebutton = new JButton(Resource.STR_BTN_SAVE.getString());
+		savebutton = new JButton(Resource.STR_BTN_OK.getString());
 		savebutton.setBounds(288, 150, 80, 25);
 		savebutton.addActionListener(this);
 		savebutton.setFocusable(false);
 		panel.add(savebutton);
 		
 		
-		exitbutton = new JButton(Resource.STR_BTN_CLOSE.getString());
+		exitbutton = new JButton(Resource.STR_BTN_CANCEL.getString());
 		exitbutton.setBounds(380, 150, 80, 25);
 		exitbutton.addActionListener(this);
 		exitbutton.setFocusable(false);
@@ -229,6 +229,7 @@ public class SettingDlg extends JDialog implements ActionListener
 			strLanguage = (String)comboBox.getSelectedItem();
 			
 			saveSettings();
+			this.dispose();
 		} else if(e.getSource() == exitbutton) {
 			//System.out.println("exit");
 			this.dispose();
