@@ -395,6 +395,7 @@ public class AdbWrapper
 			if(line.equals("/system/framework/framework-res.apk")
 					|| !line.endsWith(".apk")) continue;
 			pack = new PackageListObject();
+			pack.apkPath = line;
 			pack.codePath = line;
 			pack.pacakge = line;
 			pack.label = line;

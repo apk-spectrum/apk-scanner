@@ -120,11 +120,10 @@ public class PackageTreeDlg extends JPanel
 	
 					if(DeviceList.size() == 0) {
 						final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
-						//JOptionPane.showMessageDialog(null, "Device not found!\nplease check Connected","Warning", JOptionPane.WARNING_MESSAGE, Appicon);
 						int n = ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_DEVICE_NOT_FOUND.getString(), Resource.STR_LABEL_WARNING.getString(), JOptionPane.WARNING_MESSAGE, JOptionPane.WARNING_MESSAGE, Appicon,
-					    		new String[] {Resource.STR_BTN_REFRESH.getString(), Resource.STR_BTN_CLOSE.getString()}, Resource.STR_BTN_REFRESH.getString());
+					    		new String[] {Resource.STR_BTN_REFRESH.getString(), Resource.STR_BTN_CANCEL.getString()}, Resource.STR_BTN_REFRESH.getString());
 						if(n==-1 || n==1) {
-							//setVisible(false);
+							dialog.dispose();
 							return;
 						}
 					} else {
@@ -167,13 +166,13 @@ public class PackageTreeDlg extends JPanel
 			        for(int i=0; i< ArrayDataObject.size(); i++) {
 			        	DefaultMutableTreeNode temp = new DefaultMutableTreeNode(ArrayDataObject.get(i));		        	
 			        	
-			        	if(ArrayDataObject.get(i).codePath.indexOf("/system/priv-app/") >-1) {
+			        	if(ArrayDataObject.get(i).apkPath.startsWith("/system/priv-app/")) {
 			        		priv_app.add(temp);		        		
-			        	} else if(ArrayDataObject.get(i).codePath.indexOf("/system/app/") >-1) {
+			        	} else if(ArrayDataObject.get(i).apkPath.startsWith("/system/app/")) {
 			        		systemapp.add(temp);
-			        	} else if(ArrayDataObject.get(i).codePath.indexOf("/system/framework/") >-1) {
+			        	} else if(ArrayDataObject.get(i).apkPath.startsWith("/system/framework/")) {
 			        		framework_app.add(temp);
-			        	} else if(ArrayDataObject.get(i).codePath.indexOf("/data/app/") >-1) {
+			        	} else if(ArrayDataObject.get(i).apkPath.startsWith("/data/app/")) {
 			        		dataapp.add(temp);
 			        	}
 			        }
@@ -185,7 +184,7 @@ public class PackageTreeDlg extends JPanel
 		        
 		        expandOrCollapsePath(tree, new TreePath(top.getPath()),3,0, true);
                 
-		        System.out.println("end  loading package : " + dev.device);
+		        //System.out.println("end  loading package : " + dev.device);
 		        
 		        if(textFilField != null) {
 		        	if(textFilField.getText().length() >0){
@@ -259,26 +258,24 @@ public class PackageTreeDlg extends JPanel
                         {
                         	DefaultMutableTreeNode node = (DefaultMutableTreeNode)
                                     tree.getLastSelectedPathComponent();
-                        	if(node.getChildCount()==0)
-                        	{
-	                            JPopupMenu menu = new JPopupMenu ();
-	                            
-	                            
-	                            menu.add ( new JMenuItem ( Resource.STR_BTN_OPEN.getString() ) ).addActionListener(new ActionListener(){ 
-	                            	   public void actionPerformed(ActionEvent e) {
-	                            		   OpenPackage();
-	                            	   }});
-	                            menu.add ( new JMenuItem ( Resource.STR_BTN_SAVE.getString() ) ).addActionListener(new ActionListener(){ 
-	                            	   public void actionPerformed(ActionEvent e) {
-	                            		   PullPackage();
-	                            	   }});
-	                            //menu.add ( new JMenuItem ( Resource.STR_BTN_EXPORT.getString() ) ).addActionListener(new ActionListener(){ 
-	                            //	   public void actionPerformed(ActionEvent e) {
-	                            //		   
-	                            //	   }});
-	                            menu.show ( tree, e.getX (), e.getY () );
+                        	if(node.getDepth() > 0 || node.getLevel() < 3) {
+                        		return;
                         	}
-                            
+
+                            JPopupMenu menu = new JPopupMenu ();
+                            menu.add ( new JMenuItem ( Resource.STR_BTN_OPEN.getString() ) ).addActionListener(new ActionListener(){ 
+                            	   public void actionPerformed(ActionEvent e) {
+                            		   OpenPackage();
+                            	   }});
+                            menu.add ( new JMenuItem ( Resource.STR_BTN_SAVE.getString() ) ).addActionListener(new ActionListener(){ 
+                            	   public void actionPerformed(ActionEvent e) {
+                            		   PullPackage();
+                            	   }});
+                            //menu.add ( new JMenuItem ( Resource.STR_BTN_EXPORT.getString() ) ).addActionListener(new ActionListener(){ 
+                            //	   public void actionPerformed(ActionEvent e) {
+                            //		   
+                            //	   }});
+                            menu.show ( tree, e.getX (), e.getY () );
                         }
                     }
                     else if(e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {                    	
@@ -432,7 +429,7 @@ public class PackageTreeDlg extends JPanel
         
         StandardButton openbtn = new StandardButton(Resource.STR_BTN_OPEN.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);		
         StandardButton refreshbtn = new StandardButton(Resource.STR_BTN_REFRESH.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
-        StandardButton exitbtn = new StandardButton(Resource.STR_BTN_CLOSE.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
+        StandardButton exitbtn = new StandardButton(Resource.STR_BTN_CANCEL.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
 
         openbtn.addActionListener(this);
         refreshbtn.addActionListener(this);
@@ -579,8 +576,8 @@ public class PackageTreeDlg extends JPanel
     	
         //Display the window.
     	dialog.pack();
-    	dialog.setBounds(100, 100, 650, 500);
-    	dialog.setMinimumSize(new Dimension(650, 500));
+    	dialog.setBounds(100, 100, 600, 400);
+    	dialog.setMinimumSize(new Dimension(600, 400));
 		
     	dialog.setLocationRelativeTo(null);
     	dialog.setVisible(true);
@@ -626,12 +623,12 @@ public class PackageTreeDlg extends JPanel
     	dialog.pack();
     	//dialog.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width)/2 - getWidth()/2, (Toolkit.getDefaultToolkit().getScreenSize().height)/2 - getHeight()/2);
     	    	
-    	dialog.setBounds(100, 100, 650, 500);
-    	dialog.setMinimumSize(new Dimension(650, 500));
+    	dialog.setBounds(100, 100, 600, 400);
+    	dialog.setMinimumSize(new Dimension(600, 400));
 		
     	dialog.setLocationRelativeTo(null);
     	dialog.setVisible(true);
-    	
+    	dialog.dispose();
 
     }
     
@@ -660,7 +657,7 @@ public class PackageTreeDlg extends JPanel
 		
 		System.out.println(tempObject.pacakge);
 		System.out.println(tempObject.label);
-		System.out.println(tempObject.codePath);
+		System.out.println(tempObject.apkPath);
 		
 		DefaultMutableTreeNode deviceNode = null;
 		
@@ -692,7 +689,7 @@ public class PackageTreeDlg extends JPanel
 		
 		System.out.println(tempObject.pacakge);
 		System.out.println(tempObject.label);
-		System.out.println(tempObject.codePath);
+		System.out.println(tempObject.apkPath);
 		
 		DefaultMutableTreeNode deviceNode = null;
 		for(deviceNode = node ; deviceNode.getUserObject() instanceof DeviceStatus==false; deviceNode = ((DefaultMutableTreeNode)deviceNode.getParent())) { }
@@ -745,7 +742,7 @@ public class PackageTreeDlg extends JPanel
 			
 			addTreeList();
 			
-		} else if(e.getActionCommand().equals(Resource.STR_BTN_CLOSE.getString())) {
+		} else if(e.getActionCommand().equals(Resource.STR_BTN_CANCEL.getString())) {
 			//System.out.println("exit");
 			selDevice = null;
 			selPackage = null;
