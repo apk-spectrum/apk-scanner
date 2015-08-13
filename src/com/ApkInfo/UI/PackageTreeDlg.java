@@ -428,7 +428,7 @@ public class PackageTreeDlg extends JPanel
         panel.add(treeView,BorderLayout.CENTER);        
         
         StandardButton openbtn = new StandardButton(Resource.STR_BTN_OPEN.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);		
-        refreshbtn = new StandardButton(Resource.STR_BTN_REFRESH.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
+        refreshbtn = new StandardButton(Resource.STR_BTN_REFRESH.getString()+" (F5)",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
         StandardButton exitbtn = new StandardButton(Resource.STR_BTN_CANCEL.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
 
         openbtn.addActionListener(this);
@@ -765,18 +765,14 @@ public class PackageTreeDlg extends JPanel
 		
 		if(e.getActionCommand().equals(Resource.STR_BTN_OPEN.getString())) {
 			OpenPackage();
-
-		} else if(e.getActionCommand().equals(Resource.STR_BTN_REFRESH.getString())) {
-			//System.out.println("refresh");
-			
-			addTreeList();
-			
 		} else if(e.getActionCommand().equals(Resource.STR_BTN_CANCEL.getString())) {
 			//System.out.println("exit");
 			selDevice = null;
 			selPackage = null;
 			selFrameworkRes = null;
 			dialog.dispose();
+		} else if(e.getSource() == refreshbtn) {
+			addTreeList();
 		}
 	}
 	

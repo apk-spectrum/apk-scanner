@@ -56,6 +56,16 @@ public class MyListDialog extends JDialog implements ActionListener {
 					dialog.dispose();
 			    }
 			});
+
+	    	KeyStroke vk_f5 = KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, false);
+			dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(vk_f5, "VK_F5");
+			dialog.getRootPane().getActionMap().put("VK_F5", new AbstractAction() {
+				private static final long serialVersionUID = -5281980076592985530L;
+				public void actionPerformed(ActionEvent e) {
+					refreshData();
+			    }
+			});
+			
 			dialog.setVisible(true);
 			dialog.dispose();
 
@@ -224,16 +234,10 @@ public class MyListDialog extends JDialog implements ActionListener {
 			//System.out.println("click set");
 			MyListDialog.value = (int) (list.getSelectedIndex());
 			MyListDialog.dialog.setVisible(false);
+			clicked = true;
 		} else if("Refresh".equals(e.getActionCommand())) {
-			//System.out.println("Refresh");
-			  Thread t = new Thread(new Runnable(){
-			        public void run(){
-			        	refreshData();
-			        }
-			  });
-			  t.start();	    			
+			refreshData();			
 		}
-		clicked = true;
 	}
 	
 	private static void refreshData()
