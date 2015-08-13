@@ -348,7 +348,7 @@ public class PackageTreeDlg extends JPanel
             	
                 if(!(ke.getKeyChar()==27||ke.getKeyChar()==65535))//this section will execute only when user is editing the JTextField
                 {
-                	System.out.println(textFilField.getText()+ ":" + Integer.valueOf(ke.getKeyChar()));                	
+                	//System.out.println(textFilField.getText()+ ":" + Integer.valueOf(ke.getKeyChar()));                	
                 	
                 	if(ke.getKeyChar()==10) {
                 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
