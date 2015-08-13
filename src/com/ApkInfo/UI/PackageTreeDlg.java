@@ -791,8 +791,28 @@ public class PackageTreeDlg extends JPanel
 		
 		addbtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	
-            	
+            	JFileChooser jfc = new JFileChooser();			
+    			jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("apk","apk"));							
+    			
+    			if(jfc.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
+    				return;
+    			
+    			File dir = jfc.getSelectedFile();
+    			String file = null;
+    			if(dir!=null) {
+    				file = dir.getPath();
+    			}
+    			
+    			System.out.println("Select Directory" + file);
+    			
+    			
+    			
+    			if(file == null || file.isEmpty()) return;
+//    			for(String f: resList) {
+//    				if(file.equals(f)) return;
+//    			}
+//    			resList.add(file);
+//    			jlist.setListData(resList.toArray(new String[0]));
             }
         });
 		
