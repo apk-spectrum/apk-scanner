@@ -54,6 +54,8 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -321,9 +323,6 @@ public class PackageTreeDlg extends JPanel
         textFieldapkPath = new JTextField();
         textFieldapkPath.setEditable(false);
         
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        
         textFilField = new JTextField();
         
 
@@ -369,22 +368,7 @@ public class PackageTreeDlg extends JPanel
                 }
               }
         });
- 
-        tpanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
         
-        gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.fill = GridBagConstraints.HORIZONTAL;		
-		
-		tpanel.add(new JLabel(Resource.STR_LABEL_SEARCH.getString() + " : "), gbc);
-        
-		gbc.gridx = 2;
-		gbc.gridy = 0;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.weightx = 1.0;
-		gbc.gridwidth = 2; 
-		tpanel.add(textFilField,gbc);
         
 		ListPanel = makeListTable();
 		ListPanel.setVisible(false);
@@ -404,28 +388,6 @@ public class PackageTreeDlg extends JPanel
             	}    
             }
         });
-		
-		
-		gbc.gridx = 0;
-		gbc.gridy = 1;
-		gbc.fill = GridBagConstraints.LAST_LINE_START;
-		gbc.weightx = 0.0;
-		gbc.gridwidth = 3;
-		tpanel.add(checkboxUseframework,gbc);
-		
-		
-		gbc.gridx = 1;
-		gbc.gridy = 2;
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.weightx = 1.0;
-		gbc.weighty = 0.1;
-		gbc.gridwidth = 3;
-		gbc.gridheight = 1;
-		
-		tpanel.add(ListPanel,gbc);
-		
-        
-        panel.add(treeView,BorderLayout.CENTER);        
         
         StandardButton openbtn = new StandardButton(Resource.STR_BTN_OPEN.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);		
         refreshbtn = new StandardButton(Resource.STR_BTN_REFRESH.getString()+" (F5)",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
@@ -455,25 +417,13 @@ public class PackageTreeDlg extends JPanel
         
         JPanel ButtonPanelEast = new JPanel();
         ButtonPanelEast.add(openbtn);
-        ButtonPanelEast.add(exitbtn);
-        
-        JPanel tpanel2 = new JPanel(new BorderLayout());
-        
-        tpanel2.add(tpanel, BorderLayout.CENTER);
+        ButtonPanelEast.add(exitbtn);     
         
         ButtonPanel.add(ButtonPanelWest, BorderLayout.WEST);
         
         ButtonPanel.add(ButtonPanelEast, BorderLayout.EAST);     
         
         
-        tpanel2.add(ButtonPanel, BorderLayout.SOUTH);
-        panel.add(tpanel2,BorderLayout.SOUTH);
-        
-        JPanel NorthPanel = new JPanel(new BorderLayout());
-                
-        
-        NorthPanel.add(textFieldapkPath, BorderLayout.CENTER);
-                
                 
         Dimension minimumSize = new Dimension(100, 50);
         textFieldapkPath.setMinimumSize(minimumSize);
@@ -481,9 +431,31 @@ public class PackageTreeDlg extends JPanel
  
         //Add the split pane to this panel.
         //add(splitPane);
+        JPanel panelnorth = new JPanel(new BorderLayout());                
+        JPanel panelsourth = new JPanel(new BorderLayout());        
+        JPanel panelsearch = new JPanel(new BorderLayout());
         
-        add(NorthPanel,BorderLayout.NORTH);
-        add(panel, BorderLayout.CENTER);
+        panelsearch.add(new JLabel(Resource.STR_LABEL_SEARCH.getString() + " : "), BorderLayout.WEST);
+        panelsearch.add(textFilField, BorderLayout.CENTER);
+        
+        panelnorth.add(textFieldapkPath,BorderLayout.NORTH);
+        panelnorth.add(tree,BorderLayout.CENTER);
+        panelnorth.add(panelsearch,BorderLayout.SOUTH);
+        
+        
+        panelsourth.add(checkboxUseframework, BorderLayout.NORTH);
+        panelsourth.add(ListPanel, BorderLayout.CENTER);
+        panelsourth.add(ButtonPanel,BorderLayout.SOUTH);
+        
+        add(panelnorth,BorderLayout.CENTER);
+        add(panelsourth,BorderLayout.SOUTH);
+        
+        
+        
+        
+        
+        //add(NorthPanel,BorderLayout.NORTH);
+        //add(panel, BorderLayout.CENTER);
 
     }
     
@@ -779,9 +751,9 @@ public class PackageTreeDlg extends JPanel
 	
 	public JPanel makeListTable ( ) {
 		
-		JPanel panel = new JPanel();
+		JPanel panel = new JPanel(new BorderLayout());
 		
-		JTable table = new JTable(new BooleanTableModel());
+		final JTable table = new JTable(new BooleanTableModel());
 		//table.setPreferredScrollableViewportSize(table.getPreferredSize());
         //table.setFillsViewportHeight(true);
 		JButton addbtn= new JButton("add");
@@ -813,14 +785,19 @@ public class PackageTreeDlg extends JPanel
             }
         });
 		
+		
+		
+		table.setPreferredScrollableViewportSize(table.getPreferredSize());
+		table.setFillsViewportHeight(true);
+		setJTableColumnsWidth(table,550,60,80,410);
+		//table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		
         JScrollPane pane = new JScrollPane(table);
         
-        pane.setPreferredSize(new Dimension(550, 80) );
+        //pane.setPreferredSize(new Dimension(550, 80) );
         
-        setJTableColumnsWidth(table,550,60,80,410);
-        
-        panel.add(pane);
-        panel.add(addbtn);
+        panel.add(pane, BorderLayout.CENTER);
+        panel.add(addbtn, BorderLayout.EAST);
         
         
         return panel;
