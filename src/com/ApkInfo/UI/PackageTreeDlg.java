@@ -1,7 +1,6 @@
 package com.ApkInfo.UI;
 
 import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -15,7 +14,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
@@ -38,24 +36,19 @@ import com.ApkInfo.Core.AdbWrapper.PackageListObject;
 import com.ApkInfo.Core.PackageTreeDataManager;
 import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UIUtil.ArrowTraversalPane;
+import com.ApkInfo.UIUtil.BooleanTableModel;
 import com.ApkInfo.UIUtil.ButtonType;
 import com.ApkInfo.UIUtil.FilteredTreeModel;
 import com.ApkInfo.UIUtil.StandardButton;
 import com.ApkInfo.UIUtil.Theme;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.io.File;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -84,6 +77,12 @@ public class PackageTreeDlg extends JPanel
     private String tmpApkPath;
     private static JTextField textFilField;
     private FilteredTreeModel filteredModel;
+    
+	public class FrameworkTableObject {
+		public Boolean buse;
+		public String location;
+		public String path;
+	}
     
     private ArrayList<FrameworkTableObject> tableListArray = new ArrayList<FrameworkTableObject>();
     private JTable table;
@@ -218,7 +217,10 @@ public class PackageTreeDlg extends JPanel
 				        //add table
 				        
 				        table.setModel(new BooleanTableModel(tableListArray));
-				        table.setPreferredScrollableViewportSize(table.getPreferredSize());
+				        table.setPreferredScrollableViewportSize(new Dimension(0,80));
+				        
+				        
+				        
 				        setJTableColumnsWidth(table,550,30,70,440);
 				        
 				        
@@ -237,21 +239,6 @@ public class PackageTreeDlg extends JPanel
 		    }
     	});
 		t.start();
-    }
-
-    private void setSeeLevel(int level) {
-        DefaultMutableTreeNode currentNode = top.getNextNode();
-        do {
-        	if(currentNode.getLevel()>level) {
-        		break;
-        	}
-        	
-           if (currentNode.getLevel()==level) {
-        	   System.out.println(new TreePath(currentNode.getPath()));
-                tree.expandPath(new TreePath(currentNode.getPath()));
-           		}
-           		currentNode = currentNode.getNextNode();
-           } while (currentNode != null);
     }
     
     public static void expandOrCollapsePath (JTree tree,TreePath treePath,int level,int currentLevel,boolean expand) {
@@ -861,95 +848,5 @@ public class PackageTreeDlg extends JPanel
 		TableColumn column = table.getColumnModel().getColumn(i);
 		column.setPreferredWidth((int)(tablePreferredWidth * (percentages[i] / total)));
 		}
-	}
-	class FrameworkTableObject {
-		public Boolean buse;
-		public String location;
-		public String path;
-	}
-	
-	
-	
-	class BooleanTableModel extends AbstractTableModel {
-        String[] columns = {"use?", "local/device", "path"};
-
-        ArrayList<FrameworkTableObject> arrayList;
-        
-         public BooleanTableModel(ArrayList<FrameworkTableObject> datalist) {
-			// TODO Auto-generated constructor stub
-        	 System.out.println("size : "+ datalist.size());
-        	 
-        	 arrayList = datalist;
-		}
-        public int getRowCount() {
-            return arrayList.size();
-        }
- 
-        public int getColumnCount() {
-            return columns.length;
-        }
- 
-        public Object getValueAt(int rowIndex, int columnIndex) {
-        	
-        	switch(columnIndex) {
-        	case 0:
-        		return arrayList.get(rowIndex).buse;        		
-        	case 1:
-        		return arrayList.get(rowIndex).location;
-        	case 2:
-        		return arrayList.get(rowIndex).path;
-        	}
-            //return data[rowIndex][columnIndex];
-        	return null;
-        }
- 
-        @Override
-        public String getColumnName(int column) {
-            return columns[column];
-        }
-        @Override
-        public Class<?> getColumnClass(int columnIndex) {
-        	//System.out.println(columnIndex);
-        	//return arrayList.get(columnIndex).getClass();
-        	
-        	switch(columnIndex) {
-        	case 0:
-        		return Boolean.class;  		
-        	case 1:
-        		return String.class;
-        	case 2:
-        		return String.class;
-        	}
-        	return null;
-        }
-
-		public boolean isCellEditable(int row, int col) {
-			//Note that the data/cell address is constant,
-			//no matter where the cell appears onscreen.
-			if(col==0)
-				return true;
-			else return false;
-		}
-        
-        @Override
-        public void setValueAt(Object value, int row, int col) {
-            //data[row][col] = value;            
-            
-        	switch(col) {
-        	case 0:
-        		arrayList.get(row).buse = (Boolean) value;
-        		break;        		
-        	case 1:
-        		arrayList.get(row).location = (String) value;
-        		break;        		
-        	case 2:
-        		arrayList.get(row).path = (String) value;
-        		break;
-        	}
-            
-            
-            fireTableCellUpdated(row, col);
-        }
-    }
-	
+	}	
 }
