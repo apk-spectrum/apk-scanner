@@ -72,7 +72,7 @@ public class PackageTreeDlg extends JPanel
     private DefaultMutableTreeNode top;
     private JPanel gifPanel;
     private JCheckBox checkboxUseframework;
-    private JPanel tpanel;
+    
     private JPanel ListPanel;
     private StandardButton refreshbtn;
     
@@ -85,6 +85,8 @@ public class PackageTreeDlg extends JPanel
     private static JTextField textFilField;
     private FilteredTreeModel filteredModel;
     
+    private ArrayList<FrameworkTableObject> tableListArray = new ArrayList<FrameworkTableObject>();
+    private JTable table;
     public String getSelectedDevice() {
     	return selDevice;
     }
@@ -196,6 +198,15 @@ public class PackageTreeDlg extends JPanel
 				        		systemapp.add(temp);
 				        	} else if(obj.apkPath.startsWith("/system/framework/")) {
 				        		framework_app.add(temp);
+				        		
+				        		FrameworkTableObject tableObject = new FrameworkTableObject();
+				        		
+				        		tableObject.buse = true;
+				        		tableObject.location = "device";
+				        		tableObject.path = ((PackageListObject)temp.getUserObject()).apkPath; 
+				        		
+				        		tableListArray.add(tableObject);
+				        		
 				        	} else if(obj.apkPath.startsWith("/data/app/")) {
 				        		dataapp.add(temp);
 				        	}
@@ -204,6 +215,12 @@ public class PackageTreeDlg extends JPanel
 				        devTree[i].removeAllChildren();
 				        devTree[i].add(system);		        
 				        devTree[i].add(data);
+				        //add table
+				        
+				        table.setModel(new BooleanTableModel(tableListArray));
+				        table.setPreferredScrollableViewportSize(table.getPreferredSize());
+				        setJTableColumnsWidth(table,550,30,70,440);
+				        
 				        
 				        tree.updateUI();
 				        expandOrCollapsePath(tree, new TreePath(top.getPath()),3,0, true);
@@ -763,30 +780,42 @@ public class PackageTreeDlg extends JPanel
 		
 		JPanel panel = new JPanel(new BorderLayout());
 		
-		final JTable table = new JTable(new BooleanTableModel());
+		//JTable table = new JTable(new BooleanTableModel());
+		table = new JTable();
 		//table.setPreferredScrollableViewportSize(table.getPreferredSize());
         //table.setFillsViewportHeight(true);
 		JButton addbtn= new JButton("add");
 		
 		addbtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	JFileChooser jfc = new JFileChooser();			
-    			jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("apk","apk"));							
+//            	JFileChooser jfc = new JFileChooser();			
+//    			jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("apk","apk"));							
+//    			
+//    			if(jfc.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
+//    				return;
+//    			
+//    			File dir = jfc.getSelectedFile();
+//    			String file = null;
+//    			if(dir!=null) {
+//    				file = dir.getPath();
+//    			}
+//    			
+//    			System.out.println("Select Directory" + file);
+//    			
+//    			
+//    			
+//    			if(file == null || file.isEmpty()) return;
     			
-    			if(jfc.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
-    				return;
+    			FrameworkTableObject temp = new FrameworkTableObject();
     			
-    			File dir = jfc.getSelectedFile();
-    			String file = null;
-    			if(dir!=null) {
-    				file = dir.getPath();
-    			}
+    			temp.buse = true;
+    			temp.location = "device";
+    			temp.path = "/system/framework/twframework-res.apk";
     			
-    			System.out.println("Select Directory" + file);
+    			tableListArray.add(temp);    			
+    			((AbstractTableModel) table.getModel()).fireTableDataChanged();   			
     			
     			
-    			
-    			if(file == null || file.isEmpty()) return;
 //    			for(String f: resList) {
 //    				if(file.equals(f)) return;
 //    			}
@@ -799,7 +828,7 @@ public class PackageTreeDlg extends JPanel
 		
 		table.setPreferredScrollableViewportSize(table.getPreferredSize());
 		table.setFillsViewportHeight(true);
-		setJTableColumnsWidth(table,550,60,80,410);
+		setJTableColumnsWidth(table,550,30,70,440);
 		//table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
         JScrollPane pane = new JScrollPane(table);
@@ -833,18 +862,27 @@ public class PackageTreeDlg extends JPanel
 		column.setPreferredWidth((int)(tablePreferredWidth * (percentages[i] / total)));
 		}
 	}
+	class FrameworkTableObject {
+		public Boolean buse;
+		public String location;
+		public String path;
+	}
+	
 	
 	
 	class BooleanTableModel extends AbstractTableModel {
         String[] columns = {"use?", "local/device", "path"};
-        Object[][] data = {
-                {Boolean.TRUE, "local","/home/leejinhyeong/Desktop/framework.apk"},
-                {Boolean.TRUE, "device","/system/framework/twframework.apk"},
-                {Boolean.TRUE, "device","/system/framework/google_framework.apk"}
-        };
-         
+
+        ArrayList<FrameworkTableObject> arrayList;
+        
+         public BooleanTableModel(ArrayList<FrameworkTableObject> datalist) {
+			// TODO Auto-generated constructor stub
+        	 System.out.println("size : "+ datalist.size());
+        	 
+        	 arrayList = datalist;
+		}
         public int getRowCount() {
-            return data.length;
+            return arrayList.size();
         }
  
         public int getColumnCount() {
@@ -852,7 +890,17 @@ public class PackageTreeDlg extends JPanel
         }
  
         public Object getValueAt(int rowIndex, int columnIndex) {
-            return data[rowIndex][columnIndex];
+        	
+        	switch(columnIndex) {
+        	case 0:
+        		return arrayList.get(rowIndex).buse;        		
+        	case 1:
+        		return arrayList.get(rowIndex).location;
+        	case 2:
+        		return arrayList.get(rowIndex).path;
+        	}
+            //return data[rowIndex][columnIndex];
+        	return null;
         }
  
         @Override
@@ -861,12 +909,45 @@ public class PackageTreeDlg extends JPanel
         }
         @Override
         public Class<?> getColumnClass(int columnIndex) {
-        	return data[0][columnIndex].getClass();
+        	//System.out.println(columnIndex);
+        	//return arrayList.get(columnIndex).getClass();
+        	
+        	switch(columnIndex) {
+        	case 0:
+        		return Boolean.class;  		
+        	case 1:
+        		return String.class;
+        	case 2:
+        		return String.class;
+        	}
+        	return null;
         }
 
+		public boolean isCellEditable(int row, int col) {
+			//Note that the data/cell address is constant,
+			//no matter where the cell appears onscreen.
+			if(col==0)
+				return true;
+			else return false;
+		}
+        
         @Override
         public void setValueAt(Object value, int row, int col) {
-            data[row][col] = value;
+            //data[row][col] = value;            
+            
+        	switch(col) {
+        	case 0:
+        		arrayList.get(row).buse = (Boolean) value;
+        		break;        		
+        	case 1:
+        		arrayList.get(row).location = (String) value;
+        		break;        		
+        	case 2:
+        		arrayList.get(row).path = (String) value;
+        		break;
+        	}
+            
+            
             fireTableCellUpdated(row, col);
         }
     }
