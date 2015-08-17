@@ -448,7 +448,7 @@ public class PackageTreeDlg extends JPanel
         panelsearch.add(textFilField, BorderLayout.CENTER);
         
         panelnorth.add(textFieldapkPath,BorderLayout.NORTH);
-        panelnorth.add(tree,BorderLayout.CENTER);
+        panelnorth.add(treeView,BorderLayout.CENTER);
         panelnorth.add(panelsearch,BorderLayout.SOUTH);
         
         
