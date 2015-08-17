@@ -344,11 +344,11 @@ public class ApkManager
 			mApkInfo.PackageName = xmlAndroidManifest.getAttributes("package");
 			mApkInfo.SharedUserId = xmlAndroidManifest.getAttributes("android:sharedUserId");
 			
-			if(mApkInfo.VersionCode.isEmpty()) {
+			if(mApkInfo.VersionCode == null || mApkInfo.VersionCode.isEmpty()) {
 				mApkInfo.VersionCode = xmlAndroidManifest.getAttributes("android:versionCode");
 			}
 			
-			if(mApkInfo.VersionName.isEmpty()) {
+			if(mApkInfo.VersionName == null || mApkInfo.VersionName.isEmpty()) {
 				mApkInfo.VersionName = xmlAndroidManifest.getAttributes("android:versionName");
 			}
 

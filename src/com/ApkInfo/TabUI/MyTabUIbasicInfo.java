@@ -6,6 +6,8 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.util.Set;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -19,6 +21,7 @@ import com.ApkInfo.Core.ApkManager.ApkInfo;
 import com.ApkInfo.Core.PermissionGroupManager.PermissionGroup;
 import com.ApkInfo.Core.AdbWrapper;
 import com.ApkInfo.Core.ApkManager;
+import com.ApkInfo.Core.CoreApkTool;
 import com.ApkInfo.Core.PermissionGroupManager.PermissionInfo;
 
 public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListener
@@ -239,7 +242,8 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 		if(id.equals("other-lang")) {
 			if(mutiLabels == null || mutiLabels.isEmpty()
 					|| apkInfo.Labelname.length == 1) return;
-			showDialog(mutiLabels, Resource.STR_LABEL_APP_NAME_LIST.getString(), new Dimension(300, 200));
+			showDialog(mutiLabels, Resource.STR_LABEL_APP_NAME_LIST.getString(), new Dimension(300, 200)
+					, new ImageIcon(CoreApkTool.getScaledImage(new ImageIcon(apkInfo.IconPath),32,32)));
 		} else if(id.equals("display-list")) {
 			showPermList();
 		} else {
@@ -247,7 +251,7 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 		}
 	}
 	
-	private void showDialog(String content, String title, Dimension size)
+	private void showDialog(String content, String title, Dimension size, Icon icon)
 	{
 		JTextArea taskOutput = new JTextArea();
 		taskOutput.setText(content);
@@ -257,7 +261,7 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 		JScrollPane scrollPane = new JScrollPane(taskOutput);
 		scrollPane.setPreferredSize(size);
 
-		JOptionPane.showOptionDialog(null, scrollPane, title, JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, null,
+		JOptionPane.showOptionDialog(null, scrollPane, title, JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, icon,
 	    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
 	}
 	
@@ -286,7 +290,7 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 	    descPane.setEditable(false);
 	    descPane.setBackground(label.getBackground());
 	    */
-	    showDialog(apkInfo.Permissions, Resource.STR_BASIC_PERM_LIST_TITLE.getString(), new Dimension(500, 200));
+	    showDialog(apkInfo.Permissions, Resource.STR_BASIC_PERM_LIST_TITLE.getString(), new Dimension(500, 200), null);
 	}
 	
 	public void showPermDetailDesc(String group)
@@ -337,7 +341,7 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 	    descPane.setEditable(false);
 	    descPane.setBackground(label.getBackground());
 	    */
-	    showDialog(body.toString(), Resource.STR_BASIC_PERM_DISPLAY_TITLE.getString(), new Dimension(600, 200));
+	    showDialog(body.toString(), Resource.STR_BASIC_PERM_DISPLAY_TITLE.getString(), new Dimension(600, 200), new ImageIcon(g.icon.replaceAll("^file:/", "")));
 	}
 
 	public void reloadResource() {

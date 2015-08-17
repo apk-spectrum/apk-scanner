@@ -546,7 +546,7 @@ public class PackageTreeDlg extends JPanel
     	
         //Create and set up the window.
     	dialog = new JDialog(new JFrame(), Resource.STR_TREE_OPEN_PACKAGE.getString(), true);
-    	dialog.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+    	dialog.setIconImage(Resource.IMG_USB_ICON.getImageIcon().getImage());
     	//dialog.setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
     	
 		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
@@ -579,7 +579,7 @@ public class PackageTreeDlg extends JPanel
         //Display the window.
     	dialog.pack();
     	dialog.setBounds(100, 100, 600, 400);
-    	dialog.setMinimumSize(new Dimension(700, 400));
+    	dialog.setMinimumSize(new Dimension(600, 400));
 		
     	dialog.setLocationRelativeTo(null);
     	dialog.setVisible(true);
@@ -597,6 +597,7 @@ public class PackageTreeDlg extends JPanel
         //Create and set up the window.
     	dialog = new JDialog(new JFrame(), Resource.STR_TREE_OPEN_PACKAGE.getString(), true);
     	dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    	dialog.setIconImage(Resource.IMG_USB_ICON.getImageIcon().getImage());
 
     	KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
 		dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
@@ -637,7 +638,7 @@ public class PackageTreeDlg extends JPanel
     	//dialog.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width)/2 - getWidth()/2, (Toolkit.getDefaultToolkit().getScreenSize().height)/2 - getHeight()/2);
     	    	
     	dialog.setBounds(100, 100, 600, 400);
-    	dialog.setMinimumSize(new Dimension(700, 400));
+    	dialog.setMinimumSize(new Dimension(600, 400));
 		
     	dialog.setLocationRelativeTo(null);
     	dialog.setVisible(true);

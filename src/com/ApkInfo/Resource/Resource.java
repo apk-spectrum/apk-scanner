@@ -188,6 +188,7 @@ public enum Resource
 	IMG_INSTALL_WAIT			(Type.IMAGE, "install_wait.gif"),
 	IMG_LOADING					(Type.IMAGE, "loading.gif"),
 	IMG_WAIT_BAR				(Type.IMAGE, "wait_bar.gif"),
+	IMG_USB_ICON				(Type.IMAGE, "ic_dialog_usb.png"),
 
 	BIN_ADB_LNX					(Type.BIN, "adb"),
 	BIN_ADB_WIN					(Type.BIN, "adb.exe"),
