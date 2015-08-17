@@ -711,11 +711,9 @@ public class PackageTreeDlg extends JPanel
 		
 		System.out.println(deviceNode.getUserObject());
 		
-		String device = ((DeviceStatus)deviceNode.getUserObject()).device;
-		String packageName = tempObject.pacakge;
-		
+		String device = ((DeviceStatus)deviceNode.getUserObject()).name;
 
-		String apkPath = AdbWrapper.getPackageInfo(device, packageName).apkPath;
+		String apkPath = tempObject.apkPath;
 		if(apkPath == null) return;
 		
 		String saveFileName;
