@@ -81,6 +81,7 @@ public class PackageTreeDlg extends JPanel
 	public class FrameworkTableObject {
 		public Boolean buse;
 		public String location;
+		public String deviceID;
 		public String path;
 	}
     
@@ -117,12 +118,46 @@ public class PackageTreeDlg extends JPanel
         addTreeList();
     }
     
+	private void addframeworkresIntree() {
+		// TODO Auto-generated method stub
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+                tree.getLastSelectedPathComponent();
+		
+		if(node.getChildCount() != 0) {
+			System.out.println("not node!");
+			return ;
+		}
+		PackageListObject tempObject = ((PackageListObject)node.getUserObject()); 		
+		
+		DefaultMutableTreeNode deviceNode = null;
+		for(deviceNode = node ; deviceNode.getUserObject() instanceof DeviceStatus==false; deviceNode = ((DefaultMutableTreeNode)deviceNode.getParent())) { }
+		
+		System.out.println(deviceNode.getUserObject());
+		
+		FrameworkTableObject temp = new FrameworkTableObject();
+		
+		temp.buse = true;
+		temp.location = ((DeviceStatus)deviceNode.getUserObject()).device;
+		temp.deviceID = ((DeviceStatus)deviceNode.getUserObject()).name;
+		
+		temp.path = tempObject.apkPath;
+		
+		tableListArray.add(temp);
+		((AbstractTableModel) table.getModel()).fireTableDataChanged();
+		
+		table.updateUI();
+		
+	}
+    
     private void addTreeList() {
 
     	if(!refreshbtn.isVisible()) {
     		System.out.println("Already refreshing...");
     		return;
     	}
+    	    	
+    	tableListArray.clear();
+    	table.updateUI();
     	
     	top.removeAllChildren();
     	tree.updateUI();
@@ -157,8 +192,9 @@ public class PackageTreeDlg extends JPanel
 
 			private void createDeviceNodes(DefaultMutableTreeNode top, DeviceStatus[] devList)
 		    {
+				
 				DefaultMutableTreeNode[] devTree = new DefaultMutableTreeNode[devList.length];
-
+				
 				for(int i = 0; i < devList.length; i++) {
 					devTree[i] = new DefaultMutableTreeNode(devList[i]);
 			        top.add(devTree[i]);
@@ -200,8 +236,16 @@ public class PackageTreeDlg extends JPanel
 				        		
 				        		FrameworkTableObject tableObject = new FrameworkTableObject();
 				        		
-				        		tableObject.buse = true;
-				        		tableObject.location = "device";
+				        		
+				        		if(obj.apkPath.startsWith("/system/framework/framework-res.apk") || obj.apkPath.startsWith("/system/framework/twframework-res.apk")) {
+				        			tableObject.buse = true;
+				        		} else {
+				        			tableObject.buse = false;
+				        		}
+				        		
+				        		
+				        		tableObject.location = devList[i].device;
+				        		tableObject.deviceID = devList[i].name;
 				        		tableObject.path = ((PackageListObject)temp.getUserObject()).apkPath; 
 				        		
 				        		tableListArray.add(tableObject);
@@ -221,7 +265,7 @@ public class PackageTreeDlg extends JPanel
 				        
 				        
 				        
-				        setJTableColumnsWidth(table,550,30,70,440);
+				        setJTableColumnsWidth(table,550,30,120,390);
 				        
 				        
 				        tree.updateUI();
@@ -233,7 +277,7 @@ public class PackageTreeDlg extends JPanel
 		        
 		        if(textFilField != null) {
 		        	if(textFilField.getText().length() >0){
-		        		makefilter(textFilField.getText());		        		
+		        		makefilter(textFilField.getText());
 		        	}
 		        }
 		    }
@@ -301,6 +345,14 @@ public class PackageTreeDlg extends JPanel
                             	   public void actionPerformed(ActionEvent e) {
                             		   PullPackage();
                             	   }});
+                            menu.add ( new JMenuItem ( Resource.STR_SETTINGS_RES.getString() ) ).addActionListener(new ActionListener(){ 
+                         	   public void actionPerformed(ActionEvent e) {
+                         		   
+                         		   
+                         		   		addframeworkresIntree();
+                         		   
+                         		   
+                         	   }});
                             //menu.add ( new JMenuItem ( Resource.STR_BTN_EXPORT.getString() ) ).addActionListener(new ActionListener(){ 
                             //	   public void actionPerformed(ActionEvent e) {
                             //		   
@@ -564,6 +616,7 @@ public class PackageTreeDlg extends JPanel
 			private static final long serialVersionUID = -5281980076592985530L;
 			public void actionPerformed(ActionEvent e) {
 				ptg.addTreeList();
+				
 		    }
 		});
  
@@ -774,33 +827,33 @@ public class PackageTreeDlg extends JPanel
 		
 		addbtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-//            	JFileChooser jfc = new JFileChooser();			
-//    			jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("apk","apk"));							
-//    			
-//    			if(jfc.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
-//    				return;
-//    			
-//    			File dir = jfc.getSelectedFile();
-//    			String file = null;
-//    			if(dir!=null) {
-//    				file = dir.getPath();
-//    			}
-//    			
-//    			System.out.println("Select Directory" + file);
-//    			
-//    			
-//    			
-//    			if(file == null || file.isEmpty()) return;
+            	JFileChooser jfc = new JFileChooser();			
+    			jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("apk","apk"));							
+    			
+    			if(jfc.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
+    				return;
+    			
+    			File dir = jfc.getSelectedFile();
+    			String file = null;
+    			if(dir!=null) {
+    				file = dir.getPath();
+    			}
+    			
+    			System.out.println("Select Apk File" + file);
+    			
+    			if(file == null || file.isEmpty()) return;
     			
     			FrameworkTableObject temp = new FrameworkTableObject();
     			
-    			temp.buse = false;
-    			temp.location = "device";
-    			temp.path = "/system/framework/twframework-res.apk";
+    			temp.buse = true;
+    			temp.location = "local";
+    			temp.deviceID = "local";
+    			temp.path = file;
     			
-    			tableListArray.add(temp);    			
-    			((AbstractTableModel) table.getModel()).fireTableDataChanged();   			
+    			tableListArray.add(temp);
+    			((AbstractTableModel) table.getModel()).fireTableDataChanged();
     			
+    			table.updateUI();
     			
 //    			for(String f: resList) {
 //    				if(file.equals(f)) return;
@@ -814,7 +867,7 @@ public class PackageTreeDlg extends JPanel
 		
 		table.setPreferredScrollableViewportSize(table.getPreferredSize());
 		table.setFillsViewportHeight(true);
-		setJTableColumnsWidth(table,550,30,70,440);
+		setJTableColumnsWidth(table,550,30,100,410);
 		//table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
         JScrollPane pane = new JScrollPane(table);

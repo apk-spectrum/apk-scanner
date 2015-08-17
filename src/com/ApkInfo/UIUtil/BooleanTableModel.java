@@ -31,7 +31,7 @@ public class BooleanTableModel extends AbstractTableModel {
     	case 0:
     		return arrayList.get(rowIndex).buse;        		
     	case 1:
-    		return arrayList.get(rowIndex).location;
+    		return arrayList.get(rowIndex).deviceID +"(" + arrayList.get(rowIndex).location + ")";
     	case 2:
     		return arrayList.get(rowIndex).path;
     	}
