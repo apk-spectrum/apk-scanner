@@ -48,7 +48,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 	static private MyToolBarUI mMyToolBarUI;
 	
 	//window position
-	static public int nPositionX,nPositionY;
+	static public int nPositionX,nPositionY, nPositionWidth;
 	
 	//for waiting
 	static public JFrame WaitingDlg;
@@ -638,15 +638,15 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 		
 		nPositionX = 100;
 		nPositionY = 100;
-        
+		
 		frame.getContentPane().addHierarchyBoundsListener(new HierarchyBoundsListener(){
 			@Override
 			public void ancestorMoved(HierarchyEvent e) {
 				if(frame.isVisible()) {
 					nPositionX = frame.getLocationOnScreen().x;
 					nPositionY = frame.getLocationOnScreen().y;
-										
-					DeviceUIManager.setLogWindowPosition(nPositionX,nPositionY);
+					nPositionWidth = frame.getContentPane().getWidth();
+					DeviceUIManager.setLogWindowPosition(nPositionX,nPositionY,nPositionWidth);
 					DeviceUIManager.setLogWindowToFront();
 				}
 			}

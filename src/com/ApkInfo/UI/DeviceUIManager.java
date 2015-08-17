@@ -234,10 +234,10 @@ public class DeviceUIManager
 			dialogLogArea.append(msg+"\n");
 		}
 	}
-	public static void setLogWindowPosition(int x, int y) {
+	public static void setLogWindowPosition(int x, int y, int width) {
 		
 		if(dlgDialog != null) {
-			dlgDialog.setLocation(x +600, y);
+			dlgDialog.setLocation(x + width, y);
 		}
 	}
 	
