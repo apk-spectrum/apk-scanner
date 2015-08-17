@@ -7,14 +7,12 @@ import javax.swing.table.AbstractTableModel;
 import com.ApkInfo.UI.PackageTreeDlg.FrameworkTableObject;
 
 public class BooleanTableModel extends AbstractTableModel {
-    String[] columns = {"use?", "local/device", "path"};
+    String[] columns = {"", "device", "path"};
 
     ArrayList<FrameworkTableObject> arrayList;
     
      public BooleanTableModel(ArrayList<FrameworkTableObject> datalist) {
-		// TODO Auto-generated constructor stub
-    	 System.out.println("size : "+ datalist.size());
-    	 
+		// TODO Auto-generated constructor stub    	 
     	 arrayList = datalist;
 	}
     public int getRowCount() {

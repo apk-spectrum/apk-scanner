@@ -265,7 +265,7 @@ public class PackageTreeDlg extends JPanel
 				        
 				        
 				        
-				        setJTableColumnsWidth(table,550,30,120,390);
+				        setJTableColumnsWidth(table,550,10,120,410);
 				        
 				        
 				        tree.updateUI();
@@ -867,7 +867,7 @@ public class PackageTreeDlg extends JPanel
 		
 		table.setPreferredScrollableViewportSize(table.getPreferredSize());
 		table.setFillsViewportHeight(true);
-		setJTableColumnsWidth(table,550,30,100,410);
+		setJTableColumnsWidth(table,550,10,120,410);
 		//table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
         JScrollPane pane = new JScrollPane(table);
