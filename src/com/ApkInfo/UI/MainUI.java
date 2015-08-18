@@ -140,6 +140,8 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 				mApkManager.clear(false, null);
 				mApkManager = null;
 			}
+			
+			System.out.println(frameworkRes);
 
 			if(apkPath == null) {
 				if(exiting) return;
@@ -163,7 +165,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 			tmpPath = tmpPath.replaceAll("/", File.separator+File.separator).replaceAll("//", "/");
 			tmpPath = CoreApkTool.makeTempPath(tmpPath)+".apk";
 			tempApkPath = tmpPath;
-			this.frameworkRes = frameworkRes;
+			//this.frameworkRes = frameworkRes;
 			if(this.frameworkRes == null) {
 				this.frameworkRes = (String)Resource.PROP_FRAMEWORK_RES.getData();
 			}
@@ -218,12 +220,13 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 		}
 	}
 	
-	private void newWindow(String device, String packageName, String frameworkRes)
+	private void newWindow(String device, String apkPath, String frameworkRes)
 	{
 		try {
 			String classPath = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
 			classPath = URLDecoder.decode(classPath, "UTF-8");
-			Runtime.getRuntime().exec(new String[] {"java", "-Dfile.encoding=utf-8", "-cp", classPath, MainUI.class.getName(), "@package", device, packageName, frameworkRes});
+			if(frameworkRes == null || frameworkRes.isEmpty()) frameworkRes = "null";
+			Runtime.getRuntime().exec(new String[] {"java", "-Dfile.encoding=utf-8", "-cp", classPath, MainUI.class.getName(), "@package", device, apkPath, frameworkRes});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -379,8 +382,8 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 					PackageTreeDlg Dlg = new PackageTreeDlg();
 					Dlg.showTreeDlg();
 					
-					if(Dlg.getSelectedDevice() != null && !Dlg.getSelectedDevice().isEmpty() && !Dlg.getSelectedPackage().isEmpty())
-						newWindow(Dlg.getSelectedDevice(), Dlg.getSelectedPackage(), Dlg.getSelectedFrameworkRes());
+					if(Dlg.getSelectedDevice() != null && !Dlg.getSelectedDevice().isEmpty() && !Dlg.getSelectedApkPath().isEmpty())
+						newWindow(Dlg.getSelectedDevice(), Dlg.getSelectedApkPath(), Dlg.getSelectedFrameworkRes());
 				} else if(cmd.equals(Resource.STR_MENU_APK_FILE.getString())) {
 					String file = selectApkFile();
 					openApkFile(file);
