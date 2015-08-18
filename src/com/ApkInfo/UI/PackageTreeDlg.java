@@ -138,6 +138,21 @@ public class PackageTreeDlg extends JPanel
         addTreeList();
     }
     
+    private DeviceStatus getCurrentSelectedDevice() {
+    	DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+                tree.getLastSelectedPathComponent();
+    	
+		if(node.getChildCount() != 0) {
+			System.out.println("not node!");
+			return null;
+		}
+    	
+    	DefaultMutableTreeNode deviceNode = null;
+		for(deviceNode = node ; deviceNode.getUserObject() instanceof DeviceStatus==false; deviceNode = ((DefaultMutableTreeNode)deviceNode.getParent())) { }
+    	
+    	return ((DeviceStatus)deviceNode.getUserObject());
+    }
+    
 	private void addframeworkresIntree() {
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
                 tree.getLastSelectedPathComponent();
@@ -148,16 +163,17 @@ public class PackageTreeDlg extends JPanel
 		}
 		PackageListObject tempObject = ((PackageListObject)node.getUserObject()); 		
 		
-		DefaultMutableTreeNode deviceNode = null;
-		for(deviceNode = node ; deviceNode.getUserObject() instanceof DeviceStatus==false; deviceNode = ((DefaultMutableTreeNode)deviceNode.getParent())) { }
-		
-		System.out.println(deviceNode.getUserObject());
-		
+		DeviceStatus deviceNode = null;
+//		for(deviceNode = node ; deviceNode.getUserObject() instanceof DeviceStatus==false; deviceNode = ((DefaultMutableTreeNode)deviceNode.getParent())) { }
+//		System.out.println(deviceNode.getUserObject());
 		FrameworkTableObject temp = new FrameworkTableObject();
 		
+		
+		deviceNode = getCurrentSelectedDevice();
+		
 		temp.buse = true;
-		temp.location = ((DeviceStatus)deviceNode.getUserObject()).device;
-		temp.deviceID = ((DeviceStatus)deviceNode.getUserObject()).name;
+		temp.location = deviceNode.device;
+		temp.deviceID = deviceNode.name;
 		
 		temp.path = tempObject.apkPath;
 		
@@ -372,14 +388,33 @@ public class PackageTreeDlg extends JPanel
                             	   public void actionPerformed(ActionEvent e) {
                             		   PullPackage();
                             	   }});
+                            menu.add ( new JMenuItem ( Resource.STR_BTN_DEL.getString() ) ).addActionListener(new ActionListener(){ 
+                           	   public void actionPerformed(ActionEvent e) {
+   
+                           		DeviceStatus deviceNode = null;
+                        		deviceNode = getCurrentSelectedDevice();
+                           		
+                        		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+                                        tree.getLastSelectedPathComponent();
+                        		                        		
+                        		PackageListObject tempObject = ((PackageListObject)node.getUserObject()); 
+                           		   
+                        		
+                        		System.out.println("remove :" + deviceNode.name  +","+ tempObject.apkPath);
+                           		AdbWrapper.removeApk(deviceNode.name, tempObject.apkPath);
+                           		
+                                TreeModel models = (TreeModel) tree.getModel();
+                                
+                                //models.removeNodeFromParent(node);
+                                
+                                //tree.up
+                           		
+                           	   }});
                             menu.add ( new JMenuItem ( Resource.STR_SETTINGS_RES.getString() ) ).addActionListener(new ActionListener(){ 
                          	   public void actionPerformed(ActionEvent e) {
-                         		   
-                         		   
                          		   		addframeworkresIntree();
-                         		   
-                         		   
                          	   }});
+                            
                             //menu.add ( new JMenuItem ( Resource.STR_BTN_EXPORT.getString() ) ).addActionListener(new ActionListener(){ 
                             //	   public void actionPerformed(ActionEvent e) {
                             //		   
