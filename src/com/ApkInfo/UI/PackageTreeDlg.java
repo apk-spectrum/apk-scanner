@@ -82,10 +82,19 @@ public class PackageTreeDlg extends JPanel
 		public String location;
 		public String deviceID;
 		public String path;
+		
+		FrameworkTableObject() {}
+		FrameworkTableObject(Boolean buse, String location, String deviceID, String path) {
+			this.buse = buse;
+			this.location = location;
+			this.deviceID = deviceID;
+			this.path = path;
+		}
 	}
     
     private ArrayList<FrameworkTableObject> tableListArray = new ArrayList<FrameworkTableObject>();
     private JTable table;
+
     public String getSelectedDevice() {
     	return selDevice;
     }
@@ -100,6 +109,17 @@ public class PackageTreeDlg extends JPanel
     
     public String getSelectedFrameworkRes() {
     	String resList = null;
+    	if(checkboxUseframework.isSelected()) {
+    		resList = "";
+    		for(FrameworkTableObject res: tableListArray) {
+    			if(!res.buse) continue;
+    			if(res.deviceID.equals("local")) {
+    				resList += res.path + ";";
+    			} else {
+    				resList += "@" + res.deviceID + res.path + ";";
+    			}
+    		}
+    	}
     	return resList;
     }
     
@@ -243,7 +263,7 @@ public class PackageTreeDlg extends JPanel
 				        		}
 				        		
 				        		
-				        		tableObject.location = devList[i].device;
+				        		tableObject.location = devList[i].model;
 				        		tableObject.deviceID = devList[i].name;
 				        		tableObject.path = ((PackageListObject)temp.getUserObject()).apkPath; 
 				        		
@@ -261,15 +281,23 @@ public class PackageTreeDlg extends JPanel
 				        
 				        table.setModel(new BooleanTableModel(tableListArray));
 				        table.setPreferredScrollableViewportSize(new Dimension(0,80));
-				        
-				        
-				        
 				        setJTableColumnsWidth(table,550,10,120,410);
 				        
 				        
 				        tree.updateUI();
 				        expandOrCollapsePath(tree, new TreePath(top.getPath()),3,0, true);
 					}
+				}
+				
+				String defalutResPath = (String)Resource.PROP_FRAMEWORK_RES.getData();
+				if(defalutResPath != null) {
+					for(String s: defalutResPath.split(";")) {
+						if(s.isEmpty()) continue;
+						tableListArray.add(new FrameworkTableObject(false, "local", "local", s));
+					}
+			        table.setModel(new BooleanTableModel(tableListArray));
+			        table.setPreferredScrollableViewportSize(new Dimension(0,80));
+			        setJTableColumnsWidth(table,550,10,120,410);
 				}
                 
 		        //System.out.println("end  loading package : " + dev.device);
