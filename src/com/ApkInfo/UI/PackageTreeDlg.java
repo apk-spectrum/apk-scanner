@@ -73,7 +73,6 @@ public class PackageTreeDlg extends JPanel
     private String selDevice;
     private String selPackage;
     private String selApkPath;
-    private String selFrameworkRes;
     private String tmpApkPath;
     private static JTextField textFilField;
     private FilteredTreeModel filteredModel;
@@ -100,7 +99,8 @@ public class PackageTreeDlg extends JPanel
     }
     
     public String getSelectedFrameworkRes() {
-    	return selFrameworkRes;
+    	String resList = null;
+    	return resList;
     }
     
     public File getSelectedFile() {
@@ -119,7 +119,6 @@ public class PackageTreeDlg extends JPanel
     }
     
 	private void addframeworkresIntree() {
-		// TODO Auto-generated method stub
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
                 tree.getLastSelectedPathComponent();
 		
@@ -423,7 +422,9 @@ public class PackageTreeDlg extends JPanel
                     
                 }
             }
-            private void expandTree(final JTree tree) {
+
+            @SuppressWarnings("unused")
+			private void expandTree(final JTree tree) {
                 for (int i = 0; i < tree.getRowCount(); i++) {
                   tree.expandRow(i);
                 }
@@ -533,15 +534,15 @@ public class PackageTreeDlg extends JPanel
         		
         		//System.out.println(tree.isCollapsed(new TreePath(currentNode.getPath())));
         		
-        		if(currentNode.getLevel()==3 && filteredModel.getChildCount(currentNode) >0) {
-    		        for(int i=0; i<filteredModel.getChildCount(currentNode); i++) {
+        		if(currentNode.getLevel()==3 && filteredModel.getChildCount(currentNode) > 0) {
+    		        //for(int i=0; i<filteredModel.getChildCount(currentNode); i++) {
     		        	
-    		        	TreePath temptreePath = new TreePath(((DefaultMutableTreeNode)(filteredModel.getChild(currentNode, i))).getPath());
+    		        	TreePath temptreePath = new TreePath(((DefaultMutableTreeNode)(filteredModel.getChild(currentNode, 0))).getPath());
     		        	
 		        		tree.setSelectionPath(temptreePath);
 		        		tree.scrollPathToVisible(temptreePath);
 		        		return;
-    		        }
+    		        //}
 		        }
         		
 //	           if (currentNode.getLevel()==4 && tree.isVisible(new TreePath(currentNode.getPath())) == true) {
@@ -645,7 +646,6 @@ public class PackageTreeDlg extends JPanel
         selDevice = null;
         selPackage = null;
         selApkPath = null;
-        selFrameworkRes = null;
 
         //Create and set up the window.
     	dialog = new JDialog(new JFrame(), Resource.STR_TREE_OPEN_PACKAGE.getString(), true);
@@ -660,7 +660,6 @@ public class PackageTreeDlg extends JPanel
 				selDevice = null;
 				selPackage = null;
 				selApkPath = null;
-				selFrameworkRes = null;
 				dialog.dispose();
 		    }
 		});
@@ -808,7 +807,6 @@ public class PackageTreeDlg extends JPanel
 			selDevice = null;
 			selPackage = null;
 			selApkPath = null;
-			selFrameworkRes = null;
 			dialog.dispose();
 		} else if(e.getSource() == refreshbtn) {
 			addTreeList();
