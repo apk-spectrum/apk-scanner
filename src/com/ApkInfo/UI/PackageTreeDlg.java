@@ -808,12 +808,10 @@ public class PackageTreeDlg extends JPanel
    		MutableTreeNode nodepath =(MutableTreeNode) path.getLastPathComponent();
        	System.out.println("Trying to remove tree : "+nodepath.toString());
        	MutableTreeNode parent=(MutableTreeNode)nodepath.getParent();
-       	int index=parent.getIndex(nodepath);
+       	
        	parent.remove(nodepath);
-
        	//FilteredTreeModel model=(FilteredTreeModel)tree.getModel();
        	//model.nodesWereRemoved(parent,new int[]{index},null);
-       		
        	tree.updateUI();
     }
     
