@@ -198,7 +198,7 @@ public enum Resource
 	IMG_TREE_APK				(Type.IMAGE, "tree_icon_apk.png"),
 	IMG_TREE_DEVICE				(Type.IMAGE, "tree_icon_device.png"),
 	IMG_TREE_TOP				(Type.IMAGE, "tree_icon_top.gif"),
-	
+	IMG_TREE_FOLDER				(Type.IMAGE, "tree_icon_folder.png"),
 	
 	BIN_ADB_LNX					(Type.BIN, "adb"),
 	BIN_ADB_WIN					(Type.BIN, "adb.exe"),

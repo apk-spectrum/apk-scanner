@@ -475,7 +475,7 @@ public class PackageTreeDlg extends JPanel
         	private ImageIcon iconApk = Resource.IMG_TREE_APK.getImageIcon();
         	private ImageIcon iconDevice = Resource.IMG_TREE_DEVICE.getImageIcon();
         	private ImageIcon iconTop = Resource.IMG_TREE_TOP.getImageIcon();
-        	private ImageIcon iconFolder = Resource.IMG_TREE_MENU_OPEN.getImageIcon();
+        	private ImageIcon iconFolder = Resource.IMG_TREE_FOLDER.getImageIcon();
         	
             @Override
             public Component getTreeCellRendererComponent(JTree tree,
