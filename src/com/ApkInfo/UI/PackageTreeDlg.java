@@ -391,24 +391,58 @@ public class PackageTreeDlg extends JPanel
                         	if(node.getDepth() > 0 || node.getLevel() < 3) {
                         		return;
                         	}
-
-                            JPopupMenu menu = new JPopupMenu ();
-                            menu.add ( new JMenuItem ( Resource.STR_BTN_OPEN.getString() ) ).addActionListener(new ActionListener(){ 
-                            	   public void actionPerformed(ActionEvent e) {
-                            		   OpenPackage();
-                            	   }});
-                            menu.add ( new JMenuItem ( Resource.STR_BTN_SAVE.getString() ) ).addActionListener(new ActionListener(){ 
-                            	   public void actionPerformed(ActionEvent e) {
-                            		   PullPackage();
-                            	   }});
-                            menu.add ( new JMenuItem ( Resource.STR_BTN_DEL.getString() ) ).addActionListener(new ActionListener(){ 
-                           	   public void actionPerformed(ActionEvent e) {
-                           		   Removepackage();
-                           	   }});
-                            menu.add ( new JMenuItem ( Resource.STR_SETTINGS_RES.getString() ) ).addActionListener(new ActionListener(){ 
+                        	
+                        	JPopupMenu menu = new JPopupMenu ();
+                            
+                            JMenuItem menuitemOpen = new JMenuItem(Resource.STR_BTN_OPEN.getString() );                                                        
+                            menuitemOpen.addActionListener(new ActionListener(){ 
                          	   public void actionPerformed(ActionEvent e) {
-                         		   	addframeworkresIntree();
-                         	   }});
+                        		   OpenPackage();
+                        	   }});
+                            menuitemOpen.setIcon(Resource.IMG_TREE_MENU_OPEN.getImageIcon());                                                        
+                            menu.add(menuitemOpen);
+                            
+                            JMenuItem menuitemSave = new JMenuItem(Resource.STR_BTN_SAVE.getString() );                                                        
+                            menuitemSave.addActionListener(new ActionListener(){ 
+                         	   public void actionPerformed(ActionEvent e) {
+                         		  PullPackage();
+                        	   }});
+                            menuitemSave.setIcon(Resource.IMG_TREE_MENU_SAVE.getImageIcon());                                                        
+                            menu.add(menuitemSave);
+                            
+                            JMenuItem menuitemDel = new JMenuItem(Resource.STR_BTN_DEL.getString() );                                                        
+                            menuitemDel.addActionListener(new ActionListener(){ 
+                         	   public void actionPerformed(ActionEvent e) {
+                         		  Removepackage();
+                        	   }});
+                            menuitemDel.setIcon(Resource.IMG_TREE_MENU_DELETE.getImageIcon());                                                        
+                            menu.add(menuitemDel);
+                            
+                            JMenuItem menuitemaddframeworkres = new JMenuItem(Resource.STR_SETTINGS_RES.getString() );                                                        
+                            menuitemaddframeworkres.addActionListener(new ActionListener(){ 
+                         	   public void actionPerformed(ActionEvent e) {
+                         		  addframeworkresIntree();
+                        	   }});
+                            menuitemaddframeworkres.setIcon(Resource.IMG_TREE_MENU_LINK.getImageIcon());                                                        
+                            menu.add(menuitemaddframeworkres);
+                            
+                            
+//                            menu.add ( new JMenuItem ( Resource.STR_BTN_OPEN.getString() ) ).addActionListener(new ActionListener(){ 
+//                            	   public void actionPerformed(ActionEvent e) {
+//                            		   OpenPackage();
+//                            	   }});
+//                            menu.add ( new JMenuItem ( Resource.STR_BTN_SAVE.getString() ) ).addActionListener(new ActionListener(){ 
+//                            	   public void actionPerformed(ActionEvent e) {
+//                            		   PullPackage();
+//                            	   }});
+//                            menu.add ( new JMenuItem ( Resource.STR_BTN_DEL.getString() ) ).addActionListener(new ActionListener(){ 
+//                           	   public void actionPerformed(ActionEvent e) {
+//                           		   Removepackage();
+//                           	   }});
+//                            menu.add ( new JMenuItem ( Resource.STR_SETTINGS_RES.getString() ) ).addActionListener(new ActionListener(){ 
+//                         	   public void actionPerformed(ActionEvent e) {
+//                         		   	addframeworkresIntree();
+//                         	   }});
                             
                             //menu.add ( new JMenuItem ( Resource.STR_BTN_EXPORT.getString() ) ).addActionListener(new ActionListener(){ 
                             //	   public void actionPerformed(ActionEvent e) {

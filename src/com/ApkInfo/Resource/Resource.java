@@ -190,6 +190,11 @@ public enum Resource
 	IMG_WAIT_BAR				(Type.IMAGE, "wait_bar.gif"),
 	IMG_USB_ICON				(Type.IMAGE, "ic_dialog_usb.png"),
 
+	IMG_TREE_MENU_LINK				(Type.IMAGE, "tree_link_menu.png"),
+	IMG_TREE_MENU_DELETE				(Type.IMAGE, "tree_menu_delete.png"),
+	IMG_TREE_MENU_SAVE				(Type.IMAGE, "tree_menu_save.png"),
+	IMG_TREE_MENU_OPEN				(Type.IMAGE, "tree_open_menu.png"),
+	
 	BIN_ADB_LNX					(Type.BIN, "adb"),
 	BIN_ADB_WIN					(Type.BIN, "adb.exe"),
 	BIN_APKTOOL_JAR				(Type.BIN, "apktool.jar"),
