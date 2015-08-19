@@ -22,6 +22,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeModel;
@@ -46,6 +47,7 @@ import com.ApkInfo.UIUtil.Theme;
 import java.util.ArrayList;
 import java.io.File;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -468,6 +470,38 @@ public class PackageTreeDlg extends JPanel
         //Listen for when the selection changes.
         tree.addTreeSelectionListener(this);
  
+        tree.setCellRenderer(new DefaultTreeCellRenderer() {
+        	        	
+        	private ImageIcon iconApk = Resource.IMG_TREE_APK.getImageIcon();
+        	private ImageIcon iconDevice = Resource.IMG_TREE_DEVICE.getImageIcon();
+        	private ImageIcon iconTop = Resource.IMG_TREE_TOP.getImageIcon();
+        	private ImageIcon iconFolder = Resource.IMG_TREE_MENU_OPEN.getImageIcon();
+        	
+            @Override
+            public Component getTreeCellRendererComponent(JTree tree,
+                    Object value, boolean selected, boolean expanded,
+                    boolean isLeaf, int row, boolean focused) {
+                Component c = super.getTreeCellRendererComponent(tree, value,
+                        selected, expanded, isLeaf, row, focused);
+                
+                DefaultMutableTreeNode nodo = (DefaultMutableTreeNode) value;
+                int level = nodo.getLevel();
+                
+                if(level==0) {
+                	setIcon(iconTop);
+                } else if(level==1) {
+                	setIcon(iconDevice);
+                } else if(level==2) {
+                	setIcon(iconFolder);
+                } else if(level==3) {
+                	setIcon(iconFolder);
+                } else if(level==4) {
+                	setIcon(iconApk);
+                }                
+                return c;
+            }
+        });
+        
         //Create the scroll pane and add the tree to it.
         JScrollPane treeView = new JScrollPane(tree);
  

@@ -195,6 +195,11 @@ public enum Resource
 	IMG_TREE_MENU_SAVE				(Type.IMAGE, "tree_menu_save.png"),
 	IMG_TREE_MENU_OPEN				(Type.IMAGE, "tree_open_menu.png"),
 	
+	IMG_TREE_APK				(Type.IMAGE, "tree_icon_apk.png"),
+	IMG_TREE_DEVICE				(Type.IMAGE, "tree_icon_device.png"),
+	IMG_TREE_TOP				(Type.IMAGE, "tree_icon_top.gif"),
+	
+	
 	BIN_ADB_LNX					(Type.BIN, "adb"),
 	BIN_ADB_WIN					(Type.BIN, "adb.exe"),
 	BIN_APKTOOL_JAR				(Type.BIN, "apktool.jar"),
