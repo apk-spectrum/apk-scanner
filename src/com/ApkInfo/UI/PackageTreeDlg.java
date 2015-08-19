@@ -401,7 +401,8 @@ public class PackageTreeDlg extends JPanel
                            		   
                         		
                         		System.out.println("remove :" + deviceNode.name  +","+ tempObject.apkPath);
-                           		AdbWrapper.removeApk(deviceNode.name, tempObject.apkPath);
+                           		
+                           		AdbWrapper.uninstallApk(deviceNode.name, tempObject.pacakge);
                            		
                                 TreeModel models = (TreeModel) tree.getModel();
                                 
@@ -846,7 +847,7 @@ public class PackageTreeDlg extends JPanel
 		jfc.setSelectedFile(new File(saveFileName));
 
 
-		if(jfc.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
+		if(jfc.showSaveDialog(null) != JFileChooser.APPROVE_OPTION)
 			return;
 
 		File dir = jfc.getSelectedFile();
