@@ -789,20 +789,26 @@ public class PackageTreeDlg extends JPanel
     }
 
     private void Removepackage() {
-   		DeviceStatus deviceNode = null;
-		deviceNode = getCurrentSelectedDevice();
-   		
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
-                tree.getLastSelectedPathComponent();
 
+    	final DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+                tree.getLastSelectedPathComponent();
+		
 		if(node == null) {
 			System.out.println("node == null");
 			return;
 		}
-		
-		PackageListObject tempObject = ((PackageListObject)node.getUserObject()); 
-   		System.out.println("remove :" + deviceNode.name  +","+ tempObject.apkPath);
-   		AdbWrapper.uninstallApk(deviceNode.name, tempObject.pacakge);
+   		
+   		Thread t = new Thread(new Runnable() {
+			public void run(){
+		  		DeviceStatus deviceNode = null;
+				deviceNode = getCurrentSelectedDevice();
+				PackageListObject tempObject = ((PackageListObject)node.getUserObject()); 
+		   		System.out.println("remove :" + deviceNode.name  +","+ tempObject.apkPath);
+		   		
+				AdbWrapper.uninstallApk(deviceNode.name, tempObject.pacakge);
+			}
+		});
+   		t.start();
    		
    		TreePath path = new TreePath(node.getPath());
    		MutableTreeNode nodepath =(MutableTreeNode) path.getLastPathComponent();
