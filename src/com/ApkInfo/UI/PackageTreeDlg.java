@@ -220,9 +220,12 @@ public class PackageTreeDlg extends JPanel
 //					}
 //				} while(true);
 				
-				if(DeviceList.size() == 0) {
-					top.add(new DefaultMutableTreeNode(Resource.STR_MSG_DEVICE_NOT_FOUND.getString()));
-				}
+//				if(DeviceList.size() == 0) {
+//					top.add(new DefaultMutableTreeNode(Resource.STR_MSG_DEVICE_NOT_FOUND.getString()));
+//					tree.updateUI();
+//					expandOrCollapsePath(tree, new TreePath(top.getPath()),3,0, true);
+//					return;
+//				}
 				
 				gifPanel.setVisible(true);
 
@@ -237,6 +240,9 @@ public class PackageTreeDlg extends JPanel
 				
 				DefaultMutableTreeNode[] devTree = new DefaultMutableTreeNode[devList.length];
 				
+				if(devList.length == 0) {					
+					top.add(new DefaultMutableTreeNode(new String("Not found")));									
+				}
 				for(int i = 0; i < devList.length; i++) {
 					devTree[i] = new DefaultMutableTreeNode(devList[i]);
 			        top.add(devTree[i]);
