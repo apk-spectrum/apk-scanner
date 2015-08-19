@@ -314,6 +314,24 @@ public class AdbWrapper
 
 		return;
 	}
+	
+	static public boolean PullApk_sync(String name, String srcApkPath, String destApkPath)
+	{
+		//System.out.println("PullApk() device : " + name + ", apkPath: " + srcApkPath);
+		if(adbCmd == null || name == null || destApkPath == null || srcApkPath == null || srcApkPath.isEmpty()) {
+			return false;
+		}
+
+		String[] result;
+		String[] cmd = {adbCmd, "-s", name, "pull", srcApkPath, destApkPath};
+		result = MyConsolCmd.exc(cmd, false, null);
+		
+		if(result[0].matches(".*s\\)")) {
+			return true;
+		}
+
+		return false;
+	}
 
 	static public DeviceInfo getDeviceInfo(String name)
 	{

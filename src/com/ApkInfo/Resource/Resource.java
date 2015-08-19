@@ -23,7 +23,7 @@ import com.ApkInfo.Core.MyXPath;
 public enum Resource
 {
 	STR_APP_NAME				(Type.TEXT, "@app_name"),
-	STR_APP_VERSION				(Type.TEXT, "2.0 beta 20150812"),
+	STR_APP_VERSION				(Type.TEXT, "2.0 beta 20150819"),
 	STR_APP_MAKER				(Type.TEXT, "jin_h.lee / sunggyu.kam"),
 	STR_APP_MAKER_EMAIL			(Type.TEXT, "jin_h.lee@samsung.com;sunggyu.kam@samsung.com"),
 

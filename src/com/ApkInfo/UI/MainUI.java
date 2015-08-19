@@ -141,8 +141,6 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 				mApkManager = null;
 			}
 			
-			System.out.println(frameworkRes);
-
 			if(apkPath == null) {
 				if(exiting) return;
 				
@@ -165,11 +163,26 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 			tmpPath = tmpPath.replaceAll("/", File.separator+File.separator).replaceAll("//", "/");
 			tmpPath = CoreApkTool.makeTempPath(tmpPath)+".apk";
 			tempApkPath = tmpPath;
-			//this.frameworkRes = frameworkRes;
-			if(this.frameworkRes == null) {
-				this.frameworkRes = (String)Resource.PROP_FRAMEWORK_RES.getData();
+
+			if(frameworkRes == null) {
+				frameworkRes = (String)Resource.PROP_FRAMEWORK_RES.getData();
 			}
-			
+			this.frameworkRes = "";
+			if(frameworkRes != null && !frameworkRes.isEmpty()) {
+				for(String s: frameworkRes.split(";")) {
+					if(s.matches("^@.*")) {
+						String name = s.replaceAll("^@([^/]*)/.*", "$1");
+						String path = s.replaceAll("^@[^/]*", "");
+						String dest = (new File(tmpPath).getParent()) + File.separator + path.replaceAll(".*/", "");
+						ProgressBarDlg.addProgress(1, "I: start to pull resource apk " + path + "\n");
+						AdbWrapper.PullApk_sync(name, path, dest);
+						this.frameworkRes += dest + ";"; 
+					} else {
+						this.frameworkRes += s + ";"; 
+					}
+				}
+			}
+
 			//System.out.println(tmpPath);
 			ProgressBarDlg.addProgress(1, "I: start to pull apk " + apkPath + "\n");
 			AdbWrapper.PullApk(device, apkPath, tmpPath, this);
@@ -570,7 +583,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 					
 					if(apkPath.equals("@package")) {
 						String res = null;
-						if(args.length > 4 && !args[3].equals("null")) {
+						if(args.length >= 4 && !args[3].equals("null")) {
 							res = args[3];
 						}
 						new PackageOpen(args[1], args[2], res);

@@ -708,8 +708,8 @@ public class ApkManager
 				CoreApkTool.deleteDirectory(parent);
 			}
 			if(isPackageTempAPK && mApkInfo.ApkPath != null && !mApkInfo.ApkPath.isEmpty()) {
-				System.out.println("delete temp APK : "  + mApkInfo.ApkPath);
-				File parent = new File(mApkInfo.ApkPath);
+				File parent = new File(mApkInfo.ApkPath).getParentFile();
+				System.out.println("delete temp APK folder : "  + parent.getPath());
 				while(parent != null && parent.exists() && parent.getParentFile() != null 
 						&& parent.getParentFile().listFiles().length == 1 
 						&& parent.getParentFile().getAbsolutePath().length() > CoreApkTool.getTempPath().length()) {
