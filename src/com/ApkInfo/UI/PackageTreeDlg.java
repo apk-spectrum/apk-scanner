@@ -23,6 +23,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -390,30 +391,11 @@ public class PackageTreeDlg extends JPanel
                             	   }});
                             menu.add ( new JMenuItem ( Resource.STR_BTN_DEL.getString() ) ).addActionListener(new ActionListener(){ 
                            	   public void actionPerformed(ActionEvent e) {
-   
-                           		DeviceStatus deviceNode = null;
-                        		deviceNode = getCurrentSelectedDevice();
-                           		
-                        		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
-                                        tree.getLastSelectedPathComponent();
-                        		                        		
-                        		PackageListObject tempObject = ((PackageListObject)node.getUserObject()); 
-                           		   
-                        		
-                        		System.out.println("remove :" + deviceNode.name  +","+ tempObject.apkPath);
-                           		
-                           		AdbWrapper.uninstallApk(deviceNode.name, tempObject.pacakge);
-                           		
-                                TreeModel models = (TreeModel) tree.getModel();
-                                
-                                //models.removeNodeFromParent(node);
-                                
-                                //tree.up
-                           		
+                           		   Removepackage();
                            	   }});
                             menu.add ( new JMenuItem ( Resource.STR_SETTINGS_RES.getString() ) ).addActionListener(new ActionListener(){ 
                          	   public void actionPerformed(ActionEvent e) {
-                         		   		addframeworkresIntree();
+                         		   	addframeworkresIntree();
                          	   }});
                             
                             //menu.add ( new JMenuItem ( Resource.STR_BTN_EXPORT.getString() ) ).addActionListener(new ActionListener(){ 
@@ -806,6 +788,35 @@ public class PackageTreeDlg extends JPanel
 		dialog.dispose();
     }
 
+    private void Removepackage() {
+   		DeviceStatus deviceNode = null;
+		deviceNode = getCurrentSelectedDevice();
+   		
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+                tree.getLastSelectedPathComponent();
+
+		if(node == null) {
+			System.out.println("node == null");
+			return;
+		}
+		
+		PackageListObject tempObject = ((PackageListObject)node.getUserObject()); 
+   		System.out.println("remove :" + deviceNode.name  +","+ tempObject.apkPath);
+   		AdbWrapper.uninstallApk(deviceNode.name, tempObject.pacakge);
+   		
+   		TreePath path = new TreePath(node.getPath());
+   		MutableTreeNode nodepath =(MutableTreeNode) path.getLastPathComponent();
+       	System.out.println("Trying to remove tree : "+nodepath.toString());
+       	MutableTreeNode parent=(MutableTreeNode)nodepath.getParent();
+       	int index=parent.getIndex(nodepath);
+       	parent.remove(nodepath);
+
+       	//FilteredTreeModel model=(FilteredTreeModel)tree.getModel();
+       	//model.nodesWereRemoved(parent,new int[]{index},null);
+       		
+       	tree.updateUI();
+    }
+    
     private void PullPackage() {
     	System.out.println("PullPackage()");
 		
