@@ -32,11 +32,11 @@
     <string name="btn_about_lab">About APK Scanner (F1)</string>
     
     <string name="menu_new">New Window...</string>
-    <string name="menu_new_window">New Window (Ctrl+N)</string>
+    <string name="menu_new_window">New empty window (Ctrl+N)</string>
     <string name="menu_new_apk_file">Open APK file to new window</string>
-    <string name="menu_new_package">Open package from device to new window</string>
+    <string name="menu_new_package">Open package to new window</string>
     <string name="menu_apk_file">Open APK file (Ctrl+O)</string>
-    <string name="menu_package">Open Package from device (Ctrl+P)</string>
+    <string name="menu_package">Open package (Ctrl+P)</string>
     <string name="menu_install">Intsall (Ctrl+I)</string>
     <string name="menu_check_installed">Check installed (Ctrl+T)</string>
 
