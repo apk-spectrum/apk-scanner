@@ -60,8 +60,7 @@
     <string name="permgrouplab_display">Other Application UI</string>
     <string name="permgroupdesc_display">Effect the UI of other applications.</string>
     <string name="permgrouplab_storage">Storage</string>
-    <string name="permgroupdesc_storage" product="nosdcard">Access the USB storage.</string>
-    <string name="permgroupdesc_storage" product="default">Access the SD card.</string>
+    <string name="permgroupdesc_storage">Access the SD card or USB storage.</string>
     <string name="permgrouplab_accessibilityFeatures">Accessibility features</string>
     <string name="permgroupdesc_accessibilityFeatures">Features that assistive technology can request.</string>
     <string name="permlab_statusBar">disable or modify status bar</string>
@@ -107,22 +106,10 @@
       requests to other messaging apps to handle respond-via-message events for incoming
       calls.</string>
     <string name="permlab_readSms">read your text messages (SMS or MMS)</string>
-    <string name="permdesc_readSms" product="tablet">Allows the app to read SMS
-      messages stored on your tablet or SIM card. This allows the app to read all
-      SMS messages, regardless of content or confidentiality.</string>
-    <string name="permdesc_readSms" product="tv">Allows the app to read SMS
-      messages stored on your TV or SIM card. This allows the app to read all
-      SMS messages, regardless of content or confidentiality.</string>
     <string name="permdesc_readSms" product="default">Allows the app to read SMS
       messages stored on your phone or SIM card. This allows the app to read all
       SMS messages, regardless of content or confidentiality.</string>
     <string name="permlab_writeSms">edit your text messages (SMS or MMS)</string>
-    <string name="permdesc_writeSms" product="tablet">Allows the app to write
-      to SMS messages stored on your tablet or SIM card. Malicious apps
-      may delete your messages.</string>
-    <string name="permdesc_writeSms" product="tv">Allows the app to write
-      to SMS messages stored on your TV or SIM card. Malicious apps
-      may delete your messages.</string>
     <string name="permdesc_writeSms" product="default">Allows the app to write
       to SMS messages stored on your phone or SIM card. Malicious apps
       may delete your messages.</string>
@@ -296,12 +283,6 @@
     <string name="permdesc_freezeScreen">Allows the application to temporarily freeze
         the screen for a full-screen transition.</string>
     <string name="permlab_injectEvents">press keys and control buttons</string>
-    <string name="permdesc_injectEvents" product="tablet">Allows the app to deliver
-        its own input events (key presses, etc.) to other apps. Malicious
-        apps may use this to take over the tablet.</string>
-    <string name="permdesc_injectEvents" product="tv">Allows the app to deliver
-        its own input events (key presses, etc.) to other apps. Malicious
-        apps may use this to take over the TV.</string>
     <string name="permdesc_injectEvents" product="default">Allows the app to deliver
         its own input events (key presses, etc.) to other apps. Malicious
         apps may use this to take over the phone.</string>
@@ -372,8 +353,6 @@
     <string name="permdesc_signalPersistentProcesses">Allows the app to request that the
         supplied signal be sent to all persistent processes.</string>
     <string name="permlab_persistentActivity">make app always run</string>
-    <string name="permdesc_persistentActivity" product="tablet">Allows the app to make parts of itself persistent in memory.  This can limit memory available to other apps slowing down the tablet.</string>
-    <string name="permdesc_persistentActivity" product="tv">Allows the app to make parts of itself persistent in memory.  This can limit memory available to other apps slowing down the TV.</string>
     <string name="permdesc_persistentActivity" product="default">Allows the app to make parts of itself persistent in memory.  This can limit memory available to other apps slowing down the phone.</string>
     <string name="permlab_deletePackages">delete apps</string>
     <string name="permdesc_deletePackages">Allows the app to delete
@@ -390,26 +369,12 @@
         Android packages. Malicious apps may use this to add new apps with arbitrarily
         powerful permissions.</string>
     <string name="permlab_clearAppCache">delete all app cache data</string>
-    <string name="permdesc_clearAppCache" product="tablet">Allows the app to free tablet storage
-        by deleting files in the cache directories of other applications.  This may cause other
-        applications to start up more slowly as they need to re-retrieve their data.</string>
-    <string name="permdesc_clearAppCache" product="tv">Allows the app to free TV storage
-        by deleting files in the cache directories of other applications.  This may cause other
-        applications to start up more slowly as they need to re-retrieve their data.</string>
     <string name="permdesc_clearAppCache" product="default">Allows the app to free phone storage
         by deleting files in the cache directories of other applications.  This may cause other
         applications to start up more slowly as they need to re-retrieve their data.</string>
     <string name="permlab_movePackage">move app resources</string>
     <string name="permdesc_movePackage">Allows the app to move app resources from internal to external media and vice versa.</string>
     <string name="permlab_readLogs">read sensitive log data</string>
-    <string name="permdesc_readLogs" product="tablet">Allows the app to read from the
-        system\'s various log files.  This allows it to discover general
-        information about what you are doing with the tablet, potentially
-        including personal or private information.</string>
-    <string name="permdesc_readLogs" product="tv">Allows the app to read from the
-        system\'s various log files.  This allows it to discover general
-        information about what you are doing with the TV, potentially
-        including personal or private information.</string>
     <string name="permdesc_readLogs" product="default">Allows the app to read from the
         system\'s various log files.  This allows it to discover general
         information about what you are doing with the phone, potentially
@@ -427,16 +392,6 @@
     potentially affect system stability and security. This should be ONLY be used
     for hardware-specific diagnostics by the manufacturer or operator.</string>
     <string name="permlab_changeComponentState">enable or disable app components</string>
-    <string name="permdesc_changeComponentState" product="tablet">Allows the app to change whether a
-        component of another app is enabled or not. Malicious apps may use this
-        to disable important tablet capabilities. Care must be used with this permission, as it is
-        possible to get app components into an unusable, inconsistent, or unstable state.
-    </string>
-    <string name="permdesc_changeComponentState" product="tv">Allows the app to change whether a
-        component of another app is enabled or not. Malicious apps may use this
-        to disable important TV capabilities. Care must be used with this permission, as it is
-        possible to get app components into an unusable, inconsistent, or unstable state.
-    </string>
     <string name="permdesc_changeComponentState" product="default">Allows the app to change whether a
         component of another app is enabled or not. Malicious apps may use this
         to disable important phone capabilities. Care must be used with this permission, as it is
@@ -463,44 +418,16 @@
     <string name="permdesc_writeGservices">Allows the app to modify the
         Google services map.  Not for use by normal apps.</string>
     <string name="permlab_receiveBootCompleted">run at startup</string>
-    <string name="permdesc_receiveBootCompleted" product="tablet">Allows the app to
-        have itself started as soon as the system has finished booting.
-        This can make it take longer to start the tablet and allow the
-        app to slow down the overall tablet by always running.</string>
-    <string name="permdesc_receiveBootCompleted" product="tv">Allows the app to
-        have itself started as soon as the system has finished booting.
-        This can make it take longer to start the TV and allow the
-        app to slow down the overall tablet by always running.</string>
     <string name="permdesc_receiveBootCompleted" product="default">Allows the app to
         have itself started as soon as the system has finished booting.
         This can make it take longer to start the phone and allow the
         app to slow down the overall phone by always running.</string>
     <string name="permlab_broadcastSticky">send sticky broadcast</string>
-    <string name="permdesc_broadcastSticky" product="tablet">Allows the app to
-    send sticky broadcasts, which remain after the broadcast ends. Excessive use
-    may make the tablet slow or unstable by causing it to use too much memory.
-    </string>
-    <string name="permdesc_broadcastSticky" product="tv">Allows the app to
-    send sticky broadcasts, which remain after the broadcast ends. Excessive use
-    may make the TV slow or unstable by causing it to use too much memory.
-    </string>
     <string name="permdesc_broadcastSticky" product="default">Allows the app to
     send sticky broadcasts, which remain after the broadcast ends. Excessive
     use may make the phone slow or unstable by causing it to use too
     much memory.</string>
     <string name="permlab_readContacts">read your contacts</string>
-    <string name="permdesc_readContacts" product="tablet">Allows the app to read
-      data about your contacts stored on your tablet, including the frequency
-      with which you\'ve called, emailed, or communicated in other ways with
-      specific individuals. This permission allows apps to save your contact
-      data, and malicious apps may share contact data without your
-      knowledge.</string>
-    <string name="permdesc_readContacts" product="tv">Allows the app to read
-      data about your contacts stored on your TV, including the frequency
-      with which you\'ve called, emailed, or communicated in other ways with
-      specific individuals. This permission allows apps to save your contact
-      data, and malicious apps may share contact data without your
-      knowledge.</string>
     <string name="permdesc_readContacts" product="default">Allows the app to
       read data about your contacts stored on your phone, including the
       frequency with which you\'ve called, emailed, or communicated in other ways
@@ -508,41 +435,17 @@
       contact data, and malicious apps may share contact data without your
       knowledge.</string>
     <string name="permlab_writeContacts">modify your contacts</string>
-    <string name="permdesc_writeContacts" product="tablet">Allows the app to
-      modify the data about your contacts stored on your tablet, including the
-      frequency with which you\'ve called, emailed, or communicated in other ways
-      with specific contacts. This permission allows apps to delete contact
-      data.</string>
-    <string name="permdesc_writeContacts" product="tv">Allows the app to
-      modify the data about your contacts stored on your TV, including the
-      frequency with which you\'ve called, emailed, or communicated in other ways
-      with specific contacts. This permission allows apps to delete contact
-      data.</string>
     <string name="permdesc_writeContacts" product="default">Allows the app to
     modify the data about your contacts stored on your phone, including the
     frequency with which you\'ve called, emailed, or communicated in other ways
     with specific contacts. This permission allows apps to delete contact
     data.</string>
     <string name="permlab_readCallLog">read call log</string>
-    <string name="permdesc_readCallLog" product="tablet">Allows the app to read
-     your tablet\'s call log, including data about incoming and outgoing calls.
-     This permission allows apps to save your call log data, and malicious apps
-     may share call log data without your knowledge.</string>
-    <string name="permdesc_readCallLog" product="tv">Allows the app to read
-     your TV\'s call log, including data about incoming and outgoing calls.
-     This permission allows apps to save your call log data, and malicious apps
-     may share call log data without your knowledge.</string>
     <string name="permdesc_readCallLog" product="default">Allows the app to read
       your phone\'s call log, including data about incoming and outgoing calls.
       This permission allows apps to save your call log data, and malicious apps
       may share call log data without your knowledge.</string>
     <string name="permlab_writeCallLog">write call log</string>
-    <string name="permdesc_writeCallLog" product="tablet">Allows the app to modify your tablet\'s call log, including data about incoming and outgoing calls.
-        Malicious apps may use this to erase or modify your call log.</string>
-    <string name="permdesc_writeCallLog" product="tv">Allows the app to modify your TV\'s call log, including data about incoming and outgoing calls.
-        Malicious apps may use this to erase or modify your call log.</string>
-    <string name="permdesc_writeCallLog" product="default">Allows the app to modify your phone\'s call log, including data about incoming and outgoing calls.
-        Malicious apps may use this to erase or modify your call log.</string>
     <string name="permlab_readProfile">read your own contact card</string>
     <string name="permdesc_readProfile" product="default">Allows the app to read
      personal profile information stored on your device, such as your name and
@@ -571,29 +474,11 @@
      come from a friend. Note: this permission may not be enforced on all social
      networks.</string>
     <string name="permlab_readCalendar">read calendar events plus confidential information</string>
-    <string name="permdesc_readCalendar" product="tablet">Allows the app to read
-       all calendar events stored on your tablet, including those of friends or
-       co-workers. This may allow the app to share or save your calendar data,
-       regardless of confidentiality or sensitivity.</string>
-    <string name="permdesc_readCalendar" product="tv">Allows the app to read
-       all calendar events stored on your TV, including those of friends or
-       co-workers. This may allow the app to share or save your calendar data,
-       regardless of confidentiality or sensitivity.</string>
     <string name="permdesc_readCalendar" product="default">Allows the app to
        read all calendar events stored on your phone, including those of friends
        or co-workers. This may allow the app to share or save your calendar data,
        regardless of confidentiality or sensitivity.</string>
     <string name="permlab_writeCalendar">add or modify calendar events and send email to guests without owners\' knowledge</string>
-    <string name="permdesc_writeCalendar" product="tablet">Allows the app to
-        add, remove, change events that you can modify on your tablet, including
-        those of friends or co-workers. This may allow the app to send messages
-        that appear to come from calendar owners, or modify events without the
-        owners\' knowledge.</string>
-    <string name="permdesc_writeCalendar" product="tv">Allows the app to
-        add, remove, change events that you can modify on your TV, including
-        those of friends or co-workers. This may allow the app to send messages
-        that appear to come from calendar owners, or modify events without the
-        owners\' knowledge.</string>
     <string name="permdesc_writeCalendar" product="default">Allows the app to
         add, remove, change events that you can modify on your phone, including
         those of friends or co-workers. This may allow the app to send messages
@@ -669,27 +554,15 @@
       time without your confirmation.</string>
     <string name="permlab_cameraDisableTransmitLed">disable transmit indicator LED when camera is in use</string>
     <string name="permdesc_cameraDisableTransmitLed">Allows a pre-installed system application to disable the camera use indicator LED.</string>
-    <string name="permlab_brick" product="tablet">permanently disable tablet</string>
-    <string name="permlab_brick" product="tv">permanently disable TV</string>
     <string name="permlab_brick" product="default">permanently disable phone</string>
-    <string name="permdesc_brick" product="tablet">Allows the app to
-        disable the entire tablet permanently. This is very dangerous.</string>
-    <string name="permdesc_brick" product="tv">Allows the app to
-        disable the entire TV permanently. This is very dangerous.</string>
     <string name="permdesc_brick" product="default">Allows the app to
         disable the entire phone permanently. This is very dangerous.</string>
-    <string name="permlab_reboot" product="tablet">force tablet reboot</string>
-    <string name="permlab_reboot" product="tv">force TV reboot</string>
     <string name="permlab_reboot" product="default">force phone reboot</string>
-    <string name="permdesc_reboot" product="tablet">Allows the app to force the tablet to reboot.</string>
-    <string name="permdesc_reboot" product="tv">Allows the app to force the TV to reboot.</string>
     <string name="permdesc_reboot" product="default">Allows the app to force the phone to reboot.</string>
-    <string name="permlab_mount_unmount_filesystems" product="nosdcard">access USB storage filesystem</string>
-    <string name="permlab_mount_unmount_filesystems" product="default">access SD Card filesystem</string>
+    <string name="permlab_mount_unmount_filesystems" product="default">access SD Card / USB storage filesystem</string>
     <string name="permdesc_mount_unmount_filesystems">Allows the app to mount and
         unmount filesystems for removable storage.</string>
-    <string name="permlab_mount_format_filesystems" product="nosdcard">erase USB storage</string>
-    <string name="permlab_mount_format_filesystems" product="default">erase SD Card</string>
+    <string name="permlab_mount_format_filesystems" product="default">erase SD Card / USB storage</string>
     <string name="permdesc_mount_format_filesystems">Allows the app to format removable storage.</string>
     <string name="permlab_asec_access">get information on internal storage</string>
     <string name="permdesc_asec_access">Allows the app to get information on internal storage.</string>
@@ -725,8 +598,6 @@
         any phone number, including emergency numbers, without your intervention.
         Malicious apps may place unnecessary and illegal calls to emergency
         services.</string>
-    <string name="permlab_performCdmaProvisioning" product="tablet">directly start CDMA tablet setup</string>
-    <string name="permlab_performCdmaProvisioning" product="tv">directly start CDMA TV setup</string>
     <string name="permlab_performCdmaProvisioning" product="default">directly start CDMA phone setup</string>
     <string name="permdesc_performCdmaProvisioning">Allows the app to start CDMA provisioning.
         Malicious apps may unnecessarily start CDMA provisioning.</string>
@@ -757,32 +628,15 @@
       phone states.  This permission allows the app to determine the real
       call status, whether a call is active or in the background, call fails,
       precise data connection status and data connection fails.</string>
-    <string name="permlab_wakeLock" product="tablet">prevent tablet from sleeping</string>
-    <string name="permlab_wakeLock" product="tv">prevent TV from sleeping</string>
     <string name="permlab_wakeLock" product="default">prevent phone from sleeping</string>
-    <string name="permdesc_wakeLock" product="tablet">Allows the app to prevent the tablet from going to sleep.</string>
-    <string name="permdesc_wakeLock" product="tv">Allows the app to prevent the TV from going to sleep.</string>
     <string name="permdesc_wakeLock" product="default">Allows the app to prevent the phone from going to sleep.</string>
     <string name="permlab_transmitIr">transmit infrared</string>
-    <string name="permdesc_transmitIr" product="tablet">Allows the app to use the tablet\'s infrared transmitter.</string>
-    <string name="permdesc_transmitIr" product="tv">Allows the app to use the TV\'s infrared transmitter.</string>
     <string name="permdesc_transmitIr" product="default">Allows the app to use the phone\'s infrared transmitter.</string>
-    <string name="permlab_devicePower" product="tablet">power tablet on or off</string>
-    <string name="permlab_devicePower" product="tv">power TV on or off</string>
     <string name="permlab_devicePower" product="default">power phone on or off</string>
-    <string name="permdesc_devicePower" product="tablet">Allows the app to turn the
-        tablet on or off.</string>
-    <string name="permdesc_devicePower" product="tv">Allows the app to turn the
-        TV on or off.</string>
     <string name="permdesc_devicePower" product="default">Allows the app to turn the phone on or off.</string>
     <string name="permlab_userActivity">reset display timeout</string>
     <string name="permdesc_userActivity">Allows the app to reset the display timeout.</string>
     <string name="permlab_factoryTest">run in factory test mode</string>
-    <string name="permdesc_factoryTest" product="tablet">Run as a low-level manufacturer test,
-        allowing complete access to the tablet hardware. Only available
-        when a tablet is running in manufacturer test mode.</string>
-    <string name="permdesc_factoryTest" product="tv">Run as a low-level manufacturer test,
-        allowing complete access to the TV hardware. Only available
         when a TV is running in manufacturer test mode.</string>
     <string name="permdesc_factoryTest" product="default">Run as a low-level manufacturer test,
         allowing complete access to the phone hardware. Only available
@@ -796,22 +650,12 @@
         reset the system to its factory settings, erasing all data,
         configuration, and installed apps.</string>
     <string name="permlab_setTime">set time</string>
-    <string name="permdesc_setTime" product="tablet">Allows the app to change the tablet\'s clock time.</string>
-    <string name="permdesc_setTime" product="tv">Allows the app to change the TV\'s clock time.</string>
     <string name="permdesc_setTime" product="default">Allows the app to change the phone\'s clock time.</string>
     <string name="permlab_setTimeZone">set time zone</string>
-    <string name="permdesc_setTimeZone" product="tablet">Allows the app to change the tablet\'s time zone.</string>
-    <string name="permdesc_setTimeZone" product="tv">Allows the app to change the TV\'s time zone.</string>
     <string name="permdesc_setTimeZone" product="default">Allows the app to change the phone\'s time zone.</string>
     <string name="permlab_accountManagerService">act as the AccountManagerService</string>
     <string name="permdesc_accountManagerService">Allows the app to make calls to AccountAuthenticators.</string>
     <string name="permlab_getAccounts">find accounts on the device</string>
-    <string name="permdesc_getAccounts" product="tablet">Allows the app to get
-      the list of accounts known by the tablet.  This may include any accounts
-      created by applications you have installed.</string>
-    <string name="permdesc_getAccounts" product="tv">Allows the app to get
-      the list of accounts known by the TV.  This may include any accounts
-      created by applications you have installed.</string>
     <string name="permdesc_getAccounts" product="default">Allows the app to get
       the list of accounts known by the phone.  This may include any accounts
       created by applications you have installed.</string>
@@ -854,60 +698,28 @@
       disconnect from Wi-Fi access points and to make changes to device
       configuration for Wi-Fi networks.</string>
     <string name="permlab_changeWifiMulticastState">allow Wi-Fi Multicast reception</string>
-    <string name="permdesc_changeWifiMulticastState" product="tablet">Allows the app to receive
-      packets sent to all devices on a Wi-Fi network using multicast addresses,
-      not just your tablet.  It uses more power than the non-multicast mode.</string>
-    <string name="permdesc_changeWifiMulticastState" product="tv">Allows the app to receive
-      packets sent to all devices on a Wi-Fi network using multicast addresses,
-      not just your TV.  It uses more power than the non-multicast mode.</string>
     <string name="permdesc_changeWifiMulticastState" product="default">Allows the app to receive
       packets sent to all devices on a Wi-Fi network using multicast addresses,
       not just your phone.  It uses more power than the non-multicast mode.</string>
     <string name="permlab_bluetoothAdmin">access Bluetooth settings</string>
-    <string name="permdesc_bluetoothAdmin" product="tablet">Allows the app to
-      configure the local Bluetooth tablet, and to discover and pair with remote
-      devices.</string>
-    <string name="permdesc_bluetoothAdmin" product="tv">Allows the app to
-      configure the local Bluetooth TV, and to discover and pair with remote
-      devices.</string>
     <string name="permdesc_bluetoothAdmin" product="default">Allows the app to configure
       the local Bluetooth phone, and to discover and pair with remote devices.</string>
     <string name="permlab_bluetoothPriv">allow Bluetooth pairing by Application</string>
-    <string name="permdesc_bluetoothPriv" product="tablet">Allows the app to
-      pair with remote devices without user interaction.</string>
-    <string name="permdesc_bluetoothPriv" product="tv">Allows the app to
-      pair with remote devices without user interaction.</string>
     <string name="permdesc_bluetoothPriv" product="default">Allows the app to
       pair with remote devices without user interaction.</string>
     <string name="permlab_bluetoothMap">access Bluetooth MAP data</string>
-    <string name="permdesc_bluetoothMap" product="tablet">Allows the app to access Bluetooth MAP data.</string>
-    <string name="permdesc_bluetoothMap" product="tv">Allows the app to access Bluetooth MAP data.</string>
     <string name="permdesc_bluetoothMap" product="default">Allows the app to access Bluetooth MAP data.</string>
     <string name="permlab_accessWimaxState">connect and disconnect from WiMAX</string>
     <string name="permdesc_accessWimaxState">Allows the app to determine whether
      WiMAX is enabled and information about any WiMAX networks that are
      connected. </string>
     <string name="permlab_changeWimaxState">Change WiMAX state</string>
-    <string name="permdesc_changeWimaxState" product="tablet">Allows the app to
-      connect the tablet to and disconnect the tablet from WiMAX networks.</string>
-    <string name="permdesc_changeWimaxState" product="tv">Allows the app to
-      connect the TV to and disconnect the TV from WiMAX networks.</string>
     <string name="permdesc_changeWimaxState" product="default">Allows the app to
       connect the phone to and disconnect the phone from WiMAX networks.</string>
     <string name="permlab_scoreNetworks">score networks</string>
-    <string name="permdesc_scoreNetworks" product="tablet">Allows the app to
-      rank networks and influence which networks the tablet should prefer.</string>
-    <string name="permdesc_scoreNetworks" product="tv">Allows the app to
-      rank networks and influence which networks the TV should prefer.</string>
     <string name="permdesc_scoreNetworks" product="default">Allows the app to
         rank networks and influence which networks the phone should prefer.</string>
     <string name="permlab_bluetooth">pair with Bluetooth devices</string>
-    <string name="permdesc_bluetooth" product="tablet">Allows the app to view the
-      configuration of Bluetooth on the tablet, and to make and accept
-      connections with paired devices.</string>
-    <string name="permdesc_bluetooth" product="tv">Allows the app to view the
-      configuration of Bluetooth on the TV, and to make and accept
-      connections with paired devices.</string>
     <string name="permdesc_bluetooth" product="default">Allows the app to view the
       configuration of the Bluetooth on the phone, and to make and accept
       connections with paired devices.</string>
@@ -936,13 +748,9 @@
     <string name="permlab_writeDictionary">add words to user-defined dictionary</string>
     <string name="permdesc_writeDictionary">Allows the app to write new words into the
       user dictionary.</string>
-    <string name="permlab_sdcardRead" product="nosdcard">read the contents of your USB storage</string>
     <string name="permlab_sdcardRead" product="default">read the contents of your SD card</string>
-    <string name="permdesc_sdcardRead" product="nosdcard">Allows the app to read the contents of your USB storage.</string>
     <string name="permdesc_sdcardRead" product="default">Allows the app to read the contents of your SD card.</string>
-    <string name="permlab_sdcardWrite" product="nosdcard">modify or delete the contents of your USB storage</string>
     <string name="permlab_sdcardWrite" product="default">modify or delete the contents of your SD card</string>
-    <string name="permdesc_sdcardWrite" product="nosdcard">Allows the app to write to the USB storage.</string>
     <string name="permdesc_sdcardWrite" product="default">Allows the app to write to the SD card.</string>
     <string name="permlab_mediaStorageWrite" product="default">modify/delete internal media storage contents</string>
     <string name="permdesc_mediaStorageWrite" product="default">Allows the app to modify the contents of the internal media storage.</string>
@@ -1000,16 +808,6 @@
      bookmarks. Note: this permission may not be enforced by third-party
      browsers or other  applications with web browsing capabilities.</string>
     <string name="permlab_writeHistoryBookmarks">write web bookmarks and history</string>
-    <string name="permdesc_writeHistoryBookmarks" product="tablet">Allows the
-        app to modify the Browser\'s history or bookmarks stored on your tablet.
-        This may allow the app to erase or modify Browser data.  Note: this
-        permission may note be enforced by third-party browsers or other
-        applications with web browsing capabilities.</string>
-    <string name="permdesc_writeHistoryBookmarks" product="tv">Allows the
-        app to modify the Browser\'s history or bookmarks stored on your TV.
-        This may allow the app to erase or modify Browser data.  Note: this
-        permission may note be enforced by third-party browsers or other
-        applications with web browsing capabilities.</string>
     <string name="permdesc_writeHistoryBookmarks" product="default">Allows the
         app to modify the Browser\'s history or bookmarks stored on your phone.
         This may allow the app to erase or modify Browser data.  Note:

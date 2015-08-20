@@ -53,7 +53,6 @@ public enum Resource
 	STR_BTN_UNPACK_LAB			(Type.TEXT, "@btn_unpack_lab"),
 	STR_BTN_PACK_LAB			(Type.TEXT, "@btn_pack_lab"),
 	STR_BTN_INSTALL_LAB			(Type.TEXT, "@btn_install_lab"),
-	STR_BTN_PUSH_LAB			(Type.TEXT, "@btn_push_lab"),
 	STR_BTN_SETTING_LAB			(Type.TEXT, "@btn_setting_lab"),
 	STR_BTN_ABOUT_LAB			(Type.TEXT, "@btn_about_lab"),
 	

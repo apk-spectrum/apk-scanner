@@ -36,7 +36,7 @@
     <string name="menu_new_apk_file">새창으로 APK 파일 열기</string>
     <string name="menu_new_package">새창으로 패키지 열기</string>
     <string name="menu_apk_file">APK 파일 열기 (Ctrl+O)</string>
-    <string name="menu_package">패키지 열기 (Ctrl+P)</string>
+    <string name="menu_package">디바이스 패키지 열기 (Ctrl+P)</string>
     <string name="menu_install">설치 (Ctrl+I)</string>
     <string name="menu_check_installed">설치 유무 확인 (Ctrl+T)</string>
 
