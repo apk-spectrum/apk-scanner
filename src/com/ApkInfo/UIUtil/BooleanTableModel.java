@@ -4,12 +4,13 @@ import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
+import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UI.PackageTreeDlg.FrameworkTableObject;
 
 public class BooleanTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = -645265173724630402L;
 
-	String[] columns = {"", "device", "path"};
+	String[] columns = {"", Resource.STR_LABEL_DEVICE.getString(), Resource.STR_LABEL_PATH.getString()};
 
     ArrayList<FrameworkTableObject> arrayList;
     

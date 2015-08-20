@@ -598,7 +598,7 @@ public class PackageTreeDlg extends JPanel
 		ListPanel = makeListTable();
 		ListPanel.setVisible(false);
 		
-		checkboxUseframework = new JCheckBox("use framework apk???");
+		checkboxUseframework = new JCheckBox(Resource.STR_LABEL_USES_RESOURCE.getString());
 		checkboxUseframework.setSelected(false);
 		checkboxUseframework.addActionListener(new ActionListener() {
 			
@@ -1013,12 +1013,12 @@ public class PackageTreeDlg extends JPanel
 		table = new JTable();
 		//table.setPreferredScrollableViewportSize(table.getPreferredSize());
         //table.setFillsViewportHeight(true);
-		JButton addbtn= new JButton("add");
+		JButton addbtn= new JButton(Resource.STR_BTN_ADD.getString());
 		
 		addbtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	JFileChooser jfc = new JFileChooser();			
-    			jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("apk","apk"));							
+    			jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(Resource.STR_LABEL_APK_FILE_DESC.getString(),"apk"));							
     			
     			if(jfc.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
     				return;

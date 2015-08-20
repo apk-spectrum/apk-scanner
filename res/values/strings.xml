@@ -121,6 +121,9 @@
     <string name="label_search">Search</string>
     <string name="label_loading">Loading...</string>
     <string name="label_apk_file_description">Android Package(.apk)</string>
+    <string name="label_device">Device</string>
+    <string name="label_path">Path</string>
+    <string name="label_uses_resource">Uses framework resource files</string>
     
     <string name="msg_failure_open_apk">Sorry, Can not open the APK</string>
     <string name="msg_device_not_found">Device not found!

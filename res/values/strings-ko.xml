@@ -120,6 +120,9 @@
     <string name="label_search">검색</string>
     <string name="label_loading">로딩...</string>
     <string name="label_apk_file_description">안드로이드 패키지(.apk)</string>
+    <string name="label_device">디바이스</string>
+    <string name="label_path">경로</string>
+    <string name="label_uses_resource">프레임워크 리소스 파일 사용</string>
     
     <string name="msg_failure_open_apk">APK 파일을 열수 없습니다.</string>
     <string name="msg_device_not_found">장치를 찾을 수 없습니다.

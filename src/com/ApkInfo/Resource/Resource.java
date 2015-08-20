@@ -146,6 +146,9 @@ public enum Resource
 	STR_LABEL_SEARCH			(Type.TEXT, "@label_search"),
 	STR_LABEL_LOADING			(Type.TEXT, "@label_loading"),
 	STR_LABEL_APK_FILE_DESC		(Type.TEXT, "@label_apk_file_description"),
+	STR_LABEL_DEVICE			(Type.TEXT, "@label_device"),
+	STR_LABEL_PATH				(Type.TEXT, "@label_path"),
+	STR_LABEL_USES_RESOURCE		(Type.TEXT, "@label_uses_resource"),
 	
 	STR_MSG_FAILURE_OPEN_APK	(Type.TEXT, "@msg_failure_open_apk"),
 	STR_MSG_DEVICE_NOT_FOUND	(Type.TEXT, "@msg_device_not_found"),
