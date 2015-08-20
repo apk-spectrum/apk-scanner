@@ -366,7 +366,7 @@ public class PackageTreeDlg extends JPanel
       }
    }
     
-	private void uninstallApk(String deviceNum, String packageName, String apkPath)
+	private boolean uninstallApk(final String deviceNum, final String packageName, final String apkPath)
 	{
 		boolean isSystemApp = false;
 		if((apkPath != null && apkPath.matches("^/system/.*"))
@@ -375,17 +375,32 @@ public class PackageTreeDlg extends JPanel
 		}
 		
 		if(isSystemApp) {
-			AdbWrapper.removeApk(deviceNum, apkPath);
-			
-			final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
-			int reboot = ArrowTraversalPane.showOptionDialog(null, Resource.STR_QUESTION_REBOOT_DEVICE.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.YES_NO_OPTION, 
-					JOptionPane.QUESTION_MESSAGE, null, yesNoOptions, yesNoOptions[1]);
-			if(reboot == 0){
-				AdbWrapper.reboot(deviceNum);
+			if(AdbWrapper.hasRootPermission(deviceNum) != true) {
+				ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_DEVICE_HAS_NOT_ROOT.getString(), Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, Resource.IMG_WARNING.getImageIcon(),
+			    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
+				return false;
 			}
+
+			new Thread(new Runnable() {
+				public void run(){
+					AdbWrapper.removeApk(deviceNum, apkPath);
+					
+					final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
+					int reboot = ArrowTraversalPane.showOptionDialog(null, Resource.STR_QUESTION_REBOOT_DEVICE.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.YES_NO_OPTION, 
+							JOptionPane.QUESTION_MESSAGE, null, yesNoOptions, yesNoOptions[1]);
+					if(reboot == 0){
+						AdbWrapper.reboot(deviceNum);
+					}
+				}
+			}).start();
 		} else {
-			AdbWrapper.uninstallApk(deviceNum, packageName);
+			new Thread(new Runnable() {
+				public void run(){
+					AdbWrapper.uninstallApk(deviceNum, packageName);
+				}
+			}).start();
 		}
+		return true;
 	}
     
     private void makeTreeForm() {
@@ -899,28 +914,24 @@ public class PackageTreeDlg extends JPanel
 			System.out.println("node == null");
 			return;
 		}
+		
+		DeviceStatus deviceNode = getCurrentSelectedDevice();
+		PackageListObject tempObject = ((PackageListObject)node.getUserObject()); 
    		
-   		Thread t = new Thread(new Runnable() {
-			public void run(){
-		  		DeviceStatus deviceNode = null;
-				deviceNode = getCurrentSelectedDevice();
-				PackageListObject tempObject = ((PackageListObject)node.getUserObject()); 
-		   		System.out.println("remove :" + deviceNode.name  +","+ tempObject.apkPath);
-		   		
-		   		uninstallApk(deviceNode.name, tempObject.pacakge, tempObject.apkPath);
-			}
-		});
-   		t.start();
+		System.out.println("remove :" + deviceNode.name  +","+ tempObject.apkPath);
+   		boolean run = uninstallApk(deviceNode.name, tempObject.pacakge, tempObject.apkPath);
    		
-   		TreePath path = new TreePath(node.getPath());
-   		MutableTreeNode nodepath =(MutableTreeNode) path.getLastPathComponent();
-       	System.out.println("Trying to remove tree : "+nodepath.toString());
-       	MutableTreeNode parent=(MutableTreeNode)nodepath.getParent();
-       	
-       	parent.remove(nodepath);
-       	//FilteredTreeModel model=(FilteredTreeModel)tree.getModel();
-       	//model.nodesWereRemoved(parent,new int[]{index},null);
-       	tree.updateUI();
+   		if(run) {
+	   		TreePath path = new TreePath(node.getPath());
+	   		MutableTreeNode nodepath =(MutableTreeNode) path.getLastPathComponent();
+	       	System.out.println("Trying to remove tree : "+nodepath.toString());
+	       	MutableTreeNode parent=(MutableTreeNode)nodepath.getParent();
+	       	
+	       	parent.remove(nodepath);
+	       	//FilteredTreeModel model=(FilteredTreeModel)tree.getModel();
+	       	//model.nodesWereRemoved(parent,new int[]{index},null);
+	       	tree.updateUI();
+   		}
     }
     
     private void PullPackage() {

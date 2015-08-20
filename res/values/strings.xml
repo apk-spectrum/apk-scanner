@@ -131,6 +131,7 @@ Please check device.</string>
     <string name="msg_success_installed">Success...</string>
     <string name="msg_device_unauthorized">Device unauthorized. Please check the confirmation dialog on your device.</string>
     <string name="msg_device_unknown">device unknown</string>
+    <string name="msg_cannot_run_root">adbd cannot run as root in production builds</string>
 
     <string name="question_reboot_device">Restart device now?</string>
     <string name="question_continue_install">Continue install?</string>

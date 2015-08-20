@@ -155,6 +155,7 @@ public enum Resource
 	STR_MSG_SUCCESS_INSTALLED	(Type.TEXT, "@msg_success_installed"),
 	STR_MSG_DEVICE_UNAUTHORIZED	(Type.TEXT, "@msg_device_unauthorized"),
 	STR_MSG_DEVICE_UNKNOWN		(Type.TEXT, "@msg_device_unknown"),
+	STR_MSG_DEVICE_HAS_NOT_ROOT	(Type.TEXT, "@msg_cannot_run_root"),
 
 	STR_QUESTION_REBOOT_DEVICE	(Type.TEXT, "@question_reboot_device"),
 	STR_QUESTION_CONTINUE_INSTALL(Type.TEXT, "@question_continue_install"),
