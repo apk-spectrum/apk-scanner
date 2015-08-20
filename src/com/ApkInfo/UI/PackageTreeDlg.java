@@ -918,8 +918,8 @@ public class PackageTreeDlg extends JPanel
 		DeviceStatus deviceNode = getCurrentSelectedDevice();
 		PackageListObject tempObject = ((PackageListObject)node.getUserObject()); 
    		
-		System.out.println("remove :" + deviceNode.name  +","+ tempObject.apkPath);
-   		boolean run = uninstallApk(deviceNode.name, tempObject.pacakge, tempObject.apkPath);
+		System.out.println("remove :" + deviceNode.name  +","+ tempObject.codePath);
+   		boolean run = uninstallApk(deviceNode.name, tempObject.pacakge, tempObject.codePath);
    		
    		if(run) {
 	   		TreePath path = new TreePath(node.getPath());

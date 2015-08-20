@@ -7,7 +7,9 @@ import javax.swing.table.AbstractTableModel;
 import com.ApkInfo.UI.PackageTreeDlg.FrameworkTableObject;
 
 public class BooleanTableModel extends AbstractTableModel {
-    String[] columns = {"", "device", "path"};
+	private static final long serialVersionUID = -645265173724630402L;
+
+	String[] columns = {"", "device", "path"};
 
     ArrayList<FrameworkTableObject> arrayList;
     
