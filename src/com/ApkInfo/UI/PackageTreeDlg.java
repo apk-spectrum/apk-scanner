@@ -243,7 +243,7 @@ public class PackageTreeDlg extends JPanel
 				DefaultMutableTreeNode[] devTree = new DefaultMutableTreeNode[devList.length];
 				
 				if(devList.length == 0) {					
-					top.add(new DefaultMutableTreeNode(new String("Not found")));									
+					top.add(new DefaultMutableTreeNode(Resource.STR_MSG_DEVICE_NOT_FOUND.getString().replace("\n", " ")));									
 				}
 				for(int i = 0; i < devList.length; i++) {
 					devTree[i] = new DefaultMutableTreeNode(devList[i]);
