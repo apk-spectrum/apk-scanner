@@ -366,6 +366,28 @@ public class PackageTreeDlg extends JPanel
       }
    }
     
+	private void uninstallApk(String deviceNum, String packageName, String apkPath)
+	{
+		boolean isSystemApp = false;
+		if((apkPath != null && apkPath.matches("^/system/.*"))
+				|| (apkPath != null && apkPath.matches("^/system/.*"))) {
+			isSystemApp = true;
+		}
+		
+		if(isSystemApp) {
+			AdbWrapper.removeApk(deviceNum, apkPath);
+			
+			final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
+			int reboot = ArrowTraversalPane.showOptionDialog(null, Resource.STR_QUESTION_REBOOT_DEVICE.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.YES_NO_OPTION, 
+					JOptionPane.QUESTION_MESSAGE, null, yesNoOptions, yesNoOptions[1]);
+			if(reboot == 0){
+				AdbWrapper.reboot(deviceNum);
+			}
+		} else {
+			AdbWrapper.uninstallApk(deviceNum, packageName);
+		}
+	}
+    
     private void makeTreeForm() {
         //Create the nodes.
         top =
@@ -471,8 +493,8 @@ public class PackageTreeDlg extends JPanel
         tree.addTreeSelectionListener(this);
  
         tree.setCellRenderer(new DefaultTreeCellRenderer() {
-        	        	
-        	private ImageIcon iconApk = Resource.IMG_TREE_APK.getImageIcon();
+			private static final long serialVersionUID = 6248791058116909814L;
+			private ImageIcon iconApk = Resource.IMG_TREE_APK.getImageIcon();
         	private ImageIcon iconDevice = Resource.IMG_TREE_DEVICE.getImageIcon();
         	private ImageIcon iconTop = Resource.IMG_TREE_TOP.getImageIcon();
         	private ImageIcon iconFolder = Resource.IMG_TREE_FOLDER.getImageIcon();
@@ -885,7 +907,7 @@ public class PackageTreeDlg extends JPanel
 				PackageListObject tempObject = ((PackageListObject)node.getUserObject()); 
 		   		System.out.println("remove :" + deviceNode.name  +","+ tempObject.apkPath);
 		   		
-				AdbWrapper.uninstallApk(deviceNode.name, tempObject.pacakge);
+		   		uninstallApk(deviceNode.name, tempObject.pacakge, tempObject.apkPath);
 			}
 		});
    		t.start();
