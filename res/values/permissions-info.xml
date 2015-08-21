@@ -446,6 +446,8 @@
       This permission allows apps to save your call log data, and malicious apps
       may share call log data without your knowledge.</string>
     <string name="permlab_writeCallLog">write call log</string>
+    <string name="permdesc_writeCallLog" product="default">Allows the app to modify your phone\'s call log, including data about incoming and outgoing calls.
+        Malicious apps may use this to erase or modify your call log.</string>
     <string name="permlab_readProfile">read your own contact card</string>
     <string name="permdesc_readProfile" product="default">Allows the app to read
      personal profile information stored on your device, such as your name and
@@ -637,7 +639,6 @@
     <string name="permlab_userActivity">reset display timeout</string>
     <string name="permdesc_userActivity">Allows the app to reset the display timeout.</string>
     <string name="permlab_factoryTest">run in factory test mode</string>
-        when a TV is running in manufacturer test mode.</string>
     <string name="permdesc_factoryTest" product="default">Run as a low-level manufacturer test,
         allowing complete access to the phone hardware. Only available
         when a phone is running in manufacturer test mode.</string>
