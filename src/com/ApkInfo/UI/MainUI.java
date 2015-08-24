@@ -228,7 +228,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 			String classPath = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
 			String libPath = Resource.LIB_JSON_JAR.getPath();
 			classPath = URLDecoder.decode(classPath, "UTF-8");
-			Runtime.getRuntime().exec(new String[] {"java", "-Dfile.encoding=utf-8", "-cp", classPath + ";" + libPath, MainUI.class.getName(), apkFile});
+			Runtime.getRuntime().exec(new String[] {"java", "-Dfile.encoding=utf-8", "-cp", classPath + File.pathSeparator + libPath, MainUI.class.getName(), apkFile});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -241,7 +241,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 			String libPath = Resource.LIB_JSON_JAR.getPath();
 			classPath = URLDecoder.decode(classPath, "UTF-8");
 			if(frameworkRes == null || frameworkRes.isEmpty()) frameworkRes = "null";
-			Runtime.getRuntime().exec(new String[] {"java", "-Dfile.encoding=utf-8", "-cp", classPath + ";" + libPath, MainUI.class.getName(), "@package", device, apkPath, frameworkRes});
+			Runtime.getRuntime().exec(new String[] {"java", "-Dfile.encoding=utf-8", "-cp", classPath + File.pathSeparator + libPath, MainUI.class.getName(), "@package", device, apkPath, frameworkRes});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
