@@ -57,7 +57,8 @@ if not exist "%APP_PATH%" (
 rem --- 파일 복사 ---
 copy /Y %SRC_PATH%\ApkScanner.exe "%APP_PATH%"
 copy /Y %SRC_PATH%\APKInfoDlg.jar "%APP_PATH%"
-copy /Y %SRC_PATH%\tool\apktool.jar "%APP_PATH%\tool"
+copy /Y %SRC_PATH%\lib\apktool.jar "%APP_PATH%\tool"
+copy /Y %SRC_PATH%\lib\json-simple-1.1.1.jar "%APP_PATH%\tool"
 copy /Y %SRC_PATH%\tool\adb.exe "%APP_PATH%\tool"
 copy /Y %SRC_PATH%\tool\AdbWinApi.dll "%APP_PATH%\tool"
 copy /Y %SRC_PATH%\tool\AdbWinUsbApi.dll "%APP_PATH%\tool"
