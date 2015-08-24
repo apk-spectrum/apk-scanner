@@ -38,6 +38,7 @@ public class ApkManager
 		public String Permissions = null;
 		public String Startup = null;
 		public String ProtectionLevel = null;
+		public boolean debuggable = false; 
 		public String SharedUserId = null;
 		public String ApkSize = null;
 		public String CertSummary = null;
@@ -356,7 +357,9 @@ public class ApkManager
 			xmlAndroidManifest.getNode("/manifest/application");
 			mApkInfo.Labelname = getMutiLang(xmlAndroidManifest.getAttributes("android:label"));
 			mApkInfo.IconPath = getResourceInfo(xmlAndroidManifest.getAttributes("android:icon"));
-
+			
+			String debuggable = xmlAndroidManifest.getAttributes("android:debuggable");
+			mApkInfo.debuggable = debuggable != null && debuggable.toLowerCase().equals("true");
 	        
 	        // hidden
 	        if(!xmlAndroidManifest.isNode("//category[@name='android.intent.category.LAUNCHER']")) {

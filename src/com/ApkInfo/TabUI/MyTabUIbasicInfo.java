@@ -137,6 +137,9 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
         if(!apkInfo.SharedUserId.isEmpty()) {
         	feature += ", " + makeHyperLink("", Resource.STR_FEATURE_SHAREDUSERID_LAB.getString(), Resource.STR_FEATURE_SHAREDUSERID_DESC.getString(), null);
         }
+        if(apkInfo.debuggable) {
+        	feature += ", " + makeHyperLink("", Resource.STR_FEATURE_DEBUGGABLE_LAB.getString(), Resource.STR_FEATURE_DEBUGGABLE_DESC.getString(), null);
+        }
         
         String permGorupImg = makePermGroup();
 		

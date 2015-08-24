@@ -21,7 +21,7 @@ import com.ApkInfo.Core.MyXPath;
 public enum Resource
 {
 	STR_APP_NAME				(Type.TEXT, "@app_name"),
-	STR_APP_VERSION				(Type.TEXT, "2.0 beta 20150821"),
+	STR_APP_VERSION				(Type.TEXT, "2.0 beta 20150824"),
 	STR_APP_MAKER				(Type.TEXT, "jin_h.lee / sunggyu.kam"),
 	STR_APP_MAKER_EMAIL			(Type.TEXT, "jin_h.lee@samsung.com;sunggyu.kam@samsung.com"),
 
@@ -88,6 +88,8 @@ public enum Resource
 	STR_FEATURE_SIGNATURE_DESC	(Type.TEXT, "@feature_signature_desc"),
 	STR_FEATURE_SHAREDUSERID_LAB  (Type.TEXT, "@feature_shared_user_id_lab"),
 	STR_FEATURE_SHAREDUSERID_DESC (Type.TEXT, "@feature_shared_user_id_desc"),
+	STR_FEATURE_DEBUGGABLE_LAB  (Type.TEXT, "@feature_debuggable_lab"),
+	STR_FEATURE_DEBUGGABLE_DESC (Type.TEXT, "@feature_debuggable_desc"),
 
 	STR_WIDGET_COLUMN_IMAGE		(Type.TEXT, "@widget_column_image"),
 	STR_WIDGET_COLUMN_LABEL		(Type.TEXT, "@widget_column_label"),

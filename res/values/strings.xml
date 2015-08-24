@@ -65,6 +65,8 @@
     <string name="feature_signature_desc">SIGNATURE</string>
     <string name="feature_shared_user_id_lab">SHARED_USER_ID</string>
     <string name="feature_shared_user_id_desc">SHARED_USER_ID</string>
+    <string name="feature_debuggable_lab">DEBUGGABLE</string>
+    <string name="feature_debuggable_desc">Whether or not the application can be debugged, even when running on a device in user mode.</string>
     
     <string name="widget_column_image">Image</string>
     <string name="widget_column_label">Label</string>
