@@ -2,6 +2,8 @@
 
 APP_PATH="/opt/APKScanner"
 APP_FILE="APKInfoDlg.jar"
+LIB_PATH="$APP_PATH/lib/json-simple-1.1.1.jar"
+MAIN_CLASS="com.ApkInfo.UI.MainUI"
 
 
 # java 버전 확인
@@ -22,8 +24,10 @@ cat << EOF > ./APKScanner.sh
 
 APP_PATH="/opt/APKScanner"
 APP_FILE="APKInfoDlg.jar"
+LIB_PATH="$APP_PATH/lib/json-simple-1.1.1.jar"
+MAIN_CLASS="com.ApkInfo.UI.MainUI"
 
-java -jar $APP_PATH/$APP_FILE \$* > /dev/null 2&>1
+java -classpath $APP_PATH/$APP_FILE:$LIB_PATH: $MAIN_CLASS \$* > /dev/null 2&>1
 EOF
 
 jar -xf APKInfoDlg.jar icons/AppIcon.png
@@ -62,7 +66,7 @@ cat << EOF > ./apkscanner.desktop
 Encoding=UTF-8
 Version=1.0
 Type=Application
-Exec=java -jar $APP_PATH/$APP_FILE %f
+Exec=java -classpath $APP_PATH/$APP_FILE:$LIB_PATH: $MAIN_CLASS %f
 Name=APK Scanner
 Comment=APK Scanner
 Icon=$APP_PATH/icons/AppIcon.png
