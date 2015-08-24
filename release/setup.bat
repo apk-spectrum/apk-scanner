@@ -49,6 +49,10 @@ if not exist "%APP_PATH%\data" (
      echo Create folder : %APP_PATH%\data
      mkdir "%APP_PATH%\data"
 )
+if not exist "%APP_PATH%\lib" (
+     echo Create folder : %APP_PATH%\lib
+     mkdir "%APP_PATH%\lib"
+)
 if not exist "%APP_PATH%" (
     echo Fail : Not create the folder : %APP_PATH%
     goto exit
@@ -57,8 +61,8 @@ if not exist "%APP_PATH%" (
 rem --- 파일 복사 ---
 copy /Y %SRC_PATH%\ApkScanner.exe "%APP_PATH%"
 copy /Y %SRC_PATH%\APKInfoDlg.jar "%APP_PATH%"
-copy /Y %SRC_PATH%\lib\apktool.jar "%APP_PATH%\tool"
-copy /Y %SRC_PATH%\lib\json-simple-1.1.1.jar "%APP_PATH%\tool"
+copy /Y %SRC_PATH%\lib\apktool.jar "%APP_PATH%\lib"
+copy /Y %SRC_PATH%\lib\json-simple-1.1.1.jar "%APP_PATH%\lib"
 copy /Y %SRC_PATH%\tool\adb.exe "%APP_PATH%\tool"
 copy /Y %SRC_PATH%\tool\AdbWinApi.dll "%APP_PATH%\tool"
 copy /Y %SRC_PATH%\tool\AdbWinUsbApi.dll "%APP_PATH%\tool"
