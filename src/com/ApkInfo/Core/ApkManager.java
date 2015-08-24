@@ -193,7 +193,7 @@ public class ApkManager
 	static public String getApkToolVersion()
 	{
 		if(ApktoolVer == null) {
-			String apkToolPath = Resource.BIN_APKTOOL_JAR.getPath();
+			String apkToolPath = Resource.LIB_APKTOOL_JAR.getPath();
 			if(!(new File(apkToolPath)).exists()) {
 				System.out.println("No such file : apktool.jar");
 				return null;
@@ -282,7 +282,7 @@ public class ApkManager
 		
 		private boolean solveAPK(String APKFilePath, String solvePath)
 		{
-			String apkToolPath = Resource.BIN_APKTOOL_JAR.getPath();
+			String apkToolPath = Resource.LIB_APKTOOL_JAR.getPath();
 			System.out.println("apkToolPath : " + apkToolPath);
 
 			if(!(new File(apkToolPath)).exists()) {

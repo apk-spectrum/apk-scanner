@@ -2,7 +2,6 @@ package com.ApkInfo.Resource;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,7 +14,6 @@ import javax.swing.ImageIcon;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import com.ApkInfo.Core.CoreApkTool;
 import com.ApkInfo.Core.MyXPath;
@@ -205,7 +203,8 @@ public enum Resource
 	
 	BIN_ADB_LNX					(Type.BIN, "adb"),
 	BIN_ADB_WIN					(Type.BIN, "adb.exe"),
-	BIN_APKTOOL_JAR				(Type.BIN, "apktool.jar"),
+	BIN_AAPT_LNX				(Type.BIN, "aapt"),
+	BIN_AAPT_WIN				(Type.BIN, "aapt.exe"),
 
 	PROP_EDITOR					(Type.PROP, "editor"),
 	PROP_FRAMEWORK_RES			(Type.PROP, "framewokr-res"),
@@ -215,12 +214,16 @@ public enum Resource
 	PROP_LAST_FILE_OPEN_PATH	(Type.PROP, "last_file_open_path"),
 	PROP_LAST_FILE_SAVE_PATH	(Type.PROP, "last_file_save_path"),
 	
+	LIB_JSON_JAR				(Type.LIB, "json-simple-1.1.1.jar"),
+	LIB_APKTOOL_JAR				(Type.LIB, "apktool.jar"),
+	
 	ETC_SETTINGS_FILE			(Type.ETC, "settings.txt");
 	
 	private enum Type {
 		IMAGE,
 		TEXT,
 		BIN,
+		LIB,
 		PROP,
 		ETC
 	}
@@ -228,7 +231,7 @@ public enum Resource
 	private String value;
 	private Type type;
 
-	private static JSONObject property;
+	private static JSONObject property = null;
 	private static String lang = null;
 
 	public static void setLanguage(String l) { lang = l; }
@@ -253,6 +256,9 @@ public enum Resource
 			return getClass().getResource("/icons/" + value).toString();
 		case BIN:
 			subPath = File.separator + "tool";
+			break;
+		case LIB:
+			subPath = File.separator + "lib";
 			break;
 		case ETC:
 			subPath = "";
@@ -329,7 +335,7 @@ public enum Resource
 
 		return value;
 	}
-	
+
 	static private void loadProperty()
 	{
 		if(property == null) {
@@ -341,11 +347,7 @@ public enum Resource
 				property = (JSONObject)parser.parse(fileReader);
 
 				fileReader.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (ParseException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
