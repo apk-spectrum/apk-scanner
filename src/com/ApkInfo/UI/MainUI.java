@@ -12,6 +12,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -59,7 +61,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 	static private boolean exiting = false;
 	
 	public static void openApk(final String apkPath, String frameworkRes, boolean isPackage) {
-		//System.out.println("target file :" + apkPath);
+		//Log.i("target file :" + apkPath);
 		if(mApkManager != null)
 			mApkManager.clear(false, null);
 
@@ -68,13 +70,14 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 		mApkManager.solve(SolveType.RESOURCE, new StatusListener(){
 			@Override
 			public void OnStart() {
-				//System.out.println("ApkCore.OnStart()");
+				//Log.i("ApkCore.OnStart()");
 				frame.setVisible(false);
+				Log.i("openApk start");
 			}
 
 			@Override
 			public void OnSuccess() {
-				//System.out.println("ApkCore.OnSuccess()");
+				//Log.i("ApkCore.OnSuccess()");
 				if(exiting) return;
 				
 				mMyToolBarUI.setEnabledAt(ButtonId.NEED_TARGET_APK, true);
@@ -111,12 +114,12 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 
 			@Override
 			public void OnComplete() {
-				//System.out.println("ApkCore.OnComplete()");
+				//Log.i("ApkCore.OnComplete()");
 			}
 
 			@Override
 			public void OnProgress(int step, String msg) {
-				//System.out.println("ApkCore.OnProgress() " + step + ",  " + msg);
+				//Log.i("ApkCore.OnProgress() " + step + ",  " + msg);
 				if(exiting) return;
 				
 				ProgressBarDlg.addProgress(step, msg);
@@ -124,7 +127,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 
 			@Override
 			public void OnStateChange() {
-				//System.out.println("ApkCore.OnStateChange()");
+				//Log.i("ApkCore.OnStateChange()");
 			}
 		});
 	}
@@ -183,7 +186,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 				}
 			}
 
-			//System.out.println(tmpPath);
+			//Log.i(tmpPath);
 			ProgressBarDlg.addProgress(1, "I: start to pull apk " + apkPath + "\n");
 			AdbWrapper.PullApk(device, apkPath, tmpPath, this);
 		}
@@ -193,7 +196,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 				tempApkPath = null;
 				return;
 			}
-			//System.out.println("Target APK : " + tempApkPath);
+			//Log.i("Target APK : " + tempApkPath);
 			//frame.setVisible(false);
 			openApk(tempApkPath, frameworkRes, true);
 		}
@@ -509,6 +512,18 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 				case KeyEvent.VK_F1:
 					showAbout();
 					break;
+				case KeyEvent.VK_F11:
+					JTextArea taskOutput = new JTextArea();
+					taskOutput.setText(Log.getLog());
+					taskOutput.setEditable(false);
+					taskOutput.setCaretPosition(0);
+					
+					JScrollPane scrollPane = new JScrollPane(taskOutput);
+					scrollPane.setPreferredSize(new Dimension(600, 400));
+
+					JOptionPane.showOptionDialog(null, scrollPane, Resource.STR_LABEL_LOG.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, null,
+				    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
+					break;
 				default:
 					return false;
 				}
@@ -523,7 +538,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 	{
 		try {   
     		//text.append( files[i].getCanonicalPath() + "\n" );
-    		//System.out.println(files[0].getCanonicalPath() + "\n");
+    		//Log.i(files[0].getCanonicalPath() + "\n");
 
     		ProgressBarDlg.init();
 			WaitingDlg.setVisible(true);
@@ -531,7 +546,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
         }   // end try
         catch( java.io.IOException e ) {}
 	}
-	
+
 	public static void setLanguage(String lang)
 	{
 		Resource.setLanguage(lang);
@@ -552,6 +567,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 		WaitingDlg.setVisible(false);
 		if(mApkManager != null)
 			mApkManager.clear(true, null);
+		Log.saveLogFile("savelog.txt");
 	}
 
 	/**
@@ -559,13 +575,15 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 	 */
 	public static void main(final String[] args)
 	{
+		if(Resource.STR_APP_BUILD_MODE.getString().equals("user"))
+			Log.enableConsoleLog(false);
+		
+		Log.i(Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString());
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				
+
 				String Osname = System.getProperty("os.name");
-				System.out.println("OS : " + Osname);
-				//System.out.println("java.io.tmpdir : " + System.getProperty("java.io.tmpdir"));
-				//System.out.println("user.dir : " + System.getProperty("user.dir"));
+				Log.i("OS : " + Osname);
 				
 				String apkPath = null;
 				if(args.length > 0)
@@ -590,7 +608,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 						}
 						new PackageOpen(args[1], args[2], res);
 					} else {
-						System.out.println("Target APK : " + apkPath);
+						Log.i("Target APK : " + apkPath);
 						//frame.setVisible(false);
 						openApk(apkPath, (String)Resource.PROP_FRAMEWORK_RES.getData(), false);
 					}
@@ -615,8 +633,9 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 	/**
 	 * Create the application.
 	 */
-	public MainUI() {
-		//initialize();
+	public MainUI()
+	{
+		
 	}
 
 	/**
