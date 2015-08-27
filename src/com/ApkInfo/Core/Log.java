@@ -10,6 +10,7 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import java.util.logging.StreamHandler;
 
 
@@ -22,7 +23,8 @@ public class Log
 	static private ByteArrayOutputStream logOutputStream;
 	static private boolean enableConsoleHandler = true; 
 
-	static public enum Level {
+	static public enum Level
+	{
 		ALL(java.util.logging.Level.ALL, ' '),
 		VERBOSE(java.util.logging.Level.FINEST, 'V'),
 		DEBUG(java.util.logging.Level.FINE, 'D'),
@@ -144,7 +146,7 @@ public class Log
 		
 		Formatter ft = new LogFormatter();
 
-		consoleHandler = new ConsoleHandler();
+		consoleHandler = new ConsoleHandlerToStdout();
 		consoleHandler.setFormatter(ft);
 		consoleHandler.setLevel(Level.ALL.getLoggerLevel());
 		logger.addHandler(consoleHandler);
@@ -170,6 +172,24 @@ public class Log
 		public String format(LogRecord rec) {
 			return String.format("%s %03d %c %s\n", dateFormat.format(new Date(rec.getMillis())), rec.getThreadID(), Level.getAcronym(rec.getLevel()), rec.getMessage());
 		}
+	}
+	
+	static private class ConsoleHandlerToStdout extends ConsoleHandler {
+		public ConsoleHandlerToStdout() {
+			super();
+			this.setOutputStream(System.out);
+		}
+	}
+	
+	@SuppressWarnings("unused")
+	static private class MyConsoleHandler extends StreamHandler {           
+	    private java.util.logging.Formatter formatter = new SimpleFormatter();
+	     public void publish(LogRecord record){      
+	         if(record.getLevel().intValue() < java.util.logging.Level.WARNING.intValue())
+	             System.out.println(formatter.formatMessage(record));            
+	         else
+	             System.err.println(formatter.format(record));
+	     }
 	}
 
 }
