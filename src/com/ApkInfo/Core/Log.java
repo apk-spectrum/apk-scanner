@@ -169,7 +169,13 @@ public class Log
 	{
 		@Override
 		public String format(LogRecord rec) {
-			return String.format("%s %03d %c %s\n", dateFormat.format(new Date(rec.getMillis())), rec.getThreadID(), Level.getAcronym(rec.getLevel()), rec.getMessage());
+			String head = String.format("%s %03d %c ", dateFormat.format(new Date(rec.getMillis())), rec.getThreadID(), Level.getAcronym(rec.getLevel()));
+			String msg = rec.getMessage();
+			if(msg.indexOf("\n") > -1) {
+				String tag = String.format("%" + msg.indexOf(":") + "s", "") + ": ";
+				msg = msg.replaceAll("\n", "\n" + head + tag);
+			}
+			return head + msg + "\n";
 		}
 	}
 	
