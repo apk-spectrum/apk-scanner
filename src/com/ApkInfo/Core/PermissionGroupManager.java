@@ -35,9 +35,9 @@ public class PermissionGroupManager {
 	{
 		String lang = Resource.getLanguage();
 		
-		//System.out.println(getClass().getResource("/values/permissions.xml"));
-		//System.out.println(getClass().getResource("/values/permissions-info.xml"));
-		//System.out.println(getClass().getResource("/values/permissions-info-" + lang + ".xml"));
+		//Log.i(getClass().getResource("/values/permissions.xml"));
+		//Log.i(getClass().getResource("/values/permissions-info.xml"));
+		//Log.i(getClass().getResource("/values/permissions-info-" + lang + ".xml"));
 
 		xmlPermissions = new MyXPath(getClass().getResourceAsStream("/values/permissions.xml"));
 		xmlPermInfoDefault = new MyXPath(getClass().getResourceAsStream("/values/permissions-info.xml"));
@@ -92,7 +92,7 @@ public class PermissionGroupManager {
 				if(permInfo.desc != null) permInfo.desc = permInfo.desc.replaceAll("\"", "");
 			}
 		}
-		//System.out.println(permInfo.permission + ", " + permInfo.permGroup + ", " + permInfo.label + ", " + permInfo.desc);
+		//Log.i(permInfo.permission + ", " + permInfo.permGroup + ", " + permInfo.label + ", " + permInfo.desc);
 		return permInfo;
 	}
 	
@@ -118,7 +118,7 @@ public class PermissionGroupManager {
 			permGroup.permSummary = "[" + permGroup.permGroup + "]";
 		}
 		
-		//System.out.println(permGroup.icon + ", " + permGroup.permGroup + ", " + permGroup.label + ", " + permGroup.desc);
+		//Log.i(permGroup.icon + ", " + permGroup.permGroup + ", " + permGroup.label + ", " + permGroup.desc);
 		return permGroup;
 	}
 	

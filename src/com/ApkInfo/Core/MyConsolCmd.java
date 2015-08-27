@@ -38,7 +38,7 @@ public class MyConsolCmd
 		List<String> buffer = new ArrayList<String>(); 
 		
 		if(showLog) {
-			System.out.println(echoCmd(cmd));
+			Log.i(echoCmd(cmd));
 		}
     	if(observer != null) {
     		observer.ConsolOutput(echoCmd(cmd));
@@ -49,7 +49,7 @@ public class MyConsolCmd
 		    BufferedReader stdOut = new BufferedReader(new InputStreamReader(oProcess.getInputStream()/*, encoding*/));
 		    
 		    while ((s = stdOut.readLine()) != null) {
-		    	if(showLog) System.out.println(s);
+		    	if(showLog) Log.i(s);
 		    	if(observer != null) {
 		    		multiCmdExit = !observer.ConsolOutput(s) || multiCmdExit;
 		    	}

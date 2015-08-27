@@ -166,7 +166,7 @@ public class ApkManager
 		File apkFile = new File(apkPath);
 
 		if(!apkFile.exists()) {
-			System.out.println("No Such APK file");
+			Log.e("No Such APK file");
 			return;
 		}
 		apkPath = apkFile.getAbsolutePath();
@@ -184,7 +184,7 @@ public class ApkManager
 			if(file.isEmpty()) continue;
 			File resFile = new File(file);
 			if(!resFile.exists()) {
-				System.out.println("No Such res file : " + file);
+				Log.w("No Such res file : " + file);
 				continue;
 			}
 			mFrameworkResList.add(resFile.getAbsolutePath());
@@ -196,7 +196,7 @@ public class ApkManager
 		if(ApktoolVer == null) {
 			String apkToolPath = Resource.LIB_APKTOOL_JAR.getPath();
 			if(!(new File(apkToolPath)).exists()) {
-				System.out.println("No such file : apktool.jar");
+				Log.e("No such file : apktool.jar");
 				return null;
 			}
 			String[] result = MyConsolCmd.exc(new String[] {"java", "-jar", apkToolPath, "--version"}, false);
@@ -209,7 +209,7 @@ public class ApkManager
 	public void solve(SolveType type, StatusListener listener)
 	{
 		if(mApkInfo.ApkPath == null) return;
-		//System.out.println("solve()....start ");
+		//Log.i("solve()....start ");
 		synchronized(this) {
 			mProcess = new ProcessThead(this, ProcessCmd.SOLVE_RESOURCE, listener);
 			mProcess.start();
@@ -221,12 +221,12 @@ public class ApkManager
 				e.printStackTrace();
 			}
 		}
-		//System.out.println("solve()....end ");
+		//Log.i("solve()....end ");
 	}
 
 	public void clear(boolean wait, StatusListener listener)
 	{
-		//System.out.println("clear()....start ");
+		//Log.i("clear()....start ");
 		mProcess = new ProcessThead(this, ProcessCmd.DELETE_TEMP_PATH, listener);
 		synchronized(this) {
 			mProcess.start();
@@ -243,7 +243,7 @@ public class ApkManager
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		//System.out.println("clear()....end ");
+		//Log.i("clear()....end ");
 	}
 	
 	public final ApkInfo getApkInfo()
@@ -265,7 +265,7 @@ public class ApkManager
 		private boolean solve()
 		{
 			mApkInfo.WorkTempPath = CoreApkTool.makeTempPath(mApkInfo.ApkPath);
-			System.out.println("Temp path : " + mApkInfo.WorkTempPath);
+			Log.i("Temp path : " + mApkInfo.WorkTempPath);
 
 			mApkInfo.ApkSize = CoreApkTool.getFileSize((new File(mApkInfo.ApkPath)), FSStyle.FULL);
 			
@@ -284,10 +284,10 @@ public class ApkManager
 		private boolean solveAPK(String APKFilePath, String solvePath)
 		{
 			String apkToolPath = Resource.LIB_APKTOOL_JAR.getPath();
-			System.out.println("apkToolPath : " + apkToolPath);
+			Log.i("apkToolPath : " + apkToolPath);
 
 			if(!(new File(apkToolPath)).exists()) {
-				System.out.println("No such file : apktool.jar");
+				Log.i("No such file : apktool.jar");
 				return false;
 			}
 
@@ -405,7 +405,7 @@ public class ApkManager
 	        // widget
 	        progress(5,"parsing widget...\n");
 	        xmlAndroidManifest.getNodeList("//meta-data[@name='android.appwidget.provider']");
-	        //System.out.println("Normal widgetList cnt = " + xmlAndroidManifest.getLength());
+	        //Log.i("Normal widgetList cnt = " + xmlAndroidManifest.getLength());
 	        for( int idx=0; idx < xmlAndroidManifest.getLength(); idx++ ){
 	        	Object[] widgetExtraInfo = {mApkInfo.IconPath, ""};
 	        	
@@ -421,7 +421,7 @@ public class ApkManager
 	        }
 	        
 	        xmlAndroidManifest.getNodeList("//action[@name='android.intent.action.CREATE_SHORTCUT']");
-	        //System.out.println("Shortcut widgetList cnt = " + xmlAndroidManifest.getLength());
+	        //Log.i("Shortcut widgetList cnt = " + xmlAndroidManifest.getLength());
 	        for( int idx=0; idx < xmlAndroidManifest.getLength(); idx++ ){
 	        	MyXPath parent = xmlAndroidManifest.getParentNode(idx).getParentNode();
 	        	String widgetTitle = getResourceInfo(parent.getAttributes("android:label"));
@@ -452,29 +452,29 @@ public class ApkManager
 			long maxImgSize = 0;
 			
 			if(!id.matches("^@.*")) {
-				//System.out.println("id is start without @");
+				//Log.i("id is start without @");
 				result = new String(id);
 				return result;
 			} else if(id.matches("^@drawable/.*")) {
-				//System.out.println("@drawable");
+				//Log.i("@drawable");
 
 				filter = "^drawable.*";
 				fileName = new String(id.substring(10)) + ".png";
 				type = "image";
 			} else if(id.matches("^@string/.*")) {
-				//System.out.println("@stirng");
+				//Log.i("@stirng");
 				
 				filter = "^values.*";
 				query = "//resources/string[@name='"+id.substring(id.indexOf("/")+1)+"']";
 				fileName = "strings.xml";
 			} else if(id.matches("^@dimen/.*")) {
-				//System.out.println("string@dimen");
+				//Log.i("string@dimen");
 
 				filter = "^values.*";
 				query = "//resources/dimen[@name='"+id.substring(id.indexOf("/")+1)+"']";
 				fileName = "dimens.xml";
 			} else {
-				System.out.println("getResourceInfo() Unknown id " + id);
+				Log.w("getResourceInfo() Unknown id " + id);
 				return new String(id);
 			}
 			
@@ -484,10 +484,10 @@ public class ApkManager
 				File resFile = new File(resXmlPath + s + File.separator + fileName);
 				if(!resFile.exists()) continue;
 
-		        //System.out.println(" - " + resFile.getAbsolutePath() + ", " + type);
+		        //Log.i(" - " + resFile.getAbsolutePath() + ", " + type);
 				if(type.equals("image")) {
 					if(resFile.length() > maxImgSize) {
-						//System.out.println(resFile.getPath() + ", " + maxImgSize);
+						//Log.i(resFile.getPath() + ", " + maxImgSize);
 						result = new String(resFile.getPath());
 						maxImgSize = resFile.length();
 					}
@@ -496,7 +496,7 @@ public class ApkManager
 			        if(result != null) break;;
 				}
 			}
-	        //System.out.println(">> " + result);
+	        //Log.i(">> " + result);
 			return result;
 		}
 		
@@ -562,7 +562,7 @@ public class ApkManager
 		
 		private Object[] getWidgetInfo(String resource) {
 
-			//System.out.println("getWidgetInfo() " + resource);
+			//Log.i("getWidgetInfo() " + resource);
 			String resXmlPath = new String(mApkInfo.WorkTempPath + File.separator + "res" + File.separator);
 
 			String Size = "";
@@ -574,7 +574,7 @@ public class ApkManager
 			}
 
 			String widgetXml = new String(resource.substring(5));
-			//System.out.println("widgetXml : " + widgetXml);
+			//Log.i("widgetXml : " + widgetXml);
 
 			for (String s : (new File(resXmlPath)).list()) {
 				if(!s.matches("^xml.*")) continue;
@@ -582,7 +582,7 @@ public class ApkManager
 				File xmlFile = new File(resXmlPath + s + File.separator + widgetXml + ".xml");
 				if(!xmlFile.exists()) continue;
 				
-				//System.out.println("xmlFile " + xmlFile.getAbsolutePath());
+				//Log.i("xmlFile " + xmlFile.getAbsolutePath());
 
 				MyXPath xpath = new MyXPath(xmlFile.getAbsolutePath());
 				
@@ -597,7 +597,7 @@ public class ApkManager
 					//Size = ((Integer.parseInt(width) - 40) / 70 + 1) + " X " + ((Integer.parseInt(Height) - 40) / 70 + 1);
 					Size = (int)Math.ceil((Float.parseFloat(width) - 40) / 76 + 1) + " X " + (int)Math.ceil((Float.parseFloat(Height) - 40) / 76 + 1);
 					Size += "\n(" + width + " X " + Height + ")";
-			    	//System.out.println("Size " + Size + ", width " + width + ", height " + Height);
+			    	//Log.i("Size " + Size + ", width " + width + ", height " + Height);
 				}
 				
 				if(ReSizeMode.isEmpty() && xpath.getAttributes("android:resizeMode") != null) {
@@ -607,7 +607,7 @@ public class ApkManager
 				if(IconPath.isEmpty() && xpath.getAttributes("android:previewImage") != null) {
 					String icon = xpath.getAttributes("android:previewImage");
 					IconPath = getResourceInfo(icon);
-					//System.out.println("icon " + IconPath);
+					//Log.i("icon " + IconPath);
 				}
 			}
 			
@@ -665,7 +665,7 @@ public class ApkManager
 
 			mApkInfo.CertList.clear();
 			if(!(new File(CertPath)).exists()) {
-				System.out.println("META-INFO 폴더가 존재 하지 않습니다 :");
+				Log.e("META-INFO 폴더가 존재 하지 않습니다 :");
 				return mApkInfo.CertList;
 			}
 			
@@ -698,7 +698,7 @@ public class ApkManager
 
 		private void deleteTempPath()
 		{
-			System.out.println("delete Folder : "  + mApkInfo.WorkTempPath);
+			Log.i("delete Folder : "  + mApkInfo.WorkTempPath);
 			if(mApkInfo.WorkTempPath != null && !mApkInfo.WorkTempPath.isEmpty()) {
 				CoreApkTool.deleteDirectory(new File(mApkInfo.WorkTempPath+"-res"));
 
@@ -712,7 +712,7 @@ public class ApkManager
 			}
 			if(isPackageTempAPK && mApkInfo.ApkPath != null && !mApkInfo.ApkPath.isEmpty()) {
 				File parent = new File(mApkInfo.ApkPath).getParentFile();
-				System.out.println("delete temp APK folder : "  + parent.getPath());
+				Log.i("delete temp APK folder : "  + parent.getPath());
 				while(parent != null && parent.exists() && parent.getParentFile() != null 
 						&& parent.getParentFile().listFiles().length == 1 
 						&& parent.getParentFile().getAbsolutePath().length() > CoreApkTool.getTempPath().length()) {
@@ -726,7 +726,7 @@ public class ApkManager
 
 		public void run()
 		{
-			//System.out.println("ProcessThead run()~~~");
+			//Log.i("ProcessThead run()~~~");
 			synchronized(mOwner) {
 				mOwner.notify();
 				try {

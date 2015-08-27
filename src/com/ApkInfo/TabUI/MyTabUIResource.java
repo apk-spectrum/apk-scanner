@@ -107,7 +107,7 @@ public class MyTabUIResource extends JPanel{
     private class JListHandler implements ListSelectionListener {
     	// 리스트의 항목이 선택이 되면
     	public void valueChanged(ListSelectionEvent event) {
-    		//System.out.println("valueChanged : " + list.getSelectedIndex() + " event : "+ event.getSource());
+    		//Log.i("valueChanged : " + list.getSelectedIndex() + " event : "+ event.getSource());
     		
     		photographLabel.setIcon(new ImageIcon(CoreApkTool.getMaxScaledImage(
     				new ImageIcon(nameList.get(list.getSelectedIndex())),photographLabel.getWidth(),photographLabel.getHeight())));

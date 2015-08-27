@@ -96,7 +96,7 @@ public class DeviceUIManager
 				DeviceStatus dev = DeviceList.get(0);
 				if(DeviceList.size() > 1 || (DeviceList.size() == 1 && !dev.status.equals("device"))) {
 					int selectedValue = MyListDialog.showDialog();
-					//System.out.println("Seltected index : " + selectedValue);
+					//Log.i("Seltected index : " + selectedValue);
 					
 					if(selectedValue == -1) {
 						Listener.SetInstallButtonStatus(true);
@@ -127,7 +127,7 @@ public class DeviceUIManager
 							n = ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_OPEN_OR_INSTALL.getString(),
 									Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, checkPackOptions, checkPackOptions[2]);							
 						}
-						//System.out.println("Seltected index : " + n);
+						//Log.i("Seltected index : " + n);
 						if(n==-1 || (!isDeletePossible && n==2) || (isDeletePossible && n==3)) {
 							Listener.SetInstallButtonStatus(true);
 							setVisible(false);
@@ -138,7 +138,7 @@ public class DeviceUIManager
 							tmpPath = tmpPath.replaceAll("/", File.separator+File.separator).replaceAll("//", "/");
 							tmpPath = CoreApkTool.makeTempPath(tmpPath)+".apk";
 							tmpApkPath = tmpPath; 
-							//System.out.println(tmpPath);
+							//Log.i(tmpPath);
 							AdbWrapper.PullApk(dev.name, pkgInfo.apkPath, tmpPath, new AdbWrapperObserver("pull", dev.name));
 							return;
 						}
@@ -184,7 +184,7 @@ public class DeviceUIManager
 							String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
 							int n = ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_PUSH_OR_INSTALL.getString(),
 									Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, options, options[1]);
-							//System.out.println("Seltected index : " + n);
+							//Log.i("Seltected index : " + n);
 							if(n==-1 || n==2) {
 								Listener.SetInstallButtonStatus(true);
 								setVisible(false);
@@ -205,7 +205,7 @@ public class DeviceUIManager
 						String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
 						int n = ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_CONTINUE_INSTALL.getString(),
 								Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, yesNoOptions, yesNoOptions[1]);
-						//System.out.println("Seltected index : " + n);
+						//Log.i("Seltected index : " + n);
 						if(n==-1 || n==1) {
 							Listener.SetInstallButtonStatus(true);
 							setVisible(false);

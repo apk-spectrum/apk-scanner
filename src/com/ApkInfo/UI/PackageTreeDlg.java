@@ -35,6 +35,7 @@ import javax.swing.event.TreeSelectionListener;
 import com.ApkInfo.Core.AdbWrapper;
 import com.ApkInfo.Core.AdbWrapper.DeviceStatus;
 import com.ApkInfo.Core.AdbWrapper.PackageListObject;
+import com.ApkInfo.Core.Log;
 import com.ApkInfo.Core.PackageTreeDataManager;
 import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UIUtil.ArrowTraversalPane;
@@ -146,7 +147,7 @@ public class PackageTreeDlg extends JPanel
                 tree.getLastSelectedPathComponent();
     	
 		if(node.getChildCount() != 0) {
-			System.out.println("not node!");
+			Log.w("not node!");
 			return null;
 		}
     	
@@ -161,14 +162,14 @@ public class PackageTreeDlg extends JPanel
                 tree.getLastSelectedPathComponent();
 		
 		if(node.getChildCount() != 0) {
-			System.out.println("not node!");
+			Log.w("not node!");
 			return ;
 		}
 		PackageListObject tempObject = ((PackageListObject)node.getUserObject()); 		
 		
 		DeviceStatus deviceNode = null;
 //		for(deviceNode = node ; deviceNode.getUserObject() instanceof DeviceStatus==false; deviceNode = ((DefaultMutableTreeNode)deviceNode.getParent())) { }
-//		System.out.println(deviceNode.getUserObject());
+//		Log.i(deviceNode.getUserObject());
 		FrameworkTableObject temp = new FrameworkTableObject();
 		
 		
@@ -190,7 +191,7 @@ public class PackageTreeDlg extends JPanel
     private void addTreeList() {
 
     	if(!refreshbtn.isVisible()) {
-    		System.out.println("Already refreshing...");
+    		Log.i("Already refreshing...");
     		return;
     	}
     	    	
@@ -331,7 +332,7 @@ public class PackageTreeDlg extends JPanel
 			        setJTableColumnsWidth(table,550,10,120,410);
 				}
                 
-		        //System.out.println("end  loading package : " + dev.device);
+		        //Log.i("end  loading package : " + dev.device);
 		        
 		        if(textFilField != null) {
 		        	if(textFilField.getText().length() >0){
@@ -571,7 +572,7 @@ public class PackageTreeDlg extends JPanel
             	
                 if(!(ke.getKeyChar()==27||ke.getKeyChar()==65535))//this section will execute only when user is editing the JTextField
                 {
-                	//System.out.println(textFilField.getText()+ ":" + Integer.valueOf(ke.getKeyChar()));                	
+                	//Log.i(textFilField.getText()+ ":" + Integer.valueOf(ke.getKeyChar()));                	
                 	
                 	if(ke.getKeyChar()==10) {
                 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
@@ -691,11 +692,11 @@ public class PackageTreeDlg extends JPanel
         
 		//DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode)filteredModel.getRoot();
         do {
-        		//System.out.println(currentNode.getLevel());
-        		//System.out.println(currentNode.getUserObject());
-        		//System.out.println(filteredModel.getChildCount(currentNode));
+        		//Log.i(currentNode.getLevel());
+        		//Log.i(currentNode.getUserObject());
+        		//Log.i(filteredModel.getChildCount(currentNode));
         		
-        		//System.out.println(tree.isCollapsed(new TreePath(currentNode.getPath())));
+        		//Log.i(tree.isCollapsed(new TreePath(currentNode.getPath())));
         		
         		if(currentNode.getLevel()==3 && filteredModel.getChildCount(currentNode) > 0) {
     		        //for(int i=0; i<filteredModel.getChildCount(currentNode); i++) {
@@ -802,7 +803,7 @@ public class PackageTreeDlg extends JPanel
     	dialog.setVisible(true);
     	dialog.dispose();
     	
-    	System.out.println("package dialog closed");
+    	Log.i("package dialog closed");
     }
  
     public void showTreeDlg() {
@@ -874,7 +875,7 @@ public class PackageTreeDlg extends JPanel
 
     private void OpenPackage() {
 
-    	System.out.println("open package");
+    	Log.i("open package");
     	
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
                 tree.getLastSelectedPathComponent();
@@ -885,9 +886,9 @@ public class PackageTreeDlg extends JPanel
 		
 		PackageListObject tempObject = ((PackageListObject)node.getUserObject()); 
 		
-		System.out.println(tempObject.pacakge);
-		System.out.println(tempObject.label);
-		System.out.println(tempObject.apkPath);
+		Log.i(tempObject.pacakge);
+		Log.i(tempObject.label);
+		Log.i(tempObject.apkPath);
 		
 		DefaultMutableTreeNode deviceNode = null;
 		
@@ -895,7 +896,7 @@ public class PackageTreeDlg extends JPanel
 			
 		}
 		
-		System.out.println(deviceNode.getUserObject());
+		Log.i(deviceNode.getUserObject().toString());
 		
 		selDevice = ((DeviceStatus)deviceNode.getUserObject()).name;
 		selPackage = tempObject.pacakge;
@@ -911,20 +912,20 @@ public class PackageTreeDlg extends JPanel
                 tree.getLastSelectedPathComponent();
 		
 		if(node == null) {
-			System.out.println("node == null");
+			Log.i("node == null");
 			return;
 		}
 		
 		DeviceStatus deviceNode = getCurrentSelectedDevice();
 		PackageListObject tempObject = ((PackageListObject)node.getUserObject()); 
    		
-		System.out.println("remove :" + deviceNode.name  +","+ tempObject.codePath);
+		Log.i("remove :" + deviceNode.name  +","+ tempObject.codePath);
    		boolean run = uninstallApk(deviceNode.name, tempObject.pacakge, tempObject.codePath);
    		
    		if(run) {
 	   		TreePath path = new TreePath(node.getPath());
 	   		MutableTreeNode nodepath =(MutableTreeNode) path.getLastPathComponent();
-	       	System.out.println("Trying to remove tree : "+nodepath.toString());
+	       	Log.i("Trying to remove tree : "+nodepath.toString());
 	       	MutableTreeNode parent=(MutableTreeNode)nodepath.getParent();
 	       	
 	       	parent.remove(nodepath);
@@ -935,26 +936,26 @@ public class PackageTreeDlg extends JPanel
     }
     
     private void PullPackage() {
-    	System.out.println("PullPackage()");
+    	Log.i("PullPackage()");
 		
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
                 tree.getLastSelectedPathComponent();
 		
 		if(node.getChildCount() != 0) {
-			System.out.println("not node!");
+			Log.i("not node!");
 			return ;
 		}
 
 		PackageListObject tempObject = ((PackageListObject)node.getUserObject()); 
 		
-		System.out.println(tempObject.pacakge);
-		System.out.println(tempObject.label);
-		System.out.println(tempObject.apkPath);
+		Log.i(tempObject.pacakge);
+		Log.i(tempObject.label);
+		Log.i(tempObject.apkPath);
 		
 		DefaultMutableTreeNode deviceNode = null;
 		for(deviceNode = node ; deviceNode.getUserObject() instanceof DeviceStatus==false; deviceNode = ((DefaultMutableTreeNode)deviceNode.getParent())) { }
 		
-		System.out.println(deviceNode.getUserObject());
+		Log.i(deviceNode.getUserObject().toString());
 		
 		String device = ((DeviceStatus)deviceNode.getUserObject()).name;
 
@@ -995,7 +996,7 @@ public class PackageTreeDlg extends JPanel
 		if(e.getActionCommand().equals(Resource.STR_BTN_OPEN.getString())) {
 			OpenPackage();
 		} else if(e.getActionCommand().equals(Resource.STR_BTN_CANCEL.getString())) {
-			//System.out.println("exit");
+			//Log.i("exit");
 			selDevice = null;
 			selPackage = null;
 			selApkPath = null;
@@ -1029,7 +1030,7 @@ public class PackageTreeDlg extends JPanel
     				file = dir.getPath();
     			}
     			
-    			System.out.println("Select Apk File" + file);
+    			Log.i("Select Apk File" + file);
     			
     			if(file == null || file.isEmpty()) return;
     			

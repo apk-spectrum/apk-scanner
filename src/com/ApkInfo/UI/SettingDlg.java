@@ -212,7 +212,7 @@ public class SettingDlg extends JDialog implements ActionListener
 	public void actionPerformed(ActionEvent e) {
 	
 		if(e.getSource() == savebutton) {
-			//System.out.println("save");
+			//Log.i("save");
 			
 			if((new File(textExcutePath.getText().trim()).exists())) {
 				strExcuteEditorPath = textExcutePath.getText().trim();					
@@ -231,7 +231,7 @@ public class SettingDlg extends JDialog implements ActionListener
 			saveSettings();
 			this.dispose();
 		} else if(e.getSource() == exitbutton) {
-			//System.out.println("exit");
+			//Log.i("exit");
 			this.dispose();
 		} else if(e.getSource() == browser1) {
 			JFileChooser jfc = new JFileChooser();										

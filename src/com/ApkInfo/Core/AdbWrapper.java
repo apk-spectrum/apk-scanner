@@ -172,7 +172,7 @@ public class AdbWrapper
 			}
 	
 			if(!(new File(cmd)).exists()) {
-				System.out.println("no such adb tool" + adbCmd);
+				Log.e("no such adb tool" + adbCmd);
 				cmd = null;
 			}
 		}
@@ -193,7 +193,7 @@ public class AdbWrapper
 
 	static public boolean ckeckAdbTool()
 	{
-		//System.out.println("ckeckAdbTool()");
+		//Log.i("ckeckAdbTool()");
 		if(adbCmd == null) return false;
 
 		MyConsolCmd.exc(new String[] {adbCmd, "kill-server"}, false, null);
@@ -272,7 +272,7 @@ public class AdbWrapper
 	
 	static public void PushApk(String name, String srcApkPath, String destApkPath, String libPath, AdbWrapperListener listener)
 	{
-		//System.out.println("PushApk() device : " + name + ", apkPath: " + srcApkPath);
+		//Log.i("PushApk() device : " + name + ", apkPath: " + srcApkPath);
 		if(adbCmd == null || name == null || destApkPath == null || srcApkPath == null || srcApkPath.isEmpty()) {
 			if(listener != null) {
 				listener.OnError();
@@ -288,7 +288,7 @@ public class AdbWrapper
 	
 	static public void InstallApk(String name, String apkPath, AdbWrapperListener listener)
 	{
-		//System.out.println("InstallApk() device : " + name + ", apkPath: " + apkPath);
+		//Log.i("InstallApk() device : " + name + ", apkPath: " + apkPath);
 		if(adbCmd == null || name == null || apkPath == null || apkPath.isEmpty()) {
 			if(listener != null) {
 				listener.OnError();
@@ -304,7 +304,7 @@ public class AdbWrapper
 	
 	static public void PullApk(String name, String srcApkPath, String destApkPath, AdbWrapperListener listener)
 	{
-		//System.out.println("PullApk() device : " + name + ", apkPath: " + srcApkPath);
+		//Log.i("PullApk() device : " + name + ", apkPath: " + srcApkPath);
 		if(adbCmd == null || name == null || destApkPath == null || srcApkPath == null || srcApkPath.isEmpty()) {
 			if(listener != null) {
 				listener.OnError();
@@ -320,7 +320,7 @@ public class AdbWrapper
 	
 	static public boolean PullApk_sync(String name, String srcApkPath, String destApkPath)
 	{
-		//System.out.println("PullApk() device : " + name + ", apkPath: " + srcApkPath);
+		//Log.i("PullApk() device : " + name + ", apkPath: " + srcApkPath);
 		if(adbCmd == null || name == null || destApkPath == null || srcApkPath == null || srcApkPath.isEmpty()) {
 			return false;
 		}
@@ -439,7 +439,7 @@ public class AdbWrapper
 
 		if(pkgName == null) return null;
 		
-		//System.out.println("ckeckPackage() " + pkgName);
+		//Log.i("ckeckPackage() " + pkgName);
 
 		if(!pkgName.matches("/system/framework/.*apk")) {
 			cmd = new String[] {adbCmd, "-s", device, "shell", "pm", "list", "packages", "-f", "-i", pkgName};
@@ -572,9 +572,9 @@ public class AdbWrapper
 				cmd.add(new String[] {adbCmd, "-s", this.device, "remount"});
 				cmd.add(new String[] {adbCmd, "-s", this.device, "shell", "su", "-c", "setenforce", "0"});
 				cmd.add(new String[] {adbCmd, "-s", this.device, "push", this.srcApkPath, this.destApkPath});
-				//System.out.println(this.srcApkPath + " to " + this.destApkPath);
+				//Log.i(this.srcApkPath + " to " + this.destApkPath);
 				
-				//System.out.println("libpath " + libPath);
+				//Log.i("libpath " + libPath);
 				if(libPath != null && (new File(libPath)).exists()) {
 					String[] selAbi = selectAbi(this.device, libPath);
 					String abi32 = selAbi[0];
@@ -584,19 +584,19 @@ public class AdbWrapper
 					while(libPaths.hasNext()) {
 						String path = libPaths.next();
 						if(!(new File(path)).exists()) {
-							System.out.println("no such file : " + path);
+							Log.w("no such file : " + path);
 							continue;
 						}
 						String abi = path.replaceAll(libPath.replace("\\", "\\\\")+"([^\\\\/]*).*","$1");
-						//System.out.println("abi = " + abi);
+						//Log.i("abi = " + abi);
 						if(abi.equals(abi32)) {
 							cmd.add(new String[] {adbCmd, "-s", this.device, "push", path, "/system/lib/"});
-							//System.out.println("push " + path + " " + "/system/lib/");
+							//Log.i("push " + path + " " + "/system/lib/");
 						} else if (abi.equals(abi64)) {
 							cmd.add(new String[] {adbCmd, "-s", this.device, "push", path, "/system/lib64/"});
-							//System.out.println("push " + path + " " + "/system/lib64/");						
+							//Log.i("push " + path + " " + "/system/lib64/");						
 						} else {
-							//System.out.println("ignored path : " + path);
+							//Log.w("ignored path : " + path);
 						}
 					}
 				}
@@ -611,14 +611,14 @@ public class AdbWrapper
 				    		|| output.equals("adbd cannot run as root in production builds")
 				    		|| output.matches(".*Permission denied.*")
 				    	) {
-				    		//System.out.println(">>>>>>>>>>>> fail : " + output);
+				    		//Log.e(">>>>>>>>>>>> fail : " + output);
 				    		return false;
 				    	}
 				    	return true;
 					}
 				});
 
-				//System.out.println("cmd.size() " + cmd.size() + ", result.length " + result.length);
+				//Log.i("cmd.size() " + cmd.size() + ", result.length " + result.length);
 				if(listener != null) {
 					listener.OnCompleted();
 					if(cmd.size() == result.length) {
@@ -644,7 +644,7 @@ public class AdbWrapper
 			for (String s : (new File(LibSourcePath)).list()) {
 				if(s.matches("arm64.*")) {
 					if(abiList64.matches(".*" + s + ",.*")) {
-						//System.out.println("device support this abi : " + s);
+						//Log.i("device support this abi : " + s);
 						if(abi64 == null) {
 							abi64 = s;
 						} else {
@@ -653,15 +653,15 @@ public class AdbWrapper
 							if(old_ver < new_ver) {
 								abi64 = s;
 							} else {
-								//System.out.println("The version is lower than previous versions. : " + s + " < " + abi64);
+								//Log.w("The version is lower than previous versions. : " + s + " < " + abi64);
 							}
 						}
 					} else {
-						//System.out.println("device not support this abi : " + s);
+						//Log.w("device not support this abi : " + s);
 					}
 				} else if(s.matches("armeabi.*")) {
 					if(abiList32.matches(".*" + s + ",.*")) {
-						//System.out.println("device support this abi : " + s);
+						//Log.i("device support this abi : " + s);
 						if(abi32 == null) {
 							abi32 = s;
 						} else {
@@ -670,18 +670,18 @@ public class AdbWrapper
 							if(old_ver < new_ver) {
 								abi32 = s;
 							} else {
-								//System.out.println("The version is lower than previous versions. : " + s + " < " + abi32);
+								//Log.w("The version is lower than previous versions. : " + s + " < " + abi32);
 							}
 						}
 					} else {
-						//System.out.println("device not support this abi : " + s);
+						//Log.w("device not support this abi : " + s);
 					}
 				} else {
-					//System.out.println("Unknown abi type : " + s);
+					//Log.w("Unknown abi type : " + s);
 				}
-				//System.out.println("LibSourcePath list = " + s.replaceAll("([^-]*)", "$1"));
+				//Log.i("LibSourcePath list = " + s.replaceAll("([^-]*)", "$1"));
 			}
-			//System.out.println("abi64 : " + abi64 + ", abi32 : " + abi32);
+			//Log.i("abi64 : " + abi64 + ", abi32 : " + abi32);
 			return new String[] { abi32, abi64 };
 		}
 		

@@ -74,7 +74,7 @@ public class MyXPath {
 	public Object evaluate(String expression, QName returnType) {
 		if(xpath == null) return null;
 
-    	//System.out.println("evaluate() " + expression + ", " + document + ", " + returnType);
+    	//Log.i("evaluate() " + expression + ", " + document + ", " + returnType);
 		try {
 			objNode = xpath.evaluate(expression, document, returnType);
 			QType = objNode != null ? returnType : null;
@@ -116,11 +116,11 @@ public class MyXPath {
 		if(getNode().getAttributes().getNamedItem(name) == null) {
 			if(name.indexOf(":") == -1) return null;
 			String shortName = name.substring(name.indexOf(":"));
-			//System.out.println("getAttributes() shortName " + shortName);
+			//Log.i("getAttributes() shortName " + shortName);
 			for(int i=0; i < getNode().getAttributes().getLength(); i++) {
-				//System.out.println("getAttributes() " + i + " : " + getNode().getAttributes().item(i).getNodeName());
+				//Log.i("getAttributes() " + i + " : " + getNode().getAttributes().item(i).getNodeName());
 				if(getNode().getAttributes().item(i).getNodeName().matches(".*"+shortName)) {
-					//System.out.println("getAttributes() maybe...... ");
+					//Log.i("getAttributes() maybe...... ");
 					return getNode().getAttributes().item(i).getTextContent();
 				}
 			}
@@ -138,11 +138,11 @@ public class MyXPath {
 		if(getNodeList().item(idx).getAttributes().getNamedItem(name) == null) {
 			if(name.indexOf(":") == -1) return null;
 			String shortName = name.substring(name.indexOf(":"));
-			//System.out.println("getAttributes() shortName " + shortName);
+			//Log.i("getAttributes() shortName " + shortName);
 			for(int i=0; i < getNodeList().item(idx).getAttributes().getLength(); i++) {
-				//System.out.println("getAttributes() " + i + " : " + getNodeList().item(idx).getAttributes().item(i).getNodeName());
+				//Log.i("getAttributes() " + i + " : " + getNodeList().item(idx).getAttributes().item(i).getNodeName());
 				if(getNodeList().item(idx).getAttributes().item(i).getNodeName().matches(".*"+shortName)) {
-					//System.out.println("getAttributes() maybe...... ");
+					//Log.i("getAttributes() maybe...... ");
 					return getNodeList().item(idx).getAttributes().item(i).getTextContent();
 				}
 			}
