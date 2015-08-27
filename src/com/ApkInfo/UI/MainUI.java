@@ -512,7 +512,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 				case KeyEvent.VK_F1:
 					showAbout();
 					break;
-				case KeyEvent.VK_F11:
+				case KeyEvent.VK_F12:
 					JTextArea taskOutput = new JTextArea();
 					taskOutput.setText(Log.getLog());
 					taskOutput.setEditable(false);
@@ -567,7 +567,6 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 		WaitingDlg.setVisible(false);
 		if(mApkManager != null)
 			mApkManager.clear(true, null);
-		Log.saveLogFile("savelog.txt");
 	}
 
 	/**
