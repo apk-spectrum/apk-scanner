@@ -10,7 +10,6 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 import java.util.logging.StreamHandler;
 
 
@@ -18,7 +17,7 @@ public class Log
 {
 	static private Logger logger = getLogger(Log.class.getName());
 	static private SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd hh:mm:ss.ms");
-	static private ConsoleHandler consoleHandler;
+	static private StreamHandler consoleHandler;
 	static private StreamHandler streamHandler;
 	static private ByteArrayOutputStream logOutputStream;
 	static private boolean enableConsoleHandler = true; 
@@ -146,7 +145,7 @@ public class Log
 		
 		Formatter ft = new LogFormatter();
 
-		consoleHandler = new ConsoleHandlerToStdout();
+		consoleHandler = new ConsoleHandlerStd();
 		consoleHandler.setFormatter(ft);
 		consoleHandler.setLevel(Level.ALL.getLoggerLevel());
 		logger.addHandler(consoleHandler);
@@ -174,21 +173,20 @@ public class Log
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	static private class ConsoleHandlerToStdout extends ConsoleHandler {
 		public ConsoleHandlerToStdout() {
 			super();
-			this.setOutputStream(System.out);
+			setOutputStream(System.out);
 		}
 	}
 	
-	@SuppressWarnings("unused")
-	static private class MyConsoleHandler extends StreamHandler {           
-	    private java.util.logging.Formatter formatter = new SimpleFormatter();
+	static private class ConsoleHandlerStd extends StreamHandler {           
 	     public void publish(LogRecord record){      
 	         if(record.getLevel().intValue() < java.util.logging.Level.WARNING.intValue())
-	             System.out.println(formatter.formatMessage(record));            
+	             System.out.print(getFormatter().format(record));            
 	         else
-	             System.err.println(formatter.format(record));
+	             System.err.print(getFormatter().format(record));
 	     }
 	}
 

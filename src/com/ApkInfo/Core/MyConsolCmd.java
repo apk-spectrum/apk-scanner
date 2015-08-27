@@ -56,7 +56,7 @@ public class MyConsolCmd
 		    	buffer.add(s);
 		    }
 		} catch (IOException e) { // 에러 처리
-		      System.err.println("에러! 외부 명령 실행에 실패했습니다.\n" + e.getMessage());		      
+		      Log.e("에러! 외부 명령 실행에 실패했습니다.\n" + e.getMessage());		      
 		      System.exit(-1);
 	    }
 
