@@ -16,7 +16,7 @@ import java.util.logging.StreamHandler;
 public class Log
 {
 	static private Logger logger = getLogger(Log.class.getName());
-	static private SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd hh:mm:ss.ms");
+	static private SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd hh:mm:ss.SSS");
 	static private StreamHandler consoleHandler;
 	static private StreamHandler streamHandler;
 	static private ByteArrayOutputStream logOutputStream;
