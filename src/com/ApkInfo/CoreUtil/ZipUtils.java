@@ -133,82 +133,6 @@ public class ZipUtils {
      * @param fileNameToLowerCase - 파일명을 소문자로 바꿀지 여부
      * @throws Exception
      */
-    public static void unzip(File zipFile, File targetDir, String findFile, boolean fileNameToLowerCase) throws Exception {
-        FileInputStream fis = null;
-        ZipInputStream zis = null;
-        ZipEntry zentry = null;
-
-        try {
-            fis = new FileInputStream(zipFile); // FileInputStream
-            zis = new ZipInputStream(fis); // ZipInputStream
-
-            while ((zentry = zis.getNextEntry()) != null) {
-                String fileNameToUnzip = zentry.getName();
-                
-                System.out.println(fileNameToUnzip);
-                
-                if(fileNameToUnzip.endsWith(findFile)) {
-                    File targetFile = new File(targetDir, fileNameToUnzip);
-                    unzipEntry(zis, targetFile);
-                	break;
-                } else {
-                	continue;
-                }                
-            }
-        } finally {
-            if (zis != null) {
-                zis.close();
-            }
-            if (fis != null) {
-                fis.close();
-            }
-        }
-    }
-
-    
-    public static ArrayList<ImageIcon> unimagezip(File zipFile, File targetDir, String findFile, boolean fileNameToLowerCase) throws Exception {
-        FileInputStream fis = null;
-        ZipInputStream zis = null;
-        ZipEntry zentry = null;
-        ImageIcon resultImage = new ImageIcon();
-
-        ArrayList<ImageIcon> arrayImage = new ArrayList<ImageIcon>();
-        
-        try {
-            fis = new FileInputStream(zipFile); // FileInputStream
-            zis = new ZipInputStream(fis); // ZipInputStream
-
-            while ((zentry = zis.getNextEntry()) != null) {
-                String fileNameToUnzip = zentry.getName();
-                
-                if(fileNameToUnzip.endsWith(".png") &&  fileNameToUnzip.indexOf("res/") >= 0) {
-                    //File targetFile = new File(targetDir, fileNameToUnzip);
-                    //FileOutputStream ios = unzipEntry(zis, targetFile);
-                	//System.out.println(fileNameToUnzip);
-//                    BufferedImage bufferedImage = ImageIO.read(zis);
-//                    ImageIcon imageIcon = new ImageIcon(bufferedImage);
-//                    
-//                    arrayImage.add(imageIcon);
-                	
-                	
-                    Image bufferedImage = ImageIO.read(zis);
-                    ImageIcon imageIcon = new ImageIcon(bufferedImage);
-                    arrayImage.add(imageIcon);
-                } else {
-                	continue;
-                }                
-            }
-        } finally {
-            if (zis != null) {
-                zis.close();
-            }
-            if (fis != null) {
-                fis.close();
-            }
-        }        
-        return arrayImage;
-    }
-
     public static ArrayList<String> unimagezipfromfile(File zipFile, File targetDir, String findFile, boolean fileNameToLowerCase) throws Exception {
         FileInputStream fis = null;
         ZipInputStream zis = null;
@@ -221,29 +145,18 @@ public class ZipUtils {
             zis = new ZipInputStream(fis); // ZipInputStream
 
             while ((zentry = zis.getNextEntry()) != null) {
-                String fileNameToUnzip = zentry.getName();
-                
-                if(fileNameToUnzip.endsWith(".png") &&  fileNameToUnzip.indexOf("res/") >= 0) {
-                	
-                	File directory = new File(zentry.getName());
-                	
-                	File subDir = new File(targetDir +"/"+ fileNameToUnzip);
-                	
-                    if (subDir.getParentFile() != null && !subDir.getParentFile().exists()) {
-                    	
-                    	Log.d("not exists folder: " + zentry.getName());
-                    	
+                String fileNameToUnzip = zentry.getName();                
+                //if(fileNameToUnzip.endsWith(".png") &&  fileNameToUnzip.indexOf("res/") >= 0) {
+                if(fileNameToUnzip.indexOf(findFile) >= 0) {
+                	File subDir = new File(targetDir +"/"+ fileNameToUnzip);                	
+                    if (subDir.getParentFile() != null && !subDir.getParentFile().exists()) {                    	
                     	subDir.getParentFile().mkdirs();
                     }
                     
-                	
-                    directory.mkdir();
-                	
+                    Log.d("size : "+fis.available() + " : " + subDir);
+                    
                     File targetFile = new File(targetDir, fileNameToUnzip);
                     unzipEntry(zis, targetFile);
-                	//System.out.println(fileNameToUnzip);
-                    //BufferedImage bufferedImage = ImageIO.read(zis);
-                    //ImageIcon imageIcon = new ImageIcon(bufferedImage);                    
                     arrayImage.add(targetFile.getAbsolutePath());
                 } else {
                 	continue;

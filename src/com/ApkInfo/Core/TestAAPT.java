@@ -21,52 +21,51 @@ public class TestAAPT extends JDialog{
 	
 	TestAAPT () {
 		
-		JPanel mainpanel = new JPanel(new FlowLayout());
+		JPanel mainpanel = new JPanel();
 		
 		ArrayList<ImageIcon> arrayImage = null; 
 		ArrayList<String> arrayImageFromfile = null;
 		
 		
-		//JScrollPane scroller = new JScrollPane(mainpanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		JScrollPane scroller = new JScrollPane(mainpanel);
 		
 		
 		//getContentPane().add(panel, BorderLayout.CENTER);
 		
-		this.add(mainpanel);
+		this.add(scroller);
 		
-		Log.d("start memory image");
-		
-		
-		for(int j=0; j<3; j++) {
-			try {
-				arrayImage = ZipUtils.unimagezip(new File("/home/leejinhyeong/Desktop/Schedulememo.apk"), new File("/home/leejinhyeong/Desktop/"), "icd_weather_14.png", false);
-				
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}		
-			
-			//Log.d(""+ arrayImage.size());
-			
-			for(int i=0;i<arrayImage.size(); i++ ) {
-				JLabel panel = new JLabel();
-				panel.setIcon(arrayImage.get(i));
-				mainpanel.add(panel);
-			}
-			arrayImage.clear();
-			
-		}
-		
-		Log.d("end memory image");
+//		Log.d("start memory image");		
+//		
+//		for(int j=0; j<1; j++) {
+//			try {
+//				arrayImage = ZipUtils.unimagezip(new File("/home/leejinhyeong/Desktop/PMApplication-release.apk"), new File("/home/leejinhyeong/Desktop/"), "icd_weather_14.png", false);
+//				
+//			} catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}		
+//			
+//			//Log.d(""+ arrayImage.size());
+//			
+//			for(int i=0;i<arrayImage.size(); i++ ) {
+//				JLabel panel = new JLabel();
+//				panel.setIcon(arrayImage.get(i));
+//				mainpanel.add(panel);
+//			}
+//			arrayImage.clear();
+//			
+//		}
+//		
+//		Log.d("end memory image");
 		
 		
 		
 		
 		Log.d("start file image");
 		
-		for(int j=0; j<3; j++) {
+		for(int j=0; j<1; j++) {
 			try {
-				arrayImageFromfile = ZipUtils.unimagezipfromfile(new File("/home/leejinhyeong/Desktop/Schedulememo.apk"), new File("/home/leejinhyeong/Desktop/"), "icd_weather_14.png", false);
+				arrayImageFromfile = ZipUtils.unimagezipfromfile(new File("/home/leejinhyeong/Desktop/PMApplication-release.apk"), new File("/home/leejinhyeong/Desktop/"), "ic_launcher_hoppin.png", false);
 				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
