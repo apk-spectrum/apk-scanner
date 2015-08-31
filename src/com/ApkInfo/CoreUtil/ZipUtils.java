@@ -21,6 +21,8 @@ import javax.imageio.stream.ImageInputStream;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+import com.ApkInfo.Core.Log;
+
 //import org.apache.commons.lang.StringUtils;
 
 public class ZipUtils {
@@ -211,8 +213,7 @@ public class ZipUtils {
         FileInputStream fis = null;
         ZipInputStream zis = null;
         ZipEntry zentry = null;
-        ImageIcon resultImage = new ImageIcon();
-
+        
         ArrayList<String> arrayImage = new ArrayList<String>();
         
         try {
@@ -223,17 +224,30 @@ public class ZipUtils {
                 String fileNameToUnzip = zentry.getName();
                 
                 if(fileNameToUnzip.endsWith(".png") &&  fileNameToUnzip.indexOf("res/") >= 0) {
+                	
+                	File directory = new File(zentry.getName());
+                	
+                	File subDir = new File(targetDir +"/"+ fileNameToUnzip);
+                	
+                    if (subDir.getParentFile() != null && !subDir.getParentFile().exists()) {
+                    	
+                    	Log.d("not exists folder: " + zentry.getName());
+                    	
+                    	subDir.getParentFile().mkdirs();
+                    }
+                    
+                	
+                    directory.mkdir();
+                	
                     File targetFile = new File(targetDir, fileNameToUnzip);
                     unzipEntry(zis, targetFile);
                 	//System.out.println(fileNameToUnzip);
                     //BufferedImage bufferedImage = ImageIO.read(zis);
-                    //ImageIcon imageIcon = new ImageIcon(bufferedImage);
-                    
+                    //ImageIcon imageIcon = new ImageIcon(bufferedImage);                    
                     arrayImage.add(targetFile.getAbsolutePath());
-                	
                 } else {
                 	continue;
-                }                
+                } 
             }
         } finally {
             if (zis != null) {
