@@ -3,7 +3,7 @@ package com.apkscanner.core;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.ApkInfo.Resource.Resource;
+import com.apkscanner.resource.Resource;
 
 public class PermissionGroupManager {
 

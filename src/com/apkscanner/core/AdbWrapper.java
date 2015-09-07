@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.ApkInfo.Resource.Resource;
 import com.apkscanner.core.MyConsolCmd.OutputObserver;
+import com.apkscanner.resource.Resource;
 
 public class AdbWrapper
 {

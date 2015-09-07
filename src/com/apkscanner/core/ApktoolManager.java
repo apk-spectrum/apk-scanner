@@ -7,10 +7,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.ApkInfo.Resource.Resource;
 import com.apkscanner.core.CoreApkTool.FSStyle;
 import com.apkscanner.core.MyConsolCmd.OutputObserver;
 import com.apkscanner.core.PermissionGroupManager.PermissionGroup;
+import com.apkscanner.resource.Resource;
 
 public class ApktoolManager
 {

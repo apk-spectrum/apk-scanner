@@ -9,8 +9,8 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 
 import com.ApkInfo.CoreUtil.ZipUtils;
-import com.ApkInfo.Resource.Resource;
 import com.apkscanner.core.Log;
+import com.apkscanner.resource.Resource;
 
 import javax.swing.JPanel;
 
