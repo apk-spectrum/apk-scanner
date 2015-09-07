@@ -1,4 +1,4 @@
-package com.ApkInfo.Core;
+package com.apkscanner.core;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -7,11 +7,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.ApkInfo.Core.CoreApkTool.FSStyle;
-import com.ApkInfo.Core.PermissionGroupManager.PermissionGroup;
 import com.ApkInfo.Resource.Resource;
+import com.apkscanner.core.CoreApkTool.FSStyle;
+import com.apkscanner.core.MyConsolCmd.OutputObserver;
+import com.apkscanner.core.PermissionGroupManager.PermissionGroup;
 
-public class ApkManager
+public class ApktoolManager
 {
 	private ApkInfo mApkInfo = null;
 	static private final String ApktoolVer = getApkToolVersion();
@@ -133,27 +134,27 @@ public class ApkManager
 		BOTH
 	}
 	
-	public ApkManager()
+	public ApktoolManager()
 	{
 		this(null, null, false);
 	}
 
-	public ApkManager(String apkPath)
+	public ApktoolManager(String apkPath)
 	{
 		this(apkPath, null, false);
 	}
 
-	public ApkManager(String apkPath, boolean isPackage)
+	public ApktoolManager(String apkPath, boolean isPackage)
 	{
 		this(apkPath, null, isPackage);
 	}
 
-	public ApkManager(String apkPath, String frameworkResPath)
+	public ApktoolManager(String apkPath, String frameworkResPath)
 	{
 		this(apkPath, frameworkResPath, false);
 	}
 
-	public ApkManager(String apkPath, String frameworkResPath, boolean isPackage)
+	public ApktoolManager(String apkPath, String frameworkResPath, boolean isPackage)
 	{
 		mApkInfo = new ApkInfo();
 		mFrameworkResList = new ArrayList<String>();
@@ -522,7 +523,9 @@ public class ApkManager
 				File resFile = new File(resXmlPath + s + File.separator + fileName);
 				if(!resFile.exists()) continue;
 				String value = new MyXPath(resFile.getAbsolutePath()).getNode(query).getTextContent();
-		        if(value != null) {
+				if(value != null && value.startsWith("@")) {
+					return getMutiLang(value);
+				} else if(value != null) {
 		        	String lang = s.replaceAll("values-?", "");
 		        	if(lang.isEmpty()) {
 		        		result.add(0, value);	

@@ -29,23 +29,27 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 
 import com.ApkInfo.Core.*;
-import com.ApkInfo.Core.AdbWrapper.AdbWrapperListener;
-import com.ApkInfo.Core.ApkManager.ApkInfo;
-import com.ApkInfo.Core.ApkManager.SolveType;
-import com.ApkInfo.Core.ApkManager.StatusListener;
 import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UI.DeviceUIManager.InstallButtonStatusListener;
 import com.ApkInfo.UI.MyToolBarUI.ButtonId;
 import com.ApkInfo.UIUtil.FileDrop;
 import com.ApkInfo.UIUtil.JHtmlEditorPane;
 import com.apkscanner.Main;
+import com.apkscanner.core.AdbWrapper;
+import com.apkscanner.core.ApktoolManager;
+import com.apkscanner.core.CoreApkTool;
+import com.apkscanner.core.Log;
+import com.apkscanner.core.AdbWrapper.AdbWrapperListener;
+import com.apkscanner.core.ApktoolManager.ApkInfo;
+import com.apkscanner.core.ApktoolManager.SolveType;
+import com.apkscanner.core.ApktoolManager.StatusListener;
 
 
 public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher, FileDrop.Listener
 {
 	private static final long serialVersionUID = 1L;
 
-	private ApkManager mApkManager;
+	private ApktoolManager mApkManager;
 	
 	private MyTabUI mMyTabUI;
 	private MyToolBarUI mMyToolBarUI;
@@ -107,7 +111,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 			frameworkRes = (String)Resource.PROP_FRAMEWORK_RES.getData();
 		}
 
-		mApkManager = new ApkManager(apkPath, frameworkRes, isPackage);
+		mApkManager = new ApktoolManager(apkPath, frameworkRes, isPackage);
 		//mApkManager.addFameworkRes((String)Resource.PROP_FRAMEWORK_RES.getData());
 		mApkManager.solve(SolveType.RESOURCE, new StatusListener() {
 			@Override
@@ -356,7 +360,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 		body.append("<div id=\"about\">");
 		body.append("  <H1>" + Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString() + "</H1>");
 		body.append("  Using following tools,<br/>");
-		body.append("  Apktool " + ApkManager.getApkToolVersion() + "<br/>");
+		body.append("  Apktool " + ApktoolManager.getApkToolVersion() + "<br/>");
 		body.append("  - <a href=\"http://ibotpeaches.github.io/Apktool/\" title=\"Apktool Project Site\">http://ibotpeaches.github.io/Apktool/</a><br/>");
 		body.append("  " + AdbWrapper.getVersion() + "<br/>");
 		body.append("  - <a href=\"http://developer.android.com/tools/help/adb.html\" title=\"Android Developer Site\">http://developer.android.com/tools/help/adb.html</a><br/>");

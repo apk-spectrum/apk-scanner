@@ -10,6 +10,7 @@ import javax.swing.JScrollPane;
 
 import com.ApkInfo.CoreUtil.ZipUtils;
 import com.ApkInfo.Resource.Resource;
+import com.apkscanner.core.Log;
 
 import javax.swing.JPanel;
 

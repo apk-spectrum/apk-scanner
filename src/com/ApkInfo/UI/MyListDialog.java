@@ -2,12 +2,12 @@ package com.ApkInfo.UI;
 
 import javax.swing.*;
 
-import com.ApkInfo.Core.AdbWrapper;
-import com.ApkInfo.Core.AdbWrapper.DeviceStatus;
 import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UIUtil.ButtonType;
 import com.ApkInfo.UIUtil.StandardButton;
 import com.ApkInfo.UIUtil.Theme;
+import com.apkscanner.core.AdbWrapper;
+import com.apkscanner.core.AdbWrapper.DeviceStatus;
 
 import java.awt.*;
 import java.awt.event.*;

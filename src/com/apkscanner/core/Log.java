@@ -1,4 +1,4 @@
-package com.ApkInfo.Core;
+package com.apkscanner.core;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;

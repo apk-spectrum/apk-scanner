@@ -1,4 +1,4 @@
-package com.ApkInfo.Core;
+package com.apkscanner.core;
 
 import java.awt.Graphics2D;
 import java.awt.Image;

@@ -17,9 +17,9 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import java.util.ArrayList;
+import com.apkscanner.core.CoreApkTool;
 
-import com.ApkInfo.Core.CoreApkTool;
+import java.util.ArrayList;
 
 public class MyTabUIResource extends JPanel{
 	private static final long serialVersionUID = -934921813626224616L;

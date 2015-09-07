@@ -10,11 +10,11 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import com.ApkInfo.Core.AdbWrapper;
-import com.ApkInfo.Core.ApkManager;
-import com.ApkInfo.Core.Log;
 import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UI.MainUI;
+import com.apkscanner.core.AdbWrapper;
+import com.apkscanner.core.ApktoolManager;
+import com.apkscanner.core.Log;
 
 public class Main
 {
@@ -152,6 +152,7 @@ public class Main
 		allOptions.addOption(opt);
 		normalOptions.addOption(opt);
 		
+		/*
 		opt = new Option( "c", "cui", false, "Prints the result to the command line");
 		allOptions.addOption(opt);
 		targetApkOptions.addOption(opt);
@@ -161,6 +162,7 @@ public class Main
 		allOptions.addOption(opt);
 		targetApkOptions.addOption(opt);
 		targetPackageOptions.addOption(opt);
+		*/
 		
 		opt = new Option( "d", "device", true, "The serial number of device");
 		allOptions.addOption(opt);
@@ -175,7 +177,7 @@ public class Main
 	static private void usage()
 	{
 		System.out.println(Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString());
-		System.out.println("with apktool " + ApkManager.getApkToolVersion() + " (http://ibotpeaches.github.io/Apktool/)");
+		System.out.println("with apktool " + ApktoolManager.getApkToolVersion() + " (http://ibotpeaches.github.io/Apktool/)");
 		System.out.println(" - Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)");
 		System.out.println("with " + AdbWrapper.getVersion() + " (http://developer.android.com/tools/help/adb.html)");
 		System.out.println("Programmed by " + Resource.STR_APP_MAKER.getString() + " <" + Resource.STR_APP_MAKER_EMAIL.getString() + ">" + ", 2015");

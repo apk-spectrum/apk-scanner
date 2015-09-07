@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import com.ApkInfo.UIUtil.PlasticTabbedPaneUI;
-import com.ApkInfo.Core.ApkManager.ApkInfo;
+import com.apkscanner.core.ApktoolManager.ApkInfo;
 import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.TabUI.MyTabUIActivity;
 import com.ApkInfo.TabUI.MyTabUILib;

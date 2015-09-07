@@ -16,8 +16,8 @@ import javax.swing.ImageIcon;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import com.ApkInfo.Core.CoreApkTool;
-import com.ApkInfo.Core.MyXPath;
+import com.apkscanner.core.CoreApkTool;
+import com.apkscanner.core.MyXPath;
 
 public enum Resource
 {

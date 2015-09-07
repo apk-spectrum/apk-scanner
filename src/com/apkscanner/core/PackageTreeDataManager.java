@@ -1,8 +1,8 @@
-package com.ApkInfo.Core;
+package com.apkscanner.core;
 
 import java.util.ArrayList;
 
-import com.ApkInfo.Core.AdbWrapper.PackageListObject;
+import com.apkscanner.core.AdbWrapper.PackageListObject;
 
 public class PackageTreeDataManager {
 	ArrayList<PackageListObject> ArrayDataObject;

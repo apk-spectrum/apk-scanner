@@ -8,8 +8,8 @@ import java.awt.event.WindowListener;
 import java.beans.*;
 import javax.swing.*;
 
-import com.ApkInfo.Core.Log;
 import com.ApkInfo.Resource.Resource;
+import com.apkscanner.core.Log;
 
 
 public class ProgressBarDlg extends JFrame

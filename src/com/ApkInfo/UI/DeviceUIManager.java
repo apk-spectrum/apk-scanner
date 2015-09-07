@@ -22,16 +22,16 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultCaret;
 
-import com.ApkInfo.Core.AdbWrapper;
-import com.ApkInfo.Core.CoreApkTool;
-import com.ApkInfo.Core.AdbWrapper.AdbWrapperListener;
-import com.ApkInfo.Core.AdbWrapper.DeviceStatus;
-import com.ApkInfo.Core.AdbWrapper.PackageInfo;
 import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UIUtil.ArrowTraversalPane;
 import com.ApkInfo.UIUtil.ButtonType;
 import com.ApkInfo.UIUtil.StandardButton;
 import com.ApkInfo.UIUtil.Theme;
+import com.apkscanner.core.AdbWrapper;
+import com.apkscanner.core.CoreApkTool;
+import com.apkscanner.core.AdbWrapper.AdbWrapperListener;
+import com.apkscanner.core.AdbWrapper.DeviceStatus;
+import com.apkscanner.core.AdbWrapper.PackageInfo;
 
 public class DeviceUIManager
 {

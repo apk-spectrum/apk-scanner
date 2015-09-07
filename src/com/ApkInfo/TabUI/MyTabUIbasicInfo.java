@@ -17,10 +17,10 @@ import javax.swing.JTextArea;
 import com.ApkInfo.Resource.Resource;
 import com.ApkInfo.UIUtil.JHtmlEditorPane;
 import com.ApkInfo.UIUtil.JHtmlEditorPane.HyperlinkClickListener;
-import com.ApkInfo.Core.ApkManager.ApkInfo;
-import com.ApkInfo.Core.PermissionGroupManager.PermissionGroup;
-import com.ApkInfo.Core.CoreApkTool;
-import com.ApkInfo.Core.PermissionGroupManager.PermissionInfo;
+import com.apkscanner.core.CoreApkTool;
+import com.apkscanner.core.ApktoolManager.ApkInfo;
+import com.apkscanner.core.PermissionGroupManager.PermissionGroup;
+import com.apkscanner.core.PermissionGroupManager.PermissionInfo;
 
 public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListener
 {
