@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 
@@ -218,6 +219,7 @@ public enum Resource
 	PROP_LAST_FILE_SAVE_PATH	(Type.PROP, "last_file_save_path"),
 	
 	LIB_JSON_JAR				(Type.LIB, "json-simple-1.1.1.jar"),
+	LIB_CLI_JAR					(Type.LIB, "commons-cli-1.3.1.jar"),
 	LIB_APKTOOL_JAR				(Type.LIB, "apktool.jar"),
 	
 	ETC_SETTINGS_FILE			(Type.ETC, "settings.txt");
@@ -236,9 +238,40 @@ public enum Resource
 
 	private static JSONObject property = null;
 	private static String lang = null;
+	private static MyXPath[] stringXmlPath = null;
 
-	public static void setLanguage(String l) { lang = l; }
+	public static void setLanguage(String l) { if(lang != l) makeStringXmlPath(l); lang = l; }
 	public static String getLanguage() { return lang; }
+	
+	private static void makeStringXmlPath(String lang)
+	{
+		ArrayList<MyXPath> xmlList = new ArrayList<MyXPath>();
+
+		String value_path = getUTF8Path() + File.separator + "data" + File.separator;
+		if(lang != null) {
+			String ext_lang_value_path = value_path + "strings-" + lang + ".xml";
+			if((new File(ext_lang_value_path)).exists()) {
+				xmlList.add(new MyXPath(ext_lang_value_path));
+			}
+
+			InputStream xml = Resource.class.getResourceAsStream("/values/strings-" + lang + ".xml");
+			if(xml != null) {
+				xmlList.add(new MyXPath(xml));
+			}
+		}
+		
+		String ext_lang_value_path = value_path + "strings.xml";
+		if((new File(ext_lang_value_path)).exists()) {
+			xmlList.add(new MyXPath(ext_lang_value_path));
+		}
+		
+		InputStream xml = Resource.class.getResourceAsStream("/values/strings.xml");
+		if(xml != null) {
+			xmlList.add(new MyXPath(xml));
+		}
+
+		stringXmlPath = xmlList.toArray(new MyXPath[0]);
+	}
 
 	private Resource(Type type, String value)
 	{
@@ -299,41 +332,16 @@ public enum Resource
 		String id = getValue();
 		String value = null;
 		
-		if(!id.matches("^@.*")) return id;
-		id = id.replaceAll("^@(.*)", "$1");
-
-		String value_path = getUTF8Path() + File.separator + "data" + File.separator;
-		if(lang != null) {
-			String ext_lang_value_path = value_path + "strings-" + lang + ".xml";
-			
-			if((new File(ext_lang_value_path)).exists()) {
-				MyXPath xmlValue = new MyXPath(ext_lang_value_path);
-				value = xmlValue.getNode("/resources/string[@name='" + id + "']").getTextContent();
-			}
-			
-			if(value == null) {
-				InputStream xml = getClass().getResourceAsStream("/values/strings-" + lang + ".xml");
-				if(xml != null) {
-					MyXPath xmlValue = new MyXPath(xml);
-					value = xmlValue.getNode("/resources/string[@name='" + id + "']").getTextContent();
-				}
-			}
+		if(!id.startsWith("@")) return id;
+		id = id.substring(1);
+		
+		if(stringXmlPath == null) {
+			makeStringXmlPath(lang);
 		}
 		
-		if(value == null) {
-			String ext_lang_value_path = value_path + "strings.xml";
-			if((new File(ext_lang_value_path)).exists()) {
-				MyXPath xmlValue = new MyXPath(ext_lang_value_path);
-				value = xmlValue.getNode("/resources/string[@name='" + id + "']").getTextContent();
-			}
-			
-			if(value == null) {
-				InputStream xml = getClass().getResourceAsStream("/values/strings.xml");
-				if(xml != null) {
-					MyXPath xmlValue = new MyXPath(xml);
-					value = xmlValue.getNode("/resources/string[@name='" + id + "']").getTextContent();
-				}
-			}
+		for(MyXPath xPath: stringXmlPath) {
+			value = xPath.getNode("/resources/string[@name='" + id + "']").getTextContent();
+			if(value != null) break;
 		}
 
 		return value;
@@ -408,9 +416,9 @@ public enum Resource
 		}
 	}
 
-	private String getUTF8Path()
+	private static String getUTF8Path()
 	{
-		String resourcePath = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+		String resourcePath = Resource.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		resourcePath = (new File(resourcePath)).getParentFile().getPath();
 		
 		try {

@@ -31,9 +31,15 @@ public class MyTabUIResource extends JPanel{
 	ArrayList<String> ShownameList = new ArrayList<String>();
 	String path = null;
 	
-	JList<Object> list;
+	JList<Object> list = null;
     
-	public MyTabUIResource() {
+	public MyTabUIResource()
+	{
+
+	}
+	
+	public void initialize()
+	{
 		list = new JList<Object>();
 		list.setCellRenderer(new MarioListRenderer());
 		list.addListSelectionListener(new JListHandler());
@@ -55,6 +61,9 @@ public class MyTabUIResource extends JPanel{
 
 	public void setData(String path, ArrayList<String> data)
 	{
+		if(list == null)
+			initialize();
+		
 		nameList.clear();
 		ShownameList.clear();
 		imageMap.clear();

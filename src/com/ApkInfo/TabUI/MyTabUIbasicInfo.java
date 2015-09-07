@@ -19,8 +19,6 @@ import com.ApkInfo.UIUtil.JHtmlEditorPane;
 import com.ApkInfo.UIUtil.JHtmlEditorPane.HyperlinkClickListener;
 import com.ApkInfo.Core.ApkManager.ApkInfo;
 import com.ApkInfo.Core.PermissionGroupManager.PermissionGroup;
-import com.ApkInfo.Core.AdbWrapper;
-import com.ApkInfo.Core.ApkManager;
 import com.ApkInfo.Core.CoreApkTool;
 import com.ApkInfo.Core.PermissionGroupManager.PermissionInfo;
 
@@ -28,11 +26,15 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 {
 	private static final long serialVersionUID = 6431995641984509482L;
 
-	private JHtmlEditorPane apkinform;
+	private JHtmlEditorPane apkinform = null;
 	private ApkInfo apkInfo;
 	private String mutiLabels;
 
 	public MyTabUIbasicInfo() {
+
+	}
+	
+	public void initialize() {
     	apkinform = new JHtmlEditorPane();
         apkinform.setEditable(false);
 
@@ -75,9 +77,11 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 		strTabInfo.append("<div id=\"about\">");
 		strTabInfo.append("  <H1>" + Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString() + "</H1>");
 		strTabInfo.append("  Using following tools,<br/>");
-		strTabInfo.append("  Apktool " + ApkManager.getApkToolVersion() + "<br/>");
+		strTabInfo.append("  Apktool <br/>");
+		//strTabInfo.append("  Apktool " + ApkManager.getApkToolVersion() + "<br/>");
 		strTabInfo.append("  - <a href=\"http://ibotpeaches.github.io/Apktool/\" title=\"Apktool Project Site\">http://ibotpeaches.github.io/Apktool/</a><br/>");
-		strTabInfo.append("  " + AdbWrapper.getVersion() + "<br/>");
+		strTabInfo.append("  Android Debug Bridge<br/>");
+		//strTabInfo.append("  " + AdbWrapper.getVersion() + "<br/>");
 		strTabInfo.append("  - <a href=\"http://developer.android.com/tools/help/adb.html\" title=\"Android Developer Site\">http://developer.android.com/tools/help/adb.html</a><br/>");
 		strTabInfo.append("  <br/><hr/>");
 		strTabInfo.append("  Programmed by <a href=\"mailto:" + Resource.STR_APP_MAKER_EMAIL.getString() + "\" title=\"" + Resource.STR_APP_MAKER_EMAIL.getString() + "\">" + Resource.STR_APP_MAKER.getString() + "</a>, 2015.<br/>");
@@ -101,6 +105,9 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 	public void setData(ApkInfo apkInfo)
 	{
 		this.apkInfo = apkInfo;
+		
+		if(apkinform == null)
+			initialize();
 		
 		if(apkInfo == null) {
 			removeData();

@@ -28,7 +28,8 @@ public class MyTabUI extends JPanel{
 	
 	String[] labels;
 	
-    public MyTabUI() {
+    public MyTabUI()
+    {
         super(new GridLayout(1, 1));
 
         Panels = new Container[6];
@@ -167,7 +168,7 @@ public class MyTabUI extends JPanel{
 			tabbedPane.setEnabledAt(5, false);
 		}
 
-        if(apkInfo != null) MainUI.ProgressBarDlg.addProgress(25,"check resource(*.png)...\n");
+        //if(apkInfo != null) MainUI.ProgressBarDlg.addProgress(25,"check resource(*.png)...\n");
 		if(apkInfo != null && apkInfo.ImageList.size() > 0) {
 			((MyTabUIResource) Panels[3]).setData(apkInfo.WorkTempPath, apkInfo.ImageList);
 	        tabbedPane.setTitleAt(3, labels[3] + "(" + apkInfo.ImageList.size()  + ")");

@@ -22,12 +22,16 @@ import com.ApkInfo.Resource.Resource;
 public class MyTabUILib extends JPanel {
 	private static final long serialVersionUID = -8985157400085276691L;
 
-	private MyTableModel mMyTableModel;
+	private MyTableModel mMyTableModel = null;
 	private JTable table;
 	
-	public MyTabUILib() {
+	public MyTabUILib()
+	{
 		super(new GridLayout(1, 0));
-		
+	}
+	
+	public void initialize()
+	{
 		mMyTableModel = new MyTableModel();
 		table = new JTable(mMyTableModel);
 		
@@ -45,11 +49,15 @@ public class MyTabUILib extends JPanel {
   
 	public void setData(ArrayList<String> data)
 	{
+		if(mMyTableModel == null)
+			initialize();
 		mMyTableModel.setData(data);
 	}
 	
 	public void reloadResource()
 	{
+		if(mMyTableModel == null)
+			initialize();
 		mMyTableModel.loadResource();
 		mMyTableModel.fireTableStructureChanged();
 		setJTableColumnsWidth(table, 500, 4, 65, 31);

@@ -29,14 +29,17 @@ public class MyTabUIActivity extends JPanel {
 	private JPanel IntentPanel;
 	private JLabel IntentLabel;
 	
-	private MyTableModel TableModel; 
-	private JTable table;
+	private MyTableModel TableModel = null; 
+	private JTable table = null;
   
 	public ArrayList<Object[]> ActivityList = new ArrayList<Object[]>();
   	  
 	public MyTabUIActivity() {
 		super(new GridLayout(1, 0));
+	}
 
+	public void initialize()
+	{
 		TableModel = new MyTableModel();
 		table = new JTable(TableModel) {
 			private static final long serialVersionUID = 1340713167587523626L;
@@ -121,6 +124,8 @@ public class MyTabUIActivity extends JPanel {
 	
 	public void setData(ArrayList<Object[]> data)
 	{
+		if(TableModel == null) 
+			initialize();
 		ActivityList.clear();
 		ActivityList.addAll(data);
 		TableModel.fireTableDataChanged();
@@ -128,6 +133,8 @@ public class MyTabUIActivity extends JPanel {
 	
 	public void reloadResource()
 	{
+		if(TableModel == null) 
+			initialize();
 		TableModel.loadResource();
 		TableModel.fireTableStructureChanged();
 		setJTableColumnsWidth(table, 500, 80,10,10);

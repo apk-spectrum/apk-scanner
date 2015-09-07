@@ -25,13 +25,16 @@ import com.ApkInfo.Resource.Resource;
 public class MyTabUIWidget extends JPanel {
 	private static final long serialVersionUID = 4881638983501664860L;
 
-	private MyTableModel TableModel; 
-	private JTable table;
+	private MyTableModel TableModel = null; 
+	private JTable table = null;
 	private ArrayList<Object[]> arrWidgets = new ArrayList<Object[]>();
 
 	public MyTabUIWidget() {
 		super(new GridLayout(1, 0));
-
+	}
+	
+	public void initialize()
+	{
 		TableModel = new MyTableModel();
 		table = new JTable(TableModel);
 		
@@ -44,7 +47,7 @@ public class MyTabUIWidget extends JPanel {
 		JScrollPane scrollPane = new JScrollPane(table);
 		
 		//Add the scroll pane to this panel.
-		add(scrollPane);
+		add(scrollPane);	
 	}
 	
 	public void setData(ArrayList<Object[]> data)
@@ -52,6 +55,7 @@ public class MyTabUIWidget extends JPanel {
 		//table.setPreferredScrollableViewportSize(new Dimension(500, 70));
 		arrWidgets.clear();
 		if(data == null) return;
+		if(TableModel == null) initialize();
 		for(int i=0; i< data.size(); i++) {
 			ImageIcon myimageicon = new ImageIcon((String)data.get(i)[0]);
 			

@@ -31,7 +31,8 @@ import com.ApkInfo.Resource.Resource;
 
 public class MyTabUISign extends JPanel implements ComponentListener{
 	private static final long serialVersionUID = 4333997417315260023L;
-	final JList<String> jlist;
+
+	JList<String> jlist = null;
 	JTextArea textArea;
 	
 	String mCertSummary = null;
@@ -39,9 +40,12 @@ public class MyTabUISign extends JPanel implements ComponentListener{
 	
     public MyTabUISign() {
         //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
+    }
+    
+    public void initialize()
+    {
         jlist = new JList<String>();
-
+        
         GridBagConstraints c = new GridBagConstraints();
         this.setLayout(new GridBagLayout());
         JScrollPane scrollPane1 = new JScrollPane(jlist);
@@ -103,7 +107,11 @@ public class MyTabUISign extends JPanel implements ComponentListener{
         jlist.addMouseListener(mouseListener);
     }
     
-    public void setData(String summury, ArrayList<String> data) {
+    public void setData(String summury, ArrayList<String> data)
+    {
+    	if(jlist == null)
+    		initialize();
+    	
     	mCertSummary = summury;
     	mCertList = data;
     	reloadResource();
