@@ -24,7 +24,9 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 
 import com.ApkInfo.Core.*;
 import com.ApkInfo.Core.AdbWrapper.AdbWrapperListener;
@@ -265,15 +267,26 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 	
 	private void newWindow(String apkFile)
 	{
-		if(apkFile == null) apkFile = "";
+		ArrayList<String> cmd = new ArrayList<String>();
+		
+		String classPath = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		String libPath = Resource.LIB_JSON_JAR.getPath();
+		libPath += File.pathSeparator + Resource.LIB_CLI_JAR.getPath();
+		try {
+			classPath = URLDecoder.decode(classPath, "UTF-8");
+		} catch (UnsupportedEncodingException e1) { }
+		
+		cmd.add("java");
+		cmd.add("-Dfile.encoding=utf-8");
+		cmd.add("-cp");
+		cmd.add(classPath + File.pathSeparator + libPath);
+		cmd.add(Main.class.getName());
+		if(apkFile != null) {
+			cmd.add(apkFile);
+		}
 		
 		try {
-			String classPath = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-			String libPath = Resource.LIB_JSON_JAR.getPath();
-			libPath += File.pathSeparator + Resource.LIB_CLI_JAR.getPath();
-			classPath = URLDecoder.decode(classPath, "UTF-8");
-			Runtime.getRuntime().exec(new String[] {"java", "-Dfile.encoding=utf-8", "-cp", classPath + File.pathSeparator + libPath, Main.class.getName(),
-													apkFile});
+			Runtime.getRuntime().exec(cmd.toArray(new String[0]));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
