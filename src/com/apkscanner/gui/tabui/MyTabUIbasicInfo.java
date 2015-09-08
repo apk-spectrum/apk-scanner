@@ -22,7 +22,7 @@ import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.CoreApkTool;
 
-public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListener
+public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListener, TabDataObject
 {
 	private static final long serialVersionUID = 6431995641984509482L;
 
@@ -34,6 +34,7 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 
 	}
 	
+	@Override
 	public void initialize() {
     	apkinform = new JHtmlEditorPane();
         apkinform.setEditable(false);
@@ -102,6 +103,7 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
         apkinform.setBody(strTabInfo.toString());
 	}
 
+	@Override
 	public void setData(ApkInfo apkInfo)
 	{
 		this.apkInfo = apkInfo;
@@ -354,6 +356,7 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 	    showDialog(body.toString(), Resource.STR_BASIC_PERM_DISPLAY_TITLE.getString(), new Dimension(600, 200), new ImageIcon(g.icon.replaceAll("^file:/", "")));
 	}
 
+	@Override
 	public void reloadResource() {
 		setData(apkInfo);
 	}

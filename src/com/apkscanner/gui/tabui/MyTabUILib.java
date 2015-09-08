@@ -11,6 +11,7 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
+import com.apkscanner.core.ApktoolManager.ApkInfo;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.CoreApkTool;
 import com.apkscanner.util.CoreApkTool.FSStyle;
@@ -19,7 +20,8 @@ import com.apkscanner.util.CoreApkTool.FSStyle;
  * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for
  * both cells and column headers.
  */
-public class MyTabUILib extends JPanel {
+public class MyTabUILib extends JPanel implements TabDataObject
+{
 	private static final long serialVersionUID = -8985157400085276691L;
 
 	private MyTableModel mMyTableModel = null;
@@ -30,6 +32,7 @@ public class MyTabUILib extends JPanel {
 		super(new GridLayout(1, 0));
 	}
 	
+	@Override
 	public void initialize()
 	{
 		mMyTableModel = new MyTableModel();
@@ -47,13 +50,15 @@ public class MyTabUILib extends JPanel {
 		add(scrollPane);
 	}
   
-	public void setData(ArrayList<String> data)
+	@Override
+	public void setData(ApkInfo apkInfo)
 	{
 		if(mMyTableModel == null)
 			initialize();
-		mMyTableModel.setData(data);
+		mMyTableModel.setData(apkInfo.LibList);
 	}
 	
+	@Override
 	public void reloadResource()
 	{
 		if(mMyTableModel == null)

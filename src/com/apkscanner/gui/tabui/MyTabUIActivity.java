@@ -20,9 +20,11 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import com.apkscanner.core.ApktoolManager.ApkInfo;
 import com.apkscanner.resource.Resource;
 
-public class MyTabUIActivity extends JPanel {
+public class MyTabUIActivity extends JPanel implements TabDataObject
+{
 	private static final long serialVersionUID = 8325900007802212630L;
 
 	private JTextArea textArea;
@@ -38,6 +40,7 @@ public class MyTabUIActivity extends JPanel {
 		super(new GridLayout(1, 0));
 	}
 
+	@Override
 	public void initialize()
 	{
 		TableModel = new MyTableModel();
@@ -122,15 +125,17 @@ public class MyTabUIActivity extends JPanel {
         add(splitPane);
 	}
 	
-	public void setData(ArrayList<Object[]> data)
+	@Override
+	public void setData(ApkInfo apkInfo)
 	{
 		if(TableModel == null) 
 			initialize();
 		ActivityList.clear();
-		ActivityList.addAll(data);
+		ActivityList.addAll(apkInfo.ActivityList);
 		TableModel.fireTableDataChanged();
 	}
 	
+	@Override
 	public void reloadResource()
 	{
 		if(TableModel == null) 

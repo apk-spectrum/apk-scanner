@@ -15,6 +15,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import com.apkscanner.core.ApktoolManager.ApkInfo;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.CoreApkTool;
 
@@ -22,7 +23,8 @@ import com.apkscanner.util.CoreApkTool;
  * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for
  * both cells and column headers.
  */
-public class MyTabUIWidget extends JPanel {
+public class MyTabUIWidget extends JPanel implements TabDataObject
+{
 	private static final long serialVersionUID = 4881638983501664860L;
 
 	private MyTableModel TableModel = null; 
@@ -33,6 +35,7 @@ public class MyTabUIWidget extends JPanel {
 		super(new GridLayout(1, 0));
 	}
 	
+	@Override
 	public void initialize()
 	{
 		TableModel = new MyTableModel();
@@ -50,18 +53,19 @@ public class MyTabUIWidget extends JPanel {
 		add(scrollPane);	
 	}
 	
-	public void setData(ArrayList<Object[]> data)
+	@Override
+	public void setData(ApkInfo apkInfo)
 	{
 		//table.setPreferredScrollableViewportSize(new Dimension(500, 70));
 		arrWidgets.clear();
-		if(data == null) return;
+		if(apkInfo.WidgetList == null) return;
 		if(TableModel == null) initialize();
-		for(int i=0; i< data.size(); i++) {
-			ImageIcon myimageicon = new ImageIcon((String)data.get(i)[0]);
+		for(int i=0; i< apkInfo.WidgetList.size(); i++) {
+			ImageIcon myimageicon = new ImageIcon((String)apkInfo.WidgetList.get(i)[0]);
 			
 			myimageicon.setImage(CoreApkTool.getMaxScaledImage(myimageicon,100,100));
 			
-			Object[] temp = { myimageicon , data.get(i)[1], data.get(i)[2], data.get(i)[3], data.get(i)[4]};
+			Object[] temp = { myimageicon , apkInfo.WidgetList.get(i)[1], apkInfo.WidgetList.get(i)[2], apkInfo.WidgetList.get(i)[3], apkInfo.WidgetList.get(i)[4]};
 			arrWidgets.add(temp);
 		}
 
@@ -71,6 +75,7 @@ public class MyTabUIWidget extends JPanel {
 		}
 	}
 	
+	@Override
 	public void reloadResource()
 	{
 		TableModel.loadResource();

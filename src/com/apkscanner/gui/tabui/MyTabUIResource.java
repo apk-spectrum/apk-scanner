@@ -17,11 +17,13 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.apkscanner.core.ApktoolManager.ApkInfo;
 import com.apkscanner.util.CoreApkTool;
 
 import java.util.ArrayList;
 
-public class MyTabUIResource extends JPanel{
+public class MyTabUIResource extends JPanel implements TabDataObject
+{
 	private static final long serialVersionUID = -934921813626224616L;
 
 	private Map<String, ImageIcon> imageMap = new HashMap<>();
@@ -38,6 +40,7 @@ public class MyTabUIResource extends JPanel{
 
 	}
 	
+	@Override
 	public void initialize()
 	{
 		list = new JList<Object>();
@@ -59,7 +62,8 @@ public class MyTabUIResource extends JPanel{
 		this.add(photographLabel);
 	}
 
-	public void setData(String path, ArrayList<String> data)
+	@Override
+	public void setData(ApkInfo apkInfo)
 	{
 		if(list == null)
 			initialize();
@@ -69,11 +73,11 @@ public class MyTabUIResource extends JPanel{
 		imageMap.clear();
 		list.clearSelection();
 		
-		this.path = path; 
+		this.path = apkInfo.WorkTempPath; 
 		
-		if(data == null) return;
+		if(apkInfo.ImageList == null) return;
 		
-		nameList.addAll(data);
+		nameList.addAll(apkInfo.ImageList);
 		for(int i=0; i < nameList.size(); i++) {
 			ShownameList.add(nameList.get(i).substring(path.length()));
 		}
@@ -123,4 +127,9 @@ public class MyTabUIResource extends JPanel{
     		
     	}
     }
+
+	@Override
+	public void reloadResource() {
+		
+	}
 }

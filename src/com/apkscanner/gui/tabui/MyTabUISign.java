@@ -26,10 +26,12 @@ import java.util.ArrayList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.apkscanner.core.ApktoolManager.ApkInfo;
 import com.apkscanner.resource.Resource;
 
 
-public class MyTabUISign extends JPanel implements ComponentListener{
+public class MyTabUISign extends JPanel implements ComponentListener, TabDataObject
+{
 	private static final long serialVersionUID = 4333997417315260023L;
 
 	JList<String> jlist = null;
@@ -42,6 +44,7 @@ public class MyTabUISign extends JPanel implements ComponentListener{
         //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
+    @Override
     public void initialize()
     {
         jlist = new JList<String>();
@@ -107,17 +110,19 @@ public class MyTabUISign extends JPanel implements ComponentListener{
         jlist.addMouseListener(mouseListener);
     }
     
-    public void setData(String summury, ArrayList<String> data)
+    @Override
+    public void setData(ApkInfo apkInfo)
     {
     	if(jlist == null)
     		initialize();
     	
-    	mCertSummary = summury;
-    	mCertList = data;
+    	mCertSummary = apkInfo.CertSummary;
+    	mCertList = apkInfo.CertList;
     	reloadResource();
         jlist.setSelectedIndex(0);
     }
     
+    @Override
     public void reloadResource() {
     	jlist.removeAll();
     	if(mCertList == null) return;
