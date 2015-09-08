@@ -8,8 +8,8 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 
-import com.apkscanner.core.Log;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 
 import javax.swing.JPanel;
 

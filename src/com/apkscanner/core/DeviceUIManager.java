@@ -1,4 +1,4 @@
-package com.apkscanner.gui;
+package com.apkscanner.core;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -22,17 +22,17 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultCaret;
 
-import com.apkscanner.core.AdbWrapper;
-import com.apkscanner.core.CoreApkTool;
-import com.apkscanner.core.AdbWrapper.AdbWrapperListener;
-import com.apkscanner.core.AdbWrapper.DeviceStatus;
-import com.apkscanner.core.AdbWrapper.PackageInfo;
 import com.apkscanner.gui.dialog.MyListDialog;
 import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.gui.util.ButtonType;
 import com.apkscanner.gui.util.StandardButton;
 import com.apkscanner.gui.util.Theme;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.AdbWrapper;
+import com.apkscanner.util.CoreApkTool;
+import com.apkscanner.util.AdbWrapper.AdbWrapperListener;
+import com.apkscanner.util.AdbWrapper.DeviceStatus;
+import com.apkscanner.util.AdbWrapper.PackageInfo;
 
 public class DeviceUIManager
 {

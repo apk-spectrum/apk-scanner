@@ -11,9 +11,9 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
-import com.apkscanner.core.CoreApkTool;
-import com.apkscanner.core.CoreApkTool.FSStyle;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.CoreApkTool;
+import com.apkscanner.util.CoreApkTool.FSStyle;
 
 /**
  * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for

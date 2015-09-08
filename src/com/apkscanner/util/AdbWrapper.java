@@ -1,11 +1,10 @@
-package com.apkscanner.core;
+package com.apkscanner.util;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.apkscanner.core.MyConsolCmd.OutputObserver;
 import com.apkscanner.resource.Resource;
 
 public class AdbWrapper
@@ -186,7 +185,7 @@ public class AdbWrapper
 		if(adbVersion == null) {
 			String adb = getAdbCmd();
 			if(adb == null) return null;
-			String[] result = MyConsolCmd.exc(new String[] {adb, "version"});
+			String[] result = ConsolCmd.exc(new String[] {adb, "version"});
 			return result[0];
 		}
 		return adbVersion;
@@ -197,8 +196,8 @@ public class AdbWrapper
 		//Log.i("ckeckAdbTool()");
 		if(adbCmd == null) return false;
 
-		MyConsolCmd.exc(new String[] {adbCmd, "kill-server"}, false, null);
-		String[] result = MyConsolCmd.exc(new String[] {adbCmd, "start-server"}, false, null);
+		ConsolCmd.exc(new String[] {adbCmd, "kill-server"}, false, null);
+		String[] result = ConsolCmd.exc(new String[] {adbCmd, "start-server"}, false, null);
 		return result[1].matches(".*daemon started successfully.*");
 	}
 
@@ -210,7 +209,7 @@ public class AdbWrapper
 		if(adbCmd == null) return null;
 
 		String[] cmd = {adbCmd, "devices", "-l"};
-		cmdResult = MyConsolCmd.exc(cmd,true,null);
+		cmdResult = ConsolCmd.exc(cmd,true,null);
 		
 		boolean startList = false;
 		for(String output: cmdResult) {
@@ -233,7 +232,7 @@ public class AdbWrapper
 		String[] TargetInfo;
 		String[] cmd = {adbCmd, "-s", device, "shell", "getprop", tag};
 
-		TargetInfo = MyConsolCmd.exc(cmd,false,null);
+		TargetInfo = ConsolCmd.exc(cmd,false,null);
 		
 		return TargetInfo[0];
 	}
@@ -243,7 +242,7 @@ public class AdbWrapper
 		if(adbCmd == null) return false;
 		boolean hasRoot = true;
 		String[] cmd = {adbCmd, "-s", device, "root"};
-		String[] result = MyConsolCmd.exc(cmd, false, null);
+		String[] result = ConsolCmd.exc(cmd, false, null);
 		if(!result[0].matches(".*running as root")) {
 			hasRoot = false;
 		}
@@ -253,22 +252,22 @@ public class AdbWrapper
 	static public void reboot(String device)
 	{
 		if(adbCmd == null) return;
-		MyConsolCmd.exc(new String[] {adbCmd, "-s", device, "reboot"});
+		ConsolCmd.exc(new String[] {adbCmd, "-s", device, "reboot"});
 	}
 	
 	static public void uninstallApk(String device, String packageName)
 	{
 		if(adbCmd == null) return;
-		MyConsolCmd.exc(new String[] {adbCmd, "-s", device, "uninstall", packageName});
+		ConsolCmd.exc(new String[] {adbCmd, "-s", device, "uninstall", packageName});
 	}
 	
 	static public void removeApk(String device, String apkPath)
 	{
 		if(adbCmd == null) return;
 
-		MyConsolCmd.exc(new String[] {adbCmd, "-s", device, "root"}, true);
-		MyConsolCmd.exc(new String[] {adbCmd, "-s", device, "remount"}, true);
-		MyConsolCmd.exc(new String[] {adbCmd, "-s", device, "shell", "rm", "-rf", apkPath}, true);
+		ConsolCmd.exc(new String[] {adbCmd, "-s", device, "root"}, true);
+		ConsolCmd.exc(new String[] {adbCmd, "-s", device, "remount"}, true);
+		ConsolCmd.exc(new String[] {adbCmd, "-s", device, "shell", "rm", "-rf", apkPath}, true);
 	}
 	
 	static public void PushApk(String name, String srcApkPath, String destApkPath, String libPath, AdbWrapperListener listener)
@@ -328,7 +327,7 @@ public class AdbWrapper
 
 		String[] result;
 		String[] cmd = {adbCmd, "-s", name, "pull", srcApkPath, destApkPath};
-		result = MyConsolCmd.exc(cmd, false, null);
+		result = ConsolCmd.exc(cmd, false, null);
 		
 		if(result[0].matches(".*s\\)")) {
 			return true;
@@ -359,10 +358,10 @@ public class AdbWrapper
 		ArrayList<PackageListObject> list = new ArrayList<PackageListObject>();
 		
 		String[] cmd = {adbCmd, "-s", device, "shell", "dumpsys", "package"};
-		String[] result = MyConsolCmd.exc(cmd, false, null);
+		String[] result = ConsolCmd.exc(cmd, false, null);
 		
 		cmd = new String[] {adbCmd, "-s", device, "shell", "pm", "list", "packages", "-f", "-i"};
-		String[] pmList = MyConsolCmd.exc(cmd, false, null);		
+		String[] pmList = ConsolCmd.exc(cmd, false, null);		
 		
 		boolean start = false;
 		PackageListObject pack = null;
@@ -412,7 +411,7 @@ public class AdbWrapper
 		}
 		
 		cmd = new String[] {adbCmd, "-s", device, "shell", "ls", "/system/framework/*.apk"};
-		result = MyConsolCmd.exc(cmd, false, null);
+		result = ConsolCmd.exc(cmd, false, null);
 		for(String line: result) {
 			if(line.equals("/system/framework/framework-res.apk")
 					|| !line.endsWith(".apk")) continue;
@@ -444,7 +443,7 @@ public class AdbWrapper
 
 		if(!pkgName.matches("/system/framework/.*apk")) {
 			cmd = new String[] {adbCmd, "-s", device, "shell", "pm", "list", "packages", "-f", "-i", pkgName};
-			result = MyConsolCmd.exc(cmd, false, null);		
+			result = ConsolCmd.exc(cmd, false, null);		
 			for(String output: result) {
 		    	if(output.matches("^package:.*=" + pkgName + "\\s*installer=.*")) {
 		    		apkPath = output.replaceAll("^package:(.*)=" + pkgName + "\\s*installer=(.*)", "$1");
@@ -453,7 +452,7 @@ public class AdbWrapper
 			}
 			
 			cmd = new String[] {adbCmd,"-s", device, "shell", "dumpsys","package",pkgName};
-			TargetInfo = MyConsolCmd.exc(cmd,false,null);
+			TargetInfo = ConsolCmd.exc(cmd,false,null);
 			
 			verName = selectString(TargetInfo,"versionName=");
 			verCode = selectString(TargetInfo,"versionCode=");
@@ -478,7 +477,7 @@ public class AdbWrapper
 		if(apkPath == null && codePath != null && !codePath.isEmpty() 
 				&& (isSystemApp || (!isSystemApp && hasRootPermission(device)))) {
 			cmd = new String[] {adbCmd, "-s", device, "shell", "ls", codePath};
-			result = MyConsolCmd.exc(cmd, false, null);
+			result = ConsolCmd.exc(cmd, false, null);
 			for(String output: result) {
 		    	if(output.matches("^.*apk")) {
 		    		apkPath = codePath + "/" + output;
@@ -529,7 +528,7 @@ public class AdbWrapper
 				String[] result;
 				String[] cmd = {adbCmd, "-s", this.device, "install", "-d","-r", this.srcApkPath};
 				
-				result = MyConsolCmd.exc(cmd,true,new MyConsolCmd.OutputObserver() {
+				result = ConsolCmd.exc(cmd,true,new ConsolCmd.OutputObserver() {
 					@Override
 					public boolean ConsolOutput(String output) {
 						sendMessage(output.replaceAll("^.*adb(\\.exe)?", "adb"));
@@ -549,7 +548,7 @@ public class AdbWrapper
 				String[] result;
 				String[] cmd = {adbCmd, "-s", this.device, "pull", this.srcApkPath, this.destApkPath};
 
-				result = MyConsolCmd.exc(cmd,true,new MyConsolCmd.OutputObserver() {
+				result = ConsolCmd.exc(cmd,true,new ConsolCmd.OutputObserver() {
 					@Override
 					public boolean ConsolOutput(String output) {
 						sendMessage(output.replaceAll("^.*adb(\\.exe)?", "adb"));
@@ -603,7 +602,7 @@ public class AdbWrapper
 				}
 				cmd.add(new String[] {adbCmd, "-s", this.device, "shell", "echo", "Compleated..."});
 				
-				result = MyConsolCmd.exc(cmd.toArray(new String[0][0]),true,new MyConsolCmd.OutputObserver() {
+				result = ConsolCmd.exc(cmd.toArray(new String[0][0]),true,new ConsolCmd.OutputObserver() {
 					@Override
 					public boolean ConsolOutput(String output) {
 						sendMessage(output.replaceAll("^.*adb(\\.exe)?", "adb"));

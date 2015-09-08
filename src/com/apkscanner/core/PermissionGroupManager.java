@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.MyXPath;
 
 public class PermissionGroupManager {
 

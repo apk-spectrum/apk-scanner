@@ -15,8 +15,8 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import com.apkscanner.core.CoreApkTool;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.CoreApkTool;
 
 /**
  * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for

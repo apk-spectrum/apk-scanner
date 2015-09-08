@@ -17,7 +17,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.apkscanner.core.CoreApkTool;
+import com.apkscanner.util.CoreApkTool;
 
 import java.util.ArrayList;
 

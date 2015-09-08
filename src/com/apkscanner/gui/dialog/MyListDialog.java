@@ -2,12 +2,12 @@ package com.apkscanner.gui.dialog;
 
 import javax.swing.*;
 
-import com.apkscanner.core.AdbWrapper;
-import com.apkscanner.core.AdbWrapper.DeviceStatus;
 import com.apkscanner.gui.util.ButtonType;
 import com.apkscanner.gui.util.StandardButton;
 import com.apkscanner.gui.util.Theme;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.AdbWrapper;
+import com.apkscanner.util.AdbWrapper.DeviceStatus;
 
 import java.awt.*;
 import java.awt.event.*;

@@ -29,15 +29,12 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 
 import com.apkscanner.Main;
-import com.apkscanner.core.AdbWrapper;
 import com.apkscanner.core.ApktoolManager;
-import com.apkscanner.core.CoreApkTool;
-import com.apkscanner.core.Log;
-import com.apkscanner.core.AdbWrapper.AdbWrapperListener;
+import com.apkscanner.core.DeviceUIManager;
 import com.apkscanner.core.ApktoolManager.ApkInfo;
 import com.apkscanner.core.ApktoolManager.SolveType;
 import com.apkscanner.core.ApktoolManager.StatusListener;
-import com.apkscanner.gui.DeviceUIManager.InstallButtonStatusListener;
+import com.apkscanner.core.DeviceUIManager.InstallButtonStatusListener;
 import com.apkscanner.gui.MyToolBarUI.ButtonId;
 import com.apkscanner.gui.dialog.PackageTreeDlg;
 import com.apkscanner.gui.dialog.ProgressBarDlg;
@@ -45,6 +42,10 @@ import com.apkscanner.gui.dialog.SettingDlg;
 import com.apkscanner.gui.util.FileDrop;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.AdbWrapper;
+import com.apkscanner.util.CoreApkTool;
+import com.apkscanner.util.Log;
+import com.apkscanner.util.AdbWrapper.AdbWrapperListener;
 
 
 public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher, FileDrop.Listener

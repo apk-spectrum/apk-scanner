@@ -1,4 +1,4 @@
-package com.apkscanner.core;
+package com.apkscanner.util;
 
 import java.io.FileReader;
 import java.io.IOException;

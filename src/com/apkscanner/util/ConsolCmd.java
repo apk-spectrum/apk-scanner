@@ -1,4 +1,4 @@
-package com.apkscanner.core;
+package com.apkscanner.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyConsolCmd
+public class ConsolCmd
 {
 	private boolean multiCmdExit;
 
@@ -15,21 +15,21 @@ public class MyConsolCmd
 		public boolean ConsolOutput(String output);
 	}
 	
-	private MyConsolCmd()
+	private ConsolCmd()
 	{
 		multiCmdExit = false;
 	}
 
 	static public String[] exc(String[] cmd) {
-		return (new MyConsolCmd()).exc_i(cmd, false, null);
+		return (new ConsolCmd()).exc_i(cmd, false, null);
 	}
 
 	static public String[] exc(String[] cmd, boolean showLog) {
-		return (new MyConsolCmd()).exc_i(cmd, showLog, null);
+		return (new ConsolCmd()).exc_i(cmd, showLog, null);
 	}
 
 	static public String[] exc(String[] cmd, boolean showLog, OutputObserver observer) {
-		return (new MyConsolCmd()).exc_i(cmd, showLog, observer);
+		return (new ConsolCmd()).exc_i(cmd, showLog, observer);
 	}
 	
 	private String[] exc_i(String[] cmd, boolean showLog, OutputObserver observer)
@@ -65,17 +65,17 @@ public class MyConsolCmd
 
 	static public String[][] exc(String[][] cmd)
 	{
-		return (new MyConsolCmd()).exc_i(cmd, false, null);
+		return (new ConsolCmd()).exc_i(cmd, false, null);
 	}
 
 	static public String[][] exc(String[][] cmd, boolean showLog)
 	{
-		return (new MyConsolCmd()).exc_i(cmd, showLog, null);
+		return (new ConsolCmd()).exc_i(cmd, showLog, null);
 	}
 
 	static public String[][] exc(String[][] cmd, boolean showLog, final OutputObserver observer)
 	{
-		return (new MyConsolCmd()).exc_i(cmd, showLog, observer);
+		return (new ConsolCmd()).exc_i(cmd, showLog, observer);
 	}
 	
 	private String[][] exc_i(String[][] cmd, boolean showLog, final OutputObserver observer) {

@@ -21,7 +21,7 @@ import javax.imageio.stream.ImageInputStream;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
-import com.apkscanner.core.Log;
+import com.apkscanner.util.Log;
 
 //import org.apache.commons.lang.StringUtils;
 

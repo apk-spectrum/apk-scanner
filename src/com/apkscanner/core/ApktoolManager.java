@@ -7,10 +7,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.apkscanner.core.CoreApkTool.FSStyle;
-import com.apkscanner.core.MyConsolCmd.OutputObserver;
 import com.apkscanner.core.PermissionGroupManager.PermissionGroup;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.ConsolCmd;
+import com.apkscanner.util.CoreApkTool;
+import com.apkscanner.util.Log;
+import com.apkscanner.util.MyXPath;
+import com.apkscanner.util.CoreApkTool.FSStyle;
 
 public class ApktoolManager
 {
@@ -200,7 +203,7 @@ public class ApktoolManager
 				Log.e("No such file : apktool.jar");
 				return null;
 			}
-			String[] result = MyConsolCmd.exc(new String[] {"java", "-jar", apkToolPath, "--version"}, false);
+			String[] result = ConsolCmd.exc(new String[] {"java", "-jar", apkToolPath, "--version"}, false);
 	
 			return result[0];
 		}
@@ -295,7 +298,7 @@ public class ApktoolManager
 			for(String framework: mFrameworkResList) {
 				if(!(new File(framework)).exists()) continue;
 				String[] cmd = {"java", "-jar", apkToolPath, "install-framework", "-p", solvePath+"-res", framework};
-				MyConsolCmd.exc(cmd, true, new MyConsolCmd.OutputObserver() {
+				ConsolCmd.exc(cmd, true, new ConsolCmd.OutputObserver() {
 					@Override
 					public boolean ConsolOutput(String output) {
 				    	if(output.matches("^I:.*"))
@@ -307,7 +310,7 @@ public class ApktoolManager
 			
 			boolean isSuccess = true;
 			String[] cmd = new String[] {"java", "-jar", apkToolPath, "d", "-s", "-f", "-o", solvePath, "-p", solvePath+"-res", APKFilePath};
-			String[] result = MyConsolCmd.exc(cmd, true, new MyConsolCmd.OutputObserver() {
+			String[] result = ConsolCmd.exc(cmd, true, new ConsolCmd.OutputObserver() {
 				@Override
 				public boolean ConsolOutput(String output) {
 			    	if(output.matches("^I:.*"))
@@ -679,7 +682,7 @@ public class ApktoolManager
 				if(!rsaFile.exists()) continue;
 
 				String[] cmd = {"java","-Dfile.encoding=utf8",keytoolPackage,"-printcert","-v","-file", rsaFile.getAbsolutePath()};
-				String[] result = MyConsolCmd.exc(cmd, false, null);
+				String[] result = ConsolCmd.exc(cmd, false, null);
 
 			    String certContent = "";
 			    mApkInfo.CertSummary = "<certificate[1]>\n";
