@@ -24,11 +24,8 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.ArrayList;
 
-import com.apkscanner.Main;
+import com.apkscanner.Launcher;
 import com.apkscanner.core.ApktoolManager;
 import com.apkscanner.core.DeviceUIManager;
 import com.apkscanner.core.ApktoolManager.ApkInfo;
@@ -271,49 +268,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 
 		return dir.getPath();
 	}
-	
-	private void newWindow(String apkFile)
-	{
-		ArrayList<String> cmd = new ArrayList<String>();
-		
-		String classPath = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-		String libPath = Resource.LIB_JSON_JAR.getPath();
-		libPath += File.pathSeparator + Resource.LIB_CLI_JAR.getPath();
-		try {
-			classPath = URLDecoder.decode(classPath, "UTF-8");
-		} catch (UnsupportedEncodingException e1) { }
-		
-		cmd.add("java");
-		cmd.add("-Dfile.encoding=utf-8");
-		cmd.add("-cp");
-		cmd.add(classPath + File.pathSeparator + libPath);
-		cmd.add(Main.class.getName());
-		if(apkFile != null) {
-			cmd.add(apkFile);
-		}
-		
-		try {
-			Runtime.getRuntime().exec(cmd.toArray(new String[0]));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private void newWindow(String device, String apkPath, String frameworkRes)
-	{
-		try {
-			String classPath = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-			String libPath = Resource.LIB_JSON_JAR.getPath();
-			libPath += File.pathSeparator + Resource.LIB_CLI_JAR.getPath();
-			classPath = URLDecoder.decode(classPath, "UTF-8");
-			if(frameworkRes == null || frameworkRes.isEmpty()) frameworkRes = "null";
-			Runtime.getRuntime().exec(new String[] {"java", "-Dfile.encoding=utf-8", "-cp", classPath + File.pathSeparator + libPath, Main.class.getName(),
-													"package", "-d", device, "-f", frameworkRes, apkPath});
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
+
 	private void openApkFile(String apkFile)
 	{
 		if(apkFile == null) return;
@@ -351,7 +306,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 			@Override
 			public void OnOpenApk(String path) {
 				if((new File(path)).exists())
-					newWindow(path);
+					Launcher.run(path);
 			}
 		});
 	}
@@ -455,17 +410,17 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 			} if(e.getSource().getClass().getSimpleName().equals("JMenuItem")) {
 				String cmd = e.getActionCommand();
 				if(cmd.equals(Resource.STR_MENU_NEW_WINDOW.getString())) {
-					newWindow(null);
+					Launcher.run();
 				} else if(cmd.equals(Resource.STR_MENU_NEW_APK_FILE.getString())) {
 					String file = selectApkFile();
 					if(file != null && (new File(file)).exists())
-						newWindow(file);
+						Launcher.run(file);
 				} else if(cmd.equals(Resource.STR_MENU_NEW_PACKAGE.getString())) {
 					PackageTreeDlg Dlg = new PackageTreeDlg();
 					Dlg.showTreeDlg();
 					
 					if(Dlg.getSelectedDevice() != null && !Dlg.getSelectedDevice().isEmpty() && !Dlg.getSelectedApkPath().isEmpty())
-						newWindow(Dlg.getSelectedDevice(), Dlg.getSelectedApkPath(), Dlg.getSelectedFrameworkRes());
+						Launcher.run(Dlg.getSelectedDevice(), Dlg.getSelectedApkPath(), Dlg.getSelectedFrameworkRes());
 				} else if(cmd.equals(Resource.STR_MENU_APK_FILE.getString())) {
 					String file = selectApkFile();
 					openApkFile(file);
@@ -504,7 +459,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 						openPackage(Dlg.getSelectedDevice(), Dlg.getSelectedApkPath(), Dlg.getSelectedFrameworkRes());
 					break;
 				case KeyEvent.VK_N:
-					newWindow(null);
+					Launcher.run();
 					break;
 				case KeyEvent.VK_I:
 					if(mApkManager != null) {
