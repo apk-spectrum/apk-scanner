@@ -22,7 +22,7 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultCaret;
 
-import com.apkscanner.gui.dialog.MyListDialog;
+import com.apkscanner.gui.dialog.DeviceListDialog;
 import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.gui.util.ButtonType;
 import com.apkscanner.gui.util.StandardButton;
@@ -96,7 +96,7 @@ public class DeviceUIManager
 
 				DeviceStatus dev = DeviceList.get(0);
 				if(DeviceList.size() > 1 || (DeviceList.size() == 1 && !dev.status.equals("device"))) {
-					int selectedValue = MyListDialog.showDialog();
+					int selectedValue = DeviceListDialog.showDialog();
 					//Log.i("Seltected index : " + selectedValue);
 					
 					if(selectedValue == -1) {
@@ -104,7 +104,7 @@ public class DeviceUIManager
 						setVisible(false);
 						return;
 					}
-					dev = MyListDialog.getSelectedData();
+					dev = DeviceListDialog.getSelectedData();
 				}
 				printlnLog(dev.getSummary());
 				

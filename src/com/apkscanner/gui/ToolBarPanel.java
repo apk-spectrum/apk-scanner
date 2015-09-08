@@ -22,7 +22,7 @@ import com.apkscanner.gui.util.ToolBarButton;
 import com.apkscanner.resource.Resource;
 
 
-public class MyToolBarUI extends JPanel implements ActionListener{
+public class ToolBarPanel extends JPanel implements ActionListener{
 	private static final long serialVersionUID = 894134416480807167L;
 
 	private ToolBarButton btn_open;
@@ -55,7 +55,7 @@ public class MyToolBarUI extends JPanel implements ActionListener{
     	NEED_TARGET_APK
     }
 	
-    public MyToolBarUI(ActionListener listener) {
+    public ToolBarPanel(ActionListener listener) {
         initUI(listener);
     }
 

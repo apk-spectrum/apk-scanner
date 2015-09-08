@@ -20,7 +20,7 @@ import com.apkscanner.gui.util.PlasticTabbedPaneUI;
 import com.apkscanner.resource.Resource;
 
 
-public class MyTabUI extends JPanel{
+public class TabPanel extends JPanel{
 	private static final long serialVersionUID = -5500517956616692675L;
 
 	Container[] Panels;
@@ -28,7 +28,7 @@ public class MyTabUI extends JPanel{
 	
 	String[] labels;
 	
-    public MyTabUI()
+    public TabPanel()
     {
         super(new GridLayout(1, 1));
 

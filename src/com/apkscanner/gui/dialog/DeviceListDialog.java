@@ -15,10 +15,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MyListDialog extends JDialog implements ActionListener {
+public class DeviceListDialog extends JDialog implements ActionListener {
 	private static final long serialVersionUID = 662649457192939410L;
 
-	private static MyListDialog dialog;
+	private static DeviceListDialog dialog;
 	private static int value = 0;
 	private static JList<String> list;
 	private static Boolean clicked = false;
@@ -41,7 +41,7 @@ public class MyListDialog extends JDialog implements ActionListener {
 			String[] possibleValues, int initialValue, String longValue) {
 		Frame frame = JOptionPane.getFrameForComponent(frameComp);
 		do {
-			dialog = new MyListDialog(frame, locationComp, labelText, title,
+			dialog = new DeviceListDialog(frame, locationComp, labelText, title,
 					possibleValues, initialValue, longValue);
 
 			final Object old = UIManager.get("Button.defaultButtonFollowsFocus");
@@ -100,7 +100,7 @@ public class MyListDialog extends JDialog implements ActionListener {
 		list.setSelectedIndex(value);
 	}
 
-	private MyListDialog(Frame frame, Component locationComp, String labelText,
+	private DeviceListDialog(Frame frame, Component locationComp, String labelText,
 			String title, Object[] data, int initialValue, String longValue) {
 		super(frame, title, true);
 		clicked = false;
@@ -232,8 +232,8 @@ public class MyListDialog extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if ("Set".equals(e.getActionCommand())) {
 			//Log.i("click set");
-			MyListDialog.value = (int) (list.getSelectedIndex());
-			MyListDialog.dialog.setVisible(false);
+			DeviceListDialog.value = (int) (list.getSelectedIndex());
+			DeviceListDialog.dialog.setVisible(false);
 			clicked = true;
 		} else if("Refresh".equals(e.getActionCommand())) {
 			refreshData();			
