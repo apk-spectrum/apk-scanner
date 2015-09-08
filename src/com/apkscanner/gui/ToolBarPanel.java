@@ -7,10 +7,13 @@ import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -18,7 +21,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 
-import com.apkscanner.gui.util.ToolBarButton;
 import com.apkscanner.resource.Resource;
 
 
@@ -55,6 +57,41 @@ public class ToolBarPanel extends JPanel implements ActionListener{
     	NEED_TARGET_APK
     }
 	
+    private class ToolBarButton extends JButton{
+    	private static final long serialVersionUID = -6788392217820751244L;
+
+    	public ImageIcon  mHoverIcon;
+    	public ImageIcon  mIcon;
+
+    	public ToolBarButton(String text, ImageIcon icon, ImageIcon hoverIcon, ActionListener listener)
+    	{
+    		super(text, icon);
+    		this.mHoverIcon = hoverIcon;
+    		this.mIcon = icon;
+    		
+        	setVerticalTextPosition(JLabel.BOTTOM);
+        	setHorizontalTextPosition(JLabel.CENTER);
+        	setBorderPainted(false);
+        	setOpaque(false);
+        	setFocusable(false);
+        	addActionListener(listener);
+
+    		setPreferredSize(new Dimension(63,65));
+    		
+            this.addMouseListener(new MouseAdapter()
+            {
+                public void mouseEntered(MouseEvent evt)
+                {
+                	setIcon(mHoverIcon);
+                }
+                public void mouseExited(MouseEvent evt)
+                {
+                	setIcon(mIcon);
+                }
+            });
+    	}
+    }
+    
     public ToolBarPanel(ActionListener listener) {
         initUI(listener);
     }
