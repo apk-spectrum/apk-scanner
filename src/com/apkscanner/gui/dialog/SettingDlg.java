@@ -1,4 +1,4 @@
-package com.apkscanner.gui;
+package com.apkscanner.gui.dialog;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -45,7 +45,7 @@ public class SettingDlg extends JDialog implements ActionListener
     JList<String> jlist;
     ArrayList<String> resList = new ArrayList<String>();
     
-	SettingDlg() {
+	public SettingDlg() {
 		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
 		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
 		getRootPane().getActionMap().put("ESCAPE", new AbstractAction() {
@@ -101,7 +101,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		Resource.PROP_FRAMEWORK_RES.setData(strframeworkResPath);
 	}
 
-	void makeDialog() {
+	public void makeDialog() {
 		this.setTitle(Resource.STR_SETTINGS_TITLE.getString());
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		this.setSize(new Dimension(480,215));

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
-import com.apkscanner.gui.PackageTreeDlg.FrameworkTableObject;
+import com.apkscanner.gui.dialog.PackageTreeDlg.FrameworkTableObject;
 import com.apkscanner.resource.Resource;
 
 public class BooleanTableModel extends AbstractTableModel {

@@ -1,4 +1,4 @@
-package com.apkscanner.gui;
+package com.apkscanner.gui.dialog;
 
 import javax.swing.*;
 

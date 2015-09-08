@@ -27,6 +27,7 @@ import com.apkscanner.core.CoreApkTool;
 import com.apkscanner.core.AdbWrapper.AdbWrapperListener;
 import com.apkscanner.core.AdbWrapper.DeviceStatus;
 import com.apkscanner.core.AdbWrapper.PackageInfo;
+import com.apkscanner.gui.dialog.MyListDialog;
 import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.gui.util.ButtonType;
 import com.apkscanner.gui.util.StandardButton;

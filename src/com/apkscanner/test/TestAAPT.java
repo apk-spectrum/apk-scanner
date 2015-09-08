@@ -1,4 +1,4 @@
-package com.ApkInfo.Core;
+package com.apkscanner.test;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -8,7 +8,6 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 
-import com.ApkInfo.CoreUtil.ZipUtils;
 import com.apkscanner.core.Log;
 import com.apkscanner.resource.Resource;
 

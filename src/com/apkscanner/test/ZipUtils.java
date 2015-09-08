@@ -1,4 +1,4 @@
-package com.ApkInfo.CoreUtil;
+package com.apkscanner.test;
 
 
 import java.awt.Image;
