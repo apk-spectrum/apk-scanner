@@ -9,18 +9,19 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import com.apkscanner.core.ApktoolManager.ApkInfo;
-import com.apkscanner.gui.tabui.MyTabUIActivity;
-import com.apkscanner.gui.tabui.MyTabUILib;
-import com.apkscanner.gui.tabui.MyTabUIResource;
-import com.apkscanner.gui.tabui.MyTabUISign;
-import com.apkscanner.gui.tabui.MyTabUIWidget;
-import com.apkscanner.gui.tabui.MyTabUIbasicInfo;
-import com.apkscanner.gui.tabui.TabDataObject;
+import com.apkscanner.gui.tabpanels.MyTabUIActivity;
+import com.apkscanner.gui.tabpanels.MyTabUILib;
+import com.apkscanner.gui.tabpanels.MyTabUIResource;
+import com.apkscanner.gui.tabpanels.MyTabUISign;
+import com.apkscanner.gui.tabpanels.MyTabUIWidget;
+import com.apkscanner.gui.tabpanels.MyTabUIbasicInfo;
+import com.apkscanner.gui.tabpanels.TabDataObject;
 import com.apkscanner.gui.util.PlasticTabbedPaneUI;
 import com.apkscanner.resource.Resource;
 
 
-public class TabPanel extends JPanel{
+public class TabPanel extends JPanel
+{
 	private static final long serialVersionUID = -5500517956616692675L;
 
 	private JTabbedPane tabbedPane;

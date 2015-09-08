@@ -1,4 +1,4 @@
-package com.apkscanner.gui.tabui;
+package com.apkscanner.gui.tabpanels;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
