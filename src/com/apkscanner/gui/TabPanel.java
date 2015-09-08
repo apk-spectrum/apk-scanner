@@ -9,13 +9,12 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import com.apkscanner.core.ApktoolManager.ApkInfo;
-import com.apkscanner.gui.tabpanels.MyTabUIActivity;
-import com.apkscanner.gui.tabpanels.MyTabUILib;
-import com.apkscanner.gui.tabpanels.MyTabUIResource;
-import com.apkscanner.gui.tabpanels.MyTabUISign;
-import com.apkscanner.gui.tabpanels.MyTabUIWidget;
-import com.apkscanner.gui.tabpanels.MyTabUIbasicInfo;
-import com.apkscanner.gui.tabpanels.TabDataObject;
+import com.apkscanner.gui.tabpanels.Activity;
+import com.apkscanner.gui.tabpanels.Library;
+import com.apkscanner.gui.tabpanels.ImageResource;
+import com.apkscanner.gui.tabpanels.Signature;
+import com.apkscanner.gui.tabpanels.Widget;
+import com.apkscanner.gui.tabpanels.BasicInfo;
 import com.apkscanner.gui.util.PlasticTabbedPaneUI;
 import com.apkscanner.resource.Resource;
 
@@ -27,6 +26,13 @@ public class TabPanel extends JPanel
 	private JTabbedPane tabbedPane;
 	private String[] labels;
 	
+	public abstract interface TabDataObject
+	{
+		public void initialize();
+		public void setData(ApkInfo apkInfo);
+		public void reloadResource();
+	}
+	
     public TabPanel()
     {
         super(new GridLayout(1, 1));
@@ -36,33 +42,26 @@ public class TabPanel extends JPanel
         
         loadResource();
         
-        tabbedPane.addTab(labels[0], null, new MyTabUIbasicInfo(), labels[0] + " (Alt+1)");
+        tabbedPane.addTab(labels[0], null, new BasicInfo(), labels[0] + " (Alt+1)");
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-        tabbedPane.addTab(labels[1], null, new MyTabUIWidget(), labels[1] + " (Alt+2)");
+        tabbedPane.addTab(labels[1], null, new Widget(), labels[1] + " (Alt+2)");
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
-        tabbedPane.addTab(labels[2], null, new MyTabUILib(), labels[2] + " (Alt+3)");
+        tabbedPane.addTab(labels[2], null, new Library(), labels[2] + " (Alt+3)");
         tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
-        tabbedPane.addTab(labels[3], null, new MyTabUIResource(), labels[3] + " (Alt+4)");
+        tabbedPane.addTab(labels[3], null, new ImageResource(), labels[3] + " (Alt+4)");
         tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
-        tabbedPane.addTab(labels[4], null, new MyTabUIActivity(), labels[4] + " (Alt+5)");
+        tabbedPane.addTab(labels[4], null, new Activity(), labels[4] + " (Alt+5)");
         tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
 
-        tabbedPane.addTab(labels[5], null, new MyTabUISign(), labels[5] + " (Alt+6)");
+        tabbedPane.addTab(labels[5], null, new Signature(), labels[5] + " (Alt+6)");
         tabbedPane.setMnemonicAt(5, KeyEvent.VK_6);
-        
-//	        JComponent panel6 = makeTextPanel("Panel #4 (has a preferred size of 410 x 50).");
-//	        panel6.setPreferredSize(new Dimension(700, 500));
-//	        tabbedPane.addTab("Device", null, panel6, "Device");
-//	        tabbedPane.setMnemonicAt(6, KeyEvent.VK_7);
-        
-        //Add the tabbed pane to this panel.
+
         add(tabbedPane);
         
-        //The following line enables to use scrolling tabs.
         tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
     }
     
@@ -87,7 +86,6 @@ public class TabPanel extends JPanel
     		tabbedPane.setToolTipTextAt(i, labels[i] + " (Alt+"+ (i+1) +")");
     		((TabDataObject)(tabbedPane.getComponent(i))).reloadResource();
     	}
-    	//tabbedPane.setTitleAt(0, labels[0]);
     }
 
 	protected JComponent makeTextPanel(String text)

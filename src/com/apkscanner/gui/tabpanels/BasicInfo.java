@@ -17,12 +17,13 @@ import javax.swing.JTextArea;
 import com.apkscanner.core.ApktoolManager.ApkInfo;
 import com.apkscanner.core.PermissionGroupManager.PermissionGroup;
 import com.apkscanner.core.PermissionGroupManager.PermissionInfo;
+import com.apkscanner.gui.TabPanel.TabDataObject;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.CoreApkTool;
 
-public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListener, TabDataObject
+public class BasicInfo extends JComponent implements HyperlinkClickListener, TabDataObject
 {
 	private static final long serialVersionUID = 6431995641984509482L;
 
@@ -30,12 +31,13 @@ public class MyTabUIbasicInfo extends JComponent implements HyperlinkClickListen
 	private ApkInfo apkInfo;
 	private String mutiLabels;
 
-	public MyTabUIbasicInfo() {
+	public BasicInfo() {
 
 	}
 	
 	@Override
-	public void initialize() {
+	public void initialize()
+	{
     	apkinform = new JHtmlEditorPane();
         apkinform.setEditable(false);
 

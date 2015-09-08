@@ -18,11 +18,12 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.apkscanner.core.ApktoolManager.ApkInfo;
+import com.apkscanner.gui.TabPanel.TabDataObject;
 import com.apkscanner.util.CoreApkTool;
 
 import java.util.ArrayList;
 
-public class MyTabUIResource extends JPanel implements TabDataObject
+public class ImageResource extends JPanel implements TabDataObject
 {
 	private static final long serialVersionUID = -934921813626224616L;
 
@@ -35,7 +36,7 @@ public class MyTabUIResource extends JPanel implements TabDataObject
 	
 	JList<Object> list = null;
     
-	public MyTabUIResource()
+	public ImageResource()
 	{
 
 	}

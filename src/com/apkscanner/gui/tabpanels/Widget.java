@@ -16,6 +16,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import com.apkscanner.core.ApktoolManager.ApkInfo;
+import com.apkscanner.gui.TabPanel.TabDataObject;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.CoreApkTool;
 
@@ -23,7 +24,7 @@ import com.apkscanner.util.CoreApkTool;
  * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for
  * both cells and column headers.
  */
-public class MyTabUIWidget extends JPanel implements TabDataObject
+public class Widget extends JPanel implements TabDataObject
 {
 	private static final long serialVersionUID = 4881638983501664860L;
 
@@ -31,7 +32,7 @@ public class MyTabUIWidget extends JPanel implements TabDataObject
 	private JTable table = null;
 	private ArrayList<Object[]> arrWidgets = new ArrayList<Object[]>();
 
-	public MyTabUIWidget() {
+	public Widget() {
 		super(new GridLayout(1, 0));
 	}
 	

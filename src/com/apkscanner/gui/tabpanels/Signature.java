@@ -27,10 +27,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.apkscanner.core.ApktoolManager.ApkInfo;
+import com.apkscanner.gui.TabPanel.TabDataObject;
 import com.apkscanner.resource.Resource;
 
 
-public class MyTabUISign extends JPanel implements ComponentListener, TabDataObject
+public class Signature extends JPanel implements ComponentListener, TabDataObject
 {
 	private static final long serialVersionUID = 4333997417315260023L;
 
@@ -40,7 +41,7 @@ public class MyTabUISign extends JPanel implements ComponentListener, TabDataObj
 	String mCertSummary = null;
 	ArrayList<String> mCertList = null;
 	
-    public MyTabUISign() {
+    public Signature() {
         //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     

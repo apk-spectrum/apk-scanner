@@ -21,9 +21,10 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import com.apkscanner.core.ApktoolManager.ApkInfo;
+import com.apkscanner.gui.TabPanel.TabDataObject;
 import com.apkscanner.resource.Resource;
 
-public class MyTabUIActivity extends JPanel implements TabDataObject
+public class Activity extends JPanel implements TabDataObject
 {
 	private static final long serialVersionUID = 8325900007802212630L;
 
@@ -36,7 +37,7 @@ public class MyTabUIActivity extends JPanel implements TabDataObject
   
 	public ArrayList<Object[]> ActivityList = new ArrayList<Object[]>();
   	  
-	public MyTabUIActivity() {
+	public Activity() {
 		super(new GridLayout(1, 0));
 	}
 
