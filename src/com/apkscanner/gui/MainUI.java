@@ -1,7 +1,6 @@
 package com.apkscanner.gui;
 
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 
@@ -9,7 +8,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -33,11 +31,11 @@ import com.apkscanner.core.ApktoolManager.SolveType;
 import com.apkscanner.core.ApktoolManager.StatusListener;
 import com.apkscanner.core.DeviceUIManager.InstallButtonStatusListener;
 import com.apkscanner.gui.ToolBar.ButtonSet;
+import com.apkscanner.gui.dialog.AboutDlg;
 import com.apkscanner.gui.dialog.PackageTreeDlg;
 import com.apkscanner.gui.dialog.ProgressBarDlg;
 import com.apkscanner.gui.dialog.SettingDlg;
 import com.apkscanner.gui.util.FileDrop;
-import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.AdbWrapper;
 import com.apkscanner.util.CoreApkTool;
@@ -310,44 +308,6 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 		});
 	}
 	
-	private void showAbout()
-	{
-		final ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon(100,100);
-		StringBuilder body = new StringBuilder();
-		body.append("<div id=\"about\">");
-		body.append("  <H1>" + Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString() + "</H1>");
-		body.append("  Using following tools,<br/>");
-		body.append("  Apktool " + ApktoolManager.getApkToolVersion() + "<br/>");
-		body.append("  - <a href=\"http://ibotpeaches.github.io/Apktool/\" title=\"Apktool Project Site\">http://ibotpeaches.github.io/Apktool/</a><br/>");
-		body.append("  " + AdbWrapper.getVersion() + "<br/>");
-		body.append("  - <a href=\"http://developer.android.com/tools/help/adb.html\" title=\"Android Developer Site\">http://developer.android.com/tools/help/adb.html</a><br/>");
-		body.append("  <br/><hr/>");
-		body.append("  Programmed by <a href=\"mailto:" + Resource.STR_APP_MAKER_EMAIL.getString() + "\" title=\"" + Resource.STR_APP_MAKER_EMAIL.getString() + "\">" + Resource.STR_APP_MAKER.getString() + "</a>, 2015.<br/>");
-		body.append("</div>");
-
-		JLabel label = new JLabel();
-	    Font font = label.getFont();
-
-	    // create some css from the label's font
-	    StringBuilder style = new StringBuilder("#about {");
-	    style.append("font-family:" + font.getFamily() + ";");
-	    style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-	    style.append("font-size:" + font.getSize() + "pt;}");
-	    style.append("#about a {text-decoration:none;}");
-
-	    // html content
-	    JHtmlEditorPane hep = new JHtmlEditorPane("", "", body.toString());
-	    hep.setStyle(style.toString());
-
-	    hep.setEditable(false);
-	    hep.setBackground(label.getBackground());
-
-	    // show
-	    //JOptionPane.showMessageDialog(null, hep, Resource.STR_BTN_ABOUT.getString(), JOptionPane.INFORMATION_MESSAGE, Appicon);
-	    JOptionPane.showOptionDialog(null, hep, Resource.STR_BTN_ABOUT.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, Appicon,
-	    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
-	}
-	
 	class ToolBarListener implements ActionListener
 	{
 		@Override
@@ -405,7 +365,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 						setLanguage(lang);
 					}
 				} else if(btn_label.equals(Resource.STR_BTN_ABOUT.getString())) {
-					showAbout();
+					AboutDlg.showAboutDialog();
 				}
 			} if(e.getSource().getClass().getSimpleName().equals("JMenuItem")) {
 				String cmd = e.getActionCommand();
@@ -529,7 +489,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 			} else if(e.getModifiers() == 0) {
 				switch(e.getKeyCode()) {
 				case KeyEvent.VK_F1:
-					showAbout();
+					AboutDlg.showAboutDialog();
 					break;
 				case KeyEvent.VK_F12:
 					JTextArea taskOutput = new JTextArea();
