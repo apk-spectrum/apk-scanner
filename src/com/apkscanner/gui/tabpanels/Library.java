@@ -12,7 +12,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
 import com.apkscanner.core.ApktoolManager.ApkInfo;
-import com.apkscanner.gui.TabPanel.TabDataObject;
+import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.CoreApkTool;
 import com.apkscanner.util.CoreApkTool.FSStyle;

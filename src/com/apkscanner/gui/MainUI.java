@@ -32,7 +32,7 @@ import com.apkscanner.core.ApktoolManager.ApkInfo;
 import com.apkscanner.core.ApktoolManager.SolveType;
 import com.apkscanner.core.ApktoolManager.StatusListener;
 import com.apkscanner.core.DeviceUIManager.InstallButtonStatusListener;
-import com.apkscanner.gui.ToolBarPanel.ButtonId;
+import com.apkscanner.gui.ToolBar.ButtonSet;
 import com.apkscanner.gui.dialog.PackageTreeDlg;
 import com.apkscanner.gui.dialog.ProgressBarDlg;
 import com.apkscanner.gui.dialog.SettingDlg;
@@ -51,8 +51,8 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 
 	private ApktoolManager mApkManager;
 	
-	private TabPanel tabPanel;
-	private ToolBarPanel toolBarPanel;
+	private TabbedPanel tabbedPanel;
+	private ToolBar toolBar;
 	private ProgressBarDlg progressBarDlg;
 	
 	//window position
@@ -126,10 +126,9 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 				//Log.i("ApkCore.OnSuccess()");
 				if(exiting) return;
 				
-				toolBarPanel.setEnabledAt(ButtonId.NEED_TARGET_APK, true);
-				toolBarPanel.setEnabledAt(ButtonId.PACK, false);
+				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, true);
 
-				tabPanel.setData(mApkManager.getApkInfo());
+				tabbedPanel.setData(mApkManager.getApkInfo());
 				progressBarDlg.setVisible(false);
 
 				String title = Resource.STR_APP_NAME.getString() + " - " + apkPath.substring(apkPath.lastIndexOf(File.separator)+1);
@@ -150,7 +149,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 				progressBarDlg.setVisible(false);
 
 				setTitle(Resource.STR_APP_NAME.getString());
-				tabPanel.setData(null);
+				tabbedPanel.setData(null);
 				setVisible(true);
 				final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
 				//JOptionPane.showMessageDialog(null, "Sorry, Can not open the APK", "Error", JOptionPane.ERROR_MESSAGE, Appicon);
@@ -196,7 +195,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 				progressBarDlg.setVisible(false);
 
 				setTitle(Resource.STR_APP_NAME.getString());
-				tabPanel.setData(null);
+				tabbedPanel.setData(null);
 				setVisible(true);
 				final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
 				//JOptionPane.showMessageDialog(null, "Sorry, Can not open the APK", "Error", JOptionPane.ERROR_MESSAGE, Appicon);
@@ -294,13 +293,13 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 			apkInfo = mApkManager.getApkInfo();
 		}
 
-		toolBarPanel.setEnabledAt(ButtonId.INSTALL, false);
+		toolBar.setEnabledAt(ButtonSet.INSTALL, false);
 		String libPath = apkInfo.WorkTempPath + File.separator + "lib" + File.separator;
 		new DeviceUIManager(apkInfo.PackageName, apkInfo.ApkPath, libPath , 
 				(boolean)Resource.PROP_CHECK_INSTALLED.getData(false), checkPackage, new InstallButtonStatusListener() {
 			@Override
 			public void SetInstallButtonStatus(Boolean Flag) {
-				toolBarPanel.setEnabledAt(ButtonId.INSTALL, Flag);
+				toolBar.setEnabledAt(ButtonSet.INSTALL, Flag);
 			}
 
 			@Override
@@ -362,8 +361,9 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 			if(e.getSource().getClass().getSimpleName().equals("ToolBarButton")) {
 				JButton b = (JButton) e.getSource();
 				String btn_label = b.getText();
+				
 		        
-				if (btn_label.equals(Resource.STR_BTN_OPEN.getString())) {
+				if (ToolBar.ButtonSet.OPEN.matchActionEvent(e)) {
 					String file = selectApkFile();
 					openApkFile(file);
 				} else if(btn_label.equals(Resource.STR_BTN_MANIFEST.getString())) {
@@ -574,8 +574,8 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 			title += " - " + mApkManager.getApkInfo().ApkPath.substring(mApkManager.getApkInfo().ApkPath.lastIndexOf(File.separator)+1);
 		}
 		setTitle(title);
-		toolBarPanel.reloadResource();
-		tabPanel.reloadResource();
+		toolBar.reloadResource();
+		tabbedPanel.reloadResource();
 	}
 
 	/**
@@ -593,14 +593,14 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 
 		//if(visible) setVisible(true);
 		
-        toolBarPanel = new ToolBarPanel(new ToolBarListener());
-        toolBarPanel.setEnabledAt(ButtonId.NEED_TARGET_APK, false);
-		add(toolBarPanel, BorderLayout.NORTH);
+        toolBar = new ToolBar(new ToolBarListener());
+        toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
+		add(toolBar, BorderLayout.NORTH);
 		//if(visible) revalidate();
 		
-		tabPanel = new TabPanel();
-		tabPanel.setData(null);
-		add(tabPanel, BorderLayout.CENTER);
+		tabbedPanel = new TabbedPanel();
+		tabbedPanel.setData(null);
+		add(tabbedPanel, BorderLayout.CENTER);
 		//if(visible) revalidate();
 		
 		if(visible) setVisible(true);

@@ -19,11 +19,10 @@ import com.apkscanner.gui.util.PlasticTabbedPaneUI;
 import com.apkscanner.resource.Resource;
 
 
-public class TabPanel extends JPanel
+public class TabbedPanel extends JTabbedPane
 {
 	private static final long serialVersionUID = -5500517956616692675L;
 
-	private JTabbedPane tabbedPane;
 	private String[] labels;
 	
 	public abstract interface TabDataObject
@@ -33,36 +32,31 @@ public class TabPanel extends JPanel
 		public void reloadResource();
 	}
 	
-    public TabPanel()
+    public TabbedPanel()
     {
-        super(new GridLayout(1, 1));
-
-        tabbedPane = new JTabbedPane();
-        tabbedPane.setUI(new PlasticTabbedPaneUI());
+        setUI(new PlasticTabbedPaneUI());
         
         loadResource();
         
-        tabbedPane.addTab(labels[0], null, new BasicInfo(), labels[0] + " (Alt+1)");
-        tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
+        addTab(labels[0], null, new BasicInfo(), labels[0] + " (Alt+1)");
+        setMnemonicAt(0, KeyEvent.VK_1);
 
-        tabbedPane.addTab(labels[1], null, new Widget(), labels[1] + " (Alt+2)");
-        tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+        addTab(labels[1], null, new Widget(), labels[1] + " (Alt+2)");
+        setMnemonicAt(1, KeyEvent.VK_2);
 
-        tabbedPane.addTab(labels[2], null, new Library(), labels[2] + " (Alt+3)");
-        tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
+        addTab(labels[2], null, new Library(), labels[2] + " (Alt+3)");
+        setMnemonicAt(2, KeyEvent.VK_3);
 
-        tabbedPane.addTab(labels[3], null, new ImageResource(), labels[3] + " (Alt+4)");
-        tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
+        addTab(labels[3], null, new ImageResource(), labels[3] + " (Alt+4)");
+        setMnemonicAt(3, KeyEvent.VK_4);
 
-        tabbedPane.addTab(labels[4], null, new Activity(), labels[4] + " (Alt+5)");
-        tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
+        addTab(labels[4], null, new Activity(), labels[4] + " (Alt+5)");
+        setMnemonicAt(4, KeyEvent.VK_5);
 
-        tabbedPane.addTab(labels[5], null, new Signature(), labels[5] + " (Alt+6)");
-        tabbedPane.setMnemonicAt(5, KeyEvent.VK_6);
+        addTab(labels[5], null, new Signature(), labels[5] + " (Alt+6)");
+        setMnemonicAt(5, KeyEvent.VK_6);
 
-        add(tabbedPane);
-        
-        tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+        setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
     }
     
     private void loadResource()
@@ -82,9 +76,9 @@ public class TabPanel extends JPanel
     	loadResource();
 
     	for(int i = 0; i < 6; i++) {
-    		tabbedPane.setTitleAt(i, tabbedPane.getTitleAt(i).replaceAll("^([^\\(]*)", labels[i]));
-    		tabbedPane.setToolTipTextAt(i, labels[i] + " (Alt+"+ (i+1) +")");
-    		((TabDataObject)(tabbedPane.getComponent(i))).reloadResource();
+    		setTitleAt(i, getTitleAt(i).replaceAll("^([^\\(]*)", labels[i]));
+    		setToolTipTextAt(i, labels[i] + " (Alt+"+ (i+1) +")");
+    		((TabDataObject)(getComponent(i))).reloadResource();
     	}
     }
 
@@ -102,11 +96,11 @@ public class TabPanel extends JPanel
 	public void setData(ApkInfo apkInfo)
 	{
 		if(apkInfo != null) {
-	        tabbedPane.setTitleAt(3, labels[3] + "(...)");
-			tabbedPane.setEnabledAt(3, false);
+	        setTitleAt(3, labels[3] + "(...)");
+			setEnabledAt(3, false);
 		}
         
-		((TabDataObject)(tabbedPane.getComponent(0))).setData(apkInfo);
+		((TabDataObject)(getComponent(0))).setData(apkInfo);
 
 		if(apkInfo != null) {
 			setPanelData(1, apkInfo.WidgetList.size(), apkInfo);
@@ -122,18 +116,18 @@ public class TabPanel extends JPanel
 			}
 		}
 
-		tabbedPane.setSelectedIndex(0);
+		setSelectedIndex(0);
 	}
 
 	private void setPanelData(int panelIdx, int dataSize, ApkInfo apkInfo)
 	{
 		if(dataSize > 0) {
-			((TabDataObject)(tabbedPane.getComponent(panelIdx))).setData(apkInfo);
-	        tabbedPane.setTitleAt(panelIdx, labels[panelIdx] + "(" + dataSize + ")");
-	        tabbedPane.setEnabledAt(panelIdx, true);
+			((TabDataObject)(getComponent(panelIdx))).setData(apkInfo);
+	        setTitleAt(panelIdx, labels[panelIdx] + "(" + dataSize + ")");
+	        setEnabledAt(panelIdx, true);
 		} else {
-	        tabbedPane.setTitleAt(panelIdx, labels[panelIdx] + "(0)");
-			tabbedPane.setEnabledAt(panelIdx, false);
+	        setTitleAt(panelIdx, labels[panelIdx] + "(0)");
+			setEnabledAt(panelIdx, false);
 		}
 	}
 }

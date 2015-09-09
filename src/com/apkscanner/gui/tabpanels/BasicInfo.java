@@ -17,7 +17,7 @@ import javax.swing.JTextArea;
 import com.apkscanner.core.ApktoolManager.ApkInfo;
 import com.apkscanner.core.PermissionGroupManager.PermissionGroup;
 import com.apkscanner.core.PermissionGroupManager.PermissionInfo;
-import com.apkscanner.gui.TabPanel.TabDataObject;
+import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.resource.Resource;
