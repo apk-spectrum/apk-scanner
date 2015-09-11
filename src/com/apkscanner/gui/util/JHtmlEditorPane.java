@@ -94,7 +94,7 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 
         if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
         	if(e.getDescription().isEmpty()) return;
-        	if(!e.getDescription().matches("^@.*")) {
+        	if(!e.getDescription().startsWith("@")) {
 	        	try {
 					Desktop.getDesktop().browse(new URI(e.getURL().toString()));
 				} catch (IOException | URISyntaxException e1) {

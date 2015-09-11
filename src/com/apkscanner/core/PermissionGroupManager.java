@@ -125,7 +125,7 @@ public class PermissionGroupManager {
 	
 	public String getInfoString(String value)
 	{
-		if(value == null || !value.matches("^@string.*")) {
+		if(value == null || !value.startsWith("@string")) {
 			return value;
 		}
 		String name = value.replace("@string/", "");
@@ -150,7 +150,7 @@ public class PermissionGroupManager {
 	
 	public String getIconPath(String value)
 	{
-		if(value == null || !value.matches("^@drawable.*")) {
+		if(value == null || !value.startsWith("@drawable")) {
 			value = "@drawable/perm_group_unknown";
 		}
 		String path = value.replace("@drawable/", "");

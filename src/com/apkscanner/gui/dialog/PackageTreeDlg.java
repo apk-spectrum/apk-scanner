@@ -370,8 +370,8 @@ public class PackageTreeDlg extends JPanel
 	private boolean uninstallApk(final String deviceNum, final String packageName, final String apkPath)
 	{
 		boolean isSystemApp = false;
-		if((apkPath != null && apkPath.matches("^/system/.*"))
-				|| (apkPath != null && apkPath.matches("^/system/.*"))) {
+		if((apkPath != null && apkPath.startsWith("/system/"))
+				|| (apkPath != null && apkPath.startsWith("/system/"))) {
 			isSystemApp = true;
 		}
 		

@@ -124,7 +124,10 @@ public class Signature extends JPanel implements ComponentListener, TabDataObjec
     }
     
     @Override
-    public void reloadResource() {
+    public void reloadResource()
+    {
+    	if(jlist == null) return;
+    	
     	jlist.removeAll();
     	if(mCertList == null) return;
     	int listSize = mCertList.size();

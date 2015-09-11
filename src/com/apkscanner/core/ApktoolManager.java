@@ -83,7 +83,7 @@ public class ApktoolManager
 				info[3] = info[3] != null && !((String)info[3]).isEmpty() ? info[3] : PackageName;
 				info[4] = info[4] != null && !((String)info[4]).isEmpty() ? info[4] : "Unknown";
 				
-				if(((String)info[3]).matches("^\\..*")) {
+				if(((String)info[3]).startsWith(".")) {
 					info[3] = PackageName + (String)info[3];
 	        	}
 			}
@@ -96,7 +96,7 @@ public class ApktoolManager
 				info[2] = info[2] != null && !((String)info[2]).isEmpty() ? info[2] : "X";
 				info[3] = info[3] != null && !((String)info[3]).isEmpty() ? info[3] : "";
 
-				if(((String)info[0]).matches("^\\..*")) {
+				if(((String)info[0]).startsWith(".")) {
 					info[0] = PackageName + (String)info[0];
 	        	}
 			}
@@ -301,7 +301,7 @@ public class ApktoolManager
 				ConsolCmd.exc(cmd, true, new ConsolCmd.OutputObserver() {
 					@Override
 					public boolean ConsolOutput(String output) {
-				    	if(output.matches("^I:.*"))
+				    	if(output.startsWith("I:"))
 				    		progress(1,output + "\n");
 				    	return true;
 					}
@@ -313,7 +313,7 @@ public class ApktoolManager
 			String[] result = ConsolCmd.exc(cmd, true, new ConsolCmd.OutputObserver() {
 				@Override
 				public boolean ConsolOutput(String output) {
-			    	if(output.matches("^I:.*"))
+			    	if(output.startsWith("I:"))
 			    		progress(5,output + "\n");
 			    	else
 			    		progress(0,output + "\n");
@@ -322,7 +322,7 @@ public class ApktoolManager
 			});
 			
 			for(String s: result) {
-				if(s.matches("^Exception.*")) {
+				if(s.startsWith("Exception")) {
 					isSuccess = false;
 					break;
 				}
@@ -455,26 +455,26 @@ public class ApktoolManager
 			String type = "string";
 			long maxImgSize = 0;
 			
-			if(!id.matches("^@.*")) {
+			if(!id.startsWith("@")) {
 				//Log.i("id is start without @");
 				result = new String(id);
 				return result;
-			} else if(id.matches("^@drawable/.*")) {
+			} else if(id.startsWith("@drawable/")) {
 				//Log.i("@drawable");
 
-				filter = "^drawable.*";
+				filter = "drawable";
 				fileName = new String(id.substring(10)) + ".png";
 				type = "image";
-			} else if(id.matches("^@string/.*")) {
+			} else if(id.startsWith("@string/")) {
 				//Log.i("@stirng");
 				
-				filter = "^values.*";
+				filter = "values";
 				query = "//resources/string[@name='"+id.substring(id.indexOf("/")+1)+"']";
 				fileName = "strings.xml";
-			} else if(id.matches("^@dimen/.*")) {
+			} else if(id.startsWith("@dimen/")) {
 				//Log.i("string@dimen");
 
-				filter = "^values.*";
+				filter = "values";
 				query = "//resources/dimen[@name='"+id.substring(id.indexOf("/")+1)+"']";
 				fileName = "dimens.xml";
 			} else {
@@ -483,7 +483,7 @@ public class ApktoolManager
 			}
 			
 			for (String s : (new File(resXmlPath)).list()) {
-				if(!s.matches(filter)) continue;
+				if(!s.startsWith(filter)) continue;
 
 				File resFile = new File(resXmlPath + s + File.separator + fileName);
 				if(!resFile.exists()) continue;
@@ -506,7 +506,7 @@ public class ApktoolManager
 		
 		private String[] getMutiLang(String id)
 		{
-			if(id == null || !id.matches("^@string/.*"))
+			if(id == null || !id.startsWith("@string/"))
 				return null;
 
 			ArrayList<String> result = new ArrayList<String>();
@@ -516,12 +516,12 @@ public class ApktoolManager
 			String filter = "";
 			String fileName = "";
 			
-			filter = "^values.*";
+			filter = "values";
 			query = "//resources/string[@name='"+id.substring(id.indexOf("/")+1)+"']";
 			fileName = "strings.xml";
 			
 			for (String s : (new File(resXmlPath)).list()) {
-				if(!s.matches(filter)) continue;
+				if(!s.startsWith(filter)) continue;
 
 				File resFile = new File(resXmlPath + s + File.separator + fileName);
 				if(!resFile.exists()) continue;
@@ -575,7 +575,7 @@ public class ApktoolManager
 			String IconPath = "";
 			String ReSizeMode = "";
 			
-			if(resource == null || !resource.matches("^@xml/.*")) {
+			if(resource == null || !resource.startsWith("@xml/")) {
 				return new Object[] { IconPath, Size };
 			}
 
@@ -583,7 +583,7 @@ public class ApktoolManager
 			//Log.i("widgetXml : " + widgetXml);
 
 			for (String s : (new File(resXmlPath)).list()) {
-				if(!s.matches("^xml.*")) continue;
+				if(!s.startsWith("xml")) continue;
 
 				File xmlFile = new File(resXmlPath + s + File.separator + widgetXml + ".xml");
 				if(!xmlFile.exists()) continue;
@@ -676,7 +676,7 @@ public class ApktoolManager
 			}
 			
 			for (String s : (new File(CertPath)).list()) {
-				if(!s.matches(".*\\.RSA") && !s.matches(".*\\.DSA") ) continue;
+				if(!s.endsWith(".RSA") && !s.endsWith(".DSA") ) continue;
 
 				File rsaFile = new File(CertPath + s);
 				if(!rsaFile.exists()) continue;

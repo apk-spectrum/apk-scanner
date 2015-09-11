@@ -62,8 +62,7 @@ public class Library extends JPanel implements TabDataObject
 	@Override
 	public void reloadResource()
 	{
-		if(mMyTableModel == null)
-			initialize();
+		if(mMyTableModel == null) return;
 		mMyTableModel.loadResource();
 		mMyTableModel.fireTableStructureChanged();
 		setJTableColumnsWidth(table, 500, 4, 65, 31);

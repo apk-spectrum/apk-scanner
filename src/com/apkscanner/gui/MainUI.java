@@ -133,7 +133,6 @@ public class MainUI extends JFrame
         
 		getContentPane().addHierarchyBoundsListener(new UIEventHandler());
 		new UIEventHandler().ancestorMoved(null);
-		//getContentPane().dispatchEvent(new HierarchyEvent(getContentPane(), 0, null, null));
 
 		Log.i("initialize() end");
 	}
@@ -258,7 +257,7 @@ public class MainUI extends JFrame
 			this.frameworkRes = "";
 			if(frameworkRes != null && !frameworkRes.isEmpty()) {
 				for(String s: frameworkRes.split(";")) {
-					if(s.matches("^@.*")) {
+					if(s.startsWith("@")) {
 						String name = s.replaceAll("^@([^/]*)/.*", "$1");
 						String path = s.replaceAll("^@[^/]*", "");
 						String dest = (new File(tmpPath).getParent()) + File.separator + path.replaceAll(".*/", "");

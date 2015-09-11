@@ -139,8 +139,7 @@ public class Activity extends JPanel implements TabDataObject
 	@Override
 	public void reloadResource()
 	{
-		if(TableModel == null) 
-			initialize();
+		if(TableModel == null) return;
 		TableModel.loadResource();
 		TableModel.fireTableStructureChanged();
 		setJTableColumnsWidth(table, 500, 80,10,10);

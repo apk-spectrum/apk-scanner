@@ -119,7 +119,7 @@ public class MyXPath {
 			//Log.i("getAttributes() shortName " + shortName);
 			for(int i=0; i < getNode().getAttributes().getLength(); i++) {
 				//Log.i("getAttributes() " + i + " : " + getNode().getAttributes().item(i).getNodeName());
-				if(getNode().getAttributes().item(i).getNodeName().matches(".*"+shortName)) {
+				if(getNode().getAttributes().item(i).getNodeName().endsWith(shortName)) {
 					//Log.i("getAttributes() maybe...... ");
 					return getNode().getAttributes().item(i).getTextContent();
 				}
@@ -141,7 +141,7 @@ public class MyXPath {
 			//Log.i("getAttributes() shortName " + shortName);
 			for(int i=0; i < getNodeList().item(idx).getAttributes().getLength(); i++) {
 				//Log.i("getAttributes() " + i + " : " + getNodeList().item(idx).getAttributes().item(i).getNodeName());
-				if(getNodeList().item(idx).getAttributes().item(i).getNodeName().matches(".*"+shortName)) {
+				if(getNodeList().item(idx).getAttributes().item(i).getNodeName().endsWith(shortName)) {
 					//Log.i("getAttributes() maybe...... ");
 					return getNodeList().item(idx).getAttributes().item(i).getTextContent();
 				}

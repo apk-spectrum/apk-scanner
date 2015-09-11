@@ -214,7 +214,7 @@ public class AdbWrapper
 		boolean startList = false;
 		for(String output: cmdResult) {
 			if(!startList || output.matches("^\\s*$")) {
-				if(output.matches("^List.*"))
+				if(output.startsWith("List"))
 					startList = true;
 				continue;
 			}
@@ -243,7 +243,7 @@ public class AdbWrapper
 		boolean hasRoot = true;
 		String[] cmd = {adbCmd, "-s", device, "root"};
 		String[] result = ConsolCmd.exc(cmd, false, null);
-		if(!result[0].matches(".*running as root")) {
+		if(!result[0].endsWith("running as root")) {
 			hasRoot = false;
 		}
 		return hasRoot;
@@ -329,7 +329,7 @@ public class AdbWrapper
 		String[] cmd = {adbCmd, "-s", name, "pull", srcApkPath, destApkPath};
 		result = ConsolCmd.exc(cmd, false, null);
 		
-		if(result[0].matches(".*s\\)")) {
+		if(result[0].endsWith("s)")) {
 			return true;
 		}
 
@@ -369,7 +369,7 @@ public class AdbWrapper
 		String verCode = null;
 		for(String line: result) {
 			if(!start) {
-				if(line.matches("^Packages:")) {
+				if(line.startsWith("Packages:")) {
 					start = true;
 				}
 				continue;
@@ -642,7 +642,7 @@ public class AdbWrapper
 			String abi64 = null;
 			String abi32 = null;
 			for (String s : (new File(LibSourcePath)).list()) {
-				if(s.matches("arm64.*")) {
+				if(s.startsWith("arm64")) {
 					if(abiList64.matches(".*" + s + ",.*")) {
 						//Log.i("device support this abi : " + s);
 						if(abi64 == null) {
@@ -659,7 +659,7 @@ public class AdbWrapper
 					} else {
 						//Log.w("device not support this abi : " + s);
 					}
-				} else if(s.matches("armeabi.*")) {
+				} else if(s.startsWith("armeabi")) {
 					if(abiList32.matches(".*" + s + ",.*")) {
 						//Log.i("device support this abi : " + s);
 						if(abi32 == null) {
