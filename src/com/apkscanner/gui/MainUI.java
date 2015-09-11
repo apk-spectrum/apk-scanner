@@ -132,7 +132,8 @@ public class MainUI extends JFrame
         ky.addKeyEventDispatcher(new UIEventHandler());
         
 		getContentPane().addHierarchyBoundsListener(new UIEventHandler());
-		getContentPane().dispatchEvent(new HierarchyEvent(getContentPane(), 0, null, null));
+		new UIEventHandler().ancestorMoved(null);
+		//getContentPane().dispatchEvent(new HierarchyEvent(getContentPane(), 0, null, null));
 
 		Log.i("initialize() end");
 	}
@@ -555,7 +556,6 @@ public class MainUI extends JFrame
 		
 		@Override
 		public void ancestorMoved(HierarchyEvent e) {
-			Log.i("ancestorMoved() " + isVisible());
 			if(isVisible()) {
 				int nPositionX = getContentPane().getLocationOnScreen().x;
 				int nPositionY = getContentPane().getLocationOnScreen().y;
