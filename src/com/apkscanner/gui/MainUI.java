@@ -44,7 +44,7 @@ import com.apkscanner.util.Log;
 import com.apkscanner.util.AdbWrapper.AdbWrapperListener;
 
 
-public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher, FileDrop.Listener
+public class MainUI extends JFrame
 {
 	private static final long serialVersionUID = 1L;
 
@@ -54,9 +54,6 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 	private ToolBar toolBar;
 	private ProgressBarDlg progressBarDlg;
 	
-	//window position
-	public int nPositionX, nPositionY, nPositionWidth;
-	
 	private boolean exiting = false;
 	
 	public MainUI()
@@ -65,7 +62,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 			public void run()
 			{
 				initialize(true);
-				progressBarDlg = new ProgressBarDlg(MainUI.this);
+				progressBarDlg = new ProgressBarDlg(new UIEventHandler());
 			}
 		}).start();
 	}
@@ -75,7 +72,7 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 		new Thread(new Runnable() {
 			public void run()
 			{
-				progressBarDlg = new ProgressBarDlg(MainUI.this);
+				progressBarDlg = new ProgressBarDlg(new UIEventHandler());
 				progressBarDlg.setVisible(true);
 
 				initialize(false);
@@ -89,12 +86,55 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 		new Thread(new Runnable() {
 			public void run()
 			{
-				progressBarDlg = new ProgressBarDlg(MainUI.this);
+				progressBarDlg = new ProgressBarDlg(new UIEventHandler());
 				progressBarDlg.setVisible(true);
 				initialize(false);
 				new PackageOpen(devSerialNumber, packageName, resources);
 			}
 		}).start();
+	}
+
+	private void initialize(boolean visible)
+	{
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e1) {
+			e1.printStackTrace();
+		}
+		
+		setBounds(100, 100, 650, 520);
+		setMinimumSize(new Dimension(650, 520));
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setTitle(Resource.STR_APP_NAME.getString());
+		setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+		setResizable(true);
+        setLocationRelativeTo(null);
+
+		//if(visible) setVisible(true);
+        toolBar = new ToolBar(new UIEventHandler());
+        toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
+		add(toolBar, BorderLayout.NORTH);
+		//if(visible) revalidate();
+		
+		tabbedPanel = new TabbedPanel();
+		tabbedPanel.setData(null);
+		add(tabbedPanel, BorderLayout.CENTER);
+		//if(visible) revalidate();
+		
+		if(visible) setVisible(true);
+
+		addWindowListener(new UIEventHandler());
+		
+		new FileDrop(this, /*dragBorder,*/ new UIEventHandler()); // end FileDrop.Listener
+
+		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
+        ky.addKeyEventDispatcher(new UIEventHandler());
+        
+		getContentPane().addHierarchyBoundsListener(new UIEventHandler());
+		getContentPane().dispatchEvent(new HierarchyEvent(getContentPane(), 0, null, null));
+
+		Log.i("initialize() end");
 	}
 	
 	public void openApk(final String apkPath) {
@@ -250,67 +290,79 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 		@Override public void OnSuccess() { }
 	}
 
-
-	private String selectApkFile()
-	{
-		JFileChooser jfc = new JFileChooser((String)Resource.PROP_LAST_FILE_OPEN_PATH.getData(""));
-		jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("apk","apk"));
-
-		if(jfc.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
-			return null;
-		
-		File dir = jfc.getSelectedFile();
-		if(dir == null) return null;
-		Resource.PROP_LAST_FILE_OPEN_PATH.setData(dir.getParentFile().getAbsolutePath());
-
-		return dir.getPath();
-	}
-
-	private void openApkFile(String apkFile)
-	{
-		if(apkFile == null) return;
-
-		progressBarDlg.init();
-		progressBarDlg.setVisible(true);
-		openApk(apkFile);
-	}
 	
-	private void openPackage(String device, String apkPath, String frameworkRes)
+	class UIEventHandler implements ActionListener, KeyEventDispatcher, WindowListener, FileDrop.Listener, HierarchyBoundsListener
 	{
-		progressBarDlg.init();
-		progressBarDlg.setVisible(true);
-		setVisible(false);
-		
-		new PackageOpen(device, apkPath, frameworkRes);
-	}
-	
-	private void installApk(boolean checkPackage)
-	{
-		ApkInfo apkInfo = null;
-		if(mApkManager != null) {
-			apkInfo = mApkManager.getApkInfo();
+		private String selectApkFile()
+		{
+			JFileChooser jfc = new JFileChooser((String)Resource.PROP_LAST_FILE_OPEN_PATH.getData(""));
+			jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("apk","apk"));
+
+			if(jfc.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
+				return null;
+			
+			File dir = jfc.getSelectedFile();
+			if(dir == null) return null;
+			Resource.PROP_LAST_FILE_OPEN_PATH.setData(dir.getParentFile().getAbsolutePath());
+
+			return dir.getPath();
 		}
 
-		toolBar.setEnabledAt(ButtonSet.INSTALL, false);
-		String libPath = apkInfo.WorkTempPath + File.separator + "lib" + File.separator;
-		new DeviceUIManager(apkInfo.PackageName, apkInfo.ApkPath, libPath , 
-				(boolean)Resource.PROP_CHECK_INSTALLED.getData(false), checkPackage, new InstallButtonStatusListener() {
-			@Override
-			public void SetInstallButtonStatus(Boolean Flag) {
-				toolBar.setEnabledAt(ButtonSet.INSTALL, Flag);
+		private void openApkFile(String apkFile)
+		{
+			if(apkFile == null) return;
+
+			progressBarDlg.init();
+			progressBarDlg.setVisible(true);
+			openApk(apkFile);
+		}
+		
+		private void openPackage(String device, String apkPath, String frameworkRes)
+		{
+			progressBarDlg.init();
+			progressBarDlg.setVisible(true);
+			setVisible(false);
+			
+			new PackageOpen(device, apkPath, frameworkRes);
+		}
+		
+		private void installApk(boolean checkPackage)
+		{
+			ApkInfo apkInfo = null;
+			if(mApkManager != null) {
+				apkInfo = mApkManager.getApkInfo();
 			}
 
-			@Override
-			public void OnOpenApk(String path) {
-				if((new File(path)).exists())
-					Launcher.run(path);
+			toolBar.setEnabledAt(ButtonSet.INSTALL, false);
+			String libPath = apkInfo.WorkTempPath + File.separator + "lib" + File.separator;
+			new DeviceUIManager(apkInfo.PackageName, apkInfo.ApkPath, libPath , 
+					(boolean)Resource.PROP_CHECK_INSTALLED.getData(false), checkPackage, new InstallButtonStatusListener() {
+				@Override
+				public void SetInstallButtonStatus(Boolean Flag) {
+					toolBar.setEnabledAt(ButtonSet.INSTALL, Flag);
+				}
+
+				@Override
+				public void OnOpenApk(String path) {
+					if((new File(path)).exists())
+						Launcher.run(path);
+				}
+			});
+		}
+
+		public void setLanguage(String lang)
+		{
+			Resource.setLanguage(lang);
+			String title = Resource.STR_APP_NAME.getString();
+			if(mApkManager != null) {
+				title += " - " + mApkManager.getApkInfo().ApkPath.substring(mApkManager.getApkInfo().ApkPath.lastIndexOf(File.separator)+1);
 			}
-		});
-	}
-	
-	class ToolBarListener implements ActionListener
-	{
+			setTitle(title);
+			toolBar.reloadResource();
+			tabbedPanel.reloadResource();
+		}
+		
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
@@ -377,220 +429,158 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 				installApk(true);
 			}
 		}
-	}
 
-	@Override
-	public boolean dispatchKeyEvent(KeyEvent e) {
-		ApkInfo apkInfo = null;
-		if(!isFocused()) return false;
-		if (e.getID()==KeyEvent.KEY_RELEASED) {
-			if((e.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
-				switch(e.getKeyCode()) {
-				case KeyEvent.VK_V:
-					break;
-				case KeyEvent.VK_O:
-					openApkFile(selectApkFile());
-					break;
-				case KeyEvent.VK_P:
-					PackageTreeDlg Dlg = new PackageTreeDlg();
-					Dlg.showTreeDlg();
+		@Override
+		public boolean dispatchKeyEvent(KeyEvent e) {
+			ApkInfo apkInfo = null;
+			if(!isFocused()) return false;
+			if (e.getID()==KeyEvent.KEY_RELEASED) {
+				if((e.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
+					switch(e.getKeyCode()) {
+					case KeyEvent.VK_V:
+						break;
+					case KeyEvent.VK_O:
+						openApkFile(selectApkFile());
+						break;
+					case KeyEvent.VK_P:
+						PackageTreeDlg Dlg = new PackageTreeDlg();
+						Dlg.showTreeDlg();
 
-					if(Dlg.getSelectedDevice() != null && !Dlg.getSelectedDevice().isEmpty() && !Dlg.getSelectedApkPath().isEmpty())
-						openPackage(Dlg.getSelectedDevice(), Dlg.getSelectedApkPath(), Dlg.getSelectedFrameworkRes());
-					break;
-				case KeyEvent.VK_N:
-					Launcher.run();
-					break;
-				case KeyEvent.VK_I:
-					if(mApkManager != null) {
-						apkInfo = mApkManager.getApkInfo();
-					}
-					if(apkInfo != null) {
-						installApk(false);
-					}
-					break;
-				case KeyEvent.VK_T:
-					if(mApkManager != null) {
-						apkInfo = mApkManager.getApkInfo();
-					}
-					if(apkInfo != null) {
-						installApk(true);
-					}
-					break;
-				case KeyEvent.VK_E:
-					if(mApkManager != null) {
-						apkInfo = mApkManager.getApkInfo();
-					}
-					if(apkInfo != null) {
-						try {
-							if(System.getProperty("os.name").indexOf("Window") >-1) {
-								new ProcessBuilder("explorer", apkInfo.WorkTempPath).start();
-							} else {  //for linux
-								new ProcessBuilder("nautilus", apkInfo.WorkTempPath).start();
-							}
-						} catch (IOException e1) {
-							e1.printStackTrace();
+						if(Dlg.getSelectedDevice() != null && !Dlg.getSelectedDevice().isEmpty() && !Dlg.getSelectedApkPath().isEmpty())
+							openPackage(Dlg.getSelectedDevice(), Dlg.getSelectedApkPath(), Dlg.getSelectedFrameworkRes());
+						break;
+					case KeyEvent.VK_N:
+						Launcher.run();
+						break;
+					case KeyEvent.VK_I:
+						if(mApkManager != null) {
+							apkInfo = mApkManager.getApkInfo();
 						}
-					}
-					break;
-				case KeyEvent.VK_M:
-					if(mApkManager != null) {
-						apkInfo = mApkManager.getApkInfo();
-					}
-					if(apkInfo != null) {
-						String editor = (String)Resource.PROP_EDITOR.getData();
-						if(editor == null) {
-							if(System.getProperty("os.name").indexOf("Window") >-1) {
-								editor = "notepad";
-							} else {  //for linux
-								editor = "gedit";
+						if(apkInfo != null) {
+							installApk(false);
+						}
+						break;
+					case KeyEvent.VK_T:
+						if(mApkManager != null) {
+							apkInfo = mApkManager.getApkInfo();
+						}
+						if(apkInfo != null) {
+							installApk(true);
+						}
+						break;
+					case KeyEvent.VK_E:
+						if(mApkManager != null) {
+							apkInfo = mApkManager.getApkInfo();
+						}
+						if(apkInfo != null) {
+							try {
+								if(System.getProperty("os.name").indexOf("Window") >-1) {
+									new ProcessBuilder("explorer", apkInfo.WorkTempPath).start();
+								} else {  //for linux
+									new ProcessBuilder("nautilus", apkInfo.WorkTempPath).start();
+								}
+							} catch (IOException e1) {
+								e1.printStackTrace();
 							}
 						}
-						try {
-							new ProcessBuilder(editor, apkInfo.WorkTempPath + File.separator + "AndroidManifest.xml").start();
-						} catch (IOException e1) {
-							e1.printStackTrace();
+						break;
+					case KeyEvent.VK_M:
+						if(mApkManager != null) {
+							apkInfo = mApkManager.getApkInfo();
 						}
+						if(apkInfo != null) {
+							String editor = (String)Resource.PROP_EDITOR.getData();
+							if(editor == null) {
+								if(System.getProperty("os.name").indexOf("Window") >-1) {
+									editor = "notepad";
+								} else {  //for linux
+									editor = "gedit";
+								}
+							}
+							try {
+								new ProcessBuilder(editor, apkInfo.WorkTempPath + File.separator + "AndroidManifest.xml").start();
+							} catch (IOException e1) {
+								e1.printStackTrace();
+							}
+						}
+						break;
+					case KeyEvent.VK_S:
+						(new SettingDlg()).makeDialog();
+
+						String lang = (String)Resource.PROP_LANGUAGE.getData();
+						if(lang != null && Resource.getLanguage() != null 
+								&& !Resource.getLanguage().equals(lang)) {
+							setLanguage(lang);
+						}
+						break;
+					default:
+						return false;
 					}
-					break;
-				case KeyEvent.VK_S:
-					(new SettingDlg()).makeDialog();
+					return true;
+				} else if(e.getModifiers() == 0) {
+					switch(e.getKeyCode()) {
+					case KeyEvent.VK_F1:
+						AboutDlg.showAboutDialog();
+						break;
+					case KeyEvent.VK_F12:
+						JTextArea taskOutput = new JTextArea();
+						taskOutput.setText(Log.getLog());
+						taskOutput.setEditable(false);
+						taskOutput.setCaretPosition(0);
+						
+						JScrollPane scrollPane = new JScrollPane(taskOutput);
+						scrollPane.setPreferredSize(new Dimension(600, 400));
 
-					String lang = (String)Resource.PROP_LANGUAGE.getData();
-					if(lang != null && Resource.getLanguage() != null 
-							&& !Resource.getLanguage().equals(lang)) {
-						setLanguage(lang);
+						JOptionPane.showOptionDialog(null, scrollPane, Resource.STR_LABEL_LOG.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, null,
+					    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
+						break;
+					default:
+						return false;
 					}
-					break;
-				default:
-					return false;
-				}
-				return true;
-			} else if(e.getModifiers() == 0) {
-				switch(e.getKeyCode()) {
-				case KeyEvent.VK_F1:
-					AboutDlg.showAboutDialog();
-					break;
-				case KeyEvent.VK_F12:
-					JTextArea taskOutput = new JTextArea();
-					taskOutput.setText(Log.getLog());
-					taskOutput.setEditable(false);
-					taskOutput.setCaretPosition(0);
-					
-					JScrollPane scrollPane = new JScrollPane(taskOutput);
-					scrollPane.setPreferredSize(new Dimension(600, 400));
-
-					JOptionPane.showOptionDialog(null, scrollPane, Resource.STR_LABEL_LOG.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, null,
-				    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
-					break;
-				default:
-					return false;
-				}
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public void filesDropped(File[] files)
-	{
-		try {   
-    		progressBarDlg.init();
-			progressBarDlg.setVisible(true);
-			openApk(files[0].getCanonicalPath(), (String)Resource.PROP_FRAMEWORK_RES.getData(), false);
-        } catch( java.io.IOException e ) {}
-	}
-
-	public void setLanguage(String lang)
-	{
-		Resource.setLanguage(lang);
-		String title = Resource.STR_APP_NAME.getString();
-		if(mApkManager != null) {
-			title += " - " + mApkManager.getApkInfo().ApkPath.substring(mApkManager.getApkInfo().ApkPath.lastIndexOf(File.separator)+1);
-		}
-		setTitle(title);
-		toolBar.reloadResource();
-		tabbedPanel.reloadResource();
-	}
-
-	/**
-	 * Initialize the contents of the frame.
-	 */
-	private void initialize(boolean visible)
-	{
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-				| UnsupportedLookAndFeelException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		setBounds(100, 100, 650, 520);
-		setMinimumSize(new Dimension(650, 520));
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setTitle(Resource.STR_APP_NAME.getString());
-		setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
-		setResizable(true);
-        setLocationRelativeTo(null);
-
-		//if(visible) setVisible(true);
-		
-        toolBar = new ToolBar(new ToolBarListener());
-        toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
-		add(toolBar, BorderLayout.NORTH);
-		//if(visible) revalidate();
-		
-		tabbedPanel = new TabbedPanel();
-		tabbedPanel.setData(null);
-		add(tabbedPanel, BorderLayout.CENTER);
-		//if(visible) revalidate();
-		
-		if(visible) setVisible(true);
-		
-		nPositionX = 100;
-		nPositionY = 100;
-
-		addWindowListener(this);
-		
-		new FileDrop(this, /*dragBorder,*/ this); // end FileDrop.Listener
-
-		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
-        ky.addKeyEventDispatcher(this);
-        
-		getContentPane().addHierarchyBoundsListener(new HierarchyBoundsListener(){
-			@Override
-			public void ancestorMoved(HierarchyEvent e) {
-				if(isVisible()) {
-					nPositionX = getLocationOnScreen().x;
-					nPositionY = getLocationOnScreen().y;
-					nPositionWidth = getContentPane().getWidth();
-					DeviceUIManager.setLogWindowPosition(nPositionX,nPositionY,nPositionWidth);
-					DeviceUIManager.setLogWindowToFront();
+					return true;
 				}
 			}
+			return false;
+		}
 
-			@Override public void ancestorResized(HierarchyEvent e) { }
-		});
-		Log.i("initialize() end");
+		@Override
+		public void filesDropped(File[] files)
+		{
+			try {   
+	    		progressBarDlg.init();
+				progressBarDlg.setVisible(true);
+				openApk(files[0].getCanonicalPath(), (String)Resource.PROP_FRAMEWORK_RES.getData(), false);
+	        } catch( java.io.IOException e ) {}
+		}
+		
+		@Override
+		public void ancestorMoved(HierarchyEvent e) {
+			Log.i("ancestorMoved() " + isVisible());
+			if(isVisible()) {
+				int nPositionX = getContentPane().getLocationOnScreen().x;
+				int nPositionY = getContentPane().getLocationOnScreen().y;
+				int nPositionWidth = getWidth();
+				DeviceUIManager.setLogWindowPosition(nPositionX + nPositionWidth, nPositionY);
+				DeviceUIManager.setLogWindowToFront();
+			}
+		}
+		@Override public void ancestorResized(HierarchyEvent e) { ancestorMoved(e); }
+
+		@Override
+		public void windowClosing(WindowEvent e) {
+			exiting = true;
+			setVisible(false);
+			DeviceUIManager.setVisible(false);
+			progressBarDlg.setVisible(false);
+			if(mApkManager != null)
+				mApkManager.clear(true, null);
+		}
+		
+		@Override public void windowOpened(WindowEvent e) { }
+		@Override public void windowClosed(WindowEvent e) { }
+		@Override public void windowIconified(WindowEvent e) { }
+		@Override public void windowDeiconified(WindowEvent e) { }
+		@Override public void windowActivated(WindowEvent e) { }
+		@Override public void windowDeactivated(WindowEvent e) { }
 	}
-
-	@Override
-	public void windowClosing(WindowEvent e) {
-		exiting = true;
-		setVisible(false);
-		DeviceUIManager.setVisible(false);
-		progressBarDlg.setVisible(false);
-		if(mApkManager != null)
-			mApkManager.clear(true, null);
-	}
-	
-	@Override public void windowOpened(WindowEvent e) { }
-	@Override public void windowClosed(WindowEvent e) { }
-	@Override public void windowIconified(WindowEvent e) { }
-	@Override public void windowDeiconified(WindowEvent e) { }
-	@Override public void windowActivated(WindowEvent e) { }
-	@Override public void windowDeactivated(WindowEvent e) { }
-
 }

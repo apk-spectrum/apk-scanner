@@ -47,6 +47,9 @@ public class DeviceUIManager
 	private String strLibPath;
 	private String tmpApkPath;
 	
+	//window position
+	static private int nPositionX, nPositionY;
+	
 	public interface InstallButtonStatusListener
 	{
 		public void SetInstallButtonStatus(Boolean Flag);
@@ -235,10 +238,14 @@ public class DeviceUIManager
 			dialogLogArea.append(msg+"\n");
 		}
 	}
-	public static void setLogWindowPosition(int x, int y, int width) {
+	
+	public static void setLogWindowPosition(int x, int y) {
 		
 		if(dlgDialog != null) {
-			dlgDialog.setLocation(x + width, y);
+			dlgDialog.setLocation(x, y);
+		} else {
+			nPositionX = x;
+			nPositionY = y;
 		}
 	}
 	
@@ -326,6 +333,7 @@ public class DeviceUIManager
 			        	
 					dlgDialog.setTitle(Resource.STR_LABEL_LOG.getString());
 					dlgDialog.setModal(false);
+					dlgDialog.setLocation(nPositionX, nPositionY);
 					
 					dlgDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 					//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
