@@ -557,8 +557,8 @@ public class MainUI extends JFrame
 		@Override
 		public void ancestorMoved(HierarchyEvent e) {
 			if(isVisible()) {
-				int nPositionX = getContentPane().getLocationOnScreen().x;
-				int nPositionY = getContentPane().getLocationOnScreen().y;
+				int nPositionX = getLocationOnScreen().x;
+				int nPositionY = getLocationOnScreen().y;
 				int nPositionWidth = getWidth();
 				DeviceUIManager.setLogWindowPosition(nPositionX + nPositionWidth, nPositionY);
 				DeviceUIManager.setLogWindowToFront();

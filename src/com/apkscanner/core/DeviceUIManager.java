@@ -397,17 +397,12 @@ public class DeviceUIManager
 					
 					//dlgDialog.setLocationRelativeTo(null);
 					dlgDialog.setVisible(true);
-			        	
-					//if(MainUI.window != null) {
-						//dlgDialog.setLocation(MainUI.nPositionX +600, MainUI.nPositionY);
-					//}
 				}
 			});
 			t.start();
 		}
 		else if(dlgDialog.isVisible() == false) {
 			dlgDialog.setVisible(true);
-			//dlgDialog.setLocation(MainUI.nPositionX +600, MainUI.nPositionY);
 		}
 	}
 
