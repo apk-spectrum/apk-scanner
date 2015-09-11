@@ -5,12 +5,13 @@ import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -311,90 +312,69 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 	class ToolBarListener implements ActionListener
 	{
 		@Override
-		public void actionPerformed(ActionEvent e) {
-			ApkInfo apkInfo = null;
+		public void actionPerformed(ActionEvent e)
+		{
+			if (ToolBar.ButtonSet.OPEN.matchActionEvent(e) || ToolBar.MenuItemSet.OPEN_APK.matchActionEvent(e)) {
+				String file = selectApkFile();
+				openApkFile(file);
+			} else if(ToolBar.ButtonSet.MANIFEST.matchActionEvent(e)) {
+				String editor = (String)Resource.PROP_EDITOR.getData();
+				ApkInfo apkInfo = mApkManager.getApkInfo();
+				if(editor == null) {
+					if(System.getProperty("os.name").indexOf("Window") >-1) {
+						editor = "notepad";
+					} else {  //for linux
+						editor = "gedit";
+					}
+				}
+				try {
+					new ProcessBuilder(editor, apkInfo.WorkTempPath + File.separator + "AndroidManifest.xml").start();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			} else if(ToolBar.ButtonSet.EXPLORER.matchActionEvent(e)) {
+				ApkInfo apkInfo = mApkManager.getApkInfo();
+				try {
+					if(System.getProperty("os.name").indexOf("Window") >-1) {
+						new ProcessBuilder("explorer", apkInfo.WorkTempPath).start();
+					} else {  //for linux
+						new ProcessBuilder("nautilus", apkInfo.WorkTempPath).start();
+					}
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			} else if(ToolBar.ButtonSet.INSTALL.matchActionEvent(e) || ToolBar.MenuItemSet.INSTALL_APK.matchActionEvent(e)) {
+				installApk(false);
+			} else if(ToolBar.ButtonSet.SETTING.matchActionEvent(e)) {
+				(new SettingDlg()).makeDialog();
 
-			if(mApkManager != null) {
-				apkInfo = mApkManager.getApkInfo();
-			}
-	        
-			if(e.getSource().getClass().getSimpleName().equals("ToolBarButton")) {
-				JButton b = (JButton) e.getSource();
-				String btn_label = b.getText();
+				String lang = (String)Resource.PROP_LANGUAGE.getData();
+				if(lang != null && Resource.getLanguage() != null 
+						&& !Resource.getLanguage().equals(lang)) {
+					setLanguage(lang);
+				}
+			} else if(ToolBar.ButtonSet.ABOUT.matchActionEvent(e)) {
+				AboutDlg.showAboutDialog();
+			} else if(ToolBar.MenuItemSet.NEW_EMPTY.matchActionEvent(e)) {
+				Launcher.run();
+			} else if(ToolBar.MenuItemSet.NEW_APK.matchActionEvent(e)) {
+				String file = selectApkFile();
+				if(file != null && (new File(file)).exists())
+					Launcher.run(file);
+			} else if(ToolBar.MenuItemSet.NEW_PACKAGE.matchActionEvent(e)) {
+				PackageTreeDlg Dlg = new PackageTreeDlg();
+				Dlg.showTreeDlg();
 				
-		        
-				if (ToolBar.ButtonSet.OPEN.matchActionEvent(e)) {
-					String file = selectApkFile();
-					openApkFile(file);
-				} else if(btn_label.equals(Resource.STR_BTN_MANIFEST.getString())) {
-					String editor = (String)Resource.PROP_EDITOR.getData();
-					if(editor == null) {
-						if(System.getProperty("os.name").indexOf("Window") >-1) {
-							editor = "notepad";
-						} else {  //for linux
-							editor = "gedit";
-						}
-					}
-					try {
-						new ProcessBuilder(editor, apkInfo.WorkTempPath + File.separator + "AndroidManifest.xml").start();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-				} else if(btn_label.equals(Resource.STR_BTN_EXPLORER.getString())) {
-					try {
-						if(System.getProperty("os.name").indexOf("Window") >-1) {
-							new ProcessBuilder("explorer", apkInfo.WorkTempPath).start();
-						} else {  //for linux
-							new ProcessBuilder("nautilus", apkInfo.WorkTempPath).start();
-						}
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-				} else if(btn_label.equals(Resource.STR_BTN_UNPACK.getString())) {
-					//JOptionPane.showMessageDialog(null, "unpack", "unpack", JOptionPane.INFORMATION_MESSAGE);
-				} else if(btn_label.equals(Resource.STR_BTN_PACK.getString())) {
-					//JOptionPane.showMessageDialog(null, "pack", "pack", JOptionPane.INFORMATION_MESSAGE);
-				} else if(btn_label.equals(Resource.STR_BTN_INSTALL.getString())) {
-					installApk(false);
-				} else if(btn_label.equals(Resource.STR_BTN_SETTING.getString())) {
-					(new SettingDlg()).makeDialog();
+				if(Dlg.getSelectedDevice() != null && !Dlg.getSelectedDevice().isEmpty() && !Dlg.getSelectedApkPath().isEmpty())
+					Launcher.run(Dlg.getSelectedDevice(), Dlg.getSelectedApkPath(), Dlg.getSelectedFrameworkRes());
+			} else if(ToolBar.MenuItemSet.OPEN_PACKAGE.matchActionEvent(e)) {
+				PackageTreeDlg Dlg = new PackageTreeDlg();
+				Dlg.showTreeDlg();
 
-					String lang = (String)Resource.PROP_LANGUAGE.getData();
-					if(lang != null && Resource.getLanguage() != null 
-							&& !Resource.getLanguage().equals(lang)) {
-						setLanguage(lang);
-					}
-				} else if(btn_label.equals(Resource.STR_BTN_ABOUT.getString())) {
-					AboutDlg.showAboutDialog();
-				}
-			} if(e.getSource().getClass().getSimpleName().equals("JMenuItem")) {
-				String cmd = e.getActionCommand();
-				if(cmd.equals(Resource.STR_MENU_NEW_WINDOW.getString())) {
-					Launcher.run();
-				} else if(cmd.equals(Resource.STR_MENU_NEW_APK_FILE.getString())) {
-					String file = selectApkFile();
-					if(file != null && (new File(file)).exists())
-						Launcher.run(file);
-				} else if(cmd.equals(Resource.STR_MENU_NEW_PACKAGE.getString())) {
-					PackageTreeDlg Dlg = new PackageTreeDlg();
-					Dlg.showTreeDlg();
-					
-					if(Dlg.getSelectedDevice() != null && !Dlg.getSelectedDevice().isEmpty() && !Dlg.getSelectedApkPath().isEmpty())
-						Launcher.run(Dlg.getSelectedDevice(), Dlg.getSelectedApkPath(), Dlg.getSelectedFrameworkRes());
-				} else if(cmd.equals(Resource.STR_MENU_APK_FILE.getString())) {
-					String file = selectApkFile();
-					openApkFile(file);
-				} else if(cmd.equals(Resource.STR_MENU_PACKAGE.getString())) {
-					PackageTreeDlg Dlg = new PackageTreeDlg();
-					Dlg.showTreeDlg();
-
-					if(Dlg.getSelectedDevice() != null && !Dlg.getSelectedDevice().isEmpty() && !Dlg.getSelectedApkPath().isEmpty())
-						openPackage(Dlg.getSelectedDevice(), Dlg.getSelectedApkPath(), Dlg.getSelectedFrameworkRes());
-				} else if(cmd.equals(Resource.STR_MENU_INSTALL.getString())) {
-					installApk(false);
-				} else if(cmd.equals(Resource.STR_MENU_CHECK_INSTALLED.getString())) {
-					installApk(true);
-				}
+				if(Dlg.getSelectedDevice() != null && !Dlg.getSelectedDevice().isEmpty() && !Dlg.getSelectedApkPath().isEmpty())
+					openPackage(Dlg.getSelectedDevice(), Dlg.getSelectedApkPath(), Dlg.getSelectedFrameworkRes());
+			} else if(ToolBar.MenuItemSet.INSTALLED_CHECK.matchActionEvent(e)) {
+				installApk(true);
 			}
 		}
 	}
@@ -516,14 +496,10 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 	public void filesDropped(File[] files)
 	{
 		try {   
-    		//text.append( files[i].getCanonicalPath() + "\n" );
-    		//Log.i(files[0].getCanonicalPath() + "\n");
-
     		progressBarDlg.init();
 			progressBarDlg.setVisible(true);
 			openApk(files[0].getCanonicalPath(), (String)Resource.PROP_FRAMEWORK_RES.getData(), false);
-        }   // end try
-        catch( java.io.IOException e ) {}
+        } catch( java.io.IOException e ) {}
 	}
 
 	public void setLanguage(String lang)
@@ -543,6 +519,14 @@ public class MainUI extends JFrame implements WindowListener, KeyEventDispatcher
 	 */
 	private void initialize(boolean visible)
 	{
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		setBounds(100, 100, 650, 520);
 		setMinimumSize(new Dimension(650, 520));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

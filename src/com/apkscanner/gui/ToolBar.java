@@ -6,6 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -14,9 +16,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 
 import com.apkscanner.resource.Resource;
 
@@ -25,13 +29,73 @@ public class ToolBar extends JToolBar
 {
 	private static final long serialVersionUID = 894134416480807167L;
 
-	private JPopupMenu openPopupMenu;
-	private JMenu openPopupSubMenu;
-	private JPopupMenu installPopupMenu;
+	private HashMap<ButtonSet, JButton> buttonMap;
+	private HashMap<MenuItemSet, JMenuItem> menuItemMap;
 	
-	private ActionListener listener;
-	
-	private HashMap<ButtonSet, JButton> buttonMap = new HashMap<ButtonSet, JButton>(); 
+	public enum MenuItemSet
+	{
+		NEW_WINDOW		(null, null, null, '\0', true),
+		NEW_EMPTY		(null, null, KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK, false), 'N'),
+		NEW_APK			(null, Resource.IMG_TOOLBAR_OPEN.getImageIcon(16,16), null, '\0'),
+		NEW_PACKAGE		(null, null, null, '\0'),
+		OPEN_APK		(null, Resource.IMG_TOOLBAR_OPEN.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK, false), 'O'),
+		OPEN_PACKAGE	(null, null, KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK, false), 'P'),
+		INSTALL_APK		(null, null, KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK, false), 'I'),
+		INSTALLED_CHECK	(null, null, KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK, false), 'T');
+		
+    	private String text = null;
+    	private ImageIcon icon = null;
+    	private String actionCommand = null;
+    	private KeyStroke keyStroke = null;
+    	private char mnemonic = '\0';
+    	private boolean extend = false;
+
+    	
+    	MenuItemSet(String text, ImageIcon icon, KeyStroke keyStroke, char mnemonic) {
+    		this(text, icon, keyStroke, mnemonic, false);
+    	}
+    	
+    	MenuItemSet(String text, ImageIcon icon, KeyStroke keyStroke, char mnemonic, boolean extend) {
+    		this.text = text;
+    		this.icon = icon;
+    		this.keyStroke = keyStroke;
+    		this.mnemonic = mnemonic;
+    		this.extend = extend;
+    		this.actionCommand = this.getClass().getName()+"."+this.toString();
+    	}
+    	
+    	public boolean matchActionEvent(ActionEvent e)
+    	{
+    		return actionCommand.equals(e.getActionCommand());
+    	}
+    	
+    	private JMenuItem getMenuItem(ActionListener listener)
+    	{
+    		JMenuItem menuItem = null;
+    		if(!extend) {
+    			menuItem = new JMenuItem(text);
+    			menuItem.setAccelerator(keyStroke);
+    		} else {
+    			menuItem = new JMenu(text);
+    		}
+            menuItem.addActionListener(listener);
+            menuItem.setActionCommand(actionCommand);
+            menuItem.setIcon(icon);
+            
+            menuItem.setMnemonic(mnemonic);
+            return menuItem;
+    	}
+    	
+    	static private HashMap<MenuItemSet, JMenuItem> getButtonMap(ActionListener listener)
+    	{
+    		HashMap<MenuItemSet, JMenuItem> menuItemMap = new HashMap<MenuItemSet, JMenuItem>();
+            for(MenuItemSet bs: values()) {
+            	menuItemMap.put(bs, bs.getMenuItem(listener));
+            }
+            return menuItemMap;
+    	}
+	}
+			
 	
     public enum ButtonSet
     {
@@ -56,6 +120,7 @@ public class ToolBar extends JToolBar
     	private String text = null;
     	private ImageIcon icon = null;
     	private ImageIcon hoverIcon = null;
+    	private String actionCommand = null;
     	
     	ButtonSet(Type type, String text, ImageIcon icon)
     	{
@@ -68,11 +133,12 @@ public class ToolBar extends JToolBar
     		this.text = text;
     		this.icon = icon;
     		this.hoverIcon = hoverIcon;
+    		this.actionCommand = this.getClass().getName()+"."+this.toString();
     	}
     	
     	public boolean matchActionEvent(ActionEvent e)
     	{
-    		return this.toString().equals(e.getActionCommand());
+    		return actionCommand.equals(e.getActionCommand());
     	}
 
     	private JButton getButton(ActionListener listener)
@@ -81,9 +147,16 @@ public class ToolBar extends JToolBar
     		switch(type) {
     		case NORMAL:
     			button = new JButton(text, icon);
+    			button.addActionListener(listener);
+    			button.setVerticalTextPosition(JLabel.BOTTOM);
+    			button.setHorizontalTextPosition(JLabel.CENTER);
+    			button.setBorderPainted(false);
+    			button.setOpaque(false);
+    			button.setFocusable(false);
+    			button.setPreferredSize(new Dimension(63,65));
     			break;
     		case HOVER:
-    			button = new ToolBarButton(text, icon, hoverIcon, null);
+    			button = new ToolBarButton(text, icon, hoverIcon, listener);
     			button.setVerticalTextPosition(JLabel.BOTTOM);
     			button.setHorizontalTextPosition(JLabel.CENTER);
     			button.setBorderPainted(false);
@@ -101,10 +174,18 @@ public class ToolBar extends JToolBar
     		default:
     			return null;
     		}
-			button.setActionCommand(this.toString());
-			button.addActionListener(listener);
+			button.setActionCommand(actionCommand);
     		
     		return button;
+    	}
+    	
+    	static private HashMap<ButtonSet, JButton> getButtonMap(ActionListener listener)
+    	{
+    		HashMap<ButtonSet, JButton> buttonMap = new HashMap<ButtonSet, JButton>();
+            for(ButtonSet bs: values()) {
+            	buttonMap.put(bs, bs.getButton(listener));
+            }
+            return buttonMap;
     	}
     }
 	
@@ -118,6 +199,7 @@ public class ToolBar extends JToolBar
     		super(text, icon);
     		this.mHoverIcon = hoverIcon;
     		this.mIcon = icon;
+    		this.addActionListener(listener);
 
     		this.addMouseListener(new MouseAdapter() {
                 public void mouseEntered(MouseEvent evt) {
@@ -137,30 +219,20 @@ public class ToolBar extends JToolBar
 
     public final void initUI(ActionListener listener)
     {
-        this.listener = listener;
+        buttonMap = ButtonSet.getButtonMap(listener);
+        menuItemMap = MenuItemSet.getButtonMap(listener);
         
-        for(ButtonSet bs: ButtonSet.values()) {
-        	buttonMap.put(bs, bs.getButton(listener));
-        }
-        
-        openPopupMenu = new JPopupMenu("Menu");
-        openPopupSubMenu = new JMenu(Resource.STR_MENU_NEW.getString());
-        ButtonSet.OPEN_EXTEND.getButton(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-            	JButton btn = buttonMap.get(ButtonSet.OPEN_EXTEND);
-            	openPopupMenu.show(btn, btn.getWidth()/2, btn.getHeight());
-            }
-        });
+    	final JPopupMenu openPopupMenu = new JPopupMenu();
+    	JMenuItem SubMenu = openPopupMenu.add((JMenu)menuItemMap.get(MenuItemSet.NEW_WINDOW));
+    	SubMenu.add(menuItemMap.get(MenuItemSet.NEW_EMPTY));
+    	SubMenu.add(menuItemMap.get(MenuItemSet.NEW_APK));
+    	SubMenu.add(menuItemMap.get(MenuItemSet.NEW_PACKAGE));
+        openPopupMenu.add(menuItemMap.get(MenuItemSet.OPEN_APK));
+        openPopupMenu.add(menuItemMap.get(MenuItemSet.OPEN_PACKAGE));
 
-        installPopupMenu = new JPopupMenu("Menu");      
-        ButtonSet.INSTALL_EXTEND.getButton(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-            	JButton btn = buttonMap.get(ButtonSet.INSTALL_EXTEND);
-            	installPopupMenu.show(btn, btn.getWidth()/2, btn.getHeight());
-            }
-        } );
-        
-        reloadResource();
+        final JPopupMenu installPopupMenu = new JPopupMenu();
+        installPopupMenu.add(menuItemMap.get(MenuItemSet.INSTALL_APK));
+        installPopupMenu.add(menuItemMap.get(MenuItemSet.INSTALLED_CHECK));
         
         Dimension sepSize = new Dimension(2,65);
               
@@ -183,6 +255,22 @@ public class ToolBar extends JToolBar
         add(getNewSeparator(JSeparator.VERTICAL, sepSize));
         
         add(buttonMap.get(ButtonSet.ABOUT));
+        
+        buttonMap.get(ButtonSet.OPEN_EXTEND).addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+            	JButton btn = buttonMap.get(ButtonSet.OPEN_EXTEND);
+            	openPopupMenu.show(btn, btn.getWidth()/2, btn.getHeight());
+            }
+        });
+        
+        buttonMap.get(ButtonSet.INSTALL_EXTEND).addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+            	JButton btn = buttonMap.get(ButtonSet.INSTALL_EXTEND);
+            	installPopupMenu.show(btn, btn.getWidth()/2, btn.getHeight());
+            }
+        });
+        
+        reloadResource();
 
         setAlignmentX(0);
         setFloatable(false);
@@ -193,11 +281,11 @@ public class ToolBar extends JToolBar
 
     private JSeparator getNewSeparator(int orientation, Dimension size)
     {
-        JSeparator temp = new JSeparator(orientation);
-        temp.setBackground(Color.gray);
-        temp.setForeground(Color.gray);
-        temp.setPreferredSize(size);
-    	return temp;
+        JSeparator separator = new JSeparator(orientation);
+        separator.setBackground(Color.gray);
+        separator.setForeground(Color.gray);
+        separator.setPreferredSize(size);
+    	return separator;
     }
     
     private void setButtonText(ButtonSet buttonSet, String text, String tipText)
@@ -205,7 +293,13 @@ public class ToolBar extends JToolBar
     	buttonMap.get(buttonSet).setText(text);
     	buttonMap.get(buttonSet).setToolTipText(tipText);
     }
-       
+    
+    private void setMenuItemText(MenuItemSet menuItemSet, String text, String tipText)
+    {
+    	menuItemMap.get(menuItemSet).setText(text);
+    	menuItemMap.get(menuItemSet).setToolTipText(tipText);
+    }
+
     public void reloadResource()
     {
     	setButtonText(ButtonSet.OPEN, Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OPEN_LAB.getString());
@@ -214,22 +308,15 @@ public class ToolBar extends JToolBar
     	setButtonText(ButtonSet.INSTALL, Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_INSTALL_LAB.getString());
     	setButtonText(ButtonSet.SETTING, Resource.STR_BTN_SETTING.getString(), Resource.STR_BTN_SETTING_LAB.getString());
     	setButtonText(ButtonSet.ABOUT, Resource.STR_BTN_ABOUT.getString(), Resource.STR_BTN_ABOUT_LAB.getString());
-        
-        openPopupSubMenu.setText(Resource.STR_MENU_NEW.getString());
-        openPopupSubMenu.removeAll();
-        openPopupSubMenu.add(Resource.STR_MENU_NEW_WINDOW.getString()).addActionListener(listener);
-        openPopupSubMenu.add(Resource.STR_MENU_NEW_APK_FILE.getString()).addActionListener(listener);
-        openPopupSubMenu.add(Resource.STR_MENU_NEW_PACKAGE.getString()).addActionListener(listener);
-
-        openPopupMenu.removeAll();
-        openPopupMenu.add(openPopupSubMenu);
-        openPopupMenu.add(getNewSeparator(JSeparator.HORIZONTAL, new Dimension(1,1)));
-        openPopupMenu.add(Resource.STR_MENU_APK_FILE.getString()).addActionListener(listener);
-        openPopupMenu.add(Resource.STR_MENU_PACKAGE.getString()).addActionListener(listener);
-      
-        installPopupMenu.removeAll();
-        installPopupMenu.add(Resource.STR_MENU_INSTALL.getString()).addActionListener(listener);
-        installPopupMenu.add(Resource.STR_MENU_CHECK_INSTALLED.getString()).addActionListener(listener);
+    	
+    	setMenuItemText(MenuItemSet.NEW_WINDOW, Resource.STR_MENU_NEW.getString(), null);
+    	setMenuItemText(MenuItemSet.NEW_EMPTY, Resource.STR_MENU_NEW_WINDOW.getString(), null);
+    	setMenuItemText(MenuItemSet.NEW_APK, Resource.STR_MENU_NEW_APK_FILE.getString(), null);
+    	setMenuItemText(MenuItemSet.NEW_PACKAGE, Resource.STR_MENU_NEW_PACKAGE.getString(), null);
+    	setMenuItemText(MenuItemSet.OPEN_APK, Resource.STR_MENU_APK_FILE.getString(), null);
+    	setMenuItemText(MenuItemSet.OPEN_PACKAGE, Resource.STR_MENU_PACKAGE.getString(), null);
+    	setMenuItemText(MenuItemSet.INSTALL_APK, Resource.STR_MENU_INSTALL.getString(), null);
+    	setMenuItemText(MenuItemSet.INSTALLED_CHECK, Resource.STR_MENU_CHECK_INSTALLED.getString(), null);
     }
 
     public void setEnabledAt(ButtonSet buttonId, boolean enabled)
