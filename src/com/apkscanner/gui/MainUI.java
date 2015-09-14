@@ -106,7 +106,7 @@ public class MainUI extends JFrame
 		setTitle(Resource.STR_APP_NAME.getString());
 		setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
 		
-		setBounds(100, 100, 650, 520);
+		setBounds(0, 0, 650, 520);
 		setMinimumSize(new Dimension(650, 520));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(true);

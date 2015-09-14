@@ -1,11 +1,7 @@
 package com.apkscanner.gui;
 
-import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import com.apkscanner.core.ApktoolManager.ApkInfo;
@@ -80,17 +76,6 @@ public class TabbedPanel extends JTabbedPane
     		setToolTipTextAt(i, labels[i] + " (Alt+"+ (i+1) +")");
     		((TabDataObject)(getComponent(i))).reloadResource();
     	}
-    }
-
-	protected JComponent makeTextPanel(String text)
-	{
-        JPanel panel = new JPanel(false);
-        JLabel filler = new JLabel(text);
-        filler.setHorizontalAlignment(JLabel.CENTER);
-        panel.setLayout(new GridLayout(1, 1));
-        panel.add(filler);
-        	        
-        return panel;
     }
 	
 	public void setData(ApkInfo apkInfo)

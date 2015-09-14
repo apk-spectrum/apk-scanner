@@ -507,7 +507,7 @@ public class ApktoolManager
 		private String[] getMutiLang(String id)
 		{
 			if(id == null || !id.startsWith("@string/"))
-				return null;
+				return new String[] { id };
 
 			ArrayList<String> result = new ArrayList<String>();
 

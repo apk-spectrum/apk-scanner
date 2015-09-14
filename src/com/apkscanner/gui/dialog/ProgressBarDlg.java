@@ -59,8 +59,7 @@ public class ProgressBarDlg extends JFrame
     	setTitle("APK Scanner " + Resource.STR_APP_VERSION.getString());
     	setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
     	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-    	setResizable( false );
+
 
         JPanel panel = new JPanel();
         
@@ -83,6 +82,9 @@ public class ProgressBarDlg extends JFrame
         
         setContentPane(contentPanel);
         pack();
+        
+        setLocationRelativeTo(null);
+    	setResizable( false );
         
         addWindowListener(windowListener);
         starttask();
