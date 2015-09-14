@@ -102,12 +102,13 @@ public class MainUI extends JFrame
 				| UnsupportedLookAndFeelException e1) {
 			e1.printStackTrace();
 		}
+
+		setTitle(Resource.STR_APP_NAME.getString());
+		setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
 		
 		setBounds(100, 100, 650, 520);
 		setMinimumSize(new Dimension(650, 520));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setTitle(Resource.STR_APP_NAME.getString());
-		setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
 		setResizable(true);
         setLocationRelativeTo(null);
 
@@ -125,7 +126,7 @@ public class MainUI extends JFrame
 		if(visible) setVisible(true);
 
 		addWindowListener(new UIEventHandler());
-		
+
 		new FileDrop(this, /*dragBorder,*/ new UIEventHandler()); // end FileDrop.Listener
 
 		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();

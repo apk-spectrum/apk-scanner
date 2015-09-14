@@ -21,6 +21,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.border.MatteBorder;
 
 import com.apkscanner.resource.Resource;
 
@@ -234,7 +235,7 @@ public class ToolBar extends JToolBar
         installPopupMenu.add(menuItemMap.get(MenuItemSet.INSTALL_APK));
         installPopupMenu.add(menuItemMap.get(MenuItemSet.INSTALLED_CHECK));
         
-        Dimension sepSize = new Dimension(2,65);
+        Dimension sepSize = new Dimension(1,63);
               
         add(buttonMap.get(ButtonSet.OPEN));
         add(buttonMap.get(ButtonSet.OPEN_EXTEND));
@@ -269,21 +270,20 @@ public class ToolBar extends JToolBar
             	installPopupMenu.show(btn, btn.getWidth()/2, btn.getHeight());
             }
         });
-        
         reloadResource();
 
-        setAlignmentX(0);
+        //setAlignmentX(0);
+        //setOpaque(false);
         setFloatable(false);
-        setOpaque(false);
-
-        setLayout(new FlowLayout(FlowLayout.LEFT));
+        setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
+        setBorder(new MatteBorder(0,0,1,0,Color.LIGHT_GRAY));
     }
 
     private JSeparator getNewSeparator(int orientation, Dimension size)
     {
         JSeparator separator = new JSeparator(orientation);
-        separator.setBackground(Color.gray);
-        separator.setForeground(Color.gray);
+        //separator.setBackground(Color.gray);
+        //separator.setForeground(Color.gray);
         separator.setPreferredSize(size);
     	return separator;
     }
