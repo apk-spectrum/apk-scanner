@@ -78,7 +78,7 @@ public class MainUI extends JFrame
 				initialize(false);
 				
 				apkScanner = new ApkScanner();
-				apkScanner.openApk(apkFilePath);
+				apkInfo = apkScanner.openApk(apkFilePath);
 			}
 		}).start();
 	}
@@ -93,7 +93,7 @@ public class MainUI extends JFrame
 				initialize(false);
 
 				apkScanner = new ApkScanner();
-				apkScanner.openPackage(devSerialNumber, packageName, resources);
+				apkInfo = apkScanner.openPackage(devSerialNumber, packageName, resources);
 			}
 		}).start();
 	}
@@ -290,7 +290,7 @@ public class MainUI extends JFrame
 			if(!newWindow) {
 				progressBarDlg.init();
 				progressBarDlg.setVisible(true);
-				apkScanner.openApk(apkFilePath);
+				apkInfo = apkScanner.openApk(apkFilePath);
 			} else {
 				Launcher.run(apkFilePath);
 			}
@@ -310,7 +310,7 @@ public class MainUI extends JFrame
 				progressBarDlg.setVisible(true);
 				setVisible(false);
 				
-				apkScanner.openPackage(device, apkFilePath, frameworkRes);
+				apkInfo = apkScanner.openPackage(device, apkFilePath, frameworkRes);
 			} else {
 				Launcher.run(device, apkFilePath, frameworkRes);
 			}
@@ -319,6 +319,7 @@ public class MainUI extends JFrame
 		private void evtInstallApk(boolean checkPackage)
 		{
 			if(apkInfo == null) {
+				Log.e("evtInstallApk() apkInfo is null");
 				return;
 			}
 
@@ -342,7 +343,7 @@ public class MainUI extends JFrame
 		private void evtShowManifest()
 		{
 			if(apkInfo == null) {
-				Log.e("showManifest() apkInfo is null");
+				Log.e("evtShowManifest() apkInfo is null");
 				return;
 			}
 			String editor = (String)Resource.PROP_EDITOR.getData();
@@ -363,7 +364,7 @@ public class MainUI extends JFrame
 		private void evtShowExplorer()
 		{
 			if(apkInfo == null) {
-				Log.e("showExplorer() apkInfo is null");
+				Log.e("evtShowExplorer() apkInfo is null");
 				return;
 			}
 			try {
@@ -467,7 +468,7 @@ public class MainUI extends JFrame
 			try {   
 	    		progressBarDlg.init();
 				progressBarDlg.setVisible(true);
-				apkScanner.openApk(files[0].getCanonicalPath(), (String)Resource.PROP_FRAMEWORK_RES.getData(), false);
+				apkInfo = apkScanner.openApk(files[0].getCanonicalPath(), (String)Resource.PROP_FRAMEWORK_RES.getData(), false);
 	        } catch( java.io.IOException e ) {}
 		}
 		

@@ -11,7 +11,6 @@ import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
 
 public class ArrowTraversalPane extends JOptionPane
 {
@@ -39,15 +38,10 @@ public class ArrowTraversalPane extends JOptionPane
 		pane.setOptionType(optionType);
 		pane.setOptions(options);
 		pane.setInitialValue(initialValue);
-		
-		Object old = UIManager.get("Button.defaultButtonFollowsFocus");
-		UIManager.put("Button.defaultButtonFollowsFocus", Boolean.TRUE);
 
 		JDialog dialog = pane.createDialog(parentComponent, title);
 		dialog.setVisible(true);
 		dialog.dispose();
-
-		UIManager.put("Button.defaultButtonFollowsFocus", old);
 		
 		int ret = -1;
 		if(pane.getValue() != null && !pane.getValue().equals((Integer)-1)) {

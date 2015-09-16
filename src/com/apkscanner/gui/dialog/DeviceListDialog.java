@@ -44,9 +44,6 @@ public class DeviceListDialog extends JDialog implements ActionListener {
 			dialog = new DeviceListDialog(frame, locationComp, labelText, title,
 					possibleValues, initialValue, longValue);
 
-			final Object old = UIManager.get("Button.defaultButtonFollowsFocus");
-			UIManager.put("Button.defaultButtonFollowsFocus", Boolean.TRUE);
-			
 			KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
 			dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
 			dialog.getRootPane().getActionMap().put("ESCAPE", new AbstractAction() {
@@ -69,7 +66,6 @@ public class DeviceListDialog extends JDialog implements ActionListener {
 			dialog.setVisible(true);
 			dialog.dispose();
 
-			UIManager.put("Button.defaultButtonFollowsFocus", old);
 			
 			if(clicked) {
 				if(value == -1) {
