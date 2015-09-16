@@ -10,10 +10,10 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import com.apkscanner.core.AdbWrapper;
 import com.apkscanner.core.ApktoolManager;
 import com.apkscanner.gui.MainUI;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.AdbWrapper;
 import com.apkscanner.util.Log;
 
 public class Main

@@ -6,10 +6,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
+import com.apkscanner.core.AdbWrapper;
 import com.apkscanner.core.ApktoolManager;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.AdbWrapper;
 
 public class AboutDlg /*extends JDialog*/
 {

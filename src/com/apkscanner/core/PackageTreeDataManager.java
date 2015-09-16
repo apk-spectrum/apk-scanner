@@ -2,8 +2,7 @@ package com.apkscanner.core;
 
 import java.util.ArrayList;
 
-import com.apkscanner.util.AdbWrapper;
-import com.apkscanner.util.AdbWrapper.PackageListObject;
+import com.apkscanner.core.AdbWrapper.PackageListObject;
 
 public class PackageTreeDataManager {
 	ArrayList<PackageListObject> ArrayDataObject;

@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.apkscanner.Launcher;
+import com.apkscanner.core.AdbWrapper;
 import com.apkscanner.core.ApktoolManager;
 import com.apkscanner.core.DeviceUIManager;
 import com.apkscanner.core.ApktoolManager.ApkInfo;
@@ -36,7 +37,6 @@ import com.apkscanner.gui.dialog.SettingDlg;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.FileDrop;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.AdbWrapper;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 

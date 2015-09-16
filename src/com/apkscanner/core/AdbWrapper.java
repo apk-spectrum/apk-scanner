@@ -1,4 +1,4 @@
-package com.apkscanner.util;
+package com.apkscanner.core;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,6 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.ConsolCmd;
+import com.apkscanner.util.FileUtil;
+import com.apkscanner.util.Log;
 
 public class AdbWrapper
 {
