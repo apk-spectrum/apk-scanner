@@ -37,7 +37,7 @@ import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.FileDrop;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.AdbWrapper;
-import com.apkscanner.util.CoreApkTool;
+import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 
 
@@ -178,7 +178,7 @@ public class MainUI extends JFrame
 			
 			String tempApkFilePath = "/" + devSerialNumber + devApkFilePath;
 			tempApkFilePath = tempApkFilePath.replaceAll("/", File.separator+File.separator).replaceAll("//", "/");
-			tempApkFilePath = CoreApkTool.makeTempPath(tempApkFilePath)+".apk";
+			tempApkFilePath = FileUtil.makeTempPath(tempApkFilePath)+".apk";
 
 			if(framework == null) {
 				framework = (String)Resource.PROP_FRAMEWORK_RES.getData();

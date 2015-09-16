@@ -17,8 +17,8 @@ import javax.swing.table.TableColumn;
 
 import com.apkscanner.core.ApktoolManager.ApkInfo;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
+import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.CoreApkTool;
 
 /**
  * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for
@@ -64,7 +64,7 @@ public class Widget extends JPanel implements TabDataObject
 		for(int i=0; i< apkInfo.WidgetList.size(); i++) {
 			ImageIcon myimageicon = new ImageIcon((String)apkInfo.WidgetList.get(i)[0]);
 			
-			myimageicon.setImage(CoreApkTool.getMaxScaledImage(myimageicon,100,100));
+			myimageicon.setImage(ImageScaler.getMaxScaledImage(myimageicon,100,100));
 			
 			Object[] temp = { myimageicon , apkInfo.WidgetList.get(i)[1], apkInfo.WidgetList.get(i)[2], apkInfo.WidgetList.get(i)[3], apkInfo.WidgetList.get(i)[4]};
 			arrWidgets.add(temp);

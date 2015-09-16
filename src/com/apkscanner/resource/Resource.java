@@ -16,7 +16,7 @@ import javax.swing.ImageIcon;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import com.apkscanner.util.CoreApkTool;
+import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.util.MyXPath;
 
 public enum Resource
@@ -320,7 +320,7 @@ public enum Resource
 	public ImageIcon getImageIcon(int width, int height)
 	{
 		if(type != Type.IMAGE) return null;
-		ImageIcon tempImg = new ImageIcon(CoreApkTool.getScaledImage(new ImageIcon(getURL()),width,height));
+		ImageIcon tempImg = new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(getURL()),width,height));
 		
 		return tempImg;
 	}

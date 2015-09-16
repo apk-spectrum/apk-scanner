@@ -14,8 +14,8 @@ import javax.swing.table.TableColumn;
 import com.apkscanner.core.ApktoolManager.ApkInfo;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.CoreApkTool;
-import com.apkscanner.util.CoreApkTool.FSStyle;
+import com.apkscanner.util.FileUtil;
+import com.apkscanner.util.FileUtil.FSStyle;
 
 /**
  * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for
@@ -103,7 +103,7 @@ public class Library extends JPanel implements TabDataObject
 				Object[] temp = { 
 						i+1,
 						libList.get(i).replaceAll("^.*"+separator+"lib"+separator,"lib"+separator), 
-						CoreApkTool.getFileSize((new File(libList.get(i))), FSStyle.FULL)
+						FileUtil.getFileSize((new File(libList.get(i))), FSStyle.FULL)
 				};
 				data.add(temp);
 			}

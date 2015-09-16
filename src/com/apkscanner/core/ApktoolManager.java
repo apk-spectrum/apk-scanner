@@ -10,10 +10,10 @@ import java.util.HashMap;
 import com.apkscanner.core.PermissionGroupManager.PermissionGroup;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.ConsolCmd;
-import com.apkscanner.util.CoreApkTool;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.MyXPath;
-import com.apkscanner.util.CoreApkTool.FSStyle;
+import com.apkscanner.util.FileUtil;
+import com.apkscanner.util.FileUtil.FSStyle;
 
 public class ApktoolManager
 {
@@ -268,17 +268,17 @@ public class ApktoolManager
 		
 		private boolean solve()
 		{
-			mApkInfo.WorkTempPath = CoreApkTool.makeTempPath(mApkInfo.ApkPath);
+			mApkInfo.WorkTempPath = FileUtil.makeTempPath(mApkInfo.ApkPath);
 			Log.i("Temp path : " + mApkInfo.WorkTempPath);
 
-			mApkInfo.ApkSize = CoreApkTool.getFileSize((new File(mApkInfo.ApkPath)), FSStyle.FULL);
+			mApkInfo.ApkSize = FileUtil.getFileSize((new File(mApkInfo.ApkPath)), FSStyle.FULL);
 			
 			boolean isSolve = solveAPK(mApkInfo.ApkPath, mApkInfo.WorkTempPath);
 			if(isSolve) {
 				XmlToMyApkinfo();
 				
-				mApkInfo.ImageList = CoreApkTool.findFiles(new File(mApkInfo.WorkTempPath + File.separator + "res"), ".png", ".*drawable.*");
-				mApkInfo.LibList = CoreApkTool.findFiles(new File(mApkInfo.WorkTempPath + File.separator + "lib"), ".so", null);
+				mApkInfo.ImageList = FileUtil.findFiles(new File(mApkInfo.WorkTempPath + File.separator + "res"), ".png", ".*drawable.*");
+				mApkInfo.LibList = FileUtil.findFiles(new File(mApkInfo.WorkTempPath + File.separator + "lib"), ".so", null);
 	
 				solveCert(mApkInfo.WorkTempPath + File.separator + "original" + File.separator + "META-INF" + File.separator);
 			}
@@ -706,26 +706,26 @@ public class ApktoolManager
 		{
 			Log.i("delete Folder : "  + mApkInfo.WorkTempPath);
 			if(mApkInfo.WorkTempPath != null && !mApkInfo.WorkTempPath.isEmpty()) {
-				CoreApkTool.deleteDirectory(new File(mApkInfo.WorkTempPath+"-res"));
+				FileUtil.deleteDirectory(new File(mApkInfo.WorkTempPath+"-res"));
 
 				File parent = new File(mApkInfo.WorkTempPath);
 				while(parent != null && parent.exists() && parent.getParentFile() != null 
 						&& parent.getParentFile().listFiles().length == 1 
-						&& parent.getParentFile().getAbsolutePath().length() > CoreApkTool.getTempPath().length()) {
+						&& parent.getParentFile().getAbsolutePath().length() > FileUtil.getTempPath().length()) {
 					parent = parent.getParentFile();
 				}
-				CoreApkTool.deleteDirectory(parent);
+				FileUtil.deleteDirectory(parent);
 			}
 			if(isPackageTempAPK && mApkInfo.ApkPath != null && !mApkInfo.ApkPath.isEmpty()) {
 				File parent = new File(mApkInfo.ApkPath).getParentFile();
 				Log.i("delete temp APK folder : "  + parent.getPath());
 				while(parent != null && parent.exists() && parent.getParentFile() != null 
 						&& parent.getParentFile().listFiles().length == 1 
-						&& parent.getParentFile().getAbsolutePath().length() > CoreApkTool.getTempPath().length()) {
+						&& parent.getParentFile().getAbsolutePath().length() > FileUtil.getTempPath().length()) {
 					parent = parent.getParentFile();
 				}
 				
-				CoreApkTool.deleteDirectory(parent);
+				FileUtil.deleteDirectory(parent);
 			}
 			mApkInfo = null;
 		}

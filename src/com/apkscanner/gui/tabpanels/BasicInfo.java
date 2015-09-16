@@ -18,10 +18,10 @@ import com.apkscanner.core.ApktoolManager.ApkInfo;
 import com.apkscanner.core.PermissionGroupManager.PermissionGroup;
 import com.apkscanner.core.PermissionGroupManager.PermissionInfo;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
+import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.CoreApkTool;
 
 public class BasicInfo extends JComponent implements HyperlinkClickListener, TabDataObject
 {
@@ -257,7 +257,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			if(mutiLabels == null || mutiLabels.isEmpty()
 					|| apkInfo.Labelname.length == 1) return;
 			showDialog(mutiLabels, Resource.STR_LABEL_APP_NAME_LIST.getString(), new Dimension(300, 200)
-					, new ImageIcon(CoreApkTool.getScaledImage(new ImageIcon(apkInfo.IconPath),32,32)));
+					, new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(apkInfo.IconPath),32,32)));
 		} else if(id.equals("display-list")) {
 			showPermList();
 		} else {

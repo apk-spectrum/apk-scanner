@@ -29,7 +29,7 @@ import com.apkscanner.gui.util.StandardButton;
 import com.apkscanner.gui.util.Theme;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.AdbWrapper;
-import com.apkscanner.util.CoreApkTool;
+import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.AdbWrapper.AdbWrapperListener;
 import com.apkscanner.util.AdbWrapper.DeviceStatus;
 import com.apkscanner.util.AdbWrapper.PackageInfo;
@@ -140,7 +140,7 @@ public class DeviceUIManager
 						if(n==0) {
 							String tmpPath = "/" + dev.name + pkgInfo.apkPath;
 							tmpPath = tmpPath.replaceAll("/", File.separator+File.separator).replaceAll("//", "/");
-							tmpPath = CoreApkTool.makeTempPath(tmpPath)+".apk";
+							tmpPath = FileUtil.makeTempPath(tmpPath)+".apk";
 							tmpApkPath = tmpPath; 
 							//Log.i(tmpPath);
 							AdbWrapper.PullApk(dev.name, pkgInfo.apkPath, tmpPath, new AdbWrapperObserver("pull", dev.name));

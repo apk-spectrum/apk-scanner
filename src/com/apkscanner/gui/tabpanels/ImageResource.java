@@ -19,7 +19,7 @@ import javax.swing.event.ListSelectionListener;
 
 import com.apkscanner.core.ApktoolManager.ApkInfo;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
-import com.apkscanner.util.CoreApkTool;
+import com.apkscanner.gui.util.ImageScaler;
 
 import java.util.ArrayList;
 
@@ -109,7 +109,7 @@ public class ImageResource extends JPanel implements TabDataObject
 		//Map<String, ImageIcon> map = new HashMap<>();
 		try {        	
 			for(int i=0; i< list.size(); i++) {
-				imageMap.put(list.get(i), new ImageIcon(CoreApkTool.getScaledImage(new ImageIcon(list.get(i)),32,32)));
+				imageMap.put(list.get(i), new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(list.get(i)),32,32)));
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -123,7 +123,7 @@ public class ImageResource extends JPanel implements TabDataObject
     	public void valueChanged(ListSelectionEvent event) {
     		//Log.i("valueChanged : " + list.getSelectedIndex() + " event : "+ event.getSource());
     		
-    		photographLabel.setIcon(new ImageIcon(CoreApkTool.getMaxScaledImage(
+    		photographLabel.setIcon(new ImageIcon(ImageScaler.getMaxScaledImage(
     				new ImageIcon(nameList.get(list.getSelectedIndex())),photographLabel.getWidth(),photographLabel.getHeight())));
     		
     	}

@@ -580,7 +580,7 @@ public class AdbWrapper
 					String abi32 = selAbi[0];
 					String abi64 = selAbi[1];
 					
-					Iterator<String> libPaths = CoreApkTool.findFiles(new File(libPath), ".so", null).iterator();
+					Iterator<String> libPaths = FileUtil.findFiles(new File(libPath), ".so", null).iterator();
 					while(libPaths.hasNext()) {
 						String path = libPaths.next();
 						if(!(new File(path)).exists()) {
