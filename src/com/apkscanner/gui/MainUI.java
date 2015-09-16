@@ -299,7 +299,10 @@ public class MainUI extends JFrame
 		private void evtOpenPackage(boolean newWindow)
 		{
 			PackageTreeDlg Dlg = new PackageTreeDlg();
-			Dlg.showTreeDlg();
+			if(Dlg.showTreeDlg() != PackageTreeDlg.APPROVE_OPTION) {
+				Log.v("Not choose package()");
+				return;
+			}
 			
 			String device = Dlg.getSelectedDevice();
 			String apkFilePath = Dlg.getSelectedApkPath();

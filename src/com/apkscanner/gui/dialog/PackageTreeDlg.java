@@ -64,6 +64,11 @@ import java.awt.event.WindowEvent;
 public class PackageTreeDlg extends JPanel
                       implements TreeSelectionListener, ActionListener{
 	private static final long serialVersionUID = 813267847663868531L;
+	
+	public static final int CANCEL_OPTION = 1;
+	public static final int APPROVE_OPTION = 0;
+	public static final int ERROR_OPTION = -1;
+	
 	private JTextField textFieldapkPath;
     private JTree tree;
     private DefaultMutableTreeNode top;
@@ -74,6 +79,7 @@ public class PackageTreeDlg extends JPanel
     private StandardButton refreshbtn;
     
     static private JDialog dialog;
+    static private int result;
     private String selDevice;
     private String selPackage;
     private String selApkPath;
@@ -770,6 +776,7 @@ public class PackageTreeDlg extends JPanel
 		dialog.getRootPane().getActionMap().put("ESCAPE", new AbstractAction() {
 			private static final long serialVersionUID = 8368291008098324014L;
 			public void actionPerformed(ActionEvent e) {
+				result = CANCEL_OPTION;
 				dialog.dispose();
 		    }
 		});
@@ -805,7 +812,8 @@ public class PackageTreeDlg extends JPanel
     	Log.i("package dialog closed");
     }
  
-    public void showTreeDlg() {
+    public int showTreeDlg() {
+    	result = APPROVE_OPTION;
         selDevice = null;
         selPackage = null;
         selApkPath = null;
@@ -823,6 +831,7 @@ public class PackageTreeDlg extends JPanel
 				selDevice = null;
 				selPackage = null;
 				selApkPath = null;
+				result = CANCEL_OPTION;
 				dialog.dispose();
 		    }
 		});
@@ -852,13 +861,14 @@ public class PackageTreeDlg extends JPanel
     	dialog.pack();
     	//dialog.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width)/2 - getWidth()/2, (Toolkit.getDefaultToolkit().getScreenSize().height)/2 - getHeight()/2);
     	    	
-    	dialog.setBounds(100, 100, 600, 400);
+    	dialog.setBounds(0, 0, 600, 400);
     	dialog.setMinimumSize(new Dimension(600, 400));
 		
     	dialog.setLocationRelativeTo(null);
     	dialog.setVisible(true);
     	dialog.dispose();
-
+    	
+    	return result;
     }
     
     public static void main(String[] args) {
@@ -988,6 +998,7 @@ public class PackageTreeDlg extends JPanel
 			selDevice = null;
 			selPackage = null;
 			selApkPath = null;
+			result = CANCEL_OPTION;
 			dialog.dispose();
 		} else if(e.getSource() == refreshbtn) {
 			addTreeList();
@@ -1072,12 +1083,12 @@ public class PackageTreeDlg extends JPanel
 			double... percentages) {
 		double total = 0;
 		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
-		total += percentages[i];
+			total += percentages[i];
 		}
 		
 		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
-		TableColumn column = table.getColumnModel().getColumn(i);
-		column.setPreferredWidth((int)(tablePreferredWidth * (percentages[i] / total)));
+			TableColumn column = table.getColumnModel().getColumn(i);
+			column.setPreferredWidth((int)(tablePreferredWidth * (percentages[i] / total)));
 		}
 	}	
 }
