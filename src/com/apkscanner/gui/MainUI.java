@@ -285,7 +285,10 @@ public class MainUI extends JFrame
 		private void evtOpenApkFile(boolean newWindow)
 		{
 			String apkFilePath = ApkFileChooser.openApkFilePath(MainUI.this);
-			if(apkFilePath == null) return;
+			if(apkFilePath == null) {
+				Log.v("Not choose apk file");
+				return;
+			}
 
 			if(!newWindow) {
 				progressBarDlg.init();
@@ -300,7 +303,7 @@ public class MainUI extends JFrame
 		{
 			PackageTreeDlg Dlg = new PackageTreeDlg();
 			if(Dlg.showTreeDlg() != PackageTreeDlg.APPROVE_OPTION) {
-				Log.v("Not choose package()");
+				Log.v("Not choose package");
 				return;
 			}
 			
