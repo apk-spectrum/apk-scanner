@@ -1,4 +1,4 @@
-package com.apkscanner.core;
+package com.apkscanner.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -22,6 +22,7 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultCaret;
 
+import com.apkscanner.core.AdbWrapper;
 import com.apkscanner.core.AdbWrapper.AdbWrapperListener;
 import com.apkscanner.core.AdbWrapper.DeviceStatus;
 import com.apkscanner.core.AdbWrapper.PackageInfo;
@@ -32,8 +33,9 @@ import com.apkscanner.gui.util.StandardButton;
 import com.apkscanner.gui.util.Theme;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.FileUtil;
+import com.apkscanner.util.Log;
 
-public class DeviceUIManager
+public class ApkInstaller
 {
 	static private JTextArea dialogLogArea;
 	static private JDialog dlgDialog = null;
@@ -56,7 +58,7 @@ public class DeviceUIManager
 	}
 	private InstallButtonStatusListener Listener;
 	
-	public DeviceUIManager(String PackageName, String apkPath, String libPath, 
+	public ApkInstaller(String PackageName, String apkPath, String libPath, 
 			final boolean samePackage, final boolean checkPackage, final InstallButtonStatusListener Listener)
 	{
 		final ImageIcon Appicon = Resource.IMG_QUESTION.getImageIcon();
@@ -233,13 +235,14 @@ public class DeviceUIManager
 	
 	private void printlnLog(String msg)
 	{
+		Log.i(msg);
 		if(dialogLogArea != null) {
 			dialogLogArea.append(msg+"\n");
 		}
 	}
 	
-	public static void setLogWindowPosition(int x, int y) {
-		
+	public static void setLogWindowPosition(int x, int y)
+	{
 		if(dlgDialog != null) {
 			dlgDialog.setLocation(x, y);
 		} else {
@@ -248,7 +251,8 @@ public class DeviceUIManager
 		}
 	}
 	
-	public static void setLogWindowToFront() {
+	public static void setLogWindowToFront()
+	{
 		if(dlgDialog != null) {
 			dlgDialog.toFront();
 			dlgDialog.repaint();

@@ -24,10 +24,9 @@ import java.io.IOException;
 import com.apkscanner.Launcher;
 import com.apkscanner.core.AdbWrapper;
 import com.apkscanner.core.ApktoolManager;
-import com.apkscanner.core.DeviceUIManager;
 import com.apkscanner.core.ApktoolManager.ApkInfo;
 import com.apkscanner.core.ApktoolManager.SolveType;
-import com.apkscanner.core.DeviceUIManager.InstallButtonStatusListener;
+import com.apkscanner.gui.ApkInstaller.InstallButtonStatusListener;
 import com.apkscanner.gui.ToolBar.ButtonSet;
 import com.apkscanner.gui.dialog.AboutDlg;
 import com.apkscanner.gui.dialog.LogDlg;
@@ -331,7 +330,7 @@ public class MainUI extends JFrame
 
 			toolBar.setEnabledAt(ButtonSet.INSTALL, false);
 			String libPath = apkInfo.WorkTempPath + File.separator + "lib" + File.separator;
-			new DeviceUIManager(apkInfo.PackageName, apkInfo.ApkPath, libPath , 
+			new ApkInstaller(apkInfo.PackageName, apkInfo.ApkPath, libPath , 
 					(boolean)Resource.PROP_CHECK_INSTALLED.getData(false), checkPackage, new InstallButtonStatusListener() {
 				@Override
 				public void SetInstallButtonStatus(Boolean Flag) {
@@ -486,8 +485,8 @@ public class MainUI extends JFrame
 				int nPositionX = getLocationOnScreen().x;
 				int nPositionY = getLocationOnScreen().y;
 				int nPositionWidth = getWidth();
-				DeviceUIManager.setLogWindowPosition(nPositionX + nPositionWidth, nPositionY);
-				DeviceUIManager.setLogWindowToFront();
+				ApkInstaller.setLogWindowPosition(nPositionX + nPositionWidth, nPositionY);
+				ApkInstaller.setLogWindowToFront();
 			}
 		}
 		@Override public void ancestorResized(HierarchyEvent e) { ancestorMoved(e); }
@@ -498,7 +497,7 @@ public class MainUI extends JFrame
 		{
 			exiting = true;
 			setVisible(false);
-			DeviceUIManager.setVisible(false);
+			ApkInstaller.setVisible(false);
 			progressBarDlg.setVisible(false);
 			apkScanner.clear(true);
 		}
