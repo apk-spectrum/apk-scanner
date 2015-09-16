@@ -22,6 +22,7 @@ import javax.swing.JTextField;
 import javax.swing.JCheckBox;
 import javax.swing.KeyStroke;
 
+import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.resource.Resource;
 
 public class SettingDlg extends JDialog implements ActionListener
@@ -244,17 +245,7 @@ public class SettingDlg extends JDialog implements ActionListener
 				textExcutePath.setText(dir.getPath()); 
 			}
 		} else if(e.getSource() == browser2) {
-			JFileChooser jfc = new JFileChooser();			
-			jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("apk","apk"));							
-			
-			if(jfc.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
-				return;
-			
-			File dir = jfc.getSelectedFile();
-			String file = null;
-			if(dir!=null) {
-				file = dir.getPath();
-			}
+			String file = ApkFileChooser.openApkFilePath(this);
 			
 			if(file == null || file.isEmpty()) return;
 			for(String f: resList) {

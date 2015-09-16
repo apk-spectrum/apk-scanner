@@ -17,7 +17,7 @@ public class CoreApkTool
 		ArrayList<String> tempList = new ArrayList<String>();
 		File[] list = f.listFiles();
 		if(list == null) {
-			Log.w("list null");
+			Log.i("findFiles() list is null : " + f.toString());
 			return tempList;
 		}
 		for (int i=0; i<list.length; i++) {

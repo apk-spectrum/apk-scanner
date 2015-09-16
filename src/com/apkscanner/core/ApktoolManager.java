@@ -228,7 +228,7 @@ public class ApktoolManager
 		//Log.i("solve()....end ");
 	}
 
-	public void clear(boolean wait, StatusListener listener)
+	public void clear(boolean sync, StatusListener listener)
 	{
 		//Log.i("clear()....start ");
 		mProcess = new ProcessThead(this, ProcessCmd.DELETE_TEMP_PATH, listener);
@@ -243,7 +243,7 @@ public class ApktoolManager
 			}
 		}
 		try {
-			if(wait) mProcess.join();
+			if(sync) mProcess.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

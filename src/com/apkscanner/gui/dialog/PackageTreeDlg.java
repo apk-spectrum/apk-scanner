@@ -33,6 +33,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
 import com.apkscanner.core.PackageTreeDataManager;
+import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.gui.util.BooleanTableModel;
 import com.apkscanner.gui.util.ButtonType;
@@ -969,21 +970,10 @@ public class PackageTreeDlg extends JPanel
 			saveFileName = apkPath.replaceAll(".*/", "");
 		}
 
-		JFileChooser jfc = new JFileChooser((String)Resource.PROP_LAST_FILE_SAVE_PATH.getData(""));
-		jfc.setDialogType(JFileChooser.SAVE_DIALOG);
-		jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(Resource.STR_LABEL_APK_FILE_DESC.getString(),"apk"));
-		jfc.setSelectedFile(new File(saveFileName));
-
-
-		if(jfc.showSaveDialog(null) != JFileChooser.APPROVE_OPTION)
-			return;
-
-		File dir = jfc.getSelectedFile();
-		if(dir == null) return;
-		Resource.PROP_LAST_FILE_SAVE_PATH.setData(dir.getParentFile().getAbsolutePath());
+		File destFile = ApkFileChooser.saveApkFile(this, saveFileName);
+		if(destFile == null) return;
 		
-		AdbWrapper.PullApk(device, apkPath, dir.getAbsolutePath(), null);
+		AdbWrapper.PullApk(device, apkPath, destFile.getAbsolutePath(), null);
 		//dir.isDirectory()
 		
 		//return dir.getPath();
