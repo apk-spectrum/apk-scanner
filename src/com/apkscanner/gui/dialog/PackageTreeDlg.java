@@ -33,7 +33,6 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
 import com.apkscanner.core.AdbWrapper;
-import com.apkscanner.core.PackageTreeDataManager;
 import com.apkscanner.core.AdbWrapper.DeviceStatus;
 import com.apkscanner.core.AdbWrapper.PackageListObject;
 import com.apkscanner.gui.util.ApkFileChooser;
@@ -274,8 +273,7 @@ public class PackageTreeDlg extends JPanel
 				        
 				        data.add(dataapp);
 
-						PackageTreeDataManager PackageManager = new PackageTreeDataManager(devList[i].name);
-						ArrayList<PackageListObject> ArrayDataObject = PackageManager.getDataArray();
+						ArrayList<PackageListObject> ArrayDataObject = AdbWrapper.getPackageList(devList[i].name);
 				        for(PackageListObject obj: ArrayDataObject) {
 				        	DefaultMutableTreeNode temp = new DefaultMutableTreeNode(obj);		        	
 				        	
