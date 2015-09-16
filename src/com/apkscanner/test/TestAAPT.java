@@ -8,22 +8,20 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 
-import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
 import javax.swing.JPanel;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 
+@SuppressWarnings("serial")
 public class TestAAPT extends JDialog{
 	
 	TestAAPT () {
 		
 		JPanel mainpanel = new JPanel();
 		
-		ArrayList<ImageIcon> arrayImage = null; 
+		//ArrayList<ImageIcon> arrayImage = null; 
 		ArrayList<String> arrayImageFromfile = null;
 		
 		
@@ -41,7 +39,6 @@ public class TestAAPT extends JDialog{
 //				arrayImage = ZipUtils.unimagezip(new File("/home/leejinhyeong/Desktop/PMApplication-release.apk"), new File("/home/leejinhyeong/Desktop/"), "icd_weather_14.png", false);
 //				
 //			} catch (Exception e) {
-//				// TODO Auto-generated catch block
 //				e.printStackTrace();
 //			}		
 //			
@@ -68,7 +65,6 @@ public class TestAAPT extends JDialog{
 				arrayImageFromfile = ZipUtils.unimagezipfromfile(new File("/home/leejinhyeong/Desktop/PMApplication-release.apk"), new File("/home/leejinhyeong/Desktop/"), "ic_launcher_hoppin.png", false);
 				
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			//Log.d(""+ arrayImageFromfile.size());
@@ -103,9 +99,9 @@ public class TestAAPT extends JDialog{
 	
 	public static void main(final String[] args)
 	{
-		String apkFile = "/home/leejinhyeong/Desktop/Schedulememo.apk";
-		String targetRes = "0x7f0c093d";
-		String AllString = "";
+		//String apkFile = "/home/leejinhyeong/Desktop/Schedulememo.apk";
+		//String targetRes = "0x7f0c093d";
+		//String AllString = "";
 //		Log.i("aapt dump --values resource start");
 //		String[] result = MyConsolCmd.exc(new String[] {Resource.BIN_AAPT_LNX.getPath(), "dump", "--values", "resources", apkFile});
 //		Log.i("aapt dump --values resource completed");
@@ -132,12 +128,11 @@ public class TestAAPT extends JDialog{
 //			
 //			
 //		} catch (Exception e) {
-//			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
 		//mZipUtils.unzip(new File(list[i].getAbsolutePath()),new File("./test/") , "AndroidManifest.xml", false);
 		
-		TestAAPT temp = new TestAAPT();
+		//TestAAPT temp = new TestAAPT();
 		
 	}
 	
