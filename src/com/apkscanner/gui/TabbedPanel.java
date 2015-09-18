@@ -25,7 +25,7 @@ public class TabbedPanel extends JTabbedPane
 	{
 		public void initialize();
 		public void setData(ApkInfo apkInfo);
-		public void reloadResource();
+		public void reloadResource(ApkInfo apkInfo);
 	}
 	
     public TabbedPanel()
@@ -67,14 +67,14 @@ public class TabbedPanel extends JTabbedPane
         };
     }
     
-    public void reloadResource()
+    public void reloadResource(ApkInfo apkInfo)
     {
     	loadResource();
 
     	for(int i = 0; i < 6; i++) {
     		setTitleAt(i, getTitleAt(i).replaceAll("^([^\\(]*)", labels[i]));
     		setToolTipTextAt(i, labels[i] + " (Alt+"+ (i+1) +")");
-    		((TabDataObject)(getComponent(i))).reloadResource();
+    		((TabDataObject)(getComponent(i))).reloadResource(apkInfo);
     	}
     }
 	

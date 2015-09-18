@@ -130,7 +130,7 @@ public class ImageResource extends JPanel implements TabDataObject
     }
 
 	@Override
-	public void reloadResource() {
+	public void reloadResource(ApkInfo apkInfo) {
 		
 	}
 }

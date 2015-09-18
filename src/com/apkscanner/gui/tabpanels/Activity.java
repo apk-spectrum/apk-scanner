@@ -137,7 +137,7 @@ public class Activity extends JPanel implements TabDataObject
 	}
 	
 	@Override
-	public void reloadResource()
+	public void reloadResource(ApkInfo apkInfo)
 	{
 		if(TableModel == null) return;
 		TableModel.loadResource();

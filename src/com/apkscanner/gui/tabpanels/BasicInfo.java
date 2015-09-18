@@ -359,7 +359,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	}
 
 	@Override
-	public void reloadResource() {
+	public void reloadResource(ApkInfo apkInfo) {
 		setData(apkInfo);
 	}
 }

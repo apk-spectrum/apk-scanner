@@ -45,7 +45,6 @@ public class MainUI extends JFrame
 	private static final long serialVersionUID = 1L;
 
 	private ApkScanner apkScanner = null;
-	private ApkInfo apkInfo = null;
 	
 	private TabbedPanel tabbedPanel;
 	private ToolBar toolBar;
@@ -77,7 +76,7 @@ public class MainUI extends JFrame
 				initialize(false);
 				
 				apkScanner = new ApkScanner();
-				apkInfo = apkScanner.openApk(apkFilePath);
+				apkScanner.openApk(apkFilePath);
 			}
 		}).start();
 	}
@@ -92,7 +91,7 @@ public class MainUI extends JFrame
 				initialize(false);
 
 				apkScanner = new ApkScanner();
-				apkInfo = apkScanner.openPackage(devSerialNumber, packageName, resources);
+				apkScanner.openPackage(devSerialNumber, packageName, resources);
 			}
 		}).start();
 	}
@@ -210,6 +209,11 @@ public class MainUI extends JFrame
 			return openApk(tempApkFilePath, frameworkRes, true);
 		}
 		
+		public ApkInfo getApkInfo()
+		{
+			return apkManager.getApkInfo();
+		}
+		
 		public void clear(boolean sync)
 		{
 			if(apkManager != null)
@@ -292,7 +296,7 @@ public class MainUI extends JFrame
 			if(!newWindow) {
 				progressBarDlg.init();
 				progressBarDlg.setVisible(true);
-				apkInfo = apkScanner.openApk(apkFilePath);
+				apkScanner.openApk(apkFilePath);
 			} else {
 				Launcher.run(apkFilePath);
 			}
@@ -315,7 +319,7 @@ public class MainUI extends JFrame
 				progressBarDlg.setVisible(true);
 				setVisible(false);
 				
-				apkInfo = apkScanner.openPackage(device, apkFilePath, frameworkRes);
+				apkScanner.openPackage(device, apkFilePath, frameworkRes);
 			} else {
 				Launcher.run(device, apkFilePath, frameworkRes);
 			}
@@ -323,6 +327,7 @@ public class MainUI extends JFrame
 		
 		private void evtInstallApk(boolean checkPackage)
 		{
+			ApkInfo apkInfo = apkScanner.getApkInfo();
 			if(apkInfo == null) {
 				Log.e("evtInstallApk() apkInfo is null");
 				return;
@@ -347,6 +352,7 @@ public class MainUI extends JFrame
 		
 		private void evtShowManifest()
 		{
+			ApkInfo apkInfo = apkScanner.getApkInfo();
 			if(apkInfo == null) {
 				Log.e("evtShowManifest() apkInfo is null");
 				return;
@@ -368,6 +374,7 @@ public class MainUI extends JFrame
 		
 		private void evtShowExplorer()
 		{
+			ApkInfo apkInfo = apkScanner.getApkInfo();
 			if(apkInfo == null) {
 				Log.e("evtShowExplorer() apkInfo is null");
 				return;
@@ -396,6 +403,7 @@ public class MainUI extends JFrame
 
 		private void setLanguage(String lang)
 		{
+			ApkInfo apkInfo = apkScanner.getApkInfo();
 			Resource.setLanguage(lang);
 			String title = Resource.STR_APP_NAME.getString();
 			if(apkInfo != null) {
@@ -403,7 +411,8 @@ public class MainUI extends JFrame
 			}
 			setTitle(title);
 			toolBar.reloadResource();
-			tabbedPanel.reloadResource();
+			tabbedPanel.reloadResource(apkInfo);
+			tabbedPanel.setData(apkInfo);
 		}
 		
 		// ToolBar event processing
@@ -473,7 +482,7 @@ public class MainUI extends JFrame
 			try {   
 	    		progressBarDlg.init();
 				progressBarDlg.setVisible(true);
-				apkInfo = apkScanner.openApk(files[0].getCanonicalPath(), (String)Resource.PROP_FRAMEWORK_RES.getData(), false);
+				apkScanner.openApk(files[0].getCanonicalPath(), (String)Resource.PROP_FRAMEWORK_RES.getData(), false);
 	        } catch( java.io.IOException e ) {}
 		}
 		
