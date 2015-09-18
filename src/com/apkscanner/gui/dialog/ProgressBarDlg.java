@@ -93,7 +93,7 @@ public class ProgressBarDlg extends JFrame
 		getRootPane().getActionMap().put("VK_F12", new AbstractAction() {
 			private static final long serialVersionUID = -5281980076592985530L;
 			public void actionPerformed(ActionEvent e) {
-				LogDlg.showLogDialog();
+				LogDlg.showLogDialog(ProgressBarDlg.this);
 		    }
 		});
     }

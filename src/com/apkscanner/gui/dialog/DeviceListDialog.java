@@ -15,7 +15,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DeviceListDialog extends JDialog implements ActionListener {
+public class DeviceListDialog extends JDialog implements ActionListener
+{
 	private static final long serialVersionUID = 662649457192939410L;
 
 	private static DeviceListDialog dialog;
@@ -32,13 +33,15 @@ public class DeviceListDialog extends JDialog implements ActionListener {
 	 * screen; otherwise, it should be the component on top of which the dialog
 	 * should appear.
 	 */
-	public static int showDialog() {
+	public static int showDialog()
+	{
 		return showDialog(null, null, Resource.STR_LABEL_DEVICE_LIST.getString(), Resource.STR_LABEL_SELECT_DEVICE.getString(), null, 0, "Cosmo  ");
 	}
 	
 	public static int showDialog(Component frameComp,
 			Component locationComp, String labelText, String title,
-			String[] possibleValues, int initialValue, String longValue) {
+			String[] possibleValues, int initialValue, String longValue)
+	{
 		Frame frame = JOptionPane.getFrameForComponent(frameComp);
 		do {
 			dialog = new DeviceListDialog(frame, locationComp, labelText, title,

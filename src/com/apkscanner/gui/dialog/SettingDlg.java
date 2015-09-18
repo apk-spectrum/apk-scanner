@@ -1,5 +1,6 @@
 package com.apkscanner.gui.dialog;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -102,12 +103,12 @@ public class SettingDlg extends JDialog implements ActionListener
 		Resource.PROP_FRAMEWORK_RES.setData(strframeworkResPath);
 	}
 
-	public void makeDialog() {
+	public void makeDialog(Component component) {
 		this.setTitle(Resource.STR_SETTINGS_TITLE.getString());
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		this.setSize(new Dimension(480,215));
 		this.setResizable( false );
-		this.setLocationRelativeTo(null);
+		this.setLocationRelativeTo(component);
 		this.setModal(true);
 		getContentPane().add(makeLayoutPanel());
 		//this.pack();
@@ -204,7 +205,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				SettingDlg dlg = new SettingDlg();
-				dlg.makeDialog();
+				dlg.makeDialog(null);
 			}
 		});
 	}

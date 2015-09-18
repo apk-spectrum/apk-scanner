@@ -194,8 +194,8 @@ public class PackageTreeDlg extends JPanel
 		
 	}
     
-    private void addTreeList() {
-
+    private void addTreeList()
+    {
     	if(!refreshbtn.isVisible()) {
     		Log.i("Already refreshing...");
     		return;
@@ -762,8 +762,8 @@ public class PackageTreeDlg extends JPanel
      * this method should be invoked from the
      * event dispatch thread.
      */
-    private static void createAndShowGUI() {
- 
+    private static void createAndShowGUI(Component component)
+    {
     	final PackageTreeDlg ptg = new PackageTreeDlg();
     	
         //Create and set up the window.
@@ -805,14 +805,15 @@ public class PackageTreeDlg extends JPanel
     	dialog.setBounds(100, 100, 600, 400);
     	dialog.setMinimumSize(new Dimension(600, 400));
 		
-    	dialog.setLocationRelativeTo(null);
+    	dialog.setLocationRelativeTo(component);
     	dialog.setVisible(true);
     	dialog.dispose();
     	
     	Log.i("package dialog closed");
     }
  
-    public int showTreeDlg() {
+    public int showTreeDlg(Component component)
+    {
     	result = APPROVE_OPTION;
         selDevice = null;
         selPackage = null;
@@ -864,26 +865,27 @@ public class PackageTreeDlg extends JPanel
     	dialog.setBounds(0, 0, 600, 400);
     	dialog.setMinimumSize(new Dimension(600, 400));
 		
-    	dialog.setLocationRelativeTo(null);
+    	dialog.setLocationRelativeTo(component);
     	dialog.setVisible(true);
     	dialog.dispose();
     	
     	return result;
     }
     
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         //Schedule a job for the event dispatch thread:
         //creating and showing this application's GUI.
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                createAndShowGUI();
+                createAndShowGUI(null);
                 System.exit(0);
             }
         });
     }
 
-    private void OpenPackage() {
-
+    private void OpenPackage()
+    {
     	Log.i("open package");
     	
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
@@ -915,8 +917,8 @@ public class PackageTreeDlg extends JPanel
 		dialog.dispose();
     }
 
-    private void Removepackage() {
-
+    private void Removepackage()
+    {
     	final DefaultMutableTreeNode node = (DefaultMutableTreeNode)
                 tree.getLastSelectedPathComponent();
 		
@@ -944,7 +946,8 @@ public class PackageTreeDlg extends JPanel
    		}
     }
     
-    private void PullPackage() {
+    private void PullPackage()
+    {
     	Log.i("PullPackage()");
 		
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
@@ -989,8 +992,8 @@ public class PackageTreeDlg extends JPanel
     }
     
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		
+	public void actionPerformed(ActionEvent e)
+	{
 		if(e.getActionCommand().equals(Resource.STR_BTN_OPEN.getString())) {
 			OpenPackage();
 		} else if(e.getActionCommand().equals(Resource.STR_BTN_CANCEL.getString())) {
@@ -1005,8 +1008,8 @@ public class PackageTreeDlg extends JPanel
 		}
 	}
 	
-	public JPanel makeListTable ( ) {
-		
+	public JPanel makeListTable ( )
+	{
 		JPanel panel = new JPanel(new BorderLayout());
 		
 		//JTable table = new JTable(new BooleanTableModel());
@@ -1071,16 +1074,18 @@ public class PackageTreeDlg extends JPanel
         return panel;
 	}
 	
-	public void collapseAll(JTree tree) {
-	    int row = tree.getRowCount() - 1;
-	    while (row >= 0) {
-	      tree.collapseRow(row);
-	      row--;
-	      }
-	    }
+	public void collapseAll(JTree tree)
+	{
+		int row = tree.getRowCount() - 1;
+		while (row >= 0) {
+			tree.collapseRow(row);
+			row--;
+		}
+	}
 	
 	public static void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
-			double... percentages) {
+			double... percentages)
+	{
 		double total = 0;
 		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
 			total += percentages[i];

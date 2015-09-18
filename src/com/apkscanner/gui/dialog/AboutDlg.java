@@ -1,5 +1,6 @@
 package com.apkscanner.gui.dialog;
 
+import java.awt.Component;
 import java.awt.Font;
 
 import javax.swing.ImageIcon;
@@ -18,7 +19,7 @@ public class AboutDlg /*extends JDialog*/
 
 	}
 	
-	static public int showAboutDialog()
+	static public int showAboutDialog(Component component)
 	{
 		final ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon(100,100);
 	    
@@ -51,7 +52,7 @@ public class AboutDlg /*extends JDialog*/
 	    hep.setEditable(false);
 	    hep.setBackground(label.getBackground());
 	    
-	    return JOptionPane.showOptionDialog(null, hep, Resource.STR_BTN_ABOUT.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, Appicon,
+	    return JOptionPane.showOptionDialog(component, hep, Resource.STR_BTN_ABOUT.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, Appicon,
 	    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
 	}
 }

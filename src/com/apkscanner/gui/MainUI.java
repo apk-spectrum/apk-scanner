@@ -301,7 +301,7 @@ public class MainUI extends JFrame
 		private void evtOpenPackage(boolean newWindow)
 		{
 			PackageTreeDlg Dlg = new PackageTreeDlg();
-			if(Dlg.showTreeDlg() != PackageTreeDlg.APPROVE_OPTION) {
+			if(Dlg.showTreeDlg(MainUI.this) != PackageTreeDlg.APPROVE_OPTION) {
 				Log.v("Not choose package");
 				return;
 			}
@@ -385,7 +385,7 @@ public class MainUI extends JFrame
 		
 		private void evtSettings()
 		{
-			(new SettingDlg()).makeDialog();
+			(new SettingDlg()).makeDialog(MainUI.this);
 
 			String lang = (String)Resource.PROP_LANGUAGE.getData();
 			if(lang != null && Resource.getLanguage() != null 
@@ -421,7 +421,7 @@ public class MainUI extends JFrame
 			} else if(ToolBar.ButtonSet.SETTING.matchActionEvent(e)) {
 				evtSettings();
 			} else if(ToolBar.ButtonSet.ABOUT.matchActionEvent(e)) {
-				AboutDlg.showAboutDialog();
+				AboutDlg.showAboutDialog(MainUI.this);
 			} else if(ToolBar.MenuItemSet.NEW_EMPTY.matchActionEvent(e)) {
 				Launcher.run();
 			} else if(ToolBar.MenuItemSet.NEW_APK.matchActionEvent(e)) {
@@ -456,8 +456,8 @@ public class MainUI extends JFrame
 					return true;
 				} else if(e.getModifiers() == 0) {
 					switch(e.getKeyCode()) {
-					case KeyEvent.VK_F1 : AboutDlg.showAboutDialog();	break;
-					case KeyEvent.VK_F12: LogDlg.showLogDialog();		break;
+					case KeyEvent.VK_F1 : AboutDlg.showAboutDialog(MainUI.this);break;
+					case KeyEvent.VK_F12: LogDlg.showLogDialog(MainUI.this);	break;
 					default: return false;
 					}
 					return true;
