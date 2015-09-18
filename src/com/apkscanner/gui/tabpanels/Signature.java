@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.apkscanner.core.ApktoolManager.ApkInfo;
+import com.apkscanner.data.ApkInfo;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.resource.Resource;
 

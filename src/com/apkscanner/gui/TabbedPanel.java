@@ -4,7 +4,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.JTabbedPane;
 
-import com.apkscanner.core.ApktoolManager.ApkInfo;
+import com.apkscanner.data.ApkInfo;
 import com.apkscanner.gui.tabpanels.Activity;
 import com.apkscanner.gui.tabpanels.Library;
 import com.apkscanner.gui.tabpanels.ImageResource;
