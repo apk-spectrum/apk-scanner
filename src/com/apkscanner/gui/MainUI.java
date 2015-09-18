@@ -211,6 +211,8 @@ public class MainUI extends JFrame
 		
 		public ApkInfo getApkInfo()
 		{
+			if(apkManager == null)
+				return null;
 			return apkManager.getApkInfo();
 		}
 		
@@ -412,7 +414,6 @@ public class MainUI extends JFrame
 			setTitle(title);
 			toolBar.reloadResource();
 			tabbedPanel.reloadResource(apkInfo);
-			tabbedPanel.setData(apkInfo);
 		}
 		
 		// ToolBar event processing
