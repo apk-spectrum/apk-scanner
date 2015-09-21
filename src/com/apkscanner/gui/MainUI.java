@@ -23,8 +23,9 @@ import java.io.IOException;
 
 import com.apkscanner.Launcher;
 import com.apkscanner.core.AdbWrapper;
+import com.apkscanner.core.ApkToolStub.SolveType;
+import com.apkscanner.core.ApkToolStub.StatusListener;
 import com.apkscanner.core.ApktoolManager;
-import com.apkscanner.core.ApktoolManager.SolveType;
 import com.apkscanner.data.ApkInfo;
 import com.apkscanner.gui.ApkInstaller.InstallButtonStatusListener;
 import com.apkscanner.gui.ToolBar.ButtonSet;
@@ -141,8 +142,9 @@ public class MainUI extends JFrame
 		new UIEventHandler().ancestorMoved(null);
 	}
 	
-	private class ApkScanner implements ApktoolManager.StatusListener
+	private class ApkScanner implements StatusListener
 	{
+		
 		private ApktoolManager apkManager;
 		
 		public ApkInfo openApk(final String apkFilePath)

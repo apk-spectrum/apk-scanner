@@ -108,8 +108,8 @@ public class TestAAPT extends JDialog{
 	
 	public static void main(final String[] args)
 	{
-		String apkFilePath = "/home/sunggyu.kam/MelOn.apk";
-		String tempFilePath = "/tmp/ApkScanner/tmp_image.png";
+		String apkFilePath = "/home/leejinhyeong/workspace/APKInfoDlgv2/MediaPlayer.apk";
+		String tempFilePath = "/home/leejinhyeong/workspace/APKInfoDlgv2/tmp_image.png";
 		
 		ArrayList<String> imagePathList = new ArrayList<String>();
 		ArrayList<ImageIcon> imageIconList0 = new ArrayList<ImageIcon>();

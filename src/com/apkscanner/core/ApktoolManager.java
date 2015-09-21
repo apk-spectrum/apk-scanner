@@ -6,6 +6,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.apkscanner.core.ApkToolStub.ManagerInterface;
+import com.apkscanner.core.ApkToolStub.ProcessCmd;
+import com.apkscanner.core.ApkToolStub.SolveType;
+import com.apkscanner.core.ApkToolStub.StatusListener;
 import com.apkscanner.data.ApkInfo;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.ConsolCmd;
@@ -14,7 +18,7 @@ import com.apkscanner.util.MyXPath;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.FileUtil.FSStyle;
 
-public class ApktoolManager
+public class ApktoolManager implements ManagerInterface
 {
 	private ApkInfo mApkInfo = null;
 	static private final String ApktoolVer = getApkToolVersion();
@@ -26,40 +30,7 @@ public class ApktoolManager
 	private ArrayList<String> mFrameworkResList;
 	
 	private ProcessThead mProcess = null;
-	
-	public interface StatusListener
-	{
-		public void OnStart();
-		public void OnSuccess();
-		public void OnError();
-		public void OnComplete();
-		public void OnProgress(int step, String msg);
-		public void OnStateChange();
-	}
 
-	public enum Status {
-		UNINITIALIZE,
-		INITIALIZING,
-		INITIALIZEED,
-		SOLVE_RESOURCE,
-		SOLVE_CODE,
-		SOLVE_BOTH,
-		STANDBY,
-		DELETEING
-	}
-	
-	public enum ProcessCmd {
-		SOLVE_RESOURCE,
-		SOLVE_CODE,
-		SOLVE_BOTH,
-		DELETE_TEMP_PATH,
-	}
-	
-	public enum SolveType {
-		RESOURCE,
-		CODE,
-		BOTH
-	}
 	
 	public ApktoolManager()
 	{
@@ -134,6 +105,7 @@ public class ApktoolManager
 		return ApktoolVer;
 	}
 	
+	@Override
 	public void solve(SolveType type, StatusListener listener)
 	{
 		if(mApkInfo.ApkPath == null) return;
@@ -151,7 +123,13 @@ public class ApktoolManager
 		}
 		//Log.i("solve()....end ");
 	}
-
+	
+	@Override
+	public ApkInfo getApkInfo() {
+		return this.mApkInfo; 
+	}
+	
+	@Override
 	public void clear(boolean sync, StatusListener listener)
 	{
 		//Log.i("clear()....start ");
@@ -172,11 +150,6 @@ public class ApktoolManager
 			e.printStackTrace();
 		}
 		//Log.i("clear()....end ");
-	}
-	
-	public final ApkInfo getApkInfo()
-	{
-		return mApkInfo;
 	}
 
 	class ProcessThead extends Thread {
@@ -684,5 +657,11 @@ public class ApktoolManager
 				if(mListener != null) mListener.OnComplete();
 			}
 		}
+	}
+
+	@Override
+	public void reloadResource() {
+		// TODO Auto-generated method stub
+		
 	}
 }
