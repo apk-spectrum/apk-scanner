@@ -1,0 +1,1340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.1.8" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true">  
+  <class id="1" language="java" name="com.apkscanner.gui.tabpanels.ImageResource.JListHandler" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/tabpanels/ImageResource.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="97" width="214" x="2915" y="2167"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <package id="2" language="java" name="com.apkscanner" project="APKInfoDlgv2" file="/APKInfoDlgv2/src/com/apkscanner" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="49" width="120" x="-19" y="-1113"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <class id="3" language="java" name="com.apkscanner.gui.ApkInstaller" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/ApkInstaller.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="367" width="393" x="5712" y="-1113"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="4" language="java" name="com.apkscanner.gui.util.BooleanTableModel" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/util/BooleanTableModel.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="241" width="294" x="7691" y="-1113"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="5" language="java" name="com.apkscanner.util.Log.ConsoleHandlerStd" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/util/Log.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="97" width="144" x="8601" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="6" language="java" name="com.apkscanner.gui.util.ArrowTraversalPane" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/util/ArrowTraversalPane.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="133" width="380" x="141" y="-1113"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="7" language="java" name="com.apkscanner.Launcher" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/Launcher.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="187" width="192" x="561" y="-1113"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="8" language="java" name="com.apkscanner.gui.dialog.LogDlg" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/dialog/LogDlg.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="97" width="177" x="793" y="-1113"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="9" language="java" name="com.apkscanner.gui.util.ColorUtils" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/util/ColorUtils.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="241" width="269" x="1010" y="-1113"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="10" language="java" name="com.apkscanner.core.AdbWrapper.PackageListObject" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/core/AdbWrapper.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="187" width="132" x="5953" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="11" language="java" name="com.apkscanner.gui.MainUI.UIEventHandler" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/MainUI.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="421" width="221" x="9608" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="12" language="java" name="com.apkscanner.gui.tabpanels.Library.MyTableModel" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/tabpanels/Library.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="313" width="246" x="5189" y="2167"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="13" language="java" name="com.apkscanner.core.PermissionGroupManager.PermissionInfo" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/core/PermissionGroupManager.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="151" width="114" x="3831" y="6610"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="14" language="java" name="com.apkscanner.core.AdbWrapper.PackageInfo" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/core/AdbWrapper.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="223" width="317" x="6125" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="15" language="java" name="com.apkscanner.core.AdbWrapper.MyCoreThead" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/core/AdbWrapper.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="205" width="402" x="6924" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <package id="16" language="java" name="com.apkscanner.core" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/core" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="49" width="148" x="1329" y="-1113"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <class id="17" language="java" name="com.apkscanner.gui.util.Theme" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/util/Theme.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="2761" width="238" x="1517" y="-1113"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <enumeration id="18" language="java" name="com.apkscanner.gui.ToolBar.MenuItemSet" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/ToolBar.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="403" width="344" x="10540" y="2167"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </enumeration>  
+  <package id="19" language="java" name="com.apkscanner.resource" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/resource" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="49" width="174" x="1795" y="-1113"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <class id="20" language="java" name="com.apkscanner.util.Log.ConsoleHandlerToStdout" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/util/Log.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="79" width="164" x="8785" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="21" language="java" name="com.apkscanner.gui.tabpanels.ImageResource" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/tabpanels/ImageResource.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="277" width="312" x="3169" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <interface id="22" language="java" name="com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener" 
+    project="APKInfoDlgv2" file="/APKInfoDlgv2/src/com/apkscanner/gui/util/JHtmlEditorPane.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="79" width="152" x="4207" y="2628"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </interface>  
+  <class id="23" language="java" name="com.apkscanner.gui.ApkInstaller.AdbWrapperObserver" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/ApkInstaller.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="241" width="201" x="5712" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="24" language="java" name="com.apkscanner.gui.MainUI.ApkScanner" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/MainUI.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="259" width="229" x="9869" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <enumeration id="25" language="java" name="com.apkscanner.gui.ToolBar.ButtonSet.Type" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/ToolBar.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="151" width="119" x="10184" y="2628"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </enumeration>  
+  <class id="26" language="java" name="com.apkscanner.util.MyXPath" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/util/MyXPath.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="493" width="175" x="3871" y="6077"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <enumeration id="27" language="java" name="com.apkscanner.gui.ToolBar.ButtonSet" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/ToolBar.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="421" width="316" x="10184" y="2167"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </enumeration>  
+  <class id="28" language="java" name="com.apkscanner.gui.ToolBar" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/ToolBar.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="241" width="268" x="10371" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="29" language="java" name="com.apkscanner.gui.dialog.SettingDlg" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/dialog/SettingDlg.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="457" width="194" x="2009" y="-1113"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="30" language="java" name="com.apkscanner.gui.dialog.ProgressBarDlg" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/dialog/ProgressBarDlg.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="241" width="246" x="10679" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <interface id="31" language="java" name="com.apkscanner.gui.util.FileDrop.Listener" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/util/FileDrop.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="79" width="140" x="9608" y="2167"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </interface>  
+  <enumeration id="32" language="java" name="com.apkscanner.core.ApktoolManager.ProcessCmd" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/core/ApktoolManager.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="151" width="193" x="9415" y="6077"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </enumeration>  
+  <class id="33" language="java" name="com.apkscanner.core.AdbWrapper.DeviceInfo" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/core/AdbWrapper.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="259" width="381" x="6482" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="34" language="java" name="com.apkscanner.core.ApktoolManager.ProcessThead" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/core/ApktoolManager.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="313" width="272" x="9455" y="2628"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="35" language="java" name="com.apkscanner.gui.dialog.PackageTreeDlg.FrameworkTableObject" 
+    project="APKInfoDlgv2" file="/APKInfoDlgv2/src/com/apkscanner/gui/dialog/PackageTreeDlg.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="169" width="277" x="7708" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <package id="36" language="java" name="com.apkscanner.gui.tabpanels" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/tabpanels" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="49" width="198" x="2243" y="-1113"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <package id="37" language="java" name="com.apkscanner.util" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/util" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="49" width="139" x="2481" y="-1113"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <class id="38" language="java" name="com.apkscanner.gui.util.PlasticTabbedPaneUI" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/util/PlasticTabbedPaneUI.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="367" width="444" x="2660" y="-1113"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="39" language="java" name="com.apkscanner.gui.util.JHtmlEditorPane" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/util/JHtmlEditorPane.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="313" width="282" x="3904" y="2167"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="40" language="java" name="com.apkscanner.gui.util.ButtonType" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/util/ButtonType.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="205" width="230" x="3144" y="-1113"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="41" language="java" name="com.apkscanner.gui.tabpanels.Signature" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/tabpanels/Signature.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="295" width="230" x="4268" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <interface id="42" language="java" name="com.apkscanner.gui.ApkInstaller.InstallButtonStatusListener" 
+    project="APKInfoDlgv2" file="/APKInfoDlgv2/src/com/apkscanner/gui/ApkInstaller.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="97" width="201" x="5471" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </interface>  
+  <interface id="43" language="java" name="com.apkscanner.gui.util.FileDrop.TransferableObject.Fetcher" 
+    project="APKInfoDlgv2" file="/APKInfoDlgv2/src/com/apkscanner/gui/util/FileDrop.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="79" width="114" x="5475" y="2628"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </interface>  
+  <package id="44" language="java" name="com.apkscanner.test" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/test" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="49" width="144" x="3414" y="-1113"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <enumeration id="45" language="java" name="com.apkscanner.core.ApktoolManager.SolveType" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/core/ApktoolManager.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="133" width="137" x="9788" y="2628"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </enumeration>  
+  <class id="46" language="java" name="com.apkscanner.util.Log.LogFormatter" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/util/Log.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="97" width="149" x="8989" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="47" language="java" name="com.apkscanner.core.AdbWrapper" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/core/AdbWrapper.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="421" width="325" x="6884" y="-1113"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="48" language="java" name="com.apkscanner.gui.tabpanels.Activity.MyTableModel" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/tabpanels/Activity.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="241" width="246" x="3618" y="2167"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="49" language="java" name="com.apkscanner.Main" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/Main.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="259" width="191" x="3598" y="-1113"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="50" language="java" name="com.apkscanner.gui.util.FileDrop.TransferableObject" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/util/FileDrop.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="259" width="237" x="5475" y="2167"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="51" language="java" name="com.apkscanner.core.PermissionGroupManager.PermissionGroup" 
+    project="APKInfoDlgv2" file="/APKInfoDlgv2/src/com/apkscanner/core/PermissionGroupManager.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="169" width="129" x="4086" y="6077"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="52" language="java" name="com.apkscanner.gui.tabpanels.Activity" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/tabpanels/Activity.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="259" width="255" x="3618" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="53" language="java" name="com.apkscanner.gui.dialog.PackageTreeDlg" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/dialog/PackageTreeDlg.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="853" width="309" x="8025" y="-1113"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="54" language="java" name="com.apkscanner.gui.util.ImageScaler" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/util/ImageScaler.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="115" width="237" x="3829" y="-1113"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <interface id="55" language="java" name="com.apkscanner.util.ConsolCmd.OutputObserver" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/util/ConsolCmd.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="79" width="168" x="11139" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </interface>  
+  <class id="56" language="java" name="com.apkscanner.test.ZipUtils" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/test/ZipUtils.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="223" width="319" x="4106" y="-1113"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <enumeration id="57" language="java" name="com.apkscanner.resource.Resource.Type" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/resource/Resource.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="187" width="119" x="4399" y="6077"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </enumeration>  
+  <class id="58" language="java" name="com.apkscanner.gui.util.FileDrop.Event" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/util/FileDrop.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="115" width="117" x="5752" y="2167"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="59" language="java" name="com.apkscanner.gui.dialog.DeviceListDialog" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/dialog/DeviceListDialog.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="259" width="360" x="7281" y="-1113"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="60" language="java" name="com.apkscanner.core.PermissionGroupManager" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/core/PermissionGroupManager.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="187" width="296" x="3871" y="2628"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="61" language="java" name="com.apkscanner.gui.util.StandardButton" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/util/StandardButton.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="439" width="225" x="8025" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="62" language="java" name="com.apkscanner.util.Log" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/util/Log.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="493" width="228" x="8888" y="-1113"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="63" language="java" name="com.apkscanner.gui.util.ApkFileChooser" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/util/ApkFileChooser.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="169" width="232" x="4465" y="-1113"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="64" language="java" name="com.apkscanner.gui.tabpanels.ImageResource.MarioListRenderer" 
+    project="APKInfoDlgv2" file="/APKInfoDlgv2/src/com/apkscanner/gui/tabpanels/ImageResource.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="115" width="409" x="3169" y="2167"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <interface id="65" language="java" name="com.apkscanner.core.ApktoolManager.StatusListener" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/core/ApktoolManager.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="169" width="157" x="9748" y="6077"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </interface>  
+  <package id="66" language="java" name="com.apkscanner.gui.util" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/util" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="49" width="159" x="4737" y="-1113"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <package id="67" language="java" name="com.apkscanner.gui" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="49" width="139" x="4936" y="-1113"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <enumeration id="68" language="java" name="com.apkscanner.core.AdbWrapper.INSTALL_TYPE" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/core/AdbWrapper.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="133" width="146" x="7347" y="2167"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </enumeration>  
+  <class id="69" language="java" name="com.apkscanner.gui.tabpanels.BasicInfo" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/tabpanels/BasicInfo.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="313" width="259" x="3969" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <enumeration id="70" language="java" name="com.apkscanner.core.ApktoolManager.Status" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/core/ApktoolManager.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="223" width="158" x="9965" y="2628"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </enumeration>  
+  <class id="71" language="java" name="com.apkscanner.gui.util.FilteredTreeModel" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/util/FilteredTreeModel.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="313" width="271" x="8290" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="72" language="java" name="com.apkscanner.core.ApktoolManager.ApkInfo" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/core/ApktoolManager.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="529" width="185" x="9209" y="2628"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="73" language="java" name="com.apkscanner.test.TestAAPT" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/test/TestAAPT.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="97" width="113" x="5331" y="-1113"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <package id="74" language="java" name="com.apkscanner.gui.dialog" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/dialog" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="49" width="176" x="5115" y="-1113"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <class id="75" language="java" name="com.apkscanner.gui.dialog.ProgressBarDlg.Task" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/dialog/ProgressBarDlg.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="115" width="136" x="11268" y="2167"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="76" language="java" name="com.apkscanner.util.FileUtil" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/util/FileUtil.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="205" width="240" x="10859" y="-1113"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="77" language="java" name="com.apkscanner.gui.tabpanels.Widget.MyTableModel" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/tabpanels/Widget.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="277" width="246" x="4442" y="2167"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="78" language="java" name="com.apkscanner.util.ConsolCmd" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/util/ConsolCmd.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="259" width="265" x="11139" y="-1113"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="79" language="java" name="com.apkscanner.gui.ToolBar.ToolBarButton" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/ToolBar.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="133" width="304" x="10924" y="2167"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <interface id="80" language="java" name="com.apkscanner.gui.TabbedPanel.TabDataObject" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/TabbedPanel.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="115" width="134" x="4268" y="2167"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </interface>  
+  <class id="81" language="java" name="com.apkscanner.gui.tabpanels.Widget" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/tabpanels/Widget.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="205" width="255" x="4538" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <enumeration id="82" language="java" name="com.apkscanner.resource.Resource" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/resource/Resource.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="3409" width="267" x="4399" y="2628"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </enumeration>  
+  <class id="83" language="java" name="com.apkscanner.gui.tabpanels.Widget.MultiLineCellRenderer" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/tabpanels/Widget.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="115" width="421" x="4728" y="2167"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="84" language="java" name="com.apkscanner.gui.tabpanels.Library" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/tabpanels/Library.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="187" width="255" x="4833" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="85" language="java" name="com.apkscanner.core.ApktoolManager" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/core/ApktoolManager.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="313" width="215" x="9788" y="2167"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="86" language="java" name="com.apkscanner.core.AdbWrapper.DeviceStatus" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/core/AdbWrapper.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="241" width="281" x="7387" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="87" language="java" name="com.apkscanner.gui.MainUI" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/MainUI.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="169" width="155" x="9862" y="-1113"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="88" language="java" name="com.apkscanner.gui.TabbedPanel" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/TabbedPanel.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="187" width="185" x="9362" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <enumeration id="89" language="java" name="com.apkscanner.util.FileUtil.FSStyle" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/util/FileUtil.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="295" width="134" x="10965" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </enumeration>  
+  <class id="90" language="java" name="com.apkscanner.gui.util.FileDrop" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/util/FileDrop.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="421" width="303" x="5128" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="91" language="java" name="com.apkscanner.gui.dialog.AboutDlg" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/gui/dialog/AboutDlg.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="97" width="188" x="5484" y="-1113"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <enumeration id="92" language="java" name="com.apkscanner.util.Log.Level" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/util/Log.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="277" width="144" x="9178" y="1688"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </enumeration>  
+  <interface id="93" language="java" name="com.apkscanner.core.AdbWrapper.AdbWrapperListener" project="APKInfoDlgv2" 
+    file="/APKInfoDlgv2/src/com/apkscanner/core/AdbWrapper.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="133" width="143" x="6884" y="2167"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </interface>  
+  <nesting id="94">    
+    <end type="SOURCE" refId="87"/>    
+    <end type="TARGET" refId="24"/>  
+  </nesting>  
+  <nesting id="95">    
+    <end type="SOURCE" refId="27"/>    
+    <end type="TARGET" refId="25"/>  
+  </nesting>  
+  <association id="96">    
+    <end type="SOURCE" refId="60" navigable="false">      
+      <attribute id="97" name="xmlPermissions"/>      
+      <multiplicity id="98" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="26" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="99">    
+    <bendpoint x="7356" y="1688"/>    
+    <end type="SOURCE" refId="47"/>    
+    <end type="TARGET" refId="68"/>  
+  </nesting>  
+  <nesting id="100">    
+    <end type="SOURCE" refId="47"/>    
+    <end type="TARGET" refId="10"/>  
+  </nesting>  
+  <nesting id="101">    
+    <end type="SOURCE" refId="39"/>    
+    <end type="TARGET" refId="22"/>  
+  </nesting>  
+  <association id="102">    
+    <end type="SOURCE" refId="84" navigable="false">      
+      <attribute id="103" name="mMyTableModel"/>      
+      <multiplicity id="104" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="12" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <realization id="105">    
+    <bendpoint x="10153" y="2167"/>    
+    <bendpoint x="10153" y="2628"/>    
+    <end type="SOURCE" refId="24"/>    
+    <end type="TARGET" refId="65"/>  
+  </realization>  
+  <association id="106">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="107" name="Listener"/>      
+      <multiplicity id="108" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="42" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="109">    
+    <end type="SOURCE" refId="85"/>    
+    <end type="TARGET" refId="34"/>  
+  </nesting>  
+  <association id="110">    
+    <end type="SOURCE" refId="87" navigable="false">      
+      <attribute id="111" name="toolBar"/>      
+      <multiplicity id="112" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="28" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="113">    
+    <end type="SOURCE" refId="90"/>    
+    <end type="TARGET" refId="50"/>  
+  </nesting>  
+  <association id="114">    
+    <end type="SOURCE" refId="87" navigable="false">      
+      <attribute id="115" name="tabbedPanel"/>      
+      <multiplicity id="116" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="88" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="117">    
+    <bendpoint x="6893" y="1688"/>    
+    <end type="SOURCE" refId="47"/>    
+    <end type="TARGET" refId="93"/>  
+  </nesting>  
+  <nesting id="118">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="23"/>  
+  </nesting>  
+  <nesting id="119">    
+    <end type="SOURCE" refId="88"/>    
+    <end type="TARGET" refId="80"/>  
+  </nesting>  
+  <nesting id="120">    
+    <end type="SOURCE" refId="87"/>    
+    <end type="TARGET" refId="11"/>  
+  </nesting>  
+  <nesting id="121">    
+    <end type="SOURCE" refId="85"/>    
+    <end type="TARGET" refId="45"/>  
+  </nesting>  
+  <association id="122">    
+    <end type="SOURCE" refId="85" navigable="false">      
+      <attribute id="123" name="mApkInfo"/>      
+      <multiplicity id="124" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="72" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="125">    
+    <end type="SOURCE" refId="53" navigable="false">      
+      <attribute id="126" name="refreshbtn"/>      
+      <multiplicity id="127" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="61" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="128">    
+    <end type="SOURCE" refId="34" navigable="false">      
+      <attribute id="129" name="mListener"/>      
+      <multiplicity id="130" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="65" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="131">    
+    <end type="SOURCE" refId="81" navigable="false">      
+      <attribute id="132" name="TableModel"/>      
+      <multiplicity id="133" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="77" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="134">    
+    <bendpoint x="4237" y="2167"/>    
+    <end type="SOURCE" refId="69" navigable="false">      
+      <attribute id="135" name="apkInfo"/>      
+      <multiplicity id="136" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="72" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="137">    
+    <end type="SOURCE" refId="69" navigable="false">      
+      <attribute id="138" name="apkinform"/>      
+      <multiplicity id="139" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="39" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="140">    
+    <end type="SOURCE" refId="53" navigable="false">      
+      <attribute id="141" name="tableListArray"/>      
+      <multiplicity id="142" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="35" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="143">    
+    <end type="SOURCE" refId="9" navigable="false">      
+      <attribute id="144" name="colorUtils"/>      
+      <multiplicity id="145" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="9" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="146">    
+    <end type="SOURCE" refId="28"/>    
+    <end type="TARGET" refId="18"/>  
+  </nesting>  
+  <realization id="147">    
+    <end type="SOURCE" refId="52"/>    
+    <end type="TARGET" refId="80"/>  
+  </realization>  
+  <nesting id="148">    
+    <end type="SOURCE" refId="30"/>    
+    <end type="TARGET" refId="75"/>  
+  </nesting>  
+  <nesting id="149">    
+    <end type="SOURCE" refId="84"/>    
+    <end type="TARGET" refId="12"/>  
+  </nesting>  
+  <realization id="150">    
+    <end type="SOURCE" refId="69"/>    
+    <end type="TARGET" refId="80"/>  
+  </realization>  
+  <nesting id="151">    
+    <end type="SOURCE" refId="62"/>    
+    <end type="TARGET" refId="5"/>  
+  </nesting>  
+  <association id="152">    
+    <end type="SOURCE" refId="53" navigable="false">      
+      <attribute id="153" name="filteredModel"/>      
+      <multiplicity id="154" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="71" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="155">    
+    <end type="SOURCE" refId="87" navigable="false">      
+      <attribute id="156" name="apkScanner"/>      
+      <multiplicity id="157" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="24" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="158">    
+    <end type="SOURCE" refId="27" navigable="false">      
+      <attribute id="159" name="type"/>      
+      <multiplicity id="160" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="25" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="161">    
+    <end type="SOURCE" refId="85"/>    
+    <end type="TARGET" refId="72"/>  
+  </nesting>  
+  <nesting id="162">    
+    <end type="SOURCE" refId="82"/>    
+    <end type="TARGET" refId="57"/>  
+  </nesting>  
+  <association id="163">    
+    <end type="SOURCE" refId="39" navigable="false">      
+      <attribute id="164" name="hyperlinkClickListener"/>      
+      <multiplicity id="165" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="22" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="166">    
+    <end type="SOURCE" refId="62"/>    
+    <end type="TARGET" refId="46"/>  
+  </nesting>  
+  <association id="167">    
+    <end type="SOURCE" refId="34" navigable="false">      
+      <attribute id="168" name="mCmd"/>      
+      <multiplicity id="169" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="32" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="170">    
+    <end type="SOURCE" refId="47"/>    
+    <end type="TARGET" refId="33"/>  
+  </nesting>  
+  <association id="171">    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="172" name="arrayList"/>      
+      <multiplicity id="173" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="35" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="174">    
+    <end type="SOURCE" refId="51" navigable="false">      
+      <attribute id="175" name="permList"/>      
+      <multiplicity id="176" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="13" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="177">    
+    <end type="SOURCE" refId="78"/>    
+    <end type="TARGET" refId="55"/>  
+  </nesting>  
+  <association id="178">    
+    <end type="SOURCE" refId="24" navigable="false">      
+      <attribute id="179" name="apkManager"/>      
+      <multiplicity id="180" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="85" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="181">    
+    <end type="SOURCE" refId="81"/>    
+    <end type="TARGET" refId="83"/>  
+  </nesting>  
+  <nesting id="182">    
+    <end type="SOURCE" refId="60"/>    
+    <end type="TARGET" refId="51"/>  
+  </nesting>  
+  <nesting id="183">    
+    <end type="SOURCE" refId="52"/>    
+    <end type="TARGET" refId="48"/>  
+  </nesting>  
+  <nesting id="184">    
+    <end type="SOURCE" refId="47"/>    
+    <end type="TARGET" refId="86"/>  
+  </nesting>  
+  <nesting id="185">    
+    <end type="SOURCE" refId="76"/>    
+    <end type="TARGET" refId="89"/>  
+  </nesting>  
+  <realization id="186">    
+    <bendpoint x="4216" y="2167"/>    
+    <end type="SOURCE" refId="69"/>    
+    <end type="TARGET" refId="22"/>  
+  </realization>  
+  <nesting id="187">    
+    <end type="SOURCE" refId="28"/>    
+    <end type="TARGET" refId="79"/>  
+  </nesting>  
+  <nesting id="188">    
+    <end type="SOURCE" refId="90"/>    
+    <end type="TARGET" refId="31"/>  
+  </nesting>  
+  <nesting id="189">    
+    <end type="SOURCE" refId="81"/>    
+    <end type="TARGET" refId="77"/>  
+  </nesting>  
+  <nesting id="190">    
+    <end type="SOURCE" refId="62"/>    
+    <end type="TARGET" refId="92"/>  
+  </nesting>  
+  <association id="191">    
+    <end type="SOURCE" refId="72" navigable="false">      
+      <attribute id="192" name="PermGroupMap"/>      
+      <multiplicity id="193" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="51" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="194">    
+    <end type="SOURCE" refId="82" navigable="false">      
+      <attribute id="195" name="stringXmlPath"/>      
+      <multiplicity id="196" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="26" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="197">    
+    <end type="SOURCE" refId="85" navigable="false">      
+      <attribute id="198" name="mProcess"/>      
+      <multiplicity id="199" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="34" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="200">    
+    <end type="SOURCE" refId="87" navigable="false">      
+      <attribute id="201" name="progressBarDlg"/>      
+      <multiplicity id="202" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="30" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <realization id="203">    
+    <end type="SOURCE" refId="23"/>    
+    <end type="TARGET" refId="93"/>  
+  </realization>  
+  <nesting id="204">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="42"/>  
+  </nesting>  
+  <realization id="205">    
+    <end type="SOURCE" refId="81"/>    
+    <end type="TARGET" refId="80"/>  
+  </realization>  
+  <association id="206">    
+    <end type="SOURCE" refId="52" navigable="false">      
+      <attribute id="207" name="TableModel"/>      
+      <multiplicity id="208" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="48" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="209">    
+    <bendpoint x="9424" y="2628"/>    
+    <end type="SOURCE" refId="85"/>    
+    <end type="TARGET" refId="32"/>  
+  </nesting>  
+  <nesting id="210">    
+    <end type="SOURCE" refId="21"/>    
+    <end type="TARGET" refId="1"/>  
+  </nesting>  
+  <nesting id="211">    
+    <end type="SOURCE" refId="21"/>    
+    <end type="TARGET" refId="64"/>  
+  </nesting>  
+  <nesting id="212">    
+    <end type="SOURCE" refId="47"/>    
+    <end type="TARGET" refId="14"/>  
+  </nesting>  
+  <realization id="213">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="31"/>  
+  </realization>  
+  <association id="214">    
+    <end type="SOURCE" refId="59" navigable="false">      
+      <attribute id="215" name="dialog"/>      
+      <multiplicity id="216" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="59" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="217">    
+    <bendpoint x="9577" y="1688"/>    
+    <bendpoint x="9577" y="2167"/>    
+    <end type="SOURCE" refId="87" navigable="false">      
+      <attribute id="218" name="apkInfo"/>      
+      <multiplicity id="219" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="72" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="220">    
+    <end type="SOURCE" refId="85"/>    
+    <end type="TARGET" refId="70"/>  
+  </nesting>  
+  <nesting id="221">    
+    <end type="SOURCE" refId="90"/>    
+    <end type="TARGET" refId="58"/>  
+  </nesting>  
+  <association id="222">    
+    <end type="SOURCE" refId="15" navigable="false">      
+      <attribute id="223" name="listener"/>      
+      <multiplicity id="224" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="93" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="225">    
+    <end type="SOURCE" refId="60" navigable="false">      
+      <attribute id="226" name="xmlPermInfoDefault"/>      
+      <multiplicity id="227" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="26" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <realization id="228">    
+    <end type="SOURCE" refId="41"/>    
+    <end type="TARGET" refId="80"/>  
+  </realization>  
+  <nesting id="229">    
+    <bendpoint x="9757" y="2628"/>    
+    <end type="SOURCE" refId="85"/>    
+    <end type="TARGET" refId="65"/>  
+  </nesting>  
+  <association id="230">    
+    <end type="SOURCE" refId="50" navigable="false">      
+      <attribute id="231" name="fetcher"/>      
+      <multiplicity id="232" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="43" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="233">    
+    <end type="SOURCE" refId="50"/>    
+    <end type="TARGET" refId="43"/>  
+  </nesting>  
+  <realization id="234">    
+    <end type="SOURCE" refId="84"/>    
+    <end type="TARGET" refId="80"/>  
+  </realization>  
+  <realization id="235">    
+    <end type="SOURCE" refId="21"/>    
+    <end type="TARGET" refId="80"/>  
+  </realization>  
+  <nesting id="236">    
+    <end type="SOURCE" refId="62"/>    
+    <end type="TARGET" refId="20"/>  
+  </nesting>  
+  <association id="237">    
+    <end type="SOURCE" refId="60" navigable="false">      
+      <attribute id="238" name="permGroupMap"/>      
+      <multiplicity id="239" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="51" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="240">    
+    <end type="SOURCE" refId="53"/>    
+    <end type="TARGET" refId="35"/>  
+  </nesting>  
+  <nesting id="241">    
+    <bendpoint x="3840" y="6077"/>    
+    <end type="SOURCE" refId="60"/>    
+    <end type="TARGET" refId="13"/>  
+  </nesting>  
+  <nesting id="242">    
+    <end type="SOURCE" refId="28"/>    
+    <end type="TARGET" refId="27"/>  
+  </nesting>  
+  <association id="243">    
+    <end type="SOURCE" refId="59" navigable="false">      
+      <attribute id="244" name="DeviceList"/>      
+      <multiplicity id="245" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="86" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="246">    
+    <end type="SOURCE" refId="82" navigable="false">      
+      <attribute id="247" name="type"/>      
+      <multiplicity id="248" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="57" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="249">    
+    <end type="SOURCE" refId="60" navigable="false">      
+      <attribute id="250" name="xmlPermInfoLang"/>      
+      <multiplicity id="251" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="26" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="252">    
+    <end type="SOURCE" refId="47"/>    
+    <end type="TARGET" refId="15"/>  
+  </nesting>  
+  <association id="253">    
+    <end type="SOURCE" refId="15" navigable="false">      
+      <attribute id="254" name="type"/>      
+      <multiplicity id="255" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="68" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="256">    
+    <end type="SOURCE" refId="30" navigable="false">      
+      <attribute id="257" name="task"/>      
+      <multiplicity id="258" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="75" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    sort-features="false" accessors="true" visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true" static="true"/>    
+    <operations public="true" package="true" protected="true" private="true" static="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>
