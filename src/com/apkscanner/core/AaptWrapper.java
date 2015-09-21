@@ -100,9 +100,9 @@ public class AaptWrapper
 	{
 		String cmd = aaptCmd;
 		if(cmd == null) {
-			cmd = Resource.BIN_ADB_LNX.getPath();
+			cmd = Resource.BIN_AAPT_LNX.getPath();
 			if(cmd.matches("^[A-Z]:.*")) {
-				cmd = Resource.BIN_ADB_WIN.getPath();
+				cmd = Resource.BIN_AAPT_WIN.getPath();
 			}
 	
 			if(!(new File(cmd)).exists()) {
