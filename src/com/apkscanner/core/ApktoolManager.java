@@ -7,9 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.apkscanner.core.ApkToolStub.ManagerInterface;
-import com.apkscanner.core.ApkToolStub.ProcessCmd;
-import com.apkscanner.core.ApkToolStub.SolveType;
-import com.apkscanner.core.ApkToolStub.StatusListener;
+
 import com.apkscanner.data.ApkInfo;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.ConsolCmd;
@@ -18,9 +16,8 @@ import com.apkscanner.util.MyXPath;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.FileUtil.FSStyle;
 
-public class ApktoolManager implements ManagerInterface
-{
-	private ApkInfo mApkInfo = null;
+public class ApktoolManager extends ApkToolStub implements ManagerInterface
+{	
 	static private final String ApktoolVer = getApkToolVersion();
 
 	private boolean isPackageTempAPK = false;
@@ -54,7 +51,7 @@ public class ApktoolManager implements ManagerInterface
 
 	public ApktoolManager(String apkPath, String frameworkResPath, boolean isPackage)
 	{
-		mApkInfo = new ApkInfo();
+		super.mApkInfo = new ApkInfo();
 		mFrameworkResList = new ArrayList<String>();
 		setApkFile(apkPath);
 		addFameworkRes(frameworkResPath);
@@ -124,10 +121,7 @@ public class ApktoolManager implements ManagerInterface
 		//Log.i("solve()....end ");
 	}
 	
-	@Override
-	public ApkInfo getApkInfo() {
-		return this.mApkInfo; 
-	}
+
 	
 	@Override
 	public void clear(boolean sync, StatusListener listener)

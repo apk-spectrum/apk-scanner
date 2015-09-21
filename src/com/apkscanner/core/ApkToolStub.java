@@ -4,7 +4,7 @@ import com.apkscanner.data.ApkInfo;
 
 public class ApkToolStub {
 	
-	private ApkInfo mApkInfo = null;
+	protected ApkInfo mApkInfo = null;
 
 	public enum Status {
 		UNINITIALIZE,
@@ -44,8 +44,7 @@ public class ApkToolStub {
 	{
 		public void solve(SolveType type, StatusListener listener);
 		public void clear(boolean sync, StatusListener listener);		
-		public void reloadResource();
-		public ApkInfo getApkInfo();
+		public void reloadResource();		
 	}
 	
 	

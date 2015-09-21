@@ -861,274 +861,266 @@
     <end type="SOURCE" refId="81"/>    
     <end type="TARGET" refId="73"/>  
   </nesting>  
-  <association id="125">    
-    <end type="SOURCE" refId="78" navigable="false">      
-      <attribute id="126" name="mApkInfo"/>      
-      <multiplicity id="127" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="65" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <realization id="128">    
+  <realization id="125">    
     <end type="SOURCE" refId="25"/>    
     <end type="TARGET" refId="85"/>  
   </realization>  
-  <nesting id="129">    
+  <nesting id="126">    
     <end type="SOURCE" refId="80"/>    
     <end type="TARGET" refId="26"/>  
   </nesting>  
-  <association id="130">    
+  <association id="127">    
     <end type="SOURCE" refId="56" navigable="false">      
-      <attribute id="131" name="xmlPermissions"/>      
-      <multiplicity id="132" minimum="0" maximum="1"/>    
+      <attribute id="128" name="xmlPermissions"/>      
+      <multiplicity id="129" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="28" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="133">    
+  <association id="130">    
     <end type="SOURCE" refId="75" navigable="false">      
-      <attribute id="134" name="stringXmlPath"/>      
-      <multiplicity id="135" minimum="0" maximum="2147483647"/>    
+      <attribute id="131" name="stringXmlPath"/>      
+      <multiplicity id="132" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="28" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <realization id="136">    
+  <realization id="133">    
     <end type="SOURCE" refId="12"/>    
     <end type="TARGET" refId="31"/>  
   </realization>  
-  <nesting id="137">    
+  <nesting id="134">    
     <end type="SOURCE" refId="69"/>    
     <end type="TARGET" refId="82"/>  
   </nesting>  
-  <association id="138">    
+  <association id="135">    
     <end type="SOURCE" refId="16" navigable="false">      
-      <attribute id="139" name="listener"/>      
-      <multiplicity id="140" minimum="0" maximum="1"/>    
+      <attribute id="136" name="listener"/>      
+      <multiplicity id="137" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="85" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <nesting id="141">    
+  <nesting id="138">    
     <end type="SOURCE" refId="48"/>    
     <end type="TARGET" refId="42"/>  
   </nesting>  
-  <nesting id="142">    
+  <nesting id="139">    
     <end type="SOURCE" refId="71"/>    
     <end type="TARGET" refId="52"/>  
   </nesting>  
-  <association id="143">    
+  <association id="140">    
     <end type="SOURCE" refId="80" navigable="false">      
-      <attribute id="144" name="apkScanner"/>      
-      <multiplicity id="145" minimum="0" maximum="1"/>    
+      <attribute id="141" name="apkScanner"/>      
+      <multiplicity id="142" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="26" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="146">    
+  <association id="143">    
     <end type="SOURCE" refId="56" navigable="false">      
-      <attribute id="147" name="xmlPermInfoDefault"/>      
-      <multiplicity id="148" minimum="0" maximum="1"/>    
+      <attribute id="144" name="xmlPermInfoDefault"/>      
+      <multiplicity id="145" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="28" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <nesting id="149">    
+  <nesting id="146">    
     <end type="SOURCE" refId="58"/>    
     <end type="TARGET" refId="84"/>  
   </nesting>  
-  <realization id="150">    
+  <realization id="147">    
     <end type="SOURCE" refId="40"/>    
     <end type="TARGET" refId="73"/>  
   </realization>  
-  <association id="151">    
+  <association id="148">    
     <end type="SOURCE" refId="75" navigable="false">      
-      <attribute id="152" name="type"/>      
-      <multiplicity id="153" minimum="0" maximum="1"/>    
+      <attribute id="149" name="type"/>      
+      <multiplicity id="150" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="54" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <nesting id="154">    
+  <nesting id="151">    
     <end type="SOURCE" refId="83"/>    
     <end type="TARGET" refId="31"/>  
   </nesting>  
-  <nesting id="155">    
+  <nesting id="152">    
     <end type="SOURCE" refId="83"/>    
     <end type="TARGET" refId="55"/>  
   </nesting>  
-  <nesting id="156">    
+  <nesting id="153">    
     <end type="SOURCE" refId="75"/>    
     <end type="TARGET" refId="54"/>  
   </nesting>  
-  <association id="157">    
+  <association id="154">    
     <end type="SOURCE" refId="78" navigable="false">      
-      <attribute id="158" name="mProcess"/>      
-      <multiplicity id="159" minimum="0" maximum="1"/>    
+      <attribute id="155" name="mProcess"/>      
+      <multiplicity id="156" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="33" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <realization id="160">    
+  <realization id="157">    
     <end type="SOURCE" refId="64"/>    
     <end type="TARGET" refId="73"/>  
   </realization>  
-  <nesting id="161">    
+  <nesting id="158">    
     <end type="SOURCE" refId="45"/>    
     <end type="TARGET" refId="16"/>  
   </nesting>  
-  <nesting id="162">    
+  <nesting id="159">    
     <bendpoint x="3416" y="590"/>    
     <end type="SOURCE" refId="56"/>    
     <end type="TARGET" refId="14"/>  
   </nesting>  
-  <association id="163">    
+  <association id="160">    
     <end type="SOURCE" refId="49" navigable="false">      
-      <attribute id="164" name="permList"/>      
-      <multiplicity id="165" minimum="0" maximum="2147483647"/>    
+      <attribute id="161" name="permList"/>      
+      <multiplicity id="162" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="14" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="166">    
+  <association id="163">    
     <end type="SOURCE" refId="56" navigable="false">      
-      <attribute id="167" name="xmlPermInfoLang"/>      
-      <multiplicity id="168" minimum="0" maximum="1"/>    
+      <attribute id="164" name="xmlPermInfoLang"/>      
+      <multiplicity id="165" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="28" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <nesting id="169">    
+  <nesting id="166">    
     <end type="SOURCE" refId="45"/>    
     <end type="TARGET" refId="32"/>  
   </nesting>  
-  <association id="170">    
+  <association id="167">    
     <end type="SOURCE" refId="16" navigable="false">      
-      <attribute id="171" name="type"/>      
-      <multiplicity id="172" minimum="0" maximum="1"/>    
+      <attribute id="168" name="type"/>      
+      <multiplicity id="169" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="62" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <realization id="173">    
+  <realization id="170">    
     <end type="SOURCE" refId="77"/>    
     <end type="TARGET" refId="73"/>  
   </realization>  
-  <nesting id="174">    
+  <nesting id="171">    
     <end type="SOURCE" refId="83"/>    
     <end type="TARGET" refId="48"/>  
   </nesting>  
-  <association id="175">    
+  <association id="172">    
     <end type="SOURCE" refId="10" navigable="false">      
-      <attribute id="176" name="colorUtils"/>      
-      <multiplicity id="177" minimum="0" maximum="1"/>    
+      <attribute id="173" name="colorUtils"/>      
+      <multiplicity id="174" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="10" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="178">    
+  <association id="175">    
     <end type="SOURCE" refId="74" navigable="false">      
-      <attribute id="179" name="TableModel"/>      
-      <multiplicity id="180" minimum="0" maximum="1"/>    
+      <attribute id="176" name="TableModel"/>      
+      <multiplicity id="177" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="70" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <nesting id="181">    
+  <nesting id="178">    
     <end type="SOURCE" refId="35"/>    
     <end type="TARGET" refId="19"/>  
   </nesting>  
-  <nesting id="182">    
+  <nesting id="179">    
     <end type="SOURCE" refId="74"/>    
     <end type="TARGET" refId="76"/>  
   </nesting>  
-  <nesting id="183">    
+  <nesting id="180">    
     <end type="SOURCE" refId="30"/>    
     <end type="TARGET" refId="29"/>  
   </nesting>  
-  <nesting id="184">    
+  <nesting id="181">    
     <end type="SOURCE" refId="23"/>    
     <end type="TARGET" refId="60"/>  
   </nesting>  
-  <realization id="185">    
+  <realization id="182">    
     <end type="SOURCE" refId="74"/>    
     <end type="TARGET" refId="73"/>  
   </realization>  
-  <nesting id="186">    
+  <nesting id="183">    
     <end type="SOURCE" refId="29"/>    
     <end type="TARGET" refId="27"/>  
   </nesting>  
-  <nesting id="187">    
+  <nesting id="184">    
     <end type="SOURCE" refId="3"/>    
     <end type="TARGET" refId="41"/>  
   </nesting>  
-  <association id="188">    
+  <association id="185">    
     <end type="SOURCE" refId="80" navigable="false">      
-      <attribute id="189" name="tabbedPanel"/>      
-      <multiplicity id="190" minimum="0" maximum="1"/>    
+      <attribute id="186" name="tabbedPanel"/>      
+      <multiplicity id="187" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="81" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <nesting id="191">    
+  <nesting id="188">    
     <end type="SOURCE" refId="77"/>    
     <end type="TARGET" refId="13"/>  
   </nesting>  
-  <association id="192">    
+  <association id="189">    
     <end type="SOURCE" refId="38" navigable="false">      
-      <attribute id="193" name="hyperlinkClickListener"/>      
-      <multiplicity id="194" minimum="0" maximum="1"/>    
+      <attribute id="190" name="hyperlinkClickListener"/>      
+      <multiplicity id="191" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="24" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="195">    
+  <association id="192">    
     <end type="SOURCE" refId="50" navigable="false">      
-      <attribute id="196" name="TableModel"/>      
-      <multiplicity id="197" minimum="0" maximum="1"/>    
+      <attribute id="193" name="TableModel"/>      
+      <multiplicity id="194" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="46" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="198">    
+  <association id="195">    
     <end type="SOURCE" refId="80" navigable="false">      
-      <attribute id="199" name="toolBar"/>      
-      <multiplicity id="200" minimum="0" maximum="1"/>    
+      <attribute id="196" name="toolBar"/>      
+      <multiplicity id="197" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="30" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <nesting id="201">    
+  <nesting id="198">    
     <end type="SOURCE" refId="38"/>    
     <end type="TARGET" refId="24"/>  
   </nesting>  
-  <realization id="202">    
+  <realization id="199">    
     <end type="SOURCE" refId="50"/>    
     <end type="TARGET" refId="73"/>  
   </realization>  
-  <association id="203">    
+  <association id="200">    
     <end type="SOURCE" refId="29" navigable="false">      
-      <attribute id="204" name="type"/>      
-      <multiplicity id="205" minimum="0" maximum="1"/>    
+      <attribute id="201" name="type"/>      
+      <multiplicity id="202" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="27" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="206">    
+  <association id="203">    
     <bendpoint x="3236" y="408"/>    
     <bendpoint x="3236" y="499"/>    
     <end type="SOURCE" refId="64" navigable="false">      
-      <attribute id="207" name="PermGroupMap"/>      
-      <multiplicity id="208" minimum="0" maximum="2147483647"/>    
+      <attribute id="204" name="PermGroupMap"/>      
+      <multiplicity id="205" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="49" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <nesting id="209">    
+  <nesting id="206">    
     <end type="SOURCE" refId="78"/>    
     <end type="TARGET" refId="33"/>  
   </nesting>  
-  <nesting id="210">    
+  <nesting id="207">    
     <bendpoint x="5234" y="317"/>    
     <end type="SOURCE" refId="45"/>    
     <end type="TARGET" refId="85"/>  
