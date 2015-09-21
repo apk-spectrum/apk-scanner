@@ -413,7 +413,7 @@ public class MainUI extends JFrame
 			}
 			setTitle(title);
 			toolBar.reloadResource();
-			tabbedPanel.reloadResource(apkInfo);
+			tabbedPanel.reloadResource();
 		}
 		
 		// ToolBar event processing

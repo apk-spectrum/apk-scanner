@@ -119,12 +119,12 @@ public class Signature extends JPanel implements ComponentListener, TabDataObjec
     	
     	mCertSummary = apkInfo.CertSummary;
     	mCertList = apkInfo.CertList;
-    	reloadResource(apkInfo);
+    	reloadResource();
         jlist.setSelectedIndex(0);
     }
     
     @Override
-    public void reloadResource(ApkInfo apkInfo)
+    public void reloadResource()
     {
     	if(jlist == null) return;
     	

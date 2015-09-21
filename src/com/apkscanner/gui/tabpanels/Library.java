@@ -60,7 +60,7 @@ public class Library extends JPanel implements TabDataObject
 	}
 	
 	@Override
-	public void reloadResource(ApkInfo apkInfo)
+	public void reloadResource()
 	{
 		if(mMyTableModel == null) return;
 		mMyTableModel.loadResource();

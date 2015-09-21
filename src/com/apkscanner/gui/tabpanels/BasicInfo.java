@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 
 import javax.swing.Icon;
@@ -28,8 +30,27 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	private static final long serialVersionUID = 6431995641984509482L;
 
 	private JHtmlEditorPane apkinform = null;
-	private ApkInfo apkInfo;
 	private String mutiLabels;
+	
+	private boolean wasSetData = false;
+	
+	private String[] Labelname = null;
+	private String PackageName = null;
+	private String VersionName = null;
+	private String VersionCode = null;
+	private String MinSDKversion = null;
+	private String TargerSDKversion = null;
+	private boolean isHidden = false;
+	private String IconPath = null;
+	private String Permissions = null;
+	private String Startup = null;
+	private String ProtectionLevel = null;
+	private boolean debuggable = false; 
+	private String SharedUserId = null;
+	private String ApkSize = null;
+	
+	private ArrayList<String> PermissionList = null;
+	private HashMap<String, PermissionGroup> PermGroupMap = null;
 
 	public BasicInfo() {
 
@@ -68,7 +89,24 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	
 	private void removeData()
 	{
-		this.apkInfo = null;
+		Labelname = null;
+		PackageName = null;
+		VersionName = null;
+		VersionCode = null;
+		MinSDKversion = null;
+		TargerSDKversion = null;
+		isHidden = false;
+		IconPath = null;
+		Permissions = null;
+		Startup = null;
+		ProtectionLevel = null;
+		debuggable = false; 
+		SharedUserId = null;
+		ApkSize = null;
+
+		PermissionList = null;
+		PermGroupMap = null;
+		
 
         StringBuilder strTabInfo = new StringBuilder("");
 		strTabInfo.append("<table>");
@@ -104,62 +142,53 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
         
         apkinform.setBody(strTabInfo.toString());
 	}
-
-	@Override
-	public void setData(ApkInfo apkInfo)
+	
+	public void setData()
 	{
-		this.apkInfo = apkInfo;
-		
-		if(apkinform == null)
-			initialize();
-		
-		if(apkInfo == null) {
-			removeData();
-			return;
-		}
+		if(!wasSetData) return;
 		
 		String sdkVersion = "@SDK Ver.";
-        if(!apkInfo.MinSDKversion.isEmpty()) {
-        	sdkVersion += apkInfo.MinSDKversion +" (Min)";
+        if(!MinSDKversion.isEmpty()) {
+        	sdkVersion += MinSDKversion +" (Min)";
         }
-        if(!apkInfo.TargerSDKversion.isEmpty()) {
-        	if(!apkInfo.MinSDKversion.isEmpty()) {
+        if(!TargerSDKversion.isEmpty()) {
+        	if(!MinSDKversion.isEmpty()) {
         		sdkVersion += ", "; 
         	}
-        	sdkVersion += apkInfo.TargerSDKversion + " (Target)";
+        	sdkVersion += TargerSDKversion + " (Target)";
         }
-        if(apkInfo.MinSDKversion.isEmpty() && apkInfo.TargerSDKversion.isEmpty()) {
+        if(MinSDKversion.isEmpty() && TargerSDKversion.isEmpty()) {
         	sdkVersion += "Unknown"; 
         }
         
         String feature;
-        if(apkInfo.isHidden) {
+        if(isHidden) {
         	feature = makeHyperLink("", Resource.STR_FEATURE_HIDDEN_LAB.getString(), Resource.STR_FEATURE_HIDDEN_DESC.getString(), null);
         } else {
         	feature = makeHyperLink("", Resource.STR_FEATURE_LAUNCHER_LAB.getString(), Resource.STR_FEATURE_LAUNCHER_DESC.getString(), null);
         }
         
-        if(!apkInfo.Startup.isEmpty()) {
+        if(!Startup.isEmpty()) {
         	feature += ", " + makeHyperLink("", Resource.STR_FEATURE_STARTUP_LAB.getString(), Resource.STR_FEATURE_STARTUP_DESC.getString(), null);
         }
-        if(!apkInfo.ProtectionLevel.isEmpty()) {
+        if(!ProtectionLevel.isEmpty()) {
         	feature += ", " + makeHyperLink("", Resource.STR_FEATURE_SIGNATURE_LAB.getString(), Resource.STR_FEATURE_SIGNATURE_DESC.getString(), null);
         }
-        if(!apkInfo.SharedUserId.isEmpty()) {
+        if(!SharedUserId.isEmpty()) {
         	feature += ", " + makeHyperLink("", Resource.STR_FEATURE_SHAREDUSERID_LAB.getString(), Resource.STR_FEATURE_SHAREDUSERID_DESC.getString(), null);
         }
-        if(apkInfo.debuggable) {
+        if(debuggable) {
         	feature += ", " + makeHyperLink("", Resource.STR_FEATURE_DEBUGGABLE_LAB.getString(), Resource.STR_FEATURE_DEBUGGABLE_DESC.getString(), null);
         }
         
         String permGorupImg = makePermGroup();
 		
         int infoHeight = 300;
-        if(apkInfo.PermGroupMap.keySet().size() > 15) infoHeight = 230;
-        else if(apkInfo.PermGroupMap.keySet().size() > 0) infoHeight = 270;
+        if(PermGroupMap.keySet().size() > 15) infoHeight = 230;
+        else if(PermGroupMap.keySet().size() > 0) infoHeight = 270;
         
         mutiLabels = "";
-        for(String s: apkInfo.Labelname) {
+        for(String s: Labelname) {
         	mutiLabels += s + "\n";
         }
 
@@ -167,28 +196,28 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("<table>");
 		strTabInfo.append("  <tr>");
 		strTabInfo.append("    <td width=170 height=" + infoHeight + ">");
-		strTabInfo.append("      <image src=\"file:/" + apkInfo.IconPath.replaceAll("^/", "") + "\" width=150 height=150 />");
+		strTabInfo.append("      <image src=\"file:/" + IconPath.replaceAll("^/", "") + "\" width=150 height=150 />");
 		strTabInfo.append("    </td>");
 		strTabInfo.append("    <td height=" + infoHeight + ">");
 		strTabInfo.append("      <div id=\"basic-info\">");
         strTabInfo.append("        <font style=\"font-size:20px; color:#548235; font-weight:bold\">");
-        strTabInfo.append("          " + makeHyperLink("@event", apkInfo.Labelname[0], mutiLabels, "other-lang"));
+        strTabInfo.append("          " + makeHyperLink("@event", Labelname[0], mutiLabels, "other-lang"));
         strTabInfo.append("        </font>");
-        if(apkInfo.Labelname.length > 1) {
+        if(Labelname.length > 1) {
         	strTabInfo.append("<font style=\"font-size:10px;\">");
-            strTabInfo.append(" " + makeHyperLink("@event", "["+apkInfo.Labelname.length+"]", mutiLabels, "other-lang"));
+            strTabInfo.append(" " + makeHyperLink("@event", "["+Labelname.length+"]", mutiLabels, "other-lang"));
             strTabInfo.append("</font>");
         }
         strTabInfo.append("        <br/>");
         strTabInfo.append("        <font style=\"font-size:15px; color:#4472C4\">");
-        strTabInfo.append("          [" + makeHyperLink("", apkInfo.PackageName, "Package name", null) +"]");
+        strTabInfo.append("          [" + makeHyperLink("", PackageName, "Package name", null) +"]");
         strTabInfo.append("        </font><br/>");
         strTabInfo.append("        <font style=\"font-size:15px; color:#ED7E31\">");
-        strTabInfo.append("          " + makeHyperLink("", "Ver. " + apkInfo.VersionName +" / " + apkInfo.VersionCode, "VersionName : " + apkInfo.VersionName + "\n" + "VersionCode : " + apkInfo.VersionCode, null));
+        strTabInfo.append("          " + makeHyperLink("", "Ver. " + VersionName +" / " + VersionCode, "VersionName : " + VersionName + "\n" + "VersionCode : " + VersionCode, null));
         strTabInfo.append("        </font><br/>");
         strTabInfo.append("        <br/><br/>");
         strTabInfo.append("        <font style=\"font-size:12px\">");
-        strTabInfo.append("          " + makeHyperLink("", apkInfo.ApkSize, "APK size", null) + "<br/>");
+        strTabInfo.append("          " + makeHyperLink("", ApkSize, "APK size", null) + "<br/>");
         strTabInfo.append("          " + makeHyperLink("", sdkVersion, "Target SDK version", null));
         strTabInfo.append("        </font>");
         strTabInfo.append("        <br/><br/>");
@@ -202,7 +231,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
         strTabInfo.append("</table>");
         strTabInfo.append("<div id=\"perm-group\" style=\"width:480px; padding-top:5px; border-top:1px; border-left:0px; border-right:0px; border-bottom:0px; border-style:solid;\">");
         strTabInfo.append("  <font style=\"font-size:12px;color:black;\">");
-        if(apkInfo.PermissionList.size() > 0) {
+        if(PermissionList.size() > 0) {
         strTabInfo.append("    [" + Resource.STR_BASIC_PERMISSIONS.getString() + "] - ");
         strTabInfo.append("    " + makeHyperLink("@event","<u>" + Resource.STR_BASIC_PERMLAB_DISPLAY.getString() + "</u>",Resource.STR_BASIC_PERMDESC_DISPLAY.getString(),"display-list"));
         } else {
@@ -216,15 +245,49 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
         
         apkinform.setBody(strTabInfo.toString());
 	}
+
+	@Override
+	public void setData(ApkInfo apkInfo)
+	{
+		if(apkinform == null)
+			initialize();
+		
+		if(apkInfo == null) {
+			removeData();
+			wasSetData = false;
+			return;
+		}
+		wasSetData = true;
+		
+		Labelname = apkInfo.Labelname;
+		PackageName = apkInfo.PackageName;
+		VersionName = apkInfo.VersionName;
+		VersionCode = apkInfo.VersionCode;
+		MinSDKversion = apkInfo.MinSDKversion;
+		TargerSDKversion = apkInfo.TargerSDKversion;
+		isHidden = apkInfo.isHidden;
+		IconPath = apkInfo.IconPath;
+		Permissions = apkInfo.Permissions;
+		Startup = apkInfo.Startup;
+		ProtectionLevel = apkInfo.ProtectionLevel;
+		debuggable = apkInfo.debuggable;
+		SharedUserId = apkInfo.SharedUserId;
+		ApkSize = apkInfo.ApkSize;
+		                                            
+		PermissionList = apkInfo.PermissionList;
+		PermGroupMap = apkInfo.PermGroupMap;
+	
+		setData();
+	}
 	
 	private String makePermGroup()
 	{
 		StringBuilder permGroup = new StringBuilder("");
 		
-		Set<String> keys = apkInfo.PermGroupMap.keySet();
+		Set<String> keys = PermGroupMap.keySet();
 		int cnt = 0;
 		for(String key: keys) {
-			PermissionGroup g = apkInfo.PermGroupMap.get(key);
+			PermissionGroup g = PermGroupMap.get(key);
 			permGroup.append(makeHyperLink("@event", makeImage(g.icon), g.permSummary, g.permGroup));
 			if(++cnt % 15 == 0) permGroup.append("<br/>");
 		}
@@ -255,9 +318,9 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 
 		if(id.equals("other-lang")) {
 			if(mutiLabels == null || mutiLabels.isEmpty()
-					|| apkInfo.Labelname.length == 1) return;
+					|| Labelname.length == 1) return;
 			showDialog(mutiLabels, Resource.STR_LABEL_APP_NAME_LIST.getString(), new Dimension(300, 200)
-					, new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(apkInfo.IconPath),32,32)));
+					, new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(IconPath),32,32)));
 		} else if(id.equals("display-list")) {
 			showPermList();
 		} else {
@@ -287,7 +350,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 
 		StringBuilder body = new StringBuilder("");
 		body.append("<div id=\"perm-list\">");
-		body.append(apkInfo.Permissions.replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
+		body.append(Permissions.replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
 		body.append("</div>");
 		
 	    // create some css from the label's font
@@ -304,12 +367,12 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	    descPane.setEditable(false);
 	    descPane.setBackground(label.getBackground());
 	    */
-	    showDialog(apkInfo.Permissions, Resource.STR_BASIC_PERM_LIST_TITLE.getString(), new Dimension(500, 200), null);
+	    showDialog(Permissions, Resource.STR_BASIC_PERM_LIST_TITLE.getString(), new Dimension(500, 200), null);
 	}
 	
 	public void showPermDetailDesc(String group)
 	{
-		PermissionGroup g = apkInfo.PermGroupMap.get(group);
+		PermissionGroup g = PermGroupMap.get(group);
 		
 		if(g == null) return;
 
@@ -359,7 +422,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	}
 
 	@Override
-	public void reloadResource(ApkInfo apkInfo) {
-		setData(apkInfo);
+	public void reloadResource() {
+		setData();
 	}
 }
