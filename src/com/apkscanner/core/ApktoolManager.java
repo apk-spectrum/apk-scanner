@@ -501,7 +501,8 @@ public class ApktoolManager extends ApkToolStub implements ManagerInterface
 					ReSizeMode = xpath.getAttributes("android:resizeMode");
 				}
 
-				if(IconPath.isEmpty() && xpath.getAttributes("android:previewImage") != null) {
+				if((IconPath == null || IconPath.isEmpty()) 
+						&& xpath.getAttributes("android:previewImage") != null) {
 					String icon = xpath.getAttributes("android:previewImage");
 					IconPath = getResourceInfo(icon);
 					//Log.i("icon " + IconPath);
