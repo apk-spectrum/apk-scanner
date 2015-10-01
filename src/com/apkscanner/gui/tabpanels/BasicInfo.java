@@ -73,6 +73,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	    style.append("font-size:" + font.getSize() + "pt;}");
 	    style.append("#basic-info a {text-decoration:none; color:black;}");
 	    style.append("#perm-group a {text-decoration:none; color:#"+Integer.toHexString(label.getBackground().getRGB() & 0xFFFFFF)+";}");
+	    style.append(".danger-perm {text-decoration:none; color:red;}");
 	    style.append("#about {");
 	    style.append("font-family:" + font.getFamily() + ";");
 	    style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
@@ -163,22 +164,22 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
         
         String feature;
         if(isHidden) {
-        	feature = makeHyperLink("", Resource.STR_FEATURE_HIDDEN_LAB.getString(), Resource.STR_FEATURE_HIDDEN_DESC.getString(), null);
+        	feature = makeHyperLink("", Resource.STR_FEATURE_HIDDEN_LAB.getString(), Resource.STR_FEATURE_HIDDEN_DESC.getString(), null, null);
         } else {
-        	feature = makeHyperLink("", Resource.STR_FEATURE_LAUNCHER_LAB.getString(), Resource.STR_FEATURE_LAUNCHER_DESC.getString(), null);
+        	feature = makeHyperLink("", Resource.STR_FEATURE_LAUNCHER_LAB.getString(), Resource.STR_FEATURE_LAUNCHER_DESC.getString(), null, null);
         }
         
         if(!Startup.isEmpty()) {
-        	feature += ", " + makeHyperLink("", Resource.STR_FEATURE_STARTUP_LAB.getString(), Resource.STR_FEATURE_STARTUP_DESC.getString(), null);
+        	feature += ", " + makeHyperLink("", Resource.STR_FEATURE_STARTUP_LAB.getString(), Resource.STR_FEATURE_STARTUP_DESC.getString(), null, null);
         }
         if(!ProtectionLevel.isEmpty()) {
-        	feature += ", " + makeHyperLink("", Resource.STR_FEATURE_SIGNATURE_LAB.getString(), Resource.STR_FEATURE_SIGNATURE_DESC.getString(), null);
+        	feature += ", " + makeHyperLink("", Resource.STR_FEATURE_SIGNATURE_LAB.getString(), Resource.STR_FEATURE_SIGNATURE_DESC.getString(), null, null);
         }
         if(!SharedUserId.isEmpty()) {
-        	feature += ", " + makeHyperLink("", Resource.STR_FEATURE_SHAREDUSERID_LAB.getString(), Resource.STR_FEATURE_SHAREDUSERID_DESC.getString(), null);
+        	feature += ", " + makeHyperLink("", Resource.STR_FEATURE_SHAREDUSERID_LAB.getString(), Resource.STR_FEATURE_SHAREDUSERID_DESC.getString(), null, null);
         }
         if(debuggable) {
-        	feature += ", " + makeHyperLink("", Resource.STR_FEATURE_DEBUGGABLE_LAB.getString(), Resource.STR_FEATURE_DEBUGGABLE_DESC.getString(), null);
+        	feature += ", " + makeHyperLink("", Resource.STR_FEATURE_DEBUGGABLE_LAB.getString(), Resource.STR_FEATURE_DEBUGGABLE_DESC.getString(), null, null);
         }
         
         String permGorupImg = makePermGroup();
@@ -201,24 +202,24 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("    <td height=" + infoHeight + ">");
 		strTabInfo.append("      <div id=\"basic-info\">");
         strTabInfo.append("        <font style=\"font-size:20px; color:#548235; font-weight:bold\">");
-        strTabInfo.append("          " + makeHyperLink("@event", Labelname[0], mutiLabels, "other-lang"));
+        strTabInfo.append("          " + makeHyperLink("@event", Labelname[0], mutiLabels, "other-lang", null));
         strTabInfo.append("        </font>");
         if(Labelname.length > 1) {
         	strTabInfo.append("<font style=\"font-size:10px;\">");
-            strTabInfo.append(" " + makeHyperLink("@event", "["+Labelname.length+"]", mutiLabels, "other-lang"));
+            strTabInfo.append(" " + makeHyperLink("@event", "["+Labelname.length+"]", mutiLabels, "other-lang", null));
             strTabInfo.append("</font>");
         }
         strTabInfo.append("        <br/>");
         strTabInfo.append("        <font style=\"font-size:15px; color:#4472C4\">");
-        strTabInfo.append("          [" + makeHyperLink("", PackageName, "Package name", null) +"]");
+        strTabInfo.append("          [" + makeHyperLink("", PackageName, "Package name", null, null) +"]");
         strTabInfo.append("        </font><br/>");
         strTabInfo.append("        <font style=\"font-size:15px; color:#ED7E31\">");
-        strTabInfo.append("          " + makeHyperLink("", "Ver. " + VersionName +" / " + VersionCode, "VersionName : " + VersionName + "\n" + "VersionCode : " + VersionCode, null));
+        strTabInfo.append("          " + makeHyperLink("", "Ver. " + VersionName +" / " + VersionCode, "VersionName : " + VersionName + "\n" + "VersionCode : " + VersionCode, null, null));
         strTabInfo.append("        </font><br/>");
         strTabInfo.append("        <br/><br/>");
         strTabInfo.append("        <font style=\"font-size:12px\">");
-        strTabInfo.append("          " + makeHyperLink("", ApkSize, "APK size", null) + "<br/>");
-        strTabInfo.append("          " + makeHyperLink("", sdkVersion, "Target SDK version", null));
+        strTabInfo.append("          " + makeHyperLink("", ApkSize, "APK size", null, null) + "<br/>");
+        strTabInfo.append("          " + makeHyperLink("", sdkVersion, "Target SDK version", null, null));
         strTabInfo.append("        </font>");
         strTabInfo.append("        <br/><br/>");
         strTabInfo.append("        <font style=\"font-size:12px\">");
@@ -233,7 +234,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
         strTabInfo.append("  <font style=\"font-size:12px;color:black;\">");
         if(PermissionList.size() > 0) {
         strTabInfo.append("    [" + Resource.STR_BASIC_PERMISSIONS.getString() + "] - ");
-        strTabInfo.append("    " + makeHyperLink("@event","<u>" + Resource.STR_BASIC_PERMLAB_DISPLAY.getString() + "</u>",Resource.STR_BASIC_PERMDESC_DISPLAY.getString(),"display-list"));
+        strTabInfo.append("    " + makeHyperLink("@event","<u>" + Resource.STR_BASIC_PERMLAB_DISPLAY.getString() + "</u>",Resource.STR_BASIC_PERMDESC_DISPLAY.getString(),"display-list", null));
         } else {
         strTabInfo.append("    " + Resource.STR_LABEL_NO_PERMISSION.getString());
         }
@@ -288,14 +289,14 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		int cnt = 0;
 		for(String key: keys) {
 			PermissionGroup g = PermGroupMap.get(key);
-			permGroup.append(makeHyperLink("@event", makeImage(g.icon), g.permSummary, g.permGroup));
+			permGroup.append(makeHyperLink("@event", makeImage(g.icon), g.permSummary, g.permGroup, g.hasDangerous?"color:red;":null));
 			if(++cnt % 15 == 0) permGroup.append("<br/>");
 		}
 		
 		return permGroup.toString();
 	}
 	
-	private String makeHyperLink(String href, String text, String title, String id)
+	private String makeHyperLink(String href, String text, String title, String id, String style)
 	{
 		String attr = "";
 		if(title != null) {
@@ -303,6 +304,9 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		}
 		if(id != null) {
 			attr += String.format(" id=\"%s\"", id);
+		}
+		if(style != null) {
+			attr += String.format(" style=\"%s\"", style);
 		}
 		
 		return String.format("<a href=\"%s\"%s>%s</a>", href, attr, text);
@@ -390,6 +394,9 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		
 		for(PermissionInfo info: g.permList) {
 			body.append("▶ ");
+			if(info.isDangerous) {
+				body.append("[DANGEROUS] ");	
+			}
 			if(info.label != null) {
 				body.append(info.label + " ");
 			}

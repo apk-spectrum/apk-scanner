@@ -6,14 +6,43 @@ import java.util.HashMap;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.MyXPath;
 
-public class PermissionGroupManager {
-
+public class PermissionGroupManager
+{
+	private String[] dangerousPermissions = new String[] {
+			"android.permission.READ_CALENDAR",
+			"android.permission.WRITE_CALENDAR",
+			"android.permission.CAMERA",
+			"android.permission.READ_CONTACTS",
+			"android.permission.WRITE_CONTACTS",
+			"android.permission.GET_ACCOUNT",
+			"android.permission.ACCESS_FINE_LOCATION",
+			"android.permission.ACCESS_COARSE_LOCATION",
+			"android.permission.RECORD_AUDIO",
+			"android.permission.READ_PHONE_STATE",
+			"android.permission.CALL_PHONE",
+			"android.permission.READ_CALL_LOG",
+			"android.permission.WRITE_CALL_LOG",
+			"com.android.voicemail.permission.ADD_VOICEMAIL",
+			"android.permission.USE_SIP",
+			"android.permission.PROCESS_OUTGOING_CALLS",
+			"android.permission.BODY_SENSORS",
+			"android.permission.SEND_SMS",
+			"android.permission.RECEIVE_SMS",
+			"android.permission.READ_SMS",
+			"android.permission.RECEIVE_WAP_PUSH",
+			"android.permission.RECEIVE_MMS",
+			"android.permission.READ_CELL_BROADCASTS",
+			"android.permission.READ_EXTERNAL_STORAGE",
+			"android.permission.WRITE_EXTERNAL_STORAGE"
+	};
+	
 	public class PermissionInfo
 	{
 		public String permission;
 		public String permGroup;
 		public String label;
 		public String desc;
+		public boolean isDangerous;
 	}
 	
 	public class PermissionGroup
@@ -24,6 +53,7 @@ public class PermissionGroupManager {
 		public String icon;
 		public String permSummary;
 		public ArrayList<PermissionInfo> permList; 
+		public boolean hasDangerous;
 	}
 	
 	private HashMap<String, PermissionGroup> permGroupMap;
@@ -61,27 +91,36 @@ public class PermissionGroupManager {
 			PermissionInfo permInfo = getPermissionInfo(perm);
 			if(permInfo.permGroup != null) {
 				PermissionGroup g = permGroupMap.get(permInfo.permGroup);
-				if(g != null) {
-					g.permList.add(permInfo);
-					if(permInfo.label != null) {
-						g.permSummary += "\n - " + permInfo.label;
-					}
-				} else {
+				if(g == null) {
 					g = getPermissionGroup(permInfo.permGroup);
-					g.permList.add(permInfo);
-					if(permInfo.label != null) {
-						g.permSummary += "\n - " + permInfo.label;
-					}
 					permGroupMap.put(permInfo.permGroup, g);
+				}
+				g.permList.add(permInfo);
+				if(permInfo.label != null) {
+					g.permSummary += "\n - " + permInfo.label;
+				}
+				if(permInfo.isDangerous) {
+					g.hasDangerous = true;
 				}
 			}
 		}
+	}
+	
+	private boolean checkDangerous(String perm)
+	{
+		for(String p: dangerousPermissions) {
+			if(p.equals(perm)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public PermissionInfo getPermissionInfo(String perm)
 	{
 		PermissionInfo permInfo = new PermissionInfo();
 		permInfo.permission = perm;
+		permInfo.isDangerous = checkDangerous(perm);
 
 		if(xmlPermissions != null) {
 			MyXPath permXPath = xmlPermissions.getNode("/permissions/permission[@name='" + perm + "']");
