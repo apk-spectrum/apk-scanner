@@ -3,6 +3,8 @@ package com.apkscanner.data;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.apkscanner.util.Log;
+
 public class AaptXmlTreeNode
 {
 	private String name;
@@ -10,7 +12,7 @@ public class AaptXmlTreeNode
 	private AaptXmlTreeNode parent;
 	private HashMap<String, String> attribute = new HashMap<String, String>();
 	private HashMap<String, ArrayList<AaptXmlTreeNode>> childMap = new HashMap<String, ArrayList<AaptXmlTreeNode>>();
-	private ArrayList<AaptXmlTreeNode> childList;
+	private ArrayList<AaptXmlTreeNode> childList = new ArrayList<AaptXmlTreeNode>();
 	
 	public AaptXmlTreeNode()
 	{
@@ -143,5 +145,13 @@ public class AaptXmlTreeNode
 	public String[] getAttributeList()
 	{
 		return attribute.keySet().toArray(new String[0]);
+	}
+	
+	public void dump()
+	{
+		Log.i("Node : " + name);
+		Log.i("Path : " + path);
+		Log.i("Child cnt : " + childList.size());
+		Log.i("Attr cnt : " + attribute.size());
 	}
 }

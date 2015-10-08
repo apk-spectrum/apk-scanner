@@ -36,9 +36,9 @@ public class AaptWrapper
 		static public String[] getResources(String apkFilePath, boolean includeResourceValues)
 		{
 			if(includeResourceValues) {
-				return ConsolCmd.exc(new String[] {aaptCmd, "dump", "--values", "badging", apkFilePath});	
+				return ConsolCmd.exc(new String[] {aaptCmd, "dump", "--values", "resources", apkFilePath});	
 			} else {
-				return ConsolCmd.exc(new String[] {aaptCmd, "dump", "badging", apkFilePath});				
+				return ConsolCmd.exc(new String[] {aaptCmd, "dump", "resources", apkFilePath});				
 			}
 		}
 
