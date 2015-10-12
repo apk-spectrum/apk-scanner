@@ -56,12 +56,19 @@ public class FileUtil
 		return tempPath;
 	}
 
-	public static Boolean makeFolder(String FilePath)
+	public static Boolean makeFolder(String dirPath)
 	{
-		File newDirectory = new File(FilePath);
-		if(!newDirectory.exists()) {
-			newDirectory.mkdir();
-			return true;
+		if(dirPath.endsWith(File.separator)) {
+			dirPath = dirPath.substring(0, dirPath.length()-1);
+		}
+		File newDir = new File(dirPath);
+		File parentDir = new File(dirPath.substring(0, dirPath.lastIndexOf(File.separator)));
+		if(!parentDir.exists()) {
+			if(!makeFolder(parentDir.getAbsolutePath()))
+				return false;
+		}
+		if(!newDir.exists()) {
+			return newDir.mkdir();
 		}
 		return false;
 	}

@@ -6,8 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.apkscanner.core.ApkToolStub.ManagerInterface;
-
 import com.apkscanner.data.ApkInfo;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.ConsolCmd;
@@ -16,10 +14,11 @@ import com.apkscanner.util.MyXPath;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.FileUtil.FSStyle;
 
-public class ApktoolManager extends ApkToolStub implements ManagerInterface
+public class ApktoolManager extends ApkScannerStub
 {	
 	static private final String ApktoolVer = getApkToolVersion();
 
+	private ApkInfo mApkInfo;
 	private boolean isPackageTempAPK = false;
  	
 	//private Status mState = Status.UNINITIALIZE;
@@ -27,35 +26,25 @@ public class ApktoolManager extends ApkToolStub implements ManagerInterface
 	private ArrayList<String> mFrameworkResList;
 	
 	private ProcessThead mProcess = null;
-
 	
-	public ApktoolManager()
-	{
-		this(null, null, false);
+	public enum ProcessCmd {
+		SOLVE_RESOURCE,
+		SOLVE_CODE,
+		SOLVE_BOTH,
+		DELETE_TEMP_PATH,
 	}
-
-	public ApktoolManager(String apkPath)
-	{
-		this(apkPath, null, false);
+	
+	public enum SolveType {
+		RESOURCE,
+		CODE,
+		BOTH
 	}
-
-	public ApktoolManager(String apkPath, boolean isPackage)
+	
+	public ApktoolManager(StatusListener statusListener)
 	{
-		this(apkPath, null, isPackage);
-	}
-
-	public ApktoolManager(String apkPath, String frameworkResPath)
-	{
-		this(apkPath, frameworkResPath, false);
-	}
-
-	public ApktoolManager(String apkPath, String frameworkResPath, boolean isPackage)
-	{
-		super.mApkInfo = new ApkInfo();
+		super(statusListener);
+		mApkInfo = new ApkInfo();
 		mFrameworkResList = new ArrayList<String>();
-		setApkFile(apkPath);
-		addFameworkRes(frameworkResPath);
-		isPackageTempAPK = isPackage;
 	}
 
 	public void setApkFile(String apkPath) {
@@ -101,14 +90,18 @@ public class ApktoolManager extends ApkToolStub implements ManagerInterface
 		}
 		return ApktoolVer;
 	}
-	
+
 	@Override
-	public void solve(SolveType type, StatusListener listener)
+	public void openApk(String apkFilePath, String frameworkRes)
 	{
+
+		setApkFile(apkFilePath);
+		addFameworkRes(frameworkRes);
+		
 		if(mApkInfo.ApkPath == null) return;
 		//Log.i("solve()....start ");
 		synchronized(this) {
-			mProcess = new ProcessThead(this, ProcessCmd.SOLVE_RESOURCE, listener);
+			mProcess = new ProcessThead(this, ProcessCmd.SOLVE_RESOURCE, statusListener);
 			mProcess.start();
 
 			try {
@@ -118,16 +111,13 @@ public class ApktoolManager extends ApkToolStub implements ManagerInterface
 				e.printStackTrace();
 			}
 		}
-		//Log.i("solve()....end ");
 	}
 	
-
-	
 	@Override
-	public void clear(boolean sync, StatusListener listener)
+	public void clear(boolean sync)
 	{
 		//Log.i("clear()....start ");
-		mProcess = new ProcessThead(this, ProcessCmd.DELETE_TEMP_PATH, listener);
+		mProcess = new ProcessThead(this, ProcessCmd.DELETE_TEMP_PATH, null);
 		synchronized(this) {
 			mProcess.start();
 			
@@ -652,11 +642,5 @@ public class ApktoolManager extends ApkToolStub implements ManagerInterface
 				if(mListener != null) mListener.OnComplete();
 			}
 		}
-	}
-
-	@Override
-	public void reloadResource() {
-		// TODO Auto-generated method stub
-		
 	}
 }

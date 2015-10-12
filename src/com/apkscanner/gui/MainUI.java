@@ -22,10 +22,8 @@ import java.io.File;
 import java.io.IOException;
 
 import com.apkscanner.Launcher;
-import com.apkscanner.core.AdbWrapper;
-import com.apkscanner.core.ApkToolStub.SolveType;
-import com.apkscanner.core.ApkToolStub.StatusListener;
-import com.apkscanner.core.ApktoolManager;
+import com.apkscanner.core.AaptToolManager;
+import com.apkscanner.core.ApkScannerStub;
 import com.apkscanner.data.ApkInfo;
 import com.apkscanner.gui.ApkInstaller.InstallButtonStatusListener;
 import com.apkscanner.gui.ToolBar.ButtonSet;
@@ -37,7 +35,6 @@ import com.apkscanner.gui.dialog.SettingDlg;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.FileDrop;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 
 
@@ -45,7 +42,7 @@ public class MainUI extends JFrame
 {
 	private static final long serialVersionUID = 1L;
 
-	private ApkScanner apkScanner = null;
+	private ApkScannerStub apkScanner = null;
 	
 	private TabbedPanel tabbedPanel;
 	private ToolBar toolBar;
@@ -62,7 +59,7 @@ public class MainUI extends JFrame
 				initialize(true);
 				progressBarDlg = new ProgressBarDlg(MainUI.this, new UIEventHandler());
 				
-				apkScanner = new ApkScanner();
+				apkScanner = new AaptToolManager(new ApkScannerListener());
 			}
 		}).start();
 	}
@@ -76,7 +73,7 @@ public class MainUI extends JFrame
 				progressBarDlg.setVisible(true);
 				initialize(false);
 				
-				apkScanner = new ApkScanner();
+				apkScanner = new AaptToolManager(new ApkScannerListener());
 				apkScanner.openApk(apkFilePath);
 			}
 		}).start();
@@ -91,7 +88,7 @@ public class MainUI extends JFrame
 				progressBarDlg.setVisible(true);
 				initialize(false);
 
-				apkScanner = new ApkScanner();
+				apkScanner = new AaptToolManager(new ApkScannerListener());
 				apkScanner.openPackage(devSerialNumber, packageName, resources);
 			}
 		}).start();
@@ -142,88 +139,8 @@ public class MainUI extends JFrame
 		new UIEventHandler().ancestorMoved(null);
 	}
 	
-	private class ApkScanner implements StatusListener
+	private class ApkScannerListener implements ApkScannerStub.StatusListener
 	{
-		
-		private ApktoolManager apkManager;
-		
-		public ApkInfo openApk(final String apkFilePath)
-		{
-			return openApk(apkFilePath, null, false);
-		}
-		
-		public ApkInfo openApk(final String apkFilePath, String frameworkRes, boolean isPackage)
-		{
-			Log.v("openApk() target file :" + apkFilePath);
-			//this.apkFilePath = apkFilePath;
-			
-			if(frameworkRes == null) {
-				frameworkRes = (String)Resource.PROP_FRAMEWORK_RES.getData();
-			}
-
-			if(apkManager != null) {
-				apkManager.clear(false, null);
-			}
-
-			apkManager = new ApktoolManager(apkFilePath, frameworkRes, isPackage);
-			apkManager.solve(SolveType.RESOURCE, this);
-
-			return apkManager.getApkInfo();
-		}
-
-		public ApkInfo openPackage(String devSerialNumber, String devApkFilePath, String framework)
-		{
-			progressBarDlg.addProgress(1, "I: Open package\n");
-			progressBarDlg.addProgress(1, "I: apk path in device : " + devApkFilePath + "\n");
-			
-			String tempApkFilePath = "/" + devSerialNumber + devApkFilePath;
-			tempApkFilePath = tempApkFilePath.replaceAll("/", File.separator+File.separator).replaceAll("//", "/");
-			tempApkFilePath = FileUtil.makeTempPath(tempApkFilePath)+".apk";
-
-			if(framework == null) {
-				framework = (String)Resource.PROP_FRAMEWORK_RES.getData();
-			}
-
-			String frameworkRes = "";
-			if(framework != null && !framework.isEmpty()) {
-				for(String s: framework.split(";")) {
-					if(s.startsWith("@")) {
-						String devNum = s.replaceAll("^@([^/]*)/.*", "$1");
-						String path = s.replaceAll("^@[^/]*", "");
-						String dest = (new File(tempApkFilePath).getParent()) + File.separator + path.replaceAll(".*/", "");
-						progressBarDlg.addProgress(1, "I: start to pull resource apk " + path + "\n");
-						AdbWrapper.PullApk_sync(devNum, path, dest);
-						frameworkRes += dest + ";"; 
-					} else {
-						frameworkRes += s + ";"; 
-					}
-				}
-			}
-
-			progressBarDlg.addProgress(1, "I: start to pull apk " + devApkFilePath + "\n");
-			AdbWrapper.PullApk_sync(devSerialNumber, devApkFilePath, tempApkFilePath);
-			
-			if(!(new File(tempApkFilePath)).exists()) {
-				Log.e("openPackage() failure : apk pull - " + tempApkFilePath);
-				return null;
-			}
-
-			return openApk(tempApkFilePath, frameworkRes, true);
-		}
-		
-		public ApkInfo getApkInfo()
-		{
-			if(apkManager == null)
-				return null;
-			return apkManager.getApkInfo();
-		}
-		
-		public void clear(boolean sync)
-		{
-			if(apkManager != null)
-				apkManager.clear(sync, null);
-		}
-		
 		@Override
 		public void OnStart() {
 			Log.v("ApkCore.OnStart()");
@@ -236,16 +153,16 @@ public class MainUI extends JFrame
 			if(exiting) return;
 			
 			toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, true);
-			tabbedPanel.setData(apkManager.getApkInfo());
+			tabbedPanel.setData(apkScanner.getApkInfo());
 			
 			progressBarDlg.setVisible(false);
 			
-			String apkFilePath = apkManager.getApkInfo().ApkPath;
+			String apkFilePath = apkScanner.getApkInfo().ApkPath;
 			String title = apkFilePath.substring(apkFilePath.lastIndexOf(File.separator)+1) + " - " + Resource.STR_APP_NAME.getString();
 			setTitle(title);
 			setVisible(true);
 			
-			if(apkManager.getApkInfo().PermGroupMap.keySet().size() > 30) {
+			if(apkScanner.getApkInfo().PermGroupMap.keySet().size() > 30) {
 				setSize(new Dimension(650, 550));
 			} else {
 				setSize(new Dimension(650, 500));
@@ -277,8 +194,8 @@ public class MainUI extends JFrame
 		@Override
 		public void OnProgress(int step, String msg) {
 			if(exiting) return;
-			
-			progressBarDlg.addProgress(step, msg);
+			Log.i(msg);
+			progressBarDlg.addProgress(step, msg+"\n");
 		}
 
 		@Override
@@ -485,7 +402,7 @@ public class MainUI extends JFrame
 			try {   
 	    		progressBarDlg.init();
 				progressBarDlg.setVisible(true);
-				apkScanner.openApk(files[0].getCanonicalPath(), (String)Resource.PROP_FRAMEWORK_RES.getData(), false);
+				apkScanner.openApk(files[0].getCanonicalPath(), (String)Resource.PROP_FRAMEWORK_RES.getData());
 	        } catch( java.io.IOException e ) {}
 		}
 		

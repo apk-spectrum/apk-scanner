@@ -2,6 +2,8 @@ package com.apkscanner.gui.tabpanels;
 
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
@@ -61,10 +63,17 @@ public class Widget extends JPanel implements TabDataObject
 		arrWidgets.clear();
 		if(apkInfo.WidgetList == null) return;
 		if(TableModel == null) initialize();
+		String jarPath = "jar:file:"+apkInfo.ApkPath+"!/";
 		for(int i=0; i< apkInfo.WidgetList.size(); i++) {
-			ImageIcon myimageicon = new ImageIcon((String)apkInfo.WidgetList.get(i)[0]);
-			
-			myimageicon.setImage(ImageScaler.getMaxScaledImage(myimageicon,100,100));
+			ImageIcon myimageicon = null;
+			try {
+				myimageicon = new ImageIcon(new URL(jarPath+(String)apkInfo.WidgetList.get(i)[0]));
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+			if(myimageicon != null) {
+				myimageicon.setImage(ImageScaler.getMaxScaledImage(myimageicon,100,100));
+			}
 			
 			Object[] temp = { myimageicon , apkInfo.WidgetList.get(i)[1], apkInfo.WidgetList.get(i)[2], apkInfo.WidgetList.get(i)[3], apkInfo.WidgetList.get(i)[4]};
 			arrWidgets.add(temp);

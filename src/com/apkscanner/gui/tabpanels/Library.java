@@ -2,7 +2,6 @@ package com.apkscanner.gui.tabpanels;
 
 
 import java.awt.GridLayout;
-import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -14,8 +13,8 @@ import javax.swing.table.TableColumn;
 import com.apkscanner.data.ApkInfo;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.FileUtil.FSStyle;
+import com.apkscanner.util.ZipFileUtil;
 
 /**
  * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for
@@ -27,6 +26,8 @@ public class Library extends JPanel implements TabDataObject
 
 	private MyTableModel mMyTableModel = null;
 	private JTable table;
+
+	private String apkFilePath;
 	
 	public Library()
 	{
@@ -56,6 +57,7 @@ public class Library extends JPanel implements TabDataObject
 	{
 		if(mMyTableModel == null)
 			initialize();
+		apkFilePath = apkInfo.ApkPath;
 		mMyTableModel.setData(apkInfo.LibList);
 	}
 	
@@ -98,12 +100,11 @@ public class Library extends JPanel implements TabDataObject
 			data.clear();
 			if(libList == null) return;
 
-			String separator = File.separator + (File.separator.equals("\\") ? File.separator : "");
 			for(int i=0; i< libList.size(); i++) {
 				Object[] temp = { 
 						i+1,
-						libList.get(i).replaceAll("^.*"+separator+"lib"+separator,"lib"+separator), 
-						FileUtil.getFileSize((new File(libList.get(i))), FSStyle.FULL)
+						libList.get(i), 
+						ZipFileUtil.getFileSize(apkFilePath, libList.get(i), FSStyle.FULL)
 				};
 				data.add(temp);
 			}

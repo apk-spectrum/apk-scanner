@@ -4,6 +4,8 @@ package com.apkscanner.gui.tabpanels;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,8 +33,7 @@ public class ImageResource extends JPanel implements TabDataObject
     
 	private JLabel photographLabel;
 	ArrayList<String> nameList = new ArrayList<String>();
-	ArrayList<String> ShownameList = new ArrayList<String>();
-	String path = null;
+	private String apkFilePath = null;
 	
 	JList<Object> list = null;
     
@@ -70,21 +71,17 @@ public class ImageResource extends JPanel implements TabDataObject
 			initialize();
 		
 		nameList.clear();
-		ShownameList.clear();
 		imageMap.clear();
 		list.clearSelection();
 		
-		this.path = apkInfo.WorkTempPath; 
+		this.apkFilePath = apkInfo.ApkPath; 
 		
 		if(apkInfo.ImageList == null) return;
 		
 		nameList.addAll(apkInfo.ImageList);
-		for(int i=0; i < nameList.size(); i++) {
-			ShownameList.add(nameList.get(i).substring(path.length()));
-		}
 		createImageMap(nameList);
 		
-		list.setListData(ShownameList.toArray());
+		list.setListData(nameList.toArray());
 	}
     
 	public class MarioListRenderer extends DefaultListCellRenderer {
@@ -98,7 +95,7 @@ public class ImageResource extends JPanel implements TabDataObject
 			JLabel label = (JLabel) super.getListCellRendererComponent(
 			        list, value, index, isSelected, cellHasFocus);
 			
-			label.setIcon(imageMap.get(path+(String)value));
+			label.setIcon(imageMap.get((String)value));
 			label.setHorizontalTextPosition(JLabel.RIGHT);
 			//label.setFont(font);            
 			return label;
@@ -107,9 +104,10 @@ public class ImageResource extends JPanel implements TabDataObject
 
 	private Map<String, ImageIcon> createImageMap(ArrayList<String> list) {
 		//Map<String, ImageIcon> map = new HashMap<>();
+		String jarPath = "jar:file:"+apkFilePath+"!/";
 		try {        	
 			for(int i=0; i< list.size(); i++) {
-				imageMap.put(list.get(i), new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(list.get(i)),32,32)));
+				imageMap.put(list.get(i), new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(new URL(jarPath+list.get(i))),32,32)));
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -117,15 +115,19 @@ public class ImageResource extends JPanel implements TabDataObject
 		return imageMap;
 	}
 
-
-    private class JListHandler implements ListSelectionListener {
+    private class JListHandler implements ListSelectionListener
+    {
     	// 리스트의 항목이 선택이 되면
-    	public void valueChanged(ListSelectionEvent event) {
+    	public void valueChanged(ListSelectionEvent event)
+    	{
     		//Log.i("valueChanged : " + list.getSelectedIndex() + " event : "+ event.getSource());
-    		
-    		photographLabel.setIcon(new ImageIcon(ImageScaler.getMaxScaledImage(
-    				new ImageIcon(nameList.get(list.getSelectedIndex())),photographLabel.getWidth(),photographLabel.getHeight())));
-    		
+    		String jarPath = "jar:file:"+apkFilePath+"!/";
+    		try {
+				photographLabel.setIcon(new ImageIcon(ImageScaler.getMaxScaledImage(
+						new ImageIcon(new URL(jarPath+nameList.get(list.getSelectedIndex()))),photographLabel.getWidth(),photographLabel.getHeight())));
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
     	}
     }
 
