@@ -29,6 +29,7 @@ jar -xf APKInfoDlg.jar icons/AppIcon.png
 echo "{}" > settings.txt
 
 sudo chmod 755 tool/adb
+sudo chmod 755 tool/aapt
 sudo chmod 755 APKScanner.sh
 
 sudo rm -rf $APP_PATH
