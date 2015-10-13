@@ -63,7 +63,7 @@ public class Widget extends JPanel implements TabDataObject
 		arrWidgets.clear();
 		if(apkInfo.WidgetList == null) return;
 		if(TableModel == null) initialize();
-		String jarPath = "jar:file:"+apkInfo.ApkPath+"!/";
+		String jarPath = "jar:file:"+apkInfo.ApkPath.replaceAll("#", "%23")+"!/";
 		for(int i=0; i< apkInfo.WidgetList.size(); i++) {
 			ImageIcon myimageicon = null;
 			try {

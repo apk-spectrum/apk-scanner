@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -25,7 +24,6 @@ import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.ZipFileUtil;
 
 public class BasicInfo extends JComponent implements HyperlinkClickListener, TabDataObject
 {
@@ -37,7 +35,6 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	private boolean wasSetData = false;
 	
 	private String ApkFilePath = null;
-	private String ApkTempPath = null;
 	private String[] Labelname = null;
 	private String PackageName = null;
 	private String VersionName = null;
@@ -196,21 +193,12 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		for(String s: Labelname) {
 			mutiLabels += s + "\n";
 		}
-		
-		String appIconPath = null;
-		if(ApkFilePath.indexOf("#") > 0) {
-			appIconPath = ApkTempPath + File.separator + IconPath.substring(IconPath.lastIndexOf("/")+1);
-			ZipFileUtil.unZip(ApkFilePath, IconPath, appIconPath);
-			appIconPath = "file:" + appIconPath;
-		} else {
-			appIconPath = "jar:file:" + ApkFilePath + "!/" + IconPath;
-		}
 
 		StringBuilder strTabInfo = new StringBuilder("");
 		strTabInfo.append("<table>");
 		strTabInfo.append("  <tr>");
 		strTabInfo.append("    <td width=170 height=" + infoHeight + ">");
-		strTabInfo.append("      <image src=\"" + appIconPath + "\" width=150 height=150 />");
+		strTabInfo.append("      <image src=\"jar:file:" + ApkFilePath.replaceAll("#", "%23") + "!/" + IconPath + "\" width=150 height=150 />");
 		strTabInfo.append("    </td>");
 		strTabInfo.append("    <td height=" + infoHeight + ">");
 		strTabInfo.append("      <div id=\"basic-info\">");
@@ -274,7 +262,6 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		wasSetData = true;
 		
 		ApkFilePath = apkInfo.ApkPath;
-		ApkTempPath = apkInfo.WorkTempPath;
 		Labelname = apkInfo.Labelname;
 		PackageName = apkInfo.PackageName;
 		VersionName = apkInfo.VersionName;

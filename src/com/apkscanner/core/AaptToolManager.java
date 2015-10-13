@@ -212,7 +212,7 @@ public class AaptToolManager extends ApkScannerStub
 	{
 		ArrayList<String> values = new ArrayList<String>();
 		
-		if(!id.startsWith("@"))
+		if(id == null || !id.startsWith("@"))
 			return new String[] { id };
 		String filter = "  resource " + id.substring(1);
 		String config = null;

@@ -104,7 +104,7 @@ public class ImageResource extends JPanel implements TabDataObject
 
 	private Map<String, ImageIcon> createImageMap(ArrayList<String> list) {
 		//Map<String, ImageIcon> map = new HashMap<>();
-		String jarPath = "jar:file:"+apkFilePath+"!/";
+		String jarPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/";
 		try {        	
 			for(int i=0; i< list.size(); i++) {
 				imageMap.put(list.get(i), new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(new URL(jarPath+list.get(i))),32,32)));
@@ -121,7 +121,7 @@ public class ImageResource extends JPanel implements TabDataObject
     	public void valueChanged(ListSelectionEvent event)
     	{
     		//Log.i("valueChanged : " + list.getSelectedIndex() + " event : "+ event.getSource());
-    		String jarPath = "jar:file:"+apkFilePath+"!/";
+    		String jarPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/";
     		try {
 				photographLabel.setIcon(new ImageIcon(ImageScaler.getMaxScaledImage(
 						new ImageIcon(new URL(jarPath+nameList.get(list.getSelectedIndex()))),photographLabel.getWidth(),photographLabel.getHeight())));
