@@ -18,11 +18,13 @@ abstract public class ApkScannerStub
 		UNINITIALIZE,
 		INITIALIZING,
 		INITIALIZEED,
-		SOLVE_RESOURCE,
-		SOLVE_CODE,
-		SOLVE_BOTH,
-		STANDBY,
-		DELETEING
+		BASIC_INFO_COMPLETED,
+		WIDGET_COMPLETED,
+		LIB_COMPLETED,
+		IMAGE_COMPLETED,
+		ACTIVITY_COMPLETED,
+		CERT_COMPLETED,
+		ALL_COMPLETED,
 	}
 	
 	public interface StatusListener
@@ -32,7 +34,7 @@ abstract public class ApkScannerStub
 		public void OnError();
 		public void OnComplete();
 		public void OnProgress(int step, String msg);
-		public void OnStateChange();
+		public void OnStateChanged(Status status);
 	}
 	
 	public ApkScannerStub(StatusListener statusListener)

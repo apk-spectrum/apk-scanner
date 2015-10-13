@@ -77,27 +77,35 @@ public class TabbedPanel extends JTabbedPane
     		((TabDataObject)(getComponent(i))).reloadResource();
     	}
     }
-	
-	public void setData(ApkInfo apkInfo)
-	{
-		if(apkInfo != null) {
-	        setTitleAt(3, labels[3] + "(...)");
-			setEnabledAt(3, false);
+    
+    public void initLabel()
+    {
+		for(int i = 1; i < 6; i++) {
+	        setTitleAt(i, labels[i] + "(...)");
+			setEnabledAt(i, false);
 		}
-        
-		((TabDataObject)(getComponent(0))).setData(apkInfo);
+    }
+	
+    public void setData(ApkInfo apkInfo)
+    {
+    	setData(apkInfo, -1);
+    }
+    
+	public void setData(ApkInfo apkInfo, int id)
+	{
+		if(id == -1 || id == 0) ((TabDataObject)(getComponent(0))).setData(apkInfo);
 
 		if(apkInfo != null) {
-			setPanelData(1, apkInfo.WidgetList.size(), apkInfo);
-			setPanelData(2, apkInfo.LibList.size(), apkInfo);
-			setPanelData(4, apkInfo.ActivityList.size(), apkInfo);
-			setPanelData(5, apkInfo.CertList.size(), apkInfo);
+			if(id == -1 || id == 1) setPanelData(1, apkInfo.WidgetList.size(), apkInfo);
+			if(id == -1 || id == 2) setPanelData(2, apkInfo.LibList.size(), apkInfo);
+			if(id == -1 || id == 4) setPanelData(4, apkInfo.ActivityList.size(), apkInfo);
+			if(id == -1 || id == 5) setPanelData(5, apkInfo.CertList.size(), apkInfo);
 
 	        //if(apkInfo != null) MainUI.ProgressBarDlg.addProgress(25,"check resource(*.png)...\n");
-			setPanelData(3, apkInfo.ImageList.size(), apkInfo);
+			if(id == -1 || id == 3) setPanelData(3, apkInfo.ImageList.size(), apkInfo);
 		} else {
 			for(int i = 1; i < 6; i++) {
-				setPanelData(i, 0, null);
+				if(id == -1 || id == i) setPanelData(i, 0, null);
 			}
 		}
 

@@ -23,6 +23,7 @@ public class AaptToolManager extends ApkScannerStub
 	public AaptToolManager(StatusListener statusListener)
 	{
 		super(statusListener);
+		stateChanged(Status.UNINITIALIZE);
 	}
 	
 	@Override
@@ -32,6 +33,7 @@ public class AaptToolManager extends ApkScannerStub
 			public void run()
 			{
 				if(statusListener != null) statusListener.OnStart();
+				stateChanged(Status.INITIALIZING);
 				
 				apkInfo = new ApkInfo();
 				
@@ -39,24 +41,13 @@ public class AaptToolManager extends ApkScannerStub
 
 				if(!apkFile.exists()) {
 					Log.e("No Such APK file");
+					if(statusListener != null) statusListener.OnError();
 					return;
 				}
-				//apkFilePath = apkFile.getAbsolutePath();
-				apkInfo.ApkPath = apkFilePath; 
-				
-				apkInfo.WorkTempPath = FileUtil.makeTempPath(apkInfo.ApkPath.substring(apkInfo.ApkPath.lastIndexOf(File.separator)));
-				Log.i("Temp path : " + apkInfo.WorkTempPath);
 
-				apkInfo.ApkSize = FileUtil.getFileSize(apkFile, FSStyle.FULL);
-				
-				if(apkFilePath != null && (new File(apkFilePath)).exists()) {
-					apkInfo.ApkPath = apkFilePath;
-				}
-				
 				progress(5, "I: start open apk");
-
 				progress(5, "I: getDump AndroidManifest...");
-				androidManifest = AaptWrapper.Dump.getXmltree(apkFilePath, new String[] {"AndroidManifest.xml"});
+				androidManifest = AaptWrapper.Dump.getXmltree(apkFilePath, new String[] { "AndroidManifest.xml" });
 
 				progress(10, "I: read aapt dump resources...");
 				resourcesWithValue = AaptWrapper.Dump.getResources(apkFilePath, true);
@@ -66,6 +57,13 @@ public class AaptToolManager extends ApkScannerStub
 				manifestPath.createAaptXmlTree(androidManifest);
 				namespace = manifestPath.getNamespace() + ":"; 
 				
+				stateChanged(Status.INITIALIZEED);
+				
+				apkInfo.ApkPath = apkFilePath;
+				apkInfo.ApkSize = FileUtil.getFileSize(apkFile, FSStyle.FULL);
+				
+				apkInfo.WorkTempPath = FileUtil.makeTempPath(apkInfo.ApkPath.substring(apkInfo.ApkPath.lastIndexOf(File.separator)));
+				Log.i("Temp path : " + apkInfo.WorkTempPath);
 				
 				progress(5, "I: read basic info...");
 				
@@ -140,7 +138,7 @@ public class AaptToolManager extends ApkScannerStub
 		        	apkInfo.Permissions += "\n" + perm;
 		        	apkInfo.PermissionList.add(perm);
 		        	String sig = getAttrValue(permTag[idx], "protectionLevel");
-		        	if(sig != null && sig.equals("signature")) {
+		        	if(sig != null && sig.equals("0x2")) {
 		        		apkInfo.Permissions += " - <SIGNATURE>";
 		        		apkInfo.ProtectionLevel = "SIGNATURE";
 		        	}
@@ -152,13 +150,15 @@ public class AaptToolManager extends ApkScannerStub
 		        	apkInfo.Permissions += "\n" + perm;
 		        	apkInfo.PermissionList.add(perm);
 		        	String sig = getAttrValue(permTag[idx], "protectionLevel");
-		        	if(sig != null && sig.equals("signature")) {
+		        	if(sig != null && sig.equals("0x2")) {
 		        		apkInfo.Permissions += " - <SIGNATURE>";
 		        		apkInfo.ProtectionLevel = "SIGNATURE";
 		        	}
 		        }
 		        PermissionGroupManager permGroupManager = new PermissionGroupManager(apkInfo.PermissionList.toArray(new String[0]));
 		        apkInfo.PermGroupMap = permGroupManager.getPermGroupMap();
+		        
+				stateChanged(Status.BASIC_INFO_COMPLETED);
 		        
 		        // widget
 		        progress(5, "I: read widgets...");
@@ -202,6 +202,7 @@ public class AaptToolManager extends ApkScannerStub
 
 		        	apkInfo.WidgetList.add(new Object[] {apkInfo.IconPath, widgetTitle, "1 X 1", widgetActivity, "Shortcut"});
 		        }
+		        stateChanged(Status.WIDGET_COMPLETED);
 
 		        progress(5, "I: read activitys...");
 		        // Activity/Service/Receiver/provider intent-filter
@@ -209,16 +210,24 @@ public class AaptToolManager extends ApkScannerStub
 		        apkInfo.ActivityList.addAll(getActivityInfo("service"));
 		        apkInfo.ActivityList.addAll(getActivityInfo("receiver"));
 		        apkInfo.ActivityList.addAll(getActivityInfo("provider"));
+		        stateChanged(Status.ACTIVITY_COMPLETED);
 
-		        progress(5, "I: read Imanges list...");
-		        Collections.addAll(apkInfo.ImageList, ZipFileUtil.findFiles(apkInfo.ApkPath, ".png", ".*drawable.*"));
-		        progress(5, "I: read Imanges list...");
+		        progress(5, "I: read lib list...");
 		        Collections.addAll(apkInfo.LibList, ZipFileUtil.findFiles(apkInfo.ApkPath, ".so", null));
+		        stateChanged(Status.LIB_COMPLETED);
 
 		        progress(5, "I: read signatures...");
 				solveCert();
+				stateChanged(Status.CERT_COMPLETED);
+		        
+		        progress(5, "I: read Imanges list...");
+		        Collections.addAll(apkInfo.ImageList, ZipFileUtil.findFiles(apkInfo.ApkPath, ".png", ".*drawable.*"));
+		        stateChanged(Status.IMAGE_COMPLETED);
 		        
 		        apkInfo.verify();
+
+		        progress(5, "I: completed...");
+		        stateChanged(Status.CERT_COMPLETED);
 		        
 		        if(statusListener != null) statusListener.OnSuccess();
 			}
@@ -469,6 +478,14 @@ public class AaptToolManager extends ApkScannerStub
 	{
 		if(statusListener != null) {
 			statusListener.OnProgress(step, msg);
+		}
+	}
+	
+	private void stateChanged(Status status)
+	{
+		if(statusListener != null) {
+			if(apkInfo != null) apkInfo.verify();
+			statusListener.OnStateChanged(status);
 		}
 	}
 }

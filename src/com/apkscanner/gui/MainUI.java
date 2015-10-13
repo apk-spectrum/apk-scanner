@@ -24,6 +24,7 @@ import java.io.IOException;
 import com.apkscanner.Launcher;
 import com.apkscanner.core.AaptToolManager;
 import com.apkscanner.core.ApkScannerStub;
+import com.apkscanner.core.ApkScannerStub.Status;
 import com.apkscanner.data.ApkInfo;
 import com.apkscanner.gui.ApkInstaller.InstallButtonStatusListener;
 import com.apkscanner.gui.ToolBar.ButtonSet;
@@ -145,28 +146,13 @@ public class MainUI extends JFrame
 		public void OnStart() {
 			Log.v("ApkCore.OnStart()");
 			setVisible(false);
+			tabbedPanel.initLabel();
 		}
 
 		@Override
 		public void OnSuccess() {
 			Log.v("ApkCore.OnSuccess()");
 			if(exiting) return;
-			
-			toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, true);
-			tabbedPanel.setData(apkScanner.getApkInfo());
-			
-			progressBarDlg.setVisible(false);
-			
-			String apkFilePath = apkScanner.getApkInfo().ApkPath;
-			String title = apkFilePath.substring(apkFilePath.lastIndexOf(File.separator)+1) + " - " + Resource.STR_APP_NAME.getString();
-			setTitle(title);
-			setVisible(true);
-			
-			if(apkScanner.getApkInfo().PermGroupMap.keySet().size() > 30) {
-				setSize(new Dimension(650, 550));
-			} else {
-				setSize(new Dimension(650, 500));
-			}
 		}
 
 		@Override
@@ -199,8 +185,44 @@ public class MainUI extends JFrame
 		}
 
 		@Override
-		public void OnStateChange() {
+		public void OnStateChanged(Status status)
+		{
+			switch(status) {
+			case BASIC_INFO_COMPLETED:
+				String apkFilePath = apkScanner.getApkInfo().ApkPath;
+				String title = apkFilePath.substring(apkFilePath.lastIndexOf(File.separator)+1) + " - " + Resource.STR_APP_NAME.getString();
+				setTitle(title);
+				
+				if(apkScanner.getApkInfo().PermGroupMap.keySet().size() > 30) {
+					setSize(new Dimension(650, 550));
+				} else {
+					setSize(new Dimension(650, 500));
+				}
 
+				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, true);
+				tabbedPanel.setData(apkScanner.getApkInfo(), 0);
+				
+				progressBarDlg.setVisible(false);
+				setVisible(true);
+				break;
+			case WIDGET_COMPLETED:
+				tabbedPanel.setData(apkScanner.getApkInfo(), 1);
+				break;
+			case LIB_COMPLETED:
+				tabbedPanel.setData(apkScanner.getApkInfo(), 2);
+				break;
+			case IMAGE_COMPLETED:
+				tabbedPanel.setData(apkScanner.getApkInfo(), 3);
+				break;
+			case ACTIVITY_COMPLETED:
+				tabbedPanel.setData(apkScanner.getApkInfo(), 4);
+				break;
+			case CERT_COMPLETED:
+				tabbedPanel.setData(apkScanner.getApkInfo(), 5);
+				break;
+			default:
+				break;
+			}
 		}
 	}
 
