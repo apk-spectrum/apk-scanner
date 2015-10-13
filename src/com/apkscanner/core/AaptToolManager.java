@@ -297,9 +297,10 @@ public class AaptToolManager extends ApkScannerStub
         	
         	if(manifestPath.getNode("/manifest/application/"+tag+"[@"+namespace+"name='" + name + "']/intent-filter/category[@"+namespace+"name='android.intent.category.LAUNCHER']") != null) {
         		name += " - LAUNCHER";
+        		activityList.add(0, new Object[] { name, tag, startup, intents });
+        	} else {
+        		activityList.add(new Object[] { name, tag, startup, intents });
         	}
-        	
-        	activityList.add(new Object[] { name, tag, startup, intents });
         }
 
         return activityList;
