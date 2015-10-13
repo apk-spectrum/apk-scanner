@@ -34,8 +34,8 @@ public class InstallDlg extends JDialog implements ActionListener{
         f.setTitle(Resource.STR_APP_NAME.getString());
 		f.setIconImage(Resource.IMG_TOOLBAR_INSTALL.getImageIcon().getImage());
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.setBounds(0, 0, 900, 500);
-		f.setMinimumSize(new Dimension(900, 500));
+        f.setBounds(0, 0, 700, 400);
+		f.setMinimumSize(new Dimension(700, 400));
 		f.setLocationRelativeTo(null);
 		//f.setResizable(false);
         f.pack();
@@ -44,6 +44,8 @@ public class InstallDlg extends JDialog implements ActionListener{
         //f.setLayout(new BorderLayout());
         JButton btnExit = new JButton("btnExit");
         JButton btnLogBox = new JButton("LogBox");
+        JButton btnshowLogBox = new JButton("showLogBox");
+        
         
         JPanel framelayout = new JPanel(new BorderLayout());
         JPanel parent = new JPanel(new GridLayout(1,2));
@@ -63,6 +65,8 @@ public class InstallDlg extends JDialog implements ActionListener{
         
         ButtonBox.add(btnExit,BorderLayout.EAST );
         ButtonBox.add(LogBox, BorderLayout.SOUTH);
+        ButtonBox.add(btnshowLogBox, BorderLayout.WEST);
+        
         
         framelayout.add(parent,BorderLayout.CENTER);
         framelayout.add(ButtonBox,BorderLayout.SOUTH);
