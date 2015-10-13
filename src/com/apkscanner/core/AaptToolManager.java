@@ -16,15 +16,15 @@ import com.apkscanner.util.FileUtil.FSStyle;
 public class AaptToolManager extends ApkScannerStub
 {
 	private AaptXmlTreePath manifestPath = null;
-	
-	private String androidManifest[];
-	private String resourcesWithValue[];
+	private String namespace = null;
+	private String androidManifest[] = null;
+	private String resourcesWithValue[] = null;
 	
 	public AaptToolManager(StatusListener statusListener)
 	{
 		super(statusListener);
 	}
-
+	
 	@Override
 	public void openApk(final String apkFilePath, String frameworkRes)
 	{
@@ -53,70 +53,71 @@ public class AaptToolManager extends ApkScannerStub
 					apkInfo.ApkPath = apkFilePath;
 				}
 				
-				if(statusListener != null) statusListener.OnProgress(5, "I: start open apk");
+				progress(5, "I: start open apk");
 
-				if(statusListener != null) statusListener.OnProgress(5, "I: getDump AndroidManifest...");
+				progress(5, "I: getDump AndroidManifest...");
 				androidManifest = AaptWrapper.Dump.getXmltree(apkFilePath, new String[] {"AndroidManifest.xml"});
 
-				if(statusListener != null) statusListener.OnProgress(10, "I: read aapt dump resources...");
+				progress(10, "I: read aapt dump resources...");
 				resourcesWithValue = AaptWrapper.Dump.getResources(apkFilePath, true);
 
-				if(statusListener != null) statusListener.OnProgress(20, "I: createAaptXmlTree...");
+				progress(20, "I: createAaptXmlTree...");
 				manifestPath = new AaptXmlTreePath();
 				manifestPath.createAaptXmlTree(androidManifest);
+				namespace = manifestPath.getNamespace() + ":"; 
 				
 				
-				if(statusListener != null) statusListener.OnProgress(5, "I: read basic info...");
+				progress(5, "I: read basic info...");
 				
 				AaptXmlTreeNode manifestTag = manifestPath.getNode("/manifest"); 
 
 				// package
-				apkInfo.PackageName = manifestTag.getAttribute("package");
-				apkInfo.VersionCode = hex2IntString(manifestTag.getAttribute("android:versionCode"));
-				apkInfo.VersionName = manifestTag.getAttribute("android:versionName");
-				apkInfo.SharedUserId = manifestTag.getAttribute("android:sharedUserId");
+				apkInfo.PackageName = getAttrValue(manifestTag , "package");
+				apkInfo.VersionCode = hex2IntString(getAttrValue(manifestTag, "versionCode"));
+				apkInfo.VersionName = getAttrValue(manifestTag, "versionName");
+				apkInfo.SharedUserId = getAttrValue(manifestTag, "sharedUserId");
 				
 				AaptXmlTreeNode usesSdkTag = manifestPath.getNode("/manifest/uses-sdk");
 				if(usesSdkTag != null) {
-					apkInfo.TargerSDKversion = hex2IntString(usesSdkTag.getAttribute("android:targetSdkVersion"));
-					apkInfo.MinSDKversion = hex2IntString(usesSdkTag.getAttribute("android:minSdkVersion"));
+					apkInfo.TargerSDKversion = hex2IntString(getAttrValue(usesSdkTag, "targetSdkVersion"));
+					apkInfo.MinSDKversion = hex2IntString(getAttrValue(usesSdkTag, "minSdkVersion"));
 				}
 
 				// label & icon
 				AaptXmlTreeNode applicationTag = manifestPath.getNode("/manifest/application");
-				apkInfo.Labelname = getResourceValues(applicationTag.getAttribute("android:label"), true);
-				String iconPaths[] = getResourceValues(applicationTag.getAttribute("android:icon"), false);
-				if(iconPaths.length > 0) {
+				apkInfo.Labelname = getAttrValues(applicationTag, "label", true);
+				String iconPaths[] = getAttrValues(applicationTag, "icon");
+				if(iconPaths != null && iconPaths.length > 0) {
 					apkInfo.IconPath = iconPaths[iconPaths.length-1];
 				}
 
-				String debuggable = applicationTag.getAttribute("android:debuggable");
+				String debuggable = getAttrValue(applicationTag, "debuggable");
 				apkInfo.debuggable = debuggable != null && debuggable.toLowerCase().equals("true");
 
 		        // hidden
-		        if(manifestPath.getNode("/manifest/application/activity/intent-filter/category[@android:name='android.intent.category.LAUNCHER']") != null) {
+		        if(manifestPath.getNode("/manifest/application/activity/intent-filter/category[@"+namespace+"name='android.intent.category.LAUNCHER']") == null) {
 		        	apkInfo.isHidden = true;
 		        }
 
 		        // startup
-		        if(manifestPath.getNode("/manifest/uses-permission[@android:name='android.permission.RECEIVE_BOOT_COMPLETED']") != null) {
+		        if(manifestPath.getNode("/manifest/uses-permission[@"+namespace+"name='android.permission.RECEIVE_BOOT_COMPLETED']") != null) {
 		        	apkInfo.Startup = "START_UP";
 		        } else {
 		        	apkInfo.Startup = "";
 		        }
 		        Log.i("Startup : " + apkInfo.Startup + apkInfo.isHidden);
 		        
-		        if(statusListener != null) statusListener.OnProgress(5, "I: read permissions...");
+		        progress(5, "I: read permissions...");
 		        // permission
 		        apkInfo.ProtectionLevel = "";
 		        //progress(5,"parsing permission...\n");
 		        AaptXmlTreeNode[] permTag = manifestPath.getNodeList("/manifest/uses-permission");
-		        Log.i(">>>>>> permTag length " + permTag.length);
 		        for( int idx=0; idx < permTag.length; idx++ ){
 		        	if(idx==0) apkInfo.Permissions = "<uses-permission> [" + permTag.length + "]";
-		        	apkInfo.Permissions += "\n" + permTag[idx].getAttribute("android:name");
-		        	apkInfo.PermissionList.add(permTag[idx].getAttribute("android:name"));
-		        	String sig = permTag[idx].getAttribute("android:protectionLevel");
+		        	String perm = getAttrValue(permTag[idx], "name");
+		        	apkInfo.Permissions += "\n" + perm;
+		        	apkInfo.PermissionList.add(perm);
+		        	String sig = getAttrValue(permTag[idx], "protectionLevel");
 		        	if(sig != null && sig.equals("signature")) {
 		        		apkInfo.Permissions += " - <SIGNATURE>";
 		        		apkInfo.ProtectionLevel = "SIGNATURE";
@@ -125,9 +126,10 @@ public class AaptToolManager extends ApkScannerStub
 		        permTag = manifestPath.getNodeList("/manifest/permission");
 		        for( int idx=0; idx < permTag.length; idx++ ){
 		        	if(idx==0) apkInfo.Permissions += "\n\n<permission> [" + permTag.length + "]";
-		        	apkInfo.Permissions += "\n" + permTag[idx].getAttribute("android:name");
-		        	apkInfo.PermissionList.add(permTag[idx].getAttribute("android:name"));
-		        	String sig = permTag[idx].getAttribute("android:protectionLevel");
+		        	String perm = getAttrValue(permTag[idx], "name");
+		        	apkInfo.Permissions += "\n" + perm;
+		        	apkInfo.PermissionList.add(perm);
+		        	String sig = getAttrValue(permTag[idx], "protectionLevel");
 		        	if(sig != null && sig.equals("signature")) {
 		        		apkInfo.Permissions += " - <SIGNATURE>";
 		        		apkInfo.ProtectionLevel = "SIGNATURE";
@@ -137,24 +139,24 @@ public class AaptToolManager extends ApkScannerStub
 		        apkInfo.PermGroupMap = permGroupManager.getPermGroupMap();
 		        
 		        // widget
-		        if(statusListener != null) statusListener.OnProgress(5, "I: read widgets...");
-		        AaptXmlTreeNode[] widgetTag = manifestPath.getNodeList("/manifest/application/receiver/meta-data[@android:name='android.appwidget.provider']/..");
+		        progress(5, "I: read widgets...");
+		        AaptXmlTreeNode[] widgetTag = manifestPath.getNodeList("/manifest/application/receiver/meta-data[@"+namespace+"name='android.appwidget.provider']/..");
 		        //Log.i("Normal widgetList cnt = " + xmlAndroidManifest.getLength());
 		        for( int idx=0; idx < widgetTag.length; idx++ ){
 		        	Object[] widgetExtraInfo = {apkInfo.IconPath, ""};
 
 		        	String widgetTitle = null;
 		        	String widgetActivity = null;
-		        	String tmp[] = getResourceValues(widgetTag[idx].getAttribute("android:label"), false);
-		        	if(tmp.length > 0) {
+		        	String tmp[] = getAttrValues(widgetTag[idx], "label");
+		        	if(tmp !=null && tmp.length > 0) {
 		        		widgetTitle = tmp[0];
 		        	}
-		        	tmp = getResourceValues(widgetTag[idx].getAttribute("android:name"), false);
-		        	if(tmp.length > 0) {
+		        	tmp = getAttrValues(widgetTag[idx], "name");
+		        	if(tmp !=null && tmp.length > 0) {
 		        		widgetActivity = tmp[0];
 		        	}
 
-		        	Object[] extraInfo = getWidgetInfo(getResourceValues(widgetTag[idx].getNode("meta-data").getAttribute("android:resource"), false));
+		        	Object[] extraInfo = getWidgetInfo(getResourceValues(widgetTag[idx].getNode("meta-data").getAttribute(namespace + "resource"), false));
 		        	if(extraInfo != null) {
 		        		widgetExtraInfo = extraInfo;
 		        	}
@@ -162,36 +164,36 @@ public class AaptToolManager extends ApkScannerStub
 		        	apkInfo.WidgetList.add(new Object[] {widgetExtraInfo[0], widgetTitle, widgetExtraInfo[1], widgetActivity, "Normal"});
 		        }
 		        
-		        widgetTag = manifestPath.getNodeList("/manifest/application/activity-alias/intent-filter/action[@android:name='android.intent.action.CREATE_SHORTCUT']/../..");
+		        widgetTag = manifestPath.getNodeList("/manifest/application/activity-alias/intent-filter/action[@"+namespace+"name='android.intent.action.CREATE_SHORTCUT']/../..");
 		        //Log.i("Shortcut widgetList cnt = " + xmlAndroidManifest.getLength());
 		        for( int idx=0; idx < widgetTag.length; idx++ ){
 		        	String widgetTitle = null;
 		        	String widgetActivity = null;
-		        	String tmp[] = getResourceValues(widgetTag[idx].getAttribute("android:label"), false);
-		        	if(tmp.length > 0) {
+		        	String tmp[] = apkInfo.Labelname;
+		        	if(tmp != null && tmp.length > 0) {
 		        		widgetTitle = tmp[0];
 		        	}
-		        	tmp = getResourceValues(widgetTag[idx].getAttribute("android:name"), false);
-		        	if(tmp.length > 0) {
+		        	tmp = getAttrValues(widgetTag[idx], "name");
+		        	if(tmp != null && tmp.length > 0) {
 		        		widgetActivity = tmp[0];
 		        	}
 
 		        	apkInfo.WidgetList.add(new Object[] {apkInfo.IconPath, widgetTitle, "1 X 1", widgetActivity, "Shortcut"});
 		        }
 
-		        if(statusListener != null) statusListener.OnProgress(5, "I: read activitys...");
+		        progress(5, "I: read activitys...");
 		        // Activity/Service/Receiver/provider intent-filter
 		        apkInfo.ActivityList.addAll(getActivityInfo("activity"));
 		        apkInfo.ActivityList.addAll(getActivityInfo("service"));
 		        apkInfo.ActivityList.addAll(getActivityInfo("receiver"));
 		        apkInfo.ActivityList.addAll(getActivityInfo("provider"));
 
-		        if(statusListener != null) statusListener.OnProgress(5, "I: read Imanges list...");
+		        progress(5, "I: read Imanges list...");
 		        Collections.addAll(apkInfo.ImageList, ZipFileUtil.findFiles(apkInfo.ApkPath, ".png", ".*drawable.*"));
-		        if(statusListener != null) statusListener.OnProgress(5, "I: read Imanges list...");
+		        progress(5, "I: read Imanges list...");
 		        Collections.addAll(apkInfo.LibList, ZipFileUtil.findFiles(apkInfo.ApkPath, ".so", null));
 
-		        if(statusListener != null) statusListener.OnProgress(5, "I: read signatures...");
+		        progress(5, "I: read signatures...");
 				solveCert();
 		        
 		        apkInfo.verify();
@@ -221,8 +223,10 @@ public class AaptToolManager extends ApkScannerStub
 			return null;
 
 		for(int i = 0; i < resourcesWithValue.length; i++) {
-			if(withConfig && resourcesWithValue[i].indexOf(" config ") >= 0) {
-				config = resourcesWithValue[i].replaceAll(".*config (.*)", "$1 ");
+			if(withConfig && resourcesWithValue[i].indexOf(" config (default)") >= 0) {
+				config = "";
+			} else if(withConfig && resourcesWithValue[i].indexOf(" config ") >= 0) {
+				config = resourcesWithValue[i].replaceAll(".*config \\(?(\\w*)\\)?.*", "$1 : ");
 			}
 			if(resourcesWithValue[i].indexOf(filter) < 0)
 				continue;
@@ -241,25 +245,57 @@ public class AaptToolManager extends ApkScannerStub
 		return values.toArray(new String[0]);
 	}
 	
+	private String getAttrValue(AaptXmlTreeNode node, String attr)
+	{
+		String value[] = getAttrValues(node, attr);
+		if(value == null || value.length == 0)
+			return null;
+		return value[0];
+	}
+	
+	private String[] getAttrValues(AaptXmlTreeNode node, String attr)
+	{
+		return getAttrValues(node, attr, false);
+	}
+	
+	private String[] getAttrValues(AaptXmlTreeNode node, String attr, boolean withConfig)
+	{
+		String value = node.getAttribute(namespace + attr);
+		String[] resVal = null;
+		if(value == null) {
+			value = node.getAttribute(attr);
+		}
+		while(value != null && value.startsWith("@")) {
+			resVal = getResourceValues(value, withConfig);
+			if(resVal == null || resVal.length == 0)
+				break;
+			value = resVal[0];
+		}
+		if(resVal == null || resVal.length == 0) {
+			resVal = new String[] { value };
+		}
+		return resVal;
+	}
+	
 	private ArrayList<Object[]> getActivityInfo(String tag)
 	{
 		ArrayList<Object[]> activityList = new ArrayList<Object[]>();
 		AaptXmlTreeNode[] activityTag = manifestPath.getNodeList("/manifest/application/"+tag);
         for( int idx=0; idx < activityTag.length; idx++ ){
-        	String name = activityTag[idx].getAttribute("android:name");
+        	String name = getAttrValue(activityTag[idx], "name");
         	String startup = "X";
         	String intents = "";
 
-        	AaptXmlTreeNode[] intentFilter = manifestPath.getNodeList("/manifest/application/"+tag+"[@name='" + name + "']/intent-filter/action");
+        	AaptXmlTreeNode[] intentFilter = manifestPath.getNodeList("/manifest/application/"+tag+"[@"+namespace+"name='" + name + "']/intent-filter/action");
         	for( int i=0; i < intentFilter.length; i++ ){
-        		String act = intentFilter[i].getAttribute("android:name");
+        		String act = getAttrValue(intentFilter[i], "name");
         		if(i==0) intents += "<intent-filter> [" + intentFilter.length + "]";
         		intents += "\n" + act;
         		if(act.equals("android.intent.action.BOOT_COMPLETED"))
         			startup = "O";
         	}
         	
-        	if(manifestPath.getNode("/manifest/application/"+tag+"[@name='" + name + "']/intent-filter/category[@name='android.intent.category.LAUNCHER']") != null) {
+        	if(manifestPath.getNode("/manifest/application/"+tag+"[@"+namespace+"name='" + name + "']/intent-filter/category[@"+namespace+"name='android.intent.category.LAUNCHER']") != null) {
         		name += " - LAUNCHER";
         	}
         	
@@ -288,7 +324,7 @@ public class AaptToolManager extends ApkScannerStub
 
 		AaptXmlTreeNode widgetNode = widgetTree.getNode("/appwidget-provider/@android:minWidth");
 		if(widgetNode != null) {
-			width = widgetNode.getAttribute("android:minWidth");
+			width = getAttrValue(widgetNode, "minWidth");
 			String tmp[] = getResourceValues(width, false);
 			if(tmp.length > 0) {
 				width = tmp[tmp.length-1].replaceAll("^([0-9]*).*", "$1");
@@ -297,7 +333,7 @@ public class AaptToolManager extends ApkScannerStub
 
 		widgetNode = widgetTree.getNode("/appwidget-provider/@android:minHeight");
 		if(widgetNode != null) {
-			Height = widgetNode.getAttribute("android:minHeight");
+			Height = getAttrValue(widgetNode, "minHeight");
 			String tmp[] = getResourceValues(Height, false);
 			if(tmp.length > 0) {
 				Height = tmp[tmp.length-1].replaceAll("^([0-9]*).*", "$1");
@@ -309,14 +345,14 @@ public class AaptToolManager extends ApkScannerStub
 
 		widgetNode = widgetTree.getNode("/appwidget-provider/@android:resizeMode");
 		if(widgetNode != null) {
-			ReSizeMode = widgetNode.getAttribute("android:resizeMode");
+			ReSizeMode = getAttrValue(widgetNode, "resizeMode");
 			Size += "\n\n[ReSizeMode]\n" + ReSizeMode.replaceAll("\\|", "\n");
 		}
 
 		widgetNode = widgetTree.getNode("/appwidget-provider/@android:previewImage");
 		if(widgetNode != null) {
-			String iconPaths[] = getResourceValues(widgetNode.getAttribute("android:previewImage"), false);
-			if(iconPaths.length > 0) {
+			String iconPaths[] = getAttrValues(widgetNode, "previewImage");
+			if(iconPaths != null && iconPaths.length > 0) {
 				IconPath = iconPaths[iconPaths.length-1];
 			}
 		}
@@ -401,6 +437,13 @@ public class AaptToolManager extends ApkScannerStub
 					deleteTempPath();
 				}
 			}).start();
+		}
+	}
+
+	private void progress(int step, String msg)
+	{
+		if(statusListener != null) {
+			statusListener.OnProgress(step, msg);
 		}
 	}
 }

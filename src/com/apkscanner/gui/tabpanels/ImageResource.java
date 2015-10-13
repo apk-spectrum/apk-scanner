@@ -121,6 +121,8 @@ public class ImageResource extends JPanel implements TabDataObject
     	public void valueChanged(ListSelectionEvent event)
     	{
     		//Log.i("valueChanged : " + list.getSelectedIndex() + " event : "+ event.getSource());
+    		if(list.getSelectedIndex() < 0)
+    			return;
     		String jarPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/";
     		try {
 				photographLabel.setIcon(new ImageIcon(ImageScaler.getMaxScaledImage(

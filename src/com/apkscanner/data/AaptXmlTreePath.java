@@ -10,6 +10,7 @@ public class AaptXmlTreePath
 {
 	private AaptXmlTreeNode topNode = null;
 	private AaptXmlTreeNode[] curNodes = null;
+	private String namespace = null;
 
 	public AaptXmlTreePath()
 	{
@@ -30,6 +31,8 @@ public class AaptXmlTreePath
 		Stack<AaptXmlTreeNode> nodeStack = new Stack<AaptXmlTreeNode>();
 		nodeStack.push(topNode);
 		int curDepth = 0;
+
+		namespace = "android";
 		
 		for(String s: xmlTree) {
 			int depth = s.indexOf("E:");
@@ -38,7 +41,8 @@ public class AaptXmlTreePath
 				depth = s.indexOf("A:");
 				if(depth == -1 || !s.matches("^\\s*A:.*")) {
 					if(s.startsWith("N:")) {
-						Log.i("Namespace " + s);
+						namespace = xmlTree[0].replaceAll("N: (.*)=http://schemas.android.com/apk/res/android", "$1");
+						Log.i("namespace : " + namespace);
 					} else {
 						Log.w("Unknown tag : " + s.trim());
 					}
@@ -94,6 +98,11 @@ public class AaptXmlTreePath
 			}
 		}
 		Log.v(xmlTree[0] + ", curDepth " + curDepth);
+	}
+	
+	public String getNamespace()
+	{
+		return namespace;
 	}
 	
 	public AaptXmlTreeNode getNode(String expression)
@@ -213,17 +222,4 @@ public class AaptXmlTreePath
 		
 		return false;
 	}
-	
-	/*
-	private AaptXmlTreeNode getNodeByAbsPath(String path)
-	{
-		AaptXmlTreeNode node = topNode;
-		for(String s: path.split("/")) {
-			if(s.isEmpty()) continue;
-			node = node.getNode(s);
-			if(node == null) break;
-		}
-		return node;
-	}
-	*/
 }
