@@ -206,7 +206,7 @@ public class AaptToolManager extends ApkScannerStub
 	private String hex2IntString(String hexString)
 	{
 		if(hexString == null || hexString.isEmpty() || !hexString.matches("^(0x)?[0-9a-f]*"))
-			return "0";
+			return "";
 		return String.valueOf(Integer.parseInt(hexString.replaceAll("^0x([0-9a-f]*)", "$1"), 16));
 	}
 
