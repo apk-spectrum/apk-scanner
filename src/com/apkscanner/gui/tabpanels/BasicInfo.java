@@ -34,7 +34,6 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	
 	private boolean wasSetData = false;
 	
-	private String ApkFilePath = null;
 	private String[] Labelname = null;
 	private String PackageName = null;
 	private String VersionName = null;
@@ -198,7 +197,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("<table>");
 		strTabInfo.append("  <tr>");
 		strTabInfo.append("    <td width=170 height=" + infoHeight + ">");
-		strTabInfo.append("      <image src=\"jar:file:" + ApkFilePath.replaceAll("#", "%23") + "!/" + IconPath + "\" width=150 height=150 />");
+		strTabInfo.append("      <image src=\"jar:file:" + IconPath + "\" width=150 height=150 />");
 		strTabInfo.append("    </td>");
 		strTabInfo.append("    <td height=" + infoHeight + ">");
 		strTabInfo.append("      <div id=\"basic-info\">");
@@ -261,7 +260,6 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		}
 		wasSetData = true;
 		
-		ApkFilePath = apkInfo.ApkPath;
 		Labelname = apkInfo.Labelname;
 		PackageName = apkInfo.PackageName;
 		VersionName = apkInfo.VersionName;

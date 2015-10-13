@@ -42,7 +42,7 @@ abstract public class ApkScannerStub
 
 	public void openApk(final String apkFilePath)
 	{
-		openApk(apkFilePath, null);
+		openApk(apkFilePath, (String)Resource.PROP_FRAMEWORK_RES.getData());
 	}
 	
 	abstract public void openApk(final String apkFilePath, String frameworkRes);

@@ -30,7 +30,7 @@ public class AaptXmlTreePath
 		AaptXmlTreeNode curNode = topNode;
 		Stack<AaptXmlTreeNode> nodeStack = new Stack<AaptXmlTreeNode>();
 		nodeStack.push(topNode);
-		int curDepth = 0;
+		int curDepth = -1;
 
 		namespace = "android";
 		
@@ -51,6 +51,9 @@ public class AaptXmlTreePath
 				}
 			} else {
 				type = 0;
+				if(curDepth == -1) {
+					curDepth = depth - 2;
+				}
 			}
 			
 			if(type == 0) {
@@ -61,7 +64,7 @@ public class AaptXmlTreePath
 				String nodeName = s.replaceAll("^\\s*E: ([^\\s*]*) .*", "$1");
 
 				AaptXmlTreeNode newNode = new AaptXmlTreeNode(curNode, nodeName);
-				//Log.d("addChild node " + nodeName + ", " + curDepth);
+				//Log.d("addChild node " + nodeName + ", " + curDepth + ", path " + newNode.getPath());
 				curNode.addNode(nodeName, newNode);
 				nodeStack.push(curNode);
 				curNode = newNode;

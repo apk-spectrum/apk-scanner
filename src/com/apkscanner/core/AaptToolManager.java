@@ -17,8 +17,8 @@ public class AaptToolManager extends ApkScannerStub
 {
 	private AaptXmlTreePath manifestPath = null;
 	private String namespace = null;
-	private String androidManifest[] = null;
-	private String resourcesWithValue[] = null;
+	private String[] androidManifest = null;
+	private String[] resourcesWithValue = null;
 	
 	public AaptToolManager(StatusListener statusListener)
 	{
@@ -26,7 +26,7 @@ public class AaptToolManager extends ApkScannerStub
 	}
 	
 	@Override
-	public void openApk(final String apkFilePath, String frameworkRes)
+	public void openApk(final String apkFilePath, final String frameworkRes)
 	{
 		new Thread(new Runnable() {
 			public void run()
@@ -85,14 +85,36 @@ public class AaptToolManager extends ApkScannerStub
 
 				// label & icon
 				AaptXmlTreeNode applicationTag = manifestPath.getNode("/manifest/application");
-				apkInfo.Labelname = getAttrValues(applicationTag, "label", true);
-				String iconPaths[] = getAttrValues(applicationTag, "icon");
-				if(iconPaths != null && iconPaths.length > 0) {
-					apkInfo.IconPath = iconPaths[iconPaths.length-1];
+				if(applicationTag != null) {
+					apkInfo.Labelname = getAttrValues(applicationTag, "label", true);
+					String[] iconPaths = getAttrValues(applicationTag, "icon");
+					if(iconPaths != null && iconPaths.length > 0) {
+						apkInfo.IconPath = iconPaths[iconPaths.length-1];
+					}
+					if(apkInfo.IconPath != null && apkInfo.IconPath.startsWith("@")) {
+						if(frameworkRes != null) {
+							String[] backup = resourcesWithValue;
+							for(String res: frameworkRes.split(";")) {
+								progress(10, "I: include resources... " + res);
+								resourcesWithValue = AaptWrapper.Dump.getResources(res, true);
+								
+								iconPaths = getResourceValues(apkInfo.IconPath, false);
+								if(iconPaths != null && iconPaths.length > 0) {
+									apkInfo.IconPath = res.replaceAll("#", "%23") + "!/" + iconPaths[iconPaths.length-1];
+									break;
+								}
+							}
+							resourcesWithValue = backup;
+						}
+					} else {
+						apkInfo.IconPath = apkInfo.ApkPath.replaceAll("#", "%23") + "!/" + apkInfo.IconPath;
+					}
+	
+					String debuggable = getAttrValue(applicationTag, "debuggable");
+					apkInfo.debuggable = debuggable != null && debuggable.toLowerCase().equals("true");
+				} else {
+					Log.w("Warring: node was not existed : /manifest/application");
 				}
-
-				String debuggable = getAttrValue(applicationTag, "debuggable");
-				apkInfo.debuggable = debuggable != null && debuggable.toLowerCase().equals("true");
 
 		        // hidden
 		        if(manifestPath.getNode("/manifest/application/activity/intent-filter/category[@"+namespace+"name='android.intent.category.LAUNCHER']") == null) {
@@ -216,7 +238,7 @@ public class AaptToolManager extends ApkScannerStub
 		
 		if(id == null || !id.startsWith("@"))
 			return new String[] { id };
-		String filter = "  resource " + id.substring(1);
+		String filter = "^\\s*resource 0x0*" + id.replaceAll("@0x0*(.*)", "$1") + ".*";
 		String config = null;
 
 		if(resourcesWithValue == null)
@@ -228,17 +250,16 @@ public class AaptToolManager extends ApkScannerStub
 			} else if(withConfig && resourcesWithValue[i].indexOf(" config ") >= 0) {
 				config = resourcesWithValue[i].replaceAll(".*config \\(?(\\w*)\\)?.*", "$1 : ");
 			}
-			if(resourcesWithValue[i].indexOf(filter) < 0)
+			if(!resourcesWithValue[i].matches(filter))
 				continue;
-			
-			Log.i(resourcesWithValue[i]);
+			//Log.i(resourcesWithValue[i]);
 
 			if(i+1 < resourcesWithValue.length) {
 				String val = resourcesWithValue[i+1].replaceAll("^\\s*\\([^\\(\\)]*\\) (.*)", "$1").replaceAll("^['\"](.*)['\"]\\s*$", "$1");
 				if(withConfig)
 					val = config + val;
 				values.add(val);
-				Log.d("getResourceValues() id " + id + ", val " + val);
+				//Log.d("getResourceValues() id " + id + ", val " + val);
 			}
 		}
 
@@ -260,6 +281,7 @@ public class AaptToolManager extends ApkScannerStub
 	
 	private String[] getAttrValues(AaptXmlTreeNode node, String attr, boolean withConfig)
 	{
+		//Log.d("getAttrValues() " + node + ", attr : " + attr);
 		String value = node.getAttribute(namespace + attr);
 		String[] resVal = null;
 		if(value == null) {
@@ -429,6 +451,8 @@ public class AaptToolManager extends ApkScannerStub
 	@Override
 	public void clear(boolean sync)
 	{
+		if(apkInfo == null)
+			return;
 		if(sync) {
 			deleteTempPath();
 		} else {
