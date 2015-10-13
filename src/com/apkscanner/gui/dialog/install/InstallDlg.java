@@ -1,6 +1,9 @@
 package com.apkscanner.gui.dialog.install;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -8,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import com.apkscanner.resource.Resource;
 
@@ -27,18 +31,44 @@ public class InstallDlg extends JDialog implements ActionListener{
         //Create and set up the window.
         
         JFrame f = new JFrame();
-
-		f.setTitle(Resource.STR_APP_NAME.getString());
+        f.setTitle(Resource.STR_APP_NAME.getString());
 		f.setIconImage(Resource.IMG_TOOLBAR_INSTALL.getImageIcon().getImage());
-        
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.setBounds(0, 0, 700, 500);
-		f.setMinimumSize(new Dimension(650, 500));
+        f.setBounds(0, 0, 900, 500);
+		f.setMinimumSize(new Dimension(900, 500));
 		f.setLocationRelativeTo(null);
-		f.setResizable(false);
+		//f.setResizable(false);
         f.pack();
         f.setVisible(true);
-     
+        //f.getContentPane().setLayout(new BorderLayout());
+        //f.setLayout(new BorderLayout());
+        JButton btnExit = new JButton("btnExit");
+        JButton btnLogBox = new JButton("LogBox");
+        
+        JPanel framelayout = new JPanel(new BorderLayout());
+        JPanel parent = new JPanel(new GridLayout(1,2));
+        JPanel CheckListBox = new JPanel(new BorderLayout());
+        JPanel MessageBox = new JPanel(new BorderLayout());
+        JPanel ButtonBox = new JPanel(new BorderLayout());
+        JPanel LogBox= new JPanel(new BorderLayout());
+        
+        CheckListBox.setBackground(Color.darkGray);
+        MessageBox.setBackground(Color.lightGray);
+        ButtonBox.setBackground(Color.PINK);
+        
+        parent.add(CheckListBox, BorderLayout.WEST);
+        parent.add(MessageBox, BorderLayout.EAST);
+        
+        LogBox.add(btnLogBox);
+        
+        ButtonBox.add(btnExit,BorderLayout.EAST );
+        ButtonBox.add(LogBox, BorderLayout.SOUTH);
+        
+        framelayout.add(parent,BorderLayout.CENTER);
+        framelayout.add(ButtonBox,BorderLayout.SOUTH);
+        
+        f.add(framelayout);
+        
     }
 	
     public static void main(String[] args) {
