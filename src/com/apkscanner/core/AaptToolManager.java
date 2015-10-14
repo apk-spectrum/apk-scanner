@@ -29,44 +29,41 @@ public class AaptToolManager extends ApkScannerStub
 	@Override
 	public void openApk(final String apkFilePath, final String frameworkRes)
 	{
+		apkInfo = new ApkInfo();
+		
+		File apkFile = new File(apkFilePath);
+		if(!apkFile.exists()) {
+			Log.e("No Such APK file");
+			if(statusListener != null) statusListener.OnError();
+			return;
+		}
+
+		apkInfo.ApkPath = apkFilePath;
+		apkInfo.ApkSize = FileUtil.getFileSize(apkFile, FSStyle.FULL);
+		apkInfo.WorkTempPath = FileUtil.makeTempPath(apkInfo.ApkPath.substring(apkInfo.ApkPath.lastIndexOf(File.separator)));
+		Log.i("Temp path : " + apkInfo.WorkTempPath);
+		
 		new Thread(new Runnable() {
 			public void run()
 			{
 				if(statusListener != null) statusListener.OnStart();
 				stateChanged(Status.INITIALIZING);
-				
-				apkInfo = new ApkInfo();
-				
-				File apkFile = new File(apkFilePath);
-
-				if(!apkFile.exists()) {
-					Log.e("No Such APK file");
-					if(statusListener != null) statusListener.OnError();
-					return;
-				}
 
 				progress(5, "I: start open apk");
 				progress(5, "I: getDump AndroidManifest...");
 				androidManifest = AaptWrapper.Dump.getXmltree(apkFilePath, new String[] { "AndroidManifest.xml" });
 
-				progress(10, "I: read aapt dump resources...");
+				progress(30, "I: read aapt dump resources...");
 				resourcesWithValue = AaptWrapper.Dump.getResources(apkFilePath, true);
 
-				progress(20, "I: createAaptXmlTree...");
+				progress(30, "I: createAaptXmlTree...");
 				manifestPath = new AaptXmlTreePath();
 				manifestPath.createAaptXmlTree(androidManifest);
 				namespace = manifestPath.getNamespace() + ":"; 
 				
 				stateChanged(Status.INITIALIZEED);
-				
-				apkInfo.ApkPath = apkFilePath;
-				apkInfo.ApkSize = FileUtil.getFileSize(apkFile, FSStyle.FULL);
-				
-				apkInfo.WorkTempPath = FileUtil.makeTempPath(apkInfo.ApkPath.substring(apkInfo.ApkPath.lastIndexOf(File.separator)));
-				Log.i("Temp path : " + apkInfo.WorkTempPath);
-				
+
 				progress(5, "I: read basic info...");
-				
 				AaptXmlTreeNode manifestTag = manifestPath.getNode("/manifest"); 
 
 				// package
@@ -211,18 +208,6 @@ public class AaptToolManager extends ApkScannerStub
 		        apkInfo.ActivityList.addAll(getActivityInfo("receiver"));
 		        apkInfo.ActivityList.addAll(getActivityInfo("provider"));
 		        stateChanged(Status.ACTIVITY_COMPLETED);
-
-		        progress(5, "I: read lib list...");
-		        Collections.addAll(apkInfo.LibList, ZipFileUtil.findFiles(apkInfo.ApkPath, ".so", null));
-		        stateChanged(Status.LIB_COMPLETED);
-
-		        progress(5, "I: read signatures...");
-				solveCert();
-				stateChanged(Status.CERT_COMPLETED);
-		        
-		        progress(5, "I: read Imanges list...");
-		        Collections.addAll(apkInfo.ImageList, ZipFileUtil.findFiles(apkInfo.ApkPath, ".png", ".*drawable.*"));
-		        stateChanged(Status.IMAGE_COMPLETED);
 		        
 		        apkInfo.verify();
 
@@ -230,6 +215,33 @@ public class AaptToolManager extends ApkScannerStub
 		        stateChanged(Status.CERT_COMPLETED);
 		        
 		        if(statusListener != null) statusListener.OnSuccess();
+			}
+		}).start();
+		
+		new Thread(new Runnable() {
+			public void run()
+			{
+		        progress(5, "I: read Imanges list...");
+		        Collections.addAll(apkInfo.ImageList, ZipFileUtil.findFiles(apkInfo.ApkPath, ".png", ".*drawable.*"));
+		        stateChanged(Status.IMAGE_COMPLETED);
+			}
+		}).start();
+		
+		new Thread(new Runnable() {
+			public void run()
+			{
+		        progress(5, "I: read signatures...");
+				solveCert();
+				stateChanged(Status.CERT_COMPLETED);
+			}
+		}).start();
+		
+		new Thread(new Runnable() {
+			public void run()
+			{
+		        progress(5, "I: read lib list...");
+		        Collections.addAll(apkInfo.LibList, ZipFileUtil.findFiles(apkInfo.ApkPath, ".so", null));
+		        stateChanged(Status.LIB_COMPLETED);
 			}
 		}).start();
 	}

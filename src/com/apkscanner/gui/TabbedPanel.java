@@ -93,7 +93,10 @@ public class TabbedPanel extends JTabbedPane
     
 	public void setData(ApkInfo apkInfo, int id)
 	{
-		if(id == -1 || id == 0) ((TabDataObject)(getComponent(0))).setData(apkInfo);
+		if(id == -1 || id == 0) {
+			((TabDataObject)(getComponent(0))).setData(apkInfo);
+			setSelectedIndex(0);
+		}
 
 		if(apkInfo != null) {
 			if(id == -1 || id == 1) setPanelData(1, apkInfo.WidgetList.size(), apkInfo);
@@ -108,8 +111,6 @@ public class TabbedPanel extends JTabbedPane
 				if(id == -1 || id == i) setPanelData(i, 0, null);
 			}
 		}
-
-		setSelectedIndex(0);
 	}
 
 	private void setPanelData(int panelIdx, int dataSize, ApkInfo apkInfo)
