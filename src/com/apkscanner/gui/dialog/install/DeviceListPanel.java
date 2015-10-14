@@ -158,7 +158,7 @@ public class DeviceListPanel extends JPanel implements ActionListener
 
 		// Put everything together, using the content pane's BorderLayout.
 		JLabel description = new JLabel("디바이스를 선택 하세요??");
-		this.setBorder(new EmptyBorder(100, 10, 10, 10));
+		this.setBorder(new EmptyBorder(50, 10, 10, 10));
 		this.add(description,BorderLayout.NORTH);
 		this.add(listPane, BorderLayout.CENTER);
 		this.add(buttonPane, BorderLayout.PAGE_END);

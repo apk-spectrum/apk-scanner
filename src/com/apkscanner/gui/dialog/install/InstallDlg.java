@@ -12,27 +12,46 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.apkscanner.gui.dialog.install.*;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.test.ProgressBarTest;
+import com.apkscanner.util.Log;
 
 public class InstallDlg extends JDialog implements ActionListener{
 	
-	static InstallCheckTable TestTable;
-	static DeviceListPanel deviceListDig;
+	InstallCheckTable TestTable;
+	DeviceListPanel deviceListDig;
+	JScrollPane scrollPane;
+	JPanel framelayout;
+	JFrame f;
+	JTextArea taskOutput;
 	public InstallDlg() {
+		createAndShowGUI();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		
+		if ("showLogBox".equals(e.getActionCommand())) {
+			if(scrollPane.isVisible()) {
+				scrollPane.setVisible(false);
+				this.pack();
+			} else {
+				scrollPane.setVisible(true);
+				this.pack();
+			}
+		} else if("Refresh".equals(e.getActionCommand())) {
+						
+		}
 	}
 
-    private static void createAndShowGUI() {
+    private void createAndShowGUI() {
         //Create and set up the window.
         
 		try {
@@ -42,27 +61,30 @@ public class InstallDlg extends JDialog implements ActionListener{
 			e1.printStackTrace();
 		}
     	
-        JFrame f = new JFrame();
+        f = new JFrame();
         
         TestTable = new InstallCheckTable();
         deviceListDig = new DeviceListPanel();
         
         //TestTable.createAndShowGUI();
         
-        f.setTitle(Resource.STR_APP_NAME.getString());
-		f.setIconImage(Resource.IMG_TOOLBAR_INSTALL.getImageIcon().getImage());
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.setBounds(0, 0, 700, 400);
-		f.setMinimumSize(new Dimension(700, 400));
-		f.setLocationRelativeTo(null);
-		//f.setResizable(false);
-        f.pack();
-        f.setVisible(true);
+        this.setTitle(Resource.STR_APP_NAME.getString());
+        this.setIconImage(Resource.IMG_TOOLBAR_INSTALL.getImageIcon().getImage());
+        //this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //this.setBounds(0, 0, 700, 400);
+        this.setPreferredSize(new Dimension(700,400));
+        
+         this.setMinimumSize(new Dimension(700, 400));
+        this.setLocationRelativeTo(null);
+        this.setResizable(false);
+        this.pack();
+        this.setVisible(true);
         //f.getContentPane().setLayout(new BorderLayout());
         //f.setLayout(new BorderLayout());
         JButton btnExit = new JButton("btnExit");
-        JButton btnLogBox = new JButton("LogBox");
         JButton btnshowLogBox = new JButton("showLogBox");
+        
+        btnshowLogBox.addActionListener(this);
         
         
         JPanel framelayout = new JPanel(new BorderLayout());
@@ -72,6 +94,13 @@ public class InstallDlg extends JDialog implements ActionListener{
         JPanel ButtonBox = new JPanel(new BorderLayout());
         JPanel LogBox= new JPanel(new BorderLayout());
         
+		taskOutput = new JTextArea();
+		taskOutput.setText(Log.getLog());
+		taskOutput.setEditable(false);
+		taskOutput.setCaretPosition(0);
+		scrollPane = new JScrollPane(taskOutput);
+		//scrollPane.setPreferredSize(new Dimension(600, 400));
+        
         ButtonBox.setBackground(Color.PINK);
         
         CheckListBox.add(TestTable);
@@ -80,7 +109,7 @@ public class InstallDlg extends JDialog implements ActionListener{
         parent.add(CheckListBox, BorderLayout.WEST);
         parent.add(MessageBox, BorderLayout.EAST);
         
-        LogBox.add(btnLogBox);
+        LogBox.add(scrollPane);
         
         ButtonBox.add(btnExit,BorderLayout.EAST );
         ButtonBox.add(LogBox, BorderLayout.SOUTH);
@@ -90,7 +119,10 @@ public class InstallDlg extends JDialog implements ActionListener{
         framelayout.add(parent,BorderLayout.CENTER);
         framelayout.add(ButtonBox,BorderLayout.SOUTH);
         
-        f.add(framelayout);
+        
+        scrollPane.setVisible(false);
+        
+        this.add(framelayout);
         
     }
 	
@@ -99,7 +131,7 @@ public class InstallDlg extends JDialog implements ActionListener{
         //creating and showing this application's GUI.
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                createAndShowGUI();
+            	InstallDlg dlg = new InstallDlg();                
             }
         });
     }
