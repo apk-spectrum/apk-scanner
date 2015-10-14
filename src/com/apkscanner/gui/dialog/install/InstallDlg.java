@@ -12,11 +12,16 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import com.apkscanner.resource.Resource;
+import com.apkscanner.test.MainPanel;
+import com.apkscanner.test.ProgressBarTest;
 
 public class InstallDlg extends JDialog implements ActionListener{
 	
+	static InstallCheckTable TestTable;
 	
 	public InstallDlg() {
 	}
@@ -30,7 +35,18 @@ public class InstallDlg extends JDialog implements ActionListener{
     private static void createAndShowGUI() {
         //Create and set up the window.
         
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e1) {
+			e1.printStackTrace();
+		}
+    	
         JFrame f = new JFrame();
+        
+        TestTable = new InstallCheckTable();
+        TestTable.createAndShowGUI();
+        
         f.setTitle(Resource.STR_APP_NAME.getString());
 		f.setIconImage(Resource.IMG_TOOLBAR_INSTALL.getImageIcon().getImage());
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -57,6 +73,8 @@ public class InstallDlg extends JDialog implements ActionListener{
         CheckListBox.setBackground(Color.darkGray);
         MessageBox.setBackground(Color.lightGray);
         ButtonBox.setBackground(Color.PINK);
+        
+        CheckListBox.add(TestTable);
         
         parent.add(CheckListBox, BorderLayout.WEST);
         parent.add(MessageBox, BorderLayout.EAST);
