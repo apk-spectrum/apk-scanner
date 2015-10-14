@@ -16,7 +16,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.apkscanner.resource.Resource;
-import com.apkscanner.test.MainPanel;
 import com.apkscanner.test.ProgressBarTest;
 
 public class InstallDlg extends JDialog implements ActionListener{
