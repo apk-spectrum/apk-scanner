@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowListener;
 import java.beans.*;
+
 import javax.swing.*;
 
 import com.apkscanner.resource.Resource;
@@ -59,6 +60,13 @@ public class ProgressBarDlg extends JFrame
     	setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
     	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+    	try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException
+				| IllegalAccessException | UnsupportedLookAndFeelException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
         JPanel panel = new JPanel();
         
