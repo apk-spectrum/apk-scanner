@@ -15,13 +15,14 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.apkscanner.gui.dialog.install.*;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.test.ProgressBarTest;
 
 public class InstallDlg extends JDialog implements ActionListener{
 	
 	static InstallCheckTable TestTable;
-	
+	static DeviceListPanel deviceListDig;
 	public InstallDlg() {
 	}
 
@@ -44,7 +45,9 @@ public class InstallDlg extends JDialog implements ActionListener{
         JFrame f = new JFrame();
         
         TestTable = new InstallCheckTable();
-        TestTable.createAndShowGUI();
+        deviceListDig = new DeviceListPanel();
+        
+        //TestTable.createAndShowGUI();
         
         f.setTitle(Resource.STR_APP_NAME.getString());
 		f.setIconImage(Resource.IMG_TOOLBAR_INSTALL.getImageIcon().getImage());
@@ -69,11 +72,10 @@ public class InstallDlg extends JDialog implements ActionListener{
         JPanel ButtonBox = new JPanel(new BorderLayout());
         JPanel LogBox= new JPanel(new BorderLayout());
         
-        CheckListBox.setBackground(Color.darkGray);
-        MessageBox.setBackground(Color.lightGray);
         ButtonBox.setBackground(Color.PINK);
         
         CheckListBox.add(TestTable);
+        MessageBox.add(deviceListDig);
         
         parent.add(CheckListBox, BorderLayout.WEST);
         parent.add(MessageBox, BorderLayout.EAST);
