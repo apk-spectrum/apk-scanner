@@ -256,6 +256,73 @@ public class AaptToolManager extends ApkScannerStub
 		}).start();
 	}
 	
+	public String[] getAndroidManifest()
+	{
+		return androidManifest;
+	}
+	
+	private String getResourceName(String id)
+	{
+		if(resourcesWithValue == null || id == null || !id.startsWith("@"))
+			return id;
+		String name = id;
+		String filter = "spec resource " + id.substring(1);
+		for(String s: resourcesWithValue) {
+			if(s.indexOf(filter) > -1) {
+				name = s.replaceAll(".*:(.*):.*", "@$1");
+				break;
+			}
+		}
+		return name;
+	}
+	
+	private String makeNodeXml(AaptXmlTreeNode node, String namespace, String depthSpace)
+	{
+		StringBuilder xml = new StringBuilder(depthSpace);
+
+		xml.append("<" + node.getName());
+		if(node.getName().equals("manifest")) {
+			xml.append(" xmlns:");
+			xml.append(manifestPath.getNamespace());
+			xml.append("=\"http://schemas.android.com/apk/res/android\"");
+		}
+		for(String name: node.getAttributeList()) {
+			xml.append(" ");
+			xml.append(name);
+			xml.append("=\"");
+			xml.append(getResourceName(node.getAttribute(name)));
+			xml.append("\"");
+		}
+		if(node.getNodeCount() > 0) {
+			xml.append(">\r\n");
+			for(AaptXmlTreeNode child: node.getNodeList()) {
+				xml.append(makeNodeXml(child, namespace, depthSpace + "    "));
+			}
+			xml.append(depthSpace);
+			xml.append("</");
+			xml.append(node.getName());
+			xml.append(">\r\n");
+		} else {
+			xml.append("/>\r\n");
+		}
+		
+		return xml.toString();
+	}
+	
+	public String makeAndroidManifestXml()
+	{
+		if(manifestPath == null) return null;
+		
+		AaptXmlTreeNode topNode = manifestPath.getNode("/manifest");
+		if(topNode == null) return null;
+		
+		StringBuilder xml = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"?>\r\n");
+		
+		xml.append(makeNodeXml(topNode, manifestPath.getNamespace(), ""));
+		
+		return xml.toString();
+	}
+	
 	private String hex2IntString(String hexString)
 	{
 		if(hexString == null || hexString.isEmpty() || !hexString.matches("^(0x)?[0-9a-f]*"))

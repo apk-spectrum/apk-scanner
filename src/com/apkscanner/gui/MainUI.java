@@ -19,6 +19,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import com.apkscanner.Launcher;
@@ -308,10 +309,21 @@ public class MainUI extends JFrame
 					editor = "gedit";
 				}
 			}
+			
 			try {
-				new ProcessBuilder(editor, apkInfo.WorkTempPath + File.separator + "AndroidManifest.xml").start();
+				String manifestPath = apkInfo.WorkTempPath + File.separator + "AndroidManifest.xml";
+				if(!new File(manifestPath).exists()) {
+					FileWriter fw = new FileWriter(new File(manifestPath));
+					
+					fw.write(((AaptToolManager)apkScanner).makeAndroidManifestXml());
+					//for(String line: ((AaptToolManager)apkScanner).getAndroidManifest()) {
+						//fw.write(line);
+						//fw.write("\r\n");
+					//}
+					fw.close();
+				}
+				new ProcessBuilder(editor, manifestPath).start();
 			} catch (IOException e1) {
-				e1.printStackTrace();
 			}
 		}
 		
