@@ -39,6 +39,8 @@ public class AaptToolManager extends ApkScannerStub
 			return;
 		}
 
+		if(statusListener != null) statusListener.OnStart();
+		
 		apkInfo.ApkPath = apkFilePath;
 		apkInfo.ApkSize = FileUtil.getFileSize(apkFile, FSStyle.FULL);
 		apkInfo.WorkTempPath = FileUtil.makeTempPath(apkInfo.ApkPath.substring(apkInfo.ApkPath.lastIndexOf(File.separator)));
@@ -47,7 +49,6 @@ public class AaptToolManager extends ApkScannerStub
 		new Thread(new Runnable() {
 			public void run()
 			{
-				if(statusListener != null) statusListener.OnStart();
 				stateChanged(Status.INITIALIZING);
 
 				progress(5, "I: start open apk");
@@ -472,7 +473,7 @@ public class AaptToolManager extends ApkScannerStub
 			return false;
 		}
 		
-		if(!ZipFileUtil.unZip(apkInfo.ApkPath, "META-INF", certPath)) {
+		if(!ZipFileUtil.unZip(apkInfo.ApkPath, "META-INF/", certPath)) {
 			Log.e("META-INFO 폴더가 존재 하지 않습니다 :");
 			return false;
 		}

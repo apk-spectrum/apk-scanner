@@ -91,6 +91,7 @@ public class ZipFileUtil
 					outPath = outPath.substring(0, outPath.length()-1);
 				if(subPaths != null && subPaths.length > 0) {
 					for(String p: subPaths) {
+						if(p.equals(srcPath)) continue;
 						String targetOutPath = outPath + p.substring(targetFolderPath.length()).replace("/", File.separator);
 						Log.d("src : " + p + ", targetOutPath : " + targetOutPath);
 						unZip(zipFilePath, p, targetOutPath);
