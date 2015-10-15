@@ -1,16 +1,21 @@
 package com.apkscanner.data;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Stack;
 
+import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.MyXPath;
 
 public class AaptXmlTreePath
 {
 	private AaptXmlTreeNode topNode = null;
 	private AaptXmlTreeNode[] curNodes = null;
 	private String namespace = null;
+	
+	private MyXPath attrIdPath = null;
 
 	public AaptXmlTreePath()
 	{
@@ -76,6 +81,10 @@ public class AaptXmlTreePath
 					continue;
 				} 
 				String attrName = s.replaceAll("^\\s*A: ([^\\(=]*).*", "$1");
+				if(attrName.equals(":")) {
+					String attrId = s.replaceAll("^\\s*A: :\\(([^\\(=]*)\\).*", "$1");
+					attrName = getAttrName(attrId);
+				}
 				String attrData = s.substring(s.indexOf("=")+1);
 				
 				if(attrData.indexOf("(Raw:") > -1) {
@@ -224,5 +233,18 @@ public class AaptXmlTreePath
 			return true;
 		
 		return false;
+	}
+	
+	private String getAttrName(String id) 
+	{
+		if(attrIdPath == null) {
+			InputStream xml = Resource.class.getResourceAsStream("/values/public.xml");
+			attrIdPath = new MyXPath(xml);
+		}
+		String name = attrIdPath.getNode("/resources/public[@id='" + id + "']").getAttributes("name");
+		if(name == null) {
+			name = id;
+		}
+		return name;
 	}
 }

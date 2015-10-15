@@ -38,8 +38,8 @@ public class ApkInfo
 	public String WorkTempPath = null;
 	
 	public void verify() {
-		if(Labelname == null) Labelname = new String[] {""};
 		if(PackageName == null) PackageName = "";
+		if(Labelname == null || (Labelname.length > 0 &&  Labelname[0] == null)) Labelname = new String[] { PackageName };
 		if(VersionName == null) VersionName = "";
 		if(VersionCode == null) VersionCode = "";
 		if(MinSDKversion == null) MinSDKversion = "";
@@ -55,7 +55,7 @@ public class ApkInfo
 		for(int i = 0; i < WidgetList.size(); i++){
 			Object[] info = (Object[])WidgetList.get(i);
 			info[0] = info[0] != null && !((String)info[0]).isEmpty() ? info[0] : IconPath;
-			info[1] = info[1] != null && !((String)info[1]).isEmpty() ? info[1] : Labelname;
+			info[1] = info[1] != null && !((String)info[1]).isEmpty() ? info[1] : Labelname[0];
 			info[2] = info[2] != null && !((String)info[2]).isEmpty() ? info[2] : "1 X 1";
 			info[3] = info[3] != null && !((String)info[3]).isEmpty() ? info[3] : PackageName;
 			info[4] = info[4] != null && !((String)info[4]).isEmpty() ? info[4] : "Unknown";

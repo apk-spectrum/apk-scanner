@@ -67,10 +67,12 @@ public class AaptToolManager extends ApkScannerStub
 				AaptXmlTreeNode manifestTag = manifestPath.getNode("/manifest"); 
 
 				// package
-				apkInfo.PackageName = getAttrValue(manifestTag , "package");
-				apkInfo.VersionCode = hex2IntString(getAttrValue(manifestTag, "versionCode"));
-				apkInfo.VersionName = getAttrValue(manifestTag, "versionName");
-				apkInfo.SharedUserId = getAttrValue(manifestTag, "sharedUserId");
+				if(manifestTag != null) {
+					apkInfo.PackageName = getAttrValue(manifestTag , "package");
+					apkInfo.VersionCode = hex2IntString(getAttrValue(manifestTag, "versionCode"));
+					apkInfo.VersionName = getAttrValue(manifestTag, "versionName");
+					apkInfo.SharedUserId = getAttrValue(manifestTag, "sharedUserId");
+				}
 				
 				AaptXmlTreeNode usesSdkTag = manifestPath.getNode("/manifest/uses-sdk");
 				if(usesSdkTag != null) {
@@ -289,7 +291,12 @@ public class AaptToolManager extends ApkScannerStub
 	
 	private String getAttrValue(AaptXmlTreeNode node, String attr)
 	{
-		String value[] = getAttrValues(node, attr);
+		return getAttrValue(node, namespace, attr);
+	}
+	
+	private String getAttrValue(AaptXmlTreeNode node, String namespace, String attr)
+	{
+		String value[] = getAttrValues(node, namespace, attr);
 		if(value == null || value.length == 0)
 			return null;
 		return value[0];
@@ -297,12 +304,22 @@ public class AaptToolManager extends ApkScannerStub
 	
 	private String[] getAttrValues(AaptXmlTreeNode node, String attr)
 	{
-		return getAttrValues(node, attr, false);
+		return getAttrValues(node, namespace, attr);
 	}
 	
 	private String[] getAttrValues(AaptXmlTreeNode node, String attr, boolean withConfig)
 	{
-		//Log.d("getAttrValues() " + node + ", attr : " + attr);
+		return getAttrValues(node, namespace, attr, withConfig);
+	}
+	
+	private String[] getAttrValues(AaptXmlTreeNode node, String namespace, String attr)
+	{
+		return getAttrValues(node, namespace, attr, false);
+	}
+	
+	private String[] getAttrValues(AaptXmlTreeNode node, String namespace, String attr, boolean withConfig)
+	{
+		//Log.d("getAttrValues() " + node + ", namespace : " + namespace + ", attr : " + attr);
 		String value = node.getAttribute(namespace + attr);
 		String[] resVal = null;
 		if(value == null) {
@@ -353,7 +370,6 @@ public class AaptToolManager extends ApkScannerStub
 	{
 		String Size = "";
 		String IconPath = "";
-		String ReSizeMode = "";
 		
 		if(widgetResPath == null || widgetResPath.length <= 0
 				|| apkInfo.ApkPath == null || !(new File(apkInfo.ApkPath)).exists()) {
@@ -362,47 +378,68 @@ public class AaptToolManager extends ApkScannerStub
 		
 		String[] wdgXml = AaptWrapper.Dump.getXmltree(apkInfo.ApkPath, widgetResPath);
 		AaptXmlTreePath widgetTree = new AaptXmlTreePath(wdgXml);
+		String widgetNamespace = widgetTree.getNamespace() + ":";
+		Log.i("widgetNamespace : " + widgetNamespace);
 		
 		String width = "0";
-		String Height = "0";
+		String height = "0";
 
-		AaptXmlTreeNode widgetNode = widgetTree.getNode("/appwidget-provider/@android:minWidth");
+		AaptXmlTreeNode widgetNode = widgetTree.getNode("/appwidget-provider/@"+widgetNamespace+"minWidth");
 		if(widgetNode != null) {
-			width = getAttrValue(widgetNode, "minWidth");
-			String tmp[] = getResourceValues(width, false);
-			if(tmp.length > 0) {
-				width = tmp[tmp.length-1].replaceAll("^([0-9]*).*", "$1");
+			width = getAttrValue(widgetNode, widgetNamespace, "minWidth");
+			if(width.startsWith("0x")) {
+				Log.w("Unknown widget width " + width);
+				width = "0";
+			} else {
+				width = width.replaceAll("^([0-9]*).*", "$1");
 			}
 		}
 
-		widgetNode = widgetTree.getNode("/appwidget-provider/@android:minHeight");
+		widgetNode = widgetTree.getNode("/appwidget-provider/@"+widgetNamespace+"minHeight");
 		if(widgetNode != null) {
-			Height = getAttrValue(widgetNode, "minHeight");
-			String tmp[] = getResourceValues(Height, false);
-			if(tmp.length > 0) {
-				Height = tmp[tmp.length-1].replaceAll("^([0-9]*).*", "$1");
+			height = getAttrValue(widgetNode, widgetNamespace, "minHeight");
+			if(height.startsWith("0x")) {
+				Log.w("Unknown widget height " + height);
+				height = "0";
+			} else {
+				height = height.replaceAll("^([0-9]*).*", "$1");
 			}
 		}
 		
-		Size = (int)Math.ceil((Float.parseFloat(width) - 40) / 76 + 1) + " X " + (int)Math.ceil((Float.parseFloat(Height) - 40) / 76 + 1);
-		Size += "\n(" + width + " X " + Height + ")";
-
-		widgetNode = widgetTree.getNode("/appwidget-provider/@android:resizeMode");
-		if(widgetNode != null) {
-			ReSizeMode = getAttrValue(widgetNode, "resizeMode");
-			Size += "\n\n[ReSizeMode]\n" + ReSizeMode.replaceAll("\\|", "\n");
+		if(!"0".equals(width) && !"0".equals(height)) {
+			Size = (int)Math.ceil((Float.parseFloat(width) - 40) / 76 + 1) + " X " + (int)Math.ceil((Float.parseFloat(height) - 40) / 76 + 1);
+			Size += "\n(" + width + " X " + height + ")";
+		} else {
+			Size = "Unknown";
 		}
 
-		widgetNode = widgetTree.getNode("/appwidget-provider/@android:previewImage");
+		widgetNode = widgetTree.getNode("/appwidget-provider/@"+widgetNamespace+"resizeMode");
 		if(widgetNode != null) {
-			String iconPaths[] = getAttrValues(widgetNode, "previewImage");
+			String ReSizeMode = getAttrValue(widgetNode, widgetNamespace, "resizeMode");
+			if("0x0".equals(ReSizeMode)) {
+				ReSizeMode = null;
+			} else if("0x1".equals(ReSizeMode)) {
+				ReSizeMode = "horizontal";
+			} else if("0x2".equals(ReSizeMode)) {
+				ReSizeMode = "vertical";
+			} else if("0x3".equals(ReSizeMode)) {
+				ReSizeMode = "horizontal|vertical";
+			}
+			if(ReSizeMode != null) {
+				Size += "\n\n[ReSizeMode]\n" + ReSizeMode.replaceAll("\\|", "\n");
+			}
+		}
+
+		widgetNode = widgetTree.getNode("/appwidget-provider/@"+widgetNamespace+"previewImage");
+		if(widgetNode != null) {
+			String iconPaths[] = getAttrValues(widgetNode, widgetNamespace, "previewImage");
 			if(iconPaths != null && iconPaths.length > 0) {
-				IconPath = iconPaths[iconPaths.length-1];
+				IconPath = apkInfo.ApkPath.replaceAll("#", "%23") + "!/" + iconPaths[iconPaths.length-1];
 			}
 		}
 		
-		Log.d("widget IconPath " + IconPath);
-		Log.d("widget size " + Size);
+		//Log.d("widget IconPath " + IconPath);
+		//Log.d("widget size " + Size);
 
 		return new Object[] { IconPath, Size };
 	}

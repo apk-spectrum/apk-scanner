@@ -63,11 +63,11 @@ public class Widget extends JPanel implements TabDataObject
 		arrWidgets.clear();
 		if(apkInfo.WidgetList == null) return;
 		if(TableModel == null) initialize();
-		String jarPath = "jar:file:"+apkInfo.ApkPath.replaceAll("#", "%23")+"!/";
+
 		for(int i=0; i< apkInfo.WidgetList.size(); i++) {
 			ImageIcon myimageicon = null;
 			try {
-				myimageicon = new ImageIcon(new URL(jarPath+(String)apkInfo.WidgetList.get(i)[0]));
+				myimageicon = new ImageIcon(new URL("jar:file:"+(String)apkInfo.WidgetList.get(i)[0]));
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			}
