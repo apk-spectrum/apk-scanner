@@ -22,7 +22,7 @@ import com.apkscanner.util.MyXPath;
 public enum Resource
 {
 	STR_APP_NAME				(Type.TEXT, "@app_name"),
-	STR_APP_VERSION				(Type.TEXT, "2.1 beta 20151015"),
+	STR_APP_VERSION				(Type.TEXT, "2.1 beta 20151014"),
 	STR_APP_BUILD_MODE			(Type.TEXT, "eng"),
 	STR_APP_MAKER				(Type.TEXT, "jin_h.lee / sunggyu.kam"),
 	STR_APP_MAKER_EMAIL			(Type.TEXT, "jin_h.lee@samsung.com;sunggyu.kam@samsung.com"),
@@ -204,6 +204,9 @@ public enum Resource
 	IMG_TREE_DEVICE				(Type.IMAGE, "tree_icon_device.png"),
 	IMG_TREE_TOP				(Type.IMAGE, "tree_icon_top.gif"),
 	IMG_TREE_FOLDER				(Type.IMAGE, "tree_icon_folder.png"),
+	
+	IMG_INSTALL_TABLE_DONE				(Type.IMAGE, "done_icon.png"),
+	IMG_INSTALL_TABLE_WAIT				(Type.IMAGE, "install_wait_icon.GIF"),
 	
 	BIN_ADB_LNX					(Type.BIN, "adb"),
 	BIN_ADB_WIN					(Type.BIN, "adb.exe"),
