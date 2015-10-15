@@ -67,7 +67,7 @@ public class Widget extends JPanel implements TabDataObject
 		for(int i=0; i< apkInfo.WidgetList.size(); i++) {
 			ImageIcon myimageicon = null;
 			try {
-				myimageicon = new ImageIcon(new URL("jar:file:"+(String)apkInfo.WidgetList.get(i)[0]));
+				myimageicon = new ImageIcon(new URL((String)apkInfo.WidgetList.get(i)[0]));
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			}

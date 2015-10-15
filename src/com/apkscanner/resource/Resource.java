@@ -194,19 +194,21 @@ public enum Resource
 	IMG_LOADING					(Type.IMAGE, "loading.gif"),
 	IMG_WAIT_BAR				(Type.IMAGE, "wait_bar.gif"),
 	IMG_USB_ICON				(Type.IMAGE, "ic_dialog_usb.png"),
+	IMG_DEF_APP_ICON			(Type.IMAGE, "sym_def_app_icon.png"),
+	IMG_QMG_IMAGE_ICON			(Type.IMAGE, "qmg_not_suporrted.png"),
 
-	IMG_TREE_MENU_LINK				(Type.IMAGE, "tree_link_menu.png"),
-	IMG_TREE_MENU_DELETE				(Type.IMAGE, "tree_menu_delete.png"),
-	IMG_TREE_MENU_SAVE				(Type.IMAGE, "tree_menu_save.png"),
-	IMG_TREE_MENU_OPEN				(Type.IMAGE, "tree_open_menu.png"),
+	IMG_TREE_MENU_LINK			(Type.IMAGE, "tree_link_menu.png"),
+	IMG_TREE_MENU_DELETE		(Type.IMAGE, "tree_menu_delete.png"),
+	IMG_TREE_MENU_SAVE			(Type.IMAGE, "tree_menu_save.png"),
+	IMG_TREE_MENU_OPEN			(Type.IMAGE, "tree_open_menu.png"),
 	
 	IMG_TREE_APK				(Type.IMAGE, "tree_icon_apk.png"),
 	IMG_TREE_DEVICE				(Type.IMAGE, "tree_icon_device.png"),
 	IMG_TREE_TOP				(Type.IMAGE, "tree_icon_top.gif"),
 	IMG_TREE_FOLDER				(Type.IMAGE, "tree_icon_folder.png"),
 	
-	IMG_INSTALL_TABLE_DONE				(Type.IMAGE, "done_icon.png"),
-	IMG_INSTALL_TABLE_WAIT				(Type.IMAGE, "install_wait_icon.GIF"),
+	IMG_INSTALL_TABLE_DONE		(Type.IMAGE, "done_icon.png"),
+	IMG_INSTALL_TABLE_WAIT		(Type.IMAGE, "install_wait_icon.GIF"),
 	
 	BIN_ADB_LNX					(Type.BIN, "adb"),
 	BIN_ADB_WIN					(Type.BIN, "adb.exe"),

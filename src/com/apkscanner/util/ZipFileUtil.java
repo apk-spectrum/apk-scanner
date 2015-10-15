@@ -26,8 +26,16 @@ public class ZipFileUtil
 				if(filterRegex != null && !path.matches(filterRegex))
 					continue;
 
-				if(subffix == null || path.endsWith(subffix))
+				if(subffix == null) {
 					tempList.add(path);
+				} else {
+					for(String s: subffix.split(";")) {
+						 if(path.endsWith(s)) {
+							 tempList.add(path);
+							 break;
+						 }
+					}
+				}
 			}
 			zipFile.close();
 		} catch (IOException e) {

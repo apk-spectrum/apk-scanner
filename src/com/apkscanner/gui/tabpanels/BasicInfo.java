@@ -197,7 +197,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("<table>");
 		strTabInfo.append("  <tr>");
 		strTabInfo.append("    <td width=170 height=" + infoHeight + ">");
-		strTabInfo.append("      <image src=\"jar:file:" + IconPath + "\" width=150 height=150 />");
+		strTabInfo.append("      <image src=\"" + IconPath + "\" width=150 height=150 />");
 		strTabInfo.append("    </td>");
 		strTabInfo.append("    <td height=" + infoHeight + ">");
 		strTabInfo.append("      <div id=\"basic-info\">");

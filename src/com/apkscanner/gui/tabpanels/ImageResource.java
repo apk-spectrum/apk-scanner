@@ -22,6 +22,7 @@ import javax.swing.event.ListSelectionListener;
 import com.apkscanner.data.ApkInfo;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.gui.util.ImageScaler;
+import com.apkscanner.resource.Resource;
 
 import java.util.ArrayList;
 
@@ -107,7 +108,11 @@ public class ImageResource extends JPanel implements TabDataObject
 		String jarPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/";
 		try {        	
 			for(int i=0; i< list.size(); i++) {
-				imageMap.put(list.get(i), new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(new URL(jarPath+list.get(i))),32,32)));
+				if(list.get(i).endsWith(".qmg")) {
+					imageMap.put(list.get(i), new ImageIcon(ImageScaler.getScaledImage(Resource.IMG_QMG_IMAGE_ICON.getImageIcon(),32,32)));
+				} else {
+					imageMap.put(list.get(i), new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(new URL(jarPath+list.get(i))),32,32)));
+				}
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -123,10 +128,13 @@ public class ImageResource extends JPanel implements TabDataObject
     		//Log.i("valueChanged : " + list.getSelectedIndex() + " event : "+ event.getSource());
     		if(list.getSelectedIndex() < 0)
     			return;
-    		String jarPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/";
+    		String imgPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/" + nameList.get(list.getSelectedIndex());
+    		if(imgPath.endsWith(".qmg")) {
+    			imgPath = Resource.IMG_QMG_IMAGE_ICON.getPath();
+    		}
     		try {
 				photographLabel.setIcon(new ImageIcon(ImageScaler.getMaxScaledImage(
-						new ImageIcon(new URL(jarPath+nameList.get(list.getSelectedIndex()))),photographLabel.getWidth(),photographLabel.getHeight())));
+						new ImageIcon(new URL(imgPath)),photographLabel.getWidth(),photographLabel.getHeight())));
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			}

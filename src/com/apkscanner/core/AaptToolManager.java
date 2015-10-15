@@ -7,6 +7,7 @@ import java.util.Collections;
 import com.apkscanner.data.AaptXmlTreeNode;
 import com.apkscanner.data.AaptXmlTreePath;
 import com.apkscanner.data.ApkInfo;
+import com.apkscanner.resource.Resource;
 import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
@@ -97,14 +98,20 @@ public class AaptToolManager extends ApkScannerStub
 								
 								iconPaths = getResourceValues(apkInfo.IconPath, false);
 								if(iconPaths != null && iconPaths.length > 0) {
-									apkInfo.IconPath = res.replaceAll("#", "%23") + "!/" + iconPaths[iconPaths.length-1];
+									apkInfo.IconPath = "jar:file:" + res.replaceAll("#", "%23") + "!/" + iconPaths[iconPaths.length-1];
 									break;
 								}
 							}
 							resourcesWithValue = backup;
 						}
+					} else if(apkInfo.IconPath != null) {
+						apkInfo.IconPath = "jar:file:" + apkInfo.ApkPath.replaceAll("#", "%23") + "!/" + apkInfo.IconPath;
 					} else {
-						apkInfo.IconPath = apkInfo.ApkPath.replaceAll("#", "%23") + "!/" + apkInfo.IconPath;
+						apkInfo.IconPath = Resource.IMG_DEF_APP_ICON.getPath();
+					}
+					
+					if(apkInfo.IconPath.endsWith("qmg")) {
+						apkInfo.IconPath = Resource.IMG_QMG_IMAGE_ICON.getPath();
 					}
 	
 					String debuggable = getAttrValue(applicationTag, "debuggable");
@@ -224,7 +231,7 @@ public class AaptToolManager extends ApkScannerStub
 			public void run()
 			{
 		        progress(5, "I: read Imanges list...");
-		        Collections.addAll(apkInfo.ImageList, ZipFileUtil.findFiles(apkInfo.ApkPath, ".png", ".*drawable.*"));
+		        Collections.addAll(apkInfo.ImageList, ZipFileUtil.findFiles(apkInfo.ApkPath, ".png;.qmg;.jpg;.gif", ".*drawable.*"));
 		        stateChanged(Status.IMAGE_COMPLETED);
 			}
 		}).start();
@@ -434,7 +441,10 @@ public class AaptToolManager extends ApkScannerStub
 		if(widgetNode != null) {
 			String iconPaths[] = getAttrValues(widgetNode, widgetNamespace, "previewImage");
 			if(iconPaths != null && iconPaths.length > 0) {
-				IconPath = apkInfo.ApkPath.replaceAll("#", "%23") + "!/" + iconPaths[iconPaths.length-1];
+				IconPath = "jar:file:" + apkInfo.ApkPath.replaceAll("#", "%23") + "!/" + iconPaths[iconPaths.length-1];
+			}
+			if(IconPath.endsWith("qmg")) {
+				IconPath = Resource.IMG_QMG_IMAGE_ICON.getPath();
 			}
 		}
 		
