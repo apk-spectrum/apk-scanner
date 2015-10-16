@@ -232,7 +232,7 @@ public class AaptToolManager extends ApkScannerStub
 			public void run()
 			{
 		        progress(5, "I: read Imanges list...");
-		        Collections.addAll(apkInfo.ImageList, ZipFileUtil.findFiles(apkInfo.ApkPath, ".png;.qmg;.jpg;.gif", ".*drawable.*"));
+		        Collections.addAll(apkInfo.ImageList, ZipFileUtil.findFiles(apkInfo.ApkPath, ".png;.qmg;.jpg;.gif", null));
 		        stateChanged(Status.IMAGE_COMPLETED);
 			}
 		}).start();
