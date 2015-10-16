@@ -7,6 +7,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
+import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.core.AdbWrapper;
 import com.apkscanner.core.ApktoolManager;
 import com.apkscanner.gui.util.JHtmlEditorPane;
@@ -30,7 +31,8 @@ public class AboutDlg /*extends JDialog*/
 		body.append("  Apktool " + ApktoolManager.getApkToolVersion() + "<br/>");
 		body.append("  - <a href=\"http://ibotpeaches.github.io/Apktool/\" title=\"Apktool Project Site\">http://ibotpeaches.github.io/Apktool/</a><br/>");
 		body.append("  " + AdbWrapper.getVersion() + "<br/>");
-		body.append("  - <a href=\"http://developer.android.com/tools/help/adb.html\" title=\"Android Developer Site\">http://developer.android.com/tools/help/adb.html</a><br/>");
+		body.append("  " + AaptWrapper.getVersion() + "<br/>");
+		body.append("  - <a href=\"https://developer.android.com/tools/help/index.html\" title=\"Android Developer Site\">https://developer.android.com/tools/help/index.html</a><br/>");
 		body.append("  <br/><hr/>");
 		body.append("  Programmed by <a href=\"mailto:" + Resource.STR_APP_MAKER_EMAIL.getString() + "\" title=\"" + Resource.STR_APP_MAKER_EMAIL.getString() + "\">" + Resource.STR_APP_MAKER.getString() + "</a>, 2015.<br/>");
 		body.append("</div>");

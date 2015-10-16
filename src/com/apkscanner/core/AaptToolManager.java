@@ -41,7 +41,7 @@ public class AaptToolManager extends ApkScannerStub
 
 		if(statusListener != null) statusListener.OnStart();
 		
-		apkInfo.ApkPath = apkFilePath;
+		apkInfo.ApkPath = apkFile.getAbsolutePath();
 		apkInfo.ApkSize = FileUtil.getFileSize(apkFile, FSStyle.FULL);
 		apkInfo.WorkTempPath = FileUtil.makeTempPath(apkInfo.ApkPath.substring(apkInfo.ApkPath.lastIndexOf(File.separator)));
 		Log.i("Temp path : " + apkInfo.WorkTempPath);
@@ -53,10 +53,10 @@ public class AaptToolManager extends ApkScannerStub
 
 				progress(5, "I: start open apk");
 				progress(5, "I: getDump AndroidManifest...");
-				androidManifest = AaptWrapper.Dump.getXmltree(apkFilePath, new String[] { "AndroidManifest.xml" });
+				androidManifest = AaptWrapper.Dump.getXmltree(apkInfo.ApkPath, new String[] { "AndroidManifest.xml" });
 
 				progress(30, "I: read aapt dump resources...");
-				resourcesWithValue = AaptWrapper.Dump.getResources(apkFilePath, true);
+				resourcesWithValue = AaptWrapper.Dump.getResources(apkInfo.ApkPath, true);
 
 				progress(30, "I: createAaptXmlTree...");
 				manifestPath = new AaptXmlTreePath();

@@ -123,6 +123,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		//strTabInfo.append("  Apktool " + ApkManager.getApkToolVersion() + "<br/>");
 		strTabInfo.append("  - <a href=\"http://ibotpeaches.github.io/Apktool/\" title=\"Apktool Project Site\">http://ibotpeaches.github.io/Apktool/</a><br/>");
 		strTabInfo.append("  Android Debug Bridge<br/>");
+		strTabInfo.append("  Android Asset Packaging Tool<br/>");
 		//strTabInfo.append("  " + AdbWrapper.getVersion() + "<br/>");
 		strTabInfo.append("  - <a href=\"http://developer.android.com/tools/help/adb.html\" title=\"Android Developer Site\">http://developer.android.com/tools/help/adb.html</a><br/>");
 		strTabInfo.append("  <br/><hr/>");
