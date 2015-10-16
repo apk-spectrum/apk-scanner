@@ -11,8 +11,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.UIManager;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -202,6 +200,7 @@ public class Widget extends JPanel implements TabDataObject
 
 		public Component getTableCellRendererComponent(JTable table, Object value,
 				boolean isSelected, boolean hasFocus, int row, int column) {
+			/*
 			if (isSelected) {
 				setForeground(table.getSelectionForeground());
 				setBackground(table.getSelectionBackground());
@@ -209,7 +208,6 @@ public class Widget extends JPanel implements TabDataObject
 				setForeground(table.getForeground());
 				setBackground(table.getBackground());
 			}
-			setFont(table.getFont());
 			if (hasFocus) {
 				setBorder(UIManager.getBorder("Table.focusCellHighlightBorder"));
 				if (table.isCellEditable(row, column)) {
@@ -219,6 +217,8 @@ public class Widget extends JPanel implements TabDataObject
 			} else {
 				setBorder(new EmptyBorder(1, 2, 1, 2));
 			}
+			*/
+			setFont(table.getFont());
 			setText((value == null) ? "" : value.toString());
 			return this;
 		}
