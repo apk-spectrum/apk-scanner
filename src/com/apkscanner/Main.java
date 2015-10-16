@@ -42,7 +42,7 @@ public class Main
 		try {
 			if(args.length > 0) {
 				if(!"p".equals(args[0]) && !"package".equals(args[0]) 
-						&& !args[0].startsWith("-") && !args[0].endsWith(".apk")) {
+						&& !args[0].startsWith("-") && !args[0].endsWith(".apk") && !args[0].endsWith(".ppk")) {
 					throw new ParseException("Missing argument for option: " + args[0]);
 				}
 				if("p".equals(args[0]) || "package".equals(args[0])) {

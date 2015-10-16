@@ -336,9 +336,9 @@ public class MainUI extends JFrame
 			}
 			try {
 				if(System.getProperty("os.name").indexOf("Window") >-1) {
-					new ProcessBuilder("explorer", apkInfo.WorkTempPath).start();
+					new ProcessBuilder("explorer", apkInfo.ApkPath).start();
 				} else {  //for linux
-					new ProcessBuilder("nautilus", apkInfo.WorkTempPath).start();
+					new ProcessBuilder("file-roller", apkInfo.ApkPath).start();
 				}
 			} catch (IOException e1) {
 				e1.printStackTrace();

@@ -1,5 +1,6 @@
 package com.apkscanner.gui.tabpanels;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.net.MalformedURLException;
@@ -200,14 +201,15 @@ public class Widget extends JPanel implements TabDataObject
 
 		public Component getTableCellRendererComponent(JTable table, Object value,
 				boolean isSelected, boolean hasFocus, int row, int column) {
-			/*
+
 			if (isSelected) {
-				setForeground(table.getSelectionForeground());
-				setBackground(table.getSelectionBackground());
+				//setForeground(table.getSelectionForeground());
+				setBackground(Color.LIGHT_GRAY);
 			} else {
-				setForeground(table.getForeground());
-				setBackground(table.getBackground());
+				//setForeground(table.getForeground());
+				setBackground(Color.WHITE);
 			}
+			/*
 			if (hasFocus) {
 				setBorder(UIManager.getBorder("Table.focusCellHighlightBorder"));
 				if (table.isCellEditable(row, column)) {
