@@ -401,6 +401,10 @@ public class AaptToolManager extends ApkScannerStub
 			value = node.getAttribute(attr);
 		}
 		while(value != null && value.startsWith("@")) {
+			if(value.matches("@0x0*\\s*")) {
+				resVal = new String[] { null };
+				break;
+			}
 			resVal = getResourceValues(value, withConfig);
 			if(resVal == null || resVal.length == 0)
 				break;
