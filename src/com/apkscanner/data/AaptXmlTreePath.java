@@ -212,7 +212,7 @@ public class AaptXmlTreePath
 	{
 		ArrayList<AaptXmlTreeNode> nodes = new ArrayList<AaptXmlTreeNode>();
 		for(AaptXmlTreeNode node: curList) {
-			if(node.getName().equals(item) && checkAttrCond(node, attrCond)) {
+			if((node.getName().equals(item) || "*".equals(item)) && checkAttrCond(node, attrCond)) {
 				nodes.add(node);
 			}
 			Collections.addAll(nodes, suchNode(node.getNodeList(), item, attrCond));

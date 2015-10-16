@@ -62,7 +62,7 @@ public class ZipFileUtil
 					Log.v("make folder : " + outFolder.getAbsolutePath());
 					if(FileUtil.makeFolder(outFolder.getAbsolutePath())) {
 						Log.d("sucess make folder");
-					}else {
+					} else {
 						Log.d("failure make folder");
 					}
 				} else {

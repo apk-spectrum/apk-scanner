@@ -106,7 +106,23 @@ public class AaptToolManager extends ApkScannerStub
 							resourcesWithValue = backup;
 						}
 					} else if(apkInfo.IconPath != null) {
-						apkInfo.IconPath = "jar:file:" + apkInfo.ApkPath.replaceAll("#", "%23") + "!/" + apkInfo.IconPath;
+						if(apkInfo.IconPath.endsWith(".xml")) {
+							Log.w(apkInfo.IconPath);
+							String[] iconXml = AaptWrapper.Dump.getXmltree(apkInfo.ApkPath, new String[] { apkInfo.IconPath });
+							AaptXmlTreePath iconXmlPath = new AaptXmlTreePath();
+							iconXmlPath.createAaptXmlTree(iconXml);
+							AaptXmlTreeNode iconNode = iconXmlPath.getNode("//item[@"+iconXmlPath.getNamespace()+":drawable]");
+							if(iconNode != null) {
+								apkInfo.IconPath = getAttrValue(iconNode, iconXmlPath.getNamespace(), ":drawable");
+							}
+							if(apkInfo.IconPath == null) {
+								apkInfo.IconPath = Resource.IMG_DEF_APP_ICON.getPath();
+							} else {
+								apkInfo.IconPath = "jar:file:" + apkInfo.ApkPath.replaceAll("#", "%23") + "!/" + apkInfo.IconPath;
+							}
+						} else {
+							apkInfo.IconPath = "jar:file:" + apkInfo.ApkPath.replaceAll("#", "%23") + "!/" + apkInfo.IconPath;
+						}
 					} else {
 						apkInfo.IconPath = Resource.IMG_DEF_APP_ICON.getPath();
 					}

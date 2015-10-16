@@ -37,6 +37,7 @@ import com.apkscanner.gui.dialog.SettingDlg;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.FileDrop;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 
 
@@ -312,7 +313,13 @@ public class MainUI extends JFrame
 			
 			try {
 				String manifestPath = apkInfo.WorkTempPath + File.separator + "AndroidManifest.xml";
-				if(!new File(manifestPath).exists()) {
+				File manifestFile = new File(manifestPath); 
+				if(!manifestFile.exists()) {
+					if(!manifestFile.getParentFile().exists()) {
+						if(FileUtil.makeFolder(manifestFile.getParentFile().getAbsolutePath())) {
+							Log.d("sucess make folder");
+						}
+					}
 					FileWriter fw = new FileWriter(new File(manifestPath));
 					
 					fw.write(((AaptToolManager)apkScanner).makeAndroidManifestXml());
