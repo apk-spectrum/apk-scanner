@@ -1,6 +1,7 @@
 package com.apkscanner.gui.dialog.install;
 
 import javax.swing.Icon;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 
@@ -9,15 +10,26 @@ import javax.swing.JPanel;
 
 public class QuestionPanel extends JPanel{
 
-	public QuestionPanel(Object message, String title, int optionType, int messageType, Icon icon, Object[] options, Object initialValue) {
+	public QuestionPanel(String message, int optionType, int messageType, Icon icon, Object[] options, Object initialValue) {
 		// TODO Auto-generated constructor stub
 		
+		JLabel iconLabel = new JLabel();
+		iconLabel.setIcon(icon);
+	
+		this.add(iconLabel);
 		
+	}
+	
+	public QuestionPanel(String message,Icon icon) {
+		// TODO Auto-generated constructor stub
 		
+		JLabel iconLabel = new JLabel();
+		iconLabel.setIcon(icon);
+	
+		JLabel MessageLabel = new JLabel("message");
 		
-		
-		
-		
+		this.add(iconLabel);
+		this.add(MessageLabel);
 		
 		
 	}

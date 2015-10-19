@@ -7,10 +7,14 @@ import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+
+import com.apkscanner.util.Log;
 
 public class ArrowTraversalPane extends JOptionPane
 {
@@ -53,4 +57,21 @@ public class ArrowTraversalPane extends JOptionPane
 		return ret;
 	}
 
+	static public JOptionPane makeOptionPane(Component parentComponent, Object message, String title, int optionType, int messageType, Icon icon, Object[] options, Object initialValue) {
+	    JOptionPane pane = new ArrowTraversalPane(message, optionType, messageType);
+
+		pane.setMessageType(messageType);
+		pane.setIcon(icon);
+		pane.setOptionType(optionType);
+		pane.setOptions(options);
+		pane.setInitialValue(initialValue);
+		
+		
+        return titled(pane, title);
+	}
+	
+    static <T extends JComponent> T titled(T c, String title) {
+        c.setBorder(BorderFactory.createEmptyBorder());
+        return c;
+    }
 }

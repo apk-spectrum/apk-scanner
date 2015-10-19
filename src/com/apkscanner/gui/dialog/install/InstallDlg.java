@@ -1,6 +1,7 @@
 package com.apkscanner.gui.dialog.install;
 
 import java.awt.BorderLayout;
+import java.awt.Button;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -40,6 +41,9 @@ public class InstallDlg extends JDialog implements ActionListener{
 	JTextArea taskOutput;
 	InstallDlgFuncListener CoreInstallLitener; 
 	JPanel MessageBox;
+	static JOptionPane newOption;
+	
+	final String[] checkPackDelOptions = {Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_DEL.getString(), Resource.STR_BTN_CANCEL.getString()};
 	
 	public InstallDlg() {
 		createAndShowGUI();
@@ -77,20 +81,58 @@ public class InstallDlg extends JDialog implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
+		
+		
+		
 		if ("showLogBox".equals(e.getActionCommand())) {
 			if(scrollPane.isVisible()) {
+				newOption.removeAll();
 				scrollPane.setVisible(false);
 				this.pack();
 			} else {
-				//scrollPane.setVisible(true);
+				scrollPane.setVisible(true);
 				//this.pack();
 				//for test
 				
 				final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
 				//JOptionPane.showMessageDialog(null, "Device not found!\nplease check Connected","Warning", JOptionPane.WARNING_MESSAGE, Appicon);
 			
+				JButton[] btn = new JButton[4];
 				
+				for( int i=0; checkPackDelOptions.length > i; i++ ) {
+					btn[i] = new JButton(checkPackDelOptions[i]);
+					btn[i].addActionListener(new ActionListener()
+			        {
+			            public void actionPerformed(ActionEvent e)
+			            {
+			                JButton b = (JButton) e.getSource();
+			                Log.d("click : " + b.getText());
+			                if (b.getText().equals(Resource.STR_BTN_OPEN)) {
+			                	
+			                } else if (b.getText().equals(Resource.STR_BTN_INSTALL)) {
+			                	
+			                } else if (b.getText().equals(Resource.STR_BTN_DEL)) {
+			                	
+			                } else if (b.getText().equals(Resource.STR_BTN_CANCEL)) {
+			                	
+			                } else if (b.getText().equals(Resource.STR_BTN_PUSH)) {
+			                	
+			                } else if (b.getText().equals(Resource.STR_BTN_INSTALL)) {
+			                	
+			                } else if (b.getText().equals(Resource.STR_BTN_NO)) {
+			                	
+			                } else if (b.getText().equals(Resource.STR_BTN_YES)) {
+			                	
+			                }
+			            }
+			        });
+				}
 				
+				newOption = ArrowTraversalPane.makeOptionPane(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  Resource.STR_QUESTION_OPEN_OR_INSTALL.getString(),
+						Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, btn, btn[3]);
+			
+				MessageBox.add(newOption);
+				//MessageBox.add(new QuestionPanel("aaaa", Appicon));
 				
 				this.pack();
 			}
