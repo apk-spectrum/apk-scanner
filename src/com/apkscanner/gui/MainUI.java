@@ -109,8 +109,8 @@ public class MainUI extends JFrame
 		setTitle(Resource.STR_APP_NAME.getString());
 		setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
 		
-		setBounds(0, 0, 650, 500);
-		setMinimumSize(new Dimension(650, 500));
+		setBounds(0, 0, 650, 490);
+		setMinimumSize(new Dimension(650, 490));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(true);
 		setLocationRelativeTo(null);
@@ -196,9 +196,9 @@ public class MainUI extends JFrame
 				setTitle(title);
 				
 				if(apkScanner.getApkInfo().PermGroupMap.keySet().size() > 30) {
-					setSize(new Dimension(650, 550));
+					setSize(new Dimension(650, 530));
 				} else {
-					setSize(new Dimension(650, 500));
+					setSize(new Dimension(650, 490));
 				}
 
 				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, true);

@@ -193,9 +193,9 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		
 		String permGorupImg = makePermGroup();
 		
-		int infoHeight = 300;
-		if(PermGroupMap.keySet().size() > 15) infoHeight = 230;
-		else if(PermGroupMap.keySet().size() > 0) infoHeight = 270;
+		int infoHeight = 280;
+		if(PermGroupMap.keySet().size() > 15) infoHeight = 220;
+		else if(PermGroupMap.keySet().size() > 0) infoHeight = 260;
 		
 		mutiLabels = "";
 		for(String s: Labelname) {
@@ -225,10 +225,10 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("        <font style=\"font-size:15px; color:#ED7E31\">");
 		strTabInfo.append("          " + makeHyperLink("", "Ver. " + VersionName +" / " + VersionCode, "VersionName : " + VersionName + "\n" + "VersionCode : " + VersionCode, null, null));
 		strTabInfo.append("        </font><br/>");
-		strTabInfo.append("        <br/><br/>");
+		strTabInfo.append("        <br/>");
 		strTabInfo.append("        <font style=\"font-size:12px\">");
-		strTabInfo.append("          " + makeHyperLink("", ApkSize, "APK size", null, null) + "<br/>");
-		strTabInfo.append("          " + makeHyperLink("", sdkVersion, "Target SDK version", null, null));
+		strTabInfo.append("          " + makeHyperLink("", sdkVersion, "Target SDK version", null, null) + "<br/>");
+		strTabInfo.append("          " + makeHyperLink("", ApkSize, "APK size", null, null));
 		strTabInfo.append("        </font>");
 		strTabInfo.append("        <br/><br/>");
 		strTabInfo.append("        <font style=\"font-size:12px\">");
