@@ -9,6 +9,8 @@ import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.MyXPath;
 
+import android.util.TypedValue;
+
 public class AaptXmlTreePath
 {
 	private AaptXmlTreeNode topNode = null;
@@ -91,15 +93,10 @@ public class AaptXmlTreePath
 					attrData = attrData.replaceAll(".*\\(Raw: \"(.*)\".*", "$1");
 					//Log.v("attrData raw : " + attrData);
 				} else if(attrData.startsWith("(type")) {
-					if(attrData.startsWith("(type 0x12")) {
-						if(attrData.endsWith("0x0")) {
-							attrData = "false"; // 0x0
-						} else {
-							attrData = "true"; // 0xffffffff
-						}
-					} else {
-						attrData = attrData.substring(attrData.indexOf(")")+1);
-					}
+					int t = (int)Long.parseLong(attrData.replaceAll("^\\(type 0x(.*)\\).*", "$1"), 16);
+					int d = (int)Long.parseLong(attrData.replaceAll("^\\(type .*\\)0x(.*)", "$1"), 16);
+					attrData = TypedValue.coerceToString(t, d);
+					//attrData = attrData.substring(attrData.indexOf(")")+1);
 				} else if(attrData.startsWith("\"")) {
 					
 				} else if(attrData.startsWith("@")) {

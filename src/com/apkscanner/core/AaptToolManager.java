@@ -71,15 +71,15 @@ public class AaptToolManager extends ApkScannerStub
 				// package
 				if(manifestTag != null) {
 					apkInfo.PackageName = getAttrValue(manifestTag , "package");
-					apkInfo.VersionCode = hex2IntString(getAttrValue(manifestTag, "versionCode"));
+					apkInfo.VersionCode = getAttrValue(manifestTag, "versionCode");
 					apkInfo.VersionName = getAttrValue(manifestTag, "versionName");
 					apkInfo.SharedUserId = getAttrValue(manifestTag, "sharedUserId");
 				}
 				
 				AaptXmlTreeNode usesSdkTag = manifestPath.getNode("/manifest/uses-sdk");
 				if(usesSdkTag != null) {
-					apkInfo.TargerSDKversion = hex2IntString(getAttrValue(usesSdkTag, "targetSdkVersion"));
-					apkInfo.MinSDKversion = hex2IntString(getAttrValue(usesSdkTag, "minSdkVersion"));
+					apkInfo.TargerSDKversion = getAttrValue(usesSdkTag, "targetSdkVersion");
+					apkInfo.MinSDKversion = getAttrValue(usesSdkTag, "minSdkVersion");
 				}
 
 				// label & icon
@@ -338,13 +338,6 @@ public class AaptToolManager extends ApkScannerStub
 		
 		return xml.toString();
 	}
-	
-	private String hex2IntString(String hexString)
-	{
-		if(hexString == null || hexString.isEmpty() || !hexString.matches("^(0x)?[0-9a-f]*"))
-			return "";
-		return String.valueOf(Integer.parseInt(hexString.replaceAll("^0x([0-9a-f]*)", "$1"), 16));
-	}
 
 	private String[] getResourceValues(String id, boolean withConfig)
 	{
@@ -488,6 +481,7 @@ public class AaptToolManager extends ApkScannerStub
 		if(widgetNode != null) {
 			width = getAttrValue(widgetNode, widgetNamespace, "minWidth");
 			if(width.startsWith("0x")) {
+				//width = getResourceValues("0x05", width)[0];
 				Log.w("Unknown widget width " + width);
 				width = "0";
 			} else {
@@ -499,6 +493,7 @@ public class AaptToolManager extends ApkScannerStub
 		if(widgetNode != null) {
 			height = getAttrValue(widgetNode, widgetNamespace, "minHeight");
 			if(height.startsWith("0x")) {
+				//height = getResourceValues("0x05", height)[0];
 				Log.w("Unknown widget height " + height);
 				height = "0";
 			} else {
