@@ -8,10 +8,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Method;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -23,6 +25,7 @@ import com.apkscanner.core.AdbWrapper;
 import com.apkscanner.gui.ApkInstaller;
 import com.apkscanner.gui.ApkInstaller.InstallDlgFuncListener;
 import com.apkscanner.gui.dialog.install.*;
+import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.test.ProgressBarTest;
 import com.apkscanner.util.Log;
@@ -36,7 +39,7 @@ public class InstallDlg extends JDialog implements ActionListener{
 	JFrame f;
 	JTextArea taskOutput;
 	InstallDlgFuncListener CoreInstallLitener; 
-	
+	JPanel MessageBox;
 	
 	public InstallDlg() {
 		createAndShowGUI();
@@ -83,22 +86,19 @@ public class InstallDlg extends JDialog implements ActionListener{
 				//this.pack();
 				//for test
 				
-				try {
-					addCheckListForInstallDlg(AdbWrapper.class.getMethod("scanDevices", null));
-				} catch (NoSuchMethodException | SecurityException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
+				//JOptionPane.showMessageDialog(null, "Device not found!\nplease check Connected","Warning", JOptionPane.WARNING_MESSAGE, Appicon);
+			
 				
+				
+				
+				this.pack();
 			}
 		} else if("Refresh".equals(e.getActionCommand())) {
 			
 		}
 	}
 
-	private void addCheckListForInstallDlg(Method methodObject) {
-		 //methodObject.invoke(obj, args)
-	}
 	
 	
     private void createAndShowGUI() {
@@ -140,7 +140,7 @@ public class InstallDlg extends JDialog implements ActionListener{
         JPanel framelayout = new JPanel(new BorderLayout());
         JPanel parent = new JPanel(new GridLayout(1,2));
         JPanel CheckListBox = new JPanel(new BorderLayout());
-        JPanel MessageBox = new JPanel(new BorderLayout());
+        MessageBox = new JPanel(new BorderLayout());
         JPanel ButtonBox = new JPanel(new BorderLayout());
         JPanel LogBox= new JPanel(new BorderLayout());
         
@@ -154,7 +154,7 @@ public class InstallDlg extends JDialog implements ActionListener{
         ButtonBox.setBackground(Color.PINK);
         
         CheckListBox.add(TestTable);
-        MessageBox.add(deviceListDig);
+        //MessageBox.add(deviceListDig);
         
         parent.add(CheckListBox, BorderLayout.WEST);
         parent.add(MessageBox, BorderLayout.EAST);
