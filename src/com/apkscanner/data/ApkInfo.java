@@ -13,6 +13,7 @@ public class ApkInfo
 	public String VersionCode = null;
 	public String MinSDKversion = null;
 	public String TargerSDKversion = null;
+	public String MaxSDKversion = null;
 	public String Signing = null;
 	public boolean isHidden = false;
 	public String IconPath = null;
@@ -44,6 +45,7 @@ public class ApkInfo
 		if(VersionCode == null) VersionCode = "";
 		if(MinSDKversion == null) MinSDKversion = "";
 		if(TargerSDKversion == null) TargerSDKversion = "";
+		if(MaxSDKversion == null) MaxSDKversion = "";
 		if(Signing == null) Signing = "";
 		if(IconPath == null) IconPath = "";
 		if(Permissions == null) Permissions = "";

@@ -80,6 +80,7 @@ public class AaptToolManager extends ApkScannerStub
 				if(usesSdkTag != null) {
 					apkInfo.TargerSDKversion = getAttrValue(usesSdkTag, "targetSdkVersion");
 					apkInfo.MinSDKversion = getAttrValue(usesSdkTag, "minSdkVersion");
+					apkInfo.MaxSDKversion = getAttrValue(usesSdkTag, "maxSdkVersion");
 				}
 
 				// label & icon

@@ -45,7 +45,7 @@
     <string name="tab_lib">Lib</string>
     <string name="tab_image">Image</string>
     <string name="tab_activity">Activity</string>
-    <string name="tab_cert">Cert</string>
+    <string name="tab_cert">Signature</string>
     
     <string name="basic_permissions">Permissions</string>
     <string name="basic_permlab_display_list">Display the entire list</string>
@@ -92,7 +92,7 @@
     <string name="activity_label_intent_filter">Intent filter</string>
     
     <string name="cert_summury">Summury</string>
-    <string name="cert_certificate">Certificate</string>
+    <string name="cert_certificate">Signature</string>
     
     <string name="file_size_Bytes">Bytes</string>
     <string name="file_size_KB">KB</string>

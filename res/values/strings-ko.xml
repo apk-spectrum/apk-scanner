@@ -45,7 +45,7 @@
     <string name="tab_lib">라이브러리</string>
     <string name="tab_image">이미지</string>
     <string name="tab_activity">액티비티</string>
-    <string name="tab_cert">인증서</string>
+    <string name="tab_cert">서명</string>
     
     <string name="basic_permissions">권한</string>
     <string name="basic_permlab_display_list">전체 리스트 보기</string>
@@ -92,7 +92,7 @@
     <string name="activity_label_intent_filter">인텐트 필터</string>
     
     <string name="cert_summury">요약</string>
-    <string name="cert_certificate">인증서</string>
+    <string name="cert_certificate">서명</string>
     
     <string name="file_size_Bytes">바이트</string>
     <string name="file_size_KB">KB</string>

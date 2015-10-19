@@ -40,6 +40,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	private String VersionCode = null;
 	private String MinSDKversion = null;
 	private String TargerSDKversion = null;
+	private String MaxSDKversion = null;
 	private boolean isHidden = false;
 	private String IconPath = null;
 	private String Permissions = null;
@@ -149,19 +150,26 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	{
 		if(!wasSetData) return;
 		
-		String sdkVersion = "@SDK Ver.";
+		String sdkVersion = "";
 		if(!MinSDKversion.isEmpty()) {
 			sdkVersion += MinSDKversion +" (Min)";
 		}
 		if(!TargerSDKversion.isEmpty()) {
-			if(!MinSDKversion.isEmpty()) {
+			if(!sdkVersion.isEmpty()) {
 				sdkVersion += ", ";
 			}
 			sdkVersion += TargerSDKversion + " (Target)";
 		}
-		if(MinSDKversion.isEmpty() && TargerSDKversion.isEmpty()) {
-			sdkVersion += "Unknown";
+		if(!MaxSDKversion.isEmpty()) {
+			if(!sdkVersion.isEmpty()) {
+				sdkVersion += ", ";
+				sdkVersion += MaxSDKversion + " (Max)";
+			}
 		}
+		if(sdkVersion.isEmpty()) {
+			sdkVersion += "Unspecified";
+		}
+		sdkVersion = "@SDK Ver. " + sdkVersion;
 		
 		String feature;
 		if(isHidden) {
@@ -267,6 +275,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		VersionCode = apkInfo.VersionCode;
 		MinSDKversion = apkInfo.MinSDKversion;
 		TargerSDKversion = apkInfo.TargerSDKversion;
+		MaxSDKversion = apkInfo.MaxSDKversion;
 		isHidden = apkInfo.isHidden;
 		IconPath = apkInfo.IconPath;
 		Permissions = apkInfo.Permissions;
