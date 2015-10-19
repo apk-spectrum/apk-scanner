@@ -356,7 +356,7 @@ public class AaptToolManager extends ApkScannerStub
 		String config = null;
 
 		if(resourcesWithValue == null)
-			return null;
+			return new String[] { id };
 
 		for(int i = 0; i < resourcesWithValue.length; i++) {
 			if(withConfig && resourcesWithValue[i].indexOf(" config (default)") >= 0) {
@@ -370,9 +370,14 @@ public class AaptToolManager extends ApkScannerStub
 
 			if(i+1 < resourcesWithValue.length) {
 				String val = resourcesWithValue[i+1].replaceAll("^\\s*\\([^\\(\\)]*\\) (.*)", "$1").replaceAll("^['\"](.*)['\"]\\s*$", "$1");
-				if(withConfig)
-					val = config + val;
-				values.add(val);
+				String type = resourcesWithValue[i+1].replaceAll("^\\s*\\(([^\\(\\)]*)\\) .*", "$1");
+				if("reference".equals(type) && val.startsWith("0x")) {
+					Collections.addAll(values, getResourceValues("@"+val, withConfig));
+				} else {
+					if(withConfig)
+						val = config + val;
+					values.add(val);
+				}
 				//Log.d("getResourceValues() id " + id + ", val " + val);
 			}
 		}

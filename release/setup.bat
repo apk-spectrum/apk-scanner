@@ -1,8 +1,12 @@
+@setlocal enableextensions
+@cd /d "%~dp0"
 @echo off
+
 cd
 set APP_PATH=C:\Program Files\APKScanner
 set APP_FILE=ApkScanner.exe
-set SRC_PATH=.
+set SRC_PATH=%~dp0.
+echo SRC_PATH : %SRC_PATH%
 
 if not exist "%SRC_PATH%\%APP_FILE%" (
     set SRC_PATH=C:
