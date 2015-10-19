@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Method;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -18,6 +19,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.apkscanner.core.AdbWrapper;
+import com.apkscanner.gui.ApkInstaller;
+import com.apkscanner.gui.ApkInstaller.InstallDlgFuncListener;
 import com.apkscanner.gui.dialog.install.*;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.test.ProgressBarTest;
@@ -31,8 +35,40 @@ public class InstallDlg extends JDialog implements ActionListener{
 	JPanel framelayout;
 	JFrame f;
 	JTextArea taskOutput;
+	InstallDlgFuncListener CoreInstallLitener; 
+	
+	
 	public InstallDlg() {
 		createAndShowGUI();
+		
+		CoreInstallLitener = new InstallDlgFuncListener() {
+			@Override
+			public void Complete() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void AddCheckList() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public int  ShowQuestion() {
+				
+				// TODO Auto-generated method stub
+				return 0;
+			}
+
+			@Override
+			public void AddLog(String str) {
+				// TODO Auto-generated method stub
+				
+			}
+		};		
+		ApkInstaller.setDlgListener(CoreInstallLitener);
+		
 	}
 
 	@Override
@@ -43,14 +79,28 @@ public class InstallDlg extends JDialog implements ActionListener{
 				scrollPane.setVisible(false);
 				this.pack();
 			} else {
-				scrollPane.setVisible(true);
-				this.pack();
+				//scrollPane.setVisible(true);
+				//this.pack();
+				//for test
+				
+				try {
+					addCheckListForInstallDlg(AdbWrapper.class.getMethod("scanDevices", null));
+				} catch (NoSuchMethodException | SecurityException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
 			}
 		} else if("Refresh".equals(e.getActionCommand())) {
-						
+			
 		}
 	}
 
+	private void addCheckListForInstallDlg(Method methodObject) {
+		 //methodObject.invoke(obj, args)
+	}
+	
+	
     private void createAndShowGUI() {
         //Create and set up the window.
         
@@ -114,16 +164,13 @@ public class InstallDlg extends JDialog implements ActionListener{
         ButtonBox.add(btnExit,BorderLayout.EAST );
         ButtonBox.add(LogBox, BorderLayout.SOUTH);
         ButtonBox.add(btnshowLogBox, BorderLayout.WEST);
-        
-        
+                
         framelayout.add(parent,BorderLayout.CENTER);
         framelayout.add(ButtonBox,BorderLayout.SOUTH);
-        
-        
+                
         scrollPane.setVisible(false);
         
-        this.add(framelayout);
-        
+        this.add(framelayout);        
     }
 	
     public static void main(String[] args) {

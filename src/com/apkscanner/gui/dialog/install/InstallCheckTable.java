@@ -141,7 +141,7 @@ class WorkerModel extends DefaultTableModel {
   private final ConcurrentMap<Integer, SwingWorker> swmap = new ConcurrentHashMap<>();
   private int number;
   public void addValue(String name, String t) {
-      Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_WAIT.getImageIcon().getImage()), t};
+      Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_DONE.getImageIcon().getImage()), t};
       super.addRow(obj);
       number++;
   }
@@ -168,6 +168,4 @@ class WorkerModel extends DefaultTableModel {
           this.isEditable = isEditable;
       }
   }
-  
-  
 }
