@@ -224,8 +224,7 @@ public class ApkInstaller
 							tmpApkPath = tmpPath; 
 							//Log.i(tmpPath);
 							InstallDlgListener.AddCheckList("pull APK", "Processing" , InstallDlg.CHECKLIST_MODE.WATING);
-							AdbWrapper.PullApk(dev.name, pkgInfo.apkPath, tmpPath, new AdbWrapperObserver("pull", dev.name));
-							InstallDlgListener.AddCheckList("pull APK", "Done" , InstallDlg.CHECKLIST_MODE.DONE);
+							AdbWrapper.PullApk(dev.name, pkgInfo.apkPath, tmpPath, new AdbWrapperObserver("pull", dev.name));							
 							return;
 						}
 						if(n==2) {
@@ -241,12 +240,13 @@ public class ApkInstaller
 								final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
 								int reboot = ShowQuestion(this, Resource.STR_QUESTION_REBOOT_DEVICE.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.YES_NO_OPTION, 
 										JOptionPane.QUESTION_MESSAGE, Appicon, yesNoOptions, yesNoOptions[1]);
+								InstallDlgListener.AddCheckList("Check root", (reboot==0)?"true":"false" , InstallDlg.CHECKLIST_MODE.DONE);
 								if(reboot == 0){
 									printlnLog("Wait for reboot...");									
 									AdbWrapper.reboot(dev.name);
 									printlnLog("Reboot...");
 								}
-								InstallDlgListener.AddCheckList("Check root", (reboot==0)?"Reboot":"no reboot" , InstallDlg.CHECKLIST_MODE.DONE);
+								
 							} else {
 								InstallDlgListener.AddCheckList("uninstall APK", "-" , InstallDlg.CHECKLIST_MODE.WATING);
 								printlnLog("adb uninstall " + pkgInfo.pkgName);
@@ -297,7 +297,7 @@ public class ApkInstaller
 								//installPanel.setVisible(true);
 								InstallDlgListener.AddCheckList("Push", "-" , InstallDlg.CHECKLIST_MODE.WATING);
 								AdbWrapper.PushApk(dev.name, strSourcePath, pkgInfo.apkPath, strLibPath, new AdbWrapperObserver("push", dev.name));
-								InstallDlgListener.AddCheckList("Push", "Done" , InstallDlg.CHECKLIST_MODE.DONE);
+								
 								return;
 							}
 							alreadyCheak = true;
@@ -324,8 +324,7 @@ public class ApkInstaller
 				printlnLog("Start install APK");
 				//installPanel.setVisible(true);
 				InstallDlgListener.AddCheckList("Check Install", "Install" , InstallDlg.CHECKLIST_MODE.WATING);
-				AdbWrapper.InstallApk(dev.name, strSourcePath , new AdbWrapperObserver("install", null));
-				InstallDlgListener.AddCheckList("Check Install", "Install" , InstallDlg.CHECKLIST_MODE.DONE);
+				AdbWrapper.InstallApk(dev.name, strSourcePath , new AdbWrapperObserver("install", null));				
 			}
 		});
 		t.start();
@@ -408,7 +407,7 @@ public class ApkInstaller
 		public void OnSuccess() {
 			if(type.equals("push")) {
 				final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
-				InstallDlgListener.AddCheckList("Push", "Success" , InstallDlg.CHECKLIST_MODE.ADD);
+				InstallDlgListener.AddCheckList("Push", "Success" , InstallDlg.CHECKLIST_MODE.DONE);
 				int reboot = ShowQuestion(null, Resource.STR_MSG_SUCCESS_INSTALLED.getString() + "\n" + Resource.STR_QUESTION_REBOOT_DEVICE.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.YES_NO_OPTION, 
 						JOptionPane.QUESTION_MESSAGE, QuestionAppicon, yesNoOptions, yesNoOptions[1]);
 				
@@ -421,10 +420,11 @@ public class ApkInstaller
 				}
 			} else if(type.equals("install")) {
 				//JOptionPane.showMessageDialog(null, "Success", "Complete", JOptionPane.INFORMATION_MESSAGE, SucAppicon);
-					InstallDlgListener.AddCheckList("Install", "Success" , InstallDlg.CHECKLIST_MODE.ADD);
+					InstallDlgListener.AddCheckList("Install", "Success" , InstallDlg.CHECKLIST_MODE.DONE);
 					ShowQuestion(null, Resource.STR_MSG_SUCCESS_INSTALLED.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, SucAppicon,
 			    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
 			} else if(type.equals("pull")) {
+				InstallDlgListener.AddCheckList("pull APK", "Done" , InstallDlg.CHECKLIST_MODE.DONE);
 				setVisible(false);
 				if(Listener != null) Listener.OnOpenApk(tmpApkPath);
 			} 
