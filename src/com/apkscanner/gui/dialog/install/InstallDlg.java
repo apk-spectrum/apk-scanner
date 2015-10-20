@@ -115,7 +115,7 @@ public class InstallDlg extends JDialog implements ActionListener{
 							
 						} else if("Refresh".equals(e.getActionCommand())) {
 							panel.refreshData();
-						}
+						}			            
 					}
 				}); 
 				
@@ -181,6 +181,10 @@ public class InstallDlg extends JDialog implements ActionListener{
             Log.d("click : " + b.getText());
             
             CoreInstallLitener.SetResult(CoreInstallLitener.getValue(b.getText()));
+            
+            MessageBox.removeAll();
+            dlg.pack();
+            dlg.repaint();
 		}
 		
 	}
@@ -192,11 +196,13 @@ public class InstallDlg extends JDialog implements ActionListener{
 			if(scrollPane.isVisible()) {				
 				scrollPane.setVisible(false);
 				this.pack();
+				this.repaint();
 				
 			} else {
 				scrollPane.setVisible(true);
 				
 				this.pack();
+				this.repaint();
 			}
 		} else if("Refresh".equals(e.getActionCommand())) {
 			
@@ -227,7 +233,7 @@ public class InstallDlg extends JDialog implements ActionListener{
         
          this.setMinimumSize(new Dimension(700, 400));
         this.setLocationRelativeTo(null);
-        this.setResizable(false);
+        //this.setResizable(false);
         this.pack();
         this.setVisible(true);
         //f.getContentPane().setLayout(new BorderLayout());

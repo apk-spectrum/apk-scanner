@@ -189,7 +189,11 @@ public class ApkInstaller
 				printlnLog("getPackageInfo() " + strPackageName);
 				PackageInfo pkgInfo = AdbWrapper.getPackageInfo(dev.name, strPackageName);
 				
-				InstallDlgListener.AddCheckList("Checkversion", pkgInfo.versionName + "/"+pkgInfo.versionCode , InstallDlg.CHECKLIST_MODE.ADD);
+				if(pkgInfo==null) {
+					InstallDlgListener.AddCheckList("Checkversion", "not install", InstallDlg.CHECKLIST_MODE.ADD);
+				} else {
+					InstallDlgListener.AddCheckList("Checkversion", pkgInfo.versionName + "/"+pkgInfo.versionCode , InstallDlg.CHECKLIST_MODE.ADD);
+				}
 				
 				if(checkPackage) {
 					alreadyCheak = true;
@@ -202,14 +206,19 @@ public class ApkInstaller
 						
 						InstallDlgListener.AddCheckList("CheckRoot", ""+isDeletePossible , InstallDlg.CHECKLIST_MODE.ADD);
 						
+						InstallDlgListener.AddCheckList("HOW", "-" , InstallDlg.CHECKLIST_MODE.QEUESTION);
 						int n;
 						if(isDeletePossible) {
 							n=ShowQuestion(this, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_OPEN_OR_INSTALL.getString(),
 									Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, checkPackDelOptions, checkPackDelOptions[3]);
+							InstallDlgListener.AddCheckList("HOW", ""+checkPackDelOptions[n] , InstallDlg.CHECKLIST_MODE.DONE);
 						} else {
 							n=ShowQuestion(this, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_OPEN_OR_INSTALL.getString(),
-									Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, checkPackOptions, checkPackOptions[2]);							
+									Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, checkPackOptions, checkPackOptions[2]);
+							InstallDlgListener.AddCheckList("HOW", ""+checkPackOptions[n] , InstallDlg.CHECKLIST_MODE.DONE);
 						}
+						
+						
 						
 						//Log.i("Seltected index : " + n);
 						if(n==-1 || (!isDeletePossible && n==2) || (isDeletePossible && n==3)) {
