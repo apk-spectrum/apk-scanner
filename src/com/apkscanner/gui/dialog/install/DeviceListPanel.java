@@ -39,11 +39,14 @@ public class DeviceListPanel extends JPanel implements ActionListener
 		InitUI(null, null, Resource.STR_LABEL_DEVICE_LIST.getString(), Resource.STR_LABEL_SELECT_DEVICE.getString(), null, 0, "Cosmo  ",ButtonListener);
 	}
 	
-	public static DeviceStatus getSelectedData()
-	{
+	public DeviceStatus getSelectedData()	{	
 		if(value == -1)
 			return null;
-		return DeviceList.get(value);
+		return DeviceList.get(list.getSelectedIndex());
+	}
+	
+	public int getSelectedIndex() {
+		return list.getSelectedIndex();
 	}
 
 	private void setValue(int newValue) {
@@ -177,7 +180,7 @@ public class DeviceListPanel extends JPanel implements ActionListener
 		}
 	}
 	
-	private static void refreshData()
+	public void refreshData()
 	{
     	DeviceList = AdbWrapper.scanDevices();
 		String[] names = new String[DeviceList.size()];

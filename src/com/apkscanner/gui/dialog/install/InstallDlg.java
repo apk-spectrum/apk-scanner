@@ -58,6 +58,7 @@ public class InstallDlg extends JDialog implements ActionListener{
 			int QuestionResult;
 			Object[] tempOption;
 			DeviceStatus dev;
+			DeviceListPanel panel;
 			public int getValue(String str) {
 				
 				for(int i=0;i< tempOption.length; i++) {
@@ -86,18 +87,28 @@ public class InstallDlg extends JDialog implements ActionListener{
 				
 			}
 			
+
 			@Override
 			public int ShowDeviceList(Runnable runnable) {
 				this.runThread = runnable;
 				
 				MessageBox.removeAll();
 				
-				DeviceListPanel panel = new DeviceListPanel(new ActionListener() {
+				panel = new DeviceListPanel(new ActionListener() {
 					
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						// TODO Auto-generated method stub
-						//dev = panel.getSelectedData();
+						if ("Set".equals(e.getActionCommand())) {
+							
+							dev = panel.getSelectedData();
+							Log.i("click set" + dev.getSummary());
+							
+							SetResult(panel.getSelectedIndex());
+							
+						} else if("Refresh".equals(e.getActionCommand())) {
+							panel.refreshData();
+						}
 					}
 				}); 
 				
@@ -140,7 +151,12 @@ public class InstallDlg extends JDialog implements ActionListener{
 				//this.runThread.notify();
 				return this.QuestionResult;
 			}
-			public void SetResult(int result) {				
+			@Override
+			public DeviceStatus getSelectDev() {
+				return this.dev;
+			}
+			
+			public void SetResult(int result) {
 				this.QuestionResult = result;				
 				synchronized (runThread) {
 					this.runThread.notify();
@@ -272,13 +288,13 @@ public class InstallDlg extends JDialog implements ActionListener{
         this.add(framelayout);        
     }
 	
-    public static void main(String[] args) {
-        //Schedule a job for the event-dispatching thread:
-        //creating and showing this application's GUI.
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-            	InstallDlg dlg = new InstallDlg();                
-            }
-        });
-    }
+//    public static void main(String[] args) {
+//        //Schedule a job for the event-dispatching thread:
+//        //creating and showing this application's GUI.
+//        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+//            public void run() {
+//            	InstallDlg dlg = new InstallDlg();                
+//            }
+//        });
+//    }
 }

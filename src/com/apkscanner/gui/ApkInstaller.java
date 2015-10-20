@@ -65,8 +65,10 @@ public class ApkInstaller implements ActionListener
 		public void AddLog(String str);
 		public int getResult();
 		public void SetResult(int i);
-		public void ShowDeviceList();
+		public int ShowDeviceList(Runnable runnable);
 		public void AddCheckList(String name, String t);
+		public int getValue(String text);
+		DeviceStatus getSelectDev();
 	}
 	
 	
@@ -75,7 +77,26 @@ public class ApkInstaller implements ActionListener
 
 	private int ShowQuestion(Runnable runnable, Object message, String title, int optionType, int messageType, Icon icon, Object[] options, Object initialValue) {
 		
-		int result = InstallDlgListener.ShowQuestion(runnable,message,title,optionType,messageType, icon, options, initialValue);
+		Object[] temp = new Object[options.length];
+		
+		for(int i=0; i<options.length; i++) {
+			temp[options.length-1-i] = options[i];
+		}		
+		int result = InstallDlgListener.ShowQuestion(runnable,message,title,optionType,messageType, icon, temp, initialValue);
+		synchronized (runnable) {
+			try {
+				runnable.wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}		
+		return InstallDlgListener.getResult();
+	}
+	
+	private int showDeviceList(Runnable runnable) {
+		
+		int result = InstallDlgListener.ShowDeviceList(runnable);
 		
 		synchronized (runnable) {
 			try {
@@ -101,8 +122,8 @@ public class ApkInstaller implements ActionListener
 		strSourcePath = apkPath;
 		strLibPath = libPath;
 		
-		ShowSetupLogDialog();
-		dialogLogArea.setText("");
+		//ShowSetupLogDialog();
+		//dialogLogArea.setText("");
 		
 		this.Listener = Listener; 
 		
@@ -145,15 +166,17 @@ public class ApkInstaller implements ActionListener
 				InstallDlgListener.AddCheckList("Device", dev.device);
 				
 				if(DeviceList.size() > 1 || (DeviceList.size() == 1 && !dev.status.equals("device"))) {
-					int selectedValue = DeviceListDialog.showDialog();
+					//int selectedValue = DeviceListDialog.showDialog();
 					//Log.i("Seltected index : " + selectedValue);
+					
+					int selectedValue = showDeviceList(this);
 					
 					if(selectedValue == -1) {
 						Listener.SetInstallButtonStatus(true);
 						setVisible(false);
 						return;
 					}
-					dev = DeviceListDialog.getSelectedData();
+					dev = InstallDlgListener.getSelectDev();
 				}
 				printlnLog(dev.getSummary());
 				
@@ -243,7 +266,7 @@ public class ApkInstaller implements ActionListener
 							} 
 							if(n==0) {
 								printlnLog("Start push APK");
-								installPanel.setVisible(true);
+								//installPanel.setVisible(true);
 								AdbWrapper.PushApk(dev.name, strSourcePath, pkgInfo.apkPath, strLibPath, new AdbWrapperObserver("push", dev.name));
 								return;
 							}
@@ -265,7 +288,7 @@ public class ApkInstaller implements ActionListener
 					}
 				}
 				printlnLog("Start install APK");
-				installPanel.setVisible(true);
+				//installPanel.setVisible(true);
 				AdbWrapper.InstallApk(dev.name, strSourcePath , new AdbWrapperObserver("install", null));
 			}
 		});
@@ -367,7 +390,7 @@ public class ApkInstaller implements ActionListener
 		@Override
 		public void OnCompleted() {
 			Listener.SetInstallButtonStatus(true);
-			installPanel.setVisible(false);
+			//installPanel.setVisible(false);
 		}
 	}
 	
@@ -399,17 +422,17 @@ public class ApkInstaller implements ActionListener
 					JLabel GifLabel, waitbar, installlabel;
 					ImageIcon icon = Resource.IMG_INSTALL_WAIT.getImageIcon();
 					ImageIcon waitbaricon = Resource.IMG_WAIT_BAR.getImageIcon();
-					installPanel = new JPanel();
+					//installPanel = new JPanel();
 					
 					GifLabel = new JLabel(icon);
 					waitbar = new JLabel(waitbaricon);
 					installlabel = new JLabel(Resource.STR_LABEL_INSTALLING.getString());
 					
-					installPanel.add(installlabel);
-					installPanel.add(waitbar);
+					//installPanel.add(installlabel);
+					//installPanel.add(waitbar);
 					
-					installPanel.setVisible(false);
-					installPanel.setOpaque(true);
+					//installPanel.setVisible(false);
+					//installPanel.setOpaque(true);
 
 					uninstallPanel = new JPanel();
 					uninstallPanel.add(new JLabel(Resource.STR_LABEL_UNINSTALLING.getString()));
