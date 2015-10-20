@@ -22,10 +22,12 @@ import com.apkscanner.util.MyXPath;
 public enum Resource
 {
 	STR_APP_NAME				(Type.TEXT, "@app_name"),
-	STR_APP_VERSION				(Type.TEXT, "2.1 beta 20151019"),
+	STR_APP_VERSION				(Type.TEXT, "2.1 beta 20151020"),
 	STR_APP_BUILD_MODE			(Type.TEXT, "eng"),
 	STR_APP_MAKER				(Type.TEXT, "jin_h.lee / sunggyu.kam"),
 	STR_APP_MAKER_EMAIL			(Type.TEXT, "jin_h.lee@samsung.com;sunggyu.kam@samsung.com"),
+
+	STR_SDK_INFO_FILE_PATH		(Type.TEXT, "/values/sdk-info.xml"),
 
 	STR_BTN_OPEN				(Type.TEXT, "@btn_open"),
 	STR_BTN_MANIFEST			(Type.TEXT, "@btn_manifest"),
@@ -339,11 +341,11 @@ public enum Resource
 		
 		if(!id.startsWith("@")) return id;
 		id = id.substring(1);
-		
+
 		if(stringXmlPath == null) {
 			makeStringXmlPath(lang);
 		}
-		
+
 		for(MyXPath xPath: stringXmlPath) {
 			value = xPath.getNode("/resources/string[@name='" + id + "']").getTextContent();
 			if(value != null) break;

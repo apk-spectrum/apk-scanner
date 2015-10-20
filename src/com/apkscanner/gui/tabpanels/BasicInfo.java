@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -24,6 +27,7 @@ import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.MyXPath;
 
 public class BasicInfo extends JComponent implements HyperlinkClickListener, TabDataObject
 {
@@ -152,43 +156,42 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		
 		String sdkVersion = "";
 		if(!MinSDKversion.isEmpty()) {
-			sdkVersion += MinSDKversion +" (Min)";
+			sdkVersion += makeHyperLink("@event", MinSDKversion +" (Min)", "Min SDK version", "min-sdk", null);
 		}
 		if(!TargerSDKversion.isEmpty()) {
 			if(!sdkVersion.isEmpty()) {
 				sdkVersion += ", ";
 			}
-			sdkVersion += TargerSDKversion + " (Target)";
+			sdkVersion += makeHyperLink("@event", TargerSDKversion + " (Target)", "Targer SDK version", "target-sdk", null);
 		}
 		if(!MaxSDKversion.isEmpty()) {
 			if(!sdkVersion.isEmpty()) {
 				sdkVersion += ", ";
-				sdkVersion += MaxSDKversion + " (Max)";
 			}
+			sdkVersion += makeHyperLink("@event", MaxSDKversion + " (Max)", "Max SDK version", "max-sdk", null);
 		}
 		if(sdkVersion.isEmpty()) {
 			sdkVersion += "Unspecified";
 		}
-		sdkVersion = "@SDK Ver. " + sdkVersion;
 		
 		String feature;
 		if(isHidden) {
-			feature = makeHyperLink("", Resource.STR_FEATURE_HIDDEN_LAB.getString(), Resource.STR_FEATURE_HIDDEN_DESC.getString(), null, null);
+			feature = makeHyperLink("@event", Resource.STR_FEATURE_HIDDEN_LAB.getString(), Resource.STR_FEATURE_HIDDEN_DESC.getString(), "feature-hidden", null);
 		} else {
-			feature = makeHyperLink("", Resource.STR_FEATURE_LAUNCHER_LAB.getString(), Resource.STR_FEATURE_LAUNCHER_DESC.getString(), null, null);
+			feature = makeHyperLink("@event", Resource.STR_FEATURE_LAUNCHER_LAB.getString(), Resource.STR_FEATURE_LAUNCHER_DESC.getString(), "feature-launcher", null);
 		}
 		
 		if(!Startup.isEmpty()) {
-			feature += ", " + makeHyperLink("", Resource.STR_FEATURE_STARTUP_LAB.getString(), Resource.STR_FEATURE_STARTUP_DESC.getString(), null, null);
+			feature += ", " + makeHyperLink("@event", Resource.STR_FEATURE_STARTUP_LAB.getString(), Resource.STR_FEATURE_STARTUP_DESC.getString(), "feature-startup", null);
 		}
 		if(!ProtectionLevel.isEmpty()) {
-			feature += ", " + makeHyperLink("", Resource.STR_FEATURE_SIGNATURE_LAB.getString(), Resource.STR_FEATURE_SIGNATURE_DESC.getString(), null, null);
+			feature += ", " + makeHyperLink("@event", Resource.STR_FEATURE_SIGNATURE_LAB.getString(), Resource.STR_FEATURE_SIGNATURE_DESC.getString(), "feature-protection-level", null);
 		}
 		if(!SharedUserId.isEmpty()) {
-			feature += ", " + makeHyperLink("", Resource.STR_FEATURE_SHAREDUSERID_LAB.getString(), Resource.STR_FEATURE_SHAREDUSERID_DESC.getString(), null, null);
+			feature += ", " + makeHyperLink("@event", Resource.STR_FEATURE_SHAREDUSERID_LAB.getString(), Resource.STR_FEATURE_SHAREDUSERID_DESC.getString(), "feature-shared-user-id", null);
 		}
 		if(debuggable) {
-			feature += ", " + makeHyperLink("", Resource.STR_FEATURE_DEBUGGABLE_LAB.getString(), Resource.STR_FEATURE_DEBUGGABLE_DESC.getString(), null, null);
+			feature += ", " + makeHyperLink("@event", Resource.STR_FEATURE_DEBUGGABLE_LAB.getString(), Resource.STR_FEATURE_DEBUGGABLE_DESC.getString(), "feature-debuggable", null);
 		}
 		
 		String permGorupImg = makePermGroup();
@@ -211,24 +214,28 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("    <td height=" + infoHeight + ">");
 		strTabInfo.append("      <div id=\"basic-info\">");
 		strTabInfo.append("        <font style=\"font-size:20px; color:#548235; font-weight:bold\">");
+		if(Labelname.length > 1) {
 		strTabInfo.append("          " + makeHyperLink("@event", Labelname[0], mutiLabels, "other-lang", null));
 		strTabInfo.append("        </font>");
-		if(Labelname.length > 1) {
-			strTabInfo.append("<font style=\"font-size:10px;\">");
-			strTabInfo.append(" " + makeHyperLink("@event", "["+Labelname.length+"]", mutiLabels, "other-lang", null));
-			strTabInfo.append("</font>");
+		} else {
+		strTabInfo.append("          " + Labelname[0]);
+		strTabInfo.append("</font><br/>");
 		}
-		strTabInfo.append("        <br/>");
+		if(Labelname.length > 1) {
+		strTabInfo.append("        <font style=\"font-size:10px;\">");
+		strTabInfo.append("          " + makeHyperLink("@event", "["+Labelname.length+"]", mutiLabels, "other-lang", null));
+		strTabInfo.append("</font><br/>");
+		}
 		strTabInfo.append("        <font style=\"font-size:15px; color:#4472C4\">");
-		strTabInfo.append("          [" + makeHyperLink("", PackageName, "Package name", null, null) +"]");
-		strTabInfo.append("        </font><br/>");
+		strTabInfo.append("          [" + PackageName +"]");
+		strTabInfo.append("</font><br/>");
 		strTabInfo.append("        <font style=\"font-size:15px; color:#ED7E31\">");
-		strTabInfo.append("          " + makeHyperLink("", "Ver. " + VersionName +" / " + VersionCode, "VersionName : " + VersionName + "\n" + "VersionCode : " + VersionCode, null, null));
+		strTabInfo.append("          " + makeHyperLink("@event", "Ver. " + VersionName +" / " + VersionCode, "VersionName : " + VersionName + "\n" + "VersionCode : " + VersionCode, "app-version", null));
 		strTabInfo.append("        </font><br/>");
 		strTabInfo.append("        <br/>");
 		strTabInfo.append("        <font style=\"font-size:12px\">");
-		strTabInfo.append("          " + makeHyperLink("", sdkVersion, "Target SDK version", null, null) + "<br/>");
-		strTabInfo.append("          " + makeHyperLink("", ApkSize, "APK size", null, null));
+		strTabInfo.append("          @SDK Ver. " + sdkVersion + "<br/>");
+		strTabInfo.append("          " + ApkSize);
 		strTabInfo.append("        </font>");
 		strTabInfo.append("        <br/><br/>");
 		strTabInfo.append("        <font style=\"font-size:12px\">");
@@ -328,15 +335,27 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	}
 	
 	@Override
-	public void hyperlinkClick(String id) {
-
-		if(id.equals("other-lang")) {
+	public void hyperlinkClick(String id)
+	{
+		//Log.i("hyperlinkClick() " + id);
+		if("other-lang".equals(id)) {
 			if(mutiLabels == null || mutiLabels.isEmpty()
 					|| Labelname.length == 1) return;
-			showDialog(mutiLabels, Resource.STR_LABEL_APP_NAME_LIST.getString(), new Dimension(300, 200)
-					, new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(IconPath),32,32)));
-		} else if(id.equals("display-list")) {
+			try {
+				showDialog(mutiLabels, Resource.STR_LABEL_APP_NAME_LIST.getString(), new Dimension(300, 200)
+						, new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(new URL(IconPath)),32,32)));
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+		} else if("app-version".equals(id)) {
+			String ver = "VersionName : " + VersionName + "\n" + "VersionCode : " + VersionCode;
+			showDialog(ver, "App version info", new Dimension(300, 50), null);
+		} else if("display-list".equals(id)) {
 			showPermList();
+		} else if(id.endsWith("-sdk")){
+			showSdkVersionInfo(id);
+		} else if(id.startsWith("feature-")) {
+			showFeatureInfo(id);
 		} else {
 			showPermDetailDesc(id);
 		}
@@ -436,6 +455,66 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		descPane.setBackground(label.getBackground());
 		*/
 		showDialog(body.toString(), Resource.STR_BASIC_PERM_DISPLAY_TITLE.getString(), new Dimension(600, 200), new ImageIcon(g.icon.replaceAll("^file:/", "")));
+	}
+
+	public void showSdkVersionInfo(String id)
+	{
+		String sdkVer = null;
+		if("min-sdk".equals(id)) {
+			sdkVer = MinSDKversion;
+		} else if("target-sdk".equals(id)) {
+			sdkVer = TargerSDKversion;
+		} else if("max-sdk".equals(id)) {
+			sdkVer = MaxSDKversion;
+		}
+		
+		StringBuilder info = new StringBuilder();
+		InputStream xml = Resource.class.getResourceAsStream(Resource.STR_SDK_INFO_FILE_PATH.getString());
+		MyXPath xpath = new MyXPath(xml);
+		xpath.getNode("/resources/sdk-info[@apiLevel='" + sdkVer + "']");
+
+		Dimension size = null;
+		ImageIcon logoIcon = null;
+
+		if(xpath.getNode() != null) {
+			info.append(xpath.getAttributes("platformVersion"));
+			info.append(" - " + xpath.getAttributes("codeName"));
+			info.append("\n\nAPI Level " + sdkVer);
+			info.append("\nBuild.VERSION_CODES." + xpath.getAttributes("versionCode"));
+
+			size = new Dimension(350, 100);
+			logoIcon = new ImageIcon(ImageScaler.getScaledImage(Resource.IMG_APP_ICON.getImageIcon(),100,100));
+		} else {
+			info.append("API Level " + sdkVer);
+			info.append("\nSorry, It's unknown verion.\nYou can look at the sdk info by the Android developer site\n");
+			info.append("http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels");
+
+			size = new Dimension(500, 100);
+			logoIcon = new ImageIcon(ImageScaler.getScaledImage(Resource.IMG_APP_ICON.getImageIcon(),100,100));
+		}
+		
+		showDialog(info.toString(), "SDK " + sdkVer, size, logoIcon);
+	}
+
+	public void showFeatureInfo(String id)
+	{
+		String feature = null;
+		
+		if("feature-hidden".equals(id)) {
+			feature = Resource.STR_FEATURE_HIDDEN_DESC.getString();
+		} else if("feature-launcher".equals(id)) {
+			feature = Resource.STR_FEATURE_LAUNCHER_DESC.getString();
+		} else if("feature-startup".equals(id)) {
+			feature = Resource.STR_FEATURE_STARTUP_DESC.getString();
+		} else if("feature-protection-level".equals(id)) {
+			feature = Resource.STR_FEATURE_SIGNATURE_DESC.getString();
+		} else if("feature-shared-user-id".equals(id)) {
+			feature = Resource.STR_FEATURE_SHAREDUSERID_DESC.getString();
+		} else if("feature-debuggable".equals(id)) {
+			feature = Resource.STR_FEATURE_DEBUGGABLE_DESC.getString();
+		}
+		
+		showDialog(feature, "Feature info", new Dimension(400, 100), null);
 	}
 
 	@Override

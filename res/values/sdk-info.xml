@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <sdk-info apiLevel="1" platformVersion="Android 1.0" versionCode="BASE" codeName="Base" icon="logo/base.png"/>
+    <sdk-info apiLevel="2" platformVersion="Android 1.1" versionCode="BASE_1_1" codeName="Base" icon="logo/base.png"/>
+    <sdk-info apiLevel="3" platformVersion="Android 1.5" versionCode="CUPCAKE" codeName="Cupcake" icon="logo/cupcake.png"/>
+    <sdk-info apiLevel="4" platformVersion="Android 1.6" versionCode="DONUT" codeName="Donut" icon="logo/donut.png"/>
+    <sdk-info apiLevel="5" platformVersion="Android 2.0" versionCode="ECLAIR" codeName="Eclair" icon="logo/eclair.png"/>
+    <sdk-info apiLevel="6" platformVersion="Android 2.0.1" versionCode="ECLAIR_0_1" codeName="Eclair" icon="logo/eclair.png"/>
+    <sdk-info apiLevel="7" platformVersion="Android 2.1.x" versionCode="ECLAIR_MR1" codeName="Eclair" icon="logo/eclair.png"/>
+    <sdk-info apiLevel="8" platformVersion="Android 2.2.x" versionCode="FROYO" codeName="Froyo" icon="logo/froyo.png"/>
+    <sdk-info apiLevel="9" platformVersion="Android 2.3.x" versionCode="GINGERBREAD" codeName="Gingerbread" icon="logo/gingerbread.png"/>
+    <sdk-info apiLevel="10" platformVersion="Android 2.3.x" versionCode="GINGERBREAD_MR1" codeName="Gingerbread" icon="logo/gingerbread.png"/>
+    <sdk-info apiLevel="11" platformVersion="Android 3.0.x" versionCode="HONEYCOMB" codeName="Honeycomb" icon="logo/honeycomb.png"/>
+    <sdk-info apiLevel="12" platformVersion="Android 3.1.x" versionCode="HONEYCOMB_MR1" codeName="Honeycomb" icon="logo/honeycomb.png"/>
+    <sdk-info apiLevel="13" platformVersion="Android 3.2" versionCode="HONEYCOMB_MR2" codeName="Honeycomb" icon="logo/honeycomb.png"/>
+    <sdk-info apiLevel="14" platformVersion="Android 4.0.x" versionCode="ICE_CREAM_SANDWICH" codeName="Ice Cream Sandwich" icon="logo/ice_cream_sandwich.png"/>
+    <sdk-info apiLevel="15" platformVersion="Android 4.0.x" versionCode="ICE_CREAM_SANDWICH_MR1" codeName="Ice Cream Sandwich" icon="logo/ice_cream_sandwich.png"/>
+    <sdk-info apiLevel="16" platformVersion="Android 4.1.x" versionCode="JELLY_BEAN" codeName="Jelly Bean" icon="logo/jelly_bean.png"/>
+    <sdk-info apiLevel="17" platformVersion="Android 4.2.x" versionCode="JELLY_BEAN_MR1" codeName="Jelly Bean" icon="logo/jelly_bean.png"/>
+    <sdk-info apiLevel="18" platformVersion="Android 4.3" versionCode="JELLY_BEAN_MR2" codeName="Jelly Bean" icon="logo/jelly_bean.png"/>
+    <sdk-info apiLevel="19" platformVersion="Android 4.4" versionCode="KITKAT" codeName="KitKat" icon="logo/kitkat.png"/>
+    <sdk-info apiLevel="20" platformVersion="Android 4.4W" versionCode="KITKAT_WATCH" codeName="KitKat" icon="logo/kitkat.png"/>
+    <sdk-info apiLevel="21" platformVersion="Android 5.0" versionCode="LOLLIPOP" codeName="Lollipop" icon="logo/lollipop.png"/>
+    <sdk-info apiLevel="22" platformVersion="Android 5.1" versionCode="LOLLIPOP_MR1" codeName="Lollipop" icon="logo/lollipop.png"/>
+    <sdk-info apiLevel="23" platformVersion="Android 6.0" versionCode="MARSHMALLOW" codeName="Marshmallow" icon="logo/marshmallow.png"/>
+</resources>

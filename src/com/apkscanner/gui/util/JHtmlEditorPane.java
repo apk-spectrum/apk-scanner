@@ -116,7 +116,7 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
         	if (elem != null) {
         		AttributeSet attr = elem.getAttributes();
         		AttributeSet a = (AttributeSet) attr.getAttribute(HTML.Tag.A);
-        		if (a != null) {
+        		if (a != null && a.getAttribute(HTML.Attribute.TITLE) != null) {
         			String htmlToolTip = "<html><body>" + ((String) a.getAttribute(HTML.Attribute.TITLE)).replaceAll("\n", "<br/>") + "</body></html>";
         			editor.setToolTipText(htmlToolTip);
         		}
