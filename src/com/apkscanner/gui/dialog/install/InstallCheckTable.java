@@ -67,7 +67,7 @@ public final class InstallCheckTable extends JPanel {
       }
       @Override public void actionPerformed(ActionEvent e) {
 
-          model.addValue("aaaa", "bbbb", true);
+          model.addValue("aaaa", "bbbb", InstallDlg.CHECKLIST_MODE.DONE);
           //executor.execute(worker);
           setImageObserver(table);
       }
@@ -150,17 +150,24 @@ class WorkerModel extends DefaultTableModel {
 	  if(mode == InstallDlg.CHECKLIST_MODE.ADD) {
 		  Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_DONE.getImageIcon().getImage()), t};
 		  super.addRow(obj);
+		  number++;
 	  } else if(mode == InstallDlg.CHECKLIST_MODE.WATING) {
 		  Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_WAIT.getImageIcon().getImage()), t};
 		  super.addRow(obj);
-	  }	else if(mode == InstallDlg.CHECKLIST_MODE.DONE) {
-		  Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_WAIT.getImageIcon().getImage()), t};
+	  }	else if(mode == InstallDlg.CHECKLIST_MODE.DONE) {		  
+		  Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_DONE.getImageIcon().getImage()), t};
+		  super.removeRow(number);
 		  super.addRow(obj);
+		  number++;
 	  } else if(mode == InstallDlg.CHECKLIST_MODE.QEUESTION) {
-		  Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_WAIT.getImageIcon().getImage()), t};
+		  Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_QUESTION.getImageIcon().getImage()), t};
 		  super.addRow(obj);
+	  } else if(mode == InstallDlg.CHECKLIST_MODE.ERROR) {
+		  Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_ERROR.getImageIcon().getImage()), t};
+		  super.addRow(obj);
+		  number++;
 	  }
-      number++;
+      
   }
 
   @Override public boolean isCellEditable(int row, int col) {

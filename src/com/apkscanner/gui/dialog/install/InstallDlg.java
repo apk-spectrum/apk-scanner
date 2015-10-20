@@ -48,7 +48,8 @@ public class InstallDlg extends JDialog implements ActionListener{
 		ADD,
 		WATING,
 		QEUESTION,
-		DONE
+		DONE,
+		ERROR
 	}
 	
 	public InstallDlgFuncListener getInstallDlgFuncListener() {

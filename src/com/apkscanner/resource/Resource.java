@@ -212,7 +212,7 @@ public enum Resource
 	IMG_INSTALL_TABLE_DONE		(Type.IMAGE, "done_icon.png"),
 	IMG_INSTALL_TABLE_WAIT		(Type.IMAGE, "install_wait_icon.GIF"),
 	IMG_INSTALL_TABLE_QUESTION		(Type.IMAGE, "question_icon.png"),
-	
+	IMG_INSTALL_TABLE_ERROR		(Type.IMAGE, "install_error_icon.png"),
 	
 	BIN_ADB_LNX					(Type.BIN, "adb"),
 	BIN_ADB_WIN					(Type.BIN, "adb.exe"),
