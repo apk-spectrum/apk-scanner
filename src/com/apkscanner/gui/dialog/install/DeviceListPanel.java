@@ -19,13 +19,12 @@ import java.util.Set;
 public class DeviceListPanel extends JPanel implements ActionListener
 {
 	private static final long serialVersionUID = 662649457192939410L;
-
-	private static DeviceListPanel dialog;
+	
 	private static int value = 0;
 	private static JList<String> list;
 	private static Boolean clicked = false;
 	private static ArrayList<DeviceStatus> DeviceList;
-
+	
 	/**
 	 * Set up and show the dialog. The first Component argument determines which
 	 * frame the dialog depends on; it should be a component in the dialog's
@@ -34,10 +33,10 @@ public class DeviceListPanel extends JPanel implements ActionListener
 	 * screen; otherwise, it should be the component on top of which the dialog
 	 * should appear.
 	 */
-	public DeviceListPanel() {
+	public DeviceListPanel(ActionListener ButtonListener) {
 		//showDialog();
 		
-		InitUI(null, null, Resource.STR_LABEL_DEVICE_LIST.getString(), Resource.STR_LABEL_SELECT_DEVICE.getString(), null, 0, "Cosmo  ");
+		InitUI(null, null, Resource.STR_LABEL_DEVICE_LIST.getString(), Resource.STR_LABEL_SELECT_DEVICE.getString(), null, 0, "Cosmo  ",ButtonListener);
 	}
 	
 	public static DeviceStatus getSelectedData()
@@ -53,7 +52,7 @@ public class DeviceListPanel extends JPanel implements ActionListener
 	}
 
 	private void InitUI(Frame frame, Component locationComp, String labelText,
-			String title, Object[] data, int initialValue, String longValue) {
+			String title, Object[] data, int initialValue, String longValue, ActionListener ButtonListener) {
 		clicked = false;
         		
 		// Create and initialize the buttons.
@@ -61,7 +60,7 @@ public class DeviceListPanel extends JPanel implements ActionListener
 		cancelButton.setPreferredSize(new Dimension(100,30));
 		
 		cancelButton.setActionCommand("Refresh");
-		cancelButton.addActionListener(this);
+		cancelButton.addActionListener(ButtonListener);
 		cancelButton.setFocusable(true);
 		cancelButton.addKeyListener(new KeyAdapter() {
         	public void keyPressed(KeyEvent ke) {
@@ -73,7 +72,7 @@ public class DeviceListPanel extends JPanel implements ActionListener
 		final JButton setButton = new StandardButton(Resource.STR_BTN_OK.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
 		setButton.setPreferredSize(new Dimension(100,30));
 		setButton.setActionCommand("Set");
-		setButton.addActionListener(this);
+		setButton.addActionListener(ButtonListener);
 		//this.getRootPane().setDefaultButton(setButton);
 		setButton.setFocusable(true);
 		setButton.addKeyListener(new KeyAdapter() {
@@ -171,11 +170,10 @@ public class DeviceListPanel extends JPanel implements ActionListener
 	public void actionPerformed(ActionEvent e) {
 		if ("Set".equals(e.getActionCommand())) {
 			//Log.i("click set");
-			DeviceListPanel.value = (int) (list.getSelectedIndex());
-			DeviceListPanel.dialog.setVisible(false);
+			DeviceListPanel.value = (int) (list.getSelectedIndex());			
 			clicked = true;
 		} else if("Refresh".equals(e.getActionCommand())) {
-			refreshData();			
+			refreshData();
 		}
 	}
 	

@@ -24,6 +24,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.apkscanner.core.AdbWrapper;
+import com.apkscanner.core.AdbWrapper.DeviceStatus;
 import com.apkscanner.gui.ApkInstaller;
 import com.apkscanner.gui.ApkInstaller.InstallDlgFuncListener;
 import com.apkscanner.gui.dialog.install.*;
@@ -35,7 +36,6 @@ import com.apkscanner.util.Log;
 public class InstallDlg extends JDialog implements ActionListener{
 	
 	InstallCheckTable TestTable;
-	DeviceListPanel deviceListDig;
 	JScrollPane scrollPane;
 	JPanel framelayout;
 	JFrame f;
@@ -55,7 +55,19 @@ public class InstallDlg extends JDialog implements ActionListener{
 		
 		CoreInstallLitener = new InstallDlgFuncListener() {
 			Runnable runThread;
-			int QuestionResult;			
+			int QuestionResult;
+			Object[] tempOption;
+			DeviceStatus dev;
+			public int getValue(String str) {
+				
+				for(int i=0;i< tempOption.length; i++) {
+					if(tempOption[i].toString().equals(str)) {
+						return tempOption.length - 1 -i;
+					}
+				}
+				return -1;
+			}
+			
 			@Override
 			public void AddLog(String str) {
 				// TODO Auto-generated method stub
@@ -75,8 +87,24 @@ public class InstallDlg extends JDialog implements ActionListener{
 			}
 			
 			@Override
-			public void ShowDeviceList() {
+			public int ShowDeviceList(Runnable runnable) {
+				this.runThread = runnable;
 				
+				MessageBox.removeAll();
+				
+				DeviceListPanel panel = new DeviceListPanel(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						// TODO Auto-generated method stub
+						//dev = panel.getSelectedData();
+					}
+				}); 
+				
+				MessageBox.add(panel);
+				dlg.pack();
+				
+				return 0;
 			}
 			
 			@Override
@@ -84,16 +112,21 @@ public class InstallDlg extends JDialog implements ActionListener{
 				// TODO Auto-generated method stub
 				this.runThread = runthread;
 				Log.d("ShowQuestion");				
-				
+				tempOption = options;
 				JButton[] btn = new JButton[options.length];
 				
 				for( int i=0; options.length > i; i++ ) {
-					btn[i] = new JButton(options[i].toString());
+					
+					btn[i] = new JButton((String)options[i]);
 					btn[i].addActionListener(new AlertButtonListener());
 
 				}
+				for(int i =0; i<btn.length; i++) {
+					Log.d(""+btn[i].getText());
+				}
 				
-				newOption = ArrowTraversalPane.makeOptionPane(message, title, optionType, messageType, icon, btn, initialValue);
+				
+				newOption = ArrowTraversalPane.makeOptionPane(message, title, optionType, messageType, icon, btn, null);
 				
 				MessageBox.removeAll();
 				MessageBox.add(newOption);
@@ -124,27 +157,27 @@ public class InstallDlg extends JDialog implements ActionListener{
 			// TODO Auto-generated method stub
             JButton b = (JButton) e.getSource();
             Log.d("click : " + b.getText());
-            Log.d("Resource : " + Resource.STR_BTN_CANCEL.getString());
             
-            if (b.getText().equals(Resource.STR_BTN_OPEN.getString())) {
-            	
-            } else if (b.getText().equals(Resource.STR_BTN_INSTALL.getString())) {
-            	
-            } else if (b.getText().equals(Resource.STR_BTN_DEL.getString())) {
-            	
-            } else if (b.getText().equals(Resource.STR_BTN_CANCEL.getString())) {
-            	CoreInstallLitener.SetResult(1);
-            } else if (b.getText().equals(Resource.STR_BTN_PUSH.getString())) {
-            	
-            } else if (b.getText().equals(Resource.STR_BTN_INSTALL.getString())) {
-            	
-            } else if (b.getText().equals(Resource.STR_BTN_NO.getString())) {
-            	
-            } else if (b.getText().equals(Resource.STR_BTN_YES.getString())) {
-            	
-            } else if (b.getText().equals(Resource.STR_BTN_REFRESH.getString())) {
-            	CoreInstallLitener.SetResult(0);
-            }
+            CoreInstallLitener.SetResult(CoreInstallLitener.getValue(b.getText()));
+//            if (b.getText().equals(Resource.STR_BTN_OPEN.getString())) {
+//            	
+//            } else if (b.getText().equals(Resource.STR_BTN_INSTALL.getString())) {
+//            	
+//            } else if (b.getText().equals(Resource.STR_BTN_DEL.getString())) {
+//            	
+//            } else if (b.getText().equals(Resource.STR_BTN_CANCEL.getString())) {
+//            	//CoreInstallLitener.SetResult(1);
+//            } else if (b.getText().equals(Resource.STR_BTN_PUSH.getString())) {
+//            	//CoreInstallLitener.SetResult(0);
+//            } else if (b.getText().equals(Resource.STR_BTN_INSTALL.getString())) {
+//            	//CoreInstallLitener.SetResult(1);
+//            } else if (b.getText().equals(Resource.STR_BTN_NO.getString())) {
+//            	
+//            } else if (b.getText().equals(Resource.STR_BTN_YES.getString())) {
+//            	
+//            } else if (b.getText().equals(Resource.STR_BTN_REFRESH.getString())) {
+//            	//CoreInstallLitener.SetResult(0);
+//            }
 		}
 		
 	}
@@ -181,7 +214,6 @@ public class InstallDlg extends JDialog implements ActionListener{
         f = new JFrame();
         
         TestTable = new InstallCheckTable();
-        deviceListDig = new DeviceListPanel();
         
         //TestTable.createAndShowGUI();
         
