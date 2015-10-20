@@ -49,6 +49,7 @@ public class ApkInstaller
 	private String strSourcePath;
 	private String strLibPath;
 	private String tmpApkPath;
+	final Thread t;
 	
 	//window position
 	static private int nPositionX, nPositionY;
@@ -136,7 +137,7 @@ public class ApkInstaller
 		this.InstallDlgListener = dlg.getInstallDlgFuncListener();
 		
 		
-		final Thread t = new Thread(new Runnable() {
+		t = new Thread(new Runnable() {
 			public void run(){
 				ArrayList<DeviceStatus> DeviceList;
 
@@ -408,7 +409,7 @@ public class ApkInstaller
 			}
 			InstallDlgListener.AddCheckList("Check Install", "fail" , InstallDlg.CHECKLIST_MODE.ERROR);
 			
-			ShowQuestion(null, Resource.STR_MSG_FAILURE_INSTALLED.getString(), Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, WaringAppicon,
+			ShowQuestion(t, Resource.STR_MSG_FAILURE_INSTALLED.getString(), Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, WaringAppicon,
 		    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
 		}
 
@@ -417,10 +418,12 @@ public class ApkInstaller
 			if(type.equals("push")) {
 				final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
 				InstallDlgListener.AddCheckList("Push", "Success" , InstallDlg.CHECKLIST_MODE.DONE);
-				int reboot = ShowQuestion(null, Resource.STR_MSG_SUCCESS_INSTALLED.getString() + "\n" + Resource.STR_QUESTION_REBOOT_DEVICE.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.YES_NO_OPTION, 
+				
+				InstallDlgListener.AddCheckList("reboot", "-" , InstallDlg.CHECKLIST_MODE.QEUESTION);
+				int reboot = ShowQuestion(t, Resource.STR_MSG_SUCCESS_INSTALLED.getString() + "\n" + Resource.STR_QUESTION_REBOOT_DEVICE.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.YES_NO_OPTION, 
 						JOptionPane.QUESTION_MESSAGE, QuestionAppicon, yesNoOptions, yesNoOptions[1]);
 				
-				InstallDlgListener.AddCheckList("Boot", (reboot==0)?"true":"false" , InstallDlg.CHECKLIST_MODE.ADD);
+				InstallDlgListener.AddCheckList("reboot", (reboot==0)?"true":"false" , InstallDlg.CHECKLIST_MODE.DONE);
 				
 				if(reboot == 0){
 					printlnLog("Wait for reboot...");
@@ -430,7 +433,7 @@ public class ApkInstaller
 			} else if(type.equals("install")) {
 				//JOptionPane.showMessageDialog(null, "Success", "Complete", JOptionPane.INFORMATION_MESSAGE, SucAppicon);
 					InstallDlgListener.AddCheckList("Install", "Success" , InstallDlg.CHECKLIST_MODE.DONE);
-					ShowQuestion(null, Resource.STR_MSG_SUCCESS_INSTALLED.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, SucAppicon,
+					ShowQuestion(t, Resource.STR_MSG_SUCCESS_INSTALLED.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, SucAppicon,
 			    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
 			} else if(type.equals("pull")) {
 				InstallDlgListener.AddCheckList("pull APK", "Done" , InstallDlg.CHECKLIST_MODE.DONE);

@@ -32,8 +32,10 @@ public final class InstallCheckTable extends JPanel {
       
       table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
+      table.setTableHeader(null);
       table.setEnabled(false);
       
+      table.setBackground(Color.WHITE);
       //column.setResizable(false);
       //column.setCellRenderer(new ProgressRenderer());
 

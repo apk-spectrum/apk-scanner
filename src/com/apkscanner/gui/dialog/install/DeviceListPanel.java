@@ -59,7 +59,7 @@ public class DeviceListPanel extends JPanel implements ActionListener
 		clicked = false;
         		
 		// Create and initialize the buttons.
-		StandardButton cancelButton = new StandardButton(Resource.STR_BTN_REFRESH.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
+		JButton cancelButton = new JButton(Resource.STR_BTN_REFRESH.getString());
 		cancelButton.setPreferredSize(new Dimension(100,30));
 		
 		cancelButton.setActionCommand("Refresh");
@@ -72,7 +72,7 @@ public class DeviceListPanel extends JPanel implements ActionListener
         	}
         });
 		//
-		final JButton setButton = new StandardButton(Resource.STR_BTN_OK.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
+		final JButton setButton = new JButton(Resource.STR_BTN_OK.getString());
 		setButton.setPreferredSize(new Dimension(100,30));
 		setButton.setActionCommand("Set");
 		setButton.addActionListener(ButtonListener);
