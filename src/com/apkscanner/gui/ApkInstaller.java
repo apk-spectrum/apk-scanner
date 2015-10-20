@@ -66,9 +66,9 @@ public class ApkInstaller
 		public int getResult();
 		public void SetResult(int i);
 		public int ShowDeviceList(Runnable runnable);
-		public void AddCheckList(String name, String t);
+		public void AddCheckList(String name, String t, InstallDlg.CHECKLIST_MODE mode);
 		public int getValue(String text);
-		DeviceStatus getSelectDev();
+		DeviceStatus getSelectDev();		
 	}
 	
 	
@@ -140,6 +140,7 @@ public class ApkInstaller
 			public void run(){
 				ArrayList<DeviceStatus> DeviceList;
 
+				InstallDlgListener.AddCheckList("Device", "-", true);
 				do {
 					printlnLog("scan devices...");
 					DeviceList = AdbWrapper.scanDevices();
@@ -167,8 +168,6 @@ public class ApkInstaller
 				} while(true);
 				DeviceStatus dev = DeviceList.get(0);
 				
-				InstallDlgListener.AddCheckList("Device", dev.device);
-				
 				if(DeviceList.size() > 1 || (DeviceList.size() == 1 && !dev.status.equals("device"))) {
 					//int selectedValue = DeviceListDialog.showDialog();
 					//Log.i("Seltected index : " + selectedValue);
@@ -188,6 +187,8 @@ public class ApkInstaller
 				printlnLog("getPackageInfo() " + strPackageName);
 				PackageInfo pkgInfo = AdbWrapper.getPackageInfo(dev.name, strPackageName);
 				
+				InstallDlgListener.AddCheckList("Checkversion", pkgInfo.versionName + "/"+pkgInfo.versionCode , false);
+				
 				if(checkPackage) {
 					alreadyCheak = true;
 					if(pkgInfo != null) {
@@ -196,6 +197,9 @@ public class ApkInstaller
 						if(pkgInfo.isSystemApp == true && AdbWrapper.hasRootPermission(dev.name) != true) {
 							isDeletePossible = false;
 						}
+						
+						InstallDlgListener.AddCheckList("CheckRoot", ""+isDeletePossible , false);
+						
 						int n;
 						if(isDeletePossible) {
 							n=ShowQuestion(this, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_OPEN_OR_INSTALL.getString(),
@@ -217,24 +221,30 @@ public class ApkInstaller
 							tmpPath = FileUtil.makeTempPath(tmpPath)+".apk";
 							tmpApkPath = tmpPath; 
 							//Log.i(tmpPath);
+							InstallDlgListener.AddCheckList("pull APK", "Processing" , true);
 							AdbWrapper.PullApk(dev.name, pkgInfo.apkPath, tmpPath, new AdbWrapperObserver("pull", dev.name));
+							
 							return;
 						}
 						if(n==2) {
 							//uninstallPanel.setVisible(true);
 							if(pkgInfo.isSystemApp) {
 								printlnLog("adb shell rm " + pkgInfo.codePath);
+								
+								InstallDlgListener.AddCheckList("remove APK", "Processing" , true);
 								AdbWrapper.removeApk(dev.name, pkgInfo.codePath);
 								
+								InstallDlgListener.AddCheckList("Check root", "-" , true);
 								final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
 								int reboot = ShowQuestion(this, Resource.STR_QUESTION_REBOOT_DEVICE.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.YES_NO_OPTION, 
 										JOptionPane.QUESTION_MESSAGE, Appicon, yesNoOptions, yesNoOptions[1]);
 								if(reboot == 0){
-									printlnLog("Wait for reboot...");
+									printlnLog("Wait for reboot...");									
 									AdbWrapper.reboot(dev.name);
 									printlnLog("Reboot...");
 								}
 							} else {
+								InstallDlgListener.AddCheckList("uninstall APK", "-" , true);
 								printlnLog("adb uninstall " + pkgInfo.pkgName);
 								AdbWrapper.uninstallApk(dev.name, pkgInfo.pkgName);
 							}
@@ -245,6 +255,7 @@ public class ApkInstaller
 						}
 					} else {
 						//JOptionPane.showMessageDialog(null, "동일 패키지가 설치되어 있지 않습니다.", "Info", JOptionPane.INFORMATION_MESSAGE, Appicon);
+						InstallDlgListener.AddCheckList("Check Install", "-" , true);
 						int n = ShowQuestion(this, Resource.STR_MSG_NO_SUCH_PACKAGE.getString() + "\n" + Resource.STR_QUESTION_CONTINUE_INSTALL.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, Appicon,
 								yesNoOptions, yesNoOptions[1]);
 						if(n==-1 || n==1) {

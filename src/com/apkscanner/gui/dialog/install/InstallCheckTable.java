@@ -29,9 +29,11 @@ public final class InstallCheckTable extends JPanel {
       table.setFillsViewportHeight(true);
       table.setIntercellSpacing(new Dimension());
       table.setShowGrid(false);
+      
       table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
-            
+      table.setEnabled(false);
+      
       //column.setResizable(false);
       //column.setCellRenderer(new ProgressRenderer());
 
@@ -43,8 +45,9 @@ public final class InstallCheckTable extends JPanel {
       
       setJTableColumnsWidth(table,320,5,40,20,40);
   }
-  	public void addTableModel(String name, String t) {
-  		model.addValue(name, t);
+  	public void addTableModel(String name, String t, InstallDlg.CHECKLIST_MODE mode) {
+  		model.addValue(name, t, mode);
+  		setImageObserver(table);
   	}
 	private void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
 			double... percentages) {
@@ -64,7 +67,7 @@ public final class InstallCheckTable extends JPanel {
       }
       @Override public void actionPerformed(ActionEvent e) {
 
-          model.addValue("aaaa", "bbbb");
+          model.addValue("aaaa", "bbbb", true);
           //executor.execute(worker);
           setImageObserver(table);
       }
@@ -142,9 +145,21 @@ class WorkerModel extends DefaultTableModel {
   };
   private final ConcurrentMap<Integer, SwingWorker> swmap = new ConcurrentHashMap<>();
   private int number;
-  public void addValue(String name, String t) {
-      Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_DONE.getImageIcon().getImage()), t};
-      super.addRow(obj);
+  public void addValue(String name, String t, InstallDlg.CHECKLIST_MODE mode) {
+	  
+	  if(mode == InstallDlg.CHECKLIST_MODE.ADD) {
+		  Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_DONE.getImageIcon().getImage()), t};
+		  super.addRow(obj);
+	  } else if(mode == InstallDlg.CHECKLIST_MODE.WATING) {
+		  Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_WAIT.getImageIcon().getImage()), t};
+		  super.addRow(obj);
+	  }	else if(mode == InstallDlg.CHECKLIST_MODE.DONE) {
+		  Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_WAIT.getImageIcon().getImage()), t};
+		  super.addRow(obj);
+	  } else if(mode == InstallDlg.CHECKLIST_MODE.QEUESTION) {
+		  Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_WAIT.getImageIcon().getImage()), t};
+		  super.addRow(obj);
+	  }
       number++;
   }
 

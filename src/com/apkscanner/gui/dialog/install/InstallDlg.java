@@ -44,6 +44,12 @@ public class InstallDlg extends JDialog implements ActionListener{
 	InstallDlg dlg;
 	JPanel MessageBox;
 	
+	public enum CHECKLIST_MODE{
+		ADD,
+		WATING,
+		QEUESTION,
+		DONE
+	}
 	
 	public InstallDlgFuncListener getInstallDlgFuncListener() {
 		return this.CoreInstallLitener;
@@ -75,9 +81,10 @@ public class InstallDlg extends JDialog implements ActionListener{
 			}
 
 			@Override
-			public void AddCheckList(String name,String t) {
+			public void AddCheckList(String name,String t, InstallDlg.CHECKLIST_MODE mode) {
 				// TODO Auto-generated method stub
-				TestTable.addTableModel(name,t);
+				Log.d("AddCheckList");
+				TestTable.addTableModel(name,t, mode);
 			}
 
 			@Override
@@ -90,7 +97,7 @@ public class InstallDlg extends JDialog implements ActionListener{
 			@Override
 			public int ShowDeviceList(Runnable runnable) {
 				this.runThread = runnable;
-				
+				Log.d("ShowDeviceList");
 				MessageBox.removeAll();
 				
 				panel = new DeviceListPanel(new ActionListener() {
@@ -121,7 +128,7 @@ public class InstallDlg extends JDialog implements ActionListener{
 			public int ShowQuestion(Runnable runthread, Object message, String title, int optionType, int messageType, Icon icon, Object[] options, Object initialValue) {
 				// TODO Auto-generated method stub
 				this.runThread = runthread;
-				Log.d("ShowQuestion");				
+				Log.d("ShowQuestion");
 				tempOption = options;
 				JButton[] btn = new JButton[options.length];
 				
