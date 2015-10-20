@@ -43,9 +43,7 @@ public class InstallDlg extends JDialog implements ActionListener{
 	static private InstallDlgFuncListener CoreInstallLitener; 
 	InstallDlg dlg;
 	JPanel MessageBox;
-	static JOptionPane newOption;
 	
-	final String[] checkPackDelOptions = {Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_DEL.getString(), Resource.STR_BTN_CANCEL.getString()};
 	
 	public InstallDlgFuncListener getInstallDlgFuncListener() {
 		return this.CoreInstallLitener;
@@ -59,6 +57,7 @@ public class InstallDlg extends JDialog implements ActionListener{
 			Object[] tempOption;
 			DeviceStatus dev;
 			DeviceListPanel panel;
+			JOptionPane newOption;
 			public int getValue(String str) {
 				
 				for(int i=0;i< tempOption.length; i++) {
@@ -132,11 +131,7 @@ public class InstallDlg extends JDialog implements ActionListener{
 					btn[i].addActionListener(new AlertButtonListener());
 
 				}
-				for(int i =0; i<btn.length; i++) {
-					Log.d(""+btn[i].getText());
-				}
-				
-				
+
 				newOption = ArrowTraversalPane.makeOptionPane(message, title, optionType, messageType, icon, btn, null);
 				
 				MessageBox.removeAll();
@@ -157,9 +152,12 @@ public class InstallDlg extends JDialog implements ActionListener{
 			}
 			
 			public void SetResult(int result) {
-				this.QuestionResult = result;				
-				synchronized (runThread) {
-					this.runThread.notify();
+				this.QuestionResult = result;
+				
+				if(runThread!=null) {				
+					synchronized (runThread) {
+						this.runThread.notify();
+					}
 				}
 			}			
 		};		
@@ -175,25 +173,6 @@ public class InstallDlg extends JDialog implements ActionListener{
             Log.d("click : " + b.getText());
             
             CoreInstallLitener.SetResult(CoreInstallLitener.getValue(b.getText()));
-//            if (b.getText().equals(Resource.STR_BTN_OPEN.getString())) {
-//            	
-//            } else if (b.getText().equals(Resource.STR_BTN_INSTALL.getString())) {
-//            	
-//            } else if (b.getText().equals(Resource.STR_BTN_DEL.getString())) {
-//            	
-//            } else if (b.getText().equals(Resource.STR_BTN_CANCEL.getString())) {
-//            	//CoreInstallLitener.SetResult(1);
-//            } else if (b.getText().equals(Resource.STR_BTN_PUSH.getString())) {
-//            	//CoreInstallLitener.SetResult(0);
-//            } else if (b.getText().equals(Resource.STR_BTN_INSTALL.getString())) {
-//            	//CoreInstallLitener.SetResult(1);
-//            } else if (b.getText().equals(Resource.STR_BTN_NO.getString())) {
-//            	
-//            } else if (b.getText().equals(Resource.STR_BTN_YES.getString())) {
-//            	
-//            } else if (b.getText().equals(Resource.STR_BTN_REFRESH.getString())) {
-//            	//CoreInstallLitener.SetResult(0);
-//            }
 		}
 		
 	}
@@ -202,8 +181,7 @@ public class InstallDlg extends JDialog implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if ("showLogBox".equals(e.getActionCommand())) {
-			if(scrollPane.isVisible()) {
-				newOption.removeAll();
+			if(scrollPane.isVisible()) {				
 				scrollPane.setVisible(false);
 				this.pack();
 				
@@ -241,7 +219,7 @@ public class InstallDlg extends JDialog implements ActionListener{
         
          this.setMinimumSize(new Dimension(700, 400));
         this.setLocationRelativeTo(null);
-        //this.setResizable(false);
+        this.setResizable(false);
         this.pack();
         this.setVisible(true);
         //f.getContentPane().setLayout(new BorderLayout());
@@ -287,14 +265,4 @@ public class InstallDlg extends JDialog implements ActionListener{
         
         this.add(framelayout);        
     }
-	
-//    public static void main(String[] args) {
-//        //Schedule a job for the event-dispatching thread:
-//        //creating and showing this application's GUI.
-//        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-//            public void run() {
-//            	InstallDlg dlg = new InstallDlg();                
-//            }
-//        });
-//    }
 }

@@ -59,10 +59,6 @@ public class ArrowTraversalPane extends JOptionPane
 
 	static public JOptionPane makeOptionPane(Object message, String title, int optionType, int messageType, Icon icon, Object[] options, Object initialValue) {
 	    JOptionPane pane = new ArrowTraversalPane(message, optionType, messageType);
-
-	    for(int i=0; i<options.length; i++) {
-	    	Log.d(""+options[i].toString());
-	    }
 	    
 		pane.setMessageType(messageType);
 		pane.setIcon(icon);

@@ -37,7 +37,7 @@ import com.apkscanner.resource.Resource;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 
-public class ApkInstaller implements ActionListener
+public class ApkInstaller
 {
 	static private JTextArea dialogLogArea;
 	static private JDialog dlgDialog = null;
@@ -83,14 +83,18 @@ public class ApkInstaller implements ActionListener
 			temp[options.length-1-i] = options[i];
 		}		
 		int result = InstallDlgListener.ShowQuestion(runnable,message,title,optionType,messageType, icon, temp, initialValue);
-		synchronized (runnable) {
-			try {
-				runnable.wait();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		
+		
+		if(runnable!=null) {
+			synchronized (runnable) {
+				try {
+					runnable.wait();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-		}		
+		}
 		return InstallDlgListener.getResult();
 	}
 	
@@ -217,7 +221,7 @@ public class ApkInstaller implements ActionListener
 							return;
 						}
 						if(n==2) {
-							uninstallPanel.setVisible(true);
+							//uninstallPanel.setVisible(true);
 							if(pkgInfo.isSystemApp) {
 								printlnLog("adb shell rm " + pkgInfo.codePath);
 								AdbWrapper.removeApk(dev.name, pkgInfo.codePath);
@@ -235,7 +239,7 @@ public class ApkInstaller implements ActionListener
 								AdbWrapper.uninstallApk(dev.name, pkgInfo.pkgName);
 							}
 							printlnLog("compleate");
-							uninstallPanel.setVisible(false);
+							//uninstallPanel.setVisible(false);
 							Listener.SetInstallButtonStatus(true);
 							return;
 						}
@@ -362,7 +366,7 @@ public class ApkInstaller implements ActionListener
 			} else if(type.equals("pull")) {
 				//JOptionPane.showMessageDialog(null, "Failure...", "Error", JOptionPane.ERROR_MESSAGE, WaringAppicon);
 			}
-			ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_FAILURE_INSTALLED.getString(), Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, WaringAppicon,
+			ShowQuestion(null, Resource.STR_MSG_FAILURE_INSTALLED.getString(), Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, WaringAppicon,
 		    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
 		}
 
@@ -370,7 +374,7 @@ public class ApkInstaller implements ActionListener
 		public void OnSuccess() {
 			if(type.equals("push")) {
 				final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
-				int reboot = ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_SUCCESS_INSTALLED.getString() + "\n" + Resource.STR_QUESTION_REBOOT_DEVICE.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.YES_NO_OPTION, 
+				int reboot = ShowQuestion(null, Resource.STR_MSG_SUCCESS_INSTALLED.getString() + "\n" + Resource.STR_QUESTION_REBOOT_DEVICE.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.YES_NO_OPTION, 
 						JOptionPane.QUESTION_MESSAGE, QuestionAppicon, yesNoOptions, yesNoOptions[1]);
 				if(reboot == 0){
 					printlnLog("Wait for reboot...");
@@ -379,7 +383,7 @@ public class ApkInstaller implements ActionListener
 				}
 			} else if(type.equals("install")) {
 				//JOptionPane.showMessageDialog(null, "Success", "Complete", JOptionPane.INFORMATION_MESSAGE, SucAppicon);
-				ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_SUCCESS_INSTALLED.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, SucAppicon,
+					ShowQuestion(null, Resource.STR_MSG_SUCCESS_INSTALLED.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, SucAppicon,
 			    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
 			} else if(type.equals("pull")) {
 				setVisible(false);
@@ -393,117 +397,7 @@ public class ApkInstaller implements ActionListener
 			//installPanel.setVisible(false);
 		}
 	}
-	
-	private void ShowSetupLogDialog()
-	{
-		if(dlgDialog ==null) {
-			final JPanel DialogPanel = makeLodingDialog();
-			Thread t = new Thread(new Runnable(){
-				public void run(){
-					//JOptionPane.showMessageDialog(null, DialogPanel,"Log", JOptionPane.CANCEL_OPTION,Appicon);
-					dlgDialog = new JDialog();
-			        	
-					dlgDialog.setTitle(Resource.STR_LABEL_LOG.getString());
-					dlgDialog.setModal(false);
-					dlgDialog.setLocation(nPositionX, nPositionY);
-					
-					dlgDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-					//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-					
-					KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-					dlgDialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
-					dlgDialog.getRootPane().getActionMap().put("ESCAPE", new AbstractAction() {
-						private static final long serialVersionUID = -1499175497935529270L;
-						public void actionPerformed(ActionEvent e) {
-							dlgDialog.dispose();
-					    }
-					});
-			        	
-					JLabel GifLabel, waitbar, installlabel;
-					ImageIcon icon = Resource.IMG_INSTALL_WAIT.getImageIcon();
-					ImageIcon waitbaricon = Resource.IMG_WAIT_BAR.getImageIcon();
-					//installPanel = new JPanel();
-					
-					GifLabel = new JLabel(icon);
-					waitbar = new JLabel(waitbaricon);
-					installlabel = new JLabel(Resource.STR_LABEL_INSTALLING.getString());
-					
-					//installPanel.add(installlabel);
-					//installPanel.add(waitbar);
-					
-					//installPanel.setVisible(false);
-					//installPanel.setOpaque(true);
 
-					uninstallPanel = new JPanel();
-					uninstallPanel.add(new JLabel(Resource.STR_LABEL_UNINSTALLING.getString()));
-					uninstallPanel.add(new JLabel(waitbaricon));
-					uninstallPanel.setVisible(false);
-					uninstallPanel.setOpaque(true);
-					
-					DialogPanel.add(GifLabel);
-					
-					
-			        JPanel containerPanel = new JPanel();
-			        containerPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 46, 150));
-			        containerPanel.setLayout(new BorderLayout());
-			        
-					StandardButton btnOK;
-					btnOK = new StandardButton(Resource.STR_BTN_CLOSE.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
-					btnOK.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {		                    		                    		                    
-							dlgDialog.setVisible(false);
-						}
-					});
-
-					DialogPanel.add(btnOK);
-					DialogPanel.add(containerPanel);
-					DialogPanel.add(installPanel);
-					DialogPanel.add(uninstallPanel);
-					//DialogPanel.add(installlabel);
-					//DialogPanel.add(waitbar);
-					
-					
-					dlgDialog.setSize(new Dimension(480,210));
-					dlgDialog.setResizable( false );
-					dlgDialog.add(DialogPanel);
-					
-					//dlgDialog.setLocationRelativeTo(null);
-					dlgDialog.setVisible(true);
-				}
-			});
-			t.start();
-		}
-		else if(dlgDialog.isVisible() == false) {
-			dlgDialog.setVisible(true);
-		}
-	}
-
-	private JPanel makeLodingDialog()
-	{
-		//JPanel DiaPanel = new JPanel(new BorderLayout(3,3));
-		
-		JPanel DiaPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		DiaPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 0));
-		
-		
-		dialogLogArea = new JTextArea(7,30); 
-		
-		DefaultCaret caret = (DefaultCaret) dialogLogArea.getCaret(); // ←
-		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE); 
-		
-		dialogLogArea.setWrapStyleWord(true);
-		dialogLogArea.setLineWrap(true);
-		dialogLogArea.setEditable(false);
-		
-		DiaPanel.add(new JScrollPane(dialogLogArea));
-		
-		return DiaPanel;
-	}
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
 }
 
 
