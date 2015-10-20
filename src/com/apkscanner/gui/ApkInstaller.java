@@ -232,7 +232,7 @@ public class ApkInstaller
 							tmpPath = FileUtil.makeTempPath(tmpPath)+".apk";
 							tmpApkPath = tmpPath; 
 							//Log.i(tmpPath);
-							InstallDlgListener.AddCheckList("pull APK", "Processing" , InstallDlg.CHECKLIST_MODE.WATING);
+							InstallDlgListener.AddCheckList("pull APK", "working" , InstallDlg.CHECKLIST_MODE.WATING);
 							AdbWrapper.PullApk(dev.name, pkgInfo.apkPath, tmpPath, new AdbWrapperObserver("pull", dev.name));							
 							return;
 						}
@@ -241,7 +241,7 @@ public class ApkInstaller
 							if(pkgInfo.isSystemApp) {
 								printlnLog("adb shell rm " + pkgInfo.codePath);
 								
-								InstallDlgListener.AddCheckList("remove APK", "Processing" , InstallDlg.CHECKLIST_MODE.WATING);
+								InstallDlgListener.AddCheckList("remove APK", "working" , InstallDlg.CHECKLIST_MODE.WATING);
 								AdbWrapper.removeApk(dev.name, pkgInfo.codePath);
 								InstallDlgListener.AddCheckList("remove APK", "Done" , InstallDlg.CHECKLIST_MODE.DONE);
 								
