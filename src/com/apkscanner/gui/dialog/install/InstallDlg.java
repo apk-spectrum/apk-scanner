@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Method;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -39,100 +40,126 @@ public class InstallDlg extends JDialog implements ActionListener{
 	JPanel framelayout;
 	JFrame f;
 	JTextArea taskOutput;
-	InstallDlgFuncListener CoreInstallLitener; 
+	static private InstallDlgFuncListener CoreInstallLitener; 
+	InstallDlg dlg;
 	JPanel MessageBox;
 	static JOptionPane newOption;
 	
 	final String[] checkPackDelOptions = {Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_DEL.getString(), Resource.STR_BTN_CANCEL.getString()};
 	
+	public InstallDlgFuncListener getInstallDlgFuncListener() {
+		return this.CoreInstallLitener;
+	}
 	public InstallDlg() {
 		createAndShowGUI();
 		
 		CoreInstallLitener = new InstallDlgFuncListener() {
-			@Override
-			public void Complete() {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void AddCheckList() {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public int  ShowQuestion() {
-				
-				// TODO Auto-generated method stub
-				return 0;
-			}
-
+			Runnable runThread;
+			int QuestionResult;			
 			@Override
 			public void AddLog(String str) {
 				// TODO Auto-generated method stub
 				
 			}
+
+			@Override
+			public void AddCheckList(String name,String t) {
+				// TODO Auto-generated method stub
+				TestTable.addTableModel(name,t);
+			}
+
+			@Override
+			public void Complete(String str) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void ShowDeviceList() {
+				
+			}
+			
+			@Override
+			public int ShowQuestion(Runnable runthread, Object message, String title, int optionType, int messageType, Icon icon, Object[] options, Object initialValue) {
+				// TODO Auto-generated method stub
+				this.runThread = runthread;
+				Log.d("ShowQuestion");				
+				
+				JButton[] btn = new JButton[options.length];
+				
+				for( int i=0; options.length > i; i++ ) {
+					btn[i] = new JButton(options[i].toString());
+					btn[i].addActionListener(new AlertButtonListener());
+
+				}
+				
+				newOption = ArrowTraversalPane.makeOptionPane(message, title, optionType, messageType, icon, btn, initialValue);
+				
+				MessageBox.removeAll();
+				MessageBox.add(newOption);
+				dlg.pack();
+				return 0;
+			}
+
+			@Override
+			public int getResult() {
+				// TODO Auto-generated method stub
+				//this.runThread.notify();
+				return this.QuestionResult;
+			}
+			public void SetResult(int result) {				
+				this.QuestionResult = result;				
+				synchronized (runThread) {
+					this.runThread.notify();
+				}
+			}			
 		};		
-		ApkInstaller.setDlgListener(CoreInstallLitener);
-		
+		dlg = this;
 	}
 
+	class AlertButtonListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+            JButton b = (JButton) e.getSource();
+            Log.d("click : " + b.getText());
+            Log.d("Resource : " + Resource.STR_BTN_CANCEL.getString());
+            
+            if (b.getText().equals(Resource.STR_BTN_OPEN.getString())) {
+            	
+            } else if (b.getText().equals(Resource.STR_BTN_INSTALL.getString())) {
+            	
+            } else if (b.getText().equals(Resource.STR_BTN_DEL.getString())) {
+            	
+            } else if (b.getText().equals(Resource.STR_BTN_CANCEL.getString())) {
+            	CoreInstallLitener.SetResult(1);
+            } else if (b.getText().equals(Resource.STR_BTN_PUSH.getString())) {
+            	
+            } else if (b.getText().equals(Resource.STR_BTN_INSTALL.getString())) {
+            	
+            } else if (b.getText().equals(Resource.STR_BTN_NO.getString())) {
+            	
+            } else if (b.getText().equals(Resource.STR_BTN_YES.getString())) {
+            	
+            } else if (b.getText().equals(Resource.STR_BTN_REFRESH.getString())) {
+            	CoreInstallLitener.SetResult(0);
+            }
+		}
+		
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		
-		
-		
 		if ("showLogBox".equals(e.getActionCommand())) {
 			if(scrollPane.isVisible()) {
 				newOption.removeAll();
 				scrollPane.setVisible(false);
 				this.pack();
+				
 			} else {
 				scrollPane.setVisible(true);
-				//this.pack();
-				//for test
-				
-				final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
-				//JOptionPane.showMessageDialog(null, "Device not found!\nplease check Connected","Warning", JOptionPane.WARNING_MESSAGE, Appicon);
-			
-				JButton[] btn = new JButton[4];
-				
-				for( int i=0; checkPackDelOptions.length > i; i++ ) {
-					btn[i] = new JButton(checkPackDelOptions[i]);
-					btn[i].addActionListener(new ActionListener()
-			        {
-			            public void actionPerformed(ActionEvent e)
-			            {
-			                JButton b = (JButton) e.getSource();
-			                Log.d("click : " + b.getText());
-			                if (b.getText().equals(Resource.STR_BTN_OPEN)) {
-			                	
-			                } else if (b.getText().equals(Resource.STR_BTN_INSTALL)) {
-			                	
-			                } else if (b.getText().equals(Resource.STR_BTN_DEL)) {
-			                	
-			                } else if (b.getText().equals(Resource.STR_BTN_CANCEL)) {
-			                	
-			                } else if (b.getText().equals(Resource.STR_BTN_PUSH)) {
-			                	
-			                } else if (b.getText().equals(Resource.STR_BTN_INSTALL)) {
-			                	
-			                } else if (b.getText().equals(Resource.STR_BTN_NO)) {
-			                	
-			                } else if (b.getText().equals(Resource.STR_BTN_YES)) {
-			                	
-			                }
-			            }
-			        });
-				}
-				
-				newOption = ArrowTraversalPane.makeOptionPane(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  Resource.STR_QUESTION_OPEN_OR_INSTALL.getString(),
-						Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, btn, btn[3]);
-			
-				MessageBox.add(newOption);
-				//MessageBox.add(new QuestionPanel("aaaa", Appicon));
 				
 				this.pack();
 			}
@@ -140,8 +167,6 @@ public class InstallDlg extends JDialog implements ActionListener{
 			
 		}
 	}
-
-	
 	
     private void createAndShowGUI() {
         //Create and set up the window.
@@ -168,7 +193,7 @@ public class InstallDlg extends JDialog implements ActionListener{
         
          this.setMinimumSize(new Dimension(700, 400));
         this.setLocationRelativeTo(null);
-        this.setResizable(false);
+        //this.setResizable(false);
         this.pack();
         this.setVisible(true);
         //f.getContentPane().setLayout(new BorderLayout());

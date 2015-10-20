@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -27,6 +28,7 @@ import com.apkscanner.core.AdbWrapper.AdbWrapperListener;
 import com.apkscanner.core.AdbWrapper.DeviceStatus;
 import com.apkscanner.core.AdbWrapper.PackageInfo;
 import com.apkscanner.gui.dialog.DeviceListDialog;
+import com.apkscanner.gui.dialog.install.InstallDlg;
 import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.gui.util.ButtonType;
 import com.apkscanner.gui.util.StandardButton;
@@ -35,7 +37,7 @@ import com.apkscanner.resource.Resource;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 
-public class ApkInstaller
+public class ApkInstaller implements ActionListener
 {
 	static private JTextArea dialogLogArea;
 	static private JDialog dlgDialog = null;
@@ -58,20 +60,35 @@ public class ApkInstaller
 	}
 	
 	public interface InstallDlgFuncListener {
-		public void AddCheckList();
-		public void Complete();
-		public int ShowQuestion();
+		public void Complete(String str);
+		public int ShowQuestion(Runnable runnable, Object message, String title, int optionType, int messageType, Icon icon, Object[] options, Object initialValue);
 		public void AddLog(String str);
-		
+		public int getResult();
+		public void SetResult(int i);
+		public void ShowDeviceList();
+		public void AddCheckList(String name, String t);
 	}
 	
 	
 	private InstallButtonStatusListener Listener;
 	private static InstallDlgFuncListener InstallDlgListener;
-	
-	public static void setDlgListener(InstallDlgFuncListener Listener) {
-		ApkInstaller.InstallDlgListener = Listener;
+
+	private int ShowQuestion(Runnable runnable, Object message, String title, int optionType, int messageType, Icon icon, Object[] options, Object initialValue) {
+		
+		int result = InstallDlgListener.ShowQuestion(runnable,message,title,optionType,messageType, icon, options, initialValue);
+		
+		synchronized (runnable) {
+			try {
+				runnable.wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return InstallDlgListener.getResult();
 	}
+	
 	public ApkInstaller(String PackageName, String apkPath, String libPath, 
 			final boolean samePackage, final boolean checkPackage, final InstallButtonStatusListener Listener)
 	{
@@ -89,20 +106,32 @@ public class ApkInstaller
 		
 		this.Listener = Listener; 
 		
-		Thread t = new Thread(new Runnable() {
+		
+		InstallDlg dlg = new InstallDlg();
+		this.InstallDlgListener = dlg.getInstallDlgFuncListener();
+		
+		
+		final Thread t = new Thread(new Runnable() {
 			public void run(){
 				ArrayList<DeviceStatus> DeviceList;
+
 				do {
 					printlnLog("scan devices...");
 					DeviceList = AdbWrapper.scanDevices();
-	
+					
 					if(DeviceList.size() == 0) {
 						printlnLog("Device not found!\nplease check device");
 						Listener.SetInstallButtonStatus(true);
 						final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
-						//JOptionPane.showMessageDialog(null, "Device not found!\nplease check Connected","Warning", JOptionPane.WARNING_MESSAGE, Appicon);
-						int n = ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_DEVICE_NOT_FOUND.getString(), Resource.STR_LABEL_WARNING.getString(), JOptionPane.WARNING_MESSAGE, JOptionPane.WARNING_MESSAGE, Appicon,
+						
+						Log.d("show Question");
+						
+						int n = ShowQuestion(this, Resource.STR_MSG_DEVICE_NOT_FOUND.getString(), Resource.STR_LABEL_WARNING.getString(), JOptionPane.WARNING_MESSAGE, JOptionPane.WARNING_MESSAGE, Appicon,
 					    		new String[] {Resource.STR_BTN_REFRESH.getString(), Resource.STR_BTN_CANCEL.getString()}, Resource.STR_BTN_REFRESH.getString());
+						
+						//int n = InstallDlgListener.getResult();
+						Log.d(n+"");
+						
 						if(n==-1 || n==1) {
 							setVisible(false);
 							return;
@@ -111,8 +140,10 @@ public class ApkInstaller
 						break;
 					}
 				} while(true);
-
 				DeviceStatus dev = DeviceList.get(0);
+				
+				InstallDlgListener.AddCheckList("Device", dev.device);
+				
 				if(DeviceList.size() > 1 || (DeviceList.size() == 1 && !dev.status.equals("device"))) {
 					int selectedValue = DeviceListDialog.showDialog();
 					//Log.i("Seltected index : " + selectedValue);
@@ -140,12 +171,13 @@ public class ApkInstaller
 						}
 						int n;
 						if(isDeletePossible) {
-							n = ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_OPEN_OR_INSTALL.getString(),
+							n=ShowQuestion(this, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_OPEN_OR_INSTALL.getString(),
 									Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, checkPackDelOptions, checkPackDelOptions[3]);
 						} else {
-							n = ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_OPEN_OR_INSTALL.getString(),
+							n=ShowQuestion(this, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_OPEN_OR_INSTALL.getString(),
 									Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, checkPackOptions, checkPackOptions[2]);							
 						}
+						
 						//Log.i("Seltected index : " + n);
 						if(n==-1 || (!isDeletePossible && n==2) || (isDeletePossible && n==3)) {
 							Listener.SetInstallButtonStatus(true);
@@ -168,7 +200,7 @@ public class ApkInstaller
 								AdbWrapper.removeApk(dev.name, pkgInfo.codePath);
 								
 								final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
-								int reboot = ArrowTraversalPane.showOptionDialog(null, Resource.STR_QUESTION_REBOOT_DEVICE.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.YES_NO_OPTION, 
+								int reboot = ShowQuestion(this, Resource.STR_QUESTION_REBOOT_DEVICE.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.YES_NO_OPTION, 
 										JOptionPane.QUESTION_MESSAGE, Appicon, yesNoOptions, yesNoOptions[1]);
 								if(reboot == 0){
 									printlnLog("Wait for reboot...");
@@ -186,7 +218,7 @@ public class ApkInstaller
 						}
 					} else {
 						//JOptionPane.showMessageDialog(null, "동일 패키지가 설치되어 있지 않습니다.", "Info", JOptionPane.INFORMATION_MESSAGE, Appicon);
-						int n = ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_NO_SUCH_PACKAGE.getString() + "\n" + Resource.STR_QUESTION_CONTINUE_INSTALL.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, Appicon,
+						int n = ShowQuestion(this, Resource.STR_MSG_NO_SUCH_PACKAGE.getString() + "\n" + Resource.STR_QUESTION_CONTINUE_INSTALL.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, Appicon,
 								yesNoOptions, yesNoOptions[1]);
 						if(n==-1 || n==1) {
 							Listener.SetInstallButtonStatus(true);
@@ -201,7 +233,7 @@ public class ApkInstaller
 						if(AdbWrapper.hasRootPermission(dev.name) == true) {
 							printlnLog("adbd is running as root");
 							String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
-							int n = ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_PUSH_OR_INSTALL.getString(),
+							int n = ShowQuestion(this, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_PUSH_OR_INSTALL.getString(),
 									Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, options, options[1]);
 							//Log.i("Seltected index : " + n);
 							if(n==-1 || n==2) {
@@ -222,7 +254,7 @@ public class ApkInstaller
 					}
 					if(samePackage && !alreadyCheak) {
 						String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
-						int n = ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_CONTINUE_INSTALL.getString(),
+						int n = ShowQuestion(this, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_CONTINUE_INSTALL.getString(),
 								Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, yesNoOptions, yesNoOptions[1]);
 						//Log.i("Seltected index : " + n);
 						if(n==-1 || n==1) {
@@ -443,6 +475,11 @@ public class ApkInstaller
 		DiaPanel.add(new JScrollPane(dialogLogArea));
 		
 		return DiaPanel;
+	}
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
 

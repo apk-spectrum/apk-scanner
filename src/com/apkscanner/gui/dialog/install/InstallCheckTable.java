@@ -43,8 +43,10 @@ public final class InstallCheckTable extends JPanel {
       
       setJTableColumnsWidth(table,320,5,40,20,40);
   }
-  
-	public void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
+  	public void addTableModel(String name, String t) {
+  		model.addValue(name, t);
+  	}
+	private void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
 			double... percentages) {
 			double total = 0;
 			for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {

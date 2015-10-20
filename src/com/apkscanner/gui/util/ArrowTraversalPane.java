@@ -57,7 +57,7 @@ public class ArrowTraversalPane extends JOptionPane
 		return ret;
 	}
 
-	static public JOptionPane makeOptionPane(Component parentComponent, Object message, String title, int optionType, int messageType, Icon icon, Object[] options, Object initialValue) {
+	static public JOptionPane makeOptionPane(Object message, String title, int optionType, int messageType, Icon icon, Object[] options, Object initialValue) {
 	    JOptionPane pane = new ArrowTraversalPane(message, optionType, messageType);
 
 		pane.setMessageType(messageType);
