@@ -483,14 +483,15 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			info.append("\nBuild.VERSION_CODES." + xpath.getAttributes("versionCode"));
 
 			size = new Dimension(350, 100);
-			logoIcon = new ImageIcon(ImageScaler.getScaledImage(Resource.IMG_APP_ICON.getImageIcon(),100,100));
+
+			logoIcon = new ImageIcon(Resource.class.getResource(xpath.getAttributes("icon")));
 		} else {
 			info.append("API Level " + sdkVer);
 			info.append("\nSorry, It's unknown verion.\nYou can look at the sdk info by the Android developer site\n");
 			info.append("http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels");
 
 			size = new Dimension(500, 100);
-			logoIcon = new ImageIcon(ImageScaler.getScaledImage(Resource.IMG_APP_ICON.getImageIcon(),100,100));
+			logoIcon = new ImageIcon(Resource.class.getResource("/icons/logo/base.png"));
 		}
 		
 		showDialog(info.toString(), "SDK " + sdkVer, size, logoIcon);
