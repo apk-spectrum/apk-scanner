@@ -529,6 +529,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	public void showFeatureInfo(String id)
 	{
 		String feature = null;
+		Dimension size = new Dimension(400, 100);
 		
 		if("feature-hidden".equals(id)) {
 			feature = Resource.STR_FEATURE_HIDDEN_DESC.getString();
@@ -536,8 +537,15 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			feature = Resource.STR_FEATURE_LAUNCHER_DESC.getString();
 		} else if("feature-startup".equals(id)) {
 			feature = Resource.STR_FEATURE_STARTUP_DESC.getString();
+			feature += "\nandroid.permission.RECEIVE_BOOT_COMPLETED";
 		} else if("feature-protection-level".equals(id)) {
-			feature = Resource.STR_FEATURE_SIGNATURE_DESC.getString();
+			feature = "※ " + Resource.STR_FEATURE_SIGNATURE_DESC.getString() + "\n";
+			for(String s: Permissions.split("\n")) {
+				if(s.endsWith("- <SIGNATURE>")) {
+					feature += "\n" + s;
+				}
+			}
+			size = new Dimension(500, 100);
 		} else if("feature-shared-user-id".equals(id)) {
 			feature = "sharedUserId=" + SharedUserId + "\n※ ";
 			feature += Resource.STR_FEATURE_SHAREDUSERID_DESC.getString();
@@ -547,14 +555,16 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		} else if("feature-platform-sign".equals(id)) {
 			feature = "※ " + Resource.STR_FEATURE_PLATFORM_SIGN_DESC.getString();
 			feature += "\n\n" + CertSummary;
+			size = new Dimension(500, 150);
 		} else if("feature-samsung-sign".equals(id)) {
 			feature = "※ " + Resource.STR_FEATURE_SAMSUNG_SIGN_DESC.getString();
 			feature += "\n\n" + CertSummary;
+			size = new Dimension(500, 150);
 		} else if("feature-debuggable".equals(id)) {
 			feature = Resource.STR_FEATURE_DEBUGGABLE_DESC.getString();
 		}
 		
-		showDialog(feature, "Feature info", new Dimension(400, 100), null);
+		showDialog(feature, "Feature info", size, null);
 	}
 
 	@Override
