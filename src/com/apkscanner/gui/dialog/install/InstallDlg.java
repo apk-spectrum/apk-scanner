@@ -56,8 +56,8 @@ public class InstallDlg extends JDialog implements ActionListener{
 		return this.CoreInstallLitener;
 	}
 	public InstallDlg() {
-		createAndShowGUI();
-		
+		dlg = this;
+		createAndShowGUI();		
 		CoreInstallLitener = new InstallDlgFuncListener() {
 			Runnable runThread;
 			int QuestionResult;
@@ -120,6 +120,7 @@ public class InstallDlg extends JDialog implements ActionListener{
 				}); 
 				
 				MessageBox.add(panel);
+				dlg.repaint();
 				dlg.pack();
 				
 				return 0;
@@ -144,6 +145,7 @@ public class InstallDlg extends JDialog implements ActionListener{
 				
 				MessageBox.removeAll();
 				MessageBox.add(newOption);
+				dlg.repaint();
 				dlg.pack();
 				return 0;
 			}
@@ -169,7 +171,7 @@ public class InstallDlg extends JDialog implements ActionListener{
 				}
 			}			
 		};		
-		dlg = this;
+		
 	}
 
 	class AlertButtonListener implements ActionListener {
@@ -200,7 +202,6 @@ public class InstallDlg extends JDialog implements ActionListener{
 				
 			} else {
 				scrollPane.setVisible(true);
-				
 				this.pack();
 				this.repaint();
 			}
@@ -219,8 +220,6 @@ public class InstallDlg extends JDialog implements ActionListener{
 			e1.printStackTrace();
 		}
     	
-        f = new JFrame();
-        
         TestTable = new InstallCheckTable();
         
         //TestTable.createAndShowGUI();
@@ -229,54 +228,65 @@ public class InstallDlg extends JDialog implements ActionListener{
         this.setIconImage(Resource.IMG_TOOLBAR_INSTALL.getImageIcon().getImage());
         //this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //this.setBounds(0, 0, 700, 400);
-        this.setPreferredSize(new Dimension(700,400));
+        this.setPreferredSize(new Dimension(800,500));
         
-         this.setMinimumSize(new Dimension(700, 400));
+        this.setMinimumSize(new Dimension(800, 500));
         this.setLocationRelativeTo(null);
-        //this.setResizable(false);
-        this.pack();
-        this.setVisible(true);
+        this.setResizable(false);
+        //this.setModal(f);
+        
+        
+        //this.setModalityType(ModalityType.DOCUMENT_MODAL);
+        
         //f.getContentPane().setLayout(new BorderLayout());
         //f.setLayout(new BorderLayout());
-        JButton btnExit = new JButton("btnExit");
-        JButton btnshowLogBox = new JButton("showLogBox");
-        
-        btnshowLogBox.addActionListener(this);
+        JButton btnExit = new JButton("종료");
         
         
         JPanel framelayout = new JPanel(new BorderLayout());
         JPanel parent = new JPanel(new GridLayout(1,2));
         JPanel CheckListBox = new JPanel(new BorderLayout());
+        JPanel EastPanel =  new JPanel(new BorderLayout());
         MessageBox = new JPanel(new BorderLayout());
         JPanel ButtonBox = new JPanel(new BorderLayout());
         JPanel LogBox= new JPanel(new BorderLayout());
+        
+        CheckListBox.setBackground(Color.WHITE);
         
 		taskOutput = new JTextArea();
 		taskOutput.setText(Log.getLog());
 		taskOutput.setEditable(false);
 		taskOutput.setCaretPosition(0);
+		
+		
+		
 		scrollPane = new JScrollPane(taskOutput);
-		//scrollPane.setPreferredSize(new Dimension(600, 400));
-        
-        ButtonBox.setBackground(Color.PINK);
-        
+		scrollPane.setPreferredSize(new Dimension(100,100));
+		LogBox.add(scrollPane);
+		
         CheckListBox.add(TestTable);
         //MessageBox.add(deviceListDig);
         
-        parent.add(CheckListBox, BorderLayout.WEST);
-        parent.add(MessageBox, BorderLayout.EAST);
         
-        LogBox.add(scrollPane);
+        EastPanel.add(LogBox, BorderLayout.SOUTH);
+        EastPanel.add(MessageBox, BorderLayout.CENTER);
+        
+        parent.add(CheckListBox, BorderLayout.WEST);
+        parent.add(EastPanel, BorderLayout.EAST);
+        
+        
         
         ButtonBox.add(btnExit,BorderLayout.EAST );
-        ButtonBox.add(LogBox, BorderLayout.SOUTH);
-        ButtonBox.add(btnshowLogBox, BorderLayout.WEST);
+        //ButtonBox.add(LogBox, BorderLayout.SOUTH);
+        
                 
         framelayout.add(parent,BorderLayout.CENTER);
         framelayout.add(ButtonBox,BorderLayout.SOUTH);
-                
-        scrollPane.setVisible(false);
         
-        this.add(framelayout);        
+        
+        this.add(framelayout);
+        this.setVisible(true);
+        this.pack();
     }
+
 }

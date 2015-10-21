@@ -34,8 +34,9 @@ public final class InstallCheckTable extends JPanel {
 
       table.setTableHeader(null);
       table.setEnabled(false);
+
+      table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
       
-      table.setBackground(Color.WHITE);
       //column.setResizable(false);
       //column.setCellRenderer(new ProgressRenderer());
 
