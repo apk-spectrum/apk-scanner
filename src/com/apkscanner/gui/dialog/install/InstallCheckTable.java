@@ -26,7 +26,7 @@ public final class InstallCheckTable extends JPanel {
 
       JScrollPane scrollPane = new JScrollPane(table);
       scrollPane.getViewport().setBackground(Color.WHITE);
-      table.setFillsViewportHeight(true);
+      table.setFillsViewportHeight(false);
       table.setIntercellSpacing(new Dimension());
       table.setShowGrid(false);
       
