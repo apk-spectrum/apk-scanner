@@ -458,9 +458,7 @@ public class MainUI extends JFrame
 			if(isVisible()) {
 				int nPositionX = getLocationOnScreen().x;
 				int nPositionY = getLocationOnScreen().y;
-				int nPositionWidth = getWidth();
-				ApkInstaller.setLogWindowPosition(nPositionX + nPositionWidth, nPositionY);
-				ApkInstaller.setLogWindowToFront();
+				int nPositionWidth = getWidth();			
 			}
 		}
 		@Override public void ancestorResized(HierarchyEvent e) { ancestorMoved(e); }
@@ -471,7 +469,6 @@ public class MainUI extends JFrame
 		{
 			exiting = true;
 			setVisible(false);
-			ApkInstaller.setVisible(false);
 			progressBarDlg.setVisible(false);
 			apkScanner.clear(true);
 		}
