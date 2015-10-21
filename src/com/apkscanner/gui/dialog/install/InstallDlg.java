@@ -84,7 +84,7 @@ public class InstallDlg extends JDialog implements ActionListener{
 			@Override
 			public void AddCheckList(String name,String t, InstallDlg.CHECKLIST_MODE mode) {
 				// TODO Auto-generated method stub
-				Log.d("AddCheckList");
+				Log.d("AddCheckList : " + name + " : " + t + "mode : " + mode);
 				TestTable.addTableModel(name,t, mode);
 			}
 
@@ -114,6 +114,7 @@ public class InstallDlg extends JDialog implements ActionListener{
 							SetResult(panel.getSelectedIndex());
 							
 						} else if("Refresh".equals(e.getActionCommand())) {
+							Log.d("Refresh");
 							panel.refreshData();
 						}			            
 					}
@@ -130,7 +131,7 @@ public class InstallDlg extends JDialog implements ActionListener{
 			public int ShowQuestion(Runnable runthread, Object message, String title, int optionType, int messageType, Icon icon, Object[] options, Object initialValue) {
 				// TODO Auto-generated method stub
 				this.runThread = runthread;
-				Log.d("ShowQuestion");
+				Log.d("ShowQuestion : " + runthread + " : "+ message + " : " + title + " : " + optionType + " : " + messageType + " : " + options.toString() + ": " + initialValue);
 				tempOption = options;
 				JButton[] btn = new JButton[options.length];
 				
