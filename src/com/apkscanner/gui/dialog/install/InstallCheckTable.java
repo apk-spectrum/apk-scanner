@@ -45,7 +45,7 @@ public final class InstallCheckTable extends JPanel {
       add(scrollPane);
       setPreferredSize(new Dimension(320, 240));
       
-      setJTableColumnsWidth(table,320,5,40,20,40);
+      setJTableColumnsWidth(table,320,5,25,20,55);
   }
   	public void addTableModel(String name, String t, InstallDlg.CHECKLIST_MODE mode) {
   		model.addValue(name, t, mode);

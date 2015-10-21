@@ -22,6 +22,7 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.text.DefaultCaret;
 
 import com.apkscanner.core.AdbWrapper;
 import com.apkscanner.core.AdbWrapper.DeviceStatus;
@@ -78,7 +79,7 @@ public class InstallDlg extends JDialog implements ActionListener{
 			@Override
 			public void AddLog(String str) {
 				// TODO Auto-generated method stub
-				
+				taskOutput.append(str + "\n");
 			}
 
 			@Override
@@ -91,7 +92,7 @@ public class InstallDlg extends JDialog implements ActionListener{
 			@Override
 			public void Complete(String str) {
 				// TODO Auto-generated method stub
-				
+				Log.d("Thread End");
 			}
 			
 
@@ -195,19 +196,11 @@ public class InstallDlg extends JDialog implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		if ("showLogBox".equals(e.getActionCommand())) {
-			if(scrollPane.isVisible()) {				
-				scrollPane.setVisible(false);
-				this.pack();
-				this.repaint();
-				
-			} else {
-				scrollPane.setVisible(true);
-				this.pack();
-				this.repaint();
-			}
-		} else if("Refresh".equals(e.getActionCommand())) {
-			
+		
+		
+		
+		if ("종료".equals(e.getActionCommand())) {
+			this.setVisible(false);
 		}
 	}
 	
@@ -242,7 +235,7 @@ public class InstallDlg extends JDialog implements ActionListener{
         //f.getContentPane().setLayout(new BorderLayout());
         //f.setLayout(new BorderLayout());
         JButton btnExit = new JButton("종료");
-        
+        btnExit.addActionListener(this);
         
         JPanel framelayout = new JPanel(new BorderLayout());
         JPanel parent = new JPanel(new GridLayout(1,2));
@@ -255,10 +248,11 @@ public class InstallDlg extends JDialog implements ActionListener{
         CheckListBox.setBackground(Color.WHITE);
         
 		taskOutput = new JTextArea();
-		taskOutput.setText(Log.getLog());
+		DefaultCaret caret = (DefaultCaret) taskOutput.getCaret(); // ←
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		taskOutput.setWrapStyleWord(true);
+		taskOutput.setLineWrap(true);
 		taskOutput.setEditable(false);
-		taskOutput.setCaretPosition(0);
-		
 		
 		
 		scrollPane = new JScrollPane(taskOutput);
