@@ -63,8 +63,14 @@
     <string name="feature_startup_desc">Automatically run when boot completed.</string>
     <string name="feature_signature_lab">SIGNATURE</string>
     <string name="feature_signature_desc">SIGNATURE</string>
-    <string name="feature_shared_user_id_lab">SHARED_USER_ID</string>
-    <string name="feature_shared_user_id_desc">SHARED_USER_ID</string>
+    <string name="feature_system_user_id_lab">SYSTEM_UID</string>
+    <string name="feature_system_user_id_desc">This application uses the system uid</string>
+    <string name="feature_shared_user_id_lab">SHARED_UID</string>
+    <string name="feature_shared_user_id_desc">This application uses the sharedUserId</string>
+    <string name="feature_platform_sign_lab">PLATFORM_SIGN</string>
+    <string name="feature_platform_sign_desc">This application to be sign by platform signature.</string>
+    <string name="feature_samsung_sign_lab">SAMSUNG_SIGN</string>
+    <string name="feature_samsung_sign_desc">This application to be sign by samsung signature.</string>
     <string name="feature_debuggable_lab">DEBUGGABLE</string>
     <string name="feature_debuggable_desc">Whether or not the application can be debugged, even when running on a device in user mode.</string>
     

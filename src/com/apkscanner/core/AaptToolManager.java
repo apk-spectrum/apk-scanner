@@ -159,13 +159,23 @@ public class AaptToolManager extends ApkScannerStub
 		        for( int idx=0; idx < permTag.length; idx++ ){
 		        	if(idx==0) apkInfo.Permissions = "<uses-permission> [" + permTag.length + "]";
 		        	String perm = getAttrValue(permTag[idx], "name");
+		        	String maxSdk = getAttrValue(permTag[idx], "maxSdkVersion");
+		        	if(maxSdk != null && !maxSdk.isEmpty()) {
+		        		apkInfo.Permissions += " - maxSdkVersion:" + maxSdk;
+		        	}
 		        	apkInfo.Permissions += "\n" + perm;
 		        	apkInfo.PermissionList.add(perm);
-		        	String sig = getAttrValue(permTag[idx], "protectionLevel");
-		        	if(sig != null && sig.equals("0x2")) {
-		        		apkInfo.Permissions += " - <SIGNATURE>";
-		        		apkInfo.ProtectionLevel = "SIGNATURE";
+		        }
+		        permTag = manifestPath.getNodeList("/manifest/uses-permission-sdk23");
+		        for( int idx=0; idx < permTag.length; idx++ ){
+		        	if(idx==0) apkInfo.Permissions = "\n\n<uses-permission-sdk23> [" + permTag.length + "]";
+		        	String perm = getAttrValue(permTag[idx], "name");
+		        	String maxSdk = getAttrValue(permTag[idx], "maxSdkVersion");
+		        	apkInfo.Permissions += "\n" + perm;
+		        	if(maxSdk != null && !maxSdk.isEmpty()) {
+		        		apkInfo.Permissions += " - maxSdkVersion:" + maxSdk;
 		        	}
+		        	apkInfo.PermissionList.add(perm);
 		        }
 		        permTag = manifestPath.getNodeList("/manifest/permission");
 		        for( int idx=0; idx < permTag.length; idx++ ){
@@ -184,6 +194,14 @@ public class AaptToolManager extends ApkScannerStub
 		        
 				stateChanged(Status.BASIC_INFO_COMPLETED);
 		        
+		        // Activity/Service/Receiver/provider intent-filter
+		        progress(5, "I: read activitys...");
+		        apkInfo.ActivityList.addAll(getActivityInfo("activity"));
+		        apkInfo.ActivityList.addAll(getActivityInfo("service"));
+		        apkInfo.ActivityList.addAll(getActivityInfo("receiver"));
+		        apkInfo.ActivityList.addAll(getActivityInfo("provider"));
+		        stateChanged(Status.ACTIVITY_COMPLETED);
+				
 		        // widget
 		        progress(5, "I: read widgets...");
 		        AaptXmlTreeNode[] widgetTag = manifestPath.getNodeList("/manifest/application/receiver/meta-data[@"+namespace+"name='android.appwidget.provider']/..");
@@ -227,19 +245,10 @@ public class AaptToolManager extends ApkScannerStub
 		        	apkInfo.WidgetList.add(new Object[] {apkInfo.IconPath, widgetTitle, "1 X 1", widgetActivity, "Shortcut"});
 		        }
 		        stateChanged(Status.WIDGET_COMPLETED);
-
-		        progress(5, "I: read activitys...");
-		        // Activity/Service/Receiver/provider intent-filter
-		        apkInfo.ActivityList.addAll(getActivityInfo("activity"));
-		        apkInfo.ActivityList.addAll(getActivityInfo("service"));
-		        apkInfo.ActivityList.addAll(getActivityInfo("receiver"));
-		        apkInfo.ActivityList.addAll(getActivityInfo("provider"));
-		        stateChanged(Status.ACTIVITY_COMPLETED);
 		        
 		        apkInfo.verify();
 
 		        progress(5, "I: completed...");
-		        stateChanged(Status.CERT_COMPLETED);
 		        
 		        if(statusListener != null) statusListener.OnSuccess();
 			}
@@ -567,7 +576,7 @@ public class AaptToolManager extends ApkScannerStub
 		}
 		
 		for (String s : (new File(certPath)).list()) {
-			if(!s.endsWith(".RSA") && !s.endsWith(".DSA") ) continue;
+			if(!s.endsWith(".RSA") && !s.endsWith(".DSA") && !s.endsWith(".EC") ) continue;
 
 			File rsaFile = new File(certPath + File.separator + s);
 			if(!rsaFile.exists()) continue;
@@ -576,15 +585,25 @@ public class AaptToolManager extends ApkScannerStub
 			String[] result = ConsolCmd.exc(cmd, false, null);
 
 		    String certContent = "";
+		    apkInfo.CertCN = "";
 		    apkInfo.CertSummary = "<certificate[1]>\n";
 		    for(int i=0; i < result.length; i++){
-	    		if(!certContent.isEmpty() && result[i].matches("^.*\\[[0-9]*\\]:$")){
+	    		if(!certContent.isEmpty() && result[i].matches("^.*\\[[0-9]*\\]:$")) {
 	    			apkInfo.CertList.add(certContent);
 	    			apkInfo.CertSummary += "<certificate[" + (apkInfo.CertList.size() + 1) + "]>\n";
 			    	certContent = "";
 	    		}
 	    		if(result[i].matches("^.*:( [^ ,]+=(\".*\")?[^,]*,?)+$")) {
 	    			apkInfo.CertSummary += result[i] + "\n";
+	    			if(result[i].indexOf("CN=") > -1) {
+	    				String CN = result[i].replaceAll(".*CN=([^,]*).*", "$1");
+	    				if(!CN.isEmpty() && apkInfo.CertCN.indexOf(CN) == -1) {
+	    					if(!apkInfo.CertCN.isEmpty()) {
+	    						apkInfo.CertCN += "|";
+	    					}
+	    					apkInfo.CertCN += "'" + result[i].replaceAll(".*CN=([^,]*).*", "$1") + "'";
+	    				}
+	    			}
 	    		}
 	    		certContent += (certContent.isEmpty() ? "" : "\n") + result[i];
 		    }

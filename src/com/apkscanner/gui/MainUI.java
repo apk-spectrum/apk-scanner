@@ -189,6 +189,7 @@ public class MainUI extends JFrame
 		@Override
 		public void OnStateChanged(Status status)
 		{
+			Log.i("OnStateChanged() "+ status);
 			switch(status) {
 			case BASIC_INFO_COMPLETED:
 				String apkFilePath = apkScanner.getApkInfo().ApkPath;
@@ -221,6 +222,9 @@ public class MainUI extends JFrame
 				break;
 			case CERT_COMPLETED:
 				tabbedPanel.setData(apkScanner.getApkInfo(), 5);
+				if(isVisible()) {
+					tabbedPanel.setData(apkScanner.getApkInfo(), 0);
+				}
 				break;
 			default:
 				break;

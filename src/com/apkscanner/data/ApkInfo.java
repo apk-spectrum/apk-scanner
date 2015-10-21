@@ -24,6 +24,7 @@ public class ApkInfo
 	public String SharedUserId = null;
 	public String ApkSize = null;
 	public String CertSummary = null;
+	public String CertCN = null;
 	
 	public ArrayList<Object[]> WidgetList = new ArrayList<Object[]>();
 	public ArrayList<String> ImageList = new ArrayList<String>();

@@ -62,11 +62,19 @@
     <string name="feature_startup_lab">부팅시 실행</string>
     <string name="feature_startup_desc">부팅시 자동실행 가능한 권한을 사용합니다.</string>
     <string name="feature_signature_lab">서명 권한</string>
-    <string name="feature_signature_desc">서명 권한</string>
-    <string name="feature_shared_user_id_lab">SHARED_USER_ID</string>
-    <string name="feature_shared_user_id_desc">SHARED_USER_ID 옵션이 설정되어 있습니다.</string>
+    <string name="feature_signature_desc">동일 서명이 포함 되어야 사용 가능한 권한이 정의 되어 있습니다.</string>
+    <string name="feature_system_user_id_lab">시스템 UID</string>
+    <string name="feature_system_user_id_desc">시스템 UID를 사용하고 있습니다.
+※ 시스템 리소스에 접근이 가능합니다.</string>
+    <string name="feature_shared_user_id_lab">공유 UID</string>
+    <string name="feature_shared_user_id_desc">공유 UID를 사용하고 있습니다.</string>
+    <string name="feature_platform_sign_lab">플랫폼 서명</string>
+    <string name="feature_platform_sign_desc">플랫폼 서명이 포함 되어 있습니다.</string>
+    <string name="feature_samsung_sign_lab">삼성 서명</string>
+    <string name="feature_samsung_sign_desc">삼성 서명이 포함 되어 있습니다.</string>
     <string name="feature_debuggable_lab">디버깅모드</string>
-    <string name="feature_debuggable_desc">어플리케이션 디버깅모드가 허용 되어 있습니다.</string>
+    <string name="feature_debuggable_desc">어플리케이션 디버깅모드가 허용 되어 있습니다.
+※ 버전 발행시 제거 되어야 합니다.</string>
     
     <string name="widget_column_image">이미지</string>
     <string name="widget_column_label">이름</string>

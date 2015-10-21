@@ -53,6 +53,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	private boolean debuggable = false;
 	private String SharedUserId = null;
 	private String ApkSize = null;
+	private String SignatureCN = null;
+	private String CertSummary = null;
 	
 	private ArrayList<String> PermissionList = null;
 	private HashMap<String, PermissionGroup> PermGroupMap = null;
@@ -174,24 +176,45 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			sdkVersion += "Unspecified";
 		}
 		
-		String feature;
+		StringBuilder feature = new StringBuilder();
 		if(isHidden) {
-			feature = makeHyperLink("@event", Resource.STR_FEATURE_HIDDEN_LAB.getString(), Resource.STR_FEATURE_HIDDEN_DESC.getString(), "feature-hidden", null);
+			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_HIDDEN_LAB.getString(), Resource.STR_FEATURE_HIDDEN_DESC.getString(), "feature-hidden", null));
 		} else {
-			feature = makeHyperLink("@event", Resource.STR_FEATURE_LAUNCHER_LAB.getString(), Resource.STR_FEATURE_LAUNCHER_DESC.getString(), "feature-launcher", null);
+			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_LAUNCHER_LAB.getString(), Resource.STR_FEATURE_LAUNCHER_DESC.getString(), "feature-launcher", null));
 		}
-		
 		if(!Startup.isEmpty()) {
-			feature += ", " + makeHyperLink("@event", Resource.STR_FEATURE_STARTUP_LAB.getString(), Resource.STR_FEATURE_STARTUP_DESC.getString(), "feature-startup", null);
+			feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_STARTUP_LAB.getString(), Resource.STR_FEATURE_STARTUP_DESC.getString(), "feature-startup", null));
 		}
 		if(!ProtectionLevel.isEmpty()) {
-			feature += ", " + makeHyperLink("@event", Resource.STR_FEATURE_SIGNATURE_LAB.getString(), Resource.STR_FEATURE_SIGNATURE_DESC.getString(), "feature-protection-level", null);
+			feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_SIGNATURE_LAB.getString(), Resource.STR_FEATURE_SIGNATURE_DESC.getString(), "feature-protection-level", null));
 		}
-		if(!SharedUserId.isEmpty()) {
-			feature += ", " + makeHyperLink("@event", Resource.STR_FEATURE_SHAREDUSERID_LAB.getString(), Resource.STR_FEATURE_SHAREDUSERID_DESC.getString(), "feature-shared-user-id", null);
+		if(!SharedUserId.isEmpty() && !SharedUserId.startsWith("android.uid.system") ) {
+			feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_SHAREDUSERID_LAB.getString(), Resource.STR_FEATURE_SHAREDUSERID_DESC.getString(), "feature-shared-user-id", null));
+		}
+
+		StringBuilder importantFeatures = new StringBuilder();
+		if(SharedUserId.startsWith("android.uid.system")) {
+			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
+			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_SYSTEM_UID_LAB.getString(), Resource.STR_FEATURE_SYSTEM_UID_DESC.getString(), "feature-system-user-id", null));
+			importantFeatures.append("</font>");
+		}
+		if(SignatureCN != null && SignatureCN.indexOf("'Android'") > -1) {
+			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
+			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_PLATFORM_SIGN_LAB.getString(), Resource.STR_FEATURE_PLATFORM_SIGN_DESC.getString(), "feature-platform-sign", null));
+			importantFeatures.append("</font>");
+		}
+		if(SignatureCN != null && SignatureCN.indexOf("'Samsung Cert'") > -1) {
+			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
+			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_SAMSUNG_SIGN_LAB.getString(), Resource.STR_FEATURE_SAMSUNG_SIGN_DESC.getString(), "feature-samsung-sign", null));
+			importantFeatures.append("</font>");
 		}
 		if(debuggable) {
-			feature += ", " + makeHyperLink("@event", Resource.STR_FEATURE_DEBUGGABLE_LAB.getString(), Resource.STR_FEATURE_DEBUGGABLE_DESC.getString(), "feature-debuggable", null);
+			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
+			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_DEBUGGABLE_LAB.getString(), Resource.STR_FEATURE_DEBUGGABLE_DESC.getString(), "feature-debuggable", null));
+			importantFeatures.append("</font>");
+		}
+		if(importantFeatures.length() > 0) {
+			feature.append("<br/>" + importantFeatures.substring(2));
 		}
 		
 		String permGorupImg = makePermGroup();
@@ -294,6 +317,9 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 
 		PermissionList = apkInfo.PermissionList;
 		PermGroupMap = apkInfo.PermGroupMap;
+
+		SignatureCN = apkInfo.CertCN;
+		CertSummary = apkInfo.CertSummary;
 	
 		setData();
 	}
@@ -342,8 +368,11 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			if(mutiLabels == null || mutiLabels.isEmpty()
 					|| Labelname.length == 1) return;
 			try {
-				showDialog(mutiLabels, Resource.STR_LABEL_APP_NAME_LIST.getString(), new Dimension(300, 200)
-						, new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(new URL(IconPath)),32,32)));
+				ImageIcon icon = null;
+				if(IconPath != null && (IconPath.startsWith("jar:") || IconPath.startsWith("file:"))) {
+					icon = new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(new URL(IconPath)),32,32));
+				}
+				showDialog(mutiLabels, Resource.STR_LABEL_APP_NAME_LIST.getString(), new Dimension(300, 200), icon);
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			}
@@ -510,7 +539,17 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		} else if("feature-protection-level".equals(id)) {
 			feature = Resource.STR_FEATURE_SIGNATURE_DESC.getString();
 		} else if("feature-shared-user-id".equals(id)) {
-			feature = Resource.STR_FEATURE_SHAREDUSERID_DESC.getString();
+			feature = "sharedUserId=" + SharedUserId + "\n※ ";
+			feature += Resource.STR_FEATURE_SHAREDUSERID_DESC.getString();
+		} else if("feature-system-user-id".equals(id)) {
+			feature = "sharedUserId=" + SharedUserId + "\n※ ";
+			feature += Resource.STR_FEATURE_SYSTEM_UID_DESC.getString();
+		} else if("feature-platform-sign".equals(id)) {
+			feature = "※ " + Resource.STR_FEATURE_PLATFORM_SIGN_DESC.getString();
+			feature += "\n\n" + CertSummary;
+		} else if("feature-samsung-sign".equals(id)) {
+			feature = "※ " + Resource.STR_FEATURE_SAMSUNG_SIGN_DESC.getString();
+			feature += "\n\n" + CertSummary;
 		} else if("feature-debuggable".equals(id)) {
 			feature = Resource.STR_FEATURE_DEBUGGABLE_DESC.getString();
 		}
