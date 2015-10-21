@@ -160,8 +160,7 @@ public class ApkInstaller
 							//int n = InstallDlgListener.getResult();
 							Log.d(n+"");
 							
-							if(n==-1 || n==1) {
-								setVisible(false);
+							if(n==-1 || n==1) {								
 								return;
 							}
 						} else {
@@ -178,7 +177,7 @@ public class ApkInstaller
 						
 						if(selectedValue == -1) {
 							Listener.SetInstallButtonStatus(true);
-							setVisible(false);
+							
 							return;
 						}
 						dev = InstallDlgListener.getSelectDev();
@@ -225,7 +224,7 @@ public class ApkInstaller
 							//Log.i("Seltected index : " + n);
 							if(n==-1 || (!isDeletePossible && n==2) || (isDeletePossible && n==3)) {
 								Listener.SetInstallButtonStatus(true);
-								setVisible(false);
+								
 								return;
 							}
 							if(n==0) {
@@ -277,7 +276,7 @@ public class ApkInstaller
 							InstallDlgListener.AddCheckList("Check Install", (n==0)?"Install":"not install" , InstallDlg.CHECKLIST_MODE.DONE);
 							if(n==-1 || n==1) {
 								Listener.SetInstallButtonStatus(true);
-								setVisible(false);
+								
 								return;
 							}
 						}
@@ -299,7 +298,7 @@ public class ApkInstaller
 								
 								if(n==-1 || n==2) {
 									Listener.SetInstallButtonStatus(true);
-									setVisible(false);
+									
 									InstallDlgListener.AddCheckList("Check Install", (n==0) ?"push":"cancel", InstallDlg.CHECKLIST_MODE.DONE);
 									return;
 								} 
@@ -327,7 +326,7 @@ public class ApkInstaller
 							
 							if(n==-1 || n==1) {
 								Listener.SetInstallButtonStatus(true);
-								setVisible(false);
+								
 								return;
 							}
 						}
@@ -345,12 +344,6 @@ public class ApkInstaller
 		t.start();
 	}
 	
-	static public void setVisible(boolean bool)
-	{
-		if(dlgDialog != null) {
-			dlgDialog.setVisible(bool);
-		}
-	}
 	
 	private void printlnLog(String msg)
 	{
@@ -360,23 +353,7 @@ public class ApkInstaller
 		}
 	}
 	
-	public static void setLogWindowPosition(int x, int y)
-	{
-		if(dlgDialog != null) {
-			dlgDialog.setLocation(x, y);
-		} else {
-			nPositionX = x;
-			nPositionY = y;
-		}
-	}
-	
-	public static void setLogWindowToFront()
-	{
-		if(dlgDialog != null) {
-			dlgDialog.toFront();
-			dlgDialog.repaint();
-		}
-	}
+
 	
 	private class AdbWrapperObserver implements AdbWrapperListener
 	{
@@ -442,7 +419,7 @@ public class ApkInstaller
 			    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
 			} else if(type.equals("pull")) {
 				InstallDlgListener.AddCheckList("pull APK", "Done" , InstallDlg.CHECKLIST_MODE.DONE);
-				setVisible(false);
+				
 				if(Listener != null) Listener.OnOpenApk(tmpApkPath);
 			} 
 		}
