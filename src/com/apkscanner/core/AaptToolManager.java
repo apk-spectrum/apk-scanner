@@ -48,6 +48,7 @@ public class AaptToolManager extends ApkScannerStub
 		
 		final Object xmlTreeSync = new Object();
 		final Object resouresSync = new Object();
+		final Object SignSync = new Object();
 		
 		new Thread(new Runnable() {
 			public void run()
@@ -99,6 +100,31 @@ public class AaptToolManager extends ApkScannerStub
 			try {
 				xmlTreeSync.wait();
 				xmlTreeSync.notify();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		new Thread(new Runnable() {
+			public void run()
+			{
+				synchronized(SignSync) {
+					SignSync.notify();
+					try {
+						SignSync.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+			        progress(5, "I: read signatures...");
+					solveCert();
+					stateChanged(Status.CERT_COMPLETED);
+				}
+			}
+		}).start();
+		synchronized(SignSync) {
+			try {
+				SignSync.wait();
+				SignSync.notify();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -242,7 +268,9 @@ public class AaptToolManager extends ApkScannerStub
 		        PermissionGroupManager permGroupManager = new PermissionGroupManager(apkInfo.PermissionList.toArray(new String[0]));
 		        apkInfo.PermGroupMap = permGroupManager.getPermGroupMap();
 
-				stateChanged(Status.BASIC_INFO_COMPLETED);
+		        synchronized(SignSync) {
+		        	stateChanged(Status.BASIC_INFO_COMPLETED);
+		        }
 		        
 				new Thread(new Runnable() {
 					public void run()
@@ -312,29 +340,12 @@ public class AaptToolManager extends ApkScannerStub
 			}
 		}).start();
 		
-		/*
-		synchronized(xmlTreeSync) {
-			synchronized(resouresSync) {
-				Log.i(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-			}
-		}
-		*/
-		
 		new Thread(new Runnable() {
 			public void run()
 			{
 		        progress(5, "I: read Imanges list...");
 		        Collections.addAll(apkInfo.ImageList, ZipFileUtil.findFiles(apkInfo.ApkPath, ".png;.qmg;.jpg;.gif", null));
 		        stateChanged(Status.IMAGE_COMPLETED);
-			}
-		}).start();
-		
-		new Thread(new Runnable() {
-			public void run()
-			{
-		        progress(5, "I: read signatures...");
-				solveCert();
-				stateChanged(Status.CERT_COMPLETED);
 			}
 		}).start();
 		

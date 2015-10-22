@@ -275,9 +275,6 @@ public class MainUI extends JFrame
 			case CERT_COMPLETED:
 				Log.i(status + " ui sync start");
 				tabbedPanel.setData(apkScanner.getApkInfo(), 5);
-				if(isVisible()) {
-					tabbedPanel.setData(apkScanner.getApkInfo(), 0);
-				}
 				Log.i(status + " ui sync end");
 				break;
 			default:

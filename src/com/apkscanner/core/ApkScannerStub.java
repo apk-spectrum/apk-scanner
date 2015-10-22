@@ -41,6 +41,7 @@ abstract public class ApkScannerStub
 
 	public void openApk(final String apkFilePath)
 	{
+		isPackageTempApk = false;
 		openApk(apkFilePath, (String)Resource.PROP_FRAMEWORK_RES.getData());
 	}
 	
