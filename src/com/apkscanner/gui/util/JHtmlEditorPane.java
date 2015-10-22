@@ -29,7 +29,7 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 	private String tooltip;
 	
 	private StyleSheet ssh;
-	private Image backgroundimg;
+	private Image backgroundimg = null;
 	public abstract interface HyperlinkClickListener {
 		public abstract void hyperlinkClick(String id);
 	}
@@ -63,24 +63,18 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 	
     @Override
     protected void paintComponent(Graphics g) {
-        // set background green - but can draw image here too
-//        g.setColor(Color.GREEN);
-//        g.fillRect(0, 0, getWidth(), getHeight());
 
-        // uncomment the following to draw an image
-        // Image img = ...;
-
-        
-    	 Graphics2D g2d = (Graphics2D) g;
-        AlphaComposite acomp = AlphaComposite.getInstance(
-                AlphaComposite.SRC_OVER, 0.2f);
-        g2d.setComposite(acomp);
-        g2d.drawImage(backgroundimg, 0, 0, null);
-    	
-        acomp = AlphaComposite.getInstance(
-                AlphaComposite.SRC_OVER, 1.0f);
-        g2d.setComposite(acomp);
-         //g.drawImage(backgroundimg, 0, 0, this);
+        if(backgroundimg!=null) {
+	    	 Graphics2D g2d = (Graphics2D) g;
+	        AlphaComposite acomp = AlphaComposite.getInstance(
+	                AlphaComposite.SRC_OVER, 0.2f);
+	        g2d.setComposite(acomp);
+	        g2d.drawImage(backgroundimg, 0, 0, null);
+	    	
+	        acomp = AlphaComposite.getInstance(
+	                AlphaComposite.SRC_OVER, 1.0f);
+	        g2d.setComposite(acomp);
+        }
         super.paintComponent(g);
     }
 	

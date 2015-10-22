@@ -40,7 +40,7 @@ public final class InstallCheckTable extends JPanel {
       //column.setResizable(false);
       //column.setCellRenderer(new ProgressRenderer());
 
-      table.setRowHeight(50);
+      table.setRowHeight(32);
             
       add(scrollPane);
       setPreferredSize(new Dimension(320, 240));

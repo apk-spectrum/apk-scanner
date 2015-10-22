@@ -232,9 +232,9 @@ public class InstallDlg extends JDialog implements ActionListener{
         this.setIconImage(Resource.IMG_TOOLBAR_INSTALL.getImageIcon().getImage());
         //this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //this.setBounds(0, 0, 700, 400);
-        this.setPreferredSize(new Dimension(800,500));
+        this.setPreferredSize(new Dimension(700,450));
         
-        this.setMinimumSize(new Dimension(800, 500));
+        this.setMinimumSize(new Dimension(700, 450));
         this.setLocationRelativeTo(null);
         this.setResizable(false);
         //this.setModal(f);
