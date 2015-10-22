@@ -24,7 +24,7 @@ public class AaptToolManager extends ApkScannerStub
 	public AaptToolManager(StatusListener statusListener)
 	{
 		super(statusListener);
-		stateChanged(Status.UNINITIALIZE);
+		//stateChanged(Status.UNINITIALIZE);
 	}
 	
 	@Override
@@ -49,7 +49,7 @@ public class AaptToolManager extends ApkScannerStub
 		new Thread(new Runnable() {
 			public void run()
 			{
-				stateChanged(Status.INITIALIZING);
+				//stateChanged(Status.INITIALIZING);
 
 				progress(5, "I: start open apk");
 				progress(5, "I: getDump AndroidManifest...");
@@ -63,7 +63,7 @@ public class AaptToolManager extends ApkScannerStub
 				manifestPath.createAaptXmlTree(androidManifest);
 				namespace = manifestPath.getNamespace() + ":"; 
 				
-				stateChanged(Status.INITIALIZEED);
+				//stateChanged(Status.INITIALIZEED);
 
 				progress(5, "I: read basic info...");
 				AaptXmlTreeNode manifestTag = manifestPath.getNode("/manifest"); 
@@ -191,62 +191,70 @@ public class AaptToolManager extends ApkScannerStub
 		        }
 		        PermissionGroupManager permGroupManager = new PermissionGroupManager(apkInfo.PermissionList.toArray(new String[0]));
 		        apkInfo.PermGroupMap = permGroupManager.getPermGroupMap();
-		        
+
 				stateChanged(Status.BASIC_INFO_COMPLETED);
 		        
-		        // Activity/Service/Receiver/provider intent-filter
-		        progress(5, "I: read activitys...");
-		        apkInfo.ActivityList.addAll(getActivityInfo("activity"));
-		        apkInfo.ActivityList.addAll(getActivityInfo("service"));
-		        apkInfo.ActivityList.addAll(getActivityInfo("receiver"));
-		        apkInfo.ActivityList.addAll(getActivityInfo("provider"));
-		        stateChanged(Status.ACTIVITY_COMPLETED);
+				new Thread(new Runnable() {
+					public void run()
+					{
+				        // Activity/Service/Receiver/provider intent-filter
+				        progress(5, "I: read activitys...");
+				        apkInfo.ActivityList.addAll(getActivityInfo("activity"));
+				        apkInfo.ActivityList.addAll(getActivityInfo("service"));
+				        apkInfo.ActivityList.addAll(getActivityInfo("receiver"));
+				        apkInfo.ActivityList.addAll(getActivityInfo("provider"));
+				        stateChanged(Status.ACTIVITY_COMPLETED);
+					}
+				}).run();
 				
-		        // widget
-		        progress(5, "I: read widgets...");
-		        AaptXmlTreeNode[] widgetTag = manifestPath.getNodeList("/manifest/application/receiver/meta-data[@"+namespace+"name='android.appwidget.provider']/..");
-		        //Log.i("Normal widgetList cnt = " + xmlAndroidManifest.getLength());
-		        for( int idx=0; idx < widgetTag.length; idx++ ){
-		        	Object[] widgetExtraInfo = {apkInfo.IconPath, ""};
-
-		        	String widgetTitle = null;
-		        	String widgetActivity = null;
-		        	String tmp[] = getAttrValues(widgetTag[idx], "label");
-		        	if(tmp !=null && tmp.length > 0) {
-		        		widgetTitle = tmp[0];
-		        	}
-		        	tmp = getAttrValues(widgetTag[idx], "name");
-		        	if(tmp !=null && tmp.length > 0) {
-		        		widgetActivity = tmp[0];
-		        	}
-
-		        	Object[] extraInfo = getWidgetInfo(getResourceValues(widgetTag[idx].getNode("meta-data").getAttribute(namespace + "resource"), false));
-		        	if(extraInfo != null) {
-		        		widgetExtraInfo = extraInfo;
-		        	}
-		        	
-		        	apkInfo.WidgetList.add(new Object[] {widgetExtraInfo[0], widgetTitle, widgetExtraInfo[1], widgetActivity, "Normal"});
-		        }
-		        
-		        widgetTag = manifestPath.getNodeList("/manifest/application/activity-alias/intent-filter/action[@"+namespace+"name='android.intent.action.CREATE_SHORTCUT']/../..");
-		        //Log.i("Shortcut widgetList cnt = " + xmlAndroidManifest.getLength());
-		        for( int idx=0; idx < widgetTag.length; idx++ ){
-		        	String widgetTitle = null;
-		        	String widgetActivity = null;
-		        	String tmp[] = apkInfo.Labelname;
-		        	if(tmp != null && tmp.length > 0) {
-		        		widgetTitle = tmp[0];
-		        	}
-		        	tmp = getAttrValues(widgetTag[idx], "name");
-		        	if(tmp != null && tmp.length > 0) {
-		        		widgetActivity = tmp[0];
-		        	}
-
-		        	apkInfo.WidgetList.add(new Object[] {apkInfo.IconPath, widgetTitle, "1 X 1", widgetActivity, "Shortcut"});
-		        }
-		        stateChanged(Status.WIDGET_COMPLETED);
-		        
-		        apkInfo.verify();
+				new Thread(new Runnable() {
+					public void run()
+					{
+				        // widget
+				        progress(5, "I: read widgets...");
+				        AaptXmlTreeNode[] widgetTag = manifestPath.getNodeList("/manifest/application/receiver/meta-data[@"+namespace+"name='android.appwidget.provider']/..");
+				        //Log.i("Normal widgetList cnt = " + xmlAndroidManifest.getLength());
+				        for( int idx=0; idx < widgetTag.length; idx++ ){
+				        	Object[] widgetExtraInfo = {apkInfo.IconPath, ""};
+		
+				        	String widgetTitle = null;
+				        	String widgetActivity = null;
+				        	String tmp[] = getAttrValues(widgetTag[idx], "label");
+				        	if(tmp !=null && tmp.length > 0) {
+				        		widgetTitle = tmp[0];
+				        	}
+				        	tmp = getAttrValues(widgetTag[idx], "name");
+				        	if(tmp !=null && tmp.length > 0) {
+				        		widgetActivity = tmp[0];
+				        	}
+		
+				        	Object[] extraInfo = getWidgetInfo(getResourceValues(widgetTag[idx].getNode("meta-data").getAttribute(namespace + "resource"), false));
+				        	if(extraInfo != null) {
+				        		widgetExtraInfo = extraInfo;
+				        	}
+				        	
+				        	apkInfo.WidgetList.add(new Object[] {widgetExtraInfo[0], widgetTitle, widgetExtraInfo[1], widgetActivity, "Normal"});
+				        }
+				        
+				        widgetTag = manifestPath.getNodeList("/manifest/application/activity-alias/intent-filter/action[@"+namespace+"name='android.intent.action.CREATE_SHORTCUT']/../..");
+				        //Log.i("Shortcut widgetList cnt = " + xmlAndroidManifest.getLength());
+				        for( int idx=0; idx < widgetTag.length; idx++ ){
+				        	String widgetTitle = null;
+				        	String widgetActivity = null;
+				        	String tmp[] = apkInfo.Labelname;
+				        	if(tmp != null && tmp.length > 0) {
+				        		widgetTitle = tmp[0];
+				        	}
+				        	tmp = getAttrValues(widgetTag[idx], "name");
+				        	if(tmp != null && tmp.length > 0) {
+				        		widgetActivity = tmp[0];
+				        	}
+		
+				        	apkInfo.WidgetList.add(new Object[] {apkInfo.IconPath, widgetTitle, "1 X 1", widgetActivity, "Shortcut"});
+				        }
+				        stateChanged(Status.WIDGET_COMPLETED);
+					}
+				}).run();
 
 		        progress(5, "I: completed...");
 		        

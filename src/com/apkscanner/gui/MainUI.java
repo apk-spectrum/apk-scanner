@@ -54,13 +54,19 @@ public class MainUI extends JFrame
 	
 	private boolean exiting = false;
 	
+	private Object uiInitSync = new Object();
+	
 	public MainUI()
 	{
 		new Thread(new Runnable() {
 			public void run()
 			{
+				Log.w("initialize before");
 				initialize(true);
+				Log.w("initialize after");
+				Log.w("new ProgressBarDlg before");
 				progressBarDlg = new ProgressBarDlg(MainUI.this, new UIEventHandler());
+				Log.w("new ProgressBarDlg after");
 				
 				apkScanner = new AaptToolManager(new ApkScannerListener());
 			}
@@ -72,10 +78,36 @@ public class MainUI extends JFrame
 		new Thread(new Runnable() {
 			public void run()
 			{
-				progressBarDlg = new ProgressBarDlg(MainUI.this, new UIEventHandler());
-				progressBarDlg.setVisible(true);
-				initialize(false);
-				
+				synchronized(uiInitSync) {
+					uiInitSync.notify();
+					try {
+						uiInitSync.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					Log.i("UI Init start");
+					progressBarDlg = new ProgressBarDlg(MainUI.this, new UIEventHandler());
+					progressBarDlg.setVisible(true);
+					initialize(false);
+					Log.i("UI Init end");
+				}
+				//tabbedPanel.initLabel();
+			}
+		}).start();
+		
+		synchronized(uiInitSync) {
+		try {
+			uiInitSync.wait();
+			uiInitSync.notify();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		}
+
+
+		new Thread(new Runnable() {
+			public void run()
+			{
 				apkScanner = new AaptToolManager(new ApkScannerListener());
 				apkScanner.openApk(apkFilePath);
 			}
@@ -90,7 +122,12 @@ public class MainUI extends JFrame
 				progressBarDlg = new ProgressBarDlg(MainUI.this, new UIEventHandler());
 				progressBarDlg.setVisible(true);
 				initialize(false);
-
+			}
+		}).start();
+		
+		new Thread(new Runnable() {
+			public void run()
+			{
 				apkScanner = new AaptToolManager(new ApkScannerListener());
 				apkScanner.openPackage(devSerialNumber, packageName, resources);
 			}
@@ -148,7 +185,7 @@ public class MainUI extends JFrame
 		public void OnStart() {
 			Log.v("ApkCore.OnStart()");
 			setVisible(false);
-			tabbedPanel.initLabel();
+			if(tabbedPanel != null) tabbedPanel.initLabel();
 		}
 
 		@Override
@@ -165,7 +202,7 @@ public class MainUI extends JFrame
 			progressBarDlg.setVisible(false);
 
 			setTitle(Resource.STR_APP_NAME.getString());
-			tabbedPanel.setData(null);
+			if(tabbedPanel != null) tabbedPanel.setData(null);
 			setVisible(true);
 			
 			final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
@@ -183,13 +220,16 @@ public class MainUI extends JFrame
 		public void OnProgress(int step, String msg) {
 			if(exiting) return;
 			Log.i(msg);
-			progressBarDlg.addProgress(step, msg+"\n");
+			if(progressBarDlg!=null) progressBarDlg.addProgress(step, msg+"\n");
 		}
 
 		@Override
 		public void OnStateChanged(Status status)
 		{
 			Log.i("OnStateChanged() "+ status);
+			synchronized(uiInitSync) {
+				Log.i("OnStateChanged() sync "+ status);	
+			}
 			switch(status) {
 			case BASIC_INFO_COMPLETED:
 				String apkFilePath = apkScanner.getApkInfo().ApkPath;
@@ -202,29 +242,53 @@ public class MainUI extends JFrame
 					setSize(new Dimension(650, 490));
 				}
 
-				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, true);
-				tabbedPanel.setData(apkScanner.getApkInfo(), 0);
-				
-				progressBarDlg.setVisible(false);
-				setVisible(true);
+				//synchronized(uiInitSync) {
+					Log.i(status + " ui sync start");
+					toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, true);
+					if(tabbedPanel!=null) tabbedPanel.setData(apkScanner.getApkInfo(), 0);
+					
+					if(progressBarDlg!=null) progressBarDlg.setVisible(false);
+					setVisible(true);
+					Log.i(status + " ui sync end");
+				//}
 				break;
 			case WIDGET_COMPLETED:
-				tabbedPanel.setData(apkScanner.getApkInfo(), 1);
+				//synchronized(uiInitSync) {
+					Log.i(status + " ui sync start");
+					tabbedPanel.setData(apkScanner.getApkInfo(), 1);
+					Log.i(status + " ui sync end");
+				//}
 				break;
 			case LIB_COMPLETED:
-				tabbedPanel.setData(apkScanner.getApkInfo(), 2);
+				//synchronized(uiInitSync) {
+					Log.i(status + " ui sync start");
+					tabbedPanel.setData(apkScanner.getApkInfo(), 2);
+					Log.i(status + " ui sync end");
+				//}
 				break;
 			case IMAGE_COMPLETED:
-				tabbedPanel.setData(apkScanner.getApkInfo(), 3);
+				//synchronized(uiInitSync) {
+					Log.i(status + " ui sync start");
+					tabbedPanel.setData(apkScanner.getApkInfo(), 3);
+					Log.i(status + " ui sync end");
+				//}
 				break;
 			case ACTIVITY_COMPLETED:
-				tabbedPanel.setData(apkScanner.getApkInfo(), 4);
+				//synchronized(uiInitSync) {
+					Log.i(status + " ui sync start");
+					tabbedPanel.setData(apkScanner.getApkInfo(), 4);
+					Log.i(status + " ui sync end");
+				//}
 				break;
 			case CERT_COMPLETED:
-				tabbedPanel.setData(apkScanner.getApkInfo(), 5);
-				if(isVisible()) {
-					tabbedPanel.setData(apkScanner.getApkInfo(), 0);
-				}
+				//synchronized(uiInitSync) {
+					Log.i(status + " ui sync start");
+					tabbedPanel.setData(apkScanner.getApkInfo(), 5);
+					if(isVisible()) {
+						tabbedPanel.setData(apkScanner.getApkInfo(), 0);
+					}
+					Log.i(status + " ui sync end");
+				//}
 				break;
 			default:
 				break;

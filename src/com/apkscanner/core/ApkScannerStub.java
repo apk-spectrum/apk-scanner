@@ -15,9 +15,6 @@ abstract public class ApkScannerStub
 	protected boolean isPackageTempApk = false;
 
 	public enum Status {
-		UNINITIALIZE,
-		INITIALIZING,
-		INITIALIZEED,
 		BASIC_INFO_COMPLETED,
 		WIDGET_COMPLETED,
 		LIB_COMPLETED,
