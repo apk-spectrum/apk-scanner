@@ -1,6 +1,7 @@
 package com.apkscanner.gui.util;
 
 import java.awt.AWTKeyStroke;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
@@ -58,10 +59,14 @@ public class ArrowTraversalPane extends JOptionPane
 	}
 
 	static public JOptionPane makeOptionPane(Object message, String title, int optionType, int messageType, Icon icon, Object[] options, Object initialValue) {
+		
+		messageType = JOptionPane.PLAIN_MESSAGE;
+		
 	    JOptionPane pane = new ArrowTraversalPane(message, optionType, messageType);
 	    
-		pane.setMessageType(messageType);
-		pane.setIcon(icon);
+		pane.setMessageType(JOptionPane.PLAIN_MESSAGE);
+		//pane.setIcon(icon);
+		
 		pane.setOptionType(optionType);
 		pane.setOptions(options);
 		pane.setInitialValue(initialValue);

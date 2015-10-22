@@ -1,6 +1,10 @@
 package com.apkscanner.gui.util;
 
+import java.awt.AlphaComposite;
 import java.awt.Desktop;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -25,7 +29,7 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 	private String tooltip;
 	
 	private StyleSheet ssh;
-	
+	private Image backgroundimg;
 	public abstract interface HyperlinkClickListener {
 		public abstract void hyperlinkClick(String id);
 	}
@@ -50,9 +54,35 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
         
         ssh = kit.getStyleSheet();
         ssh.addRule(style);
-
+        setOpaque(false);
         setHtml(head, body);
 	}
+	public void setBackgroundImg(Image img) {
+		this.backgroundimg = img;
+	}
+	
+    @Override
+    protected void paintComponent(Graphics g) {
+        // set background green - but can draw image here too
+//        g.setColor(Color.GREEN);
+//        g.fillRect(0, 0, getWidth(), getHeight());
+
+        // uncomment the following to draw an image
+        // Image img = ...;
+
+        
+    	 Graphics2D g2d = (Graphics2D) g;
+        AlphaComposite acomp = AlphaComposite.getInstance(
+                AlphaComposite.SRC_OVER, 0.2f);
+        g2d.setComposite(acomp);
+        g2d.drawImage(backgroundimg, 0, 0, null);
+    	
+        acomp = AlphaComposite.getInstance(
+                AlphaComposite.SRC_OVER, 1.0f);
+        g2d.setComposite(acomp);
+         //g.drawImage(backgroundimg, 0, 0, this);
+        super.paintComponent(g);
+    }
 	
 	public void setHtml(String head, String body) 
 	{

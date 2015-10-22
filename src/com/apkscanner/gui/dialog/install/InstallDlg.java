@@ -29,6 +29,7 @@ import com.apkscanner.core.AdbWrapper.DeviceStatus;
 import com.apkscanner.gui.ApkInstaller;
 import com.apkscanner.gui.ApkInstaller.InstallDlgFuncListener;
 import com.apkscanner.gui.ImagePanel;
+import com.apkscanner.gui.dialog.AboutDlg;
 import com.apkscanner.gui.dialog.install.*;
 import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.resource.Resource;
@@ -44,8 +45,8 @@ public class InstallDlg extends JDialog implements ActionListener{
 	JTextArea taskOutput;
 	static private InstallDlgFuncListener CoreInstallLitener; 
 	InstallDlg dlg;
-	ImagePanel MessageBox;
-	
+	JPanel MessageBox;
+	JPanel AboutPanel;
 	public enum CHECKLIST_MODE{
 		ADD,
 		WATING,
@@ -86,7 +87,7 @@ public class InstallDlg extends JDialog implements ActionListener{
 			@Override
 			public void AddCheckList(String name,String t, InstallDlg.CHECKLIST_MODE mode) {
 				// TODO Auto-generated method stub
-				Log.d("AddCheckList : " + name + " : " + t + "mode : " + mode);
+				Log.d("AddCheckList : " + name + " : " + t + " mode : " + mode);
 				TestTable.addTableModel(name,t, mode);
 			}
 
@@ -194,6 +195,7 @@ public class InstallDlg extends JDialog implements ActionListener{
             CoreInstallLitener.SetResult(CoreInstallLitener.getValue(b.getText()));
             
             MessageBox.removeAll();
+            MessageBox.add(AboutDlg.GetPanel());
             dlg.pack();
             dlg.repaint();
 		}
@@ -249,9 +251,10 @@ public class InstallDlg extends JDialog implements ActionListener{
         JPanel parent = new JPanel(new GridLayout(1,2));
         JPanel CheckListBox = new JPanel(new BorderLayout());
         JPanel EastPanel =  new JPanel(new BorderLayout());
-        MessageBox = new ImagePanel();
-        MessageBox.setLayout(new BorderLayout());
-        MessageBox.SetImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+        
+        MessageBox = new JPanel(new BorderLayout());
+        AboutPanel = AboutDlg.GetPanel();
+        MessageBox.add(AboutPanel, BorderLayout.CENTER);
         
         JPanel ButtonBox = new JPanel(new BorderLayout());
         JPanel LogBox= new JPanel(new BorderLayout());
