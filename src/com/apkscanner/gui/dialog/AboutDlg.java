@@ -62,8 +62,7 @@ public class AboutDlg /*extends JDialog*/
 	
 	static public JPanel GetPanel()
 	{
-		final ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon(100,100);
-	    JPanel infoPanel = new JPanel();
+		JPanel infoPanel = new JPanel();
 		StringBuilder body = new StringBuilder();
 		body.append("<br/><br/><br/>");
 		
@@ -98,7 +97,7 @@ public class AboutDlg /*extends JDialog*/
 
 	    hep.setEditable(false);
 	    hep.setBackground(label.getBackground());
-	    hep.setBackgroundImg(Resource.IMG_APP_ICON.getImageIcon().getImage());
+	    hep.setBackgroundImg(Resource.IMG_APP_ICON.getImageIcon(250,250).getImage());
 	    
 	    
 	    infoPanel.add(hep);

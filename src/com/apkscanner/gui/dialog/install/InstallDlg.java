@@ -3,7 +3,9 @@ package com.apkscanner.gui.dialog.install;
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Color;
+import java.awt.ComponentOrientation;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -244,6 +246,9 @@ public class InstallDlg extends JDialog implements ActionListener{
         
         //f.getContentPane().setLayout(new BorderLayout());
         //f.setLayout(new BorderLayout());
+        JButton btnreInstall = new JButton("재설치");
+        btnreInstall.addActionListener(this);
+        
         JButton btnExit = new JButton("종료");
         btnExit.addActionListener(this);
         
@@ -256,13 +261,15 @@ public class InstallDlg extends JDialog implements ActionListener{
         AboutPanel = AboutDlg.GetPanel();
         MessageBox.add(AboutPanel, BorderLayout.CENTER);
         
-        JPanel ButtonBox = new JPanel(new BorderLayout());
+        JPanel ButtonBox = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        
+        
         JPanel LogBox= new JPanel(new BorderLayout());
         
         CheckListBox.setBackground(Color.WHITE);
         
 		taskOutput = new JTextArea();
-		DefaultCaret caret = (DefaultCaret) taskOutput.getCaret(); // ←
+		DefaultCaret caret = (DefaultCaret) taskOutput.getCaret();
 		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		taskOutput.setWrapStyleWord(true);
 		taskOutput.setLineWrap(true);
@@ -286,7 +293,9 @@ public class InstallDlg extends JDialog implements ActionListener{
         
         
         
-        ButtonBox.add(btnExit,BorderLayout.EAST );
+        
+        ButtonBox.add(btnreInstall);
+        ButtonBox.add(btnExit);
         //ButtonBox.add(LogBox, BorderLayout.SOUTH);
         
                 

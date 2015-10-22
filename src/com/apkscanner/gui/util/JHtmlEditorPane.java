@@ -69,7 +69,7 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 	        AlphaComposite acomp = AlphaComposite.getInstance(
 	                AlphaComposite.SRC_OVER, 0.2f);
 	        g2d.setComposite(acomp);
-	        g2d.drawImage(backgroundimg, 0, 0, null);
+	        g2d.drawImage(backgroundimg, 50, 10, null);
 	    	
 	        acomp = AlphaComposite.getInstance(
 	                AlphaComposite.SRC_OVER, 1.0f);
