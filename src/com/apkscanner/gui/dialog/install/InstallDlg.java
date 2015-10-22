@@ -28,6 +28,7 @@ import com.apkscanner.core.AdbWrapper;
 import com.apkscanner.core.AdbWrapper.DeviceStatus;
 import com.apkscanner.gui.ApkInstaller;
 import com.apkscanner.gui.ApkInstaller.InstallDlgFuncListener;
+import com.apkscanner.gui.ImagePanel;
 import com.apkscanner.gui.dialog.install.*;
 import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.resource.Resource;
@@ -43,7 +44,7 @@ public class InstallDlg extends JDialog implements ActionListener{
 	JTextArea taskOutput;
 	static private InstallDlgFuncListener CoreInstallLitener; 
 	InstallDlg dlg;
-	JPanel MessageBox;
+	ImagePanel MessageBox;
 	
 	public enum CHECKLIST_MODE{
 		ADD,
@@ -112,7 +113,11 @@ public class InstallDlg extends JDialog implements ActionListener{
 							dev = panel.getSelectedData();
 							Log.i("click set" + dev.getSummary());
 							
-							SetResult(panel.getSelectedIndex());
+							SetResult(panel.getSelectedIndex());														
+														
+							MessageBox.removeAll();							
+							dlg.repaint();
+							dlg.pack();
 							
 						} else if("Refresh".equals(e.getActionCommand())) {
 							Log.d("Refresh");
@@ -120,6 +125,8 @@ public class InstallDlg extends JDialog implements ActionListener{
 						}			            
 					}
 				}); 
+				
+				panel.setOpaque(false);
 				
 				MessageBox.add(panel);
 				dlg.repaint();
@@ -144,7 +151,7 @@ public class InstallDlg extends JDialog implements ActionListener{
 				}
 
 				newOption = ArrowTraversalPane.makeOptionPane(message, title, optionType, messageType, icon, btn, null);
-				
+				newOption.setOpaque(false);
 				MessageBox.removeAll();
 				MessageBox.add(newOption);
 				dlg.repaint();
@@ -241,7 +248,10 @@ public class InstallDlg extends JDialog implements ActionListener{
         JPanel parent = new JPanel(new GridLayout(1,2));
         JPanel CheckListBox = new JPanel(new BorderLayout());
         JPanel EastPanel =  new JPanel(new BorderLayout());
-        MessageBox = new JPanel(new BorderLayout());
+        MessageBox = new ImagePanel();
+        MessageBox.setLayout(new BorderLayout());
+        MessageBox.SetImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+        
         JPanel ButtonBox = new JPanel(new BorderLayout());
         JPanel LogBox= new JPanel(new BorderLayout());
         
@@ -253,6 +263,7 @@ public class InstallDlg extends JDialog implements ActionListener{
 		taskOutput.setWrapStyleWord(true);
 		taskOutput.setLineWrap(true);
 		taskOutput.setEditable(false);
+		
 		
 		
 		scrollPane = new JScrollPane(taskOutput);

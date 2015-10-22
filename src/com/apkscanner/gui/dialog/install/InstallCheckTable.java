@@ -166,6 +166,7 @@ class WorkerModel extends DefaultTableModel {
 		  super.addRow(obj);
 	  } else if(mode == InstallDlg.CHECKLIST_MODE.ERROR) {
 		  Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_ERROR.getImageIcon().getImage()), t};
+		  super.removeRow(number);
 		  super.addRow(obj);
 		  number++;
 	  }
