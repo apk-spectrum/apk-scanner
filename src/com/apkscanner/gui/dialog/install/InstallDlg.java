@@ -208,6 +208,7 @@ public class InstallDlg extends JDialog implements ActionListener{
 		
 		if ("종료".equals(e.getActionCommand())) {
 			this.setVisible(false);
+			ApkInstaller.StopThead();
 		}
 	}
 	

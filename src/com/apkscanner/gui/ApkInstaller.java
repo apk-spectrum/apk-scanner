@@ -49,7 +49,7 @@ public class ApkInstaller
 	private String strSourcePath;
 	private String strLibPath;
 	private String tmpApkPath;
-	final Thread t;
+	static private Thread t;
 	
 	//window position
 	static private int nPositionX, nPositionY;
@@ -73,7 +73,7 @@ public class ApkInstaller
 	}
 	
 	
-	private InstallButtonStatusListener Listener;
+	private static InstallButtonStatusListener Listener;
 	private static InstallDlgFuncListener InstallDlgListener;
 
 	private int ShowQuestion(Runnable runnable, Object message, String title, int optionType, int messageType, Icon icon, Object[] options, Object initialValue) {
@@ -343,7 +343,11 @@ public class ApkInstaller
 		});
 		t.start();
 	}
-	
+	static public void StopThead() {
+		t.interrupt();
+		Listener.SetInstallButtonStatus(true);
+		t.stop();
+	}
 	
 	private void printlnLog(String msg)
 	{
