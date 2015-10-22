@@ -273,7 +273,7 @@ public class ApkInstaller
 							InstallDlgListener.AddCheckList("Check Install", "-" , InstallDlg.CHECKLIST_MODE.QEUESTION);
 							int n = ShowQuestion(this, Resource.STR_MSG_NO_SUCH_PACKAGE.getString() + "\n" + Resource.STR_QUESTION_CONTINUE_INSTALL.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, Appicon,
 									yesNoOptions, yesNoOptions[1]);
-							InstallDlgListener.AddCheckList("Check Install", (n==0)?"Install":"not install" , InstallDlg.CHECKLIST_MODE.DONE);
+							InstallDlgListener.AddCheckList("Install", (n==0)?"Install":"not install" , InstallDlg.CHECKLIST_MODE.DONE);
 							if(n==-1 || n==1) {
 								Listener.SetInstallButtonStatus(true);
 								
@@ -289,17 +289,17 @@ public class ApkInstaller
 								String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
 								InstallDlgListener.AddCheckList("Check Root", "root" , InstallDlg.CHECKLIST_MODE.ADD);
 								
-								InstallDlgListener.AddCheckList("Check Install", "-" , InstallDlg.CHECKLIST_MODE.QEUESTION);
+								InstallDlgListener.AddCheckList("Install/Push", "-" , InstallDlg.CHECKLIST_MODE.QEUESTION);
 								int n = ShowQuestion(this, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_PUSH_OR_INSTALL.getString(),
 										Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, options, options[1]);
 								//Log.i("Seltected index : " + n);
 								
-								InstallDlgListener.AddCheckList("Check Install", (n==0) ?"push":"install", InstallDlg.CHECKLIST_MODE.DONE);
+								InstallDlgListener.AddCheckList("Install", (n==0) ?"push":"install", InstallDlg.CHECKLIST_MODE.DONE);
 								
 								if(n==-1 || n==2) {
 									Listener.SetInstallButtonStatus(true);
 									
-									InstallDlgListener.AddCheckList("Check Install", (n==0) ?"push":"cancel", InstallDlg.CHECKLIST_MODE.DONE);
+									InstallDlgListener.AddCheckList("Cancel", "cancel", InstallDlg.CHECKLIST_MODE.DONE);
 									return;
 								} 
 								if(n==0) {

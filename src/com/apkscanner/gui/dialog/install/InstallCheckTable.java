@@ -43,9 +43,9 @@ public final class InstallCheckTable extends JPanel {
       table.setRowHeight(32);
             
       add(scrollPane);
-      setPreferredSize(new Dimension(320, 240));
+      setPreferredSize(new Dimension(170, 240));
       
-      setJTableColumnsWidth(table,320,5,25,20,55);
+      setJTableColumnsWidth(table,170,5,25,20);
   }
   	public void addTableModel(String name, String t, InstallDlg.CHECKLIST_MODE mode) {
   		model.addValue(name, t, mode);
@@ -142,8 +142,8 @@ class WorkerModel extends DefaultTableModel {
   private static final ColumnContext[] COLUMN_ARRAY = {
       new ColumnContext("No.",      Integer.class, false),
       new ColumnContext("Name", String.class, false),
-      new ColumnContext("Progress",     ImageIcon.class,  false),
-      new ColumnContext("Result", String.class, false)
+      new ColumnContext("Progress",     ImageIcon.class,  false)//,
+      //new ColumnContext("Result", String.class, false)
   };
   private final ConcurrentMap<Integer, SwingWorker> swmap = new ConcurrentHashMap<>();
   private int number;

@@ -1,10 +1,14 @@
 package com.apkscanner.gui.util;
 
 import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -30,6 +34,14 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 	
 	private StyleSheet ssh;
 	private Image backgroundimg = null;
+    private boolean mouseIn;
+    
+    private final int RADIUS = 30;
+    private int iw;
+    private int ih;
+    private int x;
+    private int y;
+    
 	public abstract interface HyperlinkClickListener {
 		public abstract void hyperlinkClick(String id);
 	}
@@ -56,6 +68,9 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
         ssh.addRule(style);
         setOpaque(false);
         setHtml(head, body);
+        
+        addMouseMotionListener(new MyMouseAdapter());
+        addMouseListener(new MyMouseAdapter());
 	}
 	public void setBackgroundImg(Image img) {
 		this.backgroundimg = img;
@@ -64,20 +79,86 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
     @Override
     protected void paintComponent(Graphics g) {
 
+        
+    	
         if(backgroundimg!=null) {
-	    	 Graphics2D g2d = (Graphics2D) g;
-	        AlphaComposite acomp = AlphaComposite.getInstance(
-	                AlphaComposite.SRC_OVER, 0.2f);
-	        g2d.setComposite(acomp);
-	        g2d.drawImage(backgroundimg, 50, 10, null);
-	    	
-	        acomp = AlphaComposite.getInstance(
-	                AlphaComposite.SRC_OVER, 1.0f);
-	        g2d.setComposite(acomp);
+        	
+            Graphics2D g2d = (Graphics2D) g.create();
+
+            int midX = (getWidth() - iw) / 2;
+            int midY = (getHeight() - ih) / 2;
+
+            BufferedImage bi = new BufferedImage(getWidth(),
+                    getHeight(), BufferedImage.TYPE_INT_ARGB);
+            Graphics2D bigr = bi.createGraphics();
+
+            if (mouseIn) {
+                bigr.setPaint(Color.white);
+                bigr.fillOval(x - RADIUS, y - RADIUS, RADIUS * 2,
+                        RADIUS * 2);
+                bigr.setComposite(AlphaComposite.SrcAtop);
+                bigr.drawImage(backgroundimg, midX, midY, iw, ih, this);
+            }
+
+            
+            bigr.setComposite(AlphaComposite.SrcOver.derive(1.0f));
+            bigr.drawImage(backgroundimg, midX, midY, iw, ih, this);
+            bigr.dispose();
+
+            g2d.drawImage(bi, 0, 0, getWidth(), getHeight(), this);
+            super.paintComponent(g);
+            g2d.dispose();
+            
+        	
+        	
+//        	doDrawing(g);
+//        	Graphics2D g2d = (Graphics2D) g;
+//	        AlphaComposite acomp = AlphaComposite.getInstance(
+//	                AlphaComposite.SRC_OVER, 0.2f);
+//	        g2d.setComposite(acomp);
+//	        g2d.drawImage(backgroundimg, 50, 10, null);
+//	        
+//	        acomp = AlphaComposite.getInstance(
+//	                AlphaComposite.SRC_OVER, 1.0f);
+//	        g2d.setComposite(acomp);
+	        
+	    }
+        else {
+        	super.paintComponent(g);
         }
-        super.paintComponent(g);
+
+        
+        //doDrawing(g);
     }
 	
+    private void doDrawing(Graphics g) {
+
+        Graphics2D g2d = (Graphics2D) g.create();
+
+        int midX = (getWidth() - iw) / 2;
+        int midY = (getHeight() - ih) / 2;
+
+        BufferedImage bi = new BufferedImage(getWidth(),
+                getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D bigr = bi.createGraphics();
+
+        if (mouseIn) {
+            //bigr.setPaint(Color.white);
+            bigr.fillOval(x - RADIUS, y - RADIUS, RADIUS * 2,
+                    RADIUS * 2);
+            bigr.setComposite(AlphaComposite.SrcAtop);
+            bigr.drawImage(backgroundimg, midX, midY, iw, ih, this);
+        }
+
+        bigr.setComposite(AlphaComposite.SrcOver.derive(0.1f));
+        bigr.drawImage(backgroundimg, midX, midY, iw, ih, this);
+        bigr.dispose();
+
+        g2d.drawImage(bi, 0, 0, getWidth(), getHeight(), this);
+
+        g2d.dispose();
+    }
+    
 	public void setHtml(String head, String body) 
 	{
 		this.head = head;
@@ -111,6 +192,29 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 		hyperlinkClickListener = listener;
 	}
 
+   private class MyMouseAdapter extends MouseAdapter {
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            mouseIn = false;
+            repaint();
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            mouseIn = true;
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+
+            x = e.getX();
+            y = e.getY();
+
+            repaint();
+        }
+    }
+	
     @Override
     public void hyperlinkUpdate(HyperlinkEvent e)
     {

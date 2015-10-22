@@ -118,7 +118,8 @@ public class InstallDlg extends JDialog implements ActionListener{
 							
 							SetResult(panel.getSelectedIndex());														
 														
-							MessageBox.removeAll();							
+							MessageBox.removeAll();
+							MessageBox.add(AboutPanel);
 							dlg.repaint();
 							dlg.pack();
 							
@@ -128,8 +129,6 @@ public class InstallDlg extends JDialog implements ActionListener{
 						}			            
 					}
 				}); 
-				
-				panel.setOpaque(false);
 				
 				MessageBox.add(panel);
 				dlg.repaint();
@@ -197,7 +196,7 @@ public class InstallDlg extends JDialog implements ActionListener{
             CoreInstallLitener.SetResult(CoreInstallLitener.getValue(b.getText()));
             
             MessageBox.removeAll();
-            MessageBox.add(AboutDlg.GetPanel());
+            MessageBox.add(AboutPanel);
             dlg.pack();
             dlg.repaint();
 		}
@@ -234,9 +233,9 @@ public class InstallDlg extends JDialog implements ActionListener{
         this.setIconImage(Resource.IMG_TOOLBAR_INSTALL.getImageIcon().getImage());
         //this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //this.setBounds(0, 0, 700, 400);
-        this.setPreferredSize(new Dimension(700,450));
+        this.setPreferredSize(new Dimension(500,450));
         
-        this.setMinimumSize(new Dimension(700, 450));
+        this.setMinimumSize(new Dimension(500, 450));
         this.setLocationRelativeTo(null);
         this.setResizable(false);
         //this.setModal(f);
@@ -253,7 +252,7 @@ public class InstallDlg extends JDialog implements ActionListener{
         btnExit.addActionListener(this);
         
         JPanel framelayout = new JPanel(new BorderLayout());
-        JPanel parent = new JPanel(new GridLayout(1,2));
+        JPanel parent = new JPanel(new BorderLayout());
         JPanel CheckListBox = new JPanel(new BorderLayout());
         JPanel EastPanel =  new JPanel(new BorderLayout());
         
@@ -289,7 +288,7 @@ public class InstallDlg extends JDialog implements ActionListener{
         EastPanel.add(MessageBox, BorderLayout.CENTER);
         
         parent.add(CheckListBox, BorderLayout.WEST);
-        parent.add(EastPanel, BorderLayout.EAST);
+        parent.add(EastPanel, BorderLayout.CENTER);
         
         
         

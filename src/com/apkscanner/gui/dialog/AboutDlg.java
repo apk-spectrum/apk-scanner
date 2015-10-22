@@ -15,6 +15,8 @@ import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.resource.Resource;
 
+import com.apkscanner.gui.dialog.install.*;
+
 public class AboutDlg /*extends JDialog*/
 {
 	public AboutDlg()
@@ -64,7 +66,7 @@ public class AboutDlg /*extends JDialog*/
 	{
 		JPanel infoPanel = new JPanel();
 		StringBuilder body = new StringBuilder();
-		body.append("<br/><br/><br/>");
+		body.append("<br/>");
 		
 		body.append("<div id=\"about\">");
 		body.append("  <H1>" + Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString() + "</H1>");
@@ -78,7 +80,7 @@ public class AboutDlg /*extends JDialog*/
 		body.append("  Programmed by <a href=\"mailto:" + Resource.STR_APP_MAKER_EMAIL.getString() + "\" title=\"" + Resource.STR_APP_MAKER_EMAIL.getString() + "\">" + Resource.STR_APP_MAKER.getString() + "</a>, 2015.<br/>");
 		body.append("</div>");
 		
-		body.append("<br/><br/><br/><br/><br/>");
+		body.append("<br/><br/>");
 		
 
 		JLabel label = new JLabel();
@@ -98,7 +100,11 @@ public class AboutDlg /*extends JDialog*/
 	    hep.setEditable(false);
 	    hep.setBackground(label.getBackground());
 	    hep.setBackgroundImg(Resource.IMG_APP_ICON.getImageIcon(250,250).getImage());
+	    //Spotlight SpotPanel = new Spotlight(Resource.IMG_APP_ICON.getImageIcon(250,250).getImage());
 	    
+	    
+	    
+	    //hep.add(SpotPanel);
 	    
 	    infoPanel.add(hep);
 	    return infoPanel;
