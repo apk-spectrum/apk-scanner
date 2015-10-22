@@ -200,6 +200,7 @@ public enum Resource
 	IMG_SUCCESS					(Type.IMAGE, "Succes.png"),
 	IMG_INSTALL_WAIT			(Type.IMAGE, "install_wait.gif"),
 	IMG_LOADING					(Type.IMAGE, "loading.gif"),
+	IMG_APK_LOADING				(Type.IMAGE, "loader.gif"),
 	IMG_WAIT_BAR				(Type.IMAGE, "wait_bar.gif"),
 	IMG_USB_ICON				(Type.IMAGE, "ic_dialog_usb.png"),
 	IMG_DEF_APP_ICON			(Type.IMAGE, "sym_def_app_icon.png"),

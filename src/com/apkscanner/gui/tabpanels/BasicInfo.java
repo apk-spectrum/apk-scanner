@@ -59,8 +59,12 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	private ArrayList<String> PermissionList = null;
 	private HashMap<String, PermissionGroup> PermGroupMap = null;
 
-	public BasicInfo() {
-
+	public BasicInfo(boolean opening)
+	{
+		if(!opening) {
+			initialize();
+			showAbout();
+		}
 	}
 	
 	@Override
@@ -68,6 +72,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	{
 		apkinform = new JHtmlEditorPane();
 		apkinform.setEditable(false);
+		apkinform.setOpaque(true);
 
 		//Font font = new Font("helvitica", Font.BOLD, 15);
 		JLabel label = new JLabel();
@@ -95,27 +100,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		this.add(apkinform);
 	}
 	
-	private void removeData()
+	private void showAbout()
 	{
-		Labelname = null;
-		PackageName = null;
-		VersionName = null;
-		VersionCode = null;
-		MinSDKversion = null;
-		TargerSDKversion = null;
-		isHidden = false;
-		IconPath = null;
-		Permissions = null;
-		Startup = null;
-		ProtectionLevel = null;
-		debuggable = false;
-		SharedUserId = null;
-		ApkSize = null;
-
-		PermissionList = null;
-		PermGroupMap = null;
-		
-
 		StringBuilder strTabInfo = new StringBuilder("");
 		strTabInfo.append("<table>");
 		strTabInfo.append("  <tr>");
@@ -149,6 +135,39 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("</table>");
 		strTabInfo.append("<div height=10000 width=10000></div>");
 		
+		apkinform.setBody(strTabInfo.toString());
+	}
+	
+	private void removeData()
+	{
+		Labelname = null;
+		PackageName = null;
+		VersionName = null;
+		VersionCode = null;
+		MinSDKversion = null;
+		TargerSDKversion = null;
+		isHidden = false;
+		IconPath = null;
+		Permissions = null;
+		Startup = null;
+		ProtectionLevel = null;
+		debuggable = false;
+		SharedUserId = null;
+		ApkSize = null;
+
+		PermissionList = null;
+		PermGroupMap = null;
+
+		StringBuilder strTabInfo = new StringBuilder("");
+		strTabInfo.append("<table>");
+		strTabInfo.append("  <tr>");
+		strTabInfo.append("    <td width=600 height=320>");
+		strTabInfo.append("      <center><image src=\"" + Resource.IMG_APK_LOADING.getPath() + "\"/></center>");
+		strTabInfo.append("    </td>");
+		strTabInfo.append("  </tr>");
+		strTabInfo.append("</table>");
+		strTabInfo.append("<div height=10000 width=10000></div>");
+
 		apkinform.setBody(strTabInfo.toString());
 	}
 	

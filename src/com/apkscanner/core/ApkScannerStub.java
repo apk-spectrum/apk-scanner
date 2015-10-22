@@ -51,7 +51,7 @@ abstract public class ApkScannerStub
 	public void openPackage(String devSerialNumber, String devApkFilePath, String framework)
 	{
 		isPackageTempApk = true;
-
+		
 		if(statusListener != null) statusListener.OnProgress(1, "I: Open package\n");
 		if(statusListener != null) statusListener.OnProgress(1, "I: apk path in device : " + devApkFilePath + "\n");
 		

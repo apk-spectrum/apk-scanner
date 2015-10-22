@@ -13,8 +13,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.HierarchyBoundsListener;
-import java.awt.event.HierarchyEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -32,7 +30,6 @@ import com.apkscanner.gui.ToolBar.ButtonSet;
 import com.apkscanner.gui.dialog.AboutDlg;
 import com.apkscanner.gui.dialog.LogDlg;
 import com.apkscanner.gui.dialog.PackageTreeDlg;
-import com.apkscanner.gui.dialog.ProgressBarDlg;
 import com.apkscanner.gui.dialog.SettingDlg;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.FileDrop;
@@ -49,8 +46,6 @@ public class MainUI extends JFrame
 	
 	private TabbedPanel tabbedPanel;
 	private ToolBar toolBar;
-
-	private ProgressBarDlg progressBarDlg;
 	
 	private boolean exiting = false;
 	
@@ -61,13 +56,8 @@ public class MainUI extends JFrame
 		new Thread(new Runnable() {
 			public void run()
 			{
-				Log.w("initialize before");
-				initialize(true);
-				Log.w("initialize after");
-				Log.w("new ProgressBarDlg before");
-				progressBarDlg = new ProgressBarDlg(MainUI.this, new UIEventHandler());
-				Log.w("new ProgressBarDlg after");
-				
+				initialize(false);
+				tabbedPanel.setData(null);
 				apkScanner = new AaptToolManager(new ApkScannerListener());
 			}
 		}).start();
@@ -86,25 +76,22 @@ public class MainUI extends JFrame
 						e.printStackTrace();
 					}
 					Log.i("UI Init start");
-					progressBarDlg = new ProgressBarDlg(MainUI.this, new UIEventHandler());
-					progressBarDlg.setVisible(true);
-					initialize(false);
+					initialize(true);
+					tabbedPanel.initLabel();
 					Log.i("UI Init end");
 				}
-				//tabbedPanel.initLabel();
 			}
 		}).start();
 		
 		synchronized(uiInitSync) {
-		try {
-			uiInitSync.wait();
-			uiInitSync.notify();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+			try {
+				uiInitSync.wait();
+				uiInitSync.notify();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
-		}
-
-
+		
 		new Thread(new Runnable() {
 			public void run()
 			{
@@ -119,11 +106,30 @@ public class MainUI extends JFrame
 		new Thread(new Runnable() {
 			public void run()
 			{
-				progressBarDlg = new ProgressBarDlg(MainUI.this, new UIEventHandler());
-				progressBarDlg.setVisible(true);
-				initialize(false);
+				synchronized(uiInitSync) {
+					uiInitSync.notify();
+					try {
+						uiInitSync.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					Log.i("UI Init start");
+					initialize(true);
+					tabbedPanel.initLabel();
+					Log.i("UI Init end");
+				}
+				//tabbedPanel.initLabel();
 			}
 		}).start();
+		
+		synchronized(uiInitSync) {
+			try {
+				uiInitSync.wait();
+				uiInitSync.notify();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		
 		new Thread(new Runnable() {
 			public void run()
@@ -134,8 +140,9 @@ public class MainUI extends JFrame
 		}).start();
 	}
 
-	private void initialize(boolean visible)
+	private void initialize(boolean opening)
 	{
+		Log.i("initialize() setLookAndFeel");
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
@@ -143,27 +150,32 @@ public class MainUI extends JFrame
 			e1.printStackTrace();
 		}
 
+		Log.i("initialize() set title/icon");
 		setTitle(Resource.STR_APP_NAME.getString());
 		setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
 		
+		Log.i("initialize() set bound");
 		setBounds(0, 0, 650, 490);
 		setMinimumSize(new Dimension(650, 490));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(true);
 		setLocationRelativeTo(null);
 
+		Log.i("initialize() toolbar init");
 		// ToolBar initialize and add
 		toolBar = new ToolBar(new UIEventHandler());
 		toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
 		add(toolBar, BorderLayout.NORTH);
 		
+		Log.i("initialize() tabbedpanel init");
 		// TabPanel initialize and add
-		tabbedPanel = new TabbedPanel();
-		tabbedPanel.setData(null);
+		tabbedPanel = new TabbedPanel(opening);
 		add(tabbedPanel, BorderLayout.CENTER);
 		
-		if(visible) setVisible(true);
+		Log.i("initialize() visible");
+		setVisible(true);
 		
+		Log.i("initialize() register event handler");
 		// Closing event of window be delete tempFile
 		addWindowListener(new UIEventHandler());
 		
@@ -173,10 +185,6 @@ public class MainUI extends JFrame
 		// Shortcut key event processing
 		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		ky.addKeyEventDispatcher(new UIEventHandler());
-		
-		// MainUI window move event
-		getContentPane().addHierarchyBoundsListener(new UIEventHandler());
-		new UIEventHandler().ancestorMoved(null);
 	}
 	
 	private class ApkScannerListener implements ApkScannerStub.StatusListener
@@ -184,8 +192,8 @@ public class MainUI extends JFrame
 		@Override
 		public void OnStart() {
 			Log.v("ApkCore.OnStart()");
-			setVisible(false);
 			if(tabbedPanel != null) tabbedPanel.initLabel();
+			if(toolBar != null) toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
 		}
 
 		@Override
@@ -198,12 +206,9 @@ public class MainUI extends JFrame
 		public void OnError() {
 			Log.v("ApkCore.OnError()");
 			if(exiting) return;
-			
-			progressBarDlg.setVisible(false);
 
 			setTitle(Resource.STR_APP_NAME.getString());
 			if(tabbedPanel != null) tabbedPanel.setData(null);
-			setVisible(true);
 			
 			final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
 			//JOptionPane.showMessageDialog(null, "Sorry, Can not open the APK", "Error", JOptionPane.ERROR_MESSAGE, Appicon);
@@ -220,7 +225,6 @@ public class MainUI extends JFrame
 		public void OnProgress(int step, String msg) {
 			if(exiting) return;
 			Log.i(msg);
-			if(progressBarDlg!=null) progressBarDlg.addProgress(step, msg+"\n");
 		}
 
 		@Override
@@ -242,53 +246,39 @@ public class MainUI extends JFrame
 					setSize(new Dimension(650, 490));
 				}
 
-				//synchronized(uiInitSync) {
-					Log.i(status + " ui sync start");
-					toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, true);
-					if(tabbedPanel!=null) tabbedPanel.setData(apkScanner.getApkInfo(), 0);
-					
-					if(progressBarDlg!=null) progressBarDlg.setVisible(false);
-					setVisible(true);
-					Log.i(status + " ui sync end");
-				//}
+				Log.i(status + " ui sync start");
+				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, true);
+				if(tabbedPanel!=null) tabbedPanel.setData(apkScanner.getApkInfo(), 0);
+				
+				Log.i(status + " ui sync end");
 				break;
 			case WIDGET_COMPLETED:
-				//synchronized(uiInitSync) {
-					Log.i(status + " ui sync start");
-					tabbedPanel.setData(apkScanner.getApkInfo(), 1);
-					Log.i(status + " ui sync end");
-				//}
+				Log.i(status + " ui sync start");
+				tabbedPanel.setData(apkScanner.getApkInfo(), 1);
+				Log.i(status + " ui sync end");
 				break;
 			case LIB_COMPLETED:
-				//synchronized(uiInitSync) {
-					Log.i(status + " ui sync start");
-					tabbedPanel.setData(apkScanner.getApkInfo(), 2);
-					Log.i(status + " ui sync end");
-				//}
+				Log.i(status + " ui sync start");
+				tabbedPanel.setData(apkScanner.getApkInfo(), 2);
+				Log.i(status + " ui sync end");
 				break;
 			case IMAGE_COMPLETED:
-				//synchronized(uiInitSync) {
-					Log.i(status + " ui sync start");
-					tabbedPanel.setData(apkScanner.getApkInfo(), 3);
-					Log.i(status + " ui sync end");
-				//}
+				Log.i(status + " ui sync start");
+				tabbedPanel.setData(apkScanner.getApkInfo(), 3);
+				Log.i(status + " ui sync end");
 				break;
 			case ACTIVITY_COMPLETED:
-				//synchronized(uiInitSync) {
-					Log.i(status + " ui sync start");
-					tabbedPanel.setData(apkScanner.getApkInfo(), 4);
-					Log.i(status + " ui sync end");
-				//}
+				Log.i(status + " ui sync start");
+				tabbedPanel.setData(apkScanner.getApkInfo(), 4);
+				Log.i(status + " ui sync end");
 				break;
 			case CERT_COMPLETED:
-				//synchronized(uiInitSync) {
-					Log.i(status + " ui sync start");
-					tabbedPanel.setData(apkScanner.getApkInfo(), 5);
-					if(isVisible()) {
-						tabbedPanel.setData(apkScanner.getApkInfo(), 0);
-					}
-					Log.i(status + " ui sync end");
-				//}
+				Log.i(status + " ui sync start");
+				tabbedPanel.setData(apkScanner.getApkInfo(), 5);
+				if(isVisible()) {
+					tabbedPanel.setData(apkScanner.getApkInfo(), 0);
+				}
+				Log.i(status + " ui sync end");
 				break;
 			default:
 				break;
@@ -296,7 +286,7 @@ public class MainUI extends JFrame
 		}
 	}
 
-	class UIEventHandler implements ActionListener, KeyEventDispatcher, WindowListener, FileDrop.Listener, HierarchyBoundsListener
+	class UIEventHandler implements ActionListener, KeyEventDispatcher, WindowListener, FileDrop.Listener
 	{
 		private void evtOpenApkFile(boolean newWindow)
 		{
@@ -307,8 +297,6 @@ public class MainUI extends JFrame
 			}
 
 			if(!newWindow) {
-				progressBarDlg.init();
-				progressBarDlg.setVisible(true);
 				apkScanner.openApk(apkFilePath);
 			} else {
 				Launcher.run(apkFilePath);
@@ -323,16 +311,19 @@ public class MainUI extends JFrame
 				return;
 			}
 			
-			String device = Dlg.getSelectedDevice();
-			String apkFilePath = Dlg.getSelectedApkPath();
-			String frameworkRes = Dlg.getSelectedFrameworkRes();
+			final String device = Dlg.getSelectedDevice();
+			final String apkFilePath = Dlg.getSelectedApkPath();
+			final String frameworkRes = Dlg.getSelectedFrameworkRes();
 
 			if(!newWindow) {
-				progressBarDlg.init();
-				progressBarDlg.setVisible(true);
-				setVisible(false);
-				
-				apkScanner.openPackage(device, apkFilePath, frameworkRes);
+				if(tabbedPanel != null) tabbedPanel.initLabel();
+				if(toolBar != null) toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
+				new Thread(new Runnable() {
+					public void run()
+					{
+						apkScanner.openPackage(device, apkFilePath, frameworkRes);
+					}
+				}).start();
 			} else {
 				Launcher.run(device, apkFilePath, frameworkRes);
 			}
@@ -391,10 +382,6 @@ public class MainUI extends JFrame
 					FileWriter fw = new FileWriter(new File(manifestPath));
 					
 					fw.write(((AaptToolManager)apkScanner).makeAndroidManifestXml());
-					//for(String line: ((AaptToolManager)apkScanner).getAndroidManifest()) {
-						//fw.write(line);
-						//fw.write("\r\n");
-					//}
 					fw.close();
 				}
 				new ProcessBuilder(editor, manifestPath).start();
@@ -508,32 +495,17 @@ public class MainUI extends JFrame
 		@Override
 		public void filesDropped(File[] files)
 		{
-			try {   
-	    		progressBarDlg.init();
-				progressBarDlg.setVisible(true);
+			try {
 				apkScanner.openApk(files[0].getCanonicalPath(), (String)Resource.PROP_FRAMEWORK_RES.getData());
 	        } catch( java.io.IOException e ) {}
 		}
 		
-		// MainUI window move event 
-		@Override
-		public void ancestorMoved(HierarchyEvent e)
-		{
-			if(isVisible()) {
-				int nPositionX = getLocationOnScreen().x;
-				int nPositionY = getLocationOnScreen().y;
-				int nPositionWidth = getWidth();			
-			}
-		}
-		@Override public void ancestorResized(HierarchyEvent e) { ancestorMoved(e); }
-
 		// Closing event of window be delete tempFile
 		@Override
 		public void windowClosing(WindowEvent e)
 		{
 			exiting = true;
 			setVisible(false);
-			progressBarDlg.setVisible(false);
 			apkScanner.clear(true);
 		}
 		

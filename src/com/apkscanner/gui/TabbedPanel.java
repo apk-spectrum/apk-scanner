@@ -28,13 +28,13 @@ public class TabbedPanel extends JTabbedPane
 		public void reloadResource();
 	}
 	
-    public TabbedPanel()
+    public TabbedPanel(boolean opening)
     {
         setUI(new PlasticTabbedPaneUI());
         
         loadResource();
         
-        addTab(labels[0], null, new BasicInfo(), labels[0] + " (Alt+1)");
+        addTab(labels[0], null, new BasicInfo(opening), labels[0] + " (Alt+1)");
         setMnemonicAt(0, KeyEvent.VK_1);
 
         addTab(labels[1], null, new Widget(), labels[1] + " (Alt+2)");
@@ -80,6 +80,7 @@ public class TabbedPanel extends JTabbedPane
     
     public void initLabel()
     {
+    	((TabDataObject)(getComponent(0))).setData(null);
 		for(int i = 1; i < 6; i++) {
 	        setTitleAt(i, labels[i] + "(...)");
 			setEnabledAt(i, false);
@@ -93,12 +94,11 @@ public class TabbedPanel extends JTabbedPane
     
 	public void setData(ApkInfo apkInfo, int id)
 	{
-		if(id == -1 || id == 0) {
-			((TabDataObject)(getComponent(0))).setData(apkInfo);
-			setSelectedIndex(0);
-		}
-
 		if(apkInfo != null) {
+			if(id == -1 || id == 0) {
+				((TabDataObject)(getComponent(0))).setData(apkInfo);
+				setSelectedIndex(0);
+			}
 			if(id == -1 || id == 1) setPanelData(1, apkInfo.WidgetList.size(), apkInfo);
 			if(id == -1 || id == 2) setPanelData(2, apkInfo.LibList.size(), apkInfo);
 			if(id == -1 || id == 4) setPanelData(4, apkInfo.ActivityList.size(), apkInfo);

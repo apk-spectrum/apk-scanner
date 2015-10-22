@@ -46,23 +46,73 @@ public class AaptToolManager extends ApkScannerStub
 		apkInfo.WorkTempPath = FileUtil.makeTempPath(apkInfo.ApkPath.substring(apkInfo.ApkPath.lastIndexOf(File.separator)));
 		Log.i("Temp path : " + apkInfo.WorkTempPath);
 		
+		final Object xmlTreeSync = new Object();
+		final Object resouresSync = new Object();
+		
+		new Thread(new Runnable() {
+			public void run()
+			{
+				synchronized(resouresSync) {
+					resouresSync.notify();
+					try {
+						resouresSync.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					progress(30, "I: read aapt dump resources...");
+					resourcesWithValue = AaptWrapper.Dump.getResources(apkInfo.ApkPath, true);
+					Log.i("resources completed");
+				}
+			}
+		}).start();
+		synchronized(resouresSync) {
+			try {
+				resouresSync.wait();
+				resouresSync.notify();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		new Thread(new Runnable() {
+			public void run()
+			{
+				synchronized(xmlTreeSync) {
+					xmlTreeSync.notify();
+					try {
+						xmlTreeSync.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					progress(5, "I: getDump AndroidManifest...");
+					androidManifest = AaptWrapper.Dump.getXmltree(apkInfo.ApkPath, new String[] { "AndroidManifest.xml" });
+
+					progress(30, "I: createAaptXmlTree...");
+					manifestPath = new AaptXmlTreePath();
+					manifestPath.createAaptXmlTree(androidManifest);
+					namespace = manifestPath.getNamespace() + ":"; 
+					Log.i("xmlTreeSync completed");
+				}
+			}
+		}).start();
+		synchronized(xmlTreeSync) {
+			try {
+				xmlTreeSync.wait();
+				xmlTreeSync.notify();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		new Thread(new Runnable() {
 			public void run()
 			{
 				//stateChanged(Status.INITIALIZING);
-
-				progress(5, "I: start open apk");
-				progress(5, "I: getDump AndroidManifest...");
-				androidManifest = AaptWrapper.Dump.getXmltree(apkInfo.ApkPath, new String[] { "AndroidManifest.xml" });
-
-				progress(30, "I: read aapt dump resources...");
-				resourcesWithValue = AaptWrapper.Dump.getResources(apkInfo.ApkPath, true);
-
-				progress(30, "I: createAaptXmlTree...");
-				manifestPath = new AaptXmlTreePath();
-				manifestPath.createAaptXmlTree(androidManifest);
-				namespace = manifestPath.getNamespace() + ":"; 
-				
+				synchronized(xmlTreeSync) {
+					synchronized(resouresSync) {
+						progress(5, "I: start open apk");
+					}
+				}
 				//stateChanged(Status.INITIALIZEED);
 
 				progress(5, "I: read basic info...");
@@ -261,6 +311,14 @@ public class AaptToolManager extends ApkScannerStub
 		        if(statusListener != null) statusListener.OnSuccess();
 			}
 		}).start();
+		
+		/*
+		synchronized(xmlTreeSync) {
+			synchronized(resouresSync) {
+				Log.i(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+			}
+		}
+		*/
 		
 		new Thread(new Runnable() {
 			public void run()
