@@ -81,6 +81,7 @@ public class TabbedPanel extends JTabbedPane
     public void initLabel()
     {
     	((TabDataObject)(getComponent(0))).setData(null);
+    	setSelectedIndex(0);
 		for(int i = 1; i < 6; i++) {
 	        setTitleAt(i, labels[i] + "(...)");
 			setEnabledAt(i, false);
