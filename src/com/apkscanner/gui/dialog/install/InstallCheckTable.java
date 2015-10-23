@@ -50,7 +50,19 @@ public final class InstallCheckTable extends JPanel {
   	public void addTableModel(String name, String t, InstallDlg.CHECKLIST_MODE mode) {
   		model.addValue(name, t, mode);
   		setImageObserver(table);
+  		
   	}
+  	
+  	public void clearTable() {
+  		WorkerModel dm = (WorkerModel)table.getModel();
+  		while(dm.getRowCount() > 0)
+  		{
+  		    dm.removeRow(0);
+  		}  		
+  		dm.clearTableModel();
+  		
+  	}
+  	
 	private void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
 			double... percentages) {
 			double total = 0;
@@ -170,7 +182,6 @@ class WorkerModel extends DefaultTableModel {
 		  super.addRow(obj);
 		  number++;
 	  }
-      
   }
 
   @Override public boolean isCellEditable(int row, int col) {
@@ -184,6 +195,9 @@ class WorkerModel extends DefaultTableModel {
   }
   @Override public String getColumnName(int modelIndex) {
       return COLUMN_ARRAY[modelIndex].columnName;
+  }
+  public void clearTableModel() {
+	  number=0;
   }
   private static class ColumnContext {
       public final String  columnName;

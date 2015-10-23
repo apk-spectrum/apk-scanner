@@ -213,7 +213,8 @@ public class InstallDlg extends JDialog implements ActionListener{
 			this.setVisible(false);
 			ApkInstaller.StopThead();
 		} else if ("재설치".equals(e.getActionCommand())) {
-			
+			this.TestTable.clearTable();
+			ApkInstaller.StopThead();
 			ApkInstaller.RestartThread();
 		}
 	}
@@ -292,8 +293,6 @@ public class InstallDlg extends JDialog implements ActionListener{
         
         parent.add(CheckListBox, BorderLayout.WEST);
         parent.add(EastPanel, BorderLayout.CENTER);
-        
-        
         
         
         ButtonBox.add(btnreInstall);
