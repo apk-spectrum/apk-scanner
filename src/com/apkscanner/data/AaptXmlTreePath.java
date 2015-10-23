@@ -31,82 +31,84 @@ public class AaptXmlTreePath
 	
 	public void createAaptXmlTree(String[] xmlTree)
 	{
-		topNode = new AaptXmlTreeNode(null, "top");
-		curNodes = new AaptXmlTreeNode[] { topNode };
-		
-		AaptXmlTreeNode curNode = topNode;
-		Stack<AaptXmlTreeNode> nodeStack = new Stack<AaptXmlTreeNode>();
-		nodeStack.push(topNode);
-		int curDepth = -1;
-
-		namespace = "android";
-		
-		for(String s: xmlTree) {
-			int depth = s.indexOf("E:");
-			int type = -1;
-			if(depth == -1 || !s.matches("^\\s*E:.*")) {
-				depth = s.indexOf("A:");
-				if(depth == -1 || !s.matches("^\\s*A:.*")) {
-					if(s.startsWith("N:")) {
-						namespace = xmlTree[0].replaceAll("N: (.*)=http://schemas.android.com/apk/res/android", "$1");
-						Log.i("namespace : " + namespace);
+		synchronized(this) {
+			topNode = new AaptXmlTreeNode(null, "top");
+			curNodes = new AaptXmlTreeNode[] { topNode };
+			
+			AaptXmlTreeNode curNode = topNode;
+			Stack<AaptXmlTreeNode> nodeStack = new Stack<AaptXmlTreeNode>();
+			nodeStack.push(topNode);
+			int curDepth = -1;
+	
+			namespace = "android";
+			
+			for(String s: xmlTree) {
+				int depth = s.indexOf("E:");
+				int type = -1;
+				if(depth == -1 || !s.matches("^\\s*E:.*")) {
+					depth = s.indexOf("A:");
+					if(depth == -1 || !s.matches("^\\s*A:.*")) {
+						if(s.startsWith("N:")) {
+							namespace = xmlTree[0].replaceAll("N: (.*)=http://schemas.android.com/apk/res/android", "$1");
+							Log.i("namespace : " + namespace);
+						} else {
+							Log.w("Unknown tag : " + s.trim());
+						}
 					} else {
-						Log.w("Unknown tag : " + s.trim());
+						type = 1;
 					}
 				} else {
-					type = 1;
+					type = 0;
+					if(curDepth == -1) {
+						curDepth = depth - 2;
+					}
 				}
-			} else {
-				type = 0;
-				if(curDepth == -1) {
-					curDepth = depth - 2;
-				}
-			}
-			
-			if(type == 0) {
-				while(depth <= curDepth) {
-					curNode = nodeStack.pop();
-					curDepth -= 2;
-				}
-				String nodeName = s.replaceAll("^\\s*E: ([^\\s*]*) .*", "$1");
-
-				AaptXmlTreeNode newNode = new AaptXmlTreeNode(curNode, nodeName);
-				//Log.d("addChild node " + nodeName + ", " + curDepth + ", path " + newNode.getPath());
-				curNode.addNode(nodeName, newNode);
-				nodeStack.push(curNode);
-				curNode = newNode;
-				curDepth += 2;
-				//curNode.addChild("", "");
-			} else if(type == 1) {
-				if(!s.matches("^\\s*A: ([^\\(]*).*")) {
-					Log.w("Unknown attribute : " + s);
-					continue;
-				} 
-				String attrName = s.replaceAll("^\\s*A: ([^\\(=]*).*", "$1");
-				if(attrName.equals(":")) {
-					String attrId = s.replaceAll("^\\s*A: :\\(([^\\(=]*)\\).*", "$1");
-					attrName = getAttrName(attrId);
-				}
-				String attrData = s.substring(s.indexOf("=")+1);
 				
-				if(attrData.indexOf("(Raw:") > -1) {
-					attrData = attrData.replaceAll(".*\\(Raw: \"(.*)\".*", "$1");
-					//Log.v("attrData raw : " + attrData);
-				} else if(attrData.startsWith("(type")) {
-					int t = (int)Long.parseLong(attrData.replaceAll("^\\(type 0x(.*)\\).*", "$1"), 16);
-					int d = (int)Long.parseLong(attrData.replaceAll("^\\(type .*\\)0x(.*)", "$1"), 16);
-					attrData = TypedValue.coerceToString(t, d);
-					//attrData = attrData.substring(attrData.indexOf(")")+1);
-				} else if(attrData.startsWith("\"")) {
+				if(type == 0) {
+					while(depth <= curDepth) {
+						curNode = nodeStack.pop();
+						curDepth -= 2;
+					}
+					String nodeName = s.replaceAll("^\\s*E: ([^\\s*]*) .*", "$1");
+	
+					AaptXmlTreeNode newNode = new AaptXmlTreeNode(curNode, nodeName);
+					//Log.d("addChild node " + nodeName + ", " + curDepth + ", path " + newNode.getPath());
+					curNode.addNode(nodeName, newNode);
+					nodeStack.push(curNode);
+					curNode = newNode;
+					curDepth += 2;
+					//curNode.addChild("", "");
+				} else if(type == 1) {
+					if(!s.matches("^\\s*A: ([^\\(]*).*")) {
+						Log.w("Unknown attribute : " + s);
+						continue;
+					} 
+					String attrName = s.replaceAll("^\\s*A: ([^\\(=]*).*", "$1");
+					if(attrName.equals(":")) {
+						String attrId = s.replaceAll("^\\s*A: :\\(([^\\(=]*)\\).*", "$1");
+						attrName = getAttrName(attrId);
+					}
+					String attrData = s.substring(s.indexOf("=")+1);
 					
-				} else if(attrData.startsWith("@")) {
-					
+					if(attrData.indexOf("(Raw:") > -1) {
+						attrData = attrData.replaceAll(".*\\(Raw: \"(.*)\".*", "$1");
+						//Log.v("attrData raw : " + attrData);
+					} else if(attrData.startsWith("(type")) {
+						int t = (int)Long.parseLong(attrData.replaceAll("^\\(type 0x(.*)\\).*", "$1"), 16);
+						int d = (int)Long.parseLong(attrData.replaceAll("^\\(type .*\\)0x(.*)", "$1"), 16);
+						attrData = TypedValue.coerceToString(t, d);
+						//attrData = attrData.substring(attrData.indexOf(")")+1);
+					} else if(attrData.startsWith("\"")) {
+						
+					} else if(attrData.startsWith("@")) {
+						
+					}
+					//Log.v("attribute name : " + attrName + " = " + attrData);
+					curNode.addAttribute(attrName, attrData);
 				}
-				//Log.v("attribute name : " + attrName + " = " + attrData);
-				curNode.addAttribute(attrName, attrData);
 			}
+			Log.v(xmlTree[0] + ", curDepth " + curDepth);
 		}
-		Log.v(xmlTree[0] + ", curDepth " + curDepth);
 	}
 	
 	public String getNamespace()
@@ -116,54 +118,58 @@ public class AaptXmlTreePath
 	
 	public AaptXmlTreeNode getNode(String expression)
 	{
-		AaptXmlTreeNode[] nodeList = getNodeList(expression);
-		if(nodeList == null || nodeList.length == 0)
-			return null;
-		return nodeList[0];
+		synchronized(this) {
+			AaptXmlTreeNode[] nodeList = getNodeList(expression);
+			if(nodeList == null || nodeList.length == 0)
+				return null;
+			return nodeList[0];
+		}
 	}
 	
 	public AaptXmlTreeNode[] getNodeList(String expression)
 	{
-		if(expression.startsWith("//")) {
-			expression = "." + expression;
-		} else if(expression.startsWith("/")) {
-			expression = "." + expression;
-			curNodes = new AaptXmlTreeNode[] { topNode };
-		} else if(expression.matches("^[^@\\.].*")) {
-			expression = ".//" + expression;
-			curNodes = new AaptXmlTreeNode[] { topNode };			
-		}
-		expression = expression.replaceAll("//", "/#");
-		//Log.d("getNodeList() " + expression + ", curNodes " + curNodes);
-
-		if(curNodes == null)
-			return null;
-		
-		AaptXmlTreeNode[] curNodeList = curNodes;
-		
-		for(String item: expression.split("/")) {
-			String attrCond = null;
-			if(item.matches(".*\\[.*\\]")) {
-				attrCond = item.replaceAll(".*\\[(.*)\\]", "$1");
-				item = item.replaceAll("(.*)\\[.*", "$1");
+		synchronized(this) {
+			if(expression.startsWith("//")) {
+				expression = "." + expression;
+			} else if(expression.startsWith("/")) {
+				expression = "." + expression;
+				curNodes = new AaptXmlTreeNode[] { topNode };
+			} else if(expression.matches("^[^@\\.].*")) {
+				expression = ".//" + expression;
+				curNodes = new AaptXmlTreeNode[] { topNode };			
 			}
-			//Log.d("getNodeList() item : " + item + ", attrCond : " + attrCond);
-			if(item.equals(".")) {
-				//continue;
-			} else if(item.equals("..")) {
-				curNodeList = getParents(curNodeList, attrCond);
-			} else if(item.startsWith("@")) {
-				curNodeList = getHasAttrNode(curNodeList, item.substring(1));
-			} else if(item.startsWith("#")) {
-				curNodeList = suchNode(curNodeList, item.substring(1), attrCond);
-			} else {
-				curNodeList = getChilds(curNodeList, item, attrCond);
+			expression = expression.replaceAll("//", "/#");
+			//Log.d("getNodeList() " + expression + ", curNodes " + curNodes);
+	
+			if(curNodes == null)
+				return null;
+			
+			AaptXmlTreeNode[] curNodeList = curNodes;
+			
+			for(String item: expression.split("/")) {
+				String attrCond = null;
+				if(item.matches(".*\\[.*\\]")) {
+					attrCond = item.replaceAll(".*\\[(.*)\\]", "$1");
+					item = item.replaceAll("(.*)\\[.*", "$1");
+				}
+				//Log.d("getNodeList() item : " + item + ", attrCond : " + attrCond);
+				if(item.equals(".")) {
+					//continue;
+				} else if(item.equals("..")) {
+					curNodeList = getParents(curNodeList, attrCond);
+				} else if(item.startsWith("@")) {
+					curNodeList = getHasAttrNode(curNodeList, item.substring(1));
+				} else if(item.startsWith("#")) {
+					curNodeList = suchNode(curNodeList, item.substring(1), attrCond);
+				} else {
+					curNodeList = getChilds(curNodeList, item, attrCond);
+				}
 			}
+			
+			curNodes = curNodeList;
+	
+			return curNodeList;
 		}
-		
-		curNodes = curNodeList;
-
-		return curNodeList;
 	}
 	
 	private AaptXmlTreeNode[] getChilds(AaptXmlTreeNode[] curList, String item, String attrCond)
