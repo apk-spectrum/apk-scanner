@@ -207,11 +207,14 @@ public class InstallDlg extends JDialog implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		
-		
+		Log.d(e.getActionCommand());
 		
 		if ("종료".equals(e.getActionCommand())) {
 			this.setVisible(false);
 			ApkInstaller.StopThead();
+		} else if ("재설치".equals(e.getActionCommand())) {
+			
+			ApkInstaller.RestartThread();
 		}
 	}
 	

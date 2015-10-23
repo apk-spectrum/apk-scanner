@@ -115,6 +115,10 @@ public class ApkInstaller
 		return InstallDlgListener.getResult();
 	}
 	
+	class InstallThread extends Thread {
+		
+	}
+	
 	public ApkInstaller(String PackageName, String apkPath, String libPath, 
 			final boolean samePackage, final boolean checkPackage, final InstallButtonStatusListener Listener)
 	{
@@ -337,7 +341,7 @@ public class ApkInstaller
 					AdbWrapper.InstallApk(dev.name, strSourcePath , new AdbWrapperObserver("install", null));				
 				} finally {
 					Listener.SetInstallButtonStatus(true);
-					InstallDlgListener.Complete("END");
+					InstallDlgListener.Complete("END");				
 				}
 			}
 		});
@@ -347,6 +351,12 @@ public class ApkInstaller
 		t.interrupt();
 		Listener.SetInstallButtonStatus(true);
 		t.stop();
+	}
+	static public void RestartThread() {
+		t.stop();
+		Listener.SetInstallButtonStatus(false);
+		t = new Thread();
+		t.start();
 	}
 	
 	private void printlnLog(String msg)
@@ -431,6 +441,8 @@ public class ApkInstaller
 		@Override
 		public void OnCompleted() {
 			Listener.SetInstallButtonStatus(true);
+//			ShowQuestion(t, "완료", Resource.STR_LABEL_INFO.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, SucAppicon,
+//		    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
 			//installPanel.setVisible(false);
 		}
 	}

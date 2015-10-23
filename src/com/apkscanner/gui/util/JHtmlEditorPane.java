@@ -83,45 +83,51 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
     	
         if(backgroundimg!=null) {
         	
-            Graphics2D g2d = (Graphics2D) g.create();
-
-            int midX = (getWidth() - iw) / 2;
-            int midY = (getHeight() - ih) / 2;
-
-            BufferedImage bi = new BufferedImage(getWidth(),
-                    getHeight(), BufferedImage.TYPE_INT_ARGB);
-            Graphics2D bigr = bi.createGraphics();
-
-            if (mouseIn) {
-                bigr.setPaint(Color.white);
-                bigr.fillOval(x - RADIUS, y - RADIUS, RADIUS * 2,
-                        RADIUS * 2);
-                bigr.setComposite(AlphaComposite.SrcAtop);
-                bigr.drawImage(backgroundimg, midX, midY, iw, ih, this);
-            }
-
+//            Graphics2D g2d = (Graphics2D) g.create();
+//
+//            int midX = (getWidth() - iw) / 2;
+//            int midY = (getHeight() - ih) / 2;
+//
+//            BufferedImage bi = new BufferedImage(getWidth(),
+//                    getHeight(), BufferedImage.TYPE_INT_ARGB);
+//            Graphics2D bigr = bi.createGraphics();
+//
+//            if (mouseIn) {
+//                bigr.setPaint(Color.white);
+//                bigr.fillOval(x - RADIUS, y - RADIUS, RADIUS * 2,
+//                        RADIUS * 2);
+//                bigr.setComposite(AlphaComposite.SrcAtop);
+//                
+//                bigr.drawImage(backgroundimg, midX, midY, iw, ih, this);
+//            }
+//
+//            
+//            bigr.setComposite(AlphaComposite.SrcOver.derive(1.0f));
+//            bigr.drawImage(backgroundimg, midX, midY, iw, ih, this);
+//            bigr.dispose();
+//
+//            g2d.drawImage(bi, 0, 0, getWidth(), getHeight(), this);
+//            
+//            g2d.dispose();
+//            
             
-            bigr.setComposite(AlphaComposite.SrcOver.derive(1.0f));
-            bigr.drawImage(backgroundimg, midX, midY, iw, ih, this);
-            bigr.dispose();
-
-            g2d.drawImage(bi, 0, 0, getWidth(), getHeight(), this);
+        	
             super.paintComponent(g);
-            g2d.dispose();
             
+        	//doDrawing(g);
         	
-        	
-//        	doDrawing(g);
-//        	Graphics2D g2d = (Graphics2D) g;
-//	        AlphaComposite acomp = AlphaComposite.getInstance(
-//	                AlphaComposite.SRC_OVER, 0.2f);
-//	        g2d.setComposite(acomp);
-//	        g2d.drawImage(backgroundimg, 50, 10, null);
-//	        
-//	        acomp = AlphaComposite.getInstance(
-//	                AlphaComposite.SRC_OVER, 1.0f);
-//	        g2d.setComposite(acomp);
+            
+            Graphics2D g2d = (Graphics2D) g;
+	        AlphaComposite acomp = AlphaComposite.getInstance(
+	                AlphaComposite.SRC_OVER, 0.2f);
+	        g2d.setComposite(acomp);
+	        g2d.drawImage(backgroundimg, 50, 10, null);
 	        
+	        acomp = AlphaComposite.getInstance(
+	                AlphaComposite.SRC_OVER, 1.0f);
+	        g2d.setComposite(acomp);
+	        
+            
 	    }
         else {
         	super.paintComponent(g);
