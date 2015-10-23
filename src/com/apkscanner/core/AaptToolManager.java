@@ -49,6 +49,7 @@ public class AaptToolManager extends ApkScannerStub
 		final Object xmlTreeSync = new Object();
 		final Object resouresSync = new Object();
 		final Object SignSync = new Object();
+		final Object PermSync = new Object();
 		
 		new Thread(new Runnable() {
 			public void run()
@@ -135,15 +136,75 @@ public class AaptToolManager extends ApkScannerStub
 			{
 				//stateChanged(Status.INITIALIZING);
 				synchronized(xmlTreeSync) {
-					synchronized(resouresSync) {
-						progress(5, "I: start open apk");
+			        progress(5, "I: read permissions...");
+				}
+				
+				new Thread(new Runnable() {
+					public void run()
+					{
+						synchronized(PermSync) {
+							PermSync.notify();
+							try {
+								PermSync.wait();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+					        // permission
+					        apkInfo.ProtectionLevel = "";
+					        //progress(5,"parsing permission...\n");
+					        AaptXmlTreeNode[] permTag = manifestPath.getNodeList("/manifest/uses-permission");
+					        for( int idx=0; idx < permTag.length; idx++ ){
+					        	if(idx==0) apkInfo.Permissions = "<uses-permission> [" + permTag.length + "]";
+					        	String perm = getAttrValue(permTag[idx], "name");
+					        	String maxSdk = getAttrValue(permTag[idx], "maxSdkVersion");
+					        	if(maxSdk != null && !maxSdk.isEmpty()) {
+					        		apkInfo.Permissions += " - maxSdkVersion:" + maxSdk;
+					        	}
+					        	apkInfo.Permissions += "\n" + perm;
+					        	apkInfo.PermissionList.add(perm);
+					        }
+					        permTag = manifestPath.getNodeList("/manifest/uses-permission-sdk23");
+					        for( int idx=0; idx < permTag.length; idx++ ){
+					        	if(idx==0) apkInfo.Permissions = "\n\n<uses-permission-sdk23> [" + permTag.length + "]";
+					        	String perm = getAttrValue(permTag[idx], "name");
+					        	String maxSdk = getAttrValue(permTag[idx], "maxSdkVersion");
+					        	apkInfo.Permissions += "\n" + perm;
+					        	if(maxSdk != null && !maxSdk.isEmpty()) {
+					        		apkInfo.Permissions += " - maxSdkVersion:" + maxSdk;
+					        	}
+					        	apkInfo.PermissionList.add(perm);
+					        }
+					        permTag = manifestPath.getNodeList("/manifest/permission");
+					        for( int idx=0; idx < permTag.length; idx++ ){
+					        	if(idx==0) apkInfo.Permissions += "\n\n<permission> [" + permTag.length + "]";
+					        	String perm = getAttrValue(permTag[idx], "name");
+					        	apkInfo.Permissions += "\n" + perm;
+					        	apkInfo.PermissionList.add(perm);
+					        	String sig = getAttrValue(permTag[idx], "protectionLevel");
+					        	if(sig != null && sig.equals("0x2")) {
+					        		apkInfo.Permissions += " - <SIGNATURE>";
+					        		apkInfo.ProtectionLevel = "SIGNATURE";
+					        	}
+					        }
+					        PermissionGroupManager permGroupManager = new PermissionGroupManager(apkInfo.PermissionList.toArray(new String[0]));
+					        apkInfo.PermGroupMap = permGroupManager.getPermGroupMap();
+						}
+					}
+				}).start();
+				synchronized(PermSync) {
+					try {
+						PermSync.wait();
+						PermSync.notify();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
 					}
 				}
-				//stateChanged(Status.INITIALIZEED);
-
-				progress(5, "I: read basic info...");
+		        
+				synchronized(resouresSync) {
+					progress(5, "I: read basic info...");
+				}
+		        
 				AaptXmlTreeNode manifestTag = manifestPath.getNode("/manifest"); 
-
 				// package
 				if(manifestTag != null) {
 					apkInfo.PackageName = getAttrValue(manifestTag , "package");
@@ -227,49 +288,11 @@ public class AaptToolManager extends ApkScannerStub
 		        }
 		        Log.i("Startup : " + apkInfo.Startup + apkInfo.isHidden);
 		        
-		        progress(5, "I: read permissions...");
-		        // permission
-		        apkInfo.ProtectionLevel = "";
-		        //progress(5,"parsing permission...\n");
-		        AaptXmlTreeNode[] permTag = manifestPath.getNodeList("/manifest/uses-permission");
-		        for( int idx=0; idx < permTag.length; idx++ ){
-		        	if(idx==0) apkInfo.Permissions = "<uses-permission> [" + permTag.length + "]";
-		        	String perm = getAttrValue(permTag[idx], "name");
-		        	String maxSdk = getAttrValue(permTag[idx], "maxSdkVersion");
-		        	if(maxSdk != null && !maxSdk.isEmpty()) {
-		        		apkInfo.Permissions += " - maxSdkVersion:" + maxSdk;
-		        	}
-		        	apkInfo.Permissions += "\n" + perm;
-		        	apkInfo.PermissionList.add(perm);
-		        }
-		        permTag = manifestPath.getNodeList("/manifest/uses-permission-sdk23");
-		        for( int idx=0; idx < permTag.length; idx++ ){
-		        	if(idx==0) apkInfo.Permissions = "\n\n<uses-permission-sdk23> [" + permTag.length + "]";
-		        	String perm = getAttrValue(permTag[idx], "name");
-		        	String maxSdk = getAttrValue(permTag[idx], "maxSdkVersion");
-		        	apkInfo.Permissions += "\n" + perm;
-		        	if(maxSdk != null && !maxSdk.isEmpty()) {
-		        		apkInfo.Permissions += " - maxSdkVersion:" + maxSdk;
-		        	}
-		        	apkInfo.PermissionList.add(perm);
-		        }
-		        permTag = manifestPath.getNodeList("/manifest/permission");
-		        for( int idx=0; idx < permTag.length; idx++ ){
-		        	if(idx==0) apkInfo.Permissions += "\n\n<permission> [" + permTag.length + "]";
-		        	String perm = getAttrValue(permTag[idx], "name");
-		        	apkInfo.Permissions += "\n" + perm;
-		        	apkInfo.PermissionList.add(perm);
-		        	String sig = getAttrValue(permTag[idx], "protectionLevel");
-		        	if(sig != null && sig.equals("0x2")) {
-		        		apkInfo.Permissions += " - <SIGNATURE>";
-		        		apkInfo.ProtectionLevel = "SIGNATURE";
-		        	}
-		        }
-		        PermissionGroupManager permGroupManager = new PermissionGroupManager(apkInfo.PermissionList.toArray(new String[0]));
-		        apkInfo.PermGroupMap = permGroupManager.getPermGroupMap();
 
 		        synchronized(SignSync) {
-		        	stateChanged(Status.BASIC_INFO_COMPLETED);
+		        	synchronized(PermSync) {
+		        		stateChanged(Status.BASIC_INFO_COMPLETED);
+		        	}
 		        }
 		        
 				new Thread(new Runnable() {

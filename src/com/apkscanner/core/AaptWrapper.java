@@ -9,8 +9,9 @@ import com.apkscanner.util.Log;
 
 public class AaptWrapper
 {
+	static private final Object initSync = new Object();
 	static private final String aaptCmd = getAaptCmd();
-	static private final String aaptVersion = getVersion();
+	static private String aaptVersion = null;
 
 	static public class Dump
 	{
@@ -35,6 +36,7 @@ public class AaptWrapper
 
 		static public String[] getResources(String apkFilePath, boolean includeResourceValues)
 		{
+			Log.i("getResources() " + apkFilePath);
 			if(includeResourceValues) {
 				return ConsolCmd.exc(new String[] {aaptCmd, "dump", "--values", "resources", apkFilePath});	
 			} else {
@@ -49,6 +51,7 @@ public class AaptWrapper
 
 		static public String[] getXmltree(String apkFilePath, String[] assets)
 		{
+			Log.i("getXmltree() " + apkFilePath);
 			ArrayList<String> cmd = new ArrayList<String>();
 			cmd.add(aaptCmd);
 			cmd.add("dump");
@@ -87,27 +90,32 @@ public class AaptWrapper
 
 	static public String getVersion()
 	{
-		if(aaptVersion == null) {
-			String aapt = getAaptCmd();
-			if(aapt == null) return null;
-			String[] result = ConsolCmd.exc(new String[] {aapt, "version"});
-			return result[0];
+		synchronized(initSync) {
+			if(aaptVersion == null) {
+				String aapt = getAaptCmd();
+				if(aapt == null) return null;
+				String[] result = ConsolCmd.exc(new String[] {aapt, "version"});
+				return result[0];
+			}
 		}
 		return aaptVersion;
 	}
 
 	static private String getAaptCmd()
 	{
-		String cmd = aaptCmd;
-		if(cmd == null) {
-			cmd = Resource.BIN_AAPT_LNX.getPath();
-			if(cmd.matches("^[A-Z]:.*")) {
-				cmd = Resource.BIN_AAPT_WIN.getPath();
-			}
-	
-			if(!(new File(cmd)).exists()) {
-				Log.e("no such aapt tool" + aaptCmd);
-				cmd = null;
+		String cmd;
+		synchronized(initSync) {
+			cmd = aaptCmd;
+			if(cmd == null) {
+				cmd = Resource.BIN_AAPT_LNX.getPath();
+				if(cmd.matches("^[A-Z]:.*")) {
+					cmd = Resource.BIN_AAPT_WIN.getPath();
+				}
+		
+				if(!(new File(cmd)).exists()) {
+					Log.e("no such aapt tool" + aaptCmd);
+					cmd = null;
+				}
 			}
 		}
 		return cmd;
