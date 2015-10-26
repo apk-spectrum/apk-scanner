@@ -13,6 +13,7 @@ abstract public class ApkScannerStub
 	protected StatusListener statusListener = null;
 
 	protected boolean isPackageTempApk = false;
+	protected long startTime;
 
 	public enum Status {
 		BASIC_INFO_COMPLETED,
@@ -26,7 +27,7 @@ abstract public class ApkScannerStub
 	
 	public interface StatusListener
 	{
-		public void OnStart();
+		public void OnStart(long estimatedTime);
 		public void OnSuccess();
 		public void OnError();
 		public void OnComplete();
@@ -94,5 +95,16 @@ abstract public class ApkScannerStub
 	public ApkInfo getApkInfo()
 	{
 		return apkInfo;
+	}
+	
+	protected void timeRecordStart()
+	{
+		startTime = System.currentTimeMillis();
+	}
+	
+	protected void timeRecordEnd()
+	{
+		long esTime = System.currentTimeMillis() - startTime;
+		EstimatedTimeEnRoute.setRealLeadTime(apkInfo.ApkPath, esTime);
 	}
 }

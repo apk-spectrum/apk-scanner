@@ -77,7 +77,7 @@ public class MainUI extends JFrame
 					}
 					Log.i("UI Init start");
 					initialize(true);
-					tabbedPanel.initLabel();
+					tabbedPanel.initLabel(-1);
 					Log.i("UI Init end");
 				}
 			}
@@ -115,7 +115,7 @@ public class MainUI extends JFrame
 					}
 					Log.i("UI Init start");
 					initialize(true);
-					tabbedPanel.initLabel();
+					tabbedPanel.initLabel(-1);
 					Log.i("UI Init end");
 				}
 				//tabbedPanel.initLabel();
@@ -190,10 +190,18 @@ public class MainUI extends JFrame
 	private class ApkScannerListener implements ApkScannerStub.StatusListener
 	{
 		@Override
-		public void OnStart() {
-			Log.v("ApkCore.OnStart()");
-			if(tabbedPanel != null) tabbedPanel.initLabel();
-			if(toolBar != null) toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
+		public void OnStart(final long estimatedTime) {
+			Log.i("ApkCore.OnStart() estimatedTime : " + estimatedTime);
+			new Thread(new Runnable() {
+				public void run()
+				{
+					synchronized(uiInitSync) {
+						Log.i("OnStart() uiInitSync");	
+					}
+					if(tabbedPanel != null) tabbedPanel.initLabel(estimatedTime);
+					if(toolBar != null) toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
+				}
+			}).start();
 		}
 
 		@Override
@@ -313,7 +321,7 @@ public class MainUI extends JFrame
 			final String frameworkRes = Dlg.getSelectedFrameworkRes();
 
 			if(!newWindow) {
-				if(tabbedPanel != null) tabbedPanel.initLabel();
+				if(tabbedPanel != null) tabbedPanel.initLabel(-1);
 				if(toolBar != null) toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
 				new Thread(new Runnable() {
 					public void run()

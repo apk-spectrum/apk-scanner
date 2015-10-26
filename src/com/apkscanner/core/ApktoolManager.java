@@ -623,7 +623,7 @@ public class ApktoolManager extends ApkScannerStub
 					e1.printStackTrace();
 				}
 				
-				if(mListener != null) mListener.OnStart();
+				if(mListener != null) mListener.OnStart(EstimatedTimeEnRoute.calc(apkInfo.ApkPath));
 				switch(mCmd) {
 				case SOLVE_RESOURCE:
 				case SOLVE_CODE:

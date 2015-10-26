@@ -37,6 +37,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	private String mutiLabels;
 	
 	private boolean wasSetData = false;
+	private long estimatedTime = 0;
 	
 	private String[] Labelname = null;
 	private String PackageName = null;
@@ -162,7 +163,10 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("<table>");
 		strTabInfo.append("  <tr>");
 		strTabInfo.append("    <td width=600 height=320>");
-		strTabInfo.append("      <center><image src=\"" + Resource.IMG_APK_LOADING.getPath() + "\"/></center>");
+		strTabInfo.append("      <center><image src=\"" + Resource.IMG_APK_LOADING.getPath() + "\"/></center></br>");
+		if(estimatedTime > -1) {
+		strTabInfo.append("      <center>Estimated time en route : "+(int)Math.ceil((double)estimatedTime / 1000)+" sec</center>");
+		}
 		strTabInfo.append("    </td>");
 		strTabInfo.append("  </tr>");
 		strTabInfo.append("</table>");
@@ -303,6 +307,17 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("<div height=10000 width=10000></div>");
 		
 		apkinform.setBody(strTabInfo.toString());
+	}
+
+	public void setData(long estimatedTime)
+	{
+		if(apkinform == null)
+			initialize();
+		
+		this.estimatedTime = estimatedTime;
+		removeData();
+		wasSetData = false;
+		return;
 	}
 
 	@Override

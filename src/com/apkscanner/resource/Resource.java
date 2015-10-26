@@ -233,6 +233,7 @@ public enum Resource
 	PROP_WITH_FRAMEWORK_RES		(Type.PROP, "with_framework_res"),
 	PROP_LAST_FILE_OPEN_PATH	(Type.PROP, "last_file_open_path"),
 	PROP_LAST_FILE_SAVE_PATH	(Type.PROP, "last_file_save_path"),
+	PROP_SOVE_LEAD_TIME			(Type.PROP, "solve_lead_time"),
 	
 	LIB_JSON_JAR				(Type.LIB, "json-simple-1.1.1.jar"),
 	LIB_CLI_JAR					(Type.LIB, "commons-cli-1.3.1.jar"),
@@ -416,6 +417,21 @@ public enum Resource
 		return result;
 	}
 	
+	static public Object getPropData(String key)
+	{
+		loadProperty();
+		if(property == null)
+			return null;
+		
+		return property.get(key);
+	}
+	
+	static public Object getPropData(String key, Object ref)
+	{
+		Object data = getPropData(key);
+		return data!=null?data:ref;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void setData(Object value)
 	{
@@ -430,6 +446,17 @@ public enum Resource
 			property.put(getValue(), value);
 			saveProperty();
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	static public void setPropData(String key, Object data)
+	{
+		loadProperty();
+		if(property == null) {
+			property = new JSONObject();
+		}
+		property.put(key, data);
+		saveProperty();
 	}
 
 	private static String getUTF8Path()

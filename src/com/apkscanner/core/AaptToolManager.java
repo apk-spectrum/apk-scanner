@@ -30,6 +30,8 @@ public class AaptToolManager extends ApkScannerStub
 	@Override
 	public void openApk(final String apkFilePath, final String frameworkRes)
 	{
+		timeRecordStart();
+
 		apkInfo = new ApkInfo();
 		
 		File apkFile = new File(apkFilePath);
@@ -39,7 +41,7 @@ public class AaptToolManager extends ApkScannerStub
 			return;
 		}
 
-		if(statusListener != null) statusListener.OnStart();
+		if(statusListener != null) statusListener.OnStart(EstimatedTimeEnRoute.calc(apkFilePath));
 		
 		apkInfo.ApkPath = apkFile.getAbsolutePath();
 		apkInfo.ApkSize = FileUtil.getFileSize(apkFile, FSStyle.FULL);
@@ -359,7 +361,10 @@ public class AaptToolManager extends ApkScannerStub
 
 		        progress(5, "I: completed...");
 		        
-		        if(statusListener != null) statusListener.OnSuccess();
+		        if(statusListener != null) {
+		        	timeRecordEnd();
+		        	statusListener.OnSuccess();
+		        }
 			}
 		}).start();
 		

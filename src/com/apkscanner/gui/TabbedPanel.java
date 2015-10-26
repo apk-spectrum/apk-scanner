@@ -78,9 +78,9 @@ public class TabbedPanel extends JTabbedPane
     	}
     }
     
-    public void initLabel()
+    public void initLabel(long estimatedTime)
     {
-    	((TabDataObject)(getComponent(0))).setData(null);
+    	((BasicInfo)(getComponent(0))).setData(estimatedTime);
     	setSelectedIndex(0);
 		for(int i = 1; i < 6; i++) {
 	        setTitleAt(i, labels[i] + "(...)");
