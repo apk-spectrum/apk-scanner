@@ -183,7 +183,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	
 	public void showProcessing(long remainTime)
 	{
-		this.remainTime = (int)Math.ceil((double)remainTime / 1000);
+		this.remainTime = (int)Math.round((double)remainTime / 1000);
 
 		Timer timer = new Timer();
 		timer.schedule(new RemainTimeTimer(), 0, 1000);
@@ -197,8 +197,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		public synchronized void run()
 		{
 			Log.i("RemainTimeTimer run() " + remainTime);
-			if(wasSetData || --remainTime <= 0) cancel();
 			if(!wasSetData) showProcessing();
+			if(wasSetData || --remainTime <= 0) cancel();
 		}
 	}
 	
@@ -340,10 +340,9 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	{
 		if(apkinform == null)
 			initialize();
-		
-		this.remainTime = estimatedTime;
 		removeData();
-		showProcessing(remainTime);
+		if(estimatedTime > -1)
+			showProcessing(estimatedTime);
 		wasSetData = false;
 		return;
 	}

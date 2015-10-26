@@ -9,6 +9,8 @@ import com.apkscanner.util.ZipFileUtil;
 
 public class EstimatedTimeEnRoute
 {
+	static private final int MEMORY_CNT = 5;
+
 	static public long calc(String apkFilePath)
 	{
 		long time = -1;
@@ -49,7 +51,7 @@ public class EstimatedTimeEnRoute
 		preTimes = (JSONArray)Resource.getPropData(key);
 		if(preTimes == null) preTimes = new JSONArray();
 
-		if(preTimes.size() >= 10) {
+		if(preTimes.size() >= MEMORY_CNT) {
 			preTimes.remove(0);
 		}
 		preTimes.add(estimatedTime);
