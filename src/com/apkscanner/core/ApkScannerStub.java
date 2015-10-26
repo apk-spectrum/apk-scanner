@@ -104,7 +104,8 @@ abstract public class ApkScannerStub
 	
 	protected void timeRecordEnd()
 	{
-		long esTime = System.currentTimeMillis() - startTime;
-		EstimatedTimeEnRoute.setRealLeadTime(apkInfo.ApkPath, esTime);
+		long leadTime = System.currentTimeMillis() - startTime;
+		Log.i("lead time : " + leadTime);
+		EstimatedTimeEnRoute.setRealLeadTime(apkInfo.ApkPath, leadTime);
 	}
 }

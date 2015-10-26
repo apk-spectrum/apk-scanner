@@ -290,9 +290,9 @@ public class AaptToolManager extends ApkScannerStub
 		        }
 		        Log.i("Startup : " + apkInfo.Startup + apkInfo.isHidden);
 		        
-
 		        synchronized(SignSync) {
 		        	synchronized(PermSync) {
+			        	timeRecordEnd();
 		        		stateChanged(Status.BASIC_INFO_COMPLETED);
 		        	}
 		        }
@@ -362,7 +362,6 @@ public class AaptToolManager extends ApkScannerStub
 		        progress(5, "I: completed...");
 		        
 		        if(statusListener != null) {
-		        	timeRecordEnd();
 		        	statusListener.OnSuccess();
 		        }
 			}

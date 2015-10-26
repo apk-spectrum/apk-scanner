@@ -27,7 +27,7 @@ public class EstimatedTimeEnRoute
 		String key = Resource.PROP_SOVE_LEAD_TIME.getValue() + "_" + sizeMb;
 		JSONArray preTimes = (JSONArray)Resource.getPropData(key);
 		if(preTimes == null)
-			return new Long(sizeMb);
+			return new Long(sizeMb*1000);
 		long avrg = 0;
 		for(int i = 0; i < preTimes.size(); i++) {
 			avrg += (Long)preTimes.get(i);
