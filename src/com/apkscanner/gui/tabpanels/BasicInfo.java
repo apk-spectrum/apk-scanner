@@ -196,11 +196,9 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		@Override
 		public synchronized void run()
 		{
-			if(wasSetData) return;
-
 			Log.i("RemainTimeTimer run() " + remainTime);
-			if(--remainTime <= 0) cancel();
-			showProcessing();
+			if(wasSetData || --remainTime <= 0) cancel();
+			if(!wasSetData) showProcessing();
 		}
 	}
 	
