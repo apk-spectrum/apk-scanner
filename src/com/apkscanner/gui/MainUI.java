@@ -50,6 +50,7 @@ public class MainUI extends JFrame
 	private boolean exiting = false;
 	
 	private Object uiInitSync = new Object();
+	private Object labelInitSync = new Object();
 	
 	public MainUI()
 	{
@@ -195,13 +196,29 @@ public class MainUI extends JFrame
 			new Thread(new Runnable() {
 				public void run()
 				{
-					synchronized(uiInitSync) {
-						Log.i("OnStart() uiInitSync");	
+					synchronized(labelInitSync) {
+						labelInitSync.notify();
+						try {
+							labelInitSync.wait();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						synchronized(uiInitSync) {
+							Log.i("OnStart() uiInitSync");	
+						}
 					}
 					if(tabbedPanel != null) tabbedPanel.initLabel(estimatedTime);
 					if(toolBar != null) toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
 				}
 			}).start();
+			synchronized(labelInitSync) {
+				try {
+					labelInitSync.wait();
+					labelInitSync.notify();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 
 		@Override
@@ -239,8 +256,10 @@ public class MainUI extends JFrame
 		public void OnStateChanged(Status status)
 		{
 			Log.i("OnStateChanged() "+ status);
-			synchronized(uiInitSync) {
-				Log.i("OnStateChanged() sync "+ status);	
+			synchronized(labelInitSync) {
+				synchronized(uiInitSync) {
+					Log.i("OnStateChanged() sync "+ status);	
+				}
 			}
 			switch(status) {
 			case BASIC_INFO_COMPLETED:

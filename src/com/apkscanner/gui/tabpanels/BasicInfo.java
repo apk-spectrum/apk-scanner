@@ -10,6 +10,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -27,6 +29,7 @@ import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 import com.apkscanner.util.MyXPath;
 
 public class BasicInfo extends JComponent implements HyperlinkClickListener, TabDataObject
@@ -37,7 +40,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	private String mutiLabels;
 	
 	private boolean wasSetData = false;
-	private long estimatedTime = 0;
+	private long remainTime = 0;
 	
 	private String[] Labelname = null;
 	private String PackageName = null;
@@ -158,14 +161,17 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 
 		PermissionList = null;
 		PermGroupMap = null;
-
+	}
+	
+	private void showProcessing()
+	{
 		StringBuilder strTabInfo = new StringBuilder("");
 		strTabInfo.append("<table>");
 		strTabInfo.append("  <tr>");
 		strTabInfo.append("    <td width=600 height=320>");
 		strTabInfo.append("      <center><image src=\"" + Resource.IMG_APK_LOADING.getPath() + "\"/></center></br>");
-		if(estimatedTime > -1) {
-		strTabInfo.append("      <center>Estimated time en route : "+(int)Math.ceil((double)estimatedTime / 1000)+" sec</center>");
+		if(remainTime > -1) {
+		strTabInfo.append("      <center>Remain time : "+remainTime+" sec</center>");
 		}
 		strTabInfo.append("    </td>");
 		strTabInfo.append("  </tr>");
@@ -175,7 +181,30 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		apkinform.setBody(strTabInfo.toString());
 	}
 	
-	public void setData()
+	public void showProcessing(long remainTime)
+	{
+		this.remainTime = (int)Math.ceil((double)remainTime / 1000);
+
+		Timer timer = new Timer();
+		timer.schedule(new RemainTimeTimer(), 0, 1000);
+		
+		//showProcessing();
+	}
+	
+	class RemainTimeTimer extends TimerTask
+	{
+		@Override
+		public synchronized void run()
+		{
+			if(wasSetData) return;
+
+			Log.i("RemainTimeTimer run() " + remainTime);
+			if(--remainTime <= 0) cancel();
+			showProcessing();
+		}
+	}
+	
+	public synchronized void setData()
 	{
 		if(!wasSetData) return;
 		
@@ -309,25 +338,27 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		apkinform.setBody(strTabInfo.toString());
 	}
 
-	public void setData(long estimatedTime)
+	public synchronized void setData(long estimatedTime)
 	{
 		if(apkinform == null)
 			initialize();
 		
-		this.estimatedTime = estimatedTime;
+		this.remainTime = estimatedTime;
 		removeData();
+		showProcessing(remainTime);
 		wasSetData = false;
 		return;
 	}
 
 	@Override
-	public void setData(ApkInfo apkInfo)
+	public synchronized void setData(ApkInfo apkInfo)
 	{
 		if(apkinform == null)
 			initialize();
 		
 		if(apkInfo == null) {
 			removeData();
+			showAbout();
 			wasSetData = false;
 			return;
 		}
