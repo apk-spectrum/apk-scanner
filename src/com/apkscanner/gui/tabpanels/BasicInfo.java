@@ -63,8 +63,6 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	
 	private ArrayList<String> PermissionList = null;
 	private HashMap<String, PermissionGroup> PermGroupMap = null;
-
-	private static Boolean flag = false;
 	
 	public BasicInfo(boolean opening)
 	{
@@ -168,17 +166,6 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	
 	private void showProcessing()
 	{	
-		if(flag==false) {
-			this.removeAll();
-			this.setLayout(new GridLayout(2,1));
-			JLabel gif = new JLabel(Resource.IMG_APK_LOADING.getImageIcon());
-			gif.setOpaque(true);
-			gif.setBackground(Color.white);
-			this.add(gif);
-			this.add(apkinform);
-			flag = true;
-		}
-		
 		StringBuilder strTabInfo = new StringBuilder("");
 		strTabInfo.append("<table>");
 		strTabInfo.append("  <tr>");
@@ -201,11 +188,18 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	{
 		this.remainTime = (int)Math.round((double)remainTime / 1000);
 
+		showProcessing();
 
 		Timer timer = new Timer();
 		timer.schedule(new RemainTimeTimer(), 0, 1000);
 		
-		//showProcessing();
+		this.removeAll();
+		this.setLayout(new GridLayout(2,1));
+		JLabel gif = new JLabel(Resource.IMG_APK_LOADING.getImageIcon());
+		gif.setOpaque(true);
+		gif.setBackground(Color.white);
+		this.add(gif);
+		this.add(apkinform);
 	}
 	
 	class RemainTimeTimer extends TimerTask
@@ -352,11 +346,10 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("</div>");
 		strTabInfo.append("<div height=10000 width=10000></div>");
 		
-		this.removeAll();
 		apkinform.setBody(strTabInfo.toString());
-		
+
+		this.removeAll();
 		this.setLayout(new GridLayout());
-		
 		this.add(apkinform);
 	}
 
