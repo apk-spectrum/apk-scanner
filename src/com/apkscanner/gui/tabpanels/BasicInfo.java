@@ -182,7 +182,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		StringBuilder strTabInfo = new StringBuilder("");
 		strTabInfo.append("<table>");
 		strTabInfo.append("  <tr>");
-		strTabInfo.append("    <td width=600 height=320>");
+		strTabInfo.append("    <td width=600>");
 		//strTabInfo.append("      <center><image src=\"" + Resource.IMG_APK_LOADING.getPath() + "\"/></center></br>");
 		if(remainTime > -1) {
 			strTabInfo.append("      <center>Remain time : "+remainTime+" sec</center>");
