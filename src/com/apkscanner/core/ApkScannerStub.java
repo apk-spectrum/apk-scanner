@@ -12,7 +12,6 @@ abstract public class ApkScannerStub
 	protected ApkInfo apkInfo = null;
 	protected StatusListener statusListener = null;
 
-	protected boolean isPackageTempApk = false;
 	protected long startTime;
 
 	public enum Status {
@@ -42,7 +41,6 @@ abstract public class ApkScannerStub
 
 	public void openApk(final String apkFilePath)
 	{
-		isPackageTempApk = false;
 		openApk(apkFilePath, (String)Resource.PROP_FRAMEWORK_RES.getData());
 	}
 	
@@ -52,8 +50,6 @@ abstract public class ApkScannerStub
 
 	public void openPackage(String devSerialNumber, String devApkFilePath, String framework)
 	{
-		isPackageTempApk = true;
-		
 		if(statusListener != null) statusListener.OnProgress(1, "I: Open package\n");
 		if(statusListener != null) statusListener.OnProgress(1, "I: apk path in device : " + devApkFilePath + "\n");
 		

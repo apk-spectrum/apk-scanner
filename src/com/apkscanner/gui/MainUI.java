@@ -321,6 +321,7 @@ public class MainUI extends JFrame
 			}
 
 			if(!newWindow) {
+				apkScanner.clear(false);
 				apkScanner.openApk(apkFilePath);
 			} else {
 				Launcher.run(apkFilePath);
@@ -345,6 +346,7 @@ public class MainUI extends JFrame
 				new Thread(new Runnable() {
 					public void run()
 					{
+						apkScanner.clear(false);
 						apkScanner.openPackage(device, apkFilePath, frameworkRes);
 					}
 				}).start();
@@ -520,6 +522,7 @@ public class MainUI extends JFrame
 		public void filesDropped(File[] files)
 		{
 			try {
+				apkScanner.clear(false);
 				apkScanner.openApk(files[0].getCanonicalPath(), (String)Resource.PROP_FRAMEWORK_RES.getData());
 	        } catch( java.io.IOException e ) {}
 		}

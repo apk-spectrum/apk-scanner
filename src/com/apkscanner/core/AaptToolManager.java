@@ -716,16 +716,22 @@ public class AaptToolManager extends ApkScannerStub
 		return true;
 	}
 
-	private void deleteTempPath()
+	private void deleteTempPath(String tmpPath, String apkPath)
 	{
-		Log.i("delete Folder : "  + apkInfo.WorkTempPath);
-		if(apkInfo.WorkTempPath != null && !apkInfo.WorkTempPath.isEmpty()) {
-			FileUtil.deleteDirectory(new File(apkInfo.WorkTempPath));
+		if(tmpPath != null && !tmpPath.isEmpty()) {
+			Log.i("delete Folder : "  + tmpPath);
+			FileUtil.deleteDirectory(new File(tmpPath));
 		}
-		if(isPackageTempApk && apkInfo.ApkPath != null && !apkInfo.ApkPath.isEmpty()) {
-			FileUtil.deleteDirectory(new File(apkInfo.ApkPath).getParentFile());
+		if(apkPath != null && !apkPath.isEmpty() && apkPath.startsWith(FileUtil.getTempPath())) {
+			File parent = new File(apkPath).getParentFile();
+			Log.i("delete temp APK folder : "  + parent.getPath());
+			while(parent != null && parent.exists() && parent.getParentFile() != null 
+					&& parent.getParentFile().listFiles().length == 1 
+					&& parent.getParentFile().getAbsolutePath().length() > FileUtil.getTempPath().length()) {
+				parent = parent.getParentFile();
+			}
+			FileUtil.deleteDirectory(parent);
 		}
-		apkInfo = null;
 	}
 
 	@Override
@@ -733,16 +739,19 @@ public class AaptToolManager extends ApkScannerStub
 	{
 		if(apkInfo == null)
 			return;
+		final String tmpPath = apkInfo.WorkTempPath;
+		final String apkPath = apkInfo.ApkPath;
 		if(sync) {
-			deleteTempPath();
+			deleteTempPath(tmpPath, apkPath);
 		} else {
 			new Thread(new Runnable() {
 				public void run()
 				{
-					deleteTempPath();
+					deleteTempPath(tmpPath, apkPath);
 				}
 			}).start();
 		}
+		apkInfo = null;
 	}
 
 	private void progress(int step, String msg)
