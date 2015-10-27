@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -22,6 +23,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 import com.apkscanner.core.PermissionGroupManager.PermissionGroup;
 import com.apkscanner.core.PermissionGroupManager.PermissionInfo;
@@ -64,6 +67,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	
 	private ArrayList<String> PermissionList = null;
 	private HashMap<String, PermissionGroup> PermGroupMap = null;
+	private JLabel TimerLabel = null;
 	
 	public BasicInfo(boolean opening)
 	{
@@ -101,9 +105,16 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		apkinform.setStyle(style.toString());
 		apkinform.setBackground(Color.white);
 		apkinform.setHyperlinkClickListener(this);
-
-		this.setLayout(new GridBagLayout());
-		this.add(apkinform);
+		
+		//this.setLayout(new GridBagLayout());
+		TimerLabel = new JLabel("");
+		TimerLabel.setOpaque(true);
+		TimerLabel.setBackground(Color.WHITE);
+		TimerLabel.setBorder(new EmptyBorder(0,0,50,0));
+		
+		TimerLabel.setHorizontalAlignment(JLabel.CENTER);
+		
+		//this.add(apkinform);
 	}
 	
 	private void showAbout()
@@ -169,23 +180,29 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	
 	private void showProcessing()
 	{	
-		StringBuilder strTabInfo = new StringBuilder("");
-		strTabInfo.append("<table>");
-		strTabInfo.append("  <tr>");
-		strTabInfo.append("    <td width=600>");
-		//strTabInfo.append("      <center><image src=\"" + Resource.IMG_APK_LOADING.getPath() + "\"/></center></br>");
-		strTabInfo.append("      <center><image src=\"" + Resource.IMG_LOADING.getPath() + "\"/></center></br>");
-		if(remainTime > -1) {
-			strTabInfo.append("      <center>Remain time : "+remainTime+" sec</center>");
-		} else {
-			strTabInfo.append("      <center></center>");
-		}
-		strTabInfo.append("    </td>");
-		strTabInfo.append("  </tr>");
-		strTabInfo.append("</table>");
-		strTabInfo.append("<div height=10000 width=10000></div>");
+//		StringBuilder strTabInfo = new StringBuilder("");
+//		strTabInfo.append("<table>");
+//		strTabInfo.append("  <tr>");
+//		strTabInfo.append("    <td width=600>");
+//		//strTabInfo.append("      <center><image src=\"" + Resource.IMG_APK_LOADING.getPath() + "\"/></center></br>");
+//		//strTabInfo.append("      <center><image src=\"" + Resource.IMG_LOADING.getPath() + "\"/></center></br>");
+//		if(remainTime > -1) {			
+//			strTabInfo.append("      <center>Remain time : "+remainTime+" sec</center>");
+//		} else {
+//			strTabInfo.append("      <center></center>");
+//		}
+//		strTabInfo.append("    </td>");
+//		strTabInfo.append("  </tr>");
+//		strTabInfo.append("</table>");
+//		strTabInfo.append("<div height=10000 width=10000></div>");
+//		apkinform.setBody(strTabInfo.toString());
 
-		apkinform.setBody(strTabInfo.toString());		
+		if(remainTime > -1) {
+			TimerLabel.setText("Remain time : "+remainTime+" sec...");
+		} else {
+			TimerLabel.setText("");
+		}
+		
 	}
 	
 	public void showProcessing(long time)
@@ -208,17 +225,45 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		
 		this.removeAll();
 		this.setLayout(new BorderLayout());
-		JLabel gif = new JLabel(Resource.IMG_APK_LOGO.getImageIcon(400, 250));
+		
+		JLabel logo = new JLabel(Resource.IMG_APK_LOGO.getImageIcon(400, 250));
+		logo.setOpaque(true);
+		logo.setBackground(Color.white);
+		
+		JLabel gif = new JLabel(Resource.IMG_WAIT_BAR.getImageIcon());
 		gif.setOpaque(true);
-		gif.setBackground(Color.white);
-		this.add(gif,BorderLayout.NORTH);
-		this.add(apkinform,BorderLayout.CENTER);
+		gif.setBackground(Color.WHITE);
+		gif.setPreferredSize(new Dimension(Resource.IMG_WAIT_BAR.getImageIcon().getIconWidth(),Resource.IMG_WAIT_BAR.getImageIcon().getIconHeight()));
+		
+		this.add(logo,BorderLayout.NORTH);
+		
+		this.add(gif,BorderLayout.CENTER);
+		this.add(TimerLabel,BorderLayout.SOUTH);
+		
+		//this.add(TimerLabel,BorderLayout.CENTER);
 	}
+	
+	class RemainTimeTimer extends TimerTask
+	{
+		@Override
+		public synchronized void run()
+		{			
+			Log.i("RemainTimeTimer run() " + remainTime);
+			if(!wasSetData) {
+				showProcessing();
+			}
+			if(wasSetData || --remainTime <= 0) {				
+				cancel();				
+			}
+		}
+	}
+	
 
 	public synchronized void setData()
 	{
 		if(!wasSetData) return;
 		
+		this.removeAll();
 		String sdkVersion = "";
 		if(!MinSDKversion.isEmpty()) {
 			sdkVersion += makeHyperLink("@event", MinSDKversion +" (Min)", "Min SDK version", "min-sdk", null);
@@ -345,11 +390,9 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("  " + permGorupImg);
 		strTabInfo.append("</div>");
 		strTabInfo.append("<div height=10000 width=10000></div>");
-		
+	
 		apkinform.setBody(strTabInfo.toString());
-
-		this.removeAll();
-		this.setLayout(new GridLayout());
+		//this.setLayout(new GridLayout());
 		this.add(apkinform);
 	}
 
