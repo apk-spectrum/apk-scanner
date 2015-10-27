@@ -9,6 +9,8 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.lang.reflect.Method;
 
 import javax.swing.Icon;
@@ -38,7 +40,7 @@ import com.apkscanner.resource.Resource;
 import com.apkscanner.test.ProgressBarTest;
 import com.apkscanner.util.Log;
 
-public class InstallDlg extends JDialog implements ActionListener{
+public class InstallDlg extends JDialog implements ActionListener,WindowListener{
 	
 	InstallCheckTable TestTable;
 	JScrollPane scrollPane;
@@ -212,6 +214,7 @@ public class InstallDlg extends JDialog implements ActionListener{
 		if ("종료".equals(e.getActionCommand())) {
 			this.setVisible(false);
 			ApkInstaller.StopThead();
+			System.exit(0);
 		} else if ("재설치".equals(e.getActionCommand())) {
 			this.TestTable.clearTable();
 			ApkInstaller.StopThead();
@@ -235,13 +238,15 @@ public class InstallDlg extends JDialog implements ActionListener{
         
         this.setTitle(Resource.STR_APP_NAME.getString());
         this.setIconImage(Resource.IMG_TOOLBAR_INSTALL.getImageIcon().getImage());
-        //this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         //this.setBounds(0, 0, 700, 400);
         this.setPreferredSize(new Dimension(500,450));
         
         this.setMinimumSize(new Dimension(500, 450));
         this.setLocationRelativeTo(null);
         this.setResizable(false);
+        this.addWindowListener(this);
+        
         //this.setModal(f);
         
         
@@ -308,5 +313,34 @@ public class InstallDlg extends JDialog implements ActionListener{
         this.setVisible(true);
         this.pack();
     }
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub		
+	}
+	@Override
+	public void windowClosing(WindowEvent e) {
+		// TODO Auto-generated method stub		
+	}
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub		
+		System.exit(0);
+	}
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+	}
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub		
+	}
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub		
+	}
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+	}
 
 }
