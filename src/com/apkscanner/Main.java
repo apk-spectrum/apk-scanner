@@ -1,6 +1,7 @@
 package com.apkscanner;
 
 import java.awt.EventQueue;
+import java.io.File;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -10,10 +11,14 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.core.AdbWrapper;
 import com.apkscanner.core.ApktoolManager;
+import com.apkscanner.gui.ApkInstaller;
 import com.apkscanner.gui.MainUI;
+import com.apkscanner.gui.ApkInstaller.InstallButtonStatusListener;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 
 public class Main
@@ -41,12 +46,14 @@ public class Main
 
 		try {
 			if(args.length > 0) {
-				if(!"p".equals(args[0]) && !"package".equals(args[0]) 
+				if(!"p".equals(args[0]) && !"package".equals(args[0]) && "i".equals(args[0]) && "install".equals(args[0]) 
 						&& !args[0].startsWith("-") && !args[0].endsWith(".apk") && !args[0].endsWith(".ppk")) {
 					throw new ParseException("Missing argument for option: " + args[0]);
 				}
 				if("p".equals(args[0]) || "package".equals(args[0])) {
 					cmdType = "package";
+				} else if("i".equals(args[0]) || "install".equals(args[0])) {
+					cmdType = "install";
 				}
 			}
 
@@ -86,8 +93,10 @@ public class Main
 			solveApkFile(cmd);
 		} else if("package".equals(cmdType)) {
 			solvePackage(cmd);
+		} else if("install".equals(cmdType)) {
+			install(cmd);
 		} else {
-			emptyCmd(cmd);
+			emptyCmd(cmd);			
 		}
 	}
 
@@ -142,6 +151,39 @@ public class Main
 		}
 	}
 	
+	static private void install(CommandLine cmd)
+	{
+		String apkFilePath = cmd.getArgs()[1];
+		
+		if(apkFilePath == null || apkFilePath.isEmpty() || !new File(apkFilePath).exists()) {
+			Log.e("apk is null");
+			return;
+		}
+		apkFilePath = new File(apkFilePath).getAbsolutePath();
+		Log.v("install() " + apkFilePath);
+		
+		if(!cmd.hasOption("c") && !cmd.hasOption("cui")) {
+			String tempPath = FileUtil.makeTempPath(apkFilePath.substring(apkFilePath.lastIndexOf(File.separator)));
+			String libPath = tempPath + File.separator + "lib" + File.separator;
+			String packageName = AaptWrapper.Dump.getBadging(apkFilePath, false)[0].replaceAll(".* name='([^']*)'.*", "$1");
+			Log.i("package : " + packageName);
+			new ApkInstaller(packageName, apkFilePath, libPath,
+					(boolean)Resource.PROP_CHECK_INSTALLED.getData(false), false, new InstallButtonStatusListener() {
+				@Override
+				public void SetInstallButtonStatus(Boolean Flag) { }
+
+				@Override
+				public void OnOpenApk(String path) {
+					if((new File(path)).exists())
+						Launcher.run(path);
+				}
+			});
+			Log.e("aaaaaaaaaaaaa");
+		} else {
+			
+		}
+	}
+	
 	static private void createOpstions()
 	{
 		Option opt = new Option("v", "version", false, "Prints the version then exits");
@@ -163,6 +205,8 @@ public class Main
 		targetApkOptions.addOption(opt);
 		targetPackageOptions.addOption(opt);
 		*/
+		opt = new Option( "i", "install", true, "install APK");
+		allOptions.addOption(opt);
 		
 		opt = new Option( "d", "device", true, "The serial number of device");
 		allOptions.addOption(opt);
