@@ -167,13 +167,13 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	}
 	
 	private void showProcessing()
-	{
-		
-		
+	{	
 		if(flag==false) {
 			this.removeAll();
 			this.setLayout(new GridLayout(2,1));
 			JLabel gif = new JLabel(Resource.IMG_APK_LOADING.getImageIcon());
+			gif.setOpaque(true);
+			gif.setBackground(Color.white);
 			this.add(gif);
 			this.add(apkinform);
 			flag = true;
