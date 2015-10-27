@@ -195,7 +195,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		
 		this.removeAll();
 		this.setLayout(new GridLayout(2,1));
-		JLabel gif = new JLabel(Resource.IMG_APK_LOADING.getImageIcon());
+		JLabel gif = new JLabel(Resource.IMG_APK_LOGO.getImageIcon());
 		gif.setOpaque(true);
 		gif.setBackground(Color.white);
 		this.add(gif);
