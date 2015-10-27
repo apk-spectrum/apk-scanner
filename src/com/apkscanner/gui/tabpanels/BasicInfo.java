@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -63,6 +64,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	private ArrayList<String> PermissionList = null;
 	private HashMap<String, PermissionGroup> PermGroupMap = null;
 
+	private static Boolean flag = false;
+	
 	public BasicInfo(boolean opening)
 	{
 		if(!opening) {
@@ -165,25 +168,43 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	
 	private void showProcessing()
 	{
-		StringBuilder strTabInfo = new StringBuilder("");
-		strTabInfo.append("<table>");
-		strTabInfo.append("  <tr>");
-		strTabInfo.append("    <td width=600 height=320>");
-		strTabInfo.append("      <center><image src=\"" + Resource.IMG_APK_LOADING.getPath() + "\"/></center></br>");
-		if(remainTime > -1) {
-		strTabInfo.append("      <center>Remain time : "+remainTime+" sec</center>");
+		
+		if(flag==false) {
+			flag = true;
+			this.removeAll();
+			this.setLayout(new GridLayout(2,1));
+			
+			JLabel gif = new JLabel(Resource.IMG_APK_LOADING.getImageIcon());
+			
+			
+			Log.d("showProcessing");
+			this.add(gif);
+			
+			StringBuilder strTabInfo = new StringBuilder("");
+			strTabInfo.append("<table>");
+			strTabInfo.append("  <tr>");
+			strTabInfo.append("    <td width=600 height=320>");
+			//strTabInfo.append("      <center><image src=\"" + Resource.IMG_APK_LOADING.getPath() + "\"/></center></br>");
+			if(remainTime > -1) {
+				strTabInfo.append("      <center>Remain time : "+remainTime+" sec</center>");
+			} else {
+				strTabInfo.append("      <center></center>");
+			}
+			strTabInfo.append("    </td>");
+			strTabInfo.append("  </tr>");
+			strTabInfo.append("</table>");
+			strTabInfo.append("<div height=10000 width=10000></div>");
+	
+			apkinform.setBody(strTabInfo.toString());
+			this.add(apkinform);
+			flag = false;
 		}
-		strTabInfo.append("    </td>");
-		strTabInfo.append("  </tr>");
-		strTabInfo.append("</table>");
-		strTabInfo.append("<div height=10000 width=10000></div>");
-
-		apkinform.setBody(strTabInfo.toString());
 	}
 	
 	public void showProcessing(long remainTime)
 	{
 		this.remainTime = (int)Math.round((double)remainTime / 1000);
+
 
 		Timer timer = new Timer();
 		timer.schedule(new RemainTimeTimer(), 0, 1000);
@@ -195,9 +216,11 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	{
 		@Override
 		public synchronized void run()
-		{
+		{			
 			Log.i("RemainTimeTimer run() " + remainTime);
-			if(!wasSetData) showProcessing();
+			if(!wasSetData) {
+				showProcessing();
+			}
 			if(wasSetData || --remainTime <= 0) cancel();
 		}
 	}
@@ -333,7 +356,12 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("</div>");
 		strTabInfo.append("<div height=10000 width=10000></div>");
 		
+		this.removeAll();
 		apkinform.setBody(strTabInfo.toString());
+		
+		this.setLayout(new GridLayout());
+		
+		this.add(apkinform);
 	}
 
 	public synchronized void setData(long estimatedTime)
@@ -341,8 +369,10 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		if(apkinform == null)
 			initialize();
 		removeData();
+
 		if(estimatedTime > -1)
 			showProcessing(estimatedTime);
+
 		wasSetData = false;
 		return;
 	}
