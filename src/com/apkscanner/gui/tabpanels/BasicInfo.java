@@ -163,6 +163,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 
 		PermissionList = null;
 		PermGroupMap = null;
+
+		wasSetData = false;
 	}
 	
 	private void showProcessing()
@@ -173,7 +175,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("    <td width=600>");
 		//strTabInfo.append("      <center><image src=\"" + Resource.IMG_APK_LOADING.getPath() + "\"/></center></br>");
 		strTabInfo.append("      <center><image src=\"" + Resource.IMG_LOADING.getPath() + "\"/></center></br>");
-		if(remainTime > -1) {			
+		if(remainTime > -1) {
 			strTabInfo.append("      <center>Remain time : "+remainTime+" sec</center>");
 		} else {
 			strTabInfo.append("      <center></center>");
@@ -186,14 +188,23 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		apkinform.setBody(strTabInfo.toString());		
 	}
 	
-	public void showProcessing(long remainTime)
+	public void showProcessing(long time)
 	{
-		this.remainTime = (int)Math.round((double)remainTime / 1000);
+		this.remainTime = (int)Math.round((double)time / 1000);
 
-		showProcessing();
-
+		//showProcessing();
 		Timer timer = new Timer();
-		timer.schedule(new RemainTimeTimer(), 0, 1000);
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				Log.i("RemainTimeTimer run() " + remainTime);
+				if(!wasSetData) {
+					showProcessing();
+				}
+				if(wasSetData || --remainTime <= 0) cancel();
+			}
+			
+		}, 0, 1000);
 		
 		this.removeAll();
 		this.setLayout(new BorderLayout());
@@ -203,20 +214,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		this.add(gif,BorderLayout.NORTH);
 		this.add(apkinform,BorderLayout.CENTER);
 	}
-	
-	class RemainTimeTimer extends TimerTask
-	{
-		@Override
-		public synchronized void run()
-		{			
-			Log.i("RemainTimeTimer run() " + remainTime);
-			if(!wasSetData) {
-				showProcessing();
-			}
-			if(wasSetData || --remainTime <= 0) cancel();
-		}
-	}
-	
+
 	public synchronized void setData()
 	{
 		if(!wasSetData) return;
@@ -363,8 +361,6 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 
 		if(estimatedTime > -1)
 			showProcessing(estimatedTime);
-
-		wasSetData = false;
 		return;
 	}
 
@@ -377,7 +373,6 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		if(apkInfo == null) {
 			removeData();
 			showAbout();
-			wasSetData = false;
 			return;
 		}
 		wasSetData = true;
