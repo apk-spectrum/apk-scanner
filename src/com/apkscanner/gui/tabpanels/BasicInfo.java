@@ -169,36 +169,32 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	private void showProcessing()
 	{
 		
+		
 		if(flag==false) {
-			flag = true;
 			this.removeAll();
 			this.setLayout(new GridLayout(2,1));
-			
 			JLabel gif = new JLabel(Resource.IMG_APK_LOADING.getImageIcon());
-			
-			
-			Log.d("showProcessing");
 			this.add(gif);
-			
-			StringBuilder strTabInfo = new StringBuilder("");
-			strTabInfo.append("<table>");
-			strTabInfo.append("  <tr>");
-			strTabInfo.append("    <td width=600 height=320>");
-			//strTabInfo.append("      <center><image src=\"" + Resource.IMG_APK_LOADING.getPath() + "\"/></center></br>");
-			if(remainTime > -1) {
-				strTabInfo.append("      <center>Remain time : "+remainTime+" sec</center>");
-			} else {
-				strTabInfo.append("      <center></center>");
-			}
-			strTabInfo.append("    </td>");
-			strTabInfo.append("  </tr>");
-			strTabInfo.append("</table>");
-			strTabInfo.append("<div height=10000 width=10000></div>");
-	
-			apkinform.setBody(strTabInfo.toString());
 			this.add(apkinform);
-			flag = false;
+			flag = true;
 		}
+		
+		StringBuilder strTabInfo = new StringBuilder("");
+		strTabInfo.append("<table>");
+		strTabInfo.append("  <tr>");
+		strTabInfo.append("    <td width=600 height=320>");
+		//strTabInfo.append("      <center><image src=\"" + Resource.IMG_APK_LOADING.getPath() + "\"/></center></br>");
+		if(remainTime > -1) {
+			strTabInfo.append("      <center>Remain time : "+remainTime+" sec</center>");
+		} else {
+			strTabInfo.append("      <center></center>");
+		}
+		strTabInfo.append("    </td>");
+		strTabInfo.append("  </tr>");
+		strTabInfo.append("</table>");
+		strTabInfo.append("<div height=10000 width=10000></div>");
+
+		apkinform.setBody(strTabInfo.toString());		
 	}
 	
 	public void showProcessing(long remainTime)

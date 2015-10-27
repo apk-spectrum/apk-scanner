@@ -314,33 +314,18 @@ public class InstallDlg extends JDialog implements ActionListener,WindowListener
         this.pack();
     }
 	@Override
-	public void windowOpened(WindowEvent e) {
-		// TODO Auto-generated method stub		
-	}
+	public void windowOpened(WindowEvent e) {	}
 	@Override
-	public void windowClosing(WindowEvent e) {
-		// TODO Auto-generated method stub		
-	}
+	public void windowClosing(WindowEvent e) {}
 	@Override
-	public void windowClosed(WindowEvent e) {
-		// TODO Auto-generated method stub		
-		System.exit(0);
-	}
+	public void windowClosed(WindowEvent e) {System.exit(0);}
 	@Override
-	public void windowIconified(WindowEvent e) {
-		// TODO Auto-generated method stub
-	}
+	public void windowIconified(WindowEvent e) {}
 	@Override
-	public void windowDeiconified(WindowEvent e) {
-		// TODO Auto-generated method stub		
-	}
+	public void windowDeiconified(WindowEvent e) {}
 	@Override
-	public void windowActivated(WindowEvent e) {
-		// TODO Auto-generated method stub		
-	}
+	public void windowActivated(WindowEvent e) {}
 	@Override
-	public void windowDeactivated(WindowEvent e) {
-		// TODO Auto-generated method stub
-	}
+	public void windowDeactivated(WindowEvent e) {}
 
 }
