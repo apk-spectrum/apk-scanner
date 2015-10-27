@@ -1,5 +1,6 @@
 package com.apkscanner.gui.tabpanels;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -171,7 +172,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("  <tr>");
 		strTabInfo.append("    <td width=600>");
 		//strTabInfo.append("      <center><image src=\"" + Resource.IMG_APK_LOADING.getPath() + "\"/></center></br>");
-		if(remainTime > -1) {
+		strTabInfo.append("      <center><image src=\"" + Resource.IMG_LOADING.getPath() + "\"/></center></br>");
+		if(remainTime > -1) {			
 			strTabInfo.append("      <center>Remain time : "+remainTime+" sec</center>");
 		} else {
 			strTabInfo.append("      <center></center>");
@@ -194,12 +196,12 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		timer.schedule(new RemainTimeTimer(), 0, 1000);
 		
 		this.removeAll();
-		this.setLayout(new GridLayout(2,1));
-		JLabel gif = new JLabel(Resource.IMG_APK_LOGO.getImageIcon());
+		this.setLayout(new BorderLayout());
+		JLabel gif = new JLabel(Resource.IMG_APK_LOGO.getImageIcon(400, 250));
 		gif.setOpaque(true);
 		gif.setBackground(Color.white);
-		this.add(gif);
-		this.add(apkinform);
+		this.add(gif,BorderLayout.NORTH);
+		this.add(apkinform,BorderLayout.CENTER);
 	}
 	
 	class RemainTimeTimer extends TimerTask
