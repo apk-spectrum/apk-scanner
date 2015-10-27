@@ -50,6 +50,18 @@ public class Launcher
 		return exec(cmd);
 	}
 	
+	static public boolean install(String apkFilePath)
+	{
+		if(apkFilePath == null)
+			return false;
+
+		ArrayList<String> cmd = new ArrayList<String>(getDefaultCmd());
+		cmd.add("install");
+		cmd.add(apkFilePath);
+
+		return exec(cmd);
+	}
+	
 	static private boolean exec(ArrayList<String> cmd)
 	{
 		try {
