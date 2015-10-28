@@ -254,6 +254,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	{
 		if(!wasSetData) return;
 		
+		cardLayout.show(this, "apkinform");
+		
 		String sdkVersion = "";
 		if(!MinSDKversion.isEmpty()) {
 			sdkVersion += makeHyperLink("@event", MinSDKversion +" (Min)", "Min SDK version", "min-sdk", null);
@@ -384,7 +386,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		apkinform.setBody(strTabInfo.toString());
 		//this.setLayout(new GridLayout());
 
-		cardLayout.show(this, "apkinform");
+		
 	}
 
 	public synchronized void setData(long estimatedTime)
