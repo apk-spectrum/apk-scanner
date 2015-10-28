@@ -62,6 +62,18 @@ public class Launcher
 		return exec(cmd);
 	}
 	
+	static public boolean deleteTempPath(String path)
+	{
+		if(path == null)
+			return false;
+
+		ArrayList<String> cmd = new ArrayList<String>(getDefaultCmd());
+		cmd.add("delete-temp-path");
+		cmd.add(path);
+
+		return exec(cmd);		
+	}
+	
 	static private boolean exec(ArrayList<String> cmd)
 	{
 		try {

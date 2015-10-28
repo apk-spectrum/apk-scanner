@@ -46,7 +46,9 @@ public class Main
 
 		try {
 			if(args.length > 0) {
-				if(!"p".equals(args[0]) && !"package".equals(args[0]) && "i".equals(args[0]) && "install".equals(args[0]) 
+				if(!"p".equals(args[0]) && !"package".equals(args[0])
+						&& "i".equals(args[0]) && "install".equals(args[0])
+						&& "d".equals(args[0]) && "delete-temp-path".equals(args[0]) 
 						&& !args[0].startsWith("-") && !args[0].endsWith(".apk") && !args[0].endsWith(".ppk")) {
 					throw new ParseException("Missing argument for option: " + args[0]);
 				}
@@ -54,6 +56,8 @@ public class Main
 					cmdType = "package";
 				} else if("i".equals(args[0]) || "install".equals(args[0])) {
 					cmdType = "install";
+				} else if("d".equals(args[0]) || "delete-temp-path".equals(args[0])) {
+					cmdType = "delete-temp-path";
 				}
 			}
 
@@ -95,7 +99,9 @@ public class Main
 			solvePackage(cmd);
 		} else if("install".equals(cmdType)) {
 			install(cmd);
-		} else {
+		} else if("delete-temp-path".equals(cmdType)) {
+			deleteTempPath(cmd);
+		}else {
 			emptyCmd(cmd);			
 		}
 	}
@@ -178,9 +184,24 @@ public class Main
 						Launcher.run(path);
 				}
 			});
-			Log.e("aaaaaaaaaaaaa");
 		} else {
 			
+		}
+	}
+	
+	static private void deleteTempPath(CommandLine cmd)
+	{
+		String path = cmd.getArgs()[1];
+		
+		if(path != null && !path.isEmpty() && path.startsWith(FileUtil.getTempPath())) {
+			File parent = new File(path).getParentFile();
+			Log.i("delete temp APK folder : "  + parent.getPath());
+			while(parent != null && parent.exists() && parent.getParentFile() != null 
+					&& parent.getParentFile().listFiles().length == 1 
+					&& parent.getParentFile().getAbsolutePath().length() > FileUtil.getTempPath().length()) {
+				parent = parent.getParentFile();
+			}
+			FileUtil.deleteDirectory(parent);
 		}
 	}
 	

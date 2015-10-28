@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.apkscanner.Launcher;
 import com.apkscanner.data.AaptXmlTreeNode;
 import com.apkscanner.data.AaptXmlTreePath;
 import com.apkscanner.data.ApkInfo;
@@ -731,6 +732,10 @@ public class AaptToolManager extends ApkScannerStub
 				parent = parent.getParentFile();
 			}
 			FileUtil.deleteDirectory(parent);
+			if(new File(apkPath).exists()) {
+				Log.w("failure: not delete apk file");
+				Launcher.deleteTempPath(apkPath);
+			}
 		}
 	}
 
