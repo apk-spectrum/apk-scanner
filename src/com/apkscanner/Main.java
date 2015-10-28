@@ -193,7 +193,11 @@ public class Main
 	{
 		String path = cmd.getArgs()[1];
 		
-		if(path != null && !path.isEmpty() && path.startsWith(FileUtil.getTempPath())) {
+		while(path != null && !path.isEmpty() && path.startsWith(FileUtil.getTempPath()) && new File(path).exists()) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) { }
+
 			File parent = new File(path).getParentFile();
 			Log.i("delete temp APK folder : "  + parent.getPath());
 			while(parent != null && parent.exists() && parent.getParentFile() != null 

@@ -733,7 +733,7 @@ public class AaptToolManager extends ApkScannerStub
 			}
 			FileUtil.deleteDirectory(parent);
 			if(new File(apkPath).exists()) {
-				Log.w("failure: not delete apk file");
+				Log.i("failure: not delete apk file");
 				Launcher.deleteTempPath(apkPath);
 			}
 		}

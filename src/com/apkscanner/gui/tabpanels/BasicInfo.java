@@ -198,7 +198,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 //		apkinform.setBody(strTabInfo.toString());
 
 		if(remainTime > -1) {
-			TimerLabel.setText("Remain time : "+remainTime+" sec...");
+			TimerLabel.setText("Approximate time left : "+remainTime+" sec...");
 		} else {
 			TimerLabel.setText("");
 		}
