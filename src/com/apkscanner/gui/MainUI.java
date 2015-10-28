@@ -78,7 +78,7 @@ public class MainUI extends JFrame
 					}
 					Log.i("UI Init start");
 					initialize(true);
-					tabbedPanel.initLabel(-1);
+					tabbedPanel.initLabel(0);
 					Log.i("UI Init end");
 				}
 			}
@@ -116,10 +116,9 @@ public class MainUI extends JFrame
 					}
 					Log.i("UI Init start");
 					initialize(true);
-					tabbedPanel.initLabel(-1);
+					tabbedPanel.initLabel(0);
 					Log.i("UI Init end");
 				}
-				//tabbedPanel.initLabel();
 			}
 		}).start();
 		
@@ -208,7 +207,10 @@ public class MainUI extends JFrame
 						}
 					}
 					if(tabbedPanel != null) tabbedPanel.initLabel(estimatedTime);
-					if(toolBar != null) toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
+					if(toolBar != null) {
+						toolBar.setEnabledAt(ButtonSet.OPEN, false);
+						toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
+					}
 				}
 			}).start();
 			synchronized(labelInitSync) {
@@ -244,6 +246,7 @@ public class MainUI extends JFrame
 		@Override
 		public void OnComplete() {
 			Log.v("ApkCore.OnComplete()");
+			toolBar.setEnabledAt(ButtonSet.OPEN, true);
 		}
 
 		@Override
@@ -342,7 +345,10 @@ public class MainUI extends JFrame
 
 			if(!newWindow) {
 				if(tabbedPanel != null) tabbedPanel.initLabel(-1);
-				if(toolBar != null) toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
+				if(toolBar != null) {
+					toolBar.setEnabledAt(ButtonSet.OPEN, false);
+					toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
+				}
 				new Thread(new Runnable() {
 					public void run()
 					{

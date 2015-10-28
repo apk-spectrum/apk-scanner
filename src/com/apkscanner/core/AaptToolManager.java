@@ -38,7 +38,10 @@ public class AaptToolManager extends ApkScannerStub
 		File apkFile = new File(apkFilePath);
 		if(!apkFile.exists()) {
 			Log.e("No Such APK file");
-			if(statusListener != null) statusListener.OnError();
+			if(statusListener != null) {
+				statusListener.OnError();
+	        	statusListener.OnComplete();
+			}
 			return;
 		}
 
@@ -364,6 +367,7 @@ public class AaptToolManager extends ApkScannerStub
 		        
 		        if(statusListener != null) {
 		        	statusListener.OnSuccess();
+		        	statusListener.OnComplete();
 		        }
 			}
 		}).start();

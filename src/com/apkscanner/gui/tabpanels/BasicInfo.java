@@ -197,7 +197,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 //		strTabInfo.append("<div height=10000 width=10000></div>");
 //		apkinform.setBody(strTabInfo.toString());
 
-		if(remainTime > -1) {
+		if(remainTime > 0) {
 			TimerLabel.setText("Approximate time left : "+remainTime+" sec...");
 		} else {
 			TimerLabel.setText("");
@@ -209,7 +209,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	{
 		this.remainTime = (int)Math.round((double)time / 1000);
 
-		//showProcessing();
+		showProcessing();
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 			@Override
@@ -222,42 +222,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			}
 			
 		}, 0, 1000);
-		
-		this.removeAll();
-		this.setLayout(new BorderLayout());
-		
-		JLabel logo = new JLabel(Resource.IMG_APK_LOGO.getImageIcon(400, 250));
-		logo.setOpaque(true);
-		logo.setBackground(Color.white);
-		
-		JLabel gif = new JLabel(Resource.IMG_WAIT_BAR.getImageIcon());
-		gif.setOpaque(true);
-		gif.setBackground(Color.WHITE);
-		gif.setPreferredSize(new Dimension(Resource.IMG_WAIT_BAR.getImageIcon().getIconWidth(),Resource.IMG_WAIT_BAR.getImageIcon().getIconHeight()));
-		
-		this.add(logo,BorderLayout.NORTH);
-		
-		this.add(gif,BorderLayout.CENTER);
-		this.add(TimerLabel,BorderLayout.SOUTH);
-		
 		//this.add(TimerLabel,BorderLayout.CENTER);
 	}
-	
-	class RemainTimeTimer extends TimerTask
-	{
-		@Override
-		public synchronized void run()
-		{			
-			Log.i("RemainTimeTimer run() " + remainTime);
-			if(!wasSetData) {
-				showProcessing();
-			}
-			if(wasSetData || --remainTime <= 0) {				
-				cancel();				
-			}
-		}
-	}
-	
 
 	public synchronized void setData()
 	{
@@ -400,10 +366,32 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	{
 		if(apkinform == null)
 			initialize();
-		removeData();
+
+		if(wasSetData || this.getComponentCount() <= 1) {
+			removeData();
+			
+			this.removeAll();
+			this.setLayout(new BorderLayout());
+			
+			JLabel logo = new JLabel(Resource.IMG_APK_LOGO.getImageIcon(400, 250));
+			logo.setOpaque(true);
+			logo.setBackground(Color.white);
+			
+			JLabel gif = new JLabel(Resource.IMG_WAIT_BAR.getImageIcon());
+			gif.setOpaque(true);
+			gif.setBackground(Color.WHITE);
+			gif.setPreferredSize(new Dimension(Resource.IMG_WAIT_BAR.getImageIcon().getIconWidth(),Resource.IMG_WAIT_BAR.getImageIcon().getIconHeight()));
+			
+			this.add(logo,BorderLayout.NORTH);
+			
+			this.add(gif,BorderLayout.CENTER);
+			this.add(TimerLabel,BorderLayout.SOUTH);
+		}
 
 		if(estimatedTime > -1)
 			showProcessing(estimatedTime);
+		else 
+			TimerLabel.setText("Extracting APK file...");
 		return;
 	}
 

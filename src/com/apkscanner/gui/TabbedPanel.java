@@ -13,6 +13,7 @@ import com.apkscanner.gui.tabpanels.Widget;
 import com.apkscanner.gui.tabpanels.BasicInfo;
 import com.apkscanner.gui.util.PlasticTabbedPaneUI;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 
 
 public class TabbedPanel extends JTabbedPane
@@ -67,7 +68,7 @@ public class TabbedPanel extends JTabbedPane
         };
     }
     
-    public void reloadResource()
+    public synchronized void reloadResource()
     {
     	loadResource();
 
@@ -78,14 +79,16 @@ public class TabbedPanel extends JTabbedPane
     	}
     }
     
-    public void initLabel(long estimatedTime)
+    public synchronized void initLabel(long estimatedTime)
     {
+    	Log.i("initLabel() " + estimatedTime);
     	((BasicInfo)(getComponent(0))).setData(estimatedTime);
     	setSelectedIndex(0);
 		for(int i = 1; i < 6; i++) {
 	        setTitleAt(i, labels[i] + "(...)");
 			setEnabledAt(i, false);
 		}
+		Log.v("initLabel() end");
     }
 	
     public void setData(ApkInfo apkInfo)
@@ -114,7 +117,7 @@ public class TabbedPanel extends JTabbedPane
 		}
 	}
 
-	private void setPanelData(int panelIdx, int dataSize, ApkInfo apkInfo)
+	private synchronized void setPanelData(int panelIdx, int dataSize, ApkInfo apkInfo)
 	{
 		if(dataSize > 0) {
 			((TabDataObject)(getComponent(panelIdx))).setData(apkInfo);
