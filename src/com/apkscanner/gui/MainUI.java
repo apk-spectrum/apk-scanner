@@ -78,7 +78,7 @@ public class MainUI extends JFrame
 					}
 					Log.i("UI Init start");
 					initialize(true);
-					tabbedPanel.initLabel(0);
+					tabbedPanel.setLodingLabel();
 					Log.i("UI Init end");
 				}
 			}
@@ -116,7 +116,7 @@ public class MainUI extends JFrame
 					}
 					Log.i("UI Init start");
 					initialize(true);
-					tabbedPanel.initLabel(0);
+					tabbedPanel.setLodingLabel();
 					Log.i("UI Init end");
 				}
 			}
@@ -206,7 +206,7 @@ public class MainUI extends JFrame
 							Log.i("OnStart() uiInitSync");	
 						}
 					}
-					if(tabbedPanel != null) tabbedPanel.initLabel(estimatedTime);
+					if(tabbedPanel != null) tabbedPanel.setTimeLeft(estimatedTime);
 					if(toolBar != null) {
 						toolBar.setEnabledAt(ButtonSet.OPEN, false);
 						toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
@@ -344,7 +344,7 @@ public class MainUI extends JFrame
 			final String frameworkRes = Dlg.getSelectedFrameworkRes();
 
 			if(!newWindow) {
-				if(tabbedPanel != null) tabbedPanel.initLabel(-1);
+				if(tabbedPanel != null) tabbedPanel.setTimeLeft(-1);
 				if(toolBar != null) {
 					toolBar.setEnabledAt(ButtonSet.OPEN, false);
 					toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);

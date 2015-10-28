@@ -1,10 +1,10 @@
 package com.apkscanner.gui.tabpanels;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagLayout;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -19,6 +19,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
@@ -39,6 +40,9 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	private static final long serialVersionUID = 6431995641984509482L;
 
 	private JHtmlEditorPane apkinform = null;
+	private JPanel lodingPanel = null;
+	private CardLayout cardLayout = new CardLayout();
+
 	private String mutiLabels;
 	
 	private boolean wasSetData = false;
@@ -103,15 +107,36 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		apkinform.setBackground(Color.white);
 		apkinform.setHyperlinkClickListener(this);
 		
-		//this.setLayout(new GridBagLayout());
+		// loding panel
+		JLabel logo = new JLabel(Resource.IMG_APK_LOGO.getImageIcon(400, 250));
+		logo.setOpaque(true);
+		logo.setBackground(Color.white);
+		
+		JLabel gif = new JLabel(Resource.IMG_WAIT_BAR.getImageIcon());
+		gif.setOpaque(true);
+		gif.setBackground(Color.white);
+		gif.setPreferredSize(new Dimension(Resource.IMG_WAIT_BAR.getImageIcon().getIconWidth(),Resource.IMG_WAIT_BAR.getImageIcon().getIconHeight()));
+		
 		TimerLabel = new JLabel("");
 		TimerLabel.setOpaque(true);
 		TimerLabel.setBackground(Color.WHITE);
-		TimerLabel.setBorder(new EmptyBorder(0,0,50,0));
-		
+		TimerLabel.setBorder(new EmptyBorder(0,0,50,0));		
 		TimerLabel.setHorizontalAlignment(JLabel.CENTER);
 		
-		//this.add(apkinform);
+		lodingPanel = new JPanel();
+		lodingPanel.setLayout(new BorderLayout());
+		lodingPanel.setOpaque(false);
+		lodingPanel.setBackground(Color.white);
+		lodingPanel.add(logo,BorderLayout.NORTH);
+		lodingPanel.add(gif,BorderLayout.CENTER);
+		lodingPanel.add(TimerLabel,BorderLayout.SOUTH);
+		lodingPanel.setVisible(true);
+		
+		this.setLayout(cardLayout);
+		this.add("lodingPanel", lodingPanel);
+		this.add("apkinform", apkinform);
+		
+		cardLayout.show(this, "apkinform");
 	}
 	
 	private void showAbout()
@@ -151,8 +176,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		
 		apkinform.setBody(strTabInfo.toString());
 
-		this.setLayout(new GridBagLayout());
-		this.add(apkinform);
+		lodingPanel.setVisible(false);
+		apkinform.setVisible(true);
 	}
 	
 	private void removeData()
@@ -205,7 +230,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		
 	}
 	
-	public void showProcessing(long time)
+	public synchronized void showProcessing(long time)
 	{
 		this.remainTime = (int)Math.round((double)time / 1000);
 
@@ -229,7 +254,6 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	{
 		if(!wasSetData) return;
 		
-		this.removeAll();
 		String sdkVersion = "";
 		if(!MinSDKversion.isEmpty()) {
 			sdkVersion += makeHyperLink("@event", MinSDKversion +" (Min)", "Min SDK version", "min-sdk", null);
@@ -359,33 +383,19 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	
 		apkinform.setBody(strTabInfo.toString());
 		//this.setLayout(new GridLayout());
-		this.add(apkinform);
+
+		cardLayout.show(this, "apkinform");
 	}
 
 	public synchronized void setData(long estimatedTime)
 	{
-		if(apkinform == null)
+		Log.w("setData() " + estimatedTime);
+		if(lodingPanel == null)
 			initialize();
 
-		if(wasSetData || this.getComponentCount() <= 1) {
+		if(wasSetData || !lodingPanel.isVisible()) {
 			removeData();
-			
-			this.removeAll();
-			this.setLayout(new BorderLayout());
-			
-			JLabel logo = new JLabel(Resource.IMG_APK_LOGO.getImageIcon(400, 250));
-			logo.setOpaque(true);
-			logo.setBackground(Color.white);
-			
-			JLabel gif = new JLabel(Resource.IMG_WAIT_BAR.getImageIcon());
-			gif.setOpaque(true);
-			gif.setBackground(Color.WHITE);
-			gif.setPreferredSize(new Dimension(Resource.IMG_WAIT_BAR.getImageIcon().getIconWidth(),Resource.IMG_WAIT_BAR.getImageIcon().getIconHeight()));
-			
-			this.add(logo,BorderLayout.NORTH);
-			
-			this.add(gif,BorderLayout.CENTER);
-			this.add(TimerLabel,BorderLayout.SOUTH);
+			cardLayout.show(this, "lodingPanel");
 		}
 
 		if(estimatedTime > -1)
