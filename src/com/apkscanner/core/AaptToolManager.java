@@ -13,6 +13,9 @@ import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
+
+import android.content.pm.PermissionInfo;
+
 import com.apkscanner.util.FileUtil.FSStyle;
 
 public class AaptToolManager extends ApkScannerStub
@@ -186,9 +189,11 @@ public class AaptToolManager extends ApkScannerStub
 					        	String perm = getAttrValue(permTag[idx], "name");
 					        	apkInfo.Permissions += "\n" + perm;
 					        	apkInfo.PermissionList.add(perm);
-					        	String sig = getAttrValue(permTag[idx], "protectionLevel");
-					        	if(sig != null && sig.equals("0x2")) {
-					        		apkInfo.Permissions += " - <SIGNATURE>";
+					        	String protection = getAttrValue(permTag[idx], "protectionLevel");
+					        	if(protection != null && protection.startsWith("0x")) {
+					        		int level = Integer.parseInt(protection.substring(2), 16);
+					        		protection = PermissionInfo.protectionToString(level);
+					        		apkInfo.Permissions += " - <" + protection + ">";
 					        		apkInfo.ProtectionLevel = "SIGNATURE";
 					        	}
 					        }
@@ -425,7 +430,17 @@ public class AaptToolManager extends ApkScannerStub
 			xml.append(" ");
 			xml.append(name);
 			xml.append("=\"");
-			xml.append(getResourceName(node.getAttribute(name)));
+			if(name.endsWith("protectionLevel")) {
+				String protection = node.getAttribute(name);
+	        	if(protection != null && protection.startsWith("0x")) {
+	        		int level = Integer.parseInt(protection.substring(2), 16);
+	        		xml.append(PermissionInfo.protectionToString(level));
+	        	} else {
+	        		xml.append(protection);
+	        	}
+			} else {
+				xml.append(getResourceName(node.getAttribute(name)));
+			}
 			xml.append("\"");
 		}
 		if(node.getNodeCount() > 0) {

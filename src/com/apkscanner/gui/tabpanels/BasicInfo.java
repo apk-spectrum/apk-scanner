@@ -662,11 +662,11 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		} else if("feature-protection-level".equals(id)) {
 			feature = "※ " + Resource.STR_FEATURE_SIGNATURE_DESC.getString() + "\n";
 			for(String s: Permissions.split("\n")) {
-				if(s.endsWith("- <SIGNATURE>")) {
+				if(s.indexOf(" - <") > -1) {
 					feature += "\n" + s;
 				}
 			}
-			size = new Dimension(500, 100);
+			size = new Dimension(500, 200);
 		} else if("feature-shared-user-id".equals(id)) {
 			feature = "sharedUserId=" + SharedUserId + "\n※ ";
 			feature += Resource.STR_FEATURE_SHAREDUSERID_DESC.getString();
