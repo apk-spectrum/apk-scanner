@@ -17,7 +17,6 @@ import com.apkscanner.core.ApktoolManager;
 import com.apkscanner.gui.ApkInstaller;
 import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.ApkInstaller.InstallButtonStatusListener;
-import com.apkscanner.gui.dialog.install.InstallDlg;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
@@ -99,7 +98,7 @@ public class Main
 		} else if("package".equals(cmdType)) {
 			solvePackage(cmd);
 		} else if("install".equals(cmdType)) {
-			InstallDlg dlg = new InstallDlg(true);
+			install(cmd);
 		} else if("delete-temp-path".equals(cmdType)) {
 			deleteTempPath(cmd);
 		}else {
@@ -174,7 +173,7 @@ public class Main
 			String libPath = tempPath + File.separator + "lib" + File.separator;
 			String packageName = AaptWrapper.Dump.getBadging(apkFilePath, false)[0].replaceAll(".* name='([^']*)'.*", "$1");
 			Log.i("package : " + packageName);
-			new ApkInstaller(packageName, apkFilePath, libPath,
+			new ApkInstaller(true, packageName, apkFilePath, libPath,
 					(boolean)Resource.PROP_CHECK_INSTALLED.getData(false), false, new InstallButtonStatusListener() {
 				@Override
 				public void SetInstallButtonStatus(Boolean Flag) { }

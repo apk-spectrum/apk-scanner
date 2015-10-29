@@ -371,7 +371,7 @@ public class MainUI extends JFrame
 
 			toolBar.setEnabledAt(ButtonSet.INSTALL, false);
 			String libPath = apkInfo.WorkTempPath + File.separator + "lib" + File.separator;
-			new ApkInstaller(apkInfo.PackageName, apkInfo.ApkPath, libPath , 
+			new ApkInstaller(false, apkInfo.PackageName, apkInfo.ApkPath, libPath , 
 					(boolean)Resource.PROP_CHECK_INSTALLED.getData(false), checkPackage, new InstallButtonStatusListener() {
 				@Override
 				public void SetInstallButtonStatus(Boolean Flag) {

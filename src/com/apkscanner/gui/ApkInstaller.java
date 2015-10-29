@@ -76,7 +76,7 @@ public class ApkInstaller
 	private static InstallButtonStatusListener Listener;
 	private static InstallDlgFuncListener InstallDlgListener;
 	
-	public ApkInstaller(String PackageName, String apkPath, String libPath, 
+	public ApkInstaller(Boolean isOnlyInstall, String PackageName, String apkPath, String libPath, 
 			final boolean samePackage, final boolean checkPackage, final InstallButtonStatusListener Listener)
 	{
 
@@ -92,7 +92,7 @@ public class ApkInstaller
 		this.Listener = Listener; 
 		
 		
-		InstallDlg dlg = new InstallDlg(false);
+		InstallDlg dlg = new InstallDlg(isOnlyInstall);
 		this.InstallDlgListener = dlg.getInstallDlgFuncListener();
 		
 		
