@@ -216,7 +216,10 @@ public class InstallDlg extends JDialog implements ActionListener,WindowListener
 		if ("종료".equals(e.getActionCommand())) {
 			this.setVisible(false);
 			ApkInstaller.StopThead();
-			System.exit(0);
+			
+			if(isOnlyInstall) {
+				System.exit(0);
+			}
 		} else if ("재설치".equals(e.getActionCommand())) {
 			this.TestTable.clearTable();
 			ApkInstaller.StopThead();
@@ -321,6 +324,8 @@ public class InstallDlg extends JDialog implements ActionListener,WindowListener
 	public void windowClosing(WindowEvent e) {}
 	@Override
 	public void windowClosed(WindowEvent e) {
+		this.setVisible(false);
+		ApkInstaller.StopThead();
 		if(isOnlyInstall) {
 			System.exit(0);
 		}
