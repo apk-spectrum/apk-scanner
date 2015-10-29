@@ -92,7 +92,7 @@ public class ApkInstaller
 		this.Listener = Listener; 
 		
 		
-		InstallDlg dlg = new InstallDlg();
+		InstallDlg dlg = new InstallDlg(false);
 		this.InstallDlgListener = dlg.getInstallDlgFuncListener();
 		
 		

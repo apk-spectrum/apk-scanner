@@ -17,6 +17,7 @@ import com.apkscanner.core.ApktoolManager;
 import com.apkscanner.gui.ApkInstaller;
 import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.ApkInstaller.InstallButtonStatusListener;
+import com.apkscanner.gui.dialog.install.InstallDlg;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
@@ -98,7 +99,7 @@ public class Main
 		} else if("package".equals(cmdType)) {
 			solvePackage(cmd);
 		} else if("install".equals(cmdType)) {
-			install(cmd);
+			InstallDlg dlg = new InstallDlg(true);
 		} else if("delete-temp-path".equals(cmdType)) {
 			deleteTempPath(cmd);
 		}else {

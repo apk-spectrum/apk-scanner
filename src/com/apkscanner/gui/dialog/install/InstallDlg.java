@@ -51,6 +51,7 @@ public class InstallDlg extends JDialog implements ActionListener,WindowListener
 	InstallDlg dlg;
 	JPanel MessageBox;
 	JPanel AboutPanel;
+	Boolean isOnlyInstall;
 	public enum CHECKLIST_MODE{
 		ADD,
 		WATING,
@@ -62,7 +63,8 @@ public class InstallDlg extends JDialog implements ActionListener,WindowListener
 	public InstallDlgFuncListener getInstallDlgFuncListener() {
 		return this.CoreInstallLitener;
 	}
-	public InstallDlg() {
+	public InstallDlg(Boolean isOnlyInstall) {
+		this.isOnlyInstall = isOnlyInstall;
 		dlg = this;
 		createAndShowGUI();		
 		CoreInstallLitener = new InstallDlgFuncListener() {
@@ -318,7 +320,12 @@ public class InstallDlg extends JDialog implements ActionListener,WindowListener
 	@Override
 	public void windowClosing(WindowEvent e) {}
 	@Override
-	public void windowClosed(WindowEvent e) {System.exit(0);}
+	public void windowClosed(WindowEvent e) {
+		if(isOnlyInstall) {
+			System.exit(0);
+		}
+			
+		}
 	@Override
 	public void windowIconified(WindowEvent e) {}
 	@Override
