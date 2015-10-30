@@ -24,6 +24,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
+import com.apkscanner.core.PermissionGroupManager;
 import com.apkscanner.core.PermissionGroupManager.PermissionGroup;
 import com.apkscanner.core.PermissionGroupManager.PermissionInfo;
 import com.apkscanner.data.ApkInfo;
@@ -68,6 +69,10 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	
 	private ArrayList<String> PermissionList = null;
 	private HashMap<String, PermissionGroup> PermGroupMap = null;
+	private boolean hasSignatureLevel = false;
+	private boolean hasSystemLevel = false;
+	private boolean hasSignatureOrSystemLevel = false;
+	
 	private JLabel TimerLabel = null;
 	
 	public BasicInfo(boolean opening)
@@ -292,9 +297,14 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_SHAREDUSERID_LAB.getString(), Resource.STR_FEATURE_SHAREDUSERID_DESC.getString(), "feature-shared-user-id", null));
 		}
 
+		boolean systemSignature = false;
 		StringBuilder importantFeatures = new StringBuilder();
 		if(SharedUserId.startsWith("android.uid.system")) {
-			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
+			if(SignatureCN != null && (SignatureCN.indexOf("'Android'") > -1 || SignatureCN.indexOf("'Samsung Cert'") > -1)) {
+				importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
+			} else {
+				importantFeatures.append(", <font style=\"color:#FF0000; font-weight:bold\">");
+			}
 			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_SYSTEM_UID_LAB.getString(), Resource.STR_FEATURE_SYSTEM_UID_DESC.getString(), "feature-system-user-id", null));
 			importantFeatures.append("</font>");
 		}
@@ -302,10 +312,17 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
 			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_PLATFORM_SIGN_LAB.getString(), Resource.STR_FEATURE_PLATFORM_SIGN_DESC.getString(), "feature-platform-sign", null));
 			importantFeatures.append("</font>");
+			systemSignature = true;
 		}
 		if(SignatureCN != null && SignatureCN.indexOf("'Samsung Cert'") > -1) {
 			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
 			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_SAMSUNG_SIGN_LAB.getString(), Resource.STR_FEATURE_SAMSUNG_SIGN_DESC.getString(), "feature-samsung-sign", null));
+			importantFeatures.append("</font>");
+			systemSignature = true;
+		}
+		if(((hasSignatureLevel || hasSignatureOrSystemLevel) && !systemSignature) || hasSystemLevel) {
+			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
+			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_REVOKE_PERM_LAB.getString(), Resource.STR_FEATURE_REVOKE_PERM_DESC.getString(), "feature-revoke-permissions", null));
 			importantFeatures.append("</font>");
 		}
 		if(debuggable) {
@@ -438,6 +455,9 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 
 		PermissionList = apkInfo.PermissionList;
 		PermGroupMap = apkInfo.PermGroupMap;
+		hasSignatureLevel = apkInfo.hasSignatureLevel;
+		hasSignatureOrSystemLevel = apkInfo.hasSignatureOrSystemLevel;
+		hasSystemLevel = apkInfo.hasSystemLevel;
 
 		SignatureCN = apkInfo.CertCN;
 		CertSummary = apkInfo.CertSummary;
@@ -453,7 +473,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		int cnt = 0;
 		for(String key: keys) {
 			PermissionGroup g = PermGroupMap.get(key);
-			permGroup.append(makeHyperLink("@event", makeImage(g.icon), g.permSummary, g.permGroup, g.hasDangerous?"color:red;":null));
+			permGroup.append(makeHyperLink("@event", makeImage(g.icon), g.permSummary, g.name, g.hasDangerous?"color:red;":null));
 			if(++cnt % 15 == 0) permGroup.append("<br/>");
 		}
 		
@@ -573,15 +593,16 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		
 		for(PermissionInfo info: g.permList) {
 			body.append("▶ ");
-			if(info.isDangerous) {
+			if(info.isDangerousLevel()) {
 				body.append("[DANGEROUS] ");	
 			}
 			if(info.label != null) {
 				body.append(info.label + " ");
 			}
-			body.append("[" + info.permission + "]\n");
-			if(info.desc != null) {
-				body.append(" : " + info.desc + "\n");
+			body.append("[" + info.name + "]\n");
+			body.append(" - protectionLevel=" + info.protectionLevel + "\n");
+			if(info.description != null) {
+				body.append(" : " + info.description + "\n");
 			}
 		}
 		//body.append("</div>");
@@ -681,6 +702,21 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			feature = "※ " + Resource.STR_FEATURE_SAMSUNG_SIGN_DESC.getString();
 			feature += "\n\n" + CertSummary;
 			size = new Dimension(500, 150);
+		} else if("feature-revoke-permissions".equals(id)) {
+			StringBuilder revokePerms = new StringBuilder("※ " + Resource.STR_FEATURE_REVOKE_PERM_DESC.getString() + "\n");
+			PermissionGroupManager permManager = new PermissionGroupManager(null);
+			boolean systemSignature = false;
+			if(SignatureCN != null && (SignatureCN.indexOf("'Android'") > -1 || SignatureCN.indexOf("'Samsung Cert'") > -1)) {
+				systemSignature = true;
+			}
+			for(String name: PermissionList) {
+				PermissionInfo info = permManager.getPermissionInfo(name);
+				if(((info.isSignatureLevel() || info.isSignatureOrSystemLevel()) && !systemSignature) || info.isSystemLevel()) {
+					revokePerms.append(name + " - " + info.protectionLevel + "\n");
+				}
+			}
+
+			feature = revokePerms.toString();
 		} else if("feature-debuggable".equals(id)) {
 			feature = Resource.STR_FEATURE_DEBUGGABLE_DESC.getString();
 		}

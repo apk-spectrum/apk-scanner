@@ -26,6 +26,10 @@ public class ApkInfo
 	public String CertSummary = null;
 	public String CertCN = null;
 	
+	public boolean hasSignatureLevel = false;
+	public boolean hasSystemLevel = false;
+	public boolean hasSignatureOrSystemLevel = false;
+	
 	public ArrayList<Object[]> WidgetList = new ArrayList<Object[]>();
 	public ArrayList<String> ImageList = new ArrayList<String>();
 	public ArrayList<String> LibList = new ArrayList<String>();

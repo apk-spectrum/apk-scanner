@@ -199,6 +199,9 @@ public class AaptToolManager extends ApkScannerStub
 					        }
 					        PermissionGroupManager permGroupManager = new PermissionGroupManager(apkInfo.PermissionList.toArray(new String[0]));
 					        apkInfo.PermGroupMap = permGroupManager.getPermGroupMap();
+					        apkInfo.hasSignatureLevel = permGroupManager.hasSignatureLevel;
+					        apkInfo.hasSignatureOrSystemLevel = permGroupManager.hasSignatureOrSystemLevel;
+					        apkInfo.hasSystemLevel = permGroupManager.hasSystemLevel;
 						}
 					}
 				}).start();

@@ -4,50 +4,47 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 import com.apkscanner.util.MyXPath;
 
 public class PermissionGroupManager
 {
-	private String[] dangerousPermissions = new String[] {
-			"android.permission.READ_CALENDAR",
-			"android.permission.WRITE_CALENDAR",
-			"android.permission.CAMERA",
-			"android.permission.READ_CONTACTS",
-			"android.permission.WRITE_CONTACTS",
-			"android.permission.GET_ACCOUNT",
-			"android.permission.ACCESS_FINE_LOCATION",
-			"android.permission.ACCESS_COARSE_LOCATION",
-			"android.permission.RECORD_AUDIO",
-			"android.permission.READ_PHONE_STATE",
-			"android.permission.CALL_PHONE",
-			"android.permission.READ_CALL_LOG",
-			"android.permission.WRITE_CALL_LOG",
-			"com.android.voicemail.permission.ADD_VOICEMAIL",
-			"android.permission.USE_SIP",
-			"android.permission.PROCESS_OUTGOING_CALLS",
-			"android.permission.BODY_SENSORS",
-			"android.permission.SEND_SMS",
-			"android.permission.RECEIVE_SMS",
-			"android.permission.READ_SMS",
-			"android.permission.RECEIVE_WAP_PUSH",
-			"android.permission.RECEIVE_MMS",
-			"android.permission.READ_CELL_BROADCASTS",
-			"android.permission.READ_EXTERNAL_STORAGE",
-			"android.permission.WRITE_EXTERNAL_STORAGE"
-	};
-	
 	public class PermissionInfo
 	{
-		public String permission;
-		public String permGroup;
+		public String name;
+		public String icon;
 		public String label;
-		public String desc;
-		public boolean isDangerous;
+		public String description;
+		public String group;
+		public String protectionLevel;
+		
+		public boolean isDangerousLevel()
+		{
+			return (protectionLevel != null && protectionLevel.indexOf("dangerous") > -1) ? true : false;
+		}
+		
+		public boolean isSignatureLevel()
+		{
+			return (protectionLevel != null
+					&& protectionLevel.indexOf("signature") > -1 && protectionLevel.indexOf("ystem") == -1 && protectionLevel.indexOf("privileged") == -1) ? true : false;
+		}
+		
+		public boolean isSignatureOrSystemLevel()
+		{
+			return (protectionLevel != null
+					&& protectionLevel.indexOf("signature") > -1 && (protectionLevel.indexOf("ystem") > -1 || protectionLevel.indexOf("privileged") > -1)) ? true : false;
+		}
+
+		public boolean isSystemLevel()
+		{
+			return (protectionLevel != null && protectionLevel.indexOf("signature") == -1
+					&& (protectionLevel.indexOf("ystem") > -1 || protectionLevel.indexOf("privileged") > -1)) ? true : false;
+		}
 	}
 	
 	public class PermissionGroup
 	{
-		public String permGroup;
+		public String name;
 		public String label;
 		public String desc;
 		public String icon;
@@ -57,6 +54,10 @@ public class PermissionGroupManager
 	}
 	
 	private HashMap<String, PermissionGroup> permGroupMap;
+
+	public boolean hasSignatureLevel = false;
+	public boolean hasSystemLevel = false;
+	public boolean hasSignatureOrSystemLevel = false;
 
 	private MyXPath xmlPermissions;
 	private MyXPath xmlPermInfoDefault;
@@ -70,7 +71,7 @@ public class PermissionGroupManager
 		//Log.i(getClass().getResource("/values/permissions-info.xml"));
 		//Log.i(getClass().getResource("/values/permissions-info-" + lang + ".xml"));
 
-		xmlPermissions = new MyXPath(getClass().getResourceAsStream("/values/permissions.xml"));
+		xmlPermissions = new MyXPath(getClass().getResourceAsStream("/values/AndroidManifest_SDK23.xml"));
 		xmlPermInfoDefault = new MyXPath(getClass().getResourceAsStream("/values/permissions-info.xml"));
 		if(getClass().getResource("/values/permissions-info-" + lang + ".xml") != null) {
 			xmlPermInfoLang = new MyXPath(getClass().getResourceAsStream("/values/permissions-info-" + lang + ".xml"));
@@ -87,49 +88,54 @@ public class PermissionGroupManager
 	
 	public void setData(String[] permList)
 	{
+		if(permList == null) return;
 		for(String perm: permList) {
 			PermissionInfo permInfo = getPermissionInfo(perm);
-			if(permInfo.permGroup != null) {
-				PermissionGroup g = permGroupMap.get(permInfo.permGroup);
+			if(permInfo.group != null) {
+				PermissionGroup g = permGroupMap.get(permInfo.group);
 				if(g == null) {
-					g = getPermissionGroup(permInfo.permGroup);
-					permGroupMap.put(permInfo.permGroup, g);
+					g = getPermissionGroup(permInfo.group);
+					permGroupMap.put(permInfo.group, g);
 				}
 				g.permList.add(permInfo);
 				if(permInfo.label != null) {
 					g.permSummary += "\n - " + permInfo.label;
 				}
-				if(permInfo.isDangerous) {
+				if(permInfo.isDangerousLevel()) {
 					g.hasDangerous = true;
+				}
+				if(permInfo.isSignatureLevel()) {
+					Log.i("SignatureLevel : " + permInfo.name);
+					hasSignatureLevel = true;
+				}
+				if(permInfo.isSignatureOrSystemLevel()) {
+					Log.i("SignatureOrSystemLevel : " + permInfo.name);
+					hasSignatureOrSystemLevel = true;
+				}
+				if(permInfo.isSystemLevel()) {
+					Log.i("SystemLevel : " + permInfo.name);
+					hasSystemLevel = true;
 				}
 			}
 		}
 	}
 	
-	private boolean checkDangerous(String perm)
-	{
-		for(String p: dangerousPermissions) {
-			if(p.equals(perm)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public PermissionInfo getPermissionInfo(String perm)
+	public PermissionInfo getPermissionInfo(String name)
 	{
 		PermissionInfo permInfo = new PermissionInfo();
-		permInfo.permission = perm;
-		permInfo.isDangerous = checkDangerous(perm);
+		permInfo.name = name;
 
 		if(xmlPermissions != null) {
-			MyXPath permXPath = xmlPermissions.getNode("/permissions/permission[@name='" + perm + "']");
+			MyXPath permXPath = xmlPermissions.getNode("/manifest/permission[@name='" + name + "']");
 			if(permXPath != null) {
-				permInfo.permGroup = permXPath.getAttributes("android:permissionGroup");
+				permInfo.group = permXPath.getAttributes("android:permissionGroup");
 				permInfo.label = getInfoString(permXPath.getAttributes("android:label"));
-				permInfo.desc = getInfoString(permXPath.getAttributes("android:description"));
+				permInfo.description = getInfoString(permXPath.getAttributes("android:description"));
+				permInfo.protectionLevel = permXPath.getAttributes("android:protectionLevel");
+				if(permInfo.group == null) permInfo.group = "Unspecified group";
+				if(permInfo.protectionLevel == null) permInfo.protectionLevel = "normal";
 				if(permInfo.label != null) permInfo.label = permInfo.label.replaceAll("\"", "");
-				if(permInfo.desc != null) permInfo.desc = permInfo.desc.replaceAll("\"", "");
+				if(permInfo.description != null) permInfo.description = permInfo.description.replaceAll("\"", "");
 			}
 		}
 		//Log.i(permInfo.permission + ", " + permInfo.permGroup + ", " + permInfo.label + ", " + permInfo.desc);
@@ -139,11 +145,11 @@ public class PermissionGroupManager
 	public PermissionGroup getPermissionGroup(String group)
 	{
 		PermissionGroup permGroup = new PermissionGroup();
-		permGroup.permGroup = group;
+		permGroup.name = group;
 		permGroup.permList = new ArrayList<PermissionInfo>();
 
 		if(xmlPermissions != null) {
-			MyXPath groupXPath = xmlPermissions.getNode("/permissions/permission-group[@name='" +  group + "']");
+			MyXPath groupXPath = xmlPermissions.getNode("/manifest/permission-group[@name='" +  group + "']");
 			if(groupXPath != null) {
 				permGroup.icon = getIconPath(groupXPath.getAttributes("android:icon"));
 				permGroup.label = getInfoString(groupXPath.getAttributes("android:label"));
@@ -155,7 +161,7 @@ public class PermissionGroupManager
 		if(permGroup.label != null) {
 			permGroup.permSummary = "[" + permGroup.label + "] : " + permGroup.desc;
 		} else {
-			permGroup.permSummary = "[" + permGroup.permGroup + "]";
+			permGroup.permSummary = "[" + permGroup.name + "]";
 		}
 		
 		//Log.i(permGroup.icon + ", " + permGroup.permGroup + ", " + permGroup.label + ", " + permGroup.desc);

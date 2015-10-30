@@ -98,6 +98,8 @@ public enum Resource
 	STR_FEATURE_PLATFORM_SIGN_DESC(Type.TEXT, "@feature_platform_sign_desc"),
 	STR_FEATURE_SAMSUNG_SIGN_LAB  (Type.TEXT, "@feature_samsung_sign_lab"),
 	STR_FEATURE_SAMSUNG_SIGN_DESC (Type.TEXT, "@feature_samsung_sign_desc"),
+	STR_FEATURE_REVOKE_PERM_LAB	(Type.TEXT, "@feature_revoke_permissions_lab"),
+	STR_FEATURE_REVOKE_PERM_DESC(Type.TEXT, "@feature_revoke_permissions_desc"),
 	STR_FEATURE_DEBUGGABLE_LAB  (Type.TEXT, "@feature_debuggable_lab"),
 	STR_FEATURE_DEBUGGABLE_DESC (Type.TEXT, "@feature_debuggable_desc"),
 
