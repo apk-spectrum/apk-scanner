@@ -60,9 +60,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
  
 public class PackageTreeDlg extends JPanel
-                      implements TreeSelectionListener, ActionListener{
+                      implements TreeSelectionListener, ActionListener, WindowListener{
 	private static final long serialVersionUID = 813267847663868531L;
 	
 	public static final int CANCEL_OPTION = 1;
@@ -78,13 +79,13 @@ public class PackageTreeDlg extends JPanel
     private JPanel ListPanel;
     private JButton refreshbtn;
     private JFrame parentframe;
-    static private JDialog dialog;
+    private JDialog dialog;
     static private int result;
     private String selDevice;
     private String selPackage;
     private String selApkPath;
     private String tmpApkPath;
-    private static JTextField textFilField;
+    private JTextField textFilField;
     private FilteredTreeModel filteredModel;
     
 	public class FrameworkTableObject {
@@ -762,7 +763,7 @@ public class PackageTreeDlg extends JPanel
      * this method should be invoked from the
      * event dispatch thread.
      */
-    private static void createAndShowGUI(Component component)
+    private void createAndShowGUI(Component component)
     {
     	final PackageTreeDlg ptg = new PackageTreeDlg();
     	
@@ -794,12 +795,8 @@ public class PackageTreeDlg extends JPanel
         //Add content to the window.
     	dialog.add(ptg);
  
-        dialog.addWindowListener( new WindowAdapter() {
-      	   public void windowOpened( WindowEvent e ){
-      		   textFilField.requestFocus();
-      	     }
-      	   } );
-    	
+        dialog.addWindowListener(this); 
+
         //Display the window.
     	dialog.pack();
     	dialog.setBounds(100, 100, 600, 400);
@@ -850,11 +847,7 @@ public class PackageTreeDlg extends JPanel
         //Add content to the window.
     	dialog.add(this);
  
-        dialog.addWindowListener( new WindowAdapter() {
-     	   public void windowOpened( WindowEvent e ){
-     		   textFilField.requestFocus();
-     	     }
-     	   } );
+        dialog.addWindowListener( this);
          
     	//dialog.setResizable( false );
     	//dialog.setLocationRelativeTo(null);
@@ -871,18 +864,6 @@ public class PackageTreeDlg extends JPanel
     	dialog.dispose();
     	
     	return result;
-    }
-    
-    public static void main(String[] args)
-    {
-        //Schedule a job for the event dispatch thread:
-        //creating and showing this application's GUI.
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                createAndShowGUI(null);
-                System.exit(0);
-            }
-        });
     }
 
     private void OpenPackage()
@@ -1096,5 +1077,26 @@ public class PackageTreeDlg extends JPanel
 			TableColumn column = table.getColumnModel().getColumn(i);
 			column.setPreferredWidth((int)(tablePreferredWidth * (percentages[i] / total)));
 		}
-	}	
+	}
+	@Override
+	public void windowOpened(WindowEvent e) {		
+		textFilField.requestFocus();
+	}
+	@Override
+	public void windowClosing(WindowEvent e) {
+		selDevice = null;
+		selPackage = null;
+		selApkPath = null;
+		result = CANCEL_OPTION;
+	}
+	@Override
+	public void windowClosed(WindowEvent e) {}
+	@Override
+	public void windowIconified(WindowEvent e) {}
+	@Override
+	public void windowDeiconified(WindowEvent e) {}
+	@Override
+	public void windowActivated(WindowEvent e) {}
+	@Override
+	public void windowDeactivated(WindowEvent e) {}
 }
