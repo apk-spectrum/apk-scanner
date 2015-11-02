@@ -15,6 +15,7 @@ import javax.swing.table.*;
 import javax.swing.ImageIcon;
 
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 
 public final class InstallCheckTable extends JPanel {
   private final WorkerModel model = new WorkerModel();
@@ -45,7 +46,7 @@ public final class InstallCheckTable extends JPanel {
       add(scrollPane);
       setPreferredSize(new Dimension(170, 240));
       
-      setJTableColumnsWidth(table,170,5,25,20);
+      setJTableColumnsWidth(table,170,7,25,20);
   }
   	public void addTableModel(String name, String t, InstallDlg.CHECKLIST_MODE mode) {
   		model.addValue(name, t, mode);
@@ -74,18 +75,6 @@ public final class InstallCheckTable extends JPanel {
 				column.setPreferredWidth((int)(tablePreferredWidth * (percentages[i] / total)));
 			}
 }
-
-  class ProgressValueCreateAction extends AbstractAction {
-      public ProgressValueCreateAction(String label) {
-          super(label);
-      }
-      @Override public void actionPerformed(ActionEvent e) {
-
-          model.addValue("aaaa", "bbbb", InstallDlg.CHECKLIST_MODE.DONE);
-          //executor.execute(worker);
-          setImageObserver(table);
-      }
-  }
 
   public static void main(String... args) {
       EventQueue.invokeLater(new Runnable() {
@@ -161,6 +150,8 @@ class WorkerModel extends DefaultTableModel {
   private int number;
   public void addValue(String name, String t, InstallDlg.CHECKLIST_MODE mode) {
 	  
+	  Log.d("TESTTEST : " + number + "row count : " + super.getRowCount() + "name : " + name);
+	  
 	  if(mode == InstallDlg.CHECKLIST_MODE.ADD) {
 		  Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_DONE.getImageIcon().getImage()), t};
 		  super.addRow(obj);
@@ -168,17 +159,19 @@ class WorkerModel extends DefaultTableModel {
 	  } else if(mode == InstallDlg.CHECKLIST_MODE.WATING) {
 		  Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_WAIT.getImageIcon().getImage()), t};
 		  super.addRow(obj);
+		  number++;
 	  }	else if(mode == InstallDlg.CHECKLIST_MODE.DONE) {		  
 		  Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_DONE.getImageIcon().getImage()), t};
-		  super.removeRow(number);
+		  super.removeRow(super.getRowCount()-1);
 		  super.addRow(obj);
 		  number++;
 	  } else if(mode == InstallDlg.CHECKLIST_MODE.QEUESTION) {
 		  Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_QUESTION.getImageIcon().getImage()), t};
 		  super.addRow(obj);
+		  number++;
 	  } else if(mode == InstallDlg.CHECKLIST_MODE.ERROR) {
 		  Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_ERROR.getImageIcon().getImage()), t};
-		  super.removeRow(number);
+		  super.removeRow(super.getRowCount()-1);
 		  super.addRow(obj);
 		  number++;
 	  }
