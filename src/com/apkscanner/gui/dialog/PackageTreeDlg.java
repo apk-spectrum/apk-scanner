@@ -76,8 +76,8 @@ public class PackageTreeDlg extends JPanel
     private JCheckBox checkboxUseframework;
     
     private JPanel ListPanel;
-    private StandardButton refreshbtn;
-    
+    private JButton refreshbtn;
+    private JFrame parentframe;
     static private JDialog dialog;
     static private int result;
     private String selDevice;
@@ -620,9 +620,9 @@ public class PackageTreeDlg extends JPanel
             }
         });
         
-        StandardButton openbtn = new StandardButton(Resource.STR_BTN_OPEN.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);		
-        refreshbtn = new StandardButton(Resource.STR_BTN_REFRESH.getString()+" (F5)",Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
-        StandardButton exitbtn = new StandardButton(Resource.STR_BTN_CANCEL.getString(),Theme.GRADIENT_LIGHTBLUE_THEME,ButtonType.BUTTON_ROUNDED);
+        JButton openbtn = new JButton(Resource.STR_BTN_OPEN.getString());		
+        refreshbtn = new JButton(Resource.STR_BTN_REFRESH.getString());
+        JButton exitbtn = new JButton(Resource.STR_BTN_CANCEL.getString());
 
         openbtn.addActionListener(this);
         refreshbtn.addActionListener(this);
@@ -818,7 +818,8 @@ public class PackageTreeDlg extends JPanel
         selDevice = null;
         selPackage = null;
         selApkPath = null;
-
+        parentframe = (JFrame) component;
+        
         //Create and set up the window.
     	dialog = new JDialog(new JFrame(), Resource.STR_TREE_OPEN_PACKAGE.getString(), true);
     	dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -981,7 +982,7 @@ public class PackageTreeDlg extends JPanel
 			saveFileName = apkPath.replaceAll(".*/", "");
 		}
 
-		File destFile = ApkFileChooser.saveApkFile(this, saveFileName);
+		File destFile = ApkFileChooser.saveApkFile(this.parentframe, saveFileName);
 		if(destFile == null) return;
 		
 		AdbWrapper.PullApk(device, apkPath, destFile.getAbsolutePath(), null);

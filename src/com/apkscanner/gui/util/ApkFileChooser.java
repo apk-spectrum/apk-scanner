@@ -9,6 +9,7 @@ import java.io.FilenameFilter;
 import javax.swing.JFileChooser;
 
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 
 public class ApkFileChooser
 {
@@ -20,8 +21,17 @@ public class ApkFileChooser
 //		jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(Resource.STR_LABEL_APK_FILE_DESC.getString(),"apk"));
 //		jfc.setSelectedFile(defaultFile);
 		
-		FileDialog jfc = new FileDialog((Frame) component, "탐색기", FileDialog.LOAD);
+		FileDialog jfc = new FileDialog((Frame) component, "탐색기", type);
+				
+		jfc.setLocationRelativeTo(component);
+		jfc.setDirectory(openPath);
+		if(defaultFile != null)jfc.setFile(defaultFile.getName());
+		//Log.d(Resource.STR_LABEL_APK_FILE_DESC.getString());
 		
+		//jfc.setFilenameFilter(new File(Resource.STR_LABEL_APK_FILE_DESC.getString()), "*.apk");
+		
+		
+		//jfc.setFilenameFilter(filter);
 		jfc.setFilenameFilter(new FilenameFilter(){
             @Override
             public boolean accept(File dir, String name) {
@@ -34,15 +44,18 @@ public class ApkFileChooser
 	
 	static public File openApkFile(Component component)
 	{
-		FileDialog jfc = getFileChooser(component, (String)Resource.PROP_LAST_FILE_OPEN_PATH.getData(""), JFileChooser.OPEN_DIALOG, null);
+		FileDialog jfc = getFileChooser(component, (String)Resource.PROP_LAST_FILE_OPEN_PATH.getData(""), FileDialog.LOAD, null);
 
 		//if(jfc.showOpenDialog(component) != JFileChooser.APPROVE_OPTION)
 		//	return null;
 		jfc.setVisible(true);
 		
+		if(jfc.getFiles().length == 0) {
+			return null;
+		}
 		
 		File dir = jfc.getFiles()[0];
-		if(dir != null) {
+		if(dir != null ) {
 			Resource.PROP_LAST_FILE_OPEN_PATH.setData(dir.getParentFile().getAbsolutePath());
 		}
 		return dir;
@@ -57,17 +70,21 @@ public class ApkFileChooser
 	
 	static public File saveApkFile(Component component, String defaultFilePath)
 	{
-//		JFileChooser jfc = getFileChooser((String)Resource.PROP_LAST_FILE_SAVE_PATH.getData(""), JFileChooser.SAVE_DIALOG, new File(defaultFilePath));
-//
-//		if(jfc.showSaveDialog(component) != JFileChooser.APPROVE_OPTION)
-//			return null;
-//
-//		File dir = jfc.getSelectedFile();
-//		if(dir != null) {
-//			Resource.PROP_LAST_FILE_SAVE_PATH.setData(dir.getParentFile().getAbsolutePath());
-//		}
-//		return dir;
-		return null;
+		FileDialog jfc = getFileChooser(component, (String)Resource.PROP_LAST_FILE_SAVE_PATH.getData(""), FileDialog.SAVE, new File(defaultFilePath));
+
+		jfc.setVisible(true);
+		
+		if(jfc.getFiles().length == 0) {
+			return null;
+		}
+		
+		File dir = jfc.getFiles()[0];
+		
+		if(dir != null) {
+			Resource.PROP_LAST_FILE_SAVE_PATH.setData(dir.getParentFile().getAbsolutePath());
+		}
+		return dir;
+
 	}
 	
 	static public String saveApkFilePath(Component component, String defaultFilePath)
