@@ -152,4 +152,10 @@
     <string name="question_push_or_install">교체 또는 설치?</string>
     <string name="question_open_or_install">열기 또는 설치?</string>
     
+    
+    <string name="tree_message_device">디바이스</string>
+    <string name="tree_message_version">앱 버전</string>
+    <string name="tree_message_root">루트</string>
+    <string name="tree_message_reboot">재부팅</string>
+       
 </resources>

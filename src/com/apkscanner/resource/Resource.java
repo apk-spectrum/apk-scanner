@@ -161,6 +161,13 @@ public enum Resource
 	STR_LABEL_PATH				(Type.TEXT, "@label_path"),
 	STR_LABEL_USES_RESOURCE		(Type.TEXT, "@label_uses_resource"),
 	
+	
+	STR_TREE_MESSAGE_DEVICE 		(Type.TEXT, "@tree_message_device"),
+	STR_TREE_MESSAGE_VERSION 		(Type.TEXT, "@tree_message_version"),
+	STR_TREE_MESSAGE_ROOT 		(Type.TEXT, "@tree_message_root"),
+	STR_TREE_MESSAGE_REBOOT 		(Type.TEXT, "@tree_message_reboot"),
+	
+	
 	STR_MSG_FAILURE_OPEN_APK	(Type.TEXT, "@msg_failure_open_apk"),
 	STR_MSG_DEVICE_NOT_FOUND	(Type.TEXT, "@msg_device_not_found"),
 	STR_MSG_ALREADY_INSTALLED	(Type.TEXT, "@msg_already_installed"),
@@ -170,7 +177,7 @@ public enum Resource
 	STR_MSG_DEVICE_UNAUTHORIZED	(Type.TEXT, "@msg_device_unauthorized"),
 	STR_MSG_DEVICE_UNKNOWN		(Type.TEXT, "@msg_device_unknown"),
 	STR_MSG_DEVICE_HAS_NOT_ROOT	(Type.TEXT, "@msg_cannot_run_root"),
-
+	
 	STR_QUESTION_REBOOT_DEVICE	(Type.TEXT, "@question_reboot_device"),
 	STR_QUESTION_CONTINUE_INSTALL(Type.TEXT, "@question_continue_install"),
 	STR_QUESTION_OPEN_OR_INSTALL(Type.TEXT, "@question_open_or_install"),

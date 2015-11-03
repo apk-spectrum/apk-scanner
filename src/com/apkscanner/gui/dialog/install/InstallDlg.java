@@ -203,8 +203,7 @@ public class InstallDlg extends JDialog implements ActionListener,WindowListener
             MessageBox.add(AboutPanel);
             dlg.pack();
             dlg.repaint();
-		}
-		
+		}		
 	}
 	
 	@Override

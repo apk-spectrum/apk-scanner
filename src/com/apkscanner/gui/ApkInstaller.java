@@ -158,11 +158,11 @@ public class ApkInstaller
 					final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
 					InstallDlgListener.AddCheckList("Push", "Success" , InstallDlg.CHECKLIST_MODE.DONE);
 					
-					InstallDlgListener.AddCheckList("Reboot", "-" , InstallDlg.CHECKLIST_MODE.QEUESTION);
+					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_REBOOT.getString(), "-" , InstallDlg.CHECKLIST_MODE.QEUESTION);
 					int reboot = ShowQuestion(t, Resource.STR_MSG_SUCCESS_INSTALLED.getString() + "\n" + Resource.STR_QUESTION_REBOOT_DEVICE.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.YES_NO_OPTION, 
 							JOptionPane.QUESTION_MESSAGE, QuestionAppicon, yesNoOptions, yesNoOptions[1]);
 					
-					InstallDlgListener.AddCheckList("Reboot", (reboot==0)?"true":"false" , InstallDlg.CHECKLIST_MODE.DONE);
+					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_REBOOT.getString(), (reboot==0)?"true":"false" , InstallDlg.CHECKLIST_MODE.DONE);
 					
 					if(reboot == 0){
 						printlnLog("Wait for reboot...");
@@ -242,10 +242,10 @@ public class ApkInstaller
 
 				
 				do {
-					InstallDlgListener.AddCheckList("Device", "-", InstallDlg.CHECKLIST_MODE.WATING);
+					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString(), "-", InstallDlg.CHECKLIST_MODE.WATING);
 					printlnLog("scan devices...");
 					DeviceList = AdbWrapper.scanDevices();
-					InstallDlgListener.AddCheckList("Device", "-", InstallDlg.CHECKLIST_MODE.DONE);
+					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString(), "-", InstallDlg.CHECKLIST_MODE.DONE);
 					
 					if(DeviceList.size() == 0) {
 						printlnLog("Device not found!\nplease check device");
@@ -273,9 +273,9 @@ public class ApkInstaller
 					//int selectedValue = DeviceListDialog.showDialog();
 					//Log.i("Seltected index : " + selectedValue);
 					
-					InstallDlgListener.AddCheckList("Device List", "-", InstallDlg.CHECKLIST_MODE.QEUESTION);
+					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString() + "List", "-", InstallDlg.CHECKLIST_MODE.QEUESTION);
 					int selectedValue = showDeviceList(this);
-					InstallDlgListener.AddCheckList("Device List", "-", InstallDlg.CHECKLIST_MODE.DONE);
+					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString() + "List", "-", InstallDlg.CHECKLIST_MODE.DONE);
 					
 					if(selectedValue == -1) {
 						Listener.SetInstallButtonStatus(true);
@@ -293,9 +293,9 @@ public class ApkInstaller
 				PackageInfo pkgInfo = AdbWrapper.getPackageInfo(dev.name, strPackageName);
 				
 				if(pkgInfo==null) {
-					InstallDlgListener.AddCheckList("Version", "not install", InstallDlg.CHECKLIST_MODE.ADD);
+					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_VERSION.getString(), "not install", InstallDlg.CHECKLIST_MODE.ADD);
 				} else {
-					InstallDlgListener.AddCheckList("Version", pkgInfo.versionName + "/"+pkgInfo.versionCode , InstallDlg.CHECKLIST_MODE.ADD);
+					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_VERSION.getString(), pkgInfo.versionName + "/"+pkgInfo.versionCode , InstallDlg.CHECKLIST_MODE.ADD);
 				}
 				
 				if(checkPackage) {
@@ -307,7 +307,7 @@ public class ApkInstaller
 							isDeletePossible = false;
 						}
 						
-						InstallDlgListener.AddCheckList("Root", ""+isDeletePossible , InstallDlg.CHECKLIST_MODE.ADD);
+						InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_ROOT.getString(), ""+isDeletePossible , InstallDlg.CHECKLIST_MODE.ADD);
 						
 						
 						int n;
@@ -351,11 +351,11 @@ public class ApkInstaller
 								AdbWrapper.removeApk(dev.name, pkgInfo.codePath);
 								InstallDlgListener.AddCheckList("remove APK", "Done" , InstallDlg.CHECKLIST_MODE.DONE);
 								
-								InstallDlgListener.AddCheckList("Reboot", "-" , InstallDlg.CHECKLIST_MODE.QEUESTION);
+								InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_REBOOT.getString(), "-" , InstallDlg.CHECKLIST_MODE.QEUESTION);
 								final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
 								int reboot = ShowQuestion(this, Resource.STR_QUESTION_REBOOT_DEVICE.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.YES_NO_OPTION, 
 										JOptionPane.QUESTION_MESSAGE, Appicon, yesNoOptions, yesNoOptions[1]);
-								InstallDlgListener.AddCheckList("Reboot", (reboot==0)?"true":"false" , InstallDlg.CHECKLIST_MODE.DONE);
+								InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_REBOOT.getString(), (reboot==0)?"true":"false" , InstallDlg.CHECKLIST_MODE.DONE);
 								if(reboot == 0){
 									printlnLog("Wait for reboot...");									
 									AdbWrapper.reboot(dev.name);
@@ -392,7 +392,7 @@ public class ApkInstaller
 						if(AdbWrapper.hasRootPermission(dev.name) == true) {
 							printlnLog("adbd is running as root");
 							String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
-							if(!checkPackage)InstallDlgListener.AddCheckList("Root", "root" , InstallDlg.CHECKLIST_MODE.ADD);
+							if(!checkPackage)InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_ROOT.getString(), "root" , InstallDlg.CHECKLIST_MODE.ADD);
 							
 							InstallDlgListener.AddCheckList("" + options[0] +"/"+ options[1], "-" , InstallDlg.CHECKLIST_MODE.QEUESTION);
 							int n = ShowQuestion(this, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_PUSH_OR_INSTALL.getString(),

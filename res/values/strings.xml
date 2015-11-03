@@ -150,4 +150,9 @@ Please check device.</string>
     <string name="question_push_or_install">Push or Install?</string>
     <string name="question_open_or_install">Open or Install?</string>
     
+    <string name="tree_message_device">Device</string>
+    <string name="tree_message_version">App Version</string>
+    <string name="tree_message_root">Root</string>
+    <string name="tree_message_reboot">Reboot</string>
+    
 </resources>
