@@ -35,7 +35,7 @@ public final class InstallCheckTable extends JPanel {
 
       table.setTableHeader(null);
       table.setEnabled(false);
-
+      
       table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
       
       //column.setResizable(false);
@@ -46,7 +46,7 @@ public final class InstallCheckTable extends JPanel {
       add(scrollPane);
       setPreferredSize(new Dimension(170, 240));
       
-      setJTableColumnsWidth(table,170,7,25,20);
+      setJTableColumnsWidth(table,170,30,20);
   }
   	public void addTableModel(String name, String t, InstallDlg.CHECKLIST_MODE mode) {
   		model.addValue(name, t, mode);
@@ -76,14 +76,7 @@ public final class InstallCheckTable extends JPanel {
 			}
 }
 
-  public static void main(String... args) {
-      EventQueue.invokeLater(new Runnable() {
-          @Override public void run() {
-              createAndShowGUI();
-          }
-      });
-  }
-  public static void createAndShowGUI() {
+  public void createAndShowGUI() {
       try {
           UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
       } catch (ClassNotFoundException | InstantiationException
@@ -141,36 +134,37 @@ public final class InstallCheckTable extends JPanel {
 
 class WorkerModel extends DefaultTableModel {
   private static final ColumnContext[] COLUMN_ARRAY = {
-      new ColumnContext("No.",      Integer.class, false),
+      
       new ColumnContext("Name", String.class, false),
       new ColumnContext("Progress",     ImageIcon.class,  false)//,
       //new ColumnContext("Result", String.class, false)
   };
-  private final ConcurrentMap<Integer, SwingWorker> swmap = new ConcurrentHashMap<>();
+  
   private int number;
   public void addValue(String name, String t, InstallDlg.CHECKLIST_MODE mode) {
 	  
 	  Log.d("TESTTEST : " + number + "row count : " + super.getRowCount() + "name : " + name);
 	  
 	  if(mode == InstallDlg.CHECKLIST_MODE.ADD) {
-		  Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_DONE.getImageIcon().getImage()), t};
+		  Object[] obj = {name, new ImageIcon(Resource.IMG_INSTALL_TABLE_DONE.getImageIcon().getImage()), t};
 		  super.addRow(obj);
 		  number++;
 	  } else if(mode == InstallDlg.CHECKLIST_MODE.WATING) {
-		  Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_WAIT.getImageIcon().getImage()), t};
+		  Object[] obj = {name, new ImageIcon(Resource.IMG_INSTALL_TABLE_WAIT.getImageIcon().getImage()), t};
 		  super.addRow(obj);
+		  
 		  number++;
 	  }	else if(mode == InstallDlg.CHECKLIST_MODE.DONE) {		  
-		  Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_DONE.getImageIcon().getImage()), t};
+		  Object[] obj = {name, new ImageIcon(Resource.IMG_INSTALL_TABLE_DONE.getImageIcon().getImage()), t};
 		  super.removeRow(super.getRowCount()-1);
 		  super.addRow(obj);
 		  number++;
 	  } else if(mode == InstallDlg.CHECKLIST_MODE.QEUESTION) {
-		  Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_QUESTION.getImageIcon().getImage()), t};
+		  Object[] obj = {name, new ImageIcon(Resource.IMG_INSTALL_TABLE_QUESTION.getImageIcon().getImage()), t};
 		  super.addRow(obj);
 		  number++;
 	  } else if(mode == InstallDlg.CHECKLIST_MODE.ERROR) {
-		  Object[] obj = {number, name, new ImageIcon(Resource.IMG_INSTALL_TABLE_ERROR.getImageIcon().getImage()), t};
+		  Object[] obj = {name, new ImageIcon(Resource.IMG_INSTALL_TABLE_ERROR.getImageIcon().getImage()), t};
 		  super.removeRow(super.getRowCount()-1);
 		  super.addRow(obj);
 		  number++;
