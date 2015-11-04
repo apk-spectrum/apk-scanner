@@ -28,6 +28,7 @@ import com.apkscanner.apkinfo.ReceiverInfo;
 import com.apkscanner.apkinfo.ServiceInfo;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 
 public class Activity extends JPanel implements TabDataObject
 {
@@ -61,13 +62,10 @@ public class Activity extends JPanel implements TabDataObject
 		          //c.setForeground(getSelectionForeground());
 		          c.setBackground(Color.GRAY);
 		        }else{
-					if("activity".equals((String) ActivityList.get(row)[1])) {
-						String tempstr = (String)ActivityList.get(row)[0];
-						if(tempstr.indexOf("LAUNCHER") != -1) {
-							temp = new Color(0x5D9657);
-						} else {
-							temp = new Color(0xB7F0B1);						
-						}
+					if("activity".equals((String) ActivityList.get(row)[1]) || "main".equals((String) ActivityList.get(row)[1])) {
+						temp = new Color(0xB7F0B1);
+					} else if("launcher".equals((String) ActivityList.get(row)[1])) {
+						temp = new Color(0x5D9657);
 					} else if("service".equals((String) ActivityList.get(row)[1])) {
 						temp = new Color(0xB2CCFF);
 					} else if("receiver".equals((String) ActivityList.get(row)[1])) {
@@ -87,12 +85,13 @@ public class Activity extends JPanel implements TabDataObject
 			public void valueChanged(ListSelectionEvent e) {
 				if(ActivityList == null) return;
 				if(table.getSelectedRow() > -1) {
-					textArea.setText((String) ActivityList.get(table.getSelectedRow())[3]);
+					textArea.setText((String) ActivityList.get(table.getSelectedRow())[6]);
+					textArea.setCaretPosition(0);
 				}
 			}
 		});
 	
-		setJTableColumnsWidth(table, 500, 80,10,10);
+		setJTableColumnsWidth(table, 500, 62, 10, 7, 7, 7, 7);
 		//Create the scroll pane and add the table to it.
 		JScrollPane scrollPane = new JScrollPane(table);
 
@@ -121,7 +120,7 @@ public class Activity extends JPanel implements TabDataObject
         Dimension minimumSize = new Dimension(100, 50);
         scrollPane.setMinimumSize(minimumSize);
         IntentPanel.setMinimumSize(minimumSize);
-        splitPane.setDividerLocation(300);
+        splitPane.setDividerLocation(200);
         //splitPane.setPreferredSize(new Dimension(500, 500));
         
         
@@ -137,31 +136,59 @@ public class Activity extends JPanel implements TabDataObject
 		
 		if(apkInfo.manifest.application.activity != null) {
 			for(ActivityInfo info: apkInfo.manifest.application.activity) {
-				String startUp = (info.featureFlag & ActivityInfo.ACTIVITY_FEATURE_STARTUP) != 0 ? "O" : "X";
-				ActivityList.add(new Object[] {info.name, "activity", startUp, ""} );
+				String type = null;
+				if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0 && (info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
+					type = "launcher";
+				} else if((info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
+					type = "main";
+				} else if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
+					Log.w("set launcher flag, but not main");
+					type = "activity";
+				} else {
+					type = "activity";
+				}
+				String startUp = (info.featureFlag & ApkInfo.APP_FEATURE_STARTUP) != 0 ? "O" : "X";
+				String enabled = (info.enabled == null) || info.enabled ? "O" : "X";
+				String exported = (info.exported == null) || info.exported ? "O" : "X";
+				String permission = info.permission != null ? "O" : "X"; 
+				ActivityList.add(new Object[] {info.name, type, enabled, exported, permission, startUp, info.getReport()});
 			}
 		}
 		if(apkInfo.manifest.application.activityAlias != null) {
 			for(ActivityAliasInfo info: apkInfo.manifest.application.activityAlias) {
-				ActivityList.add(new Object[] {info.name, "activity-alias", "X", ""} );
+				String startUp = (info.featureFlag & ApkInfo.APP_FEATURE_STARTUP) != 0 ? "O" : "X";
+				String enabled = (info.enabled == null) || info.enabled ? "O" : "X";
+				String exported = (info.exported == null) || info.exported ? "O" : "X";
+				String permission = info.permission != null ? "O" : "X"; 
+				ActivityList.add(new Object[] {info.name, "activity-alias", enabled, exported, permission, startUp, info.getReport()});
 			}
 		}
 		if(apkInfo.manifest.application.service != null) {
 			for(ServiceInfo info: apkInfo.manifest.application.service) {
-				//String startUp = (info.featureFlag & ActivityInfo.ACTIVITY_FEATURE_STARTUP) != 0 ? "O" : "X";
-				ActivityList.add(new Object[] {info.name, "service", "X", ""} );
-			}
-		}
-		if(apkInfo.manifest.application.provider != null) {
-			for(ProviderInfo info: apkInfo.manifest.application.provider) {
-				//String startUp = (info.featureFlag & ActivityInfo.ACTIVITY_FEATURE_STARTUP) != 0 ? "O" : "X";
-				ActivityList.add(new Object[] {info.name, "provider", "X", ""} );
+				String startUp = (info.featureFlag & ApkInfo.APP_FEATURE_STARTUP) != 0 ? "O" : "X";
+				String enabled = (info.enabled == null) || info.enabled ? "O" : "X";
+				String exported = (info.exported == null) || info.exported ? "O" : "X";
+				String permission = info.permission != null ? "O" : "X"; 
+				ActivityList.add(new Object[] {info.name, "service", enabled, exported, permission, startUp, info.getReport()});
 			}
 		}
 		if(apkInfo.manifest.application.receiver != null) {
 			for(ReceiverInfo info: apkInfo.manifest.application.receiver) {
+				String startUp = (info.featureFlag & ApkInfo.APP_FEATURE_STARTUP) != 0 ? "O" : "X";
+				String enabled = (info.enabled == null) || info.enabled ? "O" : "X";
+				String exported = (info.exported == null) || info.exported ? "O" : "X";
+				String permission = info.permission != null ? "O" : "X"; 
+				ActivityList.add(new Object[] {info.name, "receiver", enabled, exported, permission, startUp, info.getReport()});
+			}
+		}
+		if(apkInfo.manifest.application.provider != null) {
+			for(ProviderInfo info: apkInfo.manifest.application.provider) {
+				String startUp = "X";
+				String enabled = (info.enabled == null) || info.enabled ? "O" : "X";
+				String exported = (info.exported == null) || info.exported ? "O" : "X";
+				String permission = info.permission != null ? "O" : "X"; 
+				ActivityList.add(new Object[] {info.name, "receiver", enabled, exported, permission, startUp, info.getReport()});
 				//String startUp = (info.featureFlag & ActivityInfo.ACTIVITY_FEATURE_STARTUP) != 0 ? "O" : "X";
-				ActivityList.add(new Object[] {info.name, "receiver", "X", ""} );
 			}
 		}
 		
@@ -175,7 +202,7 @@ public class Activity extends JPanel implements TabDataObject
 		if(TableModel == null) return;
 		TableModel.loadResource();
 		TableModel.fireTableStructureChanged();
-		setJTableColumnsWidth(table, 500, 80,10,10);
+		setJTableColumnsWidth(table, 500, 62, 10, 7, 7, 7, 7);
 		IntentLabel.setText(Resource.STR_ACTIVITY_LABEL_INTENT.getString());
 	}
 
@@ -207,6 +234,9 @@ public class Activity extends JPanel implements TabDataObject
 			columnNames = new String[] {
 				Resource.STR_ACTIVITY_COLUME_CLASS.getString(),
 				Resource.STR_ACTIVITY_COLUME_TYPE.getString(),
+				Resource.STR_ACTIVITY_COLUME_ENABLED.getString(),
+				Resource.STR_ACTIVITY_COLUME_EXPORT.getString(),
+				Resource.STR_ACTIVITY_COLUME_PERMISSION.getString(),
 				Resource.STR_ACTIVITY_COLUME_STARTUP.getString()
 			};
 		}

@@ -72,8 +72,9 @@
     <string name="feature_platform_sign_desc">플랫폼 서명이 포함 되어 있습니다.</string>
     <string name="feature_samsung_sign_lab">삼성 서명</string>
     <string name="feature_samsung_sign_desc">삼성 서명이 포함 되어 있습니다.</string>
-    <string name="feature_revoke_permissions_lab">퍼미션 거부</string>
-    <string name="feature_revoke_permissions_desc">플랫폼 서명이 필요하거나 시스템(priv-app)에 설치되어야 사용가능한 권한을 사용하고 있습니다.</string>
+    <string name="feature_revoke_permissions_lab">권한 경고</string>
+    <string name="feature_revoke_permissions_desc">플랫폼 서명이 필요하거나 시스템(priv-app)에 설치 되어야 사용 가능한 권한을 사용하고 있습니다.
+※ 단, pre23 레벨 포함시 SDK23 이전 버전에서는 자동 승인됩니다.</string>
     <string name="feature_debuggable_lab">디버깅모드</string>
     <string name="feature_debuggable_desc">어플리케이션 디버깅모드가 허용 되어 있습니다.
 ※ 버전 발행시 제거 되어야 합니다.</string>
@@ -99,6 +100,9 @@
     <string name="activity_column_class">클래스</string>
     <string name="activity_column_type">종류</string>
     <string name="activity_column_startup">스타트업</string>
+    <string name="activity_column_enabled">상태</string>
+    <string name="activity_column_export">외부공개</string>
+    <string name="activity_column_permission">권한</string>
     <string name="activity_type_activity">액티비티</string>
     <string name="activity_type_service">서비스</string>
     <string name="activity_type_receiver">리시버</string>

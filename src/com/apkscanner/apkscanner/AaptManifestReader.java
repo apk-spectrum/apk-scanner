@@ -7,6 +7,7 @@ import java.util.Collections;
 import com.apkscanner.apkinfo.ActionInfo;
 import com.apkscanner.apkinfo.ActivityAliasInfo;
 import com.apkscanner.apkinfo.ActivityInfo;
+import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.apkinfo.CategoryInfo;
 import com.apkscanner.apkinfo.DataInfo;
 import com.apkscanner.apkinfo.IntentFilterInfo;
@@ -121,8 +122,21 @@ public class AaptManifestReader
 		}
 
         // display to launchur
-        if(manifestPath.getNode("/manifest/application/activity/intent-filter/category[@"+namespace+"name='android.intent.category.LAUNCHER']") != null) {
-        	manifestInfo.featureFlags |= ManifestInfo.MANIFEST_FEATURE_LAUNCHUR;
+		AaptXmlTreeNode[] launchers = manifestPath.getNodeList("/manifest/application/activity/intent-filter/category[@"+namespace+"name='android.intent.category.LAUNCHER']");
+        if(launchers != null) {
+        	for(AaptXmlTreeNode node: launchers) {
+        		AaptXmlTreeNode[] actionNode = node.getParent().getNodeList("action");
+        		if(actionNode != null) {
+        			for(AaptXmlTreeNode action: actionNode) {
+        				if("android.intent.action.MAIN".equals(getAttrValue(action, "name"))) {
+        		        	manifestInfo.featureFlags |= ManifestInfo.MANIFEST_FEATURE_LAUNCHUR;
+        		        	break;
+        				}
+        			}
+        		}
+        		if((manifestInfo.featureFlags & ManifestInfo.MANIFEST_FEATURE_LAUNCHUR) != 0)
+        			break;
+        	}
         }
 
         // startup
@@ -347,7 +361,7 @@ public class AaptManifestReader
 		ArrayList<ActionInfo> list = new ArrayList<ActionInfo>();
 		for(AaptXmlTreeNode node: actionNodeList) {
 			ActionInfo info = new ActionInfo();
-			info.name = node.getAttribute("name");
+			info.name = getAttrValue(node, "name");
 			list.add(info);
 		}
 		return list.toArray(new ActionInfo[0]);
@@ -360,7 +374,7 @@ public class AaptManifestReader
 		ArrayList<CategoryInfo> list = new ArrayList<CategoryInfo>();
 		for(AaptXmlTreeNode node: categoryNodeList) {
 			CategoryInfo info = new CategoryInfo();
-			info.name = node.getAttribute("name");
+			info.name = getAttrValue(node, "name");
 			list.add(info);
 		}
 		return list.toArray(new CategoryInfo[0]);
@@ -373,9 +387,9 @@ public class AaptManifestReader
 		ArrayList<MetaDataInfo> list = new ArrayList<MetaDataInfo>();
 		for(AaptXmlTreeNode node: metaDataNodeList) {
 			MetaDataInfo info = new MetaDataInfo();
-			info.name = node.getAttribute("name");
+			info.name = getAttrValue(node, "name");
 			info.resources = getAttrResourceValues(node, "resource");
-			info.value = node.getAttribute("value");
+			info.value = getAttrValue(node, "value");
 			list.add(info);
 		}
 		return list.toArray(new MetaDataInfo[0]);
@@ -388,13 +402,13 @@ public class AaptManifestReader
 		ArrayList<DataInfo> list = new ArrayList<DataInfo>();
 		for(AaptXmlTreeNode node: dataNodeList) {
 			DataInfo info = new DataInfo();
-			info.scheme = node.getAttribute("scheme");
-			info.host = node.getAttribute("scheme");
-			info.port = node.getAttribute("port");
-			info.path = node.getAttribute("path");
-			info.pathPattern = node.getAttribute("pathPattern");
-			info.pathPrefix = node.getAttribute("pathPrefix");
-			info.mimeType = node.getAttribute("mimeType");
+			info.scheme = getAttrValue(node, "scheme");
+			info.host = getAttrValue(node, "host");
+			info.port = getAttrValue(node, "port");
+			info.path = getAttrValue(node, "path");
+			info.pathPattern = getAttrValue(node, "pathPattern");
+			info.pathPrefix = getAttrValue(node, "pathPrefix");
+			info.mimeType = getAttrValue(node, "mimeType");
 			list.add(info);
 		}
 		return list.toArray(new DataInfo[0]);
@@ -413,6 +427,36 @@ public class AaptManifestReader
 			intentList.add(intentFilter); 
 		}
 		return intentList.toArray(new IntentFilterInfo[0]);
+	}
+	
+	private Integer checkIntentFlag(IntentFilterInfo[] intentFilterInfo)
+	{
+		Integer featureFlag = 0;
+    	if(intentFilterInfo == null) return featureFlag;
+
+    	for(IntentFilterInfo intent: intentFilterInfo) {
+    		if(intent.ation != null 
+    				&& (featureFlag & (ApkInfo.APP_FEATURE_MAIN | ApkInfo.APP_FEATURE_STARTUP)) 
+    					!= (ApkInfo.APP_FEATURE_MAIN | ApkInfo.APP_FEATURE_STARTUP)) {
+        		for(ActionInfo action: intent.ation) {
+    				if("android.intent.action.BOOT_COMPLETED".equals(action.name)) {
+    					featureFlag |= ApkInfo.APP_FEATURE_STARTUP;
+    				} else if("android.intent.action.MAIN".equals(action.name)) {
+    					featureFlag |= ApkInfo.APP_FEATURE_MAIN;
+    				}
+        		}
+    		}
+    		if(intent.category != null
+    				&& (featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != ApkInfo.APP_FEATURE_LAUNCHER) {
+    			for(CategoryInfo category: intent.category) {
+    				if("android.intent.category.LAUNCHER".equals(category.name)) {
+    					featureFlag |= ApkInfo.APP_FEATURE_LAUNCHER;
+    				}
+    			}
+    		}
+    	}
+		
+		return featureFlag;
 	}
 	
 	public void readActivityInfo()
@@ -438,32 +482,13 @@ public class AaptManifestReader
         	info.intentFilter = getIntentFilterInfo(activityTag[idx].getNodeList("intent-filter"));
         	info.metaData = getMetaDataInfo(activityTag[idx].getNodeList("meta-data"));
         	
-        	// Set feature flag of activity
-        	if(info.intentFilter != null) {
-	        	for(IntentFilterInfo intent: info.intentFilter) {
-	        		if(intent.ation != null 
-	        				&& (info.featureFlag & ActivityInfo.ACTIVITY_FEATURE_MAIN & ActivityInfo.ACTIVITY_FEATURE_STARTUP) 
-	        					!= (ActivityInfo.ACTIVITY_FEATURE_MAIN & ActivityInfo.ACTIVITY_FEATURE_STARTUP)) {
-		        		for(ActionInfo action: intent.ation) {
-		    				if("android.intent.action.BOOT_COMPLETED".equals(action.name)) {
-		    					info.featureFlag |= ActivityInfo.ACTIVITY_FEATURE_STARTUP;
-		    				} else if("android.intent.action.MAIN".equals(action.name)) {
-		    					info.featureFlag |= ActivityInfo.ACTIVITY_FEATURE_MAIN;
-		    				}
-		        		}
-	        		}
-	        		if(intent.category != null
-	        				&& (info.featureFlag & ActivityInfo.ACTIVITY_FEATURE_LAUNCHUR) != ActivityInfo.ACTIVITY_FEATURE_LAUNCHUR) {
-	        			for(CategoryInfo category: intent.category) {
-	        				if("android.intent.category.LAUNCHER".equals(category.name)) {
-	        					info.featureFlag |= ActivityInfo.ACTIVITY_FEATURE_LAUNCHUR;
-	        				}
-	        			}
-	        		}
-	        	}
-        	}
+        	info.featureFlag |= checkIntentFlag(info.intentFilter);
         	
-        	activityList.add(info);
+        	if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
+        		activityList.add(0, info);
+        	} else {
+        		activityList.add(info);	
+        	}
         }
 
         manifestInfo.application.activity = activityList.toArray(new ActivityInfo[0]);
@@ -494,6 +519,8 @@ public class AaptManifestReader
         	
         	info.intentFilter = getIntentFilterInfo(activityTag[idx].getNodeList("intent-filter"));
         	info.metaData = getMetaDataInfo(activityTag[idx].getNodeList("meta-data"));
+        	
+        	info.featureFlag |= checkIntentFlag(info.intentFilter);
         	
         	list.add(info);
         }
@@ -528,6 +555,8 @@ public class AaptManifestReader
         	
         	info.intentFilter = getIntentFilterInfo(activityTag[idx].getNodeList("intent-filter"));
         	info.metaData = getMetaDataInfo(activityTag[idx].getNodeList("meta-data"));
+
+        	info.featureFlag |= checkIntentFlag(info.intentFilter);
         	
         	list.add(info);
         }
@@ -560,6 +589,8 @@ public class AaptManifestReader
         	
         	info.intentFilter = getIntentFilterInfo(activityTag[idx].getNodeList("intent-filter"));
         	info.metaData = getMetaDataInfo(activityTag[idx].getNodeList("meta-data"));
+        	
+        	info.featureFlag |= checkIntentFlag(info.intentFilter);
         	
         	list.add(info);
         }

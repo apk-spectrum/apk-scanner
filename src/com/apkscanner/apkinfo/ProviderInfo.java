@@ -20,4 +20,17 @@ public class ProviderInfo
 	public MetaDataInfo[] metaData = null;
 	public GrantUriPermissionInfo[] grantUriPermission = null;
 	public PathPermissionInfo[] pathPermission = null;
+	
+	public Integer featureFlag = 0;
+	
+	public String getReport()
+	{
+		StringBuilder report = new StringBuilder();
+		report.append("name : " + name + "\n");
+		if(enabled != null) report.append("enabled : " + enabled + "\n");
+		if(exported != null) report.append("exported : " + exported + "\n");
+		if(permission != null) report.append("permission : " + permission + "\n");
+		
+		return report.toString();
+	}
 }
