@@ -19,10 +19,50 @@ import com.apkscanner.util.Log;
 
 public final class InstallCheckTable extends JPanel {
   private final WorkerModel model = new WorkerModel();
-  private final JTable table = new JTable(model);
+  private final JTable table;
   private final transient TableRowSorter<? extends TableModel> sorter = new TableRowSorter<>(model);
   public InstallCheckTable() {
       super(new BorderLayout());
+      
+      
+      ToolTipManager.sharedInstance().setReshowDelay(0);
+      table = new JTable(model) {
+          
+         //Implement table cell tool tips.
+         public String getToolTipText(MouseEvent e) {
+             String tip = null;
+             java.awt.Point p = e.getPoint();
+             int rowIndex = rowAtPoint(p);
+             int colIndex = columnAtPoint(p);
+             int realColumnIndex = convertColumnIndexToModel(colIndex);
+
+             if (realColumnIndex == 0) { //Sport column
+                 tip = "This person's favorite sport to "
+                        + "participate in is: "
+                        + getValueAt(rowIndex, colIndex);
+             } else {
+                 //You can omit this part if you know you don't
+                 //have any renderers that supply their own tool
+                 //tips.
+                 tip = super.getToolTipText(e);
+             }
+             return tip;
+         }
+
+         //Implement table header tool tips.
+         protected JTableHeader createDefaultTableHeader() {
+             return new JTableHeader(columnModel) {
+                 public String getToolTipText(MouseEvent e) {
+                     String tip = null;
+                     java.awt.Point p = e.getPoint();
+                     int index = columnModel.getColumnIndexAtX(p.x);
+                     int realIndex = columnModel.getColumn(index).getModelIndex();
+                     return "aaaaaaaaaaa";
+                 }
+             };
+         }
+     };
+      
       table.setRowSorter(sorter);
 
       JScrollPane scrollPane = new JScrollPane(table);
@@ -138,6 +178,9 @@ class WorkerModel extends DefaultTableModel {
       new ColumnContext("Name", String.class, false),
       new ColumnContext("Progress",     ImageIcon.class,  false)//,
       //new ColumnContext("Result", String.class, false)
+      
+      
+      
   };
   
   private int number;

@@ -275,9 +275,9 @@ public class ApkInstaller
 					//int selectedValue = DeviceListDialog.showDialog();
 					//Log.i("Seltected index : " + selectedValue);
 					
-					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString() + "List", "-", InstallDlg.CHECKLIST_MODE.QEUESTION);
+					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString() + " List", "-", InstallDlg.CHECKLIST_MODE.QEUESTION);
 					int selectedValue = showDeviceList(this);
-					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString() + "List", "-", InstallDlg.CHECKLIST_MODE.DONE);
+					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString() + " List", "-", InstallDlg.CHECKLIST_MODE.DONE);
 					
 					if(selectedValue == -1) {
 						Listener.SetInstallButtonStatus(true);
