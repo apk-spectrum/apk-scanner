@@ -4,7 +4,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.JTabbedPane;
 
-import com.apkscanner.data.ApkInfo;
+import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.gui.tabpanels.Activity;
 import com.apkscanner.gui.tabpanels.Library;
 import com.apkscanner.gui.tabpanels.ImageResource;
@@ -104,13 +104,20 @@ public class TabbedPanel extends JTabbedPane
 				((TabDataObject)(getComponent(0))).setData(apkInfo);
 				setSelectedIndex(0);
 			}
-			if(id == -1 || id == 1) setPanelData(1, apkInfo.WidgetList.size(), apkInfo);
-			if(id == -1 || id == 2) setPanelData(2, apkInfo.LibList.size(), apkInfo);
-			if(id == -1 || id == 4) setPanelData(4, apkInfo.ActivityList.size(), apkInfo);
-			if(id == -1 || id == 5) setPanelData(5, apkInfo.CertList.size(), apkInfo);
+			if(id == -1 || id == 1) setPanelData(1, apkInfo.widgets.length, apkInfo);
+			if(id == -1 || id == 2) setPanelData(2, apkInfo.librarys.length, apkInfo);
+			if(id == -1 || id == 4) {
+				int cnt = apkInfo.manifest.application.activity.length;
+				cnt += apkInfo.manifest.application.activityAlias.length;
+				cnt += apkInfo.manifest.application.receiver.length;
+				cnt += apkInfo.manifest.application.service.length;
+				cnt += apkInfo.manifest.application.provider.length;
+				setPanelData(4, cnt, apkInfo);
+			}
+			if(id == -1 || id == 5) setPanelData(5, apkInfo.certificates.length, apkInfo);
 
 	        //if(apkInfo != null) MainUI.ProgressBarDlg.addProgress(25,"check resource(*.png)...\n");
-			if(id == -1 || id == 3) setPanelData(3, apkInfo.ImageList.size(), apkInfo);
+			if(id == -1 || id == 3) setPanelData(3, apkInfo.images.length, apkInfo);
 		} else {
 			for(int i = 1; i < 6; i++) {
 				if(id == -1 || id == i) setPanelData(i, 0, null);

@@ -10,9 +10,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JList;
 
-
-
-
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 /**
@@ -21,12 +18,11 @@ import java.awt.event.ComponentListener;
  */
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.apkscanner.data.ApkInfo;
+import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.resource.Resource;
 
@@ -39,7 +35,7 @@ public class Signature extends JPanel implements ComponentListener, TabDataObjec
 	JTextArea textArea;
 	
 	String mCertSummary = null;
-	ArrayList<String> mCertList = null;
+	String[] mCertList = null;
 	
     public Signature() {
         //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -80,13 +76,13 @@ public class Signature extends JPanel implements ComponentListener, TabDataObjec
           public void valueChanged(ListSelectionEvent listSelectionEvent) {
         	  if(mCertList == null) return;
         	  if(jlist.getSelectedIndex() > -1) {
-        		  if(mCertList.size() > 1) {
+        		  if(mCertList.length > 1) {
         			  if(jlist.getSelectedIndex() >= 1)
-        				  textArea.setText(mCertList.get(jlist.getSelectedIndex()-1));
+        				  textArea.setText(mCertList[jlist.getSelectedIndex()-1]);
         			  else 
         				  textArea.setText(mCertSummary);
         		  } else {
-        			  textArea.setText(mCertList.get(jlist.getSelectedIndex()));
+        			  textArea.setText(mCertList[jlist.getSelectedIndex()]);
         		  }
 	              textArea.setCaretPosition(0);
         	  }
@@ -116,9 +112,14 @@ public class Signature extends JPanel implements ComponentListener, TabDataObjec
     {
     	if(jlist == null)
     		initialize();
-    	
-    	mCertSummary = apkInfo.CertSummary;
-    	mCertList = apkInfo.CertList;
+
+		mCertSummary = "";
+		for(String sign: apkInfo.certificates) {
+			String[] line = sign.split("\n");
+			mCertSummary += line[0] + "\n" + line[1] + "\n" + line[2] + "\n\n";
+		}
+
+    	mCertList = apkInfo.certificates;
     	reloadResource();
         jlist.setSelectedIndex(0);
     }
@@ -130,7 +131,7 @@ public class Signature extends JPanel implements ComponentListener, TabDataObjec
     	
     	jlist.removeAll();
     	if(mCertList == null) return;
-    	int listSize = mCertList.size();
+    	int listSize = mCertList.length;
     	String[] labels;
     	if(listSize > 1) {
     		listSize++;

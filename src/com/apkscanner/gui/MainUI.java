@@ -21,10 +21,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import com.apkscanner.Launcher;
-import com.apkscanner.core.AaptToolManager;
-import com.apkscanner.core.ApkScannerStub;
-import com.apkscanner.core.ApkScannerStub.Status;
-import com.apkscanner.data.ApkInfo;
+import com.apkscanner.apkinfo.ApkInfo;
+import com.apkscanner.apkscanner.AaptScanner;
+import com.apkscanner.apkscanner.ApkScannerStub;
+import com.apkscanner.apkscanner.ApkScannerStub.Status;
 import com.apkscanner.gui.ApkInstaller.InstallButtonStatusListener;
 import com.apkscanner.gui.ToolBar.ButtonSet;
 import com.apkscanner.gui.dialog.AboutDlg;
@@ -59,7 +59,7 @@ public class MainUI extends JFrame
 			{
 				initialize(false);
 				tabbedPanel.setData(null);
-				apkScanner = new AaptToolManager(new ApkScannerListener());
+				apkScanner = new AaptScanner(new ApkScannerListener());
 			}
 		}).start();
 	}
@@ -96,7 +96,7 @@ public class MainUI extends JFrame
 		new Thread(new Runnable() {
 			public void run()
 			{
-				apkScanner = new AaptToolManager(new ApkScannerListener());
+				apkScanner = new AaptScanner(new ApkScannerListener());
 				apkScanner.openApk(apkFilePath);
 			}
 		}).start();
@@ -134,7 +134,7 @@ public class MainUI extends JFrame
 		new Thread(new Runnable() {
 			public void run()
 			{
-				apkScanner = new AaptToolManager(new ApkScannerListener());
+				apkScanner = new AaptScanner(new ApkScannerListener());
 				apkScanner.openPackage(devSerialNumber, packageName, resources);
 			}
 		}).start();
@@ -266,15 +266,15 @@ public class MainUI extends JFrame
 			}
 			switch(status) {
 			case BASIC_INFO_COMPLETED:
-				String apkFilePath = apkScanner.getApkInfo().ApkPath;
+				String apkFilePath = apkScanner.getApkInfo().filePath;
 				String title = apkFilePath.substring(apkFilePath.lastIndexOf(File.separator)+1) + " - " + Resource.STR_APP_NAME.getString();
 				setTitle(title);
 				
-				if(apkScanner.getApkInfo().PermGroupMap.keySet().size() > 30) {
-					setSize(new Dimension(650, 530));
-				} else {
+				//if(apkScanner.getApkInfo().PermGroupMap.keySet().size() > 30) {
+				//	setSize(new Dimension(650, 530));
+				//} else {
 					setSize(new Dimension(650, 490));
-				}
+				//}
 
 				Log.i(status + " ui sync start");
 				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, true);
@@ -322,7 +322,9 @@ public class MainUI extends JFrame
 				Log.v("Not choose apk file");
 				return;
 			}
-
+			if(tabbedPanel != null) {
+				tabbedPanel.setLodingLabel();
+			}
 			if(!newWindow) {
 				apkScanner.clear(false);
 				apkScanner.openApk(apkFilePath);
@@ -344,7 +346,10 @@ public class MainUI extends JFrame
 			final String frameworkRes = Dlg.getSelectedFrameworkRes();
 
 			if(!newWindow) {
-				if(tabbedPanel != null) tabbedPanel.setTimeLeft(-1);
+				if(tabbedPanel != null) {
+					tabbedPanel.setTimeLeft(-1);
+					tabbedPanel.setLodingLabel();
+				}
 				if(toolBar != null) {
 					toolBar.setEnabledAt(ButtonSet.OPEN, false);
 					toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
@@ -370,8 +375,8 @@ public class MainUI extends JFrame
 			}
 
 			toolBar.setEnabledAt(ButtonSet.INSTALL, false);
-			String libPath = apkInfo.WorkTempPath + File.separator + "lib" + File.separator;
-			new ApkInstaller(false, apkInfo.PackageName, apkInfo.ApkPath, libPath , 
+			String libPath = apkInfo.tempWorkPath + File.separator + "lib" + File.separator;
+			new ApkInstaller(false, apkInfo.manifest.packageName, apkInfo.filePath, libPath , 
 					(boolean)Resource.PROP_CHECK_INSTALLED.getData(false), checkPackage, new InstallButtonStatusListener() {
 				@Override
 				public void SetInstallButtonStatus(Boolean Flag) {
@@ -403,7 +408,7 @@ public class MainUI extends JFrame
 			}
 			
 			try {
-				String manifestPath = apkInfo.WorkTempPath + File.separator + "AndroidManifest.xml";
+				String manifestPath = apkInfo.tempWorkPath + File.separator + "AndroidManifest.xml";
 				File manifestFile = new File(manifestPath); 
 				if(!manifestFile.exists()) {
 					if(!manifestFile.getParentFile().exists()) {
@@ -413,7 +418,7 @@ public class MainUI extends JFrame
 					}
 					FileWriter fw = new FileWriter(new File(manifestPath));
 					
-					fw.write(((AaptToolManager)apkScanner).makeAndroidManifestXml());
+					fw.write(((AaptScanner)apkScanner).makeAndroidManifestXml());
 					fw.close();
 				}
 				new ProcessBuilder(editor, manifestPath).start();
@@ -430,9 +435,9 @@ public class MainUI extends JFrame
 			}
 			try {
 				if(System.getProperty("os.name").indexOf("Window") >-1) {
-					new ProcessBuilder("explorer", apkInfo.ApkPath).start();
+					new ProcessBuilder("explorer", apkInfo.filePath).start();
 				} else {  //for linux
-					new ProcessBuilder("file-roller", apkInfo.ApkPath).start();
+					new ProcessBuilder("file-roller", apkInfo.filePath).start();
 				}
 			} catch (IOException e1) {
 				e1.printStackTrace();
@@ -456,7 +461,7 @@ public class MainUI extends JFrame
 			Resource.setLanguage(lang);
 			String title = Resource.STR_APP_NAME.getString();
 			if(apkInfo != null) {
-				title += " - " + apkInfo.ApkPath.substring(apkInfo.ApkPath.lastIndexOf(File.separator)+1);
+				title += " - " + apkInfo.filePath.substring(apkInfo.filePath.lastIndexOf(File.separator)+1);
 			}
 			setTitle(title);
 			toolBar.reloadResource();

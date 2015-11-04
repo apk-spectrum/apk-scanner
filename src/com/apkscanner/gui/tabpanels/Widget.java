@@ -16,7 +16,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import com.apkscanner.data.ApkInfo;
+import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.resource.Resource;
@@ -60,13 +60,13 @@ public class Widget extends JPanel implements TabDataObject
 	{
 		//table.setPreferredScrollableViewportSize(new Dimension(500, 70));
 		arrWidgets.clear();
-		if(apkInfo.WidgetList == null) return;
+		if(apkInfo.widgets == null) return;
 		if(TableModel == null) initialize();
 
-		for(int i=0; i< apkInfo.WidgetList.size(); i++) {
+		for(int i=0; i< apkInfo.widgets.length; i++) {
 			ImageIcon myimageicon = null;
 			try {
-				myimageicon = new ImageIcon(new URL((String)apkInfo.WidgetList.get(i)[0]));
+				myimageicon = new ImageIcon(new URL((String)apkInfo.widgets[i].icons[apkInfo.widgets[i].icons.length-1].name));
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			}
@@ -74,7 +74,7 @@ public class Widget extends JPanel implements TabDataObject
 				myimageicon.setImage(ImageScaler.getMaxScaledImage(myimageicon,100,100));
 			}
 			
-			Object[] temp = { myimageicon , apkInfo.WidgetList.get(i)[1], apkInfo.WidgetList.get(i)[2], apkInfo.WidgetList.get(i)[3], apkInfo.WidgetList.get(i)[4]};
+			Object[] temp = { myimageicon , apkInfo.widgets[i].lables[0].name, apkInfo.widgets[i].size, apkInfo.widgets[i].name, apkInfo.widgets[i].type};
 			arrWidgets.add(temp);
 		}
 

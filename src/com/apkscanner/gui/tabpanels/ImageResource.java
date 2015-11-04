@@ -1,6 +1,5 @@
 package com.apkscanner.gui.tabpanels;
 
-
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -19,12 +18,10 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.apkscanner.data.ApkInfo;
+import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.resource.Resource;
-
-import java.util.ArrayList;
 
 public class ImageResource extends JPanel implements TabDataObject
 {
@@ -33,7 +30,7 @@ public class ImageResource extends JPanel implements TabDataObject
 	private Map<String, ImageIcon> imageMap = new HashMap<>();
     
 	private JLabel photographLabel;
-	ArrayList<String> nameList = new ArrayList<String>();
+	private String[] nameList = null;
 	private String apkFilePath = null;
 	
 	JList<Object> list = null;
@@ -71,18 +68,17 @@ public class ImageResource extends JPanel implements TabDataObject
 		if(list == null)
 			initialize();
 		
-		nameList.clear();
 		imageMap.clear();
 		list.clearSelection();
 		
-		this.apkFilePath = apkInfo.ApkPath; 
+		this.apkFilePath = apkInfo.filePath; 
 		
-		if(apkInfo.ImageList == null) return;
+		if(apkInfo.images == null) return;
 		
-		nameList.addAll(apkInfo.ImageList);
+		nameList = apkInfo.images;
 		createImageMap(nameList);
 		
-		list.setListData(nameList.toArray());
+		list.setListData(nameList);
 	}
     
 	public class MarioListRenderer extends DefaultListCellRenderer {
@@ -103,15 +99,15 @@ public class ImageResource extends JPanel implements TabDataObject
         }
     }
 
-	private Map<String, ImageIcon> createImageMap(ArrayList<String> list) {
+	private Map<String, ImageIcon> createImageMap(String[] list) {
 		//Map<String, ImageIcon> map = new HashMap<>();
 		String jarPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/";
 		try {        	
-			for(int i=0; i< list.size(); i++) {
-				if(list.get(i).endsWith(".qmg")) {
-					imageMap.put(list.get(i), new ImageIcon(ImageScaler.getScaledImage(Resource.IMG_QMG_IMAGE_ICON.getImageIcon(),32,32)));
+			for(int i=0; i< list.length; i++) {
+				if(list[i].endsWith(".qmg")) {
+					imageMap.put(list[i], new ImageIcon(ImageScaler.getScaledImage(Resource.IMG_QMG_IMAGE_ICON.getImageIcon(),32,32)));
 				} else {
-					imageMap.put(list.get(i), new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(new URL(jarPath+list.get(i))),32,32)));
+					imageMap.put(list[i], new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(new URL(jarPath+list[i])),32,32)));
 				}
 			}
 		} catch (Exception ex) {
@@ -128,7 +124,7 @@ public class ImageResource extends JPanel implements TabDataObject
     		//Log.i("valueChanged : " + list.getSelectedIndex() + " event : "+ event.getSource());
     		if(list.getSelectedIndex() < 0)
     			return;
-    		String imgPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/" + nameList.get(list.getSelectedIndex());
+    		String imgPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/" + nameList[list.getSelectedIndex()];
     		if(imgPath.endsWith(".qmg")) {
     			imgPath = Resource.IMG_QMG_IMAGE_ICON.getPath();
     		}

@@ -8,9 +8,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import com.apkscanner.apkscanner.ApktoolManager;
 import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.core.AdbWrapper;
-import com.apkscanner.core.ApktoolManager;
 import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.resource.Resource;

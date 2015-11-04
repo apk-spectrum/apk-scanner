@@ -3,56 +3,14 @@ package com.apkscanner.core;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.apkscanner.apkinfo.PermissionGroup;
+import com.apkscanner.apkinfo.PermissionInfo;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.MyXPath;
 
 public class PermissionGroupManager
 {
-	public class PermissionInfo
-	{
-		public String name;
-		public String icon;
-		public String label;
-		public String description;
-		public String group;
-		public String protectionLevel;
-		
-		public boolean isDangerousLevel()
-		{
-			return (protectionLevel != null && protectionLevel.indexOf("dangerous") > -1) ? true : false;
-		}
-		
-		public boolean isSignatureLevel()
-		{
-			return (protectionLevel != null
-					&& protectionLevel.indexOf("signature") > -1 && protectionLevel.indexOf("ystem") == -1 && protectionLevel.indexOf("privileged") == -1) ? true : false;
-		}
-		
-		public boolean isSignatureOrSystemLevel()
-		{
-			return (protectionLevel != null
-					&& protectionLevel.indexOf("signature") > -1 && (protectionLevel.indexOf("ystem") > -1 || protectionLevel.indexOf("privileged") > -1)) ? true : false;
-		}
-
-		public boolean isSystemLevel()
-		{
-			return (protectionLevel != null && protectionLevel.indexOf("signature") == -1
-					&& (protectionLevel.indexOf("ystem") > -1 || protectionLevel.indexOf("privileged") > -1)) ? true : false;
-		}
-	}
-	
-	public class PermissionGroup
-	{
-		public String name;
-		public String label;
-		public String desc;
-		public String icon;
-		public String permSummary;
-		public ArrayList<PermissionInfo> permList; 
-		public boolean hasDangerous;
-	}
-	
 	private HashMap<String, PermissionGroup> permGroupMap;
 
 	public boolean hasSignatureLevel = false;
@@ -63,7 +21,7 @@ public class PermissionGroupManager
 	private MyXPath xmlPermInfoDefault;
 	private MyXPath xmlPermInfoLang;
 	
-	public PermissionGroupManager(String[] permList)
+	public PermissionGroupManager(PermissionInfo[] permList)
 	{
 		String lang = Resource.getLanguage();
 		
@@ -86,20 +44,19 @@ public class PermissionGroupManager
 		return permGroupMap;
 	}
 	
-	public void setData(String[] permList)
+	public void setData(PermissionInfo[] permList)
 	{
 		if(permList == null) return;
-		for(String perm: permList) {
-			PermissionInfo permInfo = getPermissionInfo(perm);
-			if(permInfo.group != null) {
-				PermissionGroup g = permGroupMap.get(permInfo.group);
+		for(PermissionInfo permInfo: permList) {
+			if(permInfo.permissionGroup != null) {
+				PermissionGroup g = permGroupMap.get(permInfo.permissionGroup);
 				if(g == null) {
-					g = getPermissionGroup(permInfo.group);
-					permGroupMap.put(permInfo.group, g);
+					g = getPermissionGroup(permInfo.permissionGroup);
+					permGroupMap.put(permInfo.permissionGroup, g);
 				}
 				g.permList.add(permInfo);
-				if(permInfo.label != null) {
-					g.permSummary += "\n - " + permInfo.label;
+				if(permInfo.labels != null) {
+					g.permSummary += "\n - " + permInfo.labels;
 				}
 				if(permInfo.isDangerousLevel()) {
 					g.hasDangerous = true;
@@ -118,28 +75,6 @@ public class PermissionGroupManager
 				}
 			}
 		}
-	}
-	
-	public PermissionInfo getPermissionInfo(String name)
-	{
-		PermissionInfo permInfo = new PermissionInfo();
-		permInfo.name = name;
-
-		if(xmlPermissions != null) {
-			MyXPath permXPath = xmlPermissions.getNode("/manifest/permission[@name='" + name + "']");
-			if(permXPath != null) {
-				permInfo.group = permXPath.getAttributes("android:permissionGroup");
-				permInfo.label = getInfoString(permXPath.getAttributes("android:label"));
-				permInfo.description = getInfoString(permXPath.getAttributes("android:description"));
-				permInfo.protectionLevel = permXPath.getAttributes("android:protectionLevel");
-				if(permInfo.group == null) permInfo.group = "Unspecified group";
-				if(permInfo.protectionLevel == null) permInfo.protectionLevel = "normal";
-				if(permInfo.label != null) permInfo.label = permInfo.label.replaceAll("\"", "");
-				if(permInfo.description != null) permInfo.description = permInfo.description.replaceAll("\"", "");
-			}
-		}
-		//Log.i(permInfo.permission + ", " + permInfo.permGroup + ", " + permInfo.label + ", " + permInfo.desc);
-		return permInfo;
 	}
 	
 	public PermissionGroup getPermissionGroup(String group)

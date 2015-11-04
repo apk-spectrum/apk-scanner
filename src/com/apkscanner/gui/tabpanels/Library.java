@@ -10,7 +10,7 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
-import com.apkscanner.data.ApkInfo;
+import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.FileUtil.FSStyle;
@@ -57,8 +57,8 @@ public class Library extends JPanel implements TabDataObject
 	{
 		if(mMyTableModel == null)
 			initialize();
-		apkFilePath = apkInfo.ApkPath;
-		mMyTableModel.setData(apkInfo.LibList);
+		apkFilePath = apkInfo.filePath;
+		mMyTableModel.setData(apkInfo.librarys);
 	}
 	
 	@Override
@@ -95,16 +95,16 @@ public class Library extends JPanel implements TabDataObject
 			loadResource();
 		}
 				
-		public void setData(ArrayList<String> libList)
+		public void setData(String[] libList)
 		{
 			data.clear();
 			if(libList == null) return;
 
-			for(int i=0; i< libList.size(); i++) {
+			for(int i=0; i< libList.length; i++) {
 				Object[] temp = { 
 						i+1,
-						libList.get(i), 
-						ZipFileUtil.getFileSize(apkFilePath, libList.get(i), FSStyle.FULL)
+						libList[i], 
+						ZipFileUtil.getFileSize(apkFilePath, libList[i], FSStyle.FULL)
 				};
 				data.add(temp);
 			}

@@ -11,9 +11,9 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import com.apkscanner.apkscanner.ApktoolManager;
 import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.core.AdbWrapper;
-import com.apkscanner.core.ApktoolManager;
 import com.apkscanner.gui.ApkInstaller;
 import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.ApkInstaller.InstallButtonStatusListener;

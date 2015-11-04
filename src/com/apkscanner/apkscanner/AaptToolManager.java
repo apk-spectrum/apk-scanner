@@ -1,25 +1,23 @@
-package com.apkscanner.core;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-
-import com.apkscanner.Launcher;
-import com.apkscanner.data.AaptXmlTreeNode;
-import com.apkscanner.data.AaptXmlTreePath;
-import com.apkscanner.data.ApkInfo;
-import com.apkscanner.resource.Resource;
-import com.apkscanner.util.ConsolCmd;
-import com.apkscanner.util.FileUtil;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.ZipFileUtil;
-
-import android.content.pm.PermissionInfo;
-
-import com.apkscanner.util.FileUtil.FSStyle;
+package com.apkscanner.apkscanner;
 
 public class AaptToolManager extends ApkScannerStub
 {
+
+	public AaptToolManager(StatusListener statusListener) {
+		super(statusListener);
+	}
+
+	@Override
+	public void openApk(String apkFilePath, String frameworkRes) {
+		
+	}
+
+	@Override
+	public void clear(boolean sync) {
+		
+	}
+	
+	/*
 	private AaptXmlTreePath manifestPath = null;
 	private String namespace = null;
 	private String[] androidManifest = null;
@@ -284,7 +282,7 @@ public class AaptToolManager extends ApkScannerStub
 					}
 	
 					String debuggable = getAttrValue(applicationTag, "debuggable");
-					apkInfo.debuggable = debuggable != null && debuggable.toLowerCase().equals("true");
+					apkInfo.debuggable = debuggable != null && debuggable.equals("true");
 				} else {
 					Log.w("Warring: node was not existed : /manifest/application");
 				}
@@ -795,4 +793,5 @@ public class AaptToolManager extends ApkScannerStub
 			statusListener.OnStateChanged(status);
 		}
 	}
+	*/
 }

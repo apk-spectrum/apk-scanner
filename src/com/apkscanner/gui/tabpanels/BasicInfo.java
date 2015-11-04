@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -24,17 +23,22 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
+import com.apkscanner.apkinfo.ApkInfo;
+import com.apkscanner.apkinfo.ManifestInfo;
 import com.apkscanner.core.PermissionGroupManager;
-import com.apkscanner.core.PermissionGroupManager.PermissionGroup;
-import com.apkscanner.core.PermissionGroupManager.PermissionInfo;
-import com.apkscanner.data.ApkInfo;
+import com.apkscanner.apkinfo.PermissionGroup;
+import com.apkscanner.apkinfo.PermissionInfo;
+import com.apkscanner.apkinfo.ResourceInfo;
+import com.apkscanner.apkinfo.UsesPermissionInfo;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.MyXPath;
+import com.apkscanner.util.FileUtil.FSStyle;
 
 public class BasicInfo extends JComponent implements HyperlinkClickListener, TabDataObject
 {
@@ -49,26 +53,33 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	private boolean wasSetData = false;
 	private long remainTime = 0;
 	
-	private String[] Labelname = null;
-	private String PackageName = null;
-	private String VersionName = null;
-	private String VersionCode = null;
-	private String MinSDKversion = null;
-	private String TargerSDKversion = null;
-	private String MaxSDKversion = null;
-	private boolean isHidden = false;
-	private String IconPath = null;
-	private String Permissions = null;
-	private String Startup = null;
-	private String ProtectionLevel = null;
-	private boolean debuggable = false;
-	private String SharedUserId = null;
-	private String ApkSize = null;
-	private String SignatureCN = null;
-	private String CertSummary = null;
+	private String[] labels = new String[] {""};
+	private String packageName = "";
+	private String versionName = "";
+	private String versionCode = "";
+	private String iconPath = "";
 	
-	private ArrayList<String> PermissionList = null;
-	private HashMap<String, PermissionGroup> PermGroupMap = null;
+	private Integer minSdkVersion = null;
+	private Integer targerSdkVersion = null;
+	private Integer maxSdkVersion = null;
+	
+	private boolean isHidden = false;
+	private boolean isStartup = false;
+	private boolean debuggable = false;
+	private String sharedUserId = "";
+	
+	private Long ApkSize = 0L;
+	
+	private boolean isSamsungSign = false;
+	private boolean isPlatformSign = false;
+	private String CertSummary = "";
+
+	private String allPermissionsList = "";
+	private String signaturePermissions = "";
+	private String notGrantPermmissions = "";
+	
+	private PermissionGroupManager permissionGroupManager = null; 
+
 	private boolean hasSignatureLevel = false;
 	private boolean hasSystemLevel = false;
 	private boolean hasSignatureOrSystemLevel = false;
@@ -187,52 +198,40 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	
 	private void removeData()
 	{
-		Labelname = null;
-		PackageName = null;
-		VersionName = null;
-		VersionCode = null;
-		MinSDKversion = null;
-		TargerSDKversion = null;
-		isHidden = false;
-		IconPath = null;
-		Permissions = null;
-		Startup = null;
-		ProtectionLevel = null;
-		debuggable = false;
-		SharedUserId = null;
-		ApkSize = null;
+		labels = new String[] {""};
+		packageName = "";
+		versionName = "";
+		versionCode = "";
+		iconPath = "";
+		
+		minSdkVersion = null;
+		targerSdkVersion = null;
+		maxSdkVersion = null;
 
-		PermissionList = null;
-		PermGroupMap = null;
+		isHidden = false;
+
+		isStartup = false;
+		debuggable = false;
+		sharedUserId = "";
+		ApkSize = 0L;
+		
+		isSamsungSign = false;
+		isPlatformSign = false;
+
+		allPermissionsList = "";
+		signaturePermissions = "";
+		notGrantPermmissions = "";
 
 		wasSetData = false;
 	}
 	
 	private void showProcessing()
 	{	
-//		StringBuilder strTabInfo = new StringBuilder("");
-//		strTabInfo.append("<table>");
-//		strTabInfo.append("  <tr>");
-//		strTabInfo.append("    <td width=600>");
-//		//strTabInfo.append("      <center><image src=\"" + Resource.IMG_APK_LOADING.getPath() + "\"/></center></br>");
-//		//strTabInfo.append("      <center><image src=\"" + Resource.IMG_LOADING.getPath() + "\"/></center></br>");
-//		if(remainTime > -1) {			
-//			strTabInfo.append("      <center>Remain time : "+remainTime+" sec</center>");
-//		} else {
-//			strTabInfo.append("      <center></center>");
-//		}
-//		strTabInfo.append("    </td>");
-//		strTabInfo.append("  </tr>");
-//		strTabInfo.append("</table>");
-//		strTabInfo.append("<div height=10000 width=10000></div>");
-//		apkinform.setBody(strTabInfo.toString());
-
 		if(remainTime > 0) {
 			TimerLabel.setText("Approximate time left : "+remainTime+" sec...");
 		} else {
 			TimerLabel.setText("");
 		}
-		
 	}
 	
 	public synchronized void showProcessing(long time)
@@ -252,7 +251,6 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			}
 			
 		}, 0, 1000);
-		//this.add(TimerLabel,BorderLayout.CENTER);
 	}
 
 	public synchronized void setData()
@@ -262,20 +260,20 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		cardLayout.show(this, "apkinform");
 		
 		String sdkVersion = "";
-		if(!MinSDKversion.isEmpty()) {
-			sdkVersion += makeHyperLink("@event", MinSDKversion +" (Min)", "Min SDK version", "min-sdk", null);
+		if(minSdkVersion != null) {
+			sdkVersion += makeHyperLink("@event", minSdkVersion +" (Min)", "Min SDK version", "min-sdk", null);
 		}
-		if(!TargerSDKversion.isEmpty()) {
+		if(targerSdkVersion != null) {
 			if(!sdkVersion.isEmpty()) {
 				sdkVersion += ", ";
 			}
-			sdkVersion += makeHyperLink("@event", TargerSDKversion + " (Target)", "Targer SDK version", "target-sdk", null);
+			sdkVersion += makeHyperLink("@event", targerSdkVersion + " (Target)", "Targer SDK version", "target-sdk", null);
 		}
-		if(!MaxSDKversion.isEmpty()) {
+		if(maxSdkVersion != null) {
 			if(!sdkVersion.isEmpty()) {
 				sdkVersion += ", ";
 			}
-			sdkVersion += makeHyperLink("@event", MaxSDKversion + " (Max)", "Max SDK version", "max-sdk", null);
+			sdkVersion += makeHyperLink("@event", maxSdkVersion + " (Max)", "Max SDK version", "max-sdk", null);
 		}
 		if(sdkVersion.isEmpty()) {
 			sdkVersion += "Unspecified";
@@ -287,20 +285,20 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		} else {
 			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_LAUNCHER_LAB.getString(), Resource.STR_FEATURE_LAUNCHER_DESC.getString(), "feature-launcher", null));
 		}
-		if(!Startup.isEmpty()) {
+		if(isStartup) {
 			feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_STARTUP_LAB.getString(), Resource.STR_FEATURE_STARTUP_DESC.getString(), "feature-startup", null));
 		}
-		if(!ProtectionLevel.isEmpty()) {
+		if(!signaturePermissions.isEmpty()) {
 			feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_SIGNATURE_LAB.getString(), Resource.STR_FEATURE_SIGNATURE_DESC.getString(), "feature-protection-level", null));
 		}
-		if(!SharedUserId.isEmpty() && !SharedUserId.startsWith("android.uid.system") ) {
+		if(sharedUserId != null && !sharedUserId.startsWith("android.uid.system") ) {
 			feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_SHAREDUSERID_LAB.getString(), Resource.STR_FEATURE_SHAREDUSERID_DESC.getString(), "feature-shared-user-id", null));
 		}
 
 		boolean systemSignature = false;
 		StringBuilder importantFeatures = new StringBuilder();
-		if(SharedUserId.startsWith("android.uid.system")) {
-			if(SignatureCN != null && (SignatureCN.indexOf("'Android'") > -1 || SignatureCN.indexOf("'Samsung Cert'") > -1)) {
+		if(sharedUserId != null && sharedUserId.startsWith("android.uid.system")) {
+			if(isSamsungSign || isPlatformSign) {
 				importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
 			} else {
 				importantFeatures.append(", <font style=\"color:#FF0000; font-weight:bold\">");
@@ -308,13 +306,13 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_SYSTEM_UID_LAB.getString(), Resource.STR_FEATURE_SYSTEM_UID_DESC.getString(), "feature-system-user-id", null));
 			importantFeatures.append("</font>");
 		}
-		if(SignatureCN != null && SignatureCN.indexOf("'Android'") > -1) {
+		if(isPlatformSign) {
 			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
 			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_PLATFORM_SIGN_LAB.getString(), Resource.STR_FEATURE_PLATFORM_SIGN_DESC.getString(), "feature-platform-sign", null));
 			importantFeatures.append("</font>");
 			systemSignature = true;
 		}
-		if(SignatureCN != null && SignatureCN.indexOf("'Samsung Cert'") > -1) {
+		if(isSamsungSign) {
 			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
 			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_SAMSUNG_SIGN_LAB.getString(), Resource.STR_FEATURE_SAMSUNG_SIGN_DESC.getString(), "feature-samsung-sign", null));
 			importantFeatures.append("</font>");
@@ -337,11 +335,11 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		String permGorupImg = makePermGroup();
 		
 		int infoHeight = 280;
-		if(PermGroupMap.keySet().size() > 15) infoHeight = 220;
-		else if(PermGroupMap.keySet().size() > 0) infoHeight = 260;
+		if(permissionGroupManager.getPermGroupMap().keySet().size() > 15) infoHeight = 220;
+		else if(permissionGroupManager.getPermGroupMap().keySet().size() > 0) infoHeight = 260;
 		
 		mutiLabels = "";
-		for(String s: Labelname) {
+		for(String s: labels) {
 			mutiLabels += s + "\n";
 		}
 
@@ -349,33 +347,33 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("<table>");
 		strTabInfo.append("  <tr>");
 		strTabInfo.append("    <td width=170 height=" + infoHeight + ">");
-		strTabInfo.append("      <image src=\"" + IconPath + "\" width=150 height=150 />");
+		strTabInfo.append("      <image src=\"" + iconPath + "\" width=150 height=150 />");
 		strTabInfo.append("    </td>");
 		strTabInfo.append("    <td height=" + infoHeight + ">");
 		strTabInfo.append("      <div id=\"basic-info\">");
 		strTabInfo.append("        <font style=\"font-size:20px; color:#548235; font-weight:bold\">");
-		if(Labelname.length > 1) {
-		strTabInfo.append("          " + makeHyperLink("@event", Labelname[0], mutiLabels, "other-lang", null));
+		if(labels.length > 1) {
+		strTabInfo.append("          " + makeHyperLink("@event", labels[0], mutiLabels, "other-lang", null));
 		strTabInfo.append("        </font>");
 		} else {
-		strTabInfo.append("          " + Labelname[0]);
+		strTabInfo.append("          " + labels[0]);
 		strTabInfo.append("</font><br/>");
 		}
-		if(Labelname.length > 1) {
+		if(labels.length > 1) {
 		strTabInfo.append("        <font style=\"font-size:10px;\">");
-		strTabInfo.append("          " + makeHyperLink("@event", "["+Labelname.length+"]", mutiLabels, "other-lang", null));
+		strTabInfo.append("          " + makeHyperLink("@event", "["+labels.length+"]", mutiLabels, "other-lang", null));
 		strTabInfo.append("</font><br/>");
 		}
 		strTabInfo.append("        <font style=\"font-size:15px; color:#4472C4\">");
-		strTabInfo.append("          [" + PackageName +"]");
+		strTabInfo.append("          [" + packageName +"]");
 		strTabInfo.append("</font><br/>");
 		strTabInfo.append("        <font style=\"font-size:15px; color:#ED7E31\">");
-		strTabInfo.append("          " + makeHyperLink("@event", "Ver. " + VersionName +" / " + VersionCode, "VersionName : " + VersionName + "\n" + "VersionCode : " + VersionCode, "app-version", null));
+		strTabInfo.append("          " + makeHyperLink("@event", "Ver. " + versionName +" / " + versionCode, "VersionName : " + versionName + "\n" + "VersionCode : " + versionCode, "app-version", null));
 		strTabInfo.append("        </font><br/>");
 		strTabInfo.append("        <br/>");
 		strTabInfo.append("        <font style=\"font-size:12px\">");
 		strTabInfo.append("          @SDK Ver. " + sdkVersion + "<br/>");
-		strTabInfo.append("          " + ApkSize);
+		strTabInfo.append("          " + FileUtil.getFileSize(ApkSize, FSStyle.FULL));
 		strTabInfo.append("        </font>");
 		strTabInfo.append("        <br/><br/>");
 		strTabInfo.append("        <font style=\"font-size:12px\">");
@@ -388,7 +386,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("</table>");
 		strTabInfo.append("<div id=\"perm-group\" style=\"width:480px; padding-top:5px; border-top:1px; border-left:0px; border-right:0px; border-bottom:0px; border-style:solid;\">");
 		strTabInfo.append("  <font style=\"font-size:12px;color:black;\">");
-		if(PermissionList.size() > 0) {
+		if(allPermissionsList != null && !allPermissionsList.isEmpty()) {
 		strTabInfo.append("    [" + Resource.STR_BASIC_PERMISSIONS.getString() + "] - ");
 		strTabInfo.append("    " + makeHyperLink("@event","<u>" + Resource.STR_BASIC_PERMLAB_DISPLAY.getString() + "</u>",Resource.STR_BASIC_PERMDESC_DISPLAY.getString(),"display-list", null));
 		} else {
@@ -437,30 +435,110 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		}
 		wasSetData = true;
 		
-		Labelname = apkInfo.Labelname;
-		PackageName = apkInfo.PackageName;
-		VersionName = apkInfo.VersionName;
-		VersionCode = apkInfo.VersionCode;
-		MinSDKversion = apkInfo.MinSDKversion;
-		TargerSDKversion = apkInfo.TargerSDKversion;
-		MaxSDKversion = apkInfo.MaxSDKversion;
-		isHidden = apkInfo.isHidden;
-		IconPath = apkInfo.IconPath;
-		Permissions = apkInfo.Permissions;
-		Startup = apkInfo.Startup;
-		ProtectionLevel = apkInfo.ProtectionLevel;
-		debuggable = apkInfo.debuggable;
-		SharedUserId = apkInfo.SharedUserId;
-		ApkSize = apkInfo.ApkSize;
+		if(apkInfo.manifest.application.labels != null) {
+			ArrayList<String> labels = new ArrayList<String>();
+			for(ResourceInfo r: apkInfo.manifest.application.labels) {
+				if("default".equals(r.configuration)) {
+					labels.add(r.name);
+				} else {
+					labels.add("[" + r.configuration + "] " + r.name);
+				}
+			}
+			this.labels = labels.toArray(new String[0]);
+		} else {
+			this.labels = new String[] {""}; // apkInfo.Labelname;
+		}
 
-		PermissionList = apkInfo.PermissionList;
-		PermGroupMap = apkInfo.PermGroupMap;
-		hasSignatureLevel = apkInfo.hasSignatureLevel;
-		hasSignatureOrSystemLevel = apkInfo.hasSignatureOrSystemLevel;
-		hasSystemLevel = apkInfo.hasSystemLevel;
+		if(apkInfo.manifest.packageName != null) packageName = apkInfo.manifest.packageName;
+		if(apkInfo.manifest.versionName != null) versionName = apkInfo.manifest.versionName;
+		if(apkInfo.manifest.versionCode != null) versionCode = apkInfo.manifest.versionCode.toString();
+		if(apkInfo.manifest.application.icons != null && apkInfo.manifest.application.icons.length > 0) {
+			iconPath = apkInfo.manifest.application.icons[apkInfo.manifest.application.icons.length - 1].name;
+		}
+		if(apkInfo.manifest.usesSdk.minSdkVersion != null) minSdkVersion = apkInfo.manifest.usesSdk.minSdkVersion;
+		if(apkInfo.manifest.usesSdk.targetSdkVersion != null) targerSdkVersion = apkInfo.manifest.usesSdk.targetSdkVersion;
+		if(apkInfo.manifest.usesSdk.maxSdkVersion != null) maxSdkVersion = apkInfo.manifest.usesSdk.maxSdkVersion;
 
-		SignatureCN = apkInfo.CertCN;
-		CertSummary = apkInfo.CertSummary;
+		isHidden = (apkInfo.manifest.featureFlags & ManifestInfo.MANIFEST_FEATURE_LAUNCHUR) == 0 ? true : false;
+		isStartup = (apkInfo.manifest.featureFlags & ManifestInfo.MANIFEST_FEATURE_STARTUP) != 0 ? true : false;
+		if(apkInfo.manifest.application.debuggable != null && apkInfo.manifest.application.debuggable) {
+			debuggable = true;
+		} else {
+			debuggable = false;
+		}
+		sharedUserId = apkInfo.manifest.sharedUserId;
+
+		isSamsungSign = (apkInfo.featureFlags & ApkInfo.APP_FEATURE_SAMSUNG_SIGN) != 0 ? true : false;
+		isPlatformSign = (apkInfo.featureFlags & ApkInfo.APP_FEATURE_PLATFORM_SIGN) != 0 ? true : false;
+
+		CertSummary = ""; // apkInfo.CertSummary;
+		for(String sign: apkInfo.certificates) {
+			String[] line = sign.split("\n");
+			CertSummary += line[0] + "\n" + line[1] + "\n" + line[2] + "\n\n";
+		}
+
+		ApkSize = apkInfo.fileSize;		
+		
+
+		hasSignatureLevel = false; // apkInfo.hasSignatureLevel;
+		hasSignatureOrSystemLevel = false; // apkInfo.hasSignatureOrSystemLevel;
+		hasSystemLevel = false; // apkInfo.hasSystemLevel;
+		notGrantPermmissions = "";
+		
+		StringBuilder permissionList = new StringBuilder();
+		if(apkInfo.manifest.usesPermission != null && apkInfo.manifest.usesPermission.length > 0) {
+			permissionList.append("<uses-permission> [" +  apkInfo.manifest.usesPermission.length + "]\n");
+			for(UsesPermissionInfo info: apkInfo.manifest.usesPermission) {
+				permissionList.append(info.name + " - " + info.protectionLevel);
+				if(info.isSignatureLevel()) hasSignatureLevel = true;
+				if(info.isSignatureOrSystemLevel()) hasSignatureOrSystemLevel = true;
+				if(info.isSystemLevel()) hasSystemLevel = true;
+				if(((info.isSignatureLevel() || info.isSignatureOrSystemLevel()) && !(isSamsungSign || isPlatformSign)) || info.isSystemLevel()) {
+					notGrantPermmissions += info.name + " - " + info.protectionLevel + "\n";
+				}
+				if(info.maxSdkVersion != null) {
+					permissionList.append(", maxSdkVersion : " + info.maxSdkVersion);
+				}
+				permissionList.append("\n");
+			}
+		}
+		if(apkInfo.manifest.usesPermissionSdk23 != null && apkInfo.manifest.usesPermissionSdk23.length > 0) {
+			if(permissionList.length() > 0) {
+				permissionList.append("\n");
+			}
+			permissionList.append("<uses-permission-sdk-23> [" +  apkInfo.manifest.usesPermissionSdk23.length + "]\n");
+			for(UsesPermissionInfo info: apkInfo.manifest.usesPermissionSdk23) {
+				permissionList.append(info.name + " - " + info.protectionLevel);
+				if(info.isSignatureLevel()) hasSignatureLevel = true;
+				if(info.isSignatureOrSystemLevel()) hasSignatureOrSystemLevel = true;
+				if(info.isSystemLevel()) hasSystemLevel = true;
+				if(((info.isSignatureLevel() || info.isSignatureOrSystemLevel()) && !(isSamsungSign || isPlatformSign)) || info.isSystemLevel()) {
+					notGrantPermmissions += info.name + " - " + info.protectionLevel + "\n";
+				}
+				if(info.maxSdkVersion != null) {
+					permissionList.append(", maxSdkVersion : " + info.maxSdkVersion);
+				}
+				permissionList.append("\n");
+			}
+		}
+
+		signaturePermissions = "";
+		if(apkInfo.manifest.permission != null && apkInfo.manifest.permission.length > 0) {
+			if(permissionList.length() > 0) {
+				permissionList.append("\n");
+			}
+			permissionList.append("<permission> [" +  apkInfo.manifest.permission.length + "]\n");
+			for(PermissionInfo info: apkInfo.manifest.permission) {
+				permissionList.append(info.name + " - " + info.protectionLevel + "\n");
+				if(!"normal".equals(info.protectionLevel)) {
+					signaturePermissions += info.name + " - " + info.protectionLevel + "\n";
+				}
+			}
+		}
+		allPermissionsList = permissionList.toString();
+		
+		permissionGroupManager = new PermissionGroupManager(apkInfo.manifest.usesPermission);
+
 	
 		setData();
 	}
@@ -469,13 +547,14 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	{
 		StringBuilder permGroup = new StringBuilder("");
 		
-		Set<String> keys = PermGroupMap.keySet();
+		Set<String> keys = permissionGroupManager.getPermGroupMap().keySet();
 		int cnt = 0;
 		for(String key: keys) {
-			PermissionGroup g = PermGroupMap.get(key);
+			PermissionGroup g = permissionGroupManager.getPermGroupMap().get(key);
 			permGroup.append(makeHyperLink("@event", makeImage(g.icon), g.permSummary, g.name, g.hasDangerous?"color:red;":null));
 			if(++cnt % 15 == 0) permGroup.append("<br/>");
 		}
+
 		
 		return permGroup.toString();
 	}
@@ -507,18 +586,18 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		//Log.i("hyperlinkClick() " + id);
 		if("other-lang".equals(id)) {
 			if(mutiLabels == null || mutiLabels.isEmpty()
-					|| Labelname.length == 1) return;
+					|| labels.length == 1) return;
 			try {
 				ImageIcon icon = null;
-				if(IconPath != null && (IconPath.startsWith("jar:") || IconPath.startsWith("file:"))) {
-					icon = new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(new URL(IconPath)),32,32));
+				if(iconPath != null && (iconPath.startsWith("jar:") || iconPath.startsWith("file:"))) {
+					icon = new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(new URL(iconPath)),32,32));
 				}
 				showDialog(mutiLabels, Resource.STR_LABEL_APP_NAME_LIST.getString(), new Dimension(300, 200), icon);
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			}
 		} else if("app-version".equals(id)) {
-			String ver = "VersionName : " + VersionName + "\n" + "VersionCode : " + VersionCode;
+			String ver = "versionName : " + versionName + "\n" + "versionCode : " + versionCode;
 			showDialog(ver, "App version info", new Dimension(300, 50), null);
 		} else if("display-list".equals(id)) {
 			showPermList();
@@ -570,12 +649,12 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		descPane.setEditable(false);
 		descPane.setBackground(label.getBackground());
 		*/
-		showDialog(Permissions, Resource.STR_BASIC_PERM_LIST_TITLE.getString(), new Dimension(500, 200), null);
+		showDialog(allPermissionsList, Resource.STR_BASIC_PERM_LIST_TITLE.getString(), new Dimension(500, 200), null);
 	}
 	
 	public void showPermDetailDesc(String group)
 	{
-		PermissionGroup g = PermGroupMap.get(group);
+		PermissionGroup g = permissionGroupManager.getPermGroupMap().get(group);
 		
 		if(g == null) return;
 
@@ -596,13 +675,28 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			if(info.isDangerousLevel()) {
 				body.append("[DANGEROUS] ");	
 			}
-			if(info.label != null) {
-				body.append(info.label + " ");
+			if(info.labels != null) {
+				String label = info.labels[0].name;
+				for(ResourceInfo r: info.labels) {
+					if(r.configuration != null && r.configuration.equals(Resource.getLanguage())) {
+						label = r.name;
+						break;
+					}
+				}
+				body.append(label + " ");
 			}
 			body.append("[" + info.name + "]\n");
 			body.append(" - protectionLevel=" + info.protectionLevel + "\n");
-			if(info.description != null) {
-				body.append(" : " + info.description + "\n");
+			if(info.descriptions != null) {
+				String description = info.descriptions[0].name;
+				for(ResourceInfo r: info.descriptions) {
+					if(r.configuration != null && r.configuration.equals(Resource.getLanguage())) {
+						description = r.name;
+						break;
+					}
+				}
+				if(description != null) body.append(" : " + description + "\n");
+				body.append("\n");
 			}
 		}
 		//body.append("</div>");
@@ -632,11 +726,11 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	{
 		String sdkVer = null;
 		if("min-sdk".equals(id)) {
-			sdkVer = MinSDKversion;
+			sdkVer = minSdkVersion.toString();
 		} else if("target-sdk".equals(id)) {
-			sdkVer = TargerSDKversion;
+			sdkVer = targerSdkVersion.toString();
 		} else if("max-sdk".equals(id)) {
-			sdkVer = MaxSDKversion;
+			sdkVer = maxSdkVersion.toString();
 		}
 		
 		StringBuilder info = new StringBuilder();
@@ -681,18 +775,13 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			feature = Resource.STR_FEATURE_STARTUP_DESC.getString();
 			feature += "\nandroid.permission.RECEIVE_BOOT_COMPLETED";
 		} else if("feature-protection-level".equals(id)) {
-			feature = "※ " + Resource.STR_FEATURE_SIGNATURE_DESC.getString() + "\n";
-			for(String s: Permissions.split("\n")) {
-				if(s.indexOf(" - <") > -1) {
-					feature += "\n" + s;
-				}
-			}
+			feature = "※ " + Resource.STR_FEATURE_SIGNATURE_DESC.getString() + "\n\n" + signaturePermissions;
 			size = new Dimension(500, 200);
 		} else if("feature-shared-user-id".equals(id)) {
-			feature = "sharedUserId=" + SharedUserId + "\n※ ";
+			feature = "sharedUserId=" + sharedUserId + "\n※ ";
 			feature += Resource.STR_FEATURE_SHAREDUSERID_DESC.getString();
 		} else if("feature-system-user-id".equals(id)) {
-			feature = "sharedUserId=" + SharedUserId + "\n※ ";
+			feature = "sharedUserId=" + sharedUserId + "\n※ ";
 			feature += Resource.STR_FEATURE_SYSTEM_UID_DESC.getString();
 		} else if("feature-platform-sign".equals(id)) {
 			feature = "※ " + Resource.STR_FEATURE_PLATFORM_SIGN_DESC.getString();
@@ -703,19 +792,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			feature += "\n\n" + CertSummary;
 			size = new Dimension(500, 150);
 		} else if("feature-revoke-permissions".equals(id)) {
-			StringBuilder revokePerms = new StringBuilder("※ " + Resource.STR_FEATURE_REVOKE_PERM_DESC.getString() + "\n");
-			PermissionGroupManager permManager = new PermissionGroupManager(null);
-			boolean systemSignature = false;
-			if(SignatureCN != null && (SignatureCN.indexOf("'Android'") > -1 || SignatureCN.indexOf("'Samsung Cert'") > -1)) {
-				systemSignature = true;
-			}
-			for(String name: PermissionList) {
-				PermissionInfo info = permManager.getPermissionInfo(name);
-				if(((info.isSignatureLevel() || info.isSignatureOrSystemLevel()) && !systemSignature) || info.isSystemLevel()) {
-					revokePerms.append(name + " - " + info.protectionLevel + "\n");
-				}
-			}
-
+			StringBuilder revokePerms = new StringBuilder("※ " + Resource.STR_FEATURE_REVOKE_PERM_DESC.getString() + "\n\n");
+			revokePerms.append(notGrantPermmissions);
 			feature = revokePerms.toString();
 		} else if("feature-debuggable".equals(id)) {
 			feature = Resource.STR_FEATURE_DEBUGGABLE_DESC.getString();

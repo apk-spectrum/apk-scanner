@@ -1,8 +1,10 @@
-package com.apkscanner.core;
+package com.apkscanner.apkscanner;
 
 import java.io.File;
 
-import com.apkscanner.data.ApkInfo;
+import com.apkscanner.apkinfo.ApkInfo;
+import com.apkscanner.core.AdbWrapper;
+import com.apkscanner.core.EstimatedTimeEnRoute;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
@@ -102,6 +104,6 @@ abstract public class ApkScannerStub
 	{
 		long leadTime = System.currentTimeMillis() - startTime;
 		Log.i("lead time : " + leadTime);
-		EstimatedTimeEnRoute.setRealLeadTime(apkInfo.ApkPath, leadTime);
+		EstimatedTimeEnRoute.setRealLeadTime(apkInfo.filePath, leadTime);
 	}
 }

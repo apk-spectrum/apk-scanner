@@ -20,7 +20,12 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import com.apkscanner.data.ApkInfo;
+import com.apkscanner.apkinfo.ActivityAliasInfo;
+import com.apkscanner.apkinfo.ActivityInfo;
+import com.apkscanner.apkinfo.ApkInfo;
+import com.apkscanner.apkinfo.ProviderInfo;
+import com.apkscanner.apkinfo.ReceiverInfo;
+import com.apkscanner.apkinfo.ServiceInfo;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.resource.Resource;
 
@@ -95,9 +100,6 @@ public class Activity extends JPanel implements TabDataObject
 		textArea.setEditable(false);
 		JScrollPane scrollPane2 = new JScrollPane(textArea);
 		//scrollPane2.setPreferredSize(new Dimension(300, 500));
-
-		
-		
 		
 		IntentPanel = new JPanel();
 		IntentLabel = new JLabel(Resource.STR_ACTIVITY_LABEL_INTENT.getString());
@@ -132,7 +134,38 @@ public class Activity extends JPanel implements TabDataObject
 		if(TableModel == null) 
 			initialize();
 		ActivityList.clear();
-		ActivityList.addAll(apkInfo.ActivityList);
+		
+		if(apkInfo.manifest.application.activity != null) {
+			for(ActivityInfo info: apkInfo.manifest.application.activity) {
+				String startUp = (info.featureFlag & ActivityInfo.ACTIVITY_FEATURE_STARTUP) != 0 ? "O" : "X";
+				ActivityList.add(new Object[] {info.name, "activity", startUp, ""} );
+			}
+		}
+		if(apkInfo.manifest.application.activityAlias != null) {
+			for(ActivityAliasInfo info: apkInfo.manifest.application.activityAlias) {
+				ActivityList.add(new Object[] {info.name, "activity-alias", "X", ""} );
+			}
+		}
+		if(apkInfo.manifest.application.service != null) {
+			for(ServiceInfo info: apkInfo.manifest.application.service) {
+				//String startUp = (info.featureFlag & ActivityInfo.ACTIVITY_FEATURE_STARTUP) != 0 ? "O" : "X";
+				ActivityList.add(new Object[] {info.name, "service", "X", ""} );
+			}
+		}
+		if(apkInfo.manifest.application.provider != null) {
+			for(ProviderInfo info: apkInfo.manifest.application.provider) {
+				//String startUp = (info.featureFlag & ActivityInfo.ACTIVITY_FEATURE_STARTUP) != 0 ? "O" : "X";
+				ActivityList.add(new Object[] {info.name, "provider", "X", ""} );
+			}
+		}
+		if(apkInfo.manifest.application.receiver != null) {
+			for(ReceiverInfo info: apkInfo.manifest.application.receiver) {
+				//String startUp = (info.featureFlag & ActivityInfo.ACTIVITY_FEATURE_STARTUP) != 0 ? "O" : "X";
+				ActivityList.add(new Object[] {info.name, "receiver", "X", ""} );
+			}
+		}
+		
+		//ActivityList.addAll(apkInfo.ActivityList);
 		TableModel.fireTableDataChanged();
 	}
 	

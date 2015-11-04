@@ -4,6 +4,8 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import com.apkscanner.resource.Resource;
+
 
 public class FileUtil
 {
@@ -172,7 +174,7 @@ public class FileUtil
 		
 		if(style.equals(FSStyle.FULL)) {
 			df = new DecimalFormat("#,##0");
-			result.append(" (" + df.format(length) +" Bytes)");
+			result.append(" (" + df.format(length) +" "+ Resource.STR_FILE_SIZE_BYTES.getString() +")");
 		}
 
 		return result.toString();
