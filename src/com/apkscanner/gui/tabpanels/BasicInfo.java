@@ -66,6 +66,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	private boolean isHidden = false;
 	private boolean isStartup = false;
 	private boolean debuggable = false;
+	private boolean isInstrumentation = false;
 	private String sharedUserId = "";
 	
 	private Long ApkSize = 0L;
@@ -212,6 +213,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 
 		isStartup = false;
 		debuggable = false;
+		isInstrumentation = false;
 		sharedUserId = "";
 		ApkSize = 0L;
 		
@@ -326,6 +328,11 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		if(debuggable) {
 			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
 			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_DEBUGGABLE_LAB.getString(), Resource.STR_FEATURE_DEBUGGABLE_DESC.getString(), "feature-debuggable", null));
+			importantFeatures.append("</font>");
+		}
+		if(isInstrumentation) {
+			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
+			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_INSTRUMENTATION_LAB.getString(), Resource.STR_FEATURE_INSTRUMENTATION_DESC.getString(), "feature-instrumentation", null));
 			importantFeatures.append("</font>");
 		}
 		if(importantFeatures.length() > 0) {
@@ -455,19 +462,20 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		if(apkInfo.manifest.application.icons != null && apkInfo.manifest.application.icons.length > 0) {
 			iconPath = apkInfo.manifest.application.icons[apkInfo.manifest.application.icons.length - 1].name;
 		}
-		if(apkInfo.manifest.usesSdk.minSdkVersion != null) minSdkVersion = apkInfo.manifest.usesSdk.minSdkVersion;
-		if(apkInfo.manifest.usesSdk.targetSdkVersion != null) targerSdkVersion = apkInfo.manifest.usesSdk.targetSdkVersion;
-		if(apkInfo.manifest.usesSdk.maxSdkVersion != null) maxSdkVersion = apkInfo.manifest.usesSdk.maxSdkVersion;
-
+		minSdkVersion = apkInfo.manifest.usesSdk.minSdkVersion;
+		targerSdkVersion = apkInfo.manifest.usesSdk.targetSdkVersion;
+		maxSdkVersion = apkInfo.manifest.usesSdk.maxSdkVersion;
+		sharedUserId = apkInfo.manifest.sharedUserId;
+		
 		isHidden = (apkInfo.manifest.featureFlags & ManifestInfo.MANIFEST_FEATURE_LAUNCHUR) == 0 ? true : false;
 		isStartup = (apkInfo.manifest.featureFlags & ManifestInfo.MANIFEST_FEATURE_STARTUP) != 0 ? true : false;
+		isInstrumentation = (apkInfo.manifest.featureFlags & ManifestInfo.MANIFEST_FEATURE_INSTRUMENTATION) != 0 ? true : false;
 		if(apkInfo.manifest.application.debuggable != null && apkInfo.manifest.application.debuggable) {
 			debuggable = true;
 		} else {
 			debuggable = false;
 		}
-		sharedUserId = apkInfo.manifest.sharedUserId;
-
+		
 		isSamsungSign = (apkInfo.featureFlags & ApkInfo.APP_FEATURE_SAMSUNG_SIGN) != 0 ? true : false;
 		isPlatformSign = (apkInfo.featureFlags & ApkInfo.APP_FEATURE_PLATFORM_SIGN) != 0 ? true : false;
 
@@ -797,6 +805,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			feature = revokePerms.toString();
 		} else if("feature-debuggable".equals(id)) {
 			feature = Resource.STR_FEATURE_DEBUGGABLE_DESC.getString();
+		} else if("feature-instrumentation".equals(id)) {
+			feature = Resource.STR_FEATURE_INSTRUMENTATION_DESC.getString();
 		}
 		
 		showDialog(feature, "Feature info", size, null);

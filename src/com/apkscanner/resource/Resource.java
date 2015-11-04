@@ -22,7 +22,7 @@ import com.apkscanner.util.MyXPath;
 public enum Resource
 {
 	STR_APP_NAME				(Type.TEXT, "@app_name"),
-	STR_APP_VERSION				(Type.TEXT, "2.1 beta 20151028"),
+	STR_APP_VERSION				(Type.TEXT, "2.1 beta 20151104"),
 	STR_APP_BUILD_MODE			(Type.TEXT, "eng"),
 	STR_APP_MAKER				(Type.TEXT, "jin_h.lee / sunggyu.kam"),
 	STR_APP_MAKER_EMAIL			(Type.TEXT, "jin_h.lee@samsung.com;sunggyu.kam@samsung.com"),
@@ -102,6 +102,8 @@ public enum Resource
 	STR_FEATURE_REVOKE_PERM_DESC(Type.TEXT, "@feature_revoke_permissions_desc"),
 	STR_FEATURE_DEBUGGABLE_LAB  (Type.TEXT, "@feature_debuggable_lab"),
 	STR_FEATURE_DEBUGGABLE_DESC (Type.TEXT, "@feature_debuggable_desc"),
+	STR_FEATURE_INSTRUMENTATION_LAB  (Type.TEXT, "@feature_instrumentation_lab"),
+	STR_FEATURE_INSTRUMENTATION_DESC (Type.TEXT, "@feature_instrumentation_desc"),
 
 	STR_WIDGET_COLUMN_IMAGE		(Type.TEXT, "@widget_column_image"),
 	STR_WIDGET_COLUMN_LABEL		(Type.TEXT, "@widget_column_label"),

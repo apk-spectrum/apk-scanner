@@ -129,6 +129,10 @@ public class AaptManifestReader
         if(manifestPath.getNode("/manifest/uses-permission[@"+namespace+"name='android.permission.RECEIVE_BOOT_COMPLETED']") != null) {
         	manifestInfo.featureFlags |= ManifestInfo.MANIFEST_FEATURE_STARTUP;
         }
+        
+        if(manifestPath.getNode("/manifest/instrumentation") != null) {
+			manifestInfo.featureFlags |= ManifestInfo.MANIFEST_FEATURE_INSTRUMENTATION;
+		}
 	}
 	
 	public void readPermissions()
