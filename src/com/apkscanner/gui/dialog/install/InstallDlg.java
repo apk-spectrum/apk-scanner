@@ -244,9 +244,9 @@ public class InstallDlg extends JDialog implements ActionListener,WindowListener
         this.setIconImage(Resource.IMG_TOOLBAR_INSTALL.getImageIcon().getImage());
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         //this.setBounds(0, 0, 700, 400);
-        this.setPreferredSize(new Dimension(500,400));
+        this.setPreferredSize(new Dimension(500,450));
         
-        this.setMinimumSize(new Dimension(500, 400));
+        this.setMinimumSize(new Dimension(500, 450));
         this.setLocationRelativeTo(null);
         this.setResizable(false);
         this.addWindowListener(this);
