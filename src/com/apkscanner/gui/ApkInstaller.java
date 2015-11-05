@@ -242,10 +242,10 @@ public class ApkInstaller
 
 				
 				do {
-					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString(), "-", InstallDlg.CHECKLIST_MODE.WATING);
+					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString(), "", InstallDlg.CHECKLIST_MODE.WATING);
 					printlnLog("scan devices...");
 					DeviceList = AdbWrapper.scanDevices();
-					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString(), "-", InstallDlg.CHECKLIST_MODE.DONE);
+					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString(), "", InstallDlg.CHECKLIST_MODE.DONE);
 					
 					if(DeviceList.size() == 0) {
 						printlnLog("Device not found!\nplease check device");
@@ -270,22 +270,29 @@ public class ApkInstaller
 					}
 				} while(true);
 				DeviceStatus dev = DeviceList.get(0);
-				
+								
 				if(DeviceList.size() > 1 || (DeviceList.size() == 1 && !dev.status.equals("device"))) {
 					//int selectedValue = DeviceListDialog.showDialog();
 					//Log.i("Seltected index : " + selectedValue);
 					
-					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString() + " List", "-", InstallDlg.CHECKLIST_MODE.QEUESTION);
+					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString() + " List", "", InstallDlg.CHECKLIST_MODE.QEUESTION);
 					int selectedValue = showDeviceList(this);
-					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString() + " List", "-", InstallDlg.CHECKLIST_MODE.DONE);
-					
 					if(selectedValue == -1) {
 						Listener.SetInstallButtonStatus(true);
 						
 						return;
 					}
 					dev = InstallDlgListener.getSelectDev();
+					
+//					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString() + " List", dev.name +
+//							"(" + dev.device + ")", InstallDlg.CHECKLIST_MODE.DONE);
+					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString()+ " List", dev.name +
+							"(" + dev.device + ")", InstallDlg.CHECKLIST_MODE.DONE);
+				} else {
+					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString(), dev.name +
+							"(" + dev.device + ")", InstallDlg.CHECKLIST_MODE.DONE);
 				}
+
 				printlnLog(dev.getSummary());
 				
 				
@@ -394,7 +401,7 @@ public class ApkInstaller
 						if(AdbWrapper.hasRootPermission(dev.name) == true) {
 							printlnLog("adbd is running as root");
 							String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
-							if(!checkPackage)InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_ROOT.getString(), "root" , InstallDlg.CHECKLIST_MODE.ADD);
+							if(!checkPackage)InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_ROOT.getString(), ""+AdbWrapper.hasRootPermission(dev.name) , InstallDlg.CHECKLIST_MODE.ADD);
 							
 							InstallDlgListener.AddCheckList("" + options[0] +"/"+ options[1], "-" , InstallDlg.CHECKLIST_MODE.QEUESTION);
 							int n = ShowQuestion(this, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_PUSH_OR_INSTALL.getString(),

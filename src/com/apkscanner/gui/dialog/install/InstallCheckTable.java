@@ -25,7 +25,7 @@ public final class InstallCheckTable extends JPanel {
       super(new BorderLayout());
       
       
-      ToolTipManager.sharedInstance().setReshowDelay(0);
+      //ToolTipManager.sharedInstance().setReshowDelay(0);
       table = new JTable(model) {
           
          //Implement table cell tool tips.
@@ -36,15 +36,14 @@ public final class InstallCheckTable extends JPanel {
              int colIndex = columnAtPoint(p);
              int realColumnIndex = convertColumnIndexToModel(colIndex);
 
-             if (realColumnIndex == 0) { //Sport column
-                 tip = "This person's favorite sport to "
-                        + "participate in is: "
-                        + getValueAt(rowIndex, colIndex);
+             if (realColumnIndex == 0) {
+            	 String str = (String)model.getValueAt(rowIndex, 2);
+            	 
+            	 if(str.length() > 1) {
+            		 tip = str;	 
+            	 } 
              } else {
-                 //You can omit this part if you know you don't
-                 //have any renderers that supply their own tool
-                 //tips.
-                 tip = super.getToolTipText(e);
+            	 return null;
              }
              return tip;
          }
@@ -73,6 +72,10 @@ public final class InstallCheckTable extends JPanel {
       
       table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
+      table.getColumn("Tip").setWidth(0);
+      table.getColumn("Tip").setMinWidth(0);
+      table.getColumn("Tip").setMaxWidth(0);
+      
       table.setTableHeader(null);
       table.setEnabled(false);
       
@@ -86,7 +89,7 @@ public final class InstallCheckTable extends JPanel {
       add(scrollPane);
       setPreferredSize(new Dimension(170, 240));
       
-      setJTableColumnsWidth(table,170,30,20);
+      setJTableColumnsWidth(table,170,30,20,0);
   }
   	public void addTableModel(String name, String t, InstallDlg.CHECKLIST_MODE mode) {
   		model.addValue(name, t, mode);
@@ -176,7 +179,9 @@ class WorkerModel extends DefaultTableModel {
   private static final ColumnContext[] COLUMN_ARRAY = {
       
       new ColumnContext("Name", String.class, false),
-      new ColumnContext("Progress",     ImageIcon.class,  false)//,
+      new ColumnContext("Progress",     ImageIcon.class,  false),
+      new ColumnContext("Tip",     String.class,  false),
+      //,
       //new ColumnContext("Result", String.class, false)
       
       
