@@ -1,6 +1,9 @@
 package com.apkscanner;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -77,7 +80,30 @@ public class Launcher
 	static private boolean exec(ArrayList<String> cmd)
 	{
 		try {
-			Runtime.getRuntime().exec(cmd.toArray(new String[0]));
+			final Process proc = Runtime.getRuntime().exec(cmd.toArray(new String[0]));
+			
+			new Thread(new Runnable() {
+				public void run()
+				{
+		            BufferedReader br = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+		            try {
+						while ( (br.readLine()) != null );
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}).start();
+			new Thread(new Runnable() {
+				public void run()
+				{
+		            BufferedReader br = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+		            try {
+						while ( (br.readLine()) != null );
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}).start();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
