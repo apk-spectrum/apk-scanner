@@ -25,6 +25,7 @@ public class ManifestInfo
 	public SupportsScreensInfo[] supportsScreens = null;
 	public UsesConfigurationInfo[] usesConfiguration = null;
 	public UsesFeatureInfo[] usesFeature = null;
+	public UsesLibraryInfo[] usesLibrary = null;
 	public UsesPermissionInfo[] usesPermission = null;
 	public UsesPermissionInfo[] usesPermissionSdk23 = null;
 	public UsesSdkInfo usesSdk = new UsesSdkInfo();

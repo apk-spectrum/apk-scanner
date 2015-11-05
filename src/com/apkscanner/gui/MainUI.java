@@ -322,10 +322,10 @@ public class MainUI extends JFrame
 				Log.v("Not choose apk file");
 				return;
 			}
-			if(tabbedPanel != null) {
-				tabbedPanel.setLodingLabel();
-			}
 			if(!newWindow) {
+				if(tabbedPanel != null) {
+					tabbedPanel.setLodingLabel();
+				}
 				apkScanner.clear(false);
 				apkScanner.openApk(apkFilePath);
 			} else {

@@ -9,6 +9,7 @@ import com.apkscanner.apkinfo.ActivityAliasInfo;
 import com.apkscanner.apkinfo.ActivityInfo;
 import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.apkinfo.CategoryInfo;
+import com.apkscanner.apkinfo.CompatibleScreensInfo;
 import com.apkscanner.apkinfo.DataInfo;
 import com.apkscanner.apkinfo.IntentFilterInfo;
 import com.apkscanner.apkinfo.ManifestInfo;
@@ -19,6 +20,11 @@ import com.apkscanner.apkinfo.ProviderInfo;
 import com.apkscanner.apkinfo.ReceiverInfo;
 import com.apkscanner.apkinfo.ResourceInfo;
 import com.apkscanner.apkinfo.ServiceInfo;
+import com.apkscanner.apkinfo.SupportsGlTextureInfo;
+import com.apkscanner.apkinfo.SupportsScreensInfo;
+import com.apkscanner.apkinfo.UsesConfigurationInfo;
+import com.apkscanner.apkinfo.UsesFeatureInfo;
+import com.apkscanner.apkinfo.UsesLibraryInfo;
 import com.apkscanner.apkinfo.UsesPermissionInfo;
 import com.apkscanner.apkinfo.WidgetInfo;
 import com.apkscanner.core.AaptWrapper;
@@ -81,49 +87,56 @@ public class AaptManifestReader
 	public void readBasicInfo()
 	{
 
-		AaptXmlTreeNode manifestTag = manifestPath.getNode("/manifest"); 
+		AaptXmlTreeNode tagNode = manifestPath.getNode("/manifest"); 
 		// package
-		if(manifestTag != null) {
-			manifestInfo.packageName = getAttrValue(manifestTag , "package");
-			String ver = getAttrValue(manifestTag, "versionCode");
+		if(tagNode != null) {
+			manifestInfo.packageName = getAttrValue(tagNode , "package");
+			String ver = getAttrValue(tagNode, "versionCode");
 			if(ver != null) {
 				manifestInfo.versionCode = Integer.parseInt(ver);
 			}
-			manifestInfo.versionName = getAttrValue(manifestTag, "versionName");
-			manifestInfo.sharedUserId = getAttrValue(manifestTag, "sharedUserId");
-			manifestInfo.sharedUserLabels = getAttrResourceValues(manifestTag, "sharedUserLabels");
+			manifestInfo.versionName = getAttrValue(tagNode, "versionName");
+			manifestInfo.sharedUserId = getAttrValue(tagNode, "sharedUserId");
+			manifestInfo.sharedUserLabels = getAttrResourceValues(tagNode, "sharedUserLabels");
 		}
 		
-		AaptXmlTreeNode usesSdkTag = manifestPath.getNode("/manifest/uses-sdk");
-		if(usesSdkTag != null) {
-			String ver = getAttrValue(usesSdkTag, "targetSdkVersion");
+		tagNode = manifestPath.getNode("/manifest/uses-sdk");
+		if(tagNode != null) {
+			String ver = getAttrValue(tagNode, "targetSdkVersion");
 			if(ver != null) {
 				manifestInfo.usesSdk.targetSdkVersion = Integer.parseInt(ver);
 			}
-			ver = getAttrValue(usesSdkTag, "minSdkVersion");
+			ver = getAttrValue(tagNode, "minSdkVersion");
 			if(ver != null) {
 				manifestInfo.usesSdk.minSdkVersion = Integer.parseInt(ver);
 			}
-			ver = getAttrValue(usesSdkTag, "maxSdkVersion");
+			ver = getAttrValue(tagNode, "maxSdkVersion");
 			if(ver != null) {
 				manifestInfo.usesSdk.maxSdkVersion = Integer.parseInt(ver);
 			}
 		}
 
 		// label & icon
-		AaptXmlTreeNode applicationTag = manifestPath.getNode("/manifest/application");
-		if(applicationTag != null) {
-			manifestInfo.application.labels = getAttrResourceValues(applicationTag, "label");
-			manifestInfo.application.icons = getAttrResourceValues(applicationTag, "icon");
-			String debuggable = getAttrValue(applicationTag, "debuggable");
-			manifestInfo.application.debuggable = debuggable != null && debuggable.equals("true");
+		tagNode = manifestPath.getNode("/manifest/application");
+		if(tagNode != null) {
+			manifestInfo.application.labels = getAttrResourceValues(tagNode, "label");
+			manifestInfo.application.icons = getAttrResourceValues(tagNode, "icon");
+			String bool = getAttrValue(tagNode, "debuggable");
+			if(bool != null) manifestInfo.application.debuggable = bool.equals("true");
 		} else {
-			Log.w("Warring: node was not existed : /manifest/application");
+			Log.e("error: node not existed : /manifest/application");
 		}
-
+		
+		manifestInfo.compatibleScreens = getCompatibleScreens(manifestPath.getNodeList("/manifest/compatible-screens"));
+		manifestInfo.supportsScreens = getSupportsScreens(manifestPath.getNodeList("/manifest/supports-screens"));
+		manifestInfo.supportsGlTexture = getSupportsGlTexture(manifestPath.getNodeList("/manifest/supports-gl-texture"));
+		manifestInfo.usesConfiguration = getUsesConfiguration(manifestPath.getNodeList("/manifest/uses-configuration"));
+		manifestInfo.usesFeature = getUsesFeature(manifestPath.getNodeList("/manifest/uses-configuration"));
+		manifestInfo.usesLibrary = getUsesLibrary(manifestPath.getNodeList("/manifest/uses-configuration"));
+		
         // display to launchur
 		AaptXmlTreeNode[] launchers = manifestPath.getNodeList("/manifest/application/activity/intent-filter/category[@"+namespace+"name='android.intent.category.LAUNCHER']");
-        if(launchers != null) {
+        if(launchers != null && launchers.length > 0) {
         	for(AaptXmlTreeNode node: launchers) {
         		AaptXmlTreeNode[] actionNode = node.getParent().getNodeList("action");
         		if(actionNode != null) {
@@ -155,7 +168,7 @@ public class AaptManifestReader
         Log.i("read uses-permission");
         ArrayList<UsesPermissionInfo> usesPermissionList = new ArrayList<UsesPermissionInfo>(); 
         AaptXmlTreeNode[] permTag = manifestPath.getNodeList("/manifest/uses-permission");
-        if(permTag != null) {
+        if(permTag != null && permTag.length > 0) {
 	        for( int idx=0; idx < permTag.length; idx++ ){
 	        	String name = getAttrValue(permTag[idx], "name");
 	        	String maxSdk = getAttrValue(permTag[idx], "maxSdkVersion");
@@ -168,7 +181,7 @@ public class AaptManifestReader
 
         Log.i("read uses-permission-sdk23");
         permTag = manifestPath.getNodeList("/manifest/uses-permission-sdk23");
-        if(permTag != null) {
+        if(permTag != null && permTag.length > 0) {
 	        for( int idx=0; idx < permTag.length; idx++ ){
 	        	String name = getAttrValue(permTag[idx], "name");
 	        	String maxSdk = getAttrValue(permTag[idx], "maxSdkVersion");
@@ -183,7 +196,7 @@ public class AaptManifestReader
         
         Log.i("read permission");
         permTag = manifestPath.getNodeList("/manifest/permission");
-        if(permTag != null) {
+        if(permTag != null && permTag.length > 0) {
         	ArrayList<PermissionInfo> permissionList = new ArrayList<PermissionInfo>();
 	        for( int idx=0; idx < permTag.length; idx++ ){
 	        	PermissionInfo info = new PermissionInfo();
@@ -206,9 +219,9 @@ public class AaptManifestReader
 	        permissionList = null;
         }
         
-        Log.i("read permission");
+        Log.i("read permission-tree");
         permTag = manifestPath.getNodeList("/manifest/permission-tree");
-        if(permTag != null) {
+        if(permTag != null && permTag.length > 0) {
         	ArrayList<PermissionTreeInfo> permissionList = new ArrayList<PermissionTreeInfo>();
 	        for( int idx=0; idx < permTag.length; idx++ ){
 	        	PermissionTreeInfo info = new PermissionTreeInfo();
@@ -356,7 +369,7 @@ public class AaptManifestReader
 	
 	private ActionInfo[] getActionInfo(AaptXmlTreeNode[] actionNodeList)
 	{
-		if(actionNodeList == null) return null;
+		if(actionNodeList == null || actionNodeList.length == 0) return null;
 		
 		ArrayList<ActionInfo> list = new ArrayList<ActionInfo>();
 		for(AaptXmlTreeNode node: actionNodeList) {
@@ -369,7 +382,7 @@ public class AaptManifestReader
 	
 	private CategoryInfo[] getCategoryInfo(AaptXmlTreeNode[] categoryNodeList)
 	{
-		if(categoryNodeList == null) return null;
+		if(categoryNodeList == null || categoryNodeList.length == 0) return null;
 
 		ArrayList<CategoryInfo> list = new ArrayList<CategoryInfo>();
 		for(AaptXmlTreeNode node: categoryNodeList) {
@@ -382,7 +395,7 @@ public class AaptManifestReader
 	
 	private MetaDataInfo[] getMetaDataInfo(AaptXmlTreeNode[] metaDataNodeList)
 	{
-		if(metaDataNodeList == null) return null;
+		if(metaDataNodeList == null || metaDataNodeList.length == 0) return null;
 
 		ArrayList<MetaDataInfo> list = new ArrayList<MetaDataInfo>();
 		for(AaptXmlTreeNode node: metaDataNodeList) {
@@ -397,7 +410,7 @@ public class AaptManifestReader
 	
 	private DataInfo[] getDataInfo(AaptXmlTreeNode[] dataNodeList)
 	{
-		if(dataNodeList == null) return null;
+		if(dataNodeList == null || dataNodeList.length == 0) return null;
 
 		ArrayList<DataInfo> list = new ArrayList<DataInfo>();
 		for(AaptXmlTreeNode node: dataNodeList) {
@@ -416,7 +429,7 @@ public class AaptManifestReader
 	
 	private IntentFilterInfo[] getIntentFilterInfo(AaptXmlTreeNode[] intentFilterNodeList)
 	{
-    	if(intentFilterNodeList == null) return null;
+    	if(intentFilterNodeList == null || intentFilterNodeList.length == 0) return null;
     		
     	ArrayList<IntentFilterInfo> intentList = new ArrayList<IntentFilterInfo>();
 		for(AaptXmlTreeNode intent: intentFilterNodeList) {
@@ -462,10 +475,7 @@ public class AaptManifestReader
 	public void readActivityInfo()
 	{
 		AaptXmlTreeNode[] activityTag = manifestPath.getNodeList("/manifest/application/activity");
-		if(activityTag == null) {
-			manifestInfo.application.activity = null;
-			return;
-		}
+		if(activityTag == null || activityTag.length == 0) return;
 
 		ArrayList<ActivityInfo> activityList = new ArrayList<ActivityInfo>();
         for(int idx=0; idx < activityTag.length; idx++ ){
@@ -497,10 +507,7 @@ public class AaptManifestReader
 	public void readActivityAliasInfo()
 	{
 		AaptXmlTreeNode[] activityTag = manifestPath.getNodeList("/manifest/application/activity-alias");
-		if(activityTag == null) {
-			manifestInfo.application.activityAlias = null;
-			return;
-		}
+		if(activityTag == null || activityTag.length == 0) return;
 
 		ArrayList<ActivityAliasInfo> list = new ArrayList<ActivityAliasInfo>();
         for(int idx=0; idx < activityTag.length; idx++ ){
@@ -531,10 +538,7 @@ public class AaptManifestReader
 	public void readServiceInfo()
 	{
 		AaptXmlTreeNode[] activityTag = manifestPath.getNodeList("/manifest/application/service");
-		if(activityTag == null) {
-			manifestInfo.application.activityAlias = null;
-			return;
-		}
+		if(activityTag == null || activityTag.length == 0) return;
 
 		ArrayList<ServiceInfo> list = new ArrayList<ServiceInfo>();
         for(int idx=0; idx < activityTag.length; idx++ ){
@@ -567,10 +571,7 @@ public class AaptManifestReader
 	public void readReceiverInfo()
 	{
 		AaptXmlTreeNode[] activityTag = manifestPath.getNodeList("/manifest/application/receiver");
-		if(activityTag == null) {
-			manifestInfo.application.activityAlias = null;
-			return;
-		}
+		if(activityTag == null || activityTag.length == 0) return;
 
 		ArrayList<ReceiverInfo> list = new ArrayList<ReceiverInfo>();
         for(int idx=0; idx < activityTag.length; idx++ ){
@@ -601,10 +602,7 @@ public class AaptManifestReader
 	public void readProviderInfo()
 	{
 		AaptXmlTreeNode[] activityTag = manifestPath.getNodeList("/manifest/application/receiver");
-		if(activityTag == null) {
-			manifestInfo.application.activityAlias = null;
-			return;
-		}
+		if(activityTag == null || activityTag.length == 0) return;
 
 		ArrayList<ProviderInfo> list = new ArrayList<ProviderInfo>();
         for(int idx=0; idx < activityTag.length; idx++ ){
@@ -627,6 +625,129 @@ public class AaptManifestReader
         }
 
         manifestInfo.application.provider = list.toArray(new ProviderInfo[0]);
+	}
+	
+	private CompatibleScreensInfo[] getCompatibleScreens(AaptXmlTreeNode[] nodeList)
+	{
+		if(nodeList == null || nodeList.length == 0) return null;
+
+    	ArrayList<CompatibleScreensInfo> intentList = new ArrayList<CompatibleScreensInfo>();
+		for(AaptXmlTreeNode node: nodeList) {
+			CompatibleScreensInfo info = new CompatibleScreensInfo();
+			
+			AaptXmlTreeNode[] screenNode = node.getNodeList("screen");
+			if(screenNode != null) {
+				ArrayList<CompatibleScreensInfo.Screen> screensList = new ArrayList<CompatibleScreensInfo.Screen>();
+				for(AaptXmlTreeNode s: screenNode) {
+					CompatibleScreensInfo.Screen screen = new CompatibleScreensInfo.Screen();
+					screen.screenSize = getAttrValue(s, "screenSize");
+					screen.screenDensity = getAttrValue(s, "screenDensity");
+					screensList.add(screen);
+				}
+				info.screen = screensList.toArray(new CompatibleScreensInfo.Screen[0]);
+			}
+			
+			intentList.add(info); 
+		}
+		return intentList.toArray(new CompatibleScreensInfo[0]);
+	}
+	
+	private SupportsScreensInfo[] getSupportsScreens(AaptXmlTreeNode[] tagNodeList)
+	{
+		if(tagNodeList == null || tagNodeList.length == 0) return null; 
+
+		ArrayList<SupportsScreensInfo> list = new ArrayList<SupportsScreensInfo>(); 
+		for(AaptXmlTreeNode n: tagNodeList) {
+			SupportsScreensInfo info = new SupportsScreensInfo();
+			String bool = getAttrValue(n, "resizeable");
+			if(bool != null) info.resizeable = bool.equals("true");
+			bool = getAttrValue(n, "smallScreens");
+			if(bool != null) info.smallScreens = bool.equals("true");
+			bool = getAttrValue(n, "normalScreens");
+			if(bool != null) info.normalScreens = bool.equals("true");
+			bool = getAttrValue(n, "largeScreens");
+			if(bool != null) info.largeScreens = bool.equals("true");
+			bool = getAttrValue(n, "xlargeScreens");
+			if(bool != null) info.xlargeScreens = bool.equals("true");
+			bool = getAttrValue(n, "anyDensity");
+			if(bool != null) info.anyDensity = bool.equals("true");
+			String val = getAttrValue(n, "requiresSmallestWidthDp");
+			if(val != null) info.requiresSmallestWidthDp = Integer.parseInt(val);
+			val = getAttrValue(n, "compatibleWidthLimitDp");
+			if(val != null) info.compatibleWidthLimitDp = Integer.parseInt(val);
+			val = getAttrValue(n, "largestWidthLimitDp");
+			if(val != null) info.largestWidthLimitDp = Integer.parseInt(val);
+			list.add(info);
+		}
+		
+		return list.toArray(new SupportsScreensInfo[0]);
+	}
+	
+	private UsesConfigurationInfo[] getUsesConfiguration(AaptXmlTreeNode[] tagNodeList)
+	{
+		if(tagNodeList == null || tagNodeList.length == 0) return null; 
+
+		ArrayList<UsesConfigurationInfo> list = new ArrayList<UsesConfigurationInfo>(); 
+		for(AaptXmlTreeNode n: tagNodeList) {
+			UsesConfigurationInfo info = new UsesConfigurationInfo();
+			String bool = getAttrValue(n, "reqFiveWayNav");
+			if(bool != null) info.reqFiveWayNav = bool.equals("true");
+			bool = getAttrValue(n, "reqHardKeyboard");
+			if(bool != null) info.reqHardKeyboard = bool.equals("true");
+			info.reqKeyboardType = getAttrValue(n, "reqKeyboardType");
+			info.reqNavigation = getAttrValue(n, "reqNavigation");
+			info.reqTouchScreen = getAttrValue(n, "reqTouchScreen");
+			list.add(info);
+		}
+		
+		return list.toArray(new UsesConfigurationInfo[0]);
+	}
+	
+	private UsesFeatureInfo[] getUsesFeature(AaptXmlTreeNode[] tagNodeList)
+	{
+		if(tagNodeList == null || tagNodeList.length == 0) return null; 
+
+		ArrayList<UsesFeatureInfo> list = new ArrayList<UsesFeatureInfo>(); 
+		for(AaptXmlTreeNode n: tagNodeList) {
+			UsesFeatureInfo info = new UsesFeatureInfo();
+			info.name = getAttrValue(n, "name");
+			String bool = getAttrValue(n, "required");
+			if(bool != null) info.required = bool.equals("true");
+			String val = getAttrValue(n, "glEsVersion");
+			if(val != null) info.glEsVersion = Integer.parseInt(val);
+			list.add(info);
+		}
+		
+		return list.toArray(new UsesFeatureInfo[0]);
+	}
+	
+	private UsesLibraryInfo[] getUsesLibrary(AaptXmlTreeNode[] tagNodeList)
+	{
+		if(tagNodeList == null || tagNodeList.length == 0) return null; 
+
+		ArrayList<UsesLibraryInfo> list = new ArrayList<UsesLibraryInfo>(); 
+		for(AaptXmlTreeNode n: tagNodeList) {
+			UsesLibraryInfo info = new UsesLibraryInfo();
+			info.name = getAttrValue(n, "name");
+			String bool = getAttrValue(n, "required");
+			if(bool != null) info.required = bool.equals("true");
+			list.add(info);
+		}
+		
+		return list.toArray(new UsesLibraryInfo[0]);
+	}
+	
+	private SupportsGlTextureInfo[] getSupportsGlTexture(AaptXmlTreeNode[] tagNodeList)
+	{
+		if(tagNodeList == null || tagNodeList.length == 0) return null; 
+
+		ArrayList<SupportsGlTextureInfo> list = new ArrayList<SupportsGlTextureInfo>(); 
+		for(AaptXmlTreeNode n: tagNodeList) {
+			SupportsGlTextureInfo info = new SupportsGlTextureInfo();
+			info.name = getAttrValue(n, "name");
+			list.add(info);
+		}
+		return list.toArray(new SupportsGlTextureInfo[0]);
 	}
 	
 	private String getAttrValue(AaptXmlTreeNode node, String attr)

@@ -104,6 +104,8 @@ public enum Resource
 	STR_FEATURE_DEBUGGABLE_DESC (Type.TEXT, "@feature_debuggable_desc"),
 	STR_FEATURE_INSTRUMENTATION_LAB  (Type.TEXT, "@feature_instrumentation_lab"),
 	STR_FEATURE_INSTRUMENTATION_DESC (Type.TEXT, "@feature_instrumentation_desc"),
+	STR_FEATURE_DEVICE_REQ_LAB  (Type.TEXT, "@feature_device_requirements_lab"),
+	STR_FEATURE_DEVICE_REQ_DESC (Type.TEXT, "@feature_device_requirements_desc"),
 
 	STR_WIDGET_COLUMN_IMAGE		(Type.TEXT, "@widget_column_image"),
 	STR_WIDGET_COLUMN_LABEL		(Type.TEXT, "@widget_column_label"),

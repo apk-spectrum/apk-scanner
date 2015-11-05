@@ -78,6 +78,8 @@
     <string name="feature_instrumentation_lab">INSTRUMENTATION</string>
     <string name="feature_instrumentation_desc">Instrumentation classes that provide profiling and other information as the application is running.
 they're removed before the application is published</string>
+    <string name="feature_device_requirements_lab">Device Requirements</string>
+    <string name="feature_device_requirements_desc">Its need requirements for install to device</string>
     
     <string name="widget_column_image">Image</string>
     <string name="widget_column_label">Label</string>

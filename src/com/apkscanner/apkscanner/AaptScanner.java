@@ -71,7 +71,7 @@ public class AaptScanner extends ApkScannerStub
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					progress(30, "I: read aapt dump resources...");
+					Log.i("I: read aapt dump resources...");
 					resourcesWithValue = AaptWrapper.Dump.getResources(apkInfo.filePath, true);
 					manifestReader.setResources(resourcesWithValue);
 					Log.i("resources completed");
@@ -97,10 +97,10 @@ public class AaptScanner extends ApkScannerStub
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					progress(5, "I: getDump AndroidManifest...");
+					Log.i("I: getDump AndroidManifest...");
 					androidManifest = AaptWrapper.Dump.getXmltree(apkInfo.filePath, new String[] { "AndroidManifest.xml" });
 
-					progress(30, "I: createAaptXmlTree...");
+					Log.i("I: createAaptXmlTree...");
 					manifestPath = new AaptXmlTreePath();
 					manifestPath.createAaptXmlTree(androidManifest);
 					manifestReader.setManifestPath(manifestPath);
@@ -177,10 +177,10 @@ public class AaptScanner extends ApkScannerStub
 				}
 		        
 				synchronized(resouresSync) {
-					progress(5, "I: read resources completed");
+					Log.i("I: read resources completed");
 				}
 				
-				progress(5, "I: read basic info...");
+				Log.i("I: read basic info...");
 				
 				manifestReader.readBasicInfo();
 				
@@ -229,7 +229,7 @@ public class AaptScanner extends ApkScannerStub
 					public void run()
 					{
 				        // Activity/Service/Receiver/provider intent-filter
-				        progress(5, "I: read activitys...");
+						Log.i("I: read activitys...");
 				        manifestReader.readActivityInfo();
 				        manifestReader.readActivityAliasInfo();
 				        manifestReader.readServiceInfo();
@@ -243,14 +243,14 @@ public class AaptScanner extends ApkScannerStub
 					public void run()
 					{
 				        // widget
-				        progress(5, "I: read widgets...");
+						Log.i("I: read widgets...");
 
 				        apkInfo.widgets = manifestReader.getWidgetList(apkInfo.filePath);
 				        stateChanged(Status.WIDGET_COMPLETED);
 					}
 				}).run();
 				
-		        progress(5, "I: completed...");
+				Log.i("I: completed...");
 		        
 		        if(statusListener != null) {
 		        	statusListener.OnSuccess();
@@ -262,7 +262,7 @@ public class AaptScanner extends ApkScannerStub
 		new Thread(new Runnable() {
 			public void run()
 			{
-		        progress(5, "I: read Imanges list...");
+				Log.i("I: read Imanges list...");
 		        apkInfo.images = ZipFileUtil.findFiles(apkInfo.filePath, ".png;.qmg;.jpg;.gif", null);
 		        stateChanged(Status.IMAGE_COMPLETED);
 			}
@@ -271,7 +271,7 @@ public class AaptScanner extends ApkScannerStub
 		new Thread(new Runnable() {
 			public void run()
 			{
-		        progress(5, "I: read lib list...");
+				Log.i("I: read lib list...");
 		        apkInfo.librarys = ZipFileUtil.findFiles(apkInfo.filePath, ".so", null);
 		        stateChanged(Status.LIB_COMPLETED);
 			}
@@ -452,13 +452,6 @@ public class AaptScanner extends ApkScannerStub
 			}).start();
 		}
 		apkInfo = null;
-	}
-
-	private void progress(int step, String msg)
-	{
-		if(statusListener != null) {
-			statusListener.OnProgress(step, msg);
-		}
 	}
 	
 	private void stateChanged(Status status)

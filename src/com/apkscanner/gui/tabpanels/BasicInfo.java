@@ -24,11 +24,17 @@ import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
 import com.apkscanner.apkinfo.ApkInfo;
+import com.apkscanner.apkinfo.CompatibleScreensInfo;
 import com.apkscanner.apkinfo.ManifestInfo;
 import com.apkscanner.core.PermissionGroupManager;
 import com.apkscanner.apkinfo.PermissionGroup;
 import com.apkscanner.apkinfo.PermissionInfo;
 import com.apkscanner.apkinfo.ResourceInfo;
+import com.apkscanner.apkinfo.SupportsGlTextureInfo;
+import com.apkscanner.apkinfo.SupportsScreensInfo;
+import com.apkscanner.apkinfo.UsesConfigurationInfo;
+import com.apkscanner.apkinfo.UsesFeatureInfo;
+import com.apkscanner.apkinfo.UsesLibraryInfo;
 import com.apkscanner.apkinfo.UsesPermissionInfo;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.gui.util.ImageScaler;
@@ -84,6 +90,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	private boolean hasSignatureLevel = false;
 	private boolean hasSystemLevel = false;
 	private boolean hasSignatureOrSystemLevel = false;
+	
+	private String deviceRequirements = "";
 	
 	private JLabel TimerLabel = null;
 	
@@ -223,6 +231,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		allPermissionsList = "";
 		signaturePermissions = "";
 		notGrantPermmissions = "";
+		
+		deviceRequirements = "";
 
 		wasSetData = false;
 	}
@@ -295,6 +305,9 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		}
 		if(sharedUserId != null && !sharedUserId.startsWith("android.uid.system") ) {
 			feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_SHAREDUSERID_LAB.getString(), Resource.STR_FEATURE_SHAREDUSERID_DESC.getString(), "feature-shared-user-id", null));
+		}
+		if(deviceRequirements != null && !deviceRequirements.isEmpty()) {
+			feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_DEVICE_REQ_LAB.getString(), Resource.STR_FEATURE_DEVICE_REQ_DESC.getString(), "feature-device-requirements", null));
 		}
 
 		boolean systemSignature = false;
@@ -480,9 +493,11 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		isPlatformSign = (apkInfo.featureFlags & ApkInfo.APP_FEATURE_PLATFORM_SIGN) != 0 ? true : false;
 
 		CertSummary = ""; // apkInfo.CertSummary;
-		for(String sign: apkInfo.certificates) {
-			String[] line = sign.split("\n");
-			CertSummary += line[0] + "\n" + line[1] + "\n" + line[2] + "\n\n";
+		if(apkInfo.certificates != null) {
+			for(String sign: apkInfo.certificates) {
+				String[] line = sign.split("\n");
+				CertSummary += line[0] + "\n" + line[1] + "\n" + line[2] + "\n\n";
+			}
 		}
 
 		ApkSize = apkInfo.fileSize;		
@@ -547,6 +562,47 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		
 		permissionGroupManager = new PermissionGroupManager(apkInfo.manifest.usesPermission);
 
+		
+		StringBuilder deviceReqData = new StringBuilder();
+		if(apkInfo.manifest.compatibleScreens != null) {
+			for(CompatibleScreensInfo info: apkInfo.manifest.compatibleScreens) {
+				deviceReqData.append(info.getReport());
+			}
+			deviceReqData.append("\n");
+		}
+		if(apkInfo.manifest.supportsScreens != null) {
+			for(SupportsScreensInfo info: apkInfo.manifest.supportsScreens) {
+				deviceReqData.append(info.getReport());
+			}
+			deviceReqData.append("\n");
+		}
+		if(apkInfo.manifest.usesFeature != null) {
+			for(UsesFeatureInfo info: apkInfo.manifest.usesFeature) {
+				deviceReqData.append(info.getReport());
+			}
+			deviceReqData.append("\n");
+		}
+		if(apkInfo.manifest.usesConfiguration != null) {
+			for(UsesConfigurationInfo info: apkInfo.manifest.usesConfiguration) {
+				deviceReqData.append(info.getReport());
+			}
+			deviceReqData.append("\n");
+		}
+		if(apkInfo.manifest.usesLibrary != null) {
+			deviceReqData.append("uses library :\n");
+			for(UsesLibraryInfo info: apkInfo.manifest.usesLibrary) {
+				deviceReqData.append(info.getReport());
+			}
+			deviceReqData.append("\n");
+		}
+		if(apkInfo.manifest.supportsGlTexture != null) {
+			for(SupportsGlTextureInfo info: apkInfo.manifest.supportsGlTexture) {
+				deviceReqData.append(info.getReport());
+			}
+			deviceReqData.append("\n");
+		}
+		
+		deviceRequirements = deviceReqData.toString();
 	
 		setData();
 	}
@@ -807,6 +863,9 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			feature = Resource.STR_FEATURE_DEBUGGABLE_DESC.getString();
 		} else if("feature-instrumentation".equals(id)) {
 			feature = Resource.STR_FEATURE_INSTRUMENTATION_DESC.getString();
+		} else if("feature-device-requirements".equals(id)) {
+			feature = deviceRequirements;
+			size = new Dimension(500, 250);
 		}
 		
 		showDialog(feature, "Feature info", size, null);

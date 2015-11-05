@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JTabbedPane;
 
 import com.apkscanner.apkinfo.ApkInfo;
+import com.apkscanner.apkinfo.ApplicationInfo;
 import com.apkscanner.gui.tabpanels.Activity;
 import com.apkscanner.gui.tabpanels.Library;
 import com.apkscanner.gui.tabpanels.ImageResource;
@@ -13,6 +14,7 @@ import com.apkscanner.gui.tabpanels.Widget;
 import com.apkscanner.gui.tabpanels.BasicInfo;
 import com.apkscanner.gui.util.PlasticTabbedPaneUI;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 
 public class TabbedPanel extends JTabbedPane
 {
@@ -99,6 +101,7 @@ public class TabbedPanel extends JTabbedPane
     
 	public void setData(ApkInfo apkInfo, int id)
 	{
+		Log.w("setData() start id " + id);
 		if(apkInfo != null) {
 			if(id == -1 || id == 0) {
 				((TabDataObject)(getComponent(0))).setData(apkInfo);
@@ -107,11 +110,12 @@ public class TabbedPanel extends JTabbedPane
 			if(id == -1 || id == 1) setPanelData(1, apkInfo.widgets.length, apkInfo);
 			if(id == -1 || id == 2) setPanelData(2, apkInfo.librarys.length, apkInfo);
 			if(id == -1 || id == 4) {
-				int cnt = apkInfo.manifest.application.activity.length;
-				cnt += apkInfo.manifest.application.activityAlias.length;
-				cnt += apkInfo.manifest.application.receiver.length;
-				cnt += apkInfo.manifest.application.service.length;
-				cnt += apkInfo.manifest.application.provider.length;
+				int cnt = 0;
+				ApplicationInfo app = apkInfo.manifest.application;
+				if(app.activity != null) cnt += app.activity.length;
+				if(app.activityAlias != null) cnt += app.activityAlias.length;
+				if(app.receiver != null) cnt += app.receiver.length;
+				if(app.provider != null) cnt += app.provider.length;
 				setPanelData(4, cnt, apkInfo);
 			}
 			if(id == -1 || id == 5) setPanelData(5, apkInfo.certificates.length, apkInfo);
@@ -123,6 +127,7 @@ public class TabbedPanel extends JTabbedPane
 				if(id == -1 || id == i) setPanelData(i, 0, null);
 			}
 		}
+		Log.w("setData() end id " + id);
 	}
 
 	private void setPanelData(int panelIdx, int dataSize, ApkInfo apkInfo)

@@ -11,4 +11,22 @@ public class SupportsScreensInfo
 	public Integer requiresSmallestWidthDp = null;
 	public Integer compatibleWidthLimitDp = null;
 	public Integer largestWidthLimitDp = null;
+	
+	public String getReport()
+	{
+		StringBuilder report = new StringBuilder();
+		
+		report.append("supports screens :\n");
+		if(resizeable != null) report.append("  resizeable : " + resizeable + "\n");
+		if(smallScreens != null) report.append("  smallScreens : " + smallScreens + "\n");
+		if(normalScreens != null) report.append("  normalScreens : " + normalScreens + "\n");
+		if(largeScreens != null) report.append("  largeScreens : " + largeScreens + "\n");
+		if(xlargeScreens != null) report.append("  xlargeScreens : " + xlargeScreens + "\n");
+		if(anyDensity != null) report.append("  anyDensity : " + anyDensity + "\n");
+		if(requiresSmallestWidthDp != null) report.append("  requiresSmallestWidthDp : " + requiresSmallestWidthDp + "\n");
+		if(compatibleWidthLimitDp != null) report.append("  compatibleWidthLimitDp : " + compatibleWidthLimitDp + "\n");
+		if(largestWidthLimitDp != null) report.append("  largestWidthLimitDp : " + largestWidthLimitDp + "\n");
+
+		return report.toString();
+	}
 }
