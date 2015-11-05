@@ -75,6 +75,8 @@
     <string name="feature_revoke_permissions_lab">권한 경고</string>
     <string name="feature_revoke_permissions_desc">플랫폼 서명이 필요하거나 시스템(priv-app)에 설치 되어야 사용 가능한 권한을 사용하고 있습니다.
 ※ 단, pre23 레벨 포함시 SDK23 이전 버전에서는 자동 승인됩니다.</string>
+    <string name="feature_deprecated_prem_lab">미사용 권한</string>
+    <string name="feature_deprecated_prem_desc">삭제 혹은 삭제될 퍼미션을 사용하고 있습니다.</string>
     <string name="feature_debuggable_lab">디버깅모드</string>
     <string name="feature_debuggable_desc">어플리케이션 디버깅모드가 허용 되어 있습니다.
 ※ 버전 발행시 제거 되어야 합니다.</string>

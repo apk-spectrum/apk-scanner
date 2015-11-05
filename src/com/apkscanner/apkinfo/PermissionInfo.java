@@ -20,6 +20,15 @@ public class PermissionInfo
     public static final int PROTECTION_MASK_BASE = 0xf;
     public static final int PROTECTION_MASK_FLAGS = 0xff0;
     
+    public static final String[] DeprecatedPermissionList = new String[] {
+    	"android.permission.BIND_CARRIER_MESSAGING_SERVICE:API level 23.\n - Use BIND_CARRIER_SERVICES instead",
+    	"android.permission.GET_TASKS:API level 21.\n - No longer enforced.",
+    	"android.permission.PERSISTENT_ACTIVITY:API level 9.\n - This functionality will be removed in the future; please do not use. Allow an application to make its activities persistent.",
+    	"android.permission.READ_INPUT_STATE:API level 16.\n - The API that used this permission has been removed.",
+    	"android.permission.RESTART_PACKAGES:API level 8.\n - The restartPackage(String) API is no longer supported.",
+    	"android.permission.SET_PREFERRED_APPLICATIONS:API level 7.\n - No longer useful, see addPackageToPreferred(String) for details."
+    };
+    
 	public ResourceInfo[] descriptions = null; // "string resource"
 	public ResourceInfo[] icons = null; // "drawable resource"
 	public ResourceInfo[] labels = null; // "string resource"
@@ -49,6 +58,22 @@ public class PermissionInfo
 	{
 		return (protectionLevel != null && protectionLevel.indexOf("signature") == -1
 				&& (protectionLevel.indexOf("ystem") > -1 || protectionLevel.indexOf("privileged") > -1)) ? true : false;
+	}
+	
+	public boolean isDeprecated()
+	{
+		for(String s: DeprecatedPermissionList) {
+			if(s.startsWith(name+":")) return true;
+		}
+		return false;
+	}
+	
+	public String getDeprecatedMessage()
+	{
+		for(String s: DeprecatedPermissionList) {
+			if(s.startsWith(name+":")) return s.replaceAll(":", " was deprecated in ");
+		}
+		return null;
 	}
 	
     public static int fixProtectionLevel(int level)

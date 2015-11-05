@@ -84,6 +84,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	private String allPermissionsList = "";
 	private String signaturePermissions = "";
 	private String notGrantPermmissions = "";
+	private String deprecatedPermissions = "";
 	
 	private PermissionGroupManager permissionGroupManager = null; 
 
@@ -231,6 +232,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		allPermissionsList = "";
 		signaturePermissions = "";
 		notGrantPermmissions = "";
+		deprecatedPermissions = "";
 		
 		deviceRequirements = "";
 
@@ -336,6 +338,11 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		if(((hasSignatureLevel || hasSignatureOrSystemLevel) && !systemSignature) || hasSystemLevel) {
 			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
 			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_REVOKE_PERM_LAB.getString(), Resource.STR_FEATURE_REVOKE_PERM_DESC.getString(), "feature-revoke-permissions", null));
+			importantFeatures.append("</font>");
+		}
+		if(deprecatedPermissions != null && !deprecatedPermissions.isEmpty()) {
+			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
+			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_DEPRECATED_PREM_LAB.getString(), Resource.STR_FEATURE_DEPRECATED_PREM_DESC.getString(), "feature-deprecated-perm", null));
 			importantFeatures.append("</font>");
 		}
 		if(debuggable) {
@@ -522,6 +529,9 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 				if(info.maxSdkVersion != null) {
 					permissionList.append(", maxSdkVersion : " + info.maxSdkVersion);
 				}
+				if(info.isDeprecated()) {
+					deprecatedPermissions += info.getDeprecatedMessage() + "\n\n";
+				}
 				permissionList.append("\n");
 			}
 		}
@@ -540,6 +550,9 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 				}
 				if(info.maxSdkVersion != null) {
 					permissionList.append(", maxSdkVersion : " + info.maxSdkVersion);
+				}
+				if(info.isDeprecated()) {
+					deprecatedPermissions += info.getDeprecatedMessage() + "\n\n";
 				}
 				permissionList.append("\n");
 			}
@@ -859,6 +872,10 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			StringBuilder revokePerms = new StringBuilder("※ " + Resource.STR_FEATURE_REVOKE_PERM_DESC.getString() + "\n\n");
 			revokePerms.append(notGrantPermmissions);
 			feature = revokePerms.toString();
+			size = new Dimension(500, 200);
+		} else if("feature-deprecated-perm".equals(id)) {
+			feature = deprecatedPermissions;
+			size = new Dimension(500, 200);
 		} else if("feature-debuggable".equals(id)) {
 			feature = Resource.STR_FEATURE_DEBUGGABLE_DESC.getString();
 		} else if("feature-instrumentation".equals(id)) {
