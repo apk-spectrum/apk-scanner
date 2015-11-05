@@ -71,7 +71,7 @@ public class PermissionInfo
 	public String getDeprecatedMessage()
 	{
 		for(String s: DeprecatedPermissionList) {
-			if(s.startsWith(name+":")) return "[" + s.replaceAll(":", "] was deprecated in ");
+			if(s.startsWith(name+":")) return "[" + s.replaceAll(":", "]\n - This constant was deprecated in ");
 		}
 		return null;
 	}
