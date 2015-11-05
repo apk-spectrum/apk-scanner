@@ -74,7 +74,9 @@ public class Widget extends JPanel implements TabDataObject
 				myimageicon.setImage(ImageScaler.getMaxScaledImage(myimageicon,100,100));
 			}
 			
-			Object[] temp = { myimageicon , apkInfo.widgets[i].lables[0].name, apkInfo.widgets[i].size, apkInfo.widgets[i].name, apkInfo.widgets[i].type};
+			String label = apkInfo.widgets[i].lables[0].name;
+			if(label == null) label = apkInfo.manifest.application.labels[0].name;
+			Object[] temp = { myimageicon , label, apkInfo.widgets[i].size, apkInfo.widgets[i].name, apkInfo.widgets[i].type};
 			arrWidgets.add(temp);
 		}
 
