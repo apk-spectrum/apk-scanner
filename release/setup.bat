@@ -63,17 +63,17 @@ if not exist "%APP_PATH%" (
 )
 
 rem --- 파일 복사 ---
-copy /Y %SRC_PATH%\ApkScanner.exe "%APP_PATH%"
-copy /Y %SRC_PATH%\APKInfoDlg.jar "%APP_PATH%"
-copy /Y %SRC_PATH%\lib\apktool.jar "%APP_PATH%\lib"
-copy /Y %SRC_PATH%\lib\commons-cli-1.3.1.jar "%APP_PATH%\lib"
-copy /Y %SRC_PATH%\lib\json-simple-1.1.1.jar "%APP_PATH%\lib"
-copy /Y %SRC_PATH%\tool\adb.exe "%APP_PATH%\tool"
-copy /Y %SRC_PATH%\tool\AdbWinApi.dll "%APP_PATH%\tool"
-copy /Y %SRC_PATH%\tool\AdbWinUsbApi.dll "%APP_PATH%\tool"
-copy /Y %SRC_PATH%\tool\aapt.exe "%APP_PATH%\tool"
-rem copy /Y %SRC_PATH%\data\strings-ko.xml "%APP_PATH%\data"
-rem copy /Y .\tool\* "%APP_PATH%\tool\"
+copy /Y "%SRC_PATH%\ApkScanner.exe" "%APP_PATH%"
+copy /Y "%SRC_PATH%\APKInfoDlg.jar" "%APP_PATH%"
+copy /Y "%SRC_PATH%\lib\apktool.jar" "%APP_PATH%\lib"
+copy /Y "%SRC_PATH%\lib\commons-cli-1.3.1.jar" "%APP_PATH%\lib"
+copy /Y "%SRC_PATH%\lib\json-simple-1.1.1.jar" "%APP_PATH%\lib"
+copy /Y "%SRC_PATH%\tool\adb.exe" "%APP_PATH%\tool"
+copy /Y "%SRC_PATH%\tool\AdbWinApi.dll" "%APP_PATH%\tool"
+copy /Y "%SRC_PATH%\tool\AdbWinUsbApi.dll" "%APP_PATH%\tool"
+copy /Y "%SRC_PATH%\tool\aapt.exe" "%APP_PATH%\tool"
+rem copy /Y "%SRC_PATH%\data\strings-ko.xml" "%APP_PATH%\data"
+rem copy /Y ".\tool\*" "%APP_PATH%\tool\"
 
 
 rem --- 연결프로그램 지정 ---
