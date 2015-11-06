@@ -98,6 +98,13 @@ public class AaptManifestReader
 			manifestInfo.versionName = getAttrValue(tagNode, "versionName");
 			manifestInfo.sharedUserId = getAttrValue(tagNode, "sharedUserId");
 			manifestInfo.sharedUserLabels = getAttrResourceValues(tagNode, "sharedUserLabels");
+			
+			if(manifestInfo.versionName.startsWith("@")) {
+				ResourceInfo[] res = getAttrResourceValues(tagNode, "versionName");
+				if(res != null && res[0].name != null) {
+					manifestInfo.versionName = res[0].name;
+				}
+			}
 		}
 		
 		tagNode = manifestPath.getNode("/manifest/uses-sdk");

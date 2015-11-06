@@ -116,7 +116,7 @@ public class TabbedPanel extends JTabbedPane
 				if(app.provider != null) cnt += app.provider.length;
 				setPanelData(4, cnt, apkInfo);
 			}
-			if(id == -1 || id == 5) setPanelData(5, apkInfo.certificates.length, apkInfo);
+			if(id == -1 || id == 5) setPanelData(5, (apkInfo.certificates != null) ? apkInfo.certificates.length : 0, apkInfo);
 
 	        //if(apkInfo != null) MainUI.ProgressBarDlg.addProgress(25,"check resource(*.png)...\n");
 			if(id == -1 || id == 3) setPanelData(3, apkInfo.images.length, apkInfo);

@@ -465,7 +465,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		if(apkInfo.manifest.application.labels != null) {
 			ArrayList<String> labels = new ArrayList<String>();
 			for(ResourceInfo r: apkInfo.manifest.application.labels) {
-				if("default".equals(r.configuration)) {
+				if(r.configuration == null || "default".equals(r.configuration)) {
 					labels.add(r.name);
 				} else {
 					labels.add("[" + r.configuration + "] " + r.name);

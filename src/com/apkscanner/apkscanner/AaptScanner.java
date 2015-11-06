@@ -60,25 +60,25 @@ public class AaptScanner extends ApkScannerStub
 		final Object resouresSync = new Object();
 		final Object SignSync = new Object();
 		final Object PermSync = new Object();
-		
-		new Thread(new Runnable() {
-			public void run()
-			{
-				synchronized(resouresSync) {
-					resouresSync.notify();
-					try {
-						resouresSync.wait();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					Log.i("I: read aapt dump resources...");
-					resourcesWithValue = AaptWrapper.Dump.getResources(apkInfo.filePath, true);
-					manifestReader.setResources(resourcesWithValue);
-					Log.i("resources completed");
-				}
-			}
-		}).start();
+
 		synchronized(resouresSync) {
+			new Thread(new Runnable() {
+				public void run()
+				{
+					synchronized(resouresSync) {
+						resouresSync.notify();
+						try {
+							resouresSync.wait();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						Log.i("I: read aapt dump resources...");
+						resourcesWithValue = AaptWrapper.Dump.getResources(apkInfo.filePath, true);
+						manifestReader.setResources(resourcesWithValue);
+						Log.i("resources completed");
+					}
+				}
+			}).start();
 			try {
 				resouresSync.wait();
 				resouresSync.notify();
@@ -86,29 +86,29 @@ public class AaptScanner extends ApkScannerStub
 				e.printStackTrace();
 			}
 		}
-		
-		new Thread(new Runnable() {
-			public void run()
-			{
-				synchronized(xmlTreeSync) {
-					xmlTreeSync.notify();
-					try {
-						xmlTreeSync.wait();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					Log.i("I: getDump AndroidManifest...");
-					androidManifest = AaptWrapper.Dump.getXmltree(apkInfo.filePath, new String[] { "AndroidManifest.xml" });
 
-					Log.i("I: createAaptXmlTree...");
-					manifestPath = new AaptXmlTreePath();
-					manifestPath.createAaptXmlTree(androidManifest);
-					manifestReader.setManifestPath(manifestPath);
-					Log.i("xmlTreeSync completed");
-				}
-			}
-		}).start();
 		synchronized(xmlTreeSync) {
+			new Thread(new Runnable() {
+				public void run()
+				{
+					synchronized(xmlTreeSync) {
+						xmlTreeSync.notify();
+						try {
+							xmlTreeSync.wait();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						Log.i("I: getDump AndroidManifest...");
+						androidManifest = AaptWrapper.Dump.getXmltree(apkInfo.filePath, new String[] { "AndroidManifest.xml" });
+	
+						Log.i("I: createAaptXmlTree...");
+						manifestPath = new AaptXmlTreePath();
+						manifestPath.createAaptXmlTree(androidManifest);
+						manifestReader.setManifestPath(manifestPath);
+						Log.i("xmlTreeSync completed");
+					}
+				}
+			}).start();
 			try {
 				xmlTreeSync.wait();
 				xmlTreeSync.notify();
@@ -116,25 +116,25 @@ public class AaptScanner extends ApkScannerStub
 				e.printStackTrace();
 			}
 		}
-		
-		new Thread(new Runnable() {
-			public void run()
-			{
-				synchronized(SignSync) {
-					SignSync.notify();
-					try {
-						SignSync.wait();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-			        Log.i("read signatures...");
-			        apkInfo.certificates = solveCert();
-					stateChanged(Status.CERT_COMPLETED);
-					Log.i("read signatures completed...");
-				}
-			}
-		}).start();
+
 		synchronized(SignSync) {
+			new Thread(new Runnable() {
+				public void run()
+				{
+					synchronized(SignSync) {
+						SignSync.notify();
+						try {
+							SignSync.wait();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+				        Log.i("read signatures...");
+				        apkInfo.certificates = solveCert();
+						stateChanged(Status.CERT_COMPLETED);
+						Log.i("read signatures completed...");
+					}
+				}
+			}).start();
 			try {
 				SignSync.wait();
 				SignSync.notify();
@@ -150,24 +150,24 @@ public class AaptScanner extends ApkScannerStub
 				synchronized(xmlTreeSync) {
 			        Log.i("get xmlTreeSync");
 				}
-				
-				new Thread(new Runnable() {
-					public void run()
-					{
-						synchronized(PermSync) {
-							PermSync.notify();
-							try {
-								PermSync.wait();
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							}
-							Log.i("read permissions start");
-							manifestReader.readPermissions();
-							Log.i("read permissions completed");
-						}
-					}
-				}).start();
+
 				synchronized(PermSync) {
+					new Thread(new Runnable() {
+						public void run()
+						{
+							synchronized(PermSync) {
+								PermSync.notify();
+								try {
+									PermSync.wait();
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+								Log.i("read permissions start");
+								manifestReader.readPermissions();
+								Log.i("read permissions completed");
+							}
+						}
+					}).start();
 					try {
 						PermSync.wait();
 						PermSync.notify();

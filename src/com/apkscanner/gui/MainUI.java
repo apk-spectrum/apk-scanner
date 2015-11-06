@@ -66,25 +66,24 @@ public class MainUI extends JFrame
 	
 	public MainUI(final String apkFilePath)
 	{
-		new Thread(new Runnable() {
-			public void run()
-			{
-				synchronized(uiInitSync) {
-					uiInitSync.notify();
-					try {
-						uiInitSync.wait();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					Log.i("UI Init start");
-					initialize(true);
-					tabbedPanel.setLodingLabel();
-					Log.i("UI Init end");
-				}
-			}
-		}).start();
-		
 		synchronized(uiInitSync) {
+			new Thread(new Runnable() {
+				public void run()
+				{
+					synchronized(uiInitSync) {
+						uiInitSync.notify();
+						try {
+							uiInitSync.wait();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						Log.i("UI Init start");
+						initialize(true);
+						tabbedPanel.setLodingLabel();
+						Log.i("UI Init end");
+					}
+				}
+			}).start();
 			try {
 				uiInitSync.wait();
 				uiInitSync.notify();
@@ -104,26 +103,25 @@ public class MainUI extends JFrame
 	
 	public MainUI(final String devSerialNumber, final String packageName, final String resources)
 	{
-		new Thread(new Runnable() {
-			public void run()
-			{
-				synchronized(uiInitSync) {
-					uiInitSync.notify();
-					try {
-						uiInitSync.wait();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					Log.i("UI Init start");
-					initialize(true);
-					tabbedPanel.setLodingLabel();
-					tabbedPanel.setTimeLeft(-1);
-					Log.i("UI Init end");
-				}
-			}
-		}).start();
-		
 		synchronized(uiInitSync) {
+			new Thread(new Runnable() {
+				public void run()
+				{
+					synchronized(uiInitSync) {
+						uiInitSync.notify();
+						try {
+							uiInitSync.wait();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						Log.i("UI Init start");
+						initialize(true);
+						tabbedPanel.setLodingLabel();
+						tabbedPanel.setTimeLeft(-1);
+						Log.i("UI Init end");
+					}
+				}
+			}).start();
 			try {
 				uiInitSync.wait();
 				uiInitSync.notify();
@@ -193,28 +191,28 @@ public class MainUI extends JFrame
 		@Override
 		public void OnStart(final long estimatedTime) {
 			Log.i("ApkCore.OnStart() estimatedTime : " + estimatedTime);
-			new Thread(new Runnable() {
-				public void run()
-				{
-					synchronized(labelInitSync) {
-						labelInitSync.notify();
-						try {
-							labelInitSync.wait();
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-						synchronized(uiInitSync) {
-							Log.i("OnStart() uiInitSync");	
-						}
-					}
-					if(tabbedPanel != null) tabbedPanel.setTimeLeft(estimatedTime);
-					if(toolBar != null) {
-						toolBar.setEnabledAt(ButtonSet.OPEN, false);
-						toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
-					}
-				}
-			}).start();
 			synchronized(labelInitSync) {
+				new Thread(new Runnable() {
+					public void run()
+					{
+						synchronized(labelInitSync) {
+							labelInitSync.notify();
+							try {
+								labelInitSync.wait();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							synchronized(uiInitSync) {
+								Log.i("OnStart() uiInitSync");	
+							}
+						}
+						if(tabbedPanel != null) tabbedPanel.setTimeLeft(estimatedTime);
+						if(toolBar != null) {
+							toolBar.setEnabledAt(ButtonSet.OPEN, false);
+							toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
+						}
+					}
+				}).start();
 				try {
 					labelInitSync.wait();
 					labelInitSync.notify();
