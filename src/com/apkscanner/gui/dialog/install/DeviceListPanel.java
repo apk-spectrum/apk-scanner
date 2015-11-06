@@ -5,16 +5,11 @@ import javax.swing.border.EmptyBorder;
 
 import com.apkscanner.core.AdbWrapper;
 import com.apkscanner.core.AdbWrapper.DeviceStatus;
-import com.apkscanner.gui.util.ButtonType;
-import com.apkscanner.gui.util.StandardButton;
-import com.apkscanner.gui.util.Theme;
 import com.apkscanner.resource.Resource;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 public class DeviceListPanel extends JPanel implements ActionListener
 {
@@ -22,7 +17,7 @@ public class DeviceListPanel extends JPanel implements ActionListener
 	
 	private static int value = 0;
 	private static JList<String> list;
-	private static Boolean clicked = false;
+	//private static Boolean clicked = false;
 	private static ArrayList<DeviceStatus> DeviceList;
 	
 	/**
@@ -56,7 +51,7 @@ public class DeviceListPanel extends JPanel implements ActionListener
 
 	private void InitUI(Frame frame, Component locationComp, String labelText,
 			String title, Object[] data, int initialValue, String longValue, ActionListener ButtonListener) {
-		clicked = false;
+		//clicked = false;
         		
 		// Create and initialize the buttons.
 		JButton cancelButton = new JButton(Resource.STR_BTN_REFRESH.getString());
@@ -174,7 +169,7 @@ public class DeviceListPanel extends JPanel implements ActionListener
 		if ("Set".equals(e.getActionCommand())) {
 			//Log.i("click set");
 			DeviceListPanel.value = (int) (list.getSelectedIndex());			
-			clicked = true;
+			//clicked = true;
 		} else if("Refresh".equals(e.getActionCommand())) {
 			refreshData();
 		}

@@ -1,7 +1,6 @@
 package com.apkscanner.gui.util;
 
 import java.awt.AlphaComposite;
-import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -21,7 +20,6 @@ import javax.swing.text.Element;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
-
 
 public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 {
@@ -137,7 +135,8 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
         //doDrawing(g);
     }
 	
-    private void doDrawing(Graphics g) {
+    @SuppressWarnings("unused")
+	private void doDrawing(Graphics g) {
 
         Graphics2D g2d = (Graphics2D) g.create();
 

@@ -1,7 +1,6 @@
 package com.apkscanner.gui.util;
 
 import java.awt.AWTKeyStroke;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
@@ -14,8 +13,6 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
-
-import com.apkscanner.util.Log;
 
 public class ArrowTraversalPane extends JOptionPane
 {

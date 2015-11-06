@@ -5,7 +5,10 @@ import java.awt.Image;
 
 import javax.swing.JPanel;
 
-public class ImagePanel extends JPanel{
+public class ImagePanel extends JPanel
+{
+	private static final long serialVersionUID = 2003631789889579741L;
+
 	private Image img;
 	public void SetImage(Image imgtemp) {
 		this.img = imgtemp;

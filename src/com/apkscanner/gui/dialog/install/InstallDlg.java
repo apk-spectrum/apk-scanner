@@ -1,53 +1,44 @@
 package com.apkscanner.gui.dialog.install;
 
 import java.awt.BorderLayout;
-import java.awt.Button;
 import java.awt.Color;
-import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.lang.reflect.Method;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.DefaultCaret;
 
-import com.apkscanner.core.AdbWrapper;
 import com.apkscanner.core.AdbWrapper.DeviceStatus;
 import com.apkscanner.gui.ApkInstaller;
 import com.apkscanner.gui.ApkInstaller.InstallDlgFuncListener;
-import com.apkscanner.gui.ImagePanel;
 import com.apkscanner.gui.dialog.AboutDlg;
-import com.apkscanner.gui.dialog.install.*;
 import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.test.ProgressBarTest;
 import com.apkscanner.util.Log;
 
-public class InstallDlg extends JDialog implements ActionListener,WindowListener{
-	
+public class InstallDlg extends JDialog implements ActionListener,WindowListener
+{
+	private static final long serialVersionUID = -55952374181959464L;
+
 	InstallCheckTable TestTable;
 	JScrollPane scrollPane;
 	JPanel framelayout;
 	JFrame f;
 	JTextArea taskOutput;
-	static private InstallDlgFuncListener CoreInstallLitener; 
+	private InstallDlgFuncListener CoreInstallLitener; 
 	InstallDlg dlg;
 	JPanel MessageBox;
 	JPanel AboutPanel;

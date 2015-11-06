@@ -11,11 +11,8 @@ import javax.swing.JPanel;
 import com.apkscanner.apkscanner.ApktoolManager;
 import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.core.AdbWrapper;
-import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.resource.Resource;
-
-import com.apkscanner.gui.dialog.install.*;
 
 public class AboutDlg /*extends JDialog*/
 {

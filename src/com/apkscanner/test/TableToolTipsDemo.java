@@ -17,7 +17,8 @@ import java.awt.event.MouseEvent;
  * sets up tool tips for both cells and column headers.
  */
 public class TableToolTipsDemo extends JPanel {
-    private boolean DEBUG = false;
+	private static final long serialVersionUID = 3171493012831649915L;
+	private boolean DEBUG = false;
     protected String[] columnToolTips = {null,
                                          null,
                                          "The person's favorite sport to participate in",
@@ -28,8 +29,9 @@ public class TableToolTipsDemo extends JPanel {
         super(new GridLayout(1,0));
  
         JTable table = new JTable(new MyTableModel()) {
-             
-            //Implement table cell tool tips.
+			private static final long serialVersionUID = 7237353317148787922L;
+
+			//Implement table cell tool tips.
             public String getToolTipText(MouseEvent e) {
                 String tip = null;
                 java.awt.Point p = e.getPoint();
@@ -65,8 +67,10 @@ public class TableToolTipsDemo extends JPanel {
             //Implement table header tool tips.
             protected JTableHeader createDefaultTableHeader() {
                 return new JTableHeader(columnModel) {
-                    public String getToolTipText(MouseEvent e) {
-                        String tip = null;
+					private static final long serialVersionUID = 6356510328660085046L;
+
+					public String getToolTipText(MouseEvent e) {
+                        //String tip = null;
                         java.awt.Point p = e.getPoint();
                         int index = columnModel.getColumnIndexAtX(p.x);
                         int realIndex = columnModel.getColumn(index).getModelIndex();
@@ -87,7 +91,8 @@ public class TableToolTipsDemo extends JPanel {
     }
  
     class MyTableModel extends AbstractTableModel {
-        private String[] columnNames = {"First Name",
+		private static final long serialVersionUID = 2563211676907286023L;
+		private String[] columnNames = {"First Name",
                                         "Last Name",
                                         "Sport",
                                         "# of Years",
@@ -127,7 +132,7 @@ public class TableToolTipsDemo extends JPanel {
          * then the last column would contain text ("true"/"false"),
          * rather than a check box.
          */
-        public Class getColumnClass(int c) {
+        public Class<? extends Object> getColumnClass(int c) {
             return getValueAt(0, c).getClass();
         }
  

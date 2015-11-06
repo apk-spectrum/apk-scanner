@@ -20,7 +20,8 @@ import javax.swing.table.TableModel;
 */
 public class ProgressBarTest extends JPanel {
 
-    private JTable table = new JTable(new TestModel());
+	private static final long serialVersionUID = 8727572613016196274L;
+	private JTable table = new JTable(new TestModel());
     public ProgressBarTest() {
         table.getColumnModel().getColumn(0).setCellRenderer(new TestCellRenderer());
         table.setPreferredScrollableViewportSize(new Dimension(320, 120));
@@ -29,7 +30,9 @@ public class ProgressBarTest extends JPanel {
 
     private class TestModel extends AbstractTableModel {
 
-        @Override
+		private static final long serialVersionUID = 6474883623897291715L;
+
+		@Override
         public int getRowCount() {
             return 4;
         }

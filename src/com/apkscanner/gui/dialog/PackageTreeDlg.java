@@ -38,10 +38,7 @@ import com.apkscanner.core.AdbWrapper.PackageListObject;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.gui.util.BooleanTableModel;
-import com.apkscanner.gui.util.ButtonType;
 import com.apkscanner.gui.util.FilteredTreeModel;
-import com.apkscanner.gui.util.StandardButton;
-import com.apkscanner.gui.util.Theme;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
@@ -58,7 +55,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
  
@@ -763,7 +759,8 @@ public class PackageTreeDlg extends JPanel
      * this method should be invoked from the
      * event dispatch thread.
      */
-    private void createAndShowGUI(Component component)
+    @SuppressWarnings("unused")
+	private void createAndShowGUI(Component component)
     {
     	final PackageTreeDlg ptg = new PackageTreeDlg();
     	

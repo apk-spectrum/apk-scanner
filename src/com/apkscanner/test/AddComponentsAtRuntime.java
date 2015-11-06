@@ -95,6 +95,7 @@ public class AddComponentsAtRuntime {
     }
 
     public static void main(String[] args) {
-        AddComponentsAtRuntime makingChanges = new AddComponentsAtRuntime();
+        @SuppressWarnings("unused")
+		AddComponentsAtRuntime makingChanges = new AddComponentsAtRuntime();
     }
 }

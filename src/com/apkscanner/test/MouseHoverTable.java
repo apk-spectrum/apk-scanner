@@ -2,22 +2,20 @@ package com.apkscanner.test;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.*;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.Timer;
 import javax.swing.table.TableCellRenderer;
 
 public class MouseHoverTable extends JFrame
 {
-    int itsRow =0;
+	private static final long serialVersionUID = -9221804811287169191L;
+	
+	int itsRow =0;
     int itsColumn = 0;
     JTable itsTable;
 
@@ -32,10 +30,12 @@ public class MouseHoverTable extends JFrame
 AttributiveCellRenderer());
         MyMouseAdapter aMouseAda = new MyMouseAdapter();
         itsTable.addMouseMotionListener(aMouseAda);
-        JScrollPane jsp = new JScrollPane(itsTable);
+        @SuppressWarnings("unused")
+		JScrollPane jsp = new JScrollPane(itsTable);
         this.getContentPane().add(itsTable);//jsp);
     }
 
+@SuppressWarnings("deprecation")
 public static void main(String[] args)
 {
     JFrame frame = new MouseHoverTable("Table Example");
@@ -69,7 +69,9 @@ public static void main(String[] args)
     public class AttributiveCellRenderer extends JLabel  implements
 TableCellRenderer {
 
-  public AttributiveCellRenderer() {
+		private static final long serialVersionUID = 4704190022977926777L;
+
+public AttributiveCellRenderer() {
     setOpaque(true);
   }
 

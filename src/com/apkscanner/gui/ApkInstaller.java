@@ -1,49 +1,28 @@
 package com.apkscanner.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.KeyStroke;
-import javax.swing.text.DefaultCaret;
 
 import com.apkscanner.core.AdbWrapper;
 import com.apkscanner.core.AdbWrapper.AdbWrapperListener;
 import com.apkscanner.core.AdbWrapper.DeviceStatus;
 import com.apkscanner.core.AdbWrapper.PackageInfo;
-import com.apkscanner.gui.dialog.DeviceListDialog;
 import com.apkscanner.gui.dialog.install.InstallDlg;
-import com.apkscanner.gui.util.ArrowTraversalPane;
-import com.apkscanner.gui.util.ButtonType;
-import com.apkscanner.gui.util.StandardButton;
-import com.apkscanner.gui.util.Theme;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 
 public class ApkInstaller
 {
-	static private JTextArea dialogLogArea;
-	static private JDialog dlgDialog = null;
+	//static private JTextArea dialogLogArea;
+	//static private JDialog dlgDialog = null;
 
-	static private JPanel installPanel;
-	static private JPanel uninstallPanel;
+	//static private JPanel installPanel;
+	//static private JPanel uninstallPanel;
 	
 	static private String strPackageName;
 	private static String strSourcePath;
@@ -54,7 +33,7 @@ public class ApkInstaller
 	static private Thread t;
 	
 	//window position
-	static private int nPositionX, nPositionY;
+	//static private int nPositionX, nPositionY;
 	
 	public interface InstallButtonStatusListener
 	{
@@ -83,17 +62,17 @@ public class ApkInstaller
 		strPackageName = PackageName;
 		strSourcePath = apkPath;
 		strLibPath = libPath;
-		this.checkPackage = checkPackage;
-		this.samePackage = samePackage;
+		ApkInstaller.checkPackage = checkPackage;
+		ApkInstaller.samePackage = samePackage;
 		
 		//ShowSetupLogDialog();
 		//dialogLogArea.setText("");
 		
-		this.Listener = Listener; 
+		ApkInstaller.Listener = Listener; 
 		
 		
 		InstallDlg dlg = new InstallDlg(isOnlyInstall);
-		this.InstallDlgListener = dlg.getInstallDlgFuncListener();
+		ApkInstaller.InstallDlgListener = dlg.getInstallDlgFuncListener();
 		
 		
 		t = new InstallThread();
@@ -197,6 +176,7 @@ public class ApkInstaller
 			for(int i=0; i<options.length; i++) {
 				temp[options.length-1-i] = options[i];
 			}		
+			@SuppressWarnings("unused")
 			int result = InstallDlgListener.ShowQuestion(runnable,message,title,optionType,messageType, icon, temp, initialValue);
 			
 			if(runnable!=null) {
@@ -204,7 +184,6 @@ public class ApkInstaller
 					try {
 						runnable.wait();
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -222,13 +201,13 @@ public class ApkInstaller
 		
 		private int showDeviceList(Runnable runnable) {
 			
+			@SuppressWarnings("unused")
 			int result = InstallDlgListener.ShowDeviceList(runnable);
 			
 			synchronized (runnable) {
 				try {
 					runnable.wait();
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -456,6 +435,7 @@ public class ApkInstaller
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	static public void StopThead() {
 		
 		Listener.SetInstallButtonStatus(true);
@@ -463,7 +443,6 @@ public class ApkInstaller
 		try {
 			t.join();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

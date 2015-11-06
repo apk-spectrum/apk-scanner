@@ -6,9 +6,6 @@ package com.apkscanner.gui.dialog.install;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.ImageObserver;
-import java.util.*;
-import java.util.List;
-import java.util.concurrent.*;
 
 import javax.swing.*;
 import javax.swing.table.*;
@@ -18,17 +15,19 @@ import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
 public final class InstallCheckTable extends JPanel {
-  private final WorkerModel model = new WorkerModel();
-  private final JTable table;
-  private final transient TableRowSorter<? extends TableModel> sorter = new TableRowSorter<>(model);
-  public InstallCheckTable() {
+	private static final long serialVersionUID = 8160487417393284718L;
+	private final WorkerModel model = new WorkerModel();
+	private final JTable table;
+	private final transient TableRowSorter<? extends TableModel> sorter = new TableRowSorter<>(model);
+	public InstallCheckTable() {
       super(new BorderLayout());
       
       
       //ToolTipManager.sharedInstance().setReshowDelay(0);
       table = new JTable(model) {
-          
-         //Implement table cell tool tips.
+		private static final long serialVersionUID = 7571614772906912658L;
+
+		//Implement table cell tool tips.
          public String getToolTipText(MouseEvent e) {
              String tip = null;
              java.awt.Point p = e.getPoint();
@@ -51,7 +50,10 @@ public final class InstallCheckTable extends JPanel {
          //Implement table header tool tips.
          protected JTableHeader createDefaultTableHeader() {
              return new JTableHeader(columnModel) {
-                 public String getToolTipText(MouseEvent e) {
+				private static final long serialVersionUID = -4037080104878501674L;
+
+				@SuppressWarnings("unused")
+				public String getToolTipText(MouseEvent e) {
                      String tip = null;
                      java.awt.Point p = e.getPoint();
                      int index = columnModel.getColumnIndexAtX(p.x);
@@ -176,7 +178,9 @@ public final class InstallCheckTable extends JPanel {
 }
 
 class WorkerModel extends DefaultTableModel {
-  private static final ColumnContext[] COLUMN_ARRAY = {
+	private static final long serialVersionUID = -7612102085584200217L;
+
+private static final ColumnContext[] COLUMN_ARRAY = {
       
       new ColumnContext("Name", String.class, false),
       new ColumnContext("Progress",     ImageIcon.class,  false),
@@ -236,9 +240,9 @@ class WorkerModel extends DefaultTableModel {
   }
   private static class ColumnContext {
       public final String  columnName;
-      public final Class   columnClass;
+      public final Class<?>   columnClass;
       public final boolean isEditable;
-      public ColumnContext(String columnName, Class columnClass, boolean isEditable) {
+      public ColumnContext(String columnName, Class<?> columnClass, boolean isEditable) {
           this.columnName = columnName;
           this.columnClass = columnClass;
           this.isEditable = isEditable;

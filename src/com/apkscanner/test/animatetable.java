@@ -34,7 +34,9 @@ final Object[] column = new Object[] { "Example image gif and png",
     "Example image gif and jpg" };
 
 AbstractTableModel model = new AbstractTableModel() {
-    public int getColumnCount() {
+	private static final long serialVersionUID = -7361738026806815015L;
+
+	public int getColumnCount() {
     return column.length;
     }
 
@@ -50,7 +52,8 @@ AbstractTableModel model = new AbstractTableModel() {
     return data[row][col];
     }
 
-    public Class getColumnClass(int col) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public Class getColumnClass(int col) {
     return ImageIcon.class;
     }
 };
