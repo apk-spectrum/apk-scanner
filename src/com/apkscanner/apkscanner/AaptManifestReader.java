@@ -723,7 +723,7 @@ public class AaptManifestReader
 			String bool = getAttrValue(n, "required");
 			if(bool != null) info.required = bool.equals("true");
 			String val = getAttrValue(n, "glEsVersion");
-			if(val != null) info.glEsVersion = Integer.parseInt(val);
+			if(val != null && val.startsWith("0x")) info.glEsVersion = Integer.parseInt(val.substring(2), 16);
 			list.add(info);
 		}
 		

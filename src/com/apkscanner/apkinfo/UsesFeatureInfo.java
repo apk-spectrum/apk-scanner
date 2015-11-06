@@ -12,8 +12,11 @@ public class UsesFeatureInfo
 		
 		report.append("uses feature : ");
 		if(name != null) report.append(name);
+		if(glEsVersion != null) {
+			if(name != null) report.append(", ");
+			report.append("glEsVersion=0x" + Integer.toHexString(glEsVersion));
+		}
 		if(required != null) report.append(", required=" + required);
-		if(glEsVersion != null) report.append(", glEsVersion=" + glEsVersion);
 		report.append("\n");
 
 		return report.toString();
