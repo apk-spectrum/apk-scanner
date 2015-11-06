@@ -433,7 +433,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 
 	public synchronized void setData(long estimatedTime)
 	{
-		Log.w("setData() " + estimatedTime);
+		Log.i("setData() estimatedTime " + estimatedTime);
 		if(lodingPanel == null)
 			initialize();
 
@@ -462,18 +462,22 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		}
 		wasSetData = true;
 		
-		if(apkInfo.manifest.application.labels != null) {
+		if(apkInfo.manifest.application.labels != null && apkInfo.manifest.application.labels.length > 0) {
 			ArrayList<String> labels = new ArrayList<String>();
 			for(ResourceInfo r: apkInfo.manifest.application.labels) {
 				if(r.configuration == null || "default".equals(r.configuration)) {
-					labels.add(r.name);
+					if(r.name != null) {
+						labels.add(r.name);
+					} else {
+						labels.add(apkInfo.manifest.packageName);
+					}
 				} else {
 					labels.add("[" + r.configuration + "] " + r.name);
 				}
 			}
 			this.labels = labels.toArray(new String[0]);
 		} else {
-			this.labels = new String[] {""}; // apkInfo.Labelname;
+			this.labels = new String[] { apkInfo.manifest.packageName }; // apkInfo.Labelname;
 		}
 
 		if(apkInfo.manifest.packageName != null) packageName = apkInfo.manifest.packageName;
