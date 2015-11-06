@@ -14,7 +14,6 @@ import com.apkscanner.gui.tabpanels.Widget;
 import com.apkscanner.gui.tabpanels.BasicInfo;
 import com.apkscanner.gui.util.PlasticTabbedPaneUI;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.Log;
 
 public class TabbedPanel extends JTabbedPane
 {
@@ -101,7 +100,6 @@ public class TabbedPanel extends JTabbedPane
     
 	public void setData(ApkInfo apkInfo, int id)
 	{
-		Log.w("setData() start id " + id);
 		if(apkInfo != null) {
 			if(id == -1 || id == 0) {
 				((TabDataObject)(getComponent(0))).setData(apkInfo);
@@ -127,7 +125,6 @@ public class TabbedPanel extends JTabbedPane
 				if(id == -1 || id == i) setPanelData(i, 0, null);
 			}
 		}
-		Log.w("setData() end id " + id);
 	}
 
 	private void setPanelData(int panelIdx, int dataSize, ApkInfo apkInfo)

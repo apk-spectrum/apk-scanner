@@ -117,6 +117,7 @@ public class MainUI extends JFrame
 					Log.i("UI Init start");
 					initialize(true);
 					tabbedPanel.setLodingLabel();
+					tabbedPanel.setTimeLeft(-1);
 					Log.i("UI Init end");
 				}
 			}
@@ -347,8 +348,8 @@ public class MainUI extends JFrame
 
 			if(!newWindow) {
 				if(tabbedPanel != null) {
-					tabbedPanel.setTimeLeft(-1);
 					tabbedPanel.setLodingLabel();
+					tabbedPanel.setTimeLeft(-1);
 				}
 				if(toolBar != null) {
 					toolBar.setEnabledAt(ButtonSet.OPEN, false);
