@@ -354,7 +354,9 @@ public class AaptManifestReader
 			iconPaths = getAttrResourceValues(widgetNode, "previewImage", widgetNamespace);
 			String jarPath = "jar:file:" + apkFilePath.replaceAll("#", "%23") + "!/";
 			for(ResourceInfo r: iconPaths) {
-				if(r.name.endsWith("qmg")) {
+				if(r.name == null) {
+					r.name = Resource.IMG_DEF_APP_ICON.getPath();
+				} else if(r.name.endsWith("qmg")) {
 					r.name = Resource.IMG_QMG_IMAGE_ICON.getPath();
 				} else {
 					r.name = jarPath + r.name;

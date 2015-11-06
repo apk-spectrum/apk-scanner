@@ -188,7 +188,9 @@ public class AaptScanner extends ApkScannerStub
 				if(icons != null & icons.length > 0) {
 					String jarPath = "jar:file:" + apkInfo.filePath.replaceAll("#", "%23") + "!/";
 					for(ResourceInfo r: icons) {
-						if(r.name.endsWith("qmg")) {
+						if(r.name == null) {
+							r.name = Resource.IMG_DEF_APP_ICON.getPath();
+						} else if(r.name.endsWith("qmg")) {
 							r.name = Resource.IMG_QMG_IMAGE_ICON.getPath();
 						} else if(r.name.endsWith(".xml")) {
 							Log.w("image resource is xml : " + r.name);
