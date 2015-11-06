@@ -12,7 +12,7 @@ public class UsesConfigurationInfo
 	{
 		StringBuilder report = new StringBuilder();
 		
-		report.append("uses configuration : ");
+		report.append("uses configuration : \n");
 		if(reqFiveWayNav != null) report.append("  reqFiveWayNav : " + reqFiveWayNav + "\n");
 		if(reqHardKeyboard != null) report.append("  reqHardKeyboard : " + reqHardKeyboard + "\n");
 		if(reqKeyboardType != null) report.append("  reqKeyboardType : " + reqKeyboardType + "\n");

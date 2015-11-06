@@ -138,8 +138,8 @@ public class AaptManifestReader
 		manifestInfo.supportsScreens = getSupportsScreens(manifestPath.getNodeList("/manifest/supports-screens"));
 		manifestInfo.supportsGlTexture = getSupportsGlTexture(manifestPath.getNodeList("/manifest/supports-gl-texture"));
 		manifestInfo.usesConfiguration = getUsesConfiguration(manifestPath.getNodeList("/manifest/uses-configuration"));
-		manifestInfo.usesFeature = getUsesFeature(manifestPath.getNodeList("/manifest/uses-configuration"));
-		manifestInfo.usesLibrary = getUsesLibrary(manifestPath.getNodeList("/manifest/uses-configuration"));
+		manifestInfo.usesFeature = getUsesFeature(manifestPath.getNodeList("/manifest/uses-feature"));
+		manifestInfo.usesLibrary = getUsesLibrary(manifestPath.getNodeList("/manifest/uses-library"));
 		
         // display to launchur
 		AaptXmlTreeNode[] launchers = manifestPath.getNodeList("/manifest/application/activity/intent-filter/category[@"+namespace+"name='android.intent.category.LAUNCHER']");

@@ -10,8 +10,9 @@ public class UsesLibraryInfo
 		StringBuilder report = new StringBuilder();
 		
 		report.append("uses feature : ");
-		if(name != null) report.append("  name : " + name + "\n");
-		if(required != null) report.append("  required : " + required + "\n");
+		if(name != null) report.append(name);
+		if(required != null) report.append(", required=" + required);
+		report.append("\n");
 
 		return report.toString();
 	}

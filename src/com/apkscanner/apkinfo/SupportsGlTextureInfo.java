@@ -8,8 +8,7 @@ public class SupportsGlTextureInfo
 	{
 		StringBuilder report = new StringBuilder();
 		
-		report.append("supports gl texture : ");
-		report.append(name + "\n");
+		report.append("supports gl texture : " + name + "\n");
 
 		return report.toString();
 	}
