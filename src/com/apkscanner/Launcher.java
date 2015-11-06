@@ -32,7 +32,7 @@ public class Launcher
 	
 	static public boolean run(String devSerialNum, String devApkFilePath, String frameworkRes)
 	{
-		if(devApkFilePath != null)
+		if(devApkFilePath == null)
 			return false;
 
 		ArrayList<String> cmd = new ArrayList<String>(getDefaultCmd());
