@@ -22,8 +22,8 @@ import com.apkscanner.util.MyXPath;
 public enum Resource
 {
 	STR_APP_NAME				(Type.TEXT, "@app_name"),
-	STR_APP_VERSION				(Type.TEXT, "2.1 Release 20151107"),
-	STR_APP_BUILD_MODE			(Type.TEXT, "eng"),
+	STR_APP_VERSION				(Type.TEXT, "2.1 Release 20151109"),
+	STR_APP_BUILD_MODE			(Type.TEXT, "user"),
 	STR_APP_MAKER				(Type.TEXT, "jin_h.lee / sunggyu.kam"),
 	STR_APP_MAKER_EMAIL			(Type.TEXT, "jin_h.lee@samsung.com;sunggyu.kam@samsung.com"),
 
