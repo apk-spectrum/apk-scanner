@@ -3,8 +3,12 @@ package com.apkscanner.gui.tabpanels;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Window;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -21,6 +25,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import com.apkscanner.apkinfo.ApkInfo;
@@ -698,8 +703,22 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		taskOutput.setEditable(false);
 		taskOutput.setCaretPosition(0);
 		
-		JScrollPane scrollPane = new JScrollPane(taskOutput);
+		final JScrollPane scrollPane = new JScrollPane(taskOutput);
 		scrollPane.setPreferredSize(size);
+		
+		if(!"Linux".equals(System.getProperty("os.name"))) {
+			scrollPane.addHierarchyListener(new HierarchyListener() {            
+				public void hierarchyChanged(HierarchyEvent e) {
+					Window window = SwingUtilities.getWindowAncestor(scrollPane);
+					if (window instanceof Dialog) {
+						Dialog dialog = (Dialog)window;
+						if (!dialog.isResizable()) {
+							dialog.setResizable(true);
+							}                
+						}            
+					}
+			});
+		}
 
 		JOptionPane.showOptionDialog(null, scrollPane, title, JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, icon,
 				new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
