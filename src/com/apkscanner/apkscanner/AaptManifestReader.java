@@ -99,7 +99,7 @@ public class AaptManifestReader
 			manifestInfo.sharedUserId = getAttrValue(tagNode, "sharedUserId");
 			manifestInfo.sharedUserLabels = getAttrResourceValues(tagNode, "sharedUserLabels");
 			
-			if(manifestInfo.versionName.startsWith("@")) {
+			if(manifestInfo.versionName != null && manifestInfo.versionName.startsWith("@")) {
 				ResourceInfo[] res = getAttrResourceValues(tagNode, "versionName");
 				if(res != null && res[0].name != null) {
 					manifestInfo.versionName = res[0].name;
