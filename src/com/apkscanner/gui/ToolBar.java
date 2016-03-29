@@ -112,7 +112,11 @@ public class ToolBar extends JToolBar
     	SETTING			(Type.NORMAL, Resource.STR_BTN_SETTING.getString(), Resource.STR_BTN_SETTING_LAB.getString(), Resource.IMG_TOOLBAR_SETTING.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
     	ABOUT			(Type.NORMAL, Resource.STR_BTN_ABOUT.getString(), Resource.STR_BTN_ABOUT_LAB.getString(), Resource.IMG_TOOLBAR_ABOUT.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
     	ALL				(Type.NONE, null, null),
-    	NEED_TARGET_APK	(Type.NONE, null, null);
+    	NEED_TARGET_APK	(Type.NONE, null, null),
+    	OPEN_CODE	(Type.NORMAL, Resource.STR_BTN_SETTING.getString(), Resource.STR_BTN_SETTING_LAB.getString(), Resource.IMG_TOOLBAR_OPENCODE.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+		SIGNING			(Type.NORMAL, Resource.STR_BTN_ABOUT.getString(), Resource.STR_BTN_ABOUT_LAB.getString(), Resource.IMG_TOOLBAR_SIGNNING.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize));
+
+    	
 
     	private enum Type {
     		NONE, NORMAL, HOVER, EXTEND
@@ -272,6 +276,10 @@ public class ToolBar extends JToolBar
         
         add(getNewSeparator(JSeparator.VERTICAL, sepSize));
 
+        add(buttonMap.get(ButtonSet.OPEN_CODE));
+        add(buttonMap.get(ButtonSet.SIGNING));
+        add(getNewSeparator(JSeparator.VERTICAL, sepSize));
+        
         add(buttonMap.get(ButtonSet.SETTING));
         add(getNewSeparator(JSeparator.VERTICAL, sepSize));
         
