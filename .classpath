@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="lib" path="/home/leejinhyeong/Desktop/workspace/APKScanner_Part2/lib/json-simple-1.1.1.jar"/>
-	<classpathentry kind="lib" path="/home/leejinhyeong/Desktop/workspace/APKScanner_Part2/lib/commons-cli-1.3.1.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="res"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
