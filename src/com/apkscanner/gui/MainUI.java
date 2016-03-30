@@ -407,9 +407,6 @@ public class MainUI extends JFrame
 				cmdLog =ConsolCmd.exc(new String[] {"sh", Resource.BIN_DEX2JAR_LNX.getPath(), 
 						apkfilePath, "-o", apkInfo.tempWorkPath+File.separator+jarfileName});				
 			}
-
-			
-			
 			//open JD GUI
 			for( int i=0 ; i<cmdLog.length; i++)
 			{

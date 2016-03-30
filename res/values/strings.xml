@@ -21,6 +21,7 @@
     <string name="btn_del">Del</string>
     <string name="btn_add">Add</string>
     <string name="btn_export">Export</string>
+    <string name="btn_opencode">Source Code</string>
     
     <string name="btn_open_lab">Open APK file (Ctrl+O)</string>
     <string name="btn_manifest_lab">Show AndroidManifest.xml (Ctrl+M)</string>
@@ -30,6 +31,7 @@
     <string name="btn_install_lab">Install APK to the connected device (Ctrl+I)</string>
     <string name="btn_setting_lab">Setting editor and language, etc.. (Ctrl+S)</string>
     <string name="btn_about_lab">About APK Scanner (F1)</string>
+    <string name="btn_opencode_lab">Open JD-GUI from apk</string>
     
     <string name="menu_new">New Window...</string>
     <string name="menu_new_window">New empty window(N)</string>
