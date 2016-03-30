@@ -389,6 +389,18 @@ public class MainUI extends JFrame
 				}
 			});
 		}
+		private void evtOpenJDGUI()
+		{
+			ApkInfo apkInfo = apkScanner.getApkInfo();
+			
+			try {
+				Log.i(apkInfo.tempWorkPath);
+				
+				
+				new ProcessBuilder("0").start();
+			} catch (IOException e1) {
+			}
+		}		
 		
 		private void evtShowManifest()
 		{
@@ -493,6 +505,8 @@ public class MainUI extends JFrame
 				evtOpenPackage(false);
 			} else if(ToolBar.MenuItemSet.INSTALLED_CHECK.matchActionEvent(e)) {
 				evtInstallApk(true);
+			} else if(ToolBar.ButtonSet.OPEN_CODE.matchActionEvent(e)) {
+				evtOpenJDGUI();
 			}
 		}
 

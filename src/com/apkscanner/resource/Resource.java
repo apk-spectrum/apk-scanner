@@ -263,6 +263,7 @@ public enum Resource
 	
 	ETC_SETTINGS_FILE			(Type.ETC, "settings.txt");
 	
+	
 	private enum Type {
 		IMAGE,
 		TEXT,
