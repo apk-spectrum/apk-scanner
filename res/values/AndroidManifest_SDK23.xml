@@ -76,6 +76,9 @@
     <protected-broadcast android:name="android.intent.action.USER_FOREGROUND" />
     <protected-broadcast android:name="android.intent.action.USER_SWITCHED" />
     <protected-broadcast android:name="android.intent.action.INTENT_FILTER_NEEDS_VERIFICATION" />
+    <protected-broadcast android:name="android.intent.action.SECONTAINER_REMOVED" />
+    <protected-broadcast android:name="android.intent.action.SECONTAINER_ADDED" />
+
 
     <protected-broadcast android:name="android.os.action.POWER_SAVE_MODE_CHANGED" />
     <protected-broadcast android:name="android.os.action.POWER_SAVE_MODE_CHANGING" />
@@ -231,6 +234,7 @@
     <protected-broadcast android:name="com.android.nfc_extras.action.AID_SELECTED" />
 
     <protected-broadcast android:name="android.nfc.action.TRANSACTION_DETECTED" />
+    <protected-broadcast android:name="android.nfc.action.ADAPTER_STATE_CHANGED" />
     <protected-broadcast android:name="com.gsma.services.nfc.action.TRANSACTION_EVENT" />
     <protected-broadcast android:name="services.nfc.action.GET_FIRMWARE_VERSION_RESPONSE" />
     <protected-broadcast android:name="android.intent.action.CLEAR_DNS_CACHE" />
@@ -289,7 +293,7 @@
     <!-- WTL_EDM_END -->
     <!-- WTL_EDM_START - MDM 3.1  -->
     <protected-broadcast android:name="edm.intent.certificate.action.certificate.failure" />
-    <protected-broadcast android:name="com.sec.enterprise.knox.certificate.CertificatePolicy.ACTION_CERTIFICATE_REMOVED" />
+    <protected-broadcast android:name="com.samsung.edm.intent.action.CERTIFICATE_REMOVED" />
     <!-- WTL_EDM_END - MDM 3.1  -->
     <!-- WTL_EDM_START - MDM 4.0 -->
     <protected-broadcast android:name="edm.intent.action.internal.kioskmode.REFRESH_HWKEY_CACHE" />
@@ -345,10 +349,6 @@
     <protected-broadcast android:name="com.samsung.edm.intent.action.INFORMATION_STREAM_INTERNAL" />
     <!-- WTL_EDM_END -->	    
 	
-    <!-- SRUK_KNOX_CUSTOMIZATION START -->
-    <protected-broadcast android:name="samsung.intent.action.knoxcustom.SEND_DTMF" />	
-    <!-- SRUK_KNOX_CUSTOMIZATION END -->
-    
     <protected-broadcast android:name="android.net.scoring.SCORE_NETWORKS" />
     <protected-broadcast android:name="android.net.scoring.SCORER_CHANGED" />
     <protected-broadcast android:name="android.intent.action.EXTERNAL_APPLICATIONS_AVAILABLE" />
@@ -382,6 +382,7 @@
     <protected-broadcast android:name="com.sec.action.NO_USER_ACTIVITY" />
     <protected-broadcast android:name="com.sec.action.USER_ACTIVITY" />
     <protected-broadcast android:name="com.sec.action.CALL_STATE_CHANGED" />
+    <protected-broadcast android:name="samsung.intent.action.knoxcustom.SEND_DTMF" />	
     <!-- SRUK_KNOX_CUSTOMIZATION END -->   
 
     <!-- Defined in RestrictionsManager -->
@@ -435,6 +436,7 @@
     <!-- cocktailbar intent-->
     <protected-broadcast android:name="com.samsung.android.cocktail.action.COCKTAIL_ENABLED" />
     <protected-broadcast android:name="com.samsung.android.cocktail.action.COCKTAIL_UPDATE" />
+    <protected-broadcast android:name="com.samsung.android.cocktail.v2.action.COCKTAIL_UPDATE" />
     <protected-broadcast android:name="com.samsung.android.cocktail.action.COCKTAIL_DISABLED" />
     <protected-broadcast android:name="com.samsung.android.cocktail.action.COCKTAIL_VISIBILITY_CHANGED" />
     <protected-broadcast android:name="com.samsung.android.cocktail.action.COCKTAIL_DROPED" />
@@ -443,11 +445,11 @@
     <protected-broadcast android:name="com.samsung.android.action.LOCK_TASK_MODE" />
     <!-- AppCore END -->
 
-    <!-- CIQ_TMO_INTEGRATION_START -->
+    <!-- DEVICEREPORTING_TMO_INTEGRATION_START -->
     <protected-broadcast android:name="diagandroid.app.ApplicationState" />
     <protected-broadcast android:name="diagandroid.phone.detailedCallState" />
     <protected-broadcast android:name="diagandroid.data.PDPContextState" />
-    <!-- CIQ_TMO_INTEGRATION_END -->
+    <!-- DEVICEREPORTING_TMO_INTEGRATION_END -->
 
     <!-- Knox Active Protection -->
     <protected-broadcast android:name="com.samsung.action.knox.kap.KAP_NOTIFICATION" />
@@ -481,8 +483,8 @@
 	<protected-broadcast android:name="com.samsung.edm.intent.action.ENFORCE_SMIME_ALIAS_INTERNAL" />
     <!-- Samsung Pay -->
     <protected-broadcast android:name="com.samsung.android.spay.quickpay" />
-#ifdef SEC_PRODUCT_FEATURE_KNOX_SUPPORT_IRM
-    <protected-broadcast android:name="com.samsung.android.IRM_SERVICE_BIND_ACTION" />
+#ifdef SEC_PRODUCT_FEATURE_KNOX_SUPPORT_DLP
+    <protected-broadcast android:name="com.samsung.android.DLP_SERVICE_BIND_ACTION" />
 #endif
 
     <!-- OTP Framework Callback Action -->
@@ -491,17 +493,22 @@
     <!-- Dual Screen -->
     <protected-broadcast android:name="android.intent.action.SUBSCREEN_OFF" />
     <protected-broadcast android:name="android.intent.action.SUBSCREEN_ON" />
-    
-    <!-- GameManagerService START -->
-    <protected-broadcast android:name="com.samsung.android.action.INSTALL_STARTED" />
-    <protected-broadcast android:name="com.samsung.android.action.INSTALL_FINISHED" />
-    <!-- GameManagerService END -->
 
     <!-- SHARED DEVICES -->
     <protected-broadcast android:name="com.sec.enterprise.knox.shareddevice.enable" />
     <protected-broadcast android:name="com.sec.enterprise.knox.shareddevice.keyguardstate" />
     <protected-broadcast android:name="com.sec.enterprise.knox.shareddevice.usersignedin" />
     <protected-broadcast android:name="com.sec.enterprise.knox.shareddevice.usersignedout" />
+    
+    <!-- [SEC_PRODUCT_FEATURE_COMMON_SUPPORT_WEARABLE_HMT -->
+    <protected-broadcast android:name="com.samsung.intent.action.HMT_CONNECTED" />
+    <protected-broadcast android:name="com.samsung.intent.action.HMT_DISCONNECTED" />
+    <protected-broadcast android:name="com.samsung.intent.action.HMT_MOUNT" />
+    <protected-broadcast android:name="com.samsung.intent.action.HMT_UNMOUNT" />
+    <protected-broadcast android:name="com.samsung.intent.action.HMT_PENDING_LAUNCH" />
+    <protected-broadcast android:name="com.sec.intent.action.hmt_ta_event" />
+    <protected-broadcast android:name="android.intent.action.proximity_sensor" />
+    <!-- SEC_PRODUCT_FEATURE_COMMON_SUPPORT_WEARABLE_HMT]-->
     
     <!-- ======================================== -->
     <!-- START Permissions for accessing MDM APIs -->
@@ -521,37 +528,29 @@
         android:label="@string/permlab_mdmApplications"
         android:description="@string/permdesc_mdmApplications" />
 
-#ifdef SEC_PRODUCT_FEATURE_KNOX_SUPPORT_IRM
-    <!-- Allows apps to access IRMServiceAgent 
+#ifdef SEC_PRODUCT_FEATURE_KNOX_SUPPORT_DLP
+    <!-- Allows apps to access DLPServiceAgent 
     @hide-->
-    <permission android:name="android.permission.sec.IRM_SERVICE_AGENT"
+    <permission android:name="android.permission.sec.DLP_SERVICE_AGENT"
         android:permissionGroup="com.sec.enterprise.permission-group.mdm"
         android:protectionLevel="signature"/>
 
-    <uses-permission android:name="android.permission.sec.IRM_SERVICE_AGENT" />
+    <uses-permission android:name="android.permission.sec.DLP_SERVICE_AGENT" />
 
-    <!-- Allows an application to access MDM Enterprise IRM APIs 
+    <!-- Allows an application to access MDM Enterprise DLP APIs 
     @hide-->
-    <permission android:name="com.samsung.permission.knox.KNOX_IRM"
+    <permission android:name="com.sec.enterprise.permission.KNOX_DLP"
         android:permissionGroup="com.sec.enterprise.permission-group.mdm"
         android:protectionLevel="signature"
-        android:label="@string/permlab_mdmIRM"
-        android:description="@string/permdesc_mdmIRM" />
-
-    <!-- Allows an application to access MDM Enterprise IRM APIs 
-    @hide-->
-    <permission android:name="com.samsung.permission.knox.KNOX_IRM_ISV"
-        android:permissionGroup="com.sec.enterprise.permission-group.mdm"
-        android:protectionLevel="signature"
-        android:label="@string/permlab_mdmIRMISV"
-        android:description="@string/permdesc_mdmIRMISV" />
+        android:label="@string/permlab_mdmDLP"
+        android:description="@string/permdesc_mdmDLP" />
 #endif
     <!-- @hide -->
-    <permission android:name="com.samsung.permission.SDP"
+    <permission android:name="com.sec.enterprise.permission.KNOX_SDP"
         android:permissionGroup="com.sec.enterprise.permission-group.mdm"
         android:protectionLevel="signature"
-        android:label="@string/permlab_sdp"
-        android:description="@string/permdesc_sdp" />
+        android:label="@string/permlab_mdmSDP"
+        android:description="@string/permdesc_mdmSDP" />
 
     <!-- MDM 4.0 - START -->
     <!-- Allows an application to access MDM Backup Application APIs -->
@@ -700,6 +699,13 @@
         android:protectionLevel="signature"
         android:label="@string/permlab_mdmDateTime"
         android:description="@string/permdesc_mdmDateTime" />
+   
+	<!-- Allows an application to access SPD CONTROL APIs @hide -->
+    <permission android:name="com.sec.enterprise.permission.MDM_SPDCONTROL" 
+        android:permissionGroup="com.sec.enterprise.permission-group.mdm"
+        android:protectionLevel="signature"
+        android:label="@string/permlab_spdControl"
+        android:description="@string/permdesc_spdControl" />
 
     <!-- Allows an application to access MDM Enterprise VPN APIs -->
     <permission android:name="android.permission.sec.MDM_ENTERPRISE_VPN"
@@ -1114,6 +1120,9 @@
         android:description="@string/permdesc_custom_rubense_features" />
     
     <uses-permission android:name="com.sec.android.provider.emergencymode.WRITE_DATABASE" />    
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />    
+    <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />    
+    <uses-permission android:name="com.android.launcher.permission.WRITE_SETTINGS" />    
     <!-- SRUK_KNOX_CUSTOMIZATION END -->
 
 	<!-- KNOX 2.0 -->
@@ -1157,6 +1166,33 @@
         android:protectionLevel="signature"
 		android:label="@string/permlab_mdmCcm"
         android:description="@string/permdesc_mdmCcm" />
+
+     <!-- Allows an application to manage KNOX Universal Credential  Manager -ESE @hide -->
+    <permission android:name="com.sec.enterprise.permission.KNOX_UCM_ESE"
+        android:permissionGroup="com.sec.enterprise.permission-group.mdm"
+        android:protectionLevel="system|signature"
+        android:label="@string/permlab_mdmUcsmEse"
+        android:description="@string/permdesc_mdmUcsmEse" />
+
+     <!-- Allows an application to manage KNOX Universal Credential Manager - OTHER @hide-->
+    <permission android:name="com.sec.enterprise.permission.KNOX_UCM_OTHER"
+        android:permissionGroup="com.sec.enterprise.permission-group.mdm"
+        android:protectionLevel="system|signature"
+        android:label="@string/permlab_mdmUcsmOther"
+        android:description="@string/permdesc_mdmUcsmOther" />
+
+    <!-- Allows an application to bind with UCM framework- OTHER @hide -->
+    <permission android:name="com.sec.enterprise.permission.KNOX_UCM_PLUGIN"
+        android:permissionGroup="com.sec.enterprise.permission-group.mdm"
+        android:protectionLevel="system|signature"
+        android:label="@string/permlab_ucsPlugin"
+        android:description="@string/permdesc_ucsPlugin" />   
+
+    <!-- @hide Allows system to bind with plugin-->
+    <permission android:name="com.sec.enterprise.permission.KNOX_UCM_BIND_PLUGIN"
+        android:protectionLevel="system|signature" />        
+		
+	
 	<!-- Allows an application to manage TIMA Keystore -->
     <permission android:name="com.sec.enterprise.knox.permission.KNOX_KEYSTORE"
         android:permissionGroup="com.sec.enterprise.permission-group.mdm"
@@ -1431,10 +1467,6 @@
     <!-- @hide --> 
     <permission android:name="com.sec.android.permission.AT_COMMAND"
         android:protectionLevel="signature|system" />
-
-    <!-- [SEC_MM_DRM  -->
-    <uses-permission android:name="android.permission.RECEIVE_WAP_PUSH" />
-    <!-- ]            -->
 
     <!-- Allows an application to monitor incoming Bluetooth MAP messages, to record
          or perform processing on them. -->
@@ -1938,6 +1970,10 @@
         android:label="@string/permlab_bluetoothAdmin"
         android:protectionLevel="normal" />
 
+    <!-- Allows applications to get BT log @hide -->
+    <permission android:name="com.sec.permission.BLUETOOTH_DEBUG"
+        android:protectionLevel="signature" />
+
     <!-- @SystemApi Allows applications to pair bluetooth devices without user interaction, and to
          allow or disallow phonebook access or message access.
          This is not available to third party applications. -->
@@ -1945,6 +1981,7 @@
         android:protectionLevel="system|signature" />
     <!-- MDM_BLUETOOTH_START -->
     <permission android:name="android.permission.sec.BLUETOOTH_SECUREMODE_INTERNAL"
+        android:permissionGroup="com.sec.enterprise.permission-group.mdm"
         android:protectionLevel="signature|system" />  
     <!-- MDM_BLUETOOTH_END -->
 
@@ -1971,6 +2008,11 @@
     <!-- @SystemApi Allows an internal user to use privileged ConnectivityManager APIs.
          @hide -->
     <permission android:name="android.permission.CONNECTIVITY_INTERNAL"
+        android:protectionLevel="signature|privileged" />
+
+    <!-- Allows a system application to access hardware packet offload capabilities.
+         @hide -->
+    <permission android:name="android.permission.PACKET_KEEPALIVE_OFFLOAD"
         android:protectionLevel="signature|privileged" />
 
     <!-- @SystemApi
@@ -2150,6 +2192,11 @@
     <!-- Allow an application to call overlay magnifier.
          @hide -->
     <permission android:name="com.samsung.android.permission.CALL_OVERLAY_MAGNIFIER"
+        android:protectionLevel="signature|system" />
+        
+    <!-- Allow an application to call the function for clearable notification count.
+         @hide -->
+    <permission android:name="com.samsung.android.permission.TALKBACK_NOTIFICATION"
         android:protectionLevel="signature|system" />
 
     <!-- @SystemApi Allows disabling the transmit-indicator LED that is normally on when
@@ -2383,7 +2430,7 @@
     <permission android:name="android.permission.SYSTEM_ALERT_WINDOW"
         android:label="@string/permlab_systemAlertWindow"
         android:description="@string/permdesc_systemAlertWindow"
-        android:protectionLevel="signature|preinstalled|appop|pre23" />
+        android:protectionLevel="signature|preinstalled|appop|pre23|development" />
 
     <!-- ================================== -->
     <!-- Permissions affecting the system wallpaper -->
@@ -2631,7 +2678,7 @@
     <permission android:name="android.permission.CHANGE_NETWORK_STATE"
         android:description="@string/permdesc_changeNetworkState"
         android:label="@string/permlab_changeNetworkState"
-        android:protectionLevel="signature|preinstalled|appop|pre23" />
+        android:protectionLevel="normal" />
 
     <!-- Allows an application to clear the caches of all installed
          applications on the device.
@@ -2794,6 +2841,15 @@
     <!-- @hide Allows an application to register an input filter which filters the stream
          of user events (keys, touch, trackball) before they are dispatched to any window. -->
     <permission android:name="android.permission.FILTER_EVENTS"
+        android:protectionLevel="signature" />
+
+    <!-- input_fw -->
+    <!-- @SystemApi Allows set monitorInputChannel and get the input events.
+         If the window is not in touchable state.
+         <p>Not for use by third-party applications.
+         @hide
+    -->
+    <permission android:name="com.samsung.android.permission.MONITOR_INPUT"
         android:protectionLevel="signature" />
 
     <!-- @hide Allows an application to retrieve the window token from the accessibility manager. -->
@@ -2986,6 +3042,13 @@
     <permission android:name="android.permission.SET_KEYBOARD_LAYOUT"
         android:protectionLevel="signature" />
 
+    <!-- Allows an application to query tablet mode state and monitor changes
+         in it.
+         <p>Not for use by third-party applications.
+         @hide -->
+    <permission android:name="android.permission.TABLET_MODE"
+        android:protectionLevel="signature" />
+
     <!-- Allows an application to request installing packages. Apps
          targeting APIs greater than 22 must hold this permission in
          order to use {@link android.content.Intent#ACTION_INSTALL_PACKAGE}.
@@ -3032,7 +3095,7 @@
     <!-- Allows an application to grant specific permissions.
          @hide -->
     <permission android:name="android.permission.GRANT_RUNTIME_PERMISSIONS"
-        android:protectionLevel="signature|installer" />
+        android:protectionLevel="signature|installer|verifier" />
 
     <!-- Allows an app that has this permission and the permissions to install packages
          to request certain runtime permissions to be granted at installation.
@@ -3079,6 +3142,13 @@
          by the display manager.
          @hide -->
     <permission android:name="android.permission.CONTROL_WIFI_DISPLAY"
+        android:protectionLevel="signature" />
+
+    <!-- Allows an application to control the color transforms applied to
+         displays system-wide.
+         <p>Not for use by third-party applications.</p>
+         @hide -->
+    <permission android:name="android.permission.CONFIGURE_DISPLAY_COLOR_TRANSFORM"
         android:protectionLevel="signature" />
 
     <!-- @SystemApi Allows an application to control VPN.
@@ -3147,7 +3217,11 @@
    <!-- @hide Allows low-level access to tun tap driver -->
     <permission android:name="android.permission.NET_TUNNELING"
         android:protectionLevel="signature" />
-
+		
+   <!-- @hide -->
+    <permission android:name="com.sec.android.SYSTEM_FILE_ACCESS"
+        android:protectionLevel="signature" />
+    
     <!-- Run as a manufacturer test application, running as the root user.
          Only available when the device is running in manufacturer test mode.
          <p>Not for use by third-party applications.
@@ -3246,7 +3320,7 @@
     <permission android:name="android.permission.BACKUP"
         android:protectionLevel="signature|privileged" />
 
-    <!-- CIQ_TMO_INTEGRATION_START -->
+    <!-- DEVICEREPORTING_TMO_INTEGRATION_START -->
     <!-- Allows an application to receive diagandroid.app.ApplicationState intents
          @hide -->
     <permission android:name="diagandroid.app.receiveDetailedApplicationState"
@@ -3262,7 +3336,7 @@
     <permission android:name="diagandroid.data.receivePDPContextState"
         android:label="Receive the PDP Context States"
         android:protectionLevel="signatureOrSystem" />
-    <!-- CIQ_TMO_INTEGRATION_END -->
+    <!-- DEVICEREPORTING_TMO_INTEGRATION_END -->
 
     <!-- Allows a package to launch the secure full-backup confirmation UI.
          ONLY the system process may hold this permission.
@@ -3509,6 +3583,10 @@
     <permission android:name="android.permission.MANAGE_FINGERPRINT"
         android:protectionLevel="system|signature" />
 
+    <!-- Allows an app to reset fingerprint attempt counter. Reserved for the system. @hide -->
+    <permission android:name="android.permission.RESET_FINGERPRINT_LOCKOUT"
+        android:protectionLevel="signature" />
+
     <!-- Allows an application to control keyguard.  Only allowed for system processes.
         @hide -->
     <permission android:name="android.permission.CONTROL_KEYGUARD"
@@ -3552,12 +3630,9 @@
     <permission android:name="android.permission.BIND_CHOOSER_TARGET_SERVICE"
         android:protectionLevel="signature" />
 
-    <!-- GameManagerService START
-        Allows an application to listen to package installations earlier than PACKAGE_ADDED. Only allowed for system processes.
-        @hide  -->
-    <permission android:name="android.permission.SET_INSTALL_WATCHER"
+    <!--  Permission required to access smart unlock  -->
+    <permission android:name="com.sec.android.permission.SMART_UNLOCK"
         android:protectionLevel="signature" />
-    <!-- GameManagerService END -->
 
     <!-- EAF -->
     <!-- ========================== -->
@@ -3748,6 +3823,14 @@
 		android:description="@string/permdesc_barcodeRead"
 		android:protectionLevel="signature|system" />
 
+    <!-- Samsung Private palm motion Permission
+        @hide
+    -->
+    <permission android:name="com.samsung.permission.PALM_MOTION"
+            android:label="@string/permlab_palmmotion"
+            android:description="@string/permdesc_palmmotion"
+            android:protectionLevel="signatureOrSystem" />
+
     <!-- Samsung Private sensor Permission
         @hide
     -->
@@ -3769,7 +3852,17 @@
      <permission android:name="android.permission.RECEIVE_DIRECTED_SMS"
            android:permissionGroup="android.permission-group.MESSAGES"
            android:protectionLevel="signature|system" />
-       
+
+    <!-- CscFeature_RIL_NsriSecuritySolution  NSRI_SMS
+         Allows The NSR application to receive SECURITY_SMS 
+         Not for use by third-party applications.
+         @hide -->
+    <permission android:name="android.permission.RECEIVE_SECURITY_SMS"
+        android:permissionGroup="android.permission-group.MESSAGES"
+        android:protectionLevel="normal"
+        android:label="@string/permlab_receiveSms"
+        android:description="@string/permdesc_receiveSms" />
+        
     <!-- Allows an application to receive HomeTripleClick Broadcast. -->
     <permission android:name="com.samsung.permission.HOME_TRIPLE_CLICK"
         android:protectionLevel="signature"/>
@@ -3784,7 +3877,9 @@
          @hide
     -->
     <permission android:name="com.samsung.android.permission.LOCK_TASK_MODE"
-        android:protectionLevel="normal" />
+        android:protectionLevel="normal"
+        android:label="@string/tw_lock_to_app_status_intent_permission_label"
+        android:description="@string/tw_lock_to_app_status_intent_permission_description" />
 
     
     <!-- DualScreen Permission of Samsung
@@ -3792,6 +3887,11 @@
     -->
     <permission android:name="com.samsung.android.dualscreen.permission.USE_INTERNAL_APIS"
         android:protectionLevel="signature|system" />
+
+    <!-- DualScreen folding state intent
+        @hide
+    -->
+    <protected-broadcast android:name="com.samsung.android.dualscreen.action.FOLDING_STATE_CHANGED" />    
 
     <!-- VirtualScreen Permission of Samsung
         Allows an application to create/remove virtual screen
@@ -3851,6 +3951,20 @@
     <permission android:name="com.samsung.external.sdcard.POLICY_UPDATE"
         android:protectionLevel="system|signature" />
     <!-- KNOX_V2.3_END -->
+	
+	<!-- Memo Custom permission @hide -->
+	<permission-group
+        android:name="com.samsung.android.app.memo.permission" />
+    <!-- @hide -->		
+    <permission
+        android:name="com.samsung.android.memo.READ"
+        android:protectionLevel="signatureOrSystem"
+        android:permissionGroup="com.samsung.android.app.memo.permission" />
+    <!-- @hide -->
+		<permission
+        android:name="com.samsung.android.memo.WRITE"
+        android:protectionLevel="signatureOrSystem"
+        android:permissionGroup="com.samsung.android.app.memo.permission" />
 
     <!-- The system process is explicitly the only one allowed to launch the
          confirmation UI for full backup/restore -->
@@ -4064,16 +4178,15 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.provider.Telephony.WAP_PUSH_RECEIVED" />
-                <data android:mimeType="application/vnd.oma.drm.rights+wbxml" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.provider.Telephony.WAP_PUSH_RECEIVED" />
-                <data android:mimeType="application/vnd.oma.drm.rights+xml" />
-            </intent-filter>
         </receiver>
         <!-- ]          -->
+        <receiver android:name="com.android.server.TimaServiceEventReceiver"
+                android:primaryUserOnly="true"
+                android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <receiver android:name="com.android.server.MasterClearReceiver"
             android:permission="android.permission.MASTER_CLEAR">
@@ -4094,8 +4207,6 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="com.samsung.intent.action.NITZ_SET_TIME" />
-                <action android:name="android.intent.action.TIME_SET" />
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
         <service android:name="com.android.server.SecSCService"
@@ -4108,7 +4219,7 @@
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.NITZ_SET_TIME" />
+                <action android:name="com.samsung.intent.action.NITZ_SET_TIME" />
                 <action android:name="android.intent.action.TIME_SET" />
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
@@ -4119,8 +4230,7 @@
 
         <!-- SEC_PRODUCT_FEATURE_RIL_EXT_DEV_CDMA_PACKET_ACCESS_FUNC start-->
         <receiver android:name="com.kddi.android.CpaNotiReceiver"
-            android:primaryUserOnly="true"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            android:primaryUserOnly="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <action android:name="com.kddi.android.cpa.CHANGE_MODE_REQUEST_ACTION"/>
@@ -4213,6 +4323,9 @@
             android:name="com.ipsec.client"
             android:required="true"/>
         <!-- SEC_ePDG-->
+
+   
+
     </application>
 
 </manifest>
