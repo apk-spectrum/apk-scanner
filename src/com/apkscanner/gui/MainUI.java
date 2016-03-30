@@ -407,7 +407,8 @@ public class MainUI extends JFrame
 					toolBar.setEnabledAt(ButtonSet.OPEN_CODE, false);
 					
 					if(System.getProperty("os.name").indexOf("Window") >-1) {
-					
+						cmdLog =ConsolCmd.exc(new String[] {Resource.BIN_DEX2JAR_WIN.getPath(), 
+								apkfilePath, "-o", apkInfo.tempWorkPath+File.separator+jarfileName});
 					} else {  //for linux
 						cmdLog =ConsolCmd.exc(new String[] {"sh", Resource.BIN_DEX2JAR_LNX.getPath(), 
 								apkfilePath, "-o", apkInfo.tempWorkPath+File.separator+jarfileName});				
