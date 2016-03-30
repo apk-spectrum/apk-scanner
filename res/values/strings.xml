@@ -57,6 +57,21 @@
 
     <string name="feature_lab">Feature</string>
     <string name="feature_desc">Feature or function of the App</string>
+    <string name="feature_install_location_internal_only_lab">Install Location : Internal Only</string>
+    <string name="feature_install_location_internal_only_desc">The application must be installed on the internal device storage only.
+If this is set, the application will never be installed on the external storage.
+If the internal storage is full, then the system will not install the application.
+This is also the default behavior if you do not define android:installLocation.</string>
+    <string name="feature_install_location_auto_lab">Install Location : Auto</string>
+    <string name="feature_install_location_auto_desc">The application may be installed on the external storage,
+but the system will install the application on the internal storage by default.
+If the internal storage is full, then the system will install it on the external storage.
+Once installed, the user can move the application to either internal or external storage through the system settings.</string>
+    <string name="feature_install_location_prefer_external_lab">Install Location : Prefer External</string>
+    <string name="feature_install_location_prefer_external_desc">The application prefers to be installed on the external storage (SD card).
+There is no guarantee that the system will honor this request.
+The application might be installed on internal storage if the external media is unavailable or full.
+Once installed, the user can move the application to either internal or external storage through the system settings.</string>
     <string name="feature_launcher_lab">LAUNCHER</string>
     <string name="feature_launcher_desc">Launcher icon is exist.</string>
     <string name="feature_hidden_lab">HIDDEN</string>

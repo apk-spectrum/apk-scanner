@@ -57,6 +57,18 @@
 
     <string name="feature_lab">특징</string>
     <string name="feature_desc">앱의 주요 특징 혹은 기능</string>
+    <string name="feature_install_location_internal_only_lab">설치장소 : 내장</string>
+    <string name="feature_install_location_internal_only_desc">응용 프로그램은 내부 장치에 저장 만에 설치되어 있어야합니다.
+이 설정되어 있으면, 애플리케이션은 외부 저장 장치에 설치되지 않을 것이다.
+내부 저장소가 가득 찬 경우, 시스템은 응용 프로그램을 설치하지 않습니다.</string>
+    <string name="feature_install_location_auto_lab">설치장소 : 내/외장(내장 우선)</string>
+    <string name="feature_install_location_auto_desc">응용 프로그램은 외부 저장 장치에 설치 될 수 있지만 시스템은 기본적으로 내부 저장 장치에 응용 프로그램을 설치합니다.
+내부 저장소가 가득 찬 경우, 시스템은 외부 저장 장치에 설치됩니다.
+일단 설치되면, 사용자가 시스템 설정을 통해 외부 또는 내부 저장 장치에 응용 프로그램을 이동시킬 수있다.</string>
+    <string name="feature_install_location_prefer_external_lab">설치장소 : 내/외장(외장 우선)</string>
+    <string name="feature_install_location_prefer_external_desc">애플리케이션은 외부 저장 장치 (SD 카드) 상에 설치 될 것을 선호. 시스템이 요청을 존중한다는 보장은 없습니다.
+외부 매체를 사용할 수 없거나 꽉 찬 경우 응용 프로그램이 내장 스토리지에 설치 될 수 있습니다.
+일단 설치되면, 사용자가 시스템 설정을 통해 외부 또는 내부 저장 장치에 응용 프로그램을 이동시킬 수있다.</string>
     <string name="feature_launcher_lab">실행앱</string>
     <string name="feature_launcher_desc">앱실행 아이콘이 있습니다.</string>
     <string name="feature_hidden_lab">숨김앱</string>

@@ -110,6 +110,14 @@ public enum Resource
 	STR_FEATURE_INSTRUMENTATION_DESC (Type.TEXT, "@feature_instrumentation_desc"),
 	STR_FEATURE_DEVICE_REQ_LAB  (Type.TEXT, "@feature_device_requirements_lab"),
 	STR_FEATURE_DEVICE_REQ_DESC (Type.TEXT, "@feature_device_requirements_desc"),
+	
+
+	STR_FEATURE_ILOCATION_INTERNAL_LAB  (Type.TEXT, "@feature_install_location_internal_only_lab"),
+	STR_FEATURE_ILOCATION_INTERNAL_DESC (Type.TEXT, "@feature_install_location_internal_only_desc"),
+	STR_FEATURE_ILOCATION_AUTO_LAB  (Type.TEXT, "@feature_install_location_auto_lab"),
+	STR_FEATURE_ILOCATION_AUTO_DESC (Type.TEXT, "@feature_install_location_auto_desc"),
+	STR_FEATURE_ILOCATION_EXTERNAL_LAB  (Type.TEXT, "@feature_install_location_prefer_external_lab"),
+	STR_FEATURE_ILOCATION_EXTERNAL_DESC (Type.TEXT, "@feature_install_location_prefer_external_desc"),
 
 	STR_WIDGET_COLUMN_IMAGE		(Type.TEXT, "@widget_column_image"),
 	STR_WIDGET_COLUMN_LABEL		(Type.TEXT, "@widget_column_label"),

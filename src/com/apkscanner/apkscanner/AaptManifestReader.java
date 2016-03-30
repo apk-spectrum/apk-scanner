@@ -105,6 +105,15 @@ public class AaptManifestReader
 					manifestInfo.versionName = res[0].name;
 				}
 			}
+			
+			String installLocation = getAttrValue(tagNode, "installLocation");
+			if(installLocation == null || installLocation.equals("1")) {
+				manifestInfo.installLocation = "internalOnly";
+			} else if(installLocation.equals("0")) {
+				manifestInfo.installLocation = "auto";
+			} else if(installLocation.equals("2")) {
+				manifestInfo.installLocation = "preferExternal";
+			}
 		}
 		
 		tagNode = manifestPath.getNode("/manifest/uses-sdk");

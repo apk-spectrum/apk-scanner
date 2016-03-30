@@ -74,6 +74,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	private Integer targerSdkVersion = null;
 	private Integer maxSdkVersion = null;
 	
+	private String installLocation = null;
+	
 	private boolean isHidden = false;
 	private boolean isStartup = false;
 	private boolean debuggable = false;
@@ -222,6 +224,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		minSdkVersion = null;
 		targerSdkVersion = null;
 		maxSdkVersion = null;
+		
+		installLocation = null;
 
 		isHidden = false;
 
@@ -299,6 +303,16 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		}
 		
 		StringBuilder feature = new StringBuilder();
+		
+		if("internalOnly".equals(installLocation)) {
+			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_ILOCATION_INTERNAL_LAB.getString(), Resource.STR_FEATURE_ILOCATION_INTERNAL_DESC.getString(), "feature-install-location-internal", null));
+		} else if("auto".equals(installLocation)) {
+			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_ILOCATION_AUTO_LAB.getString(), Resource.STR_FEATURE_ILOCATION_AUTO_DESC.getString(), "feature-install-location-auto", null));
+		} else if("preferExternal".equals(installLocation)) {
+			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_ILOCATION_EXTERNAL_LAB.getString(), Resource.STR_FEATURE_ILOCATION_EXTERNAL_DESC.getString(), "feature-install-location-external", null));
+		}  
+		feature.append("<br/>");
+		
 		if(isHidden) {
 			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_HIDDEN_LAB.getString(), Resource.STR_FEATURE_HIDDEN_DESC.getString(), "feature-hidden", null));
 		} else {
@@ -409,7 +423,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("        </font>");
 		strTabInfo.append("        <br/><br/>");
 		strTabInfo.append("        <font style=\"font-size:12px\">");
-		strTabInfo.append("          [" + Resource.STR_FEATURE_LAB.getString() + "]<br/>");
+		strTabInfo.append("          [" + Resource.STR_FEATURE_LAB.getString() + "] ");
 		strTabInfo.append("          " + feature);
 		strTabInfo.append("        </font><br/>");
 		strTabInfo.append("      </div>");
@@ -495,6 +509,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		targerSdkVersion = apkInfo.manifest.usesSdk.targetSdkVersion;
 		maxSdkVersion = apkInfo.manifest.usesSdk.maxSdkVersion;
 		sharedUserId = apkInfo.manifest.sharedUserId;
+		installLocation = apkInfo.manifest.installLocation;
 		
 		isHidden = (apkInfo.manifest.featureFlags & ManifestInfo.MANIFEST_FEATURE_LAUNCHUR) == 0 ? true : false;
 		isStartup = (apkInfo.manifest.featureFlags & ManifestInfo.MANIFEST_FEATURE_STARTUP) != 0 ? true : false;
@@ -906,6 +921,12 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		} else if("feature-device-requirements".equals(id)) {
 			feature = deviceRequirements;
 			size = new Dimension(500, 250);
+		} else if("feature-install-location-internal".equals(id)) {
+			feature = Resource.STR_FEATURE_ILOCATION_INTERNAL_DESC.getString();
+		} else if("feature-install-location-auto".equals(id)) {
+			feature = Resource.STR_FEATURE_ILOCATION_AUTO_DESC.getString();
+		} else if("feature-install-location-external".equals(id)) {
+			feature = Resource.STR_FEATURE_ILOCATION_EXTERNAL_DESC.getString();
 		}
 		
 		showDialog(feature, "Feature info", size, null);
