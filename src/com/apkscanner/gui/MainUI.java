@@ -34,6 +34,7 @@ import com.apkscanner.gui.dialog.SettingDlg;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.FileDrop;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 
@@ -393,14 +394,32 @@ public class MainUI extends JFrame
 		{
 			ApkInfo apkInfo = apkScanner.getApkInfo();
 			
-			try {
-				Log.i(apkInfo.tempWorkPath);
-				
-				
-				new ProcessBuilder("0").start();
-			} catch (IOException e1) {
+			String cmd="";
+			String apkfilePath=apkInfo.filePath;
+			String jarfileName = apkfilePath.substring((apkfilePath.lastIndexOf(File.separator))+1); 
+			jarfileName = jarfileName.substring(0,(jarfileName.lastIndexOf(".")))+".jar";
+						
+			String[] cmdLog = null;
+			
+			if(System.getProperty("os.name").indexOf("Window") >-1) {
+			
+			} else {  //for linux
+				cmdLog =ConsolCmd.exc(new String[] {"sh", Resource.BIN_DEX2JAR_LNX.getPath(), 
+						apkfilePath, "-o", apkInfo.tempWorkPath+File.separator+jarfileName});				
 			}
-		}		
+
+			
+			
+			//open JD GUI
+			for( int i=0 ; i<cmdLog.length; i++)
+			{
+				Log.i("DEX2JAR Log : "+ cmdLog[i]);	
+			}
+			cmdLog =ConsolCmd.exc(new String[] {"java", "-jar", Resource.BIN_JDGUI.getPath(), 
+			apkInfo.tempWorkPath+File.separator+jarfileName});
+			
+			
+		}
 		
 		private void evtShowManifest()
 		{

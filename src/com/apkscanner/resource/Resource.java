@@ -248,6 +248,10 @@ public enum Resource
 	BIN_AAPT_LNX				(Type.BIN, "aapt"),
 	BIN_AAPT_WIN				(Type.BIN, "aapt.exe"),
 
+	BIN_JDGUI				(Type.BIN, "jd-gui-1.4.0.jar"),
+	BIN_DEX2JAR_LNX				(Type.BIN, "d2j-dex2jar.sh"),
+	BIN_DEX2JAR_WIN				(Type.BIN, "d2j-dex2jar.bat"),	
+	
 	PROP_EDITOR					(Type.PROP, "editor"),
 	PROP_FRAMEWORK_RES			(Type.PROP, "framewokr-res"),
 	PROP_CHECK_INSTALLED		(Type.PROP, "check-installed"),
@@ -262,7 +266,6 @@ public enum Resource
 	LIB_APKTOOL_JAR				(Type.LIB, "apktool.jar"),
 	
 	ETC_SETTINGS_FILE			(Type.ETC, "settings.txt");
-	
 	
 	private enum Type {
 		IMAGE,

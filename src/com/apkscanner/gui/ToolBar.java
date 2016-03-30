@@ -268,6 +268,7 @@ public class ToolBar extends JToolBar
                 
         add(buttonMap.get(ButtonSet.MANIFEST));
         add(buttonMap.get(ButtonSet.EXPLORER));
+        add(buttonMap.get(ButtonSet.OPEN_CODE));
         
         add(getNewSeparator(JSeparator.VERTICAL, sepSize));
 
@@ -275,8 +276,7 @@ public class ToolBar extends JToolBar
         add(buttonMap.get(ButtonSet.INSTALL_EXTEND));
         
         add(getNewSeparator(JSeparator.VERTICAL, sepSize));
-
-        add(buttonMap.get(ButtonSet.OPEN_CODE));
+        
         add(buttonMap.get(ButtonSet.SIGNING));
         add(getNewSeparator(JSeparator.VERTICAL, sepSize));
         
