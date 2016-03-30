@@ -211,7 +211,7 @@ public enum Resource
 	IMG_TOOLBAR_SETTING			(Type.IMAGE, "toolbar_setting.png"),
 	IMG_TOOLBAR_OPENCODE			(Type.IMAGE, "toolbar_opencode.png"),
 	IMG_TOOLBAR_SIGNNING			(Type.IMAGE, "toolbar_signning.png"),
-	
+	IMG_TOOLBAR_LOADING_OPEN_JD (Type.IMAGE, "loading_openJD.gif"),
 	
 	
 	IMG_PERM_GROUP_PHONE_CALLS	(Type.IMAGE, "perm_group_phone_calls.png"),
@@ -244,6 +244,7 @@ public enum Resource
 	IMG_INSTALL_TABLE_WAIT		(Type.IMAGE, "install_wait_icon.GIF"),
 	IMG_INSTALL_TABLE_QUESTION		(Type.IMAGE, "question_icon.png"),
 	IMG_INSTALL_TABLE_ERROR		(Type.IMAGE, "install_error_icon.png"),
+	
 	
 	BIN_ADB_LNX					(Type.BIN, "adb"),
 	BIN_ADB_WIN					(Type.BIN, "adb.exe"),

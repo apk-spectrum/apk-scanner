@@ -23,6 +23,7 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.border.MatteBorder;
 
+import com.apkscanner.gui.ToolBar.ButtonSet;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
@@ -320,6 +321,12 @@ public class ToolBar extends JToolBar
     	buttonMap.get(buttonSet).setToolTipText(tipText);
     }
     
+    private void setButtonIcon(ButtonSet buttonSet, ImageIcon img)
+    {
+    	buttonMap.get(buttonSet).setIcon(img);
+    	
+    }
+    
     private void setMenuItemText(MenuItemSet menuItemSet, String text, String tipText)
     {
     	menuItemMap.get(menuItemSet).setText(text);
@@ -368,6 +375,19 @@ public class ToolBar extends JToolBar
     	case INSTALL:
     		buttonMap.get(ButtonSet.INSTALL).setEnabled(enabled);
     		buttonMap.get(ButtonSet.INSTALL_EXTEND).setEnabled(enabled);
+    		if(buttonId != ButtonSet.ALL) break;
+    	case OPEN_CODE:
+    		
+    		if(enabled) {
+    			setButtonText(ButtonSet.OPEN_CODE, Resource.STR_BTN_OPENCODE.getString(), Resource.STR_BTN_OPENCODE_LAB.getString());
+	    		setButtonIcon(ButtonSet.OPEN_CODE, Resource.IMG_TOOLBAR_OPENCODE.getImageIcon(ButtonSet.IconSize,ButtonSet.IconSize));
+    		} else {
+    			setButtonText(ButtonSet.OPEN_CODE,"여는중....","여는중....");
+	    		setButtonIcon(ButtonSet.OPEN_CODE, Resource.IMG_TOOLBAR_LOADING_OPEN_JD.getImageIcon());
+    		}
+    		//buttonMap.get(ButtonSet.OPEN_CODE).setFocusable(false);
+    		buttonMap.get(ButtonSet.OPEN_CODE).setEnabled(enabled);
+    		
     		if(buttonId != ButtonSet.ALL) break;
     	default:
     		break;

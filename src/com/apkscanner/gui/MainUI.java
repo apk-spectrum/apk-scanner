@@ -25,6 +25,7 @@ import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.apkscanner.AaptScanner;
 import com.apkscanner.apkscanner.ApkScannerStub;
 import com.apkscanner.apkscanner.ApkScannerStub.Status;
+import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.gui.ApkInstaller.InstallButtonStatusListener;
 import com.apkscanner.gui.ToolBar.ButtonSet;
 import com.apkscanner.gui.dialog.AboutDlg;
@@ -391,31 +392,38 @@ public class MainUI extends JFrame
 			});
 		}
 		private void evtOpenJDGUI()
-		{
-			ApkInfo apkInfo = apkScanner.getApkInfo();
-			
-			String cmd="";
-			String apkfilePath=apkInfo.filePath;
-			String jarfileName = apkfilePath.substring((apkfilePath.lastIndexOf(File.separator))+1); 
-			jarfileName = jarfileName.substring(0,(jarfileName.lastIndexOf(".")))+".jar";
-						
-			String[] cmdLog = null;
-			
-			if(System.getProperty("os.name").indexOf("Window") >-1) {
-			
-			} else {  //for linux
-				cmdLog =ConsolCmd.exc(new String[] {"sh", Resource.BIN_DEX2JAR_LNX.getPath(), 
-						apkfilePath, "-o", apkInfo.tempWorkPath+File.separator+jarfileName});				
-			}
-			//open JD GUI
-			for( int i=0 ; i<cmdLog.length; i++)
-			{
-				Log.i("DEX2JAR Log : "+ cmdLog[i]);	
-			}
-			cmdLog =ConsolCmd.exc(new String[] {"java", "-jar", Resource.BIN_JDGUI.getPath(), 
-			apkInfo.tempWorkPath+File.separator+jarfileName});
-			
-			
+		{			
+			new Thread(new Runnable() {
+				public void run()
+				{
+					ApkInfo apkInfo = apkScanner.getApkInfo();
+					String cmd="";
+					String apkfilePath=apkInfo.filePath;
+					String jarfileName = apkfilePath.substring((apkfilePath.lastIndexOf(File.separator))+1); 
+					jarfileName = jarfileName.substring(0,(jarfileName.lastIndexOf(".")))+".jar";
+								
+					String[] cmdLog = null;
+					
+					toolBar.setEnabledAt(ButtonSet.OPEN_CODE, false);
+					
+					if(System.getProperty("os.name").indexOf("Window") >-1) {
+					
+					} else {  //for linux
+						cmdLog =ConsolCmd.exc(new String[] {"sh", Resource.BIN_DEX2JAR_LNX.getPath(), 
+								apkfilePath, "-o", apkInfo.tempWorkPath+File.separator+jarfileName});				
+					}
+					//open JD GUI
+					for( int i=0 ; i<cmdLog.length; i++)
+					{
+						Log.i("DEX2JAR Log : "+ cmdLog[i]);	
+					}
+					cmdLog =ConsolCmd.exc(new String[] {"java", "-jar", Resource.BIN_JDGUI.getPath(), 
+					apkInfo.tempWorkPath+File.separator+jarfileName});
+					
+					toolBar.setEnabledAt(ButtonSet.OPEN_CODE, true);
+					
+				}
+			}).start();
 		}
 		
 		private void evtShowManifest()
