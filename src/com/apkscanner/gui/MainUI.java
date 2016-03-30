@@ -417,10 +417,13 @@ public class MainUI extends JFrame
 					{
 						Log.i("DEX2JAR Log : "+ cmdLog[i]);	
 					}
+					
+					toolBar.setEnabledAt(ButtonSet.OPEN_CODE, true);
+					
 					cmdLog =ConsolCmd.exc(new String[] {"java", "-jar", Resource.BIN_JDGUI.getPath(), 
 					apkInfo.tempWorkPath+File.separator+jarfileName});
 					
-					toolBar.setEnabledAt(ButtonSet.OPEN_CODE, true);
+					
 					
 				}
 			}).start();
