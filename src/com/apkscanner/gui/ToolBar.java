@@ -384,6 +384,7 @@ public class ToolBar extends JToolBar
     		} else {
     			setButtonText(ButtonSet.OPEN_CODE,"여는중....","여는중....");
 	    		setButtonIcon(ButtonSet.OPEN_CODE, Resource.IMG_TOOLBAR_LOADING_OPEN_JD.getImageIcon());
+	    		buttonMap.get(ButtonSet.OPEN_CODE).setDisabledIcon(Resource.IMG_TOOLBAR_LOADING_OPEN_JD.getImageIcon());
     		}
     		//buttonMap.get(ButtonSet.OPEN_CODE).setFocusable(false);
     		buttonMap.get(ButtonSet.OPEN_CODE).setEnabled(enabled);
