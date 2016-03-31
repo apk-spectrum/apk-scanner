@@ -406,6 +406,8 @@ public class MainUI extends JFrame
 					
 					toolBar.setEnabledAt(ButtonSet.OPEN_CODE, false);
 					
+					Log.i("Start DEX2JAR");
+					
 					if(System.getProperty("os.name").indexOf("Window") >-1) {
 						cmdLog =ConsolCmd.exc(new String[] {Resource.BIN_DEX2JAR_WIN.getPath(), 
 								apkfilePath, "-o", apkInfo.tempWorkPath+File.separator+jarfileName});
@@ -418,6 +420,8 @@ public class MainUI extends JFrame
 					{
 						Log.i("DEX2JAR Log : "+ cmdLog[i]);	
 					}
+					
+					Log.i("End DEX2JAR");
 					
 					toolBar.setEnabledAt(ButtonSet.OPEN_CODE, true);
 					

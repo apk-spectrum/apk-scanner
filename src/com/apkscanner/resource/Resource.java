@@ -220,6 +220,8 @@ public enum Resource
 	IMG_TOOLBAR_OPENCODE			(Type.IMAGE, "toolbar_opencode.png"),
 	IMG_TOOLBAR_SIGNNING			(Type.IMAGE, "toolbar_signning.png"),
 	IMG_TOOLBAR_LOADING_OPEN_JD (Type.IMAGE, "loading_openJD.gif"),
+	IMG_TOOLBAR_PACKAGETREE (Type.IMAGE, "toolbar_packagetree.png"),
+	
 	
 	
 	IMG_PERM_GROUP_PHONE_CALLS	(Type.IMAGE, "perm_group_phone_calls.png"),

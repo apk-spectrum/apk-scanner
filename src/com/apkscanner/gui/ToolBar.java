@@ -38,13 +38,13 @@ public class ToolBar extends JToolBar
 	public enum MenuItemSet
 	{
 		NEW_WINDOW		(Resource.STR_MENU_NEW.getString(), null, null, null, '\0', true),
-		NEW_EMPTY		(Resource.STR_MENU_NEW_WINDOW.getString(), null, null, KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK, false), 'N'),
+		NEW_EMPTY		(Resource.STR_MENU_NEW_WINDOW.getString(), null, Resource.IMG_TOOLBAR_MANIFEST.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK, false), 'N'),
 		NEW_APK			(Resource.STR_MENU_NEW_APK_FILE.getString(), null, Resource.IMG_TOOLBAR_OPEN.getImageIcon(16,16), null, '\0'),
-		NEW_PACKAGE		(Resource.STR_MENU_NEW_PACKAGE.getString(), null, null, null, '\0'),
+		NEW_PACKAGE		(Resource.STR_MENU_NEW_PACKAGE.getString(), null, Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(16,16), null, '\0'),
 		OPEN_APK		(Resource.STR_MENU_APK_FILE.getString(), null, Resource.IMG_TOOLBAR_OPEN.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK, false), 'O'),
-		OPEN_PACKAGE	(Resource.STR_MENU_PACKAGE.getString(), null, null, KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK, false), 'P'),
-		INSTALL_APK		(Resource.STR_MENU_INSTALL.getString(), null, null, KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK, false), 'I'),
-		INSTALLED_CHECK	(Resource.STR_MENU_CHECK_INSTALLED.getString(), null, null, KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK, false), 'T');
+		OPEN_PACKAGE	(Resource.STR_MENU_PACKAGE.getString(), null, Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK, false), 'P'),
+		INSTALL_APK		(Resource.STR_MENU_INSTALL.getString(), null, Resource.IMG_TOOLBAR_INSTALL.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK, false), 'I'),
+		INSTALLED_CHECK	(Resource.STR_MENU_CHECK_INSTALLED.getString(), null, Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK, false), 'T');
 		
     	private String text = null;
     	private String toolTipText = null;
