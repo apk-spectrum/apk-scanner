@@ -3,6 +3,8 @@ package com.apkscanner.gui.tabpanels;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -154,13 +156,10 @@ public class ImageResource extends JPanel implements TabDataObject
     	tree.setModel(model);
     	
     	for(int i=0; i<apkInfo.images.length; i++) {
-    		
     		ImageTreeObject ImageNode= new ImageTreeObject(apkInfo.images[i], false);
-    		
     		DefaultMutableTreeNode imagepath = new DefaultMutableTreeNode(ImageNode);
     		
     		String foldertemp =	getOnlyFoldername(apkInfo.images[i]);
-    		 		
     		
     		if(FolderList.contains(foldertemp)) {
     			DefaultMutableTreeNode findnode = findNode(foldertemp);
@@ -168,12 +167,15 @@ public class ImageResource extends JPanel implements TabDataObject
     			
     		} else {
     			ImageTreeObject folderNode= new ImageTreeObject(apkInfo.images[i], true);
-    			
-    			DefaultMutableTreeNode foldernode = new DefaultMutableTreeNode(folderNode);
-    			foldernode.add(imagepath);
     			FolderList.add(foldertemp);
     			
-    			top.add(new DefaultMutableTreeNode(foldertemp));
+    			
+    			DefaultMutableTreeNode foldernode = new DefaultMutableTreeNode(folderNode);
+    			
+    			foldernode.add(imagepath);
+    			
+    			top.add(foldernode);
+    			
     			
     		}    		
     		    		
@@ -204,7 +206,33 @@ public class ImageResource extends JPanel implements TabDataObject
 //         System.err.println("Path collapsed at level "+currentLevel+"-"+treePath);
       }
    }
-    
+    private void drawImageOnPanel() {
+    	//int selRow = tree.getRowForLocation(e.getX(), e.getY());
+        //TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+                tree.getLastSelectedPathComponent();
+        if(node ==null) return;
+		if(node.getLevel() != 2) {
+			photographLabel.setIcon(null);
+			
+			return;
+		}
+			
+		String imgPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/";
+		ImageTreeObject tempObject = (ImageTreeObject)node.getUserObject();
+		imgPath = imgPath + tempObject.Filepath;
+		
+		if(imgPath.endsWith(".qmg")) {
+			imgPath = Resource.IMG_QMG_IMAGE_ICON.getPath();
+		}
+		try {
+			photographLabel.setIcon(new ImageIcon(ImageScaler.getMaxScaledImage(
+					new ImageIcon(new URL(imgPath)),photographLabel.getWidth(),photographLabel.getHeight())));
+		} catch (MalformedURLException e1) {
+			e1.printStackTrace();
+		} 
+    }
     private void TreeInit() {
     	
         tree.setCellRenderer(new DefaultTreeCellRenderer() {
@@ -249,43 +277,20 @@ public class ImageResource extends JPanel implements TabDataObject
     	
     	
         MouseListener ml = new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-            	
-            	int selRow = tree.getRowForLocation(e.getX(), e.getY());
-                TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
-                
-                Log.i("selRow : " + selRow);
-                Log.i("selPath : " + selPath);
-                
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode)
-                        tree.getLastSelectedPathComponent();
-                
-                Log.i("Level : " + node.getLevel());
-                
-                
-        		if(node.getLevel() != 2)
-        			return;
-        		String imgPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/";
-        		ImageTreeObject tempObject = (ImageTreeObject)node.getUserObject();
-        		imgPath = imgPath + tempObject.Filepath;
-        		
-        		if(imgPath.endsWith(".qmg")) {
-        			imgPath = Resource.IMG_QMG_IMAGE_ICON.getPath();
-        		}
-        		try {
-    				photographLabel.setIcon(new ImageIcon(ImageScaler.getMaxScaledImage(
-    						new ImageIcon(new URL(imgPath)),photographLabel.getWidth(),photographLabel.getHeight())));
-    			} catch (MalformedURLException e1) {
-    				e1.printStackTrace();
-    			}
-                
-                
-                
+            public void mousePressed(MouseEvent e) {            	
+            	drawImageOnPanel();
             }
         };
+        tree.addKeyListener(new KeyAdapter()
+        {
+        	public void keyReleased(KeyEvent ke) {
+        		//if(ke.getKeyCode() == KeyEvent.VK_ENTER) {
+        			drawImageOnPanel();
+        		//}
+        	}
+        });        
         
-        tree.addMouseListener(ml);
-        
+        tree.addMouseListener(ml);        
     }
     
 	@Override
@@ -299,7 +304,7 @@ public class ImageResource extends JPanel implements TabDataObject
 		TreeInit();
 		
 		JScrollPane scroll = new JScrollPane(tree);
-		scroll.setPreferredSize(new Dimension(500, 400));
+		scroll.setPreferredSize(new Dimension(400, 400));
 		scroll.repaint();
 		
 		photographLabel = new JLabel();
