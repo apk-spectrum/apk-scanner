@@ -168,17 +168,11 @@ public class ImageResource extends JPanel implements TabDataObject
     		} else {
     			ImageTreeObject folderNode= new ImageTreeObject(apkInfo.images[i], true);
     			FolderList.add(foldertemp);
-    			
-    			
     			DefaultMutableTreeNode foldernode = new DefaultMutableTreeNode(folderNode);
     			
     			foldernode.add(imagepath);
-    			
     			top.add(foldernode);
-    			
-    			
-    		}    		
-    		    		
+    		}
     	}
     	
     	expandOrCollapsePath(tree, new TreePath(top.getPath()),1,0, true);
@@ -227,8 +221,8 @@ public class ImageResource extends JPanel implements TabDataObject
 			imgPath = Resource.IMG_QMG_IMAGE_ICON.getPath();
 		}
 		try {
-			photographLabel.setIcon(new ImageIcon(ImageScaler.getMaxScaledImage(
-					new ImageIcon(new URL(imgPath)),photographLabel.getWidth(),photographLabel.getHeight())));
+			photographLabel.setIcon(new ImageIcon(
+					new URL(imgPath)));
 		} catch (MalformedURLException e1) {
 			e1.printStackTrace();
 		} 
