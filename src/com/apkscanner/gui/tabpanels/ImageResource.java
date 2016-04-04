@@ -298,7 +298,7 @@ public class ImageResource extends JPanel implements TabDataObject
 		TreeInit();
 		
 		JScrollPane scroll = new JScrollPane(tree);
-		scroll.setPreferredSize(new Dimension(400, 400));
+		scroll.setPreferredSize(new Dimension(300, 400));
 		scroll.repaint();
 		
 		photographLabel = new JLabel();
