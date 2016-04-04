@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import com.apkscanner.apkinfo.PermissionGroup;
 import com.apkscanner.apkinfo.PermissionInfo;
+import com.apkscanner.apkinfo.ResourceInfo;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.MyXPath;
@@ -55,8 +56,18 @@ public class PermissionGroupManager
 					permGroupMap.put(permInfo.permissionGroup, g);
 				}
 				g.permList.add(permInfo);
+
 				if(permInfo.labels != null) {
-					g.permSummary += "\n - " + permInfo.labels;
+					String description = permInfo.labels[0].name;
+					for(ResourceInfo r: permInfo.labels) {
+						if(r.configuration != null && r.configuration.equals(Resource.getLanguage())) {
+							description = r.name;
+							break;
+						}
+					}
+					if(description != null)  {
+						g.permSummary += "\n - " + description;
+					}
 				}
 				if(permInfo.isDangerousLevel()) {
 					g.hasDangerous = true;
