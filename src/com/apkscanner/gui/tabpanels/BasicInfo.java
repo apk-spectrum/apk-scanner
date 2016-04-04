@@ -798,7 +798,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 						break;
 					}
 				}
-				body.append(label + " ");
+				if(label != null)
+					body.append(label + " ");
 			}
 			body.append("[" + info.name + "]\n");
 			body.append(" - protectionLevel=" + info.protectionLevel + "\n");
