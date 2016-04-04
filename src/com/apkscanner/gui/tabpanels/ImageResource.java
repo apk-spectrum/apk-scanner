@@ -69,7 +69,7 @@ public class ImageResource extends JPanel implements TabDataObject
 			isfolder = folder;
 			
 			if(isfolder) {
-				label = filepath;
+				label = getOnlyFoldername(filepath);
 			} else {
 				label = getOnlyFilename(filepath); 
 			}
