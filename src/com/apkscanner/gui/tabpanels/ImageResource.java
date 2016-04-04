@@ -3,7 +3,9 @@ package com.apkscanner.gui.tabpanels;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -203,30 +205,8 @@ public class ImageResource extends JPanel implements TabDataObject
       }
    }
     
-	@Override
-	public void initialize()
-	{
-		list = new JList<Object>();
-		list.setCellRenderer(new MarioListRenderer());
-		list.addListSelectionListener(new JListHandler());
-
-		makeTreeForm();
-		
-		JScrollPane scroll = new JScrollPane(tree);
-		scroll.setPreferredSize(new Dimension(500, 400));
-		scroll.repaint();
-		
-		photographLabel = new JLabel();
-		photographLabel.setVerticalTextPosition(JLabel.BOTTOM);
-		photographLabel.setHorizontalTextPosition(JLabel.CENTER);
-		photographLabel.setHorizontalAlignment(JLabel.CENTER);
-		photographLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		        
-		this.setLayout(new GridLayout(1, 1));
-//		this.add(scroll);
-//		this.add(photographLabel);
-
-		
+    private void TreeInit() {
+    	
         tree.setCellRenderer(new DefaultTreeCellRenderer() {
 			private static final long serialVersionUID = 6248791058116909814L;
 			private ImageIcon iconApk = Resource.IMG_TREE_APK.getImageIcon();
@@ -266,7 +246,73 @@ public class ImageResource extends JPanel implements TabDataObject
                 return c;
             }
         });
+    	
+    	
+        MouseListener ml = new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+            	
+            	int selRow = tree.getRowForLocation(e.getX(), e.getY());
+                TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+                
+                Log.i("selRow : " + selRow);
+                Log.i("selPath : " + selPath);
+                
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+                        tree.getLastSelectedPathComponent();
+                
+                Log.i("Level : " + node.getLevel());
+                
+                
+        		if(node.getLevel() != 2)
+        			return;
+        		String imgPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/";
+        		ImageTreeObject tempObject = (ImageTreeObject)node.getUserObject();
+        		imgPath = imgPath + tempObject.Filepath;
         		
+        		if(imgPath.endsWith(".qmg")) {
+        			imgPath = Resource.IMG_QMG_IMAGE_ICON.getPath();
+        		}
+        		try {
+    				photographLabel.setIcon(new ImageIcon(ImageScaler.getMaxScaledImage(
+    						new ImageIcon(new URL(imgPath)),photographLabel.getWidth(),photographLabel.getHeight())));
+    			} catch (MalformedURLException e1) {
+    				e1.printStackTrace();
+    			}
+                
+                
+                
+            }
+        };
+        
+        tree.addMouseListener(ml);
+        
+    }
+    
+	@Override
+	public void initialize()
+	{
+		list = new JList<Object>();
+		list.setCellRenderer(new MarioListRenderer());
+		list.addListSelectionListener(new JListHandler());
+
+		makeTreeForm();
+		TreeInit();
+		
+		JScrollPane scroll = new JScrollPane(tree);
+		scroll.setPreferredSize(new Dimension(500, 400));
+		scroll.repaint();
+		
+		photographLabel = new JLabel();
+		photographLabel.setVerticalTextPosition(JLabel.BOTTOM);
+		photographLabel.setHorizontalTextPosition(JLabel.CENTER);
+		photographLabel.setHorizontalAlignment(JLabel.CENTER);
+		photographLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		        
+		this.setLayout(new GridLayout(1, 1));
+//		this.add(scroll);
+//		this.add(photographLabel);
+		
+
 		
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.setLeftComponent(scroll);
