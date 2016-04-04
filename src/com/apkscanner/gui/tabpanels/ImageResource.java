@@ -3,9 +3,14 @@ package com.apkscanner.gui.tabpanels;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
@@ -15,13 +20,24 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTree;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
 import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
+import com.apkscanner.gui.util.FilteredTreeModel;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 
 public class ImageResource extends JPanel implements TabDataObject
 {
@@ -32,14 +48,161 @@ public class ImageResource extends JPanel implements TabDataObject
 	private JLabel photographLabel;
 	private String[] nameList = null;
 	private String apkFilePath = null;
+	private JTree tree;
+	private DefaultMutableTreeNode top;
+	private ArrayList<String> FolderList = new ArrayList<String>(); 
+	private ArrayList<String> FileList = new ArrayList<String>();
 	
 	JList<Object> list = null;
     
+	private class ImageTreeObject {
+		public String label;
+		public Boolean isfolder;
+		public String Filepath;
+		
+		public ImageTreeObject(String filepath, Boolean folder) {
+			Filepath = filepath;
+			isfolder = folder;
+			
+			if(isfolder) {
+				label = filepath;
+			} else {
+				label = getOnlyFilename(filepath); 
+			}
+		}
+		
+		@Override
+		public String toString() {
+		    return this.label;
+		}
+	}
+	
 	public ImageResource()
 	{
 
 	}
 	
+    private void makeTreeForm() {
+    	top = new DefaultMutableTreeNode("Loading...");
+    
+    	FilteredTreeModel model = new FilteredTreeModel(new DefaultTreeModel(top));
+    	
+    	tree = new JTree(model);
+    	
+    	tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);    	
+    }
+    
+	private String getOnlyFilename(String str) {
+		return str.substring(str.lastIndexOf(File.separator)+1, str.length());
+	}
+    
+	private String getOnlyFoldername(String str) {
+		return str.substring(0, str.lastIndexOf(File.separator));
+	}
+    
+    private final List<DefaultMutableTreeNode> getSearchNodes(DefaultMutableTreeNode root) {
+        List<DefaultMutableTreeNode> searchNodes = new ArrayList<DefaultMutableTreeNode>();
+
+        Enumeration<?> e = root.preorderEnumeration();
+        while(e.hasMoreElements()) {
+            searchNodes.add((DefaultMutableTreeNode)e.nextElement());
+        }
+        return searchNodes;
+    }
+	
+    public final DefaultMutableTreeNode findNode(String searchString) {
+
+        List<DefaultMutableTreeNode> searchNodes = getSearchNodes((DefaultMutableTreeNode)tree.getModel().getRoot());
+        DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
+
+        DefaultMutableTreeNode foundNode = null;
+        int bookmark = -1;
+
+        if( currentNode != null ) {
+            for(int index = 0; index < searchNodes.size(); index++) {
+                if( searchNodes.get(index) == currentNode ) {
+                    bookmark = index;
+                    break;
+                }
+            }
+        }
+
+        for(int index = bookmark + 1; index < searchNodes.size(); index++) {    
+            if(searchNodes.get(index).toString().toLowerCase().contains(searchString.toLowerCase())) {
+                foundNode = searchNodes.get(index);
+                break;
+            }
+        }
+
+        if( foundNode == null ) {
+            for(int index = 0; index <= bookmark; index++) {    
+                if(searchNodes.get(index).toString().toLowerCase().contains(searchString.toLowerCase())) {
+                    foundNode = searchNodes.get(index);
+                    break;
+                }
+            }
+        }
+        return foundNode;
+    }   
+	
+    private void SetTreeForm(ApkInfo apkInfo) {
+    	tree.removeAll();
+    	top = new DefaultMutableTreeNode(getOnlyFilename(apkInfo.filePath));
+    	FilteredTreeModel model = new FilteredTreeModel(new DefaultTreeModel(top));
+    	tree.setModel(model);
+    	
+    	for(int i=0; i<apkInfo.images.length; i++) {
+    		
+    		ImageTreeObject ImageNode= new ImageTreeObject(apkInfo.images[i], false);
+    		
+    		DefaultMutableTreeNode imagepath = new DefaultMutableTreeNode(ImageNode);
+    		
+    		String foldertemp =	getOnlyFoldername(apkInfo.images[i]);
+    		 		
+    		
+    		if(FolderList.contains(foldertemp)) {
+    			DefaultMutableTreeNode findnode = findNode(foldertemp);
+    			findnode.add(imagepath);
+    			
+    		} else {
+    			ImageTreeObject folderNode= new ImageTreeObject(apkInfo.images[i], true);
+    			
+    			DefaultMutableTreeNode foldernode = new DefaultMutableTreeNode(folderNode);
+    			foldernode.add(imagepath);
+    			FolderList.add(foldertemp);
+    			
+    			top.add(new DefaultMutableTreeNode(foldertemp));
+    			
+    		}    		
+    		    		
+    	}
+    	
+    	expandOrCollapsePath(tree, new TreePath(top.getPath()),1,0, true);
+    }
+    
+    public static void expandOrCollapsePath (JTree tree,TreePath treePath,int level,int currentLevel,boolean expand) {
+//      System.err.println("Exp level "+currentLevel+", exp="+expand);
+      if (expand && level<=currentLevel && level>0) return;
+
+      TreeNode treeNode = ( TreeNode ) treePath.getLastPathComponent();
+      TreeModel treeModel=tree.getModel();
+      if ( treeModel.getChildCount(treeNode) >= 0 ) {
+         for ( int i = 0; i < treeModel.getChildCount(treeNode); i++  ) {
+            TreeNode n = ( TreeNode )treeModel.getChild(treeNode, i);
+            TreePath path = treePath.pathByAddingChild( n );
+            expandOrCollapsePath(tree,path,level,currentLevel+1,expand);
+         }
+         if (!expand && currentLevel<level) return;
+      }      
+      if (expand) {
+         tree.expandPath( treePath );
+//         System.err.println("Path expanded at level "+currentLevel+"-"+treePath);
+      } else {
+         tree.collapsePath(treePath);
+//         System.err.println("Path collapsed at level "+currentLevel+"-"+treePath);
+      }
+   }
+    
 	@Override
 	public void initialize()
 	{
@@ -47,19 +210,75 @@ public class ImageResource extends JPanel implements TabDataObject
 		list.setCellRenderer(new MarioListRenderer());
 		list.addListSelectionListener(new JListHandler());
 
-		JScrollPane scroll = new JScrollPane(list);
-		scroll.setPreferredSize(new Dimension(300, 400));
+		makeTreeForm();
+		
+		JScrollPane scroll = new JScrollPane(tree);
+		scroll.setPreferredSize(new Dimension(500, 400));
 		scroll.repaint();
-		        
+		
 		photographLabel = new JLabel();
 		photographLabel.setVerticalTextPosition(JLabel.BOTTOM);
 		photographLabel.setHorizontalTextPosition(JLabel.CENTER);
 		photographLabel.setHorizontalAlignment(JLabel.CENTER);
 		photographLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		        
-		this.setLayout(new GridLayout(1, 2));        
-		this.add(scroll);
-		this.add(photographLabel);
+		this.setLayout(new GridLayout(1, 1));
+//		this.add(scroll);
+//		this.add(photographLabel);
+
+		
+        tree.setCellRenderer(new DefaultTreeCellRenderer() {
+			private static final long serialVersionUID = 6248791058116909814L;
+			private ImageIcon iconApk = Resource.IMG_TREE_APK.getImageIcon();
+        	private ImageIcon iconFolder = Resource.IMG_TREE_FOLDER.getImageIcon();
+        	
+            @Override
+            public Component getTreeCellRendererComponent(JTree tree,
+                    Object value, boolean selected, boolean expanded,
+                    boolean isLeaf, int row, boolean focused) {
+                Component c = super.getTreeCellRendererComponent(tree, value,
+                        selected, expanded, isLeaf, row, focused);
+                
+                DefaultMutableTreeNode nodo = (DefaultMutableTreeNode) value;
+                int level = nodo.getLevel();
+                
+                if(level==0) {
+                	setIcon(iconApk);
+                } else if(level==1) {
+                	setIcon(iconFolder);
+                } else if(level==2) {
+                	ImageTreeObject temp = (ImageTreeObject)nodo.getUserObject();
+                	String jarPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/";
+                	ImageIcon tempIcon = null;
+    				if(temp.Filepath.endsWith(".qmg")) {
+    					tempIcon = new ImageIcon(ImageScaler.getScaledImage(Resource.IMG_QMG_IMAGE_ICON.getImageIcon(),32,32));
+    				} else {
+    					try {
+							tempIcon = new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(new URL(jarPath+temp.Filepath)),32,32));
+						} catch (MalformedURLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+    				}
+                	
+                	setIcon(tempIcon);
+                }             
+                return c;
+            }
+        });
+        		
+		
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane.setLeftComponent(scroll);
+        splitPane.setRightComponent(photographLabel);
+        
+        
+        Dimension minimumSize = new Dimension(100, 50);
+        
+        //splitPane.setDividerLocation(200);
+        
+        this.add(splitPane);
+        
 	}
 
 	@Override
@@ -79,6 +298,8 @@ public class ImageResource extends JPanel implements TabDataObject
 		createImageMap(nameList);
 		
 		list.setListData(nameList);
+		SetTreeForm(apkInfo);
+		
 	}
     
 	public class MarioListRenderer extends DefaultListCellRenderer {
