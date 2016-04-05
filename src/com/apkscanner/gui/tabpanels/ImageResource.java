@@ -62,6 +62,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	private DefaultMutableTreeNode top;
 	private ArrayList<String> FolderList = new ArrayList<String>(); 
 	private ArrayList<String> FileList = new ArrayList<String>();
+	private Boolean isFolderMode = true;
 	
 	JList<Object> list = null;
     
@@ -155,32 +156,58 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
         return foundNode;
     }   
 	
-    private void SetTreeForm(ApkInfo apkInfo) {
+    private void SetTreeForm(Boolean mode) {
     	tree.removeAll();
-    	top = new DefaultMutableTreeNode(getOnlyFilename(apkInfo.filePath));
+    	FolderList.clear();
+    	FileList.clear();
+    	top = new DefaultMutableTreeNode(getOnlyFilename(this.apkFilePath));
     	FilteredTreeModel model = new FilteredTreeModel(new DefaultTreeModel(top));
     	tree.setModel(model);
-    	
-    	for(int i=0; i<apkInfo.images.length; i++) {
-    		ImageTreeObject ImageNode= new ImageTreeObject(apkInfo.images[i], false);
-    		DefaultMutableTreeNode imagepath = new DefaultMutableTreeNode(ImageNode);
-    		
-    		String foldertemp =	getOnlyFoldername(apkInfo.images[i]);
-    		
-    		if(FolderList.contains(foldertemp)) {
-    			DefaultMutableTreeNode findnode = findNode(foldertemp);
-    			findnode.add(imagepath);
-    			
-    		} else {
-    			ImageTreeObject folderNode= new ImageTreeObject(apkInfo.images[i], true);
-    			FolderList.add(foldertemp);
-    			DefaultMutableTreeNode foldernode = new DefaultMutableTreeNode(folderNode);
-    			
-    			foldernode.add(imagepath);
-    			top.add(foldernode);
-    		}
+    	if(isFolderMode) {
+	    	for(int i=0; i<this.nameList.length; i++) {
+	    		ImageTreeObject ImageNode= new ImageTreeObject(this.nameList[i], false);
+	    		DefaultMutableTreeNode imagepath = new DefaultMutableTreeNode(ImageNode);
+	    		
+	    		String foldertemp =	getOnlyFoldername(this.nameList[i]);
+	    		
+	    		if(FolderList.contains(foldertemp)) {
+	    			DefaultMutableTreeNode findnode = findNode(foldertemp);
+	    			findnode.add(imagepath);
+	    			
+	    		} else {
+	    			ImageTreeObject folderNode= new ImageTreeObject(this.nameList[i], true);
+	    			FolderList.add(foldertemp);
+	    			DefaultMutableTreeNode foldernode = new DefaultMutableTreeNode(folderNode);
+	    			
+	    			foldernode.add(imagepath);
+	    			top.add(foldernode);
+	    		}
+	    	}
+    	} else {
+	    	for(int i=0; i<this.nameList.length; i++) {
+	    		ImageTreeObject ImageNode= new ImageTreeObject(this.nameList[i], false);
+	    		DefaultMutableTreeNode imagepath = new DefaultMutableTreeNode(ImageNode);
+	    		
+	    		String filetemp =	getOnlyFilename(this.nameList[i]);
+	    		
+	    		if(FileList.contains(filetemp)) {
+	    			DefaultMutableTreeNode findnode = findNode(filetemp);
+	    			
+	    			ImageTreeObject FolderObject= new ImageTreeObject(this.nameList[i], true);
+	    			DefaultMutableTreeNode FolderNode = new DefaultMutableTreeNode(FolderObject);
+	    			
+	    			findnode.add(FolderNode);
+	    		} else {
+	    			ImageTreeObject FolderObject= new ImageTreeObject(this.nameList[i], true);
+	    			DefaultMutableTreeNode FolderNode = new DefaultMutableTreeNode(FolderObject);
+	    			
+	    			imagepath.add(FolderNode);	    			
+	    			FileList.add(filetemp);
+	    			
+	    			top.add(imagepath);
+	    		}
+	    	}
     	}
-    	
     	expandOrCollapsePath(tree, new TreePath(top.getPath()),1,0, true);
     }
     
@@ -249,12 +276,16 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
                 
                 DefaultMutableTreeNode nodo = (DefaultMutableTreeNode) value;
                 int level = nodo.getLevel();
-                
-                if(level==0) {
+                if(top==nodo) {
                 	setIcon(iconApk);
-                } else if(level==1) {
+                	return c;
+                }
+                
+                ImageTreeObject tempObject = (ImageTreeObject)nodo.getUserObject();                
+                
+                if(tempObject.isfolder) {
                 	setIcon(iconFolder);
-                } else if(level==2) {
+                } else {
                 	ImageTreeObject temp = (ImageTreeObject)nodo.getUserObject();
                 	String jarPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/";
                 	ImageIcon tempIcon = null;
@@ -267,8 +298,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-    				}
-                	
+    				}                	
                 	setIcon(tempIcon);
                 }             
                 return c;
@@ -375,7 +405,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		createImageMap(nameList);
 		
 		list.setListData(nameList);
-		SetTreeForm(apkInfo);
+		SetTreeForm(isFolderMode);
 		
 	}
     
@@ -446,8 +476,12 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		
 		if(arg0.getActionCommand().equals("image")) {
 			Log.i("image");
+			isFolderMode = false;
+			SetTreeForm(isFolderMode);
 		} else {
 			Log.i("folder");
+			isFolderMode = true;
+			SetTreeForm(isFolderMode);
 		}		
 	}
 }
