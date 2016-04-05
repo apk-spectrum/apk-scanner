@@ -45,6 +45,7 @@ import javax.swing.tree.TreeSelectionModel;
 import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.gui.util.FilteredTreeModel;
+import com.apkscanner.gui.util.ImageControlPanel;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
@@ -53,7 +54,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 {
 	private static final long serialVersionUID = -934921813626224616L;
     
-	private JLabel photographLabel;
+	private ImageControlPanel photographLabel;
 	private String[] nameList = null;
 	private String apkFilePath = null;
 	private JTree tree;
@@ -247,8 +248,11 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 			imgPath = Resource.IMG_QMG_IMAGE_ICON.getPath();
 		}
 		try {
-			photographLabel.setIcon(new ImageIcon(
-					new URL(imgPath)));
+			//photographLabel.setIcon(new ImageIcon(
+			//		new URL(imgPath)));
+
+			photographLabel.setImage(new ImageIcon( new URL(imgPath)));
+			photographLabel.repaint();
 		} catch (MalformedURLException e1) {
 			e1.printStackTrace();
 		} 
@@ -360,10 +364,10 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		scroll.setPreferredSize(new Dimension(300, 400));
 		scroll.repaint();
 		
-		photographLabel = new JLabel();
-		photographLabel.setVerticalTextPosition(JLabel.BOTTOM);
-		photographLabel.setHorizontalTextPosition(JLabel.CENTER);
-		photographLabel.setHorizontalAlignment(JLabel.CENTER);
+		photographLabel = new ImageControlPanel();
+		//photographLabel.setVerticalTextPosition(JLabel.BOTTOM);
+		//photographLabel.setHorizontalTextPosition(JLabel.CENTER);
+		//photographLabel.setHorizontalAlignment(JLabel.CENTER);
 		photographLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		        
 		this.setLayout(new GridLayout(1, 1));
