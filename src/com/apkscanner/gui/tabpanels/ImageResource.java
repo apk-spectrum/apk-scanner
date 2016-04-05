@@ -61,7 +61,8 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	private ArrayList<String> FolderList = new ArrayList<String>(); 
 	private ArrayList<String> FileList = new ArrayList<String>();
 	private Boolean isFolderMode = false;
-	
+	private FilteredTreeModel filteredModel;
+	private JTextField textField;
 	private class ImageTreeObject {
 		public String label;
 		public Boolean isfolder;
@@ -236,11 +237,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)
                 tree.getLastSelectedPathComponent();
         if(node ==null) return;
-		if(node.getLevel() != 2) {
-			photographLabel.setIcon(null);
-			
-			return;
-		}
+		
 			
 		String imgPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/";
 		ImageTreeObject tempObject = (ImageTreeObject)node.getUserObject();
@@ -319,6 +316,40 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
         tree.addMouseListener(ml);        
     }
     
+    private void expandTree(final JTree tree) {
+        for (int i = 0; i < tree.getRowCount(); i++) {
+          tree.expandRow(i);
+        }
+      }
+    
+    private void makefilter (String temp){
+        filteredModel = (FilteredTreeModel) tree.getModel();
+        filteredModel.setFilter(temp);
+        DefaultTreeModel treeModel = (DefaultTreeModel) filteredModel.getTreeModel();
+        treeModel.reload();
+        
+        
+        expandTree(tree);
+        forselectionTree ();
+	}
+    
+    private void forselectionTree () {
+        DefaultMutableTreeNode currentNode = top.getNextNode();
+        do {
+        		if(currentNode.getLevel()==2 && filteredModel.getChildCount(currentNode) > 0) {
+    		        	
+    		        	TreePath temptreePath = new TreePath(((DefaultMutableTreeNode)(filteredModel.getChild(currentNode, 0))).getPath());
+    		        	
+		        		tree.setSelectionPath(temptreePath);
+		        		tree.scrollPathToVisible(temptreePath);
+		        		return;
+		        }
+	           currentNode = currentNode.getNextNode();
+           }
+        while (currentNode != null);
+    }
+    
+    
 	@Override
 	public void initialize()
 	{
@@ -337,7 +368,29 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		        
 		this.setLayout(new GridLayout(1, 1));
 		
-		JTextField textField = new JTextField("click...for find image");
+		textField = new JTextField("click...for find image");
+		
+		
+		textField.addKeyListener(new KeyAdapter()
+        {
+            public void keyReleased(KeyEvent ke) {
+            	
+            	if(textField.getText().length() ==0) {
+            		expandOrCollapsePath(tree, new TreePath(top.getPath()),1,0, true);
+            		return;
+            	}
+            	
+                if(!(ke.getKeyChar()==27||ke.getKeyChar()==65535))//this section will execute only when user is editing the JTextField
+                {
+                	
+                	makefilter (textField.getText());
+                	
+                    
+                }
+            }
+        });
+		
+		
 		JPanel TreePanel = new JPanel(new BorderLayout());
 		JPanel TreeModePanel = new JPanel();
 		
@@ -406,11 +459,9 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		// TODO Auto-generated method stub
 		
 		if(arg0.getActionCommand().equals("image")) {
-			Log.i("image");
 			isFolderMode = false;
 			SetTreeForm(isFolderMode);
 		} else {
-			Log.i("folder");
 			isFolderMode = true;
 			SetTreeForm(isFolderMode);
 		}		
