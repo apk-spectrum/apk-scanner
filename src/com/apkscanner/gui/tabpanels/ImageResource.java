@@ -1,8 +1,11 @@
 package com.apkscanner.gui.tabpanels;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -18,13 +21,16 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -43,7 +49,7 @@ import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
-public class ImageResource extends JPanel implements TabDataObject
+public class ImageResource extends JPanel implements TabDataObject, ActionListener
 {
 	private static final long serialVersionUID = -934921813626224616L;
 
@@ -308,13 +314,39 @@ public class ImageResource extends JPanel implements TabDataObject
 		photographLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		        
 		this.setLayout(new GridLayout(1, 1));
-//		this.add(scroll);
-//		this.add(photographLabel);
 		
+		JTextField textField = new JTextField("click...for find image");
+		JPanel TreePanel = new JPanel(new BorderLayout());
+		JPanel TreeModePanel = new JPanel();
+		
+	    JRadioButton ForderModeRadioButton  = new JRadioButton("folder");
+	    ForderModeRadioButton.setSelected(true);
+	    ForderModeRadioButton.addActionListener(this);
+	    
+	    JRadioButton ImageModeRadioButton  = new JRadioButton("image");
+	    ImageModeRadioButton.addActionListener(this);
+	    
+	    JLabel TreeModeLabel = new JLabel("Tree Mode : ");
+	    	    
+	    TreeModePanel.add(TreeModeLabel);
+	    TreeModePanel.add(ImageModeRadioButton);
+	    TreeModePanel.add(ForderModeRadioButton);
+	    
+        ButtonGroup group = new ButtonGroup();
+        group.add(ImageModeRadioButton);
+        group.add(ForderModeRadioButton);        
+	    
+		TreePanel.add(textField, BorderLayout.SOUTH);
+		TreePanel.add(scroll, BorderLayout.CENTER);
+		TreePanel.add(TreeModePanel, BorderLayout.NORTH);
+		
+		
+//		this.add(scroll);
+//		this.add(photographLabel);	
 
 		
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        splitPane.setLeftComponent(scroll);
+        splitPane.setLeftComponent(TreePanel);
         splitPane.setRightComponent(photographLabel);
         
         
@@ -406,5 +438,16 @@ public class ImageResource extends JPanel implements TabDataObject
 	@Override
 	public void reloadResource() {
 		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		// TODO Auto-generated method stub
+		
+		if(arg0.getActionCommand().equals("image")) {
+			Log.i("image");
+		} else {
+			Log.i("folder");
+		}		
 	}
 }
