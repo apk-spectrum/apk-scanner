@@ -52,8 +52,6 @@ import com.apkscanner.util.Log;
 public class ImageResource extends JPanel implements TabDataObject, ActionListener
 {
 	private static final long serialVersionUID = -934921813626224616L;
-
-	private Map<String, ImageIcon> imageMap = new HashMap<>();
     
 	private JLabel photographLabel;
 	private String[] nameList = null;
@@ -62,10 +60,8 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	private DefaultMutableTreeNode top;
 	private ArrayList<String> FolderList = new ArrayList<String>(); 
 	private ArrayList<String> FileList = new ArrayList<String>();
-	private Boolean isFolderMode = true;
+	private Boolean isFolderMode = false;
 	
-	JList<Object> list = null;
-    
 	private class ImageTreeObject {
 		public String label;
 		public Boolean isfolder;
@@ -326,10 +322,6 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	@Override
 	public void initialize()
 	{
-		list = new JList<Object>();
-		list.setCellRenderer(new MarioListRenderer());
-		list.addListSelectionListener(new JListHandler());
-
 		makeTreeForm();
 		TreeInit();
 		
@@ -350,11 +342,11 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		JPanel TreeModePanel = new JPanel();
 		
 	    JRadioButton ForderModeRadioButton  = new JRadioButton("folder");
-	    ForderModeRadioButton.setSelected(true);
 	    ForderModeRadioButton.addActionListener(this);
 	    
 	    JRadioButton ImageModeRadioButton  = new JRadioButton("image");
 	    ImageModeRadioButton.addActionListener(this);
+	    ImageModeRadioButton.setSelected(true);
 	    
 	    JLabel TreeModeLabel = new JLabel("Tree Mode : ");
 	    	    
@@ -391,80 +383,19 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	@Override
 	public void setData(ApkInfo apkInfo)
 	{
-		if(list == null)
+		if(tree == null)
 			initialize();
-		
-		imageMap.clear();
-		list.clearSelection();
-		
+				
 		this.apkFilePath = apkInfo.filePath; 
 		
 		if(apkInfo.images == null) return;
 		
 		nameList = apkInfo.images;
-		createImageMap(nameList);
-		
-		list.setListData(nameList);
+
 		SetTreeForm(isFolderMode);
 		
 	}
     
-	public class MarioListRenderer extends DefaultListCellRenderer {
-		private static final long serialVersionUID = 2674069622264059360L;
-		//Font font = new Font("helvitica", Font.BOLD, 10);
-
-		@Override
-		public Component getListCellRendererComponent(
-				JList<?> list, Object value, int index,
-				boolean isSelected, boolean cellHasFocus) {
-			JLabel label = (JLabel) super.getListCellRendererComponent(
-			        list, value, index, isSelected, cellHasFocus);
-			
-			label.setIcon(imageMap.get((String)value));
-			label.setHorizontalTextPosition(JLabel.RIGHT);
-			//label.setFont(font);            
-			return label;
-        }
-    }
-
-	private Map<String, ImageIcon> createImageMap(String[] list) {
-		//Map<String, ImageIcon> map = new HashMap<>();
-		String jarPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/";
-		try {        	
-			for(int i=0; i< list.length; i++) {
-				if(list[i].endsWith(".qmg")) {
-					imageMap.put(list[i], new ImageIcon(ImageScaler.getScaledImage(Resource.IMG_QMG_IMAGE_ICON.getImageIcon(),32,32)));
-				} else {
-					imageMap.put(list[i], new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(new URL(jarPath+list[i])),32,32)));
-				}
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		return imageMap;
-	}
-
-    private class JListHandler implements ListSelectionListener
-    {
-    	// 리스트의 항목이 선택이 되면
-    	public void valueChanged(ListSelectionEvent event)
-    	{
-    		//Log.i("valueChanged : " + list.getSelectedIndex() + " event : "+ event.getSource());
-    		if(list.getSelectedIndex() < 0)
-    			return;
-    		String imgPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/" + nameList[list.getSelectedIndex()];
-    		if(imgPath.endsWith(".qmg")) {
-    			imgPath = Resource.IMG_QMG_IMAGE_ICON.getPath();
-    		}
-    		try {
-				photographLabel.setIcon(new ImageIcon(ImageScaler.getMaxScaledImage(
-						new ImageIcon(new URL(imgPath)),photographLabel.getWidth(),photographLabel.getHeight())));
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			}
-    	}
-    }
-
 	@Override
 	public void reloadResource() {
 		
