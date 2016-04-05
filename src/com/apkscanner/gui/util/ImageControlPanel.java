@@ -17,10 +17,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 
 public class ImageControlPanel extends JPanel implements MouseListener{
 	int x, y;
 	int oldx,oldy;
+	int beforx,befory;
 	private float scale = 1;
 	BufferedImage bi;
 
@@ -68,6 +70,9 @@ public class ImageControlPanel extends JPanel implements MouseListener{
 		
 		x = oldx = 0;
 		y = oldy = 0;
+		
+		beforx = befory = 0;
+		
 		scale = 1;
 		
 	}	
@@ -78,15 +83,27 @@ public class ImageControlPanel extends JPanel implements MouseListener{
 
 		AffineTransform at = new AffineTransform();
         at.scale(scale, scale);
-        at.translate(x, y);
-        
+
+        at.translate(beforx+x, befory+y);
+         
 		g2D.drawImage(bi, at, this);
 	}
 
 	class MouseMotionHandler extends MouseMotionAdapter {
 		public void mouseDragged(MouseEvent e) {
+			
+			Log.i("Oldx = "+ oldx);
+			Log.i("Oldx = "+ oldx);
+			
+			Log.i("x = "+  e.getX());
+			Log.i("y = "+  e.getY());
+			
 			x = e.getX()- oldx;
 			y = e.getY()- oldy;
+			
+			Log.i("----------x = "+  x);
+			Log.i("-----------y = "+  y);
+			
 			
 			repaint();
 		}
@@ -95,7 +112,7 @@ public class ImageControlPanel extends JPanel implements MouseListener{
 	@Override
 	public void mouseClicked(java.awt.event.MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -114,12 +131,13 @@ public class ImageControlPanel extends JPanel implements MouseListener{
 	public void mousePressed(java.awt.event.MouseEvent arg0) {
 		// TODO Auto-generated method stub
 		oldx = arg0.getX();
-		oldy = arg0.getY();	
+		oldy = arg0.getY();
 	}
 
 	@Override
 	public void mouseReleased(java.awt.event.MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+        beforx += x;
+        befory += y;
 	}
 }
