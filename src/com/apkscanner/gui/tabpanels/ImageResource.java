@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -64,6 +66,8 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	private Boolean isFolderMode = false;
 	private FilteredTreeModel filteredModel;
 	private JTextField textField;
+	private Boolean firstClick=false;
+	
 	private class ImageTreeObject {
 		public String label;
 		public Boolean isfolder;
@@ -386,13 +390,28 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
             	
                 if(!(ke.getKeyChar()==27||ke.getKeyChar()==65535))//this section will execute only when user is editing the JTextField
                 {
-                	
                 	makefilter (textField.getText());
-                	
-                    
                 }
             }
         });
+		textField.addFocusListener(new FocusListener() {
+			
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void focusGained(FocusEvent arg0) {
+				// TODO Auto-generated method stub
+            	if(!firstClick) {
+            		firstClick = true;
+            		textField.setText("");
+            	}
+			}
+		});
+		
 		
 		
 		JPanel TreePanel = new JPanel(new BorderLayout());

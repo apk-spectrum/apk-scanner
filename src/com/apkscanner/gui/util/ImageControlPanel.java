@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.MediaTracker;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -16,9 +15,6 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
-
-import com.apkscanner.resource.Resource;
-import com.apkscanner.util.Log;
 
 public class ImageControlPanel extends JPanel implements MouseListener{
 	int x, y;
@@ -34,7 +30,7 @@ public class ImageControlPanel extends JPanel implements MouseListener{
         addMouseWheelListener(new MouseAdapter() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
-                double delta = 0.05f * e.getPreciseWheelRotation();
+                double delta = -0.05f * e.getPreciseWheelRotation();
                 scale += delta;
                 revalidate();
                 repaint();
