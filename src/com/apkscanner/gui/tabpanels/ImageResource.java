@@ -238,7 +238,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)
                 tree.getLastSelectedPathComponent();
         if(node ==null) return;
-		
+		if(node ==top) return;
 			
 		String imgPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/";
 		ImageTreeObject tempObject = (ImageTreeObject)node.getUserObject();

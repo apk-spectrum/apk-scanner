@@ -82,27 +82,31 @@ public class ImageControlPanel extends JPanel implements MouseListener{
 		Graphics2D g2D = (Graphics2D) g;
 
 		AffineTransform at = new AffineTransform();
-        at.scale(scale, scale);
-
-        at.translate(beforx+x, befory+y);
+		
+		if(bi!=null) {
+	        String text = "Width : " + bi.getWidth() + "      Heiget : " + bi.getHeight();
+			g2D.drawChars(text.toCharArray(), 0, text.length(), 10,10);
+		}
+		at.translate(20 + beforx+x, 20 + befory+y);
+		
+		at.scale(scale, scale);
          
 		g2D.drawImage(bi, at, this);
+		
 	}
 
 	class MouseMotionHandler extends MouseMotionAdapter {
 		public void mouseDragged(MouseEvent e) {
 			
-			Log.i("Oldx = "+ oldx);
-			Log.i("Oldx = "+ oldx);
+			Log.i("Oldx = "+ oldx + "Oldx = "+ oldx);
 			
-			Log.i("x = "+  e.getX());
-			Log.i("y = "+  e.getY());
+			Log.i("x = "+  e.getX() + "y = "+  e.getY());
 			
 			x = e.getX()- oldx;
 			y = e.getY()- oldy;
 			
-			Log.i("----------x = "+  x);
-			Log.i("-----------y = "+  y);
+			Log.i("beforx+x = "+  (beforx+x));
+			Log.i("befory+y = "+  (beforx+y));
 			
 			
 			repaint();
