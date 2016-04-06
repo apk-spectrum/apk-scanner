@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.MediaTracker;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -77,6 +78,7 @@ public class ImageControlPanel extends JPanel implements MouseListener{
 		
 	}	
 
+	@SuppressWarnings("deprecation")
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2D = (Graphics2D) g;
@@ -86,11 +88,11 @@ public class ImageControlPanel extends JPanel implements MouseListener{
 		if(bi!=null) {
 	        String text = "Width : " + bi.getWidth() + "      Heiget : " + bi.getHeight();
 			g2D.drawChars(text.toCharArray(), 0, text.length(), 10,10);
+			Rectangle Rect = g2D.getClipRect();
+			at.translate(Rect.getWidth()/2-bi.getWidth()/2 + beforx+x, Rect.getHeight()/2-bi.getHeight()/2 + befory+y);
+			at.scale(scale, scale);	        
 		}
-		at.translate(20 + beforx+x, 20 + befory+y);
-		
-		at.scale(scale, scale);
-         
+		 
 		g2D.drawImage(bi, at, this);
 		
 	}
@@ -98,15 +100,15 @@ public class ImageControlPanel extends JPanel implements MouseListener{
 	class MouseMotionHandler extends MouseMotionAdapter {
 		public void mouseDragged(MouseEvent e) {
 			
-			Log.i("Oldx = "+ oldx + "Oldx = "+ oldx);
+			//Log.i("Oldx = "+ oldx + "Oldx = "+ oldx);
 			
-			Log.i("x = "+  e.getX() + "y = "+  e.getY());
+			//Log.i("x = "+  e.getX() + "y = "+  e.getY());
 			
 			x = e.getX()- oldx;
 			y = e.getY()- oldy;
 			
-			Log.i("beforx+x = "+  (beforx+x));
-			Log.i("befory+y = "+  (beforx+y));
+			//Log.i("beforx+x = "+  (beforx+x));
+			//Log.i("befory+y = "+  (beforx+y));
 			
 			
 			repaint();

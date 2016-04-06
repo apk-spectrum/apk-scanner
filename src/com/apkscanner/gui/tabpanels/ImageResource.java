@@ -380,7 +380,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
             public void keyReleased(KeyEvent ke) {
             	
             	if(textField.getText().length() ==0) {
-            		expandOrCollapsePath(tree, new TreePath(top.getPath()),1,0, true);
+            		expandOrCollapsePath(tree, new TreePath(top.getPath()),2,0, true);
             		return;
             	}
             	
