@@ -18,24 +18,18 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -376,7 +370,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		        
 		this.setLayout(new GridLayout(1, 1));
 		
-		textField = new JTextField("click...for find image");
+		textField = new JTextField("click...find image");
 		
 		
 		textField.addKeyListener(new KeyAdapter()
@@ -398,10 +392,8 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 			
 			@Override
 			public void focusLost(FocusEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
+				// TODO Auto-generated method stub				
+			}			
 			@Override
 			public void focusGained(FocusEvent arg0) {
 				// TODO Auto-generated method stub
@@ -411,8 +403,6 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
             	}
 			}
 		});
-		
-		
 		
 		JPanel TreePanel = new JPanel(new BorderLayout());
 		JPanel TreeModePanel = new JPanel();
