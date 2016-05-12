@@ -1,6 +1,7 @@
 package com.apkscanner.gui.tabpanels;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -365,7 +366,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		//photographLabel.setHorizontalTextPosition(JLabel.CENTER);
 		//photographLabel.setHorizontalAlignment(JLabel.CENTER);
 		photographLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		        
+		photographLabel.setBackground(Color.BLACK);        
 		this.setLayout(new GridLayout(1, 1));
 		
 		textField = new JTextField("click...find image");

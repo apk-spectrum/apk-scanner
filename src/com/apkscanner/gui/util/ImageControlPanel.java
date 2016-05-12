@@ -13,18 +13,21 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
+import javax.annotation.Resources;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
+
+import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 
 public class ImageControlPanel extends JPanel implements MouseListener{
 	private static final long serialVersionUID = -391185152837196160L;
 	
 	int x, y;
-	int oldx,oldy;
 	int beforx,befory;
 	private float scale = 1;
 	BufferedImage bi;
-
+	Image imageBackground;
 	public ImageControlPanel() {
 		setBackground(Color.white);		
 		addMouseMotionListener(new MouseMotionHandler());
@@ -32,32 +35,19 @@ public class ImageControlPanel extends JPanel implements MouseListener{
         addMouseWheelListener(new MouseAdapter() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
-                double delta = -0.05f * e.getPreciseWheelRotation();
+                double delta = -0.1f * e.getPreciseWheelRotation();
                 scale += delta;
                 revalidate();
                 repaint();
-            }
-
+            }            
         });
 		
 		//Image image = null;
-
-//		MediaTracker mt = new MediaTracker(this);
-//		mt.addImage(image, 1);
-//		try {
-//			mt.waitForAll();
-//		} catch (Exception e) {
-//			System.out.println("Exception while loading image.");
-//		}
-//
-//		if (image.getWidth(this) == -1) {
-//			System.out.println("no gif file");
-//			System.exit(0);
-//		}
-
-		//bi = new BufferedImage(image.getWidth(this), image.getHeight(this), BufferedImage.TYPE_INT_ARGB);
-		//Graphics2D big = bi.createGraphics();
-		//big.drawImage(image, 0, 0, this);
+		
+		imageBackground = Resource.IMG_RESOURCE_IMG_BACKGROUND.getImageIcon().getImage();
+		
+		
+		
 	}
 	
 	public void setImage(ImageIcon img) {
@@ -65,10 +55,15 @@ public class ImageControlPanel extends JPanel implements MouseListener{
 		
 		bi = new BufferedImage(image.getWidth(this), image.getHeight(this), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D big = bi.createGraphics();
+		
+		//imageBackground = new ImageIcon(Resource.IMG_RESOURCE_IMG_BACKGROUND.getImageIcon()).getImage();
+				
+		
+		big.drawImage(imageBackground, 0, 0, this);
 		big.drawImage(image, 0, 0, this);
 		
-		x = oldx = 0;
-		y = oldy = 0;
+		x = 0;
+		y = 0;
 		
 		beforx = befory = 0;
 		
@@ -84,11 +79,11 @@ public class ImageControlPanel extends JPanel implements MouseListener{
 		AffineTransform at = new AffineTransform();
 		
 		if(bi!=null) {
-	        String text = "Width : " + bi.getWidth() + "      Heiget : " + bi.getHeight();
+	        String text = "W : " + bi.getWidth() + "      H : " + bi.getHeight();
 			g2D.drawChars(text.toCharArray(), 0, text.length(), 10,10);
 			Rectangle Rect = g2D.getClipRect();
-			at.translate(Rect.getWidth()/2-bi.getWidth()/2 + beforx+x, Rect.getHeight()/2-bi.getHeight()/2 + befory+y);
-			at.scale(scale, scale);	        
+			at.translate(Rect.getWidth()/2-bi.getWidth()/2 + x, Rect.getHeight()/2-bi.getHeight()/2 + y);
+			at.scale(scale, scale);
 		}
 		 
 		g2D.drawImage(bi, at, this);
@@ -98,16 +93,11 @@ public class ImageControlPanel extends JPanel implements MouseListener{
 	class MouseMotionHandler extends MouseMotionAdapter {
 		public void mouseDragged(MouseEvent e) {
 			
-			//Log.i("Oldx = "+ oldx + "Oldx = "+ oldx);
+			x += ( e.getX()- beforx);
+			y += ( e.getY()- befory);
 			
-			//Log.i("x = "+  e.getX() + "y = "+  e.getY());
-			
-			x = e.getX()- oldx;
-			y = e.getY()- oldy;
-			
-			//Log.i("beforx+x = "+  (beforx+x));
-			//Log.i("befory+y = "+  (beforx+y));
-			
+			beforx = e.getX();
+			befory = e.getY();
 			
 			repaint();
 		}
@@ -134,14 +124,12 @@ public class ImageControlPanel extends JPanel implements MouseListener{
 	@Override
 	public void mousePressed(java.awt.event.MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		oldx = arg0.getX();
-		oldy = arg0.getY();
+		beforx = arg0.getX();
+		befory = arg0.getY();
 	}
 
 	@Override
 	public void mouseReleased(java.awt.event.MouseEvent arg0) {
 		// TODO Auto-generated method stub
-        beforx += x;
-        befory += y;
 	}
 }

@@ -222,7 +222,7 @@ public enum Resource
 	IMG_TOOLBAR_LOADING_OPEN_JD (Type.IMAGE, "loading_openJD.gif"),
 	IMG_TOOLBAR_PACKAGETREE (Type.IMAGE, "toolbar_packagetree.png"),
 	
-	
+	IMG_RESOURCE_IMG_BACKGROUND (Type.IMAGE, "resource_tap_image_background.jpg"),
 	
 	IMG_PERM_GROUP_PHONE_CALLS	(Type.IMAGE, "perm_group_phone_calls.png"),
 	
