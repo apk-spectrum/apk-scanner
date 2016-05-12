@@ -34,9 +34,9 @@
     <string name="btn_opencode_lab">Open JD-GUI from apk</string>
     
     <string name="menu_new">New Window...</string>
-    <string name="menu_new_window">New empty window(N)</string>
-    <string name="menu_new_apk_file">Open APK file to new window</string>
-    <string name="menu_new_package">Open package to new window</string>
+    <string name="menu_new_window">New window(N)</string>
+    <string name="menu_new_apk_file">Open APK file to new window(O)</string>
+    <string name="menu_new_package">Open package to new window(P)</string>
     <string name="menu_apk_file">Open APK file(O)</string>
     <string name="menu_package">Open package(P)</string>
     <string name="menu_install">Intsall(I)</string>

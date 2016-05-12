@@ -548,8 +548,8 @@ public class MainUI extends JFrame
 			if (e.getID()==KeyEvent.KEY_RELEASED) {
 				if((e.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
 					switch(e.getKeyCode()) {
-					case KeyEvent.VK_O: evtOpenApkFile(false);	break;
-					case KeyEvent.VK_P: evtOpenPackage(false);	break;
+					case KeyEvent.VK_O: evtOpenApkFile((e.getModifiers() & KeyEvent.SHIFT_MASK) != 0);	break;
+					case KeyEvent.VK_P: evtOpenPackage((e.getModifiers() & KeyEvent.SHIFT_MASK) != 0);	break;
 					case KeyEvent.VK_N: Launcher.run();		break;
 					case KeyEvent.VK_I: evtInstallApk(false);	break;
 					case KeyEvent.VK_T: evtInstallApk(true);	break;
