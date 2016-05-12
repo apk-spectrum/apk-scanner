@@ -80,7 +80,9 @@ public class ImageControlPanel extends JPanel implements MouseListener{
 		
 		if(bi!=null) {
 	        String text = "W : " + bi.getWidth() + "      H : " + bi.getHeight();
-			g2D.drawChars(text.toCharArray(), 0, text.length(), 10,10);
+	        g2D.setColor(Color.WHITE);
+	        g2D.drawChars(text.toCharArray(), 0, text.length(), 10,10);
+			
 			Rectangle Rect = g2D.getClipRect();
 			at.translate(Rect.getWidth()/2-bi.getWidth()/2 + x, Rect.getHeight()/2-bi.getHeight()/2 + y);
 			at.scale(scale, scale);
