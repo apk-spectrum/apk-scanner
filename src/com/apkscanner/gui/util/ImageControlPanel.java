@@ -17,6 +17,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 public class ImageControlPanel extends JPanel implements MouseListener{
+	private static final long serialVersionUID = -391185152837196160L;
+	
 	int x, y;
 	int oldx,oldy;
 	int beforx,befory;
@@ -38,7 +40,7 @@ public class ImageControlPanel extends JPanel implements MouseListener{
 
         });
 		
-		Image image = null;
+		//Image image = null;
 
 //		MediaTracker mt = new MediaTracker(this);
 //		mt.addImage(image, 1);

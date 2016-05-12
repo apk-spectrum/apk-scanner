@@ -13,7 +13,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -44,7 +43,6 @@ import com.apkscanner.gui.util.FilteredTreeModel;
 import com.apkscanner.gui.util.ImageControlPanel;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.Log;
 
 public class ImageResource extends JPanel implements TabDataObject, ActionListener
 {
@@ -270,7 +268,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
                         selected, expanded, isLeaf, row, focused);
                 
                 DefaultMutableTreeNode nodo = (DefaultMutableTreeNode) value;
-                int level = nodo.getLevel();
+                //int level = nodo.getLevel();
                 if(top==nodo) {
                 	setIcon(iconApk);
                 	return c;
@@ -438,7 +436,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
         splitPane.setRightComponent(photographLabel);
         
         
-        Dimension minimumSize = new Dimension(100, 50);
+        //Dimension minimumSize = new Dimension(100, 50);
         
         //splitPane.setDividerLocation(200);
         

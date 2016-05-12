@@ -20,12 +20,12 @@ import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.TitledBorder;
 
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.Log;
 
 public class BufferedImageMouseDrag extends JFrame {
+	private static final long serialVersionUID = 7175463633946262949L;
+	
 	DisplayCanvas canvas;
 
 	public BufferedImageMouseDrag() {
@@ -50,6 +50,8 @@ public class BufferedImageMouseDrag extends JFrame {
 }
 
 class DisplayCanvas extends JPanel implements MouseListener{
+	private static final long serialVersionUID = 7625164968963236657L;
+
 	int x, y;
 	int oldx,oldy;
 	private float scale = 1;
