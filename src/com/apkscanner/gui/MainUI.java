@@ -390,6 +390,7 @@ public class MainUI extends JFrame
 				}
 			});
 		}
+
 		private void evtOpenJDGUI()
 		{			
 			new Thread(new Runnable() {
@@ -425,9 +426,6 @@ public class MainUI extends JFrame
 					
 					cmdLog =ConsolCmd.exc(new String[] {"java", "-jar", Resource.BIN_JDGUI.getPath(), 
 					apkInfo.tempWorkPath+File.separator+jarfileName});
-					
-					
-					
 				}
 			}).start();
 		}
@@ -545,17 +543,24 @@ public class MainUI extends JFrame
 		public boolean dispatchKeyEvent(KeyEvent e)
 		{
 			if(!isFocused()) return false;
-			if (e.getID()==KeyEvent.KEY_RELEASED) {
-				if((e.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
+			if (e.getID() == KeyEvent.KEY_RELEASED) {
+				if(e.getModifiers() == KeyEvent.CTRL_MASK) {
 					switch(e.getKeyCode()) {
-					case KeyEvent.VK_O: evtOpenApkFile((e.getModifiers() & KeyEvent.SHIFT_MASK) != 0);	break;
-					case KeyEvent.VK_P: evtOpenPackage((e.getModifiers() & KeyEvent.SHIFT_MASK) != 0);	break;
-					case KeyEvent.VK_N: Launcher.run();		break;
+					case KeyEvent.VK_O: evtOpenApkFile(false);	break;
+					case KeyEvent.VK_P: evtOpenPackage(false);	break;
+					case KeyEvent.VK_N: Launcher.run();			break;
 					case KeyEvent.VK_I: evtInstallApk(false);	break;
 					case KeyEvent.VK_T: evtInstallApk(true);	break;
 					case KeyEvent.VK_E: evtShowExplorer();		break;
 					case KeyEvent.VK_M: evtShowManifest();		break;
 					case KeyEvent.VK_S: evtSettings();			break;
+					default: return false;
+					}
+					return true;
+				} else if(e.getModifiers() == (KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK)) {
+					switch(e.getKeyCode()) {
+					case KeyEvent.VK_O: evtOpenApkFile(true);	break;
+					case KeyEvent.VK_P: evtOpenPackage(true);	break;
 					default: return false;
 					}
 					return true;
@@ -576,6 +581,9 @@ public class MainUI extends JFrame
 		public void filesDropped(File[] files)
 		{
 			try {
+				if(tabbedPanel != null) {
+					tabbedPanel.setLodingLabel();
+				}
 				apkScanner.clear(false);
 				apkScanner.openApk(files[0].getCanonicalPath(), (String)Resource.PROP_FRAMEWORK_RES.getData());
 	        } catch( java.io.IOException e ) {}

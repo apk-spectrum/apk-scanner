@@ -430,7 +430,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("    </td>");
 		strTabInfo.append("  </tr>");
 		strTabInfo.append("</table>");
-		strTabInfo.append("<div id=\"perm-group\" style=\"width:480px; padding-top:5px; border-top:1px; border-left:0px; border-right:0px; border-bottom:0px; border-style:solid;\">");
+		strTabInfo.append("<div id=\"perm-group\" style=\"text-align:left; width:480px; padding-top:5px; border-top:1px; border-left:0px; border-right:0px; border-bottom:0px; border-style:solid;\">");
 		strTabInfo.append("  <font style=\"font-size:12px;color:black;\">");
 		if(allPermissionsList != null && !allPermissionsList.isEmpty()) {
 		strTabInfo.append("    [" + Resource.STR_BASIC_PERMISSIONS.getString() + "] - ");
