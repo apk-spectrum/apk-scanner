@@ -100,11 +100,11 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     }
     
 	private String getOnlyFilename(String str) {
-		return str.substring(str.lastIndexOf(File.separator)+1, str.length());
+		return str.substring(str.lastIndexOf("/")+1, str.length());
 	}
     
 	private String getOnlyFoldername(String str) {
-		return str.substring(0, str.lastIndexOf(File.separator));
+		return str.substring(0, str.lastIndexOf("/"));
 	}
     
     private final List<DefaultMutableTreeNode> getSearchNodes(DefaultMutableTreeNode root) {

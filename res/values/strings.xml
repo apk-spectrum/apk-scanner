@@ -88,8 +88,8 @@ Once installed, the user can move the application to either internal or external
     <string name="feature_platform_sign_desc">This application to be sign by platform signature.</string>
     <string name="feature_samsung_sign_lab">SAMSUNG_SIGN</string>
     <string name="feature_samsung_sign_desc">This application to be sign by samsung signature.</string>
-    <string name="feature_revoke_permissions_lab">NOT GRANT PERMISSIONS</string>
-    <string name="feature_revoke_permissions_desc">NOT GRANT PERMISSIONS</string>
+    <string name="feature_revoke_permissions_lab">SYSTEM PERMISSIONS</string>
+    <string name="feature_revoke_permissions_desc">Need platform sign or priv-app</string>
     <string name="feature_deprecated_prem_lab">Deprecated Permissions</string>
     <string name="feature_deprecated_prem_desc">uses deprecated permissions</string>
     <string name="feature_debuggable_lab">DEBUGGABLE</string>
