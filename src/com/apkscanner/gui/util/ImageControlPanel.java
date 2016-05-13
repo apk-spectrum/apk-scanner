@@ -13,12 +13,10 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-import javax.annotation.Resources;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.Log;
 
 public class ImageControlPanel extends JPanel implements MouseListener{
 	private static final long serialVersionUID = -391185152837196160L;
@@ -27,7 +25,8 @@ public class ImageControlPanel extends JPanel implements MouseListener{
 	int beforx,befory;
 	private float scale = 1;
 	BufferedImage bi;
-	Image imageBackground;
+	BufferedImage bgbi;
+
 	public ImageControlPanel() {
 		setBackground(Color.white);		
 		addMouseMotionListener(new MouseMotionHandler());
@@ -35,63 +34,84 @@ public class ImageControlPanel extends JPanel implements MouseListener{
         addMouseWheelListener(new MouseAdapter() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
-                double delta = -0.1f * e.getPreciseWheelRotation();
-                scale += delta;
+                double delta = (-e.getPreciseWheelRotation() * 0.05 + 1);
+                scale *= delta;
+                
+                if(scale > 20) scale = 20f;
+                else if(scale < 0.02f) scale = 0.02f;
+                
                 revalidate();
                 repaint();
-            }            
+            }
         });
-		
-		//Image image = null;
-		
-		imageBackground = Resource.IMG_RESOURCE_IMG_BACKGROUND.getImageIcon().getImage();
-		
-		
-		
 	}
-	
+
 	public void setImage(ImageIcon img) {
 		Image image = img.getImage();
 		
 		bi = new BufferedImage(image.getWidth(this), image.getHeight(this), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D big = bi.createGraphics();
-		
-		//imageBackground = new ImageIcon(Resource.IMG_RESOURCE_IMG_BACKGROUND.getImageIcon()).getImage();
-				
-		
-		big.drawImage(imageBackground, 0, 0, this);
 		big.drawImage(image, 0, 0, this);
-		
+
 		x = 0;
 		y = 0;
-		
-		beforx = befory = 0;
-		
-		scale = 1;
-		
-	}	
 
-	@SuppressWarnings("deprecation")
+		beforx = befory = 0;
+		scale = 1;
+	}
+	
+	public BufferedImage getBackgroundImage(int width, int height) {
+		if(bgbi == null) {
+	        Image imageBackground = Resource.IMG_RESOURCE_IMG_BACKGROUND.getImageIcon().getImage();
+			bgbi = new BufferedImage(imageBackground.getWidth(this), imageBackground.getHeight(this), BufferedImage.TYPE_INT_ARGB);
+			bgbi.createGraphics().drawImage(imageBackground, 0, 0, this);
+		}
+		
+		while(bgbi.getWidth() < width) {
+			BufferedImage newbgbi = new BufferedImage(bgbi.getWidth()*3, bgbi.getHeight(), BufferedImage.TYPE_INT_ARGB);
+			Graphics2D big = newbgbi.createGraphics();
+			
+	        int w = newbgbi.getWidth();  
+	        for (int x = 0; x < w; x += bgbi.getWidth()) {  
+	            big.drawImage(bgbi, x, 0, this); 
+	        }  
+	        bgbi = newbgbi;
+		}
+		while(bgbi.getHeight() < height) {
+			BufferedImage newbgbi = new BufferedImage(bgbi.getWidth(), bgbi.getHeight()*3, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D big = newbgbi.createGraphics();
+ 
+	        int h = newbgbi.getHeight();  
+  	        for (int y = 0; y < h; y += bgbi.getHeight()) {  
+  	            big.drawImage(bgbi, 0, y, this);  
+	        }  
+	        bgbi = newbgbi;
+		}
+
+		BufferedImage bg = bgbi.getSubimage((int)(bgbi.getWidth()/2 - width/2), 
+                (int)(bgbi.getHeight()/2 - height/2),
+                width,
+                height);
+
+		return bg;
+	}
+
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2D = (Graphics2D) g;
 
 		AffineTransform at = new AffineTransform();
-		
 		if(bi!=null) {
-	        String text = "W : " + bi.getWidth() + "      H : " + bi.getHeight();
+			Rectangle Rect = g2D.getClipBounds();
+			at.translate((Rect.getWidth()-bi.getWidth() * scale)/2 + x, (Rect.getHeight()-bi.getHeight() * scale)/2 + y);
+	        BufferedImage bg = getBackgroundImage((int)(bi.getWidth() * scale), (int)(bi.getHeight() * scale)); 
+			g2D.drawImage(bg, at, this);
+	        at.scale(scale, scale);
+			String text = "W : " + bi.getWidth() + "      H : " + bi.getHeight() + "  " + Math.round(scale * 100) + "%";		
+			g2D.drawImage(bi, at, this);
 	        g2D.setColor(Color.WHITE);
 	        g2D.drawChars(text.toCharArray(), 0, text.length(), 10,10);
-			
-			Rectangle Rect = g2D.getClipRect();
-			//at.translate(Rect.getWidth()/2-bi.getWidth()/2 + x, Rect.getHeight()/2-bi.getHeight()/2 + y);
-			at.translate((Rect.getWidth()-bi.getWidth() * scale)/2 + x, (Rect.getHeight()-bi.getHeight() * scale)/2 + y);
-			
-			at.scale(scale, scale);
 		}
-		
-		g2D.drawImage(bi, at, this);
-		
 	}
 
 	class MouseMotionHandler extends MouseMotionAdapter {

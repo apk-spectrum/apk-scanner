@@ -39,15 +39,15 @@
     <string name="menu_new_package">Open package to new window(P)</string>
     <string name="menu_apk_file">Open APK file(O)</string>
     <string name="menu_package">Open package(P)</string>
-    <string name="menu_install">Intsall(I)</string>
+    <string name="menu_install">Install(I)</string>
     <string name="menu_check_installed">Check installed(T)</string>
 
     <string name="tab_basic_info">APK Info</string>
-    <string name="tab_widget">Widget</string>
-    <string name="tab_lib">Lib</string>
-    <string name="tab_image">Image</string>
-    <string name="tab_activity">Activity</string>
-    <string name="tab_cert">Signature</string>
+    <string name="tab_widget">Widgets</string>
+    <string name="tab_lib">Libraries</string>
+    <string name="tab_image">Resources</string>
+    <string name="tab_activity">Components</string>
+    <string name="tab_cert">Signatures</string>
     
     <string name="basic_permissions">Permissions</string>
     <string name="basic_permlab_display_list">Display the entire list</string>
@@ -126,7 +126,7 @@ they're removed before the application is published</string>
     <string name="activity_type_receiver">receiver</string>
     <string name="activity_label_intent_filter">Intent filter</string>
     
-    <string name="cert_summury">Summury</string>
+    <string name="cert_summury">Summary</string>
     <string name="cert_certificate">Signature</string>
     
     <string name="file_size_Bytes">Bytes</string>

@@ -45,8 +45,8 @@
     <string name="tab_basic_info">APK 정보</string>
     <string name="tab_widget">위젯</string>
     <string name="tab_lib">라이브러리</string>
-    <string name="tab_image">이미지</string>
-    <string name="tab_activity">액티비티</string>
+    <string name="tab_image">리소스</string>
+    <string name="tab_activity">구성요소</string>
     <string name="tab_cert">서명</string>
     
     <string name="basic_permissions">권한</string>

@@ -14,6 +14,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -23,7 +24,6 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -44,6 +44,7 @@ import com.apkscanner.gui.util.FilteredTreeModel;
 import com.apkscanner.gui.util.ImageControlPanel;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 
 public class ImageResource extends JPanel implements TabDataObject, ActionListener
 {
@@ -99,11 +100,13 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     }
     
 	private String getOnlyFilename(String str) {
-		return str.substring(str.lastIndexOf("/")+1, str.length());
+		String separator = (str.indexOf(File.separator) > -1) ? separator = File.separator : "/";
+		return str.substring(str.lastIndexOf(separator)+1, str.length());
 	}
     
 	private String getOnlyFoldername(String str) {
-		return str.substring(0, str.lastIndexOf("/"));
+		String separator = (str.indexOf(File.separator) > -1) ? separator = File.separator : "/";
+		return str.substring(0, str.lastIndexOf(separator));
 	}
     
     private final List<DefaultMutableTreeNode> getSearchNodes(DefaultMutableTreeNode root) {
@@ -158,6 +161,8 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     	top = new DefaultMutableTreeNode(getOnlyFilename(this.apkFilePath));
     	FilteredTreeModel model = new FilteredTreeModel(new DefaultTreeModel(top));
     	tree.setModel(model);
+		DefaultMutableTreeNode drawable = new DefaultMutableTreeNode("drawable");
+		top.add(drawable);
     	if(isFolderMode) {
 	    	for(int i=0; i<this.nameList.length; i++) {
 	    		ImageTreeObject ImageNode= new ImageTreeObject(this.nameList[i], false);
@@ -168,14 +173,13 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	    		if(FolderList.contains(foldertemp)) {
 	    			DefaultMutableTreeNode findnode = findNode(foldertemp);
 	    			findnode.add(imagepath);
-	    			
 	    		} else {
 	    			ImageTreeObject folderNode= new ImageTreeObject(this.nameList[i], true);
 	    			FolderList.add(foldertemp);
 	    			DefaultMutableTreeNode foldernode = new DefaultMutableTreeNode(folderNode);
-	    			
+
 	    			foldernode.add(imagepath);
-	    			top.add(foldernode);
+	    			drawable.add(foldernode);
 	    		}
 	    	}
     	} else {
@@ -199,7 +203,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	    			imagepath.add(FolderNode);	    			
 	    			FileList.add(filetemp);
 	    			
-	    			top.add(imagepath);
+	    			drawable.add(imagepath);
 	    		}
 	    	}
     	}
@@ -254,8 +258,8 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 			e1.printStackTrace();
 		} 
     }
+    
     private void TreeInit() {
-    	
         tree.setCellRenderer(new DefaultTreeCellRenderer() {
 			private static final long serialVersionUID = 6248791058116909814L;
 			private ImageIcon iconApk = Resource.IMG_TREE_APK.getImageIcon();
@@ -270,8 +274,12 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
                 
                 DefaultMutableTreeNode nodo = (DefaultMutableTreeNode) value;
                 //int level = nodo.getLevel();
-                if(top==nodo) {
+                if(top == nodo) {
                 	setIcon(iconApk);
+                	return c;
+                }
+                if(nodo.getLevel() == 1){
+                	Log.e(">>>>" + nodo);
                 	return c;
                 }
                 
@@ -289,7 +297,6 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     					try {
 							tempIcon = new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(new URL(jarPath+temp.Filepath)),32,32));
 						} catch (MalformedURLException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
     				}                	
@@ -301,7 +308,13 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     	
     	
         MouseListener ml = new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {            	
+            public void mousePressed(MouseEvent e) {    
+            	DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+                        tree.getLastSelectedPathComponent();
+            	if(node == null || node.getLevel() < 2) {
+            		return;
+            	}
+            	//Log.e("level " + node.getLevel() + ", depth" + node.getDepth());
             	drawImageOnPanel();
             }
         };
@@ -337,7 +350,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     private void forselectionTree () {
         DefaultMutableTreeNode currentNode = top.getNextNode();
         do {
-        		if(currentNode.getLevel()==2 && filteredModel.getChildCount(currentNode) > 0) {
+        		if(currentNode.getLevel()==3 && filteredModel.getChildCount(currentNode) > 0) {
     		        	
     		        	TreePath temptreePath = new TreePath(((DefaultMutableTreeNode)(filteredModel.getChild(currentNode, 0))).getPath());
     		        	
@@ -369,7 +382,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		photographLabel.setBackground(Color.BLACK);        
 		this.setLayout(new GridLayout(1, 1));
 		
-		textField = new JTextField("click...find image");
+		textField = new JTextField("");
 		
 		
 		textField.addKeyListener(new KeyAdapter()
@@ -391,11 +404,10 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 			
 			@Override
 			public void focusLost(FocusEvent arg0) {
-				// TODO Auto-generated method stub				
+			
 			}			
 			@Override
 			public void focusGained(FocusEvent arg0) {
-				// TODO Auto-generated method stub
             	if(!firstClick) {
             		firstClick = true;
             		textField.setText("");
@@ -406,24 +418,25 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		JPanel TreePanel = new JPanel(new BorderLayout());
 		JPanel TreeModePanel = new JPanel();
 		
-	    JRadioButton ForderModeRadioButton  = new JRadioButton("folder");
+	    JRadioButton ForderModeRadioButton  = new JRadioButton("Folder");
 	    ForderModeRadioButton.addActionListener(this);
 	    
-	    JRadioButton ImageModeRadioButton  = new JRadioButton("image");
+	    JRadioButton ImageModeRadioButton  = new JRadioButton("Resource");
 	    ImageModeRadioButton.addActionListener(this);
 	    ImageModeRadioButton.setSelected(true);
 	    
-	    JLabel TreeModeLabel = new JLabel("Tree Mode : ");
-	    	    
-	    TreeModePanel.add(TreeModeLabel);
+	    //JLabel TreeModeLabel = new JLabel("Search");
+	    //TreeModePanel.add(TreeModeLabel);
+
 	    TreeModePanel.add(ImageModeRadioButton);
 	    TreeModePanel.add(ForderModeRadioButton);
+	    TreeModePanel.add(textField);
 	    
         ButtonGroup group = new ButtonGroup();
         group.add(ImageModeRadioButton);
-        group.add(ForderModeRadioButton);        
+        group.add(ForderModeRadioButton);
 	    
-		TreePanel.add(textField, BorderLayout.SOUTH);
+		//TreePanel.add(textField, BorderLayout.SOUTH);
 		TreePanel.add(scroll, BorderLayout.CENTER);
 		TreePanel.add(TreeModePanel, BorderLayout.NORTH);
 		
@@ -431,7 +444,6 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 //		this.add(scroll);
 //		this.add(photographLabel);	
 
-		
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.setLeftComponent(TreePanel);
         splitPane.setRightComponent(photographLabel);
@@ -458,7 +470,6 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		nameList = apkInfo.images;
 
 		SetTreeForm(isFolderMode);
-		
 	}
     
 	@Override
@@ -468,9 +479,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-		
-		if(arg0.getActionCommand().equals("image")) {
+		if(arg0.getActionCommand().equals("Resource")) {
 			isFolderMode = false;
 			SetTreeForm(isFolderMode);
 		} else {

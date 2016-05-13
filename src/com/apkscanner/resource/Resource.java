@@ -181,10 +181,10 @@ public enum Resource
 	STR_LABEL_USES_RESOURCE		(Type.TEXT, "@label_uses_resource"),
 	
 	
-	STR_TREE_MESSAGE_DEVICE 		(Type.TEXT, "@tree_message_device"),
-	STR_TREE_MESSAGE_VERSION 		(Type.TEXT, "@tree_message_version"),
+	STR_TREE_MESSAGE_DEVICE 	(Type.TEXT, "@tree_message_device"),
+	STR_TREE_MESSAGE_VERSION 	(Type.TEXT, "@tree_message_version"),
 	STR_TREE_MESSAGE_ROOT 		(Type.TEXT, "@tree_message_root"),
-	STR_TREE_MESSAGE_REBOOT 		(Type.TEXT, "@tree_message_reboot"),
+	STR_TREE_MESSAGE_REBOOT 	(Type.TEXT, "@tree_message_reboot"),
 	
 	
 	STR_MSG_FAILURE_OPEN_APK	(Type.TEXT, "@msg_failure_open_apk"),
@@ -203,24 +203,15 @@ public enum Resource
 	STR_QUESTION_PUSH_OR_INSTALL(Type.TEXT, "@question_push_or_install"),
 
 	IMG_TOOLBAR_OPEN			(Type.IMAGE, "toolbar_open.png"),
-	//IMG_TOOLBAR_OPEN_HOVER		(Type.IMAGE, "toolbar_open_hover.png"),
 	IMG_TOOLBAR_MANIFEST		(Type.IMAGE, "toolbar_manifast.png"),
-	//IMG_TOOLBAR_MANIFEST_HOVER	(Type.IMAGE, "toolbar_manifast_hover.png"),
 	IMG_TOOLBAR_EXPLORER		(Type.IMAGE, "toolbar_explorer.png"),
-	//IMG_TOOLBAR_EXPLORER_HOVER	(Type.IMAGE, "toolbar_explorer_hover.png"),
-	//IMG_TOOLBAR_PACK			(Type.IMAGE, "toolbar_pack.png"),
-	//IMG_TOOLBAR_PACK_HOVER		(Type.IMAGE, "toolbar_pack_hover.png"),
-	//IMG_TOOLBAR_UNPACK			(Type.IMAGE, "toolbar_unpack.png"),
-	//IMG_TOOLBAR_UNPACK_HOVER	(Type.IMAGE, "toolbar_unpack_hover.png"),
 	IMG_TOOLBAR_INSTALL			(Type.IMAGE, "toolbar_install.png"),
-	//IMG_TOOLBAR_INSTALL_HOVER	(Type.IMAGE, "toolbar_install_hover.png"),
 	IMG_TOOLBAR_ABOUT			(Type.IMAGE, "toolbar_about.png"),
-	//IMG_TOOLBAR_ABOUT_HOVER		(Type.IMAGE, "toolbar_about_hover.png"),
 	IMG_TOOLBAR_SETTING			(Type.IMAGE, "toolbar_setting.png"),
-	IMG_TOOLBAR_OPENCODE			(Type.IMAGE, "toolbar_opencode.png"),
-	IMG_TOOLBAR_SIGNNING			(Type.IMAGE, "toolbar_signning.png"),
+	IMG_TOOLBAR_OPENCODE		(Type.IMAGE, "toolbar_opencode.png"),
+	IMG_TOOLBAR_SIGNNING		(Type.IMAGE, "toolbar_signning.png"),
 	IMG_TOOLBAR_LOADING_OPEN_JD (Type.IMAGE, "loading_openJD.gif"),
-	IMG_TOOLBAR_PACKAGETREE (Type.IMAGE, "toolbar_packagetree.png"),
+	IMG_TOOLBAR_PACKAGETREE		(Type.IMAGE, "toolbar_packagetree.png"),
 	
 	IMG_RESOURCE_IMG_BACKGROUND (Type.IMAGE, "resource_tap_image_background.jpg"),
 	
@@ -252,7 +243,7 @@ public enum Resource
 	
 	IMG_INSTALL_TABLE_DONE		(Type.IMAGE, "done_icon.png"),
 	IMG_INSTALL_TABLE_WAIT		(Type.IMAGE, "install_wait_icon.GIF"),
-	IMG_INSTALL_TABLE_QUESTION		(Type.IMAGE, "question_icon.png"),
+	IMG_INSTALL_TABLE_QUESTION	(Type.IMAGE, "question_icon.png"),
 	IMG_INSTALL_TABLE_ERROR		(Type.IMAGE, "install_error_icon.png"),
 	
 	
@@ -261,7 +252,7 @@ public enum Resource
 	BIN_AAPT_LNX				(Type.BIN, "aapt"),
 	BIN_AAPT_WIN				(Type.BIN, "aapt.exe"),
 
-	BIN_JDGUI				(Type.BIN, "jd-gui-1.4.0.jar"),
+	BIN_JDGUI					(Type.BIN, "jd-gui-1.4.0.jar"),
 	BIN_DEX2JAR_LNX				(Type.BIN, "d2j-dex2jar.sh"),
 	BIN_DEX2JAR_WIN				(Type.BIN, "d2j-dex2jar.bat"),	
 	
