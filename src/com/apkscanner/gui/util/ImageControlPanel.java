@@ -16,6 +16,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import com.apkscanner.resource.Resource;
 
@@ -27,7 +28,8 @@ public class ImageControlPanel extends JPanel implements MouseListener{
 	private float scale = 1;
 	BufferedImage bi;
 	BufferedImage bgbi;
-
+	JScrollPane scroll;
+	
 	public ImageControlPanel() {
 		setBackground(Color.white);		
 		addMouseMotionListener(new MouseMotionHandler());
@@ -45,6 +47,10 @@ public class ImageControlPanel extends JPanel implements MouseListener{
                 repaint();
             }
         });
+        
+		JScrollPane scroll = new JScrollPane(this);
+		
+		//this.add(scroll);
 	}
 
 	public void setImage(ImageIcon img) {
