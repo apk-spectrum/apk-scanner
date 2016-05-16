@@ -36,6 +36,9 @@ public class ImageControlPanel extends JPanel{
 	ImageViewPanel imagepanel;
 	Dimension Imagearea;
 	JLabel ImageInfo;
+	Dimension ViewPortsize;
+	double positionx, positiony;
+	
 	public ImageControlPanel() {
 		imagepanel = new ImageViewPanel();
 		ImageInfo = new JLabel("");
@@ -69,6 +72,7 @@ public class ImageControlPanel extends JPanel{
 		int x, y;
 		int beforx,befory;
 		private float scale = 1;
+		private float DefalutMinscale =1;
 		BufferedImage bi;
 		BufferedImage bgbi;
 		
@@ -87,6 +91,8 @@ public class ImageControlPanel extends JPanel{
 	                
 	                revalidate();
 	                repaint();
+	                
+	                Log.d("scale : " + scale);
 	            }
 	        });
 		}
@@ -102,21 +108,31 @@ public class ImageControlPanel extends JPanel{
 			beforx = befory = 0;
 			scale = 1;	
 			
-			Imagearea = new Dimension(x,y);			
+			ViewPortsize = scroll.getViewport().getSize();
 			
+			Log.d("rect " + ViewPortsize.toString());
+			
+			scale = DefalutMinscale = (float) ((ViewPortsize.getWidth()/(image.getWidth(this)) <= ViewPortsize.getHeight()/(image.getHeight(this)))?
+					(ViewPortsize.getWidth()/image.getWidth(this)) :
+				(ViewPortsize.getHeight()/image.getHeight(this)));
+			
+			Log.d("DefalutMinscale : " + DefalutMinscale);
+			
+			Imagearea = new Dimension(x,y);
 		}
 		
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			Graphics2D g2D = (Graphics2D) g;
-			
+			ViewPortsize = scroll.getViewport().getSize();
 			AffineTransform at = new AffineTransform();
 			if(bi!=null) {
 				Rectangle Rect = g2D.getClipBounds();
 				
-				double positionx, positiony;
+				
 				positionx = (int)((Rect.getWidth()-bi.getWidth() * scale)/2) +x;
 				positiony = (int)((Rect.getHeight()-bi.getHeight() * scale)/2) + y;
+				
 				
 				at.translate(positionx, positiony);
 				
@@ -148,6 +164,8 @@ public class ImageControlPanel extends JPanel{
 				
 		        Imagearea.setSize(bi.getWidth()*scale,bi.getHeight()*scale);
 				setPreferredSize(Imagearea);
+				scrollRectToVisible(new Rectangle(-x,-y,(int)(bi.getWidth()*scale),(int)(bi.getHeight()*scale)));				
+				Log.d("positionx : "+positionx +"positiony = "+ positiony);
 			}
 		}
 		
@@ -187,17 +205,20 @@ public class ImageControlPanel extends JPanel{
 		
 		class MouseMotionHandler extends MouseMotionAdapter {
 			public void mouseDragged(MouseEvent e) {
-				//if(Imagearea.getWidth() * scale > getBounds().getWidth() || 
-				//		Imagearea.getHeight() * scale > getBounds().getHeight()) {
 				if(scroll.getHorizontalScrollBar().isVisible()) {
-					
 					x += ( e.getX()- beforx);
 					beforx = e.getX();
+					if(positionx+x >0) {
+						positionx = 0;						
+					}
 				}
 				if(scroll.getVerticalScrollBar().isVisible()) {
 					y += ( e.getY()- befory);
 					befory = e.getY();
-				}				
+					if(positiony+y >0) {
+						positiony = 0;
+					}					
+				}	
 				revalidate();
 				repaint();
 			}

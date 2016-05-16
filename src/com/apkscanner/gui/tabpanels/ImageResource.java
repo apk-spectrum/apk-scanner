@@ -558,8 +558,8 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		
 
 		imageViewerPanel = new ImageControlPanel();
-		imageViewerPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		imageViewerPanel.setBackground(Color.BLACK);
+		//imageViewerPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		//imageViewerPanel.setBackground(Color.BLACK);
 		
 		textViewerPanel = new JHtmlEditorPane();
 		
