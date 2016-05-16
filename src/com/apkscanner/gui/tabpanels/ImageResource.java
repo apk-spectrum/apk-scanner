@@ -1,6 +1,7 @@
 package com.apkscanner.gui.tabpanels;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -13,7 +14,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -43,18 +43,27 @@ import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.gui.util.FilteredTreeModel;
 import com.apkscanner.gui.util.ImageControlPanel;
 import com.apkscanner.gui.util.ImageScaler;
+import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.Log;
 
 public class ImageResource extends JPanel implements TabDataObject, ActionListener
 {
 	private static final long serialVersionUID = -934921813626224616L;
     
-	private ImageControlPanel photographLabel;
+	private static final String CONTENT_IMAGE_VIEWER = "ImageViewer";
+	private static final String CONTENT_TEXT_VIEWER = "TextViewer";
+	
+	private JPanel contentPanel;
+	private ImageControlPanel imageViewerPanel;
+	private JHtmlEditorPane textViewerPanel;
+	
 	private String[] nameList = null;
 	private String apkFilePath = null;
+
 	private JTree tree;
 	private DefaultMutableTreeNode top;
+	private DefaultMutableTreeNode[] eachTypeNodes;
+	
 	private ArrayList<String> FolderList = new ArrayList<String>(); 
 	private ArrayList<String> FileList = new ArrayList<String>();
 	private Boolean isFolderMode = false;
@@ -62,25 +71,113 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	private JTextField textField;
 	private Boolean firstClick=false;
 	
-	private class ImageTreeObject {
-		public String label;
-		public Boolean isfolder;
-		public String Filepath;
+	public enum ResourceType{
+		ANIMATION(0),
+		ANIM(1),
+		COLOR(2),
+		DRAWABLE(3),
+		MIPMAP(4),
+		LAYOUT(5),
+		MENU(6),
+		RAW(7),
+		VALUES(8),
+		XML(9),
+		ASSET(10),
+		ETC(11),
+		COUNT(12);
 		
-		public ImageTreeObject(String filepath, Boolean folder) {
-			Filepath = filepath;
-			isfolder = folder;
+		private int type;
+		ResourceType(int type) {
+			this.type = type;
+		}
+		
+		int getInt() { return type; }
+	}
+	
+	private class ResourceObject {
+		public static final int ATTR_AXML = 1;
+		public static final int ATTR_XML = 2;
+		public static final int ATTR_IMG = 3;
+		public static final int ATTR_QMG = 4;
+		public static final int ATTR_TXT = 5;
+		public static final int ATTR_ETC = 6;
+		
+		public String label;
+		public Boolean isFolder;
+		public String path;
+		public String config;
+		public ResourceType type;
+		public int attr;
+		public int childCount;
+		
+		public ResourceObject(String path, boolean isFolder) {
+			this.path = path;
+			this.isFolder = isFolder;
 			
-			if(isfolder) {
-				label = getOnlyFoldername(filepath);
+			if(path.startsWith("res/animation")) {
+				type = ResourceType.ANIMATION; 
+			} else if(path.startsWith("res/anim")) {
+				type = ResourceType.ANIM;
+			} else if(path.startsWith("res/color")) {
+				type = ResourceType.COLOR;
+			} else if(path.startsWith("res/drawable")) {
+				type = ResourceType.DRAWABLE;
+			} else if(path.startsWith("res/mipmap")) {
+				type = ResourceType.MIPMAP;
+			} else if(path.startsWith("res/layout")) {
+				type = ResourceType.LAYOUT;
+			} else if(path.startsWith("res/menu")) {
+				type = ResourceType.MENU;
+			} else if(path.startsWith("res/raw")) {
+				type = ResourceType.RAW;
+			} else if(path.startsWith("res/values")) {
+				type = ResourceType.VALUES;
+			} else if(path.startsWith("res/xml")) {
+				type = ResourceType.XML;
+			} else if(path.startsWith("assets")) {
+				type = ResourceType.ASSET;
 			} else {
-				label = getOnlyFilename(filepath); 
+				type = ResourceType.ETC;
 			}
+			
+			if(type.getInt() <= ResourceType.XML.getInt()) {
+				if(path.startsWith("res/"+type.toString().toLowerCase()+"-"))
+					config = path.replaceAll("res/"+type.toString().toLowerCase()+"-([^/]*)/.*", "$1");
+			}
+			
+			if(path.endsWith(".xml")) {
+				if(path.startsWith("res/")) attr = ATTR_AXML;
+				else attr = ATTR_XML;
+			} else if(path.endsWith(".png") || path.endsWith(".jpg") || path.endsWith(".gif")) {
+				attr = ATTR_IMG;
+			} else if(path.endsWith(".qmg")) {
+				attr = ATTR_QMG;
+			} else if(path.endsWith(".txt")) {
+				attr = ATTR_TXT;
+			} else {
+				attr = ATTR_ETC;
+			}
+			
+			if(isFolder) {
+				label = getOnlyFoldername(path);
+			} else {
+				label = getOnlyFilename(path); 
+			}
+			
+			childCount = 0;
 		}
 		
 		@Override
 		public String toString() {
-		    return this.label;
+			String str = null;
+			if(childCount > 0) {
+				str = this.label + " (" + childCount + ")";;
+			} else if(this.config != null) {
+				str = this.label + " (" + this.config + ")";
+			} else {
+				str = this.label;
+			}
+		    return str;
 		}
 	}
 	
@@ -91,11 +188,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	
     private void makeTreeForm() {
     	top = new DefaultMutableTreeNode("Loading...");
-    
-    	FilteredTreeModel model = new FilteredTreeModel(new DefaultTreeModel(top));
-    	
-    	tree = new JTree(model);
-    	
+    	tree = new JTree(new FilteredTreeModel(new DefaultTreeModel(top)));
     	tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);    	
     }
     
@@ -152,61 +245,78 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
             }
         }
         return foundNode;
-    }   
+    }
+
+    public final DefaultMutableTreeNode findNode(DefaultMutableTreeNode node, String string, boolean ignoreCase, boolean recursively) {
+    	DefaultMutableTreeNode ret = null;
+    	if(node == null) {
+    		node = (DefaultMutableTreeNode)tree.getModel().getRoot();
+    		if(node == null) return null;
+    	}
+    	
+    	DefaultMutableTreeNode childNode = null;
+    	if(node.getChildCount() > 0) {
+    		childNode = (DefaultMutableTreeNode)node.getFirstChild();
+    	}
+    	while(childNode != null) {
+            ResourceObject resObj = null;
+    		if(childNode.getUserObject() instanceof ResourceObject) {
+    			resObj = (ResourceObject)childNode.getUserObject();
+    		}
+    		if(resObj.label.equals(string) 
+    				|| (ignoreCase && resObj.label.equalsIgnoreCase(string))) {
+    			ret = childNode;
+    			break;
+    		}
+    		if(recursively && childNode.getDepth() > 0) {
+    			ret = findNode(childNode, string, ignoreCase, recursively);
+    			if(ret != null) break;
+    		}
+    		childNode = childNode.getNextSibling();
+    	}
+
+    	return ret;
+    }
 	
     private void SetTreeForm(Boolean mode) {
     	tree.removeAll();
+    	
     	FolderList.clear();
     	FileList.clear();
     	top = new DefaultMutableTreeNode(getOnlyFilename(this.apkFilePath));
     	FilteredTreeModel model = new FilteredTreeModel(new DefaultTreeModel(top));
     	tree.setModel(model);
-		DefaultMutableTreeNode drawable = new DefaultMutableTreeNode("drawable");
-		top.add(drawable);
-    	if(isFolderMode) {
-	    	for(int i=0; i<this.nameList.length; i++) {
-	    		ImageTreeObject ImageNode= new ImageTreeObject(this.nameList[i], false);
-	    		DefaultMutableTreeNode imagepath = new DefaultMutableTreeNode(ImageNode);
-	    		
-	    		String foldertemp =	getOnlyFoldername(this.nameList[i]);
-	    		
-	    		if(FolderList.contains(foldertemp)) {
-	    			DefaultMutableTreeNode findnode = findNode(foldertemp);
-	    			findnode.add(imagepath);
-	    		} else {
-	    			ImageTreeObject folderNode= new ImageTreeObject(this.nameList[i], true);
-	    			FolderList.add(foldertemp);
-	    			DefaultMutableTreeNode foldernode = new DefaultMutableTreeNode(folderNode);
+    	
 
-	    			foldernode.add(imagepath);
-	    			drawable.add(foldernode);
-	    		}
-	    	}
-    	} else {
-	    	for(int i=0; i<this.nameList.length; i++) {
-	    		ImageTreeObject ImageNode= new ImageTreeObject(this.nameList[i], false);
-	    		DefaultMutableTreeNode imagepath = new DefaultMutableTreeNode(ImageNode);
-	    		
-	    		String filetemp =	getOnlyFilename(this.nameList[i]);
-	    		
-	    		if(FileList.contains(filetemp)) {
-	    			DefaultMutableTreeNode findnode = findNode(filetemp);
-	    			
-	    			ImageTreeObject FolderObject= new ImageTreeObject(this.nameList[i], true);
-	    			DefaultMutableTreeNode FolderNode = new DefaultMutableTreeNode(FolderObject);
-	    			
-	    			findnode.add(FolderNode);
-	    		} else {
-	    			ImageTreeObject FolderObject= new ImageTreeObject(this.nameList[i], true);
-	    			DefaultMutableTreeNode FolderNode = new DefaultMutableTreeNode(FolderObject);
-	    			
-	    			imagepath.add(FolderNode);	    			
-	    			FileList.add(filetemp);
-	    			
-	    			drawable.add(imagepath);
-	    		}
-	    	}
+    	eachTypeNodes = new DefaultMutableTreeNode[ResourceType.COUNT.getInt()];
+    	for(int i=0; i<this.nameList.length; i++) {
+    		ResourceObject resObj = new ResourceObject(this.nameList[i], false);
+    		DefaultMutableTreeNode typeNode = eachTypeNodes[resObj.type.getInt()];
+    		if(resObj.type != ResourceType.ETC) {
+    			if (typeNode == null) {
+    				typeNode = new DefaultMutableTreeNode(resObj.type.toString().toLowerCase());
+    				eachTypeNodes[resObj.type.getInt()] = typeNode;
+    				top.add(typeNode);
+    			}
+    		} else {
+    			continue;
+    		}
+    		
+    		String fileName = getOnlyFilename(this.nameList[i]);
+   			DefaultMutableTreeNode findnode = findNode(typeNode, fileName, false, false);
+   			if(findnode != null) {
+   				if(findnode.getChildCount() == 0) {
+   					ResourceObject obj = (ResourceObject)findnode.getUserObject();
+   					findnode.add(new DefaultMutableTreeNode(new ResourceObject(obj.path, false)));
+   	   				((ResourceObject)findnode.getUserObject()).childCount++;
+   				}
+   				findnode.add(new DefaultMutableTreeNode(resObj));
+   				((ResourceObject)findnode.getUserObject()).childCount++;
+   			} else {
+   				typeNode.add(new DefaultMutableTreeNode(resObj));
+   			}
     	}
+    	
     	expandOrCollapsePath(tree, new TreePath(top.getPath()),1,0, true);
     }
     
@@ -232,28 +342,50 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 //         System.err.println("Path collapsed at level "+currentLevel+"-"+treePath);
       }
    }
-    private void drawImageOnPanel() {
-    	//int selRow = tree.getRowForLocation(e.getX(), e.getY());
-        //TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
 
+    private void changeContent() {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)
                 tree.getLastSelectedPathComponent();
-        if(node ==null) return;
-		if(node ==top) return;
-			
-		String imgPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/";
-		ImageTreeObject tempObject = (ImageTreeObject)node.getUserObject();
-		imgPath = imgPath + tempObject.Filepath;
+        if(node == null) return;
 		
-		if(imgPath.endsWith(".qmg")) {
+        ResourceObject resObj = null;
+		if(node.getUserObject() instanceof ResourceObject) {
+			resObj = (ResourceObject)node.getUserObject();
+		}
+
+		if(resObj == null || resObj.isFolder) {
+			 ((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_TEXT_VIEWER);
+		} else {
+			switch(resObj.attr) {
+			case ResourceObject.ATTR_IMG:
+			case ResourceObject.ATTR_QMG:
+				drawImageOnPanel(resObj);
+				 ((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_IMAGE_VIEWER);
+				break;
+			case ResourceObject.ATTR_AXML:
+				// 디코딩
+			case ResourceObject.ATTR_XML:
+				// 하이라이트 설정
+			case ResourceObject.ATTR_TXT:
+				// 텍스트 뷰어 오픈
+				 ((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_TEXT_VIEWER);
+				break;
+			default:
+				break;
+			}
+		}
+    }
+    
+    private void drawImageOnPanel(ResourceObject obj) {
+		String imgPath;
+		if(obj.attr == ResourceObject.ATTR_QMG) {
 			imgPath = Resource.IMG_QMG_IMAGE_ICON.getPath();
+		} else {
+			imgPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/" + obj.path;
 		}
 		try {
-			//photographLabel.setIcon(new ImageIcon(
-			//		new URL(imgPath)));
-
-			photographLabel.setImage(new ImageIcon( new URL(imgPath)));
-			photographLabel.repaint();
+			imageViewerPanel.setImage(new ImageIcon( new URL(imgPath)));
+			imageViewerPanel.repaint();
 		} catch (MalformedURLException e1) {
 			e1.printStackTrace();
 		} 
@@ -279,23 +411,22 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
                 	return c;
                 }
                 if(nodo.getLevel() == 1){
-                	Log.e(">>>>" + nodo);
                 	return c;
                 }
                 
-                ImageTreeObject tempObject = (ImageTreeObject)nodo.getUserObject();                
+                ResourceObject tempObject = (ResourceObject)nodo.getUserObject();                
                 
-                if(tempObject.isfolder) {
+                if(tempObject.isFolder) {
                 	setIcon(iconFolder);
                 } else {
-                	ImageTreeObject temp = (ImageTreeObject)nodo.getUserObject();
+                	ResourceObject temp = (ResourceObject)nodo.getUserObject();
                 	String jarPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/";
                 	ImageIcon tempIcon = null;
-    				if(temp.Filepath.endsWith(".qmg")) {
+    				if(temp.attr == ResourceObject.ATTR_QMG) {
     					tempIcon = new ImageIcon(ImageScaler.getScaledImage(Resource.IMG_QMG_IMAGE_ICON.getImageIcon(),32,32));
     				} else {
     					try {
-							tempIcon = new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(new URL(jarPath+temp.Filepath)),32,32));
+							tempIcon = new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(new URL(jarPath+temp.path)),32,32));
 						} catch (MalformedURLException e) {
 							e.printStackTrace();
 						}
@@ -307,27 +438,20 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
         });
     	
     	
-        MouseListener ml = new MouseAdapter() {
+        tree.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {    
-            	DefaultMutableTreeNode node = (DefaultMutableTreeNode)
-                        tree.getLastSelectedPathComponent();
-            	if(node == null || node.getLevel() < 2) {
-            		return;
-            	}
-            	//Log.e("level " + node.getLevel() + ", depth" + node.getDepth());
-            	drawImageOnPanel();
+            	changeContent();
             }
-        };
+        });
+        
         tree.addKeyListener(new KeyAdapter()
         {
         	public void keyReleased(KeyEvent ke) {
         		//if(ke.getKeyCode() == KeyEvent.VK_ENTER) {
-        			drawImageOnPanel();
+        		changeContent();
         		//}
         	}
-        });        
-        
-        tree.addMouseListener(ml);        
+        });       
     }
     
     private void expandTree(final JTree tree) {
@@ -367,24 +491,12 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	@Override
 	public void initialize()
 	{
+		this.setLayout(new GridLayout(1, 1));
+
 		makeTreeForm();
 		TreeInit();
 		
-		JScrollPane scroll = new JScrollPane(tree);
-		scroll.setPreferredSize(new Dimension(300, 400));
-		scroll.repaint();
-		
-		photographLabel = new ImageControlPanel();
-		//photographLabel.setVerticalTextPosition(JLabel.BOTTOM);
-		//photographLabel.setHorizontalTextPosition(JLabel.CENTER);
-		//photographLabel.setHorizontalAlignment(JLabel.CENTER);
-		photographLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		photographLabel.setBackground(Color.BLACK);        
-		this.setLayout(new GridLayout(1, 1));
-		
 		textField = new JTextField("");
-		
-		
 		textField.addKeyListener(new KeyAdapter()
         {
             public void keyReleased(KeyEvent ke) {
@@ -401,7 +513,6 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
             }
         });
 		textField.addFocusListener(new FocusListener() {
-			
 			@Override
 			public void focusLost(FocusEvent arg0) {
 			
@@ -415,9 +526,8 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 			}
 		});
 		
-		JPanel TreePanel = new JPanel(new BorderLayout());
-		JPanel TreeModePanel = new JPanel(new GridLayout(1,3));
 		
+		// Tree navigator ----------
 	    JRadioButton ForderModeRadioButton  = new JRadioButton("Folder");
 	    ForderModeRadioButton.addActionListener(this);
 	    
@@ -428,6 +538,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	    //JLabel TreeModeLabel = new JLabel("Search");
 	    //TreeModePanel.add(TreeModeLabel);
 
+		JPanel TreeModePanel = new JPanel(new GridLayout(1,3));
 	    TreeModePanel.add(ImageModeRadioButton);
 	    TreeModePanel.add(ForderModeRadioButton);
 	    TreeModePanel.add(textField);
@@ -435,26 +546,32 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
         ButtonGroup group = new ButtonGroup();
         group.add(ImageModeRadioButton);
         group.add(ForderModeRadioButton);
-	    
-		//TreePanel.add(textField, BorderLayout.SOUTH);
-		TreePanel.add(scroll, BorderLayout.CENTER);
-		TreePanel.add(TreeModePanel, BorderLayout.NORTH);
-		
-		
-//		this.add(scroll);
-//		this.add(photographLabel);	
+        // End Tree navigator ----------
 
+		JScrollPane treeScroll = new JScrollPane(tree);
+		treeScroll.setPreferredSize(new Dimension(300, 400));
+		treeScroll.repaint();
+		
+		JPanel TreePanel = new JPanel(new BorderLayout());
+		TreePanel.add(TreeModePanel, BorderLayout.NORTH);
+		TreePanel.add(treeScroll, BorderLayout.CENTER);
+		
+
+		imageViewerPanel = new ImageControlPanel();
+		imageViewerPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		imageViewerPanel.setBackground(Color.BLACK);
+		
+		textViewerPanel = new JHtmlEditorPane();
+		
+		contentPanel = new JPanel(new CardLayout());
+		contentPanel.add(imageViewerPanel, CONTENT_IMAGE_VIEWER);
+		contentPanel.add(textViewerPanel, CONTENT_TEXT_VIEWER);
+		
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.setLeftComponent(TreePanel);
-        splitPane.setRightComponent(photographLabel);
-        
-        
-        //Dimension minimumSize = new Dimension(100, 50);
-        
-        //splitPane.setDividerLocation(200);
+        splitPane.setRightComponent(contentPanel);
         
         this.add(splitPane);
-        
 	}
 
 	@Override
@@ -462,7 +579,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	{
 		if(tree == null)
 			initialize();
-				
+
 		this.apkFilePath = apkInfo.filePath; 
 		
 		if(apkInfo.images == null) return;
