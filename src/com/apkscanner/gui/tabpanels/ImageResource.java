@@ -5,6 +5,7 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,16 +15,20 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
-import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -39,6 +44,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import com.apkscanner.apkinfo.ApkInfo;
+import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.gui.util.FilteredTreeModel;
 import com.apkscanner.gui.util.ImageControlPanel;
@@ -65,9 +71,6 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	private DefaultMutableTreeNode top;
 	private DefaultMutableTreeNode[] eachTypeNodes;
 	
-	private ArrayList<String> FolderList = new ArrayList<String>(); 
-	private ArrayList<String> FileList = new ArrayList<String>();
-	private Boolean isFolderMode = false;
 	private FilteredTreeModel filteredModel;
 	private JTextField textField;
 	private Boolean firstClick=false;
@@ -147,13 +150,15 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 			}
 			
 			if(path.endsWith(".xml")) {
-				if(path.startsWith("res/")) attr = ATTR_AXML;
+				if(path.startsWith("res/") || path.equals("AndroidManifest.xml")) attr = ATTR_AXML;
 				else attr = ATTR_XML;
 			} else if(path.endsWith(".png") || path.endsWith(".jpg") || path.endsWith(".gif")) {
 				attr = ATTR_IMG;
 			} else if(path.endsWith(".qmg")) {
 				attr = ATTR_QMG;
-			} else if(path.endsWith(".txt")) {
+			} else if(path.endsWith(".txt")
+					|| path.endsWith(".html") || path.endsWith(".js") || path.endsWith(".csc") || path.endsWith(".json")
+					|| path.endsWith(".props") || path.endsWith(".properties")) {
 				attr = ATTR_TXT;
 			} else {
 				attr = ATTR_ETC;
@@ -279,15 +284,14 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     	return ret;
     }
 	
-    private void SetTreeForm(Boolean mode) {
+    private void setTreeForm(Boolean mode) {
     	tree.removeAll();
     	
-    	FolderList.clear();
-    	FileList.clear();
     	top = new DefaultMutableTreeNode(getOnlyFilename(this.apkFilePath));
     	FilteredTreeModel model = new FilteredTreeModel(new DefaultTreeModel(top));
     	tree.setModel(model);
     	
+    	ArrayList<DefaultMutableTreeNode> topFiles = new ArrayList<DefaultMutableTreeNode>();
 
     	eachTypeNodes = new DefaultMutableTreeNode[ResourceType.COUNT.getInt()];
     	for(int i=0; i<this.nameList.length; i++) {
@@ -295,7 +299,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 
     		ResourceObject resObj = new ResourceObject(this.nameList[i], false);
     		if(this.nameList[i].indexOf("/") == -1) {
-    			top.add(new DefaultMutableTreeNode(resObj));
+    			topFiles.add(new DefaultMutableTreeNode(resObj));
     			continue;
     		}
     		
@@ -304,7 +308,9 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 			if (typeNode == null) {
 				typeNode = new DefaultMutableTreeNode(resObj.type.toString().toLowerCase());
 				eachTypeNodes[resObj.type.getInt()] = typeNode;
-				top.add(typeNode);
+				if(resObj.type != ResourceType.ETC) {
+					top.add(typeNode);
+				}
 			}
 			
 			DefaultMutableTreeNode findnode = null;
@@ -324,6 +330,14 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
    			} else {
    				typeNode.add(new DefaultMutableTreeNode(resObj));
    			}
+    	}
+    	
+    	if(eachTypeNodes[ResourceType.ETC.getInt()] != null) {
+    		top.add(eachTypeNodes[ResourceType.ETC.getInt()]);
+    	}
+    	
+    	for(DefaultMutableTreeNode node: topFiles) {
+    		top.add(node);
     	}
     	
     	expandOrCollapsePath(tree, new TreePath(top.getPath()),1,0, true);
@@ -372,11 +386,9 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 				 ((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_IMAGE_VIEWER);
 				break;
 			case ResourceObject.ATTR_AXML:
-				// 디코딩
 			case ResourceObject.ATTR_XML:
-				// 하이라이트 설정
 			case ResourceObject.ATTR_TXT:
-				// 텍스트 뷰어 오픈
+			    setTextContentPanel(resObj);
 				 ((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_TEXT_VIEWER);
 				break;
 			default:
@@ -398,6 +410,36 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		} catch (MalformedURLException e1) {
 			e1.printStackTrace();
 		} 
+    }
+    
+    private void setTextContentPanel(ResourceObject obj) {
+    	String content = null;
+    	
+		switch(obj.attr) {
+		case ResourceObject.ATTR_AXML:
+			String[] xmlbuffer = AaptWrapper.Dump.getXmltree(apkFilePath, new String[] {obj.path});
+			StringBuilder sb = new StringBuilder();
+			for(String s: xmlbuffer) sb.append(s+"\n");
+			content = sb.toString();
+			break;
+		case ResourceObject.ATTR_XML:
+		case ResourceObject.ATTR_TXT:
+			ZipFile zipFile;
+			try {
+				zipFile = new ZipFile(apkFilePath);
+				ZipEntry entry = zipFile.getEntry(obj.path);
+				byte[] buffer = new byte[(int) entry.getSize()];
+				zipFile.getInputStream(entry).read(buffer);
+				content = new String(buffer);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			break;
+		default:
+			break;
+		}
+
+		textViewerPanel.setText(content.replaceAll("\n", "<br/>"));
     }
     
     private void TreeInit() {
@@ -570,11 +612,32 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		//imageViewerPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		//imageViewerPanel.setBackground(Color.BLACK);
 		
+
+		JLabel label = new JLabel();
+		Font font = label.getFont();
+		StringBuilder style = new StringBuilder("#basic-info, #perm-group {");
+		style.append("font-family:" + font.getFamily() + ";");
+		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
+		style.append("font-size:" + font.getSize() + "pt;}");
+		style.append("#basic-info a {text-decoration:none; color:black;}");
+		style.append("#perm-group a {text-decoration:none; color:#"+Integer.toHexString(label.getBackground().getRGB() & 0xFFFFFF)+";}");
+		style.append(".danger-perm {text-decoration:none; color:red;}");
+		style.append("#about {");
+		style.append("font-family:" + font.getFamily() + ";");
+		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
+		style.append("font-size:" + font.getSize() + "pt;}");
+		style.append("#about a {text-decoration:none;}");
+
 		textViewerPanel = new JHtmlEditorPane();
+		textViewerPanel.setStyle(style.toString());
+		textViewerPanel.setBackground(Color.white);
+		textViewerPanel.setEditable(false);
+		textViewerPanel.setOpaque(true);
+		JScrollPane textViewerScroll = new JScrollPane(textViewerPanel);
 		
 		contentPanel = new JPanel(new CardLayout());
 		contentPanel.add(imageViewerPanel, CONTENT_IMAGE_VIEWER);
-		contentPanel.add(textViewerPanel, CONTENT_TEXT_VIEWER);
+		contentPanel.add(textViewerScroll, CONTENT_TEXT_VIEWER);
 		
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.setLeftComponent(TreePanel);
@@ -594,8 +657,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		if(apkInfo.images == null) return;
 		
 		nameList = apkInfo.images;
-
-		SetTreeForm(isFolderMode);
+		setTreeForm(false);
 	}
     
 	@Override
@@ -605,12 +667,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		if(arg0.getActionCommand().equals("Resource")) {
-			isFolderMode = false;
-			SetTreeForm(isFolderMode);
-		} else {
-			isFolderMode = true;
-			SetTreeForm(isFolderMode);
-		}		
+		boolean isFolderMode = !arg0.getActionCommand().equals("Resource");
+		setTreeForm(isFolderMode);
 	}
 }
