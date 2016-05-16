@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.TexturePaint;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -113,10 +114,28 @@ public class ImageControlPanel extends JPanel implements MouseListener{
 		AffineTransform at = new AffineTransform();
 		if(bi!=null) {
 			Rectangle Rect = g2D.getClipBounds();
-			at.translate((Rect.getWidth()-bi.getWidth() * scale)/2 + x, (Rect.getHeight()-bi.getHeight() * scale)/2 + y);
-	        BufferedImage bg = getBackgroundImage((int)(bi.getWidth() * scale), (int)(bi.getHeight() * scale)); 
-			g2D.drawImage(bg, at, this);
-						
+			
+			double positionx, positiony;
+			positionx = (Rect.getWidth()-bi.getWidth() * scale)/2+x;
+			positiony = (Rect.getHeight()-bi.getHeight() * scale)/2 + y;
+			
+			
+			at.translate(positionx, positiony);
+			
+			
+	        //BufferedImage bg = getBackgroundImage((int)(bi.getWidth() * scale), (int)(bi.getHeight() * scale)); 
+			
+	        
+	        //g2D.drawImage(bg, at, this);
+			TexturePaint paint;
+		    Image imageBackground = Resource.IMG_RESOURCE_IMG_BACKGROUND.getImageIcon().getImage();
+		    bgbi = new BufferedImage(20, 20, BufferedImage.TYPE_INT_ARGB);
+		    bgbi.createGraphics().drawImage(imageBackground, 0, 0, this);
+		    
+			paint = new TexturePaint(bgbi, new Rectangle(0, 0, bgbi.getWidth(), bgbi.getHeight()));
+			g2D.setPaint(paint);
+			g2D.fill(new Rectangle((int)positionx, (int)positiony, (int)(bi.getWidth()* scale), (int)(bi.getHeight() * scale)));
+			
 			
 	        at.scale(scale, scale);
 			String text = "W : " + bi.getWidth() + "      H : " + bi.getHeight() + "  " + Math.round(scale * 100) + "%";		

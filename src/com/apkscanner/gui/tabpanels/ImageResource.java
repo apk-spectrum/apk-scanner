@@ -416,7 +416,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		});
 		
 		JPanel TreePanel = new JPanel(new BorderLayout());
-		JPanel TreeModePanel = new JPanel();
+		JPanel TreeModePanel = new JPanel(new GridLayout(1,3));
 		
 	    JRadioButton ForderModeRadioButton  = new JRadioButton("Folder");
 	    ForderModeRadioButton.addActionListener(this);
