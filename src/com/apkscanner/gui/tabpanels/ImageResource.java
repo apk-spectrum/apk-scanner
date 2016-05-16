@@ -15,7 +15,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -51,7 +50,6 @@ import com.apkscanner.gui.util.ImageControlPanel;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.Log;
 
 public class ImageResource extends JPanel implements TabDataObject, ActionListener
 {
@@ -295,7 +293,9 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 
     	eachTypeNodes = new DefaultMutableTreeNode[ResourceType.COUNT.getInt()];
     	for(int i=0; i<this.nameList.length; i++) {
-    		if(this.nameList[i].endsWith("/")) continue;
+    		if(this.nameList[i].endsWith("/")
+    				|| this.nameList[i].startsWith("lib/")
+    				|| this.nameList[i].startsWith("META-INF/")) continue;
 
     		ResourceObject resObj = new ResourceObject(this.nameList[i], false);
     		if(this.nameList[i].indexOf("/") == -1) {
@@ -440,6 +440,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		}
 
 		textViewerPanel.setText(content.replaceAll("\n", "<br/>"));
+		textViewerPanel.setCaretPosition(0);
     }
     
     private void TreeInit() {
