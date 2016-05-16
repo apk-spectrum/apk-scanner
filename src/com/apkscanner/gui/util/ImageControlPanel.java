@@ -88,10 +88,13 @@ public class ImageControlPanel extends JPanel implements MouseListener{
 	        bgbi = newbgbi;
 		}
 
-		BufferedImage bg = bgbi.getSubimage((int)(bgbi.getWidth()/2 - width/2), 
-                (int)(bgbi.getHeight()/2 - height/2),
-                width,
-                height);
+		BufferedImage bg = null;
+		if(width > 0 && height > 0) {
+			bg = bgbi.getSubimage((int)(bgbi.getWidth()/2 - width/2), 
+	                (int)(bgbi.getHeight()/2 - height/2),
+	                width,
+	                height);
+		}
 
 		return bg;
 	}
