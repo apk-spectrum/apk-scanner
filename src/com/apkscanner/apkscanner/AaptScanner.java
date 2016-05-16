@@ -265,7 +265,7 @@ public class AaptScanner extends ApkScannerStub
 			public void run()
 			{
 				Log.i("I: read Imanges list...");
-		        apkInfo.images = ZipFileUtil.findFiles(apkInfo.filePath, ".png;.qmg;.jpg;.gif", null);
+		        apkInfo.images = ZipFileUtil.findFiles(apkInfo.filePath, null, null);
 		        stateChanged(Status.IMAGE_COMPLETED);
 			}
 		}).start();

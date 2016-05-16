@@ -45,6 +45,7 @@ import com.apkscanner.gui.util.ImageControlPanel;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 
 public class ImageResource extends JPanel implements TabDataObject, ActionListener
 {
@@ -290,20 +291,28 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 
     	eachTypeNodes = new DefaultMutableTreeNode[ResourceType.COUNT.getInt()];
     	for(int i=0; i<this.nameList.length; i++) {
+    		if(this.nameList[i].endsWith("/")) continue;
+
     		ResourceObject resObj = new ResourceObject(this.nameList[i], false);
-    		DefaultMutableTreeNode typeNode = eachTypeNodes[resObj.type.getInt()];
-    		if(resObj.type != ResourceType.ETC) {
-    			if (typeNode == null) {
-    				typeNode = new DefaultMutableTreeNode(resObj.type.toString().toLowerCase());
-    				eachTypeNodes[resObj.type.getInt()] = typeNode;
-    				top.add(typeNode);
-    			}
-    		} else {
+    		if(this.nameList[i].indexOf("/") == -1) {
+    			top.add(new DefaultMutableTreeNode(resObj));
     			continue;
     		}
     		
-    		String fileName = getOnlyFilename(this.nameList[i]);
-   			DefaultMutableTreeNode findnode = findNode(typeNode, fileName, false, false);
+    		DefaultMutableTreeNode typeNode = eachTypeNodes[resObj.type.getInt()];
+
+			if (typeNode == null) {
+				typeNode = new DefaultMutableTreeNode(resObj.type.toString().toLowerCase());
+				eachTypeNodes[resObj.type.getInt()] = typeNode;
+				top.add(typeNode);
+			}
+			
+			DefaultMutableTreeNode findnode = null;
+    		if(resObj.type != ResourceType.ETC) {
+        		String fileName = getOnlyFilename(this.nameList[i]);
+       			findnode = findNode(typeNode, fileName, false, false);
+    		}
+    		
    			if(findnode != null) {
    				if(findnode.getChildCount() == 0) {
    					ResourceObject obj = (ResourceObject)findnode.getUserObject();

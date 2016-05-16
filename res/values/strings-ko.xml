@@ -46,7 +46,7 @@
     <string name="tab_widget">위젯</string>
     <string name="tab_lib">라이브러리</string>
     <string name="tab_image">리소스</string>
-    <string name="tab_activity">구성요소</string>
+    <string name="tab_activity">컴포넌트</string>
     <string name="tab_cert">서명</string>
     
     <string name="basic_permissions">권한</string>
