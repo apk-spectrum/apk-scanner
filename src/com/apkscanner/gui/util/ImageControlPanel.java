@@ -1,6 +1,7 @@
 package com.apkscanner.gui.util;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -109,6 +110,8 @@ public class ImageControlPanel extends JPanel implements MouseListener{
 			at.translate((Rect.getWidth()-bi.getWidth() * scale)/2 + x, (Rect.getHeight()-bi.getHeight() * scale)/2 + y);
 	        BufferedImage bg = getBackgroundImage((int)(bi.getWidth() * scale), (int)(bi.getHeight() * scale)); 
 			g2D.drawImage(bg, at, this);
+						
+			
 	        at.scale(scale, scale);
 			String text = "W : " + bi.getWidth() + "      H : " + bi.getHeight() + "  " + Math.round(scale * 100) + "%";		
 			g2D.drawImage(bi, at, this);
@@ -153,10 +156,14 @@ public class ImageControlPanel extends JPanel implements MouseListener{
 		// TODO Auto-generated method stub
 		beforx = arg0.getX();
 		befory = arg0.getY();
+		
+		this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	}
 
 	@Override
 	public void mouseReleased(java.awt.event.MouseEvent arg0) {
 		// TODO Auto-generated method stub
+		this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		
 	}
 }
