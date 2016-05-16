@@ -438,9 +438,11 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		default:
 			break;
 		}
-
-		textViewerPanel.setText(content.replaceAll("\n", "<br/>"));
-		textViewerPanel.setCaretPosition(0);
+		
+		if(content != null) {
+			textViewerPanel.setText("<pre>" + content.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br/>") + "</pre>");
+			textViewerPanel.setCaretPosition(0);
+		}
     }
     
     private void TreeInit() {
