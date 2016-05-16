@@ -154,7 +154,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 				attr = ATTR_IMG;
 			} else if(path.endsWith(".qmg")) {
 				attr = ATTR_QMG;
-			} else if(path.endsWith(".txt")
+			} else if(path.endsWith(".txt") || path.endsWith(".mk") 
 					|| path.endsWith(".html") || path.endsWith(".js") || path.endsWith(".csc") || path.endsWith(".json")
 					|| path.endsWith(".props") || path.endsWith(".properties")) {
 				attr = ATTR_TXT;
@@ -440,7 +440,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		}
 		
 		if(content != null) {
-			textViewerPanel.setText("<pre>" + content.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br/>") + "</pre>");
+			textViewerPanel.setText("<pre>" + content.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("[\r]\n", "<br/>") + "</pre>");
 			textViewerPanel.setCaretPosition(0);
 		}
     }
