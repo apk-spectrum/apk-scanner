@@ -101,7 +101,7 @@ public class ImageControlPanel extends JPanel{
 		scrollpanel.addMouseWheelListener(new MouseAdapter() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
-                double delta = (-e.getPreciseWheelRotation() * 0.05 + 1);
+                double delta = (-e.getPreciseWheelRotation() * 0.1 + 1);
                 scale *= delta;
                 
                 if(scale > 20) scale = 20f;
