@@ -163,16 +163,17 @@ public class ImageControlPanel extends JPanel{
 			beforx = befory = 0;
 			scale = 1;	
 			
-			ViewPortsize = scroll.getPreferredSize();
+			ViewPortsize = new Dimension(scroll.getViewport().getWidth()-10,scroll.getViewport().getHeight()-10);
 			
-			Log.d("rect " + ViewPortsize.toString());
+			//ViewPortsize.setSize(new Dimension((int)ViewPortsize.getWidth()-10, (int)ViewPortsize.getHeight()-10));
 			
-			scale = 
-					
-					DefalutMinscale = (float) ((ViewPortsize.getWidth()/(image.getWidth(this)) <= ViewPortsize.getHeight()/(image.getHeight(this)))?
+			if(ViewPortsize.getWidth()<(image.getWidth(this)) || ViewPortsize.getHeight()<(image.getHeight(this))) {
+			scale = DefalutMinscale = (float) ((ViewPortsize.getWidth()/(image.getWidth(this)) <= ViewPortsize.getHeight()/(image.getHeight(this)))?
 					(ViewPortsize.getWidth()/image.getWidth(this)) :
 				(ViewPortsize.getHeight()/image.getHeight(this)));
-			
+			} else {
+				
+			}
 			Log.d("DefalutMinscale : " + DefalutMinscale);
 			Log.d("ViewPortsize.getWidth() : "+ViewPortsize.getWidth() +"  ViewPortsize.getHeight() = "+ ViewPortsize.getHeight());
 			Imagearea = new Dimension(x,y);
@@ -181,7 +182,8 @@ public class ImageControlPanel extends JPanel{
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			Graphics2D g2D = (Graphics2D) g;
-			ViewPortsize = scroll.getPreferredSize();
+			ViewPortsize = new Dimension(scroll.getViewport().getWidth()-10,scroll.getViewport().getHeight()-10);
+						
 			AffineTransform at = new AffineTransform();
 			if(bi!=null) {
 				Rectangle Rect = g2D.getClipBounds();
@@ -226,12 +228,12 @@ public class ImageControlPanel extends JPanel{
 		        double tempx = Math.abs((int)(positionx));
 		        double tempy = Math.abs((int)(positiony));
 				setPreferredSize(Imagearea);
-				scrollRectToVisible(new Rectangle((int)0,(int)0,(int)(ViewPortsize.getWidth()),(int)(ViewPortsize.getHeight())));				
+				scrollRectToVisible(new Rectangle((int)tempx,(int)tempy,(int)(ViewPortsize.getWidth()),(int)(ViewPortsize.getHeight())));				
 				
-				Log.d("tempx : "+tempx +" tempy = "+ tempy);
-				Log.d("positionx : "+positionx +" positiony = "+ positiony);
+				//Log.d("tempx : "+tempx +" tempy = "+ tempy);
+				//Log.d("positionx : "+positionx +" positiony = "+ positiony);
 				Log.d("ViewPortsize.getWidth() : "+ViewPortsize.getWidth() +"  ViewPortsize.getHeight() = "+ ViewPortsize.getHeight());
-				Log.d("(int)(bi.getWidth()*scale : "+bi.getWidth()*scale +"  bi.getHeight()*scale = "+ bi.getHeight()*scale);
+				//Log.d("(int)(bi.getWidth()*scale : "+bi.getWidth()*scale +"  bi.getHeight()*scale = "+ bi.getHeight()*scale);
 				
 			}
 		}
