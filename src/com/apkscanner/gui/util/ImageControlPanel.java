@@ -9,6 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.TexturePaint;
 import java.awt.event.AdjustmentEvent;
@@ -28,6 +29,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JViewport;
 import javax.swing.ScrollPaneConstants;
 
 import com.apkscanner.resource.Resource;
@@ -70,23 +72,24 @@ public class ImageControlPanel extends JPanel{
 		add(scroll, BorderLayout.CENTER);
 		add(ImageInfo, BorderLayout.SOUTH);
 		
-		scrollpanel.addMouseMotionListener(new MouseAdapter() {
+		scroll.getViewport().addMouseMotionListener(new MouseAdapter() {
 			public void mouseDragged(MouseEvent e) {
-				if(scroll.getHorizontalScrollBar().isVisible()) {
-					x += ( e.getX()- beforx);
-					beforx = e.getX();
-				}
-				if(scroll.getVerticalScrollBar().isVisible()) {
-					y += ( e.getY()- befory);
-					befory = e.getY();
-				}	
-				revalidate();
-				repaint();
+				   JViewport viewPort = scroll.getViewport();
+		           Point vpp = viewPort.getViewPosition();
+		           vpp.translate((int)((beforx-e.getX())*0.1), (int)((befory-e.getY())*0.1));
+		           
+		           Log.d("x = " + (int)(beforx-e.getX()) + "    y = " + (int)(befory-e.getY())); 
+		        		   
+		           
+		           scrollpanel.scrollRectToVisible(new Rectangle(vpp, viewPort.getSize()));					
+					
+					revalidate();
+					repaint();
 			}
 		});
 		
-		scrollpanel.addMouseListener(imagepanel);
-		scrollpanel.addMouseWheelListener(new MouseAdapter() {
+		scroll.getViewport().addMouseListener(imagepanel);
+		scroll.getViewport().addMouseWheelListener(new MouseAdapter() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 double delta = (-e.getPreciseWheelRotation() * 0.05 + 1);
@@ -98,7 +101,7 @@ public class ImageControlPanel extends JPanel{
                 revalidate();
                 repaint();
                 
-                Log.d("scale : " + scale);
+                Log.d("scale : " + scale);                
             }
         });
 
@@ -111,13 +114,13 @@ public class ImageControlPanel extends JPanel{
 	 
 	            if (e.getSource().equals(scroll.getVerticalScrollBar()) 
 	                    && vPos != oldVPos) {
-	                System.out.println("Vertical Scroll Bar changed position to "
+	                Log.d("Vertical Scroll Bar changed position to "
 	                        + scroll.getVerticalScrollBar().getValue());
 	                oldVPos = vPos;
 	            }
 	            if (e.getSource().equals(scroll.getHorizontalScrollBar())
 	                    && hPos != oldHPos) {
-	                System.out.println("Horizontal Scroll Bar changed position to "
+	                Log.d("Horizontal Scroll Bar changed position to "
 	                        + scroll.getHorizontalScrollBar().getValue());
 	                oldHPos = hPos;
 	            }
@@ -174,8 +177,8 @@ public class ImageControlPanel extends JPanel{
 			} else {
 				
 			}
-			Log.d("DefalutMinscale : " + DefalutMinscale);
-			Log.d("ViewPortsize.getWidth() : "+ViewPortsize.getWidth() +"  ViewPortsize.getHeight() = "+ ViewPortsize.getHeight());
+			//Log.d("DefalutMinscale : " + DefalutMinscale);
+			//Log.d("ViewPortsize.getWidth() : "+ViewPortsize.getWidth() +"  ViewPortsize.getHeight() = "+ ViewPortsize.getHeight());
 			Imagearea = new Dimension(x,y);
 		}
 		
@@ -228,13 +231,14 @@ public class ImageControlPanel extends JPanel{
 		        double tempx = Math.abs((int)(positionx));
 		        double tempy = Math.abs((int)(positiony));
 				setPreferredSize(Imagearea);
-				scrollRectToVisible(new Rectangle((int)tempx,(int)tempy,(int)(ViewPortsize.getWidth()),(int)(ViewPortsize.getHeight())));				
 				
 				//Log.d("tempx : "+tempx +" tempy = "+ tempy);
 				//Log.d("positionx : "+positionx +" positiony = "+ positiony);
-				Log.d("ViewPortsize.getWidth() : "+ViewPortsize.getWidth() +"  ViewPortsize.getHeight() = "+ ViewPortsize.getHeight());
+				//Log.d("ViewPortsize.getWidth() : "+ViewPortsize.getWidth() +"  ViewPortsize.getHeight() = "+ ViewPortsize.getHeight());
 				//Log.d("(int)(bi.getWidth()*scale : "+bi.getWidth()*scale +"  bi.getHeight()*scale = "+ bi.getHeight()*scale);
-				
+				//scrollRectToVisible(new Rectangle((int)(tempx+x),(int)(tempy+y),(int)(ViewPortsize.getWidth()),(int)(ViewPortsize.getHeight())));
+				//Log.d("tempx + x : "+(int)(tempx + x) +" tempy + y = "+ (int)(tempy+y));
+				//Log.d("scroll value : " + scroll.getVerticalScrollBar().getValue());
 			}
 		}
 		
@@ -259,6 +263,7 @@ public class ImageControlPanel extends JPanel{
 		@Override
 		public void mousePressed(java.awt.event.MouseEvent arg0) {
 			// TODO Auto-generated method stub
+			
 			beforx = arg0.getX();
 			befory = arg0.getY();
 			
