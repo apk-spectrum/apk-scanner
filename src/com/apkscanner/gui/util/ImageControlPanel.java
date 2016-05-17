@@ -82,8 +82,6 @@ public class ImageControlPanel extends JPanel{
 //		           Log.d("x = " + (int)(beforx-e.getX()) + "    y = " + (int)(befory-e.getY()));
 //		           scrollpanel.scrollRectToVisible(new Rectangle(vpp, viewPort.getSize()));					
 //					
-					Log.d("Dragg");
-				
 					int deltaX = beforx - e.getX();
 	                int deltaY = befory - e.getY();
 	
