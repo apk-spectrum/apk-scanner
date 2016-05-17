@@ -9,6 +9,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
@@ -27,11 +29,13 @@ import java.util.zip.ZipFile;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -50,20 +54,25 @@ import com.apkscanner.gui.util.ImageControlPanel;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 
 public class ImageResource extends JPanel implements TabDataObject, ActionListener
 {
 	private static final long serialVersionUID = -934921813626224616L;
     
 	private static final String CONTENT_IMAGE_VIEWER = "ImageViewer";
+	private static final String CONTENT_HTML_VIEWER = "HtmlViewer";
 	private static final String CONTENT_TEXT_VIEWER = "TextViewer";
 	
 	private JPanel contentPanel;
 	private ImageControlPanel imageViewerPanel;
-	private JHtmlEditorPane textViewerPanel;
+	private JHtmlEditorPane htmlViewer;
+	private JEditorPane textViewer;
 	
 	private String[] nameList = null;
 	private String apkFilePath = null;
+	private String appIconPath = null;
+	private String[] resourcesWithValue = null;
 
 	private JTree tree;
 	private DefaultMutableTreeNode top;
@@ -377,7 +386,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		}
 
 		if(resObj == null || resObj.isFolder) {
-			 ((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_TEXT_VIEWER);
+			 ((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_HTML_VIEWER);
 		} else {
 			switch(resObj.attr) {
 			case ResourceObject.ATTR_IMG:
@@ -389,9 +398,11 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 			case ResourceObject.ATTR_XML:
 			case ResourceObject.ATTR_TXT:
 			    setTextContentPanel(resObj);
-				 ((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_TEXT_VIEWER);
+				 ((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_HTML_VIEWER);
 				break;
 			default:
+			    setTextContentPanel(resObj);
+				 ((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_TEXT_VIEWER);
 				break;
 			}
 		}
@@ -435,13 +446,62 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 				e.printStackTrace();
 			}
 			break;
+		case ResourceObject.ATTR_ETC:
+			if(obj.path.equals("resources.arsc")) {
+				if(resourcesWithValue != null) {
+					new Thread(new Runnable() {
+						public void run()
+						{
+							Log.e("resourcesWithValue #0");
+							StringBuilder sb2 = new StringBuilder();
+							for(String s: resourcesWithValue) sb2.append(s+"\n");
+							Log.e("resourcesWithValue #1");
+							textViewer.setText(sb2.toString());
+							Log.e("resourcesWithValue #2");
+							textViewer.setCaretPosition(0);
+							Log.e("resourcesWithValue #3");
+						}
+					}).start();
+					return;
+				} else {
+					content = "lodding...";
+				}
+				break;
+			}
 		default:
+			content = "Unknown type";
 			break;
 		}
 		
 		if(content != null) {
-			textViewerPanel.setText("<pre>" + content.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("[\r]\n", "<br/>") + "</pre>");
-			textViewerPanel.setCaretPosition(0);
+			htmlViewer.setText("<pre>" + content + "</pre>");
+			//textViewerPanel.setText("<pre>" + content.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("[\r]\n", "<br/>") + "</pre>");
+			htmlViewer.setCaretPosition(0);
+		}
+    }
+    
+    private void openContent() {
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+                tree.getLastSelectedPathComponent();
+        if(node == null) return;
+		
+        ResourceObject resObj = null;
+		if(node.getUserObject() instanceof ResourceObject) {
+			resObj = (ResourceObject)node.getUserObject();
+		}
+		
+		if(resObj != null && !resObj.isFolder) {
+			switch(resObj.attr) {
+			case ResourceObject.ATTR_IMG:
+			case ResourceObject.ATTR_QMG:
+				break;
+			case ResourceObject.ATTR_AXML:
+			case ResourceObject.ATTR_XML:
+			case ResourceObject.ATTR_TXT:
+				break;
+			default:
+				break;
+			}
 		}
     }
     
@@ -493,9 +553,18 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     	
     	
         tree.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {    
-            	changeContent();
+            public void mousePressed(MouseEvent e) {
+				if(e.getButton() == MouseEvent.BUTTON1) {
+	            	changeContent();
+				}
             }
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+					openContent();
+				}
+			}
         });
         
         tree.addKeyListener(new KeyAdapter()
@@ -631,14 +700,31 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		style.append("font-size:" + font.getSize() + "pt;}");
 		style.append("#about a {text-decoration:none;}");
 
-		textViewerPanel = new JHtmlEditorPane();
-		textViewerPanel.setStyle(style.toString());
-		textViewerPanel.setBackground(Color.white);
-		textViewerPanel.setEditable(false);
-		textViewerPanel.setOpaque(true);
-		JScrollPane textViewerScroll = new JScrollPane(textViewerPanel);
+		htmlViewer = new JHtmlEditorPane();
+		htmlViewer.setStyle(style.toString());
+		htmlViewer.setBackground(Color.white);
+		htmlViewer.setEditable(false);
+		htmlViewer.setOpaque(true);
+		JScrollPane htmlViewerScroll = new JScrollPane(htmlViewer);
+		//htmlViewerScroll.getVerticalScrollBar().setUnitIncrement(arg0);
+		
+		textViewer = new JEditorPane();
+		textViewer.setEditable(false);
+		textViewer.setOpaque(true);
+		textViewer.setDoubleBuffered(true);
+		textViewer.setBackground(Color.white);
+		JScrollPane textViewerScroll = new JScrollPane(textViewer);
+		textViewerScroll.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+
+			@Override
+			public void adjustmentValueChanged(AdjustmentEvent arg0) {
+				Log.e("addAdjustmentListener " + arg0);
+			}
+			
+		});
 		
 		contentPanel = new JPanel(new CardLayout());
+		contentPanel.add(htmlViewerScroll, CONTENT_HTML_VIEWER);
 		contentPanel.add(imageViewerPanel, CONTENT_IMAGE_VIEWER);
 		contentPanel.add(textViewerScroll, CONTENT_TEXT_VIEWER);
 		
@@ -657,10 +743,22 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 
 		this.apkFilePath = apkInfo.filePath; 
 		
-		if(apkInfo.images == null) return;
-		
 		nameList = apkInfo.images;
 		setTreeForm(false);
+	}
+	
+	public void setExtraData(ApkInfo apkInfo)
+	{
+		if(apkInfo != null) {
+			resourcesWithValue = apkInfo.resourcesWithValue;
+			if(apkInfo.manifest.application.icons != null && apkInfo.manifest.application.icons.length > 0) {
+				appIconPath = apkInfo.manifest.application.icons[apkInfo.manifest.application.icons.length - 1].name;
+			}
+		} else {
+			appIconPath = null;
+			resourcesWithValue = null;
+		}
+		
 	}
     
 	@Override

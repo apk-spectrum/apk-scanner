@@ -32,4 +32,6 @@ public class ApkInfo
 	public String[] xmls = null;
 	public String[] librarys = null;
 	public String[] certificates = null;
+	
+	public String[] resourcesWithValue = null;
 }

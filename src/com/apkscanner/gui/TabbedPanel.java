@@ -104,6 +104,8 @@ public class TabbedPanel extends JTabbedPane
 			if(id == -1 || id == 0) {
 				((TabDataObject)(getComponent(0))).setData(apkInfo);
 				setSelectedIndex(0);
+
+				((ImageResource)(getComponent(3))).setExtraData(apkInfo);
 			}
 			if(id == -1 || id == 1) setPanelData(1, apkInfo.widgets.length, apkInfo);
 			if(id == -1 || id == 2) setPanelData(2, apkInfo.librarys.length, apkInfo);
@@ -114,11 +116,10 @@ public class TabbedPanel extends JTabbedPane
 				if(app.activityAlias != null) cnt += app.activityAlias.length;
 				if(app.receiver != null) cnt += app.receiver.length;
 				if(app.provider != null) cnt += app.provider.length;
+				if(app.service != null) cnt += app.service.length;
 				setPanelData(4, cnt, apkInfo);
 			}
 			if(id == -1 || id == 5) setPanelData(5, (apkInfo.certificates != null) ? apkInfo.certificates.length : 0, apkInfo);
-
-	        //if(apkInfo != null) MainUI.ProgressBarDlg.addProgress(25,"check resource(*.png)...\n");
 			if(id == -1 || id == 3) setPanelData(3, apkInfo.images.length, apkInfo);
 		} else {
 			for(int i = 1; i < 6; i++) {
