@@ -110,37 +110,37 @@ public class ImageControlPanel extends JPanel{
                 revalidate();
                 repaint();
                 
-                Log.d("scale : " + scale);                
+                //Log.d("scale : " + scale);                
             }
         });
 
-	    AdjustmentListener adjustmentListener = new AdjustmentListener() {
-	    	
-	        @Override
-	        public void adjustmentValueChanged(AdjustmentEvent e) {
-	            int vPos = scroll.getVerticalScrollBar().getValue(), 
-	                hPos = scroll.getHorizontalScrollBar().getValue();
-	 
-	            if (e.getSource().equals(scroll.getVerticalScrollBar()) 
-	                    && vPos != oldVPos) {
-	                Log.d("Vertical Scroll Bar changed position to "
-	                        + scroll.getVerticalScrollBar().getValue());
-	                oldVPos = vPos;
-	            }
-	            if (e.getSource().equals(scroll.getHorizontalScrollBar())
-	                    && hPos != oldHPos) {
-	                Log.d("Horizontal Scroll Bar changed position to "
-	                        + scroll.getHorizontalScrollBar().getValue());
-	                oldHPos = hPos;
-	            }
-	            
-	            imagepanel.repaint();
-	        }
-	    };	    
-	    scroll.getVerticalScrollBar().addAdjustmentListener(
-                adjustmentListener);
-	    scroll.getHorizontalScrollBar().addAdjustmentListener(
-                adjustmentListener);
+//	    AdjustmentListener adjustmentListener = new AdjustmentListener() {
+//	    	
+//	        @Override
+//	        public void adjustmentValueChanged(AdjustmentEvent e) {
+//	            int vPos = scroll.getVerticalScrollBar().getValue(), 
+//	                hPos = scroll.getHorizontalScrollBar().getValue();
+//	 
+//	            if (e.getSource().equals(scroll.getVerticalScrollBar()) 
+//	                    && vPos != oldVPos) {
+//	                Log.d("Vertical Scroll Bar changed position to "
+//	                        + scroll.getVerticalScrollBar().getValue());
+//	                oldVPos = vPos;
+//	            }
+//	            if (e.getSource().equals(scroll.getHorizontalScrollBar())
+//	                    && hPos != oldHPos) {
+//	                Log.d("Horizontal Scroll Bar changed position to "
+//	                        + scroll.getHorizontalScrollBar().getValue());
+//	                oldHPos = hPos;
+//	            }
+//	            
+//	            imagepanel.repaint();
+//	        }
+//	    };	    
+//	    scroll.getVerticalScrollBar().addAdjustmentListener(
+//                adjustmentListener);
+//	    scroll.getHorizontalScrollBar().addAdjustmentListener(
+//                adjustmentListener);
 	}
 
 	public void setImage(ImageIcon img) {		
