@@ -31,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
@@ -64,6 +65,7 @@ public class ImageControlPanel extends JPanel{
 		setLayout(new BorderLayout());
 		scrollpanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		scrollpanel.setBackground(Color.BLACK);
+		scrollpanel.setAutoscrolls(true);
 		
 		scroll = new JScrollPane(scrollpanel);
 		scroll.repaint();
@@ -72,24 +74,33 @@ public class ImageControlPanel extends JPanel{
 		add(scroll, BorderLayout.CENTER);
 		add(ImageInfo, BorderLayout.SOUTH);
 		
-		scroll.getViewport().addMouseMotionListener(new MouseAdapter() {
+		scrollpanel.addMouseMotionListener(new MouseAdapter() {
 			public void mouseDragged(MouseEvent e) {
-				   JViewport viewPort = scroll.getViewport();
-		           Point vpp = viewPort.getViewPosition();
-		           vpp.translate((int)((beforx-e.getX())*0.1), (int)((befory-e.getY())*0.1));
-		           
-		           Log.d("x = " + (int)(beforx-e.getX()) + "    y = " + (int)(befory-e.getY())); 
-		        		   
-		           
-		           scrollpanel.scrollRectToVisible(new Rectangle(vpp, viewPort.getSize()));					
-					
+//				   JViewport viewPort = scroll.getViewport();
+//		           Point vpp = viewPort.getViewPosition();
+//		           vpp.translate((int)((beforx-e.getX())*0.1), (int)((befory-e.getY())*0.1));
+//		           Log.d("x = " + (int)(beforx-e.getX()) + "    y = " + (int)(befory-e.getY()));
+//		           scrollpanel.scrollRectToVisible(new Rectangle(vpp, viewPort.getSize()));					
+//					
+					Log.d("Dragg");
+				
+					int deltaX = beforx - e.getX();
+	                int deltaY = befory - e.getY();
+	
+	                JViewport viewPort = (JViewport) SwingUtilities.getAncestorOfClass(JViewport.class, scrollpanel);
+	                Rectangle view = viewPort.getViewRect();
+	                view.x += deltaX;
+	                view.y += deltaY;
+	
+	                scrollpanel.scrollRectToVisible(view);
+				
 					revalidate();
 					repaint();
 			}
 		});
 		
-		scroll.getViewport().addMouseListener(imagepanel);
-		scroll.getViewport().addMouseWheelListener(new MouseAdapter() {
+		scrollpanel.addMouseListener(imagepanel);
+		scrollpanel.addMouseWheelListener(new MouseAdapter() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 double delta = (-e.getPreciseWheelRotation() * 0.05 + 1);
