@@ -12,6 +12,8 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.TexturePaint;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseAdapter;
@@ -25,18 +27,21 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
+import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
-public class ImageControlPanel extends JPanel{
+public class ImageControlPanel extends JPanel implements ActionListener{
 	private static final long serialVersionUID = -391185152837196160L;
 	
 	JScrollPane scroll;
@@ -54,10 +59,13 @@ public class ImageControlPanel extends JPanel{
 	private float scale = 1;
 	private float DefalutMinscale =1;
 
+	Image imageBackground;
 	
 	public ImageControlPanel() {
 		
 		imagepanel = new ImageViewPanel();
+		JPanel imageInfoPanel = new JPanel();
+		
 		ImageInfo = new JLabel("");
 		
 		scrollpanel = new JPanel(new GridBagLayout());
@@ -71,9 +79,26 @@ public class ImageControlPanel extends JPanel{
 		scroll.repaint();
 		scrollpanel.add(imagepanel);
 		
-		add(scroll, BorderLayout.CENTER);
-		add(ImageInfo, BorderLayout.SOUTH);
+		imageInfoPanel.add(ImageInfo);
 		
+	    JRadioButton MonoWhiteRadioButton  = new JRadioButton("White");
+	    MonoWhiteRadioButton.addActionListener(this);
+	    
+	    JRadioButton MonoDarkRadioButton  = new JRadioButton("Dark");
+	    MonoDarkRadioButton.addActionListener(this);
+		
+	    imageInfoPanel.add(MonoWhiteRadioButton);
+	    imageInfoPanel.add(MonoDarkRadioButton);
+	    
+        ButtonGroup group = new ButtonGroup();
+        group.add(MonoWhiteRadioButton);
+        group.add(MonoDarkRadioButton);
+        
+        MonoWhiteRadioButton.setSelected(true);
+		
+		add(scroll, BorderLayout.CENTER);
+		add(imageInfoPanel, BorderLayout.SOUTH);
+				
 		scrollpanel.addMouseMotionListener(new MouseAdapter() {
 			public void mouseDragged(MouseEvent e) {
 //				   JViewport viewPort = scroll.getViewport();
@@ -141,6 +166,9 @@ public class ImageControlPanel extends JPanel{
 //                adjustmentListener);
 //	    scroll.getHorizontalScrollBar().addAdjustmentListener(
 //                adjustmentListener);
+		
+		imageBackground = Resource.IMG_RESOURCE_IMG_BACKGROUND.getImageIcon().getImage();
+		
 	}
 
 	public void setImage(ImageIcon img) {		
@@ -161,7 +189,7 @@ public class ImageControlPanel extends JPanel{
 		
 		public ImageViewPanel() {
 			setBackground(Color.white);		
-
+			
 		}
 		public void setImage(ImageIcon img) {
 			Image image = img.getImage();
@@ -208,7 +236,7 @@ public class ImageControlPanel extends JPanel{
 				//at.translate(positionx, positiony);
 				
 				TexturePaint paint;
-			    Image imageBackground = Resource.IMG_RESOURCE_IMG_BACKGROUND.getImageIcon().getImage();
+			    
 			    bgbi = new BufferedImage(imageBackground.getWidth(this), imageBackground.getHeight(this), BufferedImage.TYPE_INT_ARGB);
 			    bgbi.createGraphics().drawImage(imageBackground, 0, 0, this);
 			    
@@ -285,5 +313,17 @@ public class ImageControlPanel extends JPanel{
 			this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			
 		}
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		// TODO Auto-generated method stub
+		boolean isWhiteMono = arg0.getActionCommand().equals("White");
+		if(isWhiteMono) {
+			imageBackground = Resource.IMG_RESOURCE_IMG_BACKGROUND.getImageIcon().getImage();
+		} else {
+			imageBackground = Resource.IMG_RESOURCE_IMG_BACKGROUND_DARK.getImageIcon().getImage();
+		}
+		repaint();
 	}
 }
