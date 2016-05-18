@@ -18,11 +18,15 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -35,9 +39,14 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -49,6 +58,7 @@ import javax.swing.tree.TreeSelectionModel;
 import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
+import com.apkscanner.gui.tabpanels.Widget.MultiLineCellRenderer;
 import com.apkscanner.gui.util.FilteredTreeModel;
 import com.apkscanner.gui.util.ImageControlPanel;
 import com.apkscanner.gui.util.ImageScaler;
@@ -68,6 +78,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	private ImageControlPanel imageViewerPanel;
 	private JHtmlEditorPane htmlViewer;
 	private JEditorPane textViewer;
+	private JTable textTableViewer;
 	
 	private String[] nameList = null;
 	private String apkFilePath = null;
@@ -192,6 +203,48 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 			}
 		    return str;
 		}
+	}
+	
+	private class StringListTableModel extends AbstractTableModel {
+
+		private static final long serialVersionUID = 1473513094076687257L;
+		private String[] strings;
+
+		StringListTableModel(String[] strings) {
+			this.strings = strings;
+		}
+		
+	    @Override
+	    public int getColumnCount() {
+	        return 2;
+	    }
+
+	    @Override
+	    public int getRowCount() {
+	        return strings.length;
+	    }
+
+	    @Override
+	    public String getColumnName(int columnIndex) {
+	        switch (columnIndex) {
+	        case 0:
+	            return "#";
+	        case 1:
+	            return "Name";
+	        }
+	        return "";
+	    }
+
+	    @Override
+	    public Object getValueAt(int rowIndex, int columnIndex) {
+	        switch (columnIndex) {
+	            case 0:                
+	                return String.format("%3d", rowIndex);
+	            case 1:
+	            	return strings[rowIndex];
+	        }            
+	        return "";
+	    }
 	}
 	
 	public ImageResource()
@@ -449,6 +502,11 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		case ResourceObject.ATTR_ETC:
 			if(obj.path.equals("resources.arsc")) {
 				if(resourcesWithValue != null) {
+					textTableViewer.setModel(new StringListTableModel(resourcesWithValue));
+					textTableViewer.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+					//textTableViewer.getColumnModel().getColumn(0).setPreferredWidth(50);
+					//textTableViewer.getColumnModel().getColumn(1).setPreferredWidth(300);
+					/*
 					new Thread(new Runnable() {
 						public void run()
 						{
@@ -462,6 +520,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 							Log.e("resourcesWithValue #3");
 						}
 					}).start();
+					*/
 					return;
 				} else {
 					content = "lodding...";
@@ -714,19 +773,25 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		textViewer.setDoubleBuffered(true);
 		textViewer.setBackground(Color.white);
 		JScrollPane textViewerScroll = new JScrollPane(textViewer);
-		textViewerScroll.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
 
-			@Override
-			public void adjustmentValueChanged(AdjustmentEvent arg0) {
-				Log.e("addAdjustmentListener " + arg0);
-			}
-			
-		});
+		//textTableModel = new StringListTableModel();
+		textTableViewer = new JTable();
+		textTableViewer.setShowHorizontalLines(false);
+		textTableViewer.setTableHeader(null);
+		textTableViewer.setCellSelectionEnabled(true);
+		textTableViewer.setRowSelectionAllowed(false);
+		textTableViewer.setColumnSelectionAllowed(false);
+		textTableViewer.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		//textTableViewer.setDefaultRenderer(String.class, new MultiLineCellRenderer());
+		
+
+		JScrollPane textTableScroll = new JScrollPane(textTableViewer);
+
 		
 		contentPanel = new JPanel(new CardLayout());
 		contentPanel.add(htmlViewerScroll, CONTENT_HTML_VIEWER);
 		contentPanel.add(imageViewerPanel, CONTENT_IMAGE_VIEWER);
-		contentPanel.add(textViewerScroll, CONTENT_TEXT_VIEWER);
+		contentPanel.add(textTableScroll, CONTENT_TEXT_VIEWER);
 		
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.setLeftComponent(TreePanel);
