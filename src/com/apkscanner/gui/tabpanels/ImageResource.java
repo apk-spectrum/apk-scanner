@@ -20,10 +20,12 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.instrument.Instrumentation;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -59,12 +61,15 @@ import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.gui.tabpanels.Widget.MultiLineCellRenderer;
+import com.apkscanner.gui.util.DynamicTree;
 import com.apkscanner.gui.util.FilteredTreeModel;
 import com.apkscanner.gui.util.ImageControlPanel;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
+
+import net.sourceforge.sizeof.SizeOf;
 
 public class ImageResource extends JPanel implements TabDataObject, ActionListener
 {
@@ -87,11 +92,14 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 
 	private JTree tree;
 	private DefaultMutableTreeNode top;
-	private DefaultMutableTreeNode[] eachTypeNodes;
+	
 	
 	private FilteredTreeModel filteredModel;
 	private JTextField textField;
 	private Boolean firstClick=false;
+	
+	
+	long size = 0;
 	
 	public enum ResourceType{
 		ANIMATION(0),
@@ -255,7 +263,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     private void makeTreeForm() {
     	top = new DefaultMutableTreeNode("Loading...");
     	tree = new JTree(new FilteredTreeModel(new DefaultTreeModel(top)));
-    	tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);    	
+    	tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     }
     
 	private String getOnlyFilename(String str) {
@@ -353,6 +361,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     	
     	ArrayList<DefaultMutableTreeNode> topFiles = new ArrayList<DefaultMutableTreeNode>();
 
+    	DefaultMutableTreeNode[] eachTypeNodes;
     	eachTypeNodes = new DefaultMutableTreeNode[ResourceType.COUNT.getInt()];
     	for(int i=0; i<this.nameList.length; i++) {
     		if(this.nameList[i].endsWith("/")
@@ -364,7 +373,6 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     			topFiles.add(new DefaultMutableTreeNode(resObj));
     			continue;
     		}
-    		
     		DefaultMutableTreeNode typeNode = eachTypeNodes[resObj.type.getInt()];
 
 			if (typeNode == null) {
@@ -394,6 +402,8 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
    			}
     	}
     	
+
+    	
     	if(eachTypeNodes[ResourceType.ETC.getInt()] != null) {
     		top.add(eachTypeNodes[ResourceType.ETC.getInt()]);
     	}
@@ -403,6 +413,13 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     	}
     	
     	expandOrCollapsePath(tree, new TreePath(top.getPath()),1,0, true);
+    	
+//    	SizeOf.skipStaticField(true); //java.sizeOf will not compute static fields
+//		SizeOf.skipFinalField(true); //java.sizeOf will not compute final fields
+//		SizeOf.skipFlyweightObject(true); //java.sizeOf will not compute well-known flyweight objects
+//		Log.d(""+SizeOf.deepSizeOf(tree)); //this will print the object size in bytes
+		
+    	//topFiles.clear();
     }
     
     public static void expandOrCollapsePath (JTree tree,TreePath treePath,int level,int currentLevel,boolean expand) {
@@ -471,6 +488,9 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		try {
 			imageViewerPanel.setImage(new ImageIcon( new URL(imgPath)));
 			imageViewerPanel.repaint();
+			
+
+			
 		} catch (MalformedURLException e1) {
 			e1.printStackTrace();
 		} 
@@ -605,7 +625,8 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 						}
     				}                	
                 	setIcon(tempIcon);
-                }             
+                }
+                
                 return c;
             }
         });
@@ -730,7 +751,13 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
         group.add(ForderModeRadioButton);
         // End Tree navigator ----------
 
-		JScrollPane treeScroll = new JScrollPane(tree);
+		
+		
+		DynamicTree DynamicForTree = new DynamicTree();
+		
+		JScrollPane treeScroll = DynamicForTree.MakeScrollPane(tree);
+				
+		
 		treeScroll.setPreferredSize(new Dimension(300, 400));
 		treeScroll.repaint();
 		
@@ -835,5 +862,10 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	public void actionPerformed(ActionEvent arg0) {
 		boolean isFolderMode = !arg0.getActionCommand().equals("Resource");
 		setTreeForm(isFolderMode);
+		
+		Runtime r = Runtime.getRuntime();
+		DecimalFormat format = new DecimalFormat("###,###,###.##");
+		Log.d("Total Memony " + format.format(r.totalMemory()));
+		Log.d("Object size" +size);
 	}
 }
