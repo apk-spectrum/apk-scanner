@@ -2,6 +2,7 @@ package com.apkscanner.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,8 +46,10 @@ public class ConsolCmd
     	}
 
 		try {
-			Process oProcess = new ProcessBuilder(cmd).redirectErrorStream(true).start();
-		    BufferedReader stdOut = new BufferedReader(new InputStreamReader(oProcess.getInputStream()/*, encoding*/));
+			Process process = new ProcessBuilder(cmd).redirectErrorStream(true).start();
+			InputStream inputStream = process.getInputStream();
+			InputStreamReader inputStreamReader = new InputStreamReader(inputStream/*, encoding*/);
+		    BufferedReader stdOut = new BufferedReader(inputStreamReader);
 		    while ((s = stdOut.readLine()) != null) {
 		    	if(showLog) Log.i(s);
 		    	if(observer != null) {
@@ -55,12 +58,16 @@ public class ConsolCmd
 		    	buffer.add(s);
 		    }
 		    stdOut.close();
+		    inputStreamReader.close();
+		    inputStream.close();
+		    process.destroy();
 		} catch (IOException e) { // 에러 처리
 		      Log.e("에러! 외부 명령 실행에 실패했습니다.\n" + e.getMessage());		      
 		      System.exit(-1);
 	    }
-
-		return buffer.toArray(new String[0]);
+		
+		String[] ret = buffer.toArray(new String[0]);
+		return ret;
 	}
 
 	static public String[][] exc(String[][] cmd)

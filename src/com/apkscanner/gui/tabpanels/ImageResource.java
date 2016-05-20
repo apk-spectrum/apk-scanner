@@ -7,10 +7,9 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
@@ -18,15 +17,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -40,13 +35,10 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -58,13 +50,11 @@ import javax.swing.tree.TreeSelectionModel;
 import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
-import com.apkscanner.gui.tabpanels.Widget.MultiLineCellRenderer;
 import com.apkscanner.gui.util.FilteredTreeModel;
 import com.apkscanner.gui.util.ImageControlPanel;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.Log;
 
 public class ImageResource extends JPanel implements TabDataObject, ActionListener
 {
@@ -348,8 +338,8 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     	tree.removeAll();
     	
     	top = new DefaultMutableTreeNode(getOnlyFilename(this.apkFilePath));
-    	FilteredTreeModel model = new FilteredTreeModel(new DefaultTreeModel(top));
-    	tree.setModel(model);
+    	//FilteredTreeModel model = new FilteredTreeModel(new DefaultTreeModel(top));
+    	tree.setModel(new DefaultTreeModel(top));
     	
     	ArrayList<DefaultMutableTreeNode> topFiles = new ArrayList<DefaultMutableTreeNode>();
 
@@ -565,6 +555,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     }
     
     private void TreeInit() {
+    	///*
         tree.setCellRenderer(new DefaultTreeCellRenderer() {
 			private static final long serialVersionUID = 6248791058116909814L;
 			private ImageIcon iconApk = Resource.IMG_TREE_APK.getImageIcon();
@@ -589,26 +580,28 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
                 
                 ResourceObject tempObject = (ResourceObject)nodo.getUserObject();                
                 
-                if(tempObject.isFolder) {
-                	setIcon(iconFolder);
-                } else {
+                if(!tempObject.isFolder) {
                 	ResourceObject temp = (ResourceObject)nodo.getUserObject();
                 	String jarPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/";
+                	Image tempImage = null;
                 	ImageIcon tempIcon = null;
     				if(temp.attr == ResourceObject.ATTR_QMG) {
-    					tempIcon = new ImageIcon(ImageScaler.getScaledImage(Resource.IMG_QMG_IMAGE_ICON.getImageIcon(),32,32));
+    					tempImage = ImageScaler.getScaledImage(Resource.IMG_QMG_IMAGE_ICON.getImageIcon(),32,32);
     				} else {
     					try {
-							tempIcon = new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(new URL(jarPath+temp.path)),32,32));
+    						tempImage = ImageScaler.getScaledImage(new ImageIcon(new URL(jarPath+temp.path)),32,32);
 						} catch (MalformedURLException e) {
 							e.printStackTrace();
 						}
-    				}                	
+    				}
+					tempIcon = new ImageIcon(tempImage);
+					tempImage.flush();
                 	setIcon(tempIcon);
                 }             
                 return c;
             }
         });
+        //*/
     	
     	
         tree.addMouseListener(new MouseAdapter() {
@@ -655,6 +648,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     
     private void forselectionTree () {
         DefaultMutableTreeNode currentNode = top.getNextNode();
+        /*
         do {
         		if(currentNode.getLevel()==3 && filteredModel.getChildCount(currentNode) > 0) {
     		        	
@@ -667,6 +661,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	           currentNode = currentNode.getNextNode();
            }
         while (currentNode != null);
+        */
     }
     
     
@@ -690,7 +685,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
             	
                 if(!(ke.getKeyChar()==27||ke.getKeyChar()==65535))//this section will execute only when user is editing the JTextField
                 {
-                	makefilter (textField.getText());
+                	//makefilter (textField.getText());
                 }
             }
         });

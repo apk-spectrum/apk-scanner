@@ -86,7 +86,7 @@ public class AaptManifestReader
 	
 	public void readBasicInfo()
 	{
-
+		if(manifestPath == null) return;
 		AaptXmlTreeNode tagNode = manifestPath.getNode("/manifest"); 
 		// package
 		if(tagNode != null) {

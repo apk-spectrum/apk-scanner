@@ -31,7 +31,7 @@ public class AaptWrapper
 
 		static public String[] getPermissions(String apkFilePath)
 		{
-			return ConsolCmd.exc(new String[] {aaptCmd, "dump", "strings", apkFilePath});
+			return ConsolCmd.exc(new String[] {aaptCmd, "dump", "permissions", apkFilePath});
 		}
 
 		static public String[] getResources(String apkFilePath, boolean includeResourceValues)
