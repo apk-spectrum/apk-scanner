@@ -509,7 +509,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		}
 		
 		if(content != null) {
-			htmlViewer.setText("<pre>" + content + "</pre>");
+			htmlViewer.setText("<pre>" + content.replaceAll("<", "&lt;").replaceAll(">", "&gt;") + "</pre>");
 			//textViewerPanel.setText("<pre>" + content.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("[\r]\n", "<br/>") + "</pre>");
 			htmlViewer.setCaretPosition(0);
 			((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_HTML_VIEWER);
@@ -605,8 +605,9 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 								e1.printStackTrace();
 							}
 	                		break;
+	                	case ResourceObject.ATTR_AXML:
 	                	case ResourceObject.ATTR_XML:
-	                			tempImage = ImageScaler.getScaledImage(Resource.IMG_RESOURCE_TREE_XML.getImageIcon(),32,32);
+	                			tempImage = ImageScaler.getScaledImage(Resource.IMG_RESOURCE_TREE_XML.getImageIcon(),16,32);
 	                		break;
 	                	case ResourceObject.ATTR_QMG:
 	                		tempImage = ImageScaler.getScaledImage(Resource.IMG_QMG_IMAGE_ICON.getImageIcon(),32,32);
