@@ -557,15 +557,29 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	                	ResourceObject temp = (ResourceObject)nodo.getUserObject();
 	                	String jarPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/";
 	                	Image tempImage = null;
-	    				if(temp.attr == ResourceObject.ATTR_QMG) {
-	    					tempImage = ImageScaler.getScaledImage(Resource.IMG_QMG_IMAGE_ICON.getImageIcon(),32,32);
-	    				} else if(temp.attr == ResourceObject.ATTR_IMG) {
-	    					try {
-	    						tempImage = ImageScaler.getScaledImage(new ImageIcon(new URL(jarPath+temp.path)),32,32);
-							} catch (MalformedURLException e) {
-								e.printStackTrace();
+
+	                	switch(temp.attr) {
+	                	case ResourceObject.ATTR_IMG:
+	                		try {
+								tempImage = ImageScaler.getScaledImage(new ImageIcon(new URL(jarPath+temp.path)),32,32);
+							} catch (MalformedURLException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
 							}
-	    				}
+	                		break;
+	                	case ResourceObject.ATTR_XML:
+	                			tempImage = ImageScaler.getScaledImage(Resource.IMG_RESOURCE_TREE_XML.getImageIcon(),32,32);
+	                		break;
+	                	case ResourceObject.ATTR_QMG:
+	                		tempImage = ImageScaler.getScaledImage(Resource.IMG_QMG_IMAGE_ICON.getImageIcon(),32,32);
+	                		break;
+	                	case ResourceObject.ATTR_TXT:
+	                		tempImage = null;
+	                		break;
+	                		
+	                	default :
+	                	}
+	    				
 	    				if(tempImage != null) {
 		    				ImageIcon tempIcon = new ImageIcon(tempImage);
 							tempImage.flush();
