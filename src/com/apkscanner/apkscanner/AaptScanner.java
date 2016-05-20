@@ -74,7 +74,6 @@ public class AaptScanner extends ApkScannerStub
 						}
 						Log.i("I: read aapt dump resources...");
 						resourcesWithValue = AaptWrapper.Dump.getResources(apkInfo.filePath, true);
-						apkInfo.resourcesWithValue = resourcesWithValue;
 						manifestReader.setResources(resourcesWithValue);
 						Log.i("resources completed");
 					}
@@ -83,7 +82,6 @@ public class AaptScanner extends ApkScannerStub
 			try {
 				resouresSync.wait();
 				resouresSync.notify();
-
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -101,12 +99,12 @@ public class AaptScanner extends ApkScannerStub
 							e.printStackTrace();
 						}
 						Log.i("I: getDump AndroidManifest...");
-						//androidManifest = AaptWrapper.Dump.getXmltree(apkInfo.filePath, new String[] { "AndroidManifest.xml" });
+						androidManifest = AaptWrapper.Dump.getXmltree(apkInfo.filePath, new String[] { "AndroidManifest.xml" });
 	
 						Log.i("I: createAaptXmlTree...");
 						manifestPath = new AaptXmlTreePath();
-						//manifestPath.createAaptXmlTree(androidManifest);
-						//manifestReader.setManifestPath(manifestPath);
+						manifestPath.createAaptXmlTree(androidManifest);
+						manifestReader.setManifestPath(manifestPath);
 						Log.i("xmlTreeSync completed");
 					}
 				}
@@ -131,7 +129,7 @@ public class AaptScanner extends ApkScannerStub
 							e.printStackTrace();
 						}
 				        Log.i("read signatures...");
-				        //apkInfo.certificates = solveCert();
+				        apkInfo.certificates = solveCert();
 						stateChanged(Status.CERT_COMPLETED);
 						Log.i("read signatures completed...");
 					}
@@ -165,7 +163,7 @@ public class AaptScanner extends ApkScannerStub
 									e.printStackTrace();
 								}
 								Log.i("read permissions start");
-								//manifestReader.readPermissions();
+								manifestReader.readPermissions();
 								Log.i("read permissions completed");
 							}
 						}
@@ -185,7 +183,7 @@ public class AaptScanner extends ApkScannerStub
 				Log.i("I: read basic info...");
 				
 				manifestReader.readBasicInfo();
-				/*
+				
 				ResourceInfo[] icons = apkInfo.manifest.application.icons;
 				if(icons != null & icons.length > 0) {
 					String jarPath = "jar:file:" + apkInfo.filePath.replaceAll("#", "%23") + "!/";
@@ -218,7 +216,6 @@ public class AaptScanner extends ApkScannerStub
 					icons = new ResourceInfo[] { new ResourceInfo(Resource.IMG_DEF_APP_ICON.getPath()) };
 				}
 				apkInfo.manifest.application.icons = icons;
-				*/
 		        				
 				Log.i("read basic info completed");
 		        synchronized(SignSync) {
@@ -235,11 +232,11 @@ public class AaptScanner extends ApkScannerStub
 					{
 				        // Activity/Service/Receiver/provider intent-filter
 						Log.i("I: read activitys...");
-				        //manifestReader.readActivityInfo();
-				        //manifestReader.readActivityAliasInfo();
-				        //manifestReader.readServiceInfo();
-				        //manifestReader.readReceiverInfo();
-				        //manifestReader.readProviderInfo();
+				        manifestReader.readActivityInfo();
+				        manifestReader.readActivityAliasInfo();
+				        manifestReader.readServiceInfo();
+				        manifestReader.readReceiverInfo();
+				        manifestReader.readProviderInfo();
 				        stateChanged(Status.ACTIVITY_COMPLETED);
 					}
 				}).run();
@@ -250,7 +247,7 @@ public class AaptScanner extends ApkScannerStub
 				        // widget
 						Log.i("I: read widgets...");
 
-				        //apkInfo.widgets = manifestReader.getWidgetList(apkInfo.filePath);
+				        apkInfo.widgets = manifestReader.getWidgetList(apkInfo.filePath);
 				        stateChanged(Status.WIDGET_COMPLETED);
 					}
 				}).run();
@@ -268,7 +265,7 @@ public class AaptScanner extends ApkScannerStub
 			public void run()
 			{
 				Log.i("I: read Imanges list...");
-		        //apkInfo.images = ZipFileUtil.findFiles(apkInfo.filePath, null, null);
+		        apkInfo.images = ZipFileUtil.findFiles(apkInfo.filePath, null, null);
 		        stateChanged(Status.IMAGE_COMPLETED);
 			}
 		}).start();
@@ -277,7 +274,7 @@ public class AaptScanner extends ApkScannerStub
 			public void run()
 			{
 				Log.i("I: read lib list...");
-		        //apkInfo.librarys = ZipFileUtil.findFiles(apkInfo.filePath, ".so", null);
+		        apkInfo.librarys = ZipFileUtil.findFiles(apkInfo.filePath, ".so", null);
 		        stateChanged(Status.LIB_COMPLETED);
 			}
 		}).start();
