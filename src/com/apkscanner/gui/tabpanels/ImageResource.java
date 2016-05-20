@@ -206,7 +206,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		
 	    @Override
 	    public int getColumnCount() {
-	        return 2;
+	        return 1;
 	    }
 
 	    @Override
@@ -218,7 +218,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	    public String getColumnName(int columnIndex) {
 	        switch (columnIndex) {
 	        case 0:
-	            return "#";
+	            //return "#";
 	        case 1:
 	            return "Name";
 	        }
@@ -229,7 +229,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	    public Object getValueAt(int rowIndex, int columnIndex) {
 	        switch (columnIndex) {
 	            case 0:                
-	                return String.format("%3d", rowIndex);
+	                //return String.format("%3d", rowIndex);
 	            case 1:
 	            	return strings[rowIndex];
 	        }            

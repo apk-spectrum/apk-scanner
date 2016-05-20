@@ -74,6 +74,7 @@ public class AaptScanner extends ApkScannerStub
 						}
 						Log.i("I: read aapt dump resources...");
 						resourcesWithValue = AaptWrapper.Dump.getResources(apkInfo.filePath, true);
+						apkInfo.resourcesWithValue = resourcesWithValue;
 						manifestReader.setResources(resourcesWithValue);
 						Log.i("resources completed");
 					}
