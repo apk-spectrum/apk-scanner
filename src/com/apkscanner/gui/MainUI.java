@@ -440,7 +440,7 @@ public class MainUI extends JFrame
 			String editor = (String)Resource.PROP_EDITOR.getData();
 			if(editor == null) {
 				if(System.getProperty("os.name").indexOf("Window") >-1) {
-					editor = "notepad";
+					editor = "explorer";
 				} else {  //for linux
 					editor = "gedit";
 				}

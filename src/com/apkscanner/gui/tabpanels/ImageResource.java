@@ -17,6 +17,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -47,6 +48,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import com.apkscanner.apkinfo.ApkInfo;
+import com.apkscanner.apkscanner.AaptScanner;
 import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.gui.util.FilteredTreeModel;
@@ -54,6 +56,9 @@ import com.apkscanner.gui.util.ImageControlPanel;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.FileUtil;
+import com.apkscanner.util.Log;
+import com.apkscanner.util.ZipFileUtil;
 
 public class ImageResource extends JPanel implements TabDataObject, ActionListener
 {
@@ -70,6 +75,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	
 	private String[] nameList = null;
 	private String apkFilePath = null;
+	private String tempWorkPath = null;
 	//private String appIconPath = null;
 	private String[] resourcesWithValue = null;
 
@@ -486,7 +492,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 			}
 			break;
 		case ResourceObject.ATTR_ETC:
-			if(obj.path.equals("resources.arsc")) {
+			if("resources.arsc".equals(obj.path)) {
 				if(resourcesWithValue != null) {
 					textTableViewer.setModel(new StringListTableModel(resourcesWithValue));
 					textTableViewer.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
@@ -513,26 +519,58 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     private void openContent() {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)
                 tree.getLastSelectedPathComponent();
-        if(node == null) return;
+        if(node == null 
+        		|| !(node.getUserObject() instanceof ResourceObject)) {
+        	return;
+        }
 		
-        ResourceObject resObj = null;
-		if(node.getUserObject() instanceof ResourceObject) {
-			resObj = (ResourceObject)node.getUserObject();
+        ResourceObject resObj = (ResourceObject)node.getUserObject();
+        String resPath = tempWorkPath + File.separator + resObj.path.replace("/", File.separator);
+		File resFile = new File(resPath);
+		if(!resFile.exists()) {
+			if(!resFile.getParentFile().exists()) {
+				if(FileUtil.makeFolder(resFile.getParentFile().getAbsolutePath())) {
+					Log.d("sucess make folder");
+				}
+			}
 		}
 		
 		if(resObj != null && !resObj.isFolder) {
-			switch(resObj.attr) {
-			case ResourceObject.ATTR_IMG:
-			case ResourceObject.ATTR_QMG:
-				break;
-			case ResourceObject.ATTR_AXML:
-			case ResourceObject.ATTR_XML:
-			case ResourceObject.ATTR_TXT:
-				break;
-			default:
-				break;
+			String[] convStrings = null;
+			if(resObj.attr == ResourceObject.ATTR_AXML) {
+				convStrings = AaptWrapper.Dump.getXmltree(apkFilePath, new String[] {resObj.path});
+			} else if("resources.arsc".equals(resObj.path)) {
+				convStrings = resourcesWithValue;
+				resPath += ".txt";
+			} else if(resObj.path.endsWith(".dex")) {
+				
+			} else {
+				ZipFileUtil.unZip(apkFilePath, resObj.path, resPath);
+			}
+			
+			if(convStrings != null) {
+				StringBuilder sb = new StringBuilder();
+				for(String s: convStrings) sb.append(s+"\n");
+				try {
+					FileWriter fw = new FileWriter(new File(resPath));
+					fw.write(sb.toString());
+					fw.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
+		
+		String openner;
+		if(System.getProperty("os.name").indexOf("Window") >-1) {
+			openner = "explorer";
+		} else {  //for linux
+			openner = "xdg-open";
+		}
+
+		try {
+			new ProcessBuilder(openner, resPath).start();
+		} catch (IOException e1) { }
     }
     
     private void TreeInit() {
@@ -780,6 +818,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 			initialize();
 
 		this.apkFilePath = apkInfo.filePath; 
+		this.tempWorkPath = apkInfo.tempWorkPath;
 		
 		nameList = apkInfo.images;
 		setTreeForm(false);
