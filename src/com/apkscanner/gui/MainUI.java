@@ -185,8 +185,6 @@ public class MainUI extends JFrame
 		// Shortcut key event processing
 		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		ky.addKeyEventDispatcher(new UIEventHandler());
-		
-	
 	}
 	
 	private class ApkScannerListener implements ApkScannerStub.StatusListener
