@@ -19,7 +19,8 @@ import com.apkscanner.util.Log;
 
 public class DynamicTreeLoading extends JFrame
 {
-     //STATICS
+	private static final long serialVersionUID = 4549528078290137966L;
+	//STATICS
      private static final int NUM_OF_NODES = 20;
      private static final int SCROLLPANE_WIDTH = 200;
      private static final int SCROLLPANE_HEIGHT = 500;
