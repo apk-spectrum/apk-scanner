@@ -48,7 +48,6 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import com.apkscanner.apkinfo.ApkInfo;
-import com.apkscanner.apkscanner.AaptScanner;
 import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.gui.util.FilteredTreeModel;
@@ -66,7 +65,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     
 	private static final String CONTENT_IMAGE_VIEWER = "ImageViewer";
 	private static final String CONTENT_HTML_VIEWER = "HtmlViewer";
-	private static final String CONTENT_TEXT_VIEWER = "TextViewer";
+	private static final String CONTENT_TABLE_VIEWER = "TableViewer";
 	
 	private JPanel contentPanel;
 	private ImageControlPanel imageViewerPanel;
@@ -86,6 +85,8 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	private FilteredTreeModel filteredModel;
 	private JTextField textField;
 	private Boolean firstClick=false;
+	
+	private ResourceObject currentSelectedObj = null;
 	
 	public enum ResourceType{
 		ANIMATION(0),
@@ -169,7 +170,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 			} else if(path.endsWith(".qmg")) {
 				attr = ATTR_QMG;
 			} else if(path.endsWith(".txt") || path.endsWith(".mk") 
-					|| path.endsWith(".html") || path.endsWith(".js") || path.endsWith(".csc") || path.endsWith(".json")
+					|| path.endsWith(".html") || path.endsWith(".js") || path.endsWith(".css") || path.endsWith(".json")
 					|| path.endsWith(".props") || path.endsWith(".properties")) {
 				attr = ATTR_TXT;
 			} else {
@@ -422,7 +423,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
       }
    }
 
-    private void changeContent() {
+    private void selectContent() {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)
                 tree.getLastSelectedPathComponent();
         if(node == null) return;
@@ -431,15 +432,21 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		if(node.getUserObject() instanceof ResourceObject) {
 			resObj = (ResourceObject)node.getUserObject();
 		}
+		
+		if(resObj != null && resObj == currentSelectedObj) {
+			Log.v("select same object");
+			return;
+		}
+		currentSelectedObj = resObj;
 
 		if(resObj == null || resObj.isFolder) {
-			 ((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_HTML_VIEWER);
+			htmlViewer.setText("");
+			((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_HTML_VIEWER);
 		} else {
 			switch(resObj.attr) {
 			case ResourceObject.ATTR_IMG:
 			case ResourceObject.ATTR_QMG:
 				drawImageOnPanel(resObj);
-				 ((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_IMAGE_VIEWER);
 				break;
 			case ResourceObject.ATTR_AXML:
 			case ResourceObject.ATTR_XML:
@@ -463,6 +470,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		try {
 			imageViewerPanel.setImage(new ImageIcon( new URL(imgPath)));
 			imageViewerPanel.repaint();
+			 ((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_IMAGE_VIEWER);
 		} catch (MalformedURLException e1) {
 			e1.printStackTrace();
 		} 
@@ -496,7 +504,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 				if(resourcesWithValue != null) {
 					textTableViewer.setModel(new StringListTableModel(resourcesWithValue));
 					textTableViewer.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-					 ((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_TEXT_VIEWER);
+					 ((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_TABLE_VIEWER);
 					return;
 				} else {
 					content = "lodding...";
@@ -530,7 +538,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		if(!resFile.exists()) {
 			if(!resFile.getParentFile().exists()) {
 				if(FileUtil.makeFolder(resFile.getParentFile().getAbsolutePath())) {
-					Log.d("sucess make folder");
+					Log.i("sucess make folder : " + resFile.getParentFile().getAbsolutePath());
 				}
 			}
 		}
@@ -601,7 +609,6 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	                		try {
 								tempImage = ImageScaler.getScaledImage(new ImageIcon(new URL(jarPath+temp.path)),32,32);
 							} catch (MalformedURLException e1) {
-								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
 	                		break;
@@ -634,7 +641,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
         tree.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
 				if(e.getButton() == MouseEvent.BUTTON1) {
-	            	changeContent();
+					selectContent();
 				}
             }
 
@@ -650,7 +657,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
         {
         	public void keyReleased(KeyEvent ke) {
         		//if(ke.getKeyCode() == KeyEvent.VK_ENTER) {
-        		changeContent();
+        		selectContent();
         		//}
         	}
         });       
@@ -803,7 +810,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		contentPanel = new JPanel(new CardLayout());
 		contentPanel.add(htmlViewerScroll, CONTENT_HTML_VIEWER);
 		contentPanel.add(imageViewerPanel, CONTENT_IMAGE_VIEWER);
-		contentPanel.add(textTableScroll, CONTENT_TEXT_VIEWER);
+		contentPanel.add(textTableScroll, CONTENT_TABLE_VIEWER);
 		
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.setLeftComponent(TreePanel);

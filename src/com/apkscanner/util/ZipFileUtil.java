@@ -3,6 +3,7 @@ package com.apkscanner.util;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
@@ -75,8 +76,12 @@ public class ZipFileUtil
 				try {
 					fos = new FileOutputStream(outPath);
 	 				byte[] buffer = new byte[(int) entry.getSize()];
-					int len = zipFile.getInputStream(entry).read(buffer);
-					fos.write(buffer, 0, len);
+	 				InputStream is = zipFile.getInputStream(entry);
+	 				int len = -1;
+	 				do {
+	 					len = is.read(buffer);
+	 					if(len > 0) fos.write(buffer, 0, len);
+	 				} while(len > 0);
 				} finally {
 					if (fos != null) {
 						fos.close();
