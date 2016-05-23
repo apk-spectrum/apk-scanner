@@ -599,6 +599,16 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
                 
                 DefaultMutableTreeNode nodo = (DefaultMutableTreeNode) value;
 
+                if(nodo == top) {
+                	Image tempImage = null;
+                	tempImage = ImageScaler.getScaledImage(Resource.IMG_TREE_APK.getImageIcon(),16,16);
+                	ImageIcon tempIcon = new ImageIcon(tempImage);
+                	//tempImage.flush();	                	
+                	setIcon(tempIcon);
+                	return c;
+                }
+                
+                
                 if(nodo.getUserObject() instanceof ResourceObject) {
 	                ResourceObject tempObject = (ResourceObject)nodo.getUserObject();                
 	                
@@ -634,13 +644,13 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 							tempImage.flush();
 		                	setIcon(tempIcon);
 	    				}
-	                } else {
-	                	Image tempImage = null;
-	                	tempImage = ImageScaler.getScaledImage(Resource.IMG_TREE_FOLDER.getImageIcon(),16,16);
-	                	ImageIcon tempIcon = new ImageIcon(tempImage);
-	                	//tempImage.flush();	                	
-	                	setIcon(tempIcon);
-	                }
+	                } 
+                } else {
+                	Image tempImage = null;
+                	tempImage = ImageScaler.getScaledImage(Resource.IMG_TREE_FOLDER.getImageIcon(),16,16);
+                	ImageIcon tempIcon = new ImageIcon(tempImage);
+                	//tempImage.flush();	                	
+                	setIcon(tempIcon);
                 }
                 return c;
             }
