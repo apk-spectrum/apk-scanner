@@ -19,6 +19,8 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -28,9 +30,13 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.ZipFileUtil;
+import com.apkscanner.util.FileUtil.FSStyle;
+import com.apkscanner.util.Log;
 
 public class ImageControlPanel extends JPanel implements ActionListener{
 	private static final long serialVersionUID = -391185152837196160L;
@@ -45,6 +51,8 @@ public class ImageControlPanel extends JPanel implements ActionListener{
     private int oldVPos = 0;
     private int oldHPos = 0;
 	
+    String Filesize= "";
+    
 	int x, y;
 	int beforx,befory;
 	private float scale = 1;
@@ -55,9 +63,11 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 	public ImageControlPanel() {
 		
 		imagepanel = new ImageViewPanel();
-		JPanel imageInfoPanel = new JPanel();
+		JPanel imageInfoPanel = new JPanel(new BorderLayout());
 		
 		ImageInfo = new JLabel("");
+		
+		ImageInfo.setHorizontalAlignment(SwingConstants.LEFT);
 		
 		scrollpanel = new JPanel(new GridBagLayout());
 		//imagepanel.setLayout(new GridLayout());
@@ -70,7 +80,7 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 		scroll.repaint();
 		scrollpanel.add(imagepanel);
 		
-		imageInfoPanel.add(ImageInfo);
+		imageInfoPanel.add(ImageInfo,BorderLayout.WEST);
 		
 	    JRadioButton MonoWhiteRadioButton  = new JRadioButton("White");
 	    MonoWhiteRadioButton.addActionListener(this);
@@ -78,8 +88,12 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 	    JRadioButton MonoDarkRadioButton  = new JRadioButton("Dark");
 	    MonoDarkRadioButton.addActionListener(this);
 		
-	    imageInfoPanel.add(MonoWhiteRadioButton);
-	    imageInfoPanel.add(MonoDarkRadioButton);
+	    JPanel radioPanel = new JPanel();
+	    
+	    radioPanel.add(MonoWhiteRadioButton);
+	    radioPanel.add(MonoDarkRadioButton);
+	    
+	    imageInfoPanel.add(radioPanel, BorderLayout.EAST);
 	    
         ButtonGroup group = new ButtonGroup();
         group.add(MonoWhiteRadioButton);
@@ -162,8 +176,15 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 		
 	}
 
-	public void setImage(ImageIcon img) {		
-		imagepanel.setImage(img);
+	public void setImage(String apkFilePath, String imgPath) throws MalformedURLException {
+		
+
+		
+		Filesize = ZipFileUtil.getFileSize(apkFilePath, imgPath, FSStyle.NONE); 
+		
+		imgPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/" + imgPath;
+		
+		imagepanel.setImage(new ImageIcon( new URL(imgPath)));
 		repaint();
 	}
 
@@ -243,8 +264,10 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 				
 				g2D.fill(rect);;
 				
-		        //at.scale(scale, scale);	        
-				String text = "W : " + bi.getWidth() + "      H : " + bi.getHeight() + "     Scale : " + Math.round(scale * 100) + "%";		
+		        //at.scale(scale, scale);
+				
+				String text = String.format("  %d X %d     %s Byte     %s ",bi.getWidth(), bi.getHeight(), Filesize,  Math.round(scale * 100) + "%");
+				
 				//g2D.drawImage(bi, at, this);
 				g2D.drawImage(bi, (int)0, (int)0, (int)(bi.getWidth()* scale), (int)(bi.getHeight() * scale), this);
 		        //g2D.setColor(Color.WHITE);

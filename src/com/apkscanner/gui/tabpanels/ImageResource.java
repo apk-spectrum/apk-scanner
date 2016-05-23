@@ -465,10 +465,11 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		if(obj.attr == ResourceObject.ATTR_QMG) {
 			imgPath = Resource.IMG_QMG_IMAGE_ICON.getPath();
 		} else {
-			imgPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/" + obj.path;
+			//imgPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/" + obj.path;
+			imgPath = obj.path;
 		}
 		try {
-			imageViewerPanel.setImage(new ImageIcon( new URL(imgPath)));
+			imageViewerPanel.setImage(apkFilePath, obj.path);
 			imageViewerPanel.repaint();
 			 ((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_IMAGE_VIEWER);
 		} catch (MalformedURLException e1) {
@@ -631,6 +632,8 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 							tempImage.flush();
 		                	setIcon(tempIcon);
 	    				}
+	                } else {
+	                	
 	                }
                 }
                 return c;
