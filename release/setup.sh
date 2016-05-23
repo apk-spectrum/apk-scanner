@@ -30,6 +30,8 @@ echo "{}" > settings.txt
 
 sudo chmod 755 tool/adb
 sudo chmod 755 tool/aapt
+sudo chmod 755 tool/d2j-dex2jar.sh
+sudo chmod 755 tool/d2j_invoke.sh
 sudo chmod 755 APKScanner.sh
 
 sudo rm -rf $APP_PATH

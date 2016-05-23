@@ -512,7 +512,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 				break;
 			}
 		default:
-			content = "Unknown type";
+			content = "This type is unsupported by preview.";
 			break;
 		}
 		

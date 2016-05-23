@@ -31,6 +31,10 @@ public class AboutDlg /*extends JDialog*/
 		body.append("  Using following tools,<br/>");
 		body.append("  Apktool " + ApktoolManager.getApkToolVersion() + "<br/>");
 		body.append("  - <a href=\"http://ibotpeaches.github.io/Apktool/\" title=\"Apktool Project Site\">http://ibotpeaches.github.io/Apktool/</a><br/>");
+		body.append("  JD-GUI <br/>");
+		body.append("  - <a href=\"http://jd.benow.ca/\" title=\"JD Project Site\">http://jd.benow.ca/</a><br/>");
+		body.append("  dex2jar<br/>");
+		body.append("  - <a href=\"https://sourceforge.net/projects/dex2jar/\" title=\"JD Project Site\">https://sourceforge.net/projects/dex2jar/</a><br/>");
 		body.append("  " + AdbWrapper.getVersion() + "<br/>");
 		body.append("  " + AaptWrapper.getVersion() + "<br/>");
 		body.append("  - <a href=\"https://developer.android.com/tools/help/index.html\" title=\"Android Developer Site\">https://developer.android.com/tools/help/index.html</a><br/>");
