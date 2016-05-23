@@ -635,8 +635,10 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	                	case ResourceObject.ATTR_TXT:
 	                		tempImage = null;
 	                		break;
-	                		
-	                	default :
+	                	case ResourceObject.ATTR_ETC:
+	                		setIcon(null);
+	                		break;
+	                	default :		    				
 	                	}
 	    				
 	    				if(tempImage != null) {
