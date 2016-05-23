@@ -36,9 +36,8 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.ZipFileUtil;
 import com.apkscanner.util.FileUtil.FSStyle;
-import com.apkscanner.util.Log;
+import com.apkscanner.util.ZipFileUtil;
 
 public class ImageControlPanel extends JPanel implements ActionListener{
 	private static final long serialVersionUID = -391185152837196160L;
@@ -166,7 +165,7 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 		
 
 		
-		Filesize = ZipFileUtil.getFileSize(apkFilePath, imgPath, FSStyle.NONE); 
+		Filesize = ZipFileUtil.getFileSize(apkFilePath, imgPath, FSStyle.SHORT); 
 		
 		imgPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/" + imgPath;
 		
@@ -252,7 +251,7 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 				
 		        //at.scale(scale, scale);
 				
-				String text = String.format("  %d X %d     %s Byte     %s ",bi.getWidth(), bi.getHeight(), Filesize,  Math.round(scale * 100) + "%");
+				String text = String.format("  %d X %d     %s     %s ",bi.getWidth(), bi.getHeight(), Filesize,  Math.round(scale * 100) + "%");
 				
 				//g2D.drawImage(bi, at, this);
 				g2D.drawImage(bi, (int)0, (int)0, (int)(bi.getWidth()* scale), (int)(bi.getHeight() * scale), this);

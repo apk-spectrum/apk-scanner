@@ -145,9 +145,6 @@ public class FileUtil
 		double LengthbyUnit = (double) length;
 		int Unit = 0;
 		String strUnit = null;
-
-		DecimalFormat df = new DecimalFormat("#,##0.00");
-		StringBuilder result = new StringBuilder(df.format(LengthbyUnit).length());
 		
 		switch(style) {
 		case BYTES: case KB: case MB: case GB: case TB:
@@ -167,11 +164,19 @@ public class FileUtil
 			break;
 		case NONE: default:
 			strUnit = "";
-			df = new DecimalFormat("#,##0");
 			break;
 		}
-		result.append(df.format(LengthbyUnit) + strUnit);
+
+		DecimalFormat df;
+		if(FSStyle.fromValue(Unit) == FSStyle.BYTES) {
+			df = new DecimalFormat("#,##0");
+		} else {
+			df = new DecimalFormat("#,##0.00");
+		}
 		
+		StringBuilder result = new StringBuilder(df.format(LengthbyUnit).length());
+		result.append(df.format(LengthbyUnit) + strUnit);
+
 		if(style.equals(FSStyle.FULL)) {
 			df = new DecimalFormat("#,##0");
 			result.append(" (" + df.format(length) +" "+ Resource.STR_FILE_SIZE_BYTES.getString() +")");

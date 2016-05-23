@@ -25,11 +25,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import javax.swing.ButtonGroup;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -40,6 +42,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -49,6 +52,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import com.apkscanner.Launcher;
 import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
@@ -57,6 +61,7 @@ import com.apkscanner.gui.util.ImageControlPanel;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
@@ -89,6 +94,8 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	private Boolean firstClick=false;
 	
 	private ResourceObject currentSelectedObj = null;
+	
+	private HashMap<String, Icon> fileIcon = new HashMap<String, Icon>();
 	
 	public enum ResourceType{
 		ANIMATION(0),
@@ -463,13 +470,6 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     }
     
     private void drawImageOnPanel(ResourceObject obj) {
-		String imgPath;
-		if(obj.attr == ResourceObject.ATTR_QMG) {
-			imgPath = Resource.IMG_QMG_IMAGE_ICON.getPath();
-		} else {
-			//imgPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/" + obj.path;
-			imgPath = obj.path;
-		}
 		try {
 			imageViewerPanel.setImage(apkFilePath, obj.path);
 			imageViewerPanel.repaint();
@@ -553,8 +553,6 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 			} else if("resources.arsc".equals(resObj.path)) {
 				convStrings = resourcesWithValue;
 				resPath += ".txt";
-			} else if(resObj.path.endsWith(".dex")) {
-				
 			} else {
 				ZipFileUtil.unZip(apkFilePath, resObj.path, resPath);
 			}
@@ -572,17 +570,95 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 			}
 		}
 		
-		String openner;
-		if(System.getProperty("os.name").indexOf("Window") >-1) {
-			openner = "explorer";
-		} else {  //for linux
-			openner = "xdg-open";
+		if(resObj.path.endsWith(".dex")) {
+			Log.i("dex file");
+			openDex(resPath);
+		} else if(resObj.path.endsWith(".apk")) {
+			Launcher.run(resPath);
+		} else {
+			String openner;
+			if(System.getProperty("os.name").indexOf("Window") >-1) {
+				openner = "explorer";
+			} else {  //for linux
+				openner = "xdg-open";
+			}
+	
+			try {
+				new ProcessBuilder(openner, resPath).start();
+			} catch (IOException e1) { }
 		}
-
-		try {
-			new ProcessBuilder(openner, resPath).start();
-		} catch (IOException e1) { }
     }
+    
+	private void openDex(final String dexFilePath)
+	{			
+		new Thread(new Runnable() {
+			public void run()
+			{
+				String jarFilePath = dexFilePath.replaceAll("\\.dex$", ".jar");
+							
+				String[] cmdLog = null;
+				
+				Log.i("Start DEX2JAR");
+				if(System.getProperty("os.name").indexOf("Window") >-1) {
+					cmdLog =ConsolCmd.exc(new String[] {Resource.BIN_DEX2JAR_WIN.getPath(), 
+							dexFilePath, "-o", jarFilePath});
+				} else {  //for linux
+					cmdLog =ConsolCmd.exc(new String[] {"sh", Resource.BIN_DEX2JAR_LNX.getPath(), 
+							dexFilePath, "-o", jarFilePath});				
+				}
+				//open JD GUI
+				for( int i=0 ; i<cmdLog.length; i++)
+				{
+					Log.i("DEX2JAR Log : "+ cmdLog[i]);	
+				}
+				Log.i("End DEX2JAR");
+				
+				cmdLog =ConsolCmd.exc(new String[] {"java", "-jar", Resource.BIN_JDGUI.getPath(), jarFilePath});
+			}
+		}).start();
+	}
+	
+	private Icon getFileIcon(String suffix) {
+	    Icon icon = fileIcon.get(suffix);
+	    if(icon == null) {
+		    Log.v("getIcon " + suffix);
+		    Image tempImage = null;
+		    if("FOLDER".equals(suffix)) {
+		    	tempImage = ImageScaler.getScaledImage(Resource.IMG_TREE_FOLDER.getImageIcon(),16,16);
+
+		    	/*
+                UIDefaults defaults = UIManager.getDefaults( );
+                Icon computerIcon = defaults.getIcon( "FileView.computerIcon" );
+                Icon floppyIcon   = defaults.getIcon( "FileView.floppyDriveIcon" );
+                Icon diskIcon     = defaults.getIcon( "FileView.hardDriveIcon" );
+                Icon fileIcon     = defaults.getIcon( "FileView.fileIcon" );
+                Icon folderIcon   = defaults.getIcon( "FileView.directoryIcon" );
+                
+                icon = folderIcon;
+                */
+		    } else if(".xml".equals(suffix)) {
+		    	tempImage = ImageScaler.getScaledImage(Resource.IMG_RESOURCE_TREE_XML.getImageIcon(),16,16);
+		    } else if(".qmg".equals(suffix)) {
+		    	tempImage = ImageScaler.getScaledImage(Resource.IMG_QMG_IMAGE_ICON.getImageIcon(),32,32);
+		    } else {
+			    try {
+			        File file = File.createTempFile("icon", suffix);
+			        FileSystemView view = FileSystemView.getFileSystemView();
+			        icon = view.getSystemIcon(file);
+			        file.delete();
+			    } catch (IOException ioe) {
+			    }
+		    }
+		    if(tempImage != null) {
+		    	icon = new ImageIcon(tempImage);
+				tempImage.flush();
+		    }
+		    if(icon != null) {
+		    	fileIcon.put(suffix, icon);
+		    }
+	    }
+	    return icon;
+	}
     
     private void TreeInit() {
         tree.setCellRenderer(new DefaultTreeCellRenderer() {
@@ -603,56 +679,58 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
                 	Image tempImage = null;
                 	tempImage = ImageScaler.getScaledImage(Resource.IMG_TREE_APK.getImageIcon(),16,16);
                 	ImageIcon tempIcon = new ImageIcon(tempImage);
-                	//tempImage.flush();	                	
+                	tempImage.flush();	                	
                 	setIcon(tempIcon);
                 	return c;
                 }
                 
-                
                 if(nodo.getUserObject() instanceof ResourceObject) {
-	                ResourceObject tempObject = (ResourceObject)nodo.getUserObject();                
+	                ResourceObject tempObject = (ResourceObject)nodo.getUserObject();
 	                
 	                if(!tempObject.isFolder) {
 	                	ResourceObject temp = (ResourceObject)nodo.getUserObject();
 	                	String jarPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/";
-	                	Image tempImage = null;
+	                	Icon icon = null;
 
 	                	switch(temp.attr) {
 	                	case ResourceObject.ATTR_IMG:
 	                		try {
+	                			Image tempImage = null;
 								tempImage = ImageScaler.getScaledImage(new ImageIcon(new URL(jarPath+temp.path)),32,32);
+								icon = new ImageIcon(tempImage);
+								tempImage.flush();
 							} catch (MalformedURLException e1) {
 								e1.printStackTrace();
 							}
 	                		break;
 	                	case ResourceObject.ATTR_AXML:
 	                	case ResourceObject.ATTR_XML:
-	                			tempImage = ImageScaler.getScaledImage(Resource.IMG_RESOURCE_TREE_XML.getImageIcon(),16,16);
+	                		//tempImage = ImageScaler.getScaledImage(Resource.IMG_RESOURCE_TREE_XML.getImageIcon(),16,16);
 	                		break;
 	                	case ResourceObject.ATTR_QMG:
-	                		tempImage = ImageScaler.getScaledImage(Resource.IMG_QMG_IMAGE_ICON.getImageIcon(),32,32);
+	                		//tempImage = ImageScaler.getScaledImage(Resource.IMG_QMG_IMAGE_ICON.getImageIcon(),32,32);
 	                		break;
 	                	case ResourceObject.ATTR_TXT:
-	                		tempImage = null;
 	                		break;
 	                	case ResourceObject.ATTR_ETC:
-	                		setIcon(null);
 	                		break;
 	                	default :		    				
 	                	}
 	    				
-	    				if(tempImage != null) {
-		    				ImageIcon tempIcon = new ImageIcon(tempImage);
-							tempImage.flush();
-		                	setIcon(tempIcon);
+	    				if(icon != null) {
+		                	setIcon(icon);
+	    				} else {
+	    	                String suffix = tempObject.path.replaceAll(".*/", "");
+	    	                if(suffix.indexOf(".") > -1) {
+	    	                	suffix = suffix.replaceAll(".*\\.", ".");
+	    	                } else {
+	    	                	suffix = "";
+	    	                }
+	    	                setIcon(getFileIcon(suffix));
 	    				}
 	                } 
                 } else {
-                	Image tempImage = null;
-                	tempImage = ImageScaler.getScaledImage(Resource.IMG_TREE_FOLDER.getImageIcon(),16,16);
-                	ImageIcon tempIcon = new ImageIcon(tempImage);
-                	//tempImage.flush();	                	
-                	setIcon(tempIcon);
+                	setIcon(getFileIcon("FOLDER"));
                 }
                 return c;
             }
