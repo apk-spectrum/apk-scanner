@@ -10,6 +10,8 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
@@ -250,7 +252,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     private void makeTreeForm() {
     	top = new DefaultMutableTreeNode("Loading...");
     	tree = new JTree(new FilteredTreeModel(new DefaultTreeModel(top)));
-    	tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);    	
+    	tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     }
     
 	private String getOnlyFilename(String str) {
@@ -633,7 +635,11 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		                	setIcon(tempIcon);
 	    				}
 	                } else {
-	                	
+	                	Image tempImage = null;
+	                	tempImage = ImageScaler.getScaledImage(Resource.IMG_TREE_FOLDER.getImageIcon(),16,16);
+	                	ImageIcon tempIcon = new ImageIcon(tempImage);
+	                	//tempImage.flush();	                	
+	                	setIcon(tempIcon);
 	                }
                 }
                 return c;
@@ -767,6 +773,18 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		JScrollPane treeScroll = new JScrollPane(tree);
 		treeScroll.setPreferredSize(new Dimension(300, 400));
 		treeScroll.repaint();
+		
+	    AdjustmentListener adjustmentListener = new AdjustmentListener() {
+	        @Override
+	        public void adjustmentValueChanged(AdjustmentEvent e) {
+	        	tree.repaint();
+	        }
+	    };	    
+	    treeScroll.getVerticalScrollBar().addAdjustmentListener(
+                adjustmentListener);
+	    treeScroll.getHorizontalScrollBar().addAdjustmentListener(
+                adjustmentListener);
+		
 		
 		JPanel TreePanel = new JPanel(new BorderLayout());
 		TreePanel.add(TreeModePanel, BorderLayout.NORTH);
