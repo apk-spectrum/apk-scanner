@@ -440,8 +440,8 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		currentSelectedObj = resObj;
 
 		if(resObj == null || resObj.isFolder) {
-			htmlViewer.setText("");
-			((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_HTML_VIEWER);
+			//htmlViewer.setText("");
+			//((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_HTML_VIEWER);
 		} else {
 			switch(resObj.attr) {
 			case ResourceObject.ATTR_IMG:
@@ -614,7 +614,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	                		break;
 	                	case ResourceObject.ATTR_AXML:
 	                	case ResourceObject.ATTR_XML:
-	                			tempImage = ImageScaler.getScaledImage(Resource.IMG_RESOURCE_TREE_XML.getImageIcon(),16,32);
+	                			tempImage = ImageScaler.getScaledImage(Resource.IMG_RESOURCE_TREE_XML.getImageIcon(),16,16);
 	                		break;
 	                	case ResourceObject.ATTR_QMG:
 	                		tempImage = ImageScaler.getScaledImage(Resource.IMG_QMG_IMAGE_ICON.getImageIcon(),32,32);
