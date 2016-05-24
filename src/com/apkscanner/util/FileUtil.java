@@ -127,10 +127,16 @@ public class FileUtil
 	    
 		public String toString()
 		{
-			if(this.equals(BYTES))
-				return new String("Bytes");
-			else
-				return super.toString();
+			String unit = null;
+			switch(this) {
+			case BYTES: unit = Resource.STR_FILE_SIZE_BYTES.getString(); break;
+			case KB: unit = Resource.STR_FILE_SIZE_KB.getString(); break;
+			case MB: unit = Resource.STR_FILE_SIZE_MB.getString(); break;
+			case GB: unit = Resource.STR_FILE_SIZE_GB.getString(); break;
+			case TB: unit = Resource.STR_FILE_SIZE_TB.getString(); break;
+			default: break;
+			}
+			return unit;
 		}
 	}
 
@@ -152,7 +158,7 @@ public class FileUtil
 			while (Unit-- > 0) {
 				LengthbyUnit = LengthbyUnit / 1024;
 			}
-			strUnit = " " + style.toString();
+			strUnit = " " + style;
 			break;
 		case SHORT: case FULL:
 			Unit = 0;
@@ -160,7 +166,7 @@ public class FileUtil
 				LengthbyUnit = LengthbyUnit / 1024;
 				Unit++;
 			}
-			strUnit = " " + FSStyle.fromValue(Unit).toString();
+			strUnit = " " + FSStyle.fromValue(Unit);
 			break;
 		case NONE: default:
 			strUnit = "";
@@ -179,7 +185,7 @@ public class FileUtil
 
 		if(style.equals(FSStyle.FULL)) {
 			df = new DecimalFormat("#,##0");
-			result.append(" (" + df.format(length) +" "+ Resource.STR_FILE_SIZE_BYTES.getString() +")");
+			result.append(" (" + df.format(length) +" "+ FSStyle.BYTES +")");
 		}
 
 		return result.toString();
