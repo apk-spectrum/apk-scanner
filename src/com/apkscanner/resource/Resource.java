@@ -218,7 +218,9 @@ public enum Resource
 	
 	IMG_RESOURCE_IMG_BACKGROUND (Type.IMAGE, "resource_tap_image_background.jpg"),
 	IMG_RESOURCE_IMG_BACKGROUND_DARK (Type.IMAGE, "resource_tap_image_background_dark.jpg"),
-	IMG_RESOURCE_TREE_XML (Type.IMAGE, "resource_tab_tree_xml.png"),
+	IMG_RESOURCE_TREE_XML		(Type.IMAGE, "resource_tab_tree_xml.gif"),
+	IMG_RESOURCE_TREE_CODE		(Type.IMAGE, "resource_tab_tree_code.png"),
+	IMG_RESOURCE_TREE_ARSC		(Type.IMAGE, "resource_tab_tree_arsc.png"),
 	
 	IMG_PERM_GROUP_PHONE_CALLS	(Type.IMAGE, "perm_group_phone_calls.png"),
 	

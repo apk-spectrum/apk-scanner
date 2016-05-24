@@ -639,6 +639,10 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		    	tempImage = ImageScaler.getScaledImage(Resource.IMG_RESOURCE_TREE_XML.getImageIcon(),16,16);
 		    } else if(".qmg".equals(suffix)) {
 		    	tempImage = ImageScaler.getScaledImage(Resource.IMG_QMG_IMAGE_ICON.getImageIcon(),32,32);
+		    } else if(".dex".equals(suffix)) {
+		    	icon = Resource.IMG_RESOURCE_TREE_CODE.getImageIcon();
+		    } else if(".arsc".equals(suffix)) {
+		    	icon = Resource.IMG_RESOURCE_TREE_ARSC.getImageIcon();
 		    } else {
 			    try {
 			        File file = File.createTempFile("icon", suffix);
