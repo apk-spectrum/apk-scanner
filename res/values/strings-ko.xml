@@ -83,9 +83,10 @@
     <string name="feature_shared_user_id_lab">공유 UID</string>
     <string name="feature_shared_user_id_desc">공유 UID를 사용하고 있습니다.</string>
     <string name="feature_platform_sign_lab">플랫폼 서명</string>
-    <string name="feature_platform_sign_desc">플랫폼 서명이 포함 되어 있습니다.</string>
+    <string name="feature_platform_sign_desc">삼성 Test-key 플랫폼 서명이 포함 되어 있습니다.
+eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
     <string name="feature_samsung_sign_lab">삼성 서명</string>
-    <string name="feature_samsung_sign_desc">삼성 서명이 포함 되어 있습니다.</string>
+    <string name="feature_samsung_sign_desc">삼성 플랫폼 서명이 포함 되어 있습니다.</string>
     <string name="feature_revoke_permissions_lab">권한 경고</string>
     <string name="feature_revoke_permissions_desc">플랫폼 서명이 필요하거나 시스템(priv-app)에 설치 되어야 사용 가능한 권한을 사용하고 있습니다.
 ※ 단, pre23 레벨 포함시 SDK23 이전 버전에서는 자동 승인됩니다.</string>

@@ -392,6 +392,9 @@ public class AaptScanner extends ApkScannerStub
 
 		    String certContent = "";
 
+		    boolean isSamsungSign = false;
+		    boolean isPlatformTestKey = false;
+		    
 		    for(int i=0; i < result.length; i++){
 	    		if(!certContent.isEmpty() && result[i].matches("^.*\\[[0-9]*\\]:$")) {
 	    			certList.add(certContent);
@@ -401,14 +404,29 @@ public class AaptScanner extends ApkScannerStub
 	    			if(result[i].indexOf("CN=") > -1) {
 	    				String CN = result[i].replaceAll(".*CN=([^,]*).*", "$1");
 	    				if("Samsung Cert".equals(CN)) {
-	    					apkInfo.featureFlags |= ApkInfo.APP_FEATURE_SAMSUNG_SIGN;
+	    					isSamsungSign = true;
 	    				} else if("Android".equals(CN)) {
-	    					apkInfo.featureFlags |= ApkInfo.APP_FEATURE_PLATFORM_SIGN;
+	    					isPlatformTestKey = true;
 	    				}
+	    			}
+	    		}
+	    		if((isSamsungSign || isPlatformTestKey)
+	    				&& result[i].matches("^[^\\s]+[^:]*: ([0-9a-z]+)+$")) {
+	    			String serialNumber = result[i].replaceAll("^[^\\s]+[^:]*: ([0-9a-z]+)+$", "$1");
+	    			if(isSamsungSign && !Resource.STR_SAMSUNG_KEY_SERIAL.getString().equals(serialNumber)) {
+		    			Log.w(Resource.STR_SAMSUNG_KEY_SERIAL.getString() + " " + serialNumber);
+	    				isSamsungSign = false;
+	    			} else if(isPlatformTestKey && !Resource.STR_SS_TEST_KEY_SERIAL.getString().equals(serialNumber)) {
+		    			Log.w(Resource.STR_SS_TEST_KEY_SERIAL.getString() + " " + serialNumber);
+	    				isPlatformTestKey = false;
 	    			}
 	    		}
 	    		certContent += (certContent.isEmpty() ? "" : "\n") + result[i];
 		    }
+		    
+		    if(isSamsungSign) apkInfo.featureFlags |= ApkInfo.APP_FEATURE_SAMSUNG_SIGN;
+		    if(isPlatformTestKey) apkInfo.featureFlags |= ApkInfo.APP_FEATURE_PLATFORM_SIGN;
+		    
 		    certList.add(certContent);
 		}
 

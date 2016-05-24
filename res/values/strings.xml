@@ -84,9 +84,9 @@ Once installed, the user can move the application to either internal or external
     <string name="feature_system_user_id_desc">This application uses the system uid</string>
     <string name="feature_shared_user_id_lab">SHARED_UID</string>
     <string name="feature_shared_user_id_desc">This application uses the sharedUserId</string>
-    <string name="feature_platform_sign_lab">PLATFORM_SIGN</string>
-    <string name="feature_platform_sign_desc">This application to be sign by platform signature.</string>
-    <string name="feature_samsung_sign_lab">SAMSUNG_SIGN</string>
+    <string name="feature_platform_sign_lab">PLATFORM SIGN</string>
+    <string name="feature_platform_sign_desc">This application to be sign by platform signature(samsung test-key).</string>
+    <string name="feature_samsung_sign_lab">SAMSUNG SIGN</string>
     <string name="feature_samsung_sign_desc">This application to be sign by samsung signature.</string>
     <string name="feature_revoke_permissions_lab">SYSTEM PERMISSIONS</string>
     <string name="feature_revoke_permissions_desc">Need platform sign or priv-app</string>
