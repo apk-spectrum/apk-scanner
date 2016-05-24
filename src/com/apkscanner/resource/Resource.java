@@ -222,6 +222,7 @@ public enum Resource
 	IMG_TOOLBAR_OPEN_ARROW		(Type.IMAGE, "down_on.png"),
 	
 	IMG_APP_ICON				(Type.IMAGE, "AppIcon.png"),
+	IMG_APK_FILE_ICON			(Type.IMAGE, "apk_file_icon.png"),
 	IMG_QUESTION				(Type.IMAGE, "question.png"),
 	IMG_WARNING					(Type.IMAGE, "warning.png"),
 	IMG_SUCCESS					(Type.IMAGE, "Succes.png"),

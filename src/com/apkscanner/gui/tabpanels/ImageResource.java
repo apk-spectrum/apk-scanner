@@ -625,7 +625,6 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		    Image tempImage = null;
 		    if("FOLDER".equals(suffix)) {
 		    	tempImage = ImageScaler.getScaledImage(Resource.IMG_TREE_FOLDER.getImageIcon(),16,16);
-
 		    	/*
                 UIDefaults defaults = UIManager.getDefaults( );
                 Icon computerIcon = defaults.getIcon( "FileView.computerIcon" );
@@ -676,11 +675,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
                 DefaultMutableTreeNode nodo = (DefaultMutableTreeNode) value;
 
                 if(nodo == top) {
-                	Image tempImage = null;
-                	tempImage = ImageScaler.getScaledImage(Resource.IMG_TREE_APK.getImageIcon(),16,16);
-                	ImageIcon tempIcon = new ImageIcon(tempImage);
-                	tempImage.flush();	                	
-                	setIcon(tempIcon);
+                	setIcon(Resource.IMG_APK_FILE_ICON.getImageIcon());
                 	return c;
                 }
                 
