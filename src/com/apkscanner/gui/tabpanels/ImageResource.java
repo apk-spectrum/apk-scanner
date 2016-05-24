@@ -8,6 +8,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
@@ -18,6 +19,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -119,6 +121,16 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		
 		int getInt() { return type; }
 	}
+	private class DexResourceObject extends ResourceObject {
+		
+		public DexResourceObject(String path, boolean isFolder) {
+			super(path, isFolder);
+			isLoading = false;
+			// TODO Auto-generated constructor stub
+		}
+	}
+	
+	
 	
 	private class ResourceObject {
 		public static final int ATTR_AXML = 1;
@@ -135,11 +147,12 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		public ResourceType type;
 		public int attr;
 		public int childCount;
+		public Boolean isLoading;
 		
 		public ResourceObject(String path, boolean isFolder) {
 			this.path = path;
 			this.isFolder = isFolder;
-			
+			this.isLoading = false;
 			if(path.startsWith("res/animation")) {
 				type = ResourceType.ANIMATION; 
 			} else if(path.startsWith("res/anim")) {
@@ -207,6 +220,10 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 			}
 		    return str;
 		}
+		public void setLoadingState(Boolean state) {
+			isLoading =state;
+		}
+		public Boolean getLoadingState() {return isLoading;}
 	}
 	
 	private class StringListTableModel extends AbstractTableModel {
@@ -528,14 +545,14 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     }
     
     private void openContent() {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+        final DefaultMutableTreeNode node = (DefaultMutableTreeNode)
                 tree.getLastSelectedPathComponent();
         if(node == null 
         		|| !(node.getUserObject() instanceof ResourceObject)) {
         	return;
         }
 		
-        ResourceObject resObj = (ResourceObject)node.getUserObject();
+        final ResourceObject resObj = (ResourceObject)node.getUserObject();
         String resPath = tempWorkPath + File.separator + resObj.path.replace("/", File.separator);
 		File resFile = new File(resPath);
 		if(!resFile.exists()) {
@@ -572,9 +589,24 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		
 		if(resObj.path.endsWith(".dex")) {
 			Log.i("dex file");
-			openDex(resPath);
+			if(resObj.getLoadingState() == false) {
+				resObj.setLoadingState(true);
+								
+				tree.repaint();
+				DexLuncher.openDex(resPath, new DexLuncher.DexWrapperListener(){
+				@Override
+				public void OnError() {
+					// TODO Auto-generated method stub					
+				}
+				@Override
+				public void OnSuccess() {
+					// TODO Auto-generated method stub
+					resObj.setLoadingState(false);
+					//tree.repaint();
+				}});
+			}	
 		} else if(resObj.path.endsWith(".apk")) {
-			Launcher.run(resPath);
+				Launcher.run(resPath);
 		} else {
 			String openner;
 			if(System.getProperty("os.name").indexOf("Window") >-1) {
@@ -583,40 +615,51 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 				openner = "xdg-open";
 			}
 	
-			try {
-				new ProcessBuilder(openner, resPath).start();
-			} catch (IOException e1) { }
-		}
+				try {
+					new ProcessBuilder(openner, resPath).start();
+				} catch (IOException e1) { }
+			}		
     }
-    
-	private void openDex(final String dexFilePath)
-	{			
-		new Thread(new Runnable() {
-			public void run()
-			{
-				String jarFilePath = dexFilePath.replaceAll("\\.dex$", ".jar");
-							
-				String[] cmdLog = null;
-				
-				Log.i("Start DEX2JAR");
-				if(System.getProperty("os.name").indexOf("Window") >-1) {
-					cmdLog =ConsolCmd.exc(new String[] {Resource.BIN_DEX2JAR_WIN.getPath(), 
-							dexFilePath, "-o", jarFilePath});
-				} else {  //for linux
-					cmdLog =ConsolCmd.exc(new String[] {"sh", Resource.BIN_DEX2JAR_LNX.getPath(), 
-							dexFilePath, "-o", jarFilePath});				
-				}
-				//open JD GUI
-				for( int i=0 ; i<cmdLog.length; i++)
-				{
-					Log.i("DEX2JAR Log : "+ cmdLog[i]);	
-				}
-				Log.i("End DEX2JAR");
-				
-				cmdLog =ConsolCmd.exc(new String[] {"java", "-jar", Resource.BIN_JDGUI.getPath(), jarFilePath});
-			}
-		}).start();
-	}
+
+	
+    static public class DexLuncher {
+    	public interface DexWrapperListener
+    	{    		
+    		public void OnError();
+    		public void OnSuccess();
+    	}
+    	
+    	static public void openDex(final String dexFilePath, final DexWrapperListener listener)
+    	{			
+    		new Thread(new Runnable() {
+    			public void run()
+    			{
+    				String jarFilePath = dexFilePath.replaceAll("\\.dex$", ".jar");
+    							
+    				String[] cmdLog = null;
+    				
+    				Log.i("Start DEX2JAR");
+    				if(System.getProperty("os.name").indexOf("Window") >-1) {
+    					cmdLog =ConsolCmd.exc(new String[] {Resource.BIN_DEX2JAR_WIN.getPath(), 
+    							dexFilePath, "-o", jarFilePath});
+    				} else {  //for linux
+    					cmdLog =ConsolCmd.exc(new String[] {"sh", Resource.BIN_DEX2JAR_LNX.getPath(), 
+    							dexFilePath, "-o", jarFilePath});				
+    				}
+    				//open JD GUI
+    				for( int i=0 ; i<cmdLog.length; i++)
+    				{
+    					Log.i("DEX2JAR Log : "+ cmdLog[i]);	
+    				}
+    				Log.i("End DEX2JAR");
+    				
+    				listener.OnSuccess();
+    				
+    				cmdLog =ConsolCmd.exc(new String[] {"java", "-jar", Resource.BIN_JDGUI.getPath(), jarFilePath});
+    			}
+    		}).start();
+    	}    	    	
+    }
 	
 	private Icon getFileIcon(String suffix) {
 	    Icon icon = fileIcon.get(suffix);
@@ -663,6 +706,34 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	    return icon;
 	}
     
+	class NodeImageObserver implements ImageObserver {
+		JTree tree;
+		DefaultTreeModel model;
+		TreeNode node;
+
+		NodeImageObserver(JTree tree, TreeNode node) {
+			this.tree = tree;
+			this.model = (DefaultTreeModel) tree.getModel();
+			this.node = node;
+		}
+
+		public boolean imageUpdate(Image img, int flags, int x, int y, int w, int h) {
+			
+			Log.d("Imageupdate : ");
+			
+			if ((flags & (FRAMEBITS | ALLBITS)) != 0) {
+				TreePath path = new TreePath(model.getPathToRoot(node));
+				Rectangle rect = tree.getPathBounds(path);
+				if (rect != null) {
+					tree.repaint(rect);
+				}
+			} else {
+				Log.d("else" + flags);
+			}
+			return (flags & (ALLBITS | ABORT)) == 0;
+		}
+	}
+	
     private void TreeInit() {
         tree.setCellRenderer(new DefaultTreeCellRenderer() {
 			private static final long serialVersionUID = 6248791058116909814L;
@@ -725,7 +796,16 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	    	                } else {
 	    	                	suffix = "";
 	    	                }
-	    	                setIcon(getFileIcon(suffix));
+	    	                if(temp.getLoadingState()) {
+	    	                	ImageIcon imageicon = Resource.IMG_LOADING.getImageIcon();	    	                	
+	    	                	imageicon.setImageObserver(new NodeImageObserver(tree, nodo));	    	                	
+	    	                	setIcon(imageicon);
+	    	                		    	     
+	    	                } else {
+	    	                	setIcon(getFileIcon(suffix));
+	    	                	
+	    	                }
+	    	                
 	    				}
 	                } 
                 } else {
