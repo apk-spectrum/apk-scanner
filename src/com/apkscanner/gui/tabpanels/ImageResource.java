@@ -285,7 +285,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 				super.paintComponent(g);
 				if (getLeadSelectionPath() != null) {
 					Rectangle r = getRowBounds(getRowForPath(getLeadSelectionPath()));
-					g.setColor(((DefaultTreeCellRenderer)getCellRenderer()).getBackgroundSelectionColor());					
+					g.setColor(hasFocus() ? ((DefaultTreeCellRenderer)getCellRenderer()).getBackgroundSelectionColor().darker() :	((DefaultTreeCellRenderer)getCellRenderer()).getBackgroundSelectionColor());
 					g.drawRect(0, r.y, getWidth() - 1, r.height - 1);
 				}
 			}
