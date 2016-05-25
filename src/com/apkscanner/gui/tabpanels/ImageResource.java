@@ -6,8 +6,10 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -97,6 +99,8 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	
 	private ResourceObject currentSelectedObj = null;
 	
+	ResouceTreeCellRenderer renderer;
+	
 	private HashMap<String, Icon> fileIcon = new HashMap<String, Icon>();
 	
 	public enum ResourceType{
@@ -121,16 +125,6 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		
 		int getInt() { return type; }
 	}
-	private class DexResourceObject extends ResourceObject {
-		
-		public DexResourceObject(String path, boolean isFolder) {
-			super(path, isFolder);
-			isLoading = false;
-			// TODO Auto-generated constructor stub
-		}
-	}
-	
-	
 	
 	private class ResourceObject {
 		public static final int ATTR_AXML = 1;
@@ -275,9 +269,189 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	
     private void makeTreeForm() {
     	top = new DefaultMutableTreeNode("Loading...");
-    	tree = new JTree(new FilteredTreeModel(new DefaultTreeModel(top)));
+    	
+		tree = new JTree(new FilteredTreeModel(new DefaultTreeModel(top))) {
+			@Override
+			public void paintComponent(Graphics g) {
+				g.setColor(getBackground());
+				g.fillRect(0, 0, getWidth(), getHeight());
+				if (getSelectionCount() > 0) {
+					for (int i : getSelectionRows()) {
+						Rectangle r = getRowBounds(i);
+						g.setColor(((DefaultTreeCellRenderer)getCellRenderer()).getBackgroundSelectionColor());
+						g.fillRect(0, r.y, getWidth(), r.height);
+					}
+				}
+				super.paintComponent(g);
+				if (getLeadSelectionPath() != null) {
+					Rectangle r = getRowBounds(getRowForPath(getLeadSelectionPath()));
+					g.setColor(((DefaultTreeCellRenderer)getCellRenderer()).getBackgroundSelectionColor());					
+					g.drawRect(0, r.y, getWidth() - 1, r.height - 1);
+				}
+			}
+		};
+    	
+		tree.setUI(new javax.swing.plaf.basic.BasicTreeUI() {
+			@Override
+			public Rectangle getPathBounds(JTree tree, TreePath path) {
+				if (tree != null && treeState != null) {
+					return getPathBounds(path, tree.getInsets(), new Rectangle());
+				}
+				return null;
+			}
+
+			private Rectangle getPathBounds(TreePath path, Insets insets, Rectangle bounds) {
+				bounds = treeState.getBounds(path, bounds);
+				if (bounds != null) {
+					bounds.width = tree.getWidth();
+					bounds.y += insets.top;
+				}
+				return bounds;
+			}
+		});
+	    
+        tree.setOpaque(false);
+    	
+    	
     	tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     }
+    
+    class ResouceTreeCellRenderer extends DefaultTreeCellRenderer implements FocusListener {
+		private static final long serialVersionUID = 6248791058116909814L;
+		//private ImageIcon iconApk = Resource.IMG_TREE_APK.getImageIcon();
+    	//private ImageIcon iconFolder = Resource.IMG_TREE_FOLDER.getImageIcon();
+    	
+        @Override
+        public Component getTreeCellRendererComponent(JTree tree,
+                Object value, boolean selected, boolean expanded,
+                boolean isLeaf, int row, boolean focused) {
+            Component c = super.getTreeCellRendererComponent(tree, value,
+                    selected, expanded, isLeaf, row, focused);            
+            DefaultMutableTreeNode nodo = (DefaultMutableTreeNode) value;
+            
+            
+            //((JLabel)c).setOpaque(true);
+            
+            if(nodo == top) {
+            	setIcon(Resource.IMG_APK_FILE_ICON.getImageIcon());
+            	return c;
+            }
+            
+            if(nodo.getUserObject() instanceof ResourceObject) {
+                ResourceObject tempObject = (ResourceObject)nodo.getUserObject();
+                
+                if(!tempObject.isFolder) {
+                	ResourceObject temp = (ResourceObject)nodo.getUserObject();
+                	String jarPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/";
+                	Icon icon = null;
+
+                	switch(temp.attr) {
+                	case ResourceObject.ATTR_IMG:
+                		try {
+                			Image tempImage = null;
+							tempImage = ImageScaler.getScaledImage(new ImageIcon(new URL(jarPath+temp.path)),32,32);
+							icon = new ImageIcon(tempImage);
+							tempImage.flush();
+						} catch (MalformedURLException e1) {
+							e1.printStackTrace();
+						}
+                		break;
+                	case ResourceObject.ATTR_AXML:
+                	case ResourceObject.ATTR_XML:
+                		//tempImage = ImageScaler.getScaledImage(Resource.IMG_RESOURCE_TREE_XML.getImageIcon(),16,16);
+                		break;
+                	case ResourceObject.ATTR_QMG:
+                		//tempImage = ImageScaler.getScaledImage(Resource.IMG_QMG_IMAGE_ICON.getImageIcon(),32,32);
+                		break;
+                	case ResourceObject.ATTR_TXT:
+                		break;
+                	case ResourceObject.ATTR_ETC:
+                		break;
+                	default :		    				
+                	}
+    				
+    				if(icon != null) {
+	                	setIcon(icon);
+    				} else {
+    	                String suffix = tempObject.path.replaceAll(".*/", "");
+    	                if(suffix.indexOf(".") > -1) {
+    	                	suffix = suffix.replaceAll(".*\\.", ".");
+    	                } else {
+    	                	suffix = "";
+    	                }
+    	                if(temp.getLoadingState()) {
+    	                	ImageIcon imageicon = Resource.IMG_LOADING.getImageIcon();	    	                	
+    	                	imageicon.setImageObserver(new NodeImageObserver(tree, nodo));	    	                	
+    	                	setIcon(imageicon);
+    	                		    	     
+    	                } else {
+    	                	setIcon(getFileIcon(suffix));
+    	                	
+    	                }
+    	                
+    				}
+                } 
+            } else {
+            	setIcon(getFileIcon("FOLDER"));
+            }
+            return c;
+        }
+        @Override public void focusGained(FocusEvent e) {
+          e.getComponent().repaint();
+        }
+        @Override public void focusLost(FocusEvent e) {
+          e.getComponent().repaint();
+        }
+        
+    	private Icon getFileIcon(String suffix) {
+    	    Icon icon = fileIcon.get(suffix);
+    	    if(icon == null) {
+    		    Log.v("getIcon " + suffix);
+    		    Image tempImage = null;
+    		    if("FOLDER".equals(suffix)) {
+    		    	tempImage = ImageScaler.getScaledImage(Resource.IMG_TREE_FOLDER.getImageIcon(),16,16);
+    		    	/*
+                    UIDefaults defaults = UIManager.getDefaults( );
+                    Icon computerIcon = defaults.getIcon( "FileView.computerIcon" );
+                    Icon floppyIcon   = defaults.getIcon( "FileView.floppyDriveIcon" );
+                    Icon diskIcon     = defaults.getIcon( "FileView.hardDriveIcon" );
+                    Icon fileIcon     = defaults.getIcon( "FileView.fileIcon" );
+                    Icon folderIcon   = defaults.getIcon( "FileView.directoryIcon" );
+                    
+                    icon = folderIcon;
+                    */
+    		    } else if(".xml".equals(suffix)) {
+    		    	tempImage = ImageScaler.getScaledImage(Resource.IMG_RESOURCE_TREE_XML.getImageIcon(),16,16);
+    		    } else if(".qmg".equals(suffix)) {
+    		    	tempImage = ImageScaler.getScaledImage(Resource.IMG_QMG_IMAGE_ICON.getImageIcon(),32,32);
+    		    } else if(".dex".equals(suffix)) {
+    		    	icon = Resource.IMG_RESOURCE_TREE_CODE.getImageIcon();
+    		    } else if(".arsc".equals(suffix)) {
+    		    	icon = Resource.IMG_RESOURCE_TREE_ARSC.getImageIcon();
+    		    } else {
+    			    try {
+    			        File file = File.createTempFile("icon", suffix);
+    			        FileSystemView view = FileSystemView.getFileSystemView();
+    			        icon = view.getSystemIcon(file);
+    			        file.delete();
+    			    } catch (IOException ioe) {
+    			    }
+    		    }
+    		    if(tempImage != null) {
+    		    	icon = new ImageIcon(tempImage);
+    				tempImage.flush();
+    		    }
+    		    if(icon != null) {
+    		    	fileIcon.put(suffix, icon);
+    		    }
+    	    }
+    	    return icon;
+    	}
+      }
+    
+    
+    
+    
     
 	private String getOnlyFilename(String str) {
 		String separator = (str.indexOf(File.separator) > -1) ? separator = File.separator : "/";
@@ -661,52 +835,9 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     	}    	    	
     }
 	
-	private Icon getFileIcon(String suffix) {
-	    Icon icon = fileIcon.get(suffix);
-	    if(icon == null) {
-		    Log.v("getIcon " + suffix);
-		    Image tempImage = null;
-		    if("FOLDER".equals(suffix)) {
-		    	tempImage = ImageScaler.getScaledImage(Resource.IMG_TREE_FOLDER.getImageIcon(),16,16);
-		    	/*
-                UIDefaults defaults = UIManager.getDefaults( );
-                Icon computerIcon = defaults.getIcon( "FileView.computerIcon" );
-                Icon floppyIcon   = defaults.getIcon( "FileView.floppyDriveIcon" );
-                Icon diskIcon     = defaults.getIcon( "FileView.hardDriveIcon" );
-                Icon fileIcon     = defaults.getIcon( "FileView.fileIcon" );
-                Icon folderIcon   = defaults.getIcon( "FileView.directoryIcon" );
-                
-                icon = folderIcon;
-                */
-		    } else if(".xml".equals(suffix)) {
-		    	tempImage = ImageScaler.getScaledImage(Resource.IMG_RESOURCE_TREE_XML.getImageIcon(),16,16);
-		    } else if(".qmg".equals(suffix)) {
-		    	tempImage = ImageScaler.getScaledImage(Resource.IMG_QMG_IMAGE_ICON.getImageIcon(),32,32);
-		    } else if(".dex".equals(suffix)) {
-		    	icon = Resource.IMG_RESOURCE_TREE_CODE.getImageIcon();
-		    } else if(".arsc".equals(suffix)) {
-		    	icon = Resource.IMG_RESOURCE_TREE_ARSC.getImageIcon();
-		    } else {
-			    try {
-			        File file = File.createTempFile("icon", suffix);
-			        FileSystemView view = FileSystemView.getFileSystemView();
-			        icon = view.getSystemIcon(file);
-			        file.delete();
-			    } catch (IOException ioe) {
-			    }
-		    }
-		    if(tempImage != null) {
-		    	icon = new ImageIcon(tempImage);
-				tempImage.flush();
-		    }
-		    if(icon != null) {
-		    	fileIcon.put(suffix, icon);
-		    }
-	    }
-	    return icon;
-	}
+
     
-	class NodeImageObserver implements ImageObserver {
+	public class NodeImageObserver implements ImageObserver {
 		JTree tree;
 		DefaultTreeModel model;
 		TreeNode node;
@@ -719,7 +850,9 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 
 		public boolean imageUpdate(Image img, int flags, int x, int y, int w, int h) {
 			
-			Log.d("Imageupdate : ");
+			Log.d("Imageupdate : " + flags);
+			
+			
 			
 			if ((flags & (FRAMEBITS | ALLBITS)) != 0) {
 				TreePath path = new TreePath(model.getPathToRoot(node));
@@ -735,87 +868,11 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	}
 	
     private void TreeInit() {
-        tree.setCellRenderer(new DefaultTreeCellRenderer() {
-			private static final long serialVersionUID = 6248791058116909814L;
-			//private ImageIcon iconApk = Resource.IMG_TREE_APK.getImageIcon();
-        	//private ImageIcon iconFolder = Resource.IMG_TREE_FOLDER.getImageIcon();
-        	
-            @Override
-            public Component getTreeCellRendererComponent(JTree tree,
-                    Object value, boolean selected, boolean expanded,
-                    boolean isLeaf, int row, boolean focused) {
-                Component c = super.getTreeCellRendererComponent(tree, value,
-                        selected, expanded, isLeaf, row, focused);
-                
-                DefaultMutableTreeNode nodo = (DefaultMutableTreeNode) value;
-
-                if(nodo == top) {
-                	setIcon(Resource.IMG_APK_FILE_ICON.getImageIcon());
-                	return c;
-                }
-                
-                if(nodo.getUserObject() instanceof ResourceObject) {
-	                ResourceObject tempObject = (ResourceObject)nodo.getUserObject();
-	                
-	                if(!tempObject.isFolder) {
-	                	ResourceObject temp = (ResourceObject)nodo.getUserObject();
-	                	String jarPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/";
-	                	Icon icon = null;
-
-	                	switch(temp.attr) {
-	                	case ResourceObject.ATTR_IMG:
-	                		try {
-	                			Image tempImage = null;
-								tempImage = ImageScaler.getScaledImage(new ImageIcon(new URL(jarPath+temp.path)),32,32);
-								icon = new ImageIcon(tempImage);
-								tempImage.flush();
-							} catch (MalformedURLException e1) {
-								e1.printStackTrace();
-							}
-	                		break;
-	                	case ResourceObject.ATTR_AXML:
-	                	case ResourceObject.ATTR_XML:
-	                		//tempImage = ImageScaler.getScaledImage(Resource.IMG_RESOURCE_TREE_XML.getImageIcon(),16,16);
-	                		break;
-	                	case ResourceObject.ATTR_QMG:
-	                		//tempImage = ImageScaler.getScaledImage(Resource.IMG_QMG_IMAGE_ICON.getImageIcon(),32,32);
-	                		break;
-	                	case ResourceObject.ATTR_TXT:
-	                		break;
-	                	case ResourceObject.ATTR_ETC:
-	                		break;
-	                	default :		    				
-	                	}
-	    				
-	    				if(icon != null) {
-		                	setIcon(icon);
-	    				} else {
-	    	                String suffix = tempObject.path.replaceAll(".*/", "");
-	    	                if(suffix.indexOf(".") > -1) {
-	    	                	suffix = suffix.replaceAll(".*\\.", ".");
-	    	                } else {
-	    	                	suffix = "";
-	    	                }
-	    	                if(temp.getLoadingState()) {
-	    	                	ImageIcon imageicon = Resource.IMG_LOADING.getImageIcon();	    	                	
-	    	                	imageicon.setImageObserver(new NodeImageObserver(tree, nodo));	    	                	
-	    	                	setIcon(imageicon);
-	    	                		    	     
-	    	                } else {
-	    	                	setIcon(getFileIcon(suffix));
-	    	                	
-	    	                }
-	    	                
-	    				}
-	                } 
-                } else {
-                	setIcon(getFileIcon("FOLDER"));
-                }
-                return c;
-            }
-        });
     	
-    	
+    	renderer = new ResouceTreeCellRenderer();    	
+        tree.setCellRenderer(renderer);    			
+	    tree.addFocusListener(renderer);
+	    
         tree.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
 				if(e.getButton() == MouseEvent.BUTTON1) {
@@ -1007,6 +1064,8 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
         splitPane.setRightComponent(contentPanel);
         
         this.add(splitPane);
+        
+		
 	}
 
 	@Override
