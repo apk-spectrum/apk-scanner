@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -102,6 +103,9 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	ResouceTreeCellRenderer renderer;
 	
 	private HashMap<String, Icon> fileIcon = new HashMap<String, Icon>();
+	
+	ImageIcon Animateimageicon = Resource.IMG_RESOURCE_TREE_OPEN_JD.getImageIcon();	    	                	
+	NodeImageObserver ImageObserver;	  
 	
 	public enum ResourceType{
 		ANIMATION(0),
@@ -270,7 +274,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     private void makeTreeForm() {
     	top = new DefaultMutableTreeNode("Loading...");
     	
-		tree = new JTree(new FilteredTreeModel(new DefaultTreeModel(top))) {
+		tree = new JTree(new DefaultTreeModel(top)) {
 			@Override
 			public void paintComponent(Graphics g) {
 				g.setColor(getBackground());
@@ -379,11 +383,17 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     	                } else {
     	                	suffix = "";
     	                }
-    	                if(temp.getLoadingState()) {
-    	                	ImageIcon imageicon = Resource.IMG_LOADING.getImageIcon();	    	                	
-    	                	imageicon.setImageObserver(new NodeImageObserver(tree, nodo));	    	                	
-    	                	setIcon(imageicon);
-    	                		    	     
+    	                if(temp.getLoadingState()) {    
+    	                	
+    	                	if(ImageObserver==null) {
+	    	                	ImageObserver = new NodeImageObserver(tree);
+	    	                    Animateimageicon.setImageObserver(ImageObserver);
+	    	                    ImageObserver.setnode(nodo);
+	    	                	ImageObserver.setDrawFlag(true);	    	                	
+    	                	}
+    	                	
+    	                	setIcon(Animateimageicon);
+    	                	
     	                } else {
     	                	setIcon(getFileIcon(suffix));
     	                	
@@ -776,7 +786,11 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 				public void OnSuccess() {
 					// TODO Auto-generated method stub
 					resObj.setLoadingState(false);
-					//tree.repaint();
+					
+					Animateimageicon.setImageObserver(null);
+					ImageObserver.setDrawFlag(false);
+					ImageObserver = null;
+					tree.repaint();
 				}});
 			}	
 		} else if(resObj.path.endsWith(".apk")) {
@@ -826,10 +840,9 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     					Log.i("DEX2JAR Log : "+ cmdLog[i]);	
     				}
     				Log.i("End DEX2JAR");
-    				
     				listener.OnSuccess();
-    				
     				cmdLog =ConsolCmd.exc(new String[] {"java", "-jar", Resource.BIN_JDGUI.getPath(), jarFilePath});
+    				
     			}
     		}).start();
     	}    	    	
@@ -841,30 +854,38 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		JTree tree;
 		DefaultTreeModel model;
 		TreeNode node;
-
-		NodeImageObserver(JTree tree, TreeNode node) {
+		Boolean StopFlag;		
+		
+		
+		NodeImageObserver(JTree tree) {
 			this.tree = tree;
 			this.model = (DefaultTreeModel) tree.getModel();
-			this.node = node;
+			StopFlag = true;
 		}
 
+		public void setDrawFlag(Boolean state) {
+			StopFlag = state;
+		}
+		
+		public void setnode(TreeNode node) {
+			this.node = node;
+		}
+		
 		public boolean imageUpdate(Image img, int flags, int x, int y, int w, int h) {
 			
-			Log.d("Imageupdate : " + flags);
-			
-			
+			if(!StopFlag) return false;
 			
 			if ((flags & (FRAMEBITS | ALLBITS)) != 0) {
 				TreePath path = new TreePath(model.getPathToRoot(node));
 				Rectangle rect = tree.getPathBounds(path);
 				if (rect != null) {
 					tree.repaint(rect);
-				}
-			} else {
-				Log.d("else" + flags);
+				}				
 			}
+			
 			return (flags & (ALLBITS | ABORT)) == 0;
 		}
+
 	}
 	
     private void TreeInit() {
@@ -1064,8 +1085,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
         splitPane.setRightComponent(contentPanel);
         
         this.add(splitPane);
-        
-		
+                
 	}
 
 	@Override

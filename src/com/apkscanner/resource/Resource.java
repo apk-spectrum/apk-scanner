@@ -221,10 +221,13 @@ public enum Resource
 	IMG_RESOURCE_TREE_XML		(Type.IMAGE, "resource_tab_tree_xml.gif"),
 	IMG_RESOURCE_TREE_CODE		(Type.IMAGE, "resource_tab_tree_code.png"),
 	IMG_RESOURCE_TREE_ARSC		(Type.IMAGE, "resource_tab_tree_arsc.png"),
+	IMG_RESOURCE_TREE_OPEN_JD (Type.IMAGE, "Loading_openJD_16_16.gif"),
 	
 	IMG_PERM_GROUP_PHONE_CALLS	(Type.IMAGE, "perm_group_phone_calls.png"),
 	
 	IMG_TOOLBAR_OPEN_ARROW		(Type.IMAGE, "down_on.png"),
+	
+	
 	
 	IMG_APP_ICON				(Type.IMAGE, "AppIcon.png"),
 	IMG_APK_FILE_ICON			(Type.IMAGE, "apk_file_icon.png"),
