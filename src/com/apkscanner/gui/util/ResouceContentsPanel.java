@@ -50,6 +50,7 @@ public class ResouceContentsPanel extends JPanel{
 	JPanel ContentsviewPanel;
 	JTextField FilePathtextField;	
 	SelectViewPanel selectPanel;
+	Color defaultColor;
 	
 	public ResouceContentsPanel() {
 		
@@ -80,7 +81,7 @@ public class ResouceContentsPanel extends JPanel{
 		htmlViewer.setOpaque(true);
 		JScrollPane htmlViewerScroll = new JScrollPane(htmlViewer);
 
-		
+		defaultColor = this.getBackground();
 		
 		textTableViewer = new JTable();
 		textTableViewer.setShowHorizontalLines(false);
@@ -120,11 +121,13 @@ public class ResouceContentsPanel extends JPanel{
 		
 		HashMap<Integer, JLabel> IconHashMap = new HashMap<Integer, JLabel>();  
 
-		public final int SELECT_VIEW_ICON_JD_OPEN = 0x01;
-		public final int SELECT_VIEW_ICON_SCANNER_OPEN = 0x02;
-		public final int SELECT_VIEW_ICON_CHOOSE_APPLICATION = 0x04;
-		public final int SELECT_VIEW_ICON_EXPLORER = 0x08;
-				
+		public final static int SELECT_VIEW_ICON_OPEN = 1;
+		public final static int SELECT_VIEW_ICON_JD_OPEN = 2;
+		public final static int SELECT_VIEW_ICON_SCANNER_OPEN = 4;
+		public final static int SELECT_VIEW_ICON_CHOOSE_APPLICATION = 8;
+		public final static int SELECT_VIEW_ICON_EXPLORER = 16;
+		
+		
 		String message = new String("Sorry, this file type is unsupported by preview.\nSo, open file with an external application by below button.");
 		
 		public void InitPanel() {
@@ -140,50 +143,41 @@ public class ResouceContentsPanel extends JPanel{
 			IconHashMap.put(SELECT_VIEW_ICON_SCANNER_OPEN, new JLabel("Open", Resource.IMG_TOOLBAR_MANIFEST.getImageIcon(100,100), JLabel.CENTER));
 			IconHashMap.put(SELECT_VIEW_ICON_CHOOSE_APPLICATION, new JLabel("Choose Application", Resource.IMG_TOOLBAR_INSTALL.getImageIcon(100,100), JLabel.CENTER));
 			IconHashMap.put(SELECT_VIEW_ICON_EXPLORER, new JLabel("Explorer", Resource.IMG_TOOLBAR_EXPLORER.getImageIcon(100,100), JLabel.CENTER));
-						
+			IconHashMap.put(SELECT_VIEW_ICON_OPEN, new JLabel("Open", Resource.IMG_TOOLBAR_OPEN.getImageIcon(100,100), JLabel.CENTER));
+			
 			for(int i=0; i< IconHashMap.size(); i++) {				
 				final JLabel temp = IconHashMap.get(1<<i);
 				temp.setHorizontalTextPosition(JLabel.CENTER);
 		        temp.setVerticalTextPosition(JLabel.BOTTOM);
+		        temp.setOpaque(true);
 		        add(temp);
 		        
 		        temp.addMouseListener(new MouseListener() {
-					
+		        	@Override
+					public void mouseReleased(MouseEvent arg0) {	temp.setBackground(defaultColor);}					
 					@Override
-					public void mouseReleased(MouseEvent arg0) {
-						// TODO Auto-generated method stub
-						
-					}
-					
+					public void mousePressed(MouseEvent arg0) { Color color = new Color(0, 155 ,200, 100); temp.setBackground(color);}					
 					@Override
-					public void mousePressed(MouseEvent arg0) {
-						// TODO Auto-generated method stub
-						
-					}
-					
+					public void mouseExited(MouseEvent arg0) { 	temp.setBackground(defaultColor);}					
 					@Override
-					public void mouseExited(MouseEvent arg0) {
-						// TODO Auto-generated method stub
-						
-					}
-					
+					public void mouseEntered(MouseEvent arg0) { Color color = new Color(0, 155 ,100, 100); temp.setBackground(color);}					
 					@Override
-					public void mouseEntered(MouseEvent arg0) {
-						// TODO Auto-generated method stub
-						
-					}
-					
-					@Override
-					public void mouseClicked(MouseEvent arg0) {
-						// TODO Auto-generated method stub
-						Log.d(""+temp);
-					}
+					public void mouseClicked(MouseEvent arg0) { Log.d("Click"+temp);	}
 				});
 			}
 		}
 		
-		public void setIconMenu() {
-			
+		public void setMenu(int Flag) {
+			for(int i=0; i< IconHashMap.size(); i++) {				
+				if((Flag & 1<<i) ==0) {
+					IconHashMap.get(1<<i).setVisible(false);
+					
+				} else {
+					IconHashMap.get(1<<i).setVisible(true);
+				}
+			}
+			this.invalidate();
+			this.repaint();
 		}
 		
 	}
@@ -228,7 +222,16 @@ public class ResouceContentsPanel extends JPanel{
 			content=null;
 			((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_SELECT_VIEWER);
 			
-			
+			if(obj.path.endsWith(".dex")) {
+				selectPanel.setMenu(SelectViewPanel.SELECT_VIEW_ICON_JD_OPEN | SelectViewPanel.SELECT_VIEW_ICON_CHOOSE_APPLICATION);
+			} else if(obj.path.endsWith(".apk")) {
+				selectPanel.setMenu(SelectViewPanel.SELECT_VIEW_ICON_SCANNER_OPEN | SelectViewPanel.SELECT_VIEW_ICON_CHOOSE_APPLICATION
+						| SelectViewPanel.SELECT_VIEW_ICON_EXPLORER);
+			} else if(obj.path.endsWith(".qmg")) {
+				
+			} else {
+				selectPanel.setMenu(SelectViewPanel.SELECT_VIEW_ICON_OPEN | SelectViewPanel.SELECT_VIEW_ICON_CHOOSE_APPLICATION);
+			}
 			
 			break;
 		}
