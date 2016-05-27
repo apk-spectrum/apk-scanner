@@ -133,7 +133,7 @@ public class ResouceContentsPanel extends JPanel{
 		public void InitPanel() {
 			JTextArea textArea = new JTextArea(message);
 			JLabel warringLabel = new JLabel(warring);
-			
+			textArea.setBackground(defaultColor);
 			//this.setLayout();
 			
 			this.add(warringLabel);
@@ -152,7 +152,7 @@ public class ResouceContentsPanel extends JPanel{
 		        temp.setOpaque(true);
 		        add(temp);
 		        
-		        temp.addMouseListener(new MouseListener() {
+		        temp.addMouseListener(new MouseListener() {		        	
 		        	@Override
 					public void mouseReleased(MouseEvent arg0) {	temp.setBackground(defaultColor);}					
 					@Override
