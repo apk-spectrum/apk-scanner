@@ -1,32 +1,45 @@
 package com.apkscanner.gui.util;
 
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.text.html.ImageView;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.gui.tabpanels.ImageResource.ResourceObject;
-
+import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
 public class ResouceContentsPanel extends JPanel{
+	private static final long serialVersionUID = -934921813626224616L;
+	
 	public static final String CONTENT_IMAGE_VIEWER = "ImageViewer";
 	public static final String CONTENT_HTML_VIEWER = "HtmlViewer";
 	public static final String CONTENT_TABLE_VIEWER = "TableViewer";
+	public static final String CONTENT_SELECT_VIEWER = "SelectViewer";
 	
 	JHtmlEditorPane htmlViewer;
 	JTable textTableViewer;
@@ -34,13 +47,17 @@ public class ResouceContentsPanel extends JPanel{
 	private String apkFilePath = null;
 	private ResourceObject currentSelectedObj = null;
 	private String[] resourcesWithValue = null;
+	JPanel ContentsviewPanel;
+	JTextField FilePathtextField;	
+	SelectViewPanel selectPanel;
 	
 	public ResouceContentsPanel() {
 		
 	}
-	public void InitContentsPanel (String apkpath) {
+	public void InitContentsPanel (ApkInfo apkinfo) {
 		
-		apkFilePath = apkpath;
+		apkFilePath = apkinfo.filePath;
+		this.resourcesWithValue = apkinfo.resourcesWithValue;
 		JLabel label = new JLabel();
 		Font font = label.getFont();
 		StringBuilder style = new StringBuilder("#basic-info, #perm-group {");
@@ -62,6 +79,8 @@ public class ResouceContentsPanel extends JPanel{
 		htmlViewer.setEditable(false);
 		htmlViewer.setOpaque(true);
 		JScrollPane htmlViewerScroll = new JScrollPane(htmlViewer);
+
+		
 		
 		textTableViewer = new JTable();
 		textTableViewer.setShowHorizontalLines(false);
@@ -73,13 +92,100 @@ public class ResouceContentsPanel extends JPanel{
 
 		JScrollPane textTableScroll = new JScrollPane(textTableViewer);
 		
-		setLayout(new CardLayout());
+		setLayout(new BorderLayout());
 		
 		imageViewerPanel = new ImageControlPanel();
 		
-		this.add(htmlViewerScroll, CONTENT_HTML_VIEWER);
-		this.add(imageViewerPanel, CONTENT_IMAGE_VIEWER);
-		this.add(textTableScroll, CONTENT_TABLE_VIEWER);
+		selectPanel = new SelectViewPanel();
+		selectPanel.InitPanel();
+		
+		ContentsviewPanel = new JPanel(new CardLayout());
+		
+		ContentsviewPanel.add(htmlViewerScroll, CONTENT_HTML_VIEWER);
+		ContentsviewPanel.add(imageViewerPanel, CONTENT_IMAGE_VIEWER);
+		ContentsviewPanel.add(textTableScroll, CONTENT_TABLE_VIEWER);
+		ContentsviewPanel.add(selectPanel, CONTENT_SELECT_VIEWER);
+		
+		
+		FilePathtextField = new JTextField("FilePath");
+		FilePathtextField.setEditable(false);
+		
+		this.add(FilePathtextField, BorderLayout.NORTH);
+		this.add(ContentsviewPanel, BorderLayout.CENTER);
+		
+	}
+	
+	public class SelectViewPanel extends JPanel {
+		ImageIcon warring = Resource.IMG_WARNING.getImageIcon(50,50);
+		
+		HashMap<Integer, JLabel> IconHashMap = new HashMap<Integer, JLabel>();  
+
+		public final int SELECT_VIEW_ICON_JD_OPEN = 0x01;
+		public final int SELECT_VIEW_ICON_SCANNER_OPEN = 0x02;
+		public final int SELECT_VIEW_ICON_CHOOSE_APPLICATION = 0x04;
+		public final int SELECT_VIEW_ICON_EXPLORER = 0x08;
+				
+		String message = new String("Sorry, this file type is unsupported by preview.\nSo, open file with an external application by below button.");
+		
+		public void InitPanel() {
+			JTextArea textArea = new JTextArea(message);
+			JLabel warringLabel = new JLabel(warring);
+			
+			//this.setLayout();
+			
+			this.add(warringLabel);
+			this.add(textArea);
+						
+			IconHashMap.put(SELECT_VIEW_ICON_JD_OPEN, new JLabel("Open", Resource.IMG_TOOLBAR_OPENCODE.getImageIcon(100,100), JLabel.CENTER));
+			IconHashMap.put(SELECT_VIEW_ICON_SCANNER_OPEN, new JLabel("Open", Resource.IMG_TOOLBAR_MANIFEST.getImageIcon(100,100), JLabel.CENTER));
+			IconHashMap.put(SELECT_VIEW_ICON_CHOOSE_APPLICATION, new JLabel("Choose Application", Resource.IMG_TOOLBAR_INSTALL.getImageIcon(100,100), JLabel.CENTER));
+			IconHashMap.put(SELECT_VIEW_ICON_EXPLORER, new JLabel("Explorer", Resource.IMG_TOOLBAR_EXPLORER.getImageIcon(100,100), JLabel.CENTER));
+						
+			for(int i=0; i< IconHashMap.size(); i++) {				
+				final JLabel temp = IconHashMap.get(1<<i);
+				temp.setHorizontalTextPosition(JLabel.CENTER);
+		        temp.setVerticalTextPosition(JLabel.BOTTOM);
+		        add(temp);
+		        
+		        temp.addMouseListener(new MouseListener() {
+					
+					@Override
+					public void mouseReleased(MouseEvent arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void mousePressed(MouseEvent arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void mouseExited(MouseEvent arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void mouseEntered(MouseEvent arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						// TODO Auto-generated method stub
+						Log.d(""+temp);
+					}
+				});
+			}
+		}
+		
+		public void setIconMenu() {
+			
+		}
+		
 	}
 	
     private void setTextContentPanel(ResourceObject obj) {
@@ -110,7 +216,7 @@ public class ResouceContentsPanel extends JPanel{
 				if(resourcesWithValue != null) {
 					textTableViewer.setModel(new StringListTableModel(resourcesWithValue));
 					textTableViewer.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-					 ((CardLayout)this.getLayout()).show(this, CONTENT_TABLE_VIEWER);
+					 ((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_TABLE_VIEWER);
 					return;
 				} else {
 					content = "lodding...";
@@ -118,11 +224,9 @@ public class ResouceContentsPanel extends JPanel{
 				break;
 			}
 		default:
-			content = "This type is unsupported by preview.";
-			
-			
-			
-			
+			//content = "This type is unsupported by preview.";
+			content=null;
+			((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_SELECT_VIEWER);
 			
 			
 			
@@ -133,8 +237,10 @@ public class ResouceContentsPanel extends JPanel{
 			htmlViewer.setText("<pre>" + content.replaceAll("<", "&lt;").replaceAll(">", "&gt;") + "</pre>");
 			//textViewerPanel.setText("<pre>" + content.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("[\r]\n", "<br/>") + "</pre>");
 			htmlViewer.setCaretPosition(0);
-			((CardLayout)this.getLayout()).show(this, CONTENT_HTML_VIEWER);
+			((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_HTML_VIEWER);
 		}
+		
+		
     }
     
     public void selectContent(JTree tree) {
@@ -156,6 +262,7 @@ public class ResouceContentsPanel extends JPanel{
 		if(resObj == null || resObj.isFolder) {
 			//htmlViewer.setText("");
 			//((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_HTML_VIEWER);
+			FilePathtextField.setText("folder");
 		} else {
 			switch(resObj.attr) {
 			case ResourceObject.ATTR_IMG:
@@ -171,14 +278,15 @@ public class ResouceContentsPanel extends JPanel{
 			    setTextContentPanel(resObj);
 				break;
 			}
-		}
+			FilePathtextField.setText(resObj.path);
+		}		
     }
     
     private void drawImageOnPanel(ResourceObject obj) {
 		try {
 			imageViewerPanel.setImage(apkFilePath, obj.path);
 			imageViewerPanel.repaint();
-			 ((CardLayout)this.getLayout()).show(this, CONTENT_IMAGE_VIEWER);
+			 ((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_IMAGE_VIEWER);
 		} catch (MalformedURLException e1) {
 			e1.printStackTrace();
 		} 

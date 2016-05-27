@@ -1,11 +1,9 @@
 package com.apkscanner.gui.tabpanels;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -32,9 +30,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -43,12 +38,9 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
-import javax.swing.ListSelectionModel;
 import javax.swing.filechooser.FileSystemView;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -62,9 +54,7 @@ import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.gui.util.FilteredTreeModel;
-import com.apkscanner.gui.util.ImageControlPanel;
 import com.apkscanner.gui.util.ImageScaler;
-import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.gui.util.ResouceContentsPanel;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.ConsolCmd;
@@ -922,7 +912,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		this.tempWorkPath = apkInfo.tempWorkPath;
 		
 		nameList = apkInfo.images;
-		contentPanel.InitContentsPanel(apkFilePath);
+		contentPanel.InitContentsPanel(apkInfo);
 		setTreeForm(false);
 	}
 	
