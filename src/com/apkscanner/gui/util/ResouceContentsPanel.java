@@ -5,6 +5,8 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -24,6 +26,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -134,23 +137,30 @@ public class ResouceContentsPanel extends JPanel{
 			JTextArea textArea = new JTextArea(message);
 			JLabel warringLabel = new JLabel(warring);
 			textArea.setBackground(defaultColor);
-			//this.setLayout();
 			
-			this.add(warringLabel);
-			this.add(textArea);
-						
-			IconHashMap.put(SELECT_VIEW_ICON_JD_OPEN, new JLabel("Open", Resource.IMG_TOOLBAR_OPENCODE.getImageIcon(100,100), JLabel.CENTER));
-			IconHashMap.put(SELECT_VIEW_ICON_SCANNER_OPEN, new JLabel("Open", Resource.IMG_TOOLBAR_MANIFEST.getImageIcon(100,100), JLabel.CENTER));
-			IconHashMap.put(SELECT_VIEW_ICON_CHOOSE_APPLICATION, new JLabel("Choose Application", Resource.IMG_TOOLBAR_INSTALL.getImageIcon(100,100), JLabel.CENTER));
+			JPanel MessagePanel = new JPanel(new FlowLayout());
+	        MessagePanel.add(warringLabel);
+	        MessagePanel.add(textArea);
+	        MessagePanel.setBorder(new EmptyBorder(50, 0, 0, 0));
+	        
+	        this.setLayout(new BorderLayout());
+	        
+			this.add(MessagePanel, BorderLayout.NORTH);
+			
+			JPanel IconPanel = new JPanel(new GridBagLayout());
+			
+			IconHashMap.put(SELECT_VIEW_ICON_JD_OPEN, new JLabel("Open", Resource.IMG_RESOURCE_TREE_JD_ICON.getImageIcon(100,100), JLabel.CENTER));
+			IconHashMap.put(SELECT_VIEW_ICON_SCANNER_OPEN, new JLabel("Open", Resource.IMG_APP_ICON.getImageIcon(100,100), JLabel.CENTER));
+			IconHashMap.put(SELECT_VIEW_ICON_CHOOSE_APPLICATION, new JLabel("Choose Application", Resource.IMG_RESOURCE_TREE_OPEN_OTHERAPPLICATION_ICON.getImageIcon(100,100), JLabel.CENTER));
 			IconHashMap.put(SELECT_VIEW_ICON_EXPLORER, new JLabel("Explorer", Resource.IMG_TOOLBAR_EXPLORER.getImageIcon(100,100), JLabel.CENTER));
-			IconHashMap.put(SELECT_VIEW_ICON_OPEN, new JLabel("Open", Resource.IMG_TOOLBAR_OPEN.getImageIcon(100,100), JLabel.CENTER));
+			IconHashMap.put(SELECT_VIEW_ICON_OPEN, new JLabel("Open", Resource.IMG_RESOURCE_TREE_OPEN_ICON.getImageIcon(100,100), JLabel.CENTER));
 			
 			for(int i=0; i< IconHashMap.size(); i++) {				
 				final JLabel temp = IconHashMap.get(1<<i);
 				temp.setHorizontalTextPosition(JLabel.CENTER);
 		        temp.setVerticalTextPosition(JLabel.BOTTOM);
 		        temp.setOpaque(true);
-		        add(temp);
+		        IconPanel.add(temp);
 		        
 		        temp.addMouseListener(new MouseListener() {		        	
 		        	@Override
@@ -162,9 +172,42 @@ public class ResouceContentsPanel extends JPanel{
 					@Override
 					public void mouseEntered(MouseEvent arg0) { Color color = new Color(0, 155 ,100, 100); temp.setBackground(color);}					
 					@Override
-					public void mouseClicked(MouseEvent arg0) { Log.d("Click"+temp);	}
+					public void mouseClicked(MouseEvent arg0) {
+						
+						//int ClickedObject = IconHashMap.get((JLabel)(temp));
+						
+						//HashMap<JLabel, Integer> reversedHashMap = MapUtils.invertMap(IconHashMap);
+						
+						HashMap<JLabel, Integer> reversedHashMap = new HashMap<JLabel, Integer>();
+						for (Integer i : IconHashMap.keySet()) {
+						    reversedHashMap.put(IconHashMap.get(i), i);
+						}
+						int ClickedObject = reversedHashMap.get(temp);
+						
+						Log.d("Click Label : "+ClickedObject);
+						
+						switch(ClickedObject) {
+						case SELECT_VIEW_ICON_JD_OPEN:
+							break;
+						case SELECT_VIEW_ICON_SCANNER_OPEN:
+							break;
+						case SELECT_VIEW_ICON_CHOOSE_APPLICATION:
+							break;
+						case SELECT_VIEW_ICON_EXPLORER:
+							break;
+						case SELECT_VIEW_ICON_OPEN:
+							break;
+						default:							
+							Log.e("unknown Label : " + ClickedObject + " JLabel : " + temp);
+						}
+						
+					}
 				});
 			}
+			
+			this.add(IconPanel);
+			
+			
 		}
 		
 		public void setMenu(int Flag) {

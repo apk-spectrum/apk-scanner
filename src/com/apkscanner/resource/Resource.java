@@ -222,6 +222,9 @@ public enum Resource
 	IMG_RESOURCE_TREE_CODE		(Type.IMAGE, "resource_tab_tree_code.png"),
 	IMG_RESOURCE_TREE_ARSC		(Type.IMAGE, "resource_tab_tree_arsc.png"),
 	IMG_RESOURCE_TREE_OPEN_JD (Type.IMAGE, "Loading_openJD_16_16.gif"),
+	IMG_RESOURCE_TREE_JD_ICON (Type.IMAGE, "resource_tab_JD.png"),	
+	IMG_RESOURCE_TREE_OPEN_ICON (Type.IMAGE, "resource_tab_open.png"),
+	IMG_RESOURCE_TREE_OPEN_OTHERAPPLICATION_ICON (Type.IMAGE, "resource_tab_otherapplication.png"),
 	
 	IMG_PERM_GROUP_PHONE_CALLS	(Type.IMAGE, "perm_group_phone_calls.png"),
 	
