@@ -225,12 +225,10 @@ public enum Resource
 	IMG_RESOURCE_TREE_JD_ICON (Type.IMAGE, "resource_tab_JD.png"),	
 	IMG_RESOURCE_TREE_OPEN_ICON (Type.IMAGE, "resource_tab_open.png"),
 	IMG_RESOURCE_TREE_OPEN_OTHERAPPLICATION_ICON (Type.IMAGE, "resource_tab_otherapplication.png"),
+	IMG_RESOURCE_TREE_OPEN_JD_LOADING (Type.IMAGE, "Loading_openJD_100_100.gif"),	
 	
-	IMG_PERM_GROUP_PHONE_CALLS	(Type.IMAGE, "perm_group_phone_calls.png"),
-	
-	IMG_TOOLBAR_OPEN_ARROW		(Type.IMAGE, "down_on.png"),
-	
-	
+	IMG_PERM_GROUP_PHONE_CALLS	(Type.IMAGE, "perm_group_phone_calls.png"),	
+	IMG_TOOLBAR_OPEN_ARROW		(Type.IMAGE, "down_on.png"),	
 	
 	IMG_APP_ICON				(Type.IMAGE, "AppIcon.png"),
 	IMG_APK_FILE_ICON			(Type.IMAGE, "apk_file_icon.png"),

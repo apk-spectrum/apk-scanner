@@ -10,6 +10,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.HashMap;
@@ -30,11 +31,14 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import com.apkscanner.DexLuncher;
+import com.apkscanner.Launcher;
 import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.gui.tabpanels.ImageResource.ResourceObject;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.ZipFileUtil;
 
 public class ResouceContentsPanel extends JPanel{
 	private static final long serialVersionUID = -934921813626224616L;
@@ -47,20 +51,21 @@ public class ResouceContentsPanel extends JPanel{
 	JHtmlEditorPane htmlViewer;
 	JTable textTableViewer;
 	ImageControlPanel imageViewerPanel;
-	private String apkFilePath = null;
 	private ResourceObject currentSelectedObj = null;
 	private String[] resourcesWithValue = null;
 	JPanel ContentsviewPanel;
 	JTextField FilePathtextField;	
 	SelectViewPanel selectPanel;
 	Color defaultColor;
+	ResourceObject CurrentresObj = null;
+	ApkInfo apkinfo;
 	
 	public ResouceContentsPanel() {
 		
 	}
 	public void InitContentsPanel (ApkInfo apkinfo) {
 		
-		apkFilePath = apkinfo.filePath;
+		this.apkinfo = apkinfo;
 		this.resourcesWithValue = apkinfo.resourcesWithValue;
 		JLabel label = new JLabel();
 		Font font = label.getFont();
@@ -164,16 +169,16 @@ public class ResouceContentsPanel extends JPanel{
 		        
 		        temp.addMouseListener(new MouseListener() {		        	
 		        	@Override
-					public void mouseReleased(MouseEvent arg0) {	temp.setBackground(defaultColor);}					
+					public void mouseReleased(MouseEvent arg0) {	if(temp.isEnabled()==false) return;temp.setBackground(defaultColor);}					
 					@Override
-					public void mousePressed(MouseEvent arg0) { Color color = new Color(0, 155 ,200, 100); temp.setBackground(color);}					
+					public void mousePressed(MouseEvent arg0) { if(temp.isEnabled()==false) return;Color color = new Color(0, 155 ,200, 100); temp.setBackground(color);}					
 					@Override
 					public void mouseExited(MouseEvent arg0) { 	temp.setBackground(defaultColor);}					
 					@Override
-					public void mouseEntered(MouseEvent arg0) { Color color = new Color(0, 155 ,100, 100); temp.setBackground(color);}					
+					public void mouseEntered(MouseEvent arg0) { if(temp.isEnabled()==false) return; Color color = new Color(0, 155 ,100, 100); temp.setBackground(color);}					
 					@Override
 					public void mouseClicked(MouseEvent arg0) {
-						
+						if(temp.isEnabled()==false) return;
 						//int ClickedObject = IconHashMap.get((JLabel)(temp));
 						
 						//HashMap<JLabel, Integer> reversedHashMap = MapUtils.invertMap(IconHashMap);
@@ -185,17 +190,50 @@ public class ResouceContentsPanel extends JPanel{
 						int ClickedObject = reversedHashMap.get(temp);
 						
 						Log.d("Click Label : "+ClickedObject);
+						String resPath = apkinfo.tempWorkPath + File.separator + CurrentresObj.path.replace("/", File.separator);
+						ZipFileUtil.unZip(apkinfo.filePath, currentSelectedObj.path, resPath);
 						
 						switch(ClickedObject) {
 						case SELECT_VIEW_ICON_JD_OPEN:
+							if(CurrentresObj!=null) {
+								temp.setIcon(Resource.IMG_RESOURCE_TREE_OPEN_JD_LOADING.getImageIcon());
+								temp.setDisabledIcon(Resource.IMG_RESOURCE_TREE_OPEN_JD_LOADING.getImageIcon());
+								temp.setEnabled(false);
+								DexLuncher.openDex(resPath, new DexLuncher.DexWrapperListener() {
+									@Override
+									public void OnError() {
+																				
+									}
+									@Override
+									public void OnSuccess() {
+										temp.setIcon(null);
+										temp.setDisabledIcon(null);
+										
+										temp.setIcon(Resource.IMG_RESOURCE_TREE_JD_ICON.getImageIcon(100,100));
+										temp.setEnabled(true);
+										
+										temp.repaint();
+									}
+								});
+							}
 							break;
 						case SELECT_VIEW_ICON_SCANNER_OPEN:
+							Launcher.run(resPath);
 							break;
 						case SELECT_VIEW_ICON_CHOOSE_APPLICATION:
 							break;
 						case SELECT_VIEW_ICON_EXPLORER:
 							break;
 						case SELECT_VIEW_ICON_OPEN:
+							String openner;
+							if(System.getProperty("os.name").indexOf("Window") >-1) {
+								openner = "explorer";
+							} else {  //for linux
+								openner = "xdg-open";
+							}
+							try {
+									new ProcessBuilder(openner, resPath).start();
+								} catch (IOException e1) { }
 							break;
 						default:							
 							Log.e("unknown Label : " + ClickedObject + " JLabel : " + temp);
@@ -230,7 +268,7 @@ public class ResouceContentsPanel extends JPanel{
     	
 		switch(obj.attr) {
 		case ResourceObject.ATTR_AXML:
-			String[] xmlbuffer = AaptWrapper.Dump.getXmltree(apkFilePath, new String[] {obj.path});
+			String[] xmlbuffer = AaptWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {obj.path});
 			StringBuilder sb = new StringBuilder();
 			for(String s: xmlbuffer) sb.append(s+"\n");
 			content = sb.toString();
@@ -239,7 +277,7 @@ public class ResouceContentsPanel extends JPanel{
 		case ResourceObject.ATTR_TXT:
 			ZipFile zipFile;
 			try {
-				zipFile = new ZipFile(apkFilePath);
+				zipFile = new ZipFile(apkinfo.filePath);
 				ZipEntry entry = zipFile.getEntry(obj.path);
 				byte[] buffer = new byte[(int) entry.getSize()];
 				zipFile.getInputStream(entry).read(buffer);
@@ -294,43 +332,43 @@ public class ResouceContentsPanel extends JPanel{
                 tree.getLastSelectedPathComponent();
         if(node == null) return;
 		
-        ResourceObject resObj = null;
+        CurrentresObj = null;
 		if(node.getUserObject() instanceof ResourceObject) {
-			resObj = (ResourceObject)node.getUserObject();
+			CurrentresObj = (ResourceObject)node.getUserObject();
 		}
 		
-		if(resObj != null && resObj == currentSelectedObj) {
+		if(CurrentresObj != null && CurrentresObj == currentSelectedObj) {
 			Log.v("select same object");
 			return;
 		}
-		currentSelectedObj = resObj;
+		currentSelectedObj = CurrentresObj;
 
-		if(resObj == null || resObj.isFolder) {
+		if(CurrentresObj == null || CurrentresObj.isFolder) {
 			//htmlViewer.setText("");
 			//((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_HTML_VIEWER);
 			FilePathtextField.setText("folder");
 		} else {
-			switch(resObj.attr) {
+			switch(CurrentresObj.attr) {
 			case ResourceObject.ATTR_IMG:
 			case ResourceObject.ATTR_QMG:
-				drawImageOnPanel(resObj);
+				drawImageOnPanel(CurrentresObj);
 				break;
 			case ResourceObject.ATTR_AXML:
 			case ResourceObject.ATTR_XML:
 			case ResourceObject.ATTR_TXT:
-			    setTextContentPanel(resObj);
+			    setTextContentPanel(CurrentresObj);
 				break;
 			default:
-			    setTextContentPanel(resObj);
+			    setTextContentPanel(CurrentresObj);
 				break;
 			}
-			FilePathtextField.setText(resObj.path);
+			FilePathtextField.setText(CurrentresObj.path);
 		}		
     }
     
     private void drawImageOnPanel(ResourceObject obj) {
 		try {
-			imageViewerPanel.setImage(apkFilePath, obj.path);
+			imageViewerPanel.setImage(apkinfo.filePath, obj.path);
 			imageViewerPanel.repaint();
 			 ((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_IMAGE_VIEWER);
 		} catch (MalformedURLException e1) {
