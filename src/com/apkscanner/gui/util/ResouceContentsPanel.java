@@ -175,7 +175,7 @@ public class ResouceContentsPanel extends JPanel{
 					@Override
 					public void mouseExited(MouseEvent arg0) { 	temp.setBackground(defaultColor);}					
 					@Override
-					public void mouseEntered(MouseEvent arg0) { if(temp.isEnabled()==false) return; Color color = new Color(0, 155 ,100, 100); temp.setBackground(color);}					
+					public void mouseEntered(MouseEvent arg0) { if(temp.isEnabled()==false) return; temp.setDisabledIcon(Resource.IMG_RESOURCE_TREE_OPEN_JD_LOADING.getImageIcon()); Color color = new Color(0, 155 ,100, 100); temp.setBackground(color);}					
 					@Override
 					public void mouseClicked(MouseEvent arg0) {
 						if(temp.isEnabled()==false) return;
@@ -201,17 +201,12 @@ public class ResouceContentsPanel extends JPanel{
 								temp.setEnabled(false);
 								DexLuncher.openDex(resPath, new DexLuncher.DexWrapperListener() {
 									@Override
-									public void OnError() {
-																				
-									}
+									public void OnError() {}
 									@Override
 									public void OnSuccess() {
-										temp.setIcon(null);
-										temp.setDisabledIcon(null);
-										
+										temp.setDisabledIcon(null);										
 										temp.setIcon(Resource.IMG_RESOURCE_TREE_JD_ICON.getImageIcon(100,100));
-										temp.setEnabled(true);
-										
+										temp.setEnabled(true);										
 										temp.repaint();
 									}
 								});
