@@ -1,4 +1,4 @@
-package com.apkscanner.gui;
+package com.apkscanner.gui.util;
 
 import java.awt.Graphics;
 import java.awt.Image;
