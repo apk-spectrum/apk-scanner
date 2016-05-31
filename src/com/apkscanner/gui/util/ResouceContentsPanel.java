@@ -165,6 +165,7 @@ public class ResouceContentsPanel extends JPanel{
 				temp.setHorizontalTextPosition(JLabel.CENTER);
 		        temp.setVerticalTextPosition(JLabel.BOTTOM);
 		        temp.setOpaque(true);
+		        temp.setIconTextGap(5);
 		        IconPanel.add(temp);
 		        
 		        temp.addMouseListener(new MouseListener() {		        	

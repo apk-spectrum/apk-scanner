@@ -333,6 +333,12 @@ public class MainUI extends JFrame
 			}
 		}
 		
+		private void evtOpenSearchPopup() {
+			
+			
+			
+		}
+		
 		private void evtOpenPackage(boolean newWindow)
 		{
 			PackageTreeDlg Dlg = new PackageTreeDlg();
@@ -535,6 +541,8 @@ public class MainUI extends JFrame
 				evtInstallApk(true);
 			} else if(ToolBar.ButtonSet.OPEN_CODE.matchActionEvent(e)) {
 				evtOpenJDGUI();
+			} else if(ToolBar.ButtonSet.SEARCH.matchActionEvent(e)) {
+				evtOpenSearchPopup();
 			}
 		}
 
