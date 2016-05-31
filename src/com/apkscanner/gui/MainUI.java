@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.Scanner;
 import java.util.regex.PatternSyntaxException;
 import java.util.zip.ZipEntry;
@@ -43,6 +44,7 @@ import com.apkscanner.gui.dialog.PackageTreeDlg;
 import com.apkscanner.gui.dialog.SettingDlg;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.FileDrop;
+import com.apkscanner.gui.util.SearchDlg;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.FileUtil;
@@ -344,114 +346,20 @@ public class MainUI extends JFrame
 		}
 		
 		private void evtOpenSearchPopup() throws IOException {
-        	class MyDialogPopup extends JDialog {
-
-        		public String sName;
-
-        		public MyDialogPopup() {
-        			setBounds(100, 100, 296, 175);
-        			setTitle("Input Dialog");
-        			setLocationRelativeTo(null);
-        			getContentPane().setLayout(null);
-        			
-        			// Create Input 
-        			final JTextField name = new JTextField();
-        			name.setBounds(57, 36, 175, 20);
-        			getContentPane().add(name);
-        			
-        			// Button OK
-        			JButton btnOK = new JButton("OK");
-        			btnOK.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent e) {
-        					sName = name.getText();
-        					dispose();
-        				}
-        			});
-        			btnOK.setBounds(70, 93, 78, 23);
-        			getContentPane().add(btnOK);
-        			
-        			// Button Cancel
-        			JButton btnCancel = new JButton("Cancel");
-        			btnCancel.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent e) {
-        					sName = "";
-        					dispose();
-        				}
-        			});
-        			btnCancel.setBounds(158, 93, 74, 23);
-        			getContentPane().add(btnCancel);
-        			
-        		}
-        	}
+        	SearchDlg dialog = new SearchDlg();
+        	dialog.setApkInfo(apkScanner.getApkInfo());
         	
-        	MyDialogPopup dialog = new MyDialogPopup();
 			dialog.setModal(true);
 			dialog.setVisible(true);
+			
 			Log.d(dialog.sName);
 			
-			
+		
 		    // (?i) <- "찾을 문자열"에 대소문자 구분을 없애고
 		    // .*   <- 문자열이 행의 어디에 있든지 찾을 수 있게
 			
-		    String findStr = "(?i).*" + dialog.sName + ".*";
+		    //String findStr = "(?i).*" + dialog.sName + ".*";
 
-		    ApkInfo apkinfo = apkScanner.getApkInfo();
-		    
-		    String[] filelist = apkinfo.images;
-		    String temp = new String();
-		    for(int i=0; i<filelist.length; i++) {
-		    	if(filelist[i].endsWith(".png")) continue;
-		    	
-		    	if(filelist[i].startsWith("res/") || filelist[i].equals("AndroidManifest.xml")) {
-					String[] xmlbuffer = AaptWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {filelist[i]});
-					StringBuilder sb = new StringBuilder();
-					for(String s: xmlbuffer) sb.append(s+"\n");
-					temp = sb.toString();
-		    	} else if(filelist[i].endsWith(".txt") || filelist[i].endsWith(".mk") 
-							|| filelist[i].endsWith(".html") || filelist[i].endsWith(".js") || filelist[i].endsWith(".css") || filelist[i].endsWith(".json")
-							|| filelist[i].endsWith(".props") || filelist[i].endsWith(".properties")) {
-						ZipFile zipFile = null;
-						try {
-							zipFile = new ZipFile(apkinfo.filePath);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						ZipEntry entry = zipFile.getEntry(filelist[i]);
-						byte[] buffer = new byte[(int) entry.getSize()];
-						try {
-							zipFile.getInputStream(entry).read(buffer);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						temp = new String(buffer);
-					} else {
-						continue;
-					}
-		    	
-		    	
-			    int lineNumber = 1;       // 행 번호
-			    try {
-			    	
-			      ////////////////////////////////////////////////////////////////
-			    	Scanner scanner = new Scanner(temp);
-			    	//System.out.println(filelist[i]);
-			    	while (scanner.hasNextLine()) {
-			    	  String line = scanner.nextLine();
-			    	  // process the line
-			    	  if (line.matches(findStr))
-				          System.out.format("%3d: %s%n", lineNumber, line);
-		
-				        lineNumber++; // 행 번호 증가
-				      }
-			    	
-			      ////////////////////////////////////////////////////////////////
-				    } catch (PatternSyntaxException e) { // 정규식에 에러가 있다면
-				        System.err.println(e);
-				        System.exit(1);
-				    }
-		    	}
 		    
 		}
 		
