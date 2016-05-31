@@ -147,7 +147,7 @@ public class SearchDlg extends JDialog {
 					  //String line = scanner.nextLine();
 					  // process the line
 					  if (line.indexOf(findStr) !=-1)
-					      System.out.format("%3d: %s%n", lineNumber, line);
+					      //System.out.format("%3d: %s%n", lineNumber, line);
 					  	  data.add(new TableData(data.size(),filelist[i],lineNumber,line));
 					  	  allTableModel.fireTableDataChanged();
 					  	  
