@@ -14,6 +14,7 @@ import java.util.regex.PatternSyntaxException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -25,6 +26,7 @@ import javax.swing.table.AbstractTableModel;
 
 import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.core.AaptWrapper;
+import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
 public class SearchDlg extends JDialog {
@@ -34,6 +36,8 @@ public class SearchDlg extends JDialog {
 	final JTextField name;
 	AllTableModel allTableModel;
 	JTable allTable;
+	ImageIcon Loading;
+	JLabel label;
 	public SearchDlg() {
 		setBounds(100, 100, 500, 500);
 		setTitle("Input Dialog");
@@ -59,6 +63,7 @@ public class SearchDlg extends JDialog {
 				new Thread(new Runnable() {
 					public void run()
 					{
+						label.setVisible(true);
 						searchString();
 					}
 				}).start();
@@ -81,6 +86,9 @@ public class SearchDlg extends JDialog {
 		
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 		
+		label = new JLabel(Resource.IMG_WAIT_BAR.getImageIcon());
+		label.setVisible(false);
+		buttonPanel.add(label);
 	}
 	
 	private JPanel makeTable() {
@@ -164,6 +172,7 @@ public class SearchDlg extends JDialog {
 			        System.exit(1);
 			    }
 	    	}
+	    label.setVisible(false);
 	}
 	
 	public void setApkInfo(ApkInfo apkinfo) {
