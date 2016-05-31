@@ -400,6 +400,8 @@ public class MainUI extends JFrame
 		    String[] filelist = apkinfo.images;
 		    String temp = new String();
 		    for(int i=0; i<filelist.length; i++) {
+		    	if(filelist[i].endsWith(".png")) continue;
+		    	
 		    	if(filelist[i].startsWith("res/") || filelist[i].equals("AndroidManifest.xml")) {
 					String[] xmlbuffer = AaptWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {filelist[i]});
 					StringBuilder sb = new StringBuilder();
