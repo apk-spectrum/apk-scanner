@@ -5,8 +5,11 @@ import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -16,15 +19,22 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Scanner;
+import java.util.regex.PatternSyntaxException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import com.apkscanner.Launcher;
 import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.apkscanner.AaptScanner;
 import com.apkscanner.apkscanner.ApkScannerStub;
 import com.apkscanner.apkscanner.ApkScannerStub.Status;
+import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.gui.ApkInstaller.InstallButtonStatusListener;
 import com.apkscanner.gui.ToolBar.ButtonSet;
 import com.apkscanner.gui.dialog.AboutDlg;
@@ -333,10 +343,114 @@ public class MainUI extends JFrame
 			}
 		}
 		
-		private void evtOpenSearchPopup() {
+		private void evtOpenSearchPopup() throws IOException {
+        	class MyDialogPopup extends JDialog {
+
+        		public String sName;
+
+        		public MyDialogPopup() {
+        			setBounds(100, 100, 296, 175);
+        			setTitle("Input Dialog");
+        			setLocationRelativeTo(null);
+        			getContentPane().setLayout(null);
+        			
+        			// Create Input 
+        			final JTextField name = new JTextField();
+        			name.setBounds(57, 36, 175, 20);
+        			getContentPane().add(name);
+        			
+        			// Button OK
+        			JButton btnOK = new JButton("OK");
+        			btnOK.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent e) {
+        					sName = name.getText();
+        					dispose();
+        				}
+        			});
+        			btnOK.setBounds(70, 93, 78, 23);
+        			getContentPane().add(btnOK);
+        			
+        			// Button Cancel
+        			JButton btnCancel = new JButton("Cancel");
+        			btnCancel.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent e) {
+        					sName = "";
+        					dispose();
+        				}
+        			});
+        			btnCancel.setBounds(158, 93, 74, 23);
+        			getContentPane().add(btnCancel);
+        			
+        		}
+        	}
+        	
+        	MyDialogPopup dialog = new MyDialogPopup();
+			dialog.setModal(true);
+			dialog.setVisible(true);
+			Log.d(dialog.sName);
 			
 			
+		    // (?i) <- "찾을 문자열"에 대소문자 구분을 없애고
+		    // .*   <- 문자열이 행의 어디에 있든지 찾을 수 있게
 			
+		    String findStr = "(?i).*" + dialog.sName + ".*";
+
+		    ApkInfo apkinfo = apkScanner.getApkInfo();
+		    
+		    String[] filelist = apkinfo.images;
+		    String temp = new String();
+		    for(int i=0; i<filelist.length; i++) {
+		    	if(filelist[i].startsWith("res/") || filelist[i].equals("AndroidManifest.xml")) {
+					String[] xmlbuffer = AaptWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {filelist[i]});
+					StringBuilder sb = new StringBuilder();
+					for(String s: xmlbuffer) sb.append(s+"\n");
+					temp = sb.toString();
+		    	} else if(filelist[i].endsWith(".txt") || filelist[i].endsWith(".mk") 
+							|| filelist[i].endsWith(".html") || filelist[i].endsWith(".js") || filelist[i].endsWith(".css") || filelist[i].endsWith(".json")
+							|| filelist[i].endsWith(".props") || filelist[i].endsWith(".properties")) {
+						ZipFile zipFile = null;
+						try {
+							zipFile = new ZipFile(apkinfo.filePath);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						ZipEntry entry = zipFile.getEntry(filelist[i]);
+						byte[] buffer = new byte[(int) entry.getSize()];
+						try {
+							zipFile.getInputStream(entry).read(buffer);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						temp = new String(buffer);
+					} else {
+						continue;
+					}
+		    	
+		    	
+			    int lineNumber = 1;       // 행 번호
+			    try {
+			    	
+			      ////////////////////////////////////////////////////////////////
+			    	Scanner scanner = new Scanner(temp);
+			    	//System.out.println(filelist[i]);
+			    	while (scanner.hasNextLine()) {
+			    	  String line = scanner.nextLine();
+			    	  // process the line
+			    	  if (line.matches(findStr))
+				          System.out.format("%3d: %s%n", lineNumber, line);
+		
+				        lineNumber++; // 행 번호 증가
+				      }
+			    	
+			      ////////////////////////////////////////////////////////////////
+				    } catch (PatternSyntaxException e) { // 정규식에 에러가 있다면
+				        System.err.println(e);
+				        System.exit(1);
+				    }
+		    	}
+		    
 		}
 		
 		private void evtOpenPackage(boolean newWindow)
@@ -542,7 +656,12 @@ public class MainUI extends JFrame
 			} else if(ToolBar.ButtonSet.OPEN_CODE.matchActionEvent(e)) {
 				evtOpenJDGUI();
 			} else if(ToolBar.ButtonSet.SEARCH.matchActionEvent(e)) {
-				evtOpenSearchPopup();
+				try {
+					evtOpenSearchPopup();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		}
 

@@ -51,7 +51,7 @@ public class AaptWrapper
 
 		static public String[] getXmltree(String apkFilePath, String[] assets)
 		{
-			Log.i("getXmltree() " + apkFilePath);
+			//Log.i("getXmltree() " + apkFilePath);
 			ArrayList<String> cmd = new ArrayList<String>();
 			cmd.add(aaptCmd);
 			cmd.add("dump");
