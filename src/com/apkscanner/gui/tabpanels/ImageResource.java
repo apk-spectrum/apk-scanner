@@ -586,8 +586,13 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
         		|| !(node.getUserObject() instanceof ResourceObject)) {
         	return;
         }
+        
+        if(node.getChildCount() >0) return;
 		
         final ResourceObject resObj = (ResourceObject)node.getUserObject();
+        
+        Log.d(""+resObj.isFolder);
+        
         String resPath = tempWorkPath + File.separator + resObj.path.replace("/", File.separator);
 		File resFile = new File(resPath);
 		if(!resFile.exists()) {
