@@ -706,15 +706,21 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	    
         tree.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-				if(e.getButton() == MouseEvent.BUTTON1) {
-					contentPanel.selectContent(tree);
+				if(e.getButton() == MouseEvent.BUTTON1) {				
+					TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());					
+					if(selPath !=null) {
+						contentPanel.selectContent(tree);
+					}
 				}
             }
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
-					openContent();
+				if(e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {					
+					TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());					
+					if(selPath !=null) {
+						openContent();
+					}
 				}
 			}
         });

@@ -44,6 +44,8 @@ public class SearchDlg extends JDialog {
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
 		
+		
+		
 		setLayout(new BorderLayout());
 		// Create Input 
 		name = new JTextField();
