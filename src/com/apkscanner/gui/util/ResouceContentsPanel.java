@@ -13,6 +13,7 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -97,10 +98,8 @@ public class ResouceContentsPanel extends JPanel{
 		
 		xmltextArea = new RSyntaxTextArea(20, 60);
 		xmltextArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
-		xmltextArea.setCodeFoldingEnabled(true);
-				
-		xmltextArea.setEditable(false);
-		
+		xmltextArea.setCodeFoldingEnabled(true);				
+		xmltextArea.setEditable(false);		
 		RTextScrollPane sp = new RTextScrollPane(xmltextArea);
 	      
 		
@@ -305,6 +304,7 @@ public class ResouceContentsPanel extends JPanel{
 					textTableViewer.setModel(new StringListTableModel(resourcesWithValue));
 					textTableViewer.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 					 ((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_TABLE_VIEWER);
+					//content =  Arrays.toString(resourcesWithValue);
 					return;
 				} else {
 					content = "lodding...";

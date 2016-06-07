@@ -272,7 +272,25 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 			public void setTreeFocus(String path) {
 				// TODO Auto-generated method stub
 				Log.d("path : " + path);
-				tree.setSelectionPath(new TreePath(path));
+								
+				
+			    Enumeration<DefaultMutableTreeNode> e = top.depthFirstEnumeration();
+			    while (e.hasMoreElements()) {
+			        DefaultMutableTreeNode node = e.nextElement();
+			         
+			        if(node.getUserObject() instanceof ResourceObject) {
+			        	
+			        	ResourceObject temp = (ResourceObject)node.getUserObject();
+			        	if(temp.path.equals(path)){
+				        	TreePath treepath = new TreePath(node.getPath());			        	
+				        	tree.setSelectionPath(treepath);			        	
+				        	tree.scrollPathToVisible(treepath);
+				        	return;
+			        	}
+			        } else {
+			        	continue;
+			        }
+			    }
 			}
 		};       
     	
