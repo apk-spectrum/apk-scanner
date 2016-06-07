@@ -87,6 +87,8 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	
 	private HashMap<String, Icon> fileIcon = new HashMap<String, Icon>();
 	
+	static public TreeFocusChanger treefocuschanger;
+	
 	ImageIcon Animateimageicon = Resource.IMG_RESOURCE_TREE_OPEN_JD.getImageIcon();	    	                	
 	NodeImageObserver ImageObserver;	  
 	
@@ -112,6 +114,12 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		
 		int getInt() { return type; }
 	}
+	
+	static public abstract interface TreeFocusChanger
+	{
+		public void setTreeFocus(String path);
+		
+	}	
 	
 	public class ResourceObject {
 		public static final int ATTR_AXML = 1;
@@ -259,9 +267,22 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	    
         tree.setOpaque(false);
     	
+        treefocuschanger = new TreeFocusChanger() {			
+			@Override
+			public void setTreeFocus(String path) {
+				// TODO Auto-generated method stub
+				Log.d("path : " + path);
+				tree.setSelectionPath(new TreePath(path));
+			}
+		};       
     	
     	tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     }
+    
+    static public TreeFocusChanger getTreeFocuschanger() {
+    	return treefocuschanger;
+    }
+    
     
     class ResouceTreeCellRenderer extends DefaultTreeCellRenderer implements FocusListener {
 		private static final long serialVersionUID = 6248791058116909814L;

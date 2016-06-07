@@ -31,6 +31,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rtextarea.RTextScrollPane;
+
 import com.apkscanner.DexLuncher;
 import com.apkscanner.Launcher;
 import com.apkscanner.apkinfo.ApkInfo;
@@ -48,7 +52,7 @@ public class ResouceContentsPanel extends JPanel{
 	public static final String CONTENT_TABLE_VIEWER = "TableViewer";
 	public static final String CONTENT_SELECT_VIEWER = "SelectViewer";
 	
-	JHtmlEditorPane htmlViewer;
+	//JHtmlEditorPane htmlViewer;
 	JTable textTableViewer;
 	ImageControlPanel imageViewerPanel;
 	private ResourceObject currentSelectedObj = null;
@@ -59,6 +63,7 @@ public class ResouceContentsPanel extends JPanel{
 	Color defaultColor;
 	ResourceObject CurrentresObj = null;
 	ApkInfo apkinfo;
+	RSyntaxTextArea xmltextArea;
 	
 	public ResouceContentsPanel() {
 		
@@ -68,26 +73,38 @@ public class ResouceContentsPanel extends JPanel{
 		this.apkinfo = apkinfo;
 		this.resourcesWithValue = apkinfo.resourcesWithValue;
 		JLabel label = new JLabel();
-		Font font = label.getFont();
-		StringBuilder style = new StringBuilder("#basic-info, #perm-group {");
-		style.append("font-family:" + font.getFamily() + ";");
-		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-		style.append("font-size:" + font.getSize() + "pt;}");
-		style.append("#basic-info a {text-decoration:none; color:black;}");
-		style.append("#perm-group a {text-decoration:none; color:#"+Integer.toHexString(label.getBackground().getRGB() & 0xFFFFFF)+";}");
-		style.append(".danger-perm {text-decoration:none; color:red;}");
-		style.append("#about {");
-		style.append("font-family:" + font.getFamily() + ";");
-		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-		style.append("font-size:" + font.getSize() + "pt;}");
-		style.append("#about a {text-decoration:none;}");
 
-		htmlViewer = new JHtmlEditorPane();
-		htmlViewer.setStyle(style.toString());
-		htmlViewer.setBackground(Color.white);
-		htmlViewer.setEditable(false);
-		htmlViewer.setOpaque(true);
-		JScrollPane htmlViewerScroll = new JScrollPane(htmlViewer);
+//		Font font = label.getFont();
+//		StringBuilder style = new StringBuilder("#basic-info, #perm-group {");
+//		style.append("font-family:" + font.getFamily() + ";");
+//		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
+//		style.append("font-size:" + font.getSize() + "pt;}");
+//		style.append("#basic-info a {text-decoration:none; color:black;}");
+//		style.append("#perm-group a {text-decoration:none; color:#"+Integer.toHexString(label.getBackground().getRGB() & 0xFFFFFF)+";}");
+//		style.append(".danger-perm {text-decoration:none; color:red;}");
+//		style.append("#about {");
+//		style.append("font-family:" + font.getFamily() + ";");
+//		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
+//		style.append("font-size:" + font.getSize() + "pt;}");
+//		style.append("#about a {text-decoration:none;}");
+//
+//		htmlViewer = new JHtmlEditorPane();
+//		htmlViewer.setStyle(style.toString());
+//		htmlViewer.setBackground(Color.white);
+//		htmlViewer.setEditable(false);
+//		htmlViewer.setOpaque(true);
+//		JScrollPane htmlViewerScroll = new JScrollPane(htmlViewer);
+		
+		xmltextArea = new RSyntaxTextArea(20, 60);
+		xmltextArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
+		xmltextArea.setCodeFoldingEnabled(true);
+				
+		xmltextArea.setEditable(false);
+		
+		RTextScrollPane sp = new RTextScrollPane(xmltextArea);
+	      
+		
+		
 
 		defaultColor = this.getBackground();
 		
@@ -110,7 +127,7 @@ public class ResouceContentsPanel extends JPanel{
 		
 		ContentsviewPanel = new JPanel(new CardLayout());
 		
-		ContentsviewPanel.add(htmlViewerScroll, CONTENT_HTML_VIEWER);
+		ContentsviewPanel.add(sp, CONTENT_HTML_VIEWER);
 		ContentsviewPanel.add(imageViewerPanel, CONTENT_IMAGE_VIEWER);
 		ContentsviewPanel.add(textTableScroll, CONTENT_TABLE_VIEWER);
 		ContentsviewPanel.add(selectPanel, CONTENT_SELECT_VIEWER);
@@ -314,9 +331,11 @@ public class ResouceContentsPanel extends JPanel{
 		}
 		
 		if(content != null) {
-			htmlViewer.setText("<pre>" + content.replaceAll("<", "&lt;").replaceAll(">", "&gt;") + "</pre>");
+			//htmlViewer.setText("<pre>" + content.replaceAll("<", "&lt;").replaceAll(">", "&gt;") + "</pre>");
 			//textViewerPanel.setText("<pre>" + content.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("[\r]\n", "<br/>") + "</pre>");
-			htmlViewer.setCaretPosition(0);
+			//htmlViewer.setCaretPosition(0);
+			
+			xmltextArea.setText(content);
 			((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_HTML_VIEWER);
 		}
 		
@@ -335,6 +354,10 @@ public class ResouceContentsPanel extends JPanel{
 		
 		if(CurrentresObj != null && CurrentresObj == currentSelectedObj) {
 			Log.v("select same object");
+			
+			
+			Log.d("" +node.getPath().toString());						
+			
 			return;
 		}
 		currentSelectedObj = CurrentresObj;
