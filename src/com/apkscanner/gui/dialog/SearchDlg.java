@@ -52,6 +52,7 @@ public class SearchDlg extends JDialog {
 	JTable allTable;
 	ImageIcon Loading;
 	JLabel label;
+	PopupMessageBuilder Popup;
 	public SearchDlg() {
 		setBounds(100, 100, 500, 500);
 		setTitle("Input Dialog");
@@ -123,9 +124,11 @@ public class SearchDlg extends JDialog {
 		allTableModel = new AllTableModel(data);
 		JPanel panel = new JPanel(new BorderLayout());
 		allTable = new JTable(allTableModel) {
-
+			
            //Implement table cell tool tips.
            public String getToolTipText(MouseEvent e) {
+        	   
+        	   
         	   String tip = null;
                java.awt.Point p = e.getPoint();
                int rowIndex = rowAtPoint(p);
@@ -142,13 +145,20 @@ public class SearchDlg extends JDialog {
                pt.x = pt.x + p.x;
                pt.y = pt.y + p.y;
                
-               new PopupMessageBuilder().withDelay(10000).at(p).withMessage("Hello, this is a fading message\n"
-               		+ "").show();
+               
+               
+               
+               if(Popup==null) {
+            	   Popup = new PopupMessageBuilder().withDelay(10000).at(p).withMessage("Hello, this is a fading message\n"+ "").show();
+               } else {
+            	   Popup.dispose();
+            	   Popup = new PopupMessageBuilder().withDelay(10000).at(p).withMessage("Hello, this is a fading message\n"+ "").show();
+               }
                
                return tip;
            }
 
-
+           
        };
        
 		allTable.addMouseListener(new MouseAdapter() {

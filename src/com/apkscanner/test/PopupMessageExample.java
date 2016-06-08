@@ -56,6 +56,8 @@ public class PopupMessageExample {
         private long startTime;
         private Timer fadeTimer;
 
+        
+        JWindow frame;
         public PopupMessageBuilder at(Point p) {
             this.location = p;
             return this;
@@ -73,7 +75,7 @@ public class PopupMessageExample {
 
         public PopupMessageBuilder show() {
 
-            final JWindow frame = new JWindow();
+        	frame = new JWindow();
             frame.setOpacity(0f);
             frame.setBackground(new Color(0, 0, 0, 0));
             BackgroundPane pane = new BackgroundPane();
@@ -110,6 +112,10 @@ public class PopupMessageExample {
             return this;
         }
 
+        public void dispose() {
+        	frame.dispose();
+        }
+        
         public class FadeTimer extends Timer implements ActionListener {
 
             private final float startAt;
