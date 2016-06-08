@@ -117,7 +117,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	
 	static public abstract interface TreeFocusChanger
 	{
-		public void setTreeFocus(String path);
+		public void setTreeFocus(String path, int line, String string);
 		
 	}	
 	
@@ -269,7 +269,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     	
         treefocuschanger = new TreeFocusChanger() {			
 			@Override
-			public void setTreeFocus(String path) {
+			public void  setTreeFocus(String path, int line, String string) {
 				// TODO Auto-generated method stub
 				Log.d("path : " + path);
 								
@@ -285,6 +285,8 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 				        	TreePath treepath = new TreePath(node.getPath());			        	
 				        	tree.setSelectionPath(treepath);			        	
 				        	tree.scrollPathToVisible(treepath);
+				        	contentPanel.selectContent(tree);
+				        	contentPanel.selectContentAndLine(tree, line, string);
 				        	return;
 			        	}
 			        } else {

@@ -129,7 +129,10 @@ public class SearchDlg extends JDialog {
 		        	//ImageResource.setTreeFocus((data.get(row)).path, (data.get(row)).line);		        	
 		        	ImageResource.TreeFocusChanger changer = ImageResource.getTreeFocuschanger();
 		        	if(changer!=null) {
-		        		changer.setTreeFocus((data.get(row)).path);
+		        		changer.setTreeFocus((data.get(row)).path, (data.get(row)).line, name.getText());
+		        		
+		        		
+		        		
 		        	} else {
 		        		Log.d("TreeFocusChanger = null");
 		        	}

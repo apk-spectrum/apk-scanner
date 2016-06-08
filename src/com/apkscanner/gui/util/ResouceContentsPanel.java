@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.naming.directory.SearchResult;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -30,11 +31,15 @@ import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.text.Highlighter;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rtextarea.RTextAreaHighlighter.HighlightInfo;
 import org.fife.ui.rtextarea.RTextScrollPane;
+import org.fife.ui.rtextarea.SearchContext;
+import org.fife.ui.rtextarea.SearchEngine;
 
 import com.apkscanner.DexLuncher;
 import com.apkscanner.Launcher;
@@ -337,9 +342,30 @@ public class ResouceContentsPanel extends JPanel{
 			
 			xmltextArea.setText(content);
 			((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_HTML_VIEWER);
-		}
-		
-		
+			//xmltextArea.setHighlightCurrentLine(true);
+			//xmltextArea.setHighlighter(h);
+			
+			
+		}		
+    }
+    
+    public void selectContentAndLine(JTree tree, int line, String Findstr) {
+    	SearchContext context = new SearchContext();
+        context.setMatchCase(false);
+        context.setMarkAll(true);
+        context.setSearchFor(Findstr);
+        context.setWholeWord(false);
+        
+        org.fife.ui.rtextarea.SearchResult result = SearchEngine.find(xmltextArea, context);
+        
+        
+        
+        if (!result.wasFound()) {
+        	xmltextArea.setCaretPosition(0);
+        	SearchEngine.find(xmltextArea, context);
+        	Log.d("not found");
+        }	
+    	
     }
     
     public void selectContent(JTree tree) {
@@ -354,10 +380,7 @@ public class ResouceContentsPanel extends JPanel{
 		
 		if(CurrentresObj != null && CurrentresObj == currentSelectedObj) {
 			Log.v("select same object");
-			
-			
-			Log.d("" +node.getPath().toString());						
-			
+			Log.d("" +node.getPath().toString());
 			return;
 		}
 		currentSelectedObj = CurrentresObj;
