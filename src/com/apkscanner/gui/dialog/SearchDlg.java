@@ -26,12 +26,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 
 import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.gui.tabpanels.ImageResource;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.test.PopupMessageExample.PopupMessageBuilder;
 import com.apkscanner.util.Log;
 
 public class SearchDlg extends JDialog {
@@ -117,7 +120,48 @@ public class SearchDlg extends JDialog {
 	private JPanel makeTable() {
 		allTableModel = new AllTableModel(data);
 		JPanel panel = new JPanel(new BorderLayout());
-		allTable = new JTable(allTableModel);
+		allTable = new JTable(allTableModel) {
+		    protected String[] columnToolTips = {null,
+                    null,
+                    "The person's favorite sport to participate in",
+                    "The number of years the person has played the sport",
+                    "If checked, the person eats no meat"};
+			
+           //Implement table cell tool tips.
+           public String getToolTipText(MouseEvent e) {
+        	   String tip = null;
+               java.awt.Point p = e.getPoint();
+               int rowIndex = rowAtPoint(p);
+               int colIndex = columnAtPoint(p);
+               int realColumnIndex = convertColumnIndexToModel(colIndex);
+
+               Log.d("row : "+rowIndex + "col : " +realColumnIndex);
+               TableData temp = data.get(rowIndex);
+               
+               //temp.path
+               //this.getToolkit().
+               
+               //tip = "aaaaaaaaaaaaaa";
+               
+               new PopupMessageBuilder().withDelay(10000).withMessage("Hello, this is a fading message").show();
+               
+               return tip;
+           }
+
+           //Implement table header tool tips. 
+           protected JTableHeader createDefaultTableHeader() {
+               return new JTableHeader(columnModel) {
+                   public String getToolTipText(MouseEvent e) {
+                       String tip = null;
+                       java.awt.Point p = e.getPoint();
+                       int index = columnModel.getColumnIndexAtX(p.x);
+                       int realIndex = columnModel.getColumn(index).getModelIndex();
+                       return columnToolTips[realIndex];
+                   }
+               };
+           }
+       };
+       
 		allTable.addMouseListener(new MouseAdapter() {
 		    public void mousePressed(MouseEvent me) {
 		        JTable table =(JTable) me.getSource();

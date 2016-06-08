@@ -102,7 +102,7 @@ public class ResouceContentsPanel extends JPanel{
 //		JScrollPane htmlViewerScroll = new JScrollPane(htmlViewer);
 		
 		xmltextArea = new RSyntaxTextArea(20, 60);
-		xmltextArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
+		xmltextArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_HTML);
 		xmltextArea.setCodeFoldingEnabled(true);				
 		xmltextArea.setEditable(false);		
 		RTextScrollPane sp = new RTextScrollPane(xmltextArea);
