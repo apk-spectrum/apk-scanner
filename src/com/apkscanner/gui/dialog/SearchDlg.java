@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.List;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -25,6 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
@@ -135,15 +137,17 @@ public class SearchDlg extends JDialog {
                int colIndex = columnAtPoint(p);
                int realColumnIndex = convertColumnIndexToModel(colIndex);
 
-               Log.d("row : "+rowIndex + "col : " +realColumnIndex);
+               Log.d("point : "+ p + "  row : "+rowIndex + "col : " +realColumnIndex);
                TableData temp = data.get(rowIndex);
                
-               //temp.path
-               //this.getToolkit().
                
-               //tip = "aaaaaaaaaaaaaa";
+               Point pt = new Point(allTable.getLocation()); 
+               SwingUtilities.convertPointToScreen(pt, allTable); 
                
-               new PopupMessageBuilder().withDelay(10000).withMessage("Hello, this is a fading message").show();
+               pt.x = pt.x + p.x;
+               pt.y = pt.y + p.y;
+               
+               new PopupMessageBuilder().withDelay(10000).at(pt).withMessage("Hello, this is a fading message").show();
                
                return tip;
            }

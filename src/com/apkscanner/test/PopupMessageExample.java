@@ -218,12 +218,13 @@ public class PopupMessageExample {
         		xmltextArea.setEditable(false);		
         		RTextScrollPane sp = new RTextScrollPane(xmltextArea);
                 
-        		xmltextArea.setText("sfjkshdfjkhsdakjfhasdjkfhasjdkhfjkasdhfjkasjfkahsdjkfhasdkjfhajskdfhjk");
+        		
                 add(sp);
             }
 
             public void setMessage(String msg) {
                 label.setText(msg);
+                xmltextArea.setText(msg);
             }
 
         }
