@@ -4,22 +4,16 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import javax.naming.directory.SearchResult;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -31,12 +25,10 @@ import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.text.Highlighter;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
-import org.fife.ui.rtextarea.RTextAreaHighlighter.HighlightInfo;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
@@ -44,6 +36,7 @@ import org.fife.ui.rtextarea.SearchEngine;
 import com.apkscanner.DexLuncher;
 import com.apkscanner.Launcher;
 import com.apkscanner.apkinfo.ApkInfo;
+import com.apkscanner.apkscanner.AxmlToXml;
 import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.gui.tabpanels.ImageResource.ResourceObject;
 import com.apkscanner.resource.Resource;
@@ -286,9 +279,10 @@ public class ResouceContentsPanel extends JPanel{
 		switch(obj.attr) {
 		case ResourceObject.ATTR_AXML:
 			String[] xmlbuffer = AaptWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {obj.path});
-			StringBuilder sb = new StringBuilder();
-			for(String s: xmlbuffer) sb.append(s+"\n");
-			content = sb.toString();
+			AxmlToXml a2x = new AxmlToXml(xmlbuffer, resourcesWithValue);
+			//StringBuilder sb = new StringBuilder();
+			//for(String s: xmlbuffer) sb.append(s+"\n");
+			content = a2x.toString();
 			break;
 		case ResourceObject.ATTR_XML:
 		case ResourceObject.ATTR_TXT:

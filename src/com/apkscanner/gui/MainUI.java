@@ -1,41 +1,29 @@
 package com.apkscanner.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringReader;
-import java.util.Scanner;
-import java.util.regex.PatternSyntaxException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import com.apkscanner.Launcher;
 import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.apkscanner.AaptScanner;
 import com.apkscanner.apkscanner.ApkScannerStub;
 import com.apkscanner.apkscanner.ApkScannerStub.Status;
-import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.gui.ApkInstaller.InstallButtonStatusListener;
 import com.apkscanner.gui.ToolBar.ButtonSet;
 import com.apkscanner.gui.dialog.AboutDlg;
@@ -345,7 +333,7 @@ public class MainUI extends JFrame
 			}
 		}
 		
-		private void evtOpenSearchPopup() throws IOException {
+		private void evtOpenSearchPopup() {
         	SearchDlg dialog = new SearchDlg();
         	dialog.setApkInfo(apkScanner.getApkInfo());
         	
@@ -566,12 +554,7 @@ public class MainUI extends JFrame
 			} else if(ToolBar.ButtonSet.OPEN_CODE.matchActionEvent(e)) {
 				evtOpenJDGUI();
 			} else if(ToolBar.ButtonSet.SEARCH.matchActionEvent(e)) {
-				try {
-					evtOpenSearchPopup();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				evtOpenSearchPopup();
 			}
 		}
 
