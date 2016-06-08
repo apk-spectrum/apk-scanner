@@ -123,12 +123,7 @@ public class SearchDlg extends JDialog {
 		allTableModel = new AllTableModel(data);
 		JPanel panel = new JPanel(new BorderLayout());
 		allTable = new JTable(allTableModel) {
-		    protected String[] columnToolTips = {null,
-                    null,
-                    "The person's favorite sport to participate in",
-                    "The number of years the person has played the sport",
-                    "If checked, the person eats no meat"};
-			
+
            //Implement table cell tool tips.
            public String getToolTipText(MouseEvent e) {
         	   String tip = null;
@@ -142,28 +137,18 @@ public class SearchDlg extends JDialog {
                
                
                Point pt = new Point(allTable.getLocation()); 
-               SwingUtilities.convertPointToScreen(pt, allTable); 
+               SwingUtilities.convertPointToScreen(p, allTable); 
                
                pt.x = pt.x + p.x;
                pt.y = pt.y + p.y;
                
-               new PopupMessageBuilder().withDelay(10000).at(pt).withMessage("Hello, this is a fading message").show();
+               new PopupMessageBuilder().withDelay(10000).at(p).withMessage("Hello, this is a fading message\n"
+               		+ "").show();
                
                return tip;
            }
 
-           //Implement table header tool tips. 
-           protected JTableHeader createDefaultTableHeader() {
-               return new JTableHeader(columnModel) {
-                   public String getToolTipText(MouseEvent e) {
-                       String tip = null;
-                       java.awt.Point p = e.getPoint();
-                       int index = columnModel.getColumnIndexAtX(p.x);
-                       int realIndex = columnModel.getColumn(index).getModelIndex();
-                       return columnToolTips[realIndex];
-                   }
-               };
-           }
+
        };
        
 		allTable.addMouseListener(new MouseAdapter() {
