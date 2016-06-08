@@ -349,7 +349,7 @@ public class MainUI extends JFrame
         	SearchDlg dialog = new SearchDlg();
         	dialog.setApkInfo(apkScanner.getApkInfo());
         	
-			dialog.setModal(true);
+			dialog.setModal(false);
 			dialog.setVisible(true);
 			
 			Log.d(dialog.sName);

@@ -341,6 +341,7 @@ public class ResouceContentsPanel extends JPanel{
 			//htmlViewer.setCaretPosition(0);
 			
 			xmltextArea.setText(content);
+			xmltextArea.setCaretPosition(0);
 			((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_HTML_VIEWER);
 			//xmltextArea.setHighlightCurrentLine(true);
 			//xmltextArea.setHighlighter(h);
@@ -358,7 +359,9 @@ public class ResouceContentsPanel extends JPanel{
         
         org.fife.ui.rtextarea.SearchResult result = SearchEngine.find(xmltextArea, context);
         
+        //xmltextArea.getText().s
         
+        //xmltextArea.setCaretPosition(0);
         
         if (!result.wasFound()) {
         	xmltextArea.setCaretPosition(0);

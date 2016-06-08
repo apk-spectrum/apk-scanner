@@ -16,10 +16,14 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.filechooser.FileSystemView;
 
 import com.apkscanner.resource.Resource;
 
@@ -28,7 +32,7 @@ public class BufferedImageMouseDrag extends JFrame {
 	
 	DisplayCanvas canvas;
 
-	public BufferedImageMouseDrag() {
+	public BufferedImageMouseDrag() throws IOException {
 		super();
 		Container container = getContentPane();
 
@@ -44,7 +48,7 @@ public class BufferedImageMouseDrag extends JFrame {
 		setVisible(true);
 	}
 
-	public static void main(String arg[]) {
+	public static void main(String arg[]) throws IOException {
 		new BufferedImageMouseDrag();
 	}
 }
@@ -57,7 +61,7 @@ class DisplayCanvas extends JPanel implements MouseListener{
 	private float scale = 1;
 	BufferedImage bi;
 
-	DisplayCanvas() {
+	DisplayCanvas() throws IOException {
 		setBackground(Color.white);
 		setSize(450, 400);
 		addMouseMotionListener(new MouseMotionHandler());
@@ -73,8 +77,18 @@ class DisplayCanvas extends JPanel implements MouseListener{
 
         });
 		
-		Image image = Resource.IMG_QMG_IMAGE_ICON.getImageIcon().getImage();
-
+		
+		
+		
+		Icon icon;
+		File file = File.createTempFile("icon", "html");
+        FileSystemView view = FileSystemView.getFileSystemView();
+        icon = view.getSystemIcon(file);
+		
+        
+        
+        Image image = ((ImageIcon)icon).getImage();
+        
 		MediaTracker mt = new MediaTracker(this);
 		mt.addImage(image, 1);
 		try {
