@@ -87,8 +87,7 @@ public class PopupMessageExample {
             }
             frame.setVisible(true);
             frame.setAlwaysOnTop(true);
-            frame.setBounds(0, 0, 100, 100);
-
+            
             new FadeTimer(frame, 1000, 0f, 1f, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
