@@ -5,6 +5,9 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
+import java.awt.Point;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
@@ -23,10 +26,15 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.fife.ui.rsyntaxtextarea.ActiveLineRangeEvent;
+import org.fife.ui.rsyntaxtextarea.ActiveLineRangeListener;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -40,6 +48,7 @@ import com.apkscanner.apkscanner.AxmlToXml;
 import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.gui.tabpanels.ImageResource.ResourceObject;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.test.PopupMessageExample.PopupMessageBuilder;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
 
@@ -94,7 +103,26 @@ public class ResouceContentsPanel extends JPanel{
 //		htmlViewer.setOpaque(true);
 //		JScrollPane htmlViewerScroll = new JScrollPane(htmlViewer);
 		
-		xmltextArea = new RSyntaxTextArea(20, 60);
+		xmltextArea = new RSyntaxTextArea(20, 60)
+		{
+	           public String getToolTipText(MouseEvent e) {
+	        	   String tip = null;
+	               java.awt.Point p = e.getPoint();
+	               
+	               //tip = xmltextArea.getSelectedText() +"<html><body><img src=\"file:resources/img/image.png\"></body></html>";
+	               
+	               
+	               //xmltextArea.setToolTipText(xmltextArea.getSelectedText() +"<html><body><img src=\"file:resources/img/image.png\"></body></html>");
+	               
+	               tip = "<html>test<br><img src=\""+ Resource.IMG_INSTALL_WAIT.getURL()+"\"><br>"+xmltextArea.getSelectedText();
+	               
+	               return tip;
+	           }
+	           
+		};
+		
+		//xmltextArea.setToolTipText("<html><img src=\""+ Resource.IMG_INSTALL_WAIT.getURL()+"\">"+xmltextArea.getSelectedText());
+		
 		xmltextArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
 		xmltextArea.setCodeFoldingEnabled(true);				
 		xmltextArea.setEditable(false);		
@@ -337,10 +365,16 @@ public class ResouceContentsPanel extends JPanel{
 			xmltextArea.setText(content);
 			xmltextArea.setCaretPosition(0);
 			((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_HTML_VIEWER);
-			//xmltextArea.setHighlightCurrentLine(true);
-			//xmltextArea.setHighlighter(h);
 			
-			
+			xmltextArea.addCaretListener(new CaretListener() {
+				
+				@Override
+				public void caretUpdate(CaretEvent arg0) {
+					// TODO Auto-generated method stub					
+					Log.d(xmltextArea.getSelectedText());
+					
+				}
+			});
 		}		
     }
     

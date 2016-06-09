@@ -33,6 +33,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import com.apkscanner.apkinfo.ApkInfo;
+import com.apkscanner.apkscanner.AxmlToXml;
 import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.gui.tabpanels.ImageResource;
 import com.apkscanner.resource.Resource;
@@ -208,10 +209,18 @@ public class SearchDlg extends JDialog {
 			    	if(filelist[i].endsWith(".png")) continue;
 			    	
 			    	if(filelist[i].startsWith("res/") || filelist[i].equals("AndroidManifest.xml")) {
+//						String[] xmlbuffer = AaptWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {filelist[i]});
+//						StringBuilder sb = new StringBuilder();
+//						for(String s: xmlbuffer) sb.append(s+"\n");
+						
 						String[] xmlbuffer = AaptWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {filelist[i]});
-						StringBuilder sb = new StringBuilder();
-						for(String s: xmlbuffer) sb.append(s+"\n");
-						temp = sb.toString();
+						AxmlToXml a2x = new AxmlToXml(xmlbuffer, apkinfo.resourcesWithValue);
+						//StringBuilder sb = new StringBuilder();
+						//for(String s: xmlbuffer) sb.append(s+"\n");
+						temp = a2x.toString();
+						
+						
+						//temp = sb.toString();
 			    	} else if(filelist[i].endsWith(".txt") || filelist[i].endsWith(".mk") 
 								|| filelist[i].endsWith(".html") || filelist[i].endsWith(".js") || filelist[i].endsWith(".css") || filelist[i].endsWith(".json")
 								|| filelist[i].endsWith(".props") || filelist[i].endsWith(".properties")) {
@@ -240,9 +249,9 @@ public class SearchDlg extends JDialog {
 				    try {
 				    	
 				      ////////////////////////////////////////////////////////////////
-				    	Scanner scanner = new Scanner(temp);
+				    	//Scanner scanner = new Scanner(temp);
 				    	//System.out.println(filelist[i]);
-				    	
+				    	if(temp ==null) continue;
 				    	BufferedReader reader = new BufferedReader(new StringReader(temp));
 				    	
 				    	String line;
