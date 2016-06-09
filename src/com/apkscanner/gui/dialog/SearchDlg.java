@@ -1,10 +1,8 @@
 package com.apkscanner.gui.dialog;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.List;
+import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -13,7 +11,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.regex.PatternSyntaxException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -26,11 +23,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
+import javax.swing.JToolTip;
+import javax.swing.ToolTipManager;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
+
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rtextarea.RTextScrollPane;
 
 import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.apkscanner.AxmlToXml;
@@ -124,44 +123,8 @@ public class SearchDlg extends JDialog {
 	private JPanel makeTable() {
 		allTableModel = new AllTableModel(data);
 		JPanel panel = new JPanel(new BorderLayout());
-		allTable = new JTable(allTableModel) {
-			
-           //Implement table cell tool tips.
-           public String getToolTipText(MouseEvent e) {
-        	   
-        	   
-        	   String tip = null;
-               java.awt.Point p = e.getPoint();
-               int rowIndex = rowAtPoint(p);
-               int colIndex = columnAtPoint(p);
-               int realColumnIndex = convertColumnIndexToModel(colIndex);
-
-               Log.d("point : "+ p + "  row : "+rowIndex + "col : " +realColumnIndex);
-               TableData temp = data.get(rowIndex);
-               
-               
-               Point pt = new Point(allTable.getLocation()); 
-               SwingUtilities.convertPointToScreen(p, allTable); 
-               
-               pt.x = pt.x + p.x;
-               pt.y = pt.y + p.y;
-               
-               
-               
-               
-               if(Popup==null) {
-            	   Popup = new PopupMessageBuilder().withDelay(10000).at(p).withMessage("Hello, this is a fading message\n"+ "").show();
-               } else {
-            	   Popup.dispose();
-            	   Popup = new PopupMessageBuilder().withDelay(10000).at(p).withMessage("Hello, this is a fading message\n"+ "").show();
-               }
-               
-               return tip;
-           }
-
-           
-       };
-       
+		allTable = new CustomTable(allTableModel); 
+				
 		allTable.addMouseListener(new MouseAdapter() {
 		    public void mousePressed(MouseEvent me) {
 		        JTable table =(JTable) me.getSource();
@@ -175,8 +138,6 @@ public class SearchDlg extends JDialog {
 		        	if(changer!=null) {
 		        		changer.setTreeFocus((data.get(row)).path, (data.get(row)).line, name.getText());
 		        		
-		        		
-		        		
 		        	} else {
 		        		Log.d("TreeFocusChanger = null");
 		        	}
@@ -184,13 +145,77 @@ public class SearchDlg extends JDialog {
 		        }
 		    }
 		});
+				
 		
 		JScrollPane scroll = new JScrollPane(allTable);
 		setJTableColumnsWidth(allTable, allTable.getWidth(), 10, 30, 10, 50);
 		
 		panel.add(scroll);
+		
 		return panel;
 	}
+
+	
+    private static class CustomTable extends JTable {
+
+		private static final long serialVersionUID = 1L;
+		private CustomTooltip m_tooltip;
+        
+        public CustomTable(AllTableModel allTableModel) {
+			// TODO Auto-generated constructor stub
+        	super(allTableModel);
+		}
+		@Override public JToolTip createToolTip() {
+            if (m_tooltip == null) {
+                m_tooltip = new CustomTooltip();
+                m_tooltip.setComponent(this);
+            }
+            return m_tooltip;
+        }
+        public String getToolTipText(MouseEvent e) {
+        	String str = null;
+        	
+	        JTable table =(JTable) e.getSource();
+	        Point p = e.getPoint();
+	        int row = table.rowAtPoint(p);
+        	
+	        AllTableModel dtm = (AllTableModel) table.getModel();
+	        
+        	return dtm.getValueAt(row, 3)+"";
+        }
+        
+        
+    }	
+    private static class CustomTooltip extends JToolTip {
+        private JPanel m_panel;
+        private RSyntaxTextArea textView;
+        private JButton m_button;
+        public CustomTooltip() {
+            super();
+            m_panel = new JPanel(new BorderLayout());
+            textView = new RSyntaxTextArea(20,60);
+            RTextScrollPane sp = new RTextScrollPane(textView);
+            m_button = new JButton("See, I am a button!");
+            
+            
+            m_panel.add(BorderLayout.CENTER, sp);
+            m_panel.add(BorderLayout.SOUTH, m_button);
+            setLayout(new BorderLayout());
+            add(m_panel);
+        }
+
+        @Override public Dimension getPreferredSize() {
+            return m_panel.getPreferredSize();
+        }
+
+        @Override public void setTipText(String tipText) {
+            if (tipText != null && !tipText.isEmpty()) {
+            	textView.setText(tipText);
+            } else {
+                super.setTipText(tipText);
+            }
+        }
+    }
 	
 	private void searchString() {
 		label.setVisible(true);

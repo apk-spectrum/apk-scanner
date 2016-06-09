@@ -3,6 +3,7 @@ package com.apkscanner.gui.util;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.Point;
@@ -17,19 +18,25 @@ import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JToolTip;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
+import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -103,26 +110,12 @@ public class ResouceContentsPanel extends JPanel{
 //		htmlViewer.setOpaque(true);
 //		JScrollPane htmlViewerScroll = new JScrollPane(htmlViewer);
 		
-		xmltextArea = new RSyntaxTextArea(20, 60)
-		{
-	           public String getToolTipText(MouseEvent e) {
-	        	   String tip = null;
-	               java.awt.Point p = e.getPoint();
-	               
-	               //tip = xmltextArea.getSelectedText() +"<html><body><img src=\"file:resources/img/image.png\"></body></html>";
-	               
-	               
-	               //xmltextArea.setToolTipText(xmltextArea.getSelectedText() +"<html><body><img src=\"file:resources/img/image.png\"></body></html>");
-	               
-	               tip = "<html>test<br><img src=\""+ Resource.IMG_INSTALL_WAIT.getURL()+"\"><br>"+xmltextArea.getSelectedText();
-	               
-	               return tip;
-	           }
-	           
-		};
+		//xmltextArea = new RSyntaxTextArea(20, 60);
 		
-		//xmltextArea.setToolTipText("<html><img src=\""+ Resource.IMG_INSTALL_WAIT.getURL()+"\">"+xmltextArea.getSelectedText());
-		
+		CustomLabel temptextarea = new CustomLabel();
+		xmltextArea  = (RSyntaxTextArea)temptextarea;
+		//xmltextArea.createToolTip();
+				
 		xmltextArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
 		xmltextArea.setCodeFoldingEnabled(true);				
 		xmltextArea.setEditable(false);		
@@ -165,6 +158,54 @@ public class ResouceContentsPanel extends JPanel{
 		this.add(ContentsviewPanel, BorderLayout.CENTER);
 		
 	}
+
+    private static class CustomLabel extends RSyntaxTextArea {
+
+		private static final long serialVersionUID = 1L;
+		private CustomTooltip m_tooltip;
+        
+        @Override public JToolTip createToolTip() {
+            if (m_tooltip == null) {
+                m_tooltip = new CustomTooltip();
+                m_tooltip.setComponent(this);
+            }
+            return m_tooltip;
+        }
+        public String getToolTipText(MouseEvent e) {
+        	String str = null;
+        	
+        	return this.getSelectedText();        	
+        }
+    }
+	
+    private static class CustomTooltip extends JToolTip {
+        private JLabel m_label;
+        private JButton m_button;
+        private JPanel m_panel;
+        
+        public CustomTooltip() {
+            super();
+            m_label = new JLabel(Resource.IMG_APP_ICON.getImageIcon());
+            m_button = new JButton("See, I am a button!");
+            m_panel = new JPanel(new BorderLayout());
+            m_panel.add(BorderLayout.CENTER, m_label);
+            m_panel.add(BorderLayout.SOUTH, m_button);
+            setLayout(new BorderLayout());
+            add(m_panel);
+        }
+
+        @Override public Dimension getPreferredSize() {
+            return m_panel.getPreferredSize();
+        }
+
+        @Override public void setTipText(String tipText) {
+            if (tipText != null && !tipText.isEmpty()) {
+                m_label.setText(tipText);
+            } else {
+                super.setTipText(tipText);
+            }
+        }
+    }
 	
 	public class SelectViewPanel extends JPanel {
 		ImageIcon warring = Resource.IMG_WARNING.getImageIcon(50,50);
@@ -364,17 +405,7 @@ public class ResouceContentsPanel extends JPanel{
 			
 			xmltextArea.setText(content);
 			xmltextArea.setCaretPosition(0);
-			((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_HTML_VIEWER);
-			
-			xmltextArea.addCaretListener(new CaretListener() {
-				
-				@Override
-				public void caretUpdate(CaretEvent arg0) {
-					// TODO Auto-generated method stub					
-					Log.d(xmltextArea.getSelectedText());
-					
-				}
-			});
+			((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_HTML_VIEWER);						
 		}		
     }
     
