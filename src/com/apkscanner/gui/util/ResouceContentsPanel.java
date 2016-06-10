@@ -239,6 +239,8 @@ public class ResouceContentsPanel extends JPanel{
             m_panel.add(BorderLayout.CENTER, m_label);
             //m_panel.add(BorderLayout.SOUTH, m_button);
             setLayout(new BorderLayout());
+            //m_panel.setPreferredSize(new Dimension(200,100));
+            
             add(m_panel);
         }
 
@@ -255,7 +257,7 @@ public class ResouceContentsPanel extends JPanel{
                 Log.d(""+this.img);
                 
                 m_label.setIcon(this.img);
-                this.repaint();
+                this.repaint();                
             } else {
                 super.setTipText(tipText);
             }
