@@ -118,8 +118,10 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	static public abstract interface TreeFocusChanger
 	{
 		public void setTreeFocus(String path, int line, String string);	
-		
-	}	
+		public String getImagefilePath(String findfilename);
+	}
+	
+	
 	
 	public class ResourceObject {
 		public static final int ATTR_AXML = 1;
@@ -293,6 +295,30 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 			        	continue;
 			        }
 			    }
+			}
+
+			@Override
+			public String getImagefilePath(String findfilename) {
+				// TODO Auto-generated method stub
+			    Enumeration<DefaultMutableTreeNode> e = top.depthFirstEnumeration();
+			    while (e.hasMoreElements()) {
+			        DefaultMutableTreeNode node = e.nextElement();
+			         
+			        if(node.getUserObject() instanceof ResourceObject) {
+			        	
+			        	ResourceObject temp = (ResourceObject)node.getUserObject();
+			        	
+			        	if(temp.isFolder) continue;
+			        	if(!temp.path.endsWith("png")) continue;
+			        	
+			        	if(temp.path.indexOf(findfilename) != -1){
+				        	return temp.path;
+			        	}
+			        } else {
+			        	continue;
+			        }
+			    }	
+				return null;
 			}
 		};       
     	

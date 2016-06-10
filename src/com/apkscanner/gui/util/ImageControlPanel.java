@@ -37,6 +37,7 @@ import javax.swing.SwingUtilities;
 
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.FileUtil.FSStyle;
+import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
 
 public class ImageControlPanel extends JPanel implements ActionListener{
@@ -168,6 +169,8 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 		Filesize = ZipFileUtil.getFileSize(apkFilePath, imgPath, FSStyle.SHORT); 
 		
 		imgPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/" + imgPath;
+		
+		Log.d(imgPath);
 		
 		imagepanel.setImage(new ImageIcon( new URL(imgPath)));
 		repaint();

@@ -14,6 +14,7 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -53,6 +54,7 @@ import com.apkscanner.Launcher;
 import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.apkscanner.AxmlToXml;
 import com.apkscanner.core.AaptWrapper;
+import com.apkscanner.gui.tabpanels.ImageResource;
 import com.apkscanner.gui.tabpanels.ImageResource.ResourceObject;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.test.PopupMessageExample.PopupMessageBuilder;
@@ -77,7 +79,7 @@ public class ResouceContentsPanel extends JPanel{
 	SelectViewPanel selectPanel;
 	Color defaultColor;
 	ResourceObject CurrentresObj = null;
-	ApkInfo apkinfo;
+	static ApkInfo apkinfo;
 	RSyntaxTextArea xmltextArea;
 	
 	public ResouceContentsPanel() {
@@ -170,24 +172,80 @@ public class ResouceContentsPanel extends JPanel{
             return m_tooltip;
         }
         public String getToolTipText(MouseEvent e) {
-        	String str = null;
+        	String str = this.getText();
+        	String selectedstr;
+        	int startindex = this.getSelectionStart();
+        	int endindex = this.getSelectionEnd();
+        	int i;
+        	//Log.d(startindex + ": " + endindex);
         	
-        	return this.getSelectedText();        	
+        	
+        	if(endindex - startindex<3) {
+        		return null;
+        	}
+        	
+        	for(i=startindex; str.charAt(i) != "\"".toCharArray()[0]; i--) {
+        		//Log.d(i+"" +str.charAt(i));
+        		if(startindex-i > 20) break;
+        	}
+        	startindex = i+1;
+        	
+        	for(i=endindex; str.charAt(i) != "\"".toCharArray()[0]; i++) {
+        		if(i-endindex > 20) break;
+        	}
+        	endindex = i;
+        	this.setSelectionStart(startindex);
+        	this.setSelectionEnd(endindex);
+        	
+        	
+        	selectedstr = this.getSelectedText();
+        	
+        	if(selectedstr.startsWith("@drawable/")) {
+        		
+        		selectedstr = selectedstr.substring("@drawable/".length());
+        		
+        		String ImagefilePath = ImageResource.getTreeFocuschanger().getImagefilePath(selectedstr);        		
+        		
+        		ImagefilePath = "jar:file:"+apkinfo.filePath.replaceAll("#", "%23")+"!/" + ImagefilePath;
+        		Log.d(ImagefilePath);
+        		if (m_tooltip != null) {
+        			try {
+						m_tooltip.setImage(new ImageIcon( new URL(ImagefilePath)));
+					} catch (MalformedURLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+        		}
+        		
+        	} else {
+        		if (m_tooltip != null) {
+        			try {
+						m_tooltip.setImage(new ImageIcon( new URL(null)));
+					} catch (MalformedURLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+        		}
+        	}
+        	return selectedstr;        	
         }
     }
 	
     private static class CustomTooltip extends JToolTip {
         private JLabel m_label;
+        private JLabel text_label;
         private JButton m_button;
         private JPanel m_panel;
         
         public CustomTooltip() {
             super();
-            m_label = new JLabel(Resource.IMG_APP_ICON.getImageIcon());
+            text_label = new JLabel();
+            m_label = new JLabel();
             m_button = new JButton("See, I am a button!");
             m_panel = new JPanel(new BorderLayout());
+            m_panel.add(BorderLayout.NORTH, text_label);
             m_panel.add(BorderLayout.CENTER, m_label);
-            m_panel.add(BorderLayout.SOUTH, m_button);
+            //m_panel.add(BorderLayout.SOUTH, m_button);
             setLayout(new BorderLayout());
             add(m_panel);
         }
@@ -198,10 +256,15 @@ public class ResouceContentsPanel extends JPanel{
 
         @Override public void setTipText(String tipText) {
             if (tipText != null && !tipText.isEmpty()) {
-                m_label.setText(tipText);
+                //m_label.setText(tipText);
+                text_label.setText(tipText);
             } else {
                 super.setTipText(tipText);
             }
+        }
+        public void setImage(ImageIcon img) {
+        	m_label.setIcon(img);
+        	m_label.repaint();
         }
     }
 	
