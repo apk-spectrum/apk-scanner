@@ -217,6 +217,10 @@ public class ResouceContentsPanel extends JPanel{
 						e1.printStackTrace();
 					}
         		}        		
+        	} else {
+        		if (m_tooltip != null) {
+        			m_tooltip.setImage(null);
+        		}
         	}
         	Log.d("returnstr");
         	return selectedstr;        	
