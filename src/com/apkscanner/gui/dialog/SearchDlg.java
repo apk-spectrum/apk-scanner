@@ -1,8 +1,10 @@
 package com.apkscanner.gui.dialog;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -26,10 +28,14 @@ import javax.swing.JTextField;
 import javax.swing.JToolTip;
 import javax.swing.ToolTipManager;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
+import org.fife.ui.rtextarea.SearchContext;
+import org.fife.ui.rtextarea.SearchEngine;
 
 import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.apkscanner.AxmlToXml;
@@ -45,14 +51,15 @@ public class SearchDlg extends JDialog {
 	 */
 	private static final long serialVersionUID = 6109952065388761951L;
 	public String sName;
-	private ApkInfo apkinfo;
+	private static ApkInfo apkinfo;
 	private ArrayList<TableData> data = new ArrayList<TableData>();
-	final JTextField name;
+	static JTextField name;
 	AllTableModel allTableModel;
 	JTable allTable;
 	ImageIcon Loading;
 	JLabel label;
 	PopupMessageBuilder Popup;
+	static String hoverFilePath;
 	public SearchDlg() {
 		setBounds(100, 100, 500, 500);
 		setTitle("Input Dialog");
@@ -152,9 +159,11 @@ public class SearchDlg extends JDialog {
 		
 		panel.add(scroll);
 		
+		allTable.setRowHeight(20);
+		
 		return panel;
 	}
-
+	
 	
     private static class CustomTable extends JTable {
 
@@ -169,41 +178,99 @@ public class SearchDlg extends JDialog {
             if (m_tooltip == null) {
                 m_tooltip = new CustomTooltip();
                 m_tooltip.setComponent(this);
-            }
+
+                Log.d("null");
+            } else {
+            	Log.d("not null");
+            }            	
             return m_tooltip;
         }
+		public void setLabelText(String str) {
+			m_tooltip.setTextPath(str);
+		}
+		public void setMarkString(String str) {
+			m_tooltip.setMarkString(name.getText());
+		}
+		
         public String getToolTipText(MouseEvent e) {
-        	String str = null;
+            String toolTipText = null;
+            Point p = e.getPoint(); // MouseEvent
+            int col = columnAtPoint(p);
+            int row = rowAtPoint(p);
+            Component comp = prepareRenderer(getCellRenderer(row, col), row, col);
+
+            Rectangle bounds = getCellRect(row, col, false);
+            
+            try {
+                //comment row, exclude heading
+              if (comp.getPreferredSize().width > bounds.width) {
+					hoverFilePath = getValueAt(row, 1).toString();
+
+					Log.d(hoverFilePath);
+					
+					String[] xmlbuffer = AaptWrapper.Dump.getXmltree(apkinfo.filePath,
+							new String[] { hoverFilePath });
+					AxmlToXml a2x = new AxmlToXml(xmlbuffer, apkinfo.resourcesWithValue);
+					// StringBuilder sb = new StringBuilder();
+					// for(String s: xmlbuffer) sb.append(s+"\n");
+
+					// this.setLabelText(getValueAt(row, 1).toString());
+
+					toolTipText = a2x.toString();
+					if(m_tooltip !=null) {
+		                setMarkString(name.getText());
+		                setLabelText(hoverFilePath);
+					} else {
+						
+					}
+					// toolTipText = getValueAt(row, 1).toString();
+  
+                }
+            } catch (RuntimeException e1) {
+                //catch null pointer exception if mouse is over an empty line
+            }
+            return toolTipText;
         	
-	        JTable table =(JTable) e.getSource();
-	        Point p = e.getPoint();
-	        int row = table.rowAtPoint(p);
         	
-	        AllTableModel dtm = (AllTableModel) table.getModel();
-	        
-        	return dtm.getValueAt(row, 3)+"";
         }
-        
-        
     }	
     private static class CustomTooltip extends JToolTip {
         private JPanel m_panel;
         private RSyntaxTextArea textView;
-        private JButton m_button;
+        private JLabel label;
         public CustomTooltip() {
             super();
+
             m_panel = new JPanel(new BorderLayout());
             textView = new RSyntaxTextArea(20,60);
             RTextScrollPane sp = new RTextScrollPane(textView);
-            m_button = new JButton("See, I am a button!");
             
+            label = new JLabel();
+            textView.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
+            textView.setCodeFoldingEnabled(true);				
+            textView.setEditable(false);
             
             m_panel.add(BorderLayout.CENTER, sp);
-            m_panel.add(BorderLayout.SOUTH, m_button);
+            m_panel.add(BorderLayout.NORTH, label);
+            
             setLayout(new BorderLayout());
             add(m_panel);
         }
 
+        public void setMarkString(String str) {
+        	SearchContext context = new SearchContext();
+            context.setMatchCase(false);
+            context.setMarkAll(true);
+            context.setSearchFor(str);
+            context.setWholeWord(false);            
+            org.fife.ui.rtextarea.SearchResult result = SearchEngine.find(textView, context);
+            
+        }
+        
+        public void setTextPath(String str) {
+        	label.setText(str);
+        }
+        
         @Override public Dimension getPreferredSize() {
             return m_panel.getPreferredSize();
         }
@@ -211,6 +278,8 @@ public class SearchDlg extends JDialog {
         @Override public void setTipText(String tipText) {
             if (tipText != null && !tipText.isEmpty()) {
             	textView.setText(tipText);
+            	textView.setCaretPosition(0);            	
+            	
             } else {
                 super.setTipText(tipText);
             }

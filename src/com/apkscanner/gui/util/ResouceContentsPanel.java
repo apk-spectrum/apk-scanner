@@ -160,9 +160,7 @@ public class ResouceContentsPanel extends JPanel{
 	}
 
     private static class CustomLabel extends RSyntaxTextArea {
-
-		private static final long serialVersionUID = 1L;
-		private CustomTooltip m_tooltip;
+        private CustomTooltip m_tooltip;
         
         @Override public JToolTip createToolTip() {
             if (m_tooltip == null) {

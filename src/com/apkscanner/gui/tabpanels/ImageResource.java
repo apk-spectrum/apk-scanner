@@ -117,7 +117,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	
 	static public abstract interface TreeFocusChanger
 	{
-		public void setTreeFocus(String path, int line, String string);
+		public void setTreeFocus(String path, int line, String string);	
 		
 	}	
 	
