@@ -115,6 +115,7 @@ public class ResouceContentsPanel extends JPanel{
 		//xmltextArea = new RSyntaxTextArea(20, 60);
 		
 		CustomLabel temptextarea = new CustomLabel();
+		temptextarea.createToolTip();
 		xmltextArea  = (RSyntaxTextArea)temptextarea;
 		//xmltextArea.createToolTip();
 				
@@ -168,6 +169,7 @@ public class ResouceContentsPanel extends JPanel{
             if (m_tooltip == null) {
                 m_tooltip = new CustomTooltip();
                 m_tooltip.setComponent(this);
+                Log.d("createTool");
             }
             return m_tooltip;
         }
@@ -195,8 +197,7 @@ public class ResouceContentsPanel extends JPanel{
         	}
         	endindex = i;
         	this.setSelectionStart(startindex);
-        	this.setSelectionEnd(endindex);
-        	
+        	this.setSelectionEnd(endindex);        	
         	
         	selectedstr = this.getSelectedText();
         	
@@ -215,18 +216,9 @@ public class ResouceContentsPanel extends JPanel{
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-        		}
-        		
-        	} else {
-        		if (m_tooltip != null) {
-        			try {
-						m_tooltip.setImage(new ImageIcon( new URL(null)));
-					} catch (MalformedURLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-        		}
+        		}        		
         	}
+        	Log.d("returnstr");
         	return selectedstr;        	
         }
     }
@@ -236,7 +228,7 @@ public class ResouceContentsPanel extends JPanel{
         private JLabel text_label;
         private JButton m_button;
         private JPanel m_panel;
-        
+        private ImageIcon img;
         public CustomTooltip() {
             super();
             text_label = new JLabel();
@@ -255,16 +247,21 @@ public class ResouceContentsPanel extends JPanel{
         }
 
         @Override public void setTipText(String tipText) {
+        	Log.d("setTip");
             if (tipText != null && !tipText.isEmpty()) {
                 //m_label.setText(tipText);
                 text_label.setText(tipText);
+                
+                Log.d(""+this.img);
+                
+                m_label.setIcon(this.img);
+                this.repaint();
             } else {
                 super.setTipText(tipText);
             }
         }
         public void setImage(ImageIcon img) {
-        	m_label.setIcon(img);
-        	m_label.repaint();
+        	this.img = img;
         }
     }
 	
