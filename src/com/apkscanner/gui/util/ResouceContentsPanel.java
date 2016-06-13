@@ -85,10 +85,16 @@ public class ResouceContentsPanel extends JPanel{
 	public ResouceContentsPanel() {
 		
 	}
-	public void InitContentsPanel (ApkInfo apkinfo) {
-		
+	
+	public void setData(ApkInfo apkinfo) {
 		this.apkinfo = apkinfo;
 		this.resourcesWithValue = apkinfo.resourcesWithValue;
+	}
+	
+	public void InitContentsPanel (ApkInfo apkinfo) {
+		
+		setData(apkinfo);
+		
 		JLabel label = new JLabel();
 
 //		Font font = label.getFont();
