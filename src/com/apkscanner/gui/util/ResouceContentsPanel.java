@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -232,17 +233,17 @@ public class ResouceContentsPanel extends JPanel{
     
     public enum ButtonSet
     {
-    	OS_SETTING			(0x01, Type.NORMAL, Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OPEN_LAB.getString(), Resource.IMG_RESOURCE_TREE_OPEN_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-    	JD_GUI				(0x02, Type.NORMAL, Resource.STR_BTN_MANIFEST.getString(), Resource.STR_BTN_MANIFEST_LAB.getString(), Resource.IMG_RESOURCE_TREE_JD_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-    	APK_SCANNER			(0x04, Type.NORMAL, Resource.STR_BTN_MANIFEST.getString(), Resource.STR_BTN_MANIFEST_LAB.getString(), Resource.IMG_APP_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-    	EXPLORER			(0x08, Type.NORMAL, Resource.STR_BTN_EXPLORER.getString(), Resource.STR_BTN_EXPLORER_LAB.getString(), Resource.IMG_TOOLBAR_EXPLORER.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-    	CHOOSE_APPLICATION	(0x10, Type.NORMAL, Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_INSTALL_LAB.getString(), Resource.IMG_RESOURCE_TREE_OPEN_OTHERAPPLICATION_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize));
+    	OS_SETTING			(0x01, Type.NORMAL, Resource.STR_LABEL_OPEN_WITH_SYSTEM.getString(), Resource.STR_LABEL_OPEN_WITH_SYSTEM.getString(), Resource.IMG_RESOURCE_TREE_OPEN_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+    	JD_GUI				(0x02, Type.NORMAL, Resource.STR_LABEL_OPEN_WITH_JDGUI.getString(), Resource.STR_LABEL_OPEN_WITH_JDGUI.getString(), Resource.IMG_RESOURCE_TREE_JD_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+    	APK_SCANNER			(0x04, Type.NORMAL, Resource.STR_LABEL_OPEN_WITH_SCANNER.getString(), Resource.STR_LABEL_OPEN_WITH_SCANNER.getString(), Resource.IMG_APP_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+    	EXPLORER			(0x08, Type.NORMAL, Resource.STR_LABEL_OPEN_WITH_EXPLORER.getString(), Resource.STR_LABEL_OPEN_WITH_EXPLORER.getString(), Resource.IMG_TOOLBAR_EXPLORER.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+    	CHOOSE_APPLICATION	(0x10, Type.NORMAL, Resource.STR_LABEL_OPEN_WITH_CHOOSE.getString(), Resource.STR_LABEL_OPEN_WITH_CHOOSE.getString(), Resource.IMG_RESOURCE_TREE_OPEN_OTHERAPPLICATION_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize));
 
     	private enum Type {
     		NONE, NORMAL, HOVER, EXTEND
     	}
     	
-    	static private final int IconSize = 60;
+    	static private final int IconSize = 80;
 
     	private Type type = null;
     	private String text = null;
@@ -295,7 +296,7 @@ public class ResouceContentsPanel extends JPanel{
     			button.setVerticalTextPosition(JLabel.BOTTOM);
     			button.setHorizontalTextPosition(JLabel.CENTER);
     			//button.setFocusable(false);
-    			button.setPreferredSize(new Dimension(100,100));
+    			button.setPreferredSize(new Dimension(120,120));
     			button.setContentAreaFilled(false);
     			button.addMouseListener(new MouseAdapter() {
                     public void mouseEntered(MouseEvent evt) {
@@ -339,33 +340,41 @@ public class ResouceContentsPanel extends JPanel{
 		public final static int SELECT_VIEW_ICON_SCANNER_OPEN = 0x04;
 		public final static int SELECT_VIEW_ICON_EXPLORER = 0x08;
 		public final static int SELECT_VIEW_ICON_CHOOSE_APPLICATION = 0x10;
-		
-		String message = new String("Sorry,\nThis type does not support a preview.");
-		
+
 		public SelectViewPanel() {
-			JTextArea textArea = new JTextArea(message);
+			
+			JLabel warringLabel = new JLabel(Resource.IMG_WARNING2.getImageIcon(80,80));
+			
+			JTextArea textArea = new JTextArea(Resource.STR_MSG_UNSUPPORTED_PREVIEW.getString());
 			textArea.setEditable(false);
 			
-			JLabel warringLabel = new JLabel(Resource.IMG_WARNING.getImageIcon(50,50));
+			JLabel openWithLabel = new JLabel(Resource.STR_LABEL_OPEN_WITH.getString());
+			openWithLabel.setBorder(new EmptyBorder(20, 10, 0, 0));
 			
 			JPanel MessagePanel = new JPanel(new FlowLayout());
 	        MessagePanel.add(warringLabel);
 	        MessagePanel.add(textArea);
-	        MessagePanel.setBorder(new EmptyBorder(50, 0, 0, 0));
+	        MessagePanel.setBorder(new EmptyBorder(40, 0, 0, 0));
 	        MessagePanel.setBackground(Color.WHITE);
+	        MessagePanel.setMaximumSize(MessagePanel.getPreferredSize());
+	        MessagePanel.setAlignmentX(LEFT_ALIGNMENT);
 
 			buttonMap = ButtonSet.getButtonMap(this);
 			JPanel IconPanel = new JPanel(new GridBagLayout());
 			IconPanel.add(buttonMap.get(ButtonSet.OS_SETTING));
 			IconPanel.add(buttonMap.get(ButtonSet.JD_GUI));
 			IconPanel.add(buttonMap.get(ButtonSet.APK_SCANNER));
-			IconPanel.add(buttonMap.get(ButtonSet.CHOOSE_APPLICATION));
 			IconPanel.add(buttonMap.get(ButtonSet.EXPLORER));
-
+			IconPanel.add(buttonMap.get(ButtonSet.CHOOSE_APPLICATION));
 	        IconPanel.setBackground(Color.WHITE);
+	        IconPanel.setMaximumSize(MessagePanel.getPreferredSize());
+	        IconPanel.setAlignmentX(LEFT_ALIGNMENT);
 	        
-	        this.setLayout(new BorderLayout());
-			this.add(MessagePanel, BorderLayout.NORTH);			
+	        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+	        this.setBackground(Color.WHITE);
+	        
+			this.add(MessagePanel);
+			this.add(openWithLabel);
 			this.add(IconPanel);
 		}
 		

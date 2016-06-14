@@ -160,6 +160,12 @@ they're removed before the application is published</string>
     <string name="label_device">Device</string>
     <string name="label_path">Path</string>
     <string name="label_uses_resource">Uses framework resource files</string>
+    <string name="label_open_with">Open with</string>
+    <string name="label_open_with_system">Open</string>
+    <string name="label_open_with_jdgui">JD-GUI</string>
+    <string name="label_open_with_explorer">Explorer</string>
+    <string name="label_open_with_apkscanner">APK Scanner</string>
+    <string name="label_open_with_choose">Other</string>
     
     <string name="msg_failure_open_apk">Sorry, Can not open the APK</string>
     <string name="msg_device_not_found">Device not found!
@@ -171,6 +177,8 @@ Please check device.</string>
     <string name="msg_device_unauthorized">Device unauthorized. Please check the confirmation dialog on your device.</string>
     <string name="msg_device_unknown">device unknown</string>
     <string name="msg_cannot_run_root">adbd cannot run as root in production builds</string>
+    <string name="msg_unsupported_preview">Sorry,
+This type doesn't support a preview.</string>
 
     <string name="question_reboot_device">Restart device now?</string>
     <string name="question_continue_install">Continue install?</string>

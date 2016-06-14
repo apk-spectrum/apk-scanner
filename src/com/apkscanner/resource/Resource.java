@@ -182,7 +182,12 @@ public enum Resource
 	STR_LABEL_DEVICE			(Type.TEXT, "@label_device"),
 	STR_LABEL_PATH				(Type.TEXT, "@label_path"),
 	STR_LABEL_USES_RESOURCE		(Type.TEXT, "@label_uses_resource"),
-	
+	STR_LABEL_OPEN_WITH			(Type.TEXT, "@label_open_with"),
+	STR_LABEL_OPEN_WITH_SYSTEM	(Type.TEXT, "@label_open_with_system"),
+	STR_LABEL_OPEN_WITH_JDGUI	(Type.TEXT, "@label_open_with_jdgui"),
+	STR_LABEL_OPEN_WITH_EXPLORER(Type.TEXT, "@label_open_with_explorer"),
+	STR_LABEL_OPEN_WITH_SCANNER	(Type.TEXT, "@label_open_with_apkscanner"),
+	STR_LABEL_OPEN_WITH_CHOOSE	(Type.TEXT, "@label_open_with_choose"),
 	
 	STR_TREE_MESSAGE_DEVICE 	(Type.TEXT, "@tree_message_device"),
 	STR_TREE_MESSAGE_VERSION 	(Type.TEXT, "@tree_message_version"),
@@ -199,6 +204,7 @@ public enum Resource
 	STR_MSG_DEVICE_UNAUTHORIZED	(Type.TEXT, "@msg_device_unauthorized"),
 	STR_MSG_DEVICE_UNKNOWN		(Type.TEXT, "@msg_device_unknown"),
 	STR_MSG_DEVICE_HAS_NOT_ROOT	(Type.TEXT, "@msg_cannot_run_root"),
+	STR_MSG_UNSUPPORTED_PREVIEW	(Type.TEXT, "@msg_unsupported_preview"),
 	
 	STR_QUESTION_REBOOT_DEVICE	(Type.TEXT, "@question_reboot_device"),
 	STR_QUESTION_CONTINUE_INSTALL(Type.TEXT, "@question_continue_install"),
@@ -235,6 +241,7 @@ public enum Resource
 	IMG_APK_FILE_ICON			(Type.IMAGE, "apk_file_icon.png"),
 	IMG_QUESTION				(Type.IMAGE, "question.png"),
 	IMG_WARNING					(Type.IMAGE, "warning.png"),
+	IMG_WARNING2				(Type.IMAGE, "warning2.png"),
 	IMG_SUCCESS					(Type.IMAGE, "Succes.png"),
 	IMG_INSTALL_WAIT			(Type.IMAGE, "install_wait.gif"),
 	IMG_LOADING					(Type.IMAGE, "loading.gif"),
