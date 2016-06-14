@@ -178,7 +178,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 			if(path.endsWith(".xml")) {
 				if(path.startsWith("res/") || path.equals("AndroidManifest.xml")) attr = ATTR_AXML;
 				else attr = ATTR_XML;
-			} else if(path.endsWith(".png") || path.endsWith(".jpg") || path.endsWith(".gif")) {
+			} else if(path.endsWith(".png") || path.endsWith(".jpg") || path.endsWith(".gif") || path.endsWith(".bmp")) {
 				attr = ATTR_IMG;
 			} else if(path.endsWith(".qmg")) {
 				attr = ATTR_QMG;

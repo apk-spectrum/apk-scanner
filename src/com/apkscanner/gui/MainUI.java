@@ -553,9 +553,10 @@ public class MainUI extends JFrame
 				evtInstallApk(true);
 			} else if(ToolBar.ButtonSet.OPEN_CODE.matchActionEvent(e)) {
 				evtOpenJDGUI();
-			} else if(ToolBar.ButtonSet.SEARCH.matchActionEvent(e)) {
-				evtOpenSearchPopup();
-			}
+			} 
+			//else if(ToolBar.ButtonSet.SEARCH.matchActionEvent(e)) {
+				//evtOpenSearchPopup();
+			//}
 		}
 
 		// Shortcut key event processing

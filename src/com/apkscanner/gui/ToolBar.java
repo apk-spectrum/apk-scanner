@@ -113,8 +113,8 @@ public class ToolBar extends JToolBar
     	ABOUT			(Type.NORMAL, Resource.STR_BTN_ABOUT.getString(), Resource.STR_BTN_ABOUT_LAB.getString(), Resource.IMG_TOOLBAR_ABOUT.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
     	ALL				(Type.NONE, null, null),
     	NEED_TARGET_APK	(Type.NONE, null, null),
-    	OPEN_CODE	(Type.NORMAL, Resource.STR_BTN_OPENCODE.getString(), Resource.STR_BTN_OPENCODE_LAB.getString(), Resource.IMG_TOOLBAR_OPENCODE.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-    	SEARCH	(Type.NORMAL, "Search", "Search", Resource.IMG_TOOLBAR_SEARCH.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize));
+    	OPEN_CODE	(Type.NORMAL, Resource.STR_BTN_OPENCODE.getString(), Resource.STR_BTN_OPENCODE_LAB.getString(), Resource.IMG_TOOLBAR_OPENCODE.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize));
+    	//SEARCH	(Type.NORMAL, "Search", "Search", Resource.IMG_TOOLBAR_SEARCH.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize));
 
     	private enum Type {
     		NONE, NORMAL, HOVER, EXTEND
@@ -267,7 +267,7 @@ public class ToolBar extends JToolBar
         add(buttonMap.get(ButtonSet.MANIFEST));
         add(buttonMap.get(ButtonSet.EXPLORER));
         add(buttonMap.get(ButtonSet.OPEN_CODE));
-        add(buttonMap.get(ButtonSet.SEARCH));
+        //add(buttonMap.get(ButtonSet.SEARCH));
         
         add(getNewSeparator(JSeparator.VERTICAL, sepSize));
 
@@ -386,7 +386,7 @@ public class ToolBar extends JToolBar
     		}
     		buttonMap.get(ButtonSet.OPEN_CODE).setEnabled(enabled);
     		if(buttonId != ButtonSet.ALL) break;
-    	case SEARCH:
+    	//case SEARCH:
     		
     		break;
     	default:

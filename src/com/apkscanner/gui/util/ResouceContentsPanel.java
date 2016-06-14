@@ -262,11 +262,12 @@ public class ResouceContentsPanel extends JPanel{
         	Log.d("setTip");
             if (tipText != null && !tipText.isEmpty()) {
                 //m_label.setText(tipText);
-                text_label.setText(tipText);
-                
-                Log.d(""+this.img);
-                
+                text_label.setText(tipText);                
+                Log.d(""+this.img);                
                 m_label.setIcon(this.img);
+                
+                
+                
                 this.repaint();                
             } else {
                 super.setTipText(tipText);
