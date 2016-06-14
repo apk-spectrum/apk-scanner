@@ -187,7 +187,7 @@ public class Activity extends JPanel implements TabDataObject
 				String enabled = (info.enabled == null) || info.enabled ? "O" : "X";
 				String exported = (info.exported == null) || info.exported ? "O" : "X";
 				String permission = info.permission != null ? "O" : "X"; 
-				ActivityList.add(new Object[] {info.name, "receiver", enabled, exported, permission, startUp, info.getReport()});
+				ActivityList.add(new Object[] {info.name, "provider", enabled, exported, permission, startUp, info.getReport()});
 				//String startUp = (info.featureFlag & ActivityInfo.ACTIVITY_FEATURE_STARTUP) != 0 ? "O" : "X";
 			}
 		}

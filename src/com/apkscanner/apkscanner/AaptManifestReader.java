@@ -619,7 +619,7 @@ public class AaptManifestReader
 	
 	public void readProviderInfo()
 	{
-		AaptXmlTreeNode[] activityTag = manifestPath.getNodeList("/manifest/application/receiver");
+		AaptXmlTreeNode[] activityTag = manifestPath.getNodeList("/manifest/application/provider");
 		if(activityTag == null || activityTag.length == 0) return;
 
 		ArrayList<ProviderInfo> list = new ArrayList<ProviderInfo>();
