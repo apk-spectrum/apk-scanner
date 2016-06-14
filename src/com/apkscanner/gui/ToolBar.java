@@ -8,8 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.HashMap;
 
 import javax.swing.ImageIcon;
@@ -159,6 +157,7 @@ public class ToolBar extends JToolBar
     		JButton button = null;
     		switch(type) {
     		case NORMAL:
+    		case HOVER:
     			button = new JButton(text, icon);
     			button.setToolTipText(toolTipText);
     			button.addActionListener(listener);
@@ -168,16 +167,9 @@ public class ToolBar extends JToolBar
     			button.setOpaque(false);
     			button.setFocusable(false);
     			button.setPreferredSize(new Dimension(63,65));
-    			break;
-    		case HOVER:
-    			button = new ToolBarButton(text, icon, hoverIcon, listener);
-    			button.setToolTipText(toolTipText);
-    			button.setVerticalTextPosition(JLabel.BOTTOM);
-    			button.setHorizontalTextPosition(JLabel.CENTER);
-    			button.setBorderPainted(false);
-    			button.setOpaque(false);
-    			button.setFocusable(false);
-    			button.setPreferredSize(new Dimension(63,65));
+    			if(type == Type.HOVER) {
+    				button.setRolloverIcon(hoverIcon);
+    			}
     			break;
     		case EXTEND:
     			button = new JButton(text, icon);
@@ -202,29 +194,6 @@ public class ToolBar extends JToolBar
             	buttonMap.put(bs, bs.getButton(listener));
             }
             return buttonMap;
-    	}
-    }
-	
-    static private class ToolBarButton extends JButton
-    {
-    	private static final long serialVersionUID = -6788392217820751244L;
-    	public ImageIcon  mHoverIcon, mIcon;
-
-    	public ToolBarButton(String text, ImageIcon icon, ImageIcon hoverIcon, ActionListener listener)
-    	{
-    		super(text, icon);
-    		this.mHoverIcon = hoverIcon;
-    		this.mIcon = icon;
-    		this.addActionListener(listener);
-
-    		this.addMouseListener(new MouseAdapter() {
-                public void mouseEntered(MouseEvent evt) {
-                	setIcon(mHoverIcon);
-                }
-                public void mouseExited(MouseEvent evt) {
-                	setIcon(mIcon);
-                }
-            });
     	}
     }
     

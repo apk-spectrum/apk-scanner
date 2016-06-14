@@ -58,7 +58,6 @@ import com.apkscanner.gui.util.FilteredTreeModel;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.ResouceContentsPanel;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
@@ -226,6 +225,8 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     	top = new DefaultMutableTreeNode("Loading...");
     	
 		tree = new JTree(new DefaultTreeModel(top)) {
+			private static final long serialVersionUID = 2164035864213808434L;
+
 			@Override
 			public void paintComponent(Graphics g) {
 				g.setColor(getBackground());
@@ -272,11 +273,10 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
         treefocuschanger = new TreeFocusChanger() {			
 			@Override
 			public void  setTreeFocus(String path, int line, String string) {
-				// TODO Auto-generated method stub
 				Log.d("path : " + path);
-								
 				
-			    Enumeration<DefaultMutableTreeNode> e = top.depthFirstEnumeration();
+			    @SuppressWarnings("unchecked")
+				Enumeration<DefaultMutableTreeNode> e = top.depthFirstEnumeration();
 			    while (e.hasMoreElements()) {
 			        DefaultMutableTreeNode node = e.nextElement();
 			         
@@ -299,8 +299,8 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 
 			@Override
 			public String getImagefilePath(String findfilename) {
-				// TODO Auto-generated method stub
-			    Enumeration<DefaultMutableTreeNode> e = top.depthFirstEnumeration();
+			    @SuppressWarnings("unchecked")
+				Enumeration<DefaultMutableTreeNode> e = top.depthFirstEnumeration();
 			    while (e.hasMoreElements()) {
 			        DefaultMutableTreeNode node = e.nextElement();
 			         
@@ -703,11 +703,10 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 				DexLuncher.openDex(resPath, new DexLuncher.DexWrapperListener(){
 				@Override
 				public void OnError() {
-					// TODO Auto-generated method stub					
+
 				}
 				@Override
 				public void OnSuccess() {
-					// TODO Auto-generated method stub
 					resObj.setLoadingState(false);
 					
 					Animateimageicon.setImageObserver(null);
@@ -950,7 +949,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		this.tempWorkPath = apkInfo.tempWorkPath;
 		
 		nameList = apkInfo.images;
-		contentPanel.InitContentsPanel(apkInfo);
+		contentPanel.setData(apkInfo);
 		setTreeForm(false);
 	}
 	

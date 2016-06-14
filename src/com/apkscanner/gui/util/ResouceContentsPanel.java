@@ -6,11 +6,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
-import java.awt.Point;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -31,18 +30,10 @@ import javax.swing.JTextField;
 import javax.swing.JToolTip;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
-import javax.swing.LookAndFeel;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.fife.ui.rsyntaxtextarea.ActiveLineRangeEvent;
-import org.fife.ui.rsyntaxtextarea.ActiveLineRangeListener;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -57,7 +48,6 @@ import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.gui.tabpanels.ImageResource;
 import com.apkscanner.gui.tabpanels.ImageResource.ResourceObject;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.test.PopupMessageExample.PopupMessageBuilder;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
 
@@ -70,55 +60,18 @@ public class ResouceContentsPanel extends JPanel{
 	public static final String CONTENT_SELECT_VIEWER = "SelectViewer";
 	
 	//JHtmlEditorPane htmlViewer;
-	JTable textTableViewer;
-	ImageControlPanel imageViewerPanel;
+	private JTable textTableViewer;
+	private ImageControlPanel imageViewerPanel;
 	private ResourceObject currentSelectedObj = null;
 	private String[] resourcesWithValue = null;
-	JPanel ContentsviewPanel;
-	JTextField FilePathtextField;	
-	SelectViewPanel selectPanel;
-	Color defaultColor;
-	ResourceObject CurrentresObj = null;
-	static ApkInfo apkinfo;
-	RSyntaxTextArea xmltextArea;
+	private JPanel ContentsviewPanel;
+	private JTextField FilePathtextField;	
+	private SelectViewPanel selectPanel;
+	private ResourceObject CurrentresObj = null;
+	private ApkInfo apkinfo;
+	private RSyntaxTextArea xmltextArea;
 	
 	public ResouceContentsPanel() {
-		
-	}
-	
-	public void setData(ApkInfo apkinfo) {
-		this.apkinfo = apkinfo;
-		this.resourcesWithValue = apkinfo.resourcesWithValue;
-	}
-	
-	public void InitContentsPanel (ApkInfo apkinfo) {
-		
-		setData(apkinfo);
-		
-		JLabel label = new JLabel();
-
-//		Font font = label.getFont();
-//		StringBuilder style = new StringBuilder("#basic-info, #perm-group {");
-//		style.append("font-family:" + font.getFamily() + ";");
-//		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-//		style.append("font-size:" + font.getSize() + "pt;}");
-//		style.append("#basic-info a {text-decoration:none; color:black;}");
-//		style.append("#perm-group a {text-decoration:none; color:#"+Integer.toHexString(label.getBackground().getRGB() & 0xFFFFFF)+";}");
-//		style.append(".danger-perm {text-decoration:none; color:red;}");
-//		style.append("#about {");
-//		style.append("font-family:" + font.getFamily() + ";");
-//		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-//		style.append("font-size:" + font.getSize() + "pt;}");
-//		style.append("#about a {text-decoration:none;}");
-//
-//		htmlViewer = new JHtmlEditorPane();
-//		htmlViewer.setStyle(style.toString());
-//		htmlViewer.setBackground(Color.white);
-//		htmlViewer.setEditable(false);
-//		htmlViewer.setOpaque(true);
-//		JScrollPane htmlViewerScroll = new JScrollPane(htmlViewer);
-		
-		//xmltextArea = new RSyntaxTextArea(20, 60);
 		
 		CustomLabel temptextarea = new CustomLabel();
 		temptextarea.createToolTip();
@@ -129,11 +82,6 @@ public class ResouceContentsPanel extends JPanel{
 		xmltextArea.setCodeFoldingEnabled(true);				
 		xmltextArea.setEditable(false);		
 		RTextScrollPane sp = new RTextScrollPane(xmltextArea);
-	      
-		
-		
-
-		defaultColor = this.getBackground();
 		
 		textTableViewer = new JTable();
 		textTableViewer.setShowHorizontalLines(false);
@@ -150,7 +98,6 @@ public class ResouceContentsPanel extends JPanel{
 		imageViewerPanel = new ImageControlPanel();
 		
 		selectPanel = new SelectViewPanel();
-		selectPanel.InitPanel();
 		
 		ContentsviewPanel = new JPanel(new CardLayout());
 		
@@ -159,17 +106,22 @@ public class ResouceContentsPanel extends JPanel{
 		ContentsviewPanel.add(textTableScroll, CONTENT_TABLE_VIEWER);
 		ContentsviewPanel.add(selectPanel, CONTENT_SELECT_VIEWER);
 		
-		
 		FilePathtextField = new JTextField("FilePath");
 		FilePathtextField.setEditable(false);
 		
 		this.add(FilePathtextField, BorderLayout.NORTH);
 		this.add(ContentsviewPanel, BorderLayout.CENTER);
-		
+	}
+	
+	public void setData(ApkInfo apkinfo) {
+		this.apkinfo = apkinfo;
+		this.resourcesWithValue = apkinfo.resourcesWithValue;
 	}
 
-    private static class CustomLabel extends RSyntaxTextArea {
-        private CustomTooltip m_tooltip;
+    private class CustomLabel extends RSyntaxTextArea {
+		private static final long serialVersionUID = 4552614645476575656L;
+
+		private CustomTooltip m_tooltip;
         
         @Override public JToolTip createToolTip() {
             if (m_tooltip == null) {
@@ -219,7 +171,6 @@ public class ResouceContentsPanel extends JPanel{
         			try {
 						m_tooltip.setImage(new ImageIcon( new URL(ImagefilePath)));
 					} catch (MalformedURLException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
         		}        		
@@ -234,16 +185,17 @@ public class ResouceContentsPanel extends JPanel{
     }
 	
     private static class CustomTooltip extends JToolTip {
-        private JLabel m_label;
+		private static final long serialVersionUID = -1891800310718474313L;
+		private JLabel m_label;
         private JLabel text_label;
-        private JButton m_button;
+        //private JButton m_button;
         private JPanel m_panel;
         private ImageIcon img;
         public CustomTooltip() {
             super();
             text_label = new JLabel();
             m_label = new JLabel();
-            m_button = new JButton("See, I am a button!");
+            //m_button = new JButton("See, I am a button!");
             m_panel = new JPanel(new BorderLayout());
             m_panel.add(BorderLayout.NORTH, text_label);
             m_panel.add(BorderLayout.CENTER, m_label);
@@ -277,138 +229,189 @@ public class ResouceContentsPanel extends JPanel{
         	this.img = img;
         }
     }
-	
-	public class SelectViewPanel extends JPanel {
-		ImageIcon warring = Resource.IMG_WARNING.getImageIcon(50,50);
-		
-		HashMap<Integer, JLabel> IconHashMap = new HashMap<Integer, JLabel>();  
+    
+    public enum ButtonSet
+    {
+    	OS_SETTING			(0x01, Type.NORMAL, Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OPEN_LAB.getString(), Resource.IMG_RESOURCE_TREE_OPEN_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+    	JD_GUI				(0x02, Type.NORMAL, Resource.STR_BTN_MANIFEST.getString(), Resource.STR_BTN_MANIFEST_LAB.getString(), Resource.IMG_RESOURCE_TREE_JD_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+    	APK_SCANNER			(0x04, Type.NORMAL, Resource.STR_BTN_MANIFEST.getString(), Resource.STR_BTN_MANIFEST_LAB.getString(), Resource.IMG_APP_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+    	EXPLORER			(0x08, Type.NORMAL, Resource.STR_BTN_EXPLORER.getString(), Resource.STR_BTN_EXPLORER_LAB.getString(), Resource.IMG_TOOLBAR_EXPLORER.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+    	CHOOSE_APPLICATION	(0x10, Type.NORMAL, Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_INSTALL_LAB.getString(), Resource.IMG_RESOURCE_TREE_OPEN_OTHERAPPLICATION_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize));
 
-		public final static int SELECT_VIEW_ICON_OPEN = 1;
-		public final static int SELECT_VIEW_ICON_JD_OPEN = 2;
-		public final static int SELECT_VIEW_ICON_SCANNER_OPEN = 4;
-		public final static int SELECT_VIEW_ICON_CHOOSE_APPLICATION = 8;
-		public final static int SELECT_VIEW_ICON_EXPLORER = 16;
+    	private enum Type {
+    		NONE, NORMAL, HOVER, EXTEND
+    	}
+    	
+    	static private final int IconSize = 60;
+
+    	private Type type = null;
+    	private String text = null;
+    	private String toolTipText = null;
+    	private ImageIcon icon = null;
+    	//private ImageIcon hoverIcon = null;
+    	private String actionCommand = null;
+    	private int id = -1;
+    	
+    	ButtonSet(int id, Type type, String text, ImageIcon icon)
+    	{
+    		this(id, type, text, null, icon, icon);
+    	}
+    	
+    	ButtonSet(int id, Type type, String text, String toolTipText, ImageIcon icon)
+    	{
+    		this(id, type, text, toolTipText, icon, icon);
+    	}
+    	
+    	ButtonSet(int id, Type type, String text, String toolTipText, ImageIcon icon, ImageIcon hoverIcon)
+    	{
+    		this.id = id;
+    		this.type = type;
+    		this.text = text;
+    		this.toolTipText = toolTipText;
+    		this.icon = icon;
+    		//this.hoverIcon = hoverIcon;
+    		this.actionCommand = this.getClass().getName()+"."+this.toString();
+    	}
+    	
+    	public boolean matchActionEvent(ActionEvent e)
+    	{
+    		return actionCommand.equals(e.getActionCommand());
+    	}
+    	
+    	public int getButtonId() {
+    		return id;
+    	}
+
+    	private JButton getButton(ActionListener listener)
+    	{
+    		final JButton button = new JButton(text, icon);
+			button.setToolTipText(toolTipText);
+			button.setOpaque(false);
+			button.setBorderPainted(false);
+			
+    		switch(type) {
+    		case NORMAL:
+    			button.addActionListener(listener);
+    			button.setVerticalTextPosition(JLabel.BOTTOM);
+    			button.setHorizontalTextPosition(JLabel.CENTER);
+    			//button.setFocusable(false);
+    			button.setPreferredSize(new Dimension(100,100));
+    			button.setContentAreaFilled(false);
+    			button.addMouseListener(new MouseAdapter() {
+                    public void mouseEntered(MouseEvent evt) {
+                    	button.setContentAreaFilled(true);
+                    }
+                    public void mouseExited(MouseEvent evt) {
+                    	button.setContentAreaFilled(false);
+                    }
+                });
+    			break;
+    		case EXTEND:
+    			button.setMargin(new Insets(27,0,27,0));
+    			button.setFocusable(false);
+    			break;
+    		default:
+    			return null;
+    		}
+			button.setActionCommand(actionCommand);
+    		
+    		return button;
+    	}
+    	
+    	static private HashMap<ButtonSet, JButton> getButtonMap(ActionListener listener)
+    	{
+    		HashMap<ButtonSet, JButton> buttonMap = new HashMap<ButtonSet, JButton>();
+            for(ButtonSet bs: values()) {
+            	buttonMap.put(bs, bs.getButton(listener));
+            }
+            return buttonMap;
+    	}
+    }
+	
+	
+	public class SelectViewPanel extends JPanel implements ActionListener {
+		private static final long serialVersionUID = -5260902185163996992L;
+
+		private HashMap<ButtonSet, JButton> buttonMap;
+
+		public final static int SELECT_VIEW_ICON_OPEN = 0x01;
+		public final static int SELECT_VIEW_ICON_JD_OPEN = 0x02;
+		public final static int SELECT_VIEW_ICON_SCANNER_OPEN = 0x04;
+		public final static int SELECT_VIEW_ICON_EXPLORER = 0x08;
+		public final static int SELECT_VIEW_ICON_CHOOSE_APPLICATION = 0x10;
 		
+		String message = new String("Sorry,\nThis type does not support a preview.");
 		
-		String message = new String("Sorry, this file type is unsupported by preview.\nSo, open file with an external application by below button.");
-		
-		public void InitPanel() {
+		public SelectViewPanel() {
 			JTextArea textArea = new JTextArea(message);
-			JLabel warringLabel = new JLabel(warring);
-			textArea.setBackground(defaultColor);
+			textArea.setEditable(false);
+			
+			JLabel warringLabel = new JLabel(Resource.IMG_WARNING.getImageIcon(50,50));
 			
 			JPanel MessagePanel = new JPanel(new FlowLayout());
 	        MessagePanel.add(warringLabel);
 	        MessagePanel.add(textArea);
 	        MessagePanel.setBorder(new EmptyBorder(50, 0, 0, 0));
+	        MessagePanel.setBackground(Color.WHITE);
+
+			buttonMap = ButtonSet.getButtonMap(this);
+			JPanel IconPanel = new JPanel(new GridBagLayout());
+			IconPanel.add(buttonMap.get(ButtonSet.OS_SETTING));
+			IconPanel.add(buttonMap.get(ButtonSet.JD_GUI));
+			IconPanel.add(buttonMap.get(ButtonSet.APK_SCANNER));
+			IconPanel.add(buttonMap.get(ButtonSet.CHOOSE_APPLICATION));
+			IconPanel.add(buttonMap.get(ButtonSet.EXPLORER));
+
+	        IconPanel.setBackground(Color.WHITE);
 	        
 	        this.setLayout(new BorderLayout());
-	        
-			this.add(MessagePanel, BorderLayout.NORTH);
-			
-			JPanel IconPanel = new JPanel(new GridBagLayout());
-			
-			IconHashMap.put(SELECT_VIEW_ICON_JD_OPEN, new JLabel("Open", Resource.IMG_RESOURCE_TREE_JD_ICON.getImageIcon(100,100), JLabel.CENTER));
-			IconHashMap.put(SELECT_VIEW_ICON_SCANNER_OPEN, new JLabel("Open", Resource.IMG_APP_ICON.getImageIcon(100,100), JLabel.CENTER));
-			IconHashMap.put(SELECT_VIEW_ICON_CHOOSE_APPLICATION, new JLabel("Choose Application", Resource.IMG_RESOURCE_TREE_OPEN_OTHERAPPLICATION_ICON.getImageIcon(100,100), JLabel.CENTER));
-			IconHashMap.put(SELECT_VIEW_ICON_EXPLORER, new JLabel("Explorer", Resource.IMG_TOOLBAR_EXPLORER.getImageIcon(100,100), JLabel.CENTER));
-			IconHashMap.put(SELECT_VIEW_ICON_OPEN, new JLabel("Open", Resource.IMG_RESOURCE_TREE_OPEN_ICON.getImageIcon(100,100), JLabel.CENTER));
-			
-			for(int i=0; i< IconHashMap.size(); i++) {				
-				final JLabel temp = IconHashMap.get(1<<i);
-				temp.setHorizontalTextPosition(JLabel.CENTER);
-		        temp.setVerticalTextPosition(JLabel.BOTTOM);
-		        temp.setOpaque(true);
-		        temp.setIconTextGap(5);
-		        IconPanel.add(temp);
-		        
-		        temp.addMouseListener(new MouseListener() {		        	
-		        	@Override
-					public void mouseReleased(MouseEvent arg0) {	if(temp.isEnabled()==false) return;temp.setBackground(defaultColor);}					
-					@Override
-					public void mousePressed(MouseEvent arg0) { if(temp.isEnabled()==false) return;Color color = new Color(0, 155 ,200, 100); temp.setBackground(color);}					
-					@Override
-					public void mouseExited(MouseEvent arg0) { 	temp.setBackground(defaultColor);}					
-					@Override
-					public void mouseEntered(MouseEvent arg0) { if(temp.isEnabled()==false) return; temp.setDisabledIcon(Resource.IMG_RESOURCE_TREE_OPEN_JD_LOADING.getImageIcon()); Color color = new Color(0, 155 ,100, 100); temp.setBackground(color);}					
-					@Override
-					public void mouseClicked(MouseEvent arg0) {
-						if(temp.isEnabled()==false) return;
-						//int ClickedObject = IconHashMap.get((JLabel)(temp));
-						
-						//HashMap<JLabel, Integer> reversedHashMap = MapUtils.invertMap(IconHashMap);
-						
-						HashMap<JLabel, Integer> reversedHashMap = new HashMap<JLabel, Integer>();
-						for (Integer i : IconHashMap.keySet()) {
-						    reversedHashMap.put(IconHashMap.get(i), i);
-						}
-						int ClickedObject = reversedHashMap.get(temp);
-						
-						Log.d("Click Label : "+ClickedObject);
-						String resPath = apkinfo.tempWorkPath + File.separator + CurrentresObj.path.replace("/", File.separator);
-						ZipFileUtil.unZip(apkinfo.filePath, currentSelectedObj.path, resPath);
-						
-						switch(ClickedObject) {
-						case SELECT_VIEW_ICON_JD_OPEN:
-							if(CurrentresObj!=null) {
-								temp.setIcon(Resource.IMG_RESOURCE_TREE_OPEN_JD_LOADING.getImageIcon());
-								temp.setDisabledIcon(Resource.IMG_RESOURCE_TREE_OPEN_JD_LOADING.getImageIcon());
-								temp.setEnabled(false);
-								DexLuncher.openDex(resPath, new DexLuncher.DexWrapperListener() {
-									@Override
-									public void OnError() {}
-									@Override
-									public void OnSuccess() {
-										temp.setDisabledIcon(null);										
-										temp.setIcon(Resource.IMG_RESOURCE_TREE_JD_ICON.getImageIcon(100,100));
-										temp.setEnabled(true);										
-										temp.repaint();
-									}
-								});
-							}
-							break;
-						case SELECT_VIEW_ICON_SCANNER_OPEN:
-							Launcher.run(resPath);
-							break;
-						case SELECT_VIEW_ICON_CHOOSE_APPLICATION:
-							break;
-						case SELECT_VIEW_ICON_EXPLORER:
-							break;
-						case SELECT_VIEW_ICON_OPEN:
-							String openner;
-							if(System.getProperty("os.name").indexOf("Window") >-1) {
-								openner = "explorer";
-							} else {  //for linux
-								openner = "xdg-open";
-							}
-							try {
-									new ProcessBuilder(openner, resPath).start();
-								} catch (IOException e1) { }
-							break;
-						default:							
-							Log.e("unknown Label : " + ClickedObject + " JLabel : " + temp);
-						}
-						
-					}
-				});
-			}
-			
+			this.add(MessagePanel, BorderLayout.NORTH);			
 			this.add(IconPanel);
-			
-			
 		}
 		
 		public void setMenu(int Flag) {
-			for(int i=0; i< IconHashMap.size(); i++) {				
-				if((Flag & 1<<i) ==0) {
-					IconHashMap.get(1<<i).setVisible(false);
-					
-				} else {
-					IconHashMap.get(1<<i).setVisible(true);
-				}
+			for (ButtonSet key : buttonMap.keySet()) {
+				buttonMap.get(key).setVisible((key.getButtonId() & Flag) != 0);
 			}
-			this.invalidate();
-			this.repaint();
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+			String resPath = apkinfo.tempWorkPath + File.separator + CurrentresObj.path.replace("/", File.separator);
+			ZipFileUtil.unZip(apkinfo.filePath, currentSelectedObj.path, resPath);
+			
+			if (ButtonSet.OS_SETTING.matchActionEvent(e)) {
+				String openner;
+				if(System.getProperty("os.name").indexOf("Window") >-1) {
+					openner = "explorer";
+				} else {  //for linux
+					openner = "xdg-open";
+				}
+				try {
+					new ProcessBuilder(openner, resPath).start();
+				} catch (IOException e1) { }
+			} else if (ButtonSet.JD_GUI.matchActionEvent(e)) {
+				final JButton btn = buttonMap.get(ButtonSet.JD_GUI);
+				btn.setDisabledIcon(Resource.IMG_RESOURCE_TREE_OPEN_JD_LOADING.getImageIcon());
+				btn.setEnabled(false);
+				DexLuncher.openDex(resPath, new DexLuncher.DexWrapperListener() {
+					@Override
+					public void OnError() {}
+					@Override
+					public void OnSuccess() {
+						btn.setDisabledIcon(null);										
+						//btn.setIcon(Resource.IMG_RESOURCE_TREE_JD_ICON.getImageIcon(100,100));
+						btn.setEnabled(true);
+					}
+				});
+			} else if (ButtonSet.APK_SCANNER.matchActionEvent(e)) {
+				Launcher.run(resPath);
+			} else if (ButtonSet.EXPLORER.matchActionEvent(e)) {
+				
+			} else if (ButtonSet.CHOOSE_APPLICATION.matchActionEvent(e)) {
+				
+			}
 		}
 		
 	}
