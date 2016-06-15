@@ -23,12 +23,14 @@ import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JToolBar;
 import javax.swing.JToolTip;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
@@ -69,6 +71,10 @@ public class ResouceContentsPanel extends JPanel{
 	public static final String CONTENT_TABLE_VIEWER = "TableViewer";
 	public static final String CONTENT_SELECT_VIEWER = "SelectViewer";
 	
+	public static final String TEXTVIEWER_TOOLBAR_OPEN = "textviewer_toolbar_open";
+	public static final String TEXTVIEWER_TOOLBAR_SAVE= "textviewer_toolbar_save";
+	public static final String TEXTVIEWER_TOOLBAR_FIND = "textviewer_toolbar_find";
+	
 	//JHtmlEditorPane htmlViewer;
 	private JTable textTableViewer;
 	private ImageControlPanel imageViewerPanel;
@@ -80,6 +86,7 @@ public class ResouceContentsPanel extends JPanel{
 	private ApkInfo apkinfo;
 	private RSyntaxTextArea xmltextArea;
 	private FindDialog finddlg;
+	private JToolBar toolBar;
 	
 	public ResouceContentsPanel() {
 		
@@ -100,6 +107,10 @@ public class ResouceContentsPanel extends JPanel{
 		TextAreaPanel.add(errorStrip,BorderLayout.LINE_END);
 		
 		
+		toolBar = new JToolBar("");
+		initToolbar(toolBar);
+		
+		TextAreaPanel.add(toolBar,BorderLayout.PAGE_START);
 		
 		finddlg = new FindDialog(MainUI.getCurrentParentsFrame(), new SearchListener() {			
 			@Override
@@ -145,6 +156,7 @@ public class ResouceContentsPanel extends JPanel{
 				return null;
 			}
 		});
+		finddlg.setResizable(false);
 		
 		
 		textTableViewer = new JTable();
@@ -212,6 +224,68 @@ public class ResouceContentsPanel extends JPanel{
 		}
 	}
 
+	private void initToolbar(JToolBar toolbar) {
+		
+		ToolbarActionListener toolbarListener = new ToolbarActionListener();
+		String[] petStrings = { "AXML", "XML"};
+		
+		JButton OpenBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_OPEN.getImageIcon(20, 20));
+		JButton saveBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_SAVE.getImageIcon(20, 20));
+		JButton FindBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_FIND.getImageIcon(20, 20));
+		
+		OpenBtn.setName(TEXTVIEWER_TOOLBAR_OPEN);
+		saveBtn.setName(TEXTVIEWER_TOOLBAR_SAVE);
+		FindBtn.setName(TEXTVIEWER_TOOLBAR_FIND);
+		
+		
+		JTextField findtextField = new JTextField();
+		JComboBox combobox = new JComboBox(petStrings);
+
+		combobox.addActionListener(toolbarListener);
+		findtextField.addActionListener(toolbarListener);
+		
+		OpenBtn.addActionListener(toolbarListener);
+		saveBtn.addActionListener(toolbarListener);
+		FindBtn.addActionListener(toolbarListener);
+		
+		toolbar.add(OpenBtn);
+		toolbar.add(saveBtn);
+		toolbar.add(findtextField);
+		toolbar.add(FindBtn);
+		toolbar.add(combobox);
+		
+	}
+	class ToolbarActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			if(arg0.getSource() instanceof JButton) {
+				String name = ((JButton)arg0.getSource()).getName();
+				switch(name) {
+				case TEXTVIEWER_TOOLBAR_OPEN:
+					Log.d("open");
+					break;
+				case TEXTVIEWER_TOOLBAR_SAVE:
+					Log.d("save");
+					break;
+				case TEXTVIEWER_TOOLBAR_FIND:
+					Log.d("find");
+					break;
+				}				
+			} else if(arg0.getSource() instanceof JTextField) {
+				String findstr = ((JTextField)(arg0.getSource())).getText();
+				
+				
+				Log.d("find : " + findstr);
+				
+			} else if(arg0.getSource() instanceof JComboBox) {
+				String fileType = ((JComboBox)(arg0.getSource())).getSelectedItem().toString();
+				
+				Log.d("fileType : " + fileType);
+			}
+		}		
+	}
+	
     public enum ButtonSet
     {
     	OS_SETTING			(0x01, Type.NORMAL, Resource.STR_LABEL_OPEN_WITH_SYSTEM.getString(), Resource.STR_LABEL_OPEN_WITH_SYSTEM.getString(), Resource.IMG_RESOURCE_TREE_OPEN_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
