@@ -68,7 +68,6 @@ public class ResouceContentsPanel extends JPanel{
 	private JPanel ContentsviewPanel;
 	private JTextField FilePathtextField;	
 	private SelectViewPanel selectPanel;
-	private ResourceObject CurrentresObj = null;
 	private ApkInfo apkinfo;
 	private RSyntaxTextArea xmltextArea;
 	
@@ -389,7 +388,7 @@ public class ResouceContentsPanel extends JPanel{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			
-			String resPath = apkinfo.tempWorkPath + File.separator + CurrentresObj.path.replace("/", File.separator);
+			String resPath = apkinfo.tempWorkPath + File.separator + currentSelectedObj.path.replace("/", File.separator);
 			ZipFileUtil.unZip(apkinfo.filePath, currentSelectedObj.path, resPath);
 			
 			if (ButtonSet.OS_SETTING.matchActionEvent(e)) {
@@ -525,7 +524,7 @@ public class ResouceContentsPanel extends JPanel{
                 tree.getLastSelectedPathComponent();
         if(node == null) return;
 		
-        CurrentresObj = null;
+        ResourceObject CurrentresObj = null;
 		if(node.getUserObject() instanceof ResourceObject) {
 			CurrentresObj = (ResourceObject)node.getUserObject();
 		}
@@ -535,13 +534,13 @@ public class ResouceContentsPanel extends JPanel{
 			Log.d("" +node.getPath().toString());
 			return;
 		}
-		currentSelectedObj = CurrentresObj;
 
 		if(CurrentresObj == null || CurrentresObj.isFolder) {
 			//htmlViewer.setText("");
 			//((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_HTML_VIEWER);
 			//FilePathtextField.setText("folder");
 		} else {
+			currentSelectedObj = CurrentresObj;
 			switch(CurrentresObj.attr) {
 			case ResourceObject.ATTR_IMG:
 			case ResourceObject.ATTR_QMG:
