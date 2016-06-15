@@ -354,12 +354,14 @@ public class ResouceContentsPanel extends JPanel{
 			JPanel MessagePanel = new JPanel(new FlowLayout());
 	        MessagePanel.add(warringLabel);
 	        MessagePanel.add(textArea);
-	        MessagePanel.setBorder(new EmptyBorder(40, 0, 0, 0));
+	        MessagePanel.setBorder(new EmptyBorder(40, 5, 0, 0));
 	        MessagePanel.setBackground(Color.WHITE);
 	        MessagePanel.setMaximumSize(MessagePanel.getPreferredSize());
 	        MessagePanel.setAlignmentX(LEFT_ALIGNMENT);
 
 			buttonMap = ButtonSet.getButtonMap(this);
+			buttonMap.get(ButtonSet.JD_GUI).setDisabledIcon(Resource.IMG_RESOURCE_TREE_OPEN_JD_LOADING.getImageIcon());
+			
 			JPanel IconPanel = new JPanel(new GridBagLayout());
 			IconPanel.add(buttonMap.get(ButtonSet.OS_SETTING));
 			IconPanel.add(buttonMap.get(ButtonSet.JD_GUI));
@@ -402,22 +404,27 @@ public class ResouceContentsPanel extends JPanel{
 				} catch (IOException e1) { }
 			} else if (ButtonSet.JD_GUI.matchActionEvent(e)) {
 				final JButton btn = buttonMap.get(ButtonSet.JD_GUI);
-				btn.setDisabledIcon(Resource.IMG_RESOURCE_TREE_OPEN_JD_LOADING.getImageIcon());
 				btn.setEnabled(false);
 				DexLuncher.openDex(resPath, new DexLuncher.DexWrapperListener() {
 					@Override
 					public void OnError() {}
 					@Override
 					public void OnSuccess() {
-						btn.setDisabledIcon(null);										
-						//btn.setIcon(Resource.IMG_RESOURCE_TREE_JD_ICON.getImageIcon(100,100));
 						btn.setEnabled(true);
 					}
 				});
 			} else if (ButtonSet.APK_SCANNER.matchActionEvent(e)) {
 				Launcher.run(resPath);
 			} else if (ButtonSet.EXPLORER.matchActionEvent(e)) {
-				
+				try {
+					if(System.getProperty("os.name").indexOf("Window") >-1) {
+						new ProcessBuilder("explorer", resPath).start();
+					} else {  //for linux
+						new ProcessBuilder("file-roller", resPath).start();
+					}
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 			} else if (ButtonSet.CHOOSE_APPLICATION.matchActionEvent(e)) {
 				
 			}
@@ -533,7 +540,7 @@ public class ResouceContentsPanel extends JPanel{
 		if(CurrentresObj == null || CurrentresObj.isFolder) {
 			//htmlViewer.setText("");
 			//((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_HTML_VIEWER);
-			FilePathtextField.setText("folder");
+			//FilePathtextField.setText("folder");
 		} else {
 			switch(CurrentresObj.attr) {
 			case ResourceObject.ATTR_IMG:
