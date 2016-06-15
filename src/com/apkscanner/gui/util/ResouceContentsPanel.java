@@ -638,8 +638,8 @@ public class ResouceContentsPanel extends JPanel{
 			switch(CurrentresObj.attr) {
 			case ResourceObject.ATTR_IMG:
 				drawImageOnPanel(CurrentresObj);
+				break;
 			case ResourceObject.ATTR_QMG:
-				//break;
 			case ResourceObject.ATTR_AXML:
 			case ResourceObject.ATTR_XML:
 			case ResourceObject.ATTR_TXT:
