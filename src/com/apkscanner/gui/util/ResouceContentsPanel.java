@@ -83,9 +83,7 @@ public class ResouceContentsPanel extends JPanel{
 	
 	public ResouceContentsPanel() {
 		
-		CustomLabel temptextarea = new CustomLabel();
-		temptextarea.createToolTip();
-		xmltextArea  = (RSyntaxTextArea)temptextarea;
+		xmltextArea  = new RSyntaxTextArea();
 		//xmltextArea.createToolTip();
 		
 		JPanel TextAreaPanel = new JPanel(new BorderLayout());
@@ -214,118 +212,6 @@ public class ResouceContentsPanel extends JPanel{
 		}
 	}
 
-    private class CustomLabel extends RSyntaxTextArea {
-		private static final long serialVersionUID = 4552614645476575656L;
-
-		private CustomTooltip m_tooltip;
-        
-        @Override public JToolTip createToolTip() {
-            if (m_tooltip == null) {
-                m_tooltip = new CustomTooltip();
-                m_tooltip.setComponent(this);
-                Log.d("createTool");
-            }
-            return m_tooltip;
-        }
-        public String getToolTipText(MouseEvent e) {
-        	String str = this.getText();
-        	String selectedstr;
-        	int startindex = this.getSelectionStart();
-        	int endindex = this.getSelectionEnd();
-        	int i;
-        	//Log.d(startindex + ": " + endindex);
-        	
-        	
-        	if(endindex - startindex<3) {
-        		return null;
-        	}
-        	
-        	for(i=startindex; str.charAt(i) != "\"".toCharArray()[0]; i--) {
-        		//Log.d(i+"" +str.charAt(i));
-        		if(startindex-i > 20) break;
-        	}
-        	startindex = i+1;
-        	
-        	for(i=endindex; str.charAt(i) != "\"".toCharArray()[0]; i++) {
-        		if(i-endindex > 20) break;
-        	}
-        	endindex = i;
-        	this.setSelectionStart(startindex);
-        	this.setSelectionEnd(endindex);        	
-        	
-        	selectedstr = this.getSelectedText();
-        	
-        	if(selectedstr.startsWith("@drawable/")) {
-        		
-        		selectedstr = selectedstr.substring("@drawable/".length());
-        		
-        		String ImagefilePath = ImageResource.getTreeFocuschanger().getImagefilePath(selectedstr);        		
-        		
-        		ImagefilePath = "jar:file:"+apkinfo.filePath.replaceAll("#", "%23")+"!/" + ImagefilePath;
-        		Log.d(ImagefilePath);
-        		if (m_tooltip != null) {
-        			try {
-						m_tooltip.setImage(new ImageIcon( new URL(ImagefilePath)));
-					} catch (MalformedURLException e1) {
-						e1.printStackTrace();
-					}
-        		}        		
-        	} else {
-        		if (m_tooltip != null) {
-        			m_tooltip.setImage(null);
-        		}
-        	}
-        	Log.d("returnstr");
-        	return selectedstr;        	
-        }
-    }
-	
-    private static class CustomTooltip extends JToolTip {
-		private static final long serialVersionUID = -1891800310718474313L;
-		private JLabel m_label;
-        private JLabel text_label;
-        //private JButton m_button;
-        private JPanel m_panel;
-        private ImageIcon img;
-        public CustomTooltip() {
-            super();
-            text_label = new JLabel();
-            m_label = new JLabel();
-            //m_button = new JButton("See, I am a button!");
-            m_panel = new JPanel(new BorderLayout());
-            m_panel.add(BorderLayout.NORTH, text_label);
-            m_panel.add(BorderLayout.CENTER, m_label);
-            //m_panel.add(BorderLayout.SOUTH, m_button);
-            setLayout(new BorderLayout());
-            //m_panel.setPreferredSize(new Dimension(200,100));
-            
-            add(m_panel);
-        }
-
-        @Override public Dimension getPreferredSize() {
-            return m_panel.getPreferredSize();
-        }
-
-        @Override public void setTipText(String tipText) {
-        	Log.d("setTip");
-            if (tipText != null && !tipText.isEmpty()) {
-                //m_label.setText(tipText);
-                text_label.setText(tipText);                
-                Log.d(""+this.img);                
-                m_label.setIcon(this.img);
-                
-                
-                
-                this.repaint();                
-            } else {
-                super.setTipText(tipText);
-            }
-        }
-        public void setImage(ImageIcon img) {
-        	this.img = img;
-        }
-    }
-    
     public enum ButtonSet
     {
     	OS_SETTING			(0x01, Type.NORMAL, Resource.STR_LABEL_OPEN_WITH_SYSTEM.getString(), Resource.STR_LABEL_OPEN_WITH_SYSTEM.getString(), Resource.IMG_RESOURCE_TREE_OPEN_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
