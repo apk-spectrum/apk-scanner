@@ -21,7 +21,12 @@ fi
 
 cat << EOF > ./APKScanner.sh
 #!/bin/bash
-java -classpath $APP_PATH/$APP_FILE:$LIB_PATH: $MAIN_CLASS \$* > /dev/null
+_classpath="$APP_PATH/$APP_FILE"
+for k in $APP_PATH/lib/*.jar
+do
+    _classpath="\${_classpath}:\${k}"
+done
+java -Xms512m -Xmx1024m -classpath "\${_classpath}" com.apkscanner.Main "\$@" > /dev/null
 EOF
 
 jar -xf APKInfoDlg.jar icons/AppIcon.png
