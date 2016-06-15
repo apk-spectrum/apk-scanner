@@ -24,7 +24,6 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -426,6 +425,7 @@ public class ResouceContentsPanel extends JPanel{
 		private static final long serialVersionUID = -5260902185163996992L;
 
 		private HashMap<ButtonSet, JButton> buttonMap;
+		private JLabel openWithLabel;
 
 		public final static int SELECT_VIEW_ICON_OPEN = 0x01;
 		public final static int SELECT_VIEW_ICON_JD_OPEN = 0x02;
@@ -440,7 +440,7 @@ public class ResouceContentsPanel extends JPanel{
 			JTextArea textArea = new JTextArea(Resource.STR_MSG_UNSUPPORTED_PREVIEW.getString());
 			textArea.setEditable(false);
 			
-			JLabel openWithLabel = new JLabel(Resource.STR_LABEL_OPEN_WITH.getString());
+			openWithLabel = new JLabel(Resource.STR_LABEL_OPEN_WITH.getString());
 			openWithLabel.setBorder(new EmptyBorder(20, 10, 0, 0));
 			
 			JPanel MessagePanel = new JPanel(new FlowLayout());
@@ -473,6 +473,7 @@ public class ResouceContentsPanel extends JPanel{
 		}
 		
 		public void setMenu(int Flag) {
+			openWithLabel.setVisible(Flag != 0);
 			for (ButtonSet key : buttonMap.keySet()) {
 				buttonMap.get(key).setVisible((key.getButtonId() & Flag) != 0);
 			}
@@ -572,7 +573,7 @@ public class ResouceContentsPanel extends JPanel{
 				selectPanel.setMenu(SelectViewPanel.SELECT_VIEW_ICON_SCANNER_OPEN | SelectViewPanel.SELECT_VIEW_ICON_CHOOSE_APPLICATION
 						| SelectViewPanel.SELECT_VIEW_ICON_EXPLORER);
 			} else if(obj.path.endsWith(".qmg")) {
-				
+				selectPanel.setMenu(0);
 			} else {
 				selectPanel.setMenu(SelectViewPanel.SELECT_VIEW_ICON_OPEN | SelectViewPanel.SELECT_VIEW_ICON_CHOOSE_APPLICATION);
 			}
@@ -636,9 +637,9 @@ public class ResouceContentsPanel extends JPanel{
 			currentSelectedObj = CurrentresObj;
 			switch(CurrentresObj.attr) {
 			case ResourceObject.ATTR_IMG:
-			case ResourceObject.ATTR_QMG:
 				drawImageOnPanel(CurrentresObj);
-				break;
+			case ResourceObject.ATTR_QMG:
+				//break;
 			case ResourceObject.ATTR_AXML:
 			case ResourceObject.ATTR_XML:
 			case ResourceObject.ATTR_TXT:
