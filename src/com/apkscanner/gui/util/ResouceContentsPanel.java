@@ -19,10 +19,12 @@ import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -30,22 +32,30 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolTip;
 import javax.swing.JTree;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.fife.rsta.ui.search.FindDialog;
+import org.fife.rsta.ui.search.SearchEvent;
+import org.fife.rsta.ui.search.SearchListener;
+import org.fife.ui.rsyntaxtextarea.ErrorStrip;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
+import org.fife.ui.rtextarea.SearchResult;
 
 import com.apkscanner.DexLuncher;
 import com.apkscanner.Launcher;
 import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.apkscanner.AxmlToXml;
 import com.apkscanner.core.AaptWrapper;
+import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.tabpanels.ImageResource;
 import com.apkscanner.gui.tabpanels.ImageResource.ResourceObject;
 import com.apkscanner.resource.Resource;
@@ -70,6 +80,7 @@ public class ResouceContentsPanel extends JPanel{
 	private SelectViewPanel selectPanel;
 	private ApkInfo apkinfo;
 	private RSyntaxTextArea xmltextArea;
+	private FindDialog finddlg;
 	
 	public ResouceContentsPanel() {
 		
@@ -77,11 +88,67 @@ public class ResouceContentsPanel extends JPanel{
 		temptextarea.createToolTip();
 		xmltextArea  = (RSyntaxTextArea)temptextarea;
 		//xmltextArea.createToolTip();
-				
+		
+		JPanel TextAreaPanel = new JPanel(new BorderLayout());
+		
 		xmltextArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
-		xmltextArea.setCodeFoldingEnabled(true);				
-		xmltextArea.setEditable(false);		
+		xmltextArea.setCodeFoldingEnabled(true);
+		xmltextArea.setMarkOccurrences(true);
+		xmltextArea.setEditable(false);	
 		RTextScrollPane sp = new RTextScrollPane(xmltextArea);
+		
+		TextAreaPanel.add(sp);
+		
+		ErrorStrip errorStrip = new ErrorStrip(xmltextArea);
+		TextAreaPanel.add(errorStrip,BorderLayout.LINE_END);
+		
+		
+		
+		finddlg = new FindDialog(MainUI.getCurrentParentsFrame(), new SearchListener() {			
+			@Override
+			public void searchEvent(SearchEvent e) {
+				// TODO Auto-generated method stub
+				SearchEvent.Type type = e.getType();
+				SearchContext context = e.getSearchContext();
+				SearchResult result = null;
+
+				switch (type) {
+					default: // Prevent FindBugs warning later
+					case MARK_ALL:
+						result = SearchEngine.markAll(xmltextArea, context);
+						break;
+					case FIND:
+						result = SearchEngine.find(xmltextArea, context);
+						if (!result.wasFound()) {
+							UIManager.getLookAndFeel().provideErrorFeedback(xmltextArea);
+						}
+						break;
+				}
+
+				String text = null;
+				if (result.wasFound()) {
+					text = "Text found; occurrences marked: " + result.getMarkedCount();
+				}
+				else if (type==SearchEvent.Type.MARK_ALL) {
+					if (result.getMarkedCount()>0) {
+						text = "Occurrences marked: " + result.getMarkedCount();
+					}
+					else {
+						text = "";
+					}
+				}
+				else {
+					text = "Text not found";
+				}				
+			}
+			
+			@Override
+			public String getSelectedText() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		});
+		
 		
 		textTableViewer = new JTable();
 		textTableViewer.setShowHorizontalLines(false);
@@ -90,7 +157,7 @@ public class ResouceContentsPanel extends JPanel{
 		textTableViewer.setRowSelectionAllowed(false);
 		textTableViewer.setColumnSelectionAllowed(false);
 		textTableViewer.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-
+		
 		JScrollPane textTableScroll = new JScrollPane(textTableViewer);
 		
 		setLayout(new BorderLayout());
@@ -101,15 +168,41 @@ public class ResouceContentsPanel extends JPanel{
 		
 		ContentsviewPanel = new JPanel(new CardLayout());
 		
-		ContentsviewPanel.add(sp, CONTENT_HTML_VIEWER);
+		ContentsviewPanel.add(TextAreaPanel, CONTENT_HTML_VIEWER);
 		ContentsviewPanel.add(imageViewerPanel, CONTENT_IMAGE_VIEWER);
 		ContentsviewPanel.add(textTableScroll, CONTENT_TABLE_VIEWER);
 		ContentsviewPanel.add(selectPanel, CONTENT_SELECT_VIEWER);
 		
+		
+		JPanel northPanel = new JPanel(new BorderLayout());
 		FilePathtextField = new JTextField("FilePath");
 		FilePathtextField.setEditable(false);
 		
-		this.add(FilePathtextField, BorderLayout.NORTH);
+		JButton searchButton = new JButton("Search");
+		searchButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub				
+				finddlg.setVisible(true);
+			}
+		});
+		
+        String keyStrokeAndKey = "control F";
+        KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
+        xmltextArea.getInputMap().put(keyStroke, keyStrokeAndKey);
+        xmltextArea.getActionMap().put(keyStrokeAndKey, new AbstractAction() {			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				finddlg.setVisible(true);
+			}
+		});
+		
+		northPanel.add(FilePathtextField, BorderLayout.CENTER);
+		northPanel.add(searchButton, BorderLayout.EAST);
+		
+		this.add(northPanel, BorderLayout.NORTH);
 		this.add(ContentsviewPanel, BorderLayout.CENTER);
 	}
 	

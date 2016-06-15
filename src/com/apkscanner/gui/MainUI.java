@@ -53,6 +53,8 @@ public class MainUI extends JFrame
 	private Object uiInitSync = new Object();
 	private Object labelInitSync = new Object();
 	
+	static private JFrame frame;
+	
 	public MainUI()
 	{
 		new Thread(new Runnable() {
@@ -185,6 +187,12 @@ public class MainUI extends JFrame
 		// Shortcut key event processing
 		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		ky.addKeyEventDispatcher(new UIEventHandler());
+		
+		frame = this;
+	}
+	
+	public static JFrame getCurrentParentsFrame() {
+		return frame;
 	}
 	
 	private class ApkScannerListener implements ApkScannerStub.StatusListener
