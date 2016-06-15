@@ -207,7 +207,11 @@ public class ResouceContentsPanel extends JPanel{
 	
 	public void setData(ApkInfo apkinfo) {
 		this.apkinfo = apkinfo;
-		this.resourcesWithValue = apkinfo.resourcesWithValue;
+		if(apkinfo != null) {
+			this.resourcesWithValue = apkinfo.resourcesWithValue;
+		} else {
+			this.resourcesWithValue = null;
+		}
 	}
 
     private class CustomLabel extends RSyntaxTextArea {
