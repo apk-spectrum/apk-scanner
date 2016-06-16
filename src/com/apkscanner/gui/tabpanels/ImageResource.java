@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -33,6 +34,7 @@ import java.util.List;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -842,6 +844,13 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
         */
     }
     
+    class TreeFindFildListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			Log.d(" find string = " + textField.getText());
+		}    	
+    }
     
 	@Override
 	public void initialize()
@@ -851,16 +860,22 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		makeTreeForm();
 		TreeInit();
 		
-		textField = new JTextField("aaaaaaa",300);
+		textField = new JTextField("");
 				
 	    //JLabel TreeModeLabel = new JLabel("Search");
 	    //TreeModePanel.add(TreeModeLabel);
 
-		JPanel TreeModePanel = new JPanel(new GridLayout(1,3));
-	    
+		JButton findicon = new JButton(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_FIND.getImageIcon(16, 16));
+		JPanel TreeModePanel = new JPanel(new FlowLayout());
+		textField.setPreferredSize(new Dimension(130, 27));
+		TreeFindFildListener findListener =  new TreeFindFildListener();
+		
+		textField.addActionListener(findListener);
+		findicon.addActionListener(findListener);
 		
 		TreeModePanel.add(textField);
-	    
+		TreeModePanel.add(findicon);
+		
         // End Tree navigator ----------
 
 		JScrollPane treeScroll = new JScrollPane(tree);
