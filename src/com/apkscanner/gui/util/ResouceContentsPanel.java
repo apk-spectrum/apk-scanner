@@ -186,6 +186,7 @@ public class ResouceContentsPanel extends JPanel{
 		JPanel northPanel = new JPanel(new BorderLayout());
 		FilePathtextField = new JTextField("FilePath");
 		FilePathtextField.setEditable(false);
+		FilePathtextField.setBackground(Color.WHITE);
 		
 		JButton searchButton = new JButton("Search");
 		searchButton.addActionListener(new ActionListener() {
@@ -229,9 +230,9 @@ public class ResouceContentsPanel extends JPanel{
 		ToolbarActionListener toolbarListener = new ToolbarActionListener();
 		String[] petStrings = { "AXML", "XML"};
 		
-		JButton OpenBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_OPEN.getImageIcon(20, 20));
-		JButton saveBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_SAVE.getImageIcon(20, 20));
-		JButton FindBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_FIND.getImageIcon(20, 20));
+		JButton OpenBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_OPEN.getImageIcon(16, 16));
+		JButton saveBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_SAVE.getImageIcon(16, 16));
+		JButton FindBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_FIND.getImageIcon(16, 16));
 		
 		OpenBtn.setName(TEXTVIEWER_TOOLBAR_OPEN);
 		saveBtn.setName(TEXTVIEWER_TOOLBAR_SAVE);
@@ -253,6 +254,8 @@ public class ResouceContentsPanel extends JPanel{
 		toolbar.add(findtextField);
 		toolbar.add(FindBtn);
 		toolbar.add(combobox);
+		
+		toolbar.setFloatable(false);
 		
 	}
 	class ToolbarActionListener implements ActionListener {
