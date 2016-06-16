@@ -71,6 +71,7 @@ public class ResouceContentsPanel extends JPanel{
 	public static final String CONTENT_HTML_VIEWER = "HtmlViewer";
 	public static final String CONTENT_TABLE_VIEWER = "TableViewer";
 	public static final String CONTENT_SELECT_VIEWER = "SelectViewer";
+	public static final String CONTENT_INIT_VIEWER = "InitViewer";
 	
 	public static final String TEXTVIEWER_TOOLBAR_OPEN = "textviewer_toolbar_open";
 	public static final String TEXTVIEWER_TOOLBAR_SAVE= "textviewer_toolbar_save";
