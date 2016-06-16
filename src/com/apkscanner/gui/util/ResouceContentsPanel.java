@@ -228,7 +228,7 @@ public class ResouceContentsPanel extends JPanel{
 	private void initToolbar(JToolBar toolbar) {
 		
 		ToolbarActionListener toolbarListener = new ToolbarActionListener();
-		String[] petStrings = { "AXML", "XML"};
+		String[] petStrings = { "XML", "ARSC"};
 		
 		JButton OpenBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_OPEN.getImageIcon(16, 16));
 		JButton saveBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_SAVE.getImageIcon(16, 16));
@@ -240,6 +240,8 @@ public class ResouceContentsPanel extends JPanel{
 		
 		
 		JTextField findtextField = new JTextField();
+		Dimension size = findtextField.getPreferredSize();
+		findtextField.setPreferredSize(new Dimension(size.width+100, size.height));
 		JComboBox combobox = new JComboBox(petStrings);
 
 		combobox.addActionListener(toolbarListener);
@@ -256,6 +258,7 @@ public class ResouceContentsPanel extends JPanel{
 		toolbar.add(combobox);
 		
 		toolbar.setFloatable(false);
+		toolbar.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
 		
 	}
 	class ToolbarActionListener implements ActionListener {
