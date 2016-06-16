@@ -27,6 +27,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -214,6 +215,13 @@ public class ResouceContentsPanel extends JPanel{
 		}
 	}
 
+    private JSeparator getNewSeparator(int orientation, Dimension size)
+    {
+        JSeparator separator = new JSeparator(orientation);
+        separator.setPreferredSize(size);
+    	return separator;
+    }
+    
 	private void initToolbar(JToolBar toolbar) {
 		
 		ToolbarActionListener toolbarListener = new ToolbarActionListener();
@@ -240,10 +248,14 @@ public class ResouceContentsPanel extends JPanel{
 		saveBtn.addActionListener(toolbarListener);
 		FindBtn.addActionListener(toolbarListener);
 		
+		Dimension sepSize = new Dimension(5,16);
+		
 		toolbar.add(OpenBtn);
 		toolbar.add(saveBtn);
+		toolbar.add(getNewSeparator(JSeparator.VERTICAL, sepSize));
 		toolbar.add(findtextField);
 		toolbar.add(FindBtn);
+		toolbar.add(getNewSeparator(JSeparator.VERTICAL, sepSize));
 		toolbar.add(combobox);
 		
 		toolbar.setFloatable(false);
