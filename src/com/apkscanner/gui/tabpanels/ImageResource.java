@@ -774,8 +774,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     	renderer = new ResouceTreeCellRenderer();    	
         tree.setCellRenderer(renderer);    			
 	    tree.addFocusListener(renderer);
-	    
-        tree.addMouseListener(new MouseAdapter() {
+	    tree.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
 				if(e.getButton() == MouseEvent.BUTTON1) {				
 					TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());					
@@ -852,56 +851,16 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		makeTreeForm();
 		TreeInit();
 		
-		textField = new JTextField("");
-		textField.addKeyListener(new KeyAdapter()
-        {
-            public void keyReleased(KeyEvent ke) {
-            	
-            	if(textField.getText().length() ==0) {
-            		expandOrCollapsePath(tree, new TreePath(top.getPath()),2,0, true);
-            		return;
-            	}
-            	
-                if(!(ke.getKeyChar()==27||ke.getKeyChar()==65535))//this section will execute only when user is editing the JTextField
-                {
-                	//makefilter (textField.getText());
-                }
-            }
-        });
-		textField.addFocusListener(new FocusListener() {
-			@Override
-			public void focusLost(FocusEvent arg0) {
-			
-			}			
-			@Override
-			public void focusGained(FocusEvent arg0) {
-            	if(!firstClick) {
-            		firstClick = true;
-            		textField.setText("");
-            	}
-			}
-		});
-		
-		
-		// Tree navigator ----------
-	    JRadioButton ForderModeRadioButton  = new JRadioButton("Folder");
-	    ForderModeRadioButton.addActionListener(this);
-	    
-	    JRadioButton ImageModeRadioButton  = new JRadioButton("Resource");
-	    ImageModeRadioButton.addActionListener(this);
-	    ImageModeRadioButton.setSelected(true);
-	    
+		textField = new JTextField("aaaaaaa",300);
+				
 	    //JLabel TreeModeLabel = new JLabel("Search");
 	    //TreeModePanel.add(TreeModeLabel);
 
 		JPanel TreeModePanel = new JPanel(new GridLayout(1,3));
-	    TreeModePanel.add(ImageModeRadioButton);
-	    TreeModePanel.add(ForderModeRadioButton);
-	    TreeModePanel.add(textField);
 	    
-        ButtonGroup group = new ButtonGroup();
-        group.add(ImageModeRadioButton);
-        group.add(ForderModeRadioButton);
+		
+		TreeModePanel.add(textField);
+	    
         // End Tree navigator ----------
 
 		JScrollPane treeScroll = new JScrollPane(tree);
@@ -934,9 +893,9 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.setLeftComponent(TreePanel);
         splitPane.setRightComponent(contentPanel);
+        splitPane.setDividerLocation(200);
         
         this.add(splitPane);
-                
 	}
 
 	@Override

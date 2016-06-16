@@ -149,7 +149,8 @@ public class ResouceContentsPanel extends JPanel{
 				}
 				else {
 					text = "Text not found";
-				}				
+				}
+				Log.d("Found : " + text);
 			}
 			
 			@Override
