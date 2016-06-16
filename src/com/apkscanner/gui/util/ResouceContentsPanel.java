@@ -177,13 +177,16 @@ public class ResouceContentsPanel extends JPanel{
 		
 		selectPanel = new SelectViewPanel();
 		
-		ContentsviewPanel = new JPanel(new CardLayout());
+		JPanel initPanel = new JPanel();
 		
+		ContentsviewPanel = new JPanel(new CardLayout());
 		ContentsviewPanel.add(TextAreaPanel, CONTENT_HTML_VIEWER);
 		ContentsviewPanel.add(imageViewerPanel, CONTENT_IMAGE_VIEWER);
 		ContentsviewPanel.add(textTableScroll, CONTENT_TABLE_VIEWER);
 		ContentsviewPanel.add(selectPanel, CONTENT_SELECT_VIEWER);
+		ContentsviewPanel.add(initPanel, CONTENT_INIT_VIEWER);
 		
+		((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_INIT_VIEWER);
 		
 		JPanel northPanel = new JPanel(new BorderLayout());
 		FilePathtextField = new JTextField("FilePath");
