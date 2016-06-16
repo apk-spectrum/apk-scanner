@@ -188,16 +188,6 @@ public class ResouceContentsPanel extends JPanel{
 		FilePathtextField.setEditable(false);
 		FilePathtextField.setBackground(Color.WHITE);
 		
-		JButton searchButton = new JButton("Search");
-		searchButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub				
-				finddlg.setVisible(true);
-			}
-		});
-		
         String keyStrokeAndKey = "control F";
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
         xmltextArea.getInputMap().put(keyStroke, keyStrokeAndKey);
@@ -210,7 +200,6 @@ public class ResouceContentsPanel extends JPanel{
 		});
 		
 		northPanel.add(FilePathtextField, BorderLayout.CENTER);
-		northPanel.add(searchButton, BorderLayout.EAST);
 		
 		this.add(northPanel, BorderLayout.NORTH);
 		this.add(ContentsviewPanel, BorderLayout.CENTER);
@@ -276,6 +265,7 @@ public class ResouceContentsPanel extends JPanel{
 					break;
 				case TEXTVIEWER_TOOLBAR_FIND:
 					Log.d("find");
+					finddlg.setVisible(true);
 					break;
 				}				
 			} else if(arg0.getSource() instanceof JTextField) {
