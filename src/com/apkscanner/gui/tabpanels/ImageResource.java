@@ -957,6 +957,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	{
 		if(apkInfo != null) {
 			resourcesWithValue = apkInfo.resourcesWithValue;
+			if(contentPanel==null) return;
 			contentPanel.setData(apkInfo);
 			//if(apkInfo.manifest.application.icons != null && apkInfo.manifest.application.icons.length > 0) {
 				//appIconPath = apkInfo.manifest.application.icons[apkInfo.manifest.application.icons.length - 1].name;
@@ -964,6 +965,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		} else {
 			//appIconPath = null;
 			resourcesWithValue = null;
+			if(contentPanel==null) return;
 			contentPanel.setData(null);
 		}
 	}
