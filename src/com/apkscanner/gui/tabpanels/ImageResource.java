@@ -174,16 +174,18 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 					config = path.replaceAll("res/"+type.toString().toLowerCase()+"-([^/]*)/.*", "$1");
 			}
 			
-			if(path.endsWith(".xml")) {
+			String extension = path.replaceAll(".*/", "").replaceAll(".*\\.", ".").toLowerCase();
+			
+			if(extension.endsWith(".xml")) {
 				if(path.startsWith("res/") || path.equals("AndroidManifest.xml")) attr = ATTR_AXML;
 				else attr = ATTR_XML;
-			} else if(path.endsWith(".png") || path.endsWith(".jpg") || path.endsWith(".gif") || path.endsWith(".bmp")) {
+			} else if(extension.endsWith(".png") || extension.endsWith(".jpg") || extension.endsWith(".gif") || extension.endsWith(".bmp")) {
 				attr = ATTR_IMG;
-			} else if(path.endsWith(".qmg")) {
+			} else if(extension.endsWith(".qmg")) {
 				attr = ATTR_QMG;
-			} else if(path.endsWith(".txt") || path.endsWith(".mk") 
-					|| path.endsWith(".html") || path.endsWith(".js") || path.endsWith(".css") || path.endsWith(".json")
-					|| path.endsWith(".props") || path.endsWith(".properties")) {
+			} else if(extension.endsWith(".txt") || extension.endsWith(".mk") 
+					|| extension.endsWith(".html") || extension.endsWith(".js") || extension.endsWith(".css") || extension.endsWith(".json")
+					|| extension.endsWith(".props") || extension.endsWith(".properties")) {
 				attr = ATTR_TXT;
 			} else {
 				attr = ATTR_ETC;
@@ -309,7 +311,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 			        	ResourceObject temp = (ResourceObject)node.getUserObject();
 			        	
 			        	if(temp.isFolder) continue;
-			        	if(!temp.path.endsWith("png")) continue;
+			        	if(!temp.path.toLowerCase().endsWith(".png")) continue;
 			        	
 			        	if(temp.path.indexOf(findfilename) != -1){
 				        	return temp.path;
@@ -694,7 +696,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 			}
 		}
 		
-		if(resObj.path.endsWith(".dex")) {
+		if(resObj.path.toLowerCase().endsWith(".dex")) {
 			Log.i("dex file");
 			if(resObj.getLoadingState() == false) {
 				resObj.setLoadingState(true);
@@ -715,7 +717,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 					tree.repaint();
 				}});
 			}	
-		} else if(resObj.path.endsWith(".apk")) {
+		} else if(resObj.path.toLowerCase().endsWith(".apk")) {
 				Launcher.run(resPath);
 		} else {
 			String openner;

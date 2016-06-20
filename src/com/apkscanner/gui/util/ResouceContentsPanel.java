@@ -634,7 +634,7 @@ public class ResouceContentsPanel extends JPanel{
 	}
 	
 	private String getSyntaxStyle(String extension) {
-		switch(extension) {
+		switch(extension.toLowerCase()) {
 		case ".as": return SyntaxConstants.SYNTAX_STYLE_ACTIONSCRIPT;
 		case ".asm": return SyntaxConstants.SYNTAX_STYLE_ASSEMBLER_X86;
 		//case ".": return SyntaxConstants.SYNTAX_STYLE_BBCODE;
