@@ -29,7 +29,7 @@
     <string name="btn_unpack_lab">Decompile</string>
     <string name="btn_pack_lab">Recompile</string>
     <string name="btn_install_lab">Install APK to the connected device (Ctrl+I)</string>
-    <string name="btn_setting_lab">Setting editor and language, etc.. (Ctrl+S)</string>
+    <string name="btn_setting_lab">Setting editor and language, etc..</string>
     <string name="btn_about_lab">About APK Scanner (F1)</string>
     <string name="btn_opencode_lab">Open JD-GUI from apk</string>
     

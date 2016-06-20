@@ -341,6 +341,7 @@ public class MainUI extends JFrame
 			}
 		}
 		
+		@SuppressWarnings("unused")
 		private void evtOpenSearchPopup() {
         	SearchDlg dialog = new SearchDlg();
         	dialog.setApkInfo(apkScanner.getApkInfo());
@@ -582,7 +583,7 @@ public class MainUI extends JFrame
 					case KeyEvent.VK_T: evtInstallApk(true);	break;
 					case KeyEvent.VK_E: evtShowExplorer();		break;
 					case KeyEvent.VK_M: evtShowManifest();		break;
-					case KeyEvent.VK_S: evtSettings();			break;
+					//case KeyEvent.VK_S: evtSettings();			break;
 					default: return false;
 					}
 					return true;

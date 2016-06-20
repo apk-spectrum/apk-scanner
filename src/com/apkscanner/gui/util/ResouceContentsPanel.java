@@ -77,6 +77,8 @@ public class ResouceContentsPanel extends JPanel{
 	public static final String TEXTVIEWER_TOOLBAR_OPEN = "textviewer_toolbar_open";
 	public static final String TEXTVIEWER_TOOLBAR_SAVE= "textviewer_toolbar_save";
 	public static final String TEXTVIEWER_TOOLBAR_FIND = "textviewer_toolbar_find";
+	public static final String TEXTVIEWER_TOOLBAR_NEXT = "textviewer_toolbar_next";
+	public static final String TEXTVIEWER_TOOLBAR_PREV = "textviewer_toolbar_prev";
 	
 	private static final int VEIW_TYPE_XML = 0;
 	private static final int VEIW_TYPE_ARSC = 1;
@@ -117,7 +119,7 @@ public class ResouceContentsPanel extends JPanel{
 		TextAreaPanel.add(errorStrip,BorderLayout.LINE_END);
 		
 		toolBar = new JToolBar("");
-		ToolbarActionListener toolbarListener = new ToolbarActionListener();
+		final ToolbarActionListener toolbarListener = new ToolbarActionListener();
 		initToolbar(toolBar, toolbarListener);
 		
 		String[] petStrings = { "XML", "ARSC"};
@@ -224,6 +226,17 @@ public class ResouceContentsPanel extends JPanel{
 				finddlg.setVisible(true);
 			}
 		});
+        
+        String keyStrokeAndKey2 = "control S";
+        KeyStroke keyStroke2 = KeyStroke.getKeyStroke(keyStrokeAndKey2);
+        xmltextArea.getInputMap().put(keyStroke2, keyStrokeAndKey2);
+        xmltextArea.getActionMap().put(keyStrokeAndKey2, new AbstractAction() {			
+			private static final long serialVersionUID = -6173067499783519719L;
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				toolbarListener.exportContent(ToolbarActionListener.EXPORT_TYPE_SAVE);
+			}
+		});
 		
 		northPanel.add(FilePathtextField, BorderLayout.CENTER);
 		
@@ -252,11 +265,14 @@ public class ResouceContentsPanel extends JPanel{
 		JButton OpenBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_OPEN.getImageIcon(16, 16));
 		JButton saveBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_SAVE.getImageIcon(16, 16));
 		JButton FindBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_FIND.getImageIcon(16, 16));
+		JButton NextBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_NEXT.getImageIcon(16, 16));
+		JButton PrevBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_PREV.getImageIcon(16, 16));
 		
 		OpenBtn.setName(TEXTVIEWER_TOOLBAR_OPEN);
 		saveBtn.setName(TEXTVIEWER_TOOLBAR_SAVE);
 		FindBtn.setName(TEXTVIEWER_TOOLBAR_FIND);
-		
+		NextBtn.setName(TEXTVIEWER_TOOLBAR_NEXT);
+		PrevBtn.setName(TEXTVIEWER_TOOLBAR_PREV);
 		
 		JTextField findtextField = new JTextField();
 		Dimension size = findtextField.getPreferredSize();
@@ -275,6 +291,8 @@ public class ResouceContentsPanel extends JPanel{
 		toolbar.add(getNewSeparator(JSeparator.VERTICAL, sepSize));
 		toolbar.add(findtextField);
 		toolbar.add(FindBtn);
+		toolbar.add(PrevBtn);
+		toolbar.add(NextBtn);
 		
 		toolbar.setFloatable(false);
 		toolbar.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
@@ -282,8 +300,8 @@ public class ResouceContentsPanel extends JPanel{
 	}
 
 	class ToolbarActionListener implements ActionListener {
-		private static final int EXPORT_TYPE_OPEN = 0;
-		private static final int EXPORT_TYPE_SAVE = 1;
+		public static final int EXPORT_TYPE_OPEN = 0;
+		public static final int EXPORT_TYPE_SAVE = 1;
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
@@ -302,6 +320,12 @@ public class ResouceContentsPanel extends JPanel{
 					Log.d("find");
 					finddlg.setVisible(true);
 					break;
+				case TEXTVIEWER_TOOLBAR_NEXT:
+					Log.d("next");
+					break;
+				case TEXTVIEWER_TOOLBAR_PREV:
+					Log.d("prev");
+					break;
 				}				
 			} else if(arg0.getSource() instanceof JTextField) {
 				String findstr = ((JTextField)(arg0.getSource())).getText();
@@ -319,7 +343,7 @@ public class ResouceContentsPanel extends JPanel{
 			}
 		}
 		
-	    private void exportContent(int type) {
+	    public void exportContent(int type) {
 	    	String resPath = null;
 	    	File resFile = null;
 	    	if(type == EXPORT_TYPE_OPEN) {
