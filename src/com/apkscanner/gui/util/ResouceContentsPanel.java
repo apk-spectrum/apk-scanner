@@ -283,6 +283,8 @@ public class ResouceContentsPanel extends JPanel{
 		OpenBtn.addActionListener(toolbarListener);
 		saveBtn.addActionListener(toolbarListener);
 		FindBtn.addActionListener(toolbarListener);
+		NextBtn.addActionListener(toolbarListener);
+		PrevBtn.addActionListener(toolbarListener);
 		
 		Dimension sepSize = new Dimension(5,16);
 		
