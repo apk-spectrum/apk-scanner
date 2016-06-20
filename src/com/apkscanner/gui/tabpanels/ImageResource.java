@@ -31,13 +31,11 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
@@ -82,7 +80,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	
 	private FilteredTreeModel filteredModel;
 	private JTextField textField;
-	private Boolean firstClick=false;
+	//private Boolean firstClick=false;
 	
 	ResouceTreeCellRenderer renderer;
 	
@@ -847,7 +845,6 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     class TreeFindFildListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
 			Log.d(" find string = " + textField.getText());
 		}    	
     }

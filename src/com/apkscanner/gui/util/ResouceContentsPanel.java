@@ -3,6 +3,7 @@ package com.apkscanner.gui.util;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
@@ -12,9 +13,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -24,6 +25,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -32,7 +34,6 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
-import javax.swing.JToolTip;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
@@ -58,9 +59,9 @@ import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.apkscanner.AxmlToXml;
 import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.gui.MainUI;
-import com.apkscanner.gui.tabpanels.ImageResource;
 import com.apkscanner.gui.tabpanels.ImageResource.ResourceObject;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
 
@@ -77,6 +78,9 @@ public class ResouceContentsPanel extends JPanel{
 	public static final String TEXTVIEWER_TOOLBAR_SAVE= "textviewer_toolbar_save";
 	public static final String TEXTVIEWER_TOOLBAR_FIND = "textviewer_toolbar_find";
 	
+	private static final int VEIW_TYPE_XML = 0;
+	private static final int VEIW_TYPE_ARSC = 1;
+	
 	//JHtmlEditorPane htmlViewer;
 	private JTable textTableViewer;
 	private ImageControlPanel imageViewerPanel;
@@ -89,6 +93,10 @@ public class ResouceContentsPanel extends JPanel{
 	private RSyntaxTextArea xmltextArea;
 	private FindDialog finddlg;
 	private JToolBar toolBar;
+	
+	private int axmlVeiwType;
+	JComboBox<String> resTypeCombobox;
+	JSeparator resTypeSep;
 	
 	public ResouceContentsPanel() {
 		
@@ -108,16 +116,23 @@ public class ResouceContentsPanel extends JPanel{
 		ErrorStrip errorStrip = new ErrorStrip(xmltextArea);
 		TextAreaPanel.add(errorStrip,BorderLayout.LINE_END);
 		
-		
 		toolBar = new JToolBar("");
-		initToolbar(toolBar);
+		ToolbarActionListener toolbarListener = new ToolbarActionListener();
+		initToolbar(toolBar, toolbarListener);
+		
+		String[] petStrings = { "XML", "ARSC"};
+		resTypeCombobox = new JComboBox<String>(petStrings);
+		resTypeCombobox.addActionListener(toolbarListener);
+		resTypeSep = getNewSeparator(JSeparator.VERTICAL, new Dimension(5,16));
+		toolBar.add(resTypeSep);
+		toolBar.add(resTypeCombobox);
+		
 		
 		TextAreaPanel.add(toolBar,BorderLayout.PAGE_START);
 		
 		finddlg = new FindDialog(MainUI.getCurrentParentsFrame(), new SearchListener() {			
 			@Override
 			public void searchEvent(SearchEvent e) {
-				// TODO Auto-generated method stub
 				SearchEvent.Type type = e.getType();
 				SearchContext context = e.getSearchContext();
 				SearchResult result = null;
@@ -155,12 +170,10 @@ public class ResouceContentsPanel extends JPanel{
 			
 			@Override
 			public String getSelectedText() {
-				// TODO Auto-generated method stub
 				return null;
 			}
 		});
 		finddlg.setResizable(false);
-		
 		
 		textTableViewer = new JTable();
 		textTableViewer.setShowHorizontalLines(false);
@@ -171,6 +184,13 @@ public class ResouceContentsPanel extends JPanel{
 		textTableViewer.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		
 		JScrollPane textTableScroll = new JScrollPane(textTableViewer);
+
+		JToolBar toolBar2 = new JToolBar("");
+		initToolbar(toolBar2, toolbarListener);
+		
+		JPanel textTablePanel = new JPanel(new BorderLayout());
+		textTablePanel.add(toolBar2,BorderLayout.PAGE_START);
+		textTablePanel.add(textTableScroll);
 		
 		setLayout(new BorderLayout());
 		
@@ -183,14 +203,14 @@ public class ResouceContentsPanel extends JPanel{
 		ContentsviewPanel = new JPanel(new CardLayout());
 		ContentsviewPanel.add(TextAreaPanel, CONTENT_HTML_VIEWER);
 		ContentsviewPanel.add(imageViewerPanel, CONTENT_IMAGE_VIEWER);
-		ContentsviewPanel.add(textTableScroll, CONTENT_TABLE_VIEWER);
+		ContentsviewPanel.add(textTablePanel, CONTENT_TABLE_VIEWER);
 		ContentsviewPanel.add(selectPanel, CONTENT_SELECT_VIEWER);
 		ContentsviewPanel.add(initPanel, CONTENT_INIT_VIEWER);
 		
 		((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_INIT_VIEWER);
 		
 		JPanel northPanel = new JPanel(new BorderLayout());
-		FilePathtextField = new JTextField("FilePath");
+		FilePathtextField = new JTextField("");
 		FilePathtextField.setEditable(false);
 		FilePathtextField.setBackground(Color.WHITE);
 		
@@ -198,9 +218,9 @@ public class ResouceContentsPanel extends JPanel{
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
         xmltextArea.getInputMap().put(keyStroke, keyStrokeAndKey);
         xmltextArea.getActionMap().put(keyStrokeAndKey, new AbstractAction() {			
+			private static final long serialVersionUID = 3664216150572292067L;
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
 				finddlg.setVisible(true);
 			}
 		});
@@ -227,11 +247,8 @@ public class ResouceContentsPanel extends JPanel{
     	return separator;
     }
     
-	private void initToolbar(JToolBar toolbar) {
-		
-		ToolbarActionListener toolbarListener = new ToolbarActionListener();
-		String[] petStrings = { "XML", "ARSC"};
-		
+	private void initToolbar(JToolBar toolbar, ToolbarActionListener toolbarListener) {
+	
 		JButton OpenBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_OPEN.getImageIcon(16, 16));
 		JButton saveBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_SAVE.getImageIcon(16, 16));
 		JButton FindBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_FIND.getImageIcon(16, 16));
@@ -244,9 +261,7 @@ public class ResouceContentsPanel extends JPanel{
 		JTextField findtextField = new JTextField();
 		Dimension size = findtextField.getPreferredSize();
 		findtextField.setPreferredSize(new Dimension(size.width+100, size.height));
-		JComboBox combobox = new JComboBox(petStrings);
 
-		combobox.addActionListener(toolbarListener);
 		findtextField.addActionListener(toolbarListener);
 		
 		OpenBtn.addActionListener(toolbarListener);
@@ -260,25 +275,28 @@ public class ResouceContentsPanel extends JPanel{
 		toolbar.add(getNewSeparator(JSeparator.VERTICAL, sepSize));
 		toolbar.add(findtextField);
 		toolbar.add(FindBtn);
-		toolbar.add(getNewSeparator(JSeparator.VERTICAL, sepSize));
-		toolbar.add(combobox);
 		
 		toolbar.setFloatable(false);
 		toolbar.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
 		
 	}
+
 	class ToolbarActionListener implements ActionListener {
+		private static final int EXPORT_TYPE_OPEN = 0;
+		private static final int EXPORT_TYPE_SAVE = 1;
+
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
 			if(arg0.getSource() instanceof JButton) {
 				String name = ((JButton)arg0.getSource()).getName();
 				switch(name) {
 				case TEXTVIEWER_TOOLBAR_OPEN:
 					Log.d("open");
+					exportContent(EXPORT_TYPE_OPEN);
 					break;
 				case TEXTVIEWER_TOOLBAR_SAVE:
 					Log.d("save");
+					exportContent(EXPORT_TYPE_SAVE);
 					break;
 				case TEXTVIEWER_TOOLBAR_FIND:
 					Log.d("find");
@@ -287,16 +305,103 @@ public class ResouceContentsPanel extends JPanel{
 				}				
 			} else if(arg0.getSource() instanceof JTextField) {
 				String findstr = ((JTextField)(arg0.getSource())).getText();
-				
-				
 				Log.d("find : " + findstr);
-				
 			} else if(arg0.getSource() instanceof JComboBox) {
+				@SuppressWarnings("rawtypes")
 				String fileType = ((JComboBox)(arg0.getSource())).getSelectedItem().toString();
-				
 				Log.d("fileType : " + fileType);
+				if("XML".equals(fileType)) {
+					axmlVeiwType = VEIW_TYPE_XML;
+				} else if("ARSC".equals(fileType)) {
+					axmlVeiwType = VEIW_TYPE_ARSC;
+				}
+				setTextContentPanel(currentSelectedObj);
 			}
-		}		
+		}
+		
+	    private void exportContent(int type) {
+	    	String resPath = null;
+	    	File resFile = null;
+	    	if(type == EXPORT_TYPE_OPEN) {
+				resPath = apkinfo.tempWorkPath + File.separator + currentSelectedObj.path.replace("/", File.separator);
+				resFile = new File(resPath);
+	    	} else {
+	    		resFile = getSaveFile(null, currentSelectedObj.path.replace("/", File.separator));
+	    		if(resFile == null) return;
+	    		resPath = resFile.getAbsolutePath(); 
+	    	}
+
+			if(!resFile.exists()) {
+				if(!resFile.getParentFile().exists()) {
+					if(FileUtil.makeFolder(resFile.getParentFile().getAbsolutePath())) {
+						Log.i("sucess make folder : " + resFile.getParentFile().getAbsolutePath());
+					}
+				}
+			}
+
+			String[] convStrings = null;
+			boolean convAxml2Xml = false;
+			if(currentSelectedObj.attr == ResourceObject.ATTR_AXML) {
+				convStrings = AaptWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {currentSelectedObj.path});
+				if(axmlVeiwType == VEIW_TYPE_XML) convAxml2Xml = true;
+			} else if("resources.arsc".equals(currentSelectedObj.path)) {
+				convStrings = resourcesWithValue;
+				if(type == EXPORT_TYPE_OPEN) {
+					resPath += ".txt";
+				}
+			} else {
+				ZipFileUtil.unZip(apkinfo.filePath, currentSelectedObj.path, resPath);
+			}
+			
+			if(convStrings != null) {
+				String writeString = null;
+				if(convAxml2Xml) {
+					Log.i("conv AxmlToXml");
+					AxmlToXml a2x = new AxmlToXml(convStrings, resourcesWithValue);
+					writeString = a2x.toString();
+				} else {
+					StringBuilder sb = new StringBuilder();
+					for(String s: convStrings) sb.append(s+"\n");
+					writeString = sb.toString();
+				}
+				try {
+					FileWriter fw = new FileWriter(new File(resPath));
+					fw.write(writeString);
+					fw.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+			if(type == EXPORT_TYPE_OPEN) {
+				String openner;
+				if(System.getProperty("os.name").indexOf("Window") >-1) {
+					openner = "explorer";
+				} else {  //for linux
+					openner = "xdg-open";
+				}
+		
+				try {
+					new ProcessBuilder(openner, resPath).start();
+				} catch (IOException e1) { }	
+			}
+	    }
+	    
+		public File getSaveFile(Component component, String defaultFilePath)
+		{
+			JFileChooser jfc = ApkFileChooser.getFileChooser((String)Resource.PROP_LAST_FILE_SAVE_PATH.getData(""), JFileChooser.SAVE_DIALOG, new File(defaultFilePath));
+			//jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(Resource.STR_LABEL_APK_FILE_DESC.getString(),"apk"));
+
+			if(jfc.showSaveDialog(component) != JFileChooser.APPROVE_OPTION)
+				return null;
+
+			File dir = jfc.getSelectedFile();
+			if(dir != null) {
+				Resource.PROP_LAST_FILE_SAVE_PATH.setData(dir.getParentFile().getAbsolutePath());
+			}
+			return dir;
+		}
+	    
 	}
 	
     public enum ButtonSet
@@ -508,13 +613,21 @@ public class ResouceContentsPanel extends JPanel{
 		switch(obj.attr) {
 		case ResourceObject.ATTR_AXML:
 			String[] xmlbuffer = AaptWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {obj.path});
-			AxmlToXml a2x = new AxmlToXml(xmlbuffer, resourcesWithValue);
-			//StringBuilder sb = new StringBuilder();
-			//for(String s: xmlbuffer) sb.append(s+"\n");
-			content = a2x.toString();
+			resTypeSep.setVisible(true);
+			resTypeCombobox.setVisible(true);
+			if(axmlVeiwType == VEIW_TYPE_XML) {
+				AxmlToXml a2x = new AxmlToXml(xmlbuffer, resourcesWithValue);
+				content = a2x.toString();
+			} else {
+				StringBuilder sb = new StringBuilder();
+				for(String s: xmlbuffer) sb.append(s+"\n");
+				content = sb.toString();
+			}
 			break;
 		case ResourceObject.ATTR_XML:
 		case ResourceObject.ATTR_TXT:
+			resTypeSep.setVisible(false);
+			resTypeCombobox.setVisible(false);
 			ZipFile zipFile;
 			try {
 				zipFile = new ZipFile(apkinfo.filePath);
