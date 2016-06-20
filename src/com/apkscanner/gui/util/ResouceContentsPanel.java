@@ -633,6 +633,52 @@ public class ResouceContentsPanel extends JPanel{
 		
 	}
 	
+	private String getSyntaxStyle(String extension) {
+		switch(extension) {
+		case ".as": return SyntaxConstants.SYNTAX_STYLE_ACTIONSCRIPT;
+		case ".asm": return SyntaxConstants.SYNTAX_STYLE_ASSEMBLER_X86;
+		//case ".": return SyntaxConstants.SYNTAX_STYLE_BBCODE;
+		case ".c": return SyntaxConstants.SYNTAX_STYLE_C;
+		//case ".": return SyntaxConstants.SYNTAX_STYLE_CLOJURE;
+		case ".cpp": return SyntaxConstants.SYNTAX_STYLE_CPLUSPLUS;
+		//case ".": return SyntaxConstants.SYNTAX_STYLE_CSHARP;
+		case ".css": return SyntaxConstants.SYNTAX_STYLE_CSS;
+		//case ".": return SyntaxConstants.SYNTAX_STYLE_D;
+		//case ".": return SyntaxConstants.SYNTAX_STYLE_DART;
+		//case ".": return SyntaxConstants.SYNTAX_STYLE_DELPHI;
+		//case ".": return SyntaxConstants.SYNTAX_STYLE_DTD;
+		//case ".": return SyntaxConstants.SYNTAX_STYLE_FORTRAN;
+		//case ".": return SyntaxConstants.SYNTAX_STYLE_GROOVY;
+		//case ".": return SyntaxConstants.SYNTAX_STYLE_HTACCESS;
+		case ".html": return SyntaxConstants.SYNTAX_STYLE_HTML;
+		case ".java": return SyntaxConstants.SYNTAX_STYLE_JAVA;
+		case ".js": return SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT;
+		//case ".": return SyntaxConstants.SYNTAX_STYLE_JSHINTRC;
+		case ".json": return SyntaxConstants.SYNTAX_STYLE_JSON;
+		case ".jsp": return SyntaxConstants.SYNTAX_STYLE_JSP;
+		//case ".": return SyntaxConstants.SYNTAX_STYLE_LATEX;
+		//case ".": return SyntaxConstants.SYNTAX_STYLE_LISP;
+		//case ".": return SyntaxConstants.SYNTAX_STYLE_LUA;
+		case ".mk": return SyntaxConstants.SYNTAX_STYLE_MAKEFILE;
+		//case ".": return SyntaxConstants.SYNTAX_STYLE_MXML;
+		//case ".": return SyntaxConstants.SYNTAX_STYLE_NSIS;
+		//case ".": return SyntaxConstants.SYNTAX_STYLE_PERL;
+		case ".php": return SyntaxConstants.SYNTAX_STYLE_PHP;
+		case ".properties": return SyntaxConstants.SYNTAX_STYLE_PROPERTIES_FILE;
+		//case ".": return SyntaxConstants.SYNTAX_STYLE_PYTHON;
+		//case ".": return SyntaxConstants.SYNTAX_STYLE_RUBY;
+		//case ".": return SyntaxConstants.SYNTAX_STYLE_SAS;
+		//case ".": return SyntaxConstants.SYNTAX_STYLE_SCALA;
+		//case ".": return SyntaxConstants.SYNTAX_STYLE_SQL;
+		//case ".": return SyntaxConstants.SYNTAX_STYLE_TCL;
+		case ".sh": return SyntaxConstants.SYNTAX_STYLE_UNIX_SHELL;
+		case ".vb": return SyntaxConstants.SYNTAX_STYLE_VISUAL_BASIC;
+		case ".bat": return SyntaxConstants.SYNTAX_STYLE_WINDOWS_BATCH;
+		case ".xml": return SyntaxConstants.SYNTAX_STYLE_XML;
+		default: return SyntaxConstants.SYNTAX_STYLE_NONE;
+		}
+	}
+	
     private void setTextContentPanel(ResourceObject obj) {
     	String content = null;
     	
@@ -701,7 +747,8 @@ public class ResouceContentsPanel extends JPanel{
 			//htmlViewer.setText("<pre>" + content.replaceAll("<", "&lt;").replaceAll(">", "&gt;") + "</pre>");
 			//textViewerPanel.setText("<pre>" + content.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("[\r]\n", "<br/>") + "</pre>");
 			//htmlViewer.setCaretPosition(0);
-			
+
+			xmltextArea.setSyntaxEditingStyle(getSyntaxStyle(obj.path.replaceAll(".*/", "").replaceAll(".*\\.", ".")));
 			xmltextArea.setText(content);
 			xmltextArea.setCaretPosition(0);
 			((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_HTML_VIEWER);						
