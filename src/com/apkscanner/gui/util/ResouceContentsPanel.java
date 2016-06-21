@@ -95,6 +95,7 @@ public class ResouceContentsPanel extends JPanel{
 	private RSyntaxTextArea xmltextArea;
 	private FindDialog finddlg;
 	private JToolBar toolBar;
+	private JTextField findtextField;
 	
 	private int axmlVeiwType;
 	JComboBox<String> resTypeCombobox;
@@ -135,39 +136,7 @@ public class ResouceContentsPanel extends JPanel{
 		finddlg = new FindDialog(MainUI.getCurrentParentsFrame(), new SearchListener() {			
 			@Override
 			public void searchEvent(SearchEvent e) {
-				SearchEvent.Type type = e.getType();
-				SearchContext context = e.getSearchContext();
-				SearchResult result = null;
-
-				switch (type) {
-					default: // Prevent FindBugs warning later
-					case MARK_ALL:
-						result = SearchEngine.markAll(xmltextArea, context);
-						break;
-					case FIND:
-						result = SearchEngine.find(xmltextArea, context);
-						if (!result.wasFound()) {
-							UIManager.getLookAndFeel().provideErrorFeedback(xmltextArea);
-						}
-						break;
-				}
-
-				String text = null;
-				if (result.wasFound()) {
-					text = "Text found; occurrences marked: " + result.getMarkedCount();
-				}
-				else if (type==SearchEvent.Type.MARK_ALL) {
-					if (result.getMarkedCount()>0) {
-						text = "Occurrences marked: " + result.getMarkedCount();
-					}
-					else {
-						text = "";
-					}
-				}
-				else {
-					text = "Text not found";
-				}
-				Log.d("Found : " + text);
+				SearchAndNext(e.getType(), e.getSearchContext());
 			}
 			
 			@Override
@@ -244,6 +213,61 @@ public class ResouceContentsPanel extends JPanel{
 		this.add(ContentsviewPanel, BorderLayout.CENTER);
 	}
 	
+	private void SearchAndNext(SearchEvent.Type type, SearchContext context) {		
+		SearchResult result = null;
+
+		Log.d("type :" + type + "context : " + context);
+		
+		switch (type) {
+			default: // Prevent FindBugs warning later
+			case MARK_ALL:
+				result = SearchEngine.markAll(xmltextArea, context);
+				break;
+			case FIND:
+				result = SearchEngine.find(xmltextArea, context);
+				if (!result.wasFound()) {
+					UIManager.getLookAndFeel().provideErrorFeedback(xmltextArea);
+				}
+				break;
+		}
+
+		String text = null;
+		if (result.wasFound()) {
+			text = "Text found; occurrences marked: " + result.getMarkedCount();
+		}
+		else if (type==SearchEvent.Type.MARK_ALL) {
+			if (result.getMarkedCount()>0) {
+				text = "Occurrences marked: " + result.getMarkedCount();
+			}
+			else {
+				text = "";
+			}
+		}
+		else {
+			if(finddlg.getWrapSearch()) {						
+				int offset = xmltextArea.getCaretPosition();
+				if(context.getSearchForward()){
+					xmltextArea.setCaretPosition(0);
+					
+				} else {
+					xmltextArea.setCaretPosition(xmltextArea.getText().length());
+				}
+				result = SearchEngine.find(xmltextArea, context);
+				
+				if(result.wasFound()) {
+					text = "Text found; occurrences marked: " + result.getMarkedCount();
+				}
+				else {
+					text = "Text not found";
+					xmltextArea.setCaretPosition(offset);
+				}
+			} else {
+				text = "Text not found";
+			}
+		}
+		Log.d("Found : " + text);
+	}
+	
 	public void setData(ApkInfo apkinfo) {
 		
 		if(apkinfo == null || this.apkinfo != apkinfo) {
@@ -280,7 +304,7 @@ public class ResouceContentsPanel extends JPanel{
 		NextBtn.setName(TEXTVIEWER_TOOLBAR_NEXT);
 		PrevBtn.setName(TEXTVIEWER_TOOLBAR_PREV);
 		
-		JTextField findtextField = new JTextField();
+		findtextField = new JTextField();
 		Dimension size = findtextField.getPreferredSize();
 		findtextField.setPreferredSize(new Dimension(size.width+100, size.height));
 
@@ -329,15 +353,22 @@ public class ResouceContentsPanel extends JPanel{
 					finddlg.setVisible(true);
 					break;
 				case TEXTVIEWER_TOOLBAR_NEXT:
-					Log.d("next");
+					finddlg.getSearchContext().setSearchForward(true);
+					SearchAndNext(SearchEvent.Type.FIND, finddlg.getSearchContext());
 					break;
 				case TEXTVIEWER_TOOLBAR_PREV:
-					Log.d("prev");
+					finddlg.getSearchContext().setSearchForward(false);
+					SearchAndNext(SearchEvent.Type.FIND, finddlg.getSearchContext());
 					break;
 				}				
 			} else if(arg0.getSource() instanceof JTextField) {
 				String findstr = ((JTextField)(arg0.getSource())).getText();
-				Log.d("find : " + findstr);
+				Log.d("find : " + ((JTextField)(arg0.getSource())).getText());
+				Log.d("find : " + findtextField.getText());
+				finddlg.getSearchContext().setSearchFor(findstr);
+				finddlg.getSearchContext().setSearchForward(true);
+				SearchAndNext(SearchEvent.Type.FIND, finddlg.getSearchContext());
+				
 			} else if(arg0.getSource() instanceof JComboBox) {
 				@SuppressWarnings("rawtypes")
 				String fileType = ((JComboBox)(arg0.getSource())).getSelectedItem().toString();
