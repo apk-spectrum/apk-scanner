@@ -2,7 +2,7 @@
 
 APP_PATH="/opt/APKScanner"
 APP_FILE="APKInfoDlg.jar"
-LIB_PATH="$APP_PATH/lib/json-simple-1.1.1.jar:$APP_PATH/lib/commons-cli-1.3.1.jar"
+LIB_PATH="$APP_PATH/lib/json-simple-1.1.1.jar:$APP_PATH/lib/commons-cli-1.3.1.jar:$APP_PATH/lib/rsyntaxtextarea-2.5.7.jar:$APP_PATH/lib/ForfindGUI.jar"
 MAIN_CLASS="com.apkscanner.Main"
 
 
