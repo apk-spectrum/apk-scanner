@@ -245,6 +245,12 @@ public class ResouceContentsPanel extends JPanel{
 	}
 	
 	public void setData(ApkInfo apkinfo) {
+		
+		if(apkinfo == null || this.apkinfo != apkinfo) {
+			FilePathtextField.setText("");
+			((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_INIT_VIEWER);
+		}
+		
 		this.apkinfo = apkinfo;
 		if(apkinfo != null) {
 			this.resourcesWithValue = apkinfo.resourcesWithValue;
