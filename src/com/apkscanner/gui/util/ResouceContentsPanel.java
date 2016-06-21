@@ -5,11 +5,14 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -25,6 +28,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -96,6 +100,8 @@ public class ResouceContentsPanel extends JPanel{
 	private FindDialog finddlg;
 	private JToolBar toolBar;
 	private JTextField findtextField;
+	private ToolbarActionListener toolbarListener;
+	
 	
 	private int axmlVeiwType;
 	JComboBox<String> resTypeCombobox;
@@ -120,7 +126,7 @@ public class ResouceContentsPanel extends JPanel{
 		TextAreaPanel.add(errorStrip,BorderLayout.LINE_END);
 		
 		toolBar = new JToolBar("");
-		final ToolbarActionListener toolbarListener = new ToolbarActionListener();
+		toolbarListener = new ToolbarActionListener();
 		initToolbar(toolBar, toolbarListener);
 		
 		String[] petStrings = { "XML", "ARSC"};
@@ -185,27 +191,12 @@ public class ResouceContentsPanel extends JPanel{
 		FilePathtextField.setEditable(false);
 		FilePathtextField.setBackground(Color.WHITE);
 		
-        String keyStrokeAndKey = "control F";
-        KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
-        xmltextArea.getInputMap().put(keyStroke, keyStrokeAndKey);
-        xmltextArea.getActionMap().put(keyStrokeAndKey, new AbstractAction() {			
-			private static final long serialVersionUID = 3664216150572292067L;
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				finddlg.setVisible(true);
-			}
-		});
-        
-        String keyStrokeAndKey2 = "control S";
-        KeyStroke keyStroke2 = KeyStroke.getKeyStroke(keyStrokeAndKey2);
-        xmltextArea.getInputMap().put(keyStroke2, keyStrokeAndKey2);
-        xmltextArea.getActionMap().put(keyStrokeAndKey2, new AbstractAction() {			
-			private static final long serialVersionUID = -6173067499783519719L;
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				toolbarListener.exportContent(ToolbarActionListener.EXPORT_TYPE_SAVE);
-			}
-		});
+		TextViewKeyInputAction keyInputListener = new TextViewKeyInputAction();
+		
+		ComponentkeyInput(xmltextArea,"control F", keyInputListener);
+		ComponentkeyInput(xmltextArea,"control S", keyInputListener);
+		ComponentkeyInput(xmltextArea,"F3", keyInputListener);
+		ComponentkeyInput(xmltextArea,"shift F3", keyInputListener);
 		
 		northPanel.add(FilePathtextField, BorderLayout.CENTER);
 		
@@ -213,11 +204,56 @@ public class ResouceContentsPanel extends JPanel{
 		this.add(ContentsviewPanel, BorderLayout.CENTER);
 	}
 	
+	class TextViewKeyInputAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			
+	        EventQueue queue = Toolkit.getDefaultToolkit().getSystemEventQueue();
+	        KeyEvent ke = (KeyEvent)queue.getCurrentEvent();
+	        String keyStroke = ke.getKeyText( ke.getKeyCode() );
+	        String number = keyStroke.substring(0);
+			int FuncKey = arg0.getModifiers(); 
+	        
+			switch (number) {
+			case "F":      /////////F key
+				finddlg.setVisible(true);
+				break;			
+			case "S":      /////////S key
+				toolbarListener.exportContent(ToolbarActionListener.EXPORT_TYPE_SAVE);
+				break;
+			case "F3":      /////////F3
+				if(FuncKey==1) {
+					Log.d("shift F3 Key");
+					finddlg.getSearchContext().setSearchForward(false);
+					SearchAndNext(SearchEvent.Type.FIND, finddlg.getSearchContext());
+				} else {
+					Log.d("F3 Key");
+					finddlg.getSearchContext().setSearchForward(true);
+					SearchAndNext(SearchEvent.Type.FIND, finddlg.getSearchContext());
+				}
+				break;			
+			default:
+				Log.d("unknown");
+				break;
+			}
+		}
+	}
+	
+	private void ComponentkeyInput(JComponent component, String keyStrokeAndKey, AbstractAction abstractAction) {
+        KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
+        component.getInputMap().put(keyStroke, keyStrokeAndKey);
+        component.getActionMap().put(keyStrokeAndKey, abstractAction);        
+	}
+	
 	private void SearchAndNext(SearchEvent.Type type, SearchContext context) {		
 		SearchResult result = null;
-
-		Log.d("type :" + type + "context : " + context);
-		
 		switch (type) {
 			default: // Prevent FindBugs warning later
 			case MARK_ALL:
@@ -341,15 +377,12 @@ public class ResouceContentsPanel extends JPanel{
 				String name = ((JButton)arg0.getSource()).getName();
 				switch(name) {
 				case TEXTVIEWER_TOOLBAR_OPEN:
-					Log.d("open");
 					exportContent(EXPORT_TYPE_OPEN);
 					break;
-				case TEXTVIEWER_TOOLBAR_SAVE:
-					Log.d("save");
+				case TEXTVIEWER_TOOLBAR_SAVE:					
 					exportContent(EXPORT_TYPE_SAVE);
 					break;
-				case TEXTVIEWER_TOOLBAR_FIND:
-					Log.d("find");
+				case TEXTVIEWER_TOOLBAR_FIND:					
 					finddlg.setVisible(true);
 					break;
 				case TEXTVIEWER_TOOLBAR_NEXT:
@@ -363,8 +396,8 @@ public class ResouceContentsPanel extends JPanel{
 				}				
 			} else if(arg0.getSource() instanceof JTextField) {
 				String findstr = ((JTextField)(arg0.getSource())).getText();
-				Log.d("find : " + ((JTextField)(arg0.getSource())).getText());
-				Log.d("find : " + findtextField.getText());
+				//Log.d("find : " + ((JTextField)(arg0.getSource())).getText());
+				//Log.d("find : " + findtextField.getText());
 				finddlg.getSearchContext().setSearchFor(findstr);
 				finddlg.getSearchContext().setSearchForward(true);
 				SearchAndNext(SearchEvent.Type.FIND, finddlg.getSearchContext());
