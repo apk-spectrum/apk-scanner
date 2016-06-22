@@ -16,6 +16,8 @@ import javax.swing.text.Highlighter;
 
 class SearchRenderer implements TableCellRenderer {
 	  private static final Color BACKGROUND_SELECTION_COLOR = new Color(120, 140, 155);
+	  private static final Color BACKGROUND_FIND_COLOR = new Color(220, 220, 220);
+	  
 	  private final transient Highlighter.HighlightPainter highlightPainter
 	    = new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW);
 	  private final JTextField field = new JTextField();
@@ -32,15 +34,7 @@ class SearchRenderer implements TableCellRenderer {
 	      return true;
 	    }
 	  }
-	  
-	  public void findNext() {
-		  
-	  }
-	  
-	  public void findbefore() {
-		  
-	  }
-	  
+
 	  public SearchRenderer() {
 	    super();
 	    field.setOpaque(true);
@@ -55,8 +49,7 @@ class SearchRenderer implements TableCellRenderer {
 	    Highlighter highlighter = field.getHighlighter();
 	    highlighter.removeAllHighlights();
 	    field.setText(txt);
-	    field.setBackground(isSelected ? BACKGROUND_SELECTION_COLOR : Color.WHITE);
-	    
+	    field.setBackground(isSelected ? BACKGROUND_SELECTION_COLOR : Color.WHITE);	    
 	    if (pattern != null && !pattern.isEmpty() && !pattern.equals(prev)) {
 	      Matcher matcher = Pattern.compile(pattern).matcher(txt);
 	      if (matcher.find()) {
@@ -64,7 +57,7 @@ class SearchRenderer implements TableCellRenderer {
 	        int end   = matcher.end();
 	        try {
 	          highlighter.addHighlight(start, end, highlightPainter);
-	          if(!isSelected)field.setBackground(Color.GRAY);
+	          if(!isSelected)field.setBackground(BACKGROUND_FIND_COLOR);
 	        } catch (BadLocationException e) {
 	          e.printStackTrace();
 	        }

@@ -42,6 +42,7 @@ import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
@@ -105,6 +106,7 @@ public class ResouceContentsPanel extends JPanel{
 	private FindDialog finddlg;
 	private JToolBar toolBar;
 	private JTextField findtextField;
+	private JTextField findtextField_ResourceTable;
 	private ToolbarActionListener toolbarListener;
 	private SearchRenderer renderer;
 	
@@ -113,7 +115,7 @@ public class ResouceContentsPanel extends JPanel{
 	private JComboBox<String> resTypeCombobox;
 	private JSeparator resTypeSep;
 	private JToggleButton multiLinePrintButton;
-	
+	private JScrollPane textTableScroll;
 	public ResouceContentsPanel() {
 		
 		xmltextArea  = new RSyntaxTextArea();
@@ -167,7 +169,7 @@ public class ResouceContentsPanel extends JPanel{
 		});
 		finddlg.setResizable(false);
 		
-		textTableViewer = new JTable();
+		textTableViewer = new JTable(); 
 		
 		renderer = new SearchRenderer();
 		textTableViewer.setDefaultRenderer(Object.class, renderer);
@@ -179,7 +181,9 @@ public class ResouceContentsPanel extends JPanel{
 		textTableViewer.setColumnSelectionAllowed(false);
 		textTableViewer.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		
-		JScrollPane textTableScroll = new JScrollPane(textTableViewer);
+		
+		
+		textTableScroll = new JScrollPane(textTableViewer);
 
 		JToolBar toolBar2 = new JToolBar("");
 		initToolbar(toolBar2, toolbarListener, RESOURCE_LISTVIEW_TOOLBAR);
@@ -216,12 +220,45 @@ public class ResouceContentsPanel extends JPanel{
 		ComponentkeyInput(xmltextArea,"control S", keyInputListener);
 		ComponentkeyInput(xmltextArea,"F3", keyInputListener);
 		ComponentkeyInput(xmltextArea,"shift F3", keyInputListener);
+		ComponentkeyInput(textTableViewer,"control F", keyInputListener);
 		
 		northPanel.add(FilePathtextField, BorderLayout.CENTER);
 		
 		this.add(northPanel, BorderLayout.NORTH);
 		this.add(ContentsviewPanel, BorderLayout.CENTER);
 	}
+	
+	void FindNextTable(boolean next) {
+		
+		int selectindex = textTableViewer.getSelectedRow();
+		Log.d("" +selectindex);
+				
+		textTableViewer.getSelectionModel().clearSelection();
+		
+		int maxscroolbar = textTableScroll.getVerticalScrollBar().getMaximum();
+		int rowCount = textTableViewer.getRowCount(); 
+		int i;
+		if(next){
+			for(i=selectindex+1; i < rowCount; i++) {
+				String str = ""+textTableViewer.getModel().getValueAt(i, 0);				
+				if(str.indexOf(findtextField_ResourceTable.getText()) != -1) {
+					textTableViewer.getSelectionModel().addSelectionInterval(i, i);
+					break;
+				}
+			}
+		} else {
+			for(i=selectindex-1; i >= 0; i--) {
+				String str = ""+textTableViewer.getModel().getValueAt(i, 0);				
+				if(str.indexOf(findtextField_ResourceTable.getText()) != -1) {
+					textTableViewer.getSelectionModel().addSelectionInterval(i, i);
+					break;
+				}
+			}
+		}
+		
+		textTableScroll.getVerticalScrollBar().setValue(i*maxscroolbar/rowCount);;
+	}
+	
 	
 	class TextViewKeyInputAction extends AbstractAction {
 
@@ -239,10 +276,26 @@ public class ResouceContentsPanel extends JPanel{
 	        String keyStroke = ke.getKeyText( ke.getKeyCode() );
 	        String number = keyStroke.substring(0);
 			int FuncKey = arg0.getModifiers(); 
-	        
+			
 			switch (number) {
 			case "F":      /////////F key
-				finddlg.setVisible(true);
+				
+				if(arg0.getSource() instanceof JTable) {
+					
+		             SwingUtilities.invokeLater( new Runnable() 
+	                 { 
+	                 public void run() 
+	                     {
+	                	 Log.d("aaa" + findtextField_ResourceTable.requestFocusInWindow());
+	                	 Log.d("aaa" + findtextField_ResourceTable.isDisplayable() +findtextField_ResourceTable.isFocusable() + findtextField_ResourceTable.isVisible());
+	                 } 
+	                 });
+					
+					//findtextField_ResourceTable.requestFocusInWindow();
+				} else {
+					finddlg.setVisible(true);
+				}
+				
 				break;			
 			case "S":      /////////S key
 				toolbarListener.exportContent(ToolbarActionListener.EXPORT_TYPE_SAVE);
@@ -365,11 +418,21 @@ public class ResouceContentsPanel extends JPanel{
 		NextBtn.setFocusPainted(false);
 		PrevBtn.setFocusPainted(false);
 		
-		findtextField = new JTextField();
-		Dimension size = findtextField.getPreferredSize();
-		findtextField.setPreferredSize(new Dimension(size.width+100, size.height));
-		findtextField.addActionListener(toolbarListener);
-		findtextField.setName(TEXTVIEWER_TOOLBAR_FIND_TEXTAREA+ Type); 
+		JTextField tempfield = new JTextField();
+		 
+		
+		if(Type.equals(RESOURCE_LISTVIEW_TOOLBAR)) {
+			findtextField_ResourceTable = tempfield;
+			findtextField_ResourceTable.setName(TEXTVIEWER_TOOLBAR_FIND_TEXTAREA+Type);
+		} else {			
+			findtextField = tempfield;
+			findtextField.setName(TEXTVIEWER_TOOLBAR_FIND_TEXTAREA); 
+		}
+		Dimension size = tempfield.getPreferredSize();
+		tempfield.setPreferredSize(new Dimension(size.width+100, size.height));
+		tempfield.addActionListener(toolbarListener);
+		
+		tempfield.setFocusable(true);
 		
 		OpenBtn.addActionListener(toolbarListener);
 		saveBtn.addActionListener(toolbarListener);
@@ -382,7 +445,7 @@ public class ResouceContentsPanel extends JPanel{
 		toolbar.add(OpenBtn);
 		toolbar.add(saveBtn);
 		toolbar.add(getNewSeparator(JSeparator.VERTICAL, sepSize));
-		toolbar.add(findtextField);
+		toolbar.add(tempfield);
 		toolbar.add(FindBtn);
 		toolbar.add(PrevBtn);
 		toolbar.add(NextBtn);
@@ -413,13 +476,17 @@ public class ResouceContentsPanel extends JPanel{
 					finddlg.setVisible(true);
 					break;
 				case TEXTVIEWER_TOOLBAR_FIND+RESOURCE_LISTVIEW_TOOLBAR:					
-					Log.d(name);
+				    String pattern = findtextField_ResourceTable.getText().trim();
+			    	renderer.setPattern(pattern);
+			    	FindNextTable(true);
+			    	textTableViewer.repaint();
 					break;
-				case TEXTVIEWER_TOOLBAR_NEXT+RESOURCE_LISTVIEW_TOOLBAR:
+				case TEXTVIEWER_TOOLBAR_NEXT+RESOURCE_LISTVIEW_TOOLBAR:					
+					FindNextTable(true);
 					Log.d(name);
 					break;
 				case TEXTVIEWER_TOOLBAR_PREV+RESOURCE_LISTVIEW_TOOLBAR:
-					Log.d(name);
+					FindNextTable(false);
 					break;
 				case TEXTVIEWER_TOOLBAR_NEXT:
 					finddlg.getSearchContext().setSearchForward(true);
@@ -442,6 +509,7 @@ public class ResouceContentsPanel extends JPanel{
 				case TEXTVIEWER_TOOLBAR_FIND_TEXTAREA+RESOURCE_LISTVIEW_TOOLBAR:
 				    String pattern = findstr.trim();
 			    	renderer.setPattern(pattern);
+			    	FindNextTable(true);
 			    	textTableViewer.repaint();
 					break;
 				}				
