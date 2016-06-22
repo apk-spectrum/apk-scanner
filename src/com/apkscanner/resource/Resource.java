@@ -22,7 +22,7 @@ import com.apkscanner.util.MyXPath;
 public enum Resource
 {
 	STR_APP_NAME				(Type.TEXT, "@app_name"),
-	STR_APP_VERSION				(Type.TEXT, "2.2 beta 20160615"),
+	STR_APP_VERSION				(Type.TEXT, "2.2 beta 20160622"),
 	STR_APP_BUILD_MODE			(Type.TEXT, "eng"),
 	STR_APP_MAKER				(Type.TEXT, "jin_h.lee / sunggyu.kam"),
 	STR_APP_MAKER_EMAIL			(Type.TEXT, "jin_h.lee@samsung.com;sunggyu.kam@samsung.com"),
@@ -239,7 +239,7 @@ public enum Resource
 	IMG_RESOURCE_TEXTVIEWER_TOOLBAR_FIND (Type.IMAGE, "ResourceTab_TextViewer_toolbar_find.png"),
 	IMG_RESOURCE_TEXTVIEWER_TOOLBAR_NEXT (Type.IMAGE, "ResourceTab_TextViewer_toolbar_next.png"),
 	IMG_RESOURCE_TEXTVIEWER_TOOLBAR_PREV (Type.IMAGE, "ResourceTab_TextViewer_toolbar_previous.png"),
-	
+	IMG_RESOURCE_TEXTVIEWER_TOOLBAR_INDENT(Type.IMAGE, "ResourceTab_TextViewer_toolbar_text_indent.png"),
 	
 	IMG_PERM_GROUP_PHONE_CALLS	(Type.IMAGE, "perm_group_phone_calls.png"),	
 	IMG_TOOLBAR_OPEN_ARROW		(Type.IMAGE, "down_on.png"),	

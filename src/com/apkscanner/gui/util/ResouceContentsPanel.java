@@ -37,6 +37,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
@@ -104,8 +105,10 @@ public class ResouceContentsPanel extends JPanel{
 	
 	
 	private int axmlVeiwType;
-	JComboBox<String> resTypeCombobox;
-	JSeparator resTypeSep;
+	private boolean isMultiLinePrint;
+	private JComboBox<String> resTypeCombobox;
+	private JSeparator resTypeSep;
+	private JToggleButton multiLinePrintButton;
 	
 	public ResouceContentsPanel() {
 		
@@ -129,13 +132,21 @@ public class ResouceContentsPanel extends JPanel{
 		toolbarListener = new ToolbarActionListener();
 		initToolbar(toolBar, toolbarListener);
 		
+		axmlVeiwType = VEIW_TYPE_XML;
+		isMultiLinePrint = false;
+		
 		String[] petStrings = { "XML", "ARSC"};
 		resTypeCombobox = new JComboBox<String>(petStrings);
 		resTypeCombobox.addActionListener(toolbarListener);
+		
+		multiLinePrintButton = new JToggleButton(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_INDENT.getImageIcon());
+		multiLinePrintButton.addActionListener(toolbarListener);
+		multiLinePrintButton.setFocusPainted(false);
+		
 		resTypeSep = getNewSeparator(JSeparator.VERTICAL, new Dimension(5,16));
 		toolBar.add(resTypeSep);
 		toolBar.add(resTypeCombobox);
-		
+		toolBar.add(multiLinePrintButton);
 		
 		TextAreaPanel.add(toolBar,BorderLayout.PAGE_START);
 		
@@ -340,6 +351,12 @@ public class ResouceContentsPanel extends JPanel{
 		NextBtn.setName(TEXTVIEWER_TOOLBAR_NEXT);
 		PrevBtn.setName(TEXTVIEWER_TOOLBAR_PREV);
 		
+		OpenBtn.setFocusPainted(false);
+		saveBtn.setFocusPainted(false);
+		FindBtn.setFocusPainted(false);
+		NextBtn.setFocusPainted(false);
+		PrevBtn.setFocusPainted(false);
+		
 		findtextField = new JTextField();
 		Dimension size = findtextField.getPreferredSize();
 		findtextField.setPreferredSize(new Dimension(size.width+100, size.height));
@@ -408,9 +425,14 @@ public class ResouceContentsPanel extends JPanel{
 				Log.d("fileType : " + fileType);
 				if("XML".equals(fileType)) {
 					axmlVeiwType = VEIW_TYPE_XML;
+					multiLinePrintButton.setEnabled(true);
 				} else if("ARSC".equals(fileType)) {
 					axmlVeiwType = VEIW_TYPE_ARSC;
+					multiLinePrintButton.setEnabled(false);
 				}
+				setTextContentPanel(currentSelectedObj);
+			} else if(arg0.getSource() instanceof JToggleButton) {
+				isMultiLinePrint = ((JToggleButton)(arg0.getSource())).isSelected();
 				setTextContentPanel(currentSelectedObj);
 			}
 		}
@@ -454,6 +476,7 @@ public class ResouceContentsPanel extends JPanel{
 				if(convAxml2Xml) {
 					Log.i("conv AxmlToXml");
 					AxmlToXml a2x = new AxmlToXml(convStrings, resourcesWithValue);
+					a2x.setMultiLinePrint(isMultiLinePrint);
 					writeString = a2x.toString();
 				} else {
 					StringBuilder sb = new StringBuilder();
@@ -757,8 +780,10 @@ public class ResouceContentsPanel extends JPanel{
 			String[] xmlbuffer = AaptWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {obj.path});
 			resTypeSep.setVisible(true);
 			resTypeCombobox.setVisible(true);
+			multiLinePrintButton.setVisible(true);
 			if(axmlVeiwType == VEIW_TYPE_XML) {
 				AxmlToXml a2x = new AxmlToXml(xmlbuffer, resourcesWithValue);
+				a2x.setMultiLinePrint(isMultiLinePrint);
 				content = a2x.toString();
 			} else {
 				StringBuilder sb = new StringBuilder();
@@ -770,6 +795,7 @@ public class ResouceContentsPanel extends JPanel{
 		case ResourceObject.ATTR_TXT:
 			resTypeSep.setVisible(false);
 			resTypeCombobox.setVisible(false);
+			multiLinePrintButton.setVisible(false);
 			ZipFile zipFile;
 			try {
 				zipFile = new ZipFile(apkinfo.filePath);
