@@ -58,41 +58,61 @@ public class AxmlToXml {
 			xml.append(" ");
 			xml.append(name);
 			xml.append("=\"");
+			
+			String val = getResourceName(node.getAttribute(name));
 			if(name.endsWith("protectionLevel")) {
-				String protection = node.getAttribute(name);
-	        	if(protection != null && protection.startsWith("0x")) {
-	        		int level = Integer.parseInt(protection.substring(2), 16);
-	        		xml.append(PermissionInfo.protectionToString(level));
-	        	} else {
-	        		xml.append(protection);
+	        	if(val != null && val.startsWith("0x")) {
+	        		int level = Integer.parseInt(val.substring(2), 16);
+	        		val = PermissionInfo.protectionToString(level);
 	        	}
 			} else if(name.endsWith("layout_width") || name.endsWith("layout_height")) {
-				String val = getResourceName(node.getAttribute(name));
 				if("-1".equals(val)) {
 					val = "match_parent";
 				} else if("-2".equals(val)) {
 					val = "wrap_content";
 				}
-				xml.append(val);
 			} else if(name.endsWith("orientation")) {
-				String val = getResourceName(node.getAttribute(name));
 				if("0".equals(val)) {
 					val = "horizontal";
 				} else if("1".equals(val)) {
 					val = "vertical";
 				}
-				xml.append(val);
 			} else if(name.endsWith("gravity")) {
-				String val = getResourceName(node.getAttribute(name));
-				if("0".equals(val)) {
-					val = "horizontal";
-				} else if("1".equals(val)) {
-					val = "vertical";
-				}
-				xml.append(val);
-			} else {
-				xml.append(getResourceName(node.getAttribute(name)));
+	        	if(val != null && val.startsWith("0x")) {
+	        		int level = Integer.parseInt(val.substring(2), 16);
+	        		val = "";
+	        		if((level & 0x00800001) == 0x00800001) {
+	        			if((level & 0x7) == 0x7 || (level & 0x6) == 0) {
+	        				val += "|unknown"; 
+	        			} else if((level & 0x3) == 0x3) {
+	        				val += "|start"; 
+	        			} else if((level & 0x5) == 0x5) {
+	        				val += "|end";
+	        			}
+	        			level &= 0xF8;
+	        		}
+	        		if((level & 0x08) == 0x08) val += "|clip_horizontal";
+	        		if((level & 0x80) == 0x80) val += "|clip_vertical";
+	        		if((level & 0x77) == 0x77) val += "|fill";
+	        		else if((level & 0x77) == 0x11) val += "|center";
+	        		else {
+	        			if((level & 0x07) == 0x07) val += "|fill_horizontal";
+	        			else if((level & 0x07) == 0x01) val += "|center_horizontal";
+	        			else if((level & 0x07) == 0x03) val += "|left";
+	        			else if((level & 0x07) == 0x05) val += "|right";
+	        			else if((level & 0x07) != 0x00) val += "|unknown_horizontal";
+
+	        			if((level & 0x70) == 0x70) val += "|fill_vertical";
+	        			else if((level & 0x70) == 0x10) val += "|center_vertical";
+	        			else if((level & 0x70) == 0x30) val += "|top";
+	        			else if((level & 0x70) == 0x50) val += "|bottom";
+	        			else if((level & 0x70) != 0x00) val += "|unknown_vertical";
+	        		}
+	        		if(!val.isEmpty()) val = val.substring(1);
+	        	}
 			}
+			xml.append(val);
+
 			xml.append("\"");
 		}
 		if(node.getNodeCount() > 0) {
