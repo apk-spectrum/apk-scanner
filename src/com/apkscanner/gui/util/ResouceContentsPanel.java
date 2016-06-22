@@ -84,6 +84,10 @@ public class ResouceContentsPanel extends JPanel{
 	public static final String TEXTVIEWER_TOOLBAR_FIND = "textviewer_toolbar_find";
 	public static final String TEXTVIEWER_TOOLBAR_NEXT = "textviewer_toolbar_next";
 	public static final String TEXTVIEWER_TOOLBAR_PREV = "textviewer_toolbar_prev";
+	public static final String TEXTVIEWER_TOOLBAR_FIND_TEXTAREA = "textviewer_toolbar_findtextarea";
+	
+	public static final String RESOURCE_LISTVIEW_TOOLBAR = "_resource_toolbar" ;
+	
 	
 	private static final int VEIW_TYPE_XML = 0;
 	private static final int VEIW_TYPE_ARSC = 1;
@@ -102,7 +106,7 @@ public class ResouceContentsPanel extends JPanel{
 	private JToolBar toolBar;
 	private JTextField findtextField;
 	private ToolbarActionListener toolbarListener;
-	
+	private SearchRenderer renderer;
 	
 	private int axmlVeiwType;
 	private boolean isMultiLinePrint;
@@ -130,7 +134,7 @@ public class ResouceContentsPanel extends JPanel{
 		
 		toolBar = new JToolBar("");
 		toolbarListener = new ToolbarActionListener();
-		initToolbar(toolBar, toolbarListener);
+		initToolbar(toolBar, toolbarListener, "");
 		
 		axmlVeiwType = VEIW_TYPE_XML;
 		isMultiLinePrint = false;
@@ -164,17 +168,21 @@ public class ResouceContentsPanel extends JPanel{
 		finddlg.setResizable(false);
 		
 		textTableViewer = new JTable();
+		
+		renderer = new SearchRenderer();
+		textTableViewer.setDefaultRenderer(Object.class, renderer);
+		
 		textTableViewer.setShowHorizontalLines(false);
 		textTableViewer.setTableHeader(null);
 		textTableViewer.setCellSelectionEnabled(true);
-		textTableViewer.setRowSelectionAllowed(false);
+		textTableViewer.setRowSelectionAllowed(true);
 		textTableViewer.setColumnSelectionAllowed(false);
 		textTableViewer.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		
 		JScrollPane textTableScroll = new JScrollPane(textTableViewer);
 
 		JToolBar toolBar2 = new JToolBar("");
-		initToolbar(toolBar2, toolbarListener);
+		initToolbar(toolBar2, toolbarListener, RESOURCE_LISTVIEW_TOOLBAR);
 		
 		JPanel textTablePanel = new JPanel(new BorderLayout());
 		textTablePanel.add(toolBar2,BorderLayout.PAGE_START);
@@ -337,7 +345,7 @@ public class ResouceContentsPanel extends JPanel{
     	return separator;
     }
     
-	private void initToolbar(JToolBar toolbar, ToolbarActionListener toolbarListener) {
+	private void initToolbar(JToolBar toolbar, ToolbarActionListener toolbarListener, String Type) {
 	
 		JButton OpenBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_OPEN.getImageIcon(16, 16));
 		JButton saveBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_SAVE.getImageIcon(16, 16));
@@ -345,11 +353,11 @@ public class ResouceContentsPanel extends JPanel{
 		JButton NextBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_NEXT.getImageIcon(16, 16));
 		JButton PrevBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_PREV.getImageIcon(16, 16));
 		
-		OpenBtn.setName(TEXTVIEWER_TOOLBAR_OPEN);
-		saveBtn.setName(TEXTVIEWER_TOOLBAR_SAVE);
-		FindBtn.setName(TEXTVIEWER_TOOLBAR_FIND);
-		NextBtn.setName(TEXTVIEWER_TOOLBAR_NEXT);
-		PrevBtn.setName(TEXTVIEWER_TOOLBAR_PREV);
+		OpenBtn.setName(TEXTVIEWER_TOOLBAR_OPEN+Type);
+		saveBtn.setName(TEXTVIEWER_TOOLBAR_SAVE+Type);
+		FindBtn.setName(TEXTVIEWER_TOOLBAR_FIND+Type);
+		NextBtn.setName(TEXTVIEWER_TOOLBAR_NEXT+Type);
+		PrevBtn.setName(TEXTVIEWER_TOOLBAR_PREV+Type);
 		
 		OpenBtn.setFocusPainted(false);
 		saveBtn.setFocusPainted(false);
@@ -360,8 +368,8 @@ public class ResouceContentsPanel extends JPanel{
 		findtextField = new JTextField();
 		Dimension size = findtextField.getPreferredSize();
 		findtextField.setPreferredSize(new Dimension(size.width+100, size.height));
-
 		findtextField.addActionListener(toolbarListener);
+		findtextField.setName(TEXTVIEWER_TOOLBAR_FIND_TEXTAREA+ Type); 
 		
 		OpenBtn.addActionListener(toolbarListener);
 		saveBtn.addActionListener(toolbarListener);
@@ -394,13 +402,24 @@ public class ResouceContentsPanel extends JPanel{
 				String name = ((JButton)arg0.getSource()).getName();
 				switch(name) {
 				case TEXTVIEWER_TOOLBAR_OPEN:
+				case TEXTVIEWER_TOOLBAR_OPEN+RESOURCE_LISTVIEW_TOOLBAR:	
 					exportContent(EXPORT_TYPE_OPEN);
 					break;
-				case TEXTVIEWER_TOOLBAR_SAVE:					
+				case TEXTVIEWER_TOOLBAR_SAVE:
+				case TEXTVIEWER_TOOLBAR_SAVE+RESOURCE_LISTVIEW_TOOLBAR:					
 					exportContent(EXPORT_TYPE_SAVE);
 					break;
 				case TEXTVIEWER_TOOLBAR_FIND:					
 					finddlg.setVisible(true);
+					break;
+				case TEXTVIEWER_TOOLBAR_FIND+RESOURCE_LISTVIEW_TOOLBAR:					
+					Log.d(name);
+					break;
+				case TEXTVIEWER_TOOLBAR_NEXT+RESOURCE_LISTVIEW_TOOLBAR:
+					Log.d(name);
+					break;
+				case TEXTVIEWER_TOOLBAR_PREV+RESOURCE_LISTVIEW_TOOLBAR:
+					Log.d(name);
 					break;
 				case TEXTVIEWER_TOOLBAR_NEXT:
 					finddlg.getSearchContext().setSearchForward(true);
@@ -413,11 +432,19 @@ public class ResouceContentsPanel extends JPanel{
 				}				
 			} else if(arg0.getSource() instanceof JTextField) {
 				String findstr = ((JTextField)(arg0.getSource())).getText();
-				//Log.d("find : " + ((JTextField)(arg0.getSource())).getText());
-				//Log.d("find : " + findtextField.getText());
-				finddlg.getSearchContext().setSearchFor(findstr);
-				finddlg.getSearchContext().setSearchForward(true);
-				SearchAndNext(SearchEvent.Type.FIND, finddlg.getSearchContext());
+				String name = ((JTextField)(arg0.getSource())).getName();
+				switch(name) {
+				case TEXTVIEWER_TOOLBAR_FIND_TEXTAREA:
+					finddlg.getSearchContext().setSearchFor(findstr);
+					finddlg.getSearchContext().setSearchForward(true);
+					SearchAndNext(SearchEvent.Type.FIND, finddlg.getSearchContext());
+					break;
+				case TEXTVIEWER_TOOLBAR_FIND_TEXTAREA+RESOURCE_LISTVIEW_TOOLBAR:
+				    String pattern = findstr.trim();
+			    	renderer.setPattern(pattern);
+			    	textTableViewer.repaint();
+					break;
+				}				
 				
 			} else if(arg0.getSource() instanceof JComboBox) {
 				@SuppressWarnings("rawtypes")
