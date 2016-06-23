@@ -12,6 +12,8 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -324,11 +326,9 @@ public class ResouceContentsPanel extends JPanel{
 					
 		             SwingUtilities.invokeLater( new Runnable() 
 	                 { 
-	                 public void run() 
-	                     {
-	                	 Log.d("aaa" + findtextField_ResourceTable.requestFocusInWindow());
-	                	 Log.d("aaa" + findtextField_ResourceTable.isDisplayable() +findtextField_ResourceTable.isFocusable() + findtextField_ResourceTable.isVisible());
-	                 } 
+	                 public void run() {
+	                	 findtextField_ResourceTable.requestFocusInWindow();	                	 
+	                 }
 	                 });
 					
 					//findtextField_ResourceTable.requestFocusInWindow();
@@ -473,6 +473,20 @@ public class ResouceContentsPanel extends JPanel{
 		tempfield.addActionListener(toolbarListener);
 		
 		tempfield.setFocusable(true);
+		
+		tempfield.addFocusListener(new FocusListener() {			
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				// TODO Auto-generated method stub
+				((JTextField)(arg0.getSource())).setBackground(new Color(255,255,255));					
+			}
+			
+			@Override
+			public void focusGained(FocusEvent arg0) {
+				// TODO Auto-generated method stub
+				((JTextField)(arg0.getSource())).setBackground(new Color(178,235,244));				
+			}
+		});
 		
 		OpenBtn.addActionListener(toolbarListener);
 		saveBtn.addActionListener(toolbarListener);
