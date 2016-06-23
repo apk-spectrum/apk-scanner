@@ -228,6 +228,10 @@ public class ResouceContentsPanel extends JPanel{
 		ComponentkeyInput(textTableViewer,"F3", keyInputListener);
 		ComponentkeyInput(textTableViewer,"shift F3", keyInputListener);
 		
+		ComponentkeyInput(findtextField_ResourceTable,"F3", keyInputListener);
+		ComponentkeyInput(findtextField_ResourceTable,"shift F3", keyInputListener);
+		
+		
 		northPanel.add(FilePathtextField, BorderLayout.CENTER);
 		
 		this.add(northPanel, BorderLayout.NORTH);
@@ -296,7 +300,7 @@ public class ResouceContentsPanel extends JPanel{
 			}
 		}
 		
-		Log.d(" i = " + i  + " max scrool = " + maxscroolbar + "rowCount : " + rowCount);
+		//Log.d(" i = " + i  + " max scrool = " + maxscroolbar + "rowCount : " + rowCount);
 		if(!findflag) Log.d("Not Found");
 		textTableScroll.getVerticalScrollBar().setValue((i*(maxscroolbar/rowCount)));
 	}
@@ -322,15 +326,12 @@ public class ResouceContentsPanel extends JPanel{
 			switch (number) {
 			case "F":      /////////F key
 				
-				if(arg0.getSource() instanceof JTable) {
-					
-		             SwingUtilities.invokeLater( new Runnable() 
-	                 { 
+				if(arg0.getSource() instanceof JTable) {					
+		             SwingUtilities.invokeLater( new Runnable(){ 
 	                 public void run() {
 	                	 findtextField_ResourceTable.requestFocusInWindow();	                	 
-	                 }
-	                 });
-					
+	                 	}
+	                 });					
 					//findtextField_ResourceTable.requestFocusInWindow();
 				} else {
 					finddlg.setVisible(true);
@@ -341,14 +342,23 @@ public class ResouceContentsPanel extends JPanel{
 				toolbarListener.exportContent(ToolbarActionListener.EXPORT_TYPE_SAVE);
 				break;
 			case "F3":      /////////F3
-				if(FuncKey==1) {
-					Log.d("shift F3 Key");
-					finddlg.getSearchContext().setSearchForward(false);
-					SearchAndNext(SearchEvent.Type.FIND, finddlg.getSearchContext());
-				} else {
-					Log.d("F3 Key");
-					finddlg.getSearchContext().setSearchForward(true);
-					SearchAndNext(SearchEvent.Type.FIND, finddlg.getSearchContext());
+				
+				if(arg0.getSource() instanceof JTable || findtextField_ResourceTable.equals(arg0.getSource())) {
+					if(FuncKey==1) {
+						FindNextTable(false);
+					} else {
+						FindNextTable(true);
+					}
+				} else {				
+					if(FuncKey==1) {
+						Log.d("shift F3 Key");
+						finddlg.getSearchContext().setSearchForward(false);
+						SearchAndNext(SearchEvent.Type.FIND, finddlg.getSearchContext());
+					} else {
+						Log.d("F3 Key");
+						finddlg.getSearchContext().setSearchForward(true);
+						SearchAndNext(SearchEvent.Type.FIND, finddlg.getSearchContext());
+					}
 				}
 				break;			
 			default:
@@ -536,8 +546,7 @@ public class ResouceContentsPanel extends JPanel{
 			    	textTableViewer.repaint();
 					break;
 				case TEXTVIEWER_TOOLBAR_NEXT+RESOURCE_LISTVIEW_TOOLBAR:					
-					FindNextTable(true);
-					Log.d(name);
+					FindNextTable(true);					
 					break;
 				case TEXTVIEWER_TOOLBAR_PREV+RESOURCE_LISTVIEW_TOOLBAR:
 					FindNextTable(false);
