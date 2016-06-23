@@ -220,7 +220,11 @@ public class ResouceContentsPanel extends JPanel{
 		ComponentkeyInput(xmltextArea,"control S", keyInputListener);
 		ComponentkeyInput(xmltextArea,"F3", keyInputListener);
 		ComponentkeyInput(xmltextArea,"shift F3", keyInputListener);
+		
 		ComponentkeyInput(textTableViewer,"control F", keyInputListener);
+		ComponentkeyInput(textTableViewer,"control S", keyInputListener);
+		ComponentkeyInput(textTableViewer,"F3", keyInputListener);
+		ComponentkeyInput(textTableViewer,"shift F3", keyInputListener);
 		
 		northPanel.add(FilePathtextField, BorderLayout.CENTER);
 		
@@ -231,32 +235,68 @@ public class ResouceContentsPanel extends JPanel{
 	void FindNextTable(boolean next) {
 		
 		int selectindex = textTableViewer.getSelectedRow();
-		Log.d("" +selectindex);
-				
+		boolean findflag= false;
+		
+		if(selectindex== -1) selectindex = 0;
+		
 		textTableViewer.getSelectionModel().clearSelection();
 		
 		int maxscroolbar = textTableScroll.getVerticalScrollBar().getMaximum();
 		int rowCount = textTableViewer.getRowCount(); 
 		int i;
+		
+		
+		if(selectindex > rowCount) {
+			textTableViewer.getSelectionModel().addSelectionInterval(0, 0);
+			return ;
+		}
+		
+		if(selectindex < 0) {
+			textTableViewer.getSelectionModel().addSelectionInterval(maxscroolbar, maxscroolbar);
+			return ;
+		}
+		
+		String textFieldstr = findtextField_ResourceTable.getText().toLowerCase();
+		
+		boolean roop = false;
+		int to;
 		if(next){
-			for(i=selectindex+1; i < rowCount; i++) {
-				String str = ""+textTableViewer.getModel().getValueAt(i, 0);				
-				if(str.indexOf(findtextField_ResourceTable.getText()) != -1) {
+			to = rowCount;
+			for(i=selectindex+1; i < to; i++) {
+				String str = ""+textTableViewer.getModel().getValueAt(i, 0);
+				str = str.toLowerCase();
+				
+				if(str.indexOf(textFieldstr) != -1) {
 					textTableViewer.getSelectionModel().addSelectionInterval(i, i);
+					findflag = true;
 					break;
+				}
+				if(i== rowCount-1 && roop ==false) {
+					roop = true;
+					i = 0;
+					to = selectindex-1;
 				}
 			}
 		} else {
-			for(i=selectindex-1; i >= 0; i--) {
+			to = 0;
+			for(i=selectindex-1; i >= to; i--) {
 				String str = ""+textTableViewer.getModel().getValueAt(i, 0);				
-				if(str.indexOf(findtextField_ResourceTable.getText()) != -1) {
+				if(str.indexOf(textFieldstr) != -1) {
 					textTableViewer.getSelectionModel().addSelectionInterval(i, i);
+					findflag = true;
 					break;
+				}
+				if(i== 0 && roop ==false) {
+					roop = true;
+					i = rowCount;
+					to = selectindex+1;
 				}
 			}
 		}
 		
-		textTableScroll.getVerticalScrollBar().setValue(i*maxscroolbar/rowCount);;
+		Log.d(" i = " + i  + " max scrool = " + maxscroolbar + "rowCount : " + rowCount);
+		if(!findflag) Log.d("Not Found");
+		textTableScroll.getVerticalScrollBar().setValue((i*(maxscroolbar/rowCount)));
 	}
 	
 	

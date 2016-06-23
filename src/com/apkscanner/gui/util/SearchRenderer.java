@@ -51,7 +51,7 @@ class SearchRenderer implements TableCellRenderer {
 	    field.setText(txt);
 	    field.setBackground(isSelected ? BACKGROUND_SELECTION_COLOR : Color.WHITE);	    
 	    if (pattern != null && !pattern.isEmpty() && !pattern.equals(prev)) {
-	      Matcher matcher = Pattern.compile(pattern).matcher(txt);
+	      Matcher matcher = Pattern.compile("(?i)"+pattern).matcher(txt);
 	      if (matcher.find()) {
 	        int start = matcher.start();
 	        int end   = matcher.end();
