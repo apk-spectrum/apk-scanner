@@ -31,7 +31,7 @@ public class ToolBar extends JToolBar
 
 	private HashMap<ButtonSet, JButton> buttonMap;
 	private HashMap<MenuItemSet, JMenuItem> menuItemMap;
-	private static boolean isSearchButtonOn = false;
+	private static boolean isSearchButtonOn = System.getProperty("os.name").equals("Linux");
 	
 	public enum MenuItemSet
 	{
