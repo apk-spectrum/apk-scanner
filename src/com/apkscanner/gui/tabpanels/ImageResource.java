@@ -31,6 +31,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -40,6 +41,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -847,7 +851,7 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
     class TreeFindFildListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			Log.d(" find string = " + textField.getText());
+			
 		}    	
     }
     
@@ -860,23 +864,49 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		TreeInit();
 		
 		textField = new JTextField("");
-				
-	    //JLabel TreeModeLabel = new JLabel("Search");
-	    //TreeModePanel.add(TreeModeLabel);
-
+		textField.addFocusListener(new FocusListener() {			
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				// TODO Auto-generated method stub
+				((JTextField)(arg0.getSource())).setBackground(new Color(255,255,255));					
+			}
+			
+			@Override
+			public void focusGained(FocusEvent arg0) {
+				// TODO Auto-generated method stub
+				((JTextField)(arg0.getSource())).setBackground(new Color(178,235,244));				
+			}
+		});
+		
 		JButton findicon = new JButton(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_FIND.getImageIcon(16, 16));
-		JPanel TreeModePanel = new JPanel(new FlowLayout());
-		textField.setPreferredSize(new Dimension(130, 27));
+		JButton refreshicon = new JButton(Resource.IMG_RESOURCE_TREE_TOOLBAR_REFRESH.getImageIcon(16, 16));
+		
+		findicon.setPreferredSize(new Dimension(27, 27));
+		refreshicon.setPreferredSize(new Dimension(27, 27));
+		
+		findicon.setFocusPainted(false);
+		refreshicon.setFocusPainted(false);
+		
+		JPanel TreeButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		
+		JPanel TreeModePanel = new JPanel(new BorderLayout());
+		//textField.setPreferredSize(new Dimension(10, 27));
+		
 		TreeFindFildListener findListener =  new TreeFindFildListener();
 		
 		textField.addActionListener(findListener);
 		findicon.addActionListener(findListener);
+		refreshicon.addActionListener(findListener);
 		
-		TreeModePanel.add(textField);
-		TreeModePanel.add(findicon);
+		TreeModePanel.add(textField, BorderLayout.CENTER);
 		
+		TreeButtonPanel.add(findicon);		
+		TreeButtonPanel.add(refreshicon);
+		
+		TreeModePanel.add(TreeButtonPanel,BorderLayout.EAST);
         // End Tree navigator ----------
-
+		
+		
 		JScrollPane treeScroll = new JScrollPane(tree);
 		treeScroll.setPreferredSize(new Dimension(300, 400));
 		treeScroll.repaint();

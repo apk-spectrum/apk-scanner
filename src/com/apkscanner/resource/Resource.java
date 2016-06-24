@@ -232,7 +232,9 @@ public enum Resource
 	IMG_RESOURCE_TREE_JD_ICON (Type.IMAGE, "resource_tab_JD.png"),	
 	IMG_RESOURCE_TREE_OPEN_ICON (Type.IMAGE, "resource_tab_open.png"),
 	IMG_RESOURCE_TREE_OPEN_OTHERAPPLICATION_ICON (Type.IMAGE, "resource_tab_otherapplication.png"),
-	IMG_RESOURCE_TREE_OPEN_JD_LOADING (Type.IMAGE, "Loading_openJD_80_80.gif"),	
+	IMG_RESOURCE_TREE_OPEN_JD_LOADING (Type.IMAGE, "Loading_openJD_80_80.gif"),
+	IMG_RESOURCE_TREE_TOOLBAR_REFRESH (Type.IMAGE, "resource_tab_tree_toolbar_refresh.png"),
+	
 	
 	IMG_RESOURCE_TEXTVIEWER_TOOLBAR_OPEN (Type.IMAGE, "ResourceTab_TextViewer_toolbar_open.png"),
 	IMG_RESOURCE_TEXTVIEWER_TOOLBAR_SAVE (Type.IMAGE, "ResourceTab_TextViewer_toolbar_save.png"),
