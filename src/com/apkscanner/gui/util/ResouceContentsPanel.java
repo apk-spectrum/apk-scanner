@@ -836,6 +836,7 @@ public class ResouceContentsPanel extends JPanel{
 			for (ButtonSet key : buttonMap.keySet()) {
 				buttonMap.get(key).setVisible((key.getButtonId() & Flag) != 0);
 			}
+			buttonMap.get(ButtonSet.CHOOSE_APPLICATION).setVisible(false);
 		}
 
 		@Override
