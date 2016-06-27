@@ -18,6 +18,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.ImageObserver;
@@ -66,7 +67,7 @@ import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
 
-public class ImageResource extends JPanel implements TabDataObject, ActionListener {
+public class ImageResource extends JPanel implements TabDataObject {
 	private static final long serialVersionUID = -934921813626224616L;
 
 	private ResouceContentsPanel contentPanel;
@@ -83,7 +84,9 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	
 	private FilteredTreeModel filteredModel;
 	private JTextField textField;
-	// private Boolean firstClick=false;
+	JButton findicon;
+	JButton refreshicon;
+	private Boolean isFilter = false;
 
 	ResouceTreeCellRenderer renderer;
 
@@ -897,29 +900,35 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 			
 			if (arg0.getSource() instanceof JTextField) {
 				String temp = ((JTextField) (arg0.getSource())).getText();
-				if (temp.length() > 0) {
-					tree.setModel(new DefaultTreeModel(createFilteredTree(top, temp)));
-				} else {
-					tree.setModel(new DefaultTreeModel(createFilteredTree(top, "")));
-				}
-				tree.repaint();
+				searchTree(temp);
 			} else if (arg0.getSource() instanceof JButton) {
 				JButton temp = (JButton) (arg0.getSource());
 				
-				if (temp.getName().equals(RESOURCE_TREE_TOOLBAR_BUTTON_FIND)) {
-					
+				if (temp.getName().equals(RESOURCE_TREE_TOOLBAR_BUTTON_FIND)) {					
 					String strtemp = textField.getText();
-					if (strtemp.length() > 0) {
-						tree.setModel(new DefaultTreeModel(createFilteredTree(top, strtemp)));
-					} else {
-						tree.setModel(new DefaultTreeModel(createFilteredTree(top, "")));
-					}					
+					searchTree(strtemp);
 				} else if (temp.getName().equals(RESOURCE_TREE_TOOLBAR_BUTTON_REFRESH)) {
-					tree.setModel(new DefaultTreeModel(createFilteredTree(top, "")));
+					searchTree("");
 				}
 				tree.repaint();
 			}
 
+		}
+		
+		void searchTree(String str) {		
+			
+			if(str.length() > 0) {
+				refreshicon.setEnabled(true);
+				isFilter = true;
+				
+			} else {
+				refreshicon.setEnabled(false);
+				isFilter = false;
+		
+			}
+				
+			tree.setModel(new DefaultTreeModel(createFilteredTree(top, str)));			
+			tree.repaint();
 		}
 	}
 
@@ -945,11 +954,12 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 			}
 		});
 
-		JButton findicon = new JButton(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_FIND.getImageIcon(16, 16));
-		JButton refreshicon = new JButton(Resource.IMG_RESOURCE_TREE_TOOLBAR_REFRESH.getImageIcon(16, 16));
+		findicon = new JButton(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_FIND.getImageIcon(16, 16));
+		refreshicon = new JButton(Resource.IMG_RESOURCE_TREE_TOOLBAR_REFRESH.getImageIcon(16, 16));
 
 		findicon.setPreferredSize(new Dimension(22, 22));
 		refreshicon.setPreferredSize(new Dimension(22, 22));
+		refreshicon.setEnabled(false);
 
 		findicon.setName(RESOURCE_TREE_TOOLBAR_BUTTON_FIND);
 		refreshicon.setName(RESOURCE_TREE_TOOLBAR_BUTTON_REFRESH);
@@ -968,8 +978,26 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 		findicon.addActionListener(findListener);
 		refreshicon.addActionListener(findListener);
 
+		textField.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent arg0) {}
+			
+			@Override
+			public void keyReleased(KeyEvent arg0) {
+				if(textField.getText().length() > 0) {
+					findicon.setEnabled(true);
+				} else {
+					findicon.setEnabled(false);
+				}
+			}
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				
+			}
+		});
+		
 		TreeModePanel.add(textField, BorderLayout.CENTER);
-
 		TreeButtonPanel.add(findicon);
 		TreeButtonPanel.add(refreshicon);
 
@@ -1045,11 +1073,5 @@ public class ImageResource extends JPanel implements TabDataObject, ActionListen
 	@Override
 	public void reloadResource() {
 
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		boolean isFolderMode = !arg0.getActionCommand().equals("Resource");
-		setTreeForm(isFolderMode);
-	}
+	}	
 }
