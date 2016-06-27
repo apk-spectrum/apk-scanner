@@ -59,6 +59,7 @@ public class AxmlToXml {
 			xml.append(name);
 			xml.append("=\"");
 			
+			// /android/frameworks/base/core/res/res/values/attrs.xml
 			// /android/frameworks/base/core/res/res/values/attrs_manifest.xml
 			String val = getResourceName(node.getAttribute(name));
 			if(name.endsWith("protectionLevel")) {
@@ -78,7 +79,7 @@ public class AxmlToXml {
 				case "1" : val = "vertical"; break;
 				default: break;
 				}
-			} else if(name.endsWith("gravity")) {
+			} else if(name.endsWith("gravity") || name.endsWith("foregroundGravity")) {
 	        	if(val != null && val.startsWith("0x")) {
 	        		int iVal = Integer.parseInt(val.substring(2), 16);
 	        		val = "";
