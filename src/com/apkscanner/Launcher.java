@@ -132,6 +132,7 @@ public class Launcher
 		
 		defaultCmd.add("java");
 		defaultCmd.add("-Dfile.encoding=utf-8");
+		defaultCmd.add("-Djava.library.path=./tool");
 		defaultCmd.add("-cp");
 		defaultCmd.add(classPath);
 		defaultCmd.add(Main.class.getName());

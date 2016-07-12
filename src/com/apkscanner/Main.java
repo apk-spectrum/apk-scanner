@@ -91,7 +91,8 @@ public class Main
 		
 		Log.i(Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString() + " " + Resource.STR_APP_BUILD_MODE.getString());
 		Log.i("OS : " + System.getProperty("os.name"));
-		Log.i("OS : " + System.getProperty("file.encoding"));
+		Log.i("file.encoding : " + System.getProperty("file.encoding"));
+		Log.i("java.library.path : " + System.getProperty("java.library.path"));
     	System.out.println("Default Charset=" + Charset.defaultCharset());
     	System.out.println("file.encoding=" + System.getProperty("file.encoding"));
 

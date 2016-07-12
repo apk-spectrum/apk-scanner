@@ -26,7 +26,7 @@ for k in $APP_PATH/lib/*.jar
 do
     _classpath="\${_classpath}:\${k}"
 done
-java -Xms512m -Xmx1024m -classpath "\${_classpath}" com.apkscanner.Main "\$@" > /dev/null
+java -Xms512m -Xmx1024m -Djava.library.path=$APP_PATH/tool -classpath "\${_classpath}" com.apkscanner.Main "\$@" > /dev/null
 EOF
 
 jar -xf APKInfoDlg.jar icons/AppIcon.png
@@ -68,7 +68,7 @@ cat << EOF > ./apkscanner.desktop
 Encoding=UTF-8
 Version=1.0
 Type=Application
-Exec=java -classpath $APP_PATH/$APP_FILE:$LIB_PATH: $MAIN_CLASS %f
+Exec=java -Djava.library.path=$APP_PATH/tool -classpath $APP_PATH/$APP_FILE:$LIB_PATH: $MAIN_CLASS %f
 Name=APK Scanner
 Comment=APK Scanner
 Icon=$APP_PATH/icons/AppIcon.png

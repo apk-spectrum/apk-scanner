@@ -82,12 +82,29 @@ public class AaptNativeWrapper {
 	}
 	
 	public static class ResourceTable {
+		private Object resTable;
 		public ResourceTable(String apkFilePath)
 		{
+			resTable = getResTable(apkFilePath);
+		}
+		
+		public void release() {
+			if(resTable != null) {
+				realeaseResTable(resTable);
+				resTable = null;
+			}
+		}
+		
+		public String getResourceName(int resId) {
+			return AaptNativeWrapper.getResourceName(resTable, resId);
 		}
 	}
 
 	private native static String[] run(String[] params);
+	
+	public native static Object getResTable(String apkFilePath);
+	public native static void realeaseResTable(Object resTable);
+	public native static String getResourceName(Object resTable, int resId);
 
 	static {
 		if (System.getProperty("os.name").indexOf("Linux") > -1) {
@@ -97,8 +114,4 @@ public class AaptNativeWrapper {
 		//System.load("Y:\\android-sdk-build\\out\\host\\windows-x86\\lib64\\libAaptNativeWrapper.dll");
 		//System.load("/home/local_depot/android-sdk-build/out/host/linux-x86/lib64/libAaptNativeWrapper.so");
 	}
-
-	//private native static int getResourceTable(String apkFilePath);
-	//private native static int getResourceName(int handle, int resId);
-	
 }
