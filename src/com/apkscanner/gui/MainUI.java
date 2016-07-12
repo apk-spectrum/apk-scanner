@@ -21,9 +21,9 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import com.apkscanner.Launcher;
 import com.apkscanner.apkinfo.ApkInfo;
-import com.apkscanner.apkscanner.AaptScanner;
-import com.apkscanner.apkscanner.ApkScannerStub;
-import com.apkscanner.apkscanner.ApkScannerStub.Status;
+import com.apkscanner.core.scanner.AaptScanner;
+import com.apkscanner.core.scanner.ApkScannerStub;
+import com.apkscanner.core.scanner.ApkScannerStub.Status;
 import com.apkscanner.gui.ApkInstaller.InstallButtonStatusListener;
 import com.apkscanner.gui.ToolBar.ButtonSet;
 import com.apkscanner.gui.dialog.AboutDlg;
@@ -341,7 +341,6 @@ public class MainUI extends JFrame
 			}
 		}
 		
-		@SuppressWarnings("unused")
 		private void evtOpenSearchPopup() {
         	SearchDlg dialog = new SearchDlg();
         	dialog.setApkInfo(apkScanner.getApkInfo());

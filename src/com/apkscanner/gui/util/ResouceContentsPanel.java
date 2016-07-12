@@ -61,14 +61,15 @@ import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 import org.fife.ui.rtextarea.SearchResult;
 
-import com.apkscanner.DexLuncher;
 import com.apkscanner.Launcher;
 import com.apkscanner.apkinfo.ApkInfo;
-import com.apkscanner.apkscanner.AxmlToXml;
-import com.apkscanner.core.AaptWrapper;
 import com.apkscanner.gui.MainUI;
-import com.apkscanner.gui.tabpanels.ImageResource.ResourceObject;
+import com.apkscanner.gui.tabpanels.Resources.ResourceObject;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.tool.aapt.AaptNativeWrapper;
+import com.apkscanner.tool.aapt.AaptWrapper;
+import com.apkscanner.tool.aapt.AxmlToXml;
+import com.apkscanner.tool.dex2jar.DexLuncher;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
@@ -618,7 +619,7 @@ public class ResouceContentsPanel extends JPanel{
 			String[] convStrings = null;
 			boolean convAxml2Xml = false;
 			if(currentSelectedObj.attr == ResourceObject.ATTR_AXML) {
-				convStrings = AaptWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {currentSelectedObj.path});
+				convStrings = AaptNativeWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {currentSelectedObj.path});
 				if(axmlVeiwType == VEIW_TYPE_XML) convAxml2Xml = true;
 			} else if("resources.arsc".equals(currentSelectedObj.path)) {
 				convStrings = resourcesWithValue;
@@ -936,7 +937,7 @@ public class ResouceContentsPanel extends JPanel{
     	
 		switch(obj.attr) {
 		case ResourceObject.ATTR_AXML:
-			String[] xmlbuffer = AaptWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {obj.path});
+			String[] xmlbuffer = AaptNativeWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {obj.path});
 			resTypeSep.setVisible(true);
 			resTypeCombobox.setVisible(true);
 			multiLinePrintButton.setVisible(true);

@@ -2,6 +2,7 @@ package com.apkscanner;
 
 import java.awt.EventQueue;
 import java.io.File;
+import java.nio.charset.Charset;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -11,13 +12,13 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import com.apkscanner.apkscanner.ApktoolManager;
-import com.apkscanner.core.AaptWrapper;
-import com.apkscanner.core.AdbWrapper;
 import com.apkscanner.gui.ApkInstaller;
-import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.ApkInstaller.InstallButtonStatusListener;
+import com.apkscanner.gui.MainUI;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.tool.aapt.AaptNativeWrapper;
+import com.apkscanner.tool.adb.AdbWrapper;
+import com.apkscanner.tool.apktool.ApktoolManager;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 
@@ -27,7 +28,7 @@ public class Main
 	static private Options normalOptions = new Options();
 	static private Options targetApkOptions = new Options();
 	static private Options targetPackageOptions = new Options();
-	
+
 	static public void main(final String[] args)
 	{
 		CommandLineParser parser = new DefaultParser();
@@ -39,10 +40,64 @@ public class Main
 			Log.enableConsoleLog(false);
 		}
 		
+
+		/*
+		
+        Map map = Charset.availableCharsets();
+        Set set = map.entrySet();
+        Iterator it = set.iterator();
+        while (it.hasNext()) {
+            Map.Entry entry = (Map.Entry) it.next();
+            String name = (String) entry.getKey();
+            Charset chs = (Charset) entry.getValue();
+            System.out.println(name);
+            Set aliases = chs.aliases();
+            for (Iterator it2 = aliases.iterator(); it2.hasNext();) {
+                System.out.println("\t" + it2.next());
+            }
+        }
+		
+		Map availcs = Charset.availableCharsets();
+		Set keys = availcs.keySet();
+		for(Iterator iter = keys.iterator();iter.hasNext();)
+		{
+			String key = (String) iter.next();
+			System.out.println(key);
+		}
+		
+		FileWriter filewriter;
+		try {
+			filewriter = new FileWriter("out");
+			String encname = filewriter.getEncoding();
+			filewriter.close();
+			System.out.println("default charset is: " + encname);
+			
+			Charset charset1 = Charset.forName("ms949");
+			Charset charset2 = Charset.forName("x-windows-949");
+			System.out.println("charset1 : " + charset1);
+			if(charset1.equals(charset2))
+			{
+				System.out.println("Cp1252/windows-1252 equal");
+			}
+			else 
+			{
+				System.out.println("Cp1252/windows-1252 unequal");
+			}
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		*/
+		
 		Log.i(Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString() + " " + Resource.STR_APP_BUILD_MODE.getString());
 		Log.i("OS : " + System.getProperty("os.name"));
-		
+		Log.i("OS : " + System.getProperty("file.encoding"));
+    	System.out.println("Default Charset=" + Charset.defaultCharset());
+    	System.out.println("file.encoding=" + System.getProperty("file.encoding"));
+
 		createOpstions();
+
+		//String[] test = AaptNativeWrapper.Dump.getBadging("Z:\\Btv_mobile_Erasable.apk", false);
 
 		try {
 			if(args.length > 0) {
@@ -171,7 +226,7 @@ public class Main
 		if(!cmd.hasOption("c") && !cmd.hasOption("cui")) {
 			String tempPath = FileUtil.makeTempPath(apkFilePath.substring(apkFilePath.lastIndexOf(File.separator)));
 			String libPath = tempPath + File.separator + "lib" + File.separator;
-			String packageName = AaptWrapper.Dump.getBadging(apkFilePath, false)[0].replaceAll(".* name='([^']*)'.*", "$1");
+			String packageName = AaptNativeWrapper.Dump.getBadging(apkFilePath, false)[0].replaceAll(".* name='([^']*)'.*", "$1");
 			Log.i("package : " + packageName);
 			new ApkInstaller(true, packageName, apkFilePath, libPath,
 					(boolean)Resource.PROP_CHECK_INSTALLED.getData(false), false, new InstallButtonStatusListener() {

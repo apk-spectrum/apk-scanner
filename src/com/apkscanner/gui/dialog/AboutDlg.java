@@ -8,10 +8,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import com.apkscanner.core.AaptWrapper;
-import com.apkscanner.core.AdbWrapper;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.tool.aapt.AaptWrapper;
+import com.apkscanner.tool.adb.AdbWrapper;
 
 public class AboutDlg /*extends JDialog*/
 {

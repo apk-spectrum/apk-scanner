@@ -7,12 +7,12 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
-import com.apkscanner.core.AdbWrapper;
-import com.apkscanner.core.AdbWrapper.AdbWrapperListener;
-import com.apkscanner.core.AdbWrapper.DeviceStatus;
-import com.apkscanner.core.AdbWrapper.PackageInfo;
 import com.apkscanner.gui.dialog.install.InstallDlg;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.tool.adb.AdbWrapper;
+import com.apkscanner.tool.adb.AdbWrapper.AdbWrapperListener;
+import com.apkscanner.tool.adb.AdbWrapper.DeviceStatus;
+import com.apkscanner.tool.adb.AdbWrapper.PackageInfo;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 

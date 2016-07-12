@@ -32,14 +32,14 @@ import javax.swing.tree.TreeSelectionModel;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
-import com.apkscanner.core.AdbWrapper;
-import com.apkscanner.core.AdbWrapper.DeviceStatus;
-import com.apkscanner.core.AdbWrapper.PackageListObject;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.gui.util.BooleanTableModel;
 import com.apkscanner.gui.util.FilteredTreeModel;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.tool.adb.AdbWrapper;
+import com.apkscanner.tool.adb.AdbWrapper.DeviceStatus;
+import com.apkscanner.tool.adb.AdbWrapper.PackageListObject;
 import com.apkscanner.util.Log;
 
 import java.util.ArrayList;

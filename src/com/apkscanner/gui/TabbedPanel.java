@@ -6,11 +6,11 @@ import javax.swing.JTabbedPane;
 
 import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.apkinfo.ApplicationInfo;
-import com.apkscanner.gui.tabpanels.Activity;
-import com.apkscanner.gui.tabpanels.Library;
-import com.apkscanner.gui.tabpanels.ImageResource;
-import com.apkscanner.gui.tabpanels.Signature;
-import com.apkscanner.gui.tabpanels.Widget;
+import com.apkscanner.gui.tabpanels.Components;
+import com.apkscanner.gui.tabpanels.Libraries;
+import com.apkscanner.gui.tabpanels.Resources;
+import com.apkscanner.gui.tabpanels.Signatures;
+import com.apkscanner.gui.tabpanels.Widgets;
 import com.apkscanner.gui.tabpanels.BasicInfo;
 import com.apkscanner.gui.util.PlasticTabbedPaneUI;
 import com.apkscanner.resource.Resource;
@@ -37,19 +37,19 @@ public class TabbedPanel extends JTabbedPane
         addTab(labels[0], null, new BasicInfo(opening), labels[0] + " (Alt+1)");
         setMnemonicAt(0, KeyEvent.VK_1);
 
-        addTab(labels[1], null, new Widget(), labels[1] + " (Alt+2)");
+        addTab(labels[1], null, new Widgets(), labels[1] + " (Alt+2)");
         setMnemonicAt(1, KeyEvent.VK_2);
 
-        addTab(labels[2], null, new Library(), labels[2] + " (Alt+3)");
+        addTab(labels[2], null, new Libraries(), labels[2] + " (Alt+3)");
         setMnemonicAt(2, KeyEvent.VK_3);
 
-        addTab(labels[3], null, new ImageResource(), labels[3] + " (Alt+4)");
+        addTab(labels[3], null, new Resources(), labels[3] + " (Alt+4)");
         setMnemonicAt(3, KeyEvent.VK_4);
 
-        addTab(labels[4], null, new Activity(), labels[4] + " (Alt+5)");
+        addTab(labels[4], null, new Components(), labels[4] + " (Alt+5)");
         setMnemonicAt(4, KeyEvent.VK_5);
 
-        addTab(labels[5], null, new Signature(), labels[5] + " (Alt+6)");
+        addTab(labels[5], null, new Signatures(), labels[5] + " (Alt+6)");
         setMnemonicAt(5, KeyEvent.VK_6);
 
         setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
@@ -105,7 +105,7 @@ public class TabbedPanel extends JTabbedPane
 				((TabDataObject)(getComponent(0))).setData(apkInfo);
 				setSelectedIndex(0);
 
-				((ImageResource)(getComponent(3))).setExtraData(apkInfo);
+				((Resources)(getComponent(3))).setExtraData(apkInfo);
 			}
 			if(id == -1 || id == 1) setPanelData(1, apkInfo.widgets.length, apkInfo);
 			if(id == -1 || id == 2) setPanelData(2, apkInfo.librarys.length, apkInfo);

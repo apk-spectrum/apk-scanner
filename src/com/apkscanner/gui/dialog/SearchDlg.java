@@ -26,9 +26,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolTip;
-import javax.swing.ToolTipManager;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -38,11 +36,11 @@ import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 
 import com.apkscanner.apkinfo.ApkInfo;
-import com.apkscanner.apkscanner.AxmlToXml;
-import com.apkscanner.core.AaptWrapper;
-import com.apkscanner.gui.tabpanels.ImageResource;
+import com.apkscanner.gui.tabpanels.Resources;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.test.PopupMessageExample.PopupMessageBuilder;
+import com.apkscanner.tool.aapt.AaptNativeWrapper;
+import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.util.Log;
 
 public class SearchDlg extends JDialog {
@@ -141,7 +139,7 @@ public class SearchDlg extends JDialog {
 		            // your valueChanged overridden method 
 		        	Log.d("click : " + row + "  file : " +(data.get(row)).path + "   line : " + (data.get(row)).line);
 		        	//ImageResource.setTreeFocus((data.get(row)).path, (data.get(row)).line);		        	
-		        	ImageResource.TreeFocusChanger changer = ImageResource.getTreeFocuschanger();
+		        	Resources.TreeFocusChanger changer = Resources.getTreeFocuschanger();
 		        	if(changer!=null) {
 		        		changer.setTreeFocus((data.get(row)).path, (data.get(row)).line, name.getText());
 		        		
@@ -208,7 +206,7 @@ public class SearchDlg extends JDialog {
 
 					Log.d(hoverFilePath);
 					
-					String[] xmlbuffer = AaptWrapper.Dump.getXmltree(apkinfo.filePath,
+					String[] xmlbuffer = AaptNativeWrapper.Dump.getXmltree(apkinfo.filePath,
 							new String[] { hoverFilePath });
 					AxmlToXml a2x = new AxmlToXml(xmlbuffer, apkinfo.resourcesWithValue);
 					// StringBuilder sb = new StringBuilder();
@@ -307,7 +305,7 @@ public class SearchDlg extends JDialog {
 //						StringBuilder sb = new StringBuilder();
 //						for(String s: xmlbuffer) sb.append(s+"\n");
 						
-						String[] xmlbuffer = AaptWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {filelist[i]});
+						String[] xmlbuffer = AaptNativeWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {filelist[i]});
 						AxmlToXml a2x = new AxmlToXml(xmlbuffer, apkinfo.resourcesWithValue);
 						//StringBuilder sb = new StringBuilder();
 						//for(String s: xmlbuffer) sb.append(s+"\n");

@@ -3,9 +3,9 @@ package com.apkscanner.gui.dialog.install;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-import com.apkscanner.core.AdbWrapper;
-import com.apkscanner.core.AdbWrapper.DeviceStatus;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.tool.adb.AdbWrapper;
+import com.apkscanner.tool.adb.AdbWrapper.DeviceStatus;
 
 import java.awt.*;
 import java.awt.event.*;
