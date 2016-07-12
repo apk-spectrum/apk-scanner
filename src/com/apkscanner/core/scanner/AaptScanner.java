@@ -7,7 +7,6 @@ import com.apkscanner.Launcher;
 import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.apkinfo.PermissionInfo;
 import com.apkscanner.apkinfo.ResourceInfo;
-import com.apkscanner.core.EstimatedTimeEnRoute;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AaptXmlTreeNode;

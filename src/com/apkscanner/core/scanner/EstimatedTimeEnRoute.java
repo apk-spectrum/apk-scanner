@@ -1,4 +1,4 @@
-package com.apkscanner.core;
+package com.apkscanner.core.scanner;
 
 import java.io.File;
 

@@ -27,7 +27,6 @@ import com.apkscanner.apkinfo.UsesFeatureInfo;
 import com.apkscanner.apkinfo.UsesLibraryInfo;
 import com.apkscanner.apkinfo.UsesPermissionInfo;
 import com.apkscanner.apkinfo.WidgetInfo;
-import com.apkscanner.core.PermissionManager;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AaptXmlTreeNode;
