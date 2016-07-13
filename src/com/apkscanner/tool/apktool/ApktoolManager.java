@@ -159,7 +159,7 @@ public class ApktoolManager extends ApkScannerStub
 			if(isSolve) {
 				XmlToMyApkinfo();
 				
-				mApkInfo.images = FileUtil.findFiles(new File(mApkInfo.tempWorkPath + File.separator + "res"), ".png", ".*drawable.*").toArray(new String[0]);
+				mApkInfo.resources = FileUtil.findFiles(new File(mApkInfo.tempWorkPath + File.separator + "res"), ".png", ".*drawable.*").toArray(new String[0]);
 				mApkInfo.librarys = FileUtil.findFiles(new File(mApkInfo.tempWorkPath + File.separator + "lib"), ".so", null).toArray(new String[0]);
 	
 				solveCert(mApkInfo.tempWorkPath + File.separator + "original" + File.separator + "META-INF" + File.separator);

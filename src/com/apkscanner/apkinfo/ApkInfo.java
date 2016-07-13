@@ -28,7 +28,7 @@ public class ApkInfo
 	public ManifestInfo manifest = new ManifestInfo();
 	
 	public WidgetInfo[] widgets = null;
-	public String[] images = null;
+	public String[] resources = null;
 	public String[] xmls = null;
 	public String[] librarys = null;
 	public String[] certificates = null;

@@ -120,7 +120,7 @@ public class TabbedPanel extends JTabbedPane
 				setPanelData(4, cnt, apkInfo);
 			}
 			if(id == -1 || id == 5) setPanelData(5, (apkInfo.certificates != null) ? apkInfo.certificates.length : 0, apkInfo);
-			if(id == -1 || id == 3) setPanelData(3, apkInfo.images.length, apkInfo);
+			if(id == -1 || id == 3) setPanelData(3, apkInfo.resources.length, apkInfo);
 		} else {
 			for(int i = 1; i < 6; i++) {
 				if(id == -1 || id == i) setPanelData(i, 0, null);

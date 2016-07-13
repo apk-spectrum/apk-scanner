@@ -292,7 +292,7 @@ public class SearchDlg extends JDialog {
 			{	
 				String findStr =name.getText();
 	    	    
-			    String[] filelist = apkinfo.images;
+			    String[] filelist = apkinfo.resources;
 			    String temp = new String();
 			    
 			    data.clear();

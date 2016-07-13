@@ -1042,7 +1042,7 @@ public class Resources extends JPanel implements TabDataObject {
 		this.apkFilePath = apkInfo.filePath;
 		this.tempWorkPath = apkInfo.tempWorkPath;
 
-		nameList = apkInfo.images;
+		nameList = apkInfo.resources;
 		contentPanel.setData(apkInfo);
 		setTreeForm(false);
 	}

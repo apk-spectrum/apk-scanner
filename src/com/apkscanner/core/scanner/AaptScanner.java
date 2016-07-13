@@ -60,6 +60,9 @@ public class AaptScanner extends ApkScannerStub
 		final Object SignSync = new Object();
 		final Object PermSync = new Object();
 
+		Log.i("I: getDump AndroidManifest...");
+		androidManifest = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath, new String[] { "AndroidManifest.xml" });
+		
 		synchronized(resouresSync) {
 			new Thread(new Runnable() {
 				public void run()
@@ -98,8 +101,6 @@ public class AaptScanner extends ApkScannerStub
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
-						Log.i("I: getDump AndroidManifest...");
-						androidManifest = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath, new String[] { "AndroidManifest.xml" });
 	
 						Log.i("I: createAaptXmlTree...");
 						manifestPath = new AaptXmlTreePath();
@@ -132,6 +133,15 @@ public class AaptScanner extends ApkScannerStub
 				        apkInfo.certificates = solveCert();
 						stateChanged(Status.CERT_COMPLETED);
 						Log.i("read signatures completed...");
+						SignSync.notify();
+						
+						Log.i("I: read Imanges list...");
+				        apkInfo.resources = ZipFileUtil.findFiles(apkInfo.filePath, null, null);
+				        stateChanged(Status.IMAGE_COMPLETED);
+				        
+						Log.i("I: read lib list...");
+				        apkInfo.librarys = ZipFileUtil.findFiles(apkInfo.filePath, ".so", null);
+				        stateChanged(Status.LIB_COMPLETED);
 					}
 				}
 			}).start();
@@ -258,24 +268,6 @@ public class AaptScanner extends ApkScannerStub
 		        	statusListener.OnSuccess();
 		        	statusListener.OnComplete();
 		        }
-			}
-		}).start();
-		
-		new Thread(new Runnable() {
-			public void run()
-			{
-				Log.i("I: read Imanges list...");
-		        apkInfo.images = ZipFileUtil.findFiles(apkInfo.filePath, null, null);
-		        stateChanged(Status.IMAGE_COMPLETED);
-			}
-		}).start();
-		
-		new Thread(new Runnable() {
-			public void run()
-			{
-				Log.i("I: read lib list...");
-		        apkInfo.librarys = ZipFileUtil.findFiles(apkInfo.filePath, ".so", null);
-		        stateChanged(Status.LIB_COMPLETED);
 			}
 		}).start();
 	}
