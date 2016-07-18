@@ -18,53 +18,50 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class MyXPath {
+public class XmlPath {
 	private Document document = null;
 	private XPath xpath = null;
 	private Object objNode = null;
 	private QName QType = null;
 	
-	public MyXPath(MyXPath clone) {
+	public XmlPath(XmlPath clone) {
 		document = clone.document;
 		xpath = clone.xpath;
 		objNode = clone.objNode;
 		QType = clone.QType;
 	}
 	
-	public MyXPath(String xmlPath) {
+	public XmlPath(String xmlPath) {
 		try {
 			InputSource is = new InputSource(new FileReader(xmlPath));
 			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
 			xpath = XPathFactory.newInstance().newXPath();
 		} catch (SAXException | IOException | ParserConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			document = null;
 			xpath = null;
 		}
 	}
 	
-	public MyXPath(InputStream xml) {
+	public XmlPath(InputStream xml) {
 		try {
-			//InputSource is = ;
 			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xml);
 			xpath = XPathFactory.newInstance().newXPath();
 		} catch (SAXException | IOException | ParserConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			document = null;
 			xpath = null;
 		}
 	}
 
-	public MyXPath(Node node) {
+	public XmlPath(Node node) {
 		if(node != null) {
 			objNode = node;
 			QType = XPathConstants.NODE;
 		}
 	}
 
-	public MyXPath(NodeList node) {
+	public XmlPath(NodeList node) {
 		if(node != null) {
 			objNode = node;
 			QType = XPathConstants.NODESET;
@@ -95,7 +92,7 @@ public class MyXPath {
 		return (Node)(QType == XPathConstants.NODE ? objNode : null);
 	}
 	
-	public MyXPath getNode(String expression) {
+	public XmlPath getNode(String expression) {
 		evaluate(expression, XPathConstants.NODE);
 		return this; 
 	}
@@ -104,7 +101,7 @@ public class MyXPath {
 		return (NodeList)(QType == XPathConstants.NODESET ? objNode : null);
 	}
 	
-	public MyXPath getNodeList(String expression) {
+	public XmlPath getNodeList(String expression) {
 		evaluate(expression, XPathConstants.NODESET);
 		return this;
 	}
@@ -166,31 +163,31 @@ public class MyXPath {
 		return (QType == XPathConstants.NODESET ? ((NodeList)objNode).getLength() : 0);
 	}
 	
-	public MyXPath getParentNode() {
+	public XmlPath getParentNode() {
 		Node parent = null;
 		if(getNode() != null)
 			parent = getNode().getParentNode();
-		return new MyXPath(parent);
+		return new XmlPath(parent);
 	}
 	
-	public MyXPath getParentNode(int idx) {
+	public XmlPath getParentNode(int idx) {
 		Node parent = null;
 		if(getNodeList() != null && getNodeList().item(idx) != null) 
 			parent = getNodeList().item(idx).getParentNode();
-		return new MyXPath(parent);
+		return new XmlPath(parent);
 	}
 	
-	public MyXPath getChildNodes() {
+	public XmlPath getChildNodes() {
 		NodeList child = null;
 		if(getNode() != null)
 			child = getNode().getChildNodes();
-		return new MyXPath(child);
+		return new XmlPath(child);
 	}
 	
-	public MyXPath getChildNodes(int idx) {
+	public XmlPath getChildNodes(int idx) {
 		NodeList child = null;
 		if(getNodeList() != null && getNodeList().item(idx) != null) 
 			child = getNodeList().item(idx).getChildNodes();
-		return new MyXPath(child);
+		return new XmlPath(child);
 	}
 }

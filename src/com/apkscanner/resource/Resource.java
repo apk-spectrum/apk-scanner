@@ -17,7 +17,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import com.apkscanner.gui.util.ImageScaler;
-import com.apkscanner.util.MyXPath;
+import com.apkscanner.util.XmlPath;
 
 public enum Resource
 {
@@ -314,39 +314,39 @@ public enum Resource
 
 	private static JSONObject property = null;
 	private static String lang = null;
-	private static MyXPath[] stringXmlPath = null;
+	private static XmlPath[] stringXmlPath = null;
 
 	public static void setLanguage(String l) { if(lang != l) makeStringXmlPath(l); lang = l; }
 	public static String getLanguage() { return lang; }
 	
 	private static void makeStringXmlPath(String lang)
 	{
-		ArrayList<MyXPath> xmlList = new ArrayList<MyXPath>();
+		ArrayList<XmlPath> xmlList = new ArrayList<XmlPath>();
 
 		String value_path = getUTF8Path() + File.separator + "data" + File.separator;
 		if(lang != null) {
 			String ext_lang_value_path = value_path + "strings-" + lang + ".xml";
 			if((new File(ext_lang_value_path)).exists()) {
-				xmlList.add(new MyXPath(ext_lang_value_path));
+				xmlList.add(new XmlPath(ext_lang_value_path));
 			}
 
 			InputStream xml = Resource.class.getResourceAsStream("/values/strings-" + lang + ".xml");
 			if(xml != null) {
-				xmlList.add(new MyXPath(xml));
+				xmlList.add(new XmlPath(xml));
 			}
 		}
 		
 		String ext_lang_value_path = value_path + "strings.xml";
 		if((new File(ext_lang_value_path)).exists()) {
-			xmlList.add(new MyXPath(ext_lang_value_path));
+			xmlList.add(new XmlPath(ext_lang_value_path));
 		}
 		
 		InputStream xml = Resource.class.getResourceAsStream("/values/strings.xml");
 		if(xml != null) {
-			xmlList.add(new MyXPath(xml));
+			xmlList.add(new XmlPath(xml));
 		}
 
-		stringXmlPath = xmlList.toArray(new MyXPath[0]);
+		stringXmlPath = xmlList.toArray(new XmlPath[0]);
 	}
 
 	private Resource(Type type, String value)
@@ -415,7 +415,7 @@ public enum Resource
 			makeStringXmlPath(lang);
 		}
 
-		for(MyXPath xPath: stringXmlPath) {
+		for(XmlPath xPath: stringXmlPath) {
 			value = xPath.getNode("/resources/string[@name='" + id + "']").getTextContent();
 			if(value != null) break;
 		}

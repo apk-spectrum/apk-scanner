@@ -48,7 +48,7 @@ import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
-import com.apkscanner.util.MyXPath;
+import com.apkscanner.util.XmlPath;
 import com.apkscanner.util.FileUtil.FSStyle;
 
 public class BasicInfo extends JComponent implements HyperlinkClickListener, TabDataObject
@@ -856,7 +856,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		
 		StringBuilder info = new StringBuilder();
 		InputStream xml = Resource.class.getResourceAsStream(Resource.STR_SDK_INFO_FILE_PATH.getString());
-		MyXPath xpath = new MyXPath(xml);
+		XmlPath xpath = new XmlPath(xml);
 		xpath.getNode("/resources/sdk-info[@apiLevel='" + sdkVer + "']");
 
 		Dimension size = null;

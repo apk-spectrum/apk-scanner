@@ -7,7 +7,7 @@ import java.util.Stack;
 
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
-import com.apkscanner.util.MyXPath;
+import com.apkscanner.util.XmlPath;
 
 import android.util.TypedValue;
 
@@ -17,7 +17,7 @@ public class AaptXmlTreePath
 	private AaptXmlTreeNode[] curNodes = null;
 	private String namespace = null;
 	
-	private MyXPath attrIdPath = null;
+	private XmlPath attrIdPath = null;
 
 	public AaptXmlTreePath()
 	{
@@ -52,7 +52,7 @@ public class AaptXmlTreePath
 							namespace = xmlTree[0].replaceAll("N: (.*)=http://schemas.android.com/apk/res/android", "$1");
 							//Log.i("namespace : " + namespace);
 						} else {
-							Log.d("Unknown tag : " + s.trim());
+							//Log.d("Unknown tag : " + s.trim());
 						}
 					} else {
 						type = 1;
@@ -242,7 +242,7 @@ public class AaptXmlTreePath
 	{
 		if(attrIdPath == null) {
 			InputStream xml = Resource.class.getResourceAsStream("/values/public.xml");
-			attrIdPath = new MyXPath(xml);
+			attrIdPath = new XmlPath(xml);
 		}
 		String name = attrIdPath.getNode("/resources/public[@id='" + id + "']").getAttributes("name");
 		if(name == null) {

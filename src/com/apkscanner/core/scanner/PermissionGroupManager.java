@@ -8,7 +8,7 @@ import com.apkscanner.apkinfo.PermissionInfo;
 import com.apkscanner.apkinfo.ResourceInfo;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
-import com.apkscanner.util.MyXPath;
+import com.apkscanner.util.XmlPath;
 
 public class PermissionGroupManager
 {
@@ -18,9 +18,9 @@ public class PermissionGroupManager
 	public boolean hasSystemLevel = false;
 	public boolean hasSignatureOrSystemLevel = false;
 
-	private MyXPath xmlPermissions;
-	private MyXPath xmlPermInfoDefault;
-	private MyXPath xmlPermInfoLang;
+	private XmlPath xmlPermissions;
+	private XmlPath xmlPermInfoDefault;
+	private XmlPath xmlPermInfoLang;
 	
 	public PermissionGroupManager(PermissionInfo[] permList)
 	{
@@ -30,10 +30,10 @@ public class PermissionGroupManager
 		//Log.i(getClass().getResource("/values/permissions-info.xml"));
 		//Log.i(getClass().getResource("/values/permissions-info-" + lang + ".xml"));
 
-		xmlPermissions = new MyXPath(getClass().getResourceAsStream("/values/AndroidManifest_SDK23.xml"));
-		xmlPermInfoDefault = new MyXPath(getClass().getResourceAsStream("/values/permissions-info.xml"));
+		xmlPermissions = new XmlPath(getClass().getResourceAsStream("/values/AndroidManifest_SDK23.xml"));
+		xmlPermInfoDefault = new XmlPath(getClass().getResourceAsStream("/values/permissions-info.xml"));
 		if(getClass().getResource("/values/permissions-info-" + lang + ".xml") != null) {
-			xmlPermInfoLang = new MyXPath(getClass().getResourceAsStream("/values/permissions-info-" + lang + ".xml"));
+			xmlPermInfoLang = new XmlPath(getClass().getResourceAsStream("/values/permissions-info-" + lang + ".xml"));
 		}
 		
 		permGroupMap = new HashMap<String, PermissionGroup>();
@@ -95,7 +95,7 @@ public class PermissionGroupManager
 		permGroup.permList = new ArrayList<PermissionInfo>();
 
 		if(xmlPermissions != null) {
-			MyXPath groupXPath = xmlPermissions.getNode("/manifest/permission-group[@name='" +  group + "']");
+			XmlPath groupXPath = xmlPermissions.getNode("/manifest/permission-group[@name='" +  group + "']");
 			if(groupXPath != null) {
 				permGroup.icon = getIconPath(groupXPath.getAttributes("android:icon"));
 				permGroup.label = getInfoString(groupXPath.getAttributes("android:label"));
@@ -123,14 +123,14 @@ public class PermissionGroupManager
 		
 		String result = null;
 		if(xmlPermInfoLang != null) {
-			MyXPath infoXPath = xmlPermInfoLang.getNode("/permission-info/string[@name='" + name + "']");
+			XmlPath infoXPath = xmlPermInfoLang.getNode("/permission-info/string[@name='" + name + "']");
 			if(infoXPath != null) {
 				result = infoXPath.getTextContent();
 			}
 		}
 
 		if(result == null && xmlPermInfoDefault != null) {
-			MyXPath infoXPath = xmlPermInfoDefault.getNode("/permission-info/string[@name='" + name + "']");
+			XmlPath infoXPath = xmlPermInfoDefault.getNode("/permission-info/string[@name='" + name + "']");
 			if(infoXPath != null) {
 				result = infoXPath.getTextContent();
 			}

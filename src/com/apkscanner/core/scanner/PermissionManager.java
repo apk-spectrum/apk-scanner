@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import com.apkscanner.apkinfo.ResourceInfo;
 import com.apkscanner.apkinfo.UsesPermissionInfo;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.MyXPath;
+import com.apkscanner.util.XmlPath;
 
 public class PermissionManager
 {
-	private static MyXPath xmlPermissions = null;
-	private static MyXPath xmlPermInfoDefault = null;
-	private static MyXPath xmlPermInfoLang = null;
+	private static XmlPath xmlPermissions = null;
+	private static XmlPath xmlPermInfoDefault = null;
+	private static XmlPath xmlPermInfoLang = null;
 	
 	public static UsesPermissionInfo getUsesPermissionInfo(String name, String maxSdkVersion)
 	{
@@ -24,7 +24,7 @@ public class PermissionManager
 		loadXmlPath();
 
 		if(xmlPermissions != null) {
-			MyXPath permXPath = xmlPermissions.getNode("/manifest/permission[@name='" + name + "']");
+			XmlPath permXPath = xmlPermissions.getNode("/manifest/permission[@name='" + name + "']");
 			if(permXPath != null) {
 				permInfo.permissionGroup = permXPath.getAttributes("android:permissionGroup");
 				permInfo.labels = getInfoString(permXPath.getAttributes("android:label"));
@@ -48,7 +48,7 @@ public class PermissionManager
 		ArrayList<ResourceInfo> resList = new ArrayList<ResourceInfo>();  
 		
 		if(xmlPermInfoDefault != null) {
-			MyXPath infoXPath = xmlPermInfoDefault.getNode("/permission-info/string[@name='" + name + "']");
+			XmlPath infoXPath = xmlPermInfoDefault.getNode("/permission-info/string[@name='" + name + "']");
 			if(infoXPath != null) {
 				String result = infoXPath.getTextContent();
 				if(result != null) result = result.replaceAll("\"", "");
@@ -57,7 +57,7 @@ public class PermissionManager
 		}
 
 		if(xmlPermInfoLang != null) {
-			MyXPath infoXPath = xmlPermInfoLang.getNode("/permission-info/string[@name='" + name + "']");
+			XmlPath infoXPath = xmlPermInfoLang.getNode("/permission-info/string[@name='" + name + "']");
 			if(infoXPath != null) {
 				String result = infoXPath.getTextContent();
 				if(result != null) result = result.replaceAll("\"", "");
@@ -74,10 +74,10 @@ public class PermissionManager
 		
 		String lang = Resource.getLanguage();
 
-		xmlPermissions = new MyXPath(Resource.class.getResourceAsStream("/values/AndroidManifest_SDK23.xml"));
-		xmlPermInfoDefault = new MyXPath(Resource.class.getResourceAsStream("/values/permissions-info.xml"));
+		xmlPermissions = new XmlPath(Resource.class.getResourceAsStream("/values/AndroidManifest_SDK23.xml"));
+		xmlPermInfoDefault = new XmlPath(Resource.class.getResourceAsStream("/values/permissions-info.xml"));
 		if(Resource.class.getResource("/values/permissions-info-" + lang + ".xml") != null) {
-			xmlPermInfoLang = new MyXPath(Resource.class.getResourceAsStream("/values/permissions-info-" + lang + ".xml"));
+			xmlPermInfoLang = new XmlPath(Resource.class.getResourceAsStream("/values/permissions-info-" + lang + ".xml"));
 		}
 	}
 }

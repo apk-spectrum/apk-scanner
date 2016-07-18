@@ -13,7 +13,7 @@ import com.apkscanner.resource.Resource;
 import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
-import com.apkscanner.util.MyXPath;
+import com.apkscanner.util.XmlPath;
 
 public class ApktoolManager extends ApkScannerStub
 {	
@@ -224,7 +224,7 @@ public class ApktoolManager extends ApkScannerStub
 			YmlToMyApkinfo();
 
 			progress(5,"parsing AndroidManifest....\n");
-			MyXPath xmlAndroidManifest = new MyXPath(mApkInfo.tempWorkPath + File.separator + "AndroidManifest.xml");
+			XmlPath xmlAndroidManifest = new XmlPath(mApkInfo.tempWorkPath + File.separator + "AndroidManifest.xml");
 
 			// package
 			xmlAndroidManifest.getNode("/manifest");
@@ -379,7 +379,7 @@ public class ApktoolManager extends ApkScannerStub
 						maxImgSize = resFile.length();
 					}
 				} else {
-			        result = new MyXPath(resFile.getAbsolutePath()).getNode(query).getTextContent();
+			        result = new XmlPath(resFile.getAbsolutePath()).getNode(query).getTextContent();
 			        if(result != null) break;;
 				}
 			}
@@ -409,7 +409,7 @@ public class ApktoolManager extends ApkScannerStub
 
 				File resFile = new File(resXmlPath + s + File.separator + fileName);
 				if(!resFile.exists()) continue;
-				String value = new MyXPath(resFile.getAbsolutePath()).getNode(query).getTextContent();
+				String value = new XmlPath(resFile.getAbsolutePath()).getNode(query).getTextContent();
 				if(value != null && value.startsWith("@")) {
 					return getMutiLang(value);
 				} else if(value != null) {
@@ -426,14 +426,14 @@ public class ApktoolManager extends ApkScannerStub
 		}
 		
 		@SuppressWarnings("unused")
-		private void getActivityInfo(MyXPath xmlAndroidManifest, String tag) {
+		private void getActivityInfo(XmlPath xmlAndroidManifest, String tag) {
 	        xmlAndroidManifest.getNodeList("//"+tag);
 	        for( int idx=0; idx < xmlAndroidManifest.getLength(); idx++ ){
 	        	String name = xmlAndroidManifest.getAttributes(idx, "android:name");
 	        	String startup = "X";
 	        	String intents = "";
 
-	        	MyXPath intentsNode = new MyXPath(xmlAndroidManifest);
+	        	XmlPath intentsNode = new XmlPath(xmlAndroidManifest);
 	        	intentsNode.getNodeList("//"+tag+"[@name='" + name + "']/intent-filter/action");
 	        	for( int i=0; i < intentsNode.getLength(); i++ ){
 	        		String act = intentsNode.getAttributes(i, "android:name");
@@ -476,7 +476,7 @@ public class ApktoolManager extends ApkScannerStub
 				
 				//Log.i("xmlFile " + xmlFile.getAbsolutePath());
 
-				MyXPath xpath = new MyXPath(xmlFile.getAbsolutePath());
+				XmlPath xpath = new XmlPath(xmlFile.getAbsolutePath());
 				
 				xpath.getNode("//appwidget-provider");
 		        
