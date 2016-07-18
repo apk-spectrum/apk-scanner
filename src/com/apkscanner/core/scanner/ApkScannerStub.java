@@ -2,7 +2,7 @@ package com.apkscanner.core.scanner;
 
 import java.io.File;
 
-import com.apkscanner.apkinfo.ApkInfo;
+import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.util.FileUtil;

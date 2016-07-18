@@ -1,6 +1,6 @@
 package com.apkscanner.tool.aapt;
 
-import com.apkscanner.apkinfo.PermissionInfo;
+import com.apkscanner.data.apkinfo.PermissionInfo;
 
 public class AxmlToXml {
 	

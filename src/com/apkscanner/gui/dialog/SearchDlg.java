@@ -35,7 +35,7 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 
-import com.apkscanner.apkinfo.ApkInfo;
+import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.tabpanels.Resources;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.test.PopupMessageExample.PopupMessageBuilder;

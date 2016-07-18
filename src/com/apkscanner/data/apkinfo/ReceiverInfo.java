@@ -1,6 +1,6 @@
-package com.apkscanner.apkinfo;
+package com.apkscanner.data.apkinfo;
 
-public class ActivityAliasInfo
+public class ReceiverInfo
 {
 	public Boolean enabled =  null;
 	public Boolean exported = null;
@@ -8,8 +8,8 @@ public class ActivityAliasInfo
 	public ResourceInfo[] labels = null; // "string resource"
 	public String name = null; // "string"
 	public String permission = null; // "string"
-	public String targetActivity = null; // "string"
-	
+	public String process = null; // "string"
+
 	public IntentFilterInfo[] intentFilter = null;
 	public MetaDataInfo[] metaData = null;
 	

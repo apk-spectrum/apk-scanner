@@ -4,9 +4,9 @@ import java.io.File;
 import java.util.ArrayList;
 
 import com.apkscanner.Launcher;
-import com.apkscanner.apkinfo.ApkInfo;
-import com.apkscanner.apkinfo.PermissionInfo;
-import com.apkscanner.apkinfo.ResourceInfo;
+import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.data.apkinfo.PermissionInfo;
+import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AaptXmlTreeNode;

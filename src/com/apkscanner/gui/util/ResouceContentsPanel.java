@@ -62,7 +62,7 @@ import org.fife.ui.rtextarea.SearchEngine;
 import org.fife.ui.rtextarea.SearchResult;
 
 import com.apkscanner.Launcher;
-import com.apkscanner.apkinfo.ApkInfo;
+import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.tabpanels.Resources.ResourceObject;
 import com.apkscanner.resource.Resource;

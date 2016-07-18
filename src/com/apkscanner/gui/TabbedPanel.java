@@ -4,13 +4,13 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.JTabbedPane;
 
-import com.apkscanner.apkinfo.ApkInfo;
-import com.apkscanner.apkinfo.ApplicationInfo;
 import com.apkscanner.gui.tabpanels.Components;
 import com.apkscanner.gui.tabpanels.Libraries;
 import com.apkscanner.gui.tabpanels.Resources;
 import com.apkscanner.gui.tabpanels.Signatures;
 import com.apkscanner.gui.tabpanels.Widgets;
+import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.data.apkinfo.ApplicationInfo;
 import com.apkscanner.gui.tabpanels.BasicInfo;
 import com.apkscanner.gui.util.PlasticTabbedPaneUI;
 import com.apkscanner.resource.Resource;

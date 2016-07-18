@@ -1,10 +1,11 @@
-package com.apkscanner.apkinfo;
+package com.apkscanner.data.apkinfo;
 
-public class ReceiverInfo
+public class ServiceInfo
 {
 	public Boolean enabled =  null;
 	public Boolean exported = null;
 	public ResourceInfo[] icons = null; // "drawable resource"
+	public Boolean isolatedProcess = null;
 	public ResourceInfo[] labels = null; // "string resource"
 	public String name = null; // "string"
 	public String permission = null; // "string"

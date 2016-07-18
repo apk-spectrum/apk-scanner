@@ -6,9 +6,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.core.scanner.ApkScannerStub;
 import com.apkscanner.core.scanner.EstimatedTimeEnRoute;
+import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.FileUtil;

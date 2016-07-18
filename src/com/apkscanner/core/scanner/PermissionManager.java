@@ -2,8 +2,8 @@ package com.apkscanner.core.scanner;
 
 import java.util.ArrayList;
 
-import com.apkscanner.apkinfo.ResourceInfo;
-import com.apkscanner.apkinfo.UsesPermissionInfo;
+import com.apkscanner.data.apkinfo.ResourceInfo;
+import com.apkscanner.data.apkinfo.UsesPermissionInfo;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.XmlPath;
 

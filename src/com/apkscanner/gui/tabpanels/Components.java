@@ -20,12 +20,12 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import com.apkscanner.apkinfo.ActivityAliasInfo;
-import com.apkscanner.apkinfo.ActivityInfo;
-import com.apkscanner.apkinfo.ApkInfo;
-import com.apkscanner.apkinfo.ProviderInfo;
-import com.apkscanner.apkinfo.ReceiverInfo;
-import com.apkscanner.apkinfo.ServiceInfo;
+import com.apkscanner.data.apkinfo.ActivityAliasInfo;
+import com.apkscanner.data.apkinfo.ActivityInfo;
+import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.data.apkinfo.ProviderInfo;
+import com.apkscanner.data.apkinfo.ReceiverInfo;
+import com.apkscanner.data.apkinfo.ServiceInfo;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;

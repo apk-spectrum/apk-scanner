@@ -20,10 +20,10 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.apkscanner.Launcher;
-import com.apkscanner.apkinfo.ApkInfo;
 import com.apkscanner.core.scanner.AaptScanner;
 import com.apkscanner.core.scanner.ApkScannerStub;
 import com.apkscanner.core.scanner.ApkScannerStub.Status;
+import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.ApkInstaller.InstallButtonStatusListener;
 import com.apkscanner.gui.ToolBar.ButtonSet;
 import com.apkscanner.gui.dialog.AboutDlg;

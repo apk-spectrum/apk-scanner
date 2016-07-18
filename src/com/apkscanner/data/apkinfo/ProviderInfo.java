@@ -1,18 +1,25 @@
-package com.apkscanner.apkinfo;
+package com.apkscanner.data.apkinfo;
 
-public class ServiceInfo
+public class ProviderInfo
 {
+	public String[] authorities = null; // "list"
 	public Boolean enabled =  null;
 	public Boolean exported = null;
+	public Boolean grantUriPermissions = null;
 	public ResourceInfo[] icons = null; // "drawable resource"
-	public Boolean isolatedProcess = null;
+	public Integer initOrder = null;
 	public ResourceInfo[] labels = null; // "string resource"
+	public Boolean multiprocess = null;
 	public String name = null; // "string"
 	public String permission = null; // "string"
 	public String process = null; // "string"
+	public String readPermission = null; // "string"
+	public Boolean syncable = null;
+	public String writePermission = null; // "string"
 
-	public IntentFilterInfo[] intentFilter = null;
 	public MetaDataInfo[] metaData = null;
+	public GrantUriPermissionInfo[] grantUriPermission = null;
+	public PathPermissionInfo[] pathPermission = null;
 	
 	public Integer featureFlag = 0;
 	
@@ -23,23 +30,6 @@ public class ServiceInfo
 		if(enabled != null) report.append("enabled : " + enabled + "\n");
 		if(exported != null) report.append("exported : " + exported + "\n");
 		if(permission != null) report.append("permission : " + permission + "\n");
-		
-		if(intentFilter != null) {
-			report.append("\nintent-filter count : " + intentFilter.length + "\n");
-			for(IntentFilterInfo info: intentFilter) {
-				report.append("intent-filter : \n");
-				if(info.ation != null) {
-					for(ActionInfo a: info.ation) {
-						report.append("  " + a.name + "\n");
-					}
-				}
-				if(info.category != null) {
-					for(CategoryInfo c: info.category) {
-						report.append("  " + c.name + "\n");
-					}
-				}
-			}
-		}
 		
 		return report.toString();
 	}

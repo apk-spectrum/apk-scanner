@@ -1,4 +1,4 @@
-package com.apkscanner.apkinfo;
+package com.apkscanner.data.apkinfo;
 
 public class CompatibleScreensInfo
 {
