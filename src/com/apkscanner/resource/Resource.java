@@ -293,6 +293,7 @@ public enum Resource
 	PROP_LAST_FILE_OPEN_PATH	(Type.PROP, "last_file_open_path"),
 	PROP_LAST_FILE_SAVE_PATH	(Type.PROP, "last_file_save_path"),
 	PROP_SOVE_LEAD_TIME			(Type.PROP, "solve_lead_time"),
+	PROP_CURRENT_THEME			(Type.PROP, "Current_theme"),
 	
 	LIB_JSON_JAR				(Type.LIB, "json-simple-1.1.1.jar"),
 	LIB_CLI_JAR					(Type.LIB, "commons-cli-1.3.1.jar"),

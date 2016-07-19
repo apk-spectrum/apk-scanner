@@ -22,9 +22,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JCheckBox;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 
 public class SettingDlg extends JDialog implements ActionListener
 {
@@ -36,12 +39,16 @@ public class SettingDlg extends JDialog implements ActionListener
 	private String strframeworkResPath;
 	
 	private String strLanguage;
+	private String strSetTheme;
+	
 	private boolean isSamePackage;
 	
 	JButton savebutton, exitbutton;
     JButton browser1,browser2,browser3;
 	
     JComboBox<String> comboBox;
+    JComboBox<String> themecomboBox;
+    
     JCheckBox chckbxNewCheckBox;
     
     JList<String> jlist;
@@ -82,6 +89,15 @@ public class SettingDlg extends JDialog implements ActionListener
 			Resource.PROP_LANGUAGE.setData(strLanguage);
 		}
 		
+		strSetTheme = (String)Resource.PROP_CURRENT_THEME.getData();
+		
+		
+		if(strSetTheme == null) {
+			strSetTheme = UIManager.getSystemLookAndFeelClassName();			
+			Resource.PROP_CURRENT_THEME.setData(strSetTheme);
+		}
+		
+		
 		isSamePackage = (boolean)Resource.PROP_CHECK_INSTALLED.getData(false);
 		
 		strframeworkResPath = (String)Resource.PROP_FRAMEWORK_RES.getData();
@@ -101,6 +117,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		Resource.PROP_LANGUAGE.setData(strLanguage);
 		Resource.PROP_CHECK_INSTALLED.setData(isSamePackage);
 		Resource.PROP_FRAMEWORK_RES.setData(strframeworkResPath);
+		Resource.PROP_CURRENT_THEME.setData(strSetTheme);	
 	}
 
 	public void makeDialog(Component component) {
@@ -189,15 +206,28 @@ public class SettingDlg extends JDialog implements ActionListener
 	    panel.add(label);
 	    
 	    comboBox = new JComboBox<String>();
-	    comboBox.setBounds(87, 120, 94, 24);
-	    
+	    comboBox.setBounds(87, 120, 94, 24);	    
 	    comboBox.addItem("ko");
-	    comboBox.addItem("en");
-	    
+	    comboBox.addItem("en");	    
 	    comboBox.setSelectedItem(strLanguage);
+	    panel.add(comboBox);
 	    
-	    panel.add(comboBox);	
 	    
+	    JLabel themelabel = new JLabel("Theme");
+	    themelabel.setBounds(200, 120, 60, 25);
+	    panel.add(themelabel);
+	    
+	    themecomboBox = new JComboBox<String>();
+	    themecomboBox.setBounds(250, 120, 200, 24);
+	    
+	    panel.add(themecomboBox);
+	    
+        for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+        	themecomboBox.addItem(info.getClassName());        	
+        }
+        
+        themecomboBox.getModel().setSelectedItem(strSetTheme);
+        
 		return panel;
 	}
 	
@@ -229,8 +259,17 @@ public class SettingDlg extends JDialog implements ActionListener
 			
 			isSamePackage = chckbxNewCheckBox.isSelected();
 			strLanguage = (String)comboBox.getSelectedItem();
-			
+			strSetTheme = (String)themecomboBox.getSelectedItem();
 			saveSettings();
+			
+			try {
+				UIManager.setLookAndFeel(strSetTheme);
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+					| UnsupportedLookAndFeelException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
 			this.dispose();
 		} else if(e.getSource() == exitbutton) {
 			//Log.i("exit");

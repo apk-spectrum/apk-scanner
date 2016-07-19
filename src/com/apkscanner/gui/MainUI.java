@@ -146,7 +146,12 @@ public class MainUI extends JFrame
 	{
 		Log.i("initialize() setLookAndFeel");
 		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			
+			if(Resource.PROP_CURRENT_THEME.getData()==null) {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			} else {
+				UIManager.setLookAndFeel(Resource.PROP_CURRENT_THEME.getData().toString());
+			}
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 				| UnsupportedLookAndFeelException e1) {
 			e1.printStackTrace();
