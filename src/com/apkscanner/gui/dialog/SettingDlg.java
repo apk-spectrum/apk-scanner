@@ -22,9 +22,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JCheckBox;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
@@ -117,7 +119,19 @@ public class SettingDlg extends JDialog implements ActionListener
 		Resource.PROP_LANGUAGE.setData(strLanguage);
 		Resource.PROP_CHECK_INSTALLED.setData(isSamePackage);
 		Resource.PROP_FRAMEWORK_RES.setData(strframeworkResPath);
-		Resource.PROP_CURRENT_THEME.setData(strSetTheme);	
+		
+		if(Resource.PROP_CURRENT_THEME.getData().toString().equals(strSetTheme)==false) {
+			Resource.PROP_CURRENT_THEME.setData(strSetTheme);
+			try {
+				UIManager.setLookAndFeel(strSetTheme);
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+					| UnsupportedLookAndFeelException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			SwingUtilities.updateComponentTreeUI(MainUI.getCurrentParentsFrame());
+			MainUI.getCurrentParentsFrame().pack();
+		}
 	}
 
 	public void makeDialog(Component component) {
