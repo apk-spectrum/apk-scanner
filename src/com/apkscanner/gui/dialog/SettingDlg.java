@@ -130,7 +130,7 @@ public class SettingDlg extends JDialog implements ActionListener
 				e.printStackTrace();
 			}
 			SwingUtilities.updateComponentTreeUI(MainUI.getCurrentParentsFrame());
-			MainUI.getCurrentParentsFrame().pack();
+			MainUI.getCurrentParentsFrame().repaint();
 		}
 	}
 
