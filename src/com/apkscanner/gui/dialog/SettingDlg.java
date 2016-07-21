@@ -3,10 +3,13 @@ package com.apkscanner.gui.dialog;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
@@ -26,6 +29,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.resource.Resource;
@@ -44,6 +48,7 @@ public class SettingDlg extends JDialog implements ActionListener
 	private String strSetTheme;
 	
 	private boolean isSamePackage;
+	private int changed = 0;
 	
 	JButton savebutton, exitbutton;
     JButton browser1,browser2,browser3;
@@ -124,17 +129,16 @@ public class SettingDlg extends JDialog implements ActionListener
 			Resource.PROP_CURRENT_THEME.setData(strSetTheme);
 			try {
 				UIManager.setLookAndFeel(strSetTheme);
+				changed = 1;
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 					| UnsupportedLookAndFeelException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
-			SwingUtilities.updateComponentTreeUI(MainUI.getCurrentParentsFrame());
-			MainUI.getCurrentParentsFrame().repaint();
+			}			
 		}
 	}
 
-	public void makeDialog(Component component) {
+	public int makeDialog(Component component) {
 		this.setTitle(Resource.STR_SETTINGS_TITLE.getString());
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		this.setSize(new Dimension(480,215));
@@ -147,6 +151,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		this.setVisible(true);
 		//readSettingInfoFromFile();
 		//readSettingInfoFromFile();
+		return changed; 
 	}
 	
 	JPanel makeLayoutPanel() {

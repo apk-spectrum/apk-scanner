@@ -514,10 +514,35 @@ public class MainUI extends JFrame
 			}
 		}
 		
+		private void restart() {
+	        
+			String filePath = apkScanner.getApkInfo().filePath;
+			String cmd = new String();			
+			if(System.getProperty("os.name").indexOf("Window") >-1) {
+				cmd += "C:\\Program Files\\APKScanner\\ApkScanner.exe";
+			} else {  //for linux
+				cmd += "/opt/APKScanner/APKScanner.sh";
+			}
+			cmd += " " + filePath;
+			
+			try {
+	              Runtime.getRuntime().exec(cmd.toString());
+	          } catch (IOException e) {
+	              // TODO Auto-generated catch block
+	              e.printStackTrace();
+	          }
+	          System.exit(0);
+	  }
+		
 		private void evtSettings()
 		{
-			(new SettingDlg()).makeDialog(MainUI.this);
-
+			int value = (new SettingDlg()).makeDialog(MainUI.this);
+			
+			//changed theme
+			if(value == 1) {
+				restart();
+			}
+			
 			String lang = (String)Resource.PROP_LANGUAGE.getData();
 			if(lang != null && Resource.getLanguage() != null 
 					&& !Resource.getLanguage().equals(lang)) {
