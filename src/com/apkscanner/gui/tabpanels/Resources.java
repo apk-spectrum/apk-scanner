@@ -58,7 +58,8 @@ import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.ResouceContentsPanel;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
-import com.apkscanner.tool.dex2jar.DexLuncher;
+import com.apkscanner.tool.dex2jar.Dex2JarWrapper;
+import com.apkscanner.tool.jd_gui.JDGuiLauncher;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
@@ -751,20 +752,26 @@ public class Resources extends JPanel implements TabDataObject {
 				resObj.setLoadingState(true);
 
 				tree.repaint();
-				DexLuncher.openDex(resPath, new DexLuncher.DexWrapperListener() {
-					@Override
-					public void OnError() {
-
-					}
-
-					@Override
-					public void OnSuccess() {
+				Dex2JarWrapper.openDex(resPath, new Dex2JarWrapper.DexWrapperListener() {
+					private void resetUI() {
 						resObj.setLoadingState(false);
 
 						Animateimageicon.setImageObserver(null);
 						ImageObserver.setDrawFlag(false);
 						ImageObserver = null;
 						tree.repaint();
+						
+					}
+
+					@Override
+					public void OnError() {
+						resetUI();
+					}
+
+					@Override
+					public void OnSuccess(String jarFilePath) {
+						resetUI();
+						JDGuiLauncher.run(jarFilePath);
 					}
 				});
 			}

@@ -69,7 +69,8 @@ import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AaptWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
-import com.apkscanner.tool.dex2jar.DexLuncher;
+import com.apkscanner.tool.dex2jar.Dex2JarWrapper;
+import com.apkscanner.tool.jd_gui.JDGuiLauncher;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
@@ -859,12 +860,15 @@ public class ResouceContentsPanel extends JPanel{
 			} else if (ButtonSet.JD_GUI.matchActionEvent(e)) {
 				final JButton btn = buttonMap.get(ButtonSet.JD_GUI);
 				btn.setEnabled(false);
-				DexLuncher.openDex(resPath, new DexLuncher.DexWrapperListener() {
+				Dex2JarWrapper.openDex(resPath, new Dex2JarWrapper.DexWrapperListener() {
 					@Override
-					public void OnError() {}
-					@Override
-					public void OnSuccess() {
+					public void OnError() {
 						btn.setEnabled(true);
+					}
+					@Override
+					public void OnSuccess(String jarFilePath) {
+						btn.setEnabled(true);
+						JDGuiLauncher.run(jarFilePath);
 					}
 				});
 			} else if (ButtonSet.APK_SCANNER.matchActionEvent(e)) {

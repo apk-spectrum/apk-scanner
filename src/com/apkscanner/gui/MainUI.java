@@ -34,7 +34,8 @@ import com.apkscanner.gui.dialog.SettingDlg;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.FileDrop;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.ConsolCmd;
+import com.apkscanner.tool.dex2jar.Dex2JarWrapper;
+import com.apkscanner.tool.jd_gui.JDGuiLauncher;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 
@@ -423,42 +424,25 @@ public class MainUI extends JFrame
 		}
 
 		private void evtOpenJDGUI()
-		{			
-			new Thread(new Runnable() {
-				public void run()
-				{
-					ApkInfo apkInfo = apkScanner.getApkInfo();
-					String apkfilePath=apkInfo.filePath;
-					String jarfileName = apkfilePath.substring((apkfilePath.lastIndexOf(File.separator))+1); 
-					jarfileName = jarfileName.substring(0,(jarfileName.lastIndexOf(".")))+".jar";
-								
-					String[] cmdLog = null;
-					
-					toolBar.setEnabledAt(ButtonSet.OPEN_CODE, false);
-					
-					Log.i("Start DEX2JAR");
-					
-					if(System.getProperty("os.name").indexOf("Window") >-1) {
-						cmdLog =ConsolCmd.exc(new String[] {Resource.BIN_DEX2JAR_WIN.getPath(), 
-								apkfilePath, "-o", apkInfo.tempWorkPath+File.separator+jarfileName});
-					} else {  //for linux
-						cmdLog =ConsolCmd.exc(new String[] {"sh", Resource.BIN_DEX2JAR_LNX.getPath(), 
-								apkfilePath, "-o", apkInfo.tempWorkPath+File.separator+jarfileName});				
-					}
-					//open JD GUI
-					for( int i=0 ; i<cmdLog.length; i++)
-					{
-						Log.i("DEX2JAR Log : "+ cmdLog[i]);	
-					}
-					
-					Log.i("End DEX2JAR");
-					
+		{
+			ApkInfo apkInfo = apkScanner.getApkInfo();
+			if(apkInfo == null) {
+				Log.e("evtOpenJDGUI() apkInfo is null");
+				return;
+			}
+
+			toolBar.setEnabledAt(ButtonSet.OPEN_CODE, false);
+			Dex2JarWrapper.openDex(apkInfo.filePath, new Dex2JarWrapper.DexWrapperListener() {
+				@Override
+				public void OnError() {
 					toolBar.setEnabledAt(ButtonSet.OPEN_CODE, true);
-					
-					cmdLog =ConsolCmd.exc(new String[] {"java", "-jar", Resource.BIN_JDGUI.getPath(), 
-					apkInfo.tempWorkPath+File.separator+jarfileName});
 				}
-			}).start();
+				@Override
+				public void OnSuccess(String jarFilePath) {
+					toolBar.setEnabledAt(ButtonSet.OPEN_CODE, true);
+					JDGuiLauncher.run(jarFilePath);
+				}
+			});
 		}
 		
 		private void evtShowManifest()
@@ -528,7 +512,6 @@ public class MainUI extends JFrame
 			try {
 	              Runtime.getRuntime().exec(cmd.toString());
 	          } catch (IOException e) {
-	              // TODO Auto-generated catch block
 	              e.printStackTrace();
 	          }
 	          System.exit(0);
