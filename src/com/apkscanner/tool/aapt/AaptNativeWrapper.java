@@ -80,31 +80,7 @@ public class AaptNativeWrapper {
 			return run(cmd.toArray(new String[0]));
 		}
 	}
-	
-	public static class ResourceTable {
-		private Object resTable;
-		public ResourceTable(String apkFilePath)
-		{
-			resTable = getResTable(apkFilePath);
-		}
-		
-		public void release() {
-			if(resTable != null) {
-				realeaseResTable(resTable);
-				resTable = null;
-			}
-		}
-		
-		public String getResourceName(int resId) {
-			return AaptNativeWrapper.getResourceName(resTable, resId);
-		}
-	}
-
 	private native static String[] run(String[] params);
-	
-	public native static Object getResTable(String apkFilePath);
-	public native static void realeaseResTable(Object resTable);
-	public native static String getResourceName(Object resTable, int resId);
 
 	static {
 		if (System.getProperty("os.name").indexOf("Linux") > -1) {

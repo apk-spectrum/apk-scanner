@@ -79,7 +79,9 @@ aaptHostLdLibs_darwin := -lz
 # ==========================================================
 # APK Scanner variables
 # ==========================================================
-apkscannerJni := com_apkscanner_tool_aapt_AaptNativeWrapper.cpp \
+apkscannerJni := \
+    com_apkscanner_tool_aapt_AaptNativeWrapper.cpp \
+    com_apkscanner_core_scanner_AaptNativeScanner.cpp \
     JniCharacterSet.cpp
 
 outputRedirection := OutLineBuffer.cpp

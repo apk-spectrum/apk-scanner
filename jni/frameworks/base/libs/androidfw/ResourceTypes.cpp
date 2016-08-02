@@ -3964,6 +3964,284 @@ ssize_t ResTable::getResource(uint32_t resID, Res_value* outValue, bool mayBeBag
     return entry.package->header->index;
 }
 
+//#ifdef APKSCANNER_JNI
+ssize_t ResTable::getResource(uint32_t resID, Vector<String8> *outValues,
+    Vector<String8> *outConfigs, resource_name *outName) const
+{
+    if (mError != NO_ERROR) {
+        return mError;
+    }
+
+    const ssize_t p = getResourcePackageIndex(resID);
+    const int t = Res_GETTYPE(resID);
+    const int e = Res_GETENTRY(resID);
+
+    if (p < 0) {
+        if (Res_GETPACKAGE(resID)+1 == 0) {
+            ALOGW("No package identifier when getting value for resource number 0x%08x", resID);
+        } else {
+            ALOGW("No known package when getting value for resource number 0x%08x", resID);
+        }
+        return BAD_INDEX;
+    }
+    if (t < 0) {
+        ALOGW("No type identifier when getting value for resource number 0x%08x", resID);
+        return BAD_INDEX;
+    }
+
+    const PackageGroup* const pg = mPackageGroups[p];
+    if (pg == NULL) {
+        ALOGW("Bad identifier when getting value for resource number 0x%08x", resID);
+        return BAD_INDEX;
+    }
+    int packageId = pg->id;
+
+    const TypeList& typeList = pg->types[t];
+    if (typeList.isEmpty()) {
+        return BAD_TYPE;
+    }
+    const Type* typeConfigs = typeList[0];
+    const size_t NTC = typeConfigs->configs.size();
+
+    for (size_t configIndex=0; configIndex<NTC; configIndex++) {
+        const ResTable_type* type = typeConfigs->configs[configIndex];
+        if ((((uint64_t)type)&0x3) != 0) {
+            printf("      NON-INTEGER ResTable_type ADDRESS: %p\n", type);
+            continue;
+        }
+
+        // Always copy the config, as fields get added and we need to
+        // set the defaults.
+        ResTable_config thisConfig;
+        thisConfig.copyFromDtoH(type->config);
+
+        String8 configStr = thisConfig.toString();
+        //printf("      config %s:\n", configStr.size() > 0
+        //        ? configStr.string() : "(default)");
+        //size_t entryCount = dtohl(type->entryCount);
+        uint32_t entriesStart = dtohl(type->entriesStart);
+        if ((entriesStart&0x3) != 0) {
+            printf("      NON-INTEGER ResTable_type entriesStart OFFSET: 0x%x\n", entriesStart);
+            continue;
+        }
+        uint32_t typeSize = dtohl(type->header.size);
+        if ((typeSize&0x3) != 0) {
+            printf("      NON-INTEGER ResTable_type header.size: 0x%x\n", typeSize);
+            continue;
+        }
+        
+        const uint32_t* const eindex = (const uint32_t*)
+            (((const uint8_t*)type) + dtohs(type->header.headerSize));
+
+        uint32_t thisOffset = dtohl(eindex[e]);
+        if (thisOffset == ResTable_type::NO_ENTRY) {
+            continue;
+        }
+        if (packageId == 0) {
+            pg->dynamicRefTable.lookupResourceId(&resID);
+        }
+        if(outName != NULL) {
+            resource_name &resName = *outName;
+            if (this->getResourceName(resID, true, &resName)) {
+                String8 type8;
+                String8 name8;
+                if (resName.type8 != NULL) {
+                    type8 = String8(resName.type8, resName.typeLen);
+                } else {
+                    type8 = String8(resName.type, resName.typeLen);
+                }
+                if (resName.name8 != NULL) {
+                    name8 = String8(resName.name8, resName.nameLen);
+                } else {
+                    name8 = String8(resName.name, resName.nameLen);
+                }
+                //printf("      config %s:\n", configStr.size() > 0
+                //        ? configStr.string() : "(default)");
+                //printf("        resource 0x%08x %s:%s/%s: ", resID,
+                //        String8(String16(resName.package,resName.packageLen)).string(),
+                //        type8.string(), name8.string());
+            } else {
+                printf("        INVALID RESOURCE 0x%08x: ", resID);
+            }
+        }
+        if ((thisOffset&0x3) != 0) {
+            printf("NON-INTEGER OFFSET: 0x%x\n", thisOffset);
+            continue;
+        }
+        if ((thisOffset+sizeof(ResTable_entry)) > typeSize) {
+            printf("OFFSET OUT OF BOUNDS: 0x%x+0x%x (size is 0x%x)\n",
+                   entriesStart, thisOffset, typeSize);
+            continue;
+        }
+
+        const ResTable_entry* ent = (const ResTable_entry*)
+            (((const uint8_t*)type) + entriesStart + thisOffset);
+        if (((entriesStart + thisOffset)&0x3) != 0) {
+            printf("NON-INTEGER ResTable_entry OFFSET: 0x%x\n",
+                 (entriesStart + thisOffset));
+            continue;
+        }
+
+        uintptr_t esize = dtohs(ent->size);
+        if ((esize&0x3) != 0) {
+            printf("NON-INTEGER ResTable_entry SIZE: %p\n", (void *)esize);
+            continue;
+        }
+        if ((thisOffset+esize) > typeSize) {
+            printf("ResTable_entry OUT OF BOUNDS: 0x%x+0x%x+%p (size is 0x%x)\n",
+                   entriesStart, thisOffset, (void *)esize, typeSize);
+            continue;
+        }
+
+        const Res_value* valuePtr = NULL;
+        const ResTable_map_entry* bagPtr = NULL;
+        Res_value value;
+        if ((dtohs(ent->flags)&ResTable_entry::FLAG_COMPLEX) != 0) {
+            //printf("<bag>");
+            bagPtr = (const ResTable_map_entry*)ent;
+        } else {
+            valuePtr = (const Res_value*)
+                (((const uint8_t*)ent) + esize);
+            value.copyFrom_dtoh(*valuePtr);
+            //printf("t=0x%02x d=0x%08x (s=0x%04x r=0x%02x)",
+            //       (int)value.dataType, (int)value.data,
+            //       (int)value.size, (int)value.res0);
+        }
+
+        if ((dtohs(ent->flags)&ResTable_entry::FLAG_PUBLIC) != 0) {
+            //printf(" (PUBLIC)");
+        }
+        //printf("\n");
+
+        if (valuePtr != NULL) {
+            //printf("          ");
+            //print_value(typeConfigs->package, value);
+
+            outValues->add(valueToString8(typeConfigs->package, value));
+            if(outConfigs != NULL) {
+                outConfigs->add(configStr);
+            }
+        } else if (bagPtr != NULL) {
+            const int N = dtohl(bagPtr->count);
+            const uint8_t* baseMapPtr = (const uint8_t*)ent;
+            size_t mapOffset = esize;
+            const ResTable_map* mapPtr = (ResTable_map*)(baseMapPtr+mapOffset);
+            const uint32_t parent = dtohl(bagPtr->parent.ident);
+            uint32_t resolvedParent = parent;
+            if (Res_GETPACKAGE(resolvedParent) + 1 == 0) {
+                status_t err = pg->dynamicRefTable.lookupResourceId(&resolvedParent);
+                if (err != NO_ERROR) {
+                    resolvedParent = 0;
+                }
+            }
+            printf("          Parent=0x%08x(Resolved=0x%08x), Count=%d\n",
+                    parent, resolvedParent, N);
+            for (int i=0; i<N && mapOffset < (typeSize-sizeof(ResTable_map)); i++) {
+                printf("          #%i (Key=0x%08x): ",
+                    i, dtohl(mapPtr->name.ident));
+                value.copyFrom_dtoh(mapPtr->value);
+                print_value(typeConfigs->package, value);
+                const size_t size = dtohs(mapPtr->value.size);
+                mapOffset += size + sizeof(*mapPtr)-sizeof(mapPtr->value);
+                mapPtr = (ResTable_map*)(baseMapPtr+mapOffset);
+            }
+        }
+
+    }
+
+    return NO_ERROR;
+}
+
+String8 complexToString(uint32_t complex, bool isFraction)
+{
+    String8 ret;
+    const float MANTISSA_MULT =
+        1.0f / (1<<Res_value::COMPLEX_MANTISSA_SHIFT);
+    const float RADIX_MULTS[] = {
+        1.0f*MANTISSA_MULT, 1.0f/(1<<7)*MANTISSA_MULT,
+        1.0f/(1<<15)*MANTISSA_MULT, 1.0f/(1<<23)*MANTISSA_MULT
+    };
+
+    float value = (complex&(Res_value::COMPLEX_MANTISSA_MASK
+                   <<Res_value::COMPLEX_MANTISSA_SHIFT))
+            * RADIX_MULTS[(complex>>Res_value::COMPLEX_RADIX_SHIFT)
+                            & Res_value::COMPLEX_RADIX_MASK];
+    ret = String8::format("%f", value);
+
+    if (!isFraction) {
+        switch ((complex>>Res_value::COMPLEX_UNIT_SHIFT)&Res_value::COMPLEX_UNIT_MASK) {
+            case Res_value::COMPLEX_UNIT_PX: ret += "px"; break;
+            case Res_value::COMPLEX_UNIT_DIP:ret += "dp"; break;
+            case Res_value::COMPLEX_UNIT_SP: ret += "sp"; break;
+            case Res_value::COMPLEX_UNIT_PT: ret += "pt"; break;
+            case Res_value::COMPLEX_UNIT_IN: ret += "in"; break;
+            case Res_value::COMPLEX_UNIT_MM: ret += "mm"; break;
+            default: ret += " (unknown unit)"; break;
+        }
+    } else {
+        switch ((complex>>Res_value::COMPLEX_UNIT_SHIFT)&Res_value::COMPLEX_UNIT_MASK) {
+            case Res_value::COMPLEX_UNIT_FRACTION: ret += "%%"; break;
+            case Res_value::COMPLEX_UNIT_FRACTION_PARENT: ret += "%%p"; break;
+            default: ret += " (unknown unit)"; break;
+        }
+    }
+    return ret;
+}
+
+String8 ResTable::valueToString8(const Package* pkg, const Res_value& value) const
+{
+    String8 strval;
+    if (value.dataType == Res_value::TYPE_NULL) {
+        if (value.data == Res_value::DATA_NULL_UNDEFINED) {
+            strval = "(null)";
+        } else if (value.data == Res_value::DATA_NULL_EMPTY) {
+            strval = "(null empty)";
+        } else {
+            // This should never happen.
+            strval = String8::format("(null) 0x%08x", value.data);
+        }
+    } else if (value.dataType == Res_value::TYPE_REFERENCE) {
+        strval = String8::format("0x%08x", value.data);
+    } else if (value.dataType == Res_value::TYPE_DYNAMIC_REFERENCE) {
+        strval = String8::format("0x%08x", value.data);
+    } else if (value.dataType == Res_value::TYPE_ATTRIBUTE) {
+        strval = String8::format("0x%08x", value.data);
+    } else if (value.dataType == Res_value::TYPE_STRING) {
+        size_t len;
+        const char* str8 = pkg->header->values.string8At(
+                value.data, &len);
+        if (str8 != NULL) {
+            strval = normalizeForOutput(str8);
+        } else {
+            const char16_t* str16 = pkg->header->values.stringAt(
+                    value.data, &len);
+            if (str16 != NULL) {
+                strval = normalizeForOutput(String8(str16, len).string());
+            } else {
+                strval = "";
+            }
+        }
+    } else if (value.dataType == Res_value::TYPE_FLOAT) {
+        strval = String8::format("%g", *(const float*)&value.data);
+    } else if (value.dataType == Res_value::TYPE_DIMENSION) {
+        strval = complexToString(value.data, false);
+    } else if (value.dataType == Res_value::TYPE_FRACTION) {
+        strval = complexToString(value.data, true);
+    } else if (value.dataType >= Res_value::TYPE_FIRST_COLOR_INT
+            || value.dataType <= Res_value::TYPE_LAST_COLOR_INT) {
+        strval = String8::format("#%08x", value.data);
+    } else if (value.dataType == Res_value::TYPE_INT_BOOLEAN) {
+        strval = String8::format("%s", value.data ? "true" : "false");
+    } else if (value.dataType >= Res_value::TYPE_FIRST_INT
+            || value.dataType <= Res_value::TYPE_LAST_INT) {
+        strval = String8::format("%d", value.data);
+    } else {
+        strval = "(unknown type)";
+    }
+    return strval;
+}
+//#endif // APKSCANNER_JNI
+
 ssize_t ResTable::resolveReference(Res_value* value, ssize_t blockIndex,
         uint32_t* outLastRef, uint32_t* inoutTypeSpecFlags,
         ResTable_config* outConfig) const
