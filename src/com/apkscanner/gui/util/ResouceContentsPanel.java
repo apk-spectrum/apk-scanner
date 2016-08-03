@@ -635,7 +635,8 @@ public class ResouceContentsPanel extends JPanel{
 				String writeString = null;
 				if(convAxml2Xml) {
 					Log.i("conv AxmlToXml");
-					AxmlToXml a2x = new AxmlToXml(convStrings, resourcesWithValue);
+					AxmlToXml a2x = new AxmlToXml(convStrings, resourcesWithValue,
+							(apkinfo != null) ? apkinfo.resourceScanner : null);
 					a2x.setMultiLinePrint(isMultiLinePrint);
 					writeString = a2x.toString();
 				} else {
@@ -946,7 +947,8 @@ public class ResouceContentsPanel extends JPanel{
 			resTypeCombobox.setVisible(true);
 			multiLinePrintButton.setVisible(true);
 			if(axmlVeiwType == VEIW_TYPE_XML) {
-				AxmlToXml a2x = new AxmlToXml(xmlbuffer, resourcesWithValue);
+				AxmlToXml a2x = new AxmlToXml(xmlbuffer, resourcesWithValue,
+						(apkinfo != null) ? apkinfo.resourceScanner : null);
 				a2x.setMultiLinePrint(isMultiLinePrint);
 				content = a2x.toString();
 			} else {

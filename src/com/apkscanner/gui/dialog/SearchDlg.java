@@ -208,7 +208,8 @@ public class SearchDlg extends JDialog {
 					
 					String[] xmlbuffer = AaptNativeWrapper.Dump.getXmltree(apkinfo.filePath,
 							new String[] { hoverFilePath });
-					AxmlToXml a2x = new AxmlToXml(xmlbuffer, apkinfo.resourcesWithValue);
+					AxmlToXml a2x = new AxmlToXml(xmlbuffer, apkinfo.resourcesWithValue,
+							(apkinfo != null) ? apkinfo.resourceScanner : null);
 					// StringBuilder sb = new StringBuilder();
 					// for(String s: xmlbuffer) sb.append(s+"\n");
 
@@ -306,7 +307,8 @@ public class SearchDlg extends JDialog {
 //						for(String s: xmlbuffer) sb.append(s+"\n");
 						
 						String[] xmlbuffer = AaptNativeWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {filelist[i]});
-						AxmlToXml a2x = new AxmlToXml(xmlbuffer, apkinfo.resourcesWithValue);
+						AxmlToXml a2x = new AxmlToXml(xmlbuffer, apkinfo.resourcesWithValue,
+								(apkinfo != null) ? apkinfo.resourceScanner : null);
 						//StringBuilder sb = new StringBuilder();
 						//for(String s: xmlbuffer) sb.append(s+"\n");
 						temp = a2x.toString();

@@ -86,8 +86,8 @@ public class AaptNativeWrapper {
 		if (System.getProperty("os.name").indexOf("Linux") > -1) {
 			System.loadLibrary("c++");
 		}
-		//System.loadLibrary("AaptNativeWrapper");
-		System.load("Y:\\android-sdk-build\\out\\host\\windows-x86\\lib64\\libAaptNativeWrapper.dll");
+		System.loadLibrary("AaptNativeWrapper");
+		//System.load("Y:\\android-sdk-build\\out\\host\\windows-x86\\lib64\\libAaptNativeWrapper.dll");
 		//System.load("/home/local_depot/android-sdk-build/out/host/linux-x86/lib64/libAaptNativeWrapper.so");
 	}
 }

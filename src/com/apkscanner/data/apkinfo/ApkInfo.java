@@ -1,5 +1,7 @@
 package com.apkscanner.data.apkinfo;
 
+import com.apkscanner.core.scanner.AaptNativeScanner;
+
 public class ApkInfo
 {
 	public static final int APP_FEATURE_LAUNCHER = 0x1;
@@ -34,4 +36,5 @@ public class ApkInfo
 	public String[] certificates = null;
 	
 	public String[] resourcesWithValue = null;
+	public AaptNativeScanner resourceScanner = null;
 }

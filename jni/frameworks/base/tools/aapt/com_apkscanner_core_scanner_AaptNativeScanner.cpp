@@ -1882,10 +1882,25 @@ JNIEXPORT jstring JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_get
 }
 
 JNIEXPORT jobjectArray JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_getResourceValues
-  (JNIEnv *, jclass, jlong handle, jint resID)
+  (JNIEnv *env, jclass, jlong handle, jint resID)
 {
     if(handle == 0) return NULL;
-        
+
+    jclass apkinfo_ResourceInfo = env->FindClass("com/apkscanner/data/apkinfo/ResourceInfo");
+    if(apkinfo_ResourceInfo == NULL) {
+        fprintf(stderr, "ERROR: failed find class \"com/apkscanner/data/apkinfo/ResourceInfo\"\n");
+        fflush(stderr);
+        return NULL;
+    }
+    
+    jmethodID apkinfo_ResourceInfo_ = env->GetMethodID(apkinfo_ResourceInfo, "<init>", "(Ljava/lang/String;Ljava/lang/String;)V");
+    if(apkinfo_ResourceInfo_ == NULL) {
+        fprintf(stderr, "ERROR: failed GetMethodID ResourceInfo<init>\n");
+        fflush(stderr);
+        env->DeleteLocalRef(apkinfo_ResourceInfo);
+        return NULL;
+    }
+
     Vector<String8> resValues;
     Vector<String8> resConfigs;
 
@@ -1894,6 +1909,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanne
     if (res.getError() != NO_ERROR) {
         fprintf(stderr, "ERROR: dump failed because the resource table is invalid/corrupt.\n");
         fflush(stderr);
+        env->DeleteLocalRef(apkinfo_ResourceInfo);
         return NULL;
     }
     res.getResource(resID, &resValues, &resConfigs);
@@ -1905,13 +1921,29 @@ JNIEXPORT jobjectArray JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanne
         fprintf(stderr, "WARRING: resValues is different size with resConfigs\n");
         fflush(stderr);
     }
-    
-    for(int i = 0; i < valCount; i++) {
-        fprintf(stdout, "%s - %s\n", i < confCount ? resConfigs[i].string() : "", resValues[i].string());
-    }
-    fflush(stdout);
 
-    return NULL;
+    jobjectArray outputArray = env->NewObjectArray(valCount, apkinfo_ResourceInfo, NULL);
+    if(outputArray == NULL) {
+        fprintf(stderr, "ERROR: Can't create to arrary of ResourceInfo\n");
+        fflush(stderr);
+        env->DeleteLocalRef(apkinfo_ResourceInfo);
+        return NULL;
+    }
+
+    for(int i = 0; i < valCount; i++) {
+        jobject item = env->NewObject(apkinfo_ResourceInfo, apkinfo_ResourceInfo_,
+                env->NewStringUTF(resValues[i].string()),
+                env->NewStringUTF(i < confCount ? resConfigs[i].string() : ""));
+        if(item == NULL) {
+            fprintf(stderr, "WARRING: Can't create to object of ResourceInfo\n");
+            fflush(stderr);
+            continue;
+        }
+        env->SetObjectArrayElement(outputArray, i, item);
+        env->DeleteLocalRef(item);
+    }
+
+    return outputArray;
 }
 
 JNIEXPORT jstring JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_getResourceString

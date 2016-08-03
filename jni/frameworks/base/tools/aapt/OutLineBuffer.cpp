@@ -13,12 +13,12 @@ OutLineBuffer::OutLineBuffer(JNIEnv* env)
     jclass java_util_ArrayList = env->FindClass("java/util/ArrayList");
     if(java_util_ArrayList == NULL) return;
 
-    java_util_ArrayList_add = env->GetMethodID(java_util_ArrayList, "add", "(Ljava/lang/Object;)Z");
-    
     jmethodID java_util_ArrayList_ = env->GetMethodID(java_util_ArrayList, "<init>", "()V");
     if(java_util_ArrayList_ != NULL) {
         outputArrayList = env->NewObject(java_util_ArrayList, java_util_ArrayList_);
     }
+
+    java_util_ArrayList_add = env->GetMethodID(java_util_ArrayList, "add", "(Ljava/lang/Object;)Z");
     
     if(outputArrayList != NULL && java_util_ArrayList_add != NULL) {
         pOutLineBuffer = this;

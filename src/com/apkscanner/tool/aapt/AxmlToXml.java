@@ -1,16 +1,23 @@
 package com.apkscanner.tool.aapt;
 
+import com.apkscanner.core.scanner.AaptNativeScanner;
 import com.apkscanner.data.apkinfo.PermissionInfo;
 
 public class AxmlToXml {
 	
 	private AaptXmlTreePath axmlPath;
 	private String[] resourcesWithValue;
+	private AaptNativeScanner resourceScanner;
 	
 	private boolean isMultiLinePrint = false;
 
 	public AxmlToXml(String[] axml, String[] resourcesWithValue) {
+		this(axml, resourcesWithValue, null);
+	}
+	
+	public AxmlToXml(String[] axml, String[] resourcesWithValue, AaptNativeScanner resourceScanner) {
 		this.resourcesWithValue = resourcesWithValue;
+		this.resourceScanner = resourceScanner;
 		
 		axmlPath = new AaptXmlTreePath();
 		axmlPath.createAaptXmlTree(axml);
@@ -22,8 +29,14 @@ public class AxmlToXml {
 
 	private String getResourceName(String id)
 	{
+		if(resourceScanner != null && (id != null && id.startsWith("@0x"))) {
+			int resId = Integer.parseInt(id.substring(3), 16);
+			return resourceScanner.getResourceName(resId);
+		}
+		
 		if(resourcesWithValue == null || id == null || !id.startsWith("@"))
 			return id;
+
 		String name = id;
 		String filter = "spec resource " + id.substring(1);
 		for(String s: resourcesWithValue) {

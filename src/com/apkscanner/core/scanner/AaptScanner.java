@@ -21,6 +21,7 @@ public class AaptScanner extends ApkScannerStub
 	private AaptXmlTreePath manifestPath = null;
 	private String[] androidManifest = null;
 	private String[] resourcesWithValue = null;
+	private AaptNativeScanner resourceScanner;
 	
 	public AaptScanner(StatusListener statusListener)
 	{
@@ -31,11 +32,15 @@ public class AaptScanner extends ApkScannerStub
 	@Override
 	public void openApk(final String apkFilePath, final String frameworkRes)
 	{
-		timeRecordStart();
+		if(apkFilePath == null) {
+			Log.e("APK file path is null");
+			if(statusListener != null) {
+				statusListener.OnError();
+	        	statusListener.OnComplete();
+			}
+			return;
+		}
 
-		apkInfo = new ApkInfo();
-		final AaptManifestReader manifestReader = new AaptManifestReader(null, null, apkInfo.manifest);
-		
 		File apkFile = new File(apkFilePath);
 		if(!apkFile.exists()) {
 			Log.e("No Such APK file");
@@ -46,78 +51,20 @@ public class AaptScanner extends ApkScannerStub
 			return;
 		}
 
+		timeRecordStart();
 		if(statusListener != null) {
 			statusListener.OnStart(EstimatedTimeEnRoute.calc(apkFile.getAbsolutePath()));
 		}
-		
+
+		apkInfo = new ApkInfo();
 		apkInfo.filePath = apkFile.getAbsolutePath();
 		apkInfo.fileSize = apkFile.length();
 		apkInfo.tempWorkPath = FileUtil.makeTempPath(apkInfo.filePath.substring(apkInfo.filePath.lastIndexOf(File.separator)));
 		Log.i("Temp path : " + apkInfo.tempWorkPath);
 		
-		final Object xmlTreeSync = new Object();
-		final Object resouresSync = new Object();
-		final Object SignSync = new Object();
-		final Object PermSync = new Object();
-
-		Log.i("I: getDump AndroidManifest...");
-		androidManifest = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath, new String[] { "AndroidManifest.xml" });
+		final AaptManifestReader manifestReader = new AaptManifestReader(null, null, apkInfo.manifest);
 		
-		synchronized(resouresSync) {
-			new Thread(new Runnable() {
-				public void run()
-				{
-					synchronized(resouresSync) {
-						resouresSync.notify();
-						try {
-							resouresSync.wait();
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-						Log.i("I: read aapt dump resources...");
-						resourcesWithValue = AaptNativeWrapper.Dump.getResources(apkInfo.filePath, true);
-						apkInfo.resourcesWithValue = resourcesWithValue;
-						manifestReader.setResources(resourcesWithValue);
-						Log.i("resources completed");
-					}
-				}
-			}).start();
-			try {
-				resouresSync.wait();
-				resouresSync.notify();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-
-		synchronized(xmlTreeSync) {
-			new Thread(new Runnable() {
-				public void run()
-				{
-					synchronized(xmlTreeSync) {
-						xmlTreeSync.notify();
-						try {
-							xmlTreeSync.wait();
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-	
-						Log.i("I: createAaptXmlTree...");
-						manifestPath = new AaptXmlTreePath();
-						manifestPath.createAaptXmlTree(androidManifest);
-						manifestReader.setManifestPath(manifestPath);
-						Log.i("xmlTreeSync completed");
-					}
-				}
-			}).start();
-			try {
-				xmlTreeSync.wait();
-				xmlTreeSync.notify();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-
+		final Object SignSync = new Object();
 		synchronized(SignSync) {
 			new Thread(new Runnable() {
 				public void run()
@@ -133,15 +80,6 @@ public class AaptScanner extends ApkScannerStub
 				        apkInfo.certificates = solveCert();
 						stateChanged(Status.CERT_COMPLETED);
 						Log.i("read signatures completed...");
-						SignSync.notify();
-						
-						Log.i("I: read Imanges list...");
-				        apkInfo.resources = ZipFileUtil.findFiles(apkInfo.filePath, null, null);
-				        stateChanged(Status.IMAGE_COMPLETED);
-				        
-						Log.i("I: read lib list...");
-				        apkInfo.librarys = ZipFileUtil.findFiles(apkInfo.filePath, ".so", null);
-				        stateChanged(Status.LIB_COMPLETED);
 					}
 				}
 			}).start();
@@ -156,120 +94,109 @@ public class AaptScanner extends ApkScannerStub
 		new Thread(new Runnable() {
 			public void run()
 			{
-				//stateChanged(Status.INITIALIZING);
-				synchronized(xmlTreeSync) {
-			        Log.i("get xmlTreeSync");
-				}
-
-				synchronized(PermSync) {
-					new Thread(new Runnable() {
-						public void run()
-						{
-							synchronized(PermSync) {
-								PermSync.notify();
-								try {
-									PermSync.wait();
-								} catch (InterruptedException e) {
-									e.printStackTrace();
-								}
-								Log.i("read permissions start");
-								manifestReader.readPermissions();
-								Log.i("read permissions completed");
-							}
-						}
-					}).start();
-					try {
-						PermSync.wait();
-						PermSync.notify();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
+				Log.i("I: read lib list...");
+		        apkInfo.librarys = ZipFileUtil.findFiles(apkInfo.filePath, ".so", null);
+		        stateChanged(Status.LIB_COMPLETED);
 		        
-				synchronized(resouresSync) {
-					Log.i("I: read resources completed");
-				}
-				
-				Log.i("I: read basic info...");
-				
-				manifestReader.readBasicInfo();
-				
-				ResourceInfo[] icons = apkInfo.manifest.application.icons;
-				if(icons != null & icons.length > 0) {
-					String jarPath = "jar:file:" + apkInfo.filePath.replaceAll("#", "%23") + "!/";
-					for(ResourceInfo r: icons) {
-						if(r.name == null) {
-							r.name = Resource.IMG_DEF_APP_ICON.getPath();
-						} else if(r.name.endsWith("qmg")) {
-							r.name = Resource.IMG_QMG_IMAGE_ICON.getPath();
-						} else if(r.name.endsWith(".xml")) {
-							Log.w("image resource is xml : " + r.name);
-							String[] iconXml = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath, new String[] { r.name });
-							AaptXmlTreePath iconXmlPath = new AaptXmlTreePath();
-							iconXmlPath.createAaptXmlTree(iconXml);
-							AaptXmlTreeNode iconNode = iconXmlPath.getNode("//item[@"+iconXmlPath.getNamespace()+":drawable]");
-							if(iconNode != null) {
-								icons = manifestReader.getAttrResourceValues(iconNode, ":drawable", iconXmlPath.getNamespace());
-							}
-							if(icons == null || icons.length == 0) {
-								icons = new ResourceInfo[] { new ResourceInfo(Resource.IMG_DEF_APP_ICON.getPath()) };
-							} else {
-								for(ResourceInfo r2: icons) {
-									r2.name = jarPath + r2.name;
-								}
-							}
-						} else {
-							r.name = jarPath + r.name;
+				Log.i("I: read Resource list...");
+		        apkInfo.resources = ZipFileUtil.findFiles(apkInfo.filePath, null, null);
+		        stateChanged(Status.IMAGE_COMPLETED);
+		        
+				Log.i("I: read aapt dump resources...");
+				resourcesWithValue = AaptNativeWrapper.Dump.getResources(apkInfo.filePath, true);
+				apkInfo.resourcesWithValue = resourcesWithValue;
+				//manifestReader.setResources(resourcesWithValue);
+				Log.i("resources completed");
+
+			}
+		}).start();
+
+		Log.i("I: new resourceScanner...");
+		resourceScanner = new AaptNativeScanner(null);
+		Log.i("I: open resource apk");
+		resourceScanner.openApk(apkInfo.filePath, null);
+
+		
+		apkInfo.resourceScanner = resourceScanner;
+		manifestReader.setResourceScanner(resourceScanner);
+		
+		Log.i("I: getDump AndroidManifest...");
+		androidManifest = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath, new String[] { "AndroidManifest.xml" });
+		
+		Log.i("I: createAaptXmlTree...");
+		manifestPath = new AaptXmlTreePath();
+		manifestPath.createAaptXmlTree(androidManifest);
+		manifestReader.setManifestPath(manifestPath);
+		Log.i("xmlTreeSync completed");
+
+		Log.e("I: read basic info...");
+		manifestReader.readBasicInfo();
+		Log.e("readBasicInfo() completed");
+
+		Log.i("read permissions start");
+		manifestReader.readPermissions();
+		Log.i("read permissions completed");
+		
+		
+		ResourceInfo[] icons = apkInfo.manifest.application.icons;
+		if(icons != null & icons.length > 0) {
+			String jarPath = "jar:file:" + apkInfo.filePath.replaceAll("#", "%23") + "!/";
+			for(ResourceInfo r: icons) {
+				if(r.name == null) {
+					r.name = Resource.IMG_DEF_APP_ICON.getPath();
+				} else if(r.name.endsWith("qmg")) {
+					r.name = Resource.IMG_QMG_IMAGE_ICON.getPath();
+				} else if(r.name.endsWith(".xml")) {
+					Log.w("image resource is xml : " + r.name);
+					String[] iconXml = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath, new String[] { r.name });
+					AaptXmlTreePath iconXmlPath = new AaptXmlTreePath();
+					iconXmlPath.createAaptXmlTree(iconXml);
+					AaptXmlTreeNode iconNode = iconXmlPath.getNode("//item[@"+iconXmlPath.getNamespace()+":drawable]");
+					if(iconNode != null) {
+						icons = manifestReader.getAttrResourceValues(iconNode, ":drawable", iconXmlPath.getNamespace());
+					}
+					if(icons == null || icons.length == 0) {
+						icons = new ResourceInfo[] { new ResourceInfo(Resource.IMG_DEF_APP_ICON.getPath()) };
+					} else {
+						for(ResourceInfo r2: icons) {
+							r2.name = jarPath + r2.name;
 						}
 					}
 				} else {
-					icons = new ResourceInfo[] { new ResourceInfo(Resource.IMG_DEF_APP_ICON.getPath()) };
+					r.name = jarPath + r.name;
 				}
-				apkInfo.manifest.application.icons = icons;
-		        				
-				Log.i("read basic info completed");
-		        synchronized(SignSync) {
-		        	Log.i("sync SignSync");
-		        	synchronized(PermSync) {
-		        		Log.i("sync PermSync");
-			        	timeRecordEnd();
-		        		stateChanged(Status.BASIC_INFO_COMPLETED);
-		        	}
-		        }
-
-				new Thread(new Runnable() {
-					public void run()
-					{
-				        // Activity/Service/Receiver/provider intent-filter
-						Log.i("I: read activitys...");
-				        manifestReader.readActivityInfo();
-				        manifestReader.readActivityAliasInfo();
-				        manifestReader.readServiceInfo();
-				        manifestReader.readReceiverInfo();
-				        manifestReader.readProviderInfo();
-				        stateChanged(Status.ACTIVITY_COMPLETED);
-					}
-				}).run();
-				
-				new Thread(new Runnable() {
-					public void run()
-					{
-				        // widget
-						Log.i("I: read widgets...");
-
-				        apkInfo.widgets = manifestReader.getWidgetList(apkInfo.filePath);
-				        stateChanged(Status.WIDGET_COMPLETED);
-					}
-				}).run();
-				
-				Log.i("I: completed...");
-		        
-		        if(statusListener != null) {
-		        	statusListener.OnSuccess();
-		        	statusListener.OnComplete();
-		        }
 			}
-		}).start();
+		} else {
+			icons = new ResourceInfo[] { new ResourceInfo(Resource.IMG_DEF_APP_ICON.getPath()) };
+		}
+		apkInfo.manifest.application.icons = icons;
+
+		Log.i("read basic info completed");
+
+
+    	timeRecordEnd();
+		stateChanged(Status.BASIC_INFO_COMPLETED);
+
+        // Activity/Service/Receiver/provider intent-filter
+		Log.i("I: read activitys...");
+        manifestReader.readActivityInfo();
+        manifestReader.readActivityAliasInfo();
+        manifestReader.readServiceInfo();
+        manifestReader.readReceiverInfo();
+        manifestReader.readProviderInfo();
+        stateChanged(Status.ACTIVITY_COMPLETED);
+
+        // widget
+		Log.i("I: read widgets...");
+        apkInfo.widgets = manifestReader.getWidgetList(apkInfo.filePath);
+        stateChanged(Status.WIDGET_COMPLETED);
+		
+		Log.i("I: completed...");
+        
+        if(statusListener != null) {
+        	statusListener.OnSuccess();
+        	statusListener.OnComplete();
+        }
 	}
 	
 	public String[] getAndroidManifest()
@@ -279,8 +206,14 @@ public class AaptScanner extends ApkScannerStub
 	
 	private String getResourceName(String id)
 	{
+		if(resourceScanner != null && (id != null && id.startsWith("@0x"))) {
+			int resId = Integer.parseInt(id.substring(3), 16);
+			return resourceScanner.getResourceName(resId);
+		}
+
 		if(resourcesWithValue == null || id == null || !id.startsWith("@"))
 			return id;
+		
 		String name = id;
 		String filter = "spec resource " + id.substring(1);
 		for(String s: resourcesWithValue) {

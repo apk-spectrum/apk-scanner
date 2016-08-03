@@ -39,6 +39,7 @@ public class AaptManifestReader
 	private String namespace;
 	private ManifestInfo manifestInfo;
 	private String[] resourcesWithValue;
+	private AaptNativeScanner resourceScanner;
 	
 	public AaptManifestReader()
 	{
@@ -63,8 +64,9 @@ public class AaptManifestReader
 			manifestInfo = targetManifest;
 		else
 			manifestInfo = new ManifestInfo();
+		resourceScanner = null;
 	}
-	
+
 	public ManifestInfo getManifestInfo()
 	{
 		return manifestInfo;
@@ -81,6 +83,10 @@ public class AaptManifestReader
 	public void setResources(String[] resourcesWithValue)
 	{
 		this.resourcesWithValue = resourcesWithValue;
+	}
+	
+	public void setResourceScanner(AaptNativeScanner scanner) {
+		this.resourceScanner = scanner;
 	}
 	
 	public void readBasicInfo()
@@ -813,8 +819,18 @@ public class AaptManifestReader
 
 	private ResourceInfo[] getResourceValues(String id)
 	{
+		if(resourceScanner != null && (id != null && id.startsWith("@0x"))) {
+			int resId = Integer.parseInt(id.substring(3), 16);
+			return resourceScanner.getResourceValues(resId);
+		}
+		
 		if(id == null || !id.startsWith("@") || resourcesWithValue == null) {
 			return new ResourceInfo[] { new ResourceInfo(id, null) };
+		}
+		
+		if(resourceScanner != null && id.startsWith("@0x")) {
+			int resId = Integer.parseInt(id.substring(3), 16);
+			return resourceScanner.getResourceValues(resId);
 		}
 
 		ArrayList<ResourceInfo> values = new ArrayList<ResourceInfo>();
