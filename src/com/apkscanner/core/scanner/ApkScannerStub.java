@@ -17,12 +17,14 @@ abstract public class ApkScannerStub
 
 	public enum Status {
 		BASIC_INFO_COMPLETED,
+		PERM_INFO_COMPLETED,
 		WIDGET_COMPLETED,
 		LIB_COMPLETED,
-		IMAGE_COMPLETED,
+		RESOURCE_COMPLETED,
+		RES_DUMP_COMPLETED,
 		ACTIVITY_COMPLETED,
 		CERT_COMPLETED,
-		ALL_COMPLETED,
+		ALL_COMPLETED
 	}
 	
 	public interface StatusListener

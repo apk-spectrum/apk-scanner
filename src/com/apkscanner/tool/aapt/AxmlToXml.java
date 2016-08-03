@@ -6,17 +6,11 @@ import com.apkscanner.data.apkinfo.PermissionInfo;
 public class AxmlToXml {
 	
 	private AaptXmlTreePath axmlPath;
-	private String[] resourcesWithValue;
 	private AaptNativeScanner resourceScanner;
 	
 	private boolean isMultiLinePrint = false;
 
-	public AxmlToXml(String[] axml, String[] resourcesWithValue) {
-		this(axml, resourcesWithValue, null);
-	}
-	
-	public AxmlToXml(String[] axml, String[] resourcesWithValue, AaptNativeScanner resourceScanner) {
-		this.resourcesWithValue = resourcesWithValue;
+	public AxmlToXml(String[] axml, AaptNativeScanner resourceScanner) {
 		this.resourceScanner = resourceScanner;
 		
 		axmlPath = new AaptXmlTreePath();
@@ -27,27 +21,6 @@ public class AxmlToXml {
 		this.isMultiLinePrint = isMultiLinePrint;
 	}
 
-	private String getResourceName(String id)
-	{
-		if(resourceScanner != null && (id != null && id.startsWith("@0x"))) {
-			int resId = Integer.parseInt(id.substring(3), 16);
-			return resourceScanner.getResourceName(resId);
-		}
-		
-		if(resourcesWithValue == null || id == null || !id.startsWith("@"))
-			return id;
-
-		String name = id;
-		String filter = "spec resource " + id.substring(1);
-		for(String s: resourcesWithValue) {
-			if(s.indexOf(filter) > -1) {
-				name = s.replaceAll(".*:(.*):.*", "@$1");
-				break;
-			}
-		}
-		return name;
-	}
-	
 	private String makeNodeXml(AaptXmlTreeNode node, String namespace, String depthSpace)
 	{
 		StringBuilder xml = new StringBuilder(depthSpace);
@@ -72,7 +45,7 @@ public class AxmlToXml {
 			
 			// /android/frameworks/base/core/res/res/values/attrs.xml
 			// /android/frameworks/base/core/res/res/values/attrs_manifest.xml
-			String val = getResourceName(node.getAttribute(name));
+			String val = resourceScanner.getResourceName(node.getAttribute(name));
 			if(name.endsWith("protectionLevel")) {
 	        	if(val != null && val.startsWith("0x")) {
 	        		int level = Integer.parseInt(val.substring(2), 16);

@@ -123,7 +123,10 @@ public class Signatures extends JPanel implements ComponentListener, TabDataObje
     	reloadResource();
         jlist.setSelectedIndex(0);
     }
-    
+
+	@Override
+	public void setExtraData(ApkInfo apkInfo) { }
+	
     @Override
     public void reloadResource()
     {

@@ -60,6 +60,9 @@ public class Libraries extends JPanel implements TabDataObject
 		apkFilePath = apkInfo.filePath;
 		mMyTableModel.setData(apkInfo.librarys);
 	}
+
+	@Override
+	public void setExtraData(ApkInfo apkInfo) { }
 	
 	@Override
 	public void reloadResource()

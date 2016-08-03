@@ -2,7 +2,6 @@ package com.apkscanner.core.scanner;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import com.apkscanner.data.apkinfo.ActionInfo;
 import com.apkscanner.data.apkinfo.ActivityAliasInfo;
@@ -38,7 +37,6 @@ public class AaptManifestReader
 	private AaptXmlTreePath manifestPath;
 	private String namespace;
 	private ManifestInfo manifestInfo;
-	private String[] resourcesWithValue;
 	private AaptNativeScanner resourceScanner;
 	
 	public AaptManifestReader()
@@ -50,16 +48,10 @@ public class AaptManifestReader
 	{
 		this(manifestPath, null);
 	}
-	
-	public AaptManifestReader(AaptXmlTreePath manifestPath, String[] resourcesWithValue)
-	{
-		this(manifestPath, resourcesWithValue, null);
-	}
-	
-	public AaptManifestReader(AaptXmlTreePath manifestPath, String[] resourcesWithValue, ManifestInfo targetManifest)
+
+	public AaptManifestReader(AaptXmlTreePath manifestPath, ManifestInfo targetManifest)
 	{
 		setManifestPath(manifestPath);
-		setResources(resourcesWithValue);
 		if(targetManifest != null)
 			manifestInfo = targetManifest;
 		else
@@ -78,11 +70,6 @@ public class AaptManifestReader
 		if(manifestPath != null) {
 			namespace = manifestPath.getNamespace() + ":";
 		}
-	}
-	
-	public void setResources(String[] resourcesWithValue)
-	{
-		this.resourcesWithValue = resourcesWithValue;
 	}
 	
 	public void setResourceScanner(AaptNativeScanner scanner) {
@@ -271,7 +258,7 @@ public class AaptManifestReader
         	widget.name = getAttrValue(widgetTag[idx], "name");
         	if(widget.name != null && widget.name.startsWith("."))
         		widget.name = manifestInfo.packageName + widget.name;
-        	Object[] extraInfo = getWidgetInfo(apkFilePath, getResourceValues(widgetTag[idx].getNode("meta-data").getAttribute(namespace + "resource")));
+        	Object[] extraInfo = getWidgetInfo(apkFilePath, resourceScanner.getResourceValues(widgetTag[idx].getNode("meta-data").getAttribute(namespace + "resource")));
         	if(extraInfo[0] != null) {
         		widget.icons = (ResourceInfo[])extraInfo[0]; 
         	}
@@ -493,6 +480,15 @@ public class AaptManifestReader
     	}
 		
 		return featureFlag;
+	}
+	
+	public void readComponents()
+	{
+        readActivityInfo();
+        readActivityAliasInfo();
+        readServiceInfo();
+        readReceiverInfo();
+        readProviderInfo();
 	}
 	
 	public void readActivityInfo()
@@ -806,7 +802,7 @@ public class AaptManifestReader
 				resVal = null;
 				break;
 			}
-			resVal = getResourceValues(value);
+			resVal = resourceScanner.getResourceValues(value);
 			if(resVal == null || resVal.length == 0)
 				break;
 			value = resVal[0].name;
@@ -815,47 +811,5 @@ public class AaptManifestReader
 			resVal = new ResourceInfo[] { new ResourceInfo(value, null) };
 		}
 		return resVal;
-	}
-
-	private ResourceInfo[] getResourceValues(String id)
-	{
-		if(resourceScanner != null && (id != null && id.startsWith("@0x"))) {
-			int resId = Integer.parseInt(id.substring(3), 16);
-			return resourceScanner.getResourceValues(resId);
-		}
-		
-		if(id == null || !id.startsWith("@") || resourcesWithValue == null) {
-			return new ResourceInfo[] { new ResourceInfo(id, null) };
-		}
-		
-		if(resourceScanner != null && id.startsWith("@0x")) {
-			int resId = Integer.parseInt(id.substring(3), 16);
-			return resourceScanner.getResourceValues(resId);
-		}
-
-		ArrayList<ResourceInfo> values = new ArrayList<ResourceInfo>();
-		String filter = "^\\s*resource 0x0*" + id.replaceAll("@0x0*(.*)", "$1") + ".*";
-		String config = "";
-
-		for(int i = 0; i < resourcesWithValue.length; i++) {
-			if(resourcesWithValue[i].indexOf(" config ") >= 0) {
-				config = resourcesWithValue[i].replaceAll(".*config \\(?(\\w*)\\)?.*", "$1");
-			}
-			if(!resourcesWithValue[i].matches(filter)) continue;
-			//Log.i(resourcesWithValue[i]);
-
-			if(i+1 < resourcesWithValue.length) {
-				String val = resourcesWithValue[i+1].replaceAll("^\\s*\\([^\\(\\)]*\\) (.*)", "$1").replaceAll("^['\"](.*)['\"]\\s*$", "$1");
-				String type = resourcesWithValue[i+1].replaceAll("^\\s*\\(([^\\(\\)]*)\\) .*", "$1");
-				if("reference".equals(type) && val.startsWith("0x")) {
-					Collections.addAll(values, getResourceValues("@"+val));
-				} else {
-					values.add(new ResourceInfo(val, config));
-				}
-				//Log.d("getResourceValues() id " + id + ", val " + val);
-			}
-		}
-
-		return values.toArray(new ResourceInfo[0]);
 	}
 }

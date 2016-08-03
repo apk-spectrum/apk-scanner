@@ -472,7 +472,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			TimerLabel.setText("Extracting APK file...");
 		return;
 	}
-
+	
 	@Override
 	public synchronized void setData(ApkInfo apkInfo)
 	{
@@ -647,6 +647,13 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		deviceRequirements = deviceReqData.toString();
 	
 		setData();
+	}
+
+	@Override
+	public synchronized void setExtraData(ApkInfo apkInfo) { 
+		if(wasSetData) {
+			setData(apkInfo);
+		}
 	}
 	
 	private String makePermGroup()

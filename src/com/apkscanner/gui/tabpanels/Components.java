@@ -197,6 +197,9 @@ public class Components extends JPanel implements TabDataObject
 	}
 	
 	@Override
+	public void setExtraData(ApkInfo apkInfo) { }
+	
+	@Override
 	public void reloadResource()
 	{
 		if(TableModel == null) return;

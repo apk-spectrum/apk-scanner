@@ -296,6 +296,9 @@ public class MainUI extends JFrame
 				
 				Log.i(status + " ui sync end");
 				break;
+			case PERM_INFO_COMPLETED:
+				tabbedPanel.setData(apkScanner.getApkInfo(), 0 + TabbedPanel.CMD_EXTRA_DATA);
+				break;
 			case WIDGET_COMPLETED:
 				Log.i(status + " ui sync start");
 				tabbedPanel.setData(apkScanner.getApkInfo(), 1);
@@ -306,10 +309,13 @@ public class MainUI extends JFrame
 				tabbedPanel.setData(apkScanner.getApkInfo(), 2);
 				Log.i(status + " ui sync end");
 				break;
-			case IMAGE_COMPLETED:
+			case RESOURCE_COMPLETED:
 				Log.i(status + " ui sync start");
 				tabbedPanel.setData(apkScanner.getApkInfo(), 3);
 				Log.i(status + " ui sync end");
+				break;
+			case RES_DUMP_COMPLETED:
+				tabbedPanel.setData(apkScanner.getApkInfo(), 3 + TabbedPanel.CMD_EXTRA_DATA);
 				break;
 			case ACTIVITY_COMPLETED:
 				Log.i(status + " ui sync start");
@@ -318,6 +324,7 @@ public class MainUI extends JFrame
 				break;
 			case CERT_COMPLETED:
 				Log.i(status + " ui sync start");
+				tabbedPanel.setData(apkScanner.getApkInfo(), 0 + TabbedPanel.CMD_EXTRA_DATA);
 				tabbedPanel.setData(apkScanner.getApkInfo(), 5);
 				Log.i(status + " ui sync end");
 				break;

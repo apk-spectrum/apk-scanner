@@ -18,6 +18,8 @@ import com.apkscanner.resource.Resource;
 public class TabbedPanel extends JTabbedPane
 {
 	private static final long serialVersionUID = -5500517956616692675L;
+	
+	public static final int CMD_EXTRA_DATA = 1000;
 
 	private String[] labels;
 	
@@ -25,6 +27,7 @@ public class TabbedPanel extends JTabbedPane
 	{
 		public void initialize();
 		public void setData(ApkInfo apkInfo);
+		public void setExtraData(ApkInfo apkInfo);
 		public void reloadResource();
 	}
 	
@@ -104,8 +107,6 @@ public class TabbedPanel extends JTabbedPane
 			if(id == -1 || id == 0) {
 				((TabDataObject)(getComponent(0))).setData(apkInfo);
 				setSelectedIndex(0);
-
-				((Resources)(getComponent(3))).setExtraData(apkInfo);
 			}
 			if(id == -1 || id == 1) setPanelData(1, apkInfo.widgets.length, apkInfo);
 			if(id == -1 || id == 2) setPanelData(2, apkInfo.librarys.length, apkInfo);
@@ -121,6 +122,9 @@ public class TabbedPanel extends JTabbedPane
 			}
 			if(id == -1 || id == 5) setPanelData(5, (apkInfo.certificates != null) ? apkInfo.certificates.length : 0, apkInfo);
 			if(id == -1 || id == 3) setPanelData(3, apkInfo.resources.length, apkInfo);
+			if(id >= CMD_EXTRA_DATA) {
+				((TabDataObject)(getComponent(id - CMD_EXTRA_DATA))).setExtraData(apkInfo);
+			}
 		} else {
 			for(int i = 1; i < 6; i++) {
 				if(id == -1 || id == i) setPanelData(i, 0, null);

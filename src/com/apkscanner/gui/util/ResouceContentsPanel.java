@@ -67,7 +67,6 @@ import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.tabpanels.Resources.ResourceObject;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
-import com.apkscanner.tool.aapt.AaptWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.tool.dex2jar.Dex2JarWrapper;
 import com.apkscanner.tool.jd_gui.JDGuiLauncher;
@@ -635,8 +634,7 @@ public class ResouceContentsPanel extends JPanel{
 				String writeString = null;
 				if(convAxml2Xml) {
 					Log.i("conv AxmlToXml");
-					AxmlToXml a2x = new AxmlToXml(convStrings, resourcesWithValue,
-							(apkinfo != null) ? apkinfo.resourceScanner : null);
+					AxmlToXml a2x = new AxmlToXml(convStrings, (apkinfo != null) ? apkinfo.resourceScanner : null);
 					a2x.setMultiLinePrint(isMultiLinePrint);
 					writeString = a2x.toString();
 				} else {
@@ -947,8 +945,7 @@ public class ResouceContentsPanel extends JPanel{
 			resTypeCombobox.setVisible(true);
 			multiLinePrintButton.setVisible(true);
 			if(axmlVeiwType == VEIW_TYPE_XML) {
-				AxmlToXml a2x = new AxmlToXml(xmlbuffer, resourcesWithValue,
-						(apkinfo != null) ? apkinfo.resourceScanner : null);
+				AxmlToXml a2x = new AxmlToXml(xmlbuffer, (apkinfo != null) ? apkinfo.resourceScanner : null);
 				a2x.setMultiLinePrint(isMultiLinePrint);
 				content = a2x.toString();
 			} else {

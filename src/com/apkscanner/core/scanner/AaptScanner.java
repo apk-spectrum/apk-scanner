@@ -20,7 +20,6 @@ public class AaptScanner extends ApkScannerStub
 {
 	private AaptXmlTreePath manifestPath = null;
 	private String[] androidManifest = null;
-	private String[] resourcesWithValue = null;
 	private AaptNativeScanner resourceScanner;
 	
 	public AaptScanner(StatusListener statusListener)
@@ -51,9 +50,8 @@ public class AaptScanner extends ApkScannerStub
 			return;
 		}
 
-		timeRecordStart();
 		if(statusListener != null) {
-			statusListener.OnStart(EstimatedTimeEnRoute.calc(apkFile.getAbsolutePath()));
+			statusListener.OnStart(1);
 		}
 
 		apkInfo = new ApkInfo();
@@ -62,7 +60,7 @@ public class AaptScanner extends ApkScannerStub
 		apkInfo.tempWorkPath = FileUtil.makeTempPath(apkInfo.filePath.substring(apkInfo.filePath.lastIndexOf(File.separator)));
 		Log.i("Temp path : " + apkInfo.tempWorkPath);
 		
-		final AaptManifestReader manifestReader = new AaptManifestReader(null, null, apkInfo.manifest);
+		final AaptManifestReader manifestReader = new AaptManifestReader(null, apkInfo.manifest);
 		
 		final Object SignSync = new Object();
 		synchronized(SignSync) {
@@ -100,12 +98,11 @@ public class AaptScanner extends ApkScannerStub
 		        
 				Log.i("I: read Resource list...");
 		        apkInfo.resources = ZipFileUtil.findFiles(apkInfo.filePath, null, null);
-		        stateChanged(Status.IMAGE_COMPLETED);
+		        stateChanged(Status.RESOURCE_COMPLETED);
 		        
 				Log.i("I: read aapt dump resources...");
-				resourcesWithValue = AaptNativeWrapper.Dump.getResources(apkInfo.filePath, true);
-				apkInfo.resourcesWithValue = resourcesWithValue;
-				//manifestReader.setResources(resourcesWithValue);
+				apkInfo.resourcesWithValue = AaptNativeWrapper.Dump.getResources(apkInfo.filePath, true);
+				stateChanged(Status.RES_DUMP_COMPLETED);
 				Log.i("resources completed");
 
 			}
@@ -126,6 +123,7 @@ public class AaptScanner extends ApkScannerStub
 		Log.i("I: createAaptXmlTree...");
 		manifestPath = new AaptXmlTreePath();
 		manifestPath.createAaptXmlTree(androidManifest);
+		
 		manifestReader.setManifestPath(manifestPath);
 		Log.i("xmlTreeSync completed");
 
@@ -136,7 +134,7 @@ public class AaptScanner extends ApkScannerStub
 		Log.i("read permissions start");
 		manifestReader.readPermissions();
 		Log.i("read permissions completed");
-		
+		//stateChanged(Status.PERM_INFO_COMPLETED);
 		
 		ResourceInfo[] icons = apkInfo.manifest.application.icons;
 		if(icons != null & icons.length > 0) {
@@ -144,7 +142,7 @@ public class AaptScanner extends ApkScannerStub
 			for(ResourceInfo r: icons) {
 				if(r.name == null) {
 					r.name = Resource.IMG_DEF_APP_ICON.getPath();
-				} else if(r.name.endsWith("qmg")) {
+				} else if(r.name.endsWith(".qmg")) {
 					r.name = Resource.IMG_QMG_IMAGE_ICON.getPath();
 				} else if(r.name.endsWith(".xml")) {
 					Log.w("image resource is xml : " + r.name);
@@ -172,18 +170,11 @@ public class AaptScanner extends ApkScannerStub
 		apkInfo.manifest.application.icons = icons;
 
 		Log.i("read basic info completed");
-
-
-    	timeRecordEnd();
 		stateChanged(Status.BASIC_INFO_COMPLETED);
 
         // Activity/Service/Receiver/provider intent-filter
 		Log.i("I: read activitys...");
-        manifestReader.readActivityInfo();
-        manifestReader.readActivityAliasInfo();
-        manifestReader.readServiceInfo();
-        manifestReader.readReceiverInfo();
-        manifestReader.readProviderInfo();
+        manifestReader.readComponents();
         stateChanged(Status.ACTIVITY_COMPLETED);
 
         // widget
@@ -202,27 +193,6 @@ public class AaptScanner extends ApkScannerStub
 	public String[] getAndroidManifest()
 	{
 		return androidManifest;
-	}
-	
-	private String getResourceName(String id)
-	{
-		if(resourceScanner != null && (id != null && id.startsWith("@0x"))) {
-			int resId = Integer.parseInt(id.substring(3), 16);
-			return resourceScanner.getResourceName(resId);
-		}
-
-		if(resourcesWithValue == null || id == null || !id.startsWith("@"))
-			return id;
-		
-		String name = id;
-		String filter = "spec resource " + id.substring(1);
-		for(String s: resourcesWithValue) {
-			if(s.indexOf(filter) > -1) {
-				name = s.replaceAll(".*:(.*):.*", "@$1");
-				break;
-			}
-		}
-		return name;
 	}
 	
 	private String makeNodeXml(AaptXmlTreeNode node, String namespace, String depthSpace)
@@ -248,7 +218,7 @@ public class AaptScanner extends ApkScannerStub
 	        		xml.append(protection);
 	        	}
 			} else {
-				xml.append(getResourceName(node.getAttribute(name)));
+				xml.append(resourceScanner.getResourceName(node.getAttribute(name)));
 			}
 			xml.append("\"");
 		}

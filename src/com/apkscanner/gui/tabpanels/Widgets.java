@@ -85,6 +85,9 @@ public class Widgets extends JPanel implements TabDataObject
 			table.setRowHeight(i, 100);
 		}
 	}
+
+	@Override
+	public void setExtraData(ApkInfo apkInfo) { }
 	
 	@Override
 	public void reloadResource()

@@ -1054,6 +1054,7 @@ public class Resources extends JPanel implements TabDataObject {
 		setTreeForm(false);
 	}
 
+	@Override
 	public void setExtraData(ApkInfo apkInfo) {
 		if (apkInfo != null) {
 			resourcesWithValue = apkInfo.resourcesWithValue;

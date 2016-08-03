@@ -28,11 +28,32 @@ public class AaptNativeScanner extends ApkScannerStub
 	}
 	
 	public String getResourceName(int resId) {
-		return getResourceName(assetsHandle, resId);
+		String type = getResourceType(assetsHandle, resId);
+		String name = getResourceName(assetsHandle, resId);
+		return "@" + type + "/" + name;
+	}
+	
+	public String getResourceName(String id) {
+		if(id == null || !id.startsWith("@0x")) return id;
+		return getResourceName(Integer.parseInt(id.substring(3), 16));
 	}
 	
 	public ResourceInfo[] getResourceValues(int resId) {
+		String type = getResourceType(assetsHandle, resId);
+		ResourceInfo[] valses = getResourceValues(assetsHandle, resId);
+		if("reference".equals(type)) {
+			for(ResourceInfo info: valses) {
+				if(info.name != null && info.name.startsWith("0x")) {
+					info.name = "@" + info.name; 
+				}
+			}
+		}
 		return getResourceValues(assetsHandle, resId);
+	}
+
+	public ResourceInfo[] getResourceValues(String id) {
+		if(id == null || !id.startsWith("@0x")) return new ResourceInfo[] { new ResourceInfo(id, null) };
+		return getResourceValues(Integer.parseInt(id.substring(3), 16));
 	}
 
 	public native static long createAssetManager();
