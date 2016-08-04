@@ -1,6 +1,9 @@
 package com.apkscanner.core.scanner;
 
+import java.io.File;
+
 import com.apkscanner.data.apkinfo.ResourceInfo;
+import com.apkscanner.util.Log;
 
 public class AaptNativeScanner extends ApkScannerStub
 {
@@ -14,11 +17,46 @@ public class AaptNativeScanner extends ApkScannerStub
 	@Override
 	public void openApk(String apkFilePath, String frameworkRes) {
 		assetsHandle = createAssetManager();
-		addPackage(assetsHandle, apkFilePath);
-		if(frameworkRes != null) {
-			addPackage(assetsHandle, frameworkRes);		
-		} else {
-			//addPackage(assetsHandle, "C:\\framework-res.apk");
+		if(!addPackage(assetsHandle, apkFilePath)) {
+			Log.e("ERROR: Failed to add package to an AssetManager : " + apkFilePath);
+			return;
+		}
+		Log.i("INFO: Successed to add package to an AssetManager : " + apkFilePath);
+		
+		boolean wasSetFrameworkRes = false;
+		if(frameworkRes != null && !frameworkRes.isEmpty()) {
+			for(String framework: frameworkRes.split(";")) {
+				if(framework.isEmpty()) continue;
+				if(new File(framework).isFile()) {
+					if(addPackage(assetsHandle, frameworkRes)) {
+						wasSetFrameworkRes = true;
+						Log.i("INFO: Successed to add resource package to the AssetManager : " + frameworkRes);
+					} else {
+						Log.w("WRRAING: Failed to add resource package to the AssetManager : " + frameworkRes);
+					}
+				}
+			}
+		}
+
+		if(!wasSetFrameworkRes) {
+			Log.i("INFO: Didn't set the package of resources. so, set package of the default resources.");
+			String selfPath = getClass().getResource("/AndroidManifest.xml").toString();
+			if(selfPath.startsWith("jar:")) {
+				selfPath = selfPath.replaceAll("jar:file:(.*)!/AndroidManifest.xml", "$1");
+			} else {
+				selfPath = getClass().getResource("/").getPath();
+			}
+
+			File jarFile = new File(selfPath);
+			if(!jarFile.exists()) {
+				Log.w("WRRAING: Failed to get self path");
+			} else {
+				if(addPackage(assetsHandle, jarFile.getAbsolutePath())) {
+					Log.i("INFO: Successed to add resource package to the AssetManager : " + jarFile.getAbsolutePath());
+				} else {
+					Log.w("WRRAING: Failed to add resource package to the AssetManager : " + jarFile.getAbsolutePath());
+				}
+			}
 		}
 	}
 

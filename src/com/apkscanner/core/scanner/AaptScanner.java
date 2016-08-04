@@ -92,19 +92,23 @@ public class AaptScanner extends ApkScannerStub
 		new Thread(new Runnable() {
 			public void run()
 			{
-				Log.i("I: read lib list...");
-		        apkInfo.librarys = ZipFileUtil.findFiles(apkInfo.filePath, ".so", null);
-		        stateChanged(Status.LIB_COMPLETED);
-		        
-				Log.i("I: read Resource list...");
-		        apkInfo.resources = ZipFileUtil.findFiles(apkInfo.filePath, null, null);
-		        stateChanged(Status.RESOURCE_COMPLETED);
-		        
+				new Thread(new Runnable() {
+					public void run()
+					{
+						Log.i("I: read lib list...");
+				        apkInfo.librarys = ZipFileUtil.findFiles(apkInfo.filePath, ".so", null);
+				        stateChanged(Status.LIB_COMPLETED);
+				        
+						Log.i("I: read Resource list...");
+				        apkInfo.resources = ZipFileUtil.findFiles(apkInfo.filePath, null, null);
+				        stateChanged(Status.RESOURCE_COMPLETED);
+					}
+				}).start();
+				
 				Log.i("I: read aapt dump resources...");
 				apkInfo.resourcesWithValue = AaptNativeWrapper.Dump.getResources(apkInfo.filePath, true);
 				stateChanged(Status.RES_DUMP_COMPLETED);
 				Log.i("resources completed");
-
 			}
 		}).start();
 
