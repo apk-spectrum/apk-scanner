@@ -3965,6 +3965,33 @@ ssize_t ResTable::getResource(uint32_t resID, Res_value* outValue, bool mayBeBag
 }
 
 //#ifdef APKSCANNER_JNI
+bool ResTable::isExistPackageId(uint32_t packId) const
+{
+    if (mError != 0) {
+        printf("mError=0x%x (%s)\n", mError, strerror(mError));
+    }
+    size_t pgCount = mPackageGroups.size();
+    for (size_t pgIndex=0; pgIndex<pgCount; pgIndex++) {
+        if(mPackageGroups[pgIndex]->id == packId) return true;
+    }
+    return false;
+}
+
+uint32_t ResTable::getPackageId(int32_t cookie) const
+{
+    const size_t N = mPackageGroups.size();
+    for (size_t i = 0; i < N; i++) {
+        const PackageGroup* pg = mPackageGroups[i];
+        size_t M = pg->packages.size();
+        for (size_t j = 0; j < M; j++) {
+            if (pg->packages[j]->header->cookie == cookie) {
+                return pg->id;
+            }
+        }
+    }
+    return -1; 
+}
+
 ssize_t ResTable::getResource(uint32_t resID, Vector<String8> *outValues,
     Vector<String8> *outConfigs, resource_name *outName) const
 {

@@ -374,6 +374,11 @@ public class AaptScanner extends ApkScannerStub
 			}).start();
 		}
 		apkInfo = null;
+
+		if(resourceScanner != null) {
+			resourceScanner.clear(true);
+			resourceScanner = null;
+		}
 	}
 	
 	private void stateChanged(Status status)

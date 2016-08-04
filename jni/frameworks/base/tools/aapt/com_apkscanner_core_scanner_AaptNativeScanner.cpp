@@ -9,8 +9,6 @@
 #include "AaptXml.h"
 #include "XMLNode.h"
 
-extern jstring gEncodingCharaset;
-
 static void printResolvedResourceAttribute(const ResTable& resTable, const ResXMLTree& tree,
         uint32_t attrRes, String8 attrLabel, String8* outError)
 {
@@ -1752,6 +1750,32 @@ JNIEXPORT void JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_realea
     delete assetManager;
 }
 
+JNIEXPORT jint JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_getPackageId
+  (JNIEnv * env, jclass, jstring path)
+{
+    if(path == NULL) {
+        fprintf(stderr, "ERROR: path(%p) is null\n", path);
+        return JNI_FALSE;
+    }
+
+    char *filepath = jstring2cstr(env, path);
+    if(filepath == NULL) {
+        fprintf(stderr, "Failure: encoding path is NULL\n");
+        fflush(stderr);
+        return JNI_FALSE;
+    }
+
+    AssetManager tmpAssets;
+    int32_t assetsCookie;
+    tmpAssets.addAssetPath(String8(filepath), &assetsCookie);
+    const ResTable& res = tmpAssets.getResources(false);
+    jint packId = res.getPackageId(assetsCookie);
+    
+    free(filepath);
+
+    return packId;
+}
+
 JNIEXPORT jboolean JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_addPackage
   (JNIEnv * env, jclass, jlong handle, jstring path)
 {
@@ -1759,68 +1783,76 @@ JNIEXPORT jboolean JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_ad
         fprintf(stderr, "ERROR: handle(%lld) or path(%p) is null\n", static_cast<long long>(handle), path);
         return JNI_FALSE;
     }
-    
-    jstring encoding = gEncodingCharaset;
-    jclass java_lang_String = NULL;
-    jmethodID java_lang_String_getBytes = NULL;
 
-    if(encoding != NULL) {
-        java_lang_String = env->FindClass("java/lang/String");
-        if(java_lang_String != NULL) {
-            java_lang_String_getBytes = env->GetMethodID(java_lang_String, "getBytes", "(Ljava/lang/String;)[B");
-        }
-        if(java_lang_String_getBytes == NULL) {
-            encoding = NULL;
-            if(java_lang_String != NULL) {
-                env->DeleteLocalRef(java_lang_String);
-                java_lang_String = NULL;
-            }
-        }
-    }
-    
-    char *filepath;
-    if(encoding != NULL) {
-        jbyteArray bytes = static_cast<jbyteArray>(env->CallObjectMethod(path, java_lang_String_getBytes, encoding));
-        // check UnsupportedEncodingException
-        if(env->ExceptionCheck()) {
-            fprintf(stderr, "UnsupportedEncodingException occurred\n");
-            env->ExceptionClear();
-            
-            jmethodID java_lang_String_getBytes_ = env->GetMethodID(java_lang_String, "getBytes", "()[B");
-            if(java_lang_String_getBytes_ != NULL) {
-                bytes = static_cast<jbyteArray>(env->CallObjectMethod(path, java_lang_String_getBytes_));
-            }
-        }
-        if(bytes != NULL) {
-            filepath = jbyteArray2cstr(env, bytes);
-            env->DeleteLocalRef(bytes);
-        } else {
-            filepath = NULL;
-        }
-    } else {
-        const char *jchar = env->GetStringUTFChars(path, 0);
-        filepath = (char *)malloc(4096);
-        if(filepath != NULL) {
-            sprintf(filepath, "%s", (char*)jchar);
-        }
-        env->ReleaseStringUTFChars(path, jchar);
-    }
-    
+    char *filepath = jstring2cstr(env, path);
     if(filepath == NULL) {
         fprintf(stderr, "Failure: encoding path is NULL\n");
         fflush(stderr);
         return JNI_FALSE;
     }
-    
+
     AssetManager *assetManager = reinterpret_cast<AssetManager*>(handle);
     int32_t assetsCookie;
+    jboolean result = JNI_TRUE;
     if (!assetManager->addAssetPath(String8(filepath), &assetsCookie)) {
         fprintf(stderr, "ERROR: dump failed because assets could not be loaded : %s\n", filepath);
+        fflush(stderr);
+        result = JNI_FALSE;
+    }
+    free(filepath);
+
+    return result;
+}
+
+JNIEXPORT jboolean JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_addResPackage
+  (JNIEnv * env, jclass, jlong handle, jstring path)
+{
+    if(handle == 0 || path == 0) {
+        fprintf(stderr, "ERROR: handle(%lld) or path(%p) is null\n", static_cast<long long>(handle), path);
+        return JNI_FALSE;
+    }
+
+    char *filepath = jstring2cstr(env, path);
+    if(filepath == NULL) {
+        fprintf(stderr, "Failure: encoding path is NULL\n");
         fflush(stderr);
         return JNI_FALSE;
     }
 
-    return JNI_TRUE;
+    int32_t packId = -1;
+    {
+        AssetManager tmpAssets;
+        int32_t assetsCookie;
+        tmpAssets.addAssetPath(String8(filepath), &assetsCookie);
+        const ResTable& res = tmpAssets.getResources(false);
+        packId = res.getPackageId(assetsCookie);
+    }
+    
+    AssetManager *assetManager = reinterpret_cast<AssetManager*>(handle);
+    
+    const ResTable& res = assetManager->getResources(false);
+    if (res.getError() != NO_ERROR) {
+        fprintf(stderr, "ERROR: dump failed because the resource table is invalid/corrupt.\n");
+        fflush(stderr);
+        return JNI_FALSE;
+    }
+    
+    jboolean result = JNI_TRUE;
+    if(res.isExistPackageId(packId)) {
+        fprintf(stderr, "WARRING: Existed packageId(%d) : %s\n", packId, filepath);
+        result = JNI_FALSE;
+    } else {
+        int32_t assetsCookie;
+        if (!assetManager->addAssetPath(String8(filepath), &assetsCookie)) {
+            fprintf(stderr, "ERROR: dump failed because assets could not be loaded : %s\n", filepath);
+            result = JNI_FALSE;
+        }
+    }
+    
+    free(filepath);
+    fflush(stderr);
+
+    return result;
 }
 
 JNIEXPORT jstring JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_getResourceName
@@ -1836,7 +1868,7 @@ JNIEXPORT jstring JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_get
         fflush(stderr);
         return NULL;
     }
-    
+
     jstring resName = NULL;
     android::ResTable::resource_name rname;
     if(res.getResourceName(resID, true, &rname)) {
@@ -1946,7 +1978,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanne
     return outputArray;
 }
 
-JNIEXPORT jstring JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_getResourceString
+JNIEXPORT jobject JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_getResourceString
   (JNIEnv *, jclass, jlong handle, jint, jstring)
 {
     if(handle == 0) return NULL;

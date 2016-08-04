@@ -11,7 +11,7 @@
 
 extern int main(int argc, char* const argv[]);
 
-jstring gEncodingCharaset;
+extern jstring gEncodingCharaset;
 
 JNIEXPORT jobjectArray JNICALL Java_com_apkscanner_tool_aapt_AaptNativeWrapper_run
   (JNIEnv *env, jclass /*thiz*/, jobjectArray params)

@@ -1,5 +1,7 @@
 #include "JniCharacterSet.h"
 
+jstring gEncodingCharaset;
+
 char *jbyteArray2cstr( JNIEnv *env, jbyteArray javaBytes )
 {
     if(env == NULL || javaBytes == NULL) return NULL;
@@ -320,4 +322,55 @@ jstring getEncodingCharacterSet(JNIEnv *env) {
     }
 
     return encodingSet;
+}
+
+char* jstring2cstr( JNIEnv *env, jstring jstr)
+{
+    jstring encoding = gEncodingCharaset;
+    jclass java_lang_String = NULL;
+    jmethodID java_lang_String_getBytes = NULL;
+
+    if(encoding != NULL) {
+        java_lang_String = env->FindClass("java/lang/String");
+        if(java_lang_String != NULL) {
+            java_lang_String_getBytes = env->GetMethodID(java_lang_String, "getBytes", "(Ljava/lang/String;)[B");
+        }
+        if(java_lang_String_getBytes == NULL) {
+            encoding = NULL;
+            if(java_lang_String != NULL) {
+                env->DeleteLocalRef(java_lang_String);
+                java_lang_String = NULL;
+            }
+        }
+    }
+
+    char *cstr;
+    if(encoding != NULL) {
+        jbyteArray bytes = static_cast<jbyteArray>(env->CallObjectMethod(jstr, java_lang_String_getBytes, encoding));
+        // check UnsupportedEncodingException
+        if(env->ExceptionCheck()) {
+            fprintf(stderr, "UnsupportedEncodingException occurred\n");
+            env->ExceptionClear();
+            
+            jmethodID java_lang_String_getBytes_ = env->GetMethodID(java_lang_String, "getBytes", "()[B");
+            if(java_lang_String_getBytes_ != NULL) {
+                bytes = static_cast<jbyteArray>(env->CallObjectMethod(jstr, java_lang_String_getBytes_));
+            }
+        }
+        if(bytes != NULL) {
+            cstr = jbyteArray2cstr(env, bytes);
+            env->DeleteLocalRef(bytes);
+        } else {
+            cstr = NULL;
+        }
+    } else {
+        const char *jchar = env->GetStringUTFChars(jstr, 0);
+        cstr = (char *)malloc(4096);
+        if(cstr != NULL) {
+            sprintf(cstr, "%s", (char*)jchar);
+        }
+        env->ReleaseStringUTFChars(jstr, jchar);
+    }
+    
+    return cstr;
 }

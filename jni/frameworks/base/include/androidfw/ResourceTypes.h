@@ -1604,6 +1604,8 @@ public:
     ssize_t getResource(uint32_t resID, Vector<String8> *outValues,
                     Vector<String8> *outConfigs = NULL,
                     resource_name *outName = NULL) const;
+    uint32_t getPackageId(int32_t cookie) const;
+    bool isExistPackageId(uint32_t packId) const;
 //#endif // APKSCANNER_JNI
 
     ssize_t resolveReference(Res_value* inOutValue,
