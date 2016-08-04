@@ -115,7 +115,7 @@ public class AaptScanner extends ApkScannerStub
 		Log.i("I: new resourceScanner...");
 		resourceScanner = new AaptNativeScanner(null);
 		Log.i("I: open resource apk");
-		resourceScanner.openApk(apkInfo.filePath, null);
+		resourceScanner.openApk(apkInfo.filePath);
 
 		
 		apkInfo.resourceScanner = resourceScanner;

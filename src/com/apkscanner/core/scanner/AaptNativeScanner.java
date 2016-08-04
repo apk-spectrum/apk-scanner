@@ -23,40 +23,45 @@ public class AaptNativeScanner extends ApkScannerStub
 		}
 		Log.i("INFO: Successed to add package to an AssetManager : " + apkFilePath);
 		
-		boolean wasSetFrameworkRes = false;
-		if(frameworkRes != null && !frameworkRes.isEmpty()) {
-			for(String framework: frameworkRes.split(";")) {
-				if(framework.isEmpty()) continue;
-				if(new File(framework).isFile()) {
-					if(addPackage(assetsHandle, frameworkRes)) {
-						wasSetFrameworkRes = true;
-						Log.i("INFO: Successed to add resource package to the AssetManager : " + frameworkRes);
-					} else {
-						Log.w("WRRAING: Failed to add resource package to the AssetManager : " + frameworkRes);
+		if(getResourceType(assetsHandle, 0x01010000) != null) {
+			Log.i("INFO: It's resource package : " + apkFilePath);			
+		} else {
+			boolean wasSetFrameworkRes = false;
+			if(frameworkRes != null && !frameworkRes.isEmpty()) {
+				for(String framework: frameworkRes.split(";")) {
+					if(framework.isEmpty()) continue;
+					if(new File(framework).isFile()) {
+						if(addPackage(assetsHandle, framework)) {
+							wasSetFrameworkRes = true;
+							Log.i("INFO: Successed to add resource package to the AssetManager : " + framework);
+						} else {
+							Log.w("WRRAING: Failed to add resource package to the AssetManager : " + framework);
+						}
 					}
 				}
 			}
-		}
 
-		if(!wasSetFrameworkRes) {
-			Log.i("INFO: Didn't set the package of resources. so, set package of the default resources.");
-			String selfPath = getClass().getResource("/AndroidManifest.xml").toString();
-			if(selfPath.startsWith("jar:")) {
-				selfPath = selfPath.replaceAll("jar:file:(.*)!/AndroidManifest.xml", "$1");
-			} else {
-				selfPath = getClass().getResource("/").getPath();
-			}
-
-			File jarFile = new File(selfPath);
-			if(!jarFile.exists()) {
-				Log.w("WRRAING: Failed to get self path");
-			} else {
-				if(addPackage(assetsHandle, jarFile.getAbsolutePath())) {
-					Log.i("INFO: Successed to add resource package to the AssetManager : " + jarFile.getAbsolutePath());
+			if(!wasSetFrameworkRes) {
+				Log.i("INFO: Didn't set the package of resources. so, set package of the default resources.");
+				String selfPath = getClass().getResource("/AndroidManifest.xml").toString();
+				if(selfPath.startsWith("jar:")) {
+					selfPath = selfPath.replaceAll("jar:file:(.*)!/AndroidManifest.xml", "$1");
 				} else {
-					Log.w("WRRAING: Failed to add resource package to the AssetManager : " + jarFile.getAbsolutePath());
+					selfPath = getClass().getResource("/").getPath();
+				}
+
+				File jarFile = new File(selfPath);
+				if(!jarFile.exists()) {
+					Log.w("WRRAING: Failed to get self path");
+				} else {
+					if(addPackage(assetsHandle, jarFile.getAbsolutePath())) {
+						Log.i("INFO: Successed to add resource package to the AssetManager : " + jarFile.getAbsolutePath());
+					} else {
+						Log.w("WRRAING: Failed to add resource package to the AssetManager : " + jarFile.getAbsolutePath());
+					}
 				}
 			}
+			
 		}
 	}
 
@@ -98,6 +103,7 @@ public class AaptNativeScanner extends ApkScannerStub
 	public native static void realeaseAssetManager(long handle);
 	
 	public native static boolean addPackage(long handle, String apkFilePath);
+	public native static boolean addResPackage(long handle, String apkFilePath);
 
 	public native static String getResourceName(long handle, int resId);
 	public native static String getResourceType(long handle, int resId);
