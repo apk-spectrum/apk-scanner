@@ -12,10 +12,14 @@ public class AaptNativeScanner extends ApkScannerStub
 	
 	public AaptNativeScanner(StatusListener statusListener) {
 		super(statusListener);
+		assetsHandle = 0;
 	}
 
 	@Override
 	public void openApk(String apkFilePath, String frameworkRes) {
+		if(assetsHandle != 0) {
+			realeaseAssetManager(assetsHandle);
+		}
 		assetsHandle = createAssetManager();
 		if(!addPackage(assetsHandle, apkFilePath)) {
 			Log.e("ERROR: Failed to add package to an AssetManager : " + apkFilePath);
@@ -23,7 +27,7 @@ public class AaptNativeScanner extends ApkScannerStub
 		}
 		Log.i("INFO: Successed to add package to an AssetManager : " + apkFilePath);
 		
-		if(getResourceType(assetsHandle, 0x01010000) != null) {
+		if(getPackageId(apkFilePath) == 0x01) {
 			Log.i("INFO: It's resource package : " + apkFilePath);			
 		} else {
 			boolean wasSetFrameworkRes = false;
@@ -31,7 +35,7 @@ public class AaptNativeScanner extends ApkScannerStub
 				for(String framework: frameworkRes.split(";")) {
 					if(framework.isEmpty()) continue;
 					if(new File(framework).isFile()) {
-						if(addPackage(assetsHandle, framework)) {
+						if(addResPackage(assetsHandle, framework)) {
 							wasSetFrameworkRes = true;
 							Log.i("INFO: Successed to add resource package to the AssetManager : " + framework);
 						} else {
@@ -54,7 +58,7 @@ public class AaptNativeScanner extends ApkScannerStub
 				if(!jarFile.exists()) {
 					Log.w("WRRAING: Failed to get self path");
 				} else {
-					if(addPackage(assetsHandle, jarFile.getAbsolutePath())) {
+					if(addResPackage(assetsHandle, jarFile.getAbsolutePath())) {
 						Log.i("INFO: Successed to add resource package to the AssetManager : " + jarFile.getAbsolutePath());
 					} else {
 						Log.w("WRRAING: Failed to add resource package to the AssetManager : " + jarFile.getAbsolutePath());
@@ -67,7 +71,8 @@ public class AaptNativeScanner extends ApkScannerStub
 
 	@Override
 	public void clear(boolean sync) {
-		realeaseAssetManager(assetsHandle);	
+		realeaseAssetManager(assetsHandle);
+		assetsHandle = 0;
 	}
 	
 	public String getResourceName(int resId) {
@@ -101,10 +106,12 @@ public class AaptNativeScanner extends ApkScannerStub
 
 	public native static long createAssetManager();
 	public native static void realeaseAssetManager(long handle);
+
+	public native static int getPackageId(String apkFilePath);
 	
 	public native static boolean addPackage(long handle, String apkFilePath);
 	public native static boolean addResPackage(long handle, String apkFilePath);
-
+	
 	public native static String getResourceName(long handle, int resId);
 	public native static String getResourceType(long handle, int resId);
 	public native static ResourceInfo[] getResourceValues(long handle, int resId);

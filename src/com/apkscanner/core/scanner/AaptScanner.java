@@ -26,6 +26,7 @@ public class AaptScanner extends ApkScannerStub
 	{
 		super(statusListener);
 		//stateChanged(Status.UNINITIALIZE);
+		resourceScanner = null;
 	}
 	
 	@Override
@@ -113,10 +114,12 @@ public class AaptScanner extends ApkScannerStub
 		}).start();
 
 		Log.i("I: new resourceScanner...");
+		if(resourceScanner != null) {
+			resourceScanner.clear(true);
+		}
 		resourceScanner = new AaptNativeScanner(null);
 		Log.i("I: open resource apk");
 		resourceScanner.openApk(apkInfo.filePath);
-
 		
 		apkInfo.resourceScanner = resourceScanner;
 		manifestReader.setResourceScanner(resourceScanner);
