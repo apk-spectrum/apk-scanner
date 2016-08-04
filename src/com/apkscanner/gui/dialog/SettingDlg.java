@@ -3,17 +3,15 @@ package com.apkscanner.gui.dialog;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -23,17 +21,12 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.JCheckBox;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.Log;
 
 public class SettingDlg extends JDialog implements ActionListener
 {
@@ -132,7 +125,6 @@ public class SettingDlg extends JDialog implements ActionListener
 				changed = 1;
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 					| UnsupportedLookAndFeelException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}			
 		}
@@ -285,7 +277,6 @@ public class SettingDlg extends JDialog implements ActionListener
 				UIManager.setLookAndFeel(strSetTheme);
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 					| UnsupportedLookAndFeelException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			

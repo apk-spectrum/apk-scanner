@@ -23,7 +23,7 @@ class SearchRenderer implements TableCellRenderer {
 	  private final JTextField field = new JTextField();
 	  private String pattern = "";
 	  private String prev;
-	  private int selectedIndex;
+	  //private int selectedIndex;
 
 	  public boolean setPattern(String str) {
 	    if (str == null || str.equals(pattern)) {

@@ -169,7 +169,6 @@ public class SearchDlg extends JDialog {
 		private CustomTooltip m_tooltip;
         
         public CustomTable(AllTableModel allTableModel) {
-			// TODO Auto-generated constructor stub
         	super(allTableModel);
 		}
 		@Override public JToolTip createToolTip() {
@@ -231,9 +230,11 @@ public class SearchDlg extends JDialog {
         	
         	
         }
-    }	
+    }
+
     private static class CustomTooltip extends JToolTip {
-        private JPanel m_panel;
+		private static final long serialVersionUID = 1732882292311005730L;
+		private JPanel m_panel;
         private RSyntaxTextArea textView;
         private JLabel label;
         public CustomTooltip() {
@@ -261,7 +262,8 @@ public class SearchDlg extends JDialog {
             context.setMarkAll(true);
             context.setSearchFor(str);
             context.setWholeWord(false);            
-            org.fife.ui.rtextarea.SearchResult result = SearchEngine.find(textView, context);
+            //org.fife.ui.rtextarea.SearchResult result =
+            SearchEngine.find(textView, context);
             
         }
         
@@ -320,7 +322,6 @@ public class SearchDlg extends JDialog {
 							try {
 								zipFile = new ZipFile(apkinfo.filePath);
 							} catch (IOException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 							ZipEntry entry = zipFile.getEntry(filelist[i]);
@@ -328,7 +329,6 @@ public class SearchDlg extends JDialog {
 							try {
 								zipFile.getInputStream(entry).read(buffer);
 							} catch (IOException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 							temp = new String(buffer);
@@ -359,7 +359,6 @@ public class SearchDlg extends JDialog {
 							  	  lineNumber++; 
 							  }
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 				    	
@@ -376,8 +375,8 @@ public class SearchDlg extends JDialog {
 	}
 	
 	public void setApkInfo(ApkInfo apkinfo) {
-		this.apkinfo = apkinfo;
-		Log.d(""+this.apkinfo);
+		SearchDlg.apkinfo = apkinfo;
+		Log.d(""+SearchDlg.apkinfo);
 	}
 	
 	
@@ -411,8 +410,9 @@ public class SearchDlg extends JDialog {
 	}
 	
 	class AllTableModel extends AbstractTableModel {
+		private static final long serialVersionUID = -4035177205338096822L;
 
-	    ArrayList<TableData> tableData;
+		ArrayList<TableData> tableData;
 
 	    Object[] columnNames = {"Index", "path", "line", ""};
 

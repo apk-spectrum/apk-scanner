@@ -18,7 +18,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
@@ -50,15 +49,15 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 	Dimension ViewPortsize;
 	JPanel scrollpanel;
 	double positionx, positiony;
-    private int oldVPos = 0;
-    private int oldHPos = 0;
+    //private int oldVPos = 0;
+    //private int oldHPos = 0;
 	
     String Filesize= "";
     
 	int x, y;
 	int beforx,befory;
 	private float scale = 1;
-	private float DefalutMinscale =1;
+	//private float DefalutMinscale =1;
 
 	Image imageBackground;
 	
@@ -183,7 +182,8 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 	}
 	
 	private class ImageViewPanel extends JPanel implements MouseListener{
-
+		private static final long serialVersionUID = 5029722098872690026L;
+		
 		BufferedImage bi;
 		BufferedImage bgbi;
 		
@@ -208,7 +208,7 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 			//ViewPortsize.setSize(new Dimension((int)ViewPortsize.getWidth()-10, (int)ViewPortsize.getHeight()-10));
 			
 			if(ViewPortsize.getWidth()<(image.getWidth(this)) || ViewPortsize.getHeight()<(image.getHeight(this))) {
-			scale = DefalutMinscale = (float) ((ViewPortsize.getWidth()/(image.getWidth(this)) <= ViewPortsize.getHeight()/(image.getHeight(this)))?
+			scale = /* DefalutMinscale = */ (float) ((ViewPortsize.getWidth()/(image.getWidth(this)) <= ViewPortsize.getHeight()/(image.getHeight(this)))?
 					(ViewPortsize.getWidth()/image.getWidth(this)) :
 				(ViewPortsize.getHeight()/image.getHeight(this)));
 			} else {
@@ -224,9 +224,9 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 			Graphics2D g2D = (Graphics2D) g;
 			ViewPortsize = new Dimension(scroll.getViewport().getWidth()-10,scroll.getViewport().getHeight()-10);
 						
-			AffineTransform at = new AffineTransform();
+			//AffineTransform at = new AffineTransform();
 			if(bi!=null) {
-				Rectangle Rect = g2D.getClipBounds();
+				//Rectangle Rect = g2D.getClipBounds();
 				
 				
 				positionx = (int)((ViewPortsize.getWidth()-bi.getWidth() * scale)/2);
@@ -267,8 +267,8 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 		        Imagearea.setSize(bi.getWidth()*scale,bi.getHeight()*scale);
 		        
 		        
-		        double tempx = Math.abs((int)(positionx));
-		        double tempy = Math.abs((int)(positiony));
+		        //double tempx = Math.abs((int)(positionx));
+		        //double tempy = Math.abs((int)(positiony));
 				setPreferredSize(Imagearea);
 				
 				//Log.d("tempx : "+tempx +" tempy = "+ tempy);
@@ -283,26 +283,21 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 		
 		@Override
 		public void mouseClicked(java.awt.event.MouseEvent arg0) {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void mouseEntered(java.awt.event.MouseEvent arg0) {
-			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
 		public void mouseExited(java.awt.event.MouseEvent arg0) {
-			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
 		public void mousePressed(java.awt.event.MouseEvent arg0) {
-			// TODO Auto-generated method stub
-			
 			beforx = arg0.getX();
 			befory = arg0.getY();
 			
@@ -311,7 +306,6 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 
 		@Override
 		public void mouseReleased(java.awt.event.MouseEvent arg0) {
-			// TODO Auto-generated method stub
 			this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			
 		}
@@ -319,7 +313,6 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
 		boolean isWhiteMono = arg0.getActionCommand().equals("White");
 		if(isWhiteMono) {
 			imageBackground = Resource.IMG_RESOURCE_IMG_BACKGROUND.getImageIcon().getImage();
