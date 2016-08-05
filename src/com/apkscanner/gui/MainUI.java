@@ -34,6 +34,8 @@ import com.apkscanner.gui.dialog.SettingDlg;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.FileDrop;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.tool.aapt.AaptNativeWrapper;
+import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.tool.dex2jar.Dex2JarWrapper;
 import com.apkscanner.tool.jd_gui.JDGuiLauncher;
 import com.apkscanner.util.FileUtil;
@@ -477,9 +479,13 @@ public class MainUI extends JFrame
 							Log.d("sucess make folder");
 						}
 					}
-					FileWriter fw = new FileWriter(new File(manifestPath));
+
+					String[] convStrings = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath, new String[] {"AndroidManifest.xml"});
+					AxmlToXml a2x = new AxmlToXml(convStrings, (apkInfo != null) ? apkInfo.resourceScanner : null);
+					a2x.setMultiLinePrint(true);
 					
-					fw.write(((AaptScanner)apkScanner).makeAndroidManifestXml());
+					FileWriter fw = new FileWriter(new File(manifestPath));
+					fw.write(a2x.toString());
 					fw.close();
 				}
 				new ProcessBuilder(editor, manifestPath).start();

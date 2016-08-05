@@ -1,12 +1,15 @@
 package com.apkscanner.core.scanner;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbWrapper;
+import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.ZipFileUtil;
 
 abstract public class ApkScannerStub
 {
@@ -94,6 +97,89 @@ abstract public class ApkScannerStub
 	public ApkInfo getApkInfo()
 	{
 		return apkInfo;
+	}
+
+	protected String[] solveCert()
+	{
+		String certPath = apkInfo.tempWorkPath + File.separator + "META-INF";
+		
+		Double javaVersion = Double.parseDouble(System.getProperty("java.specification.version"));
+		String keytoolPackage;
+		if(javaVersion >= 1.8) {
+			keytoolPackage = "sun.security.tools.keytool.Main";
+		} else {
+			keytoolPackage = "sun.security.tools.KeyTool";
+		}
+
+		ArrayList<String> certList = new ArrayList<String>();  
+		
+		if(!(new File(apkInfo.filePath)).exists()) {
+			return null;
+		}
+		
+		if(!ZipFileUtil.unZip(apkInfo.filePath, "META-INF/", certPath)) {
+			Log.e("META-INFO 폴더가 존재 하지 않습니다 :");
+			return null;
+		}
+		
+		for (String s : (new File(certPath)).list()) {
+			if(!s.endsWith(".RSA") && !s.endsWith(".DSA") && !s.endsWith(".EC") ) continue;
+
+			File rsaFile = new File(certPath + File.separator + s);
+			if(!rsaFile.exists()) continue;
+
+			String[] cmd = {"java","-Dfile.encoding=utf8",keytoolPackage,"-printcert","-v","-file", rsaFile.getAbsolutePath()};
+			String[] result = ConsolCmd.exc(cmd, false, null);
+
+		    String certContent = "";
+
+		    boolean isSamsungSign = false;
+		    boolean isPlatformTestKey = false;
+		    
+		    for(int i=0; i < result.length; i++){
+	    		if(!certContent.isEmpty() && result[i].matches("^.*\\[[0-9]*\\]:$")) {
+	    			certList.add(certContent);
+			    	certContent = "";
+	    		}
+	    		if(result[i].matches("^.*:( [^ ,]+=(\".*\")?[^,]*,?)+$")) {
+	    			if(result[i].indexOf("CN=") > -1) {
+	    				String CN = result[i].replaceAll(".*CN=([^,]*).*", "$1");
+	    				if("Samsung Cert".equals(CN)) {
+	    					isSamsungSign = true;
+	    				} else if("Android".equals(CN)) {
+	    					isPlatformTestKey = true;
+	    				}
+	    			}
+	    		}
+	    		if((isSamsungSign || isPlatformTestKey)
+	    				&& result[i].matches("^[^\\s]+[^:]*: ([0-9a-z]+)+$")) {
+	    			String serialNumber = result[i].replaceAll("^[^\\s]+[^:]*: ([0-9a-z]+)+$", "$1");
+	    			if(isSamsungSign && !Resource.STR_SAMSUNG_KEY_SERIAL.getString().equals(serialNumber)) {
+		    			Log.w(Resource.STR_SAMSUNG_KEY_SERIAL.getString() + " " + serialNumber);
+	    				isSamsungSign = false;
+	    			} else if(isPlatformTestKey && !Resource.STR_SS_TEST_KEY_SERIAL.getString().equals(serialNumber)) {
+		    			Log.w(Resource.STR_SS_TEST_KEY_SERIAL.getString() + " " + serialNumber);
+	    				isPlatformTestKey = false;
+	    			}
+	    		}
+	    		certContent += (certContent.isEmpty() ? "" : "\n") + result[i];
+		    }
+		    
+		    if(isSamsungSign) apkInfo.featureFlags |= ApkInfo.APP_FEATURE_SAMSUNG_SIGN;
+		    if(isPlatformTestKey) apkInfo.featureFlags |= ApkInfo.APP_FEATURE_PLATFORM_SIGN;
+		    
+		    certList.add(certContent);
+		}
+
+		return certList.toArray(new String[0]);
+	}
+	
+	protected void stateChanged(Status status)
+	{
+		if(statusListener != null) {
+			//if(apkInfo != null) apkInfo.verify();
+			statusListener.OnStateChanged(status);
+		}
 	}
 	
 	protected void timeRecordStart()

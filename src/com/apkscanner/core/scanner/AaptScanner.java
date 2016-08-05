@@ -1,17 +1,14 @@
 package com.apkscanner.core.scanner;
 
 import java.io.File;
-import java.util.ArrayList;
 
 import com.apkscanner.Launcher;
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AaptXmlTreeNode;
 import com.apkscanner.tool.aapt.AaptXmlTreePath;
-import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
@@ -19,7 +16,6 @@ import com.apkscanner.util.ZipFileUtil;
 public class AaptScanner extends ApkScannerStub
 {
 	private AaptXmlTreePath manifestPath = null;
-	private String[] androidManifest = null;
 	private AaptNativeScanner resourceScanner;
 	
 	public AaptScanner(StatusListener statusListener)
@@ -61,7 +57,17 @@ public class AaptScanner extends ApkScannerStub
 		apkInfo.tempWorkPath = FileUtil.makeTempPath(apkInfo.filePath.substring(apkInfo.filePath.lastIndexOf(File.separator)));
 		Log.i("Temp path : " + apkInfo.tempWorkPath);
 		
+		Log.i("I: new resourceScanner...");
+		if(resourceScanner != null) {
+			resourceScanner.clear(true);
+		}
+		resourceScanner = new AaptNativeScanner(null);
+		Log.i("I: open resource apk");
+		resourceScanner.openApk(apkInfo.filePath, frameworkRes);
+		apkInfo.resourceScanner = resourceScanner;
+		
 		final AaptManifestReader manifestReader = new AaptManifestReader(null, apkInfo.manifest);
+		manifestReader.setResourceScanner(resourceScanner);
 		
 		final Object SignSync = new Object();
 		synchronized(SignSync) {
@@ -112,20 +118,9 @@ public class AaptScanner extends ApkScannerStub
 				Log.i("resources completed");
 			}
 		}).start();
-
-		Log.i("I: new resourceScanner...");
-		if(resourceScanner != null) {
-			resourceScanner.clear(true);
-		}
-		resourceScanner = new AaptNativeScanner(null);
-		Log.i("I: open resource apk");
-		resourceScanner.openApk(apkInfo.filePath);
-		
-		apkInfo.resourceScanner = resourceScanner;
-		manifestReader.setResourceScanner(resourceScanner);
 		
 		Log.i("I: getDump AndroidManifest...");
-		androidManifest = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath, new String[] { "AndroidManifest.xml" });
+		String[] androidManifest = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath, new String[] { "AndroidManifest.xml" });
 		
 		Log.i("I: createAaptXmlTree...");
 		manifestPath = new AaptXmlTreePath();
@@ -196,143 +191,6 @@ public class AaptScanner extends ApkScannerStub
         	statusListener.OnComplete();
         }
 	}
-	
-	public String[] getAndroidManifest()
-	{
-		return androidManifest;
-	}
-	
-	private String makeNodeXml(AaptXmlTreeNode node, String namespace, String depthSpace)
-	{
-		StringBuilder xml = new StringBuilder(depthSpace);
-
-		xml.append("<" + node.getName());
-		if(node.getName().equals("manifest")) {
-			xml.append(" xmlns:");
-			xml.append(manifestPath.getNamespace());
-			xml.append("=\"http://schemas.android.com/apk/res/android\"");
-		}
-		for(String name: node.getAttributeList()) {
-			xml.append(" ");
-			xml.append(name);
-			xml.append("=\"");
-			if(name.endsWith("protectionLevel")) {
-				String protection = node.getAttribute(name);
-	        	if(protection != null && protection.startsWith("0x")) {
-	        		int level = Integer.parseInt(protection.substring(2), 16);
-	        		xml.append(PermissionInfo.protectionToString(level));
-	        	} else {
-	        		xml.append(protection);
-	        	}
-			} else {
-				xml.append(resourceScanner.getResourceName(node.getAttribute(name)));
-			}
-			xml.append("\"");
-		}
-		if(node.getNodeCount() > 0) {
-			xml.append(">\r\n");
-			for(AaptXmlTreeNode child: node.getNodeList()) {
-				xml.append(makeNodeXml(child, namespace, depthSpace + "    "));
-			}
-			xml.append(depthSpace);
-			xml.append("</");
-			xml.append(node.getName());
-			xml.append(">\r\n");
-		} else {
-			xml.append("/>\r\n");
-		}
-		
-		return xml.toString();
-	}
-	
-	public String makeAndroidManifestXml()
-	{
-		if(manifestPath == null) return null;
-		
-		AaptXmlTreeNode topNode = manifestPath.getNode("/manifest");
-		if(topNode == null) return null;
-		
-		StringBuilder xml = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"?>\r\n");
-		
-		xml.append(makeNodeXml(topNode, manifestPath.getNamespace(), ""));
-		
-		return xml.toString();
-	}
-
-	private String[] solveCert()
-	{
-		String certPath = apkInfo.tempWorkPath + File.separator + "META-INF";
-		
-		Double javaVersion = Double.parseDouble(System.getProperty("java.specification.version"));
-		String keytoolPackage;
-		if(javaVersion >= 1.8) {
-			keytoolPackage = "sun.security.tools.keytool.Main";
-		} else {
-			keytoolPackage = "sun.security.tools.KeyTool";
-		}
-
-		ArrayList<String> certList = new ArrayList<String>();  
-		
-		if(!(new File(apkInfo.filePath)).exists()) {
-			return null;
-		}
-		
-		if(!ZipFileUtil.unZip(apkInfo.filePath, "META-INF/", certPath)) {
-			Log.e("META-INFO 폴더가 존재 하지 않습니다 :");
-			return null;
-		}
-		
-		for (String s : (new File(certPath)).list()) {
-			if(!s.endsWith(".RSA") && !s.endsWith(".DSA") && !s.endsWith(".EC") ) continue;
-
-			File rsaFile = new File(certPath + File.separator + s);
-			if(!rsaFile.exists()) continue;
-
-			String[] cmd = {"java","-Dfile.encoding=utf8",keytoolPackage,"-printcert","-v","-file", rsaFile.getAbsolutePath()};
-			String[] result = ConsolCmd.exc(cmd, false, null);
-
-		    String certContent = "";
-
-		    boolean isSamsungSign = false;
-		    boolean isPlatformTestKey = false;
-		    
-		    for(int i=0; i < result.length; i++){
-	    		if(!certContent.isEmpty() && result[i].matches("^.*\\[[0-9]*\\]:$")) {
-	    			certList.add(certContent);
-			    	certContent = "";
-	    		}
-	    		if(result[i].matches("^.*:( [^ ,]+=(\".*\")?[^,]*,?)+$")) {
-	    			if(result[i].indexOf("CN=") > -1) {
-	    				String CN = result[i].replaceAll(".*CN=([^,]*).*", "$1");
-	    				if("Samsung Cert".equals(CN)) {
-	    					isSamsungSign = true;
-	    				} else if("Android".equals(CN)) {
-	    					isPlatformTestKey = true;
-	    				}
-	    			}
-	    		}
-	    		if((isSamsungSign || isPlatformTestKey)
-	    				&& result[i].matches("^[^\\s]+[^:]*: ([0-9a-z]+)+$")) {
-	    			String serialNumber = result[i].replaceAll("^[^\\s]+[^:]*: ([0-9a-z]+)+$", "$1");
-	    			if(isSamsungSign && !Resource.STR_SAMSUNG_KEY_SERIAL.getString().equals(serialNumber)) {
-		    			Log.w(Resource.STR_SAMSUNG_KEY_SERIAL.getString() + " " + serialNumber);
-	    				isSamsungSign = false;
-	    			} else if(isPlatformTestKey && !Resource.STR_SS_TEST_KEY_SERIAL.getString().equals(serialNumber)) {
-		    			Log.w(Resource.STR_SS_TEST_KEY_SERIAL.getString() + " " + serialNumber);
-	    				isPlatformTestKey = false;
-	    			}
-	    		}
-	    		certContent += (certContent.isEmpty() ? "" : "\n") + result[i];
-		    }
-		    
-		    if(isSamsungSign) apkInfo.featureFlags |= ApkInfo.APP_FEATURE_SAMSUNG_SIGN;
-		    if(isPlatformTestKey) apkInfo.featureFlags |= ApkInfo.APP_FEATURE_PLATFORM_SIGN;
-		    
-		    certList.add(certContent);
-		}
-
-		return certList.toArray(new String[0]);
-	}
 
 	private void deleteTempPath(String tmpPath, String apkPath)
 	{
@@ -378,14 +236,6 @@ public class AaptScanner extends ApkScannerStub
 		if(resourceScanner != null) {
 			resourceScanner.clear(true);
 			resourceScanner = null;
-		}
-	}
-	
-	private void stateChanged(Status status)
-	{
-		if(statusListener != null) {
-			//if(apkInfo != null) apkInfo.verify();
-			statusListener.OnStateChanged(status);
 		}
 	}
 }
