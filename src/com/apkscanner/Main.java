@@ -18,7 +18,7 @@ import com.apkscanner.gui.MainUI;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.adb.AdbWrapper;
-import com.apkscanner.tool.apktool.ApktoolManager;
+import com.apkscanner.tool.apktool.ApktoolWrapper;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 
@@ -302,7 +302,7 @@ public class Main
 	static private void usage()
 	{
 		System.out.println(Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString());
-		System.out.println("with apktool " + ApktoolManager.getApkToolVersion() + " (http://ibotpeaches.github.io/Apktool/)");
+		System.out.println("with apktool " + ApktoolWrapper.getApkToolVersion() + " (http://ibotpeaches.github.io/Apktool/)");
 		System.out.println(" - Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)");
 		System.out.println("with " + AdbWrapper.getVersion() + " (http://developer.android.com/tools/help/adb.html)");
 		System.out.println("Programmed by " + Resource.STR_APP_MAKER.getString() + " <" + Resource.STR_APP_MAKER_EMAIL.getString() + ">" + ", 2015");

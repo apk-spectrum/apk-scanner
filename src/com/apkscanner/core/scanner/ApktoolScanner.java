@@ -1,4 +1,4 @@
-package com.apkscanner.tool.apktool;
+package com.apkscanner.core.scanner;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -6,8 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.apkscanner.core.scanner.ApkScannerStub;
-import com.apkscanner.core.scanner.EstimatedTimeEnRoute;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.ConsolCmd;
@@ -15,11 +13,8 @@ import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.XmlPath;
 
-public class ApktoolManager extends ApkScannerStub
-{	
-	static private final String ApktoolVer = getApkToolVersion();
-
-	private ApkInfo mApkInfo;
+public class ApktoolScanner extends ApkScannerStub
+{
 	private boolean isPackageTempAPK = false;
  	
 	//private Status mState = Status.UNINITIALIZE;
@@ -41,10 +36,10 @@ public class ApktoolManager extends ApkScannerStub
 		BOTH
 	}
 	
-	public ApktoolManager(StatusListener statusListener)
+	public ApktoolScanner(StatusListener statusListener)
 	{
 		super(statusListener);
-		mApkInfo = new ApkInfo();
+		apkInfo = new ApkInfo();
 		mFrameworkResList = new ArrayList<String>();
 	}
 
@@ -58,7 +53,7 @@ public class ApktoolManager extends ApkScannerStub
 		apkPath = apkFile.getAbsolutePath();
 		
 		if(apkPath != null && (new File(apkPath)).exists()) {
-			mApkInfo.filePath = apkPath;
+			apkInfo.filePath = apkPath;
 		}
 	}
 
@@ -76,21 +71,6 @@ public class ApktoolManager extends ApkScannerStub
 			mFrameworkResList.add(resFile.getAbsolutePath());
 		}
 	}
-	
-	static public String getApkToolVersion()
-	{
-		if(ApktoolVer == null) {
-			String apkToolPath = Resource.LIB_APKTOOL_JAR.getPath();
-			if(!(new File(apkToolPath)).exists()) {
-				Log.e("No such file : apktool.jar");
-				return null;
-			}
-			String[] result = ConsolCmd.exc(new String[] {"java", "-jar", apkToolPath, "--version"}, false);
-	
-			return result[0];
-		}
-		return ApktoolVer;
-	}
 
 	@Override
 	public void openApk(String apkFilePath, String frameworkRes)
@@ -99,7 +79,7 @@ public class ApktoolManager extends ApkScannerStub
 		setApkFile(apkFilePath);
 		addFameworkRes(frameworkRes);
 		
-		if(mApkInfo.filePath == null) return;
+		if(apkInfo.filePath == null) return;
 		//Log.i("solve()....start ");
 		synchronized(this) {
 			mProcess = new ProcessThead(this, ProcessCmd.SOLVE_RESOURCE, statusListener);
@@ -150,19 +130,19 @@ public class ApktoolManager extends ApkScannerStub
 		
 		private boolean solve()
 		{
-			mApkInfo.tempWorkPath = FileUtil.makeTempPath(mApkInfo.filePath);
-			Log.i("Temp path : " + mApkInfo.tempWorkPath);
+			apkInfo.tempWorkPath = FileUtil.makeTempPath(apkInfo.filePath);
+			Log.i("Temp path : " + apkInfo.tempWorkPath);
 
-			mApkInfo.fileSize = (new File(mApkInfo.filePath)).length();
+			apkInfo.fileSize = (new File(apkInfo.filePath)).length();
 			
-			boolean isSolve = solveAPK(mApkInfo.filePath, mApkInfo.tempWorkPath);
+			boolean isSolve = solveAPK(apkInfo.filePath, apkInfo.tempWorkPath);
 			if(isSolve) {
 				XmlToMyApkinfo();
 				
-				mApkInfo.resources = FileUtil.findFiles(new File(mApkInfo.tempWorkPath + File.separator + "res"), ".png", ".*drawable.*").toArray(new String[0]);
-				mApkInfo.librarys = FileUtil.findFiles(new File(mApkInfo.tempWorkPath + File.separator + "lib"), ".so", null).toArray(new String[0]);
+				apkInfo.resources = FileUtil.findFiles(new File(apkInfo.tempWorkPath + File.separator + "res"), ".png", ".*drawable.*").toArray(new String[0]);
+				apkInfo.librarys = FileUtil.findFiles(new File(apkInfo.tempWorkPath + File.separator + "lib"), ".so", null).toArray(new String[0]);
 	
-				solveCert(mApkInfo.tempWorkPath + File.separator + "original" + File.separator + "META-INF" + File.separator);
+				solveCert();
 			}
 			return isSolve;
 		}
@@ -224,76 +204,76 @@ public class ApktoolManager extends ApkScannerStub
 			YmlToMyApkinfo();
 
 			progress(5,"parsing AndroidManifest....\n");
-			XmlPath xmlAndroidManifest = new XmlPath(mApkInfo.tempWorkPath + File.separator + "AndroidManifest.xml");
+			XmlPath xmlAndroidManifest = new XmlPath(apkInfo.tempWorkPath + File.separator + "AndroidManifest.xml");
 
 			// package
 			xmlAndroidManifest.getNode("/manifest");
-			mApkInfo.manifest.packageName = xmlAndroidManifest.getAttributes("package");
-			mApkInfo.manifest.sharedUserId = xmlAndroidManifest.getAttributes("android:sharedUserId");
+			apkInfo.manifest.packageName = xmlAndroidManifest.getAttributes("package");
+			apkInfo.manifest.sharedUserId = xmlAndroidManifest.getAttributes("android:sharedUserId");
 			/*
-			if(mApkInfo.VersionCode == null || mApkInfo.VersionCode.isEmpty()) {
-				mApkInfo.VersionCode = xmlAndroidManifest.getAttributes("android:versionCode");
+			if(apkInfo.VersionCode == null || apkInfo.VersionCode.isEmpty()) {
+				apkInfo.VersionCode = xmlAndroidManifest.getAttributes("android:versionCode");
 			}
 			
-			if(mApkInfo.VersionName == null || mApkInfo.VersionName.isEmpty()) {
-				mApkInfo.VersionName = xmlAndroidManifest.getAttributes("android:versionName");
+			if(apkInfo.VersionName == null || apkInfo.VersionName.isEmpty()) {
+				apkInfo.VersionName = xmlAndroidManifest.getAttributes("android:versionName");
 			}
 
 			// label & icon
 			xmlAndroidManifest.getNode("/manifest/application");
-			mApkInfo.Labelname = getMutiLang(xmlAndroidManifest.getAttributes("android:label"));
-			mApkInfo.IconPath = getResourceInfo(xmlAndroidManifest.getAttributes("android:icon"));
+			apkInfo.Labelname = getMutiLang(xmlAndroidManifest.getAttributes("android:label"));
+			apkInfo.IconPath = getResourceInfo(xmlAndroidManifest.getAttributes("android:icon"));
 			
 			String debuggable = xmlAndroidManifest.getAttributes("android:debuggable");
-			mApkInfo.debuggable = debuggable != null && debuggable.equals("true");
+			apkInfo.debuggable = debuggable != null && debuggable.equals("true");
 	        
 	        // hidden
 	        if(!xmlAndroidManifest.isNode("//category[@name='android.intent.category.LAUNCHER']")) {
-	        	mApkInfo.isHidden = true;
+	        	apkInfo.isHidden = true;
 	        }
 	        
 	        // startup
 	        if(xmlAndroidManifest.isNode("//uses-permission[@name='android.permission.RECEIVE_BOOT_COMPLETED']")) {
-	        	mApkInfo.Startup = "START_UP";
+	        	apkInfo.Startup = "START_UP";
 	        } else {
-	        	mApkInfo.Startup = "";
+	        	apkInfo.Startup = "";
 	        }
 
 	        // permission
-	        mApkInfo.ProtectionLevel = "";
+	        apkInfo.ProtectionLevel = "";
 	        progress(5,"parsing permission...\n");
 	        xmlAndroidManifest.getNodeList("//uses-permission");
 	        for( int idx=0; idx < xmlAndroidManifest.getLength(); idx++ ){
-	        	if(idx==0) mApkInfo.Permissions = "<uses-permission> [" + xmlAndroidManifest.getLength() + "]";
-	        	mApkInfo.Permissions += "\n" + xmlAndroidManifest.getAttributes(idx, "android:name");
-	        	mApkInfo.PermissionList.add(xmlAndroidManifest.getAttributes(idx, "android:name"));
+	        	if(idx==0) apkInfo.Permissions = "<uses-permission> [" + xmlAndroidManifest.getLength() + "]";
+	        	apkInfo.Permissions += "\n" + xmlAndroidManifest.getAttributes(idx, "android:name");
+	        	apkInfo.PermissionList.add(xmlAndroidManifest.getAttributes(idx, "android:name"));
 	        	String sig = xmlAndroidManifest.getAttributes(idx, "android:protectionLevel");
 	        	if(sig != null && sig.equals("signature")) {
-	        		mApkInfo.Permissions += " - <SIGNATURE>";
-	        		mApkInfo.ProtectionLevel = "SIGNATURE";
+	        		apkInfo.Permissions += " - <SIGNATURE>";
+	        		apkInfo.ProtectionLevel = "SIGNATURE";
 	        	}
 	        }
 	        xmlAndroidManifest.getNodeList("//permission");
 	        for( int idx=0; idx < xmlAndroidManifest.getLength(); idx++ ){
-	        	if(idx==0) mApkInfo.Permissions += "\n\n<permission> [" + xmlAndroidManifest.getLength() + "]";
-	        	mApkInfo.Permissions += "\n" + xmlAndroidManifest.getAttributes(idx, "android:name");
-	        	mApkInfo.PermissionList.add(xmlAndroidManifest.getAttributes(idx, "android:name"));
+	        	if(idx==0) apkInfo.Permissions += "\n\n<permission> [" + xmlAndroidManifest.getLength() + "]";
+	        	apkInfo.Permissions += "\n" + xmlAndroidManifest.getAttributes(idx, "android:name");
+	        	apkInfo.PermissionList.add(xmlAndroidManifest.getAttributes(idx, "android:name"));
 	        	String sig = xmlAndroidManifest.getAttributes(idx, "android:protectionLevel");
 	        	if(sig != null && sig.equals("signature")) {
-	        		mApkInfo.Permissions += " - <SIGNATURE>";
-	        		mApkInfo.ProtectionLevel = "SIGNATURE";
+	        		apkInfo.Permissions += " - <SIGNATURE>";
+	        		apkInfo.ProtectionLevel = "SIGNATURE";
 	        	}
 	        }
 	        
-	        PermissionGroupManager permGroupManager = new PermissionGroupManager(mApkInfo.PermissionList.toArray(new String[0]));
-	        mApkInfo.PermGroupMap = permGroupManager.getPermGroupMap();
+	        PermissionGroupManager permGroupManager = new PermissionGroupManager(apkInfo.PermissionList.toArray(new String[0]));
+	        apkInfo.PermGroupMap = permGroupManager.getPermGroupMap();
 
 	        // widget
 	        progress(5,"parsing widget...\n");
 	        xmlAndroidManifest.getNodeList("//meta-data[@name='android.appwidget.provider']");
 	        //Log.i("Normal widgetList cnt = " + xmlAndroidManifest.getLength());
 	        for( int idx=0; idx < xmlAndroidManifest.getLength(); idx++ ){
-	        	Object[] widgetExtraInfo = {mApkInfo.IconPath, ""};
+	        	Object[] widgetExtraInfo = {apkInfo.IconPath, ""};
 	        	
 	        	MyXPath parent = xmlAndroidManifest.getParentNode(idx);
 	        	String widgetTitle = getResourceInfo(parent.getAttributes("android:label"));
@@ -303,7 +283,7 @@ public class ApktoolManager extends ApkScannerStub
 	        		widgetExtraInfo = extraInfo;
 	        	}
 	        	
-	        	mApkInfo.WidgetList.add(new Object[] {widgetExtraInfo[0], widgetTitle, widgetExtraInfo[1], widgetActivity, "Normal"});
+	        	apkInfo.WidgetList.add(new Object[] {widgetExtraInfo[0], widgetTitle, widgetExtraInfo[1], widgetActivity, "Normal"});
 	        }
 	        
 	        xmlAndroidManifest.getNodeList("//action[@name='android.intent.action.CREATE_SHORTCUT']");
@@ -313,7 +293,7 @@ public class ApktoolManager extends ApkScannerStub
 	        	String widgetTitle = getResourceInfo(parent.getAttributes("android:label"));
 	        	String widgetActivity = getResourceInfo(parent.getAttributes("android:name"));
 
-	        	mApkInfo.WidgetList.add(new Object[] {mApkInfo.IconPath, widgetTitle, "1 X 1", widgetActivity, "Shortcut"});
+	        	apkInfo.WidgetList.add(new Object[] {apkInfo.IconPath, widgetTitle, "1 X 1", widgetActivity, "Shortcut"});
 	        }
 	        
 	        // Activity/Service/Receiver/provider intent-filter
@@ -322,7 +302,7 @@ public class ApktoolManager extends ApkScannerStub
 	        getActivityInfo(xmlAndroidManifest, "receiver");
 	        getActivityInfo(xmlAndroidManifest, "provider");
 	        
-	        mApkInfo.verify();
+	        apkInfo.verify();
 	        */
 		}
 		
@@ -331,7 +311,7 @@ public class ApktoolManager extends ApkScannerStub
 			if(id == null) return null;
 
 			String result = null;
-			String resXmlPath = new String(mApkInfo.tempWorkPath + File.separator + "res" + File.separator);
+			String resXmlPath = new String(apkInfo.tempWorkPath + File.separator + "res" + File.separator);
 			String query = "//";
 			String filter = "";
 			String fileName = "";
@@ -395,7 +375,7 @@ public class ApktoolManager extends ApkScannerStub
 
 			ArrayList<String> result = new ArrayList<String>();
 
-			String resXmlPath = new String(mApkInfo.tempWorkPath + File.separator + "res" + File.separator);
+			String resXmlPath = new String(apkInfo.tempWorkPath + File.separator + "res" + File.separator);
 			String query = "//";
 			String filter = "";
 			String fileName = "";
@@ -447,7 +427,7 @@ public class ApktoolManager extends ApkScannerStub
 	        		name += " - LAUNCHER";
 	        	}
 	        	
-	        	//mApkInfo.ActivityList.add(new Object[] { name, tag, startup, intents });
+	        	//apkInfo.ActivityList.add(new Object[] { name, tag, startup, intents });
 	        }
 		}
 		
@@ -455,7 +435,7 @@ public class ApktoolManager extends ApkScannerStub
 		private Object[] getWidgetInfo(String resource) {
 
 			//Log.i("getWidgetInfo() " + resource);
-			String resXmlPath = new String(mApkInfo.tempWorkPath + File.separator + "res" + File.separator);
+			String resXmlPath = new String(apkInfo.tempWorkPath + File.separator + "res" + File.separator);
 
 			String Size = "";
 			String IconPath = "";
@@ -512,7 +492,7 @@ public class ApktoolManager extends ApkScannerStub
 		}
 		
 		private void YmlToMyApkinfo() {
-			String ymlPath = new String(mApkInfo.tempWorkPath + File.separator + "apktool.yml");
+			String ymlPath = new String(apkInfo.tempWorkPath + File.separator + "apktool.yml");
 			File ymlFile = new File(ymlPath);
 		    BufferedReader inFile = null;
 
@@ -525,15 +505,15 @@ public class ApktoolManager extends ApkScannerStub
 				inFile = new BufferedReader(new FileReader(ymlFile));
 				while( (sLine = inFile.readLine()) != null ) {
 					if(sLine.matches("^\\s*versionCode:.*")) {
-						mApkInfo.manifest.versionCode = Integer.parseInt(sLine.replaceFirst("\\s*versionCode:\\s*['\"]?([^'\"]+)['\"]?\\s*$", "$1"));
-						//mApkInfo.manifest.versionCode = getResourceInfo(mApkInfo.VersionCode);
+						apkInfo.manifest.versionCode = Integer.parseInt(sLine.replaceFirst("\\s*versionCode:\\s*['\"]?([^'\"]+)['\"]?\\s*$", "$1"));
+						//apkInfo.manifest.versionCode = getResourceInfo(apkInfo.VersionCode);
 					} else if(sLine.matches("^\\s*versionName:.*")) {
-						mApkInfo.manifest.versionName = sLine.replaceFirst("\\s*versionName:\\s*['\"]?([^'\"]+)['\"]?\\s*$", "$1");
-						//mApkInfo.VersionName = getResourceInfo(mApkInfo.VersionName);
+						apkInfo.manifest.versionName = sLine.replaceFirst("\\s*versionName:\\s*['\"]?([^'\"]+)['\"]?\\s*$", "$1");
+						//apkInfo.VersionName = getResourceInfo(apkInfo.VersionName);
 					} else if(sLine.matches("^\\s*minSdkVersion:.*")) {
-						mApkInfo.manifest.usesSdk.minSdkVersion = Integer.parseInt(sLine.replaceFirst("\\s*minSdkVersion:\\s*['\"]?([^'\"]+)['\"]?\\s*$", "$1"));
+						apkInfo.manifest.usesSdk.minSdkVersion = Integer.parseInt(sLine.replaceFirst("\\s*minSdkVersion:\\s*['\"]?([^'\"]+)['\"]?\\s*$", "$1"));
 					} else if(sLine.matches("^\\s*targetSdkVersion:.*")) {
-						mApkInfo.manifest.usesSdk.targetSdkVersion = Integer.parseInt(sLine.replaceFirst("\\s*targetSdkVersion:\\s*['\"]?([^'\"]+)['\"]?\\s*$", "$1"));
+						apkInfo.manifest.usesSdk.targetSdkVersion = Integer.parseInt(sLine.replaceFirst("\\s*targetSdkVersion:\\s*['\"]?([^'\"]+)['\"]?\\s*$", "$1"));
 					}
 				}
 			} catch (IOException e) {
@@ -547,59 +527,13 @@ public class ApktoolManager extends ApkScannerStub
 			}
 		}
 		
-		public ArrayList<String> solveCert(String CertPath)
-		{
-			/*
-			Double javaVersion = Double.parseDouble(System.getProperty("java.specification.version"));
-			String keytoolPackage;
-			if(javaVersion >= 1.8) {
-				keytoolPackage = "sun.security.tools.keytool.Main";
-			} else {
-				keytoolPackage = "sun.security.tools.KeyTool";
-			}
-
-			mApkInfo.certificates.CertList.clear();
-			if(!(new File(CertPath)).exists()) {
-				Log.e("META-INFO 폴더가 존재 하지 않습니다 :");
-				return mApkInfo.CertList;
-			}
-			
-			for (String s : (new File(CertPath)).list()) {
-				if(!s.endsWith(".RSA") && !s.endsWith(".DSA") ) continue;
-
-				File rsaFile = new File(CertPath + s);
-				if(!rsaFile.exists()) continue;
-
-				String[] cmd = {"java","-Dfile.encoding=utf8",keytoolPackage,"-printcert","-v","-file", rsaFile.getAbsolutePath()};
-				String[] result = ConsolCmd.exc(cmd, false, null);
-
-			    String certContent = "";
-			    mApkInfo.CertSummary = "<certificate[1]>\n";
-			    for(int i=0; i < result.length; i++){
-		    		if(!certContent.isEmpty() && result[i].matches("^.*\\[[0-9]*\\]:$")){
-		    			mApkInfo.CertList.add(certContent);
-		    			mApkInfo.CertSummary += "<certificate[" + (mApkInfo.CertList.size() + 1) + "]>\n";
-				    	certContent = "";
-		    		}
-		    		if(result[i].matches("^.*:( [^ ,]+=(\".*\")?[^,]*,?)+$")) {
-		    			mApkInfo.CertSummary += result[i] + "\n";
-		    		}
-		    		certContent += (certContent.isEmpty() ? "" : "\n") + result[i];
-			    }
-			    mApkInfo.CertList.add(certContent);
-			}
-			return mApkInfo.CertList;
-			*/
-			return null;
-		}
-
 		private void deleteTempPath()
 		{
-			Log.i("delete Folder : "  + mApkInfo.tempWorkPath);
-			if(mApkInfo.tempWorkPath != null && !mApkInfo.tempWorkPath.isEmpty()) {
-				FileUtil.deleteDirectory(new File(mApkInfo.tempWorkPath+"-res"));
+			Log.i("delete Folder : "  + apkInfo.tempWorkPath);
+			if(apkInfo.tempWorkPath != null && !apkInfo.tempWorkPath.isEmpty()) {
+				FileUtil.deleteDirectory(new File(apkInfo.tempWorkPath+"-res"));
 
-				File parent = new File(mApkInfo.tempWorkPath);
+				File parent = new File(apkInfo.tempWorkPath);
 				while(parent != null && parent.exists() && parent.getParentFile() != null 
 						&& parent.getParentFile().listFiles().length == 1 
 						&& parent.getParentFile().getAbsolutePath().length() > FileUtil.getTempPath().length()) {
@@ -607,8 +541,8 @@ public class ApktoolManager extends ApkScannerStub
 				}
 				FileUtil.deleteDirectory(parent);
 			}
-			if(isPackageTempAPK && mApkInfo.filePath != null && !mApkInfo.filePath.isEmpty()) {
-				File parent = new File(mApkInfo.filePath).getParentFile();
+			if(isPackageTempAPK && apkInfo.filePath != null && !apkInfo.filePath.isEmpty()) {
+				File parent = new File(apkInfo.filePath).getParentFile();
 				Log.i("delete temp APK folder : "  + parent.getPath());
 				while(parent != null && parent.exists() && parent.getParentFile() != null 
 						&& parent.getParentFile().listFiles().length == 1 
@@ -618,7 +552,7 @@ public class ApktoolManager extends ApkScannerStub
 				
 				FileUtil.deleteDirectory(parent);
 			}
-			mApkInfo = null;
+			apkInfo = null;
 		}
 
 		public void run()
