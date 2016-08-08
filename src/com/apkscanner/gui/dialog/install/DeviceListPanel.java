@@ -12,7 +12,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -37,7 +36,7 @@ public class DeviceListPanel extends JPanel implements ActionListener
 	private static int value = 0;
 	private static JList<String> list;
 	//private static Boolean clicked = false;
-	private static ArrayList<DeviceStatus> DeviceList;
+	private static DeviceStatus[] DeviceList;
 	
 	/**
 	 * Set up and show the dialog. The first Component argument determines which
@@ -56,7 +55,7 @@ public class DeviceListPanel extends JPanel implements ActionListener
 	public DeviceStatus getSelectedData()	{	
 		if(value == -1)
 			return null;
-		return DeviceList.get(list.getSelectedIndex());
+		return DeviceList[list.getSelectedIndex()];
 	}
 	
 	public int getSelectedIndex() {
@@ -197,7 +196,7 @@ public class DeviceListPanel extends JPanel implements ActionListener
 	public void refreshData()
 	{
     	DeviceList = AdbDeviceManager.scanDevices();
-		String[] names = new String[DeviceList.size()];
+		String[] names = new String[DeviceList.length];
 
 		int i = 0;
 		for(DeviceStatus dev: DeviceList) {

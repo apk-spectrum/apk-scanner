@@ -1,7 +1,7 @@
 package com.apkscanner.gui;
 
+import java.awt.Frame;
 import java.io.File;
-import java.util.ArrayList;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -58,7 +58,7 @@ public class ApkInstallWizard
 	private static InstallButtonStatusListener Listener;
 	private static InstallDlgFuncListener InstallDlgListener;
 	
-	public ApkInstallWizard(Boolean isOnlyInstall, String PackageName, String apkPath, String libPath, 
+	public ApkInstallWizard(Frame owner, Boolean isOnlyInstall, String PackageName, String apkPath, String libPath, 
 			final boolean samePackage, final boolean checkPackage, final InstallButtonStatusListener Listener)
 	{
 
@@ -74,8 +74,9 @@ public class ApkInstallWizard
 		ApkInstallWizard.Listener = Listener; 
 		
 		
-		InstallDlg dlg = new InstallDlg(isOnlyInstall);
+		InstallDlg dlg = new InstallDlg(owner, isOnlyInstall);
 		ApkInstallWizard.InstallDlgListener = dlg.getInstallDlgFuncListener();
+		
 		
 		
 		t = new InstallThread();
@@ -215,8 +216,7 @@ public class ApkInstallWizard
 		
 		public void run(){
 			try {
-				ArrayList<DeviceStatus> DeviceList;
-
+				DeviceStatus[] DeviceList;
 				
 				do {
 					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString(), "", InstallDlg.CHECKLIST_MODE.WATING);
@@ -224,7 +224,7 @@ public class ApkInstallWizard
 					DeviceList = AdbDeviceManager.scanDevices();
 					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString(), "", InstallDlg.CHECKLIST_MODE.DONE);
 					
-					if(DeviceList.size() == 0) {
+					if(DeviceList.length == 0) {
 						printlnLog("Device not found!\nplease check device");
 						Listener.SetInstallButtonStatus(true);
 						final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
@@ -246,9 +246,9 @@ public class ApkInstallWizard
 						break;
 					}
 				} while(true);
-				DeviceStatus dev = DeviceList.get(0);
+				DeviceStatus dev = DeviceList[0];
 								
-				if(DeviceList.size() > 1 || (DeviceList.size() == 1 && !dev.status.equals("device"))) {
+				if(DeviceList.length > 1 || (DeviceList.length == 1 && !dev.status.equals("device"))) {
 					//int selectedValue = DeviceListDialog.showDialog();
 					//Log.i("Seltected index : " + selectedValue);
 					

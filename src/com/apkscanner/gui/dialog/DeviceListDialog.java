@@ -15,7 +15,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -51,7 +50,7 @@ public class DeviceListDialog extends JDialog implements ActionListener
 	private static int value = 0;
 	private static JList<String> list;
 	private static Boolean clicked = false;
-	private static ArrayList<DeviceStatus> DeviceList;
+	private static DeviceStatus[] DeviceList;
 
 	/**
 	 * Set up and show the dialog. The first Component argument determines which
@@ -100,13 +99,13 @@ public class DeviceListDialog extends JDialog implements ActionListener
 			
 			if(clicked) {
 				if(value == -1) {
-				} else if(DeviceList.get(value).status.equals("device")) {
+				} else if(DeviceList[value].status.equals("device")) {
 					return value;
-				} else if(DeviceList.get(value).status.equals("unauthorized")) {
+				} else if(DeviceList[value].status.equals("unauthorized")) {
 					JOptionPane.showOptionDialog(null, Resource.STR_MSG_DEVICE_UNAUTHORIZED.getString(), Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, null,
 				    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
 				} else {
-					JOptionPane.showOptionDialog(null, Resource.STR_MSG_DEVICE_UNKNOWN.getString() + " " + DeviceList.get(value).status, Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, null,
+					JOptionPane.showOptionDialog(null, Resource.STR_MSG_DEVICE_UNKNOWN.getString() + " " + DeviceList[value].status, Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, null,
 				    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
 				}
 				clicked = false;
@@ -119,7 +118,7 @@ public class DeviceListDialog extends JDialog implements ActionListener
 	{
 		if(value == -1)
 			return null;
-		return DeviceList.get(value);
+		return DeviceList[value];
 	}
 
 	private void setValue(int newValue) {
@@ -270,7 +269,7 @@ public class DeviceListDialog extends JDialog implements ActionListener
 	private static void refreshData()
 	{
     	DeviceList = AdbDeviceManager.scanDevices();
-		String[] names = new String[DeviceList.size()];
+		String[] names = new String[DeviceList.length];
 
 		int i = 0;
 		for(DeviceStatus dev: DeviceList) {

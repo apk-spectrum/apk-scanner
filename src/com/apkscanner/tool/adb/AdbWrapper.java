@@ -87,6 +87,15 @@ public class AdbWrapper
 		return startServer(listener);
 	}
 	
+	public String[] devices() {
+		return devices(listener);
+	}
+	
+	static public String[] devices(ConsoleOutputObserver listener) {
+		if(adbCmd == null) return null;
+		return ConsolCmd.exc(new String[] {adbCmd, "devices", "-l"}, false, listener);
+	}
+	
 	public String getProp(String tag) {
 		return getProp(device, tag, listener);
 	}

@@ -228,7 +228,7 @@ public class Main
 			String libPath = tempPath + File.separator + "lib" + File.separator;
 			String packageName = AaptNativeWrapper.Dump.getBadging(apkFilePath, false)[0].replaceAll(".* name='([^']*)'.*", "$1");
 			Log.i("package : " + packageName);
-			new ApkInstallWizard(true, packageName, apkFilePath, libPath,
+			new ApkInstallWizard(null, true, packageName, apkFilePath, libPath,
 					(boolean)Resource.PROP_CHECK_INSTALLED.getData(false), false, new InstallButtonStatusListener() {
 				@Override
 				public void SetInstallButtonStatus(Boolean Flag) { }

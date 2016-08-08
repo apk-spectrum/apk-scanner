@@ -210,7 +210,7 @@ public class PackageTreeDlg extends JPanel
 			public void run()
 			{
 		    	refreshbtn.setVisible(false);
-				ArrayList<DeviceStatus> DeviceList;
+				DeviceStatus[] DeviceList;
 				DeviceList = AdbDeviceManager.scanDevices();
 				
 //				do {
@@ -238,7 +238,7 @@ public class PackageTreeDlg extends JPanel
 				
 				gifPanel.setVisible(true);
 
-				createDeviceNodes(top, DeviceList.toArray(new DeviceStatus[0]));
+				createDeviceNodes(top, DeviceList);
 				
 				gifPanel.setVisible(false);
 		    	refreshbtn.setVisible(true);
