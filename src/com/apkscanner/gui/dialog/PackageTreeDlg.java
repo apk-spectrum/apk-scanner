@@ -32,14 +32,17 @@ import javax.swing.tree.TreeSelectionModel;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
+import com.apkscanner.core.installer.ApkInstaller;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.gui.util.BooleanTableModel;
 import com.apkscanner.gui.util.FilteredTreeModel;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.tool.adb.AdbDeviceManager;
+import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
+import com.apkscanner.tool.adb.AdbPackageManager;
+import com.apkscanner.tool.adb.AdbPackageManager.PackageListObject;
 import com.apkscanner.tool.adb.AdbWrapper;
-import com.apkscanner.tool.adb.AdbWrapper.DeviceStatus;
-import com.apkscanner.tool.adb.AdbWrapper.PackageListObject;
 import com.apkscanner.util.Log;
 
 import java.util.ArrayList;
@@ -208,7 +211,7 @@ public class PackageTreeDlg extends JPanel
 			{
 		    	refreshbtn.setVisible(false);
 				ArrayList<DeviceStatus> DeviceList;
-				DeviceList = AdbWrapper.scanDevices();
+				DeviceList = AdbDeviceManager.scanDevices();
 				
 //				do {
 //					DeviceList = AdbWrapper.scanDevices();
@@ -276,7 +279,7 @@ public class PackageTreeDlg extends JPanel
 				        
 				        data.add(dataapp);
 
-						ArrayList<PackageListObject> ArrayDataObject = AdbWrapper.getPackageList(devList[i].name);
+						ArrayList<PackageListObject> ArrayDataObject = AdbPackageManager.getPackageList(devList[i].name);
 				        for(PackageListObject obj: ArrayDataObject) {
 				        	DefaultMutableTreeNode temp = new DefaultMutableTreeNode(obj);		        	
 				        	
@@ -376,9 +379,10 @@ public class PackageTreeDlg extends JPanel
 				|| (apkPath != null && apkPath.startsWith("/system/"))) {
 			isSystemApp = true;
 		}
+		final AdbWrapper adbCommander = new AdbWrapper(deviceNum, null);
 		
 		if(isSystemApp) {
-			if(AdbWrapper.hasRootPermission(deviceNum) != true) {
+			if(adbCommander.root() != true) {
 				ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_DEVICE_HAS_NOT_ROOT.getString(), Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, Resource.IMG_WARNING.getImageIcon(),
 			    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
 				return false;
@@ -386,20 +390,21 @@ public class PackageTreeDlg extends JPanel
 
 			new Thread(new Runnable() {
 				public void run(){
-					AdbWrapper.removeApk(deviceNum, apkPath);
+					new ApkInstaller(deviceNum).removeApk(apkPath);
+					//adbCommander.removeApk(apkPath);
 					
 					final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
 					int reboot = ArrowTraversalPane.showOptionDialog(null, Resource.STR_QUESTION_REBOOT_DEVICE.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.YES_NO_OPTION, 
 							JOptionPane.QUESTION_MESSAGE, null, yesNoOptions, yesNoOptions[1]);
 					if(reboot == 0){
-						AdbWrapper.reboot(deviceNum);
+						adbCommander.reboot();
 					}
 				}
 			}).start();
 		} else {
 			new Thread(new Runnable() {
 				public void run(){
-					AdbWrapper.uninstallApk(deviceNum, packageName);
+					adbCommander.uninstall(packageName);
 				}
 			}).start();
 		}
@@ -963,7 +968,7 @@ public class PackageTreeDlg extends JPanel
 		File destFile = ApkFileChooser.saveApkFile(this.parentframe, saveFileName);
 		if(destFile == null) return;
 		
-		AdbWrapper.PullApk(device, apkPath, destFile.getAbsolutePath(), null);
+		AdbWrapper.pull(device, apkPath, destFile.getAbsolutePath(), null);
 		//dir.isDirectory()
 		
 		//return dir.getPath();

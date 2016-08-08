@@ -160,7 +160,7 @@ public class ApktoolScanner extends ApkScannerStub
 			for(String framework: mFrameworkResList) {
 				if(!(new File(framework)).exists()) continue;
 				String[] cmd = {"java", "-jar", apkToolPath, "install-framework", "-p", solvePath+"-res", framework};
-				ConsolCmd.exc(cmd, true, new ConsolCmd.OutputObserver() {
+				ConsolCmd.exc(cmd, true, new ConsolCmd.ConsoleOutputObserver() {
 					@Override
 					public boolean ConsolOutput(String output) {
 				    	if(output.startsWith("I:"))
@@ -172,7 +172,7 @@ public class ApktoolScanner extends ApkScannerStub
 			
 			boolean isSuccess = true;
 			String[] cmd = new String[] {"java", "-jar", apkToolPath, "d", "-s", "-f", "-o", solvePath, "-p", solvePath+"-res", APKFilePath};
-			String[] result = ConsolCmd.exc(cmd, true, new ConsolCmd.OutputObserver() {
+			String[] result = ConsolCmd.exc(cmd, true, new ConsolCmd.ConsoleOutputObserver() {
 				@Override
 				public boolean ConsolOutput(String output) {
 			    	if(output.startsWith("I:"))

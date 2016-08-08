@@ -7,16 +7,19 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import com.apkscanner.core.installer.ApkInstaller;
+import com.apkscanner.core.installer.ApkInstaller.ApkInstallerListener;
 import com.apkscanner.gui.dialog.install.InstallDlg;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.tool.adb.AdbDeviceManager;
+import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
+import com.apkscanner.tool.adb.AdbPackageManager;
+import com.apkscanner.tool.adb.AdbPackageManager.PackageInfo;
 import com.apkscanner.tool.adb.AdbWrapper;
-import com.apkscanner.tool.adb.AdbWrapper.AdbWrapperListener;
-import com.apkscanner.tool.adb.AdbWrapper.DeviceStatus;
-import com.apkscanner.tool.adb.AdbWrapper.PackageInfo;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 
-public class ApkInstaller
+public class ApkInstallWizard
 {
 	//static private JTextArea dialogLogArea;
 	//static private JDialog dlgDialog = null;
@@ -50,29 +53,29 @@ public class ApkInstaller
 		public int ShowDeviceList(Runnable runnable);
 		public void AddCheckList(String name, String t, InstallDlg.CHECKLIST_MODE mode);		
 		DeviceStatus getSelectDev();
-		public int getValue(String text);		
+		public int getValue(String text);
 	}
 	private static InstallButtonStatusListener Listener;
 	private static InstallDlgFuncListener InstallDlgListener;
 	
-	public ApkInstaller(Boolean isOnlyInstall, String PackageName, String apkPath, String libPath, 
+	public ApkInstallWizard(Boolean isOnlyInstall, String PackageName, String apkPath, String libPath, 
 			final boolean samePackage, final boolean checkPackage, final InstallButtonStatusListener Listener)
 	{
 
 		strPackageName = PackageName;
 		strSourcePath = apkPath;
 		strLibPath = libPath;
-		ApkInstaller.checkPackage = checkPackage;
-		ApkInstaller.samePackage = samePackage;
+		ApkInstallWizard.checkPackage = checkPackage;
+		ApkInstallWizard.samePackage = samePackage;
 		
 		//ShowSetupLogDialog();
 		//dialogLogArea.setText("");
 		
-		ApkInstaller.Listener = Listener; 
+		ApkInstallWizard.Listener = Listener; 
 		
 		
 		InstallDlg dlg = new InstallDlg(isOnlyInstall);
-		ApkInstaller.InstallDlgListener = dlg.getInstallDlgFuncListener();
+		ApkInstallWizard.InstallDlgListener = dlg.getInstallDlgFuncListener();
 		
 		
 		t = new InstallThread();
@@ -91,20 +94,15 @@ public class ApkInstaller
 			
 		}
 		
-		private class AdbWrapperObserver implements AdbWrapperListener
+		private class AdbWrapperObserver implements ApkInstallerListener
 		{
-			private String type;
-			private String device;
 			
 			private final ImageIcon QuestionAppicon;
 			private final ImageIcon WaringAppicon;
 			private final ImageIcon SucAppicon;
 			
-			public AdbWrapperObserver(String type, String device)
+			public AdbWrapperObserver()
 			{
-				this.type = type;
-				this.device = device;
-
 				QuestionAppicon = Resource.IMG_QUESTION.getImageIcon();
 				WaringAppicon = Resource.IMG_WARNING.getImageIcon();
 				SucAppicon = Resource.IMG_SUCCESS.getImageIcon();
@@ -116,13 +114,13 @@ public class ApkInstaller
 			}
 
 			@Override
-			public void OnError() {
-				if(type.equals("push")) {
+			public void OnError(int cmdType, String device) {
+				if(cmdType == ApkInstallerListener.CMD_PUSH) {
 					printlnLog("Failure...");
 					//JOptionPane.showMessageDialog(null, "Failure...", "Error",JOptionPane.ERROR_MESSAGE, WaringAppicon);
-				} else if(type.equals("install")) {
+				} else if(cmdType == ApkInstallerListener.CMD_INSTALL) {
 					//JOptionPane.showMessageDialog(null, "Failure...", "Error", JOptionPane.ERROR_MESSAGE, WaringAppicon);
-				} else if(type.equals("pull")) {
+				} else if(cmdType == ApkInstallerListener.CMD_PULL) {
 					//JOptionPane.showMessageDialog(null, "Failure...", "Error", JOptionPane.ERROR_MESSAGE, WaringAppicon);
 				}
 				InstallDlgListener.AddCheckList("Install", "fail" , InstallDlg.CHECKLIST_MODE.ERROR);
@@ -132,8 +130,8 @@ public class ApkInstaller
 			}
 
 			@Override
-			public void OnSuccess() {
-				if(type.equals("push")) {
+			public void OnSuccess(int cmdType, String device) {
+				if(cmdType == ApkInstallerListener.CMD_PUSH) {
 					final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
 					InstallDlgListener.AddCheckList("Push", "Success" , InstallDlg.CHECKLIST_MODE.DONE);
 					
@@ -145,15 +143,15 @@ public class ApkInstaller
 					
 					if(reboot == 0){
 						printlnLog("Wait for reboot...");
-						AdbWrapper.reboot(device);
+						AdbWrapper.reboot(device, null);
 						printlnLog("Reboot...");
 					}
-				} else if(type.equals("install")) {
+				} else if(cmdType == ApkInstallerListener.CMD_INSTALL) {
 					//JOptionPane.showMessageDialog(null, "Success", "Complete", JOptionPane.INFORMATION_MESSAGE, SucAppicon);
 						InstallDlgListener.AddCheckList("Install", "Success" , InstallDlg.CHECKLIST_MODE.DONE);
 						ShowQuestion(t, Resource.STR_MSG_SUCCESS_INSTALLED.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, SucAppicon,
 				    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
-				} else if(type.equals("pull")) {
+				} else if(cmdType == ApkInstallerListener.CMD_PULL) {
 					InstallDlgListener.AddCheckList("Pull success", "Done" , InstallDlg.CHECKLIST_MODE.DONE);					
 					if(Listener != null) Listener.OnOpenApk(tmpApkPath);
 					InstallDlgListener.AddCheckList("Open APK", "Done" , InstallDlg.CHECKLIST_MODE.ADD);
@@ -161,7 +159,7 @@ public class ApkInstaller
 			}
 
 			@Override
-			public void OnCompleted() {
+			public void OnCompleted(int cmdType, String device) {
 				Listener.SetInstallButtonStatus(true);
 //				ShowQuestion(t, "완료", Resource.STR_LABEL_INFO.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, SucAppicon,
 //			    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
@@ -223,7 +221,7 @@ public class ApkInstaller
 				do {
 					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString(), "", InstallDlg.CHECKLIST_MODE.WATING);
 					printlnLog("scan devices...");
-					DeviceList = AdbWrapper.scanDevices();
+					DeviceList = AdbDeviceManager.scanDevices();
 					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString(), "", InstallDlg.CHECKLIST_MODE.DONE);
 					
 					if(DeviceList.size() == 0) {
@@ -278,7 +276,7 @@ public class ApkInstaller
 				
 				boolean alreadyCheak = false;
 				printlnLog("getPackageInfo() " + strPackageName);
-				PackageInfo pkgInfo = AdbWrapper.getPackageInfo(dev.name, strPackageName);
+				PackageInfo pkgInfo = AdbPackageManager.getPackageInfo(dev.name, strPackageName);
 				
 				if(pkgInfo==null) {
 					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_VERSION.getString(), "not install", InstallDlg.CHECKLIST_MODE.ADD);
@@ -291,7 +289,7 @@ public class ApkInstaller
 					if(pkgInfo != null) {
 						String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
 						boolean isDeletePossible = true;
-						if(pkgInfo.isSystemApp == true && AdbWrapper.hasRootPermission(dev.name) != true) {
+						if(pkgInfo.isSystemApp == true && AdbWrapper.root(dev.name, null) != true) {
 							isDeletePossible = false;
 						}
 						
@@ -320,6 +318,7 @@ public class ApkInstaller
 							
 							return;
 						}
+						ApkInstaller apkInstaller = new ApkInstaller(dev.name, new AdbWrapperObserver());
 						if(n==0) {
 							String tmpPath = "/" + dev.name + pkgInfo.apkPath;
 							tmpPath = tmpPath.replaceAll("/", File.separator+File.separator).replaceAll("//", "/");
@@ -327,7 +326,7 @@ public class ApkInstaller
 							tmpApkPath = tmpPath; 
 							//Log.i(tmpPath);
 							InstallDlgListener.AddCheckList("Pull APK", "working" , InstallDlg.CHECKLIST_MODE.WATING);
-							AdbWrapper.PullApk(dev.name, pkgInfo.apkPath, tmpPath, new AdbWrapperObserver("pull", dev.name));							
+							apkInstaller.PullApk(pkgInfo.apkPath, tmpPath);							
 							return;
 						}
 						if(n==2) {
@@ -336,7 +335,7 @@ public class ApkInstaller
 								printlnLog("adb shell rm " + pkgInfo.codePath);
 								
 								InstallDlgListener.AddCheckList("remove APK", "working" , InstallDlg.CHECKLIST_MODE.WATING);
-								AdbWrapper.removeApk(dev.name, pkgInfo.codePath);
+								apkInstaller.removeApk(pkgInfo.codePath);
 								InstallDlgListener.AddCheckList("remove APK", "Done" , InstallDlg.CHECKLIST_MODE.DONE);
 								
 								InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_REBOOT.getString(), "-" , InstallDlg.CHECKLIST_MODE.QEUESTION);
@@ -346,14 +345,14 @@ public class ApkInstaller
 								InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_REBOOT.getString(), (reboot==0)?"true":"false" , InstallDlg.CHECKLIST_MODE.DONE);
 								if(reboot == 0){
 									printlnLog("Wait for reboot...");									
-									AdbWrapper.reboot(dev.name);
+									AdbWrapper.reboot(dev.name, null);
 									printlnLog("Reboot...");
 								}
 								
 							} else {
 								InstallDlgListener.AddCheckList("Uninstall APK", "-" , InstallDlg.CHECKLIST_MODE.WATING);
 								printlnLog("adb uninstall " + pkgInfo.pkgName);
-								AdbWrapper.uninstallApk(dev.name, pkgInfo.pkgName);
+								apkInstaller.uninstallApk(pkgInfo.pkgName);
 								InstallDlgListener.AddCheckList("Uninstall APK", "Done" , InstallDlg.CHECKLIST_MODE.DONE);
 							}
 							printlnLog("compleate");
@@ -377,10 +376,10 @@ public class ApkInstaller
 				if(pkgInfo != null) {
 					printlnLog(pkgInfo.toString());
 					if(pkgInfo.isSystemApp == true) {
-						if(AdbWrapper.hasRootPermission(dev.name) == true) {
+						if(AdbWrapper.root(dev.name, null) == true) {
 							printlnLog("adbd is running as root");
 							String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
-							if(!checkPackage)InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_ROOT.getString(), ""+AdbWrapper.hasRootPermission(dev.name) , InstallDlg.CHECKLIST_MODE.ADD);
+							if(!checkPackage)InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_ROOT.getString(), ""+AdbWrapper.root(dev.name, null) , InstallDlg.CHECKLIST_MODE.ADD);
 							
 							InstallDlgListener.AddCheckList("" + options[0] +"/"+ options[1], "-" , InstallDlg.CHECKLIST_MODE.QEUESTION);
 							int n = ShowQuestion(this, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_PUSH_OR_INSTALL.getString(),
@@ -399,7 +398,7 @@ public class ApkInstaller
 								printlnLog("Start push APK");
 								//installPanel.setVisible(true);
 								InstallDlgListener.AddCheckList("Push", "-" , InstallDlg.CHECKLIST_MODE.WATING);
-								AdbWrapper.PushApk(dev.name, strSourcePath, pkgInfo.apkPath, strLibPath, new AdbWrapperObserver("push", dev.name));
+								new ApkInstaller(dev.name, new AdbWrapperObserver()).PushApk(strSourcePath, pkgInfo.apkPath, strLibPath);
 								
 								return;
 							}
@@ -427,7 +426,7 @@ public class ApkInstaller
 				printlnLog("Start install APK");
 				//installPanel.setVisible(true);
 				InstallDlgListener.AddCheckList("Install", "Install" , InstallDlg.CHECKLIST_MODE.WATING);
-				AdbWrapper.InstallApk(dev.name, strSourcePath , new AdbWrapperObserver("install", null));				
+				new ApkInstaller(dev.name, new AdbWrapperObserver()).InstallApk(strSourcePath);				
 			} finally {
 				//Listener.SetInstallButtonStatus(true);
 				InstallDlgListener.Complete("END");				

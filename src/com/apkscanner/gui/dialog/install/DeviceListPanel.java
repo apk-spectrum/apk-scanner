@@ -1,15 +1,34 @@
 package com.apkscanner.gui.dialog.install;
 
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import com.apkscanner.resource.Resource;
-import com.apkscanner.tool.adb.AdbWrapper;
-import com.apkscanner.tool.adb.AdbWrapper.DeviceStatus;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
+import com.apkscanner.tool.adb.AdbDeviceManager;
+import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
 
 public class DeviceListPanel extends JPanel implements ActionListener
 {
@@ -177,7 +196,7 @@ public class DeviceListPanel extends JPanel implements ActionListener
 	
 	public void refreshData()
 	{
-    	DeviceList = AdbWrapper.scanDevices();
+    	DeviceList = AdbDeviceManager.scanDevices();
 		String[] names = new String[DeviceList.size()];
 
 		int i = 0;

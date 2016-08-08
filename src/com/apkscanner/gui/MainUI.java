@@ -24,7 +24,7 @@ import com.apkscanner.core.scanner.AaptScanner;
 import com.apkscanner.core.scanner.ApkScannerStub;
 import com.apkscanner.core.scanner.ApkScannerStub.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.gui.ApkInstaller.InstallButtonStatusListener;
+import com.apkscanner.gui.ApkInstallWizard.InstallButtonStatusListener;
 import com.apkscanner.gui.ToolBar.ButtonSet;
 import com.apkscanner.gui.dialog.AboutDlg;
 import com.apkscanner.gui.dialog.LogDlg;
@@ -417,7 +417,7 @@ public class MainUI extends JFrame
 
 			toolBar.setEnabledAt(ButtonSet.INSTALL, false);
 			String libPath = apkInfo.tempWorkPath + File.separator + "lib" + File.separator;
-			new ApkInstaller(false, apkInfo.manifest.packageName, apkInfo.filePath, libPath , 
+			new ApkInstallWizard(false, apkInfo.manifest.packageName, apkInfo.filePath, libPath , 
 					(boolean)Resource.PROP_CHECK_INSTALLED.getData(false), checkPackage, new InstallButtonStatusListener() {
 				@Override
 				public void SetInstallButtonStatus(Boolean Flag) {
