@@ -1,10 +1,18 @@
 package com.apkscanner.gui;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 
 import javax.swing.Icon;
@@ -12,13 +20,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.apkscanner.core.installer.ApkInstaller;
 import com.apkscanner.core.installer.ApkInstaller.ApkInstallerListener;
-import com.apkscanner.gui.dialog.install.DeviceListPanel;
-import com.apkscanner.gui.dialog.install.InstallCheckTable;
+import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.dialog.install.InstallDlg;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbDeviceManager;
@@ -31,21 +39,42 @@ import com.apkscanner.util.Log;
 
 public class ApkInstallWizard
 {
+	public static final int STATUS_INIT = 0;
+	public static final int STATUS_DEVICE_SCANNING = 1;
+	public static final int STATUS_SELECT_DEVICE = 2;
+	public static final int STATUS_PACKAGE_SCANNING = 3;
+	public static final int STATUS_CHECK_PACKAGES = 4;
+	public static final int STATUS_SET_INSTALL_OPTION = 5;
+	public static final int STATUS_INSTALLING = 6;
+	public static final int STATUS_COMPLETED = 7;
+
+	// UI components
 	private Window wizard;
+	private ProgressPanel progressPanel;
+	private ContentPanel contentPanel;
+	
+
+	private int status;
+	private DeviceStatus[] targetDevices;
+	private PackageInfo[] installedPackage;
+	private ApkInfo apkInfo;
+	//private String singInfo;
 	
 	public class ApkInstallWizardDialog  extends JDialog
 	{
 		private static final long serialVersionUID = 2018466680871932348L;
 
+		public ApkInstallWizardDialog() {
+			dialog_init(null);
+		}
+		
 		public ApkInstallWizardDialog(JFrame owner) {
 			super(owner);
-			initialize(this);
 			dialog_init(owner);
 		}
 		
 		public ApkInstallWizardDialog(JDialog owner) {
 			super(owner);
-			initialize(this);
 			dialog_init(owner);
 		}
 		
@@ -55,6 +84,8 @@ public class ApkInstallWizard
 			setLocationRelativeTo(owner);
 			setResizable(false);
 			setModal(false);
+
+			initialize(this);
 		}
 	}
 	
@@ -63,7 +94,6 @@ public class ApkInstallWizard
 		private static final long serialVersionUID = -5642057585041759436L;
 		
 		public ApkInstallWizardFrame() {
-			initialize(this);
 			frame_init();
 		}
 
@@ -83,6 +113,100 @@ public class ApkInstallWizard
 			setTitle(Resource.STR_TITLE_INSTALL_WIZARD.getString());
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setResizable(false);
+
+			initialize(this);
+		}
+	}
+	
+	private class ProgressPanel extends JPanel
+	{
+		private static final long serialVersionUID = 6145481552592676895L;
+
+
+		public ProgressPanel() {
+			super(new BorderLayout());
+			
+			// add progress image components...
+
+			
+			// set status
+			setStatus(STATUS_INIT);
+		}
+
+		public void setStatus(int status) {
+			switch(status) {
+			case STATUS_INIT:
+			case STATUS_DEVICE_SCANNING:
+			case STATUS_SELECT_DEVICE:
+			case STATUS_PACKAGE_SCANNING:
+			case STATUS_CHECK_PACKAGES:
+			case STATUS_SET_INSTALL_OPTION:
+			case STATUS_INSTALLING:
+			case STATUS_COMPLETED:
+			default:
+				break;
+			}
+		}
+	}
+	
+	private class ContentPanel extends JPanel
+	{
+		private static final long serialVersionUID = -680173960208954055L;
+
+		public static final String CONTENT_INIT = "DEVICE_SCANNING";
+		public static final String CONTENT_DEVICE_SCANNING = "DEVICE_SCANNING";
+		public static final String CONTENT_SELECT_DEVICE = "SELECT_DEVICE";
+		public static final String CONTENT_PACKAGE_SCANNING = "PACKAGE_SCANNING";
+		public static final String CONTENT_CHECK_PACKAGES = "CHECK_PACKAGES";
+		public static final String CONTENT_SET_INSTALL_OPTION = "SET_INSTALL_OPTION";
+		public static final String CONTENT_INSTALLING = "INSTALLING";
+		public static final String CONTENT_COMPLETED = "COMPLETED";
+		
+		public ContentPanel(ActionListener listener) {
+			super(new CardLayout());
+			
+			add(new JPanel(), CONTENT_INIT);
+			add(new JPanel(), CONTENT_DEVICE_SCANNING);
+			add(new JPanel(), CONTENT_SELECT_DEVICE);
+			add(new JPanel(), CONTENT_PACKAGE_SCANNING);
+			add(new JPanel(), CONTENT_CHECK_PACKAGES);
+			add(new JPanel(), CONTENT_SET_INSTALL_OPTION);
+			add(new JPanel(), CONTENT_INSTALLING);
+			add(new JPanel(), CONTENT_COMPLETED);
+
+			// set status
+			setStatus(STATUS_INIT);
+		}
+		
+		public void setStatus(int status) {
+			switch(status) {
+			case STATUS_INIT:
+				((CardLayout)getLayout()).show(this, CONTENT_INIT);
+				break;
+			case STATUS_DEVICE_SCANNING:
+				((CardLayout)getLayout()).show(this, CONTENT_DEVICE_SCANNING);
+				break;
+			case STATUS_SELECT_DEVICE:
+				((CardLayout)getLayout()).show(this, CONTENT_SELECT_DEVICE);
+				break;
+			case STATUS_PACKAGE_SCANNING:
+				((CardLayout)getLayout()).show(this, CONTENT_PACKAGE_SCANNING);
+				break;
+			case STATUS_CHECK_PACKAGES:
+				((CardLayout)getLayout()).show(this, CONTENT_CHECK_PACKAGES);
+				break;
+			case STATUS_SET_INSTALL_OPTION:
+				((CardLayout)getLayout()).show(this, CONTENT_SET_INSTALL_OPTION);
+				break;
+			case STATUS_INSTALLING:
+				((CardLayout)getLayout()).show(this, CONTENT_INSTALLING);
+				break;
+			case STATUS_COMPLETED:
+				((CardLayout)getLayout()).show(this, CONTENT_COMPLETED);
+				break;
+			default:
+				break;
+			}
 		}
 	}
 
@@ -100,40 +224,210 @@ public class ApkInstallWizard
 			wizard = new ApkInstallWizardFrame();
 	}
 	
-	public void setVisible(boolean visible) {
+	private void setVisible(boolean visible) {
 		if(wizard != null) wizard.setVisible(visible);
 	}
 
 	private void initialize(Window window)
 	{
+		if(window == null) return;
+
 		window.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
 		window.setSize(new Dimension(480,215));
 		
-		
 		//JPanel panel = new JPanel();
-
-		window.add(new InstallCheckTable(), BorderLayout.NORTH);
-		window.add(new DeviceListPanel(null), BorderLayout.CENTER);
+		progressPanel = new ProgressPanel();
+		contentPanel = new ContentPanel(new UIEventHandler());
 		
-		
+		window.add(progressPanel, BorderLayout.NORTH);
+		window.add(contentPanel, BorderLayout.CENTER);
 		
 		//Log.i("initialize() register event handler");
-		//window.addWindowListener(new UIEventHandler());
+		window.addWindowListener(new UIEventHandler());
 		
 		// Shortcut key event processing
-		//KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
-		//ky.addKeyEventDispatcher(new UIEventHandler());
-
+		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
+		ky.addKeyEventDispatcher(new UIEventHandler());
 	}
 	
+	class UIEventHandler implements ActionListener, KeyEventDispatcher, WindowListener
+	{
+		@Override
+		public void windowActivated(WindowEvent arg0) { }
+
+		@Override
+		public void windowClosed(WindowEvent arg0) { }
+
+		@Override
+		public void windowClosing(WindowEvent arg0) { }
+
+		@Override
+		public void windowDeactivated(WindowEvent arg0) { }
+
+		@Override
+		public void windowDeiconified(WindowEvent arg0) { }
+
+		@Override
+		public void windowIconified(WindowEvent arg0) { }
+
+		@Override
+		public void windowOpened(WindowEvent arg0) { }
+
+		@Override
+		public boolean dispatchKeyEvent(KeyEvent arg0) {
+			return false;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) { }
+		
+	}
 	
+	private void changeState(int status) {
+		if(this.status == status) return;
+		this.status = status;
+		progressPanel.setStatus(status);
+		contentPanel.setStatus(status);
+		
+		preExecute(status);
+	}
 	
+	private void preExecute(int status) {
+		switch(status) {
+		case STATUS_DEVICE_SCANNING:
+			new Thread(new Runnable() {
+				public void run()
+				{
+					synchronized(ApkInstallWizard.this) {
+						targetDevices = AdbDeviceManager.scanDevices();
+						next();
+					}
+				}
+			}).start();
+			break;
+		case STATUS_PACKAGE_SCANNING:
+			new Thread(new Runnable() {
+				public void run()
+				{
+					synchronized(ApkInstallWizard.this) {
+						if(targetDevices != null && targetDevices.length > 0) {
+							boolean existed = false;
+							installedPackage = new PackageInfo[targetDevices.length];
+							for(int i = 0; i < targetDevices.length; i++) {
+								installedPackage[i] = AdbPackageManager.getPackageInfo(targetDevices[i].name, strPackageName);
+								if(installedPackage[i] != null) existed = true;
+							}
+							if(!existed) {
+								installedPackage = null;
+							}
+						}
+						next();
+					}
+				}
+			}).start();
+			break;
+		case STATUS_INSTALLING:
+			new Thread(new Runnable() {
+				public void run()
+				{
+					synchronized(ApkInstallWizard.this) {
+						// install
+						next();
+					}
+				}
+			}).start();
+			break;
+		default:
+			break;
+		}
+	}
 	
+	public void start() {
+		if(status != STATUS_INIT) {
+			Log.w("No init state : " + status);
+			return;
+		}
+		if(apkInfo == null || apkInfo.filePath == null || 
+				!(new File(apkInfo.filePath).isFile())) {
+			Log.e("No such apk file...");
+			return;
+		}
+		setVisible(true);
+		changeState(STATUS_DEVICE_SCANNING);
+	}
 	
+	private void next() {
+		synchronized(this) {
+			switch(status) {
+			case STATUS_INIT:
+				changeState(STATUS_DEVICE_SCANNING);
+				break;
+			case STATUS_DEVICE_SCANNING:
+				if(targetDevices == null || targetDevices.length != 1) {
+					changeState(STATUS_SELECT_DEVICE);
+					break;
+				}
+			case STATUS_SELECT_DEVICE:
+				if(targetDevices != null) {
+					changeState(STATUS_PACKAGE_SCANNING);
+				}
+				break;
+			case STATUS_PACKAGE_SCANNING:
+				if(installedPackage != null) {
+					changeState(STATUS_CHECK_PACKAGES);
+					break;
+				}
+			case STATUS_CHECK_PACKAGES:
+				changeState(STATUS_SET_INSTALL_OPTION);
+				break;
+			case STATUS_SET_INSTALL_OPTION:
+				changeState(STATUS_INSTALLING);
+				break;
+			case STATUS_INSTALLING:
+				changeState(STATUS_COMPLETED);
+				break;
+			default:
+				break;
+			}
+		}
+	}
 	
+	private void previous() {
+		synchronized(this) {
+			switch(status) {
+			case STATUS_CHECK_PACKAGES:
+				changeState(STATUS_SELECT_DEVICE);
+				break;
+			case STATUS_SET_INSTALL_OPTION:
+				changeState(STATUS_CHECK_PACKAGES);
+				break;
+			default:
+				break;
+			}
+		}
+		
+	}
 	
+	public void stop() {
+		
+	}
 	
+	public void restart() {
+		if(status != STATUS_COMPLETED) return;
+		status = STATUS_INIT;
+		start();
+	}
 	
+	public void setApkInfo(ApkInfo apkInfo) {
+		this.apkInfo = apkInfo;
+	}
+
+	public void setApkFile(String apkFilePath) {
+
+	}
+
+
+	// ----------------------------------------------------------------------------------------
 	
 	
 	
