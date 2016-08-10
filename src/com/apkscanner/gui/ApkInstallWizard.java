@@ -46,13 +46,20 @@ public class ApkInstallWizard
 	public static final int STATUS_INSTALLING = 6;
 	public static final int STATUS_COMPLETED = 7;
 	
-	public static final int FLAG_OPT_INSTALL = 0x10;
-	public static final int FLAG_OPT_INSTALL_INTERNAL = 0x01;
-	public static final int FLAG_OPT_INSTALL_EXTERNAL = 0x02;
+	public static final int FLAG_OPT_INSTALL	 	= 0x0100;
+	public static final int FLAG_OPT_PUSH			= 0x0200;
+	public static final int FLAG_OPT_PUSH_OVERWRITE = 0x0400;
 	
-	public static final int FLAG_OPT_PUSH = 0x20;
-	public static final int FLAG_OPT_PUSH_SYSTEM = 0x01;
-	public static final int FLAG_OPT_PUSH_DATA = 0x02;
+	public static final int FLAG_OPT_INSTALL_INTERNAL = 0x0001;
+	public static final int FLAG_OPT_INSTALL_EXTERNAL = 0x0002;
+	
+	public static final int FLAG_OPT_PUSH_SYSTEM	= 0x0001;
+	public static final int FLAG_OPT_PUSH_PRIVAPP	= 0x0002;
+	public static final int FLAG_OPT_PUSH_DATA		= 0x0004;
+	
+	public static final int FLAG_OPT_EXTRA_RUN		= 0x0010;
+	public static final int FLAG_OPT_EXTRA_REBOOT	= 0x0020;
+	public static final int FLAG_OPT_EXTRA_WITH_LIB	= 0x0040;
 
 	// UI components
 	private Window wizard;
