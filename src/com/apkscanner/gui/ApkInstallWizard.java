@@ -47,6 +47,14 @@ public class ApkInstallWizard
 	public static final int STATUS_SET_INSTALL_OPTION = 5;
 	public static final int STATUS_INSTALLING = 6;
 	public static final int STATUS_COMPLETED = 7;
+	
+	public static final int FLAG_OPT_INSTALL = 0x10;
+	public static final int FLAG_OPT_INSTALL_INTERNAL = 0x01;
+	public static final int FLAG_OPT_INSTALL_EXTERNAL = 0x02;
+	
+	public static final int FLAG_OPT_PUSH = 0x20;
+	public static final int FLAG_OPT_PUSH_SYSTEM = 0x01;
+	public static final int FLAG_OPT_PUSH_DATA = 0x02;
 
 	// UI components
 	private Window wizard;
@@ -55,10 +63,11 @@ public class ApkInstallWizard
 	
 
 	private int status;
+	private int flag;
+
 	private DeviceStatus[] targetDevices;
 	private PackageInfo[] installedPackage;
 	private ApkInfo apkInfo;
-	//private String singInfo;
 	
 	public class ApkInstallWizardDialog  extends JDialog
 	{
@@ -233,7 +242,7 @@ public class ApkInstallWizard
 		if(window == null) return;
 
 		window.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
-		window.setSize(new Dimension(480,215));
+		window.setSize(new Dimension(500,350));
 		
 		//JPanel panel = new JPanel();
 		progressPanel = new ProgressPanel();
@@ -332,7 +341,12 @@ public class ApkInstallWizard
 				{
 					synchronized(ApkInstallWizard.this) {
 						// install
-						next();
+						ApkInstaller installer = new ApkInstaller();
+						if((flag & FLAG_OPT_INSTALL) == FLAG_OPT_INSTALL) {
+							installer.InstallApk(apkInfo.filePath);	
+						} else if((flag & FLAG_OPT_PUSH) == FLAG_OPT_PUSH) {
+							//installer.PushApk(srcApkPath, destApkPath, libPath);
+						}
 					}
 				}
 			}).start();
@@ -381,6 +395,7 @@ public class ApkInstallWizard
 				changeState(STATUS_SET_INSTALL_OPTION);
 				break;
 			case STATUS_SET_INSTALL_OPTION:
+				if(flag == 0) break;
 				changeState(STATUS_INSTALLING);
 				break;
 			case STATUS_INSTALLING:
@@ -418,11 +433,11 @@ public class ApkInstallWizard
 		start();
 	}
 	
-	public void setApkInfo(ApkInfo apkInfo) {
+	public void setApk(ApkInfo apkInfo) {
 		this.apkInfo = apkInfo;
 	}
 
-	public void setApkFile(String apkFilePath) {
+	public void setApk(String apkFilePath) {
 
 	}
 
