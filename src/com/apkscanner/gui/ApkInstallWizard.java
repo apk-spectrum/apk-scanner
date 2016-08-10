@@ -11,8 +11,6 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.File;
 
 import javax.swing.Icon;
@@ -244,7 +242,6 @@ public class ApkInstallWizard
 		window.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
 		window.setSize(new Dimension(500,350));
 		
-		//JPanel panel = new JPanel();
 		progressPanel = new ProgressPanel();
 		contentPanel = new ContentPanel(new UIEventHandler());
 		
@@ -252,44 +249,48 @@ public class ApkInstallWizard
 		window.add(contentPanel, BorderLayout.CENTER);
 		
 		//Log.i("initialize() register event handler");
-		window.addWindowListener(new UIEventHandler());
+		//window.addWindowListener(new UIEventHandler());
 		
 		// Shortcut key event processing
 		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		ky.addKeyEventDispatcher(new UIEventHandler());
 	}
 	
-	class UIEventHandler implements ActionListener, KeyEventDispatcher, WindowListener
+	class UIEventHandler implements ActionListener, KeyEventDispatcher
 	{
 		@Override
-		public void windowActivated(WindowEvent arg0) { }
-
-		@Override
-		public void windowClosed(WindowEvent arg0) { }
-
-		@Override
-		public void windowClosing(WindowEvent arg0) { }
-
-		@Override
-		public void windowDeactivated(WindowEvent arg0) { }
-
-		@Override
-		public void windowDeiconified(WindowEvent arg0) { }
-
-		@Override
-		public void windowIconified(WindowEvent arg0) { }
-
-		@Override
-		public void windowOpened(WindowEvent arg0) { }
+		public void actionPerformed(ActionEvent arg0) {
+			if("NEXT".equals(arg0.getActionCommand())) {
+				next();
+			} else if("PREVIOUS".equals(arg0.getActionCommand())) {
+				previous();
+			} else if("REFRESH".equals(arg0.getActionCommand())) {
+			
+			} else if("SELECT_ALL".equals(arg0.getActionCommand())) {
+				
+			} else if("RUN".equals(arg0.getActionCommand())) {
+				
+			} else if("OPEN".equals(arg0.getActionCommand())) {
+				
+			} else if("SAVE".equals(arg0.getActionCommand())) {
+				
+			} else if("UNINSTALL".equals(arg0.getActionCommand())) {
+				
+			} else if("CHANG_SIGN".equals(arg0.getActionCommand())) {
+				
+			} else if("RESTART".equals(arg0.getActionCommand())) {
+				restart();
+			} else if("CANCEL".equals(arg0.getActionCommand())) {
+				wizard.dispose();
+			} else if("OK".equals(arg0.getActionCommand())) {
+				wizard.dispose();
+			}
+		}
 
 		@Override
 		public boolean dispatchKeyEvent(KeyEvent arg0) {
 			return false;
 		}
-
-		@Override
-		public void actionPerformed(ActionEvent arg0) { }
-		
 	}
 	
 	private void changeState(int status) {
@@ -298,10 +299,10 @@ public class ApkInstallWizard
 		progressPanel.setStatus(status);
 		contentPanel.setStatus(status);
 		
-		preExecute(status);
+		execute(status);
 	}
 	
-	private void preExecute(int status) {
+	private void execute(int status) {
 		switch(status) {
 		case STATUS_DEVICE_SCANNING:
 			new Thread(new Runnable() {
@@ -427,7 +428,7 @@ public class ApkInstallWizard
 		
 	}
 	
-	public void restart() {
+	private void restart() {
 		if(status != STATUS_COMPLETED) return;
 		status = STATUS_INIT;
 		start();
