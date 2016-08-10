@@ -2,6 +2,8 @@
     <string name="app_name">APK 스캐너</string>
     <string name="app_version">Ver. </string>
     
+    <string name="title_install_wizard">APK 설치 마법사</string>
+    
     <string name="btn_open">열기</string>
     <string name="btn_manifest">매니페스트</string>
     <string name="btn_explorer">탐색기</string>

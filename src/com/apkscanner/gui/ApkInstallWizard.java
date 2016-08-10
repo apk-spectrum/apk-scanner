@@ -1,14 +1,24 @@
 package com.apkscanner.gui;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Window;
 import java.io.File;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import com.apkscanner.core.installer.ApkInstaller;
 import com.apkscanner.core.installer.ApkInstaller.ApkInstallerListener;
+import com.apkscanner.gui.dialog.install.DeviceListPanel;
+import com.apkscanner.gui.dialog.install.InstallCheckTable;
 import com.apkscanner.gui.dialog.install.InstallDlg;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbDeviceManager;
@@ -21,6 +31,120 @@ import com.apkscanner.util.Log;
 
 public class ApkInstallWizard
 {
+	private Window wizard;
+	
+	public class ApkInstallWizardDialog  extends JDialog
+	{
+		private static final long serialVersionUID = 2018466680871932348L;
+
+		public ApkInstallWizardDialog(JFrame owner) {
+			super(owner);
+			initialize(this);
+			dialog_init(owner);
+		}
+		
+		public ApkInstallWizardDialog(JDialog owner) {
+			super(owner);
+			initialize(this);
+			dialog_init(owner);
+		}
+		
+		private void dialog_init(Component owner) {
+			setTitle(Resource.STR_TITLE_INSTALL_WIZARD.getString());
+			setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			setLocationRelativeTo(owner);
+			setResizable(false);
+			setModal(false);
+		}
+	}
+	
+	public class ApkInstallWizardFrame extends JFrame
+	{
+		private static final long serialVersionUID = -5642057585041759436L;
+		
+		public ApkInstallWizardFrame() {
+			initialize(this);
+			frame_init();
+		}
+
+		private void frame_init()
+		{
+			try {
+				if(Resource.PROP_CURRENT_THEME.getData()==null) {
+					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+				} else {
+					UIManager.setLookAndFeel(Resource.PROP_CURRENT_THEME.getData().toString());
+				}
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+					| UnsupportedLookAndFeelException e1) {
+				e1.printStackTrace();
+			}
+			
+			setTitle(Resource.STR_TITLE_INSTALL_WIZARD.getString());
+			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			setResizable(false);
+		}
+	}
+
+	public ApkInstallWizard(JFrame owner) {
+		if(owner != null)
+			wizard = new ApkInstallWizardDialog(owner);
+		else 
+			wizard = new ApkInstallWizardFrame();
+	}
+	
+	public ApkInstallWizard(JDialog owner) {
+		if(owner != null)
+			wizard = new ApkInstallWizardDialog(owner);
+		else 
+			wizard = new ApkInstallWizardFrame();
+	}
+	
+	public void setVisible(boolean visible) {
+		if(wizard != null) wizard.setVisible(visible);
+	}
+
+	private void initialize(Window window)
+	{
+		window.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+		window.setSize(new Dimension(480,215));
+		
+		
+		//JPanel panel = new JPanel();
+
+		window.add(new InstallCheckTable(), BorderLayout.NORTH);
+		window.add(new DeviceListPanel(null), BorderLayout.CENTER);
+		
+		
+		
+		//Log.i("initialize() register event handler");
+		//window.addWindowListener(new UIEventHandler());
+		
+		// Shortcut key event processing
+		//KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
+		//ky.addKeyEventDispatcher(new UIEventHandler());
+
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	//static private JTextArea dialogLogArea;
 	//static private JDialog dlgDialog = null;
 
@@ -57,6 +181,7 @@ public class ApkInstallWizard
 	}
 	private static InstallButtonStatusListener Listener;
 	private static InstallDlgFuncListener InstallDlgListener;
+	
 	
 	public ApkInstallWizard(Frame owner, Boolean isOnlyInstall, String PackageName, String apkPath, String libPath, 
 			final boolean samePackage, final boolean checkPackage, final InstallButtonStatusListener Listener)

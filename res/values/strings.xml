@@ -2,6 +2,8 @@
     <string name="app_name">APK Scanner</string>
     <string name="app_version">Ver. </string>
     
+    <string name="title_install_wizard">APK Install Wizard</string>
+    
     <string name="btn_open">Open</string>
     <string name="btn_manifest">Manifest</string>
     <string name="btn_explorer">Explorer</string>

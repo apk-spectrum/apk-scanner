@@ -32,6 +32,8 @@ public enum Resource
 	
 	STR_SDK_INFO_FILE_PATH		(Type.TEXT, "/values/sdk-info.xml"),
 
+	STR_TITLE_INSTALL_WIZARD	(Type.TEXT, "@title_install_wizard"),
+	
 	STR_BTN_OPEN				(Type.TEXT, "@btn_open"),
 	STR_BTN_MANIFEST			(Type.TEXT, "@btn_manifest"),
 	STR_BTN_EXPLORER			(Type.TEXT, "@btn_explorer"),
