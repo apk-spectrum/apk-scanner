@@ -42,6 +42,11 @@ abstract public class ApkScannerStub
 	
 	public ApkScannerStub(StatusListener statusListener)
 	{
+		setStatusListener(statusListener);
+	}
+	
+	public void setStatusListener(StatusListener statusListener)
+	{
 		this.statusListener = statusListener;
 	}
 

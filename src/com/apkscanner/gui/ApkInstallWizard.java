@@ -24,6 +24,9 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import com.apkscanner.core.installer.ApkInstaller;
 import com.apkscanner.core.installer.ApkInstaller.ApkInstallerListener;
+import com.apkscanner.core.scanner.AaptScanner;
+import com.apkscanner.core.scanner.ApkScannerStub;
+import com.apkscanner.core.scanner.ApkScannerStub.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.dialog.install.InstallDlg;
 import com.apkscanner.resource.Resource;
@@ -201,15 +204,27 @@ public class ApkInstallWizard
 				((CardLayout)getLayout()).show(this, CONTENT_DEVICE_SCANNING);
 				break;
 			case STATUS_SELECT_DEVICE:
+				// set UI Data of device list 
+				
+				
+				
 				((CardLayout)getLayout()).show(this, CONTENT_SELECT_DEVICE);
 				break;
 			case STATUS_PACKAGE_SCANNING:
 				((CardLayout)getLayout()).show(this, CONTENT_PACKAGE_SCANNING);
 				break;
 			case STATUS_CHECK_PACKAGES:
+				// set UI Data of package list
+				
+				
+				
 				((CardLayout)getLayout()).show(this, CONTENT_CHECK_PACKAGES);
 				break;
 			case STATUS_SET_INSTALL_OPTION:
+				// set state of component
+				
+				
+				
 				((CardLayout)getLayout()).show(this, CONTENT_SET_INSTALL_OPTION);
 				break;
 			case STATUS_INSTALLING:
@@ -272,7 +287,15 @@ public class ApkInstallWizard
 			} else if("PREVIOUS".equals(arg0.getActionCommand())) {
 				previous();
 			} else if("REFRESH".equals(arg0.getActionCommand())) {
-			
+				new Thread(new Runnable() {
+					public void run()
+					{
+						synchronized(ApkInstallWizard.this) {
+							targetDevices = AdbDeviceManager.scanDevices();
+							contentPanel.setStatus(status);
+						}
+					}
+				}).start();
 			} else if("SELECT_ALL".equals(arg0.getActionCommand())) {
 				
 			} else if("RUN".equals(arg0.getActionCommand())) {
@@ -280,7 +303,7 @@ public class ApkInstallWizard
 			} else if("OPEN".equals(arg0.getActionCommand())) {
 				
 			} else if("SAVE".equals(arg0.getActionCommand())) {
-				
+
 			} else if("UNINSTALL".equals(arg0.getActionCommand())) {
 				
 			} else if("CHANG_SIGN".equals(arg0.getActionCommand())) {
@@ -372,6 +395,13 @@ public class ApkInstallWizard
 		if(apkInfo == null || apkInfo.filePath == null || 
 				!(new File(apkInfo.filePath).isFile())) {
 			Log.e("No such apk file...");
+		    JOptionPane.showOptionDialog(null,
+		    		Resource.STR_MSG_NO_SUCH_APK_FILE.getString(), 
+		    		Resource.STR_LABEL_ERROR.getString(),
+		    		JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, 
+		    		Resource.IMG_WARNING.getImageIcon(),
+		    		new String[] {Resource.STR_BTN_CLOSE.getString()},
+		    		Resource.STR_BTN_CLOSE.getString());
 			return;
 		}
 		setVisible(true);
@@ -446,10 +476,43 @@ public class ApkInstallWizard
 	}
 
 	public void setApk(String apkFilePath) {
+		if(apkFilePath == null || !(new File(apkFilePath).isFile())) {
+			Log.e("No such apk file... : " + apkFilePath);
+		    JOptionPane.showOptionDialog(null,
+		    		Resource.STR_MSG_NO_SUCH_APK_FILE.getString(), 
+		    		Resource.STR_LABEL_ERROR.getString(),
+		    		JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, 
+		    		Resource.IMG_WARNING.getImageIcon(),
+		    		new String[] {Resource.STR_BTN_CLOSE.getString()},
+		    		Resource.STR_BTN_CLOSE.getString());
+			return;
+		}
+		
+		final AaptScanner apkScanner = new AaptScanner(new ApkScannerStub.StatusListener() {
+			@Override
+			public void OnStateChanged(Status status) {
+				Log.i("OnStateChanged() "+ status);
+				switch(status) {
+				case BASIC_INFO_COMPLETED:
+				case LIB_COMPLETED:
+				case CERT_COMPLETED:
+				case ACTIVITY_COMPLETED:
+					break;
+				default:
+					break;
+				}
+			}
 
+			@Override public void OnSuccess() { }
+			@Override public void OnStart(long estimatedTime) { }
+			@Override public void OnProgress(int step, String msg) { }
+			@Override public void OnError() { }
+			@Override public void OnComplete() { }
+		});
+		apkScanner.openApk(apkFilePath);
+		apkInfo = apkScanner.getApkInfo();
 	}
-
-
+	
 	// ----------------------------------------------------------------------------------------
 	
 	

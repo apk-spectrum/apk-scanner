@@ -169,7 +169,8 @@ they're removed before the application is published</string>
     <string name="label_open_with_apkscanner">APK Scanner</string>
     <string name="label_open_with_choose">Other</string>
     
-    <string name="msg_failure_open_apk">Sorry, Can not open the APK</string>
+    <string name="msg_failure_open_apk">ERROR: Can not open the APK</string>
+    <string name="msg_no_such_apk">No such APK file</string>
     <string name="msg_device_not_found">Device not found!
 Please check device.</string>
     <string name="msg_already_installed">This package was already installed.</string>

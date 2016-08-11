@@ -171,6 +171,7 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
     <string name="label_open_with_choose">연결 프로그램 선택</string>
     
     <string name="msg_failure_open_apk">APK 파일을 열수 없습니다.</string>
+    <string name="msg_no_such_apk">APK 파일이 존재하지 않습니다.</string>
     <string name="msg_device_not_found">장치를 찾을 수 없습니다.
 연결상태를 확인 하세요.</string>
     <string name="msg_already_installed">동일 패키지가 이미 설치되어 있습니다.</string>
