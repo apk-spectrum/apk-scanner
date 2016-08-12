@@ -205,8 +205,37 @@ public class ApkInstallWizard
 				break;
 			case STATUS_SELECT_DEVICE:
 				// set UI Data of device list 
+				if(targetDevices.length == 0) {
+					// disable select_all & next button 
+				} else {
+					// enable select_all & next button
+				}
 				
-				
+				// if() listview was not empty
+				{
+					boolean isAllSelected = true;
+					//for(DeviceStatus dev: targetDevices)
+					{
+						// such dev.name in listview
+						// isAllSelected = false;
+					}
+					if(isAllSelected) {
+						// edit label to unselect_all 
+					} else {
+						// edit label to select_all
+					}
+				} 
+				//else
+				{
+					// add devise to listview
+					for(DeviceStatus dev: targetDevices) {
+						if(dev.status.equals("device")) {
+							Log.e(">>>>>> add listview " + dev.name + "(" + dev.device + ")");
+						} else {
+							Log.e(">>>>>> add listview " + dev.name + "(Unknown) - " + dev.status);
+						}
+					}
+				}
 				
 				((CardLayout)getLayout()).show(this, CONTENT_SELECT_DEVICE);
 				break;
@@ -215,15 +244,72 @@ public class ApkInstallWizard
 				break;
 			case STATUS_CHECK_PACKAGES:
 				// set UI Data of package list
+				for(int i = 0; i < targetDevices.length; i++) {
+					if(installedPackage[i] != null) {
+						Log.e(">>>>>> add listview " + targetDevices[i].name + " - " + installedPackage[i].apkPath);
+					}
+				}
 				
+				if((apkInfo.featureFlags & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
+					// enable run app button
+				}
 				
 				
 				((CardLayout)getLayout()).show(this, CONTENT_CHECK_PACKAGES);
 				break;
 			case STATUS_SET_INSTALL_OPTION:
 				// set state of component
+
+				if((apkInfo.featureFlags & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
+					// enable run app button
+				} else {
+					
+				}
+				if((apkInfo.manifest.installLocation.indexOf("internalOnly")) > -1) {
+					// disable external
+				} else {
+					
+				}
+
+				if(apkInfo.certificates == null || apkInfo.certificates.length == 0) {
+					// disable next
+				} else {
+					
+				}
 				
-				
+				boolean isAllRootDevice = true;
+				for(DeviceStatus dev: targetDevices) {
+					// such dev.name in listview
+					if(!AdbWrapper.root(dev.name, null)) {
+						isAllRootDevice = false;
+						break;
+					}
+				}
+				if(isAllRootDevice) {
+					// enable push group
+					boolean haveSystemApp = false;
+					if(installedPackage != null) {
+						for(PackageInfo pack: installedPackage) {
+							if(pack.isSystemApp) {
+								haveSystemApp = true;
+								break;
+							}
+						}
+					}
+					if(haveSystemApp) {
+						// enable overwrite
+					} else {
+						// disable overwrite
+					}
+					
+					if(apkInfo.librarys == null || apkInfo.librarys.length == 0) {
+						// disable with libs
+					} else {
+						
+					}
+				} else {
+					// disable push group
+				}
 				
 				((CardLayout)getLayout()).show(this, CONTENT_SET_INSTALL_OPTION);
 				break;
@@ -324,6 +410,7 @@ public class ApkInstallWizard
 	}
 	
 	private void changeState(int status) {
+		Log.e(">>>>>>>>>>>>> changeState() " + status);
 		if(this.status == status) return;
 		this.status = status;
 		progressPanel.setStatus(status);
@@ -354,7 +441,7 @@ public class ApkInstallWizard
 							boolean existed = false;
 							installedPackage = new PackageInfo[targetDevices.length];
 							for(int i = 0; i < targetDevices.length; i++) {
-								installedPackage[i] = AdbPackageManager.getPackageInfo(targetDevices[i].name, strPackageName);
+								installedPackage[i] = AdbPackageManager.getPackageInfo(targetDevices[i].name, apkInfo.manifest.packageName);
 								if(installedPackage[i] != null) existed = true;
 							}
 							if(!existed) {
@@ -421,7 +508,21 @@ public class ApkInstallWizard
 				}
 			case STATUS_SELECT_DEVICE:
 				if(targetDevices != null) {
-					changeState(STATUS_PACKAGE_SCANNING);
+					boolean isAllOnline = true;
+					for(DeviceStatus dev: targetDevices) {
+						// such dev.name in listview
+						if("".equals(dev.status)) {
+							isAllOnline = false;
+							break;
+						}
+					}
+					if(isAllOnline) {
+						changeState(STATUS_PACKAGE_SCANNING);
+					} else if(status == STATUS_DEVICE_SCANNING) {
+						changeState(STATUS_SELECT_DEVICE);
+					} else {
+						// show warring message, have no online device...
+					}
 				}
 				break;
 			case STATUS_PACKAGE_SCANNING:
