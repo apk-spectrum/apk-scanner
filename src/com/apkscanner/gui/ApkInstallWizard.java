@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.apkscanner.Launcher;
 import com.apkscanner.core.installer.ApkInstaller;
 import com.apkscanner.core.installer.ApkInstaller.ApkInstallerListener;
 import com.apkscanner.core.scanner.AaptScanner;
@@ -31,6 +32,8 @@ import com.apkscanner.data.apkinfo.ActivityAliasInfo;
 import com.apkscanner.data.apkinfo.ActivityInfo;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.dialog.install.InstallDlg;
+import com.apkscanner.gui.util.ApkFileChooser;
+import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbDeviceManager;
 import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
@@ -248,6 +251,10 @@ public class ApkInstallWizard
 					}
 				}
 				
+				if(status == STATUS_DEVICE_REFRESH) {
+					break;
+				}
+
 				((CardLayout)getLayout()).show(this, CONTENT_SELECT_DEVICE);
 				break;
 			case STATUS_PACKAGE_SCANNING:
@@ -666,8 +673,83 @@ public class ApkInstallWizard
 		}
 	}
 	
-	public void refreshDevice() {
-		
+	public void openApk(DeviceStatus dev, PackageInfo pkgInfo) {
+		ApkInstaller apkInstaller = new ApkInstaller(dev.name, null);
+		String tmpPath = "/" + dev.name + pkgInfo.apkPath;
+		tmpPath = tmpPath.replaceAll("/", File.separator+File.separator).replaceAll("//", "/");
+		tmpPath = FileUtil.makeTempPath(tmpPath)+".apk";
+		apkInstaller.PullApk(pkgInfo.apkPath, tmpPath);
+		Launcher.run(tmpPath);
+	}
+	
+	public void saveApk(DeviceStatus dev, PackageInfo pkgInfo) {
+		String saveFileName;
+		if(pkgInfo.apkPath.endsWith("base.apk")) {
+			saveFileName = pkgInfo.apkPath.replaceAll(".*/(.*)/base.apk", "$1.apk");
+		} else {
+			saveFileName = pkgInfo.apkPath.replaceAll(".*/", "");
+		}
+
+		File destFile = ApkFileChooser.saveApkFile(wizard, saveFileName);
+		if(destFile == null) return;
+
+		ApkInstaller apkInstaller = new ApkInstaller(dev.name, null);		
+		apkInstaller.PullApk(pkgInfo.apkPath, destFile.getAbsolutePath());
+	}
+	
+	public void removeApk(DeviceStatus dev, PackageInfo pkgInfo) {
+		ApkInstaller apkInstaller = new ApkInstaller(dev.name, null);
+		boolean result = false;
+		if(pkgInfo.isSystemApp) {
+			if(!AdbWrapper.root(dev.name, null)) {
+				ArrowTraversalPane.showOptionDialog(null,
+						Resource.STR_MSG_DEVICE_HAS_NOT_ROOT.getString(),
+						Resource.STR_LABEL_ERROR.getString(),
+						JOptionPane.OK_OPTION, 
+						JOptionPane.ERROR_MESSAGE,
+						null,
+						new String[] {Resource.STR_BTN_OK.getString()},
+						Resource.STR_BTN_OK.getString());
+				return;
+			}
+			result = apkInstaller.removeApk(pkgInfo.codePath);
+			if(result) {
+				final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
+				int reboot = ArrowTraversalPane.showOptionDialog(null,
+						Resource.STR_QUESTION_REBOOT_DEVICE.getString(),
+						Resource.STR_LABEL_INFO.getString(),
+						JOptionPane.YES_NO_OPTION, 
+						JOptionPane.QUESTION_MESSAGE,
+						null,
+						yesNoOptions, yesNoOptions[1]);
+				if(reboot == 0){							
+					AdbWrapper.reboot(dev.name, null);
+				}
+			}
+		} else {
+			result = apkInstaller.uninstallApk(pkgInfo.pkgName);
+		}
+
+		if(result) {
+			Log.i("Success APK delete");
+			ArrowTraversalPane.showOptionDialog(null,
+				Resource.STR_MSG_SUCCESS_REMOVED.getString(),
+				Resource.STR_LABEL_ERROR.getString(),
+				JOptionPane.OK_OPTION, 
+				JOptionPane.INFORMATION_MESSAGE,
+				null,
+				new String[] {Resource.STR_BTN_OK.getString()},
+				Resource.STR_BTN_OK.getString());
+		} else {
+			ArrowTraversalPane.showOptionDialog(null,
+					Resource.STR_MSG_FAILURE_UNINSTALLED.getString(),
+					Resource.STR_LABEL_ERROR.getString(),
+					JOptionPane.OK_OPTION, 
+					JOptionPane.ERROR_MESSAGE,
+					null,
+					new String[] {Resource.STR_BTN_OK.getString()},
+					Resource.STR_BTN_OK.getString());
+		}
 	}
 	// ----------------------------------------------------------------------------------------
 	

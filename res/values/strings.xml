@@ -175,8 +175,10 @@ they're removed before the application is published</string>
 Please check device.</string>
     <string name="msg_already_installed">This package was already installed.</string>
     <string name="msg_no_such_package">No such package.</string>
-    <string name="msg_failure_installed">Failure...</string>
-    <string name="msg_success_installed">Success...</string>
+    <string name="msg_failure_installed">App did not install.</string>
+    <string name="msg_failure_uninstalled">App did not remove.</string>
+    <string name="msg_success_installed">Install success...</string>
+    <string name="msg_success_removed">Remove success!</string>
     <string name="msg_device_unauthorized">Device unauthorized. Please check the confirmation dialog on your device.</string>
     <string name="msg_device_unknown">device unknown</string>
     <string name="msg_cannot_run_root">adbd cannot run as root in production builds</string>

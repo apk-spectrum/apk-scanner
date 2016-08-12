@@ -238,18 +238,19 @@ public class AdbWrapper
 		return result;
 	}
 	
-	public void uninstall(String packageName) {
-		uninstall(device, packageName, listener);
+	public String[] uninstall(String packageName) {
+		return uninstall(device, packageName, listener);
 	}
 	
-	static public void uninstall(String device, String packageName, ConsoleOutputObserver listener) {
-		if(adbCmd == null) return;
+	static public String[] uninstall(String device, String packageName, ConsoleOutputObserver listener) {
+		if(adbCmd == null) return null;
 		String[] param;
 		if(device == null || device.isEmpty()) {
 			param = new String[] {adbCmd, "uninstall", packageName};
 		} else {
 			param = new String[] {adbCmd, "-s", device, "uninstall", packageName};
 		}
-		ConsolCmd.exc(param, false, null);
+		String[] result = ConsolCmd.exc(param, false, null);
+		return result;
 	}
 }

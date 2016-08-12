@@ -77,15 +77,24 @@ public class ApkInstaller
 		adbCommander.setListener(coutListener);
 	}
 	
-	public void uninstallApk(String packageName) {
-		adbCommander.uninstall(packageName);
+	public boolean uninstallApk(String packageName) {
+		if(adbCommander == null) return false;
+		String[] cmdResult = adbCommander.uninstall(packageName);
+		return (cmdResult != null && cmdResult.length > 0 && "Success".equals(cmdResult[0]));
 	}
 	
-	public void removeApk(String apkPath)
-	{
-		adbCommander.root();
-		adbCommander.remount();
-		adbCommander.shell(new String[] {"rm", "-rf", apkPath});
+	public boolean removeApk(String apkPath) {
+		if(adbCommander == null) return false;
+
+		boolean result = adbCommander.root();
+		result = result && adbCommander.remount();
+		if(result) {
+			String[] cmdResult = adbCommander.shell(new String[] {"rm", "-r", apkPath});
+			if(cmdResult.length > 0 && !cmdResult[0].isEmpty()) {
+				result = false;
+			}
+		}
+		return result;
 	}
 	
 	public void PushApk(final String srcApkPath, final String destApkPath, final String libPath)
