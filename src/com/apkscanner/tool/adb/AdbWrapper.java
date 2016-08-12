@@ -125,7 +125,7 @@ public class AdbWrapper
 			param = new String[] {adbCmd, "-s", device, "root"};
 		}
 		String[] result = ConsolCmd.exc(param, false, null);
-		if(result == null || !result[0].endsWith("running as root")) {
+		if(result == null || result.length == 0 || !result[0].endsWith("running as root")) {
 			return false;
 		}
 		return true;
@@ -197,7 +197,7 @@ public class AdbWrapper
 			param = new String[] {adbCmd, "-s", device, "pull", srcApkPath, destApkPath};
 		}
 		String[] result = ConsolCmd.exc(param, false, null);
-		if(result == null || !result[0].endsWith("s)")) {
+		if(result == null || result.length == 0 || !result[0].endsWith("s)")) {
 			return false;
 		}
 		return true;

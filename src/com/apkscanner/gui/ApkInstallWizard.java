@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -665,21 +666,69 @@ public class ApkInstallWizard
 		return launchActivity;
 	}
 	
-	public void launchApp(String device) {
-		if(getLaunchActivity() != null) {
-			AdbWrapper.shell(device, new String[] {"am", "start", "-n", launchActivity}, null);
-		} else {
+	public void launchApp(final String device) {
+		if(getLaunchActivity() == null) {
 			Log.w("No such launch activity");
+			ArrowTraversalPane.showOptionDialog(null,
+					Resource.STR_MSG_NO_SUCH_LAUNCHER.getString(),
+					Resource.STR_LABEL_WARNING.getString(),
+					JOptionPane.OK_OPTION, 
+					JOptionPane.INFORMATION_MESSAGE,
+					null,
+					new String[] {Resource.STR_BTN_OK.getString()},
+					Resource.STR_BTN_OK.getString());
+			return;
 		}
+		
+		new Thread(new Runnable() {
+			public void run()
+			{
+				String[] cmdResult = AdbWrapper.shell(device, new String[] {"am", "start", "-n", launchActivity}, null);
+				if(cmdResult == null || (cmdResult.length > 2 && cmdResult[1].startsWith("Error")) ||
+						(cmdResult.length > 1 && cmdResult[0].startsWith("error"))) {
+					Log.e("activity start faile : " + launchActivity);
+					Log.e(String.join("\n", cmdResult));
+					ArrowTraversalPane.showOptionDialog(null,
+							Resource.STR_MSG_FAILURE_LAUNCH_APP.getString(),
+							Resource.STR_LABEL_WARNING.getString(),
+							JOptionPane.OK_OPTION, 
+							JOptionPane.INFORMATION_MESSAGE,
+							null,
+							new String[] {Resource.STR_BTN_OK.getString()},
+							Resource.STR_BTN_OK.getString());
+				}
+			}
+		}).start();
 	}
 	
 	public void openApk(DeviceStatus dev, PackageInfo pkgInfo) {
-		ApkInstaller apkInstaller = new ApkInstaller(dev.name, null);
 		String tmpPath = "/" + dev.name + pkgInfo.apkPath;
 		tmpPath = tmpPath.replaceAll("/", File.separator+File.separator).replaceAll("//", "/");
 		tmpPath = FileUtil.makeTempPath(tmpPath)+".apk";
+		final String openApkPath = tmpPath; 
+
+		ApkInstaller apkInstaller = new ApkInstaller(dev.name, new ApkInstallerListener() {
+			@Override
+			public void OnError(int cmdType, String device) {
+				ArrowTraversalPane.showOptionDialog(null,
+						Resource.STR_MSG_FAILURE_PULL_APK.getString(),
+						Resource.STR_LABEL_ERROR.getString(),
+						JOptionPane.OK_OPTION, 
+						JOptionPane.ERROR_MESSAGE,
+						null,
+						new String[] {Resource.STR_BTN_OK.getString()},
+						Resource.STR_BTN_OK.getString());
+			}
+
+			@Override
+			public void OnSuccess(int cmdType, String device) {
+				Launcher.run(openApkPath);
+			}
+
+			@Override public void OnCompleted(int cmdType, String device) { }
+			@Override public void OnMessage(String msg) { }
+		});
 		apkInstaller.PullApk(pkgInfo.apkPath, tmpPath);
-		Launcher.run(tmpPath);
 	}
 	
 	public void saveApk(DeviceStatus dev, PackageInfo pkgInfo) {
@@ -690,16 +739,98 @@ public class ApkInstallWizard
 			saveFileName = pkgInfo.apkPath.replaceAll(".*/", "");
 		}
 
-		File destFile = ApkFileChooser.saveApkFile(wizard, saveFileName);
+		final File destFile = ApkFileChooser.saveApkFile(wizard, saveFileName);
 		if(destFile == null) return;
 
-		ApkInstaller apkInstaller = new ApkInstaller(dev.name, null);		
+		ApkInstaller apkInstaller = new ApkInstaller(dev.name, new ApkInstallerListener() {
+			@Override
+			public void OnError(int cmdType, String device) {
+				ArrowTraversalPane.showOptionDialog(null,
+						Resource.STR_MSG_FAILURE_PULL_APK.getString(),
+						Resource.STR_LABEL_ERROR.getString(),
+						JOptionPane.OK_OPTION, 
+						JOptionPane.ERROR_MESSAGE,
+						null,
+						new String[] {Resource.STR_BTN_OK.getString()},
+						Resource.STR_BTN_OK.getString());
+			}
+
+			@Override
+			public void OnSuccess(int cmdType, String device) {
+				int n = ArrowTraversalPane.showOptionDialog(null,
+						Resource.STR_MSG_SUCCESS_PULL_APK.getString() + "\n" + destFile.getAbsolutePath(),
+						Resource.STR_LABEL_QUESTION.getString(),
+						JOptionPane.YES_NO_CANCEL_OPTION,
+						JOptionPane.INFORMATION_MESSAGE,
+						null,
+						new String[] {Resource.STR_BTN_EXPLORER.getString(), Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OK.getString()},
+						Resource.STR_BTN_OK.getString());
+				switch(n) {
+				case 0: // explorer
+					String openner = (System.getProperty("os.name").indexOf("Window") > -1) ? "explorer" : "xdg-open";
+					try {
+						new ProcessBuilder(openner, destFile.getParent()).start();
+					} catch (IOException e1) { }
+					break;
+				case 1: // open
+					Launcher.run(destFile.getAbsolutePath());
+					break;
+				default:
+					break;
+				}
+			}
+
+			@Override public void OnCompleted(int cmdType, String device) { }
+			@Override public void OnMessage(String msg) { }
+		});		
 		apkInstaller.PullApk(pkgInfo.apkPath, destFile.getAbsolutePath());
 	}
 	
-	public void removeApk(DeviceStatus dev, PackageInfo pkgInfo) {
-		ApkInstaller apkInstaller = new ApkInstaller(dev.name, null);
-		boolean result = false;
+	public void removeApk(final DeviceStatus dev, final PackageInfo pkgInfo) {
+		ApkInstaller apkInstaller = new ApkInstaller(dev.name, new ApkInstallerListener() {
+			@Override
+			public void OnError(int cmdType, String device) {
+				ArrowTraversalPane.showOptionDialog(null,
+						Resource.STR_MSG_FAILURE_UNINSTALLED.getString(),
+						Resource.STR_LABEL_ERROR.getString(),
+						JOptionPane.OK_OPTION, 
+						JOptionPane.ERROR_MESSAGE,
+						null,
+						new String[] {Resource.STR_BTN_OK.getString()},
+						Resource.STR_BTN_OK.getString());
+			}
+
+			@Override
+			public void OnSuccess(int cmdType, String device) {
+				Log.i("Success APK uninstall or remove " + cmdType);
+				if(cmdType == CMD_REMOVE) {
+					final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
+					int reboot = ArrowTraversalPane.showOptionDialog(null,
+							Resource.STR_MSG_SUCCESS_REMOVED.getString() + "\n" + Resource.STR_QUESTION_REBOOT_DEVICE.getString(),
+							Resource.STR_LABEL_INFO.getString(),
+							JOptionPane.YES_NO_OPTION, 
+							JOptionPane.QUESTION_MESSAGE,
+							null,
+							yesNoOptions, yesNoOptions[1]);
+					if(reboot == 0){							
+						AdbWrapper.reboot(dev.name, null);
+					}
+				} else {
+					ArrowTraversalPane.showOptionDialog(null,
+						Resource.STR_MSG_SUCCESS_REMOVED.getString(),
+						Resource.STR_LABEL_ERROR.getString(),
+						JOptionPane.OK_OPTION, 
+						JOptionPane.INFORMATION_MESSAGE,
+						null,
+						new String[] {Resource.STR_BTN_OK.getString()},
+						Resource.STR_BTN_OK.getString());
+				}
+			}
+
+			@Override public void OnCompleted(int cmdType, String device) { }
+			@Override public void OnMessage(String msg) { }
+		});
+
 		if(pkgInfo.isSystemApp) {
 			if(!AdbWrapper.root(dev.name, null)) {
 				ArrowTraversalPane.showOptionDialog(null,
@@ -712,43 +843,9 @@ public class ApkInstallWizard
 						Resource.STR_BTN_OK.getString());
 				return;
 			}
-			result = apkInstaller.removeApk(pkgInfo.codePath);
-			if(result) {
-				final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
-				int reboot = ArrowTraversalPane.showOptionDialog(null,
-						Resource.STR_QUESTION_REBOOT_DEVICE.getString(),
-						Resource.STR_LABEL_INFO.getString(),
-						JOptionPane.YES_NO_OPTION, 
-						JOptionPane.QUESTION_MESSAGE,
-						null,
-						yesNoOptions, yesNoOptions[1]);
-				if(reboot == 0){							
-					AdbWrapper.reboot(dev.name, null);
-				}
-			}
+			apkInstaller.removeApk(pkgInfo.codePath);
 		} else {
-			result = apkInstaller.uninstallApk(pkgInfo.pkgName);
-		}
-
-		if(result) {
-			Log.i("Success APK delete");
-			ArrowTraversalPane.showOptionDialog(null,
-				Resource.STR_MSG_SUCCESS_REMOVED.getString(),
-				Resource.STR_LABEL_ERROR.getString(),
-				JOptionPane.OK_OPTION, 
-				JOptionPane.INFORMATION_MESSAGE,
-				null,
-				new String[] {Resource.STR_BTN_OK.getString()},
-				Resource.STR_BTN_OK.getString());
-		} else {
-			ArrowTraversalPane.showOptionDialog(null,
-					Resource.STR_MSG_FAILURE_UNINSTALLED.getString(),
-					Resource.STR_LABEL_ERROR.getString(),
-					JOptionPane.OK_OPTION, 
-					JOptionPane.ERROR_MESSAGE,
-					null,
-					new String[] {Resource.STR_BTN_OK.getString()},
-					Resource.STR_BTN_OK.getString());
+			apkInstaller.uninstallApk(pkgInfo.pkgName);
 		}
 	}
 	// ----------------------------------------------------------------------------------------

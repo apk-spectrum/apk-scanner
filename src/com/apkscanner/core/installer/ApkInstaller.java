@@ -18,6 +18,7 @@ public class ApkInstaller
 		public static final int CMD_UNINSTALL = 2;
 		public static final int CMD_PUSH = 3;
 		public static final int CMD_PULL = 4;
+		public static final int CMD_REMOVE = 4;
 
 		public void OnMessage(String msg);
 		public void OnError(int cmdType, String device);
@@ -77,24 +78,64 @@ public class ApkInstaller
 		adbCommander.setListener(coutListener);
 	}
 	
-	public boolean uninstallApk(String packageName) {
-		if(adbCommander == null) return false;
-		String[] cmdResult = adbCommander.uninstall(packageName);
-		return (cmdResult != null && cmdResult.length > 0 && "Success".equals(cmdResult[0]));
+	public void uninstallApk(final String packageName) {
+		if(adbCommander == null || packageName == null || packageName.isEmpty()) {
+			if(listener != null) {
+				listener.OnError(ApkInstallerListener.CMD_UNINSTALL, device);
+				listener.OnCompleted(ApkInstallerListener.CMD_UNINSTALL, device);
+			}
+			return;
+		}
+
+		new Thread(new Runnable() {
+			public void run()
+			{
+				String[] cmdResult = adbCommander.uninstall(packageName);
+
+				if(listener != null) {
+					if(cmdResult != null && cmdResult.length > 0 && "Success".equals(cmdResult[0])) {
+						listener.OnSuccess(ApkInstallerListener.CMD_UNINSTALL, device);
+					} else {
+						listener.OnError(ApkInstallerListener.CMD_UNINSTALL, device);
+					}
+					listener.OnCompleted(ApkInstallerListener.CMD_UNINSTALL, device);
+				}
+			}
+		}).start();
 	}
 	
-	public boolean removeApk(String apkPath) {
-		if(adbCommander == null) return false;
-
-		boolean result = adbCommander.root();
-		result = result && adbCommander.remount();
-		if(result) {
-			String[] cmdResult = adbCommander.shell(new String[] {"rm", "-r", apkPath});
-			if(cmdResult.length > 0 && !cmdResult[0].isEmpty()) {
-				result = false;
+	public void removeApk(final String apkPath) {
+		if(adbCommander == null || apkPath == null || apkPath.isEmpty()) {
+			if(listener != null) {
+				listener.OnError(ApkInstallerListener.CMD_REMOVE, device);
+				listener.OnCompleted(ApkInstallerListener.CMD_REMOVE, device);
 			}
+			return;
 		}
-		return result;
+
+		new Thread(new Runnable() {
+			public void run()
+			{
+				boolean result = adbCommander.root();
+				result = result && adbCommander.remount();
+				if(result) {
+					String[] cmdResult = adbCommander.shell(new String[] {"rm", "-r", apkPath});
+					if(cmdResult.length > 0 && !cmdResult[0].isEmpty()) {
+						result = false;
+						Log.e("removeApk() failure " + String.join("\n", cmdResult));
+					}
+				}
+
+				if(listener != null) {
+					if(result) {
+						listener.OnSuccess(ApkInstallerListener.CMD_REMOVE, device);
+					} else {
+						listener.OnError(ApkInstallerListener.CMD_REMOVE, device);
+					}
+					listener.OnCompleted(ApkInstallerListener.CMD_REMOVE, device);
+				}
+			}
+		}).start();
 	}
 	
 	public void PushApk(final String srcApkPath, final String destApkPath, final String libPath)
@@ -206,8 +247,6 @@ public class ApkInstaller
 				}
 			}
 		}).start();
-		
-		return;
 	}
 	
 	public void PullApk(final String srcApkPath, final String destApkPath)
@@ -225,19 +264,18 @@ public class ApkInstaller
 			public void run()
 			{
 				boolean result = adbCommander.pull(srcApkPath, destApkPath);
+				result = result && new File(destApkPath).isFile();
 
 				if(listener != null) {
-					listener.OnCompleted(ApkInstallerListener.CMD_PULL, device);
 					if(result) {
 						listener.OnSuccess(ApkInstallerListener.CMD_PULL, device);
 					} else {
 						listener.OnError(ApkInstallerListener.CMD_PULL, device);
-					}					
+					}
+					listener.OnCompleted(ApkInstallerListener.CMD_PULL, device);				
 				}
 			}
 		}).start();
-
-		return;
 	}
 
 	private String[] selectAbi(String LibSourcePath) {
