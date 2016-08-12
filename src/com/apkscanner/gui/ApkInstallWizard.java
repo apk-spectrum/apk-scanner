@@ -106,11 +106,11 @@ public class ApkInstallWizard
 		private void dialog_init(Component owner) {
 			setTitle(Resource.STR_TITLE_INSTALL_WIZARD.getString());
 			setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			setLocationRelativeTo(owner);
 			setResizable(false);
 			setModal(false);
 
 			initialize(this);
+			setLocationRelativeTo(owner);
 		}
 	}
 	
@@ -140,6 +140,7 @@ public class ApkInstallWizard
 			setResizable(false);
 
 			initialize(this);
+			setLocationRelativeTo(null);
 		}
 	}
 	
@@ -342,6 +343,10 @@ public class ApkInstallWizard
 				break;
 			}
 		}
+	}
+
+	public ApkInstallWizard() {
+		this((JFrame)null);
 	}
 
 	public ApkInstallWizard(JFrame owner) {
@@ -786,7 +791,7 @@ public class ApkInstallWizard
 		apkInstaller.PullApk(pkgInfo.apkPath, destFile.getAbsolutePath());
 	}
 	
-	public void removeApk(final DeviceStatus dev, final PackageInfo pkgInfo) {
+	public void uninstallApk(final DeviceStatus dev, final PackageInfo pkgInfo) {
 		ApkInstaller apkInstaller = new ApkInstaller(dev.name, new ApkInstallerListener() {
 			@Override
 			public void OnError(int cmdType, String device) {

@@ -74,7 +74,7 @@ public class AdbWrapper
 	
 	static public void killServer(ConsoleOutputObserver listener) {
 		if(adbCmd == null) return;
-		ConsolCmd.exc(new String[] {adbCmd, "kill-server"}, false, null);
+		ConsolCmd.exc(new String[] {adbCmd, "kill-server"}, false, listener);
 	}
 
 	public boolean restartServer() {
@@ -108,7 +108,7 @@ public class AdbWrapper
 		} else {
 			param = new String[] {adbCmd, "-s", device, "shell", "getprop", tag};
 		}
-		String[] result = ConsolCmd.exc(param, false, null);
+		String[] result = ConsolCmd.exc(param, false, listener);
 		return result[0];
 	}
 	
@@ -124,7 +124,7 @@ public class AdbWrapper
 		} else {
 			param = new String[] {adbCmd, "-s", device, "root"};
 		}
-		String[] result = ConsolCmd.exc(param, false, null);
+		String[] result = ConsolCmd.exc(param, false, listener);
 		if(result == null || result.length == 0 || !result[0].endsWith("running as root")) {
 			return false;
 		}
@@ -141,10 +141,10 @@ public class AdbWrapper
 		if(device == null || device.isEmpty()) {
 			param = new String[] {adbCmd, "remount"};
 		} else {
-			param = new String[] {adbCmd, "-s", device, "root"};
+			param = new String[] {adbCmd, "-s", device, "remount"};
 		}
-		String[] result = ConsolCmd.exc(param, false, null);
-		if(result == null || !result[0].endsWith("remount succeeded")) {
+		String[] result = ConsolCmd.exc(param, false, listener);
+		if(result == null || result.length == 0 || !result[0].endsWith("remount succeeded")) {
 			return false;
 		}
 		return true;
@@ -165,7 +165,7 @@ public class AdbWrapper
 		String[] shellcmd = new String[cmd.length + param.length];
 		System.arraycopy(cmd, 0, shellcmd, 0, cmd.length);
 		System.arraycopy(param, 0, shellcmd, cmd.length, param.length);
-		String[] result = ConsolCmd.exc(shellcmd, false, null);
+		String[] result = ConsolCmd.exc(shellcmd, false, listener);
 		return result;
 	}
 	
@@ -181,7 +181,7 @@ public class AdbWrapper
 		} else {
 			param = new String[] {adbCmd, "-s", device, "reboot"};
 		}
-		ConsolCmd.exc(param, false, null);
+		ConsolCmd.exc(param, false, listener);
 	}
 	
 	public boolean pull(String srcApkPath, String destApkPath) {
@@ -196,7 +196,7 @@ public class AdbWrapper
 		} else {
 			param = new String[] {adbCmd, "-s", device, "pull", srcApkPath, destApkPath};
 		}
-		String[] result = ConsolCmd.exc(param, false, null);
+		String[] result = ConsolCmd.exc(param, false, listener);
 		if(result == null || result.length == 0 || !result[0].endsWith("s)")) {
 			return false;
 		}
@@ -215,7 +215,7 @@ public class AdbWrapper
 		} else {
 			param = new String[] {adbCmd, "-s", device, "push", srcApkPath, destApkPath};
 		}
-		String[] result = ConsolCmd.exc(param, false, null);
+		String[] result = ConsolCmd.exc(param, false, listener);
 		if(result == null || !result[0].endsWith("s)")) {
 			return false;
 		}
@@ -234,7 +234,7 @@ public class AdbWrapper
 		} else {
 			param = new String[] {adbCmd, "-s", device, "install", "-r", "-d", apkPath};
 		}
-		String[] result = ConsolCmd.exc(param, false, null);
+		String[] result = ConsolCmd.exc(param, false, listener);
 		return result;
 	}
 	
@@ -250,7 +250,7 @@ public class AdbWrapper
 		} else {
 			param = new String[] {adbCmd, "-s", device, "uninstall", packageName};
 		}
-		String[] result = ConsolCmd.exc(param, false, null);
+		String[] result = ConsolCmd.exc(param, false, listener);
 		return result;
 	}
 }
