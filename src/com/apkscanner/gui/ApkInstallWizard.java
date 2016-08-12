@@ -27,6 +27,8 @@ import com.apkscanner.core.installer.ApkInstaller.ApkInstallerListener;
 import com.apkscanner.core.scanner.AaptScanner;
 import com.apkscanner.core.scanner.ApkScannerStub;
 import com.apkscanner.core.scanner.ApkScannerStub.Status;
+import com.apkscanner.data.apkinfo.ActivityAliasInfo;
+import com.apkscanner.data.apkinfo.ActivityInfo;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.dialog.install.InstallDlg;
 import com.apkscanner.resource.Resource;
@@ -76,6 +78,7 @@ public class ApkInstallWizard
 	private DeviceStatus[] targetDevices;
 	private PackageInfo[] installedPackage;
 	private ApkInfo apkInfo;
+	private String launchActivity;
 	
 	public class ApkInstallWizardDialog  extends JDialog
 	{
@@ -230,8 +233,10 @@ public class ApkInstallWizard
 					// add devise to listview
 					for(DeviceStatus dev: targetDevices) {
 						if(dev.status.equals("device")) {
+							// default check;
 							Log.e(">>>>>> add listview " + dev.name + "(" + dev.device + ")");
 						} else {
+							// uncheck;
 							Log.e(">>>>>> add listview " + dev.name + "(Unknown) - " + dev.status);
 						}
 					}
@@ -614,6 +619,46 @@ public class ApkInstallWizard
 		apkInfo = apkScanner.getApkInfo();
 	}
 	
+	private String getLaunchActivity() {
+		if(launchActivity == null && 
+				apkInfo != null &&
+				apkInfo.manifest != null &&
+				apkInfo.manifest.application != null) {
+			String activity = null;
+			if(apkInfo.manifest.application.activity != null) {
+				for(ActivityInfo info: apkInfo.manifest.application.activity) {
+					if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
+						activity = info.name;
+						break;
+					} else if((info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
+						activity = info.name;
+					}
+				}
+			}
+			if(activity == null && apkInfo.manifest.application.activityAlias != null) {
+				for(ActivityAliasInfo info: apkInfo.manifest.application.activityAlias) {
+					if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
+						activity = info.name;
+						break;
+					} else if((info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
+						activity = info.name;
+					}
+				}
+			}
+			if(activity != null) {
+				launchActivity = apkInfo.manifest.packageName + "/" + activity;
+			}
+		}
+		return launchActivity;
+	}
+	
+	public void launchApp(String device) {
+		if(getLaunchActivity() != null) {
+			AdbWrapper.shell(device, new String[] {"am", "start", "-n", launchActivity}, null);
+		} else {
+			Log.w("No such launch activity");
+		}
+	}
 	// ----------------------------------------------------------------------------------------
 	
 	
