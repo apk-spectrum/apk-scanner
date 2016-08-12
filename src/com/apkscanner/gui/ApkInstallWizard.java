@@ -44,12 +44,13 @@ public class ApkInstallWizard
 {
 	public static final int STATUS_INIT = 0;
 	public static final int STATUS_DEVICE_SCANNING = 1;
-	public static final int STATUS_SELECT_DEVICE = 2;
-	public static final int STATUS_PACKAGE_SCANNING = 3;
-	public static final int STATUS_CHECK_PACKAGES = 4;
-	public static final int STATUS_SET_INSTALL_OPTION = 5;
-	public static final int STATUS_INSTALLING = 6;
-	public static final int STATUS_COMPLETED = 7;
+	public static final int STATUS_DEVICE_REFRESH = 2;
+	public static final int STATUS_SELECT_DEVICE = 3;
+	public static final int STATUS_PACKAGE_SCANNING = 4;
+	public static final int STATUS_CHECK_PACKAGES = 5;
+	public static final int STATUS_SET_INSTALL_OPTION = 6;
+	public static final int STATUS_INSTALLING = 7;
+	public static final int STATUS_COMPLETED = 8;
 	
 	public static final int FLAG_OPT_INSTALL	 	= 0x0100;
 	public static final int FLAG_OPT_PUSH			= 0x0200;
@@ -206,12 +207,17 @@ public class ApkInstallWizard
 			case STATUS_DEVICE_SCANNING:
 				((CardLayout)getLayout()).show(this, CONTENT_DEVICE_SCANNING);
 				break;
+			case STATUS_DEVICE_REFRESH:
 			case STATUS_SELECT_DEVICE:
 				// set UI Data of device list 
 				if(targetDevices.length == 0) {
 					// disable select_all & next button 
 				} else {
 					// enable select_all & next button
+				}
+				
+				if(status == STATUS_DEVICE_REFRESH) {
+					// clear listview
 				}
 				
 				// if() listview was not empty
@@ -383,7 +389,7 @@ public class ApkInstallWizard
 					{
 						synchronized(ApkInstallWizard.this) {
 							targetDevices = AdbDeviceManager.scanDevices();
-							contentPanel.setStatus(status);
+							contentPanel.setStatus(STATUS_DEVICE_REFRESH);
 						}
 					}
 				}).start();
@@ -658,6 +664,10 @@ public class ApkInstallWizard
 		} else {
 			Log.w("No such launch activity");
 		}
+	}
+	
+	public void refreshDevice() {
+		
 	}
 	// ----------------------------------------------------------------------------------------
 	
