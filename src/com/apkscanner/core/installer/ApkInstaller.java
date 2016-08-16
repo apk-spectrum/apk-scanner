@@ -1,15 +1,12 @@
 package com.apkscanner.core.installer;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import com.apkscanner.tool.adb.AdbWrapper;
-import com.apkscanner.util.ConsolCmd;
+import com.apkscanner.util.ConsolCmd.ConsoleOutputObserver;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
-import com.apkscanner.util.ConsolCmd.ConsoleOutputObserver;
 
 public class ApkInstaller
 {
@@ -19,6 +16,12 @@ public class ApkInstaller
 		public static final int CMD_PUSH = 3;
 		public static final int CMD_PULL = 4;
 		public static final int CMD_REMOVE = 4;
+
+		public static final int ERR_NO_HAVE_COMMANDER = -1;
+		public static final int ERR_INVALID_DATA = 1;
+		public static final int ERR_NO_SUCH_FILE = 2;
+		public static final int ERR_DEVICE_NOT_FOUND = 2;
+		public static final int ERR_NO_PERMISSION = 3;
 
 		public void OnMessage(String msg);
 		public void OnError(int cmdType, String device);
@@ -48,7 +51,9 @@ public class ApkInstaller
 	
 	public void setDevice(String device) {
 		if(adbCommander == null) return;
-		adbCommander.setDevice(device);
+		synchronized(adbCommander) {
+			adbCommander.setDevice(device);
+		}
 		this.device = device;
 	}
 	
@@ -75,7 +80,10 @@ public class ApkInstaller
 				return false;
 			}
 		};
-		adbCommander.setListener(coutListener);
+
+		synchronized(adbCommander) {
+			adbCommander.setListener(coutListener);
+		}
 	}
 	
 	public void uninstallApk(final String packageName) {
@@ -90,7 +98,10 @@ public class ApkInstaller
 		new Thread(new Runnable() {
 			public void run()
 			{
-				String[] cmdResult = adbCommander.uninstall(packageName);
+				String[] cmdResult;
+				synchronized(adbCommander) {
+					cmdResult = adbCommander.uninstall(packageName);
+				}
 
 				if(listener != null) {
 					if(cmdResult != null && cmdResult.length > 0 && "Success".equals(cmdResult[0])) {
@@ -116,16 +127,19 @@ public class ApkInstaller
 		new Thread(new Runnable() {
 			public void run()
 			{
-				boolean result = adbCommander.root();
-				result = result && adbCommander.remount();
-				if(result) {
-					String[] cmdResult = adbCommander.shell(new String[] {"rm", "-r", apkPath});
-					if(cmdResult.length > 0 && !cmdResult[0].isEmpty()) {
-						result = false;
-						Log.e("removeApk() failure " + String.join("\n", cmdResult));
+				boolean result;
+				synchronized(adbCommander) {
+					result = adbCommander.root();
+					result = result && adbCommander.remount();
+					if(result) {
+						String[] cmdResult = adbCommander.shell(new String[] {"rm", "-r", apkPath});
+						if(cmdResult.length > 0 && !cmdResult[0].isEmpty()) {
+							result = false;
+							Log.e("removeApk() failure " + String.join("\n", cmdResult));
+						}
 					}
 				}
-
+	
 				if(listener != null) {
 					if(result) {
 						listener.OnSuccess(ApkInstallerListener.CMD_REMOVE, device);
@@ -140,7 +154,7 @@ public class ApkInstaller
 	
 	public void pushApk(final String srcApkPath, final String destApkPath, final String libPath)
 	{
-		if(destApkPath == null || srcApkPath == null || srcApkPath.isEmpty()) {
+		if(adbCommander == null || srcApkPath == null || destApkPath == null || srcApkPath.isEmpty()) {
 			if(listener != null) {
 				listener.OnError(ApkInstallerListener.CMD_PUSH, device);
 				listener.OnCompleted(ApkInstallerListener.CMD_PUSH, device);
@@ -151,44 +165,56 @@ public class ApkInstaller
 		new Thread(new Runnable() {
 			public void run()
 			{
-				String[][] result;
-				List<String[]> cmd = new ArrayList<String[]>();
-				
-				adbCommander.root();
-				adbCommander.remount();
-				adbCommander.shell(new String[] {"setenforce", "0"});
-				adbCommander.push(srcApkPath, destApkPath);
-				//Log.i(this.srcApkPath + " to " + this.destApkPath);
-				
-				//Log.i("libpath " + libPath);
-				if(libPath != null && (new File(libPath)).exists()) {
-					String[] selAbi = selectAbi(libPath);
-					String abi32 = selAbi[0];
-					String abi64 = selAbi[1];
+				synchronized(adbCommander) {
+					boolean ret = adbCommander.root();
+					ret = ret && adbCommander.remount();
+					adbCommander.shell(new String[] {"setenforce", "0"});
+					ret = ret && adbCommander.push(srcApkPath, destApkPath);
+					//Log.i(this.srcApkPath + " to " + this.destApkPath);
 					
-					Iterator<String> libPaths = FileUtil.findFiles(new File(libPath), ".so", null).iterator();
-					while(libPaths.hasNext()) {
-						String path = libPaths.next();
-						if(!(new File(path)).exists()) {
-							Log.w("no such file : " + path);
-							continue;
-						}
-						String abi = path.replaceAll(libPath.replace("\\", "\\\\")+"([^\\\\/]*).*","$1");
-						//Log.i("abi = " + abi);
-						if(abi.equals(abi32)) {
-							adbCommander.push(path, "/system/lib/");
-							//Log.i("push " + path + " " + "/system/lib/");
-						} else if (abi.equals(abi64)) {
-							adbCommander.push(path, "/system/lib64/");
-							//Log.i("push " + path + " " + "/system/lib64/");						
-						} else {
-							//Log.w("ignored path : " + path);
+					//Log.i("libpath " + libPath);
+					if(libPath != null && (new File(libPath)).exists()) {
+						String[] selAbi = selectAbi(libPath);
+						String abi32 = selAbi[0];
+						String abi64 = selAbi[1];
+						
+						Iterator<String> libPaths = FileUtil.findFiles(new File(libPath), ".so", null).iterator();
+						while(libPaths.hasNext()) {
+							String path = libPaths.next();
+							if(!(new File(path)).exists()) {
+								Log.w("no such file : " + path);
+								continue;
+							}
+							String abi = path.replaceAll(libPath.replace("\\", "\\\\")+"([^\\\\/]*).*","$1");
+							//Log.i("abi = " + abi);
+							if(destApkPath.startsWith("/data/app/")) {
+								String libPath = destApkPath.replaceAll("/[^/]*$", "/lib/"); 
+								if(abi.equals(abi32)) {
+									adbCommander.push(path, libPath + "arm/");
+									//Log.i("push " + path + " " + libPath + "arm/");
+								} else if (abi.equals(abi64)) {
+									adbCommander.push(path, libPath + "arm64/");
+									//Log.i("push " + path + " " + libPath + "arm64/");						
+								} else {
+									Log.w("ignored path : " + path + " " + libPath);
+								}
+							} else {
+								if(abi.equals(abi32)) {
+									adbCommander.push(path, "/system/lib/");
+									//Log.i("push " + path + " " + "/system/lib/");
+								} else if (abi.equals(abi64)) {
+									adbCommander.push(path, "/system/lib64/");
+									//Log.i("push " + path + " " + "/system/lib64/");						
+								} else {
+									Log.w("ignored path : " + path);
+								}
+							}
 						}
 					}
 				}
 				//cmd.add(new String[] {adbCmd, "-s", this.device, "shell", "echo", "Compleated..."});
-				
-				result = ConsolCmd.exc(cmd.toArray(new String[0][0]),true,new ConsolCmd.ConsoleOutputObserver() {
+/*
+				String[][] result = ConsolCmd.exc(cmd.toArray(new String[0][0]),true,new ConsolCmd.ConsoleOutputObserver() {
 					@Override
 					public boolean ConsolOutput(String output) {
 						//sendMessage(output.replaceAll("^.*adb(\\.exe)?", "adb"));
@@ -203,17 +229,17 @@ public class ApkInstaller
 				    	return true;
 					}
 				});
-
+*/
 				//Log.i("cmd.size() " + cmd.size() + ", result.length " + result.length);
 				if(listener != null) {
-					listener.OnCompleted(ApkInstallerListener.CMD_PUSH, device);
-					if(cmd.size() == result.length) {
+					//if(cmd.size() == result.length) {
 						//sendMessage("Success...");
 						listener.OnSuccess(ApkInstallerListener.CMD_PUSH, device);
-					} else {
+					//} else {
 						//sendMessage("Failure...");
-						listener.OnError(ApkInstallerListener.CMD_PUSH, device);
-					}					
+						//listener.OnError(ApkInstallerListener.CMD_PUSH, device);
+					//}
+					listener.OnCompleted(ApkInstallerListener.CMD_PUSH, device);
 				}
 			}
 		}).start();
@@ -235,7 +261,10 @@ public class ApkInstaller
 		new Thread(new Runnable() {
 			public void run()
 			{
-				String[] result = adbCommander.install(apkPath, onSdcard);
+				String[] result;
+				synchronized(adbCommander) {
+					result = adbCommander.install(apkPath, onSdcard);
+				}
 
 				if(listener != null) {
 					listener.OnCompleted(ApkInstallerListener.CMD_INSTALL, device);
@@ -264,7 +293,10 @@ public class ApkInstaller
 		new Thread(new Runnable() {
 			public void run()
 			{
-				boolean result = adbCommander.pull(srcApkPath, destApkPath);
+				boolean result;
+				synchronized(adbCommander) {
+					result = adbCommander.pull(srcApkPath, destApkPath);
+				}
 				result = result && new File(destApkPath).isFile();
 
 				if(listener != null) {

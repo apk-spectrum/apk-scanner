@@ -11,6 +11,8 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -43,6 +45,7 @@ import com.apkscanner.tool.adb.AdbPackageManager.PackageInfo;
 import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.ZipFileUtil;
 
 public class ApkInstallWizard
 {
@@ -70,6 +73,7 @@ public class ApkInstallWizard
 	public static final int FLAG_OPT_EXTRA_RUN		= 0x0010;
 	public static final int FLAG_OPT_EXTRA_REBOOT	= 0x0020;
 	public static final int FLAG_OPT_EXTRA_WITH_LIB	= 0x0040;
+	public static final int FLAG_OPT_EXTRA_DELETE_EXISTING_APK = 0x0080;
 
 	// UI components
 	private Window wizard;
@@ -85,6 +89,8 @@ public class ApkInstallWizard
 	private ApkInfo apkInfo;
 	private String launchActivity;
 	
+	private ApkScannerStub apkScanner;
+
 	public class ApkInstallWizardDialog  extends JDialog
 	{
 		private static final long serialVersionUID = 2018466680871932348L;
@@ -141,6 +147,9 @@ public class ApkInstallWizard
 
 			initialize(this);
 			setLocationRelativeTo(null);
+			
+			// Closing event of window be delete tempFile
+			addWindowListener(uiEventHandler);
 		}
 	}
 	
@@ -263,11 +272,6 @@ public class ApkInstallWizard
 				((CardLayout)getLayout()).show(this, CONTENT_PACKAGE_SCANNING);
 				break;
 			case STATUS_CHECK_PACKAGES:
-
-				flag = FLAG_OPT_INSTALL | FLAG_OPT_EXTRA_RUN;
-				installApk(targetDevices[0], installedPackage != null ? installedPackage[0] : null);
-				
-				
 				// set UI Data of package list
 				for(int i = 0; i < targetDevices.length; i++) {
 					if(installedPackage[i] != null) {
@@ -380,7 +384,7 @@ public class ApkInstallWizard
 		window.setSize(new Dimension(500,350));
 		
 		progressPanel = new ProgressPanel();
-		contentPanel = new ContentPanel(new UIEventHandler());
+		contentPanel = new ContentPanel(uiEventHandler);
 		
 		window.add(progressPanel, BorderLayout.NORTH);
 		window.add(contentPanel, BorderLayout.CENTER);
@@ -390,52 +394,7 @@ public class ApkInstallWizard
 		
 		// Shortcut key event processing
 		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
-		ky.addKeyEventDispatcher(new UIEventHandler());
-	}
-	
-	class UIEventHandler implements ActionListener, KeyEventDispatcher
-	{
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			if("NEXT".equals(arg0.getActionCommand())) {
-				next();
-			} else if("PREVIOUS".equals(arg0.getActionCommand())) {
-				previous();
-			} else if("REFRESH".equals(arg0.getActionCommand())) {
-				new Thread(new Runnable() {
-					public void run()
-					{
-						synchronized(ApkInstallWizard.this) {
-							targetDevices = AdbDeviceManager.scanDevices();
-							contentPanel.setStatus(STATUS_DEVICE_REFRESH);
-						}
-					}
-				}).start();
-			} else if("SELECT_ALL".equals(arg0.getActionCommand())) {
-				
-			} else if("RUN".equals(arg0.getActionCommand())) {
-				
-			} else if("OPEN".equals(arg0.getActionCommand())) {
-				
-			} else if("SAVE".equals(arg0.getActionCommand())) {
-
-			} else if("UNINSTALL".equals(arg0.getActionCommand())) {
-				
-			} else if("CHANG_SIGN".equals(arg0.getActionCommand())) {
-				
-			} else if("RESTART".equals(arg0.getActionCommand())) {
-				restart();
-			} else if("CANCEL".equals(arg0.getActionCommand())) {
-				wizard.dispose();
-			} else if("OK".equals(arg0.getActionCommand())) {
-				wizard.dispose();
-			}
-		}
-
-		@Override
-		public boolean dispatchKeyEvent(KeyEvent arg0) {
-			return false;
-		}
+		ky.addKeyEventDispatcher(uiEventHandler);
 	}
 	
 	private void changeState(int status) {
@@ -592,6 +551,10 @@ public class ApkInstallWizard
 	
 	public void setApk(ApkInfo apkInfo) {
 		this.apkInfo = apkInfo;
+		if(apkScanner != null) {
+			apkScanner.clear(false);
+			apkScanner = null;
+		}
 	}
 
 	public void setApk(String apkFilePath) {
@@ -606,8 +569,12 @@ public class ApkInstallWizard
 		    		Resource.STR_BTN_CLOSE.getString());
 			return;
 		}
-		
-		final AaptScanner apkScanner = new AaptScanner(new ApkScannerStub.StatusListener() {
+
+		if(apkScanner != null) {
+			apkScanner.clear(false);
+			apkScanner = null;
+		}
+		apkScanner = new AaptScanner(new ApkScannerStub.StatusListener() {
 			@Override
 			public void OnStateChanged(Status status) {
 				Log.i("OnStateChanged() "+ status);
@@ -632,7 +599,7 @@ public class ApkInstallWizard
 		apkInfo = apkScanner.getApkInfo();
 	}
 	
-	private String getLaunchActivity() {
+	private String getLauncherActivity() {
 		if(launchActivity == null && 
 				apkInfo != null &&
 				apkInfo.manifest != null &&
@@ -665,8 +632,8 @@ public class ApkInstallWizard
 		return launchActivity;
 	}
 	
-	public void launchApp(final String device) {
-		if(getLaunchActivity() == null) {
+	private void launchApp(final String device) {
+		if(getLauncherActivity() == null) {
 			Log.w("No such launch activity");
 			ArrowTraversalPane.showOptionDialog(null,
 					Resource.STR_MSG_NO_SUCH_LAUNCHER.getString(),
@@ -725,12 +692,12 @@ public class ApkInstallWizard
 			}
 
 			@Override public void OnCompleted(int cmdType, String device) { }
-			@Override public void OnMessage(String msg) { Log.v(msg); }
+			@Override public void OnMessage(String msg) { printLog(msg); }
 		});
 		apkInstaller.pullApk(pkgInfo.apkPath, tmpPath);
 	}
 	
-	public void saveApk(DeviceStatus dev, PackageInfo pkgInfo) {
+	private void saveApk(DeviceStatus dev, PackageInfo pkgInfo) {
 		String saveFileName;
 		if(pkgInfo.apkPath.endsWith("base.apk")) {
 			saveFileName = pkgInfo.apkPath.replaceAll(".*/(.*)/base.apk", "$1.apk");
@@ -780,12 +747,12 @@ public class ApkInstallWizard
 			}
 
 			@Override public void OnCompleted(int cmdType, String device) { }
-			@Override public void OnMessage(String msg) { Log.v(msg); }
+			@Override public void OnMessage(String msg) { printLog(msg); }
 		});		
 		apkInstaller.pullApk(pkgInfo.apkPath, destFile.getAbsolutePath());
 	}
 	
-	public void uninstallApk(final DeviceStatus dev, final PackageInfo pkgInfo) {
+	private void uninstallApk(final DeviceStatus dev, final PackageInfo pkgInfo) {
 		ApkInstaller apkInstaller = new ApkInstaller(dev.name, new ApkInstallerListener() {
 			@Override
 			public void OnError(int cmdType, String device) {
@@ -827,7 +794,7 @@ public class ApkInstallWizard
 			}
 
 			@Override public void OnCompleted(int cmdType, String device) { }
-			@Override public void OnMessage(String msg) { Log.v(msg); }
+			@Override public void OnMessage(String msg) { printLog(msg); }
 		});
 
 		if(pkgInfo.isSystemApp) {
@@ -848,31 +815,44 @@ public class ApkInstallWizard
 		}
 	}
 	
-	public void installReport(final DeviceStatus dev, boolean sucess, String errorMsg) {
+	private void installReport(final DeviceStatus dev, boolean sucess, String errorMsg) {
 		
 	}
 	
-	public void installApk(final DeviceStatus dev, final PackageInfo pkgInfo) {
+	private void installApk(final DeviceStatus dev, final PackageInfo pkgInfo) {
 		// install
 		ApkInstaller apkInstaller = new ApkInstaller(dev.name, new ApkInstallerListener() {
 			String ErrorMsg = "";
 			@Override
 			public void OnError(int cmdType, String device) {
-				Log.e(">>>>>>>>>>> install error " + dev.name + "-" + dev.device + ", " + ErrorMsg);
+				if(cmdType == CMD_REMOVE) {
+					 return;
+				}
+				printLog("Error installed " + dev.name + "-" + dev.device + ", " + ErrorMsg);
 				if(ErrorMsg.indexOf("INSTALL_FAILED_INSUFFICIENT_STORAGE") > -1) {
 					// 
 				} else {
 					
 				}
-				installReport(dev, true, ErrorMsg);
+				installReport(dev, false, ErrorMsg);
 			}
 
 			@Override
 			public void OnSuccess(int cmdType, String device) {
-				Log.e(">>>>>>>>>>> install success");
+				if(cmdType == CMD_REMOVE) {
+					return;
+				}
+				printLog("Succeed install into device(" + device + ")");
 				if(cmdType == CMD_INSTALL) {
 					if((flag & FLAG_OPT_EXTRA_RUN) == FLAG_OPT_EXTRA_RUN) {
+						printLog("Launch app in device(" + device + ")");
 						launchApp(dev.name);
+					}
+					installReport(dev, true, null);
+				} else if(cmdType == CMD_PUSH) {
+					if((flag & FLAG_OPT_EXTRA_REBOOT) == FLAG_OPT_EXTRA_REBOOT) {
+						printLog("reboot device(" + device + ")");
+						AdbWrapper.reboot(dev.name, null);
 					}
 				}
 				installReport(dev, true, null);
@@ -886,17 +866,125 @@ public class ApkInstallWizard
 						errmsg.indexOf("FAILED") > -1) {
 					ErrorMsg = msg;
 				}
-				Log.v(msg); 
+				printLog(msg); 
 			}
 		});
 
 		if((flag & FLAG_OPT_INSTALL) == FLAG_OPT_INSTALL) {
+			printLog("Install APK ...");
 			apkInstaller.installApk(apkInfo.filePath, (flag & FLAG_OPT_INSTALL_EXTERNAL) != 0);
 		} else if((flag & FLAG_OPT_PUSH) == FLAG_OPT_PUSH) {
-			//installer.PushApk(srcApkPath, destApkPath, libPath);
+			printLog("Install APK by push ...");
+			String destPath = null;
+			if((flag & FLAG_OPT_PUSH_OVERWRITE) == FLAG_OPT_PUSH_OVERWRITE &&
+					pkgInfo != null) {
+				printLog("Overwrite APK ...");
+				printLog("Existing path : " + pkgInfo.apkPath);
+				destPath = pkgInfo.apkPath;
+			} else {
+				if(pkgInfo != null && pkgInfo.codePath != null) {
+					printLog("Delete existing APK ...");
+					printLog("code path : " + pkgInfo.codePath);
+					apkInstaller.removeApk(pkgInfo.codePath);
+				}
+				if((flag & FLAG_OPT_PUSH_SYSTEM) == FLAG_OPT_PUSH_SYSTEM) {
+					destPath = "/system/app/";
+				} else if((flag & FLAG_OPT_PUSH_PRIVAPP) == FLAG_OPT_PUSH_PRIVAPP) {
+					destPath = "/system/priv-app/";
+				} else if((flag & FLAG_OPT_PUSH_DATA) == FLAG_OPT_PUSH_DATA) {
+					destPath = "/data/app/";
+				} else {
+					destPath = "/system/app/";
+				}
+				destPath += apkInfo.manifest.packageName + "-1/base.apk";
+				printLog("New APK Path : " + destPath);
+			}
+			
+			String libPath = null;
+			if((flag & FLAG_OPT_EXTRA_WITH_LIB) == FLAG_OPT_EXTRA_WITH_LIB &&
+					(flag & FLAG_OPT_PUSH_DATA) != FLAG_OPT_PUSH_DATA &&
+					apkInfo.librarys != null && apkInfo.librarys.length > 0) {
+				printLog("With libraries ...");
+				// unzip libs..
+				if(ZipFileUtil.unZip(apkInfo.filePath, "lib/", apkInfo.tempWorkPath+File.separator+"lib")) {
+					libPath = apkInfo.tempWorkPath + File.separator + "lib" + File.separator;
+					printLog("Success unzip lib ... " + libPath);
+				} else {
+					printLog("Fail unzip lib ...");	
+				}
+			}
+			apkInstaller.pushApk(apkInfo.filePath, destPath, libPath);
 		}
 
 	}
+	
+	private void printLog(String msg) {
+		Log.v(msg);	
+		// append to log viewer
+		
+	}
+	
+	private abstract class UIEventHandler implements ActionListener, KeyEventDispatcher, WindowListener {}; 
+	private UIEventHandler uiEventHandler = new UIEventHandler() {
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			if("NEXT".equals(arg0.getActionCommand())) {
+				next();
+			} else if("PREVIOUS".equals(arg0.getActionCommand())) {
+				previous();
+			} else if("REFRESH".equals(arg0.getActionCommand())) {
+				new Thread(new Runnable() {
+					public void run()
+					{
+						synchronized(ApkInstallWizard.this) {
+							targetDevices = AdbDeviceManager.scanDevices();
+							contentPanel.setStatus(STATUS_DEVICE_REFRESH);
+						}
+					}
+				}).start();
+			} else if("SELECT_ALL".equals(arg0.getActionCommand())) {
+				
+			} else if("RUN".equals(arg0.getActionCommand())) {
+				
+			} else if("OPEN".equals(arg0.getActionCommand())) {
+				
+			} else if("SAVE".equals(arg0.getActionCommand())) {
+
+			} else if("UNINSTALL".equals(arg0.getActionCommand())) {
+				
+			} else if("CHANG_SIGN".equals(arg0.getActionCommand())) {
+				
+			} else if("RESTART".equals(arg0.getActionCommand())) {
+				restart();
+			} else if("CANCEL".equals(arg0.getActionCommand())) {
+				wizard.dispose();
+			} else if("OK".equals(arg0.getActionCommand())) {
+				wizard.dispose();
+			}
+		}
+
+		@Override
+		public boolean dispatchKeyEvent(KeyEvent arg0) {
+			return false;
+		}
+		
+		// Closing event of window be delete tempFile
+		@Override
+		public void windowClosing(WindowEvent e)
+		{
+			if(apkScanner != null) {
+				apkScanner.clear(false);
+				apkScanner = null;
+			}
+		}
+		
+		@Override public void windowOpened(WindowEvent e) { }
+		@Override public void windowClosed(WindowEvent e) { }
+		@Override public void windowIconified(WindowEvent e) { }
+		@Override public void windowDeiconified(WindowEvent e) { }
+		@Override public void windowActivated(WindowEvent e) { }
+		@Override public void windowDeactivated(WindowEvent e) { }
+	};
 	// ----------------------------------------------------------------------------------------
 	
 	
