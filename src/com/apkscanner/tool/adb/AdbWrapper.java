@@ -225,6 +225,13 @@ public class AdbWrapper
 	public String[] install(String apkPath) {
 		return install(device, apkPath, listener);
 	}
+
+	public String[] install(String apkPath, boolean onSdcard) {
+		if(onSdcard) {
+			return installOnSdcard(device, apkPath, listener);
+		}
+		return install(device, apkPath, listener); 
+	}
 	
 	static public String[] install(String device, String apkPath, ConsoleOutputObserver listener) {
 		if(adbCmd == null) return null;
@@ -233,6 +240,18 @@ public class AdbWrapper
 			param = new String[] {adbCmd, "install", "-r", "-d", apkPath};
 		} else {
 			param = new String[] {adbCmd, "-s", device, "install", "-r", "-d", apkPath};
+		}
+		String[] result = ConsolCmd.exc(param, false, listener);
+		return result;
+	}
+	
+	static public String[] installOnSdcard(String device, String apkPath, ConsoleOutputObserver listener) {
+		if(adbCmd == null) return null;
+		String[] param;
+		if(device == null || device.isEmpty()) {
+			param = new String[] {adbCmd, "install", "-r", "-d", "-s", apkPath};
+		} else {
+			param = new String[] {adbCmd, "-s", device, "install", "-r", "-d", "-s", apkPath};
 		}
 		String[] result = ConsolCmd.exc(param, false, listener);
 		return result;

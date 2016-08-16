@@ -138,7 +138,7 @@ public class ApkInstaller
 		}).start();
 	}
 	
-	public void PushApk(final String srcApkPath, final String destApkPath, final String libPath)
+	public void pushApk(final String srcApkPath, final String destApkPath, final String libPath)
 	{
 		if(destApkPath == null || srcApkPath == null || srcApkPath.isEmpty()) {
 			if(listener != null) {
@@ -221,7 +221,7 @@ public class ApkInstaller
 		return;
 	}
 	
-	public void InstallApk(final String apkPath)
+	public void installApk(final String apkPath, final boolean onSdcard)
 	{
 		//Log.i("InstallApk() device : " + name + ", apkPath: " + apkPath);
 		if(apkPath == null || apkPath.isEmpty()) {
@@ -235,11 +235,12 @@ public class ApkInstaller
 		new Thread(new Runnable() {
 			public void run()
 			{
-				String[] result = adbCommander.install(apkPath);
+				String[] result = adbCommander.install(apkPath, onSdcard);
 
 				if(listener != null) {
 					listener.OnCompleted(ApkInstallerListener.CMD_INSTALL, device);
-					if(result.length >= 3 && result[2].equals("Success")) {
+					if(result.length > 0 && result[0].equals("Success") ||
+							result.length > 2 && result[2].equals("Success")) {
 						listener.OnSuccess(ApkInstallerListener.CMD_INSTALL, device);
 					} else {
 						listener.OnError(ApkInstallerListener.CMD_INSTALL, device);
@@ -249,7 +250,7 @@ public class ApkInstaller
 		}).start();
 	}
 	
-	public void PullApk(final String srcApkPath, final String destApkPath)
+	public void pullApk(final String srcApkPath, final String destApkPath)
 	{
 		//Log.i("PullApk() device : " + name + ", apkPath: " + srcApkPath);
 		if(destApkPath == null || srcApkPath == null || srcApkPath.isEmpty()) {

@@ -263,6 +263,11 @@ public class ApkInstallWizard
 				((CardLayout)getLayout()).show(this, CONTENT_PACKAGE_SCANNING);
 				break;
 			case STATUS_CHECK_PACKAGES:
+
+				flag = FLAG_OPT_INSTALL | FLAG_OPT_EXTRA_RUN;
+				installApk(targetDevices[0], installedPackage != null ? installedPackage[0] : null);
+				
+				
 				// set UI Data of package list
 				for(int i = 0; i < targetDevices.length; i++) {
 					if(installedPackage[i] != null) {
@@ -478,20 +483,9 @@ public class ApkInstallWizard
 			}).start();
 			break;
 		case STATUS_INSTALLING:
-			new Thread(new Runnable() {
-				public void run()
-				{
-					synchronized(ApkInstallWizard.this) {
-						// install
-						ApkInstaller installer = new ApkInstaller();
-						if((flag & FLAG_OPT_INSTALL) == FLAG_OPT_INSTALL) {
-							installer.InstallApk(apkInfo.filePath);	
-						} else if((flag & FLAG_OPT_PUSH) == FLAG_OPT_PUSH) {
-							//installer.PushApk(srcApkPath, destApkPath, libPath);
-						}
-					}
-				}
-			}).start();
+			for(int i = 0; i < targetDevices.length; i++) {
+				installApk(targetDevices[i], installedPackage != null ? installedPackage[i] : null);
+			}
 			break;
 		default:
 			break;
@@ -731,9 +725,9 @@ public class ApkInstallWizard
 			}
 
 			@Override public void OnCompleted(int cmdType, String device) { }
-			@Override public void OnMessage(String msg) { }
+			@Override public void OnMessage(String msg) { Log.v(msg); }
 		});
-		apkInstaller.PullApk(pkgInfo.apkPath, tmpPath);
+		apkInstaller.pullApk(pkgInfo.apkPath, tmpPath);
 	}
 	
 	public void saveApk(DeviceStatus dev, PackageInfo pkgInfo) {
@@ -786,9 +780,9 @@ public class ApkInstallWizard
 			}
 
 			@Override public void OnCompleted(int cmdType, String device) { }
-			@Override public void OnMessage(String msg) { }
+			@Override public void OnMessage(String msg) { Log.v(msg); }
 		});		
-		apkInstaller.PullApk(pkgInfo.apkPath, destFile.getAbsolutePath());
+		apkInstaller.pullApk(pkgInfo.apkPath, destFile.getAbsolutePath());
 	}
 	
 	public void uninstallApk(final DeviceStatus dev, final PackageInfo pkgInfo) {
@@ -833,7 +827,7 @@ public class ApkInstallWizard
 			}
 
 			@Override public void OnCompleted(int cmdType, String device) { }
-			@Override public void OnMessage(String msg) { }
+			@Override public void OnMessage(String msg) { Log.v(msg); }
 		});
 
 		if(pkgInfo.isSystemApp) {
@@ -852,6 +846,56 @@ public class ApkInstallWizard
 		} else {
 			apkInstaller.uninstallApk(pkgInfo.pkgName);
 		}
+	}
+	
+	public void installReport(final DeviceStatus dev, boolean sucess, String errorMsg) {
+		
+	}
+	
+	public void installApk(final DeviceStatus dev, final PackageInfo pkgInfo) {
+		// install
+		ApkInstaller apkInstaller = new ApkInstaller(dev.name, new ApkInstallerListener() {
+			String ErrorMsg = "";
+			@Override
+			public void OnError(int cmdType, String device) {
+				Log.e(">>>>>>>>>>> install error " + dev.name + "-" + dev.device + ", " + ErrorMsg);
+				if(ErrorMsg.indexOf("INSTALL_FAILED_INSUFFICIENT_STORAGE") > -1) {
+					// 
+				} else {
+					
+				}
+				installReport(dev, true, ErrorMsg);
+			}
+
+			@Override
+			public void OnSuccess(int cmdType, String device) {
+				Log.e(">>>>>>>>>>> install success");
+				if(cmdType == CMD_INSTALL) {
+					if((flag & FLAG_OPT_EXTRA_RUN) == FLAG_OPT_EXTRA_RUN) {
+						launchApp(dev.name);
+					}
+				}
+				installReport(dev, true, null);
+			}
+
+			@Override public void OnCompleted(int cmdType, String device) { }
+			@Override public void OnMessage(String msg) {
+				String errmsg = msg.toUpperCase();
+				if(errmsg.indexOf("ERROR") > -1 || 
+						errmsg.indexOf("FAILURE") > -1 ||
+						errmsg.indexOf("FAILED") > -1) {
+					ErrorMsg = msg;
+				}
+				Log.v(msg); 
+			}
+		});
+
+		if((flag & FLAG_OPT_INSTALL) == FLAG_OPT_INSTALL) {
+			apkInstaller.installApk(apkInfo.filePath, (flag & FLAG_OPT_INSTALL_EXTERNAL) != 0);
+		} else if((flag & FLAG_OPT_PUSH) == FLAG_OPT_PUSH) {
+			//installer.PushApk(srcApkPath, destApkPath, libPath);
+		}
+
 	}
 	// ----------------------------------------------------------------------------------------
 	
@@ -1171,7 +1215,7 @@ public class ApkInstallWizard
 							tmpApkPath = tmpPath; 
 							//Log.i(tmpPath);
 							InstallDlgListener.AddCheckList("Pull APK", "working" , InstallDlg.CHECKLIST_MODE.WATING);
-							apkInstaller.PullApk(pkgInfo.apkPath, tmpPath);							
+							apkInstaller.pullApk(pkgInfo.apkPath, tmpPath);							
 							return;
 						}
 						if(n==2) {
@@ -1243,7 +1287,7 @@ public class ApkInstallWizard
 								printlnLog("Start push APK");
 								//installPanel.setVisible(true);
 								InstallDlgListener.AddCheckList("Push", "-" , InstallDlg.CHECKLIST_MODE.WATING);
-								new ApkInstaller(dev.name, new AdbWrapperObserver()).PushApk(strSourcePath, pkgInfo.apkPath, strLibPath);
+								new ApkInstaller(dev.name, new AdbWrapperObserver()).pushApk(strSourcePath, pkgInfo.apkPath, strLibPath);
 								
 								return;
 							}
@@ -1271,7 +1315,7 @@ public class ApkInstallWizard
 				printlnLog("Start install APK");
 				//installPanel.setVisible(true);
 				InstallDlgListener.AddCheckList("Install", "Install" , InstallDlg.CHECKLIST_MODE.WATING);
-				new ApkInstaller(dev.name, new AdbWrapperObserver()).InstallApk(strSourcePath);				
+				new ApkInstaller(dev.name, new AdbWrapperObserver()).installApk(strSourcePath, false);				
 			} finally {
 				//Listener.SetInstallButtonStatus(true);
 				InstallDlgListener.Complete("END");				
