@@ -531,7 +531,7 @@ public class AaptManifestReader
         	
         	info.featureFlag |= checkIntentFlag(info.intentFilter);
         	
-        	if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
+        	if((info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
         		activityList.add(0, info);
         	} else {
         		activityList.add(info);	
@@ -566,7 +566,7 @@ public class AaptManifestReader
         	
         	info.featureFlag |= checkIntentFlag(info.intentFilter);
         	
-        	if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
+        	if((info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
         		list.add(0, info);
         	} else {
         		list.add(info);	
