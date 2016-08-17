@@ -289,7 +289,7 @@ public class ApkInstallWizard
 				break;
 			case STATUS_SET_INSTALL_OPTION:
 				// set state of component
-
+				
 				if((apkInfo.featureFlags & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
 					// enable run app button
 				} else {
@@ -524,7 +524,7 @@ public class ApkInstallWizard
 					} else if(status == STATUS_DEVICE_SCANNING) {
 						changeState(STATUS_SELECT_DEVICE);
 					} else {
-						// show warring message, have no online device...
+						// show warring message, offline device selected...
 					}
 				}
 				break;
@@ -631,29 +631,33 @@ public class ApkInstallWizard
 				apkInfo.manifest != null &&
 				apkInfo.manifest.application != null) {
 			String activity = null;
+			ArrayList<String> launcherList = new ArrayList<String>();
+			ArrayList<String> mainList = new ArrayList<String>(); 
 			if(apkInfo.manifest.application.activity != null) {
 				for(ActivityInfo info: apkInfo.manifest.application.activity) {
-					if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
-						activity = info.name;
-						break;
-					} else if((info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
-						activity = info.name;
+					if((info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
+						if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0)
+							launcherList.add(info.name);
+						else
+							mainList.add(info.name);
 					}
 				}
 			}
-			if(activity == null && apkInfo.manifest.application.activityAlias != null) {
+			if(apkInfo.manifest.application.activityAlias != null) {
 				for(ActivityAliasInfo info: apkInfo.manifest.application.activityAlias) {
-					if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
-						activity = info.name;
-						break;
-					} else if((info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
-						activity = info.name;
+					if((info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
+						if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0)
+							launcherList.add(info.name);
+						else
+							mainList.add(info.name);
 					}
 				}
 			}
-			if(activity != null) {
-				launchActivity = apkInfo.manifest.packageName + "/" + activity;
-			}
+			if(launcherList.size() > 0) {
+				launchActivity = apkInfo.manifest.packageName + "/" + launcherList.get(0);
+			} else if(mainList.size() > 0) {
+				launchActivity = apkInfo.manifest.packageName + "/" + mainList.get(0);
+			} 
 		}
 		return launchActivity;
 	}
