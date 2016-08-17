@@ -89,7 +89,6 @@ public class ApkInstallWizard
 	private DeviceStatus[] targetDevices;
 	private PackageInfo[] installedPackage;
 	private ApkInfo apkInfo;
-	private String launchActivity;
 	
 	private ApkScannerStub apkScanner;
 
@@ -373,6 +372,13 @@ public class ApkInstallWizard
 			}
 		}
 		
+		private String getSelectedLauncherActivity() {
+			// get selected activity from combo box
+			
+			String[] list = getLauncherActivityList();
+			return list.length > 0 ? list[0] : null;
+		}
+		
 		private void appendLog(String msg) {
 			// append to log viewer
 			
@@ -625,14 +631,12 @@ public class ApkInstallWizard
 		apkInfo = apkScanner.getApkInfo();
 	}
 	
-	private String getLauncherActivity() {
-		if(launchActivity == null && 
-				apkInfo != null &&
+	private String[] getLauncherActivityList() {
+		ArrayList<String> launcherList = new ArrayList<String>();
+		ArrayList<String> mainList = new ArrayList<String>(); 
+		if(apkInfo != null &&
 				apkInfo.manifest != null &&
 				apkInfo.manifest.application != null) {
-			String activity = null;
-			ArrayList<String> launcherList = new ArrayList<String>();
-			ArrayList<String> mainList = new ArrayList<String>(); 
 			if(apkInfo.manifest.application.activity != null) {
 				for(ActivityInfo info: apkInfo.manifest.application.activity) {
 					if((info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
@@ -653,17 +657,14 @@ public class ApkInstallWizard
 					}
 				}
 			}
-			if(launcherList.size() > 0) {
-				launchActivity = apkInfo.manifest.packageName + "/" + launcherList.get(0);
-			} else if(mainList.size() > 0) {
-				launchActivity = apkInfo.manifest.packageName + "/" + mainList.get(0);
-			} 
+			launcherList.addAll(mainList);
 		}
-		return launchActivity;
+		return launcherList.toArray(new String[0]);
 	}
 	
 	private void launchApp(final String device) {
-		if(getLauncherActivity() == null) {
+		final String selectedActivity = contentPanel.getSelectedLauncherActivity();
+		if(selectedActivity == null) {
 			Log.w("No such launch activity");
 			ArrowTraversalPane.showOptionDialog(null,
 					Resource.STR_MSG_NO_SUCH_LAUNCHER.getString(),
@@ -675,14 +676,15 @@ public class ApkInstallWizard
 					Resource.STR_BTN_OK.getString());
 			return;
 		}
-		
+
 		new Thread(new Runnable() {
 			public void run()
 			{
-				String[] cmdResult = AdbWrapper.shell(device, new String[] {"am", "start", "-n", launchActivity}, null);
+				String launcherActivity = apkInfo.manifest.packageName + "/" + selectedActivity;
+				String[] cmdResult = AdbWrapper.shell(device, new String[] {"am", "start", "-n", launcherActivity}, null);
 				if(cmdResult == null || (cmdResult.length > 2 && cmdResult[1].startsWith("Error")) ||
 						(cmdResult.length > 1 && cmdResult[0].startsWith("error"))) {
-					Log.e("activity start faile : " + launchActivity);
+					Log.e("activity start faile : " + launcherActivity);
 					Log.e(String.join("\n", cmdResult));
 					ArrowTraversalPane.showOptionDialog(null,
 							Resource.STR_MSG_FAILURE_LAUNCH_APP.getString(),
