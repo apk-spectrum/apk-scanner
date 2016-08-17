@@ -12,9 +12,9 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import com.apkscanner.gui.ApkInstallWizard;
-import com.apkscanner.gui.ApkInstallWizard.InstallButtonStatusListener;
 import com.apkscanner.gui.MainUI;
+import com.apkscanner.gui.dialog.ApkInstallWizard;
+import com.apkscanner.gui.dialog.ApkInstallWizard.InstallButtonStatusListener;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.adb.AdbWrapper;
