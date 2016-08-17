@@ -15,6 +15,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -79,10 +80,11 @@ public class ApkInstallWizard
 	private Window wizard;
 	private ProgressPanel progressPanel;
 	private ContentPanel contentPanel;
+	private UIEventHandler uiEventHandler = new UIEventHandler();
 	
-
 	private int status;
 	private int flag;
+	private ArrayList<InstalledReport> installReports;
 
 	private DeviceStatus[] targetDevices;
 	private PackageInfo[] installedPackage;
@@ -282,8 +284,7 @@ public class ApkInstallWizard
 				if((apkInfo.featureFlags & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
 					// enable run app button
 				}
-				
-				
+
 				((CardLayout)getLayout()).show(this, CONTENT_CHECK_PACKAGES);
 				break;
 			case STATUS_SET_INSTALL_OPTION:
@@ -346,11 +347,35 @@ public class ApkInstallWizard
 				((CardLayout)getLayout()).show(this, CONTENT_INSTALLING);
 				break;
 			case STATUS_COMPLETED:
+				int successCount = 0;
+				StringBuilder sb = new StringBuilder("-- Installation Reports ----------------\n");
+				for(InstalledReport report: installReports) {
+					sb.append(report);
+					if(report.successed) {
+						successCount++;
+					}
+				}
+				sb.append("----------------------------------------");
+				
+				if(installReports.size() == successCount) {
+					printLog("Installation succeeded.");
+				} else if(installReports.size() == 1) {
+					printLog("Installation failed.");
+				} else {
+					printLog(String.format("Installation succeeded %1$d of %2$d.", successCount, installReports.size()));
+				}
+				printLog(sb.toString());
+				
 				((CardLayout)getLayout()).show(this, CONTENT_COMPLETED);
 				break;
 			default:
 				break;
 			}
+		}
+		
+		private void appendLog(String msg) {
+			// append to log viewer
+			
 		}
 	}
 
@@ -442,6 +467,7 @@ public class ApkInstallWizard
 			}).start();
 			break;
 		case STATUS_INSTALLING:
+			installReports = new ArrayList<InstalledReport>(targetDevices.length);
 			for(int i = 0; i < targetDevices.length; i++) {
 				installApk(targetDevices[i], installedPackage != null ? installedPackage[i] : null);
 			}
@@ -816,7 +842,11 @@ public class ApkInstallWizard
 	}
 	
 	private void installReport(final DeviceStatus dev, boolean sucess, String errorMsg) {
-		
+		installReports.add(new InstalledReport(dev, sucess, errorMsg));
+		if(installReports.size() >= targetDevices.length) {
+			Log.e("Installation completed");
+			changeState(STATUS_COMPLETED);
+		}
 	}
 	
 	private void installApk(final DeviceStatus dev, final PackageInfo pkgInfo) {
@@ -848,7 +878,6 @@ public class ApkInstallWizard
 						printLog("Launch app in device(" + device + ")");
 						launchApp(dev.name);
 					}
-					installReport(dev, true, null);
 				} else if(cmdType == CMD_PUSH) {
 					if((flag & FLAG_OPT_EXTRA_REBOOT) == FLAG_OPT_EXTRA_REBOOT) {
 						printLog("reboot device(" + device + ")");
@@ -921,11 +950,33 @@ public class ApkInstallWizard
 	private void printLog(String msg) {
 		Log.v(msg);	
 		// append to log viewer
-		
+		contentPanel.appendLog(msg);
 	}
 	
-	private abstract class UIEventHandler implements ActionListener, KeyEventDispatcher, WindowListener {}; 
-	private UIEventHandler uiEventHandler = new UIEventHandler() {
+	private class InstalledReport {
+		public DeviceStatus dev;
+		public boolean successed;
+		public String errMessage;
+		
+		public InstalledReport(DeviceStatus dev, boolean successed, String errMessage) {
+			this.dev = dev;
+			this.successed = successed;
+			this.errMessage = errMessage;
+		}
+		
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			if(successed) {
+				sb.append("SUCCESS: " + dev.device + "(" + dev.name + ")\n");
+			} else {
+				sb.append("FAILURE: " + dev.device + "(" + dev.name + ")\n");
+				sb.append("\tERROR : " + errMessage + "\n");
+			}
+			return sb.toString();
+		}
+	}
+	
+	private class UIEventHandler implements ActionListener, KeyEventDispatcher, WindowListener {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			if("NEXT".equals(arg0.getActionCommand())) {
