@@ -22,9 +22,9 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.DefaultCaret;
 
-import com.apkscanner.gui.ApkInstallWizard;
-import com.apkscanner.gui.ApkInstallWizard.InstallDlgFuncListener;
 import com.apkscanner.gui.dialog.AboutDlg;
+import com.apkscanner.gui.dialog.ApkInstallWizard;
+import com.apkscanner.gui.dialog.ApkInstallWizard.InstallDlgFuncListener;
 import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
