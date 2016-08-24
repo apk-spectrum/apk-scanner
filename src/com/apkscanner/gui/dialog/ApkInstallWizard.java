@@ -1,10 +1,16 @@
 package com.apkscanner.gui.dialog;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.Window;
@@ -19,10 +25,13 @@ import java.util.ArrayList;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -35,10 +44,13 @@ import com.apkscanner.core.scanner.ApkScannerStub.Status;
 import com.apkscanner.data.apkinfo.ActivityAliasInfo;
 import com.apkscanner.data.apkinfo.ActivityInfo;
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.dialog.install.InstallDlg;
+import com.apkscanner.gui.dialog.install.InstallWizardDlg;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.test.TextAreaDemo;
 import com.apkscanner.tool.adb.AdbDeviceManager;
 import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
 import com.apkscanner.tool.adb.AdbPackageManager;
@@ -100,7 +112,7 @@ public class ApkInstallWizard
 			dialog_init(null);
 		}
 		
-		public ApkInstallWizardDialog(JFrame owner) {
+		public ApkInstallWizardDialog(Frame owner) {
 			super(owner);
 			dialog_init(owner);
 		}
@@ -113,7 +125,7 @@ public class ApkInstallWizard
 		private void dialog_init(Component owner) {
 			setTitle(Resource.STR_TITLE_INSTALL_WIZARD.getString());
 			setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			setResizable(false);
+			setResizable(true);
 			setModal(false);
 
 			initialize(this);
@@ -156,15 +168,113 @@ public class ApkInstallWizard
 	
 	private class ProgressPanel extends JPanel
 	{
+		JPanel ProgressStepPanel;
+		
 		private static final long serialVersionUID = 6145481552592676895L;
 
+		public class EllipseLayout extends JLabel {			
+			String outtext, intext;
+			
+			public EllipseLayout() {
+				//super();
+				outtext = new String("");
+				intext = new String("");
+			}
+		    public void paintComponent(Graphics g)
+		    {	
+		    	Dimension size = getSize();
+		    	
+		    	if(size.getWidth() <= size.getHeight()) {
+		    		g.fillOval(0,(int)(size.getHeight()/2 - size.getWidth()/2), (int)size.getWidth(), (int)size.getWidth());		    		
+		    	} else {
+		    		
+		    	}		    	
+		    	g.setFont(g.getFont().deriveFont(15f));
+		    	
+		    	g.drawString(outtext, 0, (int)size.getHeight()-10);
+		    	
+		    	g.setFont(g.getFont().deriveFont(30f));
+		    	g.setColor(Color.WHITE);
+		    	g.drawString(intext, (int)(size.getWidth()/2-15), (int)(size.getHeight()/2+ 15));
+		    	
+		    	
+		    }
+		    public void setEllipseText(String str) {
+		    	intext = str;
+		    }
+		    
+		    public void setDescriptionText(String str) {
+		    	outtext = str;
+		    }
+		    
+		}
+		public class Lielayout extends JLabel {
+			public void paintComponent(Graphics g)
+		    {
+				Dimension size = getSize();
+				
+				Graphics2D g2 = (Graphics2D) g;
+				
+				g2.setStroke(new BasicStroke(10) );
+				
+				g.drawLine(0, (int)(size.getHeight()/2), (int)size.getWidth(), (int)(size.getHeight()/2));
+		    }
+		}
+		
+	      private GridBagConstraints addGrid(GridBagConstraints gbc, Component c, 
+                  int gridx, int gridy, int gridwidth, int gridheight, int weightx, int weighty) {
+            gbc.gridx = gridx;
+            gbc.gridy = gridy;
+            gbc.gridwidth = gridwidth;
+            gbc.gridheight = gridheight;
+            gbc.weightx = weightx;
+            gbc.weighty = weighty;
+            return gbc;
+      }
 
 		public ProgressPanel() {
 			super(new BorderLayout());
 			
 			// add progress image components...
-
+			//setLayout(new BorderLayout());
 			
+			ProgressStepPanel = new JPanel();
+			ProgressStepPanel.setLayout(new GridBagLayout());
+			
+			ProgressStepPanel.setBackground(Color.WHITE);
+			            
+            GridBagConstraints gbc = new GridBagConstraints();
+            
+            gbc.fill = GridBagConstraints.BOTH;
+            
+            EllipseLayout[] ellipselabel = new EllipseLayout[5];			
+            Lielayout[] linelabel = new Lielayout[4];
+			
+			for(int i=0;i < 4; i++) {
+				ellipselabel[i] = new EllipseLayout();
+				ellipselabel[i].setBackground(Color.RED);
+				ellipselabel[i].setOpaque(true);
+				ellipselabel[i].setDescriptionText("bbbbb");
+				ellipselabel[i].setEllipseText(""+i);
+				
+				ProgressStepPanel.add(ellipselabel[i], addGrid(gbc, ellipselabel[i], i*2, 0, 1, 1, 1, 1));
+				
+				linelabel[i] = new Lielayout();
+				linelabel[i].setBackground(Color.BLUE);
+				linelabel[i].setOpaque(true);
+				ProgressStepPanel.add(linelabel[i], addGrid(gbc, linelabel[i], (i*2+1), 0, 1, 1, 2, 1));
+			}
+
+			ellipselabel[4] = new EllipseLayout();
+			ellipselabel[4].setBackground(Color.RED);
+			ellipselabel[4].setOpaque(true);			
+			ProgressStepPanel.add(ellipselabel[4], addGrid(gbc, ellipselabel[4], 4*2, 0, 1, 1, 1, 1));
+			
+			
+			ProgressStepPanel.setPreferredSize(new Dimension(0, 100));
+			
+			
+			add(ProgressStepPanel, BorderLayout.CENTER);
 			// set status
 			setStatus(STATUS_INIT);
 		}
@@ -183,6 +293,7 @@ public class ApkInstallWizard
 				break;
 			}
 		}
+	    
 	}
 	
 	private class ContentPanel extends JPanel
@@ -415,6 +526,7 @@ public class ApkInstallWizard
 		window.setSize(new Dimension(500,350));
 		
 		progressPanel = new ProgressPanel();
+		
 		contentPanel = new ContentPanel(uiEventHandler);
 		
 		window.add(progressPanel, BorderLayout.NORTH);
@@ -685,7 +797,7 @@ public class ApkInstallWizard
 				if(cmdResult == null || (cmdResult.length > 2 && cmdResult[1].startsWith("Error")) ||
 						(cmdResult.length > 1 && cmdResult[0].startsWith("error"))) {
 					Log.e("activity start faile : " + launcherActivity);
-					Log.e(String.join("\n", cmdResult));
+					//Log.e(String.join("\n", cmdResult));
 					ArrowTraversalPane.showOptionDialog(null,
 							Resource.STR_MSG_FAILURE_LAUNCH_APP.getString(),
 							Resource.STR_LABEL_WARNING.getString(),
@@ -1042,24 +1154,8 @@ public class ApkInstallWizard
 		@Override public void windowActivated(WindowEvent e) { }
 		@Override public void windowDeactivated(WindowEvent e) { }
 	};
-	// ----------------------------------------------------------------------------------------
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	//static private JTextArea dialogLogArea;
-	//static private JDialog dlgDialog = null;
-
-	//static private JPanel installPanel;
-	//static private JPanel uninstallPanel;
-	
+		
 	static private String strPackageName;
 	private static String strSourcePath;
 	private static String strLibPath;
@@ -1096,6 +1192,8 @@ public class ApkInstallWizard
 			final boolean samePackage, final boolean checkPackage, final InstallButtonStatusListener Listener)
 	{
 
+		
+		
 		strPackageName = PackageName;
 		strSourcePath = apkPath;
 		strLibPath = libPath;
@@ -1108,10 +1206,18 @@ public class ApkInstallWizard
 		ApkInstallWizard.Listener = Listener; 
 		
 		
-		InstallDlg dlg = new InstallDlg(owner, isOnlyInstall);
-		ApkInstallWizard.InstallDlgListener = dlg.getInstallDlgFuncListener();
+		//InstallDlg dlg = new InstallDlg(owner, isOnlyInstall);
+		//InstallWizardDlg Dlg = new InstallWizardDlg();
 		
+//		ApkInstallWizard.InstallDlgListener = Dlg.getInstallDlgFuncListener();
+//		Dlg.showTreeDlg(owner);
 		
+		if(owner != null)
+			wizard = new ApkInstallWizardDialog(owner);
+		else 
+			wizard = new ApkInstallWizardFrame();
+		
+		wizard.show();
 		
 		t = new InstallThread();
 		t.start();
@@ -1489,6 +1595,17 @@ public class ApkInstallWizard
 			t.start();
 		}
 	}
+	
+    public static void main(String args[]) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                //Turn off metal's use of bold fonts       
+            	JFrame frame = new JFrame();
+            	ApkInstallWizard wizard = new ApkInstallWizard(frame);
+            	wizard.setVisible(true);            	
+            }
+        });
+    }
 }
 
 
