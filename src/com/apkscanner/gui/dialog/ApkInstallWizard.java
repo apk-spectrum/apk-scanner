@@ -169,11 +169,18 @@ public class ApkInstallWizard
 	private class ProgressPanel extends JPanel
 	{
 		JPanel ProgressStepPanel;
+		int CurrentProgress=0;
 		
 		private static final long serialVersionUID = 6145481552592676895L;
 
 		public class EllipseLayout extends JLabel {			
 			String outtext, intext;
+			int state;
+			
+			// disable 223,227,228
+			// ing 52,152,219
+			// finish 46,204,113
+			
 			
 			public EllipseLayout() {
 				//super();
@@ -183,12 +190,18 @@ public class ApkInstallWizard
 		    public void paintComponent(Graphics g)
 		    {	
 		    	Dimension size = getSize();
+		    	state = 0;
+		    	
+		    	
+		    	if(state == 0) {
+		    		g.setColor(new Color(223,227,228));
+		    	}
 		    	
 		    	if(size.getWidth() <= size.getHeight()) {
 		    		g.fillOval(0,(int)(size.getHeight()/2 - size.getWidth()/2), (int)size.getWidth(), (int)size.getWidth());		    		
 		    	} else {
 		    		
-		    	}		    	
+		    	}
 		    	g.setFont(g.getFont().deriveFont(15f));
 		    	
 		    	g.drawString(outtext, 0, (int)size.getHeight()-10);
@@ -209,19 +222,27 @@ public class ApkInstallWizard
 		    
 		}
 		public class Lielayout extends JLabel {
+			int state;
+			
+			public Lielayout() {
+				state = 0;
+			}
 			public void paintComponent(Graphics g)
 		    {
 				Dimension size = getSize();
 				
 				Graphics2D g2 = (Graphics2D) g;
 				
-				g2.setStroke(new BasicStroke(10) );
-				
+		    	if(state == 0) {
+		    		g.setColor(new Color(223,227,228));
+		    	}
+		    	
+				g2.setStroke(new BasicStroke(10) );				
 				g.drawLine(0, (int)(size.getHeight()/2), (int)size.getWidth(), (int)(size.getHeight()/2));
 		    }
 		}
 		
-	      private GridBagConstraints addGrid(GridBagConstraints gbc, Component c, 
+	    private GridBagConstraints addGrid(GridBagConstraints gbc, Component c, 
                   int gridx, int gridy, int gridwidth, int gridheight, int weightx, int weighty) {
             gbc.gridx = gridx;
             gbc.gridy = gridy;
@@ -267,7 +288,9 @@ public class ApkInstallWizard
 
 			ellipselabel[4] = new EllipseLayout();
 			ellipselabel[4].setBackground(Color.RED);
-			ellipselabel[4].setOpaque(true);			
+			ellipselabel[4].setOpaque(true);
+			ellipselabel[4].setDescriptionText("bbbbb");
+			ellipselabel[4].setEllipseText(""+4);
 			ProgressStepPanel.add(ellipselabel[4], addGrid(gbc, ellipselabel[4], 4*2, 0, 1, 1, 1, 1));
 			
 			
@@ -279,6 +302,10 @@ public class ApkInstallWizard
 			setStatus(STATUS_INIT);
 		}
 
+		public void setNext() {
+			CurrentProgress++;
+		}
+		
 		public void setStatus(int status) {
 			switch(status) {
 			case STATUS_INIT:
@@ -523,11 +550,22 @@ public class ApkInstallWizard
 		if(window == null) return;
 
 		window.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
-		window.setSize(new Dimension(500,350));
+		window.setSize(new Dimension(700,550));
 		
 		progressPanel = new ProgressPanel();
 		
 		contentPanel = new ContentPanel(uiEventHandler);
+		
+		JButton testbtn = new JButton("test");
+		
+		testbtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                
+            }
+        });
+        
+		contentPanel.setLayout(new BorderLayout());
+		contentPanel.add(testbtn);
 		
 		window.add(progressPanel, BorderLayout.NORTH);
 		window.add(contentPanel, BorderLayout.CENTER);
