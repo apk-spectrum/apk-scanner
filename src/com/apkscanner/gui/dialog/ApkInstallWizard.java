@@ -172,41 +172,88 @@ public class ApkInstallWizard
 		JPanel ProgressStepPanel;
 		int CurrentProgress=0;
 		
-		final Color []Colorset = {new Color(223,227,228), new Color(52,152,219),new Color(46,204,113)};
+		final Color []Colorset = {new Color(222,228,228), new Color(52,152,220),new Color(46,204,114)};
 				
         EllipseLayout[] ellipselabel = new EllipseLayout[5];			
         Lielayout[] linelabel = new Lielayout[4];
         
 		private static final long serialVersionUID = 6145481552592676895L;
 
-		public class EllipseLayout extends JLabel {			
-			String outtext, intext;
+		public class ColorBase extends JPanel {
 			int state;
-	        private Timer timer = null;
+	        public Timer timer = null;
+	        public Color currentColor;
+	        public Boolean isAnimation= false;
+	        private static final int DELAY = 30;
+	        private static final int INC = 4;
+	        
 			// disable 223,227,228
 			// ing 52,152,219
 			// finish 46,204,113
-	        private static final int DELAY = 30;
-			
+	        public int addColorINC(int base, int current) {
+	        	if(base > current) {
+	        		return current+INC;
+	        	} else {
+	        		return current-INC;
+	        	}
+	        }
+	        
+	        public ColorBase() {
+	        	state = 0;
+	            timer = new Timer(DELAY, new ActionListener() {
+	                public void actionPerformed(ActionEvent e) {
+	                	int r=0,g=0,b=0;	                	
+	                	//currentColor = new Color(255%currentColor.getRed()+1, 255%currentColor.getGreen()+1, 255%currentColor.getBlue()+1);	                	
+	                	if(Colorset[state].getRed() != currentColor.getRed()){
+	                		r = addColorINC(Colorset[state].getRed() , currentColor.getRed());	                		
+	                	} else {
+	                		r = Colorset[state].getRed();
+	                	}
+	                	if(Colorset[state].getGreen() != currentColor.getGreen()){
+	                		g = addColorINC(Colorset[state].getGreen() , currentColor.getGreen());
+	                	} else {
+	                		g = Colorset[state].getGreen();
+	                	}
+	                	if(Colorset[state].getBlue() != currentColor.getBlue()){
+	                		b = addColorINC(Colorset[state].getBlue() , currentColor.getBlue());
+	                	} else {
+	                		b = Colorset[state].getBlue();
+	                	}
+	                	currentColor = new Color(r,g,b);
+	                	repaint();
+	                	if(currentColor.equals(Colorset[state])) {
+	                		timer.stop();
+	                		isAnimation = false;
+	                	}
+	                }
+	            });
+	        }
+		    public void setAnimation() {
+		    	isAnimation = true;
+		    	currentColor = Colorset[state];
+		    	timer.start();
+		    }
+		}
+		
+		
+		public class EllipseLayout extends ColorBase {
+			String outtext, intext;
+
+	        
 			public EllipseLayout() {
 				//super();
 				outtext = new String("");
 				intext = new String("");
 				state = 0;
-				
-	            timer = new Timer(DELAY, new ActionListener() {
-	                public void actionPerformed(ActionEvent e) {
-	                	
-	                }
-	            });    
-				
 			}
 		    public void paintComponent(Graphics g)
 		    {	
 		    	Dimension size = getSize();
-		    	
-		    	g.setColor(Colorset[state]);
-		    	Log.d(""+state);
+		    	if(isAnimation) {
+		    		g.setColor(currentColor);
+		    	} else {
+		    		g.setColor(Colorset[state]);
+		    	}
 		    	
 		    	if(size.getWidth() <= size.getHeight()) {
 		    		g.fillOval(0,(int)(size.getHeight()/2 - size.getWidth()/2), (int)size.getWidth(), (int)size.getWidth());		    		
@@ -221,9 +268,6 @@ public class ApkInstallWizard
 		    	g.setColor(Color.WHITE);
 		    	g.drawString(intext, (int)(size.getWidth()/2-15), (int)(size.getHeight()/2+ 15));
 		    	
-		    	
-		    	
-		    	
 		    }
 		    public void setEllipseText(String str) {
 		    	intext = str;
@@ -234,17 +278,16 @@ public class ApkInstallWizard
 		    }
 		    
 		    public void setState() {
-		    	this.state = state + 1;
+		    	setAnimation();
+		    	state = state + 1;		    	
+		    	
 		    	if(state >2) {
 		    		state = 0;
-		    	}
-		    	
-		    	this.repaint();
+		    	}		    
 		    }
 		    
 		}
-		public class Lielayout extends JLabel {
-			int state;
+		public class Lielayout extends ColorBase {
 			
 			public Lielayout() {
 				state = 0;
@@ -255,17 +298,22 @@ public class ApkInstallWizard
 				
 				Graphics2D g2 = (Graphics2D) g;
 				
-				g.setColor(Colorset[state]);
+		    	if(isAnimation) {
+		    		g.setColor(currentColor);
+		    	} else {
+		    		g.setColor(Colorset[state]);
+		    	}
 		    	
 				g2.setStroke(new BasicStroke(10) );				
 				g.drawLine(0, (int)(size.getHeight()/2), (int)size.getWidth(), (int)(size.getHeight()/2));
 		    }
+		    
 		    public void setState() {
-		    	this.state = state + 2;
+		    	setAnimation();
+		    	this.state = state + 2;		    	
 		    	if(state >2) {
 		    		state = 0;
 		    	}
-		    	this.repaint();
 		    }
 		}
 		
