@@ -171,6 +171,7 @@ public class ApkInstallWizard
 	{
 		JPanel ProgressStepPanel;
 		int CurrentProgress=0;
+		private final String [] outtexts= {"select Device","is installed", "read to install", "install", " finish"};
 		
 		final Color []Colorset = {new Color(222,228,228), new Color(52,152,220),new Color(46,204,114)};
 				
@@ -234,11 +235,8 @@ public class ApkInstallWizard
 		    	timer.start();
 		    }
 		}
-		
-		
 		public class EllipseLayout extends ColorBase {
 			String outtext, intext;
-
 	        
 			public EllipseLayout() {
 				//super();
@@ -261,13 +259,10 @@ public class ApkInstallWizard
 		    		
 		    	}
 		    	g.setFont(g.getFont().deriveFont(15f));
-		    	
 		    	g.drawString(outtext, 0, (int)size.getHeight()-10);
-		    	
 		    	g.setFont(g.getFont().deriveFont(30f));
 		    	g.setColor(Color.WHITE);
 		    	g.drawString(intext, (int)(size.getWidth()/2-15), (int)(size.getHeight()/2+ 15));
-		    	
 		    }
 		    public void setEllipseText(String str) {
 		    	intext = str;
@@ -279,31 +274,25 @@ public class ApkInstallWizard
 		    
 		    public void setState() {
 		    	setAnimation();
-		    	state = state + 1;		    	
-		    	
+		    	state = state + 1;
 		    	if(state >2) {
 		    		state = 0;
 		    	}		    
 		    }
-		    
 		}
 		public class Lielayout extends ColorBase {
-			
 			public Lielayout() {
 				state = 0;
 			}
 			public void paintComponent(Graphics g)
 		    {
 				Dimension size = getSize();
-				
 				Graphics2D g2 = (Graphics2D) g;
-				
 		    	if(isAnimation) {
 		    		g.setColor(currentColor);
 		    	} else {
 		    		g.setColor(Colorset[state]);
 		    	}
-		    	
 				g2.setStroke(new BasicStroke(10) );				
 				g.drawLine(0, (int)(size.getHeight()/2), (int)size.getWidth(), (int)(size.getHeight()/2));
 		    }
@@ -347,7 +336,7 @@ public class ApkInstallWizard
 				ellipselabel[i] = new EllipseLayout();
 				ellipselabel[i].setBackground(Color.RED);
 				ellipselabel[i].setOpaque(true);
-				ellipselabel[i].setDescriptionText("bbbbb");
+				ellipselabel[i].setDescriptionText(outtexts[i]);
 				ellipselabel[i].setEllipseText(""+i);
 				
 				ProgressStepPanel.add(ellipselabel[i], addGrid(gbc, ellipselabel[i], i*2, 0, 1, 1, 1, 1));
@@ -361,7 +350,7 @@ public class ApkInstallWizard
 			ellipselabel[4] = new EllipseLayout();
 			ellipselabel[4].setBackground(Color.RED);
 			ellipselabel[4].setOpaque(true);
-			ellipselabel[4].setDescriptionText("bbbbb");
+			ellipselabel[4].setDescriptionText(outtexts[4]);
 			ellipselabel[4].setEllipseText(""+4);
 			ProgressStepPanel.add(ellipselabel[4], addGrid(gbc, ellipselabel[4], 4*2, 0, 1, 1, 1, 1));
 			
