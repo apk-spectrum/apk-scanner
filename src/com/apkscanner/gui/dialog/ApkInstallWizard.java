@@ -32,6 +32,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -171,31 +172,38 @@ public class ApkInstallWizard
 		JPanel ProgressStepPanel;
 		int CurrentProgress=0;
 		
+		final Color []Colorset = {new Color(223,227,228), new Color(52,152,219),new Color(46,204,113)};
+				
+        EllipseLayout[] ellipselabel = new EllipseLayout[5];			
+        Lielayout[] linelabel = new Lielayout[4];
+        
 		private static final long serialVersionUID = 6145481552592676895L;
 
 		public class EllipseLayout extends JLabel {			
 			String outtext, intext;
 			int state;
-			
+	        private Timer timer = null;
 			// disable 223,227,228
 			// ing 52,152,219
 			// finish 46,204,113
-			
+	        private static final int DELAY = 30;
 			
 			public EllipseLayout() {
 				//super();
 				outtext = new String("");
 				intext = new String("");
+				state = 0;
+				
+	            timer = new Timer(DELAY, new ActionListener() {
+	                public void actionPerformed(ActionEvent e) {
+				
 			}
 		    public void paintComponent(Graphics g)
 		    {	
 		    	Dimension size = getSize();
-		    	state = 0;
 		    	
-		    	
-		    	if(state == 0) {
-		    		g.setColor(new Color(223,227,228));
-		    	}
+		    	g.setColor(Colorset[state]);
+		    	Log.d(""+state);
 		    	
 		    	if(size.getWidth() <= size.getHeight()) {
 		    		g.fillOval(0,(int)(size.getHeight()/2 - size.getWidth()/2), (int)size.getWidth(), (int)size.getWidth());		    		
@@ -211,6 +219,8 @@ public class ApkInstallWizard
 		    	g.drawString(intext, (int)(size.getWidth()/2-15), (int)(size.getHeight()/2+ 15));
 		    	
 		    	
+		    	
+		    	
 		    }
 		    public void setEllipseText(String str) {
 		    	intext = str;
@@ -218,6 +228,15 @@ public class ApkInstallWizard
 		    
 		    public void setDescriptionText(String str) {
 		    	outtext = str;
+		    }
+		    
+		    public void setState() {
+		    	this.state = state + 1;
+		    	if(state >2) {
+		    		state = 0;
+		    	}
+		    	
+		    	this.repaint();
 		    }
 		    
 		}
@@ -233,12 +252,17 @@ public class ApkInstallWizard
 				
 				Graphics2D g2 = (Graphics2D) g;
 				
-		    	if(state == 0) {
-		    		g.setColor(new Color(223,227,228));
-		    	}
+				g.setColor(Colorset[state]);
 		    	
 				g2.setStroke(new BasicStroke(10) );				
 				g.drawLine(0, (int)(size.getHeight()/2), (int)size.getWidth(), (int)(size.getHeight()/2));
+		    }
+		    public void setState() {
+		    	this.state = state + 2;
+		    	if(state >2) {
+		    		state = 0;
+		    	}
+		    	this.repaint();
 		    }
 		}
 		
@@ -267,9 +291,6 @@ public class ApkInstallWizard
             GridBagConstraints gbc = new GridBagConstraints();
             
             gbc.fill = GridBagConstraints.BOTH;
-            
-            EllipseLayout[] ellipselabel = new EllipseLayout[5];			
-            Lielayout[] linelabel = new Lielayout[4];
 			
 			for(int i=0;i < 4; i++) {
 				ellipselabel[i] = new EllipseLayout();
@@ -300,10 +321,25 @@ public class ApkInstallWizard
 			add(ProgressStepPanel, BorderLayout.CENTER);
 			// set status
 			setStatus(STATUS_INIT);
+			
 		}
-
+		
+		private void setProgressColor() {			
+			if(CurrentProgress==1) {
+				ellipselabel[0].setState();
+				return ;
+			}
+			for(int i=CurrentProgress-2; i< CurrentProgress; i++) {
+				ellipselabel[i].setState();
+			}			
+			for(int i=CurrentProgress-2; i< CurrentProgress-1; i++) {
+				linelabel[i].setState();
+			}			
+		}
+		
 		public void setNext() {
 			CurrentProgress++;
+			setProgressColor();
 		}
 		
 		public void setStatus(int status) {
@@ -556,16 +592,27 @@ public class ApkInstallWizard
 		
 		contentPanel = new ContentPanel(uiEventHandler);
 		
-		JButton testbtn = new JButton("test");
+		JButton testnextbtn = new JButton("next");
 		
-		testbtn.addActionListener(new ActionListener() {
+		testnextbtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	progressPanel.setNext();
+            }
+        });
+		
+		JButton testnprebtn = new JButton("pre");
+		
+		testnprebtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 
             }
         });
+		
+		
         
 		contentPanel.setLayout(new BorderLayout());
-		contentPanel.add(testbtn);
+		contentPanel.add(testnprebtn, BorderLayout.WEST);
+		contentPanel.add(testnextbtn, BorderLayout.EAST);
 		
 		window.add(progressPanel, BorderLayout.NORTH);
 		window.add(contentPanel, BorderLayout.CENTER);
