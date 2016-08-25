@@ -6,6 +6,7 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -244,6 +245,14 @@ public class ApkInstallWizard
 				intext = new String("");
 				state = 0;
 			}
+			
+		  public void drawCenteredString(String s, int w, int h, Graphics g) {
+			    FontMetrics fm = g.getFontMetrics();
+			    int x = (w - fm.stringWidth(s)) / 2;
+			    int y = (fm.getAscent() + (h - (fm.getAscent() + fm.getDescent())) / 2);
+			    g.drawString(s, x, y);
+			  }
+			
 		    public void paintComponent(Graphics g)
 		    {	
 		    	Dimension size = getSize();
@@ -262,7 +271,9 @@ public class ApkInstallWizard
 		    	g.drawString(outtext, 0, (int)size.getHeight()-10);
 		    	g.setFont(g.getFont().deriveFont(30f));
 		    	g.setColor(Color.WHITE);
-		    	g.drawString(intext, (int)(size.getWidth()/2-15), (int)(size.getHeight()/2+ 15));
+		    	//g.drawString(intext, (int)(size.getWidth()/2-15), (int)(size.getHeight()/2+ 15));
+		    	drawCenteredString(intext, (int)size.getWidth(), (int)size.getHeight(), g);
+		    	
 		    }
 		    public void setEllipseText(String str) {
 		    	intext = str;
