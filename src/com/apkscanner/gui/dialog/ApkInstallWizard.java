@@ -196,6 +196,9 @@ public class ApkInstallWizard
 				
 	            timer = new Timer(DELAY, new ActionListener() {
 	                public void actionPerformed(ActionEvent e) {
+	                	
+	                }
+	            });    
 				
 			}
 		    public void paintComponent(Graphics g)
