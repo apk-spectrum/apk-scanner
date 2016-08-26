@@ -123,7 +123,7 @@ public class ApkInstallWizard
 		
 		private void dialog_init(Component owner) {
 			setTitle(Resource.STR_TITLE_INSTALL_WIZARD.getString());
-			setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 			setResizable(true);
 			setModal(false);
 
@@ -138,8 +138,19 @@ public class ApkInstallWizard
 		
 		public ApkInstallWizardFrame() {
 			frame_init();
+			setDefaultCloseOperation(EXIT_ON_CLOSE);
 		}
 
+		public ApkInstallWizardFrame(Frame owner) {
+			frame_init();
+			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		}
+
+		public ApkInstallWizardFrame(JDialog owner) {
+			frame_init();
+			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		}
+		
 		private void frame_init()
 		{
 			try {
@@ -154,7 +165,6 @@ public class ApkInstallWizard
 			}
 			
 			setTitle(Resource.STR_TITLE_INSTALL_WIZARD.getString());
-			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setResizable(true);
 
 			initialize(this);
@@ -704,21 +714,21 @@ public class ApkInstallWizard
 	}
 
 	public ApkInstallWizard() {
-		this((JFrame)null);
+		wizard = new ApkInstallWizardFrame();
 	}
 
 	public ApkInstallWizard(JFrame owner) {
 		if(owner != null)
 			wizard = new ApkInstallWizardDialog(owner);
 		else 
-			wizard = new ApkInstallWizardFrame();
+			wizard = new ApkInstallWizardFrame(owner);
 	}
 	
 	public ApkInstallWizard(JDialog owner) {
 		if(owner != null)
 			wizard = new ApkInstallWizardDialog(owner);
 		else 
-			wizard = new ApkInstallWizardFrame();
+			wizard = new ApkInstallWizardFrame(owner);
 	}
 	
 	private void setVisible(boolean visible) {
@@ -1312,10 +1322,14 @@ public class ApkInstallWizard
 				next();
 			} else if(ControlPanel.CTR_ACT_CMD_PREVIOUS.equals(arg0.getActionCommand())) {
 				previous();
-			} else if(ControlPanel.CTR_ACT_CMD_OK.equals(arg0.getActionCommand())) {
-				wizard.dispose();
-			} else if(ControlPanel.CTR_ACT_CMD_CANCEL.equals(arg0.getActionCommand())) {
-				wizard.dispose();
+			} else if(ControlPanel.CTR_ACT_CMD_CANCEL.equals(arg0.getActionCommand()) ||
+					ControlPanel.CTR_ACT_CMD_OK.equals(arg0.getActionCommand())) {
+				if(wizard instanceof JFrame &&
+						((JFrame)wizard).getDefaultCloseOperation() == JFrame.EXIT_ON_CLOSE) {
+					System.exit(0);
+				} else {
+					wizard.dispose();
+				}
 			} else if(ControlPanel.CTR_ACT_CMD_RESTART.equals(arg0.getActionCommand())) {
 				restart();
 			} else if("REFRESH".equals(arg0.getActionCommand())) {
