@@ -29,7 +29,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -46,13 +45,10 @@ import com.apkscanner.core.scanner.ApkScannerStub.Status;
 import com.apkscanner.data.apkinfo.ActivityAliasInfo;
 import com.apkscanner.data.apkinfo.ActivityInfo;
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.dialog.install.InstallDlg;
-import com.apkscanner.gui.dialog.install.InstallWizardDlg;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.test.TextAreaDemo;
 import com.apkscanner.tool.adb.AdbDeviceManager;
 import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
 import com.apkscanner.tool.adb.AdbPackageManager;
@@ -94,6 +90,7 @@ public class ApkInstallWizard
 	private Window wizard;
 	private ProgressPanel progressPanel;
 	private ContentPanel contentPanel;
+	private ControlPanel controlPanel;
 	private UIEventHandler uiEventHandler = new UIEventHandler();
 	
 	private int status;
@@ -158,7 +155,7 @@ public class ApkInstallWizard
 			
 			setTitle(Resource.STR_TITLE_INSTALL_WIZARD.getString());
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			setResizable(false);
+			setResizable(true);
 
 			initialize(this);
 			setLocationRelativeTo(null);
@@ -236,6 +233,7 @@ public class ApkInstallWizard
 		    	timer.start();
 		    }
 		}
+
 		public class EllipseLayout extends ColorBase {
 			String outtext, intext;
 	        
@@ -388,23 +386,33 @@ public class ApkInstallWizard
 			}			
 		}
 		
-		public void setNext() {
-			CurrentProgress++;
-			setProgressColor();
-		}
-		
 		public void setStatus(int status) {
+			int newStatus = CurrentProgress;
 			switch(status) {
 			case STATUS_INIT:
 			case STATUS_DEVICE_SCANNING:
 			case STATUS_SELECT_DEVICE:
+				newStatus = 1;
+				break;
 			case STATUS_PACKAGE_SCANNING:
 			case STATUS_CHECK_PACKAGES:
+				newStatus = 2;
+				break;
 			case STATUS_SET_INSTALL_OPTION:
+				newStatus = 3;
+				break;
 			case STATUS_INSTALLING:
+				newStatus = 4;
+				break;
 			case STATUS_COMPLETED:
+				newStatus = 5;
+				break;
 			default:
 				break;
+			}
+			if(CurrentProgress != newStatus) {
+				CurrentProgress = newStatus;
+				setProgressColor();
 			}
 		}
 	    
@@ -500,12 +508,12 @@ public class ApkInstallWizard
 			case STATUS_CHECK_PACKAGES:
 				// set UI Data of package list
 				for(int i = 0; i < targetDevices.length; i++) {
-					if(installedPackage[i] != null) {
+					if(installedPackage != null && installedPackage[i] != null) {
 						Log.e(">>>>>> add listview " + targetDevices[i].name + " - " + installedPackage[i].apkPath);
 					}
 				}
 				
-				if((apkInfo.featureFlags & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
+				if(apkInfo != null && (apkInfo.featureFlags & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
 					// enable run app button
 				}
 
@@ -514,21 +522,23 @@ public class ApkInstallWizard
 			case STATUS_SET_INSTALL_OPTION:
 				// set state of component
 				
-				if((apkInfo.featureFlags & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
-					// enable run app button
-				} else {
-					
-				}
-				if((apkInfo.manifest.installLocation.indexOf("internalOnly")) > -1) {
-					// disable external
-				} else {
-					
-				}
-
-				if(apkInfo.certificates == null || apkInfo.certificates.length == 0) {
-					// disable next
-				} else {
-					
+				if(apkInfo != null) {
+					if((apkInfo.featureFlags & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
+						// enable run app button
+					} else {
+						
+					}
+					if((apkInfo.manifest.installLocation.indexOf("internalOnly")) > -1) {
+						// disable external
+					} else {
+						
+					}
+	
+					if(apkInfo.certificates == null || apkInfo.certificates.length == 0) {
+						// disable next
+					} else {
+						
+					}
 				}
 				
 				boolean isAllRootDevice = true;
@@ -556,7 +566,7 @@ public class ApkInstallWizard
 						// disable overwrite
 					}
 					
-					if(apkInfo.librarys == null || apkInfo.librarys.length == 0) {
+					if(apkInfo == null || apkInfo.librarys == null || apkInfo.librarys.length == 0) {
 						// disable with libs
 					} else {
 						
@@ -609,6 +619,89 @@ public class ApkInstallWizard
 			
 		}
 	}
+	
+	private class ControlPanel extends JPanel
+	{
+		private static final long serialVersionUID = 5959656550868421305L;
+		
+		public static final String CTR_ACT_CMD_NEXT = "CTR_ACT_CMD_NEXT";
+		public static final String CTR_ACT_CMD_PREVIOUS = "CTR_ACT_CMD_PREVIOUS";
+		public static final String CTR_ACT_CMD_OK = "CTR_ACT_CMD_OK";
+		public static final String CTR_ACT_CMD_CANCEL = "CTR_ACT_CMD_CANCEL";
+		public static final String CTR_ACT_CMD_SHOW_LOG = "CTR_ACT_CMD_SHOW_LOG";
+		public static final String CTR_ACT_CMD_RESTART = "CTR_ACT_CMD_RESTART";
+		
+		private JButton btnNext;
+		private JButton btnPre;
+		private JButton btnOk;
+		private JButton btnCancel;
+		private JButton btnShowLog;
+		private JButton btnRestart;
+
+		public ControlPanel(ActionListener listener) {
+			super(new BorderLayout());
+			
+			btnNext = getButton("Next", CTR_ACT_CMD_NEXT, listener);
+			btnPre = getButton("Previous", CTR_ACT_CMD_PREVIOUS, listener);
+			btnOk = getButton("OK", CTR_ACT_CMD_OK, listener);
+			btnCancel = getButton("Cancel", CTR_ACT_CMD_CANCEL, listener);
+			btnShowLog = getButton("Show Log", CTR_ACT_CMD_SHOW_LOG, listener);
+			btnRestart = getButton("Restart", CTR_ACT_CMD_SHOW_LOG, listener);
+			
+			JPanel stepPanel = new JPanel();
+			stepPanel.add(btnCancel);
+			stepPanel.add(btnPre);
+			stepPanel.add(btnNext);
+			stepPanel.add(btnRestart);
+			stepPanel.add(btnOk);
+
+			add(btnShowLog, BorderLayout.WEST);
+			add(stepPanel, BorderLayout.EAST);
+
+			// set status
+			setStatus(STATUS_INIT);
+		}
+		
+		private JButton getButton(String text, String actCmd, ActionListener listener) {
+			JButton btn = new JButton(text);
+			btn.setActionCommand(actCmd);
+			btn.addActionListener(listener);
+			return btn;
+		}
+		
+		private void setVisibleButtons(boolean next, boolean pre, boolean ok, boolean cancel, boolean showlog, boolean restart) {
+			btnNext.setVisible(next);
+			btnPre.setVisible(pre);
+			btnOk.setVisible(ok);
+			btnCancel.setVisible(cancel);
+			btnShowLog.setVisible(showlog);
+			btnRestart.setVisible(restart);
+		}
+		
+		public void setStatus(int status) {
+			switch(status) {
+			case STATUS_INIT:
+				setVisibleButtons(true, false, false, false, false, false); break;
+			case STATUS_DEVICE_SCANNING:
+			case STATUS_DEVICE_REFRESH:
+				setVisibleButtons(false, false, false, false, false, false); break;
+			case STATUS_SELECT_DEVICE:
+				setVisibleButtons(true, false, false, true, false, false); break;
+			case STATUS_PACKAGE_SCANNING:
+				setVisibleButtons(false, false, false, false, false, false); break;
+			case STATUS_CHECK_PACKAGES:
+				setVisibleButtons(true, true, false, true, false, false); break;
+			case STATUS_SET_INSTALL_OPTION:
+				setVisibleButtons(true, true, false, true, false, false); break;
+			case STATUS_INSTALLING:
+				setVisibleButtons(false, false, false, false, true, false); break;
+			case STATUS_COMPLETED:
+				setVisibleButtons(false, false, true, false, true, true); break;
+			default:
+				break;
+			}
+		}
+	}
 
 	public ApkInstallWizard() {
 		this((JFrame)null);
@@ -640,33 +733,12 @@ public class ApkInstallWizard
 		window.setSize(new Dimension(700,550));
 		
 		progressPanel = new ProgressPanel();
-		
 		contentPanel = new ContentPanel(uiEventHandler);
-		
-		JButton testnextbtn = new JButton("next");
-		
-		testnextbtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-            	progressPanel.setNext();
-            }
-        });
-		
-		JButton testnprebtn = new JButton("pre");
-		
-		testnprebtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                
-            }
-        });
-		
-		
-        
-		contentPanel.setLayout(new BorderLayout());
-		contentPanel.add(testnprebtn, BorderLayout.WEST);
-		contentPanel.add(testnextbtn, BorderLayout.EAST);
+		controlPanel = new ControlPanel(uiEventHandler);
 		
 		window.add(progressPanel, BorderLayout.NORTH);
 		window.add(contentPanel, BorderLayout.CENTER);
+		window.add(controlPanel, BorderLayout.SOUTH);
 		
 		//Log.i("initialize() register event handler");
 		//window.addWindowListener(new UIEventHandler());
@@ -682,6 +754,7 @@ public class ApkInstallWizard
 		this.status = status;
 		progressPanel.setStatus(status);
 		contentPanel.setStatus(status);
+		controlPanel.setStatus(status);
 		
 		execute(status);
 	}
@@ -704,7 +777,7 @@ public class ApkInstallWizard
 				public void run()
 				{
 					synchronized(ApkInstallWizard.this) {
-						if(targetDevices != null && targetDevices.length > 0) {
+						if(apkInfo != null && targetDevices != null && targetDevices.length > 0) {
 							boolean existed = false;
 							installedPackage = new PackageInfo[targetDevices.length];
 							for(int i = 0; i < targetDevices.length; i++) {
@@ -714,6 +787,8 @@ public class ApkInstallWizard
 							if(!existed) {
 								installedPackage = null;
 							}
+						} else {
+							installedPackage = null;
 						}
 						next();
 					}
@@ -791,7 +866,7 @@ public class ApkInstallWizard
 				changeState(STATUS_SET_INSTALL_OPTION);
 				break;
 			case STATUS_SET_INSTALL_OPTION:
-				if(flag == 0) break;
+				//if(flag == 0) break;
 				changeState(STATUS_INSTALLING);
 				break;
 			case STATUS_INSTALLING:
@@ -1233,10 +1308,16 @@ public class ApkInstallWizard
 	private class UIEventHandler implements ActionListener, KeyEventDispatcher, WindowListener {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			if("NEXT".equals(arg0.getActionCommand())) {
+			if(ControlPanel.CTR_ACT_CMD_NEXT.equals(arg0.getActionCommand())) {
 				next();
-			} else if("PREVIOUS".equals(arg0.getActionCommand())) {
+			} else if(ControlPanel.CTR_ACT_CMD_PREVIOUS.equals(arg0.getActionCommand())) {
 				previous();
+			} else if(ControlPanel.CTR_ACT_CMD_OK.equals(arg0.getActionCommand())) {
+				wizard.dispose();
+			} else if(ControlPanel.CTR_ACT_CMD_CANCEL.equals(arg0.getActionCommand())) {
+				wizard.dispose();
+			} else if(ControlPanel.CTR_ACT_CMD_RESTART.equals(arg0.getActionCommand())) {
+				restart();
 			} else if("REFRESH".equals(arg0.getActionCommand())) {
 				new Thread(new Runnable() {
 					public void run()
@@ -1259,12 +1340,6 @@ public class ApkInstallWizard
 				
 			} else if("CHANG_SIGN".equals(arg0.getActionCommand())) {
 				
-			} else if("RESTART".equals(arg0.getActionCommand())) {
-				restart();
-			} else if("CANCEL".equals(arg0.getActionCommand())) {
-				wizard.dispose();
-			} else if("OK".equals(arg0.getActionCommand())) {
-				wizard.dispose();
 			}
 		}
 
@@ -1347,13 +1422,6 @@ public class ApkInstallWizard
 		
 //		ApkInstallWizard.InstallDlgListener = Dlg.getInstallDlgFuncListener();
 //		Dlg.showTreeDlg(owner);
-		
-		if(owner != null)
-			wizard = new ApkInstallWizardDialog(owner);
-		else 
-			wizard = new ApkInstallWizardFrame();
-		
-		wizard.show();
 		
 		t = new InstallThread();
 		t.start();
@@ -1735,10 +1803,10 @@ public class ApkInstallWizard
     public static void main(String args[]) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                //Turn off metal's use of bold fonts       
-            	JFrame frame = new JFrame();
-            	ApkInstallWizard wizard = new ApkInstallWizard(frame);
-            	wizard.setVisible(true);            	
+				ApkInstallWizard wizard = new ApkInstallWizard();
+				//wizard.setApk("C:\\MShopAndroidPhoneApp.apk");
+				//wizard.start();
+				wizard.setVisible(true);
             }
         });
     }
