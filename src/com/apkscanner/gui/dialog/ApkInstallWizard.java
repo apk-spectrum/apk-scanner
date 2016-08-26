@@ -177,18 +177,20 @@ public class ApkInstallWizard
 	
 	private class ProgressPanel extends JPanel
 	{
+		private static final long serialVersionUID = 6145481552592676895L;
+		
 		JPanel ProgressStepPanel;
 		int CurrentProgress=0;
 		private final String [] outtexts= {"select Device","is installed", "read to install", "install", " finish"};
 		
-		final Color []Colorset = {new Color(222,228,228), new Color(52,152,220),new Color(46,204,114)};
+		private final Color []Colorset = {new Color(222,228,228), new Color(52,152,220),new Color(46,204,114)};
 				
-        EllipseLayout[] ellipselabel = new EllipseLayout[5];			
-        Lielayout[] linelabel = new Lielayout[4];
+        private EllipseLayout[] ellipselabel = new EllipseLayout[5];			
+        private Lielayout[] linelabel = new Lielayout[4];
         
-		private static final long serialVersionUID = 6145481552592676895L;
-
 		public class ColorBase extends JPanel {
+			private static final long serialVersionUID = -2274026145500203594L;
+
 			int state;
 	        public Timer timer = null;
 	        public Color currentColor;
@@ -213,27 +215,27 @@ public class ApkInstallWizard
 	                public void actionPerformed(ActionEvent e) {
 	                	int r=0,g=0,b=0;	                	
 	                	//currentColor = new Color(255%currentColor.getRed()+1, 255%currentColor.getGreen()+1, 255%currentColor.getBlue()+1);	                	
-	                	if(Colorset[state].getRed() != currentColor.getRed()){
+	                	if(Colorset[state].getRed() > currentColor.getRed()){
 	                		r = addColorINC(Colorset[state].getRed() , currentColor.getRed());	                		
 	                	} else {
 	                		r = Colorset[state].getRed();
 	                	}
-	                	if(Colorset[state].getGreen() != currentColor.getGreen()){
+	                	if(Colorset[state].getGreen() > currentColor.getGreen()){
 	                		g = addColorINC(Colorset[state].getGreen() , currentColor.getGreen());
 	                	} else {
 	                		g = Colorset[state].getGreen();
 	                	}
-	                	if(Colorset[state].getBlue() != currentColor.getBlue()){
+	                	if(Colorset[state].getBlue() > currentColor.getBlue()){
 	                		b = addColorINC(Colorset[state].getBlue() , currentColor.getBlue());
 	                	} else {
 	                		b = Colorset[state].getBlue();
 	                	}
 	                	currentColor = new Color(r,g,b);
-	                	repaint();
 	                	if(currentColor.equals(Colorset[state])) {
 	                		timer.stop();
 	                		isAnimation = false;
 	                	}
+	                	ColorBase.this.getParent().repaint();
 	                }
 	            });
 	        }
@@ -245,10 +247,11 @@ public class ApkInstallWizard
 		}
 
 		public class EllipseLayout extends ColorBase {
+			private static final long serialVersionUID = 5831964884908650735L;
 			String outtext, intext;
 	        
 			public EllipseLayout() {
-				//super();
+				super();
 				outtext = new String("");
 				intext = new String("");
 				state = 0;
@@ -296,11 +299,14 @@ public class ApkInstallWizard
 		    	state = state + 1;
 		    	if(state >2) {
 		    		state = 0;
-		    	}		    
+		    	}
 		    }
 		}
 		public class Lielayout extends ColorBase {
+			private static final long serialVersionUID = 4192134315491972328L;
+
 			public Lielayout() {
+				super();
 				state = 0;
 			}
 			public void paintComponent(Graphics g)
