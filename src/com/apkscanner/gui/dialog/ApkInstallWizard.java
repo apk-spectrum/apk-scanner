@@ -12,6 +12,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.Window;
@@ -29,8 +30,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
@@ -180,6 +183,7 @@ public class ApkInstallWizard
 		private static final long serialVersionUID = 6145481552592676895L;
 		
 		JPanel ProgressStepPanel;
+		JPanel TextStepPanel;
 		int CurrentProgress=0;
 		private final String [] outtexts= {"select Device","is installed", "read to install", "install", " finish"};
 		
@@ -278,8 +282,8 @@ public class ApkInstallWizard
 		    	} else {
 		    		
 		    	}
-		    	g.setFont(g.getFont().deriveFont(15f));
-		    	g.drawString(outtext, 0, (int)size.getHeight()-10);
+		    	//g.setFont(g.getFont().deriveFont(15f));
+		    	//g.drawString(outtext, 0, (int)size.getHeight()-10);
 		    	g.setFont(g.getFont().deriveFont(30f));
 		    	g.setColor(Color.WHITE);
 		    	//g.drawString(intext, (int)(size.getWidth()/2-15), (int)(size.getHeight()/2+ 15));
@@ -350,40 +354,58 @@ public class ApkInstallWizard
 			
 			ProgressStepPanel = new JPanel();
 			ProgressStepPanel.setLayout(new GridBagLayout());
-			
 			ProgressStepPanel.setBackground(Color.WHITE);
 			            
-            GridBagConstraints gbc = new GridBagConstraints();
-            
+			
+			TextStepPanel = new JPanel();
+			TextStepPanel.setLayout(new GridLayout(1,5));
+			TextStepPanel.setBackground(Color.WHITE);
+			
+			
+            GridBagConstraints gbc = new GridBagConstraints();            
             gbc.fill = GridBagConstraints.BOTH;
 			
+            for(int i=0; i< 5; i++) {
+            	JLabel label = new JLabel(outtexts[i], SwingConstants.CENTER);            	            	
+            	TextStepPanel.add(label);
+            }
+            
+            
+            
+            
+            
+            JPanel marginlabel = new JPanel();
+            marginlabel.setBackground(Color.WHITE);			
+			ProgressStepPanel.add(marginlabel, addGrid(gbc, marginlabel, 0, 0, 1, 1, 1, 1));            
 			for(int i=0;i < 4; i++) {
 				ellipselabel[i] = new EllipseLayout();
-				ellipselabel[i].setBackground(Color.RED);
 				ellipselabel[i].setOpaque(true);
 				ellipselabel[i].setDescriptionText(outtexts[i]);
-				ellipselabel[i].setEllipseText(""+i);
-				
-				ProgressStepPanel.add(ellipselabel[i], addGrid(gbc, ellipselabel[i], i*2, 0, 1, 1, 1, 1));
+				ellipselabel[i].setEllipseText(""+i);				
+				ProgressStepPanel.add(ellipselabel[i], addGrid(gbc, ellipselabel[i], i*2+1, 0, 1, 1, 1, 1));
 				
 				linelabel[i] = new Lielayout();
-				linelabel[i].setBackground(Color.BLUE);
 				linelabel[i].setOpaque(true);
-				ProgressStepPanel.add(linelabel[i], addGrid(gbc, linelabel[i], (i*2+1), 0, 1, 1, 2, 1));
+				ProgressStepPanel.add(linelabel[i], addGrid(gbc, linelabel[i], (i*2+2), 0, 1, 1, 2, 1));
 			}
 
 			ellipselabel[4] = new EllipseLayout();
-			ellipselabel[4].setBackground(Color.RED);
 			ellipselabel[4].setOpaque(true);
 			ellipselabel[4].setDescriptionText(outtexts[4]);
 			ellipselabel[4].setEllipseText(""+4);
-			ProgressStepPanel.add(ellipselabel[4], addGrid(gbc, ellipselabel[4], 4*2, 0, 1, 1, 1, 1));
+			ProgressStepPanel.add(ellipselabel[4], addGrid(gbc, ellipselabel[4], 9, 0, 1, 1, 1, 1));
+			
+            JPanel marginlabel2 = new JPanel();
+            marginlabel2.setBackground(Color.WHITE);
+			ProgressStepPanel.add(marginlabel2, addGrid(gbc, marginlabel2, 10, 0, 1, 1, 1, 1));
 			
 			
 			ProgressStepPanel.setPreferredSize(new Dimension(0, 100));
 			
 			
 			add(ProgressStepPanel, BorderLayout.CENTER);
+			add(TextStepPanel, BorderLayout.SOUTH);
+			
 			// set status
 			setStatus(STATUS_INIT);
 			
