@@ -6,6 +6,7 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Frame;
 import java.awt.Graphics;
@@ -322,7 +323,7 @@ public class ApkInstallWizard
 		    	} else {
 		    		g.setColor(Colorset[state]);
 		    	}
-				g2.setStroke(new BasicStroke(10) );				
+				g2.setStroke(new BasicStroke(5) );				
 				g.drawLine(0, (int)(size.getHeight()/2), (int)size.getWidth(), (int)(size.getHeight()/2));
 		    }
 		    
@@ -349,9 +350,6 @@ public class ApkInstallWizard
 		public ProgressPanel() {
 			super(new BorderLayout());
 			
-			// add progress image components...
-			//setLayout(new BorderLayout());
-			
 			ProgressStepPanel = new JPanel();
 			ProgressStepPanel.setLayout(new GridBagLayout());
 			ProgressStepPanel.setBackground(Color.WHITE);
@@ -366,12 +364,11 @@ public class ApkInstallWizard
             gbc.fill = GridBagConstraints.BOTH;
 			
             for(int i=0; i< 5; i++) {
-            	JLabel label = new JLabel(outtexts[i], SwingConstants.CENTER);            	            	
+            	JLabel label = new JLabel(outtexts[i], SwingConstants.CENTER);
+            	label.setFont(new Font(label.getFont().getName(), label.getFont().getStyle(), 18));
+            	
             	TextStepPanel.add(label);
             }
-            
-            
-            
             
             
             JPanel marginlabel = new JPanel();
@@ -400,7 +397,7 @@ public class ApkInstallWizard
 			ProgressStepPanel.add(marginlabel2, addGrid(gbc, marginlabel2, 10, 0, 1, 1, 1, 1));
 			
 			
-			ProgressStepPanel.setPreferredSize(new Dimension(0, 100));
+			ProgressStepPanel.setPreferredSize(new Dimension(0, 60));
 			
 			
 			add(ProgressStepPanel, BorderLayout.CENTER);
