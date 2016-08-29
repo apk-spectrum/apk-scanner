@@ -192,13 +192,19 @@ public class ApkInstallWizard
 		
 		JPanel ProgressStepPanel;
 		JPanel TextStepPanel;
+		private final int STEPMAX = 5;
+		
+		private final int COLOR_STEP_NOTFINISH = 0; 
+		private final int COLOR_STEP_PROCESSING = 1; 		
+		private final int COLOR_STEP_FINISHED = 2;
+		
 		int CurrentProgress=0;
 		private final String [] outtexts= {"SELECT DEVICE", "FIND PACKAGE", "OPTIONS", "INSTALLING", "FINISH"};
 		
 		private final Color []Colorset = {new Color(222,228,228), new Color(52,152,220),new Color(46,204,114)};
 				
-        private EllipseLayout[] ellipselabel = new EllipseLayout[5];			
-        private Lielayout[] linelabel = new Lielayout[4];
+        private EllipseLayout[] ellipselabel = new EllipseLayout[STEPMAX];			
+        private Linelayout[] linelabel = new Linelayout[STEPMAX-1];
         
 		public class ColorBase extends JPanel {
 			private static final long serialVersionUID = -2274026145500203594L;
@@ -214,7 +220,7 @@ public class ApkInstallWizard
 			// ing 52,152,219
 			// finish 46,204,113
 	        public int addColorINC(int base, int current) {
-	        	if(base > current) {
+	        	if(base >= current) {
 	        		return current+INC;
 	        	} else {
 	        		return current-INC;
@@ -223,6 +229,7 @@ public class ApkInstallWizard
 	        
 	        public ColorBase() {
 	        	state = 0;
+	        	currentColor = new Color(223,227,228);
 	            timer = new Timer(DELAY, new ActionListener() {
 	                public void actionPerformed(ActionEvent e) {
 	                	int r=0,g=0,b=0;	                	
@@ -313,18 +320,15 @@ public class ApkInstallWizard
 		    	outtext = str;
 		    }
 		    
-		    public void setState() {
-		    	setAnimation();
-		    	state = state + 1;
-		    	if(state >2) {
-		    		state = 0;
-		    	}
+		    public void setState(int state) {
+		    	setAnimation();		    	
+		    	this.state = state;		    	
 		    }
 		}
-		public class Lielayout extends ColorBase {
+		public class Linelayout extends ColorBase {
 			private static final long serialVersionUID = 4192134315491972328L;
 
-			public Lielayout() {
+			public Linelayout() {
 				super();
 				state = 0;
 			}
@@ -348,12 +352,12 @@ public class ApkInstallWizard
 				
 		    }
 		    
-		    public void setState() {
+		    public void setState(int state) {
+		    	Log.d(""+currentColor + "    " + Colorset[state]);
 		    	setAnimation();
-		    	this.state = state + 2;		    	
-		    	if(state >2) {
-		    		state = 0;
-		    	}
+		    	Log.d(""+currentColor + "    " + Colorset[state]);
+		    	
+		    	this.state = state;
 		    }
 		}
 		
@@ -377,14 +381,14 @@ public class ApkInstallWizard
 			            
 			
 			TextStepPanel = new JPanel();
-			TextStepPanel.setLayout(new GridLayout(1,5));
+			TextStepPanel.setLayout(new GridLayout(1,STEPMAX));
 			TextStepPanel.setBackground(Color.WHITE);
 			
 			
             GridBagConstraints gbc = new GridBagConstraints();            
             gbc.fill = GridBagConstraints.BOTH;
 			
-            for(int i=0; i< 5; i++) {
+            for(int i=0; i< STEPMAX; i++) {
             	JLabel label = new JLabel(outtexts[i], SwingConstants.CENTER);
             	label.setFont(new Font(label.getFont().getName(), Font.PLAIN, 14));
             	
@@ -395,27 +399,27 @@ public class ApkInstallWizard
             JPanel marginlabel = new JPanel();
             marginlabel.setBackground(Color.WHITE);			
 			ProgressStepPanel.add(marginlabel, addGrid(gbc, marginlabel, 0, 0, 1, 1, 1, 1));            
-			for(int i=0;i < 4; i++) {
+			for(int i=0;i < STEPMAX-1; i++) {
 				ellipselabel[i] = new EllipseLayout();
 				ellipselabel[i].setOpaque(true);
 				ellipselabel[i].setDescriptionText(outtexts[i]);
 				ellipselabel[i].setEllipseText(""+i);				
 				ProgressStepPanel.add(ellipselabel[i], addGrid(gbc, ellipselabel[i], i*2+1, 0, 1, 1, 1, 1));
 				
-				linelabel[i] = new Lielayout();
+				linelabel[i] = new Linelayout();
 				linelabel[i].setOpaque(true);
 				ProgressStepPanel.add(linelabel[i], addGrid(gbc, linelabel[i], (i*2+2), 0, 1, 1, 2, 1));
 			}
 
-			ellipselabel[4] = new EllipseLayout();
-			ellipselabel[4].setOpaque(true);
-			ellipselabel[4].setDescriptionText(outtexts[4]);
-			ellipselabel[4].setEllipseText(""+4);
-			ProgressStepPanel.add(ellipselabel[4], addGrid(gbc, ellipselabel[4], 9, 0, 1, 1, 1, 1));
+			ellipselabel[STEPMAX-1] = new EllipseLayout();
+			ellipselabel[STEPMAX-1].setOpaque(true);
+			ellipselabel[STEPMAX-1].setDescriptionText(outtexts[STEPMAX-1]);
+			ellipselabel[STEPMAX-1].setEllipseText(""+(STEPMAX-1));
+			ProgressStepPanel.add(ellipselabel[STEPMAX-1], addGrid(gbc, ellipselabel[STEPMAX-1], STEPMAX*2-1, 0, 1, 1, 1, 1));
 			
             JPanel marginlabel2 = new JPanel();
             marginlabel2.setBackground(Color.WHITE);
-			ProgressStepPanel.add(marginlabel2, addGrid(gbc, marginlabel2, 10, 0, 1, 1, 1, 1));			
+			ProgressStepPanel.add(marginlabel2, addGrid(gbc, marginlabel2, STEPMAX*2, 0, 1, 1, 1, 1));			
 			
 			ProgressStepPanel.setPreferredSize(new Dimension(0, 60));			
 			
@@ -427,17 +431,29 @@ public class ApkInstallWizard
 			
 		}
 		
-		private void setProgressColor() {			
-			if(CurrentProgress==1) {
-				ellipselabel[0].setState();
+		private void setProgressColor(int state) {
+			Log.d("state : " + state);
+			
+			if(state==0) {
+				for(int i=0; i< STEPMAX; i++) {
+					ellipselabel[i].setState(COLOR_STEP_NOTFINISH);
+				}
+				for(int i=0; i< STEPMAX-1; i++) {
+					linelabel[i].setState(COLOR_STEP_NOTFINISH);
+				}
 				return ;
 			}
-			for(int i=CurrentProgress-2; i< CurrentProgress; i++) {
-				ellipselabel[i].setState();
-			}			
-			for(int i=CurrentProgress-2; i< CurrentProgress-1; i++) {
-				linelabel[i].setState();
-			}			
+			
+			for(int i=1; i <= state; i++) {
+				ellipselabel[i-1].setState(2);
+				if(i!=state)linelabel[i-1].setState(COLOR_STEP_FINISHED);
+			}
+			for(int i=state; i< STEPMAX; i++) {
+				ellipselabel[i].setState(COLOR_STEP_NOTFINISH);
+			}
+			linelabel[state-1].setState(COLOR_STEP_NOTFINISH);
+			ellipselabel[state-1].setState(COLOR_STEP_PROCESSING);
+			
 		}
 		
 		public void setStatus(int status) {
@@ -466,7 +482,7 @@ public class ApkInstallWizard
 			}
 			if(CurrentProgress != newStatus) {
 				CurrentProgress = newStatus;
-				setProgressColor();
+				setProgressColor(CurrentProgress);
 			}
 		}
 	    
@@ -1868,9 +1884,9 @@ public class ApkInstallWizard
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
 				ApkInstallWizard wizard = new ApkInstallWizard();
-				//wizard.setApk("C:\\MShopAndroidPhoneApp.apk");
-				//wizard.start();
-				wizard.setVisible(true);
+				wizard.setApk("/home/leejinhyeong/Desktop/DcmContacts.apk");
+				wizard.start();
+				//wizard.setVisible(true);
             }
         });
     }
