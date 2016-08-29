@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -57,6 +58,7 @@ import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.dialog.install.InstallDlg;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.ArrowTraversalPane;
+import com.apkscanner.gui.util.ImagePanel;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbDeviceManager;
 import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
@@ -191,7 +193,7 @@ public class ApkInstallWizard
 		JPanel ProgressStepPanel;
 		JPanel TextStepPanel;
 		int CurrentProgress=0;
-		private final String [] outtexts= {"select Device","is installed", "read to install", "install", " finish"};
+		private final String [] outtexts= {"SELECT DEVICE", "FIND PACKAGE", "OPTIONS", "INSTALLING", "FINISH"};
 		
 		private final Color []Colorset = {new Color(222,228,228), new Color(52,152,220),new Color(46,204,114)};
 				
@@ -384,7 +386,7 @@ public class ApkInstallWizard
 			
             for(int i=0; i< 5; i++) {
             	JLabel label = new JLabel(outtexts[i], SwingConstants.CENTER);
-            	label.setFont(new Font(label.getFont().getName(), Font.BOLD, 18));
+            	label.setFont(new Font(label.getFont().getName(), Font.PLAIN, 14));
             	
             	TextStepPanel.add(label);
             }
@@ -474,19 +476,25 @@ public class ApkInstallWizard
 	{
 		private static final long serialVersionUID = -680173960208954055L;
 
-		public static final String CONTENT_INIT = "DEVICE_SCANNING";
-		public static final String CONTENT_DEVICE_SCANNING = "DEVICE_SCANNING";
-		public static final String CONTENT_SELECT_DEVICE = "SELECT_DEVICE";
-		public static final String CONTENT_PACKAGE_SCANNING = "PACKAGE_SCANNING";
-		public static final String CONTENT_CHECK_PACKAGES = "CHECK_PACKAGES";
-		public static final String CONTENT_SET_INSTALL_OPTION = "SET_INSTALL_OPTION";
-		public static final String CONTENT_INSTALLING = "INSTALLING";
-		public static final String CONTENT_COMPLETED = "COMPLETED";
+		public static final String CONTENT_INIT = "CONTENT_INIT";
+		public static final String CONTENT_DEVICE_SCANNING = "CONTENT_DEVICE_SCANNING";
+		public static final String CONTENT_SELECT_DEVICE = "CONTENT_SELECT_DEVICE";
+		public static final String CONTENT_PACKAGE_SCANNING = "CONTENT_PACKAGE_SCANNING";
+		public static final String CONTENT_CHECK_PACKAGES = "CONTENT_CHECK_PACKAGES";
+		public static final String CONTENT_SET_INSTALL_OPTION = "CONTENT_SET_INSTALL_OPTION";
+		public static final String CONTENT_INSTALLING = "CONTENT_INSTALLING";
+		public static final String CONTENT_COMPLETED = "CONTENT_COMPLETED";
 		
 		public ContentPanel(ActionListener listener) {
 			super(new CardLayout());
 			
-			add(new JPanel(), CONTENT_INIT);
+			JPanel initPanel = new JPanel();
+			initPanel.setLayout(new BoxLayout(initPanel, BoxLayout.Y_AXIS));
+			initPanel.add(new ImagePanel(Resource.IMG_APK_LOGO.getImageIcon()));
+			initPanel.add(new JLabel("scanning devices..."));
+			initPanel.add(new ImagePanel(Resource.IMG_WAIT_BAR.getImageIcon()));
+			
+			add(initPanel, CONTENT_INIT);
 			add(new JPanel(), CONTENT_DEVICE_SCANNING);
 			add(new JPanel(), CONTENT_SELECT_DEVICE);
 			add(new JPanel(), CONTENT_PACKAGE_SCANNING);
