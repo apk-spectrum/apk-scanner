@@ -16,12 +16,15 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
+import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.geom.Ellipse2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -271,6 +274,11 @@ public class ApkInstallWizard
 			
 		    public void paintComponent(Graphics g)
 		    {	
+		        Graphics2D g2 = (Graphics2D)g;
+		        		    	
+		        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+		        
 		    	Dimension size = getSize();
 		    	if(isAnimation) {
 		    		g.setColor(currentColor);
@@ -279,7 +287,9 @@ public class ApkInstallWizard
 		    	}
 		    	
 		    	if(size.getWidth() <= size.getHeight()) {
-		    		g.fillOval(0,(int)(size.getHeight()/2 - size.getWidth()/2), (int)size.getWidth(), (int)size.getWidth());		    		
+		    		//g.fillOval(0,(int)(size.getHeight()/2 - size.getWidth()/2), (int)size.getWidth(), (int)size.getWidth());
+		    		Shape theCircle = new Ellipse2D.Double(0,(size.getHeight()/2 - size.getWidth()/2), size.getWidth(), size.getWidth());
+		    		g2.fill(theCircle);
 		    	} else {
 		    		
 		    	}
@@ -365,7 +375,7 @@ public class ApkInstallWizard
 			
             for(int i=0; i< 5; i++) {
             	JLabel label = new JLabel(outtexts[i], SwingConstants.CENTER);
-            	label.setFont(new Font(label.getFont().getName(), label.getFont().getStyle(), 18));
+            	label.setFont(new Font(label.getFont().getName(), Font.BOLD, 18));
             	
             	TextStepPanel.add(label);
             }
@@ -394,11 +404,9 @@ public class ApkInstallWizard
 			
             JPanel marginlabel2 = new JPanel();
             marginlabel2.setBackground(Color.WHITE);
-			ProgressStepPanel.add(marginlabel2, addGrid(gbc, marginlabel2, 10, 0, 1, 1, 1, 1));
+			ProgressStepPanel.add(marginlabel2, addGrid(gbc, marginlabel2, 10, 0, 1, 1, 1, 1));			
 			
-			
-			ProgressStepPanel.setPreferredSize(new Dimension(0, 60));
-			
+			ProgressStepPanel.setPreferredSize(new Dimension(0, 60));			
 			
 			add(ProgressStepPanel, BorderLayout.CENTER);
 			add(TextStepPanel, BorderLayout.SOUTH);
