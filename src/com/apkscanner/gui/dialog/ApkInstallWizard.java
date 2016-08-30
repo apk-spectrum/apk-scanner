@@ -224,6 +224,11 @@ public class ApkInstallWizard
 			// ing 52,152,219
 			// finish 46,204,113
 	        public int addColorINC(int base, int current) {
+	        	
+	        	if(Math.abs(base-current) < 10) {
+	        		return base;
+	        	}
+	        	
 	        	if(base >= current) {
 	        		return current+INC;
 	        	} else {
@@ -245,8 +250,9 @@ public class ApkInstallWizard
 	                		g = addColorINC(Colorset[state].getGreen() , currentColor.getGreen());
 	                		b = addColorINC(Colorset[state].getBlue() , currentColor.getBlue());
 	                	currentColor = new Color(r,g,b);
-	                	if(Math.abs(r-Colorset[state].getRed()) < 10 && Math.abs(g-Colorset[state].getGreen()) < 10 && 
-	                			Math.abs(b-Colorset[state].getBlue()) < 10) {	                		
+	                	//if(Math.abs(r-Colorset[state].getRed()) < 10 && Math.abs(g-Colorset[state].getGreen()) < 10 && 
+	                			//Math.abs(b-Colorset[state].getBlue()) < 10) {
+	                	if(currentColor.equals(Colorset[state]))	{	                		
 	                		currentColor = Colorset[state];
 	                		timer.stop();
 	                		isAnimation = false;
