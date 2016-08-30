@@ -200,7 +200,7 @@ public class ApkInstallWizard
 		private final int COLOR_STEP_FINISHED = 2;
 		
 		int CurrentProgress=0;
-		private final String [] outtexts= {"SELECT DEVICE", "FIND PACKAGE", "OPTIONS", "INSTALLING", "FINISH"};
+		private final String [] outtexts= {"  SELECT DEVICE", "   FIND PACKAGE", "OPTIONS", "INSTALLING", "FINISH     "};
 		
 		private final Color []Colorset = {new Color(222,228,228), new Color(52,152,220),new Color(46,204,114)};
 				
@@ -243,10 +243,7 @@ public class ApkInstallWizard
 	            timer = new Timer(DELAY, new ActionListener() {
 	                public void actionPerformed(ActionEvent e) {
 	                	int r=0,g=0,b=0;	                	
-	                	//currentColor = new Color(255%currentColor.getRed()+1, 255%currentColor.getGreen()+1, 255%currentColor.getBlue()+1);	                	
-	                	
-	                		r = addColorINC(Colorset[state].getRed() , currentColor.getRed());	                		
-	                	
+	                		r = addColorINC(Colorset[state].getRed() , currentColor.getRed());
 	                		g = addColorINC(Colorset[state].getGreen() , currentColor.getGreen());
 	                		b = addColorINC(Colorset[state].getBlue() , currentColor.getBlue());
 	                	currentColor = new Color(r,g,b);
@@ -381,8 +378,7 @@ public class ApkInstallWizard
 			}
 			public void paintComponent(Graphics g)
 		    {
-				super.paintComponent(g);
-				Dimension size = getSize();
+				super.paintComponent(g);				
 				Graphics2D g2 = (Graphics2D) g;
 		        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
@@ -392,7 +388,6 @@ public class ApkInstallWizard
 		    	} else {
 		    		this.setForeground(Colorset[colorbase.state]);
 		    	}		    	
-		    	
 		    }
 		    public void setState(int state) {
 		    	
@@ -432,7 +427,10 @@ public class ApkInstallWizard
 			
             for(int i=0; i< STEPMAX; i++) {
             	animatlabel[i] = new AnimationLabel(outtexts[i], SwingConstants.CENTER);
-            	animatlabel[i].setFont(new Font(animatlabel[i].getFont().getName(), Font.BOLD, 14));            	
+            	animatlabel[i].setFont(new Font(animatlabel[i].getFont().getName(), Font.BOLD, 14));
+            	animatlabel[i].setForeground(Colorset[COLOR_STEP_NOTFINISH]);
+            	//ellipselabel[i].setOpaque(true);
+            	//ellipselabel[i].setBackground(new Color(i*50,100,100));
             	TextStepPanel.add(animatlabel[i]);
             }
             
