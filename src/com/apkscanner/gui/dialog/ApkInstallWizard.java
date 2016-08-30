@@ -36,11 +36,16 @@ import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -207,7 +212,6 @@ public class ApkInstallWizard
         private EllipseLayout[] ellipselabel = new EllipseLayout[STEPMAX];			
         private Linelayout[] linelabel = new Linelayout[STEPMAX-1];
         private AnimationLabel[] animatlabel = new AnimationLabel[STEPMAX];
-        
         
 		public class ColorBase{
 			private static final long serialVersionUID = -2274026145500203594L;
@@ -541,6 +545,94 @@ public class ApkInstallWizard
 		public static final String CONTENT_SET_INSTALL_OPTION = "CONTENT_SET_INSTALL_OPTION";
 		public static final String CONTENT_INSTALLING = "CONTENT_INSTALLING";
 		public static final String CONTENT_COMPLETED = "CONTENT_COMPLETED";
+
+        String[] columnNames = {"First Name",
+                "Last Name",
+                "Sport",
+                "# of Years",
+                "Vegetarian"};
+
+		Object[][] data = {
+		{"Kathy", "Smith",
+		"Snowboarding", new Integer(5), new Boolean(false)},
+		{"John", "Doe",
+		"Rowing", new Integer(3), new Boolean(true)},
+		{"Sue", "Black",
+		"Knitting", new Integer(2), new Boolean(false)},
+		{"Jane", "White",
+		"Speed reading", new Integer(20), new Boolean(true)},
+		{"Joe", "Brown",
+		"Pool", new Integer(10), new Boolean(false)}
+		};
+		
+		private JPanel panel_select_device;
+		private JPanel panel_check_package;
+		
+		void init_Panel_select_device() {
+			
+			panel_select_device.setLayout(new BorderLayout());			
+			
+			JPanel buttonsetPanel = new JPanel(new BorderLayout());
+			
+			JLabel textSelectDevice = new JLabel("please select device!");
+			
+			JButton refreshButton = new JButton("Refresh(F5");
+			JButton rejectButton = new JButton("Select all / reject");
+			
+			JTable table = new JTable(data, columnNames);
+			JScrollPane scrollPane = new JScrollPane(table);
+			
+			buttonsetPanel.add(refreshButton, BorderLayout.WEST);
+			buttonsetPanel.add(rejectButton, BorderLayout.EAST);			
+			panel_select_device.add(textSelectDevice,BorderLayout.NORTH);
+			panel_select_device.add(scrollPane,BorderLayout.CENTER);
+			panel_select_device.add(buttonsetPanel,BorderLayout.SOUTH);			
+		}
+		
+		void init_Panel_check_package() {
+			panel_check_package.setLayout(new BorderLayout());	
+			
+			JPanel mainpanel = new JPanel(new BorderLayout());
+			JPanel Listpanel = new JPanel(new BorderLayout());
+			JPanel packagepanel = new JPanel(new BorderLayout());
+			JPanel appstartpanel = new JPanel(new BorderLayout());
+			JPanel buttonpanel = new JPanel(new BorderLayout());
+			
+			JLabel textSelectDevice = new JLabel("installed same package!");
+			JList deviceList = new JList(columnNames);
+			JScrollPane listscrollPane = new JScrollPane(deviceList);
+			
+			JTextArea textViewpackageInfo = new JTextArea();
+			JScrollPane textViewscrollPane = new JScrollPane(textViewpackageInfo);
+			
+			JComboBox<String> comboStartActivity = new JComboBox<String>(columnNames);
+		    
+		    JButton startButton = new JButton("start app");	
+		    
+		    JButton openButton = new JButton("open");
+		    JButton saveButton = new JButton("save");
+		    JButton delButton = new JButton("delete");
+		    
+		    buttonpanel.add(openButton, BorderLayout.WEST);
+		    buttonpanel.add(saveButton, BorderLayout.CENTER);
+		    buttonpanel.add(delButton, BorderLayout.EAST);
+		    
+		    appstartpanel.add(comboStartActivity, BorderLayout.CENTER);
+		    appstartpanel.add(startButton, BorderLayout.EAST);
+		    
+		    packagepanel.add(textViewpackageInfo, BorderLayout.CENTER);
+		    packagepanel.add(appstartpanel, BorderLayout.SOUTH);		    
+		    
+		    Listpanel.add(packagepanel, BorderLayout.CENTER);
+		    Listpanel.add(buttonpanel, BorderLayout.SOUTH);
+		    
+		    panel_check_package.add(textSelectDevice,BorderLayout.NORTH);
+		    panel_check_package.add(Listpanel,BorderLayout.CENTER);
+		    panel_check_package.add(deviceList, BorderLayout.WEST);
+		    
+		    
+		}
+		
 		
 		public ContentPanel(ActionListener listener) {
 			super(new CardLayout());
@@ -551,15 +643,21 @@ public class ApkInstallWizard
 			initPanel.add(new JLabel("scanning devices..."));
 			initPanel.add(new ImagePanel(Resource.IMG_WAIT_BAR.getImageIcon()));
 			
+			panel_select_device = new JPanel();
+			panel_check_package = new JPanel();
+			
 			add(initPanel, CONTENT_INIT);
 			add(new JPanel(), CONTENT_DEVICE_SCANNING);
-			add(new JPanel(), CONTENT_SELECT_DEVICE);
+			add(panel_select_device, CONTENT_SELECT_DEVICE);
 			add(new JPanel(), CONTENT_PACKAGE_SCANNING);
-			add(new JPanel(), CONTENT_CHECK_PACKAGES);
+			add(panel_check_package, CONTENT_CHECK_PACKAGES);
 			add(new JPanel(), CONTENT_SET_INSTALL_OPTION);
 			add(new JPanel(), CONTENT_INSTALLING);
 			add(new JPanel(), CONTENT_COMPLETED);
-
+			
+			init_Panel_select_device();
+			init_Panel_check_package();
+			
 			// set status
 			setStatus(STATUS_INIT);
 		}
