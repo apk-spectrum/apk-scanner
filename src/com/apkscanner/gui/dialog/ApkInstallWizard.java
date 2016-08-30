@@ -229,28 +229,20 @@ public class ApkInstallWizard
 	        
 	        public ColorBase() {
 	        	state = 0;
-	        	currentColor = new Color(223,227,228);
+	        	currentColor = new Color(222,228,228);
 	            timer = new Timer(DELAY, new ActionListener() {
 	                public void actionPerformed(ActionEvent e) {
 	                	int r=0,g=0,b=0;	                	
 	                	//currentColor = new Color(255%currentColor.getRed()+1, 255%currentColor.getGreen()+1, 255%currentColor.getBlue()+1);	                	
-	                	if(Colorset[state].getRed() > currentColor.getRed()){
+	                	
 	                		r = addColorINC(Colorset[state].getRed() , currentColor.getRed());	                		
-	                	} else {
-	                		r = Colorset[state].getRed();
-	                	}
-	                	if(Colorset[state].getGreen() > currentColor.getGreen()){
+	                	
 	                		g = addColorINC(Colorset[state].getGreen() , currentColor.getGreen());
-	                	} else {
-	                		g = Colorset[state].getGreen();
-	                	}
-	                	if(Colorset[state].getBlue() > currentColor.getBlue()){
 	                		b = addColorINC(Colorset[state].getBlue() , currentColor.getBlue());
-	                	} else {
-	                		b = Colorset[state].getBlue();
-	                	}
 	                	currentColor = new Color(r,g,b);
-	                	if(currentColor.equals(Colorset[state])) {
+	                	if(Math.abs(r-Colorset[state].getRed()) < 10 && Math.abs(g-Colorset[state].getGreen()) < 10 && 
+	                			Math.abs(b-Colorset[state].getBlue()) < 10) {	                		
+	                		currentColor = Colorset[state];
 	                		timer.stop();
 	                		isAnimation = false;
 	                	}
@@ -321,6 +313,7 @@ public class ApkInstallWizard
 		    }
 		    
 		    public void setState(int state) {
+		    	if(this.state == state) return;
 		    	setAnimation();		    	
 		    	this.state = state;		    	
 		    }
@@ -353,10 +346,9 @@ public class ApkInstallWizard
 		    }
 		    
 		    public void setState(int state) {
-		    	Log.d(""+currentColor + "    " + Colorset[state]);
-		    	setAnimation();
-		    	Log.d(""+currentColor + "    " + Colorset[state]);
 		    	
+		    	if(this.state == state) return;		    	
+		    	setAnimation();		    	
 		    	this.state = state;
 		    }
 		}
@@ -445,12 +437,12 @@ public class ApkInstallWizard
 			}
 			
 			for(int i=1; i <= state; i++) {
-				ellipselabel[i-1].setState(2);
+				ellipselabel[i-1].setState(COLOR_STEP_FINISHED);				
 				if(i!=state)linelabel[i-1].setState(COLOR_STEP_FINISHED);
 			}
 			for(int i=state; i< STEPMAX; i++) {
 				ellipselabel[i].setState(COLOR_STEP_NOTFINISH);
-			}
+			}			
 			linelabel[state-1].setState(COLOR_STEP_NOTFINISH);
 			ellipselabel[state-1].setState(COLOR_STEP_PROCESSING);
 			
