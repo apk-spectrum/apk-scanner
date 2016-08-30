@@ -24,6 +24,8 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.geom.Ellipse2D;
@@ -34,6 +36,7 @@ import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -49,6 +52,8 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.ListCellRenderer;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -77,6 +82,7 @@ import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
+import com.apkscanner.gui.util.*;
 
 public class ApkInstallWizard
 {
@@ -555,22 +561,29 @@ public class ApkInstallWizard
                 "# of Years",
                 "Vegetarian"};
 
-		Object[][] data = {
-		{"Kathy", "Smith",
-		"Snowboarding", new Integer(5), new Boolean(false)},
-		{"John", "Doe",
-		"Rowing", new Integer(3), new Boolean(true)},
-		{"Sue", "Black",
-		"Knitting", new Integer(2), new Boolean(false)},
-		{"Jane", "White",
-		"Speed reading", new Integer(20), new Boolean(true)},
-		{"Joe", "Brown",
-		"Pool", new Integer(10), new Boolean(false)}
-		};
 		
 		private JPanel panel_select_device;
 		private JPanel panel_check_package;
 		private JPanel panel_set_install_option;
+		
+		  class MyCellRenderer extends JCheckBox implements ListCellRenderer{
+			    public MyCellRenderer() {
+			    }
+
+			    public Component getListCellRendererComponent(
+			      JList list,
+			      Object value,
+			      int index,
+			      boolean isSelected,
+			      boolean cellHasFocus){
+
+			      /* 項目の値を読み出して改めて表示する */
+			      JCheckBox checkBox = (JCheckBox)value;
+			      setText(checkBox.getText());
+
+			      return this;
+			    }
+			  }
 		
 		void init_Panel_select_device() {
 			
@@ -580,11 +593,33 @@ public class ApkInstallWizard
 			
 			JLabel textSelectDevice = new JLabel("please select device!");
 			
+			textSelectDevice.setFont(new Font(textSelectDevice.getFont().getName(), Font.BOLD, 50));
+			
+			
 			JButton refreshButton = new JButton("Refresh(F5");
 			JButton rejectButton = new JButton("Select all / reject");
 			
-			JTable table = new JTable(data, columnNames);
-			JScrollPane scrollPane = new JScrollPane(table);
+			
+			DefaultListModel model;
+		    model = new DefaultListModel();
+		    String[] initData = {"Blue", "Green", "Red", "Whit", "Black"};
+		    for (int i = 0 ; i < initData.length ; i++){
+		      /* 指定した文字列を持つチェックボックスをJListに登録する */
+		      model.addElement(new JCheckBox(initData[i]));
+		    }
+		    final JList Listtable  = new JList(model);
+
+		    /* CellRendererを設定する */
+		    MyCellRenderer renderer = new MyCellRenderer();
+		    Listtable.setCellRenderer(renderer);
+
+			Listtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			
+			//Listtable.add("aaa");
+			
+			
+			
+			JScrollPane scrollPane = new JScrollPane(Listtable);
 			
 			buttonsetPanel.add(refreshButton, BorderLayout.WEST);
 			buttonsetPanel.add(rejectButton, BorderLayout.EAST);			
@@ -603,6 +638,8 @@ public class ApkInstallWizard
 			JPanel buttonpanel = new JPanel();
 			
 			JLabel textSelectDevice = new JLabel("installed same package!");
+			textSelectDevice.setFont(new Font(textSelectDevice.getFont().getName(), Font.BOLD, 50));
+			
 			JList deviceList = new JList(columnNames);
 			JScrollPane listscrollPane = new JScrollPane(deviceList);
 			
@@ -650,6 +687,8 @@ public class ApkInstallWizard
 			JPanel CertPanel = new JPanel(new BorderLayout());
 			
 			JLabel textSelectDevice = new JLabel("set install option");
+			textSelectDevice.setFont(new Font(textSelectDevice.getFont().getName(), Font.BOLD, 50));
+			
 			JLabel textCertInfo = new JLabel("Cert Info");
 			
 			JTextArea CertInfo = new JTextArea();
