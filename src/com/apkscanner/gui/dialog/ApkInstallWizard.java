@@ -33,9 +33,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -43,6 +45,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -567,6 +570,7 @@ public class ApkInstallWizard
 		
 		private JPanel panel_select_device;
 		private JPanel panel_check_package;
+		private JPanel panel_set_install_option;
 		
 		void init_Panel_select_device() {
 			
@@ -596,7 +600,7 @@ public class ApkInstallWizard
 			JPanel Listpanel = new JPanel(new BorderLayout());
 			JPanel packagepanel = new JPanel(new BorderLayout());
 			JPanel appstartpanel = new JPanel(new BorderLayout());
-			JPanel buttonpanel = new JPanel(new BorderLayout());
+			JPanel buttonpanel = new JPanel();
 			
 			JLabel textSelectDevice = new JLabel("installed same package!");
 			JList deviceList = new JList(columnNames);
@@ -620,7 +624,7 @@ public class ApkInstallWizard
 		    appstartpanel.add(comboStartActivity, BorderLayout.CENTER);
 		    appstartpanel.add(startButton, BorderLayout.EAST);
 		    
-		    packagepanel.add(textViewpackageInfo, BorderLayout.CENTER);
+		    packagepanel.add(textViewscrollPane, BorderLayout.CENTER);
 		    packagepanel.add(appstartpanel, BorderLayout.SOUTH);		    
 		    
 		    Listpanel.add(packagepanel, BorderLayout.CENTER);
@@ -633,6 +637,72 @@ public class ApkInstallWizard
 		    
 		}
 		
+		void init_Panel_set_install_option() {
+			panel_set_install_option.setLayout(new BorderLayout());	
+			JPanel optionPanel = new JPanel(new GridLayout(1, 2));
+			
+			ButtonGroup install = new ButtonGroup();
+			ButtonGroup push = new ButtonGroup();
+			
+			JPanel installPanel = new JPanel(new GridLayout(0, 1));
+			JPanel pushPanel = new JPanel(new GridLayout(0, 1));
+			
+			JPanel CertPanel = new JPanel(new BorderLayout());
+			
+			JLabel textSelectDevice = new JLabel("set install option");
+			JLabel textCertInfo = new JLabel("Cert Info");
+			
+			JTextArea CertInfo = new JTextArea();
+			JScrollPane textViewscrollPane = new JScrollPane(CertInfo);
+			
+			JButton buttonchangeCert = new JButton("change Cert");
+			
+			JRadioButton RadioInstall = new JRadioButton("install");
+			JRadioButton Radiointernal = new JRadioButton("internal");
+			JRadioButton Radioexternal = new JRadioButton("external");
+			JCheckBox Checkrunafterinstall = new JCheckBox("run after installed");
+			
+			installPanel.add(RadioInstall);
+			installPanel.add(Radiointernal);
+			installPanel.add(Radioexternal);
+			installPanel.add(Checkrunafterinstall);
+			
+			
+			JRadioButton RadioPush = new JRadioButton("push");
+			JRadioButton RadiosystemPush = new JRadioButton("system");
+			JRadioButton RadioprivPush = new JRadioButton("priv-app");
+			JRadioButton RadiodataPush = new JRadioButton("data");
+			JCheckBox CheckOverwrite = new JCheckBox("overwrite lib");
+			JCheckBox CheckWithLib = new JCheckBox("with Lib");
+			JCheckBox CheckReboot = new JCheckBox("reboot after push");
+			
+			
+			pushPanel.add(RadioPush);
+			pushPanel.add(RadiosystemPush);
+			pushPanel.add(RadioprivPush);
+			pushPanel.add(RadiodataPush);
+			pushPanel.add(CheckOverwrite);
+			pushPanel.add(CheckWithLib);
+			pushPanel.add(CheckReboot);
+			
+			
+			
+			
+			optionPanel.add(installPanel);
+			optionPanel.add(pushPanel);
+			
+			
+			CertPanel.add(textCertInfo, BorderLayout.NORTH);
+			CertPanel.add(textViewscrollPane, BorderLayout.CENTER);
+			CertPanel.add(buttonchangeCert, BorderLayout.PAGE_END);
+			
+			panel_set_install_option.add(textSelectDevice, BorderLayout.NORTH);
+			panel_set_install_option.add(optionPanel, BorderLayout.CENTER);
+			panel_set_install_option.add(CertPanel, BorderLayout.SOUTH);
+			
+			
+			
+		}
 		
 		public ContentPanel(ActionListener listener) {
 			super(new CardLayout());
@@ -645,19 +715,20 @@ public class ApkInstallWizard
 			
 			panel_select_device = new JPanel();
 			panel_check_package = new JPanel();
+			panel_set_install_option = new JPanel();
 			
 			add(initPanel, CONTENT_INIT);
 			add(new JPanel(), CONTENT_DEVICE_SCANNING);
 			add(panel_select_device, CONTENT_SELECT_DEVICE);
 			add(new JPanel(), CONTENT_PACKAGE_SCANNING);
 			add(panel_check_package, CONTENT_CHECK_PACKAGES);
-			add(new JPanel(), CONTENT_SET_INSTALL_OPTION);
+			add(panel_set_install_option, CONTENT_SET_INSTALL_OPTION);
 			add(new JPanel(), CONTENT_INSTALLING);
 			add(new JPanel(), CONTENT_COMPLETED);
 			
 			init_Panel_select_device();
 			init_Panel_check_package();
-			
+			init_Panel_set_install_option();
 			// set status
 			setStatus(STATUS_INIT);
 		}
