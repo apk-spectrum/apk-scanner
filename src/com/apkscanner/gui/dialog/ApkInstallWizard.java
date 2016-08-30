@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -185,7 +186,7 @@ public class ApkInstallWizard
 			addWindowListener(uiEventHandler);
 		}
 	}
-	
+    	
 	private class ProgressPanel extends JPanel
 	{
 		private static final long serialVersionUID = 6145481552592676895L;
@@ -205,8 +206,10 @@ public class ApkInstallWizard
 				
         private EllipseLayout[] ellipselabel = new EllipseLayout[STEPMAX];			
         private Linelayout[] linelabel = new Linelayout[STEPMAX-1];
+        private AnimationLabel[] animatlabel = new AnimationLabel[STEPMAX];
         
-		public class ColorBase extends JPanel {
+        
+		public class ColorBase{
 			private static final long serialVersionUID = -2274026145500203594L;
 
 			int state;
@@ -215,6 +218,7 @@ public class ApkInstallWizard
 	        public Boolean isAnimation= false;
 	        private static final int DELAY = 30;
 	        private static final int INC = 4;
+	        public Container childContainer;
 	        
 			// disable 223,227,228
 			// ing 52,152,219
@@ -227,8 +231,9 @@ public class ApkInstallWizard
 	        	}
 	        }
 	        
-	        public ColorBase() {
+	        public ColorBase(Container child) {
 	        	state = 0;
+	        	childContainer = child;
 	        	currentColor = new Color(222,228,228);
 	            timer = new Timer(DELAY, new ActionListener() {
 	                public void actionPerformed(ActionEvent e) {
@@ -246,7 +251,8 @@ public class ApkInstallWizard
 	                		timer.stop();
 	                		isAnimation = false;
 	                	}
-	                	ColorBase.this.getParent().repaint();
+	                	//ColorBase.this.getParent().repaint();
+	                	if(childContainer!=null)childContainer.getParent().repaint();
 	                }
 	            });
 	        }
@@ -256,16 +262,18 @@ public class ApkInstallWizard
 		    	timer.start();
 		    }
 		}
-
-		public class EllipseLayout extends ColorBase {
+		
+		
+		public class EllipseLayout extends JPanel {
 			private static final long serialVersionUID = 5831964884908650735L;
 			String outtext, intext;
-	        
+			ColorBase colorbase;
 			public EllipseLayout() {
 				super();
 				outtext = new String("");
 				intext = new String("");
-				state = 0;
+				colorbase = new ColorBase(this);				
+				colorbase.state = 0;
 			}
 			
 		  public void drawCenteredString(String s, int w, int h, Graphics g) {
@@ -283,10 +291,10 @@ public class ApkInstallWizard
 		        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 		        
 		    	Dimension size = getSize();
-		    	if(isAnimation) {
-		    		g.setColor(currentColor);
+		    	if(colorbase.isAnimation) {
+		    		g.setColor(colorbase.currentColor);
 		    	} else {
-		    		g.setColor(Colorset[state]);
+		    		g.setColor(Colorset[colorbase.state]);
 		    	}
 		    	
 		    	if(size.getWidth() <= size.getHeight()) {
@@ -313,17 +321,19 @@ public class ApkInstallWizard
 		    }
 		    
 		    public void setState(int state) {
-		    	if(this.state == state) return;
-		    	setAnimation();		    	
-		    	this.state = state;		    	
+		    	if(colorbase.state == state) return;
+		    	colorbase.setAnimation();		    	
+		    	colorbase.state = state;
 		    }
 		}
-		public class Linelayout extends ColorBase {
+		public class Linelayout extends JLabel {
 			private static final long serialVersionUID = 4192134315491972328L;
-
+			ColorBase colorbase;
+			
 			public Linelayout() {
 				super();
-				state = 0;
+				colorbase = new ColorBase(this);
+				colorbase.state = 0;
 			}
 			public void paintComponent(Graphics g)
 		    {
@@ -332,10 +342,10 @@ public class ApkInstallWizard
 		        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 		        
-		    	if(isAnimation) {
-		    		g.setColor(currentColor);
+		    	if(colorbase.isAnimation) {
+		    		g.setColor(colorbase.currentColor);
 		    	} else {
-		    		g.setColor(Colorset[state]);
+		    		g.setColor(Colorset[colorbase.state]);
 		    	}
 				g2.setStroke(new BasicStroke(8) );				
 				//g.drawLine(0, (int)(size.getHeight()/2), (int)size.getWidth(), (int)(size.getHeight()/2));
@@ -347,11 +357,45 @@ public class ApkInstallWizard
 		    
 		    public void setState(int state) {
 		    	
-		    	if(this.state == state) return;		    	
-		    	setAnimation();		    	
-		    	this.state = state;
+		    	if(colorbase.state == state) return;		    	
+		    	colorbase.setAnimation();		    	
+		    	colorbase.state = state;
 		    }
 		}
+		
+		public class AnimationLabel extends JLabel {
+			private static final long serialVersionUID = 4192134315491972328L;
+			ColorBase colorbase;
+			
+			public AnimationLabel(String string, int center) {
+				// TODO Auto-generated constructor stub
+				super(string, center);
+				colorbase = new ColorBase(this);
+				colorbase.state = 0;				
+			}
+			public void paintComponent(Graphics g)
+		    {
+				super.paintComponent(g);
+				Dimension size = getSize();
+				Graphics2D g2 = (Graphics2D) g;
+		        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+		        
+		    	if(colorbase.isAnimation) {
+		    		this.setForeground(colorbase.currentColor);
+		    	} else {
+		    		this.setForeground(Colorset[colorbase.state]);
+		    	}		    	
+		    	
+		    }
+		    public void setState(int state) {
+		    	
+		    	if(colorbase.state == state) return;		    	
+		    	colorbase.setAnimation();		    	
+		    	colorbase.state = state;
+		    }
+		}
+		
 		
 	    private GridBagConstraints addGrid(GridBagConstraints gbc, Component c, 
                   int gridx, int gridy, int gridwidth, int gridheight, int weightx, int weighty) {
@@ -370,7 +414,7 @@ public class ApkInstallWizard
 			ProgressStepPanel = new JPanel();
 			ProgressStepPanel.setLayout(new GridBagLayout());
 			ProgressStepPanel.setBackground(Color.WHITE);
-			            
+			
 			
 			TextStepPanel = new JPanel();
 			TextStepPanel.setLayout(new GridLayout(1,STEPMAX));
@@ -381,12 +425,10 @@ public class ApkInstallWizard
             gbc.fill = GridBagConstraints.BOTH;
 			
             for(int i=0; i< STEPMAX; i++) {
-            	JLabel label = new JLabel(outtexts[i], SwingConstants.CENTER);
-            	label.setFont(new Font(label.getFont().getName(), Font.PLAIN, 14));
-            	
-            	TextStepPanel.add(label);
+            	animatlabel[i] = new AnimationLabel(outtexts[i], SwingConstants.CENTER);
+            	animatlabel[i].setFont(new Font(animatlabel[i].getFont().getName(), Font.BOLD, 14));            	
+            	TextStepPanel.add(animatlabel[i]);
             }
-            
             
             JPanel marginlabel = new JPanel();
             marginlabel.setBackground(Color.WHITE);			
@@ -395,7 +437,7 @@ public class ApkInstallWizard
 				ellipselabel[i] = new EllipseLayout();
 				ellipselabel[i].setOpaque(true);
 				ellipselabel[i].setDescriptionText(outtexts[i]);
-				ellipselabel[i].setEllipseText(""+i);				
+				ellipselabel[i].setEllipseText(""+i);
 				ProgressStepPanel.add(ellipselabel[i], addGrid(gbc, ellipselabel[i], i*2+1, 0, 1, 1, 1, 1));
 				
 				linelabel[i] = new Linelayout();
@@ -429,6 +471,7 @@ public class ApkInstallWizard
 			if(state==0) {
 				for(int i=0; i< STEPMAX; i++) {
 					ellipselabel[i].setState(COLOR_STEP_NOTFINISH);
+					animatlabel[i].setState(COLOR_STEP_NOTFINISH);
 				}
 				for(int i=0; i< STEPMAX-1; i++) {
 					linelabel[i].setState(COLOR_STEP_NOTFINISH);
@@ -437,15 +480,17 @@ public class ApkInstallWizard
 			}
 			
 			for(int i=1; i <= state; i++) {
-				ellipselabel[i-1].setState(COLOR_STEP_FINISHED);				
+				ellipselabel[i-1].setState(COLOR_STEP_FINISHED);
+				animatlabel[i-1].setState(COLOR_STEP_FINISHED);
 				if(i!=state)linelabel[i-1].setState(COLOR_STEP_FINISHED);
 			}
 			for(int i=state; i< STEPMAX; i++) {
 				ellipselabel[i].setState(COLOR_STEP_NOTFINISH);
+				animatlabel[i].setState(COLOR_STEP_NOTFINISH);
 			}			
 			linelabel[state-1].setState(COLOR_STEP_NOTFINISH);
 			ellipselabel[state-1].setState(COLOR_STEP_PROCESSING);
-			
+			animatlabel[state-1].setState(COLOR_STEP_PROCESSING);			
 		}
 		
 		public void setStatus(int status) {
