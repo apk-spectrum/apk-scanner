@@ -14,7 +14,6 @@ import org.apache.commons.cli.ParseException;
 
 import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
-import com.apkscanner.gui.dialog.ApkInstallWizard.InstallButtonStatusListener;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.adb.AdbWrapper;
@@ -224,21 +223,9 @@ public class Main
 		Log.v("install() " + apkFilePath);
 		
 		if(!cmd.hasOption("c") && !cmd.hasOption("cui")) {
-			String tempPath = FileUtil.makeTempPath(apkFilePath.substring(apkFilePath.lastIndexOf(File.separator)));
-			String libPath = tempPath + File.separator + "lib" + File.separator;
-			String packageName = AaptNativeWrapper.Dump.getBadging(apkFilePath, false)[0].replaceAll(".* name='([^']*)'.*", "$1");
-			Log.i("package : " + packageName);
-			new ApkInstallWizard(null, true, packageName, apkFilePath, libPath,
-					(boolean)Resource.PROP_CHECK_INSTALLED.getData(false), false, new InstallButtonStatusListener() {
-				@Override
-				public void SetInstallButtonStatus(Boolean Flag) { }
-
-				@Override
-				public void OnOpenApk(String path) {
-					if((new File(path)).exists())
-						Launcher.run(path);
-				}
-			});
+			ApkInstallWizard wizard = new ApkInstallWizard();
+			wizard.setApk(apkFilePath);
+			wizard.start();
 		} else {
 			
 		}

@@ -17,15 +17,12 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.geom.Ellipse2D;
@@ -59,6 +56,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
 
 import com.apkscanner.Launcher;
 import com.apkscanner.core.installer.ApkInstaller;
@@ -69,10 +69,11 @@ import com.apkscanner.core.scanner.ApkScannerStub.Status;
 import com.apkscanner.data.apkinfo.ActivityAliasInfo;
 import com.apkscanner.data.apkinfo.ActivityInfo;
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.gui.dialog.install.InstallDlg;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.gui.util.ImagePanel;
+import com.apkscanner.gui.util.SimpleCheckTableModel;
+import com.apkscanner.gui.util.SimpleCheckTableModel.TableRowObject;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbDeviceManager;
 import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
@@ -82,7 +83,6 @@ import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
-import com.apkscanner.gui.util.*;
 
 public class ApkInstallWizard
 {
@@ -222,9 +222,7 @@ public class ApkInstallWizard
         private Linelayout[] linelabel = new Linelayout[STEPMAX-1];
         private AnimationLabel[] animatlabel = new AnimationLabel[STEPMAX];
         
-		public class ColorBase{
-			private static final long serialVersionUID = -2274026145500203594L;
-
+		public class ColorBase {
 			int state;
 	        public Timer timer = null;
 	        public Color currentColor;
@@ -342,6 +340,7 @@ public class ApkInstallWizard
 		    	colorbase.state = state;
 		    }
 		}
+		
 		public class Linelayout extends JLabel {
 			private static final long serialVersionUID = 4192134315491972328L;
 			ColorBase colorbase;
@@ -384,7 +383,6 @@ public class ApkInstallWizard
 			ColorBase colorbase;
 			
 			public AnimationLabel(String string, int center) {
-				// TODO Auto-generated constructor stub
 				super(string, center);
 				colorbase = new ColorBase(this);
 				colorbase.state = 0;				
@@ -554,78 +552,153 @@ public class ApkInstallWizard
 		public static final String CONTENT_SET_INSTALL_OPTION = "CONTENT_SET_INSTALL_OPTION";
 		public static final String CONTENT_INSTALLING = "CONTENT_INSTALLING";
 		public static final String CONTENT_COMPLETED = "CONTENT_COMPLETED";
+		
 
-        String[] columnNames = {"First Name",
-                "Last Name",
-                "Sport",
-                "# of Years",
-                "Vegetarian"};
+		public static final String CTT_ACT_CMD_REFRESH = "CTT_ACT_CMD_REFRESH";
+		public static final String CTR_ACT_CMD_SELECT_ALL = "CTR_ACT_CMD_SELECT_ALL";
+		
+		
+		JButton refreshButton;
+		JButton selectAllButton;
 
+		
+		public class DeviceTableObject implements TableRowObject {
+			public Boolean buse;
+			public DeviceStatus devInfo;
+			
+			public DeviceTableObject(Boolean buse, DeviceStatus devInfo) {
+				this.buse = buse;
+				this.devInfo = devInfo;
+			}
+			
+			@Override
+			public Object get(int columnIndex) {
+		    	switch(columnIndex) {
+		    	case 0:
+		    		return buse;        		
+		    	case 1:
+		    		return devInfo.name;
+		    	case 2:
+		    		return devInfo.model;
+		    	case 3:
+		    		return devInfo.device;
+		    	case 4:
+		    		return devInfo.status;
+		    	}
+		    	return null;
+			}
+
+			@Override
+			public void set(int columnIndex, Object obj) {
+		    	switch(columnIndex) {
+		    	case 0:
+		    		buse = (Boolean) obj;
+		    		break;        		
+		    	default:
+		    		break;
+		    	}
+			}
+		}
+
+		String[] columnNames = {"", "SERIAL NUMBER", "MODEL", "PROJECT", "STATUS"};
+		private JTable targetDeviceTable;
+		private ArrayList<TableRowObject> tableDatas;
 		
 		private JPanel panel_select_device;
 		private JPanel panel_check_package;
 		private JPanel panel_set_install_option;
 		
-		  class MyCellRenderer extends JCheckBox implements ListCellRenderer{
-			    public MyCellRenderer() {
-			    }
-
-			    public Component getListCellRendererComponent(
-			      JList list,
-			      Object value,
-			      int index,
-			      boolean isSelected,
-			      boolean cellHasFocus){
-
-			      /* 項目の値を読み出して改めて表示する */
-			      JCheckBox checkBox = (JCheckBox)value;
-			      setText(checkBox.getText());
-
-			      return this;
-			    }
-			  }
+		private void updateSelectedAllButtonUI(SimpleCheckTableModel tableModel) {
+			int rowCount = tableModel.getRowCount();
+			int selectedRowCount = tableModel.getSelectedRowCount();
+			if(rowCount > 0) {
+				if(rowCount == selectedRowCount) {
+					selectAllButton.setText("Unselect All");
+				} else {
+					selectAllButton.setText("Select All");
+				}
+				selectAllButton.setEnabled(true);
+			} else {
+				selectAllButton.setText("Select All");
+				selectAllButton.setEnabled(false);
+			}
+		}
 		
-		void init_Panel_select_device() {
+		private JPanel createSelectDevicePanel(final ActionListener listener) {
+			final JPanel newSelctDevicePanel = new JPanel(new BorderLayout());
+		
+			JLabel textSelectDevice = new JLabel("Select target device!");
+			textSelectDevice.setFont(new Font(textSelectDevice.getFont().getName(), Font.PLAIN, 30));
 			
-			panel_select_device.setLayout(new BorderLayout());			
+			
+			
+			targetDeviceTable = new JTable();
+			tableDatas = new ArrayList<TableRowObject>();
+
+	        final SimpleCheckTableModel tableModel = new SimpleCheckTableModel(columnNames, tableDatas);
+	        tableModel.addTableModelListener(new TableModelListener() {
+				@Override
+				public void tableChanged(TableModelEvent arg0) {
+					if(arg0.getColumn() != 0) return;
+					SimpleCheckTableModel tableModel = (SimpleCheckTableModel)arg0.getSource();
+					if(tableModel.getRowCount() > 0) {
+						for(int row = arg0.getFirstRow(); row <= arg0.getLastRow(); row++) {
+							boolean checked = (boolean)tableModel.getValueAt(row, 0);
+							if(checked) {
+								String status = (String)tableModel.getValueAt(row, 4);
+								if(!"device".equals(status)) {
+									tableModel.setValueAt(false, row, 0);
+								}
+							}
+						}
+					}
+					updateSelectedAllButtonUI(tableModel);
+				}
+			});
+	        targetDeviceTable.setModel(tableModel);
+			
+			targetDeviceTable.setPreferredScrollableViewportSize(targetDeviceTable.getPreferredSize());
+			targetDeviceTable.setFillsViewportHeight(true);
+			//setJTableColumnsWidth(targetDevices,550,10,120,410);
+			//targetDeviceTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+	        JScrollPane targetDevicesPane = new JScrollPane(targetDeviceTable);
+			
+			refreshButton = new JButton("REFRESH(F5)");
+			refreshButton.setActionCommand(CTT_ACT_CMD_REFRESH);
+			refreshButton.addActionListener(listener);
+
+			selectAllButton = new JButton("Select All");
+			selectAllButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					int rowCount = tableModel.getRowCount();
+					int selectedRowCount = tableModel.getSelectedRowCount();
+					boolean check = rowCount != selectedRowCount;
+
+					for(TableRowObject rowObj : tableDatas) {
+						rowObj.set(0, check && "device".equals(rowObj.get(4)));
+					}
+	    			
+					((AbstractTableModel) targetDeviceTable.getModel()).fireTableDataChanged();
+					targetDeviceTable.updateUI();
+					newSelctDevicePanel.repaint();
+					
+					updateSelectedAllButtonUI(tableModel);
+					listener.actionPerformed(arg0);
+				}
+			});
+			updateSelectedAllButtonUI(tableModel);
 			
 			JPanel buttonsetPanel = new JPanel(new BorderLayout());
-			
-			JLabel textSelectDevice = new JLabel("please select device!");
-			
-			textSelectDevice.setFont(new Font(textSelectDevice.getFont().getName(), Font.BOLD, 50));
-			
-			
-			JButton refreshButton = new JButton("Refresh(F5");
-			JButton rejectButton = new JButton("Select all / reject");
-			
-			
-			DefaultListModel model;
-		    model = new DefaultListModel();
-		    String[] initData = {"Blue", "Green", "Red", "Whit", "Black"};
-		    for (int i = 0 ; i < initData.length ; i++){
-		      /* 指定した文字列を持つチェックボックスをJListに登録する */
-		      model.addElement(new JCheckBox(initData[i]));
-		    }
-		    final JList Listtable  = new JList(model);
-
-		    /* CellRendererを設定する */
-		    MyCellRenderer renderer = new MyCellRenderer();
-		    Listtable.setCellRenderer(renderer);
-
-			Listtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			
-			//Listtable.add("aaa");
-			
-			
-			
-			JScrollPane scrollPane = new JScrollPane(Listtable);
-			
 			buttonsetPanel.add(refreshButton, BorderLayout.WEST);
-			buttonsetPanel.add(rejectButton, BorderLayout.EAST);			
-			panel_select_device.add(textSelectDevice,BorderLayout.NORTH);
-			panel_select_device.add(scrollPane,BorderLayout.CENTER);
-			panel_select_device.add(buttonsetPanel,BorderLayout.SOUTH);			
+			buttonsetPanel.add(selectAllButton, BorderLayout.EAST);	
+			
+			
+			newSelctDevicePanel.add(textSelectDevice,BorderLayout.NORTH);
+			newSelctDevicePanel.add(targetDevicesPane,BorderLayout.CENTER);
+			newSelctDevicePanel.add(buttonsetPanel,BorderLayout.SOUTH);
+			
+			return newSelctDevicePanel;
 		}
 		
 		void init_Panel_check_package() {
@@ -752,7 +825,7 @@ public class ApkInstallWizard
 			initPanel.add(new JLabel("scanning devices..."));
 			initPanel.add(new ImagePanel(Resource.IMG_WAIT_BAR.getImageIcon()));
 			
-			panel_select_device = new JPanel();
+			panel_select_device = createSelectDevicePanel(listener);
 			panel_check_package = new JPanel();
 			panel_set_install_option = new JPanel();
 			
@@ -765,7 +838,7 @@ public class ApkInstallWizard
 			add(new JPanel(), CONTENT_INSTALLING);
 			add(new JPanel(), CONTENT_COMPLETED);
 			
-			init_Panel_select_device();
+
 			init_Panel_check_package();
 			init_Panel_set_install_option();
 			// set status
@@ -785,19 +858,18 @@ public class ApkInstallWizard
 				// set UI Data of device list 
 				if(targetDevices.length == 0) {
 					// disable select_all & next button 
+					
 				} else {
 					// enable select_all & next button
 				}
 				
 				if(status == STATUS_DEVICE_REFRESH) {
-					// clear listview
+					tableDatas.clear();
 				}
 				
-				// if() listview was not empty
-				{
+				if(!tableDatas.isEmpty()) {
 					boolean isAllSelected = true;
-					//for(DeviceStatus dev: targetDevices)
-					{
+					for(DeviceStatus dev: targetDevices) {
 						// such dev.name in listview
 						// isAllSelected = false;
 					}
@@ -806,20 +878,18 @@ public class ApkInstallWizard
 					} else {
 						// edit label to select_all
 					}
-				} 
-				//else
-				{
+				} else {
 					// add devise to listview
 					for(DeviceStatus dev: targetDevices) {
-						if(dev.status.equals("device")) {
-							// default check;
-							Log.e(">>>>>> add listview " + dev.name + "(" + dev.device + ")");
-						} else {
-							// uncheck;
-							Log.e(">>>>>> add listview " + dev.name + "(Unknown) - " + dev.status);
-						}
+						tableDatas.add(new DeviceTableObject("device".equals(dev.status), dev));
 					}
 				}
+
+    			((AbstractTableModel) targetDeviceTable.getModel()).fireTableDataChanged();
+				targetDeviceTable.updateUI();
+				panel_select_device.repaint();
+				
+				updateSelectedAllButtonUI((SimpleCheckTableModel) targetDeviceTable.getModel());
 				
 				if(status == STATUS_DEVICE_REFRESH) {
 					break;
@@ -942,6 +1012,23 @@ public class ApkInstallWizard
 		private void appendLog(String msg) {
 			// append to log viewer
 			
+		}
+
+		public DeviceStatus[] getSelectedDevices() {
+			DeviceStatus[] selectedDevices = null;
+			//
+			SimpleCheckTableModel model = (SimpleCheckTableModel)targetDeviceTable.getModel();
+			if(model.getSelectedRowCount() > 0) {
+				selectedDevices = new DeviceStatus[model.getSelectedRowCount()];
+				int i = 0;
+				for(TableRowObject rowObj : tableDatas) {
+					if((boolean)rowObj.get(0)) {
+						selectedDevices[i++] = ((DeviceTableObject)rowObj).devInfo;
+					}
+				}
+			}
+			
+			return selectedDevices;
 		}
 	}
 	
@@ -1164,16 +1251,19 @@ public class ApkInstallWizard
 					break;
 				}
 			case STATUS_SELECT_DEVICE:
+				if(status == STATUS_SELECT_DEVICE) {
+					targetDevices = contentPanel.getSelectedDevices();
+				}
 				if(targetDevices != null) {
 					boolean isAllOnline = true;
 					for(DeviceStatus dev: targetDevices) {
 						// such dev.name in listview
-						if("".equals(dev.status)) {
+						if(!"device".equals(dev.status)) {
 							isAllOnline = false;
 							break;
 						}
 					}
-					if(isAllOnline) {
+					if(targetDevices.length > 0 && isAllOnline) {
 						changeState(STATUS_PACKAGE_SCANNING);
 					} else if(status == STATUS_DEVICE_SCANNING) {
 						changeState(STATUS_SELECT_DEVICE);
@@ -1647,7 +1737,7 @@ public class ApkInstallWizard
 				}
 			} else if(ControlPanel.CTR_ACT_CMD_RESTART.equals(arg0.getActionCommand())) {
 				restart();
-			} else if("REFRESH".equals(arg0.getActionCommand())) {
+			} else if(ContentPanel.CTT_ACT_CMD_REFRESH.equals(arg0.getActionCommand())) {
 				new Thread(new Runnable() {
 					public void run()
 					{
@@ -1695,445 +1785,11 @@ public class ApkInstallWizard
 		@Override public void windowDeactivated(WindowEvent e) { }
 	};
 	
-		
-	static private String strPackageName;
-	private static String strSourcePath;
-	private static String strLibPath;
-	private static String tmpApkPath;
-	private static boolean checkPackage;
-	private static boolean samePackage;
-	static private Thread t;
-	
-	//window position
-	//static private int nPositionX, nPositionY;
-	
-	public interface InstallButtonStatusListener
-	{
-		public void SetInstallButtonStatus(Boolean Flag);
-		public void OnOpenApk(String path);
-	}
-	
-	public interface InstallDlgFuncListener {
-		public void Complete(String str);
-		public int ShowQuestion(Runnable runnable, Object message, String title, int optionType, int messageType, Icon icon, Object[] options, Object initialValue);
-		public void AddLog(String str);
-		public int getResult();
-		public void SetResult(int i);
-		public int ShowDeviceList(Runnable runnable);
-		public void AddCheckList(String name, String t, InstallDlg.CHECKLIST_MODE mode);		
-		DeviceStatus getSelectDev();
-		public int getValue(String text);
-	}
-	private static InstallButtonStatusListener Listener;
-	private static InstallDlgFuncListener InstallDlgListener;
-	
-	
-	public ApkInstallWizard(Frame owner, Boolean isOnlyInstall, String PackageName, String apkPath, String libPath, 
-			final boolean samePackage, final boolean checkPackage, final InstallButtonStatusListener Listener)
-	{
-
-		
-		
-		strPackageName = PackageName;
-		strSourcePath = apkPath;
-		strLibPath = libPath;
-		ApkInstallWizard.checkPackage = checkPackage;
-		ApkInstallWizard.samePackage = samePackage;
-		
-		//ShowSetupLogDialog();
-		//dialogLogArea.setText("");
-		
-		ApkInstallWizard.Listener = Listener; 
-		
-		
-		//InstallDlg dlg = new InstallDlg(owner, isOnlyInstall);
-		//InstallWizardDlg Dlg = new InstallWizardDlg();
-		
-//		ApkInstallWizard.InstallDlgListener = Dlg.getInstallDlgFuncListener();
-//		Dlg.showTreeDlg(owner);
-		
-		t = new InstallThread();
-		t.start();
-	}
-	
-	static class InstallThread extends Thread {
-		
-		final ImageIcon Appicon = Resource.IMG_QUESTION.getImageIcon();
-        final Object[] options = {Resource.STR_BTN_PUSH.getString(), Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_CANCEL.getString()};
-        final Object[] checkPackOptions = {Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_CANCEL.getString()};
-        final Object[] checkPackDelOptions = {Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_DEL.getString(), Resource.STR_BTN_CANCEL.getString()};
-        final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
-		
-		public InstallThread() {
-			
-		}
-		
-		private class AdbWrapperObserver implements ApkInstallerListener
-		{
-			
-			private final ImageIcon QuestionAppicon;
-			private final ImageIcon WaringAppicon;
-			private final ImageIcon SucAppicon;
-			
-			public AdbWrapperObserver()
-			{
-				QuestionAppicon = Resource.IMG_QUESTION.getImageIcon();
-				WaringAppicon = Resource.IMG_WARNING.getImageIcon();
-				SucAppicon = Resource.IMG_SUCCESS.getImageIcon();
-			}
-			
-			@Override
-			public void OnMessage(String msg) {
-				printlnLog(msg);
-			}
-
-			@Override
-			public void OnError(int cmdType, String device) {
-				if(cmdType == ApkInstallerListener.CMD_PUSH) {
-					printlnLog("Failure...");
-					//JOptionPane.showMessageDialog(null, "Failure...", "Error",JOptionPane.ERROR_MESSAGE, WaringAppicon);
-				} else if(cmdType == ApkInstallerListener.CMD_INSTALL) {
-					//JOptionPane.showMessageDialog(null, "Failure...", "Error", JOptionPane.ERROR_MESSAGE, WaringAppicon);
-				} else if(cmdType == ApkInstallerListener.CMD_PULL) {
-					//JOptionPane.showMessageDialog(null, "Failure...", "Error", JOptionPane.ERROR_MESSAGE, WaringAppicon);
-				}
-				InstallDlgListener.AddCheckList("Install", "fail" , InstallDlg.CHECKLIST_MODE.ERROR);
-				
-				ShowQuestion(t, Resource.STR_MSG_FAILURE_INSTALLED.getString(), Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, WaringAppicon,
-			    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
-			}
-
-			@Override
-			public void OnSuccess(int cmdType, String device) {
-				if(cmdType == ApkInstallerListener.CMD_PUSH) {
-					final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
-					InstallDlgListener.AddCheckList("Push", "Success" , InstallDlg.CHECKLIST_MODE.DONE);
-					
-					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_REBOOT.getString(), "-" , InstallDlg.CHECKLIST_MODE.QEUESTION);
-					int reboot = ShowQuestion(t, Resource.STR_MSG_SUCCESS_INSTALLED.getString() + "\n" + Resource.STR_QUESTION_REBOOT_DEVICE.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.YES_NO_OPTION, 
-							JOptionPane.QUESTION_MESSAGE, QuestionAppicon, yesNoOptions, yesNoOptions[1]);
-					
-					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_REBOOT.getString(), (reboot==0)?"true":"false" , InstallDlg.CHECKLIST_MODE.DONE);
-					
-					if(reboot == 0){
-						printlnLog("Wait for reboot...");
-						AdbWrapper.reboot(device, null);
-						printlnLog("Reboot...");
-					}
-				} else if(cmdType == ApkInstallerListener.CMD_INSTALL) {
-					//JOptionPane.showMessageDialog(null, "Success", "Complete", JOptionPane.INFORMATION_MESSAGE, SucAppicon);
-						InstallDlgListener.AddCheckList("Install", "Success" , InstallDlg.CHECKLIST_MODE.DONE);
-						ShowQuestion(t, Resource.STR_MSG_SUCCESS_INSTALLED.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, SucAppicon,
-				    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
-				} else if(cmdType == ApkInstallerListener.CMD_PULL) {
-					InstallDlgListener.AddCheckList("Pull success", "Done" , InstallDlg.CHECKLIST_MODE.DONE);					
-					if(Listener != null) Listener.OnOpenApk(tmpApkPath);
-					InstallDlgListener.AddCheckList("Open APK", "Done" , InstallDlg.CHECKLIST_MODE.ADD);
-				} 
-			}
-
-			@Override
-			public void OnCompleted(int cmdType, String device) {
-				Listener.SetInstallButtonStatus(true);
-//				ShowQuestion(t, "완료", Resource.STR_LABEL_INFO.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, SucAppicon,
-//			    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
-				//installPanel.setVisible(false);
-			}
-		}
-		
-		
-		private int ShowQuestion(Runnable runnable, Object message, String title, int optionType, int messageType, Icon icon, Object[] options, Object initialValue) {
-			Object[] temp = new Object[options.length];
-			
-			for(int i=0; i<options.length; i++) {
-				temp[options.length-1-i] = options[i];
-			}		
-			@SuppressWarnings("unused")
-			int result = InstallDlgListener.ShowQuestion(runnable,message,title,optionType,messageType, icon, temp, initialValue);
-			
-			if(runnable!=null) {
-				synchronized (runnable) {
-					try {
-						runnable.wait();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			return InstallDlgListener.getResult();
-		}
-		
-		private void printlnLog(String msg)
-		{
-			Log.i(msg);
-			if(InstallDlgListener != null) {
-				InstallDlgListener.AddLog(msg);
-			}
-		}
-		
-		private int showDeviceList(Runnable runnable) {
-			
-			@SuppressWarnings("unused")
-			int result = InstallDlgListener.ShowDeviceList(runnable);
-			
-			synchronized (runnable) {
-				try {
-					runnable.wait();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-			
-			return InstallDlgListener.getResult();
-		}
-		
-		public void run(){
-			try {
-				DeviceStatus[] DeviceList;
-				
-				do {
-					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString(), "", InstallDlg.CHECKLIST_MODE.WATING);
-					printlnLog("scan devices...");
-					DeviceList = AdbDeviceManager.scanDevices();
-					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString(), "", InstallDlg.CHECKLIST_MODE.DONE);
-					
-					if(DeviceList.length == 0) {
-						printlnLog("Device not found!\nplease check device");
-						Listener.SetInstallButtonStatus(true);
-						final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
-						
-						Log.d("show Question");
-						
-						int n = ShowQuestion(this, Resource.STR_MSG_DEVICE_NOT_FOUND.getString(), Resource.STR_LABEL_WARNING.getString(), JOptionPane.WARNING_MESSAGE, JOptionPane.WARNING_MESSAGE, Appicon,
-					    		new String[] {Resource.STR_BTN_REFRESH.getString(), Resource.STR_BTN_CANCEL.getString()}, Resource.STR_BTN_REFRESH.getString());
-						
-						//InstallDlgListener.AddCheckList(Resource.STR_MSG_DEVICE_NOT_FOUND.getString(), "-", InstallDlg.CHECKLIST_MODE.ERROR);
-						
-						//int n = InstallDlgListener.getResult();
-						Log.d(n+"");
-						
-						if(n==-1 || n==1) {								
-							return;
-						}
-					} else {
-						break;
-					}
-				} while(true);
-				DeviceStatus dev = DeviceList[0];
-								
-				if(DeviceList.length > 1 || (DeviceList.length == 1 && !dev.status.equals("device"))) {
-					//int selectedValue = DeviceListDialog.showDialog();
-					//Log.i("Seltected index : " + selectedValue);
-					
-					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString() + " List", "", InstallDlg.CHECKLIST_MODE.QEUESTION);
-					int selectedValue = showDeviceList(this);
-					if(selectedValue == -1) {
-						Listener.SetInstallButtonStatus(true);
-						
-						return;
-					}
-					dev = InstallDlgListener.getSelectDev();
-					
-//					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString() + " List", dev.name +
-//							"(" + dev.device + ")", InstallDlg.CHECKLIST_MODE.DONE);
-					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString()+ " List", dev.name +
-							"(" + dev.device + ")", InstallDlg.CHECKLIST_MODE.DONE);
-				} else {
-					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_DEVICE.getString(), dev.name +
-							"(" + dev.device + ")", InstallDlg.CHECKLIST_MODE.DONE);
-				}
-
-				printlnLog(dev.getSummary());
-				
-				
-				
-				boolean alreadyCheak = false;
-				printlnLog("getPackageInfo() " + strPackageName);
-				PackageInfo pkgInfo = AdbPackageManager.getPackageInfo(dev.name, strPackageName);
-				
-				if(pkgInfo==null) {
-					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_VERSION.getString(), "not install", InstallDlg.CHECKLIST_MODE.ADD);
-				} else {
-					InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_VERSION.getString(), pkgInfo.versionName + "/"+pkgInfo.versionCode , InstallDlg.CHECKLIST_MODE.ADD);
-				}
-				
-				if(checkPackage) {
-					alreadyCheak = true;
-					if(pkgInfo != null) {
-						String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
-						boolean isDeletePossible = true;
-						if(pkgInfo.isSystemApp == true && AdbWrapper.root(dev.name, null) != true) {
-							isDeletePossible = false;
-						}
-						
-						InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_ROOT.getString(), ""+isDeletePossible , InstallDlg.CHECKLIST_MODE.ADD);
-						
-						
-						int n;
-						if(isDeletePossible) {
-							InstallDlgListener.AddCheckList(""+checkPackDelOptions[0] +"/"+ checkPackDelOptions[1]+"/" + checkPackDelOptions[2], "-" , InstallDlg.CHECKLIST_MODE.QEUESTION);							
-							n=ShowQuestion(this, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_OPEN_OR_INSTALL.getString(),
-									Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, checkPackDelOptions, checkPackDelOptions[3]);
-							InstallDlgListener.AddCheckList(""+checkPackDelOptions[n], ""+checkPackDelOptions[n] , InstallDlg.CHECKLIST_MODE.DONE);
-							
-							
-						} else {
-							InstallDlgListener.AddCheckList(""+checkPackOptions[0] +"/"+ checkPackOptions[1] , "-" , InstallDlg.CHECKLIST_MODE.QEUESTION);
-							n=ShowQuestion(this, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_OPEN_OR_INSTALL.getString(),
-									Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, checkPackOptions, checkPackOptions[2]);
-							InstallDlgListener.AddCheckList(""+checkPackOptions[n], ""+checkPackOptions[n] , InstallDlg.CHECKLIST_MODE.DONE);
-						}
-						
-						
-						Log.i("Seltected index : " + n);
-						if(n==-1 || (!isDeletePossible && n==2) || (isDeletePossible && n==3)) {
-							Listener.SetInstallButtonStatus(true);
-							
-							return;
-						}
-						ApkInstaller apkInstaller = new ApkInstaller(dev.name, new AdbWrapperObserver());
-						if(n==0) {
-							String tmpPath = "/" + dev.name + pkgInfo.apkPath;
-							tmpPath = tmpPath.replaceAll("/", File.separator+File.separator).replaceAll("//", "/");
-							tmpPath = FileUtil.makeTempPath(tmpPath)+".apk";
-							tmpApkPath = tmpPath; 
-							//Log.i(tmpPath);
-							InstallDlgListener.AddCheckList("Pull APK", "working" , InstallDlg.CHECKLIST_MODE.WATING);
-							apkInstaller.pullApk(pkgInfo.apkPath, tmpPath);							
-							return;
-						}
-						if(n==2) {
-							//uninstallPanel.setVisible(true);
-							if(pkgInfo.isSystemApp) {
-								printlnLog("adb shell rm " + pkgInfo.codePath);
-								
-								InstallDlgListener.AddCheckList("remove APK", "working" , InstallDlg.CHECKLIST_MODE.WATING);
-								apkInstaller.removeApk(pkgInfo.codePath);
-								InstallDlgListener.AddCheckList("remove APK", "Done" , InstallDlg.CHECKLIST_MODE.DONE);
-								
-								InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_REBOOT.getString(), "-" , InstallDlg.CHECKLIST_MODE.QEUESTION);
-								final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
-								int reboot = ShowQuestion(this, Resource.STR_QUESTION_REBOOT_DEVICE.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.YES_NO_OPTION, 
-										JOptionPane.QUESTION_MESSAGE, Appicon, yesNoOptions, yesNoOptions[1]);
-								InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_REBOOT.getString(), (reboot==0)?"true":"false" , InstallDlg.CHECKLIST_MODE.DONE);
-								if(reboot == 0){
-									printlnLog("Wait for reboot...");									
-									AdbWrapper.reboot(dev.name, null);
-									printlnLog("Reboot...");
-								}
-								
-							} else {
-								InstallDlgListener.AddCheckList("Uninstall APK", "-" , InstallDlg.CHECKLIST_MODE.WATING);
-								printlnLog("adb uninstall " + pkgInfo.pkgName);
-								apkInstaller.uninstallApk(pkgInfo.pkgName);
-								InstallDlgListener.AddCheckList("Uninstall APK", "Done" , InstallDlg.CHECKLIST_MODE.DONE);
-							}
-							printlnLog("compleate");
-							//uninstallPanel.setVisible(false);
-							Listener.SetInstallButtonStatus(true);
-							return;
-						}
-					} else {
-						//JOptionPane.showMessageDialog(null, "동일 패키지가 설치되어 있지 않습니다.", "Info", JOptionPane.INFORMATION_MESSAGE, Appicon);
-						InstallDlgListener.AddCheckList("Install", "-" , InstallDlg.CHECKLIST_MODE.QEUESTION);
-						int n = ShowQuestion(this, Resource.STR_MSG_NO_SUCH_PACKAGE.getString() + "\n" + Resource.STR_QUESTION_CONTINUE_INSTALL.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, Appicon,
-								yesNoOptions, yesNoOptions[1]);
-						InstallDlgListener.AddCheckList("Install", (n==0)?"Install":"not install" , InstallDlg.CHECKLIST_MODE.DONE);
-						if(n==-1 || n==1) {
-							Listener.SetInstallButtonStatus(true);
-							
-							return;
-						}
-					}
-				}
-				if(pkgInfo != null) {
-					printlnLog(pkgInfo.toString());
-					if(pkgInfo.isSystemApp == true) {
-						if(AdbWrapper.root(dev.name, null) == true) {
-							printlnLog("adbd is running as root");
-							String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
-							if(!checkPackage)InstallDlgListener.AddCheckList(Resource.STR_TREE_MESSAGE_ROOT.getString(), ""+AdbWrapper.root(dev.name, null) , InstallDlg.CHECKLIST_MODE.ADD);
-							
-							InstallDlgListener.AddCheckList("" + options[0] +"/"+ options[1], "-" , InstallDlg.CHECKLIST_MODE.QEUESTION);
-							int n = ShowQuestion(this, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_PUSH_OR_INSTALL.getString(),
-									Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, options, options[1]);
-							//Log.i("Seltected index : " + n);
-							
-							InstallDlgListener.AddCheckList(options[n] + "", (n==0) ?"push":"install", InstallDlg.CHECKLIST_MODE.DONE);
-							
-							if(n==-1 || n==2) {
-								Listener.SetInstallButtonStatus(true);
-								
-								InstallDlgListener.AddCheckList("Cancel", "cancel", InstallDlg.CHECKLIST_MODE.DONE);
-								return;
-							} 
-							if(n==0) {
-								printlnLog("Start push APK");
-								//installPanel.setVisible(true);
-								InstallDlgListener.AddCheckList("Push", "-" , InstallDlg.CHECKLIST_MODE.WATING);
-								new ApkInstaller(dev.name, new AdbWrapperObserver()).pushApk(strSourcePath, pkgInfo.apkPath, strLibPath);
-								
-								return;
-							}
-							alreadyCheak = true;
-						} else {
-							printlnLog("adbd cannot run as root in production builds");
-						}
-					}
-					if(samePackage && !alreadyCheak) {
-						String strLine = "━━━━━━━━━━━━━━━━━━━━━━\n";
-						InstallDlgListener.AddCheckList("Install", "-" , InstallDlg.CHECKLIST_MODE.QEUESTION);
-						int n = ShowQuestion(this, Resource.STR_MSG_ALREADY_INSTALLED.getString() + "\n"  +  strLine + pkgInfo + strLine + Resource.STR_QUESTION_CONTINUE_INSTALL.getString(),
-								Resource.STR_LABEL_WARNING.getString(), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, Appicon, yesNoOptions, yesNoOptions[1]);
-						//Log.i("Seltected index : " + n);
-						
-						InstallDlgListener.AddCheckList("Install", (n==-1 || n==1)?"Cancel":"Install" , InstallDlg.CHECKLIST_MODE.DONE);
-						
-						if(n==-1 || n==1) {
-							Listener.SetInstallButtonStatus(true);
-							
-							return;
-						}
-					}
-				}
-				printlnLog("Start install APK");
-				//installPanel.setVisible(true);
-				InstallDlgListener.AddCheckList("Install", "Install" , InstallDlg.CHECKLIST_MODE.WATING);
-				new ApkInstaller(dev.name, new AdbWrapperObserver()).installApk(strSourcePath, false);				
-			} finally {
-				//Listener.SetInstallButtonStatus(true);
-				InstallDlgListener.Complete("END");				
-			}		
-		}
-	}
-
-	@SuppressWarnings("deprecation")
-	static public void StopThead() {
-		
-		Listener.SetInstallButtonStatus(true);
-		t.stop();
-		try {
-			t.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-	}
-	static public void RestartThread() {
-		
-		Listener.SetInstallButtonStatus(false);
-		//t = new InstallThread();
-		if(!t.isAlive()){
-			t = new InstallThread();
-			t.start();
-		}
-	}
-	
     public static void main(String args[]) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
 				ApkInstallWizard wizard = new ApkInstallWizard();
-				wizard.setApk("/home/leejinhyeong/Desktop/DcmContacts.apk");
+				wizard.setApk("C:\\Melon.apk");
 				wizard.start();
 				//wizard.setVisible(true);
             }

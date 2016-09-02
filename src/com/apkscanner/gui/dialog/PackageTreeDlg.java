@@ -35,7 +35,8 @@ import javax.swing.event.TreeSelectionListener;
 import com.apkscanner.core.installer.ApkInstaller;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.ArrowTraversalPane;
-import com.apkscanner.gui.util.BooleanTableModel;
+import com.apkscanner.gui.util.SimpleCheckTableModel;
+import com.apkscanner.gui.util.SimpleCheckTableModel.TableRowObject;
 import com.apkscanner.gui.util.FilteredTreeModel;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbDeviceManager;
@@ -87,7 +88,7 @@ public class PackageTreeDlg extends JPanel
     private JTextField textFilField;
     private FilteredTreeModel filteredModel;
     
-	public class FrameworkTableObject {
+	public class FrameworkTableObject implements TableRowObject {
 		public Boolean buse;
 		public String location;
 		public String deviceID;
@@ -100,9 +101,37 @@ public class PackageTreeDlg extends JPanel
 			this.deviceID = deviceID;
 			this.path = path;
 		}
+		
+		@Override
+		public Object get(int columnIndex) {
+	    	switch(columnIndex) {
+	    	case 0:
+	    		return buse;        		
+	    	case 1:
+	    		return deviceID +"(" + location + ")";
+	    	case 2:
+	    		return path;
+	    	}
+	    	return null;
+		}
+
+		@Override
+		public void set(int columnIndex, Object obj) {
+	    	switch(columnIndex) {
+	    	case 0:
+	    		buse = (Boolean) obj;
+	    		break;        		
+	    	case 1:
+	    		location = (String) obj;
+	    		break;        		
+	    	case 2:
+	    		path = (String) obj;
+	    		break;
+	    	}
+		}
 	}
     
-    private ArrayList<FrameworkTableObject> tableListArray = new ArrayList<FrameworkTableObject>();
+    private ArrayList<TableRowObject> tableListArray = new ArrayList<TableRowObject>();
     private JTable table;
 
     public String getSelectedDevice() {
@@ -121,12 +150,13 @@ public class PackageTreeDlg extends JPanel
     	String resList = null;
     	if(checkboxUseframework.isSelected()) {
     		resList = "";
-    		for(FrameworkTableObject res: tableListArray) {
-    			if(!res.buse) continue;
-    			if(res.deviceID.equals("local")) {
-    				resList += res.path + ";";
+    		for(TableRowObject res: tableListArray) {
+    			FrameworkTableObject fwres = (FrameworkTableObject)res;
+    			if(!fwres.buse) continue;
+    			if(fwres.deviceID.equals("local")) {
+    				resList += fwres.path + ";";
     			} else {
-    				resList += "@" + res.deviceID + res.path + ";";
+    				resList += "@" + fwres.deviceID + fwres.path + ";";
     			}
     		}
     	}
@@ -264,6 +294,7 @@ public class PackageTreeDlg extends JPanel
 				tree.updateUI();
 				expandOrCollapsePath(tree, new TreePath(top.getPath()),3,0, true);
 
+				String[] columnNames = {"", Resource.STR_LABEL_DEVICE.getString(), Resource.STR_LABEL_PATH.getString()};
 				for(int i = 0; i < devList.length; i++) {
 					if(devList[i].status.equals("device")) {
 				        DefaultMutableTreeNode priv_app = new DefaultMutableTreeNode("priv-app");
@@ -316,7 +347,7 @@ public class PackageTreeDlg extends JPanel
 				        devTree[i].add(data);
 				        //add table
 				        
-				        table.setModel(new BooleanTableModel(tableListArray));
+				        table.setModel(new SimpleCheckTableModel(columnNames, tableListArray));
 				        table.setPreferredScrollableViewportSize(new Dimension(0,80));
 				        setJTableColumnsWidth(table,550,10,120,410);
 				        
@@ -332,7 +363,7 @@ public class PackageTreeDlg extends JPanel
 						if(s.isEmpty()) continue;
 						tableListArray.add(new FrameworkTableObject(false, "local", "local", s));
 					}
-			        table.setModel(new BooleanTableModel(tableListArray));
+			        table.setModel(new SimpleCheckTableModel(columnNames, tableListArray));
 			        table.setPreferredScrollableViewportSize(new Dimension(0,80));
 			        setJTableColumnsWidth(table,550,10,120,410);
 				}
@@ -1029,7 +1060,6 @@ public class PackageTreeDlg extends JPanel
     			
     			tableListArray.add(temp);
     			((AbstractTableModel) table.getModel()).fireTableDataChanged();
-    			
     			table.updateUI();
     			
 //    			for(String f: resList) {
