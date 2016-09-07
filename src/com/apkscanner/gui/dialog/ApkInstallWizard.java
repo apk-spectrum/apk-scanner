@@ -47,6 +47,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ListCellRenderer;
@@ -1092,7 +1093,11 @@ public class ApkInstallWizard
 
 			add(btnShowLog, BorderLayout.WEST);
 			add(stepPanel, BorderLayout.EAST);
-
+			
+			JSeparator separator = new JSeparator();
+			separator.setForeground(Color.LIGHT_GRAY);
+			add(separator, BorderLayout.NORTH);
+			
 			// set status
 			setStatus(STATUS_INIT);
 		}
