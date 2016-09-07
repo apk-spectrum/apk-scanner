@@ -33,6 +33,8 @@ import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -48,12 +50,15 @@ import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.Border;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
@@ -68,7 +73,7 @@ import com.apkscanner.core.scanner.ApkScannerStub.Status;
 import com.apkscanner.data.apkinfo.ActivityAliasInfo;
 import com.apkscanner.data.apkinfo.ActivityInfo;
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.gui.MainUI;
+import com.apkscanner.data.apkinfo.ManifestInfo;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.gui.util.ImagePanel;
@@ -295,11 +300,11 @@ public class ApkInstallWizard
 		
 		public class EllipseLayout extends JPanel {
 			private static final long serialVersionUID = 5831964884908650735L;
-			String outtext, intext;
+			String /*outtext,*/ intext;
 			ColorBase colorbase;
 			public EllipseLayout() {
 				super();
-				outtext = new String("");
+				//outtext = new String("");
 				intext = new String("");
 				colorbase = new ColorBase(this);				
 				colorbase.state = 0;
@@ -346,7 +351,7 @@ public class ApkInstallWizard
 		    }
 		    
 		    public void setDescriptionText(String str) {
-		    	outtext = str;
+		    	//outtext = str;
 		    }
 		    
 		    public void setState(int state) {
@@ -574,12 +579,19 @@ public class ApkInstallWizard
 		
 
 		public static final String CTT_ACT_CMD_REFRESH = "CTT_ACT_CMD_REFRESH";
-		public static final String CTR_ACT_CMD_SELECT_ALL = "CTR_ACT_CMD_SELECT_ALL";
+		public static final String CTT_ACT_CMD_SELECT_ALL = "CTR_ACT_CMD_SELECT_ALL";
 		
 		
-		private JButton refreshButton;
-		private JButton selectAllButton;
-
+		private JButton dev_refreshButton;
+		private JButton dev_selectAllButton;
+		
+		private JList<String> pack_deviceList;
+		private JTextArea pack_textPakcInfo;
+		private JComboBox<String> pack_comboStartActivity;
+		private JButton pack_btnSave;
+		private JButton pack_btnOpen;
+		private JButton pack_btnLaunch;
+		private JButton pack_btnRemove;
 		
 		public class DeviceTableObject implements TableRowObject {
 			public Boolean buse;
@@ -632,14 +644,14 @@ public class ApkInstallWizard
 			int selectedRowCount = tableModel.getSelectedRowCount();
 			if(rowCount > 0) {
 				if(rowCount == selectedRowCount) {
-					selectAllButton.setText("Unselect All");
+					dev_selectAllButton.setText("Unselect All");
 				} else {
-					selectAllButton.setText("Select All");
+					dev_selectAllButton.setText("Select All");
 				}
-				selectAllButton.setEnabled(true);
+				dev_selectAllButton.setEnabled(true);
 			} else {
-				selectAllButton.setText("Select All");
-				selectAllButton.setEnabled(false);
+				dev_selectAllButton.setText("Select All");
+				dev_selectAllButton.setEnabled(false);
 			}
 			if(controlPanel != null) {
 				controlPanel.btnNext.setEnabled(selectedRowCount != 0);
@@ -647,15 +659,15 @@ public class ApkInstallWizard
 		}
 		
 		public void refreshDeviceList() {
-			if(refreshButton == null || !refreshButton.isEnabled()) return;
-			refreshButton.setEnabled(false);
+			if(dev_refreshButton == null || !dev_refreshButton.isEnabled()) return;
+			dev_refreshButton.setEnabled(false);
 			new Thread(new Runnable() {
 				public void run()
 				{
 					synchronized(ApkInstallWizard.this) {
 						targetDevices = AdbDeviceManager.scanDevices();
 						setStatus(STATUS_DEVICE_REFRESH);
-						refreshButton.setEnabled(true);
+						dev_refreshButton.setEnabled(true);
 					}
 				}
 			}).start();
@@ -711,9 +723,9 @@ public class ApkInstallWizard
 			//targetDeviceTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 	        JScrollPane targetDevicesPane = new JScrollPane(targetDeviceTable);
 			
-			refreshButton = new JButton("Refresh(F5)");
-			refreshButton.setActionCommand(CTT_ACT_CMD_REFRESH);
-			refreshButton.addActionListener(new ActionListener() {
+			dev_refreshButton = new JButton("Refresh(F5)");
+			dev_refreshButton.setActionCommand(CTT_ACT_CMD_REFRESH);
+			dev_refreshButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					refreshDeviceList();
@@ -721,8 +733,8 @@ public class ApkInstallWizard
 				}
 			});
 
-			selectAllButton = new JButton("Select All");
-			selectAllButton.addActionListener(new ActionListener() {
+			dev_selectAllButton = new JButton("Select All");
+			dev_selectAllButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					int rowCount = tableModel.getRowCount();
@@ -744,8 +756,8 @@ public class ApkInstallWizard
 			updateSelectedAllButtonUI(tableModel);
 			
 			JPanel buttonsetPanel = new JPanel(new BorderLayout());
-			buttonsetPanel.add(refreshButton, BorderLayout.WEST);
-			buttonsetPanel.add(selectAllButton, BorderLayout.EAST);	
+			buttonsetPanel.add(dev_refreshButton, BorderLayout.WEST);
+			buttonsetPanel.add(dev_selectAllButton, BorderLayout.EAST);	
 			
 			GridBagConstraints gbc = new GridBagConstraints();            
             gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -774,31 +786,96 @@ public class ApkInstallWizard
 			JLabel textSelectDevice = new JLabel("installed same package!");
 			textSelectDevice.setFont(new Font(textSelectDevice.getFont().getName(), Font.PLAIN, 30));
 			
-			JList deviceList = new JList(columnNames);
-			JScrollPane listscrollPane = new JScrollPane(deviceList);
+			pack_deviceList = new JList<String>(new DefaultListModel<String>());
+			pack_deviceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			pack_deviceList.addListSelectionListener(new ListSelectionListener() {
+				@Override
+				public void valueChanged(ListSelectionEvent arg0) {
+					if(pack_deviceList.getSelectedIndex() <= -1) return;
+					String selDev = pack_deviceList.getSelectedValue();
+					for(int i=0; i < targetDevices.length; i++) {
+						if(targetDevices[i].toString().equals(selDev)) {
+							pack_textPakcInfo.setText(installedPackage[i].toString());
+							break;
+						}
+					}
+				}
+			});
+			JScrollPane listscrollPane = new JScrollPane(pack_deviceList);
 			
-			JTextArea textViewpackageInfo = new JTextArea();
-			JScrollPane textViewscrollPane = new JScrollPane(textViewpackageInfo);
+			pack_textPakcInfo = new JTextArea();
+			pack_textPakcInfo.setEditable(false);
+			JScrollPane textViewscrollPane = new JScrollPane(pack_textPakcInfo);
 			
-			JComboBox<String> comboStartActivity = new JComboBox<String>(columnNames);
+			pack_comboStartActivity = new JComboBox<String>(new DefaultComboBoxModel<String>());
 		    
-		    JButton startButton = new JButton("start app");	
-		    
-		    JButton openButton = new JButton("open");
-		    JButton saveButton = new JButton("save");
-		    JButton delButton = new JButton("delete");
+		    pack_btnLaunch = new JButton("Launch");
+		    pack_btnLaunch.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					String selDev = pack_deviceList.getSelectedValue();
+					for(DeviceStatus dev: targetDevices) {
+						if(dev.toString().equals(selDev)) {
+							launchApp(dev.name);
+							break;
+						}
+					}
+				}
+		    });
+		    pack_btnOpen = new JButton("Open");
+		    pack_btnOpen.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					if(pack_deviceList.getSelectedIndex() <= -1) return;
+					String selDev = pack_deviceList.getSelectedValue();
+					for(int i=0; i < targetDevices.length; i++) {
+						if(targetDevices[i].toString().equals(selDev)) {
+							openApk(targetDevices[i], installedPackage[i]);
+							break;
+						}
+					}
+				}
+		    });
+		    pack_btnSave = new JButton("Save");
+		    pack_btnSave.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					if(pack_deviceList.getSelectedIndex() <= -1) return;
+					String selDev = pack_deviceList.getSelectedValue();
+					for(int i=0; i < targetDevices.length; i++) {
+						if(targetDevices[i].toString().equals(selDev)) {
+							saveApk(targetDevices[i], installedPackage[i]);
+							break;
+						}
+					}
+				}
+		    });
+		    pack_btnRemove = new JButton("Remove");
+		    pack_btnRemove.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					if(pack_deviceList.getSelectedIndex() <= -1) return;
+					String selDev = pack_deviceList.getSelectedValue();
+					for(int i=0; i < targetDevices.length; i++) {
+						if(targetDevices[i].toString().equals(selDev)) {
+							uninstallApk(targetDevices[i], installedPackage[i]);
+							break;
+						}
+					}
+				}
+		    });
 		    
 		    setmargin(mainpanel,5);
 		    setmargin(packagepanel,5);
 		    setmargin(Listpanel,5);
 		    
 		    
-		    buttonpanel.add(openButton, BorderLayout.WEST);
-		    buttonpanel.add(saveButton, BorderLayout.CENTER);
-		    buttonpanel.add(delButton, BorderLayout.EAST);
+		    buttonpanel.add(pack_btnOpen, BorderLayout.WEST);
+		    buttonpanel.add(pack_btnSave, BorderLayout.CENTER);
+		    buttonpanel.add(pack_btnRemove, BorderLayout.EAST);
 		    
-		    appstartpanel.add(comboStartActivity, BorderLayout.CENTER);
-		    appstartpanel.add(startButton, BorderLayout.EAST);
+		    appstartpanel.add(pack_comboStartActivity, BorderLayout.CENTER);
+		    appstartpanel.add(pack_btnLaunch, BorderLayout.EAST);
 		    
 		    packagepanel.add(textViewscrollPane, BorderLayout.CENTER);
 		    packagepanel.add(appstartpanel, BorderLayout.SOUTH);		    
@@ -808,7 +885,7 @@ public class ApkInstallWizard
 		    
 		    //mainpanel.add(textSelectDevice,BorderLayout.NORTH);
 		    mainpanel.add(Listpanel,BorderLayout.CENTER);
-		    mainpanel.add(deviceList, BorderLayout.WEST);
+		    mainpanel.add(listscrollPane, BorderLayout.WEST);
 		    
 		    GridBagConstraints gbc = new GridBagConstraints();            
             gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -997,15 +1074,28 @@ public class ApkInstallWizard
 				((CardLayout)getLayout()).show(this, CONTENT_PACKAGE_SCANNING);
 				break;
 			case STATUS_CHECK_PACKAGES:
-				// set UI Data of package list
+				DefaultListModel<String> listModel = (DefaultListModel<String>) pack_deviceList.getModel();
+				listModel.clear();
 				for(int i = 0; i < targetDevices.length; i++) {
 					if(installedPackage != null && installedPackage[i] != null) {
-						Log.e(">>>>>> add listview " + targetDevices[i].name + " - " + installedPackage[i].apkPath);
+						listModel.addElement(targetDevices[i].toString());
 					}
 				}
+				if(listModel.size() > 0) {
+					pack_deviceList.setSelectedIndex(0);
+				}
+				pack_deviceList.updateUI();
 				
-				if(apkInfo != null && (apkInfo.featureFlags & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
-					// enable run app button
+				DefaultComboBoxModel<String> comboModel = (DefaultComboBoxModel<String>) pack_comboStartActivity.getModel();
+				comboModel.removeAllElements();
+				pack_textPakcInfo.setText("");
+				if(apkInfo != null && (apkInfo.manifest.featureFlags & ManifestInfo.MANIFEST_FEATURE_LAUNCHUR) != 0) {
+					for(String act: getLauncherActivityList()) {
+						comboModel.addElement(act);
+					}
+					pack_comboStartActivity.setEnabled(comboModel.getSize() > 0);
+				} else {
+					pack_comboStartActivity.setEnabled(false);
 				}
 
 				((CardLayout)getLayout()).show(this, CONTENT_CHECK_PACKAGES);
@@ -1045,6 +1135,7 @@ public class ApkInstallWizard
 					boolean haveSystemApp = false;
 					if(installedPackage != null) {
 						for(PackageInfo pack: installedPackage) {
+							if(pack == null) continue;
 							if(pack.isSystemApp) {
 								haveSystemApp = true;
 								break;
@@ -1099,10 +1190,7 @@ public class ApkInstallWizard
 		}
 		
 		private String getSelectedLauncherActivity() {
-			// get selected activity from combo box
-			
-			String[] list = getLauncherActivityList();
-			return list.length > 0 ? list[0] : null;
+			return (String)pack_comboStartActivity.getSelectedItem();
 		}
 		
 		private void appendLog(String msg) {
@@ -1538,33 +1626,7 @@ public class ApkInstallWizard
 	}
 	
 	public void openApk(DeviceStatus dev, PackageInfo pkgInfo) {
-		String tmpPath = "/" + dev.name + pkgInfo.apkPath;
-		tmpPath = tmpPath.replaceAll("/", File.separator+File.separator).replaceAll("//", "/");
-		tmpPath = FileUtil.makeTempPath(tmpPath)+".apk";
-		final String openApkPath = tmpPath; 
-
-		ApkInstaller apkInstaller = new ApkInstaller(dev.name, new ApkInstallerListener() {
-			@Override
-			public void OnError(int cmdType, String device) {
-				ArrowTraversalPane.showOptionDialog(null,
-						Resource.STR_MSG_FAILURE_PULL_APK.getString(),
-						Resource.STR_LABEL_ERROR.getString(),
-						JOptionPane.OK_OPTION, 
-						JOptionPane.ERROR_MESSAGE,
-						null,
-						new String[] {Resource.STR_BTN_OK.getString()},
-						Resource.STR_BTN_OK.getString());
-			}
-
-			@Override
-			public void OnSuccess(int cmdType, String device) {
-				Launcher.run(openApkPath);
-			}
-
-			@Override public void OnCompleted(int cmdType, String device) { }
-			@Override public void OnMessage(String msg) { printLog(msg); }
-		});
-		apkInstaller.pullApk(pkgInfo.apkPath, tmpPath);
+		Launcher.run(dev.name, pkgInfo.apkPath, null);
 	}
 	
 	private void saveApk(DeviceStatus dev, PackageInfo pkgInfo) {
@@ -1838,6 +1900,8 @@ public class ApkInstallWizard
 			} else if(ControlPanel.CTR_ACT_CMD_RESTART.equals(arg0.getActionCommand())) {
 				restart();
 			} else if(ContentPanel.CTT_ACT_CMD_REFRESH.equals(arg0.getActionCommand())) {
+
+			} else if(ContentPanel.CTT_ACT_CMD_SELECT_ALL.equals(arg0.getActionCommand())) {
 
 			} else if("SELECT_ALL".equals(arg0.getActionCommand())) {
 				
