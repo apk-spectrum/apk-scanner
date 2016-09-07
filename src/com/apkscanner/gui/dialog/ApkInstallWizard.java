@@ -68,6 +68,7 @@ import com.apkscanner.core.scanner.ApkScannerStub.Status;
 import com.apkscanner.data.apkinfo.ActivityAliasInfo;
 import com.apkscanner.data.apkinfo.ActivityInfo;
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.gui.util.ImagePanel;
@@ -562,8 +563,8 @@ public class ApkInstallWizard
 		public static final String CTR_ACT_CMD_SELECT_ALL = "CTR_ACT_CMD_SELECT_ALL";
 		
 		
-		JButton refreshButton;
-		JButton selectAllButton;
+		private JButton refreshButton;
+		private JButton selectAllButton;
 
 		
 		public class DeviceTableObject implements TableRowObject {
@@ -626,6 +627,24 @@ public class ApkInstallWizard
 				selectAllButton.setText("Select All");
 				selectAllButton.setEnabled(false);
 			}
+			if(controlPanel != null) {
+				controlPanel.btnNext.setEnabled(selectedRowCount != 0);
+			}
+		}
+		
+		public void refreshDeviceList() {
+			if(refreshButton == null || !refreshButton.isEnabled()) return;
+			refreshButton.setEnabled(false);
+			new Thread(new Runnable() {
+				public void run()
+				{
+					synchronized(ApkInstallWizard.this) {
+						targetDevices = AdbDeviceManager.scanDevices();
+						setStatus(STATUS_DEVICE_REFRESH);
+						refreshButton.setEnabled(true);
+					}
+				}
+			}).start();
 		}
 		
 		public void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
@@ -678,9 +697,15 @@ public class ApkInstallWizard
 			//targetDeviceTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 	        JScrollPane targetDevicesPane = new JScrollPane(targetDeviceTable);
 			
-			refreshButton = new JButton("REFRESH(F5)");
+			refreshButton = new JButton("Refresh(F5)");
 			refreshButton.setActionCommand(CTT_ACT_CMD_REFRESH);
-			refreshButton.addActionListener(listener);
+			refreshButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					refreshDeviceList();
+					listener.actionPerformed(arg0);
+				}
+			});
 
 			selectAllButton = new JButton("Select All");
 			selectAllButton.addActionListener(new ActionListener() {
@@ -919,31 +944,24 @@ public class ApkInstallWizard
 				break;
 			case STATUS_DEVICE_REFRESH:
 			case STATUS_SELECT_DEVICE:
-				// set UI Data of device list 
-				if(targetDevices.length == 0) {
-					// disable select_all & next button 
-					
-				} else {
-					// enable select_all & next button
-				}
-				
-				if(status == STATUS_DEVICE_REFRESH) {
-					tableDatas.clear();
-				}
-				
 				if(!tableDatas.isEmpty()) {
-					boolean isAllSelected = true;
+					ArrayList<TableRowObject> removeList = new ArrayList<TableRowObject>(tableDatas);
 					for(DeviceStatus dev: targetDevices) {
-						// such dev.name in listview
-						// isAllSelected = false;
+						boolean existed = false;
+						for(TableRowObject row: tableDatas) {
+							if(dev.name.equals(row.get(1))) {
+								removeList.remove(row);
+								existed = true;
+								break;
+							}
+						}
+						if(!existed) {
+							tableDatas.add(new DeviceTableObject("device".equals(dev.status), dev));
+						}
 					}
-					if(isAllSelected) {
-						// edit label to unselect_all 
-					} else {
-						// edit label to select_all
-					}
+					tableDatas.removeAll(removeList);
+					removeList.clear();
 				} else {
-					// add devise to listview
 					for(DeviceStatus dev: targetDevices) {
 						tableDatas.add(new DeviceTableObject("device".equals(dev.status), dev));
 					}
@@ -1806,18 +1824,7 @@ public class ApkInstallWizard
 			} else if(ControlPanel.CTR_ACT_CMD_RESTART.equals(arg0.getActionCommand())) {
 				restart();
 			} else if(ContentPanel.CTT_ACT_CMD_REFRESH.equals(arg0.getActionCommand())) {
-				final JButton btn = (JButton)arg0.getSource();
-				btn.setEnabled(false);
-				new Thread(new Runnable() {
-					public void run()
-					{
-						synchronized(ApkInstallWizard.this) {
-							targetDevices = AdbDeviceManager.scanDevices();
-							contentPanel.setStatus(STATUS_DEVICE_REFRESH);
-							btn.setEnabled(true);
-						}
-					}
-				}).start();
+
 			} else if("SELECT_ALL".equals(arg0.getActionCommand())) {
 				
 			} else if("RUN".equals(arg0.getActionCommand())) {
@@ -1834,7 +1841,32 @@ public class ApkInstallWizard
 		}
 
 		@Override
-		public boolean dispatchKeyEvent(KeyEvent arg0) {
+		public boolean dispatchKeyEvent(KeyEvent e) {
+			if(!wizard.isFocused()) return false;
+			if (e.getID() == KeyEvent.KEY_RELEASED) {
+				if(e.getModifiers() == KeyEvent.ALT_MASK) {
+					switch(e.getKeyCode()) {
+					case KeyEvent.VK_N: 
+						next(); 
+						break;
+					case KeyEvent.VK_P:	
+						previous();
+						break;
+					default: 
+						return false;
+					}
+					return true;
+				} else if(e.getModifiers() == 0) {
+					switch(e.getKeyCode()) {
+					case KeyEvent.VK_F5 :
+						contentPanel.refreshDeviceList();
+						break;
+					default:
+						return false;
+					}
+					return true;
+				}
+			}
 			return false;
 		}
 		
