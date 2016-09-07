@@ -51,6 +51,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JToggleButton;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
@@ -58,6 +59,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.Border;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
@@ -785,19 +787,25 @@ public class ApkInstallWizard
 		}
 		
 		void init_Panel_set_install_option() {
-			panel_set_install_option.setLayout(new BorderLayout());	
+			panel_set_install_option.setLayout(new GridBagLayout());	
+			GridBagConstraints gbc = new GridBagConstraints();      
+			
 			JPanel optionPanel = new JPanel(new GridLayout(1, 2));
+			JPanel togglePanel = new JPanel(new GridBagLayout());
 			
-			ButtonGroup install = new ButtonGroup();
-			ButtonGroup push = new ButtonGroup();
+			Border Installborder = BorderFactory.createTitledBorder("Install");
+			Border Pushborder = BorderFactory.createTitledBorder("Push");
 			
-			JPanel installPanel = new JPanel(new GridLayout(0, 1));
-			JPanel pushPanel = new JPanel(new GridLayout(0, 1));
+			JPanel installPanel = new JPanel(new GridLayout(0,1));
+			JPanel pushPanel = new JPanel(new GridLayout(0,1));
+			
+			installPanel.setBorder(Installborder);
+			pushPanel.setBorder(Pushborder);
 			
 			JPanel CertPanel = new JPanel(new BorderLayout());
 			
 			JLabel textSelectDevice = new JLabel("set install option");
-			textSelectDevice.setFont(new Font(textSelectDevice.getFont().getName(), Font.BOLD, 50));
+			textSelectDevice.setFont(new Font(textSelectDevice.getFont().getName(), Font.PLAIN, 30));
 			
 			JLabel textCertInfo = new JLabel("Cert Info");
 			
@@ -806,18 +814,19 @@ public class ApkInstallWizard
 			
 			JButton buttonchangeCert = new JButton("change Cert");
 			
-			JRadioButton RadioInstall = new JRadioButton("install");
+			
 			JRadioButton Radiointernal = new JRadioButton("internal");
 			JRadioButton Radioexternal = new JRadioButton("external");
 			JCheckBox Checkrunafterinstall = new JCheckBox("run after installed");
 			
-			installPanel.add(RadioInstall);
-			installPanel.add(Radiointernal);
+			 JToggleButton InstalltoggleButton = new JToggleButton("Install");
+		     
+			
+		    installPanel.add(Radiointernal);
 			installPanel.add(Radioexternal);
 			installPanel.add(Checkrunafterinstall);
+				
 			
-			
-			JRadioButton RadioPush = new JRadioButton("push");
 			JRadioButton RadiosystemPush = new JRadioButton("system");
 			JRadioButton RadioprivPush = new JRadioButton("priv-app");
 			JRadioButton RadiodataPush = new JRadioButton("data");
@@ -825,8 +834,8 @@ public class ApkInstallWizard
 			JCheckBox CheckWithLib = new JCheckBox("with Lib");
 			JCheckBox CheckReboot = new JCheckBox("reboot after push");
 			
+			JToggleButton pushtoggleButton = new JToggleButton("Push");
 			
-			pushPanel.add(RadioPush);
 			pushPanel.add(RadiosystemPush);
 			pushPanel.add(RadioprivPush);
 			pushPanel.add(RadiodataPush);
@@ -834,23 +843,47 @@ public class ApkInstallWizard
 			pushPanel.add(CheckWithLib);
 			pushPanel.add(CheckReboot);
 			
-			
-			
-			
 			optionPanel.add(installPanel);
 			optionPanel.add(pushPanel);
 			
+			InstalltoggleButton.setPreferredSize(new Dimension(100, 25));
+			pushtoggleButton.setPreferredSize(new Dimension(100, 25));
+			
+            gbc.anchor = GridBagConstraints.EAST;            
+            togglePanel.add(InstalltoggleButton,addGrid(gbc, 0, 0, 1, 1, 1, 1));
+            gbc.anchor = GridBagConstraints.WEST;
+            togglePanel.add(pushtoggleButton,addGrid(gbc, 1, 0, 1, 1, 1, 1));
+            
+			
+			//togglePanel.add(InstalltoggleButton);
+			//togglePanel.add(pushtoggleButton);
+			
+			JPanel certibuttonpanel = new JPanel(new BorderLayout());
+			
+			certibuttonpanel.add(buttonchangeCert, BorderLayout.EAST);
 			
 			CertPanel.add(textCertInfo, BorderLayout.NORTH);
 			CertPanel.add(textViewscrollPane, BorderLayout.CENTER);
-			CertPanel.add(buttonchangeCert, BorderLayout.PAGE_END);
+			CertPanel.add(certibuttonpanel, BorderLayout.SOUTH);
 			
-			panel_set_install_option.add(textSelectDevice, BorderLayout.NORTH);
-			panel_set_install_option.add(optionPanel, BorderLayout.CENTER);
-			panel_set_install_option.add(CertPanel, BorderLayout.SOUTH);
+			      
 			
+			//panel_set_install_option.add(textSelectDevice, BorderLayout.NORTH);
+			//panel_set_install_option.add(optionPanel, BorderLayout.CENTER);
+			//panel_set_install_option.add(CertPanel, BorderLayout.SOUTH);
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.anchor = GridBagConstraints.NORTH;
+            
+			panel_set_install_option.add(textSelectDevice,addGrid(gbc, 0, 0, 1, 1, 1, 2));
+						
+			panel_set_install_option.add(togglePanel, addGrid(gbc, 0, 1, 1, 1, 1, 1));
 			
+			gbc.fill = GridBagConstraints.BOTH;
+			panel_set_install_option.add(optionPanel,addGrid(gbc, 0, 2, 1, 1, 1, 3));
+			gbc.fill = GridBagConstraints.BOTH;
+			panel_set_install_option.add(CertPanel,addGrid(gbc, 0, 3, 1, 1, 1, 5));
 			
+			panel_set_install_option.add(new JPanel(),addGrid(gbc, 0, 4, 1, 1, 1, 3));
 		}
 		
 		public ContentPanel(ActionListener listener) {
