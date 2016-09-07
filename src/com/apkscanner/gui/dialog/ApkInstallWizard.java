@@ -59,6 +59,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
 
 import com.apkscanner.Launcher;
 import com.apkscanner.core.installer.ApkInstaller;
@@ -200,7 +201,18 @@ public class ApkInstallWizard
 			addWindowListener(uiEventHandler);
 		}
 	}
-    	
+    
+    private GridBagConstraints addGrid(GridBagConstraints gbc, 
+            int gridx, int gridy, int gridwidth, int gridheight, int weightx, int weighty) {
+      gbc.gridx = gridx;
+      gbc.gridy = gridy;
+      gbc.gridwidth = gridwidth;
+      gbc.gridheight = gridheight;
+      gbc.weightx = weightx;
+      gbc.weighty = weighty;
+      return gbc;
+    }
+    
 	private class ProgressPanel extends JPanel
 	{
 		private static final long serialVersionUID = 6145481552592676895L;
@@ -409,16 +421,6 @@ public class ApkInstallWizard
 		}
 		
 		
-	    private GridBagConstraints addGrid(GridBagConstraints gbc, Component c, 
-                  int gridx, int gridy, int gridwidth, int gridheight, int weightx, int weighty) {
-            gbc.gridx = gridx;
-            gbc.gridy = gridy;
-            gbc.gridwidth = gridwidth;
-            gbc.gridheight = gridheight;
-            gbc.weightx = weightx;
-            gbc.weighty = weighty;
-            return gbc;
-      }
 
 		public ProgressPanel() {
 			super(new BorderLayout());
@@ -447,28 +449,28 @@ public class ApkInstallWizard
             
             JPanel marginlabel = new JPanel();
             marginlabel.setBackground(Color.WHITE);			
-			ProgressStepPanel.add(marginlabel, addGrid(gbc, marginlabel, 0, 0, 1, 1, 1, 1));            
+			ProgressStepPanel.add(marginlabel, addGrid(gbc, 0, 0, 1, 1, 1, 1));            
 			for(int i=0;i < STEPMAX-1; i++) {
 				ellipselabel[i] = new EllipseLayout();
 				ellipselabel[i].setOpaque(true);
 				ellipselabel[i].setDescriptionText(outtexts[i]);
 				ellipselabel[i].setEllipseText(""+i);
-				ProgressStepPanel.add(ellipselabel[i], addGrid(gbc, ellipselabel[i], i*2+1, 0, 1, 1, 1, 1));
+				ProgressStepPanel.add(ellipselabel[i], addGrid(gbc,  i*2+1, 0, 1, 1, 1, 1));
 				
 				linelabel[i] = new Linelayout();
 				linelabel[i].setOpaque(true);
-				ProgressStepPanel.add(linelabel[i], addGrid(gbc, linelabel[i], (i*2+2), 0, 1, 1, 2, 1));
+				ProgressStepPanel.add(linelabel[i], addGrid(gbc,  (i*2+2), 0, 1, 1, 2, 1));
 			}
 
 			ellipselabel[STEPMAX-1] = new EllipseLayout();
 			ellipselabel[STEPMAX-1].setOpaque(true);
 			ellipselabel[STEPMAX-1].setDescriptionText(outtexts[STEPMAX-1]);
 			ellipselabel[STEPMAX-1].setEllipseText(""+(STEPMAX-1));
-			ProgressStepPanel.add(ellipselabel[STEPMAX-1], addGrid(gbc, ellipselabel[STEPMAX-1], STEPMAX*2-1, 0, 1, 1, 1, 1));
+			ProgressStepPanel.add(ellipselabel[STEPMAX-1], addGrid(gbc, STEPMAX*2-1, 0, 1, 1, 1, 1));
 			
             JPanel marginlabel2 = new JPanel();
             marginlabel2.setBackground(Color.WHITE);
-			ProgressStepPanel.add(marginlabel2, addGrid(gbc, marginlabel2, STEPMAX*2, 0, 1, 1, 1, 1));			
+			ProgressStepPanel.add(marginlabel2, addGrid(gbc, STEPMAX*2, 0, 1, 1, 1, 1));			
 			
 			ProgressStepPanel.setPreferredSize(new Dimension(0, 60));			
 			
@@ -624,9 +626,24 @@ public class ApkInstallWizard
 			}
 		}
 		
-		private JPanel createSelectDevicePanel(final ActionListener listener) {
-			final JPanel newSelctDevicePanel = new JPanel(new BorderLayout());
+		public void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
+				double... percentages) {
+				double total = 0;
+				for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
+				total += percentages[i];
+				}
+				
+				for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
+				TableColumn column = table.getColumnModel().getColumn(i);		        
+				column.setPreferredWidth((int)(tablePreferredWidth * (percentages[i] / total)));
+				}
+			}
 		
+		private JPanel createSelectDevicePanel(final ActionListener listener) {
+			final JPanel newSelctDevicePanel = new JPanel(new GridBagLayout());
+		
+
+			
 			JLabel textSelectDevice = new JLabel("Select target device!");
 			textSelectDevice.setFont(new Font(textSelectDevice.getFont().getName(), Font.PLAIN, 30));
 			
@@ -659,7 +676,7 @@ public class ApkInstallWizard
 			
 			targetDeviceTable.setPreferredScrollableViewportSize(targetDeviceTable.getPreferredSize());
 			targetDeviceTable.setFillsViewportHeight(true);
-			//setJTableColumnsWidth(targetDevices,550,10,120,410);
+			setJTableColumnsWidth(targetDeviceTable,530,1,125,200,100,100);
 			//targetDeviceTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 	        JScrollPane targetDevicesPane = new JScrollPane(targetDeviceTable);
 			
@@ -693,10 +710,16 @@ public class ApkInstallWizard
 			buttonsetPanel.add(refreshButton, BorderLayout.WEST);
 			buttonsetPanel.add(selectAllButton, BorderLayout.EAST);	
 			
-			
-			newSelctDevicePanel.add(textSelectDevice,BorderLayout.NORTH);
-			newSelctDevicePanel.add(targetDevicesPane,BorderLayout.CENTER);
-			newSelctDevicePanel.add(buttonsetPanel,BorderLayout.SOUTH);
+			GridBagConstraints gbc = new GridBagConstraints();            
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            
+			gbc.anchor = GridBagConstraints.NORTH;
+			newSelctDevicePanel.add(textSelectDevice,addGrid(gbc, 0, 0, 1, 1, 1, 1));
+			gbc.fill = GridBagConstraints.BOTH;
+			newSelctDevicePanel.add(targetDevicesPane,addGrid(gbc, 0, 1, 1, 1, 1, 7));
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.anchor = GridBagConstraints.NORTH;
+			newSelctDevicePanel.add(buttonsetPanel,addGrid(gbc, 0, 2, 1, 1, 1, 4));
 			
 			return newSelctDevicePanel;
 		}
@@ -1789,7 +1812,7 @@ public class ApkInstallWizard
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
 				ApkInstallWizard wizard = new ApkInstallWizard();
-				wizard.setApk("C:\\Melon.apk");
+				wizard.setApk("/home/leejinhyeong/Desktop/DcmContacts.apk");
 				wizard.start();
 				//wizard.setVisible(true);
             }
