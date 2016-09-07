@@ -499,6 +499,19 @@ public class ApkInstallWizard
 				return ;
 			}
 			
+			switch(state) {
+			case 2:
+				String lable = targetDevices[0].model;
+				if(targetDevices.length > 1) {
+					lable = String.format("%1$s 외 %2$d", targetDevices[0].model, targetDevices.length-1);
+					//lable = String.format("%2$d beside %1$s", targetDevices[0].model, targetDevices.length);
+				}
+				animatlabel[0].setText(lable);
+				break;
+			default:
+				break;
+			}
+			
 			for(int i=1; i <= state; i++) {
 				ellipselabel[i-1].setState(COLOR_STEP_FINISHED);
 				animatlabel[i-1].setState(COLOR_STEP_FINISHED);
@@ -507,6 +520,7 @@ public class ApkInstallWizard
 			for(int i=state; i< STEPMAX; i++) {
 				ellipselabel[i].setState(COLOR_STEP_NOTFINISH);
 				animatlabel[i].setState(COLOR_STEP_NOTFINISH);
+				animatlabel[i-1].setText(outtexts[i-1]);
 			}			
 			linelabel[state-1].setState(COLOR_STEP_NOTFINISH);
 			ellipselabel[state-1].setState(COLOR_STEP_PROCESSING);
