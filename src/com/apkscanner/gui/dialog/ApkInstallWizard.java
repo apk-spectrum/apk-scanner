@@ -33,10 +33,6 @@ import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -52,8 +48,6 @@ import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -1812,12 +1806,15 @@ public class ApkInstallWizard
 			} else if(ControlPanel.CTR_ACT_CMD_RESTART.equals(arg0.getActionCommand())) {
 				restart();
 			} else if(ContentPanel.CTT_ACT_CMD_REFRESH.equals(arg0.getActionCommand())) {
+				final JButton btn = (JButton)arg0.getSource();
+				btn.setEnabled(false);
 				new Thread(new Runnable() {
 					public void run()
 					{
 						synchronized(ApkInstallWizard.this) {
 							targetDevices = AdbDeviceManager.scanDevices();
 							contentPanel.setStatus(STATUS_DEVICE_REFRESH);
+							btn.setEnabled(true);
 						}
 					}
 				}).start();
@@ -1863,7 +1860,11 @@ public class ApkInstallWizard
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
 				ApkInstallWizard wizard = new ApkInstallWizard();
-				wizard.setApk("/home/leejinhyeong/Desktop/DcmContacts.apk");
+				if(System.getProperty("os.name").indexOf("Window") >-1) {
+					wizard.setApk("C:\\Melon.apk");
+				} else {  //for linux
+					wizard.setApk("/home/leejinhyeong/Desktop/DcmContacts.apk");
+				}
 				wizard.start();
 				//wizard.setVisible(true);
             }
