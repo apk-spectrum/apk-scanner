@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
@@ -202,7 +203,11 @@ public class ApkInstallWizard
 			addWindowListener(uiEventHandler);
 		}
 	}
-    
+    private void setmargin(JPanel c, int size) {
+    	c.setBorder(BorderFactory.createEmptyBorder(size, size, size, size));
+    }
+	
+	
     private GridBagConstraints addGrid(GridBagConstraints gbc, 
             int gridx, int gridy, int gridwidth, int gridheight, int weightx, int weighty) {
       gbc.gridx = gridx;
@@ -642,13 +647,9 @@ public class ApkInstallWizard
 		
 		private JPanel createSelectDevicePanel(final ActionListener listener) {
 			final JPanel newSelctDevicePanel = new JPanel(new GridBagLayout());
-		
-
-			
+					
 			JLabel textSelectDevice = new JLabel("Select target device!");
 			textSelectDevice.setFont(new Font(textSelectDevice.getFont().getName(), Font.PLAIN, 30));
-			
-			
 			
 			targetDeviceTable = new JTable();
 			tableDatas = new ArrayList<TableRowObject>();
@@ -719,15 +720,16 @@ public class ApkInstallWizard
 			gbc.fill = GridBagConstraints.BOTH;
 			newSelctDevicePanel.add(targetDevicesPane,addGrid(gbc, 0, 1, 1, 1, 1, 7));
 			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.anchor = GridBagConstraints.NORTH;
+			gbc.anchor = GridBagConstraints.NORTH;			
 			newSelctDevicePanel.add(buttonsetPanel,addGrid(gbc, 0, 2, 1, 1, 1, 4));
+			
+			setmargin(newSelctDevicePanel, 5);
 			
 			return newSelctDevicePanel;
 		}
 		
 		void init_Panel_check_package() {
-			panel_check_package.setLayout(new BorderLayout());	
-			
+			panel_check_package.setLayout(new GridBagLayout());	
 			JPanel mainpanel = new JPanel(new BorderLayout());
 			JPanel Listpanel = new JPanel(new BorderLayout());
 			JPanel packagepanel = new JPanel(new BorderLayout());
@@ -735,7 +737,7 @@ public class ApkInstallWizard
 			JPanel buttonpanel = new JPanel();
 			
 			JLabel textSelectDevice = new JLabel("installed same package!");
-			textSelectDevice.setFont(new Font(textSelectDevice.getFont().getName(), Font.BOLD, 50));
+			textSelectDevice.setFont(new Font(textSelectDevice.getFont().getName(), Font.PLAIN, 30));
 			
 			JList deviceList = new JList(columnNames);
 			JScrollPane listscrollPane = new JScrollPane(deviceList);
@@ -751,6 +753,11 @@ public class ApkInstallWizard
 		    JButton saveButton = new JButton("save");
 		    JButton delButton = new JButton("delete");
 		    
+		    setmargin(mainpanel,5);
+		    setmargin(packagepanel,5);
+		    setmargin(Listpanel,5);
+		    
+		    
 		    buttonpanel.add(openButton, BorderLayout.WEST);
 		    buttonpanel.add(saveButton, BorderLayout.CENTER);
 		    buttonpanel.add(delButton, BorderLayout.EAST);
@@ -764,11 +771,17 @@ public class ApkInstallWizard
 		    Listpanel.add(packagepanel, BorderLayout.CENTER);
 		    Listpanel.add(buttonpanel, BorderLayout.SOUTH);
 		    
-		    panel_check_package.add(textSelectDevice,BorderLayout.NORTH);
-		    panel_check_package.add(Listpanel,BorderLayout.CENTER);
-		    panel_check_package.add(deviceList, BorderLayout.WEST);
+		    //mainpanel.add(textSelectDevice,BorderLayout.NORTH);
+		    mainpanel.add(Listpanel,BorderLayout.CENTER);
+		    mainpanel.add(deviceList, BorderLayout.WEST);
 		    
-		    
+		    GridBagConstraints gbc = new GridBagConstraints();            
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.anchor = GridBagConstraints.NORTH;
+            panel_check_package.add(textSelectDevice,addGrid(gbc, 0, 0, 1, 1, 1, 1));
+            gbc.fill = GridBagConstraints.BOTH;
+            panel_check_package.add(mainpanel,addGrid(gbc, 0, 1, 1, 1, 1, 7));
+            panel_check_package.add(new JPanel(),addGrid(gbc, 0, 2, 1, 1, 1, 3));
 		}
 		
 		void init_Panel_set_install_option() {
