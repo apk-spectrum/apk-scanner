@@ -1,2 +1,78 @@
-# apk-scanner
-APK Scanner
+# APK Scanner 
+[![Software License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)](https://github.mosaic.sec.samsung.net/sunggyu-kam/apk-scanner/blob/master/LICENSE)  
+Welcome to the APK Scanner!  
+
+WEBSITE : https://github.mosaic.sec.samsung.net/pages/sunggyu-kam/apk-scanner/  
+WIKI : https://github.mosaic.sec.samsung.net/sunggyu-kam/apk-scanner/wiki  
+
+Download : [M STORE](http://mosaic.sec.samsung.net/kms/wagleLayout.do?method=link&type=store.application&id=93478035)
+
+## Introduce the APK Scanner  
+The APK scanner analyzes the APK file to show all the APK information,  
+And provides functions such as installing in the device and extracting and analyzing the installed apps,  
+It is a tool to dramatically streamline APK management. [(more..)](https://github.mosaic.sec.samsung.net/pages/sunggyu-kam/apk-scanner/)
+
+![](https://github.mosaic.sec.samsung.net/sunggyu-kam/apk-scanner/blob/gh-pages/img/manual/apk-scanner-launch-img.png)
+
+## Build
+This repository have .project and .class files for be build by eclipse.
+
+### Requirements
+JDK (7 or 8).  
+Eclipse with git plugin
+
+### Create Eclipse project  
+1. source code download  
+> git clone https://github.mosaic.sec.samsung.net/sunggyu-kam/apk-scanner  
+
+2. import Eclipse project  
+> Eclipse > File > Import > Git > Project from Git  
+> \> Existing local repository > add "your project path" > <b>Import existing Eclipse projects</b>  
+
+3. Run Configuration, Main Class : <b>com.apkscanner.Main</b>  
+
+## Setup & Launch  
+Supported OS : Windows7/10, Linux Ubuntu 10.04/12.04  
+※ Based on verified OS version.  
+
+### Setup  
+
+#### for Windows  
+1. Uncompress APKScanner.tar  
+2. run setup.bat (right click > Run as administrator)  
+
+#### for Linux (ubuntu)  
+$ tar -xvf APKScanner.tar  
+$ cd APKScanner  
+$ ./setup.sh  
+
+### Launch
+1. Double click to an APK File on the explorer or p4v.  
+
+
+## External Tools & Resources  
+Using following tools & librarys  
+
+#### External Execute Tools  
+Android Asset Packaging Tool, Android Debug Bridge [![Software License](https://img.shields.io/badge/license-Attribution%202.5-brightgreen.svg)](https://developer.android.com/license.html)  
+\- http://developer.android.com/tools/help/adb.html  
+JD-GUI [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg)](https://github.com/java-decompiler/jd-gui/blob/master/LICENSE)  
+\- http://jd.benow.ca/  
+dex2jar [![Software License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0)  
+\- https://sourceforge.net/projects/dex2jar/  
+
+#### External JAR Librarys  
+RSyntaxTextArea with AutoComplete, RSTAUI [![Software License](https://img.shields.io/badge/license-BSD-brightgreen.svg)](https://github.com/bobbylight/RSyntaxTextArea/blob/master/src/main/dist/RSyntaxTextArea.License.txt)  
+\- http://bobbylight.github.io/RSyntaxTextArea/  
+json-simple [![Software License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)](https://github.com/fangyidong/json-simple/blob/master/LICENSE.txt)  
+\- https://code.google.com/archive/p/json-simple/  
+commons-cli [![Software License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)](http://www.apache.org/licenses/)  
+\- https://commons.apache.org/proper/commons-cli/  
+
+### Images  
+IconSet - Unknown..  
+
+
+## License [![Software License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)](https://github.mosaic.sec.samsung.net/sunggyu-kam/apk-scanner/blob/master/LICENSE)  
+APK Sanner are released under the Apache 2.0 license.  
+
