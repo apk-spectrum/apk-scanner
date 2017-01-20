@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>APK Scanner by sunggyu-kam</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">APK Scanner</h1>
+      <h2 class="project-tagline"></h2>
+      <a href="https://github.mosaic.sec.samsung.net/sunggyu-kam/apk-scanner" class="btn">View on GitHub</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="apk-scanner" class="anchor" href="#apk-scanner" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>APK Scanner</h1>
+
+<p><a href="https://github.mosaic.sec.samsung.net/sunggyu-kam/apk-scanner/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg" alt="Software License"></a><br>
+Welcome to the APK Scanner!  </p>
+
+<p>WEBSITE : <a href="https://github.mosaic.sec.samsung.net/pages/sunggyu-kam/apk-scanner/">https://github.mosaic.sec.samsung.net/pages/sunggyu-kam/apk-scanner/</a><br>
+WIKI : <a href="https://github.mosaic.sec.samsung.net/sunggyu-kam/apk-scanner/wiki">https://github.mosaic.sec.samsung.net/sunggyu-kam/apk-scanner/wiki</a>  </p>
+
+<p>Download : <a href="http://mosaic.sec.samsung.net/kms/wagleLayout.do?method=link&amp;type=store.application&amp;id=93478035">M STORE</a></p>
+
+<h2>
+<a id="introduce-the-apk-scanner" class="anchor" href="#introduce-the-apk-scanner" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Introduce the APK Scanner</h2>
+
+<p>The APK scanner analyzes the APK file to show all the APK information,<br>
+And provides functions such as installing in the device and extracting and analyzing the installed apps,<br>
+It is a tool to dramatically streamline APK management. <a href="https://github.mosaic.sec.samsung.net/pages/sunggyu-kam/apk-scanner/">(more..)</a></p>
+
+<p><img src="https://github.mosaic.sec.samsung.net/sunggyu-kam/apk-scanner/blob/gh-pages/img/manual/apk-scanner-launch-img.png" alt=""></p>
+
+<h2>
+<a id="build" class="anchor" href="#build" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Build</h2>
+
+<p>This repository have .project and .class files for be build by eclipse.</p>
+
+<h3>
+<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h3>
+
+<p>JDK (7 or 8).<br>
+Eclipse with git plugin</p>
+
+<h3>
+<a id="create-eclipse-project" class="anchor" href="#create-eclipse-project" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Create Eclipse project</h3>
+
+<ol>
+<li>
+<p>source code download  </p>
+
+<blockquote>
+<p>git clone <a href="https://github.mosaic.sec.samsung.net/sunggyu-kam/apk-scanner">https://github.mosaic.sec.samsung.net/sunggyu-kam/apk-scanner</a>  </p>
+</blockquote>
+</li>
+<li>
+<p>import Eclipse project  </p>
+
+<blockquote>
+<p>Eclipse &gt; File &gt; Import &gt; Git &gt; Project from Git<br>
+&gt; Existing local repository &gt; add "your project path" &gt; <b>Import existing Eclipse projects</b>  </p>
+</blockquote>
+</li>
+<li><p>Run Configuration, Main Class : <b>com.apkscanner.Main</b>  </p></li>
+</ol>
+
+<h2>
+<a id="setup--launch" class="anchor" href="#setup--launch" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Setup &amp; Launch</h2>
+
+<p>Supported OS : Windows7/10, Linux Ubuntu 10.04/12.04<br>
+※ Based on verified OS version.  </p>
+
+<h3>
+<a id="setup" class="anchor" href="#setup" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Setup</h3>
+
+<h4>
+<a id="for-windows" class="anchor" href="#for-windows" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>for Windows</h4>
+
+<ol>
+<li>Uncompress APKScanner.tar<br>
+</li>
+<li>run setup.bat (right click &gt; Run as administrator)<br>
+</li>
+</ol>
+
+<h4>
+<a id="for-linux-ubuntu" class="anchor" href="#for-linux-ubuntu" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>for Linux (ubuntu)</h4>
+
+<p>$ tar -xvf APKScanner.tar<br>
+$ cd APKScanner<br>
+$ ./setup.sh  </p>
+
+<h3>
+<a id="launch" class="anchor" href="#launch" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Launch</h3>
+
+<ol>
+<li>Double click to an APK File on the explorer or p4v.<br>
+</li>
+</ol>
+
+<h2>
+<a id="external-tools--resources" class="anchor" href="#external-tools--resources" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>External Tools &amp; Resources</h2>
+
+<p>Using following tools &amp; librarys  </p>
+
+<h4>
+<a id="external-execute-tools" class="anchor" href="#external-execute-tools" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>External Execute Tools</h4>
+
+<p>Android Asset Packaging Tool, Android Debug Bridge <a href="https://developer.android.com/license.html"><img src="https://img.shields.io/badge/license-Attribution%202.5-brightgreen.svg" alt="Software License"></a><br>
+- <a href="http://developer.android.com/tools/help/adb.html">http://developer.android.com/tools/help/adb.html</a><br>
+JD-GUI <a href="https://github.com/java-decompiler/jd-gui/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-GPLv3-brightgreen.svg" alt="Software License"></a><br>
+- <a href="http://jd.benow.ca/">http://jd.benow.ca/</a><br>
+dex2jar <a href="http://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg" alt="Software License"></a><br>
+- <a href="https://sourceforge.net/projects/dex2jar/">https://sourceforge.net/projects/dex2jar/</a>  </p>
+
+<h4>
+<a id="external-jar-librarys" class="anchor" href="#external-jar-librarys" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>External JAR Librarys</h4>
+
+<p>RSyntaxTextArea with AutoComplete, RSTAUI <a href="https://github.com/bobbylight/RSyntaxTextArea/blob/master/src/main/dist/RSyntaxTextArea.License.txt"><img src="https://img.shields.io/badge/license-BSD-brightgreen.svg" alt="Software License"></a><br>
+- <a href="http://bobbylight.github.io/RSyntaxTextArea/">http://bobbylight.github.io/RSyntaxTextArea/</a><br>
+json-simple <a href="https://github.com/fangyidong/json-simple/blob/master/LICENSE.txt"><img src="https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg" alt="Software License"></a><br>
+- <a href="https://code.google.com/archive/p/json-simple/">https://code.google.com/archive/p/json-simple/</a><br>
+commons-cli <a href="http://www.apache.org/licenses/"><img src="https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg" alt="Software License"></a><br>
+- <a href="https://commons.apache.org/proper/commons-cli/">https://commons.apache.org/proper/commons-cli/</a>  </p>
+
+<h3>
+<a id="images" class="anchor" href="#images" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Images</h3>
+
+<p>IconSet - Unknown..  </p>
+
+<h2>
+<a id="license-" class="anchor" href="#license-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License <a href="https://github.mosaic.sec.samsung.net/sunggyu-kam/apk-scanner/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg" alt="Software License"></a>
+</h2>
+
+<p>APK Sanner are released under the Apache 2.0 license.  </p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.mosaic.sec.samsung.net/sunggyu-kam/apk-scanner">APK Scanner</a> is maintained by <a href="https://github.mosaic.sec.samsung.net/sunggyu-kam">sunggyu-kam</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
