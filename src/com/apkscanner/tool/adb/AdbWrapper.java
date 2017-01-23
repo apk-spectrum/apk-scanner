@@ -87,6 +87,10 @@ public class AdbWrapper
 		return startServer(listener);
 	}
 	
+	static public void waitForDevice() {
+		ConsolCmd.exc(new String[] {adbCmd, "wait-for-device"});
+	}
+	
 	public String[] devices() {
 		return devices(listener);
 	}

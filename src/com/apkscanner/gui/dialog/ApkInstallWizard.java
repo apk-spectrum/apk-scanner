@@ -85,7 +85,6 @@ import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
 import com.apkscanner.tool.adb.AdbPackageManager;
 import com.apkscanner.tool.adb.AdbPackageManager.PackageInfo;
 import com.apkscanner.tool.adb.AdbWrapper;
-import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
 
@@ -93,13 +92,14 @@ public class ApkInstallWizard
 {
 	public static final int STATUS_INIT = 0;
 	public static final int STATUS_DEVICE_SCANNING = 1;
-	public static final int STATUS_DEVICE_REFRESH = 2;
-	public static final int STATUS_SELECT_DEVICE = 3;
-	public static final int STATUS_PACKAGE_SCANNING = 4;
-	public static final int STATUS_CHECK_PACKAGES = 5;
-	public static final int STATUS_SET_INSTALL_OPTION = 6;
-	public static final int STATUS_INSTALLING = 7;
-	public static final int STATUS_COMPLETED = 8;
+	public static final int STATUS_WAIT_FOR_DEVICE = 2;
+	public static final int STATUS_DEVICE_REFRESH = 3;
+	public static final int STATUS_SELECT_DEVICE = 4;
+	public static final int STATUS_PACKAGE_SCANNING = 5;
+	public static final int STATUS_CHECK_PACKAGES = 6;
+	public static final int STATUS_SET_INSTALL_OPTION = 7;
+	public static final int STATUS_INSTALLING = 8;
+	public static final int STATUS_COMPLETED = 9;
 	
 	public static final int FLAG_OPT_INSTALL	 	= 0x0100;
 	public static final int FLAG_OPT_PUSH			= 0x0200;
@@ -513,6 +513,18 @@ public class ApkInstallWizard
 				}
 				animatlabel[0].setText(lable);
 				break;
+			case 3:
+				int packCount = 0;
+				if(installedPackage != null) {
+					for(int i = 0; i < installedPackage.length; i++) {
+						if(installedPackage[i] != null) packCount++;
+					}
+				}
+				animatlabel[1].setText(packCount > 0 ? packCount + " DEVICE" : "NOTHING");
+				break;
+			case 4:
+				animatlabel[2].setText((flag & FLAG_OPT_INSTALL) != 0 ? "INSTALL" : "PUSH");
+				break;
 			default:
 				break;
 			}
@@ -537,6 +549,7 @@ public class ApkInstallWizard
 			switch(status) {
 			case STATUS_INIT:
 			case STATUS_DEVICE_SCANNING:
+			case STATUS_WAIT_FOR_DEVICE:
 			case STATUS_SELECT_DEVICE:
 				newStatus = 1;
 				break;
@@ -569,6 +582,7 @@ public class ApkInstallWizard
 		private static final long serialVersionUID = -680173960208954055L;
 
 		public static final String CONTENT_INIT = "CONTENT_INIT";
+		public static final String CONTENT_LOADING = "CONTENT_LOADING";
 		public static final String CONTENT_DEVICE_SCANNING = "CONTENT_DEVICE_SCANNING";
 		public static final String CONTENT_SELECT_DEVICE = "CONTENT_SELECT_DEVICE";
 		public static final String CONTENT_PACKAGE_SCANNING = "CONTENT_PACKAGE_SCANNING";
@@ -638,6 +652,8 @@ public class ApkInstallWizard
 		private JPanel panel_select_device;
 		private JPanel panel_check_package;
 		private JPanel panel_set_install_option;
+		
+		private JLabel loadingMessageLable;
 		
 		private void updateSelectedAllButtonUI(SimpleCheckTableModel tableModel) {
 			int rowCount = tableModel.getRowCount();
@@ -775,8 +791,9 @@ public class ApkInstallWizard
 			return newSelctDevicePanel;
 		}
 		
-		void init_Panel_check_package() {
-			panel_check_package.setLayout(new GridBagLayout());	
+		JPanel createFindPackagePanel() {
+			JPanel panel = new JPanel();
+			panel.setLayout(new GridBagLayout());	
 			JPanel mainpanel = new JPanel(new BorderLayout());
 			JPanel Listpanel = new JPanel(new BorderLayout());
 			JPanel packagepanel = new JPanel(new BorderLayout());
@@ -859,6 +876,15 @@ public class ApkInstallWizard
 					for(int i=0; i < targetDevices.length; i++) {
 						if(targetDevices[i].toString().equals(selDev)) {
 							uninstallApk(targetDevices[i], installedPackage[i]);
+							installedPackage[i] = null;
+							pack_deviceList.remove(pack_deviceList.getSelectedIndex());
+							if(pack_deviceList.getComponentCount() > 0) {
+								pack_deviceList.setSelectedIndex(0);
+							} else {
+								pack_textPakcInfo.setText("");
+								installedPackage = null;
+								next();
+							}
 							break;
 						}
 					}
@@ -890,10 +916,11 @@ public class ApkInstallWizard
 		    GridBagConstraints gbc = new GridBagConstraints();            
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.anchor = GridBagConstraints.NORTH;
-            panel_check_package.add(textSelectDevice,addGrid(gbc, 0, 0, 1, 1, 1, 1));
+            panel.add(textSelectDevice,addGrid(gbc, 0, 0, 1, 1, 1, 1));
             gbc.fill = GridBagConstraints.BOTH;
-            panel_check_package.add(mainpanel,addGrid(gbc, 0, 1, 1, 1, 1, 7));
-            panel_check_package.add(new JPanel(),addGrid(gbc, 0, 2, 1, 1, 1, 3));
+            panel.add(mainpanel,addGrid(gbc, 0, 1, 1, 1, 1, 7));
+            panel.add(new JPanel(),addGrid(gbc, 0, 2, 1, 1, 1, 3));
+			return panel;
 		}
 		
 		void init_Panel_set_install_option() {
@@ -999,17 +1026,19 @@ public class ApkInstallWizard
 		public ContentPanel(ActionListener listener) {
 			super(new CardLayout());
 			
-			JPanel initPanel = new JPanel();
-			initPanel.setLayout(new BoxLayout(initPanel, BoxLayout.Y_AXIS));
-			initPanel.add(new ImagePanel(Resource.IMG_APK_LOGO.getImageIcon()));
-			initPanel.add(new JLabel("scanning devices..."));
-			initPanel.add(new ImagePanel(Resource.IMG_WAIT_BAR.getImageIcon()));
+			JPanel lodingPanel = new JPanel();
+			loadingMessageLable = new JLabel("");
+			lodingPanel.setLayout(new BoxLayout(lodingPanel, BoxLayout.Y_AXIS));
+			lodingPanel.add(new ImagePanel(Resource.IMG_APK_LOGO.getImageIcon()));
+			lodingPanel.add(loadingMessageLable);
+			lodingPanel.add(new ImagePanel(Resource.IMG_WAIT_BAR.getImageIcon()));
 			
 			panel_select_device = createSelectDevicePanel(listener);
-			panel_check_package = new JPanel();
+			panel_check_package = createFindPackagePanel();
 			panel_set_install_option = new JPanel();
 			
-			add(initPanel, CONTENT_INIT);
+			add(new JPanel(), CONTENT_INIT);
+			add(lodingPanel, CONTENT_LOADING);
 			add(new JPanel(), CONTENT_DEVICE_SCANNING);
 			add(panel_select_device, CONTENT_SELECT_DEVICE);
 			add(new JPanel(), CONTENT_PACKAGE_SCANNING);
@@ -1019,7 +1048,6 @@ public class ApkInstallWizard
 			add(new JPanel(), CONTENT_COMPLETED);
 			
 
-			init_Panel_check_package();
 			init_Panel_set_install_option();
 			// set status
 			setStatus(STATUS_INIT);
@@ -1028,10 +1056,16 @@ public class ApkInstallWizard
 		public void setStatus(int status) {
 			switch(status) {
 			case STATUS_INIT:
-				((CardLayout)getLayout()).show(this, CONTENT_INIT);
+				loadingMessageLable.setText("INIT");
+				((CardLayout)getLayout()).show(this, CONTENT_LOADING);
+				break;
+			case STATUS_WAIT_FOR_DEVICE:
+				loadingMessageLable.setText("WAIT-FOR-DEVICE");
+				((CardLayout)getLayout()).show(this, CONTENT_LOADING);
 				break;
 			case STATUS_DEVICE_SCANNING:
-				((CardLayout)getLayout()).show(this, CONTENT_DEVICE_SCANNING);
+				loadingMessageLable.setText("SCANNING DEVICES");
+				((CardLayout)getLayout()).show(this, CONTENT_LOADING);
 				break;
 			case STATUS_DEVICE_REFRESH:
 			case STATUS_SELECT_DEVICE:
@@ -1071,9 +1105,11 @@ public class ApkInstallWizard
 				((CardLayout)getLayout()).show(this, CONTENT_SELECT_DEVICE);
 				break;
 			case STATUS_PACKAGE_SCANNING:
-				((CardLayout)getLayout()).show(this, CONTENT_PACKAGE_SCANNING);
+				loadingMessageLable.setText("FIND PACKAGES");
+				((CardLayout)getLayout()).show(this, CONTENT_LOADING);
 				break;
 			case STATUS_CHECK_PACKAGES:
+				pack_textPakcInfo.setText("");
 				DefaultListModel<String> listModel = (DefaultListModel<String>) pack_deviceList.getModel();
 				listModel.clear();
 				for(int i = 0; i < targetDevices.length; i++) {
@@ -1088,7 +1124,6 @@ public class ApkInstallWizard
 				
 				DefaultComboBoxModel<String> comboModel = (DefaultComboBoxModel<String>) pack_comboStartActivity.getModel();
 				comboModel.removeAllElements();
-				pack_textPakcInfo.setText("");
 				if(apkInfo != null && (apkInfo.manifest.featureFlags & ManifestInfo.MANIFEST_FEATURE_LAUNCHUR) != 0) {
 					for(String act: getLauncherActivityList()) {
 						comboModel.addElement(act);
@@ -1160,7 +1195,8 @@ public class ApkInstallWizard
 				((CardLayout)getLayout()).show(this, CONTENT_SET_INSTALL_OPTION);
 				break;
 			case STATUS_INSTALLING:
-				((CardLayout)getLayout()).show(this, CONTENT_INSTALLING);
+				loadingMessageLable.setText("INSTALLING");
+				((CardLayout)getLayout()).show(this, CONTENT_LOADING);
 				break;
 			case STATUS_COMPLETED:
 				int successCount = 0;
@@ -1185,6 +1221,8 @@ public class ApkInstallWizard
 				((CardLayout)getLayout()).show(this, CONTENT_COMPLETED);
 				break;
 			default:
+				loadingMessageLable.setText("UNKNOWN STEP");
+				((CardLayout)getLayout()).show(this, CONTENT_LOADING);
 				break;
 			}
 		}
@@ -1283,6 +1321,7 @@ public class ApkInstallWizard
 			case STATUS_INIT:
 				setVisibleButtons(true, false, false, false, false, false); break;
 			case STATUS_DEVICE_SCANNING:
+			case STATUS_WAIT_FOR_DEVICE:
 			case STATUS_DEVICE_REFRESH:
 				setVisibleButtons(false, false, false, false, false, false); break;
 			case STATUS_SELECT_DEVICE:
@@ -1372,6 +1411,17 @@ public class ApkInstallWizard
 				}
 			}).start();
 			break;
+		case STATUS_WAIT_FOR_DEVICE:
+			new Thread(new Runnable() {
+				public void run()
+				{
+					synchronized(ApkInstallWizard.this) {
+						AdbWrapper.waitForDevice();
+						next();
+					}
+				}
+			}).start();
+			break;
 		case STATUS_PACKAGE_SCANNING:
 			new Thread(new Runnable() {
 				public void run()
@@ -1431,10 +1481,14 @@ public class ApkInstallWizard
 		synchronized(this) {
 			switch(status) {
 			case STATUS_INIT:
+			case STATUS_WAIT_FOR_DEVICE:
 				changeState(STATUS_DEVICE_SCANNING);
 				break;
 			case STATUS_DEVICE_SCANNING:
-				if(targetDevices == null || targetDevices.length != 1) {
+				if(targetDevices == null || targetDevices.length == 0) {
+					changeState(STATUS_WAIT_FOR_DEVICE);
+					break;
+				} else if(targetDevices == null || targetDevices.length > 1) {
 					changeState(STATUS_SELECT_DEVICE);
 					break;
 				}
@@ -1484,11 +1538,13 @@ public class ApkInstallWizard
 	private void previous() {
 		synchronized(this) {
 			switch(status) {
-			case STATUS_CHECK_PACKAGES:
-				changeState(STATUS_SELECT_DEVICE);
-				break;
 			case STATUS_SET_INSTALL_OPTION:
 				changeState(STATUS_CHECK_PACKAGES);
+				if(installedPackage != null) {
+					break;
+				}
+			case STATUS_CHECK_PACKAGES:
+				changeState(STATUS_SELECT_DEVICE);
 				break;
 			default:
 				break;
