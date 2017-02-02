@@ -13,9 +13,16 @@ import android.util.TypedValue;
 
 public class AaptXmlTreePath
 {
+	private static final int NODE_TYPE_UNKNOWN = -1;
+	private static final int NODE_TYPE_NAMESPACE = 0;
+	private static final int NODE_TYPE_ELEMENT = 1;
+	private static final int NODE_TYPE_ATTRIBUTE = 2;
+	
+	private static final int DEPTH_SPACE = 2;
+	
 	private AaptXmlTreeNode topNode = null;
 	private AaptXmlTreeNode[] curNodes = null;
-	private String namespace = null;
+	private String defaultNamespace = null;
 	
 	private MyXPath attrIdPath = null;
 
@@ -31,54 +38,38 @@ public class AaptXmlTreePath
 	
 	public void createAaptXmlTree(String[] xmlTree)
 	{
+		ArrayList<String> namespaces = new ArrayList<String>();
+		Stack<AaptXmlTreeNode> nodeStack = new Stack<AaptXmlTreeNode>();
+
 		synchronized(this) {
 			topNode = new AaptXmlTreeNode(null, "top");
 			curNodes = new AaptXmlTreeNode[] { topNode };
 			
 			AaptXmlTreeNode curNode = topNode;
-			Stack<AaptXmlTreeNode> nodeStack = new Stack<AaptXmlTreeNode>();
 			nodeStack.push(topNode);
-			int curDepth = -1;
-	
-			namespace = "android";
+			int curDepth = 0;
+
+			defaultNamespace = "android";
 			
 			for(String s: xmlTree) {
-				int depth = s.indexOf("E:");
-				int type = -1;
-				if(depth == -1 || !s.matches("^\\s*E:.*")) {
-					depth = s.indexOf("A:");
-					if(depth == -1 || !s.matches("^\\s*A:.*")) {
-						if(s.startsWith("N:")) {
-							namespace = xmlTree[0].replaceAll("N: (.*)=http://schemas.android.com/apk/res/android", "$1");
-							Log.i("namespace : " + namespace);
-						} else {
-							Log.w("Unknown tag : " + s.trim());
-						}
-					} else {
-						type = 1;
-					}
+				int type = NODE_TYPE_UNKNOWN;
+				int depth = s.indexOf("A:");
+				if(depth > -1 && s.matches("^\\s*A:.*")) {
+					type = NODE_TYPE_ATTRIBUTE;
 				} else {
-					type = 0;
-					if(curDepth == -1) {
-						curDepth = depth - 2;
+					depth = s.indexOf("E:");
+					if(depth > -1 && s.matches("^\\s*E:.*")) {
+						type = NODE_TYPE_ELEMENT;
+					} else {
+						depth = s.indexOf("N:");	
+						if(depth > -1 && s.matches("^\\s*N:.*")) {
+							type = NODE_TYPE_NAMESPACE;
+						}
 					}
 				}
 				
-				if(type == 0) {
-					while(depth <= curDepth) {
-						curNode = nodeStack.pop();
-						curDepth -= 2;
-					}
-					String nodeName = s.replaceAll("^\\s*E: ([^\\s*]*) .*", "$1");
-	
-					AaptXmlTreeNode newNode = new AaptXmlTreeNode(curNode, nodeName);
-					//Log.d("addChild node " + nodeName + ", " + curDepth + ", path " + newNode.getPath());
-					curNode.addNode(nodeName, newNode);
-					nodeStack.push(curNode);
-					curNode = newNode;
-					curDepth += 2;
-					//curNode.addChild("", "");
-				} else if(type == 1) {
+				switch(type) {
+				case NODE_TYPE_ATTRIBUTE:
 					if(!s.matches("^\\s*A: ([^\\(]*).*")) {
 						Log.w("Unknown attribute : " + s);
 						continue;
@@ -105,15 +96,52 @@ public class AaptXmlTreePath
 					}
 					//Log.v("attribute name : " + attrName + " = " + attrData);
 					curNode.addAttribute(attrName, attrData);
+					break;
+				case NODE_TYPE_ELEMENT:
+					while(depth <= curDepth) {
+						curNode = nodeStack.pop();
+						curDepth -= DEPTH_SPACE;
+					}
+					String nodeName = s.replaceAll("^\\s*E: ([^\\s*]*) .*", "$1");
+	
+					AaptXmlTreeNode newNode = new AaptXmlTreeNode(curNode, nodeName);
+					//Log.d("addChild node " + nodeName + ", " + curDepth + ", path " + newNode.getPath());
+					curNode.addNode(nodeName, newNode);
+					nodeStack.push(curNode);
+					curNode = newNode;
+					curDepth += DEPTH_SPACE;
+					//curNode.addChild("", "");
+					if("manifest".equals(nodeName)) {
+						for(String n: namespaces) {
+							String[] space = n.split("=");
+							curNode.addAttribute(space[0], space[1]);
+						}
+					}
+					break;
+				case NODE_TYPE_NAMESPACE:
+					curDepth = depth;
+					String tag = s.replaceAll("^\\s*N: (.*)=.*", "$1");
+					String space = s.replaceAll("^\\s*N: .*=(.*)", "$1");
+					if("http://schemas.android.com/apk/res/android".equals(space)) {
+						namespaces.add(0, "xmlns:" + tag + "=" + space);
+						defaultNamespace = tag;
+					} else {
+						namespaces.add("xmlns:" + tag + "=" + space);
+					}
+					Log.i("namespace : " + s);
+					break;
+				default:
+					Log.w("Unknown tag : " + s.trim());
+					break;
 				}
 			}
 			Log.v(xmlTree[0] + ", curDepth " + curDepth);
 		}
 	}
 	
-	public String getNamespace()
+	public String getAndroidNamespaceTag()
 	{
-		return namespace;
+		return defaultNamespace;
 	}
 	
 	public AaptXmlTreeNode getNode(String expression)

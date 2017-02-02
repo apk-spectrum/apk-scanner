@@ -18,6 +18,11 @@ public class AxmlToXml {
 		axmlPath.createAaptXmlTree(axml);
 	}
 	
+	public AxmlToXml(AaptXmlTreePath axmlPath, String[] resourcesWithValue) {
+		this.resourcesWithValue = resourcesWithValue;
+		this.axmlPath = axmlPath;
+	}
+	
 	public void setMultiLinePrint(boolean isMultiLinePrint) {
 		this.isMultiLinePrint = isMultiLinePrint;
 	}
@@ -44,12 +49,14 @@ public class AxmlToXml {
 		xml.append("<" + node.getName());
 		String attrDepthSpace = "\r\n" + xml.toString().replaceAll(".", " ");
 		boolean firstAttr = true;
-		
+		/*
 		if(node.getName().equals("manifest")) {
+			node.dump();
 			xml.append(" xmlns:");
-			xml.append(axmlPath.getNamespace());
+			xml.append(axmlPath.getAndroidNamespaceTag());
 			xml.append("=\"http://schemas.android.com/apk/res/android\"");
 		}
+		*/
 		for(String name: node.getAttributeList()) {
 			if(isMultiLinePrint && !firstAttr) {
 				xml.append(attrDepthSpace);
@@ -277,7 +284,7 @@ public class AxmlToXml {
 		
 		StringBuilder xml = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"?>\r\n");
 		
-		xml.append(makeNodeXml(topNode, axmlPath.getNamespace(), ""));
+		xml.append(makeNodeXml(topNode, axmlPath.getAndroidNamespaceTag(), ""));
 		
 		return xml.toString();
 	}
