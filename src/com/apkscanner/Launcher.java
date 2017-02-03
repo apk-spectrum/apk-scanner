@@ -123,7 +123,7 @@ public class Launcher
 		//classPathBuilder.append(File.pathSeparator);
 		//classPathBuilder.append(Resource.LIB_CLI_JAR.getPath());
 		classPathBuilder.append(File.pathSeparator);
-		classPathBuilder.append("lib\\*");
+		classPathBuilder.append("lib/*");
 
 		String classPath = null;
 		try {
@@ -132,6 +132,7 @@ public class Launcher
 		
 		defaultCmd.add("java");
 		defaultCmd.add("-Dfile.encoding=utf-8");
+		defaultCmd.add("-Djava.library.path=./lib");
 		defaultCmd.add("-cp");
 		defaultCmd.add(classPath);
 		defaultCmd.add(Main.class.getName());
