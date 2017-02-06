@@ -323,6 +323,11 @@ public class AdbWrapper
 	
 	static public boolean PullApk_sync(String name, String srcApkPath, String destApkPath)
 	{
+		return PullApk_sync(name, srcApkPath, destApkPath, null);
+	}
+	
+	static public boolean PullApk_sync(String name, String srcApkPath, String destApkPath, ConsolCmd.OutputObserver observer)
+	{
 		//Log.i("PullApk() device : " + name + ", apkPath: " + srcApkPath);
 		if(adbCmd == null || name == null || destApkPath == null || srcApkPath == null || srcApkPath.isEmpty()) {
 			return false;
@@ -330,10 +335,29 @@ public class AdbWrapper
 
 		String[] result;
 		String[] cmd = {adbCmd, "-s", name, "pull", srcApkPath, destApkPath};
-		result = ConsolCmd.exc(cmd, false, null);
+		result = ConsolCmd.exc(cmd, true, observer);
 		
-		if(result[0].endsWith("s)")) {
+		if(result.length > 0 && result[0].endsWith("s)")) {
 			return true;
+		} else if(srcApkPath.startsWith("/data/app/") && result[0].trim().endsWith("open failed: Permission denied")){
+			Log.w("adb pull permission denied : " + srcApkPath);
+			String tmpPath = "/sdcard/tmp";
+			
+			String[] mk = {adbCmd, "-s", name, "shell", "mkdir", "-p", tmpPath + srcApkPath.substring(0, srcApkPath.lastIndexOf("/"))};
+			result = ConsolCmd.exc(mk, true, observer);
+			if(result.length > 0) return false;
+			
+
+			String[] cp = {adbCmd, "-s", name, "shell", "cp", srcApkPath, tmpPath + srcApkPath};
+			result = ConsolCmd.exc(cp, true, observer);
+			if(result.length > 0) return false;
+			
+			cmd[4] = tmpPath + srcApkPath;
+			result = ConsolCmd.exc(cmd, true, observer);
+			
+			if(result.length > 0 && result[0].endsWith("s)")) {
+				return true;
+			}
 		}
 
 		return false;
@@ -548,20 +572,17 @@ public class AdbWrapper
 					}					
 				}
 			} else if(type == INSTALL_TYPE.PULL) {
-				String[] result;
-				String[] cmd = {adbCmd, "-s", this.device, "pull", this.srcApkPath, this.destApkPath};
-
-				result = ConsolCmd.exc(cmd,true,new ConsolCmd.OutputObserver() {
+				boolean successed = PullApk_sync(this.device, this.srcApkPath, this.destApkPath, new ConsolCmd.OutputObserver() {
 					@Override
 					public boolean ConsolOutput(String output) {
 						sendMessage(output.replaceAll("^.*adb(\\.exe)?", "adb"));
 						return true;
 					}
 				});
-				
+
 				if(listener != null) {
 					listener.OnCompleted();
-					if(result[0].matches(".*s\\)")) {
+					if(successed) {
 						listener.OnSuccess();
 					} else {
 						listener.OnError();
