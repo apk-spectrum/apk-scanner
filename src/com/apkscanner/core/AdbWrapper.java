@@ -258,6 +258,23 @@ public class AdbWrapper
 		ConsolCmd.exc(new String[] {adbCmd, "-s", device, "reboot"});
 	}
 	
+	static public String getApkPath(String device, String dir)
+	{
+		String apkPath = dir;
+		if(!apkPath.endsWith(".apk")) {
+			Log.i("No apk file path : " + apkPath);
+			String[] cmd = {AdbWrapper.getAdbCmd(), "-s", device, "shell", "ls", apkPath + "/*.apk"};
+			String[] result = ConsolCmd.exc(cmd, true);
+			if(result.length == 0 || !result[0].endsWith(".apk")) {
+				Log.e("No such apk file : " + apkPath);
+				return null;
+			}
+			apkPath = result[0];
+			Log.i("Cahnge target apk path to " + apkPath);
+		}
+		return apkPath;
+	}
+	
 	static public void uninstallApk(String device, String packageName)
 	{
 		if(adbCmd == null) return;
@@ -330,6 +347,11 @@ public class AdbWrapper
 	{
 		//Log.i("PullApk() device : " + name + ", apkPath: " + srcApkPath);
 		if(adbCmd == null || name == null || destApkPath == null || srcApkPath == null || srcApkPath.isEmpty()) {
+			return false;
+		}
+
+		srcApkPath = getApkPath(name, srcApkPath);
+		if(srcApkPath == null) {
 			return false;
 		}
 
@@ -423,6 +445,9 @@ public class AdbWrapper
 				}
 			} else if(pack != null && pack.codePath == null && line.matches("^\\s*codePath=.*$")) {
 				pack.codePath = line.replaceAll("^\\s*codePath=\\s*([^\\s]*).*$", "$1");
+				if(pack.apkPath != null && !pack.apkPath.startsWith(pack.codePath)) {
+					pack.apkPath = pack.codePath;
+				}
 			} else if(verName == null && line.matches("^\\s*versionName=.*$")) {
 				verName = line.replaceAll("^\\s*versionName=\\s*([^\\s]*).*$", "$1");
 			} else if(verCode == null && line.matches("^\\s*versionCode=.*$")) {
@@ -444,7 +469,7 @@ public class AdbWrapper
 					|| !line.endsWith(".apk")) continue;
 			pack = new PackageListObject();
 			pack.apkPath = line;
-			pack.codePath = line;
+			pack.codePath = "/system/framework";
 			pack.pacakge = pack.apkPath.replaceAll(".*/(.*)\\.apk", "$1");
 			pack.label = pack.apkPath.replaceAll(".*/", "");
 			list.add(pack);
@@ -478,7 +503,7 @@ public class AdbWrapper
 		    	}
 			}
 			
-			cmd = new String[] {adbCmd,"-s", device, "shell", "dumpsys","package",pkgName};
+			cmd = new String[] {adbCmd,"-s", device, "shell", "dumpsys","package", pkgName};
 			TargetInfo = ConsolCmd.exc(cmd,false,null);
 			
 			verName = selectString(TargetInfo,"versionName=");
