@@ -629,6 +629,8 @@ public class AaptManifestReader
         	if(info.name != null && info.name.startsWith("."))
         		info.name = manifestInfo.packageName + info.name;
         	info.permission = getAttrValue(activityTag[idx], "permission");
+        	info.readPermission = getAttrValue(activityTag[idx], "readPermission");
+        	info.writePermission = getAttrValue(activityTag[idx], "writePermission");
         	String value = getAttrValue(activityTag[idx], "exported");
         	if(value != null) info.exported = "true".equals(value);
         	value = getAttrValue(activityTag[idx], "enabled");
