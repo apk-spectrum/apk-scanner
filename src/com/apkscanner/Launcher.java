@@ -8,6 +8,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 
+import com.apkscanner.resource.Resource;
+
 public class Launcher
 {
 	static private ArrayList<String> defaultCmd;
@@ -123,7 +125,7 @@ public class Launcher
 		//classPathBuilder.append(File.pathSeparator);
 		//classPathBuilder.append(Resource.LIB_CLI_JAR.getPath());
 		classPathBuilder.append(File.pathSeparator);
-		classPathBuilder.append("lib\\*");
+		classPathBuilder.append(Resource.LIB_ALL.getPath());
 
 		String classPath = null;
 		try {

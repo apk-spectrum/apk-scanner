@@ -221,7 +221,7 @@ public class AdbWrapper
 					startList = true;
 				continue;
 			}
-			output = output.replaceAll("^\\s*([^\\s]*)\\s*([^\\s]*)(\\s*(usb:([^\\s]*)))?(\\s*product:([^\\s]*)\\s*model:([^\\s]*)\\s*device:([^\\s]*))?\\s*$", "$1 |$2 |$5 |$7 |$8 |$9 ");
+			output = output.replaceAll("^\\s*([^\\s]*)\\s*([^\\s]*)(\\s*(usb:([^\\s]*)))?(\\s*product:([^\\s]*)\\s*model:([^\\s]*)\\s*device:([^\\s]*))?\\s*.*$", "$1 |$2 |$5 |$7 |$8 |$9 ");
 			String[] info = output.split("\\|");
 			deviceList.add(new DeviceStatus(info[0], info[1], info[2], info[3], info[4], info[5]));
 		}
@@ -256,6 +256,23 @@ public class AdbWrapper
 	{
 		if(adbCmd == null) return;
 		ConsolCmd.exc(new String[] {adbCmd, "-s", device, "reboot"});
+	}
+	
+	static public String getApkPath(String device, String dir)
+	{
+		String apkPath = dir;
+		if(!apkPath.endsWith(".apk")) {
+			Log.i("No apk file path : " + apkPath);
+			String[] cmd = {AdbWrapper.getAdbCmd(), "-s", device, "shell", "ls", apkPath + "/*.apk"};
+			String[] result = ConsolCmd.exc(cmd, true);
+			if(result.length == 0 || !result[0].endsWith(".apk")) {
+				Log.e("No such apk file : " + apkPath);
+				return null;
+			}
+			apkPath = result[0];
+			Log.i("Cahnge target apk path to " + apkPath);
+		}
+		return apkPath;
 	}
 	
 	static public void uninstallApk(String device, String packageName)
@@ -323,17 +340,46 @@ public class AdbWrapper
 	
 	static public boolean PullApk_sync(String name, String srcApkPath, String destApkPath)
 	{
+		return PullApk_sync(name, srcApkPath, destApkPath, null);
+	}
+	
+	static public boolean PullApk_sync(String name, String srcApkPath, String destApkPath, ConsolCmd.OutputObserver observer)
+	{
 		//Log.i("PullApk() device : " + name + ", apkPath: " + srcApkPath);
 		if(adbCmd == null || name == null || destApkPath == null || srcApkPath == null || srcApkPath.isEmpty()) {
 			return false;
 		}
 
+		srcApkPath = getApkPath(name, srcApkPath);
+		if(srcApkPath == null) {
+			return false;
+		}
+
 		String[] result;
 		String[] cmd = {adbCmd, "-s", name, "pull", srcApkPath, destApkPath};
-		result = ConsolCmd.exc(cmd, false, null);
+		result = ConsolCmd.exc(cmd, true, observer);
 		
-		if(result[0].endsWith("s)")) {
+		if(result.length > 0 && result[0].endsWith("s)")) {
 			return true;
+		} else if(srcApkPath.startsWith("/data/app/") && result[0].trim().endsWith("open failed: Permission denied")){
+			Log.w("adb pull permission denied : " + srcApkPath);
+			String tmpPath = "/sdcard/tmp";
+			
+			String[] mk = {adbCmd, "-s", name, "shell", "mkdir", "-p", tmpPath + srcApkPath.substring(0, srcApkPath.lastIndexOf("/"))};
+			result = ConsolCmd.exc(mk, true, observer);
+			if(result.length > 0) return false;
+			
+
+			String[] cp = {adbCmd, "-s", name, "shell", "cp", srcApkPath, tmpPath + srcApkPath};
+			result = ConsolCmd.exc(cp, true, observer);
+			if(result.length > 0) return false;
+			
+			cmd[4] = tmpPath + srcApkPath;
+			result = ConsolCmd.exc(cmd, true, observer);
+			
+			if(result.length > 0 && result[0].endsWith("s)")) {
+				return true;
+			}
 		}
 
 		return false;
@@ -399,6 +445,9 @@ public class AdbWrapper
 				}
 			} else if(pack != null && pack.codePath == null && line.matches("^\\s*codePath=.*$")) {
 				pack.codePath = line.replaceAll("^\\s*codePath=\\s*([^\\s]*).*$", "$1");
+				if(pack.apkPath != null && !pack.apkPath.startsWith(pack.codePath)) {
+					pack.apkPath = pack.codePath;
+				}
 			} else if(verName == null && line.matches("^\\s*versionName=.*$")) {
 				verName = line.replaceAll("^\\s*versionName=\\s*([^\\s]*).*$", "$1");
 			} else if(verCode == null && line.matches("^\\s*versionCode=.*$")) {
@@ -420,7 +469,7 @@ public class AdbWrapper
 					|| !line.endsWith(".apk")) continue;
 			pack = new PackageListObject();
 			pack.apkPath = line;
-			pack.codePath = line;
+			pack.codePath = "/system/framework";
 			pack.pacakge = pack.apkPath.replaceAll(".*/(.*)\\.apk", "$1");
 			pack.label = pack.apkPath.replaceAll(".*/", "");
 			list.add(pack);
@@ -454,7 +503,7 @@ public class AdbWrapper
 		    	}
 			}
 			
-			cmd = new String[] {adbCmd,"-s", device, "shell", "dumpsys","package",pkgName};
+			cmd = new String[] {adbCmd,"-s", device, "shell", "dumpsys","package", pkgName};
 			TargetInfo = ConsolCmd.exc(cmd,false,null);
 			
 			verName = selectString(TargetInfo,"versionName=");
@@ -548,20 +597,17 @@ public class AdbWrapper
 					}					
 				}
 			} else if(type == INSTALL_TYPE.PULL) {
-				String[] result;
-				String[] cmd = {adbCmd, "-s", this.device, "pull", this.srcApkPath, this.destApkPath};
-
-				result = ConsolCmd.exc(cmd,true,new ConsolCmd.OutputObserver() {
+				boolean successed = PullApk_sync(this.device, this.srcApkPath, this.destApkPath, new ConsolCmd.OutputObserver() {
 					@Override
 					public boolean ConsolOutput(String output) {
 						sendMessage(output.replaceAll("^.*adb(\\.exe)?", "adb"));
 						return true;
 					}
 				});
-				
+
 				if(listener != null) {
 					listener.OnCompleted();
-					if(result[0].matches(".*s\\)")) {
+					if(successed) {
 						listener.OnSuccess();
 					} else {
 						listener.OnError();
