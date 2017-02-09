@@ -98,6 +98,9 @@ public class AdbPackageManager {
 				}
 			} else if(pack != null && pack.codePath == null && line.matches("^\\s*codePath=.*$")) {
 				pack.codePath = line.replaceAll("^\\s*codePath=\\s*([^\\s]*).*$", "$1");
+				if(pack.apkPath != null && !pack.apkPath.startsWith(pack.codePath)) {
+					pack.apkPath = pack.codePath;
+				}
 			} else if(verName == null && line.matches("^\\s*versionName=.*$")) {
 				verName = line.replaceAll("^\\s*versionName=\\s*([^\\s]*).*$", "$1");
 			} else if(verCode == null && line.matches("^\\s*versionCode=.*$")) {
@@ -119,7 +122,7 @@ public class AdbPackageManager {
 					|| !line.endsWith(".apk")) continue;
 			pack = new PackageListObject();
 			pack.apkPath = line;
-			pack.codePath = line;
+			pack.codePath = "/system/framework";
 			pack.pacakge = pack.apkPath.replaceAll(".*/(.*)\\.apk", "$1");
 			pack.label = pack.apkPath.replaceAll(".*/", "");
 			list.add(pack);
@@ -153,7 +156,7 @@ public class AdbPackageManager {
 		    	}
 			}
 			
-			cmd = new String[] {adbCmd,"-s", device, "shell", "dumpsys","package",pkgName};
+			cmd = new String[] {adbCmd,"-s", device, "shell", "dumpsys","package", pkgName};
 			TargetInfo = ConsolCmd.exc(cmd,false,null);
 			
 			verName = selectString(TargetInfo,"versionName=");

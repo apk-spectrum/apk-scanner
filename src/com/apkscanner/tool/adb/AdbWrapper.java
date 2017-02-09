@@ -187,6 +187,67 @@ public class AdbWrapper
 		}
 		ConsolCmd.exc(param, false, listener);
 	}
+
+	static public String getApkPath(String device, String apkPath, boolean force) {
+		if(!apkPath.endsWith(".apk")) {
+			Log.i("No apk file path : " + apkPath);
+			apkPath += "/*.apk";
+		} else if(!force) {
+			return apkPath;
+		}
+
+		String[] result = shell(device, new String[] {"ls", apkPath}, null);
+		if(result.length == 0 || !result[0].endsWith(".apk")) {
+			Log.e("No such apk file : " + apkPath);
+			return null;
+		}
+		apkPath = result[0];
+		Log.i("Cahnge target apk path to " + apkPath);
+
+		return apkPath;
+	}
+	
+	public boolean pullApk(String srcApkPath, String destApkPath) {
+		return pullApk(device, srcApkPath, destApkPath, listener);
+	}
+	
+	static public boolean pullApk(final String device, final String srcApkPath, final String destApkPath, final ConsoleOutputObserver listener) {
+		final String realApkPath = getApkPath(device, srcApkPath, true);
+		final String tmpPath = "/sdcard/tmp";
+
+		if(realApkPath == null) {
+			Log.e("No such apk file : " + srcApkPath);
+			return false;
+		}
+
+		boolean ret = pull(device, realApkPath, destApkPath, new ConsoleOutputObserver() {
+			@Override
+			public boolean ConsolOutput(String output) {
+				if(realApkPath.startsWith("/data/app/") && output.trim().endsWith("open failed: Permission denied")){
+					Log.w("adb pull permission denied : " + realApkPath);
+					String[] mkdir = {"mkdir", "-p", tmpPath + realApkPath.substring(0, realApkPath.lastIndexOf("/"))};
+					String[] result = shell(device, mkdir, listener);
+					if(result.length == 0) {
+						String[] cp = {"cp", realApkPath, tmpPath + realApkPath};
+						shell(device, cp, listener);
+					}
+				}
+				if(listener != null) {
+					return listener.ConsolOutput(output);
+				}
+				return true;
+			}
+		});
+
+		if(!ret) {
+			String tmpApkFilePath = getApkPath(device, tmpPath + realApkPath, true);
+			if(tmpApkFilePath != null) {
+				ret = pull(device, tmpApkFilePath, destApkPath, listener);
+			}
+		}
+
+		return ret;
+	}
 	
 	public boolean pull(String srcApkPath, String destApkPath) {
 		return pull(device, srcApkPath, destApkPath, listener);

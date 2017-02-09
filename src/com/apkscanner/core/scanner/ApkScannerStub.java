@@ -80,7 +80,7 @@ abstract public class ApkScannerStub
 					String path = s.replaceAll("^@[^/]*", "");
 					String dest = (new File(tempApkFilePath).getParent()) + File.separator + path.replaceAll(".*/", "");
 					if(statusListener != null) statusListener.OnProgress(1, "I: start to pull resource apk " + path + "\n");
-					AdbWrapper.pull(devNum, path, dest, null);
+					AdbWrapper.pullApk(devNum, path, dest, null);
 					frameworkRes += dest + ";"; 
 				} else {
 					frameworkRes += s + ";"; 
@@ -89,7 +89,7 @@ abstract public class ApkScannerStub
 		}
 
 		if(statusListener != null) statusListener.OnProgress(1, "I: start to pull apk " + devApkFilePath + "\n");
-		AdbWrapper.pull(devSerialNumber, devApkFilePath, tempApkFilePath, null);
+		AdbWrapper.pullApk(devSerialNumber, devApkFilePath, tempApkFilePath, null);
 		
 		if(!(new File(tempApkFilePath)).exists()) {
 			Log.e("openPackage() failure : apk pull - " + tempApkFilePath);

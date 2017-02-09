@@ -926,9 +926,14 @@ public class PackageTreeDlg extends JPanel
 		
 		selDevice = ((DeviceStatus)deviceNode.getUserObject()).name;
 		selPackage = tempObject.pacakge;
-		selApkPath = tempObject.apkPath;
+		selApkPath = AdbWrapper.getApkPath(selDevice, tempObject.apkPath, true);
 		//selFrameworkRes = null;
-		
+
+		if(selApkPath == null) {
+			Log.e("No Such File : " + tempObject.apkPath);
+			return;
+		}
+
 		dialog.dispose();
     }
 
@@ -994,12 +999,15 @@ public class PackageTreeDlg extends JPanel
 			saveFileName = apkPath.replaceAll(".*/(.*)/base.apk", "$1.apk");
 		} else {
 			saveFileName = apkPath.replaceAll(".*/", "");
+			if(!saveFileName.endsWith(".apk")) {
+				saveFileName += ".apk"; 
+			}
 		}
 
 		File destFile = ApkFileChooser.saveApkFile(this.parentframe, saveFileName);
 		if(destFile == null) return;
 		
-		AdbWrapper.pull(device, apkPath, destFile.getAbsolutePath(), null);
+		AdbWrapper.pullApk(device, apkPath, destFile.getAbsolutePath(), null);
 		//dir.isDirectory()
 		
 		//return dir.getPath();

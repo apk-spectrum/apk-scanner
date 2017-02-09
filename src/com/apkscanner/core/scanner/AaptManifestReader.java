@@ -68,7 +68,7 @@ public class AaptManifestReader
 	{
 		this.manifestPath = manifestPath;
 		if(manifestPath != null) {
-			namespace = manifestPath.getNamespace() + ":";
+			namespace = manifestPath.getAndroidNamespaceTag() + ":";
 		}
 	}
 	
@@ -321,7 +321,7 @@ public class AaptManifestReader
 		
 		String[] wdgXml = AaptNativeWrapper.Dump.getXmltree(apkFilePath, xmlPath.toArray(new String[0]));
 		AaptXmlTreePath widgetTree = new AaptXmlTreePath(wdgXml);
-		String widgetNamespace = widgetTree.getNamespace() + ":";
+		String widgetNamespace = widgetTree.getAndroidNamespaceTag() + ":";
 		Log.i("widgetNamespace : " + widgetNamespace);
 		
 		String width = "0";
@@ -652,6 +652,8 @@ public class AaptManifestReader
         	if(info.name != null && info.name.startsWith("."))
         		info.name = manifestInfo.packageName + info.name;
         	info.permission = getAttrValue(activityTag[idx], "permission");
+        	info.readPermission = getAttrValue(activityTag[idx], "readPermission");
+        	info.writePermission = getAttrValue(activityTag[idx], "writePermission");
         	String value = getAttrValue(activityTag[idx], "exported");
         	if(value != null) info.exported = "true".equals(value);
         	value = getAttrValue(activityTag[idx], "enabled");

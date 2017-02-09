@@ -15,7 +15,7 @@ It is a tool to dramatically streamline APK management. [(more..)](https://githu
 ![](https://github.mosaic.sec.samsung.net/sunggyu-kam/apk-scanner/blob/gh-pages/img/manual/apk-scanner-launch-img.png)
 
 ## Build
-This repository have .project and .class files for be build by eclipse.
+This repository have .project and .class files for be build by eclipse.[(more..)](https://github.mosaic.sec.samsung.net/sunggyu-kam/apk-scanner/wiki/2.-How-to-build-by-eclipse)  
 
 ### Requirements
 JDK (7 or 8).  
@@ -51,7 +51,7 @@ $ ./setup.sh
 
 
 ## External Tools & Resources  
-Using following tools & librarys  
+Using following tools & libraries  
 
 #### External Execute Tools  
 Android Asset Packaging Tool, Android Debug Bridge [![Software License](https://img.shields.io/badge/license-Attribution%202.5-brightgreen.svg)](https://developer.android.com/license.html)  
@@ -61,7 +61,7 @@ JD-GUI [![Software License](https://img.shields.io/badge/license-GPLv3-brightgre
 dex2jar [![Software License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0)  
 \- https://sourceforge.net/projects/dex2jar/  
 
-#### External JAR Librarys  
+#### External JAR Libraries  
 RSyntaxTextArea with AutoComplete, RSTAUI [![Software License](https://img.shields.io/badge/license-BSD-brightgreen.svg)](https://github.com/bobbylight/RSyntaxTextArea/blob/master/src/main/dist/RSyntaxTextArea.License.txt)  
 \- http://bobbylight.github.io/RSyntaxTextArea/  
 json-simple [![Software License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)](https://github.com/fangyidong/json-simple/blob/master/LICENSE.txt)  

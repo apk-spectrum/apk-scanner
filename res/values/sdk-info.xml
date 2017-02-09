@@ -24,4 +24,6 @@
     <sdk-info apiLevel="21" platformVersion="Android 5.0" versionCode="LOLLIPOP" codeName="Lollipop" icon="/icons/logo/lollipop.png"/>
     <sdk-info apiLevel="22" platformVersion="Android 5.1" versionCode="LOLLIPOP_MR1" codeName="Lollipop" icon="/icons/logo/lollipop.png"/>
     <sdk-info apiLevel="23" platformVersion="Android 6.0" versionCode="MARSHMALLOW" codeName="Marshmallow" icon="/icons/logo/marshmallow.png"/>
+    <sdk-info apiLevel="24" platformVersion="Android 7.0" versionCode="NOUGAT" codeName="Nougat" icon="/icons/logo/nougat.png"/>
+    <sdk-info apiLevel="25" platformVersion="Android 7.x" versionCode="NOUGAT_MR1" codeName="Nougat++" icon="/icons/logo/nougat.png"/>
 </resources>

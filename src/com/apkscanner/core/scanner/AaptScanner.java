@@ -151,9 +151,9 @@ public class AaptScanner extends ApkScannerStub
 					String[] iconXml = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath, new String[] { r.name });
 					AaptXmlTreePath iconXmlPath = new AaptXmlTreePath();
 					iconXmlPath.createAaptXmlTree(iconXml);
-					AaptXmlTreeNode iconNode = iconXmlPath.getNode("//item[@"+iconXmlPath.getNamespace()+":drawable]");
+					AaptXmlTreeNode iconNode = iconXmlPath.getNode("//item[@"+iconXmlPath.getAndroidNamespaceTag()+":drawable]");
 					if(iconNode != null) {
-						icons = manifestReader.getAttrResourceValues(iconNode, ":drawable", iconXmlPath.getNamespace());
+						icons = manifestReader.getAttrResourceValues(iconNode, ":drawable", iconXmlPath.getAndroidNamespaceTag());
 					}
 					if(icons == null || icons.length == 0) {
 						icons = new ResourceInfo[] { new ResourceInfo(Resource.IMG_DEF_APP_ICON.getPath()) };

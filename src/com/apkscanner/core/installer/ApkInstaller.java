@@ -295,7 +295,7 @@ public class ApkInstaller
 			{
 				boolean result;
 				synchronized(adbCommander) {
-					result = adbCommander.pull(srcApkPath, destApkPath);
+					result = adbCommander.pullApk(srcApkPath, destApkPath);
 				}
 				result = result && new File(destApkPath).isFile();
 

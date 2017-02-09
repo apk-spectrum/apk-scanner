@@ -307,6 +307,7 @@ public enum Resource
 	LIB_JSON_JAR				(Type.LIB, "json-simple-1.1.1.jar"),
 	LIB_CLI_JAR					(Type.LIB, "commons-cli-1.3.1.jar"),
 	LIB_APKTOOL_JAR				(Type.LIB, "apktool.jar"),
+	LIB_ALL						(Type.LIB, "*"),
 	
 	ETC_SETTINGS_FILE			(Type.ETC, "settings.txt");
 	

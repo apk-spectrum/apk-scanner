@@ -30,6 +30,8 @@ public class ProviderInfo
 		if(enabled != null) report.append("enabled : " + enabled + "\n");
 		if(exported != null) report.append("exported : " + exported + "\n");
 		if(permission != null) report.append("permission : " + permission + "\n");
+		if(readPermission != null) report.append("readPermission : " + readPermission + "\n");
+		if(writePermission != null) report.append("writePermission : " + writePermission + "\n");
 		
 		return report.toString();
 	}
