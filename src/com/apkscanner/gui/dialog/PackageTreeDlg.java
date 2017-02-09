@@ -963,9 +963,6 @@ public class PackageTreeDlg extends JPanel
 			saveFileName = apkPath.replaceAll(".*/(.*)/base.apk", "$1.apk");
 		} else {
 			saveFileName = apkPath.replaceAll(".*/", "");
-			if(!saveFileName.endsWith(".apk")) {
-				saveFileName += ".apk"; 
-			}
 		}
 
 		File destFile = ApkFileChooser.saveApkFile(this.parentframe, saveFileName);

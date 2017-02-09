@@ -43,17 +43,25 @@ public class ApkFileChooser
 	
 	static public File saveApkFile(Component component, String defaultFilePath)
 	{
+		if(!defaultFilePath.endsWith(".apk")) {
+			defaultFilePath += ".apk"; 
+		}
+
 		JFileChooser jfc = getFileChooser((String)Resource.PROP_LAST_FILE_SAVE_PATH.getData(""), JFileChooser.SAVE_DIALOG, new File(defaultFilePath));
 		jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(Resource.STR_LABEL_APK_FILE_DESC.getString(),"apk"));
 
 		if(jfc.showSaveDialog(component) != JFileChooser.APPROVE_OPTION)
 			return null;
 
-		File dir = jfc.getSelectedFile();
-		if(dir != null) {
-			Resource.PROP_LAST_FILE_SAVE_PATH.setData(dir.getParentFile().getAbsolutePath());
+		File selFile = jfc.getSelectedFile();
+		if (jfc.getFileFilter() != jfc.getAcceptAllFileFilter() && !selFile.getPath().endsWith(".apk")) {
+			selFile = new File(jfc.getSelectedFile().getPath() + ".apk");
+        }
+
+		if(selFile != null) {
+			Resource.PROP_LAST_FILE_SAVE_PATH.setData(selFile.getParentFile().getAbsolutePath());
 		}
-		return dir;
+		return selFile;
 	}
 	
 	static public String saveApkFilePath(Component component, String defaultFilePath)
