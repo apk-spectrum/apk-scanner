@@ -4,8 +4,10 @@ import java.awt.Component;
 import java.io.File;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 
 public class ApkFileChooser
 {
@@ -57,6 +59,18 @@ public class ApkFileChooser
 		if (jfc.getFileFilter() != jfc.getAcceptAllFileFilter() && !selFile.getPath().endsWith(".apk")) {
 			selFile = new File(jfc.getSelectedFile().getPath() + ".apk");
         }
+
+		if(selFile.exists()) {
+			if(!selFile.canWrite()) {
+				Log.e("Can't wirte file : " + selFile.getPath());
+				JOptionPane.showMessageDialog(jfc, Resource.STR_MSG_CANNOT_WRITE_FILE.getString(), Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+			int ret = JOptionPane.showConfirmDialog(jfc, Resource.STR_QUESTION_SAVE_OVERWRITE.getString(), Resource.STR_LABEL_QUESTION.getString(), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if(ret != JOptionPane.YES_OPTION) {
+				return null;
+			}
+		}
 
 		if(selFile != null) {
 			Resource.PROP_LAST_FILE_SAVE_PATH.setData(selFile.getParentFile().getAbsolutePath());

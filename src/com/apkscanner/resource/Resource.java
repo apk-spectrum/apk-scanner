@@ -205,11 +205,13 @@ public enum Resource
 	STR_MSG_DEVICE_UNKNOWN		(Type.TEXT, "@msg_device_unknown"),
 	STR_MSG_DEVICE_HAS_NOT_ROOT	(Type.TEXT, "@msg_cannot_run_root"),
 	STR_MSG_UNSUPPORTED_PREVIEW	(Type.TEXT, "@msg_unsupported_preview"),
+	STR_MSG_CANNOT_WRITE_FILE	(Type.TEXT, "@msg_cannot_write_file"),
 	
 	STR_QUESTION_REBOOT_DEVICE	(Type.TEXT, "@question_reboot_device"),
 	STR_QUESTION_CONTINUE_INSTALL(Type.TEXT, "@question_continue_install"),
 	STR_QUESTION_OPEN_OR_INSTALL(Type.TEXT, "@question_open_or_install"),
 	STR_QUESTION_PUSH_OR_INSTALL(Type.TEXT, "@question_push_or_install"),
+	STR_QUESTION_SAVE_OVERWRITE	(Type.TEXT, "@question_save_overwrite"),
 
 	IMG_TOOLBAR_OPEN			(Type.IMAGE, "toolbar_open.png"),
 	IMG_TOOLBAR_MANIFEST		(Type.IMAGE, "toolbar_manifast.png"),
