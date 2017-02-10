@@ -307,6 +307,8 @@ public class PackageTreeDlg extends JPanel
 				        DefaultMutableTreeNode system = new DefaultMutableTreeNode("system");
 				        DefaultMutableTreeNode dataapp = new DefaultMutableTreeNode("app");
 				        DefaultMutableTreeNode data = new DefaultMutableTreeNode("data");
+				        DefaultMutableTreeNode recently = new DefaultMutableTreeNode("Recently activity package");
+				        DefaultMutableTreeNode running = new DefaultMutableTreeNode("Currently running package");
 				        	        
 				        system.add(priv_app);
 				        system.add(systemapp);
@@ -346,16 +348,35 @@ public class PackageTreeDlg extends JPanel
 				        	}
 				        }
 
+				        String[] recentPackages = AdbPackageManager.getRecentlyActivityPackages(devList[i].name);
+				        for(String pkg: recentPackages) {
+				        	for(PackageListObject obj: ArrayDataObject) {
+				        		if(obj.pacakge.equals(pkg)) {
+						        	recently.add(new DefaultMutableTreeNode(obj));
+				        		}
+				        	}
+				        }
+
+				        String[] runningPackages = AdbPackageManager.getCurrentlyRunningPackages(devList[i].name);
+				        for(String pkg: runningPackages) {
+				        	for(PackageListObject obj: ArrayDataObject) {
+				        		if(obj.pacakge.equals(pkg)) {
+				        			running.add(new DefaultMutableTreeNode(obj));
+				        		}
+				        	}
+				        }
+
 				        devTree[i].removeAllChildren();
-				        devTree[i].add(system);		        
+				        devTree[i].add(recently);
+				        devTree[i].add(running);
+				        devTree[i].add(system);
 				        devTree[i].add(data);
 				        //add table
-				        
+
 				        table.setModel(new SimpleCheckTableModel(columnNames, tableListArray));
 				        table.setPreferredScrollableViewportSize(new Dimension(0,80));
 				        setJTableColumnsWidth(table,550,10,120,410);
-				        
-				        
+
 				        tree.updateUI();
 				        expandOrCollapsePath(tree, new TreePath(top.getPath()),3,0, true);
 					}
@@ -390,14 +411,20 @@ public class PackageTreeDlg extends JPanel
 
       TreeNode treeNode = ( TreeNode ) treePath.getLastPathComponent();
       TreeModel treeModel=tree.getModel();
-      if ( treeModel.getChildCount(treeNode) >= 0 ) {
-         for ( int i = 0; i < treeModel.getChildCount(treeNode); i++  ) {
+      int childCnt = treeModel.getChildCount(treeNode);
+      if ( childCnt > 0 ) {
+         for ( int i = 0; i < childCnt; i++  ) {
             TreeNode n = ( TreeNode )treeModel.getChild(treeNode, i);
+            if(((DefaultMutableTreeNode) n).getUserObject() instanceof PackageListObject) {
+            	return;
+            }
             TreePath path = treePath.pathByAddingChild( n );
             expandOrCollapsePath(tree,path,level,currentLevel+1,expand);
          }
          if (!expand && currentLevel<level) return;
-      }      
+      } else {
+    	  return;
+      }
       if (expand) {
          tree.expandPath( treePath );
 //         System.err.println("Path expanded at level "+currentLevel+"-"+treePath);
@@ -556,7 +583,7 @@ public class PackageTreeDlg extends JPanel
         	private ImageIcon iconDevice = Resource.IMG_TREE_DEVICE.getImageIcon();
         	private ImageIcon iconTop = Resource.IMG_TREE_TOP.getImageIcon();
         	private ImageIcon iconFolder = Resource.IMG_TREE_FOLDER.getImageIcon();
-        	
+
             @Override
             public Component getTreeCellRendererComponent(JTree tree,
                     Object value, boolean selected, boolean expanded,
@@ -564,24 +591,24 @@ public class PackageTreeDlg extends JPanel
                 Component c = super.getTreeCellRendererComponent(tree, value,
                         selected, expanded, isLeaf, row, focused);
                 
-                DefaultMutableTreeNode nodo = (DefaultMutableTreeNode) value;
-                int level = nodo.getLevel();
-                
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+                int level = node.getLevel();
+
                 if(level==0) {
                 	setIcon(iconTop);
                 } else if(level==1) {
                 	setIcon(iconDevice);
-                } else if(level==2) {
-                	setIcon(iconFolder);
-                } else if(level==3) {
-                	setIcon(iconFolder);
-                } else if(level==4) {
-                	setIcon(iconApk);
+                } else {
+                    if(node.getUserObject() instanceof PackageListObject) {
+                    	setIcon(iconApk);
+                    } else {
+                    	setIcon(iconFolder);
+                    }
                 }                
                 return c;
             }
         });
-        
+
         //Create the scroll pane and add the tree to it.
         JScrollPane treeView = new JScrollPane(tree);
  
@@ -772,7 +799,7 @@ public class PackageTreeDlg extends JPanel
 	        TreePath path = new TreePath(treenode);
 	        textFieldapkPath.setText(path.toString());
 		} else {
-	        PackageListObject tempObject = ((PackageListObject)node.getUserObject()); 
+	        PackageListObject tempObject = ((PackageListObject)node.getUserObject());
 	        textFieldapkPath.setText(tempObject.apkPath + " - " + tempObject.pacakge);
 		}
     }

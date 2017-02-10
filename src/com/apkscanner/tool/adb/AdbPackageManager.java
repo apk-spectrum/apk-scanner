@@ -3,6 +3,7 @@ package com.apkscanner.tool.adb;
 import java.util.ArrayList;
 
 import com.apkscanner.util.ConsolCmd;
+import com.apkscanner.util.Log;
 
 public class AdbPackageManager {
 
@@ -53,6 +54,46 @@ public class AdbPackageManager {
 			s += "Installer : " + installer +"\n";
 			return s;
 		}
+	}
+
+	static public String[] getRecentlyActivityPackages(String device) {
+		String[] result = AdbWrapper.shell(device, new String[] {"am", "stack", "list"}, null);
+		ArrayList<String> pkgList = new ArrayList<String>();
+		for(String line: result) {
+			if(line.startsWith("  taskId=")) {
+				String pkg = line.replaceAll("  taskId=[0-9]*:\\s([^/]*)/.*", "$1").trim(); 
+				if(pkg != null && !pkg.isEmpty() && !pkg.equals(line)) {
+					if(pkg.indexOf(" ") == -1 && !pkgList.contains(pkg)) {
+						if(line.indexOf("visible=true") >= 0)
+							pkgList.add(0, pkg);
+						else
+							pkgList.add(pkg);
+					} else {
+						Log.w("Unknown pkg - " + pkg);
+					}
+				}
+			}
+		}
+		return pkgList.toArray(new String[0]);
+	}
+
+	static public String[] getCurrentlyRunningPackages(String device) {
+		String[] result = AdbWrapper.shell(device, new String[] {"ps"}, null);
+		ArrayList<String> pkgList = new ArrayList<String>();
+		for(String line: result) {
+			if(!line.startsWith("root")) {
+				String pkg = line.replaceAll(".* ([^\\s:]*)(:.*)?$", "$1");
+				if(pkg != null && !pkg.isEmpty() && !pkg.equals(line)) {
+					if(!pkg.startsWith("/") && !pkgList.contains(pkg)) {
+						pkgList.add(pkg);
+					}
+				}
+			}
+		}
+		if(pkgList.size() > 0 && pkgList.get(0).equals("NAME")) {
+			pkgList.remove(0);
+		}
+		return pkgList.toArray(new String[0]);
 	}
 	
 	static public ArrayList<PackageListObject> getPackageList(String device)
