@@ -24,9 +24,9 @@ import com.apkscanner.core.scanner.AaptScanner;
 import com.apkscanner.core.scanner.ApkScannerStub;
 import com.apkscanner.core.scanner.ApkScannerStub.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.gui.ApkInstaller.InstallButtonStatusListener;
 import com.apkscanner.gui.ToolBar.ButtonSet;
 import com.apkscanner.gui.dialog.AboutDlg;
+import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.dialog.LogDlg;
 import com.apkscanner.gui.dialog.PackageTreeDlg;
 import com.apkscanner.gui.dialog.SearchDlg;
@@ -416,20 +416,12 @@ public class MainUI extends JFrame
 			}
 
 			toolBar.setEnabledAt(ButtonSet.INSTALL, false);
-			String libPath = apkInfo.tempWorkPath + File.separator + "lib" + File.separator;
-			new ApkInstaller(false, apkInfo.manifest.packageName, apkInfo.filePath, libPath , 
-					(boolean)Resource.PROP_CHECK_INSTALLED.getData(false), checkPackage, new InstallButtonStatusListener() {
-				@Override
-				public void SetInstallButtonStatus(Boolean Flag) {
-					toolBar.setEnabledAt(ButtonSet.INSTALL, Flag);
-				}
+			
+			ApkInstallWizard wizard = new ApkInstallWizard(MainUI.this);
+			wizard.setApk(apkInfo);
+			wizard.start();
 
-				@Override
-				public void OnOpenApk(String path) {
-					if((new File(path)).exists())
-						Launcher.run(path);
-				}
-			});
+			toolBar.setEnabledAt(ButtonSet.INSTALL, true);
 		}
 
 		private void evtOpenJDGUI()

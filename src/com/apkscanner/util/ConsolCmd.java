@@ -11,7 +11,7 @@ public class ConsolCmd
 {
 	private boolean multiCmdExit;
 
-	public interface OutputObserver
+	public interface ConsoleOutputObserver
 	{
 		public boolean ConsolOutput(String output);
 	}
@@ -29,11 +29,11 @@ public class ConsolCmd
 		return (new ConsolCmd()).exc_i(cmd, showLog, null);
 	}
 
-	static public String[] exc(String[] cmd, boolean showLog, OutputObserver observer) {
+	static public String[] exc(String[] cmd, boolean showLog, ConsoleOutputObserver observer) {
 		return (new ConsolCmd()).exc_i(cmd, showLog, observer);
 	}
 	
-	private String[] exc_i(String[] cmd, boolean showLog, OutputObserver observer)
+	private String[] exc_i(String[] cmd, boolean showLog, ConsoleOutputObserver observer)
 	{
 		String s = "";
 		List<String> buffer = new ArrayList<String>(); 
@@ -80,12 +80,12 @@ public class ConsolCmd
 		return (new ConsolCmd()).exc_i(cmd, showLog, null);
 	}
 
-	static public String[][] exc(String[][] cmd, boolean showLog, final OutputObserver observer)
+	static public String[][] exc(String[][] cmd, boolean showLog, final ConsoleOutputObserver observer)
 	{
 		return (new ConsolCmd()).exc_i(cmd, showLog, observer);
 	}
 	
-	private String[][] exc_i(String[][] cmd, boolean showLog, final OutputObserver observer) {
+	private String[][] exc_i(String[][] cmd, boolean showLog, final ConsoleOutputObserver observer) {
 		List<String[]> buffer = new ArrayList<String[]>();
 
 		for(int i = 0; i < cmd.length; i++) {

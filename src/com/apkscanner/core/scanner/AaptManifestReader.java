@@ -159,6 +159,24 @@ public class AaptManifestReader
         			break;
         	}
         }
+        if((manifestInfo.featureFlags & ManifestInfo.MANIFEST_FEATURE_LAUNCHUR) == 0) {
+	        launchers = manifestPath.getNodeList("/manifest/application/activity-alias/intent-filter/category[@"+namespace+"name='android.intent.category.LAUNCHER']");
+	        if(launchers != null && launchers.length > 0) {
+	        	for(AaptXmlTreeNode node: launchers) {
+	        		AaptXmlTreeNode[] actionNode = node.getParent().getNodeList("action");
+	        		if(actionNode != null) {
+	        			for(AaptXmlTreeNode action: actionNode) {
+	        				if("android.intent.action.MAIN".equals(getAttrValue(action, "name"))) {
+	        		        	manifestInfo.featureFlags |= ManifestInfo.MANIFEST_FEATURE_LAUNCHUR;
+	        		        	break;
+	        				}
+	        			}
+	        		}
+	        		if((manifestInfo.featureFlags & ManifestInfo.MANIFEST_FEATURE_LAUNCHUR) != 0)
+	        			break;
+	        	}
+	        }
+        }
 
         // startup
         if(manifestPath.getNode("/manifest/uses-permission[@"+namespace+"name='android.permission.RECEIVE_BOOT_COMPLETED']") != null) {
@@ -513,7 +531,7 @@ public class AaptManifestReader
         	
         	info.featureFlag |= checkIntentFlag(info.intentFilter);
         	
-        	if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
+        	if((info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
         		activityList.add(0, info);
         	} else {
         		activityList.add(info);	
@@ -548,7 +566,11 @@ public class AaptManifestReader
         	
         	info.featureFlag |= checkIntentFlag(info.intentFilter);
         	
-        	list.add(info);
+        	if((info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
+        		list.add(0, info);
+        	} else {
+        		list.add(info);	
+        	}
         }
 
         manifestInfo.application.activityAlias = list.toArray(new ActivityAliasInfo[0]);

@@ -44,7 +44,7 @@ public class JTextOptionPane extends JOptionPane {
 		final JScrollPane scrollPane = new JScrollPane(taskOutput);
 		scrollPane.setPreferredSize(size);
 
-		JPanel panel = new JPanel();
+		final JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
 		panel.setOpaque(false);
 		panel.add(messagePane,BorderLayout.NORTH);

@@ -855,7 +855,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			logoIcon = new ImageIcon(Resource.class.getResource(xpath.getAttributes("icon")));
 		} else {
 			info.append("API Level " + sdkVer);
-			info.append("\nSorry, It's unknown verion.\nYou can look at the sdk info by the Android developer site\n");
+			info.append("\nUnknown verion.\nYou can look at the sdk info by the Android developer site\n");
 			info.append("http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels");
 
 			size = new Dimension(500, 100);

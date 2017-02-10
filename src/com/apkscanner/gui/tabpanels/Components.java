@@ -156,11 +156,25 @@ public class Components extends JPanel implements TabDataObject
 		}
 		if(apkInfo.manifest.application.activityAlias != null) {
 			for(ActivityAliasInfo info: apkInfo.manifest.application.activityAlias) {
+				String type = null;
+				if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0 && (info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
+					type = "launcher-alias";
+				} else if((info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
+					type = "main-alias";
+				} else if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
+					Log.w("set launcher flag, but not main");
+					type = "activity-alias";
+				} else {
+					type = "activity-alias";
+				}
 				String startUp = (info.featureFlag & ApkInfo.APP_FEATURE_STARTUP) != 0 ? "O" : "X";
 				String enabled = (info.enabled == null) || info.enabled ? "O" : "X";
 				String exported = (info.exported == null) || info.exported ? "O" : "X";
-				String permission = info.permission != null ? "O" : "X"; 
-				ActivityList.add(new Object[] {info.name, "activity-alias", enabled, exported, permission, startUp, info.getReport()});
+				String permission = info.permission != null ? "O" : "X";
+				if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0) 
+					ActivityList.add(0, new Object[] {info.name, type, enabled, exported, permission, startUp, info.getReport()});
+				else
+					ActivityList.add(new Object[] {info.name, type, enabled, exported, permission, startUp, info.getReport()});
 			}
 		}
 		if(apkInfo.manifest.application.service != null) {

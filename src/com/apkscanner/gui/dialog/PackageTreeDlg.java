@@ -32,17 +32,21 @@ import javax.swing.tree.TreeSelectionModel;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
+import com.apkscanner.core.installer.ApkInstaller;
 import com.apkscanner.Launcher;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.ArrowTraversalPane;
-import com.apkscanner.gui.util.BooleanTableModel;
+import com.apkscanner.gui.util.SimpleCheckTableModel;
+import com.apkscanner.gui.util.SimpleCheckTableModel.TableRowObject;
 import com.apkscanner.gui.util.FilteredTreeModel;
 import com.apkscanner.gui.util.JTextOptionPane;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.tool.adb.AdbDeviceManager;
+import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
+import com.apkscanner.tool.adb.AdbPackageManager;
+import com.apkscanner.tool.adb.AdbPackageManager.PackageListObject;
 import com.apkscanner.tool.adb.AdbWrapper;
-import com.apkscanner.tool.adb.AdbWrapper.AdbWrapperListener;
-import com.apkscanner.tool.adb.AdbWrapper.DeviceStatus;
-import com.apkscanner.tool.adb.AdbWrapper.PackageListObject;
+import com.apkscanner.util.ConsolCmd.ConsoleOutputObserver;
 import com.apkscanner.util.Log;
 
 import java.util.ArrayList;
@@ -88,7 +92,7 @@ public class PackageTreeDlg extends JPanel
     private JTextField textFilField;
     private FilteredTreeModel filteredModel;
     
-	public class FrameworkTableObject {
+	public class FrameworkTableObject implements TableRowObject {
 		public Boolean buse;
 		public String location;
 		public String deviceID;
@@ -101,9 +105,37 @@ public class PackageTreeDlg extends JPanel
 			this.deviceID = deviceID;
 			this.path = path;
 		}
+		
+		@Override
+		public Object get(int columnIndex) {
+	    	switch(columnIndex) {
+	    	case 0:
+	    		return buse;        		
+	    	case 1:
+	    		return deviceID +"(" + location + ")";
+	    	case 2:
+	    		return path;
+	    	}
+	    	return null;
+		}
+
+		@Override
+		public void set(int columnIndex, Object obj) {
+	    	switch(columnIndex) {
+	    	case 0:
+	    		buse = (Boolean) obj;
+	    		break;        		
+	    	case 1:
+	    		location = (String) obj;
+	    		break;        		
+	    	case 2:
+	    		path = (String) obj;
+	    		break;
+	    	}
+		}
 	}
     
-    private ArrayList<FrameworkTableObject> tableListArray = new ArrayList<FrameworkTableObject>();
+    private ArrayList<TableRowObject> tableListArray = new ArrayList<TableRowObject>();
     private JTable table;
 
     public String getSelectedDevice() {
@@ -122,12 +154,13 @@ public class PackageTreeDlg extends JPanel
     	String resList = null;
     	if(checkboxUseframework.isSelected()) {
     		resList = "";
-    		for(FrameworkTableObject res: tableListArray) {
-    			if(!res.buse) continue;
-    			if(res.deviceID.equals("local")) {
-    				resList += res.path + ";";
+    		for(TableRowObject res: tableListArray) {
+    			FrameworkTableObject fwres = (FrameworkTableObject)res;
+    			if(!fwres.buse) continue;
+    			if(fwres.deviceID.equals("local")) {
+    				resList += fwres.path + ";";
     			} else {
-    				resList += "@" + res.deviceID + res.path + ";";
+    				resList += "@" + fwres.deviceID + fwres.path + ";";
     			}
     		}
     	}
@@ -211,8 +244,8 @@ public class PackageTreeDlg extends JPanel
 			public void run()
 			{
 		    	refreshbtn.setVisible(false);
-				ArrayList<DeviceStatus> DeviceList;
-				DeviceList = AdbWrapper.scanDevices();
+				DeviceStatus[] DeviceList;
+				DeviceList = AdbDeviceManager.scanDevices();
 				
 //				do {
 //					DeviceList = AdbWrapper.scanDevices();
@@ -239,7 +272,7 @@ public class PackageTreeDlg extends JPanel
 				
 				gifPanel.setVisible(true);
 
-				createDeviceNodes(top, DeviceList.toArray(new DeviceStatus[0]));
+				createDeviceNodes(top, DeviceList);
 				
 				gifPanel.setVisible(false);
 		    	refreshbtn.setVisible(true);
@@ -265,6 +298,7 @@ public class PackageTreeDlg extends JPanel
 				tree.updateUI();
 				expandOrCollapsePath(tree, new TreePath(top.getPath()),3,0, true);
 
+				String[] columnNames = {"", Resource.STR_LABEL_DEVICE.getString(), Resource.STR_LABEL_PATH.getString()};
 				for(int i = 0; i < devList.length; i++) {
 					if(devList[i].status.equals("device")) {
 				        DefaultMutableTreeNode priv_app = new DefaultMutableTreeNode("priv-app");
@@ -280,7 +314,7 @@ public class PackageTreeDlg extends JPanel
 				        
 				        data.add(dataapp);
 
-						ArrayList<PackageListObject> ArrayDataObject = AdbWrapper.getPackageList(devList[i].name);
+						ArrayList<PackageListObject> ArrayDataObject = AdbPackageManager.getPackageList(devList[i].name);
 				        for(PackageListObject obj: ArrayDataObject) {
 				        	DefaultMutableTreeNode temp = new DefaultMutableTreeNode(obj);		        	
 				        	
@@ -317,7 +351,7 @@ public class PackageTreeDlg extends JPanel
 				        devTree[i].add(data);
 				        //add table
 				        
-				        table.setModel(new BooleanTableModel(tableListArray));
+				        table.setModel(new SimpleCheckTableModel(columnNames, tableListArray));
 				        table.setPreferredScrollableViewportSize(new Dimension(0,80));
 				        setJTableColumnsWidth(table,550,10,120,410);
 				        
@@ -333,7 +367,7 @@ public class PackageTreeDlg extends JPanel
 						if(s.isEmpty()) continue;
 						tableListArray.add(new FrameworkTableObject(false, "local", "local", s));
 					}
-			        table.setModel(new BooleanTableModel(tableListArray));
+			        table.setModel(new SimpleCheckTableModel(columnNames, tableListArray));
 			        table.setPreferredScrollableViewportSize(new Dimension(0,80));
 			        setJTableColumnsWidth(table,550,10,120,410);
 				}
@@ -380,9 +414,10 @@ public class PackageTreeDlg extends JPanel
 				|| (apkPath != null && apkPath.startsWith("/system/"))) {
 			isSystemApp = true;
 		}
+		final AdbWrapper adbCommander = new AdbWrapper(deviceNum, null);
 		
 		if(isSystemApp) {
-			if(AdbWrapper.hasRootPermission(deviceNum) != true) {
+			if(adbCommander.root() != true) {
 				ArrowTraversalPane.showOptionDialog(null, Resource.STR_MSG_DEVICE_HAS_NOT_ROOT.getString(), Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, Resource.IMG_WARNING.getImageIcon(),
 			    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
 				return false;
@@ -390,20 +425,21 @@ public class PackageTreeDlg extends JPanel
 
 			new Thread(new Runnable() {
 				public void run(){
-					AdbWrapper.removeApk(deviceNum, apkPath);
+					new ApkInstaller(deviceNum).removeApk(apkPath);
+					//adbCommander.removeApk(apkPath);
 					
 					final Object[] yesNoOptions = {Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
 					int reboot = ArrowTraversalPane.showOptionDialog(null, Resource.STR_QUESTION_REBOOT_DEVICE.getString(), Resource.STR_LABEL_INFO.getString(), JOptionPane.YES_NO_OPTION, 
 							JOptionPane.QUESTION_MESSAGE, null, yesNoOptions, yesNoOptions[1]);
 					if(reboot == 0){
-						AdbWrapper.reboot(deviceNum);
+						adbCommander.reboot();
 					}
 				}
 			}).start();
 		} else {
 			new Thread(new Runnable() {
 				public void run(){
-					AdbWrapper.uninstallApk(deviceNum, packageName);
+					adbCommander.uninstall(packageName);
 				}
 			}).start();
 		}
@@ -894,7 +930,7 @@ public class PackageTreeDlg extends JPanel
 		
 		selDevice = ((DeviceStatus)deviceNode.getUserObject()).name;
 		selPackage = tempObject.pacakge;
-		selApkPath = AdbWrapper.getApkPath(selDevice, tempObject.apkPath);;
+		selApkPath = AdbWrapper.getApkPath(selDevice, tempObject.apkPath, true);
 		//selFrameworkRes = null;
 
 		if(selApkPath == null) {
@@ -957,9 +993,9 @@ public class PackageTreeDlg extends JPanel
 		
 		Log.i(deviceNode.getUserObject().toString());
 		
-		String device = ((DeviceStatus)deviceNode.getUserObject()).name;
+		final String device = ((DeviceStatus)deviceNode.getUserObject()).name;
 
-		String apkPath = tempObject.apkPath;
+		final String apkPath = tempObject.apkPath;
 		if(apkPath == null) return;
 		
 		String saveFileName;
@@ -969,45 +1005,43 @@ public class PackageTreeDlg extends JPanel
 			saveFileName = apkPath.replaceAll(".*/", "");
 		}
 
-		File destFile = ApkFileChooser.saveApkFile(parentframe, saveFileName);
+		final File destFile = ApkFileChooser.saveApkFile(parentframe, saveFileName);
 		if(destFile == null) return;
 		
-		AdbWrapper.PullApk(device, apkPath, destFile.getAbsolutePath(), new AdbWrapperListener() {
+		
+		new Thread(new Runnable() {
 			StringBuilder sb = new StringBuilder();
-
-			@Override
-			public void OnSuccess() {
-				int n = JOptionPane.showOptionDialog(null, Resource.STR_MSG_SUCCESS_PULLED.getString() + "\n" + destFile.getPath(), Resource.STR_LABEL_INFO.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, null,
-						new String[] {Resource.STR_BTN_EXPLORER.getString(), Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
-				if(n == 0) { // explorer
-					try {
-						if(System.getProperty("os.name").indexOf("Window") >-1) {
-							new ProcessBuilder("explorer", destFile.getParent()).start();
-						} else {  //for linux
-							new ProcessBuilder("nautilus", destFile.getParent()).start();
-						}
-					} catch (IOException e1) {
-						e1.printStackTrace();
+			public void run()
+			{
+				boolean ret = AdbWrapper.pullApk(device, apkPath, destFile.getAbsolutePath(), new ConsoleOutputObserver(){
+					@Override
+					public boolean ConsolOutput(String output) {
+						sb.append(output+"\n");
+						return true;
 					}
-				} else if(n == 1) { // open
-					Launcher.run(destFile.getPath());
+				});
+				if(ret) {
+					int n = JOptionPane.showOptionDialog(null, Resource.STR_MSG_SUCCESS_PULLED.getString() + "\n" + destFile.getPath(), Resource.STR_LABEL_INFO.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, null,
+							new String[] {Resource.STR_BTN_EXPLORER.getString(), Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
+					if(n == 0) { // explorer
+						try {
+							if(System.getProperty("os.name").indexOf("Window") >-1) {
+								new ProcessBuilder("explorer", destFile.getParent()).start();
+							} else {  //for linux
+								new ProcessBuilder("nautilus", destFile.getParent()).start();
+							}
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					} else if(n == 1) { // open
+						Launcher.run(destFile.getPath());
+					}
+				} else {
+					JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_PULLED.getString() + "\n\nlog:", sb.toString(),  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
+							null, new Dimension(400, 100));
 				}
 			}
-
-			@Override
-			public void OnError() {
-				JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_PULLED.getString() + "\n\nlog:", sb.toString(),  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
-						null, new Dimension(400, 100));
-			}
-
-			@Override
-			public void OnMessage(String msg) {
-				sb.append(msg+"\n");
-			}
-
-			@Override
-			public void OnCompleted() { }
-		});
+		}).start();
     }
     
 	@Override
@@ -1064,7 +1098,6 @@ public class PackageTreeDlg extends JPanel
     			
     			tableListArray.add(temp);
     			((AbstractTableModel) table.getModel()).fireTableDataChanged();
-    			
     			table.updateUI();
     			
 //    			for(String f: resList) {

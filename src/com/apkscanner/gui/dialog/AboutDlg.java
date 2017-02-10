@@ -28,7 +28,7 @@ public class AboutDlg /*extends JDialog*/
 		body.append("<div id=\"about\">");
 		body.append("  <H1>" + Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString() + "</H1>");
 		body.append("  Using following tools,<br/>");
-		body.append("  " + AdbWrapper.getVersion() + "<br/>");
+		body.append("  " + AdbWrapper.version(null) + "<br/>");
 		body.append("  " + AaptWrapper.getVersion() + "<br/>");
 		body.append("  - <a href=\"https://developer.android.com/tools/help/index.html\" title=\"Android Developer Site\">https://developer.android.com/tools/help/index.html</a><br/>");
 		//body.append("  Apktool " + ApktoolManager.getApkToolVersion() + "<br/>");

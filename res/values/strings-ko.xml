@@ -2,6 +2,8 @@
     <string name="app_name">APK 스캐너</string>
     <string name="app_version">Ver. </string>
     
+    <string name="title_install_wizard">APK 설치 마법사</string>
+    
     <string name="btn_open">열기</string>
     <string name="btn_manifest">매니페스트</string>
     <string name="btn_explorer">탐색기</string>
@@ -169,12 +171,19 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
     <string name="label_open_with_choose">연결 프로그램 선택</string>
     
     <string name="msg_failure_open_apk">APK 파일을 열수 없습니다.</string>
+    <string name="msg_no_such_apk">APK 파일이 존재하지 않습니다.</string>
     <string name="msg_device_not_found">장치를 찾을 수 없습니다.
 연결상태를 확인 하세요.</string>
     <string name="msg_already_installed">동일 패키지가 이미 설치되어 있습니다.</string>
     <string name="msg_no_such_package">동일 패키지를 찾을수 없습니다.</string>
+    <string name="msg_no_such_launcher">실행 가능한 액티비티가 없습니다.</string>
+    <string name="msg_failure_launch_app">앱을 실행하지 못했습니다.</string>
     <string name="msg_failure_installed">설치 실패...</string>
+    <string name="msg_failure_uninstalled">앱 제거 실패!</string>
+    <string name="msg_failure_pull_apk">APK 파일을 가져오지 못 하였습니다.</string>
     <string name="msg_success_installed">설치 성공...</string>
+    <string name="msg_success_removed">앱 제거 완료!</string>
+    <string name="msg_success_pull_apk">APK 파일을 저장 하였습니다.</string>
     <string name="msg_success_pulled">APK 파일을 저장하였습니다.</string>
     <string name="msg_failure_pulled">APK 파일을 저장에 실패하였습니다.</string>
     <string name="msg_device_unauthorized">디바이스가 미인증 상태입니다. 디바이스에서 USB 디버깅 허용상태를 확인하세요.</string>

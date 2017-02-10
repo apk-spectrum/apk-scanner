@@ -32,6 +32,8 @@ public enum Resource
 	
 	STR_SDK_INFO_FILE_PATH		(Type.TEXT, "/values/sdk-info.xml"),
 
+	STR_TITLE_INSTALL_WIZARD	(Type.TEXT, "@title_install_wizard"),
+	
 	STR_BTN_OPEN				(Type.TEXT, "@btn_open"),
 	STR_BTN_MANIFEST			(Type.TEXT, "@btn_manifest"),
 	STR_BTN_EXPLORER			(Type.TEXT, "@btn_explorer"),
@@ -196,11 +198,18 @@ public enum Resource
 	
 	
 	STR_MSG_FAILURE_OPEN_APK	(Type.TEXT, "@msg_failure_open_apk"),
+	STR_MSG_NO_SUCH_APK_FILE	(Type.TEXT, "@msg_no_such_apk"),
 	STR_MSG_DEVICE_NOT_FOUND	(Type.TEXT, "@msg_device_not_found"),
 	STR_MSG_ALREADY_INSTALLED	(Type.TEXT, "@msg_already_installed"),
 	STR_MSG_NO_SUCH_PACKAGE		(Type.TEXT, "@msg_no_such_package"),
+	STR_MSG_NO_SUCH_LAUNCHER	(Type.TEXT, "@msg_no_such_launcher"),
+	STR_MSG_FAILURE_LAUNCH_APP	(Type.TEXT, "@msg_failure_launch_app"),
 	STR_MSG_FAILURE_INSTALLED	(Type.TEXT, "@msg_failure_installed"),
+	STR_MSG_FAILURE_UNINSTALLED	(Type.TEXT, "@msg_failure_uninstalled"),
+	STR_MSG_FAILURE_PULL_APK	(Type.TEXT, "@msg_failure_pull_apk"),
 	STR_MSG_SUCCESS_INSTALLED	(Type.TEXT, "@msg_success_installed"),
+	STR_MSG_SUCCESS_REMOVED		(Type.TEXT, "@msg_success_removed"),
+	STR_MSG_SUCCESS_PULL_APK	(Type.TEXT, "@msg_success_pull_apk"),
 	STR_MSG_SUCCESS_PULLED		(Type.TEXT, "@msg_success_pulled"),
 	STR_MSG_FAILURE_PULLED		(Type.TEXT, "@msg_failure_pulled"),
 	STR_MSG_DEVICE_UNAUTHORIZED	(Type.TEXT, "@msg_device_unauthorized"),

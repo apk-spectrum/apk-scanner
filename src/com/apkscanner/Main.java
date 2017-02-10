@@ -12,11 +12,9 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import com.apkscanner.gui.ApkInstaller;
-import com.apkscanner.gui.ApkInstaller.InstallButtonStatusListener;
 import com.apkscanner.gui.MainUI;
+import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.tool.apktool.ApktoolWrapper;
 import com.apkscanner.util.FileUtil;
@@ -84,7 +82,6 @@ public class Main
 				System.out.println("Cp1252/windows-1252 unequal");
 			}
 		} catch (IOException e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
 		*/
@@ -225,21 +222,9 @@ public class Main
 		Log.v("install() " + apkFilePath);
 		
 		if(!cmd.hasOption("c") && !cmd.hasOption("cui")) {
-			String tempPath = FileUtil.makeTempPath(apkFilePath.substring(apkFilePath.lastIndexOf(File.separator)));
-			String libPath = tempPath + File.separator + "lib" + File.separator;
-			String packageName = AaptNativeWrapper.Dump.getBadging(apkFilePath, false)[0].replaceAll(".* name='([^']*)'.*", "$1");
-			Log.i("package : " + packageName);
-			new ApkInstaller(true, packageName, apkFilePath, libPath,
-					(boolean)Resource.PROP_CHECK_INSTALLED.getData(false), false, new InstallButtonStatusListener() {
-				@Override
-				public void SetInstallButtonStatus(Boolean Flag) { }
-
-				@Override
-				public void OnOpenApk(String path) {
-					if((new File(path)).exists())
-						Launcher.run(path);
-				}
-			});
+			ApkInstallWizard wizard = new ApkInstallWizard();
+			wizard.setApk(apkFilePath);
+			wizard.start();
 		} else {
 			
 		}
@@ -304,7 +289,7 @@ public class Main
 		System.out.println(Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString());
 		System.out.println("with apktool " + ApktoolWrapper.getApkToolVersion() + " (http://ibotpeaches.github.io/Apktool/)");
 		System.out.println(" - Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)");
-		System.out.println("with " + AdbWrapper.getVersion() + " (http://developer.android.com/tools/help/adb.html)");
+		System.out.println("with " + AdbWrapper.version(null) + " (http://developer.android.com/tools/help/adb.html)");
 		System.out.println("Programmed by " + Resource.STR_APP_MAKER.getString() + " <" + Resource.STR_APP_MAKER_EMAIL.getString() + ">" + ", 2015");
 		System.out.println("Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)");
 		System.out.println();
