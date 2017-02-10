@@ -99,7 +99,7 @@ public class Resources extends JPanel implements TabDataObject {
 
 	public enum ResourceType {
 		ANIMATION(0), ANIM(1), COLOR(2), DRAWABLE(3), MIPMAP(4), LAYOUT(5), MENU(6), RAW(7), VALUES(8), XML(9), ASSET(
-				10), ETC(11), COUNT(12);
+				10), METAINF(11), ETC(12), COUNT(13);
 
 		private int type;
 
@@ -109,6 +109,13 @@ public class Resources extends JPanel implements TabDataObject {
 
 		int getInt() {
 			return type;
+		}
+		
+		public String toString() {
+			if(this.equals(METAINF))
+				return "META-INF";
+			else
+				return super.toString().toLowerCase();
 		}
 	}
 
@@ -161,13 +168,15 @@ public class Resources extends JPanel implements TabDataObject {
 				type = ResourceType.XML;
 			} else if (path.startsWith("assets")) {
 				type = ResourceType.ASSET;
+			} else if(path.startsWith("META-INF")) {
+				type = ResourceType.METAINF;
 			} else {
 				type = ResourceType.ETC;
 			}
 
 			if (type.getInt() <= ResourceType.XML.getInt()) {
-				if (path.startsWith("res/" + type.toString().toLowerCase() + "-"))
-					config = path.replaceAll("res/" + type.toString().toLowerCase() + "-([^/]*)/.*", "$1");
+				if (path.startsWith("res/" + type.toString() + "-"))
+					config = path.replaceAll("res/" + type.toString() + "-([^/]*)/.*", "$1");
 			}
 
 			String extension = path.replaceAll(".*/", "").replaceAll(".*\\.", ".").toLowerCase();
@@ -184,7 +193,8 @@ public class Resources extends JPanel implements TabDataObject {
 				attr = ATTR_QMG;
 			} else if (extension.endsWith(".txt") || extension.endsWith(".mk") || extension.endsWith(".html")
 					|| extension.endsWith(".js") || extension.endsWith(".css") || extension.endsWith(".json")
-					|| extension.endsWith(".props") || extension.endsWith(".properties")) {
+					|| extension.endsWith(".props") || extension.endsWith(".properties")
+					|| extension.endsWith(".mf") || extension.endsWith(".sf")) {
 				attr = ATTR_TXT;
 			} else {
 				attr = ATTR_ETC;
@@ -621,7 +631,7 @@ public class Resources extends JPanel implements TabDataObject {
 		eachTypeNodes = new DefaultMutableTreeNode[ResourceType.COUNT.getInt()];
 		for (int i = 0; i < this.nameList.length; i++) {
 			if (this.nameList[i].endsWith("/") || this.nameList[i].startsWith("lib/")
-					|| this.nameList[i].startsWith("META-INF/"))
+					/*|| this.nameList[i].startsWith("META-INF/")*/)
 				continue;
 
 			ResourceObject resObj = new ResourceObject(this.nameList[i], false);
@@ -633,7 +643,7 @@ public class Resources extends JPanel implements TabDataObject {
 			DefaultMutableTreeNode typeNode = eachTypeNodes[resObj.type.getInt()];
 
 			if (typeNode == null) {
-				typeNode = new DefaultMutableTreeNode(resObj.type.toString().toLowerCase());
+				typeNode = new DefaultMutableTreeNode(resObj.type.toString());
 				eachTypeNodes[resObj.type.getInt()] = typeNode;
 				if (resObj.type != ResourceType.ETC) {
 					top.add(typeNode);
