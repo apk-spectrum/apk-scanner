@@ -111,7 +111,8 @@ abstract public class ApkScannerStub
 			keytoolPackage = "sun.security.tools.KeyTool";
 		}
 
-		ArrayList<String> certList = new ArrayList<String>();  
+		ArrayList<String> certList = new ArrayList<String>();
+		ArrayList<String> certFiles = new ArrayList<String>();
 		
 		if(!(new File(apkInfo.filePath)).exists()) {
 			return null;
@@ -123,7 +124,13 @@ abstract public class ApkScannerStub
 		}
 		
 		for (String s : (new File(certPath)).list()) {
-			if(!s.endsWith(".RSA") && !s.endsWith(".DSA") && !s.endsWith(".EC") ) continue;
+			if(!s.endsWith(".RSA") && !s.endsWith(".DSA") && !s.endsWith(".EC") ) {
+				File f = new File(certPath + File.separator + s);
+				if(f.isFile()) {
+					certFiles.add(certPath + File.separator + s);
+				}
+				continue;
+			}
 
 			File rsaFile = new File(certPath + File.separator + s);
 			if(!rsaFile.exists()) continue;
@@ -170,6 +177,8 @@ abstract public class ApkScannerStub
 		    
 		    certList.add(certContent);
 		}
+
+		apkInfo.certFiles = certFiles.toArray(new String[0]);
 
 		return certList.toArray(new String[0]);
 	}

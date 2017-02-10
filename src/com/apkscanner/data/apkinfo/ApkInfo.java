@@ -34,7 +34,8 @@ public class ApkInfo
 	public String[] xmls = null;
 	public String[] librarys = null;
 	public String[] certificates = null;
-	
+	public String[] certFiles = null;
+
 	public String[] resourcesWithValue = null;
 	public AaptNativeScanner resourceScanner = null;
 }

@@ -526,7 +526,11 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		if(apkInfo.certificates != null) {
 			for(String sign: apkInfo.certificates) {
 				String[] line = sign.split("\n");
-				CertSummary += line[0] + "\n" + line[1] + "\n" + line[2] + "\n\n";
+				if(line.length >= 3) {
+					CertSummary += line[0] + "\n" + line[1] + "\n" + line[2] + "\n\n";
+				} else {
+					CertSummary += "error\n";
+				}
 			}
 		}
 
