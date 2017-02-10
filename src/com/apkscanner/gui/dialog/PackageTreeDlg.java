@@ -37,6 +37,7 @@ import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.gui.util.BooleanTableModel;
 import com.apkscanner.gui.util.FilteredTreeModel;
+import com.apkscanner.gui.util.JTextOptionPane;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.tool.adb.AdbWrapper.AdbWrapperListener;
@@ -995,7 +996,8 @@ public class PackageTreeDlg extends JPanel
 
 			@Override
 			public void OnError() {
-				JOptionPane.showMessageDialog(null, Resource.STR_MSG_FAILURE_PULLED.getString() + "\n" + sb.toString(), Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE);
+				JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_PULLED.getString() + "\n\nlog:", sb.toString(),  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
+						null, new Dimension(400, 100));
 			}
 
 			@Override

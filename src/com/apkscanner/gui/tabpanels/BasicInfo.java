@@ -3,12 +3,8 @@ package com.apkscanner.gui.tabpanels;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Window;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -23,9 +19,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import com.apkscanner.core.scanner.PermissionGroupManager;
@@ -45,11 +38,12 @@ import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
+import com.apkscanner.gui.util.JTextOptionPane;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.FileUtil;
+import com.apkscanner.util.FileUtil.FSStyle;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.XmlPath;
-import com.apkscanner.util.FileUtil.FSStyle;
 
 public class BasicInfo extends JComponent implements HyperlinkClickListener, TabDataObject
 {
@@ -722,35 +716,12 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			showPermDetailDesc(id);
 		}
 	}
-	
+
 	private void showDialog(String content, String title, Dimension size, Icon icon)
 	{
-		JTextArea taskOutput = new JTextArea();
-		taskOutput.setText(content);
-		taskOutput.setEditable(false);
-		taskOutput.setCaretPosition(0);
-		
-		final JScrollPane scrollPane = new JScrollPane(taskOutput);
-		scrollPane.setPreferredSize(size);
-		
-		if(!"Linux".equals(System.getProperty("os.name"))) {
-			scrollPane.addHierarchyListener(new HierarchyListener() {            
-				public void hierarchyChanged(HierarchyEvent e) {
-					Window window = SwingUtilities.getWindowAncestor(scrollPane);
-					if (window instanceof Dialog) {
-						Dialog dialog = (Dialog)window;
-						if (!dialog.isResizable()) {
-							dialog.setResizable(true);
-							}                
-						}            
-					}
-			});
-		}
-
-		JOptionPane.showOptionDialog(null, scrollPane, title, JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, icon,
-				new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
+		JTextOptionPane.showTextDialog(null, content, title, JOptionPane.INFORMATION_MESSAGE, icon, size);
 	}
-	
+
 	public void showPermList()
 	{
 		/*
