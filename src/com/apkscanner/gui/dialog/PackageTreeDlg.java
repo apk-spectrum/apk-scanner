@@ -32,18 +32,21 @@ import javax.swing.tree.TreeSelectionModel;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
+import com.apkscanner.Launcher;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.gui.util.BooleanTableModel;
 import com.apkscanner.gui.util.FilteredTreeModel;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbWrapper;
+import com.apkscanner.tool.adb.AdbWrapper.AdbWrapperListener;
 import com.apkscanner.tool.adb.AdbWrapper.DeviceStatus;
 import com.apkscanner.tool.adb.AdbWrapper.PackageListObject;
 import com.apkscanner.util.Log;
 
 import java.util.ArrayList;
 import java.io.File;
+import java.io.IOException;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -965,14 +968,44 @@ public class PackageTreeDlg extends JPanel
 			saveFileName = apkPath.replaceAll(".*/", "");
 		}
 
-		File destFile = ApkFileChooser.saveApkFile(this.parentframe, saveFileName);
+		File destFile = ApkFileChooser.saveApkFile(parentframe, saveFileName);
 		if(destFile == null) return;
 		
-		AdbWrapper.PullApk(device, apkPath, destFile.getAbsolutePath(), null);
-		//dir.isDirectory()
-		
-		//return dir.getPath();
-		
+		AdbWrapper.PullApk(device, apkPath, destFile.getAbsolutePath(), new AdbWrapperListener() {
+			StringBuilder sb = new StringBuilder();
+
+			@Override
+			public void OnSuccess() {
+				int n = JOptionPane.showOptionDialog(null, Resource.STR_MSG_SUCCESS_PULLED.getString() + "\n" + destFile.getPath(), Resource.STR_LABEL_INFO.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, null,
+						new String[] {Resource.STR_BTN_EXPLORER.getString(), Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
+				if(n == 0) { // explorer
+					try {
+						if(System.getProperty("os.name").indexOf("Window") >-1) {
+							new ProcessBuilder("explorer", destFile.getParent()).start();
+						} else {  //for linux
+							new ProcessBuilder("nautilus", destFile.getParent()).start();
+						}
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				} else if(n == 1) { // open
+					Launcher.run(destFile.getPath());
+				}
+			}
+
+			@Override
+			public void OnError() {
+				JOptionPane.showMessageDialog(null, Resource.STR_MSG_FAILURE_PULLED.getString() + "\n" + sb.toString(), Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE);
+			}
+
+			@Override
+			public void OnMessage(String msg) {
+				sb.append(msg+"\n");
+			}
+
+			@Override
+			public void OnCompleted() { }
+		});
     }
     
 	@Override

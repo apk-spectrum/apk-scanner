@@ -201,6 +201,8 @@ public enum Resource
 	STR_MSG_NO_SUCH_PACKAGE		(Type.TEXT, "@msg_no_such_package"),
 	STR_MSG_FAILURE_INSTALLED	(Type.TEXT, "@msg_failure_installed"),
 	STR_MSG_SUCCESS_INSTALLED	(Type.TEXT, "@msg_success_installed"),
+	STR_MSG_SUCCESS_PULLED		(Type.TEXT, "@msg_success_pulled"),
+	STR_MSG_FAILURE_PULLED		(Type.TEXT, "@msg_failure_pulled"),
 	STR_MSG_DEVICE_UNAUTHORIZED	(Type.TEXT, "@msg_device_unauthorized"),
 	STR_MSG_DEVICE_UNKNOWN		(Type.TEXT, "@msg_device_unknown"),
 	STR_MSG_DEVICE_HAS_NOT_ROOT	(Type.TEXT, "@msg_cannot_run_root"),

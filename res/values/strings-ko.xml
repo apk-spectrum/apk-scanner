@@ -175,6 +175,8 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
     <string name="msg_no_such_package">동일 패키지를 찾을수 없습니다.</string>
     <string name="msg_failure_installed">설치 실패...</string>
     <string name="msg_success_installed">설치 성공...</string>
+    <string name="msg_success_pulled">APK 파일을 저장하였습니다.</string>
+    <string name="msg_failure_pulled">APK 파일을 저장에 실패하였습니다.</string>
     <string name="msg_device_unauthorized">디바이스가 미인증 상태입니다. 디바이스에서 USB 디버깅 허용상태를 확인하세요.</string>
     <string name="msg_device_unknown">디바이스 상태를 알수 없습니다.</string>
     <string name="msg_cannot_run_root">디바이스 루트 권한이 없습니다.</string>
