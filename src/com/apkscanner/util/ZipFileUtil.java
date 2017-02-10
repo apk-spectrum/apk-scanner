@@ -73,10 +73,11 @@ public class ZipFileUtil
 						return false;
 					}
 				}
+				InputStream is = null;
 				try {
 					fos = new FileOutputStream(outPath);
 	 				byte[] buffer = new byte[(int) entry.getSize()];
-	 				InputStream is = zipFile.getInputStream(entry);
+	 				is = zipFile.getInputStream(entry);
 	 				int len = -1;
 	 				do {
 	 					len = is.read(buffer);
@@ -85,6 +86,9 @@ public class ZipFileUtil
 				} finally {
 					if (fos != null) {
 						fos.close();
+					}
+					if(is != null) {
+						is.close();
 					}
 				}
 			} else {

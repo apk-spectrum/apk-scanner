@@ -19,6 +19,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
@@ -954,13 +955,17 @@ public class ResouceContentsPanel extends JPanel{
 			resTypeSep.setVisible(false);
 			resTypeCombobox.setVisible(false);
 			multiLinePrintButton.setVisible(false);
-			ZipFile zipFile;
+			ZipFile zipFile = null;
+			InputStream is = null;
 			try {
 				zipFile = new ZipFile(apkinfo.filePath);
 				ZipEntry entry = zipFile.getEntry(obj.path);
 				byte[] buffer = new byte[(int) entry.getSize()];
-				zipFile.getInputStream(entry).read(buffer);
+				is = zipFile.getInputStream(entry);
+				is.read(buffer);
+				is.close();
 				content = new String(buffer);
+				zipFile.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
