@@ -822,7 +822,7 @@ public class AaptManifestReader
 		//Log.d("getAttrValues() " + node + ", namespace : " + namespace + ", attr : " + attr + ", value : " + value);
 		
 		while(value != null && value.startsWith("@")) {
-			if(value.matches("@0x0*\\s*")) {
+			if(value.matches("@0x*\\s*")) {
 				resVal = null;
 				break;
 			}

@@ -4228,9 +4228,9 @@ String8 ResTable::valueToString8(const Package* pkg, const Res_value& value) con
             strval = String8::format("(null) 0x%08x", value.data);
         }
     } else if (value.dataType == Res_value::TYPE_REFERENCE) {
-        strval = String8::format("0x%08x", value.data);
+        strval = String8::format("@0x%08x", value.data);
     } else if (value.dataType == Res_value::TYPE_DYNAMIC_REFERENCE) {
-        strval = String8::format("0x%08x", value.data);
+        strval = String8::format("@0x%08x", value.data);
     } else if (value.dataType == Res_value::TYPE_ATTRIBUTE) {
         strval = String8::format("0x%08x", value.data);
     } else if (value.dataType == Res_value::TYPE_STRING) {
