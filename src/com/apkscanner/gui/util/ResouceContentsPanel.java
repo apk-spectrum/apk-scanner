@@ -70,6 +70,7 @@ import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.tool.dex2jar.Dex2JarWrapper;
 import com.apkscanner.tool.jd_gui.JDGuiLauncher;
+import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
@@ -970,6 +971,21 @@ public class ResouceContentsPanel extends JPanel{
 				e.printStackTrace();
 			}
 			break;
+		case ResourceObject.ATTR_CERT:
+			Double javaVersion = Double.parseDouble(System.getProperty("java.specification.version"));
+			String keytoolPackage;
+			if(javaVersion >= 1.8) {
+				keytoolPackage = "sun.security.tools.keytool.Main";
+			} else {
+				keytoolPackage = "sun.security.tools.KeyTool";
+			}
+			String filePath = apkinfo.tempWorkPath + File.separator + obj.path;
+			String[] cmd = {"java","-Dfile.encoding=utf8",keytoolPackage,"-printcert","-v","-file", filePath};
+			String[] result = ConsolCmd.exc(cmd, false, null);
+			StringBuilder sb = new StringBuilder();
+			for(String s: result) sb.append(s+"\n");
+			content = sb.toString();
+			break;
 		case ResourceObject.ATTR_ETC:
 			if("resources.arsc".equals(obj.path)) {
 				if(resourcesWithValue != null) {
@@ -1065,6 +1081,7 @@ public class ResouceContentsPanel extends JPanel{
 			case ResourceObject.ATTR_AXML:
 			case ResourceObject.ATTR_XML:
 			case ResourceObject.ATTR_TXT:
+			case ResourceObject.ATTR_CERT:
 			    setTextContentPanel(CurrentresObj);
 				break;
 			default:

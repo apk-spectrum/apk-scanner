@@ -131,7 +131,8 @@ public class Resources extends JPanel implements TabDataObject {
 		public static final int ATTR_IMG = 3;
 		public static final int ATTR_QMG = 4;
 		public static final int ATTR_TXT = 5;
-		public static final int ATTR_ETC = 6;
+		public static final int ATTR_CERT = 6;
+		public static final int ATTR_ETC = 7;
 
 		public String label;
 		public Boolean isFolder;
@@ -196,6 +197,8 @@ public class Resources extends JPanel implements TabDataObject {
 					|| extension.endsWith(".props") || extension.endsWith(".properties")
 					|| extension.endsWith(".mf") || extension.endsWith(".sf")) {
 				attr = ATTR_TXT;
+			} else if(extension.endsWith(".rsa") || extension.endsWith(".dsa") || extension.endsWith(".ec")) {
+				attr = ATTR_CERT;
 			} else {
 				attr = ATTR_ETC;
 			}
@@ -432,6 +435,8 @@ public class Resources extends JPanel implements TabDataObject {
 						// ImageScaler.getScaledImage(Resource.IMG_QMG_IMAGE_ICON.getImageIcon(),32,32);
 						break;
 					case ResourceObject.ATTR_TXT:
+						break;
+					case ResourceObject.ATTR_CERT:
 						break;
 					case ResourceObject.ATTR_ETC:
 						break;

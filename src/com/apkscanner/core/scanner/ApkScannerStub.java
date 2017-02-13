@@ -129,7 +129,7 @@ abstract public class ApkScannerStub
 		}
 		
 		for (String s : (new File(certPath)).list()) {
-			if(!s.endsWith(".RSA") && !s.endsWith(".DSA") && !s.endsWith(".EC") ) {
+			if(!s.toUpperCase().endsWith(".RSA") && !s.toUpperCase().endsWith(".DSA") && !s.toUpperCase().endsWith(".EC") ) {
 				File f = new File(certPath + File.separator + s);
 				if(f.isFile()) {
 					certFiles.add(certPath + File.separator + s);
