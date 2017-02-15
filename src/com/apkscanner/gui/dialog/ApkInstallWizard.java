@@ -1722,8 +1722,9 @@ public class ApkInstallWizard
 				switch(n) {
 				case 0: // explorer
 					String openner = (System.getProperty("os.name").indexOf("Window") > -1) ? "explorer" : "xdg-open";
+					String openPath = String.format((System.getProperty("os.name").indexOf("Window") > -1) ? "/select,\"%s\"" : "%s", destFile.getAbsolutePath());
 					try {
-						new ProcessBuilder(openner, destFile.getParent()).start();
+						new ProcessBuilder(openner, openPath).start();
 					} catch (IOException e1) { }
 					break;
 				case 1: // open

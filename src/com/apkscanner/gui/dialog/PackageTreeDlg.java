@@ -1034,7 +1034,6 @@ public class PackageTreeDlg extends JPanel
 
 		final File destFile = ApkFileChooser.saveApkFile(parentframe, saveFileName);
 		if(destFile == null) return;
-		
 
 		ApkInstaller apkInstaller = new ApkInstaller(device, new ApkInstallerListener() {
 			StringBuilder sb = new StringBuilder();
@@ -1057,8 +1056,9 @@ public class PackageTreeDlg extends JPanel
 				switch(n) {
 				case 0: // explorer
 					String openner = (System.getProperty("os.name").indexOf("Window") > -1) ? "explorer" : "nautilus";
+					String openPath = String.format((System.getProperty("os.name").indexOf("Window") > -1) ? "/select,\"%s\"" : "%s", destFile.getAbsolutePath());
 					try {
-						new ProcessBuilder(openner, destFile.getParent()).start();
+						new ProcessBuilder(openner, openPath).start();
 					} catch (IOException e1) { }
 					break;
 				case 1: // open
