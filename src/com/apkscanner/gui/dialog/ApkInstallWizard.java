@@ -1322,6 +1322,7 @@ public class ApkInstallWizard
 				setVisibleButtons(true, false, false, false, false, false); break;
 			case STATUS_DEVICE_SCANNING:
 			case STATUS_WAIT_FOR_DEVICE:
+				setVisibleButtons(false, false, false, true, false, false); break;
 			case STATUS_DEVICE_REFRESH:
 				setVisibleButtons(false, false, false, false, false, false); break;
 			case STATUS_SELECT_DEVICE:
