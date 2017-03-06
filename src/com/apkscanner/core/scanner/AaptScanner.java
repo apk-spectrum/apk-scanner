@@ -219,23 +219,31 @@ public class AaptScanner extends ApkScannerStub
 	{
 		if(apkInfo == null)
 			return;
+		
+		if(resourceScanner != null) {
+			resourceScanner.clear(true);
+			resourceScanner = null;
+		}
+		AaptNativeScanner.lock();
+		AaptNativeWrapper.lock();
+		
 		final String tmpPath = apkInfo.tempWorkPath;
 		final String apkPath = apkInfo.filePath;
 		if(sync) {
 			deleteTempPath(tmpPath, apkPath);
+			AaptNativeScanner.unlock();
+			AaptNativeWrapper.unlock();
 		} else {
 			new Thread(new Runnable() {
 				public void run()
 				{
 					deleteTempPath(tmpPath, apkPath);
+					AaptNativeScanner.unlock();
+					AaptNativeWrapper.unlock();
 				}
 			}).start();
 		}
 		apkInfo = null;
 
-		if(resourceScanner != null) {
-			resourceScanner.clear(true);
-			resourceScanner = null;
-		}
 	}
 }
