@@ -5,6 +5,7 @@ import java.io.File;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.ConsolCmd.ConsoleOutputObserver;
+import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 
 public class AdbWrapper
@@ -220,10 +221,12 @@ public class AdbWrapper
 			return false;
 		}
 
+		FileUtil.makeFolder(new File(destApkPath).getParent());
+
 		boolean ret = pull(device, realApkPath, destApkPath, new ConsoleOutputObserver() {
 			@Override
 			public boolean ConsolOutput(String output) {
-				if(realApkPath.startsWith("/data/app/") && output.trim().endsWith("open failed: Permission denied")){
+				if(output.trim().endsWith(": Permission denied")){
 					Log.w("adb pull permission denied : " + realApkPath);
 					String[] mkdir = {"mkdir", "-p", tmpPath + realApkPath.substring(0, realApkPath.lastIndexOf("/"))};
 					String[] result = shell(device, mkdir, listener);
@@ -262,7 +265,9 @@ public class AdbWrapper
 			param = new String[] {adbCmd, "-s", device, "pull", srcApkPath, destApkPath};
 		}
 		String[] result = ConsolCmd.exc(param, false, listener);
-		if(result == null || result.length == 0 || !result[0].endsWith("s)")) {
+		if(result == null || result.length == 0
+				|| (!result[result.length-1].startsWith("[100%]") && !result[0].endsWith("s)"))
+				|| !(new File(destApkPath).exists())) {
 			return false;
 		}
 		return true;
