@@ -449,9 +449,10 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		
 	}
 
-	public synchronized void setData(long estimatedTime)
+	public synchronized void setProgress(int percent)
 	{
-		Log.i("setData() estimatedTime " + estimatedTime);
+		//Log.i("setProgress() percent " + percent);
+
 		if(lodingPanel == null)
 			initialize();
 
@@ -460,10 +461,10 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			cardLayout.show(this, "lodingPanel");
 		}
 
-		if(estimatedTime > -1)
-			showProcessing(estimatedTime);
+		if(percent > -1)
+			TimerLabel.setText("Extracting APK file [" + percent + "%]");
 		else 
-			TimerLabel.setText("Extracting APK file...");
+			TimerLabel.setText("Standby for extracting.");
 		return;
 	}
 	

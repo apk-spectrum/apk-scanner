@@ -10,6 +10,7 @@ import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
+import com.apkscanner.util.ConsolCmd.ConsoleOutputObserver;
 
 abstract public class ApkScannerStub
 {
@@ -89,10 +90,26 @@ abstract public class ApkScannerStub
 		}
 
 		if(statusListener != null) statusListener.OnProgress(1, "I: start to pull apk " + devApkFilePath + "\n");
-		AdbWrapper.pullApk(devSerialNumber, devApkFilePath, tempApkFilePath, null);
+		AdbWrapper.pullApk(devSerialNumber, devApkFilePath, tempApkFilePath, new ConsoleOutputObserver() {
+			String prePercent = null;
+			@Override
+			public boolean ConsolOutput(String output) {
+				if(statusListener != null) {
+					String percent = output.replaceAll("\\[\\s*([0-9]*)%\\] .*", "$1");
+					if(!percent.equals(output)) {
+						if(!percent.equals(prePercent)) {
+							prePercent = percent;
+							statusListener.OnProgress(0, percent);
+						}
+					}
+				}
+				return true;
+			}
+		});
 		
 		if(!(new File(tempApkFilePath)).exists()) {
 			Log.e("openPackage() failure : apk pull - " + tempApkFilePath);
+			if(statusListener != null) statusListener.OnError();
 			return;
 		}
 

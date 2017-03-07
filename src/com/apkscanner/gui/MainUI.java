@@ -123,7 +123,7 @@ public class MainUI extends JFrame
 						Log.i("UI Init start");
 						initialize(true);
 						tabbedPanel.setLodingLabel();
-						tabbedPanel.setTimeLeft(-1);
+						tabbedPanel.setProgress(-1);
 						Log.i("UI Init end");
 					}
 				}
@@ -207,7 +207,6 @@ public class MainUI extends JFrame
 	{
 		@Override
 		public void OnStart(final long estimatedTime) {
-			Log.i("ApkCore.OnStart() estimatedTime : " + estimatedTime);
 			synchronized(labelInitSync) {
 				new Thread(new Runnable() {
 					public void run()
@@ -223,7 +222,6 @@ public class MainUI extends JFrame
 								Log.i("OnStart() uiInitSync");	
 							}
 						}
-						if(tabbedPanel != null) tabbedPanel.setTimeLeft(estimatedTime);
 						if(toolBar != null) {
 							toolBar.setEnabledAt(ButtonSet.OPEN, false);
 							toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
@@ -268,7 +266,13 @@ public class MainUI extends JFrame
 		@Override
 		public void OnProgress(int step, String msg) {
 			if(exiting) return;
-			Log.i(msg);
+			switch(step) {
+			case 0:
+				tabbedPanel.setProgress(Integer.valueOf(msg));
+				break;
+			default:
+				Log.i(msg);
+			}
 		}
 
 		@Override
@@ -389,7 +393,7 @@ public class MainUI extends JFrame
 			if(!newWindow) {
 				if(tabbedPanel != null) {
 					tabbedPanel.setLodingLabel();
-					tabbedPanel.setTimeLeft(-1);
+					tabbedPanel.setProgress(-1);
 				}
 				if(toolBar != null) {
 					toolBar.setEnabledAt(ButtonSet.OPEN, false);

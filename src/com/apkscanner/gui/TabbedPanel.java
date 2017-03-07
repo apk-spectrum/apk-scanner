@@ -81,14 +81,14 @@ public class TabbedPanel extends JTabbedPane
     	}
     }
     
-    public void setTimeLeft(long estimatedTime)
+    public void setProgress(int percent)
     {
-    	((BasicInfo)(getComponent(0))).setData(estimatedTime);
+    	((BasicInfo)(getComponent(0))).setProgress(percent);
     }
     
     public void setLodingLabel()
     {
-    	((BasicInfo)(getComponent(0))).setData(0);
+    	((BasicInfo)(getComponent(0))).setProgress(-1);
     	setSelectedIndex(0);
 		for(int i = 1; i < 6; i++) {
 	        setTitleAt(i, labels[i] + "(...)");
