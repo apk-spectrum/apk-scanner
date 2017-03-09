@@ -97,10 +97,6 @@ public class Log {
 	}
 
 	static public void enableConsoleLog(boolean enable) {
-		if (enable && !enableConsoleHandler)
-			logger.addHandler(consoleHandler);
-		else if (!enable && enableConsoleHandler)
-			logger.removeHandler(consoleHandler);
 		enableConsoleHandler = enable;
 	}
 
@@ -135,7 +131,6 @@ public class Log {
 		consoleHandler.setFormatter(ft);
 		consoleHandler.setLevel(Level.ALL.getLoggerLevel());
 		logger.addHandler(consoleHandler);
-		enableConsoleHandler = true;
 
 		logOutputStream = new ByteArrayOutputStream();
 		System.setOut(new LogPrintStream(System.out, logOutputStream));
@@ -180,8 +175,14 @@ public class Log {
 
 		@Override
 		public void print(String arg0) {
-			super.print(arg0);
+			if(enableConsoleHandler) super.print(arg0);
 			bufferPrintStream.println(arg0);
+		}
+
+		@Override
+		public void println(String arg0) {
+			if(enableConsoleHandler) super.println(arg0);
+			else bufferPrintStream.println(arg0);
 		}
 	}
 
