@@ -1183,7 +1183,7 @@ public class ApkInstallWizard
 						// disable overwrite
 					}
 					
-					if(apkInfo == null || apkInfo.librarys == null || apkInfo.librarys.length == 0) {
+					if(apkInfo == null || apkInfo.libraries == null || apkInfo.libraries.length == 0) {
 						// disable with libs
 					} else {
 						
@@ -1590,7 +1590,7 @@ public class ApkInstallWizard
 		}
 		apkScanner = new AaptScanner(new ApkScannerStub.StatusListener() {
 			@Override
-			public void OnStateChanged(Status status) {
+			public void onStateChanged(Status status) {
 				Log.i("OnStateChanged() "+ status);
 				switch(status) {
 				case BASIC_INFO_COMPLETED:
@@ -1603,11 +1603,11 @@ public class ApkInstallWizard
 				}
 			}
 
-			@Override public void OnSuccess() { }
-			@Override public void OnStart(long estimatedTime) { }
-			@Override public void OnProgress(int step, String msg) { }
-			@Override public void OnError() { }
-			@Override public void OnComplete() { }
+			@Override public void onSuccess() { }
+			@Override public void onStart(long estimatedTime) { }
+			@Override public void onProgress(int step, String msg) { }
+			@Override public void onError(int error) { }
+			@Override public void onComplete() { }
 		});
 		apkScanner.openApk(apkFilePath);
 		apkInfo = apkScanner.getApkInfo();
@@ -1895,7 +1895,7 @@ public class ApkInstallWizard
 			String libPath = null;
 			if((flag & FLAG_OPT_EXTRA_WITH_LIB) == FLAG_OPT_EXTRA_WITH_LIB &&
 					(flag & FLAG_OPT_PUSH_DATA) != FLAG_OPT_PUSH_DATA &&
-					apkInfo.librarys != null && apkInfo.librarys.length > 0) {
+					apkInfo.libraries != null && apkInfo.libraries.length > 0) {
 				printLog("With libraries ...");
 				// unzip libs..
 				if(ZipFileUtil.unZip(apkInfo.filePath, "lib/", apkInfo.tempWorkPath+File.separator+"lib")) {

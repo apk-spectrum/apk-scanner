@@ -109,7 +109,7 @@ public class TabbedPanel extends JTabbedPane
 				setSelectedIndex(0);
 			}
 			if(id == -1 || id == 1) setPanelData(1, apkInfo.widgets.length, apkInfo);
-			if(id == -1 || id == 2) setPanelData(2, apkInfo.librarys.length, apkInfo);
+			if(id == -1 || id == 2) setPanelData(2, apkInfo.libraries.length, apkInfo);
 			if(id == -1 || id == 4) {
 				int cnt = 0;
 				ApplicationInfo app = apkInfo.manifest.application;
@@ -126,6 +126,8 @@ public class TabbedPanel extends JTabbedPane
 				((TabDataObject)(getComponent(id - CMD_EXTRA_DATA))).setExtraData(apkInfo);
 			}
 		} else {
+			((TabDataObject)(getComponent(0))).setData(null);
+			setSelectedIndex(0);
 			for(int i = 1; i < 6; i++) {
 				if(id == -1 || id == i) setPanelData(i, 0, null);
 			}

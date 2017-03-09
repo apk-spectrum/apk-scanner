@@ -50,7 +50,12 @@ public class AaptXmlTreePath
 			int curDepth = 0;
 
 			defaultNamespace = "android";
-			
+
+			if(xmlTree == null) {
+				Log.w("xmlTree is null");
+				return;
+			}
+
 			for(String s: xmlTree) {
 				int type = NODE_TYPE_UNKNOWN;
 				int depth = s.indexOf("A:");

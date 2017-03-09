@@ -28,6 +28,7 @@ public class AaptNativeScanner extends ApkScannerStub
 		assetsHandle = createAssetManager();
 		if(!addPackage(assetsHandle, apkFilePath)) {
 			Log.e("ERROR: Failed to add package to an AssetManager : " + apkFilePath);
+			realeaseAssetManager();
 			return;
 		}
 		Log.i("INFO: Successed to add package to an AssetManager : " + apkFilePath);
@@ -74,10 +75,18 @@ public class AaptNativeScanner extends ApkScannerStub
 		}
 	}
 
-	@Override
-	public void clear(boolean sync) {
+	private void realeaseAssetManager() {
 		realeaseAssetManager(assetsHandle);
 		assetsHandle = 0;
+	}
+	
+	public boolean hasAssetManager() {
+		return assetsHandle != 0;
+	}
+
+	@Override
+	public void clear(boolean sync) {
+		realeaseAssetManager();
 	}
 	
 	public String getResourceName(int resId) {

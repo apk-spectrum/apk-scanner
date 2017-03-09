@@ -206,7 +206,7 @@ public class MainUI extends JFrame
 	private class ApkScannerListener implements ApkScannerStub.StatusListener
 	{
 		@Override
-		public void OnStart(final long estimatedTime) {
+		public void onStart(final long estimatedTime) {
 			synchronized(labelInitSync) {
 				new Thread(new Runnable() {
 					public void run()
@@ -238,18 +238,20 @@ public class MainUI extends JFrame
 		}
 
 		@Override
-		public void OnSuccess() {
-			Log.v("ApkCore.OnSuccess()");
+		public void onSuccess() {
+			Log.v("ApkCore.onSuccess()");
 			if(exiting) return;
 		}
 
 		@Override
-		public void OnError() {
-			Log.v("ApkCore.OnError()");
+		public void onError(int error) {
+			Log.e("ApkCore.onError() " + error);
 			if(exiting) return;
 
 			setTitle(Resource.STR_APP_NAME.getString());
-			if(tabbedPanel != null) tabbedPanel.setData(null);
+			if(tabbedPanel != null) {
+				tabbedPanel.setData(null);
+			}
 			
 			final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
 			//JOptionPane.showMessageDialog(null, "Sorry, Can not open the APK", "Error", JOptionPane.ERROR_MESSAGE, Appicon);
@@ -258,13 +260,13 @@ public class MainUI extends JFrame
 		}
 
 		@Override
-		public void OnComplete() {
-			Log.v("ApkCore.OnComplete()");
+		public void onComplete() {
+			Log.v("ApkCore.onComplete()");
 			toolBar.setEnabledAt(ButtonSet.OPEN, true);
 		}
 
 		@Override
-		public void OnProgress(int step, String msg) {
+		public void onProgress(int step, String msg) {
 			if(exiting) return;
 			switch(step) {
 			case 0:
@@ -276,9 +278,9 @@ public class MainUI extends JFrame
 		}
 
 		@Override
-		public void OnStateChanged(Status status)
+		public void onStateChanged(Status status)
 		{
-			Log.i("OnStateChanged() "+ status);
+			Log.i("onStateChanged() "+ status);
 			synchronized(labelInitSync) {
 				synchronized(uiInitSync) {
 					Log.i("OnStateChanged() sync "+ status);	
@@ -301,9 +303,6 @@ public class MainUI extends JFrame
 				if(tabbedPanel!=null) tabbedPanel.setData(apkScanner.getApkInfo(), 0);
 				
 				Log.i(status + " ui sync end");
-				break;
-			case PERM_INFO_COMPLETED:
-				tabbedPanel.setData(apkScanner.getApkInfo(), 0 + TabbedPanel.CMD_EXTRA_DATA);
 				break;
 			case WIDGET_COMPLETED:
 				Log.i(status + " ui sync start");

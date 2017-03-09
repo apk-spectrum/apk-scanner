@@ -32,7 +32,7 @@ public class ApkInfo
 	public WidgetInfo[] widgets = null;
 	public String[] resources = null;
 	public String[] xmls = null;
-	public String[] librarys = null;
+	public String[] libraries = null;
 	public String[] certificates = null;
 	public String[] certFiles = null;
 

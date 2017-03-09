@@ -97,7 +97,7 @@ public class AaptManifestReader
 					manifestInfo.versionName = res[0].name;
 				}
 			}
-			
+
 			String installLocation = getAttrValue(tagNode, "installLocation");
 			if(installLocation == null || installLocation.equals("1")) {
 				manifestInfo.installLocation = "internalOnly";
@@ -106,8 +106,23 @@ public class AaptManifestReader
 			} else if(installLocation.equals("2")) {
 				manifestInfo.installLocation = "preferExternal";
 			}
+		} else {
+			Log.e("error: node not existed : /manifest");
+			return;
 		}
-		
+
+		// label & icon
+		tagNode = manifestPath.getNode("/manifest/application");
+		if(tagNode != null) {
+			manifestInfo.application.labels = getAttrResourceValues(tagNode, "label");
+			manifestInfo.application.icons = getAttrResourceValues(tagNode, "icon");
+			String bool = getAttrValue(tagNode, "debuggable");
+			if(bool != null) manifestInfo.application.debuggable = bool.equals("true");
+		} else {
+			Log.e("error: node not existed : /manifest/application");
+			return;
+		}
+
 		tagNode = manifestPath.getNode("/manifest/uses-sdk");
 		if(tagNode != null) {
 			String ver = getAttrValue(tagNode, "targetSdkVersion");
@@ -124,24 +139,13 @@ public class AaptManifestReader
 			}
 		}
 
-		// label & icon
-		tagNode = manifestPath.getNode("/manifest/application");
-		if(tagNode != null) {
-			manifestInfo.application.labels = getAttrResourceValues(tagNode, "label");
-			manifestInfo.application.icons = getAttrResourceValues(tagNode, "icon");
-			String bool = getAttrValue(tagNode, "debuggable");
-			if(bool != null) manifestInfo.application.debuggable = bool.equals("true");
-		} else {
-			Log.e("error: node not existed : /manifest/application");
-		}
-		
 		manifestInfo.compatibleScreens = getCompatibleScreens(manifestPath.getNodeList("/manifest/compatible-screens"));
 		manifestInfo.supportsScreens = getSupportsScreens(manifestPath.getNodeList("/manifest/supports-screens"));
 		manifestInfo.supportsGlTexture = getSupportsGlTexture(manifestPath.getNodeList("/manifest/supports-gl-texture"));
 		manifestInfo.usesConfiguration = getUsesConfiguration(manifestPath.getNodeList("/manifest/uses-configuration"));
 		manifestInfo.usesFeature = getUsesFeature(manifestPath.getNodeList("/manifest/uses-feature"));
 		manifestInfo.usesLibrary = getUsesLibrary(manifestPath.getNodeList("/manifest/uses-library"));
-		
+
         // display to launchur
 		AaptXmlTreeNode[] launchers = manifestPath.getNodeList("/manifest/application/activity/intent-filter/category[@"+namespace+"name='android.intent.category.LAUNCHER']");
         if(launchers != null && launchers.length > 0) {
@@ -219,7 +223,7 @@ public class AaptManifestReader
 	        usesPermissionList.clear();
         }
         usesPermissionList = null;
-        
+
         Log.i("read permission");
         permTag = manifestPath.getNodeList("/manifest/permission");
         if(permTag != null && permTag.length > 0) {
@@ -244,7 +248,7 @@ public class AaptManifestReader
 	        permissionList.clear();
 	        permissionList = null;
         }
-        
+
         Log.i("read permission-tree");
         permTag = manifestPath.getNodeList("/manifest/permission-tree");
         if(permTag != null && permTag.length > 0) {
@@ -261,10 +265,9 @@ public class AaptManifestReader
 	        permissionList = null;
         }
 	}
-	
+
 	public WidgetInfo[] getWidgetList(String apkFilePath)
 	{
-		
         AaptXmlTreeNode[] widgetTag = manifestPath.getNodeList("/manifest/application/receiver/meta-data[@"+namespace+"name='android.appwidget.provider']/..");
         //Log.i("Normal widgetList cnt = " + xmlAndroidManifest.getLength());
         ArrayList<WidgetInfo> widgetList = new ArrayList<WidgetInfo>();
@@ -285,7 +288,7 @@ public class AaptManifestReader
         	}
         	widgetList.add(widget);
         }
-        
+
         widgetTag = manifestPath.getNodeList("/manifest/application/activity-alias/intent-filter/action[@"+namespace+"name='android.intent.action.CREATE_SHORTCUT']/../..");
         //Log.i("Shortcut widgetList cnt = " + xmlAndroidManifest.getLength());
         for( int idx=0; idx < widgetTag.length; idx++ ){
@@ -299,16 +302,15 @@ public class AaptManifestReader
         	widget.size = "1 X 1";
         	widgetList.add(widget);
         }
-        
+
 		return widgetList.toArray(new WidgetInfo[0]);
 	}
-	
 
 	private Object[] getWidgetInfo(String apkFilePath, ResourceInfo[] widgetRes)
 	{
 		String Size = "";
 		ResourceInfo[] iconPaths = null;
-		
+
 		if(widgetRes == null || widgetRes.length <= 0
 				|| apkFilePath == null || !(new File(apkFilePath)).exists()) {
 			return new Object[] { null, null };
@@ -318,12 +320,12 @@ public class AaptManifestReader
 		for(ResourceInfo r: widgetRes) {
 			xmlPath.add(r.name);
 		}
-		
+
 		String[] wdgXml = AaptNativeWrapper.Dump.getXmltree(apkFilePath, xmlPath.toArray(new String[0]));
 		AaptXmlTreePath widgetTree = new AaptXmlTreePath(wdgXml);
 		String widgetNamespace = widgetTree.getAndroidNamespaceTag() + ":";
 		Log.i("widgetNamespace : " + widgetNamespace);
-		
+
 		String width = "0";
 		String height = "0";
 
@@ -350,7 +352,7 @@ public class AaptManifestReader
 				height = res[0].name.replaceAll("^([0-9]*).*", "$1");
 			}
 		}
-		
+
 		if(!"0".equals(width) && !"0".equals(height)) {
 			Size = (int)Math.ceil((Float.parseFloat(width) - 40) / 76 + 1) + " X " + (int)Math.ceil((Float.parseFloat(height) - 40) / 76 + 1);
 			Size += "\n(" + width + " X " + height + ")";
