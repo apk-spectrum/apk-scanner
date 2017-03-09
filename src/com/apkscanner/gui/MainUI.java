@@ -220,11 +220,11 @@ public class MainUI extends JFrame
 							}
 							synchronized(uiInitSync) {
 								Log.i("OnStart() uiInitSync");	
+								if(toolBar != null) {
+									toolBar.setEnabledAt(ButtonSet.OPEN, false);
+									toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
+								}
 							}
-						}
-						if(toolBar != null) {
-							toolBar.setEnabledAt(ButtonSet.OPEN, false);
-							toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
 						}
 					}
 				}).start();
@@ -281,6 +281,10 @@ public class MainUI extends JFrame
 		public void onStateChanged(Status status)
 		{
 			Log.i("onStateChanged() "+ status);
+			if(status == Status.STANBY) {
+				Log.v("STANBY: does not UI update");
+				return;
+			}
 			synchronized(labelInitSync) {
 				synchronized(uiInitSync) {
 					Log.i("OnStateChanged() sync "+ status);	
