@@ -21,6 +21,8 @@ import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
+import com.apkscanner.util.Log;
+
 public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 {
 	private static final long serialVersionUID = 7856109068620039501L;
@@ -55,9 +57,6 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 	{
 		super("text/html", "");
 		addHyperlinkListener(this);
-
-		this.head = head;
-		this.body = body;
 		
         HTMLEditorKit kit = new HTMLEditorKit();
         setEditorKit(kit);
@@ -166,6 +165,10 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
     
 	public void setHtml(String head, String body) 
 	{
+		if(head != null && body != null && head.equals(this.head) && body.equals(this.body)) {
+			Log.v("same content to pre");
+			return;
+		}
 		this.head = head;
 		this.body = body;
 
