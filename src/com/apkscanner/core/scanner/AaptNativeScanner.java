@@ -5,6 +5,7 @@ import java.util.concurrent.Semaphore;
 
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.SystemUtil;
 
 public class AaptNativeScanner extends ApkScannerStub
 {
@@ -217,7 +218,7 @@ public class AaptNativeScanner extends ApkScannerStub
 	private native static ResourceInfo nativeGetResourceString(long handle, int resId, String config);
 
 	static {
-		if (System.getProperty("os.name").indexOf("Linux") > -1) {
+		if (SystemUtil.isLinux()) {
 			System.loadLibrary("c++");
 		}
 		System.loadLibrary("AaptNativeWrapper");

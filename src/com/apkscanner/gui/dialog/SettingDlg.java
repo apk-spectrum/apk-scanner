@@ -27,6 +27,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.SystemUtil;
 
 public class SettingDlg extends JDialog implements ActionListener
 {
@@ -34,7 +35,7 @@ public class SettingDlg extends JDialog implements ActionListener
 
 	private JTextField textExcutePath;
 	
-	private String strExcuteEditorPath;
+	private String strExecuteEditorPath;
 	private String strframeworkResPath;
 	
 	private String strLanguage;
@@ -69,19 +70,19 @@ public class SettingDlg extends JDialog implements ActionListener
 	
 	private void readSettings()
 	{
-		strExcuteEditorPath = (String)Resource.PROP_EDITOR.getData();
-		if(strExcuteEditorPath == null) {
-			if(System.getProperty("os.name").indexOf("Window") >-1) {				
-				strExcuteEditorPath = "notepad";
-			} else {  //for linux
-				strExcuteEditorPath = "gedit";
+		strExecuteEditorPath = (String)Resource.PROP_EDITOR.getData();
+		if(strExecuteEditorPath == null) {
+			try {
+				strExecuteEditorPath = SystemUtil.getDefaultEditor();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			Resource.PROP_EDITOR.setData(strExcuteEditorPath);
+			Resource.PROP_EDITOR.setData(strExecuteEditorPath);
 		}
 		
 		strLanguage = (String)Resource.PROP_LANGUAGE.getData();
 		if(strLanguage == null) {
-			if(System.getProperty("user.language").indexOf("ko") > -1) {
+			if(SystemUtil.getUserLanguage().indexOf("ko") > -1) {
 				strLanguage = "ko";
 			} else {
 				strLanguage = "en";
@@ -113,7 +114,7 @@ public class SettingDlg extends JDialog implements ActionListener
 	
 	private void saveSettings()
 	{
-		Resource.PROP_EDITOR.setData(strExcuteEditorPath);
+		Resource.PROP_EDITOR.setData(strExecuteEditorPath);
 		Resource.PROP_LANGUAGE.setData(strLanguage);
 		Resource.PROP_CHECK_INSTALLED.setData(isSamePackage);
 		Resource.PROP_FRAMEWORK_RES.setData(strframeworkResPath);
@@ -156,7 +157,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		panel.add(userLabel);
 
 		textExcutePath = new JTextField(20);
-		textExcutePath.setText(strExcuteEditorPath);
+		textExcutePath.setText(strExecuteEditorPath);
 		
 		textExcutePath.setBounds(121, 10, 283, 25);
 		panel.add(textExcutePath);		
@@ -258,9 +259,9 @@ public class SettingDlg extends JDialog implements ActionListener
 			//Log.i("save");
 			
 			if((new File(textExcutePath.getText().trim()).exists())) {
-				strExcuteEditorPath = textExcutePath.getText().trim();					
+				strExecuteEditorPath = textExcutePath.getText().trim();					
 			} else {
-				textExcutePath.setText(strExcuteEditorPath);
+				textExcutePath.setText(strExecuteEditorPath);
 			}
 
 			strframeworkResPath = "";
@@ -291,7 +292,7 @@ public class SettingDlg extends JDialog implements ActionListener
 			
 			File dir = jfc.getSelectedFile();
 			if(dir!=null) {
-				strExcuteEditorPath = dir.getPath();
+				strExecuteEditorPath = dir.getPath();
 				textExcutePath.setText(dir.getPath()); 
 			}
 		} else if(e.getSource() == browser2) {

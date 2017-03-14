@@ -16,6 +16,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 
+import com.apkscanner.util.SystemUtil;
+
 public class JTextOptionPane extends JOptionPane {
 	private static final long serialVersionUID = -7000242417475447404L;
 
@@ -50,7 +52,7 @@ public class JTextOptionPane extends JOptionPane {
 		panel.add(messagePane,BorderLayout.NORTH);
 		panel.add(scrollPane,BorderLayout.CENTER);
 
-		if(!"Linux".equals(System.getProperty("os.name"))) {
+		if(SystemUtil.isWindows()) {
 			panel.addHierarchyListener(new HierarchyListener() {
 				public void hierarchyChanged(HierarchyEvent e) {
 					Window window = SwingUtilities.getWindowAncestor(panel);

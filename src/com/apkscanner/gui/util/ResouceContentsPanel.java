@@ -32,6 +32,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -63,7 +64,6 @@ import org.fife.ui.rtextarea.SearchResult;
 
 import com.apkscanner.Launcher;
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.tabpanels.Resources.ResourceObject;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
@@ -73,6 +73,7 @@ import com.apkscanner.tool.jd_gui.JDGuiLauncher;
 import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.SystemUtil;
 import com.apkscanner.util.ZipFileUtil;
 
 public class ResouceContentsPanel extends JPanel{
@@ -159,20 +160,7 @@ public class ResouceContentsPanel extends JPanel{
 		toolBar.add(multiLinePrintButton);
 		
 		TextAreaPanel.add(toolBar,BorderLayout.PAGE_START);
-		
-		finddlg = new FindDialog(MainUI.getCurrentParentsFrame(), new SearchListener() {			
-			@Override
-			public void searchEvent(SearchEvent e) {
-				SearchAndNext(e.getType(), e.getSearchContext());
-			}
-			
-			@Override
-			public String getSelectedText() {
-				return null;
-			}
-		});
-		finddlg.setResizable(false);
-		
+
 		textTableViewer = new JTable(); 
 		
 		renderer = new SearchRenderer();
@@ -240,7 +228,27 @@ public class ResouceContentsPanel extends JPanel{
 		this.add(ContentsviewPanel, BorderLayout.CENTER);
 	}
 	
-	void FindNextTable(boolean next) {
+	private FindDialog getFindDialog() {
+		if(finddlg == null) {
+			SwingUtilities.getRoot(this);
+			JFrame window = (JFrame) SwingUtilities.getWindowAncestor(this);
+			finddlg = new FindDialog(window, new SearchListener() {			
+				@Override
+				public void searchEvent(SearchEvent e) {
+					SearchAndNext(e.getType(), e.getSearchContext());
+				}
+				
+				@Override
+				public String getSelectedText() {
+					return null;
+				}
+			});
+			finddlg.setResizable(false);
+		}
+		return finddlg;
+	}
+	
+	private void FindNextTable(boolean next) {
 		
 		int selectindex = textTableViewer.getSelectedRow();
 		boolean findflag= false;
@@ -327,14 +335,14 @@ public class ResouceContentsPanel extends JPanel{
 			case "F":      /////////F key
 				
 				if(arg0.getSource() instanceof JTable) {					
-		             SwingUtilities.invokeLater( new Runnable(){ 
+					EventQueue.invokeLater( new Runnable(){ 
 	                 public void run() {
 	                	 findtextField_ResourceTable.requestFocusInWindow();	                	 
 	                 	}
 	                 });					
 					//findtextField_ResourceTable.requestFocusInWindow();
 				} else {
-					finddlg.setVisible(true);
+					getFindDialog().setVisible(true);
 				}
 				
 				break;			
@@ -535,7 +543,7 @@ public class ResouceContentsPanel extends JPanel{
 					exportContent(EXPORT_TYPE_SAVE);
 					break;
 				case TEXTVIEWER_TOOLBAR_FIND:					
-					finddlg.setVisible(true);
+					getFindDialog().setVisible(true);
 					break;
 				case TEXTVIEWER_TOOLBAR_FIND+RESOURCE_LISTVIEW_TOOLBAR:					
 				    String pattern = findtextField_ResourceTable.getText().trim();
@@ -649,16 +657,7 @@ public class ResouceContentsPanel extends JPanel{
 			}
 
 			if(type == EXPORT_TYPE_OPEN) {
-				String openner;
-				if(System.getProperty("os.name").indexOf("Window") >-1) {
-					openner = "explorer";
-				} else {  //for linux
-					openner = "xdg-open";
-				}
-		
-				try {
-					new ProcessBuilder(openner, resPath).start();
-				} catch (IOException e1) { }	
+				SystemUtil.openArchiveExplorer(resPath);
 			}
 	    }
 	    
@@ -844,15 +843,7 @@ public class ResouceContentsPanel extends JPanel{
 			ZipFileUtil.unZip(apkinfo.filePath, currentSelectedObj.path, resPath);
 			
 			if (ButtonSet.OS_SETTING.matchActionEvent(e)) {
-				String openner;
-				if(System.getProperty("os.name").indexOf("Window") >-1) {
-					openner = "explorer";
-				} else {  //for linux
-					openner = "xdg-open";
-				}
-				try {
-					new ProcessBuilder(openner, resPath).start();
-				} catch (IOException e1) { }
+				SystemUtil.openFile(resPath);
 			} else if (ButtonSet.JD_GUI.matchActionEvent(e)) {
 				final JButton btn = buttonMap.get(ButtonSet.JD_GUI);
 				btn.setEnabled(false);
@@ -870,15 +861,7 @@ public class ResouceContentsPanel extends JPanel{
 			} else if (ButtonSet.APK_SCANNER.matchActionEvent(e)) {
 				Launcher.run(resPath);
 			} else if (ButtonSet.EXPLORER.matchActionEvent(e)) {
-				try {
-					if(System.getProperty("os.name").indexOf("Window") >-1) {
-						new ProcessBuilder("explorer", resPath).start();
-					} else {  //for linux
-						new ProcessBuilder("file-roller", resPath).start();
-					}
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+				SystemUtil.openArchiveExplorer(resPath);
 			} else if (ButtonSet.CHOOSE_APPLICATION.matchActionEvent(e)) {
 				
 			}

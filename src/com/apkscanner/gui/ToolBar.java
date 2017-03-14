@@ -206,12 +206,10 @@ public class ToolBar extends JToolBar
     public final void initUI(ActionListener listener)
     {
     	Log.i("ToolBar.initUI() start");
-        
-    	
-        
+
     	final JPopupMenu openPopupMenu = new JPopupMenu();
         final JPopupMenu installPopupMenu = new JPopupMenu();
-        
+
         Log.i("ToolBar.initUI() MenuItemSet init");
         menuItemMap = MenuItemSet.getButtonMap(listener);
     	JMenuItem SubMenu = openPopupMenu.add((JMenu)menuItemMap.get(MenuItemSet.NEW_WINDOW));

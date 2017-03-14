@@ -19,6 +19,7 @@ import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.tool.apktool.ApktoolWrapper;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.SystemUtil;
 
 public class Main
 {
@@ -33,7 +34,7 @@ public class Main
 		CommandLine cmd = null;
 		String cmdType = null;
 		
-		Resource.setLanguage((String)Resource.PROP_LANGUAGE.getData(System.getProperty("user.language")));
+		Resource.setLanguage((String)Resource.PROP_LANGUAGE.getData(SystemUtil.getUserLanguage()));
 		if(Resource.STR_APP_BUILD_MODE.getString().equals("user")) {
 			Log.enableConsoleLog(false);
 		}
@@ -163,7 +164,7 @@ public class Main
 	{
 		Log.v("emptyCmd() ");
 		
-		 if(!cmd.hasOption("c") && !cmd.hasOption("cui")) {
+		if(!cmd.hasOption("c") && !cmd.hasOption("cli")) {
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					new MainUI();
@@ -173,14 +174,14 @@ public class Main
 			usage();
 		}
 	}
-	
+
 	static private void solveApkFile(CommandLine cmd)
 	{
 		final String apkFilePath = cmd.getArgs()[0];
 
 		Log.v("solveApkFile() " + apkFilePath);
 		
-		if(!cmd.hasOption("c") && !cmd.hasOption("cui")) {
+		if(!cmd.hasOption("c") && !cmd.hasOption("cli")) {
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					new MainUI(apkFilePath);
@@ -199,7 +200,7 @@ public class Main
 
 		Log.v("solvePackage() " + apkPathInDevice + ", " + frameworkResPath + ", " + deviceSerialNum);
 		
-		if(!cmd.hasOption("c") && !cmd.hasOption("cui")) {
+		if(!cmd.hasOption("c") && !cmd.hasOption("cli")) {
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					new MainUI(deviceSerialNum, apkPathInDevice, frameworkResPath);
@@ -221,7 +222,7 @@ public class Main
 		apkFilePath = new File(apkFilePath).getAbsolutePath();
 		Log.v("install() " + apkFilePath);
 		
-		if(!cmd.hasOption("c") && !cmd.hasOption("cui")) {
+		if(!cmd.hasOption("c") && !cmd.hasOption("cli")) {
 			ApkInstallWizard wizard = new ApkInstallWizard();
 			wizard.setApk(apkFilePath);
 			wizard.start();
@@ -261,7 +262,7 @@ public class Main
 		normalOptions.addOption(opt);
 		
 		/*
-		opt = new Option( "c", "cui", false, "Prints the result to the command line");
+		opt = new Option( "c", "cli", false, "Prints the result to the command line");
 		allOptions.addOption(opt);
 		targetApkOptions.addOption(opt);
 		targetPackageOptions.addOption(opt);

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
 import com.apkscanner.util.Log;
+import com.apkscanner.util.SystemUtil;
 
 public class AaptNativeWrapper {
 
@@ -111,7 +112,7 @@ public class AaptNativeWrapper {
 	private native static String[] run(String[] params);
 
 	static {
-		if (System.getProperty("os.name").indexOf("Linux") > -1) {
+		if (SystemUtil.isLinux()) {
 			System.loadLibrary("c++");
 		}
 		System.loadLibrary("AaptNativeWrapper");

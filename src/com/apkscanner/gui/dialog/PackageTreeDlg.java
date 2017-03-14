@@ -14,7 +14,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
@@ -65,6 +64,7 @@ import com.apkscanner.tool.adb.AdbPackageManager;
 import com.apkscanner.tool.adb.AdbPackageManager.PackageListObject;
 import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.SystemUtil;
  
 public class PackageTreeDlg extends JPanel
                       implements TreeSelectionListener, ActionListener, WindowListener{
@@ -1055,11 +1055,7 @@ public class PackageTreeDlg extends JPanel
 						Resource.STR_BTN_OK.getString());
 				switch(n) {
 				case 0: // explorer
-					String openner = (System.getProperty("os.name").indexOf("Window") > -1) ? "explorer" : "nautilus";
-					String openPath = String.format((System.getProperty("os.name").indexOf("Window") > -1) ? "/select,\"%s\"" : "%s", destFile.getAbsolutePath());
-					try {
-						new ProcessBuilder(openner, openPath).start();
-					} catch (IOException e1) { }
+					SystemUtil.openFileExplorer(destFile);
 					break;
 				case 1: // open
 					Launcher.run(destFile.getAbsolutePath());

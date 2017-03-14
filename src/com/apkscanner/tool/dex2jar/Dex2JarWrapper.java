@@ -5,6 +5,7 @@ import java.io.File;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.SystemUtil;
 
 public class Dex2JarWrapper {
 	public interface DexWrapperListener
@@ -26,9 +27,9 @@ public class Dex2JarWrapper {
 				jarFilePath = jarFilePath.replaceAll("\\.apk$", ".jar");
 							
 				String[] cmdLog = null;
-				
+
 				Log.i("Start DEX2JAR");
-				if(System.getProperty("os.name").indexOf("Window") >-1) {
+				if(SystemUtil.isWindows()) {
 					cmdLog = ConsolCmd.exc(new String[] {Resource.BIN_DEX2JAR_WIN.getPath(), 
 							dexFilePath, "-o", jarFilePath});
 				} else {  //for linux

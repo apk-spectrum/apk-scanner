@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Frame;
@@ -28,7 +29,6 @@ import java.awt.event.WindowListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -52,7 +52,6 @@ import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -86,6 +85,7 @@ import com.apkscanner.tool.adb.AdbPackageManager;
 import com.apkscanner.tool.adb.AdbPackageManager.PackageInfo;
 import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.SystemUtil;
 import com.apkscanner.util.ZipFileUtil;
 
 public class ApkInstallWizard
@@ -1721,11 +1721,7 @@ public class ApkInstallWizard
 						Resource.STR_BTN_OK.getString());
 				switch(n) {
 				case 0: // explorer
-					String openner = (System.getProperty("os.name").indexOf("Window") > -1) ? "explorer" : "xdg-open";
-					String openPath = String.format((System.getProperty("os.name").indexOf("Window") > -1) ? "/select,\"%s\"" : "%s", destFile.getAbsolutePath());
-					try {
-						new ProcessBuilder(openner, openPath).start();
-					} catch (IOException e1) { }
+					SystemUtil.openFileExplorer(destFile);
 					break;
 				case 1: // open
 					Launcher.run(destFile.getAbsolutePath());
@@ -2024,10 +2020,10 @@ public class ApkInstallWizard
 	};
 	
     public static void main(String args[]) {
-        SwingUtilities.invokeLater(new Runnable() {
+        EventQueue.invokeLater(new Runnable() {
             public void run() {
 				ApkInstallWizard wizard = new ApkInstallWizard();
-				if(System.getProperty("os.name").indexOf("Window") >-1) {
+				if(SystemUtil.isWindows()) {
 					wizard.setApk("C:\\Melon.apk");
 				} else {  //for linux
 					wizard.setApk("/home/leejinhyeong/Desktop/DcmContacts.apk");
