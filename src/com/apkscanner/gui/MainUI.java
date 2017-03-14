@@ -469,8 +469,11 @@ public class MainUI extends JFrame
 		}
 
 		private void restart() {
-			String filePath = apkScanner.getApkInfo().filePath;
-			Launcher.run(filePath);
+			if(apkScanner.getApkInfo() != null) {
+				Launcher.run(apkScanner.getApkInfo().filePath);
+			} else {
+				Launcher.run();
+			}
 			dispose();
 		}
 
