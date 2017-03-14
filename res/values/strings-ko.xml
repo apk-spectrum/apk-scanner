@@ -23,7 +23,9 @@
     <string name="btn_del">삭제</string>
     <string name="btn_add">추가</string>
     <string name="btn_export">내보내기</string>
-    <string name="btn_opencode">소스코드</string>
+    <string name="btn_opencode">소스코드</string>>
+    <string name="btn_opening_code">여는중...</string>
+    <string name="btn_search">검색</string>
     
     <string name="btn_open_lab">APK 파일에서 정보를 가져옵니다. (Ctrl+O)</string>
     <string name="btn_manifest_lab">AndroidManifest.xml 전문을 편집기에서 확인 합니다. (Ctrl+M)</string>
@@ -33,7 +35,9 @@
     <string name="btn_install_lab">연결된 디바이스에 APK를 설치합니다. (Ctrl+I)</string>
     <string name="btn_setting_lab">편집기, 언어 등의 설정을 변경합니다.</string>
     <string name="btn_about_lab">APK 스캐너 정보를 확인합니다. (F1)</string>
-    <string name="btn_opencode_lab">소스코드를 JD-GUI를 통하여 보여줍니다.</string>    
+    <string name="btn_opencode_lab">소스코드를 JD-GUI를 통하여 보여줍니다.</string>
+    <string name="btn_opening_code_lab">소스코드를 변환하고 있습니다.</string>
+    <string name="btn_search_lab">리소스 및 소스코드를 검색 합니다.</string>
     
     <string name="menu_new">새창으로 열기...</string>
     <string name="menu_new_window">새창 열기(N)</string>

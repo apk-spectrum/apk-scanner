@@ -24,15 +24,13 @@ import javax.swing.border.MatteBorder;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
-
 public class ToolBar extends JToolBar
 {
 	private static final long serialVersionUID = 894134416480807167L;
 
 	private HashMap<ButtonSet, JButton> buttonMap;
 	private HashMap<MenuItemSet, JMenuItem> menuItemMap;
-	private static boolean isSearchButtonOn = true;//System.getProperty("os.name").equals("Linux");
-	
+
 	public enum MenuItemSet
 	{
 		NEW_WINDOW		(Resource.STR_MENU_NEW.getString(), null, null, null, '\0', true),
@@ -43,7 +41,7 @@ public class ToolBar extends JToolBar
 		OPEN_PACKAGE	(Resource.STR_MENU_PACKAGE.getString(), null, Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK, false), 'P'),
 		INSTALL_APK		(Resource.STR_MENU_INSTALL.getString(), null, Resource.IMG_TOOLBAR_INSTALL.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK, false), 'I'),
 		INSTALLED_CHECK	(Resource.STR_MENU_CHECK_INSTALLED.getString(), null, Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK, false), 'T');
-		
+
     	private String text = null;
     	private String toolTipText = null;
     	private ImageIcon icon = null;
@@ -52,11 +50,10 @@ public class ToolBar extends JToolBar
     	private char mnemonic = '\0';
     	private boolean extend = false;
 
-    	
     	MenuItemSet(String text, String toolTipText, ImageIcon icon, KeyStroke keyStroke, char mnemonic) {
     		this(text, toolTipText, icon, keyStroke, mnemonic, false);
     	}
-    	
+
     	MenuItemSet(String text, String toolTipText, ImageIcon icon, KeyStroke keyStroke, char mnemonic, boolean extend) {
     		this.text = text;
     		this.toolTipText = toolTipText;
@@ -66,12 +63,12 @@ public class ToolBar extends JToolBar
     		this.extend = extend;
     		this.actionCommand = this.getClass().getName()+"."+this.toString();
     	}
-    	
+
     	public boolean matchActionEvent(ActionEvent e)
     	{
     		return actionCommand.equals(e.getActionCommand());
     	}
-    	
+
     	private JMenuItem getMenuItem(ActionListener listener)
     	{
     		JMenuItem menuItem = null;
@@ -85,11 +82,11 @@ public class ToolBar extends JToolBar
             menuItem.setActionCommand(actionCommand);
             menuItem.setIcon(icon);
             menuItem.setToolTipText(toolTipText);
-            
+
             menuItem.setMnemonic(mnemonic);
             return menuItem;
     	}
-    	
+
     	static private HashMap<MenuItemSet, JMenuItem> getButtonMap(ActionListener listener)
     	{
     		HashMap<MenuItemSet, JMenuItem> menuItemMap = new HashMap<MenuItemSet, JMenuItem>();
@@ -99,7 +96,7 @@ public class ToolBar extends JToolBar
             return menuItemMap;
     	}
 	}
-	
+
     public enum ButtonSet
     {
     	OPEN			(Type.NORMAL, Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OPEN_LAB.getString(), Resource.IMG_TOOLBAR_OPEN.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
@@ -112,13 +109,13 @@ public class ToolBar extends JToolBar
     	ABOUT			(Type.NORMAL, Resource.STR_BTN_ABOUT.getString(), Resource.STR_BTN_ABOUT_LAB.getString(), Resource.IMG_TOOLBAR_ABOUT.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
     	ALL				(Type.NONE, null, null),
     	NEED_TARGET_APK	(Type.NONE, null, null),
-    	OPEN_CODE	(Type.NORMAL, Resource.STR_BTN_OPENCODE.getString(), Resource.STR_BTN_OPENCODE_LAB.getString(), Resource.IMG_TOOLBAR_OPENCODE.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-    	SEARCH	(Type.NORMAL, "Search", "Search", Resource.IMG_TOOLBAR_SEARCH.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize));
+    	OPEN_CODE		(Type.NORMAL, Resource.STR_BTN_OPENCODE.getString(), Resource.STR_BTN_OPENCODE_LAB.getString(), Resource.IMG_TOOLBAR_OPENCODE.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+    	SEARCH			(Type.NORMAL, Resource.STR_BTN_SEARCH.getString(), Resource.STR_BTN_SEARCH_LAB.getString(), Resource.IMG_TOOLBAR_SEARCH.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize));
 
     	private enum Type {
     		NONE, NORMAL, HOVER, EXTEND
     	}
-    	
+
     	static private final int IconSize = 40;
 
     	private Type type = null;
@@ -132,12 +129,12 @@ public class ToolBar extends JToolBar
     	{
     		this(type, text, null, icon, icon);
     	}
-    	
+
     	ButtonSet(Type type, String text, String toolTipText, ImageIcon icon)
     	{
     		this(type, text, toolTipText, icon, icon);
     	}
-    	
+
     	ButtonSet(Type type, String text, String toolTipText, ImageIcon icon, ImageIcon hoverIcon)
     	{
     		this.type = type;
@@ -147,7 +144,7 @@ public class ToolBar extends JToolBar
     		this.hoverIcon = hoverIcon;
     		this.actionCommand = this.getClass().getName()+"."+this.toString();
     	}
-    	
+
     	public boolean matchActionEvent(ActionEvent e)
     	{
     		return actionCommand.equals(e.getActionCommand());
@@ -184,10 +181,10 @@ public class ToolBar extends JToolBar
     			return null;
     		}
 			button.setActionCommand(actionCommand);
-    		
+
     		return button;
     	}
-    	
+
     	static private HashMap<ButtonSet, JButton> getButtonMap(ActionListener listener)
     	{
     		HashMap<ButtonSet, JButton> buttonMap = new HashMap<ButtonSet, JButton>();
@@ -197,7 +194,7 @@ public class ToolBar extends JToolBar
             return buttonMap;
     	}
     }
-    
+
     public ToolBar(ActionListener listener)
     {
         initUI(listener);
@@ -225,38 +222,37 @@ public class ToolBar extends JToolBar
         Log.i("ToolBar.initUI() ButtonSet init");
         buttonMap = ButtonSet.getButtonMap(listener);
         Dimension sepSize = new Dimension(1,63);
-        
+
         Log.i("ToolBar.initUI() ButtonSet add");
         add(buttonMap.get(ButtonSet.OPEN));
         add(buttonMap.get(ButtonSet.OPEN_EXTEND));
-        
+
         add(getNewSeparator(JSeparator.VERTICAL, sepSize));
-                
+
         add(buttonMap.get(ButtonSet.MANIFEST));
         add(buttonMap.get(ButtonSet.EXPLORER));
         add(buttonMap.get(ButtonSet.OPEN_CODE));
-        
-        if(isSearchButtonOn)add(buttonMap.get(ButtonSet.SEARCH));
-        
+        add(buttonMap.get(ButtonSet.SEARCH));
+
         add(getNewSeparator(JSeparator.VERTICAL, sepSize));
 
         add(buttonMap.get(ButtonSet.INSTALL));
         add(buttonMap.get(ButtonSet.INSTALL_EXTEND));
-        
+
         add(getNewSeparator(JSeparator.VERTICAL, sepSize));
-                
+
         add(buttonMap.get(ButtonSet.SETTING));
         add(getNewSeparator(JSeparator.VERTICAL, sepSize));
-        
+
         add(buttonMap.get(ButtonSet.ABOUT));
-        
+
         buttonMap.get(ButtonSet.OPEN_EXTEND).addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
             	JButton btn = buttonMap.get(ButtonSet.OPEN_EXTEND);
             	openPopupMenu.show(btn, btn.getWidth()/2, btn.getHeight());
             }
         });
-        
+
         buttonMap.get(ButtonSet.INSTALL_EXTEND).addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
             	JButton btn = buttonMap.get(ButtonSet.INSTALL_EXTEND);
@@ -265,7 +261,7 @@ public class ToolBar extends JToolBar
         });
         //Log.i("ToolBar.initUI() reloadResource s");
         //reloadResource();
-        Log.i("ToolBar.initUI() setFloatable");
+        //Log.i("ToolBar.initUI() setFloatable");
 
         //setAlignmentX(0);
         //setOpaque(false);
@@ -283,19 +279,19 @@ public class ToolBar extends JToolBar
         separator.setPreferredSize(size);
     	return separator;
     }
-    
+
     private void setButtonText(ButtonSet buttonSet, String text, String tipText)
     {
     	buttonMap.get(buttonSet).setText(text);
     	buttonMap.get(buttonSet).setToolTipText(tipText);
     }
-    
+
     @SuppressWarnings("unused")
 	private void setButtonIcon(ButtonSet buttonSet, ImageIcon img)
     {
     	buttonMap.get(buttonSet).setIcon(img);
     }
-    
+
     private void setMenuItemText(MenuItemSet menuItemSet, String text, String tipText)
     {
     	menuItemMap.get(menuItemSet).setText(text);
@@ -311,6 +307,7 @@ public class ToolBar extends JToolBar
     	setButtonText(ButtonSet.SETTING, Resource.STR_BTN_SETTING.getString(), Resource.STR_BTN_SETTING_LAB.getString());
     	setButtonText(ButtonSet.ABOUT, Resource.STR_BTN_ABOUT.getString(), Resource.STR_BTN_ABOUT_LAB.getString());
     	setButtonText(ButtonSet.OPEN_CODE, Resource.STR_BTN_OPENCODE.getString(), Resource.STR_BTN_OPENCODE_LAB.getString());
+    	setButtonText(ButtonSet.SEARCH, Resource.STR_BTN_SEARCH.getString(), Resource.STR_BTN_SEARCH_LAB.getString());
     	
     	setMenuItemText(MenuItemSet.NEW_WINDOW, Resource.STR_MENU_NEW.getString(), null);
     	setMenuItemText(MenuItemSet.NEW_EMPTY, Resource.STR_MENU_NEW_WINDOW.getString(), null);
@@ -347,7 +344,7 @@ public class ToolBar extends JToolBar
     		if(buttonId != ButtonSet.ALL) break;
     	case OPEN_CODE:
     		if(!enabled && buttonId == ButtonSet.OPEN_CODE) {
-    			setButtonText(ButtonSet.OPEN_CODE,"여는중....","여는중....");
+    			setButtonText(ButtonSet.OPEN_CODE, Resource.STR_BTN_OPENING_CODE.getString(), Resource.STR_BTN_OPENING_CODE_LAB.getString());
 	    		buttonMap.get(ButtonSet.OPEN_CODE).setDisabledIcon(Resource.IMG_TOOLBAR_LOADING_OPEN_JD.getImageIcon());
     		} else {
     			setButtonText(ButtonSet.OPEN_CODE, Resource.STR_BTN_OPENCODE.getString(), Resource.STR_BTN_OPENCODE_LAB.getString());
@@ -356,7 +353,8 @@ public class ToolBar extends JToolBar
     		buttonMap.get(ButtonSet.OPEN_CODE).setEnabled(enabled);
     		if(buttonId != ButtonSet.ALL) break;
     	case SEARCH:
-    		
+    		buttonMap.get(ButtonSet.SEARCH).setEnabled(enabled);
+    		if(buttonId != ButtonSet.ALL) break;
     		break;
     	default:
     		break;

@@ -54,6 +54,8 @@ public enum Resource
 	STR_BTN_DEL					(Type.TEXT, "@btn_del"),
 	STR_BTN_EXPORT				(Type.TEXT, "@btn_export"),
 	STR_BTN_OPENCODE			(Type.TEXT, "@btn_opencode"),
+	STR_BTN_OPENING_CODE		(Type.TEXT, "@btn_opening_code"),
+	STR_BTN_SEARCH				(Type.TEXT, "@btn_search"),
 	
 	STR_BTN_OPEN_LAB			(Type.TEXT, "@btn_open_lab"),
 	STR_BTN_MANIFEST_LAB		(Type.TEXT, "@btn_manifest_lab"),
@@ -63,7 +65,9 @@ public enum Resource
 	STR_BTN_INSTALL_LAB			(Type.TEXT, "@btn_install_lab"),
 	STR_BTN_SETTING_LAB			(Type.TEXT, "@btn_setting_lab"),
 	STR_BTN_ABOUT_LAB			(Type.TEXT, "@btn_about_lab"),
-	STR_BTN_OPENCODE_LAB			(Type.TEXT, "@btn_opencode_lab"),
+	STR_BTN_OPENCODE_LAB		(Type.TEXT, "@btn_opencode_lab"),
+	STR_BTN_OPENING_CODE_LAB	(Type.TEXT, "@btn_opening_code_lab"),
+	STR_BTN_SEARCH_LAB			(Type.TEXT, "@btn_search_lab"),
 	
 	STR_MENU_NEW				(Type.TEXT, "@menu_new"),
 	STR_MENU_NEW_WINDOW			(Type.TEXT, "@menu_new_window"),
