@@ -131,10 +131,10 @@ public class Launcher
 		try {
 			classPath = URLDecoder.decode(classPathBuilder.toString(), "UTF-8");
 		} catch (UnsupportedEncodingException e1) { }
-		
+
 		defaultCmd.add("java");
 		defaultCmd.add("-Dfile.encoding=utf-8");
-		defaultCmd.add("-Djava.library.path=./tool");
+		defaultCmd.add("-Djava.library.path="+Resource.BIN_PATH.getPath());
 		defaultCmd.add("-cp");
 		defaultCmd.add(classPath);
 		defaultCmd.add(Main.class.getName());

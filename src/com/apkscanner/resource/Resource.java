@@ -301,6 +301,7 @@ public enum Resource
 	BIN_JDGUI					(Type.BIN, "jd-gui-1.4.0.jar"),
 	BIN_DEX2JAR_LNX				(Type.BIN, "d2j-dex2jar.sh"),
 	BIN_DEX2JAR_WIN				(Type.BIN, "d2j-dex2jar.bat"),	
+	BIN_PATH					(Type.BIN, ""),	
 	
 	PROP_EDITOR					(Type.PROP, "editor"),
 	PROP_FRAMEWORK_RES			(Type.PROP, "framewokr-res"),
