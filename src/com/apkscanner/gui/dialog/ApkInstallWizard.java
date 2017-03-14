@@ -1607,7 +1607,7 @@ public class ApkInstallWizard
 			@Override public void onStart(long estimatedTime) { }
 			@Override public void onProgress(int step, String msg) { }
 			@Override public void onError(int error) { }
-			@Override public void onComplete() { }
+			@Override public void onCompleted() { }
 		});
 		apkScanner.openApk(apkFilePath);
 		apkInfo = apkScanner.getApkInfo();

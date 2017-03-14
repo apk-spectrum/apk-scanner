@@ -165,7 +165,7 @@ public class SearchDlg extends JDialog {
 	
     private static class CustomTable extends JTable {
 
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 7146431942417244851L;
 		private CustomTooltip m_tooltip;
         
         public CustomTable(AllTableModel allTableModel) {

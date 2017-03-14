@@ -51,7 +51,7 @@ abstract public class ApkScannerStub
 		public void onStart(long estimatedTime);
 		public void onSuccess();
 		public void onError(int error);
-		public void onComplete();
+		public void onCompleted();
 		public void onProgress(int step, String msg);
 		public void onStateChanged(Status status);
 	}
@@ -126,7 +126,7 @@ abstract public class ApkScannerStub
 			Log.e("openPackage() failure : apk pull - " + tempApkFilePath);
 			if(statusListener != null) {
 				statusListener.onError(ERR_FAILURE_PULL_APK);
-				statusListener.onComplete();
+				statusListener.onCompleted();
 			}
 			return;
 		}
@@ -270,7 +270,7 @@ abstract public class ApkScannerStub
 				statusListener.onStateChanged(Status.ALL_COMPLETED);
 				Log.i("I: completed... ");
 	        	statusListener.onSuccess();
-	        	statusListener.onComplete();
+	        	statusListener.onCompleted();
 	        	completedCount = 0;
 			}
 		}

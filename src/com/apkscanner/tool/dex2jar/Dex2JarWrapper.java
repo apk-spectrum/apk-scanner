@@ -7,34 +7,47 @@ import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 
-public class Dex2JarWrapper {
+public class Dex2JarWrapper
+{
 	public interface DexWrapperListener
-	{    		
-		public void OnError();
-		public void OnSuccess(String outputFilePath);
+	{
+		public void onCompleted();
+		public void onError();
+		public void onSuccess(String outputFilePath);
 	}
-	
+
 	static public void openDex(final String dexFilePath, final DexWrapperListener listener)
-	{			
+	{
 		new Thread(new Runnable() {
-			public void run()
-			{
+			public void run() {
 				if(dexFilePath == null || !(new File(dexFilePath)).isFile()) {
-					if(listener != null) listener.OnError();
+					Log.e("No such file : " + dexFilePath);
+					if(listener != null) {
+						listener.onError();
+						listener.onCompleted();
+					}
 					return;
 				}
+
 				String jarFilePath = dexFilePath.replaceAll("\\.dex$", ".jar");
 				jarFilePath = jarFilePath.replaceAll("\\.apk$", ".jar");
-							
+
 				String[] cmdLog = null;
 
 				Log.i("Start DEX2JAR");
 				if(SystemUtil.isWindows()) {
 					cmdLog = ConsolCmd.exc(new String[] {Resource.BIN_DEX2JAR_WIN.getPath(), 
 							dexFilePath, "-o", jarFilePath});
-				} else {  //for linux
+				} else if(SystemUtil.isLinux()) {
 					cmdLog = ConsolCmd.exc(new String[] {"sh", Resource.BIN_DEX2JAR_LNX.getPath(), 
 							dexFilePath, "-o", jarFilePath});				
+				} else {
+					Log.e("Unknown OS : " + SystemUtil.OS);
+					if(listener != null) {
+						listener.onError();
+						listener.onCompleted();
+					}
+					return;
 				}
 
 				boolean successed = true;
@@ -46,15 +59,20 @@ public class Dex2JarWrapper {
 					}
 				}
 				Log.i("End DEX2JAR");
-				
+
+				if(!new File(jarFilePath).isFile()) {
+					Log.e("No such file : " + jarFilePath);
+					successed = false;
+				}
+
 				if(listener != null) {
 					if(successed)
-						listener.OnSuccess(jarFilePath);
+						listener.onSuccess(jarFilePath);
 					else
-						listener.OnError();
+						listener.onError();
+					listener.onCompleted();
 				}
 			}
 		}).start();
 	}
-	
 }

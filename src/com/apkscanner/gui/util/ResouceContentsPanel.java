@@ -318,10 +318,7 @@ public class ResouceContentsPanel extends JPanel{
 	
 	class TextViewKeyInputAction extends AbstractAction {
 
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 2157003820138446772L;
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
@@ -849,13 +846,15 @@ public class ResouceContentsPanel extends JPanel{
 				btn.setEnabled(false);
 				Dex2JarWrapper.openDex(resPath, new Dex2JarWrapper.DexWrapperListener() {
 					@Override
-					public void OnError() {
-						btn.setEnabled(true);
+					public void onError() {
 					}
 					@Override
-					public void OnSuccess(String jarFilePath) {
-						btn.setEnabled(true);
+					public void onSuccess(String jarFilePath) {
 						JDGuiLauncher.run(jarFilePath);
+					}
+					@Override
+					public void onCompleted() {
+						btn.setEnabled(true);						
 					}
 				});
 			} else if (ButtonSet.APK_SCANNER.matchActionEvent(e)) {
@@ -866,9 +865,8 @@ public class ResouceContentsPanel extends JPanel{
 				
 			}
 		}
-		
 	}
-	
+
 	private String getSyntaxStyle(String extension) {
 		switch(extension.toLowerCase()) {
 		case ".as": return SyntaxConstants.SYNTAX_STYLE_ACTIONSCRIPT;

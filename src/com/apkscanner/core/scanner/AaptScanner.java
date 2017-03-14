@@ -32,7 +32,7 @@ public class AaptScanner extends ApkScannerStub
 			Log.e("APK file path is null");
 			if(statusListener != null) {
 				statusListener.onError(ERR_UNAVAIlABLE_PARAM);
-	        	statusListener.onComplete();
+	        	statusListener.onCompleted();
 			}
 			return;
 		}
@@ -42,7 +42,7 @@ public class AaptScanner extends ApkScannerStub
 			Log.e("No Such APK file");
 			if(statusListener != null) {
 				statusListener.onError(ERR_NO_SUCH_FILE);
-	        	statusListener.onComplete();
+	        	statusListener.onCompleted();
 			}
 			return;
 		}
@@ -64,7 +64,7 @@ public class AaptScanner extends ApkScannerStub
 			Log.e("Failure : Can't open the AssetManager");
 			if(statusListener != null) {
 				statusListener.onError(ERR_CAN_NOT_ACCESS_ASSET);
-	        	statusListener.onComplete();
+	        	statusListener.onCompleted();
 			}
 			return;
 		}
@@ -75,7 +75,7 @@ public class AaptScanner extends ApkScannerStub
 			Log.e("Failure : Can't read the AndroidManifest.xml");
 			if(statusListener != null) {
 				statusListener.onError(ERR_CAN_NOT_READ_MANIFEST);
-	        	statusListener.onComplete();
+	        	statusListener.onCompleted();
 			}
 			return;
 		}
@@ -88,7 +88,7 @@ public class AaptScanner extends ApkScannerStub
 			Log.e("Failure : Wrong format. Don't have '<manifest>' or '<application>' tag");
 			if(statusListener != null) {
 				statusListener.onError(ERR_WRONG_MANIFEST);
-	        	statusListener.onComplete();
+	        	statusListener.onCompleted();
 			}
 			return;
 		}

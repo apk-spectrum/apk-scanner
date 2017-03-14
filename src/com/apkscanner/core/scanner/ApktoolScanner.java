@@ -582,7 +582,7 @@ public class ApktoolScanner extends ApkScannerStub
 					if(mListener != null) mListener.onSuccess();
 					break;
 				}
-				if(mListener != null) mListener.onComplete();
+				if(mListener != null) mListener.onCompleted();
 			}
 		}
 	}

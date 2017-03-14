@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.GridLayout;
@@ -25,6 +26,7 @@ import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -62,6 +64,7 @@ import com.apkscanner.tool.dex2jar.Dex2JarWrapper;
 import com.apkscanner.tool.jd_gui.JDGuiLauncher;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.SystemUtil;
 import com.apkscanner.util.ZipFileUtil;
 
 public class Resources extends JPanel implements TabDataObject {
@@ -624,65 +627,92 @@ public class Resources extends JPanel implements TabDataObject {
 	}
 
 	private void setTreeForm(Boolean mode) {
-		tree.removeAll();
+		new Thread(new Runnable() {
+			public void run()
+			{
+				try {
+					ArrayList<DefaultMutableTreeNode> topFiles = new ArrayList<DefaultMutableTreeNode>();
+					
+					EventQueue.invokeAndWait(new Runnable() {
+						public void run() {
+							tree.removeAll();
 
-		top = new DefaultMutableTreeNode(getOnlyFilename(this.apkFilePath));
-		// FilteredTreeModel model = new FilteredTreeModel(new
-		// DefaultTreeModel(top));
-		tree.setModel(new DefaultTreeModel(top));
+							top = new DefaultMutableTreeNode(getOnlyFilename(apkFilePath));
+							// FilteredTreeModel model = new FilteredTreeModel(new
+							// DefaultTreeModel(top));
+							tree.setModel(new DefaultTreeModel(top));
 
-		ArrayList<DefaultMutableTreeNode> topFiles = new ArrayList<DefaultMutableTreeNode>();
+							eachTypeNodes = new DefaultMutableTreeNode[ResourceType.COUNT.getInt()];
 
-		eachTypeNodes = new DefaultMutableTreeNode[ResourceType.COUNT.getInt()];
-		for (int i = 0; i < this.nameList.length; i++) {
-			if (this.nameList[i].endsWith("/") || this.nameList[i].startsWith("lib/")
-					/*|| this.nameList[i].startsWith("META-INF/")*/)
-				continue;
+						}
+					});
 
-			ResourceObject resObj = new ResourceObject(this.nameList[i], false);
-			if (this.nameList[i].indexOf("/") == -1) {
-				topFiles.add(new DefaultMutableTreeNode(resObj));
-				continue;
-			}
+					final int CHUNK_SIZE = 100;
+					for (int chunk = 0; chunk < nameList.length; chunk += CHUNK_SIZE) {
+						int start = chunk;
+						EventQueue.invokeAndWait(new Runnable() {
+							public void run() {
+								for (int i = start; i < start + CHUNK_SIZE && i < nameList.length; i++) {
+									if (nameList[i].endsWith("/") || nameList[i].startsWith("lib/")
+											/*|| this.nameList[i].startsWith("META-INF/")*/)
+										continue;
+						
+									ResourceObject resObj = new ResourceObject(nameList[i], false);
+									if (nameList[i].indexOf("/") == -1) {
+										topFiles.add(new DefaultMutableTreeNode(resObj));
+										continue;
+									}
+						
+									DefaultMutableTreeNode typeNode = eachTypeNodes[resObj.type.getInt()];
+						
+									if (typeNode == null) {
+										typeNode = new DefaultMutableTreeNode(resObj.type.toString());
+										eachTypeNodes[resObj.type.getInt()] = typeNode;
+										if (resObj.type != ResourceType.ETC) {
+											top.add(typeNode);
+										}
+									}
+						
+									DefaultMutableTreeNode findnode = null;
+									if (resObj.type != ResourceType.ETC) {
+										String fileName = getOnlyFilename(nameList[i]);
+										findnode = findNode(typeNode, fileName, false, false);
+									}
+						
+									if (findnode != null) {
+										if (findnode.getChildCount() == 0) {
+											ResourceObject obj = (ResourceObject) findnode.getUserObject();
+											findnode.add(new DefaultMutableTreeNode(new ResourceObject(obj.path, false)));
+											((ResourceObject) findnode.getUserObject()).childCount++;
+										}
+										findnode.add(new DefaultMutableTreeNode(resObj));
+										((ResourceObject) findnode.getUserObject()).childCount++;
+									} else {
+										typeNode.add(new DefaultMutableTreeNode(resObj));
+									}
+								}
+							}
+						});
+					}
 
-			DefaultMutableTreeNode typeNode = eachTypeNodes[resObj.type.getInt()];
+					EventQueue.invokeAndWait(new Runnable() {
+						public void run() {
+							if (eachTypeNodes[ResourceType.ETC.getInt()] != null) {
+								top.add(eachTypeNodes[ResourceType.ETC.getInt()]);
+							}
 
-			if (typeNode == null) {
-				typeNode = new DefaultMutableTreeNode(resObj.type.toString());
-				eachTypeNodes[resObj.type.getInt()] = typeNode;
-				if (resObj.type != ResourceType.ETC) {
-					top.add(typeNode);
+							for (DefaultMutableTreeNode node : topFiles) {
+								top.add(node);
+							}
+
+							expandOrCollapsePath(tree, new TreePath(top.getPath()), 1, 0, true);
+						}
+					});
+				} catch (InvocationTargetException | InterruptedException e) {
+					e.printStackTrace();
 				}
 			}
-
-			DefaultMutableTreeNode findnode = null;
-			if (resObj.type != ResourceType.ETC) {
-				String fileName = getOnlyFilename(this.nameList[i]);
-				findnode = findNode(typeNode, fileName, false, false);
-			}
-
-			if (findnode != null) {
-				if (findnode.getChildCount() == 0) {
-					ResourceObject obj = (ResourceObject) findnode.getUserObject();
-					findnode.add(new DefaultMutableTreeNode(new ResourceObject(obj.path, false)));
-					((ResourceObject) findnode.getUserObject()).childCount++;
-				}
-				findnode.add(new DefaultMutableTreeNode(resObj));
-				((ResourceObject) findnode.getUserObject()).childCount++;
-			} else {
-				typeNode.add(new DefaultMutableTreeNode(resObj));
-			}
-		}
-
-		if (eachTypeNodes[ResourceType.ETC.getInt()] != null) {
-			top.add(eachTypeNodes[ResourceType.ETC.getInt()]);
-		}
-
-		for (DefaultMutableTreeNode node : topFiles) {
-			top.add(node);
-		}
-
-		expandOrCollapsePath(tree, new TreePath(top.getPath()), 1, 0, true);
+		}).start();
 	}
 
 	public static void expandOrCollapsePath(JTree tree, TreePath treePath, int level, int currentLevel,
@@ -775,35 +805,27 @@ public class Resources extends JPanel implements TabDataObject {
 						ImageObserver.setDrawFlag(false);
 						ImageObserver = null;
 						tree.repaint();
-						
 					}
 
 					@Override
-					public void OnError() {
-						resetUI();
+					public void onError() {
 					}
 
 					@Override
-					public void OnSuccess(String jarFilePath) {
-						resetUI();
+					public void onSuccess(String jarFilePath) {
 						JDGuiLauncher.run(jarFilePath);
+					}
+
+					@Override
+					public void onCompleted() {
+						resetUI();
 					}
 				});
 			}
 		} else if (resObj.path.toLowerCase().endsWith(".apk")) {
 			Launcher.run(resPath);
 		} else {
-			String openner;
-			if (System.getProperty("os.name").indexOf("Window") > -1) {
-				openner = "explorer";
-			} else { // for linux
-				openner = "xdg-open";
-			}
-
-			try {
-				new ProcessBuilder(openner, resPath).start();
-			} catch (IOException e1) {
-			}
+			SystemUtil.openFile(resPath);
 		}
 	}
 

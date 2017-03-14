@@ -6,7 +6,7 @@ import com.apkscanner.resource.Resource;
 
 public class SystemUtil
 {
-	private static String OS = System.getProperty("os.name").toLowerCase();
+	public static final String OS = System.getProperty("os.name").toLowerCase();
 
 	public static boolean isWindows() {
 		return OS.indexOf("win") > -1;
