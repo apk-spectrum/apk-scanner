@@ -23,7 +23,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.resource.Resource;
@@ -121,13 +120,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		
 		if(Resource.PROP_CURRENT_THEME.getData().toString().equals(strSetTheme)==false) {
 			Resource.PROP_CURRENT_THEME.setData(strSetTheme);
-			try {
-				UIManager.setLookAndFeel(strSetTheme);
-				changed = 1;
-			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-					| UnsupportedLookAndFeelException e) {
-				e.printStackTrace();
-			}			
+			changed = 1;
 		}
 	}
 
@@ -234,13 +227,16 @@ public class SettingDlg extends JDialog implements ActionListener
 	    
 	    panel.add(themecomboBox);
 	    
+	    String selItem = null;
         for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-        	themecomboBox.addItem(info.getClassName());        	
+        	themecomboBox.addItem(info.getName());
+        	if(info.getClassName().equals(strSetTheme)) {
+        		selItem = info.getName();
+        	}
         }
-        
-        themecomboBox.getModel().setSelectedItem(strSetTheme);
-        
-		return panel;
+        themecomboBox.getModel().setSelectedItem(selItem);
+
+        return panel;
 	}
 	
 	public static void main(final String[] args) {
@@ -271,16 +267,17 @@ public class SettingDlg extends JDialog implements ActionListener
 			
 			isSamePackage = chckbxNewCheckBox.isSelected();
 			strLanguage = (String)comboBox.getSelectedItem();
-			strSetTheme = (String)themecomboBox.getSelectedItem();
+			String selItem = (String)themecomboBox.getSelectedItem();
+	        for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+	        	themecomboBox.addItem(info.getName());
+	        	if(info.getName().equals(selItem)) {
+	        		selItem = info.getClassName();
+	        		break;
+	        	}
+	        }
+	        strSetTheme = selItem;
 			saveSettings();
-			
-			try {
-				UIManager.setLookAndFeel(strSetTheme);
-			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-					| UnsupportedLookAndFeelException e1) {
-				e1.printStackTrace();
-			}
-			
+
 			this.dispose();
 		} else if(e.getSource() == exitbutton) {
 			//Log.i("exit");
