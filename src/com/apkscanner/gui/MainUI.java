@@ -79,7 +79,7 @@ public class MainUI extends JFrame
 		createAndShowGUI(true);
 	}
 
-	private void createAndShowGUI(boolean opening)
+	private void createAndShowGUI(final boolean opening)
 	{
 		if(!EventQueue.isDispatchThread()) {
 			Log.i("createAndShowGUI() - This task is not EDT. Invoke to EDT.");
@@ -204,7 +204,7 @@ public class MainUI extends JFrame
 		}
 
 		@Override
-		public void onProgress(int step, String msg) {
+		public void onProgress(final int step, final String msg) {
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					switch(step) {
@@ -219,7 +219,7 @@ public class MainUI extends JFrame
 		}
 
 		@Override
-		public void onStateChanged(Status status)
+		public void onStateChanged(final Status status)
 		{
 			Log.i("onStateChanged() "+ status);
 			if(status == Status.STANBY) {
@@ -287,7 +287,7 @@ public class MainUI extends JFrame
 	{
 		private void evtOpenApkFile(boolean newWindow)
 		{
-			String apkFilePath = ApkFileChooser.openApkFilePath(MainUI.this);
+			final String apkFilePath = ApkFileChooser.openApkFilePath(MainUI.this);
 			if(apkFilePath == null) {
 				Log.v("Not choose apk file");
 				return;

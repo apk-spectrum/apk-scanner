@@ -631,7 +631,7 @@ public class Resources extends JPanel implements TabDataObject {
 			public void run()
 			{
 				try {
-					ArrayList<DefaultMutableTreeNode> topFiles = new ArrayList<DefaultMutableTreeNode>();
+					final ArrayList<DefaultMutableTreeNode> topFiles = new ArrayList<DefaultMutableTreeNode>();
 					
 					EventQueue.invokeAndWait(new Runnable() {
 						public void run() {
@@ -649,7 +649,7 @@ public class Resources extends JPanel implements TabDataObject {
 
 					final int CHUNK_SIZE = 100;
 					for (int chunk = 0; chunk < nameList.length; chunk += CHUNK_SIZE) {
-						int start = chunk;
+						final int start = chunk;
 						EventQueue.invokeAndWait(new Runnable() {
 							public void run() {
 								for (int i = start; i < start + CHUNK_SIZE && i < nameList.length; i++) {
