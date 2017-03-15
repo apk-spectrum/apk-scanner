@@ -264,7 +264,7 @@ public class ToolBar extends JToolBar
         //Log.i("ToolBar.initUI() setFloatable");
 
         //setAlignmentX(0);
-        //setOpaque(false);
+        setOpaque(true);
         setFloatable(false);
         setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
         setBorder(new MatteBorder(0,0,1,0,Color.LIGHT_GRAY));

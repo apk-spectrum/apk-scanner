@@ -130,7 +130,14 @@ public class MainUI extends JFrame
 
 		Log.i("initialize() tabbedpanel init");
 		// TabPanel initialize and add
-		tabbedPanel = new TabbedPanel(opening);
+		String tabbedStyle = (String) Resource.PROP_TABBED_UI_THEME.getData();
+		int style = TabbedPanel.TABBED_UI_STYLE_NONE; 
+		if(tabbedStyle == null || "Plastic".equals(tabbedStyle)) style = TabbedPanel.TABBED_UI_STYLE_PLASTIC;
+		else if("Aqua".equals(tabbedStyle)) style = TabbedPanel.TABBED_UI_STYLE_AQUA;
+		else if("Photoshop".equals(tabbedStyle)) style = TabbedPanel.TABBED_UI_STYLE_PHOTOSHOP;
+		else if("Power Point".equals(tabbedStyle)) style = TabbedPanel.TABBED_UI_STYLE_POWERPOINT;
+		else if("Warrior".equals(tabbedStyle)) style = TabbedPanel.TABBED_UI_STYLE_WARRIOR;
+		tabbedPanel = new TabbedPanel(opening, style);
 		if(opening) {
 			tabbedPanel.setLodingLabel();
 		} else {

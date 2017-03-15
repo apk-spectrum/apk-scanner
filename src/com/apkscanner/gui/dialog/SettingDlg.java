@@ -39,6 +39,7 @@ public class SettingDlg extends JDialog implements ActionListener
 	
 	private String strLanguage;
 	private String strSetTheme;
+	private String strSetTabbedUI;
 	
 	private boolean isSamePackage;
 	private int changed = 0;
@@ -48,6 +49,7 @@ public class SettingDlg extends JDialog implements ActionListener
 	
     JComboBox<String> comboBox;
     JComboBox<String> themecomboBox;
+    JComboBox<String> tabbedUIComboBox;
     
     JCheckBox chckbxNewCheckBox;
     
@@ -90,14 +92,13 @@ public class SettingDlg extends JDialog implements ActionListener
 		}
 		
 		strSetTheme = (String)Resource.PROP_CURRENT_THEME.getData();
-		
-		
 		if(strSetTheme == null) {
 			strSetTheme = UIManager.getSystemLookAndFeelClassName();			
 			Resource.PROP_CURRENT_THEME.setData(strSetTheme);
 		}
-		
-		
+
+		strSetTabbedUI = (String)Resource.PROP_TABBED_UI_THEME.getData("Plastic");
+
 		isSamePackage = (boolean)Resource.PROP_CHECK_INSTALLED.getData(false);
 		
 		strframeworkResPath = (String)Resource.PROP_FRAMEWORK_RES.getData();
@@ -122,12 +123,17 @@ public class SettingDlg extends JDialog implements ActionListener
 			Resource.PROP_CURRENT_THEME.setData(strSetTheme);
 			changed = 1;
 		}
+		if(Resource.PROP_TABBED_UI_THEME.getData("Plastic").toString().equals(strSetTabbedUI)==false) {
+			Resource.PROP_TABBED_UI_THEME.setData(strSetTabbedUI);
+			changed = 1;
+		}
+		
 	}
 
 	public int makeDialog(Component component) {
 		this.setTitle(Resource.STR_SETTINGS_TITLE.getString());
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		this.setSize(new Dimension(480,215));
+		this.setSize(new Dimension(480,245));
 		this.setResizable( false );
 		this.setLocationRelativeTo(component);
 		this.setModal(true);
@@ -167,14 +173,14 @@ public class SettingDlg extends JDialog implements ActionListener
 		jlist.setListData(resList.toArray(new String[0]));
 		
 		savebutton = new JButton(Resource.STR_BTN_OK.getString());
-		savebutton.setBounds(288, 150, 80, 25);
+		savebutton.setBounds(288, 185, 80, 25);
 		savebutton.addActionListener(this);
 		savebutton.setFocusable(false);
 		panel.add(savebutton);
 		
 		
 		exitbutton = new JButton(Resource.STR_BTN_CANCEL.getString());
-		exitbutton.setBounds(380, 150, 80, 25);
+		exitbutton.setBounds(380, 185, 80, 25);
 		exitbutton.addActionListener(this);
 		exitbutton.setFocusable(false);
 		panel.add(exitbutton);
@@ -223,10 +229,9 @@ public class SettingDlg extends JDialog implements ActionListener
 	    panel.add(themelabel);
 	    
 	    themecomboBox = new JComboBox<String>();
-	    themecomboBox.setBounds(250, 120, 200, 24);
-	    
+	    themecomboBox.setBounds(265, 120, 190, 25);
 	    panel.add(themecomboBox);
-	    
+
 	    String selItem = null;
         for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
         	themecomboBox.addItem(info.getName());
@@ -235,6 +240,24 @@ public class SettingDlg extends JDialog implements ActionListener
         	}
         }
         themecomboBox.getModel().setSelectedItem(selItem);
+
+	    JLabel tabbedUIlabel = new JLabel("Tabbed UI");
+	    tabbedUIlabel.setBounds(200, 150, 60, 25);
+	    panel.add(tabbedUIlabel);
+
+        tabbedUIComboBox = new JComboBox<String>();
+        tabbedUIComboBox.setBounds(265, 150, 190, 25);
+	    panel.add(tabbedUIComboBox);
+
+	    tabbedUIComboBox.addItem("None");
+	    tabbedUIComboBox.addItem("Aqua");
+	    tabbedUIComboBox.addItem("Photoshop");
+	    tabbedUIComboBox.addItem("Plastic");
+	    tabbedUIComboBox.addItem("Power Point");
+	    tabbedUIComboBox.addItem("Warrior");
+
+	    String tabbedStyle = (String) Resource.PROP_TABBED_UI_THEME.getData("Plastic");
+	    tabbedUIComboBox.getModel().setSelectedItem(tabbedStyle);
 
         return panel;
 	}
@@ -276,6 +299,7 @@ public class SettingDlg extends JDialog implements ActionListener
 	        	}
 	        }
 	        strSetTheme = selItem;
+	        strSetTabbedUI = (String)tabbedUIComboBox.getSelectedItem();
 			saveSettings();
 
 			this.dispose();
