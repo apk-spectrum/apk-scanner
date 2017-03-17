@@ -118,7 +118,21 @@ public class MainUI extends JFrame
 
 		Log.i("initialize() set bound & size");
 
-		setBounds(0, 0, (int)(long)Resource.PROP_WINDOW_WIDTH.getData(650), (int)(long)Resource.PROP_WINDOW_HEIGHT.getData(490));
+		int preWidth = 0, preHegith = 0;
+		Object propWidth = Resource.PROP_WINDOW_WIDTH.getData(650);
+		Object propHeight = Resource.PROP_WINDOW_HEIGHT.getData(490);
+		if(propWidth instanceof Long) {
+			preWidth = (int)(long)propWidth;
+		} else {
+			preWidth = (int)propWidth;
+		}
+		if(propHeight instanceof Long) {
+			preHegith = (int)(long)propHeight;
+		} else {
+			preHegith = (int)propHeight;
+		}
+		
+		setBounds(0, 0, preWidth, preHegith);
 		setMinimumSize(new Dimension(650, 490));
 		setResizable(true);
 		setLocationRelativeTo(null);
@@ -584,12 +598,24 @@ public class MainUI extends JFrame
 			Log.v("finished()");
 
 			if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData(true)) {
-				long width = (long)getSize().getWidth();
-				long height = (long)getSize().getHeight();
-				if(width != (long)Resource.PROP_WINDOW_WIDTH.getData(0)
-						|| height != (long)Resource.PROP_WINDOW_HEIGHT.getData(0)) {
-					Resource.PROP_WINDOW_WIDTH.setData(width);
-					Resource.PROP_WINDOW_HEIGHT.setData(height);
+				int curWidth = (int)getSize().getWidth();
+				int curHeight = (int)getSize().getHeight();
+				int preWidth = 0, preHegith = 0;
+				Object propWidth = Resource.PROP_WINDOW_WIDTH.getData(0);
+				Object propHeight = Resource.PROP_WINDOW_HEIGHT.getData(0);
+				if(propWidth instanceof Long) {
+					preWidth = (int)(long)propWidth;
+				} else {
+					preWidth = (int)propWidth;
+				}
+				if(propHeight instanceof Long) {
+					preHegith = (int)(long)propHeight;
+				} else {
+					preHegith = (int)propHeight;
+				}
+				if(preWidth != curWidth || preHegith != curHeight) {
+					Resource.PROP_WINDOW_WIDTH.setData(curWidth);
+					Resource.PROP_WINDOW_HEIGHT.setData(curHeight);
 				}
 			}
 
