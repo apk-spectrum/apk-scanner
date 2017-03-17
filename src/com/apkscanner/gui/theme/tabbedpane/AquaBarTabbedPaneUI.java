@@ -3,10 +3,15 @@ package com.apkscanner.gui.theme.tabbedpane;
 import javax.swing.*;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
+
+import com.apkscanner.gui.theme.UIThemeName;
+
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+
+@UIThemeName("Aqua Bar")
 
 public class AquaBarTabbedPaneUI extends BasicTabbedPaneUI {
 
@@ -207,7 +212,7 @@ public class AquaBarTabbedPaneUI extends BasicTabbedPaneUI {
 	}
 
 	private class RollOverListener implements MouseMotionListener,
-			MouseListener {
+	MouseListener {
 
 		public void mouseDragged(MouseEvent e) {
 		}

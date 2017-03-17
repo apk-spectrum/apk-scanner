@@ -12,24 +12,17 @@ import com.apkscanner.gui.tabpanels.Libraries;
 import com.apkscanner.gui.tabpanels.Resources;
 import com.apkscanner.gui.tabpanels.Signatures;
 import com.apkscanner.gui.tabpanels.Widgets;
-import com.apkscanner.gui.theme.tabbedpane.*;
+import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.resource.Resource;
 
 public class TabbedPanel extends JTabbedPane
 {
 	private static final long serialVersionUID = -5500517956616692675L;
 
-	public static final int TABBED_UI_STYLE_NONE = 0;
-	public static final int TABBED_UI_STYLE_AQUA = 1;
-	public static final int TABBED_UI_STYLE_PLASTIC = 2;
-	public static final int TABBED_UI_STYLE_PHOTOSHOP = 3;
-	public static final int TABBED_UI_STYLE_WARRIOR = 4;
-	public static final int TABBED_UI_STYLE_POWERPOINT = 5;
-
 	public static final int CMD_EXTRA_DATA = 1000;
 
 	private String[] labels;
-	
+
 	public abstract interface TabDataObject
 	{
 		public void initialize();
@@ -37,84 +30,81 @@ public class TabbedPanel extends JTabbedPane
 		public void setExtraData(ApkInfo apkInfo);
 		public void reloadResource();
 	}
-	
-    public TabbedPanel(boolean opening, int style)
-    {
-    	switch(style) {
-    	case TABBED_UI_STYLE_AQUA: setUI(new AquaBarTabbedPaneUI()); break;
-    	case TABBED_UI_STYLE_PLASTIC: setUI(new PlasticTabbedPaneUI()); break;
-    	case TABBED_UI_STYLE_PHOTOSHOP: setUI(new PSTabbedPaneUI()); break;
-    	case TABBED_UI_STYLE_WARRIOR: setUI(new CWTabbedPaneUI()); break;
-    	case TABBED_UI_STYLE_POWERPOINT: setUI(new PPTTabbedPaneUI()); break;
-    	default: break;
-    	}
 
-        loadResource();
+	public TabbedPanel(boolean opening, String uiClass)
+	{
+		TabbedPaneUIManager.setUI(this, uiClass);
 
-        addTab(labels[0], null, new BasicInfo(opening), labels[0] + " (Alt+1)");
-        setMnemonicAt(0, KeyEvent.VK_1);
+		loadResource();
 
-        addTab(labels[1], null, new Widgets(), labels[1] + " (Alt+2)");
-        setMnemonicAt(1, KeyEvent.VK_2);
+		addTab(labels[0], null, new BasicInfo(opening), labels[0] + " (Alt+1)");
+		setMnemonicAt(0, KeyEvent.VK_1);
 
-        addTab(labels[2], null, new Libraries(), labels[2] + " (Alt+3)");
-        setMnemonicAt(2, KeyEvent.VK_3);
+		addTab(labels[1], null, new Widgets(), labels[1] + " (Alt+2)");
+		setMnemonicAt(1, KeyEvent.VK_2);
 
-        addTab(labels[3], null, new Resources(), labels[3] + " (Alt+4)");
-        setMnemonicAt(3, KeyEvent.VK_4);
+		addTab(labels[2], null, new Libraries(), labels[2] + " (Alt+3)");
+		setMnemonicAt(2, KeyEvent.VK_3);
 
-        addTab(labels[4], null, new Components(), labels[4] + " (Alt+5)");
-        setMnemonicAt(4, KeyEvent.VK_5);
+		addTab(labels[3], null, new Resources(), labels[3] + " (Alt+4)");
+		setMnemonicAt(3, KeyEvent.VK_4);
 
-        addTab(labels[5], null, new Signatures(), labels[5] + " (Alt+6)");
-        setMnemonicAt(5, KeyEvent.VK_6);
+		addTab(labels[4], null, new Components(), labels[4] + " (Alt+5)");
+		setMnemonicAt(4, KeyEvent.VK_5);
 
-        setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-        setOpaque(true);
-    }
+		addTab(labels[5], null, new Signatures(), labels[5] + " (Alt+6)");
+		setMnemonicAt(5, KeyEvent.VK_6);
 
-    private void loadResource()
-    {
-    	labels = new String[] {
-    		Resource.STR_TAB_BASIC_INFO.getString(),
-    		Resource.STR_TAB_WIDGET.getString(),
-    		Resource.STR_TAB_LIB.getString(),
-    		Resource.STR_TAB_IMAGE.getString(),
-    		Resource.STR_TAB_ACTIVITY.getString(),
-    		Resource.STR_TAB_CERT.getString()
-        };
-    }
+		setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+		setOpaque(true);
+	}
 
-    public void reloadResource()
-    {
-    	loadResource();
+	public void setUI(String clazz) {
 
-    	for(int i = 0; i < 6; i++) {
-    		setTitleAt(i, getTitleAt(i).replaceAll("^([^\\(]*)", labels[i]));
-    		setToolTipTextAt(i, labels[i] + " (Alt+"+ (i+1) +")");
-    		((TabDataObject)(getComponent(i))).reloadResource();
-    	}
-    }
+	}
 
-    public void setProgress(int percent)
-    {
-    	((BasicInfo)(getComponent(0))).setProgress(percent);
-    }
+	private void loadResource()
+	{
+		labels = new String[] {
+				Resource.STR_TAB_BASIC_INFO.getString(),
+				Resource.STR_TAB_WIDGET.getString(),
+				Resource.STR_TAB_LIB.getString(),
+				Resource.STR_TAB_IMAGE.getString(),
+				Resource.STR_TAB_ACTIVITY.getString(),
+				Resource.STR_TAB_CERT.getString()
+		};
+	}
 
-    public void setLodingLabel()
-    {
-    	((BasicInfo)(getComponent(0))).setProgress(-1);
-    	setSelectedIndex(0);
+	public void reloadResource()
+	{
+		loadResource();
+
+		for(int i = 0; i < 6; i++) {
+			setTitleAt(i, getTitleAt(i).replaceAll("^([^\\(]*)", labels[i]));
+			setToolTipTextAt(i, labels[i] + " (Alt+"+ (i+1) +")");
+			((TabDataObject)(getComponent(i))).reloadResource();
+		}
+	}
+
+	public void setProgress(int percent)
+	{
+		((BasicInfo)(getComponent(0))).setProgress(percent);
+	}
+
+	public void setLodingLabel()
+	{
+		((BasicInfo)(getComponent(0))).setProgress(-1);
+		setSelectedIndex(0);
 		for(int i = 1; i < 6; i++) {
-	        setTitleAt(i, labels[i] + "(...)");
+			setTitleAt(i, labels[i] + "(...)");
 			setEnabledAt(i, false);
 		}
-    }
+	}
 
-    public void setData(ApkInfo apkInfo)
-    {
-    	setData(apkInfo, -1);
-    }
+	public void setData(ApkInfo apkInfo)
+	{
+		setData(apkInfo, -1);
+	}
 
 	public void setData(ApkInfo apkInfo, int id)
 	{
@@ -153,10 +143,10 @@ public class TabbedPanel extends JTabbedPane
 	{
 		if(dataSize > 0) {
 			((TabDataObject)(getComponent(panelIdx))).setData(apkInfo);
-	        setTitleAt(panelIdx, labels[panelIdx] + "(" + dataSize + ")");
-	        setEnabledAt(panelIdx, true);
+			setTitleAt(panelIdx, labels[panelIdx] + "(" + dataSize + ")");
+			setEnabledAt(panelIdx, true);
 		} else {
-	        setTitleAt(panelIdx, labels[panelIdx] + "(0)");
+			setTitleAt(panelIdx, labels[panelIdx] + "(0)");
 			setEnabledAt(panelIdx, false);
 		}
 	}

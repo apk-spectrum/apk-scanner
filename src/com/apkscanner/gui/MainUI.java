@@ -130,14 +130,8 @@ public class MainUI extends JFrame
 
 		Log.i("initialize() tabbedpanel init");
 		// TabPanel initialize and add
-		String tabbedStyle = (String) Resource.PROP_TABBED_UI_THEME.getData();
-		int style = TabbedPanel.TABBED_UI_STYLE_NONE; 
-		if(tabbedStyle == null || "Plastic".equals(tabbedStyle)) style = TabbedPanel.TABBED_UI_STYLE_PLASTIC;
-		else if("Aqua".equals(tabbedStyle)) style = TabbedPanel.TABBED_UI_STYLE_AQUA;
-		else if("Photoshop".equals(tabbedStyle)) style = TabbedPanel.TABBED_UI_STYLE_PHOTOSHOP;
-		else if("Power Point".equals(tabbedStyle)) style = TabbedPanel.TABBED_UI_STYLE_POWERPOINT;
-		else if("Warrior".equals(tabbedStyle)) style = TabbedPanel.TABBED_UI_STYLE_WARRIOR;
-		tabbedPanel = new TabbedPanel(opening, style);
+		String tabbedStyle = (String) Resource.PROP_TABBED_UI_THEME.getData(com.apkscanner.gui.theme.tabbedpane.PlasticTabbedPaneUI.class.getName());
+		tabbedPanel = new TabbedPanel(opening, tabbedStyle);
 		if(opening) {
 			tabbedPanel.setLodingLabel();
 		} else {
@@ -187,8 +181,8 @@ public class MainUI extends JFrame
 
 					final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
 					//JOptionPane.showMessageDialog(null, "Sorry, Can not open the APK", "Error", JOptionPane.ERROR_MESSAGE, Appicon);
-				    JOptionPane.showOptionDialog(null, Resource.STR_MSG_FAILURE_OPEN_APK.getString(), Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, Appicon,
-				    		new String[] {Resource.STR_BTN_CLOSE.getString()}, Resource.STR_BTN_CLOSE.getString());
+					JOptionPane.showOptionDialog(null, Resource.STR_MSG_FAILURE_OPEN_APK.getString(), Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, Appicon,
+							new String[] {Resource.STR_BTN_CLOSE.getString()}, Resource.STR_BTN_CLOSE.getString());
 				}
 			});
 		}
@@ -432,24 +426,24 @@ public class MainUI extends JFrame
 		}
 
 		private void evtOpenSearchPopup() {
-        	SearchDlg dialog = new SearchDlg();
-        	dialog.setApkInfo(apkScanner.getApkInfo());
+			SearchDlg dialog = new SearchDlg();
+			dialog.setApkInfo(apkScanner.getApkInfo());
 
 			dialog.setModal(false);
 			dialog.setVisible(true);
 
 			Log.d(dialog.sName);
 
-		    // (?i) <- "찾을 문자열"에 대소문자 구분을 없애고
-		    // .*   <- 문자열이 행의 어디에 있든지 찾을 수 있게
+			// (?i) <- "찾을 문자열"에 대소문자 구분을 없애고
+			// .*   <- 문자열이 행의 어디에 있든지 찾을 수 있게
 
-		    //String findStr = "(?i).*" + dialog.sName + ".*";
+			//String findStr = "(?i).*" + dialog.sName + ".*";
 		}
 
 		private void evtSettings()
 		{
 			int value = (new SettingDlg()).makeDialog(MainUI.this);
-			
+
 			//changed theme
 			if(value == 1) {
 				restart();
@@ -569,9 +563,9 @@ public class MainUI extends JFrame
 
 				apkScanner.clear(false);
 				apkScanner.openApk(files[0].getCanonicalPath());
-	        } catch (Exception e1) {
-	        	e1.printStackTrace();
-	        }
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
 		}
 
 		private void finished()

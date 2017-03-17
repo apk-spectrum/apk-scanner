@@ -3,7 +3,12 @@ package com.apkscanner.gui.theme.tabbedpane;
 import javax.swing.*;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
+
+import com.apkscanner.gui.theme.UIThemeName;
+
 import java.awt.*;
+
+@UIThemeName("MS PowerPoint")
 
 /**
  * An implementation of the TabbedPaneUI that looks like the tabs that are used in Microsoft Powerpoint

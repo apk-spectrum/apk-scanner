@@ -1,4 +1,12 @@
-** This UI is unknown license **
+
+•PSTabbedPaneUI - Apache License, Version 2.0
+•PPTTabbedPaneUI - Apache License, Version 2.0 
+•CWTabbedPaneUI - Apache License, Version 2.0  
+
+•AquaBarTabbedPaneUI - unknown license
+•PlasticTabbedPaneUI - unknown license
+
+------------------------------------------
 I got it from the site below.
 
 http://www.jroller.com/DhilshukReddy/entry/custom_jtabbedpane
