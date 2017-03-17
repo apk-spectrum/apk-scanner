@@ -29,11 +29,11 @@ public enum Resource
 
 	STR_SAMSUNG_KEY_SERIAL		(Type.TEXT, "d20995a79c0daad6"),
 	STR_SS_TEST_KEY_SERIAL		(Type.TEXT, "b3998086d056cffa"),
-	
+
 	STR_SDK_INFO_FILE_PATH		(Type.TEXT, "/values/sdk-info.xml"),
 
 	STR_TITLE_INSTALL_WIZARD	(Type.TEXT, "@title_install_wizard"),
-	
+
 	STR_BTN_OPEN				(Type.TEXT, "@btn_open"),
 	STR_BTN_MANIFEST			(Type.TEXT, "@btn_manifest"),
 	STR_BTN_EXPLORER			(Type.TEXT, "@btn_explorer"),
@@ -56,7 +56,7 @@ public enum Resource
 	STR_BTN_OPENCODE			(Type.TEXT, "@btn_opencode"),
 	STR_BTN_OPENING_CODE		(Type.TEXT, "@btn_opening_code"),
 	STR_BTN_SEARCH				(Type.TEXT, "@btn_search"),
-	
+
 	STR_BTN_OPEN_LAB			(Type.TEXT, "@btn_open_lab"),
 	STR_BTN_MANIFEST_LAB		(Type.TEXT, "@btn_manifest_lab"),
 	STR_BTN_EXPLORER_LAB		(Type.TEXT, "@btn_explorer_lab"),
@@ -68,7 +68,7 @@ public enum Resource
 	STR_BTN_OPENCODE_LAB		(Type.TEXT, "@btn_opencode_lab"),
 	STR_BTN_OPENING_CODE_LAB	(Type.TEXT, "@btn_opening_code_lab"),
 	STR_BTN_SEARCH_LAB			(Type.TEXT, "@btn_search_lab"),
-	
+
 	STR_MENU_NEW				(Type.TEXT, "@menu_new"),
 	STR_MENU_NEW_WINDOW			(Type.TEXT, "@menu_new_window"),
 	STR_MENU_NEW_APK_FILE		(Type.TEXT, "@menu_new_apk_file"),
@@ -84,7 +84,7 @@ public enum Resource
 	STR_TAB_IMAGE				(Type.TEXT, "@tab_image"),
 	STR_TAB_ACTIVITY			(Type.TEXT, "@tab_activity"),
 	STR_TAB_CERT				(Type.TEXT, "@tab_cert"),
-	
+
 	STR_BASIC_PERMISSIONS		(Type.TEXT, "@basic_permissions"),
 	STR_BASIC_PERMLAB_DISPLAY	(Type.TEXT, "@basic_permlab_display_list"),
 	STR_BASIC_PERMDESC_DISPLAY	(Type.TEXT, "@basic_permdesc_display_list"),
@@ -119,7 +119,7 @@ public enum Resource
 	STR_FEATURE_INSTRUMENTATION_DESC (Type.TEXT, "@feature_instrumentation_desc"),
 	STR_FEATURE_DEVICE_REQ_LAB  (Type.TEXT, "@feature_device_requirements_lab"),
 	STR_FEATURE_DEVICE_REQ_DESC (Type.TEXT, "@feature_device_requirements_desc"),
-	
+
 
 	STR_FEATURE_ILOCATION_INTERNAL_LAB  (Type.TEXT, "@feature_install_location_internal_only_lab"),
 	STR_FEATURE_ILOCATION_INTERNAL_DESC (Type.TEXT, "@feature_install_location_internal_only_desc"),
@@ -138,11 +138,11 @@ public enum Resource
 	STR_WIDGET_VERTICAL			(Type.TEXT, "@widget_vertical"),
 	STR_WIDGET_TYPE_NORMAL		(Type.TEXT, "@widget_type_nomal"),
 	STR_WIDGET_TYPE_SHORTCUT	(Type.TEXT, "@widget_type_shortcut"),
-	
+
 	STR_LIB_COLUMN_INDEX		(Type.TEXT, "@lib_column_index"),
 	STR_LIB_COLUMN_PATH			(Type.TEXT, "@lib_column_path"),
 	STR_LIB_COLUMN_SIZE			(Type.TEXT, "@lib_column_size"),
-	
+
 	STR_ACTIVITY_COLUME_CLASS	(Type.TEXT, "@activity_column_class"),
 	STR_ACTIVITY_COLUME_TYPE	(Type.TEXT, "@activity_column_type"),
 	STR_ACTIVITY_COLUME_STARTUP	(Type.TEXT, "@activity_column_startup"),
@@ -156,15 +156,15 @@ public enum Resource
 
 	STR_CERT_SUMMURY			(Type.TEXT, "@cert_summury"),
 	STR_CERT_CERTIFICATE		(Type.TEXT, "@cert_certificate"),
-	
+
 	STR_FILE_SIZE_BYTES			(Type.TEXT, "@file_size_Bytes"),
 	STR_FILE_SIZE_KB			(Type.TEXT, "@file_size_KB"),
 	STR_FILE_SIZE_MB			(Type.TEXT, "@file_size_MB"),
 	STR_FILE_SIZE_GB			(Type.TEXT, "@file_size_GB"),
 	STR_FILE_SIZE_TB			(Type.TEXT, "@file_size_TB"),
-	
+
 	STR_TREE_OPEN_PACKAGE		(Type.TEXT, "@tree_open_package"),
-    
+
 	STR_SETTINGS_TITLE			(Type.TEXT, "@settings_title"),
 	STR_SETTINGS_EDITOR			(Type.TEXT, "@settings_editor"),
 	STR_SETTINGS_RES			(Type.TEXT, "@settings_res"),
@@ -194,13 +194,13 @@ public enum Resource
 	STR_LABEL_OPEN_WITH_EXPLORER(Type.TEXT, "@label_open_with_explorer"),
 	STR_LABEL_OPEN_WITH_SCANNER	(Type.TEXT, "@label_open_with_apkscanner"),
 	STR_LABEL_OPEN_WITH_CHOOSE	(Type.TEXT, "@label_open_with_choose"),
-	
+
 	STR_TREE_MESSAGE_DEVICE 	(Type.TEXT, "@tree_message_device"),
 	STR_TREE_MESSAGE_VERSION 	(Type.TEXT, "@tree_message_version"),
 	STR_TREE_MESSAGE_ROOT 		(Type.TEXT, "@tree_message_root"),
 	STR_TREE_MESSAGE_REBOOT 	(Type.TEXT, "@tree_message_reboot"),
-	
-	
+
+
 	STR_MSG_FAILURE_OPEN_APK	(Type.TEXT, "@msg_failure_open_apk"),
 	STR_MSG_NO_SUCH_APK_FILE	(Type.TEXT, "@msg_no_such_apk"),
 	STR_MSG_DEVICE_NOT_FOUND	(Type.TEXT, "@msg_device_not_found"),
@@ -221,7 +221,7 @@ public enum Resource
 	STR_MSG_DEVICE_HAS_NOT_ROOT	(Type.TEXT, "@msg_cannot_run_root"),
 	STR_MSG_UNSUPPORTED_PREVIEW	(Type.TEXT, "@msg_unsupported_preview"),
 	STR_MSG_CANNOT_WRITE_FILE	(Type.TEXT, "@msg_cannot_write_file"),
-	
+
 	STR_QUESTION_REBOOT_DEVICE	(Type.TEXT, "@question_reboot_device"),
 	STR_QUESTION_CONTINUE_INSTALL(Type.TEXT, "@question_continue_install"),
 	STR_QUESTION_OPEN_OR_INSTALL(Type.TEXT, "@question_open_or_install"),
@@ -239,7 +239,7 @@ public enum Resource
 	IMG_TOOLBAR_SIGNNING		(Type.IMAGE, "toolbar_signning.png"),
 	IMG_TOOLBAR_LOADING_OPEN_JD (Type.IMAGE, "loading_openJD.gif"),
 	IMG_TOOLBAR_PACKAGETREE		(Type.IMAGE, "toolbar_packagetree.png"),
-	
+
 	IMG_RESOURCE_IMG_BACKGROUND (Type.IMAGE, "resource_tap_image_background.jpg"),
 	IMG_RESOURCE_IMG_BACKGROUND_DARK (Type.IMAGE, "resource_tap_image_background_dark.jpg"),
 	IMG_RESOURCE_TREE_XML		(Type.IMAGE, "resource_tab_tree_xml.gif"),
@@ -251,18 +251,18 @@ public enum Resource
 	IMG_RESOURCE_TREE_OPEN_OTHERAPPLICATION_ICON (Type.IMAGE, "resource_tab_otherapplication.png"),
 	IMG_RESOURCE_TREE_OPEN_JD_LOADING (Type.IMAGE, "Loading_openJD_80_80.gif"),
 	IMG_RESOURCE_TREE_TOOLBAR_REFRESH (Type.IMAGE, "resource_tab_tree_toolbar_refresh.png"),
-	
-	
+
+
 	IMG_RESOURCE_TEXTVIEWER_TOOLBAR_OPEN (Type.IMAGE, "ResourceTab_TextViewer_toolbar_open.png"),
 	IMG_RESOURCE_TEXTVIEWER_TOOLBAR_SAVE (Type.IMAGE, "ResourceTab_TextViewer_toolbar_save.png"),
 	IMG_RESOURCE_TEXTVIEWER_TOOLBAR_FIND (Type.IMAGE, "ResourceTab_TextViewer_toolbar_find.png"),
 	IMG_RESOURCE_TEXTVIEWER_TOOLBAR_NEXT (Type.IMAGE, "ResourceTab_TextViewer_toolbar_next.png"),
 	IMG_RESOURCE_TEXTVIEWER_TOOLBAR_PREV (Type.IMAGE, "ResourceTab_TextViewer_toolbar_previous.png"),
 	IMG_RESOURCE_TEXTVIEWER_TOOLBAR_INDENT(Type.IMAGE, "ResourceTab_TextViewer_toolbar_text_indent.png"),
-	
+
 	IMG_PERM_GROUP_PHONE_CALLS	(Type.IMAGE, "perm_group_phone_calls.png"),	
 	IMG_TOOLBAR_OPEN_ARROW		(Type.IMAGE, "down_on.png"),	
-	
+
 	IMG_APP_ICON				(Type.IMAGE, "AppIcon.png"),
 	IMG_APK_FILE_ICON			(Type.IMAGE, "apk_file_icon.png"),
 	IMG_QUESTION				(Type.IMAGE, "question.png"),
@@ -281,18 +281,18 @@ public enum Resource
 	IMG_TREE_MENU_DELETE		(Type.IMAGE, "tree_menu_delete.png"),
 	IMG_TREE_MENU_SAVE			(Type.IMAGE, "tree_menu_save.png"),
 	IMG_TREE_MENU_OPEN			(Type.IMAGE, "tree_open_menu.png"),
-	
+
 	IMG_TREE_APK				(Type.IMAGE, "tree_icon_apk.png"),
 	IMG_TREE_DEVICE				(Type.IMAGE, "tree_icon_device.png"),
 	IMG_TREE_TOP				(Type.IMAGE, "tree_icon_top.gif"),
 	IMG_TREE_FOLDER				(Type.IMAGE, "tree_icon_folder.png"),
-	
+
 	IMG_INSTALL_TABLE_DONE		(Type.IMAGE, "done_icon.png"),
 	IMG_INSTALL_TABLE_WAIT		(Type.IMAGE, "install_wait_icon.GIF"),
 	IMG_INSTALL_TABLE_QUESTION	(Type.IMAGE, "question_icon.png"),
 	IMG_INSTALL_TABLE_ERROR		(Type.IMAGE, "install_error_icon.png"),
-	
-	
+
+
 	BIN_ADB_LNX					(Type.BIN, "adb"),
 	BIN_ADB_WIN					(Type.BIN, "adb.exe"),
 	BIN_AAPT_LNX				(Type.BIN, "aapt"),
@@ -302,7 +302,7 @@ public enum Resource
 	BIN_DEX2JAR_LNX				(Type.BIN, "d2j-dex2jar.sh"),
 	BIN_DEX2JAR_WIN				(Type.BIN, "d2j-dex2jar.bat"),	
 	BIN_PATH					(Type.BIN, ""),	
-	
+
 	PROP_EDITOR					(Type.PROP, "editor"),
 	PROP_FRAMEWORK_RES			(Type.PROP, "framewokr-res"),
 	PROP_CHECK_INSTALLED		(Type.PROP, "check-installed"),
@@ -313,14 +313,14 @@ public enum Resource
 	PROP_SOVE_LEAD_TIME			(Type.PROP, "solve_lead_time"),
 	PROP_CURRENT_THEME			(Type.PROP, "Current_theme"),
 	PROP_TABBED_UI_THEME		(Type.PROP, "tabbed_pane_ui"),
-	
+
 	LIB_JSON_JAR				(Type.LIB, "json-simple-1.1.1.jar"),
 	LIB_CLI_JAR					(Type.LIB, "commons-cli-1.3.1.jar"),
 	LIB_APKTOOL_JAR				(Type.LIB, "apktool.jar"),
 	LIB_ALL						(Type.LIB, "*"),
-	
+
 	ETC_SETTINGS_FILE			(Type.ETC, "settings.txt");
-	
+
 	private enum Type {
 		IMAGE,
 		TEXT,
@@ -339,7 +339,7 @@ public enum Resource
 
 	public static void setLanguage(String l) { if(lang != l) makeStringXmlPath(l); lang = l; }
 	public static String getLanguage() { return lang; }
-	
+
 	private static void makeStringXmlPath(String lang)
 	{
 		ArrayList<XmlPath> xmlList = new ArrayList<XmlPath>();
@@ -356,12 +356,12 @@ public enum Resource
 				xmlList.add(new XmlPath(xml));
 			}
 		}
-		
+
 		String ext_lang_value_path = value_path + "strings.xml";
 		if((new File(ext_lang_value_path)).exists()) {
 			xmlList.add(new XmlPath(ext_lang_value_path));
 		}
-		
+
 		InputStream xml = Resource.class.getResourceAsStream("/values/strings.xml");
 		if(xml != null) {
 			xmlList.add(new XmlPath(xml));
@@ -375,12 +375,12 @@ public enum Resource
 		this.type = type;
 		this.value = value;
 	}
-	
+
 	public String getValue()
 	{
 		return value;
 	}
-	
+
 	public String getPath()
 	{
 		String subPath;
@@ -401,34 +401,34 @@ public enum Resource
 		}
 		return getUTF8Path() + subPath + File.separator + value;
 	}
-	
+
 	public URL getURL()
 	{
 		if(type != Type.IMAGE) return null;
 		return getClass().getResource("/icons/" + value);
 	}
-	
+
 	public ImageIcon getImageIcon()
 	{
 		if(type != Type.IMAGE) return null;
 		return new ImageIcon(getURL());
 	}
-	
+
 	public ImageIcon getImageIcon(int width, int height)
 	{
 		if(type != Type.IMAGE) return null;
 		ImageIcon tempImg = new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(getURL()),width,height));
-		
+
 		return tempImg;
 	}
-	
+
 	public String getString()
 	{
 		if(type != Type.TEXT) return null;
-		
+
 		String id = getValue();
 		String value = null;
-		
+
 		if(!id.startsWith("@")) return id;
 		id = id.substring(1);
 
@@ -448,7 +448,7 @@ public enum Resource
 	{
 		if(property == null) {
 			File file = new File(ETC_SETTINGS_FILE.getPath());
-			if(!file.exists()) return;
+			if(!file.exists() || file.length() == 0) return;
 			try {
 				FileReader fileReader = new FileReader(file);
 				JSONParser parser = new JSONParser();
@@ -460,22 +460,26 @@ public enum Resource
 			}
 		}
 	}
-	
+
 	static private void saveProperty()
 	{
 		if(property == null)
 			return;
-		
+
+		String transMultiLine = property.toJSONString()
+				.replaceAll("^\\{(.*)\\}$", "{\n$1\n}")
+				.replaceAll("(\"[^\"]*\":(\"[^\"]*\")?([^\",]*)?,)", "$1\n");
+
 		BufferedWriter writer;
 		try {
 			writer = new BufferedWriter(new FileWriter(ETC_SETTINGS_FILE.getPath()));
-			writer.write(property.toJSONString());
+			writer.write(transMultiLine);
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public Object getData()
 	{
 		if(type != Type.PROP) return null;
@@ -483,51 +487,51 @@ public enum Resource
 		loadProperty();
 		if(property == null)
 			return null;
-		
+
 		return property.get(getValue());
 	}
-	
+
 	public Object getData(Object ref)
 	{
 		if(type != Type.PROP) return null;
-		
+
 		Object result = getData();
 		if(result == null) return ref;
-		
+
 		return result;
 	}
-	
+
 	static public Object getPropData(String key)
 	{
 		loadProperty();
 		if(property == null)
 			return null;
-		
+
 		return property.get(key);
 	}
-	
+
 	static public Object getPropData(String key, Object ref)
 	{
 		Object data = getPropData(key);
 		return data!=null?data:ref;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void setData(Object value)
 	{
 		if(type != Type.PROP) return;
-		
+
 		loadProperty();
 		if(property == null) {
 			property = new JSONObject();
 		}
-		
+
 		if(!value.equals(property.get(getValue()))) {
 			property.put(getValue(), value);
 			saveProperty();
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	static public void setPropData(String key, Object data)
 	{
@@ -543,13 +547,13 @@ public enum Resource
 	{
 		String resourcePath = Resource.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		resourcePath = (new File(resourcePath)).getParentFile().getPath();
-		
+
 		try {
 			resourcePath = URLDecoder.decode(resourcePath, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		
+
 		return resourcePath;
 	}
 }
