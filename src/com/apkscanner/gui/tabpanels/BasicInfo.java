@@ -97,12 +97,12 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	
 	private JLabel TimerLabel = null;
 	
-	public BasicInfo(boolean opening)
+	public BasicInfo()
 	{
-		if(!opening) {
+		//if(!opening) {
 			initialize();
 			showAbout();
-		}
+		//}
 	}
 	
 	@Override

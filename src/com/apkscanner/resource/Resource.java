@@ -313,6 +313,10 @@ public enum Resource
 	PROP_SOVE_LEAD_TIME			(Type.PROP, "solve_lead_time"),
 	PROP_CURRENT_THEME			(Type.PROP, "Current_theme"),
 	PROP_TABBED_UI_THEME		(Type.PROP, "tabbed_pane_ui"),
+	PROP_WINDOW_WIDTH			(Type.PROP, "window_size_width"),
+	PROP_WINDOW_HEIGHT			(Type.PROP, "window_size_height"),
+	PROP_SAVE_WINDOW_SIZE		(Type.PROP, "save_window_size"),
+	PROP_BASE_FONT				(Type.PROP, "base_font"),
 
 	LIB_JSON_JAR				(Type.LIB, "json-simple-1.1.1.jar"),
 	LIB_CLI_JAR					(Type.LIB, "commons-cli-1.3.1.jar"),
@@ -469,6 +473,7 @@ public enum Resource
 		String transMultiLine = property.toJSONString()
 				.replaceAll("^\\{(.*)\\}$", "{\n$1\n}")
 				.replaceAll("(\"[^\"]*\":(\"[^\"]*\")?([^\",]*)?,)", "$1\n");
+		//.replaceAll("(\"[^\"]*\":(\"[^\"]*\")?([^\",\\[]*(\\[[^\\]]\\])?)?,)", "$1\n");
 
 		BufferedWriter writer;
 		try {

@@ -144,4 +144,37 @@ public class SystemUtil
 			e1.printStackTrace();
 		}
 	}
+
+	public static String getRealPath(String path) {
+		if(path == null || path.trim().isEmpty()) return null;
+
+		String realPath = null;
+
+		if(path.indexOf(File.separator) > -1) {
+			File file = new File(path);
+			if(!file.exists()) return null;
+			realPath = file.getAbsolutePath();
+		} else {
+			String cmd = null;
+			String regular = null;
+			if(isWindows()) {
+				cmd = "where";
+				regular = "^[A-Z]:\\\\.*";
+			} else if(isLinux()) {
+				cmd = "which";
+				regular = "^/.*";
+			}
+
+			String[] result = ConsolCmd.exc(new String[] {cmd, path}, true, null);
+			if(result == null || result.length <= 0
+					|| !result[0].matches(regular)
+					|| !new File(result[0]).exists()){
+				Log.e("No such file " + result[0].matches(regular));
+				return null;
+			}
+			realPath = result[0];
+		}
+
+		return realPath;
+	}
 }

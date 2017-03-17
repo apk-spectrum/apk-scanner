@@ -31,13 +31,11 @@ public class TabbedPanel extends JTabbedPane
 		public void reloadResource();
 	}
 
-	public TabbedPanel(boolean opening, String uiClass)
+	public TabbedPanel()
 	{
-		TabbedPaneUIManager.setUI(this, uiClass);
-
 		loadResource();
 
-		addTab(labels[0], null, new BasicInfo(opening), labels[0] + " (Alt+1)");
+		addTab(labels[0], null, new BasicInfo(), labels[0] + " (Alt+1)");
 		setMnemonicAt(0, KeyEvent.VK_1);
 
 		addTab(labels[1], null, new Widgets(), labels[1] + " (Alt+2)");
@@ -60,7 +58,7 @@ public class TabbedPanel extends JTabbedPane
 	}
 
 	public void setUI(String clazz) {
-
+		TabbedPaneUIManager.setUI(this, clazz);
 	}
 
 	private void loadResource()

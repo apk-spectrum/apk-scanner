@@ -13,6 +13,7 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Enumeration;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -54,7 +55,7 @@ public class MainUI extends JFrame
 
 	public MainUI()
 	{
-		createAndShowGUI(false);
+		createAndShowGUI();
 	}
 
 	public MainUI(final String apkFilePath)
@@ -65,7 +66,7 @@ public class MainUI extends JFrame
 			}
 		}).start();
 
-		createAndShowGUI(true);
+		createAndShowGUI();
 	}
 
 	public MainUI(final String devSerialNumber, final String packageName, final String resources)
@@ -76,17 +77,17 @@ public class MainUI extends JFrame
 			}
 		}).start();
 
-		createAndShowGUI(true);
+		createAndShowGUI();
 	}
 
-	private void createAndShowGUI(final boolean opening)
+	private void createAndShowGUI()
 	{
 		if(!EventQueue.isDispatchThread()) {
 			Log.i("createAndShowGUI() - This task is not EDT. Invoke to EDT.");
 			try {
 				EventQueue.invokeAndWait(new Runnable() {
 					public void run() {
-						createAndShowGUI(opening);
+						createAndShowGUI();
 					}
 				});
 			} catch (InvocationTargetException | InterruptedException e) {
@@ -108,13 +109,16 @@ public class MainUI extends JFrame
 				| UnsupportedLookAndFeelException e1) {
 			e1.printStackTrace();
 		}
+		
+		setUIFont(new javax.swing.plaf.FontUIResource((String) Resource.PROP_BASE_FONT.getData(), java.awt.Font.PLAIN, 12)); 
 
 		Log.i("initialize() set title & icon");
 		setTitle(Resource.STR_APP_NAME.getString());
 		setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
 
 		Log.i("initialize() set bound & size");
-		setBounds(0, 0, 650, 490);
+
+		setBounds(0, 0, (int)(long)Resource.PROP_WINDOW_WIDTH.getData(650), (int)(long)Resource.PROP_WINDOW_HEIGHT.getData(490));
 		setMinimumSize(new Dimension(650, 490));
 		setResizable(true);
 		setLocationRelativeTo(null);
@@ -131,12 +135,8 @@ public class MainUI extends JFrame
 		Log.i("initialize() tabbedpanel init");
 		// TabPanel initialize and add
 		String tabbedStyle = (String) Resource.PROP_TABBED_UI_THEME.getData(com.apkscanner.gui.theme.tabbedpane.PlasticTabbedPaneUI.class.getName());
-		tabbedPanel = new TabbedPanel(opening, tabbedStyle);
-		if(opening) {
-			tabbedPanel.setLodingLabel();
-		} else {
-			tabbedPanel.setData(null);
-		}
+		tabbedPanel = new TabbedPanel();
+		tabbedPanel.setUI(tabbedStyle);
 		add(tabbedPanel, BorderLayout.CENTER);
 
 		Log.i("initialize() register event handler");
@@ -156,11 +156,28 @@ public class MainUI extends JFrame
 		Log.i("UI Init end");
 	}
 
+	public static void setUIFont(javax.swing.plaf.FontUIResource f) {
+		Enumeration<Object> keys = UIManager.getDefaults().keys();
+		while (keys.hasMoreElements()) {
+			Object key = keys.nextElement();
+			Object value = UIManager.get(key);
+			if (value instanceof javax.swing.plaf.FontUIResource) {
+				UIManager.put(key, f);
+			}
+		}
+	}
+	
 	private class ApkScannerListener implements ApkScannerStub.StatusListener
 	{
 		@Override
 		public void onStart(final long estimatedTime) {
-			Log.i("onStart()");	
+			Log.i("onStart()");
+
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					tabbedPanel.setLodingLabel();
+				}
+			});
 		}
 
 		@Override
@@ -241,12 +258,6 @@ public class MainUI extends JFrame
 				String apkFilePath = apkScanner.getApkInfo().filePath;
 				String title = apkFilePath.substring(apkFilePath.lastIndexOf(File.separator)+1) + " - " + Resource.STR_APP_NAME.getString();
 				setTitle(title);
-
-				//if(apkScanner.getApkInfo().PermGroupMap.keySet().size() > 30) {
-				//	setSize(new Dimension(650, 530));
-				//} else {
-				setSize(new Dimension(650, 490));
-				//}
 
 				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, true);
 				if(tabbedPanel!=null) tabbedPanel.setData(apkScanner.getApkInfo(), 0);
@@ -571,6 +582,17 @@ public class MainUI extends JFrame
 		private void finished()
 		{
 			Log.v("finished()");
+
+			if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData(true)) {
+				long width = (long)getSize().getWidth();
+				long height = (long)getSize().getHeight();
+				if(width != (long)Resource.PROP_WINDOW_WIDTH.getData(0)
+						|| height != (long)Resource.PROP_WINDOW_HEIGHT.getData(0)) {
+					Resource.PROP_WINDOW_WIDTH.setData(width);
+					Resource.PROP_WINDOW_HEIGHT.setData(height);
+				}
+			}
+
 			setVisible(false);
 			apkScanner.clear(true);
 		}

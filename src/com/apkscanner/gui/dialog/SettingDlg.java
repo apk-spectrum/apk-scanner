@@ -3,11 +3,13 @@ package com.apkscanner.gui.dialog;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -42,6 +44,7 @@ public class SettingDlg extends JDialog implements ActionListener
 	private String strLanguage;
 	private String strSetTheme;
 	private String strSetTabbedUI;
+	private String strFont;
 
 	private boolean isSamePackage;
 	private int changed = 0;
@@ -52,6 +55,7 @@ public class SettingDlg extends JDialog implements ActionListener
 	JComboBox<String> comboBox;
 	JComboBox<String> themecomboBox;
 	JComboBox<String> tabbedUIComboBox;
+	JComboBox<String> fontComboBox;
 
 	JCheckBox chckbxNewCheckBox;
 
@@ -130,6 +134,11 @@ public class SettingDlg extends JDialog implements ActionListener
 			changed = 1;
 		}
 
+		if(strFont != fontComboBox.getSelectedItem()) {
+			Resource.PROP_BASE_FONT.setData(fontComboBox.getSelectedItem());
+			changed = 1;
+		}
+
 	}
 
 	public int makeDialog(Component component) {
@@ -149,9 +158,10 @@ public class SettingDlg extends JDialog implements ActionListener
 	}
 
 	JPanel makeLayoutPanel() {
-		JPanel panel = new JPanel();		
+		JPanel panel = new JPanel();
 
 		panel.setLayout(null);
+		panel.setOpaque(true);
 
 		JLabel userLabel = new JLabel(Resource.STR_SETTINGS_EDITOR.getString());
 		userLabel.setBounds(10, 10, 116, 25);
@@ -261,6 +271,20 @@ public class SettingDlg extends JDialog implements ActionListener
 		if(selItem == null || strSetTabbedUI.isEmpty()) selItem = "None";
 		tabbedUIComboBox.getModel().setSelectedItem(selItem);
 
+
+		fontComboBox = new JComboBox<String>();
+		fontComboBox.setBounds(10, 150, 170, 25);
+		fontComboBox.setEditable(true);
+		panel.add(fontComboBox);
+
+		String[] fontFamilyNames = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+		Arrays.sort(fontFamilyNames);
+		for (String font : fontFamilyNames) {
+			fontComboBox.addItem(font);
+		}
+		strFont = UIManager.getFont("Panel.font").getFamily();
+		fontComboBox.getModel().setSelectedItem(strFont);
+
 		return panel;
 	}
 
@@ -279,8 +303,9 @@ public class SettingDlg extends JDialog implements ActionListener
 		if(e.getSource() == savebutton) {
 			//Log.i("save");
 
-			if((new File(textExcutePath.getText().trim()).exists())) {
-				strExecuteEditorPath = textExcutePath.getText().trim();					
+			String editPath = SystemUtil.getRealPath(textExcutePath.getText().trim());
+			if(editPath != null && new File(editPath).canExecute()) {
+				strExecuteEditorPath = textExcutePath.getText().trim();
 			} else {
 				textExcutePath.setText(strExecuteEditorPath);
 			}
