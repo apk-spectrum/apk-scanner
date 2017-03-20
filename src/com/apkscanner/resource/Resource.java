@@ -506,6 +506,23 @@ public enum Resource
 		return result;
 	}
 
+	public int getInt(int ref)
+	{
+		if(type != Type.PROP) return ref;
+		
+		Object data = getData(ref);
+		if(data == null) return ref;
+
+		int ret = ref;
+		if(data instanceof Long) {
+			ret = (int)(long)data;
+		} else if(data instanceof Integer) {
+			ret = (int)data;
+		}
+
+		return ret;
+	}
+
 	static public Object getPropData(String key)
 	{
 		loadProperty();

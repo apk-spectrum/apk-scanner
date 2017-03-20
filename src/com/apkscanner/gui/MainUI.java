@@ -109,7 +109,7 @@ public class MainUI extends JFrame
 				| UnsupportedLookAndFeelException e1) {
 			e1.printStackTrace();
 		}
-		
+
 		setUIFont(new javax.swing.plaf.FontUIResource((String) Resource.PROP_BASE_FONT.getData(), java.awt.Font.PLAIN, 12)); 
 
 		Log.i("initialize() set title & icon");
@@ -117,22 +117,7 @@ public class MainUI extends JFrame
 		setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
 
 		Log.i("initialize() set bound & size");
-
-		int preWidth = 0, preHegith = 0;
-		Object propWidth = Resource.PROP_WINDOW_WIDTH.getData(650);
-		Object propHeight = Resource.PROP_WINDOW_HEIGHT.getData(490);
-		if(propWidth instanceof Long) {
-			preWidth = (int)(long)propWidth;
-		} else {
-			preWidth = (int)propWidth;
-		}
-		if(propHeight instanceof Long) {
-			preHegith = (int)(long)propHeight;
-		} else {
-			preHegith = (int)propHeight;
-		}
-		
-		setBounds(0, 0, preWidth, preHegith);
+		setBounds(0, 0, Resource.PROP_WINDOW_WIDTH.getInt(650), Resource.PROP_WINDOW_HEIGHT.getInt(490));
 		setMinimumSize(new Dimension(650, 490));
 		setResizable(true);
 		setLocationRelativeTo(null);
@@ -180,7 +165,7 @@ public class MainUI extends JFrame
 			}
 		}
 	}
-	
+
 	private class ApkScannerListener implements ApkScannerStub.StatusListener
 	{
 		@Override
@@ -598,24 +583,12 @@ public class MainUI extends JFrame
 			Log.v("finished()");
 
 			if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData(true)) {
-				int curWidth = (int)getSize().getWidth();
-				int curHeight = (int)getSize().getHeight();
-				int preWidth = 0, preHegith = 0;
-				Object propWidth = Resource.PROP_WINDOW_WIDTH.getData(0);
-				Object propHeight = Resource.PROP_WINDOW_HEIGHT.getData(0);
-				if(propWidth instanceof Long) {
-					preWidth = (int)(long)propWidth;
-				} else {
-					preWidth = (int)propWidth;
-				}
-				if(propHeight instanceof Long) {
-					preHegith = (int)(long)propHeight;
-				} else {
-					preHegith = (int)propHeight;
-				}
-				if(preWidth != curWidth || preHegith != curHeight) {
-					Resource.PROP_WINDOW_WIDTH.setData(curWidth);
-					Resource.PROP_WINDOW_HEIGHT.setData(curHeight);
+				int width = (int)getSize().getWidth();
+				int height = (int)getSize().getHeight();
+				if(Resource.PROP_WINDOW_WIDTH.getInt(0) != width
+						|| Resource.PROP_WINDOW_HEIGHT.getInt(0) != (int)getSize().getHeight()) {
+					Resource.PROP_WINDOW_WIDTH.setData(width);
+					Resource.PROP_WINDOW_HEIGHT.setData(height);
 				}
 			}
 
