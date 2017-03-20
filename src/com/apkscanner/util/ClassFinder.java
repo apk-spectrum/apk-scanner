@@ -25,15 +25,17 @@ public class ClassFinder {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		assert classLoader != null;
 		String path = packageName.replace('.', '/');
+		ArrayList<Class> classes = new ArrayList<Class>();
 		Enumeration<URL> resources = classLoader.getResources(path);
-		List<File> dirs = new ArrayList<File>();
 		while (resources.hasMoreElements()) {
 			URL resource = resources.nextElement();
-			dirs.add(new File(resource.getFile()));
-		}
-		ArrayList<Class> classes = new ArrayList<Class>();
-		for (File directory : dirs) {
-			classes.addAll(findClasses(directory, packageName));
+			if("file".equals(resource.getProtocol())) {
+				classes.addAll(findClasses(new File(resource.getFile()), packageName));
+			} else if("jar".equals(resource.getProtocol())) {
+				classes.addAll(findClasses(resource, packageName));
+			} else {
+				Log.e("Unknown protocol " + resource);
+			}
 		}
 		return classes.toArray(new Class[classes.size()]);
 	}
@@ -61,6 +63,24 @@ public class ClassFinder {
 				classes.add(Class.forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
 			}
 		}
+		return classes;
+	}
+
+	@SuppressWarnings("rawtypes")
+	static List<Class> findClasses(URL jarURL, String packageName) throws ClassNotFoundException {
+		List<Class> classes = new ArrayList<Class>();
+
+		String[] jarPath = jarURL.getFile().split("!");
+		if(jarPath == null || jarPath.length != 2) {
+			Log.e("IllegalArgument " + jarPath);
+			return classes;
+		}
+
+		String[] classPaths = ZipFileUtil.findFiles(jarPath[0].substring(5), ".class", "^"+jarPath[1].substring(1) + "/.*");
+		for(String classPath : classPaths) {
+			classes.add(Class.forName(classPath.replace("/", ".").substring(0, classPath.length() - 6)));
+		}
+
 		return classes;
 	}
 }
