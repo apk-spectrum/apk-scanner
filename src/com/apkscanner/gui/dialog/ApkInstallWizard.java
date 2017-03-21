@@ -47,6 +47,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
@@ -74,12 +75,16 @@ import com.apkscanner.data.apkinfo.ActivityAliasInfo;
 import com.apkscanner.data.apkinfo.ActivityInfo;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ManifestInfo;
+import com.apkscanner.gui.util.AbstractTabRenderer;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.gui.util.ImagePanel;
 import com.apkscanner.gui.util.SimpleCheckTableModel;
 import com.apkscanner.gui.util.SimpleCheckTableModel.TableRowObject;
+import com.apkscanner.gui.util.JXTabbedPane;
+
 import com.apkscanner.resource.Resource;
+
 import com.apkscanner.tool.adb.AdbDeviceManager;
 import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
 import com.apkscanner.tool.adb.AdbPackageManager;
@@ -929,13 +934,22 @@ public class ApkInstallWizard
 			
 			JPanel optionPanel = new JPanel(new GridLayout(1, 2));
 			JPanel togglePanel = new JPanel(new GridBagLayout());
-			
+						
 			Border Installborder = BorderFactory.createTitledBorder("Install");
 			Border Pushborder = BorderFactory.createTitledBorder("Push");
 			
 			JPanel installPanel = new JPanel(new GridLayout(0,1));
 			JPanel pushPanel = new JPanel(new GridLayout(0,1));
 			
+			
+			JXTabbedPane tabbedPane = new JXTabbedPane(JTabbedPane.LEFT);
+	        AbstractTabRenderer renderer = (AbstractTabRenderer)tabbedPane.getTabRenderer();
+	        renderer.setPrototypeText("This text is a prototype");
+	        renderer.setHorizontalTextAlignment(SwingConstants.LEADING);
+
+	        tabbedPane.addTab("Install", null, installPanel, "Install");
+	        tabbedPane.addTab("Push", null, pushPanel, "Push");
+	        			
 			installPanel.setBorder(Installborder);
 			pushPanel.setBorder(Pushborder);
 			
@@ -980,8 +994,10 @@ public class ApkInstallWizard
 			pushPanel.add(CheckWithLib);
 			pushPanel.add(CheckReboot);
 			
-			optionPanel.add(installPanel);
-			optionPanel.add(pushPanel);
+			//optionPanel.add(installPanel);
+			//optionPanel.add(pushPanel);
+			
+			optionPanel.add(tabbedPane);
 			
 			InstalltoggleButton.setPreferredSize(new Dimension(100, 25));
 			pushtoggleButton.setPreferredSize(new Dimension(100, 25));
@@ -1013,7 +1029,7 @@ public class ApkInstallWizard
             
 			panel_set_install_option.add(textSelectDevice,addGrid(gbc, 0, 0, 1, 1, 1, 2));
 						
-			panel_set_install_option.add(togglePanel, addGrid(gbc, 0, 1, 1, 1, 1, 1));
+			//panel_set_install_option.add(togglePanel, addGrid(gbc, 0, 1, 1, 1, 1, 1));
 			
 			gbc.fill = GridBagConstraints.BOTH;
 			panel_set_install_option.add(optionPanel,addGrid(gbc, 0, 2, 1, 1, 1, 3));
@@ -2036,7 +2052,7 @@ public class ApkInstallWizard
 				if(System.getProperty("os.name").indexOf("Window") >-1) {
 					wizard.setApk("C:\\Melon.apk");
 				} else {  //for linux
-					wizard.setApk("/home/leejinhyeong/Desktop/DcmContacts.apk");
+					wizard.setApk("/home/leejinhyeong/Desktop/SecSettings2.apk");
 				}
 				wizard.start();
 				//wizard.setVisible(true);
