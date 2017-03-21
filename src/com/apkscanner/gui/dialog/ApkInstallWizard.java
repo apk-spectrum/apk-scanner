@@ -925,8 +925,6 @@ public class ApkInstallWizard
             gbc.fill = GridBagConstraints.BOTH;
             panel.add(mainpanel,addGrid(gbc, 0, 1, 1, 1, 1, 7));
             panel.add(new JPanel(),addGrid(gbc, 0, 2, 1, 1, 1, 3));
-            
-            
 			return panel;
 		}
 		
