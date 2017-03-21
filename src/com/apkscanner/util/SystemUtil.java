@@ -169,7 +169,7 @@ public class SystemUtil
 			if(result == null || result.length <= 0
 					|| !result[0].matches(regular)
 					|| !new File(result[0]).exists()){
-				Log.e("No such file " + result[0].matches(regular));
+				Log.e("No such file " + ((result != null && result.length > 0) ? result[0] : "- result null"));
 				return null;
 			}
 			realPath = result[0];
