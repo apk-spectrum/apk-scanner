@@ -13,7 +13,7 @@ public class SystemUtil
 	}
 
 	public static boolean isLinux() {
-		return OS.indexOf("linux") > -1;
+		return OS.indexOf("nux") > -1;
 	}
 
 	public static boolean isUnix() {
