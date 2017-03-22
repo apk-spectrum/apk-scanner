@@ -498,7 +498,8 @@ public class MainUI extends JFrame
 				evtShowManifest();
 			} else if(ToolBar.ButtonSet.EXPLORER.matchActionEvent(e)) {
 				evtShowExplorer();
-			} else if(ToolBar.ButtonSet.INSTALL.matchActionEvent(e) || ToolBar.MenuItemSet.INSTALL_APK.matchActionEvent(e)) {
+			} else if(ToolBar.ButtonSet.INSTALL.matchActionEvent(e) || ToolBar.MenuItemSet.INSTALL_APK.matchActionEvent(e)
+					|| ToolBar.ButtonSet.INSTALL_UPDATE.matchActionEvent(e) || ToolBar.ButtonSet.INSTALL_DOWNGRADE.matchActionEvent(e) ) {
 				evtInstallApk(false);
 			} else if(ToolBar.ButtonSet.SETTING.matchActionEvent(e)) {
 				evtSettings();
@@ -510,7 +511,7 @@ public class MainUI extends JFrame
 				evtOpenApkFile(true);
 			} else if(ToolBar.MenuItemSet.NEW_PACKAGE.matchActionEvent(e)) {
 				evtOpenPackage(true);
-			} else if(ToolBar.MenuItemSet.OPEN_PACKAGE.matchActionEvent(e)) {
+			} else if(ToolBar.ButtonSet.OPEN_PACKAGE.matchActionEvent(e) || ToolBar.MenuItemSet.OPEN_PACKAGE.matchActionEvent(e)) {
 				evtOpenPackage(false);
 			} else if(ToolBar.MenuItemSet.INSTALLED_CHECK.matchActionEvent(e)) {
 				evtInstallApk(true);
@@ -518,6 +519,8 @@ public class MainUI extends JFrame
 				evtOpenJDGUI();
 			} else if(ToolBar.ButtonSet.SEARCH.matchActionEvent(e)) {
 				evtOpenSearchPopup();
+			} else if(ToolBar.ButtonSet.LAUNCH.matchActionEvent(e)) {
+				//evtOpenSearchPopup();
 			} else {
 				Log.w("Unkown action : " + e);
 			}
