@@ -36,10 +36,10 @@ public class Dex2JarWrapper
 
 				Log.i("Start DEX2JAR");
 				if(SystemUtil.isWindows()) {
-					cmdLog = ConsolCmd.exc(new String[] {Resource.BIN_DEX2JAR_WIN.getPath(), 
+					cmdLog = ConsolCmd.exc(new String[] {Resource.BIN_DEX2JAR.getPath(), 
 							dexFilePath, "-o", jarFilePath});
 				} else if(SystemUtil.isLinux()) {
-					cmdLog = ConsolCmd.exc(new String[] {"sh", Resource.BIN_DEX2JAR_LNX.getPath(), 
+					cmdLog = ConsolCmd.exc(new String[] {"sh", Resource.BIN_DEX2JAR.getPath(), 
 							dexFilePath, "-o", jarFilePath});				
 				} else {
 					Log.e("Unknown OS : " + SystemUtil.OS);

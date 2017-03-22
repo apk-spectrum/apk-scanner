@@ -107,11 +107,8 @@ public class AaptWrapper
 		synchronized(initSync) {
 			cmd = aaptCmd;
 			if(cmd == null) {
-				cmd = Resource.BIN_AAPT_LNX.getPath();
-				if(cmd.matches("^[A-Z]:.*")) {
-					cmd = Resource.BIN_AAPT_WIN.getPath();
-				}
-		
+				cmd = Resource.BIN_AAPT.getPath();
+
 				if(!(new File(cmd)).exists()) {
 					Log.e("no such aapt tool" + aaptCmd);
 					cmd = null;

@@ -32,10 +32,7 @@ public class AdbWrapper
 	static String getAdbCmd() {
 		String cmd = adbCmd;
 		if(cmd == null) {
-			cmd = Resource.BIN_ADB_LNX.getPath();
-			if(cmd.matches("^[A-Z]:.*")) {
-				cmd = Resource.BIN_ADB_WIN.getPath();
-			}
+			cmd = Resource.BIN_ADB.getPath();
 	
 			if(!(new File(cmd)).exists()) {
 				Log.e("no such adb tool" + adbCmd);

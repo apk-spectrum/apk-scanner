@@ -17,6 +17,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import com.apkscanner.gui.util.ImageScaler;
+import com.apkscanner.util.SystemUtil;
 import com.apkscanner.util.XmlPath;
 
 public enum Resource
@@ -200,7 +201,6 @@ public enum Resource
 	STR_TREE_MESSAGE_ROOT 		(Type.TEXT, "@tree_message_root"),
 	STR_TREE_MESSAGE_REBOOT 	(Type.TEXT, "@tree_message_reboot"),
 
-
 	STR_MSG_FAILURE_OPEN_APK	(Type.TEXT, "@msg_failure_open_apk"),
 	STR_MSG_NO_SUCH_APK_FILE	(Type.TEXT, "@msg_no_such_apk"),
 	STR_MSG_DEVICE_NOT_FOUND	(Type.TEXT, "@msg_device_not_found"),
@@ -252,7 +252,6 @@ public enum Resource
 	IMG_RESOURCE_TREE_OPEN_JD_LOADING (Type.IMAGE, "Loading_openJD_80_80.gif"),
 	IMG_RESOURCE_TREE_TOOLBAR_REFRESH (Type.IMAGE, "resource_tab_tree_toolbar_refresh.png"),
 
-
 	IMG_RESOURCE_TEXTVIEWER_TOOLBAR_OPEN (Type.IMAGE, "ResourceTab_TextViewer_toolbar_open.png"),
 	IMG_RESOURCE_TEXTVIEWER_TOOLBAR_SAVE (Type.IMAGE, "ResourceTab_TextViewer_toolbar_save.png"),
 	IMG_RESOURCE_TEXTVIEWER_TOOLBAR_FIND (Type.IMAGE, "ResourceTab_TextViewer_toolbar_find.png"),
@@ -292,16 +291,21 @@ public enum Resource
 	IMG_INSTALL_TABLE_QUESTION	(Type.IMAGE, "question_icon.png"),
 	IMG_INSTALL_TABLE_ERROR		(Type.IMAGE, "install_error_icon.png"),
 
+	BIN_PATH					(Type.BIN, ""),	
 
-	BIN_ADB_LNX					(Type.BIN, "adb"),
-	BIN_ADB_WIN					(Type.BIN, "adb.exe"),
-	BIN_AAPT_LNX				(Type.BIN, "aapt"),
-	BIN_AAPT_WIN				(Type.BIN, "aapt.exe"),
+	BIN_ADB_LNX					(Type.BIN, "adb", "nux"),
+	BIN_ADB_WIN					(Type.BIN, "adb.exe", "win"),
+	BIN_ADB						(Type.BIN, new Resource[]{ BIN_ADB_WIN, BIN_ADB_LNX }),
+
+	BIN_AAPT_LNX				(Type.BIN, "aapt", "nux"),
+	BIN_AAPT_WIN				(Type.BIN, "aapt.exe", "win"),
+	BIN_AAPT					(Type.BIN, new Resource[]{ BIN_AAPT_WIN, BIN_AAPT_LNX }),
 
 	BIN_JDGUI					(Type.BIN, "jd-gui-1.4.0.jar"),
-	BIN_DEX2JAR_LNX				(Type.BIN, "d2j-dex2jar.sh"),
-	BIN_DEX2JAR_WIN				(Type.BIN, "d2j-dex2jar.bat"),	
-	BIN_PATH					(Type.BIN, ""),	
+
+	BIN_DEX2JAR_LNX				(Type.BIN, "d2j-dex2jar.sh", "nux"),
+	BIN_DEX2JAR_WIN				(Type.BIN, "d2j-dex2jar.bat", "win"),
+	BIN_DEX2JAR					(Type.BIN, new Resource[]{ BIN_DEX2JAR_WIN, BIN_DEX2JAR_LNX }),	
 
 	PROP_EDITOR					(Type.PROP, "editor"),
 	PROP_FRAMEWORK_RES			(Type.PROP, "framewokr-res"),
@@ -336,6 +340,7 @@ public enum Resource
 
 	private String value;
 	private Type type;
+	private String config;
 
 	private static JSONObject property = null;
 	private static String lang = null;
@@ -376,8 +381,33 @@ public enum Resource
 
 	private Resource(Type type, String value)
 	{
+		this(type, value, null);
+	}
+
+	private Resource(Type type, String value, String config)
+	{
 		this.type = type;
 		this.value = value;
+		this.config = config;
+	}
+
+	private Resource(Type type, Resource[] cfgResources)
+	{
+		if(cfgResources == null | cfgResources.length == 0) {
+			throw new IllegalArgumentException();
+		}
+
+		this.type = type;
+		for(Resource r: cfgResources) {
+			if(SystemUtil.OS.indexOf(r.config) > -1) {
+				this.value = r.value;
+				this.config = r.config;
+				break;
+			}
+		}
+		if(this.value == null || this.config == null) {
+			throw new IllegalArgumentException();
+		}
 	}
 
 	public String getValue()
@@ -509,7 +539,7 @@ public enum Resource
 	public int getInt(int ref)
 	{
 		if(type != Type.PROP) return ref;
-		
+
 		Object data = getData(ref);
 		if(data == null) return ref;
 
