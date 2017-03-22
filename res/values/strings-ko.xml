@@ -5,11 +5,16 @@
     <string name="title_install_wizard">APK 설치 마법사</string>
     
     <string name="btn_open">열기</string>
+    <string name="btn_open_pacakge">패키지</string>
     <string name="btn_manifest">매니페스트</string>
     <string name="btn_explorer">탐색기</string>
     <string name="btn_unpack">디컴파일</string>
     <string name="btn_pack">리컴파일</string>
     <string name="btn_install">설치</string>
+    <string name="btn_install_downgrad">다운그레이드</string>
+    <string name="btn_install_update">업데이트</string>
+    <string name="btn_launch">실행</string>
+    <string name="btn_sign_lab">서명</string>
     <string name="btn_push">교체</string>
     <string name="btn_setting">설정</string>
     <string name="btn_about">정보</string>
@@ -28,11 +33,16 @@
     <string name="btn_search">검색</string>
     
     <string name="btn_open_lab">APK 파일에서 정보를 가져옵니다. (Ctrl+O)</string>
+    <string name="btn_open_pacakge_lab">디바이스 패키지 열기(Ctrl+P)</string>
     <string name="btn_manifest_lab">AndroidManifest.xml 전문을 편집기에서 확인 합니다. (Ctrl+M)</string>
     <string name="btn_explorer_lab">압축해제 된 임시 폴더로 이동합니다. (Ctrl+E)</string>
     <string name="btn_unpack_lab">소스코드를 디검파일 합니다.</string>
     <string name="btn_pack_lab">소스코드를 리컴파일합니다.</string>
     <string name="btn_install_lab">연결된 디바이스에 APK를 설치합니다. (Ctrl+I)</string>
+    <string name="btn_install_downgrad_lab">설치된 버전보다 낮은 버전으로 다운그레이드 합니다. (Ctrl+I)</string>
+    <string name="btn_install_update_lab">설치된 버전보다 높은 버전으로 업데이트 합니다. (Ctrl+I)</string>
+    <string name="btn_launch_lab">설치된 앱을 실행합니다.</string>
+    <string name="btn_sign_lab">APK파일을 서명합니다.</string>
     <string name="btn_setting_lab">편집기, 언어 등의 설정을 변경합니다.</string>
     <string name="btn_about_lab">APK 스캐너 정보를 확인합니다. (F1)</string>
     <string name="btn_opencode_lab">소스코드를 JD-GUI를 통하여 보여줍니다.</string>
