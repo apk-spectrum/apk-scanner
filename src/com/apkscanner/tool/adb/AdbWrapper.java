@@ -2,6 +2,8 @@ package com.apkscanner.tool.adb;
 
 import java.io.File;
 
+import com.android.ddmlib.AndroidDebugBridge;
+import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.ConsolCmd.ConsoleOutputObserver;
@@ -12,7 +14,7 @@ public class AdbWrapper
 {
 	protected static final String adbCmd = getAdbCmd();
 	private static String version;
-	
+
 	private ConsoleOutputObserver listener;
 	private String device;
 
@@ -20,11 +22,11 @@ public class AdbWrapper
 		this.device = device;
 		this.listener = listener;
 	}
-	
+
 	public void setDevice(String device) {
 		this.device = device;
 	}
-	
+
 	public void setListener(ConsoleOutputObserver listener) {
 		this.listener = listener;
 	}
@@ -33,7 +35,7 @@ public class AdbWrapper
 		String cmd = adbCmd;
 		if(cmd == null) {
 			cmd = Resource.BIN_ADB.getPath();
-	
+
 			if(!(new File(cmd)).exists()) {
 				Log.e("no such adb tool" + adbCmd);
 				cmd = null;
@@ -41,7 +43,24 @@ public class AdbWrapper
 		}
 		return cmd;
 	}
-	
+
+	public static void addDeviceChangeListener(IDeviceChangeListener listener) {
+		new Thread(new Runnable() {
+			public void run() {
+				try{
+					AndroidDebugBridge.init(false);
+					if (AndroidDebugBridge.createBridge(getAdbCmd(), false) == null) {
+						Log.e("Invalid ADB location.");
+						return;
+					}
+					AndroidDebugBridge.addDeviceChangeListener(listener);;
+				} catch(IllegalStateException e) {
+					Log.v(e.getMessage());
+				}
+			}
+		}).start();
+	}
+
 	public String version() {
 		return version(listener);
 	}
@@ -55,21 +74,21 @@ public class AdbWrapper
 		}
 		return version;
 	}
-	
+
 	public boolean startServer() {
 		return startServer(listener);
 	}
-	
+
 	static public boolean startServer(ConsoleOutputObserver listener) {
 		if(adbCmd == null) return false;
 		String[] result = ConsolCmd.exc(new String[] {adbCmd, "start-server"}, false, listener);
 		return result[1].matches(".*daemon started successfully.*");
 	}
-	
+
 	public void killServer() {
 		killServer(listener);
 	}
-	
+
 	static public void killServer(ConsoleOutputObserver listener) {
 		if(adbCmd == null) return;
 		ConsolCmd.exc(new String[] {adbCmd, "kill-server"}, false, listener);
@@ -84,24 +103,24 @@ public class AdbWrapper
 		killServer(listener);
 		return startServer(listener);
 	}
-	
+
 	static public void waitForDevice() {
 		ConsolCmd.exc(new String[] {adbCmd, "wait-for-device"});
 	}
-	
+
 	public String[] devices() {
 		return devices(listener);
 	}
-	
+
 	static public String[] devices(ConsoleOutputObserver listener) {
 		if(adbCmd == null) return null;
 		return ConsolCmd.exc(new String[] {adbCmd, "devices", "-l"}, false, listener);
 	}
-	
+
 	public String getProp(String tag) {
 		return getProp(device, tag, listener);
 	}
-	
+
 	static public String getProp(String device, String tag, ConsoleOutputObserver listener) {
 		if(adbCmd == null) return null;
 		String[] param;
@@ -113,7 +132,7 @@ public class AdbWrapper
 		String[] result = ConsolCmd.exc(param, false, listener);
 		return result[0];
 	}
-	
+
 	public boolean root() {
 		return root(device, listener);
 	}
@@ -132,7 +151,7 @@ public class AdbWrapper
 		}
 		return true;
 	}
-	
+
 	public boolean remount() {
 		return remount(device, listener);
 	}
@@ -155,7 +174,7 @@ public class AdbWrapper
 	public String[] shell(String[] param) {
 		return shell(device, param, listener);
 	}
-	
+
 	static public String[] shell(String device, String[] param, ConsoleOutputObserver listener) {
 		if(adbCmd == null) return null;
 		String[] cmd;
@@ -170,7 +189,7 @@ public class AdbWrapper
 		String[] result = ConsolCmd.exc(shellcmd, false, listener);
 		return result;
 	}
-	
+
 	public void reboot() {
 		reboot(device, listener);
 	}
@@ -204,11 +223,11 @@ public class AdbWrapper
 
 		return apkPath;
 	}
-	
+
 	public boolean pullApk(String srcApkPath, String destApkPath) {
 		return pullApk(device, srcApkPath, destApkPath, listener);
 	}
-	
+
 	static public boolean pullApk(final String device, final String srcApkPath, final String destApkPath, final ConsoleOutputObserver listener) {
 		final String realApkPath = getApkPath(device, srcApkPath, true);
 		final String tmpPath = "/sdcard/tmp";
@@ -248,11 +267,11 @@ public class AdbWrapper
 
 		return ret;
 	}
-	
+
 	public boolean pull(String srcApkPath, String destApkPath) {
 		return pull(device, srcApkPath, destApkPath, listener);
 	}
-	
+
 	static public boolean pull(String device, String srcApkPath, String destApkPath, ConsoleOutputObserver listener) {
 		if(adbCmd == null) return false;
 		String[] param;
@@ -269,11 +288,11 @@ public class AdbWrapper
 		}
 		return true;
 	}
-	
+
 	public boolean push(String srcApkPath, String destApkPath) {
 		return push(device, srcApkPath, destApkPath, listener);
 	}
-	
+
 	static public boolean push(String device, String srcApkPath, String destApkPath, ConsoleOutputObserver listener) {
 		if(adbCmd == null) return false;
 		String[] param;
@@ -299,7 +318,7 @@ public class AdbWrapper
 		}
 		return install(device, apkPath, listener); 
 	}
-	
+
 	static public String[] install(String device, String apkPath, ConsoleOutputObserver listener) {
 		if(adbCmd == null) return null;
 		String[] param;
@@ -311,7 +330,7 @@ public class AdbWrapper
 		String[] result = ConsolCmd.exc(param, false, listener);
 		return result;
 	}
-	
+
 	static public String[] installOnSdcard(String device, String apkPath, ConsoleOutputObserver listener) {
 		if(adbCmd == null) return null;
 		String[] param;
@@ -323,11 +342,11 @@ public class AdbWrapper
 		String[] result = ConsolCmd.exc(param, false, listener);
 		return result;
 	}
-	
+
 	public String[] uninstall(String packageName) {
 		return uninstall(device, packageName, listener);
 	}
-	
+
 	static public String[] uninstall(String device, String packageName, ConsoleOutputObserver listener) {
 		if(adbCmd == null) return null;
 		String[] param;

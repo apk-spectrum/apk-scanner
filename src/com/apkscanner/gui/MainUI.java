@@ -21,6 +21,9 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.android.ddmlib.AndroidDebugBridge;
+import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
+import com.android.ddmlib.IDevice;
 import com.apkscanner.Launcher;
 import com.apkscanner.core.scanner.AaptScanner;
 import com.apkscanner.core.scanner.ApkScannerStub;
@@ -38,6 +41,7 @@ import com.apkscanner.gui.util.FileDrop;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
+import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.tool.dex2jar.Dex2JarWrapper;
 import com.apkscanner.tool.jd_gui.JDGuiLauncher;
 import com.apkscanner.util.FileUtil;
@@ -148,6 +152,8 @@ public class MainUI extends JFrame
 		// Shortcut key event processing
 		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		ky.addKeyEventDispatcher(new UIEventHandler());
+
+		AdbWrapper.addDeviceChangeListener(new DeviceChangeListener());
 
 		Log.i("initialize() visible");
 		setVisible(true);
@@ -608,5 +614,30 @@ public class MainUI extends JFrame
 		@Override public void windowDeiconified(WindowEvent e) { }
 		@Override public void windowActivated(WindowEvent e) { }
 		@Override public void windowDeactivated(WindowEvent e) { }
+	}
+
+	class DeviceChangeListener implements IDeviceChangeListener {
+		@Override
+		public void deviceChanged(IDevice device, int changeMask) { }
+
+		@Override
+		public void deviceConnected(IDevice device) {
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					toolBar.setFlag(ToolBar.FLAG_LAYOUT_DEVICE_CONNECTED);
+				}
+			});
+		}
+
+		@Override
+		public void deviceDisconnected(IDevice device) {
+			if(AndroidDebugBridge.getBridge().getDevices().length == 0) {
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						toolBar.unsetFlag(ToolBar.FLAG_LAYOUT_DEVICE_CONNECTED);
+					}
+				});
+			}
+		}
 	}
 }
