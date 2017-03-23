@@ -44,7 +44,7 @@ public class AdbWrapper
 		return cmd;
 	}
 
-	public static void addDeviceChangeListener(IDeviceChangeListener listener) {
+	public static void addDeviceChangeListener(final IDeviceChangeListener listener) {
 		new Thread(new Runnable() {
 			public void run() {
 				try{
@@ -282,7 +282,7 @@ public class AdbWrapper
 		}
 		String[] result = ConsolCmd.exc(param, false, listener);
 		if(result == null || result.length == 0
-				|| (!result[result.length-1].startsWith("[100%]") && !result[0].endsWith("s)"))
+				/*|| (!result[result.length-1].endsWith("s)") && !result[result.length-1].startsWith("[100%]") && !result[0].endsWith("s)"))*/
 				|| !(new File(destApkPath).exists())) {
 			return false;
 		}
