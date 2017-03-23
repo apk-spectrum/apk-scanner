@@ -249,6 +249,7 @@ public enum Resource
 	IMG_TOOLBAR_SIGNNING		(Type.IMAGE, "toolbar_signning.png"),
 	IMG_TOOLBAR_LOADING_OPEN_JD (Type.IMAGE, "loading_openJD.gif"),
 	IMG_TOOLBAR_PACKAGETREE		(Type.IMAGE, "toolbar_packagetree.png"),
+	IMG_TOOLBAR_LAUNCH			(Type.IMAGE, "toolbar_launch.png"),
 
 	IMG_RESOURCE_IMG_BACKGROUND (Type.IMAGE, "resource_tap_image_background.jpg"),
 	IMG_RESOURCE_IMG_BACKGROUND_DARK (Type.IMAGE, "resource_tap_image_background_dark.jpg"),

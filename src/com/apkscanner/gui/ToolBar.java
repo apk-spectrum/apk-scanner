@@ -119,10 +119,10 @@ public class ToolBar extends JToolBar
 		MANIFEST		(Type.NORMAL, Resource.STR_BTN_MANIFEST.getString(), Resource.STR_BTN_MANIFEST_LAB.getString(), Resource.IMG_TOOLBAR_MANIFEST.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
 		EXPLORER		(Type.NORMAL, Resource.STR_BTN_EXPLORER.getString(), Resource.STR_BTN_EXPLORER_LAB.getString(), Resource.IMG_TOOLBAR_EXPLORER.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
 		INSTALL			(Type.NORMAL, Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_INSTALL_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-		INSTALL_UPDATE	(Type.NORMAL, Resource.STR_BTN_INSTALL_DOWNGRAD.getString(), Resource.STR_BTN_INSTALL_DOWNGRAD_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-		INSTALL_DOWNGRADE(Type.NORMAL, Resource.STR_BTN_INSTALL_UPDATE.getString(), Resource.STR_BTN_INSTALL_UPDATE_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-		LAUNCH			(Type.NORMAL, Resource.STR_BTN_LAUNCH.getString(), Resource.STR_BTN_LAUNCH_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-		SIGN			(Type.NORMAL, Resource.STR_BTN_SIGN.getString(), Resource.STR_BTN_SIGN_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+		INSTALL_UPDATE	(Type.NORMAL, Resource.STR_BTN_INSTALL_UPDATE.getString(), Resource.STR_BTN_INSTALL_UPDATE_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+		INSTALL_DOWNGRADE(Type.NORMAL, Resource.STR_BTN_INSTALL_DOWNGRAD.getString(), Resource.STR_BTN_INSTALL_DOWNGRAD_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+		LAUNCH			(Type.NORMAL, Resource.STR_BTN_LAUNCH.getString(), Resource.STR_BTN_LAUNCH_LAB.getString(), Resource.IMG_TOOLBAR_LAUNCH.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+		SIGN			(Type.NORMAL, Resource.STR_BTN_SIGN.getString(), Resource.STR_BTN_SIGN_LAB.getString(), Resource.IMG_TOOLBAR_SIGNNING.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
 		INSTALL_EXTEND	(Type.EXTEND, null, Resource.IMG_TOOLBAR_OPEN_ARROW.getImageIcon(10,10)),
 		SETTING			(Type.NORMAL, Resource.STR_BTN_SETTING.getString(), Resource.STR_BTN_SETTING_LAB.getString(), Resource.IMG_TOOLBAR_SETTING.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
 		ABOUT			(Type.NORMAL, Resource.STR_BTN_ABOUT.getString(), Resource.STR_BTN_ABOUT_LAB.getString(), Resource.IMG_TOOLBAR_ABOUT.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
@@ -308,7 +308,7 @@ public class ToolBar extends JToolBar
 
 		Dimension sepSize = new Dimension(1,63);
 
-		Log.i("ToolBar.initUI() ButtonSet add");
+		Log.e("ToolBar.setReplacementLayout() flag " + flag);
 		if(!isSetFlag(FLAG_LAYOUT_DEVICE_CONNECTED)) {
 			add(buttonMap.get(ButtonSet.OPEN));
 		} else {

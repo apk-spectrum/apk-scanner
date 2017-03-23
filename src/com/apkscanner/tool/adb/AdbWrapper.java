@@ -2,8 +2,6 @@ package com.apkscanner.tool.adb;
 
 import java.io.File;
 
-import com.android.ddmlib.AndroidDebugBridge;
-import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.ConsolCmd.ConsoleOutputObserver;
@@ -42,23 +40,6 @@ public class AdbWrapper
 			}
 		}
 		return cmd;
-	}
-
-	public static void addDeviceChangeListener(final IDeviceChangeListener listener) {
-		new Thread(new Runnable() {
-			public void run() {
-				try{
-					AndroidDebugBridge.init(false);
-					if (AndroidDebugBridge.createBridge(getAdbCmd(), false) == null) {
-						Log.e("Invalid ADB location.");
-						return;
-					}
-					AndroidDebugBridge.addDeviceChangeListener(listener);;
-				} catch(IllegalStateException e) {
-					Log.v(e.getMessage());
-				}
-			}
-		}).start();
 	}
 
 	public String version() {

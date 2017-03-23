@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Enumeration;
+import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -41,7 +42,8 @@ import com.apkscanner.gui.util.FileDrop;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
-import com.apkscanner.tool.adb.AdbWrapper;
+import com.apkscanner.tool.adb.AdbPackageManager;
+import com.apkscanner.tool.adb.AdbPackageManager.PackageInfo;
 import com.apkscanner.tool.dex2jar.Dex2JarWrapper;
 import com.apkscanner.tool.jd_gui.JDGuiLauncher;
 import com.apkscanner.util.FileUtil;
@@ -53,6 +55,7 @@ public class MainUI extends JFrame
 	private static final long serialVersionUID = -623259597186280485L;
 
 	private ApkScannerStub apkScanner = new AaptScanner(new ApkScannerListener());
+	private DeviceMonitor deviceMonitor = new DeviceMonitor();
 
 	private TabbedPanel tabbedPanel;
 	private ToolBar toolBar;
@@ -153,8 +156,6 @@ public class MainUI extends JFrame
 		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		ky.addKeyEventDispatcher(new UIEventHandler());
 
-		AdbWrapper.addDeviceChangeListener(new DeviceChangeListener());
-
 		Log.i("initialize() visible");
 		setVisible(true);
 
@@ -177,6 +178,7 @@ public class MainUI extends JFrame
 		@Override
 		public void onStart(final long estimatedTime) {
 			Log.i("onStart()");
+			deviceMonitor.setApkInfo(null);
 
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
@@ -188,11 +190,13 @@ public class MainUI extends JFrame
 		@Override
 		public void onSuccess() {
 			Log.v("ApkCore.onSuccess()");
+			deviceMonitor.setApkInfo(apkScanner.getApkInfo());
 		}
 
 		@Override
 		public void onError(int error) {
 			Log.e("ApkCore.onError() " + error);
+			deviceMonitor.setApkInfo(null);
 
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
@@ -616,28 +620,140 @@ public class MainUI extends JFrame
 		@Override public void windowDeactivated(WindowEvent e) { }
 	}
 
-	class DeviceChangeListener implements IDeviceChangeListener {
+	class DeviceMonitor implements IDeviceChangeListener
+	{
+		private String packageName = null;
+		private int versionCode = 0;
+		private boolean hasSignature = false;
+
+		private HashMap<String, PackageInfo> devices = new HashMap<String, PackageInfo>(); 
+
+		public DeviceMonitor() {
+			init(this);
+		}
+
+		public void init(final IDeviceChangeListener listener) {
+			new Thread(new Runnable() {
+				public void run() {
+					try{
+						AndroidDebugBridge.init(false);
+						if (AndroidDebugBridge.createBridge(Resource.BIN_ADB.getPath(), false) == null) {
+							Log.e("Invalid ADB location.");
+							return;
+						}
+						AndroidDebugBridge.addDeviceChangeListener(listener);
+					} catch(IllegalStateException e) {
+						Log.v(e.getMessage());
+					}
+				}
+			}).start();
+		}
+
+		public void setApkInfo(ApkInfo info) {
+			synchronized(this) {
+				if(info != null) {
+					packageName = info.manifest.packageName;
+					versionCode = info.manifest.versionCode;
+					hasSignature = (info.certificates != null && info.certificates.length > 0);
+				} else {
+					packageName = null;
+					versionCode = 0;
+					hasSignature = false;
+				}
+				synchronized (devices) {
+					devices.clear();
+				}
+			}
+			applyToobarPolicy();
+		}
+
+		private void applyToobarPolicy() {
+			Log.e("applyToobarPolicy()");
+			synchronized(this) {
+				final boolean hasDevice = (AndroidDebugBridge.getBridge().getDevices().length > 0);
+
+				if(hasDevice && packageName != null) {
+					int toolbarFlag = ToolBar.FLAG_LAYOUT_NONE;
+					if(!hasSignature) {
+						toolbarFlag = ToolBar.FLAG_LAYOUT_UNSIGNED;
+					} else {
+						boolean hasInstalled = false;
+						boolean hasLower = false;
+						boolean hasUpper = false;
+						for(IDevice device: AndroidDebugBridge.getBridge().getDevices()) {
+							PackageInfo pkg = null;
+							synchronized(devices) {
+								if(devices.containsKey(device.getSerialNumber())) {
+									pkg = devices.get(device.getSerialNumber());
+								} else {
+									pkg = AdbPackageManager.getPackageInfo(device.getSerialNumber(), packageName);
+									devices.put(device.getSerialNumber(), pkg);
+								}
+							}
+							if(pkg != null) {
+								hasInstalled = true;
+								if(versionCode < pkg.versionCode) {
+									hasUpper = true;									
+								} else if(versionCode > pkg.versionCode) {
+									hasLower = true;
+								}
+							}
+						}
+
+						if(hasInstalled) {
+							if(hasLower) {
+								toolbarFlag = ToolBar.FLAG_LAYOUT_INSTALLED_LOWER;
+							} else if(hasUpper) {
+								toolbarFlag = ToolBar.FLAG_LAYOUT_INSTALLED_UPPER;
+							} else {
+								toolbarFlag = ToolBar.FLAG_LAYOUT_INSTALLED;
+							}
+						}
+					}
+
+					final int sendFlag = toolbarFlag;
+					EventQueue.invokeLater(new Runnable() {
+						public void run() {
+							Log.e("sendFlag " + sendFlag);
+							toolBar.setFlag(sendFlag);
+						}
+					});
+				} else {
+					EventQueue.invokeLater(new Runnable() {
+						public void run() {
+							toolBar.clearFlag();
+						}
+					});
+				}
+
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						if(hasDevice) {
+							toolBar.setFlag(ToolBar.FLAG_LAYOUT_DEVICE_CONNECTED);
+						} else {
+							toolBar.clearFlag();
+						}
+					}
+				});
+			}
+		}
+
 		@Override
 		public void deviceChanged(IDevice device, int changeMask) { }
 
 		@Override
 		public void deviceConnected(IDevice device) {
-			EventQueue.invokeLater(new Runnable() {
-				public void run() {
-					toolBar.setFlag(ToolBar.FLAG_LAYOUT_DEVICE_CONNECTED);
-				}
-			});
+			applyToobarPolicy();
 		}
 
 		@Override
 		public void deviceDisconnected(IDevice device) {
-			if(AndroidDebugBridge.getBridge().getDevices().length == 0) {
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						toolBar.unsetFlag(ToolBar.FLAG_LAYOUT_DEVICE_CONNECTED);
-					}
-				});
+			synchronized(devices) {
+				if(devices.containsKey(device.getSerialNumber())) {
+					devices.remove(device.getSerialNumber());
+				}
 			}
+			applyToobarPolicy();
 		}
 	}
 }

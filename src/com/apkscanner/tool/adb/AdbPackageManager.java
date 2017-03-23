@@ -29,11 +29,11 @@ public class AdbPackageManager {
 		public final String apkPath;
 		public final String codePath;
 		public final String versionName;
-		public final String versionCode;
+		public final int versionCode;
 		public final boolean isSystemApp;
 		public final String installer;
 		
-		public PackageInfo(String pkgName, String apkPath, String codePath, String versionName, String versionCode, boolean isSystemApp, String installer)
+		public PackageInfo(String pkgName, String apkPath, String codePath, String versionName, int versionCode, boolean isSystemApp, String installer)
 		{
 			this.pkgName = pkgName;
 			this.apkPath = apkPath;
@@ -206,7 +206,7 @@ public class AdbPackageManager {
 		String[] result;
 		String[] TargetInfo;
 		String verName = null;
-		String verCode = null;
+		int verCode = 0;
 		String codePath = null;
 		String apkPath = null;
 		String installer = null;
@@ -229,7 +229,10 @@ public class AdbPackageManager {
 			TargetInfo = ConsolCmd.exc(cmd,false,null);
 			
 			verName = selectString(TargetInfo,"versionName=");
-			verCode = selectString(TargetInfo,"versionCode=");
+			String vercode = selectString(TargetInfo,"versionCode=");
+			if(vercode != null && vercode.matches("\\d+")) {
+				verCode = Integer.valueOf(selectString(TargetInfo,"versionCode="));
+			}
 			codePath = selectString(TargetInfo,"codePath=");
 			
 			if(installer == null)
