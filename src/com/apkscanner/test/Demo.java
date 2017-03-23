@@ -17,6 +17,8 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import com.apkscanner.util.Log;
+
 public class Demo {
 
     private void createAndShowGUI() {
@@ -196,6 +198,8 @@ public class Demo {
             c.weightx = 1;
             rendererComponent.add(new JLabel(text, horizontalTabTextAlignmen), c);
 
+            
+            
             return rendererComponent;
         }
 
@@ -205,6 +209,7 @@ public class Demo {
             int prototypeWidth = prototypeComponent.getPreferredSize().width;
             int prototypeHeight = prototypeComponent.getPreferredSize().height;
             rendererComponent.setPreferredSize(new Dimension(prototypeWidth, prototypeHeight));
+            
             return rendererComponent;
         }
 
