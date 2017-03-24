@@ -42,11 +42,9 @@ public class ActivityInfo extends ComponentInfo
 	                                       "stateAlwaysHidden", "stateVisible",
 	                                       "stateAlwaysVisible", "adjustUnspecified",
 	                                       "adjustResize", "adjustPan"] */
-	
-	public Integer featureFlag = 0;
 
 	public IntentFilterInfo[] intentFilter = null;
-	
+
 	public String getReport()
 	{
 		StringBuilder report = new StringBuilder();
@@ -54,7 +52,7 @@ public class ActivityInfo extends ComponentInfo
 		if(enabled != null) report.append("enabled : " + enabled + "\n");
 		if(exported != null) report.append("exported : " + exported + "\n");
 		if(permission != null) report.append("permission : " + permission + "\n");
-		
+
 		if(intentFilter != null) {
 			report.append("\nintent-filter count : " + intentFilter.length + "\n");
 			for(IntentFilterInfo info: intentFilter) {
@@ -71,7 +69,7 @@ public class ActivityInfo extends ComponentInfo
 				}
 			}
 		}
-		
+
 		return report.toString();
 	}
 }

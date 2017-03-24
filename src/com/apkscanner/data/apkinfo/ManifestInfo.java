@@ -3,9 +3,10 @@ package com.apkscanner.data.apkinfo;
 public class ManifestInfo
 {
 	public static final int MANIFEST_FEATURE_LAUNCHUR = 0x1;
-	public static final int MANIFEST_FEATURE_STARTUP = 0x2;
-	public static final int MANIFEST_FEATURE_INSTRUMENTATION = 0x4;
-	public static final int MANIFEST_FEATURE_SYSTEMUID = 0x8;
+	public static final int MANIFEST_FEATURE_MAIN = 0x2;
+	public static final int MANIFEST_FEATURE_STARTUP = 0x4;
+	public static final int MANIFEST_FEATURE_INSTRUMENTATION = 0x8;
+	public static final int MANIFEST_FEATURE_SYSTEMUID = 0x10;
 
 	// manifest attributes
 	public String packageName = null; // "string"

@@ -39,6 +39,7 @@ import com.apkscanner.gui.dialog.LogDlg;
 import com.apkscanner.gui.dialog.PackageTreeDlg;
 import com.apkscanner.gui.dialog.SearchDlg;
 import com.apkscanner.gui.dialog.SettingDlg;
+import com.apkscanner.gui.messagebox.ComboMessageBox;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.gui.util.FileDrop;
@@ -493,10 +494,20 @@ public class MainUI extends JFrame
 			ComponentInfo[] activities = ApkInfoHelper.getLauncherActivityList(apkInfo, false);
 			if(activities != null && activities.length == 1) {
 				selectedActivity = activities[0].name;
-			} else if(activities.length > 0) {
+			} else {
 				activities = ApkInfoHelper.getLauncherActivityList(apkInfo, true);
 				if(activities != null) {
-					// 액티비티 셀럭터 다이얼로그 출력
+					String[] items = new String[activities.length];
+					for(int i = 0; i < activities.length; i++) {
+						boolean isLauncher = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0);
+						items[i] = (isLauncher ? "[LAUNCHER]":"[MAIN]") + " " + activities[i].name;
+					}
+					String selected = ComboMessageBox.show(null, "Select Activity", items,  Resource.STR_BTN_LAUNCH.getString(), JTextOptionPane.QUESTION_MESSAGE,
+							null, new Dimension(500, 0));
+					if(selected == null) {
+						return;
+					}
+					selectedActivity = selected.split(" ")[1];
 				}
 			}
 
@@ -515,9 +526,7 @@ public class MainUI extends JFrame
 
 			final String launcherActivity = apkInfo.manifest.packageName + "/" + selectedActivity;
 			Log.i("launcherActivity : " + launcherActivity);
-
-			JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_PULLED.getString() + "\n\nLog", launcherActivity,  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
-					null, new Dimension(400, 100));
+			
 			
 			new Thread(new Runnable() {
 				public void run()
@@ -697,6 +706,7 @@ public class MainUI extends JFrame
 		private String packageName = null;
 		private int versionCode = 0;
 		private boolean hasSignature = false;
+		private boolean hasMainActivity = false; 
 
 		private HashMap<String, PackageInfo> devices = new HashMap<String, PackageInfo>(); 
 
@@ -731,10 +741,12 @@ public class MainUI extends JFrame
 					packageName = info.manifest.packageName;
 					versionCode = info.manifest.versionCode;
 					hasSignature = (info.certificates != null && info.certificates.length > 0);
+					hasMainActivity = ApkInfoHelper.getLauncherActivityList(info, true).length > 0; 
 				} else {
 					packageName = null;
 					versionCode = 0;
 					hasSignature = false;
+					hasMainActivity = false; 
 				}
 				synchronized (devices) {
 					devices.clear();
@@ -781,6 +793,8 @@ public class MainUI extends JFrame
 								toolbarFlag = ToolBar.FLAG_LAYOUT_INSTALLED_LOWER;
 							} else if(hasUpper) {
 								toolbarFlag = ToolBar.FLAG_LAYOUT_INSTALLED_UPPER;
+							} else if(hasMainActivity) {
+								toolbarFlag = ToolBar.FLAG_LAYOUT_LAUNCHER;
 							} else {
 								toolbarFlag = ToolBar.FLAG_LAYOUT_INSTALLED;
 							}

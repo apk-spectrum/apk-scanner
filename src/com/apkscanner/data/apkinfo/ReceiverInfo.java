@@ -5,9 +5,7 @@ public class ReceiverInfo extends ComponentInfo
 	public String process = null; // "string"
 
 	public IntentFilterInfo[] intentFilter = null;
-	
-	public Integer featureFlag = 0;
-	
+
 	public String getReport()
 	{
 		StringBuilder report = new StringBuilder();
@@ -15,7 +13,7 @@ public class ReceiverInfo extends ComponentInfo
 		if(enabled != null) report.append("enabled : " + enabled + "\n");
 		if(exported != null) report.append("exported : " + exported + "\n");
 		if(permission != null) report.append("permission : " + permission + "\n");
-		
+
 		if(intentFilter != null) {
 			report.append("\nintent-filter count : " + intentFilter.length + "\n");
 			for(IntentFilterInfo info: intentFilter) {
@@ -32,7 +30,7 @@ public class ReceiverInfo extends ComponentInfo
 				}
 			}
 		}
-		
+
 		return report.toString();
 	}
 }

@@ -30,11 +30,12 @@ public class ToolBar extends JToolBar
 
 	public static final int FLAG_LAYOUT_NONE = 0x00;				// Open file
 	public static final int FLAG_LAYOUT_DEVICE_CONNECTED = 0x01;	// Open package
-	public static final int FLAG_LAYOUT_INSTALLED = 0x02;			// Run
+	public static final int FLAG_LAYOUT_INSTALLED = 0x02;			// Install 
 	public static final int FLAG_LAYOUT_INSTALLED_LOWER = 0x04;		// Downgrade
 	public static final int FLAG_LAYOUT_INSTALLED_UPPER = 0x08;		// Update
-	public static final int FLAG_LAYOUT_UNSIGNED = 0x10;			// Sign
-	public static final int FLAG_LAYOUT_NO_SUCH_CLASSES = 0x20;
+	public static final int FLAG_LAYOUT_LAUNCHER = 0x10;			// Launcher
+	public static final int FLAG_LAYOUT_UNSIGNED = 0x20;			// Sign
+	public static final int FLAG_LAYOUT_NO_SUCH_CLASSES = 0x40;
 
 	public static final int FLAG_LAYOUT_INSTALLED_MASK = FLAG_LAYOUT_INSTALLED | FLAG_LAYOUT_INSTALLED_LOWER | FLAG_LAYOUT_INSTALLED_UPPER;
 
@@ -327,7 +328,7 @@ public class ToolBar extends JToolBar
 
 		if(isSetFlag(FLAG_LAYOUT_UNSIGNED)) {
 			add(buttonMap.get(ButtonSet.SIGN));
-		} else if(isSetFlag(FLAG_LAYOUT_INSTALLED)) {
+		} else if(isSetFlag(FLAG_LAYOUT_LAUNCHER)) {
 			add(buttonMap.get(ButtonSet.LAUNCH));
 		} else if(isSetFlag(FLAG_LAYOUT_INSTALLED_LOWER)) {
 			add(buttonMap.get(ButtonSet.INSTALL_UPDATE));

@@ -13,9 +13,7 @@ public class ProviderInfo extends ComponentInfo
 
 	public GrantUriPermissionInfo[] grantUriPermission = null;
 	public PathPermissionInfo[] pathPermission = null;
-	
-	public Integer featureFlag = 0;
-	
+
 	public String getReport()
 	{
 		StringBuilder report = new StringBuilder();
@@ -25,7 +23,7 @@ public class ProviderInfo extends ComponentInfo
 		if(permission != null) report.append("permission : " + permission + "\n");
 		if(readPermission != null) report.append("readPermission : " + readPermission + "\n");
 		if(writePermission != null) report.append("writePermission : " + writePermission + "\n");
-		
+
 		return report.toString();
 	}
 }
