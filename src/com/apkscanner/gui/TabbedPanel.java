@@ -5,7 +5,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JTabbedPane;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.data.apkinfo.ApplicationInfo;
+import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.gui.tabpanels.BasicInfo;
 import com.apkscanner.gui.tabpanels.Components;
 import com.apkscanner.gui.tabpanels.Libraries;
@@ -113,16 +113,7 @@ public class TabbedPanel extends JTabbedPane
 			}
 			if(id == -1 || id == 1) setPanelData(1, apkInfo.widgets.length, apkInfo);
 			if(id == -1 || id == 2) setPanelData(2, apkInfo.libraries.length, apkInfo);
-			if(id == -1 || id == 4) {
-				int cnt = 0;
-				ApplicationInfo app = apkInfo.manifest.application;
-				if(app.activity != null) cnt += app.activity.length;
-				if(app.activityAlias != null) cnt += app.activityAlias.length;
-				if(app.receiver != null) cnt += app.receiver.length;
-				if(app.provider != null) cnt += app.provider.length;
-				if(app.service != null) cnt += app.service.length;
-				setPanelData(4, cnt, apkInfo);
-			}
+			if(id == -1 || id == 4) setPanelData(4, ApkInfoHelper.getComponentCount(apkInfo), apkInfo);
 			if(id == -1 || id == 5) setPanelData(5, (apkInfo.certificates != null) ? apkInfo.certificates.length : 0, apkInfo);
 			if(id == -1 || id == 3) setPanelData(3, apkInfo.resources.length, apkInfo);
 			if(id >= CMD_EXTRA_DATA) {

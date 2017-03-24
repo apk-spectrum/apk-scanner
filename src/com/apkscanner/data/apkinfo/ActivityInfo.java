@@ -1,6 +1,6 @@
 package com.apkscanner.data.apkinfo;
 
-public class ActivityInfo
+public class ActivityInfo extends ComponentInfo
 {
 	public Boolean allowEmbedded = null;
 	public Boolean allowTaskReparenting = null;
@@ -15,21 +15,15 @@ public class ActivityInfo
 	                                 "smallestScreenSize"] */
 	public String documentLaunchMode = null; /*["intoExisting" | "always" |
 	                                  "none" | "never"] */
-	public Boolean enabled = null;
 	public Boolean excludeFromRecents = null;
-	public Boolean exported = null;
 	public Boolean finishOnTaskLaunch = null;
 	public Boolean hardwareAccelerated = null;
-	public ResourceInfo[] icons = null; // "drawable resource"
-	public ResourceInfo[] labels = null; // "string resource"
 	public String launchMode = null; /* ["multiple" | "singleTop" |
 	                              "singleTask" | "singleInstance"]*/
 	public Integer maxRecents = null;
 	public Boolean multiprocess = null;
-	public String name = null; //"string"
 	public Boolean noHistory = null;  
 	public String parentActivityName = null; //"string" 
-	public String permission = null; //"string"
 	public String process = null; //"string"
 	public Boolean relinquishTaskIdentity = null;
 	public String screenOrientation = null; /*["unspecified" | "behind" |
@@ -52,7 +46,6 @@ public class ActivityInfo
 	public Integer featureFlag = 0;
 
 	public IntentFilterInfo[] intentFilter = null;
-	public MetaDataInfo[] metaData = null;
 	
 	public String getReport()
 	{

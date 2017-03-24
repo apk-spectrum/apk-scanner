@@ -23,8 +23,8 @@ import javax.swing.border.EmptyBorder;
 
 import com.apkscanner.core.scanner.PermissionGroupManager;
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.CompatibleScreensInfo;
-import com.apkscanner.data.apkinfo.ManifestInfo;
 import com.apkscanner.data.apkinfo.PermissionGroup;
 import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
@@ -511,14 +511,10 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		sharedUserId = apkInfo.manifest.sharedUserId;
 		installLocation = apkInfo.manifest.installLocation;
 		
-		isHidden = (apkInfo.manifest.featureFlags & ManifestInfo.MANIFEST_FEATURE_LAUNCHUR) == 0 ? true : false;
-		isStartup = (apkInfo.manifest.featureFlags & ManifestInfo.MANIFEST_FEATURE_STARTUP) != 0 ? true : false;
-		isInstrumentation = (apkInfo.manifest.featureFlags & ManifestInfo.MANIFEST_FEATURE_INSTRUMENTATION) != 0 ? true : false;
-		if(apkInfo.manifest.application.debuggable != null && apkInfo.manifest.application.debuggable) {
-			debuggable = true;
-		} else {
-			debuggable = false;
-		}
+		isHidden = ApkInfoHelper.isHidden(apkInfo);
+		isStartup = ApkInfoHelper.isHidden(apkInfo);
+		isInstrumentation = ApkInfoHelper.isInstrumentation(apkInfo);
+		debuggable = ApkInfoHelper.isDebuggable(apkInfo);
 		
 		isSamsungSign = (apkInfo.featureFlags & ApkInfo.APP_FEATURE_SAMSUNG_SIGN) != 0 ? true : false;
 		isPlatformSign = (apkInfo.featureFlags & ApkInfo.APP_FEATURE_PLATFORM_SIGN) != 0 ? true : false;
