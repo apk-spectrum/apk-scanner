@@ -48,8 +48,8 @@ public class ApkInfoHelper
 		return getComponentCount(apkInfo);
 	}
 
-	public ComponentInfo[] getLauncherActivityList() {
-		return getLauncherActivityList(apkInfo);
+	public ComponentInfo[] getLauncherActivityList(boolean includeMain) {
+		return getLauncherActivityList(apkInfo, includeMain);
 	}
 
 	public static boolean hasLauncher(ApkInfo apkInfo) {
@@ -103,7 +103,7 @@ public class ApkInfoHelper
 		return cnt;
 	}
 
-	public static ComponentInfo[] getLauncherActivityList(ApkInfo apkInfo) {
+	public static ComponentInfo[] getLauncherActivityList(ApkInfo apkInfo, boolean includeMain) {
 		ArrayList<ComponentInfo> launcherList = new ArrayList<ComponentInfo>();
 		ArrayList<ComponentInfo> mainList = new ArrayList<ComponentInfo>(); 
 		if(apkInfo != null &&
@@ -117,8 +117,9 @@ public class ApkInfoHelper
 							(info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
 						if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0)
 							launcherList.add(info);
-						else
+						else if(includeMain) {
 							mainList.add(info);
+						}
 					}
 				}
 			}
@@ -130,8 +131,9 @@ public class ApkInfoHelper
 							(info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
 						if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0)
 							launcherList.add(info);
-						else
+						else if(includeMain) {
 							mainList.add(info);
+						}
 					}
 				}
 			}

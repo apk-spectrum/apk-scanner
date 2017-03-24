@@ -30,6 +30,8 @@ import com.apkscanner.core.scanner.AaptScanner;
 import com.apkscanner.core.scanner.ApkScannerStub;
 import com.apkscanner.core.scanner.ApkScannerStub.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.data.apkinfo.ApkInfoHelper;
+import com.apkscanner.data.apkinfo.ComponentInfo;
 import com.apkscanner.gui.ToolBar.ButtonSet;
 import com.apkscanner.gui.dialog.AboutDlg;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
@@ -38,11 +40,14 @@ import com.apkscanner.gui.dialog.PackageTreeDlg;
 import com.apkscanner.gui.dialog.SearchDlg;
 import com.apkscanner.gui.dialog.SettingDlg;
 import com.apkscanner.gui.util.ApkFileChooser;
+import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.gui.util.FileDrop;
+import com.apkscanner.gui.util.JTextOptionPane;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.tool.adb.AdbPackageManager;
+import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.tool.adb.AdbPackageManager.PackageInfo;
 import com.apkscanner.tool.dex2jar.Dex2JarWrapper;
 import com.apkscanner.tool.jd_gui.JDGuiLauncher;
@@ -476,6 +481,73 @@ public class MainUI extends JFrame
 			}
 		}
 
+		private void evtLaunchApp()
+		{
+			ApkInfo apkInfo = apkScanner.getApkInfo();
+			if(apkInfo == null) {
+				Log.e("evtOpenJDGUI() apkInfo is null");
+				return;
+			}
+
+			String selectedActivity = null;
+			ComponentInfo[] activities = ApkInfoHelper.getLauncherActivityList(apkInfo, false);
+			if(activities != null && activities.length == 1) {
+				selectedActivity = activities[0].name;
+			} else if(activities.length > 0) {
+				activities = ApkInfoHelper.getLauncherActivityList(apkInfo, true);
+				if(activities != null) {
+					// 액티비티 셀럭터 다이얼로그 출력
+				}
+			}
+
+			if(selectedActivity == null) {
+				Log.w("No such activity of launcher or main");
+				ArrowTraversalPane.showOptionDialog(null,
+						Resource.STR_MSG_NO_SUCH_LAUNCHER.getString(),
+						Resource.STR_LABEL_WARNING.getString(),
+						JOptionPane.OK_OPTION, 
+						JOptionPane.INFORMATION_MESSAGE,
+						null,
+						new String[] {Resource.STR_BTN_OK.getString()},
+						Resource.STR_BTN_OK.getString());
+				return;
+			}
+
+			final String launcherActivity = apkInfo.manifest.packageName + "/" + selectedActivity;
+			Log.i("launcherActivity : " + launcherActivity);
+
+			JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_PULLED.getString() + "\n\nLog", launcherActivity,  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
+					null, new Dimension(400, 100));
+			
+			new Thread(new Runnable() {
+				public void run()
+				{
+					for(String device: deviceMonitor.getInstalledDevice()) {
+						String[] cmdResult = AdbWrapper.shell(device, new String[] {"am", "start", "-n", launcherActivity}, null);
+						if(cmdResult == null || (cmdResult.length > 2 && cmdResult[1].startsWith("Error")) ||
+								(cmdResult.length > 1 && cmdResult[0].startsWith("error"))) {
+							Log.e("activity start faile : " + launcherActivity);
+							//Log.e(String.join("\n", cmdResult));
+
+							EventQueue.invokeLater(new Runnable() {
+								public void run() {
+									ArrowTraversalPane.showOptionDialog(null,
+											Resource.STR_MSG_FAILURE_LAUNCH_APP.getString(),
+											Resource.STR_LABEL_WARNING.getString(),
+											JOptionPane.OK_OPTION, 
+											JOptionPane.INFORMATION_MESSAGE,
+											null,
+											new String[] {Resource.STR_BTN_OK.getString()},
+											Resource.STR_BTN_OK.getString());
+								}
+							});
+						}
+					}
+				}
+			}).start();
+
+		}
+
 		private void setLanguage(String lang)
 		{
 			ApkInfo apkInfo = apkScanner.getApkInfo();
@@ -530,7 +602,7 @@ public class MainUI extends JFrame
 			} else if(ToolBar.ButtonSet.SEARCH.matchActionEvent(e)) {
 				evtOpenSearchPopup();
 			} else if(ToolBar.ButtonSet.LAUNCH.matchActionEvent(e)) {
-				//evtOpenSearchPopup();
+				evtLaunchApp();
 			} else {
 				Log.w("Unkown action : " + e);
 			}
@@ -630,6 +702,10 @@ public class MainUI extends JFrame
 
 		public DeviceMonitor() {
 			init(this);
+		}
+
+		public String[] getInstalledDevice() {
+			return devices.keySet().toArray(new String[0]);
 		}
 
 		public void init(final IDeviceChangeListener listener) {
