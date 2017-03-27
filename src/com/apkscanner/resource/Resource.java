@@ -278,7 +278,6 @@ public enum Resource
 	IMG_QUESTION				(Type.IMAGE, "question.png"),
 	IMG_WARNING					(Type.IMAGE, "warning.png"),
 	IMG_WARNING2				(Type.IMAGE, "warning2.png"),
-	IMG_SUCCESS					(Type.IMAGE, "Succes.png"),
 	IMG_INSTALL_WAIT			(Type.IMAGE, "install_wait.gif"),
 	IMG_LOADING					(Type.IMAGE, "loading.gif"),
 	IMG_APK_LOGO				(Type.IMAGE, "Logo.png"),
@@ -296,11 +295,6 @@ public enum Resource
 	IMG_TREE_DEVICE				(Type.IMAGE, "tree_icon_device.png"),
 	IMG_TREE_TOP				(Type.IMAGE, "tree_icon_top.gif"),
 	IMG_TREE_FOLDER				(Type.IMAGE, "tree_icon_folder.png"),
-
-	IMG_INSTALL_TABLE_DONE		(Type.IMAGE, "done_icon.png"),
-	IMG_INSTALL_TABLE_WAIT		(Type.IMAGE, "install_wait_icon.GIF"),
-	IMG_INSTALL_TABLE_QUESTION	(Type.IMAGE, "question_icon.png"),
-	IMG_INSTALL_TABLE_ERROR		(Type.IMAGE, "install_error_icon.png"),
 
 	BIN_PATH					(Type.BIN, ""),	
 
