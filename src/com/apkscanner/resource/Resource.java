@@ -247,7 +247,7 @@ public enum Resource
 	IMG_TOOLBAR_OPENCODE		(Type.IMAGE, "toolbar_opencode.png"),
 	IMG_TOOLBAR_SEARCH		(Type.IMAGE, "toolbar_search.png"),
 	IMG_TOOLBAR_SIGNNING		(Type.IMAGE, "toolbar_signning.png"),
-	IMG_TOOLBAR_LOADING_OPEN_JD (Type.IMAGE, "loading_openJD.gif"),
+	IMG_TOOLBAR_LOADING_OPEN_JD (Type.IMAGE, "Loading_openJD_16_16.gif"),
 	IMG_TOOLBAR_PACKAGETREE		(Type.IMAGE, "toolbar_packagetree.png"),
 	IMG_TOOLBAR_LAUNCH			(Type.IMAGE, "toolbar_launch.png"),
 

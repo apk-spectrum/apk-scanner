@@ -142,6 +142,7 @@ public class MainUI extends JFrame
 		// ToolBar initialize and add
 		toolBar = new ToolBar(eventHandler);
 		toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
+		toolBar.setEnabledAt(ButtonSet.NEED_DEVICE, false);
 		add(toolBar, BorderLayout.NORTH);
 
 		Log.i("initialize() tabbedpanel init");
@@ -196,7 +197,6 @@ public class MainUI extends JFrame
 		@Override
 		public void onSuccess() {
 			Log.v("ApkCore.onSuccess()");
-			deviceMonitor.setApkInfo(apkScanner.getApkInfo());
 		}
 
 		@Override
@@ -291,10 +291,12 @@ public class MainUI extends JFrame
 				break;
 			case ACTIVITY_COMPLETED:
 				tabbedPanel.setData(apkScanner.getApkInfo(), 4);
+				deviceMonitor.setApkInfo(apkScanner.getApkInfo());
 				break;
 			case CERT_COMPLETED:
 				tabbedPanel.setData(apkScanner.getApkInfo(), 0 + TabbedPanel.CMD_EXTRA_DATA);
 				tabbedPanel.setData(apkScanner.getApkInfo(), 5);
+				deviceMonitor.setApkInfo(apkScanner.getApkInfo());
 				break;
 			default:
 				break;
@@ -589,8 +591,13 @@ public class MainUI extends JFrame
 				evtShowManifest();
 			} else if(ToolBar.ButtonSet.EXPLORER.matchActionEvent(e)) {
 				evtShowExplorer();
-			} else if(ToolBar.ButtonSet.INSTALL.matchActionEvent(e) || ToolBar.MenuItemSet.INSTALL_APK.matchActionEvent(e)
-					|| ToolBar.ButtonSet.INSTALL_UPDATE.matchActionEvent(e) || ToolBar.ButtonSet.INSTALL_DOWNGRADE.matchActionEvent(e) ) {
+			} else if(ToolBar.ButtonSet.INSTALL.matchActionEvent(e)
+					|| ToolBar.ButtonSet.INSTALL_UPDATE.matchActionEvent(e)
+					|| ToolBar.ButtonSet.INSTALL_DOWNGRADE.matchActionEvent(e) 
+					|| ToolBar.ButtonSet.SUB_INSTALL.matchActionEvent(e) 
+					|| ToolBar.ButtonSet.SUB_INSTALL_UPDATE.matchActionEvent(e)
+					|| ToolBar.ButtonSet.SUB_INSTALL_DOWNGRADE.matchActionEvent(e)
+					|| ToolBar.MenuItemSet.INSTALL_APK.matchActionEvent(e) ) {
 				evtInstallApk(false);
 			} else if(ToolBar.ButtonSet.SETTING.matchActionEvent(e)) {
 				evtSettings();
@@ -610,7 +617,7 @@ public class MainUI extends JFrame
 				evtOpenJDGUI();
 			} else if(ToolBar.ButtonSet.SEARCH.matchActionEvent(e)) {
 				evtOpenSearchPopup();
-			} else if(ToolBar.ButtonSet.LAUNCH.matchActionEvent(e)) {
+			} else if(ToolBar.ButtonSet.LAUNCH.matchActionEvent(e) || ToolBar.ButtonSet.SUB_LAUNCH.matchActionEvent(e)) {
 				evtLaunchApp();
 			} else {
 				Log.w("Unkown action : " + e);
@@ -756,58 +763,51 @@ public class MainUI extends JFrame
 		}
 
 		private void applyToobarPolicy() {
-			Log.e("applyToobarPolicy()");
+			Log.e("applyToobarPolicy() " + EventQueue.isDispatchThread());
 			synchronized(this) {
 				final boolean hasDevice = (AndroidDebugBridge.getBridge().getDevices().length > 0);
 
 				if(hasDevice && packageName != null) {
-					int toolbarFlag = ToolBar.FLAG_LAYOUT_NONE;
-					if(!hasSignature) {
-						toolbarFlag = ToolBar.FLAG_LAYOUT_UNSIGNED;
-					} else {
-						boolean hasInstalled = false;
-						boolean hasLower = false;
-						boolean hasUpper = false;
-						for(IDevice device: AndroidDebugBridge.getBridge().getDevices()) {
-							PackageInfo pkg = null;
-							synchronized(devices) {
-								if(devices.containsKey(device.getSerialNumber())) {
-									pkg = devices.get(device.getSerialNumber());
-								} else {
-									pkg = AdbPackageManager.getPackageInfo(device.getSerialNumber(), packageName);
-									devices.put(device.getSerialNumber(), pkg);
-								}
-							}
-							if(pkg != null) {
-								hasInstalled = true;
-								if(versionCode < pkg.versionCode) {
-									hasUpper = true;									
-								} else if(versionCode > pkg.versionCode) {
-									hasLower = true;
-								}
+					boolean hasInstalled = false;
+					boolean hasLower = false;
+					boolean hasUpper = false;
+					for(IDevice device: AndroidDebugBridge.getBridge().getDevices()) {
+						PackageInfo pkg = null;
+						synchronized(devices) {
+							if(devices.containsKey(device.getSerialNumber())) {
+								pkg = devices.get(device.getSerialNumber());
+							} else {
+								pkg = AdbPackageManager.getPackageInfo(device.getSerialNumber(), packageName);
+								devices.put(device.getSerialNumber(), pkg);
 							}
 						}
-
-						if(hasInstalled) {
-							if(hasLower) {
-								toolbarFlag = ToolBar.FLAG_LAYOUT_INSTALLED_LOWER;
-							} else if(hasUpper) {
-								toolbarFlag = ToolBar.FLAG_LAYOUT_INSTALLED_UPPER;
-							} else if(hasMainActivity) {
-								toolbarFlag = ToolBar.FLAG_LAYOUT_LAUNCHER;
-							} else {
-								toolbarFlag = ToolBar.FLAG_LAYOUT_INSTALLED;
+						if(pkg != null) {
+							hasInstalled = true;
+							if(versionCode < pkg.versionCode) {
+								hasUpper = true;									
+							} else if(versionCode > pkg.versionCode) {
+								hasLower = true;
 							}
 						}
 					}
 
-					final int sendFlag = toolbarFlag;
-					EventQueue.invokeLater(new Runnable() {
-						public void run() {
-							Log.e("sendFlag " + sendFlag);
-							toolBar.setFlag(sendFlag);
+					int toolbarFlag = ToolBar.FLAG_LAYOUT_NONE;
+					if(!hasSignature && !hasInstalled) {
+						toolbarFlag = ToolBar.FLAG_LAYOUT_UNSIGNED;
+					}
+					if(hasInstalled) {
+						if(hasLower) {
+							toolbarFlag = ToolBar.FLAG_LAYOUT_INSTALLED_LOWER;
+						} else if(hasUpper) {
+							toolbarFlag = ToolBar.FLAG_LAYOUT_INSTALLED_UPPER;
+						} else if(hasMainActivity) {
+							toolbarFlag = ToolBar.FLAG_LAYOUT_LAUNCHER;
+						} else {
+							toolbarFlag = ToolBar.FLAG_LAYOUT_INSTALLED;
 						}
-					});
+					}
+					
+					sendFlag(toolbarFlag);
 				} else {
 					EventQueue.invokeLater(new Runnable() {
 						public void run() {
@@ -820,12 +820,30 @@ public class MainUI extends JFrame
 					public void run() {
 						if(hasDevice) {
 							toolBar.setFlag(ToolBar.FLAG_LAYOUT_DEVICE_CONNECTED);
+							toolBar.setEnabledAt(ButtonSet.NEED_DEVICE, true);
 						} else {
 							toolBar.clearFlag();
+							toolBar.setEnabledAt(ButtonSet.NEED_DEVICE, false);
 						}
 					}
 				});
 			}
+		}
+		
+		private void sendFlag(final int flag) {
+			if(!EventQueue.isDispatchThread()) {
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						sendFlag(flag);
+					}
+				});
+				return;
+			}
+			Log.e("sendFlag " + flag);
+			if(flag != ToolBar.FLAG_LAYOUT_UNSIGNED) {
+				toolBar.unsetFlag(ToolBar.FLAG_LAYOUT_UNSIGNED);	
+			}
+			toolBar.setFlag(flag);
 		}
 
 		@Override

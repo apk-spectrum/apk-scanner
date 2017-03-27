@@ -10,6 +10,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 
+import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -19,6 +20,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
 import javax.swing.border.MatteBorder;
 
 import com.apkscanner.resource.Resource;
@@ -40,6 +42,8 @@ public class ToolBar extends JToolBar
 	public static final int FLAG_LAYOUT_INSTALLED_MASK = FLAG_LAYOUT_INSTALLED | FLAG_LAYOUT_INSTALLED_LOWER | FLAG_LAYOUT_INSTALLED_UPPER;
 
 	private int flag = 0;
+	private boolean hasTargetApk = false;
+	private boolean hasDevice = false;
 
 	private HashMap<ButtonSet, JButton> buttonMap;
 	private HashMap<MenuItemSet, JMenuItem> menuItemMap;
@@ -124,20 +128,27 @@ public class ToolBar extends JToolBar
 		INSTALL_DOWNGRADE(Type.NORMAL, Resource.STR_BTN_INSTALL_DOWNGRAD.getString(), Resource.STR_BTN_INSTALL_DOWNGRAD_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
 		LAUNCH			(Type.NORMAL, Resource.STR_BTN_LAUNCH.getString(), Resource.STR_BTN_LAUNCH_LAB.getString(), Resource.IMG_TOOLBAR_LAUNCH.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
 		SIGN			(Type.NORMAL, Resource.STR_BTN_SIGN.getString(), Resource.STR_BTN_SIGN_LAB.getString(), Resource.IMG_TOOLBAR_SIGNNING.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-		INSTALL_EXTEND	(Type.EXTEND, null, Resource.IMG_TOOLBAR_OPEN_ARROW.getImageIcon(10,10)),
+		INSTALL_EXTEND	(Type.SUB_TOOLBAR, null, Resource.IMG_TOOLBAR_OPEN_ARROW.getImageIcon(10,10)),
 		SETTING			(Type.NORMAL, Resource.STR_BTN_SETTING.getString(), Resource.STR_BTN_SETTING_LAB.getString(), Resource.IMG_TOOLBAR_SETTING.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
 		ABOUT			(Type.NORMAL, Resource.STR_BTN_ABOUT.getString(), Resource.STR_BTN_ABOUT_LAB.getString(), Resource.IMG_TOOLBAR_ABOUT.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
 		ALL				(Type.NONE, null, null),
 		NEED_TARGET_APK	(Type.NONE, null, null),
 		NEED_DEVICE		(Type.NONE, null, null),
-		OPEN_CODE		(Type.NORMAL, Resource.STR_BTN_OPENCODE.getString(), Resource.STR_BTN_OPENCODE_LAB.getString(), Resource.IMG_TOOLBAR_OPENCODE.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-		SEARCH			(Type.NORMAL, Resource.STR_BTN_SEARCH.getString(), Resource.STR_BTN_SEARCH_LAB.getString(), Resource.IMG_TOOLBAR_SEARCH.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize));
+		OPEN_CODE		(Type.SUB_TOOLBAR, Resource.STR_BTN_OPENCODE.getString(), Resource.STR_BTN_OPENCODE_LAB.getString(), Resource.IMG_TOOLBAR_OPENCODE.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
+		SEARCH			(Type.SUB_TOOLBAR, Resource.STR_BTN_SEARCH.getString(), Resource.STR_BTN_SEARCH_LAB.getString(), Resource.IMG_TOOLBAR_SEARCH.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
+
+		SUB_INSTALL			(Type.SUB_TOOLBAR, Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_INSTALL_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
+		SUB_INSTALL_UPDATE	(Type.SUB_TOOLBAR, Resource.STR_BTN_INSTALL_UPDATE.getString(), Resource.STR_BTN_INSTALL_UPDATE_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
+		SUB_INSTALL_DOWNGRADE(Type.SUB_TOOLBAR, Resource.STR_BTN_INSTALL_DOWNGRAD.getString(), Resource.STR_BTN_INSTALL_DOWNGRAD_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
+		SUB_LAUNCH			(Type.SUB_TOOLBAR, Resource.STR_BTN_LAUNCH.getString(), Resource.STR_BTN_LAUNCH_LAB.getString(), Resource.IMG_TOOLBAR_LAUNCH.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
+		SUB_SIGN			(Type.SUB_TOOLBAR, Resource.STR_BTN_SIGN.getString(), Resource.STR_BTN_SIGN_LAB.getString(), Resource.IMG_TOOLBAR_SIGNNING.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize));
 
 		private enum Type {
-			NONE, NORMAL, HOVER, EXTEND
+			NONE, NORMAL, HOVER, EXTEND, SUB_TOOLBAR
 		}
 
 		static private final int IconSize = 40;
+		static private final int SubIconSize = 16;
 
 		private Type type = null;
 		private String text = null;
@@ -173,35 +184,41 @@ public class ToolBar extends JToolBar
 
 		private JButton getButton(ActionListener listener)
 		{
-			JButton button = null;
+			if(type == Type.NONE) {
+				return null;
+			}
+
+			JButton button = new JButton(text, icon);
+			button.setToolTipText(toolTipText);
+			button.addActionListener(listener);
+			button.setBorderPainted(false);
+			button.setOpaque(false);
+			button.setFocusable(false);
+			button.setActionCommand(actionCommand);
+
 			switch(type) {
 			case NORMAL:
 			case HOVER:
-				button = new JButton(text, icon);
-				button.setToolTipText(toolTipText);
-				button.addActionListener(listener);
 				button.setVerticalTextPosition(JLabel.BOTTOM);
 				button.setHorizontalTextPosition(JLabel.CENTER);
-				button.setBorderPainted(false);
-				button.setOpaque(false);
-				button.setFocusable(false);
 				button.setPreferredSize(new Dimension(63,65));
 				if(type == Type.HOVER) {
 					button.setRolloverIcon(hoverIcon);
 				}
 				break;
+			case SUB_TOOLBAR:
+				button.setPreferredSize(new Dimension(63,20));
+				button.setHorizontalAlignment(SwingConstants.LEFT);
+				button.setHorizontalTextPosition(AbstractButton.RIGHT);
+				button.setVerticalTextPosition(AbstractButton.CENTER);
+				break;
 			case EXTEND:
-				button = new JButton(text, icon);
-				button.setToolTipText(toolTipText);
 				button.setMargin(new Insets(27,0,27,0));
-				button.setBorderPainted(false);
-				button.setOpaque(false);
-				button.setFocusable(false);
+				button.setActionCommand(null);
 				break;
 			default:
-				return null;
+				break;
 			}
-			button.setActionCommand(actionCommand);
 
 			return button;
 		}
@@ -295,7 +312,7 @@ public class ToolBar extends JToolBar
 			setReplacementLayout();
 		}
 	}
-	
+
 	public boolean isSetFlag(int flag) {
 		return ((this.flag & flag) == flag);
 	}
@@ -321,23 +338,49 @@ public class ToolBar extends JToolBar
 
 		add(buttonMap.get(ButtonSet.MANIFEST));
 		add(buttonMap.get(ButtonSet.EXPLORER));
-		add(buttonMap.get(ButtonSet.OPEN_CODE));
-		add(buttonMap.get(ButtonSet.SEARCH));
+
+		JToolBar subbar = new JToolBar();
+		subbar.setPreferredSize(new Dimension(65,60));
+		subbar.setOpaque(true);
+		subbar.setFloatable(false);
+		subbar.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		subbar.add(buttonMap.get(ButtonSet.OPEN_CODE));
+		subbar.add(buttonMap.get(ButtonSet.SEARCH));
+		add(subbar);
 
 		add(getNewSeparator(JSeparator.VERTICAL, sepSize));
 
+		subbar = new JToolBar();
+		subbar.setPreferredSize(new Dimension(65,60));
+		subbar.setOpaque(true);
+		subbar.setFloatable(false);
+		subbar.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+
 		if(isSetFlag(FLAG_LAYOUT_UNSIGNED)) {
 			add(buttonMap.get(ButtonSet.SIGN));
+			subbar.add(buttonMap.get(ButtonSet.SUB_LAUNCH));
+			subbar.add(buttonMap.get(ButtonSet.SUB_INSTALL));
 		} else if(isSetFlag(FLAG_LAYOUT_LAUNCHER)) {
 			add(buttonMap.get(ButtonSet.LAUNCH));
+			subbar.add(buttonMap.get(ButtonSet.SUB_INSTALL));
+			subbar.add(buttonMap.get(ButtonSet.SUB_SIGN));
 		} else if(isSetFlag(FLAG_LAYOUT_INSTALLED_LOWER)) {
 			add(buttonMap.get(ButtonSet.INSTALL_UPDATE));
+			subbar.add(buttonMap.get(ButtonSet.SUB_LAUNCH));
+			subbar.add(buttonMap.get(ButtonSet.SUB_SIGN));
 		} else if(isSetFlag(FLAG_LAYOUT_INSTALLED_UPPER)) {
 			add(buttonMap.get(ButtonSet.INSTALL_DOWNGRADE));
+			subbar.add(buttonMap.get(ButtonSet.SUB_LAUNCH));
+			subbar.add(buttonMap.get(ButtonSet.SUB_SIGN));
 		} else {
 			add(buttonMap.get(ButtonSet.INSTALL));
+			subbar.add(buttonMap.get(ButtonSet.SUB_LAUNCH));
+			subbar.add(buttonMap.get(ButtonSet.SUB_SIGN));
 		}
-		add(buttonMap.get(ButtonSet.INSTALL_EXTEND));
+
+		//subbar.setBorder(new MatteBorder(0,0,1,0,Color.LIGHT_GRAY));
+		subbar.add(buttonMap.get(ButtonSet.INSTALL_EXTEND));
+		add(subbar);
 
 		add(getNewSeparator(JSeparator.VERTICAL, sepSize));
 
@@ -399,25 +442,14 @@ public class ToolBar extends JToolBar
 	{
 		switch(buttonId) {
 		case ALL:
+			for(ButtonSet bs: ButtonSet.values()) {
+				buttonMap.get(bs).setEnabled(enabled);
+			}
+			break;
 		case OPEN:
 			buttonMap.get(ButtonSet.OPEN).setEnabled(enabled);
 			buttonMap.get(ButtonSet.OPEN_EXTEND).setEnabled(enabled);
-			if(buttonId != ButtonSet.ALL) break;
-		case ABOUT:
-			buttonMap.get(ButtonSet.ABOUT).setEnabled(enabled);
-			if(buttonId != ButtonSet.ALL) break;
-		case NEED_TARGET_APK:
-			buttonId = ButtonSet.ALL;
-		case MANIFEST:
-			buttonMap.get(ButtonSet.MANIFEST).setEnabled(enabled);
-			if(buttonId != ButtonSet.ALL) break;
-		case EXPLORER:
-			buttonMap.get(ButtonSet.EXPLORER).setEnabled(enabled);
-			if(buttonId != ButtonSet.ALL) break;
-		case INSTALL:
-			buttonMap.get(ButtonSet.INSTALL).setEnabled(enabled);
-			buttonMap.get(ButtonSet.INSTALL_EXTEND).setEnabled(enabled);
-			if(buttonId != ButtonSet.ALL) break;
+			break;
 		case OPEN_CODE:
 			if(!enabled && buttonId == ButtonSet.OPEN_CODE) {
 				setButtonText(ButtonSet.OPEN_CODE, Resource.STR_BTN_OPENING_CODE.getString(), Resource.STR_BTN_OPENING_CODE_LAB.getString());
@@ -427,12 +459,30 @@ public class ToolBar extends JToolBar
 				buttonMap.get(ButtonSet.OPEN_CODE).setDisabledIcon(null);
 			}
 			buttonMap.get(ButtonSet.OPEN_CODE).setEnabled(enabled);
-			if(buttonId != ButtonSet.ALL) break;
-		case SEARCH:
+			break;
+		case NEED_TARGET_APK:
+			hasTargetApk = enabled;
+			buttonMap.get(ButtonSet.MANIFEST).setEnabled(enabled);
+			buttonMap.get(ButtonSet.EXPLORER).setEnabled(enabled);
+			buttonMap.get(ButtonSet.OPEN_CODE).setEnabled(enabled);
 			buttonMap.get(ButtonSet.SEARCH).setEnabled(enabled);
-			if(buttonId != ButtonSet.ALL) break;
+			buttonMap.get(ButtonSet.INSTALL).setEnabled(enabled);
+			buttonMap.get(ButtonSet.INSTALL_EXTEND).setEnabled(enabled);
+			buttonMap.get(ButtonSet.INSTALL_DOWNGRADE).setEnabled(enabled);
+			buttonMap.get(ButtonSet.INSTALL_UPDATE).setEnabled(enabled);
+			buttonMap.get(ButtonSet.SIGN).setEnabled(enabled);
+			buttonMap.get(ButtonSet.SUB_INSTALL).setEnabled(enabled);
+			buttonMap.get(ButtonSet.SUB_INSTALL_DOWNGRADE).setEnabled(enabled);
+			buttonMap.get(ButtonSet.SUB_INSTALL_UPDATE).setEnabled(enabled);
+			buttonMap.get(ButtonSet.SUB_SIGN).setEnabled(enabled);
+		case NEED_DEVICE:
+			if(buttonId == ButtonSet.NEED_DEVICE) hasDevice = enabled;
+			enabled = hasDevice && hasTargetApk;
+			buttonMap.get(ButtonSet.LAUNCH).setEnabled(enabled);
+			buttonMap.get(ButtonSet.SUB_LAUNCH).setEnabled(enabled);
 			break;
 		default:
+			buttonMap.get(buttonId).setEnabled(enabled);
 			break;
 		}
 	}

@@ -106,9 +106,7 @@ public class ApkInfoHelper
 	public static ComponentInfo[] getLauncherActivityList(ApkInfo apkInfo, boolean includeMain) {
 		ArrayList<ComponentInfo> launcherList = new ArrayList<ComponentInfo>();
 		ArrayList<ComponentInfo> mainList = new ArrayList<ComponentInfo>(); 
-		if(apkInfo != null &&
-				apkInfo.manifest != null &&
-				apkInfo.manifest.application != null) {
+		if(apkInfo != null) {
 			if(apkInfo.manifest.application.activity != null) {
 				for(ActivityInfo info: apkInfo.manifest.application.activity) {
 					if((info.enabled == null || info.enabled) &&

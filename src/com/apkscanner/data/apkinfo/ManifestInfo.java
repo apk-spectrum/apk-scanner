@@ -16,7 +16,7 @@ public class ManifestInfo
 	public String versionName = null; // "string"
 	public String installLocation = null; // ["auto" | "internalOnly" | "preferExternal"]
 
-	public ApplicationInfo application = new ApplicationInfo();
+	public final ApplicationInfo application = new ApplicationInfo();
 	public CompatibleScreensInfo[] compatibleScreens = null;
 	public InstrumentationInfo[] instrumentation = null;
 	public PermissionInfo[] permission = null;
