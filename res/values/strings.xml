@@ -70,6 +70,7 @@
     <string name="basic_permdesc_display_list">Show the list of all permissions.</string>
     <string name="basic_perm_list_title">Permissions list</string>
     <string name="basic_perm_display_title">Permissions description</string>
+    <string name="basic_create_shortcut">Create shortcut on desktop</string>
 
     <string name="feature_lab">Feature</string>
     <string name="feature_desc">Feature or function of the App</string>
