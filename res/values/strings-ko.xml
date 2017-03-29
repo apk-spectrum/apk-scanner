@@ -48,7 +48,7 @@
     <string name="btn_about_lab">APK 스캐너 정보를 확인합니다. (F1)</string>
     <string name="btn_opencode_lab">소스코드를 JD-GUI를 통하여 보여줍니다.</string>
     <string name="btn_opening_code_lab">소스코드를 변환하고 있습니다.</string>
-    <string name="btn_search_lab">리소스 및 소스코드를 검색 합니다.</string>
+    <string name="btn_search_lab">리소스 정보를 검색 합니다.</string>
     <string name="btn_more_lab">추가 기능 보기</string>
     
     <string name="menu_new">새창으로 열기...</string>
@@ -195,10 +195,12 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
     <string name="msg_no_such_package">동일 패키지를 찾을수 없습니다.</string>
     <string name="msg_no_such_launcher">실행 가능한 액티비티가 없습니다.</string>
     <string name="msg_no_such_package_device">패키지가 설치 된 장치를 찾지 못하였습니다.</string>
+    <string name="msg_no_such_classes_dex">APK 파일에 classes.dex 파일이 존재하지 않습니다.</string>
     <string name="msg_failure_launch_app">앱을 실행하지 못했습니다.</string>
     <string name="msg_failure_installed">설치 실패...</string>
     <string name="msg_failure_uninstalled">앱 제거 실패!</string>
     <string name="msg_failure_pull_apk">APK 파일을 가져오지 못 하였습니다.</string>
+    <string name="msg_failure_dex2jar">jar 파일 변환에 실패 하였습니다.</string>
     <string name="msg_success_installed">설치 성공...</string>
     <string name="msg_success_removed">앱 제거 완료!</string>
     <string name="msg_success_pull_apk">APK 파일을 저장 하였습니다.</string>

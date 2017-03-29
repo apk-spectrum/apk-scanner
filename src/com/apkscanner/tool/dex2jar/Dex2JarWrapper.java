@@ -12,7 +12,7 @@ public class Dex2JarWrapper
 	public interface DexWrapperListener
 	{
 		public void onCompleted();
-		public void onError();
+		public void onError(String message);
 		public void onSuccess(String outputFilePath);
 	}
 
@@ -23,7 +23,7 @@ public class Dex2JarWrapper
 				if(dexFilePath == null || !(new File(dexFilePath)).isFile()) {
 					Log.e("No such file : " + dexFilePath);
 					if(listener != null) {
-						listener.onError();
+						listener.onError("No such file : " + dexFilePath);
 						listener.onCompleted();
 					}
 					return;
@@ -44,21 +44,31 @@ public class Dex2JarWrapper
 				} else {
 					Log.e("Unknown OS : " + SystemUtil.OS);
 					if(listener != null) {
-						listener.onError();
+						listener.onError("Unknown OS : " + SystemUtil.OS);
 						listener.onCompleted();
 					}
 					return;
 				}
 
+				StringBuilder sb = new StringBuilder();
 				boolean successed = true;
-				for( int i=0 ; i<cmdLog.length; i++)
+				
+				for(String s: cmdLog)
 				{
-					Log.i("DEX2JAR Log : "+ cmdLog[i]);
-					if(cmdLog[i].indexOf("Can not find classes.dex") > -1) {
+					sb.append(s+"\n");
+					Log.i("DEX2JAR Log : "+ s);
+					if(s.indexOf("Can not find classes.dex") > -1) {
 						successed = false;
 					}
 				}
 				Log.i("End DEX2JAR");
+
+				if(!successed) {
+					if(listener != null)
+						listener.onError(sb.toString());
+					listener.onCompleted();
+					return;
+				}
 
 				if(!new File(jarFilePath).isFile()) {
 					Log.e("No such file : " + jarFilePath);
@@ -69,7 +79,7 @@ public class Dex2JarWrapper
 					if(successed)
 						listener.onSuccess(jarFilePath);
 					else
-						listener.onError();
+						listener.onError("No such file : " + jarFilePath);
 					listener.onCompleted();
 				}
 			}

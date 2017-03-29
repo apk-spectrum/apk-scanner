@@ -48,7 +48,7 @@
     <string name="btn_about_lab">About APK Scanner (F1)</string>
     <string name="btn_opencode_lab">Open APK via JD-GUI</string>
     <string name="btn_opening_code_lab">Open APK via JD-GUI</string>
-    <string name="btn_search_lab">Search resource and source</string>
+    <string name="btn_search_lab">Search resource</string>
     <string name="btn_more_lab">More...</string>
     
     <string name="menu_new">New Window...</string>
@@ -194,10 +194,12 @@ Please check device.</string>
     <string name="msg_no_such_package">No such package.</string>
     <string name="msg_no_such_launcher">No such launcher activity.</string>
     <string name="msg_no_such_package_device">No such device of a package installed.</string>
+    <string name="msg_no_such_classes_dex">No such classes.dex in an APK file.</string>
     <string name="msg_failure_launch_app">Did not launch.</string>
     <string name="msg_failure_installed">App did not install.</string>
     <string name="msg_failure_uninstalled">App did not remove.</string>
     <string name="msg_failure_pull_apk">Did not pull APK.</string>
+    <string name="msg_failure_dex2jar">Can't covert to jar</string>
     <string name="msg_success_installed">Install success...</string>
     <string name="msg_success_removed">Remove success!</string>
     <string name="msg_success_pull_apk">Success pull apk!</string>

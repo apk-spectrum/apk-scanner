@@ -846,7 +846,7 @@ public class ResouceContentsPanel extends JPanel{
 				btn.setEnabled(false);
 				Dex2JarWrapper.openDex(resPath, new Dex2JarWrapper.DexWrapperListener() {
 					@Override
-					public void onError() {
+					public void onError(String message) {
 					}
 					@Override
 					public void onSuccess(String jarFilePath) {

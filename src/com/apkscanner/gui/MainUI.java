@@ -55,6 +55,7 @@ import com.apkscanner.tool.jd_gui.JDGuiLauncher;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
+import com.apkscanner.util.ZipFileUtil;
 
 public class MainUI extends JFrame
 {
@@ -430,6 +431,19 @@ public class MainUI extends JFrame
 				return;
 			}
 
+			if(!ZipFileUtil.exists(apkInfo.filePath, "classes.dex")) {
+				Log.e("No such file : classes.dex");
+				ArrowTraversalPane.showOptionDialog(null,
+						Resource.STR_MSG_NO_SUCH_CLASSES_DEX.getString(),
+						Resource.STR_LABEL_WARNING.getString(),
+						JOptionPane.OK_OPTION, 
+						JOptionPane.WARNING_MESSAGE,
+						null,
+						new String[] {Resource.STR_BTN_OK.getString()},
+						Resource.STR_BTN_OK.getString());
+				return;
+			}
+
 			toolBar.setEnabledAt(ButtonSet.OPEN_CODE, false);
 			Dex2JarWrapper.openDex(apkInfo.filePath, new Dex2JarWrapper.DexWrapperListener() {
 				@Override
@@ -442,8 +456,14 @@ public class MainUI extends JFrame
 				}
 
 				@Override
-				public void onError() {
-					Log.e("Failure: Fail Dex2Jar");
+				public void onError(String message) {
+					Log.e("Failure: Fail Dex2Jar : " + message);
+					EventQueue.invokeLater(new Runnable() {
+						public void run() {
+							JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_DEX2JAR.getString() + "\n\nerror message", message,  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
+									null, new Dimension(300, 120));
+						}
+					});
 				}
 
 				@Override

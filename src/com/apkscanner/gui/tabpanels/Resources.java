@@ -808,7 +808,7 @@ public class Resources extends JPanel implements TabDataObject {
 					}
 
 					@Override
-					public void onError() {
+					public void onError(String message) {
 					}
 
 					@Override
