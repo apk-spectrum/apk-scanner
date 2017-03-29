@@ -123,25 +123,26 @@ public class ToolBar extends JToolBar
 		OPEN_EXTEND		(Type.EXTEND, null, Resource.IMG_TOOLBAR_OPEN_ARROW.getImageIcon(10,10)),
 		MANIFEST		(Type.NORMAL, Resource.STR_BTN_MANIFEST.getString(), Resource.STR_BTN_MANIFEST_LAB.getString(), Resource.IMG_TOOLBAR_MANIFEST.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
 		EXPLORER		(Type.NORMAL, Resource.STR_BTN_EXPLORER.getString(), Resource.STR_BTN_EXPLORER_LAB.getString(), Resource.IMG_TOOLBAR_EXPLORER.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+		OPEN_CODE		(Type.SUB_TOOLBAR, Resource.STR_BTN_OPENCODE.getString(), Resource.STR_BTN_OPENCODE_LAB.getString(), Resource.IMG_TOOLBAR_OPENCODE.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
+		SEARCH			(Type.SUB_TOOLBAR, Resource.STR_BTN_SEARCH.getString(), Resource.STR_BTN_SEARCH_LAB.getString(), Resource.IMG_TOOLBAR_SEARCH.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
 		INSTALL			(Type.NORMAL, Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_INSTALL_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
 		INSTALL_UPDATE	(Type.NORMAL, Resource.STR_BTN_INSTALL_UPDATE.getString(), Resource.STR_BTN_INSTALL_UPDATE_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
 		INSTALL_DOWNGRADE(Type.NORMAL, Resource.STR_BTN_INSTALL_DOWNGRAD.getString(), Resource.STR_BTN_INSTALL_DOWNGRAD_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
 		LAUNCH			(Type.NORMAL, Resource.STR_BTN_LAUNCH.getString(), Resource.STR_BTN_LAUNCH_LAB.getString(), Resource.IMG_TOOLBAR_LAUNCH.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
 		SIGN			(Type.NORMAL, Resource.STR_BTN_SIGN.getString(), Resource.STR_BTN_SIGN_LAB.getString(), Resource.IMG_TOOLBAR_SIGNNING.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-		INSTALL_EXTEND	(Type.SUB_TOOLBAR, null, Resource.IMG_TOOLBAR_OPEN_ARROW.getImageIcon(10,10)),
+		INSTALL_EXTEND	(Type.SUB_TOOLBAR, Resource.STR_BTN_MORE.getString(), Resource.STR_BTN_MORE_LAB.getString(), Resource.IMG_TOOLBAR_OPEN_ARROW.getImageIcon(10,10)),
 		SETTING			(Type.NORMAL, Resource.STR_BTN_SETTING.getString(), Resource.STR_BTN_SETTING_LAB.getString(), Resource.IMG_TOOLBAR_SETTING.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
 		ABOUT			(Type.NORMAL, Resource.STR_BTN_ABOUT.getString(), Resource.STR_BTN_ABOUT_LAB.getString(), Resource.IMG_TOOLBAR_ABOUT.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-		ALL				(Type.NONE, null, null),
-		NEED_TARGET_APK	(Type.NONE, null, null),
-		NEED_DEVICE		(Type.NONE, null, null),
-		OPEN_CODE		(Type.SUB_TOOLBAR, Resource.STR_BTN_OPENCODE.getString(), Resource.STR_BTN_OPENCODE_LAB.getString(), Resource.IMG_TOOLBAR_OPENCODE.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
-		SEARCH			(Type.SUB_TOOLBAR, Resource.STR_BTN_SEARCH.getString(), Resource.STR_BTN_SEARCH_LAB.getString(), Resource.IMG_TOOLBAR_SEARCH.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
 
 		SUB_INSTALL			(Type.SUB_TOOLBAR, Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_INSTALL_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
 		SUB_INSTALL_UPDATE	(Type.SUB_TOOLBAR, Resource.STR_BTN_INSTALL_UPDATE.getString(), Resource.STR_BTN_INSTALL_UPDATE_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
 		SUB_INSTALL_DOWNGRADE(Type.SUB_TOOLBAR, Resource.STR_BTN_INSTALL_DOWNGRAD.getString(), Resource.STR_BTN_INSTALL_DOWNGRAD_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
 		SUB_LAUNCH			(Type.SUB_TOOLBAR, Resource.STR_BTN_LAUNCH.getString(), Resource.STR_BTN_LAUNCH_LAB.getString(), Resource.IMG_TOOLBAR_LAUNCH.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
-		SUB_SIGN			(Type.SUB_TOOLBAR, Resource.STR_BTN_SIGN.getString(), Resource.STR_BTN_SIGN_LAB.getString(), Resource.IMG_TOOLBAR_SIGNNING.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize));
+		SUB_SIGN			(Type.SUB_TOOLBAR, Resource.STR_BTN_SIGN.getString(), Resource.STR_BTN_SIGN_LAB.getString(), Resource.IMG_TOOLBAR_SIGNNING.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
+
+		NEED_TARGET_APK	(Type.NONE, null, null),
+		NEED_DEVICE		(Type.NONE, null, null),
+		ALL				(Type.NONE, null, null);
 
 		private enum Type {
 			NONE, NORMAL, HOVER, EXTEND, SUB_TOOLBAR
@@ -207,7 +208,7 @@ public class ToolBar extends JToolBar
 				}
 				break;
 			case SUB_TOOLBAR:
-				button.setPreferredSize(new Dimension(63,20));
+				button.setPreferredSize(new Dimension(68,20));
 				button.setHorizontalAlignment(SwingConstants.LEFT);
 				button.setHorizontalTextPosition(AbstractButton.RIGHT);
 				button.setVerticalTextPosition(AbstractButton.CENTER);
@@ -241,6 +242,10 @@ public class ToolBar extends JToolBar
 	public final void initUI(ActionListener listener)
 	{
 		Log.i("ToolBar.initUI() start");
+		setOpaque(true);
+		setFloatable(false);
+		setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
+		setBorder(new MatteBorder(0,0,1,0,Color.LIGHT_GRAY));
 
 		openPopupMenu = new JPopupMenu();
 		installPopupMenu = new JPopupMenu();
@@ -261,28 +266,19 @@ public class ToolBar extends JToolBar
 		buttonMap.get(ButtonSet.OPEN_EXTEND).addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				JButton btn = buttonMap.get(ButtonSet.OPEN_EXTEND);
-				openPopupMenu.show(btn, btn.getWidth()/2, btn.getHeight());
+				openPopupMenu.show(btn, 0, btn.getHeight());
 			}
 		});
 
 		buttonMap.get(ButtonSet.INSTALL_EXTEND).addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				JButton btn = buttonMap.get(ButtonSet.INSTALL_EXTEND);
-				installPopupMenu.show(btn, btn.getWidth()/2, btn.getHeight());
+				installPopupMenu.show(btn, 0, btn.getHeight());
 			}
 		});
 
 		setReplacementLayout();
 
-		//Log.i("ToolBar.initUI() reloadResource s");
-		//reloadResource();
-		//Log.i("ToolBar.initUI() setFloatable");
-
-		//setAlignmentX(0);
-		setOpaque(true);
-		setFloatable(false);
-		setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
-		setBorder(new MatteBorder(0,0,1,0,Color.LIGHT_GRAY));
 		Log.i("ToolBar.initUI() end");
 	}
 
@@ -317,6 +313,16 @@ public class ToolBar extends JToolBar
 		return ((this.flag & flag) == flag);
 	}
 
+	private JToolBar makeSubToolBar() {
+		JToolBar subbar = new JToolBar();
+		subbar.setPreferredSize(new Dimension(69,60));
+		subbar.setOpaque(false);
+		subbar.setFloatable(false);
+		subbar.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		subbar.setBorderPainted(false);
+		return subbar;
+	}
+
 	private void setReplacementLayout() {
 		removeAll();
 		installPopupMenu.removeAll();
@@ -326,7 +332,7 @@ public class ToolBar extends JToolBar
 
 		Dimension sepSize = new Dimension(1,63);
 
-		Log.e("ToolBar.setReplacementLayout() flag " + flag);
+		Log.i("ToolBar.setReplacementLayout() flag " + flag);
 		if(!isSetFlag(FLAG_LAYOUT_DEVICE_CONNECTED)) {
 			add(buttonMap.get(ButtonSet.OPEN));
 		} else {
@@ -339,23 +345,14 @@ public class ToolBar extends JToolBar
 		add(buttonMap.get(ButtonSet.MANIFEST));
 		add(buttonMap.get(ButtonSet.EXPLORER));
 
-		JToolBar subbar = new JToolBar();
-		subbar.setPreferredSize(new Dimension(65,60));
-		subbar.setOpaque(true);
-		subbar.setFloatable(false);
-		subbar.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		JToolBar subbar = makeSubToolBar();
 		subbar.add(buttonMap.get(ButtonSet.OPEN_CODE));
 		subbar.add(buttonMap.get(ButtonSet.SEARCH));
 		add(subbar);
 
 		add(getNewSeparator(JSeparator.VERTICAL, sepSize));
 
-		subbar = new JToolBar();
-		subbar.setPreferredSize(new Dimension(65,60));
-		subbar.setOpaque(true);
-		subbar.setFloatable(false);
-		subbar.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-
+		subbar = makeSubToolBar();
 		if(isSetFlag(FLAG_LAYOUT_UNSIGNED)) {
 			add(buttonMap.get(ButtonSet.SIGN));
 			subbar.add(buttonMap.get(ButtonSet.SUB_LAUNCH));
@@ -377,8 +374,6 @@ public class ToolBar extends JToolBar
 			subbar.add(buttonMap.get(ButtonSet.SUB_LAUNCH));
 			subbar.add(buttonMap.get(ButtonSet.SUB_SIGN));
 		}
-
-		//subbar.setBorder(new MatteBorder(0,0,1,0,Color.LIGHT_GRAY));
 		subbar.add(buttonMap.get(ButtonSet.INSTALL_EXTEND));
 		add(subbar);
 
@@ -420,13 +415,25 @@ public class ToolBar extends JToolBar
 	public void reloadResource()
 	{
 		setButtonText(ButtonSet.OPEN, Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OPEN_LAB.getString());
+		setButtonText(ButtonSet.OPEN_PACKAGE, Resource.STR_BTN_OPEN_PACKAGE.getString(), Resource.STR_BTN_OPEN_PACKAGE_LAB.getString());
 		setButtonText(ButtonSet.MANIFEST, Resource.STR_BTN_MANIFEST.getString(), Resource.STR_BTN_MANIFEST_LAB.getString());
 		setButtonText(ButtonSet.EXPLORER, Resource.STR_BTN_EXPLORER.getString(), Resource.STR_BTN_EXPLORER_LAB.getString());
-		setButtonText(ButtonSet.INSTALL, Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_INSTALL_LAB.getString());
-		setButtonText(ButtonSet.SETTING, Resource.STR_BTN_SETTING.getString(), Resource.STR_BTN_SETTING_LAB.getString());
-		setButtonText(ButtonSet.ABOUT, Resource.STR_BTN_ABOUT.getString(), Resource.STR_BTN_ABOUT_LAB.getString());
 		setButtonText(ButtonSet.OPEN_CODE, Resource.STR_BTN_OPENCODE.getString(), Resource.STR_BTN_OPENCODE_LAB.getString());
 		setButtonText(ButtonSet.SEARCH, Resource.STR_BTN_SEARCH.getString(), Resource.STR_BTN_SEARCH_LAB.getString());
+		setButtonText(ButtonSet.INSTALL, Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_INSTALL_LAB.getString());
+		setButtonText(ButtonSet.INSTALL_UPDATE, Resource.STR_BTN_INSTALL_UPDATE.getString(), Resource.STR_BTN_INSTALL_UPDATE_LAB.getString());
+		setButtonText(ButtonSet.INSTALL_DOWNGRADE, Resource.STR_BTN_INSTALL_DOWNGRAD.getString(), Resource.STR_BTN_INSTALL_DOWNGRAD_LAB.getString());
+		setButtonText(ButtonSet.LAUNCH, Resource.STR_BTN_LAUNCH.getString(), Resource.STR_BTN_LAUNCH_LAB.getString());
+		setButtonText(ButtonSet.SIGN, Resource.STR_BTN_SIGN.getString(), Resource.STR_BTN_SIGN_LAB.getString());
+		setButtonText(ButtonSet.INSTALL_EXTEND, Resource.STR_BTN_MORE.getString(), Resource.STR_BTN_MORE_LAB.getString());
+		setButtonText(ButtonSet.SETTING, Resource.STR_BTN_SETTING.getString(), Resource.STR_BTN_SETTING_LAB.getString());
+		setButtonText(ButtonSet.ABOUT, Resource.STR_BTN_ABOUT.getString(), Resource.STR_BTN_ABOUT_LAB.getString());
+
+		setButtonText(ButtonSet.SUB_INSTALL, Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_INSTALL_LAB.getString());
+		setButtonText(ButtonSet.SUB_INSTALL_UPDATE, Resource.STR_BTN_INSTALL_UPDATE.getString(), Resource.STR_BTN_INSTALL_UPDATE_LAB.getString());
+		setButtonText(ButtonSet.SUB_INSTALL_DOWNGRADE, Resource.STR_BTN_INSTALL_DOWNGRAD.getString(), Resource.STR_BTN_INSTALL_DOWNGRAD_LAB.getString());
+		setButtonText(ButtonSet.SUB_LAUNCH, Resource.STR_BTN_LAUNCH.getString(), Resource.STR_BTN_LAUNCH_LAB.getString());
+		setButtonText(ButtonSet.SUB_SIGN, Resource.STR_BTN_SIGN.getString(), Resource.STR_BTN_SIGN_LAB.getString());
 
 		setMenuItemText(MenuItemSet.NEW_WINDOW, Resource.STR_MENU_NEW.getString(), null);
 		setMenuItemText(MenuItemSet.NEW_EMPTY, Resource.STR_MENU_NEW_WINDOW.getString(), null);

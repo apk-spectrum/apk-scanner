@@ -15,7 +15,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 
-import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.SystemUtil;
 

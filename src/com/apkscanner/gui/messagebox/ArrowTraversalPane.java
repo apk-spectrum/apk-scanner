@@ -1,4 +1,4 @@
-package com.apkscanner.gui.util;
+package com.apkscanner.gui.messagebox;
 
 import java.awt.AWTKeyStroke;
 import java.awt.Component;

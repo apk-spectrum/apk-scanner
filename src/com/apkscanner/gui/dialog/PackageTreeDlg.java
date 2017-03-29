@@ -51,10 +51,10 @@ import javax.swing.tree.TreeSelectionModel;
 import com.apkscanner.Launcher;
 import com.apkscanner.core.installer.ApkInstaller;
 import com.apkscanner.core.installer.ApkInstaller.ApkInstallerListener;
+import com.apkscanner.gui.messagebox.ArrowTraversalPane;
+import com.apkscanner.gui.messagebox.JTextOptionPane;
 import com.apkscanner.gui.util.ApkFileChooser;
-import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.gui.util.FilteredTreeModel;
-import com.apkscanner.gui.util.JTextOptionPane;
 import com.apkscanner.gui.util.SimpleCheckTableModel;
 import com.apkscanner.gui.util.SimpleCheckTableModel.TableRowObject;
 import com.apkscanner.resource.Resource;
@@ -1039,7 +1039,7 @@ public class PackageTreeDlg extends JPanel
 			StringBuilder sb = new StringBuilder();
 			@Override
 			public void OnError(int cmdType, String device) {
-				JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_PULLED.getString() + "\n\nLog", sb.toString(),  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
+				JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_PULLED.getString() + "\n\nConsol output", sb.toString(),  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
 						null, new Dimension(400, 100));
 			}
 

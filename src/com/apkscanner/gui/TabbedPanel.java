@@ -33,6 +33,14 @@ public class TabbedPanel extends JTabbedPane
 
 	public TabbedPanel()
 	{
+		this(null);
+	}
+
+	public TabbedPanel(String themeClazz)
+	{
+		setOpaque(true);
+		TabbedPaneUIManager.setUI(this, themeClazz);
+
 		loadResource();
 
 		addTab(labels[0], null, new BasicInfo(), labels[0] + " (Alt+1)");
@@ -54,11 +62,10 @@ public class TabbedPanel extends JTabbedPane
 		setMnemonicAt(5, KeyEvent.VK_6);
 
 		setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-		setOpaque(true);
-	}
 
-	public void setUI(String clazz) {
-		TabbedPaneUIManager.setUI(this, clazz);
+		for(int i = 1; i < 6; i++) {
+			setEnabledAt(i, false);
+		}
 	}
 
 	private void loadResource()

@@ -62,6 +62,7 @@ public enum Resource
 	STR_BTN_OPENCODE			(Type.TEXT, "@btn_opencode"),
 	STR_BTN_OPENING_CODE		(Type.TEXT, "@btn_opening_code"),
 	STR_BTN_SEARCH				(Type.TEXT, "@btn_search"),
+	STR_BTN_MORE				(Type.TEXT, "@btn_more"),
 
 	STR_BTN_OPEN_LAB			(Type.TEXT, "@btn_open_lab"),
 	STR_BTN_OPEN_PACKAGE_LAB	(Type.TEXT, "@btn_open_pacakge_lab"),
@@ -79,6 +80,7 @@ public enum Resource
 	STR_BTN_OPENCODE_LAB		(Type.TEXT, "@btn_opencode_lab"),
 	STR_BTN_OPENING_CODE_LAB	(Type.TEXT, "@btn_opening_code_lab"),
 	STR_BTN_SEARCH_LAB			(Type.TEXT, "@btn_search_lab"),
+	STR_BTN_MORE_LAB			(Type.TEXT, "@btn_more_lab"),
 
 	STR_MENU_NEW				(Type.TEXT, "@menu_new"),
 	STR_MENU_NEW_WINDOW			(Type.TEXT, "@menu_new_window"),
@@ -218,6 +220,7 @@ public enum Resource
 	STR_MSG_ALREADY_INSTALLED	(Type.TEXT, "@msg_already_installed"),
 	STR_MSG_NO_SUCH_PACKAGE		(Type.TEXT, "@msg_no_such_package"),
 	STR_MSG_NO_SUCH_LAUNCHER	(Type.TEXT, "@msg_no_such_launcher"),
+	STR_MSG_NO_SUCH_PACKAGE_DEVICE(Type.TEXT, "@msg_no_such_package_device"),
 	STR_MSG_FAILURE_LAUNCH_APP	(Type.TEXT, "@msg_failure_launch_app"),
 	STR_MSG_FAILURE_INSTALLED	(Type.TEXT, "@msg_failure_installed"),
 	STR_MSG_FAILURE_UNINSTALLED	(Type.TEXT, "@msg_failure_uninstalled"),
