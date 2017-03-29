@@ -1,7 +1,11 @@
 package com.apkscanner.util;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import com.apkscanner.resource.Resource;
 
@@ -91,7 +95,7 @@ public class SystemUtil
 			if(editor == null) {
 				editor = SystemUtil.getDefaultEditor();
 			}
-			new ProcessBuilder(editor, file.getAbsolutePath()).start();
+			exec(new String[] { editor, file.getAbsolutePath() });
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
@@ -108,8 +112,9 @@ public class SystemUtil
 		}
 
 		String openPath = String.format((isWindows() && file.isFile())? "/select,\"%s\"" : "%s", file.getAbsolutePath());
+
 		try {
-			new ProcessBuilder(getFileExplorer(), openPath).start();
+			exec(new String[] {getFileExplorer(), openPath});
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
@@ -126,7 +131,7 @@ public class SystemUtil
 		}
 
 		try {
-			new ProcessBuilder(getArchiveExplorer(), file.getAbsolutePath()).start();
+			exec(new String[] { getArchiveExplorer(), file.getAbsolutePath() });
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
@@ -143,7 +148,7 @@ public class SystemUtil
 		}
 
 		try {
-			new ProcessBuilder(getFileOpener(), file.getAbsolutePath()).start();
+			exec(new String[] { getFileOpener(), file.getAbsolutePath() });
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
@@ -213,6 +218,38 @@ public class SystemUtil
 			} catch (IOException | ShellLinkException e) {
 				e.printStackTrace();
 			}
+		}
+		return true;
+	}
+
+	public static boolean exec(ArrayList<String> cmd) {
+		return exec(cmd.toArray(new String[0]));
+	}
+
+	public static boolean exec(String[] cmd)
+	{
+		try {
+			final Process process = new ProcessBuilder(cmd).redirectErrorStream(true).start();
+			new Thread(new Runnable() {
+				public void run()
+				{
+					InputStream inputStream = process.getInputStream();
+					InputStreamReader inputStreamReader = new InputStreamReader(inputStream/*, encoding*/);
+					BufferedReader stdOut = new BufferedReader(inputStreamReader);
+					try {
+						while (stdOut.readLine() != null);
+						stdOut.close();
+						inputStreamReader.close();
+						inputStream.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					process.destroy();
+				}
+			}).start();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
 		}
 		return true;
 	}

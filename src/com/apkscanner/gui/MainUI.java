@@ -488,7 +488,7 @@ public class MainUI extends JFrame
 		{
 			ApkInfo apkInfo = apkScanner.getApkInfo();
 			if(apkInfo == null) {
-				Log.e("evtOpenJDGUI() apkInfo is null");
+				Log.e("evtLaunchApp() apkInfo is null");
 				return;
 			}
 

@@ -3,8 +3,8 @@ package com.apkscanner.tool.jd_gui;
 import java.io.File;
 
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.SystemUtil;
 
 public class JDGuiLauncher
 {
@@ -14,6 +14,6 @@ public class JDGuiLauncher
 			Log.e("No such file : " + jarFilePath);
 			return;
 		}
-		ConsolCmd.exc(new String[] {"java", "-jar", Resource.BIN_JDGUI.getPath(), jarFilePath});
+		SystemUtil.exec(new String[] {"java", "-jar", Resource.BIN_JDGUI.getPath(), jarFilePath});
 	}
 }
