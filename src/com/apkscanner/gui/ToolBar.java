@@ -59,6 +59,7 @@ public class ToolBar extends JToolBar
 		OPEN_APK		(Resource.STR_MENU_APK_FILE.getString(), null, Resource.IMG_TOOLBAR_OPEN.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK, false), 'O'),
 		OPEN_PACKAGE	(Resource.STR_MENU_PACKAGE.getString(), null, Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK, false), 'P'),
 		INSTALL_APK		(Resource.STR_MENU_INSTALL.getString(), null, Resource.IMG_TOOLBAR_INSTALL.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK, false), 'I'),
+		UNINSTALL_APK	(Resource.STR_MENU_UNINSTALL.getString(), null, Resource.IMG_TOOLBAR_UNINSTALL.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_DOWN_MASK, false), 'U'),
 		INSTALLED_CHECK	(Resource.STR_MENU_CHECK_INSTALLED.getString(), null, Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK, false), 'T');
 
 		private String text = null;
@@ -120,7 +121,7 @@ public class ToolBar extends JToolBar
 	{
 		OPEN			(Type.NORMAL, Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OPEN_LAB.getString(), Resource.IMG_TOOLBAR_OPEN.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
 		OPEN_PACKAGE	(Type.NORMAL, Resource.STR_BTN_OPEN_PACKAGE.getString(), Resource.STR_BTN_OPEN_PACKAGE_LAB.getString(), Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(ButtonSet.IconSize,ButtonSet.IconSize)),
-		OPEN_EXTEND		(Type.EXTEND, null, Resource.IMG_TOOLBAR_OPEN_ARROW.getImageIcon(10,10)),
+		OPEN_EXTEND		(Type.EXTEND, null, Resource.IMG_TOOLBAR_OPEN_ARROW.getImageIcon(16,16)),
 		MANIFEST		(Type.NORMAL, Resource.STR_BTN_MANIFEST.getString(), Resource.STR_BTN_MANIFEST_LAB.getString(), Resource.IMG_TOOLBAR_MANIFEST.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
 		EXPLORER		(Type.NORMAL, Resource.STR_BTN_EXPLORER.getString(), Resource.STR_BTN_EXPLORER_LAB.getString(), Resource.IMG_TOOLBAR_EXPLORER.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
 		OPEN_CODE		(Type.SUB_TOOLBAR, Resource.STR_BTN_OPENCODE.getString(), Resource.STR_BTN_OPENCODE_LAB.getString(), Resource.IMG_TOOLBAR_OPENCODE.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
@@ -130,7 +131,7 @@ public class ToolBar extends JToolBar
 		INSTALL_DOWNGRADE(Type.NORMAL, Resource.STR_BTN_INSTALL_DOWNGRAD.getString(), Resource.STR_BTN_INSTALL_DOWNGRAD_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
 		LAUNCH			(Type.NORMAL, Resource.STR_BTN_LAUNCH.getString(), Resource.STR_BTN_LAUNCH_LAB.getString(), Resource.IMG_TOOLBAR_LAUNCH.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
 		SIGN			(Type.NORMAL, Resource.STR_BTN_SIGN.getString(), Resource.STR_BTN_SIGN_LAB.getString(), Resource.IMG_TOOLBAR_SIGNNING.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-		INSTALL_EXTEND	(Type.SUB_TOOLBAR, Resource.STR_BTN_MORE.getString(), Resource.STR_BTN_MORE_LAB.getString(), Resource.IMG_TOOLBAR_OPEN_ARROW.getImageIcon(10,10)),
+		INSTALL_EXTEND	(Type.SUB_TOOLBAR, Resource.STR_BTN_MORE.getString(), Resource.STR_BTN_MORE_LAB.getString(), Resource.IMG_TOOLBAR_OPEN_ARROW.getImageIcon(16,16)),
 		SETTING			(Type.NORMAL, Resource.STR_BTN_SETTING.getString(), Resource.STR_BTN_SETTING_LAB.getString(), Resource.IMG_TOOLBAR_SETTING.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
 		ABOUT			(Type.NORMAL, Resource.STR_BTN_ABOUT.getString(), Resource.STR_BTN_ABOUT_LAB.getString(), Resource.IMG_TOOLBAR_ABOUT.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
 
@@ -260,6 +261,9 @@ public class ToolBar extends JToolBar
 		openPopupMenu.add(menuItemMap.get(MenuItemSet.OPEN_APK));
 		openPopupMenu.add(menuItemMap.get(MenuItemSet.OPEN_PACKAGE));
 
+		installPopupMenu.add(menuItemMap.get(MenuItemSet.UNINSTALL_APK));
+		installPopupMenu.add(menuItemMap.get(MenuItemSet.INSTALLED_CHECK));
+
 		Log.i("ToolBar.initUI() ButtonSet init");
 		buttonMap = ButtonSet.getButtonMap(listener);
 
@@ -325,10 +329,6 @@ public class ToolBar extends JToolBar
 
 	private void setReplacementLayout() {
 		removeAll();
-		installPopupMenu.removeAll();
-
-		installPopupMenu.add(menuItemMap.get(MenuItemSet.INSTALL_APK));
-		installPopupMenu.add(menuItemMap.get(MenuItemSet.INSTALLED_CHECK));
 
 		Dimension sepSize = new Dimension(1,63);
 
@@ -442,6 +442,7 @@ public class ToolBar extends JToolBar
 		setMenuItemText(MenuItemSet.OPEN_APK, Resource.STR_MENU_APK_FILE.getString(), null);
 		setMenuItemText(MenuItemSet.OPEN_PACKAGE, Resource.STR_MENU_PACKAGE.getString(), null);
 		setMenuItemText(MenuItemSet.INSTALL_APK, Resource.STR_MENU_INSTALL.getString(), null);
+		setMenuItemText(MenuItemSet.UNINSTALL_APK, Resource.STR_MENU_UNINSTALL.getString(), null);
 		setMenuItemText(MenuItemSet.INSTALLED_CHECK, Resource.STR_MENU_CHECK_INSTALLED.getString(), null);
 	}
 

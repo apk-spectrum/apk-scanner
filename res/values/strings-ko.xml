@@ -58,7 +58,8 @@
     <string name="menu_apk_file">APK 파일 열기(O)</string>
     <string name="menu_package">디바이스 패키지 열기(P)</string>
     <string name="menu_install">설치 (I)</string>
-    <string name="menu_check_installed">설치 유무 확인 (T)</string>
+    <string name="menu_uninstall">삭제 (U)</string>
+    <string name="menu_check_installed">설치버전 정보확인 (T)</string>
 
     <string name="tab_basic_info">APK 정보</string>
     <string name="tab_widget">위젯</string>
