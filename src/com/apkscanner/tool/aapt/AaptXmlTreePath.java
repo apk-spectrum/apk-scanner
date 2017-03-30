@@ -143,7 +143,7 @@ public class AaptXmlTreePath
 					} else {
 						namespaces.add("xmlns:" + tag + "=" + space);
 					}
-					Log.i("namespace : " + s);
+					//Log.i("namespace : " + s);
 					break;
 				default:
 					Log.w("Unknown tag : " + s.trim());

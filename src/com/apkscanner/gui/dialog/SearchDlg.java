@@ -203,7 +203,7 @@ public class SearchDlg extends JDialog {
               if (comp.getPreferredSize().width > bounds.width) {
 					hoverFilePath = getValueAt(row, 1).toString();
 
-					Log.d(hoverFilePath);
+					//Log.d(hoverFilePath);
 					
 					String[] xmlbuffer = AaptNativeWrapper.Dump.getXmltree(apkinfo.filePath,
 							new String[] { hoverFilePath });

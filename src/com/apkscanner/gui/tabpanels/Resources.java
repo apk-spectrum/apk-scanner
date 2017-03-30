@@ -3,6 +3,7 @@ package com.apkscanner.gui.tabpanels;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
@@ -41,6 +42,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.filechooser.FileSystemView;
@@ -296,7 +298,18 @@ public class Resources extends JPanel implements TabDataObject {
 		treefocuschanger = new TreeFocusChanger() {
 			@Override
 			public void setTreeFocus(String path, int line, String string) {
-				Log.d("path : " + path);
+				Log.d("path : " + path + ", " + Resources.this.getParent());
+				Container parent = (Resources.this.getParent());
+				if(parent instanceof JTabbedPane) {
+					JTabbedPane tabbed = (JTabbedPane)parent;
+					int c = tabbed.getComponentCount();
+					for(int i = 0; i<c; i++) {
+						if(tabbed.getComponent(i).equals(Resources.this)) {
+							tabbed.setSelectedIndex(i);
+							break;
+						}
+					}
+				}
 
 				@SuppressWarnings("unchecked")
 				Enumeration<DefaultMutableTreeNode> e = top.depthFirstEnumeration();
