@@ -1,20 +1,11 @@
 package com.apkscanner.data.apkinfo;
 
-public class ActivityAliasInfo
+public class ActivityAliasInfo extends ComponentInfo
 {
-	public Boolean enabled =  null;
-	public Boolean exported = null;
-	public ResourceInfo[] icons = null; // "drawable resource"
-	public ResourceInfo[] labels = null; // "string resource"
-	public String name = null; // "string"
-	public String permission = null; // "string"
 	public String targetActivity = null; // "string"
-	
+
 	public IntentFilterInfo[] intentFilter = null;
-	public MetaDataInfo[] metaData = null;
-	
-	public Integer featureFlag = 0;
-	
+
 	public String getReport()
 	{
 		StringBuilder report = new StringBuilder();
@@ -22,7 +13,7 @@ public class ActivityAliasInfo
 		if(enabled != null) report.append("enabled : " + enabled + "\n");
 		if(exported != null) report.append("exported : " + exported + "\n");
 		if(permission != null) report.append("permission : " + permission + "\n");
-		
+
 		if(intentFilter != null) {
 			report.append("\nintent-filter count : " + intentFilter.length + "\n");
 			for(IntentFilterInfo info: intentFilter) {
@@ -39,7 +30,7 @@ public class ActivityAliasInfo
 				}
 			}
 		}
-		
+
 		return report.toString();
 	}
 }

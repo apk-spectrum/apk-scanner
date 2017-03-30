@@ -34,7 +34,7 @@ public class FileUtil
 	
 	public static String getTempPath()
 	{
-		String tempPath = System.getProperty("java.io.tmpdir");
+		String tempPath = SystemUtil.getTemporaryPath();
 		String separator = File.separator + (File.separator.equals("\\") ? File.separator : "");
 
 		if(!tempPath.matches(".*"+separator+"$")) tempPath += File.separator;

@@ -27,12 +27,12 @@ public class ApkInfo
 	public Integer permissionProtectionLevel = 0;
 	public Integer usesPermissionProtectionLevel = 0;
 	
-	public ManifestInfo manifest = new ManifestInfo();
+	public final ManifestInfo manifest = new ManifestInfo();
 	
 	public WidgetInfo[] widgets = null;
 	public String[] resources = null;
 	public String[] xmls = null;
-	public String[] librarys = null;
+	public String[] libraries = null;
 	public String[] certificates = null;
 	public String[] certFiles = null;
 

@@ -5,11 +5,16 @@
     <string name="title_install_wizard">APK Install Wizard</string>
     
     <string name="btn_open">Open</string>
+    <string name="btn_open_pacakge">Package</string>
     <string name="btn_manifest">Manifest</string>
     <string name="btn_explorer">Explorer</string>
     <string name="btn_unpack">Decompile</string>
     <string name="btn_pack">Recompile</string>
     <string name="btn_install">Install</string>
+    <string name="btn_install_downgrad">Downgrade</string>
+    <string name="btn_install_update">Update</string>
+    <string name="btn_launch">Launch</string>
+    <string name="btn_sign">Sign</string>
     <string name="btn_push">Push</string>
     <string name="btn_setting">Setting</string>
     <string name="btn_about">About</string>
@@ -23,17 +28,28 @@
     <string name="btn_del">Del</string>
     <string name="btn_add">Add</string>
     <string name="btn_export">Export</string>
-    <string name="btn_opencode">Source Code</string>
+    <string name="btn_opencode">Source</string>
+    <string name="btn_opening_code">Decoding...</string>
+    <string name="btn_search">Search</string>
+    <string name="btn_more">More</string>
     
     <string name="btn_open_lab">Open APK file (Ctrl+O)</string>
+    <string name="btn_open_pacakge_lab">Open package(Ctrl+P)</string>
     <string name="btn_manifest_lab">Show AndroidManifest.xml (Ctrl+M)</string>
     <string name="btn_explorer_lab">Open Explorer from Temp folder (Ctrl+E)</string>
     <string name="btn_unpack_lab">Decompile</string>
     <string name="btn_pack_lab">Recompile</string>
     <string name="btn_install_lab">Install APK to the connected device (Ctrl+I)</string>
+    <string name="btn_install_downgrad_lab">Downgrade APK (Ctrl+I)</string>
+    <string name="btn_install_update_lab">Update APK (Ctrl+I)</string>
+    <string name="btn_launch_lab">Launch app</string>
+    <string name="btn_sign_lab">Sign APK</string>
     <string name="btn_setting_lab">Setting editor and language, etc..</string>
     <string name="btn_about_lab">About APK Scanner (F1)</string>
-    <string name="btn_opencode_lab">Open JD-GUI from apk</string>
+    <string name="btn_opencode_lab">Open APK via JD-GUI</string>
+    <string name="btn_opening_code_lab">Open APK via JD-GUI</string>
+    <string name="btn_search_lab">Search resource</string>
+    <string name="btn_more_lab">More...</string>
     
     <string name="menu_new">New Window...</string>
     <string name="menu_new_window">New window(N)</string>
@@ -42,7 +58,8 @@
     <string name="menu_apk_file">Open APK file(O)</string>
     <string name="menu_package">Open package(P)</string>
     <string name="menu_install">Install(I)</string>
-    <string name="menu_check_installed">Check installed(T)</string>
+    <string name="menu_uninstall">Uninstall(U)</string>
+    <string name="menu_check_installed">Check the Installation Version(T)</string>
 
     <string name="tab_basic_info">APK Info</string>
     <string name="tab_widget">Widgets</string>
@@ -56,6 +73,7 @@
     <string name="basic_permdesc_display_list">Show the list of all permissions.</string>
     <string name="basic_perm_list_title">Permissions list</string>
     <string name="basic_perm_display_title">Permissions description</string>
+    <string name="basic_create_shortcut">Create shortcut on desktop</string>
 
     <string name="feature_lab">Feature</string>
     <string name="feature_desc">Feature or function of the App</string>
@@ -176,10 +194,13 @@ Please check device.</string>
     <string name="msg_already_installed">This package was already installed.</string>
     <string name="msg_no_such_package">No such package.</string>
     <string name="msg_no_such_launcher">No such launcher activity.</string>
+    <string name="msg_no_such_package_device">No such device of a package installed.</string>
+    <string name="msg_no_such_classes_dex">No such classes.dex in an APK file.</string>
     <string name="msg_failure_launch_app">Did not launch.</string>
     <string name="msg_failure_installed">App did not install.</string>
     <string name="msg_failure_uninstalled">App did not remove.</string>
     <string name="msg_failure_pull_apk">Did not pull APK.</string>
+    <string name="msg_failure_dex2jar">Can't covert to jar</string>
     <string name="msg_success_installed">Install success...</string>
     <string name="msg_success_removed">Remove success!</string>
     <string name="msg_success_pull_apk">Success pull apk!</string>

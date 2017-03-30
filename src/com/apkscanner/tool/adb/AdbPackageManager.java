@@ -3,6 +3,7 @@ package com.apkscanner.tool.adb;
 import java.util.ArrayList;
 
 import com.apkscanner.util.ConsolCmd;
+import com.apkscanner.util.Log;
 
 public class AdbPackageManager {
 
@@ -28,11 +29,11 @@ public class AdbPackageManager {
 		public final String apkPath;
 		public final String codePath;
 		public final String versionName;
-		public final String versionCode;
+		public final int versionCode;
 		public final boolean isSystemApp;
 		public final String installer;
 		
-		public PackageInfo(String pkgName, String apkPath, String codePath, String versionName, String versionCode, boolean isSystemApp, String installer)
+		public PackageInfo(String pkgName, String apkPath, String codePath, String versionName, int versionCode, boolean isSystemApp, String installer)
 		{
 			this.pkgName = pkgName;
 			this.apkPath = apkPath;
@@ -54,6 +55,74 @@ public class AdbPackageManager {
 			return s;
 		}
 	}
+
+	static public String[] getRecentlyActivityPackages(String device) {
+		String[] result = AdbWrapper.shell(device, new String[] {"am", "stack", "list"}, null);
+		ArrayList<String> pkgList = new ArrayList<String>();
+		boolean isLegacy = false;
+		for(String line: result) {
+			if(line.startsWith("  taskId=")) {
+				String pkg = line.replaceAll("  taskId=[0-9]*:\\s([^/]*)/.*", "$1").trim(); 
+				if(pkg != null && !pkg.isEmpty() && !pkg.equals(line)) {
+					if(pkg.indexOf(" ") == -1 && !pkgList.contains(pkg)) {
+						if(line.indexOf("visible=true") >= 0)
+							pkgList.add(0, pkg);
+						else
+							pkgList.add(pkg);
+					} else {
+						Log.w("Unknown pkg - " + pkg);
+					}
+				}
+			}
+			if(line.startsWith("Error: unknown command 'list'")) {
+				isLegacy = true;
+				break;
+			}
+		}
+
+		if(isLegacy) {
+			return getRecentlyActivityPackagesLegacy(device);
+		}
+
+		return pkgList.toArray(new String[0]);
+	}
+	
+	static private String[] getRecentlyActivityPackagesLegacy(String device) {
+		String[] result = AdbWrapper.shell(device, new String[] {"am", "stack", "boxes"}, null);
+		ArrayList<String> pkgList = new ArrayList<String>();
+		for(String line: result) {
+			if(line.startsWith("    taskId=")) {
+				String pkg = line.replaceAll("    taskId=[0-9]*:\\s([^/]*)/.*", "$1").trim(); 
+				if(pkg != null && !pkg.isEmpty() && !pkg.equals(line)) {
+					if(pkg.indexOf(" ") == -1 && !pkgList.contains(pkg)) {
+							pkgList.add(0, pkg);
+					} else {
+						Log.w("Unknown pkg - " + pkg);
+					}
+				}
+			}
+		}
+		return pkgList.toArray(new String[0]);
+	}
+
+	static public String[] getCurrentlyRunningPackages(String device) {
+		String[] result = AdbWrapper.shell(device, new String[] {"ps"}, null);
+		ArrayList<String> pkgList = new ArrayList<String>();
+		for(String line: result) {
+			if(!line.startsWith("root")) {
+				String pkg = line.replaceAll(".* ([^\\s:]*)(:.*)?$", "$1");
+				if(pkg != null && !pkg.isEmpty() && !pkg.equals(line)) {
+					if(!pkg.startsWith("/") && !pkgList.contains(pkg)) {
+						pkgList.add(pkg);
+					}
+				}
+			}
+		}
+		if(pkgList.size() > 0 && pkgList.get(0).equals("NAME")) {
+			pkgList.remove(0);
+		}
+		return pkgList.toArray(new String[0]);
+	}
 	
 	static public ArrayList<PackageListObject> getPackageList(String device)
 	{
@@ -62,7 +131,7 @@ public class AdbPackageManager {
 		String[] cmd = {adbCmd, "-s", device, "shell", "dumpsys", "package"};
 		String[] result = ConsolCmd.exc(cmd, false, null);
 		
-		cmd = new String[] {adbCmd, "-s", device, "shell", "pm", "list", "packages", "-f", "-i"};
+		cmd = new String[] {adbCmd, "-s", device, "shell", "pm", "list", "packages", "-f", "-i", "-u"};
 		String[] pmList = ConsolCmd.exc(cmd, false, null);		
 		
 		boolean start = false;
@@ -137,7 +206,7 @@ public class AdbPackageManager {
 		String[] result;
 		String[] TargetInfo;
 		String verName = null;
-		String verCode = null;
+		int verCode = 0;
 		String codePath = null;
 		String apkPath = null;
 		String installer = null;
@@ -147,7 +216,7 @@ public class AdbPackageManager {
 		//Log.i("ckeckPackage() " + pkgName);
 
 		if(!pkgName.matches("/system/framework/.*apk")) {
-			cmd = new String[] {adbCmd, "-s", device, "shell", "pm", "list", "packages", "-f", "-i", pkgName};
+			cmd = new String[] {adbCmd, "-s", device, "shell", "pm", "list", "packages", "-f", "-i", "-u", pkgName};
 			result = ConsolCmd.exc(cmd, false, null);		
 			for(String output: result) {
 		    	if(output.matches("^package:.*=" + pkgName + "\\s*installer=.*")) {
@@ -160,7 +229,10 @@ public class AdbPackageManager {
 			TargetInfo = ConsolCmd.exc(cmd,false,null);
 			
 			verName = selectString(TargetInfo,"versionName=");
-			verCode = selectString(TargetInfo,"versionCode=");
+			String vercode = selectString(TargetInfo,"versionCode=");
+			if(vercode != null && vercode.matches("\\d+")) {
+				verCode = Integer.valueOf(selectString(TargetInfo,"versionCode="));
+			}
 			codePath = selectString(TargetInfo,"codePath=");
 			
 			if(installer == null)

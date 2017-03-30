@@ -12,7 +12,7 @@ extern "C" {
  * Method:    createAssetManager
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_createAssetManager
+JNIEXPORT jlong JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_nativeCreateAssetManager
   (JNIEnv *, jclass);
 
 /*
@@ -20,7 +20,7 @@ JNIEXPORT jlong JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_creat
  * Method:    realeaseAssetManager
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_realeaseAssetManager
+JNIEXPORT void JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_nativeRealeaseAssetManager
   (JNIEnv *, jclass, jlong);
 
 /*
@@ -28,7 +28,7 @@ JNIEXPORT void JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_realea
  * Method:    getPackageId
  * Signature: (Ljava/lang/String;)I
  */
-JNIEXPORT jint JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_getPackageId
+JNIEXPORT jint JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_nativeGetPackageId
   (JNIEnv *, jclass, jstring);
 
 /*
@@ -36,7 +36,7 @@ JNIEXPORT jint JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_getPac
  * Method:    addPackage
  * Signature: (JLjava/lang/String;)Z
  */
-JNIEXPORT jboolean JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_addPackage
+JNIEXPORT jboolean JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_nativeAddPackage
   (JNIEnv *, jclass, jlong, jstring);
 
 /*
@@ -44,7 +44,7 @@ JNIEXPORT jboolean JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_ad
  * Method:    addResPackage
  * Signature: (JLjava/lang/String;)Z
  */
-JNIEXPORT jboolean JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_addResPackage
+JNIEXPORT jboolean JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_nativeAddResPackage
   (JNIEnv *, jclass, jlong, jstring);
 
 /*
@@ -52,7 +52,7 @@ JNIEXPORT jboolean JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_ad
  * Method:    getResourceName
  * Signature: (JI)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_getResourceName
+JNIEXPORT jstring JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_nativeGetResourceName
   (JNIEnv *, jclass, jlong, jint);
 
 /*
@@ -60,7 +60,7 @@ JNIEXPORT jstring JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_get
  * Method:    getResourceType
  * Signature: (JI)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_getResourceType
+JNIEXPORT jstring JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_nativeGetResourceType
   (JNIEnv *, jclass, jlong, jint);
 
 /*
@@ -68,7 +68,7 @@ JNIEXPORT jstring JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_get
  * Method:    getResourceValues
  * Signature: (JI)[Lcom/apkscanner/data/apkinfo/ResourceInfo;
  */
-JNIEXPORT jobjectArray JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_getResourceValues
+JNIEXPORT jobjectArray JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_nativeGetResourceValues
   (JNIEnv *, jclass, jlong, jint);
 
 /*
@@ -76,7 +76,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanne
  * Method:    getResourceString
  * Signature: (JILjava/lang/String;)Lcom/apkscanner/data/apkinfo/ResourceInfo;
  */
-JNIEXPORT jobject JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_getResourceString
+JNIEXPORT jobject JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_nativeGetResourceString
   (JNIEnv *, jclass, jlong, jint, jstring);
 
 #ifdef __cplusplus

@@ -1735,14 +1735,14 @@ bail:
     return (result != NO_ERROR);
 }
 
-JNIEXPORT jlong JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_createAssetManager
+JNIEXPORT jlong JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_nativeCreateAssetManager
   (JNIEnv *, jclass)
 {
     AssetManager *assetManager = new AssetManager();
     return reinterpret_cast<jlong>(assetManager);
 }
 
-JNIEXPORT void JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_realeaseAssetManager
+JNIEXPORT void JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_nativeRealeaseAssetManager
   (JNIEnv *, jclass, jlong handle)
 {
     if(handle == 0) return;
@@ -1750,7 +1750,7 @@ JNIEXPORT void JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_realea
     delete assetManager;
 }
 
-JNIEXPORT jint JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_getPackageId
+JNIEXPORT jint JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_nativeGetPackageId
   (JNIEnv * env, jclass, jstring path)
 {
     if(path == NULL) {
@@ -1776,7 +1776,7 @@ JNIEXPORT jint JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_getPac
     return packId;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_addPackage
+JNIEXPORT jboolean JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_nativeAddPackage
   (JNIEnv * env, jclass, jlong handle, jstring path)
 {
     if(handle == 0 || path == 0) {
@@ -1804,7 +1804,7 @@ JNIEXPORT jboolean JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_ad
     return result;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_addResPackage
+JNIEXPORT jboolean JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_nativeAddResPackage
   (JNIEnv * env, jclass, jlong handle, jstring path)
 {
     if(handle == 0 || path == 0) {
@@ -1855,7 +1855,7 @@ JNIEXPORT jboolean JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_ad
     return result;
 }
 
-JNIEXPORT jstring JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_getResourceName
+JNIEXPORT jstring JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_nativeGetResourceName
   (JNIEnv *env, jclass, jlong handle, jint resID)
 {
     if(handle == 0) return NULL;
@@ -1884,7 +1884,7 @@ JNIEXPORT jstring JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_get
     return resName;
 }
 
-JNIEXPORT jstring JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_getResourceType
+JNIEXPORT jstring JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_nativeGetResourceType
   (JNIEnv * env, jclass, jlong handle, jint resID)
 {
     if(handle == 0) return NULL;
@@ -1913,7 +1913,7 @@ JNIEXPORT jstring JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_get
     return resType;
 }
 
-JNIEXPORT jobjectArray JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_getResourceValues
+JNIEXPORT jobjectArray JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_nativeGetResourceValues
   (JNIEnv *env, jclass, jlong handle, jint resID)
 {
     if(handle == 0) return NULL;
@@ -1978,7 +1978,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanne
     return outputArray;
 }
 
-JNIEXPORT jobject JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_getResourceString
+JNIEXPORT jobject JNICALL Java_com_apkscanner_core_scanner_AaptNativeScanner_nativeGetResourceString
   (JNIEnv *, jclass, jlong handle, jint, jstring)
 {
     if(handle == 0) return NULL;

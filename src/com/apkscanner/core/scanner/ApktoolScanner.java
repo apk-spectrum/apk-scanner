@@ -140,7 +140,7 @@ public class ApktoolScanner extends ApkScannerStub
 				XmlToMyApkinfo();
 				
 				apkInfo.resources = FileUtil.findFiles(new File(apkInfo.tempWorkPath + File.separator + "res"), ".png", ".*drawable.*").toArray(new String[0]);
-				apkInfo.librarys = FileUtil.findFiles(new File(apkInfo.tempWorkPath + File.separator + "lib"), ".so", null).toArray(new String[0]);
+				apkInfo.libraries = FileUtil.findFiles(new File(apkInfo.tempWorkPath + File.separator + "lib"), ".so", null).toArray(new String[0]);
 	
 				solveCert();
 			}
@@ -195,7 +195,7 @@ public class ApktoolScanner extends ApkScannerStub
 
 		private void progress(int step, String msg)
 		{
-			if(mListener != null) mListener.OnProgress(step, msg);
+			if(mListener != null) mListener.onProgress(step, msg);
 		}
 		
 		private void XmlToMyApkinfo()
@@ -566,23 +566,23 @@ public class ApktoolScanner extends ApkScannerStub
 					e1.printStackTrace();
 				}
 				
-				if(mListener != null) mListener.OnStart(EstimatedTimeEnRoute.calc(apkInfo.filePath));
+				if(mListener != null) mListener.onStart(EstimatedTimeEnRoute.calc(apkInfo.filePath));
 				switch(mCmd) {
 				case SOLVE_RESOURCE:
 				case SOLVE_CODE:
 				case SOLVE_BOTH:
 					if (solve() == true) {
-						if(mListener != null) mListener.OnSuccess();
+						if(mListener != null) mListener.onSuccess();
 					} else {
-						if(mListener != null) mListener.OnError();
+						if(mListener != null) mListener.onError(ERR_UNKNOWN);
 					}
 					break;
 				case DELETE_TEMP_PATH:
 					deleteTempPath();
-					if(mListener != null) mListener.OnSuccess();
+					if(mListener != null) mListener.onSuccess();
 					break;
 				}
-				if(mListener != null) mListener.OnComplete();
+				if(mListener != null) mListener.onCompleted();
 			}
 		}
 	}

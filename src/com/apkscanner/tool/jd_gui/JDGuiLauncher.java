@@ -1,11 +1,19 @@
 package com.apkscanner.tool.jd_gui;
 
-import com.apkscanner.resource.Resource;
-import com.apkscanner.util.ConsolCmd;
+import java.io.File;
 
-public class JDGuiLauncher {
+import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
+import com.apkscanner.util.SystemUtil;
+
+public class JDGuiLauncher
+{
 	static public void run(String jarFilePath)
 	{
-		ConsolCmd.exc(new String[] {"java", "-jar", Resource.BIN_JDGUI.getPath(), jarFilePath});
+		if(jarFilePath == null || !(new File(jarFilePath).isFile())) {
+			Log.e("No such file : " + jarFilePath);
+			return;
+		}
+		SystemUtil.exec(new String[] {"java", "-jar", Resource.BIN_JDGUI.getPath(), jarFilePath});
 	}
 }

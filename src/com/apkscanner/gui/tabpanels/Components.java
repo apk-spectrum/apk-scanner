@@ -41,7 +41,7 @@ public class Components extends JPanel implements TabDataObject
 	private MyTableModel TableModel = null; 
 	private JTable table = null;
   
-	public ArrayList<Object[]> ActivityList = new ArrayList<Object[]>();
+	public ArrayList<Object[]> ComponentList = new ArrayList<Object[]>();
   	  
 	public Components() {
 		super(new GridLayout(1, 0));
@@ -62,16 +62,21 @@ public class Components extends JPanel implements TabDataObject
 		          //c.setForeground(getSelectionForeground());
 		          c.setBackground(Color.GRAY);
 		        }else{
-					if("activity".equals((String) ActivityList.get(row)[1]) || "main".equals((String) ActivityList.get(row)[1])) {
+		        	String type = (String) ComponentList.get(row)[1];
+					if("activity".equals(type) || "main".equals(type)) {
 						temp = new Color(0xB7F0B1);
-					} else if("launcher".equals((String) ActivityList.get(row)[1])) {
+					} else if("launcher".equals(type)) {
 						temp = new Color(0x5D9657);
-					} else if("service".equals((String) ActivityList.get(row)[1])) {
+					} else if("activity-alias".equals(type)) {
+						temp = new Color(0x96E2E2);
+					} else if("service".equals(type)) {
 						temp = new Color(0xB2CCFF);
-					} else if("receiver".equals((String) ActivityList.get(row)[1])) {
+					} else if("receiver".equals(type)) {
 						temp = new Color(0xCEF279);
-					} else {
+					} else if("provider".equals(type)) {
 						temp = new Color(0xFFE08C);
+					} else {
+						temp = new Color(0xC8C8C8);
 					}
 					c.setBackground(temp);
 		        }
@@ -83,9 +88,9 @@ public class Components extends JPanel implements TabDataObject
     
 		cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
-				if(ActivityList == null) return;
+				if(ComponentList == null) return;
 				if(table.getSelectedRow() > -1) {
-					textArea.setText((String) ActivityList.get(table.getSelectedRow())[6]);
+					textArea.setText((String) ComponentList.get(table.getSelectedRow())[6]);
 					textArea.setCaretPosition(0);
 				}
 			}
@@ -132,7 +137,7 @@ public class Components extends JPanel implements TabDataObject
 	{
 		if(TableModel == null) 
 			initialize();
-		ActivityList.clear();
+		ComponentList.clear();
 		
 		if(apkInfo.manifest.application.activity != null) {
 			for(ActivityInfo info: apkInfo.manifest.application.activity) {
@@ -150,8 +155,12 @@ public class Components extends JPanel implements TabDataObject
 				String startUp = (info.featureFlag & ApkInfo.APP_FEATURE_STARTUP) != 0 ? "O" : "X";
 				String enabled = (info.enabled == null) || info.enabled ? "O" : "X";
 				String exported = (info.exported == null) || info.exported ? "O" : "X";
-				String permission = info.permission != null ? "O" : "X"; 
-				ActivityList.add(new Object[] {info.name, type, enabled, exported, permission, startUp, info.getReport()});
+				String permission = info.permission != null ? "O" : "X";
+				if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
+					ComponentList.add(0, new Object[] {info.name, type, enabled, exported, permission, startUp, info.getReport()});
+				} else {
+					ComponentList.add(new Object[] {info.name, type, enabled, exported, permission, startUp, info.getReport()});
+				}
 			}
 		}
 		if(apkInfo.manifest.application.activityAlias != null) {
@@ -171,10 +180,16 @@ public class Components extends JPanel implements TabDataObject
 				String enabled = (info.enabled == null) || info.enabled ? "O" : "X";
 				String exported = (info.exported == null) || info.exported ? "O" : "X";
 				String permission = info.permission != null ? "O" : "X";
-				if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0) 
-					ActivityList.add(0, new Object[] {info.name, type, enabled, exported, permission, startUp, info.getReport()});
-				else
-					ActivityList.add(new Object[] {info.name, type, enabled, exported, permission, startUp, info.getReport()});
+				if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0) { 
+					int i = 0;
+					for(;i<ComponentList.size();i++) {
+						String t = (String)((Object[])ComponentList.get(i))[1];
+						if(t == null || !t.equals("launcher")) break;
+					}
+					ComponentList.add(i, new Object[] {info.name, type, enabled, exported, permission, startUp, info.getReport()});
+				} else {
+					ComponentList.add(new Object[] {info.name, type, enabled, exported, permission, startUp, info.getReport()});
+				}
 			}
 		}
 		if(apkInfo.manifest.application.service != null) {
@@ -183,7 +198,7 @@ public class Components extends JPanel implements TabDataObject
 				String enabled = (info.enabled == null) || info.enabled ? "O" : "X";
 				String exported = (info.exported == null) || info.exported ? "O" : "X";
 				String permission = info.permission != null ? "O" : "X"; 
-				ActivityList.add(new Object[] {info.name, "service", enabled, exported, permission, startUp, info.getReport()});
+				ComponentList.add(new Object[] {info.name, "service", enabled, exported, permission, startUp, info.getReport()});
 			}
 		}
 		if(apkInfo.manifest.application.receiver != null) {
@@ -192,7 +207,7 @@ public class Components extends JPanel implements TabDataObject
 				String enabled = (info.enabled == null) || info.enabled ? "O" : "X";
 				String exported = (info.exported == null) || info.exported ? "O" : "X";
 				String permission = info.permission != null ? "O" : "X"; 
-				ActivityList.add(new Object[] {info.name, "receiver", enabled, exported, permission, startUp, info.getReport()});
+				ComponentList.add(new Object[] {info.name, "receiver", enabled, exported, permission, startUp, info.getReport()});
 			}
 		}
 		if(apkInfo.manifest.application.provider != null) {
@@ -208,7 +223,7 @@ public class Components extends JPanel implements TabDataObject
 				} else if(info.writePermission != null) {
 					permission = "Write";
 				}
-				ActivityList.add(new Object[] {info.name, "provider", enabled, exported, permission, startUp, info.getReport()});
+				ComponentList.add(new Object[] {info.name, "provider", enabled, exported, permission, startUp, info.getReport()});
 				//String startUp = (info.featureFlag & ActivityInfo.ACTIVITY_FEATURE_STARTUP) != 0 ? "O" : "X";
 			}
 		}
@@ -270,7 +285,7 @@ public class Components extends JPanel implements TabDataObject
 		}
 
 		public int getRowCount() {
-			return ActivityList.size();
+			return ComponentList.size();
 		}
 
 		public String getColumnName(int col) {
@@ -278,7 +293,7 @@ public class Components extends JPanel implements TabDataObject
 		}
 
 		public Object getValueAt(int row, int col) {
-			return ActivityList.get(row)[col];
+			return ComponentList.get(row)[col];
 		}
 
 		/*

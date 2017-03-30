@@ -50,7 +50,12 @@ public class AaptXmlTreePath
 			int curDepth = 0;
 
 			defaultNamespace = "android";
-			
+
+			if(xmlTree == null) {
+				Log.w("xmlTree is null");
+				return;
+			}
+
 			for(String s: xmlTree) {
 				int type = NODE_TYPE_UNKNOWN;
 				int depth = s.indexOf("A:");
@@ -76,9 +81,17 @@ public class AaptXmlTreePath
 						continue;
 					} 
 					String attrName = s.replaceAll("^\\s*A: ([^\\(=]*).*", "$1");
+					String attrId = s.replaceAll("^\\s*A: ([^: ]*)?:([^:= ]*)?\\(([^\\(=]*)\\).*", "$3");
+					String attrRealName = null;
+					if(s.endsWith(attrId) || (attrName.startsWith(defaultNamespace+":") && !attrName.equals(":"))) {
+						attrRealName = attrName;
+						//Log.v(">>>>>>> attrName " + attrRealName);
+					} else {
+						attrRealName = defaultNamespace+":"+getAttrName(attrId);
+						//Log.v("<<<<<<< attrRealName " + attrId + ", " + attrRealName);
+					}
 					if(attrName.equals(":")) {
-						String attrId = s.replaceAll("^\\s*A: :\\(([^\\(=]*)\\).*", "$1");
-						attrName = getAttrName(attrId);
+						attrName = attrRealName;
 					}
 					String attrData = s.substring(s.indexOf("=")+1);
 					
@@ -96,7 +109,7 @@ public class AaptXmlTreePath
 						
 					}
 					//Log.v("attribute name : " + attrName + " = " + attrData);
-					curNode.addAttribute(attrName, attrData);
+					curNode.addAttribute(attrRealName, attrData);
 					break;
 				case NODE_TYPE_ELEMENT:
 					while(depth <= curDepth) {
@@ -115,7 +128,8 @@ public class AaptXmlTreePath
 					if("manifest".equals(nodeName)) {
 						for(String n: namespaces) {
 							String[] space = n.split("=");
-							curNode.addAttribute(space[0], space[1]);
+							String ref = space.length >= 2 ? space[1] : "";  
+							curNode.addAttribute(space[0], ref);
 						}
 					}
 					break;

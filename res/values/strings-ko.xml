@@ -5,11 +5,16 @@
     <string name="title_install_wizard">APK 설치 마법사</string>
     
     <string name="btn_open">열기</string>
+    <string name="btn_open_pacakge">패키지</string>
     <string name="btn_manifest">매니페스트</string>
     <string name="btn_explorer">탐색기</string>
     <string name="btn_unpack">디컴파일</string>
     <string name="btn_pack">리컴파일</string>
     <string name="btn_install">설치</string>
+    <string name="btn_install_downgrad">다운그레이드</string>
+    <string name="btn_install_update">업데이트</string>
+    <string name="btn_launch">실행</string>
+    <string name="btn_sign">서명</string>
     <string name="btn_push">교체</string>
     <string name="btn_setting">설정</string>
     <string name="btn_about">정보</string>
@@ -23,17 +28,28 @@
     <string name="btn_del">삭제</string>
     <string name="btn_add">추가</string>
     <string name="btn_export">내보내기</string>
-    <string name="btn_opencode">소스코드</string>
+    <string name="btn_opencode">소스코드</string>>
+    <string name="btn_opening_code">여는중...</string>
+    <string name="btn_search">검색</string>
+    <string name="btn_more">더보기</string>
     
     <string name="btn_open_lab">APK 파일에서 정보를 가져옵니다. (Ctrl+O)</string>
+    <string name="btn_open_pacakge_lab">디바이스 패키지 열기(Ctrl+P)</string>
     <string name="btn_manifest_lab">AndroidManifest.xml 전문을 편집기에서 확인 합니다. (Ctrl+M)</string>
     <string name="btn_explorer_lab">압축해제 된 임시 폴더로 이동합니다. (Ctrl+E)</string>
     <string name="btn_unpack_lab">소스코드를 디검파일 합니다.</string>
     <string name="btn_pack_lab">소스코드를 리컴파일합니다.</string>
     <string name="btn_install_lab">연결된 디바이스에 APK를 설치합니다. (Ctrl+I)</string>
+    <string name="btn_install_downgrad_lab">설치된 버전보다 낮은 버전으로 다운그레이드 합니다. (Ctrl+I)</string>
+    <string name="btn_install_update_lab">설치된 버전보다 높은 버전으로 업데이트 합니다. (Ctrl+I)</string>
+    <string name="btn_launch_lab">설치된 앱을 실행합니다.</string>
+    <string name="btn_sign_lab">APK파일을 서명합니다.</string>
     <string name="btn_setting_lab">편집기, 언어 등의 설정을 변경합니다.</string>
     <string name="btn_about_lab">APK 스캐너 정보를 확인합니다. (F1)</string>
-    <string name="btn_opencode_lab">소스코드를 JD-GUI를 통하여 보여줍니다.</string>    
+    <string name="btn_opencode_lab">소스코드를 JD-GUI를 통하여 보여줍니다.</string>
+    <string name="btn_opening_code_lab">소스코드를 변환하고 있습니다.</string>
+    <string name="btn_search_lab">리소스 정보를 검색 합니다.</string>
+    <string name="btn_more_lab">추가 기능 보기</string>
     
     <string name="menu_new">새창으로 열기...</string>
     <string name="menu_new_window">새창 열기(N)</string>
@@ -42,7 +58,8 @@
     <string name="menu_apk_file">APK 파일 열기(O)</string>
     <string name="menu_package">디바이스 패키지 열기(P)</string>
     <string name="menu_install">설치 (I)</string>
-    <string name="menu_check_installed">설치 유무 확인 (T)</string>
+    <string name="menu_uninstall">삭제 (U)</string>
+    <string name="menu_check_installed">설치버전 정보확인 (T)</string>
 
     <string name="tab_basic_info">APK 정보</string>
     <string name="tab_widget">위젯</string>
@@ -56,6 +73,7 @@
     <string name="basic_permdesc_display_list">앱이 추가한 전체 권한 목록을 확인 할 수 있습니다.</string>
     <string name="basic_perm_list_title">전체 권한 목록</string>
     <string name="basic_perm_display_title">권한정보 상세보기</string>
+    <string name="basic_create_shortcut">바탕화면에 바로가기 추가</string>
 
     <string name="feature_lab">특징</string>
     <string name="feature_desc">앱의 주요 특징 혹은 기능</string>
@@ -177,10 +195,13 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
     <string name="msg_already_installed">동일 패키지가 이미 설치되어 있습니다.</string>
     <string name="msg_no_such_package">동일 패키지를 찾을수 없습니다.</string>
     <string name="msg_no_such_launcher">실행 가능한 액티비티가 없습니다.</string>
+    <string name="msg_no_such_package_device">패키지가 설치 된 장치를 찾지 못하였습니다.</string>
+    <string name="msg_no_such_classes_dex">APK 파일에 classes.dex 파일이 존재하지 않습니다.</string>
     <string name="msg_failure_launch_app">앱을 실행하지 못했습니다.</string>
     <string name="msg_failure_installed">설치 실패...</string>
     <string name="msg_failure_uninstalled">앱 제거 실패!</string>
     <string name="msg_failure_pull_apk">APK 파일을 가져오지 못 하였습니다.</string>
+    <string name="msg_failure_dex2jar">jar 파일 변환에 실패 하였습니다.</string>
     <string name="msg_success_installed">설치 성공...</string>
     <string name="msg_success_removed">앱 제거 완료!</string>
     <string name="msg_success_pull_apk">APK 파일을 저장 하였습니다.</string>

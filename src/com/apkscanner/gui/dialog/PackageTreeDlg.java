@@ -1,5 +1,21 @@
 package com.apkscanner.gui.dialog;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.File;
+import java.util.ArrayList;
+
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -19,6 +35,8 @@ import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -29,42 +47,24 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 
-import com.apkscanner.core.installer.ApkInstaller;
 import com.apkscanner.Launcher;
+import com.apkscanner.core.installer.ApkInstaller;
+import com.apkscanner.core.installer.ApkInstaller.ApkInstallerListener;
+import com.apkscanner.gui.messagebox.ArrowTraversalPane;
+import com.apkscanner.gui.messagebox.JTextOptionPane;
 import com.apkscanner.gui.util.ApkFileChooser;
-import com.apkscanner.gui.util.ArrowTraversalPane;
+import com.apkscanner.gui.util.FilteredTreeModel;
 import com.apkscanner.gui.util.SimpleCheckTableModel;
 import com.apkscanner.gui.util.SimpleCheckTableModel.TableRowObject;
-import com.apkscanner.gui.util.FilteredTreeModel;
-import com.apkscanner.gui.util.JTextOptionPane;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbDeviceManager;
 import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
 import com.apkscanner.tool.adb.AdbPackageManager;
 import com.apkscanner.tool.adb.AdbPackageManager.PackageListObject;
 import com.apkscanner.tool.adb.AdbWrapper;
-import com.apkscanner.util.ConsolCmd.ConsoleOutputObserver;
 import com.apkscanner.util.Log;
-
-import java.util.ArrayList;
-import java.io.File;
-import java.io.IOException;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import com.apkscanner.util.SystemUtil;
  
 public class PackageTreeDlg extends JPanel
                       implements TreeSelectionListener, ActionListener, WindowListener{
@@ -307,6 +307,8 @@ public class PackageTreeDlg extends JPanel
 				        DefaultMutableTreeNode system = new DefaultMutableTreeNode("system");
 				        DefaultMutableTreeNode dataapp = new DefaultMutableTreeNode("app");
 				        DefaultMutableTreeNode data = new DefaultMutableTreeNode("data");
+				        DefaultMutableTreeNode recently = new DefaultMutableTreeNode("Recently activity package");
+				        DefaultMutableTreeNode running = new DefaultMutableTreeNode("Currently running package");
 				        	        
 				        system.add(priv_app);
 				        system.add(systemapp);
@@ -346,16 +348,35 @@ public class PackageTreeDlg extends JPanel
 				        	}
 				        }
 
+				        String[] recentPackages = AdbPackageManager.getRecentlyActivityPackages(devList[i].name);
+				        for(String pkg: recentPackages) {
+				        	for(PackageListObject obj: ArrayDataObject) {
+				        		if(obj.pacakge.equals(pkg)) {
+						        	recently.add(new DefaultMutableTreeNode(obj));
+				        		}
+				        	}
+				        }
+
+				        String[] runningPackages = AdbPackageManager.getCurrentlyRunningPackages(devList[i].name);
+				        for(String pkg: runningPackages) {
+				        	for(PackageListObject obj: ArrayDataObject) {
+				        		if(obj.pacakge.equals(pkg)) {
+				        			running.add(new DefaultMutableTreeNode(obj));
+				        		}
+				        	}
+				        }
+
 				        devTree[i].removeAllChildren();
-				        devTree[i].add(system);		        
+				        devTree[i].add(recently);
+				        devTree[i].add(running);
+				        devTree[i].add(system);
 				        devTree[i].add(data);
 				        //add table
-				        
+
 				        table.setModel(new SimpleCheckTableModel(columnNames, tableListArray));
 				        table.setPreferredScrollableViewportSize(new Dimension(0,80));
 				        setJTableColumnsWidth(table,550,10,120,410);
-				        
-				        
+
 				        tree.updateUI();
 				        expandOrCollapsePath(tree, new TreePath(top.getPath()),3,0, true);
 					}
@@ -390,14 +411,20 @@ public class PackageTreeDlg extends JPanel
 
       TreeNode treeNode = ( TreeNode ) treePath.getLastPathComponent();
       TreeModel treeModel=tree.getModel();
-      if ( treeModel.getChildCount(treeNode) >= 0 ) {
-         for ( int i = 0; i < treeModel.getChildCount(treeNode); i++  ) {
+      int childCnt = treeModel.getChildCount(treeNode);
+      if ( childCnt > 0 ) {
+         for ( int i = 0; i < childCnt; i++  ) {
             TreeNode n = ( TreeNode )treeModel.getChild(treeNode, i);
+            if(((DefaultMutableTreeNode) n).getUserObject() instanceof PackageListObject) {
+            	return;
+            }
             TreePath path = treePath.pathByAddingChild( n );
             expandOrCollapsePath(tree,path,level,currentLevel+1,expand);
          }
          if (!expand && currentLevel<level) return;
-      }      
+      } else {
+    	  return;
+      }
       if (expand) {
          tree.expandPath( treePath );
 //         System.err.println("Path expanded at level "+currentLevel+"-"+treePath);
@@ -556,7 +583,7 @@ public class PackageTreeDlg extends JPanel
         	private ImageIcon iconDevice = Resource.IMG_TREE_DEVICE.getImageIcon();
         	private ImageIcon iconTop = Resource.IMG_TREE_TOP.getImageIcon();
         	private ImageIcon iconFolder = Resource.IMG_TREE_FOLDER.getImageIcon();
-        	
+
             @Override
             public Component getTreeCellRendererComponent(JTree tree,
                     Object value, boolean selected, boolean expanded,
@@ -564,24 +591,24 @@ public class PackageTreeDlg extends JPanel
                 Component c = super.getTreeCellRendererComponent(tree, value,
                         selected, expanded, isLeaf, row, focused);
                 
-                DefaultMutableTreeNode nodo = (DefaultMutableTreeNode) value;
-                int level = nodo.getLevel();
-                
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+                int level = node.getLevel();
+
                 if(level==0) {
                 	setIcon(iconTop);
                 } else if(level==1) {
                 	setIcon(iconDevice);
-                } else if(level==2) {
-                	setIcon(iconFolder);
-                } else if(level==3) {
-                	setIcon(iconFolder);
-                } else if(level==4) {
-                	setIcon(iconApk);
+                } else {
+                    if(node.getUserObject() instanceof PackageListObject) {
+                    	setIcon(iconApk);
+                    } else {
+                    	setIcon(iconFolder);
+                    }
                 }                
                 return c;
             }
         });
-        
+
         //Create the scroll pane and add the tree to it.
         JScrollPane treeView = new JScrollPane(tree);
  
@@ -772,7 +799,7 @@ public class PackageTreeDlg extends JPanel
 	        TreePath path = new TreePath(treenode);
 	        textFieldapkPath.setText(path.toString());
 		} else {
-	        PackageListObject tempObject = ((PackageListObject)node.getUserObject()); 
+	        PackageListObject tempObject = ((PackageListObject)node.getUserObject());
 	        textFieldapkPath.setText(tempObject.apkPath + " - " + tempObject.pacakge);
 		}
     }
@@ -1007,41 +1034,41 @@ public class PackageTreeDlg extends JPanel
 
 		final File destFile = ApkFileChooser.saveApkFile(parentframe, saveFileName);
 		if(destFile == null) return;
-		
-		
-		new Thread(new Runnable() {
+
+		ApkInstaller apkInstaller = new ApkInstaller(device, new ApkInstallerListener() {
 			StringBuilder sb = new StringBuilder();
-			public void run()
-			{
-				boolean ret = AdbWrapper.pullApk(device, apkPath, destFile.getAbsolutePath(), new ConsoleOutputObserver(){
-					@Override
-					public boolean ConsolOutput(String output) {
-						sb.append(output+"\n");
-						return true;
-					}
-				});
-				if(ret) {
-					int n = JOptionPane.showOptionDialog(null, Resource.STR_MSG_SUCCESS_PULLED.getString() + "\n" + destFile.getPath(), Resource.STR_LABEL_INFO.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, null,
-							new String[] {Resource.STR_BTN_EXPLORER.getString(), Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
-					if(n == 0) { // explorer
-						try {
-							if(System.getProperty("os.name").indexOf("Window") >-1) {
-								new ProcessBuilder("explorer", destFile.getParent()).start();
-							} else {  //for linux
-								new ProcessBuilder("nautilus", destFile.getParent()).start();
-							}
-						} catch (IOException e1) {
-							e1.printStackTrace();
-						}
-					} else if(n == 1) { // open
-						Launcher.run(destFile.getPath());
-					}
-				} else {
-					JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_PULLED.getString() + "\n\nlog:", sb.toString(),  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
-							null, new Dimension(400, 100));
+			@Override
+			public void OnError(int cmdType, String device) {
+				JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_PULLED.getString() + "\n\nConsol output", sb.toString(),  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
+						null, new Dimension(400, 100));
+			}
+
+			@Override
+			public void OnSuccess(int cmdType, String device) {
+				int n = ArrowTraversalPane.showOptionDialog(null,
+						Resource.STR_MSG_SUCCESS_PULL_APK.getString() + "\n" + destFile.getAbsolutePath(),
+						Resource.STR_LABEL_QUESTION.getString(),
+						JOptionPane.YES_NO_CANCEL_OPTION,
+						JOptionPane.INFORMATION_MESSAGE,
+						null,
+						new String[] {Resource.STR_BTN_EXPLORER.getString(), Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OK.getString()},
+						Resource.STR_BTN_OK.getString());
+				switch(n) {
+				case 0: // explorer
+					SystemUtil.openFileExplorer(destFile);
+					break;
+				case 1: // open
+					Launcher.run(destFile.getAbsolutePath());
+					break;
+				default:
+					break;
 				}
 			}
-		}).start();
+
+			@Override public void OnCompleted(int cmdType, String device) { }
+			@Override public void OnMessage(String msg) { sb.append(msg); }
+		});		
+		apkInstaller.pullApk(apkPath, destFile.getAbsolutePath());
     }
     
 	@Override

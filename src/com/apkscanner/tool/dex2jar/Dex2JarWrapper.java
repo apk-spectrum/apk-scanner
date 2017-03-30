@@ -5,55 +5,84 @@ import java.io.File;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.SystemUtil;
 
-public class Dex2JarWrapper {
+public class Dex2JarWrapper
+{
 	public interface DexWrapperListener
-	{    		
-		public void OnError();
-		public void OnSuccess(String outputFilePath);
+	{
+		public void onCompleted();
+		public void onError(String message);
+		public void onSuccess(String outputFilePath);
 	}
-	
+
 	static public void openDex(final String dexFilePath, final DexWrapperListener listener)
-	{			
+	{
 		new Thread(new Runnable() {
-			public void run()
-			{
+			public void run() {
 				if(dexFilePath == null || !(new File(dexFilePath)).isFile()) {
-					if(listener != null) listener.OnError();
+					Log.e("No such file : " + dexFilePath);
+					if(listener != null) {
+						listener.onError("No such file : " + dexFilePath);
+						listener.onCompleted();
+					}
 					return;
 				}
+
 				String jarFilePath = dexFilePath.replaceAll("\\.dex$", ".jar");
 				jarFilePath = jarFilePath.replaceAll("\\.apk$", ".jar");
-							
+
 				String[] cmdLog = null;
-				
+
 				Log.i("Start DEX2JAR");
-				if(System.getProperty("os.name").indexOf("Window") >-1) {
-					cmdLog = ConsolCmd.exc(new String[] {Resource.BIN_DEX2JAR_WIN.getPath(), 
+				if(SystemUtil.isWindows()) {
+					cmdLog = ConsolCmd.exc(new String[] {Resource.BIN_DEX2JAR.getPath(), 
 							dexFilePath, "-o", jarFilePath});
-				} else {  //for linux
-					cmdLog = ConsolCmd.exc(new String[] {"sh", Resource.BIN_DEX2JAR_LNX.getPath(), 
+				} else if(SystemUtil.isLinux()) {
+					cmdLog = ConsolCmd.exc(new String[] {"sh", Resource.BIN_DEX2JAR.getPath(), 
 							dexFilePath, "-o", jarFilePath});				
+				} else {
+					Log.e("Unknown OS : " + SystemUtil.OS);
+					if(listener != null) {
+						listener.onError("Unknown OS : " + SystemUtil.OS);
+						listener.onCompleted();
+					}
+					return;
 				}
 
+				StringBuilder sb = new StringBuilder();
 				boolean successed = true;
-				for( int i=0 ; i<cmdLog.length; i++)
+				
+				for(String s: cmdLog)
 				{
-					Log.i("DEX2JAR Log : "+ cmdLog[i]);
-					if(cmdLog[i].indexOf("Can not find classes.dex") > -1) {
+					sb.append(s+"\n");
+					Log.i("DEX2JAR Log : "+ s);
+					if(s.indexOf("Can not find classes.dex") > -1) {
 						successed = false;
 					}
 				}
 				Log.i("End DEX2JAR");
-				
+
+				if(!successed) {
+					if(listener != null)
+						listener.onError(sb.toString());
+					listener.onCompleted();
+					return;
+				}
+
+				if(!new File(jarFilePath).isFile()) {
+					Log.e("No such file : " + jarFilePath);
+					successed = false;
+				}
+
 				if(listener != null) {
 					if(successed)
-						listener.OnSuccess(jarFilePath);
+						listener.onSuccess(jarFilePath);
 					else
-						listener.OnError();
+						listener.onError("No such file : " + jarFilePath);
+					listener.onCompleted();
 				}
 			}
 		}).start();
 	}
-	
 }

@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Frame;
@@ -28,7 +29,6 @@ import java.awt.event.WindowListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -53,7 +53,6 @@ import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -75,9 +74,9 @@ import com.apkscanner.data.apkinfo.ActivityAliasInfo;
 import com.apkscanner.data.apkinfo.ActivityInfo;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ManifestInfo;
+import com.apkscanner.gui.messagebox.ArrowTraversalPane;
 import com.apkscanner.gui.util.AbstractTabRenderer;
 import com.apkscanner.gui.util.ApkFileChooser;
-import com.apkscanner.gui.util.ArrowTraversalPane;
 import com.apkscanner.gui.util.ImagePanel;
 import com.apkscanner.gui.util.SimpleCheckTableModel;
 import com.apkscanner.gui.util.SimpleCheckTableModel.TableRowObject;
@@ -91,6 +90,7 @@ import com.apkscanner.tool.adb.AdbPackageManager;
 import com.apkscanner.tool.adb.AdbPackageManager.PackageInfo;
 import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.SystemUtil;
 import com.apkscanner.util.ZipFileUtil;
 
 public class ApkInstallWizard
@@ -1201,7 +1201,7 @@ public class ApkInstallWizard
 						// disable overwrite
 					}
 					
-					if(apkInfo == null || apkInfo.librarys == null || apkInfo.librarys.length == 0) {
+					if(apkInfo == null || apkInfo.libraries == null || apkInfo.libraries.length == 0) {
 						// disable with libs
 					} else {
 						
@@ -1609,7 +1609,7 @@ public class ApkInstallWizard
 		}
 		apkScanner = new AaptScanner(new ApkScannerStub.StatusListener() {
 			@Override
-			public void OnStateChanged(Status status) {
+			public void onStateChanged(Status status) {
 				Log.i("OnStateChanged() "+ status);
 				switch(status) {
 				case BASIC_INFO_COMPLETED:
@@ -1622,11 +1622,11 @@ public class ApkInstallWizard
 				}
 			}
 
-			@Override public void OnSuccess() { }
-			@Override public void OnStart(long estimatedTime) { }
-			@Override public void OnProgress(int step, String msg) { }
-			@Override public void OnError() { }
-			@Override public void OnComplete() { }
+			@Override public void onSuccess() { }
+			@Override public void onStart(long estimatedTime) { }
+			@Override public void onProgress(int step, String msg) { }
+			@Override public void onError(int error) { }
+			@Override public void onCompleted() { }
 		});
 		apkScanner.openApk(apkFilePath);
 		apkInfo = apkScanner.getApkInfo();
@@ -1746,10 +1746,7 @@ public class ApkInstallWizard
 						Resource.STR_BTN_OK.getString());
 				switch(n) {
 				case 0: // explorer
-					String openner = (System.getProperty("os.name").indexOf("Window") > -1) ? "explorer" : "xdg-open";
-					try {
-						new ProcessBuilder(openner, destFile.getParent()).start();
-					} catch (IOException e1) { }
+					SystemUtil.openFileExplorer(destFile);
 					break;
 				case 1: // open
 					Launcher.run(destFile.getAbsolutePath());
@@ -1919,7 +1916,7 @@ public class ApkInstallWizard
 			String libPath = null;
 			if((flag & FLAG_OPT_EXTRA_WITH_LIB) == FLAG_OPT_EXTRA_WITH_LIB &&
 					(flag & FLAG_OPT_PUSH_DATA) != FLAG_OPT_PUSH_DATA &&
-					apkInfo.librarys != null && apkInfo.librarys.length > 0) {
+					apkInfo.libraries != null && apkInfo.libraries.length > 0) {
 				printLog("With libraries ...");
 				// unzip libs..
 				if(ZipFileUtil.unZip(apkInfo.filePath, "lib/", apkInfo.tempWorkPath+File.separator+"lib")) {
@@ -2048,10 +2045,10 @@ public class ApkInstallWizard
 	};
 	
     public static void main(String args[]) {
-        SwingUtilities.invokeLater(new Runnable() {
+        EventQueue.invokeLater(new Runnable() {
             public void run() {
 				ApkInstallWizard wizard = new ApkInstallWizard();
-				if(System.getProperty("os.name").indexOf("Window") >-1) {
+				if(SystemUtil.isWindows()) {
 					wizard.setApk("C:\\Melon.apk");
 				} else {  //for linux
 					wizard.setApk("/home/leejinhyeong/Desktop/SecSettings2.apk");

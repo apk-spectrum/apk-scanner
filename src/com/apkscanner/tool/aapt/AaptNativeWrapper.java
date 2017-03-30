@@ -1,10 +1,16 @@
 package com.apkscanner.tool.aapt;
 
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 import com.apkscanner.util.Log;
+import com.apkscanner.util.SystemUtil;
 
 public class AaptNativeWrapper {
+
+	static private final int SEM_COUNT = 10;
+	static private Semaphore semaphore = new Semaphore(SEM_COUNT, true);
+	static private boolean nativeLocked = false;
 
 	static public class List
 	{
@@ -23,36 +29,36 @@ public class AaptNativeWrapper {
 	{
 		static public String[] getStrings(String apkFilePath)
 		{
-			return run(new String[] {"dump", "strings", apkFilePath});
+			return run_l(new String[] {"dump", "strings", apkFilePath});
 		}
 
 		static public String[] getBadging(String apkFilePath, boolean includeMetaData)
 		{
 			if(includeMetaData) {
-				return run(new String[] {"dump", "--include-meta-data", "badging", apkFilePath});	
+				return run_l(new String[] {"dump", "--include-meta-data", "badging", apkFilePath});	
 			} else {
-				return run(new String[] {"dump", "badging", apkFilePath});				
+				return run_l(new String[] {"dump", "badging", apkFilePath});				
 			}
 		}
 
 		static public String[] getPermissions(String apkFilePath)
 		{
-			return run(new String[] {"dump", "permissions", apkFilePath});
+			return run_l(new String[] {"dump", "permissions", apkFilePath});
 		}
 
 		static public String[] getResources(String apkFilePath, boolean includeResourceValues)
 		{
 			Log.i("getResources() " + apkFilePath);
 			if(includeResourceValues) {
-				return run(new String[] {"dump", "--values", "resources", apkFilePath});	
+				return run_l(new String[] {"dump", "--values", "resources", apkFilePath});	
 			} else {
-				return run(new String[] {"dump", "resources", apkFilePath});				
+				return run_l(new String[] {"dump", "resources", apkFilePath});				
 			}
 		}
 
 		static public String[] getConfigurations(String apkFilePath)
 		{
-			return run(new String[] {"dump", "configurations", apkFilePath});
+			return run_l(new String[] {"dump", "configurations", apkFilePath});
 		}
 
 		static public String[] getXmltree(String apkFilePath, String[] assets)
@@ -65,7 +71,7 @@ public class AaptNativeWrapper {
 			for(String a: assets) {
 				cmd.add(a);
 			}
-			return run(cmd.toArray(new String[0]));
+			return run_l(cmd.toArray(new String[0]));
 		}
 
 		static public String[] getXmlstrings(String apkFilePath, String[] assets)
@@ -77,13 +83,36 @@ public class AaptNativeWrapper {
 			for(String a: assets) {
 				cmd.add(a);
 			}
-			return run(cmd.toArray(new String[0]));
+			return run_l(cmd.toArray(new String[0]));
 		}
 	}
+
+	private static String[] run_l(String[] params) {
+		semaphore.acquireUninterruptibly();
+		String[] ret = run(params);
+		semaphore.release();
+		return ret;
+	}
+	
+	public static void lock() {
+		synchronized (semaphore) {
+			if(nativeLocked) return;
+			semaphore.acquireUninterruptibly(SEM_COUNT);
+			nativeLocked = true;
+		}
+	}
+	
+	public static void unlock() {
+		synchronized (semaphore) {
+			if(nativeLocked) semaphore.release(SEM_COUNT);
+			nativeLocked = false;
+		}
+	}
+	
 	private native static String[] run(String[] params);
 
 	static {
-		if (System.getProperty("os.name").indexOf("Linux") > -1) {
+		if (SystemUtil.isLinux()) {
 			System.loadLibrary("c++");
 		}
 		System.loadLibrary("AaptNativeWrapper");
