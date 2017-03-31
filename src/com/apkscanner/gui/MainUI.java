@@ -426,7 +426,8 @@ public class MainUI extends JFrame
 		private void evtOpenJDGUI()
 		{
 			ApkInfo apkInfo = apkScanner.getApkInfo();
-			if(apkInfo == null) {
+			if(apkInfo == null || apkInfo.filePath == null
+					|| !new File(apkInfo.filePath).exists()) {
 				Log.e("evtOpenJDGUI() apkInfo is null");
 				return;
 			}
@@ -445,7 +446,9 @@ public class MainUI extends JFrame
 			}
 
 			toolBar.setEnabledAt(ButtonSet.OPEN_CODE, false);
-			Dex2JarWrapper.openDex(apkInfo.filePath, new Dex2JarWrapper.DexWrapperListener() {
+			
+			String jarfileName = apkInfo.tempWorkPath + File.separator + (new File(apkInfo.filePath)).getName().replaceAll("\\.apk$", ".jar");
+			Dex2JarWrapper.convert(apkInfo.filePath, jarfileName, new Dex2JarWrapper.DexWrapperListener() {
 				@Override
 				public void onCompleted() {
 					EventQueue.invokeLater(new Runnable() {

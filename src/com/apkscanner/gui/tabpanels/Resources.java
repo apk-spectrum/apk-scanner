@@ -810,7 +810,7 @@ public class Resources extends JPanel implements TabDataObject {
 				resObj.setLoadingState(true);
 
 				tree.repaint();
-				Dex2JarWrapper.openDex(resPath, new Dex2JarWrapper.DexWrapperListener() {
+				Dex2JarWrapper.convert(resPath, new Dex2JarWrapper.DexWrapperListener() {
 					private void resetUI() {
 						resObj.setLoadingState(false);
 

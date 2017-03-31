@@ -844,7 +844,7 @@ public class ResouceContentsPanel extends JPanel{
 			} else if (ButtonSet.JD_GUI.matchActionEvent(e)) {
 				final JButton btn = buttonMap.get(ButtonSet.JD_GUI);
 				btn.setEnabled(false);
-				Dex2JarWrapper.openDex(resPath, new Dex2JarWrapper.DexWrapperListener() {
+				Dex2JarWrapper.convert(resPath, new Dex2JarWrapper.DexWrapperListener() {
 					@Override
 					public void onError(String message) {
 					}

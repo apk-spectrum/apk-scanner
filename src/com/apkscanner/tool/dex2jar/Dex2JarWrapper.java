@@ -16,7 +16,14 @@ public class Dex2JarWrapper
 		public void onSuccess(String outputFilePath);
 	}
 
-	static public void openDex(final String dexFilePath, final DexWrapperListener listener)
+	static public void convert(final String dexFilePath, final DexWrapperListener listener)
+	{
+		String toJarFilePath = dexFilePath.replaceAll("\\.dex$", ".jar");
+		toJarFilePath = toJarFilePath.replaceAll("\\.apk$", ".jar");
+		convert(dexFilePath, toJarFilePath, listener);
+	}
+
+	static public void convert(final String dexFilePath, final String toJarFilePath, final DexWrapperListener listener)
 	{
 		new Thread(new Runnable() {
 			public void run() {
@@ -29,18 +36,15 @@ public class Dex2JarWrapper
 					return;
 				}
 
-				String jarFilePath = dexFilePath.replaceAll("\\.dex$", ".jar");
-				jarFilePath = jarFilePath.replaceAll("\\.apk$", ".jar");
-
 				String[] cmdLog = null;
 
 				Log.i("Start DEX2JAR");
 				if(SystemUtil.isWindows()) {
 					cmdLog = ConsolCmd.exc(new String[] {Resource.BIN_DEX2JAR.getPath(), 
-							dexFilePath, "-o", jarFilePath});
+							dexFilePath, "-o", toJarFilePath});
 				} else if(SystemUtil.isLinux()) {
 					cmdLog = ConsolCmd.exc(new String[] {"sh", Resource.BIN_DEX2JAR.getPath(), 
-							dexFilePath, "-o", jarFilePath});				
+							dexFilePath, "-o", toJarFilePath});				
 				} else {
 					Log.e("Unknown OS : " + SystemUtil.OS);
 					if(listener != null) {
@@ -52,7 +56,7 @@ public class Dex2JarWrapper
 
 				StringBuilder sb = new StringBuilder();
 				boolean successed = true;
-				
+
 				for(String s: cmdLog)
 				{
 					sb.append(s+"\n");
@@ -70,16 +74,16 @@ public class Dex2JarWrapper
 					return;
 				}
 
-				if(!new File(jarFilePath).isFile()) {
-					Log.e("No such file : " + jarFilePath);
+				if(!new File(toJarFilePath).isFile()) {
+					Log.e("No such file : " + toJarFilePath);
 					successed = false;
 				}
 
 				if(listener != null) {
 					if(successed)
-						listener.onSuccess(jarFilePath);
+						listener.onSuccess(toJarFilePath);
 					else
-						listener.onError("No such file : " + jarFilePath);
+						listener.onError("No such file : " + toJarFilePath);
 					listener.onCompleted();
 				}
 			}
