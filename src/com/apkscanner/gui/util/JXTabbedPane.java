@@ -7,18 +7,16 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 
 public class JXTabbedPane extends JTabbedPane {
+	private static final long serialVersionUID = 7931638587933453293L;
 
-    private ITabRenderer tabRenderer = new DefaultTabRenderer();
+	private ITabRenderer tabRenderer = new DefaultTabRenderer();
 
     public JXTabbedPane() {
         super();

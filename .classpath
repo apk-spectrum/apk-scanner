@@ -10,5 +10,7 @@
 	<classpathentry kind="lib" path="lib/ddmlib.jar"/>
 	<classpathentry kind="lib" path="lib/guava-18.0.jar"/>
 	<classpathentry kind="lib" path="lib/mslinks.jar"/>
+	<classpathentry kind="lib" path="lib/jna-platform-4.4.0.jar"/>
+	<classpathentry kind="lib" path="lib/jna-4.4.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

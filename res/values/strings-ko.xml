@@ -74,6 +74,7 @@
     <string name="basic_perm_list_title">전체 권한 목록</string>
     <string name="basic_perm_display_title">권한정보 상세보기</string>
     <string name="basic_create_shortcut">바탕화면에 바로가기 추가</string>
+    <string name="basic_assoc_ftype">.apk 파일 연결하기</string>
 
     <string name="feature_lab">특징</string>
     <string name="feature_desc">앱의 주요 특징 혹은 기능</string>

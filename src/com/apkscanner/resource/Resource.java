@@ -105,6 +105,7 @@ public enum Resource
 	STR_BASIC_PERM_LIST_TITLE	(Type.TEXT, "@basic_perm_list_title"),
 	STR_BASIC_PERM_DISPLAY_TITLE(Type.TEXT, "@basic_perm_display_title"),
 	STR_BASIC_CREATE_SHORTCUT	(Type.TEXT, "@basic_create_shortcut"),
+	STR_BASIC_ASSOC_FTYPE		(Type.TEXT, "@basic_assoc_ftype"),
 
 	STR_FEATURE_LAB				(Type.TEXT, "@feature_lab"),
 	STR_FEATURE_DESC			(Type.TEXT, "@feature_desc"),

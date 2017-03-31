@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -183,8 +184,10 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("<div id=\"div-button\">");
 		strTabInfo.append(makeHyperLink("@event", Resource.STR_BASIC_CREATE_SHORTCUT.getString(), null, "function-create-shortcut", null) + "<br/>");
 		strTabInfo.append("</div>");
+		}
+		if(!SystemUtil.isAssociatedWithFileType(".apk")) {
 		strTabInfo.append("<div id=\"div-button\">");
-		strTabInfo.append(makeHyperLink("@event", Resource.STR_BASIC_CREATE_SHORTCUT.getString(), null, "function-link-apk", null) + "<br/>");
+		strTabInfo.append(makeHyperLink("@event", Resource.STR_BASIC_ASSOC_FTYPE.getString(), null, "function-assoc-apk", null) + "<br/>");
 		strTabInfo.append("</div>");
 		}
 		strTabInfo.append("    </td>");
@@ -727,6 +730,18 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			showFeatureInfo(id);
 		} else if("function-create-shortcut".equals(id)) {
 			SystemUtil.createShortCut();
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					showAbout();
+				}
+			});
+		} else if("function-assoc-apk".equals(id)) {
+			SystemUtil.setAssociateFileType(".apk");
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					showAbout();
+				}
+			});
 		} else {
 			showPermDetailDesc(id);
 		}

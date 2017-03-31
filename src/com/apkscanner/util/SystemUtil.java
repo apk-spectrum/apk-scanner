@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import com.apkscanner.resource.Resource;
+import com.sun.jna.platform.win32.Advapi32Util;
+import com.sun.jna.platform.win32.WinReg;
 
 import mslinks.ShellLink;
 import mslinks.ShellLinkException;
@@ -211,7 +213,7 @@ public class SystemUtil
 			}
 			try {
 				String pathToExistingFile = new ShellLink(lnkPath).resolveTarget();
-				Log.e("pathToExistingFile " + pathToExistingFile);
+				Log.v("pathToExistingFile " + pathToExistingFile);
 				if(pathToExistingFile == null || !new File(pathToExistingFile).exists()) {
 					return false;
 				}
@@ -220,6 +222,161 @@ public class SystemUtil
 			}
 		}
 		return true;
+	}
+
+	public static String getOpenCommand(String suffix) throws Exception {
+		if(!isWindows() || !Advapi32Util.registryKeyExists(WinReg.HKEY_CLASSES_ROOT, suffix)) {
+			return null;
+		}
+
+		String ftypeKey = null;
+		if(Advapi32Util.registryValueExists(WinReg.HKEY_CLASSES_ROOT, suffix, "")) {
+			ftypeKey = Advapi32Util.registryGetStringValue(WinReg.HKEY_CLASSES_ROOT, suffix, "");
+		} else {
+			ftypeKey = suffix;
+		}
+		ftypeKey += "\\Shell\\Open\\Command";
+
+		if(!Advapi32Util.registryKeyExists(WinReg.HKEY_CLASSES_ROOT, ftypeKey)
+				|| !Advapi32Util.registryValueExists(WinReg.HKEY_CLASSES_ROOT, ftypeKey, "")) {
+			return null;
+		}
+		return Advapi32Util.registryGetStringValue(WinReg.HKEY_CLASSES_ROOT, ftypeKey, "");
+	}
+
+	public static boolean isAssociatedWithFileType(String suffix) {
+		if(!isWindows()) {
+			return true;
+		}
+		String filePath = Resource.getUTF8Path() + File.separator + "ApkScanner.exe";
+		String cmd = null;
+		try {
+			cmd = getOpenCommand(suffix);
+		} catch(Exception e) {
+			Log.w("Failure: Can not read registry");
+			e.printStackTrace();
+			return isAssociatedWithFileTypeLegacy(suffix);
+		}
+		return cmd != null && cmd.replaceAll("\"?(.*)", "$1").startsWith(filePath);
+	}
+
+	private static boolean isAssociatedWithFileTypeLegacy(String suffix) {
+		Log.i("isAssociatedWithFileTypeLegacy()");
+		String[] output = ConsolCmd.exc(new String[] {"cmd", "/c", "assoc", suffix});
+		if(output == null || output.length == 0
+				|| !output[0].startsWith(suffix+"=")) {
+			return false;
+		}
+
+		String ftype = output[0].replaceAll(suffix+"=(.*)", "$1");
+		if(ftype.isEmpty() || ftype.equals(output[0])) {
+			return false;
+		}
+
+		output = ConsolCmd.exc(new String[] {"cmd", "/c", "ftype", ftype});
+		if(output == null || output.length == 0
+				|| !output[0].startsWith(ftype+"=")) {
+			return false;
+		}
+
+		String cmd = output[0].replaceAll(ftype+"=\"?(.*)", "$1");
+		if(cmd.isEmpty() || cmd.equals(output[0])) {
+			return false;
+		}
+
+		String filePath = Resource.getUTF8Path() + File.separator + "ApkScanner.exe";
+		return cmd.startsWith(filePath);
+	}
+
+	public static boolean setAssociateFileType(String suffix) {
+		if(isAssociatedWithFileType(suffix)) {
+			return true;
+		}
+		String filePath = Resource.getUTF8Path() + File.separator + "ApkScanner.exe";
+		String prefixKey = "ApkScanner"+suffix;
+		try {
+			Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\CLSID");
+			Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\CLSID", "", "{E88DCCE0-B7B3-11d1-A9F0-00AA0060FA31}");
+			Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\DefaultIcon");
+			Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\DefaultIcon", "", filePath+",1");
+			Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\OpenWithProgids");
+			Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\OpenWithProgids", "CompressedFolder", "");
+			Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Open\\Command");
+			Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Open\\Command", "", filePath+" \"%1\"");
+			Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Install\\Command");
+			Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Install\\Command", "", filePath+" install \"%1\"");
+
+			Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, suffix);
+			Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, suffix, "", prefixKey);
+		} catch(Exception e) {
+			Log.w("Failure: Can not write registry");
+			e.printStackTrace();
+			return setAssociateFileTypeLegacy(suffix);
+		}
+
+		if(!isAssociatedWithFileType(suffix)) {
+			return false;
+		}
+
+		// refresh explorer icon
+		exec(new String[] {"cmd", "/c", "assoc", suffix+"=ApkScanner"+suffix });
+		return true;
+	}
+
+	private static boolean setAssociateFileTypeLegacy(String suffix) {
+		Log.i("setAssociateFileTypeLegacy()");
+		if(isAssociatedWithFileType(suffix)) {
+			return true;
+		}
+		String filePath = Resource.getUTF8Path() + File.separator + "ApkScanner.exe";
+		ConsolCmd.exc(new String[][] {
+			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\CLSID", "/ve", "/t", "REG_SZ", "/d", "{E88DCCE0-B7B3-11d1-A9F0-00AA0060FA31}", "/f" },
+			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\DefaultIcon", "/ve", "/t", "REG_SZ", "/d", filePath+",1", "/f" },
+			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\OpenWithProgids", "/v", "CompressedFolder", "/t", "REG_SZ", "/f" },
+			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\Shell\\Open\\Command", "/ve", "/t", "REG_EXPAND_SZ", "/d", filePath+" \\\"%1\\\"", "/f" },
+			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\Shell\\Install\\Command", "/ve", "/t", "REG_EXPAND_SZ", "/d", filePath+" install \\\"%1\\\"", "/f" },
+			{"cmd", "/c", "reg", "add", "HKCR\\"+suffix, "/ve", "/t", "REG_SZ", "/d", "ApkScanner"+suffix, "/f" },
+			{"cmd", "/c", "assoc", suffix+"=ApkScanner"+suffix },
+		});
+		return isAssociatedWithFileType(suffix);
+	}
+
+	public static void unsetAssociateFileType(String suffix) {
+		if(!isWindows() || !isAssociatedWithFileType(suffix)) {
+			return;
+		}
+
+		try {
+			String ftypeKey = null;
+			if(Advapi32Util.registryValueExists(WinReg.HKEY_CLASSES_ROOT, suffix, "")) {
+				ftypeKey = Advapi32Util.registryGetStringValue(WinReg.HKEY_CLASSES_ROOT, suffix, "");
+				Advapi32Util.registryDeleteValue(WinReg.HKEY_CLASSES_ROOT, suffix, "");
+			} else {
+				ftypeKey = suffix + "\\Shell\\Open\\Command";
+			}
+			if(!Advapi32Util.registryKeyExists(WinReg.HKEY_CLASSES_ROOT, ftypeKey)) {
+				return;
+			}
+			Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, ftypeKey);
+
+			// refresh explorer icon
+			exec(new String[] {"cmd", "/c", "assoc", suffix+"=" });
+		} catch(Exception e) {
+			Log.e("Failure: Can not delete registry");
+			unsetAssociateFileTypeLagacy(suffix);
+		}
+	}
+
+	private static void unsetAssociateFileTypeLagacy(String suffix) {
+		Log.i("unsetAssociateFileTypeLagacy()");
+		if(!isAssociatedWithFileType(suffix)) {
+			return;
+		}
+		ConsolCmd.exc(new String[][] {
+			{"cmd", "/c", "reg", "add", "HKCR\\"+suffix, "/ve", "/t", "REG_SZ", "/d", "", "/f" },
+			{"cmd", "/c", "reg", "delete", "HKCR\\ApkScanner"+suffix, "/f" },
+			{"cmd", "/c", "assoc", suffix+"=" },
+		});
 	}
 
 	public static boolean exec(ArrayList<String> cmd) {
