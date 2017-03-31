@@ -82,7 +82,7 @@ rem --- Launch APK Scanner  ---
 
 echo Complete
 
-goto exit
+goto exit_success
 
 :nosuch_java
 set java_ver=
@@ -92,3 +92,5 @@ goto exit
 
 :exit
 pause
+
+:exit_success

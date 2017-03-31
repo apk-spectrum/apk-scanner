@@ -205,7 +205,7 @@ public class SystemUtil
 
 	public static boolean hasShortCut() {
 		if(isWindows()) {
-			//String filePath = Resource.getUTF8Path() + File.separator + "ApkScanner.exe";
+			String filePath = Resource.getUTF8Path() + File.separator + "ApkScanner.exe";
 			String lnkPath = System.getProperty("user.home") + File.separator + "Desktop" + File.separator + Resource.STR_APP_NAME.getString() + ".lnk";
 
 			if(!new File(lnkPath).exists()) {
@@ -214,7 +214,8 @@ public class SystemUtil
 			try {
 				String pathToExistingFile = new ShellLink(lnkPath).resolveTarget();
 				Log.v("pathToExistingFile " + pathToExistingFile);
-				if(pathToExistingFile == null || !new File(pathToExistingFile).exists()) {
+				if(pathToExistingFile == null || !new File(pathToExistingFile).exists()
+						|| !pathToExistingFile.equals(filePath)) {
 					return false;
 				}
 			} catch (IOException | ShellLinkException e) {
