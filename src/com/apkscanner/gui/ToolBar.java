@@ -3,7 +3,6 @@ package com.apkscanner.gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -215,8 +214,8 @@ public class ToolBar extends JToolBar
 				button.setVerticalTextPosition(AbstractButton.CENTER);
 				break;
 			case EXTEND:
-				button.setMargin(new Insets(27,0,27,0));
-				button.setActionCommand(null);
+				button.setPreferredSize(new Dimension(20,65));
+				button.removeActionListener(listener);
 				break;
 			default:
 				break;
@@ -266,6 +265,8 @@ public class ToolBar extends JToolBar
 
 		Log.i("ToolBar.initUI() ButtonSet init");
 		buttonMap = ButtonSet.getButtonMap(listener);
+		buttonMap.get(ButtonSet.OPEN).setPreferredSize(new Dimension(55,65));
+		buttonMap.get(ButtonSet.OPEN_PACKAGE).setPreferredSize(new Dimension(55,65));
 
 		buttonMap.get(ButtonSet.OPEN_EXTEND).addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
