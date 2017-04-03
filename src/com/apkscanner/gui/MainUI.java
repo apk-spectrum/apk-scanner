@@ -22,6 +22,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.android.ddmlib.AdbVersion;
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.android.ddmlib.IDevice;
@@ -50,6 +51,8 @@ import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.tool.adb.AdbPackageManager;
 import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.tool.adb.AdbPackageManager.PackageInfo;
+import com.apkscanner.tool.adb.AdbServerMonitor;
+import com.apkscanner.tool.adb.AdbServerMonitor.IAdbDemonChangeListener;
 import com.apkscanner.tool.dex2jar.Dex2JarWrapper;
 import com.apkscanner.tool.jd_gui.JDGuiLauncher;
 import com.apkscanner.util.FileUtil;
@@ -747,7 +750,7 @@ public class MainUI extends JFrame
 		@Override public void windowDeactivated(WindowEvent e) { }
 	}
 
-	class DeviceMonitor implements IDeviceChangeListener
+	class DeviceMonitor implements IDeviceChangeListener, IAdbDemonChangeListener
 	{
 		AndroidDebugBridge adb = null;
 		private String packageName = null;
@@ -758,36 +761,18 @@ public class MainUI extends JFrame
 		private HashMap<String, PackageInfo> devices = new HashMap<String, PackageInfo>(); 
 
 		public DeviceMonitor() {
-			init(this);
+			Log.v("DeviceMonitor init");
+			AdbServerMonitor.startServerAndCreateBridge(Resource.BIN_ADB.getPath(), false, true);
+			AdbServerMonitor.addAdbDemonChangeListener(this);
+
+			AndroidDebugBridge.addDeviceChangeListener(this);
+			Log.v("DeviceMonitor end");
 		}
 
 		public String[] getInstalledDevice() {
 			synchronized (devices) {
 				return devices.keySet().toArray(new String[0]);
 			}
-		}
-
-		public void init(final IDeviceChangeListener listener) {
-			new Thread(new Runnable() {
-				public void run() {
-					Log.v("DeviceMonitor init");
-					try{
-						AndroidDebugBridge.init(false);
-						AndroidDebugBridge _adb = AndroidDebugBridge.createBridge(Resource.BIN_ADB.getPath(), false);
-						if (_adb == null) {
-							Log.e("Invalid ADB location.");
-							return;
-						}
-						synchronized(DeviceMonitor.this) {
-							adb = _adb;
-						}
-						AndroidDebugBridge.addDeviceChangeListener(listener);
-					} catch(IllegalStateException e) {
-						Log.w(e.getMessage());
-					}
-					Log.v("DeviceMonitor end");
-				}
-			}).start();
 		}
 
 		public void setApkInfo(ApkInfo info) {
@@ -814,6 +799,7 @@ public class MainUI extends JFrame
 			Log.v("applyToobarPolicy() " + EventQueue.isDispatchThread());
 
 			synchronized(this) {
+				adb = AndroidDebugBridge.getBridge();
 				if (adb == null) {
 					Log.i("DeviceMonitor is not ready");
 					return;
@@ -917,6 +903,18 @@ public class MainUI extends JFrame
 				}
 			}
 			applyToobarPolicy();
+		}
+
+		@Override
+		public void adbDemonConnected(String adbPath, AdbVersion version) {
+			Log.e("adbDemon Connected() " + adbPath + ", version " + version);
+			
+		}
+
+		@Override
+		public void adbDemonDisconnected() {
+			Log.e("adbDemon Disconnected() ");
+			
 		}
 	}
 }
