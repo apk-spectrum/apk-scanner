@@ -752,7 +752,6 @@ public class MainUI extends JFrame
 
 	class DeviceMonitor implements IDeviceChangeListener, IAdbDemonChangeListener
 	{
-		AndroidDebugBridge adb = null;
 		private String packageName = null;
 		private int versionCode = 0;
 		private boolean hasSignature = false;
@@ -799,7 +798,7 @@ public class MainUI extends JFrame
 			Log.v("applyToobarPolicy() " + EventQueue.isDispatchThread());
 
 			synchronized(this) {
-				adb = AndroidDebugBridge.getBridge();
+				AndroidDebugBridge adb = AndroidDebugBridge.getBridge();
 				if (adb == null) {
 					Log.i("DeviceMonitor is not ready");
 					return;
@@ -810,7 +809,7 @@ public class MainUI extends JFrame
 					boolean hasInstalled = false;
 					boolean hasLower = false;
 					boolean hasUpper = false;
-					for(IDevice device: AndroidDebugBridge.getBridge().getDevices()) {
+					for(IDevice device: adb.getDevices()) {
 						PackageInfo pkg = null;
 						synchronized(devices) {
 							if(devices.containsKey(device.getSerialNumber())) {
