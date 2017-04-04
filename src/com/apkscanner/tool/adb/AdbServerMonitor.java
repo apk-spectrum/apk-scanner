@@ -307,7 +307,17 @@ public final class AdbServerMonitor {
 	}
 
 	public static String getRunningAdbPath() {
-		String[] list = SystemUtil.getRunningProcessFullPath("adb.exe");
+		String processName = null;
+		if(SystemUtil.isWindows()) {
+			processName = "adb.exe";
+		} else if(SystemUtil.isLinux()) {
+			processName = "adb"; 
+		} else {
+			Log.e("Unknown OS " + SystemUtil.OS);
+			return null;
+		}
+
+		String[] list = SystemUtil.getRunningProcessFullPath(processName);
 		if(list.length > 1) {
 			Log.v("adb process list size : " + list.length);
 			String ret = null;

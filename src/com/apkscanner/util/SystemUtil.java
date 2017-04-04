@@ -496,6 +496,20 @@ public class SystemUtil
 			finally {
 				kernel32.CloseHandle(processSnapshot);
 			}
+		} else if(SystemUtil.isLinux()) {
+			String[] uid = ConsolCmd.exc(new String[] { "id", "-ur" });
+			String[] cout = null;
+			if(uid != null && uid.length > 0 && !uid[0].isEmpty()) {
+				cout = ConsolCmd.exc(new String[] { "pgrep", "-x", "-U", uid[0], imageName });
+			} else {
+				cout = ConsolCmd.exc(new String[] { "pgrep", "-x", imageName });
+			}
+			for(String pid: cout) {
+				String[] process = ConsolCmd.exc(new String[] { "readlink", "/proc/"+pid+"/exe" });
+				if(process != null && process.length > 0) {
+					list.add(process[0]);
+				}
+			}
 		}
 
 		return list.toArray(new String[list.size()]);
