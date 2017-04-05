@@ -13,7 +13,7 @@ import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.XmlPath;
 
-public class ApktoolScanner extends ApkScannerStub
+public class ApktoolScanner extends ApkScanner
 {
 	private boolean isPackageTempAPK = false;
  	

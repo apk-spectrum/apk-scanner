@@ -7,7 +7,7 @@ import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 
-public class AaptNativeScanner extends ApkScannerStub
+public class AaptNativeScanner extends ApkScanner
 {
 
 	static private final int SEM_COUNT = 10;

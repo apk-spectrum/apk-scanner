@@ -10,7 +10,6 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
@@ -68,8 +67,8 @@ import com.apkscanner.Launcher;
 import com.apkscanner.core.installer.ApkInstaller;
 import com.apkscanner.core.installer.ApkInstaller.ApkInstallerListener;
 import com.apkscanner.core.scanner.AaptScanner;
-import com.apkscanner.core.scanner.ApkScannerStub;
-import com.apkscanner.core.scanner.ApkScannerStub.Status;
+import com.apkscanner.core.scanner.ApkScanner;
+import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ActivityAliasInfo;
 import com.apkscanner.data.apkinfo.ActivityInfo;
 import com.apkscanner.data.apkinfo.ApkInfo;
@@ -78,12 +77,10 @@ import com.apkscanner.gui.messagebox.ArrowTraversalPane;
 import com.apkscanner.gui.util.AbstractTabRenderer;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.ImagePanel;
+import com.apkscanner.gui.util.JXTabbedPane;
 import com.apkscanner.gui.util.SimpleCheckTableModel;
 import com.apkscanner.gui.util.SimpleCheckTableModel.TableRowObject;
-import com.apkscanner.gui.util.JXTabbedPane;
-
 import com.apkscanner.resource.Resource;
-
 import com.apkscanner.tool.adb.AdbDeviceManager;
 import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
 import com.apkscanner.tool.adb.AdbPackageManager;
@@ -137,7 +134,7 @@ public class ApkInstallWizard
 	private PackageInfo[] installedPackage;
 	private ApkInfo apkInfo;
 	
-	private ApkScannerStub apkScanner;
+	private ApkScanner apkScanner;
 
 	public class ApkInstallWizardDialog  extends JDialog
 	{
@@ -147,12 +144,7 @@ public class ApkInstallWizard
 			dialog_init(null);
 		}
 		
-		public ApkInstallWizardDialog(Frame owner) {
-			super(owner);
-			dialog_init(owner);
-		}
-		
-		public ApkInstallWizardDialog(JDialog owner) {
+		public ApkInstallWizardDialog(Window owner) {
 			super(owner);
 			dialog_init(owner);
 		}
@@ -177,16 +169,11 @@ public class ApkInstallWizard
 			setDefaultCloseOperation(EXIT_ON_CLOSE);
 		}
 
-		public ApkInstallWizardFrame(Frame owner) {
+		public ApkInstallWizardFrame(Window owner) {
 			frame_init();
 			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		}
 
-		public ApkInstallWizardFrame(JDialog owner) {
-			frame_init();
-			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		}
-		
 		private void frame_init()
 		{
 			try {
@@ -1607,7 +1594,7 @@ public class ApkInstallWizard
 			apkScanner.clear(false);
 			apkScanner = null;
 		}
-		apkScanner = new AaptScanner(new ApkScannerStub.StatusListener() {
+		apkScanner = new AaptScanner(new ApkScanner.StatusListener() {
 			@Override
 			public void onStateChanged(Status status) {
 				Log.i("OnStateChanged() "+ status);

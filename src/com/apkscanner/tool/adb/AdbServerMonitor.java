@@ -125,12 +125,12 @@ public final class AdbServerMonitor {
 		}
 	}
 
-	private void start(boolean forceNewDemon) {
+	public void start(boolean forceNewDemon) {
 		mAdbDemonMonitorTask = new AdbServerMonitorTask(this);
 		new Thread(mAdbDemonMonitorTask, "Adb Demon Monitor").start();
 	}
 
-	private void stop() {
+	public void stop() {
 		mAdbDemonMonitorTask.stop();
 	}
 

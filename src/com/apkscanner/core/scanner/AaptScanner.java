@@ -13,7 +13,7 @@ import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
 
-public class AaptScanner extends ApkScannerStub
+public class AaptScanner extends ApkScanner
 {
 	private AaptXmlTreePath manifestPath = null;
 	private AaptNativeScanner resourceScanner;
@@ -28,6 +28,7 @@ public class AaptScanner extends ApkScannerStub
 	@Override
 	public void openApk(final String apkFilePath, final String frameworkRes)
 	{
+		Log.i("openApk() " + apkFilePath + ", res " + frameworkRes);
 		if(apkFilePath == null) {
 			Log.e("APK file path is null");
 			if(statusListener != null) {

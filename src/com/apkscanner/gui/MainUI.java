@@ -27,9 +27,8 @@ import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.android.ddmlib.IDevice;
 import com.apkscanner.Launcher;
-import com.apkscanner.core.scanner.AaptScanner;
-import com.apkscanner.core.scanner.ApkScannerStub;
-import com.apkscanner.core.scanner.ApkScannerStub.Status;
+import com.apkscanner.core.scanner.ApkScanner;
+import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ComponentInfo;
@@ -49,10 +48,10 @@ import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.tool.adb.AdbPackageManager;
-import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.tool.adb.AdbPackageManager.PackageInfo;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.AdbServerMonitor.IAdbDemonChangeListener;
+import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.tool.dex2jar.Dex2JarWrapper;
 import com.apkscanner.tool.jd_gui.JDGuiLauncher;
 import com.apkscanner.util.FileUtil;
@@ -64,47 +63,32 @@ public class MainUI extends JFrame
 {
 	private static final long serialVersionUID = -623259597186280485L;
 
-	private ApkScannerStub apkScanner = new AaptScanner(new ApkScannerListener());
-	private DeviceMonitor deviceMonitor = new DeviceMonitor();
+	private static final int WINDOW_SIZE_WIDTH_MIN = 650;
+	private static final int WINDOW_SIZE_HEIGHT_MIN = 490;
+
+	private ApkScanner apkScanner;
+	private DeviceMonitor deviceMonitor;
 
 	private TabbedPanel tabbedPanel;
 	private ToolBar toolBar;
 
-	public MainUI()
+	public MainUI(ApkScanner scanner)
 	{
-		createAndShowGUI();
+		apkScanner = scanner;
+		if(apkScanner != null) {
+			apkScanner.setStatusListener(new ApkScannerListener());
+		}
+		deviceMonitor = new DeviceMonitor();
 	}
 
-	public MainUI(final String apkFilePath)
-	{
-		new Thread(new Runnable() {
-			public void run() {
-				apkScanner.openApk(apkFilePath);
-			}
-		}).start();
-
-		createAndShowGUI();
-	}
-
-	public MainUI(final String devSerialNumber, final String packageName, final String resources)
-	{
-		new Thread(new Runnable() {
-			public void run() {
-				apkScanner.openPackage(devSerialNumber, packageName, resources);
-			}
-		}).start();
-
-		createAndShowGUI();
-	}
-
-	private void createAndShowGUI()
+	public void initialize()
 	{
 		if(!EventQueue.isDispatchThread()) {
 			Log.i("createAndShowGUI() - This task is not EDT. Invoke to EDT.");
 			try {
 				EventQueue.invokeAndWait(new Runnable() {
 					public void run() {
-						createAndShowGUI();
+						initialize();
 					}
 				});
 			} catch (InvocationTargetException | InterruptedException e) {
@@ -117,26 +101,29 @@ public class MainUI extends JFrame
 
 		Log.i("initialize() setLookAndFeel");
 		try {
-			if(Resource.PROP_CURRENT_THEME.getData()==null) {
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			} else {
-				UIManager.setLookAndFeel(Resource.PROP_CURRENT_THEME.getData().toString());
+			String theme = (String)Resource.PROP_CURRENT_THEME.getData();
+			if(theme == null || theme.isEmpty()) {
+				theme = UIManager.getSystemLookAndFeelClassName();
 			}
+			UIManager.setLookAndFeel(theme);
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 				| UnsupportedLookAndFeelException e1) {
 			e1.printStackTrace();
 		}
 
 		Log.i("initialize() setUIFont");
-		setUIFont(new javax.swing.plaf.FontUIResource((String) Resource.PROP_BASE_FONT.getData(), java.awt.Font.PLAIN, 12)); 
+		String propFont = (String) Resource.PROP_BASE_FONT.getData();
+		if(propFont != null && !propFont.isEmpty()) {
+			setUIFont(new javax.swing.plaf.FontUIResource(propFont, java.awt.Font.PLAIN, 12));
+		}
 
 		Log.i("initialize() set title & icon");
 		setTitle(Resource.STR_APP_NAME.getString());
 		setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
 
 		Log.i("initialize() set bound & size");
-		setBounds(0, 0, Resource.PROP_WINDOW_WIDTH.getInt(650), Resource.PROP_WINDOW_HEIGHT.getInt(490));
-		setMinimumSize(new Dimension(650, 490));
+		setBounds(0, 0, Resource.PROP_WINDOW_WIDTH.getInt(WINDOW_SIZE_WIDTH_MIN), Resource.PROP_WINDOW_HEIGHT.getInt(WINDOW_SIZE_HEIGHT_MIN));
+		setMinimumSize(new Dimension(WINDOW_SIZE_WIDTH_MIN, WINDOW_SIZE_HEIGHT_MIN));
 		setResizable(true);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -165,15 +152,14 @@ public class MainUI extends JFrame
 
 		// Shortcut key event processing
 		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
-		ky.addKeyEventDispatcher(new UIEventHandler());
-
-		Log.i("initialize() visible");
-		setVisible(true);
+		ky.addKeyEventDispatcher(eventHandler);
 
 		Log.i("UI Init end");
+
+		deviceMonitor.start();
 	}
 
-	public static void setUIFont(javax.swing.plaf.FontUIResource f) {
+	private static void setUIFont(javax.swing.plaf.FontUIResource f) {
 		Enumeration<Object> keys = UIManager.getDefaults().keys();
 		while (keys.hasMoreElements()) {
 			Object key = keys.nextElement();
@@ -184,7 +170,7 @@ public class MainUI extends JFrame
 		}
 	}
 
-	private class ApkScannerListener implements ApkScannerStub.StatusListener
+	private class ApkScannerListener implements ApkScanner.StatusListener
 	{
 		@Override
 		public void onStart(final long estimatedTime) {
@@ -211,9 +197,7 @@ public class MainUI extends JFrame
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					setTitle(Resource.STR_APP_NAME.getString());
-					if(tabbedPanel != null) {
-						tabbedPanel.setData(null);
-					}
+					tabbedPanel.setData(null);
 
 					final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
 					//JOptionPane.showMessageDialog(null, "Sorry, Can not open the APK", "Error", JOptionPane.ERROR_MESSAGE, Appicon);
@@ -449,7 +433,7 @@ public class MainUI extends JFrame
 			}
 
 			toolBar.setEnabledAt(ButtonSet.OPEN_CODE, false);
-			
+
 			String jarfileName = apkInfo.tempWorkPath + File.separator + (new File(apkInfo.filePath)).getName().replaceAll("\\.apk$", ".jar");
 			Dex2JarWrapper.convert(apkInfo.filePath, jarfileName, new Dex2JarWrapper.DexWrapperListener() {
 				@Override
@@ -496,7 +480,7 @@ public class MainUI extends JFrame
 
 		private void evtSettings()
 		{
-			int value = (new SettingDlg()).makeDialog(MainUI.this);
+			int value = (new SettingDlg(MainUI.this)).makeDialog(MainUI.this);
 
 			//changed theme
 			if(value == 1) {
@@ -752,6 +736,7 @@ public class MainUI extends JFrame
 
 	class DeviceMonitor implements IDeviceChangeListener, IAdbDemonChangeListener
 	{
+		AdbServerMonitor demonMonitor = null;
 		private String packageName = null;
 		private int versionCode = 0;
 		private boolean hasSignature = false;
@@ -759,13 +744,27 @@ public class MainUI extends JFrame
 
 		private HashMap<String, PackageInfo> devices = new HashMap<String, PackageInfo>(); 
 
-		public DeviceMonitor() {
-			Log.v("DeviceMonitor init");
-			AdbServerMonitor.startServerAndCreateBridge(Resource.BIN_ADB.getPath(), false, true);
+		public void start() {
+			Log.v("DeviceMonitor.start() s");
+			if(demonMonitor != null) {
+				Log.v("aleady started");
+				return;
+			}
+			demonMonitor = AdbServerMonitor.startServerAndCreateBridge(Resource.BIN_ADB.getPath(), false, true);
 			AdbServerMonitor.addAdbDemonChangeListener(this);
 
 			AndroidDebugBridge.addDeviceChangeListener(this);
-			Log.v("DeviceMonitor end");
+			Log.v("DeviceMonitor.start() e");			
+		}
+
+		public void stop() {
+			if(demonMonitor != null) {
+				demonMonitor.stop();
+				demonMonitor = null;
+			}
+			AdbServerMonitor.removeAdbDemonChangeListener(this);
+
+			AndroidDebugBridge.removeDeviceChangeListener(this);
 		}
 
 		public String[] getInstalledDevice() {
@@ -795,7 +794,20 @@ public class MainUI extends JFrame
 		}
 
 		private void applyToobarPolicy() {
-			Log.v("applyToobarPolicy() " + EventQueue.isDispatchThread());
+			Log.v("applyToobarPolicy()");
+
+			if(EventQueue.isDispatchThread()) {
+				Log.w("This task is EDT. Invoke to Nomal thread");
+				Thread thread = new Thread(new Runnable() {
+					public void run()
+					{
+						applyToobarPolicy();
+					}
+				});
+				thread.setPriority(Thread.NORM_PRIORITY);
+				thread.start();
+				return;
+			}
 
 			synchronized(this) {
 				AndroidDebugBridge adb = AndroidDebugBridge.getBridge();
@@ -871,19 +883,16 @@ public class MainUI extends JFrame
 		}
 
 		private void sendFlag(final int flag) {
-			if(!EventQueue.isDispatchThread()) {
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						sendFlag(flag);
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					Log.v("sendFlag " + flag);
+					if(flag != ToolBar.FLAG_LAYOUT_UNSIGNED) {
+						toolBar.unsetFlag(ToolBar.FLAG_LAYOUT_UNSIGNED);	
 					}
-				});
-				return;
-			}
-			Log.v("sendFlag " + flag);
-			if(flag != ToolBar.FLAG_LAYOUT_UNSIGNED) {
-				toolBar.unsetFlag(ToolBar.FLAG_LAYOUT_UNSIGNED);	
-			}
-			toolBar.setFlag(flag);
+					toolBar.setFlag(flag);
+				}
+			});
+			return;
 		}
 
 		@Override
@@ -907,13 +916,13 @@ public class MainUI extends JFrame
 		@Override
 		public void adbDemonConnected(String adbPath, AdbVersion version) {
 			Log.e("adbDemon Connected() " + adbPath + ", version " + version);
-			
+
 		}
 
 		@Override
 		public void adbDemonDisconnected() {
 			Log.e("adbDemon Disconnected() ");
-			
+
 		}
 	}
 }

@@ -12,7 +12,7 @@ import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
 
-abstract public class ApkScannerStub
+abstract public class ApkScanner
 {
 	public static final int NO_ERR = 0;
 	public static final int ERR_NO_SUCH_FILE = -1;
@@ -56,7 +56,7 @@ abstract public class ApkScannerStub
 		public void onStateChanged(Status status);
 	}
 	
-	public ApkScannerStub(StatusListener statusListener)
+	public ApkScanner(StatusListener statusListener)
 	{
 		setStatusListener(statusListener);
 	}
