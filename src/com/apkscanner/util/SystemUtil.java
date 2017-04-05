@@ -6,13 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
+import com.apkscanner.jna.ProcessPathKernel32;
 import com.apkscanner.resource.Resource;
 import com.sun.jna.Native;
-import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.Tlhelp32;
@@ -27,50 +24,6 @@ import mslinks.ShellLinkException;
 public class SystemUtil
 {
 	public static final String OS = System.getProperty("os.name").toLowerCase();
-
-	public interface ProcessPathKernel32 extends Kernel32 {
-		class MODULEENTRY32 extends Structure {
-			public static class ByReference extends MODULEENTRY32 implements Structure.ByReference {
-				public ByReference() {
-				}
-
-				public ByReference(Pointer memory) {
-					super(memory);
-				}
-			}
-			public MODULEENTRY32() {
-				dwSize = new WinDef.DWORD(size());
-			}
-
-			public MODULEENTRY32(Pointer memory) {
-				super(memory);
-				read();
-			}
-
-			public DWORD dwSize;
-			public DWORD th32ModuleID;
-			public DWORD th32ProcessID;
-			public DWORD GlblcntUsage;
-			public DWORD ProccntUsage;
-			public Pointer modBaseAddr;
-			public DWORD modBaseSize;
-			public HMODULE hModule;
-			public char[] szModule = new char[255+1]; // MAX_MODULE_NAME32
-			public char[] szExePath = new char[MAX_PATH];
-			public String szModule() { return Native.toString(this.szModule); }
-			public String szExePath() { return Native.toString(this.szExePath); }
-			@Override
-			protected List<String> getFieldOrder() {
-				return Arrays.asList(new String[] {
-						"dwSize", "th32ModuleID", "th32ProcessID", "GlblcntUsage", "ProccntUsage", "modBaseAddr", "modBaseSize", "hModule", "szModule", "szExePath"
-				});
-			}
-		}
-
-		ProcessPathKernel32 INSTANCE = (ProcessPathKernel32)Native.loadLibrary(ProcessPathKernel32.class, W32APIOptions.UNICODE_OPTIONS);
-		boolean Module32First(HANDLE hSnapshot, MODULEENTRY32.ByReference lpme);
-		boolean Module32Next(HANDLE hSnapshot, MODULEENTRY32.ByReference lpme);
-	}
 
 	public static boolean isWindows() {
 		return OS.indexOf("win") > -1;
@@ -147,10 +100,7 @@ public class SystemUtil
 		}
 
 		try {
-			String editor = (String)Resource.PROP_EDITOR.getData();
-			if(editor == null) {
-				editor = SystemUtil.getDefaultEditor();
-			}
+			String editor = (String)Resource.PROP_EDITOR.getData(SystemUtil.getDefaultEditor());
 			exec(new String[] { editor, file.getAbsolutePath() });
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -216,6 +166,12 @@ public class SystemUtil
 		String realPath = null;
 
 		if(path.indexOf(File.separator) > -1) {
+			if(path.startsWith("%")) {
+				String env = path.replaceAll("^%(.*)%.*", "$1");
+				if(!env.equals(path)) {
+					path = System.getenv(env) + path.replaceAll("^%.*%(.*)", "$1");
+				}
+			}
 			File file = new File(path);
 			if(!file.exists()) return null;
 			realPath = file.getAbsolutePath();
@@ -285,7 +241,7 @@ public class SystemUtil
 		}
 
 		String ftypeKey = null;
-		if(Advapi32Util.registryValueExists(WinReg.HKEY_CLASSES_ROOT, suffix, "")) {
+		if(suffix.startsWith(".") && Advapi32Util.registryValueExists(WinReg.HKEY_CLASSES_ROOT, suffix, "")) {
 			ftypeKey = Advapi32Util.registryGetStringValue(WinReg.HKEY_CLASSES_ROOT, suffix, "");
 		} else {
 			ftypeKey = suffix;
@@ -357,9 +313,9 @@ public class SystemUtil
 			Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\OpenWithProgids");
 			Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\OpenWithProgids", "CompressedFolder", "");
 			Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Open\\Command");
-			Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Open\\Command", "", filePath+" \"%1\"");
+			Advapi32Util.registrySetExpandableStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Open\\Command", "", "\""+filePath+"\" \"%1\"");
 			Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Install\\Command");
-			Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Install\\Command", "", filePath+" install \"%1\"");
+			Advapi32Util.registrySetExpandableStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Install\\Command", "", "\""+filePath+"\" install \"%1\"");
 
 			Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, suffix);
 			Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, suffix, "", prefixKey);
@@ -465,7 +421,6 @@ public class SystemUtil
 		}
 		return true;
 	}
-	
 
 	public static String[] getRunningProcessFullPath(String imageName) {
 		ArrayList<String> list = new ArrayList<String>();
