@@ -235,14 +235,19 @@ public class MainUI extends JFrame
 		@Override
 		public void onStateChanged(final Status status)
 		{
-			Log.i("onStateChanged() "+ status);
+			//Log.v("onStateChanged() "+ status);
 			if(status == Status.STANBY) {
 				Log.v("STANBY: does not UI update");
 				return;
 			}
 
 			if(!EventQueue.isDispatchThread()) {
-				Log.v("onStateChanged - This task is not EDT. Invoke to EDT.");
+				Log.v("onStateChanged() This task is not EDT. Invoke to EDT for " + status);
+				switch(status) {
+				case ACTIVITY_COMPLETED: case CERT_COMPLETED:
+					deviceMonitor.setApkInfo(apkScanner.getApkInfo());
+				default: break;
+				}
 				try {
 					EventQueue.invokeAndWait(new Runnable() {
 						public void run() {
@@ -255,7 +260,7 @@ public class MainUI extends JFrame
 				}
 			}
 
-			Log.i(status + " ui sync start");
+			Log.i("onStateChanged() ui sync start for " + status);
 			switch(status) {
 			case BASIC_INFO_COMPLETED:
 				String apkFilePath = apkScanner.getApkInfo().filePath;
@@ -263,7 +268,7 @@ public class MainUI extends JFrame
 				setTitle(title);
 
 				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, true);
-				if(tabbedPanel!=null) tabbedPanel.setData(apkScanner.getApkInfo(), 0);
+				tabbedPanel.setData(apkScanner.getApkInfo(), 0);
 				break;
 			case WIDGET_COMPLETED:
 				tabbedPanel.setData(apkScanner.getApkInfo(), 1);
@@ -279,17 +284,15 @@ public class MainUI extends JFrame
 				break;
 			case ACTIVITY_COMPLETED:
 				tabbedPanel.setData(apkScanner.getApkInfo(), 4);
-				deviceMonitor.setApkInfo(apkScanner.getApkInfo());
 				break;
 			case CERT_COMPLETED:
 				tabbedPanel.setData(apkScanner.getApkInfo(), 0 + TabbedPanel.CMD_EXTRA_DATA);
 				tabbedPanel.setData(apkScanner.getApkInfo(), 5);
-				deviceMonitor.setApkInfo(apkScanner.getApkInfo());
 				break;
 			default:
 				break;
 			}
-			Log.i(status + " ui sync end");
+			Log.i("onStateChanged() ui sync end " + status);
 		}
 	}
 
@@ -663,6 +666,7 @@ public class MainUI extends JFrame
 					case KeyEvent.VK_T: evtInstallApk(true);	break;
 					case KeyEvent.VK_E: evtShowExplorer();		break;
 					case KeyEvent.VK_M: evtShowManifest();		break;
+					case KeyEvent.VK_R: evtLaunchApp();			break;
 					//case KeyEvent.VK_S: evtSettings();			break;
 					default: return false;
 					}
@@ -736,7 +740,7 @@ public class MainUI extends JFrame
 
 	class DeviceMonitor implements IDeviceChangeListener, IAdbDemonChangeListener
 	{
-		AdbServerMonitor demonMonitor = null;
+		private AdbServerMonitor demonMonitor = null;
 		private String packageName = null;
 		private int versionCode = 0;
 		private boolean hasSignature = false;
@@ -797,7 +801,7 @@ public class MainUI extends JFrame
 			Log.v("applyToobarPolicy()");
 
 			if(EventQueue.isDispatchThread()) {
-				Log.w("This task is EDT. Invoke to Nomal thread");
+				Log.w("applyToobarPolicy() This task is EDT. Invoke to Nomal thread");
 				Thread thread = new Thread(new Runnable() {
 					public void run()
 					{
@@ -816,6 +820,18 @@ public class MainUI extends JFrame
 					return;
 				}
 				final boolean hasDevice = (adb.getDevices().length > 0);
+
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						if(hasDevice) {
+							toolBar.setFlag(ToolBar.FLAG_LAYOUT_DEVICE_CONNECTED);
+							toolBar.setEnabledAt(ButtonSet.NEED_DEVICE, true);
+						} else {
+							toolBar.clearFlag();
+							toolBar.setEnabledAt(ButtonSet.NEED_DEVICE, false);
+						}
+					}
+				});
 
 				if(hasDevice && packageName != null) {
 					boolean hasInstalled = false;
@@ -868,17 +884,7 @@ public class MainUI extends JFrame
 					});
 				}
 
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						if(hasDevice) {
-							toolBar.setFlag(ToolBar.FLAG_LAYOUT_DEVICE_CONNECTED);
-							toolBar.setEnabledAt(ButtonSet.NEED_DEVICE, true);
-						} else {
-							toolBar.clearFlag();
-							toolBar.setEnabledAt(ButtonSet.NEED_DEVICE, false);
-						}
-					}
-				});
+
 			}
 		}
 
@@ -916,13 +922,11 @@ public class MainUI extends JFrame
 		@Override
 		public void adbDemonConnected(String adbPath, AdbVersion version) {
 			Log.e("adbDemon Connected() " + adbPath + ", version " + version);
-
 		}
 
 		@Override
 		public void adbDemonDisconnected() {
 			Log.e("adbDemon Disconnected() ");
-
 		}
 	}
 }
