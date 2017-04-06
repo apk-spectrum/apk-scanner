@@ -515,10 +515,10 @@ public class MainUI extends JFrame
 					String[] items = new String[activities.length];
 					for(int i = 0; i < activities.length; i++) {
 						boolean isLauncher = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0);
-						items[i] = (isLauncher ? "[LAUNCHER]":"[MAIN]") + " " + activities[i].name;
+						items[i] = (isLauncher ? "[LAUNCHER]":"[MAIN]") + " " + activities[i].name.replaceAll(apkInfo.manifest.packageName, "");
 					}
-					String selected = ComboMessageBox.show(null, "Select Activity", items,  Resource.STR_BTN_LAUNCH.getString(), JTextOptionPane.QUESTION_MESSAGE,
-							null, new Dimension(500, 0));
+					String selected = ComboMessageBox.show(MainUI.this, "Select Activity", items,  Resource.STR_BTN_LAUNCH.getString(), JTextOptionPane.QUESTION_MESSAGE,
+							null, new Dimension(400, 0));
 					if(selected == null) {
 						return;
 					}
