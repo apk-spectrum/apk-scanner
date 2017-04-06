@@ -47,11 +47,11 @@ import com.apkscanner.gui.util.FileDrop;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
+import com.apkscanner.tool.adb.AdbDeviceHelper;
 import com.apkscanner.tool.adb.AdbPackageManager;
 import com.apkscanner.tool.adb.AdbPackageManager.PackageInfo;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.AdbServerMonitor.IAdbDemonChangeListener;
-import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.tool.dex2jar.Dex2JarWrapper;
 import com.apkscanner.tool.jd_gui.JDGuiLauncher;
 import com.apkscanner.util.FileUtil;
@@ -542,7 +542,7 @@ public class MainUI extends JFrame
 			final String launcherActivity = apkInfo.manifest.packageName + "/" + selectedActivity;
 			Log.i("launcherActivity : " + launcherActivity);
 
-			final String[] devices = deviceMonitor.getInstalledDevice();
+			final IDevice[] devices = deviceMonitor.getInstalledDevice();
 			if(devices == null || devices.length == 0) {
 				Log.i("No such device of a package installed.");
 				ArrowTraversalPane.showOptionDialog(null,
@@ -560,8 +560,8 @@ public class MainUI extends JFrame
 				private String errMsg = null;
 				public void run()
 				{
-					for(String device: devices) {
-						String[] cmdResult = AdbWrapper.shell(device, new String[] {"am", "start", "-n", launcherActivity}, null);
+					for(IDevice device: devices) {
+						String[] cmdResult = AdbDeviceHelper.launchActivity(device, launcherActivity);
 						if(cmdResult == null || (cmdResult.length >= 2 && cmdResult[1].startsWith("Error")) ||
 								(cmdResult.length >= 1 && cmdResult[0].startsWith("error"))) {
 							Log.e("activity start faile : " + launcherActivity);
@@ -579,6 +579,8 @@ public class MainUI extends JFrame
 											null, new Dimension(500, 120));
 								}
 							});
+						} else {
+							AdbDeviceHelper.tryDismissKeyguard(device);
 						}
 					}
 				}
@@ -746,7 +748,7 @@ public class MainUI extends JFrame
 		private boolean hasSignature = false;
 		private boolean hasMainActivity = false; 
 
-		private HashMap<String, PackageInfo> devices = new HashMap<String, PackageInfo>(); 
+		private HashMap<IDevice, PackageInfo> devices = new HashMap<IDevice, PackageInfo>(); 
 
 		public void start() {
 			Log.v("DeviceMonitor.start() s");
@@ -771,11 +773,13 @@ public class MainUI extends JFrame
 			AndroidDebugBridge.removeDeviceChangeListener(this);
 		}
 
-		public String[] getInstalledDevice() {
+		public IDevice[] getInstalledDevice() {
 			synchronized (devices) {
-				return devices.keySet().toArray(new String[0]);
+				return devices.keySet().toArray(new IDevice[devices.size()]);
 			}
 		}
+
+
 
 		public void setApkInfo(ApkInfo info) {
 			synchronized(this) {
@@ -840,13 +844,16 @@ public class MainUI extends JFrame
 					for(IDevice device: adb.getDevices()) {
 						PackageInfo pkg = null;
 						synchronized(devices) {
-							if(devices.containsKey(device.getSerialNumber())) {
-								pkg = devices.get(device.getSerialNumber());
+							if(devices.containsKey(device)) {
+								pkg = devices.get(device);
 							} else {
 								pkg = AdbPackageManager.getPackageInfo(device.getSerialNumber(), packageName);
 								if(pkg != null) {
-									devices.put(device.getSerialNumber(), pkg);
+									devices.put(device, pkg);
 								}
+								try {
+									device.getApiLevel(); // dummy
+								} catch (Exception e) { }
 							}
 						}
 						if(pkg != null) {
