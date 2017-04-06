@@ -2,7 +2,9 @@ package com.apkscanner.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -30,7 +32,13 @@ public class ClassFinder {
 		while (resources.hasMoreElements()) {
 			URL resource = resources.nextElement();
 			if("file".equals(resource.getProtocol())) {
-				classes.addAll(findClasses(new File(resource.getFile()), packageName));
+				String resFilePath = resource.getFile();
+				try {
+					resFilePath = URLDecoder.decode(resource.getFile(), "UTF-8");
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+				classes.addAll(findClasses(new File(resFilePath), packageName));
 			} else if("jar".equals(resource.getProtocol())) {
 				classes.addAll(findClasses(resource, packageName));
 			} else {
@@ -70,7 +78,13 @@ public class ClassFinder {
 	static List<Class> findClasses(URL jarURL, String packageName) throws ClassNotFoundException {
 		List<Class> classes = new ArrayList<Class>();
 
-		String[] jarPath = jarURL.getFile().split("!");
+		String jarFilePath = jarURL.getFile();
+		try {
+			jarFilePath = URLDecoder.decode(jarURL.getFile(), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		String[] jarPath = jarFilePath.split("!");
 		if(jarPath == null || jarPath.length != 2) {
 			Log.e("IllegalArgument " + jarPath);
 			return classes;

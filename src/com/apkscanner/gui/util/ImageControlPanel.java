@@ -20,8 +20,10 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -166,8 +168,14 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 
 		
 		Filesize = ZipFileUtil.getFileSize(apkFilePath, imgPath, FSStyle.SHORT); 
-		
-		imgPath = "jar:file:"+apkFilePath.replaceAll("#", "%23")+"!/" + imgPath;
+		String urlFilePath = null;
+		try {
+			urlFilePath = URLEncoder.encode(apkFilePath, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			urlFilePath = apkFilePath.replaceAll("#", "%23");
+			e.printStackTrace();
+		}
+		imgPath = "jar:file:" + urlFilePath + "!/" + imgPath;
 		
 		Log.d(imgPath);
 		

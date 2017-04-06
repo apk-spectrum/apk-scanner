@@ -10,6 +10,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.ImageIcon;
 
@@ -17,8 +18,10 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import com.apkscanner.gui.util.ImageScaler;
+import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 import com.apkscanner.util.XmlPath;
+import com.apkscanner.util.ZipFileUtil;
 
 public enum Resource
 {
@@ -321,10 +324,13 @@ public enum Resource
 	BIN_DEX2JAR_WIN				(Type.BIN, "d2j-dex2jar.bat", "win"),
 	BIN_DEX2JAR					(Type.BIN, new Resource[]{ BIN_DEX2JAR_WIN, BIN_DEX2JAR_LNX }),	
 
+	PROP_LANGUAGE				(Type.PROP, "language"),
 	PROP_EDITOR					(Type.PROP, "editor"),
+	PROP_RECENT_EDITOR			(Type.PROP, "recent_editor"),
+	PROP_ADB_PATH				(Type.PROP, "adb_path"),
+	PROP_RECENT_ADB_INFO		(Type.PROP, "recent_adb_info"),
 	PROP_FRAMEWORK_RES			(Type.PROP, "framewokr-res"),
 	PROP_CHECK_INSTALLED		(Type.PROP, "check-installed"),
-	PROP_LANGUAGE				(Type.PROP, "language"),
 	PROP_WITH_FRAMEWORK_RES		(Type.PROP, "with_framework_res"),
 	PROP_LAST_FILE_OPEN_PATH	(Type.PROP, "last_file_open_path"),
 	PROP_LAST_FILE_SAVE_PATH	(Type.PROP, "last_file_save_path"),
@@ -335,6 +341,7 @@ public enum Resource
 	PROP_WINDOW_HEIGHT			(Type.PROP, "window_size_height"),
 	PROP_SAVE_WINDOW_SIZE		(Type.PROP, "save_window_size"),
 	PROP_BASE_FONT				(Type.PROP, "base_font"),
+	PROP_BASE_FONT_SIZE			(Type.PROP, "base_font_size"),
 
 	LIB_JSON_JAR				(Type.LIB, "json-simple-1.1.1.jar"),
 	LIB_CLI_JAR					(Type.LIB, "commons-cli-1.3.1.jar"),
@@ -368,7 +375,7 @@ public enum Resource
 		ArrayList<XmlPath> xmlList = new ArrayList<XmlPath>();
 
 		String value_path = getUTF8Path() + File.separator + "data" + File.separator;
-		if(lang != null) {
+		if(lang != null && !lang.isEmpty()) {
 			String ext_lang_value_path = value_path + "strings-" + lang + ".xml";
 			if((new File(ext_lang_value_path)).exists()) {
 				xmlList.add(new XmlPath(ext_lang_value_path));
@@ -391,6 +398,66 @@ public enum Resource
 		}
 
 		stringXmlPath = xmlList.toArray(new XmlPath[0]);
+	}
+
+	public static String[] getSupportedLanguages() {
+		ArrayList<String> languages = new ArrayList<String>(); 
+
+		String value_path = getUTF8Path() + File.separator + "data" + File.separator;
+		File valueDir = new File(value_path);
+		if(valueDir != null && valueDir.isDirectory()) {
+			for(String name: valueDir.list()) {
+				if(name.startsWith("strings-") && name.endsWith(".xml")) {
+					name = name.substring(8,name.length()-4);
+					if(!languages.contains(name)) {
+						languages.add(name);
+					}
+				}
+			}
+		}
+
+		URL resource = Resource.class.getResource("/values");
+		String resFilePath = resource.getFile();
+		try {
+			resFilePath = URLDecoder.decode(resource.getFile(), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+
+		if("file".equals(resource.getProtocol())) {
+			valueDir = new File(resFilePath);
+			if(valueDir != null && valueDir.isDirectory()) {
+				for(String name: valueDir.list()) {
+					if(name.startsWith("strings-") && name.endsWith(".xml")) {
+						name = name.substring(8,name.length()-4);
+						if(!languages.contains(name)) {
+							languages.add(name);
+						}
+					}
+				}
+			}
+		} else if("jar".equals(resource.getProtocol())) {
+			String[] jarPath = resFilePath.split("!");
+			if(jarPath != null && jarPath.length == 2) {
+				String[] list = ZipFileUtil.findFiles(jarPath[0].substring(5), ".xml", "^"+jarPath[1].substring(1) + "/.*");
+				for(String name : list) {
+					if(name.startsWith("strings-") && name.endsWith(".xml")) {
+						name = name.substring(8,name.length()-4);
+						if(!languages.contains(name)) {
+							languages.add(name);
+						}
+					}
+				}
+
+			}
+		} else {
+			Log.e("Unknown protocol " + resource);
+		}
+
+		Collections.sort(languages);
+		languages.add(0, "");
+
+		return languages.toArray(new String[languages.size()]);
 	}
 
 	private Resource(Type type, String value)

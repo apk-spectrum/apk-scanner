@@ -1,6 +1,8 @@
 package com.apkscanner.core.scanner;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import com.apkscanner.Launcher;
 import com.apkscanner.data.apkinfo.ApkInfo;
@@ -17,14 +19,14 @@ public class AaptScanner extends ApkScanner
 {
 	private AaptXmlTreePath manifestPath = null;
 	private AaptNativeScanner resourceScanner;
-	
+
 	public AaptScanner(StatusListener statusListener)
 	{
 		super(statusListener);
 		//stateChanged(Status.UNINITIALIZE);
 		resourceScanner = null;
 	}
-	
+
 	@Override
 	public void openApk(final String apkFilePath, final String frameworkRes)
 	{
@@ -33,7 +35,7 @@ public class AaptScanner extends ApkScanner
 			Log.e("APK file path is null");
 			if(statusListener != null) {
 				statusListener.onError(ERR_UNAVAIlABLE_PARAM);
-	        	statusListener.onCompleted();
+				statusListener.onCompleted();
 			}
 			return;
 		}
@@ -43,7 +45,7 @@ public class AaptScanner extends ApkScanner
 			Log.e("No Such APK file");
 			if(statusListener != null) {
 				statusListener.onError(ERR_NO_SUCH_FILE);
-	        	statusListener.onCompleted();
+				statusListener.onCompleted();
 			}
 			return;
 		}
@@ -65,7 +67,7 @@ public class AaptScanner extends ApkScanner
 			Log.e("Failure : Can't open the AssetManager");
 			if(statusListener != null) {
 				statusListener.onError(ERR_CAN_NOT_ACCESS_ASSET);
-	        	statusListener.onCompleted();
+				statusListener.onCompleted();
 			}
 			return;
 		}
@@ -76,7 +78,7 @@ public class AaptScanner extends ApkScanner
 			Log.e("Failure : Can't read the AndroidManifest.xml");
 			if(statusListener != null) {
 				statusListener.onError(ERR_CAN_NOT_READ_MANIFEST);
-	        	statusListener.onCompleted();
+				statusListener.onCompleted();
 			}
 			return;
 		}
@@ -89,7 +91,7 @@ public class AaptScanner extends ApkScanner
 			Log.e("Failure : Wrong format. Don't have '<manifest>' or '<application>' tag");
 			if(statusListener != null) {
 				statusListener.onError(ERR_WRONG_MANIFEST);
-	        	statusListener.onCompleted();
+				statusListener.onCompleted();
 			}
 			return;
 		}
@@ -119,7 +121,15 @@ public class AaptScanner extends ApkScanner
 
 		ResourceInfo[] icons = apkInfo.manifest.application.icons;
 		if(icons != null && icons.length > 0) {
-			String jarPath = "jar:file:" + apkInfo.filePath.replaceAll("#", "%23") + "!/";
+			String urlFilePath = null;
+			try {
+				urlFilePath = URLEncoder.encode(apkInfo.filePath, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				urlFilePath = apkInfo.filePath.replaceAll("#", "%23");
+				e.printStackTrace();
+			}
+
+			String jarPath = "jar:file:" + urlFilePath + "!/";
 			for(ResourceInfo r: icons) {
 				if(r.name == null) {
 					r.name = Resource.IMG_DEF_APP_ICON.getPath();
@@ -155,8 +165,8 @@ public class AaptScanner extends ApkScanner
 
 		new Thread(new Runnable() {
 			public void run() {
-		        Log.i("read signatures...");
-		        apkInfo.certificates = solveCert();
+				Log.i("read signatures...");
+				apkInfo.certificates = solveCert();
 				stateChanged(Status.CERT_COMPLETED);
 				Log.i("read signatures completed...");
 			}
@@ -165,12 +175,12 @@ public class AaptScanner extends ApkScanner
 		new Thread(new Runnable() {
 			public void run() {
 				Log.i("I: read libraries list...");
-		        apkInfo.libraries = ZipFileUtil.findFiles(apkInfo.filePath, ".so", null);
-		        stateChanged(Status.LIB_COMPLETED);
+				apkInfo.libraries = ZipFileUtil.findFiles(apkInfo.filePath, ".so", null);
+				stateChanged(Status.LIB_COMPLETED);
 
 				Log.i("I: read Resource list...");
-		        apkInfo.resources = ZipFileUtil.findFiles(apkInfo.filePath, null, null);
-		        stateChanged(Status.RESOURCE_COMPLETED);
+				apkInfo.resources = ZipFileUtil.findFiles(apkInfo.filePath, null, null);
+				stateChanged(Status.RESOURCE_COMPLETED);
 			}
 		}).start();
 
@@ -183,15 +193,15 @@ public class AaptScanner extends ApkScanner
 			}
 		}).start();
 
-        // Activity/Service/Receiver/provider intent-filter
+		// Activity/Service/Receiver/provider intent-filter
 		Log.i("I: read components...");
-        manifestReader.readComponents();
-        stateChanged(Status.ACTIVITY_COMPLETED);
+		manifestReader.readComponents();
+		stateChanged(Status.ACTIVITY_COMPLETED);
 
-        // widget
+		// widget
 		Log.i("I: read widgets...");
-        apkInfo.widgets = manifestReader.getWidgetList(apkInfo.filePath);
-        stateChanged(Status.WIDGET_COMPLETED);
+		apkInfo.widgets = manifestReader.getWidgetList(apkInfo.filePath);
+		stateChanged(Status.WIDGET_COMPLETED);
 	}
 
 	private void deleteTempPath(String tmpPath, String apkPath)
