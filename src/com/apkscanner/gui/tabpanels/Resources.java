@@ -27,9 +27,11 @@ import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -83,7 +85,7 @@ public class Resources extends JPanel implements TabDataObject {
 	private JTree tree;
 	private DefaultMutableTreeNode top;
 	private DefaultMutableTreeNode[] eachTypeNodes;
-	
+
 	private FilteredTreeModel filteredModel;
 	private JTextField textField;
 	JButton findicon;
@@ -115,7 +117,7 @@ public class Resources extends JPanel implements TabDataObject {
 		int getInt() {
 			return type;
 		}
-		
+
 		public String toString() {
 			if(this.equals(METAINF))
 				return "META-INF";
@@ -267,7 +269,7 @@ public class Resources extends JPanel implements TabDataObject {
 					Rectangle r = getRowBounds(getRowForPath(getLeadSelectionPath()));
 					g.setColor(hasFocus()
 							? ((DefaultTreeCellRenderer) getCellRenderer()).getBackgroundSelectionColor().darker()
-							: ((DefaultTreeCellRenderer) getCellRenderer()).getBackgroundSelectionColor());
+									: ((DefaultTreeCellRenderer) getCellRenderer()).getBackgroundSelectionColor());
 					// g.setColor(Color.RED);
 					g.drawRect(0, r.y, getWidth() - 1, r.height - 1);
 				}
@@ -377,7 +379,7 @@ public class Resources extends JPanel implements TabDataObject {
 			return false;
 		}
 	}
-	*/
+	 */
 
 	DefaultMutableTreeNode createFilteredTree(DefaultMutableTreeNode parent, String filter) {
 		int c = parent.getChildCount();
@@ -427,7 +429,14 @@ public class Resources extends JPanel implements TabDataObject {
 
 				if (!tempObject.isFolder) {
 					ResourceObject temp = (ResourceObject) nodo.getUserObject();
-					String jarPath = "jar:file:" + apkFilePath.replaceAll("#", "%23") + "!/";
+					String urlFilePath = null;
+					try {
+						urlFilePath = URLEncoder.encode(apkFilePath, "UTF-8");
+					} catch (UnsupportedEncodingException e) {
+						urlFilePath = apkFilePath.replaceAll("#", "%23");
+						e.printStackTrace();
+					}
+					String jarPath = "jar:file:" + urlFilePath + "!/";
 					Icon icon = null;
 
 					switch (temp.attr) {
@@ -645,7 +654,7 @@ public class Resources extends JPanel implements TabDataObject {
 			{
 				try {
 					final ArrayList<DefaultMutableTreeNode> topFiles = new ArrayList<DefaultMutableTreeNode>();
-					
+
 					EventQueue.invokeAndWait(new Runnable() {
 						public void run() {
 							tree.removeAll();
@@ -669,15 +678,15 @@ public class Resources extends JPanel implements TabDataObject {
 									if (nameList[i].endsWith("/") || nameList[i].startsWith("lib/")
 											/*|| this.nameList[i].startsWith("META-INF/")*/)
 										continue;
-						
+
 									ResourceObject resObj = new ResourceObject(nameList[i], false);
 									if (nameList[i].indexOf("/") == -1) {
 										topFiles.add(new DefaultMutableTreeNode(resObj));
 										continue;
 									}
-						
+
 									DefaultMutableTreeNode typeNode = eachTypeNodes[resObj.type.getInt()];
-						
+
 									if (typeNode == null) {
 										typeNode = new DefaultMutableTreeNode(resObj.type.toString());
 										eachTypeNodes[resObj.type.getInt()] = typeNode;
@@ -685,13 +694,13 @@ public class Resources extends JPanel implements TabDataObject {
 											top.add(typeNode);
 										}
 									}
-						
+
 									DefaultMutableTreeNode findnode = null;
 									if (resObj.type != ResourceType.ETC) {
 										String fileName = getOnlyFilename(nameList[i]);
 										findnode = findNode(typeNode, fileName, false, false);
 									}
-						
+
 									if (findnode != null) {
 										if (findnode.getChildCount() == 0) {
 											ResourceObject obj = (ResourceObject) findnode.getUserObject();
@@ -952,13 +961,13 @@ public class Resources extends JPanel implements TabDataObject {
 	class TreeFindFildListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			
+
 			if (arg0.getSource() instanceof JTextField) {
 				String temp = ((JTextField) (arg0.getSource())).getText();
 				searchTree(temp);
 			} else if (arg0.getSource() instanceof JButton) {
 				JButton temp = (JButton) (arg0.getSource());
-				
+
 				if (temp.getName().equals(RESOURCE_TREE_TOOLBAR_BUTTON_FIND)) {					
 					String strtemp = textField.getText();
 					searchTree(strtemp);
@@ -969,19 +978,19 @@ public class Resources extends JPanel implements TabDataObject {
 			}
 
 		}
-		
+
 		void searchTree(String str) {		
-			
+
 			if(str.length() > 0) {
 				refreshicon.setEnabled(true);
 				//isFilter = true;
-				
+
 			} else {
 				refreshicon.setEnabled(false);
 				//isFilter = false;
-		
+
 			}
-				
+
 			tree.setModel(new DefaultTreeModel(createFilteredTree(top, str)));			
 			tree.repaint();
 		}
@@ -1034,10 +1043,10 @@ public class Resources extends JPanel implements TabDataObject {
 		refreshicon.addActionListener(findListener);
 
 		textField.addKeyListener(new KeyListener() {
-			
+
 			@Override
 			public void keyTyped(KeyEvent arg0) {}
-			
+
 			@Override
 			public void keyReleased(KeyEvent arg0) {
 				if(textField.getText().length() > 0) {
@@ -1048,10 +1057,10 @@ public class Resources extends JPanel implements TabDataObject {
 			}
 			@Override
 			public void keyPressed(KeyEvent arg0) {
-				
+
 			}
 		});
-		
+
 		TreeModePanel.add(textField, BorderLayout.CENTER);
 		TreeButtonPanel.add(findicon);
 		TreeButtonPanel.add(refreshicon);
