@@ -155,17 +155,19 @@ public class SettingDlg extends JDialog implements ActionListener
 
 		private String getFileDescription(String filePath) {
 			String desc = null;
-			try {
-				FileVersion fileVersion = new FileVersion(filePath);
-				for(FileInfo info : fileVersion.getFileInfos())
-				{
-					desc = info.getFileDescription();
-					if(desc != null && !desc.isEmpty()) {
-						break;
+			if(SystemUtil.isWindows()) {
+				try {
+					FileVersion fileVersion = new FileVersion(filePath);
+					for(FileInfo info : fileVersion.getFileInfos())
+					{
+						desc = info.getFileDescription();
+						if(desc != null && !desc.isEmpty()) {
+							break;
+						}
 					}
+				} catch (Exception e) {
+					//e.printStackTrace();
 				}
-			} catch (Exception e) {
-				//e.printStackTrace();
 			}
 			return desc;
 		}
