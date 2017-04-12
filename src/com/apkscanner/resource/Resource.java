@@ -66,6 +66,10 @@ public enum Resource
 	STR_BTN_OPENING_CODE		(Type.TEXT, "@btn_opening_code"),
 	STR_BTN_SEARCH				(Type.TEXT, "@btn_search"),
 	STR_BTN_MORE				(Type.TEXT, "@btn_more"),
+	STR_BTN_ASSOC_FTYPE			(Type.TEXT, "@btn_assoc_ftype"),
+	STR_BTN_UNASSOC_FTYPE		(Type.TEXT, "@btn_unassoc_ftype"),
+	STR_BTN_CREATE_SHORTCUT		(Type.TEXT, "@btn_create_shortcut"),
+	STR_BTN_SELF_SEARCH			(Type.TEXT, "@btn_self_search"),
 
 	STR_BTN_OPEN_LAB			(Type.TEXT, "@btn_open_lab"),
 	STR_BTN_OPEN_PACKAGE_LAB	(Type.TEXT, "@btn_open_pacakge_lab"),
@@ -84,6 +88,10 @@ public enum Resource
 	STR_BTN_OPENING_CODE_LAB	(Type.TEXT, "@btn_opening_code_lab"),
 	STR_BTN_SEARCH_LAB			(Type.TEXT, "@btn_search_lab"),
 	STR_BTN_MORE_LAB			(Type.TEXT, "@btn_more_lab"),
+	STR_BTN_ASSOC_FTYPE_LAB		(Type.TEXT, "@btn_assoc_ftype_lab"),
+	STR_BTN_UNASSOC_FTYPE_LAB	(Type.TEXT, "@btn_unassoc_ftype_lab"),
+	STR_BTN_CREATE_SHORTCUT_LAB	(Type.TEXT, "@btn_create_shortcut_lab"),
+	STR_BTN_SELF_SEARCH_LAB		(Type.TEXT, "@btn_self_search_lab"),
 
 	STR_MENU_NEW				(Type.TEXT, "@menu_new"),
 	STR_MENU_NEW_WINDOW			(Type.TEXT, "@menu_new_window"),
@@ -102,13 +110,20 @@ public enum Resource
 	STR_TAB_ACTIVITY			(Type.TEXT, "@tab_activity"),
 	STR_TAB_CERT				(Type.TEXT, "@tab_cert"),
 
+	STR_TAB_SETTING_GENERIC		(Type.TEXT, "@tab_setting_generic"),
+	STR_TAB_SETTING_GENERIC_LAB	(Type.TEXT, "@tab_setting_generic_lab"),
+	STR_TAB_SETTING_ANALYSIS	(Type.TEXT, "@tab_setting_analysis"),
+	STR_TAB_SETTING_ANALYSIS_LAB(Type.TEXT, "@tab_setting_analysis_lab"),
+	STR_TAB_SETTING_DEVICE		(Type.TEXT, "@tab_setting_device"),
+	STR_TAB_SETTING_DEVICE_LAB	(Type.TEXT, "@tab_setting_device_lab"),
+	STR_TAB_SETTING_DISPLAY		(Type.TEXT, "@tab_setting_display"),
+	STR_TAB_SETTING_DISPLAY_LAB	(Type.TEXT, "@tab_setting_display_lab"),
+
 	STR_BASIC_PERMISSIONS		(Type.TEXT, "@basic_permissions"),
 	STR_BASIC_PERMLAB_DISPLAY	(Type.TEXT, "@basic_permlab_display_list"),
 	STR_BASIC_PERMDESC_DISPLAY	(Type.TEXT, "@basic_permdesc_display_list"),
 	STR_BASIC_PERM_LIST_TITLE	(Type.TEXT, "@basic_perm_list_title"),
 	STR_BASIC_PERM_DISPLAY_TITLE(Type.TEXT, "@basic_perm_display_title"),
-	STR_BASIC_CREATE_SHORTCUT	(Type.TEXT, "@basic_create_shortcut"),
-	STR_BASIC_ASSOC_FTYPE		(Type.TEXT, "@basic_assoc_ftype"),
 
 	STR_FEATURE_LAB				(Type.TEXT, "@feature_lab"),
 	STR_FEATURE_DESC			(Type.TEXT, "@feature_desc"),
@@ -189,6 +204,11 @@ public enum Resource
 	STR_SETTINGS_RES			(Type.TEXT, "@settings_res"),
 	STR_SETTINGS_CHECK_INSTALLED(Type.TEXT, "@settings_check_installed"),
 	STR_SETTINGS_LANGUAGE		(Type.TEXT, "@settings_language"),
+	STR_SETTINGS_REMEMBER_WINDOW_SIZE(Type.TEXT, "@settings_remember_window_size"),
+	STR_SETTINGS_THEME			(Type.TEXT, "@settings_theme"),
+	STR_SETTINGS_TABBED_UI		(Type.TEXT, "@settings_tabbed_ui"),
+	STR_SETTINGS_FONT			(Type.TEXT, "@settings_font"),
+	STR_SETTINGS_THEME_FONT		(Type.TEXT, "@settings_theme_font"),
 
 	STR_LABEL_ERROR				(Type.TEXT, "@label_error"),
 	STR_LABEL_WARNING			(Type.TEXT, "@label_warning"),
@@ -307,6 +327,10 @@ public enum Resource
 	IMG_TREE_DEVICE				(Type.IMAGE, "tree_icon_device.png"),
 	IMG_TREE_TOP				(Type.IMAGE, "tree_icon_top.gif"),
 	IMG_TREE_FOLDER				(Type.IMAGE, "tree_icon_folder.png"),
+	
+	IMG_ADD_TO_DESKTOP			(Type.IMAGE, "add-to-desktop.png"),
+	IMG_ASSOCIATE_APK			(Type.IMAGE, "associate.png"),
+	IMG_UNASSOCIATE_APK			(Type.IMAGE, "unassociate.png"),
 
 	BIN_PATH					(Type.BIN, ""),	
 
@@ -342,6 +366,7 @@ public enum Resource
 	PROP_SAVE_WINDOW_SIZE		(Type.PROP, "save_window_size"),
 	PROP_BASE_FONT				(Type.PROP, "base_font"),
 	PROP_BASE_FONT_SIZE			(Type.PROP, "base_font_size"),
+	PROP_BASE_FONT_STYLE		(Type.PROP, "base_font_style"),
 
 	LIB_JSON_JAR				(Type.LIB, "json-simple-1.1.1.jar"),
 	LIB_CLI_JAR					(Type.LIB, "commons-cli-1.3.1.jar"),
@@ -441,8 +466,8 @@ public enum Resource
 			if(jarPath != null && jarPath.length == 2) {
 				String[] list = ZipFileUtil.findFiles(jarPath[0].substring(5), ".xml", "^"+jarPath[1].substring(1) + "/.*");
 				for(String name : list) {
-					if(name.startsWith("strings-") && name.endsWith(".xml")) {
-						name = name.substring(8,name.length()-4);
+					if(name.startsWith("values/strings-") && name.endsWith(".xml")) {
+						name = name.substring(15,name.length()-4);
 						if(!languages.contains(name)) {
 							languages.add(name);
 						}

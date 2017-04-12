@@ -16,6 +16,7 @@ import com.sun.jna.platform.win32.Tlhelp32;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.WinReg;
+import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.win32.W32APIOptions;
 
 import mslinks.ShellLink;
@@ -82,7 +83,18 @@ public class SystemUtil
 
 	public static String getDefaultEditor() throws Exception {
 		if(isWindows()) {
-			return "notepad";
+			String editorPath = null;
+			String cmdLine = SystemUtil.getOpenCommand(".txt");
+			if(cmdLine != null && cmdLine.indexOf("%1") >= 0) {
+				String cmd = cmdLine.replaceAll("\"?(.*\\.[eE][xX][eE])\"?.*", "$1");
+				if(!cmd.equals(cmdLine)) {
+					editorPath = SystemUtil.getRealPath(cmd);
+					if(!new File(editorPath).canExecute()) {
+						editorPath = null;
+					}
+				}
+			}
+			return editorPath != null ? editorPath : "notepad";
 		} else if(isLinux()) {
 			return "gedit";
 		}
@@ -352,6 +364,16 @@ public class SystemUtil
 		return isAssociatedWithFileType(suffix);
 	}
 
+	private static void registryDeleteKeyRecursive(HKEY root, String key) {
+		if(!Advapi32Util.registryKeyExists(root, key)) {
+			return;
+		}
+		for(String subkey: Advapi32Util.registryGetKeys(root, key)) {
+			registryDeleteKeyRecursive(root, key + "\\" + subkey);
+		}
+		Advapi32Util.registryDeleteKey(root, key);
+	}
+
 	public static void unsetAssociateFileType(String suffix) {
 		if(!isWindows() || !isAssociatedWithFileType(suffix)) {
 			return;
@@ -365,14 +387,13 @@ public class SystemUtil
 			} else {
 				ftypeKey = suffix + "\\Shell\\Open\\Command";
 			}
-			if(!Advapi32Util.registryKeyExists(WinReg.HKEY_CLASSES_ROOT, ftypeKey)) {
-				return;
-			}
-			Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, ftypeKey);
+			registryDeleteKeyRecursive(WinReg.HKEY_CLASSES_ROOT, ftypeKey);
 
 			// refresh explorer icon
+			exec(new String[] {"cmd", "/c", "assoc", suffix+"="+suffix });
 			exec(new String[] {"cmd", "/c", "assoc", suffix+"=" });
 		} catch(Exception e) {
+			e.printStackTrace();
 			Log.e("Failure: Can not delete registry");
 			unsetAssociateFileTypeLagacy(suffix);
 		}

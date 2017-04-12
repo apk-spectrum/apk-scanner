@@ -114,30 +114,6 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		apkinform.setEditable(false);
 		apkinform.setOpaque(true);
 
-		//Font font = new Font("helvitica", Font.BOLD, 15);
-		JLabel label = new JLabel();
-		Font font = label.getFont();
-
-		// create some css from the label's font
-		StringBuilder style = new StringBuilder("#basic-info, #perm-group {");
-		style.append("font-family:" + font.getFamily() + ";");
-		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-		style.append("font-size:" + font.getSize() + "pt;}");
-		style.append("#basic-info a {text-decoration:none; color:black;}");
-		style.append("#perm-group a {text-decoration:none; color:#"+Integer.toHexString(label.getBackground().getRGB() & 0xFFFFFF)+";}");
-		style.append(".danger-perm {text-decoration:none; color:red;}");
-		style.append("#about {");
-		style.append("font-family:" + font.getFamily() + ";");
-		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-		style.append("font-size:" + font.getSize() + "pt;}");
-		style.append("#about a {text-decoration:none;}");
-		style.append("#div-button { background-color: #e7e7e7; border: none; color: white; margin:1px; padding: 5px; text-align: center; text-decoration: none; display: inline-block;");
-		style.append("font-family:" + font.getFamily() + ";");
-		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-		style.append("font-size:" + font.getSize() + "pt;}");
-		style.append("#div-button a {text-decoration:none; color:black;}");
-
-		apkinform.setStyle(style.toString());
 		apkinform.setBackground(Color.white);
 		apkinform.setHyperlinkClickListener(this);
 
@@ -170,7 +146,39 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		this.add("lodingPanel", lodingPanel);
 		this.add("apkinform", apkinform);
 
+		updateUI();
+
 		cardLayout.show(this, "apkinform");
+	}
+
+	@Override
+	public void updateUI() {
+		if(apkinform == null) return;
+
+		//Font font = new Font("helvitica", Font.BOLD, 15);
+		JLabel label = new JLabel();
+		Font font = label.getFont();
+
+		// create some css from the label's font
+		StringBuilder style = new StringBuilder("#basic-info, #perm-group {");
+		style.append("font-family:" + font.getFamily() + ";");
+		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
+		style.append("font-size:" + font.getSize() + "pt;}");
+		style.append("#basic-info a {text-decoration:none; color:black;}");
+		style.append("#perm-group a {text-decoration:none; color:#"+Integer.toHexString(label.getBackground().getRGB() & 0xFFFFFF)+";}");
+		style.append(".danger-perm {text-decoration:none; color:red;}");
+		style.append("#about {");
+		style.append("font-family:" + font.getFamily() + ";");
+		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
+		style.append("font-size:" + font.getSize() + "pt;}");
+		style.append("#about a {text-decoration:none;}");
+		style.append("#div-button { background-color: #e7e7e7; border: none; color: white; margin:1px; padding: 5px; text-align: center; text-decoration: none; display: inline-block;");
+		style.append("font-family:" + font.getFamily() + ";");
+		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
+		style.append("font-size:" + font.getSize() + "pt;}");
+		style.append("#div-button a {text-decoration:none; color:black;}");
+
+		apkinform.setStyle(style.toString());
 	}
 
 	private void showAbout()
@@ -181,14 +189,14 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("    <td width=170>");
 		strTabInfo.append("      <image src=\"" + Resource.IMG_APP_ICON.getPath() + "\" width=150 height=150 />");
 		if(!SystemUtil.hasShortCut()){
-		strTabInfo.append("<div id=\"div-button\">");
-		strTabInfo.append(makeHyperLink("@event", Resource.STR_BASIC_CREATE_SHORTCUT.getString(), null, "function-create-shortcut", null) + "<br/>");
-		strTabInfo.append("</div>");
+			strTabInfo.append("<div id=\"div-button\">");
+			strTabInfo.append(makeHyperLink("@event", Resource.STR_BTN_CREATE_SHORTCUT.getString(), null, "function-create-shortcut", null) + "<br/>");
+			strTabInfo.append("</div>");
 		}
 		if(!SystemUtil.isAssociatedWithFileType(".apk")) {
-		strTabInfo.append("<div id=\"div-button\">");
-		strTabInfo.append(makeHyperLink("@event", Resource.STR_BASIC_ASSOC_FTYPE.getString(), null, "function-assoc-apk", null) + "<br/>");
-		strTabInfo.append("</div>");
+			strTabInfo.append("<div id=\"div-button\">");
+			strTabInfo.append(makeHyperLink("@event", Resource.STR_BTN_ASSOC_FTYPE.getString(), null, "function-assoc-apk", null) + "<br/>");
+			strTabInfo.append("</div>");
 		}
 		strTabInfo.append("    </td>");
 		strTabInfo.append("    <td>");

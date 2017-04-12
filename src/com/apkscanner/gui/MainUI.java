@@ -3,6 +3,7 @@ package com.apkscanner.gui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
@@ -113,16 +114,24 @@ public class MainUI extends JFrame
 
 		Log.i("initialize() setUIFont");
 		String propFont = (String) Resource.PROP_BASE_FONT.getData();
-		if(propFont != null && !propFont.isEmpty()) {
-			setUIFont(new javax.swing.plaf.FontUIResource(propFont, java.awt.Font.PLAIN, 12));
-		}
+		int propFontStyle = (int)Resource.PROP_BASE_FONT_STYLE.getInt(Font.PLAIN);
+		int propFontSize = (int) Resource.PROP_BASE_FONT_SIZE.getInt(12);
+		setUIFont(new javax.swing.plaf.FontUIResource(propFont, propFontStyle, propFontSize));
 
 		Log.i("initialize() set title & icon");
 		setTitle(Resource.STR_APP_NAME.getString());
 		setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
 
 		Log.i("initialize() set bound & size");
-		setBounds(0, 0, Resource.PROP_WINDOW_WIDTH.getInt(WINDOW_SIZE_WIDTH_MIN), Resource.PROP_WINDOW_HEIGHT.getInt(WINDOW_SIZE_HEIGHT_MIN));
+
+		int width = WINDOW_SIZE_WIDTH_MIN;
+		int height = WINDOW_SIZE_HEIGHT_MIN;
+		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData(false)) {
+			width = Resource.PROP_WINDOW_WIDTH.getInt(WINDOW_SIZE_WIDTH_MIN);
+			height = Resource.PROP_WINDOW_HEIGHT.getInt(WINDOW_SIZE_HEIGHT_MIN);
+		}
+		
+		setBounds(0, 0, width, height);
 		setMinimumSize(new Dimension(WINDOW_SIZE_WIDTH_MIN, WINDOW_SIZE_HEIGHT_MIN));
 		setResizable(true);
 		setLocationRelativeTo(null);
@@ -165,7 +174,9 @@ public class MainUI extends JFrame
 			Object key = keys.nextElement();
 			Object value = UIManager.get(key);
 			if (value instanceof javax.swing.plaf.FontUIResource) {
-				UIManager.put(key, f);
+				if(!"InternalFrame.titleFont".equals(key)) {
+					UIManager.put(key, f);
+				}
 			}
 		}
 	}
@@ -483,10 +494,11 @@ public class MainUI extends JFrame
 
 		private void evtSettings()
 		{
-			int value = (new SettingDlg(MainUI.this)).makeDialog(MainUI.this);
-
+			SettingDlg dlg = new SettingDlg(MainUI.this);
+			dlg.setVisible(true);
+			
 			//changed theme
-			if(value == 1) {
+			if(dlg.isNeedRestart()) {
 				restart();
 			}
 
@@ -713,7 +725,7 @@ public class MainUI extends JFrame
 		{
 			Log.v("finished()");
 
-			if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData(true)) {
+			if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData(false)) {
 				int width = (int)getSize().getWidth();
 				int height = (int)getSize().getHeight();
 				if(Resource.PROP_WINDOW_WIDTH.getInt(0) != width

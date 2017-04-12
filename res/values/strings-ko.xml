@@ -1,228 +1,264 @@
 <resources>
-    <string name="app_name">APK 스캐너</string>
-    <string name="app_version">Ver. </string>
-    
-    <string name="title_install_wizard">APK 설치 마법사</string>
-    
-    <string name="btn_open">열기</string>
-    <string name="btn_open_pacakge">패키지</string>
-    <string name="btn_manifest">매니페스트</string>
-    <string name="btn_explorer">탐색기</string>
-    <string name="btn_unpack">디컴파일</string>
-    <string name="btn_pack">리컴파일</string>
-    <string name="btn_install">설치</string>
-    <string name="btn_install_downgrad">다운그레이드</string>
-    <string name="btn_install_update">업데이트</string>
-    <string name="btn_launch">실행</string>
-    <string name="btn_sign">서명</string>
-    <string name="btn_push">교체</string>
-    <string name="btn_setting">설정</string>
-    <string name="btn_about">정보</string>
-    <string name="btn_save">저장</string>
-    <string name="btn_close">닫기</string>
-    <string name="btn_ok">확인</string>
-    <string name="btn_yes">예</string>
-    <string name="btn_no">아니요</string>
-    <string name="btn_cancel">취소</string>
-    <string name="btn_refresh">새로고침</string>
-    <string name="btn_del">삭제</string>
-    <string name="btn_add">추가</string>
-    <string name="btn_export">내보내기</string>
-    <string name="btn_opencode">소스코드</string>>
-    <string name="btn_opening_code">여는중...</string>
-    <string name="btn_search">검색</string>
-    <string name="btn_more">더보기</string>
-    
-    <string name="btn_open_lab">APK 파일에서 정보를 가져옵니다. (Ctrl+O)</string>
-    <string name="btn_open_pacakge_lab">디바이스 패키지 열기(Ctrl+P)</string>
-    <string name="btn_manifest_lab">AndroidManifest.xml 전문을 편집기에서 확인 합니다. (Ctrl+M)</string>
-    <string name="btn_explorer_lab">압축해제 된 임시 폴더로 이동합니다. (Ctrl+E)</string>
-    <string name="btn_unpack_lab">소스코드를 디검파일 합니다.</string>
-    <string name="btn_pack_lab">소스코드를 리컴파일합니다.</string>
-    <string name="btn_install_lab">연결된 디바이스에 APK를 설치합니다. (Ctrl+I)</string>
-    <string name="btn_install_downgrad_lab">설치된 버전보다 낮은 버전으로 다운그레이드 합니다. (Ctrl+I)</string>
-    <string name="btn_install_update_lab">설치된 버전보다 높은 버전으로 업데이트 합니다. (Ctrl+I)</string>
-    <string name="btn_launch_lab">설치된 앱을 실행합니다.</string>
-    <string name="btn_sign_lab">APK파일을 서명합니다.</string>
-    <string name="btn_setting_lab">편집기, 언어 등의 설정을 변경합니다.</string>
-    <string name="btn_about_lab">APK 스캐너 정보를 확인합니다. (F1)</string>
-    <string name="btn_opencode_lab">소스코드를 JD-GUI를 통하여 보여줍니다.</string>
-    <string name="btn_opening_code_lab">소스코드를 변환하고 있습니다.</string>
-    <string name="btn_search_lab">리소스 정보를 검색 합니다.</string>
-    <string name="btn_more_lab">추가 기능 보기</string>
-    
-    <string name="menu_new">새창으로 열기...</string>
-    <string name="menu_new_window">새창 열기(N)</string>
-    <string name="menu_new_apk_file">새창으로 APK 파일 열기(O)</string>
-    <string name="menu_new_package">새창으로 패키지 열기(P)</string>
-    <string name="menu_apk_file">APK 파일 열기(O)</string>
-    <string name="menu_package">디바이스 패키지 열기(P)</string>
-    <string name="menu_install">설치 (I)</string>
-    <string name="menu_uninstall">삭제 (U)</string>
-    <string name="menu_check_installed">설치버전 정보확인 (T)</string>
+	<string name="app_name">APK 스캐너</string>
+	<string name="app_version">Ver. </string>
 
-    <string name="tab_basic_info">APK 정보</string>
-    <string name="tab_widget">위젯</string>
-    <string name="tab_lib">라이브러리</string>
-    <string name="tab_image">리소스</string>
-    <string name="tab_activity">컴포넌트</string>
-    <string name="tab_cert">서명</string>
-    
-    <string name="basic_permissions">권한</string>
-    <string name="basic_permlab_display_list">전체 리스트 보기</string>
-    <string name="basic_permdesc_display_list">앱이 추가한 전체 권한 목록을 확인 할 수 있습니다.</string>
-    <string name="basic_perm_list_title">전체 권한 목록</string>
-    <string name="basic_perm_display_title">권한정보 상세보기</string>
-    <string name="basic_create_shortcut">바탕화면에 바로가기 추가</string>
-    <string name="basic_assoc_ftype">.apk 파일 연결하기</string>
+	<string name="title_install_wizard">APK 설치 마법사</string>
 
-    <string name="feature_lab">특징</string>
-    <string name="feature_desc">앱의 주요 특징 혹은 기능</string>
-    <string name="feature_install_location_internal_only_lab">설치장소 : 내장</string>
-    <string name="feature_install_location_internal_only_desc">응용 프로그램은 내부 장치에 저장 만에 설치되어 있어야합니다.
-이 설정되어 있으면, 애플리케이션은 외부 저장 장치에 설치되지 않을 것이다.
-내부 저장소가 가득 찬 경우, 시스템은 응용 프로그램을 설치하지 않습니다.</string>
-    <string name="feature_install_location_auto_lab">설치장소 : 내/외장(내장 우선)</string>
-    <string name="feature_install_location_auto_desc">응용 프로그램은 외부 저장 장치에 설치 될 수 있지만 시스템은 기본적으로 내부 저장 장치에 응용 프로그램을 설치합니다.
-내부 저장소가 가득 찬 경우, 시스템은 외부 저장 장치에 설치됩니다.
-일단 설치되면, 사용자가 시스템 설정을 통해 외부 또는 내부 저장 장치에 응용 프로그램을 이동시킬 수있다.</string>
-    <string name="feature_install_location_prefer_external_lab">설치장소 : 내/외장(외장 우선)</string>
-    <string name="feature_install_location_prefer_external_desc">애플리케이션은 외부 저장 장치 (SD 카드) 상에 설치 될 것을 선호. 시스템이 요청을 존중한다는 보장은 없습니다.
-외부 매체를 사용할 수 없거나 꽉 찬 경우 응용 프로그램이 내장 스토리지에 설치 될 수 있습니다.
-일단 설치되면, 사용자가 시스템 설정을 통해 외부 또는 내부 저장 장치에 응용 프로그램을 이동시킬 수있다.</string>
-    <string name="feature_launcher_lab">실행앱</string>
-    <string name="feature_launcher_desc">앱실행 아이콘이 있습니다.</string>
-    <string name="feature_hidden_lab">숨김앱</string>
-    <string name="feature_hidden_desc">앱의 실행 아이콘이 없습니다.</string>
-    <string name="feature_startup_lab">부팅시 실행</string>
-    <string name="feature_startup_desc">부팅시 자동실행 가능한 권한을 사용합니다.</string>
-    <string name="feature_signature_lab">서명 권한</string>
-    <string name="feature_signature_desc">동일 서명 혹은 시스템에 포함 되어야 사용 가능하거나 기타 보호된 권한이 정의 되어 있습니다.</string>
-    <string name="feature_system_user_id_lab">시스템 UID</string>
-    <string name="feature_system_user_id_desc">시스템 UID를 사용하고 있습니다.
-※ 시스템 리소스에 접근이 가능합니다.</string>
-    <string name="feature_shared_user_id_lab">공유 UID</string>
-    <string name="feature_shared_user_id_desc">공유 UID를 사용하고 있습니다.</string>
-    <string name="feature_platform_sign_lab">플랫폼 서명</string>
-    <string name="feature_platform_sign_desc">삼성 Test-key 플랫폼 서명이 포함 되어 있습니다.
-eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
-    <string name="feature_samsung_sign_lab">삼성 서명</string>
-    <string name="feature_samsung_sign_desc">삼성 플랫폼 서명이 포함 되어 있습니다.</string>
-    <string name="feature_revoke_permissions_lab">권한 경고</string>
-    <string name="feature_revoke_permissions_desc">플랫폼 서명이 필요하거나 시스템(priv-app)에 설치 되어야 사용 가능한 권한을 사용하고 있습니다.
-※ 단, pre23 레벨 포함시 SDK23 이전 버전에서는 자동 승인됩니다.</string>
-    <string name="feature_deprecated_prem_lab">미사용 권한</string>
-    <string name="feature_deprecated_prem_desc">더이상 사용 되지 않는 권한을 사용 하고 있습니다.</string>
-    <string name="feature_debuggable_lab">디버깅모드</string>
-    <string name="feature_debuggable_desc">어플리케이션 디버깅모드가 허용 되어 있습니다.
-※ 버전 발행시 제거 되어야 합니다.</string>
-    <string name="feature_instrumentation_lab">프로파일링</string>
-    <string name="feature_instrumentation_desc">애플리케이션이 실행 중일 때 프로파일링과 기타 정보를 제공하는 Instrumentation 클래스를 목록으로 표시합니다.
-※ 버전 발행시 제거 되어야 합니다.</string>
-    <string name="feature_device_requirements_lab">장치 요구사항</string>
-    <string name="feature_device_requirements_desc">설치에 필요한 조건 혹은 지원하는 장치 정보가 있습니다</string>
+	<string name="btn_open">열기</string>
+	<string name="btn_open_pacakge">패키지</string>
+	<string name="btn_manifest">매니페스트</string>
+	<string name="btn_explorer">탐색기</string>
+	<string name="btn_unpack">디컴파일</string>
+	<string name="btn_pack">리컴파일</string>
+	<string name="btn_install">설치</string>
+	<string name="btn_install_downgrad">다운그레이드</string>
+	<string name="btn_install_update">업데이트</string>
+	<string name="btn_launch">실행</string>
+	<string name="btn_sign">서명</string>
+	<string name="btn_push">교체</string>
+	<string name="btn_setting">설정</string>
+	<string name="btn_about">정보</string>
+	<string name="btn_save">저장</string>
+	<string name="btn_close">닫기</string>
+	<string name="btn_ok">확인</string>
+	<string name="btn_yes">예</string>
+	<string name="btn_no">아니요</string>
+	<string name="btn_cancel">취소</string>
+	<string name="btn_refresh">새로고침</string>
+	<string name="btn_del">삭제</string>
+	<string name="btn_add">추가</string>
+	<string name="btn_export">내보내기</string>
+	<string name="btn_opencode">소스코드</string>
+	<string name="btn_opening_code">여는중...</string>
+	<string name="btn_search">검색</string>
+	<string name="btn_more">더보기</string>
+	<string name="btn_assoc_ftype">APK 파일 연결</string>
+	<string name="btn_unassoc_ftype">APK 파일 연결해제</string>
+	<string name="btn_create_shortcut">바탕화면에 바로가기 생성</string>
+    <string name="btn_self_search">찾아보기...</string>
 
-    <string name="widget_column_image">이미지</string>
-    <string name="widget_column_label">이름</string>
-    <string name="widget_column_size">크기</string>
-    <string name="widget_column_activity">액티비티</string>
-    <string name="widget_column_type">종류</string>
-    <string name="widget_resize_mode">크기조정가능</string>
-    <string name="widget_horizontal">가로</string>
-    <string name="widget_vertical">세로</string>
-    <string name="widget_type_nomal">일반</string>
-    <string name="widget_type_shortcut">바로가기</string>
-    
-    <string name="lib_column_index">번호</string>
-    <string name="lib_column_path">경로</string>
-    <string name="lib_column_size">크기</string>
-    
-    <string name="activity_column_class">클래스</string>
-    <string name="activity_column_type">종류</string>
-    <string name="activity_column_startup">스타트업</string>
-    <string name="activity_column_enabled">상태</string>
-    <string name="activity_column_export">외부공개</string>
-    <string name="activity_column_permission">권한</string>
-    <string name="activity_type_activity">액티비티</string>
-    <string name="activity_type_service">서비스</string>
-    <string name="activity_type_receiver">리시버</string>
-    <string name="activity_label_intent_filter">인텐트 필터</string>
-    
-    <string name="cert_summury">요약</string>
-    <string name="cert_certificate">서명</string>
-    
-    <string name="file_size_Bytes">바이트</string>
-    <string name="file_size_KB">KB</string>
-    <string name="file_size_MB">MB</string>
-    <string name="file_size_GB">GB</string>
-    <string name="file_size_TB">TB</string>
-    
-    <string name="tree_open_package">열기</string>
-    
-    <string name="settings_title">환경설정</string>
-    <string name="settings_editor">편집기</string>
-    <string name="settings_res">프레임워크 리소스</string>
-    <string name="settings_check_installed">설치시 동일 패키지 팝업 유무</string>
-    <string name="settings_language">언어</string>
-    
-    <string name="label_error">오류</string>
-    <string name="label_warning">경고</string>
-    <string name="label_info">정보</string>
-    <string name="label_question">질문</string>
-    <string name="label_log">로그</string>
-    <string name="label_installing">설치중..</string>
-    <string name="label_uninstalling">삭제중..</string>
-    <string name="label_sel_device">디바이스 선택</string>
-    <string name="label_device_list">디바이스 목록</string>
-    <string name="label_app_name_list">App 이름 목록</string>
-    <string name="label_no_permission">앱에서 사용중인 권한이 없습니다.</string>
-    <string name="label_search">검색</string>
-    <string name="label_loading">로딩...</string>
-    <string name="label_apk_file_description">안드로이드 패키지(.apk)</string>
-    <string name="label_device">디바이스</string>
-    <string name="label_path">경로</string>
-    <string name="label_uses_resource">프레임워크 리소스 파일 사용</string>
-    <string name="label_open_with">연결 프로그램</string>
-    <string name="label_open_with_system">열기</string>
-    <string name="label_open_with_jdgui">JD-GUI</string>
-    <string name="label_open_with_explorer">탐색기</string>
-    <string name="label_open_with_apkscanner">APK 스캐너</string>
-    <string name="label_open_with_choose">연결 프로그램 선택</string>
-    
-    <string name="msg_failure_open_apk">APK 파일을 열수 없습니다.</string>
-    <string name="msg_no_such_apk">APK 파일이 존재하지 않습니다.</string>
-    <string name="msg_device_not_found">장치를 찾을 수 없습니다.
-연결상태를 확인 하세요.</string>
-    <string name="msg_already_installed">동일 패키지가 이미 설치되어 있습니다.</string>
-    <string name="msg_no_such_package">동일 패키지를 찾을수 없습니다.</string>
-    <string name="msg_no_such_launcher">실행 가능한 액티비티가 없습니다.</string>
-    <string name="msg_no_such_package_device">패키지가 설치 된 장치를 찾지 못하였습니다.</string>
-    <string name="msg_no_such_classes_dex">APK 파일에 classes.dex 파일이 존재하지 않습니다.</string>
-    <string name="msg_failure_launch_app">앱을 실행하지 못했습니다.</string>
-    <string name="msg_failure_installed">설치 실패...</string>
-    <string name="msg_failure_uninstalled">앱 제거 실패!</string>
-    <string name="msg_failure_pull_apk">APK 파일을 가져오지 못 하였습니다.</string>
-    <string name="msg_failure_dex2jar">jar 파일 변환에 실패 하였습니다.</string>
-    <string name="msg_success_installed">설치 성공...</string>
-    <string name="msg_success_removed">앱 제거 완료!</string>
-    <string name="msg_success_pull_apk">APK 파일을 저장 하였습니다.</string>
-    <string name="msg_success_pulled">APK 파일을 저장하였습니다.</string>
-    <string name="msg_failure_pulled">APK 파일을 저장에 실패하였습니다.</string>
-    <string name="msg_device_unauthorized">디바이스가 미인증 상태입니다. 디바이스에서 USB 디버깅 허용상태를 확인하세요.</string>
-    <string name="msg_device_unknown">디바이스 상태를 알수 없습니다.</string>
-    <string name="msg_cannot_run_root">디바이스 루트 권한이 없습니다.</string>
-    <string name="msg_unsupported_preview">이 파일은 미리보기를 지원 하지 않습니다.</string>
-    <string name="msg_cannot_write_file">파일을 덮어 쓸 수 없습니다.</string>
+	<string name="btn_open_lab">APK 파일에서 정보를 가져옵니다. (Ctrl+O)</string>
+	<string name="btn_open_pacakge_lab">디바이스 패키지 열기(Ctrl+P)</string>
+	<string name="btn_manifest_lab">AndroidManifest.xml 전문을 편집기에서 확인 합니다. (Ctrl+M)
+	</string>
+	<string name="btn_explorer_lab">압축해제 된 임시 폴더로 이동합니다. (Ctrl+E)</string>
+	<string name="btn_unpack_lab">소스코드를 디검파일 합니다.</string>
+	<string name="btn_pack_lab">소스코드를 리컴파일합니다.</string>
+	<string name="btn_install_lab">연결된 디바이스에 APK를 설치합니다. (Ctrl+I)</string>
+	<string name="btn_install_downgrad_lab">설치된 버전보다 낮은 버전으로 다운그레이드 합니다. (Ctrl+I)</string>
+	<string name="btn_install_update_lab">설치된 버전보다 높은 버전으로 업데이트 합니다. (Ctrl+I)</string>
+	<string name="btn_launch_lab">설치된 앱을 실행합니다.</string>
+	<string name="btn_sign_lab">APK파일을 서명합니다.</string>
+	<string name="btn_setting_lab">편집기, 언어 등의 설정을 변경합니다.</string>
+	<string name="btn_about_lab">APK 스캐너 정보를 확인합니다. (F1)</string>
+	<string name="btn_opencode_lab">소스코드를 JD-GUI를 통하여 보여줍니다.</string>
+	<string name="btn_opening_code_lab">소스코드를 변환하고 있습니다.</string>
+	<string name="btn_search_lab">리소스 정보를 검색 합니다.</string>
+	<string name="btn_more_lab">추가 기능 보기</string>
+	<string name="btn_assoc_ftype_lab">APK 파일 기본 연결 프로그램으로 APK Scanner를 지정 합니다.</string>
+	<string name="btn_unassoc_ftype_lab">APK 파일 기본 연결 프로그램을 해제 합니다.</string>
+	<string name="btn_create_shortcut_lab">바탕화면에 바로가기 아이콘을 생성 합니다.</string>
+    <string name="btn_self_search_lab">찾아보기...</string>
 
-    <string name="question_reboot_device">장치를 다시 시작 하시겠습니까?</string>
-    <string name="question_continue_install">설치를 계속 하시겠습니까?</string>
-    <string name="question_push_or_install">교체 또는 설치?</string>
-    <string name="question_open_or_install">열기 또는 설치?</string>
-    <string name="question_save_overwrite">파일을 덮어 쓰시겠습니까?</string>
-    
-    <string name="tree_message_device">디바이스</string>
-    <string name="tree_message_version">앱 버전</string>
-    <string name="tree_message_root">루트</string>
-    <string name="tree_message_reboot">재부팅</string>
-       
+	<string name="menu_new">새창으로 열기...</string>
+	<string name="menu_new_window">새창 열기(N)</string>
+	<string name="menu_new_apk_file">새창으로 APK 파일 열기(O)</string>
+	<string name="menu_new_package">새창으로 패키지 열기(P)</string>
+	<string name="menu_apk_file">APK 파일 열기(O)</string>
+	<string name="menu_package">디바이스 패키지 열기(P)</string>
+	<string name="menu_install">설치 (I)</string>
+	<string name="menu_uninstall">삭제 (U)</string>
+	<string name="menu_check_installed">설치버전 정보확인 (T)</string>
+
+	<string name="tab_basic_info">APK 정보</string>
+	<string name="tab_widget">위젯</string>
+	<string name="tab_lib">라이브러리</string>
+	<string name="tab_image">리소스</string>
+	<string name="tab_activity">컴포넌트</string>
+	<string name="tab_cert">서명</string>
+
+	<string name="tab_setting_generic">일반</string>
+	<string name="tab_setting_generic_lab">일반 옵션</string>
+	<string name="tab_setting_analysis">분석</string>
+	<string name="tab_setting_analysis_lab">분석 옵션</string>
+	<string name="tab_setting_device">디바이스</string>
+	<string name="tab_setting_device_lab">디바이스 관련 옵션</string>
+	<string name="tab_setting_display">화면</string>
+	<string name="tab_setting_display_lab">화면 옵션</string>
+
+	<string name="basic_permissions">권한</string>
+	<string name="basic_permlab_display_list">전체 리스트 보기</string>
+	<string name="basic_permdesc_display_list">앱이 추가한 전체 권한 목록을 확인 할 수 있습니다.</string>
+	<string name="basic_perm_list_title">전체 권한 목록</string>
+	<string name="basic_perm_display_title">권한정보 상세보기</string>
+
+	<string name="feature_lab">특징</string>
+	<string name="feature_desc">앱의 주요 특징 혹은 기능</string>
+	<string name="feature_install_location_internal_only_lab">설치장소 : 내장</string>
+	<string name="feature_install_location_internal_only_desc">응용 프로그램은 내부 장치에 저장 만에 설치되어 있어야합니다.
+		이 설정되어 있으면, 애플리케이션은 외부 저장 장치에 설치되지 않을 것이다.
+		내부 저장소가 가득 찬 경우, 시스템은 응용 프로그램을 설치하지 않습니다.
+	</string>
+	<string name="feature_install_location_auto_lab">설치장소 : 내/외장(내장 우선)</string>
+	<string name="feature_install_location_auto_desc">응용 프로그램은 외부 저장 장치에 설치 될 수 있지만 시스템은 기본적으로 내부 저장 장치에
+		응용 프로그램을 설치합니다.
+		내부 저장소가 가득 찬 경우, 시스템은 외부 저장 장치에 설치됩니다.
+		일단 설치되면, 사용자가 시스템 설정을 통해 외부 또는 내부 저장 장치에 응용 프로그램을 이동시킬 수있다.
+	</string>
+	<string name="feature_install_location_prefer_external_lab">설치장소 : 내/외장(외장 우선)</string>
+	<string name="feature_install_location_prefer_external_desc">애플리케이션은 외부 저장 장치 (SD 카드) 상에 설치 될 것을 선호. 시스템이 요청을
+		존중한다는 보장은 없습니다.
+		외부 매체를 사용할 수 없거나 꽉 찬 경우 응용 프로그램이 내장 스토리지에 설치 될 수 있습니다.
+		일단 설치되면, 사용자가 시스템 설정을 통해 외부 또는 내부 저장 장치에 응용 프로그램을 이동시킬 수있다.
+	</string>
+	<string name="feature_launcher_lab">실행앱</string>
+	<string name="feature_launcher_desc">앱실행 아이콘이 있습니다.</string>
+	<string name="feature_hidden_lab">숨김앱</string>
+	<string name="feature_hidden_desc">앱의 실행 아이콘이 없습니다.</string>
+	<string name="feature_startup_lab">부팅시 실행</string>
+	<string name="feature_startup_desc">부팅시 자동실행 가능한 권한을 사용합니다.</string>
+	<string name="feature_signature_lab">서명 권한</string>
+	<string name="feature_signature_desc">동일 서명 혹은 시스템에 포함 되어야 사용 가능하거나 기타 보호된 권한이 정의 되어
+		있습니다.</string>
+	<string name="feature_system_user_id_lab">시스템 UID</string>
+	<string name="feature_system_user_id_desc">시스템 UID를 사용하고 있습니다.
+		※ 시스템 리소스에 접근이 가능합니다.
+	</string>
+	<string name="feature_shared_user_id_lab">공유 UID</string>
+	<string name="feature_shared_user_id_desc">공유 UID를 사용하고 있습니다.</string>
+	<string name="feature_platform_sign_lab">플랫폼 서명</string>
+	<string name="feature_platform_sign_desc">삼성 Test-key 플랫폼 서명이 포함 되어 있습니다.
+		eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.
+	</string>
+	<string name="feature_samsung_sign_lab">삼성 서명</string>
+	<string name="feature_samsung_sign_desc">삼성 플랫폼 서명이 포함 되어 있습니다.</string>
+	<string name="feature_revoke_permissions_lab">권한 경고</string>
+	<string name="feature_revoke_permissions_desc">플랫폼 서명이 필요하거나 시스템(priv-app)에 설치 되어야 사용 가능한 권한을 사용하고
+		있습니다.
+		※ 단, pre23 레벨 포함시 SDK23 이전 버전에서는 자동 승인됩니다.
+	</string>
+	<string name="feature_deprecated_prem_lab">미사용 권한</string>
+	<string name="feature_deprecated_prem_desc">더이상 사용 되지 않는 권한을 사용 하고 있습니다.</string>
+	<string name="feature_debuggable_lab">디버깅모드</string>
+	<string name="feature_debuggable_desc">어플리케이션 디버깅모드가 허용 되어 있습니다.
+		※ 버전 발행시 제거 되어야 합니다.
+	</string>
+	<string name="feature_instrumentation_lab">프로파일링</string>
+	<string name="feature_instrumentation_desc">애플리케이션이 실행 중일 때 프로파일링과 기타 정보를 제공하는 Instrumentation
+		클래스를 목록으로 표시합니다.
+		※ 버전 발행시 제거 되어야 합니다.
+	</string>
+	<string name="feature_device_requirements_lab">장치 요구사항</string>
+	<string name="feature_device_requirements_desc">설치에 필요한 조건 혹은 지원하는 장치 정보가 있습니다</string>
+
+	<string name="widget_column_image">이미지</string>
+	<string name="widget_column_label">이름</string>
+	<string name="widget_column_size">크기</string>
+	<string name="widget_column_activity">액티비티</string>
+	<string name="widget_column_type">종류</string>
+	<string name="widget_resize_mode">크기조정가능</string>
+	<string name="widget_horizontal">가로</string>
+	<string name="widget_vertical">세로</string>
+	<string name="widget_type_nomal">일반</string>
+	<string name="widget_type_shortcut">바로가기</string>
+
+	<string name="lib_column_index">번호</string>
+	<string name="lib_column_path">경로</string>
+	<string name="lib_column_size">크기</string>
+
+	<string name="activity_column_class">클래스</string>
+	<string name="activity_column_type">종류</string>
+	<string name="activity_column_startup">스타트업</string>
+	<string name="activity_column_enabled">상태</string>
+	<string name="activity_column_export">외부공개</string>
+	<string name="activity_column_permission">권한</string>
+	<string name="activity_type_activity">액티비티</string>
+	<string name="activity_type_service">서비스</string>
+	<string name="activity_type_receiver">리시버</string>
+	<string name="activity_label_intent_filter">인텐트 필터</string>
+
+	<string name="cert_summury">요약</string>
+	<string name="cert_certificate">서명</string>
+
+	<string name="file_size_Bytes">바이트</string>
+	<string name="file_size_KB">KB</string>
+	<string name="file_size_MB">MB</string>
+	<string name="file_size_GB">GB</string>
+	<string name="file_size_TB">TB</string>
+
+	<string name="tree_open_package">열기</string>
+
+	<string name="settings_title">환경설정</string>
+	<string name="settings_editor">편집기</string>
+	<string name="settings_res">프레임워크 리소스</string>
+	<string name="settings_check_installed">설치시 동일 패키지 팝업 유무</string>
+	<string name="settings_language">언어</string>
+	<string name="settings_remember_window_size">윈도우 창 크기 기억</string>
+	<string name="settings_theme">테마</string>
+	<string name="settings_tabbed_ui">탭 모양</string>
+	<string name="settings_font">폰트</string>
+	<string name="settings_theme_font">테마 글꼴</string>
+
+	<string name="label_error">오류</string>
+	<string name="label_warning">경고</string>
+	<string name="label_info">정보</string>
+	<string name="label_question">질문</string>
+	<string name="label_log">로그</string>
+	<string name="label_installing">설치중..</string>
+	<string name="label_uninstalling">삭제중..</string>
+	<string name="label_sel_device">디바이스 선택</string>
+	<string name="label_device_list">디바이스 목록</string>
+	<string name="label_app_name_list">App 이름 목록</string>
+	<string name="label_no_permission">앱에서 사용중인 권한이 없습니다.</string>
+	<string name="label_search">검색</string>
+	<string name="label_loading">로딩...</string>
+	<string name="label_apk_file_description">안드로이드 패키지(.apk)</string>
+	<string name="label_device">디바이스</string>
+	<string name="label_path">경로</string>
+	<string name="label_uses_resource">프레임워크 리소스 파일 사용</string>
+	<string name="label_open_with">연결 프로그램</string>
+	<string name="label_open_with_system">열기</string>
+	<string name="label_open_with_jdgui">JD-GUI</string>
+	<string name="label_open_with_explorer">탐색기</string>
+	<string name="label_open_with_apkscanner">APK 스캐너</string>
+	<string name="label_open_with_choose">연결 프로그램 선택</string>
+
+	<string name="msg_failure_open_apk">APK 파일을 열수 없습니다.</string>
+	<string name="msg_no_such_apk">APK 파일이 존재하지 않습니다.</string>
+	<string name="msg_device_not_found">장치를 찾을 수 없습니다.
+		연결상태를 확인 하세요.
+	</string>
+	<string name="msg_already_installed">동일 패키지가 이미 설치되어 있습니다.</string>
+	<string name="msg_no_such_package">동일 패키지를 찾을수 없습니다.</string>
+	<string name="msg_no_such_launcher">실행 가능한 액티비티가 없습니다.</string>
+	<string name="msg_no_such_package_device">패키지가 설치 된 장치를 찾지 못하였습니다.</string>
+	<string name="msg_no_such_classes_dex">APK 파일에 classes.dex 파일이 존재하지 않습니다.</string>
+	<string name="msg_failure_launch_app">앱을 실행하지 못했습니다.</string>
+	<string name="msg_failure_installed">설치 실패...</string>
+	<string name="msg_failure_uninstalled">앱 제거 실패!</string>
+	<string name="msg_failure_pull_apk">APK 파일을 가져오지 못 하였습니다.</string>
+	<string name="msg_failure_dex2jar">jar 파일 변환에 실패 하였습니다.</string>
+	<string name="msg_success_installed">설치 성공...</string>
+	<string name="msg_success_removed">앱 제거 완료!</string>
+	<string name="msg_success_pull_apk">APK 파일을 저장 하였습니다.</string>
+	<string name="msg_success_pulled">APK 파일을 저장하였습니다.</string>
+	<string name="msg_failure_pulled">APK 파일을 저장에 실패하였습니다.</string>
+	<string name="msg_device_unauthorized">디바이스가 미인증 상태입니다. 디바이스에서 USB 디버깅 허용상태를 확인하세요.
+	</string>
+	<string name="msg_device_unknown">디바이스 상태를 알수 없습니다.</string>
+	<string name="msg_cannot_run_root">디바이스 루트 권한이 없습니다.</string>
+	<string name="msg_unsupported_preview">이 파일은 미리보기를 지원 하지 않습니다.</string>
+	<string name="msg_cannot_write_file">파일을 덮어 쓸 수 없습니다.</string>
+
+	<string name="question_reboot_device">장치를 다시 시작 하시겠습니까?</string>
+	<string name="question_continue_install">설치를 계속 하시겠습니까?</string>
+	<string name="question_push_or_install">교체 또는 설치?</string>
+	<string name="question_open_or_install">열기 또는 설치?</string>
+	<string name="question_save_overwrite">파일을 덮어 쓰시겠습니까?</string>
+
+	<string name="tree_message_device">디바이스</string>
+	<string name="tree_message_version">앱 버전</string>
+	<string name="tree_message_root">루트</string>
+	<string name="tree_message_reboot">재부팅</string>
+
 </resources>

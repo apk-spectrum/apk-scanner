@@ -235,10 +235,12 @@ public class AquaBarTabbedPaneUI extends BasicTabbedPaneUI {
 		}
 
 		public void mouseExited(MouseEvent e) {
+			if(tabPane == null) return;
 			tabPane.repaint();
 		}
 
 		private void checkRollOver() {
+			if(tabPane == null) return;
 			int currentRollOver = getRolloverTab();
 			if (currentRollOver != lastRollOverTab) {
 				lastRollOverTab = currentRollOver;

@@ -1,68 +1,310 @@
 package com.apkscanner.gui.dialog;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
 
 import javax.swing.AbstractAction;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
+import javax.swing.ListCellRenderer;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.TitledBorder;
+import javax.swing.filechooser.FileSystemView;
 
+import com.apkscanner.gui.TabbedPanel;
+import com.apkscanner.gui.ToolBar;
 import com.apkscanner.gui.theme.TabbedPaneUIManager;
-import com.apkscanner.gui.theme.tabbedpane.PlasticTabbedPaneUI;
 import com.apkscanner.gui.util.ApkFileChooser;
+import com.apkscanner.jna.FileInfo;
+import com.apkscanner.jna.FileVersion;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 
 public class SettingDlg extends JDialog implements ActionListener
 {
 	private static final long serialVersionUID = -854353051241196941L;
 
-	private JTextField textExcutePath;
+	private static final String ACT_CMD_EDITOR_EXPLOERE = "ACT_CMD_EDITOR_EXPLOERE";
+	private static final String ACT_CMD_CREATE_SHORTCUT = "ACT_CMD_CREATE_SHORTCUT";
+	private static final String ACT_CMD_ASSOCIATE_APK_FILE = "ACT_CMD_ASSOCIATE_APK_FILE";
 
-	private String strExecuteEditorPath;
+	private static final String ACT_CMD_SAVE = "ACT_CMD_SAVE";
+	private static final String ACT_CMD_EXIT = "ACT_CMD_EXIT";
+
+	private String propStrLanguage;
+	private String propStrEditorPath;
+	private ArrayList<String> propRecentEditors = new ArrayList<String>();
+
 	private String strframeworkResPath;
 
-	private String strLanguage;
-	private String strSetTheme;
-	private String strSetTabbedUI;
-	private String strFont;
+	private String propTheme;
+	private String propTabbedUI;
+	private String propFont;
+	private int propFontSize;
+	private int propFontStyle;
+	private boolean propSaveWinSize; 
 
 	private boolean isSamePackage;
-	private int changed = 0;
+	private boolean needUpdateUI;
 
-	JButton savebutton, exitbutton;
-	JButton browser1,browser2,browser3;
+	private static String fontOfTheme;
 
-	JComboBox<String> comboBox;
-	JComboBox<String> themecomboBox;
-	JComboBox<String> tabbedUIComboBox;
-	JComboBox<String> fontComboBox;
+	private JPanel previewPanel;
+	private JInternalFrame mPreviewFrame;
+	private TabbedPanel mPreviewTabbedPanel;
+	private ToolBar mPreviewToolBar;
+
+
+	JButton browser2,browser3;
+
+	JComboBox<String> jcbLanguage;
+	JComboBox<String> jcbEditors;
+
+	JComboBox<String> jcbTheme;
+	JComboBox<String> jcbTabbedUI;
+	JComboBox<String> jcbFont;
+	JComboBox<Integer> jcbFontSize;
+	JToggleButton jtbFontBold;
+	JToggleButton jtbFontItalic;
 
 	JCheckBox chckbxNewCheckBox;
+	JCheckBox jckRememberWinSize;
 
-	JList<String> jlist;
+	JList<String> jlFrameworkRes;
 	ArrayList<String> resList = new ArrayList<String>();
 
-	public SettingDlg() {
+	private class EditorItemRenderer extends JLabel implements ListCellRenderer<Object> {
+		private static final long serialVersionUID = -151339243781300421L;
+
+		private class CellItem {
+			public CellItem(String path) {
+				File file = new File(path);
+				text = getFileDescription(path);
+				if(text == null || text.isEmpty()) {
+					text = file.getName();
+				}
+				icon = FileSystemView.getFileSystemView().getSystemIcon(file);
+			}
+			String text;
+			Icon icon;
+		}
+		private HashMap<String, CellItem> items; 
+
+		public EditorItemRenderer() {
+			setOpaque(false);
+			setHorizontalAlignment(LEFT);
+			setVerticalAlignment(CENTER);
+
+			items = new HashMap<String, CellItem> ();
+		}
+
+		private CellItem getCellItem(String path) {
+			if(items.containsKey(path)) {
+				return items.get(path);
+			}
+			CellItem cellItem = new CellItem(path);
+			items.put(path, cellItem);
+			return cellItem;
+		}
+
+		@Override
+		public Component getListCellRendererComponent(JList<?> list, Object value,
+				int index, boolean isSelected, boolean cellHasFocus) {
+			CellItem cellItem = getCellItem((String) value);
+			setText(cellItem.text);
+			setIcon(cellItem.icon);
+			return this;
+		}
+
+		private String getFileDescription(String filePath) {
+			String desc = null;
+			try {
+				FileVersion fileVersion = new FileVersion(filePath);
+				for(FileInfo info : fileVersion.getFileInfos())
+				{
+					desc = info.getFileDescription();
+					if(desc != null && !desc.isEmpty()) {
+						break;
+					}
+				}
+			} catch (Exception e) {
+				//e.printStackTrace();
+			}
+			return desc;
+		}
+	}
+
+	private class ThremeSimpleNameItemRenderer extends JLabel implements ListCellRenderer<Object> {
+		private static final long serialVersionUID = 6776371348942306134L;
+
+		private HashMap<String, String> simpleNameMap = new HashMap<String, String>();
+
+		public ThremeSimpleNameItemRenderer() {
+			for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+				simpleNameMap.put(info.getClassName(), info.getName());
+			}
+			for (TabbedPaneUIManager.TabbedPaneUIInfo info : TabbedPaneUIManager.getUIThemes()) {
+				simpleNameMap.put(info.getClassName(), info.getName());
+			}
+		}
+
+		@Override
+		public Component getListCellRendererComponent(JList<?> list, Object value,
+				int index, boolean isSelected, boolean cellHasFocus) {
+			String className = (String) value;
+			if(simpleNameMap.containsKey(className)) {
+				setText(simpleNameMap.get(className));
+			} else {
+				setText(className);
+			}
+			return this;
+		}
+	}
+
+	private class ResourceLangItemRenderer extends JLabel implements ListCellRenderer<Object> {
+		private static final long serialVersionUID = 3001512366576666099L;
+
+		@Override
+		public Component getListCellRendererComponent(JList<?> list, Object value,
+				int index, boolean isSelected, boolean cellHasFocus) {
+			if(value.toString().isEmpty()) {
+				setText("default - en");
+			} else {
+				setText(value.toString());
+			}
+			return this;
+		}
+	}
+
+	private class FontItemRenderer extends JLabel implements ListCellRenderer<Object> {
+		private static final long serialVersionUID = 3001512366576666099L;
+
+		@Override
+		public Component getListCellRendererComponent(JList<?> list, Object value,
+				int index, boolean isSelected, boolean cellHasFocus) {
+			if(value.toString().isEmpty()) {
+				setText(Resource.STR_SETTINGS_THEME_FONT.getString() + " - " + fontOfTheme);
+			} else {
+				setText(value.toString());
+			}
+			return this;
+		}
+	}
+
+	private class FontChangedListener implements ItemListener, ActionListener {
+		private void changePreviewFont() {
+			if(jcbFont == null || jcbFontSize == null || mPreviewFrame == null) return;
+
+			int style = Font.PLAIN;
+			if(jtbFontBold.isSelected()) style |= Font.BOLD;
+			if(jtbFontItalic.isSelected()) style |= Font.ITALIC;
+
+			String newFont = (String)jcbFont.getSelectedItem();
+			setUIFont(new javax.swing.plaf.FontUIResource(newFont, style, (int)jcbFontSize.getSelectedItem()));
+			SwingUtilities.updateComponentTreeUI(mPreviewFrame);
+
+			if(jcbTabbedUI != null && mPreviewTabbedPanel != null) {
+				String className = (String)jcbTabbedUI.getSelectedItem();
+				TabbedPaneUIManager.setUI(mPreviewTabbedPanel, className);
+			}
+		}
+
+		@Override
+		public void itemStateChanged(ItemEvent arg0) {
+			changePreviewFont();
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			changePreviewFont();
+		}
+	}
+
+	public SettingDlg(Window owner) {
+		super(owner);
+
+		readSettings();
+
+		Object font = UIManager.get("Label.font");
+		UIManager.put("Label.font", null);
+		fontOfTheme = new Font(new JLabel().getFont().getFamily(), Font.PLAIN, 12).getFamily();
+		UIManager.put("Label.font", font);
+
+		initialize(owner);
+	}
+
+	private void initialize(Window window)
+	{
+		setTitle(Resource.STR_SETTINGS_TITLE.getString());
+		setIconImage(Resource.IMG_TOOLBAR_SETTING.getImageIcon().getImage());
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setSize(new Dimension(600,420));
+		setResizable(true);
+		setLocationRelativeTo(window);
+		setModal(true);
+
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
+		tabbedPane.addTab(Resource.STR_TAB_SETTING_GENERIC.getString(), null, makeGenericPanel(), Resource.STR_TAB_SETTING_GENERIC_LAB.getString());
+		tabbedPane.addTab(Resource.STR_TAB_SETTING_ANALYSIS.getString(), null, makeAnalysisPanel(), Resource.STR_TAB_SETTING_ANALYSIS_LAB.getString());
+		tabbedPane.addTab(Resource.STR_TAB_SETTING_DEVICE.getString(), null, makeDevicePanel(), Resource.STR_TAB_SETTING_DEVICE_LAB.getString());
+		tabbedPane.addTab(Resource.STR_TAB_SETTING_DISPLAY.getString(), null, makeDisplayPanel(), Resource.STR_TAB_SETTING_DISPLAY_LAB.getString());
+
+		JPanel ctrPanel = new JPanel(new FlowLayout());
+		JButton savebutton = new JButton(Resource.STR_BTN_SAVE.getString());
+		savebutton.setActionCommand(ACT_CMD_SAVE);
+		savebutton.addActionListener(this);
+		savebutton.setFocusable(false);
+		ctrPanel.add(savebutton);
+
+		JButton exitbutton = new JButton(Resource.STR_BTN_CANCEL.getString());
+		exitbutton.setActionCommand(ACT_CMD_EXIT);
+		exitbutton.addActionListener(this);
+		exitbutton.setFocusable(false);
+		ctrPanel.add(exitbutton);
+
+		JPanel contentPane = new JPanel(new BorderLayout());
+		contentPane.add(tabbedPane, BorderLayout.CENTER);
+		contentPane.add(ctrPanel, BorderLayout.SOUTH);
+
+		getContentPane().add(contentPane);
+
 		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
 		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
 		getRootPane().getActionMap().put("ESCAPE", new AbstractAction() {
@@ -71,138 +313,253 @@ public class SettingDlg extends JDialog implements ActionListener
 				dispose();
 			}
 		});
-
-		readSettings();
 	}
 
 	private void readSettings()
 	{
-		strExecuteEditorPath = (String)Resource.PROP_EDITOR.getData();
-		if(strExecuteEditorPath == null) {
+		propStrLanguage = (String)Resource.PROP_LANGUAGE.getData();
+		if(propStrLanguage == null) {
+			propStrLanguage = SystemUtil.getUserLanguage();
+		}
+
+		propStrEditorPath = SystemUtil.getRealPath((String)Resource.PROP_EDITOR.getData());
+		if(propStrEditorPath == null) {
 			try {
-				strExecuteEditorPath = SystemUtil.getDefaultEditor();
+				propStrEditorPath = SystemUtil.getDefaultEditor();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			Resource.PROP_EDITOR.setData(strExecuteEditorPath);
 		}
 
-		strLanguage = (String)Resource.PROP_LANGUAGE.getData();
-		if(strLanguage == null) {
-			if(SystemUtil.getUserLanguage().indexOf("ko") > -1) {
-				strLanguage = "ko";
-			} else {
-				strLanguage = "en";
+		String recentEditors = (String)Resource.PROP_RECENT_EDITOR.getData("");
+		for(String s: recentEditors.split(File.pathSeparator)) {
+			if(!s.isEmpty()) {
+				String realPath = SystemUtil.getRealPath(s);
+				if(realPath != null && !realPath.equalsIgnoreCase(propStrEditorPath)) {
+					propRecentEditors.add(s);
+				}
 			}
-			Resource.PROP_LANGUAGE.setData(strLanguage);
 		}
 
-		strSetTheme = (String)Resource.PROP_CURRENT_THEME.getData();
-		if(strSetTheme == null) {
-			strSetTheme = UIManager.getSystemLookAndFeelClassName();			
-			Resource.PROP_CURRENT_THEME.setData(strSetTheme);
+		propTheme = (String)Resource.PROP_CURRENT_THEME.getData();
+		if(propTheme == null || propTheme.isEmpty()) {
+			propTheme = UIManager.getSystemLookAndFeelClassName();			
 		}
 
-		strSetTabbedUI = (String)Resource.PROP_TABBED_UI_THEME.getData(PlasticTabbedPaneUI.class.getName());
+		propTabbedUI = (String)Resource.PROP_TABBED_UI_THEME.getData();
+		if(propTabbedUI == null || propTabbedUI.isEmpty()) {
+			propTabbedUI = TabbedPaneUIManager.DEFAULT_TABBED_UI;
+		}
+
+		propFont = (String)Resource.PROP_BASE_FONT.getData();
+		if(propFont == null) {
+			propFont = "";
+		}
+
+		propFontSize = (int)Resource.PROP_BASE_FONT_SIZE.getInt(12);
+
+		propFontStyle = (int)Resource.PROP_BASE_FONT_STYLE.getInt(Font.PLAIN);
+
+		propSaveWinSize = (boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData(false);
 
 		isSamePackage = (boolean)Resource.PROP_CHECK_INSTALLED.getData(false);
 
-		strframeworkResPath = (String)Resource.PROP_FRAMEWORK_RES.getData();
-		if(strframeworkResPath == null) {
-			strframeworkResPath = "";
-			Resource.PROP_FRAMEWORK_RES.setData(strframeworkResPath);
-		}
-
-		for(String s: strframeworkResPath.split(";")) {
-			resList.add(s);
+		strframeworkResPath = (String)Resource.PROP_FRAMEWORK_RES.getData("");
+		for(String s: strframeworkResPath.split(File.pathSeparator)) {
+			if(!s.isEmpty()) {
+				resList.add(s);
+			}
 		}
 	}
 
 	private void saveSettings()
 	{
-		Resource.PROP_EDITOR.setData(strExecuteEditorPath);
-		Resource.PROP_LANGUAGE.setData(strLanguage);
+		if(!propStrLanguage.equals(jcbLanguage.getSelectedItem())) {
+			Resource.PROP_LANGUAGE.setData(jcbLanguage.getSelectedItem());
+		}
+
+		if(!propStrEditorPath.equals(jcbEditors.getSelectedItem())){
+			String editorPath = SystemUtil.getRealPath((String)jcbEditors.getSelectedItem());
+			if(propRecentEditors.contains(editorPath)) {
+				propRecentEditors.remove(editorPath);
+			}
+			propRecentEditors.add(0, propStrEditorPath);
+			Resource.PROP_EDITOR.setData(editorPath);
+
+			StringBuilder recentEditors = new StringBuilder();
+			for(String editor: propRecentEditors) {
+				recentEditors.append(editor);
+				recentEditors.append(File.pathSeparator);
+			}
+			Resource.PROP_RECENT_EDITOR.setData(recentEditors.toString());
+		}
+
+		/*
 		Resource.PROP_CHECK_INSTALLED.setData(isSamePackage);
 		Resource.PROP_FRAMEWORK_RES.setData(strframeworkResPath);
-
-		if(Resource.PROP_CURRENT_THEME.getData().toString().equals(strSetTheme)==false) {
-			Resource.PROP_CURRENT_THEME.setData(strSetTheme);
-			changed = 1;
+		 */
+		needUpdateUI = false;
+		if(!propTheme.equals(jcbTheme.getSelectedItem())) {
+			Resource.PROP_CURRENT_THEME.setData(jcbTheme.getSelectedItem());
+			needUpdateUI = true;
 		}
-		if(Resource.PROP_TABBED_UI_THEME.getData(PlasticTabbedPaneUI.class.getName()).toString().equals(strSetTabbedUI) == false) {
-			Resource.PROP_TABBED_UI_THEME.setData(strSetTabbedUI);
-			changed = 1;
+		if(!propTabbedUI.equals(jcbTabbedUI.getSelectedItem())) {
+			Resource.PROP_TABBED_UI_THEME.setData(jcbTabbedUI.getSelectedItem());
+			needUpdateUI = true;
 		}
-
-		if(strFont != fontComboBox.getSelectedItem()) {
-			Resource.PROP_BASE_FONT.setData(fontComboBox.getSelectedItem());
-			changed = 1;
+		if(!propFont.equals(jcbFont.getSelectedItem())) {
+			Resource.PROP_BASE_FONT.setData(jcbFont.getSelectedItem());
+			needUpdateUI = true;
 		}
-
+		if(propFontSize != (int)jcbFontSize.getSelectedItem()) {
+			Resource.PROP_BASE_FONT_SIZE.setData(jcbFontSize.getSelectedItem());
+			needUpdateUI = true;
+		}
+		int style = Font.PLAIN;
+		if(jtbFontBold.isSelected()) style |= Font.BOLD;
+		if(jtbFontItalic.isSelected()) style |= Font.ITALIC;
+		if(propFontStyle != style) {
+			Resource.PROP_BASE_FONT_STYLE.setData(style);
+			needUpdateUI = true;
+		}
+		if(propSaveWinSize != jckRememberWinSize.isSelected()) {
+			Resource.PROP_SAVE_WINDOW_SIZE.setData(jckRememberWinSize.isSelected());	
+		}
 	}
 
-	public int makeDialog(Component component) {
-		this.setTitle(Resource.STR_SETTINGS_TITLE.getString());
-		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		this.setSize(new Dimension(480,245));
-		this.setResizable( false );
-		this.setLocationRelativeTo(component);
-		this.setModal(true);
-		getContentPane().add(makeLayoutPanel());
-		//this.pack();
-		//dlgDialog.setLocationRelativeTo(null);
-		this.setVisible(true);
-		//readSettingInfoFromFile();
-		//readSettingInfoFromFile();
-		return changed; 
-	}
-
-	JPanel makeLayoutPanel() {
-		JPanel panel = new JPanel();
-
-		panel.setLayout(null);
+	JPanel makeGenericPanel() {
+		JPanel panel = new JPanel(new GridBagLayout());
 		panel.setOpaque(true);
 
-		JLabel userLabel = new JLabel(Resource.STR_SETTINGS_EDITOR.getString());
-		userLabel.setBounds(10, 10, 116, 25);
-		panel.add(userLabel);
+		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady) 
+		GridBagConstraints rowHeadConst = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.NONE,new Insets(10,10,0,10),0,0);
+		GridBagConstraints contentConst = new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.WEST,GridBagConstraints.NONE,new Insets(10,0,0,0),0,0);
 
-		textExcutePath = new JTextField(20);
-		textExcutePath.setText(strExecuteEditorPath);
+		panel.add(new JLabel(Resource.STR_SETTINGS_LANGUAGE.getString()), rowHeadConst);
 
-		textExcutePath.setBounds(121, 10, 283, 25);
-		panel.add(textExcutePath);		
+		jcbLanguage = new JComboBox<String>(Resource.getSupportedLanguages());
+		jcbLanguage.setRenderer(new ResourceLangItemRenderer());
+		jcbLanguage.setSelectedItem(propStrLanguage);
+		propStrLanguage = (String)jcbLanguage.getSelectedItem();
+		panel.add(jcbLanguage, contentConst);
+
+		rowHeadConst.gridy++;
+		contentConst.gridy++;
+
+		panel.add(new JLabel(Resource.STR_SETTINGS_EDITOR.getString()), rowHeadConst);
+
+		final JTextField editorPath = new JTextField();
+		editorPath.setEditable(false);
+
+		jcbEditors = new JComboBox<String>();
+		jcbEditors.setRenderer(new EditorItemRenderer());
+		jcbEditors.setEditable(false);
+		jcbEditors.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent arg0) {
+				editorPath.setText(arg0.getItem().toString());
+			}
+
+		});
+
+		jcbEditors.addItem(propStrEditorPath);
+		for(String editor: propRecentEditors) {
+			jcbEditors.addItem(editor);
+		}
+
+		if(SystemUtil.isWindows()) {
+			try {
+				for(String suffix: new String[]{".txt", "txtfile", "textfile", ".xml", ".log"}) {
+					String cmdLine = SystemUtil.getOpenCommand(suffix);
+					if(cmdLine != null && cmdLine.indexOf("%1") >= 0) {
+						String cmd = cmdLine.replaceAll("\"?(.*\\.[eE][xX][eE])\"?.*", "$1");
+						if(!cmd.equals(cmdLine)) {
+							String path = SystemUtil.getRealPath(cmd);
+							if(!propRecentEditors.contains(path) && !propStrEditorPath.equalsIgnoreCase(path)) {
+								jcbEditors.addItem(path);
+							}
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		JButton btnExplorer = new JButton(Resource.STR_BTN_SELF_SEARCH.getString());
+		btnExplorer.setToolTipText(Resource.STR_BTN_SELF_SEARCH_LAB.getString());
+		btnExplorer.setMargin(new Insets(-1,10,-1,10));
+		btnExplorer.setActionCommand(ACT_CMD_EDITOR_EXPLOERE);
+		btnExplorer.addActionListener(this);
+
+
+		JPanel txtEditPane = new JPanel(new BorderLayout(5,5));
+		txtEditPane.add(jcbEditors, BorderLayout.CENTER);
+		txtEditPane.add(btnExplorer, BorderLayout.EAST);
+		txtEditPane.add(editorPath, BorderLayout.SOUTH);
+
+		panel.add(txtEditPane, contentConst);
+
+		rowHeadConst.gridy++;
+		contentConst.gridy++;
+
+		if(SystemUtil.isWindows()) {
+			JPanel etcBtnPanel = new JPanel();
+			if(!SystemUtil.hasShortCut()) {
+				JButton btnShortcut = new JButton(Resource.STR_BTN_CREATE_SHORTCUT.getString());
+				btnShortcut.setToolTipText(Resource.STR_BTN_CREATE_SHORTCUT_LAB.getString());
+				btnShortcut.setActionCommand(ACT_CMD_CREATE_SHORTCUT);
+				btnShortcut.addActionListener(this);
+				btnShortcut.setIcon(Resource.IMG_ADD_TO_DESKTOP.getImageIcon(32,32));
+				btnShortcut.setVerticalTextPosition(JLabel.BOTTOM);
+				btnShortcut.setHorizontalTextPosition(JLabel.CENTER);
+				etcBtnPanel.add(btnShortcut);
+			}
+
+			JButton btnAssociate = new JButton();
+			if(!SystemUtil.isAssociatedWithFileType(".apk")) {
+				btnAssociate.setText(Resource.STR_BTN_ASSOC_FTYPE.getString());
+				btnAssociate.setToolTipText(Resource.STR_BTN_ASSOC_FTYPE_LAB.getString());
+				btnAssociate.setIcon(Resource.IMG_ASSOCIATE_APK.getImageIcon(32,32));
+			} else {
+				btnAssociate.setText(Resource.STR_BTN_UNASSOC_FTYPE.getString());
+				btnAssociate.setToolTipText(Resource.STR_BTN_UNASSOC_FTYPE_LAB.getString());
+				btnAssociate.setIcon(Resource.IMG_UNASSOCIATE_APK.getImageIcon(32,32));
+			}
+			btnAssociate.setActionCommand(ACT_CMD_ASSOCIATE_APK_FILE);
+			btnAssociate.addActionListener(this);
+			btnAssociate.setVerticalTextPosition(JLabel.BOTTOM);
+			btnAssociate.setHorizontalTextPosition(JLabel.CENTER);
+
+			etcBtnPanel.add(btnAssociate);
+
+			panel.add(etcBtnPanel, contentConst);
+
+			rowHeadConst.gridy++;
+			contentConst.gridy++;
+		}
+
+		rowHeadConst.gridwidth = 2;
+		rowHeadConst.weighty = 1;
+		panel.add(new JPanel(), rowHeadConst);
+
+		return panel;
+	}
+
+	JPanel makeAnalysisPanel() {
+		JPanel panel = new JPanel();
 
 		JLabel frameworkLabel = new JLabel(Resource.STR_SETTINGS_RES.getString());
 		frameworkLabel.setBounds(10, 40, 114, 25);
 		panel.add(frameworkLabel);
 
-		jlist = new JList<String>();
-		JScrollPane scrollPane1 = new JScrollPane(jlist);
+		jlFrameworkRes = new JList<String>();
+		JScrollPane scrollPane1 = new JScrollPane(jlFrameworkRes);
 		scrollPane1.setPreferredSize(new Dimension(50, 400));
 		scrollPane1.setBounds(121, 40, 283, 50);
 		panel.add(scrollPane1);
-		jlist.setListData(resList.toArray(new String[0]));
+		jlFrameworkRes.setListData(resList.toArray(new String[0]));
 
-		savebutton = new JButton(Resource.STR_BTN_OK.getString());
-		savebutton.setBounds(288, 185, 80, 25);
-		savebutton.addActionListener(this);
-		savebutton.setFocusable(false);
-		panel.add(savebutton);
-
-
-		exitbutton = new JButton(Resource.STR_BTN_CANCEL.getString());
-		exitbutton.setBounds(380, 185, 80, 25);
-		exitbutton.addActionListener(this);
-		exitbutton.setFocusable(false);
-		panel.add(exitbutton);
-
-
-		browser1 = new JButton("...");
-		browser1.setBounds(405, 10, 64, 25);
-		browser1.addActionListener(this);
-		browser1.setFocusable(false);
-		panel.add(browser1);
 
 		browser2 = new JButton(Resource.STR_BTN_ADD.getString());
 		browser2.setBounds(405, 40, 64, 24);
@@ -216,6 +573,11 @@ public class SettingDlg extends JDialog implements ActionListener
 		browser3.setFocusable(false);
 		panel.add(browser3);
 
+		return panel;
+	}
+
+	JPanel makeDevicePanel() {
+		JPanel panel = new JPanel();
 		chckbxNewCheckBox = new JCheckBox(Resource.STR_SETTINGS_CHECK_INSTALLED.getString());
 
 		chckbxNewCheckBox.setSelected(isSamePackage);
@@ -223,134 +585,230 @@ public class SettingDlg extends JDialog implements ActionListener
 		chckbxNewCheckBox.addActionListener(this);
 		chckbxNewCheckBox.setBounds(10, 93, 236, 25);
 		panel.add(chckbxNewCheckBox);
+		return panel;
+	}
 
-		JLabel label = new JLabel(Resource.STR_SETTINGS_LANGUAGE.getString());
-		label.setBounds(15, 120, 60, 25);
-		panel.add(label);
 
-		comboBox = new JComboBox<String>();
-		comboBox.setBounds(87, 120, 94, 24);	    
-		comboBox.addItem("ko");
-		comboBox.addItem("en");	    
-		comboBox.setSelectedItem(strLanguage);
-		panel.add(comboBox);
+	JPanel makeDisplayPanel() {
+		JPanel panel = new JPanel(new GridBagLayout());
+		panel.setOpaque(true);
 
-		JLabel themelabel = new JLabel("Theme");
-		themelabel.setBounds(200, 120, 60, 25);
-		panel.add(themelabel);
+		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady) 
+		GridBagConstraints rowHeadConst = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.NONE,new Insets(5,10,0,10),0,0);
+		GridBagConstraints contentConst = new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.WEST,GridBagConstraints.NONE,new Insets(5,0,0,0),0,0);
 
-		themecomboBox = new JComboBox<String>();
-		themecomboBox.setBounds(265, 120, 190, 25);
-		panel.add(themecomboBox);
+		panel.add(new JLabel(Resource.STR_SETTINGS_THEME.getString()), rowHeadConst);
 
-		String selItem = null;
-		for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-			themecomboBox.addItem(info.getName());
-			if(info.getClassName().equals(strSetTheme)) {
-				selItem = info.getName();
-			}
+		jcbTheme = new JComboBox<String>();
+		jcbTheme.setFocusable(false);
+		jcbTheme.setRenderer(new ThremeSimpleNameItemRenderer());
+		for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+			jcbTheme.addItem(info.getClassName());
 		}
-		themecomboBox.getModel().setSelectedItem(selItem);
+		jcbTheme.setSelectedItem(propTheme);
+		jcbTheme.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent arg0) {
+				String theme = (String)arg0.getItem();
 
-		JLabel tabbedUIlabel = new JLabel("Tabbed UI");
-		tabbedUIlabel.setBounds(200, 150, 60, 25);
-		panel.add(tabbedUIlabel);
+				setUIFont(null);
+				try {
+					UIManager.setLookAndFeel(theme);
+				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+						| UnsupportedLookAndFeelException e1) {
+					e1.printStackTrace();
+				}
 
-		tabbedUIComboBox = new JComboBox<String>();
-		tabbedUIComboBox.setBounds(265, 150, 190, 25);
-		panel.add(tabbedUIComboBox);
+				fontOfTheme = new Font(new JLabel().getFont().getFamily(), Font.PLAIN, 12).getFamily();
+				setUIFont(new javax.swing.plaf.FontUIResource(propFont, propFontStyle, propFontSize));
 
-		selItem = null;
-		tabbedUIComboBox.addItem("None");
-		for (TabbedPaneUIManager.TabbedPaneUIInfo info : TabbedPaneUIManager.getUIThemes()) {
-			tabbedUIComboBox.addItem(info.getName());
-			if(info.getClassName().equals(strSetTabbedUI)) {
-				selItem = info.getName();
+				SwingUtilities.updateComponentTreeUI(SettingDlg.this);
+
+				if(jcbFont != null && jcbFontSize != null && mPreviewFrame != null) {
+					String newFont = (String)jcbFont.getSelectedItem();
+					//if(newFont.isEmpty()) newFont = fontOfTheme;
+					setUIFont(new javax.swing.plaf.FontUIResource(newFont, java.awt.Font.PLAIN, (int)jcbFontSize.getSelectedItem()));
+					SwingUtilities.updateComponentTreeUI(mPreviewFrame);
+				}
+
+				if(jcbTabbedUI != null && mPreviewTabbedPanel != null) {
+					String className = (String)jcbTabbedUI.getSelectedItem();
+					TabbedPaneUIManager.setUI(mPreviewTabbedPanel, className);
+				}
 			}
-		}
-		if(selItem == null || strSetTabbedUI.isEmpty()) selItem = "None";
-		tabbedUIComboBox.getModel().setSelectedItem(selItem);
+		});
+		panel.add(jcbTheme, contentConst);
 
+		rowHeadConst.gridy++;
+		contentConst.gridy++;
 
-		fontComboBox = new JComboBox<String>();
-		fontComboBox.setBounds(10, 150, 170, 25);
-		fontComboBox.setEditable(true);
-		panel.add(fontComboBox);
+		panel.add(new JLabel(Resource.STR_SETTINGS_TABBED_UI.getString()), rowHeadConst);
+
+		jcbTabbedUI = new JComboBox<String>(TabbedPaneUIManager.getUIClassNames());
+		jcbTabbedUI.setFocusable(false);
+		jcbTabbedUI.setRenderer(new ThremeSimpleNameItemRenderer());
+		jcbTabbedUI.setSelectedItem(propTabbedUI);
+		jcbTabbedUI.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent arg0) {
+				if(mPreviewTabbedPanel == null) return;
+				String className = (String)arg0.getItem();
+				TabbedPaneUIManager.setUI(mPreviewTabbedPanel, className);
+			}
+		});
+		panel.add(jcbTabbedUI, contentConst);
+
+		rowHeadConst.gridy++;
+		contentConst.gridy++;
+
+		panel.add(new JLabel(Resource.STR_SETTINGS_FONT.getString()), rowHeadConst);
+
+		FontChangedListener fontChangedListener = new FontChangedListener();
 
 		String[] fontFamilyNames = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
 		Arrays.sort(fontFamilyNames);
-		for (String font : fontFamilyNames) {
-			fontComboBox.addItem(font);
-		}
-		strFont = UIManager.getFont("Panel.font").getFamily();
-		fontComboBox.getModel().setSelectedItem(strFont);
+
+		jcbFont = new JComboBox<String>(fontFamilyNames);
+		jcbFont.setRenderer(new FontItemRenderer());
+		jcbFont.addItem("");
+		jcbFont.addItemListener(fontChangedListener);
+		jcbFont.setSelectedItem(propFont);
+
+		Dimension fCompSize = jcbFont.getPreferredSize();
+
+		jcbFontSize = new JComboBox<Integer>(new Integer[] { 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20});
+		jcbFontSize.addItemListener(fontChangedListener);
+		jcbFontSize.setSelectedItem(propFontSize);
+		jcbFontSize.setPreferredSize(new Dimension(jcbFontSize.getPreferredSize().width, fCompSize.height));
+
+		jtbFontBold = new JToggleButton();
+		jtbFontBold.setText("B");
+		jtbFontBold.setFocusable(false);
+		jtbFontBold.setMargin(new Insets(0,0,0,0));
+		jtbFontBold.setPreferredSize(new Dimension(fCompSize.height, fCompSize.height));
+		jtbFontBold.addActionListener(fontChangedListener);
+		jtbFontBold.setSelected((propFontStyle & Font.BOLD) != 0);
+
+		jtbFontItalic = new JToggleButton();
+		jtbFontItalic.setText("I");
+		jtbFontItalic.setFocusable(false);
+		jtbFontItalic.setMargin(new Insets(0,0,0,0));
+		jtbFontItalic.setPreferredSize(new Dimension(fCompSize.height, fCompSize.height));
+		jtbFontItalic.addActionListener(fontChangedListener);
+		jtbFontItalic.setSelected((propFontStyle & Font.ITALIC) != 0);
+
+		JPanel fontPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		fontPanel.add(jcbFont);
+		fontPanel.add(jcbFontSize);
+		fontPanel.add(jtbFontBold);
+		fontPanel.add(jtbFontItalic);
+
+		panel.add(fontPanel, contentConst);
+
+		rowHeadConst.gridy++;
+		contentConst.gridy++;
+
+		contentConst.gridx = 0;
+		contentConst.gridwidth = 2;
+		contentConst.fill = GridBagConstraints.BOTH;
+		contentConst.weighty = 1;
+
+		previewPanel = new JPanel(new BorderLayout());
+		previewPanel.setBorder(new TitledBorder("Preview"));
+		previewPanel.setPreferredSize(new Dimension(0,170));	
+
+		mPreviewFrame = new JInternalFrame(Resource.STR_APP_NAME.getString(),false,false,false,false);
+		mPreviewToolBar = new ToolBar(null);
+		mPreviewTabbedPanel = new TabbedPanel(propTabbedUI);
+		mPreviewFrame.setFrameIcon(Resource.IMG_APP_ICON.getImageIcon(16,16));
+		mPreviewFrame.getContentPane().add(mPreviewToolBar, BorderLayout.NORTH);
+		mPreviewFrame.getContentPane().add(mPreviewTabbedPanel, BorderLayout.CENTER);
+		mPreviewFrame.setVisible(true);
+		previewPanel.add(mPreviewFrame);
+
+		panel.add(previewPanel, contentConst);
+		rowHeadConst.gridy++;
+		contentConst.gridy++;
+
+		contentConst.weighty = 0;
+
+		jckRememberWinSize = new JCheckBox(Resource.STR_SETTINGS_REMEMBER_WINDOW_SIZE.getString());
+		jckRememberWinSize.setSelected(propSaveWinSize);
+		panel.add(jckRememberWinSize, contentConst);
+
+		contentConst.gridx = 1;
+		contentConst.gridwidth = 1;
+
+		rowHeadConst.gridy++;
+		contentConst.gridy++;
+
+		rowHeadConst.gridwidth = 2;
+		//rowHeadConst.weighty = 1;
+		panel.add(new JPanel(), rowHeadConst);
 
 		return panel;
 	}
 
-	public static void main(final String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				SettingDlg dlg = new SettingDlg();
-				dlg.makeDialog(null);
+	private static void setUIFont(javax.swing.plaf.FontUIResource f) {
+		Enumeration<Object> keys = UIManager.getDefaults().keys();
+		while (keys.hasMoreElements()) {
+			Object key = keys.nextElement();
+			Object value = UIManager.get(key);
+			if (value instanceof javax.swing.plaf.FontUIResource) {
+				if(!"InternalFrame.titleFont".equals(key)) {
+					UIManager.put(key, f);
+				}
 			}
-		});
+		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		String actCommand = e.getActionCommand();
 
-		if(e.getSource() == savebutton) {
-			//Log.i("save");
-
-			String editPath = SystemUtil.getRealPath(textExcutePath.getText().trim());
-			if(editPath != null && new File(editPath).canExecute()) {
-				strExecuteEditorPath = textExcutePath.getText().trim();
-			} else {
-				textExcutePath.setText(strExecuteEditorPath);
-			}
-
-			strframeworkResPath = "";
-			for(String f: resList) {
-				strframeworkResPath += f + ";";
-			}
-
-			isSamePackage = chckbxNewCheckBox.isSelected();
-			strLanguage = (String)comboBox.getSelectedItem();
-			String selItem = (String)themecomboBox.getSelectedItem();
-			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-				if(info.getName().equals(selItem)) {
-					selItem = info.getClassName();
-					break;
-				}
-			}
-			strSetTheme = selItem;
-
-			selItem = (String)tabbedUIComboBox.getSelectedItem();
-			for (TabbedPaneUIManager.TabbedPaneUIInfo info : TabbedPaneUIManager.getUIThemes()) {
-				if(info.getName().equals(selItem)) {
-					selItem = info.getClassName();
-				}
-			}
-			if("None".equals(selItem)) selItem = "";
-			strSetTabbedUI = selItem;
-
-			saveSettings();
-
-			this.dispose();
-		} else if(e.getSource() == exitbutton) {
-			//Log.i("exit");
-			this.dispose();
-		} else if(e.getSource() == browser1) {
+		if(ACT_CMD_EDITOR_EXPLOERE.equals(actCommand)) {
 			JFileChooser jfc = new JFileChooser();										
 			if(jfc.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
 				return;
 
 			File dir = jfc.getSelectedFile();
 			if(dir!=null) {
-				strExecuteEditorPath = dir.getPath();
-				textExcutePath.setText(dir.getPath()); 
+				String path = dir.getPath();
+				jcbEditors.addItem(path);
+				jcbEditors.setSelectedItem(path);
 			}
+		} else if(ACT_CMD_CREATE_SHORTCUT.equals(actCommand)) {
+			SystemUtil.createShortCut();
+			if(SystemUtil.hasShortCut()) {
+				((JButton)e.getSource()).setVisible(false);
+			}			
+		} else if(ACT_CMD_ASSOCIATE_APK_FILE.equals(actCommand)) {
+			JButton btn = (JButton)e.getSource();
+			if(!SystemUtil.isAssociatedWithFileType(".apk")) {
+				SystemUtil.setAssociateFileType(".apk");
+				btn.setText(Resource.STR_BTN_UNASSOC_FTYPE.getString());
+				btn.setToolTipText(Resource.STR_BTN_UNASSOC_FTYPE_LAB.getString());
+				btn.setIcon(Resource.IMG_UNASSOCIATE_APK.getImageIcon(32,32));
+			} else {
+				SystemUtil.unsetAssociateFileType(".apk");
+				btn.setText(Resource.STR_BTN_ASSOC_FTYPE.getString());
+				btn.setToolTipText(Resource.STR_BTN_ASSOC_FTYPE_LAB.getString());
+				btn.setIcon(Resource.IMG_ASSOCIATE_APK.getImageIcon(32,32));
+			}
+		} else if(ACT_CMD_SAVE.equals(actCommand)) {
+			saveSettings();
+			this.dispose();
+		} else if(ACT_CMD_EXIT.equals(actCommand)) {
+			try {
+				UIManager.setLookAndFeel(propTheme);
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+					| UnsupportedLookAndFeelException e1) {
+				e1.printStackTrace();
+			}
+
+			setUIFont(new javax.swing.plaf.FontUIResource(propFont, propFontStyle, propFontSize));
+
+			this.dispose();
 		} else if(e.getSource() == browser2) {
 			String file = ApkFileChooser.openApkFilePath(this);
 
@@ -359,11 +817,44 @@ public class SettingDlg extends JDialog implements ActionListener
 				if(file.equals(f)) return;
 			}
 			resList.add(file);
-			jlist.setListData(resList.toArray(new String[0]));
+			jlFrameworkRes.setListData(resList.toArray(new String[0]));
 		} else if(e.getSource() == browser3) {
-			if(jlist.getSelectedIndex() < 0) return;
-			resList.remove(jlist.getSelectedIndex());
-			jlist.setListData(resList.toArray(new String[0]));
+			if(jlFrameworkRes.getSelectedIndex() < 0) return;
+			resList.remove(jlFrameworkRes.getSelectedIndex());
+			jlFrameworkRes.setListData(resList.toArray(new String[0]));
 		}
+	}
+
+	public boolean isNeedRestart() {
+		return needUpdateUI;
+	}
+
+	public static void main(final String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				Resource.setLanguage((String)Resource.PROP_LANGUAGE.getData(SystemUtil.getUserLanguage()));
+
+				Log.i("initialize() setLookAndFeel");
+				try {
+					String theme = (String)Resource.PROP_CURRENT_THEME.getData();
+					if(theme == null || theme.isEmpty()) {
+						theme = UIManager.getSystemLookAndFeelClassName();
+					}
+					UIManager.setLookAndFeel(theme);
+				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+						| UnsupportedLookAndFeelException e1) {
+					e1.printStackTrace();
+				}
+
+				Log.i("initialize() setUIFont");
+				String font = (String) Resource.PROP_BASE_FONT.getData();
+				int fontSize = (int) Resource.PROP_BASE_FONT_SIZE.getInt(12);
+				setUIFont(new javax.swing.plaf.FontUIResource(font, java.awt.Font.PLAIN, fontSize));
+
+				SettingDlg dlg = new SettingDlg(new JFrame());
+				dlg.setVisible(true);
+				System.exit(0);
+			}
+		});
 	}
 }
