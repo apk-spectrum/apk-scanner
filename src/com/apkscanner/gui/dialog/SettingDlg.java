@@ -9,6 +9,7 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -23,6 +24,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 
 import javax.swing.AbstractAction;
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -35,6 +37,7 @@ import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
@@ -62,6 +65,7 @@ public class SettingDlg extends JDialog implements ActionListener
 	private static final long serialVersionUID = -854353051241196941L;
 
 	private static final String ACT_CMD_EDITOR_EXPLOERE = "ACT_CMD_EDITOR_EXPLOERE";
+	private static final String ACT_CMD_ADB_EXPLOERE = "ACT_CMD_ADB_EXPLOERE";
 	private static final String ACT_CMD_CREATE_SHORTCUT = "ACT_CMD_CREATE_SHORTCUT";
 	private static final String ACT_CMD_ASSOCIATE_APK_FILE = "ACT_CMD_ASSOCIATE_APK_FILE";
 
@@ -549,44 +553,177 @@ public class SettingDlg extends JDialog implements ActionListener
 	}
 
 	JPanel makeAnalysisPanel() {
-		JPanel panel = new JPanel();
 
-		JLabel frameworkLabel = new JLabel(Resource.STR_SETTINGS_RES.getString());
-		frameworkLabel.setBounds(10, 40, 114, 25);
-		panel.add(frameworkLabel);
+		JPanel panel = new JPanel(new GridBagLayout());
+		panel.setOpaque(true);
+
+		GridBagConstraints rowHeadConst = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.NONE,new Insets(5,10,0,10),0,0);
+		GridBagConstraints contentConst = new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.WEST,GridBagConstraints.NONE,new Insets(5,0,0,0),0,0);
+		
+
+		panel.add(new JLabel("Preferred Language"), rowHeadConst);
+		
+		JComboBox<String> jcbPreferLang = new JComboBox<String>(Resource.getSupportedLanguages());
+		//jcbPreferLang.setRenderer(new ResourceLangItemRenderer());
+		//jcbPreferLang.setSelectedItem(propStrLanguage);
+		//propStrLanguage = (String)jcbLanguage.getSelectedItem();
+		panel.add(jcbPreferLang, contentConst);
+
+		rowHeadConst.gridy++;
+		contentConst.gridy++;
+		
+		
+
+		rowHeadConst.gridy++;
+		contentConst.gridy++;
+		
+
+		panel.add(new JLabel(Resource.STR_SETTINGS_RES.getString()), rowHeadConst);
 
 		jlFrameworkRes = new JList<String>();
 		JScrollPane scrollPane1 = new JScrollPane(jlFrameworkRes);
 		scrollPane1.setPreferredSize(new Dimension(50, 400));
-		scrollPane1.setBounds(121, 40, 283, 50);
-		panel.add(scrollPane1);
+		panel.add(scrollPane1, contentConst);
+
 		jlFrameworkRes.setListData(resList.toArray(new String[0]));
 
-
+/*
 		browser2 = new JButton(Resource.STR_BTN_ADD.getString());
-		browser2.setBounds(405, 40, 64, 24);
 		browser2.addActionListener(this);
 		browser2.setFocusable(false);
 		panel.add(browser2);
 
 		browser3 = new JButton(Resource.STR_BTN_DEL.getString());
-		browser3.setBounds(405, 65, 64, 24);
 		browser3.addActionListener(this);
 		browser3.setFocusable(false);
 		panel.add(browser3);
-
+*/
 		return panel;
 	}
 
 	JPanel makeDevicePanel() {
-		JPanel panel = new JPanel();
-		chckbxNewCheckBox = new JCheckBox(Resource.STR_SETTINGS_CHECK_INSTALLED.getString());
+		JPanel panel = new JPanel(new GridBagLayout());
+		panel.setOpaque(true);
 
+		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady) 
+		GridBagConstraints rowHeadConst = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.NONE,new Insets(5,10,0,10),0,0);
+		GridBagConstraints contentConst = new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.WEST,GridBagConstraints.NONE,new Insets(5,0,0,0),0,0);
+		
+		contentConst.gridx = 0;
+		contentConst.gridwidth = 2;
+		contentConst.fill = GridBagConstraints.BOTH;
+		
+		
+		JPanel adbPolicyPanel = new JPanel(new GridLayout(0,1));
+		adbPolicyPanel.setBorder(new TitledBorder("ADB path"));
+		
+
+		JRadioButton rbUseCurrentRunningVer = new JRadioButton("Sharing ADB of the current running version");
+		JRadioButton rbRestartAdbServer = new JRadioButton("Restart ADB for target version");
+
+		ButtonGroup adbPolicyGroup = new ButtonGroup();
+		adbPolicyGroup.add(rbUseCurrentRunningVer);
+		adbPolicyGroup.add(rbRestartAdbServer);
+
+		adbPolicyPanel.add(rbUseCurrentRunningVer);
+		adbPolicyPanel.add(rbRestartAdbServer);
+
+
+		GridBagConstraints adbPathConst = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE,new Insets(0,5,0,0),0,0);
+		JPanel adbPathPanel = new JPanel(new GridBagLayout());
+
+		adbPathPanel.add(new JLabel("Path"), adbPathConst);
+		adbPathConst.gridx++;
+		
+		JComboBox<String> adbPaths = new JComboBox<String>(new String[] {"Auto - Latest version, 1.3.2", "1.3.2 - C:\\adb2"});
+		adbPaths.setEditable(false);
+		adbPaths.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent arg0) {
+				
+			}
+
+		});
+		
+		adbPathConst.weightx = 1;
+		adbPathConst.fill = GridBagConstraints.BOTH;
+		adbPathPanel.add(adbPaths, adbPathConst);
+		adbPathConst.weightx = 0;
+		adbPathConst.fill = GridBagConstraints.NONE;
+		
+		adbPathConst.gridx++;
+
+		JButton btnExplorer = new JButton(Resource.STR_BTN_SELF_SEARCH.getString());
+		btnExplorer.setToolTipText(Resource.STR_BTN_SELF_SEARCH_LAB.getString());
+		btnExplorer.setMargin(new Insets(-1,10,-1,10));
+		btnExplorer.setActionCommand(ACT_CMD_ADB_EXPLOERE);
+		btnExplorer.addActionListener(this);
+		
+		adbPathPanel.add(btnExplorer, adbPathConst);
+
+		adbPolicyPanel.add(adbPathPanel);
+		
+		adbPolicyPanel.add(new JLabel("If exist not runnging adb, launch target version"));
+		
+		panel.add(adbPolicyPanel, contentConst);
+		
+
+		contentConst.fill = GridBagConstraints.NONE;
+		rowHeadConst.gridy++;
+		contentConst.gridy++;
+		
+		chckbxNewCheckBox = new JCheckBox("Enable device monitor - dynamic toobar");
 		chckbxNewCheckBox.setSelected(isSamePackage);
-
 		chckbxNewCheckBox.addActionListener(this);
-		chckbxNewCheckBox.setBounds(10, 93, 236, 25);
-		panel.add(chckbxNewCheckBox);
+
+		panel.add(chckbxNewCheckBox, contentConst);
+				
+		rowHeadConst.gridy++;
+		contentConst.gridy++;
+		
+		panel.add(new JPanel(), contentConst);
+
+		rowHeadConst.gridy++;
+		contentConst.gridy++;
+		
+		
+
+		JPanel launchPolicyPanel = new JPanel(new GridLayout(0,1));
+		launchPolicyPanel.setBorder(new TitledBorder("Launch option"));
+		
+		
+		JComboBox<String> launchOptions = new JComboBox<String>(new String[] {"Auto - Launcher are only one", "Auto - Launcher or Main are onces", "Always confirm target"});
+		launchOptions.setEditable(false);
+		launchOptions.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent arg0) {
+				
+			}
+
+		});
+		launchPolicyPanel.add(launchOptions);
+
+		JCheckBox jckTryUnlock = new JCheckBox("Try unlock by drag after launch");
+		launchPolicyPanel.add(jckTryUnlock);
+
+		JCheckBox jckLauchAfInstalled = new JCheckBox("Launch after install completed");
+		launchPolicyPanel.add(jckLauchAfInstalled);
+
+
+		contentConst.fill = GridBagConstraints.BOTH;
+		panel.add(launchPolicyPanel, contentConst);
+
+		contentConst.fill = GridBagConstraints.NONE;
+
+		contentConst.gridx = 1;
+		contentConst.gridwidth = 1;
+		
+		rowHeadConst.gridy++;
+		contentConst.gridy++;
+		
+		rowHeadConst.weighty = 1;
+		panel.add(new JPanel(), rowHeadConst);
+		
 		return panel;
 	}
 
@@ -595,7 +732,6 @@ public class SettingDlg extends JDialog implements ActionListener
 		JPanel panel = new JPanel(new GridBagLayout());
 		panel.setOpaque(true);
 
-		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady) 
 		GridBagConstraints rowHeadConst = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.NONE,new Insets(5,10,0,10),0,0);
 		GridBagConstraints contentConst = new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.WEST,GridBagConstraints.NONE,new Insets(5,0,0,0),0,0);
 
@@ -676,18 +812,18 @@ public class SettingDlg extends JDialog implements ActionListener
 		jcbFont.addItemListener(fontChangedListener);
 		jcbFont.setSelectedItem(propFont);
 
-		Dimension fCompSize = jcbFont.getPreferredSize();
+		//Dimension fCompSize = jcbFont.getPreferredSize();
 
 		jcbFontSize = new JComboBox<Integer>(new Integer[] { 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20});
 		jcbFontSize.addItemListener(fontChangedListener);
 		jcbFontSize.setSelectedItem(propFontSize);
-		jcbFontSize.setPreferredSize(new Dimension(jcbFontSize.getPreferredSize().width, fCompSize.height));
+		//jcbFontSize.setPreferredSize(new Dimension(jcbFontSize.getPreferredSize().width, fCompSize.height));
 
 		jtbFontBold = new JToggleButton();
 		jtbFontBold.setText("B");
 		jtbFontBold.setFocusable(false);
 		jtbFontBold.setMargin(new Insets(0,0,0,0));
-		jtbFontBold.setPreferredSize(new Dimension(fCompSize.height, fCompSize.height));
+		//jtbFontBold.setPreferredSize(new Dimension(fCompSize.height, fCompSize.height));
 		jtbFontBold.addActionListener(fontChangedListener);
 		jtbFontBold.setSelected((propFontStyle & Font.BOLD) != 0);
 
@@ -695,7 +831,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		jtbFontItalic.setText("I");
 		jtbFontItalic.setFocusable(false);
 		jtbFontItalic.setMargin(new Insets(0,0,0,0));
-		jtbFontItalic.setPreferredSize(new Dimension(fCompSize.height, fCompSize.height));
+		//jtbFontItalic.setPreferredSize(new Dimension(fCompSize.height, fCompSize.height));
 		jtbFontItalic.addActionListener(fontChangedListener);
 		jtbFontItalic.setSelected((propFontStyle & Font.ITALIC) != 0);
 
