@@ -557,47 +557,65 @@ public class SettingDlg extends JDialog implements ActionListener
 		JPanel panel = new JPanel(new GridBagLayout());
 		panel.setOpaque(true);
 
-		GridBagConstraints rowHeadConst = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.NONE,new Insets(5,10,0,10),0,0);
-		GridBagConstraints contentConst = new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.WEST,GridBagConstraints.NONE,new Insets(5,0,0,0),0,0);
-		
+		GridBagConstraints contentConst = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.NONE,new Insets(5,5,0,5),0,0);
 
-		panel.add(new JLabel("Preferred Language"), rowHeadConst);
-		
-		JComboBox<String> jcbPreferLang = new JComboBox<String>(Resource.getSupportedLanguages());
-		//jcbPreferLang.setRenderer(new ResourceLangItemRenderer());
-		//jcbPreferLang.setSelectedItem(propStrLanguage);
-		//propStrLanguage = (String)jcbLanguage.getSelectedItem();
-		panel.add(jcbPreferLang, contentConst);
+		panel.add(new JLabel("Preferred Language"), contentConst);
+		contentConst.gridx++;
 
-		rowHeadConst.gridy++;
+		contentConst.weightx = 1;
+		contentConst.fill = GridBagConstraints.HORIZONTAL;
+		JTextField jtbPreferLang = new JTextField("");
+		panel.add(jtbPreferLang, contentConst);
+
 		contentConst.gridy++;
-		
-		
+		panel.add(new JLabel("ex) ko;en-rUS;en;"), contentConst);
 
-		rowHeadConst.gridy++;
 		contentConst.gridy++;
-		
+		contentConst.gridx = 0;
+		contentConst.gridwidth = 2;
+		contentConst.weightx = 0;
+		//contentConst.fill = GridBagConstraints.NONE;
 
-		panel.add(new JLabel(Resource.STR_SETTINGS_RES.getString()), rowHeadConst);
+		panel.add(new JLabel(), contentConst);
+		contentConst.gridy++;
+
+		panel.add(new JLabel(Resource.STR_SETTINGS_RES.getString()), contentConst);
+		contentConst.gridy++;
+
+		JPanel resPanel = new JPanel(new GridBagLayout());
+
+		GridBagConstraints resConst = new GridBagConstraints(0,0,1,2,1,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,5,0,5),0,0);
+
 
 		jlFrameworkRes = new JList<String>();
-		JScrollPane scrollPane1 = new JScrollPane(jlFrameworkRes);
-		scrollPane1.setPreferredSize(new Dimension(50, 400));
-		panel.add(scrollPane1, contentConst);
-
 		jlFrameworkRes.setListData(resList.toArray(new String[0]));
 
-/*
+		JScrollPane scrollPane1 = new JScrollPane(jlFrameworkRes);
+		scrollPane1.setPreferredSize(new Dimension(50, 400));
+		resPanel.add(scrollPane1, resConst);
+
+		resConst.gridx = 1;
+		resConst.gridheight = 1;
+		resConst.weightx = 0;
+		resConst.fill = GridBagConstraints.NONE;
+
 		browser2 = new JButton(Resource.STR_BTN_ADD.getString());
 		browser2.addActionListener(this);
 		browser2.setFocusable(false);
-		panel.add(browser2);
+		resPanel.add(browser2, resConst);
+		resConst.gridy++;
 
 		browser3 = new JButton(Resource.STR_BTN_DEL.getString());
 		browser3.addActionListener(this);
 		browser3.setFocusable(false);
-		panel.add(browser3);
-*/
+		resPanel.add(browser3, resConst);
+
+		panel.add(resPanel, contentConst);
+		contentConst.gridy++;
+
+		contentConst.weighty = 1;
+		panel.add(new JPanel(), contentConst);
+
 		return panel;
 	}
 
@@ -608,15 +626,15 @@ public class SettingDlg extends JDialog implements ActionListener
 		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady) 
 		GridBagConstraints rowHeadConst = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.NONE,new Insets(5,10,0,10),0,0);
 		GridBagConstraints contentConst = new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.WEST,GridBagConstraints.NONE,new Insets(5,0,0,0),0,0);
-		
+
 		contentConst.gridx = 0;
 		contentConst.gridwidth = 2;
 		contentConst.fill = GridBagConstraints.BOTH;
-		
-		
+
+
 		JPanel adbPolicyPanel = new JPanel(new GridLayout(0,1));
 		adbPolicyPanel.setBorder(new TitledBorder("ADB path"));
-		
+
 
 		JRadioButton rbUseCurrentRunningVer = new JRadioButton("Sharing ADB of the current running version");
 		JRadioButton rbRestartAdbServer = new JRadioButton("Restart ADB for target version");
@@ -634,23 +652,23 @@ public class SettingDlg extends JDialog implements ActionListener
 
 		adbPathPanel.add(new JLabel("Path"), adbPathConst);
 		adbPathConst.gridx++;
-		
+
 		JComboBox<String> adbPaths = new JComboBox<String>(new String[] {"Auto - Latest version, 1.3.2", "1.3.2 - C:\\adb2"});
 		adbPaths.setEditable(false);
 		adbPaths.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent arg0) {
-				
+
 			}
 
 		});
-		
+
 		adbPathConst.weightx = 1;
 		adbPathConst.fill = GridBagConstraints.BOTH;
 		adbPathPanel.add(adbPaths, adbPathConst);
 		adbPathConst.weightx = 0;
 		adbPathConst.fill = GridBagConstraints.NONE;
-		
+
 		adbPathConst.gridx++;
 
 		JButton btnExplorer = new JButton(Resource.STR_BTN_SELF_SEARCH.getString());
@@ -658,46 +676,46 @@ public class SettingDlg extends JDialog implements ActionListener
 		btnExplorer.setMargin(new Insets(-1,10,-1,10));
 		btnExplorer.setActionCommand(ACT_CMD_ADB_EXPLOERE);
 		btnExplorer.addActionListener(this);
-		
+
 		adbPathPanel.add(btnExplorer, adbPathConst);
 
 		adbPolicyPanel.add(adbPathPanel);
-		
+
 		adbPolicyPanel.add(new JLabel("If exist not runnging adb, launch target version"));
-		
+
 		panel.add(adbPolicyPanel, contentConst);
-		
+
 
 		contentConst.fill = GridBagConstraints.NONE;
 		rowHeadConst.gridy++;
 		contentConst.gridy++;
-		
+
 		chckbxNewCheckBox = new JCheckBox("Enable device monitor - dynamic toobar");
 		chckbxNewCheckBox.setSelected(isSamePackage);
 		chckbxNewCheckBox.addActionListener(this);
 
 		panel.add(chckbxNewCheckBox, contentConst);
-				
+
 		rowHeadConst.gridy++;
 		contentConst.gridy++;
-		
+
 		panel.add(new JPanel(), contentConst);
 
 		rowHeadConst.gridy++;
 		contentConst.gridy++;
-		
-		
+
+
 
 		JPanel launchPolicyPanel = new JPanel(new GridLayout(0,1));
 		launchPolicyPanel.setBorder(new TitledBorder("Launch option"));
-		
-		
+
+
 		JComboBox<String> launchOptions = new JComboBox<String>(new String[] {"Auto - Launcher are only one", "Auto - Launcher or Main are onces", "Always confirm target"});
 		launchOptions.setEditable(false);
 		launchOptions.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent arg0) {
-				
+
 			}
 
 		});
@@ -717,13 +735,13 @@ public class SettingDlg extends JDialog implements ActionListener
 
 		contentConst.gridx = 1;
 		contentConst.gridwidth = 1;
-		
+
 		rowHeadConst.gridy++;
 		contentConst.gridy++;
-		
+
 		rowHeadConst.weighty = 1;
 		panel.add(new JPanel(), rowHeadConst);
-		
+
 		return panel;
 	}
 
