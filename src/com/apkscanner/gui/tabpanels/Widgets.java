@@ -17,6 +17,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.resource.Resource;
@@ -63,6 +64,7 @@ public class Widgets extends JPanel implements TabDataObject
 		if(apkInfo.widgets == null) return;
 		if(TableModel == null) initialize();
 
+		String preferLang = (String)Resource.PROP_PREFERRED_LANGUAGE.getData("");
 		for(int i=0; i< apkInfo.widgets.length; i++) {
 			ImageIcon myimageicon = null;
 			try {
@@ -74,8 +76,8 @@ public class Widgets extends JPanel implements TabDataObject
 				myimageicon.setImage(ImageScaler.getMaxScaledImage(myimageicon,100,100));
 			}
 			
-			String label = apkInfo.widgets[i].lables[0].name;
-			if(label == null) label = apkInfo.manifest.application.labels[0].name;
+			String label = ApkInfoHelper.getResourceValue(apkInfo.widgets[i].lables, preferLang);
+			if(label == null) label = ApkInfoHelper.getResourceValue(apkInfo.manifest.application.labels, preferLang);
 			Object[] temp = { myimageicon , label, apkInfo.widgets[i].size, apkInfo.widgets[i].name, apkInfo.widgets[i].type};
 			arrWidgets.add(temp);
 		}

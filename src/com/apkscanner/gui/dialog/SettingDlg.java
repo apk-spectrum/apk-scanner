@@ -76,7 +76,9 @@ public class SettingDlg extends JDialog implements ActionListener
 	private String propStrEditorPath;
 	private ArrayList<String> propRecentEditors = new ArrayList<String>();
 
-	private String strframeworkResPath;
+	private String propPreferredLanguage;
+	private String propframeworkResPath;
+	private ArrayList<String> resList = new ArrayList<String>();
 
 	private String propTheme;
 	private String propTabbedUI;
@@ -96,23 +98,24 @@ public class SettingDlg extends JDialog implements ActionListener
 	private ToolBar mPreviewToolBar;
 
 
-	JButton browser2,browser3;
+	private JButton browser2,browser3;
 
-	JComboBox<String> jcbLanguage;
-	JComboBox<String> jcbEditors;
+	private JComboBox<String> jcbLanguage;
+	private JComboBox<String> jcbEditors;
 
-	JComboBox<String> jcbTheme;
-	JComboBox<String> jcbTabbedUI;
-	JComboBox<String> jcbFont;
-	JComboBox<Integer> jcbFontSize;
-	JToggleButton jtbFontBold;
-	JToggleButton jtbFontItalic;
+	private JTextField jtbPreferLang;
+	private JList<String> jlFrameworkRes;
 
-	JCheckBox chckbxNewCheckBox;
-	JCheckBox jckRememberWinSize;
+	private JComboBox<String> jcbTheme;
+	private JComboBox<String> jcbTabbedUI;
+	private JComboBox<String> jcbFont;
+	private JComboBox<Integer> jcbFontSize;
+	private JToggleButton jtbFontBold;
+	private JToggleButton jtbFontItalic;
 
-	JList<String> jlFrameworkRes;
-	ArrayList<String> resList = new ArrayList<String>();
+	private JCheckBox chckbxNewCheckBox;
+	private JCheckBox jckRememberWinSize;
+
 
 	private class EditorItemRenderer extends JLabel implements ListCellRenderer<Object> {
 		private static final long serialVersionUID = -151339243781300421L;
@@ -370,8 +373,17 @@ public class SettingDlg extends JDialog implements ActionListener
 
 		isSamePackage = (boolean)Resource.PROP_CHECK_INSTALLED.getData(false);
 
-		strframeworkResPath = (String)Resource.PROP_FRAMEWORK_RES.getData("");
-		for(String s: strframeworkResPath.split(File.pathSeparator)) {
+		propPreferredLanguage = (String)Resource.PROP_PREFERRED_LANGUAGE.getData();
+		if(propPreferredLanguage == null) {
+			propPreferredLanguage = SystemUtil.getUserLanguage();
+			if(!propPreferredLanguage.equals(propStrLanguage) && !"en".equals(propPreferredLanguage)) {
+				propPreferredLanguage += ";" + (propStrLanguage.isEmpty() ? "en" : propStrLanguage);
+			}
+			propPreferredLanguage += ";";
+		}
+
+		propframeworkResPath = (String)Resource.PROP_FRAMEWORK_RES.getData("");
+		for(String s: propframeworkResPath.split(File.pathSeparator)) {
 			if(!s.isEmpty()) {
 				resList.add(s);
 			}
@@ -400,10 +412,19 @@ public class SettingDlg extends JDialog implements ActionListener
 			Resource.PROP_RECENT_EDITOR.setData(recentEditors.toString());
 		}
 
-		/*
-		Resource.PROP_CHECK_INSTALLED.setData(isSamePackage);
-		Resource.PROP_FRAMEWORK_RES.setData(strframeworkResPath);
-		 */
+		if(!propPreferredLanguage.equals(jtbPreferLang.getText())) {
+			Resource.PROP_PREFERRED_LANGUAGE.setData(jtbPreferLang.getText());
+		}
+
+		String resPaths = "";
+		for(String f: resList) {
+			if(f.isEmpty()) continue;
+			resPaths += f + ";";
+		}
+		if(!propframeworkResPath.equals(resPaths)) {
+			Resource.PROP_FRAMEWORK_RES.setData(resPaths);
+		}
+
 		needUpdateUI = false;
 		if(!propTheme.equals(jcbTheme.getSelectedItem())) {
 			Resource.PROP_CURRENT_THEME.setData(jcbTheme.getSelectedItem());
@@ -565,7 +586,7 @@ public class SettingDlg extends JDialog implements ActionListener
 
 		contentConst.weightx = 1;
 		contentConst.fill = GridBagConstraints.HORIZONTAL;
-		JTextField jtbPreferLang = new JTextField("");
+		jtbPreferLang = new JTextField(propPreferredLanguage);
 		panel.add(jtbPreferLang, contentConst);
 
 		contentConst.gridy++;
@@ -796,7 +817,7 @@ public class SettingDlg extends JDialog implements ActionListener
 					String className = (String)jcbTabbedUI.getSelectedItem();
 					TabbedPaneUIManager.setUI(mPreviewTabbedPanel, className);
 				}
-				
+
 				if(jtbFontBold != null){
 					jtbFontBold.setPreferredSize(null);
 					Dimension fCompSize = jtbFontBold.getPreferredSize();

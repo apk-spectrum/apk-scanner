@@ -344,7 +344,7 @@ public enum Resource
 	IMG_TREE_DEVICE				(Type.IMAGE, "tree_icon_device.png"),
 	IMG_TREE_TOP				(Type.IMAGE, "tree_icon_top.gif"),
 	IMG_TREE_FOLDER				(Type.IMAGE, "tree_icon_folder.png"),
-	
+
 	IMG_ADD_TO_DESKTOP			(Type.IMAGE, "add-to-desktop.png"),
 	IMG_ASSOCIATE_APK			(Type.IMAGE, "associate.png"),
 	IMG_UNASSOCIATE_APK			(Type.IMAGE, "unassociate.png"),
@@ -384,6 +384,7 @@ public enum Resource
 	PROP_BASE_FONT				(Type.PROP, "base_font"),
 	PROP_BASE_FONT_SIZE			(Type.PROP, "base_font_size"),
 	PROP_BASE_FONT_STYLE		(Type.PROP, "base_font_style"),
+	PROP_PREFERRED_LANGUAGE		(Type.PROP, "preferred_language"),
 
 	LIB_JSON_JAR				(Type.LIB, "json-simple-1.1.1.jar"),
 	LIB_CLI_JAR					(Type.LIB, "commons-cli-1.3.1.jar"),

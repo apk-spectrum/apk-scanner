@@ -139,4 +139,30 @@ public class ApkInfoHelper
 		}
 		return launcherList.toArray(new ComponentInfo[0]);
 	}
+
+	public static String getResourceValue(ResourceInfo[] resInfos, String preferredLang) {
+		if(resInfos == null || resInfos.length == 0) return null;
+
+		String value = null;
+		if(preferredLang != null) {
+			String[] preferredLanguage = preferredLang.trim().split(";");
+			for(String preferred: preferredLanguage) {
+				if(preferred.isEmpty()) continue;
+				for(ResourceInfo r: resInfos) {
+					if(r.configuration != null && !r.configuration.isEmpty()
+							&& !"default".equals(r.configuration)
+							&& r.configuration.startsWith(preferred) && r.name != null) {
+						value = r.name;
+						break;
+					}
+					if(value != null) break;
+				}
+			}
+		}
+		if(value == null) {
+			value = resInfos[0].name;
+		}
+
+		return value;
+	}
 }

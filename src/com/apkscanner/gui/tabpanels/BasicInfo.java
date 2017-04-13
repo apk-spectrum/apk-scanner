@@ -61,6 +61,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	private long remainTime = 0;
 
 	private String[] labels = new String[] {""};
+	private String appName = "";
 	private String packageName = "";
 	private String versionName = "";
 	private String versionCode = "";
@@ -238,6 +239,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	private void removeData()
 	{
 		labels = new String[] {""};
+		appName = "";
 		packageName = "";
 		versionName = "";
 		versionCode = "";
@@ -421,10 +423,10 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("      <div id=\"basic-info\">");
 		strTabInfo.append("        <font style=\"font-size:20px; color:#548235; font-weight:bold\">");
 		if(labels.length > 1) {
-			strTabInfo.append("          " + makeHyperLink("@event", labels[0], mutiLabels, "other-lang", null));
+			strTabInfo.append("          " + makeHyperLink("@event", appName, mutiLabels, "other-lang", null));
 			strTabInfo.append("        </font>");
 		} else {
-			strTabInfo.append("          " + labels[0]);
+			strTabInfo.append("          " + appName);
 			strTabInfo.append("</font><br/>");
 		}
 		if(labels.length > 1) {
@@ -505,6 +507,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		wasSetData = true;
 
 		if(apkInfo.manifest.application.labels != null && apkInfo.manifest.application.labels.length > 0) {
+			this.appName = ApkInfoHelper.getResourceValue(apkInfo.manifest.application.labels, (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
+			
 			ArrayList<String> labels = new ArrayList<String>();
 			for(ResourceInfo r: apkInfo.manifest.application.labels) {
 				if(r.configuration == null || r.configuration.isEmpty() || "default".equals(r.configuration)) {
@@ -517,9 +521,14 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 					labels.add("[" + r.configuration + "] " + r.name);
 				}
 			}
+
 			this.labels = labels.toArray(new String[0]);
 		} else {
 			this.labels = new String[] { apkInfo.manifest.packageName }; // apkInfo.Labelname;
+		}
+
+		if(this.appName == null || this.appName.isEmpty()) {
+			this.appName = this.labels.length > 0 ? this.labels[0] : apkInfo.manifest.packageName;
 		}
 
 		if(apkInfo.manifest.packageName != null) packageName = apkInfo.manifest.packageName;
