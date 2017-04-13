@@ -63,9 +63,6 @@ public class MainUI extends JFrame
 {
 	private static final long serialVersionUID = -623259597186280485L;
 
-	private static final int WINDOW_SIZE_WIDTH_MIN = 650;
-	private static final int WINDOW_SIZE_HEIGHT_MIN = 490;
-
 	private ApkScanner apkScanner;
 	private DeviceMonitor deviceMonitor;
 
@@ -127,7 +124,7 @@ public class MainUI extends JFrame
 		}
 		
 		setBounds(0, 0, width, height);
-		setMinimumSize(new Dimension(WINDOW_SIZE_WIDTH_MIN, WINDOW_SIZE_HEIGHT_MIN));
+		setMinimumSize(new Dimension(Resource.INT_WINDOW_SIZE_WIDTH_MIN, Resource.INT_WINDOW_SIZE_HEIGHT_MIN));
 		setResizable(true);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

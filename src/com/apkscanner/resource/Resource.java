@@ -394,8 +394,8 @@ public enum Resource
 
 	ETC_SETTINGS_FILE			(Type.ETC, "settings.txt");
 
-	public static final int INT_WINDOW_SIZE_WIDTH_MIN = 640;
-	public static final int INT_WINDOW_SIZE_HEIGHT_MIN = 640;
+	public static final int INT_WINDOW_SIZE_WIDTH_MIN = 650;
+	public static final int INT_WINDOW_SIZE_HEIGHT_MIN = 490;
 
 	private enum Type {
 		IMAGE,
