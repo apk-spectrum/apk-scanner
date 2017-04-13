@@ -115,7 +115,7 @@ public class MainUI extends JFrame
 		Log.i("initialize() setUIFont");
 		String propFont = (String) Resource.PROP_BASE_FONT.getData();
 		int propFontStyle = (int)Resource.PROP_BASE_FONT_STYLE.getInt(Font.PLAIN);
-		int propFontSize = (int) Resource.PROP_BASE_FONT_SIZE.getInt(12);
+		int propFontSize = (int) Resource.PROP_BASE_FONT_SIZE.getInt();
 		setUIFont(new javax.swing.plaf.FontUIResource(propFont, propFontStyle, propFontSize));
 
 		Log.i("initialize() set title & icon");
@@ -126,7 +126,7 @@ public class MainUI extends JFrame
 
 		int width = WINDOW_SIZE_WIDTH_MIN;
 		int height = WINDOW_SIZE_HEIGHT_MIN;
-		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData(false)) {
+		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
 			width = Resource.PROP_WINDOW_WIDTH.getInt(WINDOW_SIZE_WIDTH_MIN);
 			height = Resource.PROP_WINDOW_HEIGHT.getInt(WINDOW_SIZE_HEIGHT_MIN);
 		}

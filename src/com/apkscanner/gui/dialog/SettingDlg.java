@@ -327,20 +327,10 @@ public class SettingDlg extends JDialog implements ActionListener
 	private void readSettings()
 	{
 		propStrLanguage = (String)Resource.PROP_LANGUAGE.getData();
-		if(propStrLanguage == null) {
-			propStrLanguage = SystemUtil.getUserLanguage();
-		}
 
 		propStrEditorPath = SystemUtil.getRealPath((String)Resource.PROP_EDITOR.getData());
-		if(propStrEditorPath == null) {
-			try {
-				propStrEditorPath = SystemUtil.getDefaultEditor();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 
-		String recentEditors = (String)Resource.PROP_RECENT_EDITOR.getData("");
+		String recentEditors = (String)Resource.PROP_RECENT_EDITOR.getData();
 		for(String s: recentEditors.split(File.pathSeparator)) {
 			if(!s.isEmpty()) {
 				String realPath = SystemUtil.getRealPath(s);
@@ -351,38 +341,20 @@ public class SettingDlg extends JDialog implements ActionListener
 		}
 
 		propTheme = (String)Resource.PROP_CURRENT_THEME.getData();
-		if(propTheme == null || propTheme.isEmpty()) {
-			propTheme = UIManager.getSystemLookAndFeelClassName();			
-		}
 
 		propTabbedUI = (String)Resource.PROP_TABBED_UI_THEME.getData();
-		if(propTabbedUI == null || propTabbedUI.isEmpty()) {
-			propTabbedUI = TabbedPaneUIManager.DEFAULT_TABBED_UI;
-		}
 
 		propFont = (String)Resource.PROP_BASE_FONT.getData();
-		if(propFont == null) {
-			propFont = "";
-		}
 
-		propFontSize = (int)Resource.PROP_BASE_FONT_SIZE.getInt(12);
+		propFontSize = (int)Resource.PROP_BASE_FONT_SIZE.getInt();
 
-		propFontStyle = (int)Resource.PROP_BASE_FONT_STYLE.getInt(Font.PLAIN);
+		propFontStyle = (int)Resource.PROP_BASE_FONT_STYLE.getInt();
 
-		propSaveWinSize = (boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData(false);
-
-		isSamePackage = (boolean)Resource.PROP_CHECK_INSTALLED.getData(false);
+		propSaveWinSize = (boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData();
 
 		propPreferredLanguage = (String)Resource.PROP_PREFERRED_LANGUAGE.getData();
-		if(propPreferredLanguage == null) {
-			propPreferredLanguage = SystemUtil.getUserLanguage();
-			if(!propPreferredLanguage.equals(propStrLanguage) && !"en".equals(propPreferredLanguage)) {
-				propPreferredLanguage += ";" + (propStrLanguage.isEmpty() ? "en" : propStrLanguage);
-			}
-			propPreferredLanguage += ";";
-		}
 
-		propframeworkResPath = (String)Resource.PROP_FRAMEWORK_RES.getData("");
+		propframeworkResPath = (String)Resource.PROP_FRAMEWORK_RES.getData();
 		for(String s: propframeworkResPath.split(File.pathSeparator)) {
 			if(!s.isEmpty()) {
 				resList.add(s);
@@ -413,7 +385,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		}
 
 		if(!propPreferredLanguage.equals(jtbPreferLang.getText())) {
-			Resource.PROP_PREFERRED_LANGUAGE.setData(jtbPreferLang.getText());
+			Resource.PROP_PREFERRED_LANGUAGE.setData(jtbPreferLang.getText().replaceAll(" ", ""));
 		}
 
 		String resPaths = "";
@@ -1051,7 +1023,7 @@ public class SettingDlg extends JDialog implements ActionListener
 
 				Log.i("initialize() setUIFont");
 				String font = (String) Resource.PROP_BASE_FONT.getData();
-				int fontSize = (int) Resource.PROP_BASE_FONT_SIZE.getInt(12);
+				int fontSize = (int) Resource.PROP_BASE_FONT_SIZE.getInt();
 				setUIFont(new javax.swing.plaf.FontUIResource(font, java.awt.Font.PLAIN, fontSize));
 
 				SettingDlg dlg = new SettingDlg(new JFrame());

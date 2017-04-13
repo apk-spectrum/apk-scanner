@@ -660,7 +660,7 @@ public class ResouceContentsPanel extends JPanel{
 	    
 		public File getSaveFile(Component component, String defaultFilePath)
 		{
-			JFileChooser jfc = ApkFileChooser.getFileChooser((String)Resource.PROP_LAST_FILE_SAVE_PATH.getData(""), JFileChooser.SAVE_DIALOG, new File(defaultFilePath));
+			JFileChooser jfc = ApkFileChooser.getFileChooser((String)Resource.PROP_LAST_FILE_SAVE_PATH.getData(), JFileChooser.SAVE_DIALOG, new File(defaultFilePath));
 			//jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(Resource.STR_LABEL_APK_FILE_DESC.getString(),"apk"));
 
 			if(jfc.showSaveDialog(component) != JFileChooser.APPROVE_OPTION)

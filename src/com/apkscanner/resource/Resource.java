@@ -1,5 +1,6 @@
 package com.apkscanner.resource;
 
+import java.awt.Font;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
@@ -13,10 +14,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import javax.swing.ImageIcon;
+import javax.swing.UIManager;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
@@ -365,26 +368,24 @@ public enum Resource
 	BIN_DEX2JAR_WIN				(Type.BIN, "d2j-dex2jar.bat", "win"),
 	BIN_DEX2JAR					(Type.BIN, new Resource[]{ BIN_DEX2JAR_WIN, BIN_DEX2JAR_LNX }),	
 
-	PROP_LANGUAGE				(Type.PROP, "language"),
-	PROP_EDITOR					(Type.PROP, "editor"),
-	PROP_RECENT_EDITOR			(Type.PROP, "recent_editor"),
-	PROP_ADB_PATH				(Type.PROP, "adb_path"),
-	PROP_RECENT_ADB_INFO		(Type.PROP, "recent_adb_info"),
-	PROP_FRAMEWORK_RES			(Type.PROP, "framewokr-res"),
-	PROP_CHECK_INSTALLED		(Type.PROP, "check-installed"),
-	PROP_WITH_FRAMEWORK_RES		(Type.PROP, "with_framework_res"),
-	PROP_LAST_FILE_OPEN_PATH	(Type.PROP, "last_file_open_path"),
-	PROP_LAST_FILE_SAVE_PATH	(Type.PROP, "last_file_save_path"),
+	PROP_LANGUAGE				(Type.PROP, "language", SystemUtil.getUserLanguage()),
+	PROP_EDITOR					(Type.PROP, "editor", null /* see getDefValue() */),
+	PROP_RECENT_EDITOR			(Type.PROP, "recent_editor", ""),
+	PROP_ADB_PATH				(Type.PROP, "adb_path", BIN_ADB.getPath()),
+	PROP_RECENT_ADB_INFO		(Type.PROP, "recent_adb_info", ""),
+	PROP_FRAMEWORK_RES			(Type.PROP, "framewokr-res", ""),
+	PROP_LAST_FILE_OPEN_PATH	(Type.PROP, "last_file_open_path", ""),
+	PROP_LAST_FILE_SAVE_PATH	(Type.PROP, "last_file_save_path", ""),
 	PROP_SOVE_LEAD_TIME			(Type.PROP, "solve_lead_time"),
-	PROP_CURRENT_THEME			(Type.PROP, "Current_theme"),
-	PROP_TABBED_UI_THEME		(Type.PROP, "tabbed_pane_ui"),
-	PROP_WINDOW_WIDTH			(Type.PROP, "window_size_width"),
-	PROP_WINDOW_HEIGHT			(Type.PROP, "window_size_height"),
-	PROP_SAVE_WINDOW_SIZE		(Type.PROP, "save_window_size"),
-	PROP_BASE_FONT				(Type.PROP, "base_font"),
-	PROP_BASE_FONT_SIZE			(Type.PROP, "base_font_size"),
-	PROP_BASE_FONT_STYLE		(Type.PROP, "base_font_style"),
-	PROP_PREFERRED_LANGUAGE		(Type.PROP, "preferred_language"),
+	PROP_CURRENT_THEME			(Type.PROP, "Current_theme", UIManager.getSystemLookAndFeelClassName()),
+	PROP_TABBED_UI_THEME		(Type.PROP, "tabbed_pane_ui", TabbedPaneUIManager.DEFAULT_TABBED_UI),
+	PROP_WINDOW_WIDTH			(Type.PROP, "window_size_width", null /* see MainUI.WINDOW_SIZE_WIDTH_MIN */),
+	PROP_WINDOW_HEIGHT			(Type.PROP, "window_size_height", null /* see MainUI.WINDOW_SIZE_HEIGHT_MIN */),
+	PROP_SAVE_WINDOW_SIZE		(Type.PROP, "save_window_size", false),
+	PROP_BASE_FONT				(Type.PROP, "base_font", ""),
+	PROP_BASE_FONT_SIZE			(Type.PROP, "base_font_size", 12),
+	PROP_BASE_FONT_STYLE		(Type.PROP, "base_font_style", Font.PLAIN),
+	PROP_PREFERRED_LANGUAGE		(Type.PROP, "preferred_language", null /* see getDefValue() */),
 
 	LIB_JSON_JAR				(Type.LIB, "json-simple-1.1.1.jar"),
 	LIB_CLI_JAR					(Type.LIB, "commons-cli-1.3.1.jar"),
@@ -404,7 +405,7 @@ public enum Resource
 
 	private String value;
 	private Type type;
-	private String config;
+	private Object extValue;
 
 	private static JSONObject property = null;
 	private static String lang = null;
@@ -508,11 +509,11 @@ public enum Resource
 		this(type, value, null);
 	}
 
-	private Resource(Type type, String value, String config)
+	private Resource(Type type, String value, Object extValue)
 	{
 		this.type = type;
 		this.value = value;
-		this.config = config;
+		this.extValue = extValue;
 	}
 
 	private Resource(Type type, Resource[] cfgResources)
@@ -523,13 +524,13 @@ public enum Resource
 
 		this.type = type;
 		for(Resource r: cfgResources) {
-			if(SystemUtil.OS.indexOf(r.config) > -1) {
+			if(SystemUtil.OS.indexOf((String)r.extValue) > -1) {
 				this.value = r.value;
-				this.config = r.config;
+				this.extValue = r.extValue;
 				break;
 			}
 		}
-		if(this.value == null || this.config == null) {
+		if(this.value == null || extValue == null) {
 			throw new IllegalArgumentException();
 		}
 	}
@@ -639,15 +640,50 @@ public enum Resource
 		}
 	}
 
+	public Object getDefValue() {
+		Object obj = null;
+		if(extValue != null) {
+			return extValue;
+		}
+		switch(this) {
+		case PROP_EDITOR:
+			try {
+				obj = SystemUtil.getDefaultEditor();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			break;
+		case PROP_PREFERRED_LANGUAGE:
+			String propPreferredLanguage = SystemUtil.getUserLanguage();
+			String propStrLanguage = (String) PROP_LANGUAGE.getData();
+			if(!propPreferredLanguage.equals(propStrLanguage) && !"en".equals(propPreferredLanguage)) {
+				propPreferredLanguage += ";" + (propStrLanguage.isEmpty() ? "en" : propStrLanguage);
+			}
+			obj = propPreferredLanguage + ";";
+			break;
+		default:
+			break;
+		};
+		extValue = obj;
+		return obj;
+	}
+
 	public Object getData()
 	{
 		if(type != Type.PROP) return null;
 
-		loadProperty();
-		if(property == null)
-			return null;
+		Object obj = null;
 
-		return property.get(getValue());
+		loadProperty();
+		if(property != null) {
+			obj = property.get(getValue());	
+		}
+
+		if(obj == null) {
+			obj = getDefValue();
+		}
+
+		return obj;
 	}
 
 	public Object getData(Object ref)
@@ -658,6 +694,23 @@ public enum Resource
 		if(result == null) return ref;
 
 		return result;
+	}
+
+	public int getInt()
+	{
+		if(type != Type.PROP) return -1;
+
+		Object data = getData();
+		if(data == null) return 0;
+
+		int ret = 0;
+		if(data instanceof Long) {
+			ret = (int)(long)data;
+		} else if(data instanceof Integer) {
+			ret = (int)data;
+		}
+
+		return ret;
 	}
 
 	public int getInt(int ref)

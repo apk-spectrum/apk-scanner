@@ -23,7 +23,7 @@ public class ApkFileChooser
 	
 	static public File openApkFile(Component component)
 	{
-		JFileChooser jfc = getFileChooser((String)Resource.PROP_LAST_FILE_OPEN_PATH.getData(""), JFileChooser.OPEN_DIALOG, null);
+		JFileChooser jfc = getFileChooser((String)Resource.PROP_LAST_FILE_OPEN_PATH.getData(), JFileChooser.OPEN_DIALOG, null);
 		jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(Resource.STR_LABEL_APK_FILE_DESC.getString(),"apk"));
 
 		if(jfc.showOpenDialog(component) != JFileChooser.APPROVE_OPTION)
@@ -49,7 +49,7 @@ public class ApkFileChooser
 			defaultFilePath += ".apk"; 
 		}
 
-		JFileChooser jfc = getFileChooser((String)Resource.PROP_LAST_FILE_SAVE_PATH.getData(""), JFileChooser.SAVE_DIALOG, new File(defaultFilePath));
+		JFileChooser jfc = getFileChooser((String)Resource.PROP_LAST_FILE_SAVE_PATH.getData(), JFileChooser.SAVE_DIALOG, new File(defaultFilePath));
 		jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(Resource.STR_LABEL_APK_FILE_DESC.getString(),"apk"));
 
 		if(jfc.showSaveDialog(component) != JFileChooser.APPROVE_OPTION)
