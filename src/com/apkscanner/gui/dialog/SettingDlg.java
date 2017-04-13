@@ -504,7 +504,9 @@ public class SettingDlg extends JDialog implements ActionListener
 		txtEditPane.add(btnExplorer, BorderLayout.EAST);
 		txtEditPane.add(editorPath, BorderLayout.SOUTH);
 
+		contentConst.fill = GridBagConstraints.HORIZONTAL;
 		panel.add(txtEditPane, contentConst);
+		contentConst.fill = GridBagConstraints.NONE;
 
 		rowHeadConst.gridy++;
 		contentConst.gridy++;
@@ -553,13 +555,12 @@ public class SettingDlg extends JDialog implements ActionListener
 	}
 
 	JPanel makeAnalysisPanel() {
-
 		JPanel panel = new JPanel(new GridBagLayout());
 		panel.setOpaque(true);
 
 		GridBagConstraints contentConst = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.NONE,new Insets(5,5,0,5),0,0);
 
-		panel.add(new JLabel("Preferred Language"), contentConst);
+		panel.add(new JLabel(Resource.STR_SETTINGS_PREFERRED_LANG.getString()), contentConst);
 		contentConst.gridx++;
 
 		contentConst.weightx = 1;
@@ -568,7 +569,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		panel.add(jtbPreferLang, contentConst);
 
 		contentConst.gridy++;
-		panel.add(new JLabel("ex) ko;en-rUS;en;"), contentConst);
+		panel.add(new JLabel(Resource.STR_SETTINGS_PREFERRED_EX.getString()), contentConst);
 
 		contentConst.gridy++;
 		contentConst.gridx = 0;
@@ -633,11 +634,11 @@ public class SettingDlg extends JDialog implements ActionListener
 
 
 		JPanel adbPolicyPanel = new JPanel(new GridLayout(0,1));
-		adbPolicyPanel.setBorder(new TitledBorder("ADB path"));
+		adbPolicyPanel.setBorder(new TitledBorder(Resource.STR_SETTINGS_ADB_POLICY.getString()));
 
 
-		JRadioButton rbUseCurrentRunningVer = new JRadioButton("Sharing ADB of the current running version");
-		JRadioButton rbRestartAdbServer = new JRadioButton("Restart ADB for target version");
+		JRadioButton rbUseCurrentRunningVer = new JRadioButton(Resource.STR_SETTINGS_ADB_SHARED.getString());
+		JRadioButton rbRestartAdbServer = new JRadioButton(Resource.STR_SETTINGS_ADB_RESTART.getString());
 
 		ButtonGroup adbPolicyGroup = new ButtonGroup();
 		adbPolicyGroup.add(rbUseCurrentRunningVer);
@@ -650,10 +651,10 @@ public class SettingDlg extends JDialog implements ActionListener
 		GridBagConstraints adbPathConst = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE,new Insets(0,5,0,0),0,0);
 		JPanel adbPathPanel = new JPanel(new GridBagLayout());
 
-		adbPathPanel.add(new JLabel("Path"), adbPathConst);
+		adbPathPanel.add(new JLabel(Resource.STR_SETTINGS_ADB_PATH.getString()), adbPathConst);
 		adbPathConst.gridx++;
 
-		JComboBox<String> adbPaths = new JComboBox<String>(new String[] {"Auto - Latest version, 1.3.2", "1.3.2 - C:\\adb2"});
+		JComboBox<String> adbPaths = new JComboBox<String>(new String[] {Resource.STR_SETTINGS_ADB_AUTO_SEL.getString() + ", 1.3.2", "1.3.2 - C:\\adb2"});
 		adbPaths.setEditable(false);
 		adbPaths.addItemListener(new ItemListener() {
 			@Override
@@ -681,7 +682,7 @@ public class SettingDlg extends JDialog implements ActionListener
 
 		adbPolicyPanel.add(adbPathPanel);
 
-		adbPolicyPanel.add(new JLabel("If exist not runnging adb, launch target version"));
+		adbPolicyPanel.add(new JLabel(Resource.STR_SETTINGS_ADB_SHARED_LAB.getString()));
 
 		panel.add(adbPolicyPanel, contentConst);
 
@@ -690,7 +691,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		rowHeadConst.gridy++;
 		contentConst.gridy++;
 
-		chckbxNewCheckBox = new JCheckBox("Enable device monitor - dynamic toobar");
+		chckbxNewCheckBox = new JCheckBox(Resource.STR_SETTINGS_ADB_MONITOR.getString());
 		chckbxNewCheckBox.setSelected(isSamePackage);
 		chckbxNewCheckBox.addActionListener(this);
 
@@ -707,10 +708,15 @@ public class SettingDlg extends JDialog implements ActionListener
 
 
 		JPanel launchPolicyPanel = new JPanel(new GridLayout(0,1));
-		launchPolicyPanel.setBorder(new TitledBorder("Launch option"));
+		launchPolicyPanel.setBorder(new TitledBorder(Resource.STR_SETTINGS_LAUNCH_OPTION.getString()));
 
 
-		JComboBox<String> launchOptions = new JComboBox<String>(new String[] {"Auto - Launcher are only one", "Auto - Launcher or Main are onces", "Always confirm target"});
+		JComboBox<String> launchOptions = new JComboBox<String>(
+				new String[] {
+						Resource.STR_SETTINGS_LAUNCHER_ONLY.getString(),
+						Resource.STR_SETTINGS_LAUNCHER_OR_MAIN.getString(),
+						Resource.STR_SETTINGS_LAUNCHER_CONFIRM.getString()
+				});
 		launchOptions.setEditable(false);
 		launchOptions.addItemListener(new ItemListener() {
 			@Override
@@ -721,10 +727,10 @@ public class SettingDlg extends JDialog implements ActionListener
 		});
 		launchPolicyPanel.add(launchOptions);
 
-		JCheckBox jckTryUnlock = new JCheckBox("Try unlock by drag after launch");
+		JCheckBox jckTryUnlock = new JCheckBox(Resource.STR_SETTINGS_TRY_UNLOCK.getString());
 		launchPolicyPanel.add(jckTryUnlock);
 
-		JCheckBox jckLauchAfInstalled = new JCheckBox("Launch after install completed");
+		JCheckBox jckLauchAfInstalled = new JCheckBox(Resource.STR_SETTINGS_LAUNCH_INSTALLED.getString());
 		launchPolicyPanel.add(jckLauchAfInstalled);
 
 
@@ -744,7 +750,6 @@ public class SettingDlg extends JDialog implements ActionListener
 
 		return panel;
 	}
-
 
 	JPanel makeDisplayPanel() {
 		JPanel panel = new JPanel(new GridBagLayout());
@@ -790,6 +795,21 @@ public class SettingDlg extends JDialog implements ActionListener
 				if(jcbTabbedUI != null && mPreviewTabbedPanel != null) {
 					String className = (String)jcbTabbedUI.getSelectedItem();
 					TabbedPaneUIManager.setUI(mPreviewTabbedPanel, className);
+				}
+				
+				if(jtbFontBold != null){
+					jtbFontBold.setPreferredSize(null);
+					Dimension fCompSize = jtbFontBold.getPreferredSize();
+					if(fCompSize.height > fCompSize.width) {
+						jtbFontBold.setPreferredSize(new Dimension(fCompSize.height, fCompSize.height));
+					}
+				}
+				if(jtbFontItalic != null) {
+					jtbFontItalic.setPreferredSize(null);
+					Dimension fCompSize = jtbFontItalic.getPreferredSize();
+					if(fCompSize.height > fCompSize.width) {
+						jtbFontItalic.setPreferredSize(new Dimension(fCompSize.height, fCompSize.height));
+					}
 				}
 			}
 		});
@@ -841,7 +861,10 @@ public class SettingDlg extends JDialog implements ActionListener
 		jtbFontBold.setText("B");
 		jtbFontBold.setFocusable(false);
 		jtbFontBold.setMargin(new Insets(0,0,0,0));
-		//jtbFontBold.setPreferredSize(new Dimension(fCompSize.height, fCompSize.height));
+		Dimension fCompSize = jtbFontBold.getPreferredSize();
+		if(fCompSize.height > fCompSize.width) {
+			jtbFontBold.setPreferredSize(new Dimension(fCompSize.height, fCompSize.height));
+		}
 		jtbFontBold.addActionListener(fontChangedListener);
 		jtbFontBold.setSelected((propFontStyle & Font.BOLD) != 0);
 
@@ -849,7 +872,10 @@ public class SettingDlg extends JDialog implements ActionListener
 		jtbFontItalic.setText("I");
 		jtbFontItalic.setFocusable(false);
 		jtbFontItalic.setMargin(new Insets(0,0,0,0));
-		//jtbFontItalic.setPreferredSize(new Dimension(fCompSize.height, fCompSize.height));
+		fCompSize = jtbFontItalic.getPreferredSize();
+		if(fCompSize.height > fCompSize.width) {
+			jtbFontItalic.setPreferredSize(new Dimension(fCompSize.height, fCompSize.height));
+		}
 		jtbFontItalic.addActionListener(fontChangedListener);
 		jtbFontItalic.setSelected((propFontStyle & Font.ITALIC) != 0);
 
@@ -870,7 +896,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		contentConst.weighty = 1;
 
 		previewPanel = new JPanel(new BorderLayout());
-		previewPanel.setBorder(new TitledBorder("Preview"));
+		previewPanel.setBorder(new TitledBorder(Resource.STR_SETTINGS_THEME_PREVIEW.getString()));
 		previewPanel.setPreferredSize(new Dimension(0,170));	
 
 		mPreviewFrame = new JInternalFrame(Resource.STR_APP_NAME.getString(),false,false,false,false);

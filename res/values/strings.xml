@@ -219,6 +219,23 @@
 	<string name="settings_tabbed_ui">Tabbed UI</string>
 	<string name="settings_font">Font</string>
 	<string name="settings_theme_font">Font of theme</string>
+	<string name="settings_theme_preview">Preview</string>
+	<string name="settings_preferred_language">Preferred Language</string>
+	<string name="settings_preferred_example">ex) en-rUS;en-rGB;en;</string>
+	<string name="settings_adb_policy">ADB Policy</string>
+	<string name="settings_adb_shared">Sharing ADB of the current running version</string>
+	<string name="settings_adb_restart">Restart ADB for target version</string>
+	<string name="settings_adb_path">Path</string>
+	<string name="settings_adb_auto_selected">Auto - Latest version</string>
+	<string name="settings_adb_shared_lab">* If exist not runnging adb, launch target version</string>
+	<string name="settings_adb_restart_lab">* If version are different, restart target version</string>
+	<string name="settings_adb_monitor">Enable device monitor - dynamic toobar</string>
+	<string name="settings_launch_option">Launch option</string>
+	<string name="settings_launcher_only">Auto - Launcher are only one</string>
+	<string name="settings_launcher_or_main">Auto - Launcher or Main are onces</string>
+	<string name="settings_launcher_confirm">Always confirm target</string>
+	<string name="settings_try_unlock">Try unlock by drag after launch</string>
+	<string name="settings_launch_installed">Launch after install completed</string>
 
 	<string name="label_error">Error</string>
 	<string name="label_warning">Warning</string>
