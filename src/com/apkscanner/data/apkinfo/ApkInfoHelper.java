@@ -151,7 +151,7 @@ public class ApkInfoHelper
 				for(ResourceInfo r: resInfos) {
 					if(r.configuration != null && !r.configuration.isEmpty()
 							&& !"default".equals(r.configuration)
-							&& r.configuration.startsWith(preferred) && r.name != null) {
+							&& r.configuration.equalsIgnoreCase(preferred) && r.name != null) {
 						value = r.name;
 						break;
 					}
