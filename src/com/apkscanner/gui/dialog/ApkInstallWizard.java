@@ -177,11 +177,7 @@ public class ApkInstallWizard
 		private void frame_init()
 		{
 			try {
-				if(Resource.PROP_CURRENT_THEME.getData()==null) {
-					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-				} else {
-					UIManager.setLookAndFeel(Resource.PROP_CURRENT_THEME.getData().toString());
-				}
+				UIManager.setLookAndFeel((String)Resource.PROP_CURRENT_THEME.getData());
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 					| UnsupportedLookAndFeelException e1) {
 				e1.printStackTrace();

@@ -1011,11 +1011,7 @@ public class SettingDlg extends JDialog implements ActionListener
 
 				Log.i("initialize() setLookAndFeel");
 				try {
-					String theme = (String)Resource.PROP_CURRENT_THEME.getData();
-					if(theme == null || theme.isEmpty()) {
-						theme = UIManager.getSystemLookAndFeelClassName();
-					}
-					UIManager.setLookAndFeel(theme);
+					UIManager.setLookAndFeel((String)Resource.PROP_CURRENT_THEME.getData());
 				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 						| UnsupportedLookAndFeelException e1) {
 					e1.printStackTrace();
@@ -1023,8 +1019,9 @@ public class SettingDlg extends JDialog implements ActionListener
 
 				Log.i("initialize() setUIFont");
 				String font = (String) Resource.PROP_BASE_FONT.getData();
+				int fontStyle = (int) Resource.PROP_BASE_FONT_STYLE.getInt();
 				int fontSize = (int) Resource.PROP_BASE_FONT_SIZE.getInt();
-				setUIFont(new javax.swing.plaf.FontUIResource(font, java.awt.Font.PLAIN, fontSize));
+				setUIFont(new javax.swing.plaf.FontUIResource(font, fontStyle, fontSize));
 
 				SettingDlg dlg = new SettingDlg(new JFrame());
 				dlg.setVisible(true);

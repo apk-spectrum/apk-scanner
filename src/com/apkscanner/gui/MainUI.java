@@ -3,7 +3,6 @@ package com.apkscanner.gui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.Font;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
@@ -102,11 +101,7 @@ public class MainUI extends JFrame
 
 		Log.i("initialize() setLookAndFeel");
 		try {
-			String theme = (String)Resource.PROP_CURRENT_THEME.getData();
-			if(theme == null || theme.isEmpty()) {
-				theme = UIManager.getSystemLookAndFeelClassName();
-			}
-			UIManager.setLookAndFeel(theme);
+			UIManager.setLookAndFeel((String)Resource.PROP_CURRENT_THEME.getData());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 				| UnsupportedLookAndFeelException e1) {
 			e1.printStackTrace();
@@ -114,7 +109,7 @@ public class MainUI extends JFrame
 
 		Log.i("initialize() setUIFont");
 		String propFont = (String) Resource.PROP_BASE_FONT.getData();
-		int propFontStyle = (int)Resource.PROP_BASE_FONT_STYLE.getInt(Font.PLAIN);
+		int propFontStyle = (int)Resource.PROP_BASE_FONT_STYLE.getInt();
 		int propFontSize = (int) Resource.PROP_BASE_FONT_SIZE.getInt();
 		setUIFont(new javax.swing.plaf.FontUIResource(propFont, propFontStyle, propFontSize));
 
@@ -124,11 +119,11 @@ public class MainUI extends JFrame
 
 		Log.i("initialize() set bound & size");
 
-		int width = WINDOW_SIZE_WIDTH_MIN;
-		int height = WINDOW_SIZE_HEIGHT_MIN;
+		int width = Resource.INT_WINDOW_SIZE_WIDTH_MIN;
+		int height = Resource.INT_WINDOW_SIZE_HEIGHT_MIN;
 		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
-			width = Resource.PROP_WINDOW_WIDTH.getInt(WINDOW_SIZE_WIDTH_MIN);
-			height = Resource.PROP_WINDOW_HEIGHT.getInt(WINDOW_SIZE_HEIGHT_MIN);
+			width = Resource.PROP_WINDOW_WIDTH.getInt();
+			height = Resource.PROP_WINDOW_HEIGHT.getInt();
 		}
 		
 		setBounds(0, 0, width, height);
@@ -728,8 +723,8 @@ public class MainUI extends JFrame
 			if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData(false)) {
 				int width = (int)getSize().getWidth();
 				int height = (int)getSize().getHeight();
-				if(Resource.PROP_WINDOW_WIDTH.getInt(0) != width
-						|| Resource.PROP_WINDOW_HEIGHT.getInt(0) != (int)getSize().getHeight()) {
+				if(Resource.PROP_WINDOW_WIDTH.getInt() != width
+						|| Resource.PROP_WINDOW_HEIGHT.getInt() != (int)getSize().getHeight()) {
 					Resource.PROP_WINDOW_WIDTH.setData(width);
 					Resource.PROP_WINDOW_HEIGHT.setData(height);
 				}
