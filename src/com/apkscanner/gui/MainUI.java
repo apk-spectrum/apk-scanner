@@ -122,7 +122,7 @@ public class MainUI extends JFrame
 			width = Resource.PROP_WINDOW_WIDTH.getInt();
 			height = Resource.PROP_WINDOW_HEIGHT.getInt();
 		}
-		
+
 		setBounds(0, 0, width, height);
 		setMinimumSize(new Dimension(Resource.INT_WINDOW_SIZE_WIDTH_MIN, Resource.INT_WINDOW_SIZE_HEIGHT_MIN));
 		setResizable(true);
@@ -156,8 +156,9 @@ public class MainUI extends JFrame
 		ky.addKeyEventDispatcher(eventHandler);
 
 		Log.i("UI Init end");
-
-		deviceMonitor.start();
+		if((boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData()) {
+			deviceMonitor.start();
+		}
 	}
 
 	private static void setUIFont(javax.swing.plaf.FontUIResource f) {
@@ -488,7 +489,7 @@ public class MainUI extends JFrame
 		{
 			SettingDlg dlg = new SettingDlg(MainUI.this);
 			dlg.setVisible(true);
-			
+
 			//changed theme
 			if(dlg.isNeedRestart()) {
 				restart();
@@ -510,12 +511,20 @@ public class MainUI extends JFrame
 			}
 
 			String selectedActivity = null;
-			ComponentInfo[] activities = ApkInfoHelper.getLauncherActivityList(apkInfo, false);
+			ComponentInfo[] activities = null;
+			int activityOpt = Resource.PROP_LAUNCH_ACTIVITY_OPTION.getInt();
+			if(activityOpt == Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY
+					|| activityOpt == Resource.INT_LAUNCH_ONLY_LAUNCHER_ACTIVITY) {
+				activities = ApkInfoHelper.getLauncherActivityList(apkInfo, activityOpt == Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY);
+			}
+
 			if(activities != null && activities.length == 1) {
 				selectedActivity = activities[0].name;
 			} else {
-				activities = ApkInfoHelper.getLauncherActivityList(apkInfo, true);
-				if(activities != null) {
+				if(activityOpt != Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY) {
+					activities = ApkInfoHelper.getLauncherActivityList(apkInfo, true);
+				}
+				if(activities != null && activities.length > 0) {
 					String[] items = new String[activities.length];
 					for(int i = 0; i < activities.length; i++) {
 						boolean isLauncher = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0);
@@ -583,7 +592,7 @@ public class MainUI extends JFrame
 											null, new Dimension(500, 120));
 								}
 							});
-						} else {
+						} else if((boolean)Resource.PROP_TRY_UNLOCK_AF_LAUNCH.getData()) {
 							AdbDeviceHelper.tryDismissKeyguard(device);
 						}
 					}
@@ -755,25 +764,32 @@ public class MainUI extends JFrame
 		private HashMap<IDevice, PackageInfo> devices = new HashMap<IDevice, PackageInfo>(); 
 
 		public void start() {
-			Log.v("DeviceMonitor.start() s");
-			if(demonMonitor != null) {
-				Log.v("aleady started");
-				return;
+			synchronized(this) {
+				Log.v("DeviceMonitor.start() s");
+				if(demonMonitor != null) {
+					Log.v("aleady started");
+					return;
+				}
+				demonMonitor = AdbServerMonitor.startServerAndCreateBridge(
+						Resource.BIN_ADB.getPath(),
+						!(boolean)Resource.PROP_ADB_POLICY_SHARED.getData(),
+						(boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData());
 			}
-			demonMonitor = AdbServerMonitor.startServerAndCreateBridge(Resource.BIN_ADB.getPath(), false, true);
-			AdbServerMonitor.addAdbDemonChangeListener(this);
 
+			AdbServerMonitor.addAdbDemonChangeListener(this);
 			AndroidDebugBridge.addDeviceChangeListener(this);
 			Log.v("DeviceMonitor.start() e");			
 		}
 
 		public void stop() {
-			if(demonMonitor != null) {
-				demonMonitor.stop();
-				demonMonitor = null;
+			synchronized(this) {
+				if(demonMonitor != null) {
+					demonMonitor.stop();
+					demonMonitor = null;
+				}
 			}
+			
 			AdbServerMonitor.removeAdbDemonChangeListener(this);
-
 			AndroidDebugBridge.removeDeviceChangeListener(this);
 		}
 
@@ -783,9 +799,12 @@ public class MainUI extends JFrame
 			}
 		}
 
-
-
 		public void setApkInfo(ApkInfo info) {
+			synchronized(this) {
+				if(demonMonitor == null || !(boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData()) {
+					return;
+				}
+			}
 			synchronized(this) {
 				if(info != null) {
 					packageName = info.manifest.packageName;

@@ -227,7 +227,7 @@
 	<string name="settings_adb_restart">Restart ADB for target version</string>
 	<string name="settings_adb_path">Path</string>
 	<string name="settings_adb_auto_selected">Auto - Latest version</string>
-	<string name="settings_adb_shared_lab">* If exist not runnging adb, launch target version</string>
+	<string name="settings_adb_shared_lab">* If exist not running adb, or not supported, launch target version</string>
 	<string name="settings_adb_restart_lab">* If version are different, restart target version</string>
 	<string name="settings_adb_monitor">Enable device monitor - dynamic toobar</string>
 	<string name="settings_launch_option">Launch option</string>

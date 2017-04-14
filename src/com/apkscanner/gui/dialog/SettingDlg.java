@@ -50,6 +50,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileSystemView;
 
+import com.android.ddmlib.AdbVersion;
 import com.apkscanner.gui.TabbedPanel;
 import com.apkscanner.gui.ToolBar;
 import com.apkscanner.gui.theme.TabbedPaneUIManager;
@@ -57,6 +58,7 @@ import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.jna.FileInfo;
 import com.apkscanner.jna.FileVersion;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 
@@ -74,11 +76,11 @@ public class SettingDlg extends JDialog implements ActionListener
 
 	private String propStrLanguage;
 	private String propStrEditorPath;
-	private ArrayList<String> propRecentEditors = new ArrayList<String>();
+	private ArrayList<String> propRecentEditors;
 
 	private String propPreferredLanguage;
 	private String propframeworkResPath;
-	private ArrayList<String> resList = new ArrayList<String>();
+	private ArrayList<String> frameworkResPath;
 
 	private String propTheme;
 	private String propTabbedUI;
@@ -87,7 +89,14 @@ public class SettingDlg extends JDialog implements ActionListener
 	private int propFontStyle;
 	private boolean propSaveWinSize; 
 
-	private boolean isSamePackage;
+	private boolean propAdbShared;
+	private String propAdbPath;
+	private ArrayList<String> propAdbList;
+	private boolean propDeviceMonitoring;
+	private int propLaunchActivity;
+	private boolean propTryUnlock;
+	private boolean propLaunchAfInstalled;
+
 	private boolean needUpdateUI;
 
 	private static String fontOfTheme;
@@ -106,6 +115,13 @@ public class SettingDlg extends JDialog implements ActionListener
 	private JTextField jtbPreferLang;
 	private JList<String> jlFrameworkRes;
 
+	private JRadioButton jrbUseCurrentRunningVer;
+	private JComboBox<String> jcbAdbPaths;
+	private JCheckBox jckEnableDeviceMonitoring;
+	private JComboBox<String> jcbLaunchOptions;
+	private JCheckBox jckTryUnlock;
+	private JCheckBox jckLauchAfInstalled;
+
 	private JComboBox<String> jcbTheme;
 	private JComboBox<String> jcbTabbedUI;
 	private JComboBox<String> jcbFont;
@@ -113,7 +129,6 @@ public class SettingDlg extends JDialog implements ActionListener
 	private JToggleButton jtbFontBold;
 	private JToggleButton jtbFontItalic;
 
-	private JCheckBox chckbxNewCheckBox;
 	private JCheckBox jckRememberWinSize;
 
 
@@ -132,7 +147,7 @@ public class SettingDlg extends JDialog implements ActionListener
 			String text;
 			Icon icon;
 		}
-		private HashMap<String, CellItem> items; 
+		private HashMap<String, CellItem> items;
 
 		public EditorItemRenderer() {
 			setOpaque(false);
@@ -237,6 +252,38 @@ public class SettingDlg extends JDialog implements ActionListener
 		}
 	}
 
+	private class AdbItemRenderer extends JLabel implements ListCellRenderer<Object> {
+		private static final long serialVersionUID = 2836930268446481101L;
+
+		private HashMap<String, AdbVersion> items = new HashMap<String, AdbVersion>();
+		private AdbVersion latestVer;
+		
+		private AdbVersion getVersion(String path) {
+			AdbVersion version = items.get(path.trim());
+			if(version == null) {
+				version = AdbServerMonitor.checkAdbVersion(path.trim());
+				if(version == null) {
+					Log.w("Warring: unsupported adb : " + path.trim());
+				} else if(latestVer == null || version.compareTo(latestVer) > 0) {
+					latestVer = version;
+				}
+				items.put(path.trim(), version);
+			}
+			return version;
+		}
+
+		@Override
+		public Component getListCellRendererComponent(JList<?> list, Object value,
+				int index, boolean isSelected, boolean cellHasFocus) {
+			if(value.toString().isEmpty()) {
+				setText(Resource.STR_SETTINGS_ADB_AUTO_SEL.getString() + " - " + latestVer);
+			} else {
+				setText(getVersion(value.toString()) + " - " + value.toString());
+			}
+			return this;
+		}
+	}
+
 	private class FontChangedListener implements ItemListener, ActionListener {
 		private void changePreviewFont() {
 			if(jcbFont == null || jcbFontSize == null || mPreviewFrame == null) return;
@@ -331,6 +378,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		propStrEditorPath = SystemUtil.getRealPath((String)Resource.PROP_EDITOR.getData());
 
 		String recentEditors = (String)Resource.PROP_RECENT_EDITOR.getData();
+		propRecentEditors = new ArrayList<String>();
 		for(String s: recentEditors.split(File.pathSeparator)) {
 			if(!s.isEmpty()) {
 				String realPath = SystemUtil.getRealPath(s);
@@ -355,11 +403,36 @@ public class SettingDlg extends JDialog implements ActionListener
 		propPreferredLanguage = (String)Resource.PROP_PREFERRED_LANGUAGE.getData();
 
 		propframeworkResPath = (String)Resource.PROP_FRAMEWORK_RES.getData();
+		frameworkResPath = new ArrayList<String>();
 		for(String s: propframeworkResPath.split(File.pathSeparator)) {
 			if(!s.isEmpty()) {
-				resList.add(s);
+				frameworkResPath.add(s);
 			}
 		}
+
+		propAdbShared = (boolean)Resource.PROP_ADB_POLICY_SHARED.getData();
+
+		propAdbPath = ((String)Resource.PROP_ADB_PATH.getData()).trim();
+
+		String adbList = (String)Resource.PROP_ADB_LIST.getData();
+		propAdbList = new ArrayList<String>();
+		propAdbList.add("");
+		if(!propAdbPath.isEmpty()) {
+			propAdbList.add(propAdbPath);
+		}
+		for(String s: adbList.split(File.pathSeparator)) {
+			if(!s.trim().isEmpty() && !propAdbList.contains(s.trim())) {
+				propAdbList.add(s.trim());
+			}
+		}
+
+		propDeviceMonitoring = (boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData();
+
+		propLaunchActivity = (int)Resource.PROP_LAUNCH_ACTIVITY_OPTION.getInt();
+
+		propTryUnlock = (boolean)Resource.PROP_TRY_UNLOCK_AF_LAUNCH.getData();
+
+		propLaunchAfInstalled = (boolean)Resource.PROP_LAUNCH_AF_INSTALLED.getData();
 	}
 
 	private void saveSettings()
@@ -389,12 +462,36 @@ public class SettingDlg extends JDialog implements ActionListener
 		}
 
 		String resPaths = "";
-		for(String f: resList) {
+		for(String f: frameworkResPath) {
 			if(f.isEmpty()) continue;
 			resPaths += f + ";";
 		}
 		if(!propframeworkResPath.equals(resPaths)) {
 			Resource.PROP_FRAMEWORK_RES.setData(resPaths);
+		}
+
+		if(propAdbShared != jrbUseCurrentRunningVer.isSelected()) {
+			Resource.PROP_ADB_POLICY_SHARED.setData(jrbUseCurrentRunningVer.isSelected());
+		}
+
+		if(!propAdbPath.equals(jcbAdbPaths.getSelectedItem())) {
+			Resource.PROP_ADB_PATH.setData(jcbAdbPaths.getSelectedItem());
+		}
+
+		if(propDeviceMonitoring != jckEnableDeviceMonitoring.isSelected()) {
+			Resource.PROP_ADB_DEVICE_MONITORING.setData(jckEnableDeviceMonitoring.isSelected());
+		}
+
+		if(propLaunchActivity != jcbLaunchOptions.getSelectedIndex()) {
+			Resource.PROP_LAUNCH_ACTIVITY_OPTION.setData(jcbLaunchOptions.getSelectedIndex());
+		}
+
+		if(propTryUnlock != jckTryUnlock.isSelected()) {
+			Resource.PROP_TRY_UNLOCK_AF_LAUNCH.setData(jckTryUnlock.isSelected());
+		}
+
+		if(propLaunchAfInstalled != jckLauchAfInstalled.isSelected()) {
+			Resource.PROP_LAUNCH_AF_INSTALLED.setData(jckLauchAfInstalled.isSelected());	
 		}
 
 		needUpdateUI = false;
@@ -582,7 +679,7 @@ public class SettingDlg extends JDialog implements ActionListener
 
 
 		jlFrameworkRes = new JList<String>();
-		jlFrameworkRes.setListData(resList.toArray(new String[0]));
+		jlFrameworkRes.setListData(frameworkResPath.toArray(new String[0]));
 
 		JScrollPane scrollPane1 = new JScrollPane(jlFrameworkRes);
 		scrollPane1.setPreferredSize(new Dimension(50, 400));
@@ -629,17 +726,35 @@ public class SettingDlg extends JDialog implements ActionListener
 		JPanel adbPolicyPanel = new JPanel(new GridLayout(0,1));
 		adbPolicyPanel.setBorder(new TitledBorder(Resource.STR_SETTINGS_ADB_POLICY.getString()));
 
-
-		JRadioButton rbUseCurrentRunningVer = new JRadioButton(Resource.STR_SETTINGS_ADB_SHARED.getString());
+		jrbUseCurrentRunningVer = new JRadioButton(Resource.STR_SETTINGS_ADB_SHARED.getString());
 		JRadioButton rbRestartAdbServer = new JRadioButton(Resource.STR_SETTINGS_ADB_RESTART.getString());
 
+		final JLabel jlbAdbPolicyLabel = new JLabel();
+		ActionListener radioAction = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(jrbUseCurrentRunningVer.isSelected()) {
+					jlbAdbPolicyLabel.setText(Resource.STR_SETTINGS_ADB_SHARED_LAB.getString());
+				} else {
+					jlbAdbPolicyLabel.setText(Resource.STR_SETTINGS_ADB_RESTART_LAB.getString());
+				}
+			}
+		};
+		jrbUseCurrentRunningVer.addActionListener(radioAction);		
+		rbRestartAdbServer.addActionListener(radioAction);
+
 		ButtonGroup adbPolicyGroup = new ButtonGroup();
-		adbPolicyGroup.add(rbUseCurrentRunningVer);
+		adbPolicyGroup.add(jrbUseCurrentRunningVer);
 		adbPolicyGroup.add(rbRestartAdbServer);
 
-		adbPolicyPanel.add(rbUseCurrentRunningVer);
+		adbPolicyPanel.add(jrbUseCurrentRunningVer);
 		adbPolicyPanel.add(rbRestartAdbServer);
 
+		if(propAdbShared) {
+			jrbUseCurrentRunningVer.setSelected(true);
+		} else {
+			rbRestartAdbServer.setSelected(true);
+		}
 
 		GridBagConstraints adbPathConst = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE,new Insets(0,5,0,0),0,0);
 		JPanel adbPathPanel = new JPanel(new GridBagLayout());
@@ -647,19 +762,20 @@ public class SettingDlg extends JDialog implements ActionListener
 		adbPathPanel.add(new JLabel(Resource.STR_SETTINGS_ADB_PATH.getString()), adbPathConst);
 		adbPathConst.gridx++;
 
-		JComboBox<String> adbPaths = new JComboBox<String>(new String[] {Resource.STR_SETTINGS_ADB_AUTO_SEL.getString() + ", 1.3.2", "1.3.2 - C:\\adb2"});
-		adbPaths.setEditable(false);
-		adbPaths.addItemListener(new ItemListener() {
+		jcbAdbPaths = new JComboBox<String>(propAdbList.toArray(new String[propAdbList.size()]));
+		jcbAdbPaths.setRenderer(new AdbItemRenderer());
+		jcbAdbPaths.setEditable(false);
+		jcbAdbPaths.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent arg0) {
 
 			}
-
 		});
+		jcbAdbPaths.setSelectedItem(propAdbPath);
 
 		adbPathConst.weightx = 1;
 		adbPathConst.fill = GridBagConstraints.BOTH;
-		adbPathPanel.add(adbPaths, adbPathConst);
+		adbPathPanel.add(jcbAdbPaths, adbPathConst);
 		adbPathConst.weightx = 0;
 		adbPathConst.fill = GridBagConstraints.NONE;
 
@@ -675,7 +791,12 @@ public class SettingDlg extends JDialog implements ActionListener
 
 		adbPolicyPanel.add(adbPathPanel);
 
-		adbPolicyPanel.add(new JLabel(Resource.STR_SETTINGS_ADB_SHARED_LAB.getString()));
+		if(propAdbShared) {
+			jlbAdbPolicyLabel.setText(Resource.STR_SETTINGS_ADB_SHARED_LAB.getString());
+		} else {
+			jlbAdbPolicyLabel.setText(Resource.STR_SETTINGS_ADB_RESTART_LAB.getString());
+		}
+		adbPolicyPanel.add(jlbAdbPolicyLabel);
 
 		panel.add(adbPolicyPanel, contentConst);
 
@@ -684,11 +805,11 @@ public class SettingDlg extends JDialog implements ActionListener
 		rowHeadConst.gridy++;
 		contentConst.gridy++;
 
-		chckbxNewCheckBox = new JCheckBox(Resource.STR_SETTINGS_ADB_MONITOR.getString());
-		chckbxNewCheckBox.setSelected(isSamePackage);
-		chckbxNewCheckBox.addActionListener(this);
+		jckEnableDeviceMonitoring = new JCheckBox(Resource.STR_SETTINGS_ADB_MONITOR.getString());
+		jckEnableDeviceMonitoring.setSelected(propDeviceMonitoring);
+		jckEnableDeviceMonitoring.addActionListener(this);
 
-		panel.add(chckbxNewCheckBox, contentConst);
+		panel.add(jckEnableDeviceMonitoring, contentConst);
 
 		rowHeadConst.gridy++;
 		contentConst.gridy++;
@@ -704,28 +825,30 @@ public class SettingDlg extends JDialog implements ActionListener
 		launchPolicyPanel.setBorder(new TitledBorder(Resource.STR_SETTINGS_LAUNCH_OPTION.getString()));
 
 
-		JComboBox<String> launchOptions = new JComboBox<String>(
+		jcbLaunchOptions = new JComboBox<String>(
 				new String[] {
-						Resource.STR_SETTINGS_LAUNCHER_ONLY.getString(),
 						Resource.STR_SETTINGS_LAUNCHER_OR_MAIN.getString(),
+						Resource.STR_SETTINGS_LAUNCHER_ONLY.getString(),
 						Resource.STR_SETTINGS_LAUNCHER_CONFIRM.getString()
 				});
-		launchOptions.setEditable(false);
-		launchOptions.addItemListener(new ItemListener() {
+		jcbLaunchOptions.setEditable(false);
+		jcbLaunchOptions.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent arg0) {
 
 			}
 
 		});
-		launchPolicyPanel.add(launchOptions);
+		jcbLaunchOptions.setSelectedIndex(propLaunchActivity);
+		launchPolicyPanel.add(jcbLaunchOptions);
 
-		JCheckBox jckTryUnlock = new JCheckBox(Resource.STR_SETTINGS_TRY_UNLOCK.getString());
+		jckTryUnlock = new JCheckBox(Resource.STR_SETTINGS_TRY_UNLOCK.getString());
+		jckTryUnlock.setSelected(propTryUnlock);
 		launchPolicyPanel.add(jckTryUnlock);
 
-		JCheckBox jckLauchAfInstalled = new JCheckBox(Resource.STR_SETTINGS_LAUNCH_INSTALLED.getString());
+		jckLauchAfInstalled = new JCheckBox(Resource.STR_SETTINGS_LAUNCH_INSTALLED.getString());
+		jckLauchAfInstalled.setSelected(propLaunchAfInstalled);
 		launchPolicyPanel.add(jckLauchAfInstalled);
-
 
 		contentConst.fill = GridBagConstraints.BOTH;
 		panel.add(launchPolicyPanel, contentConst);
@@ -988,15 +1111,15 @@ public class SettingDlg extends JDialog implements ActionListener
 			String file = ApkFileChooser.openApkFilePath(this);
 
 			if(file == null || file.isEmpty()) return;
-			for(String f: resList) {
+			for(String f: frameworkResPath) {
 				if(file.equals(f)) return;
 			}
-			resList.add(file);
-			jlFrameworkRes.setListData(resList.toArray(new String[0]));
+			frameworkResPath.add(file);
+			jlFrameworkRes.setListData(frameworkResPath.toArray(new String[0]));
 		} else if(e.getSource() == browser3) {
 			if(jlFrameworkRes.getSelectedIndex() < 0) return;
-			resList.remove(jlFrameworkRes.getSelectedIndex());
-			jlFrameworkRes.setListData(resList.toArray(new String[0]));
+			frameworkResPath.remove(jlFrameworkRes.getSelectedIndex());
+			jlFrameworkRes.setListData(frameworkResPath.toArray(new String[0]));
 		}
 	}
 

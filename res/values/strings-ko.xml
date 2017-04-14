@@ -206,14 +206,14 @@
 	<string name="settings_adb_restart">선택된 ADB 버전으로 재시작</string>
 	<string name="settings_adb_path">경로</string>
 	<string name="settings_adb_auto_selected">자동 - 최신버전</string>
-	<string name="settings_adb_shared_lab">* 실행중인 ADB 버전이 없다면 선택된 ADB로 구동됩니다.</string>
-	<string name="settings_adb_restart_lab">* 실행중인 ADB 버전이 다른 경우 선택된 ADB 버전으로 재시작 합니다.</string>
+	<string name="settings_adb_shared_lab">* 현재 실행중인 ADB 버전이 없거나 미지원 버전일 경우 선택된 ADB로 구동됩니다.</string>
+	<string name="settings_adb_restart_lab">* 현재 실행중인 ADB 버전이 다른 경우 선택된 ADB 버전으로 재시작 합니다.</string>
 	<string name="settings_adb_monitor">디바이스 연결 감지 허용 - 동적 툴바 제공</string>
 	<string name="settings_launch_option">실행 옵션</string>
 	<string name="settings_launcher_only">자동 - 런처 액티비티가 하나만 존재 하는 경우 즉시 실행</string>
-	<string name="settings_launcher_or_main">자동 - 런터 혹은 메인 액티비티가 하나만 존재 하는 경우 즉시 실행</string>
+	<string name="settings_launcher_or_main">자동 - 런처 혹은 메인 액티비티가 하나만 존재 하는 경우 즉시 실행</string>
 	<string name="settings_launcher_confirm">항상 실행 할 액티비티 확인후 실행</string>
-	<string name="settings_try_unlock">앱 실행 후 드래드 언락 시도</string>
+	<string name="settings_try_unlock">앱 실행 후 드래드 락스크린 해제 시도</string>
 	<string name="settings_launch_installed">앱 설치 후 자동 실행</string>
 
 	<string name="label_error">오류</string>

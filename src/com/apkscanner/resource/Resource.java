@@ -371,7 +371,13 @@ public enum Resource
 	PROP_LANGUAGE				(Type.PROP, "language", SystemUtil.getUserLanguage()),
 	PROP_EDITOR					(Type.PROP, "editor", null /* see getDefValue() */),
 	PROP_RECENT_EDITOR			(Type.PROP, "recent_editor", ""),
-	PROP_ADB_PATH				(Type.PROP, "adb_path", BIN_ADB.getPath()),
+	PROP_ADB_PATH				(Type.PROP, "adb_path", ""),
+	PROP_ADB_LIST				(Type.PROP, "adb_list", BIN_ADB.getPath()),
+	PROP_ADB_POLICY_SHARED		(Type.PROP, "adb_policy_shared", true),
+	PROP_ADB_DEVICE_MONITORING	(Type.PROP, "adb_device_monitoring", true),
+	PROP_LAUNCH_ACTIVITY_OPTION	(Type.PROP, "adb_launch_activity_option", Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY),
+	PROP_TRY_UNLOCK_AF_LAUNCH	(Type.PROP, "adb_try_unlock_af_launch", true),
+	PROP_LAUNCH_AF_INSTALLED	(Type.PROP, "adb_launch_af_installed", true),
 	PROP_RECENT_ADB_INFO		(Type.PROP, "recent_adb_info", ""),
 	PROP_FRAMEWORK_RES			(Type.PROP, "framewokr-res", ""),
 	PROP_LAST_FILE_OPEN_PATH	(Type.PROP, "last_file_open_path", ""),
@@ -396,6 +402,10 @@ public enum Resource
 
 	public static final int INT_WINDOW_SIZE_WIDTH_MIN = 650;
 	public static final int INT_WINDOW_SIZE_HEIGHT_MIN = 490;
+
+	public static final int INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY = 0;
+	public static final int INT_LAUNCH_ONLY_LAUNCHER_ACTIVITY = 1;
+	public static final int INT_LAUNCH_ALWAYS_CONFIRM_ACTIVITY = 2;
 
 	private enum Type {
 		IMAGE,
