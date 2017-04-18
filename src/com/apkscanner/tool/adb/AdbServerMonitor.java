@@ -365,7 +365,16 @@ public final class AdbServerMonitor {
 					}
 				} else if(!isConnected && adb != null && adb.getConnectionAttemptCount() > 5) {
 					if(mAdbServerMonitor.mAllowRestart) {
-						mAdbServerMonitor.startAdb();
+						runningAdbPath = mAdbServerMonitor.mAdbPath;
+						adbVersion = AdbVersionManager.getAdbVersion(runningAdbPath);
+						mAdbServerMonitor.adbDemonConnected(runningAdbPath, adbVersion);
+						
+						isConnected = mAdbServerMonitor.startAdb();
+						
+						if(!isConnected){
+							Log.e("Failure: startAdb");
+							mAdbServerMonitor.adbDemonDisconnected();	
+						}
 					} else {
 						AndroidDebugBridge.disconnectBridge();
 					}
