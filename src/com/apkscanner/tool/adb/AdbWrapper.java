@@ -10,7 +10,7 @@ import com.apkscanner.util.Log;
 
 public class AdbWrapper
 {
-	protected static final String adbCmd = getAdbCmd();
+	protected static String adbCmd = getAdbCmd();
 	private static String version;
 
 	private ConsoleOutputObserver listener;
@@ -29,7 +29,7 @@ public class AdbWrapper
 		this.listener = listener;
 	}
 
-	static String getAdbCmd() {
+	public static String getAdbCmd() {
 		String cmd = adbCmd;
 		if(cmd == null) {
 			cmd = Resource.BIN_ADB.getPath();
@@ -40,6 +40,10 @@ public class AdbWrapper
 			}
 		}
 		return cmd;
+	}
+	
+	public static void setAdbCmd(String adbPath) {
+		adbCmd = adbPath;
 	}
 
 	public String version() {

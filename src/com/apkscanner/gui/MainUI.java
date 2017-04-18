@@ -53,6 +53,7 @@ import com.apkscanner.tool.adb.AdbPackageManager.PackageInfo;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.AdbServerMonitor.IAdbDemonChangeListener;
 import com.apkscanner.tool.adb.AdbVersionManager;
+import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.tool.dex2jar.Dex2JarWrapper;
 import com.apkscanner.tool.jd_gui.JDGuiLauncher;
 import com.apkscanner.util.FileUtil;
@@ -985,6 +986,7 @@ public class MainUI extends JFrame
 		@Override
 		public void adbDemonConnected(String adbPath, AdbVersion version) {
 			Log.v("adbDemon Connected() " + adbPath + ", version " + version);
+			AdbWrapper.setAdbCmd(adbPath);
 		}
 
 		@Override

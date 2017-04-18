@@ -2,28 +2,24 @@ package com.apkscanner.tool.adb;
 
 import java.util.ArrayList;
 
-import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.Log;
 
 public class AdbPackageManager {
 
-	static private final String adbCmd = AdbWrapper.getAdbCmd();
-	
-
-	static public class PackageListObject {
+	public static class PackageListObject {
 		public String label;
 		public String pacakge;
 		public String codePath;
 		public String apkPath;
 		public String installer;
-		
+
 		@Override
 		public String toString() {
-		    return this.label;
+			return this.label;
 		}
 	}
-	
-	static public class PackageInfo
+
+	public static class PackageInfo
 	{
 		public final String pkgName;
 		public final String apkPath;
@@ -32,7 +28,7 @@ public class AdbPackageManager {
 		public final int versionCode;
 		public final boolean isSystemApp;
 		public final String installer;
-		
+
 		public PackageInfo(String pkgName, String apkPath, String codePath, String versionName, int versionCode, boolean isSystemApp, String installer)
 		{
 			this.pkgName = pkgName;
@@ -43,7 +39,7 @@ public class AdbPackageManager {
 			this.isSystemApp = isSystemApp;
 			this.installer = installer;
 		}
-		
+
 		@Override
 		public String toString()
 		{
@@ -56,7 +52,7 @@ public class AdbPackageManager {
 		}
 	}
 
-	static public String[] getRecentlyActivityPackages(String device) {
+	public static String[] getRecentlyActivityPackages(String device) {
 		String[] result = AdbWrapper.shell(device, new String[] {"am", "stack", "list"}, null);
 		ArrayList<String> pkgList = new ArrayList<String>();
 		boolean isLegacy = false;
@@ -86,8 +82,8 @@ public class AdbPackageManager {
 
 		return pkgList.toArray(new String[0]);
 	}
-	
-	static private String[] getRecentlyActivityPackagesLegacy(String device) {
+
+	private static String[] getRecentlyActivityPackagesLegacy(String device) {
 		String[] result = AdbWrapper.shell(device, new String[] {"am", "stack", "boxes"}, null);
 		ArrayList<String> pkgList = new ArrayList<String>();
 		for(String line: result) {
@@ -95,7 +91,7 @@ public class AdbPackageManager {
 				String pkg = line.replaceAll("    taskId=[0-9]*:\\s([^/]*)/.*", "$1").trim(); 
 				if(pkg != null && !pkg.isEmpty() && !pkg.equals(line)) {
 					if(pkg.indexOf(" ") == -1 && !pkgList.contains(pkg)) {
-							pkgList.add(0, pkg);
+						pkgList.add(0, pkg);
 					} else {
 						Log.w("Unknown pkg - " + pkg);
 					}
@@ -105,7 +101,7 @@ public class AdbPackageManager {
 		return pkgList.toArray(new String[0]);
 	}
 
-	static public String[] getCurrentlyRunningPackages(String device) {
+	public static String[] getCurrentlyRunningPackages(String device) {
 		String[] result = AdbWrapper.shell(device, new String[] {"ps"}, null);
 		ArrayList<String> pkgList = new ArrayList<String>();
 		for(String line: result) {
@@ -123,17 +119,14 @@ public class AdbPackageManager {
 		}
 		return pkgList.toArray(new String[0]);
 	}
-	
-	static public ArrayList<PackageListObject> getPackageList(String device)
+
+	public static ArrayList<PackageListObject> getPackageList(String device)
 	{
 		ArrayList<PackageListObject> list = new ArrayList<PackageListObject>();
-		
-		String[] cmd = {adbCmd, "-s", device, "shell", "dumpsys", "package"};
-		String[] result = ConsolCmd.exc(cmd, false, null);
-		
-		cmd = new String[] {adbCmd, "-s", device, "shell", "pm", "list", "packages", "-f", "-i", "-u"};
-		String[] pmList = ConsolCmd.exc(cmd, false, null);		
-		
+
+		String[] result = AdbWrapper.shell(device, new String[] {"dumpsys", "package"}, null);
+		String[] pmList = AdbWrapper.shell(device, new String[] {"pm", "list", "packages", "-f", "-i", "-u"}, null);
+
 		boolean start = false;
 		PackageListObject pack = null;
 		String verName = null;
@@ -160,10 +153,10 @@ public class AdbPackageManager {
 				pack.codePath = null;
 				pack.apkPath = null;
 				for(String output: pmList) {
-			    	if(output.matches("^package:.*=" + pack.pacakge + "\\s*installer=.*")) {
-			    		pack.apkPath = output.replaceAll("^package:(.*)=" + pack.pacakge + "\\s*installer=(.*)", "$1");
-			    		//pack.installer = output.replaceAll("^package:(.*)=" + pack.pacakge + "\\s*installer=(.*)", "$2");
-			    	}
+					if(output.matches("^package:.*=" + pack.pacakge + "\\s*installer=.*")) {
+						pack.apkPath = output.replaceAll("^package:(.*)=" + pack.pacakge + "\\s*installer=(.*)", "$1");
+						//pack.installer = output.replaceAll("^package:(.*)=" + pack.pacakge + "\\s*installer=(.*)", "$2");
+					}
 				}
 			} else if(pack != null && pack.codePath == null && line.matches("^\\s*codePath=.*$")) {
 				pack.codePath = line.replaceAll("^\\s*codePath=\\s*([^\\s]*).*$", "$1");
@@ -183,9 +176,8 @@ public class AdbPackageManager {
 			pack.label = pack.apkPath.replaceAll(".*/", "") + " - [" + pack.pacakge + "] - " + verName + "/" + verCode;
 			list.add(pack);
 		}
-		
-		cmd = new String[] {adbCmd, "-s", device, "shell", "ls", "/system/framework/*.apk"};
-		result = ConsolCmd.exc(cmd, false, null);
+
+		result = AdbWrapper.shell(device, new String[] {"ls", "/system/framework/*.apk"}, null);
 		for(String line: result) {
 			if(line.equals("/system/framework/framework-res.apk")
 					|| !line.endsWith(".apk")) continue;
@@ -200,9 +192,8 @@ public class AdbPackageManager {
 		return list;
 	}
 
-	static public PackageInfo getPackageInfo(String device, String pkgName)
+	public static PackageInfo getPackageInfo(String device, String pkgName)
 	{
-		String[] cmd;
 		String[] result;
 		String[] TargetInfo;
 		String verName = null;
@@ -212,29 +203,27 @@ public class AdbPackageManager {
 		String installer = null;
 
 		if(pkgName == null) return null;
-		
+
 		//Log.i("ckeckPackage() " + pkgName);
 
 		if(!pkgName.matches("/system/framework/.*apk")) {
-			cmd = new String[] {adbCmd, "-s", device, "shell", "pm", "list", "packages", "-f", "-i", "-u", pkgName};
-			result = ConsolCmd.exc(cmd, false, null);		
+			result = AdbWrapper.shell(device, new String[] {"pm", "list", "packages", "-f", "-i", "-u", pkgName}, null);
 			for(String output: result) {
-		    	if(output.matches("^package:.*=" + pkgName + "\\s*installer=.*")) {
-		    		apkPath = output.replaceAll("^package:(.*)=" + pkgName + "\\s*installer=(.*)", "$1");
-		    		installer = output.replaceAll("^package:(.*)=" + pkgName + "\\s*installer=(.*)", "$2");
-		    	}
+				if(output.matches("^package:.*=" + pkgName + "\\s*installer=.*")) {
+					apkPath = output.replaceAll("^package:(.*)=" + pkgName + "\\s*installer=(.*)", "$1");
+					installer = output.replaceAll("^package:(.*)=" + pkgName + "\\s*installer=(.*)", "$2");
+				}
 			}
-			
-			cmd = new String[] {adbCmd,"-s", device, "shell", "dumpsys","package", pkgName};
-			TargetInfo = ConsolCmd.exc(cmd,false,null);
-			
+
+			TargetInfo = AdbWrapper.shell(device, new String[] {"dumpsys","package", pkgName}, null);
+
 			verName = selectString(TargetInfo,"versionName=");
 			String vercode = selectString(TargetInfo,"versionCode=");
 			if(vercode != null && vercode.matches("\\d+")) {
 				verCode = Integer.valueOf(selectString(TargetInfo,"versionCode="));
 			}
 			codePath = selectString(TargetInfo,"codePath=");
-			
+
 			if(installer == null)
 				installer = selectString(TargetInfo,"installerPackageName=");
 
@@ -250,27 +239,26 @@ public class AdbPackageManager {
 				|| (codePath != null && codePath.matches("^/system/.*"))) {
 			isSystemApp = true;
 		}
-		
+
 		if(apkPath == null && codePath != null && !codePath.isEmpty() 
 				&& (isSystemApp || (!isSystemApp && AdbWrapper.root(device, null)))) {
-			cmd = new String[] {adbCmd, "-s", device, "shell", "ls", codePath};
-			result = ConsolCmd.exc(cmd, false, null);
+			result = AdbWrapper.shell(device, new String[] {"ls", codePath}, null);
 			for(String output: result) {
-		    	if(output.matches("^.*apk")) {
-		    		apkPath = codePath + "/" + output;
-		    	}
+				if(output.matches("^.*apk")) {
+					apkPath = codePath + "/" + output;
+				}
 			}
 		}
 
 		if(apkPath == null) return null;
-		
+
 		return new PackageInfo(pkgName, apkPath, codePath, verName, verCode, isSystemApp, installer);
 	}
-	
-	static private String selectString(String[] source, String key)
+
+	private static String selectString(String[] source, String key)
 	{
 		String temp = null;
-		
+
 		for(int i=0; i < source.length; i++) {
 			if(source[i].matches("^\\s*"+key+".*$")) {
 				temp = source[i].replaceAll("^\\s*"+key+"\\s*([^\\s]*).*$", "$1");
