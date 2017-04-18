@@ -315,13 +315,15 @@ public class MainUI extends JFrame
 				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
 				tabbedPanel.setLodingLabel();
 
-				new Thread(new Runnable() {
+				Thread thread = new Thread(new Runnable() {
 					public void run()
 					{
 						apkScanner.clear(false);
 						apkScanner.openApk(apkFilePath);
 					}
-				}).start();
+				});
+				thread.setPriority(Thread.NORM_PRIORITY);
+				thread.start();
 			} else {
 				Launcher.run(apkFilePath);
 			}
@@ -345,13 +347,15 @@ public class MainUI extends JFrame
 				toolBar.setEnabledAt(ButtonSet.OPEN, false);
 				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
 
-				new Thread(new Runnable() {
+				Thread thread = new Thread(new Runnable() {
 					public void run()
 					{
 						apkScanner.clear(false);
 						apkScanner.openPackage(device, apkFilePath, frameworkRes);
 					}
-				}).start();
+				});
+				thread.setPriority(Thread.NORM_PRIORITY);
+				thread.start();
 			} else {
 				Launcher.run(device, apkFilePath, frameworkRes);
 			}
@@ -570,7 +574,7 @@ public class MainUI extends JFrame
 				return;
 			}
 
-			new Thread(new Runnable() {
+			Thread thread = new Thread(new Runnable() {
 				private String errMsg = null;
 				public void run()
 				{
@@ -598,8 +602,9 @@ public class MainUI extends JFrame
 						}
 					}
 				}
-			}).start();
-
+			});
+			thread.setPriority(Thread.NORM_PRIORITY);
+			thread.start();
 		}
 
 		private void setLanguage(String lang)
@@ -711,16 +716,23 @@ public class MainUI extends JFrame
 		public void filesDropped(File[] files)
 		{
 			Log.i("filesDropped()");
-			try {
-				toolBar.setEnabledAt(ButtonSet.OPEN, false);
-				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
-				tabbedPanel.setLodingLabel();
+			toolBar.setEnabledAt(ButtonSet.OPEN, false);
+			toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
+			tabbedPanel.setLodingLabel();
 
-				apkScanner.clear(false);
-				apkScanner.openApk(files[0].getCanonicalPath());
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
+			Thread thread = new Thread(new Runnable() {
+				public void run()
+				{
+					try {
+						apkScanner.clear(false);
+						apkScanner.openApk(files[0].getCanonicalPath());
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+				}
+			});
+			thread.setPriority(Thread.NORM_PRIORITY);
+			thread.start();
 		}
 
 		private void finished()
