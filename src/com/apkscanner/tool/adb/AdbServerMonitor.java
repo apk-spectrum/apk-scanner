@@ -282,7 +282,7 @@ public final class AdbServerMonitor {
 		ArrayList<String> adbList = new ArrayList<String>();
 		if(processName != null) {
 			String[] list = SystemUtil.getRunningProcessFullPath(processName);
-			if(list.length > 1) {
+			if(list != null) {
 				Log.v("adb process list size : " + list.length);
 				for(String s: list) {
 					Log.v("adb process : " + s);
