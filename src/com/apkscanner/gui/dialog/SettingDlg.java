@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
@@ -45,6 +47,7 @@ import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.TitledBorder;
@@ -58,7 +61,7 @@ import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.jna.FileInfo;
 import com.apkscanner.jna.FileVersion;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.tool.adb.AdbServerMonitor;
+import com.apkscanner.tool.adb.AdbVersionManager;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 
@@ -70,6 +73,8 @@ public class SettingDlg extends JDialog implements ActionListener
 	private static final String ACT_CMD_ADB_EXPLOERE = "ACT_CMD_ADB_EXPLOERE";
 	private static final String ACT_CMD_CREATE_SHORTCUT = "ACT_CMD_CREATE_SHORTCUT";
 	private static final String ACT_CMD_ASSOCIATE_APK_FILE = "ACT_CMD_ASSOCIATE_APK_FILE";
+	private static final String ACT_CMD_ADD_RES_APK_FILE = "ACT_CMD_ADD_RES_APK_FILE";
+	private static final String ACT_CMD_REMOVE_RES_APK_FILE = "ACT_CMD_REMOVE_RES_APK_FILE";
 
 	private static final String ACT_CMD_SAVE = "ACT_CMD_SAVE";
 	private static final String ACT_CMD_EXIT = "ACT_CMD_EXIT";
@@ -91,7 +96,6 @@ public class SettingDlg extends JDialog implements ActionListener
 
 	private boolean propAdbShared;
 	private String propAdbPath;
-	private ArrayList<String> propAdbList;
 	private boolean propDeviceMonitoring;
 	private int propLaunchActivity;
 	private boolean propTryUnlock;
@@ -106,8 +110,6 @@ public class SettingDlg extends JDialog implements ActionListener
 	private TabbedPanel mPreviewTabbedPanel;
 	private ToolBar mPreviewToolBar;
 
-
-	private JButton browser2,browser3;
 
 	private JComboBox<String> jcbLanguage;
 	private JComboBox<String> jcbEditors;
@@ -255,14 +257,19 @@ public class SettingDlg extends JDialog implements ActionListener
 	private class AdbItemRenderer extends JLabel implements ListCellRenderer<Object> {
 		private static final long serialVersionUID = 2836930268446481101L;
 
-		private HashMap<String, AdbVersion> items = new HashMap<String, AdbVersion>();
+		private HashMap<String, AdbVersion> items;
 		private AdbVersion latestVer;
-		
+
+		public AdbItemRenderer(HashMap<String, AdbVersion> map, AdbVersion ver) {
+			items = map;
+			latestVer = ver;
+		}
+
 		private AdbVersion getVersion(String path) {
 			AdbVersion version = items.get(path.trim());
 			if(version == null) {
-				version = AdbServerMonitor.checkAdbVersion(path.trim());
-				if(version == null) {
+				version = AdbVersionManager.getAdbVersion(path.trim());
+				if(AdbVersionManager.checkAdbVersion(version)) {
 					Log.w("Warring: unsupported adb : " + path.trim());
 				} else if(latestVer == null || version.compareTo(latestVer) > 0) {
 					latestVer = version;
@@ -275,10 +282,15 @@ public class SettingDlg extends JDialog implements ActionListener
 		@Override
 		public Component getListCellRendererComponent(JList<?> list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus) {
-			if(value.toString().isEmpty()) {
+			if(value == null || value.toString().isEmpty()) {
 				setText(Resource.STR_SETTINGS_ADB_AUTO_SEL.getString() + " - " + latestVer);
 			} else {
-				setText(getVersion(value.toString()) + " - " + value.toString());
+				String support = "";
+				AdbVersion version = getVersion(value.toString());
+				if (!AdbVersionManager.checkAdbVersion(version)) {
+					support = "[Unsupported]";
+				}
+				setText(support + getVersion(value.toString()) + " - " + value.toString());
 			}
 			return this;
 		}
@@ -413,18 +425,6 @@ public class SettingDlg extends JDialog implements ActionListener
 		propAdbShared = (boolean)Resource.PROP_ADB_POLICY_SHARED.getData();
 
 		propAdbPath = ((String)Resource.PROP_ADB_PATH.getData()).trim();
-
-		String adbList = (String)Resource.PROP_ADB_LIST.getData();
-		propAdbList = new ArrayList<String>();
-		propAdbList.add("");
-		if(!propAdbPath.isEmpty()) {
-			propAdbList.add(propAdbPath);
-		}
-		for(String s: adbList.split(File.pathSeparator)) {
-			if(!s.trim().isEmpty() && !propAdbList.contains(s.trim())) {
-				propAdbList.add(s.trim());
-			}
-		}
 
 		propDeviceMonitoring = (boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData();
 
@@ -690,16 +690,18 @@ public class SettingDlg extends JDialog implements ActionListener
 		resConst.weightx = 0;
 		resConst.fill = GridBagConstraints.NONE;
 
-		browser2 = new JButton(Resource.STR_BTN_ADD.getString());
-		browser2.addActionListener(this);
-		browser2.setFocusable(false);
-		resPanel.add(browser2, resConst);
+		JButton btnAdd = new JButton(Resource.STR_BTN_ADD.getString());
+		btnAdd.setActionCommand(ACT_CMD_ADD_RES_APK_FILE);
+		btnAdd.addActionListener(this);
+		btnAdd.setFocusable(false);
+		resPanel.add(btnAdd, resConst);
 		resConst.gridy++;
 
-		browser3 = new JButton(Resource.STR_BTN_DEL.getString());
-		browser3.addActionListener(this);
-		browser3.setFocusable(false);
-		resPanel.add(browser3, resConst);
+		JButton btnRemove = new JButton(Resource.STR_BTN_DEL.getString());
+		btnRemove.setActionCommand(ACT_CMD_REMOVE_RES_APK_FILE);
+		btnRemove.addActionListener(this);
+		btnRemove.setFocusable(false);
+		resPanel.add(btnRemove, resConst);
 
 		panel.add(resPanel, contentConst);
 		contentConst.gridy++;
@@ -762,16 +764,38 @@ public class SettingDlg extends JDialog implements ActionListener
 		adbPathPanel.add(new JLabel(Resource.STR_SETTINGS_ADB_PATH.getString()), adbPathConst);
 		adbPathConst.gridx++;
 
-		jcbAdbPaths = new JComboBox<String>(propAdbList.toArray(new String[propAdbList.size()]));
-		jcbAdbPaths.setRenderer(new AdbItemRenderer());
+		jcbAdbPaths = new JComboBox<String>();
 		jcbAdbPaths.setEditable(false);
-		jcbAdbPaths.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent arg0) {
-
-			}
-		});
 		jcbAdbPaths.setSelectedItem(propAdbPath);
+		jcbAdbPaths.addItem("");
+
+		new SwingWorker<HashMap<String, AdbVersion>, Void>()
+		{
+			@Override
+			protected HashMap<String, AdbVersion> doInBackground() throws Exception {
+				AdbVersionManager.loadCache();
+				AdbVersionManager.loadDefaultAdbs();
+				return AdbVersionManager.getAdbListFromCacheMap();
+			}
+
+			@Override
+			protected void done() {
+				try {
+					HashMap<String, AdbVersion> adbMap = get();
+					AdbVersion lastestVers = null;
+					for(Entry<String, AdbVersion> entry: adbMap.entrySet()) {
+						jcbAdbPaths.addItem(entry.getKey());
+						AdbVersion ver = entry.getValue();
+						if(lastestVers == null || (ver != null && ver.compareTo(lastestVers) > 0)) {
+							lastestVers = ver;
+						}
+					}
+					jcbAdbPaths.setRenderer(new AdbItemRenderer(adbMap, lastestVers));
+				} catch (InterruptedException | ExecutionException e) {
+					e.printStackTrace();
+				}
+			};
+		}.execute();
 
 		adbPathConst.weightx = 1;
 		adbPathConst.fill = GridBagConstraints.BOTH;
@@ -1107,7 +1131,7 @@ public class SettingDlg extends JDialog implements ActionListener
 			setUIFont(new javax.swing.plaf.FontUIResource(propFont, propFontStyle, propFontSize));
 
 			this.dispose();
-		} else if(e.getSource() == browser2) {
+		} else if(ACT_CMD_ADD_RES_APK_FILE.equals(actCommand)) {
 			String file = ApkFileChooser.openApkFilePath(this);
 
 			if(file == null || file.isEmpty()) return;
@@ -1116,10 +1140,31 @@ public class SettingDlg extends JDialog implements ActionListener
 			}
 			frameworkResPath.add(file);
 			jlFrameworkRes.setListData(frameworkResPath.toArray(new String[0]));
-		} else if(e.getSource() == browser3) {
+		} else if(ACT_CMD_REMOVE_RES_APK_FILE.equals(actCommand)) {
 			if(jlFrameworkRes.getSelectedIndex() < 0) return;
 			frameworkResPath.remove(jlFrameworkRes.getSelectedIndex());
 			jlFrameworkRes.setListData(frameworkResPath.toArray(new String[0]));
+		} else if(ACT_CMD_ADB_EXPLOERE.equals(actCommand)) {
+			JFileChooser jfc = new JFileChooser();
+			jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			jfc.setDialogType(JFileChooser.OPEN_DIALOG);
+			if(SystemUtil.isWindows()) {
+				jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Android Debug Bridge(.exe)","exe"));
+			}
+			if(jfc.showOpenDialog(this) != JFileChooser.APPROVE_OPTION)
+				return;
+			File file = jfc.getSelectedFile();
+			AdbVersion ver = AdbVersionManager.getAdbVersion(file);
+			if(AdbVersionManager.checkAdbVersion(ver)) {
+				return;
+			}
+			String path = file.getAbsolutePath();
+			
+			jcbAdbPaths.setSelectedItem(path);
+			if(!path.equals(jcbAdbPaths.getSelectedItem())) {
+				jcbAdbPaths.addItem(path);
+			}
+			jcbAdbPaths.setSelectedItem(path);
 		}
 	}
 

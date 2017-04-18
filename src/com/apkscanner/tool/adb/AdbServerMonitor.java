@@ -1,13 +1,11 @@
 package com.apkscanner.tool.adb;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import com.android.ddmlib.AdbVersion;
@@ -16,20 +14,25 @@ import com.android.ddmlib.DdmPreferences;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 import com.google.common.base.Joiner;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.Uninterruptibles;
 
 public final class AdbServerMonitor {
 
-	/*
-	 * Minimum and maximum version of adb supported. This correspond to
-	 * ADB_SERVER_VERSION found in //device/tools/adb/adb.h
-	 * MIN_ADB_VERSION found in //tools/base/ddmlib/src/main/java/com/android/ddmlib/AndroidDebugBridge.java
-	 */
-	private static final AdbVersion MIN_ADB_VERSION = AdbVersion.parseFrom("1.0.20");
 
 	private static final String ADB = "adb"; //$NON-NLS-1$
 	private static final String DDMS = "ddms"; //$NON-NLS-1$
+	private static final String SERVER_PORT_ENV_VAR = "ANDROID_ADB_SERVER_PORT"; //$NON-NLS-1$
+
+	// Where to find the ADB bridge.
+	static final String DEFAULT_ADB_HOST = "127.0.0.1"; //$NON-NLS-1$
+	static final int DEFAULT_ADB_PORT = 5037;
+
+	/** Port where adb server will be started **/
+	private static int sAdbServerPort = 0;
+
+	//private static InetAddress sHostAddr;
+	//private static InetSocketAddress sSocketAddr;
+
 
 	private static final ArrayList<IAdbDemonChangeListener> sServerListeners =
 			new ArrayList<IAdbDemonChangeListener>();
@@ -38,10 +41,9 @@ public final class AdbServerMonitor {
 	private static final Object sLock = sServerListeners;
 
 	private String mAdbPath;
-	private AdbVersion mAdbVersion;
 
 	private boolean mAllowRestart;
-	private boolean mForceNewDemon;
+	private boolean mDemonShared;
 
 	private AdbServerMonitorTask mAdbDemonMonitorTask;
 
@@ -51,10 +53,12 @@ public final class AdbServerMonitor {
 		void adbDemonDisconnected();
 	}
 
-	private AdbServerMonitor(String adbPath, boolean forceNewDemon, boolean allowRestart) {
+	private AdbServerMonitor(String adbPath, boolean demonShared, boolean allowRestart) {
 		mAdbPath = adbPath;
-		mForceNewDemon = forceNewDemon;
+		mDemonShared = demonShared;
 		mAllowRestart = allowRestart;
+
+		initAdbSocketAddr();
 	}
 
 	public static void addAdbDemonChangeListener(IAdbDemonChangeListener listener) {
@@ -72,9 +76,6 @@ public final class AdbServerMonitor {
 	}
 
 	private void adbDemonConnected(String adbPath, AdbVersion version) {
-		mAdbPath = adbPath;
-		mAdbVersion = version;
-
 		IAdbDemonChangeListener[] listenersCopy = null;
 		synchronized (sLock) {
 			listenersCopy = sServerListeners.toArray(
@@ -83,7 +84,7 @@ public final class AdbServerMonitor {
 
 		for (IAdbDemonChangeListener listener : listenersCopy) {
 			try {
-				listener.adbDemonConnected(mAdbPath, mAdbVersion);
+				listener.adbDemonConnected(adbPath, version);
 			} catch (Exception e) {
 				Log.e(DDMS, e.toString());
 			}
@@ -106,18 +107,19 @@ public final class AdbServerMonitor {
 		}
 	}
 
-	public static AdbServerMonitor startServerAndCreateBridge(String adbPath, boolean forceNewDemon, boolean allowRestart) {
+	public static AdbServerMonitor startServerAndCreateBridge(String adbPath, boolean demonShared, boolean allowRestart) {
 		synchronized (sLock) {
 			if (sThis != null) {
-				if(sThis.mAdbPath != null && sThis.mAdbPath.equals(adbPath) && !forceNewDemon) {
+				if(demonShared || (sThis.mAdbPath != null && sThis.mAdbPath.equals(adbPath))) {
 					return sThis;
 				} else {
 					sThis.stop();
+					sThis = null;
 				}
 			}
 
-			sThis = new AdbServerMonitor(adbPath, forceNewDemon, allowRestart);
-			sThis.start(forceNewDemon);
+			sThis = new AdbServerMonitor(adbPath, demonShared, allowRestart);
+			sThis.start();
 
 			Log.v("DeviceMonitor end");
 
@@ -125,7 +127,7 @@ public final class AdbServerMonitor {
 		}
 	}
 
-	public void start(boolean forceNewDemon) {
+	public void start() {
 		mAdbDemonMonitorTask = new AdbServerMonitorTask(this);
 		new Thread(mAdbDemonMonitorTask, "Adb Demon Monitor").start();
 	}
@@ -134,52 +136,13 @@ public final class AdbServerMonitor {
 		mAdbDemonMonitorTask.stop();
 	}
 
-	public static AdbVersion checkAdbVersion(String adbPath) {
-		// default is bad check
-		if(adbPath == null) return null;
-
-		File adb = new File(adbPath);
-		if(!adb.exists())
-			return null;
-
-		ListenableFuture<AdbVersion> future = AndroidDebugBridge.getAdbVersion(adb);
-		AdbVersion version;
-		try {
-			version = future.get(5, TimeUnit.SECONDS);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			return null;
-		} catch (java.util.concurrent.TimeoutException e) {
-			String msg = "Unable to obtain result of 'adb version'";
-			//Log.logAndDisplay(LogLevel.ERROR, ADB, msg);
-			Log.e(msg);
-			return null;
-		} catch (ExecutionException e) {
-			//Log.logAndDisplay(LogLevel.ERROR, ADB, e.getCause().getMessage());
-			Log.e(e.getCause().getMessage());
-			//Throwables.propagateIfInstanceOf(e.getCause(), IOException.class);
-			return null;
-		}
-		if (version.compareTo(MIN_ADB_VERSION) > 0) {
-			//mVersionCheck = true;
-		} else {
-			String message = String.format(
-					"Required minimum version of adb: %1$s."
-							+ "Current version is %2$s : %3$s", MIN_ADB_VERSION, version, adbPath);
-			//Log.logAndDisplay(LogLevel.ERROR, ADB, message);
-			Log.e(message);
-			version = null;
-		}
-		return version;
-	}
-
 	private String[] getAdbLaunchCommand(String option) {
 		List<String> command = new ArrayList<String>(4);
 		command.add(mAdbPath);
-		//if (sAdbServerPort != DEFAULT_ADB_PORT) {
-		//	command.add("-P"); //$NON-NLS-1$
-		//	command.add(Integer.toString(sAdbServerPort));
-		//}
+		if (sAdbServerPort != DEFAULT_ADB_PORT) {
+			command.add("-P"); //$NON-NLS-1$
+			command.add(Integer.toString(sAdbServerPort));
+		}
 		command.add(option);
 		return command.toArray(new String[command.size()]);
 	}
@@ -306,7 +269,7 @@ public final class AdbServerMonitor {
 		return process.waitFor();
 	}
 
-	public static String getRunningAdbPath() {
+	public static String[] getRunningAdbPath() {
 		String processName = null;
 		if(SystemUtil.isWindows()) {
 			processName = "adb.exe";
@@ -314,22 +277,23 @@ public final class AdbServerMonitor {
 			processName = "adb"; 
 		} else {
 			Log.e("Unknown OS " + SystemUtil.OS);
-			return null;
 		}
 
-		String[] list = SystemUtil.getRunningProcessFullPath(processName);
-		if(list.length > 1) {
-			Log.v("adb process list size : " + list.length);
-			String ret = null;
-			for(String s: list) {
-				Log.v("adb process : " + s);
-				if(s != null && !s.isEmpty()) {
-					ret = s;
+		ArrayList<String> adbList = new ArrayList<String>();
+		if(processName != null) {
+			String[] list = SystemUtil.getRunningProcessFullPath(processName);
+			if(list.length > 1) {
+				Log.v("adb process list size : " + list.length);
+				for(String s: list) {
+					Log.v("adb process : " + s);
+					if(s != null && !s.isEmpty() && !adbList.contains(s)) {
+						adbList.add(s);
+					}
 				}
 			}
-			return ret;
 		}
-		return (list != null && list.length > 0) ? list[0] : null;
+
+		return adbList.toArray(new String[adbList.size()]);
 	}
 
 	static class AdbServerMonitorTask  implements Runnable {
@@ -348,30 +312,45 @@ public final class AdbServerMonitor {
 			Log.v("startServerAndCreateBridge");
 			String runningAdbPath = null;
 			AdbVersion adbVersion = null;
-			if(!mAdbServerMonitor.mForceNewDemon) {
-				runningAdbPath = getRunningAdbPath();
-				adbVersion = checkAdbVersion(runningAdbPath);
-				if(adbVersion != null) {
-					isConnected = true;
-				} else {
-					runningAdbPath = null;
+			if(mAdbServerMonitor.mDemonShared) {
+				String[] runProcess = null;
+				int waitCnt = 0;
+				do {
+					if(runProcess != null) {
+						if(waitCnt++ > 5) {
+							Log.d("waiting for running adb daemon only one. but any daemon be not exit. " + runProcess.length);
+							break;
+						};
+						Log.d("waiting for running adb daemon only one. runProcess:" + runProcess.length + ", waitCnt:" + waitCnt);
+						Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
+					}
+					runProcess = getRunningAdbPath();
+				} while(runProcess.length > 1);
+				if(runProcess != null && runProcess.length > 0) {
+					runningAdbPath = runProcess[0];
+					adbVersion = AdbVersionManager.getAdbVersion(runningAdbPath);
+					if(AdbVersionManager.checkAdbVersion(adbVersion)) {
+						isConnected = true;
+					} else {
+						runningAdbPath = null;
+					}
 				}
-			} 
+			}
 			Log.v("runningAdbPath " + runningAdbPath + ", version " + adbVersion);
 
 			if(runningAdbPath == null){
 				isConnected = mAdbServerMonitor.startAdb();
-				runningAdbPath = getRunningAdbPath();
-				adbVersion = checkAdbVersion(runningAdbPath);
+				runningAdbPath = mAdbServerMonitor.mAdbPath;
+				adbVersion = AdbVersionManager.getAdbVersion(runningAdbPath);
 			}
 
 			AndroidDebugBridge.init(false);
 			AndroidDebugBridge.createBridge();
-			
+
 			if(isConnected) {
 				mAdbServerMonitor.adbDemonConnected(runningAdbPath, adbVersion);
 			}
-			
+
 			Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
 
 			do {
@@ -379,8 +358,7 @@ public final class AdbServerMonitor {
 				if(isConnected != isConnected(adb)) {
 					isConnected = !isConnected;
 					if(isConnected) {
-						runningAdbPath = getRunningAdbPath();
-						adbVersion = checkAdbVersion(runningAdbPath);
+						adbVersion = AdbVersionManager.getAdbVersion(runningAdbPath);
 						mAdbServerMonitor.adbDemonConnected(runningAdbPath, adbVersion);
 					} else {
 						mAdbServerMonitor.adbDemonDisconnected();
@@ -392,11 +370,18 @@ public final class AdbServerMonitor {
 						AndroidDebugBridge.disconnectBridge();
 					}
 				} else if(!isConnected && adb == null) {
-					String adbPath = getRunningAdbPath();
+					String[] adbPath = getRunningAdbPath();
 					if(adbPath != null) {
-						AndroidDebugBridge.createBridge();
+						if(adbPath.length == 1) {
+							runningAdbPath = adbPath[0];
+							AndroidDebugBridge.createBridge();
+						} else if(adbPath.length > 1) {
+							Log.d("current running adb is multiple.");
+							for(String s: adbPath) {
+								Log.d("adb:" + s);
+							}
+						}
 					}
-					
 				}
 				Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
 			} while (!mQuit);
@@ -409,6 +394,94 @@ public final class AdbServerMonitor {
 
 		public void stop() {
 			mQuit = true;
+		}
+	}
+
+	/**
+	 * Instantiates sSocketAddr with the address of the host's adb process.
+	 */
+	private static void initAdbSocketAddr() {
+		sAdbServerPort = getAdbServerPort();
+		/*
+		try {
+			//sAdbServerPort = getAdbServerPort();
+			//sHostAddr = InetAddress.getByName(DEFAULT_ADB_HOST);
+			//sSocketAddr = new InetSocketAddress(sHostAddr, sAdbServerPort);
+		} catch (UnknownHostException e) {
+			// localhost should always be known.
+		}
+		 */
+	}
+	/**
+	 * Returns the port where adb server should be launched. This looks at:
+	 * <ol>
+	 * <li>The system property ANDROID_ADB_SERVER_PORT</li>
+	 * <li>The environment variable ANDROID_ADB_SERVER_PORT</li>
+	 * <li>Defaults to {@link #DEFAULT_ADB_PORT} if neither the system property nor the env var
+	 * are set.</li>
+	 * </ol>
+	 *
+	 * @return The port number where the host's adb should be expected or started.
+	 */
+	private static int getAdbServerPort() {
+		// check system property
+		Integer prop = Integer.getInteger(SERVER_PORT_ENV_VAR);
+		if (prop != null) {
+			try {
+				return validateAdbServerPort(prop.toString());
+			} catch (IllegalArgumentException e) {
+				String msg = String.format(
+						"Invalid value (%1$s) for ANDROID_ADB_SERVER_PORT system property.",
+						prop);
+				Log.w(DDMS, msg);
+			}
+		}
+		// when system property is not set or is invalid, parse environment property
+		try {
+			String env = System.getenv(SERVER_PORT_ENV_VAR);
+			if (env != null) {
+				return validateAdbServerPort(env);
+			}
+		} catch (SecurityException ex) {
+			// A security manager has been installed that doesn't allow access to env vars.
+			// So an environment variable might have been set, but we can't tell.
+			// Let's log a warning and continue with ADB's default port.
+			// The issue is that adb would be started (by the forked process having access
+			// to the env vars) on the desired port, but within this process, we can't figure out
+			// what that port is. However, a security manager not granting access to env vars
+			// but allowing to fork is a rare and interesting configuration, so the right
+			// thing seems to be to continue using the default port, as forking is likely to
+			// fail later on in the scenario of the security manager.
+			Log.w(DDMS,
+					"No access to env variables allowed by current security manager. "
+							+ "If you've set ANDROID_ADB_SERVER_PORT: it's being ignored.");
+		} catch (IllegalArgumentException e) {
+			String msg = String.format(
+					"Invalid value (%1$s) for ANDROID_ADB_SERVER_PORT environment variable (%2$s).",
+					prop, e.getMessage());
+			Log.w(DDMS, msg);
+		}
+		// use default port if neither are set
+		return DEFAULT_ADB_PORT;
+	}
+	/**
+	 * Returns the integer port value if it is a valid value for adb server port
+	 * @param adbServerPort adb server port to validate
+	 * @return {@code adbServerPort} as a parsed integer
+	 * @throws IllegalArgumentException when {@code adbServerPort} is not bigger than 0 or it is
+	 * not a number at all
+	 */
+	private static int validateAdbServerPort(String adbServerPort)
+			throws IllegalArgumentException {
+		try {
+			// C tools (adb, emulator) accept hex and octal port numbers, so need to accept them too
+			int port = Integer.decode(adbServerPort);
+			if (port <= 0 || port >= 65535) {
+				throw new IllegalArgumentException("Should be > 0 and < 65535");
+			}
+			return port;
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException("Not a valid port number");
 		}
 	}
 }

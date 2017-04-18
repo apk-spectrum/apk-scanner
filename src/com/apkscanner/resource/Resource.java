@@ -372,7 +372,6 @@ public enum Resource
 	PROP_EDITOR					(Type.PROP, "editor", null /* see getDefValue() */),
 	PROP_RECENT_EDITOR			(Type.PROP, "recent_editor", ""),
 	PROP_ADB_PATH				(Type.PROP, "adb_path", ""),
-	PROP_ADB_LIST				(Type.PROP, "adb_list", BIN_ADB.getPath()),
 	PROP_ADB_POLICY_SHARED		(Type.PROP, "adb_policy_shared", true),
 	PROP_ADB_DEVICE_MONITORING	(Type.PROP, "adb_device_monitoring", true),
 	PROP_LAUNCH_ACTIVITY_OPTION	(Type.PROP, "adb_launch_activity_option", Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY),

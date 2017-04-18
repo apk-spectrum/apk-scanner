@@ -52,6 +52,7 @@ import com.apkscanner.tool.adb.AdbPackageManager;
 import com.apkscanner.tool.adb.AdbPackageManager.PackageInfo;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.AdbServerMonitor.IAdbDemonChangeListener;
+import com.apkscanner.tool.adb.AdbVersionManager;
 import com.apkscanner.tool.dex2jar.Dex2JarWrapper;
 import com.apkscanner.tool.jd_gui.JDGuiLauncher;
 import com.apkscanner.util.FileUtil;
@@ -764,21 +765,41 @@ public class MainUI extends JFrame
 		private HashMap<IDevice, PackageInfo> devices = new HashMap<IDevice, PackageInfo>(); 
 
 		public void start() {
-			synchronized(this) {
-				Log.v("DeviceMonitor.start() s");
-				if(demonMonitor != null) {
-					Log.v("aleady started");
-					return;
-				}
-				demonMonitor = AdbServerMonitor.startServerAndCreateBridge(
-						Resource.BIN_ADB.getPath(),
-						!(boolean)Resource.PROP_ADB_POLICY_SHARED.getData(),
-						(boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData());
-			}
+			Thread thread = new Thread(new Runnable() {
+				public void run()
+				{
+					AdbVersionManager.loadCache();
 
-			AdbServerMonitor.addAdbDemonChangeListener(this);
-			AndroidDebugBridge.addDeviceChangeListener(this);
-			Log.v("DeviceMonitor.start() e");			
+					synchronized(DeviceMonitor.this) {
+						Log.v("DeviceMonitor.start() s");
+						if(demonMonitor != null) {
+							Log.v("aleady started");
+							return;
+						}
+
+						String adbPath = ((String)Resource.PROP_ADB_PATH.getData()).trim();
+						if(adbPath == null || adbPath.isEmpty()
+								|| !AdbVersionManager.checkAdbVersion(adbPath)) {
+							adbPath = AdbVersionManager.getAdbLastestVersionFromCache();
+							if(adbPath == null){
+								AdbVersionManager.loadDefaultAdbs(); // very higher cost
+								adbPath = AdbVersionManager.getAdbLastestVersionFromCache();
+							}
+						}
+
+						demonMonitor = AdbServerMonitor.startServerAndCreateBridge(
+								adbPath,
+								(boolean)Resource.PROP_ADB_POLICY_SHARED.getData(),
+								(boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData());
+					}
+
+					AdbServerMonitor.addAdbDemonChangeListener(DeviceMonitor.this);
+					AndroidDebugBridge.addDeviceChangeListener(DeviceMonitor.this);
+					Log.v("DeviceMonitor.start() e");		
+				}
+			});
+			thread.setPriority(Thread.NORM_PRIORITY);
+			thread.start();
 		}
 
 		public void stop() {
@@ -788,7 +809,7 @@ public class MainUI extends JFrame
 					demonMonitor = null;
 				}
 			}
-			
+
 			AdbServerMonitor.removeAdbDemonChangeListener(this);
 			AndroidDebugBridge.removeDeviceChangeListener(this);
 		}
@@ -951,12 +972,12 @@ public class MainUI extends JFrame
 
 		@Override
 		public void adbDemonConnected(String adbPath, AdbVersion version) {
-			Log.e("adbDemon Connected() " + adbPath + ", version " + version);
+			Log.v("adbDemon Connected() " + adbPath + ", version " + version);
 		}
 
 		@Override
 		public void adbDemonDisconnected() {
-			Log.e("adbDemon Disconnected() ");
+			Log.v("adbDemon Disconnected() ");
 		}
 	}
 }
