@@ -146,7 +146,7 @@ public class AaptXmlTreePath
 					//Log.i("namespace : " + s);
 					break;
 				default:
-					Log.w("Unknown tag : " + s.trim());
+					Log.v("Unknown tag : " + s.trim());
 					break;
 				}
 			}

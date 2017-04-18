@@ -100,7 +100,7 @@ public class AdbDeviceHelper {
 			e.printStackTrace();
 		}
 		String shResult = shResultBuilder.toString().trim();
-		Log.e(shResult);
+		Log.v(shResult);
 
 		return !shResult.isEmpty();
 	}
