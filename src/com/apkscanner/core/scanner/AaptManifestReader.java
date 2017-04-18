@@ -1,8 +1,6 @@
 package com.apkscanner.core.scanner;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import com.apkscanner.data.apkinfo.ActionInfo;
@@ -382,13 +380,7 @@ public class AaptManifestReader
 		widgetNode = widgetTree.getNode("/appwidget-provider/@"+widgetNamespace+"previewImage");
 		if(widgetNode != null) {
 			iconPaths = getAttrResourceValues(widgetNode, "previewImage", widgetNamespace);
-			String urlFilePath = null;
-			try {
-				urlFilePath = URLEncoder.encode(apkFilePath, "UTF-8");
-			} catch (UnsupportedEncodingException e) {
-				urlFilePath = apkFilePath.replaceAll("#", "%23");
-				e.printStackTrace();
-			}
+			String urlFilePath = apkFilePath.replaceAll("#", "%23");
 			String jarPath = "jar:file:" + urlFilePath + "!/";
 			for(ResourceInfo r: iconPaths) {
 				if(r.name == null) {

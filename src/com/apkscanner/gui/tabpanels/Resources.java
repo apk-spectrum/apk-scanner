@@ -27,11 +27,9 @@ import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -430,12 +428,7 @@ public class Resources extends JPanel implements TabDataObject {
 				if (!tempObject.isFolder) {
 					ResourceObject temp = (ResourceObject) nodo.getUserObject();
 					String urlFilePath = null;
-					try {
-						urlFilePath = URLEncoder.encode(apkFilePath, "UTF-8");
-					} catch (UnsupportedEncodingException e) {
-						urlFilePath = apkFilePath.replaceAll("#", "%23");
-						e.printStackTrace();
-					}
+					urlFilePath = apkFilePath.replaceAll("#", "%23");
 					String jarPath = "jar:file:" + urlFilePath + "!/";
 					Icon icon = null;
 

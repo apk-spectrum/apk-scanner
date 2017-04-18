@@ -1,8 +1,6 @@
 package com.apkscanner.core.scanner;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 import com.apkscanner.Launcher;
 import com.apkscanner.data.apkinfo.ApkInfo;
@@ -122,12 +120,7 @@ public class AaptScanner extends ApkScanner
 		ResourceInfo[] icons = apkInfo.manifest.application.icons;
 		if(icons != null && icons.length > 0) {
 			String urlFilePath = null;
-			try {
-				urlFilePath = URLEncoder.encode(apkInfo.filePath, "UTF-8");
-			} catch (UnsupportedEncodingException e) {
-				urlFilePath = apkInfo.filePath.replaceAll("#", "%23");
-				e.printStackTrace();
-			}
+			urlFilePath = apkInfo.filePath.replaceAll("#", "%23");
 
 			String jarPath = "jar:file:" + urlFilePath + "!/";
 			for(ResourceInfo r: icons) {
