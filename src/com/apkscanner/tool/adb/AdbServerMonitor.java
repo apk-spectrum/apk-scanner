@@ -167,7 +167,6 @@ public final class AdbServerMonitor {
 			if (DdmPreferences.getUseAdbHost()) {
 				String adbHostValue = DdmPreferences.getAdbHostValue();
 				if (adbHostValue != null && !adbHostValue.isEmpty()) {
-					//TODO : check that the String is a valid IP address
 					Map<String, String> env = processBuilder.environment();
 					env.put("ADBHOST", adbHostValue);
 				}
@@ -358,8 +357,22 @@ public final class AdbServerMonitor {
 				if(isConnected != isConnected(adb)) {
 					isConnected = !isConnected;
 					if(isConnected) {
-						adbVersion = AdbVersionManager.getAdbVersion(runningAdbPath);
-						mAdbServerMonitor.adbDemonConnected(runningAdbPath, adbVersion);
+						String[] adbPath = getRunningAdbPath();
+						if(adbPath != null && adbPath.length == 1) {
+							runningAdbPath = adbPath[0];
+							adbVersion = AdbVersionManager.getAdbVersion(runningAdbPath);
+							mAdbServerMonitor.adbDemonConnected(runningAdbPath, adbVersion);
+						} else {
+							if(adbPath.length > 1) {
+								Log.d("current running adb is multiple.");
+								for(String s: adbPath) {
+									Log.d("adb:" + s + ", " + AdbVersionManager.getAdbVersion(s));
+								}
+							} else {
+								Log.d("no such running adb...");
+							}
+							isConnected = false;
+						}
 					} else {
 						mAdbServerMonitor.adbDemonDisconnected();
 					}

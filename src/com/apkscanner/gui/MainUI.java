@@ -580,6 +580,7 @@ public class MainUI extends JFrame
 				public void run()
 				{
 					for(IDevice device: devices) {
+						Log.v("launch activity on " + device.getSerialNumber());
 						String[] cmdResult = AdbDeviceHelper.launchActivity(device, launcherActivity);
 						if(cmdResult == null || (cmdResult.length >= 2 && cmdResult[1].startsWith("Error")) ||
 								(cmdResult.length >= 1 && cmdResult[0].startsWith("error"))) {
@@ -904,7 +905,9 @@ public class MainUI extends JFrame
 							if(devices.containsKey(device)) {
 								pkg = devices.get(device);
 							} else {
-								pkg = AdbPackageManager.getPackageInfo(device.getSerialNumber(), packageName);
+								if(device.isOnline()) {
+									pkg = AdbPackageManager.getPackageInfo(device, packageName);
+								}
 								if(pkg != null) {
 									devices.put(device, pkg);
 								}
@@ -966,18 +969,29 @@ public class MainUI extends JFrame
 		}
 
 		@Override
-		public void deviceChanged(IDevice device, int changeMask) { }
+		public void deviceChanged(IDevice device, int changeMask) { 
+			Log.v("deviceChanged() " + device.getSerialNumber() + ", " + device.getState() + ", changeMask " + changeMask);
+			if((changeMask & IDevice.CHANGE_STATE) != 0 && device.isOnline()) {
+				applyToobarPolicy();
+			}
+		}
 
 		@Override
 		public void deviceConnected(IDevice device) {
-			applyToobarPolicy();
+			Log.v("deviceConnected() " + device.getSerialNumber() + ", " + device.getState());
+			if(device.isOnline()) {
+				applyToobarPolicy();
+			} else {
+				Log.v("device connected, but not online: " + device.getSerialNumber() + ", " + device.getState());
+			}
 		}
 
 		@Override
 		public void deviceDisconnected(IDevice device) {
+			Log.v("deviceDisconnected() " + device.getSerialNumber());
 			synchronized(devices) {
-				if(devices.containsKey(device.getSerialNumber())) {
-					devices.remove(device.getSerialNumber());
+				if(devices.containsKey(device)) {
+					devices.remove(device);
 				}
 			}
 			applyToobarPolicy();
