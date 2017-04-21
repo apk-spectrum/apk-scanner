@@ -6,7 +6,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -36,6 +35,7 @@ import com.apkscanner.data.apkinfo.UsesFeatureInfo;
 import com.apkscanner.data.apkinfo.UsesLibraryInfo;
 import com.apkscanner.data.apkinfo.UsesPermissionInfo;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
+import com.apkscanner.gui.dialog.SdkVersionInfoDlg;
 import com.apkscanner.gui.messagebox.JTextOptionPane;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.JHtmlEditorPane;
@@ -45,7 +45,6 @@ import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.FileUtil.FSStyle;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
-import com.apkscanner.util.XmlPath;
 
 public class BasicInfo extends JComponent implements HyperlinkClickListener, TabDataObject
 {
@@ -879,33 +878,9 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			sdkVer = maxSdkVersion.toString();
 		}
 
-		StringBuilder info = new StringBuilder();
-		InputStream xml = Resource.class.getResourceAsStream(Resource.STR_SDK_INFO_FILE_PATH.getString());
-		XmlPath xpath = new XmlPath(xml);
-		xpath.getNode("/resources/sdk-info[@apiLevel='" + sdkVer + "']");
-
-		Dimension size = null;
-		ImageIcon logoIcon = null;
-
-		if(xpath.getNode() != null) {
-			info.append(xpath.getAttributes("platformVersion"));
-			info.append(" - " + xpath.getAttributes("codeName"));
-			info.append("\n\nAPI Level " + sdkVer);
-			info.append("\nBuild.VERSION_CODES." + xpath.getAttributes("versionCode"));
-
-			size = new Dimension(350, 100);
-
-			logoIcon = new ImageIcon(Resource.class.getResource(xpath.getAttributes("icon")));
-		} else {
-			info.append("API Level " + sdkVer);
-			info.append("\nUnknown verion.\nYou can look at the sdk info by the Android developer site\n");
-			info.append("http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels");
-
-			size = new Dimension(500, 100);
-			logoIcon = new ImageIcon(Resource.class.getResource("/icons/logo/base.png"));
-		}
-
-		showDialog(info.toString(), "SDK " + sdkVer, size, logoIcon);
+		SdkVersionInfoDlg sdkDlg = new SdkVersionInfoDlg(null, Resource.STR_SDK_INFO_FILE_PATH.getString(), Integer.parseInt(sdkVer));
+		sdkDlg.setLocationRelativeTo(this);
+		sdkDlg.setVisible(true);
 	}
 
 	public void showFeatureInfo(String id)
