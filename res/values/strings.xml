@@ -43,8 +43,7 @@
 	<string name="btn_explorer_lab">Open Explorer from Temp folder (Ctrl+E)</string>
 	<string name="btn_unpack_lab">Decompile</string>
 	<string name="btn_pack_lab">Recompile</string>
-	<string name="btn_install_lab">Install APK to the connected device (Ctrl+I)
-	</string>
+	<string name="btn_install_lab">Install APK to the connected device (Ctrl+I)</string>
 	<string name="btn_install_downgrad_lab">Downgrade APK (Ctrl+I)</string>
 	<string name="btn_install_update_lab">Update APK (Ctrl+I)</string>
 	<string name="btn_launch_lab">Launch app</string>
@@ -96,45 +95,20 @@
 	<string name="feature_lab">Feature</string>
 	<string name="feature_desc">Feature or function of the App</string>
 	<string name="feature_install_location_internal_only_lab">Install Location : Internal Only</string>
-	<string name="feature_install_location_internal_only_desc">The application must be installed on the internal
-		device storage only.
-		If this is set, the application will never be
-		installed on the external
-		storage.
-		If the internal storage is full, then
-		the system will not install the
-		application.
-		This is also the default
-		behavior if you do not define
-		android:installLocation.
-	</string>
+	<string name="feature_install_location_internal_only_desc">The application must be installed on the internal device storage only.
+If this is set, the application will never be installed on the external storage.
+If the internal storage is full, then the system will not install the application.
+This is also the default behavior if you do not define android:installLocation.</string>
 	<string name="feature_install_location_auto_lab">Install Location : Auto</string>
-	<string name="feature_install_location_auto_desc">The application may be installed on the external
-		storage,
-		but the system will install the application on the internal
-		storage by
-		default.
-		If the internal storage is full, then the system
-		will install it on the
-		external storage.
-		Once installed, the user can
-		move the application to either internal or
-		external storage through the
-		system settings.
-	</string>
+	<string name="feature_install_location_auto_desc">The application may be installed on the external storage,
+but the system will install the application on the internal storage by default.
+If the internal storage is full, then the system will install it on the external storage.
+Once installed, the user can move the application to either internal or external storage through the system settings.</string>
 	<string name="feature_install_location_prefer_external_lab">Install Location : Prefer External</string>
-	<string name="feature_install_location_prefer_external_desc">The application prefers to be installed on the
-		external storage (SD card).
-		There is no guarantee that the system will
-		honor this request.
-		The application might be installed on internal
-		storage if the external
-		media is unavailable or full.
-		Once installed,
-		the user can move the application to either internal or
-		external
-		storage through the system settings.
-	</string>
+	<string name="feature_install_location_prefer_external_desc">The application prefers to be installed on the external storage (SD card).
+There is no guarantee that the system will honor this request.
+The application might be installed on internal storage if the external media is unavailable or full.
+Once installed, the user can move the application to either internal or external storage through the system settings.</string>
 	<string name="feature_launcher_lab">LAUNCHER</string>
 	<string name="feature_launcher_desc">Launcher icon is exist.</string>
 	<string name="feature_hidden_lab">HIDDEN</string>
@@ -148,29 +122,21 @@
 	<string name="feature_shared_user_id_lab">SHARED_UID</string>
 	<string name="feature_shared_user_id_desc">This application uses the sharedUserId</string>
 	<string name="feature_platform_sign_lab">PLATFORM SIGN</string>
-	<string name="feature_platform_sign_desc">This application to be sign by platform
-		signature(samsung test-key).
-	</string>
+	<string name="feature_platform_sign_desc">This application to be sign by platform signature(samsung test-key).</string>
 	<string name="feature_samsung_sign_lab">SAMSUNG SIGN</string>
-	<string name="feature_samsung_sign_desc">This application to be sign by samsung signature.
-	</string>
+	<string name="feature_samsung_sign_desc">This application to be sign by samsung signature.</string>
 	<string name="feature_revoke_permissions_lab">SYSTEM PERMISSIONS</string>
 	<string name="feature_revoke_permissions_desc">Need platform sign or priv-app</string>
 	<string name="feature_deprecated_prem_lab">Deprecated Permissions</string>
 	<string name="feature_deprecated_prem_desc">uses deprecated permissions</string>
 	<string name="feature_debuggable_lab">DEBUGGABLE</string>
 	<string name="feature_debuggable_desc">Whether or not the application can be debugged,
-		even when running on a device in user mode.
-	</string>
+even when running on a device in user mode. </string>
 	<string name="feature_instrumentation_lab">INSTRUMENTATION</string>
-	<string name="feature_instrumentation_desc">Instrumentation classes that provide profiling and
-		other information as the application is running.
-		they're removed before
-		the application is published
-	</string>
+	<string name="feature_instrumentation_desc">Instrumentation classes that provide profiling and other information as the application is running.
+they're removed before the application is published</string>
 	<string name="feature_device_requirements_lab">Device Requirements</string>
-	<string name="feature_device_requirements_desc">Its need requirements for install to device
-	</string>
+	<string name="feature_device_requirements_desc">Its need requirements for install to device</string>
 
 	<string name="widget_column_image">Image</string>
 	<string name="widget_column_label">Label</string>
@@ -263,9 +229,7 @@
 
 	<string name="msg_failure_open_apk">ERROR: Can not open the APK</string>
 	<string name="msg_no_such_apk">No such APK file</string>
-	<string name="msg_device_not_found">Device not found!
-		Please check device.
-	</string>
+	<string name="msg_device_not_found">Device not found! Please check device.</string>
 	<string name="msg_already_installed">This package was already installed.</string>
 	<string name="msg_no_such_package">No such package.</string>
 	<string name="msg_no_such_launcher">No such launcher activity.</string>
@@ -281,16 +245,12 @@
 	<string name="msg_success_pull_apk">Success pull apk!</string>
 	<string name="msg_success_pulled">Success pull APK file.</string>
 	<string name="msg_failure_pulled">Failure pull APK file.</string>
-	<string name="msg_device_unauthorized">Device unauthorized. Please check the confirmation
-		dialog on your device.
-	</string>
+	<string name="msg_device_unauthorized">Device unauthorized.
+Please check the confirmation dialog on your device.</string>
 	<string name="msg_device_unknown">device unknown</string>
-	<string name="msg_cannot_run_root">adbd cannot run as root in production builds
-	</string>
-	<string name="msg_unsupported_preview">Sorry,
-		This type doesn't support a preview.
-	</string>
-	<string name="msg_cannot_write_file">Can not wirte file.</string>
+	<string name="msg_cannot_run_root">adbd cannot run as root in production builds</string>
+	<string name="msg_unsupported_preview">This type doesn't support a preview.</string>
+	<string name="msg_cannot_write_file">Can not write file.</string>
 
 	<string name="question_reboot_device">Restart device now?</string>
 	<string name="question_continue_install">Continue install?</string>

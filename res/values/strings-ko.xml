@@ -39,8 +39,7 @@
 
 	<string name="btn_open_lab">APK 파일에서 정보를 가져옵니다. (Ctrl+O)</string>
 	<string name="btn_open_pacakge_lab">디바이스 패키지 열기(Ctrl+P)</string>
-	<string name="btn_manifest_lab">AndroidManifest.xml 전문을 편집기에서 확인 합니다. (Ctrl+M)
-	</string>
+	<string name="btn_manifest_lab">AndroidManifest.xml 전문을 편집기에서 확인 합니다. (Ctrl+M)</string>
 	<string name="btn_explorer_lab">압축해제 된 임시 폴더로 이동합니다. (Ctrl+E)</string>
 	<string name="btn_unpack_lab">소스코드를 디검파일 합니다.</string>
 	<string name="btn_pack_lab">소스코드를 리컴파일합니다.</string>
@@ -96,21 +95,17 @@
 	<string name="feature_desc">앱의 주요 특징 혹은 기능</string>
 	<string name="feature_install_location_internal_only_lab">설치장소 : 내장</string>
 	<string name="feature_install_location_internal_only_desc">응용 프로그램은 내부 장치에 저장 만에 설치되어 있어야합니다.
-		이 설정되어 있으면, 애플리케이션은 외부 저장 장치에 설치되지 않을 것이다.
-		내부 저장소가 가득 찬 경우, 시스템은 응용 프로그램을 설치하지 않습니다.
-	</string>
+이 설정되어 있으면, 애플리케이션은 외부 저장 장치에 설치되지 않을 것이다.
+내부 저장소가 가득 찬 경우, 시스템은 응용 프로그램을 설치하지 않습니다.</string>
 	<string name="feature_install_location_auto_lab">설치장소 : 내/외장(내장 우선)</string>
 	<string name="feature_install_location_auto_desc">응용 프로그램은 외부 저장 장치에 설치 될 수 있지만 시스템은 기본적으로 내부 저장 장치에
-		응용 프로그램을 설치합니다.
-		내부 저장소가 가득 찬 경우, 시스템은 외부 저장 장치에 설치됩니다.
-		일단 설치되면, 사용자가 시스템 설정을 통해 외부 또는 내부 저장 장치에 응용 프로그램을 이동시킬 수있다.
-	</string>
+응용 프로그램을 설치합니다.
+내부 저장소가 가득 찬 경우, 시스템은 외부 저장 장치에 설치됩니다.
+일단 설치되면, 사용자가 시스템 설정을 통해 외부 또는 내부 저장 장치에 응용 프로그램을 이동시킬 수있다.</string>
 	<string name="feature_install_location_prefer_external_lab">설치장소 : 내/외장(외장 우선)</string>
-	<string name="feature_install_location_prefer_external_desc">애플리케이션은 외부 저장 장치 (SD 카드) 상에 설치 될 것을 선호. 시스템이 요청을
-		존중한다는 보장은 없습니다.
-		외부 매체를 사용할 수 없거나 꽉 찬 경우 응용 프로그램이 내장 스토리지에 설치 될 수 있습니다.
-		일단 설치되면, 사용자가 시스템 설정을 통해 외부 또는 내부 저장 장치에 응용 프로그램을 이동시킬 수있다.
-	</string>
+	<string name="feature_install_location_prefer_external_desc">애플리케이션은 외부 저장 장치 (SD 카드) 상에 설치 될 것을 선호. 시스템이 요청을 존중한다는 보장은 없습니다.
+외부 매체를 사용할 수 없거나 꽉 찬 경우 응용 프로그램이 내장 스토리지에 설치 될 수 있습니다.
+일단 설치되면, 사용자가 시스템 설정을 통해 외부 또는 내부 저장 장치에 응용 프로그램을 이동시킬 수있다.</string>
 	<string name="feature_launcher_lab">실행앱</string>
 	<string name="feature_launcher_desc">앱실행 아이콘이 있습니다.</string>
 	<string name="feature_hidden_lab">숨김앱</string>
@@ -118,36 +113,28 @@
 	<string name="feature_startup_lab">부팅시 실행</string>
 	<string name="feature_startup_desc">부팅시 자동실행 가능한 권한을 사용합니다.</string>
 	<string name="feature_signature_lab">서명 권한</string>
-	<string name="feature_signature_desc">동일 서명 혹은 시스템에 포함 되어야 사용 가능하거나 기타 보호된 권한이 정의 되어
-		있습니다.</string>
+	<string name="feature_signature_desc">동일 서명 혹은 시스템에 포함 되어야 사용 가능하거나 기타 보호된 권한이 정의 되어있습니다.</string>
 	<string name="feature_system_user_id_lab">시스템 UID</string>
 	<string name="feature_system_user_id_desc">시스템 UID를 사용하고 있습니다.
-		※ 시스템 리소스에 접근이 가능합니다.
-	</string>
+※ 시스템 리소스에 접근이 가능합니다.</string>
 	<string name="feature_shared_user_id_lab">공유 UID</string>
 	<string name="feature_shared_user_id_desc">공유 UID를 사용하고 있습니다.</string>
 	<string name="feature_platform_sign_lab">플랫폼 서명</string>
 	<string name="feature_platform_sign_desc">삼성 Test-key 플랫폼 서명이 포함 되어 있습니다.
-		eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.
-	</string>
+eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="feature_samsung_sign_lab">삼성 서명</string>
 	<string name="feature_samsung_sign_desc">삼성 플랫폼 서명이 포함 되어 있습니다.</string>
 	<string name="feature_revoke_permissions_lab">권한 경고</string>
-	<string name="feature_revoke_permissions_desc">플랫폼 서명이 필요하거나 시스템(priv-app)에 설치 되어야 사용 가능한 권한을 사용하고
-		있습니다.
-		※ 단, pre23 레벨 포함시 SDK23 이전 버전에서는 자동 승인됩니다.
-	</string>
+	<string name="feature_revoke_permissions_desc">플랫폼 서명이 필요하거나 시스템(priv-app)에 설치 되어야 사용 가능한 권한을 사용하고 있습니다.
+※ pre23 레벨 포함시 SDK23 이전 버전에서는 자동 승인됩니다.</string>
 	<string name="feature_deprecated_prem_lab">미사용 권한</string>
 	<string name="feature_deprecated_prem_desc">더이상 사용 되지 않는 권한을 사용 하고 있습니다.</string>
 	<string name="feature_debuggable_lab">디버깅모드</string>
 	<string name="feature_debuggable_desc">어플리케이션 디버깅모드가 허용 되어 있습니다.
-		※ 버전 발행시 제거 되어야 합니다.
-	</string>
+※ 버전 발행시 제거 되어야 합니다.</string>
 	<string name="feature_instrumentation_lab">프로파일링</string>
-	<string name="feature_instrumentation_desc">애플리케이션이 실행 중일 때 프로파일링과 기타 정보를 제공하는 Instrumentation
-		클래스를 목록으로 표시합니다.
-		※ 버전 발행시 제거 되어야 합니다.
-	</string>
+	<string name="feature_instrumentation_desc">애플리케이션이 실행 중일 때 프로파일링과 기타 정보를 제공하는 Instrumentation 클래스를 목록으로 표시합니다.
+※ 버전 발행시 제거 되어야 합니다.</string>
 	<string name="feature_device_requirements_lab">장치 요구사항</string>
 	<string name="feature_device_requirements_desc">설치에 필요한 조건 혹은 지원하는 장치 정보가 있습니다</string>
 
@@ -242,9 +229,7 @@
 
 	<string name="msg_failure_open_apk">APK 파일을 열수 없습니다.</string>
 	<string name="msg_no_such_apk">APK 파일이 존재하지 않습니다.</string>
-	<string name="msg_device_not_found">장치를 찾을 수 없습니다.
-		연결상태를 확인 하세요.
-	</string>
+	<string name="msg_device_not_found">장치를 찾을 수 없습니다. 연결상태를 확인 하세요.</string>
 	<string name="msg_already_installed">동일 패키지가 이미 설치되어 있습니다.</string>
 	<string name="msg_no_such_package">동일 패키지를 찾을수 없습니다.</string>
 	<string name="msg_no_such_launcher">실행 가능한 액티비티가 없습니다.</string>
@@ -260,8 +245,7 @@
 	<string name="msg_success_pull_apk">APK 파일을 저장 하였습니다.</string>
 	<string name="msg_success_pulled">APK 파일을 저장하였습니다.</string>
 	<string name="msg_failure_pulled">APK 파일을 저장에 실패하였습니다.</string>
-	<string name="msg_device_unauthorized">디바이스가 미인증 상태입니다. 디바이스에서 USB 디버깅 허용상태를 확인하세요.
-	</string>
+	<string name="msg_device_unauthorized">디바이스가 미인증 상태입니다. 디바이스에서 USB 디버깅 허용상태를 확인하세요.</string>
 	<string name="msg_device_unknown">디바이스 상태를 알수 없습니다.</string>
 	<string name="msg_cannot_run_root">디바이스 루트 권한이 없습니다.</string>
 	<string name="msg_unsupported_preview">이 파일은 미리보기를 지원 하지 않습니다.</string>
