@@ -1012,24 +1012,29 @@ public class ResouceContentsPanel extends JPanel{
     }
     
     public void selectContentAndLine(JTree tree, int line, String Findstr) {
-    	SearchContext context = new SearchContext();
-        context.setMatchCase(false);
-        context.setMarkAll(true);
-        context.setSearchFor(Findstr);
-        context.setWholeWord(false);
-        
-        org.fife.ui.rtextarea.SearchResult result = SearchEngine.find(xmltextArea, context);
-        
-        //xmltextArea.getText().s
-        
-        //xmltextArea.setCaretPosition(0);
-        
-        if (!result.wasFound()) {
-        	xmltextArea.setCaretPosition(0);
-        	SearchEngine.find(xmltextArea, context);
-        	Log.d("not found");
-        }	
     	
+        if("resources.arsc".equals(currentSelectedObj.path)) {
+	        textTableViewer.getSelectionModel().clearSelection();
+	        textTableViewer.getSelectionModel().addSelectionInterval(line, line);
+	        
+			int maxscroolbar = textTableScroll.getVerticalScrollBar().getMaximum();
+			int rowCount = textTableViewer.getRowCount(); 
+			textTableScroll.getVerticalScrollBar().setValue((line*(maxscroolbar/rowCount)));
+        } else {
+        	SearchContext context = new SearchContext();
+            context.setMatchCase(false);
+            context.setMarkAll(true);
+            context.setSearchFor(Findstr);
+            context.setWholeWord(false);
+            
+        	org.fife.ui.rtextarea.SearchResult result = SearchEngine.find(xmltextArea, context);
+
+        	if (!result.wasFound()) {
+        		xmltextArea.setCaretPosition(0);
+        		SearchEngine.find(xmltextArea, context);
+        		Log.d("not found");
+        	}
+        }
     }
     
     public void selectContent(JTree tree) {

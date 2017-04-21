@@ -331,6 +331,20 @@ public class SearchDlg extends JDialog {
 							e.printStackTrace();
 						}
 						temp = new String(buffer);
+					} else if("resources.arsc".equals(filelist[i])) {
+						String[] lines = apkinfo.resourcesWithValue;
+						if(lines == null) {
+							Log.w("no ready resources.arsc");
+							continue;
+						}
+
+						for(int n = 0; n < lines.length; n++) {
+							if (lines[n].indexOf(findStr) !=-1) {
+								data.add(new TableData(data.size(),filelist[i],n,lines[n]));
+							}
+						}
+						allTableModel.fireTableDataChanged();
+						continue;
 					} else {
 						continue;
 					}
@@ -350,13 +364,14 @@ public class SearchDlg extends JDialog {
 							while ((line = reader.readLine()) != null) {
 								//String line = scanner.nextLine();
 								// process the line
-								if (line.indexOf(findStr) !=-1)
+								if (line.indexOf(findStr) !=-1)  {
 									//System.out.format("%3d: %s%n", lineNumber, line);
 									data.add(new TableData(data.size(),filelist[i],lineNumber,line));
-								allTableModel.fireTableDataChanged();
+								}
 
 								lineNumber++; 
 							}
+							allTableModel.fireTableDataChanged();
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
