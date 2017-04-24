@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -11,17 +12,18 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
-import com.apkscanner.util.Log;
-
 public class MyJTableDialog extends JDialog {
 
-    JButton btnenable;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 5885728964966289501L;
+	JButton btnenable;
     JButton btnApply;
     JButton btnCancel;
     MainPanel mainPanel;
@@ -36,7 +38,11 @@ public class MyJTableDialog extends JDialog {
 
 
      public static class MainPanel extends JPanel implements ActionListener , TableModelListener{
-        JButton btnEnable;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -7250646637207934530L;
+		JButton btnEnable;
         JButton btnApply;
         JButton btnCancel;
         TablePanel tablePanel;
@@ -152,13 +158,17 @@ public class MyJTableDialog extends JDialog {
      } // end main panel class
 
      public static class TablePanel extends JPanel  implements TableModelListener{
-            private JTable table;
+            /**
+		 * 
+		 */
+		private static final long serialVersionUID = -3883029087722958892L;
+			private JTable table;
             JLabel  busyLabel;
             DefaultTableModel model;
 
             int rowSelected=-1;
 
-            ArrayList rowsSelectedList = new ArrayList();
+            ArrayList<String> rowsSelectedList = new ArrayList<String>();
             boolean somethingChkd = false;
 
             Object[] columnNames = {"Col 0", "Col 1", "Col 2"};
@@ -169,8 +179,14 @@ public class MyJTableDialog extends JDialog {
                 model = new DefaultTableModel(data, columnNames);
                 table = new JTable(model) {
 
-                    @Override
-                    public Class getColumnClass(int column) {
+                    /**
+					 * 
+					 */
+					private static final long serialVersionUID = 3189289968114712874L;
+
+
+					@Override
+                    public Class<?> getColumnClass(int column) {
                         switch (column) {
                             case 0:
                                 return  String.class;

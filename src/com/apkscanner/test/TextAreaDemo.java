@@ -12,7 +12,11 @@ import javax.swing.GroupLayout.*;
 public class TextAreaDemo extends JFrame
         implements DocumentListener {
      
-    private JLabel jLabel1;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 806363707084154399L;
+	private JLabel jLabel1;
     private JScrollPane jScrollPane1;
     private JTextArea textArea;
      
@@ -165,7 +169,12 @@ public class TextAreaDemo extends JFrame
     }
      
     private class CommitAction extends AbstractAction {
-        public void actionPerformed(ActionEvent ev) {
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -4851216409261565691L;
+
+		public void actionPerformed(ActionEvent ev) {
             if (mode == Mode.COMPLETION) {
                 int pos = textArea.getSelectionEnd();
                 textArea.insert(" ", pos);

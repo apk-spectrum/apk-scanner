@@ -8,6 +8,7 @@ import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+
 import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -16,8 +17,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-
-import com.apkscanner.util.Log;
 
 public class Demo {
 
@@ -44,7 +43,12 @@ public class Demo {
     private JPanel createEmptyPanel() {
         JPanel dummyPanel = new JPanel() {
 
-            @Override
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 658005226727359429L;
+
+			@Override
             public Dimension getPreferredSize() {
                 return isPreferredSizeSet() ?
                             super.getPreferredSize() : new Dimension(400, 300);
@@ -65,7 +69,11 @@ public class Demo {
 
     class JXTabbedPane extends JTabbedPane {
 
-        private ITabRenderer tabRenderer = new DefaultTabRenderer();
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 88526244902072208L;
+		private ITabRenderer tabRenderer = new DefaultTabRenderer();
 
         public JXTabbedPane() {
             super();

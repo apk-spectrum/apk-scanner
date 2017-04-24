@@ -21,7 +21,12 @@ import javax.swing.SwingUtilities;
 
 public class Popup extends JFrame {
 
-    public Popup() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7809870455784381700L;
+
+	public Popup() {
         setBounds( 100, 100, 300, 120 );
         setDefaultCloseOperation( 3 );
         getContentPane().setLayout( new FlowLayout( FlowLayout.LEADING, 10, 10 ) );
@@ -43,7 +48,11 @@ public class Popup extends JFrame {
     }
 
     public class JSwitchBox extends AbstractButton{
-        private Color colorBright = new Color(220,220,220);
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 682063584519890442L;
+		private Color colorBright = new Color(220,220,220);
         private Color colorDark = new Color(150,150,150);
         private Color black  = new Color(0,0,0,100);
         private Color white = new Color(255,255,255,100);
@@ -56,7 +65,8 @@ public class Popup extends JFrame {
         private final String trueLabel;
         private final String falseLabel;
         private Dimension thumbBounds;
-        private Rectangle2D bounds;
+        @SuppressWarnings("unused")
+		private Rectangle2D bounds;
         private int max;
 
 
