@@ -1172,7 +1172,7 @@ public class ApkInstallWizard
 					if(installedPackage != null) {
 						for(PackageInfo pack: installedPackage) {
 							if(pack == null) continue;
-							if(pack.isSystemApp) {
+							if(pack.isSystemApp()) {
 								haveSystemApp = true;
 								break;
 							}
@@ -1790,7 +1790,7 @@ public class ApkInstallWizard
 			@Override public void OnMessage(String msg) { printLog(msg); }
 		});
 
-		if(pkgInfo.isSystemApp) {
+		if(pkgInfo.isSystemApp()) {
 			if(!AdbWrapper.root(dev.name, null)) {
 				ArrowTraversalPane.showOptionDialog(null,
 						Resource.STR_MSG_DEVICE_HAS_NOT_ROOT.getString(),

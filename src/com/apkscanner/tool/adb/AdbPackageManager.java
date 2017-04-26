@@ -9,6 +9,7 @@ import com.android.ddmlib.ShellCommandUnresponsiveException;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.tool.adb.AdbDeviceHelper.SimpleOutputReceiver;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.XmlPath;
 
 public class AdbPackageManager {
 
@@ -32,18 +33,45 @@ public class AdbPackageManager {
 		public final String codePath;
 		public final String versionName;
 		public final int versionCode;
-		public final boolean isSystemApp;
 		public final String installer;
 
-		public PackageInfo(String pkgName, String apkPath, String codePath, String versionName, int versionCode, boolean isSystemApp, String installer)
+		public final String[] dumpsys;
+
+		public final String signature;
+
+		public final IDevice device;
+
+		public PackageInfo(IDevice device, String pkgName, String apkPath, String codePath, String installer, String[] dumpsys, String signature)
+		{
+			this.device = device;
+			this.pkgName = pkgName;
+			this.apkPath = apkPath;
+			this.dumpsys = dumpsys;
+			this.signature = signature;
+			this.installer = installer;
+
+			this.codePath = codePath;
+
+			versionName = getValue("versionName");
+			String vercode = getValue("versionCode");
+			if(vercode != null && vercode.matches("\\d+")) {
+				this.versionCode = Integer.valueOf(vercode);
+			} else {
+				this.versionCode = 0;
+			}
+		}
+
+		public PackageInfo(String pkgName, String apkPath, String codePath, String versionName, int versionCode, String installer, String[] dumpsys, String signature)
 		{
 			this.pkgName = pkgName;
 			this.apkPath = apkPath;
 			this.codePath = codePath;
 			this.versionName = versionName;
 			this.versionCode = versionCode;
-			this.isSystemApp = isSystemApp;
 			this.installer = installer;
+			this.dumpsys = dumpsys;
+			this.signature = signature;
+			this.device = null;
 		}
 
 		@Override
@@ -55,6 +83,26 @@ public class AdbPackageManager {
 			s += "APK Path : " + apkPath +"\n";
 			s += "Installer : " + installer +"\n";
 			return s;
+		}
+
+		public String getValue(String key)
+		{
+			String value = null;
+			for(String line: dumpsys) {
+				if(line.indexOf(" " + key + "=") > -1) {
+					value = line.replaceAll(".*\\s+" + key + "=(\\d+-\\d+-\\d+\\s+\\d+:\\d+:\\d+|[^\\[][^\\s\\{]*(\\{[^\\}]*\\})?|\\[[^\\]]*\\]).*", "$1");
+					if(!line.equals(value)) {
+						break;
+					}
+					value = null;
+				}
+			}
+			return value;
+		}
+
+		public boolean isSystemApp() {
+			return (apkPath != null && apkPath.matches("^/system/.*")) 
+					|| (codePath != null && codePath.matches("^/system/.*")); 
 		}
 	}
 
@@ -201,7 +249,7 @@ public class AdbPackageManager {
 	public static PackageInfo getPackageInfo(String device, String pkgName)
 	{
 		String[] result;
-		String[] TargetInfo;
+		String[] dumpSys = null;
 		String verName = null;
 		int verCode = 0;
 		String codePath = null;
@@ -221,20 +269,22 @@ public class AdbPackageManager {
 				}
 			}
 
-			TargetInfo = AdbWrapper.shell(device, new String[] {"dumpsys","package", pkgName}, null);
+			dumpSys = AdbWrapper.shell(device, new String[] {"dumpsys","package", pkgName}, null);
 
-			verName = selectString(TargetInfo,"versionName=");
-			String vercode = selectString(TargetInfo,"versionCode=");
+			verName = selectString(dumpSys,"versionName");
+			String vercode = selectString(dumpSys,"versionCode");
 			if(vercode != null && vercode.matches("\\d+")) {
-				verCode = Integer.valueOf(selectString(TargetInfo,"versionCode="));
+				verCode = Integer.valueOf(selectString(dumpSys,"versionCode"));
 			}
-			codePath = selectString(TargetInfo,"codePath=");
+			codePath = selectString(dumpSys,"codePath");
 
-			if(installer == null)
-				installer = selectString(TargetInfo,"installerPackageName=");
+			if(installer == null) {
+				installer = selectString(dumpSys,"installerPackageName");
+			}
 
-			if(installer != null && installer.equals("null"))
-				installer = null;			
+			if(installer != null && installer.equalsIgnoreCase("null")) {
+				installer = null;
+			}			
 		} else {
 			codePath = pkgName;
 			apkPath = pkgName;
@@ -258,20 +308,19 @@ public class AdbPackageManager {
 
 		if(apkPath == null) return null;
 
-		return new PackageInfo(pkgName, apkPath, codePath, verName, verCode, isSystemApp, installer);
+		return new PackageInfo(pkgName, apkPath, codePath, verName, verCode, installer, dumpSys, null);
 	}
 
 	public static PackageInfo getPackageInfo(IDevice device, String pkgName)
 	{
 		String[] result;
-		String[] TargetInfo;
-		String verName = null;
-		int verCode = 0;
+		String[] dumpSys = null;
 		String codePath = null;
 		String apkPath = null;
 		String installer = null;
 
 		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
+		outputReceiver.setTrimLine(false);
 
 		if(pkgName == null) return null;
 
@@ -299,20 +348,15 @@ public class AdbPackageManager {
 					| IOException e) {
 				e.printStackTrace();
 			}
-			TargetInfo = outputReceiver.getOutput();
+			dumpSys = outputReceiver.getOutput();
 
-			verName = selectString(TargetInfo,"versionName=");
-			String vercode = selectString(TargetInfo,"versionCode=");
-			if(vercode != null && vercode.matches("\\d+")) {
-				verCode = Integer.valueOf(selectString(TargetInfo,"versionCode="));
-			}
-			codePath = selectString(TargetInfo,"codePath=");
+			codePath = selectString(dumpSys,"codePath=");
 
 			if(installer == null)
-				installer = selectString(TargetInfo,"installerPackageName=");
+				installer = selectString(dumpSys,"installerPackageName=");
 
 			if(installer != null && installer.equals("null"))
-				installer = null;			
+				installer = null;
 		} else {
 			codePath = pkgName;
 			apkPath = pkgName;
@@ -358,19 +402,66 @@ public class AdbPackageManager {
 			}
 		}
 
-		if(apkPath == null) return null;
 
-		return new PackageInfo(pkgName, apkPath, codePath, verName, verCode, isSystemApp, installer);
+		Log.e(">>>>>>>>>>>>>>> check sign");
+		outputReceiver.clear();
+		try {
+			device.executeShellCommand("cat /data/system/packages.xml", outputReceiver);
+		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
+				| IOException e) {
+			e.printStackTrace();
+		}
+		StringBuilder xmlContent = new StringBuilder();
+		for(String s: outputReceiver.getOutput()) {
+			xmlContent.append(s);
+		}
+
+		String sig = "";
+		if(xmlContent.indexOf("Permission denied") <= -1) { 
+			XmlPath packagesXml = new XmlPath(xmlContent.toString());
+
+			packagesXml.getNodeList("/packages/package[@name='" + pkgName + "']/sigs/cert");
+
+			ArrayList<String> sigsList = new ArrayList<String>(); 
+			int signCount = packagesXml.getLength();
+			for(int i = 0; i < signCount; i++) {
+				String key = packagesXml.getAttributes(i, "key");
+
+				if(key == null || key.isEmpty()) {
+					XmlPath keyPath = new XmlPath(packagesXml);
+					String index = packagesXml.getAttributes(i, "index");
+					keyPath.getNodeList("/packages/package/sigs/cert[@index='"+index+"' and @key]");
+					int keyCount = keyPath.getLength();
+					for(int j=0; j < keyCount; j++) {
+						key = keyPath.getAttributes(j, "key");
+						if(key == null || key.isEmpty()) {
+							continue;
+						}
+						sigsList.add(key);
+					}
+				} else {
+					sigsList.add(key);
+				}
+			}
+			if(!sigsList.isEmpty()) {
+				sig = sigsList.get(0);
+			}
+		} else {
+			sig = "Permission denied";
+		}
+
+		return new PackageInfo(device, pkgName, apkPath, codePath, installer, dumpSys, sig);
 	}
 
 	private static String selectString(String[] source, String key)
 	{
 		String temp = null;
-
-		for(int i=0; i < source.length; i++) {
-			if(source[i].matches("^\\s*"+key+".*$")) {
-				temp = source[i].replaceAll("^\\s*"+key+"\\s*([^\\s]*).*$", "$1");
-				break;
+		for(String line: source) {
+			if(line.indexOf(" " + key + "=") > -1) {
+				temp = line.replaceAll(".*\\s+" + key + "=(\\d+-\\d+-\\d+\\s+\\d+:\\d+:\\d+|[^\\[][^\\s\\{]*(\\{[^\\}]*\\})?|\\[[^\\]]*\\]).*", "$1");
+				if(!line.equals(temp)) {
+					break;
+				}
 			}
 		}
 		return temp;

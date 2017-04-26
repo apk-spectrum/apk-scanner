@@ -204,7 +204,8 @@ public class ApktoolScanner extends ApkScanner
 			YmlToMyApkinfo();
 
 			progress(5,"parsing AndroidManifest....\n");
-			XmlPath xmlAndroidManifest = new XmlPath(apkInfo.tempWorkPath + File.separator + "AndroidManifest.xml");
+			File manifestFile = new File(apkInfo.tempWorkPath + File.separator + "AndroidManifest.xml");
+			XmlPath xmlAndroidManifest = new XmlPath(manifestFile);
 
 			// package
 			xmlAndroidManifest.getNode("/manifest");
@@ -359,7 +360,7 @@ public class ApktoolScanner extends ApkScanner
 						maxImgSize = resFile.length();
 					}
 				} else {
-			        result = new XmlPath(resFile.getAbsolutePath()).getNode(query).getTextContent();
+			        result = new XmlPath(resFile).getNode(query).getTextContent();
 			        if(result != null) break;;
 				}
 			}
@@ -389,7 +390,7 @@ public class ApktoolScanner extends ApkScanner
 
 				File resFile = new File(resXmlPath + s + File.separator + fileName);
 				if(!resFile.exists()) continue;
-				String value = new XmlPath(resFile.getAbsolutePath()).getNode(query).getTextContent();
+				String value = new XmlPath(resFile).getNode(query).getTextContent();
 				if(value != null && value.startsWith("@")) {
 					return getMutiLang(value);
 				} else if(value != null) {
@@ -456,7 +457,7 @@ public class ApktoolScanner extends ApkScanner
 				
 				//Log.i("xmlFile " + xmlFile.getAbsolutePath());
 
-				XmlPath xpath = new XmlPath(xmlFile.getAbsolutePath());
+				XmlPath xpath = new XmlPath(xmlFile);
 				
 				xpath.getNode("//appwidget-provider");
 		        

@@ -1,8 +1,10 @@
 package com.apkscanner.util;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -23,17 +25,17 @@ public class XmlPath {
 	private XPath xpath = null;
 	private Object objNode = null;
 	private QName QType = null;
-	
+
 	public XmlPath(XmlPath clone) {
 		document = clone.document;
 		xpath = clone.xpath;
 		objNode = clone.objNode;
 		QType = clone.QType;
 	}
-	
-	public XmlPath(String xmlPath) {
+
+	public XmlPath(File xmlFile) {
 		try {
-			InputSource is = new InputSource(new FileReader(xmlPath));
+			InputSource is = new InputSource(new FileReader(xmlFile));
 			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
 			xpath = XPathFactory.newInstance().newXPath();
 		} catch (SAXException | IOException | ParserConfigurationException e) {
@@ -42,10 +44,21 @@ public class XmlPath {
 			xpath = null;
 		}
 	}
-	
+
 	public XmlPath(InputStream xml) {
 		try {
 			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xml);
+			xpath = XPathFactory.newInstance().newXPath();
+		} catch (SAXException | IOException | ParserConfigurationException e) {
+			e.printStackTrace();
+			document = null;
+			xpath = null;
+		}
+	}
+
+	public XmlPath(String xmlContent) {
+		try {
+			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(xmlContent)));
 			xpath = XPathFactory.newInstance().newXPath();
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			e.printStackTrace();
@@ -71,7 +84,7 @@ public class XmlPath {
 	public Object evaluate(String expression, QName returnType) {
 		if(xpath == null) return null;
 
-    	//Log.i("evaluate() " + expression + ", " + document + ", " + returnType);
+		//Log.i("evaluate() " + expression + ", " + document + ", " + returnType);
 		try {
 			objNode = xpath.evaluate(expression, document, returnType);
 			QType = objNode != null ? returnType : null;
@@ -83,29 +96,29 @@ public class XmlPath {
 		}
 		return objNode;
 	}
-	
+
 	public boolean isNode(String expression) {
 		return (getNode(expression).getNode() != null);
 	}
-	
+
 	public Node getNode() {
 		return (Node)(QType == XPathConstants.NODE ? objNode : null);
 	}
-	
+
 	public XmlPath getNode(String expression) {
 		evaluate(expression, XPathConstants.NODE);
 		return this; 
 	}
-	
+
 	public NodeList getNodeList() {
 		return (NodeList)(QType == XPathConstants.NODESET ? objNode : null);
 	}
-	
+
 	public XmlPath getNodeList(String expression) {
 		evaluate(expression, XPathConstants.NODESET);
 		return this;
 	}
-	
+
 	public String getAttributes(String name) {
 		if(getNode() == null || getNode().getAttributes() == null) {
 			return null;
@@ -123,13 +136,13 @@ public class XmlPath {
 			}
 			return null;
 		}
-		
+
 		return getNode().getAttributes().getNamedItem(name).getTextContent();
 	}
-	
+
 	public String getAttributes(int idx, String name) {
 		if(getNodeList() == null || getNodeList().item(idx) == null 
-			|| getNodeList().item(idx).getAttributes() == null) {
+				|| getNodeList().item(idx).getAttributes() == null) {
 			return null;
 		}
 		if(getNodeList().item(idx).getAttributes().getNamedItem(name) == null) {
@@ -158,32 +171,32 @@ public class XmlPath {
 		if(getNodeList() == null || getNodeList().item(idx) == null) return null;
 		return getNodeList().item(idx).getTextContent();
 	}
-	
+
 	public int getLength() {
 		return (QType == XPathConstants.NODESET ? ((NodeList)objNode).getLength() : 0);
 	}
-	
+
 	public XmlPath getParentNode() {
 		Node parent = null;
 		if(getNode() != null)
 			parent = getNode().getParentNode();
 		return new XmlPath(parent);
 	}
-	
+
 	public XmlPath getParentNode(int idx) {
 		Node parent = null;
 		if(getNodeList() != null && getNodeList().item(idx) != null) 
 			parent = getNodeList().item(idx).getParentNode();
 		return new XmlPath(parent);
 	}
-	
+
 	public XmlPath getChildNodes() {
 		NodeList child = null;
 		if(getNode() != null)
 			child = getNode().getChildNodes();
 		return new XmlPath(child);
 	}
-	
+
 	public XmlPath getChildNodes(int idx) {
 		NodeList child = null;
 		if(getNodeList() != null && getNodeList().item(idx) != null) 

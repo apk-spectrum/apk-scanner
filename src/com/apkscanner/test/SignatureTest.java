@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
+import com.apkscanner.core.signer.Signature;
+
 import sun.security.pkcs.PKCS7;
 
 public class SignatureTest {

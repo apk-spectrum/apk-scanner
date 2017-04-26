@@ -433,8 +433,9 @@ public enum Resource
 		String value_path = getUTF8Path() + File.separator + "data" + File.separator;
 		if(lang != null && !lang.isEmpty()) {
 			String ext_lang_value_path = value_path + "strings-" + lang + ".xml";
-			if((new File(ext_lang_value_path)).exists()) {
-				xmlList.add(new XmlPath(ext_lang_value_path));
+			File extFile = new File(ext_lang_value_path);
+			if(extFile.exists()) {
+				xmlList.add(new XmlPath(extFile));
 			}
 
 			InputStream xml = Resource.class.getResourceAsStream("/values/strings-" + lang + ".xml");
@@ -444,8 +445,9 @@ public enum Resource
 		}
 
 		String ext_lang_value_path = value_path + "strings.xml";
-		if((new File(ext_lang_value_path)).exists()) {
-			xmlList.add(new XmlPath(ext_lang_value_path));
+		File extFile = new File(ext_lang_value_path);
+		if(extFile.exists()) {
+			xmlList.add(new XmlPath(extFile));
 		}
 
 		InputStream xml = Resource.class.getResourceAsStream("/values/strings.xml");

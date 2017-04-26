@@ -1,4 +1,4 @@
-package com.apkscanner.test;
+package com.apkscanner.core.signer;
 /*
  * Copyright (C) 2008 The Android Open Source Project
  *

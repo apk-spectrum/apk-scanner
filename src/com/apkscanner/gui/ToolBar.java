@@ -484,11 +484,11 @@ public class ToolBar extends JToolBar
 			buttonMap.get(ButtonSet.SUB_INSTALL_DOWNGRADE).setEnabled(enabled);
 			buttonMap.get(ButtonSet.SUB_INSTALL_UPDATE).setEnabled(enabled);
 			buttonMap.get(ButtonSet.SUB_SIGN).setEnabled(enabled);
+			buttonMap.get(ButtonSet.LAUNCH).setEnabled(enabled);
+			buttonMap.get(ButtonSet.SUB_LAUNCH).setEnabled(enabled);
 		case NEED_DEVICE:
 			if(buttonId == ButtonSet.NEED_DEVICE) hasDevice = enabled;
 			enabled = hasDevice && hasTargetApk;
-			buttonMap.get(ButtonSet.LAUNCH).setEnabled(enabled);
-			buttonMap.get(ButtonSet.SUB_LAUNCH).setEnabled(enabled);
 			break;
 		default:
 			buttonMap.get(buttonId).setEnabled(enabled);

@@ -36,6 +36,7 @@ import com.apkscanner.gui.ToolBar.ButtonSet;
 import com.apkscanner.gui.dialog.AboutDlg;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.dialog.LogDlg;
+import com.apkscanner.gui.dialog.PackageInfoDlg;
 import com.apkscanner.gui.dialog.PackageTreeDlg;
 import com.apkscanner.gui.dialog.SearchDlg;
 import com.apkscanner.gui.dialog.SettingDlg;
@@ -142,7 +143,7 @@ public class MainUI extends JFrame
 
 		Log.i("initialize() tabbedpanel init");
 		// TabPanel initialize and add
-		String tabbedStyle = (String) Resource.PROP_TABBED_UI_THEME.getData(com.apkscanner.gui.theme.tabbedpane.PlasticTabbedPaneUI.class.getName());
+		String tabbedStyle = (String) Resource.PROP_TABBED_UI_THEME.getData();
 		tabbedPanel = new TabbedPanel(tabbedStyle);
 		add(tabbedPanel, BorderLayout.CENTER);
 
@@ -609,6 +610,41 @@ public class MainUI extends JFrame
 			thread.start();
 		}
 
+		private void evtShowInstalledPackageInfo()
+		{
+			final IDevice[] devices = deviceMonitor.getInstalledDevice();
+			if(devices == null || devices.length == 0) {
+				Log.i("No such device of a package installed.");
+				ArrowTraversalPane.showOptionDialog(null,
+						Resource.STR_MSG_NO_SUCH_PACKAGE_DEVICE.getString(),
+						Resource.STR_LABEL_INFO.getString(),
+						JOptionPane.OK_OPTION, 
+						JOptionPane.INFORMATION_MESSAGE,
+						null,
+						new String[] {Resource.STR_BTN_OK.getString()},
+						Resource.STR_BTN_OK.getString());
+				return;
+			}
+
+			Thread thread = new Thread(new Runnable() {
+				public void run()
+				{
+					for(IDevice device: devices) {
+						PackageInfo info = deviceMonitor.getPackageInfo(device);
+						EventQueue.invokeLater(new Runnable() {
+							public void run() {
+								PackageInfoDlg packageInfoDlg = new PackageInfoDlg(MainUI.this);
+								packageInfoDlg.setPackageInfo(info);
+								packageInfoDlg.setVisible(true);
+							}
+						});
+					}
+				}
+			});
+			thread.setPriority(Thread.NORM_PRIORITY);
+			thread.start();
+		}
+
 		private void setLanguage(String lang)
 		{
 			ApkInfo apkInfo = apkScanner.getApkInfo();
@@ -662,7 +698,7 @@ public class MainUI extends JFrame
 			} else if(ToolBar.ButtonSet.OPEN_PACKAGE.matchActionEvent(e) || ToolBar.MenuItemSet.OPEN_PACKAGE.matchActionEvent(e)) {
 				evtOpenPackage(false);
 			} else if(ToolBar.MenuItemSet.INSTALLED_CHECK.matchActionEvent(e)) {
-				evtInstallApk(true);
+				evtShowInstalledPackageInfo();
 			} else if(ToolBar.ButtonSet.OPEN_CODE.matchActionEvent(e)) {
 				evtOpenJDGUI();
 			} else if(ToolBar.ButtonSet.SEARCH.matchActionEvent(e)) {
@@ -686,7 +722,7 @@ public class MainUI extends JFrame
 					case KeyEvent.VK_P: evtOpenPackage(false);	break;
 					case KeyEvent.VK_N: Launcher.run();			break;
 					case KeyEvent.VK_I: evtInstallApk(false);	break;
-					case KeyEvent.VK_T: evtInstallApk(true);	break;
+					case KeyEvent.VK_T: evtShowInstalledPackageInfo();	break;
 					case KeyEvent.VK_E: evtShowExplorer();		break;
 					case KeyEvent.VK_M: evtShowManifest();		break;
 					case KeyEvent.VK_R: evtLaunchApp();			break;
@@ -831,6 +867,12 @@ public class MainUI extends JFrame
 		public IDevice[] getInstalledDevice() {
 			synchronized (devices) {
 				return devices.keySet().toArray(new IDevice[devices.size()]);
+			}
+		}
+		
+		public PackageInfo getPackageInfo(IDevice device) {
+			synchronized (devices) {
+				return devices.get(device);
 			}
 		}
 

@@ -1,10 +1,13 @@
 package com.apkscanner.tool.adb;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
+import com.android.ddmlib.AdbVersion;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.ConsolCmd.ConsoleOutputObserver;
+import com.google.common.util.concurrent.Uninterruptibles;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 
@@ -32,7 +35,49 @@ public class AdbWrapper
 	public static String getAdbCmd() {
 		String cmd = adbCmd;
 		if(cmd == null) {
-			cmd = Resource.BIN_ADB.getPath();
+			String runningAdbPath = null;
+			AdbVersion adbVersion = null;
+			if((boolean)Resource.PROP_ADB_POLICY_SHARED.getData()) {
+				String[] runProcess = null;
+				int waitCnt = 0;
+				do {
+					if(runProcess != null) {
+						if(waitCnt++ > 5) {
+							Log.d("waiting for running adb daemon only one. but any daemon be not exit. " + runProcess.length);
+							break;
+						};
+						Log.d("waiting for running adb daemon only one. runProcess:" + runProcess.length + ", waitCnt:" + waitCnt);
+						Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
+					}
+					runProcess = AdbServerMonitor.getRunningAdbPath();
+				} while(runProcess.length > 1);
+				if(runProcess != null && runProcess.length > 0) {
+					runningAdbPath = runProcess[0];
+					adbVersion = AdbVersionManager.getAdbVersion(runningAdbPath);
+					if(!AdbVersionManager.checkAdbVersion(adbVersion)) {
+						runningAdbPath = null;
+					}
+				}
+			}
+			Log.v("runningAdbPath " + runningAdbPath + ", version " + adbVersion);
+
+			if(runningAdbPath == null) {
+				String adbPath = ((String)Resource.PROP_ADB_PATH.getData()).trim();
+				if(adbPath == null || adbPath.isEmpty()
+						|| !AdbVersionManager.checkAdbVersion(adbPath)) {
+					adbPath = AdbVersionManager.getAdbLastestVersionFromCache();
+					if(adbPath == null){
+						AdbVersionManager.loadDefaultAdbs(); // very higher cost
+						adbPath = AdbVersionManager.getAdbLastestVersionFromCache();
+					}
+				}
+				runningAdbPath = adbPath;
+			}
+
+			if(runningAdbPath == null) {
+				runningAdbPath = Resource.BIN_ADB.getPath();
+			}
+			cmd = runningAdbPath;
 
 			if(!(new File(cmd)).exists()) {
 				Log.e("no such adb tool" + adbCmd);
@@ -41,7 +86,7 @@ public class AdbWrapper
 		}
 		return cmd;
 	}
-	
+
 	public static void setAdbCmd(String adbPath) {
 		adbCmd = adbPath;
 	}
