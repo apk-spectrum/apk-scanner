@@ -630,7 +630,7 @@ public class MainUI extends JFrame
 				public void run()
 				{
 					for(IDevice device: devices) {
-						PackageInfo info = deviceMonitor.getPackageInfo(device);
+						final PackageInfo info = deviceMonitor.getPackageInfo(device);
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
 								PackageInfoDlg packageInfoDlg = new PackageInfoDlg(MainUI.this);
