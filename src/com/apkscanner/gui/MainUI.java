@@ -751,7 +751,7 @@ public class MainUI extends JFrame
 
 		// Drag & Drop event processing
 		@Override
-		public void filesDropped(File[] files)
+		public void filesDropped(final File[] files)
 		{
 			Log.i("filesDropped()");
 			toolBar.setEnabledAt(ButtonSet.OPEN, false);
