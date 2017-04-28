@@ -510,7 +510,7 @@ public class MainUI extends JFrame
 			}
 		}
 
-		private void evtLaunchApp(boolean selectActivity)
+		private void evtLaunchApp(final boolean selectActivity)
 		{
 			final IDevice[] devices = deviceMonitor.getInstalledDevice();
 			if(devices == null || devices.length == 0) {
