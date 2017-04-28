@@ -75,6 +75,9 @@
 	<string name="tab_image">리소스</string>
 	<string name="tab_activity">컴포넌트</string>
 	<string name="tab_cert">서명</string>
+	<string name="tab_package_info">패키지 정보</string>
+	<string name="tab_dumpsys">덤프</string>
+	<string name="tab_sys_package_info">시스템 패키지 정보</string>
 
 	<string name="tab_setting_generic">일반</string>
 	<string name="tab_setting_generic_lab">일반 옵션</string>
@@ -137,6 +140,12 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 ※ 버전 발행시 제거 되어야 합니다.</string>
 	<string name="feature_device_requirements_lab">장치 요구사항</string>
 	<string name="feature_device_requirements_desc">설치에 필요한 조건 혹은 지원하는 장치 정보가 있습니다</string>
+	<string name="feature_flag_lab">FLAGS</string>
+	<string name="feature_flag_desc">패키지 속성 FLAGS</string>
+	<string name="feature_installer_lab">설치</string>
+	<string name="feature_installer_desc">인스톨러 및 타입 스탬프</string>
+	<string name="feature_hidden_system_package_lab">시스템 패키지</string>
+	<string name="feature_hidden_system_package_desc">숨겨진 시스템 패키지</string>
 
 	<string name="widget_column_image">이미지</string>
 	<string name="widget_column_label">이름</string>

@@ -9,6 +9,7 @@ public class ApkInfo
 	public static final int APP_FEATURE_STARTUP = 0x4;
 	public static final int APP_FEATURE_DEBUGGABLE = 0x8;
 	public static final int APP_FEATURE_SYSTEMUID = 0x10;
+	public static final int APP_FEATURE_DEFAULT = 0x20;
 
 	public static final int APP_FEATURE_PLATFORM_SIGN = 0x100;
 	public static final int APP_FEATURE_SAMSUNG_SIGN = 0x200;

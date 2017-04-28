@@ -491,10 +491,13 @@ public class AaptManifestReader
         		}
     		}
     		if(intent.category != null
-    				&& (featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != ApkInfo.APP_FEATURE_LAUNCHER) {
+    				&& (featureFlag & (ApkInfo.APP_FEATURE_LAUNCHER | ApkInfo.APP_FEATURE_DEFAULT))
+    					!= (ApkInfo.APP_FEATURE_LAUNCHER | ApkInfo.APP_FEATURE_DEFAULT)) {
     			for(CategoryInfo category: intent.category) {
     				if("android.intent.category.LAUNCHER".equals(category.name)) {
     					featureFlag |= ApkInfo.APP_FEATURE_LAUNCHER;
+    				} else if("android.intent.category.DEFAULT".equals(category.name)) {
+    					featureFlag |= ApkInfo.APP_FEATURE_DEFAULT;
     				}
     			}
     		}

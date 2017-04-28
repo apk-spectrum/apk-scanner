@@ -700,18 +700,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 
 	private String makeHyperLink(String href, String text, String title, String id, String style)
 	{
-		String attr = "";
-		if(title != null) {
-			attr += String.format(" title=\"%s\"", title);
-		}
-		if(id != null) {
-			attr += String.format(" id=\"%s\"", id);
-		}
-		if(style != null) {
-			attr += String.format(" style=\"%s\"", style);
-		}
-
-		return String.format("<a href=\"%s\"%s>%s</a>", href, attr, text);
+		return JHtmlEditorPane.makeHyperLink(href, text, title, id, style);
 	}
 
 	private String makeImage(String src)

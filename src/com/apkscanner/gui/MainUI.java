@@ -7,6 +7,7 @@ import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -50,11 +51,11 @@ import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.tool.adb.AdbDeviceHelper;
 import com.apkscanner.tool.adb.AdbPackageManager;
-import com.apkscanner.tool.adb.AdbPackageManager.PackageInfo;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.AdbServerMonitor.IAdbDemonChangeListener;
 import com.apkscanner.tool.adb.AdbVersionManager;
 import com.apkscanner.tool.adb.AdbWrapper;
+import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.dex2jar.Dex2JarWrapper;
 import com.apkscanner.tool.jd_gui.JDGuiLauncher;
 import com.apkscanner.util.FileUtil;
@@ -509,59 +510,8 @@ public class MainUI extends JFrame
 			}
 		}
 
-		private void evtLaunchApp()
+		private void evtLaunchApp(boolean selectActivity)
 		{
-			ApkInfo apkInfo = apkScanner.getApkInfo();
-			if(apkInfo == null) {
-				Log.e("evtLaunchApp() apkInfo is null");
-				return;
-			}
-
-			String selectedActivity = null;
-			ComponentInfo[] activities = null;
-			int activityOpt = Resource.PROP_LAUNCH_ACTIVITY_OPTION.getInt();
-			if(activityOpt == Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY
-					|| activityOpt == Resource.INT_LAUNCH_ONLY_LAUNCHER_ACTIVITY) {
-				activities = ApkInfoHelper.getLauncherActivityList(apkInfo, activityOpt == Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY);
-			}
-
-			if(activities != null && activities.length == 1) {
-				selectedActivity = activities[0].name;
-			} else {
-				if(activityOpt != Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY) {
-					activities = ApkInfoHelper.getLauncherActivityList(apkInfo, true);
-				}
-				if(activities != null && activities.length > 0) {
-					String[] items = new String[activities.length];
-					for(int i = 0; i < activities.length; i++) {
-						boolean isLauncher = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0);
-						items[i] = (isLauncher ? "[LAUNCHER]":"[MAIN]") + " " + activities[i].name.replaceAll(apkInfo.manifest.packageName, "");
-					}
-					String selected = ComboMessageBox.show(MainUI.this, "Select Activity", items,  Resource.STR_BTN_LAUNCH.getString(), JTextOptionPane.QUESTION_MESSAGE,
-							null, new Dimension(400, 0));
-					if(selected == null) {
-						return;
-					}
-					selectedActivity = selected.split(" ")[1];
-				}
-			}
-
-			if(selectedActivity == null) {
-				Log.w("No such activity of launcher or main");
-				ArrowTraversalPane.showOptionDialog(null,
-						Resource.STR_MSG_NO_SUCH_LAUNCHER.getString(),
-						Resource.STR_LABEL_WARNING.getString(),
-						JOptionPane.OK_OPTION, 
-						JOptionPane.INFORMATION_MESSAGE,
-						null,
-						new String[] {Resource.STR_BTN_OK.getString()},
-						Resource.STR_BTN_OK.getString());
-				return;
-			}
-
-			final String launcherActivity = apkInfo.manifest.packageName + "/" + selectedActivity;
-			Log.i("launcherActivity : " + launcherActivity);
-
 			final IDevice[] devices = deviceMonitor.getInstalledDevice();
 			if(devices == null || devices.length == 0) {
 				Log.i("No such device of a package installed.");
@@ -582,6 +532,61 @@ public class MainUI extends JFrame
 				{
 					for(IDevice device: devices) {
 						Log.v("launch activity on " + device.getSerialNumber());
+
+						PackageInfo packageInfo = deviceMonitor.getPackageInfo(device);
+
+						String selectedActivity = null;
+						ComponentInfo[] activities = null;
+						int activityOpt = Resource.PROP_LAUNCH_ACTIVITY_OPTION.getInt();
+						if(!selectActivity && (activityOpt == Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY
+								|| activityOpt == Resource.INT_LAUNCH_ONLY_LAUNCHER_ACTIVITY)) {
+							activities = packageInfo.getLauncherActivityList(false);
+						}
+
+						if(activities != null && activities.length == 1) {
+							selectedActivity = activities[0].name;
+						} else {
+							activities = packageInfo.getLauncherActivityList(true);
+							if(!selectActivity && activityOpt == Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY) {
+								if(activities != null && activities.length == 1) {
+									selectedActivity = activities[0].name;
+								}
+							}
+							if(selectedActivity == null && activities != null && activities.length > 0) {
+								String[] items = new String[activities.length];
+								for(int i = 0; i < activities.length; i++) {
+									boolean isLauncher = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0);
+									boolean isMain = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0);
+									items[i] = (isLauncher ? "[LAUNCHER]": (isMain ? "[MAIN]": "")) + " " + activities[i].name.replaceAll(packageInfo.pkgName, "");
+								}
+								String selected = ComboMessageBox.show(MainUI.this, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL), items,  Resource.STR_BTN_LAUNCH.getString(), JTextOptionPane.QUESTION_MESSAGE,
+										null, new Dimension(400, 0));
+								if(selected == null) {
+									return;
+								}
+								selectedActivity = selected.split(" ")[1];
+							}
+						}
+
+						if(selectedActivity == null) {
+							Log.w("No such activity of launcher or main");
+							ArrowTraversalPane.showOptionDialog(null,
+									Resource.STR_MSG_NO_SUCH_LAUNCHER.getString(),
+									Resource.STR_LABEL_WARNING.getString(),
+									JOptionPane.OK_OPTION, 
+									JOptionPane.INFORMATION_MESSAGE,
+									null,
+									new String[] {Resource.STR_BTN_OK.getString()},
+									Resource.STR_BTN_OK.getString());
+							return;
+						}
+
+						final String launcherActivity = packageInfo.pkgName + "/" + selectedActivity;
+						Log.i("launcherActivity : " + launcherActivity);
+
+
+
+
 						String[] cmdResult = AdbDeviceHelper.launchActivity(device, launcherActivity);
 						if(cmdResult == null || (cmdResult.length >= 2 && cmdResult[1].startsWith("Error")) ||
 								(cmdResult.length >= 1 && cmdResult[0].startsWith("error"))) {
@@ -672,7 +677,7 @@ public class MainUI extends JFrame
 		public void actionPerformed(ActionEvent e)
 		{
 			if (ToolBar.ButtonSet.OPEN.matchActionEvent(e) || ToolBar.MenuItemSet.OPEN_APK.matchActionEvent(e)) {
-				evtOpenApkFile(false);
+				evtOpenApkFile((e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
 			} else if(ToolBar.ButtonSet.MANIFEST.matchActionEvent(e)) {
 				evtShowManifest();
 			} else if(ToolBar.ButtonSet.EXPLORER.matchActionEvent(e)) {
@@ -696,7 +701,7 @@ public class MainUI extends JFrame
 			} else if(ToolBar.MenuItemSet.NEW_PACKAGE.matchActionEvent(e)) {
 				evtOpenPackage(true);
 			} else if(ToolBar.ButtonSet.OPEN_PACKAGE.matchActionEvent(e) || ToolBar.MenuItemSet.OPEN_PACKAGE.matchActionEvent(e)) {
-				evtOpenPackage(false);
+				evtOpenPackage((e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
 			} else if(ToolBar.MenuItemSet.INSTALLED_CHECK.matchActionEvent(e)) {
 				evtShowInstalledPackageInfo();
 			} else if(ToolBar.ButtonSet.OPEN_CODE.matchActionEvent(e)) {
@@ -704,7 +709,7 @@ public class MainUI extends JFrame
 			} else if(ToolBar.ButtonSet.SEARCH.matchActionEvent(e)) {
 				evtOpenSearchPopup();
 			} else if(ToolBar.ButtonSet.LAUNCH.matchActionEvent(e) || ToolBar.ButtonSet.SUB_LAUNCH.matchActionEvent(e)) {
-				evtLaunchApp();
+				evtLaunchApp((e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
 			} else {
 				Log.w("Unkown action : " + e);
 			}
@@ -725,7 +730,7 @@ public class MainUI extends JFrame
 					case KeyEvent.VK_T: evtShowInstalledPackageInfo();	break;
 					case KeyEvent.VK_E: evtShowExplorer();		break;
 					case KeyEvent.VK_M: evtShowManifest();		break;
-					case KeyEvent.VK_R: evtLaunchApp();			break;
+					case KeyEvent.VK_R: evtLaunchApp(false);	break;
 					//case KeyEvent.VK_S: evtSettings();			break;
 					default: return false;
 					}
@@ -734,6 +739,7 @@ public class MainUI extends JFrame
 					switch(e.getKeyCode()) {
 					case KeyEvent.VK_O: evtOpenApkFile(true);	break;
 					case KeyEvent.VK_P: evtOpenPackage(true);	break;
+					case KeyEvent.VK_R: evtLaunchApp(true);	break;
 					default: return false;
 					}
 					return true;
@@ -869,7 +875,7 @@ public class MainUI extends JFrame
 				return devices.keySet().toArray(new IDevice[devices.size()]);
 			}
 		}
-		
+
 		public PackageInfo getPackageInfo(IDevice device) {
 			synchronized (devices) {
 				return devices.get(device);

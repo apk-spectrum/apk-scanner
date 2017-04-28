@@ -26,86 +26,6 @@ public class AdbPackageManager {
 		}
 	}
 
-	public static class PackageInfo
-	{
-		public final String pkgName;
-		public final String apkPath;
-		public final String codePath;
-		public final String versionName;
-		public final int versionCode;
-		public final String installer;
-
-		public final String[] dumpsys;
-
-		public final String signature;
-
-		public final IDevice device;
-
-		public PackageInfo(IDevice device, String pkgName, String apkPath, String codePath, String installer, String[] dumpsys, String signature)
-		{
-			this.device = device;
-			this.pkgName = pkgName;
-			this.apkPath = apkPath;
-			this.dumpsys = dumpsys;
-			this.signature = signature;
-			this.installer = installer;
-
-			this.codePath = codePath;
-
-			versionName = getValue("versionName");
-			String vercode = getValue("versionCode");
-			if(vercode != null && vercode.matches("\\d+")) {
-				this.versionCode = Integer.valueOf(vercode);
-			} else {
-				this.versionCode = 0;
-			}
-		}
-
-		public PackageInfo(String pkgName, String apkPath, String codePath, String versionName, int versionCode, String installer, String[] dumpsys, String signature)
-		{
-			this.pkgName = pkgName;
-			this.apkPath = apkPath;
-			this.codePath = codePath;
-			this.versionName = versionName;
-			this.versionCode = versionCode;
-			this.installer = installer;
-			this.dumpsys = dumpsys;
-			this.signature = signature;
-			this.device = null;
-		}
-
-		@Override
-		public String toString()
-		{
-			String s = "-Installed APK info\n";
-			s += "Pakage : " + pkgName +"\n";
-			s += "Version : " + versionName + " / " + versionCode +"\n";
-			s += "APK Path : " + apkPath +"\n";
-			s += "Installer : " + installer +"\n";
-			return s;
-		}
-
-		public String getValue(String key)
-		{
-			String value = null;
-			for(String line: dumpsys) {
-				if(line.indexOf(" " + key + "=") > -1) {
-					value = line.replaceAll(".*\\s+" + key + "=(\\d+-\\d+-\\d+\\s+\\d+:\\d+:\\d+|[^\\[][^\\s\\{]*(\\{[^\\}]*\\})?|\\[[^\\]]*\\]).*", "$1");
-					if(!line.equals(value)) {
-						break;
-					}
-					value = null;
-				}
-			}
-			return value;
-		}
-
-		public boolean isSystemApp() {
-			return (apkPath != null && apkPath.matches("^/system/.*")) 
-					|| (codePath != null && codePath.matches("^/system/.*")); 
-		}
-	}
-
 	public static String[] getRecentlyActivityPackages(String device) {
 		String[] result = AdbWrapper.shell(device, new String[] {"am", "stack", "list"}, null);
 		ArrayList<String> pkgList = new ArrayList<String>();
@@ -352,11 +272,13 @@ public class AdbPackageManager {
 
 			codePath = selectString(dumpSys,"codePath=");
 
-			if(installer == null)
+			if(installer == null) {
 				installer = selectString(dumpSys,"installerPackageName=");
+			}
 
-			if(installer != null && installer.equals("null"))
+			if(installer != null && installer.equals("null")) {
 				installer = null;
+			}
 		} else {
 			codePath = pkgName;
 			apkPath = pkgName;

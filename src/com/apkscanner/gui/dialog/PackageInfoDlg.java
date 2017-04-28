@@ -27,6 +27,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.border.MatteBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import com.android.ddmlib.AdbCommandRejectedException;
 import com.android.ddmlib.ShellCommandUnresponsiveException;
@@ -40,27 +42,33 @@ import com.apkscanner.gui.messagebox.JTextOptionPane;
 import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.JHtmlEditorPane;
+import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbDeviceHelper.SimpleOutputReceiver;
-import com.apkscanner.tool.adb.AdbPackageManager.PackageInfo;
+import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.util.FileUtil;
-import com.apkscanner.util.SystemUtil;
 import com.apkscanner.util.FileUtil.FSStyle;
+import com.apkscanner.util.SystemUtil;
 
-public class PackageInfoDlg extends JDialog implements ActionListener {
+public class PackageInfoDlg extends JDialog implements ActionListener, HyperlinkClickListener, ChangeListener {
 	private static final long serialVersionUID = 7654892270063010429L;
-	
+
 	private static final String ACT_CMD_OPEN_PACKAGE = "ACT_CMD_OPEN_PACKAGE";
 	private static final String ACT_CMD_SAVE_PACKAGE = "ACT_CMD_SAVE_PACKAGE";
 	private static final String ACT_CMD_LAUCH_PACKAGE = "ACT_CMD_LAUCH_PACKAGE";
 	private static final String ACT_CMD_UNINSTALL_PACKAGE = "ACT_CMD_UNINSTALL_PACKAGE";
 
+	JTabbedPane tabbedPane;
 	JHtmlEditorPane infoPanel;
+	JHtmlEditorPane sysPackInfoPanel;
 	JTextArea dumpsysTextArea;
 	JTextArea signatureTextArea;
 	JTextField txtApkPath;
-	
+
 	PackageInfo packageInfo;
+	boolean hasSysPack;
+	String apkPath;
+	String hiddenApkPath;
 
 	public PackageInfoDlg(Window owner) {
 		super(owner);
@@ -95,15 +103,22 @@ public class PackageInfoDlg extends JDialog implements ActionListener {
 		add(toolBar, BorderLayout.NORTH);
 
 		String tabbedStyle = (String) Resource.PROP_TABBED_UI_THEME.getData();
-		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane = new JTabbedPane();
 		TabbedPaneUIManager.setUI(tabbedPane, tabbedStyle);
-
+		tabbedPane.addChangeListener(this);
 
 		infoPanel = new JHtmlEditorPane();
 		infoPanel.setEditable(false);
 		infoPanel.setOpaque(true);
 		infoPanel.setBackground(Color.white);
-		//infoPanel.setHyperlinkClickListener(this);
+		infoPanel.setHyperlinkClickListener(this);
+
+		sysPackInfoPanel = new JHtmlEditorPane();
+		sysPackInfoPanel.setEditable(false);
+		sysPackInfoPanel.setOpaque(true);
+		sysPackInfoPanel.setBackground(Color.white);
+		sysPackInfoPanel.setHyperlinkClickListener(this);
+
 		//Font font = new Font("helvitica", Font.BOLD, 15);
 		JLabel label = new JLabel();
 		Font font = label.getFont();
@@ -128,16 +143,13 @@ public class PackageInfoDlg extends JDialog implements ActionListener {
 		style.append("#div-button a {text-decoration:none; color:black;}");
 
 		infoPanel.setStyle(style.toString());
-
-		tabbedPane.addTab("Info", null, infoPanel, null);
+		sysPackInfoPanel.setStyle(style.toString());
 
 		dumpsysTextArea = new JTextArea();
 		dumpsysTextArea.setEditable(false);
-		tabbedPane.addTab("Dumpsys", null, new JScrollPane(dumpsysTextArea), null);
 
 		signatureTextArea = new JTextArea();
 		signatureTextArea.setEditable(false);
-		tabbedPane.addTab("Signature", null, new JScrollPane(signatureTextArea), null);
 
 		add(tabbedPane, BorderLayout.CENTER);
 
@@ -162,21 +174,32 @@ public class PackageInfoDlg extends JDialog implements ActionListener {
 		return button;
 	}
 
+	private void alignTabbedPanel(boolean hasSysPackPanel) {
+		tabbedPane.removeAll();
+		tabbedPane.addTab(Resource.STR_TAB_PACAKGE_INFO.getString(), null, infoPanel, null);
+		if(hasSysPackPanel) {
+			tabbedPane.addTab(Resource.STR_TAB_SYS_PACAKGE_INFO.getString(), null, sysPackInfoPanel, null);
+		}
+		tabbedPane.addTab(Resource.STR_TAB_DUMPSYS.getString(), null, new JScrollPane(dumpsysTextArea), null);
+		tabbedPane.addTab(Resource.STR_TAB_CERT.getString(), null, new JScrollPane(signatureTextArea), null);
+	}
+
 	public void setPackageInfo(PackageInfo info) {
 		packageInfo = info;
 
+		hasSysPack = info.getHiddenSystemPackageValue("pkg") != null;
+		alignTabbedPanel(hasSysPack);
+
+		info.getLauncherActivityList(true);
+
 		txtApkPath.setText(info.apkPath);
 
-		showSummaryInfo(info);
-
-		StringBuilder dumpSys = new StringBuilder();
-		for(String s: info.dumpsys) {
-			dumpSys.append(s);
-			dumpSys.append("\n");
+		infoPanel.setBody(getSummaryText(info, false));
+		if(hasSysPack) {
+			sysPackInfoPanel.setBody(getSummaryText(info, true));
 		}
 
-		dumpsysTextArea.setText(dumpSys.toString());
-		dumpsysTextArea.setCaretPosition(0);
+		setDumpsysText(info.dumpsys);
 
 		String publicKey = null;
 		if(info.signature != null && !info.signature.isEmpty() 
@@ -196,15 +219,17 @@ public class PackageInfoDlg extends JDialog implements ActionListener {
 		signatureTextArea.setCaretPosition(0);
 	}
 
-	private void showSummaryInfo(PackageInfo info)
+	private String getSummaryText(PackageInfo info, boolean isSystemPackage)
 	{
 		//String appName = "App Name";
-		String temp = null;
+		String infoBlock = !isSystemPackage ? "Packages" : "Hidden system packages";
 
+		String apkPath = !isSystemPackage ? info.apkPath : info.getHiddenSystemPackageValue("codePath");
+		
 		long apkSize = 0;
 		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
 		try {
-			info.device.executeShellCommand("ls -l " + info.apkPath, outputReceiver);
+			info.device.executeShellCommand("ls -l " + apkPath, outputReceiver);
 		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException | IOException e) {
 			e.printStackTrace();
 		}
@@ -213,39 +238,65 @@ public class PackageInfoDlg extends JDialog implements ActionListener {
 			String size = line.replaceAll(".*\\s+(\\d+)\\s+\\d+.*", "$1");
 			if(!line.equals(size)) {
 				apkSize = Integer.parseInt(size);
+				if(!apkPath.endsWith(".apk")) {
+					String tmp = line.replaceAll(".*\\s(\\S*\\.apk)", "/$1");
+					if(!line.equals(tmp)) {
+						apkPath += tmp;
+					}
+				}
 			}
 		}
-
-		String feature = "LAUNCHER, FLAGS<br/>";
-
-		String installer = info.getValue("installerPackageName");
-		if(installer == null || installer.isEmpty()) {
-			installer = "N/A";
+		if(!isSystemPackage) {
+			this.apkPath = apkPath;
+		} else {
+			this.hiddenApkPath = apkPath;
 		}
-		installer += ", " + info.getValue("timeStamp");
 
+		String versionName = info.getValue(infoBlock, "versionName");
+		String versionCode = info.getValue(infoBlock, "versionCode");
+
+		String temp = null;
 		String sdkVersion = "";
-		temp = info.getValue("minSdk");
+		temp = info.getValue(infoBlock, "minSdk");
 		if(temp != null) {
-			sdkVersion += temp + "(Min)";
+			sdkVersion += makeHyperLink("@event", temp +" (Min)", "Min SDK version", "minSdk", null);
 		}
-		temp = info.getValue("targetSdk");
+		temp = info.getValue(infoBlock, "targetSdk");
 		if(temp != null) {
 			if(!sdkVersion.isEmpty()) {
 				sdkVersion += ", ";
 			}
-			sdkVersion += temp + "(Target)";
+			sdkVersion += makeHyperLink("@event", temp + " (Target)", "Targer SDK version", "targetSdk", null);
 		}
-		temp = info.getValue("maxSdk");
+		temp = info.getValue(infoBlock, "maxSdk");
 		if(temp != null) {
 			if(!sdkVersion.isEmpty()) {
 				sdkVersion += ", ";
 			}
-			sdkVersion += temp + "(Max)";
+			sdkVersion += makeHyperLink("@event", temp + " (Max)", "Max SDK version", "maxSdk", null);
 		}
 		if(sdkVersion.isEmpty()) {
 			sdkVersion += "Unspecified";
 		}
+
+		//String feature = "LAUNCHER, FLAGS<br/>";
+
+		StringBuilder feature = new StringBuilder();
+		if(isSystemPackage) {
+			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_HIDDEN_SYS_PACK_LAB.getString(), Resource.STR_FEATURE_HIDDEN_SYS_PACK_DESC.getString(), "feature-hidden-pack", null));
+		} else if(info.hasLauncher()) {
+			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_LAUNCHER_LAB.getString(), Resource.STR_FEATURE_LAUNCHER_DESC.getString(), "feature-launcher", null));
+		} else {
+			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_HIDDEN_LAB.getString(), Resource.STR_FEATURE_HIDDEN_DESC.getString(), "feature-hidden", null));
+		}
+		feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_FLAG_LAB.getString(), Resource.STR_FEATURE_FLAG_DESC.getString(), "feature-flags", null));
+
+		String installer = info.getValue(infoBlock, "installerPackageName");
+		if(installer == null || installer.isEmpty()) {
+			installer = "N/A";
+		}
+		installer += ", " + info.getValue(infoBlock, "timeStamp");
+		installer = makeHyperLink("@event", installer, "TimeStamp", "feature-timeStamp", null);
 
 		StringBuilder strTabInfo = new StringBuilder("");
 		strTabInfo.append("<table>");
@@ -259,7 +310,7 @@ public class PackageInfoDlg extends JDialog implements ActionListener {
 		strTabInfo.append("          [" + info.pkgName +"]");
 		strTabInfo.append("        </font><br/>");
 		strTabInfo.append("        <font style=\"font-size:15px; color:#ED7E31\">");
-		strTabInfo.append("          Ver. " + info.versionName +" / " + info.versionCode);
+		strTabInfo.append("          " + makeHyperLink("@event", "Ver. " + versionName +" / " + versionCode, "VersionName : " + versionName + "\n" + "VersionCode : " + versionCode, "app-version", null));
 		strTabInfo.append("        </font><br/>");
 		strTabInfo.append("        <br/>");
 		strTabInfo.append("        <font style=\"font-size:12px\">");
@@ -269,8 +320,9 @@ public class PackageInfoDlg extends JDialog implements ActionListener {
 		strTabInfo.append("        <br/><br/>");
 		strTabInfo.append("        <font style=\"font-size:12px\">");
 		strTabInfo.append("          [" + Resource.STR_FEATURE_LAB.getString() + "] ");
-		strTabInfo.append("          " + feature);
-		strTabInfo.append("          [설치] " + installer);
+		strTabInfo.append("          " + feature.toString() + "<br/>");
+		strTabInfo.append("          [" + Resource.STR_FEATURE_INSTALLER_LAB.getString() + "] ");
+		strTabInfo.append("          " + installer);
 		strTabInfo.append("        </font><br/>");
 		strTabInfo.append("      </div>");
 		strTabInfo.append("    </td>");
@@ -292,19 +344,133 @@ public class PackageInfoDlg extends JDialog implements ActionListener {
 		strTabInfo.append("</div>");
 		strTabInfo.append("<div height=10000 width=10000></div>");
 
-		infoPanel.setBody(strTabInfo.toString());
+		return strTabInfo.toString();
+	}
+
+	private void setDumpsysText(String[] dumpsys) {
+		StringBuilder dumpSys = new StringBuilder();
+		StringBuilder packageInfo = new StringBuilder();
+
+		String blockRegex = "^(\\s*)(Hidden system )?[pP]ackages:\\s*$";
+		String blockEndRegex = "";
+		boolean startInfoBlock = false;
+		for(String line: dumpsys) {
+			if(startInfoBlock && line.matches(blockEndRegex)) {
+				startInfoBlock = false;
+			}
+
+			if(!startInfoBlock) {
+				if(line.matches(blockRegex)) {
+					startInfoBlock = true;
+					blockEndRegex = "^" + line.replaceAll(blockRegex, "$1") + "\\S.*";
+				}
+			}
+
+			if(startInfoBlock) {
+				packageInfo.append(line);
+				packageInfo.append("\n");
+			} else {
+				dumpSys.append(line);
+				dumpSys.append("\n");
+			}
+		}
+		packageInfo.append("\n");
+		packageInfo.append(dumpSys.toString());
+
+		dumpsysTextArea.setText(packageInfo.toString());
+		dumpsysTextArea.setCaretPosition(0);
+	}
+
+	private String makeHyperLink(String href, String text, String title, String id, String style)
+	{
+		return JHtmlEditorPane.makeHyperLink(href, text, title, id, style);
+	}
+
+	private void showDialog(String content, String title, Dimension size, Icon icon)
+	{
+		JTextOptionPane.showTextDialog(null, content, title, JOptionPane.INFORMATION_MESSAGE, icon, size);
+	}
+
+	public void showFeatureInfo(String id)
+	{
+		String feature = null;
+		Dimension size = new Dimension(400, 100);
+
+		if("feature-hidden".equals(id)) {
+			feature = Resource.STR_FEATURE_HIDDEN_DESC.getString();
+		} else if("feature-launcher".equals(id)) {
+			feature = Resource.STR_FEATURE_LAUNCHER_DESC.getString();
+		} else if("feature-flags".equals(id)) {
+			StringBuilder sb = new StringBuilder();
+			String temp = packageInfo.getValue("flags"); 
+			if(temp != null && !temp.isEmpty()) {
+				sb.append("flags: ");
+				sb.append(temp);
+			}
+			temp = packageInfo.getValue("privateFlags"); 
+			if(temp != null && !temp.isEmpty()) {
+				sb.append("\nprivateFlags: ");
+				sb.append(temp);
+			}
+			temp = packageInfo.getValue("pkgFlags"); 
+			if(temp != null && !temp.isEmpty()) {
+				sb.append("\npkgFlags: ");
+				sb.append(temp);
+			}
+			feature = sb.toString();
+		} else if("feature-timeStamp".equals(id)) {
+			StringBuilder sb = new StringBuilder();
+
+			String temp = packageInfo.getValue("installerPackageName");
+			if(temp == null || temp.isEmpty()) {
+				temp = "N/A";
+			}
+			sb.append("Installer: ");
+			sb.append(temp);
+			sb.append("\n");
+			temp = packageInfo.getValue("timeStamp");
+			if(temp != null && !temp.isEmpty()) {
+				sb.append("\ntimeStamp: ");
+				sb.append(temp);
+			}
+			temp = packageInfo.getValue("firstInstallTime"); 
+			if(temp != null && !temp.isEmpty()) {
+				sb.append("\nfirstInstallTime: ");
+				sb.append(temp);
+			}
+			temp = packageInfo.getValue("lastUpdateTime"); 
+			if(temp != null && !temp.isEmpty()) {
+				sb.append("\nlastUpdateTime: ");
+				sb.append(temp);
+			}
+			feature = sb.toString();
+		}
+
+		showDialog(feature, "Feature info", size, null);
+	}
+
+	@Override
+	public void stateChanged(ChangeEvent arg0) {
+		if(!hasSysPack) return;
+		
+		JTabbedPane tabSource = (JTabbedPane) arg0.getSource();
+		if(tabSource.getSelectedComponent().equals(sysPackInfoPanel)) {
+			txtApkPath.setText(hiddenApkPath);
+		} else {
+			txtApkPath.setText(apkPath);
+		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		String actCmd = arg0.getActionCommand();
-		
+
 		if(ACT_CMD_OPEN_PACKAGE.equals(actCmd)) {
-			Launcher.run(packageInfo.device.getSerialNumber(), packageInfo.apkPath, null);
+			Launcher.run(packageInfo.device.getSerialNumber(), txtApkPath.getText(), null);
 		} else if(ACT_CMD_SAVE_PACKAGE.equals(actCmd)) {
-			final String apkPath = packageInfo.apkPath;
+			final String apkPath = txtApkPath.getText();
 			if(apkPath == null) return;
-			
+
 			String saveFileName;
 			if(apkPath.endsWith("base.apk")) {
 				saveFileName = apkPath.replaceAll(".*/(.*)/base.apk", "$1.apk");
@@ -352,4 +518,18 @@ public class PackageInfoDlg extends JDialog implements ActionListener {
 		}
 	}
 
+	@Override
+	public void hyperlinkClick(String id) {
+		if(id.endsWith("Sdk")){
+			String sdkVer = packageInfo.getValue(id);
+			SdkVersionInfoDlg sdkDlg = new SdkVersionInfoDlg(null, Resource.STR_SDK_INFO_FILE_PATH.getString(), Integer.parseInt(sdkVer));
+			sdkDlg.setLocationRelativeTo(this);
+			sdkDlg.setVisible(true);
+		} else if("app-version".equals(id)) {
+			String ver = "versionName : " + packageInfo.versionName + "\n" + "versionCode : " + packageInfo.versionCode;
+			showDialog(ver, "App version info", new Dimension(300, 50), null);
+		} else if(id.startsWith("feature-")) {
+			showFeatureInfo(id);
+		}
+	}
 }

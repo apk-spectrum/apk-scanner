@@ -75,6 +75,9 @@
 	<string name="tab_image">Resources</string>
 	<string name="tab_activity">Components</string>
 	<string name="tab_cert">Signatures</string>
+	<string name="tab_package_info">Package Info</string>
+	<string name="tab_dumpsys">Dumpsys</string>
+	<string name="tab_sys_package_info">System Package Info</string>
 
 	<string name="tab_setting_generic">Generic</string>
 	<string name="tab_setting_generic_lab">Set generic options</string>
@@ -137,6 +140,12 @@ even when running on a device in user mode. </string>
 they're removed before the application is published</string>
 	<string name="feature_device_requirements_lab">Device Requirements</string>
 	<string name="feature_device_requirements_desc">Its need requirements for install to device</string>
+	<string name="feature_flag_lab">FLAGS</string>
+	<string name="feature_flag_desc">FLAGS of package</string>
+	<string name="feature_installer_lab">Installer</string>
+	<string name="feature_installer_desc">Installer and time stamp</string>
+	<string name="feature_hidden_system_package_lab">SYSTEM PACKAGE</string>
+	<string name="feature_hidden_system_package_desc">Hidden system package</string>
 
 	<string name="widget_column_image">Image</string>
 	<string name="widget_column_label">Label</string>

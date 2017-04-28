@@ -112,6 +112,9 @@ public enum Resource
 	STR_TAB_IMAGE				(Type.TEXT, "@tab_image"),
 	STR_TAB_ACTIVITY			(Type.TEXT, "@tab_activity"),
 	STR_TAB_CERT				(Type.TEXT, "@tab_cert"),
+	STR_TAB_PACAKGE_INFO		(Type.TEXT, "@tab_package_info"),
+	STR_TAB_DUMPSYS				(Type.TEXT, "@tab_dumpsys"),
+	STR_TAB_SYS_PACAKGE_INFO	(Type.TEXT, "@tab_sys_package_info"),
 
 	STR_TAB_SETTING_GENERIC		(Type.TEXT, "@tab_setting_generic"),
 	STR_TAB_SETTING_GENERIC_LAB	(Type.TEXT, "@tab_setting_generic_lab"),
@@ -156,7 +159,12 @@ public enum Resource
 	STR_FEATURE_INSTRUMENTATION_DESC (Type.TEXT, "@feature_instrumentation_desc"),
 	STR_FEATURE_DEVICE_REQ_LAB  (Type.TEXT, "@feature_device_requirements_lab"),
 	STR_FEATURE_DEVICE_REQ_DESC (Type.TEXT, "@feature_device_requirements_desc"),
-
+	STR_FEATURE_FLAG_LAB  (Type.TEXT, "@feature_flag_lab"),
+	STR_FEATURE_FLAG_DESC (Type.TEXT, "@feature_flag_desc"),
+	STR_FEATURE_INSTALLER_LAB	(Type.TEXT, "@feature_installer_lab"),
+	STR_FEATURE_INSTALLER_DESC	(Type.TEXT, "@feature_installer_desc"),
+	STR_FEATURE_HIDDEN_SYS_PACK_LAB(Type.TEXT, "@feature_hidden_system_package_lab"),
+	STR_FEATURE_HIDDEN_SYS_PACK_DESC(Type.TEXT, "@feature_hidden_system_package_desc"),
 
 	STR_FEATURE_ILOCATION_INTERNAL_LAB  (Type.TEXT, "@feature_install_location_internal_only_lab"),
 	STR_FEATURE_ILOCATION_INTERNAL_DESC (Type.TEXT, "@feature_install_location_internal_only_desc"),
