@@ -324,8 +324,11 @@ public class AdbPackageManager {
 			}
 		}
 
+		if(apkPath == null || apkPath.isEmpty()) {
+			Log.i("No such package");
+			return null;
+		}
 
-		Log.e(">>>>>>>>>>>>>>> check sign");
 		outputReceiver.clear();
 		try {
 			device.executeShellCommand("cat /data/system/packages.xml", outputReceiver);

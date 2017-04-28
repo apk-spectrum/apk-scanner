@@ -3,11 +3,13 @@ package com.apkscanner.gui.dialog;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -31,23 +33,29 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.android.ddmlib.AdbCommandRejectedException;
+import com.android.ddmlib.IDevice;
 import com.android.ddmlib.ShellCommandUnresponsiveException;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.Launcher;
 import com.apkscanner.core.installer.ApkInstaller;
 import com.apkscanner.core.installer.ApkInstaller.ApkInstallerListener;
 import com.apkscanner.core.signer.Signature;
+import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.data.apkinfo.ComponentInfo;
 import com.apkscanner.gui.messagebox.ArrowTraversalPane;
+import com.apkscanner.gui.messagebox.ComboMessageBox;
 import com.apkscanner.gui.messagebox.JTextOptionPane;
 import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.tool.adb.AdbDeviceHelper;
 import com.apkscanner.tool.adb.AdbDeviceHelper.SimpleOutputReceiver;
 import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.FileUtil.FSStyle;
+import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 
 public class PackageInfoDlg extends JDialog implements ActionListener, HyperlinkClickListener, ChangeListener {
@@ -58,17 +66,17 @@ public class PackageInfoDlg extends JDialog implements ActionListener, Hyperlink
 	private static final String ACT_CMD_LAUCH_PACKAGE = "ACT_CMD_LAUCH_PACKAGE";
 	private static final String ACT_CMD_UNINSTALL_PACKAGE = "ACT_CMD_UNINSTALL_PACKAGE";
 
-	JTabbedPane tabbedPane;
-	JHtmlEditorPane infoPanel;
-	JHtmlEditorPane sysPackInfoPanel;
-	JTextArea dumpsysTextArea;
-	JTextArea signatureTextArea;
-	JTextField txtApkPath;
+	private JTabbedPane tabbedPane;
+	private JHtmlEditorPane infoPanel;
+	private JHtmlEditorPane sysPackInfoPanel;
+	private JTextArea dumpsysTextArea;
+	private JTextArea signatureTextArea;
+	private JTextField txtApkPath;
 
-	PackageInfo packageInfo;
-	boolean hasSysPack;
-	String apkPath;
-	String hiddenApkPath;
+	private PackageInfo packageInfo;
+	private boolean hasSysPack;
+	private String apkPath;
+	private String hiddenApkPath;
 
 	public PackageInfoDlg(Window owner) {
 		super(owner);
@@ -225,7 +233,7 @@ public class PackageInfoDlg extends JDialog implements ActionListener, Hyperlink
 		String infoBlock = !isSystemPackage ? "Packages" : "Hidden system packages";
 
 		String apkPath = !isSystemPackage ? info.apkPath : info.getHiddenSystemPackageValue("codePath");
-		
+
 		long apkSize = 0;
 		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
 		try {
@@ -452,7 +460,7 @@ public class PackageInfoDlg extends JDialog implements ActionListener, Hyperlink
 	@Override
 	public void stateChanged(ChangeEvent arg0) {
 		if(!hasSysPack) return;
-		
+
 		JTabbedPane tabSource = (JTabbedPane) arg0.getSource();
 		if(tabSource.getSelectedComponent().equals(sysPackInfoPanel)) {
 			txtApkPath.setText(hiddenApkPath);
@@ -515,6 +523,94 @@ public class PackageInfoDlg extends JDialog implements ActionListener, Hyperlink
 				@Override public void OnMessage(String msg) { sb.append(msg); }
 			});		
 			apkInstaller.pullApk(apkPath, destFile.getAbsolutePath());
+		} else if(ACT_CMD_LAUCH_PACKAGE.equals(actCmd)) {
+			final boolean selectActivity = (arg0.getModifiers() & InputEvent.SHIFT_MASK) != 0;
+			final IDevice device = packageInfo.device;
+
+			Thread thread = new Thread(new Runnable() {
+				private String errMsg = null;
+				public void run()
+				{
+					String selectedActivity = null;
+					ComponentInfo[] activities = null;
+					int activityOpt = Resource.PROP_LAUNCH_ACTIVITY_OPTION.getInt();
+					if(!selectActivity && (activityOpt == Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY
+							|| activityOpt == Resource.INT_LAUNCH_ONLY_LAUNCHER_ACTIVITY)) {
+						activities = packageInfo.getLauncherActivityList(false);
+					}
+
+					if(activities != null && activities.length == 1) {
+						selectedActivity = activities[0].name;
+					} else {
+						activities = packageInfo.getLauncherActivityList(true);
+						if(!selectActivity && activityOpt == Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY) {
+							if(activities != null && activities.length == 1) {
+								selectedActivity = activities[0].name;
+							}
+						}
+						if(selectedActivity == null && activities != null && activities.length > 0) {
+							String[] items = new String[activities.length];
+							for(int i = 0; i < activities.length; i++) {
+								boolean isLauncher = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0);
+								boolean isMain = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0);
+								items[i] = (isLauncher ? "[LAUNCHER]": (isMain ? "[MAIN]": "")) + " " + activities[i].name.replaceAll(packageInfo.pkgName, "");
+							}
+							String selected = ComboMessageBox.show(PackageInfoDlg.this, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL), items,  Resource.STR_BTN_LAUNCH.getString(), JTextOptionPane.QUESTION_MESSAGE,
+									null, new Dimension(400, 0));
+							if(selected == null) {
+								return;
+							}
+							selectedActivity = selected.split(" ")[1];
+						}
+					}
+
+					if(selectedActivity == null) {
+						Log.w("No such activity of launcher or main");
+						EventQueue.invokeLater(new Runnable() {
+							public void run() {
+								ArrowTraversalPane.showOptionDialog(null,
+										Resource.STR_MSG_NO_SUCH_LAUNCHER.getString(),
+										Resource.STR_LABEL_WARNING.getString(),
+										JOptionPane.OK_OPTION, 
+										JOptionPane.INFORMATION_MESSAGE,
+										null,
+										new String[] {Resource.STR_BTN_OK.getString()},
+										Resource.STR_BTN_OK.getString());
+							}
+						});
+						return;
+					}
+
+					final String launcherActivity = packageInfo.pkgName + "/" + selectedActivity;
+					Log.i("launcherActivity : " + launcherActivity);
+
+					String[] cmdResult = AdbDeviceHelper.launchActivity(device, launcherActivity);
+					if(cmdResult == null || (cmdResult.length >= 2 && cmdResult[1].startsWith("Error")) ||
+							(cmdResult.length >= 1 && cmdResult[0].startsWith("error"))) {
+						Log.e("activity start faile : " + launcherActivity);
+
+						if(cmdResult != null) {
+							StringBuilder sb = new StringBuilder("cmd: adb shell start -n " + launcherActivity + "\n\n");
+							for(String s : cmdResult) sb.append(s+"\n");
+							errMsg = sb.toString();
+							Log.e(errMsg);
+						}
+
+						EventQueue.invokeLater(new Runnable() {
+							public void run() {
+								JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_LAUNCH_APP.getString() + "\n\nConsol output", errMsg,  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
+										null, new Dimension(500, 120));
+							}
+						});
+					} else if((boolean)Resource.PROP_TRY_UNLOCK_AF_LAUNCH.getData()) {
+						AdbDeviceHelper.tryDismissKeyguard(device);
+					}
+				}
+			});
+			thread.setPriority(Thread.NORM_PRIORITY);
+			thread.start();
+		} else if(ACT_CMD_UNINSTALL_PACKAGE.equals(actCmd)) {
+
 		}
 	}
 
