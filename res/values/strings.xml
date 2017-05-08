@@ -146,6 +146,8 @@ they're removed before the application is published</string>
 	<string name="feature_installer_desc">Installer and time stamp</string>
 	<string name="feature_hidden_system_package_lab">SYSTEM PACKAGE</string>
 	<string name="feature_hidden_system_package_desc">Hidden system package</string>
+	<string name="feature_disabled_package_lab">DISABLED</string>
+	<string name="feature_disabled_package_desc">Disabled package</string>
 
 	<string name="widget_column_image">Image</string>
 	<string name="widget_column_label">Label</string>
@@ -209,7 +211,7 @@ they're removed before the application is published</string>
 	<string name="settings_launcher_only">Auto - Launcher are only one</string>
 	<string name="settings_launcher_or_main">Auto - Launcher or Main are onces</string>
 	<string name="settings_launcher_confirm">Always confirm target</string>
-	<string name="settings_try_unlock">Try unlock by drag after launch</string>
+	<string name="settings_try_unlock">Dismiss the keyguard after launch, prompting the user for auth if necessary.</string>
 	<string name="settings_launch_installed">Launch after install completed</string>
 
 	<string name="label_error">Error</string>

@@ -165,6 +165,8 @@ public enum Resource
 	STR_FEATURE_INSTALLER_DESC	(Type.TEXT, "@feature_installer_desc"),
 	STR_FEATURE_HIDDEN_SYS_PACK_LAB(Type.TEXT, "@feature_hidden_system_package_lab"),
 	STR_FEATURE_HIDDEN_SYS_PACK_DESC(Type.TEXT, "@feature_hidden_system_package_desc"),
+	STR_FEATURE_DISABLED_PACK_LAB(Type.TEXT, "@feature_disabled_package_lab"),
+	STR_FEATURE_DISABLED_PACK_DESC(Type.TEXT, "@feature_disabled_package_desc"),
 
 	STR_FEATURE_ILOCATION_INTERNAL_LAB  (Type.TEXT, "@feature_install_location_internal_only_lab"),
 	STR_FEATURE_ILOCATION_INTERNAL_DESC (Type.TEXT, "@feature_install_location_internal_only_desc"),

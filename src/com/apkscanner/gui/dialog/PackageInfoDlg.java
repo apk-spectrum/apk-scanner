@@ -34,6 +34,7 @@ import javax.swing.event.ChangeListener;
 
 import com.android.ddmlib.AdbCommandRejectedException;
 import com.android.ddmlib.IDevice;
+import com.android.ddmlib.InstallException;
 import com.android.ddmlib.ShellCommandUnresponsiveException;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.Launcher;
@@ -200,19 +201,20 @@ public class PackageInfoDlg extends JDialog implements ActionListener, Hyperlink
 
 		info.getLauncherActivityList(true);
 
-		txtApkPath.setText(info.apkPath);
+		txtApkPath.setText(info.getApkPath());
 
 		infoPanel.setBody(getSummaryText(info, false));
 		if(hasSysPack) {
 			sysPackInfoPanel.setBody(getSummaryText(info, true));
 		}
 
-		setDumpsysText(info.dumpsys);
+		setDumpsysText(info.getDumpsys());
 
 		String publicKey = null;
-		if(info.signature != null && !info.signature.isEmpty() 
-				&& !info.signature.startsWith("Permission denied")) {
-			Signature signature = new Signature(info.signature);
+		String sig = info.getSignature();
+		if(sig != null && !sig.isEmpty() 
+				&& !sig.startsWith("Permission denied")) {
+			Signature signature = new Signature(sig);
 			try {
 				CertificateFactory cf = CertificateFactory.getInstance("X509");
 				X509Certificate X509Certificatecertificate = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(signature.toByteArray()));
@@ -221,7 +223,7 @@ public class PackageInfoDlg extends JDialog implements ActionListener, Hyperlink
 				e1.printStackTrace();
 			}
 		} else {
-			publicKey = info.signature;
+			publicKey = sig;
 		}
 		signatureTextArea.setText(publicKey);
 		signatureTextArea.setCaretPosition(0);
@@ -231,8 +233,9 @@ public class PackageInfoDlg extends JDialog implements ActionListener, Hyperlink
 	{
 		//String appName = "App Name";
 		String infoBlock = !isSystemPackage ? "Packages" : "Hidden system packages";
+		String suffix = isSystemPackage ? "@system" : "@active";
 
-		String apkPath = !isSystemPackage ? info.apkPath : info.getHiddenSystemPackageValue("codePath");
+		String apkPath = !isSystemPackage ? info.getApkPath() : info.getHiddenSystemPackageValue("codePath");
 
 		long apkSize = 0;
 		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
@@ -267,21 +270,21 @@ public class PackageInfoDlg extends JDialog implements ActionListener, Hyperlink
 		String sdkVersion = "";
 		temp = info.getValue(infoBlock, "minSdk");
 		if(temp != null) {
-			sdkVersion += makeHyperLink("@event", temp +" (Min)", "Min SDK version", "minSdk", null);
+			sdkVersion += makeHyperLink("@event", temp +" (Min)", "Min SDK version", "minSdk" + suffix, null);
 		}
 		temp = info.getValue(infoBlock, "targetSdk");
 		if(temp != null) {
 			if(!sdkVersion.isEmpty()) {
 				sdkVersion += ", ";
 			}
-			sdkVersion += makeHyperLink("@event", temp + " (Target)", "Targer SDK version", "targetSdk", null);
+			sdkVersion += makeHyperLink("@event", temp + " (Target)", "Targer SDK version", "targetSdk" + suffix, null);
 		}
 		temp = info.getValue(infoBlock, "maxSdk");
 		if(temp != null) {
 			if(!sdkVersion.isEmpty()) {
 				sdkVersion += ", ";
 			}
-			sdkVersion += makeHyperLink("@event", temp + " (Max)", "Max SDK version", "maxSdk", null);
+			sdkVersion += makeHyperLink("@event", temp + " (Max)", "Max SDK version", "maxSdk" + suffix, null);
 		}
 		if(sdkVersion.isEmpty()) {
 			sdkVersion += "Unspecified";
@@ -290,21 +293,33 @@ public class PackageInfoDlg extends JDialog implements ActionListener, Hyperlink
 		//String feature = "LAUNCHER, FLAGS<br/>";
 
 		StringBuilder feature = new StringBuilder();
-		if(isSystemPackage) {
-			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_HIDDEN_SYS_PACK_LAB.getString(), Resource.STR_FEATURE_HIDDEN_SYS_PACK_DESC.getString(), "feature-hidden-pack", null));
-		} else if(info.hasLauncher()) {
-			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_LAUNCHER_LAB.getString(), Resource.STR_FEATURE_LAUNCHER_DESC.getString(), "feature-launcher", null));
-		} else {
-			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_HIDDEN_LAB.getString(), Resource.STR_FEATURE_HIDDEN_DESC.getString(), "feature-hidden", null));
+
+		int state = -1;
+		String value = info.getValue(infoBlock, "enabled");
+		if(value != null && value.matches("\\d+")) {
+			state = Integer.parseInt(value);			
 		}
-		feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_FLAG_LAB.getString(), Resource.STR_FEATURE_FLAG_DESC.getString(), "feature-flags", null));
+		if(state < 0 || state > 1) {
+			feature.append("<font style=\"color:#ED7E31; font-weight:bold\">");
+			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_DISABLED_PACK_LAB.getString(), Resource.STR_FEATURE_DISABLED_PACK_DESC.getString(), "feature-disabled-pack" + suffix, null));
+			feature.append("</font>, ");
+		}
+
+		if(isSystemPackage) {
+			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_HIDDEN_SYS_PACK_LAB.getString(), Resource.STR_FEATURE_HIDDEN_SYS_PACK_DESC.getString(), "feature-hidden-pack" + suffix, null));
+		} else if(info.hasLauncher()) {
+			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_LAUNCHER_LAB.getString(), Resource.STR_FEATURE_LAUNCHER_DESC.getString(), "feature-launcher" + suffix, null));
+		} else {
+			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_HIDDEN_LAB.getString(), Resource.STR_FEATURE_HIDDEN_DESC.getString(), "feature-hidden" + suffix, null));
+		}
+		feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_FLAG_LAB.getString(), Resource.STR_FEATURE_FLAG_DESC.getString(), "feature-flags" + suffix, null));
 
 		String installer = info.getValue(infoBlock, "installerPackageName");
 		if(installer == null || installer.isEmpty()) {
 			installer = "N/A";
 		}
 		installer += ", " + info.getValue(infoBlock, "timeStamp");
-		installer = makeHyperLink("@event", installer, "TimeStamp", "feature-timeStamp", null);
+		installer = makeHyperLink("@event", installer, "TimeStamp", "feature-timeStamp" + suffix, null);
 
 		StringBuilder strTabInfo = new StringBuilder("");
 		strTabInfo.append("<table>");
@@ -315,10 +330,10 @@ public class PackageInfoDlg extends JDialog implements ActionListener, Hyperlink
 		//strTabInfo.append("          " + appName);
 		//strTabInfo.append("        </font><br/>");
 		strTabInfo.append("        <font style=\"font-size:15px; color:#4472C4\">");
-		strTabInfo.append("          [" + info.pkgName +"]");
+		strTabInfo.append("          [" + info.packageName +"]");
 		strTabInfo.append("        </font><br/>");
 		strTabInfo.append("        <font style=\"font-size:15px; color:#ED7E31\">");
-		strTabInfo.append("          " + makeHyperLink("@event", "Ver. " + versionName +" / " + versionCode, "VersionName : " + versionName + "\n" + "VersionCode : " + versionCode, "app-version", null));
+		strTabInfo.append("          " + makeHyperLink("@event", "Ver. " + versionName +" / " + versionCode, "VersionName : " + versionName + "\n" + "VersionCode : " + versionCode, "app-version" + suffix, null));
 		strTabInfo.append("        </font><br/>");
 		strTabInfo.append("        <br/>");
 		strTabInfo.append("        <font style=\"font-size:12px\">");
@@ -402,54 +417,73 @@ public class PackageInfoDlg extends JDialog implements ActionListener, Hyperlink
 	public void showFeatureInfo(String id)
 	{
 		String feature = null;
+
+		String[] tmp = id.split("@");
+		String infoBlock = id.indexOf("@system") > -1 ? "Hidden system packages" : "Packages";
+
 		Dimension size = new Dimension(400, 100);
 
-		if("feature-hidden".equals(id)) {
+		if("feature-hidden".equals(tmp[0])) {
 			feature = Resource.STR_FEATURE_HIDDEN_DESC.getString();
-		} else if("feature-launcher".equals(id)) {
+		} else if("feature-launcher".equals(tmp[0])) {
 			feature = Resource.STR_FEATURE_LAUNCHER_DESC.getString();
-		} else if("feature-flags".equals(id)) {
+		} else if("feature-flags".equals(tmp[0])) {
 			StringBuilder sb = new StringBuilder();
-			String temp = packageInfo.getValue("flags"); 
+			String temp = packageInfo.getValue(infoBlock, "flags"); 
 			if(temp != null && !temp.isEmpty()) {
 				sb.append("flags: ");
 				sb.append(temp);
 			}
-			temp = packageInfo.getValue("privateFlags"); 
+			temp = packageInfo.getValue(infoBlock, "privateFlags"); 
 			if(temp != null && !temp.isEmpty()) {
 				sb.append("\nprivateFlags: ");
 				sb.append(temp);
 			}
-			temp = packageInfo.getValue("pkgFlags"); 
+			temp = packageInfo.getValue(infoBlock, "pkgFlags"); 
 			if(temp != null && !temp.isEmpty()) {
 				sb.append("\npkgFlags: ");
 				sb.append(temp);
 			}
 			feature = sb.toString();
-		} else if("feature-timeStamp".equals(id)) {
+		} else if("feature-timeStamp".equals(tmp[0])) {
 			StringBuilder sb = new StringBuilder();
 
-			String temp = packageInfo.getValue("installerPackageName");
+			String temp = packageInfo.getValue(infoBlock, "installerPackageName");
 			if(temp == null || temp.isEmpty()) {
 				temp = "N/A";
 			}
 			sb.append("Installer: ");
 			sb.append(temp);
 			sb.append("\n");
-			temp = packageInfo.getValue("timeStamp");
+			temp = packageInfo.getValue(infoBlock, "timeStamp");
 			if(temp != null && !temp.isEmpty()) {
 				sb.append("\ntimeStamp: ");
 				sb.append(temp);
 			}
-			temp = packageInfo.getValue("firstInstallTime"); 
+			temp = packageInfo.getValue(infoBlock, "firstInstallTime"); 
 			if(temp != null && !temp.isEmpty()) {
 				sb.append("\nfirstInstallTime: ");
 				sb.append(temp);
 			}
-			temp = packageInfo.getValue("lastUpdateTime"); 
+			temp = packageInfo.getValue(infoBlock, "lastUpdateTime"); 
 			if(temp != null && !temp.isEmpty()) {
 				sb.append("\nlastUpdateTime: ");
 				sb.append(temp);
+			}
+			feature = sb.toString();
+		} else if("feature-disabled-pack".equals(tmp[0])) {
+			StringBuilder sb = new StringBuilder();
+			int state = -1;
+			String value = packageInfo.getValue(infoBlock, "enabled");
+			if(value != null && value.matches("\\d+")) {
+				state = Integer.parseInt(value);			
+			}
+			sb.append("EnableState: ");
+			sb.append(PackageInfo.getEnabledStateToString(state));
+			String caller = packageInfo.getValue(infoBlock, "lastDisabledCaller");
+			if(caller != null) {
+				sb.append("\n\nlastDisabledCaller: ");
+				sb.append(caller);
 			}
 			feature = sb.toString();
 		}
@@ -553,7 +587,7 @@ public class PackageInfoDlg extends JDialog implements ActionListener, Hyperlink
 							for(int i = 0; i < activities.length; i++) {
 								boolean isLauncher = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0);
 								boolean isMain = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0);
-								items[i] = (isLauncher ? "[LAUNCHER]": (isMain ? "[MAIN]": "")) + " " + activities[i].name.replaceAll(packageInfo.pkgName, "");
+								items[i] = (isLauncher ? "[LAUNCHER]": (isMain ? "[MAIN]": "")) + " " + activities[i].name.replaceAll(packageInfo.packageName, "");
 							}
 							String selected = ComboMessageBox.show(PackageInfoDlg.this, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL), items,  Resource.STR_BTN_LAUNCH.getString(), JTextOptionPane.QUESTION_MESSAGE,
 									null, new Dimension(400, 0));
@@ -581,7 +615,7 @@ public class PackageInfoDlg extends JDialog implements ActionListener, Hyperlink
 						return;
 					}
 
-					final String launcherActivity = packageInfo.pkgName + "/" + selectedActivity;
+					final String launcherActivity = packageInfo.packageName + "/" + selectedActivity;
 					Log.i("launcherActivity : " + launcherActivity);
 
 					String[] cmdResult = AdbDeviceHelper.launchActivity(device, launcherActivity);
@@ -610,22 +644,39 @@ public class PackageInfoDlg extends JDialog implements ActionListener, Hyperlink
 			thread.setPriority(Thread.NORM_PRIORITY);
 			thread.start();
 		} else if(ACT_CMD_UNINSTALL_PACKAGE.equals(actCmd)) {
-
+			final IDevice device = packageInfo.device;
+			try {
+				String errMessage = device.uninstallPackage(packageInfo.packageName);
+				Log.e(errMessage);
+			} catch (InstallException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
 	@Override
 	public void hyperlinkClick(String id) {
-		if(id.endsWith("Sdk")){
-			String sdkVer = packageInfo.getValue(id);
+		if(id.startsWith("feature-")) {
+			showFeatureInfo(id);
+			return;
+		}
+
+		String[] tmp = id.split("@");
+		String infoBlock = id.indexOf("@system") > -1 ? "Hidden system packages" : "Packages";
+
+		if(tmp[0].endsWith("Sdk")){
+			String sdkVer = packageInfo.getValue(infoBlock, tmp[0]);
 			SdkVersionInfoDlg sdkDlg = new SdkVersionInfoDlg(null, Resource.STR_SDK_INFO_FILE_PATH.getString(), Integer.parseInt(sdkVer));
 			sdkDlg.setLocationRelativeTo(this);
 			sdkDlg.setVisible(true);
-		} else if("app-version".equals(id)) {
-			String ver = "versionName : " + packageInfo.versionName + "\n" + "versionCode : " + packageInfo.versionCode;
+		} else if("app-version".equals(tmp[0])) {
+			int versionCode = 0;
+			String verCodeTmp = packageInfo.getValue(infoBlock, "versionCode");
+			if(tmp != null && verCodeTmp.matches("\\d+")) {
+				versionCode = Integer.parseInt(verCodeTmp);
+			}
+			String ver = "versionName : " + packageInfo.getValue(infoBlock, "versionName") + "\n" + "versionCode : " + versionCode;
 			showDialog(ver, "App version info", new Dimension(300, 50), null);
-		} else if(id.startsWith("feature-")) {
-			showFeatureInfo(id);
 		}
 	}
 }

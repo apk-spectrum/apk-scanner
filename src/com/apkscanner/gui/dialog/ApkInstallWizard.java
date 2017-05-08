@@ -1690,15 +1690,15 @@ public class ApkInstallWizard
 	}
 	
 	public void openApk(DeviceStatus dev, PackageInfo pkgInfo) {
-		Launcher.run(dev.name, pkgInfo.apkPath, null);
+		Launcher.run(dev.name, pkgInfo.getApkPath(), null);
 	}
 	
 	private void saveApk(DeviceStatus dev, PackageInfo pkgInfo) {
 		String saveFileName;
-		if(pkgInfo.apkPath.endsWith("base.apk")) {
-			saveFileName = pkgInfo.apkPath.replaceAll(".*/(.*)/base.apk", "$1.apk");
+		if(pkgInfo.getApkPath().endsWith("base.apk")) {
+			saveFileName = pkgInfo.getApkPath().replaceAll(".*/(.*)/base.apk", "$1.apk");
 		} else {
-			saveFileName = pkgInfo.apkPath.replaceAll(".*/", "");
+			saveFileName = pkgInfo.getApkPath().replaceAll(".*/", "");
 		}
 
 		final File destFile = ApkFileChooser.saveApkFile(wizard, saveFileName);
@@ -1742,7 +1742,7 @@ public class ApkInstallWizard
 			@Override public void OnCompleted(int cmdType, String device) { }
 			@Override public void OnMessage(String msg) { printLog(msg); }
 		});		
-		apkInstaller.pullApk(pkgInfo.apkPath, destFile.getAbsolutePath());
+		apkInstaller.pullApk(pkgInfo.getApkPath(), destFile.getAbsolutePath());
 	}
 	
 	private void uninstallApk(final DeviceStatus dev, final PackageInfo pkgInfo) {
@@ -1802,9 +1802,9 @@ public class ApkInstallWizard
 						Resource.STR_BTN_OK.getString());
 				return;
 			}
-			apkInstaller.removeApk(pkgInfo.codePath);
+			apkInstaller.removeApk(pkgInfo.getCodePath());
 		} else {
-			apkInstaller.uninstallApk(pkgInfo.pkgName);
+			apkInstaller.uninstallApk(pkgInfo.packageName);
 		}
 	}
 	
@@ -1875,13 +1875,13 @@ public class ApkInstallWizard
 			if((flag & FLAG_OPT_PUSH_OVERWRITE) == FLAG_OPT_PUSH_OVERWRITE &&
 					pkgInfo != null) {
 				printLog("Overwrite APK ...");
-				printLog("Existing path : " + pkgInfo.apkPath);
-				destPath = pkgInfo.apkPath;
+				printLog("Existing path : " + pkgInfo.getApkPath());
+				destPath = pkgInfo.getApkPath();
 			} else {
-				if(pkgInfo != null && pkgInfo.codePath != null) {
+				if(pkgInfo != null && pkgInfo.getCodePath() != null) {
 					printLog("Delete existing APK ...");
-					printLog("code path : " + pkgInfo.codePath);
-					apkInstaller.removeApk(pkgInfo.codePath);
+					printLog("code path : " + pkgInfo.getCodePath());
+					apkInstaller.removeApk(pkgInfo.getCodePath());
 				}
 				if((flag & FLAG_OPT_PUSH_SYSTEM) == FLAG_OPT_PUSH_SYSTEM) {
 					destPath = "/system/app/";

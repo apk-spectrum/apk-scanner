@@ -388,6 +388,24 @@ public class AdbDeviceHelper {
 			}
 		}
 	}
+	
+	public static boolean isRoot(IDevice device) {
+		boolean isRoot = false;
+		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
+		try {
+			device.executeShellCommand("id", outputReceiver);
+		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
+				| IOException e) {
+			e.printStackTrace();
+		}
+		String[] result = outputReceiver.getOutput();
+		for(String output: result) {
+			if(output.indexOf("uid=0") > -1) {
+				isRoot = true;
+			}
+		}
+		return isRoot;
+	}
 
 	public static boolean isShowingLockscreen(IDevice device)
 	{
@@ -448,7 +466,7 @@ public class AdbDeviceHelper {
 			String strSize = shResult.replaceAll(".*Physical size:\\s*(\\d+[xX]\\d+).*", "$1");
 			if(!strSize.equals(shResult)) {
 				String[] temp = strSize.split("[xX]");
-				size = new Dimension(Integer.valueOf(temp[0]), Integer.valueOf(temp[1]));
+				size = new Dimension(Integer.parseInt(temp[0]), Integer.parseInt(temp[1]));
 			}
 		}
 		return size;

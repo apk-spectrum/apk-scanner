@@ -1,15 +1,8 @@
 package com.apkscanner.tool.adb;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
-import com.android.ddmlib.AdbCommandRejectedException;
-import com.android.ddmlib.IDevice;
-import com.android.ddmlib.ShellCommandUnresponsiveException;
-import com.android.ddmlib.TimeoutException;
-import com.apkscanner.tool.adb.AdbDeviceHelper.SimpleOutputReceiver;
 import com.apkscanner.util.Log;
-import com.apkscanner.util.XmlPath;
 
 public class AdbPackageManager {
 
@@ -194,7 +187,7 @@ public class AdbPackageManager {
 			verName = selectString(dumpSys,"versionName");
 			String vercode = selectString(dumpSys,"versionCode");
 			if(vercode != null && vercode.matches("\\d+")) {
-				verCode = Integer.valueOf(selectString(dumpSys,"versionCode"));
+				verCode = Integer.parseInt(selectString(dumpSys,"versionCode"));
 			}
 			codePath = selectString(dumpSys,"codePath");
 
@@ -229,153 +222,6 @@ public class AdbPackageManager {
 		if(apkPath == null) return null;
 
 		return new PackageInfo(pkgName, apkPath, codePath, verName, verCode, installer, dumpSys, null);
-	}
-
-	public static PackageInfo getPackageInfo(IDevice device, String pkgName)
-	{
-		String[] result;
-		String[] dumpSys = null;
-		String codePath = null;
-		String apkPath = null;
-		String installer = null;
-
-		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
-		outputReceiver.setTrimLine(false);
-
-		if(pkgName == null) return null;
-
-		//Log.i("ckeckPackage() " + pkgName);
-
-		if(!pkgName.matches("/system/framework/.*apk")) {
-			try {
-				device.executeShellCommand("pm list packages -f -i -u " + pkgName, outputReceiver);
-			} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
-					| IOException e) {
-				e.printStackTrace();
-			}
-			result = outputReceiver.getOutput();
-			for(String output: result) {
-				if(output.matches("^package:.*=" + pkgName + "\\s*installer=.*")) {
-					apkPath = output.replaceAll("^package:(.*)=" + pkgName + "\\s*installer=(.*)", "$1");
-					installer = output.replaceAll("^package:(.*)=" + pkgName + "\\s*installer=(.*)", "$2");
-				}
-			}
-
-			outputReceiver.clear();
-			try {
-				device.executeShellCommand("dumpsys package " + pkgName, outputReceiver);
-			} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
-					| IOException e) {
-				e.printStackTrace();
-			}
-			dumpSys = outputReceiver.getOutput();
-
-			codePath = selectString(dumpSys,"codePath=");
-
-			if(installer == null) {
-				installer = selectString(dumpSys,"installerPackageName=");
-			}
-
-			if(installer != null && installer.equals("null")) {
-				installer = null;
-			}
-		} else {
-			codePath = pkgName;
-			apkPath = pkgName;
-		}
-
-		boolean isSystemApp = false;
-		if((apkPath != null && apkPath.matches("^/system/.*"))
-				|| (codePath != null && codePath.matches("^/system/.*"))) {
-			isSystemApp = true;
-		}
-
-		if(apkPath == null && codePath != null && !codePath.isEmpty()) {
-			boolean isRoot = false;
-			if(!isSystemApp){
-				outputReceiver.clear();
-				try {
-					device.executeShellCommand("id", outputReceiver);
-				} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
-						| IOException e) {
-					e.printStackTrace();
-				}
-				result = outputReceiver.getOutput();
-				for(String output: result) {
-					if(output.indexOf("uid=0") > -1) {
-						isRoot = true;
-					}
-				}
-			}
-			if(isSystemApp || isRoot) {
-				outputReceiver.clear();
-				try {
-					device.executeShellCommand("ls " + codePath, outputReceiver);
-				} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
-						| IOException e) {
-					e.printStackTrace();
-				}
-				result = outputReceiver.getOutput();
-				for(String output: result) {
-					if(output.matches("^.*apk")) {
-						apkPath = codePath + "/" + output;
-					}
-				}
-			}
-		}
-
-		if(apkPath == null || apkPath.isEmpty()) {
-			Log.i("No such package");
-			return null;
-		}
-
-		outputReceiver.clear();
-		try {
-			device.executeShellCommand("cat /data/system/packages.xml", outputReceiver);
-		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
-				| IOException e) {
-			e.printStackTrace();
-		}
-		StringBuilder xmlContent = new StringBuilder();
-		for(String s: outputReceiver.getOutput()) {
-			xmlContent.append(s);
-		}
-
-		String sig = "";
-		if(xmlContent.indexOf("Permission denied") <= -1) { 
-			XmlPath packagesXml = new XmlPath(xmlContent.toString());
-
-			packagesXml.getNodeList("/packages/package[@name='" + pkgName + "']/sigs/cert");
-
-			ArrayList<String> sigsList = new ArrayList<String>(); 
-			int signCount = packagesXml.getLength();
-			for(int i = 0; i < signCount; i++) {
-				String key = packagesXml.getAttributes(i, "key");
-
-				if(key == null || key.isEmpty()) {
-					XmlPath keyPath = new XmlPath(packagesXml);
-					String index = packagesXml.getAttributes(i, "index");
-					keyPath.getNodeList("/packages/package/sigs/cert[@index='"+index+"' and @key]");
-					int keyCount = keyPath.getLength();
-					for(int j=0; j < keyCount; j++) {
-						key = keyPath.getAttributes(j, "key");
-						if(key == null || key.isEmpty()) {
-							continue;
-						}
-						sigsList.add(key);
-					}
-				} else {
-					sigsList.add(key);
-				}
-			}
-			if(!sigsList.isEmpty()) {
-				sig = sigsList.get(0);
-			}
-		} else {
-			sig = "Permission denied";
-		}
-
-		return new PackageInfo(device, pkgName, apkPath, codePath, installer, dumpSys, sig);
 	}
 
 	private static String selectString(String[] source, String key)

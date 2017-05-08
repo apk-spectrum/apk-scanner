@@ -1,42 +1,42 @@
 package com.apkscanner.tool.adb;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.android.ddmlib.AdbCommandRejectedException;
 import com.android.ddmlib.IDevice;
-import com.apkscanner.data.apkinfo.ActivityAliasInfo;
-import com.apkscanner.data.apkinfo.ActivityInfo;
+import com.android.ddmlib.ShellCommandUnresponsiveException;
+import com.android.ddmlib.TimeoutException;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ComponentInfo;
-import com.apkscanner.data.apkinfo.ProviderInfo;
-import com.apkscanner.data.apkinfo.ReceiverInfo;
-import com.apkscanner.data.apkinfo.ServiceInfo;
+import com.apkscanner.tool.adb.AdbDeviceHelper.SimpleOutputReceiver;
+import com.apkscanner.util.XmlPath;
 
 public class PackageInfo {
 
-	public final String pkgName;
-	public final String apkPath;
-	public final String codePath;
-	public final String versionName;
-	public final int versionCode;
-	public final String installer;
-
-	public final String[] dumpsys;
-
-	public final String signature;
-
 	public final IDevice device;
+	public final String packageName;
 
-	public ActivityInfo[] activity = null;
-	public ActivityAliasInfo[] activityAlias = null;
-	public ServiceInfo[] service = null;
-	public ReceiverInfo[] receiver = null;
-	public ProviderInfo[] provider = null;
+	private String apkPath;
+	private String codePath;
+	private String versionName;
+	private int versionCode;
+	private String installer;
+
+	private String[] dumpsys;
+	private String signature;
+
+	public PackageInfo(IDevice device, String pkgName)
+	{
+		this.device = device;
+		this.packageName = pkgName;
+	}
 
 	public PackageInfo(IDevice device, String pkgName, String apkPath, String codePath, String installer, String[] dumpsys, String signature)
 	{
 		this.device = device;
-		this.pkgName = pkgName;
+		this.packageName = pkgName;
 		this.apkPath = apkPath;
 		this.dumpsys = dumpsys;
 		this.signature = signature;
@@ -55,7 +55,7 @@ public class PackageInfo {
 
 	public PackageInfo(String pkgName, String apkPath, String codePath, String versionName, int versionCode, String installer, String[] dumpsys, String signature)
 	{
-		this.pkgName = pkgName;
+		this.packageName = pkgName;
 		this.apkPath = apkPath;
 		this.codePath = codePath;
 		this.versionName = versionName;
@@ -66,15 +66,145 @@ public class PackageInfo {
 		this.device = null;
 	}
 
-	@Override
-	public String toString()
-	{
-		String s = "-Installed APK info\n";
-		s += "Pakage : " + pkgName +"\n";
-		s += "Version : " + versionName + " / " + versionCode +"\n";
-		s += "APK Path : " + apkPath +"\n";
-		s += "Installer : " + installer +"\n";
-		return s;
+	public IDevice getDevice() {
+		return device;
+	}
+
+	public String getPakcageName() {
+		return packageName;
+	}
+
+	public String getApkPath() {
+		if(apkPath != null) return apkPath;
+
+		String[] result;
+		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
+
+		if(!packageName.matches("/system/framework/.*apk")) {
+			try {
+				device.executeShellCommand("pm list packages -f -i -u " + packageName, outputReceiver);
+			} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
+					| IOException e) {
+				e.printStackTrace();
+			}
+			result = outputReceiver.getOutput();
+			for(String output: result) {
+				if(output.matches("^package:.*=" + packageName + "\\s*installer=.*")) {
+					apkPath = output.replaceAll("^package:(.*)=" + packageName + "\\s*installer=(.*)", "$1");
+					installer = output.replaceAll("^package:(.*)=" + packageName + "\\s*installer=(.*)", "$2");
+				}
+			}
+		} else {
+			codePath = packageName;
+			apkPath = packageName;
+		}
+
+		if(apkPath == null && getCodePath() != null) {
+			boolean isSystemApp = (apkPath != null && apkPath.matches("^/system/.*"))
+					|| (codePath != null && codePath.matches("^/system/.*"));
+
+			if(isSystemApp || AdbDeviceHelper.isRoot(device)) {
+				outputReceiver.clear();
+				try {
+					device.executeShellCommand("ls " + codePath, outputReceiver);
+				} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
+						| IOException e) {
+					e.printStackTrace();
+				}
+				result = outputReceiver.getOutput();
+				for(String output: result) {
+					if(output.matches("^.*apk")) {
+						apkPath = codePath + "/" + output;
+					}
+				}
+			}
+		}
+
+		return apkPath;
+	}
+
+	public String getCodePath() {
+		if(codePath != null) return codePath;
+		if(packageName.matches("/system/framework/.*apk")) {
+			apkPath = packageName;
+			codePath = packageName;
+		} else {
+			codePath = getValue("codePath");
+		}
+		if(codePath != null && codePath.isEmpty()) {
+			codePath = null;
+		}
+		return codePath;
+	}
+
+	public String getInstaller() {
+		if(installer != null) return installer;
+
+		getApkPath();
+		if(installer != null) return installer;
+
+		installer = getValue("installerPackageName");
+
+		if(installer != null && installer.equalsIgnoreCase("null")) {
+			installer = null;
+		}
+
+		return installer;
+	}
+
+	public String getVersionName() {
+		return getValue("versionName");
+	}
+
+	public int getVersionCode() {
+		int versionCode = 0;
+		String tmp = getValue("versionCode");
+		if(tmp != null && tmp.matches("\\d+")) {
+			versionCode = Integer.parseInt(tmp);
+		}
+		return versionCode;
+	}
+
+	public boolean isEnabled() {
+		String statue = getValue("enabled");
+		return statue.equals("0") || statue.equals("1");
+	}
+
+	public String getEnabledStateToString() {
+		int state = -1;
+		String value = getValue("enabled");
+		if(value != null && value.matches("\\d+")) {
+			state = Integer.parseInt(value);			
+		}
+
+		return getEnabledStateToString(state);
+	}
+
+	public static String getEnabledStateToString(int state) {
+		switch(state) {
+		case 0: return "DEFAULT";
+		case 1: return "ENABLED";
+		case 2: return "DISABLED";
+		case 3: return "DISABLED_USER";
+		case 4: return "DISABLED_UNTIL_USED";
+		default: return "UNKNOWN_" + state;
+		}
+	}
+
+	public String[] getDumpsys() {
+		if(dumpsys != null) return dumpsys;
+
+		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
+		outputReceiver.setTrimLine(false);
+		try {
+			device.executeShellCommand("dumpsys package " + packageName, outputReceiver);
+		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
+				| IOException e) {
+			e.printStackTrace();
+		}
+		dumpsys = outputReceiver.getOutput();
+
+		return dumpsys;
 	}
 
 	public String getValue(String block, String key) {
@@ -82,7 +212,7 @@ public class PackageInfo {
 		String blockRegex = "^(\\s*)" + block + ":$";
 		String blockEndRegex = "";
 		boolean startInfoBlock = false;
-		for(String line: dumpsys) {
+		for(String line: getDumpsys()) {
 			if(!startInfoBlock) {
 				if(line.matches(blockRegex)) {
 					startInfoBlock = true;
@@ -97,6 +227,14 @@ public class PackageInfo {
 			if(line.indexOf(" " + key + "=") > -1) {
 				value = line.replaceAll(".*\\s+" + key + "=(\\d+-\\d+-\\d+\\s+\\d+:\\d+:\\d+|[^\\[][^\\s\\{]*(\\{[^\\}]*\\})?|\\[[^\\]]*\\]).*", "$1");
 				if(!line.equals(value)) {
+					value = value.trim();
+					break;
+				}
+				value = null;
+			} else if(line.indexOf(" " + key + ":") > -1) {
+				value = line.replaceAll(".*\\s+" + key + ":\\s*(.*)", "$1");
+				if(!line.equals(value)) {
+					value = value.trim();
 					break;
 				}
 				value = null;
@@ -123,14 +261,6 @@ public class PackageInfo {
 		return (comp != null && comp.length > 0);
 	}
 
-	public PackageInfo getHiddenSystemPackage() {
-		//String pkgName, String apkPath, String codePath, String versionName, int versionCode, String installer, String[] dumpsys, String signature
-		String codePath = getHiddenSystemPackageValue("codePath");
-		String apkPath = codePath;
-		String installer = getHiddenSystemPackageValue("installerPackageName");
-		return new PackageInfo(device, pkgName, apkPath, codePath, installer, dumpsys, signature);
-	}
-
 	public ComponentInfo[] getLauncherActivityList(boolean includeMain) {
 		String blockRegex = "^(\\s*)Activity Resolver Table:\\s*$";
 		String blockEndRegex = "";
@@ -153,7 +283,7 @@ public class PackageInfo {
 			}
 
 			if(line.indexOf(" filter ") > -1) {
-				String name = line.replaceAll("\\s*[0-9a-f]+\\s" + pkgName + "/(\\S+)\\sfilter\\s[0-9a-f]+", "$1");
+				String name = line.replaceAll("\\s*[0-9a-f]+\\s" + packageName + "/(\\S+)\\sfilter\\s[0-9a-f]+", "$1");
 				if(!line.equals(name)) {
 					curComp = components.get(name);
 					if(curComp == null) {
@@ -198,6 +328,70 @@ public class PackageInfo {
 		}
 
 		return launcherList.toArray(new ComponentInfo[launcherList.size()]);
+	}
+
+	public String getSignature() {
+
+		if(signature != null) return signature;
+
+		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
+		try {
+			device.executeShellCommand("cat /data/system/packages.xml", outputReceiver);
+		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
+				| IOException e) {
+			e.printStackTrace();
+		}
+
+		StringBuilder xmlContent = new StringBuilder();
+		for(String s: outputReceiver.getOutput()) {
+			xmlContent.append(s);
+		}
+
+		if(xmlContent.indexOf("Permission denied") <= -1) { 
+			XmlPath packagesXml = new XmlPath(xmlContent.toString());
+
+			packagesXml.getNodeList("/packages/package[@name='" + packageName + "']/sigs/cert");
+
+			ArrayList<String> sigsList = new ArrayList<String>(); 
+			int signCount = packagesXml.getLength();
+			for(int i = 0; i < signCount; i++) {
+				String key = packagesXml.getAttributes(i, "key");
+
+				if(key == null || key.isEmpty()) {
+					XmlPath keyPath = new XmlPath(packagesXml);
+					String index = packagesXml.getAttributes(i, "index");
+					keyPath.getNodeList("/packages/package/sigs/cert[@index='"+index+"' and @key]");
+					int keyCount = keyPath.getLength();
+					for(int j=0; j < keyCount; j++) {
+						key = keyPath.getAttributes(j, "key");
+						if(key == null || key.isEmpty()) {
+							continue;
+						}
+						sigsList.add(key);
+					}
+				} else {
+					sigsList.add(key);
+				}
+			}
+			if(!sigsList.isEmpty()) {
+				signature = sigsList.get(0);
+			}
+		} else {
+			signature = "Permission denied";
+		}
+
+		return signature;
+	}
+
+	@Override
+	public String toString()
+	{
+		String s = "-Installed APK info\n";
+		s += "Pakage : " + packageName +"\n";
+		s += "Version : " + versionName + " / " + versionCode +"\n";
+		s += "APK Path : " + apkPath +"\n";
+		s += "Installer : " + installer +"\n";
+		return s;
 	}
 }
 

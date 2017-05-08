@@ -50,7 +50,6 @@ import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.tool.adb.AdbDeviceHelper;
-import com.apkscanner.tool.adb.AdbPackageManager;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.AdbServerMonitor.IAdbDemonChangeListener;
 import com.apkscanner.tool.adb.AdbVersionManager;
@@ -231,7 +230,7 @@ public class MainUI extends JFrame
 				public void run() {
 					switch(step) {
 					case 0:
-						tabbedPanel.setProgress(Integer.valueOf(msg));
+						tabbedPanel.setProgress(Integer.parseInt(msg));
 						break;
 					default:
 						Log.i(msg);
@@ -557,7 +556,7 @@ public class MainUI extends JFrame
 								for(int i = 0; i < activities.length; i++) {
 									boolean isLauncher = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0);
 									boolean isMain = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0);
-									items[i] = (isLauncher ? "[LAUNCHER]": (isMain ? "[MAIN]": "")) + " " + activities[i].name.replaceAll(packageInfo.pkgName, "");
+									items[i] = (isLauncher ? "[LAUNCHER]": (isMain ? "[MAIN]": "")) + " " + activities[i].name.replaceAll(packageInfo.packageName, "");
 								}
 								String selected = ComboMessageBox.show(MainUI.this, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL), items,  Resource.STR_BTN_LAUNCH.getString(), JTextOptionPane.QUESTION_MESSAGE,
 										null, new Dimension(400, 0));
@@ -581,7 +580,7 @@ public class MainUI extends JFrame
 							return;
 						}
 
-						final String launcherActivity = packageInfo.pkgName + "/" + selectedActivity;
+						final String launcherActivity = packageInfo.packageName + "/" + selectedActivity;
 						Log.i("launcherActivity : " + launcherActivity);
 
 
@@ -954,9 +953,9 @@ public class MainUI extends JFrame
 								pkg = devices.get(device);
 							} else {
 								if(device.isOnline()) {
-									pkg = AdbPackageManager.getPackageInfo(device, packageName);
+									pkg = new PackageInfo(device, packageName);
 								}
-								if(pkg != null) {
+								if(pkg != null && pkg.getApkPath() != null) {
 									devices.put(device, pkg);
 								}
 								try {
@@ -966,9 +965,10 @@ public class MainUI extends JFrame
 						}
 						if(pkg != null) {
 							hasInstalled = true;
-							if(versionCode < pkg.versionCode) {
+							int packVerCode = pkg.getVersionCode();
+							if(versionCode < packVerCode) {
 								hasUpper = true;									
-							} else if(versionCode > pkg.versionCode) {
+							} else if(versionCode > packVerCode) {
 								hasLower = true;
 							}
 						}
