@@ -534,6 +534,18 @@ public class MainUI extends JFrame
 
 						PackageInfo packageInfo = deviceMonitor.getPackageInfo(device);
 
+						if(!packageInfo.isEnabled()) {
+							ArrowTraversalPane.showOptionDialog(null,
+									device.getName() + "\n : " + Resource.STR_MSG_DISABLED_PACKAGE.getString(),
+									Resource.STR_LABEL_WARNING.getString(),
+									JOptionPane.OK_OPTION, 
+									JOptionPane.INFORMATION_MESSAGE,
+									null,
+									new String[] {Resource.STR_BTN_OK.getString()},
+									Resource.STR_BTN_OK.getString());
+							continue;
+						}
+
 						String selectedActivity = null;
 						ComponentInfo[] activities = null;
 						int activityOpt = Resource.PROP_LAUNCH_ACTIVITY_OPTION.getInt();

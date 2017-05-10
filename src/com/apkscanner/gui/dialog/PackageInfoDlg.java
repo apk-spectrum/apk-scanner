@@ -561,6 +561,18 @@ public class PackageInfoDlg extends JDialog implements ActionListener, Hyperlink
 			final boolean selectActivity = (arg0.getModifiers() & InputEvent.SHIFT_MASK) != 0;
 			final IDevice device = packageInfo.device;
 
+			if(!packageInfo.isEnabled()) {
+				ArrowTraversalPane.showOptionDialog(null,
+						device.getName() + "\n : " + Resource.STR_MSG_DISABLED_PACKAGE.getString(),
+						Resource.STR_LABEL_WARNING.getString(),
+						JOptionPane.OK_OPTION, 
+						JOptionPane.INFORMATION_MESSAGE,
+						null,
+						new String[] {Resource.STR_BTN_OK.getString()},
+						Resource.STR_BTN_OK.getString());
+				return;
+			}
+
 			Thread thread = new Thread(new Runnable() {
 				private String errMsg = null;
 				public void run()

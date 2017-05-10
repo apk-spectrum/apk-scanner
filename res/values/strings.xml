@@ -262,6 +262,7 @@ Please check the confirmation dialog on your device.</string>
 	<string name="msg_cannot_run_root">adbd cannot run as root in production builds</string>
 	<string name="msg_unsupported_preview">This type doesn't support a preview.</string>
 	<string name="msg_cannot_write_file">Can not write file.</string>
+	<string name="msg_disabled_package">Can not launch, This package was disabled.</string>
 
 	<string name="question_reboot_device">Restart device now?</string>
 	<string name="question_continue_install">Continue install?</string>

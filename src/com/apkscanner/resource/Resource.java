@@ -292,6 +292,7 @@ public enum Resource
 	STR_MSG_DEVICE_HAS_NOT_ROOT	(Type.TEXT, "@msg_cannot_run_root"),
 	STR_MSG_UNSUPPORTED_PREVIEW	(Type.TEXT, "@msg_unsupported_preview"),
 	STR_MSG_CANNOT_WRITE_FILE	(Type.TEXT, "@msg_cannot_write_file"),
+	STR_MSG_DISABLED_PACKAGE	(Type.TEXT, "@msg_disabled_package"),
 
 	STR_QUESTION_REBOOT_DEVICE	(Type.TEXT, "@question_reboot_device"),
 	STR_QUESTION_CONTINUE_INSTALL(Type.TEXT, "@question_continue_install"),
