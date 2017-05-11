@@ -26,7 +26,6 @@ import com.apkscanner.util.SystemUtil;
 public class Main implements Runnable
 {
 	private static final ApkScanner apkScanner = new AaptScanner(null);
-
 	private static final Options allOptions = new Options();
 	private static final Options normalOptions = new Options();
 	private static final Options targetApkOptions = new Options();
