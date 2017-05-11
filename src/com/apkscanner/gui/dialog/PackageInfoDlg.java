@@ -10,12 +10,8 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -41,6 +37,7 @@ import com.apkscanner.Launcher;
 import com.apkscanner.core.installer.ApkInstaller;
 import com.apkscanner.core.installer.ApkInstaller.ApkInstallerListener;
 import com.apkscanner.core.signer.Signature;
+import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ComponentInfo;
 import com.apkscanner.gui.messagebox.ArrowTraversalPane;
@@ -214,14 +211,8 @@ public class PackageInfoDlg extends JDialog implements ActionListener, Hyperlink
 		String sig = info.getSignature();
 		if(sig != null && !sig.isEmpty() 
 				&& !sig.startsWith("Permission denied")) {
-			Signature signature = new Signature(sig);
-			try {
-				CertificateFactory cf = CertificateFactory.getInstance("X509");
-				X509Certificate X509Certificatecertificate = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(signature.toByteArray()));
-				publicKey = X509Certificatecertificate.toString();
-			} catch (CertificateException e1) {
-				e1.printStackTrace();
-			}
+			SignatureReport sr = new SignatureReport(new Signature[] {new Signature(sig)});
+			publicKey = sr.toString();
 		} else {
 			publicKey = sig;
 		}
