@@ -1,12 +1,16 @@
 package com.apkscanner.core.scanner;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
+import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbWrapper;
-import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.ConsolCmd.ConsoleOutputObserver;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
@@ -45,7 +49,7 @@ abstract public class ApkScanner
 		CERT_COMPLETED,
 		ALL_COMPLETED
 	}
-	
+
 	public interface StatusListener
 	{
 		public void onStart(long estimatedTime);
@@ -55,12 +59,12 @@ abstract public class ApkScanner
 		public void onProgress(int step, String msg);
 		public void onStateChanged(Status status);
 	}
-	
+
 	public ApkScanner(StatusListener statusListener)
 	{
 		setStatusListener(statusListener);
 	}
-	
+
 	public void setStatusListener(StatusListener statusListener)
 	{
 		this.statusListener = statusListener;
@@ -70,7 +74,7 @@ abstract public class ApkScanner
 	{
 		openApk(apkFilePath, (String)Resource.PROP_FRAMEWORK_RES.getData());
 	}
-	
+
 	abstract public void openApk(final String apkFilePath, String frameworkRes);
 
 	abstract public void clear(boolean sync);
@@ -79,7 +83,7 @@ abstract public class ApkScanner
 	{
 		if(statusListener != null) statusListener.onProgress(1, "I: Open package\n");
 		if(statusListener != null) statusListener.onProgress(1, "I: apk path in device : " + devApkFilePath + "\n");
-		
+
 		String tempApkFilePath = "/" + devSerialNumber + devApkFilePath;
 		tempApkFilePath = tempApkFilePath.replaceAll("/", File.separator+File.separator).replaceAll("//", "/");
 		tempApkFilePath = FileUtil.makeTempPath(tempApkFilePath)+".apk";
@@ -133,7 +137,7 @@ abstract public class ApkScanner
 
 		openApk(tempApkFilePath, frameworkRes);
 	}
-	
+
 	public ApkInfo getApkInfo()
 	{
 		return apkInfo;
@@ -141,93 +145,55 @@ abstract public class ApkScanner
 
 	protected String[] solveCert()
 	{
-		String certPath = apkInfo.tempWorkPath + File.separator + "META-INF";
-
-		Double javaVersion = Double.parseDouble(System.getProperty("java.specification.version"));
-		String keytoolPackage;
-		if(javaVersion >= 1.8) {
-			keytoolPackage = "sun.security.tools.keytool.Main";
-		} else {
-			keytoolPackage = "sun.security.tools.KeyTool";
-		}
-
-		ArrayList<String> certList = new ArrayList<String>();
-		ArrayList<String> certFiles = new ArrayList<String>();
-
 		if(!(new File(apkInfo.filePath)).exists()) {
 			Log.e("No such apk file");
 			return null;
 		}
 
-		if(!ZipFileUtil.unZip(apkInfo.filePath, "META-INF/", certPath)) {
+		//String certPath = apkInfo.tempWorkPath + File.separator + "META-INF";
+		ArrayList<String> certList = new ArrayList<String>();
+		ArrayList<String> certFiles = new ArrayList<String>();
+
+		String[] certFilePaths = ZipFileUtil.findFiles(apkInfo.filePath, null, "^META-INF/.*");
+
+		if(certFilePaths == null) {
 			Log.e("No such folder : META-INFO/");
 			return null;
 		}
 
-		for (String s : (new File(certPath)).list()) {
-			if(!s.toUpperCase().endsWith(".RSA") && !s.toUpperCase().endsWith(".DSA") && !s.toUpperCase().endsWith(".EC") ) {
-				File f = new File(certPath + File.separator + s);
-				if(f.isFile()) {
-					certFiles.add(certPath + File.separator + s);
+		ZipFile zf = null;
+		InputStream is = null;
+		try {
+			zf = new ZipFile(apkInfo.filePath);
+			for (String s : certFilePaths) {
+				ZipEntry entry = zf.getEntry(s);
+				if(entry == null || entry.isDirectory()) {
+					Log.w("entry was no file " + s);
+					continue;
 				}
-				continue;
+				if(!s.toUpperCase().endsWith(".RSA") && !s.toUpperCase().endsWith(".DSA") && !s.toUpperCase().endsWith(".EC") ) {
+					certFiles.add(s);
+					continue;
+				}
+				is = zf.getInputStream(entry);
+				SignatureReport sr = new SignatureReport(is);
+				for(int i = 0; i < sr.getSize(); i ++) {
+					certList.add(sr.getReport(i));
+				}
 			}
-
-			File rsaFile = new File(certPath + File.separator + s);
-			if(!rsaFile.exists()) {
-				Log.e("No such file : " + rsaFile.getAbsolutePath());
-				continue;
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if(zf != null) {
+				try {
+					zf.close();
+				} catch (IOException e) {}
 			}
-
-			String[] cmd = {"java","-Dfile.encoding=utf8",keytoolPackage,"-printcert","-v","-file", rsaFile.getAbsolutePath()};
-			String[] result = ConsolCmd.exc(cmd, false, null);
-			if(result == null || result.length == 0) {
-				Log.e("Fail printcert : " + rsaFile.getAbsolutePath());
-				continue;
-			} else if(result[0].indexOf(keytoolPackage) > -1) {
-				Log.e("Failure: Unkown keytool package : " + keytoolPackage);
-				Log.e("       : " + rsaFile.getAbsolutePath());
-				continue;
+			if(is != null) {
+				try {
+					is.close();
+				} catch (IOException e) { }
 			}
-
-		    String certContent = "";
-
-		    boolean isSamsungSign = false;
-		    boolean isPlatformTestKey = false;
-
-		    for(int i=0; i < result.length; i++){
-	    		if(!certContent.isEmpty() && result[i].matches("^.*\\[[0-9]*\\]:$")) {
-	    			certList.add(certContent);
-			    	certContent = "";
-	    		}
-	    		if(result[i].matches("^.*:( [^ ,]+=(\".*\")?[^,]*,?)+$")) {
-	    			if(result[i].indexOf("CN=") > -1) {
-	    				String CN = result[i].replaceAll(".*CN=([^,]*).*", "$1");
-	    				if("Samsung Cert".equals(CN)) {
-	    					isSamsungSign = true;
-	    				} else if("Android".equals(CN)) {
-	    					isPlatformTestKey = true;
-	    				}
-	    			}
-	    		}
-	    		if((isSamsungSign || isPlatformTestKey)
-	    				&& result[i].matches("^[^\\s]+[^:]*: ([0-9a-z]+)+$")) {
-	    			String serialNumber = result[i].replaceAll("^[^\\s]+[^:]*: ([0-9a-z]+)+$", "$1");
-	    			if(isSamsungSign && !Resource.STR_SAMSUNG_KEY_SERIAL.getString().equals(serialNumber)) {
-		    			Log.w(Resource.STR_SAMSUNG_KEY_SERIAL.getString() + " " + serialNumber);
-	    				isSamsungSign = false;
-	    			} else if(isPlatformTestKey && !Resource.STR_SS_TEST_KEY_SERIAL.getString().equals(serialNumber)) {
-		    			Log.w(Resource.STR_SS_TEST_KEY_SERIAL.getString() + " " + serialNumber);
-	    				isPlatformTestKey = false;
-	    			}
-	    		}
-	    		certContent += (certContent.isEmpty() ? "" : "\n") + result[i];
-		    }
-
-		    if(isSamsungSign) apkInfo.featureFlags |= ApkInfo.APP_FEATURE_SAMSUNG_SIGN;
-		    if(isPlatformTestKey) apkInfo.featureFlags |= ApkInfo.APP_FEATURE_PLATFORM_SIGN;
-
-		    certList.add(certContent);
 		}
 
 		apkInfo.certFiles = null;
@@ -241,7 +207,7 @@ abstract public class ApkScanner
 
 		return certList.toArray(new String[0]);
 	}
-	
+
 	protected void stateChanged(Status status)
 	{
 		if(statusListener != null) {
@@ -269,9 +235,9 @@ abstract public class ApkScanner
 			if(completedCount == 7) {
 				statusListener.onStateChanged(Status.ALL_COMPLETED);
 				Log.i("I: completed... ");
-	        	statusListener.onSuccess();
-	        	statusListener.onCompleted();
-	        	completedCount = 0;
+				statusListener.onSuccess();
+				statusListener.onCompleted();
+				completedCount = 0;
 			}
 		}
 	}

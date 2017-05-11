@@ -6,10 +6,10 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -31,9 +31,10 @@ public class Signatures extends JPanel implements ComponentListener, TabDataObje
 	JList<String> jlist;
 	JTextArea textArea;
 
-	String mCertSummary;
-	String[] mCertList;
-	String[] mCertFiles;
+	private String mCertSummary;
+	private String[] mCertList;
+	private String[] mCertFiles;
+	private String apkFilePath;
 
 	public Signatures() {
 		//initialize();
@@ -72,30 +73,38 @@ public class Signatures extends JPanel implements ComponentListener, TabDataObje
 						textArea.setText(mCertList[jlist.getSelectedIndex()-1]);
 					} else {
 						String fileName = jlist.getSelectedValue();
-						File selFile = null;
+						String entryPath = null;
+
 						for(String path: mCertFiles) {
-							if(path.endsWith(File.separator + fileName)) {
+							if(path.endsWith("/" + fileName)) {
 								Log.i("Select cert file : " + path);
-								selFile = new File(path);
+								entryPath = path;
 								break;
 							}
 						}
-						if(selFile != null) {
-							FileReader fr = null;
-							BufferedReader inFile = null;
-							String line;
-							StringBuilder sb = new StringBuilder();
+						if(apkFilePath != null && entryPath != null) {
+							ZipFile zipFile = null;
+							InputStream is = null;
 							try {
-								fr = new FileReader(selFile);
-								inFile = new BufferedReader(fr);
-								while( (line = inFile.readLine()) != null ) {
-									sb.append(line + "\n");
+								zipFile = new ZipFile(apkFilePath);
+								ZipEntry entry = zipFile.getEntry(entryPath);
+								byte[] buffer = new byte[(int) entry.getSize()];
+								is = zipFile.getInputStream(entry);
+								is.read(buffer);
+								textArea.setText(new String(buffer));
+							} catch (IOException e) {
+								e.printStackTrace();
+							} finally {
+								if(is != null) {
+									try {
+										is.close();
+									} catch (IOException e) { }
 								}
-								inFile.close();
-								fr.close();
-								textArea.setText(sb.toString());
-							} catch (IOException e1) {
-								e1.printStackTrace();
+								if(zipFile != null) {
+									try {
+										zipFile.close();
+									} catch (IOException e) { }
+								}
 							}
 						} else {
 							textArea.setText("fail read file : " + fileName);
@@ -130,6 +139,7 @@ public class Signatures extends JPanel implements ComponentListener, TabDataObje
 		if(jlist == null)
 			initialize();
 
+		apkFilePath = apkInfo.filePath;
 		mCertList = apkInfo.certificates;
 		mCertFiles = apkInfo.certFiles;
 		mCertSummary = "";
@@ -183,7 +193,7 @@ public class Signatures extends JPanel implements ComponentListener, TabDataObje
 
 		if(mCertFiles != null) {
 			for(String path: mCertFiles){
-				labels[i++] = path.substring(path.lastIndexOf(File.separator)+1);
+				labels[i++] = path.substring(path.lastIndexOf("/")+1);
 			}
 		}
 

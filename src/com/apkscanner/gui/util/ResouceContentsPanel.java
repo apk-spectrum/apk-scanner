@@ -63,6 +63,7 @@ import org.fife.ui.rtextarea.SearchEngine;
 import org.fife.ui.rtextarea.SearchResult;
 
 import com.apkscanner.Launcher;
+import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.tabpanels.Resources.ResourceObject;
 import com.apkscanner.resource.Resource;
@@ -70,7 +71,6 @@ import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.tool.dex2jar.Dex2JarWrapper;
 import com.apkscanner.tool.jd_gui.JDGuiLauncher;
-import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
@@ -915,6 +915,8 @@ public class ResouceContentsPanel extends JPanel{
 	
     private void setTextContentPanel(ResourceObject obj) {
     	String content = null;
+		ZipFile zipFile = null;
+		InputStream is = null;
     	
 		switch(obj.attr) {
 		case ResourceObject.ATTR_AXML:
@@ -937,35 +939,49 @@ public class ResouceContentsPanel extends JPanel{
 			resTypeSep.setVisible(false);
 			resTypeCombobox.setVisible(false);
 			multiLinePrintButton.setVisible(false);
-			ZipFile zipFile = null;
-			InputStream is = null;
 			try {
 				zipFile = new ZipFile(apkinfo.filePath);
 				ZipEntry entry = zipFile.getEntry(obj.path);
 				byte[] buffer = new byte[(int) entry.getSize()];
 				is = zipFile.getInputStream(entry);
 				is.read(buffer);
-				is.close();
 				content = new String(buffer);
-				zipFile.close();
 			} catch (IOException e) {
 				e.printStackTrace();
+			} finally {
+				if(is != null) {
+					try {
+						is.close();
+					} catch (IOException e) { }
+				}
+				if(zipFile != null) {
+					try {
+						zipFile.close();
+					} catch (IOException e) { }
+				}
 			}
 			break;
 		case ResourceObject.ATTR_CERT:
-			Double javaVersion = Double.parseDouble(System.getProperty("java.specification.version"));
-			String keytoolPackage;
-			if(javaVersion >= 1.8) {
-				keytoolPackage = "sun.security.tools.keytool.Main";
-			} else {
-				keytoolPackage = "sun.security.tools.KeyTool";
+			try {
+				zipFile = new ZipFile(apkinfo.filePath);
+				ZipEntry entry = zipFile.getEntry(obj.path);
+				is = zipFile.getInputStream(entry);
+				SignatureReport sr = new SignatureReport(is);
+				content = sr.toString();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				if(is != null) {
+					try {
+						is.close();
+					} catch (IOException e) { }
+				}
+				if(zipFile != null) {
+					try {
+						zipFile.close();
+					} catch (IOException e) { }
+				}
 			}
-			String filePath = apkinfo.tempWorkPath + File.separator + obj.path;
-			String[] cmd = {"java","-Dfile.encoding=utf8",keytoolPackage,"-printcert","-v","-file", filePath};
-			String[] result = ConsolCmd.exc(cmd, false, null);
-			StringBuilder sb = new StringBuilder();
-			for(String s: result) sb.append(s+"\n");
-			content = sb.toString();
 			break;
 		case ResourceObject.ATTR_ETC:
 			if("resources.arsc".equals(obj.path)) {
