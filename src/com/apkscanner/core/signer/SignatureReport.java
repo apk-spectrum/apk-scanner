@@ -18,7 +18,6 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,6 +29,7 @@ import javax.xml.bind.DatatypeConverter;
 
 import com.apkscanner.util.Log;
 
+import sun.misc.BASE64Encoder;
 import sun.security.pkcs.PKCS7;
 import sun.security.provider.X509Factory;
 import sun.security.x509.CertificateExtensions;
@@ -44,7 +44,7 @@ public class SignatureReport {
 
 	private static java.util.ResourceBundle rb = java.util.ResourceBundle.getBundle(
 			Double.parseDouble(System.getProperty("java.specification.version")) >= 1.8 ?
-					"sun.security.tools.keytool.Resources" : "sun.security.tools.keytool.Resources"
+					"sun.security.tools.keytool.Resources" : "sun.security.util.Resources"
 			);
 
 	private boolean rfc = false;
@@ -211,7 +211,9 @@ public class SignatureReport {
 	{
 		if (rfc) {
 			out.println(X509Factory.BEGIN_CERT);
-			out.println(Base64.getMimeEncoder().encodeToString(cert.getEncoded()));
+			//out.println(Base64.getMimeEncoder().encodeToString(cert.getEncoded()));
+			BASE64Encoder encoder = new BASE64Encoder();
+			encoder.encodeBuffer(cert.getEncoded(), out);
 			out.println(X509Factory.END_CERT);
 		} else {
 			out.write(cert.getEncoded()); // binary
