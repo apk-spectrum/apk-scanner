@@ -20,6 +20,10 @@ public class CustomListRenderer extends DefaultListCellRenderer
 {
     private static final ImageIcon crossIcon = new ImageIcon(Resource.class.getResource("/icons/logo/base.png"));
     private static ImageIcon tipIcon = new ImageIcon(Resource.class.getResource("/icons/logo/nougat.png"));
+    private static ImageIcon tipIcon1 = new ImageIcon(Resource.class.getResource("/icons/logo/marshmallow.png"));
+    private static ImageIcon tipIcon2 = new ImageIcon(Resource.class.getResource("/icons/logo/jelly_bean.png"));
+    
+    
     private static int LIST_HEIGHT = 60;
     
     /**
@@ -34,14 +38,20 @@ public class CustomListRenderer extends DefaultListCellRenderer
         DefaultListModel model = new DefaultListModel ();
         model.addElement ( new CustomData ( new Color ( 209, 52, 23 ), 0, "SC-02J" ) );
         model.addElement ( new CustomData ( new Color ( 135, 163, 14 ), 1, "SC-04J" ) );
-        model.addElement ( new CustomData ( new Color ( 204, 204, 204 ), 1, "SC-05J" ) );
-        model.addElement ( new CustomData ( new Color ( 90, 90, 90 ), 0, "SCH-44566" ) );
+        model.addElement ( new CustomData ( new Color ( 204, 204, 204 ), 2, "SC-05J" ) );
+        model.addElement ( new CustomData ( new Color ( 90, 90, 90 ), 3, "SCH-44566" ) );
 
         Image tipIconimg = tipIcon.getImage();  //ImageIcon을 Image로 변환.
-
         Image result = tipIconimg.getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
-
         tipIcon = new ImageIcon(result); //Image로 ImageIcon 생성
+
+        tipIconimg = tipIcon1.getImage();  //ImageIcon을 Image로 변환.
+        result = tipIconimg.getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
+        tipIcon1 = new ImageIcon(result); //Image로 ImageIcon 생성
+
+        tipIconimg = tipIcon2.getImage();  //ImageIcon을 Image로 변환.
+        result = tipIconimg.getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
+        tipIcon2 = new ImageIcon(result); //Image로 ImageIcon 생성
         
         
         JList list = new JList ( model );
@@ -130,7 +140,7 @@ public class CustomListRenderer extends DefaultListCellRenderer
             super ();
             setOpaque ( false );
             setBorder ( BorderFactory.createEmptyBorder ( 0, 70, 0, 40 ) );
-            setFont();
+            setFont(new Font(getFont().getName(), Font.BOLD, 20));
         }
 
         private void setSelected ( boolean selected )
@@ -176,14 +186,24 @@ public class CustomListRenderer extends DefaultListCellRenderer
             switch(data.getNewMessages ()) {
         	case 0:
         		g2d.setPaint ( Color.LIGHT_GRAY );
+        		g2d.drawImage ( tipIcon.getImage (), 10 + 26 - tipIcon.getIconWidth () / 2, 10 + 26 - tipIcon.getIconHeight () / 2, null );
         		break;
         	case 1:
         		g2d.setPaint ( Color.GREEN );
-        		break;        	
+        		g2d.drawImage ( tipIcon2.getImage (), 10 + 26 - tipIcon2.getIconWidth () / 2, 10 + 26 - tipIcon2.getIconHeight () / 2, null );
+        		break;
+        	case 2:
+        		g2d.setPaint ( Color.LIGHT_GRAY );
+        		g2d.drawImage ( tipIcon1.getImage (), 10 + 26 - tipIcon1.getIconWidth () / 2, 10 + 26 - tipIcon1.getIconHeight () / 2, null );
+        		break;
+        	case 3:
+        		g2d.setPaint ( Color.GREEN );
+        		g2d.drawImage ( tipIcon2.getImage (), 10 + 26 - tipIcon2.getIconWidth () / 2, 10 + 26 - tipIcon2.getIconHeight () / 2, null );
+        		break;
         	}
         	
             
-            g2d.fill ( new Ellipse2D.Double ( getWidth () - 36 - 10, getHeight () / 2 - 18, 36, 36 ) );
+            g2d.fill ( new Ellipse2D.Double ( getWidth () - 18 - 10, getHeight () / 2 - 18, 18, 18 ) );
 //
 //                final String text = "" + data.getNewMessages ();
 //                final Font oldFont = g2d.getFont ();
