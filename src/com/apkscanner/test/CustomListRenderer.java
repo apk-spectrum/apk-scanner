@@ -20,7 +20,8 @@ public class CustomListRenderer extends DefaultListCellRenderer
 {
     private static final ImageIcon crossIcon = new ImageIcon(Resource.class.getResource("/icons/logo/base.png"));
     private static ImageIcon tipIcon = new ImageIcon(Resource.class.getResource("/icons/logo/nougat.png"));
-
+    private static int LIST_HEIGHT = 60;
+    
     /**
      * Sample frame with list.
      *
@@ -31,14 +32,14 @@ public class CustomListRenderer extends DefaultListCellRenderer
         JFrame frame = new JFrame ( "Custom list renderer" );
 
         DefaultListModel model = new DefaultListModel ();
-        model.addElement ( new CustomData ( new Color ( 209, 52, 23 ), 0, "Anna Williams" ) );
-        model.addElement ( new CustomData ( new Color ( 135, 163, 14 ), 1, "Lucy Frank" ) );
-        model.addElement ( new CustomData ( new Color ( 204, 204, 204 ), 2, "Joe Fritz" ) );
-        model.addElement ( new CustomData ( new Color ( 90, 90, 90 ), 0, "Mikle Garin" ) );
+        model.addElement ( new CustomData ( new Color ( 209, 52, 23 ), 0, "SC-02J" ) );
+        model.addElement ( new CustomData ( new Color ( 135, 163, 14 ), 1, "SC-04J" ) );
+        model.addElement ( new CustomData ( new Color ( 204, 204, 204 ), 1, "SC-05J" ) );
+        model.addElement ( new CustomData ( new Color ( 90, 90, 90 ), 0, "SCH-44566" ) );
 
         Image tipIconimg = tipIcon.getImage();  //ImageIcon을 Image로 변환.
 
-        Image result = tipIconimg.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
+        Image result = tipIconimg.getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
 
         tipIcon = new ImageIcon(result); //Image로 ImageIcon 생성
         
@@ -128,7 +129,8 @@ public class CustomListRenderer extends DefaultListCellRenderer
         {
             super ();
             setOpaque ( false );
-            setBorder ( BorderFactory.createEmptyBorder ( 0, 36 + 5, 0, 40 ) );
+            setBorder ( BorderFactory.createEmptyBorder ( 0, 70, 0, 40 ) );
+            setFont();
         }
 
         private void setSelected ( boolean selected )
@@ -151,41 +153,37 @@ public class CustomListRenderer extends DefaultListCellRenderer
 
             if ( selected )
             {
-                Area area = new Area ( new Ellipse2D.Double ( 0, 0, 36, 36 ) );
-                area.add ( new Area ( new RoundRectangle2D.Double ( 18, 3, getWidth () - 18, 29, 6, 6 ) ) );
+                Area area = new Area ( new Ellipse2D.Double ( 0, 0, 72, 72 ) );
+                area.add ( new Area ( new RoundRectangle2D.Double ( 36, 6, getWidth () - 36, 58, 12, 12 ) ) );
                 g2d.setPaint ( selectionColor );
                 g2d.fill ( area );
 
                 g2d.setPaint ( Color.WHITE );
-                g2d.fill ( new Ellipse2D.Double ( 2, 2, 32, 32 ) );
+                g2d.fill ( new Ellipse2D.Double ( 4, 4, 64, 64 ) );
             }
 
             g2d.setPaint ( data.getCircleColor () );
-            g2d.fill ( new Ellipse2D.Double ( 5, 5, 26, 26 ) );
+            g2d.fill ( new Ellipse2D.Double ( 10, 10, 52, 52 ) );
             //g2d.drawImage ( tipIcon.getImage (), 5 + 13 - tipIcon.getIconWidth () / 2, 5 + 13 - tipIcon.getIconHeight () / 2, null );
-            g2d.drawImage ( tipIcon.getImage (), 5 + 13 - tipIcon.getIconWidth () / 2, 5 + 13 - tipIcon.getIconHeight () / 2, null );
+            g2d.drawImage ( tipIcon.getImage (), 10 + 26 - tipIcon.getIconWidth () / 2, 10 + 26 - tipIcon.getIconHeight () / 2, null );
             
             if ( selected )
             {
 //                g2d.drawImage ( crossIcon.getImage (), getWidth () - 9 - 5 - crossIcon.getIconWidth () / 2,
 //                        getHeight () / 2 - crossIcon.getIconHeight () / 2, null );
             }
-            else if ( data.getNewMessages () >= 0 )
-            {
-            	switch(data.getNewMessages ()) {
-            	case 0:
-            		g2d.setPaint ( Color.RED );
-            		break;
-            	case 1:
-            		g2d.setPaint ( Color.YELLOW );
-            		break;
-            	case 2:
-            		g2d.setPaint ( Color.GREEN );
-            		break;
-            	}
-            	
-                
-                g2d.fill ( new Ellipse2D.Double ( getWidth () - 18 - 5, getHeight () / 2 - 9, 18, 18 ) );
+
+            switch(data.getNewMessages ()) {
+        	case 0:
+        		g2d.setPaint ( Color.LIGHT_GRAY );
+        		break;
+        	case 1:
+        		g2d.setPaint ( Color.GREEN );
+        		break;        	
+        	}
+        	
+            
+            g2d.fill ( new Ellipse2D.Double ( getWidth () - 36 - 10, getHeight () / 2 - 18, 36, 36 ) );
 //
 //                final String text = "" + data.getNewMessages ();
 //                final Font oldFont = g2d.getFont ();
@@ -195,7 +193,6 @@ public class CustomListRenderer extends DefaultListCellRenderer
 //                g2d.drawString ( text, getWidth () - 9 - 5 - fm.stringWidth ( text ) / 2,
 //                        getHeight () / 2 + ( fm.getAscent () - fm.getLeading () - fm.getDescent () ) / 2 );
 //                g2d.setFont ( oldFont );
-            }
 
             super.paintComponent ( g );
         }
@@ -204,7 +201,7 @@ public class CustomListRenderer extends DefaultListCellRenderer
         public Dimension getPreferredSize ()
         {
             final Dimension ps = super.getPreferredSize ();
-            ps.height = 36;
+            ps.height = 72;
             return ps;
         }
     }
