@@ -13,9 +13,11 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -23,10 +25,12 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.android.ddmlib.AdbCommandRejectedException;
 import com.android.ddmlib.AdbVersion;
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.android.ddmlib.IDevice;
+import com.android.ddmlib.TimeoutException;
 import com.apkscanner.Launcher;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.core.scanner.ApkScanner.Status;
@@ -54,7 +58,9 @@ import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.AdbServerMonitor.IAdbDemonChangeListener;
 import com.apkscanner.tool.adb.AdbVersionManager;
 import com.apkscanner.tool.adb.AdbWrapper;
+import com.apkscanner.tool.adb.IPackageStateListener;
 import com.apkscanner.tool.adb.PackageInfo;
+import com.apkscanner.tool.adb.PackageManager;
 import com.apkscanner.tool.dex2jar.Dex2JarWrapper;
 import com.apkscanner.tool.jd_gui.JDGuiLauncher;
 import com.apkscanner.util.FileUtil;
@@ -626,6 +632,72 @@ public class MainUI extends JFrame
 			thread.start();
 		}
 
+		private void evtUninstallApp() {
+			final IDevice[] devices = deviceMonitor.getInstalledDevice();
+			if(devices == null || devices.length == 0) {
+				Log.i("No such device of a package installed.");
+				ArrowTraversalPane.showOptionDialog(null,
+						Resource.STR_MSG_NO_SUCH_PACKAGE_DEVICE.getString(),
+						Resource.STR_LABEL_INFO.getString(),
+						JOptionPane.OK_OPTION, 
+						JOptionPane.INFORMATION_MESSAGE,
+						null,
+						new String[] {Resource.STR_BTN_OK.getString()},
+						Resource.STR_BTN_OK.getString());
+				return;
+			}
+
+			Thread thread = new Thread(new Runnable() {
+				public void run()
+				{
+					for(IDevice device: devices) {
+						Log.v("uninstall apk on " + device.getSerialNumber());
+
+						PackageInfo packageInfo = deviceMonitor.getPackageInfo(device);
+
+						String errMessage = null;
+						if(!packageInfo.isSystemApp()) {
+							errMessage = PackageManager.uninstallPackage(packageInfo);
+						} else {
+							errMessage = PackageManager.removePackage(packageInfo);
+							if(errMessage == null || errMessage.isEmpty()) {
+								try {
+									device.reboot(null);
+								} catch (TimeoutException | AdbCommandRejectedException | IOException e) {
+									e.printStackTrace();
+								}
+							}
+						}
+
+						if(errMessage != null && !errMessage.isEmpty()) {
+							final String errMsg = errMessage;
+							EventQueue.invokeLater(new Runnable() {
+								public void run() {
+									JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_UNINSTALLED.getString() + "\nConsol output:", errMsg,  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
+											null, new Dimension(300, 50));
+								}
+							});
+						} else {
+							EventQueue.invokeLater(new Runnable() {
+								public void run() {
+									ArrowTraversalPane.showOptionDialog(null,
+											Resource.STR_MSG_SUCCESS_REMOVED.getString(),
+											Resource.STR_LABEL_INFO.getString(),
+											JOptionPane.YES_OPTION, 
+											JOptionPane.INFORMATION_MESSAGE,
+											null,
+											new String[] {Resource.STR_BTN_OK.getString()},
+											Resource.STR_BTN_OK.getString());
+								}
+							});
+						}
+					}
+				}
+			});
+			thread.setPriority(Thread.NORM_PRIORITY);
+			thread.start();
+		}
+
 		private void evtShowInstalledPackageInfo()
 		{
 			final IDevice[] devices = deviceMonitor.getInstalledDevice();
@@ -721,8 +793,10 @@ public class MainUI extends JFrame
 				evtOpenSearchPopup();
 			} else if(ToolBar.ButtonSet.LAUNCH.matchActionEvent(e) || ToolBar.ButtonSet.SUB_LAUNCH.matchActionEvent(e)) {
 				evtLaunchApp((e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
+			} else if(ToolBar.MenuItemSet.UNINSTALL_APK.matchActionEvent(e)) {
+				evtUninstallApp();
 			} else {
-				Log.w("Unkown action : " + e);
+				Log.v("Unkown action : " + e);
 			}
 		}
 
@@ -821,7 +895,7 @@ public class MainUI extends JFrame
 		@Override public void windowDeactivated(WindowEvent e) { }
 	}
 
-	class DeviceMonitor implements IDeviceChangeListener, IAdbDemonChangeListener
+	class DeviceMonitor implements IDeviceChangeListener, IAdbDemonChangeListener, IPackageStateListener
 	{
 		private AdbServerMonitor demonMonitor = null;
 		private String packageName = null;
@@ -829,7 +903,11 @@ public class MainUI extends JFrame
 		private boolean hasSignature = false;
 		private boolean hasMainActivity = false; 
 
-		private HashMap<IDevice, PackageInfo> devices = new HashMap<IDevice, PackageInfo>(); 
+		private HashMap<IDevice, PackageInfo> devices = new HashMap<IDevice, PackageInfo>();
+
+		public DeviceMonitor() {
+			PackageManager.addPackageStateListener(this);
+		}
 
 		public void start() {
 			Thread thread = new Thread(new Runnable() {
@@ -883,6 +961,12 @@ public class MainUI extends JFrame
 
 		public IDevice[] getInstalledDevice() {
 			synchronized (devices) {
+				for(Entry<IDevice, PackageInfo> entry: devices.entrySet()) {
+					String apkPath = entry.getValue().getApkPath();
+					if(apkPath == null || apkPath.isEmpty()) {
+						devices.remove(entry.getKey());
+					}
+				}
 				return devices.keySet().toArray(new IDevice[devices.size()]);
 			}
 		}
@@ -965,9 +1049,9 @@ public class MainUI extends JFrame
 								pkg = devices.get(device);
 							} else {
 								if(device.isOnline()) {
-									pkg = new PackageInfo(device, packageName);
+									pkg = PackageManager.getPackageInfo(device, packageName);
 								}
-								if(pkg != null && pkg.getApkPath() != null) {
+								if(pkg != null) {
 									devices.put(device, pkg);
 								}
 								try {
@@ -1066,6 +1150,39 @@ public class MainUI extends JFrame
 		@Override
 		public void adbDemonDisconnected() {
 			Log.v("adbDemon Disconnected() ");
+		}
+
+		@Override
+		public void packageInstalled(PackageInfo packageInfo) {
+			if(packageName != null && packageInfo != null 
+					&& packageName.equals(packageInfo.packageName)) {
+				synchronized(devices) {
+					if(devices.containsKey(packageInfo.device)) {
+						devices.remove(packageInfo.device);
+					}
+					devices.put(packageInfo.device, packageInfo);
+				}
+				applyToobarPolicy();
+			}
+
+		}
+
+		@Override
+		public void packageUninstalled(PackageInfo packageInfo) {
+			if(packageName != null && packageInfo != null 
+					&& packageName.equals(packageInfo.packageName)) {
+				synchronized(devices) {
+					if(devices.containsKey(packageInfo.device)) {
+						devices.remove(packageInfo.device);
+					}
+				}
+				applyToobarPolicy();
+			}
+		}
+
+		@Override
+		public void enableStateChanged(PackageInfo packageInfo) {
+
 		}
 	}
 }

@@ -27,7 +27,7 @@ public class PackageInfo {
 	private String[] dumpsys;
 	private String signature;
 
-	public PackageInfo(IDevice device, String pkgName)
+	PackageInfo(IDevice device, String pkgName)
 	{
 		this.device = device;
 		this.packageName = pkgName;
@@ -381,6 +381,17 @@ public class PackageInfo {
 		}
 
 		return signature;
+	}
+
+	public void clear() {
+		apkPath = null;
+		codePath = null;
+		versionName = null;
+		versionCode = 0;
+		installer = null;
+
+		dumpsys = null;
+		signature = null;
 	}
 
 	@Override

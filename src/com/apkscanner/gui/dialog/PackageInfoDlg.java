@@ -2,6 +2,7 @@ package com.apkscanner.gui.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
@@ -30,7 +31,6 @@ import javax.swing.event.ChangeListener;
 
 import com.android.ddmlib.AdbCommandRejectedException;
 import com.android.ddmlib.IDevice;
-import com.android.ddmlib.InstallException;
 import com.android.ddmlib.ShellCommandUnresponsiveException;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.Launcher;
@@ -51,6 +51,7 @@ import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbDeviceHelper;
 import com.apkscanner.tool.adb.AdbDeviceHelper.SimpleOutputReceiver;
 import com.apkscanner.tool.adb.PackageInfo;
+import com.apkscanner.tool.adb.PackageManager;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.FileUtil.FSStyle;
 import com.apkscanner.util.Log;
@@ -64,6 +65,7 @@ public class PackageInfoDlg extends JDialog implements ActionListener, Hyperlink
 	private static final String ACT_CMD_LAUCH_PACKAGE = "ACT_CMD_LAUCH_PACKAGE";
 	private static final String ACT_CMD_UNINSTALL_PACKAGE = "ACT_CMD_UNINSTALL_PACKAGE";
 
+	private JToolBar toolBar;
 	private JTabbedPane tabbedPane;
 	private JHtmlEditorPane infoPanel;
 	private JHtmlEditorPane sysPackInfoPanel;
@@ -92,7 +94,7 @@ public class PackageInfoDlg extends JDialog implements ActionListener, Hyperlink
 		setSize(new Dimension(500, 400));
 		setLocationRelativeTo(window);
 
-		JToolBar toolBar = new JToolBar();
+		toolBar = new JToolBar();
 		toolBar.setFloatable(false);
 		toolBar.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
 		toolBar.setBorder(new MatteBorder(0,0,1,0,Color.LIGHT_GRAY));
@@ -648,11 +650,77 @@ public class PackageInfoDlg extends JDialog implements ActionListener, Hyperlink
 			thread.start();
 		} else if(ACT_CMD_UNINSTALL_PACKAGE.equals(actCmd)) {
 			final IDevice device = packageInfo.device;
-			try {
-				String errMessage = device.uninstallPackage(packageInfo.packageName);
-				Log.e(errMessage);
-			} catch (InstallException e) {
-				e.printStackTrace();
+
+			String errMessage = null;
+			if(!packageInfo.isSystemApp()) {
+				errMessage = PackageManager.uninstallPackage(packageInfo);
+			} else {
+				errMessage = PackageManager.removePackage(packageInfo);
+				if(errMessage == null || errMessage.isEmpty()) {
+					try {
+						device.reboot(null);
+					} catch (TimeoutException | AdbCommandRejectedException | IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+			if(errMessage != null && !errMessage.isEmpty()) {
+				final String errMsg = errMessage;
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_UNINSTALLED.getString() + "\nConsol output:", errMsg,  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
+								null, new Dimension(300, 50));
+					}
+				});
+			} else {
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						if(hasSysPack) {
+							int n = ArrowTraversalPane.showOptionDialog(null,
+									Resource.STR_QUESTION_PACK_INFO_REFRESH.getString(),
+									Resource.STR_LABEL_QUESTION.getString(),
+									JOptionPane.YES_NO_OPTION, 
+									JOptionPane.QUESTION_MESSAGE,
+									null,
+									new String[] {Resource.STR_BTN_CLOSE.getString(), Resource.STR_BTN_NO.getString(), Resource.STR_BTN_YES.getString()},
+									Resource.STR_BTN_YES.getString());
+							if(n == 0) {
+								dispose();
+							} else if(n == 2) {
+								setPackageInfo(packageInfo);
+							} else {
+								for(Component c: toolBar.getComponents()) {
+									if(c instanceof JButton) {
+										((JButton)c).setEnabled(false);
+									}
+								}
+								apkPath += " - [REMOVED]";
+								txtApkPath.setText(apkPath);
+							}
+						} else {
+							int n = ArrowTraversalPane.showOptionDialog(null,
+									Resource.STR_QUESTION_PACK_INFO_CLOSE.getString(),
+									Resource.STR_LABEL_QUESTION.getString(),
+									JOptionPane.YES_NO_OPTION, 
+									JOptionPane.QUESTION_MESSAGE,
+									null,
+									new String[] {Resource.STR_BTN_NO.getString(), Resource.STR_BTN_YES.getString()},
+									Resource.STR_BTN_YES.getString());
+							if(n == 1) {
+								dispose();
+							} else {
+								for(Component c: toolBar.getComponents()) {
+									if(c instanceof JButton) {
+										((JButton)c).setEnabled(false);
+									}
+								}
+								apkPath += " - [REMOVED]";
+								txtApkPath.setText(apkPath);
+							}
+						}
+					}
+				});
 			}
 		}
 	}

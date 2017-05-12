@@ -268,6 +268,10 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="question_push_or_install">교체 또는 설치?</string>
 	<string name="question_open_or_install">열기 또는 설치?</string>
 	<string name="question_save_overwrite">파일을 덮어 쓰시겠습니까?</string>
+	<string name="question_pack_info_close">패키지를 제거 하였습니다.
+창을 닫으시겠습니까?</string>
+	<string name="question_pack_info_refresh">패키지를 제거 하였습니다.
+패키지 정보를 갱신 하시겠습니까?</string>
 
 	<string name="tree_message_device">디바이스</string>
 	<string name="tree_message_version">앱 버전</string>

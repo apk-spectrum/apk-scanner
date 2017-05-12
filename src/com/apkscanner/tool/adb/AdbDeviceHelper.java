@@ -40,6 +40,16 @@ public class AdbDeviceHelper {
 		public void clear() {
 			output.clear();
 		}
+		
+		@Override
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			for(String line: output) {
+				sb.append(line);
+				sb.append("\n");
+			}
+			return sb.toString();
+		}
 	}
 
 
@@ -364,7 +374,7 @@ public class AdbDeviceHelper {
 	}
 
 	/**
-	 * Reboot the device.
+	 * Root the device.
 	 *
 	 * @param into what to reboot into (recovery, bootloader). Or null to just reboot.
 	 * @throws TimeoutException in case of timeout on the connection.
@@ -388,7 +398,32 @@ public class AdbDeviceHelper {
 			}
 		}
 	}
-	
+
+
+	/**
+	 * Remount the device.
+	 *
+	 * @throws TimeoutException in case of timeout on the connection.
+	 * @throws AdbCommandRejectedException if adb rejects the command
+	 * @throws IOException in case of I/O error on the connection.
+	 */
+	public static void remount(InetSocketAddress adbSockAddr,
+			IDevice device) throws TimeoutException, CommandRejectedException, IOException {
+		byte[] request = formAdbRequest("remount:"); //$NON-NLS-1$
+		SocketChannel adbChan = null;
+		try {
+			adbChan = SocketChannel.open(adbSockAddr);
+			adbChan.configureBlocking(false);
+			// if the device is not -1, then we first tell adb we're looking to talk
+			// to a specific device
+			setDevice(adbChan, device);
+			write(adbChan, request);
+		} finally {
+			if (adbChan != null) {
+				adbChan.close();
+			}
+		}
+	}
 	public static boolean isRoot(IDevice device) {
 		boolean isRoot = false;
 		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
@@ -405,6 +440,24 @@ public class AdbDeviceHelper {
 			}
 		}
 		return isRoot;
+	}
+
+	public static boolean hasSu(IDevice device) {
+		boolean hasSu = false;
+		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
+		try {
+			device.executeShellCommand("which su", outputReceiver);
+		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
+				| IOException e) {
+			e.printStackTrace();
+		}
+		String[] result = outputReceiver.getOutput();
+		for(String output: result) {
+			if(output.endsWith("/su")) {
+				hasSu = true;
+			}
+		}
+		return hasSu;
 	}
 
 	public static boolean isShowingLockscreen(IDevice device)
