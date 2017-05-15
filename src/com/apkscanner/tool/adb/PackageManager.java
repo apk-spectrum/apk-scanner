@@ -3,6 +3,8 @@ package com.apkscanner.tool.adb;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
@@ -19,6 +21,8 @@ public class PackageManager {
 			new ArrayList<IPackageStateListener>();
 
 	private static final Object sLock = sPackageListeners;
+
+	private static HashMap<IDevice, HashMap<String, PackageInfo>> packagesMap = new HashMap<IDevice, HashMap<String, PackageInfo>>();
 
 	public static void addPackageStateListener(IPackageStateListener listener) {
 		synchronized (sLock) {
@@ -39,6 +43,12 @@ public class PackageManager {
 		synchronized (sLock) {
 			listenersCopy = sPackageListeners.toArray(
 					new IPackageStateListener[sPackageListeners.size()]);
+			HashMap<String, PackageInfo> devicePackagList = packagesMap.get(packageInfo.device);
+			if(devicePackagList == null) {
+				devicePackagList = new HashMap<String, PackageInfo>();
+				packagesMap.put(packageInfo.device, devicePackagList);
+			}
+			devicePackagList.put(packageInfo.packageName, packageInfo);
 		}
 
 		for (IPackageStateListener listener : listenersCopy) {
@@ -55,6 +65,10 @@ public class PackageManager {
 		synchronized (sLock) {
 			listenersCopy = sPackageListeners.toArray(
 					new IPackageStateListener[sPackageListeners.size()]);
+			HashMap<String, PackageInfo> devicePackagList = packagesMap.get(packageInfo.device);
+			if(devicePackagList != null && devicePackagList.containsKey(packageInfo.packageName)) {
+				devicePackagList.remove(packageInfo.packageName);
+			}
 		}
 
 		for (IPackageStateListener listener : listenersCopy) {
@@ -67,6 +81,10 @@ public class PackageManager {
 	}
 
 	public static PackageInfo getPackageInfo(IDevice device, String packageName) {
+		return getPackageInfo(device, packageName, true);
+	}
+
+	public static PackageInfo getPackageInfo(IDevice device, String packageName, boolean fromCash) {
 		if(device == null || !device.isOnline()) {
 			Log.e("device is null or no online");
 			return null;
@@ -76,8 +94,47 @@ public class PackageManager {
 			return null;
 		}
 
-		PackageInfo info = new PackageInfo(device, packageName);
-		return info.getApkPath() != null ? info : null;
+		PackageInfo info = null;
+		synchronized (sLock) {
+			HashMap<String, PackageInfo> devicePackagList = packagesMap.get(device);
+			if(devicePackagList == null) {
+				devicePackagList = new HashMap<String, PackageInfo>();
+				packagesMap.put(device, devicePackagList);
+			}
+			if(fromCash) {
+				info = devicePackagList.get(packageName);
+			}
+			if(info == null) {
+				info = new PackageInfo(device, packageName);
+				if(info.getApkPath() == null) {
+					info = null;
+				} else {
+					devicePackagList.put(packageName, info);
+				}
+			}
+		}
+		return info;
+	}
+
+	public static void removeCash(IDevice device) {
+		synchronized (sLock) {
+			if(packagesMap.containsKey(device)) {
+				packagesMap.remove(device);
+			}
+		}
+	}
+
+	public static IDevice[] getInstalledDevices(String packageName) {
+		ArrayList<IDevice> list = new ArrayList<IDevice>();
+		synchronized (sLock) {
+			for(Entry<IDevice, HashMap<String, PackageInfo>> entry: packagesMap.entrySet()) {
+				if(entry.getKey().isOnline() && entry.getValue().containsKey(packageName)) {
+					list.add(entry.getKey());
+				}
+			}
+		}
+
+		return list.toArray(new IDevice[list.size()]);
 	}
 
 	public static String installPackage(IDevice device, String localApkPath, boolean reinstall, String... extraArgs) {
