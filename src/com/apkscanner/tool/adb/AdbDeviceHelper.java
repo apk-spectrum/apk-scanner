@@ -7,52 +7,16 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import com.android.ddmlib.AdbCommandRejectedException;
 import com.android.ddmlib.DdmPreferences;
 import com.android.ddmlib.IDevice;
 import com.android.ddmlib.IShellOutputReceiver;
-import com.android.ddmlib.MultiLineReceiver;
 import com.android.ddmlib.ShellCommandUnresponsiveException;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.util.Log;
 
 public class AdbDeviceHelper {
-
-	public static class SimpleOutputReceiver extends MultiLineReceiver {
-		private ArrayList<String> output = new ArrayList<String>();
-
-		@Override
-		public void processNewLines(String[] lines) {
-			output.addAll(Arrays.asList(lines));
-		}
-
-		@Override
-		public boolean isCancelled() {
-			return false;
-		}
-
-		public String[] getOutput() {
-			return output.toArray(new String[output.size()]);
-		}
-
-		public void clear() {
-			output.clear();
-		}
-		
-		@Override
-		public String toString() {
-			StringBuilder sb = new StringBuilder();
-			for(String line: output) {
-				sb.append(line);
-				sb.append("\n");
-			}
-			return sb.toString();
-		}
-	}
-
-
 
 	public static class CommandRejectedException extends Exception {
 		private static final long serialVersionUID = 1L;

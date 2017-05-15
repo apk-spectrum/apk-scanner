@@ -56,7 +56,6 @@ import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.tool.adb.AdbDeviceHelper;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.AdbServerMonitor.IAdbDemonChangeListener;
-import com.apkscanner.tool.adb.AdbVersionManager;
 import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.tool.adb.IPackageStateListener;
 import com.apkscanner.tool.adb.PackageInfo;
@@ -73,7 +72,7 @@ public class MainUI extends JFrame
 	private static final long serialVersionUID = -623259597186280485L;
 
 	private ApkScanner apkScanner;
-	private DeviceMonitor deviceMonitor;
+	private ToolbarManagement toolbarManager = new ToolbarManagement();
 
 	private TabbedPanel tabbedPanel;
 	private ToolBar toolBar;
@@ -84,7 +83,6 @@ public class MainUI extends JFrame
 		if(apkScanner != null) {
 			apkScanner.setStatusListener(new ApkScannerListener());
 		}
-		deviceMonitor = new DeviceMonitor();
 	}
 
 	public void initialize()
@@ -165,9 +163,7 @@ public class MainUI extends JFrame
 		ky.addKeyEventDispatcher(eventHandler);
 
 		Log.i("UI Init end");
-		if((boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData()) {
-			deviceMonitor.start();
-		}
+		toolbarManager.setEnabled((boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData());
 	}
 
 	private static void setUIFont(javax.swing.plaf.FontUIResource f) {
@@ -188,7 +184,7 @@ public class MainUI extends JFrame
 		@Override
 		public void onStart(final long estimatedTime) {
 			Log.i("onStart()");
-			deviceMonitor.setApkInfo(null);
+			toolbarManager.setApkInfo(null);
 
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
@@ -205,7 +201,7 @@ public class MainUI extends JFrame
 		@Override
 		public void onError(int error) {
 			Log.e("ApkCore.onError() " + error);
-			deviceMonitor.setApkInfo(null);
+			toolbarManager.setApkInfo(null);
 
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
@@ -258,7 +254,7 @@ public class MainUI extends JFrame
 				Log.v("onStateChanged() This task is not EDT. Invoke to EDT for " + status);
 				switch(status) {
 				case ACTIVITY_COMPLETED: case CERT_COMPLETED:
-					deviceMonitor.setApkInfo(apkScanner.getApkInfo());
+					toolbarManager.setApkInfo(apkScanner.getApkInfo());
 				default: break;
 				}
 				try {
@@ -513,11 +509,13 @@ public class MainUI extends JFrame
 					&& !Resource.getLanguage().equals(lang)) {
 				setLanguage(lang);
 			}
+
+			toolbarManager.setEnabled((boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData());
 		}
 
 		private void evtLaunchApp(final boolean selectActivity)
 		{
-			final IDevice[] devices = deviceMonitor.getInstalledDevice();
+			final IDevice[] devices = toolbarManager.getInstalledDevice();
 			if(devices == null || devices.length == 0) {
 				Log.i("No such device of a package installed.");
 				ArrowTraversalPane.showOptionDialog(null,
@@ -538,7 +536,7 @@ public class MainUI extends JFrame
 					for(IDevice device: devices) {
 						Log.v("launch activity on " + device.getSerialNumber());
 
-						PackageInfo packageInfo = deviceMonitor.getPackageInfo(device);
+						PackageInfo packageInfo = toolbarManager.getPackageInfo(device);
 
 						if(!packageInfo.isEnabled()) {
 							ArrowTraversalPane.showOptionDialog(null,
@@ -633,7 +631,7 @@ public class MainUI extends JFrame
 		}
 
 		private void evtUninstallApp() {
-			final IDevice[] devices = deviceMonitor.getInstalledDevice();
+			final IDevice[] devices = toolbarManager.getInstalledDevice();
 			if(devices == null || devices.length == 0) {
 				Log.i("No such device of a package installed.");
 				ArrowTraversalPane.showOptionDialog(null,
@@ -653,7 +651,7 @@ public class MainUI extends JFrame
 					for(IDevice device: devices) {
 						Log.v("uninstall apk on " + device.getSerialNumber());
 
-						PackageInfo packageInfo = deviceMonitor.getPackageInfo(device);
+						PackageInfo packageInfo = toolbarManager.getPackageInfo(device);
 
 						String errMessage = null;
 						if(!packageInfo.isSystemApp()) {
@@ -700,7 +698,7 @@ public class MainUI extends JFrame
 
 		private void evtShowInstalledPackageInfo()
 		{
-			final IDevice[] devices = deviceMonitor.getInstalledDevice();
+			final IDevice[] devices = toolbarManager.getInstalledDevice();
 			if(devices == null || devices.length == 0) {
 				Log.i("No such device of a package installed.");
 				ArrowTraversalPane.showOptionDialog(null,
@@ -718,7 +716,7 @@ public class MainUI extends JFrame
 				public void run()
 				{
 					for(IDevice device: devices) {
-						final PackageInfo info = deviceMonitor.getPackageInfo(device);
+						final PackageInfo info = toolbarManager.getPackageInfo(device);
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
 								PackageInfoDlg packageInfoDlg = new PackageInfoDlg(MainUI.this);
@@ -895,68 +893,51 @@ public class MainUI extends JFrame
 		@Override public void windowDeactivated(WindowEvent e) { }
 	}
 
-	class DeviceMonitor implements IDeviceChangeListener, IAdbDemonChangeListener, IPackageStateListener
+	class ToolbarManagement implements IDeviceChangeListener, IAdbDemonChangeListener, IPackageStateListener
 	{
-		private AdbServerMonitor demonMonitor = null;
-		private String packageName = null;
-		private int versionCode = 0;
-		private boolean hasSignature = false;
-		private boolean hasMainActivity = false; 
+		private boolean enabled;
+
+		private String packageName;
+		private int versionCode;
+		private boolean hasSignature;
+		private boolean hasMainActivity; 
 
 		private HashMap<IDevice, PackageInfo> devices = new HashMap<IDevice, PackageInfo>();
 
-		public DeviceMonitor() {
+		public void registerEventListeners() {
+			AdbServerMonitor.addAdbDemonChangeListener(this);
+			AndroidDebugBridge.addDeviceChangeListener(this);
 			PackageManager.addPackageStateListener(this);
 		}
 
-		public void start() {
-			Thread thread = new Thread(new Runnable() {
-				public void run()
-				{
-					AdbVersionManager.loadCache();
-
-					synchronized(DeviceMonitor.this) {
-						Log.v("DeviceMonitor.start() s");
-						if(demonMonitor != null) {
-							Log.v("aleady started");
-							return;
-						}
-
-						String adbPath = ((String)Resource.PROP_ADB_PATH.getData()).trim();
-						if(adbPath == null || adbPath.isEmpty()
-								|| !AdbVersionManager.checkAdbVersion(adbPath)) {
-							adbPath = AdbVersionManager.getAdbLastestVersionFromCache();
-							if(adbPath == null){
-								AdbVersionManager.loadDefaultAdbs(); // very higher cost
-								adbPath = AdbVersionManager.getAdbLastestVersionFromCache();
-							}
-						}
-
-						demonMonitor = AdbServerMonitor.startServerAndCreateBridge(
-								adbPath,
-								(boolean)Resource.PROP_ADB_POLICY_SHARED.getData(),
-								(boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData());
-					}
-
-					AdbServerMonitor.addAdbDemonChangeListener(DeviceMonitor.this);
-					AndroidDebugBridge.addDeviceChangeListener(DeviceMonitor.this);
-					Log.v("DeviceMonitor.start() e");		
-				}
-			});
-			thread.setPriority(Thread.NORM_PRIORITY);
-			thread.start();
-		}
-
-		public void stop() {
-			synchronized(this) {
-				if(demonMonitor != null) {
-					demonMonitor.stop();
-					demonMonitor = null;
-				}
-			}
-
+		public void unregisterEventListeners() {
 			AdbServerMonitor.removeAdbDemonChangeListener(this);
 			AndroidDebugBridge.removeDeviceChangeListener(this);
+			PackageManager.removePackageStateListener(this);
+		}
+
+		public boolean isEnabled() {
+			return enabled;
+		}
+
+		public void setEnabled(boolean enable) {
+			synchronized(this) {
+				if(enabled != enable) {
+					enabled = enable;
+					if(enable) {
+						AdbServerMonitor.startServerAndCreateBridgeAsync();
+						registerEventListeners();
+					} else {
+						unregisterEventListeners();
+						devices.clear();
+						EventQueue.invokeLater(new Runnable() {
+							public void run() {
+								toolBar.clearFlag();
+							}
+						});
+					}
+				}
+			}
 		}
 
 		public IDevice[] getInstalledDevice() {
@@ -979,11 +960,9 @@ public class MainUI extends JFrame
 
 		public void setApkInfo(ApkInfo info) {
 			synchronized(this) {
-				if(demonMonitor == null || !(boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData()) {
+				if(!enabled) {
 					return;
 				}
-			}
-			synchronized(this) {
 				if(info != null) {
 					packageName = info.manifest.packageName;
 					versionCode = info.manifest.versionCode;

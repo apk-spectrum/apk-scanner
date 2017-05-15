@@ -49,7 +49,7 @@ import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbDeviceHelper;
-import com.apkscanner.tool.adb.AdbDeviceHelper.SimpleOutputReceiver;
+import com.apkscanner.tool.adb.SimpleOutputReceiver;
 import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
 import com.apkscanner.util.FileUtil;

@@ -10,7 +10,7 @@ import com.android.ddmlib.ShellCommandUnresponsiveException;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ComponentInfo;
-import com.apkscanner.tool.adb.AdbDeviceHelper.SimpleOutputReceiver;
+import com.apkscanner.tool.adb.SimpleOutputReceiver;
 import com.apkscanner.util.XmlPath;
 
 public class PackageInfo {
