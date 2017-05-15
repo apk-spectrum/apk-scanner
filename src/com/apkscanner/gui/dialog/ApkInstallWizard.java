@@ -97,7 +97,6 @@ public class ApkInstallWizard
 	
 	private int status;
 	private int flag;
-	private ArrayList<InstalledReport> installReports;
 
 	static private DeviceStatus[] targetDevices;
 	
@@ -295,7 +294,7 @@ public class ApkInstallWizard
 		}
 
 		setVisible(true);
-		changeState(STATUS_DEVICE_SCANNING);
+		changeState(STATUS_CHECK_PACKAGES);
 	}
 	
 	private void next() {
@@ -336,9 +335,9 @@ public class ApkInstallWizard
 				}
 				break;
 			case STATUS_PACKAGE_SCANNING:
-				
+				changeState(STATUS_CHECK_PACKAGES);
 				break;
-			case STATUS_CHECK_PACKAGES:				
+			case STATUS_CHECK_PACKAGES:
 				changeState(STATUS_SET_INSTALL_OPTION);
 				break;
 			case STATUS_SET_INSTALL_OPTION:
@@ -402,29 +401,6 @@ public class ApkInstallWizard
 		Log.v(msg);	
 		// append to log viewer
 		contentPanel.appendLog(msg);
-	}
-	
-	private class InstalledReport {
-		public DeviceStatus dev;
-		public boolean successed;
-		public String errMessage;
-		
-		public InstalledReport(DeviceStatus dev, boolean successed, String errMessage) {
-			this.dev = dev;
-			this.successed = successed;
-			this.errMessage = errMessage;
-		}
-		
-		public String toString() {
-			StringBuilder sb = new StringBuilder();
-			if(successed) {
-				sb.append("SUCCESS: " + dev.device + "(" + dev.name + ")\n");
-			} else {
-				sb.append("FAILURE: " + dev.device + "(" + dev.name + ")\n");
-				sb.append("\tERROR : " + errMessage + "\n");
-			}
-			return sb.toString();
-		}
 	}
 	
 	public class UIEventHandler implements ActionListener, KeyEventDispatcher, WindowListener {

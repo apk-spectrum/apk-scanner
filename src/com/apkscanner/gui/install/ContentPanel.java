@@ -1,57 +1,21 @@
 package com.apkscanner.gui.install;
 
-import java.awt.BorderLayout;
+
 import java.awt.CardLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JToggleButton;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
-
-import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.data.apkinfo.ManifestInfo;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.install.DeviceTablePanel.DeviceDO;
-import com.apkscanner.gui.util.AbstractTabRenderer;
 import com.apkscanner.gui.util.ImagePanel;
-import com.apkscanner.gui.util.JXTabbedPane;
-import com.apkscanner.gui.util.SimpleCheckTableModel;
-import com.apkscanner.gui.util.SimpleCheckTableModel.TableRowObject;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.tool.adb.AdbDeviceManager;
-import com.apkscanner.tool.adb.AdbWrapper;
-import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
+
 
 public class ContentPanel extends JPanel
 {
