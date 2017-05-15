@@ -33,7 +33,7 @@ public class InstallProgressPanel extends JPanel
 	
 	JPanel ProgressStepPanel;
 	JPanel TextStepPanel;
-	private final int STEPMAX = 5;
+	private final int STEPMAX = 4;
 	
 	private final int COLOR_STEP_NOTFINISH = 0; 
 	private final int COLOR_STEP_PROCESSING = 1; 		
@@ -245,7 +245,7 @@ public class InstallProgressPanel extends JPanel
 
 	public InstallProgressPanel() {
 		super(new BorderLayout());
-		setPreferredSize(new Dimension(700, 100));
+		setPreferredSize(new Dimension(300, 70));
 		ProgressStepPanel = new JPanel();
 		ProgressStepPanel.setLayout(new GridBagLayout());
 		ProgressStepPanel.setBackground(Color.WHITE);
@@ -261,7 +261,7 @@ public class InstallProgressPanel extends JPanel
 		
         for(int i=0; i< STEPMAX; i++) {
         	animatlabel[i] = new AnimationLabel(outtexts[i], SwingConstants.CENTER);
-        	animatlabel[i].setFont(new Font(animatlabel[i].getFont().getName(), Font.BOLD, 14));
+        	animatlabel[i].setFont(new Font(animatlabel[i].getFont().getName(), Font.BOLD, 10));
         	animatlabel[i].setForeground(Colorset[COLOR_STEP_NOTFINISH]);
         	//ellipselabel[i].setOpaque(true);
         	//ellipselabel[i].setBackground(new Color(i*50,100,100));

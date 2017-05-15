@@ -18,46 +18,27 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.JComboBox;
+
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import com.apkscanner.Launcher;
-import com.apkscanner.core.installer.ApkInstaller;
-import com.apkscanner.core.installer.ApkInstaller.ApkInstallerListener;
-import com.apkscanner.core.scanner.AaptScanner;
-
-import com.apkscanner.data.apkinfo.ActivityAliasInfo;
-import com.apkscanner.data.apkinfo.ActivityInfo;
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.data.apkinfo.ManifestInfo;
 import com.apkscanner.gui.install.ContentPanel;
 import com.apkscanner.gui.install.ControlPanel;
-import com.apkscanner.gui.install.FindPackagePanel;
 import com.apkscanner.gui.install.InstallProgressPanel;
-import com.apkscanner.gui.messagebox.ArrowTraversalPane;
-import com.apkscanner.gui.util.ApkFileChooser;
-
 import com.apkscanner.resource.Resource;
 
 import com.apkscanner.tool.adb.AdbDeviceManager;
 import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
-import com.apkscanner.tool.adb.AdbPackageManager;
 import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
-import com.apkscanner.util.ZipFileUtil;
 
 public class ApkInstallWizard
 {
@@ -94,7 +75,7 @@ public class ApkInstallWizard
 	private ContentPanel contentPanel;
 	private ControlPanel controlPanel;
 	private UIEventHandler uiEventHandler = new UIEventHandler();
-	
+	public static  String pakcageFilePath;
 	private int status;
 	private int flag;
 
@@ -192,6 +173,13 @@ public class ApkInstallWizard
 		wizard = new ApkInstallWizardFrame();
 	}
 
+	public ApkInstallWizard(String FilePath) {
+		pakcageFilePath = FilePath;
+		wizard = new ApkInstallWizardFrame();
+		
+	}
+
+	
 	public ApkInstallWizard(JFrame owner) {
 		if(owner != null)
 			wizard = new ApkInstallWizardDialog(owner);
@@ -235,7 +223,7 @@ public class ApkInstallWizard
 		//Log.i("initialize() register event handler");
 		//window.addWindowListener(new UIEventHandler());
 		
-		window.setMinimumSize(new Dimension(700, 550));
+		//window.setMinimumSize(new Dimension(700, 550));
 		
 		// Shortcut key event processing
 		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
@@ -395,6 +383,9 @@ public class ApkInstallWizard
 		    		Resource.STR_BTN_CLOSE.getString());
 			return;
 		}
+		pakcageFilePath = apkFilePath;
+		
+		Log.d(ApkInstallWizard.pakcageFilePath);
 	}
 	
 	private void printLog(String msg) {
@@ -426,17 +417,7 @@ public class ApkInstallWizard
 
 			} else if("SELECT_ALL".equals(arg0.getActionCommand())) {
 				
-			} else if(FindPackagePanel.CTR_ACT_CMD_FINDPACKAGE_LAUNCH.equals(arg0.getActionCommand())) {
-				
-			} else if(FindPackagePanel.CTR_ACT_CMD_FINDPACKAGE_OPEN.equals(arg0.getActionCommand())) {
-				
-			} else if(FindPackagePanel.CTR_ACT_CMD_FINDPACKAGE_REMOVE.equals(arg0.getActionCommand())) {
-				
-			} else if(FindPackagePanel.CTR_ACT_CMD_FINDPACKAGE_SAVE.equals(arg0.getActionCommand())) {
-				
-			} else if(FindPackagePanel.CTR_ACT_CMD_FINDPACKAGE_PACKAGEINFO.equals(arg0.getActionCommand())) {
-				
-			} else if("CHANG_SIGN".equals(arg0.getActionCommand())) {
+			}else if("CHANG_SIGN".equals(arg0.getActionCommand())) {
 				
 			}
 		}
@@ -489,7 +470,7 @@ public class ApkInstallWizard
     public static void main(String args[]) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
-				ApkInstallWizard wizard = new ApkInstallWizard();
+				ApkInstallWizard wizard = new ApkInstallWizard("/home/leejinhyeong/Desktop/DCMContacts.apk");
 				if(SystemUtil.isWindows()) {
 					wizard.setApk("C:\\Melon.apk");
 				} else {  //for linux

@@ -1,45 +1,42 @@
-package com.apkscanner.test;
+package com.apkscanner.gui.install;
 
-import javax.swing.*;
-
-import com.apkscanner.resource.Resource;
-
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
 
-/**
- * @author Mikle Garin
- * @see http://stackoverflow.com/a/18589264/909085
- */
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
 
-public class CustomListRenderer extends DefaultListCellRenderer
-{
-    private static final ImageIcon crossIcon = new ImageIcon(Resource.class.getResource("/icons/logo/base.png"));
+import com.apkscanner.resource.Resource;
+
+public class DeviceCustomList extends JPanel{
+
     private static ImageIcon tipIcon = new ImageIcon(Resource.class.getResource("/icons/logo/nougat.png"));
     private static ImageIcon tipIcon1 = new ImageIcon(Resource.class.getResource("/icons/logo/marshmallow.png"));
     private static ImageIcon tipIcon2 = new ImageIcon(Resource.class.getResource("/icons/logo/jelly_bean.png"));
-    
-    
-    private static int LIST_HEIGHT = 60;
-    
-    /**
-     * Sample frame with list.
-     *
-     * @param args arguments
-     */
-    public static void main ( String[] args )
-    {
-        JFrame frame = new JFrame ( "Custom list renderer" );
-
+	
+    public DeviceCustomList() {
+    	setLayout(new BorderLayout());
+    	
         DefaultListModel model = new DefaultListModel ();
-        model.addElement ( new CustomData ( new Color ( 209, 52, 23 ), 0, "SC-02J" ) );
-        model.addElement ( new CustomData ( new Color ( 135, 163, 14 ), 1, "SC-04J" ) );
-        model.addElement ( new CustomData ( new Color ( 204, 204, 204 ), 2, "SC-05J" ) );
-        model.addElement ( new CustomData ( new Color ( 90, 90, 90 ), 3, "SCH-44566" ) );
+        model.addElement ( new DeviceListData ( new Color ( 209, 52, 23 ), 0, "SC-02J" ) );
+        model.addElement ( new DeviceListData ( new Color ( 135, 163, 14 ), 1, "SC-04J" ) );
+        model.addElement ( new DeviceListData ( new Color ( 204, 204, 204 ), 2, "SC-05J" ) );
+        model.addElement ( new DeviceListData ( new Color ( 90, 90, 90 ), 3, "SCH-44566" ) );
 
         Image tipIconimg = tipIcon.getImage();  //ImageIcon을 Image로 변환.
         Image result = tipIconimg.getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
@@ -51,44 +48,67 @@ public class CustomListRenderer extends DefaultListCellRenderer
 
         tipIconimg = tipIcon2.getImage();  //ImageIcon을 Image로 변환.
         result = tipIconimg.getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
-        tipIcon2 = new ImageIcon(result); //Image로 ImageIcon 생성
-        
+        tipIcon2 = new ImageIcon(result); //Image로 ImageIcon 생성        
         
         JList list = new JList ( model );
-        list.setCellRenderer ( new CustomListRenderer ( list ) );
+        list.setCellRenderer ( new Listrenderer ( ) );
         list.setBorder ( BorderFactory.createEmptyBorder ( 5, 5, 5, 5 ) );
-        frame.add ( list );
-
-        frame.pack ();
-        frame.setLocationRelativeTo ( null );
-        frame.setDefaultCloseOperation ( JFrame.EXIT_ON_CLOSE );
-        frame.setVisible ( true );
+        add ( list );
     }
-
-    private CustomLabel renderer;
-    public CustomListRenderer ( final JList list )
+    
+    private class Listrenderer extends DefaultListCellRenderer {
+    	private CustomLabel renderer;
+        @Override
+        public Component getListCellRendererComponent ( JList list, Object value, int index, boolean isSelected, boolean cellHasFocus )
+        {
+            renderer.setSelected ( isSelected );
+            renderer.setData ( ( DeviceListData ) value );
+            return renderer;
+        }
+        
+        private Listrenderer () {
+            super ();
+            renderer = new CustomLabel ();
+        }
+    }
+    
+    
+    private static class DeviceListData
     {
-        super ();
-        renderer = new CustomLabel ();
-    }
+        private Color circleColor;
+        private int newMessages;
+        private String name;
 
-    @Override
-    public Component getListCellRendererComponent ( JList list, Object value, int index, boolean isSelected, boolean cellHasFocus )
-    {
-        renderer.setSelected ( isSelected );
-        renderer.setData ( ( CustomData ) value );
-        return renderer;
-    }
+        public DeviceListData ( Color circleColor, int newMessages, String name )
+        {
+            super ();
+            this.circleColor = circleColor;
+            this.newMessages = newMessages;
+            this.name = name;
+        }
 
-    /**
-     * Label that has some custom decorations.
-     */
+        private Color getCircleColor ()
+        {
+            return circleColor;
+        }
+
+        private int getNewMessages ()
+        {
+            return newMessages;
+        }
+
+        private String getName ()
+        {
+            return name;
+        }
+    }
+    
     private static class CustomLabel extends JLabel
     {
         private static final Color selectionColor = new Color ( 82, 158, 202 );
 
         private boolean selected;
-        private CustomData data;
+        private DeviceListData data;
 
         public CustomLabel ()
         {
@@ -104,7 +124,7 @@ public class CustomListRenderer extends DefaultListCellRenderer
             setForeground ( selected ? Color.WHITE : Color.BLACK );
         }
 
-        private void setData ( CustomData data )
+        private void setData ( DeviceListData data )
         {
             this.data = data;
             setText ( data.getName () );
@@ -178,39 +198,6 @@ public class CustomListRenderer extends DefaultListCellRenderer
             final Dimension ps = super.getPreferredSize ();
             ps.height = 72;
             return ps;
-        }
-    }
-
-    /**
-     * Custom data for our list.
-     */
-    private static class CustomData
-    {
-        private Color circleColor;
-        private int newMessages;
-        private String name;
-
-        public CustomData ( Color circleColor, int newMessages, String name )
-        {
-            super ();
-            this.circleColor = circleColor;
-            this.newMessages = newMessages;
-            this.name = name;
-        }
-
-        private Color getCircleColor ()
-        {
-            return circleColor;
-        }
-
-        private int getNewMessages ()
-        {
-            return newMessages;
-        }
-
-        private String getName ()
-        {
-            return name;
         }
     }
 }

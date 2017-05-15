@@ -1,12 +1,15 @@
 package com.apkscanner.gui.install;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -15,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -22,116 +26,50 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.android.ddmlib.AndroidDebugBridge;
+import com.android.ddmlib.IDevice;
+import com.apkscanner.core.installer.ApkInstaller;
+import com.apkscanner.core.scanner.ApkScanner;
+import com.apkscanner.gui.MainUI;
+
+import com.apkscanner.gui.dialog.PackageInfoDlg;
+import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.dialog.ApkInstallWizard.UIEventHandler;
+import com.apkscanner.gui.messagebox.ArrowTraversalPane;
+import com.apkscanner.resource.Resource;
+import com.apkscanner.tool.adb.PackageInfo;
+import com.apkscanner.tool.adb.PackageManager;
 import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
+import com.apkscanner.tool.adb.AdbServerMonitor;
+import com.apkscanner.tool.adb.DeviceMonitor;
 import com.apkscanner.util.Log;
+import com.sun.jna.platform.win32.DBT.DEV_BROADCAST_DEVICEINTERFACE;
 
 public class FindPackagePanel extends JPanel{
-	private JTextArea pack_textPakcInfo;
-	private JComboBox<String> pack_comboStartActivity;
-	private JList<String> pack_deviceList;
-	private JButton pack_btnSave;
-	private JButton pack_btnOpen;
-	private JButton pack_btnLaunch;
-	private JButton pack_btnRemove;
+	
 	private ActionListener mainlistener;
-	
-	public static final String CTR_ACT_CMD_FINDPACKAGE_SAVE = "CTR_ACT_CMD_FINDPACKAGE_SAVE";
-	public static final String CTR_ACT_CMD_FINDPACKAGE_OPEN = "CTR_ACT_CMD_FINDPACKAGE_OPEN";
-	public static final String CTR_ACT_CMD_FINDPACKAGE_LAUNCH= "CTR_ACT_CMD_FINDPACKAGE_LAUNCH";
-	public static final String CTR_ACT_CMD_FINDPACKAGE_REMOVE = "CTR_ACT_CMD_FINDPACKAGE_REMOVE";
-	public static final String CTR_ACT_CMD_FINDPACKAGE_PACKAGEINFO = "CTR_ACT_CMD_FINDPACKAGE_PACKAGEINFO";
-	
+	private DeviceCustomList devicelist;	
+	private DeviceMonitor deviceMonitor;
 	
     public FindPackagePanel(ActionListener listener) {
 		this.setLayout(new GridBagLayout());
 		mainlistener = listener;
+
+		deviceMonitor = new DeviceMonitor();
+		
 		JPanel mainpanel = new JPanel(new BorderLayout());
 		JPanel Listpanel = new JPanel(new BorderLayout());
 		JPanel packagepanel = new JPanel(new BorderLayout());
 		JPanel appstartpanel = new JPanel(new BorderLayout());
 		JPanel buttonpanel = new JPanel();
 		
+		devicelist = new DeviceCustomList();
+		
+		
 		JLabel textSelectDevice = new JLabel("installed same package!");
 		textSelectDevice.setFont(new Font(textSelectDevice.getFont().getName(), Font.PLAIN, 30));
-		
-		pack_deviceList = new JList<String>(new DefaultListModel<String>());
-		pack_deviceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		
-		pack_deviceList.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				// TODO Auto-generated method stub				
-				if(pack_deviceList.getSelectedIndex() <= -1) return;
-				String selDev = pack_deviceList.getSelectedValue();
-				Object[] obj = new Object[2];
-				obj[0] = selDev;
-				obj[1] = pack_deviceList;
-				ActionEvent action = new ActionEvent(obj, 0, CTR_ACT_CMD_FINDPACKAGE_PACKAGEINFO);
-				mainlistener.actionPerformed(action);
-			}
-		});
-		JScrollPane listscrollPane = new JScrollPane(pack_deviceList);
-		
-		pack_textPakcInfo = new JTextArea();
-		pack_textPakcInfo.setEditable(false);
-		JScrollPane textViewscrollPane = new JScrollPane(pack_textPakcInfo);
-		
-		pack_comboStartActivity = new JComboBox<String>(new DefaultComboBoxModel<String>());
 	    
-	    pack_btnLaunch = getButton("Launch", CTR_ACT_CMD_FINDPACKAGE_LAUNCH, listener);
-	    pack_btnLaunch.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				String selDev = pack_deviceList.getSelectedValue();
-				arg0.setSource((String)(selDev));				
-				mainlistener.actionPerformed(arg0);
-			}
-	    });
-	    pack_btnOpen = getButton("Open", CTR_ACT_CMD_FINDPACKAGE_OPEN, listener);
-	    pack_btnOpen.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				String selDev = pack_deviceList.getSelectedValue();
-				arg0.setSource((String)(selDev));				
-				mainlistener.actionPerformed(arg0);
-			}
-	    });
-
-	    pack_btnSave = getButton("Save", CTR_ACT_CMD_FINDPACKAGE_SAVE, listener);
-	    pack_btnSave.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if(pack_deviceList.getSelectedIndex() <= -1) return;
-				String selDev = pack_deviceList.getSelectedValue();				
-				arg0.setSource((String)(selDev));				
-				mainlistener.actionPerformed(arg0);
-			}
-	    });
-	    pack_btnRemove = getButton("Remove", CTR_ACT_CMD_FINDPACKAGE_REMOVE, listener);
-	    pack_btnRemove.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if(pack_deviceList.getSelectedIndex() <= -1) return;
-				String selDev = pack_deviceList.getSelectedValue();
-				arg0.setSource((String)(selDev));				
-				mainlistener.actionPerformed(arg0);
-			}
-	    });
-	    
-	    setmargin(mainpanel,5);
-	    setmargin(packagepanel,5);
-	    setmargin(Listpanel,5);
-	    
-	    
-	    buttonpanel.add(pack_btnOpen, BorderLayout.WEST);
-	    buttonpanel.add(pack_btnSave, BorderLayout.CENTER);
-	    buttonpanel.add(pack_btnRemove, BorderLayout.EAST);
-	    
-	    appstartpanel.add(pack_comboStartActivity, BorderLayout.CENTER);
-	    appstartpanel.add(pack_btnLaunch, BorderLayout.EAST);
-	    
-	    packagepanel.add(textViewscrollPane, BorderLayout.CENTER);
+	    packagepanel.add(evtShowInstalledPackageInfo(), BorderLayout.CENTER);
 	    packagepanel.add(appstartpanel, BorderLayout.SOUTH);		    
 	    
 	    Listpanel.add(packagepanel, BorderLayout.CENTER);
@@ -139,7 +77,7 @@ public class FindPackagePanel extends JPanel{
 	    
 	    //mainpanel.add(textSelectDevice,BorderLayout.NORTH);
 	    mainpanel.add(Listpanel,BorderLayout.CENTER);
-	    mainpanel.add(listscrollPane, BorderLayout.WEST);
+	    mainpanel.add(devicelist, BorderLayout.WEST);
 	    
 	    GridBagConstraints gbc = new GridBagConstraints();            
 	    gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -161,16 +99,6 @@ public class FindPackagePanel extends JPanel{
 		return btn;
 	}
 	
-	public JList getDeivceListCombo() {
-		return pack_deviceList;
-	}
-	
-	public JComboBox getActivityCombo() {
-		return pack_comboStartActivity;
-	}
-	public JTextArea getappInfotextarea() {
-		return pack_textPakcInfo;
-	}
 	
     private GridBagConstraints addGrid(GridBagConstraints gbc, 
             int gridx, int gridy, int gridwidth, int gridheight, int weightx, int weighty) {
@@ -182,4 +110,29 @@ public class FindPackagePanel extends JPanel{
       gbc.weighty = weighty;
       return gbc;
     }
+    
+	private Container evtShowInstalledPackageInfo()
+	{
+		Log.d(ApkInstallWizard.pakcageFilePath);
+        String packageName = ApkScanner.getPackageName(ApkInstallWizard.pakcageFilePath);
+        
+        AndroidDebugBridge adb = AdbServerMonitor.getAndroidDebugBridge();
+        IDevice[] devices = adb.getDevices();
+        
+        Log.d(devices.length + "         " + ApkInstallWizard.pakcageFilePath);
+        
+        ArrayList<PackageInfo> packageList = new ArrayList<PackageInfo>();
+        for(IDevice dev: devices) {
+            PackageInfo info = PackageManager.getPackageInfo(dev, packageName);
+            if(info != null) {
+                packageList.add(info);
+                PackageInfoDlg packageInfoDlg = new PackageInfoDlg(null);
+    			packageInfoDlg.setPackageInfo(info);
+    			//packageInfoDlg.setVisible(true);
+    			return packageInfoDlg.getContentPane();
+            }
+        }
+		
+		return null;	
+	}
 }

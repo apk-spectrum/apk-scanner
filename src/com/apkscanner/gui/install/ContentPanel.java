@@ -141,11 +141,6 @@ public class ContentPanel extends JPanel
 	}
 	
 	
-	public String getSelectedLauncherActivity() {		
-		return (String)panel_check_package.getActivityCombo().getSelectedItem();
-		//return (String)pack_comboStartActivity.getSelectedItem();		
-	}
-	
 	public void appendLog(String msg) {
 		// append to log viewer
 		
