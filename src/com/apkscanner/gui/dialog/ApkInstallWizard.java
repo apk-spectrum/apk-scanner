@@ -199,7 +199,7 @@ public class ApkInstallWizard
 		if(window == null) return;
 
 		window.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
-		window.setSize(new Dimension(600,550));
+		window.setSize(new Dimension(600,450));
 		
 		progressPanel = new InstallProgressPanel();
 		contentPanel = new ContentPanel(uiEventHandler);
@@ -219,7 +219,7 @@ public class ApkInstallWizard
 		//Log.i("initialize() register event handler");
 		//window.addWindowListener(new UIEventHandler());
 		
-		//window.setMinimumSize(new Dimension(700, 550));
+		window.setMinimumSize(new Dimension(600, 450));
 		
 		// Shortcut key event processing
 		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();

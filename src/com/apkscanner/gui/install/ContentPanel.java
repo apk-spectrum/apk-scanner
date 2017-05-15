@@ -37,7 +37,7 @@ public class ContentPanel extends JPanel
 	private JButton dev_refreshButton;
 	private JButton dev_selectAllButton;
 	
-	private DeviceTablePanel panel_select_device;
+	//private DeviceTablePanel panel_select_device;
 	private FindPackagePanel panel_check_package;
 	private JPanel panel_set_install_option;
 	
@@ -67,7 +67,7 @@ public class ContentPanel extends JPanel
 		lodingPanel.add(loadingMessageLable);
 		lodingPanel.add(new ImagePanel(Resource.IMG_WAIT_BAR.getImageIcon()));
 		
-		panel_select_device = new DeviceTablePanel(listener);				
+		//panel_select_device = new DeviceTablePanel(listener);				
 				
 		panel_check_package = new FindPackagePanel(listener);
 		panel_set_install_option = new JPanel();
@@ -129,9 +129,5 @@ public class ContentPanel extends JPanel
 	public void appendLog(String msg) {
 		// append to log viewer
 		
-	}
-	
-	public List<DeviceDO> getDeviceList() {
-		return panel_select_device.getDeviceList();
-	}
+	}	
 }

@@ -111,9 +111,19 @@ public class FindPackagePanel extends JPanel{
       return gbc;
     }
     
+	private void initADBInit() {
+		AndroidDebugBridge.init(true);
+        AndroidDebugBridge debugBridge = AndroidDebugBridge.createBridge(Resource.BIN_ADB.getPath(), true);
+//        if (debugBridge == null) {
+//            System.err.println("Invalid ADB  location.");
+//            System.exit(1);
+//        }
+	}
+    
 	private Container evtShowInstalledPackageInfo()
 	{
-		Log.d(ApkInstallWizard.pakcageFilePath);
+		initADBInit();
+		
         String packageName = ApkScanner.getPackageName(ApkInstallWizard.pakcageFilePath);
         
         AndroidDebugBridge adb = AdbServerMonitor.getAndroidDebugBridge();
