@@ -23,8 +23,6 @@ public class ContentPanel extends JPanel
 
 	public static final String CONTENT_INIT = "CONTENT_INIT";
 	public static final String CONTENT_LOADING = "CONTENT_LOADING";
-	public static final String CONTENT_DEVICE_SCANNING = "CONTENT_DEVICE_SCANNING";
-	public static final String CONTENT_SELECT_DEVICE = "CONTENT_SELECT_DEVICE";
 	public static final String CONTENT_PACKAGE_SCANNING = "CONTENT_PACKAGE_SCANNING";
 	public static final String CONTENT_CHECK_PACKAGES = "CONTENT_CHECK_PACKAGES";
 	public static final String CONTENT_SET_INSTALL_OPTION = "CONTENT_SET_INSTALL_OPTION";
@@ -75,9 +73,7 @@ public class ContentPanel extends JPanel
 		panel_set_install_option = new JPanel();
 		
 		add(new JPanel(), CONTENT_INIT);
-		add(lodingPanel, CONTENT_LOADING);
-		add(new JPanel(), CONTENT_DEVICE_SCANNING);
-		add(panel_select_device, CONTENT_SELECT_DEVICE);
+		add(lodingPanel, CONTENT_LOADING);		
 		add(new JPanel(), CONTENT_PACKAGE_SCANNING);
 		add(panel_check_package, CONTENT_CHECK_PACKAGES);
 		add(panel_set_install_option, CONTENT_SET_INSTALL_OPTION);
@@ -98,18 +94,7 @@ public class ContentPanel extends JPanel
 			loadingMessageLable.setText("INIT");
 			((CardLayout)getLayout()).show(this, CONTENT_LOADING);
 			break;
-		case ApkInstallWizard.STATUS_WAIT_FOR_DEVICE:
-			loadingMessageLable.setText("WAIT-FOR-DEVICE");
-			((CardLayout)getLayout()).show(this, CONTENT_LOADING);
-			break;
-		case ApkInstallWizard.STATUS_DEVICE_SCANNING:
-			loadingMessageLable.setText("SCANNING DEVICES");
-			((CardLayout)getLayout()).show(this, CONTENT_LOADING);
-			break;
-		case ApkInstallWizard.STATUS_DEVICE_REFRESH:
-		case ApkInstallWizard.STATUS_SELECT_DEVICE:
-			((CardLayout)getLayout()).show(this, CONTENT_SELECT_DEVICE);
-			break;
+			
 		case ApkInstallWizard.STATUS_PACKAGE_SCANNING:
 			loadingMessageLable.setText("FIND PACKAGES");
 			((CardLayout)getLayout()).show(this, CONTENT_LOADING);

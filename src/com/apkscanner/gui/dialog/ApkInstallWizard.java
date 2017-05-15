@@ -43,15 +43,11 @@ import com.apkscanner.util.SystemUtil;
 public class ApkInstallWizard
 {
 	public static final int STATUS_INIT = 0;
-	public static final int STATUS_DEVICE_SCANNING = 1;
-	public static final int STATUS_WAIT_FOR_DEVICE = 2;
-	public static final int STATUS_DEVICE_REFRESH = 3;
-	public static final int STATUS_SELECT_DEVICE = 4;
-	public static final int STATUS_PACKAGE_SCANNING = 5;
-	public static final int STATUS_CHECK_PACKAGES = 6;
-	public static final int STATUS_SET_INSTALL_OPTION = 7;
-	public static final int STATUS_INSTALLING = 8;
-	public static final int STATUS_COMPLETED = 9;
+	public static final int STATUS_PACKAGE_SCANNING = 1;
+	public static final int STATUS_CHECK_PACKAGES = 2;
+	public static final int STATUS_SET_INSTALL_OPTION = 3;
+	public static final int STATUS_INSTALLING = 4;
+	public static final int STATUS_COMPLETED = 5;
 	
 	public static final int FLAG_OPT_INSTALL	 	= 0x0100;
 	public static final int FLAG_OPT_PUSH			= 0x0200;
@@ -203,7 +199,7 @@ public class ApkInstallWizard
 		if(window == null) return;
 
 		window.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
-		window.setSize(new Dimension(700,550));
+		window.setSize(new Dimension(600,550));
 		
 		progressPanel = new InstallProgressPanel();
 		contentPanel = new ContentPanel(uiEventHandler);
@@ -213,7 +209,7 @@ public class ApkInstallWizard
 		//progressPanel.setPreferredSize(new Dimension(700, 200));
 		PanelDummy.setBackground(Color.WHITE);
 		PanelDummy.setOpaque(true);
-		PanelDummy.setPreferredSize(new Dimension(700, 120));
+		PanelDummy.setPreferredSize(new Dimension(600, 80));
 		PanelDummy.add(progressPanel);
 		
 		window.add(PanelDummy, BorderLayout.NORTH);
@@ -243,28 +239,6 @@ public class ApkInstallWizard
 	
 	private void execute(int status) {
 		switch(status) {
-		case STATUS_DEVICE_SCANNING:
-			new Thread(new Runnable() {
-				public void run()
-				{
-					synchronized(ApkInstallWizard.this) {
-						targetDevices = AdbDeviceManager.scanDevices();
-						next();
-					}
-				}
-			}).start();
-			break;
-		case STATUS_WAIT_FOR_DEVICE:
-			new Thread(new Runnable() {
-				public void run()
-				{
-					synchronized(ApkInstallWizard.this) {
-						AdbWrapper.waitForDevice();
-						next();
-					}
-				}
-			}).start();
-			break;
 		case STATUS_PACKAGE_SCANNING:
 
 			break;
@@ -289,38 +263,6 @@ public class ApkInstallWizard
 		synchronized(this) {
 			switch(status) {
 			case STATUS_INIT:
-			case STATUS_WAIT_FOR_DEVICE:
-				changeState(STATUS_DEVICE_SCANNING);
-				break;
-			case STATUS_DEVICE_SCANNING:
-				if(targetDevices == null || targetDevices.length == 0) {
-					changeState(STATUS_WAIT_FOR_DEVICE);
-					break;
-				} else if(targetDevices == null || targetDevices.length > 1) {
-					changeState(STATUS_SELECT_DEVICE);
-					break;
-				}
-			case STATUS_SELECT_DEVICE:
-				if(status == STATUS_SELECT_DEVICE) {
-					//targetDevices = contentPanel.getSelectedDevices();
-				}
-				if(targetDevices != null) {
-					boolean isAllOnline = true;
-					for(DeviceStatus dev: targetDevices) {
-						// such dev.name in listview
-						if(!"device".equals(dev.status)) {
-							isAllOnline = false;
-							break;
-						}
-					}
-					if(targetDevices.length > 0 && isAllOnline) {
-						changeState(STATUS_PACKAGE_SCANNING);
-					} else if(status == STATUS_DEVICE_SCANNING) {
-						changeState(STATUS_SELECT_DEVICE);
-					} else {
-						// show warring message, offline device selected...
-					}
-				}
 				break;
 			case STATUS_PACKAGE_SCANNING:
 				changeState(STATUS_CHECK_PACKAGES);
@@ -346,10 +288,6 @@ public class ApkInstallWizard
 			switch(status) {
 			case STATUS_SET_INSTALL_OPTION:
 				changeState(STATUS_CHECK_PACKAGES);
-
-			case STATUS_CHECK_PACKAGES:
-				changeState(STATUS_SELECT_DEVICE);
-				break;
 			default:
 				break;
 			}
@@ -363,7 +301,7 @@ public class ApkInstallWizard
 	
 	private void restart() {
 		if(status != STATUS_COMPLETED) return;
-		status = STATUS_INIT;
+		status = STATUS_PACKAGE_SCANNING;
 		start();
 	}
 	

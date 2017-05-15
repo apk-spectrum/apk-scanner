@@ -76,13 +76,6 @@ public class ControlPanel extends JPanel
 		switch(status) {
 		case ApkInstallWizard.STATUS_INIT:
 			setVisibleButtons(true, false, false, false, false, false); break;
-		case ApkInstallWizard.STATUS_DEVICE_SCANNING:
-		case ApkInstallWizard.STATUS_WAIT_FOR_DEVICE:
-			setVisibleButtons(false, false, false, true, false, false); break;
-		case ApkInstallWizard.STATUS_DEVICE_REFRESH:
-			setVisibleButtons(false, false, false, false, false, false); break;
-		case ApkInstallWizard.STATUS_SELECT_DEVICE:
-			setVisibleButtons(true, false, false, true, false, false); break;
 		case ApkInstallWizard.STATUS_PACKAGE_SCANNING:
 			setVisibleButtons(false, false, false, false, false, false); break;
 		case ApkInstallWizard.STATUS_CHECK_PACKAGES:

@@ -40,7 +40,7 @@ public class InstallProgressPanel extends JPanel
 	private final int COLOR_STEP_FINISHED = 2;
 	
 	int CurrentProgress=0;
-	private final String [] outtexts= {"SELECT DEVICE", "FIND PACKAGE", "OPTIONS", "INSTALLING", "FINISH"};
+	private final String [] outtexts= {"PACKAGE", "OPTIONS", "INSTALLING", "FINISH"};
 	
 	private final Color []Colorset = {new Color(222,228,228), new Color(52,152,220),new Color(46,204,114)};
 			
@@ -245,7 +245,7 @@ public class InstallProgressPanel extends JPanel
 
 	public InstallProgressPanel() {
 		super(new BorderLayout());
-		setPreferredSize(new Dimension(300, 70));
+		setPreferredSize(new Dimension(600, 70));
 		ProgressStepPanel = new JPanel();
 		ProgressStepPanel.setLayout(new GridBagLayout());
 		ProgressStepPanel.setBackground(Color.WHITE);
@@ -293,7 +293,7 @@ public class InstallProgressPanel extends JPanel
         marginlabel2.setBackground(Color.WHITE);
 		ProgressStepPanel.add(marginlabel2, addGrid(gbc, STEPMAX*2, 0, 1, 1, 1, 1));			
 		
-		ProgressStepPanel.setPreferredSize(new Dimension(0, 60));			
+		ProgressStepPanel.setPreferredSize(new Dimension(0, 70));			
 		
 		add(ProgressStepPanel, BorderLayout.CENTER);
 		add(TextStepPanel, BorderLayout.SOUTH);
@@ -371,23 +371,19 @@ public class InstallProgressPanel extends JPanel
 		int newStatus = CurrentProgress;
 		switch(status) {
 		case ApkInstallWizard.STATUS_INIT:
-		case ApkInstallWizard.STATUS_DEVICE_SCANNING:
-		case ApkInstallWizard.STATUS_WAIT_FOR_DEVICE:
-		case ApkInstallWizard.STATUS_SELECT_DEVICE:
-			newStatus = 1;
 			break;
 		case ApkInstallWizard.STATUS_PACKAGE_SCANNING:
 		case ApkInstallWizard.STATUS_CHECK_PACKAGES:
-			newStatus = 2;
+			newStatus = 1;
 			break;
 		case ApkInstallWizard.STATUS_SET_INSTALL_OPTION:
-			newStatus = 3;
+			newStatus = 2;
 			break;
 		case ApkInstallWizard.STATUS_INSTALLING:
-			newStatus = 4;
+			newStatus = 3;
 			break;
 		case ApkInstallWizard.STATUS_COMPLETED:
-			newStatus = 5;
+			newStatus = 4;
 			break;
 		default:
 			break;
