@@ -7,42 +7,16 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import com.android.ddmlib.AdbCommandRejectedException;
 import com.android.ddmlib.DdmPreferences;
 import com.android.ddmlib.IDevice;
 import com.android.ddmlib.IShellOutputReceiver;
-import com.android.ddmlib.MultiLineReceiver;
 import com.android.ddmlib.ShellCommandUnresponsiveException;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.util.Log;
 
 public class AdbDeviceHelper {
-
-	public static class SimpleOutputReceiver extends MultiLineReceiver {
-		private ArrayList<String> output = new ArrayList<String>();
-
-		@Override
-		public void processNewLines(String[] lines) {
-			output.addAll(Arrays.asList(lines));
-		}
-
-		@Override
-		public boolean isCancelled() {
-			return false;
-		}
-
-		public String[] getOutput() {
-			return output.toArray(new String[output.size()]);
-		}
-
-		public void clear() {
-			output.clear();
-		}
-	}
-
-
 
 	public static class CommandRejectedException extends Exception {
 		private static final long serialVersionUID = 1L;
@@ -364,7 +338,7 @@ public class AdbDeviceHelper {
 	}
 
 	/**
-	 * Reboot the device.
+	 * Root the device.
 	 *
 	 * @param into what to reboot into (recovery, bootloader). Or null to just reboot.
 	 * @throws TimeoutException in case of timeout on the connection.
@@ -388,7 +362,32 @@ public class AdbDeviceHelper {
 			}
 		}
 	}
-	
+
+
+	/**
+	 * Remount the device.
+	 *
+	 * @throws TimeoutException in case of timeout on the connection.
+	 * @throws AdbCommandRejectedException if adb rejects the command
+	 * @throws IOException in case of I/O error on the connection.
+	 */
+	public static void remount(InetSocketAddress adbSockAddr,
+			IDevice device) throws TimeoutException, CommandRejectedException, IOException {
+		byte[] request = formAdbRequest("remount:"); //$NON-NLS-1$
+		SocketChannel adbChan = null;
+		try {
+			adbChan = SocketChannel.open(adbSockAddr);
+			adbChan.configureBlocking(false);
+			// if the device is not -1, then we first tell adb we're looking to talk
+			// to a specific device
+			setDevice(adbChan, device);
+			write(adbChan, request);
+		} finally {
+			if (adbChan != null) {
+				adbChan.close();
+			}
+		}
+	}
 	public static boolean isRoot(IDevice device) {
 		boolean isRoot = false;
 		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
@@ -405,6 +404,24 @@ public class AdbDeviceHelper {
 			}
 		}
 		return isRoot;
+	}
+
+	public static boolean hasSu(IDevice device) {
+		boolean hasSu = false;
+		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
+		try {
+			device.executeShellCommand("which su", outputReceiver);
+		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
+				| IOException e) {
+			e.printStackTrace();
+		}
+		String[] result = outputReceiver.getOutput();
+		for(String output: result) {
+			if(output.endsWith("/su")) {
+				hasSu = true;
+			}
+		}
+		return hasSu;
 	}
 
 	public static boolean isShowingLockscreen(IDevice device)

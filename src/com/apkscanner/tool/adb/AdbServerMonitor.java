@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import com.android.ddmlib.AdbVersion;
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.DdmPreferences;
+import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 import com.google.common.base.Joiner;
@@ -107,6 +108,35 @@ public final class AdbServerMonitor {
 		}
 	}
 
+	public static void startServerAndCreateBridgeAsync() {
+		Thread thread = new Thread(new Runnable() {
+			public void run() {
+				startServerAndCreateBridge();
+			}
+		});
+		thread.setPriority(Thread.NORM_PRIORITY);
+		thread.start();
+	}
+
+	public static AdbServerMonitor startServerAndCreateBridge() {
+		AdbVersionManager.loadCache();
+
+		String adbPath = ((String)Resource.PROP_ADB_PATH.getData()).trim();
+		if(adbPath == null || adbPath.isEmpty()
+				|| !AdbVersionManager.checkAdbVersion(adbPath)) {
+			adbPath = AdbVersionManager.getAdbLastestVersionFromCache();
+			if(adbPath == null){
+				AdbVersionManager.loadDefaultAdbs(); // very higher cost
+				adbPath = AdbVersionManager.getAdbLastestVersionFromCache();
+			}
+		}
+
+		return AdbServerMonitor.startServerAndCreateBridge(
+				adbPath,
+				(boolean)Resource.PROP_ADB_POLICY_SHARED.getData(),
+				(boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData());
+	}
+
 	public static AdbServerMonitor startServerAndCreateBridge(String adbPath, boolean demonShared, boolean allowRestart) {
 		synchronized (sLock) {
 			if (sThis != null) {
@@ -134,6 +164,24 @@ public final class AdbServerMonitor {
 
 	public void stop() {
 		mAdbDemonMonitorTask.stop();
+		mAdbDemonMonitorTask = null;
+	}
+
+	public static AndroidDebugBridge getAndroidDebugBridge() {
+		synchronized (sLock) {
+			if(sThis == null) {
+				startServerAndCreateBridge();
+				if(null == AndroidDebugBridge.getBridge()) {
+					try {
+						Log.i("Wait to created AndroidDebugBridge");
+						sLock.wait();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				};
+			}
+		}
+		return AndroidDebugBridge.getBridge();
 	}
 
 	private String[] getAdbLaunchCommand(String option) {
@@ -343,8 +391,14 @@ public final class AdbServerMonitor {
 				adbVersion = AdbVersionManager.getAdbVersion(runningAdbPath);
 			}
 
-			AndroidDebugBridge.init(false);
-			AndroidDebugBridge.createBridge();
+			synchronized(sLock) {
+				try{
+					AndroidDebugBridge.init(false);
+				} catch (Exception e) {}
+				AndroidDebugBridge.createBridge();
+				Log.i("AndroidDebugBridge createBridge() notifyAll");
+				sLock.notifyAll();
+			}
 
 			if(isConnected) {
 				mAdbServerMonitor.adbDemonConnected(runningAdbPath, adbVersion);
@@ -381,9 +435,9 @@ public final class AdbServerMonitor {
 						runningAdbPath = mAdbServerMonitor.mAdbPath;
 						adbVersion = AdbVersionManager.getAdbVersion(runningAdbPath);
 						mAdbServerMonitor.adbDemonConnected(runningAdbPath, adbVersion);
-						
+
 						isConnected = mAdbServerMonitor.startAdb();
-						
+
 						if(!isConnected){
 							Log.e("Failure: startAdb");
 							mAdbServerMonitor.adbDemonDisconnected();	

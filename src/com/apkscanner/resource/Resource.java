@@ -299,6 +299,8 @@ public enum Resource
 	STR_QUESTION_OPEN_OR_INSTALL(Type.TEXT, "@question_open_or_install"),
 	STR_QUESTION_PUSH_OR_INSTALL(Type.TEXT, "@question_push_or_install"),
 	STR_QUESTION_SAVE_OVERWRITE	(Type.TEXT, "@question_save_overwrite"),
+	STR_QUESTION_PACK_INFO_CLOSE(Type.TEXT, "@question_pack_info_close"),
+	STR_QUESTION_PACK_INFO_REFRESH(Type.TEXT, "@question_pack_info_refresh"),
 
 	IMG_TOOLBAR_OPEN			(Type.IMAGE, "toolbar_open.png"),
 	IMG_TOOLBAR_MANIFEST		(Type.IMAGE, "toolbar_manifast.png"),

@@ -10,6 +10,8 @@ import java.util.zip.ZipFile;
 import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.tool.aapt.AaptNativeWrapper;
+import com.apkscanner.tool.aapt.AaptXmlTreePath;
 import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.util.ConsolCmd.ConsoleOutputObserver;
 import com.apkscanner.util.FileUtil;
@@ -241,4 +243,29 @@ abstract public class ApkScanner
 			}
 		}
 	}
+
+	public static String getPackageName(final String apkFilePath) {
+		if(apkFilePath == null || apkFilePath.isEmpty() 
+				|| !new File(apkFilePath).isFile()) {
+			Log.e("No such file " + apkFilePath);
+			return null;
+		}
+
+		Log.i("getDump AndroidManifest...");
+		String[] androidManifest = AaptNativeWrapper.Dump.getXmltree(apkFilePath, new String[] { "AndroidManifest.xml" });
+		if(androidManifest == null || androidManifest.length == 0) {
+			Log.e("Failure : Can't read the AndroidManifest.xml");
+			return null;
+		}
+
+		Log.i("createAaptXmlTree...");
+		AaptXmlTreePath manifestPath = new AaptXmlTreePath();
+		manifestPath.createAaptXmlTree(androidManifest);
+		if(manifestPath.getNode("/manifest") == null || manifestPath.getNode("/manifest/application") == null) {
+			Log.e("Failure : Wrong format. Don't have '<manifest>' or '<application>' tag");
+			return null;
+		}
+
+		return manifestPath.getNode("/manifest").getAttribute("package");
+	}	
 }
