@@ -11,6 +11,7 @@ import com.android.ddmlib.TimeoutException;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ComponentInfo;
 import com.apkscanner.tool.adb.SimpleOutputReceiver;
+import com.apkscanner.util.Log;
 import com.apkscanner.util.XmlPath;
 
 public class PackageInfo {
@@ -18,52 +19,20 @@ public class PackageInfo {
 	public final IDevice device;
 	public final String packageName;
 
-	private String apkPath;
-	private String codePath;
-	private String versionName;
-	private int versionCode;
-	private String installer;
+	String apkPath;
+	String codePath;
+	String versionName;
+	int versionCode;
+	String installer;
+	String label;
 
-	private String[] dumpsys;
-	private String signature;
+	String[] dumpsys;
+	String signature;
 
 	PackageInfo(IDevice device, String pkgName)
 	{
 		this.device = device;
 		this.packageName = pkgName;
-	}
-
-	public PackageInfo(IDevice device, String pkgName, String apkPath, String codePath, String installer, String[] dumpsys, String signature)
-	{
-		this.device = device;
-		this.packageName = pkgName;
-		this.apkPath = apkPath;
-		this.dumpsys = dumpsys;
-		this.signature = signature;
-		this.installer = installer;
-
-		this.codePath = codePath;
-
-		versionName = getValue("versionName");
-		String vercode = getValue("versionCode");
-		if(vercode != null && vercode.matches("\\d+")) {
-			this.versionCode = Integer.valueOf(vercode);
-		} else {
-			this.versionCode = 0;
-		}
-	}
-
-	public PackageInfo(String pkgName, String apkPath, String codePath, String versionName, int versionCode, String installer, String[] dumpsys, String signature)
-	{
-		this.packageName = pkgName;
-		this.apkPath = apkPath;
-		this.codePath = codePath;
-		this.versionName = versionName;
-		this.versionCode = versionCode;
-		this.installer = installer;
-		this.dumpsys = dumpsys;
-		this.signature = signature;
-		this.device = null;
 	}
 
 	public IDevice getDevice() {
@@ -122,6 +91,30 @@ public class PackageInfo {
 
 		return apkPath;
 	}
+	
+	public String getRealApkPath() {
+		String realPath = apkPath;
+		if(!realPath.endsWith(".apk")) {
+			Log.i("No apk file path : " + realPath);
+			realPath += "/*.apk";
+		}
+
+		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
+		try {
+			device.executeShellCommand("ls " + realPath, outputReceiver);
+		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException | IOException e) {
+			e.printStackTrace();
+		}
+		String[] result = outputReceiver.getOutput();
+		if(result.length == 0 || !result[0].endsWith(".apk")) {
+			Log.e("No such apk file : " + realPath);
+			return null;
+		}
+		realPath = result[0];
+		Log.i("Cahnge target apk path to " + realPath);
+
+		return realPath;
+	}
 
 	public String getCodePath() {
 		if(codePath != null) return codePath;
@@ -163,6 +156,10 @@ public class PackageInfo {
 			versionCode = Integer.parseInt(tmp);
 		}
 		return versionCode;
+	}
+
+	public String getLabel() {
+		return label;
 	}
 
 	public boolean isEnabled() {
@@ -269,7 +266,7 @@ public class PackageInfo {
 		HashMap<String, ComponentInfo> components = new HashMap<String, ComponentInfo>();
 		ComponentInfo curComp = null;
 
-		for(String line: dumpsys) {
+		for(String line: getDumpsys()) {
 			if(!startInfoBlock) {
 				if(line.matches(blockRegex)) {
 					startInfoBlock = true;
@@ -397,12 +394,15 @@ public class PackageInfo {
 	@Override
 	public String toString()
 	{
+		/*
 		String s = "-Installed APK info\n";
 		s += "Pakage : " + packageName +"\n";
 		s += "Version : " + versionName + " / " + versionCode +"\n";
 		s += "APK Path : " + apkPath +"\n";
 		s += "Installer : " + installer +"\n";
 		return s;
+		*/
+		return getLabel();
 	}
 }
 
