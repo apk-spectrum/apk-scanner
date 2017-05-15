@@ -2034,7 +2034,7 @@ public class ApkInstallWizard
 				if(SystemUtil.isWindows()) {
 					wizard.setApk("C:\\Melon.apk");
 				} else {  //for linux
-					wizard.setApk("/home/leejinhyeong/Desktop/SecSettings2.apk");
+					wizard.setApk("/home/leejinhyeong/Desktop/DCMContacts.apk");
 				}
 				wizard.start();
 				//wizard.setVisible(true);
