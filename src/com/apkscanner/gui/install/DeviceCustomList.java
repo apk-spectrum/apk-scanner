@@ -8,10 +8,14 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.font.FontRenderContext;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -21,42 +25,109 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 
+import com.android.ddmlib.AdbCommandRejectedException;
+import com.android.ddmlib.AndroidDebugBridge;
+import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
+import com.android.ddmlib.IDevice;
+import com.android.ddmlib.MultiLineReceiver;
+import com.android.ddmlib.ShellCommandUnresponsiveException;
+import com.android.ddmlib.TimeoutException;
+import com.apkscanner.gui.dialog.ApkInstallWizard;
+import com.apkscanner.gui.install.DeviceTablePanel.DeviceDO;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.tool.adb.AdbServerMonitor;
+import com.apkscanner.util.Log;
 
-public class DeviceCustomList extends JPanel{
+public class DeviceCustomList extends JList implements IDeviceChangeListener{
 
-    private static ImageIcon tipIcon = new ImageIcon(Resource.class.getResource("/icons/logo/nougat.png"));
-    private static ImageIcon tipIcon1 = new ImageIcon(Resource.class.getResource("/icons/logo/marshmallow.png"));
-    private static ImageIcon tipIcon2 = new ImageIcon(Resource.class.getResource("/icons/logo/jelly_bean.png"));
-	
+	DefaultListModel listmodel;
     public DeviceCustomList() {
-    	setLayout(new BorderLayout());
-    	
-        DefaultListModel model = new DefaultListModel ();
-        model.addElement ( new DeviceListData ( new Color ( 209, 52, 23 ), 0, "SC-02J" ) );
-        model.addElement ( new DeviceListData ( new Color ( 135, 163, 14 ), 1, "SC-04J" ) );
-        model.addElement ( new DeviceListData ( new Color ( 204, 204, 204 ), 2, "SC-05J" ) );
-        model.addElement ( new DeviceListData ( new Color ( 90, 90, 90 ), 3, "SCH-44566" ) );
-
-        Image tipIconimg = tipIcon.getImage();  //ImageIcon을 Image로 변환.
-        Image result = tipIconimg.getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
-        tipIcon = new ImageIcon(result); //Image로 ImageIcon 생성
-
-        tipIconimg = tipIcon1.getImage();  //ImageIcon을 Image로 변환.
-        result = tipIconimg.getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
-        tipIcon1 = new ImageIcon(result); //Image로 ImageIcon 생성
-
-        tipIconimg = tipIcon2.getImage();  //ImageIcon을 Image로 변환.
-        result = tipIconimg.getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
-        tipIcon2 = new ImageIcon(result); //Image로 ImageIcon 생성        
+		// TODO Auto-generated constructor stub
+    	setLayout(new BorderLayout());    	
+        listmodel = new DefaultListModel ();
+		//AndroidDebugBridge.init(true);
+        IDevice[] devices = AdbServerMonitor.getAndroidDebugBridge().getDevices();
         
-        JList list = new JList ( model );
-        list.setCellRenderer ( new Listrenderer ( ) );
-        list.setBorder ( BorderFactory.createEmptyBorder ( 5, 5, 5, 5 ) );
-        add ( list );
+        Log.d(devices.length + "         " + ApkInstallWizard.pakcageFilePath);
+        
+        AndroidDebugBridge.addDeviceChangeListener(this);
+        
+        
+//        listmodel.addElement ( new DeviceListData ( new Color ( 209, 52, 23 ), "Aa", "SC-02J", "O","aa"));
+//        listmodel.addElement ( new DeviceListData ( new Color ( 135, 163, 14 ), false, "SC-04J", "M" ) );
+//        listmodel.addElement ( new DeviceListData ( new Color ( 204, 204, 204 ), true, "SC-05J", "N" ) );
+//        listmodel.addElement ( new DeviceListData ( new Color ( 90, 90, 90 ), true, "SCH-44566", "N" ) );
+        
+        for(IDevice dev: devices) {
+        	setModeldata(listmodel, dev);
+        }        
+        
+        this.setModel(listmodel);
+        
+        this.setCellRenderer ( new Listrenderer ( ) );
+        this.setBorder ( BorderFactory.createEmptyBorder ( 5, 5, 5, 5 ) );
+	}
+
+    private void setModeldata(DefaultListModel listmodel, IDevice device) {
+    	for(int i=0; i < listmodel.size(); i++) {
+    		DeviceListData temp = (DeviceListData) listmodel.getElementAt(i);
+    		if(temp.serialnumber.equals(device.getSerialNumber())) {
+    			temp.status = device.getState().toString();
+    			setDeviceProperty(device, temp, IDevice.PROP_DEVICE_MODEL);
+    			setDeviceProperty(device,temp,IDevice.PROP_BUILD_API_LEVEL);
+    			this.repaint();
+    			return;
+    		}
+    	}
+    	    	
+		DeviceListData data = new DeviceListData();
+		data.circleColor = new Color( 209, 52, 23 );
+		data.serialnumber = device.getSerialNumber();
+		//data.SDKVersion = device.getProperty(IDevice.PROP_BUILD_VERSION_NUMBER);
+		//data.name = device.getName();
+		setDeviceProperty(device,data,IDevice.PROP_DEVICE_MODEL);
+		setDeviceProperty(device,data,IDevice.PROP_BUILD_API_LEVEL);
+		
+		data.status = device.getState().toString();
+		
+		listmodel.addElement (data);		
     }
     
-    private class Listrenderer extends DefaultListCellRenderer {
+	public void setDeviceProperty(IDevice device, final DeviceListData DO, final String propertyname) {
+		try {
+		final String DeviceName = null;
+		if("ONLINE".equals(device.getState().toString())) {
+				device.executeShellCommand("getprop "+propertyname, new MultiLineReceiver() {
+					String temp;
+					    @Override
+					    public void processNewLines(String[] lines) {					        
+					        	if(lines[0].length() >0) {
+					        		if(propertyname.indexOf(IDevice.PROP_DEVICE_MODEL) > -1) {
+					        			DO.name = lines[0];					        		
+					        		} else if(propertyname.indexOf(IDevice.PROP_BUILD_API_LEVEL) > -1) {
+					        			DO.SDKVersion = lines[0];
+					        		}
+					        		return ;
+					        	}
+					    }
+					    @Override
+					    public boolean isCancelled() {
+					        return false;
+					    }
+					});
+				
+			} else {				
+				DO.name = device.getName();
+			}
+			return;
+		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
+				| IOException e) {
+			e.printStackTrace();
+		}
+		return;
+	}
+    
+	private class Listrenderer extends DefaultListCellRenderer {
     	private CustomLabel renderer;
         @Override
         public Component getListCellRendererComponent ( JList list, Object value, int index, boolean isSelected, boolean cellHasFocus )
@@ -73,34 +144,44 @@ public class DeviceCustomList extends JPanel{
     }
     
     
-    private static class DeviceListData
+    private class DeviceListData
     {
-        private Color circleColor;
-        private int newMessages;
-        private String name;
-
-        public DeviceListData ( Color circleColor, int newMessages, String name )
+        public Color circleColor;
+        public String status;
+        public String name;
+        public String serialnumber;
+        public String SDKVersion;
+        
+        public DeviceListData ( Color circleColor, String status, String name, String sdkVersion, String serialnumber )
         {
             super ();
             this.circleColor = circleColor;
-            this.newMessages = newMessages;
+            this.status = status;
             this.name = name;
+            this.SDKVersion = sdkVersion;
+        }
+        
+        public DeviceListData ()
+        {
+
         }
 
-        private Color getCircleColor ()
-        {
+        private Color getCircleColor () {
             return circleColor;
         }
 
-        private int getNewMessages ()
-        {
-            return newMessages;
+        private String getStatus() {
+            return status;
         }
 
-        private String getName ()
-        {
+        private String getName () {
             return name;
         }
+        
+        private String getSDKVersion() {
+        	return SDKVersion;
+        }
+        
     }
     
     private static class CustomLabel extends JLabel
@@ -114,8 +195,8 @@ public class DeviceCustomList extends JPanel{
         {
             super ();
             setOpaque ( false );
-            setBorder ( BorderFactory.createEmptyBorder ( 0, 70, 0, 40 ) );
-            setFont(new Font(getFont().getName(), Font.BOLD, 20));
+            setBorder ( BorderFactory.createEmptyBorder ( 0, 60, 0, 40 ) );
+            setFont(new Font(getFont().getName(), Font.BOLD, 9));
         }
 
         private void setSelected ( boolean selected )
@@ -130,6 +211,28 @@ public class DeviceCustomList extends JPanel{
             setText ( data.getName () );
         }
 
+        private void centerString(Graphics g, Rectangle r, String s, 
+                Font font) {
+            FontRenderContext frc = 
+                    new FontRenderContext(null, true, true);
+
+            if(s==null) {
+            	s = "";
+            }
+            
+            Rectangle2D r2D = font.getStringBounds(s, frc);
+            int rWidth = (int) Math.round(r2D.getWidth());
+            int rHeight = (int) Math.round(r2D.getHeight());
+            int rX = (int) Math.round(r2D.getX());
+            int rY = (int) Math.round(r2D.getY());
+
+            int a = (r.width / 2) - (rWidth / 2) - rX;
+            int b = (r.height / 2) - (rHeight / 2) - rY;
+
+            g.setFont(font);
+            g.drawString(s, r.x + a, r.y + b);
+        }
+        
         @Override
         protected void paintComponent ( Graphics g )
         {
@@ -138,57 +241,36 @@ public class DeviceCustomList extends JPanel{
 
             if ( selected )
             {
-                Area area = new Area ( new Ellipse2D.Double ( 0, 0, 72, 72 ) );
-                area.add ( new Area ( new RoundRectangle2D.Double ( 36, 6, getWidth () - 36, 58, 12, 12 ) ) );
+                Area area = new Area ( new Ellipse2D.Double ( 0, 0, 52, 52 ) );
+                area.add ( new Area ( new RoundRectangle2D.Double ( 36, 6, getWidth () - 36, 40, 12, 12 ) ) );
                 g2d.setPaint ( selectionColor );
                 g2d.fill ( area );
 
                 g2d.setPaint ( Color.WHITE );
-                g2d.fill ( new Ellipse2D.Double ( 4, 4, 64, 64 ) );
+                g2d.fill ( new Ellipse2D.Double ( 4, 4, 44, 44 ) );
             }
-
+            
             g2d.setPaint ( data.getCircleColor () );
-            g2d.fill ( new Ellipse2D.Double ( 10, 10, 52, 52 ) );
-            //g2d.drawImage ( tipIcon.getImage (), 5 + 13 - tipIcon.getIconWidth () / 2, 5 + 13 - tipIcon.getIconHeight () / 2, null );
-            g2d.drawImage ( tipIcon.getImage (), 10 + 26 - tipIcon.getIconWidth () / 2, 10 + 26 - tipIcon.getIconHeight () / 2, null );
+            g2d.fill ( new Ellipse2D.Double ( 6, 6, 40, 40 ) );
             
-            if ( selected )
-            {
-//                g2d.drawImage ( crossIcon.getImage (), getWidth () - 9 - 5 - crossIcon.getIconWidth () / 2,
-//                        getHeight () / 2 - crossIcon.getIconHeight () / 2, null );
-            }
-
-            switch(data.getNewMessages ()) {
-        	case 0:
-        		g2d.setPaint ( Color.LIGHT_GRAY );
-        		g2d.drawImage ( tipIcon.getImage (), 10 + 26 - tipIcon.getIconWidth () / 2, 10 + 26 - tipIcon.getIconHeight () / 2, null );
-        		break;
-        	case 1:
-        		g2d.setPaint ( Color.GREEN );
-        		g2d.drawImage ( tipIcon2.getImage (), 10 + 26 - tipIcon2.getIconWidth () / 2, 10 + 26 - tipIcon2.getIconHeight () / 2, null );
-        		break;
-        	case 2:
-        		g2d.setPaint ( Color.LIGHT_GRAY );
-        		g2d.drawImage ( tipIcon1.getImage (), 10 + 26 - tipIcon1.getIconWidth () / 2, 10 + 26 - tipIcon1.getIconHeight () / 2, null );
-        		break;
-        	case 3:
-        		g2d.setPaint ( Color.GREEN );
-        		g2d.drawImage ( tipIcon2.getImage (), 10 + 26 - tipIcon2.getIconWidth () / 2, 10 + 26 - tipIcon2.getIconHeight () / 2, null );
-        		break;
-        	}
+            g2d.setPaint ( Color.WHITE );
+            //g2d.drawString("N", 22, 22);
+            
+            centerString(g2d,new Rectangle(4, 4, 44, 44), data.getSDKVersion(), new Font(getFont().getName(), Font.BOLD, 20));
         	
+            if(data.status.indexOf("ONLINE") > -1) {
+            	g2d.setPaint ( new Color(116, 211, 109) ); // online color            
+            } else if(data.status.indexOf("OFFLINE") > -1) {
+            	g2d.setPaint(Color.GRAY);
+            } else {
+            	g2d.setPaint(Color.ORANGE);            	
+            }
+            g2d.fill ( new Ellipse2D.Double ( getWidth () - 18 - 10, getHeight () / 2 - 9, 18, 18 ) );
             
-            g2d.fill ( new Ellipse2D.Double ( getWidth () - 18 - 10, getHeight () / 2 - 18, 18, 18 ) );
-//
-//                final String text = "" + data.getNewMessages ();
-//                final Font oldFont = g2d.getFont ();
-//                g2d.setFont ( oldFont.deriveFont ( oldFont.getSize () - 1f ) );
-//                final FontMetrics fm = g2d.getFontMetrics ();
-//                g2d.setPaint ( Color.WHITE );
-//                g2d.drawString ( text, getWidth () - 9 - 5 - fm.stringWidth ( text ) / 2,
-//                        getHeight () / 2 + ( fm.getAscent () - fm.getLeading () - fm.getDescent () ) / 2 );
-//                g2d.setFont ( oldFont );
-
+            g2d.setPaint ( Color.LIGHT_GRAY );
+            g.drawLine(2, getHeight()-2, getWidth()-2, getHeight()-2 );
+            
+            g.setFont(new Font(getFont().getName(), Font.BOLD, 15));
             super.paintComponent ( g );
         }
 
@@ -196,8 +278,38 @@ public class DeviceCustomList extends JPanel{
         public Dimension getPreferredSize ()
         {
             final Dimension ps = super.getPreferredSize ();
-            ps.height = 72;
+            ps.height = 54;
+            ps.width = 200;
             return ps;
         }
     }
+
+	@Override
+	public void deviceChanged(IDevice arg0, int arg1) {
+		// TODO Auto-generated method stub
+		Log.d("change device state : " + arg0.getSerialNumber() + " : " + arg0.getState());
+		setModeldata(listmodel, arg0);
+	}
+
+	@Override
+	public void deviceConnected(IDevice arg0) {
+		// TODO Auto-generated method stub
+		Log.d("deviceConnected device state : " + arg0.getSerialNumber() + " : " + arg0.getState());
+		setModeldata(listmodel, arg0);
+	}
+
+	@Override
+	public void deviceDisconnected(IDevice arg0) {
+		// TODO Auto-generated method stub
+		Log.d("deviceDisconnected device state : " + arg0.getSerialNumber() + " : " + arg0.getState());
+    	for(int i=0; i < listmodel.size(); i++) {
+    		DeviceListData temp = (DeviceListData) listmodel.getElementAt(i);
+    		if(temp.serialnumber.equals(arg0.getSerialNumber())) {
+    			listmodel.remove(i);    			
+    			return;
+    			//setDeviceProperty(device, temp, IDevice.PROP_DEVICE_MODEL);
+    		}
+    	}
+		
+	}
 }

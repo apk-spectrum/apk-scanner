@@ -35,6 +35,7 @@ import com.apkscanner.gui.install.InstallProgressPanel;
 import com.apkscanner.resource.Resource;
 
 import com.apkscanner.tool.adb.AdbDeviceManager;
+import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
 import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.util.Log;
@@ -146,6 +147,7 @@ public class ApkInstallWizard
 			
 			// Closing event of window be delete tempFile
 			addWindowListener(uiEventHandler);
+			
 		}
 	}
     private void setmargin(JPanel c, int size) {
@@ -198,8 +200,9 @@ public class ApkInstallWizard
 	{
 		if(window == null) return;
 
+		AdbServerMonitor.startServerAndCreateBridgeAsync();
 		window.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
-		window.setSize(new Dimension(600,450));
+		window.setSize(new Dimension(550,450));
 		
 		progressPanel = new InstallProgressPanel();
 		contentPanel = new ContentPanel(uiEventHandler);
@@ -209,7 +212,7 @@ public class ApkInstallWizard
 		//progressPanel.setPreferredSize(new Dimension(700, 200));
 		PanelDummy.setBackground(Color.WHITE);
 		PanelDummy.setOpaque(true);
-		PanelDummy.setPreferredSize(new Dimension(600, 80));
+		PanelDummy.setPreferredSize(new Dimension(550, 80));
 		PanelDummy.add(progressPanel);
 		
 		window.add(PanelDummy, BorderLayout.NORTH);
@@ -219,7 +222,7 @@ public class ApkInstallWizard
 		//Log.i("initialize() register event handler");
 		//window.addWindowListener(new UIEventHandler());
 		
-		window.setMinimumSize(new Dimension(600, 450));
+		window.setMinimumSize(new Dimension(550, 450));
 		
 		// Shortcut key event processing
 		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
@@ -227,7 +230,7 @@ public class ApkInstallWizard
 	}
 	
 	private void changeState(int status) {
-		Log.e(">>>>>>>>>>>>> changeState() " + status);
+		Log.d(">>>>>>>>>>>>> changeState() " + status);
 		if(this.status == status) return;
 		this.status = status;
 		progressPanel.setStatus(status);

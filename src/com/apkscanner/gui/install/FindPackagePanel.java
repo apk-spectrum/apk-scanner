@@ -27,6 +27,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.android.ddmlib.AndroidDebugBridge;
+import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.android.ddmlib.IDevice;
 import com.apkscanner.core.installer.ApkInstaller;
 import com.apkscanner.core.scanner.ApkScanner;
@@ -49,13 +50,10 @@ public class FindPackagePanel extends JPanel{
 	
 	private ActionListener mainlistener;
 	private DeviceCustomList devicelist;	
-	private DeviceMonitor deviceMonitor;
-	
+	AndroidDebugBridge adb;
     public FindPackagePanel(ActionListener listener) {
-		this.setLayout(new GridBagLayout());
+		this.setLayout(new GridBagLayout());		
 		mainlistener = listener;
-
-		deviceMonitor = new DeviceMonitor();
 		
 		JPanel mainpanel = new JPanel(new BorderLayout());
 		JPanel Listpanel = new JPanel(new BorderLayout());
@@ -63,26 +61,26 @@ public class FindPackagePanel extends JPanel{
 		JPanel appstartpanel = new JPanel(new BorderLayout());
 		JPanel buttonpanel = new JPanel();
 		
-		devicelist = new DeviceCustomList();
-		
-		
 		JLabel textSelectDevice = new JLabel("installed same package!");
 		textSelectDevice.setFont(new Font(textSelectDevice.getFont().getName(), Font.PLAIN, 30));
 	    
-	    packagepanel.add(evtShowInstalledPackageInfo(), BorderLayout.CENTER);
+	    packagepanel.add(getPackageInfopanel(), BorderLayout.CENTER);
 	    packagepanel.add(appstartpanel, BorderLayout.SOUTH);		    
 	    
 	    Listpanel.add(packagepanel, BorderLayout.CENTER);
 	    Listpanel.add(buttonpanel, BorderLayout.SOUTH);
 	    
 	    //mainpanel.add(textSelectDevice,BorderLayout.NORTH);
+	    
+	    devicelist = new DeviceCustomList();
+	    
 	    mainpanel.add(Listpanel,BorderLayout.CENTER);
 	    mainpanel.add(devicelist, BorderLayout.WEST);
 	    
 	    GridBagConstraints gbc = new GridBagConstraints();            
 	    gbc.fill = GridBagConstraints.HORIZONTAL;
 	    gbc.anchor = GridBagConstraints.NORTH;
-	    this.add(textSelectDevice,addGrid(gbc, 0, 0, 1, 1, 1, 1));
+	    //this.add(textSelectDevice,addGrid(gbc, 0, 0, 1, 1, 1, 1));
 	    gbc.fill = GridBagConstraints.BOTH;
 	    this.add(mainpanel,addGrid(gbc, 0, 1, 1, 1, 1, 7));
 	    this.add(new JPanel(),addGrid(gbc, 0, 2, 1, 1, 1, 3));
@@ -110,23 +108,12 @@ public class FindPackagePanel extends JPanel{
       gbc.weighty = weighty;
       return gbc;
     }
-    
-	private void initADBInit() {
-		AndroidDebugBridge.init(true);
-        AndroidDebugBridge debugBridge = AndroidDebugBridge.createBridge(Resource.BIN_ADB.getPath(), true);
-//        if (debugBridge == null) {
-//            System.err.println("Invalid ADB  location.");
-//            System.exit(1);
-//        }
-	}
-    
-	private Container evtShowInstalledPackageInfo()
+
+    private Container getPackageInfopanel()
 	{
-		initADBInit();
-		
         String packageName = ApkScanner.getPackageName(ApkInstallWizard.pakcageFilePath);
         
-        AndroidDebugBridge adb = AdbServerMonitor.getAndroidDebugBridge();
+        adb = AdbServerMonitor.getAndroidDebugBridge();
         IDevice[] devices = adb.getDevices();
         
         Log.d(devices.length + "         " + ApkInstallWizard.pakcageFilePath);
