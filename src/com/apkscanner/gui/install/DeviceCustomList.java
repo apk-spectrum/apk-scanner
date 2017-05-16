@@ -38,7 +38,7 @@ import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.Log;
 
-public class DeviceCustomList extends JList implements IDeviceChangeListener{
+public class DeviceCustomList extends JList{
 
 	DefaultListModel listmodel;
     public DeviceCustomList() {
@@ -46,17 +46,9 @@ public class DeviceCustomList extends JList implements IDeviceChangeListener{
     	setLayout(new BorderLayout());    	
         listmodel = new DefaultListModel ();
 		//AndroidDebugBridge.init(true);
-        IDevice[] devices = AdbServerMonitor.getAndroidDebugBridge().getDevices();
-        
-        Log.d(devices.length + "         " + ApkInstallWizard.pakcageFilePath);
-        
-        AndroidDebugBridge.addDeviceChangeListener(this);
-        
-        
-//        listmodel.addElement ( new DeviceListData ( new Color ( 209, 52, 23 ), "Aa", "SC-02J", "O","aa"));
-//        listmodel.addElement ( new DeviceListData ( new Color ( 135, 163, 14 ), false, "SC-04J", "M" ) );
-//        listmodel.addElement ( new DeviceListData ( new Color ( 204, 204, 204 ), true, "SC-05J", "N" ) );
-//        listmodel.addElement ( new DeviceListData ( new Color ( 90, 90, 90 ), true, "SCH-44566", "N" ) );
+        IDevice[] devices = AdbServerMonitor.getAndroidDebugBridge().getDevices();        
+        Log.d(devices.length + "         " + ApkInstallWizard.pakcageFilePath);        
+        //AndroidDebugBridge.addDeviceChangeListener(this);
         
         for(IDevice dev: devices) {
         	setModeldata(listmodel, dev);
@@ -151,7 +143,7 @@ public class DeviceCustomList extends JList implements IDeviceChangeListener{
         public String name;
         public String serialnumber;
         public String SDKVersion;
-        
+        public JPanel AppDetailpanel;
         public DeviceListData ( Color circleColor, String status, String name, String sdkVersion, String serialnumber )
         {
             super ();
@@ -283,22 +275,18 @@ public class DeviceCustomList extends JList implements IDeviceChangeListener{
             return ps;
         }
     }
-
-	@Override
 	public void deviceChanged(IDevice arg0, int arg1) {
 		// TODO Auto-generated method stub
 		Log.d("change device state : " + arg0.getSerialNumber() + " : " + arg0.getState());
 		setModeldata(listmodel, arg0);
 	}
 
-	@Override
 	public void deviceConnected(IDevice arg0) {
 		// TODO Auto-generated method stub
 		Log.d("deviceConnected device state : " + arg0.getSerialNumber() + " : " + arg0.getState());
 		setModeldata(listmodel, arg0);
 	}
 
-	@Override
 	public void deviceDisconnected(IDevice arg0) {
 		// TODO Auto-generated method stub
 		Log.d("deviceDisconnected device state : " + arg0.getSerialNumber() + " : " + arg0.getState());

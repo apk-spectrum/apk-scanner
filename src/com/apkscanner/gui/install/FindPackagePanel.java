@@ -1,6 +1,7 @@
 package com.apkscanner.gui.install;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -46,44 +47,30 @@ import com.apkscanner.tool.adb.DeviceMonitor;
 import com.apkscanner.util.Log;
 import com.sun.jna.platform.win32.DBT.DEV_BROADCAST_DEVICEINTERFACE;
 
-public class FindPackagePanel extends JPanel{
+public class FindPackagePanel extends JPanel implements IDeviceChangeListener{
+	
+	private static final String NO_DEVICE_LAYOUT = "NO_DEVICE_LAYOUT";
+	private static final String DEVICE_LAYOUT = "DEVICE_LAYOUT";
 	
 	private ActionListener mainlistener;
 	private DeviceCustomList devicelist;	
 	AndroidDebugBridge adb;
     public FindPackagePanel(ActionListener listener) {
-		this.setLayout(new GridBagLayout());		
+    	AndroidDebugBridge.addDeviceChangeListener(this);
+		this.setLayout(new CardLayout());
 		mainlistener = listener;
-		
 		JPanel mainpanel = new JPanel(new BorderLayout());
-		JPanel Listpanel = new JPanel(new BorderLayout());
-		JPanel packagepanel = new JPanel(new BorderLayout());
-		JPanel appstartpanel = new JPanel(new BorderLayout());
-		JPanel buttonpanel = new JPanel();
-		
-		JLabel textSelectDevice = new JLabel("installed same package!");
+		JLabel textSelectDevice = new JLabel("no device");
 		textSelectDevice.setFont(new Font(textSelectDevice.getFont().getName(), Font.PLAIN, 30));
-	    
-	    packagepanel.add(getPackageInfopanel(), BorderLayout.CENTER);
-	    packagepanel.add(appstartpanel, BorderLayout.SOUTH);		    
-	    
-	    Listpanel.add(packagepanel, BorderLayout.CENTER);
-	    Listpanel.add(buttonpanel, BorderLayout.SOUTH);
-	    
 	    //mainpanel.add(textSelectDevice,BorderLayout.NORTH);
-	    
+	    mainpanel.add(getPackageInfopanel(),BorderLayout.CENTER);
 	    devicelist = new DeviceCustomList();
-	    
-	    mainpanel.add(Listpanel,BorderLayout.CENTER);
 	    mainpanel.add(devicelist, BorderLayout.WEST);
+
+	    this.add(mainpanel, DEVICE_LAYOUT);
+	    this.add(textSelectDevice, NO_DEVICE_LAYOUT);
 	    
-	    GridBagConstraints gbc = new GridBagConstraints();            
-	    gbc.fill = GridBagConstraints.HORIZONTAL;
-	    gbc.anchor = GridBagConstraints.NORTH;
-	    //this.add(textSelectDevice,addGrid(gbc, 0, 0, 1, 1, 1, 1));
-	    gbc.fill = GridBagConstraints.BOTH;
-	    this.add(mainpanel,addGrid(gbc, 0, 1, 1, 1, 1, 7));
-	    this.add(new JPanel(),addGrid(gbc, 0, 2, 1, 1, 1, 3));
+	    //((CardLayout)getLayout()).show(this, NO_DEVICE_LAYOUT);
 	}
 
 	private void setmargin(JPanel c, int size) {
@@ -129,7 +116,27 @@ public class FindPackagePanel extends JPanel{
     			return packageInfoDlg.getContentPane();
             }
         }
+		return new JPanel();
+	}
+
+	@Override
+	public void deviceChanged(IDevice arg0, int arg1) {
+		// TODO Auto-generated method stub
+		Log.d("change device state : " + arg0.getSerialNumber() + " : " + arg0.getState());
 		
-		return null;	
+		if(devicelist!=null) devicelist.deviceChanged(arg0, arg1);
+	}
+
+	@Override
+	public void deviceConnected(IDevice arg0) {
+		Log.d("connect device state : " + arg0.getSerialNumber() + " : " + arg0.getState());
+		// TODO Auto-generated method stub
+		if(devicelist!=null) devicelist.deviceConnected(arg0);
+	}
+
+	@Override
+	public void deviceDisconnected(IDevice arg0) {
+		// TODO Auto-generated method stub
+		if(devicelist!=null) devicelist.deviceDisconnected(arg0);
 	}
 }
