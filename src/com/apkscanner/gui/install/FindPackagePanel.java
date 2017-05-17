@@ -35,6 +35,7 @@ import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.MainUI;
 
 import com.apkscanner.gui.dialog.PackageInfoDlg;
+import com.apkscanner.gui.install.DeviceCustomList.DeviceListData;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.dialog.ApkInstallWizard.UIEventHandler;
 import com.apkscanner.gui.messagebox.ArrowTraversalPane;
@@ -47,13 +48,14 @@ import com.apkscanner.tool.adb.DeviceMonitor;
 import com.apkscanner.util.Log;
 import com.sun.jna.platform.win32.DBT.DEV_BROADCAST_DEVICEINTERFACE;
 
-public class FindPackagePanel extends JPanel implements IDeviceChangeListener{
+public class FindPackagePanel extends JPanel implements IDeviceChangeListener, ListSelectionListener{
 	
 	private static final String NO_DEVICE_LAYOUT = "NO_DEVICE_LAYOUT";
 	private static final String DEVICE_LAYOUT = "DEVICE_LAYOUT";
 	
 	private ActionListener mainlistener;
-	private DeviceCustomList devicelist;	
+	private DeviceCustomList devicelist;
+	private JPanel pacakgeinfopanel;
 	AndroidDebugBridge adb;
     public FindPackagePanel(ActionListener listener) {
     	AndroidDebugBridge.addDeviceChangeListener(this);
@@ -63,8 +65,13 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener{
 		JLabel textSelectDevice = new JLabel("no device");
 		textSelectDevice.setFont(new Font(textSelectDevice.getFont().getName(), Font.PLAIN, 30));
 	    //mainpanel.add(textSelectDevice,BorderLayout.NORTH);
-	    mainpanel.add(getPackageInfopanel(),BorderLayout.CENTER);
+		
+		pacakgeinfopanel = new JPanel(new CardLayout());
+		
+	    mainpanel.add(pacakgeinfopanel,BorderLayout.CENTER);
 	    devicelist = new DeviceCustomList();
+	    devicelist.addListSelectionListener(this);
+	    
 	    mainpanel.add(devicelist, BorderLayout.WEST);
 
 	    this.add(mainpanel, DEVICE_LAYOUT);
@@ -138,5 +145,17 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener{
 	public void deviceDisconnected(IDevice arg0) {
 		// TODO Auto-generated method stub
 		if(devicelist!=null) devicelist.deviceDisconnected(arg0);
+	}
+
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+		// TODO Auto-generated method stub		
+		DeviceListData data = (DeviceListData)devicelist.getModel().getElementAt(devicelist.getSelectedIndex());
+		
+		pacakgeinfopanel.removeAll();
+		pacakgeinfopanel.add(data.AppDetailpanel);
+		
+		this.repaint();
+		this.revalidate();		
 	}
 }

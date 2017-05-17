@@ -3,6 +3,7 @@ package com.apkscanner.gui.install;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -16,6 +17,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -32,10 +34,14 @@ import com.android.ddmlib.IDevice;
 import com.android.ddmlib.MultiLineReceiver;
 import com.android.ddmlib.ShellCommandUnresponsiveException;
 import com.android.ddmlib.TimeoutException;
+import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
+import com.apkscanner.gui.dialog.PackageInfoDlg;
 import com.apkscanner.gui.install.DeviceTablePanel.DeviceDO;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbServerMonitor;
+import com.apkscanner.tool.adb.PackageInfo;
+import com.apkscanner.tool.adb.PackageManager;
 import com.apkscanner.util.Log;
 
 public class DeviceCustomList extends JList{
@@ -49,10 +55,6 @@ public class DeviceCustomList extends JList{
         IDevice[] devices = AdbServerMonitor.getAndroidDebugBridge().getDevices();        
         Log.d(devices.length + "         " + ApkInstallWizard.pakcageFilePath);        
         //AndroidDebugBridge.addDeviceChangeListener(this);
-        
-        for(IDevice dev: devices) {
-        	setModeldata(listmodel, dev);
-        }        
         
         this.setModel(listmodel);
         
@@ -71,7 +73,7 @@ public class DeviceCustomList extends JList{
     			return;
     		}
     	}
-    	    	
+    	
 		DeviceListData data = new DeviceListData();
 		data.circleColor = new Color( 209, 52, 23 );
 		data.serialnumber = device.getSerialNumber();
@@ -82,8 +84,32 @@ public class DeviceCustomList extends JList{
 		
 		data.status = device.getState().toString();
 		
-		listmodel.addElement (data);		
+		//data.AppDetailpanel = getPackageInfopanel(device);
+		
+		data.AppDetailpanel = new JPanel();
+		
+		listmodel.addElement (data);
+		
+		if(listmodel.size() ==1) {
+			this.setSelectedIndex(0);
+		}
+		
     }
+    
+    private Container getPackageInfopanel(IDevice dev)
+	{
+        String packageName = ApkScanner.getPackageName(ApkInstallWizard.pakcageFilePath);
+        
+        PackageInfo info = PackageManager.getPackageInfo(dev, packageName);
+        if(info != null) {
+            PackageInfoDlg packageInfoDlg = new PackageInfoDlg(null);
+			packageInfoDlg.setPackageInfo(info);
+			//packageInfoDlg.setVisible(true);
+			return packageInfoDlg.getContentPane();
+        }
+        
+		return new JPanel();
+	}
     
 	public void setDeviceProperty(IDevice device, final DeviceListData DO, final String propertyname) {
 		try {
@@ -136,14 +162,14 @@ public class DeviceCustomList extends JList{
     }
     
     
-    private class DeviceListData
+    public class DeviceListData
     {
         public Color circleColor;
         public String status;
         public String name;
         public String serialnumber;
         public String SDKVersion;
-        public JPanel AppDetailpanel;
+        public Container AppDetailpanel;
         public DeviceListData ( Color circleColor, String status, String name, String sdkVersion, String serialnumber )
         {
             super ();
