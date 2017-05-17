@@ -37,6 +37,7 @@ import com.android.ddmlib.TimeoutException;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.dialog.PackageInfoDlg;
+import com.apkscanner.gui.dialog.PackageInfoPanel;
 import com.apkscanner.gui.install.DeviceTablePanel.DeviceDO;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbServerMonitor;
@@ -52,8 +53,8 @@ public class DeviceCustomList extends JList{
     	setLayout(new BorderLayout());    	
         listmodel = new DefaultListModel ();
 		//AndroidDebugBridge.init(true);
-        IDevice[] devices = AdbServerMonitor.getAndroidDebugBridge().getDevices();        
-        Log.d(devices.length + "         " + ApkInstallWizard.pakcageFilePath);        
+        //IDevice[] devices = AdbServerMonitor.getAndroidDebugBridge().getDevices();        
+        //Log.d(devices.length + "         " + ApkInstallWizard.pakcageFilePath);        
         //AndroidDebugBridge.addDeviceChangeListener(this);
         
         this.setModel(listmodel);
@@ -66,9 +67,10 @@ public class DeviceCustomList extends JList{
     	for(int i=0; i < listmodel.size(); i++) {
     		DeviceListData temp = (DeviceListData) listmodel.getElementAt(i);
     		if(temp.serialnumber.equals(device.getSerialNumber())) {
-    			temp.status = device.getState().toString();
     			setDeviceProperty(device, temp, IDevice.PROP_DEVICE_MODEL);
-    			setDeviceProperty(device,temp,IDevice.PROP_BUILD_API_LEVEL);
+    			setDeviceProperty(device,temp,IDevice.PROP_BUILD_API_LEVEL);    			
+    			temp.status = temp.SDKVersion == null ? "OFFLINE" : device.getState().toString();    			
+    			temp.AppDetailpanel = getPackageInfopanel(device);
     			this.repaint();
     			return;
     		}
@@ -82,33 +84,30 @@ public class DeviceCustomList extends JList{
 		setDeviceProperty(device,data,IDevice.PROP_DEVICE_MODEL);
 		setDeviceProperty(device,data,IDevice.PROP_BUILD_API_LEVEL);
 		
-		data.status = device.getState().toString();
-		
-		//data.AppDetailpanel = getPackageInfopanel(device);
-		
-		data.AppDetailpanel = new JPanel();
-		
+		data.status = data.SDKVersion == null ? "OFFLINE" : device.getState().toString();
+		data.AppDetailpanel = getPackageInfopanel(device);
 		listmodel.addElement (data);
 		
 		if(listmodel.size() ==1) {
 			this.setSelectedIndex(0);
 		}
-		
+		this.repaint();
     }
     
     private Container getPackageInfopanel(IDevice dev)
 	{
         String packageName = ApkScanner.getPackageName(ApkInstallWizard.pakcageFilePath);
-        
         PackageInfo info = PackageManager.getPackageInfo(dev, packageName);
+        
         if(info != null) {
-            PackageInfoDlg packageInfoDlg = new PackageInfoDlg(null);
-			packageInfoDlg.setPackageInfo(info);
+        	PackageInfoPanel packageInfoPanel = new PackageInfoPanel();
+        	packageInfoPanel.setPackageInfo(info);
 			//packageInfoDlg.setVisible(true);
-			return packageInfoDlg.getContentPane();
+			return packageInfoPanel;
         }
         
 		return new JPanel();
+        //return null;
 	}
     
 	public void setDeviceProperty(IDevice device, final DeviceListData DO, final String propertyname) {
@@ -124,6 +123,7 @@ public class DeviceCustomList extends JList{
 					        			DO.name = lines[0];					        		
 					        		} else if(propertyname.indexOf(IDevice.PROP_BUILD_API_LEVEL) > -1) {
 					        			DO.SDKVersion = lines[0];
+					        			
 					        		}
 					        		return ;
 					        	}
@@ -278,7 +278,7 @@ public class DeviceCustomList extends JList{
         	
             if(data.status.indexOf("ONLINE") > -1) {
             	g2d.setPaint ( new Color(116, 211, 109) ); // online color            
-            } else if(data.status.indexOf("OFFLINE") > -1) {
+            } else if(data.status.indexOf("OFFLINE") > -1) {            	
             	g2d.setPaint(Color.GRAY);
             } else {
             	g2d.setPaint(Color.ORANGE);            	
@@ -316,10 +316,14 @@ public class DeviceCustomList extends JList{
 	public void deviceDisconnected(IDevice arg0) {
 		// TODO Auto-generated method stub
 		Log.d("deviceDisconnected device state : " + arg0.getSerialNumber() + " : " + arg0.getState());
+				
     	for(int i=0; i < listmodel.size(); i++) {
     		DeviceListData temp = (DeviceListData) listmodel.getElementAt(i);
     		if(temp.serialnumber.equals(arg0.getSerialNumber())) {
-    			listmodel.remove(i);    			
+    			listmodel.remove(i);
+    			if(listmodel.size() >=1) {
+    				this.setSelectedIndex(0);
+    			}
     			return;
     			//setDeviceProperty(device, temp, IDevice.PROP_DEVICE_MODEL);
     		}

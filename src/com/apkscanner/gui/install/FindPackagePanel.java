@@ -149,12 +149,13 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		// TODO Auto-generated method stub		
-		DeviceListData data = (DeviceListData)devicelist.getModel().getElementAt(devicelist.getSelectedIndex());
-		
-		pacakgeinfopanel.removeAll();
-		pacakgeinfopanel.add(data.AppDetailpanel);
-		
+		// TODO Auto-generated method stub
+		if(e.getValueIsAdjusting()) {		
+			DeviceListData data = (DeviceListData)devicelist.getModel().getElementAt(devicelist.getSelectedIndex());
+			
+			pacakgeinfopanel.removeAll();
+			pacakgeinfopanel.add(data.AppDetailpanel);
+		}
 		this.repaint();
 		this.revalidate();		
 	}
