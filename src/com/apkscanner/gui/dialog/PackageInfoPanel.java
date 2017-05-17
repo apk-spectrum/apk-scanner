@@ -301,7 +301,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		StringBuilder strTabInfo = new StringBuilder("");
 		strTabInfo.append("<table>");
 		strTabInfo.append("  <tr>");
-		strTabInfo.append("    <td height=200>");
+		strTabInfo.append("    <td height=100>");
 		strTabInfo.append("      <div id=\"basic-info\">");
 		//strTabInfo.append("        <font style=\"font-size:20px; color:#548235; font-weight:bold\">");
 		//strTabInfo.append("          " + appName);

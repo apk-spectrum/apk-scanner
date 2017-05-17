@@ -57,18 +57,21 @@ public class DeviceCustomList extends JList{
         //Log.d(devices.length + "         " + ApkInstallWizard.pakcageFilePath);        
         //AndroidDebugBridge.addDeviceChangeListener(this);
         
+        setPreferredSize(new Dimension(200, 0));
+        
+        
         this.setModel(listmodel);
         
         this.setCellRenderer ( new Listrenderer ( ) );
         this.setBorder ( BorderFactory.createEmptyBorder ( 5, 5, 5, 5 ) );
 	}
 
-    private void setModeldata(DefaultListModel listmodel, IDevice device) {
+    private void setModeldata(DefaultListModel listmodel, final IDevice device) {
     	for(int i=0; i < listmodel.size(); i++) {
     		DeviceListData temp = (DeviceListData) listmodel.getElementAt(i);
     		if(temp.serialnumber.equals(device.getSerialNumber())) {
     			setDeviceProperty(device, temp, IDevice.PROP_DEVICE_MODEL);
-    			setDeviceProperty(device,temp,IDevice.PROP_BUILD_API_LEVEL);    			
+    			setDeviceProperty(device,temp,IDevice.PROP_BUILD_VERSION);    			
     			temp.status = temp.SDKVersion == null ? "OFFLINE" : device.getState().toString();    			
     			temp.AppDetailpanel = getPackageInfopanel(device);
     			this.repaint();
@@ -76,20 +79,32 @@ public class DeviceCustomList extends JList{
     		}
     	}
     	
-		DeviceListData data = new DeviceListData();
+		final DeviceListData data = new DeviceListData();
 		data.circleColor = new Color( 209, 52, 23 );
 		data.serialnumber = device.getSerialNumber();
 		//data.SDKVersion = device.getProperty(IDevice.PROP_BUILD_VERSION_NUMBER);
 		//data.name = device.getName();
 		setDeviceProperty(device,data,IDevice.PROP_DEVICE_MODEL);
-		setDeviceProperty(device,data,IDevice.PROP_BUILD_API_LEVEL);
+		setDeviceProperty(device,data,IDevice.PROP_BUILD_VERSION);
 		
 		data.status = data.SDKVersion == null ? "OFFLINE" : device.getState().toString();
-		data.AppDetailpanel = getPackageInfopanel(device);
+		
+		data.AppDetailpanel = new JLabel(Resource.IMG_LOADING.getImageIcon());
+		
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				data.AppDetailpanel = getPackageInfopanel(device);
+				fireSelectionValueChanged(0, 0, true);
+			}			
+		}).start();
+		
 		listmodel.addElement (data);
 		
 		if(listmodel.size() ==1) {
-			this.setSelectedIndex(0);
+			setSelectedIndex(0);
+			fireSelectionValueChanged(0, 0, true);
 		}
 		this.repaint();
     }
@@ -106,7 +121,7 @@ public class DeviceCustomList extends JList{
 			return packageInfoPanel;
         }
         
-		return new JPanel();
+		return new JLabel("not installed");
         //return null;
 	}
     
@@ -121,7 +136,7 @@ public class DeviceCustomList extends JList{
 					        	if(lines[0].length() >0) {
 					        		if(propertyname.indexOf(IDevice.PROP_DEVICE_MODEL) > -1) {
 					        			DO.name = lines[0];					        		
-					        		} else if(propertyname.indexOf(IDevice.PROP_BUILD_API_LEVEL) > -1) {
+					        		} else if(propertyname.indexOf(IDevice.PROP_BUILD_VERSION) > -1) {
 					        			DO.SDKVersion = lines[0];
 					        			
 					        		}
@@ -170,6 +185,12 @@ public class DeviceCustomList extends JList{
         public String serialnumber;
         public String SDKVersion;
         public Container AppDetailpanel;
+        public int isinstalled;
+        
+        public static final String INSTALLED = "installed";
+        public static final String NOT_INSTALLED = "not installed";
+        public static final String WAITING = "walting";
+        
         public DeviceListData ( Color circleColor, String status, String name, String sdkVersion, String serialnumber )
         {
             super ();

@@ -77,7 +77,7 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	    this.add(mainpanel, DEVICE_LAYOUT);
 	    this.add(textSelectDevice, NO_DEVICE_LAYOUT);
 	    
-	    //((CardLayout)getLayout()).show(this, NO_DEVICE_LAYOUT);
+	    ((CardLayout)getLayout()).show(this, NO_DEVICE_LAYOUT);
 	}
 
 	private void setmargin(JPanel c, int size) {
@@ -132,6 +132,7 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 		Log.d("change device state : " + arg0.getSerialNumber() + " : " + arg0.getState());
 		
 		if(devicelist!=null) devicelist.deviceChanged(arg0, arg1);
+		
 	}
 
 	@Override
@@ -139,12 +140,18 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 		Log.d("connect device state : " + arg0.getSerialNumber() + " : " + arg0.getState());
 		// TODO Auto-generated method stub
 		if(devicelist!=null) devicelist.deviceConnected(arg0);
+		
+		((CardLayout)getLayout()).show(this, DEVICE_LAYOUT);
 	}
 
 	@Override
 	public void deviceDisconnected(IDevice arg0) {
 		// TODO Auto-generated method stub
 		if(devicelist!=null) devicelist.deviceDisconnected(arg0);
+		
+		if(devicelist.getModel().getSize() == 0) {
+			((CardLayout)getLayout()).show(this, NO_DEVICE_LAYOUT);
+		}
 	}
 
 	@Override
@@ -155,8 +162,8 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 			
 			pacakgeinfopanel.removeAll();
 			pacakgeinfopanel.add(data.AppDetailpanel);
+			this.repaint();
+			this.revalidate();		
 		}
-		this.repaint();
-		this.revalidate();		
 	}
 }
