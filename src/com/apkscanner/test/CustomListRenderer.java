@@ -65,58 +65,13 @@ public class CustomListRenderer extends DefaultListCellRenderer
         frame.setVisible ( true );
     }
 
-    /**
-     * Actual renderer.
-     */
     private CustomLabel renderer;
-
-    /**
-     * Custom renderer constructor.
-     * We will use it to create actual renderer component instance.
-     * We will also add a custom mouse listener to process close button.
-     *
-     * @param list our JList instance
-     */
     public CustomListRenderer ( final JList list )
     {
         super ();
         renderer = new CustomLabel ();
-
-        list.addMouseListener ( new MouseAdapter ()
-        {
-            @Override
-            public void mouseReleased ( MouseEvent e )
-            {
-//                if ( SwingUtilities.isLeftMouseButton ( e ) )
-//                {
-//                    int index = list.locationToIndex ( e.getPoint () );
-//                    if ( index != -1 && list.isSelectedIndex ( index ) )
-//                    {
-//                        Rectangle rect = list.getCellBounds ( index, index );
-//                        Point pointWithinCell = new Point ( e.getX () - rect.x, e.getY () - rect.y );
-//                        Rectangle crossRect = new Rectangle ( rect.width - 9 - 5 - crossIcon.getIconWidth () / 2,
-//                                rect.height / 2 - crossIcon.getIconHeight () / 2, crossIcon.getIconWidth (), crossIcon.getIconHeight () );
-//                        if ( crossRect.contains ( pointWithinCell ) )
-//                        {
-//                            DefaultListModel model = ( DefaultListModel ) list.getModel ();
-//                            model.remove ( index );
-//                        }
-//                    }
-//                }
-            }
-        } );
     }
 
-    /**
-     * Returns custom renderer for each cell of the list.
-     *
-     * @param list         list to process
-     * @param value        cell value (CustomData object in our case)
-     * @param index        cell index
-     * @param isSelected   whether cell is selected or not
-     * @param cellHasFocus whether cell has focus or not
-     * @return custom renderer for each cell of the list
-     */
     @Override
     public Component getListCellRendererComponent ( JList list, Object value, int index, boolean isSelected, boolean cellHasFocus )
     {
