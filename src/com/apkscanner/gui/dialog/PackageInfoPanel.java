@@ -57,12 +57,13 @@ import com.apkscanner.util.SystemUtil;
 import com.apkscanner.util.FileUtil.FSStyle;
 
 public class PackageInfoPanel extends JPanel implements ActionListener, HyperlinkClickListener, ChangeListener{
+	private static final long serialVersionUID = -2600940167326680123L;
 
 	private static final String ACT_CMD_OPEN_PACKAGE = "ACT_CMD_OPEN_PACKAGE";
 	private static final String ACT_CMD_SAVE_PACKAGE = "ACT_CMD_SAVE_PACKAGE";
 	private static final String ACT_CMD_LAUCH_PACKAGE = "ACT_CMD_LAUCH_PACKAGE";
 	private static final String ACT_CMD_UNINSTALL_PACKAGE = "ACT_CMD_UNINSTALL_PACKAGE";
-	
+
 	private JToolBar toolBar;
 	private JTabbedPane tabbedPane;
 	private JHtmlEditorPane infoPanel;
@@ -70,12 +71,12 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 	private JTextArea dumpsysTextArea;
 	private JTextArea signatureTextArea;
 	private JTextField txtApkPath;
-	
+
 	private PackageInfo packageInfo;
 	private boolean hasSysPack;
 	private String apkPath;
 	private String hiddenApkPath;
-	
+
 	public PackageInfoPanel() {
 		setLayout(new BorderLayout());
 		toolBar = new JToolBar();
@@ -151,6 +152,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 
 		add(txtApkPath, BorderLayout.SOUTH);
 	}
+
 	private JButton getToolbarButton(String text, Icon icon, String tooltip, String actCommand) {
 		JButton button = new JButton(icon);
 		button.setToolTipText(tooltip);
@@ -164,8 +166,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		//button.setPreferredSize(new Dimension(43,45));
 		return button;
 	}
-	
-	
+
 	private void alignTabbedPanel(boolean hasSysPackPanel) {
 		tabbedPane.removeAll();
 		tabbedPane.addTab(Resource.STR_TAB_PACAKGE_INFO.getString(), null, infoPanel, null);

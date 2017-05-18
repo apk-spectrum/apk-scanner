@@ -3,50 +3,29 @@ package com.apkscanner.gui.install;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Container;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.android.ddmlib.IDevice;
-import com.apkscanner.core.installer.ApkInstaller;
 import com.apkscanner.core.scanner.ApkScanner;
-import com.apkscanner.gui.MainUI;
-
+import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.dialog.PackageInfoDlg;
 import com.apkscanner.gui.install.DeviceCustomList.DeviceListData;
-import com.apkscanner.gui.dialog.ApkInstallWizard;
-import com.apkscanner.gui.dialog.ApkInstallWizard.UIEventHandler;
-import com.apkscanner.gui.messagebox.ArrowTraversalPane;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
-import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
-import com.apkscanner.tool.adb.AdbServerMonitor;
-import com.apkscanner.tool.adb.DeviceMonitor;
 import com.apkscanner.util.Log;
-import com.sun.jna.platform.win32.DBT.DEV_BROADCAST_DEVICEINTERFACE;
 
 public class FindPackagePanel extends JPanel implements IDeviceChangeListener, ListSelectionListener{
 	
