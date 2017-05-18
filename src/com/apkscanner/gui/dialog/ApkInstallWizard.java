@@ -212,7 +212,7 @@ public class ApkInstallWizard
 		//progressPanel.setPreferredSize(new Dimension(700, 200));
 		PanelDummy.setBackground(Color.WHITE);
 		PanelDummy.setOpaque(true);
-		PanelDummy.setPreferredSize(new Dimension(550, 80));
+		PanelDummy.setPreferredSize(new Dimension(600, 80));
 		PanelDummy.add(progressPanel);
 		
 		window.add(PanelDummy, BorderLayout.NORTH);
@@ -222,7 +222,7 @@ public class ApkInstallWizard
 		//Log.i("initialize() register event handler");
 		//window.addWindowListener(new UIEventHandler());
 		
-		window.setMinimumSize(new Dimension(550, 450));
+		window.setMinimumSize(new Dimension(600, 450));
 		
 		// Shortcut key event processing
 		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
@@ -415,7 +415,7 @@ public class ApkInstallWizard
 				if(SystemUtil.isWindows()) {
 					wizard.setApk("C:\\Melon.apk");
 				} else {  //for linux
-					wizard.setApk("/home/leejinhyeong/Desktop/DCMContacts.apk");
+					wizard.setApk("/home/leejinhyeong/Desktop/reco.apk");
 				}
 				wizard.start();
 				//wizard.setVisible(true);

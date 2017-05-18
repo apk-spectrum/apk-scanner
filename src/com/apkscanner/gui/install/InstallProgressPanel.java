@@ -12,12 +12,15 @@ import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.font.FontRenderContext;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -34,6 +37,8 @@ public class InstallProgressPanel extends JPanel
 	JPanel ProgressStepPanel;
 	JPanel TextStepPanel;
 	private final int STEPMAX = 4;
+	private final int STEPWIDTH = 600;
+	private final int STEPHEIGHT = 70;
 	
 	private final int COLOR_STEP_NOTFINISH = 0; 
 	private final int COLOR_STEP_PROCESSING = 1; 		
@@ -207,15 +212,39 @@ public class InstallProgressPanel extends JPanel
 	public class AnimationLabel extends JLabel {
 		private static final long serialVersionUID = 4192134315491972328L;
 		ColorBase colorbase;
-		
+		String str;
 		public AnimationLabel(String string, int center) {
-			super(string, center);
+			
+			super(string, center);			
 			colorbase = new ColorBase(this);
-			colorbase.state = 0;				
+			colorbase.state = 0;
 		}
+		
+        private void centerString(Graphics g, Rectangle r, String s, 
+                Font font) {
+            FontRenderContext frc = 
+                    new FontRenderContext(null, true, true);
+
+            if(s==null) {
+            	s = "";
+            }
+            
+            Rectangle2D r2D = font.getStringBounds(s, frc);
+            int rWidth = (int) Math.round(r2D.getWidth());
+            int rHeight = (int) Math.round(r2D.getHeight());
+            int rX = (int) Math.round(r2D.getX());
+            int rY = (int) Math.round(r2D.getY());
+
+            int a = (r.width / 2) - (rWidth / 2) - rX;
+            int b = (r.height / 2) - (rHeight / 2) - rY;
+
+            g.setFont(font);
+            g.drawString(s, r.x + a, r.y + b);
+        }
+		
 		public void paintComponent(Graphics g)
 	    {
-			super.paintComponent(g);				
+			
 			Graphics2D g2 = (Graphics2D) g;
 	        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 	        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
@@ -224,7 +253,10 @@ public class InstallProgressPanel extends JPanel
 	    		this.setForeground(colorbase.currentColor);
 	    	} else {
 	    		this.setForeground(Colorset[colorbase.state]);
-	    	}		    	
+	    	}
+	    	
+	    	//centerString(g2, getBounds(), str, new Font(getFont().getName(), Font.BOLD, getFont().getSize()));
+	    	super.paintComponent(g);
 	    }
 	    public void setState(int state) {
 	    	
@@ -233,9 +265,9 @@ public class InstallProgressPanel extends JPanel
 	    	colorbase.state = state;
 	    }
 	    @Override
-	    public void setText(String str) {
+	    public void setText(String str) {    	
 	    	
-	    	
+	    	this.str = str; 
 	    	super.setText(str);
 	    }
 
@@ -245,7 +277,7 @@ public class InstallProgressPanel extends JPanel
 
 	public InstallProgressPanel() {
 		super(new BorderLayout());
-		setPreferredSize(new Dimension(600, 70));
+		setPreferredSize(new Dimension(STEPWIDTH, STEPHEIGHT));
 		ProgressStepPanel = new JPanel();
 		ProgressStepPanel.setLayout(new GridBagLayout());
 		ProgressStepPanel.setBackground(Color.WHITE);
@@ -259,10 +291,12 @@ public class InstallProgressPanel extends JPanel
         GridBagConstraints gbc = new GridBagConstraints();            
         gbc.fill = GridBagConstraints.BOTH;
 		
+                
         for(int i=0; i< STEPMAX; i++) {
         	animatlabel[i] = new AnimationLabel(outtexts[i], SwingConstants.CENTER);
         	animatlabel[i].setFont(new Font(animatlabel[i].getFont().getName(), Font.BOLD, 10));
         	animatlabel[i].setForeground(Colorset[COLOR_STEP_NOTFINISH]);
+        	//animatlabel[i].setPreferredSize(new Dimension(STEPWIDTH/STEPMAX, 10));
         	//ellipselabel[i].setOpaque(true);
         	//ellipselabel[i].setBackground(new Color(i*50,100,100));
         	TextStepPanel.add(animatlabel[i]);
