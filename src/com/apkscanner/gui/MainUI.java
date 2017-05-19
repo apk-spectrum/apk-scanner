@@ -334,7 +334,7 @@ public class MainUI extends JFrame
 
 		private void evtOpenPackage(boolean newWindow)
 		{
-			PackageTreeDlg Dlg = new PackageTreeDlg();
+			PackageTreeDlg Dlg = new PackageTreeDlg(MainUI.this);
 			if(Dlg.showTreeDlg(MainUI.this) != PackageTreeDlg.APPROVE_OPTION) {
 				Log.v("Not choose package");
 				return;

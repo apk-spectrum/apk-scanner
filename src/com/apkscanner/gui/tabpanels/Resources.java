@@ -927,8 +927,7 @@ public class Resources extends JPanel implements TabDataObject {
 	private void makefilter(String temp) {
 		filteredModel = (FilteredTreeModel) tree.getModel();
 		filteredModel.setFilter(temp);
-		DefaultTreeModel treeModel = (DefaultTreeModel) filteredModel.getTreeModel();
-		treeModel.reload();
+		filteredModel.reload();
 
 		expandTree(tree);
 		forselectionTree();

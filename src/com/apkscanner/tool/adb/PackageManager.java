@@ -25,6 +25,7 @@ public class PackageManager {
 	private static final Object sLock = sPackageListeners;
 
 	private static HashMap<IDevice, HashMap<String, PackageInfo>> packagesMap = new HashMap<IDevice, HashMap<String, PackageInfo>>();
+	private static HashMap<String, PackageInfo[]> packageListCache = new HashMap<String, PackageInfo[]>();
 
 	public static void addPackageStateListener(IPackageStateListener listener) {
 		synchronized (sLock) {
@@ -117,14 +118,23 @@ public class PackageManager {
 		}
 		return info;
 	}
-	
+
 	public static PackageInfo[] getPackageList(IDevice device) {
 		return getPackageList(device, true);
 	}
-	
+
 	public static PackageInfo[] getPackageList(IDevice device, boolean useCache) {
+		if(useCache) {
+			synchronized (sLock) {
+				PackageInfo[] cache = packageListCache.get(device.getSerialNumber());
+				if(cache != null) {
+					return cache;
+				}
+			}
+		}
+
 		ArrayList<PackageInfo> list = new ArrayList<PackageInfo>();
-		
+
 		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
 		outputReceiver.setTrimLine(false);
 
@@ -141,7 +151,7 @@ public class PackageManager {
 		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException | IOException e1) {
 			e1.printStackTrace();
 		}
-		
+
 		boolean start = false;
 		PackageInfo pack = null;
 		String verName = null;
@@ -183,7 +193,7 @@ public class PackageManager {
 			}
 		}
 		outputReceiver.clear();
-		
+
 		if(pack != null) {
 			if(pack.apkPath == null) {
 				pack.apkPath = pack.codePath;
@@ -191,7 +201,7 @@ public class PackageManager {
 			pack.label = pack.apkPath.replaceAll(".*/", "") + " - [" + pack.packageName + "] - " + verName + "/" + verCode;
 			list.add(pack);
 		}
-		
+
 		try {
 			device.executeShellCommand("ls /system/framework/*.apk", outputReceiver);
 		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException | IOException e) {
@@ -207,8 +217,18 @@ public class PackageManager {
 			pack.label = pack.apkPath.replaceAll(".*/", "");
 			list.add(pack);
 		}
-		
-		return list.toArray(new PackageInfo[list.size()]);
+
+		PackageInfo[] packageList = list.toArray(new PackageInfo[list.size()]);
+		synchronized (sLock) {
+			packageListCache.put(device.getSerialNumber(), packageList);
+		}
+		return packageList;
+	}
+
+	public static void removeListCash(IDevice device) {
+		synchronized (sLock) {
+			packageListCache.remove(device.getSerialNumber());
+		}
 	}
 
 	public static void removeCash(IDevice device) {
