@@ -17,6 +17,8 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -44,10 +46,12 @@ import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.XmlPath;
 
 public class DeviceCustomList extends JList{
 
 	DefaultListModel listmodel;
+	private XmlPath sdkXmlPath;
     public DeviceCustomList() {
 		// TODO Auto-generated constructor stub
     	setLayout(new BorderLayout());    	
@@ -66,6 +70,25 @@ public class DeviceCustomList extends JList{
         this.setBorder ( BorderFactory.createEmptyBorder ( 5, 5, 5, 5 ) );
 	}
 
+    private int hashCode(String str) {
+        int hash = 0;
+        for (int i = 0; i < str.length(); i++) {
+            //hash = str.charAt(i)^10 + ((hash << 4) - hash);
+        	hash = str.charAt(i) + ((hash << 10) * hash);
+        }
+        return hash;
+    }
+    
+    private String intToARGB(int i) {
+        String hex = ""+ Integer.toHexString((i>>24)&0xFF) + Integer.toHexString((i>>16)&0xFF) +
+        		Integer.toHexString((i>>8)&0xFF) + Integer.toHexString(i&0xFF);
+        // Sometimes the string returned will be too short so we 
+        // add zeros to pad it out, which later get removed if
+        // the length is greater than six.
+        //hex += "000000";
+        return hex.substring(0, 6);
+    }
+    
     private void setModeldata(DefaultListModel listmodel, final IDevice device) {
     	for(int i=0; i < listmodel.size(); i++) {
     		DeviceListData temp = (DeviceListData) listmodel.getElementAt(i);
@@ -74,18 +97,29 @@ public class DeviceCustomList extends JList{
     			setDeviceProperty(device,temp,IDevice.PROP_BUILD_VERSION);    			
     			temp.status = temp.SDKVersion == null ? "OFFLINE" : device.getState().toString();    			
     			temp.AppDetailpanel = getPackageInfopanel(device);
+    			
+    			Log.d(temp.name + "#"+intToARGB(hashCode(temp.name)));
+    			temp.circleColor = Color.decode("#"+intToARGB(hashCode(temp.name)));
+    			
+    			
     			this.repaint();
     			return;
     		}
     	}
     	
 		final DeviceListData data = new DeviceListData();
-		data.circleColor = new Color( 209, 52, 23 );
+		//data.circleColor = new Color( 209, 52, 23 );
 		data.serialnumber = device.getSerialNumber();
 		//data.SDKVersion = device.getProperty(IDevice.PROP_BUILD_VERSION_NUMBER);
 		//data.name = device.getName();
 		setDeviceProperty(device,data,IDevice.PROP_DEVICE_MODEL);
 		setDeviceProperty(device,data,IDevice.PROP_BUILD_VERSION);
+		
+		//Log.d(data.name + "#"+intToARGB(hashCode(data.name)));
+		data.circleColor = Color.decode("#"+intToARGB(hashCode(data.name)));
+		
+		
+		//data.circleColor = ;
 		
 		data.status = data.SDKVersion == null ? "OFFLINE" : device.getState().toString();
 		
@@ -254,10 +288,6 @@ public class DeviceCustomList extends JList{
                 Font font) {
             FontRenderContext frc = 
                     new FontRenderContext(null, true, true);
-
-            if(s==null) {
-            	s = "";
-            }
             
             Rectangle2D r2D = font.getStringBounds(s, frc);
             int rWidth = (int) Math.round(r2D.getWidth());
@@ -289,14 +319,19 @@ public class DeviceCustomList extends JList{
                 g2d.fill ( new Ellipse2D.Double ( 4, 4, 44, 44 ) );
             }
             
-            g2d.setPaint ( data.getCircleColor () );
+            g2d.setPaint ( data.status.indexOf("ONLINE") > -1? data.getCircleColor():Color.GRAY );
             g2d.fill ( new Ellipse2D.Double ( 6, 6, 40, 40 ) );
             
             g2d.setPaint ( Color.WHITE );
             //g2d.drawString("N", 22, 22);
             
-            centerString(g2d,new Rectangle(4, 4, 44, 44), data.getSDKVersion(), new Font(getFont().getName(), Font.BOLD, 20));
-        	
+            if(data.getSDKVersion()!=null) {
+                if(data.getSDKVersion().length() < 4) {
+	            	centerString(g2d,new Rectangle(4, 4, 44, 44), data.getSDKVersion(), new Font(getFont().getName(), Font.BOLD, 20));
+	            } else {
+	            	centerString(g2d,new Rectangle(4, 4, 44, 44), data.getSDKVersion(), new Font(getFont().getName(), Font.BOLD, 15));
+	            }
+            }
             if(data.status.indexOf("ONLINE") > -1) {
             	g2d.setPaint ( new Color(116, 211, 109) ); // online color            
             } else if(data.status.indexOf("OFFLINE") > -1) {            	
@@ -348,7 +383,25 @@ public class DeviceCustomList extends JList{
     			return;
     			//setDeviceProperty(device, temp, IDevice.PROP_DEVICE_MODEL);
     		}
-    	}
-		
+    	}		
 	}
+	
+	private void setSdkXml(String xmlPath) {
+		if(xmlPath == null) {
+			return;
+		}
+		InputStream xml = Resource.class.getResourceAsStream(xmlPath);
+		sdkXmlPath = new XmlPath(xml);
+
+		int maxSdk = sdkXmlPath.getNodeList("/resources/sdk-info").getLength();
+//		int preDefMaxSdk = sdkVersions.getItemCount() - 1;
+//		for(int ver = preDefMaxSdk + 1; ver <= maxSdk; ver++) {
+//			sdkVersions.addItem(ver);
+//		}
+
+		try {
+			xml.close();
+		} catch (IOException e) { }
+	}
+	
 }
