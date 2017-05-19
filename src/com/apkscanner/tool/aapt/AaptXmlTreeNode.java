@@ -2,6 +2,7 @@ package com.apkscanner.tool.aapt;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import com.apkscanner.util.Log;
 
@@ -10,7 +11,7 @@ public class AaptXmlTreeNode
 	private String name;
 	private String path;
 	private AaptXmlTreeNode parent;
-	private HashMap<String, String> attribute = new HashMap<String, String>();
+	private LinkedHashMap<String, String> attribute = new LinkedHashMap<String, String>();
 	private HashMap<String, ArrayList<AaptXmlTreeNode>> childMap = new HashMap<String, ArrayList<AaptXmlTreeNode>>();
 	private ArrayList<AaptXmlTreeNode> childList = new ArrayList<AaptXmlTreeNode>();
 	

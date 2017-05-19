@@ -15,9 +15,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map.Entry;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -515,7 +514,7 @@ public class MainUI extends JFrame
 
 		private void evtLaunchApp(final boolean selectActivity)
 		{
-			final IDevice[] devices = toolbarManager.getInstalledDevice();
+			final IDevice[] devices = getInstalledDevice();
 			if(devices == null || devices.length == 0) {
 				Log.i("No such device of a package installed.");
 				ArrowTraversalPane.showOptionDialog(null,
@@ -536,7 +535,7 @@ public class MainUI extends JFrame
 					for(IDevice device: devices) {
 						Log.v("launch activity on " + device.getSerialNumber());
 
-						PackageInfo packageInfo = toolbarManager.getPackageInfo(device);
+						PackageInfo packageInfo = getPackageInfo(device);
 
 						if(!packageInfo.isEnabled()) {
 							ArrowTraversalPane.showOptionDialog(null,
@@ -631,7 +630,7 @@ public class MainUI extends JFrame
 		}
 
 		private void evtUninstallApp() {
-			final IDevice[] devices = toolbarManager.getInstalledDevice();
+			final IDevice[] devices = getInstalledDevice();
 			if(devices == null || devices.length == 0) {
 				Log.i("No such device of a package installed.");
 				ArrowTraversalPane.showOptionDialog(null,
@@ -651,7 +650,7 @@ public class MainUI extends JFrame
 					for(IDevice device: devices) {
 						Log.v("uninstall apk on " + device.getSerialNumber());
 
-						PackageInfo packageInfo = toolbarManager.getPackageInfo(device);
+						PackageInfo packageInfo = getPackageInfo(device);
 
 						String errMessage = null;
 						if(!packageInfo.isSystemApp()) {
@@ -698,7 +697,7 @@ public class MainUI extends JFrame
 
 		private void evtShowInstalledPackageInfo()
 		{
-			final IDevice[] devices = toolbarManager.getInstalledDevice();
+			final IDevice[] devices = getInstalledDevice();
 			if(devices == null || devices.length == 0) {
 				Log.i("No such device of a package installed.");
 				ArrowTraversalPane.showOptionDialog(null,
@@ -716,7 +715,7 @@ public class MainUI extends JFrame
 				public void run()
 				{
 					for(IDevice device: devices) {
-						final PackageInfo info = toolbarManager.getPackageInfo(device);
+						final PackageInfo info = getPackageInfo(device);
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
 								PackageInfoDlg packageInfoDlg = new PackageInfoDlg(MainUI.this);
@@ -729,6 +728,37 @@ public class MainUI extends JFrame
 			});
 			thread.setPriority(Thread.NORM_PRIORITY);
 			thread.start();
+		}
+		
+		private IDevice[] getInstalledDevice() {
+			IDevice[] devices = null;
+			if(toolbarManager.isEnabled()) {
+				devices = PackageManager.getInstalledDevices(apkScanner.getApkInfo().manifest.packageName);
+			} else {
+				AndroidDebugBridge adb = AdbServerMonitor.getAndroidDebugBridge();
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				devices = adb.getDevices();
+				Log.i("devices size : " + devices.length);
+
+				ArrayList<IDevice> deviceList = new ArrayList<IDevice>();
+				for(IDevice dev: devices) {
+					PackageInfo info = getPackageInfo(dev);
+					if(info != null) {
+						deviceList.add(dev);
+					}
+				}
+				devices = deviceList.toArray(new IDevice[deviceList.size()]);
+			}
+			return devices;
+		}
+		
+		private PackageInfo getPackageInfo(IDevice device) {
+			return PackageManager.getPackageInfo(device, apkScanner.getApkInfo().manifest.packageName);
 		}
 
 		private void setLanguage(String lang)
@@ -902,8 +932,6 @@ public class MainUI extends JFrame
 		private boolean hasSignature;
 		private boolean hasMainActivity; 
 
-		private HashMap<IDevice, PackageInfo> devices = new HashMap<IDevice, PackageInfo>();
-
 		public void registerEventListeners() {
 			AdbServerMonitor.addAdbDemonChangeListener(this);
 			AndroidDebugBridge.addDeviceChangeListener(this);
@@ -929,7 +957,6 @@ public class MainUI extends JFrame
 						registerEventListeners();
 					} else {
 						unregisterEventListeners();
-						devices.clear();
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
 								toolBar.clearFlag();
@@ -937,24 +964,6 @@ public class MainUI extends JFrame
 						});
 					}
 				}
-			}
-		}
-
-		public IDevice[] getInstalledDevice() {
-			synchronized (devices) {
-				for(Entry<IDevice, PackageInfo> entry: devices.entrySet()) {
-					String apkPath = entry.getValue().getApkPath();
-					if(apkPath == null || apkPath.isEmpty()) {
-						devices.remove(entry.getKey());
-					}
-				}
-				return devices.keySet().toArray(new IDevice[devices.size()]);
-			}
-		}
-
-		public PackageInfo getPackageInfo(IDevice device) {
-			synchronized (devices) {
-				return devices.get(device);
 			}
 		}
 
@@ -973,9 +982,6 @@ public class MainUI extends JFrame
 					versionCode = 0;
 					hasSignature = false;
 					hasMainActivity = false; 
-				}
-				synchronized (devices) {
-					devices.clear();
 				}
 			}
 			applyToobarPolicy();
@@ -1023,20 +1029,8 @@ public class MainUI extends JFrame
 					boolean hasUpper = false;
 					for(IDevice device: adb.getDevices()) {
 						PackageInfo pkg = null;
-						synchronized(devices) {
-							if(devices.containsKey(device)) {
-								pkg = devices.get(device);
-							} else {
-								if(device.isOnline()) {
-									pkg = PackageManager.getPackageInfo(device, packageName);
-								}
-								if(pkg != null) {
-									devices.put(device, pkg);
-								}
-								try {
-									device.getApiLevel(); // dummy
-								} catch (Exception e) { }
-							}
+						if(device.isOnline()) {
+							pkg = PackageManager.getPackageInfo(device, packageName);
 						}
 						if(pkg != null) {
 							hasInstalled = true;
@@ -1112,11 +1106,7 @@ public class MainUI extends JFrame
 		@Override
 		public void deviceDisconnected(IDevice device) {
 			Log.v("deviceDisconnected() " + device.getSerialNumber());
-			synchronized(devices) {
-				if(devices.containsKey(device)) {
-					devices.remove(device);
-				}
-			}
+			PackageManager.removeCash(device);
 			applyToobarPolicy();
 		}
 
@@ -1135,12 +1125,6 @@ public class MainUI extends JFrame
 		public void packageInstalled(PackageInfo packageInfo) {
 			if(packageName != null && packageInfo != null 
 					&& packageName.equals(packageInfo.packageName)) {
-				synchronized(devices) {
-					if(devices.containsKey(packageInfo.device)) {
-						devices.remove(packageInfo.device);
-					}
-					devices.put(packageInfo.device, packageInfo);
-				}
 				applyToobarPolicy();
 			}
 
@@ -1150,11 +1134,6 @@ public class MainUI extends JFrame
 		public void packageUninstalled(PackageInfo packageInfo) {
 			if(packageName != null && packageInfo != null 
 					&& packageName.equals(packageInfo.packageName)) {
-				synchronized(devices) {
-					if(devices.containsKey(packageInfo.device)) {
-						devices.remove(packageInfo.device);
-					}
-				}
 				applyToobarPolicy();
 			}
 		}
