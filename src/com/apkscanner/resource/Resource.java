@@ -34,8 +34,8 @@ public enum Resource
 	STR_APP_MAKER				(Type.TEXT, "jin_h.lee / sunggyu.kam"),
 	STR_APP_MAKER_EMAIL			(Type.TEXT, "jin_h.lee@samsung.com;sunggyu.kam@samsung.com"),
 
-	STR_SAMSUNG_KEY_SERIAL		(Type.TEXT, "d20995a79c0daad6"),
-	STR_SS_TEST_KEY_SERIAL		(Type.TEXT, "b3998086d056cffa"),
+	STR_SAMSUNG_KEY_MD5			(Type.TEXT, "D0:87:E7:29:12:FB:A0:64:CA:FA:78:DC:34:AE:A8:39"),
+	STR_SS_TEST_KEY_MD5			(Type.TEXT, "8D:DB:34:2F:2D:A5:40:84:02:D7:56:8A:F2:1E:29:F9"),
 
 	STR_SDK_INFO_FILE_PATH		(Type.TEXT, "/values/sdk-info.xml"),
 

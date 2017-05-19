@@ -182,6 +182,13 @@ abstract public class ApkScanner
 				for(int i = 0; i < sr.getSize(); i ++) {
 					certList.add(sr.getReport(i));
 				}
+
+				if(sr.contains("MD5", Resource.STR_SAMSUNG_KEY_MD5.getString())) {
+					apkInfo.featureFlags |= ApkInfo.APP_FEATURE_SAMSUNG_SIGN;
+				}
+				if(sr.contains("MD5", Resource.STR_SS_TEST_KEY_MD5.getString())) {
+					apkInfo.featureFlags |= ApkInfo.APP_FEATURE_PLATFORM_SIGN;
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
