@@ -183,8 +183,6 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		hasSysPack = info.getHiddenSystemPackageValue("pkg") != null;
 		alignTabbedPanel(hasSysPack);
 
-		info.getLauncherActivityList(true);
-
 		txtApkPath.setText(info.getApkPath());
 
 		infoPanel.setBody(getSummaryText(info, false));
@@ -577,7 +575,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 							for(int i = 0; i < activities.length; i++) {
 								boolean isLauncher = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0);
 								boolean isMain = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0);
-								items[i] = (isLauncher ? "[LAUNCHER]": (isMain ? "[MAIN]": "")) + " " + activities[i].name.replaceAll(packageInfo.packageName, "");
+								items[i] = (isLauncher ? "[LAUNCHER]": (isMain ? "[MAIN]": "")) + " " + activities[i].name.replaceAll("^"+packageInfo.packageName, "");
 							}
 							String selected = ComboMessageBox.show(PackageInfoPanel.this, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL), items,  Resource.STR_BTN_LAUNCH.getString(), JTextOptionPane.QUESTION_MESSAGE,
 									null, new Dimension(400, 0));
