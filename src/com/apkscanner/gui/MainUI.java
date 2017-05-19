@@ -1064,6 +1064,9 @@ public class MainUI extends JFrame
 					EventQueue.invokeLater(new Runnable() {
 						public void run() {
 							toolBar.clearFlag();
+							if(hasDevice) {
+								toolBar.setFlag(ToolBar.FLAG_LAYOUT_DEVICE_CONNECTED);
+							}
 						}
 					});
 				}
