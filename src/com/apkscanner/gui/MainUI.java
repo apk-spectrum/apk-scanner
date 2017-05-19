@@ -226,15 +226,15 @@ public class MainUI extends JFrame
 		}
 
 		@Override
-		public void onProgress(final int step, final String msg) {
+		public void onProgress(final int step, final String message) {
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					switch(step) {
 					case 0:
-						tabbedPanel.setProgress(Integer.parseInt(msg));
+						tabbedPanel.setProgress(message);
 						break;
 					default:
-						Log.i(msg);
+						Log.i(message);
 					}
 				}
 			});
@@ -346,7 +346,7 @@ public class MainUI extends JFrame
 
 			if(!newWindow) {
 				tabbedPanel.setLodingLabel();
-				tabbedPanel.setProgress(-1);
+				tabbedPanel.setProgress(null);
 				toolBar.setEnabledAt(ButtonSet.OPEN, false);
 				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
 

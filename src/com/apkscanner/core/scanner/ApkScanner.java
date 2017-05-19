@@ -116,13 +116,13 @@ abstract public class ApkScanner
 			@Override
 			public boolean ConsolOutput(String output) {
 				if(statusListener != null) {
-					String percent = output.replaceAll("\\[\\s*([0-9]*)%\\] .*", "$1");
-					if(!percent.equals(output)) {
+					String percent = output;//.replaceAll("\\[\\s*([0-9]*)%\\] .*", "$1");
+					//if(!percent.equals(output)) {
 						if(!percent.equals(prePercent)) {
 							prePercent = percent;
 							statusListener.onProgress(0, percent);
 						}
-					}
+					//}
 				}
 				return true;
 			}
