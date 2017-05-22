@@ -38,7 +38,6 @@ import com.android.ddmlib.ShellCommandUnresponsiveException;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
-import com.apkscanner.gui.dialog.PackageInfoDlg;
 import com.apkscanner.gui.dialog.PackageInfoPanel;
 import com.apkscanner.gui.install.DeviceTablePanel.DeviceDO;
 import com.apkscanner.resource.Resource;

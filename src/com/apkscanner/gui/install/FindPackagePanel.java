@@ -20,7 +20,6 @@ import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.android.ddmlib.IDevice;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
-import com.apkscanner.gui.dialog.PackageInfoDlg;
 import com.apkscanner.gui.install.DeviceCustomList.DeviceListData;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.PackageInfo;
@@ -81,7 +80,7 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
       gbc.weighty = weighty;
       return gbc;
     }
-
+/*
     private Container getPackageInfopanel()
 	{
         String packageName = ApkScanner.getPackageName(ApkInstallWizard.pakcageFilePath);
@@ -104,7 +103,7 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
         }
 		return new JPanel();
 	}
-
+*/
 	@Override
 	public void deviceChanged(IDevice arg0, int arg1) {
 		// TODO Auto-generated method stub

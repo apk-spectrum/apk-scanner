@@ -40,7 +40,7 @@ import com.apkscanner.gui.ToolBar.ButtonSet;
 import com.apkscanner.gui.dialog.AboutDlg;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.dialog.LogDlg;
-import com.apkscanner.gui.dialog.PackageInfoDlg;
+import com.apkscanner.gui.dialog.PackageInfoPanel;
 import com.apkscanner.gui.dialog.PackageTreeDlg;
 import com.apkscanner.gui.dialog.SearchDlg;
 import com.apkscanner.gui.dialog.SettingDlg;
@@ -718,9 +718,9 @@ public class MainUI extends JFrame
 						final PackageInfo info = getPackageInfo(device);
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
-								PackageInfoDlg packageInfoDlg = new PackageInfoDlg(MainUI.this);
-								packageInfoDlg.setPackageInfo(info);
-								packageInfoDlg.setVisible(true);
+								PackageInfoPanel packageInfoPanel = new PackageInfoPanel();
+								packageInfoPanel.setPackageInfo(info);
+								packageInfoPanel.showDialog(MainUI.this);
 							}
 						});
 					}

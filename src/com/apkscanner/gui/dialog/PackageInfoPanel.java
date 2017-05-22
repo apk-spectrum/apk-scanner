@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -15,6 +16,7 @@ import java.io.IOException;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -734,4 +736,21 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		}
 	}
 
+
+	public void showDialog(Window owner) {
+		JDialog dialog = new JDialog(owner);
+
+		dialog.setTitle("Package Info");
+		dialog.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		dialog.setResizable(true);
+		dialog.setModal(false);
+		dialog.setLayout(new BorderLayout());
+		dialog.setSize(new Dimension(500, 400));
+		dialog.setLocationRelativeTo(owner);
+
+		dialog.add(this, BorderLayout.CENTER);
+
+		dialog.setVisible(true);
+	}
 }

@@ -678,9 +678,9 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		}
 
 		PackageInfo info = ((PackageInfo)node.getUserObject()); 
-		PackageInfoDlg dlg = new PackageInfoDlg(this);
-		dlg.setPackageInfo(info);
-		dlg.setVisible(true);
+		PackageInfoPanel packageInfoPanel = new PackageInfoPanel();
+		packageInfoPanel.setPackageInfo(info);
+		packageInfoPanel.showDialog(this);
 	}
 
 
