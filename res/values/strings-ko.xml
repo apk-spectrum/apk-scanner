@@ -3,6 +3,7 @@
 	<string name="app_version">Ver. </string>
 
 	<string name="title_install_wizard">APK 설치 마법사</string>
+	<string name="title_apk_signer">APK 서명</string>
 
 	<string name="btn_open">열기</string>
 	<string name="btn_open_pacakge">패키지</string>

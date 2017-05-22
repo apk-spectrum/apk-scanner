@@ -39,6 +39,7 @@ import com.apkscanner.data.apkinfo.ComponentInfo;
 import com.apkscanner.gui.ToolBar.ButtonSet;
 import com.apkscanner.gui.dialog.AboutDlg;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
+import com.apkscanner.gui.dialog.ApkSignerWizard;
 import com.apkscanner.gui.dialog.LogDlg;
 import com.apkscanner.gui.dialog.PackageInfoPanel;
 import com.apkscanner.gui.dialog.PackageTreeDlg;
@@ -695,6 +696,18 @@ public class MainUI extends JFrame
 			thread.start();
 		}
 
+		private void evtSignApkFile() {
+			ApkInfo apkInfo = apkScanner.getApkInfo();
+			if(apkInfo == null || apkInfo.filePath == null
+					|| !new File(apkInfo.filePath).exists()) {
+				Log.e("evtSignApkFile() apkInfo is null");
+				return;
+			}
+			ApkSignerWizard wizard = new ApkSignerWizard(MainUI.this);
+			wizard.setApk(apkInfo.filePath);
+			wizard.setVisible(true);
+		}
+
 		private void evtShowInstalledPackageInfo()
 		{
 			final IDevice[] devices = getInstalledDevice();
@@ -729,7 +742,7 @@ public class MainUI extends JFrame
 			thread.setPriority(Thread.NORM_PRIORITY);
 			thread.start();
 		}
-		
+
 		private IDevice[] getInstalledDevice() {
 			IDevice[] devices = null;
 			if(toolbarManager.isEnabled()) {
@@ -756,7 +769,7 @@ public class MainUI extends JFrame
 			}
 			return devices;
 		}
-		
+
 		private PackageInfo getPackageInfo(IDevice device) {
 			return PackageManager.getPackageInfo(device, apkScanner.getApkInfo().manifest.packageName);
 		}
@@ -823,6 +836,8 @@ public class MainUI extends JFrame
 				evtLaunchApp((e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
 			} else if(ToolBar.MenuItemSet.UNINSTALL_APK.matchActionEvent(e)) {
 				evtUninstallApp();
+			} else if(ToolBar.ButtonSet.SIGN.matchActionEvent(e) || ToolBar.ButtonSet.SUB_SIGN.matchActionEvent(e)) { 
+				evtSignApkFile();
 			} else {
 				Log.v("Unkown action : " + e);
 			}

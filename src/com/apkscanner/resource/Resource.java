@@ -40,6 +40,7 @@ public enum Resource
 	STR_SDK_INFO_FILE_PATH		(Type.TEXT, "/values/sdk-info.xml"),
 
 	STR_TITLE_INSTALL_WIZARD	(Type.TEXT, "@title_install_wizard"),
+	STR_TITLE_APK_SIGNER		(Type.TEXT, "@title_apk_signer"),
 
 	STR_BTN_OPEN				(Type.TEXT, "@btn_open"),
 	STR_BTN_OPEN_PACKAGE		(Type.TEXT, "@btn_open_pacakge"),
@@ -379,7 +380,9 @@ public enum Resource
 
 	BIN_DEX2JAR_LNX				(Type.BIN, "d2j-dex2jar.sh", "nux"),
 	BIN_DEX2JAR_WIN				(Type.BIN, "d2j-dex2jar.bat", "win"),
-	BIN_DEX2JAR					(Type.BIN, new Resource[]{ BIN_DEX2JAR_WIN, BIN_DEX2JAR_LNX }),	
+	BIN_DEX2JAR					(Type.BIN, new Resource[]{ BIN_DEX2JAR_WIN, BIN_DEX2JAR_LNX }),
+
+	BIN_SIGNAPK					(Type.BIN, "signapk.jar"),
 
 	PROP_LANGUAGE				(Type.PROP, "language", SystemUtil.getUserLanguage()),
 	PROP_EDITOR					(Type.PROP, "editor", null /* see getDefValue() */),
@@ -404,6 +407,8 @@ public enum Resource
 	PROP_BASE_FONT_SIZE			(Type.PROP, "base_font_size", 12),
 	PROP_BASE_FONT_STYLE		(Type.PROP, "base_font_style", Font.PLAIN),
 	PROP_PREFERRED_LANGUAGE		(Type.PROP, "preferred_language", null /* see getDefValue() */),
+	PROP_PEM_FILE_PATH			(Type.PROP, "last_pem_file_path", ""),
+	PROP_PK8_FILE_PATH			(Type.PROP, "last_pk8_file_path", ""),
 
 	LIB_JSON_JAR				(Type.LIB, "json-simple-1.1.1.jar"),
 	LIB_CLI_JAR					(Type.LIB, "commons-cli-1.3.1.jar"),
