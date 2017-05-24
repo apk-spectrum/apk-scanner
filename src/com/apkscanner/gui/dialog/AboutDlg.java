@@ -45,11 +45,11 @@ public class AboutDlg /*extends JDialog*/
 		// create some css from the label's font
 		StringBuilder style = new StringBuilder("#about {");
 		style.append("width:350px;margin:0px;padding:0px;");
+		style.append("background-color:#"+Integer.toHexString(label.getBackground().getRGB() & 0xFFFFFF)+";");
 		style.append("font-family:" + font.getFamily() + ";");
 		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
 		style.append("font-size:" + font.getSize() + "pt;}");
 		style.append("#about a {text-decoration:none;}");
-		style.append("body {background-color:#"+Integer.toHexString(label.getBackground().getRGB() & 0xFFFFFF)+";}");
 		style.append("H1 {margin-top: 0px; margin-bottom: 0px;}");
 		style.append("H3 {margin-top: 5px; margin-bottom: 0px;}");
 
