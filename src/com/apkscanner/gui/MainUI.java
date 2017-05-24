@@ -83,24 +83,12 @@ public class MainUI extends JFrame
 		}
 
 		messageBox = new MessageBoxPool(this);
+
+		initialize();
 	}
 
 	public void initialize()
 	{
-		if(!EventQueue.isDispatchThread()) {
-			Log.i("createAndShowGUI() - This task is not EDT. Invoke to EDT.");
-			try {
-				EventQueue.invokeAndWait(new Runnable() {
-					public void run() {
-						initialize();
-					}
-				});
-			} catch (InvocationTargetException | InterruptedException e) {
-				e.printStackTrace();
-			}
-			return;
-		}
-
 		Log.i("UI Init start");
 
 		Log.i("initialize() setLookAndFeel");
