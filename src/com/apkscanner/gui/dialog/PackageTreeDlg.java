@@ -31,7 +31,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -63,7 +62,7 @@ import com.android.ddmlib.TimeoutException;
 import com.apkscanner.Launcher;
 import com.apkscanner.core.installer.ApkInstaller;
 import com.apkscanner.core.installer.ApkInstaller.ApkInstallerListener;
-import com.apkscanner.gui.messagebox.MessageBoxPane;
+import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.FilteredTreeModel;
 import com.apkscanner.gui.util.SimpleCheckTableModel;
@@ -624,8 +623,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 			final String errMsg = errMessage;
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
-					MessageBoxPane.showTextDialog(null, Resource.STR_MSG_FAILURE_UNINSTALLED.getString() + "\nConsol output:", errMsg,  Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE,
-							null, new Dimension(300, 50));
+					MessageBoxPool.show(PackageTreeDlg.this, MessageBoxPool.MSG_FAILURE_UNINSTALLED, errMsg);
 				}
 			});
 
@@ -725,20 +723,12 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 			StringBuilder sb = new StringBuilder();
 			@Override
 			public void OnError(int cmdType, String device) {
-				MessageBoxPane.showTextDialog(null, Resource.STR_MSG_FAILURE_PULLED.getString() + "\n\nConsol output", sb.toString(),  Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE,
-						null, new Dimension(400, 100));
+				MessageBoxPool.show(PackageTreeDlg.this, MessageBoxPool.MSG_FAILURE_PULLED, sb.toString());
 			}
 
 			@Override
 			public void OnSuccess(int cmdType, String device) {
-				int n = MessageBoxPane.showOptionDialog(null,
-						Resource.STR_MSG_SUCCESS_PULL_APK.getString() + "\n" + destFile.getAbsolutePath(),
-						Resource.STR_LABEL_QUESTION.getString(),
-						JOptionPane.YES_NO_CANCEL_OPTION,
-						JOptionPane.INFORMATION_MESSAGE,
-						null,
-						new String[] {Resource.STR_BTN_EXPLORER.getString(), Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OK.getString()},
-						Resource.STR_BTN_OK.getString());
+				int n = MessageBoxPool.show(PackageTreeDlg.this, MessageBoxPool.QUESTION_SUCCESS_PULL_APK, destFile.getAbsolutePath());
 				switch(n) {
 				case 0: // explorer
 					SystemUtil.openFileExplorer(destFile);

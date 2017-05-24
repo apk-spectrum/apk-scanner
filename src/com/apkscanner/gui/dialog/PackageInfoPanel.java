@@ -18,7 +18,6 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -42,6 +41,7 @@ import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ComponentInfo;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
+import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.JHtmlEditorPane;
@@ -387,7 +387,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 
 	private void showDialog(String content, String title, Dimension size, Icon icon)
 	{
-		MessageBoxPane.showTextDialog(null, content, title, JOptionPane.INFORMATION_MESSAGE, icon, size);
+		MessageBoxPane.showTextAreaDialog(null, content, title, MessageBoxPane.INFORMATION_MESSAGE, icon, size);
 	}
 
 	public void showFeatureInfo(String id)
@@ -503,20 +503,12 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 				StringBuilder sb = new StringBuilder();
 				@Override
 				public void OnError(int cmdType, String device) {
-					MessageBoxPane.showTextDialog(null, Resource.STR_MSG_FAILURE_PULLED.getString() + "\n\nConsol output", sb.toString(),  Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE,
-							null, new Dimension(400, 100));
+					MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.MSG_FAILURE_PULLED, sb.toString());
 				}
 
 				@Override
 				public void OnSuccess(int cmdType, String device) {
-					int n = MessageBoxPane.showOptionDialog(null,
-							Resource.STR_MSG_SUCCESS_PULL_APK.getString() + "\n" + destFile.getAbsolutePath(),
-							Resource.STR_LABEL_QUESTION.getString(),
-							JOptionPane.YES_NO_CANCEL_OPTION,
-							JOptionPane.INFORMATION_MESSAGE,
-							null,
-							new String[] {Resource.STR_BTN_EXPLORER.getString(), Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OK.getString()},
-							Resource.STR_BTN_OK.getString());
+					int n = MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.QUESTION_SUCCESS_PULL_APK, destFile.getAbsolutePath());
 					switch(n) {
 					case 0: // explorer
 						SystemUtil.openFileExplorer(destFile);
@@ -538,14 +530,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 			final IDevice device = packageInfo.device;
 
 			if(!packageInfo.isEnabled()) {
-				MessageBoxPane.showOptionDialog(null,
-						device.getName() + "\n : " + Resource.STR_MSG_DISABLED_PACKAGE.getString(),
-						Resource.STR_LABEL_WARNING.getString(),
-						JOptionPane.OK_OPTION, 
-						JOptionPane.INFORMATION_MESSAGE,
-						null,
-						new String[] {Resource.STR_BTN_OK.getString()},
-						Resource.STR_BTN_OK.getString());
+				MessageBoxPool.show(this, MessageBoxPool.MSG_DISABLED_PACKAGE, device.getName());
 				return;
 			}
 
@@ -577,8 +562,8 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 								boolean isMain = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0);
 								items[i] = (isLauncher ? "[LAUNCHER]": (isMain ? "[MAIN]": "")) + " " + activities[i].name.replaceAll("^"+packageInfo.packageName, "");
 							}
-							String selected = MessageBoxPane.show(PackageInfoPanel.this, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL), items,  Resource.STR_BTN_LAUNCH.getString(), JOptionPane.QUESTION_MESSAGE,
-									null, new Dimension(400, 0));
+							String selected = (String)MessageBoxPane.showInputDialog(PackageInfoPanel.this, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL),
+									Resource.STR_BTN_LAUNCH.getString(), MessageBoxPane.QUESTION_MESSAGE, null, items, items[0]);
 							if(selected == null) {
 								return;
 							}
@@ -590,14 +575,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 						Log.w("No such activity of launcher or main");
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
-								MessageBoxPane.showOptionDialog(null,
-										Resource.STR_MSG_NO_SUCH_LAUNCHER.getString(),
-										Resource.STR_LABEL_WARNING.getString(),
-										JOptionPane.OK_OPTION, 
-										JOptionPane.INFORMATION_MESSAGE,
-										null,
-										new String[] {Resource.STR_BTN_OK.getString()},
-										Resource.STR_BTN_OK.getString());
+								MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.MSG_NO_SUCH_LAUNCHER);
 							}
 						});
 						return;
@@ -620,8 +598,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
-								MessageBoxPane.showTextDialog(null, Resource.STR_MSG_FAILURE_LAUNCH_APP.getString() + "\n\nConsol output", errMsg,  Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE,
-										null, new Dimension(500, 120));
+								MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.MSG_FAILURE_LAUNCH_APP, errMsg);
 							}
 						});
 					} else if((boolean)Resource.PROP_TRY_UNLOCK_AF_LAUNCH.getData()) {
@@ -652,22 +629,14 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 				final String errMsg = errMessage;
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
-						MessageBoxPane.showTextDialog(null, Resource.STR_MSG_FAILURE_UNINSTALLED.getString() + "\nConsol output:", errMsg,  Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE,
-								null, new Dimension(300, 50));
+						MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.MSG_FAILURE_UNINSTALLED, errMsg);
 					}
 				});
 			} else {
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
 						if(hasSysPack) {
-							int n = MessageBoxPane.showOptionDialog(null,
-									Resource.STR_QUESTION_PACK_INFO_REFRESH.getString(),
-									Resource.STR_LABEL_QUESTION.getString(),
-									JOptionPane.YES_NO_OPTION, 
-									JOptionPane.QUESTION_MESSAGE,
-									null,
-									new String[] {Resource.STR_BTN_CLOSE.getString(), Resource.STR_BTN_NO.getString(), Resource.STR_BTN_YES.getString()},
-									Resource.STR_BTN_YES.getString());
+							int n = MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.QUESTION_PACK_INFO_REFRESH);
 							if(n == 0) {
 								//dispose();
 							} else if(n == 2) {
@@ -682,14 +651,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 								txtApkPath.setText(apkPath);
 							}
 						} else {
-							int n = MessageBoxPane.showOptionDialog(null,
-									Resource.STR_QUESTION_PACK_INFO_CLOSE.getString(),
-									Resource.STR_LABEL_QUESTION.getString(),
-									JOptionPane.YES_NO_OPTION, 
-									JOptionPane.QUESTION_MESSAGE,
-									null,
-									new String[] {Resource.STR_BTN_NO.getString(), Resource.STR_BTN_YES.getString()},
-									Resource.STR_BTN_YES.getString());
+							int n = MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.QUESTION_PACK_INFO_CLOSE);
 							if(n == 1) {
 								//dispose();
 							} else {

@@ -3,18 +3,14 @@ package com.apkscanner.gui.messagebox;
 import java.awt.AWTKeyStroke;
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.HeadlessException;
 import java.awt.KeyboardFocusManager;
-import java.awt.Window;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.Icon;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -22,63 +18,214 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.SystemUtil;
 
 public class MessageBoxPane extends JOptionPane
 {
 	private static final long serialVersionUID = 4947402878882910721L;
-	private static final int Integer = 0;
-	
+
+	public MessageBoxPane() {
+		this("MessageBoxPane message");
+	}
+
+	public MessageBoxPane(Object message) {
+		this(message, PLAIN_MESSAGE);
+	}
+
+	public MessageBoxPane(Object message, int messageType) {
+		this(message, messageType, DEFAULT_OPTION);
+	}
+
+	public MessageBoxPane(Object message, int messageType, int optionType) {
+		this(message, messageType, optionType, null);
+	}
+
+	public MessageBoxPane(Object message, int messageType, int optionType,
+			Icon icon) {
+		this(message, messageType, optionType, icon, null);
+	}
+
+	public MessageBoxPane(Object message, int messageType, int optionType,
+			Icon icon, Object[] options) {
+		this(message, messageType, optionType, icon, options, null);
+	}
+
 	public MessageBoxPane(Object message, int messageType, int optionType, Icon icon, Object[] options, Object initialValue)
 	{
 		super(message, messageType, optionType, icon, options, initialValue);
-		
+
 		Set<AWTKeyStroke> forwardKeys = new HashSet<AWTKeyStroke>(getFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS));
 		forwardKeys.add(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.VK_UNDEFINED));
 		setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, forwardKeys);
-		
+
 		Set<AWTKeyStroke> backwardKeys = new HashSet<AWTKeyStroke>(getFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS));
 		backwardKeys.add(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.VK_UNDEFINED));
 		setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, backwardKeys);
 	}
 
-	static public void showMessageDialog(Component parentComponent, Object message, String title, int messageType, Icon icon) {
-		
+	public JDialog createDialog(Component parentComponent, String title)
+			throws HeadlessException {
+		JDialog dialog = super.createDialog(parentComponent, title);
+		dialog.setResizable(true);
+		dialog.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+		return dialog;
 	}
 
-	static public int showOptionDialog(Component parentComponent, Object message, String title, int optionType, int messageType, Icon icon, Object[] options, Object initialValue) {
-	    JOptionPane pane = new MessageBoxPane(message, messageType, optionType, icon, options, initialValue);
+	public JDialog createDialog(String title) throws HeadlessException {
+		JDialog dialog = super.createDialog(title);
+		dialog.setResizable(true);
+		return dialog;
+	}
+
+	public static String showInputDialog(Object message)
+			throws HeadlessException {
+		return showInputDialog(null, message);
+	}
+
+	public static String showInputDialog(Object message, Object initialSelectionValue) {
+		return showInputDialog(null, message, initialSelectionValue);
+	}
+
+	public static String showInputDialog(Component parentComponent,
+			Object message) throws HeadlessException {
+		return showInputDialog(parentComponent, message, UIManager.getString(
+				"OptionPane.inputDialogTitle"), QUESTION_MESSAGE);
+	}
+
+	public static String showInputDialog(Component parentComponent, Object message,
+			Object initialSelectionValue) {
+		return (String)showInputDialog(parentComponent, message,
+				UIManager.getString("OptionPane.inputDialogTitle"), QUESTION_MESSAGE, null, null,
+				initialSelectionValue);
+	}
+
+	public static String showInputDialog(Component parentComponent,
+			Object message, String title, int messageType)
+					throws HeadlessException {
+		return (String)showInputDialog(parentComponent, message, title,
+				messageType, null, null, null);
+	}
+
+	public static Object showInputDialog(Component parentComponent,
+			Object message, String title, int messageType, Icon icon,
+			Object[] selectionValues, Object initialSelectionValue)
+					throws HeadlessException {
+		MessageBoxPane pane = new MessageBoxPane(message, messageType,
+				OK_CANCEL_OPTION, icon,
+				null, null);
+
+		pane.setWantsInput(true);
+		pane.setSelectionValues(selectionValues);
+		pane.setInitialSelectionValue(initialSelectionValue);
+		pane.setComponentOrientation(((parentComponent == null) ?
+				getRootFrame() : parentComponent).getComponentOrientation());
 
 		JDialog dialog = pane.createDialog(parentComponent, title);
+
+		pane.selectInitialValue();
 		dialog.setVisible(true);
 		dialog.dispose();
-		
 
-		
-		int ret = -1;
-		if(pane.getValue() != null && !pane.getValue().equals((Integer)-1)) {
-			for(Object o: options) {
-				ret++;
-				if(o.equals(pane.getValue())) break;
-			}
+		Object value = pane.getInputValue();
+
+		if (value == UNINITIALIZED_VALUE) {
+			return null;
 		}
-		return ret;
-	}
-	
-
-	public static void showTextDialog(Component parent, String content, String title, int messageType, Icon icon, Dimension size)
-	{
-		showTextDialog(parent, null, content, title, messageType, icon, size);
+		return value;
 	}
 
-	public static void showTextDialog(Component parent, String message, String content, String title, int messageType, Icon icon, Dimension size)
-	{
+	public static void showMessageDialog(Component parentComponent,
+			Object message) throws HeadlessException {
+		showMessageDialog(parentComponent, message, UIManager.getString("OptionPane.messageDialogTitle"),
+				INFORMATION_MESSAGE);
+	}
+
+	public static void showMessageDialog(Component parentComponent,
+			Object message, String title, int messageType)
+					throws HeadlessException {
+		showMessageDialog(parentComponent, message, title, messageType, null);
+	}
+
+	public static void showMessageDialog(Component parentComponent,
+			Object message, String title, int messageType, Icon icon)
+					throws HeadlessException {
+		showOptionDialog(parentComponent, message, title, DEFAULT_OPTION,
+				messageType, icon, null, null);
+	}
+
+	public static int showConfirmDialog(Component parentComponent,
+			Object message) throws HeadlessException {
+		return showConfirmDialog(parentComponent, message,
+				UIManager.getString("OptionPane.titleText"),
+				YES_NO_CANCEL_OPTION);
+	}
+
+	public static int showConfirmDialog(Component parentComponent,
+			Object message, String title, int optionType)
+					throws HeadlessException {
+		return showConfirmDialog(parentComponent, message, title, optionType,
+				QUESTION_MESSAGE);
+	}
+
+	public static int showConfirmDialog(Component parentComponent,
+			Object message, String title, int optionType, int messageType)
+					throws HeadlessException {
+		return showConfirmDialog(parentComponent, message, title, optionType,
+				messageType, null);
+	}
+
+	public static int showConfirmDialog(Component parentComponent,
+			Object message, String title, int optionType,
+			int messageType, Icon icon) throws HeadlessException {
+		return showOptionDialog(parentComponent, message, title, optionType,
+				messageType, icon, null, null);
+	}
+
+	public static int showOptionDialog(Component parentComponent,
+			Object message, String title, int optionType, int messageType,
+			Icon icon, Object[] options, Object initialValue)
+					throws HeadlessException {
+		MessageBoxPane pane = new MessageBoxPane(message, messageType,
+				optionType, icon,
+				options, initialValue);
+
+		pane.setInitialValue(initialValue);
+		pane.setComponentOrientation(((parentComponent == null) ?
+				getRootFrame() : parentComponent).getComponentOrientation());
+
+		JDialog dialog = pane.createDialog(parentComponent, title);
+
+		pane.selectInitialValue();
+		dialog.setVisible(true);
+		dialog.dispose();
+
+		Object selectedValue = pane.getValue();
+
+		if(selectedValue == null)
+			return CLOSED_OPTION;
+		if(options == null) {
+			if(selectedValue instanceof Integer)
+				return ((Integer)selectedValue).intValue();
+			return CLOSED_OPTION;
+		}
+		for(int counter = 0, maxCounter = options.length;
+				counter < maxCounter; counter++) {
+			if(options[counter].equals(selectedValue))
+				return counter;
+		}
+		return CLOSED_OPTION;
+	}
+
+	public static void showTextAreaDialog(Component parentComponent, String text, String title, int messageType, Icon icon, Dimension size) {
+		showTextAreaDialog(parentComponent, null, text, title, messageType, icon, size);
+	}
+
+	public static void showTextAreaDialog(Component parentComponent, String subject, String text, String title, int messageType, Icon icon, Dimension size) {
 		JTextPane messagePane = new JTextPane();
-		if(message != null) {
-			messagePane.setText(message);
+		if(subject != null) {
+			messagePane.setText(subject);
 			messagePane.setOpaque(false);
 			messagePane.setEditable(false);
 			messagePane.setFocusable(false);
@@ -87,7 +234,7 @@ public class MessageBoxPane extends JOptionPane
 		}
 
 		JTextArea taskOutput = new JTextArea();
-		taskOutput.setText(content);
+		taskOutput.setText(text);
 		taskOutput.setEditable(false);
 		taskOutput.setCaretPosition(0);
 
@@ -100,73 +247,27 @@ public class MessageBoxPane extends JOptionPane
 		panel.add(messagePane,BorderLayout.NORTH);
 		panel.add(scrollPane,BorderLayout.CENTER);
 
-		if(SystemUtil.isWindows()) {
-			panel.addHierarchyListener(new HierarchyListener() {
-				public void hierarchyChanged(HierarchyEvent e) {
-					Window window = SwingUtilities.getWindowAncestor(panel);
-					if (window instanceof Dialog) {
-						Dialog dialog = (Dialog)window;
-						if (!dialog.isResizable()) {
-							dialog.setResizable(true);
-							}
-						}
-					}
-			});
-		}
-
-		JOptionPane.showMessageDialog(parent, panel, title, messageType, icon);
+		showOptionDialog(parentComponent, panel, title, DEFAULT_OPTION,
+				messageType, icon, null, null);
 	}
 	
-	
-
-	public static String show(Component parent, String[] items, String title, int messageType, Icon icon, Dimension size)
-	{
-		return show(parent, null, items, title, messageType, icon, size);
+	public static void showInfomation(Component parentComponent, Object message) {
+		showMessageDialog(parentComponent, message, Resource.STR_LABEL_INFO.getString(), INFORMATION_MESSAGE, null);
 	}
 
-	public static String show(Component parent, String message, String[] items, String title, int messageType, Icon icon, Dimension size)
-	{
-		JTextPane messagePane = new JTextPane();
-		if(message != null) {
-			messagePane.setText(message);
-			messagePane.setOpaque(false);
-			messagePane.setEditable(false);
-			messagePane.setFocusable(false);
-		} else {
-			messagePane.setVisible(false);
-		}
+	public static void showWarring(Component parentComponent, Object message) {
+		showMessageDialog(parentComponent, message, Resource.STR_LABEL_WARNING.getString(), WARNING_MESSAGE, null);
+	}
 
-		JComboBox<String> comboBox = new JComboBox<String>(items);
-		comboBox.setEditable(false);
-		if(size.getHeight() == 0) {
-			Dimension _size = comboBox.getPreferredSize();
-			size.setSize(size.getWidth(), _size.getHeight());
-		}
-		comboBox.setPreferredSize(size);
+	public static void showError(Component parentComponent, Object message) {
+		showMessageDialog(parentComponent, message, Resource.STR_LABEL_ERROR.getString(), ERROR_MESSAGE, null);
+	}
 
-		final JPanel panel = new JPanel();
-		panel.setLayout(new BorderLayout());
-		panel.setOpaque(false);
-		panel.add(messagePane,BorderLayout.CENTER);
-		panel.add(comboBox,BorderLayout.SOUTH);
+	public static int showQuestion(Component parentComponent, Object message, int optionType) {
+		return showConfirmDialog(parentComponent, message, Resource.STR_LABEL_QUESTION.getString(), optionType, QUESTION_MESSAGE, null);
+	}
 
-		if(SystemUtil.isWindows()) {
-			panel.addHierarchyListener(new HierarchyListener() {
-				public void hierarchyChanged(HierarchyEvent e) {
-					Window window = SwingUtilities.getWindowAncestor(panel);
-					if (window instanceof Dialog) {
-						Dialog dialog = (Dialog)window;
-						if (!dialog.isResizable()) {
-							dialog.setResizable(true);
-						}
-					}
-				}
-			});
-		}
-
-		int ret = MessageBoxPane.showOptionDialog(parent, panel, title, JOptionPane.DEFAULT_OPTION, messageType, icon,
-				new String[] {Resource.STR_BTN_OK.getString(), Resource.STR_BTN_CANCEL.getString()}, Resource.STR_BTN_OK.getString());
-
-		return ret == 0 ? (String) comboBox.getSelectedItem() : null;
+	public static void showPlain(Component parentComponent, Object message) {
+		showMessageDialog(parentComponent, message, Resource.STR_APP_NAME.getString(), PLAIN_MESSAGE, null);
 	}
 }

@@ -222,7 +222,7 @@ public class ApkSignerWizard implements ActionListener {
 	public void setApk(String apkFilePath) {
 		if(apkFilePath == null || !(new File(apkFilePath).isFile())) {
 			Log.e("No such apk file... : " + apkFilePath);
-			MessageBoxPool.show(MessageBoxPool.MSG_NO_SUCH_APK_FILE);
+			MessageBoxPool.show(wizard, MessageBoxPool.MSG_NO_SUCH_APK_FILE);
 			return;
 		}
 		this.apkFilePath = apkFilePath;

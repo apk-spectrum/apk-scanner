@@ -3,10 +3,10 @@ package com.apkscanner.gui.dialog;
 import java.awt.Component;
 import java.awt.Dimension;
 
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
@@ -17,7 +17,7 @@ public class LogDlg
 
 	}
 	
-	static public int showLogDialog(Component component)
+	static public void showLogDialog(Component component)
 	{
 		JTextArea taskOutput = new JTextArea();
 		taskOutput.setText(Log.getLog());
@@ -27,7 +27,6 @@ public class LogDlg
 		JScrollPane scrollPane = new JScrollPane(taskOutput);
 		scrollPane.setPreferredSize(new Dimension(600, 400));
 
-		return JOptionPane.showOptionDialog(component, scrollPane, Resource.STR_LABEL_LOG.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, null,
-	    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
+		MessageBoxPane.showMessageDialog(component, scrollPane, Resource.STR_LABEL_LOG.getString(), MessageBoxPane.INFORMATION_MESSAGE, null);
 	}
 }

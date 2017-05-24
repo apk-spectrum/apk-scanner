@@ -28,13 +28,13 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
+import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.util.ButtonType;
 import com.apkscanner.gui.util.StandardButton;
 import com.apkscanner.gui.util.Theme;
@@ -69,7 +69,7 @@ public class DeviceListDialog extends JDialog implements ActionListener
 			Component locationComp, String labelText, String title,
 			String[] possibleValues, int initialValue, String longValue)
 	{
-		Frame frame = JOptionPane.getFrameForComponent(frameComp);
+		Frame frame = MessageBoxPane.getFrameForComponent(frameComp);
 		do {
 			dialog = new DeviceListDialog(frame, locationComp, labelText, title,
 					possibleValues, initialValue, longValue);
@@ -102,10 +102,10 @@ public class DeviceListDialog extends JDialog implements ActionListener
 				} else if(DeviceList[value].status.equals("device")) {
 					return value;
 				} else if(DeviceList[value].status.equals("unauthorized")) {
-					JOptionPane.showOptionDialog(null, Resource.STR_MSG_DEVICE_UNAUTHORIZED.getString(), Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, null,
+					MessageBoxPane.showOptionDialog(null, Resource.STR_MSG_DEVICE_UNAUTHORIZED.getString(), Resource.STR_LABEL_ERROR.getString(), MessageBoxPane.ERROR_MESSAGE, MessageBoxPane.ERROR_MESSAGE, null,
 				    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
 				} else {
-					JOptionPane.showOptionDialog(null, Resource.STR_MSG_DEVICE_UNKNOWN.getString() + " " + DeviceList[value].status, Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, null,
+					MessageBoxPane.showOptionDialog(null, Resource.STR_MSG_DEVICE_UNKNOWN.getString() + " " + DeviceList[value].status, Resource.STR_LABEL_ERROR.getString(), MessageBoxPane.ERROR_MESSAGE, MessageBoxPane.ERROR_MESSAGE, null,
 				    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
 				}
 				clicked = false;

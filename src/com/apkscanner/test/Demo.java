@@ -12,14 +12,11 @@ import java.beans.PropertyChangeSupport;
 import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-
-import com.apkscanner.gui.messagebox.MessageBoxPane;
 
 public class Demo {
 
@@ -40,23 +37,6 @@ public class Demo {
         frame.pack();
         frame.setLocationByPlatform(true);
         frame.setVisible(true);
-
-        
-        
-        String[] st = {"a", "b", "c"};
-/*
-        ArrowTraversalPane.showInputDialog(frame, "Msg", "Title", JOptionPane.PLAIN_MESSAGE, null, st, "c");
-        ArrowTraversalPane.showInputDialog(frame, "Msg", "Title", JOptionPane.ERROR_MESSAGE, null, st, "c");
-        ArrowTraversalPane.showInputDialog(frame, "Msg", "Title", JOptionPane.WARNING_MESSAGE, null, st, "c");
-        ArrowTraversalPane.showInputDialog(frame, "Msg", "Title", JOptionPane.INFORMATION_MESSAGE, null, st, "c");
-        ArrowTraversalPane.showInputDialog(frame, "Msg", "Title", JOptionPane.QUESTION_MESSAGE, null, st, "c");
-*/
-        //JOptionPane.showConfirmDialog(frame, "Msg", "Title", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null);
-        //JOptionPane.showConfirmDialog(frame, "Msg", "Title", JOptionPane.NO_OPTION, JOptionPane.WARNING_MESSAGE, null);
-        //JOptionPane.showConfirmDialog(frame, "Msg", "Title", JOptionPane.YES_OPTION, JOptionPane.WARNING_MESSAGE, null);
-        MessageBoxPane.showMessageDialog(frame, "djflksjkld");
-        
-        
     }
 
     private JPanel createEmptyPanel() {
