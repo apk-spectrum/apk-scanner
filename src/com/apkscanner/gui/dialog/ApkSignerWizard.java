@@ -246,11 +246,11 @@ public class ApkSignerWizard implements ActionListener {
 	public void actionPerformed(final ActionEvent arg0) {
 		String actCmd = arg0.getActionCommand();
 		if(ACT_CMD_SIGN_APK.equals(actCmd)) {
-			File pemFile = new File(txtPemFilePath.getText());
+			final File pemFile = new File(txtPemFilePath.getText());
 			if(!pemFile.isFile()) {
 				return;
 			}
-			File pk8File = new File(txtPk8FilePath.getText());
+			final File pk8File = new File(txtPk8FilePath.getText());
 			if(!pk8File.isFile()) {
 				return;
 			}

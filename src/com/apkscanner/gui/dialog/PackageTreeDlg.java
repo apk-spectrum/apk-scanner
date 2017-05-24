@@ -1037,7 +1037,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		}
 
 		@Override
-		public void deviceChanged(IDevice device, int changeMask) { 
+		public void deviceChanged(final IDevice device, int changeMask) { 
 			Log.v("deviceChanged() " + device.getSerialNumber() + ", " + device.getState() + ", changeMask " + changeMask);
 			if((changeMask & IDevice.CHANGE_STATE) != 0 && device.isOnline()) {
 				EventQueue.invokeLater(new Runnable() {
