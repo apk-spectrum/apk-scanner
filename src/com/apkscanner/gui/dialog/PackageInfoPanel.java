@@ -41,9 +41,7 @@ import com.apkscanner.core.signer.Signature;
 import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ComponentInfo;
-import com.apkscanner.gui.messagebox.ArrowTraversalPane;
-import com.apkscanner.gui.messagebox.ComboMessageBox;
-import com.apkscanner.gui.messagebox.JTextOptionPane;
+import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.JHtmlEditorPane;
@@ -54,9 +52,9 @@ import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
 import com.apkscanner.tool.adb.SimpleOutputReceiver;
 import com.apkscanner.util.FileUtil;
+import com.apkscanner.util.FileUtil.FSStyle;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
-import com.apkscanner.util.FileUtil.FSStyle;
 
 public class PackageInfoPanel extends JPanel implements ActionListener, HyperlinkClickListener, ChangeListener{
 	private static final long serialVersionUID = -2600940167326680123L;
@@ -389,7 +387,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 
 	private void showDialog(String content, String title, Dimension size, Icon icon)
 	{
-		JTextOptionPane.showTextDialog(null, content, title, JOptionPane.INFORMATION_MESSAGE, icon, size);
+		MessageBoxPane.showTextDialog(null, content, title, JOptionPane.INFORMATION_MESSAGE, icon, size);
 	}
 
 	public void showFeatureInfo(String id)
@@ -505,13 +503,13 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 				StringBuilder sb = new StringBuilder();
 				@Override
 				public void OnError(int cmdType, String device) {
-					JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_PULLED.getString() + "\n\nConsol output", sb.toString(),  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
+					MessageBoxPane.showTextDialog(null, Resource.STR_MSG_FAILURE_PULLED.getString() + "\n\nConsol output", sb.toString(),  Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE,
 							null, new Dimension(400, 100));
 				}
 
 				@Override
 				public void OnSuccess(int cmdType, String device) {
-					int n = ArrowTraversalPane.showOptionDialog(null,
+					int n = MessageBoxPane.showOptionDialog(null,
 							Resource.STR_MSG_SUCCESS_PULL_APK.getString() + "\n" + destFile.getAbsolutePath(),
 							Resource.STR_LABEL_QUESTION.getString(),
 							JOptionPane.YES_NO_CANCEL_OPTION,
@@ -540,7 +538,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 			final IDevice device = packageInfo.device;
 
 			if(!packageInfo.isEnabled()) {
-				ArrowTraversalPane.showOptionDialog(null,
+				MessageBoxPane.showOptionDialog(null,
 						device.getName() + "\n : " + Resource.STR_MSG_DISABLED_PACKAGE.getString(),
 						Resource.STR_LABEL_WARNING.getString(),
 						JOptionPane.OK_OPTION, 
@@ -579,7 +577,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 								boolean isMain = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0);
 								items[i] = (isLauncher ? "[LAUNCHER]": (isMain ? "[MAIN]": "")) + " " + activities[i].name.replaceAll("^"+packageInfo.packageName, "");
 							}
-							String selected = ComboMessageBox.show(PackageInfoPanel.this, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL), items,  Resource.STR_BTN_LAUNCH.getString(), JTextOptionPane.QUESTION_MESSAGE,
+							String selected = MessageBoxPane.show(PackageInfoPanel.this, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL), items,  Resource.STR_BTN_LAUNCH.getString(), JOptionPane.QUESTION_MESSAGE,
 									null, new Dimension(400, 0));
 							if(selected == null) {
 								return;
@@ -592,7 +590,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 						Log.w("No such activity of launcher or main");
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
-								ArrowTraversalPane.showOptionDialog(null,
+								MessageBoxPane.showOptionDialog(null,
 										Resource.STR_MSG_NO_SUCH_LAUNCHER.getString(),
 										Resource.STR_LABEL_WARNING.getString(),
 										JOptionPane.OK_OPTION, 
@@ -622,7 +620,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
-								JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_LAUNCH_APP.getString() + "\n\nConsol output", errMsg,  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
+								MessageBoxPane.showTextDialog(null, Resource.STR_MSG_FAILURE_LAUNCH_APP.getString() + "\n\nConsol output", errMsg,  Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE,
 										null, new Dimension(500, 120));
 							}
 						});
@@ -654,7 +652,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 				final String errMsg = errMessage;
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
-						JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_UNINSTALLED.getString() + "\nConsol output:", errMsg,  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
+						MessageBoxPane.showTextDialog(null, Resource.STR_MSG_FAILURE_UNINSTALLED.getString() + "\nConsol output:", errMsg,  Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE,
 								null, new Dimension(300, 50));
 					}
 				});
@@ -662,7 +660,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
 						if(hasSysPack) {
-							int n = ArrowTraversalPane.showOptionDialog(null,
+							int n = MessageBoxPane.showOptionDialog(null,
 									Resource.STR_QUESTION_PACK_INFO_REFRESH.getString(),
 									Resource.STR_LABEL_QUESTION.getString(),
 									JOptionPane.YES_NO_OPTION, 
@@ -684,7 +682,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 								txtApkPath.setText(apkPath);
 							}
 						} else {
-							int n = ArrowTraversalPane.showOptionDialog(null,
+							int n = MessageBoxPane.showOptionDialog(null,
 									Resource.STR_QUESTION_PACK_INFO_CLOSE.getString(),
 									Resource.STR_LABEL_QUESTION.getString(),
 									JOptionPane.YES_NO_OPTION, 

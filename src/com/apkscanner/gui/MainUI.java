@@ -45,9 +45,8 @@ import com.apkscanner.gui.dialog.PackageInfoPanel;
 import com.apkscanner.gui.dialog.PackageTreeDlg;
 import com.apkscanner.gui.dialog.SearchDlg;
 import com.apkscanner.gui.dialog.SettingDlg;
-import com.apkscanner.gui.messagebox.ArrowTraversalPane;
-import com.apkscanner.gui.messagebox.ComboMessageBox;
-import com.apkscanner.gui.messagebox.JTextOptionPane;
+import com.apkscanner.gui.messagebox.MessageBoxPane;
+import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.FileDrop;
 import com.apkscanner.resource.Resource;
@@ -437,14 +436,7 @@ public class MainUI extends JFrame
 
 			if(!ZipFileUtil.exists(apkInfo.filePath, "classes.dex")) {
 				Log.e("No such file : classes.dex");
-				ArrowTraversalPane.showOptionDialog(null,
-						Resource.STR_MSG_NO_SUCH_CLASSES_DEX.getString(),
-						Resource.STR_LABEL_WARNING.getString(),
-						JOptionPane.OK_OPTION, 
-						JOptionPane.WARNING_MESSAGE,
-						null,
-						new String[] {Resource.STR_BTN_OK.getString()},
-						Resource.STR_BTN_OK.getString());
+				MessageBoxPool.show(MessageBoxPool.MSG_NO_SUCH_CLASSES_DEX);
 				return;
 			}
 
@@ -466,7 +458,7 @@ public class MainUI extends JFrame
 					Log.e("Failure: Fail Dex2Jar : " + message);
 					EventQueue.invokeLater(new Runnable() {
 						public void run() {
-							JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_DEX2JAR.getString() + "\n\nerror message", message,  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
+							MessageBoxPane.showTextDialog(null, Resource.STR_MSG_FAILURE_DEX2JAR.getString() + "\n\nerror message", message,  Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE,
 									null, new Dimension(300, 120));
 						}
 					});
@@ -518,14 +510,7 @@ public class MainUI extends JFrame
 			final IDevice[] devices = getInstalledDevice();
 			if(devices == null || devices.length == 0) {
 				Log.i("No such device of a package installed.");
-				ArrowTraversalPane.showOptionDialog(null,
-						Resource.STR_MSG_NO_SUCH_PACKAGE_DEVICE.getString(),
-						Resource.STR_LABEL_INFO.getString(),
-						JOptionPane.OK_OPTION, 
-						JOptionPane.INFORMATION_MESSAGE,
-						null,
-						new String[] {Resource.STR_BTN_OK.getString()},
-						Resource.STR_BTN_OK.getString());
+				MessageBoxPool.show(MessageBoxPool.MSG_NO_SUCH_PACKAGE_DEVICE);
 				return;
 			}
 
@@ -539,14 +524,7 @@ public class MainUI extends JFrame
 						PackageInfo packageInfo = getPackageInfo(device);
 
 						if(!packageInfo.isEnabled()) {
-							ArrowTraversalPane.showOptionDialog(null,
-									device.getName() + "\n : " + Resource.STR_MSG_DISABLED_PACKAGE.getString(),
-									Resource.STR_LABEL_WARNING.getString(),
-									JOptionPane.OK_OPTION, 
-									JOptionPane.INFORMATION_MESSAGE,
-									null,
-									new String[] {Resource.STR_BTN_OK.getString()},
-									Resource.STR_BTN_OK.getString());
+							MessageBoxPool.show(MessageBoxPool.MSG_DISABLED_PACKAGE, device.getName());
 							continue;
 						}
 
@@ -574,8 +552,11 @@ public class MainUI extends JFrame
 									boolean isMain = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0);
 									items[i] = (isLauncher ? "[LAUNCHER]": (isMain ? "[MAIN]": "")) + " " + activities[i].name.replaceAll("^"+packageInfo.packageName, "");
 								}
-								String selected = ComboMessageBox.show(MainUI.this, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL), items,  Resource.STR_BTN_LAUNCH.getString(), JTextOptionPane.QUESTION_MESSAGE,
+								String selected = MessageBoxPane.show(MainUI.this, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL), items,  Resource.STR_BTN_LAUNCH.getString(), JOptionPane.QUESTION_MESSAGE,
 										null, new Dimension(400, 0));
+								
+								MessageBoxPane.showInputDialog(MainUI.this, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL), "Title", JOptionPane.QUESTION_MESSAGE, null, items, items[0]);
+								
 								if(selected == null) {
 									return;
 								}
@@ -585,14 +566,7 @@ public class MainUI extends JFrame
 
 						if(selectedActivity == null) {
 							Log.w("No such activity of launcher or main");
-							ArrowTraversalPane.showOptionDialog(null,
-									Resource.STR_MSG_NO_SUCH_LAUNCHER.getString(),
-									Resource.STR_LABEL_WARNING.getString(),
-									JOptionPane.OK_OPTION, 
-									JOptionPane.INFORMATION_MESSAGE,
-									null,
-									new String[] {Resource.STR_BTN_OK.getString()},
-									Resource.STR_BTN_OK.getString());
+							MessageBoxPool.show(MessageBoxPool.MSG_NO_SUCH_LAUNCHER);
 							return;
 						}
 
@@ -616,7 +590,7 @@ public class MainUI extends JFrame
 
 							EventQueue.invokeLater(new Runnable() {
 								public void run() {
-									JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_LAUNCH_APP.getString() + "\n\nConsol output", errMsg,  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
+									MessageBoxPane.showTextDialog(null, Resource.STR_MSG_FAILURE_LAUNCH_APP.getString() + "\n\nConsol output", errMsg,  Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE,
 											null, new Dimension(500, 120));
 								}
 							});
@@ -634,7 +608,7 @@ public class MainUI extends JFrame
 			final IDevice[] devices = getInstalledDevice();
 			if(devices == null || devices.length == 0) {
 				Log.i("No such device of a package installed.");
-				ArrowTraversalPane.showOptionDialog(null,
+				MessageBoxPane.showOptionDialog(null,
 						Resource.STR_MSG_NO_SUCH_PACKAGE_DEVICE.getString(),
 						Resource.STR_LABEL_INFO.getString(),
 						JOptionPane.OK_OPTION, 
@@ -671,14 +645,14 @@ public class MainUI extends JFrame
 							final String errMsg = errMessage;
 							EventQueue.invokeLater(new Runnable() {
 								public void run() {
-									JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_UNINSTALLED.getString() + "\nConsol output:", errMsg,  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
+									MessageBoxPane.showTextDialog(null, Resource.STR_MSG_FAILURE_UNINSTALLED.getString() + "\nConsol output:", errMsg,  Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE,
 											null, new Dimension(300, 50));
 								}
 							});
 						} else {
 							EventQueue.invokeLater(new Runnable() {
 								public void run() {
-									ArrowTraversalPane.showOptionDialog(null,
+									MessageBoxPane.showOptionDialog(null,
 											Resource.STR_MSG_SUCCESS_REMOVED.getString(),
 											Resource.STR_LABEL_INFO.getString(),
 											JOptionPane.YES_OPTION, 
@@ -713,7 +687,7 @@ public class MainUI extends JFrame
 			final IDevice[] devices = getInstalledDevice();
 			if(devices == null || devices.length == 0) {
 				Log.i("No such device of a package installed.");
-				ArrowTraversalPane.showOptionDialog(null,
+				MessageBoxPane.showOptionDialog(null,
 						Resource.STR_MSG_NO_SUCH_PACKAGE_DEVICE.getString(),
 						Resource.STR_LABEL_INFO.getString(),
 						JOptionPane.OK_OPTION, 

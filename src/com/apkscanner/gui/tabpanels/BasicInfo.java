@@ -36,7 +36,7 @@ import com.apkscanner.data.apkinfo.UsesLibraryInfo;
 import com.apkscanner.data.apkinfo.UsesPermissionInfo;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.gui.dialog.SdkVersionInfoDlg;
-import com.apkscanner.gui.messagebox.JTextOptionPane;
+import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
@@ -754,7 +754,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 
 	private void showDialog(String content, String title, Dimension size, Icon icon)
 	{
-		JTextOptionPane.showTextDialog(null, content, title, JOptionPane.INFORMATION_MESSAGE, icon, size);
+		MessageBoxPane.showTextDialog(null, content, title, JOptionPane.INFORMATION_MESSAGE, icon, size);
 	}
 
 	public void showPermList()

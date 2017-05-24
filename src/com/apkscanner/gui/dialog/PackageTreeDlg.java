@@ -63,8 +63,7 @@ import com.android.ddmlib.TimeoutException;
 import com.apkscanner.Launcher;
 import com.apkscanner.core.installer.ApkInstaller;
 import com.apkscanner.core.installer.ApkInstaller.ApkInstallerListener;
-import com.apkscanner.gui.messagebox.ArrowTraversalPane;
-import com.apkscanner.gui.messagebox.JTextOptionPane;
+import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.FilteredTreeModel;
 import com.apkscanner.gui.util.SimpleCheckTableModel;
@@ -625,7 +624,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 			final String errMsg = errMessage;
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
-					JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_UNINSTALLED.getString() + "\nConsol output:", errMsg,  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
+					MessageBoxPane.showTextDialog(null, Resource.STR_MSG_FAILURE_UNINSTALLED.getString() + "\nConsol output:", errMsg,  Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE,
 							null, new Dimension(300, 50));
 				}
 			});
@@ -726,13 +725,13 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 			StringBuilder sb = new StringBuilder();
 			@Override
 			public void OnError(int cmdType, String device) {
-				JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_PULLED.getString() + "\n\nConsol output", sb.toString(),  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
+				MessageBoxPane.showTextDialog(null, Resource.STR_MSG_FAILURE_PULLED.getString() + "\n\nConsol output", sb.toString(),  Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE,
 						null, new Dimension(400, 100));
 			}
 
 			@Override
 			public void OnSuccess(int cmdType, String device) {
-				int n = ArrowTraversalPane.showOptionDialog(null,
+				int n = MessageBoxPane.showOptionDialog(null,
 						Resource.STR_MSG_SUCCESS_PULL_APK.getString() + "\n" + destFile.getAbsolutePath(),
 						Resource.STR_LABEL_QUESTION.getString(),
 						JOptionPane.YES_NO_CANCEL_OPTION,
