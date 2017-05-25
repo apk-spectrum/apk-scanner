@@ -612,14 +612,14 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		if(!packageInfo.isSystemApp()) {
 			errMessage = PackageManager.uninstallPackage(packageInfo);
 		} else {
-			int n = MessageBoxPane.showQuestion(PackageTreeDlg.this, "It's system app, remove continue?   ", MessageBoxPane.YES_NO_OPTION);
+			int n = MessageBoxPool.show(PackageTreeDlg.this, MessageBoxPool.QUESTION_REMOVE_SYSTEM_APK);
 			if(n == MessageBoxPane.NO_OPTION) {
 				return false;
 			}
 
 			errMessage = PackageManager.removePackage(packageInfo);
 			if(errMessage == null || errMessage.isEmpty()) {
-				n = MessageBoxPane.showQuestion(PackageTreeDlg.this, "remove successful, need root, now?   ", MessageBoxPane.YES_NO_OPTION);
+				n = MessageBoxPool.show(PackageTreeDlg.this, MessageBoxPool.QUESTION_REBOOT_SYSTEM);
 				if(n == MessageBoxPane.YES_OPTION) {
 					try {
 						device.reboot(null);

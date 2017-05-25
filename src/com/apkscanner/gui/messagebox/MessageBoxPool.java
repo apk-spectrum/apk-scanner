@@ -23,6 +23,8 @@ public class MessageBoxPool {
 	public static final int QUESTION_PACK_INFO_CLOSE = 14;
 	public static final int MSG_CANNOT_WRITE_FILE = 15;
 	public static final int QUESTION_SAVE_OVERWRITE = 16;
+	public static final int QUESTION_REMOVE_SYSTEM_APK = 17;
+	public static final int QUESTION_REBOOT_SYSTEM = 18;
 
 	private Component parentComponent;
 	private static HashMap<Integer, MessageBoxPool> pool = new HashMap<Integer, MessageBoxPool>(); 
@@ -107,6 +109,10 @@ public class MessageBoxPool {
 					new String[] {Resource.STR_BTN_NO.getString(), Resource.STR_BTN_YES.getString()}, Resource.STR_BTN_YES.getString());
 		case QUESTION_SAVE_OVERWRITE:
 			return MessageBoxPane.showQuestion(parentComponent, Resource.STR_QUESTION_SAVE_OVERWRITE.getString(), MessageBoxPane.YES_NO_OPTION);
+		case QUESTION_REMOVE_SYSTEM_APK:
+			return MessageBoxPane.showQuestion(parentComponent, Resource.STR_QUESTION_REMOVE_SYSTEM_APK.getString(), MessageBoxPane.YES_NO_OPTION);
+		case QUESTION_REBOOT_SYSTEM:
+			return MessageBoxPane.showQuestion(parentComponent, Resource.STR_QUESTION_REMOVED_REBOOT.getString(), MessageBoxPane.YES_NO_OPTION);
 		}
 		return MessageBoxPane.CLOSED_OPTION;
 	}

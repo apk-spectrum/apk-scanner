@@ -303,6 +303,8 @@ public enum Resource
 	STR_QUESTION_SAVE_OVERWRITE	(Type.TEXT, "@question_save_overwrite"),
 	STR_QUESTION_PACK_INFO_CLOSE(Type.TEXT, "@question_pack_info_close"),
 	STR_QUESTION_PACK_INFO_REFRESH(Type.TEXT, "@question_pack_info_refresh"),
+	STR_QUESTION_REMOVE_SYSTEM_APK(Type.TEXT, "@question_remove_system_apk"),
+	STR_QUESTION_REMOVED_REBOOT (Type.TEXT, "@question_removed_reboot"),
 
 	IMG_TOOLBAR_OPEN			(Type.IMAGE, "toolbar_open.png"),
 	IMG_TOOLBAR_MANIFEST		(Type.IMAGE, "toolbar_manifast.png"),

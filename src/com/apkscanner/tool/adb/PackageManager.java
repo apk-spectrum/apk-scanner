@@ -394,7 +394,7 @@ public class PackageManager {
 
 		try {
 			SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
-			packageInfo.device.executeShellCommand("rm " + packageInfo.getApkPath(), outputReceiver);
+			packageInfo.device.executeShellCommand("rm -r " + packageInfo.getApkPath(), outputReceiver);
 			//packageInfo.device.removeRemotePackage(packageInfo.getApkPath());
 			for(String line: outputReceiver.getOutput()) {
 				if(!line.isEmpty()) {

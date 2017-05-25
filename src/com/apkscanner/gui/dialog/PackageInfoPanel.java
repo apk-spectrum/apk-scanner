@@ -615,12 +615,20 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 			if(!packageInfo.isSystemApp()) {
 				errMessage = PackageManager.uninstallPackage(packageInfo);
 			} else {
+				int n = MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.QUESTION_REMOVE_SYSTEM_APK);
+				if(n == MessageBoxPane.NO_OPTION) {
+					return;
+				}
+
 				errMessage = PackageManager.removePackage(packageInfo);
 				if(errMessage == null || errMessage.isEmpty()) {
-					try {
-						device.reboot(null);
-					} catch (TimeoutException | AdbCommandRejectedException | IOException e) {
-						e.printStackTrace();
+					n = MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.QUESTION_REBOOT_SYSTEM);
+					if(n == MessageBoxPane.YES_OPTION) {
+						try {
+							device.reboot(null);
+						} catch (TimeoutException | AdbCommandRejectedException | IOException e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}

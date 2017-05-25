@@ -127,7 +127,7 @@ Once installed, the user can move the application to either internal or external
 	<string name="feature_shared_user_id_lab">SHARED_UID</string>
 	<string name="feature_shared_user_id_desc">This application uses the sharedUserId</string>
 	<string name="feature_platform_sign_lab">PLATFORM SIGN</string>
-	<string name="feature_platform_sign_desc">This application to be sign by platform signature(samsung test-key).</string>
+	<string name="feature_platform_sign_desc">This application to be sign by platform signature(google test-key).</string>
 	<string name="feature_samsung_sign_lab">SAMSUNG SIGN</string>
 	<string name="feature_samsung_sign_desc">This application to be sign by samsung signature.</string>
 	<string name="feature_revoke_permissions_lab">SYSTEM PERMISSIONS</string>
@@ -275,6 +275,8 @@ Please check the confirmation dialog on your device.</string>
 Close this windows?</string>
 	<string name="question_pack_info_refresh">Success uninstall package.
 Refresh this package information?</string>
+	<string name="question_remove_system_apk">It's system app, continues remove?</string>
+	<string name="question_removed_reboot">remove successful, need reboot, now?</string>
 
 	<string name="tree_message_device">Device</string>
 	<string name="tree_message_version">App Version</string>

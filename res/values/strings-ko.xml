@@ -125,7 +125,7 @@
 	<string name="feature_shared_user_id_lab">공유 UID</string>
 	<string name="feature_shared_user_id_desc">공유 UID를 사용하고 있습니다.</string>
 	<string name="feature_platform_sign_lab">플랫폼 서명</string>
-	<string name="feature_platform_sign_desc">삼성 Test-key 플랫폼 서명이 포함 되어 있습니다.
+	<string name="feature_platform_sign_desc">구글 Test-key 플랫폼 서명이 포함 되어 있습니다.
 eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="feature_samsung_sign_lab">삼성 서명</string>
 	<string name="feature_samsung_sign_desc">삼성 플랫폼 서명이 포함 되어 있습니다.</string>
@@ -274,6 +274,8 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 창을 닫으시겠습니까?</string>
 	<string name="question_pack_info_refresh">패키지를 제거 하였습니다.
 패키지 정보를 갱신 하시겠습니까?</string>
+	<string name="question_remove_system_apk">시템앱을 삭제하려고 합니다. 계속 하시겠습니까?</string>
+	<string name="question_removed_reboot">시스템앱을 삭제하였습니다. 재부팅 하시겠습니까?</string>
 
 	<string name="tree_message_device">디바이스</string>
 	<string name="tree_message_version">앱 버전</string>
