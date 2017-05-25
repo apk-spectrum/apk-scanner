@@ -529,21 +529,37 @@ public class MainUI extends JFrame
 									selectedActivity = activities[0].name;
 								}
 							}
-							if(selectedActivity == null && activities != null && activities.length > 0) {
-								String[] items = new String[activities.length];
-								for(int i = 0; i < activities.length; i++) {
-									boolean isLauncher = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0);
-									boolean isMain = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0);
-									items[i] = (isLauncher ? "[LAUNCHER]": (isMain ? "[MAIN]": "")) + " " + activities[i].name.replaceAll("^"+packageInfo.packageName, "");
+							if(selectedActivity == null) {
+								ApkInfo apkInfo = apkScanner.getApkInfo();
+								ComponentInfo[] apkActivities = ApkInfoHelper.getLauncherActivityList(apkInfo, true);
+								
+								int mergeLength = (activities != null ? activities.length : 0) + (apkActivities != null ? apkActivities.length : 0);
+								ArrayList<String> mergeList = new ArrayList<String>(mergeLength);
+								
+								if(activities != null && activities.length > 0) {
+									for(int i = 0; i < activities.length; i++) {
+										boolean isLauncher = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0);
+										boolean isMain = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0);
+										mergeList.add((isLauncher ? "[LAUNCHER]": (isMain ? "[MAIN]": "")) + " " + activities[i].name.replaceAll("^"+packageInfo.packageName, ""));
+									}
+								}
+								
+								if(apkActivities != null && apkActivities.length > 0) {
+									for(ComponentInfo comp: apkActivities) {
+										boolean isLauncher = ((comp.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0);
+										boolean isMain = ((comp.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0);
+										mergeList.add((isLauncher ? "[APK_LAUNCHER]": (isMain ? "[APK_MAIN]": "[APK]")) + " " + comp.name.replaceAll("^"+apkInfo.manifest.packageName, ""));										
+									}
 								}
 
-								String selected = (String)MessageBoxPane.showInputDialog(MainUI.this, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL),
-										Resource.STR_BTN_LAUNCH.getString(), MessageBoxPane.QUESTION_MESSAGE, null, items, items[0]);
-
-								if(selected == null) {
-									return;
+								if(!mergeList.isEmpty()) { 
+									String selected = (String)MessageBoxPane.showInputDialog(MainUI.this, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL),
+											Resource.STR_BTN_LAUNCH.getString(), MessageBoxPane.QUESTION_MESSAGE, null, mergeList.toArray(new String[mergeList.size()]), mergeList.get(0));
+									if(selected == null) {
+										return;
+									}
+									selectedActivity = selected.split(" ")[1];
 								}
-								selectedActivity = selected.split(" ")[1];
 							}
 						}
 

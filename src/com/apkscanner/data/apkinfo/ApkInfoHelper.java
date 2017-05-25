@@ -111,8 +111,8 @@ public class ApkInfoHelper
 				for(ActivityInfo info: apkInfo.manifest.application.activity) {
 					if((info.enabled == null || info.enabled) &&
 							(info.exported == null || info.exported) &&
-							(info.permission == null || info.permission.isEmpty()) &&
-							(info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
+							(info.permission == null || info.permission.isEmpty())/* &&
+							(info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0*/) {
 						if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0)
 							launcherList.add(info);
 						else if(includeMain) {
@@ -125,8 +125,8 @@ public class ApkInfoHelper
 				for(ActivityAliasInfo info: apkInfo.manifest.application.activityAlias) {
 					if((info.enabled == null || info.enabled) &&
 							(info.exported == null || info.exported) &&
-							(info.permission == null || info.permission.isEmpty()) &&
-							(info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
+							(info.permission == null || info.permission.isEmpty())/* &&
+							(info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0*/) {
 						if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0)
 							launcherList.add(info);
 						else if(includeMain) {
