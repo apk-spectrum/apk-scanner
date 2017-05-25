@@ -64,6 +64,8 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 	private static final String ACT_CMD_LAUCH_PACKAGE = "ACT_CMD_LAUCH_PACKAGE";
 	private static final String ACT_CMD_UNINSTALL_PACKAGE = "ACT_CMD_UNINSTALL_PACKAGE";
 
+	private JDialog dialog;
+
 	private JToolBar toolBar;
 	private JTabbedPane tabbedPane;
 	private JHtmlEditorPane infoPanel;
@@ -644,9 +646,12 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
 						if(hasSysPack) {
-							int n = MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.QUESTION_PACK_INFO_REFRESH);
+							int n = 2;
+							if(dialog != null) {
+								n = MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.QUESTION_PACK_INFO_REFRESH);
+							}
 							if(n == 0) {
-								//dispose();
+								dialog.dispose();
 							} else if(n == 2) {
 								setPackageInfo(packageInfo);
 							} else {
@@ -659,9 +664,12 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 								txtApkPath.setText(apkPath);
 							}
 						} else {
-							int n = MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.QUESTION_PACK_INFO_CLOSE);
+							int n = 0;
+							if(dialog != null) {
+								n = MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.QUESTION_PACK_INFO_CLOSE);
+							}
 							if(n == 1) {
-								//dispose();
+								dialog.dispose();
 							} else {
 								for(Component c: toolBar.getComponents()) {
 									if(c instanceof JButton) {
@@ -704,9 +712,8 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		}
 	}
 
-
 	public void showDialog(Window owner) {
-		JDialog dialog = new JDialog(owner);
+		dialog = new JDialog(owner);
 
 		dialog.setTitle("Package Info");
 		dialog.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());

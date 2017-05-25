@@ -1006,7 +1006,7 @@ public class MainUI extends JFrame
 							pkg = PackageManager.getPackageInfo(device, packageName);
 						}
 						if(pkg != null) {
-							hasInstalled = true;
+							hasInstalled = pkg.getApkPath() != null;
 							int packVerCode = pkg.getVersionCode();
 							if(versionCode < packVerCode) {
 								hasUpper = true;									
@@ -1052,10 +1052,14 @@ public class MainUI extends JFrame
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					Log.v("sendFlag " + flag);
-					if(flag != ToolBar.FLAG_LAYOUT_UNSIGNED) {
-						toolBar.unsetFlag(ToolBar.FLAG_LAYOUT_UNSIGNED);	
+					if(flag == 0) {
+						toolBar.clearFlag();
+					} else {
+						if(flag != ToolBar.FLAG_LAYOUT_UNSIGNED) {
+							toolBar.unsetFlag(ToolBar.FLAG_LAYOUT_UNSIGNED);	
+						}
+						toolBar.setFlag(flag);
 					}
-					toolBar.setFlag(flag);
 				}
 			});
 			return;

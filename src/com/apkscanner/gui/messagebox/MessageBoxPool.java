@@ -74,7 +74,7 @@ public class MessageBoxPool {
 			MessageBoxPane.showError(parentComponent, Resource.STR_MSG_FAILURE_OPEN_APK.getString());
 			break;
 		case MSG_SUCCESS_REMOVED:
-			MessageBoxPane.showPlain(parentComponent, Resource.STR_MSG_FAILURE_OPEN_APK.getString());
+			MessageBoxPane.showPlain(parentComponent, Resource.STR_MSG_SUCCESS_REMOVED.getString());
 			break;
 		case MSG_FAILURE_DEX2JAR:
 			MessageBoxPane.showTextAreaDialog(parentComponent, Resource.STR_MSG_FAILURE_DEX2JAR.getString() + "\n\nerror message", extMessage[0],

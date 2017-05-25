@@ -403,7 +403,7 @@ public class PackageManager {
 				}
 			}
 
-			if(errMessage == null) {
+			if(errMessage == null || errMessage.isEmpty()) {
 				packageInfo.clear();
 				packageUninstalled(packageInfo);
 			}
