@@ -606,14 +606,14 @@ public class MainUI extends JFrame
 						if(!packageInfo.isSystemApp()) {
 							errMessage = PackageManager.uninstallPackage(packageInfo);
 						} else {
-							int n = MessageBoxPool.show(MainUI.this, MessageBoxPool.QUESTION_REMOVE_SYSTEM_APK);
+							int n = messageBox.show(MessageBoxPool.QUESTION_REMOVE_SYSTEM_APK);
 							if(n == MessageBoxPane.NO_OPTION) {
 								return;
 							}
 
 							errMessage = PackageManager.removePackage(packageInfo);
 							if(errMessage == null || errMessage.isEmpty()) {
-								n = MessageBoxPool.show(MainUI.this, MessageBoxPool.QUESTION_REBOOT_SYSTEM);
+								n = messageBox.show(MessageBoxPool.QUESTION_REBOOT_SYSTEM);
 								if(n == MessageBoxPane.YES_OPTION) {
 									try {
 										device.reboot(null);
