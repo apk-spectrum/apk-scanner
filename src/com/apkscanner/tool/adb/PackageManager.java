@@ -11,6 +11,7 @@ import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
 import com.android.ddmlib.IDevice.DeviceState;
 import com.android.ddmlib.InstallException;
+import com.android.ddmlib.NullOutputReceiver;
 import com.android.ddmlib.ShellCommandUnresponsiveException;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.core.scanner.ApkScanner;
@@ -351,16 +352,16 @@ public class PackageManager {
 
 		if(packageInfo == null || packageInfo.packageName == null) {
 			errMessage = "PackageInfo is null";
-		} else if(packageInfo.device != null) {
+		} else if(packageInfo.device == null) {
 			errMessage = "Device is null";
 		} else if(packageInfo.device.getState() != DeviceState.ONLINE) {
 			errMessage = "Device is no online : " + packageInfo.device.getState();
 		} else {
 			if(packageInfo.isSystemApp()) {
 				if(!AdbDeviceHelper.hasSu(packageInfo.device)) {
-					errMessage = "This device was not rooting!\nSo, can not remove for the system package!";
+					errMessage = "This device was not rooting!\nCan not remove for the system package!";
 				} else if(!AdbDeviceHelper.isRoot(packageInfo.device)) {
-					errMessage = "no root, retry after change root mode";
+					errMessage = "No root, retry after change to root mode";
 				}
 			}
 
@@ -368,8 +369,7 @@ public class PackageManager {
 			if(apkPath == null || apkPath.isEmpty()) {
 				errMessage = "No such apk file";
 			} else {
-				packageInfo.clear();
-				String newApkPath = packageInfo.getApkPath();
+				String newApkPath = packageInfo.getRealApkPath();
 				if(newApkPath == null || newApkPath.isEmpty()) {
 					errMessage = "Already uninstalled";
 				} else if(!apkPath.equals(newApkPath)) {
@@ -381,7 +381,8 @@ public class PackageManager {
 		if(errMessage == null && packageInfo.isSystemApp()) {
 			try {
 				AdbDeviceHelper.remount(AndroidDebugBridge.getSocketAddress(), packageInfo.device);
-			} catch (TimeoutException | CommandRejectedException | IOException e1) {
+				packageInfo.device.executeShellCommand("su root setenforce 0", new NullOutputReceiver());
+			} catch (TimeoutException | CommandRejectedException | IOException | AdbCommandRejectedException | ShellCommandUnresponsiveException e1) {
 				errMessage = e1.getMessage();
 				e1.printStackTrace();
 			}
@@ -392,10 +393,21 @@ public class PackageManager {
 		}
 
 		try {
-			packageInfo.device.removeRemotePackage(packageInfo.getApkPath());
-			packageInfo.clear();
-			packageUninstalled(packageInfo);
-		} catch (InstallException e) {
+			SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
+			packageInfo.device.executeShellCommand("rm " + packageInfo.getApkPath(), outputReceiver);
+			//packageInfo.device.removeRemotePackage(packageInfo.getApkPath());
+			for(String line: outputReceiver.getOutput()) {
+				if(!line.isEmpty()) {
+					errMessage = line;
+					break;
+				}
+			}
+
+			if(errMessage == null) {
+				packageInfo.clear();
+				packageUninstalled(packageInfo);
+			}
+		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException | IOException e) {
 			errMessage = e.getMessage();
 			e.printStackTrace();
 		}

@@ -29,7 +29,7 @@ import com.apkscanner.util.ZipFileUtil;
 public enum Resource
 {
 	STR_APP_NAME				(Type.TEXT, "@app_name"),
-	STR_APP_VERSION				(Type.TEXT, "2.3 Beta 20160803"),
+	STR_APP_VERSION				(Type.TEXT, "2.3 Beta 20170524"),
 	STR_APP_BUILD_MODE			(Type.TEXT, "eng"),
 	STR_APP_MAKER				(Type.TEXT, "jin_h.lee / sunggyu.kam"),
 	STR_APP_MAKER_EMAIL			(Type.TEXT, "jin_h.lee@samsung.com;sunggyu.kam@samsung.com"),
@@ -74,6 +74,7 @@ public enum Resource
 	STR_BTN_UNASSOC_FTYPE		(Type.TEXT, "@btn_unassoc_ftype"),
 	STR_BTN_CREATE_SHORTCUT		(Type.TEXT, "@btn_create_shortcut"),
 	STR_BTN_SELF_SEARCH			(Type.TEXT, "@btn_self_search"),
+	STR_BTN_DETAILS_INFO		(Type.TEXT, "@btn_details_info"),
 
 	STR_BTN_OPEN_LAB			(Type.TEXT, "@btn_open_lab"),
 	STR_BTN_OPEN_PACKAGE_LAB	(Type.TEXT, "@btn_open_pacakge_lab"),

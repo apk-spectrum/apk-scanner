@@ -37,6 +37,7 @@
 	<string name="btn_unassoc_ftype">APK 파일 연결해제</string>
 	<string name="btn_create_shortcut">바탕화면에 바로가기 생성</string>
     <string name="btn_self_search">찾아보기...</string>
+	<string name="btn_details_info">상세 패키지정보</string>
 
 	<string name="btn_open_lab">APK 파일에서 정보를 가져옵니다. (Ctrl+O)</string>
 	<string name="btn_open_pacakge_lab">디바이스 패키지 열기(Ctrl+P)</string>

@@ -457,6 +457,7 @@ public class ToolBar extends JToolBar
 			break;
 		case OPEN:
 			buttonMap.get(ButtonSet.OPEN).setEnabled(enabled);
+			buttonMap.get(ButtonSet.OPEN_PACKAGE).setEnabled(enabled);
 			buttonMap.get(ButtonSet.OPEN_EXTEND).setEnabled(enabled);
 			break;
 		case OPEN_CODE:

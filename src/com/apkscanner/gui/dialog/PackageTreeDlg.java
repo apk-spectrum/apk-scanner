@@ -62,6 +62,7 @@ import com.android.ddmlib.TimeoutException;
 import com.apkscanner.Launcher;
 import com.apkscanner.core.installer.ApkInstaller;
 import com.apkscanner.core.installer.ApkInstaller.ApkInstallerListener;
+import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.FilteredTreeModel;
@@ -426,15 +427,17 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		table.updateUI();
 
 		top.removeAllChildren();
+		top.add(new DefaultMutableTreeNode(Resource.STR_MSG_DEVICE_NOT_FOUND.getString().replace("\n", " ")));
+		tree.expandPath(new TreePath(top.getPath()));
 		tree.updateUI();
 
 		refreshbtn.setVisible(false);
 		gifPanel.setVisible(true);
 
-		SwingWorker<Void, Object> task = new SwingWorker<Void, Object>()
+		SwingWorker<Integer, Object> task = new SwingWorker<Integer, Object>()
 		{
 			@Override
-			protected Void doInBackground() throws Exception {
+			protected Integer doInBackground() throws Exception {
 				AndroidDebugBridge adb = AdbServerMonitor.getAndroidDebugBridge();
 				IDevice[] devices = adb.getDevices();
 				for(IDevice device: devices) {
@@ -443,7 +446,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 					}
 					deviceHandler.deviceConnected(device);
 				}
-				return null;
+				return devices.length;
 			}
 
 			@Override
@@ -609,12 +612,20 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		if(!packageInfo.isSystemApp()) {
 			errMessage = PackageManager.uninstallPackage(packageInfo);
 		} else {
+			int n = MessageBoxPane.showQuestion(PackageTreeDlg.this, "It's system app, remove continue?   ", MessageBoxPane.YES_NO_OPTION);
+			if(n == MessageBoxPane.NO_OPTION) {
+				return false;
+			}
+
 			errMessage = PackageManager.removePackage(packageInfo);
 			if(errMessage == null || errMessage.isEmpty()) {
-				try {
-					device.reboot(null);
-				} catch (TimeoutException | AdbCommandRejectedException | IOException e) {
-					e.printStackTrace();
+				n = MessageBoxPane.showQuestion(PackageTreeDlg.this, "remove successful, need root, now?   ", MessageBoxPane.YES_NO_OPTION);
+				if(n == MessageBoxPane.YES_OPTION) {
+					try {
+						device.reboot(null);
+					} catch (TimeoutException | AdbCommandRejectedException | IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
@@ -926,23 +937,28 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 						data.add(dataapp);
 
 						for(PackageInfo info: devPack.packages) {
+							String apkPath = info.getApkPath(); 
+							if(apkPath == null || apkPath.isEmpty()) {
+								continue;
+							}
+
 							DefaultMutableTreeNode temp = new DefaultMutableTreeNode(info);
 
-							if(info.getApkPath().startsWith("/system/priv-app/")) {
+							if(apkPath.startsWith("/system/priv-app/")) {
 								priv_app.add(temp);		        		
-							} else if(info.getApkPath().startsWith("/system/app/")) {
+							} else if(apkPath.startsWith("/system/app/")) {
 								systemapp.add(temp);
-							} else if(info.getApkPath().startsWith("/system/framework/")) {
+							} else if(apkPath.startsWith("/system/framework/")) {
 								framework_app.add(temp);
 
-								FrameworkTableObject tableObject = new FrameworkTableObject(false, dev.getName(), dev.getSerialNumber(), ((PackageInfo)temp.getUserObject()).getApkPath());
+								FrameworkTableObject tableObject = new FrameworkTableObject(false, dev.getName(), dev.getSerialNumber(), apkPath);
 
-								if(info.getApkPath().startsWith("/system/framework/framework-res.apk") || info.getApkPath().startsWith("/system/framework/twframework-res.apk")) {
+								if(apkPath.startsWith("/system/framework/framework-res.apk") || apkPath.startsWith("/system/framework/twframework-res.apk")) {
 									tableObject.buse = true;
 								}
 
 								tableListArray.add(tableObject);
-							} else if(info.getApkPath().startsWith("/data/app/")) {
+							} else if(apkPath.startsWith("/data/app/")) {
 								dataapp.add(temp);
 							}
 						}
@@ -961,9 +977,10 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 						devNode.add(system);
 						devNode.add(data);
 
-						expandOrCollapsePath(tree, new TreePath(devNode.getPath()),3,0, true);
+						//expandOrCollapsePath(tree, new TreePath(devNode.getPath()),3,0, true);
 						tree.updateUI();
-						
+						setFilter();
+
 						table.setModel(new SimpleCheckTableModel(columnNames, tableListArray));
 						table.setPreferredScrollableViewportSize(new Dimension(0,80));
 						setJTableColumnsWidth(table,550,10,120,410);
@@ -1149,12 +1166,12 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 						menuitemOpen.setIcon(Resource.IMG_TREE_MENU_OPEN.getImageIcon());                                                        
 						menu.add(menuitemOpen);
 
-						JMenuItem menuitemDetail = new JMenuItem(Resource.STR_BTN_MORE.getString() );                                                        
+						JMenuItem menuitemDetail = new JMenuItem(Resource.STR_BTN_DETAILS_INFO.getString() );                                                        
 						menuitemDetail.addActionListener(new ActionListener(){ 
 							public void actionPerformed(ActionEvent e) {
 								showDetailInfo();
 							}});
-						menuitemDetail.setIcon(Resource.IMG_TREE_MENU_OPEN.getImageIcon());                                                        
+						menuitemDetail.setIcon(Resource.IMG_TREE_APK.getImageIcon());                                                        
 						menu.add(menuitemDetail);
 
 						JMenuItem menuitemSave = new JMenuItem(Resource.STR_BTN_SAVE.getString() );                                                        

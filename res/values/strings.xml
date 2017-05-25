@@ -59,6 +59,7 @@
 	<string name="btn_unassoc_ftype_lab">Unassociate .apk file</string>
 	<string name="btn_create_shortcut_lab">Create Shortcut on Desktop</string>
 	<string name="btn_self_search_lab">Search...</string>
+	<string name="btn_details_info">Detail information</string>
 
 	<string name="menu_new">New Window...</string>
 	<string name="menu_new_window">New window(N)</string>
