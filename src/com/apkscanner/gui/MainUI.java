@@ -532,10 +532,10 @@ public class MainUI extends JFrame
 							if(selectedActivity == null) {
 								ApkInfo apkInfo = apkScanner.getApkInfo();
 								ComponentInfo[] apkActivities = ApkInfoHelper.getLauncherActivityList(apkInfo, true);
-								
+
 								int mergeLength = (activities != null ? activities.length : 0) + (apkActivities != null ? apkActivities.length : 0);
 								ArrayList<String> mergeList = new ArrayList<String>(mergeLength);
-								
+
 								if(activities != null && activities.length > 0) {
 									for(int i = 0; i < activities.length; i++) {
 										boolean isLauncher = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0);
@@ -543,7 +543,7 @@ public class MainUI extends JFrame
 										mergeList.add((isLauncher ? "[LAUNCHER]": (isMain ? "[MAIN]": "")) + " " + activities[i].name.replaceAll("^"+packageInfo.packageName, ""));
 									}
 								}
-								
+
 								if(apkActivities != null && apkActivities.length > 0) {
 									for(ComponentInfo comp: apkActivities) {
 										boolean isLauncher = ((comp.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0);
@@ -947,7 +947,7 @@ public class MainUI extends JFrame
 				}
 				if(info != null) {
 					packageName = info.manifest.packageName;
-					versionCode = info.manifest.versionCode;
+					versionCode = info.manifest.versionCode != null ? info.manifest.versionCode : 0;
 					hasSignature = (info.certificates != null && info.certificates.length > 0);
 					hasMainActivity = ApkInfoHelper.getLauncherActivityList(info, true).length > 0; 
 				} else {
@@ -964,10 +964,9 @@ public class MainUI extends JFrame
 			Log.v("applyToobarPolicy()");
 
 			if(EventQueue.isDispatchThread()) {
-				Log.w("applyToobarPolicy() This task is EDT. Invoke to Nomal thread");
+				Log.v("applyToobarPolicy() This task is EDT. Invoke to Nomal thread");
 				Thread thread = new Thread(new Runnable() {
-					public void run()
-					{
+					public void run() {
 						applyToobarPolicy();
 					}
 				});
@@ -979,10 +978,10 @@ public class MainUI extends JFrame
 			synchronized(this) {
 				AndroidDebugBridge adb = AndroidDebugBridge.getBridge();
 				if (adb == null) {
-					Log.i("DeviceMonitor is not ready");
-					return;
+					Log.v("DeviceMonitor is not ready");
 				}
-				final boolean hasDevice = (adb.getDevices().length > 0);
+
+				final boolean hasDevice = adb != null ? (adb.getDevices().length > 0) : false;
 
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
@@ -1032,7 +1031,16 @@ public class MainUI extends JFrame
 						}
 					}
 
-					sendFlag(toolbarFlag);
+					final int flag = toolbarFlag;
+					EventQueue.invokeLater(new Runnable() {
+						public void run() {
+							Log.v("sendFlag " + flag);
+							if(flag != ToolBar.FLAG_LAYOUT_UNSIGNED) {
+								toolBar.unsetFlag(ToolBar.FLAG_LAYOUT_UNSIGNED);
+							}
+							toolBar.setFlag(flag);
+						}
+					});
 				} else {
 					EventQueue.invokeLater(new Runnable() {
 						public void run() {
@@ -1043,26 +1051,7 @@ public class MainUI extends JFrame
 						}
 					});
 				}
-
-
 			}
-		}
-
-		private void sendFlag(final int flag) {
-			EventQueue.invokeLater(new Runnable() {
-				public void run() {
-					Log.v("sendFlag " + flag);
-					if(flag == 0) {
-						toolBar.clearFlag();
-					} else {
-						if(flag != ToolBar.FLAG_LAYOUT_UNSIGNED) {
-							toolBar.unsetFlag(ToolBar.FLAG_LAYOUT_UNSIGNED);	
-						}
-						toolBar.setFlag(flag);
-					}
-				}
-			});
-			return;
 		}
 
 		@Override
@@ -1107,7 +1096,6 @@ public class MainUI extends JFrame
 					&& packageName.equals(packageInfo.packageName)) {
 				applyToobarPolicy();
 			}
-
 		}
 
 		@Override
