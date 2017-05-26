@@ -444,7 +444,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("          [" + packageName +"]");
 		strTabInfo.append("</font><br/>");
 		strTabInfo.append("        <font style=\"font-size:15px; color:#ED7E31\">");
-		strTabInfo.append("          " + makeHyperLink("@event", "Ver. " + versionName +" / " + versionCode, "VersionName : " + versionName + "\n" + "VersionCode : " + versionCode, "app-version", null));
+		strTabInfo.append("          " + makeHyperLink("@event", "Ver. " + versionName +" / " + (!versionCode.isEmpty() ? versionCode : "0"), "VersionName : " + versionName + "\n" + "VersionCode : " + (!versionCode.isEmpty() ? versionCode : "Unspecified"), "app-version", null));
 		strTabInfo.append("        </font><br/>");
 		strTabInfo.append("        <br/>");
 		strTabInfo.append("        <font style=\"font-size:12px\">");
@@ -732,7 +732,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 				e.printStackTrace();
 			}
 		} else if("app-version".equals(id)) {
-			String ver = "versionName : " + versionName + "\n" + "versionCode : " + versionCode;
+			String ver = "versionName : " + versionName + "\n" + "versionCode : " + (!versionCode.isEmpty() ? versionCode : "Unspecified");
 			showDialog(ver, "App version info", new Dimension(300, 50), null);
 		} else if("display-list".equals(id)) {
 			showPermList();
