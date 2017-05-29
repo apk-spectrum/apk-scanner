@@ -73,11 +73,11 @@ public class MainUI extends JFrame
 
 	private TabbedPanel tabbedPanel;
 	private ToolBar toolBar;
-	private MessageBoxPool messageBox;
+	private MessageBoxPool messagePool;
 
 	public MainUI(ApkScanner scanner)
 	{
-		messageBox = new MessageBoxPool(this);
+		messagePool = new MessageBoxPool(this);
 
 		initialize();
 
@@ -195,7 +195,7 @@ public class MainUI extends JFrame
 				public void run() {
 					setTitle(Resource.STR_APP_NAME.getString());
 					tabbedPanel.setData(null);
-					messageBox.show(MessageBoxPool.MSG_FAILURE_OPEN_APK);
+					messagePool.show(MessageBoxPool.MSG_FAILURE_OPEN_APK);
 				}
 			});
 		}
@@ -421,7 +421,7 @@ public class MainUI extends JFrame
 
 			if(!ZipFileUtil.exists(apkInfo.filePath, "classes.dex")) {
 				Log.e("No such file : classes.dex");
-				messageBox.show(MessageBoxPool.MSG_NO_SUCH_CLASSES_DEX);
+				messagePool.show(MessageBoxPool.MSG_NO_SUCH_CLASSES_DEX);
 				return;
 			}
 
@@ -494,7 +494,7 @@ public class MainUI extends JFrame
 			final IDevice[] devices = getInstalledDevice();
 			if(devices == null || devices.length == 0) {
 				Log.i("No such device of a package installed.");
-				messageBox.show(MessageBoxPool.MSG_NO_SUCH_PACKAGE_DEVICE);
+				messagePool.show(MessageBoxPool.MSG_NO_SUCH_PACKAGE_DEVICE);
 				return;
 			}
 
@@ -508,7 +508,7 @@ public class MainUI extends JFrame
 						PackageInfo packageInfo = getPackageInfo(device);
 
 						if(!packageInfo.isEnabled()) {
-							messageBox.show(MessageBoxPool.MSG_DISABLED_PACKAGE, device.getProperty(IDevice.PROP_DEVICE_MODEL));
+							messagePool.show(MessageBoxPool.MSG_DISABLED_PACKAGE, device.getProperty(IDevice.PROP_DEVICE_MODEL));
 							continue;
 						}
 
@@ -565,7 +565,7 @@ public class MainUI extends JFrame
 
 						if(selectedActivity == null) {
 							Log.w("No such activity of launcher or main");
-							messageBox.show(MessageBoxPool.MSG_NO_SUCH_LAUNCHER);
+							messagePool.show(MessageBoxPool.MSG_NO_SUCH_LAUNCHER);
 							return;
 						}
 
@@ -589,7 +589,7 @@ public class MainUI extends JFrame
 
 							EventQueue.invokeLater(new Runnable() {
 								public void run() {
-									messageBox.show(MessageBoxPool.MSG_FAILURE_LAUNCH_APP, errMsg);
+									messagePool.show(MessageBoxPool.MSG_FAILURE_LAUNCH_APP, errMsg);
 								}
 							});
 						} else if((boolean)Resource.PROP_TRY_UNLOCK_AF_LAUNCH.getData()) {
@@ -606,7 +606,7 @@ public class MainUI extends JFrame
 			final IDevice[] devices = getInstalledDevice();
 			if(devices == null || devices.length == 0) {
 				Log.i("No such device of a package installed.");
-				messageBox.show(MessageBoxPool.MSG_NO_SUCH_PACKAGE_DEVICE);
+				messagePool.show(MessageBoxPool.MSG_NO_SUCH_PACKAGE_DEVICE);
 				return;
 			}
 
@@ -622,14 +622,14 @@ public class MainUI extends JFrame
 						if(!packageInfo.isSystemApp()) {
 							errMessage = PackageManager.uninstallPackage(packageInfo);
 						} else {
-							int n = messageBox.show(MessageBoxPool.QUESTION_REMOVE_SYSTEM_APK);
+							int n = messagePool.show(MessageBoxPool.QUESTION_REMOVE_SYSTEM_APK);
 							if(n == MessageBoxPane.NO_OPTION) {
 								return;
 							}
 
 							errMessage = PackageManager.removePackage(packageInfo);
 							if(errMessage == null || errMessage.isEmpty()) {
-								n = messageBox.show(MessageBoxPool.QUESTION_REBOOT_SYSTEM);
+								n = messagePool.show(MessageBoxPool.QUESTION_REBOOT_SYSTEM);
 								if(n == MessageBoxPane.YES_OPTION) {
 									try {
 										device.reboot(null);
@@ -644,13 +644,13 @@ public class MainUI extends JFrame
 							final String errMsg = errMessage;
 							EventQueue.invokeLater(new Runnable() {
 								public void run() {
-									messageBox.show(MessageBoxPool.MSG_FAILURE_UNINSTALLED, errMsg);
+									messagePool.show(MessageBoxPool.MSG_FAILURE_UNINSTALLED, errMsg);
 								}
 							});
 						} else {
 							EventQueue.invokeLater(new Runnable() {
 								public void run() {
-									messageBox.show(MessageBoxPool.MSG_SUCCESS_REMOVED);
+									messagePool.show(MessageBoxPool.MSG_SUCCESS_REMOVED);
 								}
 							});
 						}
@@ -678,7 +678,7 @@ public class MainUI extends JFrame
 			final IDevice[] devices = getInstalledDevice();
 			if(devices == null || devices.length == 0) {
 				Log.i("No such device of a package installed.");
-				messageBox.show(MessageBoxPool.MSG_NO_SUCH_PACKAGE_DEVICE);
+				messagePool.show(MessageBoxPool.MSG_NO_SUCH_PACKAGE_DEVICE);
 				return;
 			}
 
