@@ -36,8 +36,8 @@ public class InstallProgressPanel extends JPanel
 	
 	JPanel ProgressStepPanel;
 	JPanel TextStepPanel;
-	private final int STEPMAX = 4;
-	private final int STEPWIDTH = 600;
+	private final int STEPMAX = 3;
+	private final int STEPWIDTH = 400;
 	private final int STEPHEIGHT = 70;
 	
 	private final int COLOR_STEP_NOTFINISH = 0; 
@@ -45,7 +45,7 @@ public class InstallProgressPanel extends JPanel
 	private final int COLOR_STEP_FINISHED = 2;
 	
 	int CurrentProgress=0;
-	private final String [] outtexts= {"PACKAGE", "OPTIONS", "INSTALLING", "FINISH"};
+	private final String [] outtexts= {"PACKAGE", "INSTALLING", "FINISH"};
 	
 	private final Color []Colorset = {new Color(222,228,228), new Color(52,152,220),new Color(46,204,114)};
 			

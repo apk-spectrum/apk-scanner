@@ -12,11 +12,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentListener;
 import java.util.ArrayList;
 
+
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -25,6 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
+import javax.swing.Timer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -176,14 +179,56 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 		pacakgeinfopanel.removeAll();
 		
 		if(data.showstate == DeviceListData.SHOW_INSTALL_DETAL) {
+			
 			pacakgeinfopanel.add(data.AppDetailpanel);
 		} else if(data.showstate == DeviceListData.SHOW_INSTALL_OPTION) {
 			pacakgeinfopanel.add(data.installoptionpanel);
+			
+			//slidePanelInFromRight(data.AppDetailpanel, data.installoptionpanel, pacakgeinfopanel);
+			
 		}		
 		//pacakgeinfopanel.add(new JLabel("aa"));
 		this.repaint();
 		this.revalidate();		
 	}
+	
+	synchronized void slidePanelInFromRight(final JComponent before, final JComponent panelInput, final JComponent parent) {
+		//panelInput.setSize(width, height);
+		    // timer runs 25 times per second
+
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					int width = parent.getWidth();
+					int x =0;
+					for ( ; ;) {						
+						x=x+10;
+			        	panelInput.setLocation(width-x, 0);
+			        	before.setLocation(x, 0);
+			        	before.repaint();
+			        	panelInput.repaint();
+			        	try {
+							Thread.sleep(20);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+			        	if(x > width) {			        		
+			        		parent.removeAll();
+			        		parent.add(panelInput);
+			        		parent.repaint();
+			        		break;
+			        	}
+					}
+		        	
+				}			
+			}).start();
+		    
+		    //timer.start();
+
+		}
+	
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

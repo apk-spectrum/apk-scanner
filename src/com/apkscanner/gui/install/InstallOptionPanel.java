@@ -28,11 +28,7 @@ import javafx.scene.layout.Border;
 public class InstallOptionPanel extends JPanel{
 	
 	public InstallOptionPanel() {
-		this.setLayout(new GridBagLayout());	
-		GridBagConstraints gbc = new GridBagConstraints();      
-		
-		JPanel optionPanel = new JPanel(new GridLayout(1, 2));
-		JPanel togglePanel = new JPanel(new GridBagLayout());
+		this.setLayout(new BorderLayout());	
 					
 		TitledBorder Installborder = BorderFactory.createTitledBorder("Install");
 		TitledBorder Pushborder = BorderFactory.createTitledBorder("Push");
@@ -41,28 +37,13 @@ public class InstallOptionPanel extends JPanel{
 		JPanel pushPanel = new JPanel(new GridLayout(0,1));
 		
 		
-		JXTabbedPane tabbedPane = new JXTabbedPane(JTabbedPane.LEFT);
-        AbstractTabRenderer renderer = (AbstractTabRenderer)tabbedPane.getTabRenderer();
-        renderer.setPrototypeText("This text is a prototype");
-        renderer.setHorizontalTextAlignment(SwingConstants.LEADING);
-
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
+        
         tabbedPane.addTab("Install", null, installPanel, "Install");
         tabbedPane.addTab("Push", null, pushPanel, "Push");
         			
 		installPanel.setBorder(Installborder);
 		pushPanel.setBorder(Pushborder);
-		
-		JPanel CertPanel = new JPanel(new BorderLayout());
-		
-		JLabel textSelectDevice = new JLabel("set install option");
-		textSelectDevice.setFont(new Font(textSelectDevice.getFont().getName(), Font.PLAIN, 30));
-		
-		JLabel textCertInfo = new JLabel("Cert Info");
-		
-		JTextArea CertInfo = new JTextArea();
-		JScrollPane textViewscrollPane = new JScrollPane(CertInfo);
-		
-		JButton buttonchangeCert = new JButton("change Cert");
 		
 		
 		JRadioButton Radiointernal = new JRadioButton("internal");
@@ -96,46 +77,14 @@ public class InstallOptionPanel extends JPanel{
 		//optionPanel.add(installPanel);
 		//optionPanel.add(pushPanel);
 		
-		optionPanel.add(tabbedPane);
 		
 		InstalltoggleButton.setPreferredSize(new Dimension(100, 25));
 		pushtoggleButton.setPreferredSize(new Dimension(100, 25));
 		
-        gbc.anchor = GridBagConstraints.EAST;            
-        togglePanel.add(InstalltoggleButton,addGrid(gbc, 0, 0, 1, 1, 1, 1));
-        gbc.anchor = GridBagConstraints.WEST;
-        togglePanel.add(pushtoggleButton,addGrid(gbc, 1, 0, 1, 1, 1, 1));
-        
-		
 		//togglePanel.add(InstalltoggleButton);
 		//togglePanel.add(pushtoggleButton);
 		
-		JPanel certibuttonpanel = new JPanel(new BorderLayout());
-		
-		certibuttonpanel.add(buttonchangeCert, BorderLayout.EAST);
-		
-		CertPanel.add(textCertInfo, BorderLayout.NORTH);
-		CertPanel.add(textViewscrollPane, BorderLayout.CENTER);
-		CertPanel.add(certibuttonpanel, BorderLayout.SOUTH);
-		
-		      
-		
-		//panel_set_install_option.add(textSelectDevice, BorderLayout.NORTH);
-		//panel_set_install_option.add(optionPanel, BorderLayout.CENTER);
-		//panel_set_install_option.add(CertPanel, BorderLayout.SOUTH);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.anchor = GridBagConstraints.NORTH;
-        
-		this.add(textSelectDevice,addGrid(gbc, 0, 0, 1, 1, 1, 2));
-					
-		//panel_set_install_option.add(togglePanel, addGrid(gbc, 0, 1, 1, 1, 1, 1));
-		
-		gbc.fill = GridBagConstraints.BOTH;
-		this.add(optionPanel,addGrid(gbc, 0, 2, 1, 1, 1, 3));
-		gbc.fill = GridBagConstraints.BOTH;
-		this.add(CertPanel,addGrid(gbc, 0, 3, 1, 1, 1, 5));
-		
-		this.add(new JPanel(),addGrid(gbc, 0, 4, 1, 1, 1, 3));
+		this.add(tabbedPane, BorderLayout.CENTER);		
 	}
 	
     private GridBagConstraints addGrid(GridBagConstraints gbc, 

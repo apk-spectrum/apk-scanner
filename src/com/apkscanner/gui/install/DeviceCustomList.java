@@ -33,6 +33,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -83,7 +84,9 @@ public class DeviceCustomList extends JList{
         this.setCellRenderer ( listrenderer);
         
         
-        this.setBorder ( BorderFactory.createEmptyBorder ( 5, 5, 5, 5 ) );
+        //this.setBorder ( BorderFactory.createEmptyBorder ( 5, 5, 5, 5 ) );
+        
+        this.setBorder(new EtchedBorder(EtchedBorder.RAISED));
 	}
 
     private int hashCode(String str) {
@@ -148,6 +151,8 @@ public class DeviceCustomList extends JList{
 			public void run() {
 				// TODO Auto-generated method stub
 				data.AppDetailpanel = getPackageInfopanel(device);
+				data.AppDetailpanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
+				
 				fireSelectionValueChanged(0, 0, true);
 			}			
 		}).start();
@@ -161,7 +166,7 @@ public class DeviceCustomList extends JList{
 		this.repaint();
     }
     
-    private Container getPackageInfopanel(IDevice dev)
+    private JComponent getPackageInfopanel(IDevice dev)
 	{
         String packageName = ApkScanner.getPackageName(ApkInstallWizard.pakcageFilePath);
         PackageInfo info = PackageManager.getPackageInfo(dev, packageName);
@@ -250,11 +255,17 @@ public class DeviceCustomList extends JList{
                             Object value = list.getModel().getElementAt(index);
                             Component comp = listrenderer.getListCellRendererComponent(list, value, index, true, true);
                             comp.setBounds(list.getCellBounds(index, index));
-                            //Point contextPoint = SwingUtilities.convertPoint(list, p, comp);
+                            
                             Component child = comp.getComponentAt(pointWithinCell);
                             
                             if(child instanceof JPanel) {
-                            	Log.d(""+ child);
+                            	Log.d(""+child.getBounds());
+                            	
+                            	Log.d(""+pointWithinCell);
+                            	
+                            	Log.d(""+ SwingUtilities.convertPoint(child, pointWithinCell, (JComponent)e.getSource()));
+                            	
+                            	
                             	DeviceListData temp = (DeviceListData) listmodel.get(list.getSelectedIndex());
                             	temp.showstate = (temp.showstate == DeviceListData.SHOW_INSTALL_OPTION)?
                             			DeviceListData.SHOW_INSTALL_DETAL :DeviceListData.SHOW_INSTALL_OPTION;
@@ -278,10 +289,10 @@ public class DeviceCustomList extends JList{
         public String serialnumber;
         public String SDKVersion;
         
-        public Container NowShowpanel;
+        public JComponent NowShowpanel;
         
-        public Container AppDetailpanel;
-        public Container installoptionpanel;
+        public JComponent AppDetailpanel;
+        public JComponent installoptionpanel;
         
         public int showstate;
         
@@ -329,20 +340,24 @@ public class DeviceCustomList extends JList{
     	JPanel Tagpanel;
     	JLabel TagLabel;
     	
+    	JLabel IconLabel;
+    	
     	public CustomListPanel() {
     		label = new CustomLabel();
     		setLayout(new BorderLayout());
     		add(label, BorderLayout.CENTER);
     		
-    		Tagpanel = new JPanel(new BorderLayout());
+    		Tagpanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     		Tagpanel.setBackground(Color.white);
-    		TagLabel = new JLabel("Install",JLabel.RIGHT);
+    		
+    		TagLabel = new JLabel("Install");
     		TagLabel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
-    		TagLabel.setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_NEXT.getImageIcon());
-    		TagLabel.setHorizontalTextPosition(SwingConstants.LEADING);
     		
-    		Tagpanel.add(TagLabel, BorderLayout.EAST);
+    		IconLabel = new JLabel("");
+    		IconLabel.setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_NEXT.getImageIcon());
     		
+    		Tagpanel.add(TagLabel);
+    		Tagpanel.add(IconLabel);
     		
     		add( Tagpanel , BorderLayout.SOUTH);
     		setBackground(Color.white);
