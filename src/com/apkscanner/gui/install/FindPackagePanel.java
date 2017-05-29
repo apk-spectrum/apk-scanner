@@ -17,6 +17,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -40,6 +41,7 @@ import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.dialog.ApkInstallWizard.UIEventHandler;
 import com.apkscanner.gui.messagebox.ArrowTraversalPane;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.test.PanelSlider42;
 import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
 import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
@@ -48,15 +50,18 @@ import com.apkscanner.tool.adb.DeviceMonitor;
 import com.apkscanner.util.Log;
 import com.sun.jna.platform.win32.DBT.DEV_BROADCAST_DEVICEINTERFACE;
 
-public class FindPackagePanel extends JPanel implements IDeviceChangeListener, ListSelectionListener{
+public class FindPackagePanel extends JPanel implements IDeviceChangeListener, ListSelectionListener, ActionListener{
 	
 	private static final String NO_DEVICE_LAYOUT = "NO_DEVICE_LAYOUT";
 	private static final String DEVICE_LAYOUT = "DEVICE_LAYOUT";
 	
+	public static final String REQ_REFRESH_DETAIL_PANEL = "REQ_REFRESH_DETAIL_PANEL";
+	
 	private ActionListener mainlistener;
 	private DeviceCustomList devicelist;
-	private JPanel pacakgeinfopanel;
+	private JPanel pacakgeinfopanel;	
 	AndroidDebugBridge adb;
+	PanelSlider42<JPanel> slider;
     public FindPackagePanel(ActionListener listener) {
     	AndroidDebugBridge.addDeviceChangeListener(this);
 		this.setLayout(new CardLayout());
@@ -64,12 +69,15 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 		JPanel mainpanel = new JPanel(new BorderLayout());
 		JLabel textSelectDevice = new JLabel("no device");
 		textSelectDevice.setFont(new Font(textSelectDevice.getFont().getName(), Font.PLAIN, 30));
-	    //mainpanel.add(textSelectDevice,BorderLayout.NORTH);
-		
+	    mainpanel.add(textSelectDevice,BorderLayout.NORTH);
 		pacakgeinfopanel = new JPanel(new CardLayout());
 		
+        slider = new PanelSlider42<JPanel>(this);
+        //pacakgeinfopanel = slider.getBasePanel();
+		
+		
 	    mainpanel.add(pacakgeinfopanel,BorderLayout.CENTER);
-	    devicelist = new DeviceCustomList();
+	    devicelist = new DeviceCustomList(this);
 	    devicelist.addListSelectionListener(this);
 	    
 	    mainpanel.add(devicelist, BorderLayout.WEST);
@@ -158,12 +166,31 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	public void valueChanged(ListSelectionEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getValueIsAdjusting()) {		
-			DeviceListData data = (DeviceListData)devicelist.getModel().getElementAt(devicelist.getSelectedIndex());
-			
-			pacakgeinfopanel.removeAll();
-			pacakgeinfopanel.add(data.AppDetailpanel);
-			this.repaint();
-			this.revalidate();		
+			refreshDetailPanel();
 		}
 	}
+	
+	public void refreshDetailPanel() {
+		DeviceListData data = (DeviceListData)devicelist.getModel().getElementAt(devicelist.getSelectedIndex());
+		
+		pacakgeinfopanel.removeAll();
+		
+		if(data.showstate == DeviceListData.SHOW_INSTALL_DETAL) {
+			pacakgeinfopanel.add(data.AppDetailpanel);
+		} else if(data.showstate == DeviceListData.SHOW_INSTALL_OPTION) {
+			pacakgeinfopanel.add(data.installoptionpanel);
+		}		
+		//pacakgeinfopanel.add(new JLabel("aa"));
+		this.repaint();
+		this.revalidate();		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		if(e.getActionCommand().equals(REQ_REFRESH_DETAIL_PANEL)) {
+			refreshDetailPanel();			
+		}
+	}
+	
 }

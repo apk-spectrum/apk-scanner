@@ -5,12 +5,19 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
@@ -25,9 +32,13 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.border.EtchedBorder;
 
 import com.android.ddmlib.AdbCommandRejectedException;
 import com.android.ddmlib.AndroidDebugBridge;
@@ -52,7 +63,9 @@ public class DeviceCustomList extends JList{
 
 	DefaultListModel listmodel;
 	private XmlPath sdkXmlPath;
-    public DeviceCustomList() {
+	Listrenderer listrenderer;
+	ActionListener FindPackagelistener;
+    public DeviceCustomList(ActionListener listener) {
 		// TODO Auto-generated constructor stub
     	setLayout(new BorderLayout());    	
         listmodel = new DefaultListModel ();
@@ -63,10 +76,13 @@ public class DeviceCustomList extends JList{
         
         setPreferredSize(new Dimension(200, 0));
         
+        listrenderer = new Listrenderer(this);
+        FindPackagelistener = listener;
         
         this.setModel(listmodel);
+        this.setCellRenderer ( listrenderer);
         
-        this.setCellRenderer ( new Listrenderer ( ) );
+        
         this.setBorder ( BorderFactory.createEmptyBorder ( 5, 5, 5, 5 ) );
 	}
 
@@ -122,6 +138,8 @@ public class DeviceCustomList extends JList{
 		//data.circleColor = ;
 		
 		data.status = data.SDKVersion == null ? "OFFLINE" : device.getState().toString();
+		data.installoptionpanel = new InstallOptionPanel();
+		data.showstate = DeviceListData.SHOW_INSTALL_DETAL;
 		
 		data.AppDetailpanel = new JLabel(Resource.IMG_LOADING.getImageIcon());
 		
@@ -195,18 +213,59 @@ public class DeviceCustomList extends JList{
 	}
     
 	private class Listrenderer extends DefaultListCellRenderer {
-    	private CustomLabel renderer;
+    	private CustomListPanel renderer;
+    	
         @Override
         public Component getListCellRendererComponent ( JList list, Object value, int index, boolean isSelected, boolean cellHasFocus )
         {
             renderer.setSelected ( isSelected );
             renderer.setData ( ( DeviceListData ) value );
+
             return renderer;
         }
         
-        private Listrenderer () {
+        private Listrenderer (final JList list) {
             super ();
-            renderer = new CustomLabel ();
+            renderer = new CustomListPanel ();
+            
+            list.addMouseListener ( new MouseAdapter ()
+            {
+                @Override
+                public void mouseReleased ( MouseEvent e )
+                {
+                    if ( SwingUtilities.isLeftMouseButton ( e ) )
+                    {
+                        int index = list.locationToIndex ( e.getPoint () );
+                        if ( index != -1 && list.isSelectedIndex ( index ) )
+                        {
+                            Rectangle rect = list.getCellBounds ( index, index );
+                            Point pointWithinCell = new Point ( e.getX () - rect.x, e.getY () - rect.y );
+                            
+                            //Log.d("x = "+pointWithinCell.getX() + " y = " + pointWithinCell.getY());
+                            
+//                            Rectangle crossRect = new Rectangle ( rect.width - 9 - 5 - crossIcon.getIconWidth () / 2,
+//                                    rect.height / 2 - crossIcon.getIconHeight () / 2, crossIcon.getIconWidth (), crossIcon.getIconHeight () );
+//                            if ( crossRect.contains ( pointWithinCell ) )
+                            
+                            Object value = list.getModel().getElementAt(index);
+                            Component comp = listrenderer.getListCellRendererComponent(list, value, index, true, true);
+                            comp.setBounds(list.getCellBounds(index, index));
+                            //Point contextPoint = SwingUtilities.convertPoint(list, p, comp);
+                            Component child = comp.getComponentAt(pointWithinCell);
+                            
+                            if(child instanceof JPanel) {
+                            	Log.d(""+ child);
+                            	DeviceListData temp = (DeviceListData) listmodel.get(list.getSelectedIndex());
+                            	temp.showstate = (temp.showstate == DeviceListData.SHOW_INSTALL_OPTION)?
+                            			DeviceListData.SHOW_INSTALL_DETAL :DeviceListData.SHOW_INSTALL_OPTION;
+                            	
+                            	
+                            	FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.REQ_REFRESH_DETAIL_PANEL));
+                            }
+                        }
+                    }
+                }
+            } );
         }
     }
     
@@ -218,12 +277,21 @@ public class DeviceCustomList extends JList{
         public String name;
         public String serialnumber;
         public String SDKVersion;
+        
+        public Container NowShowpanel;
+        
         public Container AppDetailpanel;
-        public int isinstalled;
+        public Container installoptionpanel;
+        
+        public int showstate;
         
         public static final String INSTALLED = "installed";
         public static final String NOT_INSTALLED = "not installed";
         public static final String WAITING = "walting";
+
+        public static final int SHOW_INSTALL_DETAL = 0;
+        public static final int SHOW_INSTALL_OPTION = 1;
+        
         
         public DeviceListData ( Color circleColor, String status, String name, String sdkVersion, String serialnumber )
         {
@@ -256,10 +324,56 @@ public class DeviceCustomList extends JList{
         }
         
     }
+    private class CustomListPanel extends JPanel {
+    	CustomLabel label;
+    	JPanel Tagpanel;
+    	JLabel TagLabel;
+    	
+    	public CustomListPanel() {
+    		label = new CustomLabel();
+    		setLayout(new BorderLayout());
+    		add(label, BorderLayout.CENTER);
+    		
+    		Tagpanel = new JPanel(new BorderLayout());
+    		Tagpanel.setBackground(Color.white);
+    		TagLabel = new JLabel("Install",JLabel.RIGHT);
+    		TagLabel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
+    		TagLabel.setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_NEXT.getImageIcon());
+    		TagLabel.setHorizontalTextPosition(SwingConstants.LEADING);
+    		
+    		Tagpanel.add(TagLabel, BorderLayout.EAST);
+    		
+    		
+    		add( Tagpanel , BorderLayout.SOUTH);
+    		setBackground(Color.white);
+    		setBorder ( BorderFactory.createEmptyBorder ( 5, 5 , 5, 5 ) );
+            
+    	}
+    	
+        @Override
+        protected void paintComponent ( Graphics g ) {
+        	Graphics2D g2d = ( Graphics2D ) g;
+        	g2d.setPaint ( Color.LIGHT_GRAY );
+            g.drawLine(2, getHeight()-2, getWidth()-2, getHeight()-2 );
+        }
+    	
+    	
+		public void setData(DeviceListData value) {
+			// TODO Auto-generated method stub
+			label.setData(value);
+		}
+
+
+		public void setSelected(boolean isSelected) {
+			// TODO Auto-generated method stub
+			label.setSelected(isSelected);
+		}
+    	
+    }
     
-    private static class CustomLabel extends JLabel
+    private class CustomLabel extends JLabel
     {
-        private static final Color selectionColor = new Color ( 82, 158, 202 );
+        private final Color selectionColor = new Color ( 82, 158, 202 );
 
         private boolean selected;
         private DeviceListData data;
@@ -340,9 +454,6 @@ public class DeviceCustomList extends JList{
             	g2d.setPaint(Color.ORANGE);            	
             }
             g2d.fill ( new Ellipse2D.Double ( getWidth () - 18 - 10, getHeight () / 2 - 9, 18, 18 ) );
-            
-            g2d.setPaint ( Color.LIGHT_GRAY );
-            g.drawLine(2, getHeight()-2, getWidth()-2, getHeight()-2 );
             
             g.setFont(new Font(getFont().getName(), Font.BOLD, 15));
             super.paintComponent ( g );
