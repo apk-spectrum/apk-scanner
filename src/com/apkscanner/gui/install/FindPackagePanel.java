@@ -28,6 +28,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.Timer;
+import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -78,10 +79,13 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
         slider = new PanelSlider42<JPanel>(this);
         //pacakgeinfopanel = slider.getBasePanel();
 		
-		
+        pacakgeinfopanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
+        
+        
 	    mainpanel.add(pacakgeinfopanel,BorderLayout.CENTER);
 	    devicelist = new DeviceCustomList(this);
 	    devicelist.addListSelectionListener(this);
+	    devicelist.setBorder(new EtchedBorder(EtchedBorder.RAISED));
 	    
 	    mainpanel.add(devicelist, BorderLayout.WEST);
 

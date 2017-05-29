@@ -84,9 +84,9 @@ public class DeviceCustomList extends JList{
         this.setCellRenderer ( listrenderer);
         
         
-        //this.setBorder ( BorderFactory.createEmptyBorder ( 5, 5, 5, 5 ) );
+        this.setBorder ( BorderFactory.createEmptyBorder ( 5, 5, 5, 5 ) );
         
-        this.setBorder(new EtchedBorder(EtchedBorder.RAISED));
+        
 	}
 
     private int hashCode(String str) {
@@ -151,7 +151,7 @@ public class DeviceCustomList extends JList{
 			public void run() {
 				// TODO Auto-generated method stub
 				data.AppDetailpanel = getPackageInfopanel(device);
-				data.AppDetailpanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
+				//data.AppDetailpanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
 				
 				fireSelectionValueChanged(0, 0, true);
 			}			
