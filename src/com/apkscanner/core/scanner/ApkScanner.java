@@ -34,22 +34,25 @@ abstract public class ApkScanner
 	public static final int ERR_UNKNOWN = -100;
 
 	protected ApkInfo apkInfo = null;
-	protected StatusListener statusListener = null;
-
-	protected long startTime;
-
-	protected int completedCount = 0;
+	
+	private StatusListener statusListener = null;
+	private int scanningStatus;
+	private int lastErrorCode;
 
 	public enum Status {
-		STANBY,
-		BASIC_INFO_COMPLETED,
-		WIDGET_COMPLETED,
-		LIB_COMPLETED,
-		RESOURCE_COMPLETED,
-		RES_DUMP_COMPLETED,
-		ACTIVITY_COMPLETED,
-		CERT_COMPLETED,
-		ALL_COMPLETED
+		STANBY(0x00),
+		BASIC_INFO_COMPLETED(0x01),
+		WIDGET_COMPLETED(0x02),
+		LIB_COMPLETED(0x04),
+		RESOURCE_COMPLETED(0x08),
+		RES_DUMP_COMPLETED(0x10),
+		ACTIVITY_COMPLETED(0x20),
+		CERT_COMPLETED(0x40),
+		ALL_COMPLETED(0x7F);
+
+		int value;
+		Status(int value) { this.value = value; }
+		public int value() { return value; }
 	}
 
 	public interface StatusListener
@@ -69,7 +72,21 @@ abstract public class ApkScanner
 
 	public void setStatusListener(StatusListener statusListener)
 	{
-		this.statusListener = statusListener;
+		synchronized(this) {
+			this.statusListener = statusListener;
+			if(statusListener == null) return;
+
+			if(lastErrorCode != NO_ERR) {
+				statusListener.onError(lastErrorCode);
+			} else if(scanningStatus != 0) {
+				for(Status state: Status.values()) {
+					if(isCompleted(state)) {
+						Log.v(state + " is compleated sooner than register listener");
+						statusListener.onStateChanged(state);
+					}
+				}
+			}
+		}
 	}
 
 	public void openApk(final String apkFilePath)
@@ -118,10 +135,10 @@ abstract public class ApkScanner
 				if(statusListener != null) {
 					String percent = output;//.replaceAll("\\[\\s*([0-9]*)%\\] .*", "$1");
 					//if(!percent.equals(output)) {
-						if(!percent.equals(prePercent)) {
-							prePercent = percent;
-							statusListener.onProgress(0, percent);
-						}
+					if(!percent.equals(prePercent)) {
+						prePercent = percent;
+						statusListener.onProgress(0, percent);
+					}
 					//}
 				}
 				return true;
@@ -217,37 +234,63 @@ abstract public class ApkScanner
 		return certList.toArray(new String[0]);
 	}
 
-	protected void stateChanged(Status status)
-	{
-		if(statusListener != null) {
-			statusListener.onStateChanged(status);
-		}
-
+	protected void scanningStarted() {
 		synchronized (this) {
-			switch(status) {
-			case STANBY:
-				completedCount = 0;
-				break;
-			case BASIC_INFO_COMPLETED:
-			case WIDGET_COMPLETED:
-			case LIB_COMPLETED:
-			case RESOURCE_COMPLETED:
-			case RES_DUMP_COMPLETED:
-			case ACTIVITY_COMPLETED:
-			case CERT_COMPLETED:
-				completedCount++;
-				break;
-			default:
-				break;
+			lastErrorCode = 0;
+
+			if(statusListener != null) {
+				statusListener.onStart(0);
+			}
+		}
+	}
+
+	protected void errorOccurred(int errorCode) {
+		synchronized (this) {
+			lastErrorCode = errorCode;
+
+			if(statusListener != null) {
+				statusListener.onError(errorCode);
+				statusListener.onCompleted();
+			}
+		}
+	}
+
+	protected void stateChanged(Status status) {
+		synchronized (this) {
+			if(status == Status.STANBY) {
+				scanningStatus = 0;
+			} else {
+				scanningStatus |= status.value();
 			}
 
-			if(completedCount == 7) {
-				statusListener.onStateChanged(Status.ALL_COMPLETED);
-				Log.i("I: completed... ");
-				statusListener.onSuccess();
-				statusListener.onCompleted();
-				completedCount = 0;
+			if(statusListener != null) {
+				statusListener.onStateChanged(status);
+
+				if(scanningStatus == Status.ALL_COMPLETED.value()) {
+					Log.i("I: completed... ");
+					statusListener.onStateChanged(Status.ALL_COMPLETED);
+					statusListener.onSuccess();
+					statusListener.onCompleted();
+				}
 			}
+		}
+	}
+
+	public boolean isScanning() {
+		synchronized (this) {
+			return (lastErrorCode == NO_ERR && scanningStatus != 0 && scanningStatus != Status.ALL_COMPLETED.value());
+		}
+	}
+
+	public boolean isCompleted(Status status) {
+		synchronized (this) {
+			return (status.value() != 0 && (scanningStatus & status.value()) == status.value());
+		}
+	}
+
+	public int getLastErrorCode() {
+		synchronized (this) {
+			return lastErrorCode;
 		}
 	}
 
@@ -274,5 +317,5 @@ abstract public class ApkScanner
 		}
 
 		return manifestPath.getNode("/manifest").getAttribute("package");
-	}	
+	}
 }

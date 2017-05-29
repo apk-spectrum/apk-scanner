@@ -77,14 +77,14 @@ public class MainUI extends JFrame
 
 	public MainUI(ApkScanner scanner)
 	{
+		messageBox = new MessageBoxPool(this);
+
+		initialize();
+
 		apkScanner = scanner;
 		if(apkScanner != null) {
 			apkScanner.setStatusListener(new ApkScannerListener());
 		}
-
-		messageBox = new MessageBoxPool(this);
-
-		initialize();
 	}
 
 	public void initialize()

@@ -82,7 +82,7 @@ public class ApktoolScanner extends ApkScanner
 		if(apkInfo.filePath == null) return;
 		//Log.i("solve()....start ");
 		synchronized(this) {
-			mProcess = new ProcessThead(this, ProcessCmd.SOLVE_RESOURCE, statusListener);
+			mProcess = new ProcessThead(this, ProcessCmd.SOLVE_RESOURCE, null /*statusListener*/);
 			mProcess.start();
 
 			try {
