@@ -217,7 +217,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 				if(level==0) {
 					setIcon(iconTop);
 				} else if(node.getUserObject() instanceof IDevice) {
-					setText(((IDevice)node.getUserObject()).getName());
+					setText(((IDevice)node.getUserObject()).getProperty(IDevice.PROP_DEVICE_MODEL));
 					setIcon(iconDevice);
 				} else {
 					if(node.getUserObject() instanceof PackageInfo) {
@@ -407,7 +407,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		IDevice device = getCurrentSelectedDevice();
 		//		for(deviceNode = node ; deviceNode.getUserObject() instanceof DeviceStatus==false; deviceNode = ((DefaultMutableTreeNode)deviceNode.getParent())) { }
 		//		Log.i(deviceNode.getUserObject());
-		FrameworkTableObject temp = new FrameworkTableObject(true, device.getName(), device.getSerialNumber(), tempObject.getApkPath());
+		FrameworkTableObject temp = new FrameworkTableObject(true, device.getProperty(IDevice.PROP_DEVICE_MODEL), device.getSerialNumber(), tempObject.getApkPath());
 
 		tableListArray.add(temp);
 		((AbstractTableModel) table.getModel()).fireTableDataChanged();
@@ -951,7 +951,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 							} else if(apkPath.startsWith("/system/framework/")) {
 								framework_app.add(temp);
 
-								FrameworkTableObject tableObject = new FrameworkTableObject(false, dev.getName(), dev.getSerialNumber(), apkPath);
+								FrameworkTableObject tableObject = new FrameworkTableObject(false, dev.getProperty(IDevice.PROP_DEVICE_MODEL), dev.getSerialNumber(), apkPath);
 
 								if(apkPath.startsWith("/system/framework/framework-res.apk") || apkPath.startsWith("/system/framework/twframework-res.apk")) {
 									tableObject.buse = true;

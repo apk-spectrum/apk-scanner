@@ -532,7 +532,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 			final IDevice device = packageInfo.device;
 
 			if(!packageInfo.isEnabled()) {
-				MessageBoxPool.show(this, MessageBoxPool.MSG_DISABLED_PACKAGE, device.getName());
+				MessageBoxPool.show(this, MessageBoxPool.MSG_DISABLED_PACKAGE, device.getProperty(IDevice.PROP_DEVICE_MODEL));
 				return;
 			}
 

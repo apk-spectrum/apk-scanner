@@ -508,7 +508,7 @@ public class MainUI extends JFrame
 						PackageInfo packageInfo = getPackageInfo(device);
 
 						if(!packageInfo.isEnabled()) {
-							messageBox.show(MessageBoxPool.MSG_DISABLED_PACKAGE, device.getName());
+							messageBox.show(MessageBoxPool.MSG_DISABLED_PACKAGE, device.getProperty(IDevice.PROP_DEVICE_MODEL));
 							continue;
 						}
 
