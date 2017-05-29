@@ -42,7 +42,7 @@
 	<string name="btn_open_lab">APK 파일에서 정보를 가져옵니다. (Ctrl+O)</string>
 	<string name="btn_open_pacakge_lab">디바이스 패키지 열기(Ctrl+P)</string>
 	<string name="btn_manifest_lab">AndroidManifest.xml 전문을 편집기에서 확인 합니다. (Ctrl+M)</string>
-	<string name="btn_explorer_lab">압축해제 된 임시 폴더로 이동합니다. (Ctrl+E)</string>
+	<string name="btn_explorer_lab">APK 파일 내부에 압축된 파일을 확인합니다. (Ctrl+E)</string>
 	<string name="btn_unpack_lab">소스코드를 디검파일 합니다.</string>
 	<string name="btn_pack_lab">소스코드를 리컴파일합니다.</string>
 	<string name="btn_install_lab">연결된 디바이스에 APK를 설치합니다. (Ctrl+I)</string>
@@ -154,7 +154,7 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="widget_column_image">이미지</string>
 	<string name="widget_column_label">이름</string>
 	<string name="widget_column_size">크기</string>
-	<string name="widget_column_activity">액티비티</string>
+	<string name="widget_column_activity">클래스</string>
 	<string name="widget_column_type">종류</string>
 	<string name="widget_resize_mode">크기조정가능</string>
 	<string name="widget_horizontal">가로</string>
