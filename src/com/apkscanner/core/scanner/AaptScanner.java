@@ -15,14 +15,11 @@ import com.apkscanner.util.ZipFileUtil;
 
 public class AaptScanner extends ApkScanner
 {
-	private AaptXmlTreePath manifestPath = null;
 	private AaptNativeScanner resourceScanner;
 
 	public AaptScanner(StatusListener statusListener)
 	{
 		super(statusListener);
-		//stateChanged(Status.UNINITIALIZE);
-		resourceScanner = null;
 	}
 
 	@Override
@@ -68,7 +65,7 @@ public class AaptScanner extends ApkScanner
 		}
 
 		Log.i("I: createAaptXmlTree...");
-		manifestPath = new AaptXmlTreePath();
+		AaptXmlTreePath manifestPath = new AaptXmlTreePath();
 		manifestPath.createAaptXmlTree(androidManifest);
 
 		if(manifestPath.getNode("/manifest") == null || manifestPath.getNode("/manifest/application") == null) {

@@ -294,6 +294,21 @@ abstract public class ApkScanner
 		}
 	}
 
+	public static ApkScanner getInstance() {
+		return getInstance(null);
+	}
+
+	public static ApkScanner getInstance(String name) {
+		if(name == null || "AAPT".equalsIgnoreCase(name)) {
+			return new AaptScanner(null);
+		} else if("AAPTLIGHT".equalsIgnoreCase(name)) {
+			return new AaptLightScanner();
+		} else if("APKTOOL".equalsIgnoreCase(name)) {
+			return new ApktoolScanner(null);
+		}
+		return new AaptScanner(null);
+	}
+
 	public static String getPackageName(final String apkFilePath) {
 		if(apkFilePath == null || apkFilePath.isEmpty() 
 				|| !new File(apkFilePath).isFile()) {
