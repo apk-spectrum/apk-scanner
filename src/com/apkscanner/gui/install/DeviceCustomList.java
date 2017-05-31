@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -38,6 +39,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
@@ -224,12 +226,26 @@ public class DeviceCustomList extends JList{
     	private CustomListPanel renderer;
     	private JList list;
     	private MouseAdapter adapter;
+    	public JRadioButton button;
+        public int pressedIndex  = -1;
+        public int rolloverIndex = -1;
+        
         @Override
         public Component getListCellRendererComponent ( JList list, Object value, int index, boolean isSelected, boolean cellHasFocus )
         {
             renderer.setSelected ( isSelected );
             renderer.setData ( ( DeviceListData ) value );
 
+            if (Objects.nonNull(button)) {
+                if (index == pressedIndex) {
+                    button.getModel().setSelected(true);
+                    button.getModel().setArmed(true);
+                    button.getModel().setPressed(true);
+                } else if (index == rolloverIndex) {
+                    button.getModel().setRollover(true);
+                }
+            }
+            
             return renderer;
         }
         
@@ -246,13 +262,14 @@ public class DeviceCustomList extends JList{
                     if ( SwingUtilities.isLeftMouseButton ( e ) )
                     {
                     	Component child = getComponentinList(e);
-                            
-                        if(child instanceof JLabel && ((JLabel)child).getText().equals("")) {
+                        
+                        if(child instanceof JRadioButton) { //&& ((JLabel)child).getText().equals("")) {
+                        	Log.d(((JRadioButton)child).getText());
                         	DeviceListData temp = (DeviceListData) listmodel.get(list.getSelectedIndex());
                         	
                         	if(temp.showstate == DeviceListData.SHOW_INSTALL_OPTION) {
                         		temp.showstate = DeviceListData.SHOW_INSTALL_DETAL;
-//                        		((JLabel)child).setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_PREV.getImageIcon());                        		
+//                        		((JLabel)child).setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_PREV.getImageIcon());
                         		list.repaint();
                         		
                         	} else {
@@ -272,18 +289,16 @@ public class DeviceCustomList extends JList{
                 @Override
                 public void mouseMoved ( MouseEvent e ) {
                 	Component child = getComponentinList(e);
-                	
-                	if(!(child instanceof JLabel)) {
+                	Log.d("aa"+child);
+                	if(!(child instanceof JRadioButton)) {
                 		return ;
                 	}
                 	
-                	if(((JLabel)child).getText().equals("")) {
-                		//Log.d(""+e);
-                		//((JLabel)child).setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_PREV.getImageIcon());
-                	} else {
-                		//Log.d(""+e);
-                		//((JLabel)child).setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_NEXT.getImageIcon());
-                	}
+                	button = (JRadioButton)child;
+                	
+                	
+                	//((JRadioButton) child).getModel().setRollover(true);
+                	list.repaint();
                 }
             } );
             
@@ -384,20 +399,26 @@ public class DeviceCustomList extends JList{
     		setLayout(new BorderLayout());
     		add(label, BorderLayout.CENTER);
     		
-    		Tagpanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    		Tagpanel.setBackground(Color.white);
+    		//Tagpanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    		
+    		Tagpanel = ToggleButtonBar.makeToggleButtonBar(0x888888);
+    		
+    		//Tagpanel.setBackground(Color.white);
     		
     		TagLabel = new JLabel("Install");
     		TagLabel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
     		
     		IconLabel = new JLabel("");
     		    		
-    		Tagpanel.add(TagLabel);
-    		Tagpanel.add(IconLabel);
+    		//Tagpanel.add(TagLabel);
+    		//Tagpanel.add(IconLabel);
     		
     		//Tagpanel.setBackground(Color.GRAY);
     		
     		add( Tagpanel , BorderLayout.SOUTH);
+    		
+    		
+    		
     		setBackground(Color.white);
     		setBorder ( BorderFactory.createEmptyBorder ( 5, 5 , 5, 5 ) );
             
@@ -561,23 +582,4 @@ public class DeviceCustomList extends JList{
     		}
     	}		
 	}
-	
-	private void setSdkXml(String xmlPath) {
-		if(xmlPath == null) {
-			return;
-		}
-		InputStream xml = Resource.class.getResourceAsStream(xmlPath);
-		sdkXmlPath = new XmlPath(xml);
-
-		int maxSdk = sdkXmlPath.getNodeList("/resources/sdk-info").getLength();
-//		int preDefMaxSdk = sdkVersions.getItemCount() - 1;
-//		for(int ver = preDefMaxSdk + 1; ver <= maxSdk; ver++) {
-//			sdkVersions.addItem(ver);
-//		}
-
-		try {
-			xml.close();
-		} catch (IOException e) { }
-	}
-	
 }

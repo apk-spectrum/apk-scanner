@@ -45,12 +45,10 @@ import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.dialog.ApkInstallWizard.UIEventHandler;
 import com.apkscanner.gui.messagebox.ArrowTraversalPane;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.test.PanelSlider42;
 import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
 import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
 import com.apkscanner.tool.adb.AdbServerMonitor;
-import com.apkscanner.tool.adb.DeviceMonitor;
 import com.apkscanner.util.Log;
 import com.sun.jna.platform.win32.DBT.DEV_BROADCAST_DEVICEINTERFACE;
 
@@ -65,7 +63,6 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	private DeviceCustomList devicelist;
 	private JPanel pacakgeinfopanel;	
 	AndroidDebugBridge adb;
-	PanelSlider42<JPanel> slider;
     public FindPackagePanel(ActionListener listener) {
     	AndroidDebugBridge.addDeviceChangeListener(this);
 		this.setLayout(new CardLayout());
@@ -76,7 +73,6 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	    mainpanel.add(textSelectDevice,BorderLayout.NORTH);
 		pacakgeinfopanel = new JPanel(new CardLayout());
 		
-        slider = new PanelSlider42<JPanel>(this);
         //pacakgeinfopanel = slider.getBasePanel();
 		
         pacakgeinfopanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));

@@ -41,7 +41,7 @@ public class InstallOptionPanel extends JPanel {
 		installOptionsPanel.add(cbLaucnApp);
 		installOptionsPanel.add(Box.createVerticalStrut(5));
 		
-		JPanel additionalOptionsPanel = new JPanel();
+		final JPanel additionalOptionsPanel = new JPanel();
 		additionalOptionsPanel.setAlignmentX(0);
 		additionalOptionsPanel.setVisible(false);
 		additionalOptionsPanel.setLayout(new BoxLayout(additionalOptionsPanel, BoxLayout.Y_AXIS));
