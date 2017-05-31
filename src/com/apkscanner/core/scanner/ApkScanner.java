@@ -267,5 +267,5 @@ abstract public class ApkScanner
 		}
 
 		return manifestPath.getNode("/manifest").getAttribute("package");
-	}	
+	}
 }

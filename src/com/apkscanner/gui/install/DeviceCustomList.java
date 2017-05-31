@@ -18,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
@@ -49,6 +50,7 @@ import com.android.ddmlib.MultiLineReceiver;
 import com.android.ddmlib.ShellCommandUnresponsiveException;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.core.scanner.ApkScanner;
+import com.apkscanner.core.scanner.ApktoolScanner;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.dialog.PackageInfoDlg;
 import com.apkscanner.gui.dialog.PackageInfoPanel;
@@ -168,9 +170,10 @@ public class DeviceCustomList extends JList{
     
     private JComponent getPackageInfopanel(IDevice dev)
 	{
+    	
         String packageName = ApkScanner.getPackageName(ApkInstallWizard.pakcageFilePath);
         PackageInfo info = PackageManager.getPackageInfo(dev, packageName);
-        
+                
         if(info != null) {
         	PackageInfoPanel packageInfoPanel = new PackageInfoPanel();
         	packageInfoPanel.setPackageInfo(info);
@@ -219,7 +222,8 @@ public class DeviceCustomList extends JList{
     
 	private class Listrenderer extends DefaultListCellRenderer {
     	private CustomListPanel renderer;
-    	
+    	private JList list;
+    	private MouseAdapter adapter;
         @Override
         public Component getListCellRendererComponent ( JList list, Object value, int index, boolean isSelected, boolean cellHasFocus )
         {
@@ -231,54 +235,85 @@ public class DeviceCustomList extends JList{
         
         private Listrenderer (final JList list) {
             super ();
+            this.list = list;
             renderer = new CustomListPanel ();
             
-            list.addMouseListener ( new MouseAdapter ()
-            {
+            list.addMouseListener ( adapter = new MouseAdapter () {
                 @Override
                 public void mouseReleased ( MouseEvent e )
                 {
+                	
                     if ( SwingUtilities.isLeftMouseButton ( e ) )
                     {
-                        int index = list.locationToIndex ( e.getPoint () );
-                        if ( index != -1 && list.isSelectedIndex ( index ) )
-                        {
-                            Rectangle rect = list.getCellBounds ( index, index );
-                            Point pointWithinCell = new Point ( e.getX () - rect.x, e.getY () - rect.y );
+                    	Component child = getComponentinList(e);
                             
-                            //Log.d("x = "+pointWithinCell.getX() + " y = " + pointWithinCell.getY());
-                            
-//                            Rectangle crossRect = new Rectangle ( rect.width - 9 - 5 - crossIcon.getIconWidth () / 2,
-//                                    rect.height / 2 - crossIcon.getIconHeight () / 2, crossIcon.getIconWidth (), crossIcon.getIconHeight () );
-//                            if ( crossRect.contains ( pointWithinCell ) )
-                            
-                            Object value = list.getModel().getElementAt(index);
-                            Component comp = listrenderer.getListCellRendererComponent(list, value, index, true, true);
-                            comp.setBounds(list.getCellBounds(index, index));
-                            
-                            Component child = comp.getComponentAt(pointWithinCell);
-                            
-                            if(child instanceof JPanel) {
-                            	Log.d(""+child.getBounds());
-                            	
-                            	Log.d(""+pointWithinCell);
-                            	
-                            	Log.d(""+ SwingUtilities.convertPoint(child, pointWithinCell, (JComponent)e.getSource()));
-                            	
-                            	
-                            	DeviceListData temp = (DeviceListData) listmodel.get(list.getSelectedIndex());
-                            	temp.showstate = (temp.showstate == DeviceListData.SHOW_INSTALL_OPTION)?
-                            			DeviceListData.SHOW_INSTALL_DETAL :DeviceListData.SHOW_INSTALL_OPTION;
-                            	
-                            	
-                            	FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.REQ_REFRESH_DETAIL_PANEL));
-                            }
-                        }
+                        if(child instanceof JLabel && ((JLabel)child).getText().equals("")) {
+                        	DeviceListData temp = (DeviceListData) listmodel.get(list.getSelectedIndex());
+                        	
+                        	if(temp.showstate == DeviceListData.SHOW_INSTALL_OPTION) {
+                        		temp.showstate = DeviceListData.SHOW_INSTALL_DETAL;
+//                        		((JLabel)child).setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_PREV.getImageIcon());                        		
+                        		list.repaint();
+                        		
+                        	} else {
+                        		temp.showstate = DeviceListData.SHOW_INSTALL_OPTION;
+//                        		((JLabel)child).setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_NEXT.getImageIcon());
+                        		list.repaint();
+                        	}
+                        	
+                        	
+                        	//((JLabel)child).setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_PREV.getImageIcon());
+                        	
+                        	FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.REQ_REFRESH_DETAIL_PANEL));
+                        }                        
                     }
                 }
+                
+                @Override
+                public void mouseMoved ( MouseEvent e ) {
+                	Component child = getComponentinList(e);
+                	
+                	if(!(child instanceof JLabel)) {
+                		return ;
+                	}
+                	
+                	if(((JLabel)child).getText().equals("")) {
+                		//Log.d(""+e);
+                		//((JLabel)child).setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_PREV.getImageIcon());
+                	} else {
+                		//Log.d(""+e);
+                		//((JLabel)child).setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_NEXT.getImageIcon());
+                	}
+                }
             } );
+            
+            list.addMouseMotionListener(adapter);
         }
-    }
+	    private Component getComponentinList(MouseEvent e) {
+	        int index = list.locationToIndex ( e.getPoint () );
+	        if ( index != -1 && list.isSelectedIndex ( index ) ) {
+	            Rectangle rect = list.getCellBounds ( index, index );
+	            Point pointWithinCell = new Point ( e.getX () - rect.x, e.getY () - rect.y );
+	            
+	            //Log.d("x = "+pointWithinCell.getX() + " y = " + pointWithinCell.getY());
+	            
+	//                Rectangle crossRect = new Rectangle ( rect.width - 9 - 5 - crossIcon.getIconWidth () / 2,
+	//                        rect.height / 2 - crossIcon.getIconHeight () / 2, crossIcon.getIconWidth (), crossIcon.getIconHeight () );
+	//                if ( crossRect.contains ( pointWithinCell ) )
+	            
+	            Object value = list.getModel().getElementAt(index);
+	            Component comp = listrenderer.getListCellRendererComponent(list, value, index, true, true);
+	            comp.setBounds(list.getCellBounds(index, index));
+	            
+	            //Component child = comp.getComponentAt(pointWithinCell);
+	                    	
+	            return SwingUtilities.getDeepestComponentAt(comp, pointWithinCell.x, pointWithinCell.y); 
+	        }
+	        
+	        return null;
+	    }
+	    
+	}
     
     
     public class DeviceListData
@@ -288,16 +323,17 @@ public class DeviceCustomList extends JList{
         public String name;
         public String serialnumber;
         public String SDKVersion;
-        
-        public JComponent NowShowpanel;
-        
+                
         public JComponent AppDetailpanel;
         public JComponent installoptionpanel;
         
         public int showstate;
         
-        public static final String INSTALLED = "installed";
-        public static final String NOT_INSTALLED = "not installed";
+        public static final String INSTALLED = "Installed";
+        public static final String NOT_INSTALLED = "Not installed";
+        public static final String CAN_NOT_INSTALL = "Can't installed";
+        public static final String PUSH = "Push";
+        
         public static final String WAITING = "walting";
 
         public static final int SHOW_INSTALL_DETAL = 0;
@@ -339,6 +375,7 @@ public class DeviceCustomList extends JList{
     	CustomLabel label;
     	JPanel Tagpanel;
     	JLabel TagLabel;
+    	DeviceListData data;
     	
     	JLabel IconLabel;
     	
@@ -354,10 +391,11 @@ public class DeviceCustomList extends JList{
     		TagLabel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
     		
     		IconLabel = new JLabel("");
-    		IconLabel.setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_NEXT.getImageIcon());
-    		
+    		    		
     		Tagpanel.add(TagLabel);
     		Tagpanel.add(IconLabel);
+    		
+    		//Tagpanel.setBackground(Color.GRAY);
     		
     		add( Tagpanel , BorderLayout.SOUTH);
     		setBackground(Color.white);
@@ -370,11 +408,23 @@ public class DeviceCustomList extends JList{
         	Graphics2D g2d = ( Graphics2D ) g;
         	g2d.setPaint ( Color.LIGHT_GRAY );
             g.drawLine(2, getHeight()-2, getWidth()-2, getHeight()-2 );
+                        
+            
+        	if(data.showstate != DeviceListData.SHOW_INSTALL_OPTION) {
+        		//data.showstate = DeviceListData.SHOW_INSTALL_DETAL;
+        		IconLabel.setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_PREV.getImageIcon());
+        	} else {
+        		//data.showstate = DeviceListData.SHOW_INSTALL_OPTION;
+        		IconLabel.setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_NEXT.getImageIcon());        		
+        	}
+
+            
         }
     	
     	
 		public void setData(DeviceListData value) {
 			// TODO Auto-generated method stub
+			this.data = value;
 			label.setData(value);
 		}
 
