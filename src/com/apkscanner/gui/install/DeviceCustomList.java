@@ -297,7 +297,7 @@ public class DeviceCustomList extends JList{
                 	button = (JRadioButton)child;
                 	
                 	
-                	//((JRadioButton) child).getModel().setRollover(true);
+                	((JRadioButton) child).getModel().setRollover(true);
                 	list.repaint();
                 }
             } );
