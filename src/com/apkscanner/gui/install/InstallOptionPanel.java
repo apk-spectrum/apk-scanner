@@ -1,9 +1,12 @@
 package com.apkscanner.gui.install;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
@@ -25,6 +28,9 @@ import com.apkscanner.gui.util.ToggleButtonBarCellIcon;
 
 public class InstallOptionPanel extends JPanel {
 	private static final long serialVersionUID = 2307623568442307145L;
+	
+	public static final String ACT_CMD_INSTALL = "ACT_CMD_INSTALL";
+	public static final String ACT_CMD_PUSH = "ACT_CMD_PUSH";
 
 	public InstallOptionPanel() {
 		setLayout(new BorderLayout());	
@@ -32,11 +38,11 @@ public class InstallOptionPanel extends JPanel {
 
 		JCheckBox cbLaucnApp = new JCheckBox("Launch after installed");
 		cbLaucnApp.setSelected(true);
-
+		
 		JPanel installOptionsPanel = new JPanel();
 		installOptionsPanel.setLayout(new BoxLayout(installOptionsPanel, BoxLayout.Y_AXIS));
 		
-		//installPanel.setBorder(BorderFactory.createTitledBorder("Install options"));
+		installOptionsPanel.setBorder(BorderFactory.createTitledBorder("Install options"));
 
 		installOptionsPanel.add(cbLaucnApp);
 		installOptionsPanel.add(Box.createVerticalStrut(5));
@@ -67,10 +73,14 @@ public class InstallOptionPanel extends JPanel {
 		});
 		installOptionsPanel.add(additionalOptionsLabel);
 		installOptionsPanel.add(additionalOptionsPanel);
+		installOptionsPanel.add(Box.createVerticalGlue());
 		
 		JComboBox<String> cbLaunchActivity = new JComboBox<String>(new String[] { "aaa" , "bbb"});
 		cbLaunchActivity.setAlignmentY(0);
 		cbLaunchActivity.setAlignmentX(0);
+		Dimension maxSize = cbLaunchActivity.getMaximumSize();
+		maxSize.setSize(maxSize.getWidth(), cbLaunchActivity.getMinimumSize().getHeight());
+		cbLaunchActivity.setMaximumSize(maxSize);
 		additionalOptionsPanel.add(cbLaunchActivity);
 		
 		//additionalOptionsPanel
@@ -79,8 +89,8 @@ public class InstallOptionPanel extends JPanel {
 		JCheckBox ckDowngrade = new JCheckBox("Allow version code downgrade");
 		JCheckBox ckToSdCard = new JCheckBox("Install application on sdcard");
 		JCheckBox ckGrandPerm = new JCheckBox("Grant all runtime permissions");
-		JCheckBox ckLock = new JCheckBox("forward lock application");
-		JCheckBox ckTestPack = new JCheckBox("allow test packages");
+		JCheckBox ckLock = new JCheckBox("Forward lock application");
+		JCheckBox ckTestPack = new JCheckBox("Allow test packages");
 		
 		additionalOptionsPanel.add(ckReplace);
 		additionalOptionsPanel.add(ckDowngrade);
@@ -90,22 +100,31 @@ public class InstallOptionPanel extends JPanel {
 		additionalOptionsPanel.add(ckTestPack);
 
 
-		JRadioButton RadiosystemPush = new JRadioButton("system");
-		JRadioButton RadioprivPush = new JRadioButton("priv-app");
-		JRadioButton RadiodataPush = new JRadioButton("data");
-		JCheckBox CheckOverwrite = new JCheckBox("overwrite lib");
-		JCheckBox CheckWithLib = new JCheckBox("with Lib");
-		JCheckBox CheckReboot = new JCheckBox("reboot after push");
+		JRadioButton RadiosystemPush = new JRadioButton("/system/app");
+		JRadioButton RadioprivPush = new JRadioButton("/system/priv-app");
+		JCheckBox CheckWithLib32 = new JCheckBox("With Lib32");
+		JCheckBox CheckWithLib64 = new JCheckBox("With Lib64");
+		JCheckBox CheckReboot = new JCheckBox("Reboot after pushed");
 
 
-		JPanel pushPanel = new JPanel(new GridLayout(0,1));
-		pushPanel.setBorder(BorderFactory.createTitledBorder("Push"));
-		pushPanel.add(RadiosystemPush);
-		pushPanel.add(RadioprivPush);
-		pushPanel.add(RadiodataPush);
-		pushPanel.add(CheckOverwrite);
-		pushPanel.add(CheckWithLib);
-		pushPanel.add(CheckReboot);
+		JPanel pushOptionsPanel = new JPanel();
+		pushOptionsPanel.setLayout(new BoxLayout(pushOptionsPanel, BoxLayout.Y_AXIS));
+		pushOptionsPanel.setBorder(BorderFactory.createTitledBorder("Push options"));
+		Box installLocationBox = Box.createHorizontalBox();
+		installLocationBox.setAlignmentX(0);
+		installLocationBox.setAlignmentY(0);
+		installLocationBox.add(new JLabel("Path:"));
+		installLocationBox.add(Box.createHorizontalStrut(5));
+		installLocationBox.add(RadiosystemPush);
+		installLocationBox.add(Box.createHorizontalStrut(10));
+		installLocationBox.add(RadioprivPush);
+		installLocationBox.setMaximumSize(installLocationBox.getMinimumSize());
+		
+		pushOptionsPanel.add(installLocationBox);
+		pushOptionsPanel.add(CheckReboot);
+		pushOptionsPanel.add(CheckWithLib32);
+		pushOptionsPanel.add(CheckWithLib64);
+		pushOptionsPanel.add(Box.createVerticalGlue());
 
 		//optionPanel.add(installPanel);
 		//optionPanel.add(pushPanel);
@@ -114,17 +133,24 @@ public class InstallOptionPanel extends JPanel {
 		//togglePanel.add(InstalltoggleButton);
 		//togglePanel.add(pushtoggleButton);
 		
-		JPanel installMethodPanel = new JPanel();
-		installMethodPanel.add(new JLabel(" How to install : "));
-		installMethodPanel.add(makeToggleButtonBar(0x555555, true));
-		installMethodPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
+		final JPanel installOrPushOptionsPanel = new JPanel(new CardLayout());
+		installOrPushOptionsPanel.add(installOptionsPanel, ACT_CMD_INSTALL);
+		installOrPushOptionsPanel.add(pushOptionsPanel, ACT_CMD_PUSH);
+		
+		JPanel installMethodPanel = makeToggleButtonBar(0x555555, true, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				String actionCommand = arg0.getActionCommand();
+				((CardLayout)installOrPushOptionsPanel.getLayout()).show(installOrPushOptionsPanel, actionCommand);
+			}
+		});
 
-		add(makeToggleButtonBar(0x555555, true), BorderLayout.NORTH);
-		add(installOptionsPanel, BorderLayout.CENTER);		
+		add(installMethodPanel, BorderLayout.NORTH);
+		add(installOrPushOptionsPanel, BorderLayout.CENTER);		
 		add(new JButton("Apply all models"), BorderLayout.SOUTH);
 	}
 
-	private static AbstractButton makeButton(String title) {
+	private static AbstractButton makeButton(String title, String actionCommand) {
 		AbstractButton b = new JRadioButton(title);
 		//b.setVerticalAlignment(SwingConstants.CENTER);
 		//b.setVerticalTextPosition(SwingConstants.CENTER);
@@ -135,18 +161,20 @@ public class InstallOptionPanel extends JPanel {
 		b.setFocusPainted(false);
 		//b.setBackground(new Color(cc));
 		b.setForeground(Color.WHITE);
+		b.setActionCommand(actionCommand);
 		return b;
 	}
 
-	private static JPanel makeToggleButtonBar(int cc, boolean round) {
+	private static JPanel makeToggleButtonBar(int cc, boolean round, ActionListener listener) {
 		ButtonGroup bg = new ButtonGroup();
 		JPanel p = new JPanel(new GridLayout(1, 0, 0, 0));
         p.setBorder(BorderFactory.createTitledBorder("How to install"));
         //p.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		Color color = new Color(cc);
-		for (AbstractButton b: Arrays.asList(makeButton("Install"), makeButton("Push"))) {
+		for (AbstractButton b: Arrays.asList(makeButton("Install", ACT_CMD_INSTALL), makeButton("Push", ACT_CMD_PUSH))) {
 			b.setBackground(color);
 			b.setIcon(new ToggleButtonBarCellIcon());
+			b.addActionListener(listener);
 
 			bg.add(b);
 			p.add(b);
