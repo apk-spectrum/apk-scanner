@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
@@ -125,6 +126,11 @@ public class InstallOptionPanel extends JPanel {
 		installLocationBox.setMaximumSize(installLocationBox.getMinimumSize());
 		
 		pushOptionsPanel.add(installLocationBox);
+		JTextField txtTargetPath = new JTextField("/system/app/apkscanner/apk.apk");
+		txtTargetPath.setEditable(false);
+		//txtTargetPath.setFocusable(false);
+		txtTargetPath.setCaretPosition(0);
+		pushOptionsPanel.add(txtTargetPath);
 		pushOptionsPanel.add(CheckReboot);
 		pushOptionsPanel.add(Box.createVerticalStrut(5));
 		pushOptionsPanel.add(new JLabel("With Libraries"));
@@ -175,7 +181,13 @@ public class InstallOptionPanel extends JPanel {
 		
 		//pushOptionsPanel.add(new JLabel("▶ Show libray list"));
 		
-		DefaultTableModel model = new DefaultTableModel(new String[][] { {"1", "APK/lib/armeabi64-v7a/fjklds.so" , "/system/lib/fjklds.so"} }, new String[] {"No." , "Srouce" , "Destination"});
+		DefaultTableModel model = new DefaultTableModel(new String[][] { 
+			{"1", "APK/lib/armeabi64-v7a/fjklds.so" , "/system/lib/fjklds.so"},
+			{"2", "APK/lib/armeabi64-v7a/fjklds.so" , "/system/lib/fjklds.so"},
+			{"3", "APK/lib/armeabi64-v7a/fjklds.so" , "/system/lib/fjklds.so"},
+			{"4", "APK/lib/armeabi64-v7a/fjklds.so" , "/system/lib/fjklds.so"},
+			{"5", "APK/lib/armeabi64-v7a/fjklds.so" , "/system/lib/fjklds.so"}
+		}, new String[] {"No." , "Srouce" , "Destination"});
 		JTable list = new JTable(model);
 		JScrollPane listPanel = new JScrollPane(list);
 		listPanel.setAlignmentX(0);
