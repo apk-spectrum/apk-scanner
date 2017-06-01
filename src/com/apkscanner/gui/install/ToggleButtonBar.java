@@ -18,6 +18,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
 import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
@@ -26,7 +27,7 @@ import javax.swing.SwingConstants;
 public class ToggleButtonBar {
 
     private static AbstractButton makeButton(String title) {
-        AbstractButton b = new JRadioButton(title);
+        AbstractButton b = new JButton(title);
         //b.setVerticalAlignment(SwingConstants.CENTER);
         //b.setVerticalTextPosition(SwingConstants.CENTER);
         //b.setHorizontalAlignment(SwingConstants.CENTER);

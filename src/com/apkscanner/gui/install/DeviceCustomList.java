@@ -226,7 +226,7 @@ public class DeviceCustomList extends JList{
     	private CustomListPanel renderer;
     	private JList list;
     	private MouseAdapter adapter;
-    	public JRadioButton button;
+    	public JButton button;
         public int pressedIndex  = -1;
         public int rolloverIndex = -1;
         
@@ -263,8 +263,8 @@ public class DeviceCustomList extends JList{
                     {
                     	Component child = getComponentinList(e);
                         
-                        if(child instanceof JRadioButton) { //&& ((JLabel)child).getText().equals("")) {
-                        	Log.d(((JRadioButton)child).getText());
+                        if(child instanceof JButton) { //&& ((JLabel)child).getText().equals("")) {
+                        	Log.d(((JButton)child).getText());
                         	DeviceListData temp = (DeviceListData) listmodel.get(list.getSelectedIndex());
                         	
                         	if(temp.showstate == DeviceListData.SHOW_INSTALL_OPTION) {
@@ -289,15 +289,13 @@ public class DeviceCustomList extends JList{
                 @Override
                 public void mouseMoved ( MouseEvent e ) {
                 	Component child = getComponentinList(e);
-                	Log.d("aa"+child);
-                	if(!(child instanceof JRadioButton)) {
+
+                	if(!(child instanceof JButton)) {
                 		return ;
                 	}
-                	
-                	button = (JRadioButton)child;
-                	
-                	
-                	((JRadioButton) child).getModel().setRollover(true);
+                	Log.d("aa"+child);
+                	button = (JButton)child;
+                	((JButton) child).getModel().setRollover(true);
                 	list.repaint();
                 }
             } );

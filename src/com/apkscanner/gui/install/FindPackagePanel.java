@@ -191,44 +191,6 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 		this.repaint();
 		this.revalidate();		
 	}
-	
-	synchronized void slidePanelInFromRight(final JComponent before, final JComponent panelInput, final JComponent parent) {
-		//panelInput.setSize(width, height);
-		    // timer runs 25 times per second
-
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					int width = parent.getWidth();
-					int x =0;
-					for ( ; ;) {						
-						x=x+10;
-			        	panelInput.setLocation(width-x, 0);
-			        	before.setLocation(x, 0);
-			        	before.repaint();
-			        	panelInput.repaint();
-			        	try {
-							Thread.sleep(20);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-			        	if(x > width) {			        		
-			        		parent.removeAll();
-			        		parent.add(panelInput);
-			        		parent.repaint();
-			        		break;
-			        	}
-					}
-		        	
-				}			
-			}).start();
-		    
-		    //timer.start();
-
-		}
-	
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
