@@ -36,8 +36,8 @@ public class InstallProgressPanel extends JPanel
 	
 	JPanel ProgressStepPanel;
 	JPanel TextStepPanel;
-	private final int STEPMAX = 3;
-	private final int STEPWIDTH = 400;
+	private final int STEPMAX = 4;
+	private final int STEPWIDTH = 500;
 	private final int STEPHEIGHT = 70;
 	
 	private final int COLOR_STEP_NOTFINISH = 0; 
@@ -45,7 +45,7 @@ public class InstallProgressPanel extends JPanel
 	private final int COLOR_STEP_FINISHED = 2;
 	
 	int CurrentProgress=0;
-	private final String [] outtexts= {"PACKAGE", "INSTALLING", "FINISH"};
+	private final String [] outtexts= {"APK VERIFY", "PACKAGE", "INSTALLING", "FINISH"};
 	
 	private final Color []Colorset = {new Color(222,228,228), new Color(52,152,220),new Color(46,204,114)};
 			
@@ -151,7 +151,7 @@ public class InstallProgressPanel extends JPanel
 	    	}
 	    	//g.setFont(g.getFont().deriveFont(15f));
 	    	//g.drawString(outtext, 0, (int)size.getHeight()-10);
-	    	g.setFont(g.getFont().deriveFont(30f));
+	    	g.setFont(g.getFont().deriveFont(20f));
 	    	g.setColor(Color.WHITE);
 	    	//g.drawString(intext, (int)(size.getWidth()/2-15), (int)(size.getHeight()/2+ 15));
 	    	drawCenteredString(intext, (int)size.getWidth(), (int)size.getHeight(), g);
