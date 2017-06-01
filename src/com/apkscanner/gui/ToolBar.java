@@ -38,7 +38,7 @@ public class ToolBar extends JToolBar
 	public static final int FLAG_LAYOUT_UNSIGNED = 0x20;			// Sign
 	public static final int FLAG_LAYOUT_NO_SUCH_CLASSES = 0x40;
 
-	public static final int FLAG_LAYOUT_INSTALLED_MASK = FLAG_LAYOUT_INSTALLED | FLAG_LAYOUT_INSTALLED_LOWER | FLAG_LAYOUT_INSTALLED_UPPER;
+	public static final int FLAG_LAYOUT_INSTALLED_MASK = FLAG_LAYOUT_INSTALLED | FLAG_LAYOUT_INSTALLED_LOWER | FLAG_LAYOUT_INSTALLED_UPPER | FLAG_LAYOUT_LAUNCHER;
 
 	private int flag = 0;
 	private boolean hasTargetApk = false;
@@ -289,7 +289,11 @@ public class ToolBar extends JToolBar
 
 	public void setFlag(int flag) {
 		int preFlag = this.flag;
+		if(flag != FLAG_LAYOUT_DEVICE_CONNECTED) {
+			this.flag &= ~FLAG_LAYOUT_INSTALLED_MASK;
+		}
 		this.flag |= flag;
+		Log.v("setFlag() preFlag " + Integer.toHexString(preFlag) + ", newFlag " + Integer.toHexString(this.flag));
 		if(preFlag != this.flag) {
 			setReplacementLayout();
 		}
@@ -457,6 +461,7 @@ public class ToolBar extends JToolBar
 			break;
 		case OPEN:
 			buttonMap.get(ButtonSet.OPEN).setEnabled(enabled);
+			buttonMap.get(ButtonSet.OPEN_PACKAGE).setEnabled(enabled);
 			buttonMap.get(ButtonSet.OPEN_EXTEND).setEnabled(enabled);
 			break;
 		case OPEN_CODE:

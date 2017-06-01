@@ -15,13 +15,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map.Entry;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -40,14 +37,14 @@ import com.apkscanner.data.apkinfo.ComponentInfo;
 import com.apkscanner.gui.ToolBar.ButtonSet;
 import com.apkscanner.gui.dialog.AboutDlg;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
+import com.apkscanner.gui.dialog.ApkSignerWizard;
 import com.apkscanner.gui.dialog.LogDlg;
-import com.apkscanner.gui.dialog.PackageInfoDlg;
+import com.apkscanner.gui.dialog.PackageInfoPanel;
 import com.apkscanner.gui.dialog.PackageTreeDlg;
 import com.apkscanner.gui.dialog.SearchDlg;
 import com.apkscanner.gui.dialog.SettingDlg;
-import com.apkscanner.gui.messagebox.ArrowTraversalPane;
-import com.apkscanner.gui.messagebox.ComboMessageBox;
-import com.apkscanner.gui.messagebox.JTextOptionPane;
+import com.apkscanner.gui.messagebox.MessageBoxPane;
+import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.FileDrop;
 import com.apkscanner.resource.Resource;
@@ -76,9 +73,14 @@ public class MainUI extends JFrame
 
 	private TabbedPanel tabbedPanel;
 	private ToolBar toolBar;
+	private MessageBoxPool messagePool;
 
 	public MainUI(ApkScanner scanner)
 	{
+		messagePool = new MessageBoxPool(this);
+
+		initialize();
+
 		apkScanner = scanner;
 		if(apkScanner != null) {
 			apkScanner.setStatusListener(new ApkScannerListener());
@@ -87,20 +89,6 @@ public class MainUI extends JFrame
 
 	public void initialize()
 	{
-		if(!EventQueue.isDispatchThread()) {
-			Log.i("createAndShowGUI() - This task is not EDT. Invoke to EDT.");
-			try {
-				EventQueue.invokeAndWait(new Runnable() {
-					public void run() {
-						initialize();
-					}
-				});
-			} catch (InvocationTargetException | InterruptedException e) {
-				e.printStackTrace();
-			}
-			return;
-		}
-
 		Log.i("UI Init start");
 
 		Log.i("initialize() setLookAndFeel");
@@ -207,11 +195,7 @@ public class MainUI extends JFrame
 				public void run() {
 					setTitle(Resource.STR_APP_NAME.getString());
 					tabbedPanel.setData(null);
-
-					final ImageIcon Appicon = Resource.IMG_WARNING.getImageIcon();
-					//JOptionPane.showMessageDialog(null, "Sorry, Can not open the APK", "Error", JOptionPane.ERROR_MESSAGE, Appicon);
-					JOptionPane.showOptionDialog(null, Resource.STR_MSG_FAILURE_OPEN_APK.getString(), Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, Appicon,
-							new String[] {Resource.STR_BTN_CLOSE.getString()}, Resource.STR_BTN_CLOSE.getString());
+					messagePool.show(MessageBoxPool.MSG_FAILURE_OPEN_APK);
 				}
 			});
 		}
@@ -227,15 +211,15 @@ public class MainUI extends JFrame
 		}
 
 		@Override
-		public void onProgress(final int step, final String msg) {
+		public void onProgress(final int step, final String message) {
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					switch(step) {
 					case 0:
-						tabbedPanel.setProgress(Integer.parseInt(msg));
+						tabbedPanel.setProgress(message);
 						break;
 					default:
-						Log.i(msg);
+						Log.i(message);
 					}
 				}
 			});
@@ -335,7 +319,7 @@ public class MainUI extends JFrame
 
 		private void evtOpenPackage(boolean newWindow)
 		{
-			PackageTreeDlg Dlg = new PackageTreeDlg();
+			PackageTreeDlg Dlg = new PackageTreeDlg(MainUI.this);
 			if(Dlg.showTreeDlg(MainUI.this) != PackageTreeDlg.APPROVE_OPTION) {
 				Log.v("Not choose package");
 				return;
@@ -347,7 +331,7 @@ public class MainUI extends JFrame
 
 			if(!newWindow) {
 				tabbedPanel.setLodingLabel();
-				tabbedPanel.setProgress(-1);
+				tabbedPanel.setProgress(null);
 				toolBar.setEnabledAt(ButtonSet.OPEN, false);
 				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
 
@@ -437,14 +421,7 @@ public class MainUI extends JFrame
 
 			if(!ZipFileUtil.exists(apkInfo.filePath, "classes.dex")) {
 				Log.e("No such file : classes.dex");
-				ArrowTraversalPane.showOptionDialog(null,
-						Resource.STR_MSG_NO_SUCH_CLASSES_DEX.getString(),
-						Resource.STR_LABEL_WARNING.getString(),
-						JOptionPane.OK_OPTION, 
-						JOptionPane.WARNING_MESSAGE,
-						null,
-						new String[] {Resource.STR_BTN_OK.getString()},
-						Resource.STR_BTN_OK.getString());
+				messagePool.show(MessageBoxPool.MSG_NO_SUCH_CLASSES_DEX);
 				return;
 			}
 
@@ -466,8 +443,7 @@ public class MainUI extends JFrame
 					Log.e("Failure: Fail Dex2Jar : " + message);
 					EventQueue.invokeLater(new Runnable() {
 						public void run() {
-							JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_DEX2JAR.getString() + "\n\nerror message", message,  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
-									null, new Dimension(300, 120));
+							MessageBoxPool.show(MainUI.this, MessageBoxPool.MSG_FAILURE_DEX2JAR, message);
 						}
 					});
 				}
@@ -515,17 +491,10 @@ public class MainUI extends JFrame
 
 		private void evtLaunchApp(final boolean selectActivity)
 		{
-			final IDevice[] devices = toolbarManager.getInstalledDevice();
+			final IDevice[] devices = getInstalledDevice();
 			if(devices == null || devices.length == 0) {
 				Log.i("No such device of a package installed.");
-				ArrowTraversalPane.showOptionDialog(null,
-						Resource.STR_MSG_NO_SUCH_PACKAGE_DEVICE.getString(),
-						Resource.STR_LABEL_INFO.getString(),
-						JOptionPane.OK_OPTION, 
-						JOptionPane.INFORMATION_MESSAGE,
-						null,
-						new String[] {Resource.STR_BTN_OK.getString()},
-						Resource.STR_BTN_OK.getString());
+				messagePool.show(MessageBoxPool.MSG_NO_SUCH_PACKAGE_DEVICE);
 				return;
 			}
 
@@ -536,17 +505,10 @@ public class MainUI extends JFrame
 					for(IDevice device: devices) {
 						Log.v("launch activity on " + device.getSerialNumber());
 
-						PackageInfo packageInfo = toolbarManager.getPackageInfo(device);
+						PackageInfo packageInfo = getPackageInfo(device);
 
 						if(!packageInfo.isEnabled()) {
-							ArrowTraversalPane.showOptionDialog(null,
-									device.getName() + "\n : " + Resource.STR_MSG_DISABLED_PACKAGE.getString(),
-									Resource.STR_LABEL_WARNING.getString(),
-									JOptionPane.OK_OPTION, 
-									JOptionPane.INFORMATION_MESSAGE,
-									null,
-									new String[] {Resource.STR_BTN_OK.getString()},
-									Resource.STR_BTN_OK.getString());
+							messagePool.show(MessageBoxPool.MSG_DISABLED_PACKAGE, device.getProperty(IDevice.PROP_DEVICE_MODEL));
 							continue;
 						}
 
@@ -567,32 +529,43 @@ public class MainUI extends JFrame
 									selectedActivity = activities[0].name;
 								}
 							}
-							if(selectedActivity == null && activities != null && activities.length > 0) {
-								String[] items = new String[activities.length];
-								for(int i = 0; i < activities.length; i++) {
-									boolean isLauncher = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0);
-									boolean isMain = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0);
-									items[i] = (isLauncher ? "[LAUNCHER]": (isMain ? "[MAIN]": "")) + " " + activities[i].name.replaceAll(packageInfo.packageName, "");
+							if(selectedActivity == null) {
+								ApkInfo apkInfo = apkScanner.getApkInfo();
+								ComponentInfo[] apkActivities = ApkInfoHelper.getLauncherActivityList(apkInfo, true);
+
+								int mergeLength = (activities != null ? activities.length : 0) + (apkActivities != null ? apkActivities.length : 0);
+								ArrayList<String> mergeList = new ArrayList<String>(mergeLength);
+
+								if(activities != null && activities.length > 0) {
+									for(int i = 0; i < activities.length; i++) {
+										boolean isLauncher = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0);
+										boolean isMain = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0);
+										mergeList.add((isLauncher ? "[LAUNCHER]": (isMain ? "[MAIN]": "")) + " " + activities[i].name.replaceAll("^"+packageInfo.packageName, ""));
+									}
 								}
-								String selected = ComboMessageBox.show(MainUI.this, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL), items,  Resource.STR_BTN_LAUNCH.getString(), JTextOptionPane.QUESTION_MESSAGE,
-										null, new Dimension(400, 0));
-								if(selected == null) {
-									return;
+
+								if(apkActivities != null && apkActivities.length > 0) {
+									for(ComponentInfo comp: apkActivities) {
+										boolean isLauncher = ((comp.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0);
+										boolean isMain = ((comp.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0);
+										mergeList.add((isLauncher ? "[APK_LAUNCHER]": (isMain ? "[APK_MAIN]": "[APK]")) + " " + comp.name.replaceAll("^"+apkInfo.manifest.packageName, ""));										
+									}
 								}
-								selectedActivity = selected.split(" ")[1];
+
+								if(!mergeList.isEmpty()) { 
+									String selected = (String)MessageBoxPane.showInputDialog(MainUI.this, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL),
+											Resource.STR_BTN_LAUNCH.getString(), MessageBoxPane.QUESTION_MESSAGE, null, mergeList.toArray(new String[mergeList.size()]), mergeList.get(0));
+									if(selected == null) {
+										return;
+									}
+									selectedActivity = selected.split(" ")[1];
+								}
 							}
 						}
 
 						if(selectedActivity == null) {
 							Log.w("No such activity of launcher or main");
-							ArrowTraversalPane.showOptionDialog(null,
-									Resource.STR_MSG_NO_SUCH_LAUNCHER.getString(),
-									Resource.STR_LABEL_WARNING.getString(),
-									JOptionPane.OK_OPTION, 
-									JOptionPane.INFORMATION_MESSAGE,
-									null,
-									new String[] {Resource.STR_BTN_OK.getString()},
-									Resource.STR_BTN_OK.getString());
+							messagePool.show(MessageBoxPool.MSG_NO_SUCH_LAUNCHER);
 							return;
 						}
 
@@ -616,8 +589,7 @@ public class MainUI extends JFrame
 
 							EventQueue.invokeLater(new Runnable() {
 								public void run() {
-									JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_LAUNCH_APP.getString() + "\n\nConsol output", errMsg,  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
-											null, new Dimension(500, 120));
+									messagePool.show(MessageBoxPool.MSG_FAILURE_LAUNCH_APP, errMsg);
 								}
 							});
 						} else if((boolean)Resource.PROP_TRY_UNLOCK_AF_LAUNCH.getData()) {
@@ -631,17 +603,10 @@ public class MainUI extends JFrame
 		}
 
 		private void evtUninstallApp() {
-			final IDevice[] devices = toolbarManager.getInstalledDevice();
+			final IDevice[] devices = getInstalledDevice();
 			if(devices == null || devices.length == 0) {
 				Log.i("No such device of a package installed.");
-				ArrowTraversalPane.showOptionDialog(null,
-						Resource.STR_MSG_NO_SUCH_PACKAGE_DEVICE.getString(),
-						Resource.STR_LABEL_INFO.getString(),
-						JOptionPane.OK_OPTION, 
-						JOptionPane.INFORMATION_MESSAGE,
-						null,
-						new String[] {Resource.STR_BTN_OK.getString()},
-						Resource.STR_BTN_OK.getString());
+				messagePool.show(MessageBoxPool.MSG_NO_SUCH_PACKAGE_DEVICE);
 				return;
 			}
 
@@ -651,18 +616,26 @@ public class MainUI extends JFrame
 					for(IDevice device: devices) {
 						Log.v("uninstall apk on " + device.getSerialNumber());
 
-						PackageInfo packageInfo = toolbarManager.getPackageInfo(device);
+						PackageInfo packageInfo = getPackageInfo(device);
 
 						String errMessage = null;
 						if(!packageInfo.isSystemApp()) {
 							errMessage = PackageManager.uninstallPackage(packageInfo);
 						} else {
+							int n = messagePool.show(MessageBoxPool.QUESTION_REMOVE_SYSTEM_APK);
+							if(n == MessageBoxPane.NO_OPTION) {
+								return;
+							}
+
 							errMessage = PackageManager.removePackage(packageInfo);
 							if(errMessage == null || errMessage.isEmpty()) {
-								try {
-									device.reboot(null);
-								} catch (TimeoutException | AdbCommandRejectedException | IOException e) {
-									e.printStackTrace();
+								n = messagePool.show(MessageBoxPool.QUESTION_REBOOT_SYSTEM);
+								if(n == MessageBoxPane.YES_OPTION) {
+									try {
+										device.reboot(null);
+									} catch (TimeoutException | AdbCommandRejectedException | IOException e) {
+										e.printStackTrace();
+									}
 								}
 							}
 						}
@@ -671,21 +644,13 @@ public class MainUI extends JFrame
 							final String errMsg = errMessage;
 							EventQueue.invokeLater(new Runnable() {
 								public void run() {
-									JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_UNINSTALLED.getString() + "\nConsol output:", errMsg,  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
-											null, new Dimension(300, 50));
+									messagePool.show(MessageBoxPool.MSG_FAILURE_UNINSTALLED, errMsg);
 								}
 							});
 						} else {
 							EventQueue.invokeLater(new Runnable() {
 								public void run() {
-									ArrowTraversalPane.showOptionDialog(null,
-											Resource.STR_MSG_SUCCESS_REMOVED.getString(),
-											Resource.STR_LABEL_INFO.getString(),
-											JOptionPane.YES_OPTION, 
-											JOptionPane.INFORMATION_MESSAGE,
-											null,
-											new String[] {Resource.STR_BTN_OK.getString()},
-											Resource.STR_BTN_OK.getString());
+									messagePool.show(MessageBoxPool.MSG_SUCCESS_REMOVED);
 								}
 							});
 						}
@@ -696,19 +661,24 @@ public class MainUI extends JFrame
 			thread.start();
 		}
 
+		private void evtSignApkFile() {
+			ApkInfo apkInfo = apkScanner.getApkInfo();
+			if(apkInfo == null || apkInfo.filePath == null
+					|| !new File(apkInfo.filePath).exists()) {
+				Log.e("evtSignApkFile() apkInfo is null");
+				return;
+			}
+			ApkSignerWizard wizard = new ApkSignerWizard(MainUI.this);
+			wizard.setApk(apkInfo.filePath);
+			wizard.setVisible(true);
+		}
+
 		private void evtShowInstalledPackageInfo()
 		{
-			final IDevice[] devices = toolbarManager.getInstalledDevice();
+			final IDevice[] devices = getInstalledDevice();
 			if(devices == null || devices.length == 0) {
 				Log.i("No such device of a package installed.");
-				ArrowTraversalPane.showOptionDialog(null,
-						Resource.STR_MSG_NO_SUCH_PACKAGE_DEVICE.getString(),
-						Resource.STR_LABEL_INFO.getString(),
-						JOptionPane.OK_OPTION, 
-						JOptionPane.INFORMATION_MESSAGE,
-						null,
-						new String[] {Resource.STR_BTN_OK.getString()},
-						Resource.STR_BTN_OK.getString());
+				messagePool.show(MessageBoxPool.MSG_NO_SUCH_PACKAGE_DEVICE);
 				return;
 			}
 
@@ -716,12 +686,12 @@ public class MainUI extends JFrame
 				public void run()
 				{
 					for(IDevice device: devices) {
-						final PackageInfo info = toolbarManager.getPackageInfo(device);
+						final PackageInfo info = getPackageInfo(device);
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
-								PackageInfoDlg packageInfoDlg = new PackageInfoDlg(MainUI.this);
-								packageInfoDlg.setPackageInfo(info);
-								packageInfoDlg.setVisible(true);
+								PackageInfoPanel packageInfoPanel = new PackageInfoPanel();
+								packageInfoPanel.setPackageInfo(info);
+								packageInfoPanel.showDialog(MainUI.this);
 							}
 						});
 					}
@@ -729,6 +699,37 @@ public class MainUI extends JFrame
 			});
 			thread.setPriority(Thread.NORM_PRIORITY);
 			thread.start();
+		}
+
+		private IDevice[] getInstalledDevice() {
+			IDevice[] devices = null;
+			if(toolbarManager.isEnabled()) {
+				devices = PackageManager.getInstalledDevices(apkScanner.getApkInfo().manifest.packageName);
+			} else {
+				AndroidDebugBridge adb = AdbServerMonitor.getAndroidDebugBridge();
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				devices = adb.getDevices();
+				Log.i("devices size : " + devices.length);
+
+				ArrayList<IDevice> deviceList = new ArrayList<IDevice>();
+				for(IDevice dev: devices) {
+					PackageInfo info = getPackageInfo(dev);
+					if(info != null) {
+						deviceList.add(dev);
+					}
+				}
+				devices = deviceList.toArray(new IDevice[deviceList.size()]);
+			}
+			return devices;
+		}
+
+		private PackageInfo getPackageInfo(IDevice device) {
+			return PackageManager.getPackageInfo(device, apkScanner.getApkInfo().manifest.packageName);
 		}
 
 		private void setLanguage(String lang)
@@ -793,6 +794,8 @@ public class MainUI extends JFrame
 				evtLaunchApp((e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
 			} else if(ToolBar.MenuItemSet.UNINSTALL_APK.matchActionEvent(e)) {
 				evtUninstallApp();
+			} else if(ToolBar.ButtonSet.SIGN.matchActionEvent(e) || ToolBar.ButtonSet.SUB_SIGN.matchActionEvent(e)) { 
+				evtSignApkFile();
 			} else {
 				Log.v("Unkown action : " + e);
 			}
@@ -902,8 +905,6 @@ public class MainUI extends JFrame
 		private boolean hasSignature;
 		private boolean hasMainActivity; 
 
-		private HashMap<IDevice, PackageInfo> devices = new HashMap<IDevice, PackageInfo>();
-
 		public void registerEventListeners() {
 			AdbServerMonitor.addAdbDemonChangeListener(this);
 			AndroidDebugBridge.addDeviceChangeListener(this);
@@ -929,7 +930,6 @@ public class MainUI extends JFrame
 						registerEventListeners();
 					} else {
 						unregisterEventListeners();
-						devices.clear();
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
 								toolBar.clearFlag();
@@ -940,24 +940,6 @@ public class MainUI extends JFrame
 			}
 		}
 
-		public IDevice[] getInstalledDevice() {
-			synchronized (devices) {
-				for(Entry<IDevice, PackageInfo> entry: devices.entrySet()) {
-					String apkPath = entry.getValue().getApkPath();
-					if(apkPath == null || apkPath.isEmpty()) {
-						devices.remove(entry.getKey());
-					}
-				}
-				return devices.keySet().toArray(new IDevice[devices.size()]);
-			}
-		}
-
-		public PackageInfo getPackageInfo(IDevice device) {
-			synchronized (devices) {
-				return devices.get(device);
-			}
-		}
-
 		public void setApkInfo(ApkInfo info) {
 			synchronized(this) {
 				if(!enabled) {
@@ -965,17 +947,14 @@ public class MainUI extends JFrame
 				}
 				if(info != null) {
 					packageName = info.manifest.packageName;
-					versionCode = info.manifest.versionCode;
-					hasSignature = (info.certificates != null && info.certificates.length > 0);
+					versionCode = info.manifest.versionCode != null ? info.manifest.versionCode : 0;
+					hasSignature = ApkInfoHelper.isSigned(info);
 					hasMainActivity = ApkInfoHelper.getLauncherActivityList(info, true).length > 0; 
 				} else {
 					packageName = null;
 					versionCode = 0;
 					hasSignature = false;
 					hasMainActivity = false; 
-				}
-				synchronized (devices) {
-					devices.clear();
 				}
 			}
 			applyToobarPolicy();
@@ -985,10 +964,9 @@ public class MainUI extends JFrame
 			Log.v("applyToobarPolicy()");
 
 			if(EventQueue.isDispatchThread()) {
-				Log.w("applyToobarPolicy() This task is EDT. Invoke to Nomal thread");
+				Log.v("applyToobarPolicy() This task is EDT. Invoke to Nomal thread");
 				Thread thread = new Thread(new Runnable() {
-					public void run()
-					{
+					public void run() {
 						applyToobarPolicy();
 					}
 				});
@@ -1000,10 +978,10 @@ public class MainUI extends JFrame
 			synchronized(this) {
 				AndroidDebugBridge adb = AndroidDebugBridge.getBridge();
 				if (adb == null) {
-					Log.i("DeviceMonitor is not ready");
-					return;
+					Log.v("DeviceMonitor is not ready");
 				}
-				final boolean hasDevice = (adb.getDevices().length > 0);
+
+				final boolean hasDevice = adb != null ? (adb.getDevices().length > 0) : false;
 
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
@@ -1023,23 +1001,11 @@ public class MainUI extends JFrame
 					boolean hasUpper = false;
 					for(IDevice device: adb.getDevices()) {
 						PackageInfo pkg = null;
-						synchronized(devices) {
-							if(devices.containsKey(device)) {
-								pkg = devices.get(device);
-							} else {
-								if(device.isOnline()) {
-									pkg = PackageManager.getPackageInfo(device, packageName);
-								}
-								if(pkg != null) {
-									devices.put(device, pkg);
-								}
-								try {
-									device.getApiLevel(); // dummy
-								} catch (Exception e) { }
-							}
+						if(device.isOnline()) {
+							pkg = PackageManager.getPackageInfo(device, packageName);
 						}
 						if(pkg != null) {
-							hasInstalled = true;
+							hasInstalled = pkg.getApkPath() != null;
 							int packVerCode = pkg.getVersionCode();
 							if(versionCode < packVerCode) {
 								hasUpper = true;									
@@ -1065,30 +1031,27 @@ public class MainUI extends JFrame
 						}
 					}
 
-					sendFlag(toolbarFlag);
+					final int flag = toolbarFlag;
+					EventQueue.invokeLater(new Runnable() {
+						public void run() {
+							Log.v("sendFlag " + flag);
+							if(flag != ToolBar.FLAG_LAYOUT_UNSIGNED) {
+								toolBar.unsetFlag(ToolBar.FLAG_LAYOUT_UNSIGNED);
+							}
+							toolBar.setFlag(flag);
+						}
+					});
 				} else {
 					EventQueue.invokeLater(new Runnable() {
 						public void run() {
 							toolBar.clearFlag();
+							if(hasDevice) {
+								toolBar.setFlag(ToolBar.FLAG_LAYOUT_DEVICE_CONNECTED);
+							}
 						}
 					});
 				}
-
-
 			}
-		}
-
-		private void sendFlag(final int flag) {
-			EventQueue.invokeLater(new Runnable() {
-				public void run() {
-					Log.v("sendFlag " + flag);
-					if(flag != ToolBar.FLAG_LAYOUT_UNSIGNED) {
-						toolBar.unsetFlag(ToolBar.FLAG_LAYOUT_UNSIGNED);	
-					}
-					toolBar.setFlag(flag);
-				}
-			});
-			return;
 		}
 
 		@Override
@@ -1112,11 +1075,7 @@ public class MainUI extends JFrame
 		@Override
 		public void deviceDisconnected(IDevice device) {
 			Log.v("deviceDisconnected() " + device.getSerialNumber());
-			synchronized(devices) {
-				if(devices.containsKey(device)) {
-					devices.remove(device);
-				}
-			}
+			PackageManager.removeCash(device);
 			applyToobarPolicy();
 		}
 
@@ -1135,26 +1094,14 @@ public class MainUI extends JFrame
 		public void packageInstalled(PackageInfo packageInfo) {
 			if(packageName != null && packageInfo != null 
 					&& packageName.equals(packageInfo.packageName)) {
-				synchronized(devices) {
-					if(devices.containsKey(packageInfo.device)) {
-						devices.remove(packageInfo.device);
-					}
-					devices.put(packageInfo.device, packageInfo);
-				}
 				applyToobarPolicy();
 			}
-
 		}
 
 		@Override
 		public void packageUninstalled(PackageInfo packageInfo) {
 			if(packageName != null && packageInfo != null 
 					&& packageName.equals(packageInfo.packageName)) {
-				synchronized(devices) {
-					if(devices.containsKey(packageInfo.device)) {
-						devices.remove(packageInfo.device);
-					}
-				}
 				applyToobarPolicy();
 			}
 		}

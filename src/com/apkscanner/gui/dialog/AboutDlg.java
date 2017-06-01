@@ -1,116 +1,64 @@
 package com.apkscanner.gui.dialog;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
+import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.tool.aapt.AaptWrapper;
-import com.apkscanner.tool.adb.AdbWrapper;
 
 public class AboutDlg /*extends JDialog*/
 {
-	public AboutDlg()
+	static public void showAboutDialog(Component component)
 	{
-
-	}
-	
-	static public int showAboutDialog(Component component)
-	{
-		final ImageIcon Appicon = Resource.IMG_APP_ICON.getImageIcon(100,100);
-	    
 		StringBuilder body = new StringBuilder();
 		body.append("<div id=\"about\">");
 		body.append("  <H1>" + Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString() + "</H1>");
-		body.append("  Using following tools,<br/>");
-		body.append("  " + AdbWrapper.version(null) + "<br/>");
-		body.append("  " + AaptWrapper.getVersion() + "<br/>");
+		body.append("  <H3>Using following tools</H3>");
+		body.append("  Android Asset Packaging Tool, Android Debug Bridge, signapk<br/>");
 		body.append("  - <a href=\"https://developer.android.com/tools/help/index.html\" title=\"Android Developer Site\">https://developer.android.com/tools/help/index.html</a><br/>");
 		//body.append("  Apktool " + ApktoolManager.getApkToolVersion() + "<br/>");
 		//body.append("  - <a href=\"http://ibotpeaches.github.io/Apktool/\" title=\"Apktool Project Site\">http://ibotpeaches.github.io/Apktool/</a><br/>");
-		body.append("  JD-GUI <br/>");
+		body.append("  JD-GUI<br/>");
 		body.append("  - <a href=\"http://jd.benow.ca/\" title=\"JD Project Site\">http://jd.benow.ca/</a><br/>");
 		body.append("  dex2jar<br/>");
 		body.append("  - <a href=\"https://sourceforge.net/projects/dex2jar/\" title=\"JD Project Site\">https://sourceforge.net/projects/dex2jar/</a><br/>");
-		body.append("  RSyntaxTextArea with AutoComplete, RSTAUI<br/>");
-		body.append("  - <a href=\"http://bobbylight.github.io/RSyntaxTextArea/\" title=\"RSyntaxTextArea Site\">http://bobbylight.github.io/RSyntaxTextArea/</a><br/>");
-		body.append("  <br/><hr/>");
+		body.append("  <H3>Included libraries</H3>");
+		body.append("  - <a href=\"https://android.googlesource.com/platform/tools/base/+/master/ddmlib/\" title=\"Google Git Site\">ddmlib</a>,");
+		body.append("  <a href=\"https://github.com/google/guava\" title=\"guava Site\">guava-18.0</a>,");
+		body.append("  <a href=\"https://github.com/java-native-access/jna\" title=\"jna Site\">jna-4.4.0</a>,");
+		body.append("  <a href=\"https://github.com/BlackOverlord666/mslinks\" title=\"mslinks Site\">mslinks</a>,");
+		body.append("  <a href=\"http://bobbylight.github.io/RSyntaxTextArea/\" title=\"RSyntaxTextArea Site\">rsyntaxtextarea-2.5.7</a>,<br/>");
+		body.append("  <a href=\"https://commons.apache.org/proper/commons-cli/\" title=\"commons-cli Site\">commons-cli-1.3.1</a>,");
+		body.append("  <a href=\"https://code.google.com/archive/p/json-simple/\" title=\"json-simple Site\">json-simple-1.1.1</a>");
+		body.append("  <br/><br/><hr/>");
 		body.append("  Programmed by <a href=\"mailto:" + Resource.STR_APP_MAKER_EMAIL.getString() + "\" title=\"" + Resource.STR_APP_MAKER_EMAIL.getString() + "\">" + Resource.STR_APP_MAKER.getString() + "</a>, 2015.<br/>");
+		body.append("  It is open source project on <a href=\"https://github.sec.samsung.net/sunggyu-kam/apk-scanner\" title=\"APK Scanner Site\">SEC Github</a>");
 		body.append("</div>");
 
 		JLabel label = new JLabel();
-	    Font font = label.getFont();
+		Font font = label.getFont();
 
-	    // create some css from the label's font
-	    StringBuilder style = new StringBuilder("#about {");
-	    style.append("font-family:" + font.getFamily() + ";");
-	    style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-	    style.append("font-size:" + font.getSize() + "pt;}");
-	    style.append("#about a {text-decoration:none;}");
+		// create some css from the label's font
+		StringBuilder style = new StringBuilder("#about {");
+		style.append("width:350px;margin:0px;padding:0px;");
+		style.append("background-color:#"+Integer.toHexString(label.getBackground().getRGB() & 0xFFFFFF)+";");
+		style.append("font-family:" + font.getFamily() + ";");
+		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
+		style.append("font-size:" + font.getSize() + "pt;}");
+		style.append("#about a {text-decoration:none;}");
+		style.append("H1 {margin-top: 0px; margin-bottom: 0px;}");
+		style.append("H3 {margin-top: 5px; margin-bottom: 0px;}");
 
-	    // html content
-	    JHtmlEditorPane hep = new JHtmlEditorPane("", "", body.toString());
-	    hep.setStyle(style.toString());
+		// html content
+		JHtmlEditorPane hep = new JHtmlEditorPane("", style.toString(), body.toString());
+		hep.setEditable(false);
+		hep.setBackground(label.getBackground());
+		hep.setPreferredSize(new Dimension(400,300));
 
-	    hep.setEditable(false);
-	    hep.setBackground(label.getBackground());
-	    
-	    return JOptionPane.showOptionDialog(component, hep, Resource.STR_BTN_ABOUT.getString(), JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE, Appicon,
-	    		new String[] {Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
-	}
-	
-	static public JPanel GetPanel()
-	{
-		JPanel infoPanel = new JPanel();
-//		StringBuilder body = new StringBuilder();
-//		body.append("<br/>");
-//		
-//		body.append("<div id=\"about\">");
-//		body.append("  <H1>" + Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString() + "</H1>");
-//		body.append("  Using following tools,<br/>");
-//		body.append("  Apktool " + ApktoolManager.getApkToolVersion() + "<br/>");
-//		body.append("  - <a href=\"http://ibotpeaches.github.io/Apktool/\" title=\"Apktool Project Site\">http://ibotpeaches.github.io/Apktool/</a><br/>");
-//		body.append("  " + AdbWrapper.getVersion() + "<br/>");
-//		body.append("  " + AaptWrapper.getVersion() + "<br/>");
-//		body.append("  - <a href=\"https://developer.android.com/tools/help/index.html\" title=\"Android Developer Site\">https://developer.android.com/tools/help/index.html</a><br/>");
-//		body.append("  <br/><hr/>");
-//		body.append("  Programmed by <a href=\"mailto:" + Resource.STR_APP_MAKER_EMAIL.getString() + "\" title=\"" + Resource.STR_APP_MAKER_EMAIL.getString() + "\">" + Resource.STR_APP_MAKER.getString() + "</a>, 2015.<br/>");
-//		body.append("</div>");
-//		
-//		body.append("<br/><br/>");
-//		
-//
-//		JLabel label = new JLabel();
-//	    Font font = label.getFont();
-//
-//	    // create some css from the label's font
-//	    StringBuilder style = new StringBuilder("#about {");
-//	    style.append("font-family:" + font.getFamily() + ";");
-//	    style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-//	    style.append("font-size:" + font.getSize() + "pt;}");
-//	    style.append("#about a {text-decoration:none;}");
-//
-//	    // html content
-//	    JHtmlEditorPane hep = new JHtmlEditorPane("", "", body.toString());
-//	    hep.setStyle(style.toString());
-//
-//	    hep.setEditable(false);
-//	    hep.setBackground(label.getBackground());
-//	    hep.setBackgroundImg(Resource.IMG_APK_LOGO.getImageIcon(250,150).getImage());
-//	    //Spotlight SpotPanel = new Spotlight(Resource.IMG_APP_ICON.getImageIcon(250,250).getImage());
-//	    
-//	    
-//	    
-//	    //hep.add(SpotPanel);
-		JLabel imgLogo = new JLabel(Resource.IMG_APK_LOGO.getImageIcon(350,250));
-		
-		
-	    infoPanel.add(imgLogo);
-	    return infoPanel;
+		MessageBoxPane.showMessageDialog(component, hep, Resource.STR_BTN_ABOUT.getString(), MessageBoxPane.INFORMATION_MESSAGE, Resource.IMG_APP_ICON.getImageIcon(100,100));
 	}
 }

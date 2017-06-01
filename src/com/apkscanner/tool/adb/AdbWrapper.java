@@ -308,7 +308,7 @@ public class AdbWrapper
 		if(device == null || device.isEmpty()) {
 			param = new String[] {adbCmd, "pull", srcApkPath, destApkPath};
 		} else {
-			param = new String[] {adbCmd, "-s", device, "pull", srcApkPath, destApkPath};
+			param = new String[] {adbCmd, "-s", device, "pull", "-p", srcApkPath, destApkPath};
 		}
 		String[] result = ConsolCmd.exc(param, false, listener);
 		if(result == null || result.length == 0

@@ -23,7 +23,6 @@ import javax.swing.BorderFactory;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -32,6 +31,7 @@ import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.install.ContentPanel;
 import com.apkscanner.gui.install.ControlPanel;
 import com.apkscanner.gui.install.InstallProgressPanel;
+import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.resource.Resource;
 
 import com.apkscanner.tool.adb.AdbDeviceManager;
@@ -315,13 +315,7 @@ public class ApkInstallWizard
 	public void setApk(String apkFilePath) {
 		if(apkFilePath == null || !(new File(apkFilePath).isFile())) {
 			Log.e("No such apk file... : " + apkFilePath);
-		    JOptionPane.showOptionDialog(null,
-		    		Resource.STR_MSG_NO_SUCH_APK_FILE.getString(), 
-		    		Resource.STR_LABEL_ERROR.getString(),
-		    		JOptionPane.ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE, 
-		    		Resource.IMG_WARNING.getImageIcon(),
-		    		new String[] {Resource.STR_BTN_CLOSE.getString()},
-		    		Resource.STR_BTN_CLOSE.getString());
+			MessageBoxPool.show(wizard, MessageBoxPool.MSG_NO_SUCH_APK_FILE);
 			return;
 		}
 		pakcageFilePath = apkFilePath;

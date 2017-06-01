@@ -15,14 +15,11 @@ import com.apkscanner.util.ZipFileUtil;
 
 public class AaptScanner extends ApkScanner
 {
-	private AaptXmlTreePath manifestPath = null;
 	private AaptNativeScanner resourceScanner;
 
 	public AaptScanner(StatusListener statusListener)
 	{
 		super(statusListener);
-		//stateChanged(Status.UNINITIALIZE);
-		resourceScanner = null;
 	}
 
 	@Override
@@ -31,26 +28,18 @@ public class AaptScanner extends ApkScanner
 		Log.i("openApk() " + apkFilePath + ", res " + frameworkRes);
 		if(apkFilePath == null) {
 			Log.e("APK file path is null");
-			if(statusListener != null) {
-				statusListener.onError(ERR_UNAVAIlABLE_PARAM);
-				statusListener.onCompleted();
-			}
+			errorOccurred(ERR_UNAVAIlABLE_PARAM);
 			return;
 		}
 
 		File apkFile = new File(apkFilePath);
 		if(!apkFile.exists()) {
 			Log.e("No Such APK file");
-			if(statusListener != null) {
-				statusListener.onError(ERR_NO_SUCH_FILE);
-				statusListener.onCompleted();
-			}
+			errorOccurred(ERR_NO_SUCH_FILE);
 			return;
 		}
 
-		if(statusListener != null) {
-			statusListener.onStart(0);
-		}
+		scanningStarted();
 
 		Log.i("I: new resourceScanner...");
 		if(resourceScanner != null) {
@@ -63,10 +52,7 @@ public class AaptScanner extends ApkScanner
 		if(!resourceScanner.hasAssetManager()){
 			resourceScanner = null;
 			Log.e("Failure : Can't open the AssetManager");
-			if(statusListener != null) {
-				statusListener.onError(ERR_CAN_NOT_ACCESS_ASSET);
-				statusListener.onCompleted();
-			}
+			errorOccurred(ERR_CAN_NOT_ACCESS_ASSET);
 			return;
 		}
 
@@ -74,23 +60,17 @@ public class AaptScanner extends ApkScanner
 		String[] androidManifest = AaptNativeWrapper.Dump.getXmltree(apkFile.getAbsolutePath(), new String[] { "AndroidManifest.xml" });
 		if(androidManifest == null || androidManifest.length == 0) {
 			Log.e("Failure : Can't read the AndroidManifest.xml");
-			if(statusListener != null) {
-				statusListener.onError(ERR_CAN_NOT_READ_MANIFEST);
-				statusListener.onCompleted();
-			}
+			errorOccurred(ERR_CAN_NOT_READ_MANIFEST);
 			return;
 		}
 
 		Log.i("I: createAaptXmlTree...");
-		manifestPath = new AaptXmlTreePath();
+		AaptXmlTreePath manifestPath = new AaptXmlTreePath();
 		manifestPath.createAaptXmlTree(androidManifest);
 
 		if(manifestPath.getNode("/manifest") == null || manifestPath.getNode("/manifest/application") == null) {
 			Log.e("Failure : Wrong format. Don't have '<manifest>' or '<application>' tag");
-			if(statusListener != null) {
-				statusListener.onError(ERR_WRONG_MANIFEST);
-				statusListener.onCompleted();
-			}
+			errorOccurred(ERR_WRONG_MANIFEST);
 			return;
 		}
 

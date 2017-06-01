@@ -17,7 +17,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
@@ -36,7 +35,7 @@ import com.apkscanner.data.apkinfo.UsesLibraryInfo;
 import com.apkscanner.data.apkinfo.UsesPermissionInfo;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.gui.dialog.SdkVersionInfoDlg;
-import com.apkscanner.gui.messagebox.JTextOptionPane;
+import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
@@ -177,6 +176,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
 		style.append("font-size:" + font.getSize() + "pt;}");
 		style.append("#div-button a {text-decoration:none; color:black;}");
+		style.append("H1 {margin-top: 0px; margin-bottom: 0px;}");
+		style.append("H3 {margin-top: 5px; margin-bottom: 0px;}");
 
 		apkinform.setStyle(style.toString());
 	}
@@ -202,8 +203,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("    <td>");
 		strTabInfo.append("<div id=\"about\">");
 		strTabInfo.append("  <H1>" + Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString() + "</H1>");
-		strTabInfo.append("  Using following tools,<br/>");
-		strTabInfo.append("  Android Asset Packaging Tool, Android Debug Bridge<br/>");
+		strTabInfo.append("  <H3>Using following tools</H3>");
+		strTabInfo.append("  Android Asset Packaging Tool, Android Debug Bridge, signapk<br/>");
 		//strTabInfo.append("  " + AdbWrapper.getVersion() + "<br/>");
 		strTabInfo.append("  - <a href=\"http://developer.android.com/tools/help/adb.html\" title=\"Android Developer Site\">http://developer.android.com/tools/help/adb.html</a><br/>");
 		//strTabInfo.append("  Apktool<br/>");
@@ -213,11 +214,17 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("  - <a href=\"http://jd.benow.ca/\" title=\"JD Project Site\">http://jd.benow.ca/</a><br/>");
 		strTabInfo.append("  dex2jar<br/>");
 		strTabInfo.append("  - <a href=\"https://sourceforge.net/projects/dex2jar/\" title=\"JD Project Site\">https://sourceforge.net/projects/dex2jar/</a><br/>");
-		strTabInfo.append("  RSyntaxTextArea with AutoComplete, RSTAUI<br/>");
-		strTabInfo.append("  - <a href=\"http://bobbylight.github.io/RSyntaxTextArea/\" title=\"RSyntaxTextArea Site\">http://bobbylight.github.io/RSyntaxTextArea/</a><br/>");
-		strTabInfo.append("  <br/><hr/>");
+		strTabInfo.append("  <H3>Included libraries</H3>");
+		strTabInfo.append("  - <a href=\"https://android.googlesource.com/platform/tools/base/+/master/ddmlib/\" title=\"Google Git Site\">ddmlib</a>,");
+		strTabInfo.append("  <a href=\"https://github.com/google/guava\" title=\"guava Site\">guava-18.0</a>,");
+		strTabInfo.append("  <a href=\"https://github.com/java-native-access/jna\" title=\"jna Site\">jna-4.4.0</a>,");
+		strTabInfo.append("  <a href=\"https://github.com/BlackOverlord666/mslinks\" title=\"mslinks Site\">mslinks</a>,");
+		strTabInfo.append("  <a href=\"http://bobbylight.github.io/RSyntaxTextArea/\" title=\"RSyntaxTextArea Site\">rsyntaxtextarea-2.5.7</a>,<br/>");
+		strTabInfo.append("  <a href=\"https://commons.apache.org/proper/commons-cli/\" title=\"commons-cli Site\">commons-cli-1.3.1</>,");
+		strTabInfo.append("  <a href=\"https://code.google.com/archive/p/json-simple/\" title=\"json-simple Site\">json-simple-1.1.1</a>");
+		strTabInfo.append("  <br/><br/><hr/>");
 		strTabInfo.append("  Programmed by <a href=\"mailto:" + Resource.STR_APP_MAKER_EMAIL.getString() + "\" title=\"" + Resource.STR_APP_MAKER_EMAIL.getString() + "\">" + Resource.STR_APP_MAKER.getString() + "</a>, 2015.<br/>");
-		strTabInfo.append("  It's open source project on <a href=\"https://github.mosaic.sec.samsung.net/sunggyu-kam/apk-scanner\" title=\"APK Scanner Site\">MOSAIC Github</a>");
+		strTabInfo.append("  It is open source project on <a href=\"https://github.sec.samsung.net/sunggyu-kam/apk-scanner\" title=\"APK Scanner Site\">SEC Github</a>");
 		strTabInfo.append("</div>");
 		strTabInfo.append("    </td>");
 		strTabInfo.append("  </tr>");
@@ -437,7 +444,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("          [" + packageName +"]");
 		strTabInfo.append("</font><br/>");
 		strTabInfo.append("        <font style=\"font-size:15px; color:#ED7E31\">");
-		strTabInfo.append("          " + makeHyperLink("@event", "Ver. " + versionName +" / " + versionCode, "VersionName : " + versionName + "\n" + "VersionCode : " + versionCode, "app-version", null));
+		strTabInfo.append("          " + makeHyperLink("@event", "Ver. " + versionName +" / " + (!versionCode.isEmpty() ? versionCode : "0"), "VersionName : " + versionName + "\n" + "VersionCode : " + (!versionCode.isEmpty() ? versionCode : "Unspecified"), "app-version", null));
 		strTabInfo.append("        </font><br/>");
 		strTabInfo.append("        <br/>");
 		strTabInfo.append("        <font style=\"font-size:12px\">");
@@ -473,7 +480,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 
 	}
 
-	public synchronized void setProgress(int percent)
+	public synchronized void setProgress(String message)
 	{
 		//Log.i("setProgress() percent " + percent);
 
@@ -485,8 +492,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			cardLayout.show(this, "lodingPanel");
 		}
 
-		if(percent > -1)
-			TimerLabel.setText("Extracting APK file [" + percent + "%]");
+		if(message != null && !message.isEmpty())
+			TimerLabel.setText(message);
 		else 
 			TimerLabel.setText("Standby for extracting.");
 		return;
@@ -725,7 +732,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 				e.printStackTrace();
 			}
 		} else if("app-version".equals(id)) {
-			String ver = "versionName : " + versionName + "\n" + "versionCode : " + versionCode;
+			String ver = "versionName : " + versionName + "\n" + "versionCode : " + (!versionCode.isEmpty() ? versionCode : "Unspecified");
 			showDialog(ver, "App version info", new Dimension(300, 50), null);
 		} else if("display-list".equals(id)) {
 			showPermList();
@@ -754,7 +761,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 
 	private void showDialog(String content, String title, Dimension size, Icon icon)
 	{
-		JTextOptionPane.showTextDialog(null, content, title, JOptionPane.INFORMATION_MESSAGE, icon, size);
+		MessageBoxPane.showTextAreaDialog(null, content, title, MessageBoxPane.INFORMATION_MESSAGE, icon, size);
 	}
 
 	public void showPermList()

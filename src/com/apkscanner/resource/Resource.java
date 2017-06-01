@@ -29,17 +29,18 @@ import com.apkscanner.util.ZipFileUtil;
 public enum Resource
 {
 	STR_APP_NAME				(Type.TEXT, "@app_name"),
-	STR_APP_VERSION				(Type.TEXT, "2.3 Beta 20160803"),
+	STR_APP_VERSION				(Type.TEXT, "2.3 Beta 20170525"),
 	STR_APP_BUILD_MODE			(Type.TEXT, "eng"),
 	STR_APP_MAKER				(Type.TEXT, "jin_h.lee / sunggyu.kam"),
 	STR_APP_MAKER_EMAIL			(Type.TEXT, "jin_h.lee@samsung.com;sunggyu.kam@samsung.com"),
 
-	STR_SAMSUNG_KEY_SERIAL		(Type.TEXT, "d20995a79c0daad6"),
-	STR_SS_TEST_KEY_SERIAL		(Type.TEXT, "b3998086d056cffa"),
+	STR_SAMSUNG_KEY_MD5			(Type.TEXT, "D0:87:E7:29:12:FB:A0:64:CA:FA:78:DC:34:AE:A8:39"),
+	STR_SS_TEST_KEY_MD5			(Type.TEXT, "8D:DB:34:2F:2D:A5:40:84:02:D7:56:8A:F2:1E:29:F9"),
 
 	STR_SDK_INFO_FILE_PATH		(Type.TEXT, "/values/sdk-info.xml"),
 
 	STR_TITLE_INSTALL_WIZARD	(Type.TEXT, "@title_install_wizard"),
+	STR_TITLE_APK_SIGNER		(Type.TEXT, "@title_apk_signer"),
 
 	STR_BTN_OPEN				(Type.TEXT, "@btn_open"),
 	STR_BTN_OPEN_PACKAGE		(Type.TEXT, "@btn_open_pacakge"),
@@ -73,6 +74,7 @@ public enum Resource
 	STR_BTN_UNASSOC_FTYPE		(Type.TEXT, "@btn_unassoc_ftype"),
 	STR_BTN_CREATE_SHORTCUT		(Type.TEXT, "@btn_create_shortcut"),
 	STR_BTN_SELF_SEARCH			(Type.TEXT, "@btn_self_search"),
+	STR_BTN_DETAILS_INFO		(Type.TEXT, "@btn_details_info"),
 
 	STR_BTN_OPEN_LAB			(Type.TEXT, "@btn_open_lab"),
 	STR_BTN_OPEN_PACKAGE_LAB	(Type.TEXT, "@btn_open_pacakge_lab"),
@@ -301,6 +303,8 @@ public enum Resource
 	STR_QUESTION_SAVE_OVERWRITE	(Type.TEXT, "@question_save_overwrite"),
 	STR_QUESTION_PACK_INFO_CLOSE(Type.TEXT, "@question_pack_info_close"),
 	STR_QUESTION_PACK_INFO_REFRESH(Type.TEXT, "@question_pack_info_refresh"),
+	STR_QUESTION_REMOVE_SYSTEM_APK(Type.TEXT, "@question_remove_system_apk"),
+	STR_QUESTION_REMOVED_REBOOT (Type.TEXT, "@question_removed_reboot"),
 
 	IMG_TOOLBAR_OPEN			(Type.IMAGE, "toolbar_open.png"),
 	IMG_TOOLBAR_MANIFEST		(Type.IMAGE, "toolbar_manifast.png"),
@@ -382,7 +386,9 @@ public enum Resource
 
 	BIN_DEX2JAR_LNX				(Type.BIN, "d2j-dex2jar.sh", "nux"),
 	BIN_DEX2JAR_WIN				(Type.BIN, "d2j-dex2jar.bat", "win"),
-	BIN_DEX2JAR					(Type.BIN, new Resource[]{ BIN_DEX2JAR_WIN, BIN_DEX2JAR_LNX }),	
+	BIN_DEX2JAR					(Type.BIN, new Resource[]{ BIN_DEX2JAR_WIN, BIN_DEX2JAR_LNX }),
+
+	BIN_SIGNAPK					(Type.BIN, "signapk.jar"),
 
 	PROP_LANGUAGE				(Type.PROP, "language", SystemUtil.getUserLanguage()),
 	PROP_EDITOR					(Type.PROP, "editor", null /* see getDefValue() */),
@@ -407,6 +413,8 @@ public enum Resource
 	PROP_BASE_FONT_SIZE			(Type.PROP, "base_font_size", 12),
 	PROP_BASE_FONT_STYLE		(Type.PROP, "base_font_style", Font.PLAIN),
 	PROP_PREFERRED_LANGUAGE		(Type.PROP, "preferred_language", null /* see getDefValue() */),
+	PROP_PEM_FILE_PATH			(Type.PROP, "last_pem_file_path", ""),
+	PROP_PK8_FILE_PATH			(Type.PROP, "last_pk8_file_path", ""),
 
 	LIB_JSON_JAR				(Type.LIB, "json-simple-1.1.1.jar"),
 	LIB_CLI_JAR					(Type.LIB, "commons-cli-1.3.1.jar"),

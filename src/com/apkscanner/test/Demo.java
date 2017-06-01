@@ -37,7 +37,6 @@ public class Demo {
         frame.pack();
         frame.setLocationByPlatform(true);
         frame.setVisible(true);
-
     }
 
     private JPanel createEmptyPanel() {

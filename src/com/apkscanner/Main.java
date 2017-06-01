@@ -113,7 +113,6 @@ public class Main implements Runnable
 
 	private static void createAndShowGUI() {
 		MainUI mainFrame = new MainUI(apkScanner);
-		mainFrame.initialize();
 		mainFrame.setVisible(true);
 	}
 

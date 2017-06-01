@@ -4,8 +4,9 @@ import java.awt.Component;
 import java.io.File;
 
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 
+import com.apkscanner.gui.messagebox.MessageBoxPane;
+import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
@@ -63,11 +64,11 @@ public class ApkFileChooser
 		if(selFile.exists()) {
 			if(!selFile.canWrite()) {
 				Log.e("Can't wirte file : " + selFile.getPath());
-				JOptionPane.showMessageDialog(jfc, Resource.STR_MSG_CANNOT_WRITE_FILE.getString(), Resource.STR_LABEL_ERROR.getString(), JOptionPane.ERROR_MESSAGE);
+				MessageBoxPool.show(jfc, MessageBoxPool.MSG_CANNOT_WRITE_FILE);
 				return null;
 			}
-			int ret = JOptionPane.showConfirmDialog(jfc, Resource.STR_QUESTION_SAVE_OVERWRITE.getString(), Resource.STR_LABEL_QUESTION.getString(), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-			if(ret != JOptionPane.YES_OPTION) {
+			int ret = MessageBoxPool.show(jfc, MessageBoxPool.QUESTION_SAVE_OVERWRITE);
+			if(ret != MessageBoxPane.YES_OPTION) {
 				return null;
 			}
 		}

@@ -13,6 +13,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Timestamp;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -272,6 +273,80 @@ public class SignatureReport {
 	public String getTimeStampReport(int idx) {
 		if(idx < 0 || idx >= timestamp.length) return null;
 		return getReport(timestamp[idx]);
+	}
+
+	public String toByteString(Certificate cert) {
+		byte[] sig = null;
+		try {
+			sig = cert.getEncoded();
+		} catch (CertificateEncodingException e) {
+			e.printStackTrace();
+		}
+		if(sig == null) return null;
+
+		final int N = sig.length;
+		final int N2 = N*2;
+		char[] text = new char[N2];
+		for (int j=0; j<N; j++) {
+			byte v = sig[j];
+			int d = (v>>4)&0xf;
+			text[j*2] = (char)(d >= 10 ? ('a' + d - 10) : ('0' + d));
+			d = v&0xf;
+			text[j*2+1] = (char)(d >= 10 ? ('a' + d - 10) : ('0' + d));
+		}
+		return new String(text);
+	}
+
+	public boolean contains(String algorithm, String data) {
+		if((certificates == null && timestamp == null) || data == null || data.isEmpty()) {
+			return false;
+		}
+
+		if(algorithm != null && !algorithm.isEmpty() 
+				&& !algorithm.equalsIgnoreCase("RAWDATA")) {
+			for(X509Certificate cert: certificates) {
+				String fingerPrint = null;
+				try {
+					fingerPrint = getCertFingerPrint(algorithm, cert);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				if(fingerPrint != null && fingerPrint.equals(data)) {
+					return true;
+				}
+			}
+
+			if(timestamp != null) {
+				for(X509Certificate cert: timestamp) {
+					String fingerPrint = null;
+					try {
+						fingerPrint = getCertFingerPrint(algorithm, cert);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					if(fingerPrint != null && fingerPrint.equals(data)) {
+						return true;
+					}
+				}
+			}
+		} else {
+			for(X509Certificate cert: certificates) {
+				String byteStr = toByteString(cert);
+				if(byteStr != null && byteStr.equals(data)) {
+					return true;
+				}
+			}
+
+			if(timestamp != null) {
+				for(X509Certificate cert: timestamp) {
+					String byteStr = toByteString(cert);
+					if(byteStr != null && byteStr.equals(data)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override

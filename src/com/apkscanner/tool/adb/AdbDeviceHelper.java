@@ -410,7 +410,7 @@ public class AdbDeviceHelper {
 		boolean hasSu = false;
 		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
 		try {
-			device.executeShellCommand("which su", outputReceiver);
+			device.executeShellCommand("ls /system/xbin/su;which su", outputReceiver);
 		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
 				| IOException e) {
 			e.printStackTrace();

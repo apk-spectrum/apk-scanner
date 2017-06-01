@@ -3,6 +3,7 @@
 	<string name="app_version">Ver. </string>
 
 	<string name="title_install_wizard">APK Install Wizard</string>
+	<string name="title_apk_signer">APK Signer</string>
 
 	<string name="btn_open">Open</string>
 	<string name="btn_open_pacakge">Package</string>
@@ -40,7 +41,7 @@
 	<string name="btn_open_lab">Open APK file (Ctrl+O)</string>
 	<string name="btn_open_pacakge_lab">Open package(Ctrl+P)</string>
 	<string name="btn_manifest_lab">Show AndroidManifest.xml (Ctrl+M)</string>
-	<string name="btn_explorer_lab">Open Explorer from Temp folder (Ctrl+E)</string>
+	<string name="btn_explorer_lab">Open APK file into Explorer. (Ctrl+E)</string>
 	<string name="btn_unpack_lab">Decompile</string>
 	<string name="btn_pack_lab">Recompile</string>
 	<string name="btn_install_lab">Install APK to the connected device (Ctrl+I)</string>
@@ -58,6 +59,7 @@
 	<string name="btn_unassoc_ftype_lab">Unassociate .apk file</string>
 	<string name="btn_create_shortcut_lab">Create Shortcut on Desktop</string>
 	<string name="btn_self_search_lab">Search...</string>
+	<string name="btn_details_info">Detail information</string>
 
 	<string name="menu_new">New Window...</string>
 	<string name="menu_new_window">New window(N)</string>
@@ -125,7 +127,7 @@ Once installed, the user can move the application to either internal or external
 	<string name="feature_shared_user_id_lab">SHARED_UID</string>
 	<string name="feature_shared_user_id_desc">This application uses the sharedUserId</string>
 	<string name="feature_platform_sign_lab">PLATFORM SIGN</string>
-	<string name="feature_platform_sign_desc">This application to be sign by platform signature(samsung test-key).</string>
+	<string name="feature_platform_sign_desc">This application to be sign by platform signature(google test-key).</string>
 	<string name="feature_samsung_sign_lab">SAMSUNG SIGN</string>
 	<string name="feature_samsung_sign_desc">This application to be sign by samsung signature.</string>
 	<string name="feature_revoke_permissions_lab">SYSTEM PERMISSIONS</string>
@@ -152,7 +154,7 @@ they're removed before the application is published</string>
 	<string name="widget_column_image">Image</string>
 	<string name="widget_column_label">Label</string>
 	<string name="widget_column_size">Size</string>
-	<string name="widget_column_activity">Activity</string>
+	<string name="widget_column_activity">Class</string>
 	<string name="widget_column_type">Type</string>
 	<string name="widget_resize_mode">ReSizeMode</string>
 	<string name="widget_horizontal">horizontal</string>
@@ -273,6 +275,8 @@ Please check the confirmation dialog on your device.</string>
 Close this windows?</string>
 	<string name="question_pack_info_refresh">Success uninstall package.
 Refresh this package information?</string>
+	<string name="question_remove_system_apk">It's system app, continues remove?</string>
+	<string name="question_removed_reboot">remove successful, need reboot, now?</string>
 
 	<string name="tree_message_device">Device</string>
 	<string name="tree_message_version">App Version</string>

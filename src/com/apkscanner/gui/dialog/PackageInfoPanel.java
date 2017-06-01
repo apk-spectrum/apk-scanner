@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -15,8 +16,8 @@ import java.io.IOException;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -39,9 +40,8 @@ import com.apkscanner.core.signer.Signature;
 import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ComponentInfo;
-import com.apkscanner.gui.messagebox.ArrowTraversalPane;
-import com.apkscanner.gui.messagebox.ComboMessageBox;
-import com.apkscanner.gui.messagebox.JTextOptionPane;
+import com.apkscanner.gui.messagebox.MessageBoxPane;
+import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.JHtmlEditorPane;
@@ -52,17 +52,20 @@ import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
 import com.apkscanner.tool.adb.SimpleOutputReceiver;
 import com.apkscanner.util.FileUtil;
+import com.apkscanner.util.FileUtil.FSStyle;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
-import com.apkscanner.util.FileUtil.FSStyle;
 
 public class PackageInfoPanel extends JPanel implements ActionListener, HyperlinkClickListener, ChangeListener{
+	private static final long serialVersionUID = -2600940167326680123L;
 
 	private static final String ACT_CMD_OPEN_PACKAGE = "ACT_CMD_OPEN_PACKAGE";
 	private static final String ACT_CMD_SAVE_PACKAGE = "ACT_CMD_SAVE_PACKAGE";
 	private static final String ACT_CMD_LAUCH_PACKAGE = "ACT_CMD_LAUCH_PACKAGE";
 	private static final String ACT_CMD_UNINSTALL_PACKAGE = "ACT_CMD_UNINSTALL_PACKAGE";
-	
+
+	private JDialog dialog;
+
 	private JToolBar toolBar;
 	private JTabbedPane tabbedPane;
 	private JHtmlEditorPane infoPanel;
@@ -70,12 +73,12 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 	private JTextArea dumpsysTextArea;
 	private JTextArea signatureTextArea;
 	private JTextField txtApkPath;
-	
+
 	private PackageInfo packageInfo;
 	private boolean hasSysPack;
 	private String apkPath;
 	private String hiddenApkPath;
-	
+
 	public PackageInfoPanel() {
 		setLayout(new BorderLayout());
 		toolBar = new JToolBar();
@@ -151,6 +154,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 
 		add(txtApkPath, BorderLayout.SOUTH);
 	}
+
 	private JButton getToolbarButton(String text, Icon icon, String tooltip, String actCommand) {
 		JButton button = new JButton(icon);
 		button.setToolTipText(tooltip);
@@ -164,8 +168,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		//button.setPreferredSize(new Dimension(43,45));
 		return button;
 	}
-	
-	
+
 	private void alignTabbedPanel(boolean hasSysPackPanel) {
 		tabbedPane.removeAll();
 		tabbedPane.addTab(Resource.STR_TAB_PACAKGE_INFO.getString(), null, infoPanel, null);
@@ -181,8 +184,6 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 
 		hasSysPack = info.getHiddenSystemPackageValue("pkg") != null;
 		alignTabbedPanel(hasSysPack);
-
-		info.getLauncherActivityList(true);
 
 		txtApkPath.setText(info.getApkPath());
 
@@ -388,7 +389,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 
 	private void showDialog(String content, String title, Dimension size, Icon icon)
 	{
-		JTextOptionPane.showTextDialog(null, content, title, JOptionPane.INFORMATION_MESSAGE, icon, size);
+		MessageBoxPane.showTextAreaDialog(null, content, title, MessageBoxPane.INFORMATION_MESSAGE, icon, size);
 	}
 
 	public void showFeatureInfo(String id)
@@ -504,20 +505,12 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 				StringBuilder sb = new StringBuilder();
 				@Override
 				public void OnError(int cmdType, String device) {
-					JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_PULLED.getString() + "\n\nConsol output", sb.toString(),  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
-							null, new Dimension(400, 100));
+					MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.MSG_FAILURE_PULLED, sb.toString());
 				}
 
 				@Override
 				public void OnSuccess(int cmdType, String device) {
-					int n = ArrowTraversalPane.showOptionDialog(null,
-							Resource.STR_MSG_SUCCESS_PULL_APK.getString() + "\n" + destFile.getAbsolutePath(),
-							Resource.STR_LABEL_QUESTION.getString(),
-							JOptionPane.YES_NO_CANCEL_OPTION,
-							JOptionPane.INFORMATION_MESSAGE,
-							null,
-							new String[] {Resource.STR_BTN_EXPLORER.getString(), Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OK.getString()},
-							Resource.STR_BTN_OK.getString());
+					int n = MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.QUESTION_SUCCESS_PULL_APK, destFile.getAbsolutePath());
 					switch(n) {
 					case 0: // explorer
 						SystemUtil.openFileExplorer(destFile);
@@ -539,14 +532,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 			final IDevice device = packageInfo.device;
 
 			if(!packageInfo.isEnabled()) {
-				ArrowTraversalPane.showOptionDialog(null,
-						device.getName() + "\n : " + Resource.STR_MSG_DISABLED_PACKAGE.getString(),
-						Resource.STR_LABEL_WARNING.getString(),
-						JOptionPane.OK_OPTION, 
-						JOptionPane.INFORMATION_MESSAGE,
-						null,
-						new String[] {Resource.STR_BTN_OK.getString()},
-						Resource.STR_BTN_OK.getString());
+				MessageBoxPool.show(this, MessageBoxPool.MSG_DISABLED_PACKAGE, device.getProperty(IDevice.PROP_DEVICE_MODEL));
 				return;
 			}
 
@@ -576,10 +562,10 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 							for(int i = 0; i < activities.length; i++) {
 								boolean isLauncher = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0);
 								boolean isMain = ((activities[i].featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0);
-								items[i] = (isLauncher ? "[LAUNCHER]": (isMain ? "[MAIN]": "")) + " " + activities[i].name.replaceAll(packageInfo.packageName, "");
+								items[i] = (isLauncher ? "[LAUNCHER]": (isMain ? "[MAIN]": "")) + " " + activities[i].name.replaceAll("^"+packageInfo.packageName, "");
 							}
-							String selected = ComboMessageBox.show(PackageInfoPanel.this, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL), items,  Resource.STR_BTN_LAUNCH.getString(), JTextOptionPane.QUESTION_MESSAGE,
-									null, new Dimension(400, 0));
+							String selected = (String)MessageBoxPane.showInputDialog(PackageInfoPanel.this, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL),
+									Resource.STR_BTN_LAUNCH.getString(), MessageBoxPane.QUESTION_MESSAGE, null, items, items[0]);
 							if(selected == null) {
 								return;
 							}
@@ -591,14 +577,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 						Log.w("No such activity of launcher or main");
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
-								ArrowTraversalPane.showOptionDialog(null,
-										Resource.STR_MSG_NO_SUCH_LAUNCHER.getString(),
-										Resource.STR_LABEL_WARNING.getString(),
-										JOptionPane.OK_OPTION, 
-										JOptionPane.INFORMATION_MESSAGE,
-										null,
-										new String[] {Resource.STR_BTN_OK.getString()},
-										Resource.STR_BTN_OK.getString());
+								MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.MSG_NO_SUCH_LAUNCHER);
 							}
 						});
 						return;
@@ -621,8 +600,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
-								JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_LAUNCH_APP.getString() + "\n\nConsol output", errMsg,  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
-										null, new Dimension(500, 120));
+								MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.MSG_FAILURE_LAUNCH_APP, errMsg);
 							}
 						});
 					} else if((boolean)Resource.PROP_TRY_UNLOCK_AF_LAUNCH.getData()) {
@@ -639,12 +617,20 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 			if(!packageInfo.isSystemApp()) {
 				errMessage = PackageManager.uninstallPackage(packageInfo);
 			} else {
+				int n = MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.QUESTION_REMOVE_SYSTEM_APK);
+				if(n == MessageBoxPane.NO_OPTION) {
+					return;
+				}
+
 				errMessage = PackageManager.removePackage(packageInfo);
 				if(errMessage == null || errMessage.isEmpty()) {
-					try {
-						device.reboot(null);
-					} catch (TimeoutException | AdbCommandRejectedException | IOException e) {
-						e.printStackTrace();
+					n = MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.QUESTION_REBOOT_SYSTEM);
+					if(n == MessageBoxPane.YES_OPTION) {
+						try {
+							device.reboot(null);
+						} catch (TimeoutException | AdbCommandRejectedException | IOException e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}
@@ -653,24 +639,19 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 				final String errMsg = errMessage;
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
-						JTextOptionPane.showTextDialog(null, Resource.STR_MSG_FAILURE_UNINSTALLED.getString() + "\nConsol output:", errMsg,  Resource.STR_LABEL_ERROR.getString(), JTextOptionPane.ERROR_MESSAGE,
-								null, new Dimension(300, 50));
+						MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.MSG_FAILURE_UNINSTALLED, errMsg);
 					}
 				});
 			} else {
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
 						if(hasSysPack) {
-							int n = ArrowTraversalPane.showOptionDialog(null,
-									Resource.STR_QUESTION_PACK_INFO_REFRESH.getString(),
-									Resource.STR_LABEL_QUESTION.getString(),
-									JOptionPane.YES_NO_OPTION, 
-									JOptionPane.QUESTION_MESSAGE,
-									null,
-									new String[] {Resource.STR_BTN_CLOSE.getString(), Resource.STR_BTN_NO.getString(), Resource.STR_BTN_YES.getString()},
-									Resource.STR_BTN_YES.getString());
+							int n = 2;
+							if(dialog != null) {
+								n = MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.QUESTION_PACK_INFO_REFRESH);
+							}
 							if(n == 0) {
-								//dispose();
+								dialog.dispose();
 							} else if(n == 2) {
 								setPackageInfo(packageInfo);
 							} else {
@@ -683,16 +664,12 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 								txtApkPath.setText(apkPath);
 							}
 						} else {
-							int n = ArrowTraversalPane.showOptionDialog(null,
-									Resource.STR_QUESTION_PACK_INFO_CLOSE.getString(),
-									Resource.STR_LABEL_QUESTION.getString(),
-									JOptionPane.YES_NO_OPTION, 
-									JOptionPane.QUESTION_MESSAGE,
-									null,
-									new String[] {Resource.STR_BTN_NO.getString(), Resource.STR_BTN_YES.getString()},
-									Resource.STR_BTN_YES.getString());
+							int n = 0;
+							if(dialog != null) {
+								n = MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.QUESTION_PACK_INFO_CLOSE);
+							}
 							if(n == 1) {
-								//dispose();
+								dialog.dispose();
 							} else {
 								for(Component c: toolBar.getComponents()) {
 									if(c instanceof JButton) {
@@ -735,4 +712,20 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		}
 	}
 
+	public void showDialog(Window owner) {
+		dialog = new JDialog(owner);
+
+		dialog.setTitle("Package Info");
+		dialog.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		dialog.setResizable(true);
+		dialog.setModal(false);
+		dialog.setLayout(new BorderLayout());
+		dialog.setSize(new Dimension(500, 400));
+		dialog.setLocationRelativeTo(owner);
+
+		dialog.add(this, BorderLayout.CENTER);
+
+		dialog.setVisible(true);
+	}
 }
