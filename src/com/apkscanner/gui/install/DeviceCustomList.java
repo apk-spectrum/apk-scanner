@@ -161,6 +161,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 		data.installoptionpanel = new InstallOptionPanel();
 		data.showstate = DeviceListData.SHOW_INSTALL_DETAL;
 		
+		data.pacakgeLoadingstatus =DeviceListData.WAITING; 
 		data.AppDetailpanel = new JLabel(Resource.IMG_LOADING.getImageIcon());
 		
 		new Thread(new Runnable() {
@@ -170,6 +171,15 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 				data.AppDetailpanel = getPackageInfopanel(device);
 				//data.AppDetailpanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
 				
+				if(data.AppDetailpanel instanceof PackageInfoPanel) {
+					data.isinstalled = DeviceListData.INSTALLED;
+				} else {
+					data.isinstalled = DeviceListData.NOT_INSTALLED;
+				}
+				
+				data.pacakgeLoadingstatus =DeviceListData.DONE;
+				
+		        Log.d(""+ data.isinstalled);
 				fireSelectionValueChanged(0, 0, true);
 			}			
 		}).start();
@@ -188,14 +198,14 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
     	
         String packageName = ApkScanner.getPackageName(ApkInstallWizard.pakcageFilePath);
         PackageInfo info = PackageManager.getPackageInfo(dev, packageName);
-                
+            
         if(info != null) {
         	PackageInfoPanel packageInfoPanel = new PackageInfoPanel();
         	packageInfoPanel.setPackageInfo(info);
-			//packageInfoDlg.setVisible(true);
+        	//packageInfoDlg.setVisible(true);
 			return packageInfoPanel;
         }
-        
+                
 		return new JLabel("not installed");
         //return null;
 	}
@@ -259,7 +269,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	            JButton button = getButton(list, pt, index);
 	            ButtonsRenderer renderer = (ButtonsRenderer) list.getCellRenderer();
 	            renderer.button = button;
-	            if (Objects.nonNull(button)) {
+	            if (Objects.nonNull(button) && button.isEnabled()) {
 	                button.getModel().setRollover(true);
 	                renderer.rolloverIndex = index;
 	                if (!button.equals(prevButton)) {
@@ -288,7 +298,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	        int index = list.locationToIndex(pt);
 	        if (index >= 0) {
 	            JButton button = getButton(list, pt, index);
-	            if (Objects.nonNull(button)) {
+	            if (Objects.nonNull(button) && button.isEnabled()) {
 	            	ButtonsRenderer renderer = (ButtonsRenderer) list.getCellRenderer();
 	                renderer.pressedIndex = index;
 	                renderer.button = button;
@@ -302,7 +312,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	        int index = list.locationToIndex(pt);
 	        if (index >= 0) {
 	            JButton button = getButton(list, pt, index);
-	            if (Objects.nonNull(button)) {
+	            if (Objects.nonNull(button) && button.isEnabled()) {
 	            	ButtonsRenderer renderer = (ButtonsRenderer) list.getCellRenderer();
 	                renderer.pressedIndex = -1;
 	                renderer.button = null;
@@ -311,17 +321,13 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	                
                 	DeviceListData temp = (DeviceListData) listmodel.get(list.getSelectedIndex());
                 	
-                	if(temp.showstate == DeviceListData.SHOW_INSTALL_OPTION) {
-                		temp.showstate = DeviceListData.SHOW_INSTALL_DETAL;
-//                		((JLabel)child).setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_PREV.getImageIcon());
-                		list.repaint();
-                		
-                	} else {
+                	if(button.getActionCommand().equals(ToggleButtonBar.BUTTON_TYPE_INSTALL_INFO)) {
                 		temp.showstate = DeviceListData.SHOW_INSTALL_OPTION;
-//                		((JLabel)child).setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_NEXT.getImageIcon());
-                		list.repaint();
+                	} else if(button.getActionCommand().equals(ToggleButtonBar.BUTTON_TYPE_PACAKGE_INFO)){                		
+                		temp.showstate = DeviceListData.SHOW_INSTALL_DETAL;
                 	}
-	                
+                	list.repaint();
+                	
 	                FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.REQ_REFRESH_DETAIL_PANEL));
 	            }
 	        }
@@ -348,14 +354,12 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
     
 	class ButtonsRenderer<E> extends JPanel implements ListCellRenderer<E> {
 	    private final Color EVEN_COLOR = new Color(230, 255, 230);
-	    private final JButton deleteButton = new JButton();
-	    private final JButton copyButton = new JButton();
 	    private final DefaultListModel<E> model;
 	    private int index;
 	    public int pressedIndex  = -1;
 	    public int rolloverIndex = -1;
 	    public JButton button;
-    	JPanel Tagpanel;
+	    ToggleButtonBar Tagpanel;
 	    CustomLabel customlabel = new CustomLabel();
 
 	    protected ButtonsRenderer(DefaultListModel<E> model) {
@@ -365,12 +369,18 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	        setBorder ( BorderFactory.createEmptyBorder ( 5, 5 , 5, 5 ) );
 	        
 	        setOpaque(true);
-	        Tagpanel = ToggleButtonBar.makeToggleButtonBar(0x888888);
+	        Tagpanel = new ToggleButtonBar(DeviceListData.WAITING);
 	        
+	        JPanel Iconpanel = new JPanel(new BorderLayout());
+	        
+	        Iconpanel.setBackground(Color.WHITE);
+	        
+	        Iconpanel.add(Tagpanel, BorderLayout.CENTER);
+	        Iconpanel.add(new JLabel(Resource.IMG_INSTALL_CHECK.getImageIcon()), BorderLayout.WEST);
 	        
 	        //add(textArea);
 	        add(customlabel, BorderLayout.CENTER);
-	        add(Tagpanel, BorderLayout.SOUTH);	        
+	        add(Iconpanel, BorderLayout.SOUTH);	        
 	    }
 	    @Override public Dimension getPreferredSize() {
 	        Dimension d = super.getPreferredSize();
@@ -390,6 +400,8 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	        
 	    	if(value instanceof DeviceListData) {
 	    		customlabel.setData((DeviceListData)value);
+	    		Tagpanel.setData((DeviceListData)value);
+	    		resetButtonStatus((DeviceListData) value);
 	    	}
 	    	
 	        this.index = index;
@@ -401,7 +413,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	            setBackground(list.getBackground());
 	            customlabel.setSelected(isSelected);
 	        }
-	        resetButtonStatus();
+	        
 	        if (Objects.nonNull(button)) {
 	            if (index == pressedIndex) {
 	                button.getModel().setSelected(true);
@@ -413,18 +425,23 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	        }
 	        return this;
 	    }
-	    private void resetButtonStatus() {
-	    	
+	    private void resetButtonStatus(DeviceListData value) {	    	
 	    	for( Component b: Tagpanel.getComponents() ) {
-	    		if(b instanceof JButton) {	    			
+	    		if(b instanceof JButton) {
+	    			
+	    			if((value).status.equals("OFFLINE") || (value).pacakgeLoadingstatus ==DeviceListData.WAITING) {
+	    				b.setEnabled(false);
+	    				continue;
+	    			} else if((value).status.equals("ONLINE")) {
+	    				b.setEnabled(true);	    				
+	    			}
+	    			
 	    			ButtonModel m = ((JButton)b).getModel();
 	    			m.setRollover(false);
 		            m.setArmed(false);
 		            m.setPressed(false);
 		            m.setSelected(false);
 	    		}
-	    		
-	    		
 	    	}
 	    	
 	    }
@@ -434,6 +451,8 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
     {
         public Color circleColor;
         public String status;
+        public int pacakgeLoadingstatus;
+        
         public String name;
         public String serialnumber;
         public String SDKVersion;
@@ -441,15 +460,22 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
         public JComponent AppDetailpanel;
         public JComponent installoptionpanel;
         
+        public int isinstalled = WAITING;
+        public int possibleOption = WAITING;
+        
         public int showstate;
         
-        public static final String INSTALLED = "Installed";
-        public static final String NOT_INSTALLED = "Not installed";
-        public static final String CAN_NOT_INSTALL = "Can't installed";
-        public static final String PUSH = "Push";
+        public static final int INSTALLED = 0;
+        public static final int NOT_INSTALLED = 1;
         
-        public static final String WAITING = "walting";
-
+        public static final int POSSIBLE_INSTALL = 0;
+        public static final int POSSIBLE_PUSH = 1;
+        public static final int IMPOSSIBLE_INSTALL = 2;
+        
+                
+        public static final int WAITING = 3;
+        public static final int DONE = 1;
+        
         public static final int SHOW_INSTALL_DETAL = 0;
         public static final int SHOW_INSTALL_OPTION = 1;
         
@@ -626,7 +652,6 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
         	  ((DeviceListData)selectionValues[i]).showstate  = DeviceListData.SHOW_INSTALL_OPTION;
         	  FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.REQ_REFRESH_DETAIL_PANEL));
           }
-          System.out.println();
         //}
 		 
 	}

@@ -355,12 +355,15 @@ public enum Resource
 	IMG_TREE_MENU_DELETE		(Type.IMAGE, "tree_menu_delete.png"),
 	IMG_TREE_MENU_SAVE			(Type.IMAGE, "tree_menu_save.png"),
 	IMG_TREE_MENU_OPEN			(Type.IMAGE, "tree_open_menu.png"),
-
+	
 	IMG_TREE_APK				(Type.IMAGE, "tree_icon_apk.png"),
 	IMG_TREE_DEVICE				(Type.IMAGE, "tree_icon_device.png"),
 	IMG_TREE_TOP				(Type.IMAGE, "tree_icon_top.gif"),
 	IMG_TREE_FOLDER				(Type.IMAGE, "tree_icon_folder.png"),
 
+	IMG_INSTALL_CHECK			(Type.IMAGE, "install_dlg_check.png"),
+	IMG_INSTALL_BLOCK		(Type.IMAGE, "install_dlg_block.png"),
+	
 	IMG_ADD_TO_DESKTOP			(Type.IMAGE, "add-to-desktop.png"),
 	IMG_ASSOCIATE_APK			(Type.IMAGE, "associate.png"),
 	IMG_UNASSOCIATE_APK			(Type.IMAGE, "unassociate.png"),

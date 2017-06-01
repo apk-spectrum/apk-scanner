@@ -1,5 +1,6 @@
 package com.apkscanner.gui.install;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -19,14 +20,54 @@ import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 
+import com.apkscanner.gui.install.DeviceCustomList.DeviceListData;
+import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 
-public class ToggleButtonBar {
 
-    private static AbstractButton makeButton(String title) {
+public class ToggleButtonBar extends JPanel{
+
+	public static final String BUTTON_TYPE_PACAKGE_INFO = "pacakge_info";
+	public static final String BUTTON_TYPE_INSTALL_INFO = "install_info";
+	
+	DeviceListData data;
+		
+	private static final Color[] ColorSet = { new Color(0x006400), new Color(0xFF7400), new Color(0x8b0000), new Color(0x555555)};
+	
+	private static String[] installtextSet = {"Installed", "Not installed", "", "waiting"};
+	private final String[] installOptiontextSet = {"Install", "Push", "Impossible", "waiting"};
+	
+	
+	AbstractButton btninstalled;
+	AbstractButton btnoption;
+	
+	public ToggleButtonBar(int state) {
+        setLayout(new GridLayout(1, 0, 0, 0));
+        
+//        for (AbstractButton b: Arrays.asList(makeButton("install",BUTTON_TYPE_INSTALL_INFO, state), 
+//        		makeButton("installed", BUTTON_TYPE_PACAKGE_INFO,state))) {            
+//            b.setIcon(new ToggleButtonBarCellIcon());
+//            //bg.add(b);
+//            this.add(b);
+//        }
+//        
+        btninstalled = makeButton("installed",BUTTON_TYPE_PACAKGE_INFO, state);
+        btnoption = makeButton("install",BUTTON_TYPE_INSTALL_INFO, state);
+        
+        btninstalled.setIcon(new ToggleButtonBarCellIcon());
+        btnoption.setIcon(new ToggleButtonBarCellIcon());
+        
+        
+        this.add(btnoption);        
+        this.add(btninstalled);
+	}
+	
+    private static AbstractButton makeButton(String title, String ActionString, int level) {
         AbstractButton b = new JButton(title);
         //b.setVerticalAlignment(SwingConstants.CENTER);
         //b.setVerticalTextPosition(SwingConstants.CENTER);
@@ -35,20 +76,39 @@ public class ToggleButtonBar {
         b.setBorder(BorderFactory.createEmptyBorder());
         b.setContentAreaFilled(false);
         b.setFocusPainted(false);
+        b.setActionCommand(ActionString);
         //b.setBackground(new Color(cc));
         b.setForeground(Color.WHITE);
+        
+        b.setBackground(ColorSet[level]);
+        
         return b;
     }
 	
-    public static JPanel makeToggleButtonBar(int cc) {
+    // - 20:02   설치됨,안됨 / 설치,푸쉬,불가
+   
+    
+    public JPanel makeToggleButtonBar(int install_level, int package_level) {
         ButtonGroup bg = new ButtonGroup();
         JPanel p = new JPanel(new GridLayout(1, 0, 0, 0));        
-        Color color = new Color(cc);
-        for (AbstractButton b: Arrays.asList(makeButton("install"), makeButton("installed"))) {
-            b.setBackground(color);
+        //Color color = new Color(cc);
+        for (AbstractButton b: Arrays.asList(makeButton("install",BUTTON_TYPE_INSTALL_INFO, install_level), 
+        		makeButton("installed", BUTTON_TYPE_PACAKGE_INFO,package_level))) {            
             b.setIcon(new ToggleButtonBarCellIcon());
-
-            bg.add(b);
+            //bg.add(b);
+            p.add(b);
+        }
+        return p;
+    }
+    
+    public JPanel makeToggleButtonBar(int ccl) {
+        ButtonGroup bg = new ButtonGroup();
+        JPanel p = new JPanel(new GridLayout(1, 0, 0, 0));        
+        Color color = new Color(ccl);
+        for (AbstractButton b: Arrays.asList(makeButton("install",BUTTON_TYPE_INSTALL_INFO, ccl), 
+        		makeButton("installed", BUTTON_TYPE_PACAKGE_INFO,ccl))) {            
+            b.setIcon(new ToggleButtonBarCellIcon());
+            //bg.add(b);
             p.add(b);
         }
         return p;
@@ -118,10 +178,29 @@ public class ToggleButtonBar {
             g2.dispose();
         }
         @Override public int getIconWidth() {
-            return 90;
+            return 80;
         }
         @Override public int getIconHeight() {
             return 20;
         }
     }
+    
+    @Override
+    protected void paintComponent ( Graphics g ) {
+    	
+    	
+    	btninstalled.setBackground(ColorSet[data.isinstalled]);
+    	btnoption.setBackground(ColorSet[data.possibleOption]);
+    	
+    	btninstalled.setText(installtextSet[data.isinstalled]);
+    	
+    	//Log.d("" +data.isinstalled);
+    	
+    	
+    }
+    
+	public void setData(DeviceListData value) {
+		// TODO Auto-generated method stub
+		this.data = value;
+	}
 }
