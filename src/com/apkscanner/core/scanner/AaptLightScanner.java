@@ -7,6 +7,7 @@ import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AaptXmlTreePath;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.ZipFileUtil;
 
 public class AaptLightScanner extends ApkScanner {
 
@@ -92,7 +93,11 @@ public class AaptLightScanner extends ApkScanner {
 		apkInfo.certificates = solveCert();
 		stateChanged(Status.CERT_COMPLETED);
 		Log.i("read signatures completed...");
-
+		
+		Log.i("I: read libraries list...");
+		apkInfo.libraries = ZipFileUtil.findFiles(apkInfo.filePath, ".so", null);
+		stateChanged(Status.LIB_COMPLETED);
+		
 		// Activity/Service/Receiver/provider intent-filter
 		Log.i("I: read components...");
 		manifestReader.readComponents();
