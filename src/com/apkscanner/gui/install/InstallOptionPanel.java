@@ -22,7 +22,11 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableModel;
 
 import com.apkscanner.gui.util.ToggleButtonBarCellIcon;
 
@@ -31,6 +35,7 @@ public class InstallOptionPanel extends JPanel {
 	
 	public static final String ACT_CMD_INSTALL = "ACT_CMD_INSTALL";
 	public static final String ACT_CMD_PUSH = "ACT_CMD_PUSH";
+	public static final String ACT_CMD_NOT_INSTALL = "ACT_CMD_NOT_INSTALL";
 
 	public InstallOptionPanel() {
 		setLayout(new BorderLayout());	
@@ -79,7 +84,7 @@ public class InstallOptionPanel extends JPanel {
 		cbLaunchActivity.setAlignmentY(0);
 		cbLaunchActivity.setAlignmentX(0);
 		Dimension maxSize = cbLaunchActivity.getMaximumSize();
-		maxSize.setSize(maxSize.getWidth(), cbLaunchActivity.getMinimumSize().getHeight());
+		maxSize.height = cbLaunchActivity.getMinimumSize().height;
 		cbLaunchActivity.setMaximumSize(maxSize);
 		additionalOptionsPanel.add(cbLaunchActivity);
 		
@@ -102,8 +107,8 @@ public class InstallOptionPanel extends JPanel {
 
 		JRadioButton RadiosystemPush = new JRadioButton("/system/app");
 		JRadioButton RadioprivPush = new JRadioButton("/system/priv-app");
-		JCheckBox CheckWithLib32 = new JCheckBox("With Lib32");
-		JCheckBox CheckWithLib64 = new JCheckBox("With Lib64");
+		JCheckBox CheckWithLib32 = new JCheckBox("32Bit");
+		JCheckBox CheckWithLib64 = new JCheckBox("64Bit");
 		JCheckBox CheckReboot = new JCheckBox("Reboot after pushed");
 
 
@@ -121,9 +126,73 @@ public class InstallOptionPanel extends JPanel {
 		installLocationBox.setMaximumSize(installLocationBox.getMinimumSize());
 		
 		pushOptionsPanel.add(installLocationBox);
+		JTextField txtTargetPath = new JTextField("/system/app/apkscanner/apk.apk");
+		txtTargetPath.setEditable(false);
+		//txtTargetPath.setFocusable(false);
+		txtTargetPath.setCaretPosition(0);
+		pushOptionsPanel.add(txtTargetPath);
 		pushOptionsPanel.add(CheckReboot);
-		pushOptionsPanel.add(CheckWithLib32);
-		pushOptionsPanel.add(CheckWithLib64);
+		pushOptionsPanel.add(Box.createVerticalStrut(5));
+		pushOptionsPanel.add(new JLabel("With Libraries"));
+		//pushOptionsPanel.add(CheckWithLib32);
+		//pushOptionsPanel.add(CheckWithLib64);
+		
+		Dimension prefSize = new Dimension(maxSize);
+		//Dimension minSize = new Dimension(maxSize);
+		prefSize.width = 110;
+		//minSize.width = 150;
+		Box lib32Box = Box.createHorizontalBox();
+		lib32Box.setAlignmentX(0);
+		lib32Box.setAlignmentY(0);
+		lib32Box.add(CheckWithLib32);
+		JComboBox<String> lib32Src = new JComboBox<String>(new String[] {"armeabi-v7a", "armeabi", "mips"});
+		lib32Src.setSize(prefSize);
+		lib32Src.setPreferredSize(prefSize);
+		lib32Src.setMaximumSize(prefSize);
+		lib32Src.setMinimumSize(prefSize);
+		lib32Box.add(lib32Src);
+		lib32Box.add(new JLabel(">"));
+		JComboBox<String> lib32Dest = new JComboBox<String>(new String[] {"/system/lib", "/system/vendor/lib", "/system/app/{package}/lib"});
+		lib32Dest.setMaximumSize(maxSize);
+		lib32Dest.setMinimumSize(prefSize);
+		//lib32Dest.setPreferredSize(maxSize);
+		lib32Box.add(lib32Dest);
+		//lib32Box.add(Box.createHorizontalGlue());
+		pushOptionsPanel.add(lib32Box);
+		
+		Box lib64Box = Box.createHorizontalBox();
+		lib64Box.setAlignmentX(0);
+		lib64Box.setAlignmentY(0);
+		lib64Box.add(CheckWithLib64);
+		JComboBox<String> lib64Src = new JComboBox<String>(new String[] {"armeabi64-v7a", "armeabi64", "mips64"});
+		lib64Src.setSize(prefSize);
+		lib64Src.setPreferredSize(prefSize);
+		lib64Src.setMaximumSize(prefSize);
+		lib64Src.setMinimumSize(prefSize);
+		lib64Box.add(lib64Src);
+		lib64Box.add(new JLabel(">"));
+		JComboBox<String> lib64Dest = new JComboBox<String>(new String[] {"/system/lib64", "/system/vendor/lib64", "/system/app/{package}/lib"});
+		lib64Dest.setMaximumSize(maxSize);
+		lib64Dest.setMinimumSize(prefSize);
+		//lib64Dest.setPreferredSize(maxSize);
+		lib64Box.add(lib64Dest);
+		//lib64Box.add(Box.createHorizontalGlue());
+		pushOptionsPanel.add(lib64Box);
+		
+		//pushOptionsPanel.add(new JLabel("▶ Show libray list"));
+		
+		DefaultTableModel model = new DefaultTableModel(new String[][] { 
+			{"1", "APK/lib/armeabi64-v7a/fjklds.so" , "/system/lib/fjklds.so"},
+			{"2", "APK/lib/armeabi64-v7a/fjklds.so" , "/system/lib/fjklds.so"},
+			{"3", "APK/lib/armeabi64-v7a/fjklds.so" , "/system/lib/fjklds.so"},
+			{"4", "APK/lib/armeabi64-v7a/fjklds.so" , "/system/lib/fjklds.so"},
+			{"5", "APK/lib/armeabi64-v7a/fjklds.so" , "/system/lib/fjklds.so"}
+		}, new String[] {"No." , "Srouce" , "Destination"});
+		JTable list = new JTable(model);
+		JScrollPane listPanel = new JScrollPane(list);
+		listPanel.setAlignmentX(0);
+		pushOptionsPanel.add(listPanel);
+		
 		pushOptionsPanel.add(Box.createVerticalGlue());
 
 		//optionPanel.add(installPanel);
@@ -136,6 +205,7 @@ public class InstallOptionPanel extends JPanel {
 		final JPanel installOrPushOptionsPanel = new JPanel(new CardLayout());
 		installOrPushOptionsPanel.add(installOptionsPanel, ACT_CMD_INSTALL);
 		installOrPushOptionsPanel.add(pushOptionsPanel, ACT_CMD_PUSH);
+		installOrPushOptionsPanel.add(new JPanel(), ACT_CMD_NOT_INSTALL);
 		
 		JPanel installMethodPanel = makeToggleButtonBar(0x555555, true, new ActionListener() {
 			@Override
@@ -171,7 +241,7 @@ public class InstallOptionPanel extends JPanel {
         p.setBorder(BorderFactory.createTitledBorder("How to install"));
         //p.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		Color color = new Color(cc);
-		for (AbstractButton b: Arrays.asList(makeButton("Install", ACT_CMD_INSTALL), makeButton("Push", ACT_CMD_PUSH))) {
+		for (AbstractButton b: Arrays.asList(makeButton("Install", ACT_CMD_INSTALL), makeButton("Push", ACT_CMD_PUSH), makeButton("Not install", ACT_CMD_NOT_INSTALL))) {
 			b.setBackground(color);
 			b.setIcon(new ToggleButtonBarCellIcon());
 			b.addActionListener(listener);
