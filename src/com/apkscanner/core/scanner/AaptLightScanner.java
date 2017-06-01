@@ -112,5 +112,4 @@ public class AaptLightScanner extends ApkScanner {
 	public void clear(boolean sync) {
 		
 	}
-
 }

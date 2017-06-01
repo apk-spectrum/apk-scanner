@@ -39,7 +39,6 @@ public class ApkInfoHelper
 		return isDebuggable(apkInfo);
 	}
 
-
 	public int getInstallLocation() {
 		return getInstallLocation(apkInfo);
 	}
@@ -50,6 +49,10 @@ public class ApkInfoHelper
 
 	public ComponentInfo[] getLauncherActivityList(boolean includeMain) {
 		return getLauncherActivityList(apkInfo, includeMain);
+	}
+
+	public static CompactApkInfo getCompactApkInfo(ApkInfo apkInfo) {
+		return new CompactApkInfo(apkInfo);
 	}
 
 	public static boolean hasLauncher(ApkInfo apkInfo) {

@@ -121,7 +121,7 @@ public class TabbedPanel extends JTabbedPane
 			if(id == -1 || id == 1) setPanelData(1, apkInfo.widgets.length, apkInfo);
 			if(id == -1 || id == 2) setPanelData(2, apkInfo.libraries.length, apkInfo);
 			if(id == -1 || id == 4) setPanelData(4, ApkInfoHelper.getComponentCount(apkInfo), apkInfo);
-			if(id == -1 || id == 5) setPanelData(5, (apkInfo.certificates != null) ? apkInfo.certificates.length : 0, apkInfo);
+			if(id == -1 || id == 5) setPanelData(5, ApkInfoHelper.isSigned(apkInfo) ? apkInfo.certificates.length : 0, apkInfo);
 			if(id == -1 || id == 3) setPanelData(3, apkInfo.resources.length, apkInfo);
 			if(id >= CMD_EXTRA_DATA) {
 				((TabDataObject)(getComponent(id - CMD_EXTRA_DATA))).setExtraData(apkInfo);

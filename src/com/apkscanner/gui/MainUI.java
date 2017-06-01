@@ -948,7 +948,7 @@ public class MainUI extends JFrame
 				if(info != null) {
 					packageName = info.manifest.packageName;
 					versionCode = info.manifest.versionCode != null ? info.manifest.versionCode : 0;
-					hasSignature = (info.certificates != null && info.certificates.length > 0);
+					hasSignature = ApkInfoHelper.isSigned(info);
 					hasMainActivity = ApkInfoHelper.getLauncherActivityList(info, true).length > 0; 
 				} else {
 					packageName = null;
