@@ -205,7 +205,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 			return packageInfoPanel;
         }
                 
-		return new JLabel("not installed");
+		return new JLabel("Not installed");
         //return null;
 	}
     
