@@ -28,6 +28,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
+import com.apkscanner.core.installer.OptionsBundle;
 import com.apkscanner.gui.util.ToggleButtonBarCellIcon;
 
 public class InstallOptionPanel extends JPanel {
@@ -251,4 +252,9 @@ public class InstallOptionPanel extends JPanel {
 		}
 		return p;
 	}
+	
+	public void setOptions(OptionsBundle bundle) {
+		
+	}
+	
 }

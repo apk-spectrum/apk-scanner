@@ -16,6 +16,7 @@ public class CompactApkInfo {
 	public String installLocation = null; // ["auto" | "internalOnly" | "preferExternal"]
 
 	public String[] libraries = null;
+	public String[] certificates = null;
 
 	public CompactApkInfo() { }
 
@@ -34,5 +35,6 @@ public class CompactApkInfo {
 		installLocation = info.manifest.installLocation;
 
 		libraries = info.libraries;
+		certificates = info.certificates;
 	}
 }
