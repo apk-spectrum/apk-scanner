@@ -28,9 +28,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.ButtonModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -40,9 +43,13 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextArea;
+import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import com.android.ddmlib.AdbCommandRejectedException;
 import com.android.ddmlib.AndroidDebugBridge;
@@ -63,12 +70,13 @@ import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.XmlPath;
+import com.sun.corba.se.impl.protocol.BootstrapServerRequestDispatcher;
 
-public class DeviceCustomList extends JList{
+public class DeviceCustomList extends JList implements ListSelectionListener{
 
 	DefaultListModel listmodel;
 	private XmlPath sdkXmlPath;
-	Listrenderer listrenderer;
+	ButtonsRenderer listrenderer;
 	ActionListener FindPackagelistener;
     public DeviceCustomList(ActionListener listener) {
 		// TODO Auto-generated constructor stub
@@ -81,15 +89,20 @@ public class DeviceCustomList extends JList{
         
         setPreferredSize(new Dimension(200, 0));
         
-        listrenderer = new Listrenderer(this);
+        listrenderer = new ButtonsRenderer<DeviceListData>(listmodel);
         FindPackagelistener = listener;
+        
+        CellButtonsMouseListener cbml = new CellButtonsMouseListener(this);
+        
+        this.addMouseListener(cbml);
+        this.addMouseMotionListener(cbml);
         
         this.setModel(listmodel);
         this.setCellRenderer ( listrenderer);
         
         
         this.setBorder ( BorderFactory.createEmptyBorder ( 5, 5, 5, 5 ) );
-        
+        this.addListSelectionListener(this);
         
 	}
 
@@ -222,112 +235,200 @@ public class DeviceCustomList extends JList{
 		return;
 	}
     
-	private class Listrenderer extends DefaultListCellRenderer {
-    	private CustomListPanel renderer;
-    	private JList list;
-    	private MouseAdapter adapter;
-    	public JButton button;
-        public int pressedIndex  = -1;
-        public int rolloverIndex = -1;
-        
-        @Override
-        public Component getListCellRendererComponent ( JList list, Object value, int index, boolean isSelected, boolean cellHasFocus )
-        {
-            renderer.setSelected ( isSelected );
-            renderer.setData ( ( DeviceListData ) value );
-
-            if (Objects.nonNull(button)) {
-                if (index == pressedIndex) {
-                    button.getModel().setSelected(true);
-                    button.getModel().setArmed(true);
-                    button.getModel().setPressed(true);
-                } else if (index == rolloverIndex) {
-                    button.getModel().setRollover(true);
-                }
-            }
-            
-            return renderer;
-        }
-        
-        private Listrenderer (final JList list) {
-            super ();
-            this.list = list;
-            renderer = new CustomListPanel ();
-            
-            list.addMouseListener ( adapter = new MouseAdapter () {
-                @Override
-                public void mouseReleased ( MouseEvent e )
-                {
-                	
-                    if ( SwingUtilities.isLeftMouseButton ( e ) )
-                    {
-                    	Component child = getComponentinList(e);
-                        
-                        if(child instanceof JButton) { //&& ((JLabel)child).getText().equals("")) {
-                        	Log.d(((JButton)child).getText());
-                        	DeviceListData temp = (DeviceListData) listmodel.get(list.getSelectedIndex());
-                        	
-                        	if(temp.showstate == DeviceListData.SHOW_INSTALL_OPTION) {
-                        		temp.showstate = DeviceListData.SHOW_INSTALL_DETAL;
-//                        		((JLabel)child).setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_PREV.getImageIcon());
-                        		list.repaint();
-                        		
-                        	} else {
-                        		temp.showstate = DeviceListData.SHOW_INSTALL_OPTION;
-//                        		((JLabel)child).setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_NEXT.getImageIcon());
-                        		list.repaint();
-                        	}
-                        	
-                        	
-                        	//((JLabel)child).setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_PREV.getImageIcon());
-                        	
-                        	FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.REQ_REFRESH_DETAIL_PANEL));
-                        }                        
-                    }
-                }
-                
-                @Override
-                public void mouseMoved ( MouseEvent e ) {
-                	Component child = getComponentinList(e);
-
-                	if(!(child instanceof JButton)) {
-                		return ;
-                	}
-                	Log.d("aa"+child);
-                	button = (JButton)child;
-                	((JButton) child).getModel().setRollover(true);
-                	list.repaint();
-                }
-            } );
-            
-            list.addMouseMotionListener(adapter);
-        }
-	    private Component getComponentinList(MouseEvent e) {
-	        int index = list.locationToIndex ( e.getPoint () );
-	        if ( index != -1 && list.isSelectedIndex ( index ) ) {
-	            Rectangle rect = list.getCellBounds ( index, index );
-	            Point pointWithinCell = new Point ( e.getX () - rect.x, e.getY () - rect.y );
-	            
-	            //Log.d("x = "+pointWithinCell.getX() + " y = " + pointWithinCell.getY());
-	            
-	//                Rectangle crossRect = new Rectangle ( rect.width - 9 - 5 - crossIcon.getIconWidth () / 2,
-	//                        rect.height / 2 - crossIcon.getIconHeight () / 2, crossIcon.getIconWidth (), crossIcon.getIconHeight () );
-	//                if ( crossRect.contains ( pointWithinCell ) )
-	            
-	            Object value = list.getModel().getElementAt(index);
-	            Component comp = listrenderer.getListCellRendererComponent(list, value, index, true, true);
-	            comp.setBounds(list.getCellBounds(index, index));
-	            
-	            //Component child = comp.getComponentAt(pointWithinCell);
-	                    	
-	            return SwingUtilities.getDeepestComponentAt(comp, pointWithinCell.x, pointWithinCell.y); 
-	        }
-	        
-	        return null;
+	class CellButtonsMouseListener extends MouseAdapter {
+	    private int prevIndex = -1;
+	    private JButton prevButton;
+	    private final JList<String> list;
+	    protected CellButtonsMouseListener(JList<String> list) {
+	        super();
+	        this.list = list;
 	    }
-	    
+	    @Override public void mouseMoved(MouseEvent e) {
+	        //JList list = (JList) e.getComponent();
+	        Point pt = e.getPoint();
+	        int index = list.locationToIndex(pt);
+	        if (!list.getCellBounds(index, index).contains(pt)) {
+	            if (prevIndex >= 0) {
+	                listRepaint(list, list.getCellBounds(prevIndex, prevIndex));
+	            }
+	            index = -1;
+	            prevButton = null;
+	            return;
+	        }
+	        if (index >= 0) {
+	            JButton button = getButton(list, pt, index);
+	            ButtonsRenderer renderer = (ButtonsRenderer) list.getCellRenderer();
+	            renderer.button = button;
+	            if (Objects.nonNull(button)) {
+	                button.getModel().setRollover(true);
+	                renderer.rolloverIndex = index;
+	                if (!button.equals(prevButton)) {
+	                    listRepaint(list, list.getCellBounds(prevIndex, index));
+	                }
+	            } else {
+	                renderer.rolloverIndex = -1;
+	                Rectangle r = null;
+	                if (prevIndex == index) {
+	                    if (prevIndex >= 0 && Objects.nonNull(prevButton)) {
+	                        r = list.getCellBounds(prevIndex, prevIndex);
+	                    }
+	                } else {
+	                    r = list.getCellBounds(index, index);
+	                }
+	                listRepaint(list, r);
+	                prevIndex = -1;
+	            }
+	            prevButton = button;
+	        }
+	        prevIndex = index;
+	    }
+	    @Override public void mousePressed(MouseEvent e) {
+	        //JList list = (JList) e.getComponent();
+	        Point pt = e.getPoint();
+	        int index = list.locationToIndex(pt);
+	        if (index >= 0) {
+	            JButton button = getButton(list, pt, index);
+	            if (Objects.nonNull(button)) {
+	            	ButtonsRenderer renderer = (ButtonsRenderer) list.getCellRenderer();
+	                renderer.pressedIndex = index;
+	                renderer.button = button;
+	                listRepaint(list, list.getCellBounds(index, index));
+	            }
+	        }
+	    }
+	    @Override public void mouseReleased(MouseEvent e) {
+	        //JList list = (JList) e.getComponent();
+	        Point pt = e.getPoint();
+	        int index = list.locationToIndex(pt);
+	        if (index >= 0) {
+	            JButton button = getButton(list, pt, index);
+	            if (Objects.nonNull(button)) {
+	            	ButtonsRenderer renderer = (ButtonsRenderer) list.getCellRenderer();
+	                renderer.pressedIndex = -1;
+	                renderer.button = null;
+	                button.doClick();
+	                listRepaint(list, list.getCellBounds(index, index));
+	                
+                	DeviceListData temp = (DeviceListData) listmodel.get(list.getSelectedIndex());
+                	
+                	if(temp.showstate == DeviceListData.SHOW_INSTALL_OPTION) {
+                		temp.showstate = DeviceListData.SHOW_INSTALL_DETAL;
+//                		((JLabel)child).setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_PREV.getImageIcon());
+                		list.repaint();
+                		
+                	} else {
+                		temp.showstate = DeviceListData.SHOW_INSTALL_OPTION;
+//                		((JLabel)child).setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_NEXT.getImageIcon());
+                		list.repaint();
+                	}
+	                
+	                FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.REQ_REFRESH_DETAIL_PANEL));
+	            }
+	        }
+	    }
+	    private void listRepaint(JList list, Rectangle rect) {
+	        if (Objects.nonNull(rect)) {
+	            list.repaint(rect);
+	        }
+	    }
+	    private JButton getButton(JList<String> list, Point pt, int index) {
+	        Component c = list.getCellRenderer().getListCellRendererComponent(list, "", index, false, false);
+	        Rectangle r = list.getCellBounds(index, index);
+	        c.setBounds(r);
+	        //c.doLayout(); //may be needed for mone LayoutManager
+	        pt.translate(-r.x, -r.y);
+	        Component b = SwingUtilities.getDeepestComponentAt(c, pt.x, pt.y);
+	        if (b instanceof JButton) {
+	            return (JButton) b;
+	        } else {
+	            return null;
+	        }
+	    }
 	}
     
+	class ButtonsRenderer<E> extends JPanel implements ListCellRenderer<E> {
+	    private final Color EVEN_COLOR = new Color(230, 255, 230);
+	    private final JButton deleteButton = new JButton();
+	    private final JButton copyButton = new JButton();
+	    private final DefaultListModel<E> model;
+	    private int index;
+	    public int pressedIndex  = -1;
+	    public int rolloverIndex = -1;
+	    public JButton button;
+    	JPanel Tagpanel;
+	    CustomLabel customlabel = new CustomLabel();
+
+	    protected ButtonsRenderer(DefaultListModel<E> model) {
+	        super(new BorderLayout());
+	        this.model = model;
+	        
+	        setBorder ( BorderFactory.createEmptyBorder ( 5, 5 , 5, 5 ) );
+	        
+	        setOpaque(true);
+	        Tagpanel = ToggleButtonBar.makeToggleButtonBar(0x888888);
+	        
+	        
+	        //add(textArea);
+	        add(customlabel, BorderLayout.CENTER);
+	        add(Tagpanel, BorderLayout.SOUTH);	        
+	    }
+	    @Override public Dimension getPreferredSize() {
+	        Dimension d = super.getPreferredSize();
+	        d.width = 0; // VerticalScrollBar as needed
+	        return d;
+	    }
+	    
+        @Override
+        protected void paintComponent ( Graphics g ) {
+        	Graphics2D g2d = ( Graphics2D ) g;
+        	g2d.setPaint ( Color.LIGHT_GRAY );
+            g.drawLine(2, getHeight()-2, getWidth()-2, getHeight()-2 );                    
+        }
+        
+	    @Override public Component getListCellRendererComponent(JList<? extends E> list, E value, int index, boolean isSelected, boolean cellHasFocus) {
+	        //textArea.setText(Objects.toString(value, ""));
+	        
+	    	if(value instanceof DeviceListData) {
+	    		customlabel.setData((DeviceListData)value);
+	    	}
+	    	
+	        this.index = index;
+	        if (isSelected) {
+	            setBackground(list.getSelectionBackground());
+	            customlabel.setSelected(isSelected);
+	            
+	        } else {
+	            setBackground(list.getBackground());
+	            customlabel.setSelected(isSelected);
+	        }
+	        resetButtonStatus();
+	        if (Objects.nonNull(button)) {
+	            if (index == pressedIndex) {
+	                button.getModel().setSelected(true);
+	                button.getModel().setArmed(true);
+	                button.getModel().setPressed(true);
+	            } else if (index == rolloverIndex) {
+	                button.getModel().setRollover(true);
+	            }
+	        }
+	        return this;
+	    }
+	    private void resetButtonStatus() {
+	    	
+	    	for( Component b: Tagpanel.getComponents() ) {
+	    		if(b instanceof JButton) {	    			
+	    			ButtonModel m = ((JButton)b).getModel();
+	    			m.setRollover(false);
+		            m.setArmed(false);
+		            m.setPressed(false);
+		            m.setSelected(false);
+	    		}
+	    		
+	    		
+	    	}
+	    	
+	    }
+	}
     
     public class DeviceListData
     {
@@ -383,76 +484,6 @@ public class DeviceCustomList extends JList{
         	return SDKVersion;
         }
         
-    }
-    private class CustomListPanel extends JPanel {
-    	CustomLabel label;
-    	JPanel Tagpanel;
-    	JLabel TagLabel;
-    	DeviceListData data;
-    	
-    	JLabel IconLabel;
-    	
-    	public CustomListPanel() {
-    		label = new CustomLabel();
-    		setLayout(new BorderLayout());
-    		add(label, BorderLayout.CENTER);
-    		
-    		//Tagpanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    		
-    		Tagpanel = ToggleButtonBar.makeToggleButtonBar(0x888888);
-    		
-    		//Tagpanel.setBackground(Color.white);
-    		
-    		TagLabel = new JLabel("Install");
-    		TagLabel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
-    		
-    		IconLabel = new JLabel("");
-    		    		
-    		//Tagpanel.add(TagLabel);
-    		//Tagpanel.add(IconLabel);
-    		
-    		//Tagpanel.setBackground(Color.GRAY);
-    		
-    		add( Tagpanel , BorderLayout.SOUTH);
-    		
-    		
-    		
-    		setBackground(Color.white);
-    		setBorder ( BorderFactory.createEmptyBorder ( 5, 5 , 5, 5 ) );
-            
-    	}
-    	
-        @Override
-        protected void paintComponent ( Graphics g ) {
-        	Graphics2D g2d = ( Graphics2D ) g;
-        	g2d.setPaint ( Color.LIGHT_GRAY );
-            g.drawLine(2, getHeight()-2, getWidth()-2, getHeight()-2 );
-                        
-            
-        	if(data.showstate != DeviceListData.SHOW_INSTALL_OPTION) {
-        		//data.showstate = DeviceListData.SHOW_INSTALL_DETAL;
-        		IconLabel.setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_PREV.getImageIcon());
-        	} else {
-        		//data.showstate = DeviceListData.SHOW_INSTALL_OPTION;
-        		IconLabel.setIcon(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_NEXT.getImageIcon());        		
-        	}
-
-            
-        }
-    	
-    	
-		public void setData(DeviceListData value) {
-			// TODO Auto-generated method stub
-			this.data = value;
-			label.setData(value);
-		}
-
-
-		public void setSelected(boolean isSelected) {
-			// TODO Auto-generated method stub
-			label.setSelected(isSelected);
-		}
-    	
     }
     
     private class CustomLabel extends JLabel
@@ -579,5 +610,24 @@ public class DeviceCustomList extends JList{
     			//setDeviceProperty(device, temp, IDevice.PROP_DEVICE_MODEL);
     		}
     	}		
+	}
+
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+		// TODO Auto-generated method stub
+        boolean adjust = e.getValueIsAdjusting();
+        //if (!adjust) {
+          JList list = (JList) e.getSource();
+          int selections[] = list.getSelectedIndices();
+          Object selectionValues[] = list.getSelectedValues();
+          for (int i = 0, n = selections.length; i < n; i++) {
+            
+            //System.out.print(selections[i] + "/" + selectionValues[i] + " ");
+        	  ((DeviceListData)selectionValues[i]).showstate  = DeviceListData.SHOW_INSTALL_OPTION;
+        	  FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.REQ_REFRESH_DETAIL_PANEL));
+          }
+          System.out.println();
+        //}
+		 
 	}
 }

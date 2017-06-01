@@ -44,7 +44,7 @@ public class ToggleButtonBar {
         ButtonGroup bg = new ButtonGroup();
         JPanel p = new JPanel(new GridLayout(1, 0, 0, 0));        
         Color color = new Color(cc);
-        for (AbstractButton b: Arrays.asList(makeButton("push"), makeButton("install"))) {
+        for (AbstractButton b: Arrays.asList(makeButton("install"), makeButton("installed"))) {
             b.setBackground(color);
             b.setIcon(new ToggleButtonBarCellIcon());
 
@@ -118,7 +118,7 @@ public class ToggleButtonBar {
             g2.dispose();
         }
         @Override public int getIconWidth() {
-            return 100;
+            return 90;
         }
         @Override public int getIconHeight() {
             return 20;
