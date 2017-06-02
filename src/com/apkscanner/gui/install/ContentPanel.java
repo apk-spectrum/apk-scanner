@@ -49,6 +49,8 @@ public class ContentPanel extends JPanel
 	private JLabel loadingMessageLable;
 	private JLabel ErrorMessageLable;
 	
+	private JPanel lodingPanel;
+	
 	public void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
 			double... percentages) {
 			double total = 0;
@@ -66,10 +68,10 @@ public class ContentPanel extends JPanel
 	public ContentPanel(ActionListener listener) {
 		super(new CardLayout());
 		
-		JPanel lodingPanel = new JPanel();
+		lodingPanel = new JPanel();
 		loadingMessageLable = new JLabel("");
 		lodingPanel.setLayout(new BoxLayout(lodingPanel, BoxLayout.Y_AXIS));
-		lodingPanel.add(new ImagePanel(Resource.IMG_APK_LOGO.getImageIcon()));
+		lodingPanel.add(new ImagePanel(Resource.IMG_APK_LOGO.getImageIcon(340,220)));
 		lodingPanel.add(loadingMessageLable);
 		lodingPanel.add(new ImagePanel(Resource.IMG_WAIT_BAR.getImageIcon()));
 		
@@ -88,7 +90,7 @@ public class ContentPanel extends JPanel
 		add(panel_check_package, CONTENT_CHECK_PACKAGES);
 		add(panel_set_install_option, CONTENT_SET_INSTALL_OPTION);
 		add(new JPanel(), CONTENT_INSTALLING);
-		add(new JPanel(), CONTENT_COMPLETED);
+		add(new JLabel("result"), CONTENT_COMPLETED);
 		
 		this.setBorder(new EmptyBorder(10,10,10,10));
 		
@@ -106,7 +108,7 @@ public class ContentPanel extends JPanel
 			break;
 			
 		case ApkInstallWizard.STATUS_PACKAGE_SCANNING:
-			loadingMessageLable.setText("FIND PACKAGES");
+			loadingMessageLable.setText("SCANNING APK");			
 			((CardLayout)getLayout()).show(this, CONTENT_LOADING);
 			break;
 		case ApkInstallWizard.STATUS_CHECK_PACKAGES:
@@ -120,6 +122,7 @@ public class ContentPanel extends JPanel
 		case ApkInstallWizard.STATUS_INSTALLING:
 			loadingMessageLable.setText("INSTALLING");
 			((CardLayout)getLayout()).show(this, CONTENT_LOADING);
+			lodingPanel.revalidate();
 			break;
 		case ApkInstallWizard.STATUS_COMPLETED:
 			

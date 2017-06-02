@@ -123,7 +123,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
     			Log.d(temp.name + "#"+intToARGB(hashCode(temp.name)));
     			temp.circleColor = Color.decode("#"+intToARGB(hashCode(temp.name)));
     			
-    			setInstalloptionListener((InstallOptionPanel)temp.installoptionpanel, device);
+    			//setInstalloptionListener((InstallOptionPanel)temp.installoptionpanel, device);
     			
     			this.repaint();
     			return;

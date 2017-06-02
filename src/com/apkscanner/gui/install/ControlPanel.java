@@ -2,6 +2,7 @@ package com.apkscanner.gui.install;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
@@ -36,7 +37,8 @@ public class ControlPanel extends JPanel
 		btnOk = getButton("OK", CTR_ACT_CMD_OK, listener);
 		btnCancel = getButton("Cancel", CTR_ACT_CMD_CANCEL, listener);
 		btnShowLog = getButton("Show Log", CTR_ACT_CMD_SHOW_LOG, listener);
-		btnRestart = getButton("Restart", CTR_ACT_CMD_SHOW_LOG, listener);
+		btnRestart = getButton("Restart", CTR_ACT_CMD_RESTART, listener);
+		
 		
 		JPanel stepPanel = new JPanel();
 		stepPanel.add(btnCancel);
@@ -45,7 +47,10 @@ public class ControlPanel extends JPanel
 		stepPanel.add(btnRestart);
 		stepPanel.add(btnOk);
 
-		add(btnShowLog, BorderLayout.WEST);
+		JPanel ShowPanel = new JPanel();
+		ShowPanel.add(btnShowLog);
+		
+		add(ShowPanel, BorderLayout.WEST);
 		add(stepPanel, BorderLayout.EAST);
 		
 		JSeparator separator = new JSeparator();
@@ -75,9 +80,9 @@ public class ControlPanel extends JPanel
 	public void setStatus(int status) {
 		switch(status) {
 		case ApkInstallWizard.STATUS_INIT:
-			setVisibleButtons(true, false, false, false, false, false); break;
-		case ApkInstallWizard.STATUS_PACKAGE_SCANNING:
 			setVisibleButtons(false, false, false, false, false, false); break;
+		case ApkInstallWizard.STATUS_PACKAGE_SCANNING:
+			setVisibleButtons(false, false, false, false, true, false); break;
 		case ApkInstallWizard.STATUS_CHECK_PACKAGES:
 			setVisibleButtons(true, false, false, true, false, false); break;
 		case ApkInstallWizard.STATUS_SET_INSTALL_OPTION:
@@ -92,4 +97,11 @@ public class ControlPanel extends JPanel
 			break;
 		}
 	}
+    @Override public Dimension getPreferredSize() {
+        Dimension d = super.getPreferredSize();
+        d.width = 0; // VerticalScrollBar as needed
+        d.height = 35;
+        
+        return d;
+    }
 }

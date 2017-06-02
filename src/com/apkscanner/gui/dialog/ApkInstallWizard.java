@@ -287,6 +287,20 @@ public class ApkInstallWizard
 			}).start();			
 			break;
 		case STATUS_INSTALLING:
+			
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						Thread.sleep(3000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			        next();
+				}			
+			}).start();
+			
 			break;
 		default:
 			break;
@@ -317,7 +331,7 @@ public class ApkInstallWizard
 			case STATUS_SET_INSTALL_OPTION:
 				//if(flag == 0) break;
 				changeState(STATUS_INSTALLING);
-				break;
+				break;				
 			case STATUS_INSTALLING:
 				changeState(STATUS_COMPLETED);
 				break;
@@ -386,7 +400,7 @@ public class ApkInstallWizard
 					wizard.dispose();
 				}
 			} else if(ControlPanel.CTR_ACT_CMD_RESTART.equals(arg0.getActionCommand())) {
-				restart();
+				changeState(STATUS_PACKAGE_SCANNING);
 			} else if(ContentPanel.CTT_ACT_CMD_REFRESH.equals(arg0.getActionCommand())) {
 
 			} else if(ContentPanel.CTT_ACT_CMD_SELECT_ALL.equals(arg0.getActionCommand())) {
