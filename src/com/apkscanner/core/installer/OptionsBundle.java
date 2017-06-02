@@ -87,7 +87,7 @@ public class OptionsBundle {
 		this.blockedFlags = blockedFlags;
 		flag &= ~blockedFlags;
 	}
-	
+
 	public synchronized boolean isBlockedFlags(int flags) {
 		return (blockedFlags & flags) == flags;
 	}
@@ -126,7 +126,7 @@ public class OptionsBundle {
 					systemPath = extraData[0];
 				}
 				break;
-				*/
+				 */
 			case FLAG_OPT_PUSH_LIB32:
 				if(extraData.length >= 2
 				&& (lib32Arch != extraData[0] || lib32ToPath != extraData[1])) {
@@ -194,11 +194,19 @@ public class OptionsBundle {
 	}
 
 	public synchronized boolean isInstallOptions() {
-		return (flag & FLAG_OPT_INSTALL) == FLAG_OPT_INSTALL;
+		return (flag & (FLAG_OPT_INSTALL | FLAG_OPT_PUSH)) == FLAG_OPT_INSTALL;
 	}
 
 	public synchronized boolean isPushOptions() {
-		return (flag & FLAG_OPT_INSTALL) != FLAG_OPT_INSTALL;
+		return (flag & (FLAG_OPT_INSTALL | FLAG_OPT_PUSH)) != FLAG_OPT_PUSH;
+	}
+
+	public synchronized boolean isNoInstallOptions() {
+		return (flag & FLAG_OPT_NOT_INSTALL) == FLAG_OPT_NOT_INSTALL;
+	}
+
+	public synchronized boolean isDontInstallOptions() {
+		return (flag & FLAG_OPT_NOT_INSTALL) == 0;
 	}
 
 	public synchronized boolean isSetForwardLock() {
