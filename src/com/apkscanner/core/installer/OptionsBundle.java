@@ -198,7 +198,7 @@ public class OptionsBundle {
 	}
 
 	public synchronized boolean isPushOptions() {
-		return (flag & (FLAG_OPT_INSTALL | FLAG_OPT_PUSH)) != FLAG_OPT_PUSH;
+		return (flag & (FLAG_OPT_INSTALL | FLAG_OPT_PUSH)) == FLAG_OPT_PUSH;
 	}
 
 	public synchronized boolean isNoInstallOptions() {
