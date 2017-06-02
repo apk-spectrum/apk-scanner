@@ -123,7 +123,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
     			Log.d(temp.name + "#"+intToARGB(hashCode(temp.name)));
     			temp.circleColor = Color.decode("#"+intToARGB(hashCode(temp.name)));
     			
-    			//setInstalloptionListener((InstallOptionPanel)temp.installoptionpanel, device);
+    			setInstalloptionListener((InstallOptionPanel)temp.installoptionpanel, device);
     			
     			this.repaint();
     			return;
@@ -150,9 +150,8 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 		}
 		
 		data.installoptionpanel = new InstallOptionPanel();
-		
+				
 		data.showstate = DeviceListData.SHOW_INSTALL_DETAL;
-		
 		data.pacakgeLoadingstatus =DeviceListData.WAITING; 
 		data.AppDetailpanel = new JLabel(Resource.IMG_LOADING.getImageIcon());
 		
@@ -170,6 +169,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 				}
 				
 				data.pacakgeLoadingstatus =DeviceListData.DONE;
+				setInstalloptionListener((InstallOptionPanel)data.installoptionpanel, device);
 				
 		        fireSelectionValueChanged(0, 0, true);
 			}
@@ -210,6 +210,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
         } else {
             // 설치 불가
         }
+        panel.setApkInfo(ApkInstallWizard.apkInfo);
         
         panel.setOptions(bundle);
 

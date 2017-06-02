@@ -40,7 +40,7 @@ public class DefaultOptionsFactory {
 				blockedFlags |= OptionsBundle.FLAG_OPT_INSTALL | OptionsBundle.FLAG_OPT_PUSH;
 			} else if(device != null) {
 				PackageInfo packageInfo = PackageManager.getPackageInfo(device, apkInfo.packageName);
-				int apiLevel = device.getApiLevel();
+				int apiLevel = 25;
 				if(apiLevel < minSdkVersion) {
 					blockedFlags |= OptionsBundle.FLAG_OPT_INSTALL | OptionsBundle.FLAG_OPT_PUSH;
 				} else if(signatureReport != null && packageInfo != null) {
