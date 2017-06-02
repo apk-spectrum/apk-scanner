@@ -58,7 +58,7 @@ public class OptionsBundle {
 	}
 
 	public synchronized boolean copyFrom(OptionsBundle bundle) {
-		if((flag & bundle.blockedFlags) != 0) {
+		if((blockedFlags & bundle.flag) != 0) {
 			return false; 
 		}
 
