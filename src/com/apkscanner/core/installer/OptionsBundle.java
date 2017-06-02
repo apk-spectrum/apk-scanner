@@ -57,7 +57,11 @@ public class OptionsBundle {
 		addOptionsChangedListener(listener);
 	}
 
-	public synchronized void copyFrom(OptionsBundle bundle) {
+	public synchronized boolean copyFrom(OptionsBundle bundle) {
+		if((flag & bundle.blockedFlags) != 0) {
+			return false; 
+		}
+
 		flag = bundle.flag;
 		launchActivity = bundle.launchActivity;
 		systemPath = bundle.systemPath;
@@ -72,10 +76,11 @@ public class OptionsBundle {
 		lib32ToPath = bundle.lib32ToPath != null ? new String(bundle.lib32ToPath) : null;
 		lib64Arch = bundle.lib64Arch != null ? new String(bundle.lib64Arch) : null;
 		 */
+		return true;
 	}
 
-	public synchronized void copyTo(OptionsBundle bundle) {
-		bundle.copyFrom(this);
+	public synchronized boolean copyTo(OptionsBundle bundle) {
+		return bundle.copyFrom(this);
 	}
 
 	public synchronized void setBlockedFlags(int blockedFlags) {
