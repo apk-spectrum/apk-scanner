@@ -675,7 +675,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
     	for(int i=0; i < listmodel.size(); i++) {
     		DeviceListData temp = (DeviceListData) listmodel.getElementAt(i);
     		if(temp.serialnumber.equals(arg0.getSerialNumber())) {
-    			listmodel.remove(i);
+    			listmodel.removeElementAt(i);
     			if(listmodel.size() >=1) {
     				this.setSelectedIndex(0);
     			}
