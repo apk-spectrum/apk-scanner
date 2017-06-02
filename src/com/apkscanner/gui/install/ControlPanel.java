@@ -86,6 +86,8 @@ public class ControlPanel extends JPanel
 			setVisibleButtons(false, false, false, false, true, false); break;
 		case ApkInstallWizard.STATUS_COMPLETED:
 			setVisibleButtons(false, false, true, false, true, true); break;
+		case ApkInstallWizard.STATUS_APK_VERTIFY_ERROR:
+			setVisibleButtons(false, false, false, true, false, false); break;
 		default:
 			break;
 		}

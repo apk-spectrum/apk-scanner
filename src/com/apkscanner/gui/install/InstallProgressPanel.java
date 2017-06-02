@@ -43,12 +43,14 @@ public class InstallProgressPanel extends JPanel
 	private final int COLOR_STEP_NOTFINISH = 0; 
 	private final int COLOR_STEP_PROCESSING = 1; 		
 	private final int COLOR_STEP_FINISHED = 2;
+	private final int COLOR_STEP_ERROR= 3;
 	
 	int CurrentProgress=0;
 	private final String [] outtexts= {"APK VERIFY", "PACKAGE", "INSTALLING", "FINISH"};
 	
-	private final Color []Colorset = {new Color(222,228,228), new Color(52,152,220),new Color(46,204,114)};
-			
+	private final Color []Colorset = {new Color(222,228,228), new Color(52,152,220),new Color(46,204,114), new Color(0xFF0000)};
+	//private final Color ErrorColor = new Color(0xFF7400);		
+	
     private EllipseLayout[] ellipselabel = new EllipseLayout[STEPMAX];			
     private Linelayout[] linelabel = new Linelayout[STEPMAX-1];
     private AnimationLabel[] animatlabel = new AnimationLabel[STEPMAX];
@@ -120,7 +122,7 @@ public class InstallProgressPanel extends JPanel
 			colorbase = new ColorBase(this);				
 			colorbase.state = 0;
 		}
-		
+				
 	  public void drawCenteredString(String s, int w, int h, Graphics g) {
 		    FontMetrics fm = g.getFontMetrics();
 		    int x = (w - fm.stringWidth(s)) / 2;
@@ -418,6 +420,10 @@ public class InstallProgressPanel extends JPanel
 			break;
 		case ApkInstallWizard.STATUS_COMPLETED:
 			newStatus = 4;
+			break;
+		case ApkInstallWizard.STATUS_APK_VERTIFY_ERROR:
+			ellipselabel[CurrentProgress-1].setState(COLOR_STEP_ERROR);
+			animatlabel[CurrentProgress-1].setState(COLOR_STEP_ERROR);
 			break;
 		default:
 			break;

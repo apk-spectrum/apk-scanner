@@ -2,6 +2,7 @@ package com.apkscanner.gui.install;
 
 
 import java.awt.CardLayout;
+import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.BoxLayout;
@@ -9,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableColumn;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
@@ -45,6 +47,7 @@ public class ContentPanel extends JPanel
 	private JPanel panel_set_install_option;
 	
 	private JLabel loadingMessageLable;
+	private JLabel ErrorMessageLable;
 	
 	public void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
 			double... percentages) {
@@ -74,11 +77,13 @@ public class ContentPanel extends JPanel
 				
 		panel_check_package = new FindPackagePanel(listener);
 		panel_set_install_option = new JPanel();
+		ErrorMessageLable = new JLabel("APK Error!!!", SwingConstants.CENTER);
+		ErrorMessageLable.setFont(new Font("Serif", Font.PLAIN, 30)); 
 		
 		add(new JPanel(), CONTENT_INIT);
 		add(lodingPanel, CONTENT_LOADING);		
 		add(new JPanel(), CONTENT_PACKAGE_SCANNING);
-		add(new JLabel("error"), CONTENT_VERIFY_ERROR);
+		add(ErrorMessageLable, CONTENT_VERIFY_ERROR);
 		
 		add(panel_check_package, CONTENT_CHECK_PACKAGES);
 		add(panel_set_install_option, CONTENT_SET_INSTALL_OPTION);
@@ -119,6 +124,9 @@ public class ContentPanel extends JPanel
 		case ApkInstallWizard.STATUS_COMPLETED:
 			
 			((CardLayout)getLayout()).show(this, CONTENT_COMPLETED);
+			break;
+		case ApkInstallWizard.STATUS_APK_VERTIFY_ERROR:
+			((CardLayout)getLayout()).show(this, CONTENT_VERIFY_ERROR);
 			break;
 		default:
 			loadingMessageLable.setText("UNKNOWN STEP");

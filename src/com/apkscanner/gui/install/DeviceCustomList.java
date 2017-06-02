@@ -676,8 +676,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
           JList list = (JList) e.getSource();
           int selections[] = list.getSelectedIndices();
           Object selectionValues[] = list.getSelectedValues();
-          for (int i = 0, n = selections.length; i < n; i++) {
-            
+          for (int i = 0, n = selections.length; i < n; i++) {            
             //System.out.print(selections[i] + "/" + selectionValues[i] + " ");
         	  ((DeviceListData)selectionValues[i]).showstate  = DeviceListData.SHOW_INSTALL_OPTION;
         	  FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.REQ_REFRESH_DETAIL_PANEL));

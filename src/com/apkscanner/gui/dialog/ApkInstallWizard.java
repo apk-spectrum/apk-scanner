@@ -55,6 +55,8 @@ public class ApkInstallWizard
 	public static final int STATUS_INSTALLING = 4;
 	public static final int STATUS_COMPLETED = 5;
 	
+	public static final int STATUS_APK_VERTIFY_ERROR = 6;
+	
 	public static final int FLAG_OPT_INSTALL	 	= 0x0100;
 	public static final int FLAG_OPT_PUSH			= 0x0200;
 	public static final int FLAG_OPT_PUSH_OVERWRITE = 0x0400;
@@ -262,6 +264,7 @@ public class ApkInstallWizard
 			        scanner.openApk(apkFilePath);
 			        if(scanner.getLastErrorCode() != ApkScanner.NO_ERR) {
 			            Log.e("Fail open APK");
+			            changeState(STATUS_APK_VERTIFY_ERROR);
 			        }
 			        apkInfo = new CompactApkInfo(scanner.getApkInfo());
 			        
@@ -271,6 +274,7 @@ public class ApkInstallWizard
 			        } catch (Exception e) { }
 			        if(signatureReport == null) {
 			            Log.e("Fail APK Virify");
+			            changeState(STATUS_APK_VERTIFY_ERROR);
 			        }
 			        try {
 						Thread.sleep(100);
