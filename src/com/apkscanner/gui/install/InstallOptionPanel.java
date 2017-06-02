@@ -29,7 +29,9 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
 import com.apkscanner.core.installer.OptionsBundle;
+import com.apkscanner.data.apkinfo.CompactApkInfo;
 import com.apkscanner.gui.util.ToggleButtonBarCellIcon;
+import com.apkscanner.util.Log;
 
 public class InstallOptionPanel extends JPanel {
 	private static final long serialVersionUID = 2307623568442307145L;
@@ -253,8 +255,14 @@ public class InstallOptionPanel extends JPanel {
 		return p;
 	}
 	
-	public void setOptions(OptionsBundle bundle) {
+	public void setApkInfo(CompactApkInfo apkinfo) {
 		
+	}
+	
+	public void setOptions(OptionsBundle bundle) {
+		Log.e("OptionsBundle >>>>>>>>> ");
+		Log.e("launchActivity " + bundle.launchActivity);
+		Log.e("systemPath " + bundle.systemPath);
 	}
 	
 }

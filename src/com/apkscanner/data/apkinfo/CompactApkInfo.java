@@ -18,6 +18,8 @@ public class CompactApkInfo {
 	public String[] libraries = null;
 	public String[] certificates = null;
 
+	public ComponentInfo[] activityList = null;
+
 	public CompactApkInfo() { }
 
 	public CompactApkInfo(ApkInfo info) {
@@ -36,5 +38,7 @@ public class CompactApkInfo {
 
 		libraries = info.libraries;
 		certificates = info.certificates;
+		
+		activityList = ApkInfoHelper.getLauncherActivityList(info, true);
 	}
 }

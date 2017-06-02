@@ -77,6 +77,11 @@ public class OptionsBundle {
 
 	public synchronized void setBlockedFlags(int blockedFlags) {
 		this.blockedFlags = blockedFlags;
+		flag &= ~blockedFlags;
+	}
+	
+	public synchronized boolean isBlockedFlags(int flags) {
+		return (blockedFlags & flags) == flags;
 	}
 
 	public synchronized void set(int flag) {
@@ -114,7 +119,7 @@ public class OptionsBundle {
 				break;
 			case FLAG_OPT_PUSH_LIB32:
 				if(extraData.length >= 2
-						&& (lib32Arch != extraData[0] || lib32ToPath != extraData[1])) {
+				&& (lib32Arch != extraData[0] || lib32ToPath != extraData[1])) {
 					isChangeExtraData = true;
 					lib32Arch = extraData[0];
 					lib32ToPath = extraData[1];
@@ -122,7 +127,7 @@ public class OptionsBundle {
 				break;
 			case FLAG_OPT_PUSH_LIB64:
 				if(extraData.length >= 2
-						&& (lib64Arch != extraData[0] || lib64ToPath != extraData[1])) {
+				&& (lib64Arch != extraData[0] || lib64ToPath != extraData[1])) {
 					isChangeExtraData = true;
 					lib64Arch = extraData[0];
 					lib64ToPath = extraData[1];
@@ -160,6 +165,8 @@ public class OptionsBundle {
 		if((boolean)Resource.PROP_LAUNCH_AF_INSTALLED.getData()) {
 			flag |= FLAG_OPT_INSTALL_LAUNCH; 
 		}
+
+		flag |= FLAG_OPT_PUSH_SYSTEM | FLAG_OPT_PUSH_REBOOT | FLAG_OPT_PUSH_LIB_BOTH;
 		optionsChanged(FLAG_OPT_CLEAR_OPTIONS, (String[])null);
 	}
 
