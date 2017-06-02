@@ -23,11 +23,14 @@ public class ContentPanel extends JPanel
 
 	public static final String CONTENT_INIT = "CONTENT_INIT";
 	public static final String CONTENT_LOADING = "CONTENT_LOADING";
+	public static final String CONTENT_VERIFY_ERROR = "CONTENT_VERIFY_ERROR";
+	
 	public static final String CONTENT_PACKAGE_SCANNING = "CONTENT_PACKAGE_SCANNING";
 	public static final String CONTENT_CHECK_PACKAGES = "CONTENT_CHECK_PACKAGES";
 	public static final String CONTENT_SET_INSTALL_OPTION = "CONTENT_SET_INSTALL_OPTION";
 	public static final String CONTENT_INSTALLING = "CONTENT_INSTALLING";
 	public static final String CONTENT_COMPLETED = "CONTENT_COMPLETED";
+	
 	
 
 	public static final String CTT_ACT_CMD_REFRESH = "CTT_ACT_CMD_REFRESH";
@@ -75,6 +78,8 @@ public class ContentPanel extends JPanel
 		add(new JPanel(), CONTENT_INIT);
 		add(lodingPanel, CONTENT_LOADING);		
 		add(new JPanel(), CONTENT_PACKAGE_SCANNING);
+		add(new JLabel("error"), CONTENT_VERIFY_ERROR);
+		
 		add(panel_check_package, CONTENT_CHECK_PACKAGES);
 		add(panel_set_install_option, CONTENT_SET_INSTALL_OPTION);
 		add(new JPanel(), CONTENT_INSTALLING);

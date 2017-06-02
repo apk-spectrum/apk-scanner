@@ -18,6 +18,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.util.jar.JarFile;
 
 import javax.swing.BorderFactory;
 
@@ -27,10 +28,14 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.apkscanner.core.scanner.ApkScanner;
+import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.data.apkinfo.CompactApkInfo;
 import com.apkscanner.gui.install.ContentPanel;
 import com.apkscanner.gui.install.ControlPanel;
 import com.apkscanner.gui.install.InstallProgressPanel;
+import com.apkscanner.gui.install.DeviceCustomList.DeviceListData;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.resource.Resource;
 
@@ -72,7 +77,11 @@ public class ApkInstallWizard
 	private ContentPanel contentPanel;
 	private ControlPanel controlPanel;
 	private UIEventHandler uiEventHandler = new UIEventHandler();
-	public static  String pakcageFilePath;
+	
+	public static String pakcageFilePath;	
+	public static CompactApkInfo apkInfo;
+	public static SignatureReport signatureReport;
+	
 	private int status;
 	private int flag;
 
@@ -243,7 +252,35 @@ public class ApkInstallWizard
 	private void execute(int status) {
 		switch(status) {
 		case STATUS_PACKAGE_SCANNING:
-
+			
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+			        String apkFilePath = pakcageFilePath;
+			        
+			        ApkScanner scanner = ApkScanner.getInstance("AAPTLIGHT");
+			        scanner.openApk(apkFilePath);
+			        if(scanner.getLastErrorCode() != ApkScanner.NO_ERR) {
+			            Log.e("Fail open APK");
+			        }
+			        apkInfo = new CompactApkInfo(scanner.getApkInfo());
+			        
+			        signatureReport = null;
+			        try {
+			            signatureReport = new SignatureReport(new JarFile(apkFilePath, true));
+			        } catch (Exception e) { }
+			        if(signatureReport == null) {
+			            Log.e("Fail APK Virify");
+			        }
+			        try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			        next();
+				}			
+			}).start();			
 			break;
 		case STATUS_INSTALLING:
 			break;
@@ -259,7 +296,7 @@ public class ApkInstallWizard
 		}
 
 		setVisible(true);
-		changeState(STATUS_CHECK_PACKAGES);
+		changeState(STATUS_PACKAGE_SCANNING);
 	}
 	
 	private void next() {
@@ -271,7 +308,7 @@ public class ApkInstallWizard
 				changeState(STATUS_CHECK_PACKAGES);
 				break;
 			case STATUS_CHECK_PACKAGES:
-				changeState(STATUS_SET_INSTALL_OPTION);
+				changeState(STATUS_INSTALLING);
 				break;
 			case STATUS_SET_INSTALL_OPTION:
 				//if(flag == 0) break;
@@ -409,7 +446,7 @@ public class ApkInstallWizard
 				if(SystemUtil.isWindows()) {
 					wizard.setApk("C:\\Melon.apk");
 				} else {  //for linux
-					wizard.setApk("/home/leejinhyeong/Desktop/reco.apk");
+					wizard.setApk("/home/leejinhyeong/Desktop/DCMContacts.apk");
 				}
 				wizard.start();
 				//wizard.setVisible(true);

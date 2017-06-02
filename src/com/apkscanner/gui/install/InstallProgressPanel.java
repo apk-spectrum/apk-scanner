@@ -407,10 +407,10 @@ public class InstallProgressPanel extends JPanel
 		case ApkInstallWizard.STATUS_INIT:
 			break;
 		case ApkInstallWizard.STATUS_PACKAGE_SCANNING:
-		case ApkInstallWizard.STATUS_CHECK_PACKAGES:
 			newStatus = 1;
 			break;
 		case ApkInstallWizard.STATUS_SET_INSTALL_OPTION:
+		case ApkInstallWizard.STATUS_CHECK_PACKAGES:
 			newStatus = 2;
 			break;
 		case ApkInstallWizard.STATUS_INSTALLING:
