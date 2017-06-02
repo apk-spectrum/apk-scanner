@@ -114,18 +114,8 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
     	for(int i=0; i < listmodel.size(); i++) {
     		DeviceListData temp = (DeviceListData) listmodel.getElementAt(i);
     		if(temp.serialnumber.equals(device.getSerialNumber())) {
-    			setDeviceProperty(device, temp, IDevice.PROP_DEVICE_MODEL);
-    			setDeviceProperty(device,temp,IDevice.PROP_BUILD_VERSION);    			
-    			temp.status = temp.SDKVersion == null ? "OFFLINE" : device.getState().toString();
-    			if(!temp.status.equals("OFFLINE")) {
-    				temp.isinstalldevice = true;
-    				setInstalloptionListener((InstallOptionPanel)temp.installoptionpanel, device);
-    			}    			
-    			temp.AppDetailpanel = getPackageInfopanel(device);    			
-    			//Log.d(temp.name + "#"+intToARGB(hashCode(temp.name)));
-    			temp.circleColor = Color.decode("#"+intToARGB(hashCode(temp.name)));
     			
-    			
+    			refteshdefaultListData(temp, device);
     			
     			this.repaint();
     			return;
@@ -133,29 +123,36 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
     	}
     	
 		final DeviceListData data = new DeviceListData();
-		//data.circleColor = new Color( 209, 52, 23 );
 		data.serialnumber = device.getSerialNumber();
-		//data.SDKVersion = device.getProperty(IDevice.PROP_BUILD_VERSION_NUMBER);
-		//data.name = device.getName();
+		data.installoptionpanel = new InstallOptionPanel();
+				
+		refteshdefaultListData(data, device);
+		
+		listmodel.addElement (data);
+		
+		if(listmodel.size() ==1) {
+			setSelectedIndex(0);
+			fireSelectionValueChanged(0, 0, true);
+		}
+		this.repaint();
+    }
+    
+    private void refteshdefaultListData(final DeviceListData data, final IDevice device) {
 		setDeviceProperty(device,data,IDevice.PROP_DEVICE_MODEL);
 		setDeviceProperty(device,data,IDevice.PROP_BUILD_VERSION);
 		
-		//Log.d(data.name + "#"+intToARGB(hashCode(data.name)));
 		data.circleColor = Color.decode("#"+intToARGB(hashCode(data.name)));
 		
-		
-		//data.circleColor = ;
-		data.installoptionpanel = new InstallOptionPanel();
-		
 		data.status = data.SDKVersion == null ? "OFFLINE" : device.getState().toString();
-		if(!data.status.equals("OFFLINE")) {
-			data.isinstalldevice = true;
-			//setInstalloptionListener((InstallOptionPanel)data.installoptionpanel, device);
-		}
-				
+		
 		data.showstate = DeviceListData.SHOW_INSTALL_DETAL;
 		data.pacakgeLoadingstatus =DeviceListData.WAITING; 
 		data.AppDetailpanel = new JLabel(Resource.IMG_LOADING.getImageIcon());
+		
+		if(!data.status.equals("OFFLINE")) {
+			data.isinstalldevice = true;
+			setInstalloptionListener((InstallOptionPanel)data.installoptionpanel, device);
+		}   
 		
 		new Thread(new Runnable() {
 			@Override
@@ -177,13 +174,6 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 			}
 		}).start();
 		
-		listmodel.addElement (data);
-		
-		if(listmodel.size() ==1) {
-			setSelectedIndex(0);
-			fireSelectionValueChanged(0, 0, true);
-		}
-		this.repaint();
     }
     
     private synchronized void setInstalloptionListener(final InstallOptionPanel panel ,final IDevice device) {
@@ -458,8 +448,6 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
     			}
     		    
     		}
-	    		
-	    	
 	    	
 	        this.index = index;
 	        if (isSelected) {

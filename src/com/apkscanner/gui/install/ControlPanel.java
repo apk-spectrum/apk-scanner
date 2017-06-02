@@ -41,7 +41,7 @@ public class ControlPanel extends JPanel
 		
 		
 		JPanel stepPanel = new JPanel();
-		stepPanel.add(btnCancel);
+		
 		stepPanel.add(btnPre);
 		stepPanel.add(btnNext);
 		stepPanel.add(btnRestart);
@@ -49,6 +49,7 @@ public class ControlPanel extends JPanel
 
 		JPanel ShowPanel = new JPanel();
 		ShowPanel.add(btnShowLog);
+		ShowPanel.add(btnCancel);
 		
 		add(ShowPanel, BorderLayout.WEST);
 		add(stepPanel, BorderLayout.EAST);
@@ -84,7 +85,7 @@ public class ControlPanel extends JPanel
 		case ApkInstallWizard.STATUS_PACKAGE_SCANNING:
 			setVisibleButtons(false, false, false, false, true, false); break;
 		case ApkInstallWizard.STATUS_CHECK_PACKAGES:
-			setVisibleButtons(true, false, false, true, false, false); break;
+			setVisibleButtons(true, false, false, false, false, false); break;
 		case ApkInstallWizard.STATUS_SET_INSTALL_OPTION:
 			setVisibleButtons(true, true, false, true, false, false); break;
 		case ApkInstallWizard.STATUS_INSTALLING:
@@ -93,6 +94,8 @@ public class ControlPanel extends JPanel
 			setVisibleButtons(false, false, true, false, true, true); break;
 		case ApkInstallWizard.STATUS_APK_VERTIFY_ERROR:
 			setVisibleButtons(false, false, false, true, false, false); break;
+		case ApkInstallWizard.STATUS_NO_DEVICE:
+			setVisibleButtons(false, false, false, false, false, false); break;			
 		default:
 			break;
 		}

@@ -54,7 +54,7 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 		this.setLayout(new CardLayout());
 		mainlistener = listener;
 		JPanel mainpanel = new JPanel(new BorderLayout());
-		JLabel textSelectDevice = new JLabel("no device");
+		JLabel textSelectDevice = new JLabel("connect device........... and wait");
 		textSelectDevice.setFont(new Font(textSelectDevice.getFont().getName(), Font.PLAIN, 30));
 	    mainpanel.add(textSelectDevice,BorderLayout.NORTH);
 		pacakgeinfopanel = new JPanel(new CardLayout());
@@ -74,7 +74,7 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	    this.add(mainpanel, DEVICE_LAYOUT);
 	    this.add(textSelectDevice, NO_DEVICE_LAYOUT);
 	    
-	    ((CardLayout)getLayout()).show(this, NO_DEVICE_LAYOUT);
+	    ((CardLayout)getLayout()).show(this, NO_DEVICE_LAYOUT);	    
 	}
 
 	private void setmargin(JPanel c, int size) {
@@ -139,6 +139,7 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 		if(devicelist!=null) devicelist.deviceConnected(arg0);
 		
 		((CardLayout)getLayout()).show(this, DEVICE_LAYOUT);
+		mainlistener.actionPerformed(new ActionEvent(this, 0, DEVICE_LAYOUT));
 	}
 
 	@Override
@@ -148,6 +149,7 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 		
 		if(devicelist.getModel().getSize() == 0) {
 			((CardLayout)getLayout()).show(this, NO_DEVICE_LAYOUT);
+			mainlistener.actionPerformed(new ActionEvent(this, 0, NO_DEVICE_LAYOUT));
 		}
 	}
 

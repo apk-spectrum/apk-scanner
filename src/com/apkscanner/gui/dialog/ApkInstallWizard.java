@@ -58,6 +58,9 @@ public class ApkInstallWizard
 	
 	public static final int STATUS_APK_VERTIFY_ERROR = 6;
 	
+	public static final int STATUS_NO_DEVICE = 7;
+	public static final int STATUS_DEVICE = 8;
+	
 	public static final int FLAG_OPT_INSTALL	 	= 0x0100;
 	public static final int FLAG_OPT_PUSH			= 0x0200;
 	public static final int FLAG_OPT_PUSH_OVERWRITE = 0x0400;
@@ -283,8 +286,7 @@ public class ApkInstallWizard
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}
-			        DefaultOptionsFactory optFactory = new DefaultOptionsFactory(ApkInstallWizard.apkInfo, ApkInstallWizard.signatureReport);
+					}			        
 			        next();
 				}			
 			}).start();			
@@ -410,9 +412,13 @@ public class ApkInstallWizard
 
 			} else if("SELECT_ALL".equals(arg0.getActionCommand())) {
 				
-			}else if("CHANG_SIGN".equals(arg0.getActionCommand())) {
+			} else if("CHANG_SIGN".equals(arg0.getActionCommand())) {
 				
-			}
+			} else if("NO_DEVICE_LAYOUT".equals(arg0.getActionCommand())) {
+				controlPanel.setStatus(ApkInstallWizard.STATUS_NO_DEVICE);
+			} else if("DEVICE_LAYOUT".equals(arg0.getActionCommand())) {
+				controlPanel.setStatus(ApkInstallWizard.STATUS_CHECK_PACKAGES);
+			}  
 		}
 
 		@Override
