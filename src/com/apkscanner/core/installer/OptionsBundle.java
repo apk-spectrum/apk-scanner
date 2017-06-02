@@ -6,8 +6,9 @@ import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
 public class OptionsBundle {
-	public static final int FLAG_OPT_INSTALL	 	= 0x0100;
-	public static final int FLAG_OPT_PUSH			= 0x0200;
+	public static final int FLAG_OPT_INSTALL	 	= 0x010000;
+	public static final int FLAG_OPT_PUSH			= 0x020000;
+	public static final int FLAG_OPT_NOT_INSTALL	= 0x030000;
 
 	public static final int FLAG_OPT_INSTALL_FORWARD_LOCK	= 0x0001;
 	public static final int FLAG_OPT_INSTALL_REPLACE		= 0x0002;
@@ -17,15 +18,15 @@ public class OptionsBundle {
 	public static final int FLAG_OPT_INSTALL_GRANT_PERM		= 0x0020;
 	public static final int FLAG_OPT_INSTALL_LAUNCH			= 0x0040;
 
-	public static final int FLAG_OPT_PUSH_SYSTEM	= 0x0001;
-	public static final int FLAG_OPT_PUSH_PRIVAPP	= 0x0002;
-	public static final int FLAG_OPT_PUSH_LIB32		= 0x0004;
-	public static final int FLAG_OPT_PUSH_LIB64		= 0x0008;
-	public static final int FLAG_OPT_PUSH_LIB_BOTH	= 0x0010;
-	public static final int FLAG_OPT_PUSH_REBOOT	= 0x0040;
+	public static final int FLAG_OPT_PUSH_SYSTEM	= 0x0100;
+	public static final int FLAG_OPT_PUSH_PRIVAPP	= 0x0200;
+	public static final int FLAG_OPT_PUSH_LIB32		= 0x0400;
+	public static final int FLAG_OPT_PUSH_LIB64		= 0x0800;
+	public static final int FLAG_OPT_PUSH_LIB_BOTH	= 0x1000;
+	public static final int FLAG_OPT_PUSH_REBOOT	= 0x4000;
 
-	public static final int FLAG_OPT_CLEAR_OPTIONS = 0x1000; 
-	public static final int FLAG_OPT_HAS_EXTRADATA_MASK = FLAG_OPT_INSTALL_LAUNCH | FLAG_OPT_PUSH | FLAG_OPT_PUSH_LIB32 | FLAG_OPT_PUSH_LIB64;
+	public static final int FLAG_OPT_CLEAR_OPTIONS = 0x800000; 
+	public static final int FLAG_OPT_HAS_EXTRADATA_MASK = FLAG_OPT_INSTALL_LAUNCH | FLAG_OPT_PUSH_LIB32 | FLAG_OPT_PUSH_LIB64;
 
 	private int flag;
 	private int blockedFlags; 
@@ -93,9 +94,9 @@ public class OptionsBundle {
 			Log.w(String.format("flag(0x%x) is blocked(0x%x)", flag, blockedFlags));
 			flag &= ~blockedFlags;
 		}
-		if(flag == 0 || Integer.SIZE - Integer.numberOfLeadingZeros(flag) > 1) {
-			Log.e("Can be set flag to only one bit at once");
-			return;
+		if(flag == 0 || Integer.bitCount(flag) > 1) {
+			//Log.v("Can be set flag to only one bit at once " + Integer.bitCount(flag) + ", " + Integer.toHexString(flag));
+			//return;
 		}
 
 		if((flag & FLAG_OPT_HAS_EXTRADATA_MASK) != 0 && extraData == null) {
@@ -111,12 +112,14 @@ public class OptionsBundle {
 					launchActivity = extraData[0];
 				}
 				break;
+				/*
 			case FLAG_OPT_PUSH:
 				if(systemPath != extraData[0]) {
 					isChangeExtraData = true;
 					systemPath = extraData[0];
 				}
 				break;
+				*/
 			case FLAG_OPT_PUSH_LIB32:
 				if(extraData.length >= 2
 				&& (lib32Arch != extraData[0] || lib32ToPath != extraData[1])) {
@@ -136,16 +139,25 @@ public class OptionsBundle {
 			}
 		}
 
+		switch(flag) {
+		case FLAG_OPT_INSTALL:
+		case FLAG_OPT_PUSH:
+		case FLAG_OPT_NOT_INSTALL:
+			this.flag &= ~FLAG_OPT_NOT_INSTALL;
+			break;
+		}
+
 		int pre = this.flag;
 		this.flag |= flag;
 
 		if(pre != this.flag || isChangeExtraData) {
-			optionsChanged(pre ^ this.flag, extraData);
+			int changeFlag = pre ^ this.flag;
+			optionsChanged(changeFlag, extraData);
 		}
 	}
 
 	public synchronized void unset(int flag) {
-		if(flag == 0 || Integer.SIZE - Integer.numberOfLeadingZeros(flag) > 1) {
+		if(flag == 0 || Integer.bitCount(flag) > 1) {
 			Log.e("Can be unset flag to only one bit at once");
 			return;
 		}
@@ -224,6 +236,7 @@ public class OptionsBundle {
 
 	public void addOptionsChangedListener(IOptionsChangedListener listener) {
 		synchronized (sLock) {
+			if(listener == null) return;
 			if (!sChangedListeners.contains(listener)) {
 				sChangedListeners.add(listener);
 			}

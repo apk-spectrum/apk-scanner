@@ -39,8 +39,9 @@ public class DefaultOptionsFactory {
 			if(!wasSigned) {
 				blockedFlags |= OptionsBundle.FLAG_OPT_INSTALL | OptionsBundle.FLAG_OPT_PUSH;
 			} else if(device != null) {
+				Log.v("create options for " + device.getName());
 				PackageInfo packageInfo = PackageManager.getPackageInfo(device, apkInfo.packageName);
-				int apiLevel = 25;
+				int apiLevel = device.getApiLevel();
 				if(apiLevel < minSdkVersion) {
 					blockedFlags |= OptionsBundle.FLAG_OPT_INSTALL | OptionsBundle.FLAG_OPT_PUSH;
 				} else if(signatureReport != null && packageInfo != null) {
@@ -53,12 +54,12 @@ public class DefaultOptionsFactory {
 							}
 						}
 					}
-					
+
 					if(packageInfo.isSystemApp()) {
-						
+
 					}
 				}
-				
+
 				if(packageInfo != null) {
 					String apkPath = null;
 					if(packageInfo.isSystemApp()) {
@@ -66,7 +67,7 @@ public class DefaultOptionsFactory {
 					} else if(packageInfo.getHiddenSystemPackageValue("pkg") != null) {
 						apkPath = packageInfo.getHiddenSystemPackageValue("codePath");
 					}
-					
+
 					if(apkPath != null && !apkPath.endsWith(".apk")) {
 						SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
 						try {
@@ -83,7 +84,7 @@ public class DefaultOptionsFactory {
 							}
 						}
 					}
-					
+
 					if(apkPath == null || apkPath.isEmpty()) {
 						apkPath = "/system/app/" + packageInfo.packageName + "-1/base.apk";
 					} else if(!apkPath.endsWith(".apk")) {
@@ -107,7 +108,7 @@ public class DefaultOptionsFactory {
 		}
 
 		options.setBlockedFlags(blockedFlags);
-		
+
 		return options;
 	}
 }
