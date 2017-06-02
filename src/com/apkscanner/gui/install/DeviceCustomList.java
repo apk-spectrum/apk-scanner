@@ -22,6 +22,7 @@ import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
 
 import java.util.Objects;
+import java.util.jar.JarFile;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonModel;
@@ -44,6 +45,8 @@ import com.android.ddmlib.TimeoutException;
 import com.apkscanner.core.installer.DefaultOptionsFactory;
 import com.apkscanner.core.installer.OptionsBundle;
 import com.apkscanner.core.scanner.ApkScanner;
+import com.apkscanner.core.signer.SignatureReport;
+import com.apkscanner.data.apkinfo.CompactApkInfo;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.dialog.PackageInfoPanel;
 
@@ -116,14 +119,13 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
     			temp.status = temp.SDKVersion == null ? "OFFLINE" : device.getState().toString();
     			if(!temp.status.equals("OFFLINE")) {
     				temp.isinstalldevice = true;
-    			}
-    			
-    			temp.AppDetailpanel = getPackageInfopanel(device);
-    			
-    			Log.d(temp.name + "#"+intToARGB(hashCode(temp.name)));
+    				setInstalloptionListener((InstallOptionPanel)temp.installoptionpanel, device);
+    			}    			
+    			temp.AppDetailpanel = getPackageInfopanel(device);    			
+    			//Log.d(temp.name + "#"+intToARGB(hashCode(temp.name)));
     			temp.circleColor = Color.decode("#"+intToARGB(hashCode(temp.name)));
     			
-    			setInstalloptionListener((InstallOptionPanel)temp.installoptionpanel, device);
+    			
     			
     			this.repaint();
     			return;
@@ -143,13 +145,13 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 		
 		
 		//data.circleColor = ;
+		data.installoptionpanel = new InstallOptionPanel();
 		
 		data.status = data.SDKVersion == null ? "OFFLINE" : device.getState().toString();
 		if(!data.status.equals("OFFLINE")) {
 			data.isinstalldevice = true;
+			//setInstalloptionListener((InstallOptionPanel)data.installoptionpanel, device);
 		}
-		
-		data.installoptionpanel = new InstallOptionPanel();
 				
 		data.showstate = DeviceListData.SHOW_INSTALL_DETAL;
 		data.pacakgeLoadingstatus =DeviceListData.WAITING; 
@@ -184,35 +186,61 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 		this.repaint();
     }
     
-    private void setInstalloptionListener(InstallOptionPanel panel ,IDevice device) {
-                        
-        DefaultOptionsFactory optFactory = new DefaultOptionsFactory(ApkInstallWizard.apkInfo, ApkInstallWizard.signatureReport);
-        
-        OptionsBundle bundle = optFactory.createOptions(device);
-        bundle.addOptionsChangedListener(new OptionsBundle.IOptionsChangedListener() {
-            @Override
-            public void changeOptions(int changedFlag, String... extraData) {            	
-                switch(changedFlag) {
-                case OptionsBundle.FLAG_OPT_INSTALL:
-                    // 인스톨로 바뀜                	
-                    break;
-                case OptionsBundle.FLAG_OPT_PUSH:
-                    // 푸쉬로 바뀜
-                    break;
-                }
-            }
-        });
-        
-        if(bundle.isInstallOptions()) {
-            // 초기값이 인스톨설정 
-        } else if(bundle.isPushOptions()) {
-            // 초기값이 인스톨설정 
-        } else {
-            // 설치 불가
-        }
-        panel.setApkInfo(ApkInstallWizard.apkInfo);
-        
-        panel.setOptions(bundle);
+    private synchronized void setInstalloptionListener(final InstallOptionPanel panel ,final IDevice device) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+	    	if(ApkInstallWizard.optFactory==null) {
+	    		if(ApkInstallWizard.apkInfo == null) {
+			        ApkScanner scanner = ApkScanner.getInstance("AAPTLIGHT");
+			        scanner.openApk(ApkInstallWizard.pakcageFilePath);
+			        
+			        ApkInstallWizard.apkInfo = new CompactApkInfo(scanner.getApkInfo());
+	    		}
+	    		if(ApkInstallWizard.signatureReport == null) {
+	    			try {
+						ApkInstallWizard.signatureReport = new SignatureReport(new JarFile(ApkInstallWizard.pakcageFilePath, true));
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	    		}
+	    		ApkInstallWizard.optFactory = new DefaultOptionsFactory(ApkInstallWizard.apkInfo, ApkInstallWizard.signatureReport);
+	    	}
+	    	
+	        OptionsBundle bundle = ApkInstallWizard.optFactory.createOptions(device);
+	        bundle.addOptionsChangedListener(new OptionsBundle.IOptionsChangedListener() {
+	            @Override
+	            public void changeOptions(int changedFlag, String... extraData) {            	
+	                switch(changedFlag) {
+	                case OptionsBundle.FLAG_OPT_INSTALL:
+	                    // 인스톨로 바뀜                	
+	                    break;
+	                case OptionsBundle.FLAG_OPT_PUSH:
+	                    // 푸쉬로 바뀜
+	                    break;
+	                }
+	            }
+	        });
+	        
+	        if(bundle.isInstallOptions()) {
+	            // 초기값이 인스톨설정 
+	        } else if(bundle.isPushOptions()) {
+	            // 초기값이 인스톨설정 
+	        } else {
+	            // 설치 불가
+	        }
+	        panel.setApkInfo(ApkInstallWizard.apkInfo);
+	        
+	        panel.setOptions(bundle);
+	        
+	        Log.d(device.getSerialNumber()+" " +device.getState() + "");
+	        
+			}
+		}).start();		        
 
     }
     

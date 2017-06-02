@@ -28,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.apkscanner.core.installer.DefaultOptionsFactory;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.ApkInfo;
@@ -83,6 +84,7 @@ public class ApkInstallWizard
 	public static String pakcageFilePath;	
 	public static CompactApkInfo apkInfo;
 	public static SignatureReport signatureReport;
+	public static DefaultOptionsFactory optFactory;
 	
 	private int status;
 	private int flag;
@@ -282,6 +284,7 @@ public class ApkInstallWizard
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+			        DefaultOptionsFactory optFactory = new DefaultOptionsFactory(ApkInstallWizard.apkInfo, ApkInstallWizard.signatureReport);
 			        next();
 				}			
 			}).start();			
