@@ -25,7 +25,9 @@ public class OptionsBundle {
 	public static final int FLAG_OPT_PUSH_LIB_BOTH	= 0x1000;
 	public static final int FLAG_OPT_PUSH_REBOOT	= 0x4000;
 
-	public static final int FLAG_OPT_CLEAR_OPTIONS = 0x800000; 
+	public static final int FLAG_OPT_DISSEMINATE 	= 0x400000;
+	public static final int FLAG_OPT_CLEAR_OPTIONS	= 0x800000;
+
 	public static final int FLAG_OPT_HAS_EXTRADATA_MASK = FLAG_OPT_INSTALL_LAUNCH | FLAG_OPT_PUSH_LIB32 | FLAG_OPT_PUSH_LIB64;
 
 	private int flag;
@@ -258,6 +260,18 @@ public class OptionsBundle {
 
 		for (IOptionsChangedListener listener : listenersCopy) {
 			listener.changeOptions(changedFlag, extraData);
+		}
+	}
+
+	public void disseminate() {
+		IOptionsChangedListener[] listenersCopy = null;
+		synchronized (sLock) {
+			listenersCopy = sChangedListeners.toArray(
+					new IOptionsChangedListener[sChangedListeners.size()]);
+		}
+
+		for (IOptionsChangedListener listener : listenersCopy) {
+			listener.changeOptions(FLAG_OPT_DISSEMINATE, (String[])null);
 		}
 	}
 }

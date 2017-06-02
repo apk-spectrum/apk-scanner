@@ -94,10 +94,19 @@ public class InstallOptionPanel extends JPanel {
 				}
 			}
 		});
-
+		
+		JButton disseminate = new JButton("Apply all models");
+		disseminate.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(bundle != null) {
+					bundle.disseminate();
+				}
+			}
+		});
 		add(installMethodPanel, BorderLayout.NORTH);
 		add(optionsPanel, BorderLayout.CENTER);		
-		add(new JButton("Apply all models"), BorderLayout.SOUTH);
+		add(disseminate, BorderLayout.SOUTH);
 	}
 
 	private JPanel makeInstallOptionsPanel() {
