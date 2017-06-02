@@ -37,10 +37,10 @@ public class ToggleButtonBar extends JPanel{
 	
 	DeviceListData data;
 		
-	private static final Color[] ColorSet = { new Color(0x006400), new Color(0xFF7400), new Color(0x8b0000), new Color(0x555555)};
+	private static final Color[] ColorSet = { new Color(0x50AF49), new Color(0xFF7400), new Color(0x5CD1E5), new Color(0x8b0000), new Color(0x555555)};
 	
-	private static String[] installtextSet = {"Installed", "Not installed", "", "waiting"};
-	private final String[] installOptiontextSet = {"Install", "Push", "Impossible", "waiting"};
+	private static String[] installtextSet = {"Installed", "Not installed", "", "", "waiting"};
+	private final String[] installOptiontextSet = {"Install", "No Install", "Push", "Impossible", "waiting"};
 	
 	
 	AbstractButton btninstalled;
@@ -190,10 +190,10 @@ public class ToggleButtonBar extends JPanel{
     	
     	
     	btninstalled.setBackground(ColorSet[data.isinstalled]);
-    	btnoption.setBackground(ColorSet[data.possibleOption]);
+    	btnoption.setBackground(ColorSet[data.selectedinstalloption]);
     	
     	btninstalled.setText(installtextSet[data.isinstalled]);
-    	
+    	btnoption.setText(installOptiontextSet[data.selectedinstalloption]);    	
     	//Log.d("" +data.isinstalled);
     	
     	

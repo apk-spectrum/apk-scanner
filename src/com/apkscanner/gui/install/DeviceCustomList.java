@@ -37,6 +37,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.apache.commons.cli.OptionBuilder;
+
 import com.android.ddmlib.AdbCommandRejectedException;
 import com.android.ddmlib.IDevice;
 import com.android.ddmlib.MultiLineReceiver;
@@ -111,6 +113,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
     }
     
     private void setModeldata(DefaultListModel listmodel, final IDevice device) {
+    	Log.d("set model");
     	for(int i=0; i < listmodel.size(); i++) {
     		DeviceListData temp = (DeviceListData) listmodel.getElementAt(i);
     		if(temp.serialnumber.equals(device.getSerialNumber())) {
@@ -148,12 +151,8 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 		data.showstate = DeviceListData.SHOW_INSTALL_DETAL;
 		data.pacakgeLoadingstatus =DeviceListData.WAITING; 
 		data.AppDetailpanel = new JLabel(Resource.IMG_LOADING.getImageIcon());
-		
-		if(!data.status.equals("OFFLINE")) {
-			data.isinstalldevice = true;
-			setInstalloptionListener((InstallOptionPanel)data.installoptionpanel, device);
-		}   
-		
+			
+		final JList list = this;
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -167,8 +166,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 					data.isinstalled = DeviceListData.NOT_INSTALLED;
 				}
 				
-				data.pacakgeLoadingstatus =DeviceListData.DONE;
-				setInstalloptionListener((InstallOptionPanel)data.installoptionpanel, device);
+				setInstalloptionListener(list, data, device);
 				
 		        fireSelectionValueChanged(0, 0, true);
 			}
@@ -176,7 +174,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 		
     }
     
-    private synchronized void setInstalloptionListener(final InstallOptionPanel panel ,final IDevice device) {
+    private synchronized void setInstalloptionListener(final JList list, final DeviceListData data ,final IDevice device) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -203,35 +201,54 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	    	
 	        OptionsBundle bundle = ApkInstallWizard.optFactory.createOptions(device);
 	        bundle.addOptionsChangedListener(new OptionsBundle.IOptionsChangedListener() {
+	        	//DeviceListData Listdata;
 	            @Override
-	            public void changeOptions(int changedFlag, String... extraData) {            	
+	            public void changeOptions(int changedFlag, String... extraData) {
+	            	Log.d(changedFlag+ "");
 	                switch(changedFlag) {
 	                case OptionsBundle.FLAG_OPT_INSTALL:
-	                    // 인스톨로 바뀜                	
+	                    // 인스톨로 바뀜
+	                	data.selectedinstalloption =  DeviceListData.OPTION_INSTALL;
 	                    break;
 	                case OptionsBundle.FLAG_OPT_PUSH:
 	                    // 푸쉬로 바뀜
+	                	data.selectedinstalloption =  DeviceListData.OPTION_PUSH;
 	                    break;
+	                case OptionsBundle.FLAG_OPT_NOT_INSTALL:
+	                    // 푸쉬로 바뀜
+	                	data.selectedinstalloption =  DeviceListData.OPTION_NO_INSTALL;
+	                    break;
+	                case OptionsBundle.FLAG_OPT_DISSEMINATE:
+	                	
+	                	break;
 	                }
+	                list.repaint();
 	            }
 	        });
 	        
-	        if(bundle.isInstallOptions()) {
-	            // 초기값이 인스톨설정 
+	        //((InstallOptionPanel)data.installoptionpanel).selectedinstalloption;
+	        
+	        
+	        		
+	        if(bundle.isDontInstallOptions()) {
+	        	data.selectedinstalloption =  DeviceListData.OPTION_IMPOSSIBLE_INSTALL;
 	        } else if(bundle.isPushOptions()) {
-	            // 초기값이 인스톨설정 
-	        } else {
-	            // 설치 불가
+	        	data.selectedinstalloption =  DeviceListData.OPTION_PUSH;
+	        } else if(bundle.isInstallOptions()) {	        	
+	        	data.selectedinstalloption =  DeviceListData.OPTION_INSTALL;
+	        } else if(bundle.isNoInstallOptions()) {
+	        	data.selectedinstalloption =  DeviceListData.OPTION_NO_INSTALL;
 	        }
-	        panel.setApkInfo(ApkInstallWizard.apkInfo);
 	        
-	        panel.setOptions(bundle);
+	        Log.d(""+data.selectedinstalloption);
 	        
-	        Log.d(device.getSerialNumber()+" " +device.getState() + "");
-	        
+	        ((InstallOptionPanel)data.installoptionpanel).setApkInfo(ApkInstallWizard.apkInfo);
+	        ((InstallOptionPanel)data.installoptionpanel).setOptions(bundle);
+	        data.pacakgeLoadingstatus =DeviceListData.DONE;
+	        list.repaint();
 			}
-		}).start();		        
-
+			
+		}).start();
     }
     
     private JComponent getPackageInfopanel(IDevice dev)
@@ -441,9 +458,10 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	    		Tagpanel.setData((DeviceListData)value);
 	    		resetButtonStatus((DeviceListData) value);
 	    			    		
-    			if(((DeviceListData)value).status.equals("OFFLINE")) {    				
+    			if(((DeviceListData)value).status.equals("OFFLINE") || ((DeviceListData)value).selectedinstalloption == DeviceListData.OPTION_NO_INSTALL ||
+    					((DeviceListData)value).selectedinstalloption == DeviceListData.OPTION_IMPOSSIBLE_INSTALL) {    				
     				isinstallIcon.setIcon(Resource.IMG_INSTALL_BLOCK.getImageIcon());
-    			} else if(((DeviceListData)value).isinstalldevice) {
+    			} else if(((DeviceListData)value).selectedinstalloption != DeviceListData.OPTION_NO_INSTALL) {
     				isinstallIcon.setIcon(Resource.IMG_INSTALL_CHECK.getImageIcon());	    					    				
     			}
     		    
@@ -502,25 +520,26 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
         public String serialnumber;
         public String SDKVersion;
         
-        public boolean isinstalldevice;
+        
+        public int selectedinstalloption = WAITING;
         
         public JComponent AppDetailpanel;
         public JComponent installoptionpanel;
         
         public int isinstalled = WAITING;
-        public int possibleOption = WAITING;
+        //public int possibleOption = WAITING;
         
         public int showstate;
         
         public static final int INSTALLED = 0;
         public static final int NOT_INSTALLED = 1;
         
-        public static final int POSSIBLE_INSTALL = 0;
-        public static final int POSSIBLE_PUSH = 1;
-        public static final int IMPOSSIBLE_INSTALL = 2;
-        
+        public static final int OPTION_INSTALL = 0;
+        public static final int OPTION_NO_INSTALL = 1;
+        public static final int OPTION_PUSH = 2;
+        public static final int OPTION_IMPOSSIBLE_INSTALL = 3;
                 
-        public static final int WAITING = 3;
+        public static final int WAITING = 4;
         public static final int DONE = 1;
         
         public static final int SHOW_INSTALL_DETAL = 0;
