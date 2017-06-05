@@ -26,6 +26,13 @@ public class MessageBoxPool {
 	public static final int QUESTION_REMOVE_SYSTEM_APK = 17;
 	public static final int QUESTION_REBOOT_SYSTEM = 18;
 
+	public static final int MSG_BLOCKED_CAUSE_UNSIGNED = 19;
+	public static final int MSG_BLOCKED_UNSUPPORTED_SDK_LEVEL = 20;
+	public static final int MSG_BLOCKED_MISMATCH_SIGNED = 21;
+	public static final int MSG_BLOCKED_NO_ROOT = 22;
+	public static final int MSG_BLOCKED_MISMATCH_SIGNED_NOT_SYSTEM = 23;
+	public static final int MSG_BLOCKED_UNKNOWN = 24;
+
 	private Component parentComponent;
 	private static HashMap<Integer, MessageBoxPool> pool = new HashMap<Integer, MessageBoxPool>(); 
 
@@ -113,6 +120,21 @@ public class MessageBoxPool {
 			return MessageBoxPane.showQuestion(parentComponent, Resource.STR_QUESTION_REMOVE_SYSTEM_APK.getString(), MessageBoxPane.YES_NO_OPTION);
 		case QUESTION_REBOOT_SYSTEM:
 			return MessageBoxPane.showQuestion(parentComponent, Resource.STR_QUESTION_REMOVED_REBOOT.getString(), MessageBoxPane.YES_NO_OPTION);
+		case MSG_BLOCKED_CAUSE_UNSIGNED:
+			MessageBoxPane.showError(parentComponent, "Unsigned APK");
+			break;
+		case MSG_BLOCKED_UNSUPPORTED_SDK_LEVEL:
+			MessageBoxPane.showError(parentComponent, "UNSUPPORTED_SDK_LEVEL");
+			break;
+		case MSG_BLOCKED_MISMATCH_SIGNED:
+			MessageBoxPane.showError(parentComponent, "MISMATCH_SIGNED");
+			break;
+		case MSG_BLOCKED_NO_ROOT:
+			MessageBoxPane.showError(parentComponent, "NO_ROOT");
+			break;
+		case MSG_BLOCKED_MISMATCH_SIGNED_NOT_SYSTEM:
+			MessageBoxPane.showError(parentComponent, "MISMATCH_SIGNED_NOT_SYSTEM");
+			break;
 		}
 		return MessageBoxPane.CLOSED_OPTION;
 	}
