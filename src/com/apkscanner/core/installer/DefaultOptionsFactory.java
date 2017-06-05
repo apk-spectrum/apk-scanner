@@ -1,6 +1,7 @@
 package com.apkscanner.core.installer;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import com.android.ddmlib.AdbCommandRejectedException;
 import com.android.ddmlib.IDevice;
@@ -22,14 +23,28 @@ public class DefaultOptionsFactory {
 	private boolean hasApkInfo;
 	private boolean wasSigned;
 	private int minSdkVersion;
+	
+	private ArrayList<String> archList;
 
 	public DefaultOptionsFactory(CompactApkInfo apkInfo, SignatureReport signatureReport) {
 		this.apkInfo = apkInfo;
 		this.signatureReport = signatureReport;
 
 		hasApkInfo = (apkInfo != null && apkInfo.packageName != null && !apkInfo.packageName.isEmpty());
-		wasSigned = signatureReport != null || (apkInfo.certificates != null && apkInfo.certificates.length > 0);
+		wasSigned = signatureReport != null || (apkInfo != null && apkInfo.certificates != null && apkInfo.certificates.length > 0);
 		minSdkVersion = (apkInfo != null && apkInfo.minSdkVersion != null) ? apkInfo.minSdkVersion : 1;
+		
+		archList = new ArrayList<String>();
+		for(String lib: apkInfo.libraries) {
+			if(!lib.startsWith("lib/")) {
+				Log.v("Unknown lib path : " + lib);
+				continue;
+			}
+			String arch = lib.replaceAll("lib/([^/]*)/.*", "$1");
+			if(!archList.contains(arch)) {
+				archList.add(arch);
+			}
+		}
 	}
 
 	public OptionsBundle createOptions(IDevice device) {
@@ -103,6 +118,46 @@ public class DefaultOptionsFactory {
 								options.set(OptionsBundle.FLAG_OPT_PUSH_SYSTEM);
 								Log.w("Unknown path : " + apkPath);
 							}
+						}
+					}
+
+					if(archList != null && !archList.isEmpty()) {
+						StringBuilder deviceAbiList = new StringBuilder(); 
+						deviceAbiList.append(device.getProperty("ro.product.cpu.abi")).append(",");
+						deviceAbiList.append(device.getProperty("ro.product.cpu.abi2")).append(",");
+						deviceAbiList.append(device.getProperty("ro.product.cpu.abilist32")).append(",");
+						deviceAbiList.append(device.getProperty("ro.product.cpu.abilist64")).append(",");
+						deviceAbiList.append(device.getProperty("ro.product.cpu.abilist"));
+						Log.v("deviceAbiList:" + deviceAbiList.toString());
+						
+						String abi32 = null;
+						String abi64 = null;
+						for(String abi: deviceAbiList.toString().split(",")) {
+							if(abi.isEmpty() || abi.equalsIgnoreCase("null")) continue;
+							if(abi32 != null && abi64 != null) break;
+							if(abi.contains("64")) {
+								if(archList.contains(abi)) {
+									if(abi64 == null) {
+										abi64 = abi;
+										continue;
+									}
+								}
+							} else {
+								if(archList.contains(abi)) {
+									if(abi32 == null) {
+										abi32 = abi;
+										continue;
+									}
+								}
+							}
+						}
+						if(abi32 != null) {
+							Log.e("FLAG_OPT_PUSH_LIB32 " + abi32);
+							options.set(OptionsBundle.FLAG_OPT_PUSH_LIB32, abi32, "");
+						}
+						if(abi64 != null) {
+							Log.e("FLAG_OPT_PUSH_LIB64 " + abi64);
+							options.set(OptionsBundle.FLAG_OPT_PUSH_LIB64, abi64, "");
 						}
 					}
 				}

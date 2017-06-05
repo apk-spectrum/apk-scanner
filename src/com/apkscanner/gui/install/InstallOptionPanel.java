@@ -47,7 +47,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 
 	public static final String ACT_CMD_INSTALL = Integer.toString(OptionsBundle.FLAG_OPT_INSTALL);
 	public static final String ACT_CMD_PUSH = Integer.toString(OptionsBundle.FLAG_OPT_PUSH);
-	public static final String ACT_CMD_NOT_INSTALL = Integer.toString(OptionsBundle.FLAG_OPT_NO_INSTALL);
+	public static final String ACT_CMD_NO_INSTALL = Integer.toString(OptionsBundle.FLAG_OPT_NO_INSTALL);
 
 	public static final String ACT_OPT_LAUNCH = Integer.toString(OptionsBundle.FLAG_OPT_INSTALL_LAUNCH);
 	public static final String ACT_OPT_REPLACE = Integer.toString(OptionsBundle.FLAG_OPT_INSTALL_REPLACE);
@@ -149,7 +149,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 		optionsPanel = new JPanel(new CardLayout());
 		optionsPanel.add(makeInstallOptionsPanel(), ACT_CMD_INSTALL);
 		optionsPanel.add(makePushOptionPanel(), ACT_CMD_PUSH);
-		optionsPanel.add(new JPanel(), ACT_CMD_NOT_INSTALL);
+		optionsPanel.add(new JPanel(), ACT_CMD_NO_INSTALL);
 
 		JButton disseminate = new JButton("Apply all models");
 		disseminate.addActionListener(new ActionListener() {
@@ -371,7 +371,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 		cbLib64Src.setMinimumSize(prefSize);
 		lib64Box.add(cbLib64Src);
 		lib64Box.add(new JLabel(">"));
-		cbLib64Dest = new JComboBox<String>(new String[]{"/system/lib64", "/system/vendor/lib64", "{package}/lib64"});
+		cbLib64Dest = new JComboBox<String>(new String[]{"/system/lib64/", "/system/vendor/lib64/", "{package}/lib64/"});
 		cbLib64Dest.setActionCommand(ACT_OPT_PUSH_LIB64);
 		cbLib64Dest.addItemListener(this);
 		cbLib64Dest.setEditable(false);
@@ -433,7 +433,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 		p.setBorder(BorderFactory.createTitledBorder("How to install"));
 		//p.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		Color color = new Color(cc);
-		for (AbstractButton b: Arrays.asList(makeButton("Install", ACT_CMD_INSTALL), makeButton("Push", ACT_CMD_PUSH), makeButton("Not install", ACT_CMD_NOT_INSTALL))) {
+		for (AbstractButton b: Arrays.asList(makeButton("Install", ACT_CMD_INSTALL), makeButton("Push", ACT_CMD_PUSH), makeButton("No Install", ACT_CMD_NO_INSTALL))) {
 			b.setBackground(color);
 			b.setIcon(new ToggleButtonBarCellIcon());
 			b.addActionListener(listener);
@@ -521,7 +521,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 			} else if(bundle.isPushOptions()) {
 				selectAct = ACT_CMD_PUSH;
 			} else {
-				selectAct = ACT_CMD_NOT_INSTALL;
+				selectAct = ACT_CMD_NO_INSTALL;
 			}
 			((CardLayout)optionsPanel.getLayout()).show(optionsPanel, selectAct);
 
@@ -531,6 +531,13 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 				String actCmd = btn.getActionCommand();
 				if(selectAct.equals(actCmd)) {
 					bgInstallMethod.setSelected(btn.getModel(), true);
+					if(ACT_CMD_NO_INSTALL.equals(actCmd)) {
+						if(bundle.isBlockedFlags(OptionsBundle.FLAG_OPT_INSTALL | OptionsBundle.FLAG_OPT_PUSH)) {
+							btn.setText("Imposiable");
+						} else {
+							btn.setText("No Install");
+						}
+					}
 				} else if(ACT_CMD_INSTALL.equals(actCmd)) {
 					if(bundle.isBlockedFlags(OptionsBundle.FLAG_OPT_INSTALL)) {
 						//btn.setEnabled(false);
