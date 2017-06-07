@@ -153,6 +153,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 		data.AppDetailpanel = new JLabel(Resource.IMG_LOADING.getImageIcon());
 		data.installoptionpanel = new JLabel(Resource.IMG_LOADING.getImageIcon());
 		
+
 		final JList list = this;
 		new Thread(new Runnable() {
 			@Override
@@ -166,6 +167,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 				} else {
 					data.isinstalled = DeviceListData.NOT_INSTALLED;
 				}
+				FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.REQ_REFRESH_DETAIL_PANEL));
 				
 				setInstalloptionListener(list, data, device);
 								
@@ -246,6 +248,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	        data.pacakgeLoadingstatus =DeviceListData.DONE;
 	        data.installoptionpanel = installtemppanel;
 	        list.repaint();
+	        FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.REQ_REFRESH_DETAIL_PANEL));
 			}
 			
 		}).start();
