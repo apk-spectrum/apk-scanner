@@ -37,8 +37,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.apache.commons.cli.OptionBuilder;
-
 import com.android.ddmlib.AdbCommandRejectedException;
 import com.android.ddmlib.IDevice;
 import com.android.ddmlib.MultiLineReceiver;
@@ -51,24 +49,25 @@ import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.CompactApkInfo;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.dialog.PackageInfoPanel;
-
 import com.apkscanner.resource.Resource;
 
 import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
 import com.apkscanner.util.Log;
-import com.apkscanner.util.XmlPath;
 
 
+@SuppressWarnings("rawtypes")
 public class DeviceCustomList extends JList implements ListSelectionListener{
-
-	DefaultListModel listmodel;
-	ButtonsRenderer listrenderer;
+	private static final long serialVersionUID = 4647130365982201484L;
+	
+	DefaultListModel<DeviceListData> listmodel;
+	ButtonsRenderer<DeviceListData> listrenderer;
 	ActionListener FindPackagelistener;
-    public DeviceCustomList(ActionListener listener) {
+    @SuppressWarnings("unchecked")
+	public DeviceCustomList(ActionListener listener) {
 		// TODO Auto-generated constructor stub
     	setLayout(new BorderLayout());    	
-        listmodel = new DefaultListModel ();
+        listmodel = new DefaultListModel<DeviceListData> ();
 		//AndroidDebugBridge.init(true);
         //IDevice[] devices = AdbServerMonitor.getAndroidDebugBridge().getDevices();        
         //Log.d(devices.length + "         " + ApkInstallWizard.pakcageFilePath);        
@@ -112,7 +111,8 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
         return hex.substring(0, 6);
     }
     
-    private void setModeldata(DefaultListModel listmodel, final IDevice device) {
+    @SuppressWarnings("unchecked")
+	private void setModeldata(DefaultListModel listmodel, final IDevice device) {
     	Log.d("set model");
     	for(int i=0; i < listmodel.size(); i++) {
     		DeviceListData temp = (DeviceListData) listmodel.getElementAt(i);
@@ -204,7 +204,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	        	//DeviceListData Listdata;
 	            @Override
 	            public void changeOptions(int changedFlag, String... extraData) {
-	            	//Log.d(changedFlag+ "");
+	            	Log.d("change Install Option : " + changedFlag);
 	                switch(changedFlag) {
 	                case OptionsBundle.FLAG_OPT_INSTALL:
 	                    // 인스톨로 바뀜
@@ -227,8 +227,6 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	        });
 	        
 	        //((InstallOptionPanel)data.installoptionpanel).selectedinstalloption;
-	        
-	        
 	        		
 	        if(bundle.isDontInstallOptions()) {
 	        	data.selectedinstalloption =  DeviceListData.OPTION_IMPOSSIBLE_INSTALL;
@@ -268,10 +266,8 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
     
 	public void setDeviceProperty(IDevice device, final DeviceListData DO, final String propertyname) {
 		try {
-		final String DeviceName = null;
 		if("ONLINE".equals(device.getState().toString())) {
 				device.executeShellCommand("getprop "+propertyname, new MultiLineReceiver() {
-					String temp;
 					    @Override
 					    public void processNewLines(String[] lines) {					        
 					        	if(lines[0].length() >0) {
@@ -309,7 +305,8 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	        super();
 	        this.list = list;
 	    }
-	    @Override public void mouseMoved(MouseEvent e) {
+	    @SuppressWarnings("unchecked")
+		@Override public void mouseMoved(MouseEvent e) {
 	        //JList list = (JList) e.getComponent();
 	        Point pt = e.getPoint();
 	        int index = list.locationToIndex(pt);
@@ -355,7 +352,8 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	    	clickevent(e);
 	    }
 	    
-	    private void clickevent(MouseEvent e) {
+	    @SuppressWarnings("unchecked")
+		private void clickevent(MouseEvent e) {
 	        Point pt = e.getPoint();
 	        int index = list.locationToIndex(pt);
 	        if (index >= 0) {
@@ -403,10 +401,12 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	    }
 	}
     
-	class ButtonsRenderer<E> extends JPanel implements ListCellRenderer<E> {
-	    private final Color EVEN_COLOR = new Color(230, 255, 230);
-	    private final DefaultListModel<E> model;
-	    private int index;
+	class ButtonsRenderer<E> extends JPanel implements ListCellRenderer<E> {	    
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 927417951602577901L;	
+				
 	    public int pressedIndex  = -1;
 	    public int rolloverIndex = -1;
 	    public JButton button;
@@ -416,7 +416,6 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 
 	    protected ButtonsRenderer(DefaultListModel<E> model) {
 	        super(new BorderLayout());
-	        this.model = model;
 	        
 	        setBorder ( BorderFactory.createEmptyBorder ( 5, 5 , 5, 5 ) );
 	        
@@ -431,7 +430,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	        Iconpanel.add(Tagpanel, BorderLayout.CENTER);
 	        Iconpanel.add(isinstallIcon, BorderLayout.WEST);
 	        
-	        //add(textArea);
+	        //add(textArea);	        
 	        add(customlabel, BorderLayout.CENTER);
 	        add(Iconpanel, BorderLayout.SOUTH);	        
 	    }
@@ -450,7 +449,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
         
 	    @Override public Component getListCellRendererComponent(JList<? extends E> list, E value, int index, boolean isSelected, boolean cellHasFocus) {
 	        //textArea.setText(Objects.toString(value, ""));
-	        
+	    	
 	    	if(value instanceof DeviceListData) {
 	    		customlabel.setData((DeviceListData)value);
 	    		Tagpanel.setData((DeviceListData)value);
@@ -466,8 +465,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
     			}
     		    
     		}
-	    	
-	        this.index = index;
+	    		        
 	        if (isSelected) {
 	            setBackground(list.getSelectionBackground());
 	            customlabel.setSelected(isSelected);
@@ -497,7 +495,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	    				b.setEnabled(false);
 	    				continue;
 	    			} else if((value).status.equals("ONLINE")) {
-	    				b.setEnabled(true);	    				
+	    				b.setEnabled(true);
 	    			}
 	    			
 	    			ButtonModel m = ((JButton)b).getModel();
@@ -564,10 +562,6 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
             return circleColor;
         }
 
-        private String getStatus() {
-            return status;
-        }
-
         private String getName () {
             return name;
         }
@@ -578,9 +572,12 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
         
     }
     
-    private class CustomLabel extends JLabel
+    
+	private class CustomLabel extends JLabel
     {
-        private final Color selectionColor = new Color ( 82, 158, 202 );
+		private static final long serialVersionUID = -9172448518025388689L;
+
+		private final Color selectionColor = new Color ( 82, 158, 202 );
 
         private boolean selected;
         private DeviceListData data;
@@ -707,11 +704,12 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		// TODO Auto-generated method stub
-        boolean adjust = e.getValueIsAdjusting();
+        //boolean adjust = e.getValueIsAdjusting();
         //if (!adjust) {
           JList list = (JList) e.getSource();
           int selections[] = list.getSelectedIndices();
-          Object selectionValues[] = list.getSelectedValues();
+          @SuppressWarnings("deprecation")
+		Object selectionValues[] = list.getSelectedValues();
           for (int i = 0, n = selections.length; i < n; i++) {            
             //System.out.print(selections[i] + "/" + selectionValues[i] + " ");
         	  ((DeviceListData)selectionValues[i]).showstate  = DeviceListData.SHOW_INSTALL_OPTION;

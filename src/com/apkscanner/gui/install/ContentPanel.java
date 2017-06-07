@@ -37,11 +37,7 @@ public class ContentPanel extends JPanel
 
 	public static final String CTT_ACT_CMD_REFRESH = "CTT_ACT_CMD_REFRESH";
 	public static final String CTT_ACT_CMD_SELECT_ALL = "CTR_ACT_CMD_SELECT_ALL";
-	
-	
-	private JButton dev_refreshButton;
-	private JButton dev_selectAllButton;
-	
+
 	//private DeviceTablePanel panel_select_device;
 	private FindPackagePanel panel_check_package;
 	private JPanel panel_set_install_option;

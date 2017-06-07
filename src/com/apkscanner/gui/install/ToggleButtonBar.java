@@ -1,6 +1,5 @@
 package com.apkscanner.gui.install;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -16,22 +15,21 @@ import java.util.Objects;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
+
 import javax.swing.ButtonModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
+
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 
 import com.apkscanner.gui.install.DeviceCustomList.DeviceListData;
-import com.apkscanner.resource.Resource;
-import com.apkscanner.util.Log;
+
 
 
 public class ToggleButtonBar extends JPanel{
-
+	
+	private static final long serialVersionUID = -8497802681135584399L;
 	public static final String BUTTON_TYPE_PACAKGE_INFO = "pacakge_info";
 	public static final String BUTTON_TYPE_INSTALL_INFO = "install_info";
 	
@@ -89,7 +87,6 @@ public class ToggleButtonBar extends JPanel{
    
     
     public JPanel makeToggleButtonBar(int install_level, int package_level) {
-        ButtonGroup bg = new ButtonGroup();
         JPanel p = new JPanel(new GridLayout(1, 0, 0, 0));        
         //Color color = new Color(cc);
         for (AbstractButton b: Arrays.asList(makeButton("install",BUTTON_TYPE_INSTALL_INFO, install_level), 
@@ -102,9 +99,8 @@ public class ToggleButtonBar extends JPanel{
     }
     
     public JPanel makeToggleButtonBar(int ccl) {
-        ButtonGroup bg = new ButtonGroup();
         JPanel p = new JPanel(new GridLayout(1, 0, 0, 0));        
-        Color color = new Color(ccl);
+        //Color color = new Color(ccl);
         for (AbstractButton b: Arrays.asList(makeButton("install",BUTTON_TYPE_INSTALL_INFO, ccl), 
         		makeButton("installed", BUTTON_TYPE_PACAKGE_INFO,ccl))) {            
             b.setIcon(new ToggleButtonBarCellIcon());

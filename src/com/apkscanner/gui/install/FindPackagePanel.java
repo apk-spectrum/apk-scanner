@@ -2,25 +2,13 @@ package com.apkscanner.gui.install;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Container;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.ListSelectionModel;
-import javax.swing.Timer;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -28,17 +16,13 @@ import javax.swing.event.ListSelectionListener;
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.android.ddmlib.IDevice;
-import com.apkscanner.core.scanner.ApkScanner;
-import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.install.DeviceCustomList.DeviceListData;
-import com.apkscanner.tool.adb.AdbServerMonitor;
-import com.apkscanner.tool.adb.PackageInfo;
-import com.apkscanner.tool.adb.PackageManager;
-import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
-import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.Log;
 
+
 public class FindPackagePanel extends JPanel implements IDeviceChangeListener, ListSelectionListener, ActionListener{
+	
+	private static final long serialVersionUID = 3234890834569931496L;
 	
 	private static final String NO_DEVICE_LAYOUT = "NO_DEVICE_LAYOUT";
 	private static final String DEVICE_LAYOUT = "DEVICE_LAYOUT";
@@ -77,28 +61,6 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	    ((CardLayout)getLayout()).show(this, NO_DEVICE_LAYOUT);	    
 	}
 
-	private void setmargin(JPanel c, int size) {
-    	c.setBorder(BorderFactory.createEmptyBorder(size, size, size, size));
-    }
-    
-	private JButton getButton(String text, String actCmd, ActionListener listener) {
-		JButton btn = new JButton(text);
-		btn.setActionCommand(actCmd);		
-		btn.addActionListener(listener);
-		return btn;
-	}
-	
-	
-    private GridBagConstraints addGrid(GridBagConstraints gbc, 
-            int gridx, int gridy, int gridwidth, int gridheight, int weightx, int weighty) {
-      gbc.gridx = gridx;
-      gbc.gridy = gridy;
-      gbc.gridwidth = gridwidth;
-      gbc.gridheight = gridheight;
-      gbc.weightx = weightx;
-      gbc.weighty = weighty;
-      return gbc;
-    }
 /*
     private Container getPackageInfopanel()
 	{

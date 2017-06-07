@@ -8,7 +8,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Frame;
-import java.awt.GridBagConstraints;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.Window;
@@ -19,8 +18,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.util.jar.JarFile;
-
-import javax.swing.BorderFactory;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -36,14 +33,10 @@ import com.apkscanner.data.apkinfo.CompactApkInfo;
 import com.apkscanner.gui.install.ContentPanel;
 import com.apkscanner.gui.install.ControlPanel;
 import com.apkscanner.gui.install.InstallProgressPanel;
-import com.apkscanner.gui.install.DeviceCustomList.DeviceListData;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.resource.Resource;
 
-import com.apkscanner.tool.adb.AdbDeviceManager;
 import com.apkscanner.tool.adb.AdbServerMonitor;
-import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
-import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 
@@ -90,9 +83,6 @@ public class ApkInstallWizard
 	public static DefaultOptionsFactory optFactory;
 	
 	private int status;
-	private int flag;
-
-	static private DeviceStatus[] targetDevices;
 	
 	public class ApkInstallWizardDialog  extends JDialog
 	{
@@ -166,22 +156,6 @@ public class ApkInstallWizard
 			
 		}
 	}
-    private void setmargin(JPanel c, int size) {
-    	c.setBorder(BorderFactory.createEmptyBorder(size, size, size, size));
-    }
-	
-	
-    private GridBagConstraints addGrid(GridBagConstraints gbc, 
-            int gridx, int gridy, int gridwidth, int gridheight, int weightx, int weighty) {
-      gbc.gridx = gridx;
-      gbc.gridy = gridy;
-      gbc.gridwidth = gridwidth;
-      gbc.gridheight = gridheight;
-      gbc.weightx = weightx;
-      gbc.weighty = weighty;
-      return gbc;
-    }
-    
 
 	public ApkInstallWizard() {
 		wizard = new ApkInstallWizardFrame();
