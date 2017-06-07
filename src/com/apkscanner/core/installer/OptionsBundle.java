@@ -157,7 +157,7 @@ public class OptionsBundle {
 	}
 
 	public synchronized void set(int flag, String... extraData) {
-		if((flag & blockedFlags) != 0) {
+		if((flag & blockedFlags) != 0 && flag != FLAG_OPT_NO_INSTALL) {
 			Log.w(String.format("flag(0x%x) is blocked(0x%x)", flag, blockedFlags));
 			flag &= ~blockedFlags;
 		}
