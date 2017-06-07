@@ -204,7 +204,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	        	//DeviceListData Listdata;
 	            @Override
 	            public void changeOptions(int changedFlag, String... extraData) {
-	            	Log.d(changedFlag+ "");
+	            	//Log.d(changedFlag+ "");
 	                switch(changedFlag) {
 	                case OptionsBundle.FLAG_OPT_INSTALL:
 	                    // 인스톨로 바뀜
@@ -239,8 +239,6 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	        } else if(bundle.isNoInstallOptions()) {
 	        	data.selectedinstalloption =  DeviceListData.OPTION_NO_INSTALL;
 	        }
-	        
-	        Log.d(""+data.selectedinstalloption);
 	        
 	        ((InstallOptionPanel)data.installoptionpanel).setApkInfo(ApkInstallWizard.apkInfo);
 	        ((InstallOptionPanel)data.installoptionpanel).setOptions(bundle);
@@ -457,6 +455,8 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	    		customlabel.setData((DeviceListData)value);
 	    		Tagpanel.setData((DeviceListData)value);
 	    		resetButtonStatus((DeviceListData) value);
+	    		
+	    		//Log.d("aa" + ((DeviceListData) value).selectedinstalloption);
 	    			    		
     			if(((DeviceListData)value).status.equals("OFFLINE") || ((DeviceListData)value).selectedinstalloption == DeviceListData.OPTION_NO_INSTALL ||
     					((DeviceListData)value).selectedinstalloption == DeviceListData.OPTION_IMPOSSIBLE_INSTALL) {    				
