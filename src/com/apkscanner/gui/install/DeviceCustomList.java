@@ -214,7 +214,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	                    // 푸쉬로 바뀜
 	                	data.selectedinstalloption =  DeviceListData.OPTION_PUSH;
 	                    break;
-	                case OptionsBundle.FLAG_OPT_NOT_INSTALL:
+	                case OptionsBundle.FLAG_OPT_NO_INSTALL:
 	                    // 푸쉬로 바뀜
 	                	data.selectedinstalloption =  DeviceListData.OPTION_NO_INSTALL;
 	                    break;
