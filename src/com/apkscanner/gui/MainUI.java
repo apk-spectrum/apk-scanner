@@ -53,7 +53,6 @@ import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.tool.adb.AdbDeviceHelper;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.AdbServerMonitor.IAdbDemonChangeListener;
-import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.tool.adb.IPackageStateListener;
 import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
@@ -571,9 +570,6 @@ public class MainUI extends JFrame
 						final String launcherActivity = packageInfo.packageName + "/" + selectedActivity;
 						Log.i("launcherActivity : " + launcherActivity);
 
-
-
-
 						String[] cmdResult = AdbDeviceHelper.launchActivity(device, launcherActivity);
 						if(cmdResult == null || (cmdResult.length >= 2 && cmdResult[1].startsWith("Error")) ||
 								(cmdResult.length >= 1 && cmdResult[0].startsWith("error"))) {
@@ -1081,7 +1077,6 @@ public class MainUI extends JFrame
 		@Override
 		public void adbDemonConnected(String adbPath, AdbVersion version) {
 			Log.v("adbDemon Connected() " + adbPath + ", version " + version);
-			AdbWrapper.setAdbCmd(adbPath);
 		}
 
 		@Override

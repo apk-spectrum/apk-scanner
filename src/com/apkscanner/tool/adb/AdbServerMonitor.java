@@ -18,8 +18,6 @@ import com.google.common.base.Joiner;
 import com.google.common.util.concurrent.Uninterruptibles;
 
 public final class AdbServerMonitor {
-
-
 	private static final String ADB = "adb"; //$NON-NLS-1$
 	private static final String DDMS = "ddms"; //$NON-NLS-1$
 	private static final String SERVER_PORT_ENV_VAR = "ANDROID_ADB_SERVER_PORT"; //$NON-NLS-1$
@@ -83,6 +81,7 @@ public final class AdbServerMonitor {
 					new IAdbDemonChangeListener[sServerListeners.size()]);
 		}
 
+		AdbWrapper.setAdbCmd(adbPath);
 		for (IAdbDemonChangeListener listener : listenersCopy) {
 			try {
 				listener.adbDemonConnected(adbPath, version);

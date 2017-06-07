@@ -13,6 +13,7 @@ import com.android.ddmlib.IDevice.DeviceState;
 import com.android.ddmlib.InstallException;
 import com.android.ddmlib.NullOutputReceiver;
 import com.android.ddmlib.ShellCommandUnresponsiveException;
+import com.android.ddmlib.SyncException;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.tool.adb.AdbDeviceHelper.CommandRejectedException;
@@ -412,6 +413,22 @@ public class PackageManager {
 			e.printStackTrace();
 		}
 
+		return errMessage;
+	}
+
+	public static String pullApk(final IDevice device, final String srcApkPath, final String destApkPath)
+	{
+		String errMessage = null;
+		try {
+			device.pullFile(srcApkPath, destApkPath);
+		} catch (SyncException | IOException | AdbCommandRejectedException | TimeoutException e) {
+			errMessage = e.getMessage();
+			e.printStackTrace();
+		}
+
+		if(errMessage == null && !new File(destApkPath).isFile()) {
+			errMessage = "Unknown Error";
+		}
 		return errMessage;
 	}
 

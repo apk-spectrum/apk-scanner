@@ -17,8 +17,6 @@ import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.tool.adb.AdbWrapper;
-import com.apkscanner.tool.apktool.ApktoolWrapper;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
@@ -233,9 +231,9 @@ public class Main implements Runnable
 	static private void usage()
 	{
 		System.out.println(Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString());
-		System.out.println("with apktool " + ApktoolWrapper.getApkToolVersion() + " (http://ibotpeaches.github.io/Apktool/)");
-		System.out.println(" - Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)");
-		System.out.println("with " + AdbWrapper.version(null) + " (http://developer.android.com/tools/help/adb.html)");
+		//System.out.println("with apktool " + ApktoolWrapper.getApkToolVersion() + " (http://ibotpeaches.github.io/Apktool/)");
+		//System.out.println(" - Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)");
+		System.out.println("with Android debug bridge (http://developer.android.com/tools/help/adb.html)");
 		System.out.println("Programmed by " + Resource.STR_APP_MAKER.getString() + " <" + Resource.STR_APP_MAKER_EMAIL.getString() + ">" + ", 2015");
 		System.out.println("Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)");
 		System.out.println();

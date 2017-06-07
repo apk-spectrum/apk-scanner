@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -25,6 +26,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.SwingWorker;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -34,8 +36,6 @@ import com.android.ddmlib.IDevice;
 import com.android.ddmlib.ShellCommandUnresponsiveException;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.Launcher;
-import com.apkscanner.core.installer.ApkInstaller;
-import com.apkscanner.core.installer.ApkInstaller.ApkInstallerListener;
 import com.apkscanner.core.signer.Signature;
 import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.ApkInfo;
@@ -501,32 +501,39 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 			final File destFile = ApkFileChooser.saveApkFile(this, saveFileName);
 			if(destFile == null) return;
 
-			ApkInstaller apkInstaller = new ApkInstaller(packageInfo.device.getSerialNumber(), new ApkInstallerListener() {
-				StringBuilder sb = new StringBuilder();
+
+			new SwingWorker<String, Object> () {
 				@Override
-				public void OnError(int cmdType, String device) {
-					MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.MSG_FAILURE_PULLED, sb.toString());
+				protected String doInBackground() throws Exception {
+					return PackageManager.pullApk(packageInfo.device, apkPath, destFile.getAbsolutePath());
 				}
 
 				@Override
-				public void OnSuccess(int cmdType, String device) {
-					int n = MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.QUESTION_SUCCESS_PULL_APK, destFile.getAbsolutePath());
-					switch(n) {
-					case 0: // explorer
-						SystemUtil.openFileExplorer(destFile);
-						break;
-					case 1: // open
-						Launcher.run(destFile.getAbsolutePath());
-						break;
-					default:
-						break;
+				protected void done() {
+					String errMessage = null;
+					try {
+						errMessage = get();
+					} catch (InterruptedException | ExecutionException e) {
+						errMessage = e.getMessage();
+						e.printStackTrace();
 					}
-				}
-
-				@Override public void OnCompleted(int cmdType, String device) { }
-				@Override public void OnMessage(String msg) { sb.append(msg); }
-			});		
-			apkInstaller.pullApk(apkPath, destFile.getAbsolutePath());
+					if(errMessage == null) {
+						int n = MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.QUESTION_SUCCESS_PULL_APK, destFile.getAbsolutePath());
+						switch(n) {
+						case 0: // explorer
+							SystemUtil.openFileExplorer(destFile);
+							break;
+						case 1: // open
+							Launcher.run(destFile.getAbsolutePath());
+							break;
+						default:
+							break;
+						}
+					} else {
+						MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.MSG_FAILURE_PULLED, errMessage);
+					}
+				};
+			}.execute();
 		} else if(ACT_CMD_LAUCH_PACKAGE.equals(actCmd)) {
 			final boolean selectActivity = (arg0.getModifiers() & InputEvent.SHIFT_MASK) != 0;
 			final IDevice device = packageInfo.device;
