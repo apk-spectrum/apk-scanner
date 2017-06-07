@@ -17,6 +17,7 @@ import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.android.ddmlib.IDevice;
 import com.apkscanner.gui.install.DeviceCustomList.DeviceListData;
+import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.Log;
 
 
@@ -34,8 +35,8 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	private JPanel pacakgeinfopanel;	
 	AndroidDebugBridge adb;
     public FindPackagePanel(ActionListener listener) {
-    	AndroidDebugBridge.addDeviceChangeListener(this);
 		this.setLayout(new CardLayout());
+		AndroidDebugBridge.addDeviceChangeListener(this);
 		mainlistener = listener;
 		JPanel mainpanel = new JPanel(new BorderLayout());
 		JLabel textSelectDevice = new JLabel("connect device........... and wait");
@@ -58,33 +59,15 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	    this.add(mainpanel, DEVICE_LAYOUT);
 	    this.add(textSelectDevice, NO_DEVICE_LAYOUT);
 	    
-	    ((CardLayout)getLayout()).show(this, NO_DEVICE_LAYOUT);	    
+	    ((CardLayout)getLayout()).show(this, NO_DEVICE_LAYOUT);
+	    
+	    
+	    IDevice[] devices = AdbServerMonitor.getAndroidDebugBridge().getDevices();	    
+	    for(IDevice device: devices) {
+	    	deviceConnected(device);
+	    }
 	}
 
-/*
-    private Container getPackageInfopanel()
-	{
-        String packageName = ApkScanner.getPackageName(ApkInstallWizard.pakcageFilePath);
-        
-        adb = AdbServerMonitor.getAndroidDebugBridge();
-        IDevice[] devices = adb.getDevices();
-        
-        Log.d(devices.length + "         " + ApkInstallWizard.pakcageFilePath);
-        
-        ArrayList<PackageInfo> packageList = new ArrayList<PackageInfo>();
-        for(IDevice dev: devices) {
-            PackageInfo info = PackageManager.getPackageInfo(dev, packageName);
-            if(info != null) {
-                packageList.add(info);
-                PackageInfoDlg packageInfoDlg = new PackageInfoDlg(null);
-    			packageInfoDlg.setPackageInfo(info);
-    			//packageInfoDlg.setVisible(true);
-    			return packageInfoDlg.getContentPane();
-            }
-        }
-		return new JPanel();
-	}
-*/
 	@Override
 	public void deviceChanged(IDevice arg0, int arg1) {
 		// TODO Auto-generated method stub

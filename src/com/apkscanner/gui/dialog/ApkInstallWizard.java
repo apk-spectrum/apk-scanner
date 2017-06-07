@@ -162,26 +162,41 @@ public class ApkInstallWizard
 	}
 
 	public ApkInstallWizard(String FilePath) {
-		pakcageFilePath = FilePath;
-		wizard = new ApkInstallWizardFrame();
-		
+		pakcageFilePath = FilePath;		
+		if(FilePath == null || !(new File(FilePath).isFile())) {
+			Log.e("No such apk file... : " + FilePath);
+			MessageBoxPool.show(wizard, MessageBoxPool.MSG_NO_SUCH_APK_FILE);
+			return;
+		}		
+		wizard = new ApkInstallWizardFrame();		
+	}
+	
+	public ApkInstallWizard(String FilePath, JFrame owner) {
+		pakcageFilePath = FilePath;		
+		if(FilePath == null || !(new File(FilePath).isFile())) {
+			Log.e("No such apk file... : " + FilePath);
+			MessageBoxPool.show(wizard, MessageBoxPool.MSG_NO_SUCH_APK_FILE);
+			return;
+		}		
+		if(owner != null)
+			wizard = new ApkInstallWizardDialog(owner);
+		else 
+			wizard = new ApkInstallWizardFrame(owner);
+	}
+	
+	public ApkInstallWizard(String FilePath, JDialog owner) {
+		pakcageFilePath = FilePath;		
+		if(FilePath == null || !(new File(FilePath).isFile())) {
+			Log.e("No such apk file... : " + FilePath);
+			MessageBoxPool.show(wizard, MessageBoxPool.MSG_NO_SUCH_APK_FILE);
+			return;
+		}		
+		if(owner != null)
+			wizard = new ApkInstallWizardDialog(owner);
+		else 
+			wizard = new ApkInstallWizardFrame(owner);
 	}
 
-	
-	public ApkInstallWizard(JFrame owner) {
-		if(owner != null)
-			wizard = new ApkInstallWizardDialog(owner);
-		else 
-			wizard = new ApkInstallWizardFrame(owner);
-	}
-	
-	public ApkInstallWizard(JDialog owner) {
-		if(owner != null)
-			wizard = new ApkInstallWizardDialog(owner);
-		else 
-			wizard = new ApkInstallWizardFrame(owner);
-	}
-	
 	private void setVisible(boolean visible) {
 		if(wizard != null) wizard.setVisible(visible);
 	}
@@ -195,8 +210,9 @@ public class ApkInstallWizard
 		window.setSize(new Dimension(550,450));
 		
 		progressPanel = new InstallProgressPanel();
-		contentPanel = new ContentPanel(uiEventHandler);
 		controlPanel = new ControlPanel(uiEventHandler);
+		contentPanel = new ContentPanel(uiEventHandler);
+		
 		
 		JPanel PanelDummy = new JPanel();
 		//progressPanel.setPreferredSize(new Dimension(700, 200));
@@ -342,21 +358,6 @@ public class ApkInstallWizard
 		start();
 	}
 	
-	public void setApk(ApkInfo apkInfo) {
-		//this.apkInfo = apkInfo;
-	}
-
-	public void setApk(String apkFilePath) {
-		if(apkFilePath == null || !(new File(apkFilePath).isFile())) {
-			Log.e("No such apk file... : " + apkFilePath);
-			MessageBoxPool.show(wizard, MessageBoxPool.MSG_NO_SUCH_APK_FILE);
-			return;
-		}
-		pakcageFilePath = apkFilePath;
-		
-		Log.d(ApkInstallWizard.pakcageFilePath);
-	}
-	
 	private void printLog(String msg) {
 		Log.v(msg);	
 		// append to log viewer
@@ -443,14 +444,13 @@ public class ApkInstallWizard
     public static void main(String args[]) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
-				ApkInstallWizard wizard = new ApkInstallWizard("/home/leejinhyeong/Desktop/DCMContacts.apk");
-				if(SystemUtil.isWindows()) {
-					wizard.setApk("C:\\Melon.apk");
-				} else {  //for linux
-					wizard.setApk("/home/leejinhyeong/Desktop/DCMContacts.apk");
-				}
-				wizard.start();
-				//wizard.setVisible(true);
+            	if(SystemUtil.isWindows()) {
+            		ApkInstallWizard wizard = new ApkInstallWizard("C:\\Melon.apk");
+            		wizard.start();
+            	} else {
+            		ApkInstallWizard wizard = new ApkInstallWizard("/home/leejinhyeong/Desktop/DCMContacts.apk");
+            		wizard.start();
+            	}
             }
         });
     }

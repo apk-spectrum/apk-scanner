@@ -169,8 +169,7 @@ public class Main implements Runnable
 		Log.v("install() " + apkFilePath);
 
 		if(!cmd.hasOption("c") && !cmd.hasOption("cli")) {
-			ApkInstallWizard wizard = new ApkInstallWizard();
-			wizard.setApk(apkFilePath);
+			ApkInstallWizard wizard = new ApkInstallWizard(apkFilePath);
 			wizard.start();
 		} else {
 

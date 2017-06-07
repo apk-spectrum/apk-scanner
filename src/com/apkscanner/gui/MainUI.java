@@ -359,8 +359,7 @@ public class MainUI extends JFrame
 
 			toolBar.setEnabledAt(ButtonSet.INSTALL, false);
 
-			ApkInstallWizard wizard = new ApkInstallWizard(MainUI.this);
-			wizard.setApk(apkInfo.filePath);
+			ApkInstallWizard wizard = new ApkInstallWizard(apkInfo.filePath, MainUI.this);			
 			wizard.start();
 
 			toolBar.setEnabledAt(ButtonSet.INSTALL, true);
