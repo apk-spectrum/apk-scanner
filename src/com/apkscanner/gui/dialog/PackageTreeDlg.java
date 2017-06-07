@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -60,8 +61,6 @@ import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.android.ddmlib.IDevice;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.Launcher;
-import com.apkscanner.core.installer.ApkInstaller;
-import com.apkscanner.core.installer.ApkInstaller.ApkInstallerListener;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.util.ApkFileChooser;
@@ -691,7 +690,6 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		packageInfoPanel.showDialog(this);
 	}
 
-
 	private void pullPackage()
 	{
 		Log.i("PullPackage()");
@@ -704,20 +702,20 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 			return ;
 		}
 
-		PackageInfo tempObject = ((PackageInfo)node.getUserObject()); 
+		final PackageInfo packageInfo = ((PackageInfo)node.getUserObject()); 
 
-		Log.i(tempObject.packageName);
-		Log.i(tempObject.getLabel());
-		Log.i(tempObject.getApkPath());
+		Log.i(packageInfo.packageName);
+		Log.i(packageInfo.getLabel());
+		Log.i(packageInfo.getApkPath());
 
 		DefaultMutableTreeNode deviceNode = null;
 		for(deviceNode = node ; !(deviceNode.getUserObject() instanceof IDevice); deviceNode = ((DefaultMutableTreeNode)deviceNode.getParent())) { }
 
 		Log.i(deviceNode.getUserObject().toString());
 
-		final String device = ((IDevice)deviceNode.getUserObject()).getSerialNumber();
+		final IDevice device = (IDevice) deviceNode.getUserObject();
 
-		final String apkPath = tempObject.getApkPath();
+		final String apkPath = packageInfo.getApkPath();
 		if(apkPath == null) return;
 
 		String saveFileName;
@@ -730,32 +728,38 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		final File destFile = ApkFileChooser.saveApkFile(parentframe, saveFileName);
 		if(destFile == null) return;
 
-		ApkInstaller apkInstaller = new ApkInstaller(device, new ApkInstallerListener() {
-			StringBuilder sb = new StringBuilder();
+		new SwingWorker<String, Object> () {
 			@Override
-			public void OnError(int cmdType, String device) {
-				MessageBoxPool.show(PackageTreeDlg.this, MessageBoxPool.MSG_FAILURE_PULLED, sb.toString());
+			protected String doInBackground() throws Exception {
+				return PackageManager.pullApk(device, apkPath, destFile.getAbsolutePath());
 			}
 
 			@Override
-			public void OnSuccess(int cmdType, String device) {
-				int n = MessageBoxPool.show(PackageTreeDlg.this, MessageBoxPool.QUESTION_SUCCESS_PULL_APK, destFile.getAbsolutePath());
-				switch(n) {
-				case 0: // explorer
-					SystemUtil.openFileExplorer(destFile);
-					break;
-				case 1: // open
-					Launcher.run(destFile.getAbsolutePath());
-					break;
-				default:
-					break;
+			protected void done() {
+				String errMessage = null;
+				try {
+					errMessage = get();
+				} catch (InterruptedException | ExecutionException e) {
+					errMessage = e.getMessage();
+					e.printStackTrace();
 				}
-			}
-
-			@Override public void OnCompleted(int cmdType, String device) { }
-			@Override public void OnMessage(String msg) { sb.append(msg); }
-		});		
-		apkInstaller.pullApk(apkPath, destFile.getAbsolutePath());
+				if(errMessage == null) {
+					int n = MessageBoxPool.show(PackageTreeDlg.this, MessageBoxPool.QUESTION_SUCCESS_PULL_APK, destFile.getAbsolutePath());
+					switch(n) {
+					case 0: // explorer
+						SystemUtil.openFileExplorer(destFile);
+						break;
+					case 1: // open
+						Launcher.run(destFile.getAbsolutePath());
+						break;
+					default:
+						break;
+					}
+				} else {
+					MessageBoxPool.show(PackageTreeDlg.this, MessageBoxPool.MSG_FAILURE_PULLED, errMessage);
+				}
+			};
+		}.execute();
 	}
 
 	@Override

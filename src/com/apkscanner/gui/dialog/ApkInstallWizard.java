@@ -40,9 +40,7 @@ import com.apkscanner.gui.install.DeviceCustomList.DeviceListData;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.resource.Resource;
 
-import com.apkscanner.tool.adb.AdbDeviceManager;
 import com.apkscanner.tool.adb.AdbServerMonitor;
-import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
 import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
@@ -92,7 +90,6 @@ public class ApkInstallWizard
 	private int status;
 	private int flag;
 
-	static private DeviceStatus[] targetDevices;
 	
 	public class ApkInstallWizardDialog  extends JDialog
 	{

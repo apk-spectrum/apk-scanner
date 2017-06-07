@@ -34,7 +34,6 @@ import com.apkscanner.gui.install.DeviceCustomList.DeviceListData;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
-import com.apkscanner.tool.adb.AdbDeviceManager.DeviceStatus;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.Log;
 
