@@ -3,7 +3,7 @@ package com.apkscanner.core.installer;
 import java.util.ArrayList;
 
 import com.android.ddmlib.IDevice;
-import com.apkscanner.core.scanner.ApkScanner;
+import com.apkscanner.data.apkinfo.CompactApkInfo;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbDeviceHelper;
 import com.apkscanner.tool.adb.PackageManager;
@@ -25,16 +25,16 @@ public class ApkInstaller
 		this.device = device;
 	}
 
-	public void install(final String apkPath, final OptionsBundle options) {
-		install(device, apkPath, options);
+	public void install(final CompactApkInfo apkInfo, final OptionsBundle options) {
+		install(device, apkInfo, options);
 	}
 
-	public static String install(final IDevice device, final String apkPath, final OptionsBundle options)
+	public static String install(final IDevice device, final CompactApkInfo apkInfo, final OptionsBundle options)
 	{
 		String errMessage = null;
 		//Log.i("InstallApk() device : " + name + ", apkPath: " + apkPath);
-		if(apkPath == null || apkPath.isEmpty()) {
-			errMessage = "No such file: " + apkPath;
+		if(apkInfo == null || apkInfo.filePath == null || apkInfo.filePath.isEmpty()) {
+			errMessage = "No such file: " + apkInfo.filePath;
 			return errMessage;
 		}
 
@@ -46,16 +46,16 @@ public class ApkInstaller
 
 		if(errMessage == null) {
 			if(options.isInstallOptions()) {
-				errMessage = installApk(device, apkPath, options);
+				errMessage = installApk(device, apkInfo, options);
 			} else if(options.isPushOptions()) {
-				errMessage = pushApk(device, apkPath, options);
+				errMessage = pushApk(device, apkInfo, options);
 			}
 		}
 
 		return errMessage;
 	}
 
-	public static String installApk(final IDevice device, final String apkPath, final OptionsBundle options) {
+	public static String installApk(final IDevice device, final CompactApkInfo apkInfo, final OptionsBundle options) {
 		String errMessage = null;
 
 		boolean reinstall = options.isSetReplace();
@@ -77,12 +77,12 @@ public class ApkInstaller
 			extraArgs.add("-g");
 		}
 
-		errMessage = PackageManager.installPackage(device, apkPath, reinstall, extraArgs.isEmpty() ? null : extraArgs.toArray(new String[extraArgs.size()]));
+		errMessage = PackageManager.installPackage(device, apkInfo.filePath, reinstall, extraArgs.isEmpty() ? null : extraArgs.toArray(new String[extraArgs.size()]));
 		if(errMessage == null || errMessage.isEmpty()) {
 			if(options.isSetLaunch()) {
 				String activity = options.getLaunchActivity();
 				if(activity != null) {
-					String pacakgeName = ApkScanner.getPackageName(apkPath);
+					String pacakgeName = apkInfo.packageName;
 					if(pacakgeName != null) {
 						String[] cmdResult = AdbDeviceHelper.launchActivity(device, pacakgeName + "/" + activity);
 						if(cmdResult == null || (cmdResult.length >= 2 && cmdResult[1].startsWith("Error")) ||
@@ -105,7 +105,7 @@ public class ApkInstaller
 		return errMessage;
 	}
 
-	private static String pushApk(final IDevice device, final String apkPath, final OptionsBundle options) {
+	private static String pushApk(final IDevice device, final CompactApkInfo apkInfo, final OptionsBundle options) {
 		String errMessage = null;
 
 
