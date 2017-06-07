@@ -256,12 +256,19 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 		ckTestPack.setActionCommand(ACT_OPT_ALLOW_TEST);
 		ckTestPack.addItemListener(this);
 
-		additionalOptionsPanel.add(ckReplace);
-		additionalOptionsPanel.add(ckDowngrade);
-		additionalOptionsPanel.add(ckOnSdCard);
-		additionalOptionsPanel.add(ckGrandPerm);
-		additionalOptionsPanel.add(ckLock);
-		additionalOptionsPanel.add(ckTestPack);
+		JPanel addCheckOptionsPanel = new JPanel();
+		addCheckOptionsPanel.setLayout(new BoxLayout(addCheckOptionsPanel, BoxLayout.Y_AXIS));
+		addCheckOptionsPanel.add(ckReplace);
+		addCheckOptionsPanel.add(ckDowngrade);
+		addCheckOptionsPanel.add(ckOnSdCard);
+		addCheckOptionsPanel.add(ckGrandPerm);
+		addCheckOptionsPanel.add(ckLock);
+		addCheckOptionsPanel.add(ckTestPack);
+		
+		JScrollPane emptyBorderScrollPanel = new JScrollPane(addCheckOptionsPanel);
+		emptyBorderScrollPanel.setBorder(new EmptyBorder(0,0,0,0));
+		emptyBorderScrollPanel.setAlignmentX(0);
+		additionalOptionsPanel.add(emptyBorderScrollPanel);
 
 		installOptionsPanel.add(additionalOptionsPanel);
 		installOptionsPanel.add(Box.createVerticalGlue());
