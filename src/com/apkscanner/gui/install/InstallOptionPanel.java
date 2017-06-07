@@ -582,10 +582,10 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 			String systemPath = bundle.getSystemPath();
 			if(systemPath != null) {
 				txtTargetPath.setText(systemPath);
-			} else if(bundle.isSetPushToSystem()) {
-				txtTargetPath.setText("/system/app/12345");
+			} else if(bundle.isSetPushToPriv()) {
+				txtTargetPath.setText("/system/priv-app/unknown-1/unknown-1.apk");
 			} else {
-				txtTargetPath.setText("/system/priv-app/45615");
+				txtTargetPath.setText("/system/app/unknown-1/unknown-1.apk");
 			}
 			ckReboot.setSelected(bundle.isSetReboot());
 			ckLib32.setSelected(bundle.isSetWithLib32());

@@ -48,6 +48,7 @@ public class OptionsBundle {
 	int blockedCause;
 
 	String launchActivity;
+	String installedPath;
 	String systemPath;
 	String lib32Arch;
 	String lib32ToPath;
