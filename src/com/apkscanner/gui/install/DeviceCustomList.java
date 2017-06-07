@@ -127,7 +127,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
     	
 		final DeviceListData data = new DeviceListData();
 		data.serialnumber = device.getSerialNumber();
-		data.installoptionpanel = new InstallOptionPanel();
+		
 				
 		refteshdefaultListData(data, device);
 		
@@ -148,10 +148,11 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 		
 		data.status = data.SDKVersion == null ? "OFFLINE" : device.getState().toString();
 		
-		data.showstate = DeviceListData.SHOW_INSTALL_DETAL;
+		data.showstate = DeviceListData.SHOW_INSTALL_OPTION;
 		data.pacakgeLoadingstatus =DeviceListData.WAITING; 
 		data.AppDetailpanel = new JLabel(Resource.IMG_LOADING.getImageIcon());
-			
+		data.installoptionpanel = new JLabel(Resource.IMG_LOADING.getImageIcon());
+		
 		final JList list = this;
 		new Thread(new Runnable() {
 			@Override
@@ -167,7 +168,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 				}
 				
 				setInstalloptionListener(list, data, device);
-				
+								
 		        fireSelectionValueChanged(0, 0, true);
 			}
 		}).start();
@@ -198,6 +199,8 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	    		}
 	    		ApkInstallWizard.optFactory = new DefaultOptionsFactory(ApkInstallWizard.apkInfo, ApkInstallWizard.signatureReport);
 	    	}
+	    	
+	    	InstallOptionPanel installtemppanel = new InstallOptionPanel();
 	    	
 	        OptionsBundle bundle = ApkInstallWizard.optFactory.createOptions(device);
 	        bundle.addOptionsChangedListener(new OptionsBundle.IOptionsChangedListener() {
@@ -238,9 +241,10 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	        	data.selectedinstalloption =  DeviceListData.OPTION_NO_INSTALL;
 	        }
 	        
-	        ((InstallOptionPanel)data.installoptionpanel).setApkInfo(ApkInstallWizard.apkInfo);
-	        ((InstallOptionPanel)data.installoptionpanel).setOptions(bundle);
+	        installtemppanel.setApkInfo(ApkInstallWizard.apkInfo);
+	        installtemppanel.setOptions(bundle);
 	        data.pacakgeLoadingstatus =DeviceListData.DONE;
+	        data.installoptionpanel = installtemppanel;
 	        list.repaint();
 			}
 			

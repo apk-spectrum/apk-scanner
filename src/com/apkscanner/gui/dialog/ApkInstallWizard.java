@@ -430,7 +430,7 @@ public class ApkInstallWizard
 		@Override
 		public void windowClosing(WindowEvent e)
 		{
-
+			Log.d("closing");
 		}
 		
 		@Override public void windowOpened(WindowEvent e) { }
@@ -440,6 +440,7 @@ public class ApkInstallWizard
 		@Override public void windowActivated(WindowEvent e) { }
 		@Override public void windowDeactivated(WindowEvent e) { }
 	};
+	
 	
     public static void main(String args[]) {
         EventQueue.invokeLater(new Runnable() {

@@ -111,10 +111,9 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 		
 		pacakgeinfopanel.removeAll();
 		
-		if(data.showstate == DeviceListData.SHOW_INSTALL_DETAL || data.pacakgeLoadingstatus == DeviceListData.WAITING) {
-			
+		if(data.showstate == DeviceListData.SHOW_INSTALL_DETAL) {			
 			pacakgeinfopanel.add(data.AppDetailpanel);
-		} else if(data.showstate == DeviceListData.SHOW_INSTALL_OPTION) {
+		} else if(data.showstate == DeviceListData.SHOW_INSTALL_OPTION || data.pacakgeLoadingstatus == DeviceListData.WAITING) {
 			pacakgeinfopanel.add(data.installoptionpanel);
 			
 			//slidePanelInFromRight(data.AppDetailpanel, data.installoptionpanel, pacakgeinfopanel);
