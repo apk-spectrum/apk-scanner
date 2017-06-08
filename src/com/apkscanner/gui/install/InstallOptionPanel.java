@@ -40,6 +40,7 @@ import com.apkscanner.data.apkinfo.CompactApkInfo;
 import com.apkscanner.data.apkinfo.ComponentInfo;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.util.ToggleButtonBarCellIcon;
+import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
 public class InstallOptionPanel extends JPanel implements ItemListener {
@@ -151,7 +152,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 		optionsPanel.add(makePushOptionPanel(), ACT_CMD_PUSH);
 		optionsPanel.add(new JPanel(), ACT_CMD_NO_INSTALL);
 
-		JButton disseminate = new JButton("Apply all models");
+		JButton disseminate = new JButton(Resource.STR_BTN_APPLY_ALL_MODELS.getString());
 		disseminate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -169,9 +170,9 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 	private JPanel makeInstallOptionsPanel() {
 		JPanel installOptionsPanel = new JPanel();
 		installOptionsPanel.setLayout(new BoxLayout(installOptionsPanel, BoxLayout.Y_AXIS));
-		installOptionsPanel.setBorder(BorderFactory.createTitledBorder("Install options"));
+		installOptionsPanel.setBorder(BorderFactory.createTitledBorder(Resource.STR_LABEL_INSTALL_OPTIONS.getString()));
 
-		ckLaucnApp = new JCheckBox("Launch after installed");
+		ckLaucnApp = new JCheckBox(Resource.STR_BTN_LAUNCH_AF_INSTALLED.getString());
 		ckLaucnApp.setActionCommand(ACT_OPT_LAUNCH);
 		ckLaucnApp.addItemListener(this);
 
@@ -184,7 +185,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 		additionalOptionsPanel.setVisible(false);
 		additionalOptionsPanel.setLayout(new BoxLayout(additionalOptionsPanel, BoxLayout.Y_AXIS));
 
-		JLabel additionalOptionsLabel = new JLabel("▶ Choose additional options:");
+		JLabel additionalOptionsLabel = new JLabel("▶ " + Resource.STR_LABEL_ADDITIONAL_OPTIONS.getString());
 		additionalOptionsLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -221,7 +222,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 		launcherBox.setAlignmentX(0);
 		launcherBox.setAlignmentY(0);
 		launcherBox.setMaximumSize(maxSize);
-		JLabel launcherLabel = new JLabel("Launcher:");
+		JLabel launcherLabel = new JLabel(Resource.STR_LABEL_LAUNCHER_AF_INSTALLED.getString());
 		launcherLabel.setAlignmentX(0);
 		launcherLabel.setAlignmentY(0);
 		launcherLabel.setBorder(new EmptyBorder(2, 0, 0, 0));
@@ -232,29 +233,29 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 
 		//additionalOptionsPanel
 
-		ckReplace = new JCheckBox("Replace existing application");
+		ckReplace = new JCheckBox(Resource.STR_BTN_REPLACE_EXISTING_APP.getString());
 		ckReplace.setActionCommand(ACT_OPT_REPLACE);
 		ckReplace.addItemListener(this);
 
-		ckDowngrade = new JCheckBox("Allow version code downgrade");
+		ckDowngrade = new JCheckBox(Resource.STR_BTN_ALLOW_DOWNGRADE.getString());
 		ckDowngrade.setActionCommand(ACT_OPT_DOWNGRADE);
 		ckDowngrade.addItemListener(this);
 
-		ckOnSdCard = new JCheckBox("Install application on sdcard");
+		ckOnSdCard = new JCheckBox(Resource.STR_BTN_INSTALL_ON_SDCARD.getString());
 		ckOnSdCard.setActionCommand(ACT_OPT_ON_SDCARD);
 		ckOnSdCard.addItemListener(this);
 
-		ckGrandPerm = new JCheckBox("Grant all runtime permissions");
+		ckGrandPerm = new JCheckBox(Resource.STR_BTN_GRANT_RUNTIME_PERM.getString());
 		ckGrandPerm.setActionCommand(ACT_OPT_GRANT_PERM);
 		ckGrandPerm.addItemListener(this);
 
-		ckLock = new JCheckBox("Forward lock application");
-		ckLock.setActionCommand(ACT_OPT_FORWARD_LOCK);
-		ckLock.addItemListener(this);
-
-		ckTestPack = new JCheckBox("Allow test packages");
+		ckTestPack = new JCheckBox(Resource.STR_BTN_ALLOW_TEST_PACKAGE.getString());
 		ckTestPack.setActionCommand(ACT_OPT_ALLOW_TEST);
 		ckTestPack.addItemListener(this);
+
+		ckLock = new JCheckBox(Resource.STR_BTN_FORWARD_LOCK.getString());
+		ckLock.setActionCommand(ACT_OPT_FORWARD_LOCK);
+		ckLock.addItemListener(this);
 
 		JPanel addCheckOptionsPanel = new JPanel();
 		addCheckOptionsPanel.setLayout(new BoxLayout(addCheckOptionsPanel, BoxLayout.Y_AXIS));
@@ -262,8 +263,8 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 		addCheckOptionsPanel.add(ckDowngrade);
 		addCheckOptionsPanel.add(ckOnSdCard);
 		addCheckOptionsPanel.add(ckGrandPerm);
-		addCheckOptionsPanel.add(ckLock);
 		addCheckOptionsPanel.add(ckTestPack);
+		addCheckOptionsPanel.add(ckLock);
 
 		JScrollPane emptyBorderScrollPanel = new JScrollPane(addCheckOptionsPanel);
 		emptyBorderScrollPanel.setBorder(new EmptyBorder(0,0,0,0));
@@ -279,7 +280,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 	private JPanel makePushOptionPanel() {
 		JPanel pushOptionsPanel = new JPanel();
 		pushOptionsPanel.setLayout(new BoxLayout(pushOptionsPanel, BoxLayout.Y_AXIS));
-		pushOptionsPanel.setBorder(BorderFactory.createTitledBorder("Push options"));
+		pushOptionsPanel.setBorder(BorderFactory.createTitledBorder(Resource.STR_LABEL_PUSH_OPTIONS.getString()));
 
 		rbSystemPush = new JRadioButton("/system/app");
 		rbSystemPush.setActionCommand(ACT_OPT_PUSH_SYSTEM);
@@ -296,7 +297,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 		Box installLocationBox = Box.createHorizontalBox();
 		installLocationBox.setAlignmentX(0);
 		installLocationBox.setAlignmentY(0);
-		installLocationBox.add(new JLabel("Path:"));
+		installLocationBox.add(new JLabel(Resource.STR_LABEL_PATH.getString() + ":"));
 		installLocationBox.add(Box.createHorizontalStrut(5));
 		installLocationBox.add(rbSystemPush);
 		installLocationBox.add(Box.createHorizontalStrut(10));
@@ -314,12 +315,12 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 		txtTargetPath.setMaximumSize(szTxtField);
 		pushOptionsPanel.add(txtTargetPath);
 
-		ckReboot = new JCheckBox("Reboot after pushed");
+		ckReboot = new JCheckBox(Resource.STR_BTN_REBOOT_AF_PUSHED.getString());
 		ckReboot.setActionCommand(ACT_OPT_PUSH_REBOOT);
 		ckReboot.addItemListener(this);
 		pushOptionsPanel.add(ckReboot);
 		pushOptionsPanel.add(Box.createVerticalStrut(5));
-		lbWithLibs = new JLabel("With Libraries");
+		lbWithLibs = new JLabel(Resource.STR_LABEL_WITH_LIBRARIES.getString());
 		pushOptionsPanel.add(lbWithLibs);
 		//pushOptionsPanel.add(CheckWithLib32);
 		//pushOptionsPanel.add(CheckWithLib64);
@@ -391,7 +392,8 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 
 		//pushOptionsPanel.add(new JLabel("▶ Show libray list"));
 
-		DefaultTableModel model = new DefaultTableModel(new String[][] { }, new String[] {"No." , "Arch" , "Destination"});
+		DefaultTableModel model = new DefaultTableModel(new String[][] { },
+				new String[] {Resource.STR_LABEL_NUM.getString() , Resource.STR_LABEL_ABI.getString() , Resource.STR_LABEL_DESTINATION.getString()});
 		libPreviewList = new JTable(model) {
 			private static final long serialVersionUID = -6116478445588059120L;
 			@Override
@@ -437,10 +439,13 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 	private JPanel makeToggleButtonBar(int cc, boolean round, ActionListener listener) {
 		bgInstallMethod = new ButtonGroup();
 		JPanel p = new JPanel(new GridLayout(1, 0, 0, 0));
-		p.setBorder(BorderFactory.createTitledBorder("How to install"));
+		p.setBorder(BorderFactory.createTitledBorder(Resource.STR_LABEL_HOW_TO_INSTALL.getString()));
 		//p.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		Color color = new Color(cc);
-		for (AbstractButton b: Arrays.asList(makeButton("Install", ACT_CMD_INSTALL), makeButton("Push", ACT_CMD_PUSH), makeButton("No Install", ACT_CMD_NO_INSTALL))) {
+		for (AbstractButton b: Arrays.asList(
+				makeButton(Resource.STR_BTN_TO_INSTALL.getString(), ACT_CMD_INSTALL),
+				makeButton(Resource.STR_BTN_TO_PUSH.getString(), ACT_CMD_PUSH),
+				makeButton(Resource.STR_BTN_NO_INSTALL.getString(), ACT_CMD_NO_INSTALL))) {
 			b.setBackground(color);
 			b.setIcon(new ToggleButtonBarCellIcon());
 			b.addActionListener(listener);
@@ -470,7 +475,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 					ckLaucnApp.setSelected(bundle.isSetLaunch());
 				}
 			} else {
-				cbLaunchActivity.addItem("No Such Activity");
+				cbLaunchActivity.addItem(Resource.STR_MSG_NO_SUCH_LAUNCHER.getString());
 				cbLaunchActivity.setEnabled(false);
 				ckLaucnApp.setSelected(false);
 				ckLaucnApp.setEnabled(false);
@@ -540,26 +545,26 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 					bgInstallMethod.setSelected(btn.getModel(), true);
 					if(ACT_CMD_NO_INSTALL.equals(actCmd)) {
 						if(bundle.isBlockedFlags(OptionsBundle.FLAG_OPT_INSTALL | OptionsBundle.FLAG_OPT_PUSH)) {
-							btn.setText("Imposiable");
+							btn.setText(Resource.STR_BTN_IMPOSSIBLE_INSTALL.getString());
 						} else {
-							btn.setText("No Install");
+							btn.setText(Resource.STR_BTN_NO_INSTALL.getString());
 						}
 					}
 				} else if(ACT_CMD_INSTALL.equals(actCmd)) {
 					if(bundle.isBlockedFlags(OptionsBundle.FLAG_OPT_INSTALL)) {
 						//btn.setEnabled(false);
-						btn.setText("Can't Install");
+						btn.setText(Resource.STR_BTN_TO_CANNOT_INSTALL.getString());
 					} else {
 						//btn.setEnabled(true);
-						btn.setText("Install");
+						btn.setText(Resource.STR_BTN_TO_INSTALL.getString());
 					}
 				} else if(ACT_CMD_PUSH.equals(actCmd)) {
 					if(bundle.isBlockedFlags(OptionsBundle.FLAG_OPT_PUSH)) {
 						//btn.setEnabled(false);
-						btn.setText("Can't Push");
+						btn.setText(Resource.STR_BTN_TO_CANNOT_PUSH.getString());
 					} else {
 						//btn.setEnabled(true);
-						btn.setText("Push");
+						btn.setText(Resource.STR_BTN_TO_PUSH.getString());
 					}
 				}
 			}
@@ -744,7 +749,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 		}
 
 		if(bundle != null && flag != 0) {
-			Log.v(">>>>> flag 0x" + Integer.toHexString(flag) + ", extraData " + extraData + ", getStateChange " + arg0.getStateChange());
+			Log.v("flag 0x" + Integer.toHexString(flag) + ", extraData " + extraData + ", getStateChange " + arg0.getStateChange());
 			if(arg0.getStateChange() == ItemEvent.SELECTED) {
 				bundle.set(flag, extraData);
 			} else {

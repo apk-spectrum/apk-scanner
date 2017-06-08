@@ -38,6 +38,21 @@
 	<string name="btn_create_shortcut">바탕화면에 바로가기 생성</string>
     <string name="btn_self_search">찾아보기...</string>
 	<string name="btn_details_info">상세 패키지정보</string>
+	<string name="btn_to_install">Install</string>
+	<string name="btn_to_cannot_install">Install 불가</string>
+	<string name="btn_to_push">Push</string>
+	<string name="btn_to_cannot_push">Push 불가</string>
+	<string name="btn_no_install">설치 안함</string>
+	<string name="btn_impossible_install">설치 불가</string>
+	<string name="btn_apply_all_models">전체 모델에 적용</string>
+	<string name="btn_launch_after_installed">설치 후 앱 실행</string>
+	<string name="btn_replace_existing_app">기존 애플리케이션을 교체 허용(-r)</string>
+	<string name="btn_allow_downgrade">버전코드 다운그레이드 허용(-d)</string>
+	<string name="btn_install_on_sdcard">외장메모리 우선 설치(-s)</string>
+	<string name="btn_grant_runtime_perm">설치시 모든 런타임 퍼미션 허용(-g)</string>
+	<string name="btn_forward_lock">Forward lock application(-l)</string>
+	<string name="btn_allow_test_package">테스트 페키지 허용(-t)</string>
+	<string name="btn_reboot_after_pushed">완료 후 재부팅</string>
 
 	<string name="btn_open_lab">APK 파일에서 정보를 가져옵니다. (Ctrl+O)</string>
 	<string name="btn_open_pacakge_lab">디바이스 패키지 열기(Ctrl+P)</string>
@@ -239,6 +254,15 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="label_open_with_explorer">탐색기</string>
 	<string name="label_open_with_apkscanner">APK 스캐너</string>
 	<string name="label_open_with_choose">연결 프로그램 선택</string>
+	<string name="label_how_to_install">설치 방법</string>
+	<string name="label_install_options">Install 옵션</string>
+	<string name="label_push_options">Push 옵션</string>
+	<string name="label_additional_install_options">추가 옵션 선택:</string>
+	<string name="label_launcher_af_installed">런처:</string>
+	<string name="label_with_libraies">라이브러리 선택:</string>
+	<string name="label_num">번호</string>
+	<string name="label_abi">ABI</string>
+	<string name="label_destination">대상 경로</string>
 
 	<string name="msg_failure_open_apk">APK 파일을 열수 없습니다.</string>
 	<string name="msg_no_such_apk">APK 파일이 존재하지 않습니다.</string>

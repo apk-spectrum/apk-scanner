@@ -443,6 +443,7 @@ public class ApkInstallWizard
 	
 	
     public static void main(String args[]) {
+    	Resource.setLanguage((String)Resource.PROP_LANGUAGE.getData(SystemUtil.getUserLanguage()));
         EventQueue.invokeLater(new Runnable() {
             public void run() {
             	if(SystemUtil.isWindows()) {

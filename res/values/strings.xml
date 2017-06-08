@@ -60,6 +60,21 @@
 	<string name="btn_create_shortcut_lab">Create Shortcut on Desktop</string>
 	<string name="btn_self_search_lab">Search...</string>
 	<string name="btn_details_info">Detail information</string>
+	<string name="btn_to_install">Install</string>
+	<string name="btn_to_cannot_install">Can't Install</string>
+	<string name="btn_to_push">Push</string>
+	<string name="btn_to_cannot_push">Can't Push</string>
+	<string name="btn_no_install">No Install</string>
+	<string name="btn_impossible_install">Impossible</string>
+	<string name="btn_apply_all_models">Apply all models</string>
+	<string name="btn_launch_after_installed">Launch after installed</string>
+	<string name="btn_replace_existing_app">Replace existing application(-r)</string>
+	<string name="btn_allow_downgrade">Allow version code downgrade(-d)</string>
+	<string name="btn_install_on_sdcard">Install application on sdcard(-s)</string>
+	<string name="btn_grant_runtime_perm">Grant all runtime permissions(-g)</string>
+	<string name="btn_forward_lock">Forward lock application(-l)</string>
+	<string name="btn_allow_test_package">Allow test packages(-t)</string>
+	<string name="btn_reboot_after_pushed">Reboot after pushed</string>
 
 	<string name="menu_new">New Window...</string>
 	<string name="menu_new_window">New window(N)</string>
@@ -239,6 +254,15 @@ they're removed before the application is published</string>
 	<string name="label_open_with_explorer">Explorer</string>
 	<string name="label_open_with_apkscanner">APK Scanner</string>
 	<string name="label_open_with_choose">Other</string>
+	<string name="label_how_to_install">How to install</string>
+	<string name="label_install_options">Install options</string>
+	<string name="label_push_options">Push options</string>
+	<string name="label_additional_install_options">Choose additional options:</string>
+	<string name="label_launcher_af_installed">Launcher:</string>
+	<string name="label_with_libraies">With Libraries:</string>
+	<string name="label_num">No.</string>
+	<string name="label_abi">ABI</string>
+	<string name="label_destination">Destination</string>
 
 	<string name="msg_failure_open_apk">ERROR: Can not open the APK</string>
 	<string name="msg_no_such_apk">No such APK file</string>
