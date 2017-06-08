@@ -66,7 +66,7 @@ public class DefaultOptionsFactory {
 						blockedCause |= OptionsBundle.BLOACKED_COMMON_CAUSE_UNSUPPORTED_SDK_LEVEL;
 					} else if(signatureReport != null && packageInfo != null) {
 						String signature = packageInfo.getSignature();
-						if(signature != null) {
+						if(signature != null && signature.matches("[0-9a-fA-F]*")) {
 							if(!signatureReport.contains("RAWDATA", signature)) {
 								blockedFlags |= OptionsBundle.FLAG_OPT_INSTALL;
 								blockedCause |= OptionsBundle.BLOACKED_INSTALL_CAUSE_MISMATCH_SIGNED;
