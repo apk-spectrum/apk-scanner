@@ -96,7 +96,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 	private JScrollPane libPreviewPanel;
 
 	public InstallOptionPanel() {
-		setLayout(new BorderLayout());	
+		setLayout(new BorderLayout());
 
 		JPanel installMethodPanel = makeToggleButtonBar(0x555555, true, new ActionListener() {
 			@Override
@@ -117,11 +117,11 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 						} else {
 							bundle.set(OptionsBundle.FLAG_OPT_PUSH);	
 						}
-					} else {
+					} else if(!bundle.isBlockedFlags(OptionsBundle.FLAG_OPT_NO_INSTALL)) {
 						bundle.set(OptionsBundle.FLAG_OPT_NO_INSTALL);
 					}
 				}
-				
+
 				if(blockedCause == 0) {
 					((CardLayout)optionsPanel.getLayout()).show(optionsPanel, actionCommand);
 				} else {
@@ -264,7 +264,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 		addCheckOptionsPanel.add(ckGrandPerm);
 		addCheckOptionsPanel.add(ckLock);
 		addCheckOptionsPanel.add(ckTestPack);
-		
+
 		JScrollPane emptyBorderScrollPanel = new JScrollPane(addCheckOptionsPanel);
 		emptyBorderScrollPanel.setBorder(new EmptyBorder(0,0,0,0));
 		emptyBorderScrollPanel.setAlignmentX(0);
@@ -349,7 +349,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 		cbLib32Src.setMinimumSize(prefSize);
 		lib32Box.add(cbLib32Src);
 		lib32Box.add(new JLabel(">"));
-		cbLib32Dest = new JComboBox<String>(new String[]{"/system/lib/", "/system/vendor/lib/", "{package}/lib/"});
+		cbLib32Dest = new JComboBox<String>(new String[]{"/system/lib/", "/system/vendor/lib/", "{package}/lib/arm/"});
 		cbLib32Dest.setActionCommand(ACT_OPT_PUSH_LIB32);
 		cbLib32Dest.addItemListener(this);
 		cbLib32Dest.setEditable(false);
@@ -378,7 +378,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 		cbLib64Src.setMinimumSize(prefSize);
 		lib64Box.add(cbLib64Src);
 		lib64Box.add(new JLabel(">"));
-		cbLib64Dest = new JComboBox<String>(new String[]{"/system/lib64/", "/system/vendor/lib64/", "{package}/lib64/"});
+		cbLib64Dest = new JComboBox<String>(new String[]{"/system/lib64/", "/system/vendor/lib64/", "{package}/lib/arm64"});
 		cbLib64Dest.setActionCommand(ACT_OPT_PUSH_LIB64);
 		cbLib64Dest.addItemListener(this);
 		cbLib64Dest.setEditable(false);
@@ -579,9 +579,21 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 
 			rbSystemPush.setSelected(bundle.isSetPushToSystem());
 			rbPrivPush.setSelected(bundle.isSetPushToPriv());
-			String systemPath = bundle.getSystemPath();
+
+			if(cbLib32Dest.getItemCount() > 2) {
+				cbLib32Dest.removeItemAt(2);
+			}
+			if(cbLib64Dest.getItemCount() > 2) {
+				cbLib64Dest.removeItemAt(2);
+			}
+
+			String systemPath = bundle.getTargetSystemPath();
 			if(systemPath != null) {
 				txtTargetPath.setText(systemPath);
+				if(systemPath.matches("/system/(priv-)?app/[^/]*/[^/]*\\.apk")) {
+					cbLib32Dest.addItem(systemPath.replaceAll("[^/]*.apk$", "lib/arm/"));
+					cbLib64Dest.addItem(systemPath.replaceAll("[^/]*.apk$", "lib/arm64/"));
+				}
 			} else if(bundle.isSetPushToPriv()) {
 				txtTargetPath.setText("/system/priv-app/unknown-1/unknown-1.apk");
 			} else {
@@ -665,10 +677,30 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 				String convPath = txtTargetPath.getText().replaceAll("/system/(priv-)?app/", path);
 				txtTargetPath.setText(convPath);
 
+				boolean needRefresh32 = cbLib32Dest.getSelectedIndex() == 2;
+				boolean needRefresh64 = cbLib64Dest.getSelectedIndex() == 2;
+
+				if(cbLib32Dest.getItemCount() > 2) {
+					cbLib32Dest.removeItemAt(2);
+				}
+				if(cbLib64Dest.getItemCount() > 2) {
+					cbLib64Dest.removeItemAt(2);
+				}
+				if(convPath.matches("/system/(priv-)?app/[^/]*/[^/]*\\.apk")) {
+					cbLib32Dest.addItem(convPath.replaceAll("[^/]*.apk$", "lib/arm/"));
+					if(needRefresh32) cbLib32Dest.setSelectedIndex(2);
+					cbLib64Dest.addItem(convPath.replaceAll("[^/]*.apk$", "lib/arm64/"));
+					if(needRefresh64) cbLib64Dest.setSelectedIndex(2);
+				}
+
 				if(bundle != null && isSelected) {
-					String installedPath = bundle.getSystemPath();
+					String installedPath = bundle.getInstalledPath();
 					if(installedPath != null && !installedPath.equals(convPath)) {
-						Log.w("need remove installed app");
+						if(installedPath.startsWith("/system/")) {
+							Log.w("need remove installed app");
+						} else {
+							Log.v("Existed installed apk from /data/");
+						}
 					}
 				}
 				break;

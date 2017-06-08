@@ -8,7 +8,7 @@ import com.apkscanner.util.Log;
 public class OptionsBundle {
 	public static final int FLAG_OPT_INSTALL	 	= 0x010000;
 	public static final int FLAG_OPT_PUSH			= 0x020000;
-	public static final int FLAG_OPT_NO_INSTALL	= 0x030000;
+	public static final int FLAG_OPT_NO_INSTALL		= 0x030000;
 
 	public static final int FLAG_OPT_INSTALL_FORWARD_LOCK	= 0x0001;
 	public static final int FLAG_OPT_INSTALL_REPLACE		= 0x0002;
@@ -22,8 +22,7 @@ public class OptionsBundle {
 	public static final int FLAG_OPT_PUSH_PRIVAPP	= 0x0200;
 	public static final int FLAG_OPT_PUSH_LIB32		= 0x0400;
 	public static final int FLAG_OPT_PUSH_LIB64		= 0x0800;
-	public static final int FLAG_OPT_PUSH_LIB_BOTH	= 0x1000;
-	public static final int FLAG_OPT_PUSH_REBOOT	= 0x4000;
+	public static final int FLAG_OPT_PUSH_REBOOT	= 0x1000;
 
 	public static final int FLAG_OPT_DISSEMINATE 	= 0x400000;
 	public static final int FLAG_OPT_CLEAR_OPTIONS	= 0x800000;
@@ -242,7 +241,7 @@ public class OptionsBundle {
 			flag |= FLAG_OPT_INSTALL_LAUNCH; 
 		}
 
-		flag |= FLAG_OPT_PUSH_SYSTEM | FLAG_OPT_PUSH_REBOOT | FLAG_OPT_PUSH_LIB_BOTH;
+		flag |= FLAG_OPT_PUSH_SYSTEM | FLAG_OPT_PUSH_REBOOT;
 		optionsChanged(FLAG_OPT_CLEAR_OPTIONS, (String[])null);
 	}
 
@@ -318,7 +317,11 @@ public class OptionsBundle {
 		return launchActivity;
 	}
 
-	public synchronized String getSystemPath() {
+	public synchronized String getInstalledPath() {
+		return installedPath;
+	}
+
+	public synchronized String getTargetSystemPath() {
 		return systemPath;
 	}
 
