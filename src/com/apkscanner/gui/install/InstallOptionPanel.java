@@ -707,10 +707,12 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 			case OptionsBundle.FLAG_OPT_PUSH_LIB32:
 				cbLib32Src.setEnabled(isSelected);
 				cbLib32Dest.setEnabled(isSelected);
+				if(isSelected) extraData = new String[] { (String)cbLib32Src.getSelectedItem(), (String)cbLib32Dest.getSelectedItem() };
 				break;
 			case OptionsBundle.FLAG_OPT_PUSH_LIB64:
 				cbLib64Src.setEnabled(isSelected);
 				cbLib64Dest.setEnabled(isSelected);
+				if(isSelected) extraData = new String[] { (String)cbLib64Src.getSelectedItem(), (String)cbLib64Dest.getSelectedItem() };
 				break;
 			}
 		} else if(arg0.getSource() instanceof JComboBox &&
