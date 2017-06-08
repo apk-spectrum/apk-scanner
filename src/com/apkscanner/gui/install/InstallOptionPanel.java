@@ -609,12 +609,12 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 			ckLib64.setSelected(bundle.isSetWithLib64());
 
 			if(bundle.isSetWithLib32()) {
-				cbLib32Src.setSelectedItem(bundle.getWithLib32Arch());
 				cbLib32Dest.setSelectedItem(bundle.getWithLib32ToPath());
+				cbLib32Src.setSelectedItem(bundle.getWithLib32Arch());
 			}
 			if(bundle.isSetWithLib64()) {
-				cbLib64Src.setSelectedItem(bundle.getWithLib64Arch());
 				cbLib64Dest.setSelectedItem(bundle.getWithLib64ToPath());
+				cbLib64Src.setSelectedItem(bundle.getWithLib64Arch());
 			}
 			refreshLibPreview();
 		}
