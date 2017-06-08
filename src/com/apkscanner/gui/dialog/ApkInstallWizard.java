@@ -17,21 +17,28 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.util.concurrent.ExecutionException;
 import java.util.jar.JarFile;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.ListModel;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.android.ddmlib.IDevice;
+import com.apkscanner.core.installer.ApkInstaller;
 import com.apkscanner.core.installer.DefaultOptionsFactory;
+import com.apkscanner.core.installer.OptionsBundle;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.CompactApkInfo;
 import com.apkscanner.gui.install.ContentPanel;
 import com.apkscanner.gui.install.ControlPanel;
+import com.apkscanner.gui.install.DeviceCustomList.DeviceListData;
 import com.apkscanner.gui.install.InstallProgressPanel;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.resource.Resource;
@@ -48,6 +55,7 @@ public class ApkInstallWizard
 	public static final int STATUS_SET_INSTALL_OPTION = 3;
 	public static final int STATUS_INSTALLING = 4;
 	public static final int STATUS_COMPLETED = 5;
+	public static final int STATUS_DESTROY_DIALOG = 100;
 	
 	public static final int STATUS_APK_VERTIFY_ERROR = 6;
 	
@@ -107,7 +115,8 @@ public class ApkInstallWizard
 			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 			setResizable(true);
 			setModal(false);
-
+			addWindowListener(uiEventHandler);
+			
 			initialize(this);
 			setLocationRelativeTo(owner);
 		}
@@ -248,8 +257,10 @@ public class ApkInstallWizard
 	
 	private void execute(int status) {
 		switch(status) {
-		case STATUS_PACKAGE_SCANNING:
-			
+		case STATUS_INIT:
+			next();
+			break;
+		case STATUS_PACKAGE_SCANNING:			
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -283,19 +294,43 @@ public class ApkInstallWizard
 			break;
 		case STATUS_INSTALLING:
 			
+//			new Thread(new Runnable() {
+//				@Override
+//				public void run() {
+//					try {
+//						Thread.sleep(3000);
+//					} catch (InterruptedException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//			        next();
+//				}			
+//			}).start();
+			Log.d("install");
+			final ListModel<DeviceListData> listmodel  = contentPanel.getDeviceListData();
+			
+			int succesCount = 0;
+			int errorCount = 0;
 			new Thread(new Runnable() {
 				@Override
-				public void run() {
-					try {
-						Thread.sleep(3000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+				public void run() {			
+				for(int i=0; i< listmodel.getSize(); i++) {
+						contentPanel.setLoadingTextStep(i+1, listmodel.getSize());
+						final IDevice device = listmodel.getElementAt(i).device;
+						final OptionsBundle options = listmodel.getElementAt(i).bundleoption;
+						String message = ApkInstaller.install(device, apkInfo, options);
+						
+						if( message == null) {
+							Log.d("suc");
+						} else {
+							
+							Log.d("error = " + message);
+						}					
 					}
-			        next();
-				}			
+					next();				
+				}
 			}).start();
-			
+				
 			break;
 		default:
 			break;
@@ -316,6 +351,7 @@ public class ApkInstallWizard
 		synchronized(this) {
 			switch(status) {
 			case STATUS_INIT:
+				changeState(STATUS_PACKAGE_SCANNING);
 				break;
 			case STATUS_PACKAGE_SCANNING:
 				changeState(STATUS_CHECK_PACKAGES);
@@ -380,7 +416,7 @@ public class ApkInstallWizard
 					wizard.dispose();
 				}
 			} else if(ControlPanel.CTR_ACT_CMD_RESTART.equals(arg0.getActionCommand())) {
-				changeState(STATUS_PACKAGE_SCANNING);
+				changeState(STATUS_INIT);				
 			} else if(ContentPanel.CTT_ACT_CMD_REFRESH.equals(arg0.getActionCommand())) {
 
 			} else if(ContentPanel.CTT_ACT_CMD_SELECT_ALL.equals(arg0.getActionCommand())) {
@@ -429,8 +465,9 @@ public class ApkInstallWizard
 		// Closing event of window be delete tempFile
 		@Override
 		public void windowClosing(WindowEvent e)
-		{
-			Log.d("closing");
+		{	
+			Log.d("closing....ApkInstallWizard");
+			changeState(STATUS_DESTROY_DIALOG);			
 		}
 		
 		@Override public void windowOpened(WindowEvent e) { }
@@ -449,7 +486,7 @@ public class ApkInstallWizard
             		ApkInstallWizard wizard = new ApkInstallWizard("C:\\Melon.apk");
             		wizard.start();
             	} else {
-            		ApkInstallWizard wizard = new ApkInstallWizard("/home/leejinhyeong/Desktop/DCMContacts.apk");
+            		ApkInstallWizard wizard = new ApkInstallWizard("/home/leejinhyeong/Desktop/reco.apk");
             		wizard.start();
             	}
             }

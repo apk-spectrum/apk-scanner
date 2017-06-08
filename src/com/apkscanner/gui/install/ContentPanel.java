@@ -10,10 +10,12 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.ListModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableColumn;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
+import com.apkscanner.gui.install.DeviceCustomList.DeviceListData;
 import com.apkscanner.gui.install.DeviceTablePanel.DeviceDO;
 import com.apkscanner.gui.util.ImagePanel;
 import com.apkscanner.resource.Resource;
@@ -46,20 +48,7 @@ public class ContentPanel extends JPanel
 	private JLabel ErrorMessageLable;
 	
 	private JPanel lodingPanel;
-	
-	public void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
-			double... percentages) {
-			double total = 0;
-			for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
-			total += percentages[i];
-			}
-			
-			for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
-			TableColumn column = table.getColumnModel().getColumn(i);		        
-			column.setPreferredWidth((int)(tablePreferredWidth * (percentages[i] / total)));
-			}
-		}
-
+	private String loadingtext;
 	
 	public ContentPanel(ActionListener listener) {
 		super(new CardLayout());
@@ -104,12 +93,14 @@ public class ContentPanel extends JPanel
 			break;
 			
 		case ApkInstallWizard.STATUS_PACKAGE_SCANNING:
-			loadingMessageLable.setText("SCANNING APK");			
+			loadingMessageLable.setText("VERIFY APK");
+			loadingtext = "VERIFY APK";
 			((CardLayout)getLayout()).show(this, CONTENT_LOADING);
 			break;
 		case ApkInstallWizard.STATUS_CHECK_PACKAGES:
 			//pack_textPakcInfo.setText("");
-			((CardLayout)getLayout()).show(this, CONTENT_CHECK_PACKAGES);			
+			((CardLayout)getLayout()).show(this, CONTENT_CHECK_PACKAGES);
+			panel_check_package.refreshDeviceInfo();
 			break;
 		case ApkInstallWizard.STATUS_SET_INSTALL_OPTION:
 
@@ -117,29 +108,35 @@ public class ContentPanel extends JPanel
 			break;
 		case ApkInstallWizard.STATUS_INSTALLING:
 			loadingMessageLable.setText("INSTALLING");
+			loadingtext = "INSTALLING";
 			((CardLayout)getLayout()).show(this, CONTENT_LOADING);
 			lodingPanel.revalidate();
 			break;
-		case ApkInstallWizard.STATUS_COMPLETED:
-			
+		case ApkInstallWizard.STATUS_COMPLETED:			
 			((CardLayout)getLayout()).show(this, CONTENT_COMPLETED);
 			break;
 		case ApkInstallWizard.STATUS_APK_VERTIFY_ERROR:
 			((CardLayout)getLayout()).show(this, CONTENT_VERIFY_ERROR);
 			break;
+
+		case ApkInstallWizard.STATUS_DESTROY_DIALOG:
+			panel_check_package.destroy();
+			break;			
 		default:
 			loadingMessageLable.setText("UNKNOWN STEP");
 			((CardLayout)getLayout()).show(this, CONTENT_LOADING);
 			break;
 		}
 	}
-	public FindPackagePanel getFindPackagePanel() {
-		return panel_check_package;
+	public void setLoadingTextStep(int current, int all) {
+		loadingMessageLable.setText(loadingtext + "(" + current + "/" + all + ")");		
 	}
-	
-	
 	public void appendLog(String msg) {
 		// append to log viewer
 		
-	}	
+	}
+	
+	public ListModel<DeviceListData> getDeviceListData() {
+		return panel_check_package.getListModelData();
+	}
 }

@@ -407,6 +407,7 @@ public class InstallProgressPanel extends JPanel
 		int newStatus = CurrentProgress;
 		switch(status) {
 		case ApkInstallWizard.STATUS_INIT:
+			newStatus = 0;
 			break;
 		case ApkInstallWizard.STATUS_PACKAGE_SCANNING:
 			newStatus = 1;

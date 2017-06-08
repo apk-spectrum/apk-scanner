@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.ListModel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -61,11 +62,7 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	    
 	    ((CardLayout)getLayout()).show(this, NO_DEVICE_LAYOUT);
 	    
-	    
-	    IDevice[] devices = AdbServerMonitor.getAndroidDebugBridge().getDevices();	    
-	    for(IDevice device: devices) {
-	    	deviceConnected(device);
-	    }
+	    //refreshDeviceInfo();
 	}
 
 	@Override
@@ -81,8 +78,7 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	public void deviceConnected(IDevice arg0) {
 		Log.d("connect device state : " + arg0.getSerialNumber() + " : " + arg0.getState());
 		// TODO Auto-generated method stub
-		if(devicelist!=null) devicelist.deviceConnected(arg0);
-		
+		//if(devicelist!=null) devicelist.deviceConnected(arg0);
 		((CardLayout)getLayout()).show(this, DEVICE_LAYOUT);
 		mainlistener.actionPerformed(new ActionEvent(this, 0, DEVICE_LAYOUT));
 	}
@@ -105,7 +101,42 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 			refreshDetailPanel();
 		}
 	}
-	
+	public void refreshDeviceInfo() {
+	    int count = 0;
+        while (AdbServerMonitor.getAndroidDebugBridge().getBridge() == null) {
+            try {
+                Thread.sleep(100);
+                count++;
+            } catch (InterruptedException e) {
+                // pass
+            }
+            
+            // let's not wait > 10 sec.
+            if (count > 100) {
+                Log.d("Timeout getting device list!");
+            }
+        }
+        try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+	    IDevice[] devices = AndroidDebugBridge.getBridge().getDevices();
+	    
+	    if(devices.length >0) {
+	    	Log.d("device is " + devices.length);
+			((CardLayout)getLayout()).show(this, DEVICE_LAYOUT);
+			mainlistener.actionPerformed(new ActionEvent(this, 0, DEVICE_LAYOUT));
+	    }else {
+	    	Log.d("device is 0");
+	    }
+	    
+	    for(IDevice device: devices) {
+	    	devicelist.deviceConnected(device);
+	    }
+	}
 	public void refreshDetailPanel() {
 		DeviceListData data = (DeviceListData)devicelist.getModel().getElementAt(devicelist.getSelectedIndex());
 		
@@ -128,8 +159,15 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getActionCommand().equals(REQ_REFRESH_DETAIL_PANEL)) {
-			refreshDetailPanel();			
+			refreshDetailPanel();
 		}
+	}
+	@SuppressWarnings("unchecked")
+	public ListModel<DeviceListData> getListModelData() {
+		return devicelist.getModel();
+	}
+	public void destroy() {
+		AndroidDebugBridge.removeDeviceChangeListener(this);
 	}
 	
 }

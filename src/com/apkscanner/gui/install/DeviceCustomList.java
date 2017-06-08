@@ -152,7 +152,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 		data.pacakgeLoadingstatus =DeviceListData.WAITING; 
 		data.AppDetailpanel = new JLabel(Resource.IMG_LOADING.getImageIcon());
 		data.installoptionpanel = new JLabel(Resource.IMG_LOADING.getImageIcon());
-		
+		data.device = device;
 
 		final JList list = this;
 		new Thread(new Runnable() {
@@ -247,6 +247,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	        installtemppanel.setOptions(bundle);
 	        data.pacakgeLoadingstatus =DeviceListData.DONE;
 	        data.installoptionpanel = installtemppanel;
+	        data.bundleoption = bundle;
 	        list.repaint();
 	        FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.REQ_REFRESH_DETAIL_PANEL));
 			}
@@ -374,7 +375,10 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	                
                 	DeviceListData temp = (DeviceListData) listmodel.get(list.getSelectedIndex());
                 	
-                	if(button.getActionCommand().equals(ToggleButtonBar.BUTTON_TYPE_INSTALL_INFO)) {
+                	if(temp.isinstalled == DeviceListData.NOT_INSTALLED) { 
+                		temp.showstate = DeviceListData.SHOW_INSTALL_OPTION;
+                		return;
+                	} else if(button.getActionCommand().equals(ToggleButtonBar.BUTTON_TYPE_INSTALL_INFO)) {
                 		temp.showstate = DeviceListData.SHOW_INSTALL_OPTION;
                 	} else if(button.getActionCommand().equals(ToggleButtonBar.BUTTON_TYPE_PACAKGE_INFO)){                		
                 		temp.showstate = DeviceListData.SHOW_INSTALL_DETAL;
@@ -525,7 +529,6 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
         public String serialnumber;
         public String SDKVersion;
         
-        
         public int selectedinstalloption = WAITING;
         
         public JComponent AppDetailpanel;
@@ -535,6 +538,9 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
         //public int possibleOption = WAITING;
         
         public int showstate;
+        
+        public IDevice device;
+        public OptionsBundle bundleoption = null;
         
         public static final int INSTALLED = 0;
         public static final int NOT_INSTALLED = 1;
