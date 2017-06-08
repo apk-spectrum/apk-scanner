@@ -23,7 +23,7 @@ public class DefaultOptionsFactory {
 	private boolean hasApkInfo;
 	private boolean wasSigned;
 	private int minSdkVersion;
-	
+
 	private ArrayList<String> archList;
 
 	public DefaultOptionsFactory(CompactApkInfo apkInfo, SignatureReport signatureReport) {
@@ -33,7 +33,7 @@ public class DefaultOptionsFactory {
 		hasApkInfo = (apkInfo != null && apkInfo.packageName != null && !apkInfo.packageName.isEmpty());
 		wasSigned = signatureReport != null || (apkInfo != null && apkInfo.certificates != null && apkInfo.certificates.length > 0);
 		minSdkVersion = (apkInfo != null && apkInfo.minSdkVersion != null) ? apkInfo.minSdkVersion : 1;
-		
+
 		archList = new ArrayList<String>();
 		for(String lib: apkInfo.libraries) {
 			if(!lib.startsWith("lib/")) {
@@ -108,17 +108,51 @@ public class DefaultOptionsFactory {
 							}
 						}
 
-						if(apkPath != null && apkPath.startsWith("/system/") && apkPath.endsWith(".apk")) {
-							options.systemPath = apkPath;
-							if(apkPath.startsWith("/system/app/")) {
-								options.set(OptionsBundle.FLAG_OPT_PUSH_SYSTEM);
-							} else if(apkPath.startsWith("/system/priv-app/")) {
-								options.set(OptionsBundle.FLAG_OPT_PUSH_PRIVAPP);
-							} else {
-								options.set(OptionsBundle.FLAG_OPT_PUSH_SYSTEM);
-								Log.w("Unknown path : " + apkPath);
+						if(apkPath != null && apkPath.endsWith(".apk")) {
+							options.installedPath = apkPath;
+							if(apkPath.startsWith("/system/")) {
+								options.systemPath = apkPath;
 							}
 						}
+					}
+
+					if(options.systemPath == null) {
+						SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
+						try {
+							device.executeShellCommand("ls /system/app/*/*.apk; ls /system/app/*.apk", outputReceiver);
+						} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException | IOException e) {
+							e.printStackTrace();
+						}
+						String systemPathSample = null; 
+						for(String line: outputReceiver.getOutput()) {
+							if(line.isEmpty() || !line.endsWith(".apk")) continue;
+							systemPathSample = line;
+							break;
+						}
+						String makeName = apkInfo.packageName + "-1";  
+						if(systemPathSample != null) {
+							if(systemPathSample.matches("/system/app/[^/]*/[^/]*\\.apk")) {
+								options.systemPath = "/system/app/" + makeName + "/" + makeName + ".apk"; 
+							} else if(systemPathSample.matches("/system/app/[^/]*\\.apk")) {
+								options.systemPath = "/system/app/" + makeName + ".apk";
+							} else {
+								Log.w("Unknown system path type : " + systemPathSample);
+							}
+						} else {
+							Log.w("Unknown system path type : " + systemPathSample);
+						}
+						if(options.systemPath == null) {
+							options.systemPath = "/system/app/" + makeName + "/" + makeName + ".apk";
+						}
+					}
+
+					if(options.systemPath.startsWith("/system/app/")) {
+						options.set(OptionsBundle.FLAG_OPT_PUSH_SYSTEM);
+					} else if(options.systemPath.startsWith("/system/priv-app/")) {
+						options.set(OptionsBundle.FLAG_OPT_PUSH_PRIVAPP);
+					} else {
+						options.set(OptionsBundle.FLAG_OPT_PUSH_SYSTEM);
+						Log.w("Unknown path : " + options.systemPath);
 					}
 
 					if(archList != null && !archList.isEmpty()) {
@@ -129,7 +163,7 @@ public class DefaultOptionsFactory {
 						deviceAbiList.append(device.getProperty("ro.product.cpu.abilist64")).append(",");
 						deviceAbiList.append(device.getProperty("ro.product.cpu.abilist"));
 						Log.v("deviceAbiList:" + deviceAbiList.toString());
-						
+
 						String abi32 = null;
 						String abi64 = null;
 						for(String abi: deviceAbiList.toString().split(",")) {
