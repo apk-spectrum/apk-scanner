@@ -43,6 +43,7 @@ sudo rm -rf $APP_PATH
 
 sudo mkdir -p $APP_PATH
 sudo mkdir -p $APP_PATH/data
+sudo mkdir -p $APP_PATH/data/build-master-target-product-security
 sudo mkdir -p $APP_PATH/icons
 sudo mkdir -p $APP_PATH/tool
 if [ ! -d $APP_PATH ]; then

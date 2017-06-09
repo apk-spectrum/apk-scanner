@@ -76,7 +76,7 @@ public class ApkInfoHelper
 	}
 
 	public static boolean isSigned(ApkInfo apkInfo) {
-		return (apkInfo != null && apkInfo.certificates == null && apkInfo.certificates.length > 0);
+		return (apkInfo != null && apkInfo.certificates != null && apkInfo.certificates.length > 0);
 	}
 
 	public static int getInstallLocation(ApkInfo apkInfo) {

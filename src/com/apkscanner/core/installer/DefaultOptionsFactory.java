@@ -186,12 +186,10 @@ public class DefaultOptionsFactory {
 							}
 						}
 						if(abi32 != null) {
-							Log.e("FLAG_OPT_PUSH_LIB32 " + abi32);
-							options.set(OptionsBundle.FLAG_OPT_PUSH_LIB32, abi32, "");
+							options.set(OptionsBundle.FLAG_OPT_PUSH_LIB32, abi32, options.systemPath.replaceAll("[^/]*.apk$", "lib/arm/"));
 						}
 						if(abi64 != null) {
-							Log.e("FLAG_OPT_PUSH_LIB64 " + abi64);
-							options.set(OptionsBundle.FLAG_OPT_PUSH_LIB64, abi64, "");
+							options.set(OptionsBundle.FLAG_OPT_PUSH_LIB64, abi64, options.systemPath.replaceAll("[^/]*.apk$", "lib/arm64/"));
 						}
 					}
 				}

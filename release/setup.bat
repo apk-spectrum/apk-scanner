@@ -65,6 +65,14 @@ if not exist "%APP_PATH%\lib" (
      echo Create folder : %APP_PATH%\lib
      mkdir "%APP_PATH%\lib"
 )
+if not exist "%APP_PATH%\data" (
+     echo Create folder : %APP_PATH%\data
+     mkdir "%APP_PATH%\data"
+)
+if not exist "%APP_PATH%\data\build-master-target-product-security" (
+     echo Create folder : %APP_PATH%\data\build-master-target-product-security
+     mkdir "%APP_PATH%\data\build-master-target-product-security"
+)
 if not exist "%APP_PATH%" (
     echo Fail : No created a folder : %APP_PATH%
     goto exit
@@ -76,6 +84,7 @@ copy /Y "%SRC_PATH%\APKInfoDlg.jar" "%APP_PATH%"
 copy /Y "%SRC_PATH%\lib\*" "%APP_PATH%\lib"
 copy /Y "%SRC_PATH%\tool\*" "%APP_PATH%\tool"
 copy /Y "%SRC_PATH%\tool\lib\*" "%APP_PATH%\tool\lib"
+copy /Y "%SRC_PATH%\data\build-master-target-product-security\*" "%APP_PATH%\data\build-master-target-product-security"
 
 rem --- Launch APK Scanner  ---
 "%APP_PATH%\%APP_FILE%"
