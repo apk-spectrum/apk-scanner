@@ -437,8 +437,8 @@ public enum Resource
 	PROP_BASE_FONT_SIZE			(Type.PROP, "base_font_size", 12),
 	PROP_BASE_FONT_STYLE		(Type.PROP, "base_font_style", Font.PLAIN),
 	PROP_PREFERRED_LANGUAGE		(Type.PROP, "preferred_language", null /* see getDefValue() */),
-	PROP_PEM_FILE_PATH			(Type.PROP, "last_pem_file_path", ""),
-	PROP_PK8_FILE_PATH			(Type.PROP, "last_pk8_file_path", ""),
+	PROP_PEM_FILE_PATH			(Type.PROP, "last_pem_file_path", null /* see getDefValue() */),
+	PROP_PK8_FILE_PATH			(Type.PROP, "last_pk8_file_path", null /* see getDefValue() */),
 
 	LIB_JSON_JAR				(Type.LIB, "json-simple-1.1.1.jar"),
 	LIB_CLI_JAR					(Type.LIB, "commons-cli-1.3.1.jar"),
@@ -722,6 +722,16 @@ public enum Resource
 				propPreferredLanguage += ";" + (propStrLanguage.isEmpty() ? "en" : propStrLanguage);
 			}
 			obj = propPreferredLanguage + ";";
+			break;
+		case PROP_PEM_FILE_PATH:
+		case PROP_PK8_FILE_PATH:
+			String defPath = getUTF8Path() + File.separator + 
+							"data" + File.separator +
+							"build-master-target-product-security" + File.separator +
+							(this == PROP_PEM_FILE_PATH ? "platform.x509.pem" : "platform.pk8");
+			if(new File(defPath).isFile()) {
+				obj = defPath;
+			}
 			break;
 		default:
 			break;
