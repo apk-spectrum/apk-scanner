@@ -367,6 +367,7 @@ public enum Resource
 
 	IMG_INSTALL_CHECK			(Type.IMAGE, "install_dlg_check.png"),
 	IMG_INSTALL_BLOCK		(Type.IMAGE, "install_dlg_block.png"),
+	IMG_INSTALL_LOADING		(Type.IMAGE, "install_dlg_loading.gif"),
 	
 	IMG_ADD_TO_DESKTOP			(Type.IMAGE, "add-to-desktop.png"),
 	IMG_ASSOCIATE_APK			(Type.IMAGE, "associate.png"),

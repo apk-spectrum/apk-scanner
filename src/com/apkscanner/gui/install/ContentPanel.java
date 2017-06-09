@@ -99,6 +99,7 @@ public class ContentPanel extends JPanel
 			break;
 		case ApkInstallWizard.STATUS_CHECK_PACKAGES:
 			//pack_textPakcInfo.setText("");
+			panel_check_package.setStatus(ApkInstallWizard.STATUS_CHECK_PACKAGES);
 			((CardLayout)getLayout()).show(this, CONTENT_CHECK_PACKAGES);
 			panel_check_package.refreshDeviceInfo();
 			break;
@@ -107,13 +108,18 @@ public class ContentPanel extends JPanel
 			((CardLayout)getLayout()).show(this, CONTENT_SET_INSTALL_OPTION);
 			break;
 		case ApkInstallWizard.STATUS_INSTALLING:
-			loadingMessageLable.setText("INSTALLING");
-			loadingtext = "INSTALLING";
-			((CardLayout)getLayout()).show(this, CONTENT_LOADING);
-			lodingPanel.revalidate();
+			//loadingMessageLable.setText("INSTALLING");
+			//loadingtext = "INSTALLING";
+			//((CardLayout)getLayout()).show(this, CONTENT_LOADING);
+			//lodingPanel.revalidate();
+			panel_check_package.setStatus(ApkInstallWizard.STATUS_INSTALLING);
+			
+			
 			break;
 		case ApkInstallWizard.STATUS_COMPLETED:			
-			((CardLayout)getLayout()).show(this, CONTENT_COMPLETED);
+			//((CardLayout)getLayout()).show(this, CONTENT_COMPLETED);
+			panel_check_package.setStatus(ApkInstallWizard.STATUS_COMPLETED);
+						
 			break;
 		case ApkInstallWizard.STATUS_APK_VERTIFY_ERROR:
 			((CardLayout)getLayout()).show(this, CONTENT_VERIFY_ERROR);

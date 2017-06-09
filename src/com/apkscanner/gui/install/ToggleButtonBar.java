@@ -23,7 +23,9 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.install.DeviceCustomList.DeviceListData;
+import com.apkscanner.util.Log;
 
 
 
@@ -34,12 +36,22 @@ public class ToggleButtonBar extends JPanel{
 	public static final String BUTTON_TYPE_INSTALL_INFO = "install_info";
 	
 	DeviceListData data;
-		
+	int status;	
 	private static final Color[] ColorSet = { new Color(0x50AF49), new Color(0xFF7400), new Color(0x5CD1E5), new Color(0x8b0000), new Color(0x555555)};
 	
 	private static String[] installtextSet = {"Installed", "Not installed", "", "", "waiting"};
-	private final String[] installOptiontextSet = {"Install", "No Install", "Push", "Impossible", "waiting"};
+	private static final String[] installOptiontextSet = {"Install", "No Install", "Push", "Impossible", "waiting"};
 	
+	private static final Color[] InstallingColorSet = {null, null, new Color(0x555555), new Color(0x50AF49), new Color(0x8b0000)};
+	private static final String[] installingtextSet = {"Installing", "Succes", "Fail"};
+	
+    //public static final int OPTION_INSTALL = 0;
+    //public static final int OPTION_NO_INSTALL = 1;
+    //public static final int OPTION_PUSH = 2;
+    //public static final int OPTION_IMPOSSIBLE_INSTALL = 3;
+    
+    //public static final int SHOW_LOADING_INSTALL = 2;
+    //public static final int SHOW_COMPLETE_INSTALL = 3;
 	
 	AbstractButton btninstalled;
 	AbstractButton btnoption;
@@ -181,22 +193,56 @@ public class ToggleButtonBar extends JPanel{
         }
     }
     
+    
+    //public static final int OPTION_INSTALL = 0;
+    //public static final int OPTION_NO_INSTALL = 1;
+    //public static final int OPTION_PUSH = 2;
+    //public static final int OPTION_IMPOSSIBLE_INSTALL = 3;
+    
+    //public static final int SHOW_LOADING_INSTALL = 2;
+    //public static final int SHOW_COMPLETE_INSTALL = 3;
+    
     @Override
-    protected void paintComponent ( Graphics g ) {
-    	
-    	
-    	btninstalled.setBackground(ColorSet[data.isinstalled]);
+    synchronized protected void paintComponent ( Graphics g ) {    	
     	btnoption.setBackground(ColorSet[data.selectedinstalloption]);
-    	
-    	btninstalled.setText(installtextSet[data.isinstalled]);
-    	btnoption.setText(installOptiontextSet[data.selectedinstalloption]);    	
+    	btnoption.setText(installOptiontextSet[data.selectedinstalloption]);
+    	switch(status) {
+		case ApkInstallWizard.STATUS_CHECK_PACKAGES:
+	    	btninstalled.setBackground(ColorSet[data.isinstalled]);
+	    	btninstalled.setText(installtextSet[data.isinstalled]);
+	    	break;
+		case ApkInstallWizard.STATUS_INSTALLING:
+			if(!data.isNoinstall()) {				
+				if(data.showstate == DeviceListData.SHOW_COMPLETE_INSTALL) {
+					if(data.installErrorCuase == null) {
+						btninstalled.setBackground(ColorSet[0]);
+						btninstalled.setText(installingtextSet[1]);
+					} else {
+						btninstalled.setBackground(ColorSet[3]);
+						btninstalled.setText(installingtextSet[2]);
+					}
+				} else if(data.showstate == DeviceListData.SHOW_LOADING_INSTALL){
+					btninstalled.setBackground(ColorSet[4]);
+					btninstalled.setText(installingtextSet[0]);
+				}
+			} else {
+				btninstalled.setBackground(ColorSet[data.isinstalled]);
+		    	btninstalled.setText(installtextSet[data.isinstalled]);
+			}
+			break;
+		case ApkInstallWizard.STATUS_COMPLETED:
+			
+			break;
+		}
     	//Log.d("" +data.isinstalled);
-    	
-    	
     }
     
 	public void setData(DeviceListData value) {
 		// TODO Auto-generated method stub
 		this.data = value;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+		
 	}
 }

@@ -306,30 +306,30 @@ public class ApkInstallWizard
 //			        next();
 //				}			
 //			}).start();
-			Log.d("install");
-			final ListModel<DeviceListData> listmodel  = contentPanel.getDeviceListData();
-			
-			int succesCount = 0;
-			int errorCount = 0;
-			new Thread(new Runnable() {
-				@Override
-				public void run() {			
-				for(int i=0; i< listmodel.getSize(); i++) {
-						contentPanel.setLoadingTextStep(i+1, listmodel.getSize());
-						final IDevice device = listmodel.getElementAt(i).device;
-						final OptionsBundle options = listmodel.getElementAt(i).bundleoption;
-						String message = ApkInstaller.install(device, apkInfo, options);
-						
-						if( message == null) {
-							Log.d("suc");
-						} else {
-							
-							Log.d("error = " + message);
-						}					
-					}
-					next();				
-				}
-			}).start();
+//			Log.d("install");
+//			final ListModel<DeviceListData> listmodel  = contentPanel.getDeviceListData();
+//			
+//			int succesCount = 0;
+//			int errorCount = 0;
+//			new Thread(new Runnable() {
+//				@Override
+//				public void run() {			
+//				for(int i=0; i< listmodel.getSize(); i++) {
+//						contentPanel.setLoadingTextStep(i+1, listmodel.getSize());
+//						final IDevice device = listmodel.getElementAt(i).device;
+//						final OptionsBundle options = listmodel.getElementAt(i).bundleoption;
+//						String message = ApkInstaller.install(device, apkInfo, options);
+//						
+//						if( message == null) {
+//							Log.d("suc");
+//						} else {
+//							
+//							Log.d("error = " + message);
+//						}					
+//					}
+//					next();				
+//				}
+//			}).start();
 				
 			break;
 		default:

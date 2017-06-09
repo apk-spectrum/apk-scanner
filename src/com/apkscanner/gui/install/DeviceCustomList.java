@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -19,6 +20,7 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.awt.image.ImageObserver;
 import java.io.IOException;
 
 import java.util.Objects;
@@ -27,12 +29,14 @@ import java.util.jar.JarFile;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonModel;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
+import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -42,6 +46,7 @@ import com.android.ddmlib.IDevice;
 import com.android.ddmlib.MultiLineReceiver;
 import com.android.ddmlib.ShellCommandUnresponsiveException;
 import com.android.ddmlib.TimeoutException;
+import com.apkscanner.core.installer.ApkInstaller;
 import com.apkscanner.core.installer.DefaultOptionsFactory;
 import com.apkscanner.core.installer.OptionsBundle;
 import com.apkscanner.core.scanner.ApkScanner;
@@ -49,6 +54,7 @@ import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.CompactApkInfo;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.dialog.PackageInfoPanel;
+import com.apkscanner.gui.install.DeviceCustomList.DeviceListData;
 import com.apkscanner.resource.Resource;
 
 import com.apkscanner.tool.adb.PackageInfo;
@@ -63,6 +69,8 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	DefaultListModel<DeviceListData> listmodel;
 	ButtonsRenderer<DeviceListData> listrenderer;
 	ActionListener FindPackagelistener;
+	private int status;
+	int Installfinishcount = 0;
     @SuppressWarnings("unchecked")
 	public DeviceCustomList(ActionListener listener) {
 		// TODO Auto-generated constructor stub
@@ -101,6 +109,80 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
         return hash;
     }
     
+	public void setStatus(int status) {
+		this.status = status;
+		((ButtonsRenderer<DeviceListData>)this.getCellRenderer()).setStatus(status);
+		switch(status) {
+		case ApkInstallWizard.STATUS_CHECK_PACKAGES:
+			
+			break;
+		case ApkInstallWizard.STATUS_INSTALLING:			
+			deviceListinstall();
+			break;
+		case ApkInstallWizard.STATUS_COMPLETED:
+			
+			break;
+		}
+	}
+    
+	private void deviceListinstall() {
+		final ListModel<DeviceListData> listmodel  = this.getModel();
+		
+		ThreadGroup installpool = new ThreadGroup("install");
+		
+		Installfinishcount =0;
+		
+		for(int i=0; i< listmodel.getSize(); i++) {
+			final int j = i;
+			
+			//Log.d(""+ listmodel.getElementAt(j).isNoinstall());
+			
+			if(listmodel.getElementAt(j).isNoinstall()) {
+				if(isfinishall(listmodel.getSize())) {
+					Log.d("insall finish");
+					FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.REQ_FINISHED_INSTALL));					
+				}
+				continue;
+			}
+			
+			new Thread(new Runnable() {
+					@Override
+					public void run() {
+						DeviceListData data = listmodel.getElementAt(j);
+						
+						data.showstate = DeviceListData.SHOW_LOADING_INSTALL;
+						
+						String message = ApkInstaller.install(data.device, ApkInstallWizard.apkInfo, data.bundleoption);
+					
+					if( message == null) {
+						Log.d("suc");
+						data.installErrorCuase = message;
+					} else {						
+						Log.d("error = " + message);
+						data.installErrorCuase = message;
+					}
+					data.showstate = DeviceListData.SHOW_COMPLETE_INSTALL;
+					FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.REQ_REFRESH_DETAIL_PANEL));
+
+					if(isfinishall(listmodel.getSize())) {
+						Log.d("insall finish");
+						FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.REQ_FINISHED_INSTALL));
+						
+					}
+				}
+			}).start();
+		}		
+	}
+	
+	synchronized boolean isfinishall(int size) {
+		Installfinishcount++;
+		if(size == Installfinishcount) {
+			return true;			
+		}		
+		return false;
+	}
+	
+	
     private String intToARGB(int i) {
         String hex = ""+ Integer.toHexString((i>>24)&0xFF) + Integer.toHexString((i>>16)&0xFF) +
         		Integer.toHexString((i>>8)&0xFF) + Integer.toHexString(i&0xFF);
@@ -137,6 +219,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 			setSelectedIndex(0);
 			fireSelectionValueChanged(0, 0, true);
 		}
+		
 		this.repaint();
     }
     
@@ -375,6 +458,8 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	                
                 	DeviceListData temp = (DeviceListData) listmodel.get(list.getSelectedIndex());
                 	
+                	if(status != ApkInstallWizard.STATUS_CHECK_PACKAGES) return;
+                	
                 	if(temp.isinstalled == DeviceListData.NOT_INSTALLED) { 
                 		temp.showstate = DeviceListData.SHOW_INSTALL_OPTION;
                 		return;
@@ -457,24 +542,33 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
         	g2d.setPaint ( Color.LIGHT_GRAY );
             g.drawLine(2, getHeight()-2, getWidth()-2, getHeight()-2 );                    
         }
-        
+        public void setStatus(int status) {
+        	Tagpanel.setStatus(status);
+        }
 	    @Override public Component getListCellRendererComponent(JList<? extends E> list, E value, int index, boolean isSelected, boolean cellHasFocus) {
 	        //textArea.setText(Objects.toString(value, ""));
 	    	
 	    	if(value instanceof DeviceListData) {
 	    		customlabel.setData((DeviceListData)value);
-	    		Tagpanel.setData((DeviceListData)value);
+	    		Tagpanel.setData((DeviceListData)value);	    		
 	    		resetButtonStatus((DeviceListData) value);
 	    		
 	    		//Log.d("aa" + ((DeviceListData) value).selectedinstalloption);
-	    			    		
-    			if(((DeviceListData)value).status.equals("OFFLINE") || ((DeviceListData)value).selectedinstalloption == DeviceListData.OPTION_NO_INSTALL ||
-    					((DeviceListData)value).selectedinstalloption == DeviceListData.OPTION_IMPOSSIBLE_INSTALL) {    				
-    				isinstallIcon.setIcon(Resource.IMG_INSTALL_BLOCK.getImageIcon());
-    			} else if(((DeviceListData)value).selectedinstalloption != DeviceListData.OPTION_NO_INSTALL) {
-    				isinstallIcon.setIcon(Resource.IMG_INSTALL_CHECK.getImageIcon());	    					    				
-    			}
-    		    
+	    		
+	    		if(((DeviceListData)value).showstate == DeviceListData.SHOW_LOADING_INSTALL) {
+	    			ImageIcon ii = new ImageIcon(Resource.IMG_INSTALL_LOADING.getImageIcon().getImage());
+	    	         ii.setImageObserver(new AnimatedObserver(list, index));
+	    			
+	    			isinstallIcon.setIcon(ii);
+	    			
+	    			
+	    		}else {	    		
+	    			if(((DeviceListData)value).status.equals("OFFLINE") || ((DeviceListData)value).isNoinstall()) {    				
+	    				isinstallIcon.setIcon(Resource.IMG_INSTALL_BLOCK.getImageIcon());
+	    			} else if(((DeviceListData)value).selectedinstalloption != DeviceListData.OPTION_NO_INSTALL) {
+	    				isinstallIcon.setIcon(Resource.IMG_INSTALL_CHECK.getImageIcon());	    					    				
+	    			}
+	    		}
     		}
 	    		        
 	        if (isSelected) {
@@ -541,7 +635,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
         
         public IDevice device;
         public OptionsBundle bundleoption = null;
-        
+        public String installErrorCuase;
         public static final int INSTALLED = 0;
         public static final int NOT_INSTALLED = 1;
         
@@ -556,6 +650,8 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
         public static final int SHOW_INSTALL_DETAL = 0;
         public static final int SHOW_INSTALL_OPTION = 1;
         
+        public static final int SHOW_LOADING_INSTALL = 2;
+        public static final int SHOW_COMPLETE_INSTALL = 3;
         
         public DeviceListData ( Color circleColor, String status, String name, String sdkVersion, String serialnumber )
         {
@@ -583,6 +679,9 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
         	return SDKVersion;
         }
         
+        public Boolean isNoinstall() {
+        	return (selectedinstalloption == OPTION_NO_INSTALL || selectedinstalloption == OPTION_IMPOSSIBLE_INSTALL) ;
+        }
     }
     
     
@@ -719,16 +818,39 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 		// TODO Auto-generated method stub
         //boolean adjust = e.getValueIsAdjusting();
         //if (!adjust) {
+		
+		if(status != ApkInstallWizard.STATUS_CHECK_PACKAGES) return;
+		
           JList list = (JList) e.getSource();
           int selections[] = list.getSelectedIndices();
           @SuppressWarnings("deprecation")
 		Object selectionValues[] = list.getSelectedValues();
           for (int i = 0, n = selections.length; i < n; i++) {            
             //System.out.print(selections[i] + "/" + selectionValues[i] + " ");
-        	  ((DeviceListData)selectionValues[i]).showstate  = DeviceListData.SHOW_INSTALL_OPTION;
+        	  if(status == ApkInstallWizard.STATUS_CHECK_PACKAGES)((DeviceListData)selectionValues[i]).showstate  = DeviceListData.SHOW_INSTALL_OPTION;
         	  FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.REQ_REFRESH_DETAIL_PANEL));
           }
         //}
 		 
 	}
+	
+	class AnimatedObserver implements ImageObserver
+	{
+	   JList list;
+	   int index;
+	  
+	   public AnimatedObserver(JList list, int index) {
+	      this.list = list;
+	      this.index = index;
+	   } 
+	  
+	   public boolean imageUpdate (Image img, int infoflags, int x, int y, int width, int height) {
+	      if ((infoflags & (FRAMEBITS|ALLBITS)) != 0) {
+	         Rectangle rect = list.getCellBounds(index, index);
+	         list.repaint(rect);
+	      }
+	  
+	      return (infoflags & (ALLBITS|ABORT)) == 0;
+	   }
+	} 
 }

@@ -6,7 +6,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.ListModel;
@@ -17,7 +17,10 @@ import javax.swing.event.ListSelectionListener;
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.android.ddmlib.IDevice;
+import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.install.DeviceCustomList.DeviceListData;
+import com.apkscanner.gui.util.ImagePanel;
+import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.Log;
 
@@ -30,10 +33,14 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	private static final String DEVICE_LAYOUT = "DEVICE_LAYOUT";
 	
 	public static final String REQ_REFRESH_DETAIL_PANEL = "REQ_REFRESH_DETAIL_PANEL";
+	public static final String REQ_FINISHED_INSTALL = "REQ_FINISHED_INSTALL";
+	
 	
 	private ActionListener mainlistener;
 	private DeviceCustomList devicelist;
-	private JPanel pacakgeinfopanel;	
+	private JPanel pacakgeinfopanel;
+	private JPanel lodingPanel;
+	private int status;
 	AndroidDebugBridge adb;
     public FindPackagePanel(ActionListener listener) {
 		this.setLayout(new CardLayout());
@@ -61,6 +68,13 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	    this.add(textSelectDevice, NO_DEVICE_LAYOUT);
 	    
 	    ((CardLayout)getLayout()).show(this, NO_DEVICE_LAYOUT);
+	    
+		lodingPanel = new JPanel();
+		JLabel loadingMessageLable = new JLabel("INSTALLING");
+		lodingPanel.setLayout(new BoxLayout(lodingPanel, BoxLayout.Y_AXIS));
+		lodingPanel.add(new ImagePanel(Resource.IMG_APK_LOGO.getImageIcon(340,220)));
+		lodingPanel.add(loadingMessageLable);
+		lodingPanel.add(new ImagePanel(Resource.IMG_WAIT_BAR.getImageIcon()));
 	    
 	    //refreshDeviceInfo();
 	}
@@ -135,31 +149,58 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	    
 	    for(IDevice device: devices) {
 	    	devicelist.deviceConnected(device);
-	    }
+	    }	    
 	}
 	public void refreshDetailPanel() {
 		DeviceListData data = (DeviceListData)devicelist.getModel().getElementAt(devicelist.getSelectedIndex());
 		
 		pacakgeinfopanel.removeAll();
+		//pacakgeinfopanel.add(lodingPanel);
+		switch(status) {
+		case ApkInstallWizard.STATUS_CHECK_PACKAGES:		
+			if(data.showstate == DeviceListData.SHOW_INSTALL_DETAL) {
+				pacakgeinfopanel.add(data.AppDetailpanel);
+			} else if(data.showstate == DeviceListData.SHOW_INSTALL_OPTION || data.pacakgeLoadingstatus == DeviceListData.WAITING) {
+				pacakgeinfopanel.add(data.installoptionpanel);
+			}
+			break;
+		case ApkInstallWizard.STATUS_INSTALLING:			
+			if(data.showstate == DeviceListData.SHOW_LOADING_INSTALL) {				
+				pacakgeinfopanel.add(lodingPanel);
+			} else if(data.showstate == DeviceListData.SHOW_COMPLETE_INSTALL) {
+				pacakgeinfopanel.add(new JLabel(data.installErrorCuase));
+			}
+			break;
+		}
 		
-		if(data.showstate == DeviceListData.SHOW_INSTALL_DETAL) {			
-			pacakgeinfopanel.add(data.AppDetailpanel);
-		} else if(data.showstate == DeviceListData.SHOW_INSTALL_OPTION || data.pacakgeLoadingstatus == DeviceListData.WAITING) {
-			pacakgeinfopanel.add(data.installoptionpanel);
-			
-			//slidePanelInFromRight(data.AppDetailpanel, data.installoptionpanel, pacakgeinfopanel);
-			
-		}		
-		//pacakgeinfopanel.add(new JLabel("aa"));
 		this.repaint();
 		this.revalidate();		
 	}
 
+	public void setStatus(int status) {
+		this.status = status;
+		devicelist.setStatus(status);
+		switch(status) {
+		case ApkInstallWizard.STATUS_CHECK_PACKAGES:
+			
+			break;
+		case ApkInstallWizard.STATUS_INSTALLING:
+			
+			refreshDetailPanel();
+			break;
+		case ApkInstallWizard.STATUS_COMPLETED:
+			
+			break;
+		}
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getActionCommand().equals(REQ_REFRESH_DETAIL_PANEL)) {
 			refreshDetailPanel();
+		} else if(e.getActionCommand().equals(REQ_FINISHED_INSTALL)) {
+			mainlistener.actionPerformed(new ActionEvent(this, 0, ControlPanel.CTR_ACT_CMD_NEXT));
 		}
 	}
 	@SuppressWarnings("unchecked")
@@ -167,7 +208,7 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 		return devicelist.getModel();
 	}
 	public void destroy() {
-		AndroidDebugBridge.removeDeviceChangeListener(this);
+		AndroidDebugBridge.removeDeviceChangeListener(this);		
 	}
 	
 }
