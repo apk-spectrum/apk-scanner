@@ -137,6 +137,8 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 						messageId = MessageBoxPool.MSG_BLOCKED_MISMATCH_SIGNED; break;
 					case OptionsBundle.BLOACKED_PUSH_CAUSE_NO_ROOT:
 						messageId = MessageBoxPool.MSG_BLOCKED_NO_ROOT; break;
+					case OptionsBundle.BLOACKED_PUSH_CAUSE_HAS_SU_BUT_NO_ROOT:
+						messageId = MessageBoxPool.MSG_BLOCKED_NO_ROOT; break;
 					case OptionsBundle.BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_NOT_SYSTEM:
 						messageId = MessageBoxPool.MSG_BLOCKED_MISMATCH_SIGNED_NOT_SYSTEM; break;
 					case OptionsBundle.BLOACKED_CAUSE_UNKNWON:
@@ -582,9 +584,6 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 			ckLock.setSelected(bundle.isSetForwardLock());
 			ckTestPack.setSelected(bundle.isSetAllowTestPackage());
 
-			rbSystemPush.setSelected(bundle.isSetPushToSystem());
-			rbPrivPush.setSelected(bundle.isSetPushToPriv());
-
 			if(cbLib32Dest.getItemCount() > 2) {
 				cbLib32Dest.removeItemAt(2);
 			}
@@ -604,6 +603,9 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 			} else {
 				txtTargetPath.setText("/system/app/unknown-1/unknown-1.apk");
 			}
+			rbSystemPush.setSelected(bundle.isSetPushToSystem());
+			rbPrivPush.setSelected(bundle.isSetPushToPriv());
+
 			ckReboot.setSelected(bundle.isSetReboot());
 			ckLib32.setSelected(bundle.isSetWithLib32());
 			ckLib64.setSelected(bundle.isSetWithLib64());
@@ -699,7 +701,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 				}
 
 				if(bundle != null && isSelected) {
-					String installedPath = bundle.getInstalledPath();
+					String installedPath = bundle.getInstalledSystemPath();
 					if(installedPath != null && !installedPath.equals(convPath)) {
 						if(installedPath.startsWith("/system/")) {
 							Log.w("need remove installed app");
@@ -708,6 +710,8 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 						}
 					}
 				}
+
+				extraData = new String[] { convPath };
 				break;
 			case OptionsBundle.FLAG_OPT_PUSH_LIB32:
 				cbLib32Src.setEnabled(isSelected);
