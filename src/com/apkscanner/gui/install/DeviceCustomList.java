@@ -103,7 +103,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
     private int hashCode(String str) {
         int hash = 0;
         for (int i = 0; i < str.length(); i++) {
-            //hash = str.charAt(i)^10 + ((hash << 4) - hash);
+        	//hash = str.charAt(i)^10 + ((hash << 4) - hash);
         	hash = str.charAt(i) + ((hash << 10) * hash);
         }
         return hash;
@@ -137,7 +137,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 			
 			//Log.d(""+ listmodel.getElementAt(j).isNoinstall());
 			
-			if(listmodel.getElementAt(j).isNoinstall()) {
+			if(listmodel.getElementAt(j).isNoinstall()) {				
 				if(isfinishall(listmodel.getSize())) {
 					Log.d("insall finish");
 					FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.REQ_FINISHED_INSTALL));					
@@ -509,9 +509,12 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	    ToggleButtonBar Tagpanel;
 	    CustomLabel customlabel = new CustomLabel();
 	    JLabel isinstallIcon;
-
+	    ImageIcon ii;
 	    protected ButtonsRenderer(DefaultListModel<E> model) {
 	        super(new BorderLayout());
+	        
+			 ii = new ImageIcon(Resource.IMG_INSTALL_LOADING.getImageIcon().getImage());
+	        	 
 	        
 	        setBorder ( BorderFactory.createEmptyBorder ( 5, 5 , 5, 5 ) );
 	        
@@ -528,7 +531,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	        
 	        //add(textArea);	        
 	        add(customlabel, BorderLayout.CENTER);
-	        add(Iconpanel, BorderLayout.SOUTH);	        
+	        add(Iconpanel, BorderLayout.SOUTH);
 	    }
 	    @Override public Dimension getPreferredSize() {
 	        Dimension d = super.getPreferredSize();
@@ -556,12 +559,9 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	    		//Log.d("aa" + ((DeviceListData) value).selectedinstalloption);
 	    		
 	    		if(((DeviceListData)value).showstate == DeviceListData.SHOW_LOADING_INSTALL) {
-	    			ImageIcon ii = new ImageIcon(Resource.IMG_INSTALL_LOADING.getImageIcon().getImage());
-	    	         ii.setImageObserver(new AnimatedObserver(list, index));
-	    			
+	    			 ii.setImageObserver(new AnimatedObserver(list, index));
+
 	    			isinstallIcon.setIcon(ii);
-	    			
-	    			
 	    		}else {	    		
 	    			if(((DeviceListData)value).status.equals("OFFLINE") || ((DeviceListData)value).isNoinstall()) {    				
 	    				isinstallIcon.setIcon(Resource.IMG_INSTALL_BLOCK.getImageIcon());
@@ -804,6 +804,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
     		DeviceListData temp = (DeviceListData) listmodel.getElementAt(i);
     		if(temp.serialnumber.equals(arg0.getSerialNumber())) {
     			listmodel.removeElementAt(i);
+    			
     			if(listmodel.size() >=1) {
     				this.setSelectedIndex(0);
     			}

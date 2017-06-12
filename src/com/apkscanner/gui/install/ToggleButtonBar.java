@@ -231,7 +231,13 @@ public class ToggleButtonBar extends JPanel{
 			}
 			break;
 		case ApkInstallWizard.STATUS_COMPLETED:
-			
+			if(data.installErrorCuase == null) {
+				btninstalled.setBackground(ColorSet[0]);
+				btninstalled.setText(installingtextSet[1]);
+			} else {
+				btninstalled.setBackground(ColorSet[3]);
+				btninstalled.setText(installingtextSet[2]);
+			}
 			break;
 		}
     	//Log.d("" +data.isinstalled);

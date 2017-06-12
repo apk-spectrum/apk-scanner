@@ -360,7 +360,7 @@ public class ApkInstallWizard
 				changeState(STATUS_INSTALLING);
 				break;
 			case STATUS_SET_INSTALL_OPTION:
-				//if(flag == 0) break;
+				//if(flag == 0) break;				
 				changeState(STATUS_INSTALLING);
 				break;				
 			case STATUS_INSTALLING:
@@ -426,9 +426,13 @@ public class ApkInstallWizard
 			} else if("CHANG_SIGN".equals(arg0.getActionCommand())) {
 				
 			} else if("NO_DEVICE_LAYOUT".equals(arg0.getActionCommand())) {
-				controlPanel.setStatus(ApkInstallWizard.STATUS_NO_DEVICE);
+				if(status == ApkInstallWizard.STATUS_CHECK_PACKAGES) {
+					controlPanel.setStatus(ApkInstallWizard.STATUS_NO_DEVICE);
+				}
 			} else if("DEVICE_LAYOUT".equals(arg0.getActionCommand())) {
-				controlPanel.setStatus(ApkInstallWizard.STATUS_CHECK_PACKAGES);
+				if(status == ApkInstallWizard.STATUS_CHECK_PACKAGES) {
+					controlPanel.setStatus(ApkInstallWizard.STATUS_CHECK_PACKAGES);
+				}
 			}  
 		}
 
@@ -487,7 +491,7 @@ public class ApkInstallWizard
             		ApkInstallWizard wizard = new ApkInstallWizard("C:\\Melon.apk");
             		wizard.start();
             	} else {
-            		ApkInstallWizard wizard = new ApkInstallWizard("/home/leejinhyeong/Desktop/reco.apk");
+            		ApkInstallWizard wizard = new ApkInstallWizard("/home/leejinhyeong/Desktop/DCMContacts.apk");
             		wizard.start();
             	}
             }
