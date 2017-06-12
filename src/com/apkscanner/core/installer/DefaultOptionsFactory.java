@@ -200,6 +200,8 @@ public class DefaultOptionsFactory {
 					int activityFlag = apkInfo.activityList[0].featureFlag;
 					if((activityFlag & ApkInfo.APP_FEATURE_LAUNCHER) != ApkInfo.APP_FEATURE_LAUNCHER) {
 						options.unset(OptionsBundle.FLAG_OPT_INSTALL_LAUNCH);
+					} else {
+						options.set(OptionsBundle.FLAG_OPT_INSTALL_LAUNCH, apkInfo.activityList[0].name);
 					}
 				}
 				/*
