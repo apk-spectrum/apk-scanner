@@ -389,13 +389,22 @@ public class PackageManager {
 			}
 		}
 
+		String removePath = null;
+		if(errMessage == null) {
+			removePath = packageInfo.getApkPath().replaceAll("^(/system/(priv-)?app/[^/]*/)[^/]*\\.apk", "$1");
+			Log.v("remove target path: " + removePath);
+			if(removePath.matches("^/system/(priv-)?app/$")) {
+				errMessage = "Can't remove system floder: " + removePath;
+			}
+		}
+
 		if(errMessage != null) {
 			return errMessage; 
 		}
-
+		
 		try {
 			SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
-			packageInfo.device.executeShellCommand("rm -r " + packageInfo.getApkPath(), outputReceiver);
+			packageInfo.device.executeShellCommand("rm -r " + removePath, outputReceiver);
 			//packageInfo.device.removeRemotePackage(packageInfo.getApkPath());
 			for(String line: outputReceiver.getOutput()) {
 				if(!line.isEmpty()) {

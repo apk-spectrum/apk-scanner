@@ -170,14 +170,17 @@ public final class AdbServerMonitor {
 		synchronized (sLock) {
 			if(sThis == null) {
 				startServerAndCreateBridge();
+			}
+			if(sThis.mAdbDemonMonitorTask.state == AdbServerMonitorTask.STATUS_NEW
+					|| sThis.mAdbDemonMonitorTask.state == AdbServerMonitorTask.STATUS_STARTED) {
 				if(null == AndroidDebugBridge.getBridge()) {
 					try {
 						Log.i("Wait to created AndroidDebugBridge");
-						sLock.wait();
-					} catch (Exception e) {
+						sLock.wait(5000);
+					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-				};
+				}
 			}
 		}
 		return AndroidDebugBridge.getBridge();
@@ -343,7 +346,13 @@ public final class AdbServerMonitor {
 	}
 
 	static class AdbServerMonitorTask  implements Runnable {
+		private static final int STATUS_NEW = 0;
+		private static final int STATUS_STARTED = 1;
+		private static final int STATUS_CREATE_BRIDGE = 2;
+		private static final int STATUS_RUNNABLE = 3;
+
 		private volatile boolean mQuit;
+		private volatile int state = STATUS_NEW;
 		private AdbServerMonitor mAdbServerMonitor;
 		private boolean isConnected;
 
@@ -353,6 +362,7 @@ public final class AdbServerMonitor {
 
 		@Override
 		public void run() {
+			state = STATUS_STARTED;
 			isConnected = false;
 
 			Log.v("startServerAndCreateBridge");
@@ -396,6 +406,7 @@ public final class AdbServerMonitor {
 				} catch (Exception e) {}
 				AndroidDebugBridge.createBridge();
 				Log.i("AndroidDebugBridge createBridge() notifyAll");
+				state = STATUS_CREATE_BRIDGE;
 				sLock.notifyAll();
 			}
 
@@ -405,6 +416,7 @@ public final class AdbServerMonitor {
 
 			Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
 
+			state = STATUS_RUNNABLE;
 			do {
 				AndroidDebugBridge adb = AndroidDebugBridge.getBridge();
 				if(isConnected != isConnected(adb)) {

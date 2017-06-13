@@ -27,15 +27,16 @@ public class OptionsBundle {
 	public static final int FLAG_OPT_DISSEMINATE 	= 0x400000;
 	public static final int FLAG_OPT_CLEAR_OPTIONS	= 0x800000;
 
-	public static final int FLAG_OPT_HAS_EXTRADATA_MASK = FLAG_OPT_INSTALL_LAUNCH | FLAG_OPT_PUSH_LIB32 | FLAG_OPT_PUSH_LIB64;
+	public static final int FLAG_OPT_HAS_EXTRADATA_MASK = FLAG_OPT_INSTALL_LAUNCH | FLAG_OPT_PUSH_LIB32 | FLAG_OPT_PUSH_LIB64 | FLAG_OPT_PUSH_SYSTEM | FLAG_OPT_PUSH_PRIVAPP;
 
 	public static final int NO_BLOACKED = 0x0000;
 	public static final int BLOACKED_COMMON_CAUSE_UNSIGNED = 0x0001;
 	public static final int BLOACKED_COMMON_CAUSE_UNSUPPORTED_SDK_LEVEL = 0x0002;
-	public static final int BLOACKED_INSTALL_CAUSE_MISMATCH_SIGNED = 0x0008;
-	public static final int BLOACKED_PUSH_CAUSE_NO_ROOT = 0x0004;
-	public static final int BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_NOT_SYSTEM = 0x0010;
-	public static final int BLOACKED_LAUNCH_CAUSE_NO_SUCH_ACTIVITY = 0x0020;
+	public static final int BLOACKED_INSTALL_CAUSE_MISMATCH_SIGNED = 0x0004;
+	public static final int BLOACKED_PUSH_CAUSE_NO_ROOT = 0x0008;
+	public static final int BLOACKED_PUSH_CAUSE_HAS_SU_BUT_NO_ROOT = 0x0010;
+	public static final int BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_NOT_SYSTEM = 0x0020;
+	public static final int BLOACKED_LAUNCH_CAUSE_NO_SUCH_ACTIVITY = 0x0040;
 	public static final int BLOACKED_CAUSE_UNKNWON = 0x8000;
 
 	public static final int BLOACKED_INSTALL_MASK = BLOACKED_COMMON_CAUSE_UNSIGNED | BLOACKED_COMMON_CAUSE_UNSUPPORTED_SDK_LEVEL | BLOACKED_INSTALL_CAUSE_MISMATCH_SIGNED; 
@@ -47,8 +48,8 @@ public class OptionsBundle {
 	int blockedCause;
 
 	String launchActivity;
-	String installedPath;
-	String systemPath;
+	String installedSystemPath;
+	String targetSystemPath;
 	String lib32Arch;
 	String lib32ToPath;
 	String lib64Arch;
@@ -78,7 +79,7 @@ public class OptionsBundle {
 
 		flag = bundle.flag;
 		launchActivity = bundle.launchActivity;
-		systemPath = bundle.systemPath;
+		targetSystemPath = bundle.targetSystemPath;
 		lib32Arch = bundle.lib32Arch;
 		lib32ToPath = bundle.lib32ToPath;
 		lib64Arch = bundle.lib64Arch;
@@ -171,13 +172,18 @@ public class OptionsBundle {
 		}
 
 		boolean isChangeExtraData = false;
-		if(extraData != null && extraData.length >= 1) {
+		if(extraData != null && extraData.length > 0) {
 			switch(flag) {
 			case FLAG_OPT_INSTALL_LAUNCH:
 				if(launchActivity != extraData[0]) {
 					isChangeExtraData = true;
 					launchActivity = extraData[0];
 				}
+				break;
+			case FLAG_OPT_PUSH_SYSTEM:
+			case FLAG_OPT_PUSH_PRIVAPP:
+				targetSystemPath = extraData[0];
+				Log.e(targetSystemPath);
 				break;
 			case FLAG_OPT_PUSH_LIB32:
 				if(extraData.length >= 2
@@ -317,12 +323,12 @@ public class OptionsBundle {
 		return launchActivity;
 	}
 
-	public synchronized String getInstalledPath() {
-		return installedPath;
+	public synchronized String getInstalledSystemPath() {
+		return installedSystemPath;
 	}
 
 	public synchronized String getTargetSystemPath() {
-		return systemPath;
+		return targetSystemPath;
 	}
 
 	public synchronized String getWithLib32Arch() {

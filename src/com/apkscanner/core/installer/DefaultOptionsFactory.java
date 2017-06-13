@@ -80,9 +80,14 @@ public class DefaultOptionsFactory {
 
 					if(!AdbDeviceHelper.isRoot(device)) {
 						blockedFlags |= OptionsBundle.FLAG_OPT_PUSH;
-						blockedCause |= OptionsBundle.BLOACKED_PUSH_CAUSE_NO_ROOT;
+						if(!AdbDeviceHelper.hasSu(device)) {
+							blockedCause |= OptionsBundle.BLOACKED_PUSH_CAUSE_NO_ROOT;
+						} else {
+							blockedCause |= OptionsBundle.BLOACKED_PUSH_CAUSE_HAS_SU_BUT_NO_ROOT;
+						}
 					}
 
+					String targetSystemPath = null;
 					if(packageInfo != null) {
 						String apkPath = null;
 						if(packageInfo.isSystemApp()) {
@@ -109,14 +114,14 @@ public class DefaultOptionsFactory {
 						}
 
 						if(apkPath != null && apkPath.endsWith(".apk")) {
-							options.installedPath = apkPath;
+							options.installedSystemPath = apkPath;
 							if(apkPath.startsWith("/system/")) {
-								options.systemPath = apkPath;
+								targetSystemPath = apkPath;
 							}
 						}
 					}
 
-					if(options.systemPath == null) {
+					if(targetSystemPath == null) {
 						SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
 						try {
 							device.executeShellCommand("ls /system/app/*/*.apk; ls /system/app/*.apk", outputReceiver);
@@ -132,27 +137,27 @@ public class DefaultOptionsFactory {
 						String makeName = apkInfo.packageName + "-1";  
 						if(systemPathSample != null) {
 							if(systemPathSample.matches("/system/app/[^/]*/[^/]*\\.apk")) {
-								options.systemPath = "/system/app/" + makeName + "/" + makeName + ".apk"; 
+								targetSystemPath = "/system/app/" + makeName + "/" + makeName + ".apk"; 
 							} else if(systemPathSample.matches("/system/app/[^/]*\\.apk")) {
-								options.systemPath = "/system/app/" + makeName + ".apk";
+								targetSystemPath = "/system/app/" + makeName + ".apk";
 							} else {
 								Log.w("Unknown system path type : " + systemPathSample);
 							}
 						} else {
 							Log.w("Unknown system path type : " + systemPathSample);
 						}
-						if(options.systemPath == null) {
-							options.systemPath = "/system/app/" + makeName + "/" + makeName + ".apk";
+						if(targetSystemPath == null) {
+							targetSystemPath = "/system/app/" + makeName + "/" + makeName + ".apk";
 						}
 					}
 
-					if(options.systemPath.startsWith("/system/app/")) {
-						options.set(OptionsBundle.FLAG_OPT_PUSH_SYSTEM);
-					} else if(options.systemPath.startsWith("/system/priv-app/")) {
-						options.set(OptionsBundle.FLAG_OPT_PUSH_PRIVAPP);
+					if(targetSystemPath.startsWith("/system/app/")) {
+						options.set(OptionsBundle.FLAG_OPT_PUSH_SYSTEM, targetSystemPath);
+					} else if(targetSystemPath.startsWith("/system/priv-app/")) {
+						options.set(OptionsBundle.FLAG_OPT_PUSH_PRIVAPP, targetSystemPath);
 					} else {
-						options.set(OptionsBundle.FLAG_OPT_PUSH_SYSTEM);
-						Log.w("Unknown path : " + options.systemPath);
+						options.set(OptionsBundle.FLAG_OPT_PUSH_SYSTEM, targetSystemPath);
+						Log.w("Unknown path : " + targetSystemPath);
 					}
 
 					if(archList != null && !archList.isEmpty()) {
@@ -186,10 +191,10 @@ public class DefaultOptionsFactory {
 							}
 						}
 						if(abi32 != null) {
-							options.set(OptionsBundle.FLAG_OPT_PUSH_LIB32, abi32, options.systemPath.replaceAll("[^/]*.apk$", "lib/arm/"));
+							options.set(OptionsBundle.FLAG_OPT_PUSH_LIB32, abi32, targetSystemPath.replaceAll("[^/]*.apk$", "lib/arm/"));
 						}
 						if(abi64 != null) {
-							options.set(OptionsBundle.FLAG_OPT_PUSH_LIB64, abi64, options.systemPath.replaceAll("[^/]*.apk$", "lib/arm64/"));
+							options.set(OptionsBundle.FLAG_OPT_PUSH_LIB64, abi64, targetSystemPath.replaceAll("[^/]*.apk$", "lib/arm64/"));
 						}
 					}
 				}
@@ -200,6 +205,8 @@ public class DefaultOptionsFactory {
 					int activityFlag = apkInfo.activityList[0].featureFlag;
 					if((activityFlag & ApkInfo.APP_FEATURE_LAUNCHER) != ApkInfo.APP_FEATURE_LAUNCHER) {
 						options.unset(OptionsBundle.FLAG_OPT_INSTALL_LAUNCH);
+					} else {
+						options.set(OptionsBundle.FLAG_OPT_INSTALL_LAUNCH, apkInfo.activityList[0].name);
 					}
 				}
 				/*
