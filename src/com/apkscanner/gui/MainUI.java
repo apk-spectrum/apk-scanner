@@ -235,11 +235,6 @@ public class MainUI extends JFrame
 
 			if(!EventQueue.isDispatchThread()) {
 				Log.v("onStateChanged() This task is not EDT. Invoke to EDT for " + status);
-				switch(status) {
-				case ACTIVITY_COMPLETED: case CERT_COMPLETED:
-					toolbarManager.setApkInfo(apkScanner.getApkInfo());
-				default: break;
-				}
 				try {
 					EventQueue.invokeAndWait(new Runnable() {
 						public void run() {
@@ -250,6 +245,12 @@ public class MainUI extends JFrame
 				} catch (InvocationTargetException | InterruptedException e) {
 					e.printStackTrace();
 				}
+			}
+
+			switch(status) {
+			case ACTIVITY_COMPLETED: case CERT_COMPLETED:
+				toolbarManager.setApkInfo(apkScanner.getApkInfo());
+			default: break;
 			}
 
 			Log.i("onStateChanged() ui sync start for " + status);
