@@ -43,7 +43,7 @@ public class Libraries extends JPanel implements TabDataObject
 		
 		//table.setPreferredScrollableViewportSize(new Dimension(500, 70));
 		
-		setJTableColumnsWidth(table, 500, 4, 65, 31, 31);
+		setJTableColumnsWidth(table, 500, 1, 59, 30, 10);
 		
 		//Create the scroll pane and add the table to it.
 		
@@ -71,7 +71,7 @@ public class Libraries extends JPanel implements TabDataObject
 		if(mMyTableModel == null) return;
 		mMyTableModel.loadResource();
 		mMyTableModel.fireTableStructureChanged();
-		setJTableColumnsWidth(table, 500, 4, 65, 31);
+		setJTableColumnsWidth(table, 500, 1, 59, 30, 10);
 	}
 
 	public static void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
