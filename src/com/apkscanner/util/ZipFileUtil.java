@@ -135,6 +135,22 @@ public class ZipFileUtil
 		return size;
 	}
 
+	public static Long getCompressedSize(String zipFilePath, String srcPath)
+	{
+		long size = 0;
+		try {
+			ZipFile zipFile = new ZipFile(zipFilePath);
+			ZipEntry entry = zipFile.getEntry(srcPath);
+			if(entry != null) {
+				size = entry.getCompressedSize();
+			}
+			zipFile.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return size;
+	}
+
 	public static String getFileSize(String zipFilePath, String srcPath, FSStyle style)
 	{
 		return FileUtil.getFileSize(getFileSize(zipFilePath, srcPath), style);

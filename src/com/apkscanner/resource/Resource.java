@@ -29,7 +29,7 @@ import com.apkscanner.util.ZipFileUtil;
 public enum Resource
 {
 	STR_APP_NAME				(Type.TEXT, "@app_name"),
-	STR_APP_VERSION				(Type.TEXT, "2.3 Beta 20170525"),
+	STR_APP_VERSION				(Type.TEXT, "2.3 Beta 20170613"),
 	STR_APP_BUILD_MODE			(Type.TEXT, "eng"),
 	STR_APP_MAKER				(Type.TEXT, "jin_h.lee / sunggyu.kam"),
 	STR_APP_MAKER_EMAIL			(Type.TEXT, "jin_h.lee@samsung.com;sunggyu.kam@samsung.com"),
@@ -206,6 +206,7 @@ public enum Resource
 	STR_LIB_COLUMN_INDEX		(Type.TEXT, "@lib_column_index"),
 	STR_LIB_COLUMN_PATH			(Type.TEXT, "@lib_column_path"),
 	STR_LIB_COLUMN_SIZE			(Type.TEXT, "@lib_column_size"),
+	STR_LIB_COLUMN_COMPRESS		(Type.TEXT, "@lib_column_compressibility"),
 
 	STR_ACTIVITY_COLUME_CLASS	(Type.TEXT, "@activity_column_class"),
 	STR_ACTIVITY_COLUME_TYPE	(Type.TEXT, "@activity_column_type"),

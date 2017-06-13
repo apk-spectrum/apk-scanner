@@ -180,6 +180,7 @@ they're removed before the application is published</string>
 	<string name="lib_column_index">Index</string>
 	<string name="lib_column_path">Path</string>
 	<string name="lib_column_size">Size</string>
+	<string name="lib_column_compressibility">Compressibility</string>
 
 	<string name="activity_column_class">Class</string>
 	<string name="activity_column_type">Type</string>
