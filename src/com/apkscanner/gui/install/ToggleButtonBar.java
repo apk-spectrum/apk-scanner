@@ -43,7 +43,7 @@ public class ToggleButtonBar extends JPanel{
 	private static final String[] installOptiontextSet = {"Install", "No Install", "Push", "Impossible", "waiting"};
 	
 	private static final Color[] InstallingColorSet = {null, null, new Color(0x555555), new Color(0x50AF49), new Color(0x8b0000)};
-	private static final String[] installingtextSet = {"Installing", "Succes", "Fail"};
+	private static final String[] installingtextSet = {"Installing..", "Succes", "Fail"};
 	
     //public static final int OPTION_INSTALL = 0;
     //public static final int OPTION_NO_INSTALL = 1;
@@ -212,8 +212,8 @@ public class ToggleButtonBar extends JPanel{
 	    	btninstalled.setText(installtextSet[data.isinstalled]);
 	    	break;
 		case ApkInstallWizard.STATUS_INSTALLING:
-			if(!data.isNoinstall()) {				
-				if(data.showstate == DeviceListData.SHOW_COMPLETE_INSTALL) {
+			if(!data.isNoinstall()) {
+				if(data.showstate == DeviceListData.SHOW_COMPLETE_INSTALL) {					
 					if(data.installErrorCuase == null) {
 						btninstalled.setBackground(ColorSet[0]);
 						btninstalled.setText(installingtextSet[1]);
@@ -231,12 +231,17 @@ public class ToggleButtonBar extends JPanel{
 			}
 			break;
 		case ApkInstallWizard.STATUS_COMPLETED:
-			if(data.installErrorCuase == null) {
-				btninstalled.setBackground(ColorSet[0]);
-				btninstalled.setText(installingtextSet[1]);
+			if(!data.isNoinstall()) {
+				if(data.installErrorCuase == null) {
+					btninstalled.setBackground(ColorSet[0]);
+					btninstalled.setText(installingtextSet[1]);
+				} else {
+					btninstalled.setBackground(ColorSet[3]);
+					btninstalled.setText(installingtextSet[2]);
+				}
 			} else {
-				btninstalled.setBackground(ColorSet[3]);
-				btninstalled.setText(installingtextSet[2]);
+				btninstalled.setBackground(ColorSet[data.isinstalled]);
+		    	btninstalled.setText(installtextSet[data.isinstalled]);
 			}
 			break;
 		}

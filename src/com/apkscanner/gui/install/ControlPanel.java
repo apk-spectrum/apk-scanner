@@ -23,6 +23,10 @@ public class ControlPanel extends JPanel
 	public static final String CTR_ACT_CMD_SHOW_LOG = "CTR_ACT_CMD_SHOW_LOG";
 	public static final String CTR_ACT_CMD_RESTART = "CTR_ACT_CMD_RESTART";
 	
+	public static final int STATUS_NO_DEVICE = 200;
+	public static final int STATUS_APK_VERTIFY_ERROR = 201;
+
+	
 	private JButton btnNext;
 	private JButton btnPre;
 	private JButton btnOk;
@@ -87,16 +91,16 @@ public class ControlPanel extends JPanel
 		case ApkInstallWizard.STATUS_PACKAGE_SCANNING:
 			setVisibleButtons(false, false, false, false, true, false); break;
 		case ApkInstallWizard.STATUS_CHECK_PACKAGES:
-			setVisibleButtons(true, false, false, false, false, false); break;
-		case ApkInstallWizard.STATUS_SET_INSTALL_OPTION:
-			setVisibleButtons(true, true, false, true, false, false); break;
+			setVisibleButtons(true, false, false, false, false, false);
+			btnNext.setEnabled(true);
+			break;
 		case ApkInstallWizard.STATUS_INSTALLING:
-			setVisibleButtons(false, false, false, false, true, false); break;
+			setVisibleButtons(false, false, false, false, false, false); break;
 		case ApkInstallWizard.STATUS_COMPLETED:
-			setVisibleButtons(false, false, true, false, true, true); break;
+			setVisibleButtons(false, false, true, false, false, false); break;
 		case ApkInstallWizard.STATUS_APK_VERTIFY_ERROR:
 			setVisibleButtons(false, false, false, true, false, false); break;
-		case ApkInstallWizard.STATUS_NO_DEVICE:
+		case STATUS_NO_DEVICE:
 			setVisibleButtons(false, false, false, false, false, false); break;			
 		default:
 			break;

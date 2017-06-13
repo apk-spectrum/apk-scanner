@@ -38,6 +38,7 @@ import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.CompactApkInfo;
 import com.apkscanner.gui.install.ContentPanel;
 import com.apkscanner.gui.install.ControlPanel;
+import com.apkscanner.gui.install.FindPackagePanel;
 import com.apkscanner.gui.install.DeviceCustomList.DeviceListData;
 import com.apkscanner.gui.install.InstallProgressPanel;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
@@ -52,15 +53,11 @@ public class ApkInstallWizard
 	public static final int STATUS_INIT = 0;
 	public static final int STATUS_PACKAGE_SCANNING = 1;
 	public static final int STATUS_CHECK_PACKAGES = 2;
-	public static final int STATUS_SET_INSTALL_OPTION = 3;
-	public static final int STATUS_INSTALLING = 4;
-	public static final int STATUS_COMPLETED = 5;
+	public static final int STATUS_INSTALLING = 3;
+	public static final int STATUS_COMPLETED = 4;
+	
 	public static final int STATUS_DESTROY_DIALOG = 100;
-	
-	public static final int STATUS_APK_VERTIFY_ERROR = 6;
-	
-	public static final int STATUS_NO_DEVICE = 7;
-	public static final int STATUS_DEVICE = 8;
+	public static final int STATUS_APK_VERTIFY_ERROR = 101;
 	
 	public static final int FLAG_OPT_INSTALL	 	= 0x0100;
 	public static final int FLAG_OPT_PUSH			= 0x0200;
@@ -353,16 +350,13 @@ public class ApkInstallWizard
 			case STATUS_INIT:
 				changeState(STATUS_PACKAGE_SCANNING);
 				break;
-			case STATUS_PACKAGE_SCANNING:
+			case STATUS_PACKAGE_SCANNING:				
 				changeState(STATUS_CHECK_PACKAGES);
+				//changeState(STATUS_WATING_CHECK_PACKAGES);
 				break;
 			case STATUS_CHECK_PACKAGES:
 				changeState(STATUS_INSTALLING);
-				break;
-			case STATUS_SET_INSTALL_OPTION:
-				//if(flag == 0) break;				
-				changeState(STATUS_INSTALLING);
-				break;				
+				break;						
 			case STATUS_INSTALLING:
 				changeState(STATUS_COMPLETED);
 				break;
@@ -370,19 +364,7 @@ public class ApkInstallWizard
 				break;
 			}
 		}
-	}
-	
-	private void previous() {
-		synchronized(this) {
-			switch(status) {
-			case STATUS_SET_INSTALL_OPTION:
-				changeState(STATUS_CHECK_PACKAGES);
-			default:
-				break;
-			}
-		}
-		
-	}
+	}	
 	
 	public void stop() {
 		
@@ -406,7 +388,7 @@ public class ApkInstallWizard
 			if(ControlPanel.CTR_ACT_CMD_NEXT.equals(arg0.getActionCommand())) {
 				next();
 			} else if(ControlPanel.CTR_ACT_CMD_PREVIOUS.equals(arg0.getActionCommand())) {
-				previous();
+				//previous();
 			} else if(ControlPanel.CTR_ACT_CMD_CANCEL.equals(arg0.getActionCommand()) ||
 					ControlPanel.CTR_ACT_CMD_OK.equals(arg0.getActionCommand())) {
 				if(wizard instanceof JFrame &&
@@ -425,15 +407,15 @@ public class ApkInstallWizard
 				
 			} else if("CHANG_SIGN".equals(arg0.getActionCommand())) {
 				
-			} else if("NO_DEVICE_LAYOUT".equals(arg0.getActionCommand())) {
+			} else if(FindPackagePanel.NO_DEVICE_LAYOUT.equals(arg0.getActionCommand())) {
 				if(status == ApkInstallWizard.STATUS_CHECK_PACKAGES) {
-					controlPanel.setStatus(ApkInstallWizard.STATUS_NO_DEVICE);
+					controlPanel.setStatus(ControlPanel.STATUS_NO_DEVICE);
 				}
-			} else if("DEVICE_LAYOUT".equals(arg0.getActionCommand())) {
+			} else if(FindPackagePanel.DEVICE_LAYOUT.equals(arg0.getActionCommand())) {
 				if(status == ApkInstallWizard.STATUS_CHECK_PACKAGES) {
 					controlPanel.setStatus(ApkInstallWizard.STATUS_CHECK_PACKAGES);
 				}
-			}  
+			}
 		}
 
 		@Override
@@ -446,7 +428,7 @@ public class ApkInstallWizard
 						next(); 
 						break;
 					case KeyEvent.VK_P:	
-						previous();
+						//previous();
 						break;
 					default: 
 						return false;
@@ -491,7 +473,7 @@ public class ApkInstallWizard
             		ApkInstallWizard wizard = new ApkInstallWizard("C:\\Melon.apk");
             		wizard.start();
             	} else {
-            		ApkInstallWizard wizard = new ApkInstallWizard("/home/leejinhyeong/Desktop/DCMContacts.apk");
+            		ApkInstallWizard wizard = new ApkInstallWizard("/home/leejinhyeong/Desktop/DCMContacts_test.apk");
             		wizard.start();
             	}
             }

@@ -333,8 +333,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	        data.bundleoption = bundle;
 	        list.repaint();
 	        FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.REQ_REFRESH_DETAIL_PANEL));
-			}
-			
+			}			
 		}).start();
     }
     
@@ -562,8 +561,8 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	    			 ii.setImageObserver(new AnimatedObserver(list, index));
 
 	    			isinstallIcon.setIcon(ii);
-	    		}else {	    		
-	    			if(((DeviceListData)value).status.equals("OFFLINE") || ((DeviceListData)value).isNoinstall()) {    				
+	    		} else {
+	    			if(((DeviceListData)value).status.equals("OFFLINE") || ((DeviceListData)value).isNoinstall() || ((DeviceListData)value).installErrorCuase != null) {    				
 	    				isinstallIcon.setIcon(Resource.IMG_INSTALL_BLOCK.getImageIcon());
 	    			} else if(((DeviceListData)value).selectedinstalloption != DeviceListData.OPTION_NO_INSTALL) {
 	    				isinstallIcon.setIcon(Resource.IMG_INSTALL_CHECK.getImageIcon());	    					    				
@@ -820,7 +819,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
         //boolean adjust = e.getValueIsAdjusting();
         //if (!adjust) {
 		
-		if(status != ApkInstallWizard.STATUS_CHECK_PACKAGES) return;
+		//if(status != ApkInstallWizard.STATUS_CHECK_PACKAGES) return;
 		
           JList list = (JList) e.getSource();
           int selections[] = list.getSelectedIndices();
@@ -828,7 +827,9 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 		Object selectionValues[] = list.getSelectedValues();
           for (int i = 0, n = selections.length; i < n; i++) {            
             //System.out.print(selections[i] + "/" + selectionValues[i] + " ");
-        	  if(status == ApkInstallWizard.STATUS_CHECK_PACKAGES)((DeviceListData)selectionValues[i]).showstate  = DeviceListData.SHOW_INSTALL_OPTION;
+        	  if(status == ApkInstallWizard.STATUS_CHECK_PACKAGES) {
+        		  ((DeviceListData)selectionValues[i]).showstate  = DeviceListData.SHOW_INSTALL_OPTION;
+        	  }
         	  FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.REQ_REFRESH_DETAIL_PANEL));
           }
         //}

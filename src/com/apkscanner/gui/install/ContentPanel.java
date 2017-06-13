@@ -31,7 +31,6 @@ public class ContentPanel extends JPanel
 	
 	public static final String CONTENT_PACKAGE_SCANNING = "CONTENT_PACKAGE_SCANNING";
 	public static final String CONTENT_CHECK_PACKAGES = "CONTENT_CHECK_PACKAGES";
-	public static final String CONTENT_SET_INSTALL_OPTION = "CONTENT_SET_INSTALL_OPTION";
 	public static final String CONTENT_INSTALLING = "CONTENT_INSTALLING";
 	public static final String CONTENT_COMPLETED = "CONTENT_COMPLETED";
 	
@@ -64,7 +63,7 @@ public class ContentPanel extends JPanel
 				
 		panel_check_package = new FindPackagePanel(listener);
 		panel_set_install_option = new JPanel();
-		ErrorMessageLable = new JLabel("APK Error!!!", SwingConstants.CENTER);
+		ErrorMessageLable = new JLabel("Please Check this APK file!", SwingConstants.CENTER);
 		ErrorMessageLable.setFont(new Font("Serif", Font.PLAIN, 30)); 
 		
 		add(new JPanel(), CONTENT_INIT);
@@ -73,7 +72,6 @@ public class ContentPanel extends JPanel
 		add(ErrorMessageLable, CONTENT_VERIFY_ERROR);
 		
 		add(panel_check_package, CONTENT_CHECK_PACKAGES);
-		add(panel_set_install_option, CONTENT_SET_INSTALL_OPTION);
 		add(new JPanel(), CONTENT_INSTALLING);
 		add(new JLabel("result"), CONTENT_COMPLETED);
 		
@@ -97,15 +95,12 @@ public class ContentPanel extends JPanel
 			loadingtext = "VERIFY APK";
 			((CardLayout)getLayout()).show(this, CONTENT_LOADING);
 			break;
+			
 		case ApkInstallWizard.STATUS_CHECK_PACKAGES:
 			//pack_textPakcInfo.setText("");
 			panel_check_package.setStatus(ApkInstallWizard.STATUS_CHECK_PACKAGES);
 			((CardLayout)getLayout()).show(this, CONTENT_CHECK_PACKAGES);
 			panel_check_package.refreshDeviceInfo();
-			break;
-		case ApkInstallWizard.STATUS_SET_INSTALL_OPTION:
-
-			((CardLayout)getLayout()).show(this, CONTENT_SET_INSTALL_OPTION);
 			break;
 		case ApkInstallWizard.STATUS_INSTALLING:
 			//loadingMessageLable.setText("INSTALLING");
@@ -113,7 +108,6 @@ public class ContentPanel extends JPanel
 			//((CardLayout)getLayout()).show(this, CONTENT_LOADING);
 			//lodingPanel.revalidate();
 			panel_check_package.setStatus(ApkInstallWizard.STATUS_INSTALLING);
-			
 			
 			break;
 		case ApkInstallWizard.STATUS_COMPLETED:			
