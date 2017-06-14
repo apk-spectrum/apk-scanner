@@ -38,6 +38,8 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	
 	
 	public static final String DEVICE_LAYOUT_WAIT_INSTALL_BUTTON = "DEVICE_LAYOUT_WAIT_INSTALL_BUTTON";
+	
+	
 	public static final String REQ_REFRESH_DETAIL_PANEL = "REQ_REFRESH_DETAIL_PANEL";
 	public static final String REQ_FINISHED_INSTALL = "REQ_FINISHED_INSTALL";
 	
@@ -91,7 +93,7 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	public void deviceChanged(IDevice arg0, int arg1) {
 		// TODO Auto-generated method stub
 		Log.d("change device state : " + arg0.getSerialNumber() + " : " + arg0.getState());
-		
+		if(status != ApkInstallWizard.STATUS_CHECK_PACKAGES) return;
 		if(devicelist!=null) devicelist.deviceChanged(arg0, arg1);
 		
 	}
@@ -101,6 +103,8 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 		Log.d("connect device state : " + arg0.getSerialNumber() + " : " + arg0.getState());
 		// TODO Auto-generated method stub
 		//if(devicelist!=null) devicelist.deviceConnected(arg0);
+		if(status != ApkInstallWizard.STATUS_CHECK_PACKAGES) return;
+		
 		((CardLayout)getLayout()).show(this, DEVICE_LAYOUT);
 		mainlistener.actionPerformed(new ActionEvent(this, 0, DEVICE_LAYOUT));
 	}
@@ -108,6 +112,8 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	@Override
 	public void deviceDisconnected(IDevice arg0) {
 		// TODO Auto-generated method stub
+		if(status != ApkInstallWizard.STATUS_CHECK_PACKAGES) return;
+		
 		if(devicelist!=null) devicelist.deviceDisconnected(arg0);
 		
 		if(devicelist.getModel().getSize() == 0) {
@@ -148,16 +154,18 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	    
 	    if(devices.length >0) {
 	    	Log.d("device is " + devices.length);
-			((CardLayout)getLayout()).show(this, DEVICE_LAYOUT);
-			mainlistener.actionPerformed(new ActionEvent(this, 0, DEVICE_LAYOUT));
+			
 	    }else {
 	    	Log.d("device is 0");
+	    	return;
 	    }
-	    
+
+	    ((CardLayout)getLayout()).show(this, DEVICE_LAYOUT);
+		mainlistener.actionPerformed(new ActionEvent(this, 0, DEVICE_LAYOUT));
+		
 	    for(IDevice device: devices) {
 	    	devicelist.deviceConnected(device);
 	    }
-	    
 	    
 	}
 	public void refreshDetailPanel() {

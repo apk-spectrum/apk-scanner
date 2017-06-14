@@ -290,43 +290,6 @@ public class ApkInstallWizard
 			}).start();			
 			break;
 		case STATUS_INSTALLING:
-			
-//			new Thread(new Runnable() {
-//				@Override
-//				public void run() {
-//					try {
-//						Thread.sleep(3000);
-//					} catch (InterruptedException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//			        next();
-//				}			
-//			}).start();
-//			Log.d("install");
-//			final ListModel<DeviceListData> listmodel  = contentPanel.getDeviceListData();
-//			
-//			int succesCount = 0;
-//			int errorCount = 0;
-//			new Thread(new Runnable() {
-//				@Override
-//				public void run() {			
-//				for(int i=0; i< listmodel.getSize(); i++) {
-//						contentPanel.setLoadingTextStep(i+1, listmodel.getSize());
-//						final IDevice device = listmodel.getElementAt(i).device;
-//						final OptionsBundle options = listmodel.getElementAt(i).bundleoption;
-//						String message = ApkInstaller.install(device, apkInfo, options);
-//						
-//						if( message == null) {
-//							Log.d("suc");
-//						} else {
-//							
-//							Log.d("error = " + message);
-//						}					
-//					}
-//					next();				
-//				}
-//			}).start();
 				
 			break;
 		default:
@@ -413,7 +376,11 @@ public class ApkInstallWizard
 				}
 			} else if(FindPackagePanel.DEVICE_LAYOUT.equals(arg0.getActionCommand())) {
 				if(status == ApkInstallWizard.STATUS_CHECK_PACKAGES) {
-					controlPanel.setStatus(ApkInstallWizard.STATUS_CHECK_PACKAGES);
+					controlPanel.setStatus(ApkInstallWizard.STATUS_CHECK_PACKAGES);					
+				}
+			} else if(FindPackagePanel.DEVICE_LAYOUT_WAIT_INSTALL_BUTTON.equals(arg0.getActionCommand())) {
+				if(status == ApkInstallWizard.STATUS_CHECK_PACKAGES) {
+					controlPanel.setNextButtonEnable(false);
 				}
 			}
 		}
@@ -473,7 +440,7 @@ public class ApkInstallWizard
             		ApkInstallWizard wizard = new ApkInstallWizard("C:\\Melon.apk");
             		wizard.start();
             	} else {
-            		ApkInstallWizard wizard = new ApkInstallWizard("/home/leejinhyeong/Desktop/DCMContacts_test.apk");
+            		ApkInstallWizard wizard = new ApkInstallWizard("/home/leejinhyeong/Desktop/reco.apk");
             		wizard.start();
             	}
             }

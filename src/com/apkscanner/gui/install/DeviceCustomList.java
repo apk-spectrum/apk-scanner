@@ -307,7 +307,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	                	data.selectedinstalloption =  DeviceListData.OPTION_NO_INSTALL;
 	                    break;
 	                case OptionsBundle.FLAG_OPT_DISSEMINATE:
-	                	
+	                	applyAllDeviceInstallOption(data.bundleoption);
 	                	break;
 	                }
 	                list.repaint();
@@ -316,15 +316,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	        
 	        //((InstallOptionPanel)data.installoptionpanel).selectedinstalloption;
 	        		
-	        if(bundle.isDontInstallOptions()) {
-	        	data.selectedinstalloption =  DeviceListData.OPTION_IMPOSSIBLE_INSTALL;
-	        } else if(bundle.isPushOptions()) {
-	        	data.selectedinstalloption =  DeviceListData.OPTION_PUSH;
-	        } else if(bundle.isInstallOptions()) {	        	
-	        	data.selectedinstalloption =  DeviceListData.OPTION_INSTALL;
-	        } else if(bundle.isNoInstallOptions()) {
-	        	data.selectedinstalloption =  DeviceListData.OPTION_NO_INSTALL;
-	        }
+	        setInstallOptionBundle(data, bundle);
 	        
 	        installtemppanel.setApkInfo(ApkInstallWizard.apkInfo);
 	        installtemppanel.setOptions(bundle);
@@ -336,6 +328,31 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 			}			
 		}).start();
     }
+    
+    void setInstallOptionBundle(DeviceListData data, OptionsBundle bundle) {
+        if(bundle.isDontInstallOptions()) {
+        	data.selectedinstalloption =  DeviceListData.OPTION_IMPOSSIBLE_INSTALL;
+        } else if(bundle.isPushOptions()) {
+        	data.selectedinstalloption =  DeviceListData.OPTION_PUSH;
+        } else if(bundle.isInstallOptions()) {	        	
+        	data.selectedinstalloption =  DeviceListData.OPTION_INSTALL;
+        } else if(bundle.isNoInstallOptions()) {
+        	data.selectedinstalloption =  DeviceListData.OPTION_NO_INSTALL;
+        }
+    }
+    
+    
+    void applyAllDeviceInstallOption(OptionsBundle bundleoption) {
+    	final ListModel<DeviceListData> listmodel  = this.getModel();
+    	
+    	for(int i=0; i< listmodel.getSize(); i++) {
+    		DeviceListData temp = listmodel.getElementAt(i);
+    		temp.bundleoption.copyFrom(bundleoption);
+    		((InstallOptionPanel)temp.installoptionpanel).setOptions(temp.bundleoption);
+    		setInstallOptionBundle(temp, temp.bundleoption);
+    	}
+    }
+    
     
     private JComponent getPackageInfopanel(IDevice dev)
 	{
@@ -351,7 +368,6 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
         }
                 
 		return new JLabel("Not installed");
-        //return null;
 	}
     
 	public void setDeviceProperty(IDevice device, final DeviceListData DO, final String propertyname) {
