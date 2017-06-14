@@ -20,14 +20,15 @@ public class OptionsBundle {
 
 	public static final int FLAG_OPT_PUSH_SYSTEM	= 0x0100;
 	public static final int FLAG_OPT_PUSH_PRIVAPP	= 0x0200;
-	public static final int FLAG_OPT_PUSH_LIB32		= 0x0400;
-	public static final int FLAG_OPT_PUSH_LIB64		= 0x0800;
-	public static final int FLAG_OPT_PUSH_REBOOT	= 0x1000;
+	public static final int FLAG_OPT_PUSH_OTHER		= 0x0400;
+	public static final int FLAG_OPT_PUSH_LIB32		= 0x0800;
+	public static final int FLAG_OPT_PUSH_LIB64		= 0x1000;
+	public static final int FLAG_OPT_PUSH_REBOOT	= 0x2000;
 
 	public static final int FLAG_OPT_DISSEMINATE 	= 0x400000;
 	public static final int FLAG_OPT_CLEAR_OPTIONS	= 0x800000;
 
-	public static final int FLAG_OPT_HAS_EXTRADATA_MASK = FLAG_OPT_INSTALL_LAUNCH | FLAG_OPT_PUSH_LIB32 | FLAG_OPT_PUSH_LIB64 | FLAG_OPT_PUSH_SYSTEM | FLAG_OPT_PUSH_PRIVAPP;
+	public static final int FLAG_OPT_HAS_EXTRADATA_MASK = FLAG_OPT_INSTALL_LAUNCH | FLAG_OPT_PUSH_LIB32 | FLAG_OPT_PUSH_LIB64 | FLAG_OPT_PUSH_SYSTEM | FLAG_OPT_PUSH_PRIVAPP | FLAG_OPT_PUSH_OTHER;
 
 	public static final int NO_BLOACKED = 0x0000;
 	public static final int BLOACKED_COMMON_CAUSE_UNSIGNED = 0x0001;
@@ -182,6 +183,7 @@ public class OptionsBundle {
 				break;
 			case FLAG_OPT_PUSH_SYSTEM:
 			case FLAG_OPT_PUSH_PRIVAPP:
+			case FLAG_OPT_PUSH_OTHER:
 				targetSystemPath = extraData[0];
 				Log.e(targetSystemPath);
 				break;
@@ -212,7 +214,8 @@ public class OptionsBundle {
 			break;
 		case FLAG_OPT_PUSH_SYSTEM:
 		case FLAG_OPT_PUSH_PRIVAPP:
-			this.flag &= ~(FLAG_OPT_PUSH_SYSTEM | FLAG_OPT_PUSH_PRIVAPP);
+		case FLAG_OPT_PUSH_OTHER:
+			this.flag &= ~(FLAG_OPT_PUSH_SYSTEM | FLAG_OPT_PUSH_PRIVAPP | FLAG_OPT_PUSH_OTHER);
 			break;
 		}
 
@@ -305,6 +308,10 @@ public class OptionsBundle {
 
 	public synchronized boolean isSetPushToPriv() {
 		return (flag & FLAG_OPT_PUSH_PRIVAPP) == FLAG_OPT_PUSH_PRIVAPP;
+	}
+
+	public synchronized boolean isSetPushToOther() {
+		return (flag & FLAG_OPT_PUSH_OTHER) == FLAG_OPT_PUSH_OTHER;
 	}
 
 	public synchronized boolean isSetReboot() {

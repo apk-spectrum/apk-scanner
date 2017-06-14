@@ -597,14 +597,27 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 				if(systemPath.matches("/system/(priv-)?app/[^/]*/[^/]*\\.apk")) {
 					cbLib32Dest.addItem(systemPath.replaceAll("[^/]*.apk$", "lib/arm/"));
 					cbLib64Dest.addItem(systemPath.replaceAll("[^/]*.apk$", "lib/arm64/"));
+				} else if(systemPath.matches("^/system/(priv-)?app/[^/]*\\.apk")) {
+					cbLib32Dest.addItem(systemPath.replaceAll(".*/([^/]*).apk$", "/data/app-lib/$1/"));
+					cbLib64Dest.addItem(systemPath.replaceAll(".*/([^/]*).apk$", "/data/app-lib/$1/"));
 				}
 			} else if(bundle.isSetPushToPriv()) {
 				txtTargetPath.setText("/system/priv-app/unknown-1/unknown-1.apk");
 			} else {
 				txtTargetPath.setText("/system/app/unknown-1/unknown-1.apk");
 			}
-			rbSystemPush.setSelected(bundle.isSetPushToSystem());
-			rbPrivPush.setSelected(bundle.isSetPushToPriv());
+			
+			if(!bundle.isSetPushToOther()) {
+				rbSystemPush.setSelected(bundle.isSetPushToSystem());
+				rbSystemPush.setEnabled(true);
+				rbPrivPush.setSelected(bundle.isSetPushToPriv());
+				rbPrivPush.setEnabled(true);
+			} else {
+				rbSystemPush.setSelected(false);
+				rbSystemPush.setEnabled(false);
+				rbPrivPush.setSelected(false);
+				rbPrivPush.setEnabled(false);
+			}
 
 			ckReboot.setSelected(bundle.isSetReboot());
 			ckLib32.setSelected(bundle.isSetWithLib32());
@@ -687,13 +700,13 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 				boolean needRefresh32 = cbLib32Dest.getSelectedIndex() == 2;
 				boolean needRefresh64 = cbLib64Dest.getSelectedIndex() == 2;
 
-				if(cbLib32Dest.getItemCount() > 2) {
-					cbLib32Dest.removeItemAt(2);
-				}
-				if(cbLib64Dest.getItemCount() > 2) {
-					cbLib64Dest.removeItemAt(2);
-				}
 				if(convPath.matches("/system/(priv-)?app/[^/]*/[^/]*\\.apk")) {
+					if(cbLib32Dest.getItemCount() > 2) {
+						cbLib32Dest.removeItemAt(2);
+					}
+					if(cbLib64Dest.getItemCount() > 2) {
+						cbLib64Dest.removeItemAt(2);
+					}
 					cbLib32Dest.addItem(convPath.replaceAll("[^/]*.apk$", "lib/arm/"));
 					if(needRefresh32) cbLib32Dest.setSelectedIndex(2);
 					cbLib64Dest.addItem(convPath.replaceAll("[^/]*.apk$", "lib/arm64/"));
