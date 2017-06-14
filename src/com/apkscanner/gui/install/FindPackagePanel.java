@@ -102,11 +102,11 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	public void deviceConnected(IDevice arg0) {
 		Log.d("connect device state : " + arg0.getSerialNumber() + " : " + arg0.getState());
 		// TODO Auto-generated method stub
-		//if(devicelist!=null) devicelist.deviceConnected(arg0);
+		if(devicelist!=null) devicelist.deviceConnected(arg0);
 		if(status != ApkInstallWizard.STATUS_CHECK_PACKAGES) return;
 		
 		((CardLayout)getLayout()).show(this, DEVICE_LAYOUT);
-		mainlistener.actionPerformed(new ActionEvent(this, 0, DEVICE_LAYOUT));
+		//mainlistener.actionPerformed(new ActionEvent(this, 0, DEVICE_LAYOUT));
 	}
 
 	@Override
@@ -161,7 +161,7 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	    }
 
 	    ((CardLayout)getLayout()).show(this, DEVICE_LAYOUT);
-		mainlistener.actionPerformed(new ActionEvent(this, 0, DEVICE_LAYOUT));
+		//mainlistener.actionPerformed(new ActionEvent(this, 0, DEVICE_LAYOUT));
 		
 	    for(IDevice device: devices) {
 	    	devicelist.deviceConnected(device);
@@ -225,7 +225,9 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 		} else if(e.getActionCommand().equals(REQ_FINISHED_INSTALL)) {
 			mainlistener.actionPerformed(new ActionEvent(this, 0, ControlPanel.CTR_ACT_CMD_NEXT));
 		} else if(e.getActionCommand().equals(DEVICE_LAYOUT_WAIT_INSTALL_BUTTON)) {
-			mainlistener.actionPerformed(new ActionEvent(this, 0, ControlPanel.CTR_ACT_CMD_NEXT));
+			mainlistener.actionPerformed(new ActionEvent(this, 0, DEVICE_LAYOUT_WAIT_INSTALL_BUTTON));
+		}  else if(e.getActionCommand().equals(DEVICE_LAYOUT)) {
+			mainlistener.actionPerformed(new ActionEvent(this, 0, DEVICE_LAYOUT));
 		}
 	}
 	@SuppressWarnings("unchecked")

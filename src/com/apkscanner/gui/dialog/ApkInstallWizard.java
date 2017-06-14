@@ -376,7 +376,8 @@ public class ApkInstallWizard
 				}
 			} else if(FindPackagePanel.DEVICE_LAYOUT.equals(arg0.getActionCommand())) {
 				if(status == ApkInstallWizard.STATUS_CHECK_PACKAGES) {
-					controlPanel.setStatus(ApkInstallWizard.STATUS_CHECK_PACKAGES);					
+					//controlPanel.setStatus(ApkInstallWizard.STATUS_CHECK_PACKAGES);
+					controlPanel.setNextButtonEnable(true);
 				}
 			} else if(FindPackagePanel.DEVICE_LAYOUT_WAIT_INSTALL_BUTTON.equals(arg0.getActionCommand())) {
 				if(status == ApkInstallWizard.STATUS_CHECK_PACKAGES) {
