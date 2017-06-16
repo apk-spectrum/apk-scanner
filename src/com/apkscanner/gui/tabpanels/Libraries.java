@@ -14,6 +14,7 @@ import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.FileUtil.FSStyle;
+import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.ZipFileUtil;
 
 /**
@@ -42,7 +43,7 @@ public class Libraries extends JPanel implements TabDataObject
 		
 		//table.setPreferredScrollableViewportSize(new Dimension(500, 70));
 		
-		setJTableColumnsWidth(table, 500, 4, 65, 31);
+		setJTableColumnsWidth(table, 500, 1, 59, 30, 10);
 		
 		//Create the scroll pane and add the table to it.
 		
@@ -70,7 +71,7 @@ public class Libraries extends JPanel implements TabDataObject
 		if(mMyTableModel == null) return;
 		mMyTableModel.loadResource();
 		mMyTableModel.fireTableStructureChanged();
-		setJTableColumnsWidth(table, 500, 4, 65, 31);
+		setJTableColumnsWidth(table, 500, 1, 59, 30, 10);
 	}
 
 	public static void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
@@ -104,10 +105,13 @@ public class Libraries extends JPanel implements TabDataObject
 			if(libList == null) return;
 
 			for(int i=0; i< libList.length; i++) {
+				long size = ZipFileUtil.getFileSize(apkFilePath, libList[i]);
+				long compressed = ZipFileUtil.getCompressedSize(apkFilePath, libList[i]);
 				Object[] temp = { 
 						i+1,
 						libList[i], 
-						ZipFileUtil.getFileSize(apkFilePath, libList[i], FSStyle.FULL)
+						FileUtil.getFileSize(size, FSStyle.FULL),
+						String.format("%.2f", ((float)(size - compressed) / (float)size) * 100f) + " %"
 				};
 				data.add(temp);
 			}
@@ -119,7 +123,8 @@ public class Libraries extends JPanel implements TabDataObject
 			columnNames = new String[] {
 				Resource.STR_LIB_COLUMN_INDEX.getString(),
 				Resource.STR_LIB_COLUMN_PATH.getString(),
-				Resource.STR_LIB_COLUMN_SIZE.getString()
+				Resource.STR_LIB_COLUMN_SIZE.getString(),
+				Resource.STR_LIB_COLUMN_COMPRESS.getString()
 			};
 		}
 

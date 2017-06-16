@@ -180,6 +180,7 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="lib_column_index">번호</string>
 	<string name="lib_column_path">경로</string>
 	<string name="lib_column_size">크기</string>
+	<string name="lib_column_compressibility">압축률</string>
 
 	<string name="activity_column_class">클래스</string>
 	<string name="activity_column_type">종류</string>
