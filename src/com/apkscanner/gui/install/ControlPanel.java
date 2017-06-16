@@ -91,21 +91,23 @@ public class ControlPanel extends JPanel
 		case ApkInstallWizard.STATUS_PACKAGE_SCANNING:
 			setVisibleButtons(false, false, false, false, true, false); break;
 		case ApkInstallWizard.STATUS_CHECK_PACKAGES:
-			setVisibleButtons(true, false, false, false, false, false);
-			btnNext.setEnabled(true);
+			setVisibleButtons(true, false, false, false, false, false);			
 			break;
 		case ApkInstallWizard.STATUS_INSTALLING:
 			setVisibleButtons(false, false, false, false, false, false); break;
 		case ApkInstallWizard.STATUS_COMPLETED:
 			setVisibleButtons(false, false, true, false, false, false); break;
 		case ApkInstallWizard.STATUS_APK_VERTIFY_ERROR:
-			setVisibleButtons(false, false, false, true, false, false); break;
-		case STATUS_NO_DEVICE:
-			setVisibleButtons(false, false, false, false, false, false); break;			
+			setVisibleButtons(false, false, false, true, false, false); break;		
 		default:
 			break;
 		}
 	}
+	
+	public void setNextButtonEnable(Boolean flag) {
+		btnNext.setEnabled(flag);
+	}
+	
     @Override public Dimension getPreferredSize() {
         Dimension d = super.getPreferredSize();
         d.width = 0; // VerticalScrollBar as needed

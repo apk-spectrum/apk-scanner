@@ -69,6 +69,8 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	DefaultListModel<DeviceListData> listmodel;
 	ButtonsRenderer<DeviceListData> listrenderer;
 	ActionListener FindPackagelistener;
+	int AllLoadingCount=0;
+	Object lock = AllLoadingCount;
 	private int status;
 	int Installfinishcount = 0;
     @SuppressWarnings("unchecked")
@@ -208,8 +210,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
     	}
     	
 		final DeviceListData data = new DeviceListData();
-		data.serialnumber = device.getSerialNumber();
-		
+		data.serialnumber = device.getSerialNumber();		
 				
 		refteshdefaultListData(data, device);
 		
@@ -232,11 +233,33 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 		data.status = data.SDKVersion == null ? "OFFLINE" : device.getState().toString();
 		
 		data.showstate = DeviceListData.SHOW_INSTALL_OPTION;
-		data.pacakgeLoadingstatus =DeviceListData.WAITING; 
+		data.pacakgeLoadingstatus =DeviceListData.WAITING;
+		
+		synchronized (lock) {			
+			AllLoadingCount++;
+			FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.DEVICE_LAYOUT_WAIT_INSTALL_BUTTON));			
+		}
+		
+		
 		data.AppDetailpanel = new JLabel(Resource.IMG_LOADING.getImageIcon());
 		data.installoptionpanel = new JLabel(Resource.IMG_LOADING.getImageIcon());
 		data.device = device;
 
+		
+		// OFFLINE
+		if(data.SDKVersion == null) {
+			synchronized (lock) {
+				AllLoadingCount --;
+				if(AllLoadingCount==0) {
+					FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.DEVICE_LAYOUT));
+				}				
+			}
+			
+			data.pacakgeLoadingstatus =DeviceListData.DONE;
+			data.installoptionpanel = new JLabel("Please check device!(OFFLINE)");
+			return;
+		}
+		
 		final JList list = this;
 		new Thread(new Runnable() {
 			@Override
@@ -304,38 +327,68 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	                    break;
 	                case OptionsBundle.FLAG_OPT_NO_INSTALL:
 	                    // 푸쉬로 바뀜
-	                	data.selectedinstalloption =  DeviceListData.OPTION_NO_INSTALL;
+	                	data.selectedinstalloption =  DeviceListData.OPTION_NO_INSTALL;	                	
 	                    break;
 	                case OptionsBundle.FLAG_OPT_DISSEMINATE:
-	                	
+	                	applyAllDeviceInstallOption(data.bundleoption);
 	                	break;
 	                }
+	                possibleinstallbuttoncontrol();
 	                list.repaint();
 	            }
 	        });
 	        
 	        //((InstallOptionPanel)data.installoptionpanel).selectedinstalloption;
 	        		
-	        if(bundle.isDontInstallOptions()) {
-	        	data.selectedinstalloption =  DeviceListData.OPTION_IMPOSSIBLE_INSTALL;
-	        } else if(bundle.isPushOptions()) {
-	        	data.selectedinstalloption =  DeviceListData.OPTION_PUSH;
-	        } else if(bundle.isInstallOptions()) {	        	
-	        	data.selectedinstalloption =  DeviceListData.OPTION_INSTALL;
-	        } else if(bundle.isNoInstallOptions()) {
-	        	data.selectedinstalloption =  DeviceListData.OPTION_NO_INSTALL;
-	        }
+	        setInstallOptionBundle(data, bundle);
 	        
 	        installtemppanel.setApkInfo(ApkInstallWizard.apkInfo);
 	        installtemppanel.setOptions(bundle);
 	        data.pacakgeLoadingstatus =DeviceListData.DONE;
 	        data.installoptionpanel = installtemppanel;
 	        data.bundleoption = bundle;
+	        
+			synchronized (lock) {
+				AllLoadingCount --;				
+				if(AllLoadingCount==0) {
+					FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.DEVICE_LAYOUT));
+				}
+			}
+			
 	        list.repaint();
 	        FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.REQ_REFRESH_DETAIL_PANEL));
 			}			
 		}).start();
     }
+    
+    void setInstallOptionBundle(DeviceListData data, OptionsBundle bundle) {
+        if(bundle.isDontInstallOptions()) {
+        	data.selectedinstalloption =  DeviceListData.OPTION_IMPOSSIBLE_INSTALL;
+        } else if(bundle.isPushOptions()) {
+        	data.selectedinstalloption =  DeviceListData.OPTION_PUSH;
+        } else if(bundle.isInstallOptions()) {	        	
+        	data.selectedinstalloption =  DeviceListData.OPTION_INSTALL;
+        } else if(bundle.isNoInstallOptions()) {
+        	data.selectedinstalloption =  DeviceListData.OPTION_NO_INSTALL;
+        }
+    }
+    
+    
+    void applyAllDeviceInstallOption(OptionsBundle bundleoption) {
+    	final ListModel<DeviceListData> listmodel  = this.getModel();
+    	
+    	for(int i=0; i< listmodel.getSize(); i++) {
+    		DeviceListData temp = listmodel.getElementAt(i);
+    		
+    		
+    		if(temp.isOffline()) continue;
+    		
+    		temp.bundleoption.copyFrom(bundleoption);
+    		((InstallOptionPanel)temp.installoptionpanel).setOptions(temp.bundleoption);
+    		setInstallOptionBundle(temp, temp.bundleoption);
+    	}
+    }
+    
     
     private JComponent getPackageInfopanel(IDevice dev)
 	{
@@ -351,7 +404,6 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
         }
                 
 		return new JLabel("Not installed");
-        //return null;
 	}
     
 	public void setDeviceProperty(IDevice device, final DeviceListData DO, final String propertyname) {
@@ -562,7 +614,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 
 	    			isinstallIcon.setIcon(ii);
 	    		} else {
-	    			if(((DeviceListData)value).status.equals("OFFLINE") || ((DeviceListData)value).isNoinstall() || ((DeviceListData)value).installErrorCuase != null) {    				
+	    			if(((DeviceListData)value).isOffline() || ((DeviceListData)value).isNoinstall() || ((DeviceListData)value).installErrorCuase != null) {    				
 	    				isinstallIcon.setIcon(Resource.IMG_INSTALL_BLOCK.getImageIcon());
 	    			} else if(((DeviceListData)value).selectedinstalloption != DeviceListData.OPTION_NO_INSTALL) {
 	    				isinstallIcon.setIcon(Resource.IMG_INSTALL_CHECK.getImageIcon());	    					    				
@@ -595,7 +647,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	    		
 	    		if(b instanceof JButton || b instanceof JLabel) {
 	    			
-	    			if((value).status.equals("OFFLINE") || (value).pacakgeLoadingstatus ==DeviceListData.WAITING) {
+	    			if((value).isOffline() || (value).pacakgeLoadingstatus ==DeviceListData.WAITING) {
 	    				b.setEnabled(false);
 	    				continue;
 	    			} else if((value).status.equals("ONLINE")) {
@@ -679,8 +731,13 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
         }
         
         public Boolean isNoinstall() {
-        	return (selectedinstalloption == OPTION_NO_INSTALL || selectedinstalloption == OPTION_IMPOSSIBLE_INSTALL) ;
+        	return (selectedinstalloption == OPTION_NO_INSTALL || selectedinstalloption == OPTION_IMPOSSIBLE_INSTALL
+        			|| isOffline());
         }
+        public Boolean isOffline() {
+        	return status.equals("OFFLINE");
+        }
+        
     }
     
     
@@ -787,12 +844,14 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 		// TODO Auto-generated method stub
 		Log.d("change device state : " + arg0.getSerialNumber() + " : " + arg0.getState());
 		setModeldata(listmodel, arg0);
+		possibleinstallbuttoncontrol();
 	}
 
 	public void deviceConnected(IDevice arg0) {
 		// TODO Auto-generated method stub
 		Log.d("deviceConnected device state : " + arg0.getSerialNumber() + " : " + arg0.getState());
 		setModeldata(listmodel, arg0);
+		possibleinstallbuttoncontrol();
 	}
 
 	public void deviceDisconnected(IDevice arg0) {
@@ -802,16 +861,36 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
     	for(int i=0; i < listmodel.size(); i++) {
     		DeviceListData temp = (DeviceListData) listmodel.getElementAt(i);
     		if(temp.serialnumber.equals(arg0.getSerialNumber())) {
-    			listmodel.removeElementAt(i);
-    			
+    			listmodel.removeElementAt(i);    			
     			if(listmodel.size() >=1) {
     				this.setSelectedIndex(0);
-    			}
-    			return;
+    			}    			
     			//setDeviceProperty(device, temp, IDevice.PROP_DEVICE_MODEL);
+    			break;
+    		}
+    	}
+    	possibleinstallbuttoncontrol();
+	}
+	
+	private void possibleinstallbuttoncontrol() {
+		if(checkinstalldevice()) {
+			FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.DEVICE_LAYOUT));
+		} else {
+			FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.DEVICE_LAYOUT_WAIT_INSTALL_BUTTON));
+		}
+	}
+	
+	private Boolean checkinstalldevice() {
+		
+    	for(int i=0; i < listmodel.size(); i++) {
+    		DeviceListData temp = (DeviceListData) listmodel.getElementAt(i);
+    		if(!temp.isNoinstall()) {    			
+    			return true;
     		}
     	}		
+		return false;
 	}
+	
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {

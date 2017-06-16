@@ -156,12 +156,12 @@ public class DefaultOptionsFactory {
 					} else if(targetSystemPath.startsWith("/system/priv-app/")) {
 						options.set(OptionsBundle.FLAG_OPT_PUSH_PRIVAPP, targetSystemPath);
 					} else {
-						options.set(OptionsBundle.FLAG_OPT_PUSH_SYSTEM, targetSystemPath);
+						options.set(OptionsBundle.FLAG_OPT_PUSH_OTHER, targetSystemPath);
 						Log.w("Unknown path : " + targetSystemPath);
 					}
 
 					if(archList != null && !archList.isEmpty()) {
-						StringBuilder deviceAbiList = new StringBuilder(); 
+						StringBuilder deviceAbiList = new StringBuilder();
 						deviceAbiList.append(device.getProperty("ro.product.cpu.abi")).append(",");
 						deviceAbiList.append(device.getProperty("ro.product.cpu.abi2")).append(",");
 						deviceAbiList.append(device.getProperty("ro.product.cpu.abilist32")).append(",");
@@ -190,11 +190,26 @@ public class DefaultOptionsFactory {
 								}
 							}
 						}
-						if(abi32 != null) {
-							options.set(OptionsBundle.FLAG_OPT_PUSH_LIB32, abi32, targetSystemPath.replaceAll("[^/]*.apk$", "lib/arm/"));
-						}
-						if(abi64 != null) {
-							options.set(OptionsBundle.FLAG_OPT_PUSH_LIB64, abi64, targetSystemPath.replaceAll("[^/]*.apk$", "lib/arm64/"));
+
+						if(targetSystemPath.matches("^/system/(priv-)?app/[^/]*/[^/]*\\.apk")) {
+							if(abi32 != null) {
+								options.set(OptionsBundle.FLAG_OPT_PUSH_LIB32, abi32, targetSystemPath.replaceAll("[^/]*.apk$", "lib/arm/"));
+							}
+							if(abi64 != null) {
+								options.set(OptionsBundle.FLAG_OPT_PUSH_LIB64, abi64, targetSystemPath.replaceAll("[^/]*.apk$", "lib/arm64/"));
+							}
+						} else if(targetSystemPath.matches("^/system/(priv-)?app/[^/]*\\.apk")) {
+							String libDirectory = targetSystemPath.replaceAll(".*/([^/]*).apk$", "/data/app-lib/$1/");
+							if(abi32 != null) {
+								options.set(OptionsBundle.FLAG_OPT_PUSH_LIB32, abi32, libDirectory);
+							}
+							if(abi64 != null) {
+								options.set(OptionsBundle.FLAG_OPT_PUSH_LIB64, abi64, libDirectory);
+							}
+						} else {
+							Log.v("Unknown systemPath, unset LIB32, LIB64");
+							options.unset(OptionsBundle.FLAG_OPT_PUSH_LIB32);
+							options.unset(OptionsBundle.FLAG_OPT_PUSH_LIB64);
 						}
 					}
 				}
