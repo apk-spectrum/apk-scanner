@@ -119,6 +119,7 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 		if(devicelist.getModel().getSize() == 0) {
 			((CardLayout)getLayout()).show(this, NO_DEVICE_LAYOUT);
 			mainlistener.actionPerformed(new ActionEvent(this, 0, NO_DEVICE_LAYOUT));
+			mainlistener.actionPerformed(new ActionEvent(this, 0, DEVICE_LAYOUT_WAIT_INSTALL_BUTTON));
 		}
 	}
 
@@ -140,7 +141,7 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
             }            
             // let's not wait > 10 sec.
             if (count > 100) {
-                Log.d("Timeout getting device list!");
+                Log.d("Timeout getting device list!");                
             }
         }
         try {
@@ -156,6 +157,8 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	    	Log.d("device is " + devices.length);
 			
 	    }else {
+			mainlistener.actionPerformed(new ActionEvent(this, 0, NO_DEVICE_LAYOUT));
+			mainlistener.actionPerformed(new ActionEvent(this, 0, DEVICE_LAYOUT_WAIT_INSTALL_BUTTON));
 	    	Log.d("device is 0");
 	    	return;
 	    }
