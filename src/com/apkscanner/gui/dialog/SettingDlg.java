@@ -441,12 +441,14 @@ public class SettingDlg extends JDialog implements ActionListener
 			Resource.PROP_LANGUAGE.setData(jcbLanguage.getSelectedItem());
 		}
 
-		if(!propStrEditorPath.equals(jcbEditors.getSelectedItem())){
+		if(!jcbEditors.getSelectedItem().equals(propStrEditorPath)){
 			String editorPath = SystemUtil.getRealPath((String)jcbEditors.getSelectedItem());
 			if(propRecentEditors.contains(editorPath)) {
 				propRecentEditors.remove(editorPath);
 			}
-			propRecentEditors.add(0, propStrEditorPath);
+			if(propStrEditorPath != null) {
+				propRecentEditors.add(0, propStrEditorPath);
+			}
 			Resource.PROP_EDITOR.setData(editorPath);
 
 			StringBuilder recentEditors = new StringBuilder();
@@ -558,7 +560,9 @@ public class SettingDlg extends JDialog implements ActionListener
 
 		});
 
-		jcbEditors.addItem(propStrEditorPath);
+		if(propStrEditorPath != null) {
+			jcbEditors.addItem(propStrEditorPath);
+		}
 		for(String editor: propRecentEditors) {
 			jcbEditors.addItem(editor);
 		}
@@ -571,7 +575,7 @@ public class SettingDlg extends JDialog implements ActionListener
 						String cmd = cmdLine.replaceAll("\"?(.*\\.[eE][xX][eE])\"?.*", "$1");
 						if(!cmd.equals(cmdLine)) {
 							String path = SystemUtil.getRealPath(cmd);
-							if(!propRecentEditors.contains(path) && !propStrEditorPath.equalsIgnoreCase(path)) {
+							if(path != null && !propRecentEditors.contains(path) && !path.equalsIgnoreCase(propStrEditorPath)) {
 								jcbEditors.addItem(path);
 							}
 						}
