@@ -91,16 +91,16 @@ JNIEXPORT jobjectArray JNICALL Java_com_apkscanner_tool_aapt_AaptNativeWrapper_r
     	stringArray = olb.toArray();
     }
 
-	for(int i = 0; i < paramCnt; i++) {
-	    if(buf[i+1] != NULL) {
-	        free((void*)buf[i+1]);
-	    }
+    for(int i = 0; i < paramCnt; i++) {
+        if(buf[i+1] != NULL) {
+            free((void*)buf[i+1]);
+        }
     }
 
-	fflush(stdout);
-	fflush(stderr);
+    fflush(stdout);
+    fflush(stderr);
     
-	return stringArray;
+    return stringArray;
 }
 
 //static JNINativeMethod sMethod[] = {

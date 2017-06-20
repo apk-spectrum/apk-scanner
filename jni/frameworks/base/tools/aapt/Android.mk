@@ -152,7 +152,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := libAaptNativeWrapper
 LOCAL_MODULE_HOST_OS := darwin linux windows
-LOCAL_CFLAGS := $(aaptCFlags) $(apkscannerCFlags)
+LOCAL_CFLAGS := $(aaptCFlags) $(apkscannerCFlags) -O0
 LOCAL_CPPFLAGS := $(aaptCppFlags)
 LOCAL_LDLIBS_darwin := $(aaptHostLdLibs_darwin)
 LOCAL_LDLIBS_linux := $(aaptHostLdLibs_linux)

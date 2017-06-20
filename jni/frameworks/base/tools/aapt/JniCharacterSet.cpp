@@ -314,7 +314,7 @@ jstring getEncodingCharacterSet(JNIEnv *env) {
     if(encodingSet != NULL) {
         const char *encoding = env->GetStringUTFChars(encodingSet, 0);
         if(encoding != NULL) {
-            printf("Get encoding character set : %s\n", encoding);
+            //printf("Get encoding character set : %s\n", encoding);
             env->ReleaseStringUTFChars(encodingSet, encoding);
         } else {
             printf("Get encoding character set : unknown\n");

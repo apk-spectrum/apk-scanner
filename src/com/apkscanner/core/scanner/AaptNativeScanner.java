@@ -218,11 +218,10 @@ public class AaptNativeScanner extends ApkScanner
 	private native static ResourceInfo nativeGetResourceString(long handle, int resId, String config);
 
 	static {
+		String arch = System.getProperty("sun.arch.data.model");
 		if (SystemUtil.isLinux()) {
-			System.loadLibrary("c++");
+			System.loadLibrary("c++" + arch);
 		}
-		System.loadLibrary("AaptNativeWrapper");
-		//System.load("Y:\\android-sdk-build\\out\\host\\windows-x86\\lib64\\libAaptNativeWrapper.dll");
-		//System.load("/home/local_depot/android-sdk-build/out/host/linux-x86/lib64/libAaptNativeWrapper.so");
+		System.loadLibrary("AaptNativeWrapper" + arch);
 	}
 }
