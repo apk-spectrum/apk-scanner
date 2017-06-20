@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.JFrame;
 import javax.swing.UIManager;
@@ -150,7 +152,14 @@ public class MainUI extends JFrame
 		ky.addKeyEventDispatcher(eventHandler);
 
 		Log.i("UI Init end");
-		toolbarManager.setEnabled((boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData());
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run()
+            {
+            	Log.e("isDispatchThread " + EventQueue.isDispatchThread());
+                toolbarManager.setEnabled((boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData());
+            }
+        }, 1000);
 	}
 
 	private static void setUIFont(javax.swing.plaf.FontUIResource f) {
