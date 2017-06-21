@@ -1,6 +1,5 @@
 package com.apkscanner.test;
 
-import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -14,7 +13,7 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
-import javax.swing.JFrame;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JWindow;
@@ -54,7 +53,7 @@ public class PopupMessageExample {
         private String message;
 
         private long startTime;
-        private Timer fadeTimer;
+        //private Timer fadeTimer;
 
         
         JWindow frame;
@@ -118,10 +117,14 @@ public class PopupMessageExample {
         
         public class FadeTimer extends Timer implements ActionListener {
 
-            private final float startAt;
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 4546123210581924146L;
+			private final float startAt;
             private final float endAt;
             private final int duration;
-            private long startTimer;
+            //private long startTimer;
 
             private ActionListener endListener;
 
@@ -168,7 +171,11 @@ public class PopupMessageExample {
 
         public class BackgroundPane extends JPanel {
 
-            private MessagePane messagePane;
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 27094827930732975L;
+			private MessagePane messagePane;
 
             public BackgroundPane() {
                 setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -210,7 +217,11 @@ public class PopupMessageExample {
 
         public class MessagePane extends JPanel {
 
-            private JLabel label;
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 553830274361457410L;
+			private JLabel label;
         	RSyntaxTextArea xmltextArea;
             public MessagePane() {
                 setOpaque(false);

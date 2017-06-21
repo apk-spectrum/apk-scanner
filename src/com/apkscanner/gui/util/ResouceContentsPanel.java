@@ -9,7 +9,6 @@ import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -20,6 +19,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
@@ -32,6 +32,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -61,16 +62,18 @@ import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 import org.fife.ui.rtextarea.SearchResult;
 
-import com.apkscanner.DexLuncher;
 import com.apkscanner.Launcher;
-import com.apkscanner.apkinfo.ApkInfo;
-import com.apkscanner.apkscanner.AxmlToXml;
-import com.apkscanner.core.AaptWrapper;
-import com.apkscanner.gui.MainUI;
-import com.apkscanner.gui.tabpanels.ImageResource.ResourceObject;
+import com.apkscanner.core.signer.SignatureReport;
+import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.gui.tabpanels.Resources.ResourceObject;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.tool.aapt.AaptNativeWrapper;
+import com.apkscanner.tool.aapt.AxmlToXml;
+import com.apkscanner.tool.dex2jar.Dex2JarWrapper;
+import com.apkscanner.tool.jd_gui.JDGuiLauncher;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.SystemUtil;
 import com.apkscanner.util.ZipFileUtil;
 
 public class ResouceContentsPanel extends JPanel{
@@ -157,20 +160,7 @@ public class ResouceContentsPanel extends JPanel{
 		toolBar.add(multiLinePrintButton);
 		
 		TextAreaPanel.add(toolBar,BorderLayout.PAGE_START);
-		
-		finddlg = new FindDialog(MainUI.getCurrentParentsFrame(), new SearchListener() {			
-			@Override
-			public void searchEvent(SearchEvent e) {
-				SearchAndNext(e.getType(), e.getSearchContext());
-			}
-			
-			@Override
-			public String getSelectedText() {
-				return null;
-			}
-		});
-		finddlg.setResizable(false);
-		
+
 		textTableViewer = new JTable(); 
 		
 		renderer = new SearchRenderer();
@@ -238,7 +228,27 @@ public class ResouceContentsPanel extends JPanel{
 		this.add(ContentsviewPanel, BorderLayout.CENTER);
 	}
 	
-	void FindNextTable(boolean next) {
+	private FindDialog getFindDialog() {
+		if(finddlg == null) {
+			SwingUtilities.getRoot(this);
+			JFrame window = (JFrame) SwingUtilities.getWindowAncestor(this);
+			finddlg = new FindDialog(window, new SearchListener() {			
+				@Override
+				public void searchEvent(SearchEvent e) {
+					SearchAndNext(e.getType(), e.getSearchContext());
+				}
+				
+				@Override
+				public String getSelectedText() {
+					return null;
+				}
+			});
+			finddlg.setResizable(false);
+		}
+		return finddlg;
+	}
+	
+	private void FindNextTable(boolean next) {
 		
 		int selectindex = textTableViewer.getSelectedRow();
 		boolean findflag= false;
@@ -308,18 +318,13 @@ public class ResouceContentsPanel extends JPanel{
 	
 	class TextViewKeyInputAction extends AbstractAction {
 
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 2157003820138446772L;
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
-			
-	        EventQueue queue = Toolkit.getDefaultToolkit().getSystemEventQueue();
-	        KeyEvent ke = (KeyEvent)queue.getCurrentEvent();
-	        String keyStroke = ke.getKeyText( ke.getKeyCode() );
+	        //EventQueue queue = Toolkit.getDefaultToolkit().getSystemEventQueue();
+	        KeyEvent ke = (KeyEvent)EventQueue.getCurrentEvent();
+	        String keyStroke = KeyEvent.getKeyText( ke.getKeyCode() );
 	        String number = keyStroke.substring(0);
 			int FuncKey = arg0.getModifiers(); 
 			
@@ -327,14 +332,14 @@ public class ResouceContentsPanel extends JPanel{
 			case "F":      /////////F key
 				
 				if(arg0.getSource() instanceof JTable) {					
-		             SwingUtilities.invokeLater( new Runnable(){ 
+					EventQueue.invokeLater( new Runnable(){ 
 	                 public void run() {
 	                	 findtextField_ResourceTable.requestFocusInWindow();	                	 
 	                 	}
 	                 });					
 					//findtextField_ResourceTable.requestFocusInWindow();
 				} else {
-					finddlg.setVisible(true);
+					getFindDialog().setVisible(true);
 				}
 				
 				break;			
@@ -487,13 +492,11 @@ public class ResouceContentsPanel extends JPanel{
 		tempfield.addFocusListener(new FocusListener() {			
 			@Override
 			public void focusLost(FocusEvent arg0) {
-				// TODO Auto-generated method stub
 				((JTextField)(arg0.getSource())).setBackground(new Color(255,255,255));					
 			}
 			
 			@Override
 			public void focusGained(FocusEvent arg0) {
-				// TODO Auto-generated method stub
 				((JTextField)(arg0.getSource())).setBackground(new Color(178,235,244));				
 			}
 		});
@@ -537,7 +540,7 @@ public class ResouceContentsPanel extends JPanel{
 					exportContent(EXPORT_TYPE_SAVE);
 					break;
 				case TEXTVIEWER_TOOLBAR_FIND:					
-					finddlg.setVisible(true);
+					getFindDialog().setVisible(true);
 					break;
 				case TEXTVIEWER_TOOLBAR_FIND+RESOURCE_LISTVIEW_TOOLBAR:					
 				    String pattern = findtextField_ResourceTable.getText().trim();
@@ -618,7 +621,7 @@ public class ResouceContentsPanel extends JPanel{
 			String[] convStrings = null;
 			boolean convAxml2Xml = false;
 			if(currentSelectedObj.attr == ResourceObject.ATTR_AXML) {
-				convStrings = AaptWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {currentSelectedObj.path});
+				convStrings = AaptNativeWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {currentSelectedObj.path});
 				if(axmlVeiwType == VEIW_TYPE_XML) convAxml2Xml = true;
 			} else if("resources.arsc".equals(currentSelectedObj.path)) {
 				convStrings = resourcesWithValue;
@@ -633,7 +636,7 @@ public class ResouceContentsPanel extends JPanel{
 				String writeString = null;
 				if(convAxml2Xml) {
 					Log.i("conv AxmlToXml");
-					AxmlToXml a2x = new AxmlToXml(convStrings, resourcesWithValue);
+					AxmlToXml a2x = new AxmlToXml(convStrings, (apkinfo != null) ? apkinfo.resourceScanner : null);
 					a2x.setMultiLinePrint(isMultiLinePrint);
 					writeString = a2x.toString();
 				} else {
@@ -651,22 +654,13 @@ public class ResouceContentsPanel extends JPanel{
 			}
 
 			if(type == EXPORT_TYPE_OPEN) {
-				String openner;
-				if(System.getProperty("os.name").indexOf("Window") >-1) {
-					openner = "explorer";
-				} else {  //for linux
-					openner = "xdg-open";
-				}
-		
-				try {
-					new ProcessBuilder(openner, resPath).start();
-				} catch (IOException e1) { }	
+				SystemUtil.openArchiveExplorer(resPath);
 			}
 	    }
 	    
 		public File getSaveFile(Component component, String defaultFilePath)
 		{
-			JFileChooser jfc = ApkFileChooser.getFileChooser((String)Resource.PROP_LAST_FILE_SAVE_PATH.getData(""), JFileChooser.SAVE_DIALOG, new File(defaultFilePath));
+			JFileChooser jfc = ApkFileChooser.getFileChooser((String)Resource.PROP_LAST_FILE_SAVE_PATH.getData(), JFileChooser.SAVE_DIALOG, new File(defaultFilePath));
 			//jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(Resource.STR_LABEL_APK_FILE_DESC.getString(),"apk"));
 
 			if(jfc.showSaveDialog(component) != JFileChooser.APPROVE_OPTION)
@@ -846,45 +840,33 @@ public class ResouceContentsPanel extends JPanel{
 			ZipFileUtil.unZip(apkinfo.filePath, currentSelectedObj.path, resPath);
 			
 			if (ButtonSet.OS_SETTING.matchActionEvent(e)) {
-				String openner;
-				if(System.getProperty("os.name").indexOf("Window") >-1) {
-					openner = "explorer";
-				} else {  //for linux
-					openner = "xdg-open";
-				}
-				try {
-					new ProcessBuilder(openner, resPath).start();
-				} catch (IOException e1) { }
+				SystemUtil.openFile(resPath);
 			} else if (ButtonSet.JD_GUI.matchActionEvent(e)) {
 				final JButton btn = buttonMap.get(ButtonSet.JD_GUI);
 				btn.setEnabled(false);
-				DexLuncher.openDex(resPath, new DexLuncher.DexWrapperListener() {
+				Dex2JarWrapper.convert(resPath, new Dex2JarWrapper.DexWrapperListener() {
 					@Override
-					public void OnError() {}
+					public void onError(String message) {
+					}
 					@Override
-					public void OnSuccess() {
-						btn.setEnabled(true);
+					public void onSuccess(String jarFilePath) {
+						JDGuiLauncher.run(jarFilePath);
+					}
+					@Override
+					public void onCompleted() {
+						btn.setEnabled(true);						
 					}
 				});
 			} else if (ButtonSet.APK_SCANNER.matchActionEvent(e)) {
 				Launcher.run(resPath);
 			} else if (ButtonSet.EXPLORER.matchActionEvent(e)) {
-				try {
-					if(System.getProperty("os.name").indexOf("Window") >-1) {
-						new ProcessBuilder("explorer", resPath).start();
-					} else {  //for linux
-						new ProcessBuilder("file-roller", resPath).start();
-					}
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+				SystemUtil.openArchiveExplorer(resPath);
 			} else if (ButtonSet.CHOOSE_APPLICATION.matchActionEvent(e)) {
 				
 			}
 		}
-		
 	}
-	
+
 	private String getSyntaxStyle(String extension) {
 		switch(extension.toLowerCase()) {
 		case ".as": return SyntaxConstants.SYNTAX_STYLE_ACTIONSCRIPT;
@@ -933,15 +915,17 @@ public class ResouceContentsPanel extends JPanel{
 	
     private void setTextContentPanel(ResourceObject obj) {
     	String content = null;
+		ZipFile zipFile = null;
+		InputStream is = null;
     	
 		switch(obj.attr) {
 		case ResourceObject.ATTR_AXML:
-			String[] xmlbuffer = AaptWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {obj.path});
+			String[] xmlbuffer = AaptNativeWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {obj.path});
 			resTypeSep.setVisible(true);
 			resTypeCombobox.setVisible(true);
 			multiLinePrintButton.setVisible(true);
 			if(axmlVeiwType == VEIW_TYPE_XML) {
-				AxmlToXml a2x = new AxmlToXml(xmlbuffer, resourcesWithValue);
+				AxmlToXml a2x = new AxmlToXml(xmlbuffer, (apkinfo != null) ? apkinfo.resourceScanner : null);
 				a2x.setMultiLinePrint(isMultiLinePrint);
 				content = a2x.toString();
 			} else {
@@ -955,15 +939,48 @@ public class ResouceContentsPanel extends JPanel{
 			resTypeSep.setVisible(false);
 			resTypeCombobox.setVisible(false);
 			multiLinePrintButton.setVisible(false);
-			ZipFile zipFile;
 			try {
 				zipFile = new ZipFile(apkinfo.filePath);
 				ZipEntry entry = zipFile.getEntry(obj.path);
 				byte[] buffer = new byte[(int) entry.getSize()];
-				zipFile.getInputStream(entry).read(buffer);
+				is = zipFile.getInputStream(entry);
+				is.read(buffer);
 				content = new String(buffer);
 			} catch (IOException e) {
 				e.printStackTrace();
+			} finally {
+				if(is != null) {
+					try {
+						is.close();
+					} catch (IOException e) { }
+				}
+				if(zipFile != null) {
+					try {
+						zipFile.close();
+					} catch (IOException e) { }
+				}
+			}
+			break;
+		case ResourceObject.ATTR_CERT:
+			try {
+				zipFile = new ZipFile(apkinfo.filePath);
+				ZipEntry entry = zipFile.getEntry(obj.path);
+				is = zipFile.getInputStream(entry);
+				SignatureReport sr = new SignatureReport(is);
+				content = sr.toString();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				if(is != null) {
+					try {
+						is.close();
+					} catch (IOException e) { }
+				}
+				if(zipFile != null) {
+					try {
+						zipFile.close();
+					} catch (IOException e) { }
+				}
 			}
 			break;
 		case ResourceObject.ATTR_ETC:
@@ -1011,24 +1028,29 @@ public class ResouceContentsPanel extends JPanel{
     }
     
     public void selectContentAndLine(JTree tree, int line, String Findstr) {
-    	SearchContext context = new SearchContext();
-        context.setMatchCase(false);
-        context.setMarkAll(true);
-        context.setSearchFor(Findstr);
-        context.setWholeWord(false);
-        
-        org.fife.ui.rtextarea.SearchResult result = SearchEngine.find(xmltextArea, context);
-        
-        //xmltextArea.getText().s
-        
-        //xmltextArea.setCaretPosition(0);
-        
-        if (!result.wasFound()) {
-        	xmltextArea.setCaretPosition(0);
-        	SearchEngine.find(xmltextArea, context);
-        	Log.d("not found");
-        }	
     	
+        if("resources.arsc".equals(currentSelectedObj.path)) {
+	        textTableViewer.getSelectionModel().clearSelection();
+	        textTableViewer.getSelectionModel().addSelectionInterval(line, line);
+	        
+			int maxscroolbar = textTableScroll.getVerticalScrollBar().getMaximum();
+			int rowCount = textTableViewer.getRowCount(); 
+			textTableScroll.getVerticalScrollBar().setValue((line*(maxscroolbar/rowCount)));
+        } else {
+        	SearchContext context = new SearchContext();
+            context.setMatchCase(false);
+            context.setMarkAll(true);
+            context.setSearchFor(Findstr);
+            context.setWholeWord(false);
+            
+        	org.fife.ui.rtextarea.SearchResult result = SearchEngine.find(xmltextArea, context);
+
+        	if (!result.wasFound()) {
+        		xmltextArea.setCaretPosition(0);
+        		SearchEngine.find(xmltextArea, context);
+        		Log.d("not found");
+        	}
+        }
     }
     
     public void selectContent(JTree tree) {
@@ -1061,6 +1083,7 @@ public class ResouceContentsPanel extends JPanel{
 			case ResourceObject.ATTR_AXML:
 			case ResourceObject.ATTR_XML:
 			case ResourceObject.ATTR_TXT:
+			case ResourceObject.ATTR_CERT:
 			    setTextContentPanel(CurrentresObj);
 				break;
 			default:

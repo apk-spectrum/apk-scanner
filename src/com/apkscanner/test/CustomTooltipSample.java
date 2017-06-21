@@ -16,7 +16,11 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import com.apkscanner.util.Log;
 
 public class CustomTooltipSample extends JFrame {
-    private CustomLabel m_label;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7602921155022505902L;
+	private CustomLabel m_label;
     
     public CustomTooltipSample() {
         setTitle("Custom tooltip sample");
@@ -37,7 +41,11 @@ public class CustomTooltipSample extends JFrame {
     }
     
     private static class CustomLabel extends RSyntaxTextArea {
-        private CustomTooltip m_tooltip;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -2693163416771997690L;
+		private CustomTooltip m_tooltip;
         
         public CustomLabel(String text) {
             super(text);
@@ -61,7 +69,11 @@ public class CustomTooltipSample extends JFrame {
     }
     
     private static class CustomTooltip extends JToolTip {
-        private JLabel m_label;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -8826248801147475337L;
+		private JLabel m_label;
         private JButton m_button;
         private JPanel m_panel;
         

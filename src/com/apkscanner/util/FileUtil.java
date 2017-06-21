@@ -34,10 +34,8 @@ public class FileUtil
 	
 	public static String getTempPath()
 	{
-		String tempPath = System.getProperty("java.io.tmpdir");
-		String separator = File.separator + (File.separator.equals("\\") ? File.separator : "");
-
-		if(!tempPath.matches(".*"+separator+"$")) tempPath += File.separator;
+		String tempPath = SystemUtil.getTemporaryPath();
+		if(!tempPath.endsWith(File.separator)) tempPath += File.separator;
 		tempPath += "ApkScanner";
 		
 		return tempPath;

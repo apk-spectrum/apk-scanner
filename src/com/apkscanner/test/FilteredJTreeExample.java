@@ -24,7 +24,11 @@ import javax.swing.tree.TreeModel;
 
 public class FilteredJTreeExample extends JFrame {
 
-    private JPanel contentPane;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6121065743985727828L;
+	private JPanel contentPane;
     private JTextField textField;
 
     /**
@@ -94,7 +98,11 @@ public class FilteredJTreeExample extends JFrame {
         });
 
         tree.setCellRenderer(new DefaultTreeCellRenderer() {
-            private JLabel lblNull = new JLabel();
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1741304831874120632L;
+			private JLabel lblNull = new JLabel();
 
             @Override
             public Component getTreeCellRendererComponent(JTree tree, Object value,
@@ -121,7 +129,8 @@ public class FilteredJTreeExample extends JFrame {
             }
 
             private boolean containsMatchingChild(DefaultMutableTreeNode node) {
-                Enumeration<DefaultMutableTreeNode> e = node.breadthFirstEnumeration();
+                @SuppressWarnings("unchecked")
+				Enumeration<DefaultMutableTreeNode> e = node.breadthFirstEnumeration();
                 while (e.hasMoreElements()) {
                     if (matchesFilter(e.nextElement())) {
                         return true;

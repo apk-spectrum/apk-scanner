@@ -73,10 +73,11 @@ public class ZipFileUtil
 						return false;
 					}
 				}
+				InputStream is = null;
 				try {
 					fos = new FileOutputStream(outPath);
 	 				byte[] buffer = new byte[(int) entry.getSize()];
-	 				InputStream is = zipFile.getInputStream(entry);
+	 				is = zipFile.getInputStream(entry);
 	 				int len = -1;
 	 				do {
 	 					len = is.read(buffer);
@@ -85,6 +86,9 @@ public class ZipFileUtil
 				} finally {
 					if (fos != null) {
 						fos.close();
+					}
+					if(is != null) {
+						is.close();
 					}
 				}
 			} else {
@@ -117,7 +121,7 @@ public class ZipFileUtil
 
 	public static Long getFileSize(String zipFilePath, String srcPath)
 	{
-		long size = -1;
+		long size = 0;
 		try {
 			ZipFile zipFile = new ZipFile(zipFilePath);
 			ZipEntry entry = zipFile.getEntry(srcPath);
@@ -131,19 +135,40 @@ public class ZipFileUtil
 		return size;
 	}
 
-	public static String getFileSize(String zipFilePath, String srcPath, FSStyle style)
+	public static Long getCompressedSize(String zipFilePath, String srcPath)
 	{
 		long size = 0;
 		try {
 			ZipFile zipFile = new ZipFile(zipFilePath);
 			ZipEntry entry = zipFile.getEntry(srcPath);
 			if(entry != null) {
-				size = entry.getSize();
+				size = entry.getCompressedSize();
 			}
 			zipFile.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return FileUtil.getFileSize(size, style);
+		return size;
+	}
+
+	public static String getFileSize(String zipFilePath, String srcPath, FSStyle style)
+	{
+		return FileUtil.getFileSize(getFileSize(zipFilePath, srcPath), style);
+	}
+
+	public static boolean exists(String zipFilePath, String srcPath)
+	{
+		boolean ret = false;
+		try {
+			ZipFile zipFile = new ZipFile(zipFilePath);
+			ZipEntry entry = zipFile.getEntry(srcPath);
+			if(entry != null && !entry.isDirectory()) {
+				ret = true;
+			}
+			zipFile.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return ret;
 	}
 }

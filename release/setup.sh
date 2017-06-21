@@ -2,7 +2,7 @@
 
 APP_PATH="/opt/APKScanner"
 APP_FILE="APKInfoDlg.jar"
-LIB_PATH="$APP_PATH/lib/json-simple-1.1.1.jar:$APP_PATH/lib/commons-cli-1.3.1.jar:$APP_PATH/lib/rsyntaxtextarea-2.5.7.jar:$APP_PATH/lib/ForfindGUI.jar"
+LIB_PATH="$APP_PATH/lib/json-simple-1.1.1.jar:$APP_PATH/lib/commons-cli-1.3.1.jar:$APP_PATH/lib/rsyntaxtextarea-2.5.7.jar:$APP_PATH/lib/ForfindGUI.jar:$APP_PATH/lib/ddmlib.jar:$APP_PATH/lib/guava-18.0.jar:$APP_PATH/lib/mslinks.jar:$APP_PATH/lib/jna-4.4.0.jar:$APP_PATH/lib/jna-platform-4.4.0.jar"
 MAIN_CLASS="com.apkscanner.Main"
 
 
@@ -26,7 +26,7 @@ for k in $APP_PATH/lib/*.jar
 do
     _classpath="\${_classpath}:\${k}"
 done
-java -Xms512m -Xmx1024m -classpath "\${_classpath}" com.apkscanner.Main "\$@" > /dev/null
+java -Xms512m -Xmx1024m -Djava.library.path=$APP_PATH/tool -classpath "\${_classpath}" com.apkscanner.Main "\$@" > /dev/null
 EOF
 
 jar -xf APKInfoDlg.jar icons/AppIcon.png
@@ -43,6 +43,7 @@ sudo rm -rf $APP_PATH
 
 sudo mkdir -p $APP_PATH
 sudo mkdir -p $APP_PATH/data
+sudo mkdir -p $APP_PATH/data/build-master-target-product-security
 sudo mkdir -p $APP_PATH/icons
 sudo mkdir -p $APP_PATH/tool
 if [ ! -d $APP_PATH ]; then
@@ -68,7 +69,7 @@ cat << EOF > ./apkscanner.desktop
 Encoding=UTF-8
 Version=1.0
 Type=Application
-Exec=java -classpath $APP_PATH/$APP_FILE:$LIB_PATH: $MAIN_CLASS %f
+Exec=java -Djava.library.path=$APP_PATH/tool -classpath $APP_PATH/$APP_FILE:$LIB_PATH: $MAIN_CLASS %f
 Name=APK Scanner
 Comment=APK Scanner
 Icon=$APP_PATH/icons/AppIcon.png

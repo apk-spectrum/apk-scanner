@@ -25,8 +25,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileSystemView;
 
-import com.apkscanner.resource.Resource;
-
 public class BufferedImageMouseDrag extends JFrame {
 	private static final long serialVersionUID = 7175463633946262949L;
 	

@@ -31,7 +31,12 @@ import com.apkscanner.util.Log;
  */
  public class AnimatedIconTreeExample extends JFrame {
 
-  public AnimatedIconTreeExample() {
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7811249051552624726L;
+
+public AnimatedIconTreeExample() {
      super("AnimatedIconTreeExample");
      String[] strs = { "CARNIVORA", // 0
          "Felidae", // 1
@@ -121,7 +126,12 @@ import com.apkscanner.util.Log;
 
 class IconNodeRenderer extends DefaultTreeCellRenderer {
 
-  public Component getTreeCellRendererComponent(JTree tree, Object value,
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2567229320934693663L;
+
+public Component getTreeCellRendererComponent(JTree tree, Object value,
        boolean sel, boolean expanded, boolean leaf, int row,
        boolean hasFocus) {
 
@@ -131,7 +141,8 @@ class IconNodeRenderer extends DefaultTreeCellRenderer {
     Icon icon = ((IconNode) value).getIcon();
     Log.d("Aaaaaaaaaaaaaa");
     if (icon == null) {
-       Hashtable icons = (Hashtable) tree.getClientProperty("JTree.icons");
+       @SuppressWarnings("rawtypes")
+	Hashtable icons = (Hashtable) tree.getClientProperty("JTree.icons");
        String name = ((IconNode) value).getIconName();
        if ((icons != null) && (name != null)) {
          icon = (Icon) icons.get(name);
@@ -149,7 +160,12 @@ class IconNodeRenderer extends DefaultTreeCellRenderer {
 
 class IconNode extends DefaultMutableTreeNode {
 
-  protected Icon icon;
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3534956028497946635L;
+
+protected Icon icon;
 
   protected String iconName;
 
