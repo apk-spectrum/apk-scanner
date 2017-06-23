@@ -210,7 +210,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
     	}
     	
 		final DeviceListData data = new DeviceListData();
-		data.serialnumber = device.getSerialNumber();		
+		data.serialnumber = device.getSerialNumber();
 				
 		refteshdefaultListData(data, device);
 		
@@ -245,6 +245,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 		data.installoptionpanel = new JLabel(Resource.IMG_LOADING.getImageIcon());
 		data.device = device;
 
+		FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.REQ_REFRESH_DETAIL_PANEL));
 		
 		// OFFLINE
 		if(data.SDKVersion == null) {
@@ -253,10 +254,10 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 				if(AllLoadingCount==0) {
 					FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.DEVICE_LAYOUT));
 				}				
-			}
-			
+			}			
 			data.pacakgeLoadingstatus =DeviceListData.DONE;
 			data.installoptionpanel = new JLabel("Please check device!(OFFLINE)");
+			Log.d("set model return - offline");
 			return;
 		}
 		
@@ -280,7 +281,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 		        fireSelectionValueChanged(0, 0, true);
 			}
 		}).start();
-		
+		Log.d("set model return - online");
     }
     
     private synchronized void setInstalloptionListener(final JList list, final DeviceListData data ,final IDevice device) {
@@ -766,7 +767,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 
         private void setData ( DeviceListData data )
         {
-            this.data = data;
+            this.data = data;            
             setText ( data.getName () );
         }
 
