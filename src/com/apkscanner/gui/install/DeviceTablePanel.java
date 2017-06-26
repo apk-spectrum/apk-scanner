@@ -1,16 +1,14 @@
 package com.apkscanner.gui.install;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -19,30 +17,27 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
-import javax.swing.text.BadLocationException;
 
 import com.android.ddmlib.AdbCommandRejectedException;
 import com.android.ddmlib.AndroidDebugBridge;
+import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.android.ddmlib.IDevice;
 import com.android.ddmlib.MultiLineReceiver;
 import com.android.ddmlib.ShellCommandUnresponsiveException;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
-import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 
 public class DeviceTablePanel extends JPanel implements ComponentListener{
+	private static final long serialVersionUID = 7799899722760215241L;
+
 	JTable table;
 	JTextArea Logtext;	
 	ActionListener Mainlistener;
@@ -213,7 +208,7 @@ public class DeviceTablePanel extends JPanel implements ComponentListener{
 	public void getDeviceName(IDevice device, final DeviceDO DO) {
 		try 
 		{
-		final String DeviceName = null;
+		//final String DeviceName = null;
 		if("ONLINE".equals(device.getState().toString())) {
 				device.executeShellCommand("getprop ro.product.model", new MultiLineReceiver() {
 					String temp;
@@ -477,7 +472,7 @@ public class DeviceTablePanel extends JPanel implements ComponentListener{
 	    }	    
 	    
 	    public void addRow(DeviceDO do1) {
-	    	boolean isexist = false;
+	    	//boolean isexist = false;
 	    	
 	    	do1.setNumber(data.size());
 	    	do1.setchecked(new Boolean(false));	

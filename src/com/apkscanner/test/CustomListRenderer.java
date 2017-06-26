@@ -1,15 +1,26 @@
 package com.apkscanner.test;
 
-import javax.swing.*;
-
-import com.apkscanner.resource.Resource;
-
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+
+import com.apkscanner.resource.Resource;
 
 /**
  * @author Mikle Garin
@@ -18,13 +29,15 @@ import java.awt.geom.RoundRectangle2D;
 
 public class CustomListRenderer extends DefaultListCellRenderer
 {
-    private static final ImageIcon crossIcon = new ImageIcon(Resource.class.getResource("/icons/logo/base.png"));
+	private static final long serialVersionUID = -1867006118377826954L;
+
+	//private static final ImageIcon crossIcon = new ImageIcon(Resource.class.getResource("/icons/logo/base.png"));
     private static ImageIcon tipIcon = new ImageIcon(Resource.class.getResource("/icons/logo/nougat.png"));
     private static ImageIcon tipIcon1 = new ImageIcon(Resource.class.getResource("/icons/logo/marshmallow.png"));
     private static ImageIcon tipIcon2 = new ImageIcon(Resource.class.getResource("/icons/logo/jelly_bean.png"));
     
     
-    private static int LIST_HEIGHT = 60;
+    //private static int LIST_HEIGHT = 60;
     
     /**
      * Sample frame with list.
@@ -35,7 +48,7 @@ public class CustomListRenderer extends DefaultListCellRenderer
     {
         JFrame frame = new JFrame ( "Custom list renderer" );
 
-        DefaultListModel model = new DefaultListModel ();
+        DefaultListModel<CustomData> model = new DefaultListModel<CustomData> ();
         model.addElement ( new CustomData ( new Color ( 209, 52, 23 ), 0, "SC-02J" ) );
         model.addElement ( new CustomData ( new Color ( 135, 163, 14 ), 1, "SC-04J" ) );
         model.addElement ( new CustomData ( new Color ( 204, 204, 204 ), 2, "SC-05J" ) );
@@ -54,7 +67,7 @@ public class CustomListRenderer extends DefaultListCellRenderer
         tipIcon2 = new ImageIcon(result); //Image로 ImageIcon 생성
         
         
-        JList list = new JList ( model );
+        JList<?> list = new JList<CustomData> ( model );
         list.setCellRenderer ( new CustomListRenderer ( list ) );
         list.setBorder ( BorderFactory.createEmptyBorder ( 5, 5, 5, 5 ) );
         frame.add ( list );
@@ -66,14 +79,14 @@ public class CustomListRenderer extends DefaultListCellRenderer
     }
 
     private CustomLabel renderer;
-    public CustomListRenderer ( final JList list )
+    public CustomListRenderer ( final JList<?> list )
     {
         super ();
         renderer = new CustomLabel ();
     }
 
     @Override
-    public Component getListCellRendererComponent ( JList list, Object value, int index, boolean isSelected, boolean cellHasFocus )
+    public Component getListCellRendererComponent ( JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus )
     {
         renderer.setSelected ( isSelected );
         renderer.setData ( ( CustomData ) value );
@@ -85,7 +98,9 @@ public class CustomListRenderer extends DefaultListCellRenderer
      */
     private static class CustomLabel extends JLabel
     {
-        private static final Color selectionColor = new Color ( 82, 158, 202 );
+		private static final long serialVersionUID = -458675320336838995L;
+
+		private static final Color selectionColor = new Color ( 82, 158, 202 );
 
         private boolean selected;
         private CustomData data;

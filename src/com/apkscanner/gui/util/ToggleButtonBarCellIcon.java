@@ -9,7 +9,6 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
-import java.util.Objects;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonModel;
@@ -23,7 +22,7 @@ public class ToggleButtonBarCellIcon implements Icon {
 
 	@Override public void paintIcon(Component c, Graphics g, int x, int y) {
 		Container parent = c.getParent();
-		if (Objects.isNull(parent)) {
+		if (parent == null) {
 			return;
 		}
 		int r = 8;

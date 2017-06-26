@@ -2,18 +2,15 @@ package com.apkscanner.gui.install;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.ListModel;
-import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -50,7 +47,7 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	private JPanel lodingPanel;
 	private JLabel causeLabel;
 	
-	private int DeviceInfoFinishCount = 0;
+	//private int DeviceInfoFinishCount = 0;
 	
 	private int status;
 	AndroidDebugBridge adb;
@@ -91,7 +88,6 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 
 	@Override
 	public void deviceChanged(IDevice arg0, int arg1) {
-		// TODO Auto-generated method stub
 		Log.d("change device state : " + arg0.getSerialNumber() + " : " + arg0.getState());
 		if(status != ApkInstallWizard.STATUS_CHECK_PACKAGES) return;
 		if(devicelist!=null) devicelist.deviceChanged(arg0, arg1);
@@ -101,7 +97,6 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	@Override
 	public void deviceConnected(IDevice arg0) {
 		Log.d("connect device state : " + arg0.getSerialNumber() + " : " + arg0.getState());
-		// TODO Auto-generated method stub
 		if(devicelist!=null) devicelist.deviceConnected(arg0);
 		if(status != ApkInstallWizard.STATUS_CHECK_PACKAGES) return;
 		
@@ -111,7 +106,6 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 
 	@Override
 	public void deviceDisconnected(IDevice arg0) {
-		// TODO Auto-generated method stub
 		if(status != ApkInstallWizard.STATUS_CHECK_PACKAGES) return;
 		
 		if(devicelist!=null) devicelist.deviceDisconnected(arg0);
@@ -125,14 +119,13 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		// TODO Auto-generated method stub
 		if(e.getValueIsAdjusting()) {		
 			refreshDetailPanel();
 		}
 	}
 	public void refreshDeviceInfo() {
 	    int count = 0;
-        while (AdbServerMonitor.getAndroidDebugBridge().getBridge() == null) {
+        while (AdbServerMonitor.getAndroidDebugBridge() == null) {
             try {
                 Thread.sleep(100);
                 count++;
@@ -147,7 +140,6 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
         try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         
@@ -201,6 +193,7 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 		//checkmemory();
 	}
 
+	@SuppressWarnings("unused")
 	private void checkmemory() {
 		  /* Total amount of free memory available to the JVM */
 		  Log.d("Free memory (bytes): " + Runtime.getRuntime().freeMemory());	
@@ -222,7 +215,6 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		if(e.getActionCommand().equals(REQ_REFRESH_DETAIL_PANEL)) {
 			refreshDetailPanel();
 		} else if(e.getActionCommand().equals(REQ_FINISHED_INSTALL)) {

@@ -22,8 +22,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.ImageObserver;
 import java.io.IOException;
-
-import java.util.Objects;
 import java.util.jar.JarFile;
 
 import javax.swing.BorderFactory;
@@ -54,9 +52,7 @@ import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.CompactApkInfo;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.dialog.PackageInfoPanel;
-import com.apkscanner.gui.install.DeviceCustomList.DeviceListData;
 import com.apkscanner.resource.Resource;
-
 import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
 import com.apkscanner.util.Log;
@@ -111,6 +107,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
         return hash;
     }
     
+	@SuppressWarnings("unchecked")
 	public void setStatus(int status) {
 		this.status = status;
 		((ButtonsRenderer<DeviceListData>)this.getCellRenderer()).setStatus(status);
@@ -128,9 +125,10 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	}
     
 	private void deviceListinstall() {
+		@SuppressWarnings("unchecked")
 		final ListModel<DeviceListData> listmodel  = this.getModel();
 		
-		ThreadGroup installpool = new ThreadGroup("install");
+		//ThreadGroup installpool = new ThreadGroup("install");
 		
 		Installfinishcount =0;
 		
@@ -375,7 +373,8 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
     
     
     void applyAllDeviceInstallOption(OptionsBundle bundleoption) {
-    	final ListModel<DeviceListData> listmodel  = this.getModel();
+    	@SuppressWarnings("unchecked")
+		final ListModel<DeviceListData> listmodel  = this.getModel();
     	
     	for(int i=0; i< listmodel.getSize(); i++) {
     		DeviceListData temp = listmodel.getElementAt(i);
@@ -464,7 +463,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	            JButton button = getButton(list, pt, index);
 	            ButtonsRenderer renderer = (ButtonsRenderer) list.getCellRenderer();
 	            renderer.button = button;
-	            if (Objects.nonNull(button) && button.isEnabled()) {
+	            if (button != null && button.isEnabled()) {
 	                button.getModel().setRollover(true);
 	                renderer.rolloverIndex = index;
 	                if (!button.equals(prevButton)) {
@@ -474,7 +473,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	                renderer.rolloverIndex = -1;
 	                Rectangle r = null;
 	                if (prevIndex == index) {
-	                    if (prevIndex >= 0 && Objects.nonNull(prevButton)) {
+	                    if (prevIndex >= 0 && prevButton != null) {
 	                        r = list.getCellBounds(prevIndex, prevIndex);
 	                    }
 	                } else {
@@ -500,7 +499,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	        int index = list.locationToIndex(pt);
 	        if (index >= 0) {
 	            JButton button = getButton(list, pt, index);
-	            if (Objects.nonNull(button) && button.isEnabled()) {
+	            if (button != null && button.isEnabled()) {
 	            	ButtonsRenderer renderer = (ButtonsRenderer) list.getCellRenderer();
 	                renderer.pressedIndex = -1;
 	                renderer.button = null;
@@ -529,7 +528,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	    
 	    
 	    private void listRepaint(JList list, Rectangle rect) {
-	        if (Objects.nonNull(rect)) {
+	        if (rect != null) {
 	            list.repaint(rect);
 	        }
 	    }
@@ -631,7 +630,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	            customlabel.setSelected(isSelected);
 	        }
 	        
-	        if (Objects.nonNull(button)) {
+	        if (button != null) {
 	            if (index == pressedIndex) {
 	                button.getModel().setSelected(true);
 	                button.getModel().setArmed(true);

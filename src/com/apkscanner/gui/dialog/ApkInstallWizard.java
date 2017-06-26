@@ -2,7 +2,6 @@ package com.apkscanner.gui.dialog;
 
 
 import java.awt.BorderLayout;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -17,33 +16,24 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.util.concurrent.ExecutionException;
 import java.util.jar.JarFile;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.ListModel;
-import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import com.android.ddmlib.IDevice;
-import com.apkscanner.core.installer.ApkInstaller;
 import com.apkscanner.core.installer.DefaultOptionsFactory;
-import com.apkscanner.core.installer.OptionsBundle;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.core.signer.SignatureReport;
-import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.CompactApkInfo;
 import com.apkscanner.gui.install.ContentPanel;
 import com.apkscanner.gui.install.ControlPanel;
 import com.apkscanner.gui.install.FindPackagePanel;
-import com.apkscanner.gui.install.DeviceCustomList.DeviceListData;
 import com.apkscanner.gui.install.InstallProgressPanel;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.resource.Resource;
-
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
@@ -332,19 +322,21 @@ public class ApkInstallWizard
 	public void stop() {
 		
 	}
-	
+
+	@SuppressWarnings("unused")
 	private void restart() {
 		if(status != STATUS_COMPLETED) return;
 		status = STATUS_PACKAGE_SCANNING;
 		start();
 	}
-	
+
+	@SuppressWarnings("unused")
 	private void printLog(String msg) {
 		Log.v(msg);	
 		// append to log viewer
 		contentPanel.appendLog(msg);
 	}
-	
+
 	public class UIEventHandler implements ActionListener, KeyEventDispatcher, WindowListener {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {

@@ -4,19 +4,16 @@ package com.apkscanner.gui.install;
 import java.awt.CardLayout;
 import java.awt.Font;
 import java.awt.event.ActionListener;
-import java.util.List;
+
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTable;
 import javax.swing.ListModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.TableColumn;
+
 import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.install.DeviceCustomList.DeviceListData;
-import com.apkscanner.gui.install.DeviceTablePanel.DeviceDO;
 import com.apkscanner.gui.util.ImagePanel;
 import com.apkscanner.resource.Resource;
 
@@ -41,7 +38,7 @@ public class ContentPanel extends JPanel
 
 	//private DeviceTablePanel panel_select_device;
 	private FindPackagePanel panel_check_package;
-	private JPanel panel_set_install_option;
+	//private JPanel panel_set_install_option;
 	
 	private JLabel loadingMessageLable;
 	private JLabel ErrorMessageLable;
@@ -62,7 +59,7 @@ public class ContentPanel extends JPanel
 		//panel_select_device = new DeviceTablePanel(listener);				
 				
 		panel_check_package = new FindPackagePanel(listener);
-		panel_set_install_option = new JPanel();
+		//panel_set_install_option = new JPanel();
 		ErrorMessageLable = new JLabel("Please Check this APK file!", SwingConstants.CENTER);
 		ErrorMessageLable.setFont(new Font("Serif", Font.PLAIN, 30)); 
 		

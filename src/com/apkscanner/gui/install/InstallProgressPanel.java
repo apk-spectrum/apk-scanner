@@ -222,7 +222,8 @@ public class InstallProgressPanel extends JPanel
 			colorbase.state = 0;
 		}
 		
-        private void centerString(Graphics g, Rectangle r, String s, 
+        @SuppressWarnings("unused")
+		private void centerString(Graphics g, Rectangle r, String s, 
                 Font font) {
             FontRenderContext frc = 
                     new FontRenderContext(null, true, true);

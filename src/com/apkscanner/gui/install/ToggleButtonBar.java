@@ -11,21 +11,17 @@ import java.awt.RenderingHints;
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
 import java.util.Arrays;
-import java.util.Objects;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
-
 import javax.swing.ButtonModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
-
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.install.DeviceCustomList.DeviceListData;
-import com.apkscanner.util.Log;
 
 
 
@@ -42,7 +38,7 @@ public class ToggleButtonBar extends JPanel{
 	private static String[] installtextSet = {"Installed", "Not installed", "", "", "waiting"};
 	private static final String[] installOptiontextSet = {"Install", "No Install", "Push", "Impossible", "waiting"};
 	
-	private static final Color[] InstallingColorSet = {null, null, new Color(0x555555), new Color(0x50AF49), new Color(0x8b0000)};
+	//private static final Color[] InstallingColorSet = {null, null, new Color(0x555555), new Color(0x50AF49), new Color(0x8b0000)};
 	private static final String[] installingtextSet = {"Installing..", "Succes", "Fail"};
 	
     //public static final int OPTION_INSTALL = 0;
@@ -130,7 +126,7 @@ public class ToggleButtonBar extends JPanel{
 
         @Override public void paintIcon(Component c, Graphics g, int x, int y) {
             Container parent = c.getParent();
-            if (Objects.isNull(parent)) {
+            if (parent == null) {
                 return;
             }
             int r = 8;
