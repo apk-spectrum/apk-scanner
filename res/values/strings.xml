@@ -76,6 +76,12 @@
 	<string name="btn_allow_test_package">Allow test packages(-t)</string>
 	<string name="btn_reboot_after_pushed">Reboot after pushed</string>
 
+	<string name="btn_installed">Installed</string>
+	<string name="btn_not_installed">Not installed</string>
+	<string name="btn_waiting">Waiting...</string>
+	<string name="btn_success">Success</string>
+	<string name="btn_fail">Fail</string>
+	
 	<string name="menu_new">New Window...</string>
 	<string name="menu_new_window">New window(N)</string>
 	<string name="menu_new_apk_file">Open APK file to new window(O)</string>

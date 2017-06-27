@@ -25,6 +25,7 @@ import javax.swing.SwingConstants;
 
 import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.install.DeviceCustomList.DeviceListData;
+import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
 
@@ -39,11 +40,12 @@ public class ToggleButtonBar extends JPanel{
 	int status;	
 	private static final Color[] ColorSet = { new Color(0x50AF49), new Color(0xFF7400), new Color(0x5CD1E5), new Color(0x8b0000), new Color(0x555555)};
 	
-	private static String[] installtextSet = {"Installed", "Not installed", "", "", "waiting"};
-	private static final String[] installOptiontextSet = {"Install", "No Install", "Push", "Impossible", "waiting"};
+	private String[] installtextSet = {Resource.STR_BTN_INSTALLED.getString(), Resource.STR_BTN_NOT_INSTALLED.getString(), "", "", Resource.STR_BTN_WAITING.getString()};
+	private String[] installOptiontextSet = {"Install", Resource.STR_BTN_NO_INSTALL.getString(),
+			"Push", Resource.STR_BTN_IMPOSSIBLE_INSTALL.getString(), Resource.STR_BTN_WAITING.getString()};
 	
 	private static final Color[] InstallingColorSet = {null, null, new Color(0x555555), new Color(0x50AF49), new Color(0x8b0000)};
-	private static final String[] installingtextSet = {"Installing..", "Succes", "Fail"};
+	private static final String[] installingtextSet = {Resource.STR_LABEL_INSTALLING.getString(), Resource.STR_BTN_SUCCESS.getString(), Resource.STR_BTN_FAIL.getString()};
 	
     //public static final int OPTION_INSTALL = 0;
     //public static final int OPTION_NO_INSTALL = 1;

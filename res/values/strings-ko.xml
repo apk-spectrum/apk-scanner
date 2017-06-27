@@ -53,6 +53,12 @@
 	<string name="btn_forward_lock">Forward lock application(-l)</string>
 	<string name="btn_allow_test_package">테스트 페키지 허용(-t)</string>
 	<string name="btn_reboot_after_pushed">완료 후 재부팅</string>
+	
+	<string name="btn_installed">설치됨</string>
+    <string name="btn_not_installed">설치 안됨</string>
+    <string name="btn_waiting">처리중..</string>
+    <string name="btn_success">성공</string>	
+    <string name="btn_fail">실패</string>
 
 	<string name="btn_open_lab">APK 파일에서 정보를 가져옵니다. (Ctrl+O)</string>
 	<string name="btn_open_pacakge_lab">디바이스 패키지 열기(Ctrl+P)</string>

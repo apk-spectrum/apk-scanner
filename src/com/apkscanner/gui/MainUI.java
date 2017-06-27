@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.JFrame;
 import javax.swing.UIManager;
@@ -148,9 +150,15 @@ public class MainUI extends JFrame
 		// Shortcut key event processing
 		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		ky.addKeyEventDispatcher(eventHandler);
-
-		Log.i("UI Init end");
-		toolbarManager.setEnabled((boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData());
+		
+		Timer m_timer = new Timer();
+		TimerTask m_task = new TimerTask() {
+			@Override
+			public void run() {
+				toolbarManager.setEnabled((boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData());
+			}
+		};
+		m_timer.schedule(m_task, 1000);
 	}
 
 	private static void setUIFont(javax.swing.plaf.FontUIResource f) {
@@ -201,7 +209,7 @@ public class MainUI extends JFrame
 
 		@Override
 		public void onCompleted() {
-			EventQueue.invokeLater(new Runnable() {
+			EventQueue.invokeLater(new Runnable() { 
 				public void run() {
 					Log.v("ApkCore.onComplete()");
 					toolBar.setEnabledAt(ButtonSet.OPEN, true);
@@ -924,6 +932,7 @@ public class MainUI extends JFrame
 					if(enable) {
 						AdbServerMonitor.startServerAndCreateBridgeAsync();
 						registerEventListeners();
+						//applyToobarPolicy();
 					} else {
 						unregisterEventListeners();
 						EventQueue.invokeLater(new Runnable() {
