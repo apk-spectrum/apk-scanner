@@ -11,6 +11,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.ListModel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -56,9 +57,9 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 		AndroidDebugBridge.addDeviceChangeListener(this);
 		mainlistener = listener;
 		JPanel mainpanel = new JPanel(new BorderLayout());
-		JLabel textSelectDevice = new JLabel("connect device........... and wait");
+		JLabel textSelectDevice = new JLabel("Connect device.", SwingConstants.CENTER);
 		textSelectDevice.setFont(new Font(textSelectDevice.getFont().getName(), Font.PLAIN, 30));
-	    mainpanel.add(textSelectDevice,BorderLayout.NORTH);
+	    //mainpanel.add(textSelectDevice,BorderLayout.NORTH);
 		pacakgeinfopanel = new JPanel(new GridLayout(1, 1));
 		pacakgeinfopanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
         mainpanel.add(pacakgeinfopanel,BorderLayout.CENTER);
@@ -165,6 +166,9 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	}
 	public void refreshDetailPanel() {
 		//checkmemory();
+		
+		if(devicelist.getSelectedIndex() <0) return;
+		
 		DeviceListData data = (DeviceListData)devicelist.getModel().getElementAt(devicelist.getSelectedIndex());
 		
 		pacakgeinfopanel.removeAll();

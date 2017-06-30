@@ -210,7 +210,7 @@ public class MainUI extends JFrame
 
 		@Override
 		public void onCompleted() {
-			EventQueue.invokeLater(new Runnable() {
+			EventQueue.invokeLater(new Runnable() { 
 				public void run() {
 					Log.v("ApkCore.onComplete()");
 					toolBar.setEnabledAt(ButtonSet.OPEN, true);
@@ -933,6 +933,7 @@ public class MainUI extends JFrame
 					if(enable) {
 						AdbServerMonitor.startServerAndCreateBridgeAsync();
 						registerEventListeners();
+						//applyToobarPolicy();
 					} else {
 						unregisterEventListeners();
 						EventQueue.invokeLater(new Runnable() {

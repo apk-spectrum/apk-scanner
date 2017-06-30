@@ -91,6 +91,12 @@ public enum Resource
 	STR_BTN_ALLOW_TEST_PACKAGE	(Type.TEXT, "@btn_allow_test_package"),
 	STR_BTN_REBOOT_AF_PUSHED	(Type.TEXT, "@btn_reboot_after_pushed"),
 
+	STR_BTN_INSTALLED	(Type.TEXT, "@btn_installed"),
+	STR_BTN_NOT_INSTALLED	(Type.TEXT, "@btn_not_installed"),
+	STR_BTN_WAITING	(Type.TEXT, "@btn_waiting"),
+	STR_BTN_SUCCESS	(Type.TEXT, "@btn_success"),
+	STR_BTN_FAIL	(Type.TEXT, "@btn_fail"),
+	
 	STR_BTN_OPEN_LAB			(Type.TEXT, "@btn_open_lab"),
 	STR_BTN_OPEN_PACKAGE_LAB	(Type.TEXT, "@btn_open_pacakge_lab"),
 	STR_BTN_MANIFEST_LAB		(Type.TEXT, "@btn_manifest_lab"),
