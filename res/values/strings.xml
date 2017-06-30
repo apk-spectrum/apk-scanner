@@ -303,9 +303,9 @@ Refresh this package information?</string>
 	<string name="question_remove_system_apk">It's system app, continues remove?</string>
 	<string name="question_removed_reboot">remove successful, need reboot, now?</string>
 
-	<string name="tree_message_device">Device</string>
-	<string name="tree_message_version">App Version</string>
-	<string name="tree_message_root">Root</string>
-	<string name="tree_message_reboot">Reboot</string>
+	<string name="tree_node_device">Device</string>
+	<string name="tree_node_displayed">Currently Displayed Packages</string>
+	<string name="tree_node_recently">Recently Activity Packages</string>
+	<string name="tree_node_running">Currently Running Process Packages</string>
 
 </resources>

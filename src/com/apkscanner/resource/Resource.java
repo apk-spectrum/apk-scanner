@@ -291,10 +291,10 @@ public enum Resource
 	STR_LABEL_ABI				(Type.TEXT, "@label_abi"),
 	STR_LABEL_DESTINATION		(Type.TEXT, "@label_destination"),
 
-	STR_TREE_MESSAGE_DEVICE 	(Type.TEXT, "@tree_message_device"),
-	STR_TREE_MESSAGE_VERSION 	(Type.TEXT, "@tree_message_version"),
-	STR_TREE_MESSAGE_ROOT 		(Type.TEXT, "@tree_message_root"),
-	STR_TREE_MESSAGE_REBOOT 	(Type.TEXT, "@tree_message_reboot"),
+	STR_TREE_NODE_DEVICE 		(Type.TEXT, "@tree_node_device"),
+	STR_TREE_NODE_DISPLAYED		(Type.TEXT, "@tree_node_displayed"),
+	STR_TREE_NODE_RECENTLY		(Type.TEXT, "@tree_node_recently"),
+	STR_TREE_NODE_RUNNING_PROC 	(Type.TEXT, "@tree_node_running"),
 
 	STR_MSG_FAILURE_OPEN_APK	(Type.TEXT, "@msg_failure_open_apk"),
 	STR_MSG_NO_SUCH_APK_FILE	(Type.TEXT, "@msg_no_such_apk"),
@@ -389,6 +389,8 @@ public enum Resource
 	IMG_TREE_DEVICE				(Type.IMAGE, "tree_icon_device.png"),
 	IMG_TREE_TOP				(Type.IMAGE, "tree_icon_top.gif"),
 	IMG_TREE_FOLDER				(Type.IMAGE, "tree_icon_folder.png"),
+	IMG_TREE_LOADING			(Type.IMAGE, "tree_loading.gif"),
+	IMG_TREE_FAVOR				(Type.IMAGE, "tree_favor.png"),
 
 	IMG_INSTALL_CHECK			(Type.IMAGE, "install_dlg_check.png"),
 	IMG_INSTALL_BLOCK		(Type.IMAGE, "install_dlg_block.png"),

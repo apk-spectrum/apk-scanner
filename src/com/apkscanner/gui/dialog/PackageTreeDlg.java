@@ -16,6 +16,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +30,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -67,11 +67,13 @@ import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.FilteredTreeModel;
 import com.apkscanner.gui.util.SimpleCheckTableModel;
 import com.apkscanner.gui.util.SimpleCheckTableModel.TableRowObject;
+import com.apkscanner.gui.util.TreeNodeIconRefresher;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.IPackageStateListener;
 import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
+import com.apkscanner.tool.adb.WindowStateInfo;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 
@@ -90,7 +92,6 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 
 	private JPanel ListPanel;
 	private JButton refreshbtn;
-	private JFrame parentframe;
 	static private int result;
 	private String selDevice;
 	private String selPackage;
@@ -98,12 +99,16 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 	private String tmpApkPath;
 	private JTextField textSearchFilter;
 
+	private String currentFocus;
 
 	private final String[] columnNames = {"", Resource.STR_LABEL_DEVICE.getString(), Resource.STR_LABEL_PATH.getString()};
 	private ArrayList<TableRowObject> tableListArray = new ArrayList<TableRowObject>();
 	private JTable table;
 
 	private DeviceHandler deviceHandler;
+
+	// Must be accessing to pullingNodes in EventDispatchThread 
+	private ArrayList<TreeNode> pullingNodes = new ArrayList<TreeNode>();
 
 	public class FrameworkTableObject implements TableRowObject {
 		public Boolean buse;
@@ -187,7 +192,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		});
 
 
-		top = new DefaultMutableTreeNode("Device");
+		top = new DefaultMutableTreeNode(Resource.STR_TREE_NODE_DEVICE.getString());
 
 		tree = new JTree(new FilteredTreeModel(top));
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -201,7 +206,14 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 			private final ImageIcon iconApk = Resource.IMG_TREE_APK.getImageIcon(16,16);
 			private final ImageIcon iconDevice = Resource.IMG_TREE_DEVICE.getImageIcon(16,16);
 			private final ImageIcon iconTop = Resource.IMG_TREE_TOP.getImageIcon(16,16);
-			private final ImageIcon iconFolder = Resource.IMG_TREE_FOLDER.getImageIcon(16,16);
+			private final ImageIcon iconFolder = Resource.IMG_TREE_FOLDER.getImageIcon();
+			private final ImageIcon iconLoading = Resource.IMG_TREE_LOADING.getImageIcon();
+			private final ImageIcon iconFavor = Resource.IMG_TREE_FAVOR.getImageIcon();
+
+			private TreeNodeIconRefresher treeIconRefresher = new TreeNodeIconRefresher(tree);
+			{
+				iconLoading.setImageObserver(treeIconRefresher);
+			}
 
 			@Override
 			public Component getTreeCellRendererComponent(JTree tree,
@@ -220,7 +232,30 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 					setIcon(iconDevice);
 				} else {
 					if(node.getUserObject() instanceof PackageInfo) {
-						setIcon(iconApk);
+						if(pullingNodes.contains(node)) {
+							setIcon(iconLoading);
+							treeIconRefresher.addTreeNode(node);
+						} else {
+							PackageInfo pack = (PackageInfo) node.getUserObject();
+							if(pack.packageName.equals(currentFocus)) {
+								setIcon(iconFavor);
+							} else {
+								setIcon(iconApk);
+							}
+							treeIconRefresher.removeTreeNode(node);
+						}
+					} else if(node.getUserObject() instanceof String) {
+						String nodeName = (String)node.getUserObject();
+						if(nodeName.startsWith("*")) {
+							setText(nodeName.substring(1));
+							setIcon(iconFavor);
+						} else if(nodeName.startsWith("#")) {
+							setText(nodeName.substring(1));
+							setIcon(iconLoading);
+							treeIconRefresher.addTreeNode(node);
+						} else {
+							setIcon(iconFolder);
+						}
 					} else {
 						setIcon(iconFolder);
 					}
@@ -296,7 +331,6 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		openbtn.addActionListener(this);
 		refreshbtn.addActionListener(this);
 		exitbtn.addActionListener(this);
-
 
 		JLabel GifLabel = new JLabel(Resource.IMG_WAIT_BAR.getImageIcon());
 		JLabel Loading = new JLabel(Resource.STR_LABEL_LOADING.getString());
@@ -430,9 +464,6 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		tree.expandPath(new TreePath(top.getPath()));
 		tree.updateUI();
 
-		refreshbtn.setVisible(false);
-		gifPanel.setVisible(true);
-
 		SwingWorker<Integer, Object> task = new SwingWorker<Integer, Object>()
 		{
 			@Override
@@ -447,18 +478,6 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 				}
 				return devices.length;
 			}
-
-			@Override
-			protected void done() {
-				if(textSearchFilter != null) {
-					if(textSearchFilter.getText().length() > 0){
-						setFilter();
-					}
-				}
-
-				gifPanel.setVisible(false);
-				refreshbtn.setVisible(true);
-			};
 		};
 		task.execute();
 
@@ -553,13 +572,12 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		}
 	}
 
-	public int showTreeDlg(Component component)
+	public int showTreeDlg()
 	{
 		result = APPROVE_OPTION;
 		selDevice = null;
 		selPackage = null;
 		selApkPath = null;
-		parentframe = (JFrame) component;
 
 		setVisible(true);
 
@@ -692,31 +710,63 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 
 	private void pullPackage()
 	{
-		Log.i("PullPackage()");
+		Log.i("pullPackage()");
 
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
-				tree.getLastSelectedPathComponent();
-
-		if(node.getChildCount() != 0) {
-			Log.i("not node!");
-			return ;
+		if(!EventQueue.isDispatchThread()) {
+			Log.w("Must be accessing to pullingNodes in EventDispatchThread");
+			try {
+				EventQueue.invokeAndWait(new Runnable() {
+					@Override
+					public void run() {
+						pullPackage();
+					}
+				});
+			} catch (InvocationTargetException | InterruptedException e) {
+				e.printStackTrace();
+			}
+			return;
 		}
 
-		final PackageInfo packageInfo = ((PackageInfo)node.getUserObject()); 
+		if(tree == null) {
+			Log.e("tree is null");
+			return;
+		}
+
+		final DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+		if(node == null || !(node.getUserObject() instanceof PackageInfo)) {
+			Log.w("node is null or no node of PackageInfo!");
+			return;
+		}
+
+		if(pullingNodes.contains(node)) {
+			Log.e("already pulling..");
+			return;
+		}
+
+		final PackageInfo packageInfo = (PackageInfo) node.getUserObject(); 
 
 		Log.i(packageInfo.packageName);
 		Log.i(packageInfo.getLabel());
 		Log.i(packageInfo.getApkPath());
 
-		DefaultMutableTreeNode deviceNode = null;
-		for(deviceNode = node ; !(deviceNode.getUserObject() instanceof IDevice); deviceNode = ((DefaultMutableTreeNode)deviceNode.getParent())) { }
+		final String apkPath = packageInfo.getApkPath();
+		if(apkPath == null) {
+			Log.e("apkPath is null");
+			return;
+		}
 
-		Log.i(deviceNode.getUserObject().toString());
+		DefaultMutableTreeNode deviceNode = null;
+		for(deviceNode = ((DefaultMutableTreeNode)node.getParent());
+				deviceNode != null && !(deviceNode.getUserObject() instanceof IDevice);
+				deviceNode = ((DefaultMutableTreeNode)deviceNode.getParent())) { }
+
+		if(deviceNode == null) {
+			Log.e("no such device node");
+			return;
+		}
 
 		final IDevice device = (IDevice) deviceNode.getUserObject();
-
-		final String apkPath = packageInfo.getApkPath();
-		if(apkPath == null) return;
+		Log.i(device.toString());
 
 		String saveFileName;
 		if(apkPath.endsWith("base.apk")) {
@@ -725,8 +775,10 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 			saveFileName = apkPath.replaceAll(".*/", "");
 		}
 
-		final File destFile = ApkFileChooser.saveApkFile(parentframe, saveFileName);
+		final File destFile = ApkFileChooser.saveApkFile(PackageTreeDlg.this, saveFileName);
 		if(destFile == null) return;
+
+		pullingNodes.add(node);
 
 		new SwingWorker<String, Object> () {
 			@Override
@@ -736,6 +788,10 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 
 			@Override
 			protected void done() {
+				if(pullingNodes.contains(node)) {
+					pullingNodes.remove(node);
+				}
+
 				String errMessage = null;
 				try {
 					errMessage = get();
@@ -847,6 +903,20 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		}
 	}
 
+	private void setRefreshBtnVisible(final boolean visible) {
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				if(gifPanel != null && gifPanel.isVisible() != !visible) {
+					gifPanel.setVisible(!visible);
+				}
+				if(refreshbtn != null && refreshbtn.isVisible() != visible) {
+					refreshbtn.setVisible(visible);
+				}
+			}
+		});
+	}
+
 	class DeviceHandler extends SwingWorker<Object, Object> implements IDeviceChangeListener, IPackageStateListener {
 		private boolean quit;
 		Queue<IDevice> eventQueue = new LinkedList<IDevice>();
@@ -854,6 +924,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		class DevicePackageInfo {
 			IDevice device;
 			PackageInfo[] packages;
+			PackageInfo[] displayedPackages;
 			PackageInfo[] recentPackages;
 			PackageInfo[] runningPackages;
 		}
@@ -865,15 +936,22 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 
 		@Override
 		protected Object doInBackground() throws Exception {
+			boolean isWakeUp = false;
 			while(!quit) {
 				IDevice device = null;
 				synchronized (eventQueue) {
 					if(eventQueue.isEmpty()) {
 						Log.v("Event queue is empty");
+						setRefreshBtnVisible(true);
 						eventQueue.wait();
 						if(quit) break;
+						isWakeUp = true;
 					}
 					device = eventQueue.poll();
+					if(device != null && isWakeUp) {
+						isWakeUp = false;
+						setRefreshBtnVisible(false);
+					}
 				}
 
 				if(device != null) {
@@ -907,6 +985,24 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 						}
 						devPack.runningPackages = list.toArray(new PackageInfo[list.size()]);
 
+						WindowStateInfo[] winStates = PackageManager.getCurrentlyDisplayedPackages(device);
+						list = new ArrayList<PackageInfo>(pkgs.length);
+						for(WindowStateInfo info: winStates) {
+							for(PackageInfo obj: devPack.packages) {
+								if(obj.packageName.equals(info.packageName) && !list.contains(obj)) {
+									if(info.isCurrentFocus) {
+										list.add(0, obj);
+									} else {
+										list.add(obj);	
+									}
+								}
+							}
+							if(info.isCurrentFocus) {
+								currentFocus = info.packageName;
+							}
+						}
+						devPack.displayedPackages = list.toArray(new PackageInfo[list.size()]);
+
 						publish(devPack);
 					}
 				}
@@ -914,7 +1010,6 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 			Log.v("doInBackground() Quit");
 			return null;
 		}
-
 
 		@Override
 		protected void process(List<Object> chunks){
@@ -931,8 +1026,9 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 						DefaultMutableTreeNode system = new DefaultMutableTreeNode("system");
 						DefaultMutableTreeNode dataapp = new DefaultMutableTreeNode("app");
 						DefaultMutableTreeNode data = new DefaultMutableTreeNode("data");
-						DefaultMutableTreeNode recently = new DefaultMutableTreeNode("Recently activity package");
-						DefaultMutableTreeNode running = new DefaultMutableTreeNode("Currently running package");
+						DefaultMutableTreeNode displayed = new DefaultMutableTreeNode("*" + Resource.STR_TREE_NODE_DISPLAYED.getString());
+						DefaultMutableTreeNode recently = new DefaultMutableTreeNode("*" + Resource.STR_TREE_NODE_RECENTLY.getString());
+						DefaultMutableTreeNode running = new DefaultMutableTreeNode("*" + Resource.STR_TREE_NODE_RUNNING_PROC.getString());
 
 						system.add(priv_app);
 						system.add(systemapp);
@@ -967,6 +1063,10 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 							}
 						}
 
+						for(PackageInfo obj: devPack.displayedPackages) {
+							displayed.add(new DefaultMutableTreeNode(obj));
+						}
+
 						for(PackageInfo obj: devPack.recentPackages) {
 							recently.add(new DefaultMutableTreeNode(obj));
 						}
@@ -976,6 +1076,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 						}
 
 						devNode.removeAllChildren();
+						devNode.add(displayed);
 						devNode.add(recently);
 						devNode.add(running);
 						devNode.add(system);
@@ -1030,7 +1131,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 			}
 			node.removeAllChildren();
 			if(device.isOnline()) {
-				node.add(new DefaultMutableTreeNode(Resource.STR_LABEL_LOADING.getString()));
+				node.add(new DefaultMutableTreeNode("#" + Resource.STR_LABEL_LOADING.getString()));
 
 				synchronized (eventQueue) {
 					if(!eventQueue.contains(device)) {

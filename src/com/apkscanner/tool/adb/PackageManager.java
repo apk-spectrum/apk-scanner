@@ -184,14 +184,14 @@ public class PackageManager {
 					}
 				}
 			} else if(pack != null && pack.codePath == null && line.matches("^\\s*codePath=.*$")) {
-				pack.codePath = line.replaceAll("^\\s*codePath=\\s*([^\\s]*).*$", "$1");
+				pack.codePath = line.replaceAll("^\\s*codePath=\\s*(\\S*).*$", "$1");
 				if(pack.apkPath != null && !pack.apkPath.startsWith(pack.codePath)) {
 					pack.apkPath = pack.codePath;
 				}
 			} else if(verName == null && line.matches("^\\s*versionName=.*$")) {
-				verName = line.replaceAll("^\\s*versionName=\\s*([^\\s]*).*$", "$1");
+				verName = line.replaceAll("^\\s*versionName=\\s*(\\S*).*$", "$1");
 			} else if(verCode == null && line.matches("^\\s*versionCode=.*$")) {
-				verCode = line.replaceAll("^\\s*versionCode=\\s*([^\\s]*).*$", "$1");
+				verCode = line.replaceAll("^\\s*versionCode=\\s*(\\S*).*$", "$1");
 			}
 		}
 		outputReceiver.clear();
@@ -401,7 +401,7 @@ public class PackageManager {
 		if(errMessage != null) {
 			return errMessage; 
 		}
-		
+
 		try {
 			SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
 			packageInfo.device.executeShellCommand("rm -r " + removePath, outputReceiver);
@@ -439,6 +439,91 @@ public class PackageManager {
 			errMessage = "Unknown Error";
 		}
 		return errMessage;
+	}
+
+	public static WindowStateInfo[] getCurrentlyDisplayedPackages(IDevice device) {
+		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
+		outputReceiver.setTrimLine(false);
+		try {
+			device.executeShellCommand("dumpsys window windows", outputReceiver);
+		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException | IOException e) {
+			e.printStackTrace();
+		}
+		String[] result = outputReceiver.getOutput();
+		//ArrayList<String> pkgList = new ArrayList<String>();
+
+		ArrayList<WindowStateInfo> windows = new ArrayList<WindowStateInfo>();  
+		ArrayList<String> windowDump = new ArrayList<String>();
+		boolean isWindowInfoBlock = false;
+		WindowStateInfo winStateInfo = null;
+		String blockEndRegex = "";
+
+		String currentFocus = null;
+		String focusedApp = null;
+
+		for(String line: result) {
+			if(line.matches("^(\\s+)Window\\s+#.*")) {
+				isWindowInfoBlock = true;
+				blockEndRegex = "^" + line.replaceAll("^(\\s+)Window\\s+#.*", "$1") + "\\S.*";
+				if(winStateInfo != null) {
+					if(winStateInfo.name == null || winStateInfo.packageName == null || winStateInfo.packageName.equalsIgnoreCase("null")
+							|| winStateInfo.hasSurface == null || !winStateInfo.hasSurface) {
+						Log.v("Unkown window or no surface : " + winStateInfo.name + ", package: " + winStateInfo.packageName
+								+ " hasSurface: " + winStateInfo.hasSurface);
+					} else {
+						winStateInfo.dump = windowDump.toArray(new String[windowDump.size()]);
+						windows.add(winStateInfo);
+					}
+				}
+				windowDump.clear();
+				winStateInfo = new WindowStateInfo();
+				winStateInfo.name = line.replaceAll("^\\s+Window\\s+#[0-9]+\\s+(Window\\{.*\\}):.*$", "$1");
+				//Log.v("stateName:" + winStateInfo.name);
+				windowDump.add(line);
+				continue;
+			} else if(isWindowInfoBlock && line.matches(blockEndRegex)) {
+				isWindowInfoBlock = false;
+			}
+			if(isWindowInfoBlock) {
+				windowDump.add(line);
+
+				if(winStateInfo.mToken == null && line.matches("^\\s+mToken=.*$")) {
+					winStateInfo.mToken = line.replaceAll("^\\s+mToken=(.*)$", "$1");
+					//Log.v("mToken:" + winStateInfo.mToken);
+				} else if(winStateInfo.packageName == null && line.matches(".*\\s+package=(\\S+)\\s*.*")) {
+					winStateInfo.packageName = line.replaceAll(".*\\s+package=(\\S+)\\s*.*", "$1");
+					//Log.v("packageName:" + winStateInfo.packageName);
+				} else if(winStateInfo.hasSurface == null && line.matches(".*\\s+mHasSurface=(\\S+)\\s*.*")) {
+					winStateInfo.hasSurface = "true".equalsIgnoreCase(line.replaceAll(".*\\s+mHasSurface=(\\S+)\\s*.*", "$1"));
+					//Log.v("hasSurface:" + winStateInfo.hasSurface);
+				}
+			} else {
+				if(currentFocus == null && line.matches("\\s+mCurrentFocus=(.*)$")) {
+					currentFocus = line.replaceAll("\\s+mCurrentFocus=(.*)$", "$1");
+				} else if(focusedApp == null && line.matches("\\s+mFocusedApp=(.*)$")) {
+					focusedApp = line.replaceAll("\\s+mFocusedApp=(.*)$", "$1");
+				}
+			}
+		}
+		if(winStateInfo != null) {
+			if(winStateInfo.name == null || winStateInfo.packageName == null || winStateInfo.packageName.equalsIgnoreCase("null")
+					|| winStateInfo.hasSurface == null || !winStateInfo.hasSurface) {
+				Log.v("Unkown window or no surface : " + winStateInfo.name + ", package: " + winStateInfo.packageName
+						+ " hasSurface: " + winStateInfo.hasSurface);
+			} else {
+				winStateInfo.dump = windowDump.toArray(new String[windowDump.size()]);
+				windows.add(winStateInfo);
+			}
+		}
+
+		Log.v("currentFocus : " + currentFocus + ", focusedApp : " + focusedApp);
+		for(WindowStateInfo info: windows) {
+			info.isCurrentFocus = info.name.equals(currentFocus);
+			info.isFocusedApp = info.name.equals(focusedApp);
+			//Log.v("info.pakc : " + info.packageName + ", curFocus : " + info.isCurrentFocus + ", focused : " + info.isFocusedApp);
+		}
+
+		return windows.toArray(new WindowStateInfo[windows.size()]);
 	}
 
 	public static String[] getRecentlyActivityPackages(IDevice device) {
@@ -501,7 +586,7 @@ public class PackageManager {
 				}
 			}
 		}
-		return pkgList.toArray(new String[0]);
+		return pkgList.toArray(new String[pkgList.size()]);
 	}
 
 	public static String[] getCurrentlyRunningPackages(IDevice device) {
@@ -527,6 +612,6 @@ public class PackageManager {
 		if(pkgList.size() > 0 && pkgList.get(0).equals("NAME")) {
 			pkgList.remove(0);
 		}
-		return pkgList.toArray(new String[0]);
+		return pkgList.toArray(new String[pkgList.size()]);
 	}
 }

@@ -302,9 +302,9 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="question_remove_system_apk">시템앱을 삭제하려고 합니다. 계속 하시겠습니까?</string>
 	<string name="question_removed_reboot">시스템앱을 삭제하였습니다. 재부팅 하시겠습니까?</string>
 
-	<string name="tree_message_device">디바이스</string>
-	<string name="tree_message_version">앱 버전</string>
-	<string name="tree_message_root">루트</string>
-	<string name="tree_message_reboot">재부팅</string>
+	<string name="tree_node_device">디바이스</string>
+	<string name="tree_node_displayed">화면에 표시중인 패키지</string>
+	<string name="tree_node_recently">최근 실행된 액티비티 패키지</string>
+	<string name="tree_node_running">실행중인 프로세스 패키지</string>
 
 </resources>
