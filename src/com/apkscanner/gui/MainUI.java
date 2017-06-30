@@ -948,9 +948,6 @@ public class MainUI extends JFrame
 
 		public void setApkInfo(ApkInfo info) {
 			synchronized(this) {
-				if(!enabled) {
-					return;
-				}
 				if(info != null) {
 					packageName = info.manifest.packageName;
 					versionCode = info.manifest.versionCode != null ? info.manifest.versionCode : 0;
@@ -963,7 +960,9 @@ public class MainUI extends JFrame
 					hasMainActivity = false; 
 				}
 			}
-			applyToobarPolicy();
+			if(enabled) {
+				applyToobarPolicy();
+			}
 		}
 
 		private void applyToobarPolicy() {
@@ -1062,7 +1061,7 @@ public class MainUI extends JFrame
 
 		@Override
 		public void deviceChanged(IDevice device, int changeMask) { 
-			Log.v("deviceChanged() " + device.getSerialNumber() + ", " + device.getState() + ", changeMask " + changeMask);
+			Log.v("deviceChanged() " + device.getName() + ", " + device.getState() + ", changeMask " + changeMask);
 			if((changeMask & IDevice.CHANGE_STATE) != 0 && device.isOnline()) {
 				applyToobarPolicy();
 			}
@@ -1070,7 +1069,7 @@ public class MainUI extends JFrame
 
 		@Override
 		public void deviceConnected(IDevice device) {
-			Log.v("deviceConnected() " + device.getSerialNumber() + ", " + device.getState());
+			Log.v("deviceConnected() " + device.getName() + ", " + device.getState());
 			if(device.isOnline()) {
 				applyToobarPolicy();
 			} else {
