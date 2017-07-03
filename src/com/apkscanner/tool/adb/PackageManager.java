@@ -28,6 +28,7 @@ public class PackageManager {
 
 	private static HashMap<IDevice, HashMap<String, PackageInfo>> packagesMap = new HashMap<IDevice, HashMap<String, PackageInfo>>();
 	private static HashMap<String, PackageInfo[]> packageListCache = new HashMap<String, PackageInfo[]>();
+	private static HashMap<IDevice, String> focusPackageCache = new HashMap<IDevice, String>();
 
 	public static void addPackageStateListener(IPackageStateListener listener) {
 		synchronized (sLock) {
@@ -520,10 +521,21 @@ public class PackageManager {
 		for(WindowStateInfo info: windows) {
 			info.isCurrentFocus = info.name.equals(currentFocus);
 			info.isFocusedApp = info.name.equals(focusedApp);
+
+			if(info.isCurrentFocus) {
+				focusPackageCache.put(device, info.packageName);
+			}
 			//Log.v("info.pakc : " + info.packageName + ", curFocus : " + info.isCurrentFocus + ", focused : " + info.isFocusedApp);
 		}
 
 		return windows.toArray(new WindowStateInfo[windows.size()]);
+	}
+
+	public static String getCurrentFocusPackage(IDevice device, boolean force) {
+		if(force || !focusPackageCache.containsKey(device)) {
+			getCurrentlyDisplayedPackages(device);
+		}
+		return focusPackageCache.get(device);
 	}
 
 	public static String[] getRecentlyActivityPackages(IDevice device) {

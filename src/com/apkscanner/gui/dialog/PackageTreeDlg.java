@@ -99,8 +99,6 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 	private String tmpApkPath;
 	private JTextField textSearchFilter;
 
-	private String currentFocus;
-
 	private final String[] columnNames = {"", Resource.STR_LABEL_DEVICE.getString(), Resource.STR_LABEL_PATH.getString()};
 	private ArrayList<TableRowObject> tableListArray = new ArrayList<TableRowObject>();
 	private JTable table;
@@ -237,7 +235,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 							treeIconRefresher.addTreeNode(node);
 						} else {
 							PackageInfo pack = (PackageInfo) node.getUserObject();
-							if(pack.packageName.equals(currentFocus)) {
+							if(pack.packageName.equals(PackageManager.getCurrentFocusPackage(pack.device, false))) {
 								setIcon(iconFavor);
 							} else {
 								setIcon(iconApk);
@@ -996,9 +994,6 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 										list.add(obj);	
 									}
 								}
-							}
-							if(info.isCurrentFocus) {
-								currentFocus = info.packageName;
 							}
 						}
 						devPack.displayedPackages = list.toArray(new PackageInfo[list.size()]);
