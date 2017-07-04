@@ -45,21 +45,21 @@ public class ApkInstallWizard
 	public static final int STATUS_CHECK_PACKAGES = 2;
 	public static final int STATUS_INSTALLING = 3;
 	public static final int STATUS_COMPLETED = 4;
-	
+
 	public static final int STATUS_DESTROY_DIALOG = 100;
 	public static final int STATUS_APK_VERTIFY_ERROR = 101;
-	
+
 	public static final int FLAG_OPT_INSTALL	 	= 0x0100;
 	public static final int FLAG_OPT_PUSH			= 0x0200;
 	public static final int FLAG_OPT_PUSH_OVERWRITE = 0x0400;
-	
+
 	public static final int FLAG_OPT_INSTALL_INTERNAL = 0x0001;
 	public static final int FLAG_OPT_INSTALL_EXTERNAL = 0x0002;
-	
+
 	public static final int FLAG_OPT_PUSH_SYSTEM	= 0x0001;
 	public static final int FLAG_OPT_PUSH_PRIVAPP	= 0x0002;
 	public static final int FLAG_OPT_PUSH_DATA		= 0x0004;
-	
+
 	public static final int FLAG_OPT_EXTRA_RUN		= 0x0010;
 	public static final int FLAG_OPT_EXTRA_REBOOT	= 0x0020;
 	public static final int FLAG_OPT_EXTRA_WITH_LIB	= 0x0040;
@@ -71,14 +71,14 @@ public class ApkInstallWizard
 	private ContentPanel contentPanel;
 	private ControlPanel controlPanel;
 	private UIEventHandler uiEventHandler = new UIEventHandler();
-	
+
 	public static String pakcageFilePath;	
 	public static CompactApkInfo apkInfo;
 	public static SignatureReport signatureReport;
 	public static DefaultOptionsFactory optFactory;
-	
+
 	private int status;
-	
+
 	public class ApkInstallWizardDialog  extends JDialog
 	{
 		private static final long serialVersionUID = 2018466680871932348L;
@@ -86,33 +86,33 @@ public class ApkInstallWizard
 		public ApkInstallWizardDialog() {
 			dialog_init(null);
 		}
-		
+
 		public ApkInstallWizardDialog(Frame owner) {
 			super(owner);
 			dialog_init(owner);
 		}
-		
+
 		public ApkInstallWizardDialog(JDialog owner) {
 			super(owner);
 			dialog_init(owner);
 		}
-		
+
 		private void dialog_init(Component owner) {
 			setTitle(Resource.STR_TITLE_INSTALL_WIZARD.getString());
 			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 			setResizable(true);
 			setModal(false);
 			addWindowListener(uiEventHandler);
-			
+
 			initialize(this);
 			setLocationRelativeTo(owner);
 		}
 	}
-	
+
 	public class ApkInstallWizardFrame extends JFrame
 	{
 		private static final long serialVersionUID = -5642057585041759436L;
-		
+
 		public ApkInstallWizardFrame() {
 			frame_init();
 			setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -127,7 +127,7 @@ public class ApkInstallWizard
 			frame_init();
 			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		}
-		
+
 		private void frame_init()
 		{
 			try {
@@ -140,16 +140,16 @@ public class ApkInstallWizard
 					| UnsupportedLookAndFeelException e1) {
 				e1.printStackTrace();
 			}
-			
+
 			setTitle(Resource.STR_TITLE_INSTALL_WIZARD.getString());
 			setResizable(true);
 
 			initialize(this);
 			setLocationRelativeTo(null);
-			
+
 			// Closing event of window be delete tempFile
 			addWindowListener(uiEventHandler);
-			
+
 		}
 	}
 
@@ -166,7 +166,7 @@ public class ApkInstallWizard
 		}		
 		wizard = new ApkInstallWizardFrame();		
 	}
-	
+
 	public ApkInstallWizard(String FilePath, JFrame owner) {
 		pakcageFilePath = FilePath;		
 		if(FilePath == null || !(new File(FilePath).isFile())) {
@@ -179,7 +179,7 @@ public class ApkInstallWizard
 		else 
 			wizard = new ApkInstallWizardFrame(owner);
 	}
-	
+
 	public ApkInstallWizard(String FilePath, JDialog owner) {
 		pakcageFilePath = FilePath;		
 		if(FilePath == null || !(new File(FilePath).isFile())) {
@@ -204,44 +204,44 @@ public class ApkInstallWizard
 		AdbServerMonitor.startServerAndCreateBridgeAsync();
 		window.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
 		window.setSize(new Dimension(550,450));
-		
+
 		progressPanel = new InstallProgressPanel();
 		controlPanel = new ControlPanel(uiEventHandler);
 		contentPanel = new ContentPanel(uiEventHandler);
-		
-		
+
+
 		JPanel PanelDummy = new JPanel();
 		//progressPanel.setPreferredSize(new Dimension(700, 200));
 		PanelDummy.setBackground(Color.WHITE);
 		PanelDummy.setOpaque(true);
 		PanelDummy.setPreferredSize(new Dimension(600, 80));
 		PanelDummy.add(progressPanel);
-		
+
 		window.add(PanelDummy, BorderLayout.NORTH);
 		window.add(contentPanel, BorderLayout.CENTER);
 		window.add(controlPanel, BorderLayout.SOUTH);
-		
+
 		//Log.i("initialize() register event handler");
 		//window.addWindowListener(new UIEventHandler());
-		
+
 		window.setMinimumSize(new Dimension(600, 450));
-		
+
 		// Shortcut key event processing
 		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		ky.addKeyEventDispatcher(uiEventHandler);
 	}
-	
+
 	private void changeState(int status) {
-		Log.d(">>>>>>>>>>>>> changeState() " + status);
+		Log.v("changeState() " + status);
 		if(this.status == status) return;
 		this.status = status;
 		progressPanel.setStatus(status);
 		contentPanel.setStatus(status);
 		controlPanel.setStatus(status);
-		
+
 		execute(status);
 	}
-	
+
 	private void execute(int status) {
 		switch(status) {
 		case STATUS_INIT:
@@ -251,42 +251,41 @@ public class ApkInstallWizard
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-			        String apkFilePath = pakcageFilePath;
-			        
-			        ApkScanner scanner = ApkScanner.getInstance("AAPTLIGHT");
-			        scanner.openApk(apkFilePath);
-			        if(scanner.getLastErrorCode() != ApkScanner.NO_ERR) {
-			            Log.e("Fail open APK");
-			            changeState(STATUS_APK_VERTIFY_ERROR);
-			        }
-			        apkInfo = new CompactApkInfo(scanner.getApkInfo());
-			        
-			        signatureReport = null;
-			        try {
-			            signatureReport = new SignatureReport(new JarFile(apkFilePath, true));
-			        } catch (Exception e) { }
-			        if(signatureReport == null) {
-			            Log.e("Fail APK Virify");
-			            changeState(STATUS_APK_VERTIFY_ERROR);
-			        }
-			        try {
+					String apkFilePath = pakcageFilePath;
+
+					ApkScanner scanner = ApkScanner.getInstance("AAPTLIGHT");
+					scanner.openApk(apkFilePath);
+					if(scanner.getLastErrorCode() != ApkScanner.NO_ERR) {
+						Log.e("Fail open APK");
+						changeState(STATUS_APK_VERTIFY_ERROR);
+					}
+					apkInfo = new CompactApkInfo(scanner.getApkInfo());
+
+					signatureReport = null;
+					try {
+						signatureReport = new SignatureReport(new JarFile(apkFilePath, true));
+					} catch (Exception e) { }
+					if(signatureReport == null) {
+						Log.e("Fail APK Virify");
+						changeState(STATUS_APK_VERTIFY_ERROR);
+					}
+					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}			        
-			        next();
+					next();
 				}			
 			}).start();			
 			break;
 		case STATUS_INSTALLING:
-				
+
 			break;
 		default:
 			break;
 		}
 	}
-	
+
 	public void start() {
 		if(status != STATUS_INIT) {
 			Log.w("No init state : " + status);
@@ -296,7 +295,7 @@ public class ApkInstallWizard
 		setVisible(true);
 		changeState(STATUS_PACKAGE_SCANNING);
 	}
-	
+
 	private void next() {
 		synchronized(this) {
 			switch(status) {
@@ -318,9 +317,9 @@ public class ApkInstallWizard
 			}
 		}
 	}	
-	
+
 	public void stop() {
-		
+
 	}
 
 	@SuppressWarnings("unused")
@@ -358,10 +357,6 @@ public class ApkInstallWizard
 
 			} else if(ContentPanel.CTT_ACT_CMD_SELECT_ALL.equals(arg0.getActionCommand())) {
 
-			} else if("SELECT_ALL".equals(arg0.getActionCommand())) {
-				
-			} else if("CHANG_SIGN".equals(arg0.getActionCommand())) {
-				
 			} else if(FindPackagePanel.NO_DEVICE_LAYOUT.equals(arg0.getActionCommand())) {
 				if(status == ApkInstallWizard.STATUS_CHECK_PACKAGES) {
 					controlPanel.setStatus(ControlPanel.STATUS_NO_DEVICE);
@@ -385,12 +380,12 @@ public class ApkInstallWizard
 				if(e.getModifiers() == KeyEvent.ALT_MASK) {
 					switch(e.getKeyCode()) {
 					case KeyEvent.VK_N: 
-						next(); 
+						//next();
 						break;
 					case KeyEvent.VK_P:	
 						//previous();
 						break;
-					default: 
+					default:
 						return false;
 					}
 					return true;
@@ -407,15 +402,15 @@ public class ApkInstallWizard
 			}
 			return false;
 		}
-		
+
 		// Closing event of window be delete tempFile
 		@Override
 		public void windowClosing(WindowEvent e)
-		{	
+		{
 			Log.d("closing....ApkInstallWizard");
-			changeState(STATUS_DESTROY_DIALOG);			
+			changeState(STATUS_DESTROY_DIALOG);
 		}
-		
+
 		@Override public void windowOpened(WindowEvent e) { }
 		@Override public void windowClosed(WindowEvent e) { }
 		@Override public void windowIconified(WindowEvent e) { }
@@ -423,22 +418,22 @@ public class ApkInstallWizard
 		@Override public void windowActivated(WindowEvent e) { }
 		@Override public void windowDeactivated(WindowEvent e) { }
 	};
-	
-	
-    public static void main(String args[]) {
-    	Resource.setLanguage((String)Resource.PROP_LANGUAGE.getData(SystemUtil.getUserLanguage()));
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-            	if(SystemUtil.isWindows()) {
-            		ApkInstallWizard wizard = new ApkInstallWizard("C:\\Melon.apk");
-            		wizard.start();
-            	} else {
-            		ApkInstallWizard wizard = new ApkInstallWizard("/home/leejinhyeong/Desktop/reco.apk");
-            		wizard.start();
-            	}
-            }
-        });
-    }
+
+
+	public static void main(String args[]) {
+		Resource.setLanguage((String)Resource.PROP_LANGUAGE.getData(SystemUtil.getUserLanguage()));
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				if(SystemUtil.isWindows()) {
+					ApkInstallWizard wizard = new ApkInstallWizard("C:\\Melon.apk");
+					wizard.start();
+				} else {
+					ApkInstallWizard wizard = new ApkInstallWizard("/home/leejinhyeong/Desktop/reco.apk");
+					wizard.start();
+				}
+			}
+		});
+	}
 }
 
 

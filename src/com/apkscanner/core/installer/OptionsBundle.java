@@ -138,6 +138,8 @@ public class OptionsBundle {
 						cause = BLOACKED_PUSH_CAUSE_NO_ROOT;
 					} else if ((blockedCause & BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_NOT_SYSTEM) == BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_NOT_SYSTEM) {
 						cause = BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_NOT_SYSTEM;
+					} else if ((blockedCause & BLOACKED_PUSH_CAUSE_HAS_SU_BUT_NO_ROOT) == BLOACKED_PUSH_CAUSE_HAS_SU_BUT_NO_ROOT) {
+						cause = BLOACKED_PUSH_CAUSE_HAS_SU_BUT_NO_ROOT;
 					} else {
 						cause = BLOACKED_CAUSE_UNKNWON;
 					}					
@@ -185,7 +187,7 @@ public class OptionsBundle {
 			case FLAG_OPT_PUSH_PRIVAPP:
 			case FLAG_OPT_PUSH_OTHER:
 				targetSystemPath = extraData[0];
-				Log.e(targetSystemPath);
+				Log.v(targetSystemPath);
 				break;
 			case FLAG_OPT_PUSH_LIB32:
 				if(extraData.length >= 2

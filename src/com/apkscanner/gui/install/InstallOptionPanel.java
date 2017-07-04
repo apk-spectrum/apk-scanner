@@ -141,7 +141,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 						messageId = MessageBoxPool.MSG_BLOCKED_NO_ROOT; break;
 					case OptionsBundle.BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_NOT_SYSTEM:
 						messageId = MessageBoxPool.MSG_BLOCKED_MISMATCH_SIGNED_NOT_SYSTEM; break;
-					case OptionsBundle.BLOACKED_CAUSE_UNKNWON:
+					case OptionsBundle.BLOACKED_CAUSE_UNKNWON: default:
 						messageId = MessageBoxPool.MSG_BLOCKED_UNKNOWN; break;
 					}
 					MessageBoxPool.show(InstallOptionPanel.this, messageId);

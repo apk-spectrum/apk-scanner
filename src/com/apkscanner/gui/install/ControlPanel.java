@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
 import com.apkscanner.gui.dialog.ApkInstallWizard;
+import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
 public class ControlPanel extends JPanel
@@ -37,10 +38,10 @@ public class ControlPanel extends JPanel
 	public ControlPanel(ActionListener listener) {
 		super(new BorderLayout());
 		
-		btnNext = getButton("Install", CTR_ACT_CMD_NEXT, listener);
+		btnNext = getButton(Resource.STR_BTN_INSTALL.getString(), CTR_ACT_CMD_NEXT, listener);
 		btnPre = getButton("Previous", CTR_ACT_CMD_PREVIOUS, listener);
-		btnOk = getButton("OK", CTR_ACT_CMD_OK, listener);
-		btnCancel = getButton("Cancel", CTR_ACT_CMD_CANCEL, listener);
+		btnOk = getButton(Resource.STR_BTN_OK.getString(), CTR_ACT_CMD_OK, listener);
+		btnCancel = getButton(Resource.STR_BTN_CANCEL.getString(), CTR_ACT_CMD_CANCEL, listener);
 		btnShowLog = getButton("Show Log", CTR_ACT_CMD_SHOW_LOG, listener);
 		btnRestart = getButton("Restart", CTR_ACT_CMD_RESTART, listener);
 		
@@ -89,10 +90,9 @@ public class ControlPanel extends JPanel
 		case ApkInstallWizard.STATUS_INIT:
 			setVisibleButtons(false, false, false, false, false, false); break;
 		case ApkInstallWizard.STATUS_PACKAGE_SCANNING:
-			setVisibleButtons(false, false, false, false, true, false); break;
+			setVisibleButtons(false, false, false, false, false, false); break;
 		case ApkInstallWizard.STATUS_CHECK_PACKAGES:
-			setVisibleButtons(true, false, false, false, false, false);			
-			break;
+			setVisibleButtons(true, false, false, true, false, false); break;
 		case ApkInstallWizard.STATUS_INSTALLING:
 			setVisibleButtons(false, false, false, false, false, false); break;
 		case ApkInstallWizard.STATUS_COMPLETED:

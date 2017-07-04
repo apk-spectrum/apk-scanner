@@ -135,6 +135,9 @@ public class MessageBoxPool {
 		case MSG_BLOCKED_MISMATCH_SIGNED_NOT_SYSTEM:
 			MessageBoxPane.showError(parentComponent, "MISMATCH_SIGNED_NOT_SYSTEM");
 			break;
+		case MSG_BLOCKED_UNKNOWN:
+			MessageBoxPane.showError(parentComponent, "MISMATCH_SIGNED_NOT_SYSTEM");
+			break;
 		}
 		return MessageBoxPane.CLOSED_OPTION;
 	}
