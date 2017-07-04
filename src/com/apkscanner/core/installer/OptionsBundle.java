@@ -17,6 +17,7 @@ public class OptionsBundle {
 	public static final int FLAG_OPT_INSTALL_DOWNGRADE		= 0x0010;
 	public static final int FLAG_OPT_INSTALL_GRANT_PERM		= 0x0020;
 	public static final int FLAG_OPT_INSTALL_LAUNCH			= 0x0040;
+	public static final int FLAG_OPT_INSTALL_MASK			= 0x00FF;
 
 	public static final int FLAG_OPT_PUSH_SYSTEM	= 0x0100;
 	public static final int FLAG_OPT_PUSH_PRIVAPP	= 0x0200;
@@ -24,6 +25,7 @@ public class OptionsBundle {
 	public static final int FLAG_OPT_PUSH_LIB32		= 0x0800;
 	public static final int FLAG_OPT_PUSH_LIB64		= 0x1000;
 	public static final int FLAG_OPT_PUSH_REBOOT	= 0x2000;
+	public static final int FLAG_OPT_PUSH_MASK		= 0xFF00;
 
 	public static final int FLAG_OPT_DISSEMINATE 	= 0x400000;
 	public static final int FLAG_OPT_CLEAR_OPTIONS	= 0x800000;
@@ -74,24 +76,32 @@ public class OptionsBundle {
 	}
 
 	public synchronized boolean copyFrom(OptionsBundle bundle) {
-		if((blockedFlags & bundle.flag) != 0) {
-			return false; 
+		if(this.equals(bundle)) {
+			return true;
+		}
+		if(bundle.isNoInstallOptions()) {
+			flag |= FLAG_OPT_NO_INSTALL;
+		} else if(bundle.isInstallOptions()) {
+			if((blockedFlags & FLAG_OPT_INSTALL) != 0) {
+				return false;
+			}
+			flag &= ~(FLAG_OPT_NO_INSTALL | FLAG_OPT_INSTALL_MASK);
+			flag |= FLAG_OPT_INSTALL | (bundle.flag & FLAG_OPT_INSTALL_MASK);
+			launchActivity = bundle.launchActivity;
+		} else if(bundle.isPushOptions()) {
+			if((blockedFlags & FLAG_OPT_PUSH) != 0) {
+				return false;
+			}
+			flag &= ~(FLAG_OPT_NO_INSTALL | FLAG_OPT_PUSH_MASK);
+			flag |= FLAG_OPT_PUSH | (bundle.flag & FLAG_OPT_PUSH_MASK);
+			targetSystemPath = bundle.targetSystemPath;
+			lib32Arch = bundle.lib32Arch;
+			lib32ToPath = bundle.lib32ToPath;
+			lib64Arch = bundle.lib64Arch;
+		} else {
+			return false;
 		}
 
-		flag = bundle.flag;
-		launchActivity = bundle.launchActivity;
-		targetSystemPath = bundle.targetSystemPath;
-		lib32Arch = bundle.lib32Arch;
-		lib32ToPath = bundle.lib32ToPath;
-		lib64Arch = bundle.lib64Arch;
-
-		/*
-		launchActivity = bundle.launchActivity != null ? new String(bundle.launchActivity) : null;
-		path = bundle.path != null ? new String(bundle.path) : null;
-		lib32Arch = bundle.lib32Arch != null ? new String(bundle.lib32Arch) : null;
-		lib32ToPath = bundle.lib32ToPath != null ? new String(bundle.lib32ToPath) : null;
-		lib64Arch = bundle.lib64Arch != null ? new String(bundle.lib64Arch) : null;
-		 */
 		return true;
 	}
 
