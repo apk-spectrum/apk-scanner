@@ -642,7 +642,7 @@ public class Resources extends JPanel implements TabDataObject {
 	}
 
 	private void setTreeForm(Boolean mode) {
-		new Thread(new Runnable() {
+		Thread thread = new Thread(new Runnable() {
 			public void run()
 			{
 				try {
@@ -662,7 +662,7 @@ public class Resources extends JPanel implements TabDataObject {
 						}
 					});
 
-					final int CHUNK_SIZE = 100;
+					final int CHUNK_SIZE = 30;
 					for (int chunk = 0; chunk < nameList.length; chunk += CHUNK_SIZE) {
 						final int start = chunk;
 						EventQueue.invokeAndWait(new Runnable() {
@@ -708,6 +708,7 @@ public class Resources extends JPanel implements TabDataObject {
 								}
 							}
 						});
+						Thread.yield();
 					}
 
 					EventQueue.invokeAndWait(new Runnable() {
@@ -727,7 +728,9 @@ public class Resources extends JPanel implements TabDataObject {
 					e.printStackTrace();
 				}
 			}
-		}).start();
+		});
+		thread.setPriority(Thread.NORM_PRIORITY);
+		thread.start();
 	}
 
 	public static void expandOrCollapsePath(JTree tree, TreePath treePath, int level, int currentLevel,
