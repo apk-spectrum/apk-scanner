@@ -269,7 +269,10 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="label_with_libraies">라이브러리 선택:</string>
 	<string name="label_num">번호</string>
 	<string name="label_abi">ABI</string>
-	<string name="label_destination">대상 경로</string>
+	<string name="label_apk_verify">APK VERIFY</string>
+	<string name="label_apk_install_option">OPTIONS</string>
+	<string name="label_apk_installing">INSTALLING</string>
+	<string name="label_apk_install_finish">FINISH</string>
 
 	<string name="msg_failure_open_apk">APK 파일을 열수 없습니다.</string>
 	<string name="msg_no_such_apk">APK 파일이 존재하지 않습니다.</string>
