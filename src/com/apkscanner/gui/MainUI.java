@@ -156,7 +156,7 @@ public class MainUI extends JFrame
             @Override
             public void run()
             {
-            	Log.e("isDispatchThread " + EventQueue.isDispatchThread());
+            	Log.v("isDispatchThread " + EventQueue.isDispatchThread());
                 toolbarManager.setEnabled((boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData());
             }
         }, 1000);

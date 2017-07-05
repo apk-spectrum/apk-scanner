@@ -203,7 +203,7 @@ public class ToggleButtonBar extends JPanel{
     	btnoption.setBackground(ColorSet[data.selectedinstalloption]);
     	btnoption.setText(installOptiontextSet[data.selectedinstalloption]);
     	switch(status) {
-		case ApkInstallWizard.STATUS_CHECK_PACKAGES:
+		case ApkInstallWizard.STATUS_SET_OPTIONS:
 	    	btninstalled.setBackground(ColorSet[data.isinstalled]);
 	    	btninstalled.setText(installtextSet[data.isinstalled]);
 	    	break;

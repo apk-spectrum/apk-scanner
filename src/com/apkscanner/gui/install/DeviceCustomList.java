@@ -112,7 +112,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 		this.status = status;
 		((ButtonsRenderer<DeviceListData>)this.getCellRenderer()).setStatus(status);
 		switch(status) {
-		case ApkInstallWizard.STATUS_CHECK_PACKAGES:
+		case ApkInstallWizard.STATUS_SET_OPTIONS:
 			
 			break;
 		case ApkInstallWizard.STATUS_INSTALLING:			
@@ -509,7 +509,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 	                
                 	DeviceListData temp = (DeviceListData) listmodel.get(list.getSelectedIndex());
                 	
-                	if(status != ApkInstallWizard.STATUS_CHECK_PACKAGES) return;
+                	if(status != ApkInstallWizard.STATUS_SET_OPTIONS) return;
                 	
                 	if(temp.isinstalled == DeviceListData.NOT_INSTALLED) { 
                 		temp.showstate = DeviceListData.SHOW_INSTALL_OPTION;
@@ -906,7 +906,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
 		Object selectionValues[] = list.getSelectedValues();
           for (int i = 0, n = selections.length; i < n; i++) {            
             //System.out.print(selections[i] + "/" + selectionValues[i] + " ");
-        	  if(status == ApkInstallWizard.STATUS_CHECK_PACKAGES) {
+        	  if(status == ApkInstallWizard.STATUS_SET_OPTIONS) {
         		  ((DeviceListData)selectionValues[i]).showstate  = DeviceListData.SHOW_INSTALL_OPTION;
         	  }
         	  FindPackagelistener.actionPerformed(new ActionEvent(this, 0, FindPackagePanel.REQ_REFRESH_DETAIL_PANEL));

@@ -90,7 +90,7 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	@Override
 	public void deviceChanged(IDevice arg0, int arg1) {
 		Log.d("change device state : " + arg0.getSerialNumber() + " : " + arg0.getState());
-		if(status != ApkInstallWizard.STATUS_CHECK_PACKAGES) return;
+		if(status != ApkInstallWizard.STATUS_SET_OPTIONS) return;
 		if(devicelist!=null) devicelist.deviceChanged(arg0, arg1);
 		
 	}
@@ -99,7 +99,7 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 	public void deviceConnected(IDevice arg0) {
 		Log.d("connect device state : " + arg0.getSerialNumber() + " : " + arg0.getState());
 		if(devicelist!=null) devicelist.deviceConnected(arg0);
-		if(status != ApkInstallWizard.STATUS_CHECK_PACKAGES) return;
+		if(status != ApkInstallWizard.STATUS_SET_OPTIONS) return;
 		
 		((CardLayout)getLayout()).show(this, DEVICE_LAYOUT);
 		//mainlistener.actionPerformed(new ActionEvent(this, 0, DEVICE_LAYOUT));
@@ -107,7 +107,7 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 
 	@Override
 	public void deviceDisconnected(IDevice arg0) {
-		if(status != ApkInstallWizard.STATUS_CHECK_PACKAGES) return;
+		if(status != ApkInstallWizard.STATUS_SET_OPTIONS) return;
 		
 		if(devicelist!=null) devicelist.deviceDisconnected(arg0);
 		
@@ -174,7 +174,7 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 		pacakgeinfopanel.removeAll();
 		//pacakgeinfopanel.add(lodingPanel);
 		switch(status) {
-		case ApkInstallWizard.STATUS_CHECK_PACKAGES:		
+		case ApkInstallWizard.STATUS_SET_OPTIONS:		
 			if(data.showstate == DeviceListData.SHOW_INSTALL_DETAL) {
 				pacakgeinfopanel.add(data.AppDetailpanel);
 			} else if(data.showstate == DeviceListData.SHOW_INSTALL_OPTION || data.pacakgeLoadingstatus == DeviceListData.WAITING) {
@@ -207,7 +207,7 @@ public class FindPackagePanel extends JPanel implements IDeviceChangeListener, L
 		this.status = status;
 		devicelist.setStatus(status);
 		switch(status) {
-		case ApkInstallWizard.STATUS_CHECK_PACKAGES:
+		case ApkInstallWizard.STATUS_SET_OPTIONS:
 			
 			break;
 		case ApkInstallWizard.STATUS_INSTALLING:

@@ -50,7 +50,7 @@ public class Main implements Runnable
 			if(args.length > 0) {
 				if(!"p".equals(args[0]) && !"package".equals(args[0])
 						&& "i".equals(args[0]) && "install".equals(args[0])
-						&& "d".equals(args[0]) && "delete-temp-path".equals(args[0]) 
+						&& "d".equals(args[0]) && "delete-temp-path".equals(args[0])
 						&& !args[0].startsWith("-") && !args[0].endsWith(".apk") && !args[0].endsWith(".ppk")) {
 					throw new ParseException("Missing argument for option: " + args[0]);
 				}
@@ -157,18 +157,23 @@ public class Main implements Runnable
 
 	static private void install(CommandLine cmd)
 	{
-		String apkFilePath = cmd.getArgs()[1];
+		final String apkFilePath = cmd.getArgs()[1];
 
 		if(apkFilePath == null || apkFilePath.isEmpty() || !new File(apkFilePath).exists()) {
 			Log.e("apk is null");
 			return;
 		}
-		apkFilePath = new File(apkFilePath).getAbsolutePath();
 		Log.v("install() " + apkFilePath);
 
 		if(!cmd.hasOption("c") && !cmd.hasOption("cli")) {
-			ApkInstallWizard wizard = new ApkInstallWizard(apkFilePath);
-			wizard.start();
+			EventQueue.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					String path = new File(apkFilePath).getAbsolutePath();
+					ApkInstallWizard wizard = new ApkInstallWizard(path);
+					wizard.start();
+				}
+			});
 		} else {
 
 		}
@@ -185,8 +190,8 @@ public class Main implements Runnable
 
 			File parent = new File(path).getParentFile();
 			Log.i("delete temp APK folder : "  + parent.getPath());
-			while(parent != null && parent.exists() && parent.getParentFile() != null 
-					&& parent.getParentFile().listFiles().length == 1 
+			while(parent != null && parent.exists() && parent.getParentFile() != null
+					&& parent.getParentFile().listFiles().length == 1
 					&& parent.getParentFile().getAbsolutePath().length() > FileUtil.getTempPath().length()) {
 				parent = parent.getParentFile();
 			}

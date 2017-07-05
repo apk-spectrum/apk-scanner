@@ -54,9 +54,9 @@ public class InstallProgressPanel extends JPanel
 			Resource.STR_LABEL_APK_INSTALL_FINISH.getString() };
 
 	private final Color[] Colorset = {new Color(222,228,228), new Color(52,152,220),new Color(46,204,114), new Color(0xFF0000)};
-	//private final Color ErrorColor = new Color(0xFF7400);		
+	//private final Color ErrorColor = new Color(0xFF7400);
 
-	private EllipseLayout[] ellipselabel = new EllipseLayout[STEPMAX];			
+	private EllipseLayout[] ellipselabel = new EllipseLayout[STEPMAX];
 	private Linelayout[] linelabel = new Linelayout[STEPMAX-1];
 	private AnimationLabel[] animatlabel = new AnimationLabel[STEPMAX];
 
@@ -91,14 +91,14 @@ public class InstallProgressPanel extends JPanel
 			currentColor = new Color(222,228,228);
 			timer = new Timer(DELAY, new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					int r=0,g=0,b=0;	                	
+					int r=0,g=0,b=0;
 					r = addColorINC(Colorset[state].getRed() , currentColor.getRed());
 					g = addColorINC(Colorset[state].getGreen() , currentColor.getGreen());
 					b = addColorINC(Colorset[state].getBlue() , currentColor.getBlue());
 					currentColor = new Color(r,g,b);
-					//if(Math.abs(r-Colorset[state].getRed()) < 10 && Math.abs(g-Colorset[state].getGreen()) < 10 && 
+					//if(Math.abs(r-Colorset[state].getRed()) < 10 && Math.abs(g-Colorset[state].getGreen()) < 10 &&
 					//Math.abs(b-Colorset[state].getBlue()) < 10) {
-					if(currentColor.equals(Colorset[state]))	{	                		
+					if(currentColor.equals(Colorset[state]))	{
 						currentColor = Colorset[state];
 						timer.stop();
 						isAnimation = false;
@@ -124,7 +124,7 @@ public class InstallProgressPanel extends JPanel
 			super();
 			//outtext = new String("");
 			intext = new String("");
-			colorbase = new ColorBase(this);				
+			colorbase = new ColorBase(this);
 			colorbase.state = 0;
 		}
 
@@ -136,7 +136,7 @@ public class InstallProgressPanel extends JPanel
 		}
 
 		public void paintComponent(Graphics g)
-		{	
+		{
 			Graphics2D g2 = (Graphics2D)g;
 
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -174,7 +174,7 @@ public class InstallProgressPanel extends JPanel
 
 		public void setState(int state) {
 			if(colorbase.state == state) return;
-			colorbase.setAnimation();		    	
+			colorbase.setAnimation();
 			colorbase.state = state;
 		}
 	}
@@ -200,7 +200,7 @@ public class InstallProgressPanel extends JPanel
 			} else {
 				g.setColor(Colorset[colorbase.state]);
 			}
-			g2.setStroke(new BasicStroke(8) );				
+			g2.setStroke(new BasicStroke(8) );
 			//g.drawLine(0, (int)(size.getHeight()/2), (int)size.getWidth(), (int)(size.getHeight()/2));
 
 			Shape Line = new Line2D.Double(0, size.getHeight()/2, size.getWidth(), size.getHeight()/2);
@@ -210,8 +210,8 @@ public class InstallProgressPanel extends JPanel
 
 		public void setState(int state) {
 
-			if(colorbase.state == state) return;		    	
-			colorbase.setAnimation();		    	
+			if(colorbase.state == state) return;
+			colorbase.setAnimation();
 			colorbase.state = state;
 		}
 	}
@@ -222,15 +222,15 @@ public class InstallProgressPanel extends JPanel
 		String str;
 		public AnimationLabel(String string, int center) {
 
-			super(string, center);			
+			super(string, center);
 			colorbase = new ColorBase(this);
 			colorbase.state = 0;
 		}
 
 		@SuppressWarnings("unused")
-		private void centerString(Graphics g, Rectangle r, String s, 
+		private void centerString(Graphics g, Rectangle r, String s,
 				Font font) {
-			FontRenderContext frc = 
+			FontRenderContext frc =
 					new FontRenderContext(null, true, true);
 
 			if(s==null) {
@@ -268,14 +268,14 @@ public class InstallProgressPanel extends JPanel
 		}
 		public void setState(int state) {
 
-			if(colorbase.state == state) return;		    	
+			if(colorbase.state == state) return;
 			colorbase.setAnimation();
 			colorbase.state = state;
 		}
 		@Override
-		public void setText(String str) {    	
+		public void setText(String str) {
 
-			this.str = str; 
+			this.str = str;
 			super.setText(str);
 		}
 
@@ -296,7 +296,7 @@ public class InstallProgressPanel extends JPanel
 		TextStepPanel.setBackground(Color.WHITE);
 
 
-		GridBagConstraints gbc = new GridBagConstraints();            
+		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.BOTH;
 
 
@@ -311,8 +311,8 @@ public class InstallProgressPanel extends JPanel
 		}
 
 		JPanel marginlabel = new JPanel();
-		marginlabel.setBackground(Color.WHITE);			
-		ProgressStepPanel.add(marginlabel, addGrid(gbc, 0, 0, 1, 1, 1, 1));            
+		marginlabel.setBackground(Color.WHITE);
+		ProgressStepPanel.add(marginlabel, addGrid(gbc, 0, 0, 1, 1, 1, 1));
 		for(int i=0;i < STEPMAX-1; i++) {
 			ellipselabel[i] = new EllipseLayout();
 			ellipselabel[i].setOpaque(true);
@@ -333,9 +333,9 @@ public class InstallProgressPanel extends JPanel
 
 		JPanel marginlabel2 = new JPanel();
 		marginlabel2.setBackground(Color.WHITE);
-		ProgressStepPanel.add(marginlabel2, addGrid(gbc, STEPMAX*2, 0, 1, 1, 1, 1));			
+		ProgressStepPanel.add(marginlabel2, addGrid(gbc, STEPMAX*2, 0, 1, 1, 1, 1));
 
-		ProgressStepPanel.setPreferredSize(new Dimension(0, 70));			
+		ProgressStepPanel.setPreferredSize(new Dimension(0, 70));
 
 		add(ProgressStepPanel, BorderLayout.CENTER);
 		add(TextStepPanel, BorderLayout.SOUTH);
@@ -344,8 +344,8 @@ public class InstallProgressPanel extends JPanel
 		setStatus(ApkInstallWizard.STATUS_INIT);
 
 	}
-	public void setEllipselabelText(String str, int index, Boolean ischange) {		
-		if(ischange) {    		
+	public void setEllipselabelText(String str, int index, Boolean ischange) {
+		if(ischange) {
 			animatlabel[index].setText(str);
 		} else {
 			animatlabel[index].setText(outtexts[index]);
@@ -406,19 +406,19 @@ public class InstallProgressPanel extends JPanel
 
 		if(state -1 < STEPMAX-1) linelabel[state-1].setState(COLOR_STEP_NOTFINISH);
 		ellipselabel[state-1].setState(COLOR_STEP_PROCESSING);
-		animatlabel[state-1].setState(COLOR_STEP_PROCESSING);			
+		animatlabel[state-1].setState(COLOR_STEP_PROCESSING);
 	}
 
-	public void setStatus(int status) {		
+	public void setStatus(int status) {
 		int newStatus = CurrentProgress;
 		switch(status) {
 		case ApkInstallWizard.STATUS_INIT:
 			newStatus = 0;
 			break;
-		case ApkInstallWizard.STATUS_PACKAGE_SCANNING:
+		case ApkInstallWizard.STATUS_APK_VERIFY:
 			newStatus = 1;
 			break;
-		case ApkInstallWizard.STATUS_CHECK_PACKAGES:
+		case ApkInstallWizard.STATUS_SET_OPTIONS:
 			newStatus = 2;
 			break;
 		case ApkInstallWizard.STATUS_INSTALLING:
@@ -440,7 +440,7 @@ public class InstallProgressPanel extends JPanel
 		}
 	}
 
-	private GridBagConstraints addGrid(GridBagConstraints gbc, 
+	private GridBagConstraints addGrid(GridBagConstraints gbc,
 			int gridx, int gridy, int gridwidth, int gridheight, int weightx, int weighty) {
 		gbc.gridx = gridx;
 		gbc.gridy = gridy;

@@ -16,11 +16,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.util.concurrent.ExecutionException;
 import java.util.jar.JarFile;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -41,29 +43,14 @@ import com.apkscanner.util.SystemUtil;
 public class ApkInstallWizard
 {
 	public static final int STATUS_INIT = 0;
-	public static final int STATUS_PACKAGE_SCANNING = 1;
-	public static final int STATUS_CHECK_PACKAGES = 2;
-	public static final int STATUS_INSTALLING = 3;
-	public static final int STATUS_COMPLETED = 4;
+	public static final int STATUS_APK_VERIFY = 1;
+	public static final int STATUS_WAIT_FOR_DEVICE = 2;
+	public static final int STATUS_SET_OPTIONS = 3;
+	public static final int STATUS_INSTALLING = 4;
+	public static final int STATUS_COMPLETED = 5;
+	public static final int STATUS_DESTROY_WINDOW = 6;
 
-	public static final int STATUS_DESTROY_DIALOG = 100;
 	public static final int STATUS_APK_VERTIFY_ERROR = 101;
-
-	public static final int FLAG_OPT_INSTALL	 	= 0x0100;
-	public static final int FLAG_OPT_PUSH			= 0x0200;
-	public static final int FLAG_OPT_PUSH_OVERWRITE = 0x0400;
-
-	public static final int FLAG_OPT_INSTALL_INTERNAL = 0x0001;
-	public static final int FLAG_OPT_INSTALL_EXTERNAL = 0x0002;
-
-	public static final int FLAG_OPT_PUSH_SYSTEM	= 0x0001;
-	public static final int FLAG_OPT_PUSH_PRIVAPP	= 0x0002;
-	public static final int FLAG_OPT_PUSH_DATA		= 0x0004;
-
-	public static final int FLAG_OPT_EXTRA_RUN		= 0x0010;
-	public static final int FLAG_OPT_EXTRA_REBOOT	= 0x0020;
-	public static final int FLAG_OPT_EXTRA_WITH_LIB	= 0x0040;
-	public static final int FLAG_OPT_EXTRA_DELETE_EXISTING_APK = 0x0080;
 
 	// UI components
 	private Window wizard;
@@ -72,7 +59,7 @@ public class ApkInstallWizard
 	private ControlPanel controlPanel;
 	private UIEventHandler uiEventHandler = new UIEventHandler();
 
-	public static String pakcageFilePath;	
+	public static String pakcageFilePath;
 	public static CompactApkInfo apkInfo;
 	public static SignatureReport signatureReport;
 	public static DefaultOptionsFactory optFactory;
@@ -149,7 +136,6 @@ public class ApkInstallWizard
 
 			// Closing event of window be delete tempFile
 			addWindowListener(uiEventHandler);
-
 		}
 	}
 
@@ -158,38 +144,38 @@ public class ApkInstallWizard
 	}
 
 	public ApkInstallWizard(String FilePath) {
-		pakcageFilePath = FilePath;		
+		pakcageFilePath = FilePath;
 		if(FilePath == null || !(new File(FilePath).isFile())) {
 			Log.e("No such apk file... : " + FilePath);
-			MessageBoxPool.show(wizard, MessageBoxPool.MSG_NO_SUCH_APK_FILE);
+			MessageBoxPool.show(null, MessageBoxPool.MSG_NO_SUCH_APK_FILE);
 			return;
-		}		
-		wizard = new ApkInstallWizardFrame();		
+		}
+		wizard = new ApkInstallWizardFrame();
 	}
 
 	public ApkInstallWizard(String FilePath, JFrame owner) {
-		pakcageFilePath = FilePath;		
+		pakcageFilePath = FilePath;
 		if(FilePath == null || !(new File(FilePath).isFile())) {
 			Log.e("No such apk file... : " + FilePath);
-			MessageBoxPool.show(wizard, MessageBoxPool.MSG_NO_SUCH_APK_FILE);
+			MessageBoxPool.show(owner, MessageBoxPool.MSG_NO_SUCH_APK_FILE);
 			return;
-		}		
+		}
 		if(owner != null)
 			wizard = new ApkInstallWizardDialog(owner);
-		else 
+		else
 			wizard = new ApkInstallWizardFrame(owner);
 	}
 
 	public ApkInstallWizard(String FilePath, JDialog owner) {
-		pakcageFilePath = FilePath;		
+		pakcageFilePath = FilePath;
 		if(FilePath == null || !(new File(FilePath).isFile())) {
 			Log.e("No such apk file... : " + FilePath);
-			MessageBoxPool.show(wizard, MessageBoxPool.MSG_NO_SUCH_APK_FILE);
+			MessageBoxPool.show(owner, MessageBoxPool.MSG_NO_SUCH_APK_FILE);
 			return;
-		}		
+		}
 		if(owner != null)
 			wizard = new ApkInstallWizardDialog(owner);
-		else 
+		else
 			wizard = new ApkInstallWizardFrame(owner);
 	}
 
@@ -208,7 +194,6 @@ public class ApkInstallWizard
 		progressPanel = new InstallProgressPanel();
 		controlPanel = new ControlPanel(uiEventHandler);
 		contentPanel = new ContentPanel(uiEventHandler);
-
 
 		JPanel PanelDummy = new JPanel();
 		//progressPanel.setPreferredSize(new Dimension(700, 200));
@@ -233,8 +218,13 @@ public class ApkInstallWizard
 
 	private void changeState(int status) {
 		Log.v("changeState() " + status);
+		if(!EventQueue.isDispatchThread()) {
+			Log.w("changeState() isDispatchThread " + EventQueue.isDispatchThread());
+		}
+
 		if(this.status == status) return;
 		this.status = status;
+
 		progressPanel.setStatus(status);
 		contentPanel.setStatus(status);
 		controlPanel.setStatus(status);
@@ -247,17 +237,16 @@ public class ApkInstallWizard
 		case STATUS_INIT:
 			next();
 			break;
-		case STATUS_PACKAGE_SCANNING:			
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
+		case STATUS_APK_VERIFY:
+			new SwingWorker<Boolean, Void>() {
+				protected Boolean doInBackground() throws Exception {
 					String apkFilePath = pakcageFilePath;
 
 					ApkScanner scanner = ApkScanner.getInstance("AAPTLIGHT");
 					scanner.openApk(apkFilePath);
 					if(scanner.getLastErrorCode() != ApkScanner.NO_ERR) {
-						Log.e("Fail open APK");
-						changeState(STATUS_APK_VERTIFY_ERROR);
+						Log.e("Fail open APK: errcode " + scanner.getLastErrorCode());
+						return false;
 					}
 					apkInfo = new CompactApkInfo(scanner.getApkInfo());
 
@@ -265,18 +254,29 @@ public class ApkInstallWizard
 					try {
 						signatureReport = new SignatureReport(new JarFile(apkFilePath, true));
 					} catch (Exception e) { }
-					if(signatureReport == null) {
+					if(signatureReport == null || signatureReport.getSize() == 0) {
 						Log.e("Fail APK Virify");
+						return false;
+					}
+					return true;
+				}
+
+				@Override
+				protected void done() {
+					boolean pass = false;
+					try {
+						pass = get();
+					} catch (InterruptedException | ExecutionException e) {
+						e.printStackTrace();
+						pass = false;
+					}
+					if(pass) {
+						next();
+					} else {
 						changeState(STATUS_APK_VERTIFY_ERROR);
 					}
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}			        
-					next();
-				}			
-			}).start();			
+				}
+			}.execute();
 			break;
 		case STATUS_INSTALLING:
 
@@ -293,22 +293,21 @@ public class ApkInstallWizard
 		}
 
 		setVisible(true);
-		changeState(STATUS_PACKAGE_SCANNING);
+		changeState(STATUS_APK_VERIFY);
 	}
 
 	private void next() {
 		synchronized(this) {
 			switch(status) {
 			case STATUS_INIT:
-				changeState(STATUS_PACKAGE_SCANNING);
+				changeState(STATUS_APK_VERIFY);
 				break;
-			case STATUS_PACKAGE_SCANNING:				
-				changeState(STATUS_CHECK_PACKAGES);
-				//changeState(STATUS_WATING_CHECK_PACKAGES);
+			case STATUS_APK_VERIFY:
+				changeState(STATUS_SET_OPTIONS);
 				break;
-			case STATUS_CHECK_PACKAGES:
+			case STATUS_SET_OPTIONS:
 				changeState(STATUS_INSTALLING);
-				break;						
+				break;
 			case STATUS_INSTALLING:
 				changeState(STATUS_COMPLETED);
 				break;
@@ -316,7 +315,7 @@ public class ApkInstallWizard
 				break;
 			}
 		}
-	}	
+	}
 
 	public void stop() {
 
@@ -325,15 +324,15 @@ public class ApkInstallWizard
 	@SuppressWarnings("unused")
 	private void restart() {
 		if(status != STATUS_COMPLETED) return;
-		status = STATUS_PACKAGE_SCANNING;
+		status = STATUS_APK_VERIFY;
 		start();
 	}
 
 	@SuppressWarnings("unused")
 	private void printLog(String msg) {
-		Log.v(msg);	
+		Log.v(msg);
 		// append to log viewer
-		contentPanel.appendLog(msg);
+		//contentPanel.appendLog(msg);
 	}
 
 	public class UIEventHandler implements ActionListener, KeyEventDispatcher, WindowListener {
@@ -352,22 +351,21 @@ public class ApkInstallWizard
 					wizard.dispose();
 				}
 			} else if(ControlPanel.CTR_ACT_CMD_RESTART.equals(arg0.getActionCommand())) {
-				changeState(STATUS_INIT);				
+				changeState(STATUS_INIT);
 			} else if(ContentPanel.CTT_ACT_CMD_REFRESH.equals(arg0.getActionCommand())) {
 
 			} else if(ContentPanel.CTT_ACT_CMD_SELECT_ALL.equals(arg0.getActionCommand())) {
 
 			} else if(FindPackagePanel.NO_DEVICE_LAYOUT.equals(arg0.getActionCommand())) {
-				if(status == ApkInstallWizard.STATUS_CHECK_PACKAGES) {
-					controlPanel.setStatus(ControlPanel.STATUS_NO_DEVICE);
+				if(status == STATUS_SET_OPTIONS) {
+					controlPanel.setStatus(STATUS_WAIT_FOR_DEVICE);
 				}
 			} else if(FindPackagePanel.DEVICE_LAYOUT.equals(arg0.getActionCommand())) {
-				if(status == ApkInstallWizard.STATUS_CHECK_PACKAGES) {
-					//controlPanel.setStatus(ApkInstallWizard.STATUS_CHECK_PACKAGES);
+				if(status == STATUS_SET_OPTIONS) {
 					controlPanel.setNextButtonEnable(true);
 				}
 			} else if(FindPackagePanel.DEVICE_LAYOUT_WAIT_INSTALL_BUTTON.equals(arg0.getActionCommand())) {
-				if(status == ApkInstallWizard.STATUS_CHECK_PACKAGES) {
+				if(status == STATUS_SET_OPTIONS) {
 					controlPanel.setNextButtonEnable(false);
 				}
 			}
@@ -379,10 +377,10 @@ public class ApkInstallWizard
 			if (e.getID() == KeyEvent.KEY_RELEASED) {
 				if(e.getModifiers() == KeyEvent.ALT_MASK) {
 					switch(e.getKeyCode()) {
-					case KeyEvent.VK_N: 
+					case KeyEvent.VK_N:
 						//next();
 						break;
-					case KeyEvent.VK_P:	
+					case KeyEvent.VK_P:
 						//previous();
 						break;
 					default:
@@ -408,7 +406,7 @@ public class ApkInstallWizard
 		public void windowClosing(WindowEvent e)
 		{
 			Log.d("closing....ApkInstallWizard");
-			changeState(STATUS_DESTROY_DIALOG);
+			changeState(STATUS_DESTROY_WINDOW);
 		}
 
 		@Override public void windowOpened(WindowEvent e) { }
@@ -418,7 +416,6 @@ public class ApkInstallWizard
 		@Override public void windowActivated(WindowEvent e) { }
 		@Override public void windowDeactivated(WindowEvent e) { }
 	};
-
 
 	public static void main(String args[]) {
 		Resource.setLanguage((String)Resource.PROP_LANGUAGE.getData(SystemUtil.getUserLanguage()));
@@ -435,5 +432,3 @@ public class ApkInstallWizard
 		});
 	}
 }
-
-
