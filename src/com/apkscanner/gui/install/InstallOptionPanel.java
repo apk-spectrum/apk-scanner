@@ -96,6 +96,8 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 	private JTable libPreviewList;
 	private JScrollPane libPreviewPanel;
 
+	private JButton btnDisseminate;
+
 	public InstallOptionPanel() {
 		setLayout(new BorderLayout());
 
@@ -154,8 +156,8 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 		optionsPanel.add(makePushOptionPanel(), ACT_CMD_PUSH);
 		optionsPanel.add(new JPanel(), ACT_CMD_NO_INSTALL);
 
-		JButton disseminate = new JButton(Resource.STR_BTN_APPLY_ALL_MODELS.getString());
-		disseminate.addActionListener(new ActionListener() {
+		btnDisseminate = new JButton(Resource.STR_BTN_APPLY_ALL_MODELS.getString());
+		btnDisseminate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(bundle != null) {
@@ -166,7 +168,11 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 
 		add(installMethodPanel, BorderLayout.NORTH);
 		add(optionsPanel, BorderLayout.CENTER);		
-		add(disseminate, BorderLayout.SOUTH);
+		add(btnDisseminate, BorderLayout.SOUTH);
+	}
+
+	public void setVisibleDisseminate(boolean visible) {
+		btnDisseminate.setVisible(visible);
 	}
 
 	private JPanel makeInstallOptionsPanel() {
@@ -632,6 +638,8 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 				cbLib64Src.setSelectedItem(bundle.getWithLib64Arch());
 			}
 			refreshLibPreview();
+
+			btnDisseminate.setEnabled(!bundle.isImpossibleInstallOptions());
 		}
 	}
 

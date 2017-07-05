@@ -361,7 +361,7 @@ public class DeviceCustomList extends JList implements ListSelectionListener{
     }
     
     void setInstallOptionBundle(DeviceListData data, OptionsBundle bundle) {
-        if(bundle.isDontInstallOptions()) {
+        if(bundle.isImpossibleInstallOptions()) {
         	data.selectedinstalloption =  DeviceListData.OPTION_IMPOSSIBLE_INSTALL;
         } else if(bundle.isPushOptions()) {
         	data.selectedinstalloption =  DeviceListData.OPTION_PUSH;

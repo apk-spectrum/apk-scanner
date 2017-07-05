@@ -282,7 +282,7 @@ public class OptionsBundle {
 		return (flag & FLAG_OPT_NO_INSTALL) == FLAG_OPT_NO_INSTALL;
 	}
 
-	public synchronized boolean isDontInstallOptions() {
+	public synchronized boolean isImpossibleInstallOptions() {
 		return (flag & FLAG_OPT_NO_INSTALL) == 0;
 	}
 

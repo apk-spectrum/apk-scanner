@@ -49,7 +49,7 @@ public class ApkInstaller
 			errMessage = "No such file: " + apkInfo.filePath;
 		} else if(options == null) {
 			errMessage = "Options is null";
-		} else if(options.isDontInstallOptions()) {
+		} else if(options.isImpossibleInstallOptions()) {
 			errMessage = "Can not install";
 		} else if(options.isNoInstallOptions()) {
 			errMessage = "No install";
