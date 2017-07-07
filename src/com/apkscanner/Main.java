@@ -41,6 +41,7 @@ public class Main implements Runnable
 		Log.i("file.encoding : " + System.getProperty("file.encoding"));
 		Log.i("java.library.path : " + System.getProperty("java.library.path"));
 		Log.i("Default Charset : " + Charset.defaultCharset());
+		Log.i("sun.arch.data.model : " + System.getProperty("sun.arch.data.model"));
 
 		createOpstions();
 
