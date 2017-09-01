@@ -219,8 +219,10 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
 		try {
 			info.device.executeShellCommand("ls -l " + apkPath, outputReceiver);
-		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException | IOException e) {
+		} catch (TimeoutException | ShellCommandUnresponsiveException | IOException e) {
 			e.printStackTrace();
+		} catch (AdbCommandRejectedException e1) {
+			Log.w(e1.getMessage());
 		}
 		for(String line: outputReceiver.getOutput()) {
 			if(line.isEmpty()) continue;
@@ -635,8 +637,10 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 					if(n == MessageBoxPane.YES_OPTION) {
 						try {
 							device.reboot(null);
-						} catch (TimeoutException | AdbCommandRejectedException | IOException e) {
+						} catch (TimeoutException | IOException e) {
 							e.printStackTrace();
+						} catch (AdbCommandRejectedException e1) {
+							Log.w(e1.getMessage());
 						}
 					}
 				}

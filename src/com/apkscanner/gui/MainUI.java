@@ -638,8 +638,10 @@ public class MainUI extends JFrame
 								if(n == MessageBoxPane.YES_OPTION) {
 									try {
 										device.reboot(null);
-									} catch (TimeoutException | AdbCommandRejectedException | IOException e) {
+									} catch (TimeoutException | IOException e) {
 										e.printStackTrace();
+									} catch (AdbCommandRejectedException e1) {
+										Log.w(e1.getMessage());
 									}
 								}
 							}

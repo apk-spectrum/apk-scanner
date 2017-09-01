@@ -132,9 +132,11 @@ public class ApkInstaller
 			} catch (TimeoutException | CommandRejectedException | IOException e) {
 				errMessage = "Failure: Can not remount";
 				e.printStackTrace();
-			} catch (AdbCommandRejectedException | ShellCommandUnresponsiveException e) {
+			} catch (ShellCommandUnresponsiveException e) {
 				Log.w("Warning: fail: su root setenforce 0");
 				e.printStackTrace();
+			} catch (AdbCommandRejectedException e1) {
+				Log.w(e1.getMessage());
 			}
 		}
 

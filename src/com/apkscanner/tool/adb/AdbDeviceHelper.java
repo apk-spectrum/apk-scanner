@@ -393,9 +393,11 @@ public class AdbDeviceHelper {
 		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
 		try {
 			device.executeShellCommand("id", outputReceiver);
-		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
+		} catch (TimeoutException | ShellCommandUnresponsiveException
 				| IOException e) {
 			e.printStackTrace();
+		} catch (AdbCommandRejectedException e1) {
+			Log.w(e1.getMessage());
 		}
 		String[] result = outputReceiver.getOutput();
 		for(String output: result) {
@@ -411,9 +413,11 @@ public class AdbDeviceHelper {
 		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
 		try {
 			device.executeShellCommand("ls /system/xbin/su;which su", outputReceiver);
-		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
+		} catch (TimeoutException | ShellCommandUnresponsiveException
 				| IOException e) {
 			e.printStackTrace();
+		} catch (AdbCommandRejectedException e1) {
+			Log.w(e1.getMessage());
 		}
 		String[] result = outputReceiver.getOutput();
 		for(String output: result) {
@@ -442,9 +446,11 @@ public class AdbDeviceHelper {
 				public boolean isCancelled() {
 					return false;
 				}});
-		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
+		} catch (TimeoutException | ShellCommandUnresponsiveException
 				| IOException e) {
 			e.printStackTrace();
+		} catch (AdbCommandRejectedException e1) {
+			Log.w(e1.getMessage());
 		}
 		String shResult = shResultBuilder.toString().trim();
 
@@ -472,9 +478,11 @@ public class AdbDeviceHelper {
 				public boolean isCancelled() {
 					return false;
 				}});
-		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
+		} catch (TimeoutException | ShellCommandUnresponsiveException
 				| IOException e) {
 			e.printStackTrace();
+		} catch (AdbCommandRejectedException e1) {
+			Log.w(e1.getMessage());
 		}
 		String shResult = shResultBuilder.toString().trim();
 
@@ -506,9 +514,11 @@ public class AdbDeviceHelper {
 				public boolean isCancelled() {
 					return false;
 				}});
-		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
+		} catch (TimeoutException | ShellCommandUnresponsiveException
 				| IOException e) {
 			e.printStackTrace();
+		} catch (AdbCommandRejectedException e1) {
+			Log.w(e1.getMessage());
 		}
 		String shResult = shResultBuilder.toString().trim();
 		Log.v(shResult);
@@ -533,9 +543,11 @@ public class AdbDeviceHelper {
 				public boolean isCancelled() {
 					return false;
 				}});
-		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
+		} catch (TimeoutException | ShellCommandUnresponsiveException
 				| IOException e) {
 			e.printStackTrace();
+		} catch (AdbCommandRejectedException e1) {
+			Log.w(e1.getMessage());
 		}
 		String shResult = shResultBuilder.toString().trim();
 
@@ -559,9 +571,11 @@ public class AdbDeviceHelper {
 				public boolean isCancelled() {
 					return false;
 				}});
-		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
+		} catch (TimeoutException | ShellCommandUnresponsiveException
 				| IOException e) {
 			e.printStackTrace();
+		} catch (AdbCommandRejectedException e1) {
+			Log.w(e1.getMessage());
 		}
 		return output.toArray(new String[output.size()]);
 	}
@@ -595,9 +609,11 @@ public class AdbDeviceHelper {
 					public boolean isCancelled() {
 						return false;
 					}});
-			} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
+			} catch (TimeoutException | ShellCommandUnresponsiveException
 					| IOException e) {
 				e.printStackTrace();
+			} catch (AdbCommandRejectedException e1) {
+				Log.w(e1.getMessage());
 			}
 		} else {
 			Log.v("device api level " + device.getApiLevel());

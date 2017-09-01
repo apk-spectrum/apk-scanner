@@ -100,8 +100,10 @@ public class DefaultOptionsFactory {
 							SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
 							try {
 								device.executeShellCommand("ls -l " + apkPath, outputReceiver);
-							} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException | IOException e) {
+							} catch (TimeoutException | ShellCommandUnresponsiveException | IOException e) {
 								e.printStackTrace();
+							} catch (AdbCommandRejectedException e1) {
+								Log.w(e1.getMessage());
 							}
 							for(String line: outputReceiver.getOutput()) {
 								if(line.isEmpty()) continue;
@@ -125,19 +127,21 @@ public class DefaultOptionsFactory {
 						SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
 						try {
 							device.executeShellCommand("ls /system/app/*/*.apk; ls /system/app/*.apk", outputReceiver);
-						} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException | IOException e) {
+						} catch (TimeoutException | ShellCommandUnresponsiveException | IOException e) {
 							e.printStackTrace();
+						} catch (AdbCommandRejectedException e1) {
+							Log.w(e1.getMessage());
 						}
-						String systemPathSample = null; 
+						String systemPathSample = null;
 						for(String line: outputReceiver.getOutput()) {
 							if(line.isEmpty() || !line.endsWith(".apk")) continue;
 							systemPathSample = line;
 							break;
 						}
-						String makeName = apkInfo.packageName + "-1";  
+						String makeName = apkInfo.packageName + "-1";
 						if(systemPathSample != null) {
 							if(systemPathSample.matches("/system/app/[^/]*/[^/]*\\.apk")) {
-								targetSystemPath = "/system/app/" + makeName + "/" + makeName + ".apk"; 
+								targetSystemPath = "/system/app/" + makeName + "/" + makeName + ".apk";
 							} else if(systemPathSample.matches("/system/app/[^/]*\\.apk")) {
 								targetSystemPath = "/system/app/" + makeName + ".apk";
 							} else {
@@ -226,7 +230,7 @@ public class DefaultOptionsFactory {
 				}
 				/*
 				int activityOpt = Resource.PROP_LAUNCH_ACTIVITY_OPTION.getInt();
-				if(activityOpt == Resource.INT_LAUNCH_ONLY_LAUNCHER_ACTIVITY 
+				if(activityOpt == Resource.INT_LAUNCH_ONLY_LAUNCHER_ACTIVITY
 						&& (activityFlag & ApkInfo.APP_FEATURE_LAUNCHER) == ApkInfo.APP_FEATURE_LAUNCHER) {
 					options.set(OptionsBundle.FLAG_OPT_INSTALL_LAUNCH, apkInfo.activityList[0].name);
 				} else if(activityOpt == Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY

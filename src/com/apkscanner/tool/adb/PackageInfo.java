@@ -52,9 +52,11 @@ public class PackageInfo {
 		if(!packageName.matches("/system/framework/.*apk")) {
 			try {
 				device.executeShellCommand("pm list packages -f -i -u " + packageName, outputReceiver);
-			} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
+			} catch (TimeoutException | ShellCommandUnresponsiveException
 					| IOException e) {
 				e.printStackTrace();
+			} catch (AdbCommandRejectedException e1) {
+				Log.w(e1.getMessage());
 			}
 			result = outputReceiver.getOutput();
 			for(String output: result) {
@@ -102,8 +104,10 @@ public class PackageInfo {
 		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
 		try {
 			device.executeShellCommand("ls " + realPath, outputReceiver);
-		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException | IOException e) {
+		} catch (TimeoutException | ShellCommandUnresponsiveException | IOException e) {
 			e.printStackTrace();
+		} catch (AdbCommandRejectedException e1) {
+			Log.w(e1.getMessage());
 		}
 		String[] result = outputReceiver.getOutput();
 		if(result.length == 0 || !result[0].endsWith(".apk")) {
@@ -195,9 +199,11 @@ public class PackageInfo {
 		outputReceiver.setTrimLine(false);
 		try {
 			device.executeShellCommand("dumpsys package " + packageName, outputReceiver);
-		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
+		} catch (TimeoutException | ShellCommandUnresponsiveException
 				| IOException e) {
 			e.printStackTrace();
+		} catch (AdbCommandRejectedException e1) {
+			Log.w(e1.getMessage());
 		}
 		dumpsys = outputReceiver.getOutput();
 
@@ -334,9 +340,13 @@ public class PackageInfo {
 		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
 		try {
 			device.executeShellCommand("cat /data/system/packages.xml", outputReceiver);
-		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
+		} catch (TimeoutException | ShellCommandUnresponsiveException
 				| IOException e) {
 			e.printStackTrace();
+			return null;
+		} catch (AdbCommandRejectedException e1) {
+			Log.w(e1.getMessage());
+			return null;
 		}
 
 		StringBuilder xmlContent = new StringBuilder();

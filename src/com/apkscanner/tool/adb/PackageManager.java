@@ -143,8 +143,10 @@ public class PackageManager {
 
 		try {
 			device.executeShellCommand("pm list packages -f -i -u", outputReceiver);
-		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException | IOException e1) {
+		} catch (TimeoutException | ShellCommandUnresponsiveException | IOException e1) {
 			e1.printStackTrace();
+		} catch (AdbCommandRejectedException e1) {
+			Log.w(e1.getMessage());
 		}
 		String[] pmList = outputReceiver.getOutput();
 
@@ -384,9 +386,11 @@ public class PackageManager {
 			try {
 				AdbDeviceHelper.remount(AndroidDebugBridge.getSocketAddress(), packageInfo.device);
 				packageInfo.device.executeShellCommand("su root setenforce 0", new NullOutputReceiver());
-			} catch (TimeoutException | CommandRejectedException | IOException | AdbCommandRejectedException | ShellCommandUnresponsiveException e1) {
+			} catch (TimeoutException | CommandRejectedException | IOException | ShellCommandUnresponsiveException e1) {
 				errMessage = e1.getMessage();
 				e1.printStackTrace();
+			} catch (AdbCommandRejectedException e1) {
+				Log.w(e1.getMessage());
 			}
 		}
 
@@ -431,9 +435,11 @@ public class PackageManager {
 		String errMessage = null;
 		try {
 			device.pullFile(srcApkPath, destApkPath);
-		} catch (SyncException | IOException | AdbCommandRejectedException | TimeoutException e) {
+		} catch (SyncException | IOException | TimeoutException e) {
 			errMessage = e.getMessage();
 			e.printStackTrace();
+		} catch (AdbCommandRejectedException e1) {
+			Log.w(e1.getMessage());
 		}
 
 		if(errMessage == null && !new File(destApkPath).isFile()) {
@@ -447,8 +453,10 @@ public class PackageManager {
 		outputReceiver.setTrimLine(false);
 		try {
 			device.executeShellCommand("dumpsys window windows", outputReceiver);
-		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException | IOException e) {
+		} catch (TimeoutException | ShellCommandUnresponsiveException | IOException e) {
 			e.printStackTrace();
+		} catch (AdbCommandRejectedException e1) {
+			Log.w(e1.getMessage());
 		}
 		String[] result = outputReceiver.getOutput();
 		//ArrayList<String> pkgList = new ArrayList<String>();
@@ -543,8 +551,10 @@ public class PackageManager {
 		outputReceiver.setTrimLine(false);
 		try {
 			device.executeShellCommand("am stack list", outputReceiver);
-		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException | IOException e) {
+		} catch (TimeoutException | ShellCommandUnresponsiveException | IOException e) {
 			e.printStackTrace();
+		} catch (AdbCommandRejectedException e1) {
+			Log.w(e1.getMessage());
 		}
 		String[] result = outputReceiver.getOutput();
 		ArrayList<String> pkgList = new ArrayList<String>();
@@ -581,8 +591,10 @@ public class PackageManager {
 		outputReceiver.setTrimLine(false);
 		try {
 			device.executeShellCommand("am stack boxes", outputReceiver);
-		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException | IOException e) {
+		} catch (TimeoutException | ShellCommandUnresponsiveException | IOException e) {
 			e.printStackTrace();
+		} catch (AdbCommandRejectedException e1) {
+			Log.w(e1.getMessage());
 		}
 		String[] result = outputReceiver.getOutput();
 		ArrayList<String> pkgList = new ArrayList<String>();
@@ -606,8 +618,10 @@ public class PackageManager {
 		outputReceiver.setTrimLine(false);
 		try {
 			device.executeShellCommand("ps", outputReceiver);
-		} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException | IOException e) {
+		} catch (TimeoutException | ShellCommandUnresponsiveException | IOException e) {
 			e.printStackTrace();
+		} catch (AdbCommandRejectedException e1) {
+			Log.w(e1.getMessage());
 		}
 		String[] result = outputReceiver.getOutput();
 		ArrayList<String> pkgList = new ArrayList<String>();
