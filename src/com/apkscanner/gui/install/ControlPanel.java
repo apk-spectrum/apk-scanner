@@ -81,6 +81,9 @@ public class ControlPanel extends JPanel
 
 	public void setStatus(int status) {
 		Log.d(""+status );
+
+		btnNext.setEnabled(status != ApkInstallWizard.STATUS_WAIT_FOR_DEVICE);
+
 		switch(status) {
 		case ApkInstallWizard.STATUS_INIT:
 			setVisibleButtons(false, false, false, false, false, false); break;

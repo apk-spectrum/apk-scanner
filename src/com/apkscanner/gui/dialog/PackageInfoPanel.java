@@ -476,7 +476,8 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		if(!hasSysPack) return;
 
 		JTabbedPane tabSource = (JTabbedPane) arg0.getSource();
-		if(tabSource.getSelectedComponent().equals(sysPackInfoPanel)) {
+		if(tabSource != null && tabSource.getSelectedComponent() != null &&
+				tabSource.getSelectedComponent().equals(sysPackInfoPanel)) {
 			txtApkPath.setText(hiddenApkPath);
 		} else {
 			txtApkPath.setText(apkPath);

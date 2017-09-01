@@ -60,6 +60,8 @@ public class DefaultOptionsFactory {
 				if(device != null) {
 					Log.v("create options for " + device.getName());
 					PackageInfo packageInfo = PackageManager.getPackageInfo(device, apkInfo.packageName);
+					options.isInstalled = packageInfo != null;
+
 					int apiLevel = device.getApiLevel();
 					if(apiLevel < minSdkVersion) {
 						blockedFlags |= OptionsBundle.FLAG_OPT_INSTALL | OptionsBundle.FLAG_OPT_PUSH;

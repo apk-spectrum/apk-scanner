@@ -42,12 +42,12 @@ public class OptionsBundle {
 	public static final int BLOACKED_LAUNCH_CAUSE_NO_SUCH_ACTIVITY = 0x0040;
 	public static final int BLOACKED_CAUSE_UNKNWON = 0x8000;
 
-	public static final int BLOACKED_INSTALL_MASK = BLOACKED_COMMON_CAUSE_UNSIGNED | BLOACKED_COMMON_CAUSE_UNSUPPORTED_SDK_LEVEL | BLOACKED_INSTALL_CAUSE_MISMATCH_SIGNED; 
-	public static final int BLOACKED_PUSH_MASK = BLOACKED_COMMON_CAUSE_UNSIGNED | BLOACKED_COMMON_CAUSE_UNSUPPORTED_SDK_LEVEL 
+	public static final int BLOACKED_INSTALL_MASK = BLOACKED_COMMON_CAUSE_UNSIGNED | BLOACKED_COMMON_CAUSE_UNSUPPORTED_SDK_LEVEL | BLOACKED_INSTALL_CAUSE_MISMATCH_SIGNED;
+	public static final int BLOACKED_PUSH_MASK = BLOACKED_COMMON_CAUSE_UNSIGNED | BLOACKED_COMMON_CAUSE_UNSUPPORTED_SDK_LEVEL
 			| BLOACKED_PUSH_CAUSE_NO_ROOT | BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_NOT_SYSTEM;
 
 	int flag;
-	int blockedFlags; 
+	int blockedFlags;
 	int blockedCause;
 
 	String launchActivity;
@@ -57,6 +57,8 @@ public class OptionsBundle {
 	String lib32ToPath;
 	String lib64Arch;
 	String lib64ToPath;
+
+	boolean isInstalled;
 
 	public interface IOptionsChangedListener {
 		void changeOptions(int changedFlag, String... extraData);
@@ -126,7 +128,7 @@ public class OptionsBundle {
 	public synchronized boolean isBlockedFlags(int flags) {
 		return (blockedFlags & flags) == flags;
 	}
-	
+
 	public synchronized int getBlockedCause(int flag) {
 		int cause = NO_BLOACKED;
 		switch(flag) {
@@ -152,7 +154,7 @@ public class OptionsBundle {
 						cause = BLOACKED_PUSH_CAUSE_HAS_SU_BUT_NO_ROOT;
 					} else {
 						cause = BLOACKED_CAUSE_UNKNWON;
-					}					
+					}
 				}
 			}
 			break;
@@ -259,7 +261,7 @@ public class OptionsBundle {
 	public synchronized void clear() {
 		flag = FLAG_OPT_INSTALL | FLAG_OPT_INSTALL_REPLACE | FLAG_OPT_INSTALL_DOWNGRADE;
 		if((boolean)Resource.PROP_LAUNCH_AF_INSTALLED.getData()) {
-			flag |= FLAG_OPT_INSTALL_LAUNCH; 
+			flag |= FLAG_OPT_INSTALL_LAUNCH;
 		}
 
 		flag |= FLAG_OPT_PUSH_SYSTEM | FLAG_OPT_PUSH_REBOOT;
@@ -336,6 +338,10 @@ public class OptionsBundle {
 
 	public synchronized boolean isSetWithLib64() {
 		return (flag & FLAG_OPT_PUSH_LIB64) == FLAG_OPT_PUSH_LIB64;
+	}
+
+	public synchronized boolean isInstalled() {
+		return isInstalled;
 	}
 
 	public synchronized String getLaunchActivity() {
