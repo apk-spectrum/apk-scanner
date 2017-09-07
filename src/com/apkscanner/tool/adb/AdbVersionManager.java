@@ -256,6 +256,15 @@ public class AdbVersionManager implements Comparator<String> {
 					.replaceAll("(\"[^\"]*\":(\"[^\"]*\")?([^\",]*)?,)", "$1\n");
 			//.replaceAll("(\"[^\"]*\":(\"[^\"]*\")?([^\",\\[]*(\\[[^\\]]\\])?)?,)", "$1\n");
 
+			File file = new File(CACHE_FILE_PATH);
+			if(!file.exists() || file.length() == 0) {
+				try {
+					file.createNewFile();
+				} catch (IOException e) {
+					e.printStackTrace();
+					return;
+				}
+			}
 			BufferedWriter writer;
 			try {
 				writer = new BufferedWriter(new FileWriter(CACHE_FILE_PATH));
