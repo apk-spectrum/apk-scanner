@@ -189,6 +189,7 @@ public class SdkVersionInfoDlg extends JDialog {
 				info.append(list.getAttributes(i, "codeName"));
 				info.append("\n");
 			}
+			info.append("\nhttp://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels");
 
 			logoIcon = new ImageIcon(Resource.class.getResource("/icons/logo/base.png"));
 		}
