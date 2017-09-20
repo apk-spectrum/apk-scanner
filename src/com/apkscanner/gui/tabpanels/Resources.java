@@ -103,7 +103,7 @@ public class Resources extends JPanel implements TabDataObject {
 	private static final String RESOURCE_TREE_TOOLBAR_BUTTON_REFRESH = "TREE REFRESH";
 
 	public enum ResourceType {
-		ANIMATION(0), ANIM(1), COLOR(2), DRAWABLE(3), MIPMAP(4), LAYOUT(5), MENU(6), RAW(7), VALUES(8), XML(9), ASSET(
+		ANIMATOR(0), ANIM(1), COLOR(2), DRAWABLE(3), MIPMAP(4), LAYOUT(5), MENU(6), RAW(7), VALUES(8), XML(9), ASSET(
 				10), METAINF(11), ETC(12), COUNT(13);
 
 		private int type;
@@ -112,7 +112,7 @@ public class Resources extends JPanel implements TabDataObject {
 			this.type = type;
 		}
 
-		int getInt() {
+		public int getInt() {
 			return type;
 		}
 
@@ -130,7 +130,7 @@ public class Resources extends JPanel implements TabDataObject {
 		public String getImagefilePath(String findfilename);
 	}
 
-	public class ResourceObject {
+	public static class ResourceObject {
 		public static final int ATTR_AXML = 1;
 		public static final int ATTR_XML = 2;
 		public static final int ATTR_IMG = 3;
@@ -152,8 +152,8 @@ public class Resources extends JPanel implements TabDataObject {
 			this.path = path;
 			this.isFolder = isFolder;
 			this.isLoading = false;
-			if (path.startsWith("res/animation")) {
-				type = ResourceType.ANIMATION;
+			if (path.startsWith("res/animator")) {
+				type = ResourceType.ANIMATOR;
 			} else if (path.startsWith("res/anim")) {
 				type = ResourceType.ANIM;
 			} else if (path.startsWith("res/color")) {
@@ -553,12 +553,12 @@ public class Resources extends JPanel implements TabDataObject {
 		}
 	}
 
-	private String getOnlyFilename(String str) {
+	private static String getOnlyFilename(String str) {
 		String separator = (str.indexOf(File.separator) > -1) ? separator = File.separator : "/";
 		return str.substring(str.lastIndexOf(separator) + 1, str.length());
 	}
 
-	private String getOnlyFoldername(String str) {
+	private static String getOnlyFoldername(String str) {
 		String separator = (str.indexOf(File.separator) > -1) ? separator = File.separator : "/";
 		return str.substring(0, str.lastIndexOf(separator));
 	}
