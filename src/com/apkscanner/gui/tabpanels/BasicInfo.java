@@ -550,7 +550,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		installLocation = apkInfo.manifest.installLocation;
 
 		isHidden = ApkInfoHelper.isHidden(apkInfo);
-		isStartup = ApkInfoHelper.isHidden(apkInfo);
+		isStartup = ApkInfoHelper.isStartup(apkInfo);
 		isInstrumentation = ApkInfoHelper.isInstrumentation(apkInfo);
 		debuggable = ApkInfoHelper.isDebuggable(apkInfo);
 
