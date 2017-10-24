@@ -577,10 +577,12 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		hasSystemLevel = false; // apkInfo.hasSystemLevel;
 		notGrantPermmissions = "";
 
+		ArrayList<UsesPermissionInfo> allPermissions = new ArrayList<UsesPermissionInfo>(); 
 		StringBuilder permissionList = new StringBuilder();
 		if(apkInfo.manifest.usesPermission != null && apkInfo.manifest.usesPermission.length > 0) {
 			permissionList.append("<uses-permission> [" +  apkInfo.manifest.usesPermission.length + "]\n");
 			for(UsesPermissionInfo info: apkInfo.manifest.usesPermission) {
+				allPermissions.add(info);
 				permissionList.append(info.name + " - " + info.protectionLevel);
 				if(info.isSignatureLevel()) hasSignatureLevel = true;
 				if(info.isSignatureOrSystemLevel()) hasSignatureOrSystemLevel = true;
@@ -603,6 +605,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			}
 			permissionList.append("<uses-permission-sdk-23> [" +  apkInfo.manifest.usesPermissionSdk23.length + "]\n");
 			for(UsesPermissionInfo info: apkInfo.manifest.usesPermissionSdk23) {
+				allPermissions.add(info);
 				permissionList.append(info.name + " - " + info.protectionLevel);
 				if(info.isSignatureLevel()) hasSignatureLevel = true;
 				if(info.isSignatureOrSystemLevel()) hasSignatureOrSystemLevel = true;
@@ -634,9 +637,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			}
 		}
 		allPermissionsList = permissionList.toString();
-
-		permissionGroupManager = new PermissionGroupManager(apkInfo.manifest.usesPermission);
-
+		permissionGroupManager = new PermissionGroupManager(allPermissions.toArray(new UsesPermissionInfo[allPermissions.size()]));
 
 		StringBuilder deviceReqData = new StringBuilder();
 		if(apkInfo.manifest.compatibleScreens != null) {
@@ -700,7 +701,6 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			permGroup.append(makeHyperLink("@event", makeImage(g.icon), g.permSummary, g.name, g.hasDangerous?"color:red;":null));
 			if(++cnt % 15 == 0) permGroup.append("<br/>");
 		}
-
 
 		return permGroup.toString();
 	}
