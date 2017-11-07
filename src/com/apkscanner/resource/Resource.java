@@ -345,6 +345,10 @@ public enum Resource
 	STR_WITH_WEAK				(Type.TEXT, "@with_weak"),
 	STR_KEY_BIT					(Type.TEXT, "@key_bit"),
 	STR_KEY_BIT_WEAK			(Type.TEXT, "@key_bit_weak"),
+	STR_NOT_A_SINGED_JAR_FILE	(Type.TEXT, "@not_a_singed_jar_file"),
+	STR_EXTENSIONS				(Type.TEXT, "@extensions"),
+	STR_EMPTY_VALUE				(Type.TEXT, "@empty_value"),
+	STR_TIMESTAMP				(Type.TEXT, "@timestamp"),
 
 	IMG_TOOLBAR_OPEN			(Type.IMAGE, "toolbar_open.png"),
 	IMG_TOOLBAR_MANIFEST		(Type.IMAGE, "toolbar_manifast.png"),

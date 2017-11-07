@@ -11,7 +11,6 @@ import java.io.PrintStream;
 import java.security.CodeSigner;
 import java.security.CryptoPrimitive;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.Timestamp;
 import java.security.cert.Certificate;
@@ -29,8 +28,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import javax.xml.bind.DatatypeConverter;
 
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
@@ -56,11 +53,6 @@ public class SignatureReport {
 
     private static final Set<CryptoPrimitive> SIG_PRIMITIVE_SET = Collections
             .unmodifiableSet(EnumSet.of(CryptoPrimitive.SIGNATURE));
-
-	private static java.util.ResourceBundle rb = java.util.ResourceBundle.getBundle(
-			Double.parseDouble(System.getProperty("java.specification.version")) >= 1.8 ?
-					"sun.security.tools.keytool.Resources" : "sun.security.util.Resources"
-			);
 
 	private boolean rfc = false;
 
@@ -130,7 +122,7 @@ public class SignatureReport {
 		}
 		jf.close();
 		if (ss.isEmpty()) {
-			Log.w(rb.getString("Not.a.signed.jar.file"));
+			Log.w(Resource.STR_NOT_A_SINGED_JAR_FILE.getString());
 		}
 		if(!certList.isEmpty()) {
 			certificates = certList.toArray(new X509Certificate[certList.size()]);
@@ -166,7 +158,7 @@ public class SignatureReport {
 	{
 		String pattern = null;
 		Object[] source = null;
-
+		
 		pattern = Resource.STR_PATTERN_PRINT_X509_CERT.getString();
         PublicKey pkey = cert.getPublicKey();
         String sigName = cert.getSigAlgName();
@@ -198,7 +190,7 @@ public class SignatureReport {
 			CertificateExtensions exts = (CertificateExtensions)
 					certInfo.get(X509CertInfo.EXTENSIONS);
 			if (exts != null) {
-				printExtensions(rb.getString("Extensions."), exts, out);
+				printExtensions(Resource.STR_EXTENSIONS.getString(), exts, out);
 			}
 		}
 	}
@@ -219,7 +211,7 @@ public class SignatureReport {
 			if (ext.getClass() == Extension.class) {
 				byte[] v = ext.getExtensionValue();
 				if (v.length == 0) {
-					out.println(rb.getString(".Empty.value."));
+					out.println(Resource.STR_EMPTY_VALUE.getString());
 				} else {
 					new sun.misc.HexDumpEncoder().encodeBuffer(ext.getExtensionValue(), out);
 					out.println();
@@ -247,19 +239,39 @@ public class SignatureReport {
 	}
 
 	private static String getCertFingerPrint(String mdAlg, Certificate cert) throws Exception {
-		String print = null;
-		try {
-			MessageDigest messageDigest = MessageDigest.getInstance(mdAlg);
-			messageDigest.update(cert.getEncoded());
-			byte[] hash = messageDigest.digest();
-			print = DatatypeConverter.printHexBinary(hash).toUpperCase()
-					.replaceAll("([\\dA-F]{2})", "$1:").replaceAll(":$", "");
-		} catch (NoSuchAlgorithmException e) {
-			print = e.getMessage();
-			e.printStackTrace();
-		}
-		return print;
+        byte[] encCertInfo = cert.getEncoded();
+        MessageDigest md = MessageDigest.getInstance(mdAlg);
+        byte[] digest = md.digest(encCertInfo);
+        return toHexString(digest);
 	}
+	
+
+    /**
+     * Converts a byte to hex digit and writes to the supplied buffer
+     */
+    private static void byte2hex(byte b, StringBuffer buf) {
+        char[] hexChars = { '0', '1', '2', '3', '4', '5', '6', '7', '8',
+                            '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+        int high = ((b & 0xf0) >> 4);
+        int low = (b & 0x0f);
+        buf.append(hexChars[high]);
+        buf.append(hexChars[low]);
+    }
+    
+    /**
+     * Converts a byte array to hex string
+     */
+    private static String toHexString(byte[] block) {
+        StringBuffer buf = new StringBuffer();
+        int len = block.length;
+        for (int i = 0; i < len; i++) {
+             byte2hex(block[i], buf);
+             if (i < len-1) {
+                 buf.append(":");
+             }
+        }
+        return buf.toString();
+    }
 
 	public String getReport(X509Certificate cert) {
 		Log.v(Integer.toHexString(cert.hashCode()));
@@ -387,7 +399,7 @@ public class SignatureReport {
 		}
 		if(timestamp != null) {
 			sb.append("\n");
-			sb.append(rb.getString("Timestamp."));
+			sb.append(Resource.STR_TIMESTAMP.getString());
 			sb.append("\n");
 			for(X509Certificate cert: timestamp) {
 				sb.append(getReport(cert));

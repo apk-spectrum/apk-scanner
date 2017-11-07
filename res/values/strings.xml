@@ -322,4 +322,8 @@ Refresh this package information?</string>
 	<string name="with_weak">%s (weak)</string>
 	<string name="key_bit">%d-bit %s key</string>
 	<string name="key_bit_weak">%d-bit %s key (weak)</string>
+	<string name="not_a_singed_jar_file">Not a signed jar file</string>
+	<string name="extensions">Extensions: </string>
+	<string name="empty_value">(Empty value)</string>
+	<string name="timestamp">Timestamp:</string>
 </resources>
