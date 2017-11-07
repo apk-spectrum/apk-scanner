@@ -1,7 +1,7 @@
 #!/bin/bash
 
 APP_PATH="/opt/APKScanner"
-APP_VERSION="2.3"
+APP_VERSION="2.3.2"
 APP_FILE="APKInfoDlg.jar"
 LIB_PATH="$APP_PATH/lib/json-simple-1.1.1.jar:$APP_PATH/lib/commons-cli-1.3.1.jar:$APP_PATH/lib/rsyntaxtextarea-2.5.7.jar:$APP_PATH/lib/ForfindGUI.jar:$APP_PATH/lib/ddmlib.jar:$APP_PATH/lib/guava-18.0.jar:$APP_PATH/lib/mslinks.jar:$APP_PATH/lib/jna-4.4.0.jar:$APP_PATH/lib/jna-platform-4.4.0.jar"
 MAIN_CLASS="com.apkscanner.Main"
