@@ -341,6 +341,11 @@ public enum Resource
 	STR_QUESTION_REMOVE_SYSTEM_APK(Type.TEXT, "@question_remove_system_apk"),
 	STR_QUESTION_REMOVED_REBOOT (Type.TEXT, "@question_removed_reboot"),
 
+	STR_PATTERN_PRINT_X509_CERT (Type.TEXT, "@pattern_print_x509_cert"),
+	STR_WITH_WEAK				(Type.TEXT, "@with_weak"),
+	STR_KEY_BIT					(Type.TEXT, "@key_bit"),
+	STR_KEY_BIT_WEAK			(Type.TEXT, "@key_bit_weak"),
+
 	IMG_TOOLBAR_OPEN			(Type.IMAGE, "toolbar_open.png"),
 	IMG_TOOLBAR_MANIFEST		(Type.IMAGE, "toolbar_manifast.png"),
 	IMG_TOOLBAR_EXPLORER		(Type.IMAGE, "toolbar_explorer.png"),
@@ -676,7 +681,7 @@ public enum Resource
 			if(value != null) break;
 		}
 
-		return value;
+		return value != null ? value.replaceAll("\\\\n", "\n").replaceAll("\\\\t", "\t") : null;
 	}
 
 	private static void loadProperty()

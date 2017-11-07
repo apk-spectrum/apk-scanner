@@ -9,8 +9,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.security.CodeSigner;
+import java.security.CryptoPrimitive;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.security.Timestamp;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
@@ -19,6 +21,8 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,11 +32,14 @@ import java.util.jar.JarFile;
 
 import javax.xml.bind.DatatypeConverter;
 
+import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
 import sun.misc.BASE64Encoder;
 import sun.security.pkcs.PKCS7;
 import sun.security.provider.X509Factory;
+import sun.security.util.DisabledAlgorithmConstraints;
+import sun.security.util.KeyUtil;
 import sun.security.x509.CertificateExtensions;
 import sun.security.x509.Extension;
 import sun.security.x509.X509CertImpl;
@@ -42,6 +49,13 @@ public class SignatureReport {
 
 	private X509Certificate[] certificates;
 	private X509Certificate[] timestamp;
+
+    private static final DisabledAlgorithmConstraints DISABLED_CHECK =
+            new DisabledAlgorithmConstraints(
+                    DisabledAlgorithmConstraints.PROPERTY_CERTPATH_DISABLED_ALGS);
+
+    private static final Set<CryptoPrimitive> SIG_PRIMITIVE_SET = Collections
+            .unmodifiableSet(EnumSet.of(CryptoPrimitive.SIGNATURE));
 
 	private static java.util.ResourceBundle rb = java.util.ResourceBundle.getBundle(
 			Double.parseDouble(System.getProperty("java.specification.version")) >= 1.8 ?
@@ -126,43 +140,54 @@ public class SignatureReport {
 		}
 	}
 
+    private static String withWeak(String alg) {
+        if (DISABLED_CHECK.permits(SIG_PRIMITIVE_SET, alg, null)) {
+            return alg;
+        } else {
+            return String.format(Resource.STR_WITH_WEAK.getString(), alg);
+        }
+    }
+
+    private static String withWeak(PublicKey key) {
+        if (DISABLED_CHECK.permits(SIG_PRIMITIVE_SET, key)) {
+            return String.format(Resource.STR_KEY_BIT.getString(),
+                    KeyUtil.getKeySize(key), key.getAlgorithm());
+        } else {
+            return String.format(Resource.STR_KEY_BIT_WEAK.getString(),
+                    KeyUtil.getKeySize(key), key.getAlgorithm());
+        }
+    }
+
 	/**
 	 * Prints a certificate in a human readable format.
 	 */
 	private static void printX509Cert(X509Certificate cert, PrintStream out)
 			throws Exception
 	{
-		/*
-        out.println("Owner: "
-                    + cert.getSubjectDN().toString()
-                    + "\n"
-                    + "Issuer: "
-                    + cert.getIssuerDN().toString()
-                    + "\n"
-                    + "Serial number: " + cert.getSerialNumber().toString(16)
-                    + "\n"
-                    + "Valid from: " + cert.getNotBefore().toString()
-                    + " until: " + cert.getNotAfter().toString()
-                    + "\n"
-                    + "Certificate fingerprints:\n"
-                    + "\t MD5:  " + getCertFingerPrint("MD5", cert)
-                    + "\n"
-                    + "\t SHA1: " + getCertFingerPrint("SHA1", cert));
-		 */
+		String pattern = null;
+		Object[] source = null;
 
-		MessageFormat form = new MessageFormat
-				(rb.getString(".PATTERN.printX509Cert"));
-		Object[] source = {cert.getSubjectDN().toString(),
+		pattern = Resource.STR_PATTERN_PRINT_X509_CERT.getString();
+        PublicKey pkey = cert.getPublicKey();
+        String sigName = cert.getSigAlgName();
+        // No need to warn about sigalg of a trust anchor
+        //if (!isTrustedCert(cert)) {
+            sigName = withWeak(sigName);
+        //}
+		source = new Object[] {cert.getSubjectDN().toString(),
 				cert.getIssuerDN().toString(),
 				cert.getSerialNumber().toString(16),
 				cert.getNotBefore().toString(),
 				cert.getNotAfter().toString(),
 				getCertFingerPrint("MD5", cert),
-				getCertFingerPrint("SHA1", cert),
+				getCertFingerPrint("SHA-1", cert),
 				getCertFingerPrint("SHA-256", cert),
-				cert.getSigAlgName(),
+				sigName,
+				withWeak(pkey),
 				cert.getVersion()
 		};
+
+		MessageFormat form = new MessageFormat(pattern);
 		out.println(form.format(source));
 
 		if (cert instanceof X509CertImpl) {
@@ -302,7 +327,7 @@ public class SignatureReport {
 			return false;
 		}
 
-		if(algorithm != null && !algorithm.isEmpty() 
+		if(algorithm != null && !algorithm.isEmpty()
 				&& !algorithm.equalsIgnoreCase("RAWDATA")) {
 			for(X509Certificate cert: certificates) {
 				String fingerPrint = null;

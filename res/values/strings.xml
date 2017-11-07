@@ -318,4 +318,8 @@ Refresh this package information?</string>
 	<string name="tree_node_recently">Recently Activity Packages</string>
 	<string name="tree_node_running">Currently Running Process Packages</string>
 
+	<string name="pattern_print_x509_cert">Owner: {0}\nIssuer: {1}\nSerial number: {2}\nValid from: {3} until: {4}\nCertificate fingerprints:\n\t MD5:  {5}\n\t SHA1: {6}\n\t SHA256: {7}\nSignature algorithm name: {8}\nSubject Public Key Algorithm: {9}\nVersion: {10}</string>
+	<string name="with_weak">%s (weak)</string>
+	<string name="key_bit">%d-bit %s key</string>
+	<string name="key_bit_weak">%d-bit %s key (weak)</string>
 </resources>
