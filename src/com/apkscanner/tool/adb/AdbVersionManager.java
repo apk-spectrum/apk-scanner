@@ -258,6 +258,7 @@ public class AdbVersionManager implements Comparator<String> {
 
 			File file = new File(CACHE_FILE_PATH);
 			if(!file.exists() || file.length() == 0) {
+				FileUtil.makeFolder(file.getParent());
 				try {
 					file.createNewFile();
 				} catch (IOException e) {
