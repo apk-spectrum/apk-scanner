@@ -437,7 +437,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 		}.execute();
 	}
 
-	private void revaluationDeviceState(IDevice device) {
+	private void revaluationDeviceState(final IDevice device) {
 		new SwingWorker<Boolean, Object>() {
 			@Override
 			protected Boolean doInBackground() throws Exception {
@@ -561,7 +561,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 		Log.i("deviceDisconnected() " + device.getName() + ", isOnline " + device.isOnline());
 		synchronized(deviceDataMap) {
 			Log.i("deviceDisconnected() 2 " + device.getName() + ", isOnline " + device.isOnline());
-			DeviceListData data = deviceDataMap.get(device);
+			final DeviceListData data = deviceDataMap.get(device);
 			if(data != null) {
 				try {
 					EventQueue.invokeAndWait(new Runnable() {
