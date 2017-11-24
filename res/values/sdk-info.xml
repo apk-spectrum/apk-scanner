@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!--
+http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels
+https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/os/Build.java
+-->
 <resources>
     <sdk-info apiLevel="1" platformVersion="Android 1.0" versionCode="BASE" codeName="Base" icon="/icons/logo/base.png"/>
     <sdk-info apiLevel="2" platformVersion="Android 1.1" versionCode="BASE_1_1" codeName="Base" icon="/icons/logo/base.png"/>
@@ -23,7 +27,8 @@
     <sdk-info apiLevel="20" platformVersion="Android 4.4W" versionCode="KITKAT_WATCH" codeName="KitKat" icon="/icons/logo/kitkat.png"/>
     <sdk-info apiLevel="21" platformVersion="Android 5.0" versionCode="LOLLIPOP" codeName="Lollipop" icon="/icons/logo/lollipop.png"/>
     <sdk-info apiLevel="22" platformVersion="Android 5.1" versionCode="LOLLIPOP_MR1" codeName="Lollipop" icon="/icons/logo/lollipop.png"/>
-    <sdk-info apiLevel="23" platformVersion="Android 6.0" versionCode="MARSHMALLOW" codeName="Marshmallow" icon="/icons/logo/marshmallow.png"/>
-    <sdk-info apiLevel="24" platformVersion="Android 7.0" versionCode="NOUGAT" codeName="Nougat" icon="/icons/logo/nougat.png"/>
-    <sdk-info apiLevel="25" platformVersion="Android 7.x" versionCode="NOUGAT_MR1" codeName="Nougat++" icon="/icons/logo/nougat.png"/>
+    <sdk-info apiLevel="23" platformVersion="Android 6.0" versionCode="M" codeName="Marshmallow" icon="/icons/logo/marshmallow.png"/>
+    <sdk-info apiLevel="24" platformVersion="Android 7.0" versionCode="N" codeName="Nougat" icon="/icons/logo/nougat.png"/>
+    <sdk-info apiLevel="25" platformVersion="Android 7.1.x" versionCode="N_MR1" codeName="Nougat++" icon="/icons/logo/nougat.png"/>
+    <sdk-info apiLevel="26" platformVersion="Android 8.0" versionCode="O" codeName="Oreo" icon="/icons/logo/oreo.png"/>
 </resources>

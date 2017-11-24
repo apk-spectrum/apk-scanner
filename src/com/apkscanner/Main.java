@@ -38,6 +38,8 @@ public class Main implements Runnable
 
 		Log.i(Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString() + " " + Resource.STR_APP_BUILD_MODE.getString());
 		Log.i("OS : " + SystemUtil.OS);
+		Log.i("java.version : " + System.getProperty("java.version"));
+		Log.i("java.specification.version : " + System.getProperty("java.specification.version"));
 		Log.i("file.encoding : " + System.getProperty("file.encoding"));
 		Log.i("java.library.path : " + System.getProperty("java.library.path"));
 		Log.i("Default Charset : " + Charset.defaultCharset());

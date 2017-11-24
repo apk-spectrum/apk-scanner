@@ -29,7 +29,7 @@ import com.apkscanner.util.ZipFileUtil;
 public enum Resource
 {
 	STR_APP_NAME				(Type.TEXT, "@app_name"),
-	STR_APP_VERSION				(Type.TEXT, "2.3"),
+	STR_APP_VERSION				(Type.TEXT, "2.3.2"),
 	STR_APP_BUILD_MODE			(Type.TEXT, "eng"),
 	STR_APP_MAKER				(Type.TEXT, "jin_h.lee / sunggyu.kam"),
 	STR_APP_MAKER_EMAIL			(Type.TEXT, "jin_h.lee@samsung.com;sunggyu.kam@samsung.com"),
@@ -340,6 +340,15 @@ public enum Resource
 	STR_QUESTION_PACK_INFO_REFRESH(Type.TEXT, "@question_pack_info_refresh"),
 	STR_QUESTION_REMOVE_SYSTEM_APK(Type.TEXT, "@question_remove_system_apk"),
 	STR_QUESTION_REMOVED_REBOOT (Type.TEXT, "@question_removed_reboot"),
+
+	STR_PATTERN_PRINT_X509_CERT (Type.TEXT, "@pattern_print_x509_cert"),
+	STR_WITH_WEAK				(Type.TEXT, "@with_weak"),
+	STR_KEY_BIT					(Type.TEXT, "@key_bit"),
+	STR_KEY_BIT_WEAK			(Type.TEXT, "@key_bit_weak"),
+	STR_NOT_A_SINGED_JAR_FILE	(Type.TEXT, "@not_a_singed_jar_file"),
+	STR_EXTENSIONS				(Type.TEXT, "@extensions"),
+	STR_EMPTY_VALUE				(Type.TEXT, "@empty_value"),
+	STR_TIMESTAMP				(Type.TEXT, "@timestamp"),
 
 	IMG_TOOLBAR_OPEN			(Type.IMAGE, "toolbar_open.png"),
 	IMG_TOOLBAR_MANIFEST		(Type.IMAGE, "toolbar_manifast.png"),
@@ -676,7 +685,7 @@ public enum Resource
 			if(value != null) break;
 		}
 
-		return value;
+		return value != null ? value.replaceAll("\\\\n", "\n").replaceAll("\\\\t", "\t") : null;
 	}
 
 	private static void loadProperty()

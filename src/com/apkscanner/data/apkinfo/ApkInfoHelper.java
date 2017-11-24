@@ -64,7 +64,7 @@ public class ApkInfoHelper
 	}
 
 	public static boolean isStartup(ApkInfo apkInfo) {
-		return (apkInfo != null && (apkInfo.manifest.featureFlags & ManifestInfo.MANIFEST_FEATURE_INSTRUMENTATION) != 0);
+		return (apkInfo != null && (apkInfo.manifest.featureFlags & ManifestInfo.MANIFEST_FEATURE_STARTUP) != 0);
 	}
 
 	public static boolean isInstrumentation(ApkInfo apkInfo) {

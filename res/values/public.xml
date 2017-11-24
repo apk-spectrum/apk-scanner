@@ -2547,6 +2547,7 @@
     <!-- @hide This really shouldn't be public; clients using it should use @* to ref it.  -->
     <public type="style" name="Theme.Leanback.FormWizard" id="0x010302d0" />
 
+    <!-- @hide @SystemApi This shouldn't be public. -->
     <public type="array" name="config_keySystemUuidMapping" id="0x01070005" />
 
     <!-- An interpolator which accelerates fast but decelerates slowly. -->
@@ -2595,13 +2596,13 @@
     <public type="attr" name="accessibilityTraversalAfter" id="0x010104d2" />
     <public type="attr" name="dialogPreferredPadding" id="0x010104d3" />
     <public type="attr" name="searchHintIcon" id="0x010104d4" />
-    <public type="attr" name="revisionCode" />
-    <public type="attr" name="drawableTint" />
-    <public type="attr" name="drawableTintMode" />
-    <public type="attr" name="fraction" />
+    <public type="attr" name="revisionCode" id="0x010104d5" />
+    <public type="attr" name="drawableTint" id="0x010104d6" />
+    <public type="attr" name="drawableTintMode" id="0x010104d7" />
+    <public type="attr" name="fraction" id="0x010104d8" />
 
-    <public type="style" name="Theme.DeviceDefault.Dialog.Alert" />
-    <public type="style" name="Theme.DeviceDefault.Light.Dialog.Alert" />
+    <public type="style" name="Theme.DeviceDefault.Dialog.Alert" id="0x010302d1" />
+    <public type="style" name="Theme.DeviceDefault.Light.Dialog.Alert" id="0x010302d2" />
 
   <!-- ===============================================================
        Resources added in version M of the platform
@@ -2653,5 +2654,195 @@
     <public type="id" name="accessibilityActionScrollRight" id="0x0102003b" />
     <public type="id" name="accessibilityActionContextClick" id="0x0102003c" />
 
-    <public type="string" name="fingerprint_icon_content_description" />
+    <public type="string" name="fingerprint_icon_content_description" id="0x01040018" />
+
+  <!-- ===============================================================
+       Resources added in version N of the platform
+       =============================================================== -->
+    <eat-comment />
+
+    <public type="attr" name="listMenuViewStyle" id="0x010104f2" />
+    <public type="attr" name="subMenuArrow" id="0x010104f3" />
+    <public type="attr" name="defaultWidth" id="0x010104f4" />
+    <public type="attr" name="defaultHeight" id="0x010104f5" />
+    <public type="attr" name="resizeableActivity" id="0x010104f6" />
+    <public type="attr" name="supportsPictureInPicture" id="0x010104f7" />
+    <public type="attr" name="titleMargin" id="0x010104f8" />
+    <public type="attr" name="titleMarginStart" id="0x010104f9" />
+    <public type="attr" name="titleMarginEnd" id="0x010104fa" />
+    <public type="attr" name="titleMarginTop" id="0x010104fb" />
+    <public type="attr" name="titleMarginBottom" id="0x010104fc" />
+    <public type="attr" name="maxButtonHeight" id="0x010104fd" />
+    <public type="attr" name="buttonGravity" id="0x010104fe" />
+    <public type="attr" name="collapseIcon" id="0x010104ff" />
+    <public type="attr" name="level" id="0x01010500" />
+    <public type="attr" name="contextPopupMenuStyle" id="0x01010501" />
+    <public type="attr" name="textAppearancePopupMenuHeader" id="0x01010502" />
+    <public type="attr" name="windowBackgroundFallback" id="0x01010503" />
+    <public type="attr" name="defaultToDeviceProtectedStorage" id="0x01010504" />
+    <public type="attr" name="directBootAware" id="0x01010505" />
+    <public type="attr" name="preferenceFragmentStyle" id="0x01010506" />
+    <public type="attr" name="canControlMagnification" id="0x01010507" />
+    <public type="attr" name="languageTag" id="0x01010508" />
+    <public type="attr" name="pointerIcon" id="0x01010509" />
+    <public type="attr" name="tickMark" id="0x0101050a" />
+    <public type="attr" name="tickMarkTint" id="0x0101050b" />
+    <public type="attr" name="tickMarkTintMode" id="0x0101050c" />
+    <public type="attr" name="canPerformGestures" id="0x0101050d" />
+    <public type="attr" name="externalService" id="0x0101050e" />
+    <public type="attr" name="supportsLocalInteraction" id="0x0101050f" />
+    <public type="attr" name="startX" id="0x01010510" />
+    <public type="attr" name="startY" id="0x01010511" />
+    <public type="attr" name="endX" id="0x01010512" />
+    <public type="attr" name="endY" id="0x01010513" />
+    <public type="attr" name="offset" id="0x01010514" />
+    <public type="attr" name="use32bitAbi" id="0x01010515" />
+    <public type="attr" name="bitmap" id="0x01010516" />
+    <public type="attr" name="hotSpotX" id="0x01010517" />
+    <public type="attr" name="hotSpotY" id="0x01010518" />
+    <public type="attr" name="version" id="0x01010519" />
+    <public type="attr" name="backupInForeground" id="0x0101051a" />
+    <public type="attr" name="countDown" id="0x0101051b" />
+    <public type="attr" name="canRecord" id="0x0101051c" />
+    <public type="attr" name="tunerCount" id="0x0101051d" />
+    <public type="attr" name="fillType" id="0x0101051e" />
+    <public type="attr" name="popupEnterTransition" id="0x0101051f" />
+    <public type="attr" name="popupExitTransition" id="0x01010520" />
+    <public type="attr" name="forceHasOverlappingRendering" id="0x01010521" />
+    <public type="attr" name="contentInsetStartWithNavigation" id="0x01010522" />
+    <public type="attr" name="contentInsetEndWithActions" id="0x01010523" />
+    <public type="attr" name="numberPickerStyle" id="0x01010524" />
+    <public type="attr" name="enableVrMode" id="0x01010525" />
+    <public type="attr" name="hash" id="0x01010526" />
+    <public type="attr" name="networkSecurityConfig" id="0x01010527" />
+
+    <public type="style" name="Theme.Material.Light.DialogWhenLarge.DarkActionBar" id="0x010302d8" />
+    <public type="style" name="Widget.Material.SeekBar.Discrete" id="0x010302d9" />
+    <public type="style" name="Widget.Material.CompoundButton.Switch" id="0x010302da" />
+    <public type="style" name="Widget.Material.Light.CompoundButton.Switch" id="0x010302db" />
+    <public type="style" name="Widget.Material.NumberPicker" id="0x010302dc" />
+    <public type="style" name="Widget.Material.Light.NumberPicker" id="0x010302dd" />
+    <public type="style" name="TextAppearance.Material.Widget.Button.Colored" id="0x010302de" />
+    <public type="style" name="TextAppearance.Material.Widget.Button.Borderless.Colored" id="0x010302df" />
+
+    <public type="id" name="accessibilityActionSetProgress" id="0x0102003d" />
+    <public type="id" name="icon_frame" id="0x0102003e" />
+    <public type="id" name="list_container" id="0x0102003f" />
+    <public type="id" name="switch_widget" id="0x01020040" />
+  <!-- ===============================================================
+       Resources added in version N MR1 of the platform
+       =============================================================== -->
+    <eat-comment />
+    <public type="attr" name="shortcutId" id="0x01010528" />
+    <public type="attr" name="shortcutShortLabel" id="0x01010529" />
+    <public type="attr" name="shortcutLongLabel" id="0x0101052a" />
+    <public type="attr" name="shortcutDisabledMessage" id="0x0101052b" />
+    <public type="attr" name="roundIcon" id="0x0101052c" />
+    <public type="attr" name="contextUri" id="0x0101052d" />
+    <public type="attr" name="contextDescription" id="0x0101052e" />
+    <public type="attr" name="showMetadataInPreview" id="0x0101052f" />
+    <public type="attr" name="colorSecondary" id="0x01010530" />
+
+  <!-- ===============================================================
+       Resources added in version O of the platform
+
+       NOTE: add <public> elements within a <public-group> like so:
+
+       <public-group type="attr" first-id="0x01010531">
+           <public name="exampleAttr1" />
+           <public name="exampleAttr2" />
+       </public-group>
+
+       To add a new public-group block, choose an id value that is 1 greater
+       than the last of that item above. For example, the last "attr" id
+       value above is 0x01010530, so the public-group of attrs below has
+       the id value of 0x01010531.
+       =============================================================== -->
+    <eat-comment />
+
+    <public type="attr" name="visibleToInstantApps" id="0x01010531" />
+    <public type="attr" name="font" id="0x01010532" />
+    <public type="attr" name="fontWeight" id="0x01010533" />
+    <public type="attr" name="tooltipText" id="0x01010534" />
+    <public type="attr" name="autoSizeTextType" id="0x01010535" />
+    <public type="attr" name="autoSizeStepGranularity" id="0x01010536" />
+    <public type="attr" name="autoSizePresetSizes" id="0x01010537" />
+    <public type="attr" name="autoSizeMinTextSize" id="0x01010538" />
+    <public type="attr" name="min" id="0x01010539" />
+    <public type="attr" name="rotationAnimation" id="0x0101053a" />
+    <public type="attr" name="layout_marginHorizontal" id="0x0101053b" />
+    <public type="attr" name="layout_marginVertical" id="0x0101053c" />
+    <public type="attr" name="paddingHorizontal" id="0x0101053d" />
+    <public type="attr" name="paddingVertical" id="0x0101053e" />
+    <public type="attr" name="fontStyle" id="0x0101053f" />
+    <public type="attr" name="keyboardNavigationCluster" id="0x01010540" />
+    <public type="attr" name="targetProcesses" id="0x01010541" />
+    <public type="attr" name="nextClusterForward" id="0x01010542" />
+    <public type="attr" name="colorError" id="0x01010543" />
+    <public type="attr" name="focusedByDefault" id="0x01010544" />
+    <public type="attr" name="appCategory" id="0x01010545" />
+    <public type="attr" name="autoSizeMaxTextSize" id="0x01010546" />
+    <public type="attr" name="recreateOnConfigChanges" id="0x01010547" />
+    <public type="attr" name="certDigest" id="0x01010548" />
+    <public type="attr" name="splitName" id="0x01010549" />
+    <public type="attr" name="colorMode" id="0x0101054a" />
+    <public type="attr" name="isolatedSplits" id="0x0101054b" />
+    <public type="attr" name="targetSandboxVersion" id="0x0101054c" />
+    <public type="attr" name="canRequestFingerprintGestures" id="0x0101054d" />
+    <public type="attr" name="alphabeticModifiers" id="0x0101054e" />
+    <public type="attr" name="numericModifiers" id="0x0101054f" />
+    <public type="attr" name="fontProviderAuthority" id="0x01010550" />
+    <public type="attr" name="fontProviderQuery" id="0x01010551" />
+    <public type="attr" name="primaryContentAlpha" id="0x01010552" />
+    <public type="attr" name="secondaryContentAlpha" id="0x01010553" />
+    <public type="attr" name="requiredFeature" id="0x01010554" />
+    <public type="attr" name="requiredNotFeature" id="0x01010555" />
+    <public type="attr" name="autofillHints" id="0x01010556" />
+    <public type="attr" name="fontProviderPackage" id="0x01010557" />
+    <public type="attr" name="importantForAutofill" id="0x01010558" />
+    <public type="attr" name="recycleEnabled" id="0x01010559"/>
+    <public type="attr" name="isStatic" id="0x0101055a" />
+    <public type="attr" name="isFeatureSplit" id="0x0101055b" />
+    <public type="attr" name="singleLineTitle" id="0x0101055c" />
+    <public type="attr" name="fontProviderCerts" id="0x0101055d" />
+    <public type="attr" name="iconTint" id="0x0101055e" />
+    <public type="attr" name="iconTintMode" id="0x0101055f" />
+    <public type="attr" name="maxAspectRatio" id="0x01010560"/>
+    <public type="attr" name="iconSpaceReserved" id="0x01010561"/>
+    <public type="attr" name="defaultFocusHighlightEnabled" id="0x01010562" />
+    <public type="attr" name="persistentWhenFeatureAvailable" id="0x01010563"/>
+    <public type="attr" name="windowSplashscreenContent" id="0x01010564" />
+    <!-- @hide @SystemApi -->
+    <public type="attr" name="requiredSystemPropertyName" id="0x01010565" />
+    <!-- @hide @SystemApi -->
+    <public type="attr" name="requiredSystemPropertyValue" id="0x01010566" />
+    <public type="attr" name="justificationMode" id="0x01010567" />
+    <public type="attr" name="autofilledHighlight" id="0x01010568" />
+
+    <public type="id" name="textAssist" id="0x01020041" />
+    <public type="id" name="accessibilityActionMoveWindow" id="0x01020042" />
+    <public type="id" name="autofill" id="0x01020043" />
+
+    <public type="string" name="paste_as_plain_text" id="0x01040019" />
+
+    <public-group type="attr" first-id="0x01010569">
+    </public-group>
+
+    <public-group type="style" first-id="0x010302e0">
+    </public-group>
+
+    <public-group type="id" first-id="0x01020044">
+    </public-group>
+
+    <public-group type="string" first-id="0x0104001a">
+    </public-group>
+
+  <!-- ===============================================================
+       DO NOT ADD UN-GROUPED ITEMS HERE
+
+       Any new items (attrs, styles, ids, etc.) *must* be added in a
+       public-group block, as the preceding comment explains.
+       Items added outside of a group may have their value recalculated
+       every time something new is added to this file.
+       =============================================================== -->
 </resources>

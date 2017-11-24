@@ -313,7 +313,10 @@ public class ApkInstallWizard implements IDeviceChangeListener
 					} catch (Exception e) { }
 					if(signatureReport == null || signatureReport.getSize() == 0) {
 						Log.e("Fail APK Virify");
-						return false;
+						if(apkInfo.certificates == null || apkInfo.certificates.length == 0) {
+							Log.e("certificates is null or 0");
+							return false;
+						}
 					}
 					optFactory = new DefaultOptionsFactory(apkInfo, signatureReport);
 					return true;

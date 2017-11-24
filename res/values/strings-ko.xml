@@ -316,4 +316,12 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="tree_node_recently">최근 실행된 액티비티 패키지</string>
 	<string name="tree_node_running">실행중인 프로세스 패키지</string>
 
+	<string name="pattern_print_x509_cert">소유자: {0}\n발행자: {1}\n일련 번호: {2}\n적합한 시작 날짜: {3} 종료 날짜: {4}\n인증서 지문:\n\t MD5:  {5}\n\t SHA1: {6}\n\t SHA256: {7}\n서명 알고리즘 이름: {8}\n주체 공용 키 알고리즘: {9}\n버전: {10}</string>
+	<string name="with_weak">%s(약함)</string>
+	<string name="key_bit">%d비트 %s 키</string>
+	<string name="key_bit_weak">%d비트 %s 키(약함)</string>
+	<string name="not_a_singed_jar_file">서명된 jar 파일이 아닙니다.</string>
+	<string name="extensions">확장: </string>
+	<string name="empty_value">(비어 있는 값)</string>
+	<string name="timestamp">시간 기록:</string>
 </resources>

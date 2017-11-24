@@ -15,8 +15,6 @@ import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.bind.DatatypeConverter;
-
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -43,7 +41,6 @@ public class AdbVersionManager implements Comparator<String> {
 	private static final ArrayList<String> sortedList = new ArrayList<String>();
 
 	public static final String CACHE_FILE_PATH = FileUtil.getTempPath() + File.separator + "adb_list_cache.txt";
-
 
 	public static AdbVersion getAdbVersion(String adbPath) {
 		return getAdbVersion(adbPath, true);	
@@ -163,13 +160,40 @@ public class AdbVersionManager implements Comparator<String> {
 		return 0;
 	}
 
+    /**
+     * Converts a byte to hex digit and writes to the supplied buffer
+     */
+    private static void byte2hex(byte b, StringBuffer buf) {
+        char[] hexChars = { '0', '1', '2', '3', '4', '5', '6', '7', '8',
+                            '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+        int high = ((b & 0xf0) >> 4);
+        int low = (b & 0x0f);
+        buf.append(hexChars[high]);
+        buf.append(hexChars[low]);
+    }
+
+    /**
+     * Converts a byte array to hex string
+     */
+    private static String toHexString(byte[] block) {
+        StringBuffer buf = new StringBuffer();
+        int len = block.length;
+        for (int i = 0; i < len; i++) {
+             byte2hex(block[i], buf);	
+             if (i < len-1) {
+                 buf.append(":");
+             }
+        }
+        return buf.toString();
+    }
+
 	public static String getMD5(File file) {
 		if(file.canRead()) {
 			try {
 				MessageDigest messageDigest = MessageDigest.getInstance("MD5");
 				messageDigest.update(Files.readAllBytes(file.toPath()));
 				byte[] hash = messageDigest.digest();
-				return DatatypeConverter.printHexBinary(hash).toUpperCase();
+				return toHexString(hash);
 			} catch (IOException | NoSuchAlgorithmException e) {
 				e.printStackTrace();
 			}
@@ -256,6 +280,16 @@ public class AdbVersionManager implements Comparator<String> {
 					.replaceAll("(\"[^\"]*\":(\"[^\"]*\")?([^\",]*)?,)", "$1\n");
 			//.replaceAll("(\"[^\"]*\":(\"[^\"]*\")?([^\",\\[]*(\\[[^\\]]\\])?)?,)", "$1\n");
 
+			File file = new File(CACHE_FILE_PATH);
+			if(!file.exists() || file.length() == 0) {
+				FileUtil.makeFolder(file.getParent());
+				try {
+					file.createNewFile();
+				} catch (IOException e) {
+					e.printStackTrace();
+					return;
+				}
+			}
 			BufferedWriter writer;
 			try {
 				writer = new BufferedWriter(new FileWriter(CACHE_FILE_PATH));
