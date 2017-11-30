@@ -277,14 +277,30 @@ public class AaptManifestReader
         	widget.type = "Normal";
         	widget.lables = getAttrResourceValues(widgetTag[idx], "label");
         	widget.name = getAttrValue(widgetTag[idx], "name");
-        	if(widget.name != null && widget.name.startsWith("."))
+        	if(widget.name != null && widget.name.startsWith(".")) {
         		widget.name = manifestInfo.packageName + widget.name;
-        	Object[] extraInfo = getWidgetInfo(apkFilePath, resourceScanner.getResourceValues(widgetTag[idx].getNode("meta-data").getAttribute(namespace + "resource")));
-        	if(extraInfo[0] != null) {
-        		widget.icons = (ResourceInfo[])extraInfo[0]; 
         	}
-        	if(extraInfo[1] != null) {
-        		widget.size = (String)extraInfo[1]; 
+
+        	AaptXmlTreeNode[] meta = widgetTag[idx].getNodeList("meta-data");
+        	String resource = null;
+        	for(AaptXmlTreeNode m: meta) {
+        		if("android.appwidget.provider".equals(m.getAttribute(namespace + "name"))) {
+        			resource = m.getAttribute(namespace + "resource");
+        			if(resource != null) break;
+        		}
+        	}
+
+        	if(resource != null) {
+	        	//Log.e(widgetTag[idx].getNode("meta-data[@"+namespace+"name='android.appwidget.provider']").getAttribute(namespace + "name"));
+	        	Object[] extraInfo = getWidgetInfo(apkFilePath, resourceScanner.getResourceValues(resource));
+	        	if(extraInfo[0] != null) {
+	        		widget.icons = (ResourceInfo[])extraInfo[0]; 
+	        	}
+	        	if(extraInfo[1] != null) {
+	        		widget.size = (String)extraInfo[1]; 
+	        	}
+        	} else {
+        		widget.size = "Unknown";
         	}
         	widgetList.add(widget);
         }
@@ -318,7 +334,14 @@ public class AaptManifestReader
 
 		ArrayList<String> xmlPath = new ArrayList<String>();
 		for(ResourceInfo r: widgetRes) {
-			xmlPath.add(r.name);
+			if(r.name != null) {
+				xmlPath.add(r.name);
+			}
+		}
+
+		if(xmlPath.size() == 0) {
+			Log.w("widgetRes name is null or unknown");
+			return new Object[] { null, "Unknown" };
 		}
 
 		String[] wdgXml = AaptNativeWrapper.Dump.getXmltree(apkFilePath, xmlPath.toArray(new String[0]));

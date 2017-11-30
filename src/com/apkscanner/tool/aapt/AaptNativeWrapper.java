@@ -88,6 +88,12 @@ public class AaptNativeWrapper {
 	}
 
 	private static String[] run_l(String[] params) {
+		for(String s: params) {
+			if(s == null) {
+				throw new NullPointerException("params has null");
+			}
+		}
+
 		semaphore.acquireUninterruptibly();
 		String[] ret = run(params);
 		semaphore.release();
