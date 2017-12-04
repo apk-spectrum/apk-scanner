@@ -21,6 +21,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.ImageObserver;
+import java.util.EventListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonModel;
@@ -33,6 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
+import javax.swing.event.ListSelectionListener;
 
 import com.android.ddmlib.IDevice;
 import com.apkscanner.core.installer.OptionsBundle;
@@ -43,12 +45,14 @@ import com.apkscanner.util.Log;
 public class DeviceCustomList extends JList<DeviceListData> {
 	private static final long serialVersionUID = 4647130365982201484L;
 
-	private ActionListener listener;
+	private ActionListener actionlistener;
 
-	public DeviceCustomList(ActionListener listener) {
+	public DeviceCustomList(EventListener listener) {
 		setLayout(new BorderLayout());
 
-		this.listener = listener;
+		if(listener != null && listener instanceof ActionListener) {
+			actionlistener = (ActionListener) listener;
+		}
 
 		setPreferredSize(new Dimension(200, 0));
 		//setBorder(BorderFactory.createEmptyBorder ( 5, 5, 5, 5 ));
@@ -61,7 +65,9 @@ public class DeviceCustomList extends JList<DeviceListData> {
 		addMouseListener(cbml);
 		addMouseMotionListener(cbml);
 
-		//addListSelectionListener(this);
+		if(listener != null && listener instanceof ListSelectionListener) {
+			addListSelectionListener((ListSelectionListener) listener);
+		}
 	}
 
 	class DeviceDataRenderer extends JPanel implements ListCellRenderer<DeviceListData> {
@@ -85,7 +91,7 @@ public class DeviceCustomList extends JList<DeviceListData> {
 			setBorder ( BorderFactory.createEmptyBorder ( 5, 5 , 5, 5 ) );
 
 			setOpaque(true);
-			tagPanel = new ToggleButtonBar(ApkInstallWizard.STATUS_INSTALLING, listener);
+			tagPanel = new ToggleButtonBar(ApkInstallWizard.STATUS_INSTALLING, actionlistener);
 
 			JPanel Iconpanel = new JPanel(new BorderLayout());
 			isinstallIcon = new JLabel(Resource.IMG_INSTALL_BLOCK.getImageIcon());
@@ -366,7 +372,7 @@ public class DeviceCustomList extends JList<DeviceListData> {
 					}
 					//list.repaint();
 					listRepaint(list, list.getCellBounds(index, index));
-					listener.actionPerformed(new ActionEvent(temp, 0, button.getActionCommand()));
+					actionlistener.actionPerformed(new ActionEvent(temp, 0, button.getActionCommand()));
 				}
 			}
 		}
