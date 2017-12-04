@@ -37,8 +37,8 @@ public class InstallProgressPanel extends JPanel
 
 	JPanel progressStepPanel;
 	JPanel textStepPanel;
-	private final int STEPMAX = 4;
-	private final int STEPWIDTH = 500;
+	private final int STEPMAX = 5;
+	private final int STEPWIDTH = 600;
 	private final int STEPHEIGHT = 70;
 
 	private final int COLOR_STEP_NOTFINISH = 0;
@@ -49,6 +49,7 @@ public class InstallProgressPanel extends JPanel
 	int CurrentProgress=0;
 	private final String [] outtexts= {
 			Resource.STR_LABEL_APK_VERIFY.getString(),
+			Resource.STR_LABEL_WAIT_FOR_DEVICE.getString(),
 			Resource.STR_LABEL_APK_INSTALL_OPT.getString(),
 			Resource.STR_LABEL_APK_INSTALLING.getString(),
 			Resource.STR_LABEL_APK_INSTALL_FINISH.getString() };
@@ -418,14 +419,17 @@ public class InstallProgressPanel extends JPanel
 		case ApkInstallWizard.STATUS_APK_VERIFY:
 			newStatus = 1;
 			break;
-		case ApkInstallWizard.STATUS_SET_OPTIONS:
+		case ApkInstallWizard.STATUS_WAIT_FOR_DEVICE:
 			newStatus = 2;
 			break;
-		case ApkInstallWizard.STATUS_INSTALLING:
+		case ApkInstallWizard.STATUS_SET_OPTIONS:
 			newStatus = 3;
 			break;
-		case ApkInstallWizard.STATUS_COMPLETED:
+		case ApkInstallWizard.STATUS_INSTALLING:
 			newStatus = 4;
+			break;
+		case ApkInstallWizard.STATUS_COMPLETED:
+			newStatus = 5;
 			break;
 		case ApkInstallWizard.STATUS_APK_VERTIFY_ERROR:
 			ellipselabel[CurrentProgress-1].setState(COLOR_STEP_ERROR);

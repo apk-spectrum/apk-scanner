@@ -297,6 +297,7 @@ public enum Resource
 	STR_LABEL_ABI				(Type.TEXT, "@label_abi"),
 	STR_LABEL_DESTINATION		(Type.TEXT, "@label_destination"),
 	STR_LABEL_APK_VERIFY		(Type.TEXT, "@label_apk_verify"),
+	STR_LABEL_WAIT_FOR_DEVICE	(Type.TEXT, "@label_wait_for_device"),
 	STR_LABEL_APK_INSTALL_OPT	(Type.TEXT, "@label_apk_install_option"),
 	STR_LABEL_APK_INSTALLING	(Type.TEXT, "@label_apk_installing"),
 	STR_LABEL_APK_INSTALL_FINISH(Type.TEXT, "@label_apk_install_finish"),
