@@ -37,6 +37,7 @@ public class ContentPanel extends JPanel
 
 		lodingPanel = new JPanel();
 		loadingMessageLable = new JLabel("");
+		loadingMessageLable.setAlignmentX(0.5f);
 		lodingPanel.setLayout(new BoxLayout(lodingPanel, BoxLayout.Y_AXIS));
 		lodingPanel.add(new ImagePanel(Resource.IMG_APK_LOGO.getImageIcon(340,220)));
 		lodingPanel.add(loadingMessageLable);
@@ -90,6 +91,10 @@ public class ContentPanel extends JPanel
 			//((CardLayout)getLayout()).show(this, CONTENT_LOADING);
 			break;
 		}
+	}
+
+	public void setLoadingMessage(String message) {
+		loadingMessageLable.setText(message != null ? message : "");
 	}
 
 	public void show(String name) {

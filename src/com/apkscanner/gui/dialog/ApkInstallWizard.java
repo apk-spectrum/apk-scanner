@@ -15,7 +15,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -231,7 +230,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 		ky.addKeyEventDispatcher(uiEventHandler);
 	}
 
-	private void changeState(int status) {
+	private void changeState(final int status) {
 		Log.v("changeState() " + status);
 		if(this.status == status) {
 			Log.v("No action, because does not changed state.");
@@ -241,6 +240,13 @@ public class ApkInstallWizard implements IDeviceChangeListener
 
 		if(!EventQueue.isDispatchThread()) {
 			Log.w("changeState() isDispatchThread " + EventQueue.isDispatchThread());
+			EventQueue.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					changeState(status);
+				}
+			});
+			return;
 		}
 
 		progressPanel.setStatus(status);
@@ -426,90 +432,84 @@ public class ApkInstallWizard implements IDeviceChangeListener
 			}
 		}.execute();
 	}
-
-	private void revaluationDeviceState(final IDevice device) {
+	
+	private void addDeviceToList(final IDevice device) {
 		new SwingWorker<Boolean, Object>() {
 			@Override
 			protected Boolean doInBackground() throws Exception {
-
-				AndroidDebugBridge adb = AdbServerMonitor.getAndroidDebugBridge();
-				if(adb == null) {
-					Log.w("revaluationDeviceState() adb is null");
-					return false;
+				DeviceListData data = null;
+				synchronized (deviceDataMap) {
+					data = deviceDataMap.get(device);
+					if(data == null) {
+						OptionsBundle bundle = new OptionsBundle();
+						data = new DeviceListData(device, bundle);
+						data.setState(DeviceListData.STATUS_CONNECTING_DEVICE);
+						deviceDataMap.put(device, data);
+						publish(data);
+					}
 				}
-
-				IDevice[] devices = adb.getDevices();
-				if(devices == null || devices.length == 0) {
-					if(status == STATUS_SET_OPTIONS) {
-						publish(STATUS_WAIT_FOR_DEVICE);
-					}
-				} else {
-					if(device != null) {
-						devices = new IDevice[] { device };
-					}
-
-					for(IDevice dev: devices) {
-						synchronized (deviceDataMap) {
-							DeviceListData data = deviceDataMap.get(dev);
-							if(data == null) {
-								final OptionsBundle bundle = optFactory.createOptions(dev);
-								bundle.addOptionsChangedListener(new IOptionsChangedListener() {
-									@Override
-									public void changeOptions(int changedFlag, String... extraData) {
-										switch(changedFlag) {
-										case OptionsBundle.FLAG_OPT_DISSEMINATE:
-											synchronized(deviceDataMap) {
-												for(Entry<IDevice, DeviceListData> entry: deviceDataMap.entrySet()) {
-													entry.getValue().getOptionsBundle().copyFrom(bundle);
-												}
-											}
-										case OptionsBundle.FLAG_OPT_INSTALL:
-										case OptionsBundle.FLAG_OPT_PUSH:
-										case OptionsBundle.FLAG_OPT_NO_INSTALL:
-											deviceList.repaint();
-											break;
-										default:
-											break;
-										}
-										synchronized(deviceDataMap) {
-											boolean posibleInstall = false;
-											for(Entry<IDevice, DeviceListData> entry: deviceDataMap.entrySet()) {
-												OptionsBundle bundle = entry.getValue().getOptionsBundle();
-												if(bundle.isInstallOptions() || bundle.isPushOptions()) {
-													posibleInstall = true;
-													break;
-												}
-											}
-											controlPanel.setNextButtonEnable(posibleInstall);
-										}
+				if(device.isOnline() && data.getState() == DeviceListData.STATUS_CONNECTING_DEVICE) {
+					final OptionsBundle bundle = data.getOptionsBundle();
+					optFactory.createOptions(device, bundle);
+					bundle.addOptionsChangedListener(new IOptionsChangedListener() {
+						@Override
+						public void changeOptions(int changedFlag, String... extraData) {
+							switch(changedFlag) {
+							case OptionsBundle.FLAG_OPT_DISSEMINATE:
+								synchronized(deviceDataMap) {
+									for(Entry<IDevice, DeviceListData> entry: deviceDataMap.entrySet()) {
+										entry.getValue().getOptionsBundle().copyFrom(bundle);
 									}
-								});
-								data = new DeviceListData(dev, bundle);
-								//Log.v("deviceDataMap.put " + dev.getSerialNumber());
-								deviceDataMap.put(dev, data);
-								publish(data);
+								}
+							case OptionsBundle.FLAG_OPT_INSTALL:
+							case OptionsBundle.FLAG_OPT_PUSH:
+							case OptionsBundle.FLAG_OPT_NO_INSTALL:
+								deviceList.repaint();
+								break;
+							default:
+								break;
+							}
+							synchronized(deviceDataMap) {
+								boolean posibleInstall = false;
+								for(Entry<IDevice, DeviceListData> entry: deviceDataMap.entrySet()) {
+									OptionsBundle bundle = entry.getValue().getOptionsBundle();
+									if(bundle.isInstallOptions() || bundle.isPushOptions()) {
+										posibleInstall = true;
+										break;
+									}
+								}
+								controlPanel.setNextButtonEnable(posibleInstall);
 							}
 						}
-					}
-
-					if(status == STATUS_WAIT_FOR_DEVICE) {
-						publish(STATUS_SET_OPTIONS);
-					}
+					});
+					data.setState(DeviceListData.STATUS_SETTING);
+					publish(data);
 				}
+
 				return true;
 			}
 
 			@Override
 			protected void process(List<Object> chunks) {
 				for(Object data: chunks) {
-					if(data instanceof Integer) {
-						changeState((Integer)data);
-					} else if(data instanceof DeviceListData) {
-						synchronized (deviceDataMap) {
-							if(deviceDataMap.containsValue(data)) {
-								//Log.v("deviceListModel.addElement ");
-								deviceListModel.addElement((DeviceListData)data);
-							}
+					if(!(data instanceof DeviceListData)) {
+						return;
+					}
+					if(!deviceListModel.contains(data)) {
+						deviceListModel.addElement((DeviceListData)data);
+					} else {
+						deviceList.repaint();
+					}
+					if(deviceList.isSelectionEmpty()) {
+						deviceList.setSelectedIndex(0);
+					}
+					if(data != null && data.equals(deviceList.getSelectedValue())) {
+						installOptionPanel.setOptions(((DeviceListData) data).getOptionsBundle());
+						if(((DeviceListData) data).getState() != DeviceListData.STATUS_CONNECTING_DEVICE) {
+							contentPanel.show(ContentPanel.CONTENT_SET_OPTIONS);
+						} else {
+							contentPanel.setLoadingMessage("Reading information of device...");
+							contentPanel.show(ContentPanel.CONTENT_LOADING);
 						}
 					}
 				}
@@ -518,7 +518,6 @@ public class ApkInstallWizard implements IDeviceChangeListener
 			@Override
 			protected void done() {
 				if(deviceListModel.getSize() == 0) {
-					//Log.v("DONE() BUT LIST IS EMPTY");
 					changeState(STATUS_WAIT_FOR_DEVICE);
 				} else {
 					if(deviceList.isSelectionEmpty()) {
@@ -528,6 +527,34 @@ public class ApkInstallWizard implements IDeviceChangeListener
 				}
 			};
 		}.execute();
+	}
+
+	private void revaluationDeviceState(final IDevice device) {
+		final AndroidDebugBridge adb = AdbServerMonitor.getAndroidDebugBridge();
+		if(adb == null) {
+			Log.w("revaluationDeviceState() adb is null");
+			return;
+		}
+
+		IDevice[] devices = adb.getDevices();
+		if(devices == null || devices.length == 0) {
+			if(status == STATUS_SET_OPTIONS) {
+				changeState(STATUS_WAIT_FOR_DEVICE);
+			}
+			return;
+		}
+
+		if(status == STATUS_WAIT_FOR_DEVICE) {
+			changeState(STATUS_SET_OPTIONS);
+		}
+
+		if(device != null) {
+			devices = new IDevice[] { device };
+		}
+
+		for(final IDevice dev: devices) {
+			addDeviceToList(dev);
+		}
 	}
 
 	@Override
@@ -540,36 +567,34 @@ public class ApkInstallWizard implements IDeviceChangeListener
 
 	@Override
 	public void deviceConnected(IDevice device) {
-		Log.i("deviceConnected() " + device.getName() + ", isOnline " + device.isOnline());
-		if(device.isOnline()) {
-			revaluationDeviceState(device);
-		}
+		Log.e("deviceConnected() " + device.getName() + ", isOnline " + device.isOnline() + ", state " + device.getState());
+		//if(device.isOnline()) {
+		revaluationDeviceState(device);
+		//}
 	}
 
 	@Override
 	public void deviceDisconnected(IDevice device) {
 		Log.i("deviceDisconnected() " + device.getName() + ", isOnline " + device.isOnline());
 		synchronized(deviceDataMap) {
-			Log.i("deviceDisconnected() 2 " + device.getName() + ", isOnline " + device.isOnline());
 			final DeviceListData data = deviceDataMap.get(device);
 			if(data != null) {
-				try {
-					EventQueue.invokeAndWait(new Runnable() {
-						@Override
-						public void run() {
-							deviceListModel.removeElement(data);
-							if(deviceListModel.size() == 0) {
-								changeState(STATUS_WAIT_FOR_DEVICE);
-							} else {
-								installOptionPanel.setVisibleDisseminate(deviceListModel.getSize() > 1);
-							}
-						}
-					});
-				} catch (InvocationTargetException | InterruptedException e) {
-					e.printStackTrace();
-				}
-				//Log.v("deviceDataMap.remove " + device.getSerialNumber());
 				deviceDataMap.remove(device);
+
+				EventQueue.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						deviceListModel.removeElement(data);
+						if(deviceListModel.size() <= 0) {
+							changeState(STATUS_WAIT_FOR_DEVICE);
+						} else {
+							if(deviceList.isSelectionEmpty()) {
+								deviceList.setSelectedIndex(0);
+							}
+							installOptionPanel.setVisibleDisseminate(deviceListModel.size() > 1);
+						}
+					}
+				});
 			}
 		}
 	}
@@ -585,7 +610,12 @@ public class ApkInstallWizard implements IDeviceChangeListener
 				if(data == null) return;
 
 				installOptionPanel.setOptions(data.getOptionsBundle());
-				contentPanel.show(ContentPanel.CONTENT_SET_OPTIONS);
+				if(data.getState() != DeviceListData.STATUS_CONNECTING_DEVICE) {
+					contentPanel.show(ContentPanel.CONTENT_SET_OPTIONS);
+				} else {
+					contentPanel.setLoadingMessage("Reading information of device...");
+					contentPanel.show(ContentPanel.CONTENT_LOADING);
+				}
 			}
 		}
 
@@ -610,7 +640,12 @@ public class ApkInstallWizard implements IDeviceChangeListener
 				if(arg0.getSource() instanceof DeviceListData) {
 					DeviceListData data = (DeviceListData) arg0.getSource();
 					installOptionPanel.setOptions(data.getOptionsBundle());
-					contentPanel.show(ContentPanel.CONTENT_SET_OPTIONS);
+					if(data.getState() != DeviceListData.STATUS_CONNECTING_DEVICE) {
+						contentPanel.show(ContentPanel.CONTENT_SET_OPTIONS);
+					} else {
+						contentPanel.setLoadingMessage("Reading information of device...");
+						contentPanel.show(ContentPanel.CONTENT_LOADING);
+					}
 				}
 			} else if(ToggleButtonBar.ACT_CMD_PACKAGE_INFO.equals(actCommand)) {
 				if(arg0.getSource() instanceof DeviceListData) {

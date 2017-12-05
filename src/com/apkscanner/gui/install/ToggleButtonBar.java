@@ -162,15 +162,17 @@ public class ToggleButtonBar extends JPanel {
 		OptionsBundle bundle = data.getOptionsBundle();
 		
 		int optType = WAITING;
-        if(bundle.isImpossibleInstallOptions()) {
-        	optType = OPTION_IMPOSSIBLE_INSTALL;
-        } else if(bundle.isPushOptions()) {
-        	optType =  OPTION_PUSH;
-        } else if(bundle.isInstallOptions()) {	        	
-        	optType =  OPTION_INSTALL;
-        } else if(bundle.isNoInstallOptions()) {
-        	optType =  OPTION_NO_INSTALL;
-        }
+		if(data.getState() != DeviceListData.STATUS_CONNECTING_DEVICE) {
+			if(bundle.isImpossibleInstallOptions()) {
+				optType = OPTION_IMPOSSIBLE_INSTALL;
+			} else if(bundle.isPushOptions()) {
+				optType =  OPTION_PUSH;
+			} else if(bundle.isInstallOptions()) {
+				optType =  OPTION_INSTALL;
+			} else if(bundle.isNoInstallOptions()) {
+				optType =  OPTION_NO_INSTALL;
+			}
+		}
 		btnoption.setBackground(ColorSet[optType]);
 		btnoption.setText(installOptiontextSet[optType]);
 		
@@ -196,6 +198,10 @@ public class ToggleButtonBar extends JPanel {
 		case DeviceListData.STATUS_NO_ACTION:
 			btninstalled.setBackground(ColorSet[installedType]);
 			btninstalled.setText(installtextSet[installedType]);
+			break;
+		case DeviceListData.STATUS_CONNECTING_DEVICE:
+			btninstalled.setBackground(ColorSet[1]);
+			btninstalled.setText(installtextSet[4]);
 			break;
 		}
 		//Log.d("" +data.isinstalled);

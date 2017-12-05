@@ -49,6 +49,10 @@ public class DefaultOptionsFactory {
 
 	public OptionsBundle createOptions(IDevice device) {
 		OptionsBundle options = new OptionsBundle();
+		return createOptions(device, options);
+	}
+
+	public OptionsBundle createOptions(IDevice device, OptionsBundle options) {
 		int blockedFlags = 0;
 		int blockedCause = 0;
 

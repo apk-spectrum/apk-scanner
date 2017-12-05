@@ -12,6 +12,7 @@ public class DeviceListData
 	public static final int STATUS_SUCESSED = 2;
 	public static final int STATUS_FAILED = 3;
 	public static final int STATUS_NO_ACTION = 4;
+	public static final int STATUS_CONNECTING_DEVICE = 5;
 
 	//public String status;
 	//public int pacakgeLoadingstatus;
@@ -87,7 +88,8 @@ public class DeviceListData
 
 	public String getDeviceName() {
 		if(deviceName == null || deviceName.isEmpty()) {
-			deviceName = device.getProperty(IDevice.PROP_DEVICE_MODEL).trim();
+			deviceName = device.getProperty(IDevice.PROP_DEVICE_MODEL);
+			if(deviceName != null) deviceName = deviceName.trim();
 			if(deviceName != null && deviceName.isEmpty()) {
 				deviceName = null;
 			}
