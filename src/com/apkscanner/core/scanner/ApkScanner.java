@@ -25,12 +25,12 @@ abstract public class ApkScanner
 	public static final int ERR_NO_SUCH_MANIFEST = -2;
 	public static final int ERR_FAILURE_PULL_APK = -3;
 	public static final int ERR_CAN_NOT_ACCESS_ASSET = -4;
-	public static final int ERR_CAN_NOT_READ_MANIFEST = -5;
 	public static final int ERR_WRONG_MANIFEST = -5;
 	public static final int ERR_FAILURE_VERIFY_CERT = -6;
 
-	public static final int ERR_DEVICE_DISCONNECTED = -2;
+	// @deprecated
 	public static final int ERR_UNAVAIlABLE_PARAM = -99;
+	// @deprecated
 	public static final int ERR_UNKNOWN = -100;
 
 	protected ApkInfo apkInfo = null;
@@ -291,6 +291,25 @@ abstract public class ApkScanner
 	public int getLastErrorCode() {
 		synchronized (this) {
 			return lastErrorCode;
+		}
+	}
+
+	public String getLastErrorMessage() {
+		synchronized (this) {
+			return getErrorMessage(lastErrorCode);
+		}
+	}
+	
+	public String getErrorMessage(int errCode) {
+		switch(errCode) {
+		case NO_ERR: return null;
+		case ERR_NO_SUCH_FILE: return "No such apk file.";
+		case ERR_NO_SUCH_MANIFEST: return "No such manifest file in the APK.";
+		case ERR_FAILURE_PULL_APK: return "Can not pull apk from device.";
+		case ERR_CAN_NOT_ACCESS_ASSET: return "Access fail for asset of APK.";
+		case ERR_WRONG_MANIFEST: return "Manifest was wrong format.";
+		case ERR_FAILURE_VERIFY_CERT: return "Bad signed.";
+		case ERR_UNKNOWN: default: return "Unknown Error: " + errCode;
 		}
 	}
 

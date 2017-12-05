@@ -214,7 +214,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 		installOptionPanel = new InstallOptionPanel();
 		pacakgeInfoPanel = new PackageInfoPanel();
 		errorMessageLable = new JLabel("Please Check this APK file!", SwingConstants.CENTER);
-		errorMessageLable.setFont(new Font("Serif", Font.PLAIN, 30));
+		errorMessageLable.setFont(new Font("Serif", Font.PLAIN, 24));
 
 		contentPanel.add(installOptionPanel, ContentPanel.CONTENT_SET_OPTIONS);
 		contentPanel.add(pacakgeInfoPanel, ContentPanel.CONTENT_PACKAGE_INFO);
@@ -236,10 +236,9 @@ public class ApkInstallWizard implements IDeviceChangeListener
 			Log.v("No action, because does not changed state.");
 			return;
 		}
-		this.status = status;
 
 		if(!EventQueue.isDispatchThread()) {
-			Log.w("changeState() isDispatchThread " + EventQueue.isDispatchThread());
+			Log.v("changeState() isDispatchThread " + EventQueue.isDispatchThread());
 			EventQueue.invokeLater(new Runnable() {
 				@Override
 				public void run() {
@@ -248,6 +247,8 @@ public class ApkInstallWizard implements IDeviceChangeListener
 			});
 			return;
 		}
+
+		this.status = status;
 
 		progressPanel.setStatus(status);
 		contentPanel.setStatus(status);
@@ -340,9 +341,9 @@ public class ApkInstallWizard implements IDeviceChangeListener
 
 				ApkScanner scanner = ApkScanner.getInstance("AAPTLIGHT");
 				scanner.openApk(apkFilePath);
-				if(scanner.getLastErrorCode() != ApkScanner.NO_ERR) {
-					Log.e("Fail open APK: errcode " + scanner.getLastErrorCode());
-					return "Fail open APK: errcode " + scanner.getLastErrorCode();
+				int errCode = scanner.getLastErrorCode();
+				if(errCode != ApkScanner.NO_ERR) {
+					return scanner.getLastErrorMessage();
 				}
 				apkInfo = new CompactApkInfo(scanner.getApkInfo());
 
@@ -354,7 +355,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 					Log.e("Fail APK Virify");
 					if(apkInfo.certificates == null || apkInfo.certificates.length == 0) {
 						Log.e("certificates is null or 0");
-						return "APK was not signed." + scanner.getLastErrorCode();
+						return "APK was not signed.";
 					}
 				}
 				optFactory = new DefaultOptionsFactory(apkInfo, signatureReport);
@@ -374,6 +375,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 					installOptionPanel.setApkInfo(apkInfo);
 					next();
 				} else {
+					errorMessageLable.setText(errMessage);
 					changeState(STATUS_APK_VERTIFY_ERROR);
 				}
 			}
@@ -404,17 +406,19 @@ public class ApkInstallWizard implements IDeviceChangeListener
 				}
 
 				for(Entry<IDevice, DeviceListData> entry: entrySet) {
-					OptionsBundle bundle = entry.getValue().getOptionsBundle();
+					DeviceListData data = entry.getValue();
+					OptionsBundle bundle = data.getOptionsBundle();
 					if(!bundle.isInstallOptions() && !bundle.isPushOptions()) {
 						 continue;
 					}
 
-					String errMsg = ApkInstaller.install(entry.getValue().getDevice(), apkInfo, bundle);
+					String errMsg = ApkInstaller.install(data.getDevice(), apkInfo, bundle);
 					if(errMsg == null || errMsg.isEmpty()) {
-						entry.getValue().setState(DeviceListData.STATUS_SUCESSED);
+						data.setState(DeviceListData.STATUS_SUCESSED);
 					} else {
 						Log.e(errMsg);
-						entry.getValue().setState(DeviceListData.STATUS_FAILED);
+						data.setState(DeviceListData.STATUS_FAILED);
+						data.setErrorMessage(errMsg);
 					}
 					publish(errMsg);
 				}

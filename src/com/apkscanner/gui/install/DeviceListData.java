@@ -14,24 +14,10 @@ public class DeviceListData
 	public static final int STATUS_NO_ACTION = 4;
 	public static final int STATUS_CONNECTING_DEVICE = 5;
 
-	//public String status;
-	//public int pacakgeLoadingstatus;
-
-	//public String serialnumber;
-	//public String SDKVersion;
-
-
-	//public int isinstalled = WAITING;
-	//public int possibleOption = WAITING;
-
-	//public int showstate;
-	
-	//private String installErrorCuase;
-	
-
 	private IDevice device;
 	private OptionsBundle options = null;
 	private int state = STATUS_SETTING;
+	private String errorMessage;
 	
 	private String osVersion;
 	private String deviceName;
@@ -56,6 +42,14 @@ public class DeviceListData
 
 	public int getState() {
 		return state;
+	}
+
+	public void setErrorMessage(String message) {
+		errorMessage = message;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
 	}
 
 	private int hashCode(String str) {

@@ -60,7 +60,7 @@ public class AaptScanner extends ApkScanner
 		String[] androidManifest = AaptNativeWrapper.Dump.getXmltree(apkFile.getAbsolutePath(), new String[] { "AndroidManifest.xml" });
 		if(androidManifest == null || androidManifest.length == 0) {
 			Log.e("Failure : Can't read the AndroidManifest.xml");
-			errorOccurred(ERR_CAN_NOT_READ_MANIFEST);
+			errorOccurred(ERR_NO_SUCH_MANIFEST);
 			return;
 		}
 

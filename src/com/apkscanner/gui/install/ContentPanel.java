@@ -80,7 +80,7 @@ public class ContentPanel extends JPanel
 			((CardLayout)getLayout()).show(this, CONTENT_LOADING);
 			break;
 		case ApkInstallWizard.STATUS_COMPLETED:
-			//((CardLayout)getLayout()).show(this, CONTENT_COMPLETED);
+			((CardLayout)getLayout()).show(this, CONTENT_COMPLETED);
 			break;
 		case ApkInstallWizard.STATUS_APK_VERTIFY_ERROR:
 			((CardLayout)getLayout()).show(this, CONTENT_VERIFY_ERROR);
