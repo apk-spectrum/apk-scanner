@@ -44,7 +44,7 @@ public class ApkInstaller
 	public static String install(final IDevice device, final CompactApkInfo apkInfo, final OptionsBundle options)
 	{
 		String errMessage = null;
-		//Log.i("InstallApk() device : " + name + ", apkPath: " + apkPath);
+		Log.i("InstallApk() device : " + device.getSerialNumber() + ", apkPath: " + apkInfo.filePath);
 		if(apkInfo == null || apkInfo.filePath == null || apkInfo.filePath.isEmpty()) {
 			errMessage = "No such file: " + apkInfo.filePath;
 		} else if(options == null) {

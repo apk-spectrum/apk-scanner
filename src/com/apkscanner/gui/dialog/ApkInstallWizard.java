@@ -15,10 +15,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.jar.JarFile;
 
@@ -397,22 +397,23 @@ public class ApkInstallWizard implements IDeviceChangeListener
 			deviceList.repaint();
 		}
 
-		new SwingWorker<Object, Object>() {
-			@Override
-			protected Object doInBackground() throws Exception {
-				Set<Entry<IDevice, DeviceListData>> entrySet = null;
-				synchronized (deviceDataMap) {
-					entrySet = deviceDataMap.entrySet();
+		final ArrayList<DeviceListData> remainderList = new ArrayList<DeviceListData>();
+		synchronized (deviceDataMap) {
+			for(DeviceListData data: deviceDataMap.values()) {
+				final OptionsBundle bundle = data.getOptionsBundle();
+				if(!bundle.isInstallOptions() && !bundle.isPushOptions()) {
+					 continue;
 				}
+				remainderList.add(data);
+			}
+		}
 
-				for(Entry<IDevice, DeviceListData> entry: entrySet) {
-					DeviceListData data = entry.getValue();
-					OptionsBundle bundle = data.getOptionsBundle();
-					if(!bundle.isInstallOptions() && !bundle.isPushOptions()) {
-						 continue;
-					}
-
-					String errMsg = ApkInstaller.install(data.getDevice(), apkInfo, bundle);
+		final DeviceListData[] targets = remainderList.toArray(new DeviceListData[remainderList.size()]);
+		for(final DeviceListData data: targets) {
+			new SwingWorker<DeviceListData, Void>() {
+				@Override
+				protected DeviceListData doInBackground() throws Exception {
+					String errMsg = ApkInstaller.install(data.getDevice(), apkInfo, data.getOptionsBundle());
 					if(errMsg == null || errMsg.isEmpty()) {
 						data.setState(DeviceListData.STATUS_SUCESSED);
 					} else {
@@ -420,23 +421,44 @@ public class ApkInstallWizard implements IDeviceChangeListener
 						data.setState(DeviceListData.STATUS_FAILED);
 						data.setErrorMessage(errMsg);
 					}
-					publish(errMsg);
+					return data;
 				}
-				return null;
-			}
-
-			@Override
-			protected void process(List<Object> chunks) {
-				deviceList.repaint();
-			}
-
-			@Override
-			protected void done() {
-				next();
-			}
-		}.execute();
-	}
 	
+				@Override
+				protected void done() {
+					DeviceListData data = null;
+					try {
+						data = get();
+					} catch (InterruptedException | ExecutionException e) {
+						e.printStackTrace();
+					}
+					if(data != null && data.equals(deviceList.getSelectedValue())) {
+						switch(((DeviceListData) data).getState()) {
+						case DeviceListData.STATUS_SUCESSED:
+							contentPanel.setCompletedMessage("Successed");
+							contentPanel.show(ContentPanel.CONTENT_COMPLETED);
+							break;
+						case DeviceListData.STATUS_FAILED:
+							contentPanel.setCompletedMessage(((DeviceListData) data).getErrorMessage());
+							contentPanel.show(ContentPanel.CONTENT_COMPLETED);
+							break;
+						default: break;
+						}
+					}
+					deviceList.repaint();
+					synchronized (remainderList) {
+						if(remainderList.contains(data)) {
+							remainderList.remove(data);
+						}
+						if(remainderList.isEmpty()) {
+							next();
+						}
+					}
+				}
+			}.execute();
+		}
+	}
+
 	private void addDeviceToList(final IDevice device) {
 		new SwingWorker<Boolean, Object>() {
 			@Override
@@ -613,12 +635,29 @@ public class ApkInstallWizard implements IDeviceChangeListener
 				DeviceListData data = list.getSelectedValue();
 				if(data == null) return;
 
-				installOptionPanel.setOptions(data.getOptionsBundle());
-				if(data.getState() != DeviceListData.STATUS_CONNECTING_DEVICE) {
+				switch(data.getState()) {
+				case DeviceListData.STATUS_SETTING:
+					installOptionPanel.setOptions(data.getOptionsBundle());
 					contentPanel.show(ContentPanel.CONTENT_SET_OPTIONS);
-				} else {
+					break;
+				case DeviceListData.STATUS_CONNECTING_DEVICE:
 					contentPanel.setLoadingMessage("Reading information of device...");
 					contentPanel.show(ContentPanel.CONTENT_LOADING);
+					break;
+				case DeviceListData.STATUS_INSTALLING:
+					contentPanel.setLoadingMessage("INSTALLING");
+					contentPanel.show(ContentPanel.CONTENT_LOADING);
+					break;
+				case DeviceListData.STATUS_SUCESSED:
+					contentPanel.setCompletedMessage("Successed");
+					contentPanel.show(ContentPanel.CONTENT_COMPLETED);
+					break;
+				case DeviceListData.STATUS_FAILED:
+					contentPanel.setCompletedMessage(((DeviceListData) data).getErrorMessage());
+					contentPanel.show(ContentPanel.CONTENT_COMPLETED);
+					break;
+				default:
+					break;
 				}
 			}
 		}

@@ -29,19 +29,27 @@ public class ContentPanel extends JPanel
 	public static final String CONTENT_COMPLETED = "CONTENT_COMPLETED";
 
 	private JLabel loadingMessageLable;
-
-	private JPanel lodingPanel;
+	private JLabel completedMessageLable;
 
 	public ContentPanel(ActionListener listener) {
 		super(new CardLayout());
 
-		lodingPanel = new JPanel();
+		JPanel lodingPanel = new JPanel();
 		loadingMessageLable = new JLabel("");
 		loadingMessageLable.setAlignmentX(0.5f);
 		lodingPanel.setLayout(new BoxLayout(lodingPanel, BoxLayout.Y_AXIS));
 		lodingPanel.add(new ImagePanel(Resource.IMG_APK_LOGO.getImageIcon(340,220)));
 		lodingPanel.add(loadingMessageLable);
 		lodingPanel.add(new ImagePanel(Resource.IMG_WAIT_BAR.getImageIcon()));
+
+		JPanel completedPanel = new JPanel();
+		completedMessageLable = new JLabel("");
+		completedMessageLable.setAlignmentX(0.5f);
+		Font font = completedMessageLable.getFont();
+		completedMessageLable.setFont(new Font(font.getName(), Font.BOLD, 20));
+		completedPanel.setLayout(new BoxLayout(completedPanel, BoxLayout.Y_AXIS));
+		completedPanel.add(completedMessageLable);
+		//completedPanel.add(new ImagePanel(Resource.IMG_APK_LOGO.getImageIcon(340,220)));
 
 		JLabel txtWaitForDevice = new JLabel("Wait for device!", SwingConstants.CENTER);
 		txtWaitForDevice.setFont(new Font(txtWaitForDevice.getFont().getName(), Font.PLAIN, 30));
@@ -51,7 +59,7 @@ public class ContentPanel extends JPanel
 		add(txtWaitForDevice, CONTENT_WAIT_FOR_DEVICE);
 		add(new JPanel(), CONTENT_SET_OPTIONS);
 		add(new JPanel(), CONTENT_INSTALLING);
-		add(new JPanel(), CONTENT_COMPLETED);
+		add(completedPanel, CONTENT_COMPLETED);
 
 		this.setBorder(new EmptyBorder(10,10,10,10));
 
@@ -95,6 +103,10 @@ public class ContentPanel extends JPanel
 
 	public void setLoadingMessage(String message) {
 		loadingMessageLable.setText(message != null ? message : "");
+	}
+
+	public void setCompletedMessage(String message) {
+		completedMessageLable.setText(message != null ? message : "");
 	}
 
 	public void show(String name) {
