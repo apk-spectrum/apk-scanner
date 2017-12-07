@@ -399,6 +399,8 @@ public enum Resource
 	IMG_USB_ICON				(Type.IMAGE, "ic_dialog_usb.png"),
 	IMG_DEF_APP_ICON			(Type.IMAGE, "sym_def_app_icon.png"),
 	IMG_QMG_IMAGE_ICON			(Type.IMAGE, "qmg_not_suporrted.png"),
+	IMG_RESULT_SUCCESS			(Type.IMAGE, "result_success.png"),
+	IMG_RESULT_FAIL				(Type.IMAGE, "result_fail.png"),
 
 	IMG_TREE_MENU_LINK			(Type.IMAGE, "tree_link_menu.png"),
 	IMG_TREE_MENU_DELETE		(Type.IMAGE, "tree_menu_delete.png"),
@@ -413,9 +415,9 @@ public enum Resource
 	IMG_TREE_FAVOR				(Type.IMAGE, "tree_favor.png"),
 
 	IMG_INSTALL_CHECK			(Type.IMAGE, "install_dlg_check.png"),
-	IMG_INSTALL_BLOCK		(Type.IMAGE, "install_dlg_block.png"),
-	IMG_INSTALL_LOADING		(Type.IMAGE, "install_dlg_loading.gif"),
-	
+	IMG_INSTALL_BLOCK			(Type.IMAGE, "install_dlg_block.png"),
+	IMG_INSTALL_LOADING			(Type.IMAGE, "install_dlg_loading.gif"),
+
 	IMG_ADD_TO_DESKTOP			(Type.IMAGE, "add-to-desktop.png"),
 	IMG_ASSOCIATE_APK			(Type.IMAGE, "associate.png"),
 	IMG_UNASSOCIATE_APK			(Type.IMAGE, "unassociate.png"),

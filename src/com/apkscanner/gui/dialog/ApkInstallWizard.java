@@ -435,12 +435,11 @@ public class ApkInstallWizard implements IDeviceChangeListener
 					if(data != null && data.equals(deviceList.getSelectedValue())) {
 						switch(((DeviceListData) data).getState()) {
 						case DeviceListData.STATUS_SUCESSED:
-							contentPanel.setCompletedMessage("Successed");
-							contentPanel.show(ContentPanel.CONTENT_COMPLETED);
+							contentPanel.show(ContentPanel.CONTENT_SUCCESSED);
 							break;
 						case DeviceListData.STATUS_FAILED:
-							contentPanel.setCompletedMessage(((DeviceListData) data).getErrorMessage());
-							contentPanel.show(ContentPanel.CONTENT_COMPLETED);
+							contentPanel.setErrorMessage(((DeviceListData) data).getErrorMessage());
+							contentPanel.show(ContentPanel.CONTENT_FAILED);
 							break;
 						default: break;
 						}
@@ -649,12 +648,11 @@ public class ApkInstallWizard implements IDeviceChangeListener
 					contentPanel.show(ContentPanel.CONTENT_LOADING);
 					break;
 				case DeviceListData.STATUS_SUCESSED:
-					contentPanel.setCompletedMessage("Successed");
-					contentPanel.show(ContentPanel.CONTENT_COMPLETED);
+					contentPanel.show(ContentPanel.CONTENT_SUCCESSED);
 					break;
 				case DeviceListData.STATUS_FAILED:
-					contentPanel.setCompletedMessage(((DeviceListData) data).getErrorMessage());
-					contentPanel.show(ContentPanel.CONTENT_COMPLETED);
+					contentPanel.setErrorMessage(((DeviceListData) data).getErrorMessage());
+					contentPanel.show(ContentPanel.CONTENT_FAILED);
 					break;
 				default:
 					break;
