@@ -450,6 +450,10 @@ public class ApkInstallWizard implements IDeviceChangeListener
 							remainderList.remove(data);
 						}
 						if(remainderList.isEmpty()) {
+							DeviceListData curData = deviceList.getSelectedValue();
+							if(curData != null && curData.getState() == DeviceListData.STATUS_NO_ACTION){
+								contentPanel.show(ContentPanel.CONTENT_NO_ACTION);
+							}
 							next();
 						}
 					}
@@ -549,6 +553,17 @@ public class ApkInstallWizard implements IDeviceChangeListener
 						deviceList.setSelectedIndex(0);
 					}
 					installOptionPanel.setVisibleDisseminate(deviceListModel.getSize() > 1);
+
+					synchronized(deviceDataMap) {
+						boolean posibleInstall = false;
+						for(Entry<IDevice, DeviceListData> entry: deviceDataMap.entrySet()) {
+							if(entry.getValue().getState() != DeviceListData.STATUS_CONNECTING_DEVICE) {
+								posibleInstall = true;
+								break;
+							}
+						}
+						controlPanel.setNextButtonEnable(posibleInstall);
+					}
 				}
 			};
 		}.execute();
@@ -577,6 +592,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 			devices = new IDevice[] { device };
 		}
 
+		controlPanel.setNextButtonEnable(false);
 		for(final IDevice dev: devices) {
 			addDeviceToList(dev);
 		}
@@ -640,12 +656,10 @@ public class ApkInstallWizard implements IDeviceChangeListener
 					contentPanel.show(ContentPanel.CONTENT_SET_OPTIONS);
 					break;
 				case DeviceListData.STATUS_CONNECTING_DEVICE:
-					contentPanel.setLoadingMessage("Reading information of device...");
-					contentPanel.show(ContentPanel.CONTENT_LOADING);
+					contentPanel.show(ContentPanel.CONTENT_CONNECTING_DEVICE);
 					break;
 				case DeviceListData.STATUS_INSTALLING:
-					contentPanel.setLoadingMessage("INSTALLING");
-					contentPanel.show(ContentPanel.CONTENT_LOADING);
+					contentPanel.show(ContentPanel.CONTENT_INSTALLING);
 					break;
 				case DeviceListData.STATUS_SUCESSED:
 					contentPanel.show(ContentPanel.CONTENT_SUCCESSED);
@@ -654,6 +668,8 @@ public class ApkInstallWizard implements IDeviceChangeListener
 					contentPanel.setErrorMessage(((DeviceListData) data).getErrorMessage());
 					contentPanel.show(ContentPanel.CONTENT_FAILED);
 					break;
+				case DeviceListData.STATUS_NO_ACTION:
+					contentPanel.show(ContentPanel.CONTENT_NO_ACTION);
 				default:
 					break;
 				}

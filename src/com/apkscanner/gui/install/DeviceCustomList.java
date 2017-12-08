@@ -32,6 +32,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionListener;
@@ -60,6 +61,7 @@ public class DeviceCustomList extends JList<DeviceListData> {
 
 		setModel(new DefaultListModel<DeviceListData>());
 		setCellRenderer(new DeviceDataRenderer());
+		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		CellButtonsMouseListener cbml = new CellButtonsMouseListener(this);
 		addMouseListener(cbml);

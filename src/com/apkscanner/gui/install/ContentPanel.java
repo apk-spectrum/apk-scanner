@@ -23,6 +23,7 @@ public class ContentPanel extends JPanel
 
 	public static final String CONTENT_INIT = "CONTENT_INIT";
 	public static final String CONTENT_LOADING = "CONTENT_LOADING";
+	public static final String CONTENT_CONNECTING_DEVICE = "CONTENT_CONNECTING_DEVICE";
 	public static final String CONTENT_VERIFY_ERROR = "CONTENT_VERIFY_ERROR";
 	public static final String CONTENT_WAIT_FOR_DEVICE = "CONTENT_WAIT_FOR_DEVICE";
 	public static final String CONTENT_SET_OPTIONS = "CONTENT_SET_OPTIONS";
@@ -30,6 +31,7 @@ public class ContentPanel extends JPanel
 	public static final String CONTENT_INSTALLING = "CONTENT_INSTALLING";
 	public static final String CONTENT_SUCCESSED = "CONTENT_SUCCESSED";
 	public static final String CONTENT_FAILED = "CONTENT_FILED";
+	public static final String CONTENT_NO_ACTION = "CONTENT_NO_ACTION";
 
 	private JLabel loadingMessageLable;
 	private JTextArea errorMessageArea;
@@ -82,6 +84,9 @@ public class ContentPanel extends JPanel
 		JLabel txtWaitForDevice = new JLabel("Wait for device!", SwingConstants.CENTER);
 		txtWaitForDevice.setFont(new Font(txtWaitForDevice.getFont().getName(), Font.PLAIN, 30));
 
+		JLabel txtNoActions = new JLabel("This is not target device", SwingConstants.CENTER);
+		txtNoActions.setFont(new Font(txtNoActions.getFont().getName(), Font.PLAIN, 30));
+
 		add(new JPanel(), CONTENT_INIT);
 		add(lodingPanel, CONTENT_LOADING);
 		add(txtWaitForDevice, CONTENT_WAIT_FOR_DEVICE);
@@ -89,6 +94,7 @@ public class ContentPanel extends JPanel
 		add(new JPanel(), CONTENT_INSTALLING);
 		add(successPanel, CONTENT_SUCCESSED);
 		add(failPanel, CONTENT_FAILED);
+		add(txtNoActions, CONTENT_NO_ACTION);
 
 		this.setBorder(new EmptyBorder(10,10,10,10));
 
@@ -100,32 +106,28 @@ public class ContentPanel extends JPanel
 		switch(status) {
 		case ApkInstallWizard.STATUS_INIT:
 			loadingMessageLable.setText("INIT");
-			((CardLayout)getLayout()).show(this, CONTENT_LOADING);
+			show(CONTENT_LOADING);
 			break;
 		case ApkInstallWizard.STATUS_APK_VERIFY:
 			loadingMessageLable.setText("VERIFY APK");
-			((CardLayout)getLayout()).show(this, CONTENT_LOADING);
+			show(CONTENT_LOADING);
 			break;
 		case ApkInstallWizard.STATUS_WAIT_FOR_DEVICE:
-			((CardLayout)getLayout()).show(this, CONTENT_WAIT_FOR_DEVICE);
+			show(CONTENT_WAIT_FOR_DEVICE);
 			break;
 		case ApkInstallWizard.STATUS_SET_OPTIONS:
-			((CardLayout)getLayout()).show(this, CONTENT_SET_OPTIONS);
+			show(CONTENT_SET_OPTIONS);
 			break;
 		case ApkInstallWizard.STATUS_INSTALLING:
-			loadingMessageLable.setText("INSTALLING");
-			((CardLayout)getLayout()).show(this, CONTENT_LOADING);
+			show(CONTENT_INSTALLING);
 			break;
 		case ApkInstallWizard.STATUS_COMPLETED:
-			//((CardLayout)getLayout()).show(this, CONTENT_COMPLETED);
 			break;
 		case ApkInstallWizard.STATUS_APK_VERTIFY_ERROR:
-			((CardLayout)getLayout()).show(this, CONTENT_VERIFY_ERROR);
+			show(CONTENT_VERIFY_ERROR);
 			break;
 		default:
 			Log.w("Unknown status : " + status);
-			//loadingMessageLable.setText("UNKNOWN STEP : " + status);
-			//((CardLayout)getLayout()).show(this, CONTENT_LOADING);
 			break;
 		}
 	}
@@ -139,6 +141,13 @@ public class ContentPanel extends JPanel
 	}
 
 	public void show(String name) {
+		if(CONTENT_INSTALLING.endsWith(name)) {
+			loadingMessageLable.setText("INSTALLING");
+			name = CONTENT_LOADING; 
+		} else if(CONTENT_CONNECTING_DEVICE.equals(name)) {
+			loadingMessageLable.setText("Reading information of device...");
+			name = CONTENT_LOADING;
+		}
 		((CardLayout)getLayout()).show(this, name);
 	}
 }
