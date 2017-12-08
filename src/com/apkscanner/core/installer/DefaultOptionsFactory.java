@@ -49,6 +49,10 @@ public class DefaultOptionsFactory {
 
 	public OptionsBundle createOptions(IDevice device) {
 		OptionsBundle options = new OptionsBundle();
+		return createOptions(device, options);
+	}
+
+	public OptionsBundle createOptions(IDevice device, OptionsBundle options) {
 		int blockedFlags = 0;
 		int blockedCause = 0;
 
@@ -60,6 +64,8 @@ public class DefaultOptionsFactory {
 				if(device != null) {
 					Log.v("create options for " + device.getName());
 					PackageInfo packageInfo = PackageManager.getPackageInfo(device, apkInfo.packageName);
+					options.isInstalled = packageInfo != null;
+
 					int apiLevel = device.getApiLevel();
 					if(apiLevel < minSdkVersion) {
 						blockedFlags |= OptionsBundle.FLAG_OPT_INSTALL | OptionsBundle.FLAG_OPT_PUSH;

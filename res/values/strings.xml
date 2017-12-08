@@ -271,6 +271,7 @@ they're removed before the application is published</string>
 	<string name="label_abi">ABI</string>
 	<string name="label_destination">Destination</string>
 	<string name="label_apk_verify">APK VERIFY</string>
+	<string name="label_wait_for_device">DETECT DEVICE</string>
 	<string name="label_apk_install_option">OPTIONS</string>
 	<string name="label_apk_installing">INSTALLING</string>
 	<string name="label_apk_install_finish">FINISH</string>

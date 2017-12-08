@@ -270,6 +270,7 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="label_num">번호</string>
 	<string name="label_abi">ABI</string>
 	<string name="label_apk_verify">APK VERIFY</string>
+	<string name="label_wait_for_device">DETECT DEVICE</string>
 	<string name="label_apk_install_option">OPTIONS</string>
 	<string name="label_apk_installing">INSTALLING</string>
 	<string name="label_apk_install_finish">FINISH</string>

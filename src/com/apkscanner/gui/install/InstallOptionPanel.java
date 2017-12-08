@@ -56,7 +56,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 	public static final String ACT_OPT_ON_SDCARD = Integer.toString(OptionsBundle.FLAG_OPT_INSTALL_ON_SDCARD);
 	public static final String ACT_OPT_GRANT_PERM = Integer.toString(OptionsBundle.FLAG_OPT_INSTALL_GRANT_PERM);
 	public static final String ACT_OPT_FORWARD_LOCK = Integer.toString(OptionsBundle.FLAG_OPT_INSTALL_FORWARD_LOCK);
-	public static final String ACT_OPT_ALLOW_TEST = Integer.toString(OptionsBundle.FLAG_OPT_INSTALL_TEST_PACKAGE); 
+	public static final String ACT_OPT_ALLOW_TEST = Integer.toString(OptionsBundle.FLAG_OPT_INSTALL_TEST_PACKAGE);
 
 	public static final String ACT_OPT_PUSH_SYSTEM = Integer.toString(OptionsBundle.FLAG_OPT_PUSH_SYSTEM);
 	public static final String ACT_OPT_PUSH_PRIVAPP = Integer.toString(OptionsBundle.FLAG_OPT_PUSH_PRIVAPP);
@@ -82,7 +82,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 	//private ButtonGroup bgPushDest;
 	private JRadioButton rbSystemPush;
 	private JRadioButton rbPrivPush;
-	private JTextField txtTargetPath; 
+	private JTextField txtTargetPath;
 	private JCheckBox ckReboot;
 	private JLabel lbWithLibs;
 	private Box lib32Box;
@@ -118,7 +118,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 						if(bundle.isBlockedFlags(OptionsBundle.FLAG_OPT_PUSH)) {
 							blockedCause = bundle.getBlockedCause(OptionsBundle.FLAG_OPT_PUSH);
 						} else {
-							bundle.set(OptionsBundle.FLAG_OPT_PUSH);	
+							bundle.set(OptionsBundle.FLAG_OPT_PUSH);
 						}
 					} else if(!bundle.isBlockedFlags(OptionsBundle.FLAG_OPT_NO_INSTALL)) {
 						bundle.set(OptionsBundle.FLAG_OPT_NO_INSTALL);
@@ -167,7 +167,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 		});
 
 		add(installMethodPanel, BorderLayout.NORTH);
-		add(optionsPanel, BorderLayout.CENTER);		
+		add(optionsPanel, BorderLayout.CENTER);
 		add(btnDisseminate, BorderLayout.SOUTH);
 	}
 
@@ -476,7 +476,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 				ckLaucnApp.setEnabled(true);
 
 				if(bundle != null) {
-					String selActivity = bundle.getLaunchActivity(); 
+					String selActivity = bundle.getLaunchActivity();
 					if(selActivity != null && !selActivity.isEmpty()) {
 						cbLaunchActivity.setSelectedItem(selActivity);
 					}
@@ -577,7 +577,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 				}
 			}
 
-			String selActivity = bundle.getLaunchActivity(); 
+			String selActivity = bundle.getLaunchActivity();
 			if(selActivity != null && !selActivity.isEmpty()) {
 				cbLaunchActivity.setSelectedItem(selActivity);
 			}
@@ -612,7 +612,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 			} else {
 				txtTargetPath.setText("/system/app/unknown-1/unknown-1.apk");
 			}
-			
+
 			if(!bundle.isSetPushToOther()) {
 				rbSystemPush.setSelected(bundle.isSetPushToSystem());
 				rbSystemPush.setEnabled(true);

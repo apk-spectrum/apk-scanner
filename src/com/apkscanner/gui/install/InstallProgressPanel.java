@@ -35,10 +35,10 @@ public class InstallProgressPanel extends JPanel
 {
 	private static final long serialVersionUID = 6145481552592676895L;
 
-	JPanel ProgressStepPanel;
-	JPanel TextStepPanel;
-	private final int STEPMAX = 4;
-	private final int STEPWIDTH = 500;
+	JPanel progressStepPanel;
+	JPanel textStepPanel;
+	private final int STEPMAX = 5;
+	private final int STEPWIDTH = 600;
 	private final int STEPHEIGHT = 70;
 
 	private final int COLOR_STEP_NOTFINISH = 0;
@@ -49,6 +49,7 @@ public class InstallProgressPanel extends JPanel
 	int CurrentProgress=0;
 	private final String [] outtexts= {
 			Resource.STR_LABEL_APK_VERIFY.getString(),
+			Resource.STR_LABEL_WAIT_FOR_DEVICE.getString(),
 			Resource.STR_LABEL_APK_INSTALL_OPT.getString(),
 			Resource.STR_LABEL_APK_INSTALLING.getString(),
 			Resource.STR_LABEL_APK_INSTALL_FINISH.getString() };
@@ -281,24 +282,21 @@ public class InstallProgressPanel extends JPanel
 
 	}
 
-
-
 	public InstallProgressPanel() {
-		super(new BorderLayout());
-		setPreferredSize(new Dimension(STEPWIDTH, STEPHEIGHT));
-		ProgressStepPanel = new JPanel();
-		ProgressStepPanel.setLayout(new GridBagLayout());
-		ProgressStepPanel.setBackground(Color.WHITE);
+		setOpaque(true);
+		setBackground(Color.WHITE);
+		setPreferredSize(new Dimension(600, 80));
 
+		progressStepPanel = new JPanel();
+		progressStepPanel.setLayout(new GridBagLayout());
+		progressStepPanel.setBackground(Color.WHITE);
 
-		TextStepPanel = new JPanel();
-		TextStepPanel.setLayout(new GridLayout(1,STEPMAX));
-		TextStepPanel.setBackground(Color.WHITE);
-
+		textStepPanel = new JPanel();
+		textStepPanel.setLayout(new GridLayout(1,STEPMAX));
+		textStepPanel.setBackground(Color.WHITE);
 
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.BOTH;
-
 
 		for(int i=0; i< STEPMAX; i++) {
 			animatlabel[i] = new AnimationLabel(outtexts[i], SwingConstants.CENTER);
@@ -307,43 +305,47 @@ public class InstallProgressPanel extends JPanel
 			//animatlabel[i].setPreferredSize(new Dimension(STEPWIDTH/STEPMAX, 10));
 			//ellipselabel[i].setOpaque(true);
 			//ellipselabel[i].setBackground(new Color(i*50,100,100));
-			TextStepPanel.add(animatlabel[i]);
+			textStepPanel.add(animatlabel[i]);
 		}
 
 		JPanel marginlabel = new JPanel();
 		marginlabel.setBackground(Color.WHITE);
-		ProgressStepPanel.add(marginlabel, addGrid(gbc, 0, 0, 1, 1, 1, 1));
+		progressStepPanel.add(marginlabel, addGrid(gbc, 0, 0, 1, 1, 1, 1));
 		for(int i=0;i < STEPMAX-1; i++) {
 			ellipselabel[i] = new EllipseLayout();
 			ellipselabel[i].setOpaque(true);
 			ellipselabel[i].setDescriptionText(outtexts[i]);
 			ellipselabel[i].setEllipseText(""+i);
-			ProgressStepPanel.add(ellipselabel[i], addGrid(gbc,  i*2+1, 0, 1, 1, 1, 1));
+			progressStepPanel.add(ellipselabel[i], addGrid(gbc,  i*2+1, 0, 1, 1, 1, 1));
 
 			linelabel[i] = new Linelayout();
 			linelabel[i].setOpaque(true);
-			ProgressStepPanel.add(linelabel[i], addGrid(gbc,  (i*2+2), 0, 1, 1, 2, 1));
+			progressStepPanel.add(linelabel[i], addGrid(gbc,  (i*2+2), 0, 1, 1, 2, 1));
 		}
 
 		ellipselabel[STEPMAX-1] = new EllipseLayout();
 		ellipselabel[STEPMAX-1].setOpaque(true);
 		ellipselabel[STEPMAX-1].setDescriptionText(outtexts[STEPMAX-1]);
 		ellipselabel[STEPMAX-1].setEllipseText(""+(STEPMAX-1));
-		ProgressStepPanel.add(ellipselabel[STEPMAX-1], addGrid(gbc, STEPMAX*2-1, 0, 1, 1, 1, 1));
+		progressStepPanel.add(ellipselabel[STEPMAX-1], addGrid(gbc, STEPMAX*2-1, 0, 1, 1, 1, 1));
 
 		JPanel marginlabel2 = new JPanel();
 		marginlabel2.setBackground(Color.WHITE);
-		ProgressStepPanel.add(marginlabel2, addGrid(gbc, STEPMAX*2, 0, 1, 1, 1, 1));
+		progressStepPanel.add(marginlabel2, addGrid(gbc, STEPMAX*2, 0, 1, 1, 1, 1));
 
-		ProgressStepPanel.setPreferredSize(new Dimension(0, 70));
+		progressStepPanel.setPreferredSize(new Dimension(0, 70));
 
-		add(ProgressStepPanel, BorderLayout.CENTER);
-		add(TextStepPanel, BorderLayout.SOUTH);
+		JPanel panelDummy = new JPanel(new BorderLayout());
+		panelDummy.setPreferredSize(new Dimension(STEPWIDTH, STEPHEIGHT));
+		panelDummy.add(progressStepPanel, BorderLayout.CENTER);
+		panelDummy.add(textStepPanel, BorderLayout.SOUTH);
+		
+		add(panelDummy);
 
 		// set status
 		setStatus(ApkInstallWizard.STATUS_INIT);
-
 	}
+
 	public void setEllipselabelText(String str, int index, Boolean ischange) {
 		if(ischange) {
 			animatlabel[index].setText(str);
@@ -351,7 +353,6 @@ public class InstallProgressPanel extends JPanel
 			animatlabel[index].setText(outtexts[index]);
 		}
 	}
-
 
 	private void setProgressColor(int state) {
 		Log.d("state : " + state);
@@ -418,14 +419,17 @@ public class InstallProgressPanel extends JPanel
 		case ApkInstallWizard.STATUS_APK_VERIFY:
 			newStatus = 1;
 			break;
-		case ApkInstallWizard.STATUS_SET_OPTIONS:
+		case ApkInstallWizard.STATUS_WAIT_FOR_DEVICE:
 			newStatus = 2;
 			break;
-		case ApkInstallWizard.STATUS_INSTALLING:
+		case ApkInstallWizard.STATUS_SET_OPTIONS:
 			newStatus = 3;
 			break;
-		case ApkInstallWizard.STATUS_COMPLETED:
+		case ApkInstallWizard.STATUS_INSTALLING:
 			newStatus = 4;
+			break;
+		case ApkInstallWizard.STATUS_COMPLETED:
+			newStatus = 5;
 			break;
 		case ApkInstallWizard.STATUS_APK_VERTIFY_ERROR:
 			ellipselabel[CurrentProgress-1].setState(COLOR_STEP_ERROR);

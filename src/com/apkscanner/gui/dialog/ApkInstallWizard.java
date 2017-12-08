@@ -1,11 +1,10 @@
 package com.apkscanner.gui.dialog;
 
-
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
@@ -16,31 +15,50 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.jar.JarFile;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
+import com.android.ddmlib.AndroidDebugBridge;
+import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
+import com.android.ddmlib.IDevice;
+import com.apkscanner.core.installer.ApkInstaller;
 import com.apkscanner.core.installer.DefaultOptionsFactory;
+import com.apkscanner.core.installer.OptionsBundle;
+import com.apkscanner.core.installer.OptionsBundle.IOptionsChangedListener;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.CompactApkInfo;
 import com.apkscanner.gui.install.ContentPanel;
 import com.apkscanner.gui.install.ControlPanel;
-import com.apkscanner.gui.install.FindPackagePanel;
+import com.apkscanner.gui.install.DeviceCustomList;
+import com.apkscanner.gui.install.DeviceListData;
+import com.apkscanner.gui.install.InstallOptionPanel;
 import com.apkscanner.gui.install.InstallProgressPanel;
+import com.apkscanner.gui.install.ToggleButtonBar;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbServerMonitor;
+import com.apkscanner.tool.adb.PackageInfo;
+import com.apkscanner.tool.adb.PackageManager;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 
-public class ApkInstallWizard
+public class ApkInstallWizard implements IDeviceChangeListener
 {
 	public static final int STATUS_INIT = 0;
 	public static final int STATUS_APK_VERIFY = 1;
@@ -48,7 +66,6 @@ public class ApkInstallWizard
 	public static final int STATUS_SET_OPTIONS = 3;
 	public static final int STATUS_INSTALLING = 4;
 	public static final int STATUS_COMPLETED = 5;
-	public static final int STATUS_DESTROY_WINDOW = 6;
 
 	public static final int STATUS_APK_VERTIFY_ERROR = 101;
 
@@ -57,16 +74,23 @@ public class ApkInstallWizard
 	private InstallProgressPanel progressPanel;
 	private ContentPanel contentPanel;
 	private ControlPanel controlPanel;
+	private DeviceCustomList deviceList;
+	private DefaultListModel<DeviceListData> deviceListModel;
 	private UIEventHandler uiEventHandler = new UIEventHandler();
 
-	public static String pakcageFilePath;
-	public static CompactApkInfo apkInfo;
-	public static SignatureReport signatureReport;
-	public static DefaultOptionsFactory optFactory;
+	private InstallOptionPanel installOptionPanel;
+	private PackageInfoPanel pacakgeInfoPanel;
+	private JLabel errorMessageLable;
+
+	private String packageFilePath;
+	private CompactApkInfo apkInfo;
+	private SignatureReport signatureReport;
+	private DefaultOptionsFactory optFactory;
+	private HashMap<IDevice, DeviceListData> deviceDataMap = new HashMap<IDevice, DeviceListData>();
 
 	private int status;
 
-	public class ApkInstallWizardDialog  extends JDialog
+	public class ApkInstallWizardDialog extends JDialog
 	{
 		private static final long serialVersionUID = 2018466680871932348L;
 
@@ -134,45 +158,30 @@ public class ApkInstallWizard
 			initialize(this);
 			setLocationRelativeTo(null);
 
-			// Closing event of window be delete tempFile
 			addWindowListener(uiEventHandler);
 		}
 	}
 
 	public ApkInstallWizard() {
+		packageFilePath = null;
 		wizard = new ApkInstallWizardFrame();
 	}
 
-	public ApkInstallWizard(String FilePath) {
-		pakcageFilePath = FilePath;
-		if(FilePath == null || !(new File(FilePath).isFile())) {
-			Log.e("No such apk file... : " + FilePath);
-			MessageBoxPool.show(null, MessageBoxPool.MSG_NO_SUCH_APK_FILE);
-			return;
-		}
+	public ApkInstallWizard(String filePath) {
+		packageFilePath = filePath;
 		wizard = new ApkInstallWizardFrame();
 	}
 
-	public ApkInstallWizard(String FilePath, JFrame owner) {
-		pakcageFilePath = FilePath;
-		if(FilePath == null || !(new File(FilePath).isFile())) {
-			Log.e("No such apk file... : " + FilePath);
-			MessageBoxPool.show(owner, MessageBoxPool.MSG_NO_SUCH_APK_FILE);
-			return;
-		}
+	public ApkInstallWizard(String filePath, JFrame owner) {
+		packageFilePath = filePath;
 		if(owner != null)
 			wizard = new ApkInstallWizardDialog(owner);
 		else
 			wizard = new ApkInstallWizardFrame(owner);
 	}
 
-	public ApkInstallWizard(String FilePath, JDialog owner) {
-		pakcageFilePath = FilePath;
-		if(FilePath == null || !(new File(FilePath).isFile())) {
-			Log.e("No such apk file... : " + FilePath);
-			MessageBoxPool.show(owner, MessageBoxPool.MSG_NO_SUCH_APK_FILE);
-			return;
-		}
+	public ApkInstallWizard(String filePath, JDialog owner) {
+		packageFilePath = filePath;
 		if(owner != null)
 			wizard = new ApkInstallWizardDialog(owner);
 		else
@@ -185,49 +194,76 @@ public class ApkInstallWizard
 
 	private void initialize(Window window)
 	{
-		if(window == null) return;
+		if(window == null) {
+			Log.e("Error: window is null");
+			return;
+		}
 
 		AdbServerMonitor.startServerAndCreateBridgeAsync();
+
 		window.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
-		window.setSize(new Dimension(550,450));
+		window.setSize(new Dimension(600, 450));
+		window.setMinimumSize(new Dimension(600, 450));
 
 		progressPanel = new InstallProgressPanel();
 		controlPanel = new ControlPanel(uiEventHandler);
 		contentPanel = new ContentPanel(uiEventHandler);
+		deviceList = new DeviceCustomList(uiEventHandler);
+		deviceListModel = (DefaultListModel<DeviceListData>) deviceList.getModel();
 
-		JPanel PanelDummy = new JPanel();
-		//progressPanel.setPreferredSize(new Dimension(700, 200));
-		PanelDummy.setBackground(Color.WHITE);
-		PanelDummy.setOpaque(true);
-		PanelDummy.setPreferredSize(new Dimension(600, 80));
-		PanelDummy.add(progressPanel);
+		installOptionPanel = new InstallOptionPanel();
+		pacakgeInfoPanel = new PackageInfoPanel();
+		errorMessageLable = new JLabel("Please Check this APK file!", SwingConstants.CENTER);
+		errorMessageLable.setFont(new Font("Serif", Font.PLAIN, 24));
 
-		window.add(PanelDummy, BorderLayout.NORTH);
+		contentPanel.add(installOptionPanel, ContentPanel.CONTENT_SET_OPTIONS);
+		contentPanel.add(pacakgeInfoPanel, ContentPanel.CONTENT_PACKAGE_INFO);
+		contentPanel.add(errorMessageLable, ContentPanel.CONTENT_VERIFY_ERROR);
+
+		window.add(progressPanel, BorderLayout.NORTH);
+		window.add(deviceList, BorderLayout.WEST);
 		window.add(contentPanel, BorderLayout.CENTER);
 		window.add(controlPanel, BorderLayout.SOUTH);
-
-		//Log.i("initialize() register event handler");
-		//window.addWindowListener(new UIEventHandler());
-
-		window.setMinimumSize(new Dimension(600, 450));
 
 		// Shortcut key event processing
 		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		ky.addKeyEventDispatcher(uiEventHandler);
 	}
 
-	private void changeState(int status) {
+	private void changeState(final int status) {
 		Log.v("changeState() " + status);
-		if(!EventQueue.isDispatchThread()) {
-			Log.w("changeState() isDispatchThread " + EventQueue.isDispatchThread());
+		if(this.status == status) {
+			Log.v("No action, because does not changed state.");
+			return;
 		}
 
-		if(this.status == status) return;
+		if(!EventQueue.isDispatchThread()) {
+			Log.v("changeState() isDispatchThread " + EventQueue.isDispatchThread());
+			EventQueue.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					changeState(status);
+				}
+			});
+			return;
+		}
+
 		this.status = status;
 
 		progressPanel.setStatus(status);
 		contentPanel.setStatus(status);
 		controlPanel.setStatus(status);
+
+		switch(status) {
+		case STATUS_SET_OPTIONS:
+		case STATUS_INSTALLING:
+		case STATUS_COMPLETED:
+			deviceList.setVisible(true);
+			break;
+		default:
+			deviceList.setVisible(false);
+			break;
+		}
 
 		execute(status);
 	}
@@ -238,65 +274,40 @@ public class ApkInstallWizard
 			next();
 			break;
 		case STATUS_APK_VERIFY:
-			new SwingWorker<Boolean, Void>() {
-				protected Boolean doInBackground() throws Exception {
-					String apkFilePath = pakcageFilePath;
-
-					ApkScanner scanner = ApkScanner.getInstance("AAPTLIGHT");
-					scanner.openApk(apkFilePath);
-					if(scanner.getLastErrorCode() != ApkScanner.NO_ERR) {
-						Log.e("Fail open APK: errcode " + scanner.getLastErrorCode());
-						return false;
-					}
-					apkInfo = new CompactApkInfo(scanner.getApkInfo());
-
-					signatureReport = null;
-					try {
-						signatureReport = new SignatureReport(new JarFile(apkFilePath, true));
-					} catch (Exception e) { }
-					if(signatureReport == null || signatureReport.getSize() == 0) {
-						Log.e("Fail APK Virify");
-						if(apkInfo.certificates == null || apkInfo.certificates.length == 0) {
-							Log.e("certificates is null or 0");
-							return false;
-						}
-					}
-					return true;
-				}
-
-				@Override
-				protected void done() {
-					boolean pass = false;
-					try {
-						pass = get();
-					} catch (InterruptedException | ExecutionException e) {
-						e.printStackTrace();
-						pass = false;
-					}
-					if(pass) {
-						next();
-					} else {
-						changeState(STATUS_APK_VERTIFY_ERROR);
-					}
-				}
-			}.execute();
+			verifyApk();
+			break;
+		case STATUS_WAIT_FOR_DEVICE:
+			revaluationDeviceState(null);
+			break;
+		case STATUS_SET_OPTIONS:
 			break;
 		case STATUS_INSTALLING:
-
+			installApk();
+			break;
+		case STATUS_COMPLETED:
 			break;
 		default:
 			break;
 		}
 	}
 
-	public void start() {
+	public boolean start() {
 		if(status != STATUS_INIT) {
 			Log.w("No init state : " + status);
-			return;
+			return false;
 		}
 
+		if(packageFilePath == null || !(new File(packageFilePath).isFile())) {
+			Log.e("No such apk file... : " + packageFilePath);
+			MessageBoxPool.show(wizard != null ? wizard.getParent() : null, MessageBoxPool.MSG_NO_SUCH_APK_FILE);
+			return false;
+		}
+
+		AndroidDebugBridge.addDeviceChangeListener(this);
 		setVisible(true);
-		changeState(STATUS_APK_VERIFY);
+		next();
+
+		return true;
 	}
 
 	private void next() {
@@ -306,6 +317,9 @@ public class ApkInstallWizard
 				changeState(STATUS_APK_VERIFY);
 				break;
 			case STATUS_APK_VERIFY:
+				changeState(STATUS_WAIT_FOR_DEVICE);
+				break;
+			case STATUS_WAIT_FOR_DEVICE:
 				changeState(STATUS_SET_OPTIONS);
 				break;
 			case STATUS_SET_OPTIONS:
@@ -320,56 +334,388 @@ public class ApkInstallWizard
 		}
 	}
 
-	public void stop() {
+	private void verifyApk() {
+		new SwingWorker<String, Void>() {
+			protected String doInBackground() throws Exception {
+				String apkFilePath = packageFilePath;
 
+				ApkScanner scanner = ApkScanner.getInstance("AAPTLIGHT");
+				scanner.openApk(apkFilePath);
+				int errCode = scanner.getLastErrorCode();
+				if(errCode != ApkScanner.NO_ERR) {
+					return scanner.getLastErrorMessage();
+				}
+				apkInfo = new CompactApkInfo(scanner.getApkInfo());
+
+				signatureReport = null;
+				try {
+					signatureReport = new SignatureReport(new JarFile(apkFilePath, true));
+				} catch (Exception e) { }
+				if(signatureReport == null || signatureReport.getSize() == 0) {
+					Log.e("Fail APK Virify");
+					if(apkInfo.certificates == null || apkInfo.certificates.length == 0) {
+						Log.e("certificates is null or 0");
+						return "APK was not signed.";
+					}
+				}
+				optFactory = new DefaultOptionsFactory(apkInfo, signatureReport);
+				return null;
+			}
+
+			@Override
+			protected void done() {
+				String errMessage = null;
+				try {
+					errMessage = get();
+				} catch (InterruptedException | ExecutionException e) {
+					e.printStackTrace();
+					errMessage = e.getMessage();
+				}
+				if(errMessage == null) {
+					installOptionPanel.setApkInfo(apkInfo);
+					next();
+				} else {
+					errorMessageLable.setText(errMessage);
+					changeState(STATUS_APK_VERTIFY_ERROR);
+				}
+			}
+		}.execute();
 	}
 
-	@SuppressWarnings("unused")
-	private void restart() {
-		if(status != STATUS_COMPLETED) return;
-		status = STATUS_APK_VERIFY;
-		start();
+	private void installApk() {
+		AndroidDebugBridge.removeDeviceChangeListener(this);
+
+		synchronized (deviceDataMap) {
+			for(Entry<IDevice, DeviceListData> entry: deviceDataMap.entrySet()) {
+				OptionsBundle bundle = entry.getValue().getOptionsBundle();
+				if(bundle.isInstallOptions() || bundle.isPushOptions()) {
+					entry.getValue().setState(DeviceListData.STATUS_INSTALLING);
+				} else {
+					entry.getValue().setState(DeviceListData.STATUS_NO_ACTION);
+				}
+			}
+			deviceList.repaint();
+		}
+
+		final ArrayList<DeviceListData> remainderList = new ArrayList<DeviceListData>();
+		synchronized (deviceDataMap) {
+			for(DeviceListData data: deviceDataMap.values()) {
+				final OptionsBundle bundle = data.getOptionsBundle();
+				if(!bundle.isInstallOptions() && !bundle.isPushOptions()) {
+					 continue;
+				}
+				remainderList.add(data);
+			}
+		}
+
+		final DeviceListData[] targets = remainderList.toArray(new DeviceListData[remainderList.size()]);
+		for(final DeviceListData data: targets) {
+			new SwingWorker<DeviceListData, Void>() {
+				@Override
+				protected DeviceListData doInBackground() throws Exception {
+					String errMsg = ApkInstaller.install(data.getDevice(), apkInfo, data.getOptionsBundle());
+					if(errMsg == null || errMsg.isEmpty()) {
+						data.setState(DeviceListData.STATUS_SUCESSED);
+					} else {
+						Log.e(errMsg);
+						data.setState(DeviceListData.STATUS_FAILED);
+						data.setErrorMessage(errMsg);
+					}
+					return data;
+				}
+	
+				@Override
+				protected void done() {
+					DeviceListData data = null;
+					try {
+						data = get();
+					} catch (InterruptedException | ExecutionException e) {
+						e.printStackTrace();
+					}
+					if(data != null && data.equals(deviceList.getSelectedValue())) {
+						switch(((DeviceListData) data).getState()) {
+						case DeviceListData.STATUS_SUCESSED:
+							contentPanel.show(ContentPanel.CONTENT_SUCCESSED);
+							break;
+						case DeviceListData.STATUS_FAILED:
+							contentPanel.setErrorMessage(((DeviceListData) data).getErrorMessage());
+							contentPanel.show(ContentPanel.CONTENT_FAILED);
+							break;
+						default: break;
+						}
+					}
+					deviceList.repaint();
+					synchronized (remainderList) {
+						if(remainderList.contains(data)) {
+							remainderList.remove(data);
+						}
+						if(remainderList.isEmpty()) {
+							DeviceListData curData = deviceList.getSelectedValue();
+							if(curData != null && curData.getState() == DeviceListData.STATUS_NO_ACTION){
+								contentPanel.show(ContentPanel.CONTENT_NO_ACTION);
+							}
+							next();
+						}
+					}
+				}
+			}.execute();
+		}
 	}
 
-	@SuppressWarnings("unused")
-	private void printLog(String msg) {
-		Log.v(msg);
-		// append to log viewer
-		//contentPanel.appendLog(msg);
+	private void addDeviceToList(final IDevice device) {
+		new SwingWorker<Boolean, Object>() {
+			@Override
+			protected Boolean doInBackground() throws Exception {
+				DeviceListData data = null;
+				synchronized (deviceDataMap) {
+					data = deviceDataMap.get(device);
+					if(data == null) {
+						OptionsBundle bundle = new OptionsBundle();
+						data = new DeviceListData(device, bundle);
+						data.setState(DeviceListData.STATUS_CONNECTING_DEVICE);
+						deviceDataMap.put(device, data);
+						publish(data);
+					}
+				}
+				if(device.isOnline() && data.getState() == DeviceListData.STATUS_CONNECTING_DEVICE) {
+					final OptionsBundle bundle = data.getOptionsBundle();
+					optFactory.createOptions(device, bundle);
+					bundle.addOptionsChangedListener(new IOptionsChangedListener() {
+						@Override
+						public void changeOptions(int changedFlag, String... extraData) {
+							switch(changedFlag) {
+							case OptionsBundle.FLAG_OPT_DISSEMINATE:
+								synchronized(deviceDataMap) {
+									for(Entry<IDevice, DeviceListData> entry: deviceDataMap.entrySet()) {
+										entry.getValue().getOptionsBundle().copyFrom(bundle);
+									}
+								}
+							case OptionsBundle.FLAG_OPT_INSTALL:
+							case OptionsBundle.FLAG_OPT_PUSH:
+							case OptionsBundle.FLAG_OPT_NO_INSTALL:
+								deviceList.repaint();
+								break;
+							default:
+								break;
+							}
+							synchronized(deviceDataMap) {
+								boolean posibleInstall = false;
+								for(Entry<IDevice, DeviceListData> entry: deviceDataMap.entrySet()) {
+									OptionsBundle bundle = entry.getValue().getOptionsBundle();
+									if(bundle.isInstallOptions() || bundle.isPushOptions()) {
+										posibleInstall = true;
+										break;
+									}
+								}
+								controlPanel.setNextButtonEnable(posibleInstall);
+							}
+						}
+					});
+					data.setState(DeviceListData.STATUS_SETTING);
+					publish(data);
+				}
+
+				return true;
+			}
+
+			@Override
+			protected void process(List<Object> chunks) {
+				for(Object data: chunks) {
+					if(!(data instanceof DeviceListData)) {
+						return;
+					}
+					if(!deviceListModel.contains(data)) {
+						deviceListModel.addElement((DeviceListData)data);
+					} else {
+						deviceList.repaint();
+					}
+					if(deviceList.isSelectionEmpty()) {
+						deviceList.setSelectedIndex(0);
+					}
+					if(data != null && data.equals(deviceList.getSelectedValue())) {
+						installOptionPanel.setOptions(((DeviceListData) data).getOptionsBundle());
+						if(((DeviceListData) data).getState() != DeviceListData.STATUS_CONNECTING_DEVICE) {
+							contentPanel.show(ContentPanel.CONTENT_SET_OPTIONS);
+						} else {
+							contentPanel.setLoadingMessage("Reading information of device...");
+							contentPanel.show(ContentPanel.CONTENT_LOADING);
+						}
+					}
+				}
+			}
+
+			@Override
+			protected void done() {
+				if(deviceListModel.getSize() == 0) {
+					changeState(STATUS_WAIT_FOR_DEVICE);
+				} else {
+					if(deviceList.isSelectionEmpty()) {
+						deviceList.setSelectedIndex(0);
+					}
+					installOptionPanel.setVisibleDisseminate(deviceListModel.getSize() > 1);
+
+					synchronized(deviceDataMap) {
+						boolean posibleInstall = false;
+						for(Entry<IDevice, DeviceListData> entry: deviceDataMap.entrySet()) {
+							if(entry.getValue().getState() != DeviceListData.STATUS_CONNECTING_DEVICE) {
+								posibleInstall = true;
+								break;
+							}
+						}
+						controlPanel.setNextButtonEnable(posibleInstall);
+					}
+				}
+			};
+		}.execute();
 	}
 
-	public class UIEventHandler implements ActionListener, KeyEventDispatcher, WindowListener {
+	private void revaluationDeviceState(final IDevice device) {
+		final AndroidDebugBridge adb = AdbServerMonitor.getAndroidDebugBridge();
+		if(adb == null) {
+			Log.w("revaluationDeviceState() adb is null");
+			return;
+		}
+
+		IDevice[] devices = adb.getDevices();
+		if(devices == null || devices.length == 0) {
+			if(status == STATUS_SET_OPTIONS) {
+				changeState(STATUS_WAIT_FOR_DEVICE);
+			}
+			return;
+		}
+
+		if(status == STATUS_WAIT_FOR_DEVICE) {
+			changeState(STATUS_SET_OPTIONS);
+		}
+
+		if(device != null) {
+			devices = new IDevice[] { device };
+		}
+
+		controlPanel.setNextButtonEnable(false);
+		for(final IDevice dev: devices) {
+			addDeviceToList(dev);
+		}
+	}
+
+	@Override
+	public void deviceChanged(IDevice device, int changeMask) {
+		if((changeMask & IDevice.CHANGE_STATE) != 0) {
+			Log.i("deviceChanged() " + device.getName());
+			revaluationDeviceState(device);
+		}
+	}
+
+	@Override
+	public void deviceConnected(IDevice device) {
+		Log.e("deviceConnected() " + device.getName() + ", isOnline " + device.isOnline() + ", state " + device.getState());
+		//if(device.isOnline()) {
+		revaluationDeviceState(device);
+		//}
+	}
+
+	@Override
+	public void deviceDisconnected(IDevice device) {
+		Log.i("deviceDisconnected() " + device.getName() + ", isOnline " + device.isOnline());
+		synchronized(deviceDataMap) {
+			final DeviceListData data = deviceDataMap.get(device);
+			if(data != null) {
+				deviceDataMap.remove(device);
+
+				EventQueue.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						deviceListModel.removeElement(data);
+						if(deviceListModel.size() <= 0) {
+							changeState(STATUS_WAIT_FOR_DEVICE);
+						} else {
+							if(deviceList.isSelectionEmpty()) {
+								deviceList.setSelectedIndex(0);
+							}
+							installOptionPanel.setVisibleDisseminate(deviceListModel.size() > 1);
+						}
+					}
+				});
+			}
+		}
+	}
+
+	public class UIEventHandler implements ActionListener, KeyEventDispatcher, WindowListener, ListSelectionListener {
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			if(e.getSource() instanceof DeviceCustomList) {
+				DeviceCustomList list = (DeviceCustomList) e.getSource();
+				if(list == null) return;
+
+				DeviceListData data = list.getSelectedValue();
+				if(data == null) return;
+
+				switch(data.getState()) {
+				case DeviceListData.STATUS_SETTING:
+					installOptionPanel.setOptions(data.getOptionsBundle());
+					contentPanel.show(ContentPanel.CONTENT_SET_OPTIONS);
+					break;
+				case DeviceListData.STATUS_CONNECTING_DEVICE:
+					contentPanel.show(ContentPanel.CONTENT_CONNECTING_DEVICE);
+					break;
+				case DeviceListData.STATUS_INSTALLING:
+					contentPanel.show(ContentPanel.CONTENT_INSTALLING);
+					break;
+				case DeviceListData.STATUS_SUCESSED:
+					contentPanel.show(ContentPanel.CONTENT_SUCCESSED);
+					break;
+				case DeviceListData.STATUS_FAILED:
+					contentPanel.setErrorMessage(((DeviceListData) data).getErrorMessage());
+					contentPanel.show(ContentPanel.CONTENT_FAILED);
+					break;
+				case DeviceListData.STATUS_NO_ACTION:
+					contentPanel.show(ContentPanel.CONTENT_NO_ACTION);
+				default:
+					break;
+				}
+			}
+		}
+
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			if(ControlPanel.CTR_ACT_CMD_NEXT.equals(arg0.getActionCommand())) {
+			String actCommand = arg0.getActionCommand();
+			if(ControlPanel.CTR_ACT_CMD_NEXT.equals(actCommand)) {
 				next();
-			} else if(ControlPanel.CTR_ACT_CMD_PREVIOUS.equals(arg0.getActionCommand())) {
+			} else if(ControlPanel.CTR_ACT_CMD_PREVIOUS.equals(actCommand)) {
 				//previous();
-			} else if(ControlPanel.CTR_ACT_CMD_CANCEL.equals(arg0.getActionCommand()) ||
-					ControlPanel.CTR_ACT_CMD_OK.equals(arg0.getActionCommand())) {
+			} else if(ControlPanel.CTR_ACT_CMD_CANCEL.equals(actCommand) ||
+					ControlPanel.CTR_ACT_CMD_OK.equals(actCommand)) {
 				if(wizard instanceof JFrame &&
 						((JFrame)wizard).getDefaultCloseOperation() == JFrame.EXIT_ON_CLOSE) {
 					System.exit(0);
 				} else {
 					wizard.dispose();
 				}
-			} else if(ControlPanel.CTR_ACT_CMD_RESTART.equals(arg0.getActionCommand())) {
+			} else if(ControlPanel.CTR_ACT_CMD_RESTART.equals(actCommand)) {
 				changeState(STATUS_INIT);
-			} else if(ContentPanel.CTT_ACT_CMD_REFRESH.equals(arg0.getActionCommand())) {
-
-			} else if(ContentPanel.CTT_ACT_CMD_SELECT_ALL.equals(arg0.getActionCommand())) {
-
-			} else if(FindPackagePanel.NO_DEVICE_LAYOUT.equals(arg0.getActionCommand())) {
-				if(status == STATUS_SET_OPTIONS) {
-					controlPanel.setStatus(STATUS_WAIT_FOR_DEVICE);
+			} else if(ToggleButtonBar.ACT_CMD_BUILD_OPTTIONS.equals(actCommand)) {
+				if(arg0.getSource() instanceof DeviceListData) {
+					DeviceListData data = (DeviceListData) arg0.getSource();
+					installOptionPanel.setOptions(data.getOptionsBundle());
+					if(data.getState() != DeviceListData.STATUS_CONNECTING_DEVICE) {
+						contentPanel.show(ContentPanel.CONTENT_SET_OPTIONS);
+					} else {
+						contentPanel.setLoadingMessage("Reading information of device...");
+						contentPanel.show(ContentPanel.CONTENT_LOADING);
+					}
 				}
-			} else if(FindPackagePanel.DEVICE_LAYOUT.equals(arg0.getActionCommand())) {
-				if(status == STATUS_SET_OPTIONS) {
-					controlPanel.setNextButtonEnable(true);
-				}
-			} else if(FindPackagePanel.DEVICE_LAYOUT_WAIT_INSTALL_BUTTON.equals(arg0.getActionCommand())) {
-				if(status == STATUS_SET_OPTIONS) {
-					controlPanel.setNextButtonEnable(false);
+			} else if(ToggleButtonBar.ACT_CMD_PACKAGE_INFO.equals(actCommand)) {
+				if(arg0.getSource() instanceof DeviceListData) {
+					DeviceListData data = (DeviceListData) arg0.getSource();
+					if(data != null && data.getDevice() != null && apkInfo != null && apkInfo.packageName != null) {
+						PackageInfo info = PackageManager.getPackageInfo(data.getDevice(), apkInfo.packageName);
+						if(info != null) {
+							pacakgeInfoPanel.setPackageInfo(info);
+							contentPanel.show(ContentPanel.CONTENT_PACKAGE_INFO);
+						}
+					} else {
+						Log.v("no have device or apk package");
+					}
 				}
 			}
 		}
@@ -406,14 +752,18 @@ public class ApkInstallWizard
 
 		// Closing event of window be delete tempFile
 		@Override
-		public void windowClosing(WindowEvent e)
-		{
-			Log.d("closing....ApkInstallWizard");
-			changeState(STATUS_DESTROY_WINDOW);
+		public void windowClosing(WindowEvent e){
+			Log.v("closing....ApkInstallWizard");
+			AndroidDebugBridge.removeDeviceChangeListener(ApkInstallWizard.this);
+		}
+
+		@Override
+		public void windowClosed(WindowEvent e) {
+			Log.v("closed....ApkInstallWizard");
+			AndroidDebugBridge.removeDeviceChangeListener(ApkInstallWizard.this);
 		}
 
 		@Override public void windowOpened(WindowEvent e) { }
-		@Override public void windowClosed(WindowEvent e) { }
 		@Override public void windowIconified(WindowEvent e) { }
 		@Override public void windowDeiconified(WindowEvent e) { }
 		@Override public void windowActivated(WindowEvent e) { }
@@ -424,12 +774,16 @@ public class ApkInstallWizard
 		Resource.setLanguage((String)Resource.PROP_LANGUAGE.getData(SystemUtil.getUserLanguage()));
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
+				boolean ret = false;
 				if(SystemUtil.isWindows()) {
 					ApkInstallWizard wizard = new ApkInstallWizard("C:\\Melon.apk");
-					wizard.start();
+					ret = wizard.start();
 				} else {
 					ApkInstallWizard wizard = new ApkInstallWizard("/home/leejinhyeong/Desktop/reco.apk");
-					wizard.start();
+					ret = wizard.start();
+				}
+				if(!ret) {
+					System.exit(1);
 				}
 			}
 		});

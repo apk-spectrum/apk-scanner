@@ -33,23 +33,11 @@ public class AaptLightScanner extends ApkScanner {
 
 		scanningStarted();
 
-		Log.i("I: new resourceScanner...");
-		AaptNativeScanner resourceScanner = new AaptNativeScanner(null);
-
-		Log.i("I: add asset apk");
-		resourceScanner.openApk(apkFile.getAbsolutePath(), frameworkRes);
-		if(!resourceScanner.hasAssetManager()){
-			resourceScanner = null;
-			Log.e("Failure : Can't open the AssetManager");
-			errorOccurred(ERR_CAN_NOT_ACCESS_ASSET);
-			return;
-		}
-
 		Log.i("I: getDump AndroidManifest...");
 		String[] androidManifest = AaptNativeWrapper.Dump.getXmltree(apkFile.getAbsolutePath(), new String[] { "AndroidManifest.xml" });
 		if(androidManifest == null || androidManifest.length == 0) {
 			Log.e("Failure : Can't read the AndroidManifest.xml");
-			errorOccurred(ERR_CAN_NOT_READ_MANIFEST);
+			errorOccurred(ERR_NO_SUCH_MANIFEST);
 			return;
 		}
 
@@ -60,6 +48,18 @@ public class AaptLightScanner extends ApkScanner {
 		if(manifestPath.getNode("/manifest") == null || manifestPath.getNode("/manifest/application") == null) {
 			Log.e("Failure : Wrong format. Don't have '<manifest>' or '<application>' tag");
 			errorOccurred(ERR_WRONG_MANIFEST);
+			return;
+		}
+
+		Log.i("I: new resourceScanner...");
+		AaptNativeScanner resourceScanner = new AaptNativeScanner(null);
+
+		Log.i("I: add asset apk");
+		resourceScanner.openApk(apkFile.getAbsolutePath(), frameworkRes);
+		if(!resourceScanner.hasAssetManager()){
+			resourceScanner = null;
+			Log.e("Failure : Can't open the AssetManager");
+			errorOccurred(ERR_CAN_NOT_ACCESS_ASSET);
 			return;
 		}
 
