@@ -470,7 +470,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 				IDevice[] devices = adb.getDevices();
 				for(IDevice device: devices) {
 					if(!allowCache) {
-						PackageManager.removeListCash(device);
+						PackageManager.removeListCache(device);
 					}
 					deviceHandler.deviceConnected(device);
 				}

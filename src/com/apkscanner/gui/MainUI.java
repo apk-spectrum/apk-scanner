@@ -668,6 +668,45 @@ public class MainUI extends JFrame
 			thread.start();
 		}
 
+		private void evtClearData() {
+			final IDevice[] devices = getInstalledDevice();
+			if(devices == null || devices.length == 0) {
+				Log.i("No such device of a package installed.");
+				messagePool.show(MessageBoxPool.MSG_NO_SUCH_PACKAGE_DEVICE);
+				return;
+			}
+
+			Thread thread = new Thread(new Runnable() {
+				public void run()
+				{
+					for(IDevice device: devices) {
+						Log.v("clear data on " + device.getSerialNumber());
+
+						PackageInfo packageInfo = getPackageInfo(device);
+
+						String errMessage = PackageManager.clearData(packageInfo);
+
+						if(errMessage != null && !errMessage.isEmpty()) {
+							final String errMsg = errMessage;
+							EventQueue.invokeLater(new Runnable() {
+								public void run() {
+									messagePool.show(MessageBoxPool.MSG_FAILURE_CLEAR_DATA, errMsg);
+								}
+							});
+						} else {
+							EventQueue.invokeLater(new Runnable() {
+								public void run() {
+									messagePool.show(MessageBoxPool.MSG_SUCCESS_CLEAR_DATA);
+								}
+							});
+						}
+					}
+				}
+			});
+			thread.setPriority(Thread.NORM_PRIORITY);
+			thread.start();
+		}
+
 		private void evtSignApkFile() {
 			ApkInfo apkInfo = apkScanner.getApkInfo();
 			if(apkInfo == null || apkInfo.filePath == null
@@ -801,6 +840,8 @@ public class MainUI extends JFrame
 				evtLaunchApp((e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
 			} else if(ToolBar.MenuItemSet.UNINSTALL_APK.matchActionEvent(e)) {
 				evtUninstallApp();
+			} else if(ToolBar.MenuItemSet.CLEAR_DATA.matchActionEvent(e)) {
+				evtClearData();
 			} else if(ToolBar.ButtonSet.SIGN.matchActionEvent(e) || ToolBar.ButtonSet.SUB_SIGN.matchActionEvent(e)) { 
 				evtSignApkFile();
 			} else {
@@ -1082,7 +1123,7 @@ public class MainUI extends JFrame
 		@Override
 		public void deviceDisconnected(IDevice device) {
 			Log.v("deviceDisconnected() " + device.getSerialNumber());
-			PackageManager.removeCash(device);
+			PackageManager.removeCache(device);
 			applyToobarPolicy();
 		}
 

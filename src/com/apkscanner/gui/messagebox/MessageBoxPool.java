@@ -33,6 +33,9 @@ public class MessageBoxPool {
 	public static final int MSG_BLOCKED_MISMATCH_SIGNED_NOT_SYSTEM = 23;
 	public static final int MSG_BLOCKED_UNKNOWN = 24;
 
+	public static final int MSG_SUCCESS_CLEAR_DATA = 25;
+	public static final int MSG_FAILURE_CLEAR_DATA = 26;
+
 	private Component parentComponent;
 	private static HashMap<Integer, MessageBoxPool> pool = new HashMap<Integer, MessageBoxPool>(); 
 
@@ -137,6 +140,12 @@ public class MessageBoxPool {
 			break;
 		case MSG_BLOCKED_UNKNOWN:
 			MessageBoxPane.showError(parentComponent, "MISMATCH_SIGNED_NOT_SYSTEM");
+			break;
+		case MSG_SUCCESS_CLEAR_DATA:
+			MessageBoxPane.showInfomation(parentComponent, Resource.STR_MSG_SUCCESS_CLEAR_DATA.getString());
+			break;
+		case MSG_FAILURE_CLEAR_DATA:
+			MessageBoxPane.showError(parentComponent, Resource.STR_MSG_FAILURE_CLEAR_DATA.getString());
 			break;
 		}
 		return MessageBoxPane.CLOSED_OPTION;

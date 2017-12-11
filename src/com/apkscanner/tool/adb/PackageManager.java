@@ -230,13 +230,13 @@ public class PackageManager {
 		return packageList;
 	}
 
-	public static void removeListCash(IDevice device) {
+	public static void removeListCache(IDevice device) {
 		synchronized (sLock) {
 			packageListCache.remove(device.getSerialNumber());
 		}
 	}
 
-	public static void removeCash(IDevice device) {
+	public static void removeCache(IDevice device) {
 		synchronized (sLock) {
 			if(packagesMap.containsKey(device)) {
 				packagesMap.remove(device);
@@ -445,6 +445,43 @@ public class PackageManager {
 		if(errMessage == null && !new File(destApkPath).isFile()) {
 			errMessage = "Unknown Error";
 		}
+		return errMessage;
+	}
+
+	public static String clearData(PackageInfo packageInfo) {
+		String errMessage = null;
+
+		if(packageInfo == null || packageInfo.packageName == null) {
+			errMessage = "PackageInfo is null";
+		} else if(packageInfo.device == null) {
+			errMessage = "Device is null";
+		} else if(packageInfo.device.getState() != DeviceState.ONLINE) {
+			errMessage = "Device is no online : " + packageInfo.device.getState();
+		}
+
+		if(errMessage == null) {
+			errMessage = "";
+			try {
+				SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
+				outputReceiver.setTrimLine(false);
+				packageInfo.device.executeShellCommand("pm clear " + packageInfo.packageName, outputReceiver);
+				String[] result = outputReceiver.getOutput();
+				if(result != null) {
+					for(String s: result) {
+						if(s.equalsIgnoreCase("Success")) {
+							return null;
+						}
+						errMessage += s + "\n";
+					}
+				}
+			} catch (TimeoutException | ShellCommandUnresponsiveException | IOException e) {
+				errMessage = e.getMessage();
+				e.printStackTrace();
+			} catch (AdbCommandRejectedException e1) {
+				Log.w(e1.getMessage());
+			}
+		}
+
 		return errMessage;
 	}
 

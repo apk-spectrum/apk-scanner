@@ -63,6 +63,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 	private static final String ACT_CMD_SAVE_PACKAGE = "ACT_CMD_SAVE_PACKAGE";
 	private static final String ACT_CMD_LAUCH_PACKAGE = "ACT_CMD_LAUCH_PACKAGE";
 	private static final String ACT_CMD_UNINSTALL_PACKAGE = "ACT_CMD_UNINSTALL_PACKAGE";
+	private static final String ACT_CMD_CLEAR_DATA = "ACT_CMD_CLEAR_DATA";
 
 	private JDialog dialog;
 
@@ -94,6 +95,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		toolBar.add(separator);
 		toolBar.add(getToolbarButton(null, Resource.IMG_TOOLBAR_LAUNCH.getImageIcon(24, 24), null, ACT_CMD_LAUCH_PACKAGE));
 		toolBar.add(getToolbarButton("uninstall", Resource.IMG_TOOLBAR_UNINSTALL.getImageIcon(24, 24), null, ACT_CMD_UNINSTALL_PACKAGE));
+		toolBar.add(getToolbarButton("clear", Resource.IMG_TOOLBAR_CLEAR.getImageIcon(24, 24), null, ACT_CMD_CLEAR_DATA));
 
 		add(toolBar, BorderLayout.NORTH);
 
@@ -695,6 +697,29 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 					}
 				});
 			}
+		} else if(ACT_CMD_CLEAR_DATA.endsWith(actCmd)) {
+			new SwingWorker<String, Object> () {
+				@Override
+				protected String doInBackground() throws Exception {
+					return PackageManager.clearData(packageInfo);
+				}
+
+				@Override
+				protected void done() {
+					String errMessage = null;
+					try {
+						errMessage = get();
+					} catch (InterruptedException | ExecutionException e) {
+						errMessage = e.getMessage();
+						e.printStackTrace();
+					}
+					if(errMessage == null) {
+						MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.MSG_SUCCESS_CLEAR_DATA);
+					} else {
+						MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.MSG_FAILURE_CLEAR_DATA, errMessage);
+					}
+				};
+			}.execute();
 		}
 	}
 

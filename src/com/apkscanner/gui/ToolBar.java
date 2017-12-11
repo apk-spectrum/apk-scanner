@@ -59,6 +59,7 @@ public class ToolBar extends JToolBar
 		OPEN_PACKAGE	(Resource.STR_MENU_PACKAGE.getString(), null, Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK, false), 'P'),
 		INSTALL_APK		(Resource.STR_MENU_INSTALL.getString(), null, Resource.IMG_TOOLBAR_INSTALL.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK, false), 'I'),
 		UNINSTALL_APK	(Resource.STR_MENU_UNINSTALL.getString(), null, Resource.IMG_TOOLBAR_UNINSTALL.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_DOWN_MASK, false), 'U'),
+		CLEAR_DATA		(Resource.STR_MENU_CLEAR_DATA.getString(), null, Resource.IMG_TOOLBAR_CLEAR.getImageIcon(16,16), null, '\0'),
 		INSTALLED_CHECK	(Resource.STR_MENU_CHECK_INSTALLED.getString(), null, Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK, false), 'T');
 
 		private String text = null;
@@ -261,6 +262,7 @@ public class ToolBar extends JToolBar
 		openPopupMenu.add(menuItemMap.get(MenuItemSet.OPEN_PACKAGE));
 
 		installPopupMenu.add(menuItemMap.get(MenuItemSet.UNINSTALL_APK));
+		installPopupMenu.add(menuItemMap.get(MenuItemSet.CLEAR_DATA));
 		installPopupMenu.add(menuItemMap.get(MenuItemSet.INSTALLED_CHECK));
 
 		Log.i("ToolBar.initUI() ButtonSet init");
@@ -448,6 +450,7 @@ public class ToolBar extends JToolBar
 		setMenuItemText(MenuItemSet.OPEN_PACKAGE, Resource.STR_MENU_PACKAGE.getString(), null);
 		setMenuItemText(MenuItemSet.INSTALL_APK, Resource.STR_MENU_INSTALL.getString(), null);
 		setMenuItemText(MenuItemSet.UNINSTALL_APK, Resource.STR_MENU_UNINSTALL.getString(), null);
+		setMenuItemText(MenuItemSet.CLEAR_DATA, Resource.STR_MENU_CLEAR_DATA.getString(), null);
 		setMenuItemText(MenuItemSet.INSTALLED_CHECK, Resource.STR_MENU_CHECK_INSTALLED.getString(), null);
 	}
 

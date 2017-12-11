@@ -127,6 +127,7 @@ public enum Resource
 	STR_MENU_PACKAGE			(Type.TEXT, "@menu_package"),
 	STR_MENU_INSTALL			(Type.TEXT, "@menu_install"),
 	STR_MENU_UNINSTALL			(Type.TEXT, "@menu_uninstall"),
+	STR_MENU_CLEAR_DATA			(Type.TEXT, "@menu_clear_data"),
 	STR_MENU_CHECK_INSTALLED	(Type.TEXT, "@menu_check_installed"),
 
 	STR_TAB_BASIC_INFO			(Type.TEXT, "@tab_basic_info"),
@@ -331,6 +332,8 @@ public enum Resource
 	STR_MSG_UNSUPPORTED_PREVIEW	(Type.TEXT, "@msg_unsupported_preview"),
 	STR_MSG_CANNOT_WRITE_FILE	(Type.TEXT, "@msg_cannot_write_file"),
 	STR_MSG_DISABLED_PACKAGE	(Type.TEXT, "@msg_disabled_package"),
+	STR_MSG_SUCCESS_CLEAR_DATA	(Type.TEXT, "@msg_success_clear_data"),
+	STR_MSG_FAILURE_CLEAR_DATA	(Type.TEXT, "@msg_failure_clear_data"),
 
 	STR_QUESTION_REBOOT_DEVICE	(Type.TEXT, "@question_reboot_device"),
 	STR_QUESTION_CONTINUE_INSTALL(Type.TEXT, "@question_continue_install"),
@@ -364,6 +367,7 @@ public enum Resource
 	IMG_TOOLBAR_PACKAGETREE		(Type.IMAGE, "toolbar_packagetree.png"),
 	IMG_TOOLBAR_LAUNCH			(Type.IMAGE, "toolbar_launch.png"),
 	IMG_TOOLBAR_UNINSTALL		(Type.IMAGE, "toolbar_uninstall.png"),
+	IMG_TOOLBAR_CLEAR			(Type.IMAGE, "toolbar_clear.png"),
 
 	IMG_RESOURCE_IMG_BACKGROUND (Type.IMAGE, "resource_tap_image_background.jpg"),
 	IMG_RESOURCE_IMG_BACKGROUND_DARK (Type.IMAGE, "resource_tap_image_background_dark.jpg"),
