@@ -31,4 +31,5 @@ https://android.googlesource.com/platform/frameworks/base/+/master/core/java/and
     <sdk-info apiLevel="24" platformVersion="Android 7.0" versionCode="N" codeName="Nougat" icon="/icons/logo/nougat.png"/>
     <sdk-info apiLevel="25" platformVersion="Android 7.1.x" versionCode="N_MR1" codeName="Nougat++" icon="/icons/logo/nougat.png"/>
     <sdk-info apiLevel="26" platformVersion="Android 8.0" versionCode="O" codeName="Oreo" icon="/icons/logo/oreo.png"/>
+    <sdk-info apiLevel="27" platformVersion="Android 8.1" versionCode="O_MR1" codeName="O MR1" icon="/icons/logo/oreo.png"/>
 </resources>
