@@ -461,6 +461,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("  </tr>");
 		strTabInfo.append("</table>");
 		strTabInfo.append("<div id=\"perm-group\" style=\"text-align:left; width:480px; padding-top:5px; border-top:1px; border-left:0px; border-right:0px; border-bottom:0px; border-style:solid;\">");
+		strTabInfo.append("<table width=\"100%\" style=\"border:0px;padding:0px;margin:0px;\"><tr style=\\\"border:0px;padding:0px;margin:0px;\\\" ><td style=\\\"border:0px;padding:0px;margin:0px;\\\">");
 		strTabInfo.append("  <font style=\"font-size:12px;color:black;\">");
 		if(allPermissionsList != null && !allPermissionsList.isEmpty()) {
 			strTabInfo.append("    [" + Resource.STR_BASIC_PERMISSIONS.getString() + "] - ");
@@ -468,16 +469,13 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		} else {
 			strTabInfo.append("    " + Resource.STR_LABEL_NO_PERMISSION.getString());
 		}
-		strTabInfo.append("  </font><br/>");
-		strTabInfo.append("  <font style=\"font-size:5px\"><br/></font>");
+		strTabInfo.append("</font></td><td width=\"150px\" style=\"text-align:right;\">@SDK27</td></tr></table>");
 		strTabInfo.append("  " + permGorupImg);
 		strTabInfo.append("</div>");
 		strTabInfo.append("<div height=10000 width=10000></div>");
 
 		apkinform.setBody(strTabInfo.toString());
 		//this.setLayout(new GridLayout());
-
-
 	}
 
 	public synchronized void setProgress(String message)

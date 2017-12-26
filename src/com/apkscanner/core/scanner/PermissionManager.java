@@ -48,7 +48,7 @@ public class PermissionManager
 		ArrayList<ResourceInfo> resList = new ArrayList<ResourceInfo>();  
 		
 		if(xmlPermInfoDefault != null) {
-			XmlPath infoXPath = xmlPermInfoDefault.getNode("/permission-info/string[@name='" + name + "']");
+			XmlPath infoXPath = xmlPermInfoDefault.getNode("/resources/string[@name='" + name + "']");
 			if(infoXPath != null) {
 				String result = infoXPath.getTextContent();
 				if(result != null) result = result.replaceAll("\"", "");
@@ -57,7 +57,7 @@ public class PermissionManager
 		}
 
 		if(xmlPermInfoLang != null) {
-			XmlPath infoXPath = xmlPermInfoLang.getNode("/permission-info/string[@name='" + name + "']");
+			XmlPath infoXPath = xmlPermInfoLang.getNode("/resources/string[@name='" + name + "']");
 			if(infoXPath != null) {
 				String result = infoXPath.getTextContent();
 				if(result != null) result = result.replaceAll("\"", "");
@@ -74,10 +74,10 @@ public class PermissionManager
 		
 		String lang = Resource.getLanguage();
 
-		xmlPermissions = new XmlPath(Resource.class.getResourceAsStream("/values/AndroidManifest_SDK23.xml"));
-		xmlPermInfoDefault = new XmlPath(Resource.class.getResourceAsStream("/values/permissions-info.xml"));
-		if(Resource.class.getResource("/values/permissions-info-" + lang + ".xml") != null) {
-			xmlPermInfoLang = new XmlPath(Resource.class.getResourceAsStream("/values/permissions-info-" + lang + ".xml"));
+		xmlPermissions = new XmlPath(Resource.class.getResourceAsStream("/values/permissions-info/27/AndroidManifest.xml"));
+		xmlPermInfoDefault = new XmlPath(Resource.class.getResourceAsStream("/values/permissions-info/27/strings.xml"));
+		if(Resource.class.getResource("/values/permissions-info/27/strings-" + lang + ".xml") != null) {
+			xmlPermInfoLang = new XmlPath(Resource.class.getResourceAsStream("/values/permissions-info/27/strings-" + lang + ".xml"));
 		}
 	}
 }

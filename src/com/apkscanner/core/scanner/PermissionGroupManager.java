@@ -30,14 +30,14 @@ public class PermissionGroupManager
 		//Log.i(getClass().getResource("/values/permissions-info.xml"));
 		//Log.i(getClass().getResource("/values/permissions-info-" + lang + ".xml"));
 
-		xmlPermissions = new XmlPath(getClass().getResourceAsStream("/values/AndroidManifest_SDK23.xml"));
-		xmlPermInfoDefault = new XmlPath(getClass().getResourceAsStream("/values/permissions-info.xml"));
-		if(getClass().getResource("/values/permissions-info-" + lang + ".xml") != null) {
-			xmlPermInfoLang = new XmlPath(getClass().getResourceAsStream("/values/permissions-info-" + lang + ".xml"));
+		xmlPermissions = new XmlPath(getClass().getResourceAsStream("/values/permissions-info/27/AndroidManifest.xml"));
+		xmlPermInfoDefault = new XmlPath(getClass().getResourceAsStream("/values/permissions-info/27/strings.xml"));
+		if(getClass().getResource("/values/permissions-info/27/strings-" + lang + ".xml") != null) {
+			xmlPermInfoLang = new XmlPath(getClass().getResourceAsStream("/values/permissions-info/27/strings-" + lang + ".xml"));
 		}
-		
+
 		permGroupMap = new HashMap<String, PermissionGroup>();
-		
+
 		setData(permList);
 	}
 	
@@ -123,14 +123,14 @@ public class PermissionGroupManager
 		
 		String result = null;
 		if(xmlPermInfoLang != null) {
-			XmlPath infoXPath = xmlPermInfoLang.getNode("/permission-info/string[@name='" + name + "']");
+			XmlPath infoXPath = xmlPermInfoLang.getNode("/resources/string[@name='" + name + "']");
 			if(infoXPath != null) {
 				result = infoXPath.getTextContent();
 			}
 		}
 
 		if(result == null && xmlPermInfoDefault != null) {
-			XmlPath infoXPath = xmlPermInfoDefault.getNode("/permission-info/string[@name='" + name + "']");
+			XmlPath infoXPath = xmlPermInfoDefault.getNode("/resources/string[@name='" + name + "']");
 			if(infoXPath != null) {
 				result = infoXPath.getTextContent();
 			}
