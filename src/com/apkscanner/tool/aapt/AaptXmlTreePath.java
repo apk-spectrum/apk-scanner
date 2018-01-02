@@ -17,34 +17,34 @@ public class AaptXmlTreePath
 	private static final int NODE_TYPE_NAMESPACE = 0;
 	private static final int NODE_TYPE_ELEMENT = 1;
 	private static final int NODE_TYPE_ATTRIBUTE = 2;
-	
+
 	private static final int DEPTH_SPACE = 2;
-	
+
 	private AaptXmlTreeNode topNode = null;
 	private AaptXmlTreeNode[] curNodes = null;
 	private String defaultNamespace = null;
-	
+
 	private XmlPath attrIdPath = null;
 
 	public AaptXmlTreePath()
 	{
-		
+
 	}
 
 	public AaptXmlTreePath(String[] xmlTree)
 	{
 		createAaptXmlTree(xmlTree);
 	}
-	
+
 	public void createAaptXmlTree(String[] xmlTree)
 	{
-		ArrayList<String> namespaces = new ArrayList<String>();
+		Stack<String> namespaces = new Stack<String>();
 		Stack<AaptXmlTreeNode> nodeStack = new Stack<AaptXmlTreeNode>();
 
 		synchronized(this) {
 			topNode = new AaptXmlTreeNode(null, "top");
 			curNodes = new AaptXmlTreeNode[] { topNode };
-			
+
 			AaptXmlTreeNode curNode = topNode;
 			nodeStack.push(topNode);
 			int curDepth = 0;
@@ -67,19 +67,19 @@ public class AaptXmlTreePath
 					if(depth > -1 && s.matches("^\\s*E:.*")) {
 						type = NODE_TYPE_ELEMENT;
 					} else {
-						depth = s.indexOf("N:");	
+						depth = s.indexOf("N:");
 						if(depth > -1 && s.matches("^\\s*N:.*")) {
 							type = NODE_TYPE_NAMESPACE;
 						}
 					}
 				}
-				
+
 				switch(type) {
 				case NODE_TYPE_ATTRIBUTE:
 					if(!s.matches("^\\s*A: ([^\\(]*).*")) {
 						Log.w("Unknown attribute : " + s);
 						continue;
-					} 
+					}
 					String attrName = s.replaceAll("^\\s*A: ([^\\(=]*).*", "$1");
 					String attrId = s.replaceAll("^\\s*A: ([^: ]*)?:([^:= ]*)?\\(([^\\(=]*)\\).*", "$3");
 					String attrRealName = null;
@@ -94,7 +94,7 @@ public class AaptXmlTreePath
 						attrName = attrRealName;
 					}
 					String attrData = s.substring(s.indexOf("=")+1);
-					
+
 					if(attrData.indexOf("(Raw:") > -1) {
 						attrData = attrData.replaceAll(".*\\(Raw: \"(.*)\".*", "$1");
 						//Log.v("attrData raw : " + attrData);
@@ -104,20 +104,21 @@ public class AaptXmlTreePath
 						attrData = TypedValue.coerceToString(t, d);
 						//attrData = attrData.substring(attrData.indexOf(")")+1);
 					} else if(attrData.startsWith("\"")) {
-						
+
 					} else if(attrData.startsWith("@")) {
-						
+
 					}
 					//Log.v("attribute name : " + attrName + " = " + attrData);
 					curNode.addAttribute(attrRealName, attrData);
 					break;
 				case NODE_TYPE_ELEMENT:
-					while(depth <= curDepth) {
+					while(depth < curDepth) {
+						//Log.v("depth " + depth + ", curDepth " + curDepth + ", nodeStack " +  nodeStack.size() + ", curNode.getNamespaceCount() " + curNode.getNamespaceCount());
+						curDepth -= (curNode.getNamespaceCount() + 1) * DEPTH_SPACE;
 						curNode = nodeStack.pop();
-						curDepth -= DEPTH_SPACE;
 					}
 					String nodeName = s.replaceAll("^\\s*E: ([^\\s*]*) .*", "$1");
-	
+
 					AaptXmlTreeNode newNode = new AaptXmlTreeNode(curNode, nodeName);
 					//Log.d("addChild node " + nodeName + ", " + curDepth + ", path " + newNode.getPath());
 					curNode.addNode(nodeName, newNode);
@@ -125,24 +126,28 @@ public class AaptXmlTreePath
 					curNode = newNode;
 					curDepth += DEPTH_SPACE;
 					//curNode.addChild("", "");
-					if("manifest".equals(nodeName)) {
-						for(String n: namespaces) {
-							String[] space = n.split("=");
-							String ref = space.length >= 2 ? space[1] : "";  
-							curNode.addAttribute(space[0], ref);
-						}
+
+					while(!namespaces.empty()) {
+						String n = namespaces.pop();
+						String[] space = n.split("=");
+						String ref = space.length >= 2 ? space[1] : "";
+						curNode.addNameSpace(space[0], ref);
 					}
 					break;
 				case NODE_TYPE_NAMESPACE:
-					curDepth = depth;
+					while(depth < curDepth) {
+						//Log.v("depth " + depth + ", curDepth " + curDepth + ", nodeStack " +  nodeStack.size() + ", curNode.getNamespaceCount() " + curNode.getNamespaceCount());
+						curDepth -= (curNode.getNamespaceCount() + 1) * DEPTH_SPACE;
+						curNode = nodeStack.pop();
+					}
+					curDepth += DEPTH_SPACE;
+
 					String tag = s.replaceAll("^\\s*N: (.*)=.*", "$1");
 					String space = s.replaceAll("^\\s*N: .*=(.*)", "$1");
 					if("http://schemas.android.com/apk/res/android".equals(space)) {
-						namespaces.add(0, "xmlns:" + tag + "=" + space);
 						defaultNamespace = tag;
-					} else {
-						namespaces.add("xmlns:" + tag + "=" + space);
 					}
+					namespaces.push("xmlns:" + tag + "=" + space);
 					//Log.i("namespace : " + s);
 					break;
 				default:
@@ -153,12 +158,12 @@ public class AaptXmlTreePath
 			//Log.v(xmlTree[0] + ", curDepth " + curDepth);
 		}
 	}
-	
+
 	public String getAndroidNamespaceTag()
 	{
 		return defaultNamespace;
 	}
-	
+
 	public AaptXmlTreeNode getNode(String expression)
 	{
 		synchronized(this) {
@@ -168,7 +173,7 @@ public class AaptXmlTreePath
 			return nodeList[0];
 		}
 	}
-	
+
 	public AaptXmlTreeNode[] getNodeList(String expression)
 	{
 		synchronized(this) {
@@ -179,16 +184,16 @@ public class AaptXmlTreePath
 				curNodes = new AaptXmlTreeNode[] { topNode };
 			} else if(expression.matches("^[^@\\.].*")) {
 				expression = ".//" + expression;
-				curNodes = new AaptXmlTreeNode[] { topNode };			
+				curNodes = new AaptXmlTreeNode[] { topNode };
 			}
 			expression = expression.replaceAll("//", "/#");
 			//Log.d("getNodeList() " + expression + ", curNodes " + curNodes);
-	
+
 			if(curNodes == null)
 				return null;
-			
+
 			AaptXmlTreeNode[] curNodeList = curNodes;
-			
+
 			for(String item: expression.split("/")) {
 				String attrCond = null;
 				if(item.matches(".*\\[.*\\]")) {
@@ -208,13 +213,13 @@ public class AaptXmlTreePath
 					curNodeList = getChilds(curNodeList, item, attrCond);
 				}
 			}
-			
+
 			curNodes = curNodeList;
-	
+
 			return curNodeList;
 		}
 	}
-	
+
 	private AaptXmlTreeNode[] getChilds(AaptXmlTreeNode[] curList, String item, String attrCond)
 	{
 		ArrayList<AaptXmlTreeNode> nodes = new ArrayList<AaptXmlTreeNode>();
@@ -222,7 +227,7 @@ public class AaptXmlTreePath
 			//Log.d("getChilds() node : " + node.getName() + ", " + node.getNodeCount());
 			for(AaptXmlTreeNode child: node.getNodeList()) {
 				//Log.d("getChilds() child : " + child.getName());
-				if("*".equals(item) 
+				if("*".equals(item)
 						|| (child.getName().equals(item) && checkAttrCond(child, attrCond))) {
 					nodes.add(child);
 				}
@@ -230,7 +235,7 @@ public class AaptXmlTreePath
 		}
 		return nodes.toArray(new AaptXmlTreeNode[0]);
 	}
-	
+
 	private AaptXmlTreeNode[] getParents(AaptXmlTreeNode[] curList, String attrCond)
 	{
 		ArrayList<AaptXmlTreeNode> nodes = new ArrayList<AaptXmlTreeNode>();
@@ -242,7 +247,7 @@ public class AaptXmlTreePath
 		}
 		return nodes.toArray(new AaptXmlTreeNode[0]);
 	}
-	
+
 	private AaptXmlTreeNode[] getHasAttrNode(AaptXmlTreeNode[] curList, String attr)
 	{
 		ArrayList<AaptXmlTreeNode> nodes = new ArrayList<AaptXmlTreeNode>();
@@ -253,7 +258,7 @@ public class AaptXmlTreePath
 		}
 		return nodes.toArray(new AaptXmlTreeNode[0]);
 	}
-	
+
 	private AaptXmlTreeNode[] suchNode(AaptXmlTreeNode[] curList, String item, String attrCond)
 	{
 		ArrayList<AaptXmlTreeNode> nodes = new ArrayList<AaptXmlTreeNode>();
@@ -265,23 +270,23 @@ public class AaptXmlTreePath
 		}
 		return nodes.toArray(new AaptXmlTreeNode[0]);
 	}
-	
+
 	private boolean checkAttrCond(AaptXmlTreeNode node, String attrCond)
 	{
 		if(attrCond == null || attrCond.trim().isEmpty() || attrCond.indexOf("=") < 0)
 			return true;
-		
+
 		String cond[] = attrCond.split("=");
 		String attr = cond[0].trim().substring(1);
 		String val = cond[1].trim().replaceAll("^['\"](.*)['\"]$", "$1");
-		
+
 		if(val.equals(node.getAttribute(attr)))
 			return true;
-		
+
 		return false;
 	}
-	
-	private String getAttrName(String id) 
+
+	private String getAttrName(String id)
 	{
 		if(attrIdPath == null) {
 			InputStream xml = Resource.class.getResourceAsStream("/values/public.xml");

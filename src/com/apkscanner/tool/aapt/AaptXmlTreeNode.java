@@ -14,17 +14,18 @@ public class AaptXmlTreeNode
 	private LinkedHashMap<String, String> attribute = new LinkedHashMap<String, String>();
 	private HashMap<String, ArrayList<AaptXmlTreeNode>> childMap = new HashMap<String, ArrayList<AaptXmlTreeNode>>();
 	private ArrayList<AaptXmlTreeNode> childList = new ArrayList<AaptXmlTreeNode>();
-	
+	private int namespaceCount = 0;
+
 	public AaptXmlTreeNode()
 	{
 		this(null);
 	}
-	
+
 	public AaptXmlTreeNode(AaptXmlTreeNode parent)
 	{
 		this(parent, null);
 	}
-	
+
 	public AaptXmlTreeNode(AaptXmlTreeNode parent, String name)
 	{
 		String path = null;
@@ -37,11 +38,11 @@ public class AaptXmlTreeNode
 		this.name = name;
 		this.path = path;
 	}
-	
+
 	public void addNode(String name, AaptXmlTreeNode node)
 	{
 		childList.add(node);
-		
+
 		ArrayList<AaptXmlTreeNode> nodes = null;
 		if(childMap.containsKey(name)) {
 			nodes = childMap.get(name);
@@ -51,22 +52,28 @@ public class AaptXmlTreeNode
 		}
 		nodes.add(node);
 	}
-	
+
+	public void addNameSpace(String name, String data)
+	{
+		namespaceCount++;
+		attribute.put(name, data);
+	}
+
 	public void addAttribute(String name, String data)
 	{
 		attribute.put(name, data);
 	}
-	
+
 	public String getName()
 	{
 		return name;
 	}
-	
+
 	public String getPath()
 	{
 		return path;
 	}
-	
+
 	public AaptXmlTreeNode getParent()
 	{
 		return parent;
@@ -76,12 +83,12 @@ public class AaptXmlTreeNode
 	{
 		return childList.size();
 	}
-	
+
 	public int getNodeCount(String name)
 	{
 		if(!childMap.containsKey(name))
 			return -1;
-		
+
 		return getNodeList(name).length;
 	}
 
@@ -89,7 +96,7 @@ public class AaptXmlTreeNode
 	{
 		return attribute.size();
 	}
-	
+
 	public AaptXmlTreeNode getNode()
 	{
 		if(getNodeCount() <= 0)
@@ -97,7 +104,7 @@ public class AaptXmlTreeNode
 
 		return getNodeList()[0];
 	}
-	
+
 	public AaptXmlTreeNode getNode(String name)
 	{
 		if(!childMap.containsKey(name))
@@ -105,7 +112,7 @@ public class AaptXmlTreeNode
 
 		return getNodeList(name)[0];
 	}
-	
+
 	public AaptXmlTreeNode getNode(int idx)
 	{
 		if(idx < 0 || idx >= getNodeCount())
@@ -113,7 +120,7 @@ public class AaptXmlTreeNode
 
 		return getNodeList()[idx];
 	}
-	
+
 	public AaptXmlTreeNode getNextSibling()
 	{
 		if(getParent() == null)
@@ -121,15 +128,15 @@ public class AaptXmlTreeNode
 		int idx = getParent().childList.indexOf(this);
 		if(++idx >= getParent().getNodeCount())
 			return null;
-		
+
 		return getParent().getNode(idx);
 	}
-	
+
 	public AaptXmlTreeNode[] getNodeList()
 	{
 		return childList.toArray(new AaptXmlTreeNode[0]);
 	}
-	
+
 	public AaptXmlTreeNode[] getNodeList(String name)
 	{
 		if(!childMap.containsKey(name))
@@ -137,17 +144,22 @@ public class AaptXmlTreeNode
 
 		return childMap.get(name).toArray(new AaptXmlTreeNode[0]);
 	}
-	
+
 	public String getAttribute(String name)
 	{
 		return attribute.get(name);
 	}
-	
+
 	public String[] getAttributeList()
 	{
 		return attribute.keySet().toArray(new String[0]);
 	}
-	
+
+	public int getNamespaceCount()
+	{
+		return namespaceCount;
+	}
+
 	public void dump()
 	{
 		Log.i("Node : " + name);
