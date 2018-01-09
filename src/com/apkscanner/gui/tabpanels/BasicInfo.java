@@ -219,7 +219,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("  <a href=\"https://github.com/google/guava\" title=\"guava Site\">guava-18.0</a>,");
 		strTabInfo.append("  <a href=\"https://github.com/java-native-access/jna\" title=\"jna Site\">jna-4.4.0</a>,");
 		strTabInfo.append("  <a href=\"https://github.com/BlackOverlord666/mslinks\" title=\"mslinks Site\">mslinks</a>,");
-		strTabInfo.append("  <a href=\"http://bobbylight.github.io/RSyntaxTextArea/\" title=\"RSyntaxTextArea Site\">rsyntaxtextarea-2.5.7</a>,<br/>");
+		strTabInfo.append("  <a href=\"http://bobbylight.github.io/RSyntaxTextArea/\" title=\"RSyntaxTextArea Site\">rsyntaxtextarea-2.6.1</a>,<br/>");
 		strTabInfo.append("  <a href=\"https://commons.apache.org/proper/commons-cli/\" title=\"commons-cli Site\">commons-cli-1.3.1</>,");
 		strTabInfo.append("  <a href=\"https://code.google.com/archive/p/json-simple/\" title=\"json-simple Site\">json-simple-1.1.1</a>");
 		strTabInfo.append("  <br/><br/><hr/>");

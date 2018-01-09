@@ -407,25 +407,21 @@ public class ResouceContentsPanel extends JPanel{
 			}
 		}
 		else {
-			if(finddlg.getWrapSearch()) {						
-				int offset = xmltextArea.getCaretPosition();
-				if(context.getSearchForward()){
-					xmltextArea.setCaretPosition(0);
-					
-				} else {
-					xmltextArea.setCaretPosition(xmltextArea.getText().length());
-				}
-				result = SearchEngine.find(xmltextArea, context);
+			int offset = xmltextArea.getCaretPosition();
+			if(context.getSearchForward()){
+				xmltextArea.setCaretPosition(0);
 				
-				if(result.wasFound()) {
-					text = "Text found; occurrences marked: " + result.getMarkedCount();
-				}
-				else {
-					text = "Text not found";
-					xmltextArea.setCaretPosition(offset);
-				}
 			} else {
+				xmltextArea.setCaretPosition(xmltextArea.getText().length());
+			}
+			result = SearchEngine.find(xmltextArea, context);
+			
+			if(result.wasFound()) {
+				text = "Text found; occurrences marked: " + result.getMarkedCount();
+			}
+			else {
 				text = "Text not found";
+				xmltextArea.setCaretPosition(offset);
 			}
 		}
 		Log.d("Found : " + text);

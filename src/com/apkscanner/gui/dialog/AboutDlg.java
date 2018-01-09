@@ -31,7 +31,7 @@ public class AboutDlg /*extends JDialog*/
 		body.append("  <a href=\"https://github.com/google/guava\" title=\"guava Site\">guava-18.0</a>,");
 		body.append("  <a href=\"https://github.com/java-native-access/jna\" title=\"jna Site\">jna-4.4.0</a>,");
 		body.append("  <a href=\"https://github.com/BlackOverlord666/mslinks\" title=\"mslinks Site\">mslinks</a>,");
-		body.append("  <a href=\"http://bobbylight.github.io/RSyntaxTextArea/\" title=\"RSyntaxTextArea Site\">rsyntaxtextarea-2.5.7</a>,<br/>");
+		body.append("  <a href=\"http://bobbylight.github.io/RSyntaxTextArea/\" title=\"RSyntaxTextArea Site\">rsyntaxtextarea-2.6.1</a>,<br/>");
 		body.append("  <a href=\"https://commons.apache.org/proper/commons-cli/\" title=\"commons-cli Site\">commons-cli-1.3.1</a>,");
 		body.append("  <a href=\"https://code.google.com/archive/p/json-simple/\" title=\"json-simple Site\">json-simple-1.1.1</a>");
 		body.append("  <br/><br/><hr/>");
