@@ -3,6 +3,7 @@ package com.apkscanner.tool.aapt;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
+import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 
@@ -119,9 +120,12 @@ public class AaptNativeWrapper {
 
 	static {
 		String arch = System.getProperty("sun.arch.data.model");
-		if (SystemUtil.isLinux()) {
-			System.loadLibrary("c++" + arch);
+		String libPath = Resource.BIN_PATH.getPath();
+		if(SystemUtil.isWindows()) {
+			System.load(libPath + "AaptNativeWrapper" + arch + ".dll");
+		} else {
+			System.load(libPath + "libc++" + arch + ".so");
+			System.load(libPath + "libAaptNativeWrapper" + arch + ".so");
 		}
-		System.loadLibrary("AaptNativeWrapper" + arch);
 	}
 }
