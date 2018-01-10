@@ -1,10 +1,7 @@
 #!/bin/bash
 
 APP_PATH="/opt/APKScanner"
-APP_FILE="APKInfoDlg.jar"
-LIB_PATH="$APP_PATH/lib/json-simple-1.1.1.jar:$APP_PATH/lib/commons-cli-1.3.1.jar:$APP_PATH/lib/rsyntaxtextarea-2.6.1.jar:$APP_PATH/lib/rstaui-2.6.0.jar:$APP_PATH/lib/autocomplete-2.6.0.jar:$APP_PATH/lib/ddmlib.jar:$APP_PATH/lib/guava-18.0.jar:$APP_PATH/lib/mslinks.jar:$APP_PATH/lib/jna-4.4.0.jar:$APP_PATH/lib/jna-platform-4.4.0.jar"
-MAIN_CLASS="com.apkscanner.Main"
-
+APP_FILE="ApkScanner.jar"
 
 # java 버전 확인
 java_ver=$(java -version 2>&1 | sed '1!{d}; /^java version/!d; s/java version \"\([0-9].[0-9]\).*\"/\1/')
@@ -21,15 +18,10 @@ fi
 
 cat << EOF > ./APKScanner.sh
 #!/bin/bash
-_classpath="$APP_PATH/$APP_FILE"
-for k in $APP_PATH/lib/*.jar
-do
-    _classpath="\${_classpath}:\${k}"
-done
-java -Xms512m -Xmx1024m -Djava.library.path=$APP_PATH/tool -classpath "\${_classpath}" com.apkscanner.Main "\$@" > /dev/null
+java -Xms512m -Xmx1024m -jar $APP_PATH/$APP_FILE "\$@" > /dev/null
 EOF
 
-jar -xf APKInfoDlg.jar icons/AppIcon.png
+jar -xf ApkScanner.jar icons/AppIcon.png
 
 echo "{}" > settings.txt
 
@@ -46,6 +38,7 @@ sudo mkdir -p $APP_PATH/data
 sudo mkdir -p $APP_PATH/data/build-master-target-product-security
 sudo mkdir -p $APP_PATH/icons
 sudo mkdir -p $APP_PATH/tool
+sudo mkdir -p $APP_PATH/plugin
 if [ ! -d $APP_PATH ]; then
     echo Fail : Not create the folder : %APP_PATH%
     exit
@@ -69,7 +62,7 @@ cat << EOF > ./apkscanner.desktop
 Encoding=UTF-8
 Version=1.0
 Type=Application
-Exec=java -Djava.library.path=$APP_PATH/tool -classpath $APP_PATH/$APP_FILE:$LIB_PATH: $MAIN_CLASS %f
+Exec=java -jar $APP_PATH/$APP_FILE %f
 Name=APK Scanner
 Comment=APK Scanner
 Icon=$APP_PATH/icons/AppIcon.png

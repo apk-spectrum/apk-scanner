@@ -34,21 +34,21 @@ SetCompressor Zlib
 !insertmacro MUI_RESERVEFILE_LANGDLL
 
 LangString APP_NAME ${LANG_ENGLISH} "APK Scanner"
-LangString APP_NAME ${LANG_KOREAN} "APK ï¿½ï¿½Ä³ï¿½ï¿½"
+LangString APP_NAME ${LANG_KOREAN} "APK ½ºÄ³³Ê"
 LangString APP_NAME_DESC ${LANG_ENGLISH} "APK Scanner"
-LangString APP_NAME_DESC ${LANG_KOREAN} "APK ï¿½ï¿½Ä³ï¿½ï¿½"
+LangString APP_NAME_DESC ${LANG_KOREAN} "APK ½ºÄ³³Ê"
 LangString ASSOCITATE_APK ${LANG_ENGLISH} "Associate APK File"
-LangString ASSOCITATE_APK ${LANG_KOREAN} "APKï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½"
+LangString ASSOCITATE_APK ${LANG_KOREAN} "APKÆÄÀÏ ¿¬°á"
 LangString ASSOCITATE_APK_DESC ${LANG_ENGLISH} "Associate APK File. Open apk file by double click."
-LangString ASSOCITATE_APK_DESC ${LANG_KOREAN} "APKï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½. APK ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å¬ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½Ð¼ï¿½ ï¿½Ò¼ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½."
+LangString ASSOCITATE_APK_DESC ${LANG_KOREAN} "APKÆÄÀÏ ¿¬°áÇÕ´Ï´Ù. APK ÆÄÀÏÀ» ´õºíÅ¬¸¯ÇÏ¿© ºÐ¼® ÇÒ¼ö ÀÖ½À´Ï´Ù."
 LangString ADD_STARTMENU ${LANG_ENGLISH} "Start Menu Shortcuts"
-LangString ADD_STARTMENU ${LANG_KOREAN} "ï¿½ï¿½ï¿½Û¸Þ´ï¿½ï¿½ï¿½ ï¿½ß°ï¿½"
+LangString ADD_STARTMENU ${LANG_KOREAN} "½ÃÀÛ¸Þ´º¿¡ Ãß°¡"
 LangString ADD_STARTMENU_DESC ${LANG_ENGLISH} "Start Menu Shortcuts"
-LangString ADD_STARTMENU_DESC ${LANG_KOREAN} "ï¿½ï¿½ï¿½Û¸Þ´ï¿½ï¿½ï¿½ ï¿½Ù·Î°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½Õ´Ï´ï¿½."
+LangString ADD_STARTMENU_DESC ${LANG_KOREAN} "½ÃÀÛ¸Þ´º¿¡ ¹Ù·Î°¡±â ¾ÆÀÌÄÜÀ» Ãß°¡ ÇÕ´Ï´Ù."
 LangString ADD_DESKTOP ${LANG_ENGLISH} "Desktop Shortcut"
-LangString ADD_DESKTOP ${LANG_KOREAN} "ï¿½ï¿½ï¿½ï¿½È­ï¿½é¿¡ ï¿½ß°ï¿½"
+LangString ADD_DESKTOP ${LANG_KOREAN} "¹ÙÅÁÈ­¸é¿¡ Ãß°¡"
 LangString ADD_DESKTOP_DESC ${LANG_ENGLISH} "Desktop Shortcut"
-LangString ADD_DESKTOP_DESC ${LANG_KOREAN} "ï¿½ï¿½ï¿½ï¿½È­ï¿½é¿¡ ï¿½Ù·Î°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½Õ´Ï´ï¿½."
+LangString ADD_DESKTOP_DESC ${LANG_KOREAN} "¹ÙÅÁÈ­¸é¿¡ ¹Ù·Î°¡±â ¾ÆÀÌÄÜÀ» Ãß°¡ ÇÕ´Ï´Ù."
 
 Section $(APP_NAME) Section1
 
@@ -58,7 +58,7 @@ Section $(APP_NAME) Section1
 
 	; Set Section Files and Shortcuts
 	SetOutPath "$INSTDIR\"
-	File "release\APKInfoDlg.jar"
+	File "release\ApkScanner.jar"
 	File "release\ApkScanner.exe"
 	SetOutPath "$INSTDIR\data\build-master-target-product-security\"
 	File "release\data\build-master-target-product-security\Android.mk"
@@ -111,6 +111,7 @@ Section $(APP_NAME) Section1
 	File "release\tool\lib\dex-translator-2.0.jar"
 	File "release\tool\lib\dex-writer-2.0.jar"
 	File "release\tool\lib\dx-1.7.jar"
+	SetOutPath "$INSTDIR\plugin\"
 
 SectionEnd
 
@@ -188,7 +189,7 @@ Section Uninstall
 	Delete "$DESKTOP\$(APP_NAME).lnk"
 
 	; Clean up APK Scanner
-	Delete "$INSTDIR\APKInfoDlg.jar"
+	Delete "$INSTDIR\ApkScanner.jar"
 	Delete "$INSTDIR\ApkScanner.exe"
 	Delete "$INSTDIR\data\build-master-target-product-security\Android.mk"
 	Delete "$INSTDIR\data\build-master-target-product-security\media.pk8"
@@ -245,6 +246,7 @@ Section Uninstall
 	RMDir "$INSTDIR\lib\"
 	RMDir "$INSTDIR\data\build-master-target-product-security\"
 	RMDir "$INSTDIR\data\"
+	RMDir "$INSTDIR\plugin\"
 	RMDir "$INSTDIR\"
 
 	Var /GLOBAL associate
