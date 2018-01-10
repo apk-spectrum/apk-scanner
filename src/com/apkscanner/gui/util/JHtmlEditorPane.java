@@ -8,9 +8,7 @@ import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import javax.swing.JEditorPane;
 import javax.swing.event.HyperlinkEvent;
@@ -231,11 +229,14 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 		if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
 			if(e.getDescription().isEmpty()) return;
 			if(!e.getDescription().startsWith("@")) {
-				try {
-					Desktop.getDesktop().browse(new URI(e.getURL().toString()));
-				} catch (IOException | URISyntaxException e1) {
-					e1.printStackTrace();
-				}
+				Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+				if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+			        try {
+			            desktop.browse(new URI(e.getURL().toString()));
+			        } catch (Exception e1) {
+			            e1.printStackTrace();
+			        }
+			    }
 			} else {
 				Element elem = e.getSourceElement();
 				if (elem != null) {
