@@ -29,6 +29,9 @@ public class PermissionManager
 				permInfo.permissionGroup = permXPath.getAttributes("android:permissionGroup");
 				permInfo.labels = getInfoString(permXPath.getAttributes("android:label"));
 				permInfo.descriptions = getInfoString(permXPath.getAttributes("android:description"));
+				if(permInfo.descriptions[0].name == null) {
+					permInfo.descriptions[0].name = permXPath.getComment();
+				}
 				permInfo.protectionLevel = permXPath.getAttributes("android:protectionLevel");
 				if(permInfo.permissionGroup == null) permInfo.permissionGroup = "Unspecified group";
 				if(permInfo.protectionLevel == null) permInfo.protectionLevel = "normal";

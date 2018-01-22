@@ -36,7 +36,9 @@ public class XmlPath {
 	public XmlPath(File xmlFile) {
 		try {
 			InputSource is = new InputSource(new FileReader(xmlFile));
-			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			factory.setIgnoringComments(false);
+			document = factory.newDocumentBuilder().parse(is);
 			xpath = XPathFactory.newInstance().newXPath();
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			e.printStackTrace();
@@ -47,7 +49,9 @@ public class XmlPath {
 
 	public XmlPath(InputStream xml) {
 		try {
-			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xml);
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			factory.setIgnoringComments(false);
+			document = factory.newDocumentBuilder().parse(xml);
 			xpath = XPathFactory.newInstance().newXPath();
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			e.printStackTrace();
@@ -58,7 +62,9 @@ public class XmlPath {
 
 	public XmlPath(String xmlContent) {
 		try {
-			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(xmlContent)));
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			factory.setIgnoringComments(false);
+			document = factory.newDocumentBuilder().parse(new InputSource(new StringReader(xmlContent)));
 			xpath = XPathFactory.newInstance().newXPath();
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			e.printStackTrace();
@@ -170,6 +176,19 @@ public class XmlPath {
 	public String getTextContent(int idx) {
 		if(getNodeList() == null || getNodeList().item(idx) == null) return null;
 		return getNodeList().item(idx).getTextContent();
+	}
+
+	public String getComment() {
+		if(getNode() == null) return null;
+
+		Node preNode = getNode().getPreviousSibling();
+		if(preNode.getNodeType() == Node.TEXT_NODE) {
+			preNode = preNode.getPreviousSibling();
+		}
+		if(preNode.getNodeType() != Node.COMMENT_NODE) {
+			return null;
+		}
+		return preNode.getTextContent();
 	}
 
 	public int getLength() {
