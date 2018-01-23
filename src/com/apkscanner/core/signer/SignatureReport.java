@@ -118,10 +118,21 @@ public class SignatureReport {
 						}
 					}
 				}
+			} else {
+				String entryName = je.getName(); 
+				if(entryName.startsWith("META-INF/")){
+					if(entryName.toUpperCase().endsWith(".RSA") || entryName.toUpperCase().endsWith(".DSA") || entryName.toUpperCase().endsWith(".EC")) {
+						try {
+							certificates = new PKCS7(jf.getInputStream(je)).getCertificates();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}
 			}
 		}
 		jf.close();
-		if (ss.isEmpty()) {
+		if (ss.isEmpty() && certificates == null) {
 			Log.w(Resource.STR_NOT_A_SINGED_JAR_FILE.getString());
 		}
 		if(!certList.isEmpty()) {
