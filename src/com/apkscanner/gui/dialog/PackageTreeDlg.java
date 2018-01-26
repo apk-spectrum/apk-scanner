@@ -1066,10 +1066,6 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 						DefaultMutableTreeNode recently = new DefaultMutableTreeNode("*" + Resource.STR_TREE_NODE_RECENTLY.getString());
 						DefaultMutableTreeNode running = new DefaultMutableTreeNode("*" + Resource.STR_TREE_NODE_RUNNING_PROC.getString());
 
-						system.add(priv_app);
-						system.add(systemapp);
-						system.add(framework_app);
-
 						data.add(dataapp);
 
 						for(PackageInfo info: devPack.packages) {
@@ -1099,6 +1095,10 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 							}
 						}
 
+						if(priv_app.getChildCount() > 0) system.add(priv_app);
+						if(systemapp.getChildCount() > 0) system.add(systemapp);
+						if(framework_app.getChildCount() > 0) system.add(framework_app);
+
 						for(PackageInfo obj: devPack.displayedPackages) {
 							displayed.add(new DefaultMutableTreeNode(obj));
 						}
@@ -1112,11 +1112,11 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 						}
 
 						devNode.removeAllChildren();
-						devNode.add(displayed);
-						devNode.add(recently);
-						devNode.add(running);
-						devNode.add(system);
-						devNode.add(data);
+						if(displayed.getChildCount() > 0) devNode.add(displayed);
+						if(recently.getChildCount() > 0) devNode.add(recently);
+						if(running.getChildCount() > 0) devNode.add(running);
+						if(system.getChildCount() > 0) devNode.add(system);
+						if(dataapp.getChildCount() > 0) devNode.add(data);
 
 						//expandOrCollapsePath(tree, new TreePath(devNode.getPath()),3,0, true);
 						tree.updateUI();
