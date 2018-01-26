@@ -693,6 +693,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 				if(errMessage == null) {
 					MessageBoxPool.show(PackageTreeDlg.this, MessageBoxPool.MSG_SUCCESS_CLEAR_DATA);
 				} else {
+					Log.e(errMessage);
 					MessageBoxPool.show(PackageTreeDlg.this, MessageBoxPool.MSG_FAILURE_CLEAR_DATA, errMessage);
 				}
 			};

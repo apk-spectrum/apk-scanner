@@ -716,6 +716,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 					if(errMessage == null) {
 						MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.MSG_SUCCESS_CLEAR_DATA);
 					} else {
+						Log.e(errMessage);
 						MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.MSG_FAILURE_CLEAR_DATA, errMessage);
 					}
 				};

@@ -690,6 +690,7 @@ public class MainUI extends JFrame
 							final String errMsg = errMessage;
 							EventQueue.invokeLater(new Runnable() {
 								public void run() {
+									Log.e(errMsg);
 									messagePool.show(MessageBoxPool.MSG_FAILURE_CLEAR_DATA, errMsg);
 								}
 							});
