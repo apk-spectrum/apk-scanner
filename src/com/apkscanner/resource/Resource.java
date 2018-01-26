@@ -407,6 +407,7 @@ public enum Resource
 	IMG_RESULT_FAIL				(Type.IMAGE, "result_fail.png"),
 
 	IMG_TREE_MENU_LINK			(Type.IMAGE, "tree_link_menu.png"),
+	IMG_TREE_MENU_CLEARDATA		(Type.IMAGE, "tree_icon_clear.png"),
 	IMG_TREE_MENU_DELETE		(Type.IMAGE, "tree_menu_delete.png"),
 	IMG_TREE_MENU_SAVE			(Type.IMAGE, "tree_menu_save.png"),
 	IMG_TREE_MENU_OPEN			(Type.IMAGE, "tree_open_menu.png"),

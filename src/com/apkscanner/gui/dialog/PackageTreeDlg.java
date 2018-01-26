@@ -661,6 +661,44 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		return true;
 	}
 
+	private void clearData()
+	{
+		final DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+				tree.getLastSelectedPathComponent();
+
+		if(node == null) {
+			Log.i("node == null");
+			return;
+		}
+
+		IDevice device = getCurrentSelectedDevice();
+		final PackageInfo packageInfo = ((PackageInfo)node.getUserObject()); 
+
+		Log.i("clearData :" + device.getSerialNumber()  +","+ packageInfo.packageName);
+		new SwingWorker<String, Object> () {
+			@Override
+			protected String doInBackground() throws Exception {
+				return PackageManager.clearData(packageInfo);
+			}
+
+			@Override
+			protected void done() {
+				String errMessage = null;
+				try {
+					errMessage = get();
+				} catch (InterruptedException | ExecutionException e) {
+					errMessage = e.getMessage();
+					e.printStackTrace();
+				}
+				if(errMessage == null) {
+					MessageBoxPool.show(PackageTreeDlg.this, MessageBoxPool.MSG_SUCCESS_CLEAR_DATA);
+				} else {
+					MessageBoxPool.show(PackageTreeDlg.this, MessageBoxPool.MSG_FAILURE_CLEAR_DATA, errMessage);
+				}
+			};
+		}.execute();
+	}
+
 	private void removePackage()
 	{
 		final DefaultMutableTreeNode node = (DefaultMutableTreeNode)
@@ -1283,6 +1321,14 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 							}});
 						menuitemSave.setIcon(Resource.IMG_TREE_MENU_SAVE.getImageIcon());                                                        
 						menu.add(menuitemSave);
+
+						JMenuItem menuitemClear = new JMenuItem(Resource.STR_MENU_CLEAR_DATA.getString() );                                                        
+						menuitemClear.addActionListener(new ActionListener(){ 
+							public void actionPerformed(ActionEvent e) {
+								clearData();
+							}});
+						menuitemClear.setIcon(Resource.IMG_TREE_MENU_CLEARDATA.getImageIcon());                                                        
+						menu.add(menuitemClear);
 
 						JMenuItem menuitemDel = new JMenuItem(Resource.STR_BTN_DEL.getString() );                                                        
 						menuitemDel.addActionListener(new ActionListener(){ 
