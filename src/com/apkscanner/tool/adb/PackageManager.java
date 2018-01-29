@@ -613,6 +613,8 @@ public class PackageManager {
 			if(line.startsWith("Error: unknown command 'list'")) {
 				isLegacy = true;
 				break;
+			} else if(line.startsWith("Error:")) {
+				Log.e(line);
 			}
 		}
 
@@ -654,7 +656,7 @@ public class PackageManager {
 		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
 		outputReceiver.setTrimLine(false);
 		try {
-			device.executeShellCommand("ps", outputReceiver);
+			device.executeShellCommand("ps;ps -e", outputReceiver);
 		} catch (TimeoutException | ShellCommandUnresponsiveException | IOException e) {
 			e.printStackTrace();
 		} catch (AdbCommandRejectedException e1) {
