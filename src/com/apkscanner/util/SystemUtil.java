@@ -89,8 +89,13 @@ public class SystemUtil
 				String cmd = cmdLine.replaceAll("\"?(.*\\.[eE][xX][eE])\"?.*", "$1");
 				if(!cmd.equals(cmdLine)) {
 					editorPath = SystemUtil.getRealPath(cmd);
-					if(!new File(editorPath).canExecute()) {
-						editorPath = null;
+					if(editorPath != null) {
+						if(!new File(editorPath).canExecute()) {
+							Log.w("editor can not execute : " + editorPath);
+							editorPath = null;
+						}
+					} else {
+						Log.w("editor is null");
 					}
 				}
 			}
