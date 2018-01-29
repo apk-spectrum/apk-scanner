@@ -2,7 +2,7 @@
 
 ; Define your application name
 !define PROJECTNAME "APK Scanner"
-!define PROJECTNAMEANDVERSION "APK Scanner 2.3.3"
+!define PROJECTNAMEANDVERSION "APK Scanner 2.3.4"
 
 ; Main Install settings
 Name "${PROJECTNAMEANDVERSION}"
@@ -58,6 +58,8 @@ Section $(APP_NAME) Section1
 
 	; Set Section Files and Shortcuts
 	SetOutPath "$INSTDIR\"
+	Delete "$INSTDIR\APKInfoDlg.jar"
+
 	File "release\ApkScanner.jar"
 	File "release\ApkScanner.exe"
 	SetOutPath "$INSTDIR\data\build-master-target-product-security\"
