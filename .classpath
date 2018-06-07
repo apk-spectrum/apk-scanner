@@ -13,5 +13,6 @@
 	<classpathentry kind="lib" path="lib/mslinks.jar"/>
 	<classpathentry kind="lib" path="lib/jna-platform-4.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/jna-4.4.0.jar"/>
+	<classpathentry kind="lib" path="lib/luciad-webp-imageio.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
