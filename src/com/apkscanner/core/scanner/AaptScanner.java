@@ -116,12 +116,12 @@ public class AaptScanner extends ApkScanner
 					AaptXmlTreeNode iconNode = iconXmlPath.getNode("//item[@"+iconXmlPath.getAndroidNamespaceTag()+":drawable]");
 					if(iconNode != null) {
 						icons = manifestReader.getAttrResourceValues(iconNode, ":drawable", iconXmlPath.getAndroidNamespaceTag());
-					}
-					if(icons == null || icons.length == 0) {
-						icons = new ResourceInfo[] { new ResourceInfo(Resource.IMG_DEF_APP_ICON.getPath()) };
-					} else {
-						for(ResourceInfo r2: icons) {
-							r2.name = jarPath + r2.name;
+						if(icons == null || icons.length == 0) {
+							icons = new ResourceInfo[] { new ResourceInfo(Resource.IMG_DEF_APP_ICON.getPath()) };
+						} else {
+							for(ResourceInfo r2: icons) {
+								r2.name = jarPath + r2.name;
+							}
 						}
 					}
 				} else {
