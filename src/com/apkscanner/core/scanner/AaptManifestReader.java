@@ -352,7 +352,7 @@ public class AaptManifestReader
 		String width = "0";
 		String height = "0";
 
-		AaptXmlTreeNode widgetNode = widgetTree.getNode("/appwidget-provider/@"+widgetNamespace+"minWidth");
+		AaptXmlTreeNode widgetNode = widgetTree.getNode("/appwidget-provider");
 		if(widgetNode != null) {
 			ResourceInfo[] res = getAttrResourceValues(widgetNode, "minWidth", widgetNamespace);
 			if(res == null || res.length == 0 || res[0].name.startsWith("0x")) {
@@ -362,9 +362,11 @@ public class AaptManifestReader
 			} else {
 				width = res[0].name.replaceAll("^([0-9]*).*", "$1");
 			}
+		} else {
+			Log.e("widgetNode is null");
 		}
 
-		widgetNode = widgetTree.getNode("/appwidget-provider/@"+widgetNamespace+"minHeight");
+		//widgetNode = widgetTree.getNode("/appwidget-provider");
 		if(widgetNode != null) {
 			ResourceInfo[] res = getAttrResourceValues(widgetNode, "minHeight", widgetNamespace);
 			if(res == null || res.length == 0 || res[0].name.startsWith("0x")) {
@@ -383,7 +385,7 @@ public class AaptManifestReader
 			Size = "Unknown";
 		}
 
-		widgetNode = widgetTree.getNode("/appwidget-provider/@"+widgetNamespace+"resizeMode");
+		//widgetNode = widgetTree.getNode("/appwidget-provider");
 		if(widgetNode != null) {
 			String ReSizeMode = getAttrValue(widgetNode, "resizeMode", widgetNamespace);
 			if("0x0".equals(ReSizeMode)) {
@@ -400,7 +402,7 @@ public class AaptManifestReader
 			}
 		}
 
-		widgetNode = widgetTree.getNode("/appwidget-provider/@"+widgetNamespace+"previewImage");
+		//widgetNode = widgetTree.getNode("/appwidget-provider");
 		if(widgetNode != null) {
 			iconPaths = getAttrResourceValues(widgetNode, "previewImage", widgetNamespace);
 			String urlFilePath = apkFilePath.replaceAll("#", "%23");

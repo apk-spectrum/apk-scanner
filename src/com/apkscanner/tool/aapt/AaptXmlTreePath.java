@@ -49,7 +49,7 @@ public class AaptXmlTreePath
 			nodeStack.push(topNode);
 			int curDepth = 0;
 
-			defaultNamespace = "android";
+			defaultNamespace = "http://schemas.android.com/apk/res/android";
 
 			if(xmlTree == null) {
 				Log.w("xmlTree is null");
