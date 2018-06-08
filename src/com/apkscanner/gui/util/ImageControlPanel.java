@@ -20,9 +20,11 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -162,16 +164,16 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 	}
 
 	public void setImage(String apkFilePath, String imgPath) throws MalformedURLException {
-		
-
-		
 		Filesize = ZipFileUtil.getFileSize(apkFilePath, imgPath, FSStyle.SHORT); 
+
 		String urlFilePath = apkFilePath.replaceAll("#", "%23");
 		imgPath = "jar:file:" + urlFilePath + "!/" + imgPath;
-		
 		Log.d(imgPath);
-		
-		imagepanel.setImage(new ImageIcon( new URL(imgPath)));
+		try {
+			imagepanel.setImage(new ImageIcon(ImageIO.read(new URL(imgPath))));
+		} catch (IOException|NullPointerException e) {
+			//e.printStackTrace();
+		}
 		repaint();
 	}
 

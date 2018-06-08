@@ -28,13 +28,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -193,7 +193,7 @@ public class Resources extends JPanel implements TabDataObject {
 				else
 					attr = ATTR_XML;
 			} else if (extension.endsWith(".png") || extension.endsWith(".jpg") || extension.endsWith(".gif")
-					|| extension.endsWith(".bmp")) {
+					|| extension.endsWith(".bmp") || extension.endsWith(".webp")) {
 				attr = ATTR_IMG;
 			} else if (extension.endsWith(".qmg")) {
 				attr = ATTR_QMG;
@@ -436,11 +436,12 @@ public class Resources extends JPanel implements TabDataObject {
 					case ResourceObject.ATTR_IMG:
 						try {
 							Image tempImage = null;
-							tempImage = ImageScaler.getScaledImage(new ImageIcon(new URL(jarPath + temp.path)), 32, 32);
+							tempImage = ImageScaler.getScaledImage(new ImageIcon(ImageIO.read(new URL(jarPath + temp.path))), 32, 32);
+
 							icon = new ImageIcon(tempImage);
 							tempImage.flush();
-						} catch (MalformedURLException e1) {
-							e1.printStackTrace();
+						} catch (IOException|NullPointerException e1) {
+							//e1.printStackTrace();
 						}
 						break;
 					case ResourceObject.ATTR_AXML:

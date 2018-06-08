@@ -6,13 +6,20 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
+import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -540,6 +547,9 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		if(apkInfo.manifest.versionCode != null) versionCode = apkInfo.manifest.versionCode.toString();
 		if(apkInfo.manifest.application.icons != null && apkInfo.manifest.application.icons.length > 0) {
 			iconPath = apkInfo.manifest.application.icons[apkInfo.manifest.application.icons.length - 1].name;
+			if(iconPath.toLowerCase().endsWith(".webp")) {
+				iconPath = covertWebp2Png(iconPath, apkInfo.tempWorkPath);
+			}
 		}
 		minSdkVersion = apkInfo.manifest.usesSdk.minSdkVersion;
 		targerSdkVersion = apkInfo.manifest.usesSdk.targetSdkVersion;
@@ -686,6 +696,32 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		if(wasSetData) {
 			setData(apkInfo);
 		}
+	}
+
+	private String covertWebp2Png(final String imagePath, final String tempPath) {
+		String[] path = imagePath.split("!");
+		String convetPath = imagePath;
+		try {
+			String apkPath = path[0].replaceAll("^(jar:)?file:", "");
+			ZipFile zipFile = new ZipFile(apkPath);
+			ZipEntry entry = zipFile.getEntry(path[1].replaceAll("^/", ""));
+			if(entry != null) {
+				  //String tempPath = FileUtil.makeTempPath(apkPath.substring(apkPath.lastIndexOf(File.separator)));
+				  FileUtil.makeFolder(tempPath);
+				  String tempImg = tempPath + File.separator + path[1].replaceAll(".*/", "") + ".png";
+	              File out = new File(tempImg);
+	              InputStream is = zipFile.getInputStream(entry);
+	              BufferedImage image = ImageIO.read(is);
+	              ImageIO.write(image, "png", out);
+	              if(out.exists()) {
+	            	  convetPath = "file:"+out.getAbsolutePath();
+	              }
+			}
+			zipFile.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return convetPath;
 	}
 
 	private String makePermGroup()
