@@ -545,10 +545,16 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		if(apkInfo.manifest.packageName != null) packageName = apkInfo.manifest.packageName;
 		if(apkInfo.manifest.versionName != null) versionName = apkInfo.manifest.versionName;
 		if(apkInfo.manifest.versionCode != null) versionCode = apkInfo.manifest.versionCode.toString();
+		iconPath = null;
 		if(apkInfo.manifest.application.icons != null && apkInfo.manifest.application.icons.length > 0) {
-			iconPath = apkInfo.manifest.application.icons[apkInfo.manifest.application.icons.length - 1].name;
-			if(iconPath.toLowerCase().endsWith(".webp")) {
-				iconPath = covertWebp2Png(iconPath, apkInfo.tempWorkPath);
+			ResourceInfo[] iconList = apkInfo.manifest.application.icons;
+			for(int i=iconList.length-1; i >= 0; i--) {
+				if(iconList[i].name.endsWith(".xml")) continue;
+				iconPath = iconList[i].name;
+				if(iconPath.toLowerCase().endsWith(".webp")) {
+					iconPath = covertWebp2Png(iconPath, apkInfo.tempWorkPath);
+				}
+				if(iconPath != null) break;
 			}
 		}
 		minSdkVersion = apkInfo.manifest.usesSdk.minSdkVersion;
