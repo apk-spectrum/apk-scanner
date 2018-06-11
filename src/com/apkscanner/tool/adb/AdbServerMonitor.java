@@ -167,6 +167,10 @@ public final class AdbServerMonitor {
 	}
 
 	public static AndroidDebugBridge getAndroidDebugBridge() {
+		return getAndroidDebugBridge(5000);
+	}
+
+	public static AndroidDebugBridge getAndroidDebugBridge(int waitMs) {
 		synchronized (sLock) {
 			if(sThis == null) {
 				startServerAndCreateBridge();
@@ -176,7 +180,7 @@ public final class AdbServerMonitor {
 				if(null == AndroidDebugBridge.getBridge()) {
 					try {
 						Log.i("Wait to created AndroidDebugBridge");
-						sLock.wait(5000);
+						sLock.wait(waitMs);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}

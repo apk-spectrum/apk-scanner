@@ -17,6 +17,7 @@ import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
@@ -136,6 +137,7 @@ public class Main implements Runnable
 
 		if(!cmd.hasOption("c") && !cmd.hasOption("cli")) {
 			EventQueue.invokeLater(new Main());
+			waitAdbServer();
 			apkScanner.openApk(apkFilePath);
 		} else {
 
@@ -200,6 +202,18 @@ public class Main implements Runnable
 			}
 			FileUtil.deleteDirectory(parent);
 		}
+	}
+
+	static private void waitAdbServer() {
+        if(SystemUtil.isWindows() && (boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData()) {
+        	//AdbServerMonitor.startServerAndCreateBridge();
+        	while(AdbServerMonitor.getAndroidDebugBridge(1000) == null) {
+        		Log.v("wait for adb server");
+        		try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) { }
+        	};
+        }
 	}
 
 	static private void createOpstions()
