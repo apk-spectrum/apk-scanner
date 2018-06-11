@@ -717,11 +717,21 @@ public class Resources extends JPanel implements TabDataObject {
 								top.add(eachTypeNodes[ResourceType.ETC.getInt()]);
 							}
 
+							DefaultMutableTreeNode manifest = null;
 							for (DefaultMutableTreeNode node : topFiles) {
 								top.add(node);
+								if("AndroidManifest.xml".equals(((ResourceObject) node.getUserObject()).path)) {
+									manifest = node;
+								}
 							}
 
 							expandOrCollapsePath(tree, new TreePath(top.getPath()), 1, 0, true);
+
+							if(manifest != null) {
+								TreePath treepath = new TreePath(manifest.getPath());
+								tree.setSelectionPath(treepath);
+								contentPanel.selectContent(tree);
+							}
 						}
 					});
 				} catch (InvocationTargetException | InterruptedException e) {
