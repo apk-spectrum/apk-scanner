@@ -2,7 +2,7 @@
 
 ; Define your application name
 !define PROJECTNAME "APK Scanner"
-!define PROJECTNAMEANDVERSION "APK Scanner 2.3.4"
+!define PROJECTNAMEANDVERSION "APK Scanner 2.3.5"
 
 ; Main Install settings
 Name "${PROJECTNAMEANDVERSION}"
@@ -83,10 +83,13 @@ Section $(APP_NAME) Section1
 	File "release\lib\jna-4.4.0.jar"
 	File "release\lib\jna-platform-4.4.0.jar"
 	File "release\lib\json-simple-1.1.1.jar"
+	File "release\lib\luciad-webp-imageio.jar"
 	File "release\lib\mslinks.jar"
 	File "release\lib\rsyntaxtextarea-2.6.1.jar"
 	File "release\lib\rstaui-2.6.0.jar"
 	File "release\lib\autocomplete-2.6.0.jar"
+	File "release\lib\webp-imageio32.dll"
+	File "release\lib\webp-imageio64.dll"
 	SetOutPath "$INSTDIR\tool\"
 	File "release\tool\aapt.exe"
 	File "release\tool\AaptNativeWrapper32.dll"
@@ -212,10 +215,13 @@ Section Uninstall
 	Delete "$INSTDIR\lib\jna-4.4.0.jar"
 	Delete "$INSTDIR\lib\jna-platform-4.4.0.jar"
 	Delete "$INSTDIR\lib\json-simple-1.1.1.jar"
+	Delete "$INSTDIR\lib\luciad-webp-imageio.jar"
 	Delete "$INSTDIR\lib\mslinks.jar"
 	Delete "$INSTDIR\lib\rsyntaxtextarea-2.6.1.jar"
 	Delete "$INSTDIR\lib\rstaui-2.6.0.jar"
 	Delete "$INSTDIR\lib\autocomplete-2.6.0.jar"
+	Delete "$INSTDIR\lib\webp-imageio32.dll"
+	Delete "$INSTDIR\lib\webp-imageio64.dll"
 	Delete "$INSTDIR\tool\aapt.exe"
 	Delete "$INSTDIR\tool\AaptNativeWrapper32.dll"
 	Delete "$INSTDIR\tool\AaptNativeWrapper64.dll"
