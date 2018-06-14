@@ -170,7 +170,11 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 		imgPath = "jar:file:" + urlFilePath + "!/" + imgPath;
 		Log.d(imgPath);
 		try {
-			imagepanel.setImage(new ImageIcon(ImageIO.read(new URL(imgPath))));
+			if(imgPath.toLowerCase().endsWith(".webp")) {
+				imagepanel.setImage(new ImageIcon(ImageIO.read(new URL(imgPath))));
+			} else {
+				imagepanel.setImage(new ImageIcon(new URL(imgPath)));
+			}
 		} catch (IOException|NullPointerException e) {
 			//e.printStackTrace();
 		}

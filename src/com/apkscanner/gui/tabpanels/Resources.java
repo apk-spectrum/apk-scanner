@@ -436,8 +436,11 @@ public class Resources extends JPanel implements TabDataObject {
 					case ResourceObject.ATTR_IMG:
 						try {
 							Image tempImage = null;
-							tempImage = ImageScaler.getScaledImage(new ImageIcon(ImageIO.read(new URL(jarPath + temp.path))), 32, 32);
-
+							if(temp.path.toLowerCase().endsWith(".webp")) {
+								tempImage = ImageScaler.getScaledImage(new ImageIcon(ImageIO.read(new URL(jarPath + temp.path))), 32, 32);
+							} else {
+								tempImage = ImageScaler.getScaledImage(new ImageIcon(new URL(jarPath + temp.path)), 32, 32);
+							}
 							icon = new ImageIcon(tempImage);
 							tempImage.flush();
 						} catch (IOException|NullPointerException e1) {
