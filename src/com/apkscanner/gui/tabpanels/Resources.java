@@ -8,6 +8,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Rectangle;
@@ -1003,7 +1004,7 @@ public class Resources extends JPanel implements TabDataObject {
 
 	@Override
 	public void initialize() {
-		this.setLayout(new BorderLayout());
+		this.setLayout(new GridLayout(1, 1));
 
 		makeTreeForm();
 		TreeInit();
@@ -1024,14 +1025,16 @@ public class Resources extends JPanel implements TabDataObject {
 		});
 
 		findicon = new JButton(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_FIND.getImageIcon(16, 16));
-		findicon.setPreferredSize(new Dimension(22, 22));
-		findicon.setName(RESOURCE_TREE_TOOLBAR_BUTTON_FIND);
-		findicon.setFocusPainted(false);
-		
 		refreshicon = new JButton(Resource.IMG_RESOURCE_TREE_TOOLBAR_REFRESH.getImageIcon(16, 16));
+
+		findicon.setPreferredSize(new Dimension(22, 22));
 		refreshicon.setPreferredSize(new Dimension(22, 22));
 		refreshicon.setEnabled(false);
+
+		findicon.setName(RESOURCE_TREE_TOOLBAR_BUTTON_FIND);
 		refreshicon.setName(RESOURCE_TREE_TOOLBAR_BUTTON_REFRESH);
+
+		findicon.setFocusPainted(false);
 		refreshicon.setFocusPainted(false);
 
 		JPanel TreeButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 2));
@@ -1072,7 +1075,7 @@ public class Resources extends JPanel implements TabDataObject {
 		// End Tree navigator ----------
 
 		JScrollPane treeScroll = new JScrollPane(tree);
-		//treeScroll.setPreferredSize(new Dimension(300, 400));
+		treeScroll.setPreferredSize(new Dimension(300, 400));
 		treeScroll.repaint();
 
 		AdjustmentListener adjustmentListener = new AdjustmentListener() {
@@ -1094,13 +1097,10 @@ public class Resources extends JPanel implements TabDataObject {
 		// imageViewerPanel.setBackground(Color.BLACK);
 
 		contentPanel = new ResouceContentsPanel();
-		JScrollPane scrollPane = new JScrollPane(contentPanel);
-		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 
-		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		splitPane.setLeftComponent(TreePanel);
-		splitPane.setRightComponent(scrollPane);
+		splitPane.setRightComponent(contentPanel);
 		splitPane.setDividerLocation(200);
 
 		this.add(splitPane);
