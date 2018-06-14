@@ -90,16 +90,16 @@ public class AaptNativeScanner extends ApkScanner
 	public void clear(boolean sync) {
 		realeaseAssetManager();
 	}
-	
-	public String getResourceName(int resId) {
+
+	public String getResourceName(String ref, int resId) {
 		String type = getResourceType(assetsHandle, resId);
 		String name = getResourceName(assetsHandle, resId);
-		return "@" + type + "/" + name;
+		return ref + type + "/" + name;
 	}
-	
+
 	public String getResourceName(String id) {
-		if(id == null || !id.startsWith("@0x")) return id;
-		return getResourceName(Integer.parseInt(id.substring(3), 16));
+		if(id == null || (!id.startsWith("@0x") && !id.startsWith("?0x"))) return id;
+		return getResourceName(id.substring(0, 1), Integer.parseInt(id.substring(3), 16));
 	}
 	
 	public ResourceInfo[] getResourceValues(int resId) {
