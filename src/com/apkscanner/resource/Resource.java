@@ -460,7 +460,7 @@ public enum Resource
 	PROP_LAST_FILE_SAVE_PATH	(Type.PROP, "last_file_save_path", ""),
 	PROP_SOVE_LEAD_TIME			(Type.PROP, "solve_lead_time"),
 	PROP_CURRENT_THEME			(Type.PROP, "Current_theme", UIManager.getSystemLookAndFeelClassName()),
-	PROP_TABBED_UI_THEME		(Type.PROP, "tabbed_pane_ui", TabbedPaneUIManager.DEFAULT_TABBED_UI),
+	PROP_TABBED_UI_THEME		(Type.PROP, "tabbed_pane_ui", null /* see getDefValue() */),
 	PROP_WINDOW_WIDTH			(Type.PROP, "window_size_width", Resource.INT_WINDOW_SIZE_WIDTH_MIN),
 	PROP_WINDOW_HEIGHT			(Type.PROP, "window_size_height", Resource.INT_WINDOW_SIZE_HEIGHT_MIN),
 	PROP_SAVE_WINDOW_SIZE		(Type.PROP, "save_window_size", false),
@@ -764,6 +764,8 @@ public enum Resource
 				obj = defPath;
 			}
 			break;
+		case PROP_TABBED_UI_THEME:
+			return TabbedPaneUIManager.DEFAULT_TABBED_UI;
 		default:
 			break;
 		};
