@@ -49,6 +49,7 @@ import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.FileDrop;
+import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
@@ -110,20 +111,20 @@ public class MainUI extends JFrame
 		setTitle(Resource.STR_APP_NAME.getString());
 		setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
 
-		Log.i("initialize() set bound & size");
 
-		int width = Resource.INT_WINDOW_SIZE_WIDTH_MIN;
-		int height = Resource.INT_WINDOW_SIZE_HEIGHT_MIN;
+		Log.i("initialize() set bound & size ");
+		Dimension minSize = new Dimension(Resource.INT_WINDOW_SIZE_WIDTH_MIN, Resource.INT_WINDOW_SIZE_HEIGHT_MIN);
 		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
-			width = Resource.PROP_WINDOW_WIDTH.getInt();
-			height = Resource.PROP_WINDOW_HEIGHT.getInt();
+			WindowSizeMemorizer.resizeCompoent(this, minSize);
+		} else {
+			setSize(minSize);
 		}
-
-		setBounds(0, 0, width, height);
-		setMinimumSize(new Dimension(Resource.INT_WINDOW_SIZE_WIDTH_MIN, Resource.INT_WINDOW_SIZE_HEIGHT_MIN));
+		setMinimumSize(minSize);
 		setResizable(true);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		WindowSizeMemorizer.registeComponent(this);
 
 		UIEventHandler eventHandler = new UIEventHandler();
 
@@ -143,7 +144,7 @@ public class MainUI extends JFrame
 		Log.i("initialize() register event handler");
 		// Closing event of window be delete tempFile
 		addWindowListener(eventHandler);
-
+		
 		// Drag & Drop event processing
 		new FileDrop(this, /*dragBorder,*/ eventHandler); // end FileDrop.Listener
 
@@ -917,16 +918,6 @@ public class MainUI extends JFrame
 		private void finished()
 		{
 			Log.v("finished()");
-
-			if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData(false)) {
-				int width = (int)getSize().getWidth();
-				int height = (int)getSize().getHeight();
-				if(Resource.PROP_WINDOW_WIDTH.getInt() != width
-						|| Resource.PROP_WINDOW_HEIGHT.getInt() != (int)getSize().getHeight()) {
-					Resource.PROP_WINDOW_WIDTH.setData(width);
-					Resource.PROP_WINDOW_HEIGHT.setData(height);
-				}
-			}
 
 			setVisible(false);
 			apkScanner.clear(true);

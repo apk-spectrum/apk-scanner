@@ -68,6 +68,7 @@ import com.apkscanner.gui.util.FilteredTreeModel;
 import com.apkscanner.gui.util.SimpleCheckTableModel;
 import com.apkscanner.gui.util.SimpleCheckTableModel.TableRowObject;
 import com.apkscanner.gui.util.TreeNodeIconRefresher;
+import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.IPackageStateListener;
@@ -159,8 +160,16 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		setResizable(true);
 		setModal(true);
 		setLayout(new BorderLayout());
-		setSize(new Dimension(600, 400));
-		setMinimumSize(new Dimension(600, 400));
+
+		Dimension minSize = new Dimension(600, 400);
+		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
+			WindowSizeMemorizer.resizeCompoent(this, minSize);
+		} else {
+			setSize(minSize);
+		}
+		setMinimumSize(minSize);
+		WindowSizeMemorizer.registeComponent(this);
+
 		setLocationRelativeTo(window);
 
 		addWindowListener(new WindowEventHandler());

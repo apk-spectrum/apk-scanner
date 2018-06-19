@@ -37,8 +37,8 @@ import org.fife.ui.rtextarea.SearchEngine;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.tabpanels.Resources;
+import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.test.PopupMessageExample.PopupMessageBuilder;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.util.Log;
@@ -54,7 +54,6 @@ public class SearchDlg extends JDialog {
 	JTable allTable;
 	ImageIcon Loading;
 	JLabel label;
-	PopupMessageBuilder Popup;
 	static String hoverFilePath;
 
 	public SearchDlg() {
@@ -62,6 +61,15 @@ public class SearchDlg extends JDialog {
 		setTitle("Input Dialog");
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
+		
+		Dimension minSize = new Dimension(500, 500);
+		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
+			WindowSizeMemorizer.resizeCompoent(this, minSize);
+		} else {
+			setSize(minSize);
+		}
+		//setMinimumSize(minSize);
+		WindowSizeMemorizer.registeComponent(this);
 
 		setLayout(new BorderLayout());
 		// Create Input 

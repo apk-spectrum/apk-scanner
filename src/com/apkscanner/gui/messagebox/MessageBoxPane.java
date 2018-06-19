@@ -20,6 +20,7 @@ import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
+import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
 
 public class MessageBoxPane extends JOptionPane
@@ -196,6 +197,11 @@ public class MessageBoxPane extends JOptionPane
 				getRootFrame() : parentComponent).getComponentOrientation());
 
 		JDialog dialog = pane.createDialog(parentComponent, title);
+
+		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
+			WindowSizeMemorizer.resizeCompoent(dialog, title);
+		}
+		WindowSizeMemorizer.registeComponent(dialog, title);
 
 		pane.selectInitialValue();
 		dialog.setVisible(true);

@@ -28,6 +28,7 @@ import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 
 import com.apkscanner.gui.util.ImagePanel;
+import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.XmlPath;
 
@@ -64,7 +65,15 @@ public class SdkVersionInfoDlg extends JDialog {
 		setLocationRelativeTo(window);
 		setModal(true);
 		setLayout(new GridBagLayout());
-		setSize(new Dimension(550, 270));
+
+		Dimension minSize = new Dimension(550, 270);
+		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
+			WindowSizeMemorizer.resizeCompoent(this, minSize);
+		} else {
+			setSize(minSize);
+		}
+		//setMinimumSize(minSize);
+		WindowSizeMemorizer.registeComponent(this);
 
 		sdkLogoImg = new ImagePanel();
 		sdkInfoArea = new JTextArea();

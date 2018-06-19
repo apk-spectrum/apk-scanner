@@ -51,6 +51,7 @@ import com.apkscanner.gui.install.InstallOptionPanel;
 import com.apkscanner.gui.install.InstallProgressPanel;
 import com.apkscanner.gui.install.ToggleButtonBar;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
+import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.PackageInfo;
@@ -202,8 +203,15 @@ public class ApkInstallWizard implements IDeviceChangeListener
 		AdbServerMonitor.startServerAndCreateBridgeAsync();
 
 		window.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
-		window.setSize(new Dimension(600, 450));
-		window.setMinimumSize(new Dimension(600, 450));
+		
+		Dimension minSize = new Dimension(600, 450);
+		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
+			WindowSizeMemorizer.resizeCompoent(window, minSize);
+		} else {
+			window.setSize(minSize);
+		}
+		window.setMinimumSize(minSize);
+		WindowSizeMemorizer.registeComponent(window);
 
 		progressPanel = new InstallProgressPanel();
 		controlPanel = new ControlPanel(uiEventHandler);

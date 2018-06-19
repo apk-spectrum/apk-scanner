@@ -45,6 +45,7 @@ import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.JHtmlEditorPane;
+import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbDeviceHelper;
@@ -759,7 +760,16 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		dialog.setResizable(true);
 		dialog.setModal(false);
 		dialog.setLayout(new BorderLayout());
-		dialog.setSize(new Dimension(500, 400));
+
+		Dimension minSize = new Dimension(500, 400);
+		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
+			WindowSizeMemorizer.resizeCompoent(dialog, minSize);
+		} else {
+			dialog.setSize(minSize);
+		}
+		//dialog.setMinimumSize(minSize);
+		WindowSizeMemorizer.registeComponent(dialog);
+
 		dialog.setLocationRelativeTo(owner);
 
 		dialog.add(this, BorderLayout.CENTER);

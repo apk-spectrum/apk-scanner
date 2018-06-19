@@ -58,6 +58,7 @@ import com.apkscanner.gui.TabbedPanel;
 import com.apkscanner.gui.ToolBar;
 import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.gui.util.ApkFileChooser;
+import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.jna.FileInfo;
 import com.apkscanner.jna.FileVersion;
 import com.apkscanner.resource.Resource;
@@ -343,7 +344,16 @@ public class SettingDlg extends JDialog implements ActionListener
 		setTitle(Resource.STR_SETTINGS_TITLE.getString());
 		setIconImage(Resource.IMG_TOOLBAR_SETTING.getImageIcon().getImage());
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setSize(new Dimension(600,420));
+
+		Dimension minSize = new Dimension(600, 420);
+		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
+			WindowSizeMemorizer.resizeCompoent(this, minSize);
+		} else {
+			setSize(minSize);
+		}
+		//setMinimumSize(minSize);
+		WindowSizeMemorizer.registeComponent(this);
+
 		setResizable(true);
 		setLocationRelativeTo(window);
 		setModal(true);
