@@ -144,7 +144,7 @@ public class ResouceContentsPanel extends JPanel{
 		initToolbar(toolBar, toolbarListener, "");
 		
 		axmlVeiwType = VEIW_TYPE_XML;
-		isMultiLinePrint = false;
+		isMultiLinePrint = (boolean)Resource.PROP_PRINT_MULTILINE_ATTR.getData();
 		
 		String[] petStrings = { "XML", "ARSC"};
 		resTypeCombobox = new JComboBox<String>(petStrings);
@@ -153,6 +153,7 @@ public class ResouceContentsPanel extends JPanel{
 		multiLinePrintButton = new JToggleButton(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_INDENT.getImageIcon());
 		multiLinePrintButton.addActionListener(toolbarListener);
 		multiLinePrintButton.setFocusPainted(false);
+		multiLinePrintButton.setSelected(isMultiLinePrint);
 		
 		resTypeSep = getNewSeparator(JSeparator.VERTICAL, new Dimension(5,16));
 		toolBar.add(resTypeSep);
@@ -590,6 +591,7 @@ public class ResouceContentsPanel extends JPanel{
 				setTextContentPanel(currentSelectedObj);
 			} else if(arg0.getSource() instanceof JToggleButton) {
 				isMultiLinePrint = ((JToggleButton)(arg0.getSource())).isSelected();
+				Resource.PROP_PRINT_MULTILINE_ATTR.setData(isMultiLinePrint);
 				setTextContentPanel(currentSelectedObj);
 			}
 		}

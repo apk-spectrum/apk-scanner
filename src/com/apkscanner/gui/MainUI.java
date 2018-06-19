@@ -395,7 +395,7 @@ public class MainUI extends JFrame
 
 					String[] convStrings = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath, new String[] {"AndroidManifest.xml"});
 					AxmlToXml a2x = new AxmlToXml(convStrings, (apkInfo != null) ? apkInfo.resourceScanner : null);
-					a2x.setMultiLinePrint(true);
+					a2x.setMultiLinePrint((boolean)Resource.PROP_PRINT_MULTILINE_ATTR.getData());
 
 					FileWriter fw = new FileWriter(new File(manifestPath));
 					fw.write(a2x.toString());
