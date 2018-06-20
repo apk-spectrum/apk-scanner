@@ -86,9 +86,12 @@ public class AaptXmlTreePath
 					if(s.endsWith(attrId) || (attrName.startsWith(defaultNamespace+":") && !attrName.equals(":"))) {
 						attrRealName = attrName;
 						//Log.v(">>>>>>> attrName " + attrRealName);
-					} else {
+					} else if(attrId.matches("^0x0?1[0-9a-f]{6}")) {
 						attrRealName = defaultNamespace+":"+getAttrName(attrId);
 						//Log.v("<<<<<<< attrRealName " + attrId + ", " + attrRealName);
+					} else {
+						//Log.v("<<<<<<< attrRealName " + attrId + ", " + attrRealName);
+						attrRealName = attrName;
 					}
 					if(attrName.equals(":")) {
 						attrName = attrRealName;
