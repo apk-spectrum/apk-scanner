@@ -389,8 +389,17 @@ public class Resources extends JPanel implements TabDataObject {
 		} else {
 			temp = top.toString();
 		}
+		temp = temp.toLowerCase();
+		
+		boolean matches = false;
+		String[] pattern = filter.toLowerCase().split(";");
+		for(String p: pattern) {
+			if(temp.contains(p)) {
+				matches = true;
+				break;
+			}
+		}
 
-		boolean matches = temp.toLowerCase().contains(filter.toLowerCase());
 		for (int i = 0; i < c; ++i) {
 			DefaultMutableTreeNode n = (DefaultMutableTreeNode) parent.getChildAt(i);
 			DefaultMutableTreeNode f = createFilteredTree(n, filter);
