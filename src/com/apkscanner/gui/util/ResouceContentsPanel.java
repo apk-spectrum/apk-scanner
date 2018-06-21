@@ -206,9 +206,33 @@ public class ResouceContentsPanel extends JPanel{
 
 		((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_INIT_VIEWER);
 
+		JButton openBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_OPEN.getImageIcon(16, 16));
+		JButton saveBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_SAVE.getImageIcon(16, 16));
+		openBtn.setName(TEXTVIEWER_TOOLBAR_OPEN);
+		saveBtn.setName(TEXTVIEWER_TOOLBAR_SAVE);
+		openBtn.addActionListener(toolbarListener);
+		saveBtn.addActionListener(toolbarListener);
+
+		openBtn.setFocusPainted(false);
+		saveBtn.setFocusPainted(false);
+
+		JToolBar extrTools = new JToolBar("");
+		extrTools.add(openBtn);
+		extrTools.add(saveBtn);
+		extrTools.add(getNewSeparator(JSeparator.VERTICAL, new Dimension(5,16)));
+		extrTools.setFloatable(false);
+		extrTools.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
+
 		FilePathtextField = new JTextField("");
 		FilePathtextField.setEditable(false);
 		FilePathtextField.setBackground(Color.WHITE);
+
+		JPanel northPanel = new JPanel(new BorderLayout());
+		northPanel.add(FilePathtextField, BorderLayout.CENTER);
+		northPanel.add(extrTools, BorderLayout.WEST);
+
+		JScrollPane northPanelScroll = new JScrollPane(northPanel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		northPanelScroll.setBorder(new EmptyBorder(0,0,0,0));
 
 		TextViewKeyInputAction keyInputListener = new TextViewKeyInputAction();
 
@@ -225,10 +249,7 @@ public class ResouceContentsPanel extends JPanel{
 		ComponentkeyInput(findtextField_ResourceTable,"F3", keyInputListener);
 		ComponentkeyInput(findtextField_ResourceTable,"shift F3", keyInputListener);
 
-		JPanel northPanel = new JPanel(new BorderLayout());
-		northPanel.add(FilePathtextField, BorderLayout.CENTER);
-
-		add(northPanel, BorderLayout.NORTH);
+		add(northPanelScroll, BorderLayout.NORTH);
 		add(ContentsviewPanel, BorderLayout.CENTER);
 	}
 
@@ -455,20 +476,14 @@ public class ResouceContentsPanel extends JPanel{
 
 	private void initToolbar(JToolBar toolbar, ToolbarActionListener toolbarListener, String Type) {
 
-		JButton OpenBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_OPEN.getImageIcon(16, 16));
-		JButton saveBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_SAVE.getImageIcon(16, 16));
 		JButton FindBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_FIND.getImageIcon(16, 16));
 		JButton NextBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_NEXT.getImageIcon(16, 16));
 		JButton PrevBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_PREV.getImageIcon(16, 16));
 
-		OpenBtn.setName(TEXTVIEWER_TOOLBAR_OPEN+Type);
-		saveBtn.setName(TEXTVIEWER_TOOLBAR_SAVE+Type);
 		FindBtn.setName(TEXTVIEWER_TOOLBAR_FIND+Type);
 		NextBtn.setName(TEXTVIEWER_TOOLBAR_NEXT+Type);
 		PrevBtn.setName(TEXTVIEWER_TOOLBAR_PREV+Type);
 
-		OpenBtn.setFocusPainted(false);
-		saveBtn.setFocusPainted(false);
 		FindBtn.setFocusPainted(false);
 		NextBtn.setFocusPainted(false);
 		PrevBtn.setFocusPainted(false);
@@ -501,17 +516,12 @@ public class ResouceContentsPanel extends JPanel{
 			}
 		});
 
-		OpenBtn.addActionListener(toolbarListener);
-		saveBtn.addActionListener(toolbarListener);
 		FindBtn.addActionListener(toolbarListener);
 		NextBtn.addActionListener(toolbarListener);
 		PrevBtn.addActionListener(toolbarListener);
 
-		Dimension sepSize = new Dimension(5,16);
-
-		toolbar.add(OpenBtn);
-		toolbar.add(saveBtn);
-		toolbar.add(getNewSeparator(JSeparator.VERTICAL, sepSize));
+		//toolbar.add(new JLabel(Resource.STR_LABEL_SEARCH.getString()));
+		//toolbar.add(getNewSeparator(JSeparator.VERTICAL, new Dimension(5,16)));
 		toolbar.add(tempfield);
 		toolbar.add(FindBtn);
 		toolbar.add(PrevBtn);
