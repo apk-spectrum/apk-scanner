@@ -78,33 +78,33 @@ import com.apkscanner.util.ZipFileUtil;
 
 public class ResouceContentsPanel extends JPanel{
 	private static final long serialVersionUID = -934921813626224616L;
-	
+
 	public static final String CONTENT_IMAGE_VIEWER = "ImageViewer";
 	public static final String CONTENT_HTML_VIEWER = "HtmlViewer";
 	public static final String CONTENT_TABLE_VIEWER = "TableViewer";
 	public static final String CONTENT_SELECT_VIEWER = "SelectViewer";
 	public static final String CONTENT_INIT_VIEWER = "InitViewer";
-	
+
 	public static final String TEXTVIEWER_TOOLBAR_OPEN = "textviewer_toolbar_open";
 	public static final String TEXTVIEWER_TOOLBAR_SAVE= "textviewer_toolbar_save";
 	public static final String TEXTVIEWER_TOOLBAR_FIND = "textviewer_toolbar_find";
 	public static final String TEXTVIEWER_TOOLBAR_NEXT = "textviewer_toolbar_next";
 	public static final String TEXTVIEWER_TOOLBAR_PREV = "textviewer_toolbar_prev";
 	public static final String TEXTVIEWER_TOOLBAR_FIND_TEXTAREA = "textviewer_toolbar_findtextarea";
-	
+
 	public static final String RESOURCE_LISTVIEW_TOOLBAR = "_resource_toolbar" ;
-	
-	
+
+
 	private static final int VEIW_TYPE_XML = 0;
 	private static final int VEIW_TYPE_ARSC = 1;
-	
+
 	//JHtmlEditorPane htmlViewer;
 	private JTable textTableViewer;
 	private ImageControlPanel imageViewerPanel;
 	private ResourceObject currentSelectedObj = null;
 	private String[] resourcesWithValue = null;
 	private JPanel ContentsviewPanel;
-	private JTextField FilePathtextField;	
+	private JTextField FilePathtextField;
 	private SelectViewPanel selectPanel;
 	private ApkInfo apkinfo;
 	private RSyntaxTextArea xmltextArea;
@@ -114,7 +114,7 @@ public class ResouceContentsPanel extends JPanel{
 	private JTextField findtextField_ResourceTable;
 	private ToolbarActionListener toolbarListener;
 	private SearchRenderer renderer;
-	
+
 	private int axmlVeiwType;
 	private boolean isMultiLinePrint;
 	private JComboBox<String> resTypeCombobox;
@@ -122,123 +122,126 @@ public class ResouceContentsPanel extends JPanel{
 	private JToggleButton multiLinePrintButton;
 	private JScrollPane textTableScroll;
 	public ResouceContentsPanel() {
-		
+
 		xmltextArea  = new RSyntaxTextArea();
 		//xmltextArea.createToolTip();
-		
+
 		JPanel TextAreaPanel = new JPanel(new BorderLayout());
-		
+
 		xmltextArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
 		xmltextArea.setCodeFoldingEnabled(true);
 		xmltextArea.setMarkOccurrences(true);
-		xmltextArea.setEditable(false);	
+		xmltextArea.setEditable(false);
 		RTextScrollPane sp = new RTextScrollPane(xmltextArea);
-		
+
 		TextAreaPanel.add(sp);
-		
+
 		ErrorStrip errorStrip = new ErrorStrip(xmltextArea);
 		TextAreaPanel.add(errorStrip,BorderLayout.LINE_END);
-		
+
 		toolBar = new JToolBar("");
 		toolbarListener = new ToolbarActionListener();
 		initToolbar(toolBar, toolbarListener, "");
-		
+
 		axmlVeiwType = VEIW_TYPE_XML;
 		isMultiLinePrint = (boolean)Resource.PROP_PRINT_MULTILINE_ATTR.getData();
-		
+
 		String[] petStrings = { "XML", "ARSC"};
 		resTypeCombobox = new JComboBox<String>(petStrings);
 		resTypeCombobox.addActionListener(toolbarListener);
-		
+
 		multiLinePrintButton = new JToggleButton(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_INDENT.getImageIcon());
 		multiLinePrintButton.addActionListener(toolbarListener);
 		multiLinePrintButton.setFocusPainted(false);
 		multiLinePrintButton.setSelected(isMultiLinePrint);
-		
+
 		resTypeSep = getNewSeparator(JSeparator.VERTICAL, new Dimension(5,16));
 		toolBar.add(resTypeSep);
 		toolBar.add(resTypeCombobox);
 		toolBar.add(multiLinePrintButton);
-		
-		TextAreaPanel.add(toolBar,BorderLayout.PAGE_START);
+		JScrollPane toolBarScroll = new JScrollPane(toolBar, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		toolBarScroll.setBorder(new EmptyBorder(0,0,0,0));
 
-		textTableViewer = new JTable(); 
-		
+		TextAreaPanel.add(toolBarScroll,BorderLayout.PAGE_START);
+
+		textTableViewer = new JTable();
+
 		renderer = new SearchRenderer();
 		textTableViewer.setDefaultRenderer(Object.class, renderer);
-		
+
 		textTableViewer.setShowHorizontalLines(false);
 		textTableViewer.setTableHeader(null);
 		textTableViewer.setCellSelectionEnabled(true);
 		textTableViewer.setRowSelectionAllowed(true);
 		textTableViewer.setColumnSelectionAllowed(false);
 		textTableViewer.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		
-		
-		
+
+
+
 		textTableScroll = new JScrollPane(textTableViewer);
 
 		JToolBar toolBar2 = new JToolBar("");
 		initToolbar(toolBar2, toolbarListener, RESOURCE_LISTVIEW_TOOLBAR);
-		
+		JScrollPane toolBar2Scroll = new JScrollPane(toolBar2, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		toolBar2Scroll.setBorder(new EmptyBorder(0,0,0,0));
+
 		JPanel textTablePanel = new JPanel(new BorderLayout());
-		textTablePanel.add(toolBar2,BorderLayout.PAGE_START);
+		textTablePanel.add(toolBar2Scroll,BorderLayout.PAGE_START);
 		textTablePanel.add(textTableScroll);
-		
+
 		setLayout(new BorderLayout());
-		
+
 		imageViewerPanel = new ImageControlPanel();
-		
+
 		selectPanel = new SelectViewPanel();
-		
-		JPanel initPanel = new JPanel();
-		
+		JScrollPane selectPanelScroll = new JScrollPane(selectPanel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		selectPanelScroll.setBorder(new EmptyBorder(0,0,0,0));
+
 		ContentsviewPanel = new JPanel(new CardLayout());
 		ContentsviewPanel.add(TextAreaPanel, CONTENT_HTML_VIEWER);
 		ContentsviewPanel.add(imageViewerPanel, CONTENT_IMAGE_VIEWER);
 		ContentsviewPanel.add(textTablePanel, CONTENT_TABLE_VIEWER);
-		ContentsviewPanel.add(selectPanel, CONTENT_SELECT_VIEWER);
-		ContentsviewPanel.add(initPanel, CONTENT_INIT_VIEWER);
-		
+		ContentsviewPanel.add(selectPanelScroll, CONTENT_SELECT_VIEWER);
+		ContentsviewPanel.add(new JPanel(), CONTENT_INIT_VIEWER);
+
 		((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_INIT_VIEWER);
-		
-		JPanel northPanel = new JPanel(new BorderLayout());
+
 		FilePathtextField = new JTextField("");
 		FilePathtextField.setEditable(false);
 		FilePathtextField.setBackground(Color.WHITE);
-		
+
 		TextViewKeyInputAction keyInputListener = new TextViewKeyInputAction();
-		
+
 		ComponentkeyInput(xmltextArea,"control F", keyInputListener);
 		ComponentkeyInput(xmltextArea,"control S", keyInputListener);
 		ComponentkeyInput(xmltextArea,"F3", keyInputListener);
 		ComponentkeyInput(xmltextArea,"shift F3", keyInputListener);
-		
+
 		ComponentkeyInput(textTableViewer,"control F", keyInputListener);
 		ComponentkeyInput(textTableViewer,"control S", keyInputListener);
 		ComponentkeyInput(textTableViewer,"F3", keyInputListener);
 		ComponentkeyInput(textTableViewer,"shift F3", keyInputListener);
-		
+
 		ComponentkeyInput(findtextField_ResourceTable,"F3", keyInputListener);
 		ComponentkeyInput(findtextField_ResourceTable,"shift F3", keyInputListener);
-		
-		
+
+		JPanel northPanel = new JPanel(new BorderLayout());
 		northPanel.add(FilePathtextField, BorderLayout.CENTER);
-		
-		this.add(northPanel, BorderLayout.NORTH);
-		this.add(ContentsviewPanel, BorderLayout.CENTER);
+
+		add(northPanel, BorderLayout.NORTH);
+		add(ContentsviewPanel, BorderLayout.CENTER);
 	}
-	
+
 	private FindDialog getFindDialog() {
 		if(finddlg == null) {
 			SwingUtilities.getRoot(this);
 			JFrame window = (JFrame) SwingUtilities.getWindowAncestor(this);
-			finddlg = new FindDialog(window, new SearchListener() {			
+			finddlg = new FindDialog(window, new SearchListener() {
 				@Override
 				public void searchEvent(SearchEvent e) {
 					SearchAndNext(e.getType(), e.getSearchContext());
 				}
-				
+
 				@Override
 				public String getSelectedText() {
 					return null;
@@ -248,33 +251,33 @@ public class ResouceContentsPanel extends JPanel{
 		}
 		return finddlg;
 	}
-	
+
 	private void FindNextTable(boolean next) {
-		
+
 		int selectindex = textTableViewer.getSelectedRow();
 		boolean findflag= false;
-		
+
 		if(selectindex== -1) selectindex = 0;
-		
+
 		textTableViewer.getSelectionModel().clearSelection();
-		
+
 		int maxscroolbar = textTableScroll.getVerticalScrollBar().getMaximum();
-		int rowCount = textTableViewer.getRowCount(); 
+		int rowCount = textTableViewer.getRowCount();
 		int i;
-		
-		
+
+
 		if(selectindex > rowCount) {
 			textTableViewer.getSelectionModel().addSelectionInterval(0, 0);
 			return ;
 		}
-		
+
 		if(selectindex < 0) {
 			textTableViewer.getSelectionModel().addSelectionInterval(maxscroolbar, maxscroolbar);
 			return ;
 		}
-		
+
 		String textFieldstr = findtextField_ResourceTable.getText().toLowerCase();
-		
+
 		boolean roop = false;
 		int to;
 		if(next){
@@ -282,7 +285,7 @@ public class ResouceContentsPanel extends JPanel{
 			for(i=selectindex+1; i < to; i++) {
 				String str = ""+textTableViewer.getModel().getValueAt(i, 0);
 				str = str.toLowerCase();
-				
+
 				if(str.indexOf(textFieldstr) != -1) {
 					textTableViewer.getSelectionModel().addSelectionInterval(i, i);
 					findflag = true;
@@ -297,7 +300,7 @@ public class ResouceContentsPanel extends JPanel{
 		} else {
 			to = 0;
 			for(i=selectindex-1; i >= to; i--) {
-				String str = ""+textTableViewer.getModel().getValueAt(i, 0);				
+				String str = ""+textTableViewer.getModel().getValueAt(i, 0);
 				if(str.indexOf(textFieldstr) != -1) {
 					textTableViewer.getSelectionModel().addSelectionInterval(i, i);
 					findflag = true;
@@ -310,13 +313,13 @@ public class ResouceContentsPanel extends JPanel{
 				}
 			}
 		}
-		
+
 		//Log.d(" i = " + i  + " max scrool = " + maxscroolbar + "rowCount : " + rowCount);
 		if(!findflag) Log.d("Not Found");
 		textTableScroll.getVerticalScrollBar().setValue((i*(maxscroolbar/rowCount)));
 	}
-	
-	
+
+
 	class TextViewKeyInputAction extends AbstractAction {
 
 		private static final long serialVersionUID = 2157003820138446772L;
@@ -327,35 +330,35 @@ public class ResouceContentsPanel extends JPanel{
 	        KeyEvent ke = (KeyEvent)EventQueue.getCurrentEvent();
 	        String keyStroke = KeyEvent.getKeyText( ke.getKeyCode() );
 	        String number = keyStroke.substring(0);
-			int FuncKey = arg0.getModifiers(); 
-			
+			int FuncKey = arg0.getModifiers();
+
 			switch (number) {
 			case "F":      /////////F key
-				
-				if(arg0.getSource() instanceof JTable) {					
-					EventQueue.invokeLater( new Runnable(){ 
+
+				if(arg0.getSource() instanceof JTable) {
+					EventQueue.invokeLater( new Runnable(){
 	                 public void run() {
-	                	 findtextField_ResourceTable.requestFocusInWindow();	                	 
+	                	 findtextField_ResourceTable.requestFocusInWindow();
 	                 	}
-	                 });					
+	                 });
 					//findtextField_ResourceTable.requestFocusInWindow();
 				} else {
 					getFindDialog().setVisible(true);
 				}
-				
-				break;			
+
+				break;
 			case "S":      /////////S key
 				toolbarListener.exportContent(ToolbarActionListener.EXPORT_TYPE_SAVE);
 				break;
 			case "F3":      /////////F3
-				
+
 				if(arg0.getSource() instanceof JTable || findtextField_ResourceTable.equals(arg0.getSource())) {
 					if(FuncKey==1) {
 						FindNextTable(false);
 					} else {
 						FindNextTable(true);
 					}
-				} else {				
+				} else {
 					if(FuncKey==1) {
 						Log.d("shift F3 Key");
 						finddlg.getSearchContext().setSearchForward(false);
@@ -366,21 +369,21 @@ public class ResouceContentsPanel extends JPanel{
 						SearchAndNext(SearchEvent.Type.FIND, finddlg.getSearchContext());
 					}
 				}
-				break;			
+				break;
 			default:
 				Log.d("unknown");
 				break;
 			}
 		}
 	}
-	
+
 	private void ComponentkeyInput(JComponent component, String keyStrokeAndKey, AbstractAction abstractAction) {
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
         component.getInputMap().put(keyStroke, keyStrokeAndKey);
-        component.getActionMap().put(keyStrokeAndKey, abstractAction);        
+        component.getActionMap().put(keyStrokeAndKey, abstractAction);
 	}
-	
-	private void SearchAndNext(SearchEvent.Type type, SearchContext context) {		
+
+	private void SearchAndNext(SearchEvent.Type type, SearchContext context) {
 		SearchResult result = null;
 		switch (type) {
 			default: // Prevent FindBugs warning later
@@ -411,12 +414,12 @@ public class ResouceContentsPanel extends JPanel{
 			int offset = xmltextArea.getCaretPosition();
 			if(context.getSearchForward()){
 				xmltextArea.setCaretPosition(0);
-				
+
 			} else {
 				xmltextArea.setCaretPosition(xmltextArea.getText().length());
 			}
 			result = SearchEngine.find(xmltextArea, context);
-			
+
 			if(result.wasFound()) {
 				text = "Text found; occurrences marked: " + result.getMarkedCount();
 			}
@@ -427,14 +430,14 @@ public class ResouceContentsPanel extends JPanel{
 		}
 		Log.d("Found : " + text);
 	}
-	
+
 	public void setData(ApkInfo apkinfo) {
-		
+
 		if(apkinfo == null || this.apkinfo != apkinfo) {
 			FilePathtextField.setText("");
 			((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_INIT_VIEWER);
 		}
-		
+
 		this.apkinfo = apkinfo;
 		if(apkinfo != null) {
 			this.resourcesWithValue = apkinfo.resourcesWithValue;
@@ -449,63 +452,63 @@ public class ResouceContentsPanel extends JPanel{
         separator.setPreferredSize(size);
     	return separator;
     }
-    
+
 	private void initToolbar(JToolBar toolbar, ToolbarActionListener toolbarListener, String Type) {
-	
+
 		JButton OpenBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_OPEN.getImageIcon(16, 16));
 		JButton saveBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_SAVE.getImageIcon(16, 16));
 		JButton FindBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_FIND.getImageIcon(16, 16));
 		JButton NextBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_NEXT.getImageIcon(16, 16));
 		JButton PrevBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_PREV.getImageIcon(16, 16));
-		
+
 		OpenBtn.setName(TEXTVIEWER_TOOLBAR_OPEN+Type);
 		saveBtn.setName(TEXTVIEWER_TOOLBAR_SAVE+Type);
 		FindBtn.setName(TEXTVIEWER_TOOLBAR_FIND+Type);
 		NextBtn.setName(TEXTVIEWER_TOOLBAR_NEXT+Type);
 		PrevBtn.setName(TEXTVIEWER_TOOLBAR_PREV+Type);
-		
+
 		OpenBtn.setFocusPainted(false);
 		saveBtn.setFocusPainted(false);
 		FindBtn.setFocusPainted(false);
 		NextBtn.setFocusPainted(false);
 		PrevBtn.setFocusPainted(false);
-		
+
 		JTextField tempfield = new JTextField();
-		 
-		
+
+
 		if(Type.equals(RESOURCE_LISTVIEW_TOOLBAR)) {
 			findtextField_ResourceTable = tempfield;
 			findtextField_ResourceTable.setName(TEXTVIEWER_TOOLBAR_FIND_TEXTAREA+Type);
-		} else {			
+		} else {
 			findtextField = tempfield;
-			findtextField.setName(TEXTVIEWER_TOOLBAR_FIND_TEXTAREA); 
+			findtextField.setName(TEXTVIEWER_TOOLBAR_FIND_TEXTAREA);
 		}
 		Dimension size = tempfield.getPreferredSize();
 		tempfield.setPreferredSize(new Dimension(size.width+100, size.height));
 		tempfield.addActionListener(toolbarListener);
-		
+
 		tempfield.setFocusable(true);
-		
-		tempfield.addFocusListener(new FocusListener() {			
+
+		tempfield.addFocusListener(new FocusListener() {
 			@Override
 			public void focusLost(FocusEvent arg0) {
-				((JTextField)(arg0.getSource())).setBackground(new Color(255,255,255));					
+				((JTextField)(arg0.getSource())).setBackground(new Color(255,255,255));
 			}
-			
+
 			@Override
 			public void focusGained(FocusEvent arg0) {
-				((JTextField)(arg0.getSource())).setBackground(new Color(178,235,244));				
+				((JTextField)(arg0.getSource())).setBackground(new Color(178,235,244));
 			}
 		});
-		
+
 		OpenBtn.addActionListener(toolbarListener);
 		saveBtn.addActionListener(toolbarListener);
 		FindBtn.addActionListener(toolbarListener);
 		NextBtn.addActionListener(toolbarListener);
 		PrevBtn.addActionListener(toolbarListener);
-		
+
 		Dimension sepSize = new Dimension(5,16);
-		
+
 		toolbar.add(OpenBtn);
 		toolbar.add(saveBtn);
 		toolbar.add(getNewSeparator(JSeparator.VERTICAL, sepSize));
@@ -513,10 +516,10 @@ public class ResouceContentsPanel extends JPanel{
 		toolbar.add(FindBtn);
 		toolbar.add(PrevBtn);
 		toolbar.add(NextBtn);
-		
+
 		toolbar.setFloatable(false);
 		toolbar.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
-		
+
 	}
 
 	class ToolbarActionListener implements ActionListener {
@@ -529,24 +532,24 @@ public class ResouceContentsPanel extends JPanel{
 				String name = ((JButton)arg0.getSource()).getName();
 				switch(name) {
 				case TEXTVIEWER_TOOLBAR_OPEN:
-				case TEXTVIEWER_TOOLBAR_OPEN+RESOURCE_LISTVIEW_TOOLBAR:	
+				case TEXTVIEWER_TOOLBAR_OPEN+RESOURCE_LISTVIEW_TOOLBAR:
 					exportContent(EXPORT_TYPE_OPEN);
 					break;
 				case TEXTVIEWER_TOOLBAR_SAVE:
-				case TEXTVIEWER_TOOLBAR_SAVE+RESOURCE_LISTVIEW_TOOLBAR:					
+				case TEXTVIEWER_TOOLBAR_SAVE+RESOURCE_LISTVIEW_TOOLBAR:
 					exportContent(EXPORT_TYPE_SAVE);
 					break;
-				case TEXTVIEWER_TOOLBAR_FIND:					
+				case TEXTVIEWER_TOOLBAR_FIND:
 					getFindDialog().setVisible(true);
 					break;
-				case TEXTVIEWER_TOOLBAR_FIND+RESOURCE_LISTVIEW_TOOLBAR:					
+				case TEXTVIEWER_TOOLBAR_FIND+RESOURCE_LISTVIEW_TOOLBAR:
 				    String pattern = findtextField_ResourceTable.getText().trim();
 			    	renderer.setPattern(pattern);
 			    	FindNextTable(true);
 			    	textTableViewer.repaint();
 					break;
-				case TEXTVIEWER_TOOLBAR_NEXT+RESOURCE_LISTVIEW_TOOLBAR:					
-					FindNextTable(true);					
+				case TEXTVIEWER_TOOLBAR_NEXT+RESOURCE_LISTVIEW_TOOLBAR:
+					FindNextTable(true);
 					break;
 				case TEXTVIEWER_TOOLBAR_PREV+RESOURCE_LISTVIEW_TOOLBAR:
 					FindNextTable(false);
@@ -559,7 +562,7 @@ public class ResouceContentsPanel extends JPanel{
 					finddlg.getSearchContext().setSearchForward(false);
 					SearchAndNext(SearchEvent.Type.FIND, finddlg.getSearchContext());
 					break;
-				}				
+				}
 			} else if(arg0.getSource() instanceof JTextField) {
 				String findstr = ((JTextField)(arg0.getSource())).getText();
 				String name = ((JTextField)(arg0.getSource())).getName();
@@ -575,8 +578,8 @@ public class ResouceContentsPanel extends JPanel{
 			    	FindNextTable(true);
 			    	textTableViewer.repaint();
 					break;
-				}				
-				
+				}
+
 			} else if(arg0.getSource() instanceof JComboBox) {
 				@SuppressWarnings("rawtypes")
 				String fileType = ((JComboBox)(arg0.getSource())).getSelectedItem().toString();
@@ -595,7 +598,7 @@ public class ResouceContentsPanel extends JPanel{
 				setTextContentPanel(currentSelectedObj);
 			}
 		}
-		
+
 	    public void exportContent(int type) {
 	    	String resPath = null;
 	    	File resFile = null;
@@ -605,7 +608,7 @@ public class ResouceContentsPanel extends JPanel{
 	    	} else {
 	    		resFile = getSaveFile(null, currentSelectedObj.path.replace("/", File.separator));
 	    		if(resFile == null) return;
-	    		resPath = resFile.getAbsolutePath(); 
+	    		resPath = resFile.getAbsolutePath();
 	    	}
 
 			if(!resFile.exists()) {
@@ -629,7 +632,7 @@ public class ResouceContentsPanel extends JPanel{
 			} else {
 				ZipFileUtil.unZip(apkinfo.filePath, currentSelectedObj.path, resPath);
 			}
-			
+
 			if(convStrings != null) {
 				String writeString = null;
 				if(convAxml2Xml) {
@@ -655,7 +658,7 @@ public class ResouceContentsPanel extends JPanel{
 				SystemUtil.openArchiveExplorer(resPath);
 			}
 	    }
-	    
+
 		public File getSaveFile(Component component, String defaultFilePath)
 		{
 			JFileChooser jfc = ApkFileChooser.getFileChooser((String)Resource.PROP_LAST_FILE_SAVE_PATH.getData(), JFileChooser.SAVE_DIALOG, new File(defaultFilePath));
@@ -670,9 +673,9 @@ public class ResouceContentsPanel extends JPanel{
 			}
 			return dir;
 		}
-	    
+
 	}
-	
+
     public enum ButtonSet
     {
     	OS_SETTING			(0x01, Type.NORMAL, Resource.STR_LABEL_OPEN_WITH_SYSTEM.getString(), Resource.STR_LABEL_OPEN_WITH_SYSTEM.getString(), Resource.IMG_RESOURCE_TREE_OPEN_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
@@ -684,7 +687,7 @@ public class ResouceContentsPanel extends JPanel{
     	private enum Type {
     		NONE, NORMAL, HOVER, EXTEND
     	}
-    	
+
     	static private final int IconSize = 80;
 
     	private Type type = null;
@@ -694,17 +697,17 @@ public class ResouceContentsPanel extends JPanel{
     	//private ImageIcon hoverIcon = null;
     	private String actionCommand = null;
     	private int id = -1;
-    	
+
     	ButtonSet(int id, Type type, String text, ImageIcon icon)
     	{
     		this(id, type, text, null, icon, icon);
     	}
-    	
+
     	ButtonSet(int id, Type type, String text, String toolTipText, ImageIcon icon)
     	{
     		this(id, type, text, toolTipText, icon, icon);
     	}
-    	
+
     	ButtonSet(int id, Type type, String text, String toolTipText, ImageIcon icon, ImageIcon hoverIcon)
     	{
     		this.id = id;
@@ -715,12 +718,12 @@ public class ResouceContentsPanel extends JPanel{
     		//this.hoverIcon = hoverIcon;
     		this.actionCommand = this.getClass().getName()+"."+this.toString();
     	}
-    	
+
     	public boolean matchActionEvent(ActionEvent e)
     	{
     		return actionCommand.equals(e.getActionCommand());
     	}
-    	
+
     	public int getButtonId() {
     		return id;
     	}
@@ -731,7 +734,7 @@ public class ResouceContentsPanel extends JPanel{
 			button.setToolTipText(toolTipText);
 			button.setOpaque(false);
 			button.setBorderPainted(false);
-			
+
     		switch(type) {
     		case NORMAL:
     			button.addActionListener(listener);
@@ -757,10 +760,10 @@ public class ResouceContentsPanel extends JPanel{
     			return null;
     		}
 			button.setActionCommand(actionCommand);
-    		
+
     		return button;
     	}
-    	
+
     	static private HashMap<ButtonSet, JButton> getButtonMap(ActionListener listener)
     	{
     		HashMap<ButtonSet, JButton> buttonMap = new HashMap<ButtonSet, JButton>();
@@ -770,8 +773,8 @@ public class ResouceContentsPanel extends JPanel{
             return buttonMap;
     	}
     }
-	
-	
+
+
 	public class SelectViewPanel extends JPanel implements ActionListener {
 		private static final long serialVersionUID = -5260902185163996992L;
 
@@ -785,15 +788,15 @@ public class ResouceContentsPanel extends JPanel{
 		public final static int SELECT_VIEW_ICON_CHOOSE_APPLICATION = 0x10;
 
 		public SelectViewPanel() {
-			
+
 			JLabel warringLabel = new JLabel(Resource.IMG_WARNING2.getImageIcon(80,80));
-			
+
 			JTextArea textArea = new JTextArea(Resource.STR_MSG_UNSUPPORTED_PREVIEW.getString());
 			textArea.setEditable(false);
-			
+
 			openWithLabel = new JLabel(Resource.STR_LABEL_OPEN_WITH.getString());
 			openWithLabel.setBorder(new EmptyBorder(20, 10, 0, 0));
-			
+
 			JPanel MessagePanel = new JPanel(new FlowLayout());
 	        MessagePanel.add(warringLabel);
 	        MessagePanel.add(textArea);
@@ -804,7 +807,7 @@ public class ResouceContentsPanel extends JPanel{
 
 			buttonMap = ButtonSet.getButtonMap(this);
 			buttonMap.get(ButtonSet.JD_GUI).setDisabledIcon(Resource.IMG_RESOURCE_TREE_OPEN_JD_LOADING.getImageIcon());
-			
+
 			JPanel IconPanel = new JPanel(new GridBagLayout());
 			IconPanel.add(buttonMap.get(ButtonSet.OS_SETTING));
 			IconPanel.add(buttonMap.get(ButtonSet.JD_GUI));
@@ -814,15 +817,15 @@ public class ResouceContentsPanel extends JPanel{
 	        IconPanel.setBackground(Color.WHITE);
 	        IconPanel.setMaximumSize(MessagePanel.getPreferredSize());
 	        IconPanel.setAlignmentX(LEFT_ALIGNMENT);
-	        
+
 	        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 	        this.setBackground(Color.WHITE);
-	        
+
 			this.add(MessagePanel);
 			this.add(openWithLabel);
 			this.add(IconPanel);
 		}
-		
+
 		public void setMenu(int Flag) {
 			openWithLabel.setVisible(Flag != 0);
 			for (ButtonSet key : buttonMap.keySet()) {
@@ -833,10 +836,10 @@ public class ResouceContentsPanel extends JPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			
+
 			String resPath = apkinfo.tempWorkPath + File.separator + currentSelectedObj.path.replace("/", File.separator);
 			ZipFileUtil.unZip(apkinfo.filePath, currentSelectedObj.path, resPath);
-			
+
 			if (ButtonSet.OS_SETTING.matchActionEvent(e)) {
 				SystemUtil.openFile(resPath);
 			} else if (ButtonSet.JD_GUI.matchActionEvent(e)) {
@@ -852,7 +855,7 @@ public class ResouceContentsPanel extends JPanel{
 					}
 					@Override
 					public void onCompleted() {
-						btn.setEnabled(true);						
+						btn.setEnabled(true);
 					}
 				});
 			} else if (ButtonSet.APK_SCANNER.matchActionEvent(e)) {
@@ -860,7 +863,7 @@ public class ResouceContentsPanel extends JPanel{
 			} else if (ButtonSet.EXPLORER.matchActionEvent(e)) {
 				SystemUtil.openArchiveExplorer(resPath);
 			} else if (ButtonSet.CHOOSE_APPLICATION.matchActionEvent(e)) {
-				
+
 			}
 		}
 	}
@@ -910,12 +913,12 @@ public class ResouceContentsPanel extends JPanel{
 		default: return SyntaxConstants.SYNTAX_STYLE_NONE;
 		}
 	}
-	
+
     private void setTextContentPanel(ResourceObject obj) {
     	String content = null;
 		ZipFile zipFile = null;
 		InputStream is = null;
-    	
+
 		switch(obj.attr) {
 		case ResourceObject.ATTR_AXML:
 			String[] xmlbuffer = AaptNativeWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {obj.path});
@@ -998,7 +1001,7 @@ public class ResouceContentsPanel extends JPanel{
 			//content = "This type is unsupported by preview.";
 			content=null;
 			((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_SELECT_VIEWER);
-			
+
 			if(obj.path.endsWith(".dex")) {
 				selectPanel.setMenu(SelectViewPanel.SELECT_VIEW_ICON_JD_OPEN | SelectViewPanel.SELECT_VIEW_ICON_CHOOSE_APPLICATION);
 			} else if(obj.path.endsWith(".apk")) {
@@ -1009,10 +1012,10 @@ public class ResouceContentsPanel extends JPanel{
 			} else {
 				selectPanel.setMenu(SelectViewPanel.SELECT_VIEW_ICON_OPEN | SelectViewPanel.SELECT_VIEW_ICON_CHOOSE_APPLICATION);
 			}
-			
+
 			break;
 		}
-		
+
 		if(content != null) {
 			//htmlViewer.setText("<pre>" + content.replaceAll("<", "&lt;").replaceAll(">", "&gt;") + "</pre>");
 			//textViewerPanel.setText("<pre>" + content.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("[\r]\n", "<br/>") + "</pre>");
@@ -1021,18 +1024,18 @@ public class ResouceContentsPanel extends JPanel{
 			xmltextArea.setSyntaxEditingStyle(getSyntaxStyle(obj.path.replaceAll(".*/", "").replaceAll(".*\\.", ".")));
 			xmltextArea.setText(content);
 			xmltextArea.setCaretPosition(0);
-			((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_HTML_VIEWER);						
-		}		
+			((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_HTML_VIEWER);
+		}
     }
-    
+
     public void selectContentAndLine(JTree tree, int line, String Findstr) {
-    	
+
         if("resources.arsc".equals(currentSelectedObj.path)) {
 	        textTableViewer.getSelectionModel().clearSelection();
 	        textTableViewer.getSelectionModel().addSelectionInterval(line, line);
-	        
+
 			int maxscroolbar = textTableScroll.getVerticalScrollBar().getMaximum();
-			int rowCount = textTableViewer.getRowCount(); 
+			int rowCount = textTableViewer.getRowCount();
 			textTableScroll.getVerticalScrollBar().setValue((line*(maxscroolbar/rowCount)));
         } else {
         	SearchContext context = new SearchContext();
@@ -1040,7 +1043,7 @@ public class ResouceContentsPanel extends JPanel{
             context.setMarkAll(true);
             context.setSearchFor(Findstr);
             context.setWholeWord(false);
-            
+
         	org.fife.ui.rtextarea.SearchResult result = SearchEngine.find(xmltextArea, context);
 
         	if (!result.wasFound()) {
@@ -1050,17 +1053,17 @@ public class ResouceContentsPanel extends JPanel{
         	}
         }
     }
-    
+
     public void selectContent(JTree tree) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)
                 tree.getLastSelectedPathComponent();
         if(node == null) return;
-		
+
         ResourceObject CurrentresObj = null;
 		if(node.getUserObject() instanceof ResourceObject) {
 			CurrentresObj = (ResourceObject)node.getUserObject();
 		}
-		
+
 		if(CurrentresObj != null && CurrentresObj == currentSelectedObj) {
 			Log.v("select same object");
 			Log.d("" +node.getPath().toString());
@@ -1089,9 +1092,9 @@ public class ResouceContentsPanel extends JPanel{
 				break;
 			}
 			FilePathtextField.setText(CurrentresObj.path);
-		}		
+		}
     }
-    
+
     private void drawImageOnPanel(ResourceObject obj) {
 		try {
 			imageViewerPanel.setImage(apkinfo.filePath, obj.path);
@@ -1099,9 +1102,9 @@ public class ResouceContentsPanel extends JPanel{
 			 ((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_IMAGE_VIEWER);
 		} catch (MalformedURLException e1) {
 			e1.printStackTrace();
-		} 
+		}
     }
-    
+
 	private class StringListTableModel extends AbstractTableModel {
 
 		private static final long serialVersionUID = 1473513094076687257L;
@@ -1110,7 +1113,7 @@ public class ResouceContentsPanel extends JPanel{
 		StringListTableModel(String[] strings) {
 			this.strings = strings;
 		}
-		
+
 	    @Override
 	    public int getColumnCount() {
 	        return 1;
@@ -1135,11 +1138,11 @@ public class ResouceContentsPanel extends JPanel{
 	    @Override
 	    public Object getValueAt(int rowIndex, int columnIndex) {
 	        switch (columnIndex) {
-	            case 0:                
+	            case 0:
 	                //return String.format("%3d", rowIndex);
 	            case 1:
 	            	return strings[rowIndex];
-	        }            
+	        }
 	        return "";
 	    }
 	}

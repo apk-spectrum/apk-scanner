@@ -45,6 +45,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -390,7 +391,7 @@ public class Resources extends JPanel implements TabDataObject {
 			temp = top.toString();
 		}
 		temp = temp.toLowerCase();
-		
+
 		boolean matches = false;
 		String[] pattern = filter.toLowerCase().split(";");
 		for(String p: pattern) {
@@ -533,7 +534,7 @@ public class Resources extends JPanel implements TabDataObject {
 					 * fileIcon = defaults.getIcon( "FileView.fileIcon" ); Icon
 					 * folderIcon = defaults.getIcon( "FileView.directoryIcon"
 					 * );
-					 * 
+					 *
 					 * icon = folderIcon;
 					 */
 				} else if (".xml".equals(suffix)) {
@@ -965,11 +966,11 @@ public class Resources extends JPanel implements TabDataObject {
 		/*
 		 * do { if(currentNode.getLevel()==3 &&
 		 * filteredModel.getChildCount(currentNode) > 0) {
-		 * 
+		 *
 		 * TreePath temptreePath = new
 		 * TreePath(((DefaultMutableTreeNode)(filteredModel.getChild(
 		 * currentNode, 0))).getPath());
-		 * 
+		 *
 		 * tree.setSelectionPath(temptreePath);
 		 * tree.scrollPathToVisible(temptreePath); return; } currentNode =
 		 * currentNode.getNextNode(); } while (currentNode != null);
@@ -986,7 +987,7 @@ public class Resources extends JPanel implements TabDataObject {
 			} else if (arg0.getSource() instanceof JButton) {
 				JButton temp = (JButton) (arg0.getSource());
 
-				if (temp.getName().equals(RESOURCE_TREE_TOOLBAR_BUTTON_FIND)) {					
+				if (temp.getName().equals(RESOURCE_TREE_TOOLBAR_BUTTON_FIND)) {
 					String strtemp = textField.getText();
 					searchTree(strtemp);
 				} else if (temp.getName().equals(RESOURCE_TREE_TOOLBAR_BUTTON_REFRESH)) {
@@ -997,7 +998,7 @@ public class Resources extends JPanel implements TabDataObject {
 
 		}
 
-		void searchTree(String str) {		
+		void searchTree(String str) {
 
 			if(str.length() > 0) {
 				refreshicon.setEnabled(true);
@@ -1009,7 +1010,7 @@ public class Resources extends JPanel implements TabDataObject {
 
 			}
 
-			tree.setModel(new DefaultTreeModel(createFilteredTree(top, str)));			
+			tree.setModel(new DefaultTreeModel(createFilteredTree(top, str)));
 			tree.repaint();
 		}
 	}
@@ -1049,11 +1050,6 @@ public class Resources extends JPanel implements TabDataObject {
 		findicon.setFocusPainted(false);
 		refreshicon.setFocusPainted(false);
 
-		JPanel TreeButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 2));
-
-		JPanel TreeModePanel = new JPanel(new BorderLayout());
-		// textField.setPreferredSize(new Dimension(10, 27));
-
 		TreeFindFildListener findListener = new TreeFindFildListener();
 
 		textField.addActionListener(findListener);
@@ -1079,15 +1075,22 @@ public class Resources extends JPanel implements TabDataObject {
 			}
 		});
 
-		TreeModePanel.add(textField, BorderLayout.CENTER);
+		JPanel TreeButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 2));
 		TreeButtonPanel.add(findicon);
 		TreeButtonPanel.add(refreshicon);
 
+		JPanel TreeModePanel = new JPanel(new BorderLayout());
+		TreeModePanel.add(textField, BorderLayout.CENTER);
 		TreeModePanel.add(TreeButtonPanel, BorderLayout.EAST);
+
+		JScrollPane treeNaviScroll = new JScrollPane(TreeModePanel);
+		treeNaviScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		treeNaviScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+		treeNaviScroll.setBorder(new EmptyBorder(0,0,0,0));
 		// End Tree navigator ----------
 
 		JScrollPane treeScroll = new JScrollPane(tree);
-		treeScroll.setPreferredSize(new Dimension(300, 400));
+		//treeScroll.setPreferredSize(new Dimension(300, 400));
 		treeScroll.repaint();
 
 		AdjustmentListener adjustmentListener = new AdjustmentListener() {
@@ -1100,7 +1103,7 @@ public class Resources extends JPanel implements TabDataObject {
 		treeScroll.getHorizontalScrollBar().addAdjustmentListener(adjustmentListener);
 
 		JPanel TreePanel = new JPanel(new BorderLayout());
-		TreePanel.add(TreeModePanel, BorderLayout.NORTH);
+		TreePanel.add(treeNaviScroll, BorderLayout.NORTH);
 		TreePanel.add(treeScroll, BorderLayout.CENTER);
 
 		// imageViewerPanel = new ImageControlPanel();
@@ -1156,5 +1159,5 @@ public class Resources extends JPanel implements TabDataObject {
 	@Override
 	public void reloadResource() {
 
-	}	
+	}
 }
