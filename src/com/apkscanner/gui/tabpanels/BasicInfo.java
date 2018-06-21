@@ -85,6 +85,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	private String sharedUserId = "";
 
 	private Long ApkSize = 0L;
+	private String apkPath = "";
+	private String checkSumMd5 = "";
 
 	private boolean isSamsungSign = false;
 	private boolean isPlatformSign = false;
@@ -271,6 +273,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		isInstrumentation = false;
 		sharedUserId = "";
 		ApkSize = 0L;
+		checkSumMd5 = "";
 
 		isSamsungSign = false;
 		isPlatformSign = false;
@@ -456,7 +459,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("        <br/>");
 		strTabInfo.append("        <font style=\"font-size:12px\">");
 		strTabInfo.append("          @SDK Ver. " + sdkVersion + "<br/>");
-		strTabInfo.append("          " + FileUtil.getFileSize(ApkSize, FSStyle.FULL));
+		strTabInfo.append("          " + makeHyperLink("@event", FileUtil.getFileSize(ApkSize, FSStyle.FULL), "MD5: " + checkSumMd5, "file-checksum", null));
 		strTabInfo.append("        </font>");
 		strTabInfo.append("        <br/><br/>");
 		strTabInfo.append("        <font style=\"font-size:12px\">");
@@ -583,7 +586,9 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			}
 		}
 
-		ApkSize = apkInfo.fileSize;		
+		ApkSize = apkInfo.fileSize;
+		apkPath = apkInfo.filePath;
+		checkSumMd5 = FileUtil.getMessageDigest(new File(apkPath), "MD5");
 
 
 		hasSignatureLevel = false; // apkInfo.hasSignatureLevel;
@@ -794,6 +799,12 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 					showAbout();
 				}
 			});
+		} else if("file-checksum".equals(id)) {
+			String checksum = apkPath + "\n" + FileUtil.getFileSize(ApkSize, FSStyle.FULL) + "\n\n";
+			checksum += "MD5: " + checkSumMd5 + "\n";
+			checksum += "SHA1: " + FileUtil.getMessageDigest(new File(apkPath), "SHA-1") + "\n";
+			checksum += "SHA256: " + FileUtil.getMessageDigest(new File(apkPath), "SHA-256");
+			showDialog(checksum, "APK Checksum", new Dimension(650, 150), null);
 		} else {
 			showPermDetailDesc(id);
 		}
