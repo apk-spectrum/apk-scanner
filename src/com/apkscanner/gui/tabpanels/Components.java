@@ -118,7 +118,7 @@ public class Components extends JPanel implements TabDataObject
 		//add(scrollPane);
 		//add(IntentPanel);
 		
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
         splitPane.setTopComponent(scrollPane);
         splitPane.setBottomComponent(IntentPanel);
 		

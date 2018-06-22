@@ -1113,7 +1113,7 @@ public class Resources extends JPanel implements TabDataObject {
 
 		contentPanel = new ResouceContentsPanel();
 
-		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
 		splitPane.setLeftComponent(TreePanel);
 		splitPane.setRightComponent(contentPanel);
 		splitPane.setDividerLocation(200);
