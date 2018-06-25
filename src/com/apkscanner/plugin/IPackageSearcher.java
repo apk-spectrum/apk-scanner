@@ -2,7 +2,7 @@ package com.apkscanner.plugin;
 
 import java.awt.Event;
 
-public interface IStoreSearcher extends IPlugIn {
+public interface IPackageSearcher {
 	public static final int SEARCHER_TYPE_PACKAGE_NAME = 0x01;
 	public static final int SEARCHER_TYPE_APP_NAME = 0x02;
 
@@ -14,9 +14,9 @@ public interface IStoreSearcher extends IPlugIn {
 	 */
 	public int getSupportType();
 
-	public String getPreferLangForAppName();
-
 	public boolean trySearch(int type, String name);
 	
 	public void launch(Event event, int type, String name);
+	
+	public String getPreferLangForAppName();
 }

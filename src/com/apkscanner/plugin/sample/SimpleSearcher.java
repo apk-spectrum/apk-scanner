@@ -1,27 +1,17 @@
-package com.apkscanner.plugin;
+package com.apkscanner.plugin.sample;
 
 import java.awt.Desktop;
 import java.awt.Event;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URL;
 import java.net.URLEncoder;
 
-public class SimpleSearcher implements IStoreSearcher {
+import com.apkscanner.plugin.AbstractPackageSearcher;
 
+public class SimpleSearcher extends AbstractPackageSearcher {
 	@Override
 	public int getSupportType() {
 		return SEARCHER_TYPE_PACKAGE_NAME | SEARCHER_TYPE_APP_NAME;
-	}
-
-	@Override
-	public URL getIconURL() {
-		return null;
-	}
-
-	@Override
-	public String getPreferLangForAppName() {
-		return null;
 	}
 
 	@Override
@@ -55,15 +45,5 @@ public class SimpleSearcher implements IStoreSearcher {
 	            e1.printStackTrace();
 	        }
 	    }
-	}
-
-	@Override
-	public String getName() {
-		return getClass().getSimpleName();
-	}
-
-	@Override
-	public int getType() {
-		return IPlugIn.PLUGIN_TPYE_STORE_SEARCHER;
 	}
 }

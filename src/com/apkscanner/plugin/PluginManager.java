@@ -10,7 +10,7 @@ public final class PluginManager {
 		
 	}
 	
-	public IUpdateChecker getUpdateChecker() {
+	static public IUpdateChecker getUpdateChecker() {
 		return null;
 	}
 }
