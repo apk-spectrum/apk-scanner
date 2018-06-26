@@ -2,7 +2,7 @@ package com.apkscanner.plugin;
 
 import java.awt.Event;
 
-public interface IPackageSearcher {
+public interface IPackageSearcher extends IPlugIn {
 	public static final int SEARCHER_TYPE_PACKAGE_NAME = 0x01;
 	public static final int SEARCHER_TYPE_APP_NAME = 0x02;
 

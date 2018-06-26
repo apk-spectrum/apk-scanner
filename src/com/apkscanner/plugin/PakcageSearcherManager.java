@@ -1,45 +1,67 @@
 package com.apkscanner.plugin;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 
-import com.apkscanner.plugin.sample.SimpleSearcher;
-import com.apkscanner.util.ClassFinder;
-import com.apkscanner.util.Log;
-
-public class PakcageSearcherManager {
-	
+public class PakcageSearcherManager
+{
 	private ArrayList<IPackageSearcher> searchers = new ArrayList<IPackageSearcher>();
 
 	public void add(IPackageSearcher searcher) {
 		synchronized(searchers) {
 			if(!searchers.contains(searcher)) {
-				System.out.println(searcher.getClass().getName());
 				searchers.add(searcher);
-				//searcher.launch(null, IStoreSearcher.SEARCHER_TYPE_APP_NAME, "���");
 			}
 		}
 	}
 
-	public void loadPlugIn() {
-    	add(new SimpleSearcher());
-    	
-		try {
-			for(Class<?> cls : ClassFinder.getClasses("com.apkscanner.plugin")) {
-				if(cls.isMemberClass() || cls.isInterface()) continue;
-				Log.e("cls " + cls.getName());
+	public void remove(IPackageSearcher searcher) {
+		synchronized(searchers) {
+			if(searchers.contains(searcher)) {
+				searchers.remove(searcher);
 			}
-		} catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
+		}
+	}
+
+	public void removeAll(Collection<IPackageSearcher> searchers) {
+		synchronized(searchers) {
+			searchers.removeAll(searchers);
+		}
+	}
+
+	public void clear() {
+		synchronized(searchers) {
+			searchers.clear();
 		}
 	}
 
 	public IPackageSearcher[] getList() {
-		return searchers.toArray(new IPackageSearcher[searchers.size()]);
+		synchronized(searchers) {
+			return searchers.toArray(new IPackageSearcher[searchers.size()]);
+		}
 	}
-	
-    public static void main(String[] args) throws IOException {
-    	PakcageSearcherManager manager = new PakcageSearcherManager();
-    	manager.loadPlugIn();
-    }
+
+	public IPackageSearcher[] getList(int type) {
+		synchronized(searchers) {
+			ArrayList<IPackageSearcher> list = new ArrayList<IPackageSearcher>(searchers.size());
+			for(IPackageSearcher searcher: searchers) {
+				if((searcher.getSupportType() & type) == type) {
+					list.add(searcher);
+				}
+			}
+			return list.toArray(new IPackageSearcher[list.size()]);
+		}
+	}
+
+	public IPackageSearcher[] getList(int type, String name) {
+		synchronized(searchers) {
+			ArrayList<IPackageSearcher> list = new ArrayList<IPackageSearcher>(searchers.size());
+			for(IPackageSearcher searcher: searchers) {
+				if(searcher.trySearch(type, name)) {
+					list.add(searcher);
+				}
+			}
+			return list.toArray(new IPackageSearcher[list.size()]);
+		}
+	}
 }

@@ -1,4 +1,4 @@
-package com.apkscanner.plugin;
+package com.apkscanner.plugin.manifest;
 
 public class InvalidManifestException extends Exception {
 	private static final long serialVersionUID = -1418009045489968369L;

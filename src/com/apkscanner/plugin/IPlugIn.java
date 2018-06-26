@@ -40,7 +40,7 @@ public interface IPlugIn {
 	/**
 	 * Get the plug-in type.
 	 * 
-	 * @return an type of plug-in
+	 * @return type of plug-in
 	 */
 	public int getType();
 }
