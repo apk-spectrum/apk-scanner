@@ -444,6 +444,8 @@ public enum Resource
 	BIN_DEX2JAR					(Type.BIN, new Resource[]{ BIN_DEX2JAR_WIN, BIN_DEX2JAR_LNX }),
 
 	BIN_SIGNAPK					(Type.BIN, "signapk.jar"),
+	
+	PLUGIN_PATH					(Type.PLUGIN, ""),	
 
 	PROP_LANGUAGE				(Type.PROP, "language", SystemUtil.getUserLanguage()),
 	PROP_EDITOR					(Type.PROP, "editor", null /* see getDefValue() */),
@@ -489,6 +491,7 @@ public enum Resource
 		TEXT,
 		BIN,
 		LIB,
+		PLUGIN,
 		PROP,
 		ETC
 	}
@@ -643,6 +646,9 @@ public enum Resource
 			break;
 		case LIB:
 			subPath = File.separator + "lib";
+			break;
+		case PLUGIN:
+			subPath = File.separator + "plugin";
 			break;
 		case ETC:
 			subPath = "";

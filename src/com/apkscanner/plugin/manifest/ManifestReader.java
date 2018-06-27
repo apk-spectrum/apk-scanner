@@ -36,6 +36,10 @@ public class ManifestReader
 			throw new InvalidManifestException("XmlPath is null", new NullPointerException());
 		}
 
+		if(manifest.getLastException() != null) {
+			throw new InvalidManifestException("Fail to parse xml", manifest.getLastException());
+		}
+
 		if(manifest.getNodeList("/manifest").getLength() != 1) {
 			throw new InvalidManifestException("Must have only one <manifest> tag on root");
 		}
@@ -102,10 +106,11 @@ public class ManifestReader
 	}
 
 	static private Linker[] makeLinker(@NonNull XmlPath component) {
-		Log.e("makeLinker() " + component.toString());
+		//Log.d("makeLinker() " + component.toString());
 		ArrayList<Linker> linkers = new ArrayList<Linker>();
 		XmlPath node = component.getChildNodes();
 		for(int i = 0; i < node.getLength(); i++) {
+			if(node.getNodeList().item(i).getNodeType() != Node.ELEMENT_NODE) continue;
 			if(!"linker".equals(node.getNodeList().item(i).getNodeName())) {
 				Log.w("this is no linker node : " + node.getNodeList().item(i).getNodeName());
 				continue;
