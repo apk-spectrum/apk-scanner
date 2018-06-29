@@ -3,23 +3,19 @@ package com.apkscanner.plugin;
 import java.awt.Desktop;
 import java.net.URI;
 
+import com.apkscanner.plugin.manifest.Component;
 import com.apkscanner.util.ApkScannerVersion;
 import com.apkscanner.util.Log;
 
 public class UpdateCheckerLinker extends AbstractUpdateChecker
 {
-	private String versionCheckUrl;
-	private String updateUrl;
-
-	public UpdateCheckerLinker(String packageName, String pluginName, String versionCheckUrl, String updateUrl) {
-		super(packageName, pluginName);
-		this.versionCheckUrl = versionCheckUrl;
-		this.updateUrl = updateUrl;
+	public UpdateCheckerLinker(String packageName, Component component) {
+		super(packageName, component);
 	}
 
 	@Override
 	public String getNewVersion() {
-		if(versionCheckUrl == null) return "0.0.0";
+		if(component.url == null) return "0.0.0";
 		return "2.3.6";
 	}
 
@@ -42,7 +38,7 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 			return;
 		}
 
-		String url = updateUrl != null ? updateUrl : versionCheckUrl;
+		String url = component.updateUrl != null ? component.updateUrl : component.url;
 		Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
 		if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
 	        try {

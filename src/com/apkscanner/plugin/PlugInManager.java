@@ -89,25 +89,17 @@ public final class PlugInManager
 			for(Component c: manifest.plugin.components) {
 				switch(c.type) {
 				case Component.TYPE_PACAKGE_SEARCHER_LINKER:
-					int type = 0;
-					for(String s: c.target.split("\\|")) {
-						if(s.toLowerCase().equals("package")) {
-							type |= IPackageSearcher.SEARCHER_TYPE_PACKAGE_NAME;
-						} else if(s.toLowerCase().equals("label")) {
-							type |= IPackageSearcher.SEARCHER_TYPE_APP_NAME;
-						}
-					}
-					IPackageSearcher plugin = new PackageSearcherLinker(manifest.packageName, c.name, type, c.url, c.preferLang);
+					IPackageSearcher plugin = new PackageSearcherLinker(manifest.packageName, c);
 					psm.add(plugin);
 					break;
 				case Component.TYPE_UPDATE_CHECKER_LINKER:
-					IUpdateChecker plugin2 = new UpdateCheckerLinker(manifest.packageName, c.name, c.url, c.updateUrl);
+					IUpdateChecker plugin2 = new UpdateCheckerLinker(manifest.packageName, c);
 					//plugin2.launch();
 					Log.e(plugin2.getNewVersion());
 					Log.e(" " + plugin2.checkNewVersion(Resource.STR_APP_VERSION.getString()));
 					break;
 				case Component.TYPE_EXTERNAL_TOOL_LINKER:
-					//IExternalTool plugin3 = new ExternalToolLinker(manifest.packageName, c.name, c.path, c.param);
+					//IExternalTool plugin3 = new ExternalToolLinker(manifest.packageName, c);
 					//plugin3.launch("abc.apk");
 					break;
 				default: 

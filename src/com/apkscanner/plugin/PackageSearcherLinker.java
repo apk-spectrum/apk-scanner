@@ -6,27 +6,31 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 
+import com.apkscanner.plugin.manifest.Component;
+
 public class PackageSearcherLinker extends AbstractPackageSearcher
 {
-	private int searchType;
-	private String searchUrl;
-	private String preferLanguage;
 
-	public PackageSearcherLinker(String packageName, String pluginName, int searchType, String searchUrl, String preferLanguage) {
-		super(packageName, pluginName);
-		this.searchType = searchType;
-		this.searchUrl = searchUrl;
-		this.preferLanguage = preferLanguage;
+	public PackageSearcherLinker(String packageName, Component component) {
+		super(packageName, component);
 	}
 
 	@Override
 	public int getSupportType() {
-		return searchType;
+		int type = 0;
+		for(String s: component.target.split("\\|")) {
+			if(s.toLowerCase().equals("package")) {
+				type |= IPackageSearcher.SEARCHER_TYPE_PACKAGE_NAME;
+			} else if(s.toLowerCase().equals("label")) {
+				type |= IPackageSearcher.SEARCHER_TYPE_APP_NAME;
+			}
+		}
+		return type;
 	}
 
 	@Override
 	public String getPreferLangForAppName() {
-		return preferLanguage;
+		return component.preferLang;
 	}
 
 	@Override
@@ -45,7 +49,7 @@ public class PackageSearcherLinker extends AbstractPackageSearcher
 			e.printStackTrace();
 			filter = name;
 		}
-		String url = searchUrl.replaceAll("%[tT][aA][rR][gG][eE][tT]%", filter);
+		String url = component.url.replaceAll("%[tT][aA][rR][gG][eE][tT]%", filter);
 		Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
 		if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
 	        try {

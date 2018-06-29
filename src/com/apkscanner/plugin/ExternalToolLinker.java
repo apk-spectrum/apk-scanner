@@ -1,21 +1,17 @@
 package com.apkscanner.plugin;
 
+import com.apkscanner.plugin.manifest.Component;
 import com.apkscanner.util.ConsolCmd;
 
 public class ExternalToolLinker extends AbstractExternalTool
 {
-	private String path;
-	private String param;
-
-	public ExternalToolLinker(String packageName, String pluginName, String path, String param) {
-		super(packageName, pluginName);
-		this.path = path;
-		this.param = param;
+	public ExternalToolLinker(String packageName, Component component) {
+		super(packageName, component);
 	}
 
 	@Override
 	public void launch(String apkPath) {
-		String tmp = param.replaceAll("%[aA][pP][kK]_[pP][aA][tT][hH]%", apkPath);
-		ConsolCmd.exc(new String[] {path, tmp}, true, null);		
+		String tmp = component.param.replaceAll("%[aA][pP][kK]_[pP][aA][tT][hH]%", apkPath);
+		ConsolCmd.exc(new String[] {component.path, tmp}, true, null);		
 	}
 }

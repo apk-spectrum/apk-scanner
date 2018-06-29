@@ -1,8 +1,10 @@
 package com.apkscanner.plugin;
 
+import com.apkscanner.plugin.manifest.Component;
+
 public abstract class AbstractPackageSearcher extends AbstractPlugIn implements IPackageSearcher {
-	public AbstractPackageSearcher(String packageName, String pluginName) {
-		super(packageName, pluginName);
+	public AbstractPackageSearcher(String packageName, Component component) {
+		super(packageName, component);
 	}
 
 	@Override

@@ -1,15 +1,20 @@
 package com.apkscanner.plugin;
 
+import java.net.MalformedURLException;
 import java.net.URL;
+
+import com.apkscanner.plugin.manifest.Component;
 
 public abstract class AbstractPlugIn implements IPlugIn
 {
-	private String packageName;
-	private String pluginName;
+	protected String packageName;
+	protected Component component;
+	protected boolean enable;
 
-	public AbstractPlugIn(String packageName, String pluginName) {
+	public AbstractPlugIn(String packageName, Component component) {
 		this.packageName = packageName;
-		this.pluginName = pluginName;
+		this.component = component;
+		this.enable = component.enable;
 	}
 
 	public String getPackageName() {
@@ -17,23 +22,28 @@ public abstract class AbstractPlugIn implements IPlugIn
 	}
 
 	public String getName() {
-		return pluginName;
+		return component.name;
 	}
 
 	public URL getIconURL() {
+		try {
+			return new URL(component.icon);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	public String getLabel() {
-		return null;
+		return component.label;
 	}
 
 	public String getDescription() {
-		return null;
+		return component.description;
 	}
 
 	public boolean isEnabled() {
-		return true;
+		return enable;
 	}
 
 	public int getType() {

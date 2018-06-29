@@ -7,10 +7,11 @@ import java.net.URI;
 import java.net.URLEncoder;
 
 import com.apkscanner.plugin.AbstractPackageSearcher;
+import com.apkscanner.plugin.manifest.Component;
 
 public class SimpleSearcher extends AbstractPackageSearcher {
-	public SimpleSearcher(String packageName, String pluginName) {
-		super(packageName, pluginName);
+	public SimpleSearcher(String packageName, Component component) {
+		super(packageName, component);
 	}
 
 	@Override
