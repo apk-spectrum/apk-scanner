@@ -1,4 +1,4 @@
-package com.apkscanner.plugin.sample;
+package com.apkscanner.plugin;
 
 import java.awt.Desktop;
 import java.awt.Event;
@@ -6,41 +6,46 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 
-import com.apkscanner.plugin.AbstractPackageSearcher;
+public class PackageSearcherLinker extends AbstractPackageSearcher
+{
+	private int searchType;
+	private String searchUrl;
+	private String preferLanguage;
 
-public class SimpleSearcher extends AbstractPackageSearcher {
-	public SimpleSearcher(String packageName, String pluginName) {
+	public PackageSearcherLinker(String packageName, String pluginName, int searchType, String searchUrl, String preferLanguage) {
 		super(packageName, pluginName);
+		this.searchType = searchType;
+		this.searchUrl = searchUrl;
+		this.preferLanguage = preferLanguage;
 	}
 
 	@Override
 	public int getSupportType() {
-		return SEARCHER_TYPE_PACKAGE_NAME | SEARCHER_TYPE_APP_NAME;
+		return searchType;
+	}
+
+	@Override
+	public String getPreferLangForAppName() {
+		return preferLanguage;
 	}
 
 	@Override
 	public boolean trySearch(int type, String name) {
-		return (getSupportType() & type) == type && Integer.bitCount(type) == 1;
+		return (getSupportType() & type) == type && name != null && !name.trim().isEmpty();
 	}
 
 	@Override
 	public void launch(Event event, int type, String name) {
 		if(!trySearch(type, name)) return;
-		String url = "https://play.google.com/store";
 
 		String filter = null;
 		try {
 			filter = URLEncoder.encode(name, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
+			filter = name;
 		}
-
-		if(type == SEARCHER_TYPE_PACKAGE_NAME) {
-			url += "/apps/details?id=" + filter;
-		} else if(type == SEARCHER_TYPE_APP_NAME) {
-			url += "/search?q=" + filter + "&c=apps";
-		}
-
+		String url = searchUrl.replaceAll("%[tT][aA][rR][gG][eE][tT]%", filter);
 		Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
 		if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
 	        try {

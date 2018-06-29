@@ -3,9 +3,11 @@ package com.apkscanner.plugin;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import com.apkscanner.plugin.manifest.Component;
 import com.apkscanner.plugin.manifest.InvalidManifestException;
 import com.apkscanner.plugin.manifest.Manifest;
 import com.apkscanner.plugin.manifest.ManifestReader;
@@ -15,6 +17,7 @@ import com.apkscanner.util.Log;
 public final class PlugInManager
 {
 	private static PakcageSearcherManager psm = new PakcageSearcherManager();
+	private static HashMap<String, Manifest> pluginPackages = new HashMap<String, Manifest>();
 
 	private PlugInManager() { }
 
@@ -76,17 +79,63 @@ public final class PlugInManager
 	}
 	
 	public static void createPlugInInstance(Manifest manifest, File jarPath) {
-		if(manifest != null) {
-			Log.e(manifest.packageName);
-			Log.e(manifest.plugin.icon);
-			Log.e("enable " + manifest.plugin.enable);
-			Log.e(manifest.plugin.components[0].name);
-			Log.e(manifest.plugin.components[1].linkers[0].url);
-			Log.e(manifest.plugin.components[1].linkers[1].target);
+		if(manifest == null) return;
+		Log.v(manifest.packageName);
+		Log.v(manifest.versionCode + "");
+		Log.v(manifest.versionName);
+		Log.v(manifest.minScannerVersion);
+		if(jarPath == null) {
+			pluginPackages.put(manifest.packageName, manifest);
+			for(Component c: manifest.plugin.components) {
+				switch(c.type) {
+				case Component.TYPE_PACAKGE_SEARCHER_LINKER:
+					int type = 0;
+					for(String s: c.target.split("\\|")) {
+						if(s.toLowerCase().equals("package")) {
+							type |= IPackageSearcher.SEARCHER_TYPE_PACKAGE_NAME;
+						} else if(s.toLowerCase().equals("label")) {
+							type |= IPackageSearcher.SEARCHER_TYPE_APP_NAME;
+						}
+					}
+					IPackageSearcher plugin = new PackageSearcherLinker(manifest.packageName, c.name, type, c.url, c.preferLang);
+					psm.add(plugin);
+					break;
+				case Component.TYPE_UPDATE_CHECKER_LINKER:
+					IUpdateChecker plugin2 = new UpdateCheckerLinker(manifest.packageName, c.name, c.url, c.updateUrl);
+					//plugin2.launch();
+					Log.e(plugin2.getNewVersion());
+					Log.e(" " + plugin2.checkNewVersion(Resource.STR_APP_VERSION.getString()));
+					break;
+				case Component.TYPE_EXTERNAL_TOOL_LINKER:
+					//IExternalTool plugin3 = new ExternalToolLinker(manifest.packageName, c.name, c.path, c.param);
+					//plugin3.launch("abc.apk");
+					break;
+				default: 
+					break;
+				}
+			}
+		} else {
+			Log.e("" + jarPath.getAbsolutePath());
+			for(Component c: manifest.plugin.components) {
+				switch(c.type) {
+				case Component.TYPE_PACAKGE_SEARCHER:
+					break;
+				case Component.TYPE_UPDATE_CHECKER_LINKER:
+					break;
+				case Component.TYPE_EXTERNAL_TOOL_LINKER:
+					break;
+				}
+			}
 		}
 	}
 
     public static void main(String[] args) throws IOException {
     	loadPlugIn();
+
+    	IPackageSearcher[] searchers = getPackageSearchers();
+    	if(searchers != null && searchers.length > 1) {
+    		//searchers[1].launch(null, IPackageSearcher.SEARCHER_TYPE_APP_NAME, "멜론");
+    		Log.e(searchers[1].getPreferLangForAppName());
+    	}
     }
 }

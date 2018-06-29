@@ -4,26 +4,46 @@ import java.net.URL;
 
 public abstract class AbstractPlugIn implements IPlugIn
 {
-	public String getPackageName() {
-		return getClass().getPackage().getName();
+	private String packageName;
+	private String pluginName;
+
+	public AbstractPlugIn(String packageName, String pluginName) {
+		this.packageName = packageName;
+		this.pluginName = pluginName;
 	}
-	
+
+	public String getPackageName() {
+		return packageName;
+	}
+
 	public String getName() {
-		return getClass().getSimpleName();
+		return pluginName;
 	}
 
 	public URL getIconURL() {
 		return null;
 	}
 
+	public String getLabel() {
+		return null;
+	}
+
+	public String getDescription() {
+		return null;
+	}
+
+	public boolean isEnabled() {
+		return true;
+	}
+
 	public int getType() {
-		if(this instanceof AbstractPackageSearcher) {
+		if(this instanceof IPackageSearcher) {
 			return PLUGIN_TPYE_PACKAGE_SEARCHER; 
 		}
-		if(this instanceof AbstractUpdateChecker) {
+		if(this instanceof IUpdateChecker) {
 			return PLUGIN_TPYE_UPDATE_CHECKER; 
 		}
-		if(this instanceof AbstractExternalTool) {
+		if(this instanceof IExternalTool) {
 			return PLUGIN_TPYE_EXTRA_TOOL; 
 		}
 		return PLUGIN_TPYE_UNKNOWN;

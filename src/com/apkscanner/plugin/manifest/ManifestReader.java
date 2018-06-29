@@ -55,7 +55,7 @@ public class ManifestReader
 		XmlPath node = manifest.getNode("/manifest");
 		String packageName = node.getAttributes("package");
 		String versionName = node.getAttributes("versionName");
-		int versionCode = Integer.valueOf(node.getAttributes("versionCode"));
+		int versionCode = node.getAttributes("versionCode") != null ? Integer.valueOf(node.getAttributes("versionCode")) : 0;
 		String minScannerVersion = node.getAttributes("minScannerVersion");
 		
 		PlugIn plugin = makePlugin(manifest);
@@ -98,13 +98,34 @@ public class ManifestReader
 				String description = node.getAttributes("description");
 				String name = node.getAttributes("name");
 				String url = node.getAttributes("url");
-				Linker[] linkers = makeLinker(node);
-				components.add(new Component(type, enable, label, icon, description, name, url, linkers));
+				
+				//Linker[] linkers = makeLinker(node);
+				String target = null;
+				String preferLang = null;
+				String path = null;
+				String param = null;
+				String updateUrl = null;
+				switch(type) {
+				case Component.TYPE_PACAKGE_SEARCHER_LINKER:
+					target = node.getAttributes("target");
+					preferLang = node.getAttributes("preferLanguage");
+					break;
+				case Component.TYPE_UPDATE_CHECKER_LINKER:
+					updateUrl = node.getAttributes("updateUrl");
+					break;
+				case Component.TYPE_EXTERNAL_TOOL_LINKER:
+					path = node.getAttributes("path");
+					param = node.getAttributes("param");
+					break;
+				}
+				components.add(new Component(type, enable, label, icon, description, name, url, /* linkers */
+						target, preferLang, path, param, updateUrl));
 			}
 		}
 		return components.toArray(new Component[components.size()]);
 	}
 
+	@SuppressWarnings("unused")
 	static private Linker[] makeLinker(@NonNull XmlPath component) {
 		//Log.d("makeLinker() " + component.toString());
 		ArrayList<Linker> linkers = new ArrayList<Linker>();

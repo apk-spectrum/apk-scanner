@@ -43,4 +43,10 @@ public interface IPlugIn {
 	 * @return type of plug-in
 	 */
 	public int getType();
+
+	public String getLabel();
+	
+	public String getDescription();
+	
+	public boolean isEnabled();
 }
