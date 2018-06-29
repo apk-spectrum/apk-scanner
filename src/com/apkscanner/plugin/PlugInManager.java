@@ -3,6 +3,10 @@ package com.apkscanner.plugin;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -106,15 +110,47 @@ public final class PlugInManager
 					break;
 				}
 			}
-		} else {
-			Log.e("" + jarPath.getAbsolutePath());
+		} else {			
+            URLClassLoader loader = null;
+			try {
+				URL classURL = new URL("jar:" + jarPath.toURI().toURL() + "!/");
+	            loader = new URLClassLoader(new URL [] {classURL});
+			} catch (MalformedURLException e1) {
+				e1.printStackTrace();
+			}
+	        if(loader == null) {
+	        	return;
+	        }
+			
 			for(Component c: manifest.plugin.components) {
+				if(c.name == null || c.name.isEmpty() || c.name.endsWith(".")) {
+					continue;
+				}
+			    String className = (c.name.startsWith(".") ? manifest.packageName : "") + c.name;
+
+			    IPlugIn object = null;
+		        try {
+		            Class<?> clazz = loader.loadClass(className);
+		            object = (IPlugIn)clazz.getDeclaredConstructor(String.class, Component.class).newInstance(manifest.packageName, c);
+		        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+		        	e.printStackTrace();
+		        } catch (IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+					e.printStackTrace();
+				}
+		        if(object == null) {
+		        	continue;
+		        }
 				switch(c.type) {
 				case Component.TYPE_PACAKGE_SEARCHER:
+					if(object instanceof IPackageSearcher) {
+						psm.add((IPackageSearcher)object);
+					} else {
+						Log.e("Class was no matched to IPackageSearcher : " + className);
+					}
 					break;
-				case Component.TYPE_UPDATE_CHECKER_LINKER:
+				case Component.TYPE_UPDATE_CHECKER:
 					break;
-				case Component.TYPE_EXTERNAL_TOOL_LINKER:
+				case Component.TYPE_EXTERNAL_TOOL:
 					break;
 				}
 			}
