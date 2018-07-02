@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -21,6 +22,8 @@ import com.apkscanner.util.Log;
 public final class PlugInManager
 {
 	private static PakcageSearcherManager psm = new PakcageSearcherManager();
+	private static ArrayList<IPlugIn> plugins = new ArrayList<IPlugIn>();
+	
 	private static HashMap<String, Manifest> pluginPackages = new HashMap<String, Manifest>();
 
 	private PlugInManager() { }
@@ -55,16 +58,16 @@ public final class PlugInManager
 				return name.endsWith(".xml") || name.endsWith(".jar");
 			}
 		});
-		for(File plugin: pluginFiles) {
+		for(File pluginFile: pluginFiles) {
 			boolean isLinker = false;
 			Manifest manifest = null;
 			ZipFile zipFile = null;
 			try {
-				isLinker = plugin.getName().endsWith(".xml");
+				isLinker = pluginFile.getName().endsWith(".xml");
 				if(isLinker) {
-					manifest = ManifestReader.readManifest(plugin);
+					manifest = ManifestReader.readManifest(pluginFile);
 				} else {
-					zipFile = new ZipFile(plugin);
+					zipFile = new ZipFile(pluginFile);
 					ZipEntry entry = zipFile.getEntry("Manifest.xml");
 					manifest = ManifestReader.readManifest(zipFile.getInputStream(entry));
 				}
@@ -78,83 +81,109 @@ public final class PlugInManager
 					} catch (IOException e) { }
 				}
 			}
-			createPlugInInstance(manifest, !isLinker ? plugin : null );
+			
+			if(createPlugInInstance(manifest, !isLinker ? pluginFile : null)) {
+				pluginPackages.put(manifest.packageName, manifest);	
+			}
 		}
 	}
 	
-	public static void createPlugInInstance(Manifest manifest, File jarPath) {
-		if(manifest == null) return;
+	public static boolean createPlugInInstance(Manifest manifest, File jarFile) {
+		if(manifest == null) return false;
 		Log.v(manifest.packageName);
 		Log.v(manifest.versionCode + "");
 		Log.v(manifest.versionName);
 		Log.v(manifest.minScannerVersion);
-		if(jarPath == null) {
-			pluginPackages.put(manifest.packageName, manifest);
-			for(Component c: manifest.plugin.components) {
-				switch(c.type) {
-				case Component.TYPE_PACAKGE_SEARCHER_LINKER:
-					IPackageSearcher plugin = new PackageSearcherLinker(manifest.packageName, c);
-					psm.add(plugin);
-					break;
-				case Component.TYPE_UPDATE_CHECKER_LINKER:
-					IUpdateChecker plugin2 = new UpdateCheckerLinker(manifest.packageName, c);
-					//plugin2.launch();
-					Log.e(plugin2.getNewVersion());
-					Log.e(" " + plugin2.checkNewVersion(Resource.STR_APP_VERSION.getString()));
-					break;
-				case Component.TYPE_EXTERNAL_TOOL_LINKER:
-					//IExternalTool plugin3 = new ExternalToolLinker(manifest.packageName, c);
-					//plugin3.launch("abc.apk");
-					break;
-				default: 
-					break;
-				}
-			}
-		} else {			
-            URLClassLoader loader = null;
+
+		boolean hasPlugins = false;
+		URLClassLoader loader = null;
+		if(jarFile != null) {
 			try {
-				URL classURL = new URL("jar:" + jarPath.toURI().toURL() + "!/");
+				URL classURL = new URL("jar:" + jarFile.toURI().toURL() + "!/");
 	            loader = new URLClassLoader(new URL [] {classURL});
 			} catch (MalformedURLException e1) {
 				e1.printStackTrace();
 			}
 	        if(loader == null) {
-	        	return;
+	        	Log.e("URLClassLoader is null : " + jarFile.getPath());
+	        	return false;
 	        }
-			
-			for(Component c: manifest.plugin.components) {
+		}
+		
+		for(Component c: manifest.plugin.components) {
+			IPlugIn plugin = null;
+			switch(c.type) {
+			case Component.TYPE_PACAKGE_SEARCHER_LINKER:
+				plugin = new PackageSearcherLinker(manifest.packageName, c);
+				psm.add((IPackageSearcher)plugin);
+				break;
+			case Component.TYPE_UPDATE_CHECKER_LINKER:
+				plugin = new UpdateCheckerLinker(manifest.packageName, c);
+				break;
+			case Component.TYPE_EXTERNAL_TOOL_LINKER:
+				plugin = new ExternalToolLinker(manifest.packageName, c);
+				break;
+			default:
+				if(jarFile == null) {
+					Log.w("XML plug-ins need only the LINKER plug-in. This type is not supported : " +  c.type);
+					break;
+				}
+
 				if(c.name == null || c.name.isEmpty() || c.name.endsWith(".")) {
+					Log.w("error: Illegal class name : \"" + c.name + "\"");
 					continue;
 				}
 			    String className = (c.name.startsWith(".") ? manifest.packageName : "") + c.name;
 
-			    IPlugIn object = null;
 		        try {
 		            Class<?> clazz = loader.loadClass(className);
-		            object = (IPlugIn)clazz.getDeclaredConstructor(String.class, Component.class).newInstance(manifest.packageName, c);
+		            plugin = (IPlugIn)clazz.getDeclaredConstructor(String.class, Component.class).newInstance(manifest.packageName, c);
 		        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-		        	e.printStackTrace();
+		        	Log.e("Fail loadClass : " + className + ", " + e.getMessage());
 		        } catch (IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-					e.printStackTrace();
+		        	Log.e("Fail newInstance : " + className + ", " + e.getMessage());
 				}
-		        if(object == null) {
+		        if(plugin == null) {
+		        	Log.e("plugin is null : " + className);
 		        	continue;
 		        }
+
 				switch(c.type) {
 				case Component.TYPE_PACAKGE_SEARCHER:
-					if(object instanceof IPackageSearcher) {
-						psm.add((IPackageSearcher)object);
+					if(plugin instanceof IPackageSearcher) {
+						psm.add((IPackageSearcher)plugin);
 					} else {
 						Log.e("Class was no matched to IPackageSearcher : " + className);
+						plugin = null;
 					}
 					break;
 				case Component.TYPE_UPDATE_CHECKER:
+					if(!(plugin instanceof IUpdateChecker)) {
+						Log.e("Class was no matched to IUpdateChecker : " + className);
+						plugin = null;
+					}
 					break;
 				case Component.TYPE_EXTERNAL_TOOL:
+					if(!(plugin instanceof IExternalTool)) {
+						Log.e("Class was no matched to IExternalTool : " + className);
+						plugin = null;
+					}
+					break;
+				default:
+					Log.e("Unknown type : " + c.type);
+					plugin = null;
 					break;
 				}
+				break;
+			}
+
+			if(plugin != null) {
+				plugins.add(plugin);
+				hasPlugins = true;
 			}
 		}
+
+		return hasPlugins;
 	}
 
     public static void main(String[] args) throws IOException {
