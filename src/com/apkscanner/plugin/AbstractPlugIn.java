@@ -7,18 +7,18 @@ import com.apkscanner.plugin.manifest.Component;
 
 public abstract class AbstractPlugIn implements IPlugIn
 {
-	protected String packageName;
+	protected PlugInPackage pluginPackage;
 	protected Component component;
 	protected boolean enable;
 
-	public AbstractPlugIn(String packageName, Component component) {
-		this.packageName = packageName;
+	public AbstractPlugIn(PlugInPackage pluginPackage, Component component) {
+		this.pluginPackage = pluginPackage;
 		this.component = component;
-		this.enable = component.enable;
+		this.enable = component != null ? component.enable : false;
 	}
 
 	public String getPackageName() {
-		return packageName;
+		return pluginPackage.getPackageName();
 	}
 
 	public String getName() {
@@ -35,11 +35,15 @@ public abstract class AbstractPlugIn implements IPlugIn
 	}
 
 	public String getLabel() {
-		return component.label;
+		return pluginPackage.getResourceString(component.label);
 	}
 
 	public String getDescription() {
-		return component.description;
+		return pluginPackage.getResourceString(component.description);
+	}
+
+	public void setEnable(boolean enable) {
+		this.enable = enable;
 	}
 
 	public boolean isEnabled() {

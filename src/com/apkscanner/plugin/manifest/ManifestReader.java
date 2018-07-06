@@ -30,7 +30,7 @@ public class ManifestReader
 		}
 		return makeManifest(new XmlPath(input));
 	}
-	
+
 	static private Manifest makeManifest(@NonNull XmlPath manifest) throws InvalidManifestException {
 		if(manifest == null) {
 			throw new InvalidManifestException("XmlPath is null", new NullPointerException());
@@ -57,12 +57,13 @@ public class ManifestReader
 		String versionName = node.getAttributes("versionName");
 		int versionCode = node.getAttributes("versionCode") != null ? Integer.valueOf(node.getAttributes("versionCode")) : 0;
 		String minScannerVersion = node.getAttributes("minScannerVersion");
-		
-		PlugIn plugin = makePlugin(manifest);
 
-		return new Manifest(packageName, versionName, versionCode, minScannerVersion, plugin);
+		PlugIn plugin = makePlugin(manifest);
+		Resources[] resources = makeResources(manifest);
+
+		return new Manifest(packageName, versionName, versionCode, minScannerVersion, plugin, resources);
 	}
-	
+
 	static private PlugIn makePlugin(@NonNull XmlPath manifest) {
 		XmlPath node = manifest.getNode("/manifest/plugin");
 		boolean enable = !"false".equals(node.getAttributes("enable"));
@@ -74,7 +75,7 @@ public class ManifestReader
 		Component[] components =  makeComponents(manifest);
 		return new PlugIn(enable, label, icon, description, pluginSize, components);
 	}
-	
+
 	static private Component[] makeComponents(@NonNull XmlPath manifest) {
 		ArrayList<Component> components = new ArrayList<Component>();
 		NodeList list = manifest.getNode("/manifest/plugin").getChildNodes().getNodeList();
@@ -98,7 +99,7 @@ public class ManifestReader
 				String description = node.getAttributes("description");
 				String name = node.getAttributes("name");
 				String url = node.getAttributes("url");
-				
+
 				//Linker[] linkers = makeLinker(node);
 				String target = null;
 				String preferLang = null;
@@ -142,5 +143,29 @@ public class ManifestReader
 			linkers.add(new Linker(url, target, preferLang));
 		}
 		return !linkers.isEmpty() ? linkers.toArray(new Linker[linkers.size()]) : null;
+	}
+
+	private static Resources[] makeResources(XmlPath manifest) {
+		ArrayList<Resources> resources = new ArrayList<Resources>();
+		XmlPath node = manifest.getNodeList("/manifest/resources");
+		for(int i = 0; i < node.getLength(); i++) {
+			String src = node.getAttributes(i, "src");
+			String lang = node.getAttributes(i, "lang");
+			ArrayList<StringData> datas = new ArrayList<StringData>();
+			XmlPath child = node.getChildNodes(i);
+			
+			for(int j=0; j<child.getLength(); j++) {
+				if(child.getNodeList().item(j).getNodeType() != Node.ELEMENT_NODE) continue;
+				if(!"string".equals(child.getNodeList().item(j).getNodeName())) {
+					Log.w("this is no string node : " + child.getNodeList().item(j).getNodeName());
+					continue;
+				}
+				String name = child.getAttributes(j, "name");
+				String data = child.getTextContent(j);
+				datas.add(new StringData(name, data));	
+			}
+			resources.add(new Resources(src, lang, datas.toArray(new StringData[datas.size()])));
+		}
+		return resources.toArray(new Resources[resources.size()]);
 	}
 }

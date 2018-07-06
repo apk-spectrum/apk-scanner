@@ -11,8 +11,8 @@ import com.apkscanner.plugin.manifest.Component;
 public class PackageSearcherLinker extends AbstractPackageSearcher
 {
 
-	public PackageSearcherLinker(String packageName, Component component) {
-		super(packageName, component);
+	public PackageSearcherLinker(PlugInPackage pluginPackage, Component component) {
+		super(pluginPackage, component);
 	}
 
 	@Override

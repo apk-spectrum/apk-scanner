@@ -5,8 +5,8 @@ import com.apkscanner.util.ConsolCmd;
 
 public class ExternalToolLinker extends AbstractExternalTool
 {
-	public ExternalToolLinker(String packageName, Component component) {
-		super(packageName, component);
+	public ExternalToolLinker(PlugInPackage pluginPackage, Component component) {
+		super(pluginPackage, component);
 	}
 
 	@Override

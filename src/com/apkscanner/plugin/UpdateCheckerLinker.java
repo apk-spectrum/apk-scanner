@@ -9,8 +9,8 @@ import com.apkscanner.util.Log;
 
 public class UpdateCheckerLinker extends AbstractUpdateChecker
 {
-	public UpdateCheckerLinker(String packageName, Component component) {
-		super(packageName, component);
+	public UpdateCheckerLinker(PlugInPackage pluginPackage, Component component) {
+		super(pluginPackage, component);
 	}
 
 	@Override
