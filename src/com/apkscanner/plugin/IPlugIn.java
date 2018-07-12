@@ -51,4 +51,6 @@ public interface IPlugIn {
 	public boolean isEnabled();
 	
 	public void setEnable(boolean enable);
+	
+	public String getPackageName();
 }

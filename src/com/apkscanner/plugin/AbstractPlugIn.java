@@ -17,14 +17,17 @@ public abstract class AbstractPlugIn implements IPlugIn
 		this.enable = component != null ? component.enable : false;
 	}
 
+	@Override
 	public String getPackageName() {
 		return pluginPackage.getPackageName();
 	}
 
+	@Override
 	public String getName() {
 		return component.name;
 	}
 
+	@Override
 	public URL getIconURL() {
 		try {
 			return new URL(component.icon);
@@ -34,22 +37,27 @@ public abstract class AbstractPlugIn implements IPlugIn
 		return null;
 	}
 
+	@Override
 	public String getLabel() {
 		return pluginPackage.getResourceString(component.label);
 	}
 
+	@Override
 	public String getDescription() {
 		return pluginPackage.getResourceString(component.description);
 	}
 
+	@Override
 	public void setEnable(boolean enable) {
 		this.enable = enable;
 	}
 
+	@Override
 	public boolean isEnabled() {
 		return enable;
 	}
 
+	@Override
 	public int getType() {
 		if(this instanceof IPackageSearcher) {
 			return PLUGIN_TPYE_PACKAGE_SEARCHER; 

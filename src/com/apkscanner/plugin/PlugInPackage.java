@@ -16,6 +16,7 @@ import java.util.HashMap;
 import org.w3c.dom.NodeList;
 
 import com.apkscanner.plugin.manifest.Component;
+import com.apkscanner.plugin.manifest.Configuration;
 import com.apkscanner.plugin.manifest.InvalidManifestException;
 import com.apkscanner.plugin.manifest.Manifest;
 import com.apkscanner.plugin.manifest.ManifestReader;
@@ -112,7 +113,7 @@ public class PlugInPackage
 		Log.v(manifest.versionCode + "");
 		Log.v(manifest.versionName);
 
-		ArrayList<IPlugIn> plugins = new ArrayList<IPlugIn>();
+		ArrayList<IPlugIn> plugins = new ArrayList<>();
 		URLClassLoader loader = null;
 		boolean isJarPackage = isJarPackage(pluginFile.toURI());
 		if(isJarPackage) {
@@ -201,7 +202,7 @@ public class PlugInPackage
 
 	private HashMap<String, HashMap<String,String>> loadResource(File pluginFile, Manifest manifest) {
 		if(manifest == null || manifest.resources == null) return null;
-		HashMap<String, HashMap<String,String>> resources = new HashMap<String, HashMap<String,String>>();
+		HashMap<String, HashMap<String,String>> resources = new HashMap<>();
 
 		for(Resources res: manifest.resources) {
 			String lang = res.lang != null ? res.lang.trim() : "";
@@ -209,7 +210,7 @@ public class PlugInPackage
 			if(resources.containsKey(lang)) {
 				map = resources.get(lang);
 			} else {
-				map = new HashMap<String, String>();
+				map = new HashMap<>();
 				resources.put(lang, map);
 			}
 			if(res.src != null && !res.src.trim().isEmpty()) {
@@ -250,7 +251,7 @@ public class PlugInPackage
 
 	public String getResourceString(String name) {
 		if(resources == null || name == null || !name.startsWith("@")) return name;
-		String lang = PluginConfigure.getLang();
+		String lang = PluginConfiguration.getLang();
 		String id = name.substring(1);
 		String value = null;
 		if(resources.containsKey(lang) && resources.get(lang).containsKey(id)) {
@@ -301,5 +302,19 @@ public class PlugInPackage
 			Log.e(e.getMessage());
 		}
 		return uri;
+	}
+	
+	public String getConfiguration(String key) {
+		if(key == null) return null;
+		String value = null;
+		for(Configuration c: manifest.configuration) {
+			if(key.equals(c.name)) {
+				value = c.value;				
+			}
+		}
+		if(value == null) {
+			value = PluginConfiguration.getConfiguration(key);
+		}
+		return value;
 	}
 }

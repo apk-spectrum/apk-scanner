@@ -60,8 +60,9 @@ public class ManifestReader
 
 		PlugIn plugin = makePlugin(manifest);
 		Resources[] resources = makeResources(manifest);
+		Configuration[] configuration = makeConfigurations(manifest);
 
-		return new Manifest(packageName, versionName, versionCode, minScannerVersion, plugin, resources);
+		return new Manifest(packageName, versionName, versionCode, minScannerVersion, plugin, resources, configuration);
 	}
 
 	static private PlugIn makePlugin(@NonNull XmlPath manifest) {
@@ -77,7 +78,7 @@ public class ManifestReader
 	}
 
 	static private Component[] makeComponents(@NonNull XmlPath manifest) {
-		ArrayList<Component> components = new ArrayList<Component>();
+		ArrayList<Component> components = new ArrayList<>();
 		NodeList list = manifest.getNode("/manifest/plugin").getChildNodes().getNodeList();
 		for(int i = 0; i < list.getLength(); i++) {
 			Node element = list.item(i);
@@ -129,7 +130,7 @@ public class ManifestReader
 	@SuppressWarnings("unused")
 	static private Linker[] makeLinker(@NonNull XmlPath component) {
 		//Log.d("makeLinker() " + component.toString());
-		ArrayList<Linker> linkers = new ArrayList<Linker>();
+		ArrayList<Linker> linkers = new ArrayList<>();
 		XmlPath node = component.getChildNodes();
 		for(int i = 0; i < node.getLength(); i++) {
 			if(node.getNodeList().item(i).getNodeType() != Node.ELEMENT_NODE) continue;
@@ -146,12 +147,12 @@ public class ManifestReader
 	}
 
 	private static Resources[] makeResources(XmlPath manifest) {
-		ArrayList<Resources> resources = new ArrayList<Resources>();
+		ArrayList<Resources> resources = new ArrayList<>();
 		XmlPath node = manifest.getNodeList("/manifest/resources");
 		for(int i = 0; i < node.getLength(); i++) {
 			String src = node.getAttributes(i, "src");
 			String lang = node.getAttributes(i, "lang");
-			ArrayList<StringData> datas = new ArrayList<StringData>();
+			ArrayList<StringData> datas = new ArrayList<>();
 			XmlPath child = node.getChildNodes(i);
 			
 			for(int j=0; j<child.getLength(); j++) {
@@ -167,5 +168,16 @@ public class ManifestReader
 			resources.add(new Resources(src, lang, datas.toArray(new StringData[datas.size()])));
 		}
 		return resources.toArray(new Resources[resources.size()]);
+	}
+
+	private static Configuration[] makeConfigurations(XmlPath manifest) {
+		ArrayList<Configuration> configurations = new ArrayList<>();
+		XmlPath node = manifest.getNodeList("/manifest/configuration");
+		for(int i = 0; i < node.getLength(); i++) {
+			String name = node.getAttributes(i, "name");
+			String value = node.getAttributes(i, "value");
+			configurations.add(new Configuration(name, value));
+		}
+		return configurations.toArray(new Configuration[configurations.size()]);
 	}
 }
