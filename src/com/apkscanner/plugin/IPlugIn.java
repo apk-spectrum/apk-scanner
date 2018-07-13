@@ -11,18 +11,23 @@ public interface IPlugIn {
 	/**
 	 * Check to latest version and update for APK Scanner. 
 	 */
-	public static final int PLUGIN_TPYE_UPDATE_CHECKER = 1;
+	public static final int PLUGIN_TPYE_UPDATE_CHECKER = 0x01;
 
 	/**
 	 * Search package information from app store or external service.
 	 */
-	public static final int PLUGIN_TPYE_PACKAGE_SEARCHER = 2;
+	public static final int PLUGIN_TPYE_PACKAGE_SEARCHER = 0x02;
 	
 	/**
 	 * Launch extra tools. so possible add to toolbar. 
 	 */
-	public static final int PLUGIN_TPYE_EXTRA_TOOL = 3;
+	public static final int PLUGIN_TPYE_EXTRA_TOOL = 0x04;
 
+	/**
+	 * Launch extra tools. so possible add to toolbar. 
+	 */
+	public static final int PLUGIN_TPYE_ALL = 0x07;
+	
 	/**
 	 * Get the plug-in name
 	 * 

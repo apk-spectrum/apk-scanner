@@ -39,7 +39,7 @@ public class PlugInPackage
 			throw new NullPointerException();
 		}
 		pluginUri = pluginFile.toURI();
-		if(!isJarPackage(pluginUri) && !pluginUri.toString().endsWith(".xml")) {
+		if(!isJarPackage() && !isXmlPackage()) {
 			throw new IllegalArgumentException("Unsupported extension of file.");
 		}
 		fingerprint = FileUtil.getMessageDigest(pluginFile, "SHA-1");
@@ -47,6 +47,10 @@ public class PlugInPackage
 		plugins = createPlugInInstance(pluginFile, manifest);
 		resources = loadResource(pluginFile, manifest);
 		readSettings();
+	}
+
+	public URI getPlugInUri() {
+		return pluginUri;
 	}
 
 	public Manifest getManifest() {
@@ -73,16 +77,37 @@ public class PlugInPackage
 		return fingerprint;
 	}
 
-	public boolean hasPlugIn(int type) {
+	public boolean hasPlugIn(int plugInType) {
 		if(plugins == null) return false;
 		for(IPlugIn p: plugins) {
-			if((p.getType() & type) == type) return true;
+			if((p.getType() & plugInType) != 0) return true;
 		}
 		return false;
 	}
-	
+
+	public IPlugIn[] getPlugIn(int plugInType) {
+		if(plugins == null) return null;
+		ArrayList<IPlugIn> list = new ArrayList<>();
+		for(IPlugIn p: plugins) {
+			if((p.getType() & plugInType) != 0) list.add(p);
+		}
+		return list.toArray(new IPlugIn[list.size()]);
+	}
+
+	public boolean isJarPackage() {
+		return isJarPackage(pluginUri);
+	}
+
+	public boolean isXmlPackage() {
+		return isXmlPackage(pluginUri);
+	}
+
 	private boolean isJarPackage(URI pluginUri) {
 		return pluginUri.toString().endsWith(".jar");
+	}
+
+	private boolean isXmlPackage(URI pluginUri) {
+		return pluginUri.toString().endsWith(".xml");
 	}
 
 	private Manifest readManifest(URI pluginUri) throws InvalidManifestException {
@@ -90,20 +115,23 @@ public class PlugInPackage
 		if(isJarPackage(pluginUri)) {
 			pluginUri = getResourceUri(pluginUri, "Manifest.xml");
 		}
-		InputStream is = null;
+
+		URLConnection conn = null;
 		try {
-			URLConnection conn = pluginUri.toURL().openConnection();
+			conn = pluginUri.toURL().openConnection();
 	        conn.connect();
-	        is = conn.getInputStream();
-	        manifest = ManifestReader.readManifest(is);
-		} catch(IOException e) {
+		} catch(IOException | NullPointerException e) {
 			Log.e(e.getMessage());
-			throw new InvalidManifestException();
-		} finally {
-			try {
-				if(is != null) is.close();
-			} catch (IOException e) { }
+			throw new InvalidManifestException(e.getMessage());
 		}
+
+		try(InputStream is = conn.getInputStream()) {
+	        manifest = ManifestReader.readManifest(is);	
+		} catch (IOException | NullPointerException e) {
+			Log.e(e.getMessage());
+			throw new InvalidManifestException(e.getMessage());
+		}
+
 		return manifest;
 	}
 
