@@ -32,6 +32,7 @@ public class PlugInPackage
 	private URI pluginUri;
 	private String fingerprint;
 	private IPlugIn[] plugins;
+	private PlugInGroup[] pluginGroups;
 	private HashMap<String, HashMap<String,String>> resources;
 
 	public PlugInPackage(File pluginFile) throws InvalidManifestException {
@@ -44,6 +45,7 @@ public class PlugInPackage
 		}
 		fingerprint = FileUtil.getMessageDigest(pluginFile, "SHA-1");
 		manifest = readManifest(pluginUri);
+		pluginGroups = readPlugInGroup(pluginFile, manifest);
 		plugins = createPlugInInstance(pluginFile, manifest);
 		resources = loadResource(pluginFile, manifest);
 		readSettings();
@@ -94,6 +96,26 @@ public class PlugInPackage
 		return list.toArray(new IPlugIn[list.size()]);
 	}
 
+	public PlugInGroup getPlugInGroup(String name) {
+		if(pluginGroups == null || name == null || name.trim().isEmpty()) return null;
+		for(PlugInGroup g: pluginGroups) {
+			if(name.equals(g.getName())) return g;
+		}
+		return null;
+	}
+
+	public PlugInGroup[] getPlugInGroups() {
+		return pluginGroups;
+	}
+
+	public PlugInGroup[] getTopPlugInGroup() {
+		ArrayList<PlugInGroup> list = new ArrayList<>();
+		for(PlugInGroup g: pluginGroups) {
+			if(g.isTopGroup()) list.add(g);
+		}
+		return list.toArray(new PlugInGroup[list.size()]);
+	}
+
 	public boolean isJarPackage() {
 		return isJarPackage(pluginUri);
 	}
@@ -135,6 +157,24 @@ public class PlugInPackage
 		return manifest;
 	}
 
+	private PlugInGroup[] readPlugInGroup(File pluginFile, Manifest manifest) {
+		if(manifest == null) return null;
+		ArrayList<PlugInGroup> pluginGroup = new ArrayList<>();
+		for(Component c: manifest.plugin.components) {
+			if(c.type != Component.TYPE_PLUGIN_GROUP) continue;
+			if(c.name == null || c.name.trim().isEmpty()) {
+				Log.e("Must have name to PlugInGroup");
+				continue;
+			}
+			if(getPlugInGroup(c.name) != null) {
+				Log.e("Aleady existed plugin group : " + c.name);
+				continue;
+			}
+			pluginGroup.add(new PlugInGroup(this, c));
+		}
+		return pluginGroup.toArray(new PlugInGroup[pluginGroup.size()]);
+	}
+
 	private IPlugIn[] createPlugInInstance(File pluginFile, Manifest manifest) {
 		if(manifest == null) return null;
 		Log.v(manifest.packageName + " : " + fingerprint);
@@ -164,6 +204,8 @@ public class PlugInPackage
 				break;
 			case Component.TYPE_EXTERNAL_TOOL_LINKER:
 				plugin = new ExternalToolLinker(this, c);
+				break;
+			case Component.TYPE_PLUGIN_GROUP:
 				break;
 			default:
 				if(!isJarPackage) {

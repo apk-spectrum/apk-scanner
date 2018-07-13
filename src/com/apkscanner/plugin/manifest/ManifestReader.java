@@ -71,10 +71,9 @@ public class ManifestReader
 		String label = node.getAttributes("label");
 		String icon = node.getAttributes("icon");
 		String description = node.getAttributes("description");
-		int pluginSize = manifest.getNode("/manifest/plugin").getChildNodes().getLength();
 
 		Component[] components =  makeComponents(manifest);
-		return new PlugIn(enable, label, icon, description, pluginSize, components);
+		return new PlugIn(enable, label, icon, description, components);
 	}
 
 	static private Component[] makeComponents(@NonNull XmlPath manifest) {
@@ -91,6 +90,7 @@ public class ManifestReader
 					case "update-checker-linker": type = Component.TYPE_UPDATE_CHECKER_LINKER; break;
 					case "external-tool": type = Component.TYPE_EXTERNAL_TOOL; break;
 					case "external-tool-linker": type = Component.TYPE_EXTERNAL_TOOL_LINKER; break;
+					case "plugin-group" : type = Component.TYPE_PLUGIN_GROUP; break;
 					default: type = Component.TYPE_UNKNWON;
 				}
 				XmlPath node = new XmlPath(element);
@@ -100,6 +100,7 @@ public class ManifestReader
 				String description = node.getAttributes("description");
 				String name = node.getAttributes("name");
 				String url = node.getAttributes("url");
+				String pluginGroup = node.getAttributes("pluginGroup");
 
 				//Linker[] linkers = makeLinker(node);
 				String target = null;
@@ -121,7 +122,7 @@ public class ManifestReader
 					break;
 				}
 				components.add(new Component(type, enable, label, icon, description, name, url, /* linkers */
-						target, preferLang, path, param, updateUrl));
+						target, preferLang, path, param, updateUrl, pluginGroup));
 			}
 		}
 		return components.toArray(new Component[components.size()]);

@@ -58,4 +58,6 @@ public interface IPlugIn {
 	public void setEnable(boolean enable);
 	
 	public String getPackageName();
+
+	public PlugInGroup getParantGroup();
 }

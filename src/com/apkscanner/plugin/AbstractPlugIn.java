@@ -24,7 +24,7 @@ public abstract class AbstractPlugIn implements IPlugIn
 
 	@Override
 	public String getName() {
-		return component.name;
+		return (component.name != null && !component.name.trim().isEmpty()) ? component.name : null;
 	}
 
 	@Override
@@ -69,5 +69,11 @@ public abstract class AbstractPlugIn implements IPlugIn
 			return PLUGIN_TPYE_EXTRA_TOOL; 
 		}
 		return PLUGIN_TPYE_UNKNOWN;
+	}
+
+	@Override
+	public PlugInGroup getParantGroup() {
+		if(pluginPackage == null) return null;
+		return pluginPackage.getPlugInGroup(component.pluginGroup);
 	}
 }
