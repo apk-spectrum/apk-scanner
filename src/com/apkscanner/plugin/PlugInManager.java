@@ -5,6 +5,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.plugin.manifest.InvalidManifestException;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
@@ -12,6 +13,7 @@ import com.apkscanner.util.Log;
 public final class PlugInManager
 {
 	private static ArrayList<PlugInPackage> pluginPackages = new ArrayList<>();
+	private static ApkInfo apkinfo = null;
 
 	private PlugInManager() { }
 
@@ -80,6 +82,14 @@ public final class PlugInManager
 			}
 		}
 		return list.toArray(new IPackageSearcher[list.size()]);
+	}
+
+	public static void setApkInfo(ApkInfo info) {
+		apkinfo = info;
+	}
+
+	public static ApkInfo getApkInfo() {
+		return apkinfo;
 	}
 
 	public static void loadPlugIn() {

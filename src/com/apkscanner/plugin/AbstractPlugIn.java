@@ -42,10 +42,12 @@ public abstract class AbstractPlugIn implements IPlugIn
 
 	@Override
 	public URL getIconURL() {
-		try {
-			return new URL(component.icon);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
+		if(component.icon != null) { 
+			try {
+				return new URL(component.icon);
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
 		}
 		return null;
 	}
