@@ -60,4 +60,6 @@ public interface IPlugIn {
 	public String getPackageName();
 
 	public PlugInGroup getParantGroup();
+
+	String getGroupName();
 }

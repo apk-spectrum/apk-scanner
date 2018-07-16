@@ -24,7 +24,20 @@ public abstract class AbstractPlugIn implements IPlugIn
 
 	@Override
 	public String getName() {
-		return (component.name != null && !component.name.trim().isEmpty()) ? component.name : null;
+		String name = (component.name != null && !component.name.trim().isEmpty()) ? component.name : null;
+		if(name != null && name.startsWith(".")) {
+			name = getPackageName() + name;
+		}
+		return name;
+	}
+
+	@Override
+	public String getGroupName() {
+		String name = (component.pluginGroup != null && !component.pluginGroup.trim().isEmpty()) ? component.pluginGroup : null;
+		if(name != null && name.startsWith(".")) {
+			name = getPackageName() + name;
+		}
+		return name;
 	}
 
 	@Override

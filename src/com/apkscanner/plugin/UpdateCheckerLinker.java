@@ -13,6 +13,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.apkscanner.plugin.manifest.Component;
+import com.apkscanner.resource.Resource;
 import com.apkscanner.util.ApkScannerVersion;
 import com.apkscanner.util.Log;
 
@@ -96,15 +97,23 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 	}
 
 	@Override
-	public boolean checkNewVersion(String oldVersion) {
+	public boolean checkNewVersion() {
 		String version = getNewVersion();
 		if(version == null || version.trim().isEmpty()) {
 			Log.i("No such new version");
 			return false;
 		}
-		ApkScannerVersion newVer = ApkScannerVersion.parseFrom(version);
-		ApkScannerVersion oldVer = ApkScannerVersion.parseFrom(oldVersion);
-		return newVer.compareTo(oldVer) > 0;
+		if("com.apkscanner.plugin.ApkScannerUpdater".equals(getName())) {
+			ApkScannerVersion newVer = ApkScannerVersion.parseFrom(version);
+			ApkScannerVersion oldVer = ApkScannerVersion.parseFrom(Resource.STR_APP_VERSION.getString());
+			return newVer.compareTo(oldVer) > 0;
+		} else if ("com.apkscanner.plugin.SdkPermissionUpdater".equals(getName())) {
+			return false;
+		} else {
+			int curVer = pluginPackage.getVersionCode();
+			int newVer = Integer.parseInt(version);
+			return newVer > curVer; 
+		}
 	}
 
 	@Override
