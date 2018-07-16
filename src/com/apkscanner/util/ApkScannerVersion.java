@@ -4,10 +4,9 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.android.ddmlib.AdbVersion;
 import com.apkscanner.annotations.NonNull;
 
-public class ApkScannerVersion implements Comparable<AdbVersion> {
+public class ApkScannerVersion {
     public static final ApkScannerVersion UNKNOWN = new ApkScannerVersion(-1, -1, -1);
 
     /** Matches e.g. ".... 1.0.32" */
@@ -29,8 +28,7 @@ public class ApkScannerVersion implements Comparable<AdbVersion> {
         return String.format(Locale.US, "%1$d.%2$d.%3$d", major, minor, micro);
     }
 
-    @Override
-    public int compareTo(AdbVersion o) {
+    public int compareTo(ApkScannerVersion o) {
         if (major != o.major) {
             return major - o.major;
         }
@@ -64,7 +62,7 @@ public class ApkScannerVersion implements Comparable<AdbVersion> {
             return false;
         }
 
-        AdbVersion version = (AdbVersion) o;
+        ApkScannerVersion version = (ApkScannerVersion) o;
 
         if (major != version.major) {
             return false;
@@ -83,4 +81,5 @@ public class ApkScannerVersion implements Comparable<AdbVersion> {
         result = 31 * result + micro;
         return result;
     }
+
 }

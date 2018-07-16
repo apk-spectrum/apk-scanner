@@ -26,6 +26,8 @@ public class XmlPath {
 	private Object objNode = null;
 	private QName QType = null;
 
+	private Exception lastException = null;
+
 	public XmlPath(XmlPath clone) {
 		document = clone.document;
 		xpath = clone.xpath;
@@ -41,6 +43,7 @@ public class XmlPath {
 			document = factory.newDocumentBuilder().parse(is);
 			xpath = XPathFactory.newInstance().newXPath();
 		} catch (SAXException | IOException | ParserConfigurationException e) {
+			lastException = e;
 			e.printStackTrace();
 			document = null;
 			xpath = null;
@@ -54,6 +57,7 @@ public class XmlPath {
 			document = factory.newDocumentBuilder().parse(xml);
 			xpath = XPathFactory.newInstance().newXPath();
 		} catch (SAXException | IOException | ParserConfigurationException e) {
+			lastException = e;
 			e.printStackTrace();
 			document = null;
 			xpath = null;
@@ -67,6 +71,7 @@ public class XmlPath {
 			document = factory.newDocumentBuilder().parse(new InputSource(new StringReader(xmlContent)));
 			xpath = XPathFactory.newInstance().newXPath();
 		} catch (SAXException | IOException | ParserConfigurationException e) {
+			lastException = e;
 			e.printStackTrace();
 			document = null;
 			xpath = null;
@@ -221,5 +226,9 @@ public class XmlPath {
 		if(getNodeList() != null && getNodeList().item(idx) != null) 
 			child = getNodeList().item(idx).getChildNodes();
 		return new XmlPath(child);
+	}
+
+	public Exception getLastException() {
+		return lastException;
 	}
 }
