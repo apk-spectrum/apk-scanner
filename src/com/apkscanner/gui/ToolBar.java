@@ -88,7 +88,6 @@ public class ToolBar extends JToolBar
 		DECODER_JD_GUI	(Resource.STR_MENU_DECODER_JD_GUI.getString(), null, null, null, '\0', Resource.STR_DECORDER_JD_GUI),
 		DECODER_JADX_GUI(Resource.STR_MENU_DECODER_JADX_GUI.getString(), null, null, null, '\0', Resource.STR_DECORDER_JADX_GUI),
 		DECODER_BYTECODE(Resource.STR_MENU_DECODER_BYTECODE.getString(), null, null, null, '\0', Resource.STR_DECORDER_BYTECOD),
-		DECODER_JEB_VIEW(Resource.STR_MENU_DECODER_JEB.getString(), null, null, null, '\0', Resource.STR_DECORDER_JEB),
 		SEARCH_RESOURCE	(Resource.STR_MENU_SEARCH_RESOURCE.getString(), null, null, null, '\0', Resource.STR_DEFAULT_SEARCHER),
 		EXPLORER_ARCHIVE(Resource.STR_MENU_EXPLORER_ARCHIVE.getString(), null, null, null, '\0', Resource.STR_EXPLORER_ARCHIVE),
 		EXPLORER_FOLDER	(Resource.STR_MENU_EXPLORER_FOLDER.getString(), null, null, null, '\0', Resource.STR_EXPLORER_FOLDER),
@@ -152,8 +151,7 @@ public class ToolBar extends JToolBar
 						String value = e.getActionCommand().replaceAll(".*:", "");
 						if(DECODER_JD_GUI.matchActionEvent(e)
 							|| DECODER_JADX_GUI.matchActionEvent(e)
-							|| DECODER_BYTECODE.matchActionEvent(e)
-							|| DECODER_JEB_VIEW.matchActionEvent(e)) {
+							|| DECODER_BYTECODE.matchActionEvent(e)) {
 							Resource.PROP_DEFAULT_DECORDER.setData(value);
 						} else if(LAUNCH_LAUNCHER.matchActionEvent(e)
 							|| LAUNCH_SELECT.matchActionEvent(e)) {
@@ -379,7 +377,6 @@ public class ToolBar extends JToolBar
 		decordePopupMenu.add(menuItemMap.get(MenuItemSet.DECODER_JD_GUI));
 		decordePopupMenu.add(menuItemMap.get(MenuItemSet.DECODER_JADX_GUI));
 		decordePopupMenu.add(menuItemMap.get(MenuItemSet.DECODER_BYTECODE));
-		decordePopupMenu.add(menuItemMap.get(MenuItemSet.DECODER_JEB_VIEW));
 		decordePopupMenu.addSeparator();
 		decordePopupMenu.add(makeSelectDefaultMenuItem());
 
@@ -838,7 +835,6 @@ public class ToolBar extends JToolBar
 		setMenuItemText(MenuItemSet.DECODER_JD_GUI, Resource.STR_MENU_DECODER_JD_GUI.getString(), null);
 		setMenuItemText(MenuItemSet.DECODER_JADX_GUI, Resource.STR_MENU_DECODER_JADX_GUI.getString(), null);
 		setMenuItemText(MenuItemSet.DECODER_BYTECODE, Resource.STR_MENU_DECODER_BYTECODE.getString(), null);
-		setMenuItemText(MenuItemSet.DECODER_JEB_VIEW, Resource.STR_MENU_DECODER_JEB.getString(), null);
 		setMenuItemText(MenuItemSet.SEARCH_RESOURCE, Resource.STR_MENU_SEARCH_RESOURCE.getString(), null);
 		setMenuItemText(MenuItemSet.EXPLORER_ARCHIVE, Resource.STR_MENU_EXPLORER_ARCHIVE.getString(), null);
 		setMenuItemText(MenuItemSet.EXPLORER_FOLDER, Resource.STR_MENU_EXPLORER_FOLDER.getString(), null);

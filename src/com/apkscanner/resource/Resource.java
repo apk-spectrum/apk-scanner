@@ -344,6 +344,7 @@ public enum Resource
 	STR_MSG_DISABLED_PACKAGE	(Type.TEXT, "@msg_disabled_package"),
 	STR_MSG_SUCCESS_CLEAR_DATA	(Type.TEXT, "@msg_success_clear_data"),
 	STR_MSG_FAILURE_CLEAR_DATA	(Type.TEXT, "@msg_failure_clear_data"),
+	STR_MSG_WARN_UNSUPPORTED_JVM(Type.TEXT, "@msg_warn_unsupported_jvm"),
 
 	STR_QUESTION_REBOOT_DEVICE	(Type.TEXT, "@question_reboot_device"),
 	STR_QUESTION_CONTINUE_INSTALL(Type.TEXT, "@question_continue_install"),
@@ -453,6 +454,12 @@ public enum Resource
 	BIN_DEX2JAR_WIN				(Type.BIN, "d2j-dex2jar.bat", "win"),
 	BIN_DEX2JAR					(Type.BIN, new Resource[]{ BIN_DEX2JAR_WIN, BIN_DEX2JAR_LNX }),
 
+	BIN_JADX_LNX				(Type.BIN, "jadx/bin/jadx-gui", "nux"),
+	BIN_JADX_WIN				(Type.BIN, "jadx\\bin\\jadx-gui.bat", "win"),
+	BIN_JADX_GUI				(Type.BIN, new Resource[]{ BIN_JADX_WIN, BIN_JADX_LNX }),
+
+	BIN_BYTECODE_VIEWER			(Type.BIN, "Bytecode-Viewer.jar"),
+
 	BIN_SIGNAPK					(Type.BIN, "signapk.jar"),
 	
 	PLUGIN_PATH					(Type.PLUGIN, ""),	
@@ -504,7 +511,6 @@ public enum Resource
 	public static final String STR_DECORDER_JD_GUI = "jd-gui";
 	public static final String STR_DECORDER_JADX_GUI = "jadx-gui";
 	public static final String STR_DECORDER_BYTECOD = "Bytecode-viewer";
-	public static final String STR_DECORDER_JEB = "JEB-Decompiler";
 	public static final String STR_DEFAULT_SEARCHER = "resource";
 	public static final String STR_EXPLORER_ARCHIVE = "archive";
 	public static final String STR_EXPLORER_FOLDER = "folder";

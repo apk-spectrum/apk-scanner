@@ -35,6 +35,8 @@ public class MessageBoxPool {
 
 	public static final int MSG_SUCCESS_CLEAR_DATA = 25;
 	public static final int MSG_FAILURE_CLEAR_DATA = 26;
+	
+	public static final int MSG_WARN_UNSUPPORTED_JVM = 27;
 
 	private Component parentComponent;
 	private static HashMap<Integer, MessageBoxPool> pool = new HashMap<Integer, MessageBoxPool>(); 
@@ -146,6 +148,9 @@ public class MessageBoxPool {
 			break;
 		case MSG_FAILURE_CLEAR_DATA:
 			MessageBoxPane.showError(parentComponent, Resource.STR_MSG_FAILURE_CLEAR_DATA.getString());
+			break;
+		case MSG_WARN_UNSUPPORTED_JVM:
+			MessageBoxPane.showWarring(parentComponent, Resource.STR_MSG_WARN_UNSUPPORTED_JVM.getString());
 			break;
 		}
 		return MessageBoxPane.CLOSED_OPTION;

@@ -65,8 +65,10 @@ import com.apkscanner.tool.adb.AdbServerMonitor.IAdbDemonChangeListener;
 import com.apkscanner.tool.adb.IPackageStateListener;
 import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
-import com.apkscanner.tool.dex2jar.Dex2JarWrapper;
-import com.apkscanner.tool.jd_gui.JDGuiLauncher;
+import com.apkscanner.tool.external.BytecodeViewerLauncher;
+import com.apkscanner.tool.external.Dex2JarWrapper;
+import com.apkscanner.tool.external.JADXLauncher;
+import com.apkscanner.tool.external.JDGuiLauncher;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
@@ -503,34 +505,52 @@ public class MainUI extends JFrame
 				return;
 			}
 
-			toolBar.setEnabledAt(ButtonSet.OPEN_CODE, false);
 
-			String jarfileName = apkInfo.tempWorkPath + File.separator + (new File(apkInfo.filePath)).getName().replaceAll("\\.apk$", ".jar");
-			Dex2JarWrapper.convert(apkInfo.filePath, jarfileName, new Dex2JarWrapper.DexWrapperListener() {
-				@Override
-				public void onCompleted() {
-					EventQueue.invokeLater(new Runnable() {
-						public void run() {
-							toolBar.setEnabledAt(ButtonSet.OPEN_CODE, true);
-						}
-					});
+			int actionType = 0;
+			if(e == null || ToolBar.ButtonSet.OPEN_CODE.matchActionEvent(e)) {
+				String data = (String)Resource.PROP_DEFAULT_DECORDER.getData();
+				if(Resource.STR_DECORDER_JD_GUI.equals(data)) {
+					actionType = 1;
+				} else if(Resource.STR_DECORDER_JADX_GUI.equals(data)) {
+					actionType = 2;
+				} else if(Resource.STR_DECORDER_BYTECOD.equals(data)) {
+					actionType = 3;
 				}
+			}
+			if(actionType == 1 || ToolBar.MenuItemSet.DECODER_JD_GUI.matchActionEvent(e)) {
+				toolBar.setEnabledAt(ButtonSet.OPEN_CODE, false);
 
-				@Override
-				public void onError(final String message) {
-					Log.e("Failure: Fail Dex2Jar : " + message);
-					EventQueue.invokeLater(new Runnable() {
-						public void run() {
-							MessageBoxPool.show(MainUI.this, MessageBoxPool.MSG_FAILURE_DEX2JAR, message);
-						}
-					});
-				}
+				String jarfileName = apkInfo.tempWorkPath + File.separator + (new File(apkInfo.filePath)).getName().replaceAll("\\.apk$", ".jar");
+				Dex2JarWrapper.convert(apkInfo.filePath, jarfileName, new Dex2JarWrapper.DexWrapperListener() {
+					@Override
+					public void onCompleted() {
+						EventQueue.invokeLater(new Runnable() {
+							public void run() {
+								toolBar.setEnabledAt(ButtonSet.OPEN_CODE, true);
+							}
+						});
+					}
 
-				@Override
-				public void onSuccess(String jarFilePath) {
-					JDGuiLauncher.run(jarFilePath);
-				}
-			});
+					@Override
+					public void onError(final String message) {
+						Log.e("Failure: Fail Dex2Jar : " + message);
+						EventQueue.invokeLater(new Runnable() {
+							public void run() {
+								MessageBoxPool.show(MainUI.this, MessageBoxPool.MSG_FAILURE_DEX2JAR, message);
+							}
+						});
+					}
+
+					@Override
+					public void onSuccess(String jarFilePath) {
+						JDGuiLauncher.run(jarFilePath);
+					}
+				});
+			} else if(actionType == 2 || ToolBar.MenuItemSet.DECODER_JADX_GUI.matchActionEvent(e)) {
+				JADXLauncher.run(apkInfo.filePath);
+			} else if(actionType == 3 || ToolBar.MenuItemSet.DECODER_BYTECODE.matchActionEvent(e)) {
+				BytecodeViewerLauncher.run(apkInfo.filePath);
+			}
 		}
 
 		private void evtOpenSearcher(ActionEvent e) {
@@ -929,8 +949,7 @@ public class MainUI extends JFrame
 			} else if(ToolBar.ButtonSet.OPEN_CODE.matchActionEvent(e)
 					|| ToolBar.MenuItemSet.DECODER_JD_GUI.matchActionEvent(e)
 					|| ToolBar.MenuItemSet.DECODER_JADX_GUI.matchActionEvent(e)
-					|| ToolBar.MenuItemSet.DECODER_BYTECODE.matchActionEvent(e)
-					|| ToolBar.MenuItemSet.DECODER_JEB_VIEW.matchActionEvent(e)) {
+					|| ToolBar.MenuItemSet.DECODER_BYTECODE.matchActionEvent(e)) {
 				evtOpenDecompiler(e);
 			} else if(ToolBar.ButtonSet.SEARCH.matchActionEvent(e)
 					|| ToolBar.MenuItemSet.SEARCH_RESOURCE.matchActionEvent(e)) {

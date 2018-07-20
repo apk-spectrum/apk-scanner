@@ -314,6 +314,7 @@ Please check the confirmation dialog on your device.</string>
 	<string name="msg_disabled_package">Can not launch, This package was disabled.</string>
 	<string name="msg_success_clear_data">Success clear data.</string>
 	<string name="msg_failure_clear_data">Fail clear data.</string>
+	<string name="msg_warn_unsupported_jvm">Ensure you have installed Java 8 64-bit version</string>
 
 	<string name="question_reboot_device">Restart device now?</string>
 	<string name="question_continue_install">Continue install?</string>
