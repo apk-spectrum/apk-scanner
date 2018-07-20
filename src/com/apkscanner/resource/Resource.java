@@ -313,6 +313,7 @@ public enum Resource
 	STR_LABEL_APK_INSTALL_OPT	(Type.TEXT, "@label_apk_install_option"),
 	STR_LABEL_APK_INSTALLING	(Type.TEXT, "@label_apk_installing"),
 	STR_LABEL_APK_INSTALL_FINISH(Type.TEXT, "@label_apk_install_finish"),
+	STR_LABEL_SAVE_AS			(Type.TEXT, "@label_save_as"),
 
 	STR_TREE_NODE_DEVICE 		(Type.TEXT, "@tree_node_device"),
 	STR_TREE_NODE_DISPLAYED		(Type.TEXT, "@tree_node_displayed"),

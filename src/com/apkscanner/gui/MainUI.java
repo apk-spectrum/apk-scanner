@@ -446,7 +446,7 @@ public class MainUI extends JFrame
 					manifestPath = manifestFile.getAbsolutePath();
 				}
 
-				if(!manifestFile.exists()) {
+				if(saveAs || !manifestFile.exists()) {
 					if(!manifestFile.getParentFile().exists()) {
 						if(FileUtil.makeFolder(manifestFile.getParentFile().getAbsolutePath())) {
 							Log.d("sucess make folder");

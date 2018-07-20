@@ -4,8 +4,8 @@ import java.awt.Component;
 import java.io.File;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
-import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
@@ -14,7 +14,34 @@ public class ApkFileChooser
 {
 	static public JFileChooser getFileChooser(String openPath, int type, File defaultFile)
 	{
-		JFileChooser jfc = new JFileChooser(openPath);
+		JFileChooser jfc = new JFileChooser(openPath){
+			private static final long serialVersionUID = 4182035928805481628L;
+			@Override
+		    public void approveSelection(){
+		        File f = getSelectedFile();
+		        if(f.exists() && getDialogType() == SAVE_DIALOG){
+		            int result = JOptionPane.showConfirmDialog(this,Resource.STR_QUESTION_SAVE_OVERWRITE.getString(),Resource.STR_LABEL_SAVE_AS.getString(),JOptionPane.YES_NO_CANCEL_OPTION);
+		            switch(result){
+		                case JOptionPane.YES_OPTION:
+			    			if(!f.canWrite()) {
+			    				Log.e("Can't wirte file : " + f.getPath());
+			    				MessageBoxPool.show(this, MessageBoxPool.MSG_CANNOT_WRITE_FILE);
+			    				return;
+			    			}
+		                    super.approveSelection();
+		                    return;
+		                case JOptionPane.NO_OPTION:
+		                    return;
+		                case JOptionPane.CLOSED_OPTION:
+		                    return;
+		                case JOptionPane.CANCEL_OPTION:
+		                    cancelSelection();
+		                    return;
+		            }
+		        }
+		        super.approveSelection();
+		    }        
+		};
 		jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		jfc.setDialogType(type);
 		jfc.setSelectedFile(defaultFile);
@@ -60,18 +87,6 @@ public class ApkFileChooser
 		if (jfc.getFileFilter() != jfc.getAcceptAllFileFilter() && !selFile.getPath().endsWith(".apk")) {
 			selFile = new File(jfc.getSelectedFile().getPath() + ".apk");
         }
-
-		if(selFile.exists()) {
-			if(!selFile.canWrite()) {
-				Log.e("Can't wirte file : " + selFile.getPath());
-				MessageBoxPool.show(jfc, MessageBoxPool.MSG_CANNOT_WRITE_FILE);
-				return null;
-			}
-			int ret = MessageBoxPool.show(jfc, MessageBoxPool.QUESTION_SAVE_OVERWRITE);
-			if(ret != MessageBoxPane.YES_OPTION) {
-				return null;
-			}
-		}
 
 		if(selFile != null) {
 			Resource.PROP_LAST_FILE_SAVE_PATH.setData(selFile.getParentFile().getAbsolutePath());
