@@ -17,10 +17,13 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JFrame;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -50,6 +53,9 @@ import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.FileDrop;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
+import com.apkscanner.plugin.IUpdateChecker;
+import com.apkscanner.plugin.PlugInManager;
+import com.apkscanner.plugin.PluginConfiguration;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
@@ -87,6 +93,9 @@ public class MainUI extends JFrame
 		if(apkScanner != null) {
 			apkScanner.setStatusListener(new ApkScannerListener());
 		}
+
+		toolbarManager.setEnabled((boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData(), 1000);
+		loadPlugIn();
 	}
 
 	public void initialize()
@@ -153,14 +162,49 @@ public class MainUI extends JFrame
 		ky.addKeyEventDispatcher(eventHandler);
 
 		Log.i("UI Init end");
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run()
-            {
-            	Log.v("isDispatchThread " + EventQueue.isDispatchThread());
-                toolbarManager.setEnabled((boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData());
-            }
-        }, 1000);
+	}
+
+	private void loadPlugIn() {
+        new SwingWorker<IUpdateChecker[], Void>() {
+			@Override
+			protected IUpdateChecker[] doInBackground() throws Exception {
+				PlugInManager.loadPlugIn();
+				PluginConfiguration.setLang(Resource.getLanguage());
+				publish();
+				IUpdateChecker[] updater = PlugInManager.getUpdateChecker();
+				ArrayList<IUpdateChecker> newUpdates = new ArrayList<>();
+				for(IUpdateChecker uc: updater) {
+					if(uc.checkNewVersion()) {
+						newUpdates.add(uc);
+					};
+				}
+				return newUpdates.toArray(new IUpdateChecker[newUpdates.size()]);
+			}
+
+			@Override
+			protected void process(List<Void> arg0) {
+				toolBar.setReplacementLayout();
+				int state = apkScanner.getStatus();
+				if( PlugInManager.getPackageSearchers().length > 0
+						&& Status.BASIC_INFO_COMPLETED.isCompleted(state)
+						&& Status.CERT_COMPLETED.isCompleted(state) ) {
+					tabbedPanel.setData(apkScanner.getApkInfo(), 0 + TabbedPanel.CMD_EXTRA_DATA);
+				}
+			}
+
+			@Override
+			protected void done() {
+				IUpdateChecker[] updaters =  null;
+				try {
+					updaters = get();
+				} catch (InterruptedException | ExecutionException e) {
+					Log.e(e.getMessage());
+				}
+				if(updaters != null && updaters.length > 0) {
+
+				}
+			}
+		}.execute();
 	}
 
 	private static void setUIFont(javax.swing.plaf.FontUIResource f) {
@@ -240,6 +284,7 @@ public class MainUI extends JFrame
 			//Log.v("onStateChanged() "+ status);
 			if(status == Status.STANBY) {
 				Log.v("STANBY: does not UI update");
+				PlugInManager.setApkInfo(apkScanner.getApkInfo());
 				return;
 			}
 
@@ -408,18 +453,42 @@ public class MainUI extends JFrame
 			}
 		}
 
-		private void evtShowExplorer()
+		private void evtShowExplorer(ActionEvent e)
 		{
+			int actionType = 0;
+			if(e == null || ToolBar.ButtonSet.EXPLORER.matchActionEvent(e)) {
+				String data = (String)Resource.PROP_DEFAULT_EXPLORER.getData();
+				if(Resource.STR_EXPLORER_ARCHIVE.equals(data)) {
+					actionType = 1;
+				} else if(Resource.STR_EXPLORER_FOLDER.equals(data)) {
+					actionType = 2;
+				}
+			} else if(ToolBar.MenuItemSet.EXPLORER_ARCHIVE.matchActionEvent(e)) {
+				actionType = 1;
+			} else if(ToolBar.MenuItemSet.EXPLORER_FOLDER.matchActionEvent(e)) {
+				actionType = 2;
+			}
+
 			ApkInfo apkInfo = apkScanner.getApkInfo();
 			if(apkInfo == null) {
 				Log.e("evtShowExplorer() apkInfo is null");
 				return;
 			}
 
-			SystemUtil.openArchiveExplorer(apkInfo.filePath);
+			switch(actionType) {
+			case 1:
+				SystemUtil.openArchiveExplorer(apkInfo.filePath);
+				break;
+			case 2:
+				SystemUtil.openFileExplorer(apkInfo.filePath);
+				break;
+			default:
+				Log.e("evtShowExplorer() unknown type : " + actionType);
+				break;
+			}
 		}
 
-		private void evtOpenJDGUI()
+		private void evtOpenDecompiler(ActionEvent e)
 		{
 			ApkInfo apkInfo = apkScanner.getApkInfo();
 			if(apkInfo == null || apkInfo.filePath == null
@@ -464,7 +533,7 @@ public class MainUI extends JFrame
 			});
 		}
 
-		private void evtOpenSearchPopup() {
+		private void evtOpenSearcher(ActionEvent e) {
 			SearchDlg dialog = new SearchDlg();
 			dialog.setApkInfo(apkScanner.getApkInfo());
 
@@ -498,7 +567,7 @@ public class MainUI extends JFrame
 			toolbarManager.setEnabled((boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData());
 		}
 
-		private void evtLaunchApp(final boolean selectActivity)
+		private void evtLaunchApp(final ActionEvent e)
 		{
 			final IDevice[] devices = getInstalledDevice();
 			if(devices == null || devices.length == 0) {
@@ -511,6 +580,28 @@ public class MainUI extends JFrame
 				private String errMsg = null;
 				public void run()
 				{
+					boolean isShiftPressed = (e != null && (e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
+					int actionType = 0;
+					if(e == null || ToolBar.ButtonSet.LAUNCH.matchActionEvent(e)) {
+						String data = (String)Resource.PROP_DEFAULT_LAUNCH_MODE.getData();
+						if(Resource.STR_LAUNCH_LAUNCHER.equals(data)) {
+							actionType = 1;
+						} else if(Resource.STR_LAUNCH_SELECT.equals(data)) {
+							actionType = 2;
+						}
+					} else if(ToolBar.MenuItemSet.LAUNCH_LAUNCHER.matchActionEvent(e)) {
+						actionType = 1;
+						isShiftPressed = false;
+					} else if(ToolBar.MenuItemSet.LAUNCH_SELECT.matchActionEvent(e)) {
+						actionType = 2;
+						isShiftPressed = false;
+					}
+
+					int activityOpt = Resource.PROP_LAUNCH_ACTIVITY_OPTION.getInt();
+					if(actionType == 2) {
+						activityOpt = Resource.INT_LAUNCH_ALWAYS_CONFIRM_ACTIVITY;
+					}
+
 					for(IDevice device: devices) {
 						Log.v("launch activity on " + device.getSerialNumber());
 
@@ -523,8 +614,7 @@ public class MainUI extends JFrame
 
 						String selectedActivity = null;
 						ComponentInfo[] activities = null;
-						int activityOpt = Resource.PROP_LAUNCH_ACTIVITY_OPTION.getInt();
-						if(!selectActivity && (activityOpt == Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY
+						if(!isShiftPressed && (activityOpt == Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY
 								|| activityOpt == Resource.INT_LAUNCH_ONLY_LAUNCHER_ACTIVITY)) {
 							activities = packageInfo.getLauncherActivityList(false);
 						}
@@ -533,7 +623,7 @@ public class MainUI extends JFrame
 							selectedActivity = activities[0].name;
 						} else {
 							activities = packageInfo.getLauncherActivityList(true);
-							if(!selectActivity && activityOpt == Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY) {
+							if(!isShiftPressed && activityOpt == Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY) {
 								if(activities != null && activities.length == 1) {
 									selectedActivity = activities[0].name;
 								}
@@ -810,8 +900,10 @@ public class MainUI extends JFrame
 				evtOpenApkFile((e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
 			} else if(ToolBar.ButtonSet.MANIFEST.matchActionEvent(e)) {
 				evtShowManifest();
-			} else if(ToolBar.ButtonSet.EXPLORER.matchActionEvent(e)) {
-				evtShowExplorer();
+			} else if(ToolBar.ButtonSet.EXPLORER.matchActionEvent(e)
+					|| ToolBar.MenuItemSet.EXPLORER_ARCHIVE.matchActionEvent(e)
+					|| ToolBar.MenuItemSet.EXPLORER_FOLDER.matchActionEvent(e)) {
+				evtShowExplorer(e);
 			} else if(ToolBar.ButtonSet.INSTALL.matchActionEvent(e)
 					|| ToolBar.ButtonSet.INSTALL_UPDATE.matchActionEvent(e)
 					|| ToolBar.ButtonSet.INSTALL_DOWNGRADE.matchActionEvent(e) 
@@ -834,12 +926,19 @@ public class MainUI extends JFrame
 				evtOpenPackage((e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
 			} else if(ToolBar.MenuItemSet.INSTALLED_CHECK.matchActionEvent(e)) {
 				evtShowInstalledPackageInfo();
-			} else if(ToolBar.ButtonSet.OPEN_CODE.matchActionEvent(e)) {
-				evtOpenJDGUI();
-			} else if(ToolBar.ButtonSet.SEARCH.matchActionEvent(e)) {
-				evtOpenSearchPopup();
-			} else if(ToolBar.ButtonSet.LAUNCH.matchActionEvent(e) || ToolBar.ButtonSet.SUB_LAUNCH.matchActionEvent(e)) {
-				evtLaunchApp((e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
+			} else if(ToolBar.ButtonSet.OPEN_CODE.matchActionEvent(e)
+					|| ToolBar.MenuItemSet.DECODER_JD_GUI.matchActionEvent(e)
+					|| ToolBar.MenuItemSet.DECODER_JADX_GUI.matchActionEvent(e)
+					|| ToolBar.MenuItemSet.DECODER_BYTECODE.matchActionEvent(e)
+					|| ToolBar.MenuItemSet.DECODER_JEB_VIEW.matchActionEvent(e)) {
+				evtOpenDecompiler(e);
+			} else if(ToolBar.ButtonSet.SEARCH.matchActionEvent(e)
+					|| ToolBar.MenuItemSet.SEARCH_RESOURCE.matchActionEvent(e)) {
+				evtOpenSearcher(e);
+			} else if(ToolBar.ButtonSet.LAUNCH.matchActionEvent(e) || ToolBar.ButtonSet.SUB_LAUNCH.matchActionEvent(e)
+					|| ToolBar.MenuItemSet.LAUNCH_LAUNCHER.matchActionEvent(e)
+					|| ToolBar.MenuItemSet.LAUNCH_SELECT.matchActionEvent(e)) {
+				evtLaunchApp(e);
 			} else if(ToolBar.MenuItemSet.UNINSTALL_APK.matchActionEvent(e)) {
 				evtUninstallApp();
 			} else if(ToolBar.MenuItemSet.CLEAR_DATA.matchActionEvent(e)) {
@@ -864,9 +963,9 @@ public class MainUI extends JFrame
 					case KeyEvent.VK_N: Launcher.run();			break;
 					case KeyEvent.VK_I: evtInstallApk(false);	break;
 					case KeyEvent.VK_T: evtShowInstalledPackageInfo();	break;
-					case KeyEvent.VK_E: evtShowExplorer();		break;
+					case KeyEvent.VK_E: evtShowExplorer(null);		break;
 					case KeyEvent.VK_M: evtShowManifest();		break;
-					case KeyEvent.VK_R: evtLaunchApp(false);	break;
+					case KeyEvent.VK_R: evtLaunchApp(null);	break;
 					//case KeyEvent.VK_S: evtSettings();			break;
 					default: return false;
 					}
@@ -875,7 +974,7 @@ public class MainUI extends JFrame
 					switch(e.getKeyCode()) {
 					case KeyEvent.VK_O: evtOpenApkFile(true);	break;
 					case KeyEvent.VK_P: evtOpenPackage(true);	break;
-					case KeyEvent.VK_R: evtLaunchApp(true);	break;
+					case KeyEvent.VK_R: evtLaunchApp(null);	break;
 					default: return false;
 					}
 					return true;
@@ -979,6 +1078,17 @@ public class MainUI extends JFrame
 					}
 				}
 			}
+		}
+
+		public void setEnabled(final boolean enable, final int delayMs) {
+	        new Timer().schedule(new TimerTask() {
+	            @Override
+	            public void run()
+	            {
+	            	Log.v("isDispatchThread " + EventQueue.isDispatchThread());
+	                setEnabled(enable);
+	            }
+	        }, delayMs);
 		}
 
 		public void setApkInfo(ApkInfo info) {

@@ -92,6 +92,16 @@
 	<string name="menu_uninstall">삭제 (U)</string>
 	<string name="menu_clear_data">데이터 삭제(캐시 포함)</string>
 	<string name="menu_check_installed">설치버전 정보확인 (T)</string>
+	<string name="menu_decorder_jd_gui">JD-GUI</string>
+	<string name="menu_decorder_jadx_gui">JADX-GUI</string>
+	<string name="menu_decorder_bytecode_viewer">Bytecode Viewer</string>
+	<string name="menu_decorder_jeb">JEB Decompiler</string>
+	<string name="menu_search_resource">리소스 검색</string>
+	<string name="menu_explorer_archive">APK 파일 내부 탐색</string>
+	<string name="menu_explorer_folder">APK 파일 위치 열기</string>
+	<string name="menu_launch_lanucher">런처 액티비티 실행</string>
+	<string name="menu_launch_select">액티비티 선택 실행</string>
+	<string name="menu_select_default">기본값으로 설정</string>
 
 	<string name="tab_basic_info">APK 정보</string>
 	<string name="tab_widget">위젯</string>

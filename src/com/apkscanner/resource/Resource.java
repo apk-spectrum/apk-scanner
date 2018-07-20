@@ -129,6 +129,16 @@ public enum Resource
 	STR_MENU_UNINSTALL			(Type.TEXT, "@menu_uninstall"),
 	STR_MENU_CLEAR_DATA			(Type.TEXT, "@menu_clear_data"),
 	STR_MENU_CHECK_INSTALLED	(Type.TEXT, "@menu_check_installed"),
+	STR_MENU_DECODER_JD_GUI		(Type.TEXT, "@menu_decorder_jd_gui"),
+	STR_MENU_DECODER_JADX_GUI	(Type.TEXT, "@menu_decorder_jadx_gui"),
+	STR_MENU_DECODER_BYTECODE	(Type.TEXT, "@menu_decorder_bytecode_viewer"),
+	STR_MENU_DECODER_JEB		(Type.TEXT, "@menu_decorder_jeb"),
+	STR_MENU_SEARCH_RESOURCE	(Type.TEXT, "@menu_search_resource"),
+	STR_MENU_EXPLORER_ARCHIVE	(Type.TEXT, "@menu_explorer_archive"),
+	STR_MENU_EXPLORER_FOLDER	(Type.TEXT, "@menu_explorer_folder"),
+	STR_MENU_LAUNCH_LAUNCHER	(Type.TEXT, "@menu_launch_lanucher"),
+	STR_MENU_LAUNCH_SELECT		(Type.TEXT, "@menu_launch_select"),
+	STR_MENU_SELECT_DEFAULT		(Type.TEXT, "@menu_select_default"),
 
 	STR_TAB_BASIC_INFO			(Type.TEXT, "@tab_basic_info"),
 	STR_TAB_WIDGET				(Type.TEXT, "@tab_widget"),
@@ -472,6 +482,11 @@ public enum Resource
 	PROP_PK8_FILE_PATH			(Type.PROP, "last_pk8_file_path", null /* see getDefValue() */),
 	PROP_PRINT_MULTILINE_ATTR	(Type.PROP, "print_multiline_attr", true),
 
+	PROP_DEFAULT_DECORDER		(Type.PROP, "default_decorder", Resource.STR_DECORDER_JD_GUI),
+	PROP_DEFAULT_SEARCHER		(Type.PROP, "default_searcher", Resource.STR_DEFAULT_SEARCHER),
+	PROP_DEFAULT_EXPLORER		(Type.PROP, "default_explorer", Resource.STR_EXPLORER_ARCHIVE),
+	PROP_DEFAULT_LAUNCH_MODE	(Type.PROP, "default_launch_mode", Resource.STR_LAUNCH_LAUNCHER),
+
 	LIB_JSON_JAR				(Type.LIB, "json-simple-1.1.1.jar"),
 	LIB_CLI_JAR					(Type.LIB, "commons-cli-1.3.1.jar"),
 	LIB_APKTOOL_JAR				(Type.LIB, "apktool.jar"),
@@ -485,6 +500,16 @@ public enum Resource
 	public static final int INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY = 0;
 	public static final int INT_LAUNCH_ONLY_LAUNCHER_ACTIVITY = 1;
 	public static final int INT_LAUNCH_ALWAYS_CONFIRM_ACTIVITY = 2;
+
+	public static final String STR_DECORDER_JD_GUI = "jd-gui";
+	public static final String STR_DECORDER_JADX_GUI = "jadx-gui";
+	public static final String STR_DECORDER_BYTECOD = "Bytecode-viewer";
+	public static final String STR_DECORDER_JEB = "JEB-Decompiler";
+	public static final String STR_DEFAULT_SEARCHER = "resource";
+	public static final String STR_EXPLORER_ARCHIVE = "archive";
+	public static final String STR_EXPLORER_FOLDER = "folder";
+	public static final String STR_LAUNCH_LAUNCHER = "launcher";
+	public static final String STR_LAUNCH_SELECT = "select";
 
 	private enum Type {
 		IMAGE,

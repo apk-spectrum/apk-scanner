@@ -92,6 +92,16 @@
 	<string name="menu_uninstall">Uninstall(U)</string>
 	<string name="menu_clear_data">Clear Data(with Cache)</string>
 	<string name="menu_check_installed">Check the Installation Version(T)</string>
+	<string name="menu_decorder_jd_gui">JD-GUI</string>
+	<string name="menu_decorder_jadx_gui">JADX-GUI</string>
+	<string name="menu_decorder_bytecode_viewer">Bytecode Viewer</string>
+	<string name="menu_decorder_jeb">JEB Decompiler</string>
+	<string name="menu_search_resource">Search to resources</string>
+	<string name="menu_explorer_archive">In APK Archive</string>
+	<string name="menu_explorer_folder">On APK folder</string>
+	<string name="menu_launch_lanucher">Launch to launcher activity</string>
+	<string name="menu_launch_select">Select to main activity</string>
+	<string name="menu_select_default">Select default action</string>
 
 	<string name="tab_basic_info">APK Info</string>
 	<string name="tab_widget">Widgets</string>

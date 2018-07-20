@@ -53,6 +53,9 @@ abstract public class ApkScanner
 		int value;
 		Status(int value) { this.value = value; }
 		public int value() { return value; }
+		public boolean isCompleted(int statusFlag) {
+			return (statusFlag & value) == value;
+		}
 	}
 
 	public interface StatusListener
@@ -274,6 +277,10 @@ abstract public class ApkScanner
 				}
 			}
 		}
+	}
+
+	public int getStatus() {
+		return scanningStatus;
 	}
 
 	public boolean isScanning() {
