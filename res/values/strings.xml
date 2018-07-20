@@ -8,6 +8,7 @@
 	<string name="btn_open">Open</string>
 	<string name="btn_open_pacakge">Package</string>
 	<string name="btn_manifest">Manifest</string>
+	<string name="btn_manifest_save">Save as...</string>
 	<string name="btn_explorer">Explorer</string>
 	<string name="btn_unpack">Decompile</string>
 	<string name="btn_pack">Recompile</string>

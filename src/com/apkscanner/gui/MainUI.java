@@ -22,6 +22,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
@@ -422,7 +423,7 @@ public class MainUI extends JFrame
 			toolBar.setEnabledAt(ButtonSet.INSTALL, true);
 		}
 
-		private void evtShowManifest()
+		private void evtShowManifest(boolean saveAs)
 		{
 			ApkInfo apkInfo = apkScanner.getApkInfo();
 			if(apkInfo == null) {
@@ -431,8 +432,20 @@ public class MainUI extends JFrame
 			}
 
 			try {
-				String manifestPath = apkInfo.tempWorkPath + File.separator + "AndroidManifest.xml";
-				File manifestFile = new File(manifestPath); 
+				String manifestPath = null;
+				File manifestFile = null;
+				if(!saveAs) {
+					manifestPath = apkInfo.tempWorkPath + File.separator + "AndroidManifest.xml";
+					manifestFile = new File(manifestPath);
+				} else {
+					JFileChooser jfc = ApkFileChooser.getFileChooser((String)Resource.PROP_LAST_FILE_SAVE_PATH.getData(), JFileChooser.SAVE_DIALOG, new File("AndroidManifest.xml"));
+					if(jfc.showSaveDialog(MainUI.this) != JFileChooser.APPROVE_OPTION) return;
+					manifestFile = jfc.getSelectedFile();
+					if(manifestFile == null) return;
+					Resource.PROP_LAST_FILE_SAVE_PATH.setData(manifestFile.getParentFile().getAbsolutePath());
+					manifestPath = manifestFile.getAbsolutePath();
+				}
+
 				if(!manifestFile.exists()) {
 					if(!manifestFile.getParentFile().exists()) {
 						if(FileUtil.makeFolder(manifestFile.getParentFile().getAbsolutePath())) {
@@ -447,9 +460,11 @@ public class MainUI extends JFrame
 					FileWriter fw = new FileWriter(new File(manifestPath));
 					fw.write(a2x.toString());
 					fw.close();
+				} else {
+					Log.e("already existed file : " + manifestPath);
 				}
 
-				SystemUtil.openEditor(manifestPath);
+				if(!saveAs) SystemUtil.openEditor(manifestPath);
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
@@ -919,7 +934,7 @@ public class MainUI extends JFrame
 			if (ToolBar.ButtonSet.OPEN.matchActionEvent(e) || ToolBar.MenuItemSet.OPEN_APK.matchActionEvent(e)) {
 				evtOpenApkFile((e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
 			} else if(ToolBar.ButtonSet.MANIFEST.matchActionEvent(e)) {
-				evtShowManifest();
+				evtShowManifest((e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
 			} else if(ToolBar.ButtonSet.EXPLORER.matchActionEvent(e)
 					|| ToolBar.MenuItemSet.EXPLORER_ARCHIVE.matchActionEvent(e)
 					|| ToolBar.MenuItemSet.EXPLORER_FOLDER.matchActionEvent(e)) {
@@ -983,7 +998,7 @@ public class MainUI extends JFrame
 					case KeyEvent.VK_I: evtInstallApk(false);	break;
 					case KeyEvent.VK_T: evtShowInstalledPackageInfo();	break;
 					case KeyEvent.VK_E: evtShowExplorer(null);		break;
-					case KeyEvent.VK_M: evtShowManifest();		break;
+					case KeyEvent.VK_M: evtShowManifest(false);		break;
 					case KeyEvent.VK_R: evtLaunchApp(null);	break;
 					//case KeyEvent.VK_S: evtSettings();			break;
 					default: return false;

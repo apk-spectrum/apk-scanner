@@ -45,6 +45,7 @@ public enum Resource
 	STR_BTN_OPEN				(Type.TEXT, "@btn_open"),
 	STR_BTN_OPEN_PACKAGE		(Type.TEXT, "@btn_open_pacakge"),
 	STR_BTN_MANIFEST			(Type.TEXT, "@btn_manifest"),
+	STR_BTN_MANIFEST_SAVE_AS	(Type.TEXT, "@btn_manifest_save"),
 	STR_BTN_EXPLORER			(Type.TEXT, "@btn_explorer"),
 	STR_BTN_UNPACK				(Type.TEXT, "@btn_unpack"),
 	STR_BTN_PACK				(Type.TEXT, "@btn_pack"),

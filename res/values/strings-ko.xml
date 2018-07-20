@@ -8,6 +8,7 @@
 	<string name="btn_open">열기</string>
 	<string name="btn_open_pacakge">패키지</string>
 	<string name="btn_manifest">매니페스트</string>
+	<string name="btn_manifest_save">저장하기</string>
 	<string name="btn_explorer">탐색기</string>
 	<string name="btn_unpack">디컴파일</string>
 	<string name="btn_pack">리컴파일</string>
