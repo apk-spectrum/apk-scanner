@@ -387,4 +387,9 @@ public class PlugInPackage
 		}
 		return value;
 	}
+
+	public String getConfiguration(String key, String defaultValue) {
+		String value = getConfiguration(key);
+		return value != null ? value : defaultValue;
+	}
 }

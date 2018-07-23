@@ -1,7 +1,7 @@
 package com.apkscanner.plugin;
 
 public interface IUpdateChecker extends IPlugIn {
-	public String getNewVersion();
-	public boolean checkNewVersion();
-	public void launch();
+	public String getNewVersion() throws NetworkException;
+	public boolean checkNewVersion() throws NetworkException;
+	public void launch() throws NetworkException;
 }

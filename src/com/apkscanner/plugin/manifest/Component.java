@@ -26,9 +26,10 @@ public class Component
 	public final String param;
 	public final String updateUrl;
 	public final String pluginGroup;
+	public final boolean decorder;
 
 	Component(int type, boolean enable, String label, String icon, String description, String name, String url, /* Linker[] linkers */
-			String target, String preferLang, String path, String param, String updateUrl, String pluginGroup) {
+			String target, String preferLang, String path, String param, String updateUrl, String pluginGroup, boolean decorder) {
 		this.type = type;
 		this.enable = enable;
 		this.label = label;
@@ -44,5 +45,7 @@ public class Component
 		this.param = param;
 		this.updateUrl = updateUrl;
 		this.pluginGroup = pluginGroup;
+
+		this.decorder = decorder;
 	}
 }

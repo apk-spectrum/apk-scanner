@@ -2,6 +2,7 @@ package com.apkscanner.plugin;
 
 import java.awt.Desktop;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -27,14 +28,14 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 	}
 
 	@Override
-	public String getNewVersion() {
+	public String getNewVersion() throws NetworkException {
 		if(version != null || component.url == null) return version;
 
 		System.setProperty("proxySet","true");
-		System.setProperty("http.proxyHost", pluginPackage.getConfiguration("http.proxyHost"));
-		System.setProperty("http.proxyPort", pluginPackage.getConfiguration("http.proxyPort"));
-		System.setProperty("https.proxyHost", pluginPackage.getConfiguration("https.proxyHost"));
-		System.setProperty("https.proxyPort", pluginPackage.getConfiguration("https.proxyPort"));
+		System.setProperty("http.proxyHost", pluginPackage.getConfiguration("http.proxyHost", ""));
+		System.setProperty("http.proxyPort", pluginPackage.getConfiguration("http.proxyPort", ""));
+		System.setProperty("https.proxyHost", pluginPackage.getConfiguration("https.proxyHost", ""));
+		System.setProperty("https.proxyPort", pluginPackage.getConfiguration("https.proxyPort", ""));
 		System.setProperty("http.protocols", "TLSv1,TLSv1.1,TLSv1.2");
 
 		String url = component.url;
@@ -52,6 +53,8 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 		request.setDoOutput(false);
 		request.setDoInput(true);
 		request.setInstanceFollowRedirects(false);
+		request.setConnectTimeout(5000);
+		request.setReadTimeout(5000);
 
 		// customizing information
 		request.setRequestProperty("User-Agent","");
@@ -78,8 +81,8 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 			}
 			jsonData = sb.toString();
 			Log.v(jsonData);
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (IOException e) {
+			throw new NetworkException(e);
 		} finally {
 			request.disconnect();
 		}
@@ -97,7 +100,7 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 	}
 
 	@Override
-	public boolean checkNewVersion() {
+	public boolean checkNewVersion() throws NetworkException {
 		String version = getNewVersion();
 		if(version == null || version.trim().isEmpty()) {
 			Log.i("No such new version");
@@ -117,7 +120,7 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 	}
 
 	@Override
-	public void launch() {
+	public void launch() throws NetworkException {
 		if(!checkNewVersion()) {
 			Log.i("Current version is latest");
 			return;

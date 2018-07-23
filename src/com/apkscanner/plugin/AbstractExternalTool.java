@@ -7,4 +7,9 @@ public abstract class AbstractExternalTool extends AbstractPlugIn implements IEx
 	public AbstractExternalTool(PlugInPackage pluginPackage, Component component) {
 		super(pluginPackage, component);
 	}
+
+	@Override
+	public boolean isDecorderTool() {
+		return component.decorder;
+	}
 }
