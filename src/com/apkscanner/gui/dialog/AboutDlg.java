@@ -22,10 +22,10 @@ public class AboutDlg /*extends JDialog*/
 		body.append("  - <a href=\"https://developer.android.com/tools/help/index.html\" title=\"Android Developer Site\">https://developer.android.com/tools/help/index.html</a><br/>");
 		//body.append("  Apktool " + ApktoolManager.getApkToolVersion() + "<br/>");
 		//body.append("  - <a href=\"http://ibotpeaches.github.io/Apktool/\" title=\"Apktool Project Site\">http://ibotpeaches.github.io/Apktool/</a><br/>");
-		body.append("  JD-GUI<br/>");
-		body.append("  - <a href=\"http://jd.benow.ca/\" title=\"JD Project Site\">http://jd.benow.ca/</a><br/>");
-		body.append("  dex2jar<br/>");
-		body.append("  - <a href=\"https://sourceforge.net/projects/dex2jar/\" title=\"JD Project Site\">https://sourceforge.net/projects/dex2jar/</a><br/>");
+		body.append("  JD-GUI - <a href=\"http://jd.benow.ca/\" title=\"JD Project Site\">http://jd.benow.ca/</a><br/>");
+		body.append("  JADX-GUI - <a href=\"https://github.com/skylot/jadx\" title=\"JADX Project Site\">https://github.com/skylot/jadx</a><br/>");
+		body.append("  Bytecode Viewer - <a href=\"https://github.com/konloch/bytecode-viewer\" title=\"Bytecode Viewer Project Site\">https://github.com/konloch/bytecode-viewer</a><br/>");
+		body.append("  dex2jar - <a href=\"https://sourceforge.net/projects/dex2jar/\" title=\"JD Project Site\">https://sourceforge.net/projects/dex2jar/</a><br/>");
 		body.append("  <H3>Included libraries</H3>");
 		body.append("  - <a href=\"https://android.googlesource.com/platform/tools/base/+/master/ddmlib/\" title=\"Google Git Site\">ddmlib</a>,");
 		body.append("  <a href=\"https://github.com/google/guava\" title=\"guava Site\">guava-18.0</a>,");

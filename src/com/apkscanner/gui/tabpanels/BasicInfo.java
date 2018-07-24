@@ -219,10 +219,10 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		//strTabInfo.append("  Apktool<br/>");
 		//strTabInfo.append("  Apktool " + ApkManager.getApkToolVersion() + "<br/>");
 		//strTabInfo.append("  - <a href=\"http://ibotpeaches.github.io/Apktool/\" title=\"Apktool Project Site\">http://ibotpeaches.github.io/Apktool/</a><br/>");
-		strTabInfo.append("  JD-GUI <br/>");
-		strTabInfo.append("  - <a href=\"http://jd.benow.ca/\" title=\"JD Project Site\">http://jd.benow.ca/</a><br/>");
-		strTabInfo.append("  dex2jar<br/>");
-		strTabInfo.append("  - <a href=\"https://sourceforge.net/projects/dex2jar/\" title=\"JD Project Site\">https://sourceforge.net/projects/dex2jar/</a><br/>");
+		strTabInfo.append("  JD-GUI - <a href=\"http://jd.benow.ca/\" title=\"JD Project Site\">http://jd.benow.ca/</a><br/>");
+		strTabInfo.append("  JADX-GUI - <a href=\"https://github.com/skylot/jadx\" title=\"JADX Project Site\">https://github.com/skylot/jadx</a><br/>");
+		strTabInfo.append("  Bytecode Viewer - <a href=\"https://github.com/konloch/bytecode-viewer\" title=\"Bytecode Viewer Project Site\">https://github.com/konloch/bytecode-viewer</a><br/>");
+		strTabInfo.append("  dex2jar - <a href=\"https://sourceforge.net/projects/dex2jar/\" title=\"JD Project Site\">https://sourceforge.net/projects/dex2jar/</a><br/>");
 		strTabInfo.append("  <H3>Included libraries</H3>");
 		strTabInfo.append("  - <a href=\"https://android.googlesource.com/platform/tools/base/+/master/ddmlib/\" title=\"Google Git Site\">ddmlib</a>,");
 		strTabInfo.append("  <a href=\"https://github.com/google/guava\" title=\"guava Site\">guava-18.0</a>,");
