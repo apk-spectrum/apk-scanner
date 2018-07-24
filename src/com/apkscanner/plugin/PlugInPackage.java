@@ -96,6 +96,14 @@ public class PlugInPackage
 		return list.toArray(new IPlugIn[list.size()]);
 	}
 
+	public IPlugIn getPlugInByActionCommand(String actionCommand) {
+		if(actionCommand == null || plugins == null) return null;
+		for(IPlugIn p: plugins) {
+			if(actionCommand.equals(p.getActionCommand())) return p;
+		}
+		return null;
+	}
+
 	public PlugInGroup getPlugInGroup(String name) {
 		if(pluginGroups == null || name == null || name.trim().isEmpty()) return null;
 		for(PlugInGroup g: pluginGroups) {
@@ -386,5 +394,10 @@ public class PlugInPackage
 			value = PluginConfiguration.getConfiguration(key);
 		}
 		return value;
+	}
+
+	public String getConfiguration(String key, String defaultValue) {
+		String value = getConfiguration(key);
+		return value != null ? value : defaultValue;
 	}
 }

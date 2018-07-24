@@ -12,9 +12,16 @@ public class ExternalToolLinker extends AbstractExternalTool
 
 	@Override
 	public void launch() {
-		ApkInfo info = PlugInManager.getApkInfo();
-		if(info == null) return;
-		String tmp = component.param.replaceAll("%[aA][pP][kK]_[pP][aA][tT][hH]%", info.filePath);
-		ConsolCmd.exc(new String[] {component.path, tmp}, true, null);		
+		Thread t = new Thread(new Runnable() {
+			public void run()
+			{
+				ApkInfo info = PlugInManager.getApkInfo();
+				if(info == null) return;
+				String tmp = component.param.replaceAll("%[aA][pP][kK]_[pP][aA][tT][hH]%", info.filePath.replaceAll("\\\\", "\\\\\\\\"));
+				ConsolCmd.exc(new String[] {component.path, tmp}, true);
+			}
+		});
+		t.setPriority(Thread.NORM_PRIORITY);
+		t.start();
 	}
 }

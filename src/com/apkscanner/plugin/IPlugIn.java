@@ -54,12 +54,14 @@ public interface IPlugIn {
 	public String getDescription();
 	
 	public boolean isEnabled();
-	
+
 	public void setEnable(boolean enable);
-	
+
 	public String getPackageName();
 
 	public PlugInGroup getParantGroup();
 
-	String getGroupName();
+	public String getGroupName();
+
+	public String getActionCommand();
 }
