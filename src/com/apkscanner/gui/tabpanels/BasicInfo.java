@@ -46,6 +46,9 @@ import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
+import com.apkscanner.plugin.IPackageSearcher;
+import com.apkscanner.plugin.IPlugIn;
+import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.FileUtil.FSStyle;
@@ -430,6 +433,26 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			mutiLabels += s + "\n";
 		}
 
+		String packageSearchers = "";
+		String appLabelSearchers = "";
+		IPackageSearcher[] searchers = PlugInManager.getPackageSearchers();
+		if(searchers.length > 0) {
+			String defaultSearchIcon = Resource.IMG_TOOLBAR_SEARCH.getPath();
+			for(IPackageSearcher searcher: searchers) {
+				URL icon = searcher.getIconURL();
+				String iconPath = icon != null ? icon.toString() : defaultSearchIcon;
+				String tag = makeHyperLink("@event", " <image src=\"" + iconPath + "\" width=16 height=16 /> ", null, "PLUGIN:"+searcher.getActionCommand(), "color:white;");
+				switch(searcher.getSupportType() ) {
+				case IPackageSearcher.SEARCHER_TYPE_PACKAGE_NAME:
+					packageSearchers += tag;
+					break;
+				case IPackageSearcher.SEARCHER_TYPE_APP_NAME:
+					appLabelSearchers += tag;
+					break;
+				};
+			}
+		}
+
 		StringBuilder strTabInfo = new StringBuilder("");
 		strTabInfo.append("<table>");
 		strTabInfo.append("  <tr>");
@@ -444,15 +467,15 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			strTabInfo.append("        </font>");
 		} else {
 			strTabInfo.append("          " + appName);
-			strTabInfo.append("</font><br/>");
+			strTabInfo.append("</font> " + appLabelSearchers + "<br/>");
 		}
 		if(labels.length > 1) {
 			strTabInfo.append("        <font style=\"font-size:10px;\">");
 			strTabInfo.append("          " + makeHyperLink("@event", "["+labels.length+"]", mutiLabels, "other-lang", null));
-			strTabInfo.append("</font><br/>");
+			strTabInfo.append("</font> " + appLabelSearchers + "<br/>");
 		}
 		strTabInfo.append("        <font style=\"font-size:15px; color:#4472C4\">");
-		strTabInfo.append("          [" + packageName +"]");
+		strTabInfo.append("          [" + packageName +"] " + packageSearchers);
 		strTabInfo.append("</font><br/>");
 		strTabInfo.append("        <font style=\"font-size:15px; color:#ED7E31\">");
 		strTabInfo.append("          " + makeHyperLink("@event", "Ver. " + versionName +" / " + (!versionCode.isEmpty() ? versionCode : "0"), "VersionName : " + versionName + "\n" + "VersionCode : " + (!versionCode.isEmpty() ? versionCode : "Unspecified"), "app-version", null));
@@ -590,7 +613,6 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		ApkSize = apkInfo.fileSize;
 		apkPath = apkInfo.filePath;
 		checkSumMd5 = FileUtil.getMessageDigest(new File(apkPath), "MD5");
-
 
 		hasSignatureLevel = false; // apkInfo.hasSignatureLevel;
 		hasSignatureOrSystemLevel = false; // apkInfo.hasSignatureOrSystemLevel;
@@ -806,6 +828,11 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			checksum += "SHA1: " + FileUtil.getMessageDigest(new File(apkPath), "SHA-1") + "\n";
 			checksum += "SHA256: " + FileUtil.getMessageDigest(new File(apkPath), "SHA-256");
 			showDialog(checksum, "APK Checksum", new Dimension(650, 150), null);
+		} else if(id != null && id.startsWith("PLUGIN:")) {
+			IPlugIn plugin = PlugInManager.getPlugInByActionCommand(id.replaceAll("PLUGIN:", ""));
+			if(plugin != null) {
+				plugin.launch();
+			}
 		} else {
 			showPermDetailDesc(id);
 		}

@@ -328,6 +328,8 @@ public class MainUI extends JFrame
 			Log.i("onStateChanged() ui sync start for " + status);
 			switch(status) {
 			case BASIC_INFO_COMPLETED:
+				PlugInManager.setApkInfo(apkScanner.getApkInfo());
+
 				String apkFilePath = apkScanner.getApkInfo().filePath;
 				String title = apkFilePath.substring(apkFilePath.lastIndexOf(File.separator)+1) + " - " + Resource.STR_APP_NAME.getString();
 				setTitle(title);
