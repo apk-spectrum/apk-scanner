@@ -111,4 +111,7 @@ public abstract class AbstractPlugIn implements IPlugIn
 		}
 		return getPackageName() + "!" + typeName + "@" + getName();
 	}
+
+	@Override
+	public void launch() { }
 }
