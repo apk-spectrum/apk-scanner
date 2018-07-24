@@ -11,7 +11,7 @@ public class ApkScannerVersion {
 
     /** Matches e.g. ".... 1.0.32" */
     private static final Pattern APKSCANNER_VERSION_PATTERN = Pattern.compile(
-            "^.*(\\d+)\\.(\\d+)\\.(\\d+).*");
+            "^[^\\d]*(\\d+)(\\.(\\d+)(\\.(\\d+))?)?.*");
 
     public final int major;
     public final int minor;
@@ -45,8 +45,8 @@ public class ApkScannerVersion {
         Matcher matcher = APKSCANNER_VERSION_PATTERN.matcher(input);
         if (matcher.matches()) {
             int major = Integer.parseInt(matcher.group(1));
-            int minor = Integer.parseInt(matcher.group(2));
-            int micro = Integer.parseInt(matcher.group(3));
+            int minor = matcher.group(3) != null ? Integer.parseInt(matcher.group(3)) : 0;
+            int micro = matcher.group(5) != null ? Integer.parseInt(matcher.group(5)) : 0;
             return new ApkScannerVersion(major, minor, micro);
         } else {
             return UNKNOWN;
