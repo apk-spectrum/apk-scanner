@@ -9,13 +9,19 @@ public abstract class AbstractExternalTool extends AbstractPlugIn implements IEx
 	}
 
 	@Override
+	public String getToolType() {
+		if(isNormalTool()) return TYPE_NORMAL_TOOL;
+		return component.like;
+	}
+
+	@Override
 	public boolean isDecorderTool() {
-		return "decorder".equals(component.like);
+		return TYPE_DECORDER_TOOL.equals(component.like);
 	}
 
 	@Override
 	public boolean isDiffTool() {
-		return "difftool".equals(component.like);
+		return TYPE_DIFF_TOOL.equals(component.like);
 	}
 
 	@Override

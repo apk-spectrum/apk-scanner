@@ -96,10 +96,18 @@ public abstract class AbstractPlugIn implements IPlugIn
 	public String getActionCommand() {
 		String typeName = null;
 		switch(getType()) {
-		case PLUGIN_TPYE_PACKAGE_SEARCHER: typeName = "PACKAGE_SEARCHER"; break;
-		case PLUGIN_TPYE_UPDATE_CHECKER: typeName = "UPDATE_CHECKER"; break;
-		case PLUGIN_TPYE_EXTRA_TOOL: typeName = "EXTRA_TOOL"; break;
-		default: typeName = "UNKNOWN_TYPE"; break;
+		case PLUGIN_TPYE_PACKAGE_SEARCHER:
+			typeName = IPackageSearcher.class.getSimpleName() + "#" + ((IPackageSearcher)this).getSupportType();
+			break;
+		case PLUGIN_TPYE_UPDATE_CHECKER:
+			typeName = IUpdateChecker.class.getSimpleName();
+			break;
+		case PLUGIN_TPYE_EXTRA_TOOL:
+			typeName = IExternalTool.class.getSimpleName() + "#" + ((IExternalTool)this).getToolType();
+			break;
+		default:
+			typeName = IPlugIn.class.getName();
+			break;
 		}
 		return getPackageName() + "!" + typeName + "@" + getName();
 	}
