@@ -87,16 +87,6 @@ public final class PlugInManager
 		return list.toArray(new IPackageSearcher[list.size()]);
 	}
 
-	public static IPackageSearcher[] getPackageSearchers(int type, String name) {
-		ArrayList<IPackageSearcher> list = new ArrayList<>();
-		for(IPackageSearcher searcher: getPackageSearchers()) {
-			if(searcher.trySearch(type, name)) {
-				list.add(searcher);
-			}
-		}
-		return list.toArray(new IPackageSearcher[list.size()]);
-	}
-
 	public static IPlugIn[] getPlugInAll() {
 		ArrayList<IPlugIn> list = new ArrayList<>();
 		for(PlugInPackage pack: pluginPackages) {

@@ -64,4 +64,6 @@ public interface IPlugIn {
 	public String getGroupName();
 
 	public String getActionCommand();
+	
+	public void launch();
 }

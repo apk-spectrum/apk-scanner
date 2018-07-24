@@ -120,10 +120,14 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 	}
 
 	@Override
-	public void launch() throws NetworkException {
-		if(!checkNewVersion()) {
-			Log.i("Current version is latest");
-			return;
+	public void launch() {
+		try {
+			if(!checkNewVersion()) {
+				Log.i("Current version is latest");
+				return;
+			}
+		} catch (NetworkException e) {
+			e.printStackTrace();
 		}
 
 		String url = targetUrl;

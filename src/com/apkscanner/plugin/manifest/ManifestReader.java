@@ -108,8 +108,7 @@ public class ManifestReader
 				String path = null;
 				String param = null;
 				String updateUrl = null;
-
-				boolean decorder = "true".equals(node.getAttributes("decorder"));
+				String like = null;
 
 				switch(type) {
 				case Component.TYPE_PACAKGE_SEARCHER_LINKER:
@@ -122,10 +121,11 @@ public class ManifestReader
 				case Component.TYPE_EXTERNAL_TOOL_LINKER:
 					path = node.getAttributes("path");
 					param = node.getAttributes("param");
+					like = node.getAttributes("like");
 					break;
 				}
 				components.add(new Component(type, enable, label, icon, description, name, url, /* linkers */
-						target, preferLang, path, param, updateUrl, pluginGroup, decorder));
+						target, preferLang, path, param, updateUrl, pluginGroup, like));
 			}
 		}
 		return components.toArray(new Component[components.size()]);
