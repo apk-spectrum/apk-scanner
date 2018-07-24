@@ -1,6 +1,7 @@
 package com.apkscanner.plugin;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 import com.apkscanner.plugin.manifest.Component;
@@ -44,7 +45,8 @@ public abstract class AbstractPlugIn implements IPlugIn
 	public URL getIconURL() {
 		if(component.icon != null) { 
 			try {
-				return new URL(component.icon);
+				URI uri = pluginPackage.getResourceUri(component.icon); 
+				return uri != null ? uri.toURL() : null;
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			}
