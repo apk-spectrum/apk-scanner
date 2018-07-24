@@ -13,6 +13,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -36,6 +37,7 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import com.apkscanner.gui.util.ExtensionButton;
+import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.plugin.IPackageSearcher;
 import com.apkscanner.plugin.IPlugIn;
@@ -730,6 +732,12 @@ public class ToolBar extends JToolBar
 		button.setActionCommand("PLUGIN:" + plugin.getActionCommand());
 		button.addActionListener(listener);
 		button.setEnabled(hasTargetApk);
+		if(plugin instanceof IExternalTool && !((IExternalTool)plugin).isDecorderTool()) {
+			URL iconUrl = plugin.getIconURL();
+			if(iconUrl != null) {
+				button.setIcon(new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(iconUrl),16,16)));
+			}
+		}
 		return button;
 	}
 
@@ -739,6 +747,12 @@ public class ToolBar extends JToolBar
 		//menuItem.setIcon(icon);
 		menuItem.setToolTipText(plugin.getDescription());
 		menuItem.setActionCommand("PLUGIN:" + plugin.getActionCommand());
+		if(plugin instanceof IPackageSearcher) {
+			URL iconUrl = plugin.getIconURL();
+			if(iconUrl != null) {
+				menuItem.setIcon(new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(iconUrl),16,16)));
+			}
+		}
 		menuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

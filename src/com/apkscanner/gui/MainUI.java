@@ -54,7 +54,6 @@ import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.FileDrop;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
-import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.IUpdateChecker;
 import com.apkscanner.plugin.NetworkException;
@@ -894,9 +893,7 @@ public class MainUI extends JFrame
 		private void evtPluginLaunch(String actionCommand) {
 			IPlugIn plugin = PlugInManager.getPlugInByActionCommand(actionCommand);
 			if(plugin != null) {
-				if(plugin instanceof IExternalTool) {
-					((IExternalTool) plugin).launch();
-				}
+				plugin.launch();
 			}
 		}
 
