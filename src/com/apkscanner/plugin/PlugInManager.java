@@ -43,7 +43,20 @@ public final class PlugInManager
 		for(PlugInPackage pack: pluginPackages) {
 			IPlugIn[] plugins = pack.getPlugIn(IPlugIn.PLUGIN_TPYE_EXTRA_TOOL);
 			for(IPlugIn p: plugins) {
-				if(p instanceof IExternalTool) {
+				if(p instanceof IExternalTool && !((IExternalTool) p).isDecorderTool()) {
+					list.add((IExternalTool)p);
+				}
+			}
+		}
+		return list.toArray(new IExternalTool[list.size()]);
+	}
+
+	public static IExternalTool[] getDecorderTool() {
+		ArrayList<IExternalTool> list = new ArrayList<>();
+		for(PlugInPackage pack: pluginPackages) {
+			IPlugIn[] plugins = pack.getPlugIn(IPlugIn.PLUGIN_TPYE_EXTRA_TOOL);
+			for(IPlugIn p: plugins) {
+				if(p instanceof IExternalTool && ((IExternalTool) p).isDecorderTool()) {
 					list.add((IExternalTool)p);
 				}
 			}
@@ -82,6 +95,24 @@ public final class PlugInManager
 			}
 		}
 		return list.toArray(new IPackageSearcher[list.size()]);
+	}
+
+	public static IPlugIn[] getPlugInAll() {
+		ArrayList<IPlugIn> list = new ArrayList<>();
+		for(PlugInPackage pack: pluginPackages) {
+			IPlugIn[] plugins = pack.getPlugIn(IPlugIn.PLUGIN_TPYE_ALL);
+			for(IPlugIn p: plugins) {
+				list.add(p);
+			}
+		}
+		return list.toArray(new IPlugIn[list.size()]);
+	}
+
+	public static IPlugIn getPlugInByActionCommand(String actionCommand) {
+		if(actionCommand == null) return null;
+		String packageName = actionCommand.replaceAll("!.*", "");
+		PlugInPackage pack = getPlugInPackage(packageName);
+		return pack != null ? pack.getPlugInByActionCommand(actionCommand) : null;
 	}
 
 	public static void setApkInfo(ApkInfo info) {
