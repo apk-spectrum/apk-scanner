@@ -314,6 +314,8 @@ public enum Resource
 	STR_LABEL_APK_INSTALLING	(Type.TEXT, "@label_apk_installing"),
 	STR_LABEL_APK_INSTALL_FINISH(Type.TEXT, "@label_apk_install_finish"),
 	STR_LABEL_SAVE_AS			(Type.TEXT, "@label_save_as"),
+	STR_LABEL_BY_PACKAGE_NAME	(Type.TEXT, "@label_by_package_name"),
+	STR_LABEL_BY_APP_LABEL		(Type.TEXT, "@label_by_app_label"),
 
 	STR_TREE_NODE_DEVICE 		(Type.TEXT, "@tree_node_device"),
 	STR_TREE_NODE_DISPLAYED		(Type.TEXT, "@tree_node_displayed"),

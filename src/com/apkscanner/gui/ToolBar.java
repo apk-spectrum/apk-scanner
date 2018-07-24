@@ -37,6 +37,8 @@ import javax.swing.event.PopupMenuListener;
 
 import com.apkscanner.gui.util.ExtensionButton;
 import com.apkscanner.plugin.IExternalTool;
+import com.apkscanner.plugin.IPackageSearcher;
+import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
@@ -370,9 +372,19 @@ public class ToolBar extends JToolBar
 		openPopupMenu.add(menuItemMap.get(MenuItemSet.OPEN_APK));
 		openPopupMenu.add(menuItemMap.get(MenuItemSet.OPEN_PACKAGE));
 
+		explorerPopupMenu.add(menuItemMap.get(MenuItemSet.EXPLORER_ARCHIVE));
+		explorerPopupMenu.add(menuItemMap.get(MenuItemSet.EXPLORER_FOLDER));
+		explorerPopupMenu.addSeparator();
+		explorerPopupMenu.add(makeSelectDefaultMenuItem());
+
 		installPopupMenu.add(menuItemMap.get(MenuItemSet.UNINSTALL_APK));
 		installPopupMenu.add(menuItemMap.get(MenuItemSet.CLEAR_DATA));
 		installPopupMenu.add(menuItemMap.get(MenuItemSet.INSTALLED_CHECK));
+
+		launchPopupMenu.add(menuItemMap.get(MenuItemSet.LAUNCH_LAUNCHER));
+		launchPopupMenu.add(menuItemMap.get(MenuItemSet.LAUNCH_SELECT));
+		launchPopupMenu.addSeparator();
+		launchPopupMenu.add(makeSelectDefaultMenuItem());
 
 		decordePopupMenu.add(menuItemMap.get(MenuItemSet.DECODER_JD_GUI));
 		decordePopupMenu.add(menuItemMap.get(MenuItemSet.DECODER_JADX_GUI));
@@ -381,16 +393,6 @@ public class ToolBar extends JToolBar
 		decordePopupMenu.add(makeSelectDefaultMenuItem());
 
 		searchPopupMenu.add(menuItemMap.get(MenuItemSet.SEARCH_RESOURCE));
-
-		explorerPopupMenu.add(menuItemMap.get(MenuItemSet.EXPLORER_ARCHIVE));
-		explorerPopupMenu.add(menuItemMap.get(MenuItemSet.EXPLORER_FOLDER));
-		explorerPopupMenu.addSeparator();
-		explorerPopupMenu.add(makeSelectDefaultMenuItem());
-
-		launchPopupMenu.add(menuItemMap.get(MenuItemSet.LAUNCH_LAUNCHER));
-		launchPopupMenu.add(menuItemMap.get(MenuItemSet.LAUNCH_SELECT));
-		launchPopupMenu.addSeparator();
-		launchPopupMenu.add(makeSelectDefaultMenuItem());
 
 		Log.i("ToolBar.initUI() ButtonSet init");
 		buttonMap = ButtonSet.getButtonMap(listener);
@@ -430,7 +432,7 @@ public class ToolBar extends JToolBar
 						setButtonText(ButtonSet.OPEN_PACKAGE, Resource.STR_MENU_NEW.getString(), Resource.STR_BTN_OPEN_PACKAGE_LAB.getString());
 						setButtonText(ButtonSet.MANIFEST, Resource.STR_BTN_MANIFEST_SAVE_AS.getString(), Resource.STR_BTN_MANIFEST_LAB.getString());
 
-						forwardMouseEvent(e, MouseEvent.MOUSE_ENTERED);
+						invokeMouseEvent(e, MouseEvent.MOUSE_ENTERED);
 					}
 				} else if (e.getID() == KeyEvent.KEY_RELEASED && isShiftPressed) {
 					if(e.getModifiers() != KeyEvent.SHIFT_MASK) {
@@ -439,7 +441,7 @@ public class ToolBar extends JToolBar
 						setButtonText(ButtonSet.OPEN_PACKAGE, Resource.STR_BTN_OPEN_PACKAGE.getString(), Resource.STR_BTN_OPEN_PACKAGE_LAB.getString());
 						setButtonText(ButtonSet.MANIFEST, Resource.STR_BTN_MANIFEST.getString(), Resource.STR_BTN_MANIFEST_LAB.getString());
 
-						forwardMouseEvent(e, MouseEvent.MOUSE_EXITED);
+						invokeMouseEvent(e, MouseEvent.MOUSE_EXITED);
 					}
 				}
 				return false;
@@ -454,7 +456,7 @@ public class ToolBar extends JToolBar
 				}
 			}
 
-			private void forwardMouseEvent(KeyEvent e, int mouseEvent) {
+			private void invokeMouseEvent(KeyEvent e, int mouseEvent) {
 				Point p = ToolBar.this.getMousePosition();
 				if(p != null) {
 					Component c = ToolBar.this.getComponentAt(p);
@@ -477,6 +479,53 @@ public class ToolBar extends JToolBar
 		});
 
 		Log.i("ToolBar.initUI() end");
+	}
+
+	public void onLoadPlugin(final ActionListener listener) {
+		IExternalTool[] tools = PlugInManager.getDecorderTool();
+		if(tools.length > 0) {
+			decordePopupMenu.removeAll();
+			decordePopupMenu.add(menuItemMap.get(MenuItemSet.DECODER_JD_GUI));
+			decordePopupMenu.add(menuItemMap.get(MenuItemSet.DECODER_JADX_GUI));
+			decordePopupMenu.add(menuItemMap.get(MenuItemSet.DECODER_BYTECODE));
+			decordePopupMenu.addSeparator();
+			for(IExternalTool tool: tools) {
+				decordePopupMenu.add(makePlugInMenuItem(tool, listener, Resource.PROP_DEFAULT_DECORDER));
+			}
+			decordePopupMenu.addSeparator();
+			decordePopupMenu.add(makeSelectDefaultMenuItem());
+		}
+
+		IPackageSearcher[] searchers = PlugInManager.getPackageSearchers();
+		if(searchers.length > 0) {
+			searchPopupMenu.removeAll();
+			searchPopupMenu.add(menuItemMap.get(MenuItemSet.SEARCH_RESOURCE));
+			searchPopupMenu.addSeparator();
+			
+			JMenuItem packageItems = null;
+			JMenuItem labelItems = null;
+			for(IPackageSearcher searcher: searchers) {
+				switch(searcher.getSupportType() ) {
+				case IPackageSearcher.SEARCHER_TYPE_PACKAGE_NAME:
+					if(packageItems == null) {
+						packageItems = searchPopupMenu.add(new JMenu(Resource.STR_LABEL_BY_PACKAGE_NAME.getString()));
+					}
+					packageItems.add(makePlugInMenuItem(searcher, listener, null));
+					break;
+				case IPackageSearcher.SEARCHER_TYPE_APP_NAME:
+					if(labelItems == null) {
+						labelItems = searchPopupMenu.add(new JMenu(Resource.STR_LABEL_BY_APP_LABEL.getString()));
+					}
+					labelItems.add(makePlugInMenuItem(searcher, listener, null));
+					break;
+				};
+			}
+		}
+
+		pluginToolBar = makePluginToolBar(listener);
+		if(pluginToolBar != null) {
+			setReplacementLayout();
+		}		
 	}
 
 	public void setFlag(int flag) {
@@ -644,66 +693,83 @@ public class ToolBar extends JToolBar
 		return subbar;
 	}
 	
-	private JComponent makePluginToolBar() {
-		if(pluginToolBar != null) {
-			return pluginToolBar;
-		}
-
+	private JComponent makePluginToolBar(ActionListener listener) {
 		IExternalTool[] tools = PlugInManager.getExternalTool();
-		if(tools.length > 0) {
-			JToolBar subbar = null;
-			subbar = makeSubToolBar();
-			if(tools.length <= 3) {
-				for(IExternalTool tool: tools) {
-					subbar.add(makePlugInButtons(tool)); 
-				}
-			} else {
-				subbar.add(makePlugInButtons(tools[0]));
-				subbar.add(makePlugInButtons(tools[1]));
-				subbar.add(buttonMap.get(ButtonSet.PLUGIN_EXTEND));
-				pluginPopupMenu.removeAll();
-				for(int i=2; i<tools.length; i++) {
-					pluginPopupMenu.add(gePlugInItem(tools[i]));
-				}
-				buttonMap.get(ButtonSet.PLUGIN_EXTEND).addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent ae) {
-						JButton btn = buttonMap.get(ButtonSet.PLUGIN_EXTEND);
-						pluginPopupMenu.show(btn, 0, btn.getHeight());
-					}
-				});
-			}
-			pluginToolBar = subbar; 
-		}
+		if(tools == null || tools.length <= 0) return null;
 
-		return pluginToolBar;
+		JToolBar subbar = makeSubToolBar();
+		if(tools.length <= 3) {
+			for(IExternalTool tool: tools) {
+				subbar.add(makePlugInButtons(tool, listener)); 
+			}
+		} else {
+			subbar.add(makePlugInButtons(tools[0], listener));
+			subbar.add(makePlugInButtons(tools[1], listener));
+			subbar.add(buttonMap.get(ButtonSet.PLUGIN_EXTEND));
+			pluginPopupMenu.removeAll();
+			for(int i=2; i<tools.length; i++) {
+				pluginPopupMenu.add(makePlugInMenuItem(tools[i], listener, null));
+			}
+			buttonMap.get(ButtonSet.PLUGIN_EXTEND).addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent ae) {
+					JButton btn = buttonMap.get(ButtonSet.PLUGIN_EXTEND);
+					pluginPopupMenu.show(btn, 0, btn.getHeight());
+				}
+			});
+		}
+		return subbar;
 	}
 
-	private JButton makePlugInButtons(final IExternalTool tool) {
-		JButton button = new JButton(tool.getLabel(), null);
-		button.setToolTipText(tool.getDescription());
+	private JButton makePlugInButtons(final IPlugIn plugin, final ActionListener listener) {
+		JButton button = new JButton(plugin.getLabel(), null);
+		button.setToolTipText(plugin.getDescription());
 		button.setBorderPainted(false);
 		button.setOpaque(false);
 		button.setFocusable(false);
 		button.setPreferredSize(new Dimension(68,20));
-		button.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				tool.launch();
-			}
-		});
+		button.setActionCommand("PLUGIN:" + plugin.getActionCommand());
+		button.addActionListener(listener);
 		button.setEnabled(hasTargetApk);
 		return button;
 	}
 
-	private JMenuItem gePlugInItem(final IExternalTool tool)
+	private JMenuItem makePlugInMenuItem(final IPlugIn plugin, final ActionListener listener, final Resource defaultPorp)
 	{
-		JMenuItem menuItem = new JMenuItem(tool.getLabel());
+		JMenuItem menuItem = new JMenuItem(plugin.getLabel());
 		//menuItem.setIcon(icon);
-		menuItem.setToolTipText(tool.getDescription());
+		menuItem.setToolTipText(plugin.getDescription());
+		menuItem.setActionCommand("PLUGIN:" + plugin.getActionCommand());
 		menuItem.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				tool.launch();
+			public void actionPerformed(ActionEvent e) {
+				boolean isSaveDefault = false;
+				for(Component c: ((JMenuItem)e.getSource()).getParent().getComponents()) {
+					if(c instanceof NoCloseCheckBoxMenuItem) {
+						if(CMD_SELECT_DEFAULT_MENU.equals(((JCheckBoxMenuItem)c).getActionCommand())) {
+							isSaveDefault = ((JCheckBoxMenuItem)c).isSelected();
+						}
+					}
+				}
+				if(isSaveDefault && defaultPorp != null) {
+					String value = e.getActionCommand().replaceAll(".*:", "");
+					switch(defaultPorp) {
+					case PROP_DEFAULT_DECORDER:
+						Resource.PROP_DEFAULT_DECORDER.setData(value);
+						break;
+					case PROP_DEFAULT_SEARCHER:
+						Resource.PROP_DEFAULT_SEARCHER.setData(value);
+						break;
+					case PROP_DEFAULT_EXPLORER:
+						Resource.PROP_DEFAULT_EXPLORER.setData(value);
+						break;
+					case PROP_DEFAULT_LAUNCH_MODE:
+						Resource.PROP_DEFAULT_LAUNCH_MODE.setData(value);
+						break;
+					default:
+						break;
+					};
+				}
+				listener.actionPerformed(e);
 			}
 		});
 		return menuItem;
@@ -759,10 +825,9 @@ public class ToolBar extends JToolBar
 		subbar.add(buttonMap.get(ButtonSet.INSTALL_EXTEND));
 		add(subbar);
 
-		JComponent pluginBar = makePluginToolBar();
-		if(pluginBar != null) {
+		if(pluginToolBar != null) {
 			add(getNewSeparator(JSeparator.VERTICAL, sepSize));
-			add(pluginBar);
+			add(pluginToolBar);
 		}
 
 		add(getNewSeparator(JSeparator.VERTICAL, sepSize));

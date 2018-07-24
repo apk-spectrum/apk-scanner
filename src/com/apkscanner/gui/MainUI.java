@@ -54,7 +54,10 @@ import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.FileDrop;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
+import com.apkscanner.plugin.IExternalTool;
+import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.IUpdateChecker;
+import com.apkscanner.plugin.NetworkException;
 import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.plugin.PluginConfiguration;
 import com.apkscanner.resource.Resource;
@@ -186,7 +189,7 @@ public class MainUI extends JFrame
 
 			@Override
 			protected void process(List<Void> arg0) {
-				toolBar.setReplacementLayout();
+				toolBar.onLoadPlugin(new UIEventHandler());
 				int state = apkScanner.getStatus();
 				if( PlugInManager.getPackageSearchers().length > 0
 						&& Status.BASIC_INFO_COMPLETED.isCompleted(state)
@@ -201,7 +204,19 @@ public class MainUI extends JFrame
 				try {
 					updaters = get();
 				} catch (InterruptedException | ExecutionException e) {
-					Log.e(e.getMessage());
+					if(e.getCause() instanceof NetworkException) {
+						NetworkException ne = (NetworkException)e.getCause();
+						//Log.d("NetworkException " + e.getMessage());
+						if(ne.isProxyException()) {
+							Log.d("isProxyException");	
+						} else if(ne.isSslCertException()) {
+							Log.d("isSslCertException");
+						} else {
+							Log.d("unkown");
+						}
+					} else {
+						e.printStackTrace();
+					}
 				}
 				if(updaters != null && updaters.length > 0) {
 
@@ -520,7 +535,6 @@ public class MainUI extends JFrame
 				return;
 			}
 
-
 			int actionType = 0;
 			if(e == null || ToolBar.ButtonSet.OPEN_CODE.matchActionEvent(e)) {
 				String data = (String)Resource.PROP_DEFAULT_DECORDER.getData();
@@ -530,6 +544,9 @@ public class MainUI extends JFrame
 					actionType = 2;
 				} else if(Resource.STR_DECORDER_BYTECOD.equals(data)) {
 					actionType = 3;
+				} else {
+					evtPluginLaunch(data);
+					return;
 				}
 			}
 			if(actionType == 1 || ToolBar.MenuItemSet.DECODER_JD_GUI.matchActionEvent(e)) {
@@ -874,6 +891,15 @@ public class MainUI extends JFrame
 			thread.start();
 		}
 
+		private void evtPluginLaunch(String actionCommand) {
+			IPlugIn plugin = PlugInManager.getPlugInByActionCommand(actionCommand);
+			if(plugin != null) {
+				if(plugin instanceof IExternalTool) {
+					((IExternalTool) plugin).launch();
+				}
+			}
+		}
+
 		private IDevice[] getInstalledDevice() {
 			IDevice[] devices = null;
 			if(toolbarManager.isEnabled()) {
@@ -979,6 +1005,8 @@ public class MainUI extends JFrame
 				evtClearData();
 			} else if(ToolBar.ButtonSet.SIGN.matchActionEvent(e) || ToolBar.ButtonSet.SUB_SIGN.matchActionEvent(e)) { 
 				evtSignApkFile();
+			} else if(e.getActionCommand() != null && e.getActionCommand().startsWith("PLUGIN:")) {
+				evtPluginLaunch(e.getActionCommand().replaceAll("PLUGIN:", ""));
 			} else {
 				Log.v("Unkown action : " + e);
 			}
