@@ -1,6 +1,7 @@
 package com.apkscanner.plugin;
 
 import com.apkscanner.plugin.manifest.Component;
+import com.apkscanner.util.SystemUtil;
 
 public abstract class AbstractExternalTool extends AbstractPlugIn implements IExternalTool
 {
@@ -27,5 +28,17 @@ public abstract class AbstractExternalTool extends AbstractPlugIn implements IEx
 	@Override
 	public boolean isNormalTool() {
 		return component.like == null || (!isDecorderTool() && !isDiffTool());
+	}
+
+	@Override
+	public boolean isSupoortedOS() {
+		return  component.supportedOS == null || component.supportedOS.isEmpty()
+			|| (SystemUtil.isWindows() && "windows".equals(component.supportedOS)) 
+			|| (SystemUtil.isLinux() && "linux".equals(component.supportedOS));
+	}
+
+	@Override
+	public boolean isEnabled() {
+ 		return isSupoortedOS() && super.isEnabled();
 	}
 }
