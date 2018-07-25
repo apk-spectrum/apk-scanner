@@ -10,4 +10,5 @@ public interface IExternalTool extends IPlugIn {
 	public boolean isDecorderTool();
 	public boolean isDiffTool();
 	public boolean isNormalTool();
+	public boolean isSupoortedOS();
 }

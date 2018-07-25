@@ -27,9 +27,10 @@ public class Component
 	public final String updateUrl;
 	public final String pluginGroup;
 	public final String like;
+	public final String supportedOS;
 
 	Component(int type, boolean enable, String label, String icon, String description, String name, String url, /* Linker[] linkers */
-			String target, String preferLang, String path, String param, String updateUrl, String pluginGroup, String like) {
+			String target, String preferLang, String path, String param, String updateUrl, String pluginGroup, String like, String supportedOS) {
 		this.type = type;
 		this.enable = enable;
 		this.label = label;
@@ -47,5 +48,6 @@ public class Component
 		this.pluginGroup = pluginGroup;
 
 		this.like = like;
+		this.supportedOS = supportedOS;
 	}
 }

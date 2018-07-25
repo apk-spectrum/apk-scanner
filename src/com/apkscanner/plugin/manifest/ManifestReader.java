@@ -109,6 +109,7 @@ public class ManifestReader
 				String param = null;
 				String updateUrl = null;
 				String like = null;
+				String supportedOS = null;
 
 				switch(type) {
 				case Component.TYPE_PACAKGE_SEARCHER_LINKER:
@@ -122,10 +123,11 @@ public class ManifestReader
 					path = node.getAttributes("path");
 					param = node.getAttributes("param");
 					like = node.getAttributes("like");
+					supportedOS = node.getAttributes("supportedOS");
 					break;
 				}
 				components.add(new Component(type, enable, label, icon, description, name, url, /* linkers */
-						target, preferLang, path, param, updateUrl, pluginGroup, like));
+						target, preferLang, path, param, updateUrl, pluginGroup, like, supportedOS));
 			}
 		}
 		return components.toArray(new Component[components.size()]);

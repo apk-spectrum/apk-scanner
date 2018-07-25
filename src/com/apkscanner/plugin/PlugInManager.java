@@ -43,7 +43,9 @@ public final class PlugInManager
 		for(PlugInPackage pack: pluginPackages) {
 			IPlugIn[] plugins = pack.getPlugIn(IPlugIn.PLUGIN_TPYE_EXTRA_TOOL);
 			for(IPlugIn p: plugins) {
-				if(p instanceof IExternalTool && !((IExternalTool) p).isDecorderTool()) {
+				if( p instanceof IExternalTool
+						&& ((IExternalTool) p).isSupoortedOS()
+						&& !((IExternalTool) p).isDecorderTool()) {
 					list.add((IExternalTool)p);
 				}
 			}
@@ -56,7 +58,9 @@ public final class PlugInManager
 		for(PlugInPackage pack: pluginPackages) {
 			IPlugIn[] plugins = pack.getPlugIn(IPlugIn.PLUGIN_TPYE_EXTRA_TOOL);
 			for(IPlugIn p: plugins) {
-				if(p instanceof IExternalTool && ((IExternalTool) p).isDecorderTool()) {
+				if( p instanceof IExternalTool
+						&& ((IExternalTool) p).isSupoortedOS()
+						&& ((IExternalTool) p).isDecorderTool() ) {
 					list.add((IExternalTool)p);
 				}
 			}
