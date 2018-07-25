@@ -111,7 +111,7 @@ public abstract class AbstractPlugIn implements IPlugIn
 			typeName = IPlugIn.class.getName();
 			break;
 		}
-		return getPackageName() + "!" + typeName + "@" + getName();
+		return getPackageName() + "!" + typeName + "@" + getName() + "[0x" + Integer.toHexString(component.hashCode()) + "]";
 	}
 
 	@Override
