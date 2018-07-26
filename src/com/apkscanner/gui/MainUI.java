@@ -54,11 +54,13 @@ import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.FileDrop;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
+import com.apkscanner.plugin.IExtraComponent;
 import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.IUpdateChecker;
 import com.apkscanner.plugin.NetworkException;
 import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.plugin.PluginConfiguration;
+import com.apkscanner.plugin.IExtraComponent.IRequestListener;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
@@ -189,6 +191,23 @@ public class MainUI extends JFrame
 			@Override
 			protected void process(List<Void> arg0) {
 				toolBar.onLoadPlugin(new UIEventHandler());
+
+				for(final IExtraComponent plugin: PlugInManager.getExtraComponenet()) {
+					//Log.v(plugin.getActionCommand());
+					plugin.initailizeComponent();
+					plugin.addStateChangedListener(new IRequestListener() {
+						@Override
+						public void onRequestVisible(boolean visible) {
+							Log.v(plugin.getLabel() + " : " + visible);
+							if(visible) {
+								tabbedPanel.addTab(plugin.getLabel(), null, plugin.getComponent(), plugin.getLabel());
+							} else {
+								tabbedPanel.remove(plugin.getComponent());
+							}
+						}
+					});
+				}
+
 				int state = apkScanner.getStatus();
 				if( PlugInManager.getPackageSearchers().length > 0
 						&& Status.BASIC_INFO_COMPLETED.isCompleted(state)
@@ -336,6 +355,10 @@ public class MainUI extends JFrame
 
 				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, true);
 				tabbedPanel.setData(apkScanner.getApkInfo(), 0);
+
+				for(final IExtraComponent plugin: PlugInManager.getExtraComponenet()) {
+					plugin.launch();
+				}
 				break;
 			case WIDGET_COMPLETED:
 				tabbedPanel.setData(apkScanner.getApkInfo(), 1);
