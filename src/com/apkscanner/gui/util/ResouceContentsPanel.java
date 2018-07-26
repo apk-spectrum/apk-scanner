@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -69,7 +70,9 @@ import com.apkscanner.gui.tabpanels.Resources.ResourceObject;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
+import com.apkscanner.tool.external.BytecodeViewerLauncher;
 import com.apkscanner.tool.external.Dex2JarWrapper;
+import com.apkscanner.tool.external.JADXLauncher;
 import com.apkscanner.tool.external.JDGuiLauncher;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
@@ -690,6 +693,8 @@ public class ResouceContentsPanel extends JPanel{
     {
     	OS_SETTING			(0x01, Type.NORMAL, Resource.STR_LABEL_OPEN_WITH_SYSTEM.getString(), Resource.STR_LABEL_OPEN_WITH_SYSTEM.getString(), Resource.IMG_RESOURCE_TREE_OPEN_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
     	JD_GUI				(0x02, Type.NORMAL, Resource.STR_LABEL_OPEN_WITH_JDGUI.getString(), Resource.STR_LABEL_OPEN_WITH_JDGUI.getString(), Resource.IMG_RESOURCE_TREE_JD_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+    	JADX_GUI			(0x02, Type.NORMAL, Resource.STR_LABEL_OPEN_WITH_JADXGUI.getString(), Resource.STR_LABEL_OPEN_WITH_JADXGUI.getString(), Resource.IMG_RESOURCE_TREE_JADX_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+    	BYTECODE_VIEWER		(0x02, Type.NORMAL, Resource.STR_LABEL_OPEN_WITH_BYTECODE.getString(), Resource.STR_LABEL_OPEN_WITH_BYTECODE.getString(), Resource.IMG_RESOURCE_TREE_BCV_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
     	APK_SCANNER			(0x04, Type.NORMAL, Resource.STR_LABEL_OPEN_WITH_SCANNER.getString(), Resource.STR_LABEL_OPEN_WITH_SCANNER.getString(), Resource.IMG_APP_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
     	EXPLORER			(0x08, Type.NORMAL, Resource.STR_LABEL_OPEN_WITH_EXPLORER.getString(), Resource.STR_LABEL_OPEN_WITH_EXPLORER.getString(), Resource.IMG_TOOLBAR_EXPLORER.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
     	CHOOSE_APPLICATION	(0x10, Type.NORMAL, Resource.STR_LABEL_OPEN_WITH_CHOOSE.getString(), Resource.STR_LABEL_OPEN_WITH_CHOOSE.getString(), Resource.IMG_RESOURCE_TREE_OPEN_OTHERAPPLICATION_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize));
@@ -776,7 +781,7 @@ public class ResouceContentsPanel extends JPanel{
 
     	static private HashMap<ButtonSet, JButton> getButtonMap(ActionListener listener)
     	{
-    		HashMap<ButtonSet, JButton> buttonMap = new HashMap<ButtonSet, JButton>();
+    		LinkedHashMap<ButtonSet, JButton> buttonMap = new LinkedHashMap<>();
             for(ButtonSet bs: values()) {
             	buttonMap.put(bs, bs.getButton(listener));
             }
@@ -819,11 +824,9 @@ public class ResouceContentsPanel extends JPanel{
 			buttonMap.get(ButtonSet.JD_GUI).setDisabledIcon(Resource.IMG_RESOURCE_TREE_OPEN_JD_LOADING.getImageIcon());
 
 			JPanel IconPanel = new JPanel(new GridBagLayout());
-			IconPanel.add(buttonMap.get(ButtonSet.OS_SETTING));
-			IconPanel.add(buttonMap.get(ButtonSet.JD_GUI));
-			IconPanel.add(buttonMap.get(ButtonSet.APK_SCANNER));
-			IconPanel.add(buttonMap.get(ButtonSet.EXPLORER));
-			IconPanel.add(buttonMap.get(ButtonSet.CHOOSE_APPLICATION));
+			for(JButton btn: buttonMap.values()) {
+				IconPanel.add(btn);
+			}
 	        IconPanel.setBackground(Color.WHITE);
 	        IconPanel.setMaximumSize(MessagePanel.getPreferredSize());
 	        IconPanel.setAlignmentX(LEFT_ALIGNMENT);
@@ -868,6 +871,10 @@ public class ResouceContentsPanel extends JPanel{
 						btn.setEnabled(true);
 					}
 				});
+			} else if (ButtonSet.JADX_GUI.matchActionEvent(e)) {
+				JADXLauncher.run(resPath);
+			} else if (ButtonSet.BYTECODE_VIEWER.matchActionEvent(e)) {
+				BytecodeViewerLauncher.run(resPath);
 			} else if (ButtonSet.APK_SCANNER.matchActionEvent(e)) {
 				Launcher.run(resPath);
 			} else if (ButtonSet.EXPLORER.matchActionEvent(e)) {

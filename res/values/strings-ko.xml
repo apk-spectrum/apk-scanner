@@ -270,6 +270,8 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="label_open_with">연결 프로그램</string>
 	<string name="label_open_with_system">열기</string>
 	<string name="label_open_with_jdgui">JD-GUI</string>
+	<string name="label_open_with_jadxgui">JADX-GUI</string>
+	<string name="label_open_with_bytecode_viewer">Bytecode Viewer</string>
 	<string name="label_open_with_explorer">탐색기</string>
 	<string name="label_open_with_apkscanner">APK 스캐너</string>
 	<string name="label_open_with_choose">연결 프로그램 선택</string>
