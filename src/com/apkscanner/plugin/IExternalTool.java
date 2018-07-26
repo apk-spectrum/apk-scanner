@@ -11,4 +11,7 @@ public interface IExternalTool extends IPlugIn {
 	public boolean isDiffTool();
 	public boolean isNormalTool();
 	public boolean isSupoortedOS();
+
+	public void launch(String src);
+	public void launch(String src1, String src2);
 }

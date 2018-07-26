@@ -50,4 +50,107 @@ public class Component
 		this.like = like;
 		this.supportedOS = supportedOS;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + (enable ? 1231 : 1237);
+		result = prime * result + ((icon == null) ? 0 : icon.hashCode());
+		result = prime * result + ((label == null) ? 0 : label.hashCode());
+		result = prime * result + ((like == null) ? 0 : like.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((param == null) ? 0 : param.hashCode());
+		result = prime * result + ((path == null) ? 0 : path.hashCode());
+		result = prime * result + ((pluginGroup == null) ? 0 : pluginGroup.hashCode());
+		result = prime * result + ((preferLang == null) ? 0 : preferLang.hashCode());
+		result = prime * result + ((supportedOS == null) ? 0 : supportedOS.hashCode());
+		result = prime * result + ((target == null) ? 0 : target.hashCode());
+		result = prime * result + type;
+		result = prime * result + ((updateUrl == null) ? 0 : updateUrl.hashCode());
+		result = prime * result + ((url == null) ? 0 : url.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Component other = (Component) obj;
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
+		if (enable != other.enable)
+			return false;
+		if (icon == null) {
+			if (other.icon != null)
+				return false;
+		} else if (!icon.equals(other.icon))
+			return false;
+		if (label == null) {
+			if (other.label != null)
+				return false;
+		} else if (!label.equals(other.label))
+			return false;
+		if (like == null) {
+			if (other.like != null)
+				return false;
+		} else if (!like.equals(other.like))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (param == null) {
+			if (other.param != null)
+				return false;
+		} else if (!param.equals(other.param))
+			return false;
+		if (path == null) {
+			if (other.path != null)
+				return false;
+		} else if (!path.equals(other.path))
+			return false;
+		if (pluginGroup == null) {
+			if (other.pluginGroup != null)
+				return false;
+		} else if (!pluginGroup.equals(other.pluginGroup))
+			return false;
+		if (preferLang == null) {
+			if (other.preferLang != null)
+				return false;
+		} else if (!preferLang.equals(other.preferLang))
+			return false;
+		if (supportedOS == null) {
+			if (other.supportedOS != null)
+				return false;
+		} else if (!supportedOS.equals(other.supportedOS))
+			return false;
+		if (target == null) {
+			if (other.target != null)
+				return false;
+		} else if (!target.equals(other.target))
+			return false;
+		if (type != other.type)
+			return false;
+		if (updateUrl == null) {
+			if (other.updateUrl != null)
+				return false;
+		} else if (!updateUrl.equals(other.updateUrl))
+			return false;
+		if (url == null) {
+			if (other.url != null)
+				return false;
+		} else if (!url.equals(other.url))
+			return false;
+		return true;
+	}
 }
