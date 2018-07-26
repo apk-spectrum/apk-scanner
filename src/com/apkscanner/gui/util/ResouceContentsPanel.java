@@ -382,12 +382,12 @@ public class ResouceContentsPanel extends JPanel{
 				} else {
 					if(FuncKey==1) {
 						Log.d("shift F3 Key");
-						finddlg.getSearchContext().setSearchForward(false);
-						SearchAndNext(SearchEvent.Type.FIND, finddlg.getSearchContext());
+						getFindDialog().getSearchContext().setSearchForward(false);
+						SearchAndNext(SearchEvent.Type.FIND, getFindDialog().getSearchContext());
 					} else {
 						Log.d("F3 Key");
-						finddlg.getSearchContext().setSearchForward(true);
-						SearchAndNext(SearchEvent.Type.FIND, finddlg.getSearchContext());
+						getFindDialog().getSearchContext().setSearchForward(true);
+						SearchAndNext(SearchEvent.Type.FIND, getFindDialog().getSearchContext());
 					}
 				}
 				break;
@@ -565,12 +565,12 @@ public class ResouceContentsPanel extends JPanel{
 					FindNextTable(false);
 					break;
 				case TEXTVIEWER_TOOLBAR_NEXT:
-					finddlg.getSearchContext().setSearchForward(true);
-					SearchAndNext(SearchEvent.Type.FIND, finddlg.getSearchContext());
+					getFindDialog().getSearchContext().setSearchForward(true);
+					SearchAndNext(SearchEvent.Type.FIND, getFindDialog().getSearchContext());
 					break;
 				case TEXTVIEWER_TOOLBAR_PREV:
-					finddlg.getSearchContext().setSearchForward(false);
-					SearchAndNext(SearchEvent.Type.FIND, finddlg.getSearchContext());
+					getFindDialog().getSearchContext().setSearchForward(false);
+					SearchAndNext(SearchEvent.Type.FIND, getFindDialog().getSearchContext());
 					break;
 				}
 			} else if(arg0.getSource() instanceof JTextField) {
@@ -578,9 +578,9 @@ public class ResouceContentsPanel extends JPanel{
 				String name = ((JTextField)(arg0.getSource())).getName();
 				switch(name) {
 				case TEXTVIEWER_TOOLBAR_FIND_TEXTAREA:
-					finddlg.getSearchContext().setSearchFor(findstr);
-					finddlg.getSearchContext().setSearchForward(true);
-					SearchAndNext(SearchEvent.Type.FIND, finddlg.getSearchContext());
+					getFindDialog().getSearchContext().setSearchFor(findstr);
+					getFindDialog().getSearchContext().setSearchForward(true);
+					SearchAndNext(SearchEvent.Type.FIND, getFindDialog().getSearchContext());
 					break;
 				case TEXTVIEWER_TOOLBAR_FIND_TEXTAREA+RESOURCE_LISTVIEW_TOOLBAR:
 				    String pattern = findstr.trim();
