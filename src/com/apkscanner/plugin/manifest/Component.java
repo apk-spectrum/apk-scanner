@@ -10,6 +10,7 @@ public class Component
 	static public final int TYPE_UPDATE_CHECKER_LINKER = 4;
 	static public final int TYPE_EXTERNAL_TOOL = 5;
 	static public final int TYPE_EXTERNAL_TOOL_LINKER = 6;
+	static public final int TYPE_EXTRA_COMPONENT = 7;
 
 	public final int type;
 	public final String description;

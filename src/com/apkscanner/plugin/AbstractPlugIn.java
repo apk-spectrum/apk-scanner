@@ -83,7 +83,10 @@ public abstract class AbstractPlugIn implements IPlugIn
 			return PLUGIN_TPYE_UPDATE_CHECKER; 
 		}
 		if(this instanceof IExternalTool) {
-			return PLUGIN_TPYE_EXTRA_TOOL; 
+			return PLUGIN_TPYE_EXTERNAL_TOOL; 
+		}
+		if(this instanceof IExtraComponent) {
+			return PLUGIN_TPYE_EXTRA_COMPONENT; 
 		}
 		return PLUGIN_TPYE_UNKNOWN;
 	}
@@ -104,7 +107,7 @@ public abstract class AbstractPlugIn implements IPlugIn
 		case PLUGIN_TPYE_UPDATE_CHECKER:
 			typeName = IUpdateChecker.class.getSimpleName();
 			break;
-		case PLUGIN_TPYE_EXTRA_TOOL:
+		case PLUGIN_TPYE_EXTERNAL_TOOL:
 			typeName = IExternalTool.class.getSimpleName() + "#" + ((IExternalTool)this).getToolType();
 			break;
 		default:

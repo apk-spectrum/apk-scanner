@@ -41,7 +41,7 @@ public final class PlugInManager
 	public static IExternalTool[] getExternalTool() {
 		ArrayList<IExternalTool> list = new ArrayList<>();
 		for(PlugInPackage pack: pluginPackages) {
-			IPlugIn[] plugins = pack.getPlugIn(IPlugIn.PLUGIN_TPYE_EXTRA_TOOL);
+			IPlugIn[] plugins = pack.getPlugIn(IPlugIn.PLUGIN_TPYE_EXTERNAL_TOOL);
 			for(IPlugIn p: plugins) {
 				if( p instanceof IExternalTool
 						&& ((IExternalTool) p).isSupoortedOS()
@@ -56,7 +56,7 @@ public final class PlugInManager
 	public static IExternalTool[] getDecorderTool() {
 		ArrayList<IExternalTool> list = new ArrayList<>();
 		for(PlugInPackage pack: pluginPackages) {
-			IPlugIn[] plugins = pack.getPlugIn(IPlugIn.PLUGIN_TPYE_EXTRA_TOOL);
+			IPlugIn[] plugins = pack.getPlugIn(IPlugIn.PLUGIN_TPYE_EXTERNAL_TOOL);
 			for(IPlugIn p: plugins) {
 				if( p instanceof IExternalTool
 						&& ((IExternalTool) p).isSupoortedOS()
@@ -89,6 +89,19 @@ public final class PlugInManager
 			}
 		}
 		return list.toArray(new IPackageSearcher[list.size()]);
+	}
+
+	public static IExtraComponent[] getExtraComponenet() {
+		ArrayList<IExtraComponent> list = new ArrayList<>();
+		for(PlugInPackage pack: pluginPackages) {
+			IPlugIn[] plugins = pack.getPlugIn(IPlugIn.PLUGIN_TPYE_EXTRA_COMPONENT);
+			for(IPlugIn p: plugins) {
+				if(p instanceof IExtraComponent) {
+					list.add((IExtraComponent)p);
+				}
+			}
+		}
+		return list.toArray(new IExtraComponent[list.size()]);
 	}
 
 	public static IPlugIn[] getPlugInAll() {

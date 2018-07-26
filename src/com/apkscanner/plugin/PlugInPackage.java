@@ -263,6 +263,12 @@ public class PlugInPackage
 						plugin = null;
 					}
 					break;
+				case Component.TYPE_EXTRA_COMPONENT:
+					if(!(plugin instanceof IExtraComponent)) {
+						Log.e("Class was no matched to IExtraComponent : " + className);
+						plugin = null;
+					}
+					break;
 				default:
 					Log.e("Unknown type : " + c.type);
 					plugin = null;
