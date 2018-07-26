@@ -21,12 +21,17 @@ public interface IPlugIn {
 	/**
 	 * Launch extra tools. so possible add to toolbar. 
 	 */
-	public static final int PLUGIN_TPYE_EXTRA_TOOL = 0x04;
+	public static final int PLUGIN_TPYE_EXTERNAL_TOOL = 0x04;
+
+	/**
+	 * Add extra component to tabs. 
+	 */
+	public static final int PLUGIN_TPYE_EXTRA_COMPONENT = 0x08;
 
 	/**
 	 * Launch extra tools. so possible add to toolbar. 
 	 */
-	public static final int PLUGIN_TPYE_ALL = 0x07;
+	public static final int PLUGIN_TPYE_ALL = 0x0F;
 	
 	/**
 	 * Get the plug-in name

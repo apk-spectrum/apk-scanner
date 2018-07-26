@@ -90,6 +90,7 @@ public class ManifestReader
 					case "update-checker-linker": type = Component.TYPE_UPDATE_CHECKER_LINKER; break;
 					case "external-tool": type = Component.TYPE_EXTERNAL_TOOL; break;
 					case "external-tool-linker": type = Component.TYPE_EXTERNAL_TOOL_LINKER; break;
+					case "extra-component": type = Component.TYPE_EXTRA_COMPONENT; break;
 					case "plugin-group" : type = Component.TYPE_PLUGIN_GROUP; break;
 					default: type = Component.TYPE_UNKNWON;
 				}
