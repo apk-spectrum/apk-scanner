@@ -4,24 +4,23 @@ package com.apkscanner.gui.tabpanels;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
+import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.FileUtil.FSStyle;
 import com.apkscanner.util.FileUtil;
+import com.apkscanner.util.FileUtil.FSStyle;
 import com.apkscanner.util.ZipFileUtil;
 
 /**
  * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for
  * both cells and column headers.
  */
-public class Libraries extends JPanel implements TabDataObject
+public class Libraries extends AbstractTabbedPanel
 {
 	private static final long serialVersionUID = -8985157400085276691L;
 
@@ -32,7 +31,10 @@ public class Libraries extends JPanel implements TabDataObject
 	
 	public Libraries()
 	{
-		super(new GridLayout(1, 0));
+		setLayout(new GridLayout(1, 0));
+		setName(Resource.STR_TAB_LIB.getString());
+		setToolTipText(Resource.STR_TAB_LIB.getString());
+		setEnabled(false);
 	}
 	
 	@Override
@@ -54,20 +56,26 @@ public class Libraries extends JPanel implements TabDataObject
 	}
   
 	@Override
-	public void setData(ApkInfo apkInfo)
+	public void setData(ApkInfo apkInfo, Status status, ITabbedRequest request)
 	{
+		if(!Status.LIB_COMPLETED.equals(status)) {
+			return;
+		}
 		if(mMyTableModel == null)
 			initialize();
 		apkFilePath = apkInfo.filePath;
 		mMyTableModel.setData(apkInfo.libraries);
+
+		setDataSize(apkInfo.libraries.length, true, false);
+		sendRequest(request, SEND_REQUEST_CURRENT_ENABLED);
 	}
 
 	@Override
-	public void setExtraData(ApkInfo apkInfo) { }
-	
-	@Override
 	public void reloadResource()
 	{
+		setName(Resource.STR_TAB_LIB.getString());
+		setToolTipText(Resource.STR_TAB_LIB.getString());
+
 		if(mMyTableModel == null) return;
 		mMyTableModel.loadResource();
 		mMyTableModel.fireTableStructureChanged();

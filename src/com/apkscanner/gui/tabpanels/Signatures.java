@@ -12,19 +12,19 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.gui.TabbedPanel.TabDataObject;
+import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
-public class Signatures extends JPanel implements ComponentListener, TabDataObject
+public class Signatures extends AbstractTabbedPanel implements ComponentListener
 {
 	private static final long serialVersionUID = 4333997417315260023L;
 
@@ -37,7 +37,9 @@ public class Signatures extends JPanel implements ComponentListener, TabDataObje
 	private String apkFilePath;
 
 	public Signatures() {
-		//initialize();
+		setName(Resource.STR_TAB_CERT.getString());
+		setToolTipText(Resource.STR_TAB_CERT.getString());
+		setEnabled(false);
 	}
 
 	@Override
@@ -134,8 +136,12 @@ public class Signatures extends JPanel implements ComponentListener, TabDataObje
 	}
 
 	@Override
-	public void setData(ApkInfo apkInfo)
+	public void setData(ApkInfo apkInfo, Status status, ITabbedRequest request)
 	{
+		if(!Status.CERT_COMPLETED.equals(status)) {
+			return;
+		}
+
 		if(jlist == null)
 			initialize();
 
@@ -157,14 +163,17 @@ public class Signatures extends JPanel implements ComponentListener, TabDataObje
 
 		reloadResource();
 		jlist.setSelectedIndex(0);
-	}
 
-	@Override
-	public void setExtraData(ApkInfo apkInfo) { }
+		setDataSize(ApkInfoHelper.isSigned(apkInfo) ? apkInfo.certificates.length : 0, true, false);
+		sendRequest(request, SEND_REQUEST_CURRENT_ENABLED);
+	}
 
 	@Override
 	public void reloadResource()
 	{
+		setName(Resource.STR_TAB_CERT.getString());
+		setToolTipText(Resource.STR_TAB_CERT.getString());
+
 		if(jlist == null) return;
 
 		jlist.removeAll();

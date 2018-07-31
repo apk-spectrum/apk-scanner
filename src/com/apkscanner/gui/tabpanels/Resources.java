@@ -56,8 +56,8 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import com.apkscanner.Launcher;
+import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.gui.util.FilteredTreeModel;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.ResouceContentsPanel;
@@ -75,7 +75,7 @@ import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 import com.apkscanner.util.ZipFileUtil;
 
-public class Resources extends JPanel implements TabDataObject {
+public class Resources extends AbstractTabbedPanel {
 	private static final long serialVersionUID = -934921813626224616L;
 
 	private ResouceContentsPanel contentPanel;
@@ -247,7 +247,9 @@ public class Resources extends JPanel implements TabDataObject {
 	}
 
 	public Resources() {
-
+		setName(Resource.STR_TAB_IMAGE.getString());
+		setToolTipText(Resource.STR_TAB_IMAGE.getString());
+		setEnabled(false);
 	}
 
 	private void makeTreeForm() {
@@ -1158,7 +1160,14 @@ public class Resources extends JPanel implements TabDataObject {
 	}
 
 	@Override
-	public void setData(ApkInfo apkInfo) {
+	public void setData(ApkInfo apkInfo, Status status, ITabbedRequest request) {
+		if(!Status.RESOURCE_COMPLETED.equals(status)) {
+			if(Status.RES_DUMP_COMPLETED.equals(status)) {
+				setExtraData(apkInfo);
+			}
+			return;
+		}
+
 		if (tree == null)
 			initialize();
 
@@ -1168,9 +1177,11 @@ public class Resources extends JPanel implements TabDataObject {
 		nameList = apkInfo.resources;
 		contentPanel.setData(apkInfo);
 		setTreeForm(false);
+
+		setDataSize(apkInfo.resources.length, true, false);
+		sendRequest(request, SEND_REQUEST_CURRENT_ENABLED);
 	}
 
-	@Override
 	public void setExtraData(ApkInfo apkInfo) {
 		if (apkInfo != null) {
 			resourcesWithValue = apkInfo.resourcesWithValue;
@@ -1194,6 +1205,7 @@ public class Resources extends JPanel implements TabDataObject {
 
 	@Override
 	public void reloadResource() {
-
+		setName(Resource.STR_TAB_IMAGE.getString());
+		setToolTipText(Resource.STR_TAB_IMAGE.getString());
 	}
 }

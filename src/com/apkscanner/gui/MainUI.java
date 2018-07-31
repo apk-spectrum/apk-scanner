@@ -212,7 +212,7 @@ public class MainUI extends JFrame
 				if( PlugInManager.getPackageSearchers().length > 0
 						&& Status.BASIC_INFO_COMPLETED.isCompleted(state)
 						&& Status.CERT_COMPLETED.isCompleted(state) ) {
-					tabbedPanel.setData(apkScanner.getApkInfo(), 0 + TabbedPanel.CMD_EXTRA_DATA);
+					tabbedPanel.setData(apkScanner.getApkInfo(), Status.BASIC_INFO_COMPLETED);
 				}
 			}
 
@@ -283,7 +283,7 @@ public class MainUI extends JFrame
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					setTitle(Resource.STR_APP_NAME.getString());
-					tabbedPanel.setData(null);
+					tabbedPanel.setData(null, null);
 					messagePool.show(MessageBoxPool.MSG_FAILURE_OPEN_APK);
 				}
 			});
@@ -305,7 +305,7 @@ public class MainUI extends JFrame
 				public void run() {
 					switch(step) {
 					case 0:
-						tabbedPanel.setProgress(message);
+						tabbedPanel.onProgress(message);
 						break;
 					default:
 						Log.i(message);
@@ -354,32 +354,8 @@ public class MainUI extends JFrame
 				setTitle(title);
 
 				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, true);
-				tabbedPanel.setData(apkScanner.getApkInfo(), 0);
-
-				for(final IExtraComponent plugin: PlugInManager.getExtraComponenet()) {
-					plugin.launch();
-				}
-				break;
-			case WIDGET_COMPLETED:
-				tabbedPanel.setData(apkScanner.getApkInfo(), 1);
-				break;
-			case LIB_COMPLETED:
-				tabbedPanel.setData(apkScanner.getApkInfo(), 2);
-				break;
-			case RESOURCE_COMPLETED:
-				tabbedPanel.setData(apkScanner.getApkInfo(), 3);
-				break;
-			case RES_DUMP_COMPLETED:
-				tabbedPanel.setData(apkScanner.getApkInfo(), 3 + TabbedPanel.CMD_EXTRA_DATA);
-				break;
-			case ACTIVITY_COMPLETED:
-				tabbedPanel.setData(apkScanner.getApkInfo(), 4);
-				break;
-			case CERT_COMPLETED:
-				tabbedPanel.setData(apkScanner.getApkInfo(), 0 + TabbedPanel.CMD_EXTRA_DATA);
-				tabbedPanel.setData(apkScanner.getApkInfo(), 5);
-				break;
 			default:
+				tabbedPanel.setData(apkScanner.getApkInfo(), status);
 				break;
 			}
 			Log.i("onStateChanged() ui sync end " + status);
@@ -428,7 +404,7 @@ public class MainUI extends JFrame
 
 			if(!newWindow) {
 				tabbedPanel.setLodingLabel();
-				tabbedPanel.setProgress(null);
+				tabbedPanel.onProgress(null);
 				toolBar.setEnabledAt(ButtonSet.OPEN, false);
 				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
 

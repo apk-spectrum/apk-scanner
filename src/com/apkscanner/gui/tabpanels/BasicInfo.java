@@ -22,12 +22,12 @@ import java.util.zip.ZipFile;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import com.apkscanner.core.scanner.PermissionGroupManager;
+import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.CompatibleScreensInfo;
@@ -40,7 +40,6 @@ import com.apkscanner.data.apkinfo.UsesConfigurationInfo;
 import com.apkscanner.data.apkinfo.UsesFeatureInfo;
 import com.apkscanner.data.apkinfo.UsesLibraryInfo;
 import com.apkscanner.data.apkinfo.UsesPermissionInfo;
-import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.gui.dialog.SdkVersionInfoDlg;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.util.ImageScaler;
@@ -55,7 +54,7 @@ import com.apkscanner.util.FileUtil.FSStyle;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 
-public class BasicInfo extends JComponent implements HyperlinkClickListener, TabDataObject
+public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickListener, IProgressListener
 {
 	private static final long serialVersionUID = 6431995641984509482L;
 
@@ -112,10 +111,12 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 
 	public BasicInfo()
 	{
-		//if(!opening) {
+		setName(Resource.STR_TAB_BASIC_INFO.getString());
+		setToolTipText(Resource.STR_TAB_BASIC_INFO.getString());
+		setEnabled(true);
+
 		initialize();
 		showAbout();
-		//}
 	}
 
 	@Override
@@ -512,7 +513,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		//this.setLayout(new GridLayout());
 	}
 
-	public synchronized void setProgress(String message)
+	public synchronized void onProgress(String message)
 	{
 		//Log.i("setProgress() percent " + percent);
 
@@ -532,7 +533,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	}
 
 	@Override
-	public synchronized void setData(ApkInfo apkInfo)
+	public synchronized void setData(ApkInfo apkInfo, Status status, ITabbedRequest request)
 	{
 		if(apkinform == null)
 			initialize();
@@ -540,7 +541,16 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		if(apkInfo == null) {
 			removeData();
 			showAbout();
+			sendRequest(request, REQUEST_SELECTED);
 			return;
+		}
+
+		if(!Status.BASIC_INFO_COMPLETED.equals(status) && !Status.CERT_COMPLETED.equals(status)) {
+			if(CertSummary.isEmpty() && apkInfo.certificates != null) {
+				Log.i("cert completed. status: " + status);
+			} else {
+				return;
+			}
 		}
 		wasSetData = true;
 
@@ -723,13 +733,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		deviceRequirements = deviceReqData.toString();
 
 		setData();
-	}
 
-	@Override
-	public synchronized void setExtraData(ApkInfo apkInfo) { 
-		if(wasSetData) {
-			setData(apkInfo);
-		}
+		sendRequest(request, REQUEST_SELECTED);
 	}
 
 	private String covertWebp2Png(final String imagePath, final String tempPath) {
@@ -1015,6 +1020,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 
 	@Override
 	public void reloadResource() {
+		setName(Resource.STR_TAB_BASIC_INFO.getString());
+		setToolTipText(Resource.STR_TAB_BASIC_INFO.getString());
 		setData();
 	}
 }
