@@ -1,14 +1,15 @@
 package com.apkscanner.plugin;
 
-import java.util.ArrayList;
+import java.net.URL;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 import com.apkscanner.plugin.manifest.Component;
 
 public abstract class AbstractExtraComponent extends AbstractPlugIn implements IExtraComponent
 {
-	protected ArrayList<IRequestListener> listeners = new ArrayList<>();
-	protected boolean visible = false;
-	protected java.awt.Component component = null;
+	protected java.awt.Component tabbedComponent = null;
 
 	public AbstractExtraComponent(PlugInPackage pluginPackage, Component component) {
 		super(pluginPackage, component);
@@ -16,47 +17,31 @@ public abstract class AbstractExtraComponent extends AbstractPlugIn implements I
 
 	@Override
 	public java.awt.Component getComponent() {
-		return component;
+		return tabbedComponent;
 	}
 
 	@Override
-	public java.awt.Component initailizeComponent() {
-		if(component != null) return component; 
-		component = new javax.swing.JPanel();
-		return component; 
+	public void initialize() {
+		if(tabbedComponent != null) return; 
+		tabbedComponent = new javax.swing.JPanel();
 	}
 
 	@Override
-	public boolean isVisibleRequested() {
-		return visible;
+	public String getTitle() {
+		return getLabel();
 	}
 
 	@Override
-	public void addStateChangedListener(IRequestListener listener) {
-		if(listener == null) return;
-		synchronized(listeners) {
-			if(!listeners.contains(listener)) {
-				listeners.add(listener);
-			}
-		}
+	public String getToolTip() {
+		String tooltip = getDescription();
+		if(tooltip == null) tooltip = getLabel();
+		return tooltip;
 	}
 
 	@Override
-	public void removeStateChangedListener(IRequestListener listener) {
-		if(listener == null) return;
-		synchronized(listeners) {
-			if(listeners.contains(listener)) {
-				listeners.remove(listener);
-			}
-		}
-	}
-
-	protected void sendRequest(boolean visible) {
-		this.visible = visible;
-		synchronized(listeners) {
-			for(IRequestListener l: listeners) {
-				l.onRequestVisible(visible);
-			}
-		}
+	public Icon getIcon() {
+		URL url = getIconURL();
+		if(url == null) return null;
+		return new ImageIcon(url);
 	}
 }
