@@ -37,8 +37,8 @@ public class Signatures extends AbstractTabbedPanel implements ComponentListener
 	private String apkFilePath;
 
 	public Signatures() {
-		setName(Resource.STR_TAB_CERT.getString());
-		setToolTipText(Resource.STR_TAB_CERT.getString());
+		setName(Resource.STR_TAB_SIGNATURES.getString());
+		setToolTipText(Resource.STR_TAB_SIGNATURES.getString());
 		setEnabled(false);
 	}
 
@@ -171,8 +171,8 @@ public class Signatures extends AbstractTabbedPanel implements ComponentListener
 	@Override
 	public void reloadResource()
 	{
-		setName(Resource.STR_TAB_CERT.getString());
-		setToolTipText(Resource.STR_TAB_CERT.getString());
+		setName(Resource.STR_TAB_SIGNATURES.getString());
+		setToolTipText(Resource.STR_TAB_SIGNATURES.getString());
 
 		if(jlist == null) return;
 

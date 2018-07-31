@@ -35,8 +35,8 @@ public class Widgets extends AbstractTabbedPanel
 
 	public Widgets() {
 		setLayout(new GridLayout(1, 0));
-		setName(Resource.STR_TAB_WIDGET.getString());
-		setToolTipText(Resource.STR_TAB_WIDGET.getString());
+		setName(Resource.STR_TAB_WIDGETS.getString());
+		setToolTipText(Resource.STR_TAB_WIDGETS.getString());
 		setEnabled(false);
 	}
 	
@@ -100,8 +100,8 @@ public class Widgets extends AbstractTabbedPanel
 	@Override
 	public void reloadResource()
 	{
-		setName(Resource.STR_TAB_WIDGET.getString());
-		setToolTipText(Resource.STR_TAB_WIDGET.getString());
+		setName(Resource.STR_TAB_WIDGETS.getString());
+		setToolTipText(Resource.STR_TAB_WIDGETS.getString());
 
 		if(TableModel == null) return;
 		TableModel.loadResource();

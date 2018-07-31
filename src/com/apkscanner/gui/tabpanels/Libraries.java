@@ -32,8 +32,8 @@ public class Libraries extends AbstractTabbedPanel
 	public Libraries()
 	{
 		setLayout(new GridLayout(1, 0));
-		setName(Resource.STR_TAB_LIB.getString());
-		setToolTipText(Resource.STR_TAB_LIB.getString());
+		setName(Resource.STR_TAB_LIBRARIES.getString());
+		setToolTipText(Resource.STR_TAB_LIBRARIES.getString());
 		setEnabled(false);
 	}
 	
@@ -73,8 +73,8 @@ public class Libraries extends AbstractTabbedPanel
 	@Override
 	public void reloadResource()
 	{
-		setName(Resource.STR_TAB_LIB.getString());
-		setToolTipText(Resource.STR_TAB_LIB.getString());
+		setName(Resource.STR_TAB_LIBRARIES.getString());
+		setToolTipText(Resource.STR_TAB_LIBRARIES.getString());
 
 		if(mMyTableModel == null) return;
 		mMyTableModel.loadResource();

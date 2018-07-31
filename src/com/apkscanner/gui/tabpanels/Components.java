@@ -46,8 +46,8 @@ public class Components extends AbstractTabbedPanel
   	  
 	public Components() {
 		setLayout(new GridLayout(1, 0));
-		setName(Resource.STR_TAB_ACTIVITY.getString());
-		setToolTipText(Resource.STR_TAB_ACTIVITY.getString());
+		setName(Resource.STR_TAB_COMPONENTS.getString());
+		setToolTipText(Resource.STR_TAB_COMPONENTS.getString());
 		setEnabled(false);
 	}
 
@@ -246,8 +246,8 @@ public class Components extends AbstractTabbedPanel
 	@Override
 	public void reloadResource()
 	{
-		setName(Resource.STR_TAB_ACTIVITY.getString());
-		setToolTipText(Resource.STR_TAB_ACTIVITY.getString());
+		setName(Resource.STR_TAB_COMPONENTS.getString());
+		setToolTipText(Resource.STR_TAB_COMPONENTS.getString());
 
 		if(TableModel == null) return;
 		TableModel.loadResource();

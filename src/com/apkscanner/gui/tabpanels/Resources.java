@@ -247,8 +247,8 @@ public class Resources extends AbstractTabbedPanel {
 	}
 
 	public Resources() {
-		setName(Resource.STR_TAB_IMAGE.getString());
-		setToolTipText(Resource.STR_TAB_IMAGE.getString());
+		setName(Resource.STR_TAB_RESOURCES.getString());
+		setToolTipText(Resource.STR_TAB_RESOURCES.getString());
 		setEnabled(false);
 	}
 
@@ -1205,7 +1205,7 @@ public class Resources extends AbstractTabbedPanel {
 
 	@Override
 	public void reloadResource() {
-		setName(Resource.STR_TAB_IMAGE.getString());
-		setToolTipText(Resource.STR_TAB_IMAGE.getString());
+		setName(Resource.STR_TAB_RESOURCES.getString());
+		setToolTipText(Resource.STR_TAB_RESOURCES.getString());
 	}
 }

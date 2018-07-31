@@ -105,11 +105,11 @@
 	<string name="menu_select_default">Select default action</string>
 
 	<string name="tab_basic_info">APK Info</string>
-	<string name="tab_widget">Widgets</string>
-	<string name="tab_lib">Libraries</string>
-	<string name="tab_image">Resources</string>
-	<string name="tab_activity">Components</string>
-	<string name="tab_cert">Signatures</string>
+	<string name="tab_widgets">Widgets</string>
+	<string name="tab_libraries">Libraries</string>
+	<string name="tab_resources">Resources</string>
+	<string name="tab_components">Components</string>
+	<string name="tab_signatures">Signatures</string>
 	<string name="tab_package_info">Package Info</string>
 	<string name="tab_dumpsys">Dumpsys</string>
 	<string name="tab_sys_package_info">System Package Info</string>
