@@ -15,4 +15,8 @@ public interface IPackageSearcher extends IPlugIn {
 	public boolean trySearch();
 
 	public String getPreferLangForAppName();
+
+	public boolean isVisibleToBasic();
+
+	public void setVisibleToBasic(boolean visible);
 }

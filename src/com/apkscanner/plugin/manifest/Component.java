@@ -29,9 +29,11 @@ public class Component
 	public final String pluginGroup;
 	public final String like;
 	public final String supportedOS;
+	public final Boolean visibleToBasic;
 
 	Component(int type, boolean enable, String label, String icon, String description, String name, String url, /* Linker[] linkers */
-			String target, String preferLang, String path, String param, String updateUrl, String pluginGroup, String like, String supportedOS) {
+			String target, String preferLang, String path, String param, String updateUrl, String pluginGroup, String like, String supportedOS,
+			Boolean visibleToBasic) {
 		this.type = type;
 		this.enable = enable;
 		this.label = label;
@@ -50,6 +52,7 @@ public class Component
 
 		this.like = like;
 		this.supportedOS = supportedOS;
+		this.visibleToBasic = visibleToBasic;
 	}
 
 	@Override
@@ -71,6 +74,7 @@ public class Component
 		result = prime * result + type;
 		result = prime * result + ((updateUrl == null) ? 0 : updateUrl.hashCode());
 		result = prime * result + ((url == null) ? 0 : url.hashCode());
+		result = prime * result + ((visibleToBasic == null) ? 0 : (visibleToBasic ? 1231 : 1237));
 		return result;
 	}
 
@@ -151,6 +155,11 @@ public class Component
 			if (other.url != null)
 				return false;
 		} else if (!url.equals(other.url))
+			return false;
+		if (visibleToBasic == null) {
+			if (other.visibleToBasic != null)
+				return false;
+		} else if (!visibleToBasic.equals(other.visibleToBasic))
 			return false;
 		return true;
 	}

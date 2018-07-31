@@ -4,8 +4,11 @@ import com.apkscanner.plugin.manifest.Component;
 
 public abstract class AbstractPackageSearcher extends AbstractPlugIn implements IPackageSearcher
 {
+	protected boolean visibleToBasic;
+
 	public AbstractPackageSearcher(PlugInPackage pluginPackage, Component component) {
 		super(pluginPackage, component);
+		visibleToBasic = component.visibleToBasic == null ? true : component.visibleToBasic;
 	}
 
 	@Override
@@ -24,5 +27,15 @@ public abstract class AbstractPackageSearcher extends AbstractPlugIn implements 
 	@Override
 	public String getPreferLangForAppName() {
 		return component.preferLang;
+	}
+
+	@Override
+	public boolean isVisibleToBasic() {
+		return visibleToBasic;
+	}
+
+	@Override
+	public void setVisibleToBasic(boolean visible) {
+		visibleToBasic = visible;
 	}
 }

@@ -111,11 +111,14 @@ public class ManifestReader
 				String updateUrl = null;
 				String like = null;
 				String supportedOS = null;
+				Boolean visibleToBasic = null;
 
 				switch(type) {
 				case Component.TYPE_PACAKGE_SEARCHER_LINKER:
 					target = node.getAttributes("target");
 					preferLang = node.getAttributes("preferLanguage");
+				case Component.TYPE_PACAKGE_SEARCHER:
+					visibleToBasic = !"false".equals(node.getAttributes("visibleToBasic"));
 					break;
 				case Component.TYPE_UPDATE_CHECKER_LINKER:
 					updateUrl = node.getAttributes("updateUrl");
@@ -128,7 +131,7 @@ public class ManifestReader
 					break;
 				}
 				components.add(new Component(type, enable, label, icon, description, name, url, /* linkers */
-						target, preferLang, path, param, updateUrl, pluginGroup, like, supportedOS));
+						target, preferLang, path, param, updateUrl, pluginGroup, like, supportedOS, visibleToBasic));
 			}
 		}
 		return components.toArray(new Component[components.size()]);
