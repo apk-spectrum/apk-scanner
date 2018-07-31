@@ -45,6 +45,7 @@ public enum Resource
 	STR_BTN_OPEN				(Type.TEXT, "@btn_open"),
 	STR_BTN_OPEN_PACKAGE		(Type.TEXT, "@btn_open_pacakge"),
 	STR_BTN_MANIFEST			(Type.TEXT, "@btn_manifest"),
+	STR_BTN_MANIFEST_SAVE_AS	(Type.TEXT, "@btn_manifest_save"),
 	STR_BTN_EXPLORER			(Type.TEXT, "@btn_explorer"),
 	STR_BTN_UNPACK				(Type.TEXT, "@btn_unpack"),
 	STR_BTN_PACK				(Type.TEXT, "@btn_pack"),
@@ -129,6 +130,16 @@ public enum Resource
 	STR_MENU_UNINSTALL			(Type.TEXT, "@menu_uninstall"),
 	STR_MENU_CLEAR_DATA			(Type.TEXT, "@menu_clear_data"),
 	STR_MENU_CHECK_INSTALLED	(Type.TEXT, "@menu_check_installed"),
+	STR_MENU_DECODER_JD_GUI		(Type.TEXT, "@menu_decorder_jd_gui"),
+	STR_MENU_DECODER_JADX_GUI	(Type.TEXT, "@menu_decorder_jadx_gui"),
+	STR_MENU_DECODER_BYTECODE	(Type.TEXT, "@menu_decorder_bytecode_viewer"),
+	STR_MENU_DECODER_JEB		(Type.TEXT, "@menu_decorder_jeb"),
+	STR_MENU_SEARCH_RESOURCE	(Type.TEXT, "@menu_search_resource"),
+	STR_MENU_EXPLORER_ARCHIVE	(Type.TEXT, "@menu_explorer_archive"),
+	STR_MENU_EXPLORER_FOLDER	(Type.TEXT, "@menu_explorer_folder"),
+	STR_MENU_LAUNCH_LAUNCHER	(Type.TEXT, "@menu_launch_lanucher"),
+	STR_MENU_LAUNCH_SELECT		(Type.TEXT, "@menu_launch_select"),
+	STR_MENU_SELECT_DEFAULT		(Type.TEXT, "@menu_select_default"),
 
 	STR_TAB_BASIC_INFO			(Type.TEXT, "@tab_basic_info"),
 	STR_TAB_WIDGET				(Type.TEXT, "@tab_widget"),
@@ -285,6 +296,8 @@ public enum Resource
 	STR_LABEL_OPEN_WITH			(Type.TEXT, "@label_open_with"),
 	STR_LABEL_OPEN_WITH_SYSTEM	(Type.TEXT, "@label_open_with_system"),
 	STR_LABEL_OPEN_WITH_JDGUI	(Type.TEXT, "@label_open_with_jdgui"),
+	STR_LABEL_OPEN_WITH_JADXGUI	(Type.TEXT, "@label_open_with_jadxgui"),
+	STR_LABEL_OPEN_WITH_BYTECODE(Type.TEXT, "@label_open_with_bytecode_viewer"),
 	STR_LABEL_OPEN_WITH_EXPLORER(Type.TEXT, "@label_open_with_explorer"),
 	STR_LABEL_OPEN_WITH_SCANNER	(Type.TEXT, "@label_open_with_apkscanner"),
 	STR_LABEL_OPEN_WITH_CHOOSE	(Type.TEXT, "@label_open_with_choose"),
@@ -302,6 +315,9 @@ public enum Resource
 	STR_LABEL_APK_INSTALL_OPT	(Type.TEXT, "@label_apk_install_option"),
 	STR_LABEL_APK_INSTALLING	(Type.TEXT, "@label_apk_installing"),
 	STR_LABEL_APK_INSTALL_FINISH(Type.TEXT, "@label_apk_install_finish"),
+	STR_LABEL_SAVE_AS			(Type.TEXT, "@label_save_as"),
+	STR_LABEL_BY_PACKAGE_NAME	(Type.TEXT, "@label_by_package_name"),
+	STR_LABEL_BY_APP_LABEL		(Type.TEXT, "@label_by_app_label"),
 
 	STR_TREE_NODE_DEVICE 		(Type.TEXT, "@tree_node_device"),
 	STR_TREE_NODE_DISPLAYED		(Type.TEXT, "@tree_node_displayed"),
@@ -334,6 +350,7 @@ public enum Resource
 	STR_MSG_DISABLED_PACKAGE	(Type.TEXT, "@msg_disabled_package"),
 	STR_MSG_SUCCESS_CLEAR_DATA	(Type.TEXT, "@msg_success_clear_data"),
 	STR_MSG_FAILURE_CLEAR_DATA	(Type.TEXT, "@msg_failure_clear_data"),
+	STR_MSG_WARN_UNSUPPORTED_JVM(Type.TEXT, "@msg_warn_unsupported_jvm"),
 
 	STR_QUESTION_REBOOT_DEVICE	(Type.TEXT, "@question_reboot_device"),
 	STR_QUESTION_CONTINUE_INSTALL(Type.TEXT, "@question_continue_install"),
@@ -375,7 +392,9 @@ public enum Resource
 	IMG_RESOURCE_TREE_CODE		(Type.IMAGE, "resource_tab_tree_code.png"),
 	IMG_RESOURCE_TREE_ARSC		(Type.IMAGE, "resource_tab_tree_arsc.png"),
 	IMG_RESOURCE_TREE_OPEN_JD	(Type.IMAGE, "Loading_openJD_16_16.gif"),
-	IMG_RESOURCE_TREE_JD_ICON	(Type.IMAGE, "resource_tab_JD.png"),	
+	IMG_RESOURCE_TREE_JD_ICON	(Type.IMAGE, "resource_tab_JD.png"),
+	IMG_RESOURCE_TREE_JADX_ICON	(Type.IMAGE, "javaicon.png"),
+	IMG_RESOURCE_TREE_BCV_ICON	(Type.IMAGE, "BCVIcon.png"),
 	IMG_RESOURCE_TREE_OPEN_ICON (Type.IMAGE, "resource_tab_open.png"),
 	IMG_RESOURCE_TREE_OPEN_OTHERAPPLICATION_ICON (Type.IMAGE, "resource_tab_otherapplication.png"),
 	IMG_RESOURCE_TREE_OPEN_JD_LOADING (Type.IMAGE, "Loading_openJD_80_80.gif"),
@@ -443,6 +462,12 @@ public enum Resource
 	BIN_DEX2JAR_WIN				(Type.BIN, "d2j-dex2jar.bat", "win"),
 	BIN_DEX2JAR					(Type.BIN, new Resource[]{ BIN_DEX2JAR_WIN, BIN_DEX2JAR_LNX }),
 
+	BIN_JADX_LNX				(Type.BIN, "jadx/bin/jadx-gui", "nux"),
+	BIN_JADX_WIN				(Type.BIN, "jadx\\bin\\jadx-gui.bat", "win"),
+	BIN_JADX_GUI				(Type.BIN, new Resource[]{ BIN_JADX_WIN, BIN_JADX_LNX }),
+
+	BIN_BYTECODE_VIEWER			(Type.BIN, "Bytecode-Viewer.jar"),
+
 	BIN_SIGNAPK					(Type.BIN, "signapk.jar"),
 	
 	PLUGIN_PATH					(Type.PLUGIN, ""),	
@@ -472,6 +497,11 @@ public enum Resource
 	PROP_PK8_FILE_PATH			(Type.PROP, "last_pk8_file_path", null /* see getDefValue() */),
 	PROP_PRINT_MULTILINE_ATTR	(Type.PROP, "print_multiline_attr", true),
 
+	PROP_DEFAULT_DECORDER		(Type.PROP, "default_decorder", Resource.STR_DECORDER_JD_GUI),
+	PROP_DEFAULT_SEARCHER		(Type.PROP, "default_searcher", Resource.STR_DEFAULT_SEARCHER),
+	PROP_DEFAULT_EXPLORER		(Type.PROP, "default_explorer", Resource.STR_EXPLORER_ARCHIVE),
+	PROP_DEFAULT_LAUNCH_MODE	(Type.PROP, "default_launch_mode", Resource.STR_LAUNCH_LAUNCHER),
+
 	LIB_JSON_JAR				(Type.LIB, "json-simple-1.1.1.jar"),
 	LIB_CLI_JAR					(Type.LIB, "commons-cli-1.3.1.jar"),
 	LIB_APKTOOL_JAR				(Type.LIB, "apktool.jar"),
@@ -485,6 +515,15 @@ public enum Resource
 	public static final int INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY = 0;
 	public static final int INT_LAUNCH_ONLY_LAUNCHER_ACTIVITY = 1;
 	public static final int INT_LAUNCH_ALWAYS_CONFIRM_ACTIVITY = 2;
+
+	public static final String STR_DECORDER_JD_GUI = "jd-gui";
+	public static final String STR_DECORDER_JADX_GUI = "jadx-gui";
+	public static final String STR_DECORDER_BYTECOD = "Bytecode-viewer";
+	public static final String STR_DEFAULT_SEARCHER = "resource";
+	public static final String STR_EXPLORER_ARCHIVE = "archive";
+	public static final String STR_EXPLORER_FOLDER = "folder";
+	public static final String STR_LAUNCH_LAUNCHER = "launcher";
+	public static final String STR_LAUNCH_SELECT = "select";
 
 	private enum Type {
 		IMAGE,

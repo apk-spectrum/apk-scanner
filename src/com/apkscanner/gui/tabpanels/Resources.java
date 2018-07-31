@@ -56,21 +56,26 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import com.apkscanner.Launcher;
+import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.gui.util.FilteredTreeModel;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.ResouceContentsPanel;
+import com.apkscanner.plugin.IExternalTool;
+import com.apkscanner.plugin.IPlugIn;
+import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
-import com.apkscanner.tool.dex2jar.Dex2JarWrapper;
-import com.apkscanner.tool.jd_gui.JDGuiLauncher;
+import com.apkscanner.tool.external.BytecodeViewerLauncher;
+import com.apkscanner.tool.external.Dex2JarWrapper;
+import com.apkscanner.tool.external.JADXLauncher;
+import com.apkscanner.tool.external.JDGuiLauncher;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 import com.apkscanner.util.ZipFileUtil;
 
-public class Resources extends JPanel implements TabDataObject {
+public class Resources extends AbstractTabbedPanel {
 	private static final long serialVersionUID = -934921813626224616L;
 
 	private ResouceContentsPanel contentPanel;
@@ -242,7 +247,9 @@ public class Resources extends JPanel implements TabDataObject {
 	}
 
 	public Resources() {
-
+		setName(Resource.STR_TAB_IMAGE.getString());
+		setToolTipText(Resource.STR_TAB_IMAGE.getString());
+		setEnabled(false);
 	}
 
 	private void makeTreeForm() {
@@ -834,36 +841,67 @@ public class Resources extends JPanel implements TabDataObject {
 		}
 
 		if (resObj.path.toLowerCase().endsWith(".dex")) {
-			Log.i("dex file");
-			if (resObj.getLoadingState() == false) {
-				resObj.setLoadingState(true);
-
-				tree.repaint();
-				Dex2JarWrapper.convert(resPath, new Dex2JarWrapper.DexWrapperListener() {
-					private void resetUI() {
-						resObj.setLoadingState(false);
-
-						Animateimageicon.setImageObserver(null);
-						ImageObserver.setDrawFlag(false);
-						ImageObserver = null;
-						tree.repaint();
-					}
-
-					@Override
-					public void onError(String message) {
-					}
-
-					@Override
-					public void onSuccess(String jarFilePath) {
-						JDGuiLauncher.run(jarFilePath);
-					}
-
-					@Override
-					public void onCompleted() {
-						resetUI();
-					}
-				});
+			int actionType = 0;
+			String data = (String)Resource.PROP_DEFAULT_DECORDER.getData();
+			if(Resource.STR_DECORDER_JD_GUI.equals(data)) {
+				actionType = 1;
+			} else if(Resource.STR_DECORDER_JADX_GUI.equals(data)) {
+				actionType = 2;
+			} else if(Resource.STR_DECORDER_BYTECOD.equals(data)) {
+				actionType = 3;
+			} else {
+				Log.e(data);
+				IPlugIn plugin = PlugInManager.getPlugInByActionCommand(data);
+				if(plugin != null
+						&& plugin instanceof IExternalTool
+						&& ((IExternalTool)plugin).isDecorderTool() ) {
+					((IExternalTool)plugin).launch(resPath);
+				} else {
+					actionType = 1;
+				}
+				return;
 			}
+
+			switch(actionType) {
+			case 1:
+				if (resObj.getLoadingState() == false) {
+					resObj.setLoadingState(true);
+
+					tree.repaint();
+					Dex2JarWrapper.convert(resPath, new Dex2JarWrapper.DexWrapperListener() {
+						private void resetUI() {
+							resObj.setLoadingState(false);
+
+							Animateimageicon.setImageObserver(null);
+							ImageObserver.setDrawFlag(false);
+							ImageObserver = null;
+							tree.repaint();
+						}
+
+						@Override
+						public void onError(String message) {
+						}
+
+						@Override
+						public void onSuccess(String jarFilePath) {
+							JDGuiLauncher.run(jarFilePath);
+						}
+
+						@Override
+						public void onCompleted() {
+							resetUI();
+						}
+					});
+				}
+				break;
+			case 2:
+				JADXLauncher.run(resPath);
+				break;
+			case 3:
+				BytecodeViewerLauncher.run(resPath);
+				break;
+			}
+			Log.i("dex file");
 		} else if (resObj.path.toLowerCase().endsWith(".apk")) {
 			Launcher.run(resPath);
 		} else {
@@ -1113,7 +1151,7 @@ public class Resources extends JPanel implements TabDataObject {
 
 		contentPanel = new ResouceContentsPanel();
 
-		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
 		splitPane.setLeftComponent(TreePanel);
 		splitPane.setRightComponent(contentPanel);
 		splitPane.setDividerLocation(200);
@@ -1122,7 +1160,14 @@ public class Resources extends JPanel implements TabDataObject {
 	}
 
 	@Override
-	public void setData(ApkInfo apkInfo) {
+	public void setData(ApkInfo apkInfo, Status status, ITabbedRequest request) {
+		if(!Status.RESOURCE_COMPLETED.equals(status)) {
+			if(Status.RES_DUMP_COMPLETED.equals(status)) {
+				setExtraData(apkInfo);
+			}
+			return;
+		}
+
 		if (tree == null)
 			initialize();
 
@@ -1132,9 +1177,11 @@ public class Resources extends JPanel implements TabDataObject {
 		nameList = apkInfo.resources;
 		contentPanel.setData(apkInfo);
 		setTreeForm(false);
+
+		setDataSize(apkInfo.resources.length, true, false);
+		sendRequest(request, SEND_REQUEST_CURRENT_ENABLED);
 	}
 
-	@Override
 	public void setExtraData(ApkInfo apkInfo) {
 		if (apkInfo != null) {
 			resourcesWithValue = apkInfo.resourcesWithValue;
@@ -1158,6 +1205,7 @@ public class Resources extends JPanel implements TabDataObject {
 
 	@Override
 	public void reloadResource() {
-
+		setName(Resource.STR_TAB_IMAGE.getString());
+		setToolTipText(Resource.STR_TAB_IMAGE.getString());
 	}
 }

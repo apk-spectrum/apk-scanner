@@ -22,12 +22,12 @@ import java.util.zip.ZipFile;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import com.apkscanner.core.scanner.PermissionGroupManager;
+import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.CompatibleScreensInfo;
@@ -40,19 +40,21 @@ import com.apkscanner.data.apkinfo.UsesConfigurationInfo;
 import com.apkscanner.data.apkinfo.UsesFeatureInfo;
 import com.apkscanner.data.apkinfo.UsesLibraryInfo;
 import com.apkscanner.data.apkinfo.UsesPermissionInfo;
-import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.gui.dialog.SdkVersionInfoDlg;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
+import com.apkscanner.plugin.IPackageSearcher;
+import com.apkscanner.plugin.IPlugIn;
+import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.FileUtil.FSStyle;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 
-public class BasicInfo extends JComponent implements HyperlinkClickListener, TabDataObject
+public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickListener, IProgressListener
 {
 	private static final long serialVersionUID = 6431995641984509482L;
 
@@ -109,10 +111,12 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 
 	public BasicInfo()
 	{
-		//if(!opening) {
+		setName(Resource.STR_TAB_BASIC_INFO.getString());
+		setToolTipText(Resource.STR_TAB_BASIC_INFO.getString());
+		setEnabled(true);
+
 		initialize();
 		showAbout();
-		//}
 	}
 
 	@Override
@@ -219,10 +223,10 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		//strTabInfo.append("  Apktool<br/>");
 		//strTabInfo.append("  Apktool " + ApkManager.getApkToolVersion() + "<br/>");
 		//strTabInfo.append("  - <a href=\"http://ibotpeaches.github.io/Apktool/\" title=\"Apktool Project Site\">http://ibotpeaches.github.io/Apktool/</a><br/>");
-		strTabInfo.append("  JD-GUI <br/>");
-		strTabInfo.append("  - <a href=\"http://jd.benow.ca/\" title=\"JD Project Site\">http://jd.benow.ca/</a><br/>");
-		strTabInfo.append("  dex2jar<br/>");
-		strTabInfo.append("  - <a href=\"https://sourceforge.net/projects/dex2jar/\" title=\"JD Project Site\">https://sourceforge.net/projects/dex2jar/</a><br/>");
+		strTabInfo.append("  JD-GUI - <a href=\"http://jd.benow.ca/\" title=\"JD Project Site\">http://jd.benow.ca/</a><br/>");
+		strTabInfo.append("  JADX-GUI - <a href=\"https://github.com/skylot/jadx\" title=\"JADX Project Site\">https://github.com/skylot/jadx</a><br/>");
+		strTabInfo.append("  Bytecode Viewer - <a href=\"https://github.com/konloch/bytecode-viewer\" title=\"Bytecode Viewer Project Site\">https://github.com/konloch/bytecode-viewer</a><br/>");
+		strTabInfo.append("  dex2jar - <a href=\"https://sourceforge.net/projects/dex2jar/\" title=\"JD Project Site\">https://sourceforge.net/projects/dex2jar/</a><br/>");
 		strTabInfo.append("  <H3>Included libraries</H3>");
 		strTabInfo.append("  - <a href=\"https://android.googlesource.com/platform/tools/base/+/master/ddmlib/\" title=\"Google Git Site\">ddmlib</a>,");
 		strTabInfo.append("  <a href=\"https://github.com/google/guava\" title=\"guava Site\">guava-18.0</a>,");
@@ -230,7 +234,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		strTabInfo.append("  <a href=\"https://github.com/BlackOverlord666/mslinks\" title=\"mslinks Site\">mslinks</a>,");
 		strTabInfo.append("  <a href=\"http://bobbylight.github.io/RSyntaxTextArea/\" title=\"RSyntaxTextArea Site\">rsyntaxtextarea-2.6.1</a>,<br/>");
 		strTabInfo.append("  <a href=\"https://commons.apache.org/proper/commons-cli/\" title=\"commons-cli Site\">commons-cli-1.3.1</>,");
-		strTabInfo.append("  <a href=\"https://code.google.com/archive/p/json-simple/\" title=\"json-simple Site\">json-simple-1.1.1</a>");
+		strTabInfo.append("  <a href=\"https://code.google.com/archive/p/json-simple/\" title=\"json-simple Site\">json-simple-1.1.1</a>,");
+		strTabInfo.append("  <a href=\"https://bitbucket.org/luciad/webp-imageio\" title=\"luciad-webp-imageio Site\">luciad-webp-imageio</a>");
 		strTabInfo.append("  <br/><br/><hr/>");
 		strTabInfo.append("  Programmed by <a href=\"mailto:" + Resource.STR_APP_MAKER_EMAIL.getString() + "\" title=\"" + Resource.STR_APP_MAKER_EMAIL.getString() + "\">" + Resource.STR_APP_MAKER.getString() + "</a>, 2015.<br/>");
 		strTabInfo.append("  It is open source project on <a href=\"https://github.sec.samsung.net/sunggyu-kam/apk-scanner\" title=\"APK Scanner Site\">SEC Github</a>");
@@ -429,6 +434,26 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			mutiLabels += s + "\n";
 		}
 
+		String packageSearchers = "";
+		String appLabelSearchers = "";
+		IPackageSearcher[] searchers = PlugInManager.getPackageSearchers();
+		if(searchers.length > 0) {
+			String defaultSearchIcon = Resource.IMG_TOOLBAR_SEARCH.getPath();
+			for(IPackageSearcher searcher: searchers) {
+				URL icon = searcher.getIconURL();
+				String iconPath = icon != null ? icon.toString() : defaultSearchIcon;
+				String tag = makeHyperLink("@event", " <image src=\"" + iconPath + "\" width=16 height=16 /> ", null, "PLUGIN:"+searcher.getActionCommand(), "color:white;");
+				switch(searcher.getSupportType() ) {
+				case IPackageSearcher.SEARCHER_TYPE_PACKAGE_NAME:
+					packageSearchers += tag;
+					break;
+				case IPackageSearcher.SEARCHER_TYPE_APP_NAME:
+					appLabelSearchers += tag;
+					break;
+				};
+			}
+		}
+
 		StringBuilder strTabInfo = new StringBuilder("");
 		strTabInfo.append("<table>");
 		strTabInfo.append("  <tr>");
@@ -443,15 +468,15 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			strTabInfo.append("        </font>");
 		} else {
 			strTabInfo.append("          " + appName);
-			strTabInfo.append("</font><br/>");
+			strTabInfo.append("</font> " + appLabelSearchers + "<br/>");
 		}
 		if(labels.length > 1) {
 			strTabInfo.append("        <font style=\"font-size:10px;\">");
 			strTabInfo.append("          " + makeHyperLink("@event", "["+labels.length+"]", mutiLabels, "other-lang", null));
-			strTabInfo.append("</font><br/>");
+			strTabInfo.append("</font> " + appLabelSearchers + "<br/>");
 		}
 		strTabInfo.append("        <font style=\"font-size:15px; color:#4472C4\">");
-		strTabInfo.append("          [" + packageName +"]");
+		strTabInfo.append("          [" + packageName +"] " + packageSearchers);
 		strTabInfo.append("</font><br/>");
 		strTabInfo.append("        <font style=\"font-size:15px; color:#ED7E31\">");
 		strTabInfo.append("          " + makeHyperLink("@event", "Ver. " + versionName +" / " + (!versionCode.isEmpty() ? versionCode : "0"), "VersionName : " + versionName + "\n" + "VersionCode : " + (!versionCode.isEmpty() ? versionCode : "Unspecified"), "app-version", null));
@@ -488,7 +513,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		//this.setLayout(new GridLayout());
 	}
 
-	public synchronized void setProgress(String message)
+	public synchronized void onProgress(String message)
 	{
 		//Log.i("setProgress() percent " + percent);
 
@@ -508,7 +533,7 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 	}
 
 	@Override
-	public synchronized void setData(ApkInfo apkInfo)
+	public synchronized void setData(ApkInfo apkInfo, Status status, ITabbedRequest request)
 	{
 		if(apkinform == null)
 			initialize();
@@ -516,7 +541,16 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		if(apkInfo == null) {
 			removeData();
 			showAbout();
+			sendRequest(request, REQUEST_SELECTED);
 			return;
+		}
+
+		if(!Status.BASIC_INFO_COMPLETED.equals(status) && !Status.CERT_COMPLETED.equals(status)) {
+			if(CertSummary.isEmpty() && apkInfo.certificates != null) {
+				Log.i("cert completed. status: " + status);
+			} else {
+				return;
+			}
 		}
 		wasSetData = true;
 
@@ -589,7 +623,6 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		ApkSize = apkInfo.fileSize;
 		apkPath = apkInfo.filePath;
 		checkSumMd5 = FileUtil.getMessageDigest(new File(apkPath), "MD5");
-
 
 		hasSignatureLevel = false; // apkInfo.hasSignatureLevel;
 		hasSignatureOrSystemLevel = false; // apkInfo.hasSignatureOrSystemLevel;
@@ -700,13 +733,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 		deviceRequirements = deviceReqData.toString();
 
 		setData();
-	}
 
-	@Override
-	public synchronized void setExtraData(ApkInfo apkInfo) { 
-		if(wasSetData) {
-			setData(apkInfo);
-		}
+		sendRequest(request, REQUEST_SELECTED);
 	}
 
 	private String covertWebp2Png(final String imagePath, final String tempPath) {
@@ -805,6 +833,11 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 			checksum += "SHA1: " + FileUtil.getMessageDigest(new File(apkPath), "SHA-1") + "\n";
 			checksum += "SHA256: " + FileUtil.getMessageDigest(new File(apkPath), "SHA-256");
 			showDialog(checksum, "APK Checksum", new Dimension(650, 150), null);
+		} else if(id != null && id.startsWith("PLUGIN:")) {
+			IPlugIn plugin = PlugInManager.getPlugInByActionCommand(id.replaceAll("PLUGIN:", ""));
+			if(plugin != null) {
+				plugin.launch();
+			}
 		} else {
 			showPermDetailDesc(id);
 		}
@@ -987,6 +1020,8 @@ public class BasicInfo extends JComponent implements HyperlinkClickListener, Tab
 
 	@Override
 	public void reloadResource() {
+		setName(Resource.STR_TAB_BASIC_INFO.getString());
+		setToolTipText(Resource.STR_TAB_BASIC_INFO.getString());
 		setData();
 	}
 }

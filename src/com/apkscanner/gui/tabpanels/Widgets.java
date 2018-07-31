@@ -8,7 +8,6 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -16,9 +15,9 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
-import com.apkscanner.gui.TabbedPanel.TabDataObject;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.resource.Resource;
 
@@ -26,7 +25,7 @@ import com.apkscanner.resource.Resource;
  * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for
  * both cells and column headers.
  */
-public class Widgets extends JPanel implements TabDataObject
+public class Widgets extends AbstractTabbedPanel
 {
 	private static final long serialVersionUID = 4881638983501664860L;
 
@@ -35,7 +34,10 @@ public class Widgets extends JPanel implements TabDataObject
 	private ArrayList<Object[]> arrWidgets = new ArrayList<Object[]>();
 
 	public Widgets() {
-		super(new GridLayout(1, 0));
+		setLayout(new GridLayout(1, 0));
+		setName(Resource.STR_TAB_WIDGET.getString());
+		setToolTipText(Resource.STR_TAB_WIDGET.getString());
+		setEnabled(false);
 	}
 	
 	@Override
@@ -57,8 +59,12 @@ public class Widgets extends JPanel implements TabDataObject
 	}
 	
 	@Override
-	public void setData(ApkInfo apkInfo)
+	public void setData(ApkInfo apkInfo, Status status, ITabbedRequest request)
 	{
+		if(!Status.WIDGET_COMPLETED.equals(status)) {
+			return;
+		}
+		
 		//table.setPreferredScrollableViewportSize(new Dimension(500, 70));
 		arrWidgets.clear();
 		if(apkInfo.widgets == null) return;
@@ -86,14 +92,17 @@ public class Widgets extends JPanel implements TabDataObject
 		for(int i=0; i< arrWidgets.size(); i++) {
 			table.setRowHeight(i, 100);
 		}
-	}
 
-	@Override
-	public void setExtraData(ApkInfo apkInfo) { }
+		setDataSize(apkInfo.widgets.length, true, false);
+		sendRequest(request, SEND_REQUEST_CURRENT_ENABLED);
+	}
 	
 	@Override
 	public void reloadResource()
 	{
+		setName(Resource.STR_TAB_WIDGET.getString());
+		setToolTipText(Resource.STR_TAB_WIDGET.getString());
+
 		if(TableModel == null) return;
 		TableModel.loadResource();
 		TableModel.fireTableStructureChanged();

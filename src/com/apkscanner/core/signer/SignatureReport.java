@@ -60,6 +60,11 @@ public class SignatureReport {
 
 	}
 
+	public SignatureReport(X509Certificate cert) {
+		certificates = new X509Certificate[1];
+		certificates[0] = cert;
+	}
+
 	public SignatureReport(Signature[] signatures) {
 		certificates = new X509Certificate[signatures.length];
 		try {

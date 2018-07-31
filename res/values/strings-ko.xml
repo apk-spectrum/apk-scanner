@@ -8,6 +8,7 @@
 	<string name="btn_open">열기</string>
 	<string name="btn_open_pacakge">패키지</string>
 	<string name="btn_manifest">매니페스트</string>
+	<string name="btn_manifest_save">저장하기</string>
 	<string name="btn_explorer">탐색기</string>
 	<string name="btn_unpack">디컴파일</string>
 	<string name="btn_pack">리컴파일</string>
@@ -92,6 +93,16 @@
 	<string name="menu_uninstall">삭제 (U)</string>
 	<string name="menu_clear_data">데이터 삭제(캐시 포함)</string>
 	<string name="menu_check_installed">설치버전 정보확인 (T)</string>
+	<string name="menu_decorder_jd_gui">JD-GUI</string>
+	<string name="menu_decorder_jadx_gui">JADX-GUI</string>
+	<string name="menu_decorder_bytecode_viewer">Bytecode Viewer</string>
+	<string name="menu_decorder_jeb">JEB Decompiler</string>
+	<string name="menu_search_resource">리소스 검색</string>
+	<string name="menu_explorer_archive">APK 파일 내부 탐색</string>
+	<string name="menu_explorer_folder">APK 파일 위치 열기</string>
+	<string name="menu_launch_lanucher">런처 액티비티 실행</string>
+	<string name="menu_launch_select">액티비티 선택 실행</string>
+	<string name="menu_select_default">기본값으로 설정</string>
 
 	<string name="tab_basic_info">APK 정보</string>
 	<string name="tab_widget">위젯</string>
@@ -259,6 +270,8 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="label_open_with">연결 프로그램</string>
 	<string name="label_open_with_system">열기</string>
 	<string name="label_open_with_jdgui">JD-GUI</string>
+	<string name="label_open_with_jadxgui">JADX-GUI</string>
+	<string name="label_open_with_bytecode_viewer">Bytecode Viewer</string>
 	<string name="label_open_with_explorer">탐색기</string>
 	<string name="label_open_with_apkscanner">APK 스캐너</string>
 	<string name="label_open_with_choose">연결 프로그램 선택</string>
@@ -275,6 +288,9 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="label_apk_install_option">OPTIONS</string>
 	<string name="label_apk_installing">INSTALLING</string>
 	<string name="label_apk_install_finish">FINISH</string>
+	<string name="label_save_as">저장하기...</string>
+	<string name="label_by_package_name">패키지명으로 검색</string>
+	<string name="label_by_app_label">앱 이름으로 검색</string>
 
 	<string name="msg_failure_open_apk">APK 파일을 열수 없습니다.</string>
 	<string name="msg_no_such_apk">APK 파일이 존재하지 않습니다.</string>
@@ -302,6 +318,7 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="msg_disabled_package">패키지가 비활성화 되어 있어 실행할 수 없습니다.</string>
 	<string name="msg_success_clear_data">앱 데이터를 삭제 하였습니다.</string>
 	<string name="msg_failure_clear_data">앱 데이터 삭제에 실패 하였습니다.</string>
+	<string name="msg_warn_unsupported_jvm">Java 8 이상 버전이 필요합니다.</string>
 
 	<string name="question_reboot_device">장치를 다시 시작 하시겠습니까?</string>
 	<string name="question_continue_install">설치를 계속 하시겠습니까?</string>

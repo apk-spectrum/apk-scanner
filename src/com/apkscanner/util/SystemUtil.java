@@ -495,4 +495,14 @@ public class SystemUtil
 
 		return list.toArray(new String[list.size()]);
 	}
+
+	public static boolean checkJvmVersion(String minVersion) {
+		String[] jvmVer = System.getProperty("java.specification.version").split("\\.");
+		String[] minVer = minVersion.split("\\.");
+		if(jvmVer.length < 2 || minVer.length < 2) return false;
+		if(Integer.parseInt(jvmVer[0]) < Integer.parseInt(minVer[0])) return false;
+		if(Integer.parseInt(jvmVer[1]) < Integer.parseInt(minVer[1])) return false;
+		return true;
+	}
+	
 }
