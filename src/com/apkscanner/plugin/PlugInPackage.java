@@ -12,6 +12,8 @@ import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.w3c.dom.NodeList;
 
@@ -34,6 +36,7 @@ public class PlugInPackage
 	private IPlugIn[] plugins;
 	private PlugInGroup[] pluginGroups;
 	private HashMap<String, HashMap<String,String>> resources;
+	private boolean enabled;
 
 	public PlugInPackage(File pluginFile) throws InvalidManifestException {
 		if(pluginFile == null) {
@@ -45,10 +48,19 @@ public class PlugInPackage
 		}
 		fingerprint = FileUtil.getMessageDigest(pluginFile, "SHA-1");
 		manifest = readManifest(pluginUri);
+		enabled = manifest.plugin.enabled;
 		pluginGroups = readPlugInGroup(pluginFile, manifest);
 		plugins = createPlugInInstance(pluginFile, manifest);
 		resources = loadResource(pluginFile, manifest);
 		readSettings();
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+	
+	public boolean isEnabled() {
+		return enabled;
 	}
 
 	public URI getPlugInUri() {
@@ -405,5 +417,35 @@ public class PlugInPackage
 	public String getConfiguration(String key, String defaultValue) {
 		String value = getConfiguration(key);
 		return value != null ? value : defaultValue;
+	}
+
+	public Map<String, Object> getChangedProperties() {
+		HashMap<String, Object> data = new HashMap<>();
+		if(manifest.plugin.enabled != isEnabled()) {
+			data.put("enabled", isEnabled());
+		}
+		for(IPlugIn p: plugins) {
+			Map<String, Object> prop = p.getChangedProperties();
+			if(!prop.isEmpty()) {
+				data.put(p.getActionCommand(), prop);
+			}
+		}
+		return data;
+	}
+
+	public void restoreProperties(Map<?, ?> data) {
+		if(data == null) return;
+		if(data.containsKey("enabled")) {
+			setEnabled((boolean)data.get("enabled"));
+			data.remove("enabled");
+		}
+		for(Entry<?, ?> entry: data.entrySet()) {
+			IPlugIn plugin = getPlugInByActionCommand((String) entry.getKey());
+			if(plugin != null) {
+				plugin.restoreProperties((Map<?, ?>) entry.getValue());
+			} else {
+				Log.w("unknown plugin : " + entry.getKey());
+			}
+		}
 	}
 }

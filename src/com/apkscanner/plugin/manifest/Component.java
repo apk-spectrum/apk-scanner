@@ -14,7 +14,7 @@ public class Component
 
 	public final int type;
 	public final String description;
-	public final boolean enable;
+	public final boolean enabled;
 	public final String icon;
 	public final String label;
 	public final String name;
@@ -35,7 +35,7 @@ public class Component
 			String target, String preferLang, String path, String param, String updateUrl, String pluginGroup, String like, String supportedOS,
 			Boolean visibleToBasic) {
 		this.type = type;
-		this.enable = enable;
+		this.enabled = enable;
 		this.label = label;
 		this.icon = icon;
 		this.description = description;
@@ -60,7 +60,7 @@ public class Component
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
-		result = prime * result + (enable ? 1231 : 1237);
+		result = prime * result + (enabled ? 1231 : 1237);
 		result = prime * result + ((icon == null) ? 0 : icon.hashCode());
 		result = prime * result + ((label == null) ? 0 : label.hashCode());
 		result = prime * result + ((like == null) ? 0 : like.hashCode());
@@ -92,7 +92,7 @@ public class Component
 				return false;
 		} else if (!description.equals(other.description))
 			return false;
-		if (enable != other.enable)
+		if (enabled != other.enabled)
 			return false;
 		if (icon == null) {
 			if (other.icon != null)

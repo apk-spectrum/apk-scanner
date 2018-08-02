@@ -1,5 +1,7 @@
 package com.apkscanner.plugin;
 
+import java.util.Map;
+
 import com.apkscanner.plugin.manifest.Component;
 
 public abstract class AbstractPackageSearcher extends AbstractPlugIn implements IPackageSearcher
@@ -37,5 +39,23 @@ public abstract class AbstractPackageSearcher extends AbstractPlugIn implements 
 	@Override
 	public void setVisibleToBasic(boolean visible) {
 		visibleToBasic = visible;
+	}
+
+	@Override
+	public Map<String, Object> getChangedProperties() {
+		Map<String, Object> data = super.getChangedProperties();
+		if(component.visibleToBasic != isVisibleToBasic()) {
+			data.put("visibleToBasic", isVisibleToBasic());
+		}
+		return data;
+	}
+
+	@Override
+	public void restoreProperties(Map<?, ?> data) {
+		super.restoreProperties(data);
+		if(data == null) return;
+		if(data.containsKey("visibleToBasic")) {
+			setVisibleToBasic((boolean)data.get("visibleToBasic"));
+		}
 	}
 }

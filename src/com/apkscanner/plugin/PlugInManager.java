@@ -4,6 +4,11 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.json.simple.JSONValue;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.plugin.manifest.InvalidManifestException;
@@ -172,6 +177,29 @@ public final class PlugInManager
 		}
 	}
 
+	public static Map<String, Object> getChangedProperties() {
+		HashMap<String, Object> data = new HashMap<>();
+		for(PlugInPackage pack: pluginPackages) {
+			Map<String, Object> prop = pack.getChangedProperties();
+			if(!prop.isEmpty()) {
+				data.put(pack.getPackageName(), prop);
+			}
+		}
+		return data;
+	}
+
+	public static void restoreProperties(Map<String, Object> data) {
+		if(data == null) return;
+		for(Entry<String, Object> entry: data.entrySet()) {
+			PlugInPackage pack = getPlugInPackage(entry.getKey());
+			if(pack != null) {
+				pack.restoreProperties((Map<?, ?>) entry.getValue());
+			} else {
+				Log.w("unknown package : " + entry.getKey());
+			}
+		}
+	}
+
     public static void main(String[] args) throws IOException {
     	loadPlugIn();
 
@@ -184,7 +212,10 @@ public final class PlugInManager
     	IUpdateChecker[] updator = getUpdateChecker();
     	if(updator != null && updator.length > 0) {
     		Log.e(((IUpdateChecker)updator[0]).getNewVersion());
-    		((IUpdateChecker)updator[0]).launch();	
+    		//((IUpdateChecker)updator[0]).launch();	
     	}
+
+    	Log.e(JSONValue.toJSONString(getChangedProperties()));
+    	restoreProperties(getChangedProperties());
     }
 }

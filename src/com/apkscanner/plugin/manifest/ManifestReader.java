@@ -67,13 +67,13 @@ public class ManifestReader
 
 	static private PlugIn makePlugin(@NonNull XmlPath manifest) {
 		XmlPath node = manifest.getNode("/manifest/plugin");
-		boolean enable = !"false".equals(node.getAttributes("enable"));
+		boolean enabled = !"false".equals(node.getAttributes("enabled"));
 		String label = node.getAttributes("label");
 		String icon = node.getAttributes("icon");
 		String description = node.getAttributes("description");
 
 		Component[] components =  makeComponents(manifest);
-		return new PlugIn(enable, label, icon, description, components);
+		return new PlugIn(enabled, label, icon, description, components);
 	}
 
 	static private Component[] makeComponents(@NonNull XmlPath manifest) {
@@ -95,7 +95,7 @@ public class ManifestReader
 					default: type = Component.TYPE_UNKNWON;
 				}
 				XmlPath node = new XmlPath(element);
-				boolean enable = !"false".equals(node.getAttributes("enable"));
+				boolean enabled = !"false".equals(node.getAttributes("enabled"));
 				String label = node.getAttributes("label");
 				String icon = node.getAttributes("icon");
 				String description = node.getAttributes("description");
@@ -130,7 +130,7 @@ public class ManifestReader
 					supportedOS = node.getAttributes("supportedOS");
 					break;
 				}
-				components.add(new Component(type, enable, label, icon, description, name, url, /* linkers */
+				components.add(new Component(type, enabled, label, icon, description, name, url, /* linkers */
 						target, preferLang, path, param, updateUrl, pluginGroup, like, supportedOS, visibleToBasic));
 			}
 		}
