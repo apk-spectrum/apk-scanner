@@ -58,7 +58,6 @@ import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.IUpdateChecker;
 import com.apkscanner.plugin.NetworkException;
 import com.apkscanner.plugin.PlugInManager;
-import com.apkscanner.plugin.PluginConfiguration;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
@@ -174,7 +173,7 @@ public class MainUI extends JFrame
 			@Override
 			protected IUpdateChecker[] doInBackground() throws Exception {
 				PlugInManager.loadPlugIn();
-				PluginConfiguration.setLang(Resource.getLanguage());
+				PlugInManager.setLang(Resource.getLanguage());
 				publish();
 				IUpdateChecker[] updater = PlugInManager.getUpdateChecker();
 				ArrayList<IUpdateChecker> newUpdates = new ArrayList<>();

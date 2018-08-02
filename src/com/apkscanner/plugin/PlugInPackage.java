@@ -36,6 +36,7 @@ public class PlugInPackage
 	private IPlugIn[] plugins;
 	private PlugInGroup[] pluginGroups;
 	private HashMap<String, HashMap<String,String>> resources;
+	private HashMap<String, String> configurations;
 	private boolean enabled;
 
 	public PlugInPackage(File pluginFile) throws InvalidManifestException {
@@ -52,6 +53,7 @@ public class PlugInPackage
 		pluginGroups = readPlugInGroup(pluginFile, manifest);
 		plugins = createPlugInInstance(pluginFile, manifest);
 		resources = loadResource(pluginFile, manifest);
+		configurations = loadConfiguration(manifest);
 		readSettings();
 	}
 
@@ -296,6 +298,16 @@ public class PlugInPackage
 		return plugins.toArray(new IPlugIn[plugins.size()]);
 	}
 
+	private HashMap<String, String> loadConfiguration(Manifest manifest) {
+		HashMap<String, String> configurations = new HashMap<>();
+		if(manifest.configuration != null) {
+			for(Configuration c: manifest.configuration) {
+				configurations.put(c.name, c.value);
+			}
+		}
+		return configurations;
+	}
+
 	private HashMap<String, HashMap<String,String>> loadResource(File pluginFile, Manifest manifest) {
 		if(manifest == null || manifest.resources == null) return null;
 		HashMap<String, HashMap<String,String>> resources = new HashMap<>();
@@ -347,7 +359,7 @@ public class PlugInPackage
 
 	public String getResourceString(String name) {
 		if(resources == null || name == null || !name.startsWith("@")) return name;
-		String lang = PluginConfiguration.getLang();
+		String lang = PlugInManager.getLang();
 		String id = name.substring(1);
 		String value = null;
 		if(resources.containsKey(lang) && resources.get(lang).containsKey(id)) {
@@ -402,14 +414,9 @@ public class PlugInPackage
 	
 	public String getConfiguration(String key) {
 		if(key == null) return null;
-		String value = null;
-		for(Configuration c: manifest.configuration) {
-			if(key.equals(c.name)) {
-				value = c.value;				
-			}
-		}
+		String value = configurations.get(key);
 		if(value == null) {
-			value = PluginConfiguration.getConfiguration(key);
+			value = PlugInManager.getGlobalConfiguration(key);
 		}
 		return value;
 	}
@@ -419,11 +426,30 @@ public class PlugInPackage
 		return value != null ? value : defaultValue;
 	}
 
+	public void setConfiguration(String key, String value) {
+		if(key == null) return;
+		if(value == null) value = "";
+		configurations.put(key, value);
+	}
+
 	public Map<String, Object> getChangedProperties() {
 		HashMap<String, Object> data = new HashMap<>();
 		if(manifest.plugin.enabled != isEnabled()) {
 			data.put("enabled", isEnabled());
 		}
+
+		if(manifest.configuration != null) {
+			HashMap<String, String> conf = new HashMap<>(configurations);
+			for(Configuration c: manifest.configuration) {
+				if(conf.containsKey(c.name) && conf.get(c.name).equals(c.value)) {
+					conf.remove(c.name);
+				}
+			}
+			if(!conf.isEmpty()) {
+				data.put("configuration", conf);
+			}
+		}
+
 		for(IPlugIn p: plugins) {
 			Map<String, Object> prop = p.getChangedProperties();
 			if(!prop.isEmpty()) {
@@ -439,6 +465,14 @@ public class PlugInPackage
 			setEnabled((boolean)data.get("enabled"));
 			data.remove("enabled");
 		}
+
+		if(data.containsKey("configuration")) {
+			@SuppressWarnings("unchecked")
+			Map<String, String> map = (Map<String, String>) data.get("configuration");
+			configurations.putAll(map);
+			data.remove("configuration");
+		}
+
 		for(Entry<?, ?> entry: data.entrySet()) {
 			IPlugIn plugin = getPlugInByActionCommand((String) entry.getKey());
 			if(plugin != null) {

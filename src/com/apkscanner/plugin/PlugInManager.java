@@ -1,6 +1,9 @@
 package com.apkscanner.plugin;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,7 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.json.simple.parser.JSONParser;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.plugin.manifest.InvalidManifestException;
@@ -18,7 +23,9 @@ import com.apkscanner.util.Log;
 public final class PlugInManager
 {
 	private static ArrayList<PlugInPackage> pluginPackages = new ArrayList<>();
+	private static HashMap<String, String> configurations = new HashMap<>();
 	private static ApkInfo apkinfo = null;
+	private static String lang = "";
 
 	private PlugInManager() { }
 
@@ -135,6 +142,24 @@ public final class PlugInManager
 		return apkinfo;
 	}
 
+	public static void setLang(String newLang) {
+		lang = newLang != null ? newLang.trim() : "";
+	}
+
+	public static String getLang() {
+		return lang != null ? lang : "";
+	}
+
+	public static String getGlobalConfiguration(String key) {
+		return configurations.containsKey(key) ? configurations.get(key) : null;
+	}
+
+	public static void setGlobalConfiguration(String key, String value) {
+		if(key == null) return;
+		if(value == null) value = "";
+		configurations.put(key, value);
+	}
+
 	public static void loadPlugIn() {
 		pluginPackages.clear();
 
@@ -175,6 +200,8 @@ public final class PlugInManager
 				}
 			}
 		}
+
+		loadProperty();
 	}
 
 	public static Map<String, Object> getChangedProperties() {
@@ -185,18 +212,56 @@ public final class PlugInManager
 				data.put(pack.getPackageName(), prop);
 			}
 		}
+		if(!configurations.isEmpty()) {
+			data.put("globalConfiguration", configurations);
+		}
 		return data;
 	}
 
-	public static void restoreProperties(Map<String, Object> data) {
+	public static void restoreProperties(Map<?, ?> data) {
 		if(data == null) return;
-		for(Entry<String, Object> entry: data.entrySet()) {
-			PlugInPackage pack = getPlugInPackage(entry.getKey());
+
+		if(data.containsKey("globalConfiguration")) {
+			@SuppressWarnings("unchecked")
+			Map<String, String> map = (Map<String, String>) data.get("globalConfiguration");
+			configurations.putAll(map);
+			data.remove("globalConfiguration");
+		}
+
+		for(Entry<?, ?> entry: data.entrySet()) {
+			PlugInPackage pack = getPlugInPackage((String) entry.getKey());
 			if(pack != null) {
 				pack.restoreProperties((Map<?, ?>) entry.getValue());
 			} else {
 				Log.w("unknown package : " + entry.getKey());
 			}
+		}
+	}
+
+	public static void loadProperty()
+	{
+		File file = new File(Resource.PLUGIN_CONF_PATH.getPath());
+		if(!file.exists() || file.length() == 0) return;
+		try(FileReader fileReader = new FileReader(file)) {
+			JSONParser parser = new JSONParser();
+			restoreProperties((JSONObject)parser.parse(fileReader));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void saveProperty()
+	{
+		String transMultiLine = JSONValue.toJSONString(getChangedProperties())
+				.replaceAll("^\\{(.*)\\}$", "{\n$1\n}")
+				.replaceAll("(\"[^\"]*\":(\"[^\"]*\")?([^\",]*)?,)", "$1\n");
+		//.replaceAll("(\"[^\"]*\":(\"[^\"]*\")?([^\",\\[]*(\\[[^\\]]\\])?)?,)", "$1\n");
+
+		try( FileWriter fw = new FileWriter(Resource.PLUGIN_CONF_PATH.getPath());
+			 BufferedWriter writer = new BufferedWriter(fw) ) {
+			writer.write(transMultiLine);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -215,7 +280,6 @@ public final class PlugInManager
     		//((IUpdateChecker)updator[0]).launch();	
     	}
 
-    	Log.e(JSONValue.toJSONString(getChangedProperties()));
-    	restoreProperties(getChangedProperties());
+    	saveProperty();
     }
 }
