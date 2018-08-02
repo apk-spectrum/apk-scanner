@@ -3,6 +3,8 @@ package com.apkscanner.plugin;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.apkscanner.plugin.manifest.Component;
 
@@ -10,12 +12,12 @@ public abstract class AbstractPlugIn implements IPlugIn
 {
 	protected PlugInPackage pluginPackage;
 	protected Component component;
-	protected boolean enable;
+	protected boolean enabled;
 
 	public AbstractPlugIn(PlugInPackage pluginPackage, Component component) {
 		this.pluginPackage = pluginPackage;
 		this.component = component;
-		this.enable = component != null ? component.enable : false;
+		this.enabled = component != null ? component.enabled : false;
 	}
 
 	@Override
@@ -65,13 +67,26 @@ public abstract class AbstractPlugIn implements IPlugIn
 	}
 
 	@Override
-	public void setEnable(boolean enable) {
-		this.enable = enable;
+	public void setEnabled(boolean enable) {
+		this.enabled = enable;
 	}
 
 	@Override
 	public boolean isEnabled() {
-		return enable;
+		return isEnabled(true);
+	}
+
+	@Override
+	public boolean isEnabled(boolean inheritance) {
+		boolean enabled = this.enabled;
+		if(enabled && inheritance) {
+			enabled = pluginPackage.isEnabled();
+			if(enabled) {
+				PlugInGroup parent = getParantGroup();
+				enabled = (parent == null) || parent.isEnabled();
+			}
+		}
+		return enabled;
 	}
 
 	@Override
@@ -119,4 +134,28 @@ public abstract class AbstractPlugIn implements IPlugIn
 
 	@Override
 	public void launch() { }
+
+	@Override
+	public Map<String, Object> getChangedProperties() {
+		HashMap<String, Object> data = new HashMap<>();
+		if(component.enabled != isEnabled(false)) {
+			if(!(this instanceof IExternalTool) || ((IExternalTool)this).isSupoortedOS()) {
+				data.put("enabled", isEnabled(false));
+			}
+		}
+		return data;
+	}
+
+	@Override
+	public void restoreProperties(Map<?, ?> data) {
+		if(data == null) return;
+		if(data.containsKey("enabled")) {
+			setEnabled((boolean)data.get("enabled"));
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		return component.hashCode();
+	}
 }

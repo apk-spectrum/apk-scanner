@@ -14,7 +14,7 @@ public class Component
 
 	public final int type;
 	public final String description;
-	public final boolean enable;
+	public final boolean enabled;
 	public final String icon;
 	public final String label;
 	public final String name;
@@ -29,11 +29,13 @@ public class Component
 	public final String pluginGroup;
 	public final String like;
 	public final String supportedOS;
+	public final Boolean visibleToBasic;
 
 	Component(int type, boolean enable, String label, String icon, String description, String name, String url, /* Linker[] linkers */
-			String target, String preferLang, String path, String param, String updateUrl, String pluginGroup, String like, String supportedOS) {
+			String target, String preferLang, String path, String param, String updateUrl, String pluginGroup, String like, String supportedOS,
+			Boolean visibleToBasic) {
 		this.type = type;
-		this.enable = enable;
+		this.enabled = enable;
 		this.label = label;
 		this.icon = icon;
 		this.description = description;
@@ -50,6 +52,7 @@ public class Component
 
 		this.like = like;
 		this.supportedOS = supportedOS;
+		this.visibleToBasic = visibleToBasic;
 	}
 
 	@Override
@@ -57,7 +60,7 @@ public class Component
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
-		result = prime * result + (enable ? 1231 : 1237);
+		result = prime * result + (enabled ? 1231 : 1237);
 		result = prime * result + ((icon == null) ? 0 : icon.hashCode());
 		result = prime * result + ((label == null) ? 0 : label.hashCode());
 		result = prime * result + ((like == null) ? 0 : like.hashCode());
@@ -71,6 +74,7 @@ public class Component
 		result = prime * result + type;
 		result = prime * result + ((updateUrl == null) ? 0 : updateUrl.hashCode());
 		result = prime * result + ((url == null) ? 0 : url.hashCode());
+		result = prime * result + ((visibleToBasic == null) ? 0 : (visibleToBasic ? 1231 : 1237));
 		return result;
 	}
 
@@ -88,7 +92,7 @@ public class Component
 				return false;
 		} else if (!description.equals(other.description))
 			return false;
-		if (enable != other.enable)
+		if (enabled != other.enabled)
 			return false;
 		if (icon == null) {
 			if (other.icon != null)
@@ -151,6 +155,11 @@ public class Component
 			if (other.url != null)
 				return false;
 		} else if (!url.equals(other.url))
+			return false;
+		if (visibleToBasic == null) {
+			if (other.visibleToBasic != null)
+				return false;
+		} else if (!visibleToBasic.equals(other.visibleToBasic))
 			return false;
 		return true;
 	}

@@ -12,6 +12,8 @@ import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.w3c.dom.NodeList;
 
@@ -25,6 +27,7 @@ import com.apkscanner.plugin.manifest.StringData;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.XmlPath;
+import com.google.common.collect.ObjectArrays;
 
 public class PlugInPackage
 {
@@ -34,6 +37,8 @@ public class PlugInPackage
 	private IPlugIn[] plugins;
 	private PlugInGroup[] pluginGroups;
 	private HashMap<String, HashMap<String,String>> resources;
+	private HashMap<String, String> configurations;
+	private boolean enabled;
 
 	public PlugInPackage(File pluginFile) throws InvalidManifestException {
 		if(pluginFile == null) {
@@ -45,10 +50,20 @@ public class PlugInPackage
 		}
 		fingerprint = FileUtil.getMessageDigest(pluginFile, "SHA-1");
 		manifest = readManifest(pluginUri);
+		enabled = manifest.plugin.enabled;
 		pluginGroups = readPlugInGroup(pluginFile, manifest);
 		plugins = createPlugInInstance(pluginFile, manifest);
 		resources = loadResource(pluginFile, manifest);
+		configurations = loadConfiguration(manifest);
 		readSettings();
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+	
+	public boolean isEnabled() {
+		return enabled;
 	}
 
 	public URI getPlugInUri() {
@@ -98,7 +113,7 @@ public class PlugInPackage
 
 	public IPlugIn getPlugInByActionCommand(String actionCommand) {
 		if(actionCommand == null || plugins == null) return null;
-		for(IPlugIn p: plugins) {
+		for(IPlugIn p: ObjectArrays.concat(plugins, pluginGroups, IPlugIn.class)) {
 			if(actionCommand.equals(p.getActionCommand())) return p;
 		}
 		return null;
@@ -106,6 +121,7 @@ public class PlugInPackage
 
 	public PlugInGroup getPlugInGroup(String name) {
 		if(pluginGroups == null || name == null || name.trim().isEmpty()) return null;
+		if(name.startsWith(".")) name = manifest.packageName + name;
 		for(PlugInGroup g: pluginGroups) {
 			if(name.equals(g.getName())) return g;
 		}
@@ -284,6 +300,16 @@ public class PlugInPackage
 		return plugins.toArray(new IPlugIn[plugins.size()]);
 	}
 
+	private HashMap<String, String> loadConfiguration(Manifest manifest) {
+		HashMap<String, String> configurations = new HashMap<>();
+		if(manifest.configuration != null) {
+			for(Configuration c: manifest.configuration) {
+				configurations.put(c.name, c.value);
+			}
+		}
+		return configurations;
+	}
+
 	private HashMap<String, HashMap<String,String>> loadResource(File pluginFile, Manifest manifest) {
 		if(manifest == null || manifest.resources == null) return null;
 		HashMap<String, HashMap<String,String>> resources = new HashMap<>();
@@ -335,7 +361,7 @@ public class PlugInPackage
 
 	public String getResourceString(String name) {
 		if(resources == null || name == null || !name.startsWith("@")) return name;
-		String lang = PluginConfiguration.getLang();
+		String lang = PlugInManager.getLang();
 		String id = name.substring(1);
 		String value = null;
 		if(resources.containsKey(lang) && resources.get(lang).containsKey(id)) {
@@ -390,14 +416,9 @@ public class PlugInPackage
 	
 	public String getConfiguration(String key) {
 		if(key == null) return null;
-		String value = null;
-		for(Configuration c: manifest.configuration) {
-			if(key.equals(c.name)) {
-				value = c.value;				
-			}
-		}
+		String value = configurations.get(key);
 		if(value == null) {
-			value = PluginConfiguration.getConfiguration(key);
+			value = PlugInManager.getGlobalConfiguration(key);
 		}
 		return value;
 	}
@@ -405,5 +426,62 @@ public class PlugInPackage
 	public String getConfiguration(String key, String defaultValue) {
 		String value = getConfiguration(key);
 		return value != null ? value : defaultValue;
+	}
+
+	public void setConfiguration(String key, String value) {
+		if(key == null) return;
+		if(value == null) value = "";
+		configurations.put(key, value);
+	}
+
+	public Map<String, Object> getChangedProperties() {
+		HashMap<String, Object> data = new HashMap<>();
+		if(manifest.plugin.enabled != isEnabled()) {
+			data.put("enabled", isEnabled());
+		}
+
+		HashMap<String, String> conf = new HashMap<>(configurations);
+		if(manifest.configuration != null) {
+			for(Configuration c: manifest.configuration) {
+				if(conf.containsKey(c.name) && conf.get(c.name).equals(c.value)) {
+					conf.remove(c.name);
+				}
+			}
+		}
+		if(!conf.isEmpty()) {
+			data.put("configuration", conf);
+		}
+
+		for(IPlugIn p: ObjectArrays.concat(plugins, pluginGroups, IPlugIn.class)) {
+			Map<String, Object> prop = p.getChangedProperties();
+			if(!prop.isEmpty()) {
+				data.put(p.getActionCommand(), prop);
+			}
+		}
+		return data;
+	}
+
+	public void restoreProperties(Map<?, ?> data) {
+		if(data == null) return;
+		if(data.containsKey("enabled")) {
+			setEnabled((boolean)data.get("enabled"));
+			data.remove("enabled");
+		}
+
+		if(data.containsKey("configuration")) {
+			@SuppressWarnings("unchecked")
+			Map<String, String> map = (Map<String, String>) data.get("configuration");
+			configurations.putAll(map);
+			data.remove("configuration");
+		}
+
+		for(Entry<?, ?> entry: data.entrySet()) {
+			IPlugIn plugin = getPlugInByActionCommand((String) entry.getKey());
+			if(plugin != null) {
+				plugin.restoreProperties((Map<?, ?>) entry.getValue());
+			} else {
+				Log.w("unknown plugin : " + entry.getKey());
+			}
+		}
 	}
 }

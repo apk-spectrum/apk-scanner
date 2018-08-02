@@ -1,6 +1,7 @@
 package com.apkscanner.plugin;
 
 import java.net.URL;
+import java.util.Map;
 
 public interface IPlugIn {
 	/**
@@ -55,12 +56,14 @@ public interface IPlugIn {
 	public int getType();
 
 	public String getLabel();
-	
+
 	public String getDescription();
-	
+
 	public boolean isEnabled();
 
-	public void setEnable(boolean enable);
+	public boolean isEnabled(boolean inheritance);
+
+	public void setEnabled(boolean enable);
 
 	public String getPackageName();
 
@@ -71,4 +74,8 @@ public interface IPlugIn {
 	public String getActionCommand();
 	
 	public void launch();
+	
+	public Map<String, Object> getChangedProperties();
+
+	public void restoreProperties(Map<?, ?> tmp);
 }

@@ -470,7 +470,8 @@ public enum Resource
 
 	BIN_SIGNAPK					(Type.BIN, "signapk.jar"),
 	
-	PLUGIN_PATH					(Type.PLUGIN, ""),	
+	PLUGIN_PATH					(Type.PLUGIN, ""),
+	PLUGIN_CONF_PATH			(Type.PLUGIN, "plugins.conf"),
 
 	PROP_LANGUAGE				(Type.PROP, "language", SystemUtil.getUserLanguage()),
 	PROP_EDITOR					(Type.PROP, "editor", null /* see getDefValue() */),
@@ -767,11 +768,9 @@ public enum Resource
 				.replaceAll("(\"[^\"]*\":(\"[^\"]*\")?([^\",]*)?,)", "$1\n");
 		//.replaceAll("(\"[^\"]*\":(\"[^\"]*\")?([^\",\\[]*(\\[[^\\]]\\])?)?,)", "$1\n");
 
-		BufferedWriter writer;
-		try {
-			writer = new BufferedWriter(new FileWriter(ETC_SETTINGS_FILE.getPath()));
+		try( FileWriter fw = new FileWriter(Resource.ETC_SETTINGS_FILE.getPath());
+			 BufferedWriter writer = new BufferedWriter(fw) ) {
 			writer.write(transMultiLine);
-			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
