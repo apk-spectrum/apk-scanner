@@ -42,7 +42,7 @@ public final class PlugInManager
 		for(PlugInPackage pack: pluginPackages) {
 			IPlugIn[] plugins = pack.getPlugIn(IPlugIn.PLUGIN_TPYE_UPDATE_CHECKER);
 			for(IPlugIn p: plugins) {
-				if(p instanceof IUpdateChecker) {
+				if(p instanceof IUpdateChecker && p.isEnabled()) {
 					list.add((IUpdateChecker)p);
 				}
 			}
@@ -56,6 +56,7 @@ public final class PlugInManager
 			IPlugIn[] plugins = pack.getPlugIn(IPlugIn.PLUGIN_TPYE_EXTERNAL_TOOL);
 			for(IPlugIn p: plugins) {
 				if( p instanceof IExternalTool
+						&& p.isEnabled()
 						&& ((IExternalTool) p).isSupoortedOS()
 						&& !((IExternalTool) p).isDecorderTool()) {
 					list.add((IExternalTool)p);
@@ -71,6 +72,7 @@ public final class PlugInManager
 			IPlugIn[] plugins = pack.getPlugIn(IPlugIn.PLUGIN_TPYE_EXTERNAL_TOOL);
 			for(IPlugIn p: plugins) {
 				if( p instanceof IExternalTool
+						&& p.isEnabled()
 						&& ((IExternalTool) p).isSupoortedOS()
 						&& ((IExternalTool) p).isDecorderTool() ) {
 					list.add((IExternalTool)p);
@@ -85,7 +87,7 @@ public final class PlugInManager
 		for(PlugInPackage pack: pluginPackages) {
 			IPlugIn[] plugins = pack.getPlugIn(IPlugIn.PLUGIN_TPYE_PACKAGE_SEARCHER);
 			for(IPlugIn p: plugins) {
-				if(p instanceof IPackageSearcher) {
+				if(p instanceof IPackageSearcher && p.isEnabled()) {
 					list.add((IPackageSearcher)p);
 				}
 			}
@@ -108,7 +110,7 @@ public final class PlugInManager
 		for(PlugInPackage pack: pluginPackages) {
 			IPlugIn[] plugins = pack.getPlugIn(IPlugIn.PLUGIN_TPYE_EXTRA_COMPONENT);
 			for(IPlugIn p: plugins) {
-				if(p instanceof IExtraComponent) {
+				if(p instanceof IExtraComponent && p.isEnabled()) {
 					list.add((IExtraComponent)p);
 				}
 			}
