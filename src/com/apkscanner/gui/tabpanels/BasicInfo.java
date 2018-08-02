@@ -440,6 +440,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		if(searchers.length > 0) {
 			String defaultSearchIcon = Resource.IMG_TOOLBAR_SEARCH.getPath();
 			for(IPackageSearcher searcher: searchers) {
+				if(!searcher.isVisibleToBasic()) continue;
 				URL icon = searcher.getIconURL();
 				String iconPath = icon != null ? icon.toString() : defaultSearchIcon;
 				String tag = makeHyperLink("@event", " <image src=\"" + iconPath + "\" width=16 height=16 /> ", null, "PLUGIN:"+searcher.getActionCommand(), "color:white;");
