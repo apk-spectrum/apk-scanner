@@ -73,6 +73,19 @@ public abstract class AbstractPlugIn implements IPlugIn
 
 	@Override
 	public boolean isEnabled() {
+		return isEnabled(true);
+	}
+
+	@Override
+	public boolean isEnabled(boolean inheritance) {
+		boolean enabled = this.enabled;
+		if(enabled && inheritance) {
+			enabled = pluginPackage.isEnabled();
+			if(enabled) {
+				PlugInGroup parent = getParantGroup();
+				enabled = (parent == null) || parent.isEnabled();
+			}
+		}
 		return enabled;
 	}
 
@@ -125,9 +138,9 @@ public abstract class AbstractPlugIn implements IPlugIn
 	@Override
 	public Map<String, Object> getChangedProperties() {
 		HashMap<String, Object> data = new HashMap<>();
-		if(component.enabled != isEnabled()) {
+		if(component.enabled != isEnabled(false)) {
 			if(!(this instanceof IExternalTool) || ((IExternalTool)this).isSupoortedOS()) {
-				data.put("enabled", isEnabled());
+				data.put("enabled", isEnabled(false));
 			}
 		}
 		return data;

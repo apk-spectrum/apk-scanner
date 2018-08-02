@@ -56,10 +56,12 @@ public interface IPlugIn {
 	public int getType();
 
 	public String getLabel();
-	
+
 	public String getDescription();
-	
+
 	public boolean isEnabled();
+
+	public boolean isEnabled(boolean inheritance);
 
 	public void setEnabled(boolean enable);
 

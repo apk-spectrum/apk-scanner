@@ -27,6 +27,7 @@ import com.apkscanner.plugin.manifest.StringData;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.XmlPath;
+import com.google.common.collect.ObjectArrays;
 
 public class PlugInPackage
 {
@@ -112,7 +113,7 @@ public class PlugInPackage
 
 	public IPlugIn getPlugInByActionCommand(String actionCommand) {
 		if(actionCommand == null || plugins == null) return null;
-		for(IPlugIn p: plugins) {
+		for(IPlugIn p: ObjectArrays.concat(plugins, pluginGroups, IPlugIn.class)) {
 			if(actionCommand.equals(p.getActionCommand())) return p;
 		}
 		return null;
@@ -120,6 +121,7 @@ public class PlugInPackage
 
 	public PlugInGroup getPlugInGroup(String name) {
 		if(pluginGroups == null || name == null || name.trim().isEmpty()) return null;
+		if(name.startsWith(".")) name = manifest.packageName + name;
 		for(PlugInGroup g: pluginGroups) {
 			if(name.equals(g.getName())) return g;
 		}
@@ -438,19 +440,19 @@ public class PlugInPackage
 			data.put("enabled", isEnabled());
 		}
 
+		HashMap<String, String> conf = new HashMap<>(configurations);
 		if(manifest.configuration != null) {
-			HashMap<String, String> conf = new HashMap<>(configurations);
 			for(Configuration c: manifest.configuration) {
 				if(conf.containsKey(c.name) && conf.get(c.name).equals(c.value)) {
 					conf.remove(c.name);
 				}
 			}
-			if(!conf.isEmpty()) {
-				data.put("configuration", conf);
-			}
+		}
+		if(!conf.isEmpty()) {
+			data.put("configuration", conf);
 		}
 
-		for(IPlugIn p: plugins) {
+		for(IPlugIn p: ObjectArrays.concat(plugins, pluginGroups, IPlugIn.class)) {
 			Map<String, Object> prop = p.getChangedProperties();
 			if(!prop.isEmpty()) {
 				data.put(p.getActionCommand(), prop);
