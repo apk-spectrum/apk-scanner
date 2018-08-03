@@ -16,6 +16,7 @@
 	<string name="btn_install_downgrad">다운그레이드</string>
 	<string name="btn_install_update">업데이트</string>
 	<string name="btn_launch">실행</string>
+	<string name="btn_launch_select_launcher">선택실행</string>
 	<string name="btn_sign">서명</string>
 	<string name="btn_push">교체</string>
 	<string name="btn_setting">설정</string>

@@ -53,6 +53,7 @@ public enum Resource
 	STR_BTN_INSTALL_DOWNGRAD	(Type.TEXT, "@btn_install_downgrad"),
 	STR_BTN_INSTALL_UPDATE		(Type.TEXT, "@btn_install_update"),
 	STR_BTN_LAUNCH				(Type.TEXT, "@btn_launch"),
+	STR_BTN_LAUNCH_SELECT		(Type.TEXT, "@btn_launch_select_launcher"),
 	STR_BTN_SIGN				(Type.TEXT, "@btn_sign"),
 	STR_BTN_PUSH				(Type.TEXT, "@btn_push"),
 	STR_BTN_SETTING				(Type.TEXT, "@btn_setting"),

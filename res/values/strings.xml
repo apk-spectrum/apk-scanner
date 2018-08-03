@@ -16,6 +16,7 @@
 	<string name="btn_install_downgrad">Downgrade</string>
 	<string name="btn_install_update">Update</string>
 	<string name="btn_launch">Launch</string>
+	<string name="btn_launch_select_launcher">Select Launcher</string>
 	<string name="btn_sign">Sign</string>
 	<string name="btn_push">Push</string>
 	<string name="btn_setting">Setting</string>

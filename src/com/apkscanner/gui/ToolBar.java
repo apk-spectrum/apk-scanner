@@ -491,6 +491,7 @@ public class ToolBar extends JToolBar
 						setButtonText(ButtonSet.OPEN, Resource.STR_MENU_NEW.getString(), Resource.STR_BTN_OPEN_LAB.getString());
 						setButtonText(ButtonSet.OPEN_PACKAGE, Resource.STR_MENU_NEW.getString(), Resource.STR_BTN_OPEN_PACKAGE_LAB.getString());
 						setButtonText(ButtonSet.MANIFEST, Resource.STR_BTN_MANIFEST_SAVE_AS.getString(), Resource.STR_BTN_MANIFEST_LAB.getString());
+						setButtonText(ButtonSet.LAUNCH, Resource.STR_BTN_LAUNCH_SELECT.getString(), Resource.STR_BTN_LAUNCH_LAB.getString());
 
 						invokeMouseEvent(e, MouseEvent.MOUSE_ENTERED);
 					}
@@ -500,6 +501,7 @@ public class ToolBar extends JToolBar
 						setButtonText(ButtonSet.OPEN, Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OPEN_LAB.getString());
 						setButtonText(ButtonSet.OPEN_PACKAGE, Resource.STR_BTN_OPEN_PACKAGE.getString(), Resource.STR_BTN_OPEN_PACKAGE_LAB.getString());
 						setButtonText(ButtonSet.MANIFEST, Resource.STR_BTN_MANIFEST.getString(), Resource.STR_BTN_MANIFEST_LAB.getString());
+						setButtonText(ButtonSet.LAUNCH, Resource.STR_BTN_LAUNCH.getString(), Resource.STR_BTN_LAUNCH_LAB.getString());
 
 						invokeMouseEvent(e, MouseEvent.MOUSE_EXITED);
 					}
