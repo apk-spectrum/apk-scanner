@@ -140,6 +140,8 @@ public enum Resource
 	STR_MENU_LAUNCH_LAUNCHER	(Type.TEXT, "@menu_launch_lanucher"),
 	STR_MENU_LAUNCH_SELECT		(Type.TEXT, "@menu_launch_select"),
 	STR_MENU_SELECT_DEFAULT		(Type.TEXT, "@menu_select_default"),
+	STR_MENU_VISIBLE_TO_BASIC	(Type.TEXT, "@menu_visible_to_basic"),
+	STR_MENU_VISIBLE_TO_BASIC_EACH(Type.TEXT, "@menu_visible_to_basic_each"),
 
 	STR_TAB_BASIC_INFO			(Type.TEXT, "@tab_basic_info"),
 	STR_TAB_WIDGETS				(Type.TEXT, "@tab_widgets"),
@@ -502,6 +504,7 @@ public enum Resource
 	PROP_DEFAULT_SEARCHER		(Type.PROP, "default_searcher", Resource.STR_DEFAULT_SEARCHER),
 	PROP_DEFAULT_EXPLORER		(Type.PROP, "default_explorer", Resource.STR_EXPLORER_ARCHIVE),
 	PROP_DEFAULT_LAUNCH_MODE	(Type.PROP, "default_launch_mode", Resource.STR_LAUNCH_LAUNCHER),
+	PROP_VISIBLE_TO_BASIC		(Type.PROP, "visible_to_basic", true),
 
 	LIB_JSON_JAR				(Type.LIB, "json-simple-1.1.1.jar"),
 	LIB_CLI_JAR					(Type.LIB, "commons-cli-1.3.1.jar"),

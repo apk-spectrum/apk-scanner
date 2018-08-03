@@ -103,6 +103,8 @@
 	<string name="menu_launch_lanucher">런처 액티비티 실행</string>
 	<string name="menu_launch_select">액티비티 선택 실행</string>
 	<string name="menu_select_default">기본값으로 설정</string>
+	<string name="menu_visible_to_basic">기본정보 탭에 검색 기능 표시</string>
+	<string name="menu_visible_to_basic_each">개별 검색 기능 표시 선택</string>
 
 	<string name="tab_basic_info">APK 정보</string>
 	<string name="tab_widgets">위젯</string>

@@ -103,6 +103,8 @@
 	<string name="menu_launch_lanucher">Launch to launcher activity</string>
 	<string name="menu_launch_select">Select to main activity</string>
 	<string name="menu_select_default">Select default action</string>
+	<string name="menu_visible_to_basic">Display searchers to Basic info</string>
+	<string name="menu_visible_to_basic_each">Select each searcher</string>
 
 	<string name="tab_basic_info">APK Info</string>
 	<string name="tab_widgets">Widgets</string>

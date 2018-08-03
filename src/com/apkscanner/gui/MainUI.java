@@ -22,6 +22,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.SwingWorker;
@@ -987,6 +988,14 @@ public class MainUI extends JFrame
 				evtSignApkFile();
 			} else if(e.getActionCommand() != null && e.getActionCommand().startsWith("PLUGIN:")) {
 				evtPluginLaunch(e.getActionCommand().replaceAll("PLUGIN:", ""));
+			} else if(ToolBar.CMD_VISIBLE_TO_BASEIC.equals(e.getActionCommand())) {
+				if(e.getSource() instanceof JCheckBoxMenuItem) {
+					JCheckBoxMenuItem ckBox = ((JCheckBoxMenuItem)e.getSource());
+					Resource.PROP_VISIBLE_TO_BASIC.setData(ckBox.isSelected());
+					tabbedPanel.reloadResource();
+				}
+			}  else if(ToolBar.CMD_VISIBLE_TO_BASEIC_CHANGED.equals(e.getActionCommand())) {
+				tabbedPanel.reloadResource();
 			} else {
 				Log.v("Unkown action : " + e);
 			}
