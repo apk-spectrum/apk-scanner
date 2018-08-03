@@ -227,6 +227,7 @@ they're removed before the application is published</string>
 
 	<string name="settings_title">Settings</string>
 	<string name="settings_editor">Editor</string>
+	<string name="settings_toolbar">Toolbar</string>
 	<string name="settings_res">Framework-res</string>
 	<string name="settings_check_installed">Check installed</string>
 	<string name="settings_language">Language</string>
@@ -252,6 +253,8 @@ they're removed before the application is published</string>
 	<string name="settings_launcher_confirm">Always confirm target</string>
 	<string name="settings_try_unlock">Dismiss the keyguard after launch, prompting the user for auth if necessary.</string>
 	<string name="settings_launch_installed">Launch after install completed</string>
+	<string name="settings_ext_toolbar_with_shift">Extend toolbar with shift key</string>
+	<string name="settings_ext_toolbar_without_shift">Always extend a toolbar</string>
 
 	<string name="label_error">Error</string>
 	<string name="label_warning">Warning</string>

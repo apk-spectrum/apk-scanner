@@ -253,6 +253,7 @@ public enum Resource
 
 	STR_SETTINGS_TITLE			(Type.TEXT, "@settings_title"),
 	STR_SETTINGS_EDITOR			(Type.TEXT, "@settings_editor"),
+	STR_SETTINGS_TOOLBAR		(Type.TEXT, "@settings_toolbar"),
 	STR_SETTINGS_RES			(Type.TEXT, "@settings_res"),
 	STR_SETTINGS_CHECK_INSTALLED(Type.TEXT, "@settings_check_installed"),
 	STR_SETTINGS_LANGUAGE		(Type.TEXT, "@settings_language"),
@@ -276,8 +277,10 @@ public enum Resource
 	STR_SETTINGS_LAUNCHER_ONLY	(Type.TEXT, "@settings_launcher_only"),
 	STR_SETTINGS_LAUNCHER_OR_MAIN(Type.TEXT, "@settings_launcher_or_main"),
 	STR_SETTINGS_LAUNCHER_CONFIRM(Type.TEXT, "@settings_launcher_confirm"),
-	STR_SETTINGS_TRY_UNLOCK		(Type.TEXT, "@settings_try_unlock"),
+	STR_SETTINGS_TRY_UNLOCK		 (Type.TEXT, "@settings_try_unlock"),
 	STR_SETTINGS_LAUNCH_INSTALLED(Type.TEXT, "@settings_launch_installed"),
+	STR_SETTINGS_TOOLBAR_WITH_SHIFT		(Type.TEXT, "@settings_ext_toolbar_with_shift"),
+	STR_SETTINGS_TOOLBAR_WITHOUT_SHIFT	(Type.TEXT, "@settings_ext_toolbar_without_shift"),
 
 	STR_LABEL_ERROR				(Type.TEXT, "@label_error"),
 	STR_LABEL_WARNING			(Type.TEXT, "@label_warning"),
@@ -506,6 +509,7 @@ public enum Resource
 	PROP_DEFAULT_EXPLORER		(Type.PROP, "default_explorer", Resource.STR_EXPLORER_ARCHIVE),
 	PROP_DEFAULT_LAUNCH_MODE	(Type.PROP, "default_launch_mode", Resource.STR_LAUNCH_LAUNCHER),
 	PROP_VISIBLE_TO_BASIC		(Type.PROP, "visible_to_basic", true),
+	PROP_ALWAYS_TOOLBAR_EXTENDED(Type.PROP, "always_toolbar_extended", false),
 
 	LIB_JSON_JAR				(Type.LIB, "json-simple-1.1.1.jar"),
 	LIB_CLI_JAR					(Type.LIB, "commons-cli-1.3.1.jar"),

@@ -227,6 +227,7 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 
 	<string name="settings_title">환경설정</string>
 	<string name="settings_editor">편집기</string>
+	<string name="settings_toolbar">도구모음</string>
 	<string name="settings_res">프레임워크 리소스</string>
 	<string name="settings_check_installed">설치시 동일 패키지 팝업 유무</string>
 	<string name="settings_language">언어</string>
@@ -252,6 +253,8 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="settings_launcher_confirm">항상 실행 할 액티비티 확인후 실행</string>
 	<string name="settings_try_unlock">앱 실행 후 락스크린을 해제 합니다. 필요한 경우 사용자에게 인증을 요청합니다.</string>
 	<string name="settings_launch_installed">앱 설치 후 자동 실행</string>
+	<string name="settings_ext_toolbar_with_shift">Shift 키를 눌러 확장된 툴바 기능 사용 </string>
+	<string name="settings_ext_toolbar_without_shift">항상 확장된 툴바 기능 사용</string>
 
 	<string name="label_error">오류</string>
 	<string name="label_warning">경고</string>
