@@ -5,9 +5,11 @@ import java.awt.Component;
 import javax.swing.Icon;
 import javax.swing.JPanel;
 
+import com.apkscanner.plugin.ITabbedComponent;
+import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.util.Log;
 
-public abstract class AbstractTabbedPanel extends JPanel implements ITabObject {
+public abstract class AbstractTabbedPanel extends JPanel implements ITabbedComponent {
 	private static final long serialVersionUID = -5636023017306297012L;
 	
 	public static final int SEND_REQUEST_CURRENT_ENABLED = 100;
@@ -57,16 +59,16 @@ public abstract class AbstractTabbedPanel extends JPanel implements ITabObject {
 
 	protected void sendRequest(ITabbedRequest handler, int request) {
 		switch(request) {
-		case REQUEST_VISIBLE:	setVisible(true); break;
-		case REQUEST_INVISIBLE:	setVisible(false); break;
-		case REQUEST_ENABLED:	setEnabled(true); break;
-		case REQUEST_DISABLED:	setEnabled(false); break;
-		case REQUEST_SELECTED:	break;
+		case ITabbedRequest.REQUEST_VISIBLE:	setVisible(true); break;
+		case ITabbedRequest.REQUEST_INVISIBLE:	setVisible(false); break;
+		case ITabbedRequest.REQUEST_ENABLED:	setEnabled(true); break;
+		case ITabbedRequest.REQUEST_DISABLED:	setEnabled(false); break;
+		case ITabbedRequest.REQUEST_SELECTED:	break;
 		case SEND_REQUEST_CURRENT_ENABLED:
-			request = isEnabled() ? REQUEST_ENABLED : REQUEST_DISABLED;
+			request = isEnabled() ? ITabbedRequest.REQUEST_ENABLED : ITabbedRequest.REQUEST_DISABLED;
 			break;
 		case SEND_REQUEST_CURRENT_VISIBLE:
-			request = isVisible() ? REQUEST_VISIBLE : REQUEST_INVISIBLE;
+			request = isVisible() ? ITabbedRequest.REQUEST_VISIBLE : ITabbedRequest.REQUEST_INVISIBLE;
 			break;
 		default:
 			Log.w("unknown request : " + request);

@@ -47,6 +47,7 @@ import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.plugin.IPackageSearcher;
 import com.apkscanner.plugin.IPlugIn;
+import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.FileUtil;
@@ -544,7 +545,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		if(apkInfo == null) {
 			removeData();
 			showAbout();
-			sendRequest(request, REQUEST_SELECTED);
+			sendRequest(request, ITabbedRequest.REQUEST_SELECTED);
 			return;
 		}
 
@@ -737,7 +738,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 
 		setData();
 
-		sendRequest(request, REQUEST_SELECTED);
+		sendRequest(request, ITabbedRequest.REQUEST_SELECTED);
 	}
 
 	private String covertWebp2Png(final String imagePath, final String tempPath) {

@@ -28,6 +28,7 @@ import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ProviderInfo;
 import com.apkscanner.data.apkinfo.ReceiverInfo;
 import com.apkscanner.data.apkinfo.ServiceInfo;
+import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 

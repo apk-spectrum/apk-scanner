@@ -63,6 +63,7 @@ import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.ResouceContentsPanel;
 import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.plugin.IPlugIn;
+import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
