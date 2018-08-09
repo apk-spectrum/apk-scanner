@@ -1,10 +1,17 @@
 package com.apkscanner.plugin;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
 import java.net.Proxy;
 import java.net.ProxySelector;
+import java.net.SocketException;
 import java.net.URI;
 import java.text.MessageFormat;
+import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 
 import com.apkscanner.util.Log;
@@ -73,5 +80,26 @@ public class NetworkSetting {
     		System.setProperty("https.proxyHost", pluginPackage.getConfiguration("https.proxyHost", ""));
     		System.setProperty("https.proxyPort", pluginPackage.getConfiguration("https.proxyPort", ""));
 		}
+	}
+	
+	public static boolean isEnabledNetworkInterface() {
+		try {
+			// https://stackoverflow.com/questions/1402005/how-to-check-if-internet-connection-is-present-in-java
+			Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+			while (interfaces.hasMoreElements()) {
+			    NetworkInterface interf = interfaces.nextElement();
+			    if (interf.isUp() && !interf.isLoopback()) {
+				    List<InterfaceAddress> adrs = interf.getInterfaceAddresses();
+				    for (Iterator<InterfaceAddress> iter = adrs.iterator(); iter.hasNext();) {
+				        InterfaceAddress adr = iter.next();
+				        InetAddress inadr = adr.getAddress();
+				        if (inadr instanceof Inet4Address) return true;
+				    }
+			    }
+			}
+		} catch (SocketException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

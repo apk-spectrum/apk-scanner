@@ -31,6 +31,11 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 	public String getNewVersion() throws NetworkException {
 		if(version != null || component.url == null) return version;
 
+		if(!NetworkSetting.isEnabledNetworkInterface()) {
+			Log.w("No such network interface");
+			throw new NetworkException(new NetworkNotFoundException("No such network interface"));
+		}
+		
 		HttpURLConnection request = null;
 		try {
 			URL targetURL = new URL(component.url);

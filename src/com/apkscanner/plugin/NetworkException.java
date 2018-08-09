@@ -17,6 +17,11 @@ public class NetworkException extends IOException {
 		super(e);
 	}
 
+	public boolean isNetworkNotFoundException() { // No such network interface
+		Throwable t = this.getCause();
+		return (t instanceof NetworkNotFoundException);
+	}
+
 	public boolean isProxyException() { // maybe proxy issue
 		Throwable t = this.getCause();
 		return (t instanceof SocketTimeoutException || t instanceof ConnectException);
