@@ -31,17 +31,10 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 	public String getNewVersion() throws NetworkException {
 		if(version != null || component.url == null) return version;
 
-		System.setProperty("proxySet","true");
-		System.setProperty("http.proxyHost", pluginPackage.getConfiguration("http.proxyHost", ""));
-		System.setProperty("http.proxyPort", pluginPackage.getConfiguration("http.proxyPort", ""));
-		System.setProperty("https.proxyHost", pluginPackage.getConfiguration("https.proxyHost", ""));
-		System.setProperty("https.proxyPort", pluginPackage.getConfiguration("https.proxyPort", ""));
-		System.setProperty("http.protocols", "TLSv1,TLSv1.1,TLSv1.2");
-
-		String url = component.url;
 		HttpURLConnection request = null;
 		try {
-			URL targetURL = new URL(url);
+			URL targetURL = new URL(component.url);
+			NetworkSetting.setProxyServer(pluginPackage, targetURL.toURI());
 			request = (HttpURLConnection) targetURL.openConnection();
 			request.setRequestMethod("GET");
 		} catch (Exception e) {
