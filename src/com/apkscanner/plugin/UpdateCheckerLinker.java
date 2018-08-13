@@ -35,7 +35,9 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 			Log.w("No such network interface");
 			throw new NetworkException(new NetworkNotFoundException("No such network interface"));
 		}
-		
+
+		System.setProperty("http.protocols", "TLSv1,TLSv1.1,TLSv1.2");
+
 		HttpURLConnection request = null;
 		try {
 			URL targetURL = new URL(component.url);

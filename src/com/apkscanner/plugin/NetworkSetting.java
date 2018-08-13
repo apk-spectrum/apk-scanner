@@ -41,12 +41,16 @@ public class NetworkSetting {
 	}
 
 	public static void setProxyServer(PlugInPackage pluginPackage, URI uri) {
-		System.setProperty("java.net.useSystemProxies","true");
-		System.setProperty("proxySet","true");
-		System.setProperty("http.protocols", "TLSv1,TLSv1.1,TLSv1.2");
+		boolean useGlobalConfig = "true".equals(pluginPackage.getConfiguration(PlugInConfig.CONFIG_USE_GLOBAL_PROXIES, "true"));
+		if(useGlobalConfig) pluginPackage = null; 
+
+		boolean useSystemProxy = "true".equals(PlugInConfig.getConfiguration(pluginPackage,
+												PlugInConfig.CONFIG_USE_SYSTEM_PROXIES,
+												useGlobalConfig ? "true" : "false"));
 
 		boolean isSetSystemProxy = false;
-		if(SystemUtil.checkJvmVersion("1.8")) {
+		if(useSystemProxy && SystemUtil.checkJvmVersion("1.8")) {
+			System.setProperty("java.net.useSystemProxies", "true");
             // Use proxy vole to find the default proxy
             ProxySearch proxySearch = ProxySearch.getDefaultProxySearch();
             proxySearch.setPacCacheSettings(20, 1000*60*10, CacheScope.CACHE_SCOPE_URL);
@@ -71,17 +75,22 @@ public class NetworkSetting {
                 }
             }
 		} else {
-			Log.w("Not supported that get system proxy setting on JVM 1.7");
+			if(useSystemProxy) Log.w("Can't supported that get system proxy setting under on JVM 1.7 or earlier");
 		}
 
 		if(!isSetSystemProxy) {
-    		System.setProperty("http.proxyHost", pluginPackage.getConfiguration("http.proxyHost", ""));
-    		System.setProperty("http.proxyPort", pluginPackage.getConfiguration("http.proxyPort", ""));
-    		System.setProperty("https.proxyHost", pluginPackage.getConfiguration("https.proxyHost", ""));
-    		System.setProperty("https.proxyPort", pluginPackage.getConfiguration("https.proxyPort", ""));
+			boolean noProxy = "true".equals(PlugInConfig.getConfiguration(pluginPackage, PlugInConfig.CONFIG_NO_PROXIES, "false"));
+			if(!noProxy) {
+	    		System.setProperty("http.proxyHost", PlugInConfig.getConfiguration(pluginPackage, PlugInConfig.CONFIG_HTTP_PROXY_HOST, ""));
+	    		System.setProperty("http.proxyPort", PlugInConfig.getConfiguration(pluginPackage, PlugInConfig.CONFIG_HTTP_PROXY_PORT, ""));
+	    		System.setProperty("https.proxyHost", PlugInConfig.getConfiguration(pluginPackage, PlugInConfig.CONFIG_HTTPS_PROXY_HOST, ""));
+	    		System.setProperty("https.proxyPort", PlugInConfig.getConfiguration(pluginPackage, PlugInConfig.CONFIG_HTTPS_PROXY_PORT, ""));
+			} else {
+            	Log.v("No Proxy");
+			}
 		}
 	}
-	
+
 	public static boolean isEnabledNetworkInterface() {
 		try {
 			// https://stackoverflow.com/questions/1402005/how-to-check-if-internet-connection-is-present-in-java

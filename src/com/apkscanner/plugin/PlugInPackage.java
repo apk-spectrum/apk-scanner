@@ -31,13 +31,6 @@ import com.google.common.collect.ObjectArrays;
 
 public class PlugInPackage
 {
-	public static final String CONFIG_USE_GLOBAL_PROXIES = "com.apkscanner.plugin.useGlobalProxies";
-	public static final String CONFIG_USE_SYSTEM_PROXIES = "java.net.useSystemProxies";
-	public static final String CONFIG_HTTP_PROXY_HOST = "http.proxyHost";
-	public static final String CONFIG_HTTP_PROXY_PORT = "http.proxyPort";
-	public static final String CONFIG_HTTPS_PROXY_HOST = "https.proxyHost";
-	public static final String CONFIG_HTTPS_PROXY_PORT = "https.proxyPort";
-	
 	private Manifest manifest;
 	private URI pluginUri;
 	private String fingerprint;
@@ -422,20 +415,20 @@ public class PlugInPackage
 	}
 
 	public String getConfiguration(String key) {
-		return getConfiguration(key, true);
+		return getConfiguration(key, false);
 	}
 
 	public String getConfiguration(String key, boolean allowGlobalConfig) {
 		if(key == null) return null;
 		String value = configurations.get(key);
 		if(value == null && allowGlobalConfig) {
-			value = PlugInManager.getGlobalConfiguration(key);
+			value = PlugInConfig.getGlobalConfiguration(key);
 		}
 		return value;
 	}
 
 	public String getConfiguration(String key, String defaultValue) {
-		return getConfiguration(key, defaultValue, true);
+		return getConfiguration(key, defaultValue, false);
 	}
 
 	public String getConfiguration(String key, String defaultValue, boolean allowGlobalConfig) {
