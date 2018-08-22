@@ -38,10 +38,13 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 
 		System.setProperty("http.protocols", "TLSv1,TLSv1.1,TLSv1.2");
 
+		NetworkSetting networkSetting = new NetworkSetting(pluginPackage);
+		networkSetting.setSSLTrustStore();
+
 		HttpURLConnection request = null;
 		try {
 			URL targetURL = new URL(component.url);
-			NetworkSetting.setProxyServer(pluginPackage, targetURL.toURI());
+			networkSetting.setProxyServer(targetURL.toURI());
 			request = (HttpURLConnection) targetURL.openConnection();
 			request.setRequestMethod("GET");
 		} catch (Exception e) {
@@ -86,6 +89,8 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 		} finally {
 			request.disconnect();
 		}
+
+		networkSetting.restoreSSLTrustStore();
 
 		JSONParser parser = new JSONParser();
 		try {

@@ -473,6 +473,8 @@ public enum Resource
 	PLUGIN_PATH					(Type.PLUGIN, ""),
 	PLUGIN_CONF_PATH			(Type.PLUGIN, "plugins.conf"),
 
+	SSL_TRUSTSTORE_PATH			(Type.SECURITY, "trustStore.jks"),
+
 	PROP_LANGUAGE				(Type.PROP, "language", SystemUtil.getUserLanguage()),
 	PROP_EDITOR					(Type.PROP, "editor", null /* see getDefValue() */),
 	PROP_RECENT_EDITOR			(Type.PROP, "recent_editor", ""),
@@ -532,6 +534,7 @@ public enum Resource
 		BIN,
 		LIB,
 		PLUGIN,
+		SECURITY,
 		PROP,
 		ETC
 	}
@@ -689,6 +692,9 @@ public enum Resource
 			break;
 		case PLUGIN:
 			subPath = File.separator + "plugin";
+			break;
+		case SECURITY:
+			subPath = File.separator + "security";
 			break;
 		case ETC:
 			subPath = "";

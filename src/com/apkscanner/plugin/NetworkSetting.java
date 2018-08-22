@@ -1,5 +1,6 @@
 package com.apkscanner.plugin;
 
+import java.io.File;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -14,6 +15,13 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 import com.github.markusbernhardt.proxy.ProxySearch;
@@ -22,7 +30,17 @@ import com.github.markusbernhardt.proxy.util.Logger;
 import com.github.markusbernhardt.proxy.util.Logger.LogBackEnd;
 import com.github.markusbernhardt.proxy.util.Logger.LogLevel;
 
-public class NetworkSetting {
+public class NetworkSetting
+{
+	private static final String DEFAULT_TRUSTSTORE_PASSWORD = "changeit";
+	private static SSLSocketFactory oldSSLSocketFactory;
+	private static Integer ignoredCount = 0;
+	private static String trustStore;
+
+	private PlugInPackage pluginPackage;
+	private boolean isIgnoreSSL;
+	private boolean isSetTruststore;
+
 	static {
 		Logger.setBackend(new LogBackEnd() {
 			@Override
@@ -40,12 +58,21 @@ public class NetworkSetting {
 		}});
 	}
 
-	public static void setProxyServer(PlugInPackage pluginPackage, URI uri) {
-		boolean useGlobalConfig = "true".equals(pluginPackage.getConfiguration(PlugInConfig.CONFIG_USE_GLOBAL_PROXIES, "true"));
-		if(useGlobalConfig) pluginPackage = null; 
+	public NetworkSetting(PlugInPackage pluginPackage) {
+		this.pluginPackage = pluginPackage;
+	}
 
-		boolean useSystemProxy = "true".equals(PlugInConfig.getConfiguration(pluginPackage,
-												PlugInConfig.CONFIG_USE_SYSTEM_PROXIES,
+	public void setProxyServer(URI uri) {
+		setProxyServer(pluginPackage, uri);
+	}
+
+	public static void setProxyServer(PlugInPackage pluginPackage, URI uri) {
+		PlugInConfig config = new PlugInConfig(pluginPackage);
+
+		boolean useGlobalConfig = "true".equals(config.getConfiguration(PlugInConfig.CONFIG_USE_GLOBAL_PROXIES, "true"));
+		if(useGlobalConfig) config.setPlugInPackage(null);
+
+		boolean useSystemProxy = "true".equals(config.getConfiguration(PlugInConfig.CONFIG_USE_SYSTEM_PROXIES,
 												useGlobalConfig ? "true" : "false"));
 
 		boolean isSetSystemProxy = false;
@@ -66,10 +93,9 @@ public class NetworkSetting {
                 	isSetSystemProxy = true;
                 	Log.v("proxy hostname : " + addr.getHostName());
                 	Log.v("proxy port : " + addr.getPort());
-                	System.setProperty("http.proxyHost", addr.getHostName());
-                	System.setProperty("http.proxyPort", Integer.toString(addr.getPort()));
-                	System.setProperty("https.proxyHost", addr.getHostName());
-                	System.setProperty("https.proxyPort", Integer.toString(addr.getPort()));
+                	Log.v("scheme " + uri.getScheme());
+                	System.setProperty(uri.getScheme() + ".proxyHost", addr.getHostName());
+                	System.setProperty(uri.getScheme() + ".proxyPort", Integer.toString(addr.getPort()));
                 } else {
                 	Log.v("No Proxy");
                 }
@@ -79,14 +105,18 @@ public class NetworkSetting {
 		}
 
 		if(!isSetSystemProxy) {
-			boolean noProxy = "true".equals(PlugInConfig.getConfiguration(pluginPackage, PlugInConfig.CONFIG_NO_PROXIES, "false"));
+			boolean noProxy = "true".equals(config.getConfiguration(PlugInConfig.CONFIG_NO_PROXIES, "false"));
 			if(!noProxy) {
-	    		System.setProperty("http.proxyHost", PlugInConfig.getConfiguration(pluginPackage, PlugInConfig.CONFIG_HTTP_PROXY_HOST, ""));
-	    		System.setProperty("http.proxyPort", PlugInConfig.getConfiguration(pluginPackage, PlugInConfig.CONFIG_HTTP_PROXY_PORT, ""));
-	    		System.setProperty("https.proxyHost", PlugInConfig.getConfiguration(pluginPackage, PlugInConfig.CONFIG_HTTPS_PROXY_HOST, ""));
-	    		System.setProperty("https.proxyPort", PlugInConfig.getConfiguration(pluginPackage, PlugInConfig.CONFIG_HTTPS_PROXY_PORT, ""));
+				for(String proerty: PlugInConfig.CONFIG_PROXY_PROPERTIES) {
+					String val = config.getConfiguration(proerty);
+					if(val != null) System.setProperty(proerty, val);
+					else System.clearProperty(proerty);
+				}
 			} else {
             	Log.v("No Proxy");
+				for(String proerty: PlugInConfig.CONFIG_PROXY_PROPERTIES) {
+					System.clearProperty(proerty);
+				}
 			}
 		}
 	}
@@ -110,5 +140,100 @@ public class NetworkSetting {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	public boolean setSSLTrustStore() {
+		PlugInConfig config = new PlugInConfig(pluginPackage, true);
+		boolean ignoreSSL = "true".equals(config.getConfiguration(PlugInConfig.CONFIG_IGNORE_SSL_CERT, "false"));
+		if(ignoreSSL) {
+			isIgnoreSSL = setIgnoreSSLCert(true);
+			return isIgnoreSSL;
+		} else {
+			if(isIgnoreSSLCert()) {
+				Log.w("Fail to set truststore because was set ignore ssl cert.");
+				return false;
+			}
+			if(isSetTrustStore()) {
+				Log.w("Fail to set truststore because was set others.");
+				return false;
+			}
+
+			trustStore = config.getConfiguration("javax.net.ssl.trustStore", Resource.SSL_TRUSTSTORE_PATH.getPath());
+			Log.v("trustStore: " + trustStore);
+			if("APK_SCANNER_SSL_TRUSTSTORE".equals(trustStore)) {
+				trustStore = Resource.SSL_TRUSTSTORE_PATH.getPath();
+			} else if("JVM_SSL_TRUSTSTORE".equals(trustStore)) {
+				trustStore = "";
+			}
+			if(!trustStore.isEmpty() && new File(trustStore).canRead()) {
+				System.setProperty("javax.net.ssl.trustStore", trustStore);
+				System.setProperty("javax.net.ssl.trustStorePassword", config.getConfiguration("javax.net.ssl.trustStorePassword", DEFAULT_TRUSTSTORE_PASSWORD));
+			} else {
+				Log.v("use truststore of jre");
+				System.clearProperty("javax.net.ssl.trustStore");
+				System.clearProperty("javax.net.ssl.trustStorePassword");
+			}
+			isSetTruststore = true;
+		}
+		return true;
+	}
+
+	public void restoreSSLTrustStore() {
+		if(isIgnoreSSL) {
+			setIgnoreSSLCert(false);
+			isIgnoreSSL = false;
+		} else if(isSetTruststore) {
+			System.clearProperty("javax.net.ssl.trustStore");
+			System.clearProperty("javax.net.ssl.trustStorePassword");
+			trustStore = null;
+		}
+	}
+
+	public static boolean isIgnoreSSLCert() {
+		return oldSSLSocketFactory != null;
+	}
+
+	public static boolean isSetTrustStore() {
+		return trustStore != null; // System.getProperty("javax.net.ssl.trustStore") != null
+	}
+
+	public static boolean setIgnoreSSLCert(boolean ignored) {
+		Log.w("setIgnoreSSLCert() " + ignored);
+		synchronized(ignoredCount) {
+			if(ignored && oldSSLSocketFactory == null) {
+				Log.w("Dangerous: Ignoring certificate errors opens the connection to potential MITM attacks.");
+				TrustManager[] trustAllCerts = new TrustManager[] {
+				    new X509TrustManager() {
+				        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+				        	Log.w("getAcceptedIssuers() Dangerous: Ignoring certificate errors opens the connection to potential MITM attacks.");
+				            return null;
+				        }
+				        public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+				        	Log.w("checkClientTrusted() Dangerous: Ignoring certificate errors opens the connection to potential MITM attacks.");
+				        }
+				        public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+				        	Log.w("checkServerTrusted() Dangerous: Ignoring certificate errors opens the connection to potential MITM attacks.");
+				        	//Log.w(new SignatureReport(certs[0]).toString());
+				        }
+				    }
+				};
+				try {
+					SSLContext sc = SSLContext.getInstance("SSL");
+				    sc.init(null, trustAllCerts, new java.security.SecureRandom());
+					oldSSLSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
+				    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+				} catch (Exception e) {
+					Log.e(e.getMessage());
+					return false;
+				}
+			} else if(!ignored && oldSSLSocketFactory != null) {
+				if(ignoredCount > 0 && --ignoredCount == 0) {
+					HttpsURLConnection.setDefaultSSLSocketFactory(oldSSLSocketFactory);
+					oldSSLSocketFactory = null;
+				}
+			} else if(ignored) ignoredCount++;
+			if(oldSSLSocketFactory == null && ignoredCount > 0) ignoredCount = 0;
+			return true;
+		}
 	}
 }
