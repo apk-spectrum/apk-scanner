@@ -16,6 +16,7 @@ public class PlugInConfig
 	public static final String CONFIG_HTTPS_PROXY_PORT = "https.proxyPort";
 	public static final String CONFIG_HTTPS_PROXY_USER = "https.proxyUser";
 	public static final String CONFIG_HTTPS_PROXY_PASS = "https.proxyPassword";
+	public static final String CONFIG_HTTP_NON_PROXY_HOSTS = "http.nonProxyHosts";
 
 	public static final String[] CONFIG_PROXY_PROPERTIES = {
 			CONFIG_HTTP_PROXY_HOST,
@@ -25,13 +26,18 @@ public class PlugInConfig
 			CONFIG_HTTPS_PROXY_HOST,
 			CONFIG_HTTPS_PROXY_PORT,
 			CONFIG_HTTPS_PROXY_USER,
-			CONFIG_HTTPS_PROXY_PASS
+			CONFIG_HTTPS_PROXY_PASS,
+			CONFIG_HTTP_NON_PROXY_HOSTS
 	};
 
 	// Ignoring certificate errors opens the connection to potential MITM attacks.
 	public static final String CONFIG_IGNORE_SSL_CERT = "ignoreSSLCert";
 
 	public static final String CONFIG_SSL_TRUSTSTORE = "javax.net.ssl.trustStore";
+
+	public static final String CONFIG_IGNORE_NETWORK_ERR_NO_SUCHE_INTERFACE = "ingnore.err-no-such-interface";
+	public static final String CONFIG_IGNORE_NETWORK_ERR_CONNECTION_TIMEOUT = "ingnore.err-connection-time-out";
+	public static final String CONFIG_IGNORE_NETWORK_ERR_SSL_HANDSHAKE = "ingnore.err-ssl-handshake";
 
 	static HashMap<String, String> configurations = new HashMap<>();
 
@@ -66,8 +72,16 @@ public class PlugInConfig
 
 	public static void setGlobalConfiguration(String key, String value) {
 		if(key == null) return;
-		if(value == null) value = "";
-		configurations.put(key, value);
+		if(value != null) {
+			configurations.put(key, value);
+		} else if(configurations.containsKey(key)) {
+			configurations.remove(key);
+		}
+	}
+
+	public static void clearGlobalConfiguration(String key) {
+		if(key == null) return;
+		configurations.remove(key);
 	}
 
 	public String getConfiguration(String key) {
@@ -99,6 +113,30 @@ public class PlugInConfig
 			return getGlobalConfiguration(key, defaultValue);
 		} else {
 			return plugInPackage.getConfiguration(key, defaultValue);
+		}
+	}
+
+	public void setConfiguration(String key, String value) {
+		setConfiguration(plugInPackage, key, value);
+	}
+
+	public static void setConfiguration(PlugInPackage plugInPackage, String key, String value) {
+		if(plugInPackage == null) {
+			setGlobalConfiguration(key, value);
+		} else {
+			plugInPackage.setConfiguration(key, value);
+		}
+	}
+
+	public void clearConfiguration(String key) {
+		clearConfiguration(plugInPackage, key);
+	}
+
+	public static void clearConfiguration(PlugInPackage plugInPackage, String key) {
+		if(plugInPackage == null) {
+			clearGlobalConfiguration(key);
+		} else {
+			plugInPackage.clearConfiguration(key);
 		}
 	}
 }

@@ -438,8 +438,18 @@ public class PlugInPackage
 
 	public void setConfiguration(String key, String value) {
 		if(key == null) return;
-		if(value == null) value = "";
-		configurations.put(key, value);
+		if(value != null) {
+			configurations.put(key, value);
+		} else if(configurations.containsKey(key)) {
+			configurations.remove(key);
+		}
+	}
+
+	public void clearConfiguration(String key) {
+		if(key == null) return;
+		if(configurations.containsKey(key)) {
+			configurations.remove(key);
+		}
 	}
 
 	public Map<String, Object> getChangedProperties() {
