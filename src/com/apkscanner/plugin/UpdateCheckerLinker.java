@@ -33,7 +33,7 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 
 		if(!NetworkSetting.isEnabledNetworkInterface()) {
 			Log.w("No such network interface");
-			throw new NetworkException(new NetworkNotFoundException("No such network interface"));
+			throw makeNetworkException(new NetworkNotFoundException("No such network interface"));
 		}
 
 		System.setProperty("http.protocols", "TLSv1,TLSv1.1,TLSv1.2");
@@ -85,7 +85,7 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 			jsonData = sb.toString();
 			Log.v(jsonData);
 		} catch (IOException e) {
-			throw new NetworkException(e);
+			throw makeNetworkException(e);
 		} finally {
 			request.disconnect();
 		}
