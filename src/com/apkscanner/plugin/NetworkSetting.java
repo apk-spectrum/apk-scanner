@@ -1,11 +1,13 @@
 package com.apkscanner.plugin;
 
 import java.io.File;
+import java.net.Authenticator;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
+import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.SocketException;
@@ -112,11 +114,33 @@ public class NetworkSetting
 					if(val != null) System.setProperty(proerty, val);
 					else System.clearProperty(proerty);
 				}
+				// Java ignores http.proxyUser. Here come's the workaround.
+				Authenticator.setDefault(new Authenticator() {
+				    @Override
+				    protected PasswordAuthentication getPasswordAuthentication() {
+				        if (getRequestorType() == RequestorType.PROXY) {
+				            String prot = getRequestingProtocol().toLowerCase();
+				            String host = System.getProperty(prot + ".proxyHost", "");
+				            String port = System.getProperty(prot + ".proxyPort", "80");
+				            String user = System.getProperty(prot + ".proxyUser", "");
+				            String password = System.getProperty(prot + ".proxyPassword", "");
+
+				            if (getRequestingHost().equalsIgnoreCase(host)) {
+				                if (Integer.parseInt(port) == getRequestingPort()) {
+				                    // Seems to be OK.
+				                    return new PasswordAuthentication(user, password.toCharArray());  
+				                }
+				            }
+				        }
+				        return null;
+				    }  
+				});
 			} else {
             	Log.v("No Proxy");
 				for(String proerty: PlugInConfig.CONFIG_PROXY_PROPERTIES) {
 					System.clearProperty(proerty);
 				}
+				Authenticator.setDefault(null);
 			}
 		}
 	}
