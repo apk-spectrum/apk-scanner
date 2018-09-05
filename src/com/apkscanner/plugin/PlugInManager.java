@@ -255,22 +255,4 @@ public final class PlugInManager
 			e.printStackTrace();
 		}
 	}
-
-    public static void main(String[] args) throws IOException {
-    	loadPlugIn();
-
-    	IPackageSearcher[] searchers = getPackageSearchers();
-    	if(searchers != null && searchers.length > 1) {
-    		//searchers[1].launch(null, IPackageSearcher.SEARCHER_TYPE_APP_NAME, "멜론");
-    		Log.e(searchers[1].getPreferLangForAppName());
-    	}
-
-    	IUpdateChecker[] updator = getUpdateChecker();
-    	if(updator != null && updator.length > 0) {
-    		Log.e(((IUpdateChecker)updator[0]).getNewVersion());
-    		//((IUpdateChecker)updator[0]).launch();	
-    	}
-
-    	saveProperty();
-    }
 }
