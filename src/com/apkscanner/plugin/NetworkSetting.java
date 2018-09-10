@@ -31,6 +31,7 @@ import com.github.markusbernhardt.proxy.selector.misc.BufferedProxySelector.Cach
 import com.github.markusbernhardt.proxy.util.Logger;
 import com.github.markusbernhardt.proxy.util.Logger.LogBackEnd;
 import com.github.markusbernhardt.proxy.util.Logger.LogLevel;
+import com.github.markusbernhardt.proxy.util.ProxyUtil;
 
 public class NetworkSetting
 {
@@ -76,15 +77,27 @@ public class NetworkSetting
 
 		boolean useSystemProxy = "true".equals(config.getConfiguration(PlugInConfig.CONFIG_USE_SYSTEM_PROXIES,
 												useGlobalConfig ? "true" : "false"));
+		boolean usePacProxy = "true".equals(config.getConfiguration(PlugInConfig.CONFIG_USE_PAC_PROXIES, "false"));
 
-		boolean isSetSystemProxy = false;
-		if(useSystemProxy && SystemUtil.checkJvmVersion("1.8")) {
-			System.setProperty("java.net.useSystemProxies", "true");
-            // Use proxy vole to find the default proxy
-            ProxySearch proxySearch = ProxySearch.getDefaultProxySearch();
-            proxySearch.setPacCacheSettings(20, 1000*60*10, CacheScope.CACHE_SCOPE_URL);
-            ProxySelector proxySelector = proxySearch.getProxySelector();
-            List<Proxy> l = proxySelector.select(uri);
+		boolean wasSetProxy = false;
+		if((useSystemProxy || usePacProxy) && SystemUtil.checkJvmVersion("1.8")) {
+			ProxySelector proxySelector = null;
+			List<Proxy> l = null;
+			if(useSystemProxy) {
+				System.setProperty("java.net.useSystemProxies", "true");
+	            // Use proxy vole to find the default proxy
+	            ProxySearch proxySearch = ProxySearch.getDefaultProxySearch();
+	            proxySearch.setPacCacheSettings(20, 1000*60*10, CacheScope.CACHE_SCOPE_URL);
+	            proxySelector = proxySearch.getProxySelector();
+	            l = proxySelector.select(uri);
+			} else {
+    			String pacUrl = config.getConfiguration(PlugInConfig.CONFIG_PAC_URL, "");
+    			if (pacUrl.startsWith("file://") && !pacUrl.startsWith("file:///")) {
+    				pacUrl = "file:///" + pacUrl.substring(7);
+    			}
+    			proxySelector = ProxyUtil.buildPacSelectorForUrl(pacUrl);
+    			l = proxySelector.select(uri);
+    		}
 
             //... Now just do what the original did ...
             for (Proxy proxy: l) {
@@ -92,7 +105,7 @@ public class NetworkSetting
                 InetSocketAddress addr = (InetSocketAddress) proxy.address();
 
                 if(addr != null) {
-                	isSetSystemProxy = true;
+                	wasSetProxy = true;
                 	Log.v("proxy hostname : " + addr.getHostName());
                 	Log.v("proxy port : " + addr.getPort());
                 	Log.v("scheme " + uri.getScheme());
@@ -103,10 +116,10 @@ public class NetworkSetting
                 }
             }
 		} else {
-			if(useSystemProxy) Log.w("Can't supported that get system proxy setting under on JVM 1.7 or earlier");
+			if(useSystemProxy || usePacProxy) Log.w("Can't supported that get system proxy setting under on JVM 1.7 or earlier");
 		}
 
-		if(!isSetSystemProxy) {
+		if(!wasSetProxy) {
 			boolean noProxy = "true".equals(config.getConfiguration(PlugInConfig.CONFIG_NO_PROXIES, "false"));
 			if(!noProxy) {
 				for(String proerty: PlugInConfig.CONFIG_PROXY_PROPERTIES) {

@@ -7,6 +7,8 @@ public class PlugInConfig
 	public static final String CONFIG_NO_PROXIES = "noProxies";
 	public static final String CONFIG_USE_GLOBAL_PROXIES = "useGlobalProxies";
 	public static final String CONFIG_USE_SYSTEM_PROXIES = "useSystemProxies";
+	public static final String CONFIG_USE_PAC_PROXIES = "usePacProxies";
+	public static final String CONFIG_PAC_URL = "pacUrl";
 
 	public static final String CONFIG_HTTP_PROXY_HOST = "http.proxyHost";
 	public static final String CONFIG_HTTP_PROXY_PORT = "http.proxyPort";
