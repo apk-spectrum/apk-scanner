@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -41,20 +42,21 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 		NetworkSetting networkSetting = new NetworkSetting(pluginPackage);
 		HttpURLConnection request = null;
 		boolean ignoreSSLCert = false;
+		boolean isSetTruststore = false;
 		try {
 			URL targetURL = new URL(component.url);
 			networkSetting.setProxyServer(targetURL.toURI());
-			networkSetting.setSSLTrustStore();
+			isSetTruststore = networkSetting.setSSLTrustStore();
 			ignoreSSLCert = NetworkSetting.isIgnoreSSLCert();
 			request = (HttpURLConnection) targetURL.openConnection();
 			request.setRequestMethod("GET");
-		} catch (IOException | URISyntaxException e) {
-			request = null;
-			e.printStackTrace();
+		} catch (MalformedURLException | URISyntaxException e) {
+			throw makeNetworkException(e);
+		} catch (IOException e) {
+			throw makeNetworkException(e);
 		} finally {
-			networkSetting.restoreSSLTrustStore();
+			if(isSetTruststore) networkSetting.restoreSSLTrustStore();
 		}
-		if(request == null) return false;
 
 		request.setUseCaches(false);
 		request.setDefaultUseCaches(false);
@@ -63,7 +65,7 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 		request.setInstanceFollowRedirects(false);
 		request.setConnectTimeout(5000);
 		request.setReadTimeout(5000);
-		
+
 		// customizing information
 		request.setRequestProperty("User-Agent","");
 		request.setRequestProperty("Referer","");
@@ -72,7 +74,7 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 		request.setRequestProperty("Cache-Control", "no-cache, no-store, must-revalidate");
 		request.setRequestProperty("Pragma", "no-cache");
 		request.setRequestProperty("Expires", "0");
-		
+
 		//request.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
 		//request.setRequestProperty("Content-length",String.valueOf(param.length()));
 
@@ -86,7 +88,7 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 		try ( InputStream is = request.getInputStream();
 			  InputStreamReader isr = new InputStreamReader(is,"UTF-8");
 			  BufferedReader br = new BufferedReader(isr) ) {
-			
+
 			String buffer = null;
 			StringBuffer sb = new StringBuffer();
 			while ((buffer = br.readLine()) != null) {
@@ -135,7 +137,7 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 		} else {
 			int curVer = pluginPackage.getVersionCode();
 			int newVer = Integer.parseInt(version);
-			return newVer > curVer; 
+			return newVer > curVer;
 		}
 	}
 
