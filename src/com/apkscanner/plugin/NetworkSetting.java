@@ -36,6 +36,10 @@ import com.github.markusbernhardt.proxy.util.ProxyUtil;
 public class NetworkSetting
 {
 	private static final String DEFAULT_TRUSTSTORE_PASSWORD = "changeit";
+
+	public static final String APK_SCANNER_SSL_TRUSTSTORE = "%APK_SCANNER_SSL_TRUSTSTORE%";
+	public static final String JVM_SSL_TRUSTSTORE = "%JVM_SSL_TRUSTSTORE%";
+	
 	private static SSLSocketFactory oldSSLSocketFactory;
 	private static Integer ignoredCount = 0;
 	private static String trustStore;
@@ -195,16 +199,16 @@ public class NetworkSetting
 				return false;
 			}
 
-			trustStore = config.getConfiguration("javax.net.ssl.trustStore", Resource.SSL_TRUSTSTORE_PATH.getPath());
+			trustStore = config.getConfiguration(PlugInConfig.CONFIG_SSL_TRUSTSTORE, Resource.SSL_TRUSTSTORE_PATH.getPath());
 			Log.v("trustStore: " + trustStore);
-			if("APK_SCANNER_SSL_TRUSTSTORE".equals(trustStore)) {
+			if(APK_SCANNER_SSL_TRUSTSTORE.equals(trustStore)) {
 				trustStore = Resource.SSL_TRUSTSTORE_PATH.getPath();
-			} else if("JVM_SSL_TRUSTSTORE".equals(trustStore)) {
+			} else if(JVM_SSL_TRUSTSTORE.equals(trustStore)) {
 				trustStore = "";
 			}
 			if(!trustStore.isEmpty() && new File(trustStore).canRead()) {
 				System.setProperty("javax.net.ssl.trustStore", trustStore);
-				System.setProperty("javax.net.ssl.trustStorePassword", config.getConfiguration("javax.net.ssl.trustStorePassword", DEFAULT_TRUSTSTORE_PASSWORD));
+				System.setProperty("javax.net.ssl.trustStorePassword", config.getConfiguration(PlugInConfig.CONFIG_SSL_TRUSTSTORE_PWD, DEFAULT_TRUSTSTORE_PASSWORD));
 			} else {
 				Log.v("use truststore of jre");
 				System.clearProperty("javax.net.ssl.trustStore");

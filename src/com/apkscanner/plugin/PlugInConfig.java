@@ -36,6 +36,7 @@ public class PlugInConfig
 	public static final String CONFIG_IGNORE_SSL_CERT = "ignoreSSLCert";
 
 	public static final String CONFIG_SSL_TRUSTSTORE = "javax.net.ssl.trustStore";
+	public static final String CONFIG_SSL_TRUSTSTORE_PWD = "javax.net.ssl.trustStorePassword";
 
 	public static final String CONFIG_IGNORE_NETWORK_ERR_NO_SUCHE_INTERFACE = "ingnore.err-no-such-interface";
 	public static final String CONFIG_IGNORE_NETWORK_ERR_CONNECTION_TIMEOUT = "ingnore.err-connection-time-out";
