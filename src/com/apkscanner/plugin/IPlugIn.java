@@ -80,4 +80,6 @@ public interface IPlugIn {
 	public Map<String, Object> getChangedProperties();
 
 	public void restoreProperties(Map<?, ?> tmp);
+	
+	public PlugInConfig getPlugInConfig();
 }
