@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.AbstractAction;
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -101,6 +102,7 @@ public class SettingDlg extends JDialog implements ActionListener
 	private int propLaunchActivity;
 	private boolean propTryUnlock;
 	private boolean propLaunchAfInstalled;
+	private boolean propAlwaysExtendToolbar;
 
 	private boolean needUpdateUI;
 
@@ -122,6 +124,7 @@ public class SettingDlg extends JDialog implements ActionListener
 	private JComboBox<String> jcbAdbPaths;
 	private JCheckBox jckEnableDeviceMonitoring;
 	private JComboBox<String> jcbLaunchOptions;
+	private JComboBox<String> jcbToolbarExtendOptions;
 	private JCheckBox jckTryUnlock;
 	private JCheckBox jckLauchAfInstalled;
 
@@ -443,6 +446,8 @@ public class SettingDlg extends JDialog implements ActionListener
 		propTryUnlock = (boolean)Resource.PROP_TRY_UNLOCK_AF_LAUNCH.getData();
 
 		propLaunchAfInstalled = (boolean)Resource.PROP_LAUNCH_AF_INSTALLED.getData();
+
+		propAlwaysExtendToolbar = (boolean)Resource.PROP_ALWAYS_TOOLBAR_EXTENDED.getData();
 	}
 
 	private void saveSettings()
@@ -533,6 +538,11 @@ public class SettingDlg extends JDialog implements ActionListener
 		if(propSaveWinSize != jckRememberWinSize.isSelected()) {
 			Resource.PROP_SAVE_WINDOW_SIZE.setData(jckRememberWinSize.isSelected());	
 		}
+
+		if(propAlwaysExtendToolbar != (jcbToolbarExtendOptions.getSelectedIndex() == 1)) {
+			Resource.PROP_ALWAYS_TOOLBAR_EXTENDED.setData(jcbToolbarExtendOptions.getSelectedIndex() == 1);
+			needUpdateUI = true;
+		}
 	}
 
 	JPanel makeGenericPanel() {
@@ -612,6 +622,31 @@ public class SettingDlg extends JDialog implements ActionListener
 		panel.add(txtEditPane, contentConst);
 		contentConst.fill = GridBagConstraints.NONE;
 
+		rowHeadConst.gridy++;
+		contentConst.gridy++;
+		
+		panel.add(new JLabel(Resource.STR_SETTINGS_TOOLBAR.getString()), rowHeadConst);
+
+		JPanel toolbarPane = new JPanel();
+		toolbarPane.setLayout(new BoxLayout(toolbarPane, BoxLayout.Y_AXIS));
+
+		jcbToolbarExtendOptions = new JComboBox<String>(
+				new String[] {
+						Resource.STR_SETTINGS_TOOLBAR_WITH_SHIFT.getString(),
+						Resource.STR_SETTINGS_TOOLBAR_WITHOUT_SHIFT.getString()
+				});
+		jcbToolbarExtendOptions.setEditable(false);
+		jcbToolbarExtendOptions.setSelectedIndex(propAlwaysExtendToolbar ? 1 : 0);
+		toolbarPane.add(jcbToolbarExtendOptions);
+
+		jckEnableDeviceMonitoring = new JCheckBox(Resource.STR_SETTINGS_ADB_MONITOR.getString());
+		jckEnableDeviceMonitoring.setSelected(propDeviceMonitoring);
+		jckEnableDeviceMonitoring.addActionListener(this);
+		jckEnableDeviceMonitoring.setAlignmentX(1);
+		toolbarPane.add(jckEnableDeviceMonitoring);
+		
+		panel.add(toolbarPane, contentConst);
+		
 		rowHeadConst.gridy++;
 		contentConst.gridy++;
 
@@ -843,14 +878,6 @@ public class SettingDlg extends JDialog implements ActionListener
 		rowHeadConst.gridy++;
 		contentConst.gridy++;
 
-		jckEnableDeviceMonitoring = new JCheckBox(Resource.STR_SETTINGS_ADB_MONITOR.getString());
-		jckEnableDeviceMonitoring.setSelected(propDeviceMonitoring);
-		jckEnableDeviceMonitoring.addActionListener(this);
-
-		panel.add(jckEnableDeviceMonitoring, contentConst);
-
-		rowHeadConst.gridy++;
-		contentConst.gridy++;
 
 		panel.add(new JPanel(), contentConst);
 

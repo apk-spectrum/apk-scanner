@@ -63,6 +63,7 @@ import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.ResouceContentsPanel;
 import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.plugin.IPlugIn;
+import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
@@ -247,8 +248,8 @@ public class Resources extends AbstractTabbedPanel {
 	}
 
 	public Resources() {
-		setName(Resource.STR_TAB_IMAGE.getString());
-		setToolTipText(Resource.STR_TAB_IMAGE.getString());
+		setName(Resource.STR_TAB_RESOURCES.getString());
+		setToolTipText(Resource.STR_TAB_RESOURCES.getString());
 		setEnabled(false);
 	}
 
@@ -1205,7 +1206,7 @@ public class Resources extends AbstractTabbedPanel {
 
 	@Override
 	public void reloadResource() {
-		setName(Resource.STR_TAB_IMAGE.getString());
-		setToolTipText(Resource.STR_TAB_IMAGE.getString());
+		setName(Resource.STR_TAB_RESOURCES.getString());
+		setToolTipText(Resource.STR_TAB_RESOURCES.getString());
 	}
 }

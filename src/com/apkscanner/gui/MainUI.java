@@ -1,5 +1,6 @@
 package com.apkscanner.gui;
 
+import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -22,6 +23,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.SwingWorker;
@@ -601,7 +603,7 @@ public class MainUI extends JFrame
 			toolbarManager.setEnabled((boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData());
 		}
 
-		private void evtLaunchApp(final ActionEvent e)
+		private void evtLaunchApp(final AWTEvent e)
 		{
 			final IDevice[] devices = getInstalledDevice();
 			if(devices == null || devices.length == 0) {
@@ -614,21 +616,29 @@ public class MainUI extends JFrame
 				private String errMsg = null;
 				public void run()
 				{
-					boolean isShiftPressed = (e != null && (e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
+					boolean isShiftPressed = false;
 					int actionType = 0;
-					if(e == null || ToolBar.ButtonSet.LAUNCH.matchActionEvent(e)) {
-						String data = (String)Resource.PROP_DEFAULT_LAUNCH_MODE.getData();
-						if(Resource.STR_LAUNCH_LAUNCHER.equals(data)) {
+					if(e instanceof ActionEvent) {
+						isShiftPressed = (e != null && (((ActionEvent) e).getModifiers() & InputEvent.SHIFT_MASK) != 0);
+						if(e == null || ToolBar.ButtonSet.LAUNCH.matchActionEvent((ActionEvent) e)) {
+							if(isShiftPressed) actionType = 2;
+						} else if(ToolBar.ButtonSet.SUB_LAUNCH.matchActionEvent((ActionEvent) e)) {
+							String data = (String)Resource.PROP_DEFAULT_LAUNCH_MODE.getData();
+							if(Resource.STR_LAUNCH_LAUNCHER.equals(data)) {
+								actionType = 1;
+							} else if(Resource.STR_LAUNCH_SELECT.equals(data)) {
+								actionType = 2;
+							}
+						} else if(ToolBar.MenuItemSet.LAUNCH_LAUNCHER.matchActionEvent((ActionEvent) e)) {
 							actionType = 1;
-						} else if(Resource.STR_LAUNCH_SELECT.equals(data)) {
+							isShiftPressed = false;
+						} else if(ToolBar.MenuItemSet.LAUNCH_SELECT.matchActionEvent((ActionEvent) e)) {
 							actionType = 2;
+							isShiftPressed = false;
 						}
-					} else if(ToolBar.MenuItemSet.LAUNCH_LAUNCHER.matchActionEvent(e)) {
-						actionType = 1;
-						isShiftPressed = false;
-					} else if(ToolBar.MenuItemSet.LAUNCH_SELECT.matchActionEvent(e)) {
-						actionType = 2;
-						isShiftPressed = false;
+					} else if(e instanceof InputEvent) {
+						isShiftPressed = (e != null && (((InputEvent) e).getModifiers() & InputEvent.SHIFT_MASK) != 0);
+						if(isShiftPressed) actionType = 2;
 					}
 
 					int activityOpt = Resource.PROP_LAUNCH_ACTIVITY_OPTION.getInt();
@@ -987,6 +997,14 @@ public class MainUI extends JFrame
 				evtSignApkFile();
 			} else if(e.getActionCommand() != null && e.getActionCommand().startsWith("PLUGIN:")) {
 				evtPluginLaunch(e.getActionCommand().replaceAll("PLUGIN:", ""));
+			} else if(ToolBar.CMD_VISIBLE_TO_BASEIC.equals(e.getActionCommand())) {
+				if(e.getSource() instanceof JCheckBoxMenuItem) {
+					JCheckBoxMenuItem ckBox = ((JCheckBoxMenuItem)e.getSource());
+					Resource.PROP_VISIBLE_TO_BASIC.setData(ckBox.isSelected());
+					tabbedPanel.reloadResource();
+				}
+			}  else if(ToolBar.CMD_VISIBLE_TO_BASEIC_CHANGED.equals(e.getActionCommand())) {
+				tabbedPanel.reloadResource();
 			} else {
 				Log.v("Unkown action : " + e);
 			}
@@ -1007,7 +1025,7 @@ public class MainUI extends JFrame
 					case KeyEvent.VK_T: evtShowInstalledPackageInfo();	break;
 					case KeyEvent.VK_E: evtShowExplorer(null);		break;
 					case KeyEvent.VK_M: evtShowManifest(false);		break;
-					case KeyEvent.VK_R: evtLaunchApp(null);	break;
+					case KeyEvent.VK_R: evtLaunchApp(e);	break;
 					//case KeyEvent.VK_S: evtSettings();			break;
 					default: return false;
 					}
@@ -1016,7 +1034,7 @@ public class MainUI extends JFrame
 					switch(e.getKeyCode()) {
 					case KeyEvent.VK_O: evtOpenApkFile(true);	break;
 					case KeyEvent.VK_P: evtOpenPackage(true);	break;
-					case KeyEvent.VK_R: evtLaunchApp(null);	break;
+					case KeyEvent.VK_R: evtLaunchApp(e);	break;
 					default: return false;
 					}
 					return true;

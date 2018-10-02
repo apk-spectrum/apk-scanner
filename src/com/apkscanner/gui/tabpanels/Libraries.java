@@ -11,6 +11,7 @@ import javax.swing.table.TableColumn;
 
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.FileUtil.FSStyle;
@@ -32,8 +33,8 @@ public class Libraries extends AbstractTabbedPanel
 	public Libraries()
 	{
 		setLayout(new GridLayout(1, 0));
-		setName(Resource.STR_TAB_LIB.getString());
-		setToolTipText(Resource.STR_TAB_LIB.getString());
+		setName(Resource.STR_TAB_LIBRARIES.getString());
+		setToolTipText(Resource.STR_TAB_LIBRARIES.getString());
 		setEnabled(false);
 	}
 	
@@ -73,8 +74,8 @@ public class Libraries extends AbstractTabbedPanel
 	@Override
 	public void reloadResource()
 	{
-		setName(Resource.STR_TAB_LIB.getString());
-		setToolTipText(Resource.STR_TAB_LIB.getString());
+		setName(Resource.STR_TAB_LIBRARIES.getString());
+		setToolTipText(Resource.STR_TAB_LIBRARIES.getString());
 
 		if(mMyTableModel == null) return;
 		mMyTableModel.loadResource();

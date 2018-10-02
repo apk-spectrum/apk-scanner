@@ -33,6 +33,8 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.border.MatteBorder;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
@@ -61,6 +63,8 @@ public class ToolBar extends JToolBar
 	public static final int FLAG_LAYOUT_INSTALLED_MASK = FLAG_LAYOUT_INSTALLED | FLAG_LAYOUT_INSTALLED_LOWER | FLAG_LAYOUT_INSTALLED_UPPER | FLAG_LAYOUT_LAUNCHER;
 
 	private static final String CMD_SELECT_DEFAULT_MENU = "CMD_SELECT_DEFAULT_MENU";
+	public static final String CMD_VISIBLE_TO_BASEIC = "CMD_VISIBLE_TO_BASEIC";
+	public static final String CMD_VISIBLE_TO_BASEIC_CHANGED = "CMD_VISIBLE_TO_BASEIC_CHANGED";
 
 	private int flag = 0;
 	private boolean hasTargetApk = false;
@@ -299,7 +303,7 @@ public class ToolBar extends JToolBar
 				button.setVerticalTextPosition(AbstractButton.CENTER);
 				button.setPreferredSize(new Dimension(75,20));
 				if(extension) {
-					button.setArrowStyle(SwingConstants.EAST, 1, 5);
+					button.setArrowStyle(SwingConstants.EAST, 1, 4);
 				}
 				break;
 			case EXTEND:
@@ -341,6 +345,60 @@ public class ToolBar extends JToolBar
         }
     }
 
+	public class SearcherCheckBoxMenuItem extends JCheckBoxMenuItem {
+		private static final long serialVersionUID = -6097881007848535633L;
+
+		private IPackageSearcher plugin;
+		private boolean selectMode = false;
+		private Icon icon;
+
+		public SearcherCheckBoxMenuItem(IPackageSearcher plugin) {
+        	super();
+        	this.plugin = plugin;
+        }
+
+		public boolean isSelectMode() {
+			return selectMode;
+		}
+
+		public void setSelecteMode(boolean selectMode) {
+			this.selectMode = selectMode;
+			super.setIcon(selectMode ? null : icon);
+			super.setSelected(selectMode ? plugin.isVisibleToBasic() : false);
+		}
+
+		@Override
+		public void setIcon(Icon icon) {
+			this.icon = icon;
+			super.setIcon(icon);
+		}
+
+        @Override
+		public void addActionListener(final ActionListener listener) {
+			super.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if(isSelectMode()) {
+						plugin.setVisibleToBasic(isSelected());
+						PlugInManager.saveProperty();
+						listener.actionPerformed(new ActionEvent(e.getSource(), e.getID(), CMD_VISIBLE_TO_BASEIC_CHANGED, e.getWhen(), e.getModifiers()));
+					} else {
+						listener.actionPerformed(e);
+					}
+				}
+			});
+		}
+
+		@Override
+        protected void processMouseEvent(MouseEvent evt) {
+            if (selectMode && evt.getID() == MouseEvent.MOUSE_RELEASED && contains(evt.getPoint())) {
+                doClick();
+                setArmed(true);
+            } else {
+                super.processMouseEvent(evt);
+            }
+        }
+    }
 
 	public ToolBar(ActionListener listener)
 	{
@@ -422,6 +480,13 @@ public class ToolBar extends JToolBar
 		setExtensionMenu(buttonMap.get(ButtonSet.EXPLORER), explorerPopupMenu, Resource.PROP_DEFAULT_EXPLORER);
 		setExtensionMenu(buttonMap.get(ButtonSet.SUB_LAUNCH), launchPopupMenu, Resource.PROP_DEFAULT_LAUNCH_MODE);
 
+		boolean alwaysExtended = (boolean)Resource.PROP_ALWAYS_TOOLBAR_EXTENDED.getData();
+		for(ButtonSet bs: ButtonSet.values()) {
+			if(bs.extension) {
+				((ExtensionButton)buttonMap.get(bs)).setArrowVisible(alwaysExtended);	
+			}
+		}
+
 		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		ky.addKeyEventDispatcher(new KeyEventDispatcher() {
 			private boolean isShiftPressed = false;
@@ -429,19 +494,23 @@ public class ToolBar extends JToolBar
 			public boolean dispatchKeyEvent(KeyEvent e) {
 				if (e.getID() == KeyEvent.KEY_PRESSED && !isShiftPressed) {
 					if(e.getModifiers() == KeyEvent.SHIFT_MASK) {
-						setArrowVisible(true);
+						isShiftPressed = true;
+						if(!(boolean)Resource.PROP_ALWAYS_TOOLBAR_EXTENDED.getData()) setArrowVisible(true);
 						setButtonText(ButtonSet.OPEN, Resource.STR_MENU_NEW.getString(), Resource.STR_BTN_OPEN_LAB.getString());
 						setButtonText(ButtonSet.OPEN_PACKAGE, Resource.STR_MENU_NEW.getString(), Resource.STR_BTN_OPEN_PACKAGE_LAB.getString());
 						setButtonText(ButtonSet.MANIFEST, Resource.STR_BTN_MANIFEST_SAVE_AS.getString(), Resource.STR_BTN_MANIFEST_LAB.getString());
+						setButtonText(ButtonSet.LAUNCH, Resource.STR_BTN_LAUNCH_SELECT.getString(), Resource.STR_BTN_LAUNCH_LAB.getString());
 
 						invokeMouseEvent(e, MouseEvent.MOUSE_ENTERED);
 					}
 				} else if (e.getID() == KeyEvent.KEY_RELEASED && isShiftPressed) {
 					if(e.getModifiers() != KeyEvent.SHIFT_MASK) {
-						setArrowVisible(false);
+						isShiftPressed = false;
+						if(!(boolean)Resource.PROP_ALWAYS_TOOLBAR_EXTENDED.getData()) setArrowVisible(false);
 						setButtonText(ButtonSet.OPEN, Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OPEN_LAB.getString());
 						setButtonText(ButtonSet.OPEN_PACKAGE, Resource.STR_BTN_OPEN_PACKAGE.getString(), Resource.STR_BTN_OPEN_PACKAGE_LAB.getString());
 						setButtonText(ButtonSet.MANIFEST, Resource.STR_BTN_MANIFEST.getString(), Resource.STR_BTN_MANIFEST_LAB.getString());
+						setButtonText(ButtonSet.LAUNCH, Resource.STR_BTN_LAUNCH.getString(), Resource.STR_BTN_LAUNCH_LAB.getString());
 
 						invokeMouseEvent(e, MouseEvent.MOUSE_EXITED);
 					}
@@ -450,7 +519,6 @@ public class ToolBar extends JToolBar
 			}
 
 			private void setArrowVisible(boolean visibale) {
-				isShiftPressed = visibale;
 				for(ButtonSet bs: ButtonSet.values()) {
 					if(bs.extension) {
 						((ExtensionButton)buttonMap.get(bs)).setArrowVisible(visibale);	
@@ -504,24 +572,25 @@ public class ToolBar extends JToolBar
 			searchPopupMenu.add(menuItemMap.get(MenuItemSet.SEARCH_RESOURCE));
 			searchPopupMenu.addSeparator();
 			
-			JMenuItem packageItems = null;
-			JMenuItem labelItems = null;
-			for(IPackageSearcher searcher: searchers) {
-				switch(searcher.getSupportType() ) {
-				case IPackageSearcher.SEARCHER_TYPE_PACKAGE_NAME:
-					if(packageItems == null) {
-						packageItems = searchPopupMenu.add(new JMenu(Resource.STR_LABEL_BY_PACKAGE_NAME.getString()));
-					}
-					packageItems.add(makePlugInMenuItem(searcher, listener, null));
-					break;
-				case IPackageSearcher.SEARCHER_TYPE_APP_NAME:
-					if(labelItems == null) {
-						labelItems = searchPopupMenu.add(new JMenu(Resource.STR_LABEL_BY_APP_LABEL.getString()));
-					}
-					labelItems.add(makePlugInMenuItem(searcher, listener, null));
-					break;
-				};
+			searchers = PlugInManager.getPackageSearchers(IPackageSearcher.SEARCHER_TYPE_PACKAGE_NAME);
+			JMenu searchersMenu = makeSearcherSelectMenu(Resource.STR_LABEL_BY_PACKAGE_NAME.getString(), searchers, listener);
+			if(searchersMenu != null) {
+				searchPopupMenu.add(searchersMenu);
 			}
+
+			searchers = PlugInManager.getPackageSearchers(IPackageSearcher.SEARCHER_TYPE_APP_NAME);
+			searchersMenu = makeSearcherSelectMenu(Resource.STR_LABEL_BY_APP_LABEL.getString(), searchers, listener);
+			if(searchersMenu != null) {
+				searchPopupMenu.add(searchersMenu);
+			}
+
+			searchPopupMenu.addSeparator();
+			JCheckBoxMenuItem v2bMenuItem = new JCheckBoxMenuItem();
+			v2bMenuItem.setActionCommand(CMD_VISIBLE_TO_BASEIC);
+			v2bMenuItem.setText(Resource.STR_MENU_VISIBLE_TO_BASIC.getString());
+			v2bMenuItem.addActionListener(listener);
+			v2bMenuItem.setSelected((boolean)Resource.PROP_VISIBLE_TO_BASIC.getData());
+			searchPopupMenu.add(v2bMenuItem);
 		}
 
 		pluginToolBar = makePluginToolBar(listener);
@@ -622,7 +691,7 @@ public class ToolBar extends JToolBar
             	if(button instanceof ExtensionButton) {
             		enable = ((ExtensionButton)button).getArrowVisible();
             	}
-            	if(enable && !me.isShiftDown()) {
+            	if(enable && !me.isShiftDown() && !(boolean)Resource.PROP_ALWAYS_TOOLBAR_EXTENDED.getData()) {
 					for(ButtonSet bs: ButtonSet.values()) {
 						if(bs.extension) {
 							((ExtensionButton)buttonMap.get(bs)).setArrowVisible(false);	
@@ -631,6 +700,7 @@ public class ToolBar extends JToolBar
 					return;
             	}
             	if(!enable || !button.isEnabled()) return;
+            	int delayMs = (boolean)Resource.PROP_ALWAYS_TOOLBAR_EXTENDED.getData() ? 1000 : 100;
 				synchronized(timer) {
 					if(task != null) {
 						task.cancel();
@@ -644,10 +714,16 @@ public class ToolBar extends JToolBar
 								popupMenu.show(button, button.getWidth(), 0);
 				            }
 				        };
-						timer.schedule(task, 100);
+						timer.schedule(task, delayMs);
 					}
 				}
             }
+
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				//Log.d("mouseClicked");
+				mouseExited(arg0);
+			}
 
 			@Override
 			public void mouseExited(MouseEvent me) {
@@ -743,50 +819,109 @@ public class ToolBar extends JToolBar
 
 	private JMenuItem makePlugInMenuItem(final IPlugIn plugin, final ActionListener listener, final Resource defaultPorp)
 	{
-		JMenuItem menuItem = new JMenuItem(plugin.getLabel());
-		//menuItem.setIcon(icon);
-		menuItem.setToolTipText(plugin.getDescription());
-		menuItem.setActionCommand("PLUGIN:" + plugin.getActionCommand());
+		JMenuItem menuItem = null;
 		if(plugin instanceof IPackageSearcher) {
+			menuItem = new SearcherCheckBoxMenuItem((IPackageSearcher)plugin);
 			URL iconUrl = plugin.getIconURL();
 			if(iconUrl != null) {
 				menuItem.setIcon(new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(iconUrl),16,16)));
 			}
-		}
-		menuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				boolean isSaveDefault = false;
-				for(Component c: ((JMenuItem)e.getSource()).getParent().getComponents()) {
-					if(c instanceof NoCloseCheckBoxMenuItem) {
-						if(CMD_SELECT_DEFAULT_MENU.equals(((JCheckBoxMenuItem)c).getActionCommand())) {
-							isSaveDefault = ((JCheckBoxMenuItem)c).isSelected();
+			menuItem.addActionListener(listener);
+		} else {
+			menuItem = new JMenuItem();
+			menuItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					boolean isSaveDefault = false;
+					for(Component c: ((JMenuItem)e.getSource()).getParent().getComponents()) {
+						if(c instanceof NoCloseCheckBoxMenuItem) {
+							if(CMD_SELECT_DEFAULT_MENU.equals(((JCheckBoxMenuItem)c).getActionCommand())) {
+								isSaveDefault = ((JCheckBoxMenuItem)c).isSelected();
+							}
 						}
 					}
+					if(isSaveDefault && defaultPorp != null) {
+						String value = e.getActionCommand().replaceAll(".*:", "");
+						switch(defaultPorp) {
+						case PROP_DEFAULT_DECORDER:
+							Resource.PROP_DEFAULT_DECORDER.setData(value);
+							break;
+						case PROP_DEFAULT_SEARCHER:
+							Resource.PROP_DEFAULT_SEARCHER.setData(value);
+							break;
+						case PROP_DEFAULT_EXPLORER:
+							Resource.PROP_DEFAULT_EXPLORER.setData(value);
+							break;
+						case PROP_DEFAULT_LAUNCH_MODE:
+							Resource.PROP_DEFAULT_LAUNCH_MODE.setData(value);
+							break;
+						default:
+							break;
+						};
+					}
+					listener.actionPerformed(e);
 				}
-				if(isSaveDefault && defaultPorp != null) {
-					String value = e.getActionCommand().replaceAll(".*:", "");
-					switch(defaultPorp) {
-					case PROP_DEFAULT_DECORDER:
-						Resource.PROP_DEFAULT_DECORDER.setData(value);
-						break;
-					case PROP_DEFAULT_SEARCHER:
-						Resource.PROP_DEFAULT_SEARCHER.setData(value);
-						break;
-					case PROP_DEFAULT_EXPLORER:
-						Resource.PROP_DEFAULT_EXPLORER.setData(value);
-						break;
-					case PROP_DEFAULT_LAUNCH_MODE:
-						Resource.PROP_DEFAULT_LAUNCH_MODE.setData(value);
-						break;
-					default:
-						break;
-					};
+			});
+		}
+		menuItem.setText(plugin.getLabel());
+		//menuItem.setIcon(icon);
+		menuItem.setToolTipText(plugin.getDescription());
+		menuItem.setActionCommand("PLUGIN:" + plugin.getActionCommand());
+
+		return menuItem;
+	}
+	
+	private JMenu makeSearcherSelectMenu(final String label, final IPackageSearcher[] searchers, final ActionListener listener) {
+		final JMenu menu = new JMenu(label);
+
+		final JCheckBoxMenuItem selVisible = new NoCloseCheckBoxMenuItem();
+		//selVisible.setActionCommand(CMD_SELECT_DEFAULT_MENU);
+		selVisible.setText(Resource.STR_MENU_VISIBLE_TO_BASIC_EACH.getString());
+		selVisible.setEnabled((boolean)Resource.PROP_VISIBLE_TO_BASIC.getData());
+		selVisible.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				for(Component c: menu.getMenuComponents()) {
+					if(c.equals(selVisible)) continue;
+					if(c instanceof SearcherCheckBoxMenuItem) {
+						SearcherCheckBoxMenuItem ckbox = (SearcherCheckBoxMenuItem)c;
+						ckbox.setSelecteMode(selVisible.isSelected());
+					}
 				}
-				listener.actionPerformed(e);
 			}
 		});
-		return menuItem;
+
+		for(IPackageSearcher searcher: searchers) {
+			menu.add(makePlugInMenuItem(searcher, listener, null));
+		}
+
+		menu.addMenuListener(new MenuListener() {
+			@Override
+			public void menuSelected(MenuEvent arg0) {
+				for(Component c: menu.getMenuComponents()) {
+					if(c instanceof NoCloseCheckBoxMenuItem) {
+						((JCheckBoxMenuItem)c).setSelected(false);
+						((JCheckBoxMenuItem)c).setEnabled((boolean)Resource.PROP_VISIBLE_TO_BASIC.getData());
+					} else if(c instanceof SearcherCheckBoxMenuItem) {
+						((SearcherCheckBoxMenuItem)c).setSelecteMode(false);
+					}
+				}
+			}
+			
+			@Override
+			public void menuDeselected(MenuEvent arg0) {
+				Log.e("menuDeselected");
+			}
+			
+			@Override
+			public void menuCanceled(MenuEvent arg0) { }
+		});
+		
+		
+		menu.addSeparator();
+		menu.add(selVisible);
+		
+		return menu;
 	}
 
 	public void setReplacementLayout() {

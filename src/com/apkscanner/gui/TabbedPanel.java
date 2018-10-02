@@ -13,14 +13,14 @@ import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.tabpanels.BasicInfo;
 import com.apkscanner.gui.tabpanels.Components;
 import com.apkscanner.gui.tabpanels.IProgressListener;
-import com.apkscanner.gui.tabpanels.ITabObject;
-import com.apkscanner.gui.tabpanels.ITabObject.ITabbedRequest;
 import com.apkscanner.gui.tabpanels.Libraries;
 import com.apkscanner.gui.tabpanels.Resources;
 import com.apkscanner.gui.tabpanels.Signatures;
 import com.apkscanner.gui.tabpanels.Widgets;
 import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.plugin.IExtraComponent;
+import com.apkscanner.plugin.ITabbedComponent;
+import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.plugin.PlugInManager;
 
 public class TabbedPanel extends JTabbedPane
@@ -28,8 +28,8 @@ public class TabbedPanel extends JTabbedPane
 	private static final long serialVersionUID = -5500517956616692675L;
 
 	private ArrayList<ITabbedRequest> tabbedRequestHandler = new ArrayList<>();
-	private HashMap<ITabObject, ITabbedRequest> invisibleTabbeds = new HashMap<>();
-	private HashMap<Component, ITabObject> componentMap = new HashMap<>();
+	private HashMap<ITabbedComponent, ITabbedRequest> invisibleTabbeds = new HashMap<>();
+	private HashMap<Component, ITabbedComponent> componentMap = new HashMap<>();
 
 	public TabbedPanel() {
 		this(null);
@@ -56,7 +56,7 @@ public class TabbedPanel extends JTabbedPane
 		}
 	}
 
-	public void addTab(final ITabObject tabbed) {
+	public void addTab(final ITabbedComponent tabbed) {
 		if(tabbed == null) return;
 		if(!tabbed.getComponent().isVisible()) {
 			addInvisibleTab(tabbed);
@@ -85,7 +85,7 @@ public class TabbedPanel extends JTabbedPane
 
 				@Override
 				public boolean onRequestEnabled(boolean enable) {
-					ITabObject tabbed = componentMap.get(getComponentAt(tabIndex));
+					ITabbedComponent tabbed = componentMap.get(getComponentAt(tabIndex));
 					setEnabledAt(tabIndex, enable);
 					setTitleAt(tabIndex, tabbed.getTitle());
 					setToolTipTextAt(tabIndex, tabbed.getToolTip());
@@ -95,7 +95,7 @@ public class TabbedPanel extends JTabbedPane
 		}
 	}
 
-	public void addInvisibleTab(final ITabObject tabbed) {
+	public void addInvisibleTab(final ITabbedComponent tabbed) {
 		if(tabbed == null) return;
 		if(tabbed.getComponent().isVisible()) {
 			addTab(tabbed);
@@ -130,12 +130,12 @@ public class TabbedPanel extends JTabbedPane
 	public void reloadResource()
 	{
 		for(int i = 0; i < getTabCount(); i++) {
-			ITabObject tabbed = componentMap.get(getComponentAt(i));
+			ITabbedComponent tabbed = componentMap.get(getComponentAt(i));
 			tabbed.reloadResource();
 			setTitleAt(i, tabbed.getTitle());
 			setToolTipTextAt(i, tabbed.getToolTip());
 		}
-		for(ITabObject tabbed: invisibleTabbeds.keySet()) {
+		for(ITabbedComponent tabbed: invisibleTabbeds.keySet()) {
 			tabbed.reloadResource();
 		}
 	}
@@ -143,10 +143,10 @@ public class TabbedPanel extends JTabbedPane
 	public void setData(ApkInfo apkInfo, Status status)
 	{
 		for(int i = 0; i < getTabCount(); i++) {
-			ITabObject tabbed = componentMap.get(getComponentAt(i));
+			ITabbedComponent tabbed = componentMap.get(getComponentAt(i));
 			tabbed.setData(apkInfo, status, tabbedRequestHandler.get(i));
 		}
-		for(Entry<ITabObject, ITabbedRequest> entry: invisibleTabbeds.entrySet()) {
+		for(Entry<ITabbedComponent, ITabbedRequest> entry: invisibleTabbeds.entrySet()) {
 			entry.getKey().setData(apkInfo, status, entry.getValue());
 		}
 	}
@@ -154,7 +154,7 @@ public class TabbedPanel extends JTabbedPane
 	public void onProgress(String message)
 	{
 		for(int i = 0; i < getTabCount(); i++) {
-			ITabObject tabbed = componentMap.get(getComponentAt(i));
+			ITabbedComponent tabbed = componentMap.get(getComponentAt(i));
 			if(tabbed instanceof IProgressListener) {
 				((IProgressListener)tabbed).onProgress(message);		
 			}
@@ -164,7 +164,7 @@ public class TabbedPanel extends JTabbedPane
 	public void setLodingLabel()
 	{
 		for(int i = 0; i < getTabCount(); i++) {
-			ITabObject tabbed = componentMap.get(getComponentAt(i));
+			ITabbedComponent tabbed = componentMap.get(getComponentAt(i));
 			if(tabbed instanceof IProgressListener) {
 				((IProgressListener)tabbed).onProgress(null);
 				setSelectedIndex(i);

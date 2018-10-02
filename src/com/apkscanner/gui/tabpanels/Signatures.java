@@ -21,6 +21,7 @@ import javax.swing.event.ListSelectionListener;
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
+import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
@@ -37,8 +38,8 @@ public class Signatures extends AbstractTabbedPanel implements ComponentListener
 	private String apkFilePath;
 
 	public Signatures() {
-		setName(Resource.STR_TAB_CERT.getString());
-		setToolTipText(Resource.STR_TAB_CERT.getString());
+		setName(Resource.STR_TAB_SIGNATURES.getString());
+		setToolTipText(Resource.STR_TAB_SIGNATURES.getString());
 		setEnabled(false);
 	}
 
@@ -171,8 +172,8 @@ public class Signatures extends AbstractTabbedPanel implements ComponentListener
 	@Override
 	public void reloadResource()
 	{
-		setName(Resource.STR_TAB_CERT.getString());
-		setToolTipText(Resource.STR_TAB_CERT.getString());
+		setName(Resource.STR_TAB_SIGNATURES.getString());
+		setToolTipText(Resource.STR_TAB_SIGNATURES.getString());
 
 		if(jlist == null) return;
 

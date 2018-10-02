@@ -47,6 +47,7 @@ import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.plugin.IPackageSearcher;
 import com.apkscanner.plugin.IPlugIn;
+import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.FileUtil;
@@ -436,21 +437,24 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 
 		String packageSearchers = "";
 		String appLabelSearchers = "";
-		IPackageSearcher[] searchers = PlugInManager.getPackageSearchers();
-		if(searchers.length > 0) {
-			String defaultSearchIcon = Resource.IMG_TOOLBAR_SEARCH.getPath();
-			for(IPackageSearcher searcher: searchers) {
-				URL icon = searcher.getIconURL();
-				String iconPath = icon != null ? icon.toString() : defaultSearchIcon;
-				String tag = makeHyperLink("@event", " <image src=\"" + iconPath + "\" width=16 height=16 /> ", null, "PLUGIN:"+searcher.getActionCommand(), "color:white;");
-				switch(searcher.getSupportType() ) {
-				case IPackageSearcher.SEARCHER_TYPE_PACKAGE_NAME:
-					packageSearchers += tag;
-					break;
-				case IPackageSearcher.SEARCHER_TYPE_APP_NAME:
-					appLabelSearchers += tag;
-					break;
-				};
+		if((boolean)Resource.PROP_VISIBLE_TO_BASIC.getData()) {
+			IPackageSearcher[] searchers = PlugInManager.getPackageSearchers();
+			if(searchers.length > 0) {
+				String defaultSearchIcon = Resource.IMG_TOOLBAR_SEARCH.getPath();
+				for(IPackageSearcher searcher: searchers) {
+					if(!searcher.isVisibleToBasic()) continue;
+					URL icon = searcher.getIconURL();
+					String iconPath = icon != null ? icon.toString() : defaultSearchIcon;
+					String tag = makeHyperLink("@event", " <image src=\"" + iconPath + "\" width=16 height=16 /> ", null, "PLUGIN:"+searcher.getActionCommand(), "color:white;");
+					switch(searcher.getSupportType() ) {
+					case IPackageSearcher.SEARCHER_TYPE_PACKAGE_NAME:
+						packageSearchers += tag;
+						break;
+					case IPackageSearcher.SEARCHER_TYPE_APP_NAME:
+						appLabelSearchers += tag;
+						break;
+					};
+				}
 			}
 		}
 
@@ -473,10 +477,10 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		if(labels.length > 1) {
 			strTabInfo.append("        <font style=\"font-size:10px;\">");
 			strTabInfo.append("          " + makeHyperLink("@event", "["+labels.length+"]", mutiLabels, "other-lang", null));
-			strTabInfo.append("</font> " + appLabelSearchers + "<br/>");
+			strTabInfo.append("</font>" + appLabelSearchers + "<br/>");
 		}
 		strTabInfo.append("        <font style=\"font-size:15px; color:#4472C4\">");
-		strTabInfo.append("          [" + packageName +"] " + packageSearchers);
+		strTabInfo.append("          [" + packageName +"]" + packageSearchers);
 		strTabInfo.append("</font><br/>");
 		strTabInfo.append("        <font style=\"font-size:15px; color:#ED7E31\">");
 		strTabInfo.append("          " + makeHyperLink("@event", "Ver. " + versionName +" / " + (!versionCode.isEmpty() ? versionCode : "0"), "VersionName : " + versionName + "\n" + "VersionCode : " + (!versionCode.isEmpty() ? versionCode : "Unspecified"), "app-version", null));
@@ -541,7 +545,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		if(apkInfo == null) {
 			removeData();
 			showAbout();
-			sendRequest(request, REQUEST_SELECTED);
+			sendRequest(request, ITabbedRequest.REQUEST_SELECTED);
 			return;
 		}
 
@@ -734,7 +738,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 
 		setData();
 
-		sendRequest(request, REQUEST_SELECTED);
+		sendRequest(request, ITabbedRequest.REQUEST_SELECTED);
 	}
 
 	private String covertWebp2Png(final String imagePath, final String tempPath) {

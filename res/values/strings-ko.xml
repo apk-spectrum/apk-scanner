@@ -16,6 +16,7 @@
 	<string name="btn_install_downgrad">다운그레이드</string>
 	<string name="btn_install_update">업데이트</string>
 	<string name="btn_launch">실행</string>
+	<string name="btn_launch_select_launcher">선택실행</string>
 	<string name="btn_sign">서명</string>
 	<string name="btn_push">교체</string>
 	<string name="btn_setting">설정</string>
@@ -103,13 +104,15 @@
 	<string name="menu_launch_lanucher">런처 액티비티 실행</string>
 	<string name="menu_launch_select">액티비티 선택 실행</string>
 	<string name="menu_select_default">기본값으로 설정</string>
+	<string name="menu_visible_to_basic">기본정보 탭에 검색 기능 표시</string>
+	<string name="menu_visible_to_basic_each">개별 검색 기능 표시 선택</string>
 
 	<string name="tab_basic_info">APK 정보</string>
-	<string name="tab_widget">위젯</string>
-	<string name="tab_lib">라이브러리</string>
-	<string name="tab_image">리소스</string>
-	<string name="tab_activity">컴포넌트</string>
-	<string name="tab_cert">서명</string>
+	<string name="tab_widgets">위젯</string>
+	<string name="tab_libraries">라이브러리</string>
+	<string name="tab_resources">리소스</string>
+	<string name="tab_components">컴포넌트</string>
+	<string name="tab_signatures">서명</string>
 	<string name="tab_package_info">패키지 정보</string>
 	<string name="tab_dumpsys">덤프</string>
 	<string name="tab_sys_package_info">시스템 패키지 정보</string>
@@ -224,6 +227,7 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 
 	<string name="settings_title">환경설정</string>
 	<string name="settings_editor">편집기</string>
+	<string name="settings_toolbar">도구모음</string>
 	<string name="settings_res">프레임워크 리소스</string>
 	<string name="settings_check_installed">설치시 동일 패키지 팝업 유무</string>
 	<string name="settings_language">언어</string>
@@ -249,6 +253,8 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="settings_launcher_confirm">항상 실행 할 액티비티 확인후 실행</string>
 	<string name="settings_try_unlock">앱 실행 후 락스크린을 해제 합니다. 필요한 경우 사용자에게 인증을 요청합니다.</string>
 	<string name="settings_launch_installed">앱 설치 후 자동 실행</string>
+	<string name="settings_ext_toolbar_with_shift">Shift 키를 눌러 확장된 툴바 기능 사용 </string>
+	<string name="settings_ext_toolbar_without_shift">항상 확장된 툴바 기능 사용</string>
 
 	<string name="label_error">오류</string>
 	<string name="label_warning">경고</string>

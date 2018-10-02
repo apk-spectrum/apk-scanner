@@ -179,7 +179,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 			tabbedPane.addTab(Resource.STR_TAB_SYS_PACAKGE_INFO.getString(), null, sysPackInfoPanel, null);
 		}
 		tabbedPane.addTab(Resource.STR_TAB_DUMPSYS.getString(), null, new JScrollPane(dumpsysTextArea), null);
-		tabbedPane.addTab(Resource.STR_TAB_CERT.getString(), null, new JScrollPane(signatureTextArea), null);
+		tabbedPane.addTab(Resource.STR_TAB_SIGNATURES.getString(), null, new JScrollPane(signatureTextArea), null);
 	}
 
 	public void setPackageInfo(PackageInfo info) {

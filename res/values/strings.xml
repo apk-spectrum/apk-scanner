@@ -16,6 +16,7 @@
 	<string name="btn_install_downgrad">Downgrade</string>
 	<string name="btn_install_update">Update</string>
 	<string name="btn_launch">Launch</string>
+	<string name="btn_launch_select_launcher">Select Launcher</string>
 	<string name="btn_sign">Sign</string>
 	<string name="btn_push">Push</string>
 	<string name="btn_setting">Setting</string>
@@ -103,13 +104,15 @@
 	<string name="menu_launch_lanucher">Launch to launcher activity</string>
 	<string name="menu_launch_select">Select to main activity</string>
 	<string name="menu_select_default">Select default action</string>
+	<string name="menu_visible_to_basic">Display searchers to Basic info</string>
+	<string name="menu_visible_to_basic_each">Select each searcher</string>
 
 	<string name="tab_basic_info">APK Info</string>
-	<string name="tab_widget">Widgets</string>
-	<string name="tab_lib">Libraries</string>
-	<string name="tab_image">Resources</string>
-	<string name="tab_activity">Components</string>
-	<string name="tab_cert">Signatures</string>
+	<string name="tab_widgets">Widgets</string>
+	<string name="tab_libraries">Libraries</string>
+	<string name="tab_resources">Resources</string>
+	<string name="tab_components">Components</string>
+	<string name="tab_signatures">Signatures</string>
 	<string name="tab_package_info">Package Info</string>
 	<string name="tab_dumpsys">Dumpsys</string>
 	<string name="tab_sys_package_info">System Package Info</string>
@@ -224,6 +227,7 @@ they're removed before the application is published</string>
 
 	<string name="settings_title">Settings</string>
 	<string name="settings_editor">Editor</string>
+	<string name="settings_toolbar">Toolbar</string>
 	<string name="settings_res">Framework-res</string>
 	<string name="settings_check_installed">Check installed</string>
 	<string name="settings_language">Language</string>
@@ -249,6 +253,8 @@ they're removed before the application is published</string>
 	<string name="settings_launcher_confirm">Always confirm target</string>
 	<string name="settings_try_unlock">Dismiss the keyguard after launch, prompting the user for auth if necessary.</string>
 	<string name="settings_launch_installed">Launch after install completed</string>
+	<string name="settings_ext_toolbar_with_shift">Extend toolbar with shift key</string>
+	<string name="settings_ext_toolbar_without_shift">Always extend a toolbar</string>
 
 	<string name="label_error">Error</string>
 	<string name="label_warning">Warning</string>
