@@ -2,7 +2,9 @@ package com.apkscanner.plugin;
 
 import java.io.IOException;
 import java.net.ConnectException;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.security.NoSuchAlgorithmException;
 
 import javax.net.ssl.SSLHandshakeException;
 
@@ -29,6 +31,10 @@ public class NetworkException extends IOException {
 
 	public boolean isSslCertException() { // maybe ssl cert issue
 		Throwable t = this.getCause();
-		return (t instanceof SSLHandshakeException);
+		boolean result = t instanceof SSLHandshakeException;
+		if(!result && t instanceof SocketException) {
+			result = t.getCause() instanceof NoSuchAlgorithmException;
+		}
+		return result;
 	}
 }
