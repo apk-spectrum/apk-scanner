@@ -35,6 +35,11 @@ public abstract class AbstractUpdateChecker extends AbstractPlugIn implements IU
 	}
 
 	@Override
+	public String getTargetPackageName() {
+		return component.targetPackageName;
+	}
+
+	@Override
 	public long getPeriod() {
 		return period;
 	}

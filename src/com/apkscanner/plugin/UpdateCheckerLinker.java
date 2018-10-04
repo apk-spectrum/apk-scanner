@@ -128,14 +128,20 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 			return false;
 		}
 		String version = (String)latestVersionInfo.get("version");
-		if("com.apkscanner.plugin.ApkScannerUpdater".equals(getName())) {
+		String targetPackageName = getTargetPackageName();
+		if("com.apkscanner".equals(targetPackageName)) {
+			Log.e("1");
 			ApkScannerVersion newVer = ApkScannerVersion.parseFrom(version);
 			ApkScannerVersion oldVer = ApkScannerVersion.parseFrom(Resource.STR_APP_VERSION.getString());
 			return newVer.compareTo(oldVer) > 0;
-		} else if ("com.apkscanner.plugin.SdkPermissionUpdater".equals(getName())) {
+		} else if ("com.android.sdk".equals(targetPackageName)) {
+			Log.e("2");
 			return false;
 		} else {
-			int curVer = pluginPackage.getVersionCode();
+			Log.e("3");
+			PlugInPackage targetPackage = PlugInManager.getPlugInPackage(targetPackageName);
+			if(targetPackage == null) return false;
+			int curVer = targetPackage.getVersionCode();
 			int newVer = Integer.parseInt(version);
 			return newVer > curVer;
 		}

@@ -12,4 +12,5 @@ public interface IUpdateChecker extends IPlugIn {
 	public Map<?,?> getLatestVersionInfo();
 	public void setLatestVersionInfo(Map<?, ?> latestVersionInfo);
 	public boolean wasPeriodPassed();
+	public String getTargetPackageName();
 }
