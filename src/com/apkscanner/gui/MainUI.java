@@ -60,6 +60,7 @@ import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.IUpdateChecker;
 import com.apkscanner.plugin.NetworkException;
 import com.apkscanner.plugin.PlugInManager;
+import com.apkscanner.plugin.gui.NetworkErrorDialog;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
@@ -171,27 +172,19 @@ public class MainUI extends JFrame
 	}
 
 	private void loadPlugIn() {
-        new SwingWorker<IUpdateChecker[], Void>() {
+        new SwingWorker<Void, Void>() {
 			@Override
-			protected IUpdateChecker[] doInBackground() throws Exception {
+			protected Void doInBackground() throws Exception {
 				PlugInManager.loadPlugIn();
 				PlugInManager.setLang(Resource.getLanguage());
-				publish();
-				IUpdateChecker[] updater = PlugInManager.getUpdateChecker();
-				ArrayList<IUpdateChecker> newUpdates = new ArrayList<>();
-				for(IUpdateChecker uc: updater) {
-					if(uc.checkNewVersion()) {
-						newUpdates.add(uc);
-					};
-				}
-				return newUpdates.toArray(new IUpdateChecker[newUpdates.size()]);
+				checkUpdated(PlugInManager.getUpdateChecker());
+				return null;
 			}
 
 			@Override
-			protected void process(List<Void> arg0) {
+			protected void done() {
 				toolBar.onLoadPlugin(new UIEventHandler());
 				tabbedPanel.onLoadPlugin();
-
 				int state = apkScanner.getStatus();
 				if( PlugInManager.getPackageSearchers().length > 0
 						&& Status.BASIC_INFO_COMPLETED.isCompleted(state)
@@ -199,26 +192,53 @@ public class MainUI extends JFrame
 					tabbedPanel.setData(apkScanner.getApkInfo(), Status.BASIC_INFO_COMPLETED);
 				}
 			}
+		}.execute();
+	}
+
+	private void checkUpdated(final IUpdateChecker[] updater) {
+        new SwingWorker<IUpdateChecker[], IUpdateChecker>() {
+			@Override
+			protected IUpdateChecker[] doInBackground() throws Exception {
+				ArrayList<IUpdateChecker> newUpdates = new ArrayList<>();
+				for(IUpdateChecker uc: updater) {
+					if(!uc.wasPeriodPassed()) continue;
+					try {
+						if(uc.checkNewVersion()) {
+							newUpdates.add(uc);
+						};
+					} catch (NetworkException e) {
+						publish(uc);
+						if(e.isNetworkNotFoundException()) {
+							Log.d("isNetworkNotFoundException");
+							break;
+						}
+					}
+				}
+				return newUpdates.toArray(new IUpdateChecker[newUpdates.size()]);
+			}
+
+			@Override
+			protected void process(List<IUpdateChecker> updater) {
+				ArrayList<IUpdateChecker> retryUpdates = new ArrayList<>();
+				for(IUpdateChecker uc: updater) {
+					int ret = NetworkErrorDialog.show(MainUI.this, uc);
+					switch(ret) {
+					case NetworkErrorDialog.RESULT_RETRY:
+						retryUpdates.add(uc);
+					}
+				}
+				if(!retryUpdates.isEmpty()) {
+					checkUpdated(retryUpdates.toArray(new IUpdateChecker[retryUpdates.size()]));
+				}
+			}
 
 			@Override
 			protected void done() {
-				IUpdateChecker[] updaters =  null;
+				IUpdateChecker[] updaters = null;
 				try {
 					updaters = get();
 				} catch (InterruptedException | ExecutionException e) {
-					if(e.getCause() instanceof NetworkException) {
-						NetworkException ne = (NetworkException)e.getCause();
-						//Log.d("NetworkException " + e.getMessage());
-						if(ne.isProxyException()) {
-							Log.d("isProxyException");	
-						} else if(ne.isSslCertException()) {
-							Log.d("isSslCertException");
-						} else {
-							Log.d("unkown");
-						}
-					} else {
-						e.printStackTrace();
-					}
+					e.printStackTrace();
 				}
 				if(updaters != null && updaters.length > 0) {
 
