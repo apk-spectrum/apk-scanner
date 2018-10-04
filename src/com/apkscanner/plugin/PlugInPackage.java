@@ -413,25 +413,43 @@ public class PlugInPackage
 		}
 		return uri;
 	}
-	
+
 	public String getConfiguration(String key) {
+		return getConfiguration(key, false);
+	}
+
+	public String getConfiguration(String key, boolean allowGlobalConfig) {
 		if(key == null) return null;
 		String value = configurations.get(key);
-		if(value == null) {
-			value = PlugInManager.getGlobalConfiguration(key);
+		if(value == null && allowGlobalConfig) {
+			value = PlugInConfig.getGlobalConfiguration(key);
 		}
 		return value;
 	}
 
 	public String getConfiguration(String key, String defaultValue) {
-		String value = getConfiguration(key);
+		return getConfiguration(key, defaultValue, false);
+	}
+
+	public String getConfiguration(String key, String defaultValue, boolean allowGlobalConfig) {
+		String value = getConfiguration(key, allowGlobalConfig);
 		return value != null ? value : defaultValue;
 	}
 
 	public void setConfiguration(String key, String value) {
 		if(key == null) return;
-		if(value == null) value = "";
-		configurations.put(key, value);
+		if(value != null) {
+			configurations.put(key, value);
+		} else if(configurations.containsKey(key)) {
+			configurations.remove(key);
+		}
+	}
+
+	public void clearConfiguration(String key) {
+		if(key == null) return;
+		if(configurations.containsKey(key)) {
+			configurations.remove(key);
+		}
 	}
 
 	public Map<String, Object> getChangedProperties() {

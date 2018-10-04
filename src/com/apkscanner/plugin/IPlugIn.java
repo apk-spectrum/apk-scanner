@@ -67,6 +67,8 @@ public interface IPlugIn {
 
 	public String getPackageName();
 
+	public PlugInPackage getPlugInPackage();
+
 	public PlugInGroup getParantGroup();
 
 	public String getGroupName();
@@ -78,4 +80,6 @@ public interface IPlugIn {
 	public Map<String, Object> getChangedProperties();
 
 	public void restoreProperties(Map<?, ?> tmp);
+	
+	public PlugInConfig getPlugInConfig();
 }

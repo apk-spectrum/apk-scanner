@@ -6,8 +6,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Date;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -20,36 +23,43 @@ import com.apkscanner.util.Log;
 
 public class UpdateCheckerLinker extends AbstractUpdateChecker
 {
-	private String version = null;
-	private String targetUrl = null;
+	private boolean isIgnoreSSLCert;
 
 	public UpdateCheckerLinker(PlugInPackage pluginPackage, Component component) {
 		super(pluginPackage, component);
 	}
 
-	@Override
-	public String getNewVersion() throws NetworkException {
-		if(version != null || component.url == null) return version;
+	public boolean getNewVersion() throws NetworkException {
+		//if(version != null || component.url == null) return version;
 
-		System.setProperty("proxySet","true");
-		System.setProperty("http.proxyHost", pluginPackage.getConfiguration("http.proxyHost", ""));
-		System.setProperty("http.proxyPort", pluginPackage.getConfiguration("http.proxyPort", ""));
-		System.setProperty("https.proxyHost", pluginPackage.getConfiguration("https.proxyHost", ""));
-		System.setProperty("https.proxyPort", pluginPackage.getConfiguration("https.proxyPort", ""));
+		if(!NetworkSetting.isEnabledNetworkInterface()) {
+			Log.w("No such network interface");
+			throw makeNetworkException(new NetworkNotFoundException("No such network interface"));
+		}
+
 		System.setProperty("http.protocols", "TLSv1,TLSv1.1,TLSv1.2");
 
-		String url = component.url;
+		NetworkSetting networkSetting = new NetworkSetting(pluginPackage);
 		HttpURLConnection request = null;
+		boolean ignoreSSLCert = false;
+		boolean isSetTruststore = false;
 		try {
-			URL targetURL = new URL(url);
+			URL targetURL = new URL(component.url);
+			networkSetting.setProxyServer(targetURL.toURI());
+			isSetTruststore = networkSetting.setSSLTrustStore();
+			ignoreSSLCert = NetworkSetting.isIgnoreSSLCert();
 			request = (HttpURLConnection) targetURL.openConnection();
 			request.setRequestMethod("GET");
-		} catch (Exception e) {
-			Log.e(e.getMessage());
+		} catch (MalformedURLException | URISyntaxException e) {
+			throw makeNetworkException(e);
+		} catch (IOException e) {
+			throw makeNetworkException(e);
+		} finally {
+			if(isSetTruststore) networkSetting.restoreSSLTrustStore();
 		}
-		if(request == null) return version;
 
 		request.setUseCaches(false);
+		request.setDefaultUseCaches(false);
 		request.setDoOutput(false);
 		request.setDoInput(true);
 		request.setInstanceFollowRedirects(false);
@@ -61,6 +71,10 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 		request.setRequestProperty("Referer","");
 		request.setRequestProperty("Cookie","");
 		request.setRequestProperty("Origin","");
+		request.setRequestProperty("Cache-Control", "no-cache, no-store, must-revalidate");
+		request.setRequestProperty("Pragma", "no-cache");
+		request.setRequestProperty("Expires", "0");
+
 		//request.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
 		//request.setRequestProperty("Content-length",String.valueOf(param.length()));
 
@@ -74,6 +88,7 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 		try ( InputStream is = request.getInputStream();
 			  InputStreamReader isr = new InputStreamReader(is,"UTF-8");
 			  BufferedReader br = new BufferedReader(isr) ) {
+
 			String buffer = null;
 			StringBuffer sb = new StringBuffer();
 			while ((buffer = br.readLine()) != null) {
@@ -82,30 +97,37 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 			jsonData = sb.toString();
 			Log.v(jsonData);
 		} catch (IOException e) {
-			throw new NetworkException(e);
+			throw makeNetworkException(e);
 		} finally {
 			request.disconnect();
 		}
 
 		JSONParser parser = new JSONParser();
+		JSONObject data = null;
 		try {
-			JSONObject verData = (JSONObject)parser.parse(jsonData);
-			version = (String)verData.get("version");
-			targetUrl = (String)verData.get("url");
+			data = (JSONObject)parser.parse(jsonData);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 
-		return version;
+		if(data != null && data.containsKey("version")) {
+			setLatestVersionInfo(data);
+			setLastUpdateDate(new Date().getTime());
+			isIgnoreSSLCert = ignoreSSLCert;
+		} else {
+			return false;
+		}
+
+		return true;
 	}
 
 	@Override
 	public boolean checkNewVersion() throws NetworkException {
-		String version = getNewVersion();
-		if(version == null || version.trim().isEmpty()) {
+		if(!getNewVersion()) {
 			Log.i("No such new version");
 			return false;
 		}
+		String version = (String)latestVersionInfo.get("version");
 		if("com.apkscanner.plugin.ApkScannerUpdater".equals(getName())) {
 			ApkScannerVersion newVer = ApkScannerVersion.parseFrom(version);
 			ApkScannerVersion oldVer = ApkScannerVersion.parseFrom(Resource.STR_APP_VERSION.getString());
@@ -115,22 +137,23 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 		} else {
 			int curVer = pluginPackage.getVersionCode();
 			int newVer = Integer.parseInt(version);
-			return newVer > curVer; 
+			return newVer > curVer;
 		}
 	}
 
 	@Override
 	public void launch() {
 		try {
-			if(!checkNewVersion()) {
-				Log.i("Current version is latest");
+			if(latestVersionInfo == null && !checkNewVersion()) {
+				Log.i("Current version is latest or cann't get latest version");
 				return;
 			}
 		} catch (NetworkException e) {
 			e.printStackTrace();
+			return;
 		}
 
-		String url = targetUrl;
+		String url = !isIgnoreSSLCert ? (String)latestVersionInfo.get("url") : null;
 		if(url == null) url = component.updateUrl != null ? component.updateUrl : component.url;
 
 		Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;

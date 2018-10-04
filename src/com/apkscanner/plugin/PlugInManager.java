@@ -23,7 +23,6 @@ import com.apkscanner.util.Log;
 public final class PlugInManager
 {
 	private static ArrayList<PlugInPackage> pluginPackages = new ArrayList<>();
-	private static HashMap<String, String> configurations = new HashMap<>();
 	private static ApkInfo apkinfo = null;
 	private static String lang = "";
 
@@ -152,16 +151,6 @@ public final class PlugInManager
 		return lang != null ? lang : "";
 	}
 
-	public static String getGlobalConfiguration(String key) {
-		return configurations.containsKey(key) ? configurations.get(key) : null;
-	}
-
-	public static void setGlobalConfiguration(String key, String value) {
-		if(key == null) return;
-		if(value == null) value = "";
-		configurations.put(key, value);
-	}
-
 	public static void loadPlugIn() {
 		pluginPackages.clear();
 
@@ -214,8 +203,8 @@ public final class PlugInManager
 				data.put(pack.getPackageName(), prop);
 			}
 		}
-		if(!configurations.isEmpty()) {
-			data.put("globalConfiguration", configurations);
+		if(!PlugInConfig.configurations.isEmpty()) {
+			data.put("globalConfiguration", PlugInConfig.configurations);
 		}
 		return data;
 	}
@@ -226,7 +215,7 @@ public final class PlugInManager
 		if(data.containsKey("globalConfiguration")) {
 			@SuppressWarnings("unchecked")
 			Map<String, String> map = (Map<String, String>) data.get("globalConfiguration");
-			configurations.putAll(map);
+			PlugInConfig.configurations.putAll(map);
 			data.remove("globalConfiguration");
 		}
 
@@ -266,22 +255,4 @@ public final class PlugInManager
 			e.printStackTrace();
 		}
 	}
-
-    public static void main(String[] args) throws IOException {
-    	loadPlugIn();
-
-    	IPackageSearcher[] searchers = getPackageSearchers();
-    	if(searchers != null && searchers.length > 1) {
-    		//searchers[1].launch(null, IPackageSearcher.SEARCHER_TYPE_APP_NAME, "멜론");
-    		Log.e(searchers[1].getPreferLangForAppName());
-    	}
-
-    	IUpdateChecker[] updator = getUpdateChecker();
-    	if(updator != null && updator.length > 0) {
-    		Log.e(((IUpdateChecker)updator[0]).getNewVersion());
-    		//((IUpdateChecker)updator[0]).launch();	
-    	}
-
-    	saveProperty();
-    }
 }

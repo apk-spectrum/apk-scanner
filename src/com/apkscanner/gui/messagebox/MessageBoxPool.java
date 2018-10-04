@@ -38,6 +38,13 @@ public class MessageBoxPool {
 	
 	public static final int MSG_WARN_UNSUPPORTED_JVM = 27;
 
+	public static final int MSG_WARN_ACCESS_TRUSTSTORE = 28;
+	public static final int MSG_CERTIFICATE_NO_SELECTED = 29;
+	public static final int CONFIRM_IMPORT_CERTIFICATE = 30;
+	
+	public static final int MSG_WARN_NEED_CERT_ALISAS = 31;
+	public static final int MSG_WARN_CERT_ALISAS_EXISTED = 32;
+
 	private Component parentComponent;
 	private static HashMap<Integer, MessageBoxPool> pool = new HashMap<Integer, MessageBoxPool>(); 
 
@@ -61,11 +68,11 @@ public class MessageBoxPool {
 		return mbp;
 	}
 
-	public int show(int messageId, String... extMessage) {
+	public int show(int messageId, Object... extMessage) {
 		return show(parentComponent, messageId, extMessage);
 	}
 
-	public static int show(Component parentComponent, int messageId, String... extMessage) {
+	public static int show(Component parentComponent, int messageId, Object... extData) {
 		switch(messageId) {
 		case MSG_NO_SUCH_APK_FILE:
 			MessageBoxPane.showError(parentComponent, Resource.STR_MSG_NO_SUCH_APK_FILE.getString());
@@ -77,7 +84,7 @@ public class MessageBoxPool {
 			MessageBoxPane.showError(parentComponent, Resource.STR_MSG_NO_SUCH_PACKAGE_DEVICE.getString());
 			break;
 		case MSG_DISABLED_PACKAGE:
-			MessageBoxPane.showError(parentComponent, extMessage[0] + "\n : " + Resource.STR_MSG_DISABLED_PACKAGE.getString());
+			MessageBoxPane.showError(parentComponent, (String)extData[0] + "\n : " + Resource.STR_MSG_DISABLED_PACKAGE.getString());
 			break;
 		case MSG_NO_SUCH_LAUNCHER:
 			MessageBoxPane.showError(parentComponent, Resource.STR_MSG_NO_SUCH_LAUNCHER.getString());
@@ -89,26 +96,26 @@ public class MessageBoxPool {
 			MessageBoxPane.showPlain(parentComponent, Resource.STR_MSG_SUCCESS_REMOVED.getString());
 			break;
 		case MSG_FAILURE_DEX2JAR:
-			MessageBoxPane.showTextAreaDialog(parentComponent, Resource.STR_MSG_FAILURE_DEX2JAR.getString() + "\n\nerror message", extMessage[0],
+			MessageBoxPane.showTextAreaDialog(parentComponent, Resource.STR_MSG_FAILURE_DEX2JAR.getString() + "\n\nerror message", (String)extData[0],
 					Resource.STR_LABEL_ERROR.getString(), MessageBoxPane.ERROR_MESSAGE, null, new Dimension(300, 120));
 			break;
 		case MSG_FAILURE_UNINSTALLED:
-			MessageBoxPane.showTextAreaDialog(parentComponent, Resource.STR_MSG_FAILURE_UNINSTALLED.getString() + "\nConsol output:", extMessage[0],
+			MessageBoxPane.showTextAreaDialog(parentComponent, Resource.STR_MSG_FAILURE_UNINSTALLED.getString() + "\nConsol output:", (String)extData[0],
 					Resource.STR_LABEL_ERROR.getString(), MessageBoxPane.ERROR_MESSAGE, null, new Dimension(300, 50));
 			break;
 		case MSG_FAILURE_LAUNCH_APP:
-			MessageBoxPane.showTextAreaDialog(parentComponent, Resource.STR_MSG_FAILURE_LAUNCH_APP.getString() + "\n\nConsol output", extMessage[0],
+			MessageBoxPane.showTextAreaDialog(parentComponent, Resource.STR_MSG_FAILURE_LAUNCH_APP.getString() + "\n\nConsol output", (String)extData[0],
 					Resource.STR_LABEL_ERROR.getString(), MessageBoxPane.ERROR_MESSAGE, null, new Dimension(500, 120));
 			break;
 		case MSG_FAILURE_PULLED:
-			MessageBoxPane.showTextAreaDialog(parentComponent, Resource.STR_MSG_FAILURE_PULLED.getString() + "\n\nConsol output", extMessage[0],
+			MessageBoxPane.showTextAreaDialog(parentComponent, Resource.STR_MSG_FAILURE_PULLED.getString() + "\n\nConsol output", (String)extData[0],
 					Resource.STR_LABEL_ERROR.getString(), MessageBoxPane.ERROR_MESSAGE, null, new Dimension(400, 100));
 			break;
 		case MSG_CANNOT_WRITE_FILE:
 			MessageBoxPane.showError(parentComponent, Resource.STR_MSG_CANNOT_WRITE_FILE.getString());
 			break;
 		case QUESTION_SUCCESS_PULL_APK:
-			return MessageBoxPane.showOptionDialog(parentComponent, Resource.STR_MSG_SUCCESS_PULL_APK.getString() + "\n" + extMessage[0],
+			return MessageBoxPane.showOptionDialog(parentComponent, Resource.STR_MSG_SUCCESS_PULL_APK.getString() + "\n" + (String)extData[0],
 					Resource.STR_LABEL_QUESTION.getString(), MessageBoxPane.DEFAULT_OPTION, MessageBoxPane.INFORMATION_MESSAGE, null,
 					new String[] {Resource.STR_BTN_EXPLORER.getString(), Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OK.getString()}, Resource.STR_BTN_OK.getString());
 		case QUESTION_PACK_INFO_REFRESH:
@@ -151,6 +158,19 @@ public class MessageBoxPool {
 			break;
 		case MSG_WARN_UNSUPPORTED_JVM:
 			MessageBoxPane.showWarring(parentComponent, Resource.STR_MSG_WARN_UNSUPPORTED_JVM.getString());
+			break;
+		case MSG_WARN_ACCESS_TRUSTSTORE:
+			return MessageBoxPane.showConfirmDialog(parentComponent, "Warning. Other applications and systems may be affected. continue deleting? ", Resource.STR_LABEL_QUESTION.getString(), MessageBoxPane.YES_NO_OPTION, MessageBoxPane.WARNING_MESSAGE, null);
+		case MSG_CERTIFICATE_NO_SELECTED:
+			MessageBoxPane.showWarring(parentComponent, "No selected");
+			break;
+		case CONFIRM_IMPORT_CERTIFICATE:
+			return MessageBoxPane.showConfirmDialog(parentComponent, extData[0], Resource.STR_LABEL_QUESTION.getString(), MessageBoxPane.OK_CANCEL_OPTION, MessageBoxPane.PLAIN_MESSAGE, null);
+		case MSG_WARN_NEED_CERT_ALISAS:
+			MessageBoxPane.showWarring(parentComponent, "Empty alilas name.");
+			break;
+		case MSG_WARN_CERT_ALISAS_EXISTED:
+			MessageBoxPane.showWarring(parentComponent, "Already existed alias name");
 			break;
 		}
 		return MessageBoxPane.CLOSED_OPTION;

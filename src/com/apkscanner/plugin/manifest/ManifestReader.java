@@ -112,6 +112,7 @@ public class ManifestReader
 				String like = null;
 				String supportedOS = null;
 				Boolean visibleToBasic = null;
+				String periodDay = null;
 
 				switch(type) {
 				case Component.TYPE_PACAKGE_SEARCHER_LINKER:
@@ -122,6 +123,7 @@ public class ManifestReader
 					break;
 				case Component.TYPE_UPDATE_CHECKER_LINKER:
 					updateUrl = node.getAttributes("updateUrl");
+					periodDay = node.getAttributes("periodDay");
 					break;
 				case Component.TYPE_EXTERNAL_TOOL_LINKER:
 					path = node.getAttributes("path");
@@ -131,7 +133,7 @@ public class ManifestReader
 					break;
 				}
 				components.add(new Component(type, enabled, label, icon, description, name, url, /* linkers */
-						target, preferLang, path, param, updateUrl, pluginGroup, like, supportedOS, visibleToBasic));
+						target, preferLang, path, param, updateUrl, pluginGroup, like, supportedOS, visibleToBasic, periodDay));
 			}
 		}
 		return components.toArray(new Component[components.size()]);

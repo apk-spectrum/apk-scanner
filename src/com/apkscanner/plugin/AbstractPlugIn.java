@@ -21,6 +21,16 @@ public abstract class AbstractPlugIn implements IPlugIn
 	}
 
 	@Override
+	public PlugInPackage getPlugInPackage() {
+		return pluginPackage;
+	}
+
+	@Override
+	public PlugInConfig getPlugInConfig() {
+		return new PlugInConfig(pluginPackage);
+	}
+
+	@Override
 	public String getPackageName() {
 		return pluginPackage.getPackageName();
 	}
