@@ -33,7 +33,7 @@ public class PlugInConfig
 	};
 
 	// Ignoring certificate errors opens the connection to potential MITM attacks.
-	public static final String CONFIG_IGNORE_SSL_CERT = "ignoreSSLCert";
+	//public static final String CONFIG_IGNORE_SSL_CERT = "ignoreSSLCert";
 
 	public static final String CONFIG_SSL_TRUSTSTORE = "javax.net.ssl.trustStore";
 	public static final String CONFIG_SSL_TRUSTSTORE_PWD = "javax.net.ssl.trustStorePassword";

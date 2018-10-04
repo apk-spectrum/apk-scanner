@@ -1,6 +1,8 @@
 package com.apkscanner.plugin;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.Authenticator;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -12,6 +14,11 @@ import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.SocketException;
 import java.net.URI;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -19,8 +26,8 @@ import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import com.apkscanner.resource.Resource;
@@ -39,13 +46,14 @@ public class NetworkSetting
 
 	public static final String APK_SCANNER_SSL_TRUSTSTORE = "%APK_SCANNER_SSL_TRUSTSTORE%";
 	public static final String JVM_SSL_TRUSTSTORE = "%JVM_SSL_TRUSTSTORE%";
-	
-	private static SSLSocketFactory oldSSLSocketFactory;
-	private static Integer ignoredCount = 0;
+
+	// Ignoring certificate errors opens the connection to potential MITM attacks.
+	public static final String IGNORE_TRUSTSTORE = "%IGNORE_TRUSTSTORE%";
+
+	private static boolean isIgnoreTrustStore = false;
 	private static String trustStore;
 
 	private PlugInPackage pluginPackage;
-	private boolean isIgnoreSSL;
 	private boolean isSetTruststore;
 
 	static {
@@ -183,67 +191,33 @@ public class NetworkSetting
 		return false;
 	}
 
-	public boolean setSSLTrustStore() {
+	public boolean setSSLTrustStore() throws NetworkException {
 		PlugInConfig config = new PlugInConfig(pluginPackage, true);
-		boolean ignoreSSL = "true".equals(config.getConfiguration(PlugInConfig.CONFIG_IGNORE_SSL_CERT, "false"));
-		if(ignoreSSL) {
-			isIgnoreSSL = setIgnoreSSLCert(true);
-			return isIgnoreSSL;
-		} else {
-			if(isIgnoreSSLCert()) {
-				Log.w("Fail to set truststore because was set ignore ssl cert.");
-				return false;
-			}
-			if(isSetTrustStore()) {
-				Log.w("Fail to set truststore because was set others.");
-				return false;
-			}
 
-			trustStore = config.getConfiguration(PlugInConfig.CONFIG_SSL_TRUSTSTORE, Resource.SSL_TRUSTSTORE_PATH.getPath());
-			Log.v("trustStore: " + trustStore);
-			if(APK_SCANNER_SSL_TRUSTSTORE.equals(trustStore)) {
-				trustStore = Resource.SSL_TRUSTSTORE_PATH.getPath();
-			} else if(JVM_SSL_TRUSTSTORE.equals(trustStore)) {
-				trustStore = "";
-			}
-			if(!trustStore.isEmpty() && new File(trustStore).canRead()) {
-				System.setProperty("javax.net.ssl.trustStore", trustStore);
-				System.setProperty("javax.net.ssl.trustStorePassword", config.getConfiguration(PlugInConfig.CONFIG_SSL_TRUSTSTORE_PWD, DEFAULT_TRUSTSTORE_PASSWORD));
-			} else {
-				Log.v("use truststore of jre");
-				System.clearProperty("javax.net.ssl.trustStore");
-				System.clearProperty("javax.net.ssl.trustStorePassword");
-			}
-			isSetTruststore = true;
+		if(isIgnoreSSLCert()) {
+			Log.w("Fail to set truststore because was set ignore ssl cert.");
+			return false;
 		}
-		return true;
-	}
+		if(isSetTrustStore()) {
+			Log.w("Fail to set truststore because was set others.");
+			return false;
+		}
 
-	public void restoreSSLTrustStore() {
-		if(isIgnoreSSL) {
-			setIgnoreSSLCert(false);
-			isIgnoreSSL = false;
-		} else if(isSetTruststore) {
-			System.clearProperty("javax.net.ssl.trustStore");
-			System.clearProperty("javax.net.ssl.trustStorePassword");
+		trustStore = config.getConfiguration(PlugInConfig.CONFIG_SSL_TRUSTSTORE, APK_SCANNER_SSL_TRUSTSTORE);
+		Log.v("trustStore: " + trustStore);
+		if(APK_SCANNER_SSL_TRUSTSTORE.equals(trustStore)) {
+			trustStore = Resource.SSL_TRUSTSTORE_PATH.getPath();
+		} else if(JVM_SSL_TRUSTSTORE.equals(trustStore)) {
+			trustStore = "";
+		} else if(IGNORE_TRUSTSTORE.equals(trustStore)) {
 			trustStore = null;
 		}
-	}
+		Log.v("trustStore convert path : " + trustStore);
 
-	public static boolean isIgnoreSSLCert() {
-		return oldSSLSocketFactory != null;
-	}
-
-	public static boolean isSetTrustStore() {
-		return trustStore != null; // System.getProperty("javax.net.ssl.trustStore") != null
-	}
-
-	public static boolean setIgnoreSSLCert(boolean ignored) {
-		Log.w("setIgnoreSSLCert() " + ignored);
-		synchronized(ignoredCount) {
-			if(ignored && oldSSLSocketFactory == null) {
-				Log.w("Dangerous: Ignoring certificate errors opens the connection to potential MITM attacks.");
-				TrustManager[] trustAllCerts = new TrustManager[] {
+		try {
+			TrustManager[] trustManager = null;
+			if(trustStore == null) {
+				trustManager = new TrustManager[] {
 				    new X509TrustManager() {
 				        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
 				        	Log.w("getAcceptedIssuers() Dangerous: Ignoring certificate errors opens the connection to potential MITM attacks.");
@@ -258,23 +232,42 @@ public class NetworkSetting
 				        }
 				    }
 				};
-				try {
-					SSLContext sc = SSLContext.getInstance("SSL");
-				    sc.init(null, trustAllCerts, new java.security.SecureRandom());
-					oldSSLSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
-				    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-				} catch (Exception e) {
-					Log.e(e.getMessage());
-					return false;
-				}
-			} else if(!ignored && oldSSLSocketFactory != null) {
-				if(ignoredCount > 0 && --ignoredCount == 0) {
-					HttpsURLConnection.setDefaultSSLSocketFactory(oldSSLSocketFactory);
-					oldSSLSocketFactory = null;
-				}
-			} else if(ignored) ignoredCount++;
-			if(oldSSLSocketFactory == null && ignoredCount > 0) ignoredCount = 0;
-			return true;
+			} else if(!trustStore.isEmpty() && new File(trustStore).canRead()) {
+			    KeyStore ts = KeyStore.getInstance("JKS");
+			    ts.load(new FileInputStream(new File(trustStore)), config.getConfiguration(PlugInConfig.CONFIG_SSL_TRUSTSTORE_PWD, DEFAULT_TRUSTSTORE_PASSWORD).toCharArray());
+			    TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+			    tmf.init(ts);
+			    trustManager = tmf.getTrustManagers();
+			} else {
+				Log.v("use truststore of jre");
+			}
+		    SSLContext sslContext = SSLContext.getInstance("SSL");
+		    sslContext.init(null, trustManager, null);
+
+		    HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+		} catch(NoSuchAlgorithmException | KeyManagementException | KeyStoreException | CertificateException | IOException e) {
+			throw new NetworkException(e);
 		}
+
+		isSetTruststore = true;
+		isIgnoreTrustStore = (trustStore == null);
+
+		return true;
+	}
+
+	public void restoreSSLTrustStore() {
+		if(isSetTruststore) {
+			trustStore = null;
+			isSetTruststore = false;
+			isIgnoreTrustStore = false;
+		}
+	}
+
+	public static boolean isIgnoreSSLCert() {
+		return isIgnoreTrustStore;
+	}
+
+	public boolean isSetTrustStore() {
+		return isSetTruststore; // System.getProperty("javax.net.ssl.trustStore") != null
 	}
 }
