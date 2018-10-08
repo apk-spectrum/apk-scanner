@@ -2,6 +2,7 @@ package com.apkscanner.gui.util;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -132,6 +133,24 @@ public class WindowSizeMemorizer implements ComponentListener, WindowListener
 		return new Dimension(width,height);
 	}
 
+	static public int getCompoentState(Component component) {
+		return getCompoentState(component, null);
+	}
+
+	static public int getCompoentState(Component component, String id) {
+		String key = "ws_"+ component.getClass().getName() + (id != null ? "#" + id : "");
+		int state = Frame.NORMAL;
+		if(component instanceof Frame) {
+			Object data = Resource.getPropData(key+"_state");
+			if(data instanceof Long) {
+				state = (int)(long)data;
+			} else if(data instanceof Integer) {
+				state = (int)data;
+			}
+		}
+		return state;
+	}
+
 	static public void resizeCompoent(Component component) {
 		resizeCompoent(component, null, null);
 	}
@@ -149,17 +168,30 @@ public class WindowSizeMemorizer implements ComponentListener, WindowListener
 		if(size != null) {
 			component.setSize(size);
 		}
+		if(component instanceof Frame) {
+			int state = getCompoentState(component, id);
+			((Frame)component).setExtendedState(state);
+		}
 	}
 
 	private void saveComponentSize() {
 		Log.v("saveComponentSize() component:" + component.getClass().getName() + ", id:" + id + ", flag:" + flag + " / size:"+component.getSize().toString());
-
 		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData(false)) {
+			String key = "ws_"+ component.getClass().getName() + (id != null ? "#" + id : "");
+			int state = Frame.NORMAL;
+			if(component instanceof Frame) {
+				state = ((Frame)component).getExtendedState() & Frame.MAXIMIZED_BOTH;
+				Resource.setPropData(key+"_state", state);
+			}
 			int width = (int)component.getSize().getWidth();
 			int height = (int)component.getSize().getHeight();
-			String key = "ws_"+ component.getClass().getName() + (id != null ? "#" + id : "");
-			Resource.setPropData(key+"_width", width);
-			Resource.setPropData(key+"_height", height);
+
+			if((state & Frame.MAXIMIZED_HORIZ) == 0) {
+				Resource.setPropData(key+"_width", width);
+			}
+			if((state & Frame.MAXIMIZED_VERT) == 0) {
+				Resource.setPropData(key+"_height", height);
+			}
 		}
 
 		if((flag & MEMORIZE_TYPE_AUTO_UNREGISTE) != 0) {
