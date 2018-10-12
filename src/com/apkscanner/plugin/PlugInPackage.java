@@ -78,6 +78,11 @@ public class PlugInPackage
 		return manifest.packageName;
 	}
 
+	public String getLabel() {
+		String label = manifest.plugin.label;
+		return label != null ? label : getPackageName();
+	}
+
 	public int getVersionCode() {
 		return manifest.versionCode;
 	}

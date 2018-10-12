@@ -31,10 +31,11 @@ public class Component
 	public final String supportedOS;
 	public final Boolean visibleToBasic;
 	public final String periodDay;
+	public final String targetPackageName;
 
 	Component(int type, boolean enable, String label, String icon, String description, String name, String url, /* Linker[] linkers */
 			String target, String preferLang, String path, String param, String updateUrl, String pluginGroup, String like, String supportedOS,
-			Boolean visibleToBasic, String periodDay) {
+			Boolean visibleToBasic, String periodDay, String targetPackageName) {
 		this.type = type;
 		this.enabled = enable;
 		this.label = label;
@@ -54,6 +55,7 @@ public class Component
 		this.supportedOS = supportedOS;
 		this.visibleToBasic = visibleToBasic;
 		this.periodDay = periodDay;
+		this.targetPackageName = targetPackageName;
 	}
 
 	@Override
@@ -77,6 +79,7 @@ public class Component
 		result = prime * result + ((url == null) ? 0 : url.hashCode());
 		result = prime * result + ((visibleToBasic == null) ? 0 : (visibleToBasic ? 1231 : 1237));
 		result = prime * result + ((periodDay == null) ? 0 : periodDay.hashCode());
+		result = prime * result + ((targetPackageName == null) ? 0 : targetPackageName.hashCode());
 		return result;
 	}
 
@@ -167,6 +170,11 @@ public class Component
 			if (other.periodDay != null)
 				return false;
 		} else if (!periodDay.equals(other.periodDay))
+			return false;
+		if (targetPackageName == null) {
+			if (other.targetPackageName != null)
+				return false;
+		} else if (!targetPackageName.equals(other.targetPackageName))
 			return false;
 		return true;
 	}

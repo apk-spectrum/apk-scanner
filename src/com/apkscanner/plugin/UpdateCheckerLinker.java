@@ -17,8 +17,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.apkscanner.plugin.manifest.Component;
-import com.apkscanner.resource.Resource;
-import com.apkscanner.util.ApkScannerVersion;
 import com.apkscanner.util.Log;
 
 public class UpdateCheckerLinker extends AbstractUpdateChecker
@@ -30,8 +28,6 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 	}
 
 	public boolean getNewVersion() throws NetworkException {
-		//if(version != null || component.url == null) return version;
-
 		if(!NetworkSetting.isEnabledNetworkInterface()) {
 			Log.w("No such network interface");
 			throw makeNetworkException(new NetworkNotFoundException("No such network interface"));
@@ -127,24 +123,13 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 			Log.i("No such new version");
 			return false;
 		}
-		String version = (String)latestVersionInfo.get("version");
-		if("com.apkscanner.plugin.ApkScannerUpdater".equals(getName())) {
-			ApkScannerVersion newVer = ApkScannerVersion.parseFrom(version);
-			ApkScannerVersion oldVer = ApkScannerVersion.parseFrom(Resource.STR_APP_VERSION.getString());
-			return newVer.compareTo(oldVer) > 0;
-		} else if ("com.apkscanner.plugin.SdkPermissionUpdater".equals(getName())) {
-			return false;
-		} else {
-			int curVer = pluginPackage.getVersionCode();
-			int newVer = Integer.parseInt(version);
-			return newVer > curVer;
-		}
+		return hasNewVersion();
 	}
 
 	@Override
 	public void launch() {
 		try {
-			if(latestVersionInfo == null && !checkNewVersion()) {
+			if(latestVersionInfo == null && getLastNetworkException() == null && !checkNewVersion()) {
 				Log.i("Current version is latest or cann't get latest version");
 				return;
 			}
@@ -153,7 +138,10 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 			return;
 		}
 
-		String url = !isIgnoreSSLCert ? (String)latestVersionInfo.get("url") : null;
+		String url = null;
+		if(latestVersionInfo != null && !isIgnoreSSLCert) {
+			url = (String)latestVersionInfo.get("url");
+		}
 		if(url == null) url = component.updateUrl != null ? component.updateUrl : component.url;
 
 		Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
