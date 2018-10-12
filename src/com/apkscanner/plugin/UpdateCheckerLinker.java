@@ -129,7 +129,7 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 	@Override
 	public void launch() {
 		try {
-			if(latestVersionInfo == null && !checkNewVersion()) {
+			if(latestVersionInfo == null && getLastNetworkException() == null && !checkNewVersion()) {
 				Log.i("Current version is latest or cann't get latest version");
 				return;
 			}
@@ -138,7 +138,10 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 			return;
 		}
 
-		String url = !isIgnoreSSLCert ? (String)latestVersionInfo.get("url") : null;
+		String url = null;
+		if(latestVersionInfo != null && !isIgnoreSSLCert) {
+			url = (String)latestVersionInfo.get("url");
+		}
 		if(url == null) url = component.updateUrl != null ? component.updateUrl : component.url;
 
 		Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;

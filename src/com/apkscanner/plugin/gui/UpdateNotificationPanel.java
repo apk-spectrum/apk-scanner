@@ -105,9 +105,18 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 			if(target == null || target.isEmpty()) continue;
 			String label = target;
 			String curVer = "";
-			String newVer = (String)version.get("version");
-			Object rawData = version.get("description");
 
+			if("com.apkscanner".equals(target)) {
+				label = Resource.STR_APP_NAME.getString();
+				curVer = Resource.STR_APP_VERSION.getString();
+			} else {
+				PlugInPackage pack = PlugInManager.getPlugInPackage(target);
+				label = pack.getLabel();
+				curVer = pack.getVersionName();
+			}
+
+			String newVer = (version != null) ? (String)version.get("version") : curVer;
+			Object rawData = (version != null) ? version.get("description") : null;
 			String desc = null;
 			if(rawData instanceof String) {
 				desc = (String) rawData;
@@ -125,14 +134,7 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 			if(desc == null) {
 				desc = "No information";
 			}
-			if("com.apkscanner".equals(target)) {
-				label = Resource.STR_APP_NAME.getString();
-				curVer = Resource.STR_APP_VERSION.getString();
-			} else {
-				PlugInPackage pack = PlugInManager.getPlugInPackage(target);
-				label = pack.getLabel();
-				curVer = pack.getVersionName();
-			}
+
 			Object[] data = new Object[] { label, target, curVer, newVer, desc, plugin };
 			updateListModel.addRow(data);
 		}
