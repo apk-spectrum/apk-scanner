@@ -4,14 +4,27 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 
+import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.border.EmptyBorder;
 
 import com.apkscanner.gui.messagebox.MessageBoxPane;
+import com.apkscanner.gui.theme.TabbedPaneUIManager;
+import com.apkscanner.gui.util.ImagePanel;
 import com.apkscanner.gui.util.JHtmlEditorPane;
+import com.apkscanner.plugin.IUpdateChecker;
+import com.apkscanner.plugin.PlugInConfig;
+import com.apkscanner.plugin.PlugInManager;
+import com.apkscanner.plugin.gui.UpdateNotificationPanel;
 import com.apkscanner.resource.Resource;
 
 public class AboutDlg /*extends JDialog*/
 {
+	static JCheckBox showUpdatePopup;
+
 	static public void showAboutDialog(Component component)
 	{
 		StringBuilder body = new StringBuilder();
@@ -59,7 +72,50 @@ public class AboutDlg /*extends JDialog*/
 		hep.setEditable(false);
 		hep.setBackground(label.getBackground());
 		hep.setPreferredSize(new Dimension(400,300));
+		hep.setAlignmentY(0.0f);
 
-		MessageBoxPane.showMessageDialog(component, hep, Resource.STR_BTN_ABOUT.getString(), MessageBoxPane.INFORMATION_MESSAGE, Resource.IMG_APP_ICON.getImageIcon(100,100));
+		ImagePanel imagePanel = new ImagePanel(Resource.IMG_APP_ICON.getImageIcon(100,100));
+		imagePanel.setAlignmentY(0.0f);
+
+		JPanel aboutPanel = new JPanel();
+		aboutPanel.setLayout(new BoxLayout(aboutPanel, BoxLayout.X_AXIS));
+		aboutPanel.add(imagePanel);
+		aboutPanel.add(hep);
+
+		JTabbedPane tabbed = new JTabbedPane();
+		tabbed.setOpaque(true);
+		tabbed.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+		tabbed.setBorder(new EmptyBorder(0,0,0,0));
+		
+		TabbedPaneUIManager.setUI(tabbed, (String) Resource.PROP_TABBED_UI_THEME.getData());
+		
+		IUpdateChecker[] updator = PlugInManager.getUpdateChecker();
+		int possibleCnt = 0;
+		for(IUpdateChecker plugin: updator) {
+			if(plugin.hasNewVersion()) {
+				possibleCnt++;
+			}
+		}
+
+		UpdateNotificationPanel updatePanel = new UpdateNotificationPanel();
+		updatePanel.addUpdateList(updator);
+		updatePanel.add(showUpdatePopup = new JCheckBox("Show update popup at startup"));
+
+		boolean propNoLookPopup = "true".equals(PlugInConfig.getGlobalConfiguration(PlugInConfig.CONFIG_NO_LOOK_UPDATE_POPUP));
+		showUpdatePopup.setSelected(!propNoLookPopup);
+
+		tabbed.addTab("About", aboutPanel);
+		tabbed.addTab("Update("+possibleCnt+")", updatePanel);
+
+		JPanel tabbedPanel = new JPanel();
+		tabbedPanel.setLayout(new BoxLayout(tabbedPanel, BoxLayout.Y_AXIS));
+		tabbedPanel.add(tabbed);
+
+		MessageBoxPane.showMessageDialog(component, tabbedPanel, Resource.STR_BTN_ABOUT.getString(), MessageBoxPane.PLAIN_MESSAGE, null);
+
+		if(propNoLookPopup == showUpdatePopup.isSelected()) {
+			PlugInConfig.setGlobalConfiguration(PlugInConfig.CONFIG_NO_LOOK_UPDATE_POPUP, propNoLookPopup ? null : "true");
+			PlugInManager.saveProperty();
+		}
 	}
 }

@@ -59,8 +59,10 @@ import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.IUpdateChecker;
 import com.apkscanner.plugin.NetworkException;
+import com.apkscanner.plugin.PlugInConfig;
 import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.plugin.gui.NetworkErrorDialog;
+import com.apkscanner.plugin.gui.UpdateNotificationWindow;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
@@ -201,7 +203,12 @@ public class MainUI extends JFrame
 			protected IUpdateChecker[] doInBackground() throws Exception {
 				ArrayList<IUpdateChecker> newUpdates = new ArrayList<>();
 				for(IUpdateChecker uc: updater) {
-					if(!uc.wasPeriodPassed()) continue;
+					if(!uc.wasPeriodPassed()) {
+						if(uc.hasNewVersion()) {
+							newUpdates.add(uc);
+						}
+						continue;
+					}
 					try {
 						if(uc.checkNewVersion()) {
 							newUpdates.add(uc);
@@ -240,9 +247,11 @@ public class MainUI extends JFrame
 				} catch (InterruptedException | ExecutionException e) {
 					e.printStackTrace();
 				}
-				if(updaters != null && updaters.length > 0) {
-
+				if(updaters != null && updaters.length > 0
+						&& !"true".equals(PlugInConfig.getGlobalConfiguration(PlugInConfig.CONFIG_NO_LOOK_UPDATE_POPUP))) {
+					UpdateNotificationWindow.show(MainUI.this, updaters);
 				}
+				PlugInManager.saveProperty();
 			}
 		}.execute();
 	}
