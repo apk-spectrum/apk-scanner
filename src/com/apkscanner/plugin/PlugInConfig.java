@@ -42,6 +42,8 @@ public class PlugInConfig
 	public static final String CONFIG_IGNORE_NETWORK_ERR_CONNECTION_TIMEOUT = "ingnore.err-connection-time-out";
 	public static final String CONFIG_IGNORE_NETWORK_ERR_SSL_HANDSHAKE = "ingnore.err-ssl-handshake";
 
+	public static final String CONFIG_NO_LOOK_UPDATE_POPUP = "CONFIG_NO_LOOK_STARTUP_UPDATE_POPUP";
+
 	static HashMap<String, String> configurations = new HashMap<>();
 
 	private PlugInPackage plugInPackage;
