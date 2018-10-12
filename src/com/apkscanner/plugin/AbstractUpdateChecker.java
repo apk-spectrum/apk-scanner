@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.Map;
 
 import com.apkscanner.plugin.manifest.Component;
+import com.apkscanner.resource.Resource;
+import com.apkscanner.util.ApkScannerVersion;
 
 public abstract class AbstractUpdateChecker extends AbstractPlugIn implements IUpdateChecker
 {
@@ -74,6 +76,32 @@ public abstract class AbstractUpdateChecker extends AbstractPlugIn implements IU
 	@Override
 	public Map<?, ?> getLatestVersionInfo() {
 		return latestVersionInfo;
+	}
+
+	@Override
+	public boolean hasNewVersion() {
+		if(latestVersionInfo == null) return false;
+
+		String version = (String)latestVersionInfo.get("version");
+		String targetPackageName = getTargetPackageName();
+		if("com.apkscanner".equals(targetPackageName)) {
+			ApkScannerVersion newVer = ApkScannerVersion.parseFrom(version);
+			ApkScannerVersion oldVer = ApkScannerVersion.parseFrom(Resource.STR_APP_VERSION.getString());
+			return newVer.compareTo(oldVer) > 0;
+		} else if ("com.android.sdk".equals(targetPackageName)) {
+			return false;
+		} else {
+			PlugInPackage targetPackage = PlugInManager.getPlugInPackage(targetPackageName);
+			if(targetPackage == null) return false;
+			int curVer = targetPackage.getVersionCode();
+			int newVer = Integer.parseInt(version);
+			return newVer > curVer;
+		}
+	}
+
+	@Override
+	public int getLaunchType() {
+		return this instanceof UpdateCheckerLinker ? TYPE_LAUNCH_OPEN_LINK : TYPE_LAUNCH_DIRECT_UPDATE;
 	}
 
 	@Override

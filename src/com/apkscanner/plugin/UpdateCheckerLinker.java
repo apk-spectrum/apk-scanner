@@ -17,8 +17,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.apkscanner.plugin.manifest.Component;
-import com.apkscanner.resource.Resource;
-import com.apkscanner.util.ApkScannerVersion;
 import com.apkscanner.util.Log;
 
 public class UpdateCheckerLinker extends AbstractUpdateChecker
@@ -30,8 +28,6 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 	}
 
 	public boolean getNewVersion() throws NetworkException {
-		//if(version != null || component.url == null) return version;
-
 		if(!NetworkSetting.isEnabledNetworkInterface()) {
 			Log.w("No such network interface");
 			throw makeNetworkException(new NetworkNotFoundException("No such network interface"));
@@ -127,24 +123,7 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 			Log.i("No such new version");
 			return false;
 		}
-		String version = (String)latestVersionInfo.get("version");
-		String targetPackageName = getTargetPackageName();
-		if("com.apkscanner".equals(targetPackageName)) {
-			Log.e("1");
-			ApkScannerVersion newVer = ApkScannerVersion.parseFrom(version);
-			ApkScannerVersion oldVer = ApkScannerVersion.parseFrom(Resource.STR_APP_VERSION.getString());
-			return newVer.compareTo(oldVer) > 0;
-		} else if ("com.android.sdk".equals(targetPackageName)) {
-			Log.e("2");
-			return false;
-		} else {
-			Log.e("3");
-			PlugInPackage targetPackage = PlugInManager.getPlugInPackage(targetPackageName);
-			if(targetPackage == null) return false;
-			int curVer = targetPackage.getVersionCode();
-			int newVer = Integer.parseInt(version);
-			return newVer > curVer;
-		}
+		return hasNewVersion();
 	}
 
 	@Override
