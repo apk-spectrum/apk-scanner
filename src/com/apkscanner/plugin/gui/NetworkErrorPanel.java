@@ -31,8 +31,12 @@ public class NetworkErrorPanel extends JPanel {
 		add(naverLook,BorderLayout.SOUTH);
 	}
 
-	public boolean isNaverLook() {
+	public boolean isNeverLook() {
 		return naverLook.isSelected();
+	}
+
+	public void setVisibleNeverLook(boolean visible) {
+		naverLook.setVisible(visible);	
 	}
 
 	public void setText(String text) {
