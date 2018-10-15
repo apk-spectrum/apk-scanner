@@ -106,6 +106,10 @@ public class AboutDlg /*extends JDialog*/
 
 		tabbed.addTab("About", aboutPanel);
 		tabbed.addTab("Update("+possibleCnt+")", updatePanel);
+		
+		if(possibleCnt > 0) {
+			tabbed.setSelectedComponent(updatePanel);
+		}
 
 		JPanel tabbedPanel = new JPanel();
 		tabbedPanel.setLayout(new BoxLayout(tabbedPanel, BoxLayout.Y_AXIS));
