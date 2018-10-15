@@ -212,7 +212,7 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 
 			@Override
 			protected void process(List<Void> arg0) {
-				int ret = NetworkErrorDialog.show(UpdateNotificationPanel.this, plugin);
+				int ret = NetworkErrorDialog.show(UpdateNotificationPanel.this, plugin, true);
 				switch(ret) {
 				case NetworkErrorDialog.RESULT_RETRY:
 					checkUpdate(plugin);
