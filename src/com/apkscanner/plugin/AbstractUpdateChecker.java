@@ -1,5 +1,6 @@
 package com.apkscanner.plugin;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
@@ -16,6 +17,9 @@ public abstract class AbstractUpdateChecker extends AbstractPlugIn implements IU
 	protected long lastUpdateDate;
 	protected Map<?, ?> latestVersionInfo;
 
+	private int state = STATUS_NO_UPDATED;
+	private ArrayList<StateChangeListener> listeners = new ArrayList<>();
+
 	public AbstractUpdateChecker(PlugInPackage pluginPackage, Component component) {
 		super(pluginPackage, component);
 		if(component.periodDay != null) {
@@ -28,6 +32,7 @@ public abstract class AbstractUpdateChecker extends AbstractPlugIn implements IU
 	}
 
 	NetworkException makeNetworkException(Exception e) {
+		setState(STATUS_ERROR_OCCURED);
 		return lastNetworkException = new NetworkException(e);
 	}
 
@@ -104,6 +109,39 @@ public abstract class AbstractUpdateChecker extends AbstractPlugIn implements IU
 		return this instanceof UpdateCheckerLinker ? TYPE_LAUNCH_OPEN_LINK : TYPE_LAUNCH_DIRECT_UPDATE;
 	}
 
+	@Override
+	public int getState() {
+		return state;
+	}
+
+	protected void setState(int state) {
+		synchronized(listeners) {
+			if(this.state == state) return;
+			this.state = state;
+			for(StateChangeListener listener: listeners) {
+				listener.stateChanged(this, state);
+			}
+		}
+	}
+
+	@Override
+	public void addStateChangeListener(StateChangeListener listener) {
+		synchronized(listeners) {
+			if(!listeners.contains(listener)) {
+				listeners.add(listener);
+			}
+		}
+	}
+
+	@Override
+	public void removeStateChangeListener(StateChangeListener listener) {
+		synchronized(listeners) {
+			if(listeners.contains(listener)) {
+				listeners.remove(listener);
+			}
+		}		
+	}
+	
 	@Override
 	public Map<String, Object> getChangedProperties() {
 		Map<String, Object> data = super.getChangedProperties();

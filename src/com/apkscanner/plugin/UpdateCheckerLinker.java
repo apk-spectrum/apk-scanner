@@ -21,8 +21,6 @@ import com.apkscanner.util.Log;
 
 public class UpdateCheckerLinker extends AbstractUpdateChecker
 {
-	private boolean isIgnoreSSLCert;
-
 	public UpdateCheckerLinker(PlugInPackage pluginPackage, Component component) {
 		super(pluginPackage, component);
 	}
@@ -107,9 +105,12 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 		}
 
 		if(data != null && data.containsKey("version")) {
+			if(ignoreSSLCert && data.containsKey("url")) {
+				Log.w("remove url : " + data.get("url"));
+				data.remove("url");
+			}
 			setLatestVersionInfo(data);
 			setLastUpdateDate(new Date().getTime());
-			isIgnoreSSLCert = ignoreSSLCert;
 		} else {
 			return false;
 		}
@@ -119,27 +120,38 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 
 	@Override
 	public boolean checkNewVersion() throws NetworkException {
+		setState(STATUS_UPDATE_CHEKCING);
 		if(!getNewVersion()) {
 			Log.i("No such new version");
+			setState(STATUS_NO_UPDATED);
 			return false;
 		}
-		return hasNewVersion();
+		boolean existedNewVersion = hasNewVersion();
+		if(existedNewVersion) {
+			setState(STATUS_HAS_NEW_UPDATED);
+		} else {
+			setState(STATUS_NO_UPDATED);
+		}
+		return existedNewVersion;
 	}
 
 	@Override
 	public void launch() {
+		setState(STATUS_UPDATING);
 		try {
 			if(latestVersionInfo == null && getLastNetworkException() == null && !checkNewVersion()) {
 				Log.i("Current version is latest or cann't get latest version");
+				setState(STATUS_NO_UPDATED);
 				return;
 			}
 		} catch (NetworkException e) {
+			setState(STATUS_ERROR_OCCURED);
 			e.printStackTrace();
 			return;
 		}
 
 		String url = null;
-		if(latestVersionInfo != null && !isIgnoreSSLCert) {
+		if(latestVersionInfo != null) {
 			url = (String)latestVersionInfo.get("url");
 		}
 		if(url == null) url = component.updateUrl != null ? component.updateUrl : component.url;
@@ -152,5 +164,6 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 	            e1.printStackTrace();
 	        }
 	    }
+		setState(STATUS_UPDATE_COMPLETED);
 	}
 }
