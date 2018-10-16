@@ -23,6 +23,10 @@ public class NetworkErrorDialog
 	private static final String IGNORE_SSH_HANDSHAKE = PlugInConfig.CONFIG_IGNORE_NETWORK_ERR_SSL_HANDSHAKE;
 
 	public static int show(Component parent, IUpdateChecker plugin) {
+		return show(parent, plugin, false);
+	}
+
+	public static int show(Component parent, IUpdateChecker plugin, boolean force) {
 		NetworkException e = plugin.getLastNetworkException();
 		if(e == null) {
 			Log.v("No NetworkException : " + plugin.getName());
@@ -32,22 +36,23 @@ public class NetworkErrorDialog
 		PlugInConfig config = plugin.getPlugInConfig();
 
 		NetworkErrorPanel errPanel = new NetworkErrorPanel();
+		errPanel.setVisibleNeverLook(!force);
 		int ret = -1;
 
 		StringBuilder errMsg = new StringBuilder("Failed PlugIn: " + plugin.getName() + "\n\n");
 
 
 		if(e.isNetworkNotFoundException()) {
-			if("true".equals(config.getConfiguration(IGNORE_NO_SUCHE_INTERFACE)))
+			if(!force && "true".equals(config.getConfiguration(IGNORE_NO_SUCHE_INTERFACE)))
 				return RESULT_IGNORED;
 
 			errPanel.setText("Not found network interface\n\nTry checking the network connection\n");
 			ret = showOptionDialog(parent, errPanel, "Network Error - Not found network interface");
 
-			config.setConfiguration(IGNORE_NO_SUCHE_INTERFACE, errPanel.isNaverLook() ? "true" : "false");
+			if(!force) config.setConfiguration(IGNORE_NO_SUCHE_INTERFACE, errPanel.isNeverLook() ? "true" : "false");
 			PlugInManager.saveProperty();
 		} else if(e.isProxyException()) {
-			if("true".equals(config.getConfiguration(IGNORE_TIME_OUT)))
+			if(!force && "true".equals(config.getConfiguration(IGNORE_TIME_OUT)))
 				return RESULT_IGNORED;
 
 			errMsg.append("Network connection timed out!\n\n");
@@ -57,11 +62,11 @@ public class NetworkErrorDialog
 			errPanel.add(new NetworkProxySettingPanel(plugin));
 			ret = showOptionDialog(parent, errPanel, "Network Error - Connection timed out");
 
-			config.setConfiguration(IGNORE_TIME_OUT, errPanel.isNaverLook() ? "true" : "false");
+			if(!force) config.setConfiguration(IGNORE_TIME_OUT, errPanel.isNeverLook() ? "true" : "false");
 			PlugInManager.saveProperty();
 		} else if(e.isSslCertException()) {
 			Log.e(e.getCause().toString());
-			if("true".equals(config.getConfiguration(IGNORE_SSH_HANDSHAKE)))
+			if(!force && "true".equals(config.getConfiguration(IGNORE_SSH_HANDSHAKE)))
 				return RESULT_IGNORED;
 
 			errMsg.append("Occurred SSLHandshakeException.\n\n");
@@ -71,7 +76,7 @@ public class NetworkErrorDialog
 			errPanel.add(new NetworkTruststoreSettingPanel(plugin));
 			ret = showOptionDialog(parent, errPanel, "Network Error - SSL Certificate Error");
 
-			config.setConfiguration(IGNORE_SSH_HANDSHAKE, errPanel.isNaverLook() ? "true" : "false");
+			if(!force) config.setConfiguration(IGNORE_SSH_HANDSHAKE, errPanel.isNeverLook() ? "true" : "false");
 			PlugInManager.saveProperty();
 			//boolean ignoreSSL = "true".equals(updater.getPlugInPackage().getConfiguration(PlugInConfig.CONFIG_IGNORE_SSL_CERT, "false", true));
 		} else {

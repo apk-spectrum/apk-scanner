@@ -101,7 +101,9 @@ public class NetworkSetting
 	            ProxySearch proxySearch = ProxySearch.getDefaultProxySearch();
 	            proxySearch.setPacCacheSettings(20, 1000*60*10, CacheScope.CACHE_SCOPE_URL);
 	            proxySelector = proxySearch.getProxySelector();
-	            l = proxySelector.select(uri);
+	            if(proxySelector != null) {
+	            	l = proxySelector.select(uri);
+	            }
 			} else {
     			String pacUrl = config.getConfiguration(PlugInConfig.CONFIG_PAC_URL, "");
     			if (pacUrl.startsWith("file://") && !pacUrl.startsWith("file:///")) {
@@ -112,7 +114,7 @@ public class NetworkSetting
     		}
 
             //... Now just do what the original did ...
-            for (Proxy proxy: l) {
+            if(l != null) for (Proxy proxy: l) {
                 Log.v("proxy hostname : " + proxy.type());
                 InetSocketAddress addr = (InetSocketAddress) proxy.address();
 
