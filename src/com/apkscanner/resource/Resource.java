@@ -452,6 +452,11 @@ public enum Resource
 	IMG_ASSOCIATE_APK			(Type.IMAGE, "associate.png"),
 	IMG_UNASSOCIATE_APK			(Type.IMAGE, "unassociate.png"),
 
+	//easy gui
+	IMG_EASY_WINDOW_EXIT			(Type.IMAGE, "easy_gui_exit.png"),
+	IMG_EASY_WINDOW_MINI			(Type.IMAGE, "easy_gui_mini.png"),
+	
+	
 	BIN_PATH					(Type.BIN, ""),	
 
 	BIN_ADB_LNX					(Type.BIN, "adb", "nux"),
