@@ -1,4 +1,4 @@
-package com.apkscanner.gui.easymode;
+package com.apkscanner.gui.easymode.contents;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -18,6 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.resource.Resource;
 
 public class EasyBordPanel extends JPanel implements ActionListener{

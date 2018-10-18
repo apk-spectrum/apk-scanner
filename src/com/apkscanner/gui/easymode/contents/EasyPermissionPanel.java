@@ -1,4 +1,4 @@
-package com.apkscanner.gui.easymode;
+package com.apkscanner.gui.easymode.contents;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -15,7 +15,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import com.apkscanner.gui.easymode.test.FlatPanel;
+import com.apkscanner.gui.easymode.util.EasyButton;
+import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.util.Log;
 
 

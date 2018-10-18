@@ -8,6 +8,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
+import com.apkscanner.gui.easymode.contents.EasyBordPanel;
+import com.apkscanner.gui.easymode.contents.EasyContentsPanel;
+import com.apkscanner.gui.easymode.contents.EasyPermissionPanel;
+
 class EasyGuiMainPanel extends JPanel {
 	private JPanel rootpanel;
 	private JPanel borderpanel;

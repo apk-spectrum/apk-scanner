@@ -1,4 +1,4 @@
-package com.apkscanner.gui.easymode;
+package com.apkscanner.gui.easymode.util;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -18,6 +18,7 @@ public class EasyButton extends JButton{
 		setlistener();
 		 setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		 setContentAreaFilled(false);
+		 setFocusable(false);
 		setlistener();		
 	}
 	

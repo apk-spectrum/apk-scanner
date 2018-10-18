@@ -1,13 +1,18 @@
-package com.apkscanner.gui.easymode;
+package com.apkscanner.gui.easymode.contents;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 
 import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
-import com.apkscanner.gui.easymode.test.FlatPanel;
+import com.apkscanner.gui.easymode.util.FlatPanel;
+import com.apkscanner.resource.Resource;
 
 public class EasyContentsPanel extends JPanel{
 	FlatPanel appiconpanel;
@@ -18,10 +23,15 @@ public class EasyContentsPanel extends JPanel{
 	FlatPanel featurepanel;
 	FlatPanel toolbarpanel;
 	
+	JTextField packagelabel;
+	JTextField versionlabel;
+	JTextField sizelabel;
+	
 	static private Color IconPanelcolor = new Color(191,191,191);
 	static private Color packagePanelcolor = new Color(221,217,195);
 	static private Color sdkverPanelcolor = new Color(242,242,242);
 	static private Color toobarPanelcolor = new Color(232,241,222);
+	static private Color packagefontcolor = new Color(89,89,89);
 	
 	public EasyContentsPanel() {
 		// TODO Auto-generated constructor stub
@@ -29,9 +39,14 @@ public class EasyContentsPanel extends JPanel{
 		setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		
 		appiconpanel = new FlatPanel();
+		appiconpanel.setLayout(new BorderLayout());
 		appiconpanel.setBackground(IconPanelcolor);
 		appiconpanel.setPreferredSize(new Dimension(160, 0));
 		appiconpanel.setshadowlen(3);
+		
+		JLabel appicon = new JLabel(Resource.IMG_APP_ICON.getImageIcon(130,130));
+		appiconpanel.add(appicon, BorderLayout.CENTER);
+		
 		add(appiconpanel, BorderLayout.WEST);
 		
 		JPanel infopanel = new JPanel(new BorderLayout());
@@ -40,6 +55,15 @@ public class EasyContentsPanel extends JPanel{
 		packagepanel.setBackground(packagePanelcolor);
 		packagepanel.setPreferredSize(new Dimension(0, 35));
 		packagepanel.setshadowlen(3);
+		
+		packagelabel = new JTextField("com.apkscanner.gui.easymode", SwingConstants.LEFT);
+		packagelabel.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
+		packagelabel.setOpaque(false);
+		packagelabel.setFont(new Font("Droid Sans", Font.PLAIN, 15));
+		packagelabel.setForeground(packagefontcolor);
+		
+		packagepanel.add(packagelabel);
+		
 		infopanel.add(packagepanel, BorderLayout.NORTH);
 
 		sdkverpanel = new FlatPanel();

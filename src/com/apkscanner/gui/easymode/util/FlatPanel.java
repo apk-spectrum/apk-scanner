@@ -1,4 +1,4 @@
-package com.apkscanner.gui.easymode.test;
+package com.apkscanner.gui.easymode.util;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
