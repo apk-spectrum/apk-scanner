@@ -21,8 +21,8 @@ import javax.swing.SwingConstants;
 import com.apkscanner.resource.Resource;
 
 public class EasyBordPanel extends JPanel implements ActionListener{
-	WindowButton btnmini;
-	WindowButton btnexit;
+	EasyButton btnmini, btnexit;
+	
     int pX, pY;
     JFrame frame;
     JPanel windowpanel;
@@ -30,7 +30,6 @@ public class EasyBordPanel extends JPanel implements ActionListener{
     
     static private Color bordercolor = new Color(230,230,230);
     static private Color bordertitlecolor = new Color(119,119,119);
-    static private Color btnhovercolor = new Color(200,200,200);
     
     static private String CMD_WINDOW_EXIT = "window_exit";
     static private String CMD_WINDOW_MINI = "window_mini";
@@ -50,11 +49,11 @@ public class EasyBordPanel extends JPanel implements ActionListener{
     	
     	((FlowLayout)windowpanel.getLayout()).setHgap(1);
         ImageIcon miniicon = new ImageIcon(Resource.IMG_EASY_WINDOW_MINI.getImageIcon(17,17).getImage());
-        btnmini = new WindowButton(miniicon);
+        btnmini = new EasyButton(miniicon);
         btnmini.setActionCommand(CMD_WINDOW_MINI);
         
         ImageIcon exiticon = new ImageIcon(Resource.IMG_EASY_WINDOW_EXIT.getImageIcon(17,17).getImage());
-        btnexit = new WindowButton(exiticon);
+        btnexit = new EasyButton(exiticon);
         btnexit.setActionCommand(CMD_WINDOW_EXIT);
         //stackLabel.setIcon(icon);
         
@@ -73,9 +72,11 @@ public class EasyBordPanel extends JPanel implements ActionListener{
         windowpanel.add(btnmini);
         windowpanel.add(btnexit);
         
+        JLabel icon = new JLabel(Resource.IMG_APP_ICON.getImageIcon(17,17));
         
         add(windowpanel, BorderLayout.EAST);
         add(maintitle, BorderLayout.CENTER);
+        //add(icon, BorderLayout.WEST);
         
         btnmini.addActionListener(this);
         btnexit.addActionListener(this);
@@ -99,41 +100,6 @@ public class EasyBordPanel extends JPanel implements ActionListener{
             }
         });
     }
-    
-    class WindowButton extends JButton {
-		private static final long serialVersionUID = -6927025737749969747L;
-		boolean entered = false;
-    	public WindowButton() {
-    		setlistener();
-    	}
-    	public WindowButton(ImageIcon icon) {
-			// TODO Auto-generated constructor stub
-    		super(icon);
-    		setlistener();
-		}
-        void setlistener() {
-    		addMouseListener(new java.awt.event.MouseAdapter() {
-    		    public void mouseEntered(java.awt.event.MouseEvent evt) {
-    		    	//this.setBackground(new Color(255,255,255));
-    		    	//setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
-    		    	entered = true;
-    		    }
-
-    		    public void mouseExited(java.awt.event.MouseEvent evt) {
-    		    	//setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-    		    	entered = false;
-    		    }
-    		});
-        }
-        
-        public void paint( Graphics g ) {
-        	if(entered) {
-        		g.setColor(btnhovercolor);
-        		g.drawRect(0, 0, this.getWidth()-1, this.getHeight()-1);
-        	}
-        	super.paint( g );            
-        }    
-    }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -141,7 +107,7 @@ public class EasyBordPanel extends JPanel implements ActionListener{
 		if(e.getActionCommand() == CMD_WINDOW_EXIT) {
 			System.exit(0);
 		} else if(e.getActionCommand() == CMD_WINDOW_MINI) {
-			EasyGuiMain.frame.setState(JFrame.ICONIFIED);
+			frame.setState(JFrame.ICONIFIED);
 		}
 	}
 }

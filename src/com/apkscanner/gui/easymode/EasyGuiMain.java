@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
+import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
 public class EasyGuiMain{
@@ -31,7 +32,8 @@ public class EasyGuiMain{
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.pack();
                 frame.setLocationRelativeTo(null);
-                frame.setVisible(true);
+                frame.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+                frame.setVisible(true);                
             }
         });
 	}
