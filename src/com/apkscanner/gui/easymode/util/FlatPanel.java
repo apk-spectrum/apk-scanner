@@ -24,8 +24,8 @@ public class FlatPanel extends JPanel {
 	public FlatPanel() {
 		setLayout(new BorderLayout());
 		//setBorder(BorderFactory.createEmptyBorder(0, 2, 2, 2));
-		contentpanel = new JPanel();
-		contentpanel.setBackground(getBackground());
+		//contentpanel = new JPanel();
+		//contentpanel.setBackground(getBackground());
 		setBorder(BorderFactory.createEmptyBorder(1, len/2, len, len/2));
 		//contentpanel.add(new JButton("aa"), BorderLayout.CENTER);
 		//add(contentpanel, BorderLayout.CENTER);		

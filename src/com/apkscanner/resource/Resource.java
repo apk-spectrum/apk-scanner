@@ -455,6 +455,7 @@ public enum Resource
 	//easy gui
 	IMG_EASY_WINDOW_EXIT			(Type.IMAGE, "easy_gui_exit.png"),
 	IMG_EASY_WINDOW_MINI			(Type.IMAGE, "easy_gui_mini.png"),
+	IMG_EASY_WINDOW_SETTING			(Type.IMAGE, "perm_group_system_tools.png"),
 	
 	
 	BIN_PATH					(Type.BIN, ""),	
