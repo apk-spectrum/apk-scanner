@@ -44,7 +44,7 @@ public class EasyBordPanel extends JPanel implements ActionListener{
     	windowpanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     	maintitle = new JLabel("APKScanner - DCMHome.apk", SwingConstants.CENTER);
     	maintitle.setOpaque(false);
-    	maintitle.setFont(new Font("Droid Sans", Font.BOLD, 15));
+    	maintitle.setFont(new Font(getFont().getName(), Font.BOLD, 15));
     	maintitle.setForeground(bordertitlecolor);
     	windowpanel.setOpaque(false);
     	

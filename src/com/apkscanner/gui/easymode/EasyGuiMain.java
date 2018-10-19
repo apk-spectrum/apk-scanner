@@ -26,6 +26,10 @@ public class EasyGuiMain{
 	public static void main(String[] args) {		
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
+
+            	System.setProperty("awt.useSystemAAFontSettings","on");
+            	System.setProperty("swing.aatext", "true");
+            	
             	frame = new JFrame("APKScanner - DCMHome.apk");
                 frame.setUndecorated(true);                
                 frame.add(new EasyGuiMainPanel(frame));

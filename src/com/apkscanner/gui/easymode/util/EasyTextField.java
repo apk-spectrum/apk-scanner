@@ -4,7 +4,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
@@ -76,7 +78,9 @@ public class EasyTextField extends JTextField{
         return size;
     }
     protected void paintComponent(Graphics g) {
-    	super.paintComponent(g);    	
+    	Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    	super.paintComponent(g);
         //adaptLabelFont(EasyTextField.this);
     }
 }

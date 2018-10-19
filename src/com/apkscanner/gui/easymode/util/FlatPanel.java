@@ -51,10 +51,6 @@ public class FlatPanel extends JPanel {
         g.fill(rr);
     }
 
-    public JPanel getContentPanel() {
-    	return contentpanel;
-    }
-    
     private static void draw(Graphics2D g, Rectangle2D r, double s)
     {
         Color c0 = new Color(100,100,100);

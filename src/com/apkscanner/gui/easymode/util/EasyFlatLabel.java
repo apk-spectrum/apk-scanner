@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -37,7 +39,7 @@ public class EasyFlatLabel extends FlatPanel{
 		textfield.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
 		textfield.setEditable(false);
 		textfield.setOpaque(false);
-		textfield.setFont(new Font("Droid Sans", Font.PLAIN, 15));
+		textfield.setFont(new Font(getFont().getName(), Font.PLAIN, 15));
 	}
 	public void setTextFont(Font font) {
 		textlabel.setFont(font);

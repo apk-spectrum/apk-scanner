@@ -24,9 +24,10 @@ import com.apkscanner.util.Log;
 
 public class EasyContentsPanel extends JPanel{
 	FlatPanel appiconpanel;
-	FlatPanel sdkverpanel;
 	FlatPanel featurepanel;
 	FlatPanel toolbarpanel;
+	
+	EasysdkDrawPanel sdkverpanel;
 	
 	EasyFlatLabel packagepanel;
 	EasyFlatLabel ininerversionpanel;
@@ -68,13 +69,13 @@ public class EasyContentsPanel extends JPanel{
 		JPanel infopanel = new JPanel(new BorderLayout());
 
 		//package
-		packagepanel = new EasyFlatLabel("com.apkscanner.g", packagePanelcolor, packagefontcolor);
+		packagepanel = new EasyFlatLabel("com.apkscanner.g33ffsd", packagePanelcolor, packagefontcolor);
 		packagepanel.setPreferredSize(new Dimension(0, 35));
 		packagepanel.setshadowlen(3);
 		
 		infopanel.add(packagepanel, BorderLayout.NORTH);
 
-		sdkverpanel = new FlatPanel();
+		sdkverpanel = new EasysdkDrawPanel();
 		sdkverpanel.setBackground(sdkverPanelcolor);
 		sdkverpanel.setPreferredSize(new Dimension(80, 0));
 		sdkverpanel.setshadowlen(3);
@@ -95,6 +96,8 @@ public class EasyContentsPanel extends JPanel{
 		ininersizepanel = new EasyFlatLabel("994.223 KB", sdkverPanelcolor, ininerinfotcolor);
 		ininersizepanel.setPreferredSize(new Dimension(0, 35));
 		ininersizepanel.setshadowlen(3);
+		ininersizepanel.setHorizontalAlignment(JTextField.CENTER);
+		
 		
 		versionpanel.add(ininerversionpanel);
 		versionpanel.add(ininersizepanel);
@@ -109,10 +112,10 @@ public class EasyContentsPanel extends JPanel{
 		String[]  arraystr = {"start", "hidden", "boot", "sdcard", "samsung"	};		
 		for(String str : arraystr) {			
 			EasyFlatLabel temp = new EasyFlatLabel(str, featurefontcolor, ininerinfotcolor);
-			temp.setBorder(BorderFactory.createEmptyBorder(400,10,100,5));
-			temp.setPreferredSize(new Dimension(70, 30));
+			//temp.setBorder(BorderFactory.createEmptyBorder(400,10,100,5));
+			temp.setPreferredSize(new Dimension(60, 30));
 			temp.setshadowlen(3);
-			temp.setTextFont(new Font("Droid Sans", Font.BOLD, 15));
+			temp.setTextFont(new Font(getFont().getName(), Font.BOLD, 15));
 			temp.setHorizontalAlignment(JTextField.CENTER);
 			temp.Addlistener();
 			featurepanel.add(temp);
@@ -171,7 +174,7 @@ public class EasyContentsPanel extends JPanel{
 		textfield.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
 		textfield.setEditable(false);
 		textfield.setOpaque(false);
-		textfield.setFont(new Font("Droid Sans", Font.PLAIN, 15));
+		textfield.setFont(new Font(getFont().getName(), Font.PLAIN, 15));
 	}
 	
     @Override
