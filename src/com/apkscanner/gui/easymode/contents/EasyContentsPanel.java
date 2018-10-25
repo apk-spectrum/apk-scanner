@@ -27,7 +27,7 @@ public class EasyContentsPanel extends JPanel{
 	FlatPanel featurepanel;
 	FlatPanel toolbarpanel;
 	
-	EasysdkDrawPanel sdkverpanel;
+	EasysdkNotDrawPanel sdkverpanel;
 	
 	EasyFlatLabel packagepanel;
 	EasyFlatLabel ininerversionpanel;
@@ -35,8 +35,8 @@ public class EasyContentsPanel extends JPanel{
 	
 	EasyTextField apptitlelabel;
 	
-	static private Color IconPanelcolor = new Color(191,191,191);
-	static private Color packagePanelcolor = new Color(221,217,195);
+	static private Color IconPanelcolor = new Color(220,220,220);
+	static private Color packagePanelcolor = new Color(220,230,242);
 	static private Color sdkverPanelcolor = new Color(242,242,242);
 	static private Color toobarPanelcolor = new Color(232,241,222);
 	static private Color packagefontcolor = new Color(89,89,89);
@@ -61,6 +61,7 @@ public class EasyContentsPanel extends JPanel{
 		apptitlelabel.setForeground(packagefontcolor);		
 		apptitlelabel.setHorizontalAlignment(JTextField.CENTER);
 		apptitlelabel.setPreferredSize(new Dimension(0, 30));
+		apptitlelabel.setFont(new Font(getFont().getName(), Font.BOLD, 15));
 		appiconpanel.add(apptitlelabel, BorderLayout.SOUTH);
 			
 		
@@ -75,9 +76,10 @@ public class EasyContentsPanel extends JPanel{
 		
 		infopanel.add(packagepanel, BorderLayout.NORTH);
 
-		sdkverpanel = new EasysdkDrawPanel();
+		sdkverpanel = new EasysdkNotDrawPanel();
 		sdkverpanel.setBackground(sdkverPanelcolor);
 		sdkverpanel.setPreferredSize(new Dimension(80, 0));
+		
 		sdkverpanel.setshadowlen(3);
 		infopanel.add(sdkverpanel, BorderLayout.EAST);
 		
@@ -115,7 +117,7 @@ public class EasyContentsPanel extends JPanel{
 			//temp.setBorder(BorderFactory.createEmptyBorder(400,10,100,5));
 			temp.setPreferredSize(new Dimension(60, 30));
 			temp.setshadowlen(3);
-			temp.setTextFont(new Font(getFont().getName(), Font.BOLD, 15));
+			temp.setTextFont(new Font(getFont().getName(), Font.PLAIN, 15));
 			temp.setHorizontalAlignment(JTextField.CENTER);
 			temp.Addlistener();
 			featurepanel.add(temp);

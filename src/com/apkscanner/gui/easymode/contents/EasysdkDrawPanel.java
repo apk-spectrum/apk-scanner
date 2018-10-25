@@ -3,12 +3,15 @@ package com.apkscanner.gui.easymode.contents;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 
 import com.apkscanner.gui.easymode.util.FlatPanel;
+import com.apkscanner.util.Log;
 
 public class EasysdkDrawPanel extends FlatPanel {
 	private final int ARR_SIZE = 6;
@@ -16,8 +19,10 @@ public class EasysdkDrawPanel extends FlatPanel {
 	private int minsdkVersion;
 	private int targetsdkVersion;
 	private int OnlineDeviceVersion;
-	
+		
 	private final Color linecolor = new Color(128, 100, 162);
+	private final Color textcolor = new Color(127, 127, 127);
+	private final Color textallowcolor = new Color(178, 53, 50);
 	public EasysdkDrawPanel() {
 		
 	}
@@ -46,12 +51,46 @@ public class EasysdkDrawPanel extends FlatPanel {
     }
 
     
-    private void drawmin(Graphics2D g, int version) {
+    private void drawmin(Graphics2D g2, int version, Rectangle rect) {
     	
     	
-    	
-    	
-    	
+    	drawCenteredString(g2, "min", rect, new Font(getFont().getName(), Font.BOLD, 20));
+    	    	
+//	    int[] nXPoints = new int[] { 0,0,5};
+//	    int[] nYPoints = new int[] { 0, 10,5};
+//
+//	    g2.setColor(textallowcolor);
+//	    //g2.fillPolygon(nXPoints, nYPoints, 3);
+		
+    }
+    
+    private void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
+        // Get the FontMetrics
+    	int trianglesize  = font.getSize();
+        FontMetrics metrics = g.getFontMetrics(font);
+        // Determine the X coordinate for the text
+        int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
+        // Determine the Y coordinate for the text (note we add the ascent, as in java 2d 0 is top of the screen)
+        int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
+        // Set the font
+        g.setColor(textcolor);
+        g.setFont(font);
+        // Draw the String
+        g.drawString(text, 0, y);
+        
+        int trianglex = metrics.stringWidth(text) + 0;
+        int triangley = y - metrics.getAscent();
+        
+        int[] nXPoints = new int[] { trianglex, trianglex, trianglex + trianglesize/2};
+	    int[] nYPoints = new int[] { triangley, y, triangley + metrics.getAscent()/2};
+
+	    g.setColor(textallowcolor);
+	    g.fillPolygon(nXPoints, nYPoints, 3);
+	    
+	    
+	    g.setFont(new Font(getFont().getName(), Font.BOLD, 15));
+	    g.setColor(textcolor);
+	    g.drawString("23", trianglex + trianglesize/2 + 10, y - 2);
     }
     
 	@Override
@@ -73,9 +112,18 @@ public class EasysdkDrawPanel extends FlatPanel {
 		g2.setColor(linecolor);
         drawArrow(g2, 50, 10, 50, 160);
         
+        //g2.setTransform(null);
+        
         g2.setTransform(at);
-		g2.setFont(new Font(getFont().getName(), Font.PLAIN, 14));
-		g2.drawString("min", 0, 30);
+        AffineTransform tt = AffineTransform.getTranslateInstance(0, 30);
+        g2.transform(tt);
+        
+        
+        
+        //g2.setTransform(at);
+        drawmin(g2, 23, new Rectangle(0, 0, getWidth(), 20));
+        
+        
         
         //g2.setTransform(at);
         //g.drawOval(0, 0, 10, 10);

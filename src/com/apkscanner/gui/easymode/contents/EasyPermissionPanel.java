@@ -3,6 +3,8 @@ package com.apkscanner.gui.easymode.contents;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -17,6 +19,7 @@ import javax.swing.JPanel;
 
 import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.gui.easymode.util.FlatPanel;
+import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.util.Log;
 
 
@@ -39,22 +42,14 @@ public class EasyPermissionPanel extends FlatPanel implements ActionListener{
 		setshadowlen(SHADOWSIZE);
 		
 		FlatPanel permissionicon = new FlatPanel();
-		
-		BufferedImage berimg;
-		try {
-			berimg = colorImage(ImageIO.read(new File(System.getProperty("user.dir") + "/res/icons/perm_group_storage.png")), dangerouscolor);
-			EasyButton btn = new EasyButton(new ImageIcon(berimg));
-			permissionicon.setPreferredSize(new Dimension(PERMISSIONICONSIZE, PERMISSIONICONSIZE));
-			permissionicon.setshadowlen(SHADOWSIZE);
-			permissionicon.setBackground(permissionbackgroundcolor);
-			permissionicon.add(btn);
-			btn.addActionListener(this);
-			add(permissionicon);
 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
+		EasyButton btn = new EasyButton(ImageUtils.setcolorImage(new ImageIcon(System.getProperty("user.dir") + "/res/icons/perm_group_storage.png"), dangerouscolor));
+		permissionicon.setPreferredSize(new Dimension(PERMISSIONICONSIZE, PERMISSIONICONSIZE));
+		permissionicon.setshadowlen(SHADOWSIZE);
+		permissionicon.setBackground(permissionbackgroundcolor);
+		permissionicon.add(btn);
+		btn.addActionListener(this);
+		add(permissionicon);		
 		
 		permissionicon = new FlatPanel();
 		permissionicon.setPreferredSize(new Dimension(PERMISSIONICONSIZE,PERMISSIONICONSIZE));
@@ -88,21 +83,4 @@ public class EasyPermissionPanel extends FlatPanel implements ActionListener{
 		// TODO Auto-generated method stub
 		Log.d("click permission");
 	}
-
-    private static BufferedImage colorImage(BufferedImage image, Color color) {
-        int width = image.getWidth();
-        int height = image.getHeight();
-        WritableRaster raster = image.getRaster();
-
-        for (int xx = 0; xx < width; xx++) {
-            for (int yy = 0; yy < height; yy++) {
-                int[] pixels = raster.getPixel(xx, yy, (int[]) null);
-                pixels[0] = color.getRed();
-                pixels[1] = color.getGreen();
-                pixels[2] = color.getBlue();
-                raster.setPixel(xx, yy, pixels);
-            }
-        }
-        return image;
-    }
 }
