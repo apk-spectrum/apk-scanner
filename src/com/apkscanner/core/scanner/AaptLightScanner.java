@@ -3,7 +3,10 @@ package com.apkscanner.core.scanner;
 import java.io.File;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.data.apkinfo.ResourceInfo;
+import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
+import com.apkscanner.tool.aapt.AaptXmlTreeNode;
 import com.apkscanner.tool.aapt.AaptXmlTreePath;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
@@ -81,7 +84,13 @@ public class AaptLightScanner extends ApkScanner {
 		Log.i("I: read basic info...");
 		manifestReader.readBasicInfo();
 		Log.i("readBasicInfo() completed");
-
+		
+		//2018. 10. 26		//////////////////////////////////////////
+		// for easy gui
+		apkInfo.manifest.application.icons = changeURLpath(apkInfo.manifest.application.icons, manifestReader);
+		///////////////////////////////////////////////////////////
+		
+		
 		Log.i("read permissions start");
 		manifestReader.readPermissions();
 		Log.i("read permissions completed");
@@ -106,8 +115,46 @@ public class AaptLightScanner extends ApkScanner {
 		if(resourceScanner != null) {
 			resourceScanner.clear(true);
 		}
+		stateChanged(Status.ALL_COMPLETED);
 	}
 
+	private ResourceInfo[] changeURLpath(ResourceInfo[] icons, AaptManifestReader manifestReader) {		
+		if(icons != null && icons.length > 0) {
+			String urlFilePath = null;
+			urlFilePath = apkInfo.filePath.replaceAll("#", "%23");
+
+			String jarPath = "jar:file:" + urlFilePath + "!/";
+			for(ResourceInfo r: icons) {
+				if(r.name == null) {
+					r.name = Resource.IMG_DEF_APP_ICON.getPath();
+				} else if(r.name.endsWith(".qmg")) {
+					r.name = Resource.IMG_QMG_IMAGE_ICON.getPath();
+				} else if(r.name.endsWith(".xml")) {
+					Log.w("image resource is xml : " + r.name);
+					String[] iconXml = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath, new String[] { r.name });
+					AaptXmlTreePath iconXmlPath = new AaptXmlTreePath();
+					iconXmlPath.createAaptXmlTree(iconXml);
+					AaptXmlTreeNode iconNode = iconXmlPath.getNode("//item[@"+iconXmlPath.getAndroidNamespaceTag()+":drawable]");
+					if(iconNode != null) {
+						icons = manifestReader.getAttrResourceValues(iconNode, ":drawable", iconXmlPath.getAndroidNamespaceTag());
+						if(icons == null || icons.length == 0) {
+							icons = new ResourceInfo[] { new ResourceInfo(Resource.IMG_DEF_APP_ICON.getPath()) };
+						} else {
+							for(ResourceInfo r2: icons) {
+								r2.name = jarPath + r2.name;
+							}
+						}
+					}
+				} else {
+					r.name = jarPath + r.name;
+				}
+			}
+		} else {
+			icons = new ResourceInfo[] { new ResourceInfo(Resource.IMG_DEF_APP_ICON.getPath()) };
+		}
+		return icons;
+	}
+	
 	@Override
 	public void clear(boolean sync) {
 		

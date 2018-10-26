@@ -34,13 +34,16 @@ public class EasyFlatLabel extends FlatPanel{
 		button.setOpaque(true);
 		add(button);
 	}
-	
 	private void setEasyTextField(JTextField textfield) {
 		textfield.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
 		textfield.setEditable(false);
 		textfield.setOpaque(false);
 		textfield.setFont(new Font(getFont().getName(), Font.PLAIN, 15));
 	}
+	public void setText(String str) {
+		textlabel.setText(str);
+	}
+	
 	public void setTextFont(Font font) {
 		textlabel.setFont(font);
 	}
@@ -73,4 +76,5 @@ public class EasyFlatLabel extends FlatPanel{
 			g.drawRect(0, 0, this.getWidth() - 3, this.getHeight() - 3);
 		}
 	}
+
 }

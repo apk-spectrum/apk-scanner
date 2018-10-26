@@ -11,15 +11,25 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.apkscanner.core.scanner.PermissionGroupManager;
+import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.data.apkinfo.PermissionGroup;
+import com.apkscanner.data.apkinfo.PermissionGroupInfo;
+import com.apkscanner.data.apkinfo.PermissionInfo;
+import com.apkscanner.data.apkinfo.UsesPermissionInfo;
 import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.easymode.util.ImageUtils;
+import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
 
@@ -40,41 +50,6 @@ public class EasyPermissionPanel extends FlatPanel implements ActionListener{
 		//add(permissionpanel, BorderLayout.CENTER);
 		setLayout(new FlowLayout(FlowLayout.LEFT, 2, 1));
 		setshadowlen(SHADOWSIZE);
-		
-		FlatPanel permissionicon = new FlatPanel();
-
-		EasyButton btn = new EasyButton(ImageUtils.setcolorImage(new ImageIcon(System.getProperty("user.dir") + "/res/icons/perm_group_storage.png"), dangerouscolor));
-		permissionicon.setPreferredSize(new Dimension(PERMISSIONICONSIZE, PERMISSIONICONSIZE));
-		permissionicon.setshadowlen(SHADOWSIZE);
-		permissionicon.setBackground(permissionbackgroundcolor);
-		permissionicon.add(btn);
-		btn.addActionListener(this);
-		add(permissionicon);		
-		
-		permissionicon = new FlatPanel();
-		permissionicon.setPreferredSize(new Dimension(PERMISSIONICONSIZE,PERMISSIONICONSIZE));
-		permissionicon.setshadowlen(SHADOWSIZE);
-		permissionicon.setBackground(permissionbackgroundcolor);
-		permissionicon.add(new EasyButton(new ImageIcon(System.getProperty("user.dir") + "/res/icons/perm_group_contacts.png")));
-		add(permissionicon);
-		
-		permissionicon = new FlatPanel();
-		permissionicon.setPreferredSize(new Dimension(PERMISSIONICONSIZE, PERMISSIONICONSIZE));
-		permissionicon.setshadowlen(SHADOWSIZE);
-		permissionicon.setBackground(permissionbackgroundcolor);
-		permissionicon.add(new EasyButton(new ImageIcon(System.getProperty("user.dir") + "/res/icons/perm_group_sms.png")));
-		add(permissionicon);
-		
-		permissionicon = new FlatPanel();
-		permissionicon.setPreferredSize(new Dimension(PERMISSIONICONSIZE, PERMISSIONICONSIZE));
-		permissionicon.setshadowlen(SHADOWSIZE);
-		permissionicon.setBackground(permissionbackgroundcolor);
-		permissionicon.add(new EasyButton(new ImageIcon(System.getProperty("user.dir") + "/res/icons/perm_group_personal_info.png")));
-		add(permissionicon);
-		//permissionpanel.setBorder(new BevelBorder(BevelBorder.RAISED));
-		//permissionpanel.setBorder(new FlatBorder(BevelBorder.RAISED));
-		
-		//setBackground(Color.RED);
 		setPreferredSize(new Dimension(0, HEIGHT));
 	}
 
@@ -82,5 +57,39 @@ public class EasyPermissionPanel extends FlatPanel implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		Log.d("click permission");
+	}
+
+	public void setPermission(ApkInfo apkInfo) {
+		// TODO Auto-generated method stub		
+		if(apkInfo.manifest.usesPermission.length < 0) return;
+		Log.d(apkInfo.manifest.usesPermission.length+ "");
+		PermissionGroupManager permissionGroupManager = new PermissionGroupManager(apkInfo.manifest.usesPermission);
+		Set<String> keys = permissionGroupManager.getPermGroupMap().keySet();
+		int cnt = 0;
+		for(String key: keys) {			
+			PermissionGroup g = permissionGroupManager.getPermGroupMap().get(key);
+			//permGroup.append(makeHyperLink("@event", g.icon, g.permSummary, g.name, g.hasDangerous?"color:red;":null));			
+			FlatPanel permissionicon = new FlatPanel();			
+			try {
+				ImageIcon imageIcon = new ImageIcon(new URL(g.icon));				
+				if(g.hasDangerous)ImageUtils.setcolorImage(imageIcon, dangerouscolor);				
+				EasyButton btn = new EasyButton(imageIcon);
+				permissionicon.setPreferredSize(new Dimension(PERMISSIONICONSIZE, PERMISSIONICONSIZE));
+				permissionicon.setshadowlen(SHADOWSIZE);
+				permissionicon.setBackground(permissionbackgroundcolor);
+				permissionicon.add(btn);
+				btn.addActionListener(this);
+				add(permissionicon);				
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		validate();		
+	}
+
+	public void clear() {
+		// TODO Auto-generated method stub
+		removeAll();
 	}
 }

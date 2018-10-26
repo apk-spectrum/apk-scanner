@@ -2,7 +2,9 @@ package com.apkscanner.gui.easymode.util;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
@@ -21,6 +23,18 @@ public class ImageUtils {
 		return bi;
 	}
 
+    public static Image getScaledImage(ImageIcon temp, int w, int h)
+    {
+		Image srcImg = temp.getImage();
+		BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = resizedImg.createGraphics();
+		g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		g2.drawImage(srcImg, 0, 0, w, h, null);
+		g2.dispose();
+		srcImg.flush();
+		return resizedImg;
+    }
+	
 	public static BufferedImage readImageFromFile(File file) throws IOException {
 		return ImageIO.read(file);
 	}

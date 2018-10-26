@@ -27,16 +27,21 @@ public class EasyTextField extends JTextField {
 		currFontSize = this.getFont().getSize();
 		init();
 	}
-
+	
 	protected void init() {
 		addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent e) {
-				adaptLabelFont(EasyTextField.this);
+				adaptLabelFont();
 			}
 		});
 	}
 
-	protected void adaptLabelFont(EasyTextField easyTextField) {
+	public void setText(String str) {
+		super.setText(str);
+		adaptLabelFont();
+	}
+	
+	protected void adaptLabelFont() {
 		if (g == null) {
 			g = getGraphics();
 			if (g == null)
@@ -44,24 +49,29 @@ public class EasyTextField extends JTextField {
 			// return;
 		}
 		currFontSize = this.getFont().getSize();
-		Rectangle r = easyTextField.getBounds();
+		Rectangle r = getBounds();
 		
 		r.x = 0;
 		r.y = 0;
+		
+		//for padding
+		r.width = r.width - 4;
+		r.height = r.height; 
+		
 		int fontSize = Math.max(MIN_FONT_SIZE, currFontSize);
-		Font f = easyTextField.getFont();
+		Font f = getFont();
 
-		Rectangle r1 = new Rectangle(getTextSize(easyTextField, easyTextField.getFont()));
+		Rectangle r1 = new Rectangle(getTextSize(getFont()));
 		while (!r.contains(r1)) {
 			fontSize--;
 			if (fontSize <= MIN_FONT_SIZE)
 				break;
-			r1 = new Rectangle(getTextSize(easyTextField, f.deriveFont(f.getStyle(), fontSize)));
+			r1 = new Rectangle(getTextSize(f.deriveFont(f.getStyle(), fontSize)));
 		}
 
 		Rectangle r2 = new Rectangle();
 		while (fontSize < MAX_FONT_SIZE) {
-			r2.setSize(getTextSize(easyTextField, f.deriveFont(f.getStyle(), fontSize + 1)));
+			r2.setSize(getTextSize(f.deriveFont(f.getStyle(), fontSize + 1)));
 			if (!r.contains(r2)) {
 				break;
 			}
@@ -71,11 +81,11 @@ public class EasyTextField extends JTextField {
 		repaint();
 	}
 
-	private Dimension getTextSize(JTextField l, Font f) {
+	private Dimension getTextSize(Font f) {
 		Dimension size = new Dimension();
 		// g.setFont(f); // superfluous.
 		FontMetrics fm = g.getFontMetrics(f);
-		size.width = fm.stringWidth(l.getText());
+		size.width = fm.stringWidth(this.getText());
 		size.height = fm.getHeight();
 		return size;
 	}

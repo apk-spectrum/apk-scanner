@@ -12,6 +12,9 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -20,42 +23,58 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
 public class EasysdkNotDrawPanel extends FlatPanel {
-	private final int ARR_SIZE = 6;
-	
+	private final int ARR_SIZE = 6;	
 	 
 	private static int DEVICE_TARGET = 0;
 	private static int DEVICE_STATE_ONLINE = 1;
 	private static int DEVICE_STATE_OFFLINE = 2;
-	
-	
-	private int minsdkVersion;
-	private int targetsdkVersion;
-	private int OnlineDeviceVersion;
 
 	private final Color linecolor = new Color(128, 100, 162);
 	private final Color textcolor = new Color(127, 127, 127);
 	
 	private final Color[] Devicecolor = {new Color(80, 80, 80), new Color(156, 177, 117), new Color(247, 150, 70)}; 
 	
+	public ArrayList<sdkDrawObject> arraysdkObject = new ArrayList<sdkDrawObject>();
+	
+	private class sdkDrawObject implements Comparable<sdkDrawObject> {
+		public int sdkversion = 0;
+		public JPanel panel;
+		
+		public sdkDrawObject(JPanel panel, int version) {
+			// TODO Auto-generated constructor stub
+			this.sdkversion = version;
+			this.panel = panel;
+		}
+		@Override
+		public int compareTo(sdkDrawObject s) {
+			// TODO Auto-generated method stub
+            if (this.sdkversion < s.sdkversion) {
+                return -1;
+            } else if (this.sdkversion > s.sdkversion) {
+                return 1;
+            }
+            return 0;			
+		}
+	}
 	
 	
 	public EasysdkNotDrawPanel() {
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
-		add(makeTextPanel("min", 23));
-		add(makeTextPanel("max", 24));
-		add(makeDevicePanel(Devicecolor[DEVICE_TARGET], 23));
-		add(makeDevicePanel(Devicecolor[DEVICE_STATE_ONLINE], 26));
-		add(makeDevicePanel(Devicecolor[DEVICE_STATE_OFFLINE], 30));
+//		add(makeTextPanel("min", 23));
+//		add(makeTextPanel("max", 24));
+//		add(makeDevicePanel(Devicecolor[DEVICE_TARGET], 23));
+//		add(makeDevicePanel(Devicecolor[DEVICE_STATE_ONLINE], 26));
+//		add(makeDevicePanel(Devicecolor[DEVICE_STATE_OFFLINE], 30));
 				
 		add(Box.createVerticalStrut(10));
-		
 	}
 	
 	private JPanel makeDevicePanel(Color devicecolor, int sdkversion) {
@@ -69,8 +88,6 @@ public class EasysdkNotDrawPanel extends FlatPanel {
 		JPanel temp = new JPanel(new BorderLayout());
 		temp.setOpaque(false);
 		JLabel minlabel = new JLabel();
-		
-		
 		
 		minlabel.setIcon(ImageUtils.setcolorImage(Resource.IMG_EASY_WINDOW_DEVICE.getImageIcon(25, 25), devicecolor));
 		minlabel.setOpaque(false);
@@ -149,4 +166,41 @@ public class EasysdkNotDrawPanel extends FlatPanel {
 		// g.fillPolygon(new int[] {len, len-ARR_SIZE, len-ARR_SIZE, len},
 		// new int[] {0, -ARR_SIZE, ARR_SIZE, 0}, 4);
 	}
+
+	public void setsdkpanel(ApkInfo apkInfo) {
+		// TODO Auto-generated method stub
+		if(apkInfo.manifest.usesSdk.minSdkVersion!=null) {
+			int minsdk = apkInfo.manifest.usesSdk.minSdkVersion;			
+			arraysdkObject.add(new sdkDrawObject(makeTextPanel("min", minsdk), minsdk));
+		}
+		
+		if(apkInfo.manifest.usesSdk.maxSdkVersion!=null) {
+			int maxsdk = apkInfo.manifest.usesSdk.maxSdkVersion;
+			arraysdkObject.add(new sdkDrawObject(makeTextPanel("max", maxsdk), maxsdk));
+		}
+		
+		if(apkInfo.manifest.usesSdk.targetSdkVersion!=null) {
+			int targetsdk = apkInfo.manifest.usesSdk.targetSdkVersion;
+			arraysdkObject.add(new sdkDrawObject(makeDevicePanel(Devicecolor[DEVICE_TARGET], targetsdk), targetsdk));
+		}
+		
+		refreshpanel();
+	}
+	
+	private void refreshpanel() {		
+		Collections.sort(arraysdkObject);
+		for(sdkDrawObject obj: arraysdkObject) {			
+			add(obj.panel);
+		}		
+		add(Box.createVerticalStrut(10));
+		validate();
+	}
+
+	public void clear() {
+		// TODO Auto-generated method stub
+		removeAll();
+		arraysdkObject.clear();
+		add(Box.createVerticalStrut(10));
+		validate();
+	}	
 }

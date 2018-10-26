@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -18,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.resource.Resource;
 
@@ -110,5 +112,13 @@ public class EasyBordPanel extends JPanel implements ActionListener{
 		} else if(e.getActionCommand() == CMD_WINDOW_MINI) {
 			frame.setState(JFrame.ICONIFIED);
 		}
+	}
+	public void setWindowTitle(ApkInfo apkinfo) {
+		this.maintitle.setText(Resource.STR_APP_NAME.getString() + " - "  + new File(apkinfo.filePath).getName());
+	}
+
+	public void clear() {
+		// TODO Auto-generated method stub
+		this.maintitle.setText("");
 	}
 }
