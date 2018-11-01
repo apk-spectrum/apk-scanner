@@ -46,6 +46,7 @@ public class EasysdkNotDrawPanel extends FlatPanel {
 	private class sdkDrawObject implements Comparable<sdkDrawObject> {
 		public int sdkversion = 0;
 		public JPanel panel;
+		boolean entered = false;
 		
 		public sdkDrawObject(JPanel panel, int version) {
 			// TODO Auto-generated constructor stub

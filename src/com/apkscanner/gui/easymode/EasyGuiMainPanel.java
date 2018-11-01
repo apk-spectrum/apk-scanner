@@ -42,7 +42,7 @@ class EasyGuiMainPanel extends JPanel {
 		contentsPanel = new EasyContentsPanel();
 		permissionPanel = new EasyPermissionPanel();
 		
-		add(bordPanel, BorderLayout.PAGE_START);
+		//add(bordPanel, BorderLayout.PAGE_START);
 		add(contentsPanel, BorderLayout.CENTER);		
 		add(permissionPanel, BorderLayout.PAGE_END);
 		setBorder(new LineBorder(Color.BLACK, 0));
@@ -58,10 +58,11 @@ class EasyGuiMainPanel extends JPanel {
 	}
 	
 	private void showApkinfopanel() {
-		bordPanel.setWindowTitle(apklightscanner.getApkInfo());
+		//bordPanel.setWindowTitle(apklightscanner.getApkInfo());
+		mainframe.setTitle(Resource.STR_APP_NAME.getString() + " - "  + new File(apklightscanner.getApkInfo().filePath).getName());
 		contentsPanel.setContents(apklightscanner.getApkInfo());
 		permissionPanel.setPermission(apklightscanner.getApkInfo());
-		//mainframe.setVisible(true);
+		mainframe.setVisible(true);
 	}
 	
 	private void clearApkinfopanel() {

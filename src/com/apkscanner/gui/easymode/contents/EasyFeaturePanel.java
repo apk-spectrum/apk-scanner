@@ -1,5 +1,6 @@
 package com.apkscanner.gui.easymode.contents;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -21,9 +23,9 @@ import com.apkscanner.resource.Resource;
 public class EasyFeaturePanel extends FlatPanel {
 	static private Color sdkverPanelcolor = new Color(242, 242, 242);
 
-	static private Color ininerinfotcolor = new Color(121, 121, 121);
-	static private Color featurefontcolor = new Color(217, 217, 217);
-
+	static private Color []featurefgfontcolor = {new Color(121, 121, 121), new Color(237, 126, 83), Color.RED} ;
+	static private Color featurebgfontcolor = new Color(217, 217, 217);
+	
 	private String installLocation = null;
 
 	private boolean isHidden = false;
@@ -46,7 +48,8 @@ public class EasyFeaturePanel extends FlatPanel {
 	private ArrayList<FeatureObject> Featurearray = new ArrayList<FeatureObject>();
 
 	public EasyFeaturePanel() {
-		setLayout(new FlowLayout(FlowLayout.LEFT, 7, 7));
+		//setLayout(new FlowLayout(FlowLayout.LEFT, 7, 7));
+		setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
 		// featurepanel.setBorder(BorderFactory.createEmptyBorder(15,5,5,5));
 		setBackground(sdkverPanelcolor);
 		setshadowlen(3);
@@ -117,7 +120,7 @@ public class EasyFeaturePanel extends FlatPanel {
 			this.description = desc;
 			this.id = id;
 
-			panel = new EasyFlatLabel(title, featurefontcolor, ininerinfotcolor);
+			panel = new EasyFlatLabel(title, featurebgfontcolor, featurefgfontcolor[style]);
 			// temp.setBorder(BorderFactory.createEmptyBorder(400,10,100,5));
 			panel.setPreferredSize(new Dimension(title.length() * 7, 25));
 			panel.setshadowlen(3);
