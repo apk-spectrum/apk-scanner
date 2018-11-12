@@ -77,7 +77,7 @@ public class EasyLightApkScanner {
 		@Override
 		public void onCompleted() {
 			Log.d("onCompleted() : " + error);
-			if(listener != null && this.error == 0) listener.onCompleted();
+			if(listener != null) listener.onCompleted();
 		}
 
 		@Override

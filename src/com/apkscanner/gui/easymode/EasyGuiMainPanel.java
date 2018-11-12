@@ -25,10 +25,11 @@ class EasyGuiMainPanel extends JPanel {
 	
 	private EasyLightApkScanner apklightscanner;
 	
-	private EasyBordPanel bordPanel;
+	//private EasyBordPanel bordPanel;
 	private EasyContentsPanel contentsPanel;
 	private EasyPermissionPanel permissionPanel;
 	private JFrame mainframe;
+	private boolean isinit= false;
 	public EasyGuiMainPanel(JFrame mainframe, EasyLightApkScanner apkscanner) {
 		this.apklightscanner = apkscanner;
 		this.mainframe = mainframe;
@@ -38,15 +39,15 @@ class EasyGuiMainPanel extends JPanel {
 		
 		setLayout(new BorderLayout());
 		setBackground(maincolor);
-		bordPanel = new EasyBordPanel(mainframe);
+		//bordPanel = new EasyBordPanel(mainframe);
 		contentsPanel = new EasyContentsPanel();
 		permissionPanel = new EasyPermissionPanel();
 		
-		//add(bordPanel, BorderLayout.PAGE_START);
-		add(contentsPanel, BorderLayout.CENTER);		
+
+		add(contentsPanel, BorderLayout.CENTER);			
 		add(permissionPanel, BorderLayout.PAGE_END);
-		setBorder(new LineBorder(Color.BLACK, 0));
 		
+		setBorder(new LineBorder(Color.BLACK, 0));
 		
 		new EasyFileDrop(this, new FileDrop.Listener() {
 			public void filesDropped(java.io.File[] files) {
@@ -55,22 +56,32 @@ class EasyGuiMainPanel extends JPanel {
 				apklightscanner.setApk(files[0].getAbsolutePath());
 			}
 		});
+		
+		//showEmptyinfo();
+		isinit=true;
 	}
 	
 	private void showApkinfopanel() {
+		Log.d("showapkinfopanel");
 		//bordPanel.setWindowTitle(apklightscanner.getApkInfo());
 		mainframe.setTitle(Resource.STR_APP_NAME.getString() + " - "  + new File(apklightscanner.getApkInfo().filePath).getName());
 		contentsPanel.setContents(apklightscanner.getApkInfo());
-		permissionPanel.setPermission(apklightscanner.getApkInfo());
-		mainframe.setVisible(true);
+		permissionPanel.setPermission(apklightscanner.getApkInfo());		
 	}
 	
-	private void clearApkinfopanel() {
-		bordPanel.clear();
+	private void showEmptyinfo() {
+		mainframe.setTitle(Resource.STR_APP_NAME.getString());		
+		contentsPanel.setEmptypanel();
+	}
+	
+	private void clearApkinfopanel() {		
+		//bordPanel.clear();
 		contentsPanel.clear();
 		permissionPanel.clear();
 	}
     class ApkLightScannerListener implements EasyLightApkScanner.StatusListener {
+    	private int error=0;
+    	
 		@Override
 		public void onStart() {
 			// TODO Auto-generated method stub
@@ -80,19 +91,26 @@ class EasyGuiMainPanel extends JPanel {
 		@Override
 		public void onSuccess() {
 			// TODO Auto-generated method stub
-			
+			this.error = 0;
 		}
 
 		@Override
 		public void onError(int error) {
 			// TODO Auto-generated method stub
-			
+			this.error = error;
+			//showEmptyinfo();
 		}
 
 		@Override
 		public void onCompleted() {
 			// TODO Auto-generated method stub
-			showApkinfopanel();
+			if(!isinit) return;
+			
+			if(this.error == 0) {
+				showApkinfopanel();
+			} else {
+				showEmptyinfo();
+			}
 		}
     }
 }

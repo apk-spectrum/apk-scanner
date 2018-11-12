@@ -51,17 +51,16 @@ public class EasyGuiMain{
             	
 //            	Log.d(apkinfo.manifest.packageName);
             	
-            	frame = new JFrame("APKScanner - DCMHome.apk");
+            	frame = new JFrame("APKScanner");
                 
             	//frame.setUndecorated(true);
             	frame.setResizable(false);
-            	
-                frame.add(new EasyGuiMainPanel(frame, apkScanner));
+            	frame.add(new EasyGuiMainPanel(frame, apkScanner));
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.pack();
                 frame.setLocationRelativeTo(null);
                 frame.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
-                //frame.setVisible(true);
+                frame.setVisible(true);
                 
 				//apkScanner.clear(false);				
 				

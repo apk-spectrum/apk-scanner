@@ -1,6 +1,7 @@
 package com.apkscanner.gui.easymode.contents;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -19,6 +20,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.gui.easymode.EasyGuiEmptyPanel;
 import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.gui.easymode.util.EasyFlatLabel;
 import com.apkscanner.gui.easymode.util.EasyTextField;
@@ -29,9 +31,9 @@ import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
 public class EasyContentsPanel extends JPanel{
-	FlatPanel appiconpanel;
+	//FlatPanel appiconpanel;
 	EasyFeaturePanel featurepanel;
-	FlatPanel toolbarpanel;
+	EasyGuiToolPanel toolbarpanel;
 	
 	EasysdkNotDrawPanel sdkverpanel;
 	
@@ -42,6 +44,7 @@ public class EasyContentsPanel extends JPanel{
 	
 	JLabel appicon;
 	
+	JPanel contentsCardPanel;
 	
 	static private Color IconPanelcolor = new Color(220,220,220);
 	
@@ -51,22 +54,35 @@ public class EasyContentsPanel extends JPanel{
 	static private Color packagefontcolor = new Color(130,114,196);
 	
 	static private Color versionfontcolor = new Color(237, 126, 83);
-	
-	
 	static private Color sdkverPanelcolor = new Color(242,242,242);
-	static private Color toobarPanelcolor = new Color(232,241,222);
 	
 	static private Color ininerinfotcolor = new Color(121,121,121);
 	static private Color ininerversiontcolor = new Color(121,121,121);
-		
+	
+	private static String CARD_LAYOUT_EMPTY = "card_empty";
+	private static String CARD_LAYOUT_APKINFO = "card_apkinfo";
+	
 	public EasyContentsPanel() {
 		// TODO Auto-generated constructor stub
-		setLayout(new BorderLayout());
+		setLayout(new BorderLayout());		
 		setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		setBackground(Color.WHITE);
 		
+		contentsCardPanel = new JPanel(new CardLayout());
+		contentsCardPanel.add(makeapkinfoPanel(), CARD_LAYOUT_APKINFO);
+		contentsCardPanel.add(new EasyGuiEmptyPanel(), CARD_LAYOUT_EMPTY);
+		((CardLayout)contentsCardPanel.getLayout()).show(contentsCardPanel,CARD_LAYOUT_EMPTY);
+		
+		add(makeapkiconPanel(), BorderLayout.WEST);
+		add(contentsCardPanel,BorderLayout.CENTER);
+		setEmptypanel();
+	}
+	
+	private JPanel makeapkiconPanel() {
+		JPanel apkiconpanel = new JPanel();
+		
 		//appicon
-		appiconpanel = new FlatPanel();
+		FlatPanel appiconpanel = new FlatPanel();		
 		appiconpanel.setBackground(sdkverPanelcolor);
 		appiconpanel.setPreferredSize(new Dimension(160, 0));
 		appiconpanel.setshadowlen(3);
@@ -100,9 +116,13 @@ public class EasyContentsPanel extends JPanel{
 		applabelpanel.add(ininersizepanel, BorderLayout.SOUTH);
 		
 		appiconpanel.add(applabelpanel, BorderLayout.SOUTH);
-		add(appiconpanel, BorderLayout.WEST);
+		
+		return appiconpanel;
+	}
+	
+	
+	private JPanel makeapkinfoPanel() {
 		JPanel infopanel = new JPanel(new BorderLayout());
-
 		//package
 		packagepanel = new EasyFlatLabel(" ", sdkverPanelcolor, packagefontcolor);
 		packagepanel.setPreferredSize(new Dimension(0, 35));		
@@ -130,52 +150,12 @@ public class EasyContentsPanel extends JPanel{
 		//versionpanel.add(ininersizepanel);
 		
 		featurepanel = new EasyFeaturePanel();
-		/////////////// end
-		innerinfopanel.add(featurepanel, BorderLayout.CENTER);
 		
-		toolbarpanel = new FlatPanel();
-		toolbarpanel.setBackground(toobarPanelcolor);
-		toolbarpanel.setPreferredSize(new Dimension(0, 40));
-		toolbarpanel.setshadowlen(3);
-		
-		
-		JPanel toolbartemppanel = new JPanel(new FlowLayout(FlowLayout.LEFT,1, 1));
-		toolbartemppanel.setOpaque(false);
-		//toolbarpanel.setLayout(new FlowLayout(FlowLayout.LEFT,1, 1));
-		
-		/////////////// tool sample		
-		EasyFlatLabel addtool = new EasyFlatLabel(Resource.IMG_TOOLBAR_INSTALL.getImageIcon(29,29), new Color(149, 179, 215));
-		addtool.setPreferredSize(new Dimension(35, 35));
-		addtool.setshadowlen(3);
-		toolbartemppanel.add(addtool);
-		
-		addtool = new EasyFlatLabel(Resource.IMG_TOOLBAR_MANIFEST.getImageIcon(29,29), new Color(195, 214, 155));
-		addtool.setPreferredSize(new Dimension(35, 35));
-		addtool.setshadowlen(3);
-		toolbartemppanel.add(addtool);
-		
-		addtool = new EasyFlatLabel(Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(29,29), new Color(250, 192, 144));
-		addtool.setPreferredSize(new Dimension(35, 35));
-		addtool.setshadowlen(3);
-		toolbartemppanel.add(addtool);
-		
-		addtool = new EasyFlatLabel(Resource.IMG_TOOLBAR_LAUNCH.getImageIcon(29,29), new Color(204, 193, 218));
-		addtool.setPreferredSize(new Dimension(35, 35));
-		addtool.setshadowlen(3);
-		toolbartemppanel.add(addtool);
-		/////////////// end
-		
-		
-		toolbarpanel.add(toolbartemppanel, BorderLayout.CENTER);
-		
-		EasyButton btnsetting = new EasyButton(Resource.IMG_EASY_WINDOW_SETTING.getImageIcon(15, 15));
-		btnsetting.setPreferredSize(new Dimension(15, 15));
-		toolbarpanel.add(btnsetting, BorderLayout.EAST);
-		
+		toolbarpanel = new EasyGuiToolPanel();
 		
 		innerinfopanel.add(toolbarpanel, BorderLayout.SOUTH);		
-		infopanel.add(innerinfopanel, BorderLayout.CENTER);		
-		add(infopanel,BorderLayout.CENTER);
+		infopanel.add(innerinfopanel, BorderLayout.CENTER);
+		return infopanel;
 	}
 	
 	private void setEasyTextField(JTextField textfield) {
@@ -190,6 +170,13 @@ public class EasyContentsPanel extends JPanel{
         return new Dimension(550, 210);
     }
 
+    public void setEmptypanel() {
+    	appicon.setIcon(Resource.IMG_APP_ICON.getImageIcon(140, 140));
+    	apptitlelabel.setText(Resource.STR_APP_NAME.getString());
+    	((CardLayout)contentsCardPanel.getLayout()).show(contentsCardPanel,CARD_LAYOUT_EMPTY);
+    	
+    }
+    
 	public void setContents(ApkInfo apkInfo) {		
 		//appicon set
 		String temppath = apkInfo.manifest.application.icons[apkInfo.manifest.application.icons.length - 1].name;
@@ -214,6 +201,7 @@ public class EasyContentsPanel extends JPanel{
 		
 		//feature
 		featurepanel.setfeature(apkInfo);
+		((CardLayout)contentsCardPanel.getLayout()).show(contentsCardPanel,CARD_LAYOUT_APKINFO);
 	}
 
 	public void clear() {

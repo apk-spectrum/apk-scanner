@@ -1,5 +1,7 @@
 package com.apkscanner.gui.easymode.contents;
 
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -33,7 +35,7 @@ import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
 
-public class EasyPermissionPanel extends FlatPanel implements ActionListener{
+public class EasyPermissionPanel extends JPanel implements ActionListener{
 	
 	static private Color bordercolor = new Color(242, 242, 242);
 	static private Color dangerouscolor = new Color(181,107,105); 
@@ -43,22 +45,46 @@ public class EasyPermissionPanel extends FlatPanel implements ActionListener{
 	static private int SHADOWSIZE = 3;
 	static private int PERMISSIONICONSIZE = 43;
 	
+	private static String CARD_LAYOUT_EMPTY = "card_empty";
+	private static String CARD_LAYOUT_APKINFO = "card_apkinfo";
+	
+	JPanel contentsCardPanel;
+	FlatPanel permissionpanel;
+	
 	public EasyPermissionPanel() {
 		// TODO Auto-generated constructor stub
-		setBackground(bordercolor);
+		
 		//permissionpanel = getContentPanel(); 
 		//add(permissionpanel, BorderLayout.CENTER);
-		setLayout(new FlowLayout(FlowLayout.LEFT, 2, 1));
-		setshadowlen(SHADOWSIZE);
-		setPreferredSize(new Dimension(0, HEIGHT));
-	}
+		setLayout(new BorderLayout());
+		
+		permissionpanel = new FlatPanel();
+		permissionpanel.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 1));		
+		permissionpanel.setPreferredSize(new Dimension(0, HEIGHT));		
+		permissionpanel.setshadowlen(SHADOWSIZE);
+		permissionpanel.setBackground(bordercolor);
+		
+		contentsCardPanel = new JPanel(new CardLayout());
+		contentsCardPanel.add(permissionpanel , CARD_LAYOUT_APKINFO);
+		contentsCardPanel.add(new EasyGuiToolPanel(HEIGHT), CARD_LAYOUT_EMPTY);
+		
+		setEmptypanel();
+		
 
+		
+		add(contentsCardPanel);
+	}	
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		Log.d("click permission");
 	}
 
+	public void setEmptypanel() {
+		((CardLayout)contentsCardPanel.getLayout()).show(contentsCardPanel,CARD_LAYOUT_EMPTY);
+	}
+	
 	public void setPermission(ApkInfo apkInfo) {
 		// TODO Auto-generated method stub		
 		if(apkInfo.manifest.usesPermission.length < 0) return;
@@ -79,17 +105,18 @@ public class EasyPermissionPanel extends FlatPanel implements ActionListener{
 				permissionicon.setBackground(permissionbackgroundcolor);
 				permissionicon.add(btn);
 				btn.addActionListener(this);
-				add(permissionicon);				
+				permissionpanel.add(permissionicon);				
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+		((CardLayout)contentsCardPanel.getLayout()).show(contentsCardPanel,CARD_LAYOUT_APKINFO);
 		validate();		
 	}
 
 	public void clear() {
 		// TODO Auto-generated method stub
-		removeAll();
+		permissionpanel.removeAll();
 	}
 }

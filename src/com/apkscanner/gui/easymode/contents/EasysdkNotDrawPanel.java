@@ -138,6 +138,9 @@ public class EasysdkNotDrawPanel extends FlatPanel {
 		super.paintComponent(g2); // paint parent's background
 		// setBackground(Color.BLACK); // set background color for this JPanel
 		// setForeground(Color.BLACK);
+		
+		if(arraysdkObject.size() == 0) return;
+		
 		RenderingHints rh = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.setRenderingHints(rh);
 		AffineTransform at = g2.getTransform();
