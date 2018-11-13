@@ -41,7 +41,7 @@ public class EasyPermissionPanel extends JPanel implements ActionListener{
 	static private Color dangerouscolor = new Color(181,107,105); 
 	static private Color permissionbackgroundcolor = new Color(217,217,217);
 	
-	static private int HEIGHT = 50;
+	static public int HEIGHT = 50;
 	static private int SHADOWSIZE = 3;
 	static private int PERMISSIONICONSIZE = 43;
 	
@@ -73,7 +73,7 @@ public class EasyPermissionPanel extends JPanel implements ActionListener{
 
 		
 		add(contentsCardPanel);
-	}	
+	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -87,7 +87,8 @@ public class EasyPermissionPanel extends JPanel implements ActionListener{
 	
 	public void setPermission(ApkInfo apkInfo) {
 		// TODO Auto-generated method stub		
-		if(apkInfo.manifest.usesPermission.length < 0) return;
+		if(apkInfo.manifest.usesPermission == null || apkInfo.manifest.usesPermission.length < 1) return;
+		
 		Log.d(apkInfo.manifest.usesPermission.length+ "");
 		PermissionGroupManager permissionGroupManager = new PermissionGroupManager(apkInfo.manifest.usesPermission);
 		Set<String> keys = permissionGroupManager.getPermGroupMap().keySet();

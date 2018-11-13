@@ -14,11 +14,12 @@ public class EasyLightApkScanner {
 		public void onSuccess();
 		public void onError(int error);
 		public void onCompleted();
+		public void onStateChanged(Status status);
 	}
 
 	private AaptLightScanner scanner = new AaptLightScanner();
 	private StatusListener listener;
-
+	private int latestError = 0;
 	public EasyLightApkScanner(String path1) {
 		scanner.setStatusListener(new ApkLightScannerListener());
 		
@@ -70,7 +71,7 @@ public class EasyLightApkScanner {
 		@Override
 		public void onError(int error) {
 			Log.d("onError()" + error);
-			this.error = error;
+			latestError = this.error = error;
 			if(listener != null) listener.onError(error);
 		}
 
@@ -88,11 +89,16 @@ public class EasyLightApkScanner {
 		@Override
 		public void onStateChanged(Status status) {
 			Log.d("onProgress()" + status );
+			if(listener != null) listener.onStateChanged(status);
 		}
     }
 
 	public void clear(boolean b) {
 		// TODO Auto-generated method stub
 		scanner.clear(b);
+	}
+	
+	public int getlatestError() {
+		return latestError;
 	}
 }

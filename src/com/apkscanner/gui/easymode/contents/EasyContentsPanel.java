@@ -28,11 +28,13 @@ import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.gui.tabpanels.Resources;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.FileUtil.FSStyle;
 
 public class EasyContentsPanel extends JPanel{
 	//FlatPanel appiconpanel;
-	EasyFeaturePanel featurepanel;
+	EasyFeatureHtmlPanel featurepanel;
 	EasyGuiToolPanel toolbarpanel;
 	
 	EasysdkNotDrawPanel sdkverpanel;
@@ -45,6 +47,9 @@ public class EasyContentsPanel extends JPanel{
 	JLabel appicon;
 	
 	JPanel contentsCardPanel;
+	
+	static public int WIDTH = 550;
+	static public int HEIGHT = 210;
 	
 	static private Color IconPanelcolor = new Color(220,220,220);
 	
@@ -79,8 +84,6 @@ public class EasyContentsPanel extends JPanel{
 	}
 	
 	private JPanel makeapkiconPanel() {
-		JPanel apkiconpanel = new JPanel();
-		
 		//appicon
 		FlatPanel appiconpanel = new FlatPanel();		
 		appiconpanel.setBackground(sdkverPanelcolor);
@@ -143,17 +146,13 @@ public class EasyContentsPanel extends JPanel{
 		ininerversionpanel = new EasyFlatLabel(" ", sdkverPanelcolor, versionfontcolor);
 		ininerversionpanel.setPreferredSize(new Dimension(0, 35));
 		ininerversionpanel.setshadowlen(3);
-		
 		innerinfopanel.add(ininerversionpanel, BorderLayout.NORTH);
 		
-		//versionpanel.add(ininerversionpanel);
-		//versionpanel.add(ininersizepanel);
+		featurepanel = new EasyFeatureHtmlPanel();
+		innerinfopanel.add(featurepanel, BorderLayout.CENTER);
 		
-		featurepanel = new EasyFeaturePanel();
-		
-		toolbarpanel = new EasyGuiToolPanel();
-		
-		innerinfopanel.add(toolbarpanel, BorderLayout.SOUTH);		
+		toolbarpanel = new EasyGuiToolPanel();		
+		innerinfopanel.add(toolbarpanel, BorderLayout.SOUTH);
 		infopanel.add(innerinfopanel, BorderLayout.CENTER);
 		return infopanel;
 	}
@@ -167,9 +166,9 @@ public class EasyContentsPanel extends JPanel{
 	
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(550, 210);
+        return new Dimension(HEIGHT, WIDTH);
     }
-
+    
     public void setEmptypanel() {
     	appicon.setIcon(Resource.IMG_APP_ICON.getImageIcon(140, 140));
     	apptitlelabel.setText(Resource.STR_APP_NAME.getString());
@@ -182,7 +181,7 @@ public class EasyContentsPanel extends JPanel{
 		String temppath = apkInfo.manifest.application.icons[apkInfo.manifest.application.icons.length - 1].name;
 		try {
 			ImageIcon icon;
-			icon = new ImageIcon(ImageUtils.getScaledImage(new ImageIcon(ImageIO.read(new URL(temppath))),110,110));
+			icon = new ImageIcon(ImageUtils.getScaledImage(new ImageIcon(ImageIO.read(new URL(temppath))),130,130));
 			appicon.setIcon(icon);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -196,9 +195,8 @@ public class EasyContentsPanel extends JPanel{
 		//version
 		ininerversionpanel.setText(apkInfo.manifest.versionName + " / " + apkInfo.manifest.versionCode);		
 		//size
-		ininersizepanel.setText(apkInfo.fileSize.toString());
-		sdkverpanel.setsdkpanel(apkInfo);
-		
+		ininersizepanel.setText(FileUtil.getFileSize(apkInfo.fileSize, FSStyle.FULL));
+		sdkverpanel.setsdkpanel(apkInfo);		
 		//feature
 		featurepanel.setfeature(apkInfo);
 		((CardLayout)contentsCardPanel.getLayout()).show(contentsCardPanel,CARD_LAYOUT_APKINFO);
@@ -207,6 +205,6 @@ public class EasyContentsPanel extends JPanel{
 	public void clear() {
 		// TODO Auto-generated method stub
 		sdkverpanel.clear();
-		featurepanel.clear();
+		//featurepanel.clear();
 	}
 }

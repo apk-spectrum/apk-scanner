@@ -30,7 +30,7 @@ public class EasyGuiEmptyPanel extends FlatPanel {
 		strTabInfo.append("  <br/><br/>");
 		strTabInfo.append("  Programmed by <a href=\"mailto:" + Resource.STR_APP_MAKER_EMAIL.getString() + "\" title=\"" + Resource.STR_APP_MAKER_EMAIL.getString() + "\">" + Resource.STR_APP_MAKER.getString() + "</a>, 2015.<br/>");
 		strTabInfo.append("  It is open source project on <a href=\"https://github.sec.samsung.net/sunggyu-kam/apk-scanner\" title=\"APK Scanner Site\">SEC Github</a></html>");		
-		appicon.setText(strTabInfo.toString());		
-		add(appicon, BorderLayout.CENTER);		
+		appicon.setText(strTabInfo.toString());
+		add(appicon, BorderLayout.CENTER);
 	}    
 }

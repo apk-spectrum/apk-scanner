@@ -25,46 +25,50 @@ import com.apkscanner.util.Log;
 public class EasyGuiMain{
 	public static JFrame frame;
 	private static final EasyLightApkScanner apkScanner = new EasyLightApkScanner();
-	
+	public static long UIstarttime;
+	public static long corestarttime;
+	public static long coreendtime;
 	public EasyGuiMain() {
 	}
 	public static void main(final String[] args) {
+		Log.d("main start");
+		UIstarttime = System.currentTimeMillis();
+		
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
 				Thread thread = new Thread(new Runnable() {
 					public void run()
 					{
 						apkScanner.clear(false);
-//						apkScanner.setApk("/media/leejinhyeong/Perforce/DCM_APP_DEV_LJH_DEV/PEACE/Cinnamon/applications/provisional/JPN/DCM/apps/DCMAccountAuthenticator/generic/DCMAccountAuthenticator.apk");
-					
 						if(args.length > 0) {
+							corestarttime = System.currentTimeMillis();
 							apkScanner.setApk(args[0]);
 						}
 					}
 				});
 				thread.setPriority(Thread.NORM_PRIORITY);
 				thread.start();
-            	
-//            	apkScanner.openApk("/media/leejinhyeong/Perforce/DCM_APP_DEV_LJH_DEV/OHIO81/Cinnamon/applications/provisional/JPN/DCM/apps/DCMContacts/starqltedcm/DCMContacts_eng.apk");
-//            	
-//            	ApkInfo apkinfo = apkScanner.getApkInfo();
-            	
-//            	Log.d(apkinfo.manifest.packageName);
-            	
-            	frame = new JFrame("APKScanner");
-                
-            	//frame.setUndecorated(true);
-            	frame.setResizable(false);
-            	frame.add(new EasyGuiMainPanel(frame, apkScanner));
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.pack();
-                frame.setLocationRelativeTo(null);
-                frame.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
-                frame.setVisible(true);
-                
-				//apkScanner.clear(false);				
-				
             }
         });
+        
+    	frame = new JFrame(Resource.STR_APP_NAME.getString());
+    	//
+    	//Resource.setLanguage("ko");
+    	
+    	//frame.setUndecorated(true);
+    	frame.setResizable(false);
+    	frame.add(new EasyGuiMainPanel(frame, apkScanner));
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //frame.setResizable(true);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+        
+        if(apkScanner.getlatestError() != 0 || args.length == 0) {
+        	Log.d("getlatestError is not 0 or args 0");
+        	frame.setVisible(true);
+        }
+        
+		Log.d("main End");
 	}
 }
