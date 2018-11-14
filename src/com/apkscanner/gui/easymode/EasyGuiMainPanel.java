@@ -84,8 +84,8 @@ class EasyGuiMainPanel extends JPanel {
 	    //btn1.setMaximumSize(d3);    
 		dragdroplabel.setBounds(0, 0, width, height);
 		dragdroplabel.setBackground(new Color(213,134,145,223));
-		//layeredPane.add(dragdroplabel, new Integer(2));
-		//dragdroplabel.setVisible(false);
+		layeredPane.add(dragdroplabel, new Integer(2));
+		dragdroplabel.setVisible(false);
 	    //btn1.setOpaque(true);
 	    
 	    //layeredPane.add(btn1, new Integer(2));
@@ -94,27 +94,27 @@ class EasyGuiMainPanel extends JPanel {
 	    
 	    add(layeredPane, BorderLayout.CENTER);
 	    
-		new EasyFileDrop(this, new EasyFileDrop.Listener() {
+		new EasyFileDrop(this, dragdroplabel, new EasyFileDrop.Listener() {
 			public void filesDropped(java.io.File[] files) {
 				clearApkinfopanel();
 				apklightscanner.clear(true);
 				apklightscanner.setApk(files[0].getAbsolutePath());
-				layeredPane.repaint();
+				//layeredPane.repaint();
 			}
 			
 			@Override
 			public void filesEnter() {
 				// TODO Auto-generated method stub
-				layeredPane.add(dragdroplabel, new Integer(2));
-				//dragdroplabel.setVisible(true);
+				//layeredPane.add(dragdroplabel, new Integer(2));
+				dragdroplabel.setVisible(true);
 				//Log.d("enter");
 				
 			}
 			@Override
 			public void filesOut() {
 				// TODO Auto-generated method stub
-				layeredPane.remove(dragdroplabel);
-				//dragdroplabel.setVisible(false);
+				//layeredPane.remove(dragdroplabel);
+				dragdroplabel.setVisible(false);
 				//Log.d("out");
 			}
 		});
@@ -192,8 +192,8 @@ class EasyGuiMainPanel extends JPanel {
 				showApkinfopanel();
 				mainframe.setVisible(true);
 			} else {
-				showEmptyinfo();				
-				mainframe.setVisible(true);				
+				showEmptyinfo();
+				mainframe.setVisible(true);
 			}
 		}
 		@Override
