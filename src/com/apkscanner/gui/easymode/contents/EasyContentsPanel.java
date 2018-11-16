@@ -21,6 +21,7 @@ import javax.swing.border.EmptyBorder;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.easymode.EasyGuiEmptyPanel;
+import com.apkscanner.gui.easymode.EasyGuiMain;
 import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.gui.easymode.util.EasyFlatLabel;
 import com.apkscanner.gui.easymode.util.EasyTextField;
@@ -74,13 +75,15 @@ public class EasyContentsPanel extends JPanel{
 		setBackground(Color.WHITE);
 		
 		contentsCardPanel = new JPanel(new CardLayout());
-		contentsCardPanel.add(makeapkinfoPanel(), CARD_LAYOUT_APKINFO);
+		contentsCardPanel.add(makeapkinfoPanel(), CARD_LAYOUT_APKINFO);  //3x ms
 		contentsCardPanel.add(new EasyGuiEmptyPanel(), CARD_LAYOUT_EMPTY);
 		((CardLayout)contentsCardPanel.getLayout()).show(contentsCardPanel,CARD_LAYOUT_EMPTY);
 		
 		add(makeapkiconPanel(), BorderLayout.WEST);
 		add(contentsCardPanel,BorderLayout.CENTER);
+		
 		setEmptypanel();
+		
 	}
 	
 	private JPanel makeapkiconPanel() {
@@ -157,9 +160,9 @@ public class EasyContentsPanel extends JPanel{
 		return infopanel;
 	}
 	
-	private void setEasyTextField(JTextField textfield) {
+	private void setEasyTextField(EasyTextField textfield) {
 		textfield.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
-		textfield.setEditable(false);
+		//textfield.setEditable(false);
 		textfield.setOpaque(false);
 		textfield.setFont(new Font(getFont().getName(), Font.PLAIN, 15));
 	}
@@ -170,8 +173,10 @@ public class EasyContentsPanel extends JPanel{
     }
     
     public void setEmptypanel() {
-    	appicon.setIcon(Resource.IMG_APP_ICON.getImageIcon(140, 140));
-    	apptitlelabel.setText(Resource.STR_APP_NAME.getString());
+    	appicon.setIcon(Resource.IMG_APP_ICON.getImageIcon(140, 140)); //10 ms
+    	
+    	//apptitlelabel.setText(Resource.STR_APP_NAME.getString()); // 20-30ms
+
     	((CardLayout)contentsCardPanel.getLayout()).show(contentsCardPanel,CARD_LAYOUT_EMPTY);
     	
     }
@@ -187,19 +192,23 @@ public class EasyContentsPanel extends JPanel{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		//apptitle
+    	
 		apptitlelabel.setText(apkInfo.manifest.application.labels[0].name);
+		EasyGuiMain.UIstarttime =System.currentTimeMillis();		
 		//package
 		packagepanel.setText(apkInfo.manifest.packageName);		
+		
 		//version
-		ininerversionpanel.setText(apkInfo.manifest.versionName + " / " + apkInfo.manifest.versionCode);		
+		ininerversionpanel.setText(apkInfo.manifest.versionName + " / " + apkInfo.manifest.versionCode);
+		
 		//size
 		ininersizepanel.setText(FileUtil.getFileSize(apkInfo.fileSize, FSStyle.FULL));
 		sdkverpanel.setsdkpanel(apkInfo);		
+		
 		//feature
 		featurepanel.setfeature(apkInfo);
 		((CardLayout)contentsCardPanel.getLayout()).show(contentsCardPanel,CARD_LAYOUT_APKINFO);
+		
 	}
 
 	public void clear() {

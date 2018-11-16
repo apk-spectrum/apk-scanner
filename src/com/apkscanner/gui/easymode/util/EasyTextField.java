@@ -10,9 +10,11 @@ import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import com.apkscanner.gui.easymode.EasyGuiMain;
 import com.apkscanner.gui.easymode.test.FontResizingLabel;
 import com.apkscanner.util.Log;
 
@@ -20,12 +22,20 @@ public class EasyTextField extends JTextField {
 	public static final int MIN_FONT_SIZE = 3;
 	public static final int MAX_FONT_SIZE = 20;
 	Graphics g;
-	int currFontSize = 0;
-
+	int currFontSize = 0;	
+	
 	public EasyTextField(String text) {
-		super(text);
-		currFontSize = this.getFont().getSize();
+//		super(text); // 20ms slow
+		currFontSize = this.getFont().getSize();		
 		init();
+		setEasyTextField(this);
+	}
+	
+	private void setEasyTextField(JTextField textfield) {
+		textfield.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
+		textfield.setEditable(false);
+		textfield.setOpaque(false);
+		textfield.setFont(new Font(getFont().getName(), Font.PLAIN, 15));
 	}
 	
 	protected void init() {
@@ -36,7 +46,7 @@ public class EasyTextField extends JTextField {
 		});
 	}
 
-	public void setText(String str) {
+	public void setText(final String str) {
 		super.setText(str);
 		adaptLabelFont();
 	}

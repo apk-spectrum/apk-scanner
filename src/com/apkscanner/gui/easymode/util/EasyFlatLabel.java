@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -20,8 +21,8 @@ public class EasyFlatLabel extends FlatPanel{
 	boolean entered = false;
 	private final Color btnhovercolor = new Color(200, 200, 200);
 	
-	public EasyFlatLabel(String str, Color backgroundColor, Color foregroundColor) {
-		textlabel = new EasyTextField(str);
+	public EasyFlatLabel(String str, Color backgroundColor, Color foregroundColor) {		
+		textlabel = new EasyTextField(str);		
 		setBackground(backgroundColor);		
 		textlabel.setForeground(foregroundColor);
 		setEasyTextField(textlabel);
@@ -33,6 +34,9 @@ public class EasyFlatLabel extends FlatPanel{
 		button.setBackground(backgroundColor);
 		button.setOpaque(true);
 		add(button);
+	}
+	public void setClicklistener(ActionListener listener) {
+		button.addActionListener(listener);
 	}
 	private void setEasyTextField(JTextField textfield) {
 		textfield.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));

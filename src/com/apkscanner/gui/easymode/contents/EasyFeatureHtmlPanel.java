@@ -26,6 +26,7 @@ import com.apkscanner.data.apkinfo.UsesConfigurationInfo;
 import com.apkscanner.data.apkinfo.UsesFeatureInfo;
 import com.apkscanner.data.apkinfo.UsesLibraryInfo;
 import com.apkscanner.data.apkinfo.UsesPermissionInfo;
+import com.apkscanner.gui.easymode.EasyGuiMain;
 import com.apkscanner.gui.easymode.core.EasyGuiAppFeatureData;
 import com.apkscanner.gui.easymode.util.EasyFlatLabel;
 import com.apkscanner.gui.easymode.util.FlatPanel;
@@ -33,6 +34,7 @@ import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 
 public class EasyFeatureHtmlPanel extends FlatPanel {
 	static private Color sdkverPanelcolor = new Color(242, 242, 242);
@@ -48,6 +50,8 @@ public class EasyFeatureHtmlPanel extends FlatPanel {
 		setBackground(sdkverPanelcolor);
 		setshadowlen(3);
 
+		AppFeature = new EasyGuiAppFeatureData();
+		
 		apkinform = new JLabel();
 		//apkinform.setEditable(false);
 		apkinform.setOpaque(false);
@@ -61,9 +65,9 @@ public class EasyFeatureHtmlPanel extends FlatPanel {
 		add(apkinform, BorderLayout.CENTER);
 	}
 
-	public void setfeature(ApkInfo apkInfo) {
-		AppFeature = new EasyGuiAppFeatureData(apkInfo);
-		makefeaturehtml(AppFeature);		
+	public void setfeature(ApkInfo apkInfo) {		
+		AppFeature.setFeature(apkInfo);
+		makefeaturehtml(AppFeature);
 	}
 
 	private String makeHyperLink(String href, String text, String title, String id, String style) {

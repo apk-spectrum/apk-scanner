@@ -46,11 +46,13 @@ class EasyGuiMainPanel extends JPanel {
 	public EasyGuiMainPanel(JFrame mainframe, EasyLightApkScanner apkscanner) {
 		this.apklightscanner = apkscanner;
 		this.mainframe = mainframe;
+		
 		if(apklightscanner != null) {
 			apklightscanner.setStatusListener(new ApkLightScannerListener());
 		}
+		
 		contentsPanel = new EasyContentsPanel();
-		permissionPanel = new EasyPermissionPanel();
+        permissionPanel = new EasyPermissionPanel();		
 		
 		width = contentsPanel.WIDTH;
 		height = contentsPanel.HEIGHT +permissionPanel.HEIGHT;
@@ -73,10 +75,7 @@ class EasyGuiMainPanel extends JPanel {
 		
 		contentspanel.setBounds(0, 0, width, height);
 		layeredPane.add(contentspanel, new Integer(1));
-		
-		
-
-	 
+			 
 		dragdroplabel = new MyJLabel(Resource.IMG_EASY_WINDOW_DRAGANDDROP.getImageIcon(100, 100));
 		//dragdroplabel = new MyJLabel(null);
 	    //Dimension d3 = new Dimension(width, height);
@@ -88,17 +87,26 @@ class EasyGuiMainPanel extends JPanel {
 		dragdroplabel.setVisible(false);
 	    //btn1.setOpaque(true);
 	    
-	    //layeredPane.add(btn1, new Integer(2));
-	    //mainframe.getContentPane().add(p1, "Center");
-		
-	    
 	    add(layeredPane, BorderLayout.CENTER);
 	    
 		new EasyFileDrop(this, dragdroplabel, new EasyFileDrop.Listener() {
-			public void filesDropped(java.io.File[] files) {
+			public void filesDropped(final java.io.File[] files) {
 				clearApkinfopanel();
-				apklightscanner.clear(true);
-				apklightscanner.setApk(files[0].getAbsolutePath());
+				Thread thread = new Thread(new Runnable() {
+					public void run()
+					{
+						try {
+							apklightscanner.clear(true);
+							EasyGuiMain.corestarttime = System.currentTimeMillis();
+							apklightscanner.setApk(files[0].getAbsolutePath());
+						} catch (Exception e1) {
+							e1.printStackTrace();
+						}
+					}
+				});
+				thread.setPriority(Thread.NORM_PRIORITY);
+				thread.start();
+				
 				//layeredPane.repaint();
 			}
 			
@@ -106,16 +114,13 @@ class EasyGuiMainPanel extends JPanel {
 			public void filesEnter() {
 				// TODO Auto-generated method stub
 				//layeredPane.add(dragdroplabel, new Integer(2));
-				dragdroplabel.setVisible(true);
-				//Log.d("enter");
-				
+				dragdroplabel.setVisible(true);	
 			}
 			@Override
 			public void filesOut() {
 				// TODO Auto-generated method stub
 				//layeredPane.remove(dragdroplabel);
-				dragdroplabel.setVisible(false);
-				//Log.d("out");
+				dragdroplabel.setVisible(false);				
 			}
 		});
 	    
@@ -140,14 +145,14 @@ class EasyGuiMainPanel extends JPanel {
 	
 	private void showApkinfopanel() {
 		Log.d("showapkinfopanel");
-		//bordPanel.setWindowTitle(apklightscanner.getApkInfo());		
+		//bordPanel.setWindowTitle(apklightscanner.getApkInfo());
+		EasyGuiMain.UIstarttime =System.currentTimeMillis(); 
+		
 		mainframe.setTitle(Resource.STR_APP_NAME.getString() + " - "  + new File(apklightscanner.getApkInfo().filePath).getName());
 		contentsPanel.setContents(apklightscanner.getApkInfo());
 		permissionPanel.setPermission(apklightscanner.getApkInfo());
 		
-		long end = System.currentTimeMillis();
-		Log.d( "전체 UI 실행 시간 : " + ( end - EasyGuiMain.UIstarttime )/1000.0 );
-		Log.d( "전체 - Core 시간: " + ( end - EasyGuiMain.UIstarttime  -  EasyGuiMain.coreendtime)/1000.0 );
+		Log.d( " UI set 시간 : " + ( System.currentTimeMillis() - EasyGuiMain.UIstarttime )/1000.0 );
 	}
 	
 	private void showEmptyinfo() {
@@ -188,8 +193,9 @@ class EasyGuiMainPanel extends JPanel {
 			//if(!isinit) return;
 			
 			if(this.error == 0) {
-				EasyGuiMain.coreendtime = System.currentTimeMillis() - EasyGuiMain.corestarttime;
 				showApkinfopanel();
+				long end = System.currentTimeMillis();
+				Log.d( "Core 시간: " + ( (System.currentTimeMillis() - EasyGuiMain.corestarttime)/1000.0 ));
 				mainframe.setVisible(true);
 			} else {
 				showEmptyinfo();

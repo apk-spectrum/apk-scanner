@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JPanel;
 
@@ -13,7 +15,7 @@ import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
-public class EasyGuiToolPanel extends FlatPanel{
+public class EasyGuiToolPanel extends FlatPanel implements ActionListener{
 	int HEIGHT = 35;
 	int BUTTON_SIZE = 35-6;
 	int SHADOW_SIZE = 3;
@@ -28,7 +30,7 @@ public class EasyGuiToolPanel extends FlatPanel{
 	}
 	
 	public EasyGuiToolPanel() {
-		init();		
+		init();
 		maketoolbutton();
 	}
 	
@@ -43,6 +45,7 @@ public class EasyGuiToolPanel extends FlatPanel{
 		
 		EasyButton btnsetting = new EasyButton(Resource.IMG_EASY_WINDOW_SETTING.getImageIcon(15, 15));
 		btnsetting.setPreferredSize(new Dimension(15, 15));
+		btnsetting.addActionListener(this);
 		add(btnsetting, BorderLayout.EAST);
 	}
 	
@@ -52,6 +55,8 @@ public class EasyGuiToolPanel extends FlatPanel{
 		EasyFlatLabel addtool = new EasyFlatLabel(Resource.IMG_TOOLBAR_INSTALL.getImageIcon(BUTTON_SIZE,BUTTON_SIZE), new Color(149, 179, 215));
 		addtool.setPreferredSize(new Dimension(HEIGHT, HEIGHT));
 		addtool.setshadowlen(SHADOW_SIZE);
+		addtool.setClicklistener(this);
+		
 		toolbartemppanel.add(addtool);
 		
 		addtool = new EasyFlatLabel(Resource.IMG_TOOLBAR_MANIFEST.getImageIcon(BUTTON_SIZE,BUTTON_SIZE), new Color(195, 214, 155));
@@ -70,7 +75,10 @@ public class EasyGuiToolPanel extends FlatPanel{
 		toolbartemppanel.add(addtool);
 		/////////////// end
 	}
-	
-	
 
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		Log.d("tool click");
+	}
 }

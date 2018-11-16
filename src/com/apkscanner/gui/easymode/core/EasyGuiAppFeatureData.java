@@ -14,7 +14,9 @@ import com.apkscanner.data.apkinfo.UsesConfigurationInfo;
 import com.apkscanner.data.apkinfo.UsesFeatureInfo;
 import com.apkscanner.data.apkinfo.UsesLibraryInfo;
 import com.apkscanner.data.apkinfo.UsesPermissionInfo;
+import com.apkscanner.gui.easymode.EasyGuiMain;
 import com.apkscanner.util.FileUtil;
+import com.apkscanner.util.Log;
 
 public class EasyGuiAppFeatureData {
 	public String installLocation = null;
@@ -49,6 +51,9 @@ public class EasyGuiAppFeatureData {
 	public EasyGuiAppFeatureData(ApkInfo apkInfo) {		
 		setFeature(apkInfo);
 	}
+	public EasyGuiAppFeatureData() {	
+		
+	}
 	
 	public void removeData()
 	{
@@ -73,7 +78,9 @@ public class EasyGuiAppFeatureData {
 		
 	}
 	
-	private void setFeature(ApkInfo apkInfo) {
+	public void setFeature(ApkInfo apkInfo) {
+		
+		
 		sharedUserId = apkInfo.manifest.sharedUserId;
 		installLocation = apkInfo.manifest.installLocation;
 
@@ -96,16 +103,17 @@ public class EasyGuiAppFeatureData {
 				}
 			}
 		}
+		
 
 		ApkSize = apkInfo.fileSize;
 		apkPath = apkInfo.filePath;
-		checkSumMd5 = FileUtil.getMessageDigest(new File(apkPath), "MD5");
-
+		//very low perfor
+		//checkSumMd5 = FileUtil.getMessageDigest(new File(apkPath), "MD5");
 		hasSignatureLevel = false; // apkInfo.hasSignatureLevel;
 		hasSignatureOrSystemLevel = false; // apkInfo.hasSignatureOrSystemLevel;
 		hasSystemLevel = false; // apkInfo.hasSystemLevel;
 		notGrantPermmissions = "";
-
+		
 		ArrayList<UsesPermissionInfo> allPermissions = new ArrayList<UsesPermissionInfo>(); 
 		StringBuilder permissionList = new StringBuilder();
 		if(apkInfo.manifest.usesPermission != null && apkInfo.manifest.usesPermission.length > 0) {
@@ -128,6 +136,9 @@ public class EasyGuiAppFeatureData {
 				permissionList.append("\n");
 			}
 		}
+		
+		
+		
 		if(apkInfo.manifest.usesPermissionSdk23 != null && apkInfo.manifest.usesPermissionSdk23.length > 0) {
 			if(permissionList.length() > 0) {
 				permissionList.append("\n");

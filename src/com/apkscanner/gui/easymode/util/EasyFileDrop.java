@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Reader;
 
+import javax.swing.JLabel;
+
+import com.apkscanner.gui.easymode.EasyGuiMain;
 import com.apkscanner.util.Log;
 
 /**
@@ -63,7 +66,8 @@ public class EasyFileDrop {
 
 	/** Discover if the running JVM is modern enough to have drag and drop. */
 	private static Boolean supportsDnD;
-
+	private long Entertime;
+	
 	// Default border color
 	private static java.awt.Color defaultBorderColor = new java.awt.Color(0f, 0f, 1f, 0.25f);
 
@@ -112,7 +116,10 @@ public class EasyFileDrop {
 				@SuppressWarnings("rawtypes")
 				public void dragEnter(java.awt.dnd.DropTargetDragEvent evt) {
 					log(out, "EasyFileDrop: dragEnter event.");
-
+					//Log.d("EasyFileDrop: dragEnter event.");
+					
+					Entertime = System.currentTimeMillis();
+					 
 					boolean isFileTypeOK = false;
 					try {
 						java.awt.datatransfer.Transferable tr = evt.getTransferable();
@@ -165,6 +172,7 @@ public class EasyFileDrop {
 																				// the
 																				// drag
 																				// target.
+					//Log.d("dragOver");
 				} // end dragOver
 
 				@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -261,16 +269,24 @@ public class EasyFileDrop {
 				public void dragExit(java.awt.dnd.DropTargetEvent evt) {
 					log(out, "EasyFileDrop: dragExit event.");
 					// If it's a Swing component, reset its border
-					if (c instanceof javax.swing.JComponent && c.getMousePosition() ==null) {
+					//Log.d("exit    " + overlay);
+					
+					
+					//Log.d("aa" + evt.getDropTargetContext().getComponent());
+					
+					if ((evt.getDropTargetContext().getComponent() instanceof JLabel) && 
+							(System.currentTimeMillis() - Entertime > 200 )
+							) {
+						
 						javax.swing.JComponent jc = (javax.swing.JComponent) c;
 						// jc.setBorder( normalBorder );
-						listener.filesOut();
+						listener.filesOut();						
 						log(out, "EasyFileDrop: normal border restored.");
 					} // end if: JComponent
 				} // end dragExit
 
 				public void dropActionChanged(java.awt.dnd.DropTargetDragEvent evt) {
-					log(out, "EasyFileDrop: dropActionChanged event.");
+					//Log.d("EasyFileDrop: dropActionChanged event.");
 					// Is this an acceptable drag event?
 					if (isDragOk(out, evt)) { // evt.acceptDrag(
 												// java.awt.dnd.DnDConstants.ACTION_COPY_OR_MOVE

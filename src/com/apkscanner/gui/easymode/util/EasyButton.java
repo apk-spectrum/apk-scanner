@@ -2,6 +2,7 @@ package com.apkscanner.gui.easymode.util;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -10,7 +11,7 @@ import javax.swing.JButton;
 public class EasyButton extends JButton {
 	private static final long serialVersionUID = -6927025737749969747L;
 	boolean entered = false;
-	private final Color btnhovercolor = new Color(190, 190, 190);
+	private final Color btnhovercolor = new Color(140, 140, 140);
 
 	public EasyButton(ImageIcon icon) {
 		// TODO Auto-generated constructor stub
@@ -21,7 +22,7 @@ public class EasyButton extends JButton {
 		setFocusable(false);
 		setlistener();
 	}
-
+	
 	void setlistener() {
 		addMouseListener(new java.awt.event.MouseAdapter() {
 			public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -38,7 +39,7 @@ public class EasyButton extends JButton {
 			}
 		});
 	}
-
+	
 	public void paint(Graphics g) {
 		super.paint(g);
 		if (entered) {
