@@ -1,6 +1,7 @@
 package com.apkscanner.gui.easymode;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
@@ -27,17 +28,19 @@ import com.apkscanner.util.SystemUtil;
 public class EasyGuiMain{
 	public static JFrame frame;
 	private static final EasyLightApkScanner apkScanner = new EasyLightApkScanner();
-	
+	private static EasyGuiMainPanel mainpanel;
 	public static long UIstarttime;
 	public static long corestarttime;
 	public static long UIInittime;
-	
+	public static boolean isdecoframe = false;
 	public EasyGuiMain() {
 	}
 	public static void main(final String[] args) {
 		Log.d("main start");
 		UIInittime = UIstarttime = System.currentTimeMillis();
-   	
+		frame = new JFrame(Resource.STR_APP_NAME.getString()); //200
+    	mainpanel = new EasyGuiMainPanel(frame, apkScanner);
+    			
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
 				Thread thread = new Thread(new Runnable() {
@@ -55,12 +58,17 @@ public class EasyGuiMain{
             }
         });    //// 70ms        
         
-    	frame = new JFrame(Resource.STR_APP_NAME.getString()); //200
+    	
     	Resource.setLanguage("ko");
-    	//frame.setUndecorated(true);
-    	frame.setResizable(false);
-    	frame.add(new EasyGuiMainPanel(frame, apkScanner)); //100  => 60
-    	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	
+    	if(isdecoframe) { 
+    		setdecoframe();
+    	} else {
+    		frame.setResizable(false);
+    		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	}
+    	
+    	frame.add(mainpanel); //100  => 60
         //frame.setResizable(true);
         frame.pack();
         
@@ -75,15 +83,22 @@ public class EasyGuiMain{
 //        Log.d( " setLocationRelativeTo  : " + ( System.currentTimeMillis() - UIsetlocationttime )/1000.0 );
          
         frame.setLocation(500, 500);
-        frame.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage()); //20
+        //frame.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage()); //20
+        
+         
         
         if(apkScanner.getlatestError() != 0 || args.length == 0) {
         	Log.d("getlatestError is not 0 or args 0");
+        	//mainpanel.showEmptyinfo();
         	frame.setVisible(true);
         }
+        
 		Log.d("main End");
-		Log.d( " init UI   : " + ( System.currentTimeMillis() - EasyGuiMain.UIInittime )/1000.0 );
-		
-
+		Log.d("init UI   : " + ( System.currentTimeMillis() - EasyGuiMain.UIInittime )/1000.0 );
+	}
+	
+	private static void setdecoframe() {
+		frame.setUndecorated(true);
+		com.sun.awt.AWTUtilities.setWindowOpacity(frame,0.7f);
 	}
 }

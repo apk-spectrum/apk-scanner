@@ -50,6 +50,7 @@ public class EasyPermissionPanel extends JPanel implements ActionListener{
 	
 	JPanel contentsCardPanel;
 	FlatPanel permissionpanel;
+	EasyGuiToolPanel toolpanel;
 	
 	public EasyPermissionPanel() {
 		// TODO Auto-generated constructor stub
@@ -66,9 +67,9 @@ public class EasyPermissionPanel extends JPanel implements ActionListener{
 		
 		contentsCardPanel = new JPanel(new CardLayout());
 		contentsCardPanel.add(permissionpanel , CARD_LAYOUT_APKINFO);
-		contentsCardPanel.add(new EasyGuiToolPanel(HEIGHT), CARD_LAYOUT_EMPTY);
 		
-		setEmptypanel();
+		
+		//setEmptypanel();
 		
 
 		
@@ -82,7 +83,16 @@ public class EasyPermissionPanel extends JPanel implements ActionListener{
 	}
 
 	public void setEmptypanel() {
+		Log.d("permission toolpanel=)" + toolpanel);
+		
+		if(toolpanel == null) {
+			toolpanel = new EasyGuiToolPanel(HEIGHT);
+			Log.d("permission new (toolpanel=)" + toolpanel);
+			contentsCardPanel.add(toolpanel, CARD_LAYOUT_EMPTY);
+		}
+				
 		((CardLayout)contentsCardPanel.getLayout()).show(contentsCardPanel,CARD_LAYOUT_EMPTY);
+		
 	}
 	
 	public void setPermission(ApkInfo apkInfo) {

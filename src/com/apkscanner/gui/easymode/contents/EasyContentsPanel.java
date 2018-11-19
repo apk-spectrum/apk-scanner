@@ -20,7 +20,6 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.gui.easymode.EasyGuiEmptyPanel;
 import com.apkscanner.gui.easymode.EasyGuiMain;
 import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.gui.easymode.util.EasyFlatLabel;
@@ -44,7 +43,7 @@ public class EasyContentsPanel extends JPanel{
 	EasyFlatLabel ininerversionpanel;
 	EasyTextField ininersizepanel;
 	EasyTextField apptitlelabel;
-	
+	EasyGuiEmptyPanel emptypanel;
 	JLabel appicon;
 	
 	JPanel contentsCardPanel;
@@ -76,13 +75,12 @@ public class EasyContentsPanel extends JPanel{
 		
 		contentsCardPanel = new JPanel(new CardLayout());
 		contentsCardPanel.add(makeapkinfoPanel(), CARD_LAYOUT_APKINFO);  //3x ms
-		contentsCardPanel.add(new EasyGuiEmptyPanel(), CARD_LAYOUT_EMPTY);
-		((CardLayout)contentsCardPanel.getLayout()).show(contentsCardPanel,CARD_LAYOUT_EMPTY);
+
 		
 		add(makeapkiconPanel(), BorderLayout.WEST);
 		add(contentsCardPanel,BorderLayout.CENTER);
 		
-		setEmptypanel();
+		//setEmptypanel();
 		
 	}
 	
@@ -173,12 +171,15 @@ public class EasyContentsPanel extends JPanel{
     }
     
     public void setEmptypanel() {
+    	Log.d("contents emptypanel=)" + emptypanel);
+    	if(emptypanel ==null) {    		
+    		emptypanel = new EasyGuiEmptyPanel();
+    		Log.d("contents new (EasyGuiEmptyPanel=)" + emptypanel);
+    		contentsCardPanel.add(new EasyGuiEmptyPanel(), CARD_LAYOUT_EMPTY);
+    	}
     	appicon.setIcon(Resource.IMG_APP_ICON.getImageIcon(140, 140)); //10 ms
-    	
     	//apptitlelabel.setText(Resource.STR_APP_NAME.getString()); // 20-30ms
-
     	((CardLayout)contentsCardPanel.getLayout()).show(contentsCardPanel,CARD_LAYOUT_EMPTY);
-    	
     }
     
 	public void setContents(ApkInfo apkInfo) {		

@@ -24,7 +24,7 @@ public class EasyGuiToolPanel extends FlatPanel implements ActionListener{
 	public EasyGuiToolPanel(int height) {
 		init();
 		HEIGHT = height - SHADOW_SIZE * 2;
-		BUTTON_SIZE = HEIGHT - SHADOW_SIZE * 2;
+		BUTTON_SIZE = HEIGHT - SHADOW_SIZE * 2;		
 		setPreferredSize(new Dimension(0, height));
 		maketoolbutton();
 	}
@@ -43,6 +43,8 @@ public class EasyGuiToolPanel extends FlatPanel implements ActionListener{
 		toolbartemppanel.setLayout((new FlowLayout(FlowLayout.LEFT,1, 1)));
 		toolbartemppanel.setOpaque(false);
 		
+		
+		
 		EasyButton btnsetting = new EasyButton(Resource.IMG_EASY_WINDOW_SETTING.getImageIcon(15, 15));
 		btnsetting.setPreferredSize(new Dimension(15, 15));
 		btnsetting.addActionListener(this);
@@ -55,14 +57,46 @@ public class EasyGuiToolPanel extends FlatPanel implements ActionListener{
 		EasyFlatLabel addtool = new EasyFlatLabel(Resource.IMG_TOOLBAR_INSTALL.getImageIcon(BUTTON_SIZE,BUTTON_SIZE), new Color(149, 179, 215));
 		addtool.setPreferredSize(new Dimension(HEIGHT, HEIGHT));
 		addtool.setshadowlen(SHADOW_SIZE);
-		addtool.setClicklistener(this);
+		addtool.setClicklistener(this);		
+		toolbartemppanel.add(addtool);
 		
+		addtool = new EasyFlatLabel(Resource.IMG_TOOLBAR_INSTALL.getImageIcon(BUTTON_SIZE,BUTTON_SIZE), new Color(149, 179, 215));
+		addtool.setPreferredSize(new Dimension(HEIGHT, HEIGHT));
+		addtool.setshadowlen(SHADOW_SIZE);
+		addtool.setClicklistener(this);		
 		toolbartemppanel.add(addtool);
 		
 		addtool = new EasyFlatLabel(Resource.IMG_TOOLBAR_MANIFEST.getImageIcon(BUTTON_SIZE,BUTTON_SIZE), new Color(195, 214, 155));
 		addtool.setPreferredSize(new Dimension(HEIGHT, HEIGHT));
 		addtool.setshadowlen(SHADOW_SIZE);
 		toolbartemppanel.add(addtool);
+		
+		addtool = new EasyFlatLabel(Resource.IMG_TOOLBAR_MANIFEST.getImageIcon(BUTTON_SIZE,BUTTON_SIZE), new Color(195, 214, 155));
+		addtool.setPreferredSize(new Dimension(HEIGHT, HEIGHT));
+		addtool.setshadowlen(SHADOW_SIZE);
+		toolbartemppanel.add(addtool);
+		
+		addtool = new EasyFlatLabel(Resource.IMG_TOOLBAR_MANIFEST.getImageIcon(BUTTON_SIZE,BUTTON_SIZE), new Color(195, 214, 155));
+		addtool.setPreferredSize(new Dimension(HEIGHT, HEIGHT));
+		addtool.setshadowlen(SHADOW_SIZE);
+		toolbartemppanel.add(addtool);
+		
+		addtool = new EasyFlatLabel(Resource.IMG_TOOLBAR_MANIFEST.getImageIcon(BUTTON_SIZE,BUTTON_SIZE), new Color(195, 214, 155));
+		addtool.setPreferredSize(new Dimension(HEIGHT, HEIGHT));
+		addtool.setshadowlen(SHADOW_SIZE);
+		toolbartemppanel.add(addtool);
+		
+		addtool = new EasyFlatLabel(Resource.IMG_TOOLBAR_MANIFEST.getImageIcon(BUTTON_SIZE,BUTTON_SIZE), new Color(195, 214, 155));
+		addtool.setPreferredSize(new Dimension(HEIGHT, HEIGHT));
+		addtool.setshadowlen(SHADOW_SIZE);
+		toolbartemppanel.add(addtool);
+		
+		addtool = new EasyFlatLabel(Resource.IMG_TOOLBAR_MANIFEST.getImageIcon(BUTTON_SIZE,BUTTON_SIZE), new Color(195, 214, 155));
+		addtool.setPreferredSize(new Dimension(HEIGHT, HEIGHT));
+		addtool.setshadowlen(SHADOW_SIZE);
+		toolbartemppanel.add(addtool);
+		
+		
 		
 		addtool = new EasyFlatLabel(Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(BUTTON_SIZE,BUTTON_SIZE), new Color(250, 192, 144));
 		addtool.setPreferredSize(new Dimension(HEIGHT, HEIGHT));

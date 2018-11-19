@@ -113,8 +113,8 @@ public class EasyBordPanel extends JPanel implements ActionListener{
 			frame.setState(JFrame.ICONIFIED);
 		}
 	}
-	public void setWindowTitle(ApkInfo apkinfo) {
-		this.maintitle.setText(Resource.STR_APP_NAME.getString() + " - "  + new File(apkinfo.filePath).getName());
+	public void setWindowTitle(String str) {
+		this.maintitle.setText(str);
 	}
 
 	public void clear() {
