@@ -17,19 +17,26 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.gui.easymode.util.CustomSlider;
 import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 
-public class EasyBordPanel extends JPanel implements ActionListener{
+public class EasyBordPanel extends JPanel implements ActionListener, ChangeListener{
 	EasyButton btnmini, btnexit;
 	
     int pX, pY;
     JFrame frame;
     JPanel windowpanel;
     JLabel maintitle;
+    CustomSlider alphaslider;
+    float opacity;
     
     static private Color bordercolor = new Color(230,230,230);
     static private Color bordertitlecolor = new Color(119,119,119);
@@ -49,6 +56,12 @@ public class EasyBordPanel extends JPanel implements ActionListener{
     	maintitle.setFont(new Font(getFont().getName(), Font.BOLD, 15));
     	maintitle.setForeground(bordertitlecolor);
     	windowpanel.setOpaque(false);
+    	
+    	alphaslider = new CustomSlider();
+    	alphaslider.addChangeListener(this);
+    	opacity = 0.5f;
+    	//alphaslider.setValue(100);
+        //Turn on labels at major tick marks.
     	
     	((FlowLayout)windowpanel.getLayout()).setHgap(1);
         ImageIcon miniicon = new ImageIcon(Resource.IMG_EASY_WINDOW_MINI.getImageIcon(17,17).getImage());
@@ -71,7 +84,8 @@ public class EasyBordPanel extends JPanel implements ActionListener{
         btnexit.setContentAreaFilled(false);
         //stackLabel.setRolloverIcon(new ImageIcon(Resource.IMG_APK_FILE_ICON.getImageIcon(15,15).getImage()));
         setBackground(bordercolor);
-
+        
+        windowpanel.add(alphaslider);
         windowpanel.add(btnmini);
         windowpanel.add(btnexit);
         
@@ -85,23 +99,55 @@ public class EasyBordPanel extends JPanel implements ActionListener{
         btnexit.addActionListener(this);
         
         
-        addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent me) {
-                // Get x,y and store them
-                pX = me.getX();
-                pY = me.getY();
+//        addMouseListener(new MouseAdapter() {
+//            public void mousePressed(MouseEvent me) {
+//                // Get x,y and store them
+//            	pX = me.getX();
+//                pY = me.getY();
+//                
+//                Log.d("pX : " + pX);
+//            }
+//            public void mouseDragged(MouseEvent me) {
+//              //  frame.setLocation(frame.getLocation().x + me.getX() - pX,
+//              //          frame.getLocation().y + me.getY() - pY);
+//            }
+//        });
+//        addMouseMotionListener(new MouseAdapter() {
+//            public void mouseDragged(MouseEvent me) {
+//            	
+//            	
+//            	
+//                frame.setLocation(frame.getLocation().x + me.getX() - pX, 
+//                        frame.getLocation().y + me.getY() - pY);
+//                Log.d("frame.getLocation().x : " + frame.getLocation().x + "    me.getX() - pX : " + (me.getX() - pX) + 
+//                		"    me.getX()  : " + (me.getX()) + "    pX : " + pX);
+//            }
+//        });
+        
+        MouseAdapter ma = new MouseAdapter() {
+            int lastX, lastY;
+            @Override
+            public void mousePressed(MouseEvent e) {
+                lastX = e.getXOnScreen();
+                lastY = e.getYOnScreen();
             }
-            public void mouseDragged(MouseEvent me) {
-                frame.setLocation(frame.getLocation().x + me.getX() - pX,
-                        frame.getLocation().y + me.getY() - pY);
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                int x = e.getXOnScreen();
+                int y = e.getYOnScreen();
+                //Log.d("x =" + x  + "    aaaaa : " +  (frame.getLocation().x + x - lastX));
+                // Move frame by the mouse delta
+                frame.setLocation(frame.getLocation().x + x - lastX,
+                		frame.getLocation().y + y - lastY);
+                
+                //frame.setLocation(1500,500);
+                
+                lastX = x;
+                lastY = y;
             }
-        });
-        addMouseMotionListener(new MouseAdapter() {
-            public void mouseDragged(MouseEvent me) {
-                frame.setLocation(frame.getLocation().x + me.getX() - pX, 
-                        frame.getLocation().y + me.getY() - pY);
-            }
-        });
+        };
+        addMouseListener(ma);
+        addMouseMotionListener(ma);
     }
 
 	@Override
@@ -120,5 +166,14 @@ public class EasyBordPanel extends JPanel implements ActionListener{
 	public void clear() {
 		// TODO Auto-generated method stub
 		this.maintitle.setText("");
+	}
+
+	@Override
+	public void stateChanged(ChangeEvent e) {
+		// TODO Auto-generated method stub
+        JSlider source = (JSlider)e.getSource();
+        int fps = (int)source.getValue();        
+        opacity = (0.1f + ((float)fps/(float)115));        
+        frame.setOpacity(opacity);        
 	}
 }

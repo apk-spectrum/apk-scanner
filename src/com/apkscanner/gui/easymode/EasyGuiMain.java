@@ -16,6 +16,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import com.apkscanner.core.scanner.AaptLightScanner;
 import com.apkscanner.core.scanner.AaptScanner;
@@ -37,6 +38,9 @@ public class EasyGuiMain{
 	}
 	public static void main(final String[] args) {
 		Log.d("main start");
+				
+		Resource.setLanguage((String)Resource.PROP_LANGUAGE.getData(SystemUtil.getUserLanguage()));		
+		
 		UIInittime = UIstarttime = System.currentTimeMillis();
 		frame = new JFrame(Resource.STR_APP_NAME.getString()); //200
     	mainpanel = new EasyGuiMainPanel(frame, apkScanner);
@@ -47,9 +51,11 @@ public class EasyGuiMain{
 					public void run()
 					{
 						apkScanner.clear(false);
-						if(args.length > 0) {
-							corestarttime = System.currentTimeMillis();
+						corestarttime = System.currentTimeMillis();
+						if(args.length > 0) {							
 							apkScanner.setApk(args[0]);
+						} else {							
+							apkScanner.setApk("");
 						}
 					}
 				});
@@ -59,15 +65,12 @@ public class EasyGuiMain{
         });    //// 70ms        
         
     	
-    	Resource.setLanguage("ko");
-    	
     	if(isdecoframe) { 
     		setdecoframe();
     	} else {
-    		frame.setResizable(false);
-    		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    		frame.setResizable(false);    		
     	}
-    	
+    	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	frame.add(mainpanel); //100  => 60
         //frame.setResizable(true);
         frame.pack();
@@ -99,6 +102,6 @@ public class EasyGuiMain{
 	
 	private static void setdecoframe() {
 		frame.setUndecorated(true);
-		com.sun.awt.AWTUtilities.setWindowOpacity(frame,0.7f);
+		com.sun.awt.AWTUtilities.setWindowOpacity(frame,0.5f);		
 	}
 }

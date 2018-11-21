@@ -68,10 +68,9 @@ class EasyGuiMainPanel extends JPanel {
 		contentspanel.setLayout(new BorderLayout());
 		contentspanel.setBackground(maincolor);
 		
-		if(EasyGuiMain.isdecoframe) {
-			
+		if(EasyGuiMain.isdecoframe) {			
 			bordPanel = new EasyBordPanel(mainframe);
-			contentspanel.add(bordPanel, BorderLayout.PAGE_START);
+			add(bordPanel, BorderLayout.PAGE_START);
 		}
 		contentspanel.add(contentsPanel, BorderLayout.CENTER);			
 		contentspanel.add(permissionPanel, BorderLayout.PAGE_END);		

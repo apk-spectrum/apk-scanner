@@ -23,6 +23,7 @@ public class EasyGuiEmptyPanel extends FlatPanel {
 		
 		setshadowlen(3);
 		setBorder(BorderFactory.createEmptyBorder(10, 10,10, 10));
+		setBackground(sdkverPanelcolor);
 		JLabel scannertext = new JLabel(Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString());
 		scannertext.setFont(new Font(getFont().getName(), Font.BOLD, 30));
 		

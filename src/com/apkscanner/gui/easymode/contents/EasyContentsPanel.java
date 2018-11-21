@@ -152,7 +152,8 @@ public class EasyContentsPanel extends JPanel{
 		featurepanel = new EasyFeatureHtmlPanel();
 		innerinfopanel.add(featurepanel, BorderLayout.CENTER);
 		
-		toolbarpanel = new EasyGuiToolPanel();		
+		toolbarpanel = new EasyGuiToolPanel(35, WIDTH - 80 - 160);
+		
 		innerinfopanel.add(toolbarpanel, BorderLayout.SOUTH);
 		infopanel.add(innerinfopanel, BorderLayout.CENTER);
 		return infopanel;

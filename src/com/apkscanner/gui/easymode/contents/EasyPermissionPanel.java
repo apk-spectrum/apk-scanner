@@ -21,6 +21,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import com.apkscanner.core.scanner.PermissionGroupManager;
 import com.apkscanner.data.apkinfo.ApkInfo;
@@ -61,17 +62,18 @@ public class EasyPermissionPanel extends JPanel implements ActionListener{
 		
 		permissionpanel = new FlatPanel();
 		permissionpanel.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 1));		
-		permissionpanel.setPreferredSize(new Dimension(0, HEIGHT));		
+		//permissionpanel.setPreferredSize(new Dimension(0, HEIGHT));		
 		permissionpanel.setshadowlen(SHADOWSIZE);
 		permissionpanel.setBackground(bordercolor);
+		
+		
 		
 		contentsCardPanel = new JPanel(new CardLayout());
 		contentsCardPanel.add(permissionpanel , CARD_LAYOUT_APKINFO);
 		
 		
 		//setEmptypanel();
-		
-
+	
 		
 		add(contentsCardPanel);
 	}
@@ -86,7 +88,7 @@ public class EasyPermissionPanel extends JPanel implements ActionListener{
 		Log.d("permission toolpanel=)" + toolpanel);
 		
 		if(toolpanel == null) {
-			toolpanel = new EasyGuiToolPanel(HEIGHT);
+			toolpanel = new EasyGuiToolPanel(HEIGHT, EasyContentsPanel.WIDTH);
 			Log.d("permission new (toolpanel=)" + toolpanel);
 			contentsCardPanel.add(toolpanel, CARD_LAYOUT_EMPTY);
 		}
