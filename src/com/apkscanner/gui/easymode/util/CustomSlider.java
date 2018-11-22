@@ -11,20 +11,27 @@ import javax.swing.JSlider;
 import javax.swing.Painter;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
+import com.apkscanner.util.Log;
 
 public class CustomSlider extends JSlider {
 	UIDefaults d;
 
 	public CustomSlider() {
+		
+		String systemlook = UIManager.getSystemLookAndFeelClassName();
+		
 		try {
 			for (UIManager.LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
 				if ("Nimbus".equals(laf.getName())) {
-					UIManager.setLookAndFeel(laf.getClassName());
+					UIManager.setLookAndFeel(laf.getClassName());					
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 		d = new UIDefaults();
 		d.put("Slider:SliderTrack[Enabled].backgroundPainter", new Painter<JSlider>() {
 			@Override
@@ -73,8 +80,22 @@ public class CustomSlider extends JSlider {
 			}
 		});
 		//this.putClientProperty("Nimbus.Overrides", d);
+		
+		UIDefaults defaults = UIManager.getLookAndFeelDefaults();
+		
+//		Log.d("" + defaults);
+//		this.putClientProperty("Nimbus.Overrides", defaults);
+//		this.putClientProperty("Nimbus.Overrides.InheritDefaults", false);
 		setPreferredSize(new Dimension(50, 15));
+		
 		this.updateUI();
+		try {
+			UIManager.setLookAndFeel(systemlook);
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

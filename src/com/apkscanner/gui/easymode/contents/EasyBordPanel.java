@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -58,9 +59,9 @@ public class EasyBordPanel extends JPanel implements ActionListener, ChangeListe
     	windowpanel.setOpaque(false);
     	
     	alphaslider = new CustomSlider();
-    	alphaslider.addChangeListener(this);
-    	opacity = 0.5f;
-    	//alphaslider.setValue(100);
+    	alphaslider.addChangeListener(this);    	
+    	opacity = 1.0f;
+    	alphaslider.setValue(100);
         //Turn on labels at major tick marks.
     	
     	((FlowLayout)windowpanel.getLayout()).setHgap(1);
@@ -173,7 +174,13 @@ public class EasyBordPanel extends JPanel implements ActionListener, ChangeListe
 		// TODO Auto-generated method stub
         JSlider source = (JSlider)e.getSource();
         int fps = (int)source.getValue();        
-        opacity = (0.1f + ((float)fps/(float)115));        
-        frame.setOpacity(opacity);        
+        opacity = (0.1f + ((float)fps/(float)115));
+        try {
+        	frame.setOpacity(opacity);
+        }
+        catch (java.awt.IllegalComponentStateException ea) {
+			// TODO Auto-generated catch block
+			//ea.printStackTrace();
+		}
 	}
 }

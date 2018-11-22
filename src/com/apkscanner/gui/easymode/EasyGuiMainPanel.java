@@ -29,75 +29,72 @@ import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
 class EasyGuiMainPanel extends JPanel {
-	private static Color maincolor = new Color(249,249,249);
-	
+	private static Color maincolor = new Color(249, 249, 249);
+
 	private EasyLightApkScanner apklightscanner;
-	
+
 	private EasyBordPanel bordPanel;
 	private EasyContentsPanel contentsPanel;
 	private EasyPermissionPanel permissionPanel;
 	private JFrame mainframe;
-	//private boolean isinit= false;
-	private int width,height;
+	// private boolean isinit= false;
+	private int width, height;
 	JLayeredPane layeredPane;
 	DropEffectLabel dragdroplabel;
-	
-		
+
 	public EasyGuiMainPanel(JFrame mainframe, EasyLightApkScanner apkscanner) {
 		this.apklightscanner = apkscanner;
 		this.mainframe = mainframe;
-		
-		if(apklightscanner != null) {
+
+		if (apklightscanner != null) {
 			apklightscanner.setStatusListener(new ApkLightScannerListener());
 		}
-		
+
 		contentsPanel = new EasyContentsPanel();
-        permissionPanel = new EasyPermissionPanel();		
-		
+		permissionPanel = new EasyPermissionPanel();
+
 		width = contentsPanel.WIDTH;
-		height = contentsPanel.HEIGHT +permissionPanel.HEIGHT;
-		
+		height = contentsPanel.HEIGHT + permissionPanel.HEIGHT;
+
 		setLayout(new BorderLayout());
 		setBorder(new LineBorder(Color.BLACK, 0));
-		
+
 		layeredPane = new JLayeredPane();
 		layeredPane.setPreferredSize(new Dimension(width, height));
-		
+
 		JPanel contentspanel = new JPanel();
-		
+
 		contentspanel.setLayout(new BorderLayout());
 		contentspanel.setBackground(maincolor);
-		
-		if(EasyGuiMain.isdecoframe) {			
+
+		if (EasyGuiMain.isdecoframe) {
 			bordPanel = new EasyBordPanel(mainframe);
 			add(bordPanel, BorderLayout.PAGE_START);
 		}
-		contentspanel.add(contentsPanel, BorderLayout.CENTER);			
-		contentspanel.add(permissionPanel, BorderLayout.PAGE_END);		
-	
-		
+		contentspanel.add(contentsPanel, BorderLayout.CENTER);
+		contentspanel.add(permissionPanel, BorderLayout.PAGE_END);
+
 		contentspanel.setBounds(0, 0, width, height);
 		layeredPane.add(contentspanel, new Integer(1));
-			 
+
 		dragdroplabel = new DropEffectLabel(Resource.IMG_EASY_WINDOW_DRAGANDDROP.getImageIcon(100, 100));
-		//dragdroplabel = new MyJLabel(null);
-	    //Dimension d3 = new Dimension(width, height);
-	    //btn1.setLayout(overlay);
-	    //btn1.setMaximumSize(d3);    
+		// dragdroplabel = new MyJLabel(null);
+		// Dimension d3 = new Dimension(width, height);
+		// btn1.setLayout(overlay);
+		// btn1.setMaximumSize(d3);
 		dragdroplabel.setBounds(0, 0, width, height);
-		dragdroplabel.setBackground(new Color(213,134,145,223));
+		dragdroplabel.setBackground(new Color(213, 134, 145, 223));
 		layeredPane.add(dragdroplabel, new Integer(2));
 		dragdroplabel.setVisible(false);
-	    //btn1.setOpaque(true);
-	    
-	    add(layeredPane, BorderLayout.CENTER);
-	    
+		// btn1.setOpaque(true);
+
+		add(layeredPane, BorderLayout.CENTER);
+
 		new EasyFileDrop(this, dragdroplabel, new EasyFileDrop.Listener() {
 			public void filesDropped(final java.io.File[] files) {
 				clearApkinfopanel();
 				Thread thread = new Thread(new Runnable() {
-					public void run()
-					{
+					public void run() {
 						try {
 							apklightscanner.clear(true);
 							EasyGuiMain.corestarttime = System.currentTimeMillis();
@@ -109,81 +106,83 @@ class EasyGuiMainPanel extends JPanel {
 				});
 				thread.setPriority(Thread.NORM_PRIORITY);
 				thread.start();
-				
-				//layeredPane.repaint();
+
+				// layeredPane.repaint();
 			}
-			
+
 			@Override
 			public void filesEnter() {
 				// TODO Auto-generated method stub
-				//layeredPane.add(dragdroplabel, new Integer(2));
-				dragdroplabel.setVisible(true);	
+				// layeredPane.add(dragdroplabel, new Integer(2));
+				dragdroplabel.setVisible(true);
 			}
+
 			@Override
 			public void filesOut() {
 				// TODO Auto-generated method stub
-				//layeredPane.remove(dragdroplabel);
-				dragdroplabel.setVisible(false);				
+				// layeredPane.remove(dragdroplabel);
+				dragdroplabel.setVisible(false);
 			}
 		});
-	    
-		//showEmptyinfo();
-		//isinit=true;
+
+		// showEmptyinfo();
+		// isinit=true;
 	}
 
-	class DropEffectLabel extends JLabel {	    
+	class DropEffectLabel extends JLabel {
 		private static final long serialVersionUID = 1L;
 
 		public DropEffectLabel(ImageIcon imageIcon) {
 			// TODO Auto-generated constructor stub
-	    	super(imageIcon);
+			super(imageIcon);
 		}
 
-		protected void paintComponent(Graphics g)
-	    {			
-	        g.setColor( getBackground() );
-	        g.fillRect(0, 0, getWidth(), getHeight());
-	        super.paintComponent(g);
-	    }
+		protected void paintComponent(Graphics g) {
+			g.setColor(getBackground());
+			g.fillRect(0, 0, getWidth(), getHeight());
+			super.paintComponent(g);
+		}
 	}
+
 	private void setframetext(String text) {
-		if(!EasyGuiMain.isdecoframe) {
+		if (!EasyGuiMain.isdecoframe) {
 			mainframe.setTitle(text);
 		} else {
 			bordPanel.setWindowTitle(text);
 		}
 	}
-	
+
 	private void showApkinfopanel() {
 		Log.d("showapkinfopanel");
-		//bordPanel.setWindowTitle(apklightscanner.getApkInfo());
-		EasyGuiMain.UIstarttime =System.currentTimeMillis(); 
-		setframetext(Resource.STR_APP_NAME.getString() + " - "  + new File(apklightscanner.getApkInfo().filePath).getName());
+		// bordPanel.setWindowTitle(apklightscanner.getApkInfo());
+		EasyGuiMain.UIstarttime = System.currentTimeMillis();
+		setframetext(
+				Resource.STR_APP_NAME.getString() + " - " + new File(apklightscanner.getApkInfo().filePath).getName());
 		contentsPanel.setContents(apklightscanner.getApkInfo());
 		permissionPanel.setPermission(apklightscanner.getApkInfo());
-		
-		Log.d( " UI set 시간 : " + ( System.currentTimeMillis() - EasyGuiMain.UIstarttime )/1000.0 );
+
+		Log.d(" UI set 시간 : " + (System.currentTimeMillis() - EasyGuiMain.UIstarttime) / 1000.0);
 	}
-	
-	
+
 	void showEmptyinfo() {
 		setframetext(Resource.STR_APP_NAME.getString());
-		contentsPanel.setEmptypanel();		
+		contentsPanel.setEmptypanel();
 		permissionPanel.setEmptypanel();
 	}
-	
-	private void clearApkinfopanel() {		
-		//bordPanel.clear();
+
+	private void clearApkinfopanel() {
+		// bordPanel.clear();
 		contentsPanel.clear();
 		permissionPanel.clear();
 	}
-    class ApkLightScannerListener implements EasyLightApkScanner.StatusListener {
-    	private int error=0;
-    	
+
+	class ApkLightScannerListener implements EasyLightApkScanner.StatusListener {
+		private int error = 0;
+
 		@Override
 		public void onStart() {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
@@ -196,32 +195,31 @@ class EasyGuiMainPanel extends JPanel {
 		public void onError(int error) {
 			// TODO Auto-generated method stub
 			this.error = error;
-			//showEmptyinfo();
+			// showEmptyinfo();
 		}
 
 		@Override
 		public void onCompleted() {
 			// TODO Auto-generated method stub
-			//if(!isinit) return;
-			
-			if(this.error == 0) {
+			// if(!isinit) return;
+
+			if (this.error == 0) {
 				showApkinfopanel();
 				long end = System.currentTimeMillis();
-				Log.d( "Core 시간: " + ( (System.currentTimeMillis() - EasyGuiMain.corestarttime)/1000.0 ));
+				Log.d("Core 시간: " + ((System.currentTimeMillis() - EasyGuiMain.corestarttime) / 1000.0));
 				mainframe.setVisible(true);
 			} else {
 				showEmptyinfo();
 				mainframe.setVisible(true);
 			}
 		}
+
 		@Override
 		public void onStateChanged(Status status) {
 			// TODO Auto-generated method stub
-			if(status.equals(Status.STANBY)) {
-				
+			if (status.equals(Status.STANBY)) {
+
 			}
 		}
-    }
+	}
 }
-
-

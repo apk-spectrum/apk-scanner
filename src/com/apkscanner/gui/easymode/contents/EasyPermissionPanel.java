@@ -35,101 +35,75 @@ import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
+public class EasyPermissionPanel extends JPanel {
 
-public class EasyPermissionPanel extends JPanel implements ActionListener{
-	
 	static private Color bordercolor = new Color(242, 242, 242);
-	static private Color dangerouscolor = new Color(181,107,105); 
-	static private Color permissionbackgroundcolor = new Color(217,217,217);
-	
+	static private Color dangerouscolor = new Color(181, 107, 105);
+	static private Color permissionbackgroundcolor = new Color(217, 217, 217);
+
 	static public int HEIGHT = 50;
+	static private int WIDTH = EasyContentsPanel.WIDTH;
 	static private int SHADOWSIZE = 3;
-	static private int PERMISSIONICONSIZE = 43;
-	
+	static private int PERMISSIONICONSIZE = HEIGHT - SHADOWSIZE * 2;
+
 	private static String CARD_LAYOUT_EMPTY = "card_empty";
 	private static String CARD_LAYOUT_APKINFO = "card_apkinfo";
+
+	EasyPermissioniconPanel iconPanel;
 	
 	JPanel contentsCardPanel;
-	FlatPanel permissionpanel;
 	EasyGuiToolPanel toolpanel;
+	FlatPanel permissiontemppanel;
+	JPanel showpermissionpanel;
+	JScrollPane scrollPane;
 	
+
+	int permissionbuttoncount = 0;
+
 	public EasyPermissionPanel() {
 		// TODO Auto-generated constructor stub
+
+		// permissionpanel = getContentPanel();
+		// add(permissionpanel, BorderLayout.CENTER);
 		
-		//permissionpanel = getContentPanel(); 
-		//add(permissionpanel, BorderLayout.CENTER);
+
+		// permissionpanel.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 1));
+		// permissionpanel.setPreferredSize(new Dimension(0, HEIGHT));
 		setLayout(new BorderLayout());
+		setBackground(bordercolor);
+		setPreferredSize(new Dimension(0, HEIGHT));
 		
-		permissionpanel = new FlatPanel();
-		permissionpanel.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 1));		
-		//permissionpanel.setPreferredSize(new Dimension(0, HEIGHT));		
-		permissionpanel.setshadowlen(SHADOWSIZE);
-		permissionpanel.setBackground(bordercolor);
-		
-		
+		iconPanel = new EasyPermissioniconPanel(HEIGHT, EasyContentsPanel.WIDTH);
 		
 		contentsCardPanel = new JPanel(new CardLayout());
-		contentsCardPanel.add(permissionpanel , CARD_LAYOUT_APKINFO);
-		
-		
-		//setEmptypanel();
-	
-		
+		contentsCardPanel.add(iconPanel, CARD_LAYOUT_APKINFO);
+
+		// setEmptypanel();
+
 		add(contentsCardPanel);
-	}
-	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		Log.d("click permission");
 	}
 
 	public void setEmptypanel() {
 		Log.d("permission toolpanel=)" + toolpanel);
-		
-		if(toolpanel == null) {
+
+		if (toolpanel == null) {
 			toolpanel = new EasyGuiToolPanel(HEIGHT, EasyContentsPanel.WIDTH);
 			Log.d("permission new (toolpanel=)" + toolpanel);
 			contentsCardPanel.add(toolpanel, CARD_LAYOUT_EMPTY);
 		}
-				
-		((CardLayout)contentsCardPanel.getLayout()).show(contentsCardPanel,CARD_LAYOUT_EMPTY);
-		
+
+		((CardLayout) contentsCardPanel.getLayout()).show(contentsCardPanel, CARD_LAYOUT_EMPTY);
+
 	}
-	
+
 	public void setPermission(ApkInfo apkInfo) {
-		// TODO Auto-generated method stub		
-		if(apkInfo.manifest.usesPermission == null || apkInfo.manifest.usesPermission.length < 1) return;
-		
-		Log.d(apkInfo.manifest.usesPermission.length+ "");
-		PermissionGroupManager permissionGroupManager = new PermissionGroupManager(apkInfo.manifest.usesPermission);
-		Set<String> keys = permissionGroupManager.getPermGroupMap().keySet();
-		int cnt = 0;
-		for(String key: keys) {			
-			PermissionGroup g = permissionGroupManager.getPermGroupMap().get(key);
-			//permGroup.append(makeHyperLink("@event", g.icon, g.permSummary, g.name, g.hasDangerous?"color:red;":null));			
-			FlatPanel permissionicon = new FlatPanel();			
-			try {
-				ImageIcon imageIcon = new ImageIcon(new URL(g.icon));				
-				if(g.hasDangerous)ImageUtils.setcolorImage(imageIcon, dangerouscolor);				
-				EasyButton btn = new EasyButton(imageIcon);
-				permissionicon.setPreferredSize(new Dimension(PERMISSIONICONSIZE, PERMISSIONICONSIZE));
-				permissionicon.setshadowlen(SHADOWSIZE);
-				permissionicon.setBackground(permissionbackgroundcolor);
-				permissionicon.add(btn);
-				btn.addActionListener(this);
-				permissionpanel.add(permissionicon);				
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		((CardLayout)contentsCardPanel.getLayout()).show(contentsCardPanel,CARD_LAYOUT_APKINFO);
-		validate();		
+		iconPanel.setPermission(apkInfo);
+		((CardLayout) contentsCardPanel.getLayout()).show(contentsCardPanel, CARD_LAYOUT_APKINFO);
+		// validate();
 	}
 
 	public void clear() {
 		// TODO Auto-generated method stub
-		permissionpanel.removeAll();
+		iconPanel.clear();
 	}
 }
