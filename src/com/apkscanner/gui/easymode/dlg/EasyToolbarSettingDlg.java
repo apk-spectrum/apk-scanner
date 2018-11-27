@@ -95,6 +95,8 @@ public class EasyToolbarSettingDlg extends JDialog {
 
 	public static void main(final String[] args) {
 		new EasyToolbarSettingDlg(null, true);
+		
+		
 	}
 
 	class BookEntry {

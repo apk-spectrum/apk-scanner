@@ -15,6 +15,7 @@ import javax.swing.JScrollPane;
 
 import com.apkscanner.gui.easymode.EasyGuiMain;
 import com.apkscanner.gui.easymode.dlg.EasyToolbarSettingDlg;
+import com.apkscanner.gui.easymode.dlg.EasyToolbarSettingDnDDlg;
 import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.gui.easymode.util.EasyFlatLabel;
 import com.apkscanner.gui.easymode.util.FlatPanel;
@@ -71,7 +72,7 @@ public class EasyGuiToolPanel extends FlatPanel implements ActionListener{
 		});
 		
 		scrollPane.setBorder(null);
-		scrollPane.setOpaque(false);		
+		scrollPane.setOpaque(false);
 		scrollPane.getViewport().setOpaque(false);
 		
 		add(scrollPane, BorderLayout.CENTER);
@@ -89,19 +90,7 @@ public class EasyGuiToolPanel extends FlatPanel implements ActionListener{
 		buttoncount = 0;
 		EasyFlatLabel[] buttonlist = {
 				new EasyFlatLabel(Resource.IMG_TOOLBAR_INSTALL.getImageIcon(BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(149, 179, 215)),
-				new EasyFlatLabel(Resource.IMG_TOOLBAR_INSTALL.getImageIcon(BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(149, 179, 215)),
 				new EasyFlatLabel(Resource.IMG_TOOLBAR_MANIFEST.getImageIcon(BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(195, 214, 155)),
-
-				new EasyFlatLabel(Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(250, 192, 144)),
-				new EasyFlatLabel(Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(250, 192, 144)),
-				new EasyFlatLabel(Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(250, 192, 144)),
-				new EasyFlatLabel(Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(250, 192, 144)),
-				
-				new EasyFlatLabel(Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(250, 192, 144)),
-				new EasyFlatLabel(Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(250, 192, 144)),
-				new EasyFlatLabel(Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(250, 192, 144)),			
-				
-								
 				new EasyFlatLabel(Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(250, 192, 144)),
 				new EasyFlatLabel(Resource.IMG_TOOLBAR_LAUNCH.getImageIcon(BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(204, 193, 218))
 				
@@ -134,7 +123,7 @@ public class EasyGuiToolPanel extends FlatPanel implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		EasyToolbarSettingDlg dlg = new EasyToolbarSettingDlg(EasyGuiMain.frame, true);		
+		EasyToolbarSettingDnDDlg dlg = new EasyToolbarSettingDnDDlg(EasyGuiMain.frame, true);		
 		Log.d("tool click");		
 	}
 }

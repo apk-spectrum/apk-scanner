@@ -88,7 +88,7 @@ public class EasyPermissionPanel extends JPanel {
 
 		if (toolpanel == null) {
 			toolpanel = new EasyGuiToolPanel(HEIGHT, EasyContentsPanel.WIDTH);
-			Log.d("permission new (toolpanel=)" + toolpanel);
+			Log.d("permission new (toolpanel)");
 			contentsCardPanel.add(toolpanel, CARD_LAYOUT_EMPTY);
 		}
 

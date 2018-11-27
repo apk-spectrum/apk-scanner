@@ -175,7 +175,7 @@ public class EasyContentsPanel extends JPanel{
     	Log.d("contents emptypanel=)" + emptypanel);
     	if(emptypanel ==null) {    		
     		emptypanel = new EasyGuiEmptyPanel();
-    		Log.d("contents new (EasyGuiEmptyPanel=)" + emptypanel);
+    		Log.d("contents new (EasyGuiEmptyPanel=)");
     		contentsCardPanel.add(new EasyGuiEmptyPanel(), CARD_LAYOUT_EMPTY);
     	}
     	appicon.setIcon(Resource.IMG_APP_ICON.getImageIcon(140, 140)); //10 ms

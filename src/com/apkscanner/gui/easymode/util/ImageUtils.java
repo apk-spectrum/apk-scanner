@@ -31,7 +31,7 @@ public class ImageUtils {
 		g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		g2.drawImage(srcImg, 0, 0, w, h, null);
 		g2.dispose();
-		srcImg.flush();
+		//srcImg.flush();
 		return resizedImg;
     }
 	

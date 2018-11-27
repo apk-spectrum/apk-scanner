@@ -73,8 +73,7 @@ public class EasyPermissioniconPanel extends FlatPanel implements ActionListener
 			public void componentShown(ComponentEvent e) {	}
 			@Override
 			public void componentResized(ComponentEvent e) {
-				// TODO Auto-generated method stub
-				Log.d("aa");
+				// TODO Auto-generated method stub				
 				WIDTH = scrollPane.getViewport().getWidth();
 				int line = (int)((HEIGHT + 1)* permissionbuttoncount / WIDTH);
 				toolbartemppanel.setPreferredSize(new Dimension(0, HEIGHT * (line+1) + ((line !=0)?SHADOW_SIZE : 0)));
@@ -112,7 +111,7 @@ public class EasyPermissioniconPanel extends FlatPanel implements ActionListener
 			PermissionGroup g = permissionGroupManager.getPermGroupMap().get(key);
 			// permGroup.append(makeHyperLink("@event", g.icon, g.permSummary,
 			// g.name, g.hasDangerous?"color:red;":null));
-for(int i=0; i<11; i++) {
+//for(int i=0; i<11; i++) {
 			FlatPanel permissionicon = new FlatPanel();
 			try {
 				ImageIcon imageIcon = new ImageIcon(new URL(g.icon));
@@ -131,7 +130,7 @@ for(int i=0; i<11; i++) {
 				e.printStackTrace();
 			}
 		}
-		}
+		//}
 	
 		WIDTH = scrollPane.getViewport().getWidth();
 		int line = (int)((HEIGHT + 1)* permissionbuttoncount / WIDTH);
