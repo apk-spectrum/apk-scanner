@@ -19,8 +19,7 @@ import javax.swing.JPanel;
 
 public class FlatPanel extends JPanel {
 	
-	int len = 7;
-	JPanel contentpanel;
+	int len = 7;	
 	public FlatPanel() {
 		setLayout(new BorderLayout());
 		//setBorder(BorderFactory.createEmptyBorder(0, 2, 2, 2));

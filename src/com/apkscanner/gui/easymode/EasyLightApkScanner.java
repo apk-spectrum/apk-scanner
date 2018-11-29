@@ -17,31 +17,56 @@ public class EasyLightApkScanner {
 		public void onStateChanged(Status status);
 	}
 
-	private AaptLightScanner scanner = new AaptLightScanner();
+	private AaptLightScanner scanner;
 	private StatusListener listener;
 	private int latestError = 0;
+	private String apkPath = null;
 	public EasyLightApkScanner(String path1) {
-		scanner.setStatusListener(new ApkLightScannerListener());
+		//scanner.setStatusListener(new ApkLightScannerListener());
 		
 		if(path1 != null) {
+			apkPath = path1;
 			scanner.openApk(path1);	
-		}		
+		}
+	}
+	public EasyLightApkScanner(AaptLightScanner aaptlightscanner) {		
+		this.scanner = (AaptLightScanner)aaptlightscanner;		
+		this.scanner.setStatusListener(new ApkLightScannerListener());
 	}
 
 	public EasyLightApkScanner() {
+		scanner = new AaptLightScanner();
 		scanner.setStatusListener(new ApkLightScannerListener());
 	}
 	
 	public ApkInfo getApkInfo() {
 		return scanner.getApkInfo();
 	}
-	
+
+	public String getApkFilePath() {
+		return apkPath;
+	}
+
 	public ApkScanner getApkScanner() {
 		return scanner;
 	}
 	
-	public void setApk(String path) {
-		scanner.openApk(path);		
+	public void setApk(final String path) {
+		apkPath = path;
+		Thread thread = new Thread(new Runnable() {
+			public void run() {
+				try {
+					scanner.clear(true);
+					EasyGuiMain.corestarttime = System.currentTimeMillis();
+					scanner.openApk(path);
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		thread.setPriority(Thread.NORM_PRIORITY);
+		thread.start();
+		
 	}
 	
 	public void setStatusListener(StatusListener listener) {

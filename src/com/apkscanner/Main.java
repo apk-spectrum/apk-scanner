@@ -12,10 +12,12 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import com.apkscanner.core.scanner.AaptLightScanner;
 import com.apkscanner.core.scanner.AaptScanner;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
+import com.apkscanner.gui.easymode.EasyGuiMain;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.FileUtil;
@@ -24,12 +26,13 @@ import com.apkscanner.util.SystemUtil;
 
 public class Main implements Runnable
 {
-	private static final ApkScanner apkScanner = new AaptScanner(null);
+	static boolean isEasyGui = true;
+	private static final ApkScanner apkScanner = (isEasyGui)?new AaptLightScanner() : new AaptScanner(null);
 	private static final Options allOptions = new Options();
 	private static final Options normalOptions = new Options();
 	private static final Options targetApkOptions = new Options();
 	private static final Options targetPackageOptions = new Options();
-
+	
 	static public void main(final String[] args)
 	{
 		Resource.setLanguage((String)Resource.PROP_LANGUAGE.getData(SystemUtil.getUserLanguage()));
@@ -114,8 +117,14 @@ public class Main implements Runnable
 	}
 
 	private static void createAndShowGUI() {
-		MainUI mainFrame = new MainUI(apkScanner);
-		mainFrame.setVisible(true);
+		
+		if(!isEasyGui) {
+			MainUI mainFrame = new MainUI(apkScanner);
+			mainFrame.setVisible(true);
+		} else {		
+			EasyGuiMain mainFrame = new EasyGuiMain((AaptLightScanner)apkScanner);
+		}
+		
 	}
 
 	static private void emptyCmd(CommandLine cmd)
@@ -139,6 +148,7 @@ public class Main implements Runnable
 			EventQueue.invokeLater(new Main());
 			waitAdbServer();
 			apkScanner.openApk(apkFilePath);
+			
 		} else {
 
 		}
@@ -267,7 +277,7 @@ public class Main implements Runnable
 	}
 
 	@Override
-	public void run() {
+	public void run() {		
 		createAndShowGUI();
 	}
 }

@@ -24,6 +24,7 @@ import com.apkscanner.gui.easymode.contents.EasyContentsPanel;
 
 import com.apkscanner.gui.easymode.contents.EasyPermissionPanel;
 import com.apkscanner.gui.easymode.core.EasyGuiAppFeatureData;
+import com.apkscanner.gui.easymode.core.ToolEntryManager;
 import com.apkscanner.gui.easymode.util.EasyFileDrop;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
@@ -41,11 +42,14 @@ class EasyGuiMainPanel extends JPanel {
 	private int width, height;
 	JLayeredPane layeredPane;
 	DropEffectLabel dragdroplabel;
-
+	
 	public EasyGuiMainPanel(JFrame mainframe, EasyLightApkScanner apkscanner) {
 		this.apklightscanner = apkscanner;
 		this.mainframe = mainframe;
 
+		ToolEntryManager.Apkscanner = apkscanner;
+		ToolEntryManager.mainframe = mainframe;
+		
 		if (apklightscanner != null) {
 			apklightscanner.setStatusListener(new ApkLightScannerListener());
 		}
@@ -93,19 +97,9 @@ class EasyGuiMainPanel extends JPanel {
 		new EasyFileDrop(this, dragdroplabel, new EasyFileDrop.Listener() {
 			public void filesDropped(final java.io.File[] files) {
 				clearApkinfopanel();
-				Thread thread = new Thread(new Runnable() {
-					public void run() {
-						try {
-							apklightscanner.clear(true);
-							EasyGuiMain.corestarttime = System.currentTimeMillis();
-							apklightscanner.setApk(files[0].getAbsolutePath());
-						} catch (Exception e1) {
-							e1.printStackTrace();
-						}
-					}
-				});
-				thread.setPriority(Thread.NORM_PRIORITY);
-				thread.start();
+				EasyGuiMain.corestarttime = System.currentTimeMillis();
+				
+				apklightscanner.setApk(files[0].getAbsolutePath());
 
 				// layeredPane.repaint();
 			}
@@ -196,6 +190,7 @@ class EasyGuiMainPanel extends JPanel {
 			// TODO Auto-generated method stub
 			this.error = error;
 			// showEmptyinfo();
+
 		}
 
 		@Override

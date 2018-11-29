@@ -14,11 +14,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import com.apkscanner.gui.easymode.EasyGuiMain;
+import com.apkscanner.gui.easymode.core.ToolEntry;
+import com.apkscanner.gui.easymode.core.ToolEntryManager;
 import com.apkscanner.gui.easymode.dlg.EasyToolbarSettingDlg;
 import com.apkscanner.gui.easymode.dlg.EasyToolbarSettingDnDDlg;
 import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.gui.easymode.util.EasyFlatLabel;
 import com.apkscanner.gui.easymode.util.FlatPanel;
+import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
@@ -30,16 +33,16 @@ public class EasyGuiToolPanel extends FlatPanel implements ActionListener{
 	static private Color toobarPanelcolor = new Color(232,241,222);
 	JPanel toolbartemppanel;
 	EasyButton btnsetting;
-	JScrollPane scrollPane;
-	int buttoncount=0;
+	JScrollPane scrollPane;	
+	ArrayList<ToolEntry> entrys;
 	
-	public EasyGuiToolPanel(int height, int width) {
-		
+	public EasyGuiToolPanel(int height, int width) {		
 		HEIGHT = height - SHADOW_SIZE * 2;
 		BUTTON_IMG_SIZE = HEIGHT - SHADOW_SIZE * 2;
 		WIDTH = width;
+		entrys = ToolEntryManager.getShowToolbarList();
 		init();
-		setPreferredSize(new Dimension(0, height));
+		setPreferredSize(new Dimension(0, height));		
 		maketoolbutton();
 	}
 		
@@ -59,10 +62,8 @@ public class EasyGuiToolPanel extends FlatPanel implements ActionListener{
 			public void componentShown(ComponentEvent e) {	}
 			@Override
 			public void componentResized(ComponentEvent e) {
-				// TODO Auto-generated method stub
-				WIDTH = scrollPane.getViewport().getWidth();
-				int line = (int)((HEIGHT + 1)* buttoncount /	WIDTH);
-				toolbartemppanel.setPreferredSize(new Dimension(0, HEIGHT * (line+1) + ((line !=0)?SHADOW_SIZE : 0)));
+				// TODO Auto-generated method stub				
+				setviewportsize();
 			}
 			@Override
 			public void componentMoved(ComponentEvent e) {}
@@ -86,23 +87,24 @@ public class EasyGuiToolPanel extends FlatPanel implements ActionListener{
 		
 	}
 	
-	private void maketoolbutton() {
-		buttoncount = 0;
-		EasyFlatLabel[] buttonlist = {
-				new EasyFlatLabel(Resource.IMG_TOOLBAR_INSTALL.getImageIcon(BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(149, 179, 215)),
-				new EasyFlatLabel(Resource.IMG_TOOLBAR_MANIFEST.getImageIcon(BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(195, 214, 155)),
-				new EasyFlatLabel(Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(250, 192, 144)),
-				new EasyFlatLabel(Resource.IMG_TOOLBAR_LAUNCH.getImageIcon(BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(204, 193, 218))
-				
-		};
-		
-		for(EasyFlatLabel btn : buttonlist) {
+	private void setviewportsize() {
+		WIDTH = scrollPane.getViewport().getWidth();
+		int line = (int)((HEIGHT + 1)* entrys.size() /	WIDTH);
+		toolbartemppanel.setPreferredSize(new Dimension(0, HEIGHT * (line+1) + ((line !=0)?SHADOW_SIZE : 0)));
+		toolbartemppanel.updateUI();
+	}
+	private void maketoolbutton() {		
+		toolbartemppanel.removeAll();
+		entrys = ToolEntryManager.getShowToolbarList();
+		//ArrayList<EasyFlatLabel> toolbtns = new ArrayList<EasyFlatLabel>();		
+		for(ToolEntry entry : entrys) {
+			EasyFlatLabel btn = new EasyFlatLabel(ImageUtils.getScaledImage(entry.getImage(),BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(149, 179, 215));			
 			btn.setPreferredSize(new Dimension(HEIGHT, HEIGHT));
-			btn.setshadowlen(SHADOW_SIZE);
-			btn.setClicklistener(this);		
-			toolbartemppanel.add(btn);
-			buttoncount++;
-		}
+			btn.setactionCommand(entry.getTitle());
+			btn.setshadowlen(SHADOW_SIZE);			
+			btn.setClicklistener(this);
+			toolbartemppanel.add(btn);			
+		}			
 		//toolbartemppanel.setPreferredSize(new Dimension(0,300));
 		// * buttonlist.length / EasyContentsPanel.WIDTH);
 		
@@ -123,7 +125,16 @@ public class EasyGuiToolPanel extends FlatPanel implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		EasyToolbarSettingDnDDlg dlg = new EasyToolbarSettingDnDDlg(EasyGuiMain.frame, true);		
-		Log.d("tool click");		
+		Log.d("Click");
+		if(e.getSource().equals(btnsetting)) {
+			EasyToolbarSettingDnDDlg dlg = new EasyToolbarSettingDnDDlg(EasyGuiMain.frame, true);
+			if(dlg.ischange()) {				
+				maketoolbutton();
+				setviewportsize();
+			}
+		} else {
+			Log.d(e.getActionCommand());
+			ToolEntryManager.excuteEntry(e.getActionCommand());
+		}		
 	}
 }

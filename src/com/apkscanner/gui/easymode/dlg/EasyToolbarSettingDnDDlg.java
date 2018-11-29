@@ -10,10 +10,13 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Shape;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -22,69 +25,61 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
+import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.apkscanner.gui.easymode.core.ToolEntry;
+import com.apkscanner.gui.easymode.core.ToolEntryManager;
 import com.apkscanner.gui.easymode.test.DragAndDropTest;
 import com.apkscanner.gui.easymode.test.ReportingListTransferHandler;
 import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
-public class EasyToolbarSettingDnDDlg extends JDialog {
+public class EasyToolbarSettingDnDDlg extends JDialog implements ActionListener{
 	
 	final int HIDE_LIST_ITEM_HEIGHT = 40;
 	final int SHOW_LIST_ITEM_HEIGHT = 35; 
-	
-	private ToolEntry items[] = {
-			new ToolEntry(Resource.STR_BTN_ABOUT.getString(), Resource.IMG_TOOLBAR_ABOUT.getImageIcon()),
-			new ToolEntry(Resource.STR_BTN_EXPLORER.getString(), Resource.IMG_TOOLBAR_EXPLORER.getImageIcon()),
-			new ToolEntry(Resource.STR_BTN_INSTALL.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon()),
-			new ToolEntry(Resource.STR_BTN_LAUNCH.getString(), Resource.IMG_TOOLBAR_LAUNCH.getImageIcon()),
-			new ToolEntry(Resource.STR_BTN_OPEN_PACKAGE.getString(), Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon()),
-	};
-	
-	private ToolEntry showitems[] = {
-			new ToolEntry(Resource.STR_BTN_ABOUT.getString(), Resource.IMG_TOOLBAR_ABOUT.getImageIcon()),
-			new ToolEntry(Resource.STR_BTN_EXPLORER.getString(), Resource.IMG_TOOLBAR_EXPLORER.getImageIcon()),
-			new ToolEntry(Resource.STR_BTN_INSTALL.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon()),
-			new ToolEntry(Resource.STR_BTN_LAUNCH.getString(), Resource.IMG_TOOLBAR_LAUNCH.getImageIcon()),
-			new ToolEntry(Resource.STR_BTN_OPEN_PACKAGE.getString(), Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon()),
-	};
 	
 	ListItemTransferHandler arrayListHandler;	
 	JLabel description;
 	JList<ToolEntry> hidetoollist;
 	JList<ToolEntry> showtoollist;
 	
+	JButton btnapply;
+	JButton btnCancel;
+	
+	boolean ischange;
 	public EasyToolbarSettingDnDDlg(Frame frame, boolean modal) {
 		super(frame, "Setting", modal);
-		
+		ischange = false;
 		this.setSize(500, 500);
 		//this.setPreferredSize(new Dimension(500, 500));
 		this.setLocationRelativeTo(frame);
 		this.setMinimumSize(new Dimension(500, 500));
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		
 		arrayListHandler = new ListItemTransferHandler();
 		// this.setResizable(false);
 
-		final DefaultListModel<ToolEntry> hidelistmodel = new DefaultListModel<>();
-	    for(ToolEntry tempentry : items) {
-	    	hidelistmodel.addElement(tempentry);
-	    }
 		
 		final DefaultListModel<ToolEntry> showlistmodel = new DefaultListModel<>();
-		for(ToolEntry tempentry : showitems) {
+		for(ToolEntry tempentry : ToolEntryManager.getShowToolbarList()) {
 			showlistmodel.addElement(tempentry);
 		}
+		
+		final DefaultListModel<ToolEntry> hidelistmodel = new DefaultListModel<>();
+	    for(ToolEntry tempentry : ToolEntryManager.getHideToolbarList()) {
+	    	hidelistmodel.addElement(tempentry);
+	    }
 		
 		hidetoollist = new JList<>(hidelistmodel);
 		showtoollist = new JList<>(showlistmodel);
@@ -97,8 +92,13 @@ public class EasyToolbarSettingDnDDlg extends JDialog {
 		listLabel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		
 		JPanel buttonsetpanel = new JPanel();
-		buttonsetpanel.add(new JButton("Apply"));
-		buttonsetpanel.add(new JButton("Cancel"));
+		btnapply = new JButton("Apply");
+		btnCancel = new JButton("Cancel");
+		btnapply.addActionListener(this);
+		btnCancel.addActionListener(this);
+		
+		buttonsetpanel.add(btnapply);
+		buttonsetpanel.add(btnCancel);
 
 		hidetoollist.setCellRenderer(new HideCellRenderer(HIDE_LIST_ITEM_HEIGHT));
 		hidetoollist.setTransferHandler(arrayListHandler);
@@ -123,7 +123,7 @@ public class EasyToolbarSettingDnDDlg extends JDialog {
 						// TODO Auto-generated method stub
 						//ListSelectionModel lsm = (ListSelectionModel)e.getSource();
 						if(showtoollist.getSelectedValue() != null){
-							description.setText("*" + showtoollist.getSelectedValue().title);
+							description.setText("*" + showtoollist.getSelectedValue().getTitle() + " : " + showtoollist.getSelectedValue().getDescription());
 						}
 					}                	 
                  });
@@ -168,7 +168,7 @@ public class EasyToolbarSettingDnDDlg extends JDialog {
 		this.setVisible(true);
 	}
 
-    private class DragMouseAdapter extends MouseAdapter
+	private class DragMouseAdapter extends MouseAdapter
     {
         public void mousePressed(MouseEvent e)
         {
@@ -179,11 +179,11 @@ public class EasyToolbarSettingDnDDlg extends JDialog {
         }
     }
 	
-	public static void main(final String[] args) {
-		new EasyToolbarSettingDnDDlg(null, true);
-		
-		
-	}
+//	public static void main(final String[] args) {
+//		new EasyToolbarSettingDnDDlg(null, true);
+//		
+//		
+//	}
 
 	class HideCellRenderer extends JLabel implements ListCellRenderer {
 		// private Color HIGHLIGHT_COLOR = new Color(0, 0, 128);
@@ -197,7 +197,7 @@ public class EasyToolbarSettingDnDDlg extends JDialog {
 				boolean cellHasFocus) {			
 			ToolEntry entry = (ToolEntry) value;
 			setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-			setText(entry.getTitle());
+			setText(entry.getTitle() + " - " +entry.getDescription());
 			setIcon(entry.getImage());
 			if (isSelected) {
 				setBackground(list.getSelectionBackground());
@@ -244,5 +244,27 @@ public class EasyToolbarSettingDnDDlg extends JDialog {
         	//image = new ImageIcon(ImageUtils.getScaledImage(entry.getImage(),30,30));
             super.paintComponent(g); //Let's paint the (scaled) JLabel!
         }
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		if(e.getSource().equals(btnapply)) {			
+			ListModel list = showtoollist.getModel();			
+			String str = "";
+			for(int i = 0; i < list.getSize(); i++){
+				ToolEntry obj = (ToolEntry)list.getElementAt(i);
+				str +=ToolEntryManager.findIndexFromAllEntry(obj) + ",";
+				}
+			Resource.PROP_EASY_GUI_TOOLBAR.setData(str);
+			ischange = true;			
+			this.dispose();
+		} else if(e.getSource().equals(btnCancel)) {
+			ischange = false;
+			this.dispose();
+		}
+	}
+	public boolean ischange() {
+		return ischange;
 	}
 }

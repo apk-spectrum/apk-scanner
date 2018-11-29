@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
 
@@ -35,6 +36,14 @@ public class EasyFlatLabel extends FlatPanel{
 		button.setOpaque(true);
 		add(button);
 	}
+	public EasyFlatLabel(Image icon, Color backgroundColor) {
+		this(new ImageIcon(icon), backgroundColor);		
+	}	
+	
+	public void setactionCommand(String cmd) {
+		button.setActionCommand(cmd);
+	}
+	
 	public void setClicklistener(ActionListener listener) {
 		button.addActionListener(listener);
 	}

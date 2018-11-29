@@ -19,6 +19,7 @@ import javax.swing.UIManager;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import com.apkscanner.gui.easymode.core.ToolEntryManager;
 import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.util.Log;
@@ -515,6 +516,8 @@ public enum Resource
 	PROP_PEM_FILE_PATH			(Type.PROP, "last_pem_file_path", null /* see getDefValue() */),
 	PROP_PK8_FILE_PATH			(Type.PROP, "last_pk8_file_path", null /* see getDefValue() */),
 	PROP_PRINT_MULTILINE_ATTR	(Type.PROP, "print_multiline_attr", true),
+	
+	PROP_EASY_GUI_TOOLBAR				(Type.PROP, "easy_gui_show_button", ToolEntryManager.defaultEntry),
 
 	PROP_DEFAULT_DECORDER		(Type.PROP, "default_decorder", Resource.STR_DECORDER_JD_GUI),
 	PROP_DEFAULT_SEARCHER		(Type.PROP, "default_searcher", Resource.STR_DEFAULT_SEARCHER),

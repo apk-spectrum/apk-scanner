@@ -1,26 +1,38 @@
-package com.apkscanner.gui.easymode.dlg;
+package com.apkscanner.gui.easymode.core;
 
 import java.io.Serializable;
 
 import javax.swing.ImageIcon;
 
-class ToolEntry implements Serializable{
-	public final String title;
-	public final ImageIcon image;
-	
+import com.apkscanner.util.Log;
+
+public class ToolEntry implements Serializable{
+	String title  = "";
+	String description = "";	
+	ImageIcon image = null;
 	
 	public ToolEntry(String title, String imagePath) {
 		this.title = title;
 		image = new ImageIcon(imagePath);
+		this.description = "";
 	}
 
 	public ToolEntry(String title, ImageIcon image) {
 		this.title = title;
-		this.image = image;
+		this.image = image;		
 	}
 
+	public ToolEntry(String title, String description, ImageIcon image) {
+		this(title, image);
+		this.description = description;
+	}
+	
 	public String getTitle() {
 		return title;
+	}
+	
+	public String getDescription() {
+		return description;
 	}
 
 	public ImageIcon getImage() {

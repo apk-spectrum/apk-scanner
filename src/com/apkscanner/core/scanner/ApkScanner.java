@@ -80,7 +80,7 @@ abstract public class ApkScanner
 			if(statusListener == null) return;
 
 			if(lastErrorCode != NO_ERR) {
-				statusListener.onError(lastErrorCode);
+				statusListener.onError(lastErrorCode);				
 			} else if(scanningStatus != 0) {
 				for(Status state: Status.values()) {
 					if(isCompleted(state)) {
@@ -250,7 +250,6 @@ abstract public class ApkScanner
 	protected void errorOccurred(int errorCode) {
 		synchronized (this) {
 			lastErrorCode = errorCode;
-
 			if(statusListener != null) {
 				statusListener.onError(errorCode);
 				statusListener.onCompleted();

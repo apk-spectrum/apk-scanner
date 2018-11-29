@@ -20,6 +20,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.gui.easymode.EasyGuiMain;
 import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.gui.easymode.util.EasyFlatLabel;
@@ -182,19 +183,38 @@ public class EasyContentsPanel extends JPanel{
     	//apptitlelabel.setText(Resource.STR_APP_NAME.getString()); // 20-30ms
     	((CardLayout)contentsCardPanel.getLayout()).show(contentsCardPanel,CARD_LAYOUT_EMPTY);
     }
-    
-	public void setContents(ApkInfo apkInfo) {		
+    private ImageIcon getAppicon(ApkInfo apkInfo) {
+		String iconPath = null;
+		if(apkInfo.manifest.application.icons != null && apkInfo.manifest.application.icons.length > 0) {
+			ResourceInfo[] iconList = apkInfo.manifest.application.icons;
+			for(int i=iconList.length-1; i >= 0; i--) {
+				if(iconList[i].name.endsWith(".xml")) continue;
+				iconPath = iconList[i].name;
+				if(iconPath.toLowerCase().endsWith(".webp")) {
+					iconPath = ImageUtils.covertWebp2Png(iconPath, apkInfo.tempWorkPath);
+				}
+				if(iconPath != null) {
+					Log.d("icon Path is null");
+					break;
+				}
+			}
+		}		
 		//appicon set
-		String temppath = apkInfo.manifest.application.icons[apkInfo.manifest.application.icons.length - 1].name;
+		//String temppath = apkInfo.manifest.application.icons[apkInfo.manifest.application.icons.length - 1].name;
 		try {
 			ImageIcon icon;
-			icon = new ImageIcon(ImageUtils.getScaledImage(new ImageIcon(ImageIO.read(new URL(temppath))),130,130));
-			appicon.setIcon(icon);
+			icon = new ImageIcon(ImageUtils.getScaledImage(new ImageIcon(ImageIO.read(new URL(iconPath))),130,130));
+			return icon;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	
+		return null;
+    }
+	public void setContents(ApkInfo apkInfo) {
+
+		appicon.setIcon(getAppicon(apkInfo));
+
 		apptitlelabel.setText(apkInfo.manifest.application.labels[0].name);
 		EasyGuiMain.UIstarttime =System.currentTimeMillis();		
 		//package
