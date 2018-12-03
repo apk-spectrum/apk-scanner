@@ -155,6 +155,7 @@ public class EasyBordPanel extends JPanel implements ActionListener, ChangeListe
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getActionCommand() == CMD_WINDOW_EXIT) {
+			frame.dispose();
 			System.exit(0);
 		} else if(e.getActionCommand() == CMD_WINDOW_MINI) {
 			frame.setState(JFrame.ICONIFIED);

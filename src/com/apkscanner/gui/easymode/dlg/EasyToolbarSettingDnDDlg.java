@@ -47,7 +47,7 @@ import com.apkscanner.util.Log;
 
 public class EasyToolbarSettingDnDDlg extends JDialog implements ActionListener{
 	
-	final int HIDE_LIST_ITEM_HEIGHT = 40;
+	final int HIDE_LIST_ITEM_HEIGHT = 50;
 	final int SHOW_LIST_ITEM_HEIGHT = 35; 
 	
 	ListItemTransferHandler arrayListHandler;	
@@ -189,7 +189,7 @@ public class EasyToolbarSettingDnDDlg extends JDialog implements ActionListener{
 		// private Color HIGHLIGHT_COLOR = new Color(0, 0, 128);
 		int height = 0;
 		public HideCellRenderer(int height) {
-			height = height;
+			this.height = height;
 			setOpaque(true);
 			setIconTextGap(12);
 		}
@@ -198,7 +198,8 @@ public class EasyToolbarSettingDnDDlg extends JDialog implements ActionListener{
 			ToolEntry entry = (ToolEntry) value;
 			setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 			setText(entry.getTitle() + " - " +entry.getDescription());
-			setIcon(entry.getImage());
+			setIcon(new ImageIcon(ImageUtils.getScaledImage(entry.getImage(), this.height, this.height)));
+			//setIcon(entry.getImage());
 			if (isSelected) {
 				setBackground(list.getSelectionBackground());
 				setForeground(list.getSelectionForeground());
@@ -223,7 +224,7 @@ public class EasyToolbarSettingDnDDlg extends JDialog implements ActionListener{
 			ToolEntry entry = (ToolEntry) value;
 			//Log.d("list.getHeight() : " + list.getPreferredScrollableViewportSize().getHeight());
  			//image = entry.getImage();
-			setIcon(new ImageIcon(ImageUtils.getScaledImage(entry.getImage(), this.height, this.height)));			
+			setIcon(new ImageIcon(ImageUtils.getScaledImage(entry.getImage(), this.height, this.height)));
 			setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));			
 			//setIcon(entry.image);
 			if (isSelected) {

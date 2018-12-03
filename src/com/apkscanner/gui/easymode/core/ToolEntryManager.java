@@ -35,14 +35,14 @@ public class ToolEntryManager {
 	
 	static ArrayList<ToolEntry> allEntry;
 
-	public static String defaultEntry = "0,1,2,3,4";
 	
 	public ToolEntryManager() {
 		
 	}
 	public static void initToolEntryManager() {
 		allEntry = new ArrayList<ToolEntry>(
-				Arrays.asList(new ToolEntry(Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OPEN_LAB.getString(), Resource.IMG_TOOLBAR_OPEN.getImageIcon()), 
+				Arrays.asList(new ToolEntry(Resource.STR_APP_NAME.getString(), "Start Scanner", Resource.IMG_APP_ICON.getImageIcon(100, 100)),
+						new ToolEntry(Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OPEN_LAB.getString(), Resource.IMG_TOOLBAR_OPEN.getImageIcon()), 
 						new ToolEntry(Resource.STR_BTN_OPEN_PACKAGE.getString(), Resource.STR_BTN_OPEN_PACKAGE_LAB.getString(), Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon()),
 						new ToolEntry(Resource.STR_BTN_MANIFEST.getString(), Resource.STR_BTN_MANIFEST_LAB.getString(), Resource.IMG_TOOLBAR_MANIFEST.getImageIcon()),
 						new ToolEntry(Resource.STR_BTN_EXPLORER.getString(), Resource.STR_BTN_EXPLORER_LAB.getString(), Resource.IMG_TOOLBAR_EXPLORER.getImageIcon()),
@@ -87,6 +87,7 @@ public class ToolEntryManager {
 	}
 	
 	public static void excuteEntry(String cmd) {
+		Log.d("Tool Click - " + cmd);
 		if(cmd.equals(Resource.STR_BTN_OPEN.getString())) {
 			final String apkFilePath = ApkFileChooser.openApkFilePath(EasyGuiMain.frame);
 			if(apkFilePath == null) {
@@ -94,6 +95,10 @@ public class ToolEntryManager {
 				return;
 			}		
 			Launcher.run(apkFilePath);
+		} else if(cmd.equals(Resource.STR_APP_NAME.getString())) {
+			
+			Launcher.run(Apkscanner.getApkInfo().filePath, false);
+			
 		} else if(cmd.equals(Resource.STR_BTN_OPEN_PACKAGE.getString())) {			
 			PackageTreeDlg Dlg = new PackageTreeDlg(mainframe);
 			if(Dlg.showTreeDlg() != PackageTreeDlg.APPROVE_OPTION) {

@@ -96,7 +96,6 @@ public class EasyGuiToolPanel extends FlatPanel implements ActionListener{
 	private void maketoolbutton() {		
 		toolbartemppanel.removeAll();
 		entrys = ToolEntryManager.getShowToolbarList();
-		//ArrayList<EasyFlatLabel> toolbtns = new ArrayList<EasyFlatLabel>();		
 		for(ToolEntry entry : entrys) {
 			EasyFlatLabel btn = new EasyFlatLabel(ImageUtils.getScaledImage(entry.getImage(),BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(149, 179, 215));			
 			btn.setPreferredSize(new Dimension(HEIGHT, HEIGHT));
@@ -105,21 +104,6 @@ public class EasyGuiToolPanel extends FlatPanel implements ActionListener{
 			btn.setClicklistener(this);
 			toolbartemppanel.add(btn);			
 		}			
-		//toolbartemppanel.setPreferredSize(new Dimension(0,300));
-		// * buttonlist.length / EasyContentsPanel.WIDTH);
-		
-//		int line = (int)((HEIGHT + 1)* buttoncount / 
-//				(WIDTH - btnsetting.getPreferredSize().getWidth() - scrollPane.getVerticalScrollBar().getPreferredSize().getWidth()));
-//		
-//		Log.d(""+HEIGHT);
-//		
-//		Log.d((HEIGHT + 1) * buttoncount+"/"+(WIDTH - btnsetting.getPreferredSize().getWidth() - scrollPane.getVerticalScrollBar().getPreferredSize().getWidth()));
-//		
-		//toolbartemppanel.setPreferredSize(new Dimension(0, HEIGHT * (line+1) + ((line !=0)?SHADOW_SIZE : 0)));
-		
-	//	Log.d(""+ );
-		
-		/////////////// end
 	}
 
 	@Override

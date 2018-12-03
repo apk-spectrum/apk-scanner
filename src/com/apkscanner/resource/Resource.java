@@ -1,6 +1,7 @@
 package com.apkscanner.resource;
 
 import java.awt.Font;
+import java.awt.Point;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
@@ -517,8 +518,9 @@ public enum Resource
 	PROP_PK8_FILE_PATH			(Type.PROP, "last_pk8_file_path", null /* see getDefValue() */),
 	PROP_PRINT_MULTILINE_ATTR	(Type.PROP, "print_multiline_attr", true),
 	
-	PROP_EASY_GUI_TOOLBAR				(Type.PROP, "easy_gui_show_button", ToolEntryManager.defaultEntry),
-
+	PROP_EASY_GUI_TOOLBAR				(Type.PROP, "easy_gui_show_button", "1,2,3,4,5"),
+	PROP_EASY_GUI_WINDOW_POSITION				(Type.PROP, "easy_gui_window_position", null),
+	
 	PROP_DEFAULT_DECORDER		(Type.PROP, "default_decorder", Resource.STR_DECORDER_JD_GUI),
 	PROP_DEFAULT_SEARCHER		(Type.PROP, "default_searcher", Resource.STR_DEFAULT_SEARCHER),
 	PROP_DEFAULT_EXPLORER		(Type.PROP, "default_explorer", Resource.STR_EXPLORER_ARCHIVE),

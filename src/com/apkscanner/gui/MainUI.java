@@ -99,7 +99,6 @@ public class MainUI extends JFrame
 		initialize();
 
 		apkScanner = scanner;
-		Log.d("main Setlistener");
 		if(apkScanner != null) {
 			apkScanner.setStatusListener(new ApkScannerListener());
 		}

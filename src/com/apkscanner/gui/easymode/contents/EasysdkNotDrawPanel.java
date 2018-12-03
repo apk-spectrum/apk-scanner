@@ -23,6 +23,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.android.ddmlib.AndroidDebugBridge;
+import com.android.ddmlib.IDevice;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.easymode.util.ImageUtils;
@@ -46,13 +48,20 @@ public class EasysdkNotDrawPanel extends FlatPanel {
 	private class sdkDrawObject implements Comparable<sdkDrawObject> {
 		public int sdkversion = 0;
 		public JPanel panel;
-		boolean entered = false;
+		public boolean isDevice = false;
 		
 		public sdkDrawObject(JPanel panel, int version) {
 			// TODO Auto-generated constructor stub
 			this.sdkversion = version;
 			this.panel = panel;
 		}
+
+		public sdkDrawObject(JPanel panel, int version, boolean isdevice) {
+			// TODO Auto-generated constructor stub
+			this(panel, version);
+			this.isDevice = isdevice;
+		}
+		
 		@Override
 		public int compareTo(sdkDrawObject s) {
 			// TODO Auto-generated method stub
@@ -185,17 +194,45 @@ public class EasysdkNotDrawPanel extends FlatPanel {
 		
 		if(apkInfo.manifest.usesSdk.targetSdkVersion!=null) {
 			int targetsdk = apkInfo.manifest.usesSdk.targetSdkVersion;
-			arraysdkObject.add(new sdkDrawObject(makeDevicePanel(Devicecolor[DEVICE_TARGET], targetsdk), targetsdk));
+			//arraysdkObject.add(new sdkDrawObject(makeDevicePanel(Devicecolor[DEVICE_TARGET], targetsdk), targetsdk));
+			arraysdkObject.add(new sdkDrawObject(makeTextPanel("tar", targetsdk), targetsdk));
 		}
 		
+		if(AndroidDebugBridge.getBridge()!=null) {
+			if(AndroidDebugBridge.getBridge().getDevices().length > 0) {
+				IDevice[] devices = AndroidDebugBridge.getBridge().getDevices();
+				for(IDevice device : devices) {
+					String name = getDeviceName(device);
+					String sdkversion = device.getProperty(IDevice.PROP_BUILD_API_LEVEL);
+					int nversion = Integer.parseInt(sdkversion);
+					
+					arraysdkObject.add(new sdkDrawObject(
+							makeDevicePanel(
+							Devicecolor[(device.getState() == IDevice.DeviceState.ONLINE)?DEVICE_STATE_ONLINE : DEVICE_STATE_OFFLINE],
+							nversion), nversion, true));
+				}
+			}			
+		}
+				
 		refreshpanel();
 	}
+	
+	private String getDeviceName(IDevice device) {
+		String deviceName;
+			deviceName = device.getProperty(IDevice.PROP_DEVICE_MODEL);
+			if(deviceName != null) deviceName = deviceName.trim();
+			if(deviceName != null && deviceName.isEmpty()) {
+				deviceName = null;
+			}		
+		return deviceName;
+	}
+
 	
 	private void refreshpanel() {		
 		Collections.sort(arraysdkObject);
 		for(sdkDrawObject obj: arraysdkObject) {			
 			add(obj.panel);
-		}		
+		}
 		add(Box.createVerticalStrut(10));
 		validate();
 	}
@@ -206,5 +243,29 @@ public class EasysdkNotDrawPanel extends FlatPanel {
 		arraysdkObject.clear();
 		add(Box.createVerticalStrut(10));
 		validate();
+	}
+
+	public void changeDevice(IDevice[] devices) {
+		// TODO Auto-generated method stub		 
+		 removeAll();
+		 for(int i = arraysdkObject.size()-1 ; i >=0 ; i--) {
+				if(arraysdkObject.get(i).isDevice) {
+					arraysdkObject.remove(i);
+				}
+		 }
+		
+		for(IDevice device : devices) {
+			String name = getDeviceName(device);
+			String sdkversion = device.getProperty(IDevice.PROP_BUILD_API_LEVEL);
+			int nversion = Integer.parseInt(sdkversion);
+			
+			arraysdkObject.add(new sdkDrawObject(
+					makeDevicePanel(
+					Devicecolor[(device.getState() == IDevice.DeviceState.ONLINE)?DEVICE_STATE_ONLINE : DEVICE_STATE_OFFLINE],
+					nversion), nversion, true));
+		}
+		
+		refreshpanel();
+		updateUI();
 	}	
 }

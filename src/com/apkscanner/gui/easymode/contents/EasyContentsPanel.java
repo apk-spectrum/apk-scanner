@@ -19,6 +19,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import com.android.ddmlib.IDevice;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.gui.easymode.EasyGuiMain;
@@ -237,5 +238,10 @@ public class EasyContentsPanel extends JPanel{
 		// TODO Auto-generated method stub
 		sdkverpanel.clear();
 		//featurepanel.clear();
+	}
+
+	public void changeDeivce(IDevice[] devices) {
+		// TODO Auto-generated method stub
+		sdkverpanel.changeDevice(devices);
 	}
 }

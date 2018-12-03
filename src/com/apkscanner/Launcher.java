@@ -6,6 +6,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 
 public class Launcher
@@ -15,6 +16,23 @@ public class Launcher
 	static public boolean run()
 	{
 		return SystemUtil.exec(getDefaultCmd());
+	}
+	
+	static public boolean run(String apkFilePath, boolean easyScanner)
+	{
+		
+		if(apkFilePath == null)
+			return false;
+
+		ArrayList<String> cmd = new ArrayList<String>(getDefaultCmd());
+		if(!easyScanner) {
+			cmd.add("o");
+		} else {
+			cmd.add("e");
+		}
+		cmd.add(apkFilePath);
+
+		return SystemUtil.exec(cmd);
 	}
 	
 	static public boolean run(String apkFilePath)

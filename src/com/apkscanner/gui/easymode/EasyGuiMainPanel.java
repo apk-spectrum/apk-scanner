@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.OverlayLayout;
 import javax.swing.border.LineBorder;
 
+import com.android.ddmlib.IDevice;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
@@ -75,6 +76,7 @@ class EasyGuiMainPanel extends JPanel {
 			bordPanel = new EasyBordPanel(mainframe);
 			add(bordPanel, BorderLayout.PAGE_START);
 		}
+		
 		contentspanel.add(contentsPanel, BorderLayout.CENTER);
 		contentspanel.add(permissionPanel, BorderLayout.PAGE_END);
 
@@ -216,5 +218,10 @@ class EasyGuiMainPanel extends JPanel {
 
 			}
 		}
+	}
+
+	public void changeDevice(IDevice[] devices) {
+		// TODO Auto-generated method stub
+		contentsPanel.changeDeivce(devices);
 	}
 }

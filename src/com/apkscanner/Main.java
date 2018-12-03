@@ -26,7 +26,7 @@ import com.apkscanner.util.SystemUtil;
 
 public class Main implements Runnable
 {
-	static boolean isEasyGui = true;
+	static boolean isEasyGui = false;
 	private static final ApkScanner apkScanner = (isEasyGui)?new AaptLightScanner() : new AaptScanner(null);
 	private static final Options allOptions = new Options();
 	private static final Options normalOptions = new Options();
@@ -67,21 +67,30 @@ public class Main implements Runnable
 					cmdType = "install";
 				} else if("d".equals(args[0]) || "delete-temp-path".equals(args[0])) {
 					cmdType = "delete-temp-path";
-				}
+				} else if("o".equals(args[0]) || "Original-Scanner".equals(args[0])) {
+					isEasyGui = false;					
+				} else if("e".equals(args[0]) || "Easy-Scanner".equals(args[0])) {
+					isEasyGui = true;					
+				}		
 			}
-
+			
 			CommandLineParser parser = new DefaultParser();
 			cmd = parser.parse(allOptions, args);
+			
 			if(cmdType == null && !cmd.hasOption("v") && !cmd.hasOption("version")
 					&& !cmd.hasOption("h") && !cmd.hasOption("help")) {
 				cmdType = "file";
+				if(cmd.getArgList().size() > 1) {
+					cmd.getArgList().remove("o");
+					cmd.getArgList().remove("e");
+				}
 			}
 
 			if("package".equals(cmdType)) {
 				if(cmd.getArgs().length > 2 || cmd.getArgs().length == 0)
 					throw new ParseException("Must be just one that the package");
 			} else if("file".equals(cmdType)) {
-				if(cmd.getArgs().length > 1 /* || cmd.getArgs().length == 0 */)
+				if(cmd.getArgs().length > 1)/* || cmd.getArgs().length == 0 */
 					throw new ParseException("Must be just one that the Apk file path");
 
 				if(cmd.getArgs().length == 0)
@@ -90,7 +99,7 @@ public class Main implements Runnable
 				//if(!cmd.getArgs()[0].endsWith(".apk"))
 				//throw new ParseException("Unknown type : " + cmd.getArgs()[0]);
 			}
-
+			
 			if("file".equals(cmdType)) {
 				solveApkFile(cmd);
 			} else if("package".equals(cmdType)) {
@@ -114,7 +123,7 @@ public class Main implements Runnable
 			emptyCmd(cmd);
 			System.exit(1);
 		}
-	}
+	}		
 
 	private static void createAndShowGUI() {
 		
@@ -249,7 +258,13 @@ public class Main implements Runnable
 		 */
 		opt = new Option( "i", "install", true, "install APK");
 		allOptions.addOption(opt);
-
+		
+		opt = new Option( "o", "Original-Scanner", true, "Excute original scanner");
+		allOptions.addOption(opt);
+		
+		opt = new Option( "e", "Easy-Scanner", true, "Excute Easy scanner");
+		allOptions.addOption(opt);
+		
 		opt = new Option( "d", "device", true, "The serial number of device");
 		allOptions.addOption(opt);
 		targetPackageOptions.addOption(opt);
