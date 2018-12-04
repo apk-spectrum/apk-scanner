@@ -100,8 +100,9 @@ public class EasyGuiToolPanel extends FlatPanel implements ActionListener{
 			EasyFlatLabel btn = new EasyFlatLabel(ImageUtils.getScaledImage(entry.getImage(),BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(149, 179, 215));			
 			btn.setPreferredSize(new Dimension(HEIGHT, HEIGHT));
 			btn.setactionCommand(entry.getTitle());
-			btn.setshadowlen(SHADOW_SIZE);			
-			btn.setClicklistener(this);
+			btn.setshadowlen(SHADOW_SIZE);
+			btn.setTooltip(entry.getTitle());
+			btn.setClicklistener(this);			
 			toolbartemppanel.add(btn);			
 		}			
 	}

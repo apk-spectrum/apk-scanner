@@ -71,6 +71,7 @@ public class EasyContentsPanel extends JPanel{
 	
 	public EasyContentsPanel() {
 		// TODO Auto-generated constructor stub
+		Log.d("start EasyContentsPanel ");
 		setLayout(new BorderLayout());		
 		setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		setBackground(Color.WHITE);
@@ -83,7 +84,7 @@ public class EasyContentsPanel extends JPanel{
 		add(contentsCardPanel,BorderLayout.CENTER);
 		
 		//setEmptypanel();
-		
+		Log.d("End EasyContentsPanel ");
 	}
 	
 	private JPanel makeapkiconPanel() {

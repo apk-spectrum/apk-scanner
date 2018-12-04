@@ -52,6 +52,7 @@ public class EasyLightApkScanner {
 	}
 	
 	public void setApk(final String path) {
+		Log.d("setApk :" + path);
 		apkPath = path;
 		Thread thread = new Thread(new Runnable() {
 			public void run() {
@@ -103,7 +104,10 @@ public class EasyLightApkScanner {
 		@Override
 		public void onCompleted() {
 			Log.d("onCompleted() : " + error);
-			if(listener != null) listener.onCompleted();
+			if(listener != null) {
+				listener.onCompleted();
+				apkPath = getApkInfo().filePath;
+			}
 		}
 
 		@Override

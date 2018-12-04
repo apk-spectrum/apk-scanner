@@ -26,15 +26,15 @@ import com.apkscanner.util.SystemUtil;
 
 public class Main implements Runnable
 {
-	static boolean isEasyGui = false;
-	private static final ApkScanner apkScanner = (isEasyGui)?new AaptLightScanner() : new AaptScanner(null);
+	static boolean isEasyGui = true;
+	private static ApkScanner apkScanner;
 	private static final Options allOptions = new Options();
 	private static final Options normalOptions = new Options();
 	private static final Options targetApkOptions = new Options();
 	private static final Options targetPackageOptions = new Options();
 	
 	static public void main(final String[] args)
-	{
+	{	
 		Resource.setLanguage((String)Resource.PROP_LANGUAGE.getData(SystemUtil.getUserLanguage()));
 		if("user".equalsIgnoreCase(Resource.STR_APP_BUILD_MODE.getString())) {
 			Log.enableConsoleLog(false);
@@ -70,9 +70,11 @@ public class Main implements Runnable
 				} else if("o".equals(args[0]) || "Original-Scanner".equals(args[0])) {
 					isEasyGui = false;					
 				} else if("e".equals(args[0]) || "Easy-Scanner".equals(args[0])) {
-					isEasyGui = true;					
+					isEasyGui = true;
 				}		
 			}
+			
+			apkScanner = (isEasyGui)?new AaptLightScanner() : new AaptScanner(null);
 			
 			CommandLineParser parser = new DefaultParser();
 			cmd = parser.parse(allOptions, args);
@@ -126,7 +128,7 @@ public class Main implements Runnable
 	}		
 
 	private static void createAndShowGUI() {
-		
+		Log.d("Easy : " + isEasyGui );
 		if(!isEasyGui) {
 			MainUI mainFrame = new MainUI(apkScanner);
 			mainFrame.setVisible(true);

@@ -27,13 +27,13 @@ public class EasyFlatLabel extends FlatPanel{
 		setBackground(backgroundColor);		
 		textlabel.setForeground(foregroundColor);
 		setEasyTextField(textlabel);
-		add(textlabel);
+		add(textlabel);		
 	}
 	
 	public EasyFlatLabel(ImageIcon icon, Color backgroundColor) {
 		button = new EasyButton(icon);
 		button.setBackground(backgroundColor);
-		button.setOpaque(true);
+		button.setOpaque(true);		
 		add(button);
 	}
 	public EasyFlatLabel(Image icon, Color backgroundColor) {
@@ -42,6 +42,10 @@ public class EasyFlatLabel extends FlatPanel{
 	
 	public void setactionCommand(String cmd) {
 		button.setActionCommand(cmd);
+	}
+	public void setTooltip(String str) {
+		if(button != null) button.setToolTipText(str);
+		if(textlabel != null) textlabel.setToolTipText(str);
 	}
 	
 	public void setClicklistener(ActionListener listener) {

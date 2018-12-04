@@ -123,6 +123,7 @@ public class EasyPermissioniconPanel extends FlatPanel implements ActionListener
 				permissionicon.setBackground(permissionbackgroundcolor);
 				permissionicon.add(btn);
 				btn.addActionListener(this);
+				btn.setToolTipText(key);
 				toolbartemppanel.add(permissionicon);
 				permissionbuttoncount++;
 			} catch (MalformedURLException e) {

@@ -19,8 +19,7 @@ public class Launcher
 	}
 	
 	static public boolean run(String apkFilePath, boolean easyScanner)
-	{
-		
+	{		
 		if(apkFilePath == null)
 			return false;
 
@@ -32,6 +31,10 @@ public class Launcher
 		}
 		cmd.add(apkFilePath);
 
+		for(String str: cmd ) {
+			Log.d(str);
+		}
+		
 		return SystemUtil.exec(cmd);
 	}
 	
@@ -42,7 +45,7 @@ public class Launcher
 
 		ArrayList<String> cmd = new ArrayList<String>(getDefaultCmd());
 		cmd.add(apkFilePath);
-
+		Log.d(""+ cmd.toArray().toString());
 		return SystemUtil.exec(cmd);
 	}
 	

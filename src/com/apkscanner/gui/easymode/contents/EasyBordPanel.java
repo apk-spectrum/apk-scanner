@@ -46,13 +46,14 @@ public class EasyBordPanel extends JPanel implements ActionListener, ChangeListe
     static private String CMD_WINDOW_MINI = "window_mini";
     
     public EasyBordPanel(JFrame mainframe) {
+    	Log.d("start EasyBordPanel ");
     	setLayout(new BorderLayout());
     	this.setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 3));
     	
     	this.frame = mainframe;
     	
     	windowpanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    	maintitle = new JLabel("APKScanner", SwingConstants.CENTER);
+    	maintitle = new JLabel(Resource.STR_APP_NAME.getString(), SwingConstants.CENTER);
     	maintitle.setOpaque(false);
     	maintitle.setFont(new Font(getFont().getName(), Font.BOLD, 15));
     	maintitle.setForeground(bordertitlecolor);
@@ -149,14 +150,16 @@ public class EasyBordPanel extends JPanel implements ActionListener, ChangeListe
         };
         addMouseListener(ma);
         addMouseMotionListener(ma);
+        Log.d("End EasyBordPanel ");
     }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getActionCommand() == CMD_WINDOW_EXIT) {
+			
+			//System.exit(0);
 			frame.dispose();
-			System.exit(0);
 		} else if(e.getActionCommand() == CMD_WINDOW_MINI) {
 			frame.setState(JFrame.ICONIFIED);
 		}

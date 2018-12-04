@@ -62,13 +62,7 @@ public class EasyPermissionPanel extends JPanel {
 
 	public EasyPermissionPanel() {
 		// TODO Auto-generated constructor stub
-
-		// permissionpanel = getContentPanel();
-		// add(permissionpanel, BorderLayout.CENTER);
-		
-
-		// permissionpanel.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 1));
-		// permissionpanel.setPreferredSize(new Dimension(0, HEIGHT));
+		Log.d("start EasyPermissionPanel ");
 		setLayout(new BorderLayout());
 		setBackground(bordercolor);
 		setPreferredSize(new Dimension(0, HEIGHT));
@@ -81,6 +75,7 @@ public class EasyPermissionPanel extends JPanel {
 		// setEmptypanel();
 
 		add(contentsCardPanel);
+		Log.d("End EasyPermissionPanel ");
 	}
 
 	public void setEmptypanel() {

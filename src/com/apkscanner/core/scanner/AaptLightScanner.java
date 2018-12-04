@@ -2,6 +2,7 @@ package com.apkscanner.core.scanner;
 
 import java.io.File;
 
+import com.apkscanner.Launcher;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.resource.Resource;
@@ -14,6 +15,8 @@ import com.apkscanner.util.ZipFileUtil;
 
 public class AaptLightScanner extends ApkScanner {
 
+	AaptNativeScanner resourceScanner;
+	
 	public AaptLightScanner() {
 		super(null);
 	}
@@ -55,7 +58,7 @@ public class AaptLightScanner extends ApkScanner {
 		}
 
 		Log.i("I: new resourceScanner...");
-		AaptNativeScanner resourceScanner = new AaptNativeScanner(null);
+		resourceScanner = new AaptNativeScanner(null);
 
 		Log.i("I: add asset apk");
 		resourceScanner.openApk(apkFile.getAbsolutePath(), frameworkRes);
@@ -157,6 +160,54 @@ public class AaptLightScanner extends ApkScanner {
 	
 	@Override
 	public void clear(boolean sync) {
-		
+		if(apkInfo == null)
+			return;
+
+		if(resourceScanner != null) {
+			resourceScanner.clear(true);
+			resourceScanner = null;
+		}
+		AaptNativeScanner.lock();
+		AaptNativeWrapper.lock();
+
+		final String tmpPath = apkInfo.tempWorkPath;
+		final String apkPath = apkInfo.filePath;
+		if(sync) {
+			deleteTempPath(tmpPath, apkPath);
+			AaptNativeScanner.unlock();
+			AaptNativeWrapper.unlock();
+		} else {
+			new Thread(new Runnable() {
+				public void run()
+				{
+					deleteTempPath(tmpPath, apkPath);
+					AaptNativeScanner.unlock();
+					AaptNativeWrapper.unlock();
+				}
+			}).start();
+		}
+		apkInfo = null;	
+	}
+	
+	private void deleteTempPath(String tmpPath, String apkPath)
+	{
+		if(tmpPath != null && !tmpPath.isEmpty()) {
+			Log.i("delete Folder : "  + tmpPath);
+			FileUtil.deleteDirectory(new File(tmpPath));
+		}
+		if(apkPath != null && !apkPath.isEmpty() && apkPath.startsWith(FileUtil.getTempPath())) {
+			File parent = new File(apkPath).getParentFile();
+			Log.i("delete temp APK folder : "  + parent.getPath());
+			while(parent != null && parent.exists() && parent.getParentFile() != null 
+					&& parent.getParentFile().listFiles().length == 1 
+					&& parent.getParentFile().getAbsolutePath().length() > FileUtil.getTempPath().length()) {
+				parent = parent.getParentFile();
+			}
+			FileUtil.deleteDirectory(parent);
+			if(new File(apkPath).exists()) {
+				Log.i("failure: not delete apk file");
+				Launcher.deleteTempPath(apkPath);
+			}
+		}
 	}
 }

@@ -34,18 +34,17 @@ import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 
-public class EasyGuiMain implements WindowListener, IDeviceChangeListener{
+public class EasyGuiMain implements WindowListener, IDeviceChangeListener {
 	public static JFrame frame;
 	private static EasyLightApkScanner apkScanner = null;
 	private static EasyGuiMainPanel mainpanel;
 	private String filepath;
-	
+
 	public static long UIstarttime;
 	public static long corestarttime;
 	public static long UIInittime;
 	public static boolean isdecoframe = true;
-	
-	
+
 	public EasyGuiMain(AaptLightScanner aaptapkScanner) {
 		this.apkScanner = new EasyLightApkScanner(aaptapkScanner);
 		ToolEntryManager.initToolEntryManager();
@@ -65,39 +64,39 @@ public class EasyGuiMain implements WindowListener, IDeviceChangeListener{
 			frame.setResizable(false);
 		}
 		frame.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		frame.add(mainpanel); // 100 => 60
 		frame.addWindowListener(this);
-				
+
 		AdbServerMonitor.startServerAndCreateBridgeAsync();
 		AndroidDebugBridge.addDeviceChangeListener(this);
-		
+
 		// frame.setResizable(true);
 		frame.pack();
 
-		Point position = (Point)Resource.PROP_EASY_GUI_WINDOW_POSITION.getData();
-		
-		if(position == null) {			
+		Point position = (Point) Resource.PROP_EASY_GUI_WINDOW_POSITION.getData();
+
+		if (position == null) {
 			frame.setLocationRelativeTo(null);
 		} else {
 			frame.setLocation(position);
 		}
-		
+
 		if (apkScanner.getlatestError() != 0 || apkScanner.getApkFilePath() == null) {
 			Log.d("getlatestError is not 0 or args 0");
-			 mainpanel.showEmptyinfo();
+			mainpanel.showEmptyinfo();
 			frame.setVisible(true);
 		}
-		
+
 		Log.d("main End");
 		Log.d("init UI   : " + (System.currentTimeMillis() - EasyGuiMain.UIInittime) / 1000.0);
 	}
-	
+
 	public static void main(final String[] args) {
 		apkScanner = new EasyLightApkScanner();
 
 		EasyGuiMain mainFrame = new EasyGuiMain(new AaptLightScanner());
-		
+
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				Thread thread = new Thread(new Runnable() {
@@ -115,8 +114,7 @@ public class EasyGuiMain implements WindowListener, IDeviceChangeListener{
 				thread.start();
 			}
 		}); //// 70ms
-		
-		
+
 	}
 
 	private static void setdecoframe() {
@@ -125,50 +123,68 @@ public class EasyGuiMain implements WindowListener, IDeviceChangeListener{
 	}
 
 	private void changeDeivce() {
-		
 		mainpanel.changeDevice(AndroidDebugBridge.getBridge().getDevices());
-		
 	}
+
+	public void finished() {
+		Log.d("finished()");
+		AndroidDebugBridge.removeDeviceChangeListener(this);
+		apkScanner.clear(true);
+		System.exit(0);
+	}
+
 	@Override
-	public void windowOpened(WindowEvent e) {}
+	public void windowOpened(WindowEvent e) {
+	}
+
 	@Override
 	public void windowClosing(WindowEvent e) {
 		Log.d("window closing");
-		//Resource.PROP_EASY_GUI_WINDOW_POSITION.setData(frame.getLocation());
-		AndroidDebugBridge.removeDeviceChangeListener(this);
+		finished();
 	}
+
 	@Override
 	public void windowClosed(WindowEvent e) {
 		Log.d("window closed");
-		AndroidDebugBridge.removeDeviceChangeListener(this);
+		finished();
 	}
+
 	@Override
-	public void windowIconified(WindowEvent e) {}
+	public void windowIconified(WindowEvent e) {
+	}
+
 	@Override
-	public void windowDeiconified(WindowEvent e) {}
+	public void windowDeiconified(WindowEvent e) {
+	}
+
 	@Override
-	public void windowActivated(WindowEvent e) {	}
+	public void windowActivated(WindowEvent e) {
+	}
+
 	@Override
-	public void windowDeactivated(WindowEvent e) {}
+	public void windowDeactivated(WindowEvent e) {
+	}
 
 	@Override
 	public void deviceChanged(IDevice arg0, int arg1) {
 		// TODO Auto-generated method stub
 		Log.d("deviceChanged");
 		changeDeivce();
-		
+
 	}
+
 	@Override
 	public void deviceConnected(IDevice arg0) {
 		// TODO Auto-generated method stub
-		
+
 		Log.d("deviceConnected");
 	}
+
 	@Override
 	public void deviceDisconnected(IDevice arg0) {
 		// TODO Auto-generated method stub
 		Log.d("deviceDisconnected");
 		changeDeivce();
-		
+
 	}
 }
