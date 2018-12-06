@@ -4,7 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.io.File;
 
 import javax.swing.ImageIcon;
@@ -20,6 +23,9 @@ import com.android.ddmlib.IDevice;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.gui.MainUI;
+import com.apkscanner.gui.dialog.AboutDlg;
+import com.apkscanner.gui.dialog.LogDlg;
 import com.apkscanner.gui.easymode.contents.EasyBordPanel;
 import com.apkscanner.gui.easymode.contents.EasyContentsPanel;
 
@@ -31,7 +37,7 @@ import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
-class EasyGuiMainPanel extends JPanel {
+class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 	private static Color maincolor = new Color(249, 249, 249);
 
 	private EasyLightApkScanner apklightscanner;
@@ -45,7 +51,7 @@ class EasyGuiMainPanel extends JPanel {
 	JLayeredPane layeredPane;
 	DropEffectLabel dragdroplabel;
 	public static MessageBoxPool messagePool;
-	
+		
 	public EasyGuiMainPanel(JFrame mainframe, EasyLightApkScanner apkscanner) {
 		Log.d("start EasyGuiMainPanel------------------------------------------------------------------------------------------------------------------------ ");
 		this.apklightscanner = apkscanner;
@@ -54,9 +60,12 @@ class EasyGuiMainPanel extends JPanel {
 		ToolEntryManager.Apkscanner = apkscanner;
 		ToolEntryManager.mainframe = mainframe;
 		messagePool = new MessageBoxPool(this.mainframe);
-		
+
+		KeyboardFocusManager ky = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+		ky.addKeyEventDispatcher(this);
+
 		if (apklightscanner != null) {
-			apklightscanner.setStatusListener(new ApkLightScannerListener());
+			apklightscanner.setStatusListener(new GUIApkLightScannerListener());
 		}
 
 		contentsPanel = new EasyContentsPanel();
@@ -80,7 +89,7 @@ class EasyGuiMainPanel extends JPanel {
 			bordPanel = new EasyBordPanel(mainframe);
 			add(bordPanel, BorderLayout.PAGE_START);
 		}
-		
+
 		contentspanel.add(contentsPanel, BorderLayout.CENTER);
 		contentspanel.add(permissionPanel, BorderLayout.PAGE_END);
 
@@ -103,8 +112,8 @@ class EasyGuiMainPanel extends JPanel {
 		new EasyFileDrop(this, dragdroplabel, new EasyFileDrop.Listener() {
 			public void filesDropped(final java.io.File[] files) {
 				clearApkinfopanel();
-				//EasyGuiMain.corestarttime = System.currentTimeMillis();
-				
+				// EasyGuiMain.corestarttime = System.currentTimeMillis();
+
 				apklightscanner.setApk(files[0].getAbsolutePath());
 
 				// layeredPane.repaint();
@@ -126,7 +135,8 @@ class EasyGuiMainPanel extends JPanel {
 		});
 
 		// showEmptyinfo();
-		// isinit=true;
+		// isinit=true;		
+		apklightscanner.setReadyListener();
 		Log.d("End EasyGuiMainPanel ------------------------------------------------------------------------------------------------------------------------");
 	}
 
@@ -145,11 +155,11 @@ class EasyGuiMainPanel extends JPanel {
 		}
 	}
 
-	private void setframetext(String text) {		
+	private void setframetext(String text) {
 		if (!EasyGuiMain.isdecoframe) {
 			mainframe.setTitle(text);
 		} else {
-			bordPanel.setWindowTitle(text);			
+			bordPanel.setWindowTitle(text);
 		}
 	}
 
@@ -159,6 +169,7 @@ class EasyGuiMainPanel extends JPanel {
 		EasyGuiMain.UIstarttime = System.currentTimeMillis();
 		setframetext(
 				Resource.STR_APP_NAME.getString() + " - " + new File(apklightscanner.getApkInfo().filePath).getName());
+		Log.d(contentsPanel +"");
 		contentsPanel.setContents(apklightscanner.getApkInfo());
 		permissionPanel.setPermission(apklightscanner.getApkInfo());
 
@@ -166,7 +177,7 @@ class EasyGuiMainPanel extends JPanel {
 	}
 
 	void showEmptyinfo() {
-		//setframetext(Resource.STR_APP_NAME.getString());
+		// setframetext(Resource.STR_APP_NAME.getString());
 		contentsPanel.setEmptypanel();
 		permissionPanel.setEmptypanel();
 	}
@@ -177,7 +188,7 @@ class EasyGuiMainPanel extends JPanel {
 		permissionPanel.clear();
 	}
 
-	class ApkLightScannerListener implements EasyLightApkScanner.StatusListener {
+	class GUIApkLightScannerListener implements EasyLightApkScanner.StatusListener {
 		private int error = 0;
 
 		@Override
@@ -196,7 +207,7 @@ class EasyGuiMainPanel extends JPanel {
 		public void onError(int error) {
 			// TODO Auto-generated method stub
 			this.error = error;
-			// showEmptyinfo();			
+			// showEmptyinfo();
 			messagePool.show(MessageBoxPool.MSG_FAILURE_OPEN_APK);
 		}
 
@@ -204,15 +215,16 @@ class EasyGuiMainPanel extends JPanel {
 		public void onCompleted() {
 			// TODO Auto-generated method stub
 			// if(!isinit) return;
-
+			
 			if (this.error == 0) {
-				showApkinfopanel();				
+				showApkinfopanel();
 				Log.d("Core 시간: " + ((System.currentTimeMillis() - EasyGuiMain.corestarttime) / 1000.0));
 				mainframe.setVisible(true);
 			} else {
 				showEmptyinfo();
 				mainframe.setVisible(true);
 			}
+
 		}
 
 		@Override
@@ -227,5 +239,24 @@ class EasyGuiMainPanel extends JPanel {
 	public void changeDevice(IDevice[] devices) {
 		// TODO Auto-generated method stub
 		contentsPanel.changeDeivce(devices);
+	}
+
+	@Override
+	public boolean dispatchKeyEvent(KeyEvent e) {
+		// TODO Auto-generated method stub
+		if (e.getID() == KeyEvent.KEY_RELEASED) {
+			switch (e.getKeyCode()) {
+			case KeyEvent.VK_F12:
+				LogDlg.showLogDialog(mainframe);				
+				break;
+			case KeyEvent.VK_F11:
+				apklightscanner.setReadyListener();		
+				break;	
+				
+			default:
+				return false;
+			}
+		}
+		return false;
 	}
 }

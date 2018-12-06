@@ -36,7 +36,7 @@ public class EasyGuiToolPanel extends FlatPanel implements ActionListener{
 	JScrollPane scrollPane;	
 	ArrayList<ToolEntry> entrys;
 	
-	public EasyGuiToolPanel(int height, int width) {		
+	public EasyGuiToolPanel(int height, int width) {
 		HEIGHT = height - SHADOW_SIZE * 2;
 		BUTTON_IMG_SIZE = HEIGHT - SHADOW_SIZE * 2;
 		WIDTH = width;

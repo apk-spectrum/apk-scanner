@@ -43,7 +43,7 @@ public class EasyGuiMain implements WindowListener, IDeviceChangeListener {
 	public static long UIstarttime;
 	public static long corestarttime;
 	public static long UIInittime;
-	public static boolean isdecoframe = true;
+	public static boolean isdecoframe = false;
 
 	public EasyGuiMain(AaptLightScanner aaptapkScanner) {
 		this.apkScanner = new EasyLightApkScanner(aaptapkScanner);
@@ -55,7 +55,12 @@ public class EasyGuiMain implements WindowListener, IDeviceChangeListener {
 		Log.d("main start");
 
 		UIInittime = UIstarttime = System.currentTimeMillis();
+		
+		//long framestarttime = System.currentTimeMillis();
 		frame = new JFrame(Resource.STR_APP_NAME.getString()); // 200
+		//Log.d(""+(System.currentTimeMillis() - framestarttime) );
+		
+		
 		mainpanel = new EasyGuiMainPanel(frame, apkScanner);
 
 		if (isdecoframe) {
@@ -128,6 +133,7 @@ public class EasyGuiMain implements WindowListener, IDeviceChangeListener {
 
 	public void finished() {
 		Log.d("finished()");
+		frame.setVisible(false);
 		AndroidDebugBridge.removeDeviceChangeListener(this);
 		apkScanner.clear(true);
 		System.exit(0);

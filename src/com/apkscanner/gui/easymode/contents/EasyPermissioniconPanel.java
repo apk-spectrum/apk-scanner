@@ -20,6 +20,9 @@ import javax.swing.JScrollPane;
 import com.apkscanner.core.scanner.PermissionGroupManager;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.PermissionGroup;
+import com.apkscanner.gui.easymode.EasyGuiMain;
+import com.apkscanner.gui.easymode.core.ToolEntryManager;
+import com.apkscanner.gui.easymode.dlg.EasyPermissionDlg;
 import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.gui.easymode.util.EasyFlatLabel;
 import com.apkscanner.gui.easymode.util.FlatPanel;
@@ -142,8 +145,11 @@ public class EasyPermissioniconPanel extends FlatPanel implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
+		Log.d("tool click" + e);
 		
-		Log.d("tool click");		
+		if(e.getSource().equals(btnshowpermissiondlg)) {
+			ToolEntryManager.excutePermissionDlg();
+		}				
 	}
 	
 	public void clear() {

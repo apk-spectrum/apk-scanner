@@ -31,6 +31,7 @@ import com.apkscanner.gui.dialog.PackageTreeDlg;
 import com.apkscanner.gui.dialog.SettingDlg;
 import com.apkscanner.gui.easymode.EasyGuiMain;
 import com.apkscanner.gui.easymode.EasyLightApkScanner;
+import com.apkscanner.gui.easymode.dlg.EasyPermissionDlg;
 import com.apkscanner.gui.easymode.dlg.EasyToolbarCertDlg;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
@@ -585,5 +586,11 @@ public class ToolEntryManager {
 			Launcher.run();
 		}
 		mainframe.dispose();
+	}
+
+	public static void excutePermissionDlg() {
+		// TODO Auto-generated method stub
+		EasyPermissionDlg dlg = new EasyPermissionDlg(mainframe, true, Apkscanner.getApkInfo());			
+		
 	}
 }
