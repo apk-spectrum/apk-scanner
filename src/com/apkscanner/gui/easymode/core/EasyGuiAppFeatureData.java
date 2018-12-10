@@ -41,7 +41,8 @@ public class EasyGuiAppFeatureData {
 	public String deprecatedPermissions = "";
 
 	public PermissionGroupManager permissionGroupManager = null; 
-
+	public ArrayList<UsesPermissionInfo> allPermissions;
+	
 	public boolean hasSignatureLevel = false;
 	public boolean hasSystemLevel = false;
 	public boolean hasSignatureOrSystemLevel = false;
@@ -114,7 +115,7 @@ public class EasyGuiAppFeatureData {
 		hasSystemLevel = false; // apkInfo.hasSystemLevel;
 		notGrantPermmissions = "";
 		
-		ArrayList<UsesPermissionInfo> allPermissions = new ArrayList<UsesPermissionInfo>(); 
+		allPermissions = new ArrayList<UsesPermissionInfo>(); 
 		StringBuilder permissionList = new StringBuilder();
 		if(apkInfo.manifest.usesPermission != null && apkInfo.manifest.usesPermission.length > 0) {
 			permissionList.append("<uses-permission> [" +  apkInfo.manifest.usesPermission.length + "]\n");

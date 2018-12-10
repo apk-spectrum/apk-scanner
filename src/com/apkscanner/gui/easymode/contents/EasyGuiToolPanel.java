@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -97,7 +98,8 @@ public class EasyGuiToolPanel extends FlatPanel implements ActionListener{
 		toolbartemppanel.removeAll();
 		entrys = ToolEntryManager.getShowToolbarList();
 		for(ToolEntry entry : entrys) {
-			EasyFlatLabel btn = new EasyFlatLabel(ImageUtils.getScaledImage(entry.getImage(),BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(149, 179, 215));			
+			EasyFlatLabel btn = new EasyFlatLabel(ImageUtils.getScaledImage(entry.getImage(),BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(149, 179, 215));
+
 			btn.setPreferredSize(new Dimension(HEIGHT, HEIGHT));
 			btn.setactionCommand(entry.getTitle());
 			btn.setshadowlen(SHADOW_SIZE);

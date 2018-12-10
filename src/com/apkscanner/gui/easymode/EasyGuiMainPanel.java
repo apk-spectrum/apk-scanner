@@ -220,6 +220,12 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 				showApkinfopanel();
 				Log.d("Core 시간: " + ((System.currentTimeMillis() - EasyGuiMain.corestarttime) / 1000.0));
 				mainframe.setVisible(true);
+				
+				
+				////////////////////////////////////for test
+				ToolEntryManager.excutePermissionDlg();				
+				/////////////////////////////////////for test
+				
 			} else {
 				showEmptyinfo();
 				mainframe.setVisible(true);

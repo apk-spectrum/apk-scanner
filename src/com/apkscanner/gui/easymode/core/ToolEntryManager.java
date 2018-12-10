@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import com.android.ddmlib.AdbCommandRejectedException;
@@ -26,6 +27,7 @@ import com.apkscanner.gui.ToolBar;
 import com.apkscanner.gui.ToolBar.ButtonSet;
 import com.apkscanner.gui.dialog.AboutDlg;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
+import com.apkscanner.gui.dialog.ApkSignerWizard;
 import com.apkscanner.gui.dialog.PackageInfoPanel;
 import com.apkscanner.gui.dialog.PackageTreeDlg;
 import com.apkscanner.gui.dialog.SettingDlg;
@@ -61,9 +63,9 @@ public class ToolEntryManager {
 	static ArrayList<ToolEntry> allEntry;
 
 	public static MessageBoxPool messagePool;
-
+	
 	public ToolEntryManager() {
-
+		
 	}
 
 	public static void initToolEntryManager() {
@@ -96,7 +98,7 @@ public class ToolEntryManager {
 						Resource.IMG_TOOLBAR_SETTING.getImageIcon()),
 				new ToolEntry(Resource.STR_BTN_ABOUT.getString(), Resource.STR_BTN_ABOUT_LAB.getString(),
 						Resource.IMG_TOOLBAR_ABOUT.getImageIcon())));
-		
+		messagePool = new MessageBoxPool(mainframe);
 		refreshToolManager();
 	}
 
@@ -156,6 +158,8 @@ public class ToolEntryManager {
 			ApkInfo apkInfo = Apkscanner.getApkInfo();
 			if (apkInfo == null) {
 				Log.e("evtShowExplorer() apkInfo is null");
+				messagePool.show(MessageBoxPool.MSG_NO_SUCH_APK_FILE);
+				
 				return;
 			}
 			SystemUtil.openArchiveExplorer(apkInfo.filePath);
@@ -163,6 +167,7 @@ public class ToolEntryManager {
 			ApkInfo apkInfo = Apkscanner.getApkInfo();
 			if (apkInfo == null) {
 				Log.e("evtInstallApk() apkInfo is null");
+				messagePool.show(MessageBoxPool.MSG_NO_SUCH_APK_FILE);
 				return;
 			}
 			ApkInstallWizard wizard = new ApkInstallWizard(apkInfo.filePath, mainframe);
@@ -171,6 +176,7 @@ public class ToolEntryManager {
 			ApkInfo apkInfo = Apkscanner.getApkInfo();
 			if (apkInfo == null) {
 				Log.e("evtInstallApk() apkInfo is null");
+				messagePool.show(MessageBoxPool.MSG_NO_SUCH_APK_FILE);
 				return;
 			}
 
@@ -215,6 +221,7 @@ public class ToolEntryManager {
 		ApkInfo apkInfo = Apkscanner.getApkInfo();
 		if (apkInfo == null || apkInfo.filePath == null || !new File(apkInfo.filePath).exists()) {
 			Log.e("evtOpenJDGUI() apkInfo is null");
+			messagePool.show(MessageBoxPool.MSG_NO_SUCH_APK_FILE);
 			return;
 		}
 
@@ -280,6 +287,10 @@ public class ToolEntryManager {
 			return;
 		}
 
+		if(Apkscanner.getApkInfo() ==null) {
+			messagePool.show(MessageBoxPool.MSG_NO_SUCH_APK_FILE);
+		}
+		
 		Thread thread = new Thread(new Runnable() {
 			public void run() {
 				for (IDevice device : devices) {
@@ -344,6 +355,7 @@ public class ToolEntryManager {
 		ApkInfo apkInfo = Apkscanner.getApkInfo();
 		if (apkInfo == null) {
 			Log.e("evtShowManifest() apkInfo is null");
+			messagePool.show(MessageBoxPool.MSG_NO_SUCH_APK_FILE);			
 			return;
 		}
 		String manifestPath = null;
@@ -441,8 +453,7 @@ public class ToolEntryManager {
 		thread.start();
 	}
 
-	private static void launchApp() {
-		messagePool = new MessageBoxPool(mainframe);
+	private static void launchApp() {		
 		final IDevice[] devices = AndroidDebugBridge.getBridge().getDevices();
 		if (devices == null || devices.length == 0) {
 			Log.i("No such device of a package installed.");
@@ -590,7 +601,21 @@ public class ToolEntryManager {
 
 	public static void excutePermissionDlg() {
 		// TODO Auto-generated method stub
-		EasyPermissionDlg dlg = new EasyPermissionDlg(mainframe, true, Apkscanner.getApkInfo());			
+		new EasyPermissionDlg(mainframe, true, Apkscanner.getApkInfo());			
 		
+	}
+
+	public static void excuteSinerDlg(JDialog dlg) {		
+		// TODO Auto-generated method stub
+		ApkInfo apkInfo = Apkscanner.getApkInfo();
+		if(apkInfo == null || apkInfo.filePath == null
+				|| !new File(apkInfo.filePath).exists()) {
+			Log.e("evtSignApkFile() apkInfo is null");
+			messagePool.show(MessageBoxPool.MSG_NO_SUCH_APK_FILE);
+			return;
+		}
+		ApkSignerWizard wizard = new ApkSignerWizard(dlg);
+		wizard.setApk(apkInfo.filePath);
+		wizard.setVisible(true);
 	}
 }

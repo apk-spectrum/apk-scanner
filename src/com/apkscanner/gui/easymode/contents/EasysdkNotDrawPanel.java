@@ -202,6 +202,7 @@ public class EasysdkNotDrawPanel extends FlatPanel {
 			if(AndroidDebugBridge.getBridge().getDevices().length > 0) {
 				IDevice[] devices = AndroidDebugBridge.getBridge().getDevices();
 				for(IDevice device : devices) {
+					if(device.getState() != IDevice.DeviceState.ONLINE) continue;
 					String name = getDeviceName(device);
 					String sdkversion = device.getProperty(IDevice.PROP_BUILD_API_LEVEL);
 					int nversion = Integer.parseInt(sdkversion);
