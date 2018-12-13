@@ -4,6 +4,8 @@ import java.awt.EventQueue;
 import java.io.File;
 import java.nio.charset.Charset;
 
+import javax.swing.JFrame;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -12,8 +14,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import com.apkscanner.core.scanner.AaptLightScanner;
-import com.apkscanner.core.scanner.AaptScanner;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
@@ -26,19 +26,20 @@ import com.apkscanner.util.SystemUtil;
 
 public class Main implements Runnable
 {
-	static boolean isEasyGui = true;
+	private static boolean isEasyGui;
 	private static ApkScanner apkScanner;
 	private static final Options allOptions = new Options();
 	private static final Options normalOptions = new Options();
 	private static final Options targetApkOptions = new Options();
 	private static final Options targetPackageOptions = new Options();
-	
+
 	static public void main(final String[] args)
-	{	
+	{
 		Resource.setLanguage((String)Resource.PROP_LANGUAGE.getData(SystemUtil.getUserLanguage()));
 		if("user".equalsIgnoreCase(Resource.STR_APP_BUILD_MODE.getString())) {
 			Log.enableConsoleLog(false);
 		}
+		isEasyGui = (boolean) Resource.PROP_USE_EASY_UI.getData();
 
 		Log.i(Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString() + " " + Resource.STR_APP_BUILD_MODE.getString());
 		Log.i("OS : " + SystemUtil.OS);
@@ -68,17 +69,17 @@ public class Main implements Runnable
 				} else if("d".equals(args[0]) || "delete-temp-path".equals(args[0])) {
 					cmdType = "delete-temp-path";
 				} else if("o".equals(args[0]) || "Original-Scanner".equals(args[0])) {
-					isEasyGui = false;					
+					isEasyGui = false;
 				} else if("e".equals(args[0]) || "Easy-Scanner".equals(args[0])) {
 					isEasyGui = true;
-				}		
+				}
 			}
-			
-			apkScanner = (isEasyGui)?new AaptLightScanner() : new AaptScanner(null);
-			
+
+			apkScanner = ApkScanner.getInstance(isEasyGui ? ApkScanner.APKSCANNER_TYPE_AAPTLIGHT : ApkScanner.APKSCANNER_TYPE_AAPT);
+
 			CommandLineParser parser = new DefaultParser();
 			cmd = parser.parse(allOptions, args);
-			
+
 			if(cmdType == null && !cmd.hasOption("v") && !cmd.hasOption("version")
 					&& !cmd.hasOption("h") && !cmd.hasOption("help")) {
 				cmdType = "file";
@@ -101,7 +102,7 @@ public class Main implements Runnable
 				//if(!cmd.getArgs()[0].endsWith(".apk"))
 				//throw new ParseException("Unknown type : " + cmd.getArgs()[0]);
 			}
-			
+
 			if("file".equals(cmdType)) {
 				solveApkFile(cmd);
 			} else if("package".equals(cmdType)) {
@@ -125,17 +126,6 @@ public class Main implements Runnable
 			emptyCmd(cmd);
 			System.exit(1);
 		}
-	}		
-
-	private static void createAndShowGUI() {
-		Log.d("Easy : " + isEasyGui );
-		if(!isEasyGui) {
-			MainUI mainFrame = new MainUI(apkScanner);
-			mainFrame.setVisible(true);
-		} else {		
-			EasyGuiMain mainFrame = new EasyGuiMain((AaptLightScanner)apkScanner);
-		}
-		
 	}
 
 	static private void emptyCmd(CommandLine cmd)
@@ -159,7 +149,6 @@ public class Main implements Runnable
 			EventQueue.invokeLater(new Main());
 			waitAdbServer();
 			apkScanner.openApk(apkFilePath);
-			
 		} else {
 
 		}
@@ -260,13 +249,13 @@ public class Main implements Runnable
 		 */
 		opt = new Option( "i", "install", true, "install APK");
 		allOptions.addOption(opt);
-		
+
 		opt = new Option( "o", "Original-Scanner", true, "Excute original scanner");
 		allOptions.addOption(opt);
-		
+
 		opt = new Option( "e", "Easy-Scanner", true, "Excute Easy scanner");
 		allOptions.addOption(opt);
-		
+
 		opt = new Option( "d", "device", true, "The serial number of device");
 		allOptions.addOption(opt);
 		targetPackageOptions.addOption(opt);
@@ -293,8 +282,15 @@ public class Main implements Runnable
 		formatter.printHelp("apkscanner p[ackage] [options] [-d[evice] <serial_number>] [-f[ramework] <framework.apk>] <package>", targetPackageOptions);
 	}
 
+	private void createAndShowGUI()
+	{
+		Log.d("Easy : " + isEasyGui );
+		JFrame mainFrame = isEasyGui ? new EasyGuiMain(apkScanner) : new MainUI(apkScanner);
+		mainFrame.setVisible(true);
+	}
+
 	@Override
-	public void run() {		
+	public void run() {
 		createAndShowGUI();
 	}
 }

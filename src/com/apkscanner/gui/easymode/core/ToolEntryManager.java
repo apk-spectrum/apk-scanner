@@ -134,7 +134,7 @@ public class ToolEntryManager {
 	public static void excuteEntry(String cmd) {
 		Log.d("Tool Click - " + cmd);
 		if (cmd.equals(Resource.STR_BTN_OPEN.getString())) {
-			final String apkFilePath = ApkFileChooser.openApkFilePath(EasyGuiMain.frame);
+			final String apkFilePath = ApkFileChooser.openApkFilePath(null);
 			if (apkFilePath == null) {
 				Log.v("Not choose apk file");
 				return;

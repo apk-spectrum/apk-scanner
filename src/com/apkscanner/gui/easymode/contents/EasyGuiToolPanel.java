@@ -4,20 +4,19 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.ArrayList;
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
-import com.apkscanner.gui.easymode.EasyGuiMain;
 import com.apkscanner.gui.easymode.core.ToolEntry;
 import com.apkscanner.gui.easymode.core.ToolEntryManager;
-import com.apkscanner.gui.easymode.dlg.EasyToolbarSettingDlg;
 import com.apkscanner.gui.easymode.dlg.EasyToolbarSettingDnDDlg;
 import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.gui.easymode.util.EasyFlatLabel;
@@ -27,6 +26,8 @@ import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
 public class EasyGuiToolPanel extends FlatPanel implements ActionListener{
+	private static final long serialVersionUID = 4941481653470088827L;
+
 	int HEIGHT = 35;
 	int WIDTH = 100;
 	int BUTTON_IMG_SIZE = 35-6;
@@ -63,7 +64,6 @@ public class EasyGuiToolPanel extends FlatPanel implements ActionListener{
 			public void componentShown(ComponentEvent e) {	}
 			@Override
 			public void componentResized(ComponentEvent e) {
-				// TODO Auto-generated method stub				
 				setviewportsize();
 			}
 			@Override
@@ -111,10 +111,10 @@ public class EasyGuiToolPanel extends FlatPanel implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		Log.d("Click");
 		if(e.getSource().equals(btnsetting)) {
-			EasyToolbarSettingDnDDlg dlg = new EasyToolbarSettingDnDDlg(EasyGuiMain.frame, true);
+			JFrame window = (JFrame) SwingUtilities.getWindowAncestor(this);
+			EasyToolbarSettingDnDDlg dlg = new EasyToolbarSettingDnDDlg(window, true);
 			if(dlg.ischange()) {				
 				maketoolbutton();
 				setviewportsize();

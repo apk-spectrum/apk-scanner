@@ -1,7 +1,6 @@
 package com.apkscanner.resource;
 
 import java.awt.Font;
-import java.awt.Point;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
@@ -20,7 +19,6 @@ import javax.swing.UIManager;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import com.apkscanner.gui.easymode.core.ToolEntryManager;
 import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.util.Log;
@@ -100,7 +98,7 @@ public enum Resource
 	STR_BTN_WAITING	(Type.TEXT, "@btn_waiting"),
 	STR_BTN_SUCCESS	(Type.TEXT, "@btn_success"),
 	STR_BTN_FAIL	(Type.TEXT, "@btn_fail"),
-	
+
 	STR_BTN_OPEN_LAB			(Type.TEXT, "@btn_open_lab"),
 	STR_BTN_OPEN_PACKAGE_LAB	(Type.TEXT, "@btn_open_pacakge_lab"),
 	STR_BTN_MANIFEST_LAB		(Type.TEXT, "@btn_manifest_lab"),
@@ -415,8 +413,8 @@ public enum Resource
 	IMG_RESOURCE_TEXTVIEWER_TOOLBAR_PREV (Type.IMAGE, "ResourceTab_TextViewer_toolbar_previous.png"),
 	IMG_RESOURCE_TEXTVIEWER_TOOLBAR_INDENT(Type.IMAGE, "ResourceTab_TextViewer_toolbar_text_indent.png"),
 
-	IMG_PERM_GROUP_PHONE_CALLS	(Type.IMAGE, "perm_group_phone_calls.png"),	
-	IMG_TOOLBAR_OPEN_ARROW		(Type.IMAGE, "down_on.png"),	
+	IMG_PERM_GROUP_PHONE_CALLS	(Type.IMAGE, "perm_group_phone_calls.png"),
+	IMG_TOOLBAR_OPEN_ARROW		(Type.IMAGE, "down_on.png"),
 
 	IMG_APP_ICON				(Type.IMAGE, "AppIcon.png"),
 	IMG_APK_FILE_ICON			(Type.IMAGE, "apk_file_icon.png"),
@@ -438,7 +436,7 @@ public enum Resource
 	IMG_TREE_MENU_DELETE		(Type.IMAGE, "tree_menu_delete.png"),
 	IMG_TREE_MENU_SAVE			(Type.IMAGE, "tree_menu_save.png"),
 	IMG_TREE_MENU_OPEN			(Type.IMAGE, "tree_open_menu.png"),
-	
+
 	IMG_TREE_APK				(Type.IMAGE, "tree_icon_apk.png"),
 	IMG_TREE_DEVICE				(Type.IMAGE, "tree_icon_device.png"),
 	IMG_TREE_TOP				(Type.IMAGE, "tree_icon_top.gif"),
@@ -462,9 +460,8 @@ public enum Resource
 	IMG_EASY_WINDOW_ALLOW			(Type.IMAGE, "easy_gui_allow.png"),
 	IMG_EASY_WINDOW_DEVICE			(Type.IMAGE, "easy_gui_device.png"),
 	IMG_EASY_WINDOW_DRAGANDDROP			(Type.IMAGE, "easy_gui_draganddrop.png"),
-	
-	
-	BIN_PATH					(Type.BIN, ""),	
+
+	BIN_PATH					(Type.BIN, ""),
 
 	BIN_ADB_LNX					(Type.BIN, "adb", "nux"),
 	BIN_ADB_WIN					(Type.BIN, "adb.exe", "win"),
@@ -487,12 +484,13 @@ public enum Resource
 	BIN_BYTECODE_VIEWER			(Type.BIN, "Bytecode-Viewer.jar"),
 
 	BIN_SIGNAPK					(Type.BIN, "signapk.jar"),
-	
+
 	PLUGIN_PATH					(Type.PLUGIN, ""),
 	PLUGIN_CONF_PATH			(Type.PLUGIN, "plugins.conf"),
 
 	SSL_TRUSTSTORE_PATH			(Type.SECURITY, "trustStore.jks"),
 
+	PROP_USE_EASY_UI			(Type.PROP, "use_easy_ui", true),
 	PROP_LANGUAGE				(Type.PROP, "language", SystemUtil.getUserLanguage()),
 	PROP_EDITOR					(Type.PROP, "editor", null /* see getDefValue() */),
 	PROP_RECENT_EDITOR			(Type.PROP, "recent_editor", ""),
@@ -517,10 +515,10 @@ public enum Resource
 	PROP_PEM_FILE_PATH			(Type.PROP, "last_pem_file_path", null /* see getDefValue() */),
 	PROP_PK8_FILE_PATH			(Type.PROP, "last_pk8_file_path", null /* see getDefValue() */),
 	PROP_PRINT_MULTILINE_ATTR	(Type.PROP, "print_multiline_attr", true),
-	
+
 	PROP_EASY_GUI_TOOLBAR				(Type.PROP, "easy_gui_show_button", "1,2,3,4,5"),
 	PROP_EASY_GUI_WINDOW_POSITION				(Type.PROP, "easy_gui_window_position", null),
-	
+
 	PROP_DEFAULT_DECORDER		(Type.PROP, "default_decorder", Resource.STR_DECORDER_JD_GUI),
 	PROP_DEFAULT_SEARCHER		(Type.PROP, "default_searcher", Resource.STR_DEFAULT_SEARCHER),
 	PROP_DEFAULT_EXPLORER		(Type.PROP, "default_explorer", Resource.STR_EXPLORER_ARCHIVE),
@@ -606,7 +604,7 @@ public enum Resource
 	}
 
 	public static String[] getSupportedLanguages() {
-		ArrayList<String> languages = new ArrayList<String>(); 
+		ArrayList<String> languages = new ArrayList<String>();
 
 		String value_path = getUTF8Path() + File.separator + "data" + File.separator;
 		File valueDir = new File(value_path);
@@ -828,7 +826,7 @@ public enum Resource
 			break;
 		case PROP_PEM_FILE_PATH:
 		case PROP_PK8_FILE_PATH:
-			String defPath = getUTF8Path() + File.separator + 
+			String defPath = getUTF8Path() + File.separator +
 							"data" + File.separator +
 							"build-master-target-product-security" + File.separator +
 							(this == PROP_PEM_FILE_PATH ? "platform.x509.pem" : "platform.pk8");
@@ -853,7 +851,7 @@ public enum Resource
 
 		loadProperty();
 		if(property != null) {
-			obj = property.get(getValue());	
+			obj = property.get(getValue());
 		}
 
 		if(obj == null) {

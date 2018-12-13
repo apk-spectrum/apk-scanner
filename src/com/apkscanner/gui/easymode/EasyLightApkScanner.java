@@ -1,7 +1,6 @@
 package com.apkscanner.gui.easymode;
 
 import com.apkscanner.core.scanner.AaptLightScanner;
-import com.apkscanner.core.scanner.AaptScanner;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
@@ -21,7 +20,7 @@ public class EasyLightApkScanner {
 		public void onStateChanged(Status status);
 	}
 
-	private AaptLightScanner scanner;
+	private ApkScanner scanner;
 	private StatusListener listener;
 	private int latestError = 0;
 	private String apkPath = null;
@@ -37,8 +36,8 @@ public class EasyLightApkScanner {
 		}
 	}
 
-	public EasyLightApkScanner(AaptLightScanner aaptlightscanner) {
-		this.scanner = (AaptLightScanner) aaptlightscanner;
+	public EasyLightApkScanner(ApkScanner aaptlightscanner) {
+		this.scanner = aaptlightscanner;
 		this.scanner.setStatusListener(new ApkLightScannerListener());
 	}
 
@@ -83,8 +82,8 @@ public class EasyLightApkScanner {
 	}
 
 	public void setReadyListener() {
-		this.isreadygui = true;
 		synchronized (lock) {
+			this.isreadygui = true;
 			Log.d("setReadyListener notify");
 			lock.notify();
 		}
@@ -135,7 +134,7 @@ public class EasyLightApkScanner {
 				}
 			}
 
-			if (listener != null) {
+			if (listener != null && getApkInfo() != null) {
 				apkPath = getApkInfo().filePath;
 				listener.onCompleted();
 			}
@@ -155,7 +154,6 @@ public class EasyLightApkScanner {
 	}
 
 	public void clear(boolean b) {
-		// TODO Auto-generated method stub
 		scanner.clear(b);
 	}
 
