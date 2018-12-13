@@ -134,7 +134,7 @@ public class ListItemTransferHandler extends TransferHandler {
 	private void cleanup(JComponent c, boolean remove) {
 		
 		
-		if (remove && Objects.nonNull(indices)) {
+		if (remove && indices != null) {
 			//Log.d("indices[0]: "+indices[0]);
 			DefaultListModel model = (DefaultListModel) source.getModel();
 			if (addCount > 0 && target.equals(source)) {

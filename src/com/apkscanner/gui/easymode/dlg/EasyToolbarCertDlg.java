@@ -53,8 +53,6 @@ import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
-import javafx.scene.control.Button;
-
 public class EasyToolbarCertDlg extends JDialog implements ActionListener {
 
 	JButton btnCert;

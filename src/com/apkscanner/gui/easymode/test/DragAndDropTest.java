@@ -199,7 +199,7 @@ class ListItemTransferHandler extends TransferHandler {
 	}
 
 	private void cleanup(JComponent c, boolean remove) {
-		if (remove && Objects.nonNull(indices)) {
+		if (remove && indices != null) {
 			if (addCount > 0) {
 				// https://github.com/aterai/java-swing-tips/blob/master/DragSelectDropReordering/src/java/example/MainPanel.java
 				for (int i = 0; i < indices.length; i++) {
