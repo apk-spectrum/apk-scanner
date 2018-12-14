@@ -36,6 +36,10 @@ public final class PlugInManager
 		return null;
 	}
 
+	public static PlugInPackage[] getPlugInPackages() {
+		return pluginPackages.toArray(new PlugInPackage[pluginPackages.size()]);
+	}
+
 	public static IUpdateChecker[] getUpdateChecker() {
 		ArrayList<IUpdateChecker> list = new ArrayList<>();
 		for(PlugInPackage pack: pluginPackages) {

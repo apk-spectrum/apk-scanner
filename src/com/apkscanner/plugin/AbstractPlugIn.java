@@ -37,7 +37,7 @@ public abstract class AbstractPlugIn implements IPlugIn
 
 	@Override
 	public String getName() {
-		String name = (component.name != null && !component.name.trim().isEmpty()) ? component.name : null;
+		String name = (component.name != null && !component.name.trim().isEmpty()) ? component.name.trim() : null;
 		if(name != null && name.startsWith(".")) {
 			name = getPackageName() + name;
 		}
@@ -46,7 +46,7 @@ public abstract class AbstractPlugIn implements IPlugIn
 
 	@Override
 	public String getGroupName() {
-		String name = (component.pluginGroup != null && !component.pluginGroup.trim().isEmpty()) ? component.pluginGroup : null;
+		String name = (component.pluginGroup != null && !component.pluginGroup.trim().isEmpty()) ? component.pluginGroup.trim() : null;
 		if(name != null && name.startsWith(".")) {
 			name = getPackageName() + name;
 		}
@@ -58,7 +58,7 @@ public abstract class AbstractPlugIn implements IPlugIn
 		if(component.icon != null) { 
 			try {
 				URI uri = pluginPackage.getResourceUri(component.icon); 
-				return uri != null ? uri.toURL() : null;
+				return uri != null ? uri.toURL() : pluginPackage.getIconURL();
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			}
@@ -68,12 +68,14 @@ public abstract class AbstractPlugIn implements IPlugIn
 
 	@Override
 	public String getLabel() {
-		return pluginPackage.getResourceString(component.label);
+		String label = pluginPackage.getResourceString(component.label);
+		return label != null ? label : pluginPackage.getLabel();
 	}
 
 	@Override
 	public String getDescription() {
-		return pluginPackage.getResourceString(component.description);
+		String desc = pluginPackage.getResourceString(component.description); 
+		return desc != null ? desc : pluginPackage.getDescription();
 	}
 
 	@Override

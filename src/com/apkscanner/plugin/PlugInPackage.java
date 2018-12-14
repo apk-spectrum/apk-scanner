@@ -78,9 +78,26 @@ public class PlugInPackage
 		return manifest.packageName;
 	}
 
+	public URL getIconURL() {
+		if(manifest.plugin.icon != null) { 
+			try {
+				URI uri = getResourceUri(manifest.plugin.icon); 
+				return uri != null ? uri.toURL() : null;
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+
 	public String getLabel() {
-		String label = manifest.plugin.label;
+		String label = getResourceString(manifest.plugin.label);
 		return label != null ? label : getPackageName();
+	}
+
+	public String getDescription() {
+		String desc = getResourceString(manifest.plugin.description); 
+		return desc != null ? desc : "";
 	}
 
 	public int getVersionCode() {
@@ -143,6 +160,23 @@ public class PlugInPackage
 			if(g.isTopGroup()) list.add(g);
 		}
 		return list.toArray(new PlugInGroup[list.size()]);
+	}
+
+	public IPlugIn[] getPlugInWithoutGroup() {
+		if(plugins == null) return null;
+		ArrayList<IPlugIn> list = new ArrayList<>();
+		for(IPlugIn p: plugins) {
+			if(p.getGroupName() == null) list.add(p);
+		}
+		return list.toArray(new IPlugIn[list.size()]);
+	}
+
+	public boolean useNetworkSetting() {
+		return manifest.plugin.useNetworkSetting;
+	}
+
+	public boolean useConfigurationSetting() {
+		return manifest.plugin.useConfigurationSetting;
 	}
 
 	public boolean isJarPackage() {

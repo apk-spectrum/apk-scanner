@@ -71,9 +71,11 @@ public class ManifestReader
 		String label = node.getAttributes("label");
 		String icon = node.getAttributes("icon");
 		String description = node.getAttributes("description");
+		boolean useNetworkSetting = "true".equals(node.getAttributes("useNetworkSetting"));
+		boolean useConfigurationSetting = "true".equals(node.getAttributes("useConfigurationSetting"));
 
 		Component[] components =  makeComponents(manifest);
-		return new PlugIn(enabled, label, icon, description, components);
+		return new PlugIn(enabled, label, icon, description, components, useNetworkSetting, useConfigurationSetting);
 	}
 
 	static private Component[] makeComponents(@NonNull XmlPath manifest) {
