@@ -246,7 +246,7 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 		// TODO Auto-generated method stub
 		contentsPanel.changeDeivce(devices);
 	}
-
+	
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent e) {
 		// TODO Auto-generated method stub

@@ -45,6 +45,7 @@ public class EasyPermissioniconPanel extends FlatPanel implements ActionListener
 	EasyButton btnshowpermissiondlg;
 	
 	int permissionbuttoncount = 0;
+	PermissionGroupManager permissionGroupManager;
 	
 	public EasyPermissioniconPanel(int height, int width) {
 		
@@ -107,7 +108,7 @@ public class EasyPermissioniconPanel extends FlatPanel implements ActionListener
 			return;
 
 		Log.d(apkInfo.manifest.usesPermission.length + "");
-		PermissionGroupManager permissionGroupManager = new PermissionGroupManager(apkInfo.manifest.usesPermission);
+		permissionGroupManager = new PermissionGroupManager(apkInfo.manifest.usesPermission);
 		Set<String> keys = permissionGroupManager.getPermGroupMap().keySet();
 		int cnt = 0;
 		for (String key : keys) {
@@ -149,7 +150,9 @@ public class EasyPermissioniconPanel extends FlatPanel implements ActionListener
 		
 		if(e.getSource().equals(btnshowpermissiondlg)) {
 			ToolEntryManager.excutePermissionDlg();
-		}				
+		} else {
+			ToolEntryManager.showPermDetailDesc(permissionGroupManager, ((EasyButton)e.getSource()).getToolTipText());
+		}
 	}
 	
 	public void clear() {
