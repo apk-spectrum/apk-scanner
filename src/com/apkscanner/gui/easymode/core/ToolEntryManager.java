@@ -1,5 +1,6 @@
 package com.apkscanner.gui.easymode.core;
 
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -9,7 +10,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Set;
 
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
@@ -19,9 +22,13 @@ import com.android.ddmlib.IDevice;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.Launcher;
 import com.apkscanner.core.scanner.ApkScanner;
+import com.apkscanner.core.scanner.PermissionGroupManager;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ComponentInfo;
+import com.apkscanner.data.apkinfo.PermissionGroup;
+import com.apkscanner.data.apkinfo.PermissionInfo;
+import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.ToolBar;
 import com.apkscanner.gui.ToolBar.ButtonSet;
@@ -617,5 +624,57 @@ public class ToolEntryManager {
 		ApkSignerWizard wizard = new ApkSignerWizard(dlg);
 		wizard.setApk(apkInfo.filePath);
 		wizard.setVisible(true);
+	}
+	
+	public static void showPermDetailDesc(PermissionGroupManager permissionGroupManager, String group)
+	{
+		PermissionGroup g = permissionGroupManager.getPermGroupMap().get(group);
+		if(g == null) return;
+
+		StringBuilder body = new StringBuilder("");
+		//body.append("<div id=\"perm-detail-desc\">");
+		body.append("■ ");
+		if(g.label != null) {
+			body.append(g.label + " - ");
+		}
+		body.append("[" + group + "]\n");
+		if(g.desc != null) {
+			body.append(" : " + g.desc + "\n");
+		}
+		body.append("------------------------------------------------------------------------------------------------------------\n\n");
+
+		for(PermissionInfo info: g.permList) {
+			body.append("▶ ");
+			if(info.isDangerousLevel()) {
+				body.append("[DANGEROUS] ");	
+			}
+			if(info.labels != null) {
+				String label = info.labels[0].name;
+				for(ResourceInfo r: info.labels) {
+					if(r.configuration != null && r.configuration.equals(Resource.getLanguage())) {
+						label = r.name;
+						break;
+					}
+				}
+				if(label != null)
+					body.append(label + " ");
+			}
+			body.append("[" + info.name + "]\n");
+			body.append(" - protectionLevel=" + info.protectionLevel + "\n");
+			if(info.descriptions != null) {
+				String description = info.descriptions[0].name;
+				for(ResourceInfo r: info.descriptions) {
+					if(r.configuration != null && r.configuration.equals(Resource.getLanguage())) {
+						description = r.name;
+						break;
+					}
+				}
+				if(description != null) body.append(" : " + description + "\n");
+				body.append("\n");
+			}
+		}
+		MessageBoxPane.showTextAreaDialog(mainframe, body.toString(), Resource.STR_BASIC_PERM_DISPLAY_TITLE.getString(), 
+				MessageBoxPane.INFORMATION_MESSAGE, new ImageIcon(g.icon.replaceAll("^file:/", "")), new Dimension(600, 200));
+		
 	}
 }
