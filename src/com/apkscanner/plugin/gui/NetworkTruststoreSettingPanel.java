@@ -48,9 +48,9 @@ import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.util.ApkFileChooser;
-import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.NetworkSetting;
 import com.apkscanner.plugin.PlugInConfig;
+import com.apkscanner.plugin.PlugInPackage;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
@@ -79,16 +79,17 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 
 	private HashMap<String, String> trustStoreTypeMap;
 	
-	private IPlugIn plugin;
+	private PlugInConfig pluginConfig;
 	
 	private KeyStore activeKeystore;
 	private String activeKeystorePath;
 
-	public NetworkTruststoreSettingPanel(final IPlugIn plugin) {
-		this.plugin = plugin;
-		
+	public NetworkTruststoreSettingPanel(final PlugInPackage pluginPackage) {
+		pluginConfig = new PlugInConfig(pluginPackage);
+
 		setOpaque(false);
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
 		Border title = new TitledBorder("SSL Trust Store Settings");
 		Border padding = new EmptyBorder(5,5,5,5);
 		setBorder(new CompoundBorder(title, padding));
@@ -133,7 +134,6 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 						String desciprtion = "";
 						String store = "";
 
-						PlugInConfig config = plugin.getPlugInConfig();
 						switch(type) {
 						case TRUSTSTORE_TYPE_APKSCANNER:
 							path = Resource.SSL_TRUSTSTORE_PATH.getPath();
@@ -144,7 +144,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 							store = NetworkSetting.JVM_SSL_TRUSTSTORE;
 							break;
 						case TRUSTSTORE_TYPE_MANUAL:
-							path = config.getConfiguration(PlugInConfig.CONFIG_SSL_TRUSTSTORE);
+							path = pluginConfig.getConfiguration(PlugInConfig.CONFIG_SSL_TRUSTSTORE);
 							if(!new File(path).canRead()) {
 								//Log.e(path);
 								File file = getKeyStoreFile(NetworkTruststoreSettingPanel.this, Resource.SSL_TRUSTSTORE_PATH.getPath());
@@ -170,7 +170,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 						} else if(!ignore) {
 							trustStore.setSelectedItem(preItem);
 						}
-						config.setConfiguration(PlugInConfig.CONFIG_SSL_TRUSTSTORE, store);
+						pluginConfig.setConfiguration(PlugInConfig.CONFIG_SSL_TRUSTSTORE, store);
 						certDescription.setText(desciprtion);
 						certDescription.setCaretPosition(0);
 						mgmtPanel.setVisible(visible);
@@ -274,9 +274,8 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 	
 	private void selectTrustStore() {
 		String trustStoreType = null;
-		PlugInConfig config = plugin.getPlugInConfig();
 
-		String storePath = config.getConfiguration(PlugInConfig.CONFIG_SSL_TRUSTSTORE, NetworkSetting.APK_SCANNER_SSL_TRUSTSTORE);
+		String storePath = pluginConfig.getConfiguration(PlugInConfig.CONFIG_SSL_TRUSTSTORE, NetworkSetting.APK_SCANNER_SSL_TRUSTSTORE);
 		Log.v("trustStore: " + trustStore);
 		if(NetworkSetting.APK_SCANNER_SSL_TRUSTSTORE.equals(storePath)) {
 			trustStoreType = TRUSTSTORE_TYPE_APKSCANNER;
@@ -438,7 +437,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 	    activeKeystorePath = null;
 		try(FileInputStream is = new FileInputStream(path)) {
 			activeKeystore = KeyStore.getInstance(KeyStore.getDefaultType());
-			char[] pass = plugin.getPlugInConfig().getConfiguration(PlugInConfig.CONFIG_SSL_TRUSTSTORE_PWD, NetworkSetting.DEFAULT_TRUSTSTORE_PASSWORD).toCharArray();
+			char[] pass = pluginConfig.getConfiguration(PlugInConfig.CONFIG_SSL_TRUSTSTORE_PWD, NetworkSetting.DEFAULT_TRUSTSTORE_PASSWORD).toCharArray();
 		    activeKeystore.load(is, pass);
 		} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
 			e.printStackTrace();
@@ -472,7 +471,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 	private void storeKeyStore() {
 		if(activeKeystore == null || activeKeystorePath == null) return;
 		try(FileOutputStream os = new FileOutputStream(activeKeystorePath)) {
-			char[] pass = plugin.getPlugInConfig().getConfiguration(PlugInConfig.CONFIG_SSL_TRUSTSTORE_PWD, NetworkSetting.DEFAULT_TRUSTSTORE_PASSWORD).toCharArray();
+			char[] pass = pluginConfig.getConfiguration(PlugInConfig.CONFIG_SSL_TRUSTSTORE_PWD, NetworkSetting.DEFAULT_TRUSTSTORE_PASSWORD).toCharArray();
 			activeKeystore.store(os, pass);	
 		} catch(KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
 			e.printStackTrace();
@@ -488,8 +487,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 			if(file != null) {
 				String path = file.getAbsolutePath();
 				trustPath.setText(path);
-				PlugInConfig config = plugin.getPlugInConfig();
-				config.setConfiguration(PlugInConfig.CONFIG_SSL_TRUSTSTORE, path);
+				pluginConfig.setConfiguration(PlugInConfig.CONFIG_SSL_TRUSTSTORE, path);
 			}
 			break;
 		case ACT_CMD_IMPORT:

@@ -1,11 +1,14 @@
 package com.apkscanner.plugin.gui;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.ItemSelectable;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
@@ -19,8 +22,10 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -35,6 +40,7 @@ import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 
+import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.PlugInGroup;
@@ -45,12 +51,16 @@ import com.apkscanner.util.Log;
 public class PlugInSettingPanel extends JPanel implements TreeSelectionListener {
 	private static final long serialVersionUID = 1234825421488294264L;
 
+	private static final String TREE_NODE_DESCRIPTION = "TREE_NODE_DESCRIPTION";
 	private static final String TREE_NODE_NETWORK_SETTING = "TREE_NODE_NETWORK_SETTING";
 	private static final String TREE_NODE_CONFIGURATION_SETTING = "TREE_NODE_CONFIGURATION_SETTING";
 	
 	private JTree tree;
 	private DefaultMutableTreeNode root;
 	private JTextArea description;
+	private JPanel extraPanel;
+	
+	private NetworkProxySettingPanel proxySettingPanel;
 
 	class CheckBoxNodeRenderer extends JPanel implements TreeCellRenderer, ItemSelectable {
 		private static final long serialVersionUID = -6067593221379257354L;
@@ -265,6 +275,10 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 		pluginTreePanel.add(label);
 		pluginTreePanel.add(scrollPane);
 		
+
+		CardLayout extraPanelLayout = new CardLayout();
+		extraPanel = new JPanel(extraPanelLayout);
+		
 		JPanel pluginDescPanel = new JPanel();
 		pluginDescPanel.setLayout(new BoxLayout(pluginDescPanel, BoxLayout.Y_AXIS));
 		
@@ -280,11 +294,45 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 		pluginDescPanel.add(label);
 		pluginDescPanel.add(scrollPane);
 		
+		
+		JPanel netSettingPanel = new JPanel();
+		netSettingPanel.setLayout(new BoxLayout(netSettingPanel, BoxLayout.Y_AXIS));
+		
+		proxySettingPanel = new NetworkProxySettingPanel(null);
+		proxySettingPanel.setAlignmentX(0);
+		
+		JButton btnTruststore = new JButton("Manage certificates");
+		btnTruststore.setAlignmentX(0);
+		btnTruststore.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(tree.isSelectionEmpty()) return;
+				TreePath parentPath = tree.getSelectionPath().getParentPath();
+				if(parentPath == null) return;
+				Object userObject = parentPath.getLastPathComponent();
+				if(!(userObject instanceof DefaultMutableTreeNode)) return;
+				userObject = ((DefaultMutableTreeNode)userObject).getUserObject();
+				if(!(userObject instanceof PlugInPackage)) return;
+
+				MessageBoxPane.showMessageDialog(null, new NetworkTruststoreSettingPanel((PlugInPackage)userObject), "Network Truststore Setting", JOptionPane.DEFAULT_OPTION);
+			}
+		});
+
+		netSettingPanel.add(proxySettingPanel);
+		netSettingPanel.add(btnTruststore);
+		//netSettingPanel.add(new NetworkTruststoreSettingPanel(null));
+		
+		extraPanel.add(pluginDescPanel, TREE_NODE_DESCRIPTION);
+		extraPanel.add(new JScrollPane(netSettingPanel), TREE_NODE_NETWORK_SETTING);
+		extraPanel.add(new JPanel(), TREE_NODE_CONFIGURATION_SETTING);
+
+		extraPanelLayout.show(extraPanel, TREE_NODE_DESCRIPTION);
+
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
 		splitPane.setTopComponent(pluginTreePanel);
-		splitPane.setBottomComponent(pluginDescPanel);
+		splitPane.setBottomComponent(extraPanel);
 		splitPane.setBorder(new EmptyBorder(0,0,0,0));
-		splitPane.setDividerLocation(200);
+		splitPane.setDividerLocation(180);
 
 		add(splitPane, BorderLayout.CENTER);
 
@@ -335,15 +383,25 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 		Object userObject = e.getPath().getLastPathComponent();
 		if(!(userObject instanceof DefaultMutableTreeNode)) return;
 
+		CardLayout extraPanelLayout = (CardLayout) extraPanel.getLayout();
 		userObject = ((DefaultMutableTreeNode)userObject).getUserObject();
 		if(userObject instanceof IPlugIn) {
 			description.setText(((IPlugIn)userObject).getDescription());
 			description.setCaretPosition(0);
+			extraPanelLayout.show(extraPanel, TREE_NODE_DESCRIPTION);
 		} else if(userObject instanceof PlugInPackage) {
 			description.setText(((PlugInPackage)userObject).getDescription());
 			description.setCaretPosition(0);
+			extraPanelLayout.show(extraPanel, TREE_NODE_DESCRIPTION);
+		} else if(TREE_NODE_NETWORK_SETTING.equals(userObject)) {
+			extraPanelLayout.show(extraPanel, TREE_NODE_NETWORK_SETTING);
+			proxySettingPanel.setPluginPackage((PlugInPackage)((DefaultMutableTreeNode)e.getPath().getParentPath().getLastPathComponent()).getUserObject());
+			//MessageBoxPane.showMessageDialog(null, new NetworkProxySettingPanel(null), "Network Proxy Setting", JOptionPane.DEFAULT_OPTION);
+			//MessageBoxPane.showMessageDialog(null, new NetworkTruststoreSettingPanel(null), "Network Truststore Setting", JOptionPane.DEFAULT_OPTION);
+		} else if(TREE_NODE_CONFIGURATION_SETTING.equals(userObject)) {
+			extraPanelLayout.show(extraPanel, TREE_NODE_CONFIGURATION_SETTING);
 		} else {
-			Log.v("Other: " + userObject.toString());
+			Log.v("Other: " + userObject.toString());	
 		}
 	}
 }

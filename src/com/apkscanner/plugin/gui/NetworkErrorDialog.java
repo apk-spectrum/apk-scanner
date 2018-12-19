@@ -59,7 +59,7 @@ public class NetworkErrorDialog
 			errMsg.append("Try checking the connection or proxy, firewall!");
 
 			errPanel.setText(errMsg.toString());
-			errPanel.add(new NetworkProxySettingPanel(plugin));
+			errPanel.add(new NetworkProxySettingPanel(plugin.getPlugInPackage()));
 			ret = showOptionDialog(parent, errPanel, "Network Error - Connection timed out");
 
 			if(!force) config.setConfiguration(IGNORE_TIME_OUT, errPanel.isNeverLook() ? "true" : "false");
@@ -73,7 +73,7 @@ public class NetworkErrorDialog
 			errMsg.append("Try add a SSL certification to the trust store!");
 
 			errPanel.setText(errMsg.toString());
-			errPanel.add(new NetworkTruststoreSettingPanel(plugin));
+			errPanel.add(new NetworkTruststoreSettingPanel(plugin.getPlugInPackage()));
 			ret = showOptionDialog(parent, errPanel, "Network Error - SSL Certificate Error");
 
 			if(!force) config.setConfiguration(IGNORE_SSH_HANDSHAKE, errPanel.isNeverLook() ? "true" : "false");
