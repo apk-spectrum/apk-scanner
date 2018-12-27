@@ -247,6 +247,11 @@ public final class PlugInManager
 
 	public static void saveProperty()
 	{
+		if(!new File(Resource.PLUGIN_CONF_PATH.getPath()).canWrite()) {
+			Log.v("Cann't write file : " + Resource.PLUGIN_CONF_PATH.getPath());
+			return;
+		}
+
 		String transMultiLine = JSONValue.toJSONString(getChangedProperties())
 				.replaceAll("^\\{(.*)\\}$", "{\n$1\n}")
 				.replaceAll("(\"[^\"]*\":(\"[^\"]*\")?([^\",]*)?,)", "$1\n");
