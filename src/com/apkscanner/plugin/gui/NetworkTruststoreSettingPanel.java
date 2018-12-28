@@ -30,6 +30,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -63,6 +64,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 	private static final String ACT_CMD_EXPLORER = "ACT_CMD_EXPLORER";
 	private static final String ACT_CMD_IMPORT = "ACT_CMD_IMPORT";
 	private static final String ACT_CMD_REMOVE = "ACT_CMD_REMOVE";
+	private static final String ACT_CMD_DETAIL = "ACT_CMD_DETAIL";
 
 	private static final String TRUSTSTORE_TYPE_APKSCANNER = "TRUSTSTORE_TYPE_APKSCANNER";
 	private static final String TRUSTSTORE_TYPE_JVM = "TRUSTSTORE_TYPE_JVM";
@@ -78,15 +80,25 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 	private JButton explorerBtn;
 
 	private HashMap<String, String> trustStoreTypeMap;
-	
+
 	private PlugInConfig pluginConfig;
-	
+
 	private KeyStore activeKeystore;
 	private String activeKeystorePath;
 
 	public NetworkTruststoreSettingPanel(final PlugInPackage pluginPackage) {
-		pluginConfig = new PlugInConfig(pluginPackage);
+		this(pluginPackage, false);
+	}
 
+	public NetworkTruststoreSettingPanel(final PlugInPackage pluginPackage, boolean simple) {
+		this(new PlugInConfig(pluginPackage), simple);
+	}
+
+	public NetworkTruststoreSettingPanel(final PlugInConfig pluginConfig) {
+		this(pluginConfig, false);
+	}
+
+	public NetworkTruststoreSettingPanel(final PlugInConfig pluginConfig, boolean simple) {
 		setOpaque(false);
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -188,7 +200,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 		mgmtPanel.setLayout(new BoxLayout(mgmtPanel, BoxLayout.Y_AXIS));
 		trustPath = new JTextField();
 		trustPath.setEditable(false);
-		
+
 		explorerBtn = new JButton("...");
 		explorerBtn.setActionCommand(ACT_CMD_EXPLORER);
 		explorerBtn.addActionListener(this);
@@ -206,7 +218,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 		pathPanel.add(trustPath, BorderLayout.CENTER);
 		pathPanel.add(explorerBtn, BorderLayout.EAST);
 		mgmtPanel.add(pathPanel);
-		mgmtPanel.add(Box.createRigidArea(new Dimension(0,5)));
+		if(!simple) mgmtPanel.add(Box.createRigidArea(new Dimension(0,5)));
 
 		certListModel = new DefaultTableModel(new String[] {
 				"발급대상",
@@ -221,17 +233,17 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 		JScrollPane certListPanel = new JScrollPane(certList);
 		certListPanel.setPreferredSize(new Dimension(150,100));
 		certListPanel.setAlignmentX(0.0f);
-		mgmtPanel.add(certListPanel);
+		if(!simple) mgmtPanel.add(certListPanel);
 
-		
+
 		JButton importBtn = new JButton("Import");
 		importBtn.setActionCommand(ACT_CMD_IMPORT);
 		importBtn.addActionListener(this);
-		
+
 		JButton removeBtn = new JButton("Remove");
 		removeBtn.setActionCommand(ACT_CMD_REMOVE);
 		removeBtn.addActionListener(this);
-		
+
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)) {
 			private static final long serialVersionUID = -8630147413462906817L;
 			@Override
@@ -245,10 +257,10 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 		buttonPanel.add(removeBtn);
 		buttonPanel.add(importBtn);
 
-		mgmtPanel.add(buttonPanel);
+		if(!simple) mgmtPanel.add(buttonPanel);
 
 		add(mgmtPanel);
-		add(Box.createRigidArea(new Dimension(0,5)));
+		if(!simple) add(Box.createRigidArea(new Dimension(0,5)));
 
 		certDescription = new JTextArea();
 		certDescription.setEditable(false);
@@ -264,15 +276,27 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 		certDescPanel.setPreferredSize(new Dimension(150,100));
 		certDescPanel.setAlignmentX(0.0f);
 		//certDescPanel
-		
-		add(certDescPanel);
-		add(Box.createRigidArea(new Dimension(0,5)));
-		
-		selectTrustStore();
+
+		if(!simple) add(certDescPanel);
+		if(!simple) add(Box.createRigidArea(new Dimension(0,5)));
+
+		if(simple) {
+			JButton detailTruststore = new JButton("Manage certificates");
+			detailTruststore.setActionCommand(ACT_CMD_DETAIL);
+			detailTruststore.addActionListener(this);
+			add(detailTruststore);
+		}
+
+		setPlugInTrustStore(pluginConfig);
 		certListModel.fireTableStructureChanged();
 	}
-	
-	private void selectTrustStore() {
+
+	public void setPlugInTrustStore(PlugInPackage pluginPackage) {
+		setPlugInTrustStore(new PlugInConfig(pluginPackage));
+	}
+
+	public void setPlugInTrustStore(PlugInConfig pluginConfig) {
+		this.pluginConfig = pluginConfig;
 		String trustStoreType = null;
 
 		String storePath = pluginConfig.getConfiguration(PlugInConfig.CONFIG_SSL_TRUSTSTORE, NetworkSetting.APK_SCANNER_SSL_TRUSTSTORE);
@@ -295,10 +319,10 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 			}
 		}
 	}
-	
+
 	public String confirmCertificateAlias(String alias, X509Certificate cert) {
 		JPanel confirmForm = new JPanel();
-		
+
 		JTextField aliasField = new JTextField();
 		aliasField.setText(alias);
 		aliasField.setAlignmentX(0.0f);
@@ -311,7 +335,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 		JScrollPane descScroll = new JScrollPane(descArea);
 		descScroll.setAlignmentX(0.0f);
 		descScroll.setPreferredSize(new Dimension(400, 150));
-		
+
 		confirmForm.setLayout(new BoxLayout(confirmForm, BoxLayout.Y_AXIS));
 		confirmForm.add(new JLabel("Alias:"));
 		confirmForm.add(aliasField);
@@ -325,7 +349,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 				try {
 					if(activeKeystore.containsAlias(alias)) {
 						MessageBoxPool.show(this, MessageBoxPool.MSG_WARN_CERT_ALISAS_EXISTED);
-						continue;							
+						continue;
 					}
 				} catch (KeyStoreException e) {
 					e.printStackTrace();
@@ -380,7 +404,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 		} catch (IOException | CertificateException e1) {
 			e1.printStackTrace();
 		}
-		return (X509Certificate) cert; 
+		return (X509Certificate) cert;
 	}
 
 	private void importCertificate(String alias, X509Certificate certificate) {
@@ -411,7 +435,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 		if(cert == null) return null;
 
 		String subCn = null;
-		String issCn = null; 
+		String issCn = null;
 		try {
 			subCn = X500Name.asX500Name(cert.getSubjectX500Principal()).getCommonName();
 			if(subCn == null) {
@@ -419,7 +443,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 			}
 			issCn = X500Name.asX500Name(cert.getIssuerX500Principal()).getCommonName();
 			if(issCn == null) {
-				issCn = X500Name.asX500Name(cert.getIssuerX500Principal()).getOrganizationalUnit(); 
+				issCn = X500Name.asX500Name(cert.getIssuerX500Principal()).getOrganizationalUnit();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -472,7 +496,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 		if(activeKeystore == null || activeKeystorePath == null) return;
 		try(FileOutputStream os = new FileOutputStream(activeKeystorePath)) {
 			char[] pass = pluginConfig.getConfiguration(PlugInConfig.CONFIG_SSL_TRUSTSTORE_PWD, NetworkSetting.DEFAULT_TRUSTSTORE_PASSWORD).toCharArray();
-			activeKeystore.store(os, pass);	
+			activeKeystore.store(os, pass);
 		} catch(KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
 			e.printStackTrace();
 		}
@@ -496,7 +520,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 			String name = certFile.getName().replaceAll("\\.([cC][rR][tT]|[cC][eE][rR])$", "");
 			name = confirmCertificateAlias(name, cert);
 			if(name != null) {
-				importCertificate(name, cert);	
+				importCertificate(name, cert);
 			}
 			break;
 		case ACT_CMD_REMOVE:
@@ -514,6 +538,11 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 				Log.v("No selected");
 				MessageBoxPool.show(this, MessageBoxPool.MSG_CERTIFICATE_NO_SELECTED);
 			}
+			break;
+		case ACT_CMD_DETAIL:
+			JPanel trustPanel = new NetworkTruststoreSettingPanel(pluginConfig);
+			trustPanel.setPreferredSize(new Dimension(500, trustPanel.getPreferredSize().height));
+			MessageBoxPane.showMessageDialog(null, trustPanel, "Network Truststore Setting", JOptionPane.DEFAULT_OPTION);
 			break;
 		}
 	}
