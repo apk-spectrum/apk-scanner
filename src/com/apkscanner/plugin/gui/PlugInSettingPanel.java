@@ -6,7 +6,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.ItemSelectable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -46,57 +45,32 @@ import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.PlugInGroup;
 import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.plugin.PlugInPackage;
+import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
 public class PlugInSettingPanel extends JPanel implements TreeSelectionListener {
 	private static final long serialVersionUID = 1234825421488294264L;
 
+	private static final String TREE_NODE_TOP_PLUGINS = "TREE_NODE_TOP_PLUGINS";
 	private static final String TREE_NODE_DESCRIPTION = "TREE_NODE_DESCRIPTION";
 	private static final String TREE_NODE_NETWORK_SETTING = "TREE_NODE_NETWORK_SETTING";
 	private static final String TREE_NODE_CONFIGURATION_SETTING = "TREE_NODE_CONFIGURATION_SETTING";
-	
+	private static final String TREE_NODE_NO_PLUGINS = "TREE_NODE_NO_PLUGINS";
+
 	private JTree tree;
 	private DefaultMutableTreeNode root;
 	private JTextArea description;
 	private JPanel extraPanel;
-	
+
 	private NetworkProxySettingPanel proxySettingPanel;
 
-	class CheckBoxNodeRenderer extends JPanel implements TreeCellRenderer, ItemSelectable {
-		private static final long serialVersionUID = -6067593221379257354L;
+	static class CheckBoxNodeRenderer implements TreeCellRenderer {
+		private ItemListener listener;
 
-		private JCheckBox check;
-		private JLabel label;
-		private Object userObject;
-
-		Color selectionBorderColor, selectionForeground, selectionBackground,
+		public static Color selectionBorderColor, selectionForeground, selectionBackground,
 		      textForeground, textBackground;
 
-		public CheckBoxNodeRenderer() {
-			Log.e("new CheckBoxNodeRenderer()");
-			setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
-			setBorder(new EmptyBorder(0,0,0,0));
-			//setOpaque(false);
-			
-			check = new JCheckBox();
-			check.setBorder(new EmptyBorder(2,0,0,0));
-			check.setOpaque(false);
-			
-			label = new JLabel();
-			label.setBorder(new EmptyBorder(0,0,0,0));
-			label.setOpaque(false);
-			
-			add(check);
-			add(label);
-			
-			Font fontValue;
-			fontValue = UIManager.getFont("Tree.font");
-			if (fontValue != null) {
-				label.setFont(fontValue);
-			}
-			Boolean booleanValue = (Boolean) UIManager.get("Tree.drawsFocusBorderAroundIcon");
-			check.setFocusPainted((booleanValue != null) && (booleanValue.booleanValue()));
-
+		static {
 			selectionBorderColor = UIManager.getColor("Tree.selectionBorderColor");
 			selectionForeground = UIManager.getColor("Tree.selectionForeground");
 			selectionBackground = UIManager.getColor("Tree.selectionBackground");
@@ -104,150 +78,166 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 			textBackground = UIManager.getColor("Tree.textBackground");
 		}
 
-		public String getText() {
-			return label.getText();
+		public CheckBoxNodeRenderer() {
+			//Log.v("CheckBoxNodeRenderer() Constructor");
 		}
 
-		public void setText(String text) {
+		public CheckBoxNodeRenderer(ItemListener listener) {
+			//Log.v("CheckBoxNodeRenderer() Constructor, " + listener);
+			this.listener = listener;
+		}
+
+		private JPanel makeCellComponent(String text, Icon icon, boolean selected,
+				boolean usedCheckbox, boolean enabledCheckBox, boolean selectedCheckBox, ItemListener listener) {
+			JPanel panel = new JPanel();
+			panel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
+			panel.setBorder(new EmptyBorder(0,0,0,0));
+			//panel.setOpaque(false);
+			panel.setForeground(selected ? selectionForeground : textForeground);
+			panel.setBackground(selected ? selectionBackground : textBackground);
+
+			JCheckBox check = new JCheckBox();
+			check.setBorder(new EmptyBorder(2,0,0,0));
+			check.setOpaque(false);
+			check.setVisible(usedCheckbox);
+			check.setEnabled(enabledCheckBox);
+			check.setSelected(selectedCheckBox);
+			check.addItemListener(listener);
+
+			Boolean booleanValue = (Boolean) UIManager.get("Tree.drawsFocusBorderAroundIcon");
+			check.setFocusPainted((booleanValue != null) && (booleanValue.booleanValue()));
+
+			JLabel label = new JLabel();
+			label.setBorder(new EmptyBorder(0,0,0,0));
+			label.setOpaque(false);
 			label.setText(text);
-		}
+			label.setIcon(icon);
 
-		public boolean isSelected() {
-			return check.isSelected();
-		}
+			Font fontValue;
+			fontValue = UIManager.getFont("Tree.font");
+			if (fontValue != null) {
+				label.setFont(fontValue);
+			}
 
-		public void setSelected(boolean selected) {
-			check.setSelected(selected);;
-		}
+			panel.add(check);
+			panel.add(label);
 
-		public Object getUserObject() {
-			return userObject;
+			return panel;
 		}
 
 		@Override
 		public Component getTreeCellRendererComponent(JTree tree, Object value,
 				boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+			//Log.v("getTreeCellRendererComponent() ");
 
-			if ((value != null) && (value instanceof DefaultMutableTreeNode)) {
+			String nodeText = "";
+			Icon nodeIcon = null;
+			boolean visibledCheckBox = false;
+			boolean enabledCheckBox = false;
+			boolean selectedCheckBox = false;
+
+			Object userObject = null;
+
+			if (value instanceof DefaultMutableTreeNode) {
 				userObject = ((DefaultMutableTreeNode) value).getUserObject();
-
 				if(userObject instanceof String) {
-					label.setText(userObject.toString());
-					label.setIcon(null);
-					check.setVisible(false);
-					check.setEnabled(false);
-					check.setSelected(false);
+					nodeText = (String)userObject;
+					switch((String)userObject) {
+					case TREE_NODE_NETWORK_SETTING:
+						nodeText = "Network Setting";
+						break;
+					case TREE_NODE_CONFIGURATION_SETTING:
+						nodeText = "Configurations Setting";
+						break;
+					case TREE_NODE_TOP_PLUGINS:
+						nodeText = "APK Scanner Plugins";
+						nodeIcon = Resource.IMG_APP_ICON.getImageIcon(16, 16);
+						break;
+					case TREE_NODE_NO_PLUGINS:
+						nodeText = "No plugins";
+						break;
+					}
 				} else if(userObject instanceof IPlugIn) {
 					IPlugIn plugin = (IPlugIn) userObject;
 					URL iconUrl = plugin.getIconURL();
-					Icon icon = null;
 					if(iconUrl != null) {
-						icon = new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(iconUrl), 16, 16));
+						nodeIcon = new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(iconUrl), 16, 16));
 					}
-					boolean enabled = true;
 					if(plugin.getGroupName() != null) {
-						enabled = plugin.getParantGroup().isEnabled();
+						enabledCheckBox = plugin.getParantGroup().isEnabled();
 					} else {
-						enabled = plugin.getPlugInPackage().isEnabled();
+						enabledCheckBox = plugin.getPlugInPackage().isEnabled();
 					}
-					label.setText(plugin.getLabel());
-					label.setIcon(icon);
-					check.setVisible(true);
-					check.setEnabled(enabled);
-					check.setSelected(plugin.isEnabled(false));
+					nodeText = plugin.getLabel();
+					visibledCheckBox = true;
+					selectedCheckBox = plugin.isEnabled(false);
 				} else if(userObject instanceof PlugInPackage) {
 					PlugInPackage pluginPackage = (PlugInPackage) userObject;
 					URL iconUrl = pluginPackage.getIconURL();
-					Icon icon = null;
 					if(iconUrl != null) {
-						icon = new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(iconUrl), 16, 16));
+						nodeIcon = new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(iconUrl), 16, 16));
 					}
-					label.setText(pluginPackage.getLabel() + " / " + pluginPackage.getVersionName());
-					label.setIcon(icon);
-					check.setVisible(true);
-					check.setEnabled(tree.isEnabled());
-					check.setSelected(pluginPackage.isEnabled());
+					nodeText = pluginPackage.getLabel() + " / " + pluginPackage.getVersionName();
+					visibledCheckBox = true;
+					enabledCheckBox = tree.isEnabled();
+					selectedCheckBox = pluginPackage.isEnabled();
 				}
 			}
 
-			if (selected) {
-				setForeground(selectionForeground);
-				setBackground(selectionBackground);
-			} else {
-				setForeground(textForeground);
-				setBackground(textBackground);
-			}
-
-			return this;
-		}
-
-		@Override
-		public void addItemListener(ItemListener listener) {
-			check.addItemListener(listener);
-		}
-
-		@Override
-		public Object[] getSelectedObjects() {
-			return check.getSelectedObjects();
-		}
-
-		@Override
-		public void removeItemListener(ItemListener listener) {
-			check.removeItemListener(listener);
+			final Object source = userObject;
+			return makeCellComponent(nodeText, nodeIcon, selected, visibledCheckBox, enabledCheckBox, selectedCheckBox, 
+				new ItemListener() {
+					@Override
+					public void itemStateChanged(ItemEvent ie) {
+						ie.setSource(source);
+						listener.itemStateChanged(ie);
+					}
+				}
+			);
 		}
 	}
 
-	class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor {
+	class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor, ItemListener {
 		private static final long serialVersionUID = -931248963141465409L;
 
-		private CheckBoxNodeRenderer renderer;
-
-		public CheckBoxNodeEditor(final JTree tree) {
-			renderer = new CheckBoxNodeRenderer();
-			ItemListener itemListener = new ItemListener() {
-				public void itemStateChanged(ItemEvent itemEvent) {
-					boolean selected = itemEvent.getStateChange() == ItemEvent.SELECTED;
-					Object userObject = renderer.getUserObject();
-					if(userObject instanceof IPlugIn) {
-						((IPlugIn) userObject).setEnabled(selected);
-					} else if(userObject instanceof PlugInPackage) {
-						((PlugInPackage) userObject).setEnabled(selected);
-					}
-					if (stopCellEditing()) {
-						fireEditingStopped();
-					}
-					tree.repaint();
-				}
-			};
-			renderer.addItemListener(itemListener);
-		}
+		private CheckBoxNodeRenderer renderer = new CheckBoxNodeRenderer(this);
 
 		@Override
 		public Object getCellEditorValue() {
-			return renderer.getUserObject();
+			//Log.v("getCellEditorValue");
+			return getUserObject(tree.getSelectionPath());
 		}
 
 		@Override
 		public boolean isCellEditable(EventObject event) {
-			boolean returnValue = false;
-			if (event instanceof MouseEvent) {
-				MouseEvent mouseEvent = (MouseEvent) event;
-				TreePath path = tree.getPathForLocation(mouseEvent.getX(), mouseEvent.getY());
-				if (path != null) {
-					Object node = path.getLastPathComponent();
-					if ((node != null) && (node instanceof DefaultMutableTreeNode)) {
-						DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) node;
-						Object userObject = treeNode.getUserObject();
-						returnValue = (userObject instanceof IPlugIn || userObject instanceof PlugInPackage);
-					}
-				}
+			//Log.v("isCellEditable " + event);
+			if (!(event instanceof MouseEvent)) return false;
+			MouseEvent mouseEvent = (MouseEvent) event;
+			TreePath path = tree.getPathForLocation(mouseEvent.getX(), mouseEvent.getY());
+			Object userObject = getUserObject(path);
+			return (userObject instanceof IPlugIn || userObject instanceof PlugInPackage);
+		}
+
+		@Override
+		public void itemStateChanged(ItemEvent itemEvent) {
+			boolean selected = itemEvent.getStateChange() == ItemEvent.SELECTED;
+			Object userObject = itemEvent.getSource();
+			//Log.v("itemStateChanged " + itemEvent.getStateChange() + ", " + userObject);
+			if(userObject instanceof IPlugIn) {
+				((IPlugIn) userObject).setEnabled(selected);
+			} else if(userObject instanceof PlugInPackage) {
+				((PlugInPackage) userObject).setEnabled(selected);
 			}
-			return returnValue;
+			if (stopCellEditing()) {
+				fireEditingStopped();
+			}
+			tree.repaint();
 		}
 
 		@Override
 		public Component getTreeCellEditorComponent(JTree tree, Object value,
 				boolean selected, boolean expanded, boolean leaf, int row) {
+			//Log.v("getTreeCellEditorComponent() ");
 			return renderer.getTreeCellRendererComponent(tree, value, true, expanded, leaf, row, true);
 		}
 	}
@@ -258,60 +248,55 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 		JPanel pluginTreePanel = new JPanel();
 		pluginTreePanel.setLayout(new BoxLayout(pluginTreePanel, BoxLayout.Y_AXIS));
 
-		tree = new JTree(root = new DefaultMutableTreeNode("PlugIn"));
+		tree = new JTree(root = new DefaultMutableTreeNode(TREE_NODE_TOP_PLUGINS));
 		tree.addTreeSelectionListener(this);
 		tree.setCellRenderer(new CheckBoxNodeRenderer());
-		tree.setCellEditor(new CheckBoxNodeEditor(tree));
+		tree.setCellEditor(new CheckBoxNodeEditor());
 		tree.setEditable(true);
 		tree.setRootVisible(true);
 
-
 		JScrollPane scrollPane = new JScrollPane(tree);
 		scrollPane.setAlignmentX(0);
-		
+
 		JLabel label = new JLabel("Enable PlugIns : ");
 		label.setAlignmentX(0);
-		
+
 		pluginTreePanel.add(label);
 		pluginTreePanel.add(scrollPane);
-		
+
 
 		CardLayout extraPanelLayout = new CardLayout();
 		extraPanel = new JPanel(extraPanelLayout);
-		
+
 		JPanel pluginDescPanel = new JPanel();
 		pluginDescPanel.setLayout(new BoxLayout(pluginDescPanel, BoxLayout.Y_AXIS));
-		
+
 		label = new JLabel("Description");
 		label.setAlignmentX(0);
-		
+
 		description = new JTextArea();
 		description.setEditable(false);
-		
+
 		scrollPane = new JScrollPane(description);
 		scrollPane.setAlignmentX(0);
 
 		pluginDescPanel.add(label);
 		pluginDescPanel.add(scrollPane);
-		
-		
+
+
 		JPanel netSettingPanel = new JPanel();
 		netSettingPanel.setLayout(new BoxLayout(netSettingPanel, BoxLayout.Y_AXIS));
-		
+
 		proxySettingPanel = new NetworkProxySettingPanel(null);
 		proxySettingPanel.setAlignmentX(0);
-		
+
 		JButton btnTruststore = new JButton("Manage certificates");
 		btnTruststore.setAlignmentX(0);
 		btnTruststore.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent ae) {
 				if(tree.isSelectionEmpty()) return;
-				TreePath parentPath = tree.getSelectionPath().getParentPath();
-				if(parentPath == null) return;
-				Object userObject = parentPath.getLastPathComponent();
-				if(!(userObject instanceof DefaultMutableTreeNode)) return;
-				userObject = ((DefaultMutableTreeNode)userObject).getUserObject();
+				Object userObject = getUserObject(tree.getSelectionPath().getParentPath());
 				if(!(userObject instanceof PlugInPackage)) return;
 
 				MessageBoxPane.showMessageDialog(null, new NetworkTruststoreSettingPanel((PlugInPackage)userObject), "Network Truststore Setting", JOptionPane.DEFAULT_OPTION);
@@ -321,7 +306,7 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 		netSettingPanel.add(proxySettingPanel);
 		netSettingPanel.add(btnTruststore);
 		//netSettingPanel.add(new NetworkTruststoreSettingPanel(null));
-		
+
 		extraPanel.add(pluginDescPanel, TREE_NODE_DESCRIPTION);
 		extraPanel.add(new JScrollPane(netSettingPanel), TREE_NODE_NETWORK_SETTING);
 		extraPanel.add(new JPanel(), TREE_NODE_CONFIGURATION_SETTING);
@@ -338,7 +323,7 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 
 		loadPlugins();
 	}
-	
+
 	public void loadPlugins() {
 		root.removeAllChildren();
 		for(PlugInPackage pack: PlugInManager.getPlugInPackages()) {
@@ -374,34 +359,60 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 			root.add(packNode);
 			tree.expandPath(new TreePath(packNode.getPath()));
 		}
+		if(root.isLeaf()) {
+			root.add(new DefaultMutableTreeNode(TREE_NODE_NO_PLUGINS));
+		}
 		tree.expandPath(new TreePath(root.getPath()));
 		tree.updateUI();
 	}
 
 	@Override
 	public void valueChanged(TreeSelectionEvent e) {
-		Object userObject = e.getPath().getLastPathComponent();
-		if(!(userObject instanceof DefaultMutableTreeNode)) return;
+		Object userObject = getUserObject(e.getPath());
 
 		CardLayout extraPanelLayout = (CardLayout) extraPanel.getLayout();
-		userObject = ((DefaultMutableTreeNode)userObject).getUserObject();
+		String layoutPage = TREE_NODE_DESCRIPTION;
 		if(userObject instanceof IPlugIn) {
 			description.setText(((IPlugIn)userObject).getDescription());
 			description.setCaretPosition(0);
-			extraPanelLayout.show(extraPanel, TREE_NODE_DESCRIPTION);
 		} else if(userObject instanceof PlugInPackage) {
 			description.setText(((PlugInPackage)userObject).getDescription());
 			description.setCaretPosition(0);
-			extraPanelLayout.show(extraPanel, TREE_NODE_DESCRIPTION);
-		} else if(TREE_NODE_NETWORK_SETTING.equals(userObject)) {
-			extraPanelLayout.show(extraPanel, TREE_NODE_NETWORK_SETTING);
-			proxySettingPanel.setPluginPackage((PlugInPackage)((DefaultMutableTreeNode)e.getPath().getParentPath().getLastPathComponent()).getUserObject());
-			//MessageBoxPane.showMessageDialog(null, new NetworkProxySettingPanel(null), "Network Proxy Setting", JOptionPane.DEFAULT_OPTION);
-			//MessageBoxPane.showMessageDialog(null, new NetworkTruststoreSettingPanel(null), "Network Truststore Setting", JOptionPane.DEFAULT_OPTION);
-		} else if(TREE_NODE_CONFIGURATION_SETTING.equals(userObject)) {
-			extraPanelLayout.show(extraPanel, TREE_NODE_CONFIGURATION_SETTING);
+		} else if(userObject instanceof String){
+			switch((String)userObject) {
+			case TREE_NODE_NETWORK_SETTING:
+				layoutPage = TREE_NODE_NETWORK_SETTING;
+				userObject = getUserObject(e.getPath().getParentPath());
+				if(userObject instanceof PlugInPackage) {
+					proxySettingPanel.setPluginPackage((PlugInPackage) userObject);
+				} else {
+					Log.w("Parent is not package : " + userObject);
+				}
+				break;
+			case TREE_NODE_CONFIGURATION_SETTING:
+				layoutPage = TREE_NODE_CONFIGURATION_SETTING;
+				break;
+			case TREE_NODE_TOP_PLUGINS:
+				description.setText("APK Scanner Plugins");
+				break;
+			case TREE_NODE_NO_PLUGINS:
+				description.setText("No plugins");
+				break;
+			default:
+				Log.v("Unknown string node : " + userObject);;
+				break;
+			}
 		} else {
-			Log.v("Other: " + userObject.toString());	
+			Log.v("Other: " + userObject.toString());
 		}
+		extraPanelLayout.show(extraPanel, layoutPage);
+	}
+
+	private Object getUserObject(TreePath path) {
+		if(path == null) return null;
+		Object userObject = path.getLastPathComponent();
+		if(!(userObject instanceof DefaultMutableTreeNode)) return null;
+		userObject = ((DefaultMutableTreeNode)userObject).getUserObject();
+		return userObject;
 	}
 }

@@ -160,7 +160,7 @@ public final class PlugInManager
 
 		File pluginFolder = new File(Resource.PLUGIN_PATH.getPath());
 		if(!pluginFolder.isDirectory()) {
-			Log.e("No such plugins: " + Resource.PLUGIN_PATH.getPath());
+			Log.v("No such plugins: " + Resource.PLUGIN_PATH.getPath());
 			return;
 		}
 
