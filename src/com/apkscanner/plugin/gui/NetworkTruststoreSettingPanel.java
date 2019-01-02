@@ -287,20 +287,19 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 			add(detailTruststore);
 		}
 
-		setPlugInTrustStore(pluginConfig);
+		setPluginPackage(pluginConfig);
 		certListModel.fireTableStructureChanged();
 	}
 
-	public void setPlugInTrustStore(PlugInPackage pluginPackage) {
-		setPlugInTrustStore(new PlugInConfig(pluginPackage));
+	public void setPluginPackage(PlugInPackage pluginPackage) {
+		setPluginPackage(new PlugInConfig(pluginPackage));
 	}
 
-	public void setPlugInTrustStore(PlugInConfig pluginConfig) {
+	public void setPluginPackage(PlugInConfig pluginConfig) {
 		this.pluginConfig = pluginConfig;
 		String trustStoreType = null;
 
 		String storePath = pluginConfig.getConfiguration(PlugInConfig.CONFIG_SSL_TRUSTSTORE, NetworkSetting.APK_SCANNER_SSL_TRUSTSTORE);
-		Log.v("trustStore: " + trustStore);
 		if(NetworkSetting.APK_SCANNER_SSL_TRUSTSTORE.equals(storePath)) {
 			trustStoreType = TRUSTSTORE_TYPE_APKSCANNER;
 		} else if(NetworkSetting.JVM_SSL_TRUSTSTORE.equals(storePath)) {
