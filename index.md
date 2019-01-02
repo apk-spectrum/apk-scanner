@@ -1,21 +1,20 @@
 # APK Scanner 
-[![Software License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)](https://github.sec.samsung.net/sunggyu-kam/apk-scanner/blob/master/LICENSE)  
+[![Software License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)](https://github.com/apk-spectrum/apk-scanner/blob/master/LICENSE)  
 Welcome to the APK Scanner!  
 
-WEBSITE : https://github.sec.samsung.net/pages/sunggyu-kam/apk-scanner/  
-WIKI : https://github.sec.samsung.net/sunggyu-kam/apk-scanner/wiki  
+WEBSITE : https://github.com/pages/apk-spectrum/apk-scanner/  
+WIKI : https://github.com/apk-spectrum/apk-scanner/wiki  
 
-Download : [M STORE](http://mosaic.sec.samsung.net/kms/wagleLayout.do?method=link&type=store.application&id=93478035)
 
 ## Introduce the APK Scanner  
 The APK scanner analyzes the APK file to show all the APK information,  
 And provides functions such as installing in the device and extracting and analyzing the installed apps,  
-It is a tool to dramatically streamline APK management. [(more..)](https://github.sec.samsung.net/pages/sunggyu-kam/apk-scanner/)
+It is a tool to dramatically streamline APK management. [(more..)](https://github.com/apk-spectrum/apk-scanner/)
 
-![](https://github.sec.samsung.net/sunggyu-kam/apk-scanner/blob/gh-pages/img/manual/apk-scanner-launch-img.png)
+![](https://github.com/apk-spectrum/apk-scanner/blob/gh-pages/img/manual/apk-scanner-launch-img.png)
 
 ## Build
-This repository have .project and .class files for be build by eclipse.[(more..)](https://github.sec.samsung.net/sunggyu-kam/apk-scanner/wiki/2.-How-to-build-by-eclipse)  
+This repository have .project and .class files for be build by eclipse.[(more..)](https://github.com/apk-spectrum/apk-scanner/wiki/2.-How-to-build-by-eclipse)  
 
 ### Requirements
 JDK (7 or 8).  
@@ -23,7 +22,7 @@ Eclipse with git plugin
 
 ### Create Eclipse project  
 1. source code download  
-> git clone https://github.sec.samsung.net/sunggyu-kam/apk-scanner  
+> git clone https://github.com/apk-spectrum/apk-scanner  
 
 2. import Eclipse project  
 > Eclipse > File > Import > Git > Project from Git  
@@ -81,5 +80,5 @@ commons-cli [![Software License](https://img.shields.io/badge/license-Apache%202
 Toolbar icons : https://dribbble.com/shots/1925117-Filo-Icon-Set-Free   
 Othres : https://github.com/ioBroker/ioBroker.icons-open-icon-library-png
 
-## License [![Software License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)](https://github.sec.samsung.net/sunggyu-kam/apk-scanner/blob/master/LICENSE)  
+## License [![Software License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)](https://github.com/apk-spectrum/apk-scanner/blob/master/LICENSE)  
 APK Sanner are released under the Apache 2.0 license.  
