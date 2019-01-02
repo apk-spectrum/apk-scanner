@@ -2,14 +2,14 @@
 [![Software License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)](https://github.com/apk-spectrum/apk-scanner/blob/master/LICENSE)  
 Welcome to the APK Scanner!  
 
-WEBSITE : https://github.com/pages/apk-spectrum/apk-scanner/  
+WEBSITE : https://apk-spectrum.github.io/apk-scanner/  
 WIKI : https://github.com/apk-spectrum/apk-scanner/wiki  
 
 
 ## Introduce the APK Scanner  
 The APK scanner analyzes the APK file to show all the APK information,  
 And provides functions such as installing in the device and extracting and analyzing the installed apps,  
-It is a tool to dramatically streamline APK management. [(more..)](https://github.com/apk-spectrum/apk-scanner/)
+It is a tool to dramatically streamline APK management. [(more..)](https://apk-spectrum.github.io/apk-scanner/)
 
 ![](https://github.com/apk-spectrum/apk-scanner/blob/gh-pages/img/manual/apk-scanner-launch-img.png)
 
