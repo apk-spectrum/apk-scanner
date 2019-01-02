@@ -223,7 +223,7 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 				
 				
 				////////////////////////////////////for test
-				ToolEntryManager.excutePermissionDlg();				
+				//ToolEntryManager.excutePermissionDlg();				
 				/////////////////////////////////////for test
 				
 			} else {

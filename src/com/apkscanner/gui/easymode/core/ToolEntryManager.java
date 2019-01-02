@@ -251,7 +251,6 @@ public class ToolEntryManager {
 			return;
 		}
 		if (actionType == 1) {
-
 			String jarfileName = apkInfo.tempWorkPath + File.separator
 					+ (new File(apkInfo.filePath)).getName().replaceAll("\\.apk$", ".jar");
 			Dex2JarWrapper.convert(apkInfo.filePath, jarfileName, new Dex2JarWrapper.DexWrapperListener() {
@@ -259,7 +258,7 @@ public class ToolEntryManager {
 				public void onCompleted() {
 					EventQueue.invokeLater(new Runnable() {
 						public void run() {
-
+							
 						}
 					});
 				}
