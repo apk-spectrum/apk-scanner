@@ -98,7 +98,7 @@ public enum Resource
 	STR_BTN_WAITING	(Type.TEXT, "@btn_waiting"),
 	STR_BTN_SUCCESS	(Type.TEXT, "@btn_success"),
 	STR_BTN_FAIL	(Type.TEXT, "@btn_fail"),
-	
+
 	STR_BTN_OPEN_LAB			(Type.TEXT, "@btn_open_lab"),
 	STR_BTN_OPEN_PACKAGE_LAB	(Type.TEXT, "@btn_open_pacakge_lab"),
 	STR_BTN_MANIFEST_LAB		(Type.TEXT, "@btn_manifest_lab"),
@@ -162,6 +162,8 @@ public enum Resource
 	STR_TAB_SETTING_DEVICE_LAB	(Type.TEXT, "@tab_setting_device_lab"),
 	STR_TAB_SETTING_DISPLAY		(Type.TEXT, "@tab_setting_display"),
 	STR_TAB_SETTING_DISPLAY_LAB	(Type.TEXT, "@tab_setting_display_lab"),
+	STR_TAB_SETTING_PLUGINS		(Type.TEXT, "@tab_setting_plugins"),
+	STR_TAB_SETTING_PLUGINS_LAB	(Type.TEXT, "@tab_setting_plugins_lab"),
 
 	STR_BASIC_PERMISSIONS		(Type.TEXT, "@basic_permissions"),
 	STR_BASIC_PERMLAB_DISPLAY	(Type.TEXT, "@basic_permlab_display_list"),
@@ -413,8 +415,8 @@ public enum Resource
 	IMG_RESOURCE_TEXTVIEWER_TOOLBAR_PREV (Type.IMAGE, "ResourceTab_TextViewer_toolbar_previous.png"),
 	IMG_RESOURCE_TEXTVIEWER_TOOLBAR_INDENT(Type.IMAGE, "ResourceTab_TextViewer_toolbar_text_indent.png"),
 
-	IMG_PERM_GROUP_PHONE_CALLS	(Type.IMAGE, "perm_group_phone_calls.png"),	
-	IMG_TOOLBAR_OPEN_ARROW		(Type.IMAGE, "down_on.png"),	
+	IMG_PERM_GROUP_PHONE_CALLS	(Type.IMAGE, "perm_group_phone_calls.png"),
+	IMG_TOOLBAR_OPEN_ARROW		(Type.IMAGE, "down_on.png"),
 
 	IMG_APP_ICON				(Type.IMAGE, "AppIcon.png"),
 	IMG_APK_FILE_ICON			(Type.IMAGE, "apk_file_icon.png"),
@@ -436,7 +438,7 @@ public enum Resource
 	IMG_TREE_MENU_DELETE		(Type.IMAGE, "tree_menu_delete.png"),
 	IMG_TREE_MENU_SAVE			(Type.IMAGE, "tree_menu_save.png"),
 	IMG_TREE_MENU_OPEN			(Type.IMAGE, "tree_open_menu.png"),
-	
+
 	IMG_TREE_APK				(Type.IMAGE, "tree_icon_apk.png"),
 	IMG_TREE_DEVICE				(Type.IMAGE, "tree_icon_device.png"),
 	IMG_TREE_TOP				(Type.IMAGE, "tree_icon_top.gif"),
@@ -452,7 +454,7 @@ public enum Resource
 	IMG_ASSOCIATE_APK			(Type.IMAGE, "associate.png"),
 	IMG_UNASSOCIATE_APK			(Type.IMAGE, "unassociate.png"),
 
-	BIN_PATH					(Type.BIN, ""),	
+	BIN_PATH					(Type.BIN, ""),
 
 	BIN_ADB_LNX					(Type.BIN, "adb", "nux"),
 	BIN_ADB_WIN					(Type.BIN, "adb.exe", "win"),
@@ -475,7 +477,7 @@ public enum Resource
 	BIN_BYTECODE_VIEWER			(Type.BIN, "Bytecode-Viewer.jar"),
 
 	BIN_SIGNAPK					(Type.BIN, "signapk.jar"),
-	
+
 	PLUGIN_PATH					(Type.PLUGIN, ""),
 	PLUGIN_CONF_PATH			(Type.PLUGIN, "plugins.conf"),
 
@@ -591,7 +593,7 @@ public enum Resource
 	}
 
 	public static String[] getSupportedLanguages() {
-		ArrayList<String> languages = new ArrayList<String>(); 
+		ArrayList<String> languages = new ArrayList<String>();
 
 		String value_path = getUTF8Path() + File.separator + "data" + File.separator;
 		File valueDir = new File(value_path);
@@ -813,7 +815,7 @@ public enum Resource
 			break;
 		case PROP_PEM_FILE_PATH:
 		case PROP_PK8_FILE_PATH:
-			String defPath = getUTF8Path() + File.separator + 
+			String defPath = getUTF8Path() + File.separator +
 							"data" + File.separator +
 							"build-master-target-product-security" + File.separator +
 							(this == PROP_PEM_FILE_PATH ? "platform.x509.pem" : "platform.pk8");
@@ -838,7 +840,7 @@ public enum Resource
 
 		loadProperty();
 		if(property != null) {
-			obj = property.get(getValue());	
+			obj = property.get(getValue());
 		}
 
 		if(obj == null) {

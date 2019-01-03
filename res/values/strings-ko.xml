@@ -125,6 +125,8 @@
 	<string name="tab_setting_device_lab">디바이스 관련 옵션</string>
 	<string name="tab_setting_display">화면</string>
 	<string name="tab_setting_display_lab">화면 옵션</string>
+	<string name="tab_setting_plugins">플러그인</string>
+	<string name="tab_setting_plugins_lab">플로그인 설정</string>
 
 	<string name="basic_permissions">권한</string>
 	<string name="basic_permlab_display_list">전체 리스트 보기</string>
