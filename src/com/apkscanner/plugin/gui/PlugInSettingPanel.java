@@ -54,6 +54,7 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 	private static final String TREE_NODE_DESCRIPTION = "TREE_NODE_DESCRIPTION";
 	private static final String TREE_NODE_NETWORK_SETTING = "TREE_NODE_NETWORK_SETTING";
 	private static final String TREE_NODE_CONFIGURATION_SETTING = "TREE_NODE_CONFIGURATION_SETTING";
+	private static final String TREE_NODE_GLOBAL_SETTINGS = "TREE_NODE_GLOBAL_SETTINGS";
 	private static final String TREE_NODE_NO_PLUGINS = "TREE_NODE_NO_PLUGINS";
 
 	private JTree tree;
@@ -177,6 +178,9 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 						break;
 					case TREE_NODE_CONFIGURATION_SETTING:
 						nodeText = "Configurations Setting";
+						break;
+					case TREE_NODE_GLOBAL_SETTINGS:
+						nodeText = "Common Settings for PlugIns";
 						break;
 					case TREE_NODE_TOP_PLUGINS:
 						nodeText = "APK Scanner Plugins";
@@ -388,6 +392,11 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 		if(root.isLeaf()) {
 			root.add(new DefaultMutableTreeNode(TREE_NODE_NO_PLUGINS));
 		}
+		DefaultMutableTreeNode commSetNode = new DefaultMutableTreeNode(TREE_NODE_GLOBAL_SETTINGS);
+		commSetNode.add(new DefaultMutableTreeNode(TREE_NODE_NETWORK_SETTING));
+		commSetNode.add(new DefaultMutableTreeNode(TREE_NODE_CONFIGURATION_SETTING));
+		root.add(commSetNode);
+
 		tree.expandPath(new TreePath(root.getPath()));
 		tree.updateUI();
 	}
@@ -409,21 +418,32 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 			case TREE_NODE_NETWORK_SETTING:
 				layoutPage = TREE_NODE_NETWORK_SETTING;
 				userObject = getUserObject(e.getPath().getParentPath());
-				if(userObject instanceof PlugInPackage) {
-					proxySettingPanel.setPluginPackage((PlugInPackage) userObject);
-					trustSettingPanel.setPluginPackage((PlugInPackage) userObject);
-				} else {
-					Log.w("Parent is not package : " + userObject);
+				if(!(userObject instanceof PlugInPackage)) {
+					if(userObject instanceof String) {
+						userObject = null;
+					} else {
+						Log.w("Parent is not package : " + userObject);
+						break;
+					}
 				}
+				proxySettingPanel.setPluginPackage((PlugInPackage) userObject);
+				trustSettingPanel.setPluginPackage((PlugInPackage) userObject);
 				break;
 			case TREE_NODE_CONFIGURATION_SETTING:
 				layoutPage = TREE_NODE_CONFIGURATION_SETTING;
 				userObject = getUserObject(e.getPath().getParentPath());
-				if(userObject instanceof PlugInPackage) {
-					confSettingPanel.setPluginPackage((PlugInPackage) userObject);
-				} else {
-					Log.w("Parent is not package : " + userObject);
+				if(!(userObject instanceof PlugInPackage)) {
+					if(userObject instanceof String) {
+						userObject = null;
+					} else {
+						Log.w("Parent is not package : " + userObject);
+						break;
+					}
 				}
+				confSettingPanel.setPluginPackage((PlugInPackage) userObject);
+				break;
+			case TREE_NODE_GLOBAL_SETTINGS:
+				description.setText("Common Settings for PlugIns");
 				break;
 			case TREE_NODE_TOP_PLUGINS:
 				description.setText("APK Scanner Plugins");
