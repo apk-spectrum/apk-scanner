@@ -24,8 +24,8 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
-import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.PlugInConfig;
+import com.apkscanner.plugin.PlugInPackage;
 
 public class NetworkProxySettingPanel extends JPanel implements ActionListener
 {
@@ -46,9 +46,10 @@ public class NetworkProxySettingPanel extends JPanel implements ActionListener
 	private HashMap<String, String> methodCardMap;
 	private PlugInConfig pluginConfig;
 
-	public NetworkProxySettingPanel(IPlugIn plugin) {
+	public NetworkProxySettingPanel(PlugInPackage pluginPackage) {
 		setOpaque(false);
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
 		Border title = new TitledBorder("Proxy Settings");
 		Border padding = new EmptyBorder(5,5,5,5);
 		setBorder(new CompoundBorder(title, padding));
@@ -77,6 +78,8 @@ public class NetworkProxySettingPanel extends JPanel implements ActionListener
             }
         };
 
+        final CardLayout descLayout = new CardLayout();
+
 		methods.setOpaque(false);
 		methods.setAlignmentX(1.0f);
 		methods.addItemListener(new ItemListener() {
@@ -84,7 +87,7 @@ public class NetworkProxySettingPanel extends JPanel implements ActionListener
 			public void itemStateChanged(ItemEvent e) {
 				if(e.getStateChange() == ItemEvent.SELECTED) {
 					String card = methodCardMap.get(e.getItem());
-					((CardLayout)descPanel.getLayout()).show(descPanel, card);
+					descLayout.show(descPanel, card);
 				}
 			}
 		});
@@ -92,7 +95,6 @@ public class NetworkProxySettingPanel extends JPanel implements ActionListener
 		add(methods);
 		add(Box.createRigidArea(new Dimension(0,5)));
 
-		CardLayout descLayout = new CardLayout();
 		descPanel = new JPanel(descLayout){
 			private static final long serialVersionUID = 5641545914222359307L;
             @Override
@@ -127,7 +129,7 @@ public class NetworkProxySettingPanel extends JPanel implements ActionListener
 		//add(Box.createVerticalGlue());
 		//setSize(500, 400);
 
-		setPlugin(plugin);
+		setPluginPackage(pluginPackage);
 	}
 
 	@Override
@@ -189,9 +191,9 @@ public class NetworkProxySettingPanel extends JPanel implements ActionListener
 		return pacFilds;
 	}
 
-	public void setPlugin(IPlugIn plugin) {
-		pluginConfig = new PlugInConfig(plugin != null ? plugin.getPlugInPackage() : null);
-		if(plugin == null) {
+	public void setPluginPackage(PlugInPackage pluginPackage) {
+		pluginConfig = new PlugInConfig(pluginPackage);
+		if(pluginPackage == null) {
 			int scannerIdx = getCardIdxFromCombobox(CARD_SCANNER_PROXY);
 			if(scannerIdx > -1) {
 				methods.removeItemAt(scannerIdx);

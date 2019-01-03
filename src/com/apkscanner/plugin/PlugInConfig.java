@@ -57,7 +57,7 @@ public class PlugInConfig
 		this.plugInPackage = plugInPackage;
 		this.allowGlobalConfig = allowGlobalConfig;
 	}
-	
+
 	public void setPlugInPackage(PlugInPackage plugInPackage) {
 		this.plugInPackage = plugInPackage;
 	}
@@ -67,7 +67,9 @@ public class PlugInConfig
 	}
 
 	public static String getGlobalConfiguration(String key) {
-		return configurations.containsKey(key) ? configurations.get(key) : null;
+		synchronized(configurations) {
+			return configurations.containsKey(key) ? configurations.get(key) : null;
+		}
 	}
 
 	public static String getGlobalConfiguration(String key, String defaultValue) {
@@ -77,16 +79,20 @@ public class PlugInConfig
 
 	public static void setGlobalConfiguration(String key, String value) {
 		if(key == null) return;
-		if(value != null) {
-			configurations.put(key, value);
-		} else if(configurations.containsKey(key)) {
-			configurations.remove(key);
+		synchronized(configurations) {
+			if(value != null) {
+				configurations.put(key, value);
+			} else if(configurations.containsKey(key)) {
+				configurations.remove(key);
+			}
 		}
 	}
 
 	public static void clearGlobalConfiguration(String key) {
 		if(key == null) return;
-		configurations.remove(key);
+		synchronized(configurations) {
+			configurations.remove(key);
+		}
 	}
 
 	public String getConfiguration(String key) {
@@ -94,7 +100,7 @@ public class PlugInConfig
 		if(value == null && plugInPackage != null && allowGlobalConfig) {
 			value = getConfiguration((PlugInPackage)null, key);
 		}
-		return value; 
+		return value;
 	}
 
 	public String getConfiguration(String key, String defaultValue) {
@@ -102,7 +108,7 @@ public class PlugInConfig
 		if(value == null && plugInPackage != null && allowGlobalConfig) {
 			value = getConfiguration((PlugInPackage)null, key, defaultValue);
 		}
-		return value; 
+		return value;
 	}
 
 	public static String getConfiguration(PlugInPackage plugInPackage, String key) {
@@ -142,6 +148,14 @@ public class PlugInConfig
 			clearGlobalConfiguration(key);
 		} else {
 			plugInPackage.clearConfiguration(key);
+		}
+	}
+
+	public HashMap<String, String> getConfigurations() {
+		synchronized(configurations) {
+			return (plugInPackage == null)
+					? new HashMap<String,String>(configurations)
+					: plugInPackage.getConfigurations();
 		}
 	}
 }

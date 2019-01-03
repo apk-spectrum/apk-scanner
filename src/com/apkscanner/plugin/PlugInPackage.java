@@ -40,6 +40,8 @@ public class PlugInPackage
 	private HashMap<String, String> configurations;
 	private boolean enabled;
 
+	private PlugInConfig pluginConfig;
+
 	public PlugInPackage(File pluginFile) throws InvalidManifestException {
 		if(pluginFile == null) {
 			throw new NullPointerException();
@@ -61,7 +63,7 @@ public class PlugInPackage
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
-	
+
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -78,9 +80,26 @@ public class PlugInPackage
 		return manifest.packageName;
 	}
 
+	public URL getIconURL() {
+		if(manifest.plugin.icon != null) {
+			try {
+				URI uri = getResourceUri(manifest.plugin.icon);
+				return uri != null ? uri.toURL() : null;
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+
 	public String getLabel() {
-		String label = manifest.plugin.label;
+		String label = getResourceString(manifest.plugin.label);
 		return label != null ? label : getPackageName();
+	}
+
+	public String getDescription() {
+		String desc = getResourceString(manifest.plugin.description);
+		return desc != null ? desc : "";
 	}
 
 	public int getVersionCode() {
@@ -145,6 +164,23 @@ public class PlugInPackage
 		return list.toArray(new PlugInGroup[list.size()]);
 	}
 
+	public IPlugIn[] getPlugInWithoutGroup() {
+		if(plugins == null) return null;
+		ArrayList<IPlugIn> list = new ArrayList<>();
+		for(IPlugIn p: plugins) {
+			if(p.getGroupName() == null) list.add(p);
+		}
+		return list.toArray(new IPlugIn[list.size()]);
+	}
+
+	public boolean useNetworkSetting() {
+		return manifest.plugin.useNetworkSetting;
+	}
+
+	public boolean useConfigurationSetting() {
+		return manifest.plugin.useConfigurationSetting;
+	}
+
 	public boolean isJarPackage() {
 		return isJarPackage(pluginUri);
 	}
@@ -177,7 +213,7 @@ public class PlugInPackage
 		}
 
 		try(InputStream is = conn.getInputStream()) {
-	        manifest = ManifestReader.readManifest(is);	
+	        manifest = ManifestReader.readManifest(is);
 		} catch (IOException | NullPointerException e) {
 			Log.e(e.getMessage());
 			throw new InvalidManifestException(e.getMessage());
@@ -419,17 +455,24 @@ public class PlugInPackage
 		return uri;
 	}
 
+	public PlugInConfig getPlugInConfig() {
+		if(pluginConfig == null) pluginConfig = new PlugInConfig(this);
+		return pluginConfig;
+	}
+
 	public String getConfiguration(String key) {
 		return getConfiguration(key, false);
 	}
 
 	public String getConfiguration(String key, boolean allowGlobalConfig) {
 		if(key == null) return null;
-		String value = configurations.get(key);
-		if(value == null && allowGlobalConfig) {
-			value = PlugInConfig.getGlobalConfiguration(key);
+		synchronized(configurations) {
+			String value = configurations.get(key);
+			if(value == null && allowGlobalConfig) {
+				value = PlugInConfig.getGlobalConfiguration(key);
+			}
+			return value;
 		}
-		return value;
 	}
 
 	public String getConfiguration(String key, String defaultValue) {
@@ -443,17 +486,27 @@ public class PlugInPackage
 
 	public void setConfiguration(String key, String value) {
 		if(key == null) return;
-		if(value != null) {
-			configurations.put(key, value);
-		} else if(configurations.containsKey(key)) {
-			configurations.remove(key);
+		synchronized(configurations) {
+			if(value != null) {
+				configurations.put(key, value);
+			} else if(configurations.containsKey(key)) {
+				configurations.remove(key);
+			}
 		}
 	}
 
 	public void clearConfiguration(String key) {
 		if(key == null) return;
-		if(configurations.containsKey(key)) {
-			configurations.remove(key);
+		synchronized(configurations) {
+			if(configurations.containsKey(key)) {
+				configurations.remove(key);
+			}
+		}
+	}
+
+	public HashMap<String, String> getConfigurations() {
+		synchronized(configurations) {
+			return new HashMap<>(configurations);
 		}
 	}
 
@@ -462,8 +515,7 @@ public class PlugInPackage
 		if(manifest.plugin.enabled != isEnabled()) {
 			data.put("enabled", isEnabled());
 		}
-
-		HashMap<String, String> conf = new HashMap<>(configurations);
+		HashMap<String, String> conf = getConfigurations();
 		if(manifest.configuration != null) {
 			for(Configuration c: manifest.configuration) {
 				if(conf.containsKey(c.name) && conf.get(c.name).equals(c.value)) {
@@ -494,7 +546,9 @@ public class PlugInPackage
 		if(data.containsKey("configuration")) {
 			@SuppressWarnings("unchecked")
 			Map<String, String> map = (Map<String, String>) data.get("configuration");
-			configurations.putAll(map);
+			synchronized(configurations) {
+				configurations.putAll(map);
+			}
 			data.remove("configuration");
 		}
 
