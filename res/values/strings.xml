@@ -125,6 +125,8 @@
 	<string name="tab_setting_device_lab">Set device options</string>
 	<string name="tab_setting_display">Display</string>
 	<string name="tab_setting_display_lab">Set display options</string>
+	<string name="tab_setting_plugins">PlugIns</string>
+	<string name="tab_setting_plugins_lab">Set PlugIns options</string>
 
 	<string name="basic_permissions">Permissions</string>
 	<string name="basic_permlab_display_list">Display the entire list</string>

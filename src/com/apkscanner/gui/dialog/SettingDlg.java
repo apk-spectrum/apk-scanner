@@ -62,6 +62,7 @@ import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.jna.FileInfo;
 import com.apkscanner.jna.FileVersion;
+import com.apkscanner.plugin.gui.PlugInSettingPanel;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbVersionManager;
 import com.apkscanner.util.Log;
@@ -94,7 +95,7 @@ public class SettingDlg extends JDialog implements ActionListener
 	private String propFont;
 	private int propFontSize;
 	private int propFontStyle;
-	private boolean propSaveWinSize; 
+	private boolean propSaveWinSize;
 
 	private boolean propAdbShared;
 	private String propAdbPath;
@@ -366,6 +367,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		tabbedPane.addTab(Resource.STR_TAB_SETTING_ANALYSIS.getString(), null, makeAnalysisPanel(), Resource.STR_TAB_SETTING_ANALYSIS_LAB.getString());
 		tabbedPane.addTab(Resource.STR_TAB_SETTING_DEVICE.getString(), null, makeDevicePanel(), Resource.STR_TAB_SETTING_DEVICE_LAB.getString());
 		tabbedPane.addTab(Resource.STR_TAB_SETTING_DISPLAY.getString(), null, makeDisplayPanel(), Resource.STR_TAB_SETTING_DISPLAY_LAB.getString());
+		tabbedPane.addTab(Resource.STR_TAB_SETTING_PLUGINS.getString(), null, new PlugInSettingPanel(), Resource.STR_TAB_SETTING_PLUGINS_LAB.getString());
 
 		JPanel ctrPanel = new JPanel(new FlowLayout());
 		JButton savebutton = new JButton(Resource.STR_BTN_SAVE.getString());
@@ -508,7 +510,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		}
 
 		if(propLaunchAfInstalled != jckLauchAfInstalled.isSelected()) {
-			Resource.PROP_LAUNCH_AF_INSTALLED.setData(jckLauchAfInstalled.isSelected());	
+			Resource.PROP_LAUNCH_AF_INSTALLED.setData(jckLauchAfInstalled.isSelected());
 		}
 
 		needUpdateUI = false;
@@ -536,7 +538,7 @@ public class SettingDlg extends JDialog implements ActionListener
 			needUpdateUI = true;
 		}
 		if(propSaveWinSize != jckRememberWinSize.isSelected()) {
-			Resource.PROP_SAVE_WINDOW_SIZE.setData(jckRememberWinSize.isSelected());	
+			Resource.PROP_SAVE_WINDOW_SIZE.setData(jckRememberWinSize.isSelected());
 		}
 
 		if(propAlwaysExtendToolbar != (jcbToolbarExtendOptions.getSelectedIndex() == 1)) {
@@ -549,7 +551,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		JPanel panel = new JPanel(new GridBagLayout());
 		panel.setOpaque(true);
 
-		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady) 
+		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady)
 		GridBagConstraints rowHeadConst = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.NONE,new Insets(10,10,0,10),0,0);
 		GridBagConstraints contentConst = new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.WEST,GridBagConstraints.NONE,new Insets(10,0,0,0),0,0);
 
@@ -624,7 +626,7 @@ public class SettingDlg extends JDialog implements ActionListener
 
 		rowHeadConst.gridy++;
 		contentConst.gridy++;
-		
+
 		panel.add(new JLabel(Resource.STR_SETTINGS_TOOLBAR.getString()), rowHeadConst);
 
 		JPanel toolbarPane = new JPanel();
@@ -644,9 +646,9 @@ public class SettingDlg extends JDialog implements ActionListener
 		jckEnableDeviceMonitoring.addActionListener(this);
 		jckEnableDeviceMonitoring.setAlignmentX(1);
 		toolbarPane.add(jckEnableDeviceMonitoring);
-		
+
 		panel.add(toolbarPane, contentConst);
-		
+
 		rowHeadConst.gridy++;
 		contentConst.gridy++;
 
@@ -765,7 +767,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		JPanel panel = new JPanel(new GridBagLayout());
 		panel.setOpaque(true);
 
-		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady) 
+		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady)
 		GridBagConstraints rowHeadConst = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.NONE,new Insets(5,10,0,10),0,0);
 		GridBagConstraints contentConst = new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.WEST,GridBagConstraints.NONE,new Insets(5,0,0,0),0,0);
 
@@ -791,7 +793,7 @@ public class SettingDlg extends JDialog implements ActionListener
 				}
 			}
 		};
-		jrbUseCurrentRunningVer.addActionListener(radioAction);		
+		jrbUseCurrentRunningVer.addActionListener(radioAction);
 		rbRestartAdbServer.addActionListener(radioAction);
 
 		ButtonGroup adbPolicyGroup = new ButtonGroup();
@@ -1078,7 +1080,7 @@ public class SettingDlg extends JDialog implements ActionListener
 
 		previewPanel = new JPanel(new BorderLayout());
 		previewPanel.setBorder(new TitledBorder(Resource.STR_SETTINGS_THEME_PREVIEW.getString()));
-		previewPanel.setPreferredSize(new Dimension(0,170));	
+		previewPanel.setPreferredSize(new Dimension(0,170));
 
 		mPreviewFrame = new JInternalFrame(Resource.STR_APP_NAME.getString(),false,false,false,false);
 		mPreviewToolBar = new ToolBar(null);
@@ -1130,7 +1132,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		String actCommand = e.getActionCommand();
 
 		if(ACT_CMD_EDITOR_EXPLOERE.equals(actCommand)) {
-			JFileChooser jfc = new JFileChooser();										
+			JFileChooser jfc = new JFileChooser();
 			if(jfc.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
 				return;
 
@@ -1144,7 +1146,7 @@ public class SettingDlg extends JDialog implements ActionListener
 			SystemUtil.createShortCut();
 			if(SystemUtil.hasShortCut()) {
 				((JButton)e.getSource()).setVisible(false);
-			}			
+			}
 		} else if(ACT_CMD_ASSOCIATE_APK_FILE.equals(actCommand)) {
 			JButton btn = (JButton)e.getSource();
 			if(!SystemUtil.isAssociatedWithFileType(".apk")) {
@@ -1200,7 +1202,7 @@ public class SettingDlg extends JDialog implements ActionListener
 				return;
 			}
 			String path = file.getAbsolutePath();
-			
+
 			jcbAdbPaths.setSelectedItem(path);
 			if(!path.equals(jcbAdbPaths.getSelectedItem())) {
 				jcbAdbPaths.addItem(path);
