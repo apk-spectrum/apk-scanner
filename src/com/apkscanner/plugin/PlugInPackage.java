@@ -423,10 +423,8 @@ public class PlugInPackage
 				}
 			}
 		}
-		if(value == null) {
-			value = name;
-		}
-		return value;
+
+		return value != null ? value.replaceAll("\\\\n", "\n").replaceAll("\\\\t", "\t") : name;
 	}
 
 	public URI getResourceUri(String resPath) {
