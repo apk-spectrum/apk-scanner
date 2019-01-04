@@ -170,10 +170,15 @@ public abstract class AbstractUpdateChecker extends AbstractPlugIn implements IU
 		if(data == null) return;
 		if(data.containsKey("period")) {
 			setPeriod((long)data.get("period"));
+		} else {
+			if(component.periodDay != null) {
+				int day = Integer.parseInt(component.periodDay);
+				setPeriod(day * PERIOD_ONE_DAY_MS);
+			} else {
+				setPeriod(PERIOD_ONE_DAY_MS);
+			}
 		}
-		if(data.containsKey("lastUpdateDate")) {
-			setLastUpdateDate((long)data.get("lastUpdateDate"));
-		}
+		setLastUpdateDate(data.containsKey("lastUpdateDate") ? (long)data.get("lastUpdateDate") : 0);
 		if(data.containsKey("latestVersionInfo")) {
 			Object value = data.get("latestVersionInfo");
 			if(value instanceof Map<?, ?>) {
@@ -181,6 +186,8 @@ public abstract class AbstractUpdateChecker extends AbstractPlugIn implements IU
 				Map<String, String> versionInfo = (Map<String, String>) value;
 				setLatestVersionInfo(versionInfo);
 			}
+		} else {
+			setLatestVersionInfo(null);
 		}
 	}
 }

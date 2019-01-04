@@ -219,6 +219,7 @@ public final class PlugInManager
 		if(data.containsKey("globalConfiguration")) {
 			@SuppressWarnings("unchecked")
 			Map<String, String> map = (Map<String, String>) data.get("globalConfiguration");
+			PlugInConfig.configurations.clear();
 			PlugInConfig.configurations.putAll(map);
 			data.remove("globalConfiguration");
 		}

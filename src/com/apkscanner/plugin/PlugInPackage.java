@@ -545,6 +545,7 @@ public class PlugInPackage
 			@SuppressWarnings("unchecked")
 			Map<String, String> map = (Map<String, String>) data.get("configuration");
 			synchronized(configurations) {
+				configurations.clear();
 				configurations.putAll(map);
 			}
 			data.remove("configuration");

@@ -54,8 +54,6 @@ public abstract class AbstractPackageSearcher extends AbstractPlugIn implements 
 	public void restoreProperties(Map<?, ?> data) {
 		super.restoreProperties(data);
 		if(data == null) return;
-		if(data.containsKey("visibleToBasic")) {
-			setVisibleToBasic((boolean)data.get("visibleToBasic"));
-		}
+		setVisibleToBasic(data.containsKey("visibleToBasic") ? (boolean)data.get("visibleToBasic") : component.visibleToBasic);
 	}
 }

@@ -161,9 +161,7 @@ public abstract class AbstractPlugIn implements IPlugIn
 	@Override
 	public void restoreProperties(Map<?, ?> data) {
 		if(data == null) return;
-		if(data.containsKey("enabled")) {
-			setEnabled((boolean)data.get("enabled"));
-		}
+		setEnabled(data.containsKey("enabled") ? (boolean)data.get("enabled") : component.enabled);
 	}
 
 	@Override
