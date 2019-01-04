@@ -3,7 +3,6 @@ package com.apkscanner.gui.dialog;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
@@ -17,6 +16,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +36,6 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -54,6 +54,8 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileSystemView;
 
+import org.json.simple.JSONValue;
+
 import com.android.ddmlib.AdbVersion;
 import com.apkscanner.gui.TabbedPanel;
 import com.apkscanner.gui.ToolBar;
@@ -62,6 +64,7 @@ import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.jna.FileInfo;
 import com.apkscanner.jna.FileVersion;
+import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.plugin.gui.PlugInSettingPanel;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbVersionManager;
@@ -104,6 +107,8 @@ public class SettingDlg extends JDialog implements ActionListener
 	private boolean propTryUnlock;
 	private boolean propLaunchAfInstalled;
 	private boolean propAlwaysExtendToolbar;
+
+	private String propPluginSettings;
 
 	private boolean needUpdateUI;
 
@@ -393,8 +398,14 @@ public class SettingDlg extends JDialog implements ActionListener
 		getRootPane().getActionMap().put("ESCAPE", new AbstractAction() {
 			private static final long serialVersionUID = -8988954049940512230L;
 			public void actionPerformed(ActionEvent e) {
+				resotreSetting();
 				dispose();
 			}
+		});
+
+		addWindowListener(new WindowAdapter() {
+			@Override public void windowClosing(WindowEvent e) { Log.v("windowClosing"); resotreSetting(); }
+			@Override public void windowClosed(WindowEvent e) { Log.v("windowClosed"); resotreSetting(); }
 		});
 	}
 
@@ -450,6 +461,8 @@ public class SettingDlg extends JDialog implements ActionListener
 		propLaunchAfInstalled = (boolean)Resource.PROP_LAUNCH_AF_INSTALLED.getData();
 
 		propAlwaysExtendToolbar = (boolean)Resource.PROP_ALWAYS_TOOLBAR_EXTENDED.getData();
+
+		propPluginSettings = JSONValue.toJSONString(PlugInManager.getChangedProperties());
 	}
 
 	private void saveSettings()
@@ -543,6 +556,12 @@ public class SettingDlg extends JDialog implements ActionListener
 
 		if(propAlwaysExtendToolbar != (jcbToolbarExtendOptions.getSelectedIndex() == 1)) {
 			Resource.PROP_ALWAYS_TOOLBAR_EXTENDED.setData(jcbToolbarExtendOptions.getSelectedIndex() == 1);
+			needUpdateUI = true;
+		}
+
+		String pluginSetting = JSONValue.toJSONString(PlugInManager.getChangedProperties());
+		if(propPluginSettings != null && !propPluginSettings.equals(pluginSetting)) {
+			PlugInManager.saveProperty();
 			needUpdateUI = true;
 		}
 	}
@@ -1164,15 +1183,7 @@ public class SettingDlg extends JDialog implements ActionListener
 			saveSettings();
 			this.dispose();
 		} else if(ACT_CMD_EXIT.equals(actCommand)) {
-			try {
-				UIManager.setLookAndFeel(propTheme);
-			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-					| UnsupportedLookAndFeelException e1) {
-				e1.printStackTrace();
-			}
-
-			setUIFont(new javax.swing.plaf.FontUIResource(propFont, propFontStyle, propFontSize));
-
+			resotreSetting();
 			this.dispose();
 		} else if(ACT_CMD_ADD_RES_APK_FILE.equals(actCommand)) {
 			String file = ApkFileChooser.openApkFilePath(this);
@@ -1215,29 +1226,37 @@ public class SettingDlg extends JDialog implements ActionListener
 		return needUpdateUI;
 	}
 
-	public static void main(final String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				Resource.setLanguage((String)Resource.PROP_LANGUAGE.getData(SystemUtil.getUserLanguage()));
+	private void resotreSetting() {
+		Log.v("resotreSetting()");
 
-				Log.i("initialize() setLookAndFeel");
-				try {
-					UIManager.setLookAndFeel((String)Resource.PROP_CURRENT_THEME.getData());
-				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-						| UnsupportedLookAndFeelException e1) {
-					e1.printStackTrace();
-				}
-
-				Log.i("initialize() setUIFont");
-				String font = (String) Resource.PROP_BASE_FONT.getData();
-				int fontStyle = (int) Resource.PROP_BASE_FONT_STYLE.getInt();
-				int fontSize = (int) Resource.PROP_BASE_FONT_SIZE.getInt();
-				setUIFont(new javax.swing.plaf.FontUIResource(font, fontStyle, fontSize));
-
-				SettingDlg dlg = new SettingDlg(new JFrame());
-				dlg.setVisible(true);
-				System.exit(0);
+		if(!propTheme.equals(jcbTheme.getSelectedItem())) {
+			Log.v("resotre LookAndFeel");
+			try {
+				UIManager.setLookAndFeel(propTheme);
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+					| UnsupportedLookAndFeelException e1) {
+				e1.printStackTrace();
 			}
-		});
+		}
+
+		boolean needRestoreFont = false;
+		if(!propTabbedUI.equals(jcbTabbedUI.getSelectedItem())) {
+			needRestoreFont = true;
+		} else if(!propFont.equals(jcbFont.getSelectedItem())) {
+			needRestoreFont = true;
+		} else if(propFontSize != (int)jcbFontSize.getSelectedItem()) {
+			needRestoreFont = true;
+		}
+		if(needRestoreFont) {
+			Log.v("resotre Font");
+			setUIFont(new javax.swing.plaf.FontUIResource(propFont, propFontStyle, propFontSize));
+		}
+
+		String pluginSetting = JSONValue.toJSONString(PlugInManager.getChangedProperties());
+		if(propPluginSettings != null && !propPluginSettings.equals(pluginSetting)) {
+			Log.v("resotre Plugin property");
+			PlugInManager.loadPlugIn();
+			propPluginSettings = null;
+		}
 	}
 }
