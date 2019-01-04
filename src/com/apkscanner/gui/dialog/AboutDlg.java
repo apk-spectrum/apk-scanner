@@ -86,9 +86,9 @@ public class AboutDlg /*extends JDialog*/
 		tabbed.setOpaque(true);
 		tabbed.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		tabbed.setBorder(new EmptyBorder(0,0,0,0));
-		
+
 		TabbedPaneUIManager.setUI(tabbed, (String) Resource.PROP_TABBED_UI_THEME.getData());
-		
+
 		IUpdateChecker[] updator = PlugInManager.getUpdateChecker();
 		int possibleCnt = 0;
 		for(IUpdateChecker plugin: updator) {
@@ -99,14 +99,14 @@ public class AboutDlg /*extends JDialog*/
 
 		UpdateNotificationPanel updatePanel = new UpdateNotificationPanel();
 		updatePanel.addUpdateList(updator);
-		updatePanel.add(showUpdatePopup = new JCheckBox("Show update popup at startup"));
+		updatePanel.add(showUpdatePopup = new JCheckBox(Resource.STR_LABEL_SHOW_UPDATE_STARTUP.getString()));
 
 		boolean propNoLookPopup = "true".equals(PlugInConfig.getGlobalConfiguration(PlugInConfig.CONFIG_NO_LOOK_UPDATE_POPUP));
 		showUpdatePopup.setSelected(!propNoLookPopup);
 
-		tabbed.addTab("About", aboutPanel);
-		tabbed.addTab("Update("+possibleCnt+")", updatePanel);
-		
+		tabbed.addTab(Resource.STR_TAB_ABOUT.getString(), aboutPanel);
+		tabbed.addTab(String.format(Resource.STR_TAB_UPDATE.getString(), possibleCnt), updatePanel);
+
 		if(possibleCnt > 0) {
 			tabbed.setSelectedComponent(updatePanel);
 		}

@@ -116,6 +116,8 @@
 	<string name="tab_package_info">패키지 정보</string>
 	<string name="tab_dumpsys">덤프</string>
 	<string name="tab_sys_package_info">시스템 패키지 정보</string>
+	<string name="tab_about">정보</string>
+	<string name="tab_update">업데이트(%d)</string>
 
 	<string name="tab_setting_generic">일반</string>
 	<string name="tab_setting_generic_lab">일반 옵션</string>
@@ -299,6 +301,7 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="label_save_as">저장하기...</string>
 	<string name="label_by_package_name">패키지명으로 검색</string>
 	<string name="label_by_app_label">앱 이름으로 검색</string>
+	<string name="label_show_update_at_startup">시작시 업데이트 목록 표시</string>
 
 	<string name="msg_failure_open_apk">APK 파일을 열수 없습니다.</string>
 	<string name="msg_no_such_apk">APK 파일이 존재하지 않습니다.</string>

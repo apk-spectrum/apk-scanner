@@ -116,6 +116,8 @@
 	<string name="tab_package_info">Package Info</string>
 	<string name="tab_dumpsys">Dumpsys</string>
 	<string name="tab_sys_package_info">System Package Info</string>
+	<string name="tab_about">About</string>
+	<string name="tab_update">Update(%d)</string>
 
 	<string name="tab_setting_generic">Generic</string>
 	<string name="tab_setting_generic_lab">Set generic options</string>
@@ -300,6 +302,7 @@ they're removed before the application is published</string>
 	<string name="label_save_as">Save As...</string>
 	<string name="label_by_package_name">By Package Name</string>
 	<string name="label_by_app_label">By App Label</string>
+	<string name="label_show_update_at_startup">Show update list at startup</string>
 
 	<string name="msg_failure_open_apk">ERROR: Can not open the APK</string>
 	<string name="msg_no_such_apk">No such APK file</string>

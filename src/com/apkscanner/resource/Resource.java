@@ -153,6 +153,8 @@ public enum Resource
 	STR_TAB_PACAKGE_INFO		(Type.TEXT, "@tab_package_info"),
 	STR_TAB_DUMPSYS				(Type.TEXT, "@tab_dumpsys"),
 	STR_TAB_SYS_PACAKGE_INFO	(Type.TEXT, "@tab_sys_package_info"),
+	STR_TAB_ABOUT				(Type.TEXT, "@tab_about"),
+	STR_TAB_UPDATE				(Type.TEXT, "@tab_update"),
 
 	STR_TAB_SETTING_GENERIC		(Type.TEXT, "@tab_setting_generic"),
 	STR_TAB_SETTING_GENERIC_LAB	(Type.TEXT, "@tab_setting_generic_lab"),
@@ -326,6 +328,7 @@ public enum Resource
 	STR_LABEL_SAVE_AS			(Type.TEXT, "@label_save_as"),
 	STR_LABEL_BY_PACKAGE_NAME	(Type.TEXT, "@label_by_package_name"),
 	STR_LABEL_BY_APP_LABEL		(Type.TEXT, "@label_by_app_label"),
+	STR_LABEL_SHOW_UPDATE_STARTUP(Type.TEXT, "@label_show_update_at_startup"),
 
 	STR_TREE_NODE_DEVICE 		(Type.TEXT, "@tree_node_device"),
 	STR_TREE_NODE_DISPLAYED		(Type.TEXT, "@tree_node_displayed"),
