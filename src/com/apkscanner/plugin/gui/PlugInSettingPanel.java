@@ -145,7 +145,7 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 			nodeComp.check.setSelected(selectedCheckBox);
 
 			boolean isLabelEnabled = (!usedCheckbox || (selectedCheckBox && enabledCheckBox));
-			if(!selected) nodeComp.label.setForeground(isLabelEnabled ? textForeground : textDisabled );
+			if(!selected) nodeComp.label.setForeground(isLabelEnabled ? textForeground : textDisabled);
 			nodeComp.label.setText(text);
 			nodeComp.label.setIcon(icon);
 			if(!isLabelEnabled) {
@@ -174,20 +174,23 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 					nodeText = (String)userObject;
 					switch((String)userObject) {
 					case TREE_NODE_NETWORK_SETTING:
-						nodeText = "Network Setting";
+						nodeText = Resource.STR_TREE_NODE_NETWORK.getString();
+						nodeIcon = Resource.IMG_TREE_NETWORK_SETTING.getImageIcon(16, 16);
 						break;
 					case TREE_NODE_CONFIGURATION_SETTING:
-						nodeText = "Configurations Setting";
+						nodeText = Resource.STR_TREE_NODE_CONFIGURATION.getString();
+						nodeIcon = Resource.IMG_TREE_CONFIG_SETTING.getImageIcon(16, 16);
 						break;
 					case TREE_NODE_GLOBAL_SETTINGS:
-						nodeText = "Common Settings for PlugIns";
+						nodeText = Resource.STR_TREE_NODE_GLOBAL_SETTING.getString();
+						nodeIcon = Resource.IMG_TREE_GLOBAL_SETTING.getImageIcon(16, 16);
 						break;
 					case TREE_NODE_TOP_PLUGINS:
-						nodeText = "APK Scanner Plugins";
+						nodeText = Resource.STR_TREE_NODE_PLUGINS_TOP.getString();
 						nodeIcon = Resource.IMG_APP_ICON.getImageIcon(16, 16);
 						break;
 					case TREE_NODE_NO_PLUGINS:
-						nodeText = "No plugins";
+						nodeText = Resource.STR_TREE_NODE_NO_PLUGINS.getString();
 						break;
 					}
 				} else if(userObject instanceof IPlugIn) {
@@ -272,7 +275,7 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 		JPanel pluginTreePanel = new JPanel();
 		pluginTreePanel.setLayout(new BoxLayout(pluginTreePanel, BoxLayout.Y_AXIS));
 
-		Border title = new TitledBorder("PlugIn Settings");
+		Border title = new TitledBorder(Resource.STR_LABEL_PLUGINS_SETTINGS.getString());
 		Border padding = new EmptyBorder(5,5,5,5);
 		pluginTreePanel.setBorder(new CompoundBorder(title, padding));
 
@@ -281,7 +284,7 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 		tree.setCellRenderer(new CheckBoxNodeRenderer());
 		tree.setCellEditor(new CheckBoxNodeEditor());
 		tree.setEditable(true);
-		tree.setRootVisible(false);
+		tree.setRootVisible(true);
 
 		JScrollPane scrollPane = new JScrollPane(tree);
 		scrollPane.setAlignmentX(0);
@@ -295,7 +298,7 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 		JPanel pluginDescPanel = new JPanel();
 		pluginDescPanel.setLayout(new BoxLayout(pluginDescPanel, BoxLayout.Y_AXIS));
 
-		JLabel label = new JLabel("Description");
+		JLabel label = new JLabel(Resource.STR_LABEL_PLUGINS_DESCRIPTION.getString());
 		label.setAlignmentX(0);
 
 		description = new JTextArea();
@@ -306,7 +309,6 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 
 		pluginDescPanel.add(label);
 		pluginDescPanel.add(scrollPane);
-
 
 		JPanel netSettingPanel = new JPanel();
 		netSettingPanel.setLayout(new BoxLayout(netSettingPanel, BoxLayout.X_AXIS));
@@ -443,13 +445,13 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 				confSettingPanel.setPluginPackage((PlugInPackage) userObject);
 				break;
 			case TREE_NODE_GLOBAL_SETTINGS:
-				description.setText("Common Settings for PlugIns");
+				description.setText(Resource.STR_TREE_NODE_GLOBAL_SETTING_DESC.getString());
 				break;
 			case TREE_NODE_TOP_PLUGINS:
-				description.setText("APK Scanner Plugins");
+				description.setText(Resource.STR_TREE_NODE_PLUGINS_TOP_DESC.getString());
 				break;
 			case TREE_NODE_NO_PLUGINS:
-				description.setText("No plugins");
+				description.setText(Resource.STR_TREE_NODE_NO_PLUGINS_DESC.getString());
 				break;
 			default:
 				Log.v("Unknown string node : " + userObject);;

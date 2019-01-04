@@ -26,6 +26,7 @@ import javax.swing.border.TitledBorder;
 
 import com.apkscanner.plugin.PlugInConfig;
 import com.apkscanner.plugin.PlugInPackage;
+import com.apkscanner.resource.Resource;
 
 public class NetworkProxySettingPanel extends JPanel implements ActionListener
 {
@@ -50,16 +51,16 @@ public class NetworkProxySettingPanel extends JPanel implements ActionListener
 		setOpaque(false);
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-		Border title = new TitledBorder("Proxy Settings");
+		Border title = new TitledBorder(Resource.STR_LABEL_PROXY_SETTING.getString());
 		Border padding = new EmptyBorder(5,5,5,5);
 		setBorder(new CompoundBorder(title, padding));
 
 		String[] proxyMethods = new String[] {
-			"No proxy",
-			"Use proxy of the APK Scanner for plugins",
-			"Use proxy of system",
-			"Use PAC script(.pac) by URL",
-			"Manual proxy"
+			Resource.STR_PROXY_MENU_NO_PROXY.getString(),
+			Resource.STR_PROXY_MENU_GLOBAL.getString(),
+			Resource.STR_PROXY_MENU_SYSTEM.getString(),
+			Resource.STR_PROXY_MENU_PAC_SCRIPT.getString(),
+			Resource.STR_PROXY_MENU_MANUAL.getString()
 		};
 		methodCardMap = new HashMap<>(proxyMethods.length);
 		methodCardMap.put(proxyMethods[0], CARD_NO_PROXY);
@@ -110,9 +111,9 @@ public class NetworkProxySettingPanel extends JPanel implements ActionListener
             }
 		};
 		descPanel.setAlignmentX(1.0f);
-		descPanel.add(new JLabel("Do not ues proxy setting."), CARD_NO_PROXY);
-		descPanel.add(new JLabel("Use proxy setting of the APK Scanner for plugins"), CARD_SCANNER_PROXY);
-		descPanel.add(new JLabel("Use proxy of system"), CARD_SYSTEM_PROXY);
+		descPanel.add(new JLabel(proxyMethods[0]), CARD_NO_PROXY);
+		descPanel.add(new JLabel(proxyMethods[1]), CARD_SCANNER_PROXY);
+		descPanel.add(new JLabel(proxyMethods[2]), CARD_SYSTEM_PROXY);
 		descPanel.add(makePacFileds(), CARD_PAC_SCRIPT_PROXY);
 		descPanel.add(makeProxyFileds(), CARD_MANUAL_PROXY);
 		descLayout.show(descPanel, CARD_NO_PROXY);
@@ -121,7 +122,7 @@ public class NetworkProxySettingPanel extends JPanel implements ActionListener
 
 		add(Box.createRigidArea(new Dimension(0,5)));
 
-		JButton applyBtn = new JButton("Apply");
+		JButton applyBtn = new JButton(Resource.STR_BTN_APPLY.getString());
 		applyBtn.setAlignmentX(1.0f);
 		applyBtn.setActionCommand(ACT_CMD_APPLY);
 		applyBtn.addActionListener(this);
@@ -185,7 +186,7 @@ public class NetworkProxySettingPanel extends JPanel implements ActionListener
 		JPanel pacFilds = new JPanel();
 		pacFilds.setLayout(new BoxLayout(pacFilds, BoxLayout.Y_AXIS));
 		pacFilds.add(Box.createRigidArea(new Dimension(0,10)));
-		pacFilds.add(new JLabel("Configuration URL :"));
+		pacFilds.add(new JLabel(Resource.STR_LABEL_PAC_SCRIPT_URL.getString()));
 		pacFilds.add(Box.createRigidArea(new Dimension(0,5)));
 		pacFilds.add(pacUrl = new JTextField());
 		return pacFilds;
@@ -193,11 +194,11 @@ public class NetworkProxySettingPanel extends JPanel implements ActionListener
 
 	public void setPluginPackage(PlugInPackage pluginPackage) {
 		pluginConfig = new PlugInConfig(pluginPackage);
-		if(pluginPackage == null) {
-			int scannerIdx = getCardIdxFromCombobox(CARD_SCANNER_PROXY);
-			if(scannerIdx > -1) {
-				methods.removeItemAt(scannerIdx);
-			}
+		int scannerIdx = getCardIdxFromCombobox(CARD_SCANNER_PROXY);
+		if(pluginPackage == null && scannerIdx > -1) {
+			methods.removeItemAt(scannerIdx);
+		} else if(pluginPackage != null && scannerIdx == -1) {
+			methods.insertItemAt(Resource.STR_PROXY_MENU_GLOBAL.getString(), 1);
 		}
 
 		boolean useGlobalConfig = "true".equals(pluginConfig.getConfiguration(PlugInConfig.CONFIG_USE_GLOBAL_PROXIES, "true"));

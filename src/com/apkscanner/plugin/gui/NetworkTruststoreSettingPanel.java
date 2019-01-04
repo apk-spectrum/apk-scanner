@@ -102,15 +102,15 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 		setOpaque(false);
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-		Border title = new TitledBorder("SSL Trust Store Settings");
+		Border title = new TitledBorder(Resource.STR_LABEL_TRUSTSTORE_SETTING.getString());
 		Border padding = new EmptyBorder(5,5,5,5);
 		setBorder(new CompoundBorder(title, padding));
 
 		String[] trustStoreList = new String[] {
-			"TrustStore of APK Scanner",
-			"TrustStore of JVM",
-			"Manual",
-			"Ignore(Not recommended)"
+			Resource.STR_TRUSTSTORE_APKSCANNER.getString(),
+			Resource.STR_TRUSTSTORE_JVM.getString(),
+			Resource.STR_TRUSTSTORE_MANUAL.getString(),
+			Resource.STR_TRUSTSTORE_IGNORE.getString()
 		};
 		trustStoreTypeMap = new HashMap<>();
 		trustStoreTypeMap.put(trustStoreList[0], TRUSTSTORE_TYPE_APKSCANNER);
@@ -171,7 +171,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 							visible = false;
 							store = NetworkSetting.IGNORE_TRUSTSTORE;
 							ignore = true;
-							desciprtion = "Warning, This option is not recommended!\nBecause, It's makes opens the connection to potential MITM attacks.";
+							desciprtion = Resource.STR_MSG_WARN_SSL_IGNORE.getString();
 							break;
 						}
 
@@ -221,10 +221,10 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 		if(!simple) mgmtPanel.add(Box.createRigidArea(new Dimension(0,5)));
 
 		certListModel = new DefaultTableModel(new String[] {
-				"발급대상",
-				"발급자",
-				"말료날짜",
-				"이름"
+				Resource.STR_COLUMN_ISSUE_TO.getString(),
+				Resource.STR_COLUMN_ISSUE_BY.getString(),
+				Resource.STR_COLUMN_EXPIRES_ON.getString(),
+				Resource.STR_COLUMN_ALIAS.getString()
 			}, 0);
 		certList = new JTable(certListModel);
 		certList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -236,11 +236,11 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 		if(!simple) mgmtPanel.add(certListPanel);
 
 
-		JButton importBtn = new JButton("Import");
+		JButton importBtn = new JButton(Resource.STR_BTN_IMPORT.getString());
 		importBtn.setActionCommand(ACT_CMD_IMPORT);
 		importBtn.addActionListener(this);
 
-		JButton removeBtn = new JButton("Remove");
+		JButton removeBtn = new JButton(Resource.STR_BTN_REMOVE.getString());
 		removeBtn.setActionCommand(ACT_CMD_REMOVE);
 		removeBtn.addActionListener(this);
 
@@ -281,7 +281,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 		if(!simple) add(Box.createRigidArea(new Dimension(0,5)));
 
 		if(simple) {
-			JButton detailTruststore = new JButton("Manage certificates");
+			JButton detailTruststore = new JButton(Resource.STR_BTN_MANAGE_CERT.getString());
 			detailTruststore.setActionCommand(ACT_CMD_DETAIL);
 			detailTruststore.addActionListener(this);
 			add(detailTruststore);
@@ -336,9 +336,9 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 		descScroll.setPreferredSize(new Dimension(400, 150));
 
 		confirmForm.setLayout(new BoxLayout(confirmForm, BoxLayout.Y_AXIS));
-		confirmForm.add(new JLabel("Alias:"));
+		confirmForm.add(new JLabel(Resource.STR_LABEL_ALIAS.getString()));
 		confirmForm.add(aliasField);
-		confirmForm.add(new JLabel("Description"));
+		confirmForm.add(new JLabel(Resource.STR_LABEL_DESCRIPTION.getString()));
 		confirmForm.add(descScroll);
 
 		do {
@@ -505,7 +505,6 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 	public void actionPerformed(ActionEvent arg0) {
 		switch(arg0.getActionCommand()) {
 		case ACT_CMD_EXPLORER:
-
 			File file = getKeyStoreFile(NetworkTruststoreSettingPanel.this, trustPath.getText());
 			if(file != null) {
 				String path = file.getAbsolutePath();
@@ -515,6 +514,8 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 			break;
 		case ACT_CMD_IMPORT:
 			File certFile = getCertificateFile(this, "");
+			if(certFile == null || !certFile.canRead()) break;
+
 			X509Certificate cert = loadCertificate(certFile);
 			String name = certFile.getName().replaceAll("\\.([cC][rR][tT]|[cC][eE][rR])$", "");
 			name = confirmCertificateAlias(name, cert);
@@ -541,7 +542,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 		case ACT_CMD_DETAIL:
 			JPanel trustPanel = new NetworkTruststoreSettingPanel(pluginConfig);
 			trustPanel.setPreferredSize(new Dimension(500, trustPanel.getPreferredSize().height));
-			MessageBoxPane.showMessageDialog(null, trustPanel, "Network Truststore Setting", JOptionPane.DEFAULT_OPTION);
+			MessageBoxPane.showMessageDialog(null, trustPanel, Resource.STR_LABEL_TRUSTSTORE_SETTING.getString(), JOptionPane.DEFAULT_OPTION);
 			break;
 		}
 	}

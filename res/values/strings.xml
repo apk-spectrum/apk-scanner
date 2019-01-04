@@ -4,6 +4,11 @@
 
 	<string name="title_install_wizard">APK Install Wizard</string>
 	<string name="title_apk_signer">APK Signer</string>
+	<string name="title_edit_config">Configuration Setting</string>
+	<string name="title_no_such_network">Network Error - Not found network interface</string>
+	<string name="title_network_timeout">Network Error - Connection timed out</string>
+	<string name="title_ssl_exception">Network Error - SSL Certificate Error</string>
+	<string name="title_update_list">Update List</string>
 
 	<string name="btn_open">Open</string>
 	<string name="btn_open_pacakge">Package</string>
@@ -29,6 +34,7 @@
 	<string name="btn_cancel">Cancel</string>
 	<string name="btn_refresh">Refresh</string>
 	<string name="btn_del">Del</string>
+	<string name="btn_edit">Edit</string>
 	<string name="btn_add">Add</string>
 	<string name="btn_export">Export</string>
 	<string name="btn_opencode">Source</string>
@@ -83,6 +89,17 @@
 	<string name="btn_waiting">Waiting...</string>
 	<string name="btn_success">Success</string>
 	<string name="btn_fail">Fail</string>
+	<string name="btn_retry">Retry</string>
+	<string name="btn_apply">Apply</string>
+	<string name="btn_remove">Remove</string>
+	<string name="btn_import">Import</string>
+	<string name="btn_manage_cert">Manage certificates</string>
+	<string name="btn_check_update">Check update</string>
+	<string name="btn_go_to_website">Go to WebSite</string>
+	<string name="btn_update">Update</string>
+	<string name="btn_download">Download</string>
+	<string name="btn_no_updated">No updated</string>
+	<string name="btn_choose_update">Choose update</string>
 	
 	<string name="menu_new">New Window...</string>
 	<string name="menu_new_window">New window(N)</string>
@@ -302,6 +319,18 @@ they're removed before the application is published</string>
 	<string name="label_save_as">Save As...</string>
 	<string name="label_by_package_name">By Package Name</string>
 	<string name="label_by_app_label">By App Label</string>
+	<string name="label_plugins_settings">PlugIn Settings</string>
+	<string name="label_plugins_description">Descriptions</string>
+	<string name="label_plugin_pcakge_config">Plugin Packge Configurations</string>
+	<string name="label_key_name">Name</string>
+	<string name="label_key_value">Value</string>
+	<string name="label_proxy_setting">Proxy Setting</string>
+	<string name="label_truststore_setting">SSL Trust Store Settings</string>
+	<string name="label_pac_script_url">PAC script URL :</string>
+	<string name="label_alias">Alias :</string>
+	<string name="label_description">Description :</string>
+	<string name="label_do_not_look_again">Do not show again</string>
+	<string name="label_update_list">Update List</string>
 	<string name="label_show_update_at_startup">Show update list at startup</string>
 
 	<string name="msg_failure_open_apk">ERROR: Can not open the APK</string>
@@ -332,6 +361,11 @@ Please check the confirmation dialog on your device.</string>
 	<string name="msg_success_clear_data">Success clear data.</string>
 	<string name="msg_failure_clear_data">Fail clear data.</string>
 	<string name="msg_warn_unsupported_jvm">Ensure you have installed Java 8 64-bit version</string>
+	<string name="msg_warn_ssl_ignore">Warning, This option is not recommended!\nBecause, It's makes opens the connection to potential MITM attacks.</string>
+	<string name="msg_no_such_network">Not found network interface\n\nTry checking the network connection\n</string>
+	<string name="msg_failure_proxy_error">Failed PlugIn: %s\n\nNetwork connection timed out!\n\nTry checking the connection or proxy, firewall!</string>
+	<string name="msg_failure_ssl_error">Failed PlugIn: %s\n\nOccurred SSLHandshakeException.\n\nTry add a SSL certification to the trust store!</string>
+	<string name="msg_no_update_informations">No information</string>
 
 	<string name="question_reboot_device">Restart device now?</string>
 	<string name="question_continue_install">Continue install?</string>
@@ -349,6 +383,14 @@ Refresh this package information?</string>
 	<string name="tree_node_displayed">Currently Displayed Packages</string>
 	<string name="tree_node_recently">Recently Activity Packages</string>
 	<string name="tree_node_running">Currently Running Process Packages</string>
+	<string name="tree_node_plugins_top">APK Scanner Plugins</string>
+	<string name="tree_node_plugins_top_desc">APK Scanner Plugins</string>
+	<string name="tree_node_no_plugins">No plugins</string>
+	<string name="tree_node_no_plugins_desc">No plugins</string>
+	<string name="tree_node_network_setting">Network Setting</string>
+	<string name="tree_node_configurations">Configurations Setting</string>
+	<string name="tree_node_global_setting">Common Settings for PlugIns</string>
+	<string name="tree_node_global_setting_desc">Common Settings for PlugIns</string>
 
 	<string name="pattern_print_x509_cert">Owner: {0}\nIssuer: {1}\nSerial number: {2}\nValid from: {3} until: {4}\nCertificate fingerprints:\n\t MD5:  {5}\n\t SHA1: {6}\n\t SHA256: {7}\nSignature algorithm name: {8}\nSubject Public Key Algorithm: {9}\nVersion: {10}</string>
 	<string name="with_weak">%s (weak)</string>
@@ -358,4 +400,26 @@ Refresh this package information?</string>
 	<string name="extensions">Extensions: </string>
 	<string name="empty_value">(Empty value)</string>
 	<string name="timestamp">Timestamp:</string>
+
+	<string name="proxy_menu_no_proxy">No proxy</string>
+	<string name="proxy_menu_global">Use proxy of plugins</string>
+	<string name="proxy_menu_system">Use proxy of system(If possible)</string>
+	<string name="proxy_menu_pac_script">Use PAC script(.pac) by URL</string>
+	<string name="proxy_menu_manual">Manual proxy</string>
+
+	<string name="truststore_golbal">Common Truststore of Pluings</string>
+	<string name="truststore_apkscanner">TrustStore of APK Scanner</string>
+	<string name="truststore_jvm">TrustStore of JVM</string>
+	<string name="truststore_manual">Manual</string>
+	<string name="truststore_ignore">Ignore(Not recommended)</string>
+
+	<string name="column_issued_to">Issued To</string>
+	<string name="column_issued_by">Issued By</string>
+	<string name="column_expires_on">Expires On</string>
+	<string name="column_alias">Alias Name</string>
+	<string name="column_name">Name</string>
+	<string name="column_package">Package</string>
+	<string name="column_this_version">Cur Ver.</string>
+	<string name="column_new_version">New Ver.</string>
+	<string name="column_last_checked_date">Last Checked</string>
 </resources>
