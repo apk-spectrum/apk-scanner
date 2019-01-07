@@ -239,7 +239,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		strTabInfo.append("  <a href=\"https://bitbucket.org/luciad/webp-imageio\" title=\"luciad-webp-imageio Site\">luciad-webp-imageio</a>");
 		strTabInfo.append("  <br/><br/><hr/>");
 		strTabInfo.append("  Programmed by <a href=\"mailto:" + Resource.STR_APP_MAKER_EMAIL.getString() + "\" title=\"" + Resource.STR_APP_MAKER_EMAIL.getString() + "\">" + Resource.STR_APP_MAKER.getString() + "</a>, 2015.<br/>");
-		strTabInfo.append("  It is open source project on <a href=\"https://github.sec.samsung.net/sunggyu-kam/apk-scanner\" title=\"APK Scanner Site\">SEC Github</a>");
+		strTabInfo.append("  It is open source project on <a href=\"https://github.com/apk-spectrum/apk-scanner\" title=\"APK Scanner Site\">Github</a>");
 		strTabInfo.append("</div>");
 		strTabInfo.append("    </td>");
 		strTabInfo.append("  </tr>");

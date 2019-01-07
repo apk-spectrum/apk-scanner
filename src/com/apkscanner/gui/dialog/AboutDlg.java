@@ -50,7 +50,7 @@ public class AboutDlg /*extends JDialog*/
 		body.append("  <a href=\"https://bitbucket.org/luciad/webp-imageio\" title=\"luciad-webp-imageio Site\">luciad-webp-imageio</a>");
 		body.append("  <br/><br/><hr/>");
 		body.append("  Programmed by <a href=\"mailto:" + Resource.STR_APP_MAKER_EMAIL.getString() + "\" title=\"" + Resource.STR_APP_MAKER_EMAIL.getString() + "\">" + Resource.STR_APP_MAKER.getString() + "</a>, 2015.<br/>");
-		body.append("  It is open source project on <a href=\"https://github.sec.samsung.net/sunggyu-kam/apk-scanner\" title=\"APK Scanner Site\">SEC Github</a>");
+		body.append("  It is open source project on <a href=\"https://github.com/apk-spectrum/apk-scanner\" title=\"APK Scanner Site\">Github</a>");
 		body.append("</div>");
 
 		JLabel label = new JLabel();
