@@ -2,6 +2,7 @@ package com.apkscanner.gui;
 
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.KeyEventDispatcher;
@@ -42,6 +43,7 @@ import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ComponentInfo;
+import com.apkscanner.gui.DropTargetChooser.DefaultTargetObject;
 import com.apkscanner.gui.ToolBar.ButtonSet;
 import com.apkscanner.gui.dialog.AboutDlg;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
@@ -54,8 +56,8 @@ import com.apkscanner.gui.dialog.SettingDlg;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.util.ApkFileChooser;
-import com.apkscanner.gui.util.FileDrop;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
+import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.IUpdateChecker;
 import com.apkscanner.plugin.NetworkException;
@@ -91,6 +93,7 @@ public class MainUI extends JFrame
 	private TabbedPanel tabbedPanel;
 	private ToolBar toolBar;
 	private MessageBoxPool messagePool;
+	private DropTargetChooser dropTargetChooser;
 
 	public MainUI(ApkScanner scanner)
 	{
@@ -162,9 +165,11 @@ public class MainUI extends JFrame
 		Log.i("initialize() register event handler");
 		// Closing event of window be delete tempFile
 		addWindowListener(eventHandler);
-		
-		// Drag & Drop event processing
-		new FileDrop(this, /*dragBorder,*/ eventHandler); // end FileDrop.Listener
+
+		// Drag & Drop event processing panel
+		dropTargetChooser = new DropTargetChooser(eventHandler);
+		setGlassPane(dropTargetChooser);
+		dropTargetChooser.setVisible(true);
 
 		// Shortcut key event processing
 		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
@@ -192,6 +197,10 @@ public class MainUI extends JFrame
 						&& Status.BASIC_INFO_COMPLETED.isCompleted(state)
 						&& Status.CERT_COMPLETED.isCompleted(state) ) {
 					tabbedPanel.setData(apkScanner.getApkInfo(), Status.BASIC_INFO_COMPLETED);
+				}
+				for(IExternalTool plugin: PlugInManager.getExternalTool()) {
+					//if(!plugin.isDiffTool()) continue;
+					dropTargetChooser.addDropTarget(plugin, plugin.getLabel(), "plugin", null, new Color(0.9f,0.7f,0.3f,0.9f));
 				}
 			}
 		}.execute();
@@ -304,7 +313,7 @@ public class MainUI extends JFrame
 
 		@Override
 		public void onCompleted() {
-			EventQueue.invokeLater(new Runnable() { 
+			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					Log.v("ApkCore.onComplete()");
 					toolBar.setEnabledAt(ButtonSet.OPEN, true);
@@ -367,6 +376,7 @@ public class MainUI extends JFrame
 				setTitle(title);
 
 				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, true);
+				dropTargetChooser.setExternalToolsVisible(true);
 			default:
 				tabbedPanel.setData(apkScanner.getApkInfo(), status);
 				break;
@@ -375,7 +385,7 @@ public class MainUI extends JFrame
 		}
 	}
 
-	class UIEventHandler implements ActionListener, KeyEventDispatcher, WindowListener, FileDrop.Listener
+	class UIEventHandler implements ActionListener, KeyEventDispatcher, WindowListener, DropTargetChooser.Listener
 	{
 		private void evtOpenApkFile(boolean newWindow)
 		{
@@ -387,6 +397,7 @@ public class MainUI extends JFrame
 			if(!newWindow) {
 				toolBar.setEnabledAt(ButtonSet.OPEN, false);
 				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
+				dropTargetChooser.setExternalToolsVisible(false);
 				tabbedPanel.setLodingLabel();
 
 				Thread thread = new Thread(new Runnable() {
@@ -420,6 +431,7 @@ public class MainUI extends JFrame
 				tabbedPanel.onProgress(null);
 				toolBar.setEnabledAt(ButtonSet.OPEN, false);
 				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
+				dropTargetChooser.setExternalToolsVisible(false);
 
 				Thread thread = new Thread(new Runnable() {
 					public void run()
@@ -445,7 +457,7 @@ public class MainUI extends JFrame
 
 			toolBar.setEnabledAt(ButtonSet.INSTALL, false);
 
-			ApkInstallWizard wizard = new ApkInstallWizard(apkInfo.filePath, MainUI.this);			
+			ApkInstallWizard wizard = new ApkInstallWizard(apkInfo.filePath, MainUI.this);
 			wizard.start();
 
 			toolBar.setEnabledAt(ButtonSet.INSTALL, true);
@@ -720,11 +732,11 @@ public class MainUI extends JFrame
 									for(ComponentInfo comp: apkActivities) {
 										boolean isLauncher = ((comp.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0);
 										boolean isMain = ((comp.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0);
-										mergeList.add((isLauncher ? "[APK_LAUNCHER]": (isMain ? "[APK_MAIN]": "[APK]")) + " " + comp.name.replaceAll("^"+apkInfo.manifest.packageName, ""));										
+										mergeList.add((isLauncher ? "[APK_LAUNCHER]": (isMain ? "[APK_MAIN]": "[APK]")) + " " + comp.name.replaceAll("^"+apkInfo.manifest.packageName, ""));
 									}
 								}
 
-								if(!mergeList.isEmpty()) { 
+								if(!mergeList.isEmpty()) {
 									String selected = (String)MessageBoxPane.showInputDialog(MainUI.this, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL),
 											Resource.STR_BTN_LAUNCH.getString(), MessageBoxPane.QUESTION_MESSAGE, null, mergeList.toArray(new String[mergeList.size()]), mergeList.get(0));
 									if(selected == null) {
@@ -986,8 +998,8 @@ public class MainUI extends JFrame
 				evtShowExplorer(e);
 			} else if(ToolBar.ButtonSet.INSTALL.matchActionEvent(e)
 					|| ToolBar.ButtonSet.INSTALL_UPDATE.matchActionEvent(e)
-					|| ToolBar.ButtonSet.INSTALL_DOWNGRADE.matchActionEvent(e) 
-					|| ToolBar.ButtonSet.SUB_INSTALL.matchActionEvent(e) 
+					|| ToolBar.ButtonSet.INSTALL_DOWNGRADE.matchActionEvent(e)
+					|| ToolBar.ButtonSet.SUB_INSTALL.matchActionEvent(e)
 					|| ToolBar.ButtonSet.SUB_INSTALL_UPDATE.matchActionEvent(e)
 					|| ToolBar.ButtonSet.SUB_INSTALL_DOWNGRADE.matchActionEvent(e)
 					|| ToolBar.MenuItemSet.INSTALL_APK.matchActionEvent(e) ) {
@@ -1022,7 +1034,7 @@ public class MainUI extends JFrame
 				evtUninstallApp();
 			} else if(ToolBar.MenuItemSet.CLEAR_DATA.matchActionEvent(e)) {
 				evtClearData();
-			} else if(ToolBar.ButtonSet.SIGN.matchActionEvent(e) || ToolBar.ButtonSet.SUB_SIGN.matchActionEvent(e)) { 
+			} else if(ToolBar.ButtonSet.SIGN.matchActionEvent(e) || ToolBar.ButtonSet.SUB_SIGN.matchActionEvent(e)) {
 				evtSignApkFile();
 			} else if(e.getActionCommand() != null && e.getActionCommand().startsWith("PLUGIN:")) {
 				evtPluginLaunch(e.getActionCommand().replaceAll("PLUGIN:", ""));
@@ -1081,26 +1093,44 @@ public class MainUI extends JFrame
 
 		// Drag & Drop event processing
 		@Override
-		public void filesDropped(final File[] files)
+		public void filesDropped(Object dropedTarget, final File[] files)
 		{
-			Log.i("filesDropped()");
-			toolBar.setEnabledAt(ButtonSet.OPEN, false);
-			toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
-			tabbedPanel.setLodingLabel();
-
-			Thread thread = new Thread(new Runnable() {
-				public void run()
-				{
-					try {
-						apkScanner.clear(false);
-						apkScanner.openApk(files[0].getCanonicalPath());
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
+			final String[] filePaths = new String[files.length];
+			for(int i = 0; i< files.length; i++) {
+				try {
+					filePaths[i] = files[i].getCanonicalPath();
+				} catch (IOException e) {
+					e.printStackTrace();
+					return;
 				}
-			});
-			thread.setPriority(Thread.NORM_PRIORITY);
-			thread.start();
+			}
+			if(dropedTarget instanceof DefaultTargetObject) {
+				switch((DefaultTargetObject)dropedTarget) {
+				case DROPED_TARGET_APK_OPEN:
+					Log.i("filesDropped()");
+					toolBar.setEnabledAt(ButtonSet.OPEN, false);
+					toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
+					dropTargetChooser.setExternalToolsVisible(false);
+					tabbedPanel.setLodingLabel();
+
+					Thread thread = new Thread(new Runnable() {
+						public void run()
+						{
+							apkScanner.clear(false);
+							apkScanner.openApk(filePaths[0]);
+						}
+					});
+					thread.setPriority(Thread.NORM_PRIORITY);
+					thread.start();
+					break;
+				case DROPED_TARGET_NEW_WIN:
+					Launcher.run(filePaths[0]);
+					break;
+				}
+			} else if(dropedTarget instanceof IExternalTool) {
+				String apkPath = apkScanner.getApkInfo().filePath;
+				((IExternalTool) dropedTarget).launch(apkPath, filePaths[0]);
+			}
 		}
 
 		private void finished()
@@ -1131,7 +1161,7 @@ public class MainUI extends JFrame
 		private String packageName;
 		private int versionCode;
 		private boolean hasSignature;
-		private boolean hasMainActivity; 
+		private boolean hasMainActivity;
 
 		public void registerEventListeners() {
 			AdbServerMonitor.addAdbDemonChangeListener(this);
@@ -1186,12 +1216,12 @@ public class MainUI extends JFrame
 					packageName = info.manifest.packageName;
 					versionCode = info.manifest.versionCode != null ? info.manifest.versionCode : 0;
 					hasSignature = ApkInfoHelper.isSigned(info);
-					hasMainActivity = ApkInfoHelper.getLauncherActivityList(info, true).length > 0; 
+					hasMainActivity = ApkInfoHelper.getLauncherActivityList(info, true).length > 0;
 				} else {
 					packageName = null;
 					versionCode = 0;
 					hasSignature = false;
-					hasMainActivity = false; 
+					hasMainActivity = false;
 				}
 			}
 			if(enabled) {
@@ -1247,7 +1277,7 @@ public class MainUI extends JFrame
 							hasInstalled = pkg.getApkPath() != null;
 							int packVerCode = pkg.getVersionCode();
 							if(versionCode < packVerCode) {
-								hasUpper = true;									
+								hasUpper = true;
 							} else if(versionCode > packVerCode) {
 								hasLower = true;
 							}
@@ -1294,7 +1324,7 @@ public class MainUI extends JFrame
 		}
 
 		@Override
-		public void deviceChanged(IDevice device, int changeMask) { 
+		public void deviceChanged(IDevice device, int changeMask) {
 			Log.v("deviceChanged() " + device.getName() + ", " + device.getState() + ", changeMask " + changeMask);
 			if((changeMask & IDevice.CHANGE_STATE) != 0 && device.isOnline()) {
 				applyToobarPolicy();
@@ -1330,7 +1360,7 @@ public class MainUI extends JFrame
 
 		@Override
 		public void packageInstalled(PackageInfo packageInfo) {
-			if(packageName != null && packageInfo != null 
+			if(packageName != null && packageInfo != null
 					&& packageName.equals(packageInfo.packageName)) {
 				applyToobarPolicy();
 			}
@@ -1338,7 +1368,7 @@ public class MainUI extends JFrame
 
 		@Override
 		public void packageUninstalled(PackageInfo packageInfo) {
-			if(packageName != null && packageInfo != null 
+			if(packageName != null && packageInfo != null
 					&& packageName.equals(packageInfo.packageName)) {
 				applyToobarPolicy();
 			}

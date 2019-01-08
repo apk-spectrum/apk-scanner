@@ -293,6 +293,11 @@ public class FileDrop
                             log( out, "FileDrop: normal border saved." );
                             jc.setBorder( dragBorder );
                             log( out, "FileDrop: drag border set." );
+                            if( listener != null )
+                                listener.dragEnter();
+                            java.awt.Component dropComp = evt.getDropTargetContext().getComponent();
+                            if(dropComp instanceof FileDrop.Listener)
+                            	((FileDrop.Listener)dropComp).dragEnter();
                         }   // end if: JComponent   
 
                         // Acknowledge that it's okay to enter
@@ -341,6 +346,9 @@ public class FileDrop
                             // Alert listener to drop.
                             if( listener != null )
                                 listener.filesDropped( files );
+                            java.awt.Component dropComp = evt.getDropTargetContext().getComponent();
+                            if(dropComp instanceof FileDrop.Listener)
+                            	((FileDrop.Listener)dropComp).filesDropped( files );
 
                             // Mark that drop is completed.
                             evt.getDropTargetContext().dropComplete(true);
@@ -365,6 +373,9 @@ public class FileDrop
                                     
                                     if(listener != null)
                                         listener.filesDropped(createFileArray(br, out));
+                                    java.awt.Component dropComp = evt.getDropTargetContext().getComponent();
+                                    if(dropComp instanceof FileDrop.Listener)
+                                    	((FileDrop.Listener)dropComp).filesDropped( createFileArray(br, out) );
                                     
                                     // Mark that drop is completed.
                                     evt.getDropTargetContext().dropComplete(true);
@@ -397,6 +408,11 @@ public class FileDrop
                         {   javax.swing.JComponent jc = (javax.swing.JComponent) c;
                             jc.setBorder( normalBorder );
                             log( out, "FileDrop: normal border restored." );
+                            if( listener != null )
+                                listener.dragExit();
+                            java.awt.Component dropComp = evt.getDropTargetContext().getComponent();
+                            if(dropComp instanceof FileDrop.Listener)
+                            	((FileDrop.Listener)dropComp).dragExit();
                         }   // end if: JComponent
                     }   // end finally
                 }   // end drop
@@ -408,6 +424,11 @@ public class FileDrop
                     {   javax.swing.JComponent jc = (javax.swing.JComponent) c;
                         jc.setBorder( normalBorder );
                         log( out, "FileDrop: normal border restored." );
+                        if( listener != null )
+                            listener.dragExit();
+                        java.awt.Component dropComp = evt.getDropTargetContext().getComponent();
+                        if(dropComp instanceof FileDrop.Listener)
+                        	((FileDrop.Listener)dropComp).dragExit();
                     }   // end if: JComponent
                 }   // end dragExit
 
@@ -483,7 +504,7 @@ public class FileDrop
      // END 2007-09-12 Nathan Blomquist -- Linux (KDE/Gnome) support added.
      
     
-    private void makeDropTarget( final java.io.PrintStream out, final java.awt.Component c, boolean recursive )
+    public void makeDropTarget( final java.io.PrintStream out, final java.awt.Component c, boolean recursive )
     {
         // Make drop target
         final java.awt.dnd.DropTarget dt = new java.awt.dnd.DropTarget();
@@ -645,8 +666,8 @@ public class FileDrop
          * @since 1.0
          */
         public abstract void filesDropped( java.io.File[] files );
-        
-        
+        public abstract void dragEnter();
+        public abstract void dragExit();
     }   // end inner-interface Listener
     
     
