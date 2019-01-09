@@ -2,13 +2,19 @@ package com.apkscanner.gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.io.File;
+import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
+import javax.swing.UIManager;
 
 import com.apkscanner.gui.util.FileDrop;
 import com.apkscanner.resource.Resource;
@@ -30,6 +36,7 @@ public class DropTargetChooser extends JComponent {
 	class DropArea extends JComponent implements FileDrop.Listener {
 		private static final long serialVersionUID = -5908315150932591478L;
 
+		private Font font;
 		private Image image;
 		private String text;
 		private String title;
@@ -43,15 +50,26 @@ public class DropTargetChooser extends JComponent {
 			this.image = image;
 			this.title = title;
 			this.background = background;
+			this.font = UIManager.getFont("Label.font");
 		}
 
 		@Override
 		protected void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			if(!visible) return;
+			Map<?, ?> desktopHints = (Map<?, ?>) Toolkit.getDefaultToolkit().getDesktopProperty("awt.font.desktophints");
+			Graphics2D g2 = (Graphics2D) g;
+			if (desktopHints != null) {
+			    g2.setRenderingHints(desktopHints);
+			} else {
+				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+				g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+			}
 			g.setColor(selected ? background : background.darker());
 	        g.fillRect(0, 0, getWidth(), getHeight());
 	        g.setColor(Color.BLACK);
+	        if(font != null) g.setFont(font.deriveFont(15f));
+    		FontMetrics fm = g.getFontMetrics();
         	int w = getWidth();
         	int h = getHeight();
 	        if(image != null) {
@@ -59,19 +77,17 @@ public class DropTargetChooser extends JComponent {
 	        	int y = (h - image.getHeight(null)) / 2;
 	        	g.drawImage(image, x, y, null);
 	        	if(text != null) {
-	        		FontMetrics fm = g.getFontMetrics();
 	    			x = (w - fm.stringWidth(text)) / 2;
-	    			y = y + image.getHeight(null) + 15;
+	    			y = y + image.getHeight(null) + fm.getHeight();
 	        		g.drawString(text, x, y);
 	        	}
 	        } else if(text != null) {
-        		FontMetrics fm = g.getFontMetrics();
     			int x = (w - fm.stringWidth(text)) / 2;
     			int y = (fm.getAscent() + (h - (fm.getAscent() + fm.getDescent())) / 2);
 	        	g.drawString(text, x, y);
 	        }
 	        if(title != null) {
-	        	g.drawString(title, 10, 20);
+	        	g.drawString(title, 5, fm.getHeight());
 	        }
 		}
 
