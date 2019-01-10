@@ -3,7 +3,6 @@ package com.apkscanner.core.scanner;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.apkscanner.data.apkinfo.PermissionGroup;
 import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.resource.Resource;

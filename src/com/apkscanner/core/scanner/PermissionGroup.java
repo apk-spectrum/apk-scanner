@@ -1,6 +1,8 @@
-package com.apkscanner.data.apkinfo;
+package com.apkscanner.core.scanner;
 
 import java.util.ArrayList;
+
+import com.apkscanner.data.apkinfo.PermissionInfo;
 
 public class PermissionGroup
 {
