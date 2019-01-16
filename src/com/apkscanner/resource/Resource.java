@@ -643,10 +643,9 @@ public enum Resource
 				xmlList.add(new XmlPath(extFile));
 			}
 
-			InputStream xml = Resource.class.getResourceAsStream("/values/strings-" + lang + ".xml");
-			if(xml != null) {
-				xmlList.add(new XmlPath(xml));
-			}
+			try(InputStream xml = Resource.class.getResourceAsStream("/values/strings-" + lang + ".xml")) {
+				if(xml != null) xmlList.add(new XmlPath(xml));
+			} catch(IOException e) { }
 		}
 
 		String ext_lang_value_path = value_path + "strings.xml";

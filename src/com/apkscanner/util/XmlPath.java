@@ -1,7 +1,6 @@
 package com.apkscanner.util;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -14,179 +13,242 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class XmlPath {
-	private Document document = null;
-	private XPath xpath = null;
-	private Object objNode = null;
-	private QName QType = null;
+	private static final XPathFactory xPathFactory;
+	private static final DocumentBuilderFactory documentBuilderFactory;
+
+	private XPath xPath = xPathFactory.newXPath();
+	private XObject xObject;
 
 	private Exception lastException = null;
 
-	public XmlPath(XmlPath clone) {
-		document = clone.document;
-		xpath = clone.xpath;
-		objNode = clone.objNode;
-		QType = clone.QType;
+	static {
+		xPathFactory = XPathFactory.newInstance();
+		documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		documentBuilderFactory.setIgnoringComments(false);
+	}
+
+	public class XObject {
+		private Object object;
+		private XObject(Node node) { object = node; }
+		private XObject(NodeList nodeList) { object = nodeList; }
+		public Object getObject() { return object; }
+	}
+
+	public class XNode extends XObject {
+		public XNode(Node node) { super(node); }
+	}
+
+	public class XNodeList extends XObject {
+		public XNodeList(NodeList nodeList) { super(nodeList); }
+	}
+
+	public XmlPath() {
+		try {
+			xObject = new XNode(documentBuilderFactory.newDocumentBuilder().newDocument());
+		} catch (ParserConfigurationException e) {
+			lastException = e;
+			e.printStackTrace();
+		}
 	}
 
 	public XmlPath(File xmlFile) {
 		try {
-			InputSource is = new InputSource(new FileReader(xmlFile));
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			factory.setIgnoringComments(false);
-			document = factory.newDocumentBuilder().parse(is);
-			xpath = XPathFactory.newInstance().newXPath();
+			xObject = new XNode(documentBuilderFactory.newDocumentBuilder().parse(xmlFile));
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			lastException = e;
 			e.printStackTrace();
-			document = null;
-			xpath = null;
 		}
 	}
 
 	public XmlPath(InputStream xml) {
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			factory.setIgnoringComments(false);
-			document = factory.newDocumentBuilder().parse(xml);
-			xpath = XPathFactory.newInstance().newXPath();
+			xObject = new XNode(documentBuilderFactory.newDocumentBuilder().parse(xml));
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			lastException = e;
 			e.printStackTrace();
-			document = null;
-			xpath = null;
 		}
 	}
 
 	public XmlPath(String xmlContent) {
-		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			factory.setIgnoringComments(false);
-			document = factory.newDocumentBuilder().parse(new InputSource(new StringReader(xmlContent)));
-			xpath = XPathFactory.newInstance().newXPath();
+		try (StringReader sr = new StringReader(xmlContent)) {
+			xObject = new XNode(documentBuilderFactory.newDocumentBuilder().parse(new InputSource(sr)));
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			lastException = e;
 			e.printStackTrace();
-			document = null;
-			xpath = null;
 		}
 	}
 
 	public XmlPath(Node node) {
-		if(node != null) {
-			objNode = node;
-			QType = XPathConstants.NODE;
+		if(node == null) {
+			lastException = new NullPointerException("starting node is null");
+			return;
 		}
+		xObject = new XNode(node);
 	}
 
-	public XmlPath(NodeList node) {
-		if(node != null) {
-			objNode = node;
-			QType = XPathConstants.NODESET;
+	public XmlPath(NodeList nodeList) {
+		if(nodeList == null) {
+			lastException = new NullPointerException("starting node is null");
+			return;
 		}
+		xObject = new XNodeList(nodeList);
+	}
+
+	public XmlPath(XmlPath clone) {
+		xObject = clone.xObject;
+	}
+
+	protected Node getNode() {
+		return xObject instanceof XNode ? (Node) xObject.getObject() : null;
+	}
+
+	protected NodeList getNodeList() {
+		return xObject instanceof XNodeList ? (NodeList) xObject.getObject() : null;
+	}
+
+	public Object getData() {
+		return xObject != null ? xObject.getObject() : null;
+	}
+
+	public QName getDataType() {
+		return xObject instanceof XNode ? XPathConstants.NODE : XPathConstants.NODESET;
 	}
 
 	public Object evaluate(String expression, QName returnType) {
-		if(xpath == null) return null;
-
-		//Log.i("evaluate() " + expression + ", " + document + ", " + returnType);
+		//Log.v("evaluate() " + expression + ", " + baseNode + ", " + returnType);
+		if(expression == null || expression.isEmpty()) return null;
+		if(!(xObject instanceof XNode)) {
+			Log.w("Unable to evaluate expression using this context");
+			return null;
+		}
+		Object result = null;
 		try {
-			objNode = xpath.evaluate(expression, document, returnType);
-			QType = objNode != null ? returnType : null;
-			return objNode;
+			result = xPath.evaluate(expression, xObject.getObject(), returnType);
 		} catch (XPathExpressionException e) {
 			e.printStackTrace();
-			QType = null;
-			objNode = null;
 		}
-		return objNode;
+		//Log.v("evaluate() result " + result);
+		return result;
 	}
 
-	public boolean isNode(String expression) {
-		return (getNode(expression).getNode() != null);
+	public Node evaluateNode(String expression) {
+		return (Node) evaluate(expression, XPathConstants.NODE);
 	}
 
-	public Node getNode() {
-		return (Node)(QType == XPathConstants.NODE ? objNode : null);
+	public NodeList evaluateNodeList(String expression) {
+		return (NodeList) evaluate(expression, XPathConstants.NODESET);
+	}
+
+	public boolean isNodeExisted(String expression) {
+		return evaluateNode(expression) instanceof Node;
+	}
+
+	public int getCount() {
+		NodeList nodeList = getNodeList();
+		return nodeList != null ? nodeList.getLength() : (getNode() != null ? 1 : 0);
+	}
+
+	public int getCount(String expression) {
+		NodeList list = evaluateNodeList(expression);
+		return list != null ? list.getLength() : 0;
 	}
 
 	public XmlPath getNode(String expression) {
-		evaluate(expression, XPathConstants.NODE);
-		return this; 
+		Node node = evaluateNode(expression);
+		return node != null ? new XmlPath(node) : null;
 	}
 
-	public NodeList getNodeList() {
-		return (NodeList)(QType == XPathConstants.NODESET ? objNode : null);
+	public XmlPath getNode(int index) {
+		NodeList nodeList = null;
+		if(index < 0 || (nodeList = getNodeList()) == null || nodeList.getLength() <= index) {
+			return null;
+		}
+		return new XmlPath(nodeList.item(index));
 	}
 
 	public XmlPath getNodeList(String expression) {
-		evaluate(expression, XPathConstants.NODESET);
-		return this;
+		NodeList list = evaluateNodeList(expression);
+		return list != null ? new XmlPath(list) : null;
 	}
 
-	public String getAttributes(String name) {
-		if(getNode() == null || getNode().getAttributes() == null) {
-			return null;
-		}
-		if(getNode().getAttributes().getNamedItem(name) == null) {
+	public NamedNodeMap getAttributes() {
+		Node node = getNode();
+		return node != null ? node.getAttributes() : null;
+	}
+
+	public NamedNodeMap getAttributes(int index) {
+		return getNode(index).getAttributes();
+	}
+
+	public String getAttribute(String name) {
+		Node node = getNode();
+		NamedNodeMap attrs = null;
+		if(node == null || (attrs = node.getAttributes()) == null)  return null;
+		if(attrs.getNamedItem(name) == null) {
 			if(name.indexOf(":") == -1) return null;
 			String shortName = name.substring(name.indexOf(":"));
 			//Log.i("getAttributes() shortName " + shortName);
-			for(int i=0; i < getNode().getAttributes().getLength(); i++) {
+			for(int i=0; i < attrs.getLength(); i++) {
 				//Log.i("getAttributes() " + i + " : " + getNode().getAttributes().item(i).getNodeName());
-				if(getNode().getAttributes().item(i).getNodeName().endsWith(shortName)) {
+				if(attrs.item(i).getNodeName().endsWith(shortName)) {
 					//Log.i("getAttributes() maybe...... ");
-					return getNode().getAttributes().item(i).getTextContent();
+					return attrs.item(i).getTextContent();
 				}
 			}
 			return null;
 		}
 
-		return getNode().getAttributes().getNamedItem(name).getTextContent();
+		return attrs.getNamedItem(name).getTextContent();
 	}
 
-	public String getAttributes(int idx, String name) {
-		if(getNodeList() == null || getNodeList().item(idx) == null 
-				|| getNodeList().item(idx).getAttributes() == null) {
+	public String getAttribute(int index, String name) {
+		Node node = null;
+		NodeList list = null;
+		if(index < 0 || (list = getNodeList()) == null || list.getLength() <= index
+				|| (node = list.item(index)) == null || node.getAttributes() == null) {
 			return null;
 		}
-		if(getNodeList().item(idx).getAttributes().getNamedItem(name) == null) {
+		NamedNodeMap attrs = node.getAttributes();
+		if(attrs.getNamedItem(name) == null) {
 			if(name.indexOf(":") == -1) return null;
 			String shortName = name.substring(name.indexOf(":"));
 			//Log.i("getAttributes() shortName " + shortName);
-			for(int i=0; i < getNodeList().item(idx).getAttributes().getLength(); i++) {
+			for(int i=0; i < attrs.getLength(); i++) {
 				//Log.i("getAttributes() " + i + " : " + getNodeList().item(idx).getAttributes().item(i).getNodeName());
-				if(getNodeList().item(idx).getAttributes().item(i).getNodeName().endsWith(shortName)) {
+				if(attrs.item(i).getNodeName().endsWith(shortName)) {
 					//Log.i("getAttributes() maybe...... ");
-					return getNodeList().item(idx).getAttributes().item(i).getTextContent();
+					return attrs.item(i).getTextContent();
 				}
 			}
 			return null;
 		}
 
-		return getNodeList().item(idx).getAttributes().getNamedItem(name).getTextContent();
+		return attrs.getNamedItem(name).getTextContent();
 	}
 
 	public String getTextContent() {
-		if(getNode() == null) return null;
-		return getNode().getTextContent();
+		Node node = getNode();
+		return node != null ? node.getTextContent() : null;
 	}
 
-	public String getTextContent(int idx) {
-		if(getNodeList() == null || getNodeList().item(idx) == null) return null;
-		return getNodeList().item(idx).getTextContent();
+	public String getTextContent(int index) {
+		NodeList list = null;
+		if(index < 0 || (list = getNodeList()) == null || list.getLength() <= index) return null;
+		return list.item(index).getTextContent();
 	}
 
 	public String getComment() {
-		if(getNode() == null) return null;
+		Node node = getNode();
+		if(node == null) return null;
 
-		Node preNode = getNode().getPreviousSibling();
+		Node preNode = node.getPreviousSibling();
 		if(preNode.getNodeType() == Node.TEXT_NODE) {
 			preNode = preNode.getPreviousSibling();
 		}
@@ -196,36 +258,43 @@ public class XmlPath {
 		return preNode.getTextContent();
 	}
 
-	public int getLength() {
-		return (QType == XPathConstants.NODESET ? ((NodeList)objNode).getLength() : 0);
+	public short getNodeType() {
+		Node node = getNode();
+		return node != null ? node.getNodeType() : -1;
+	}
+
+	public String getNodeName() {
+		Node node = getNode();
+		return node != null ? node.getNodeName() : null;
 	}
 
 	public XmlPath getParentNode() {
-		Node parent = null;
-		if(getNode() != null)
-			parent = getNode().getParentNode();
-		return new XmlPath(parent);
+		Node node = getNode();
+		return (node != null) ? new XmlPath(node.getParentNode()) : null;
 	}
 
-	public XmlPath getParentNode(int idx) {
-		Node parent = null;
-		if(getNodeList() != null && getNodeList().item(idx) != null) 
-			parent = getNodeList().item(idx).getParentNode();
-		return new XmlPath(parent);
+	public XmlPath getParentNode(int index) {
+		NodeList list = null;
+		if(index < 0 || (list = getNodeList()) == null || list.getLength() <= index) return null;
+		return new XmlPath(list.item(index).getParentNode());
 	}
 
 	public XmlPath getChildNodes() {
-		NodeList child = null;
-		if(getNode() != null)
-			child = getNode().getChildNodes();
-		return new XmlPath(child);
+		Node node = getNode();
+		NodeList list = (node != null) ? node.getChildNodes() : null;
+		return list != null ? new XmlPath(list) : null;
 	}
 
-	public XmlPath getChildNodes(int idx) {
-		NodeList child = null;
-		if(getNodeList() != null && getNodeList().item(idx) != null) 
-			child = getNodeList().item(idx).getChildNodes();
-		return new XmlPath(child);
+	public XmlPath getChildNodes(int index) {
+		NodeList list = null;
+		if(index < 0 || (list = getNodeList()) == null || list.getLength() <= index) return null;
+		return new XmlPath(list.item(index).getChildNodes());
+	}
+
+	public int getChildCount() {
+		Node node = getNode();
+		NodeList list = (node != null) ? node.getChildNodes() : null;
+		return list != null ? list.getLength() : -1;
 	}
 
 	public Exception getLastException() {
