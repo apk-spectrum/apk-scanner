@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.apkscanner.annotations.NonNull;
 import com.apkscanner.util.Log;
@@ -40,23 +39,23 @@ public class ManifestReader
 			throw new InvalidManifestException("Fail to parse xml", manifest.getLastException());
 		}
 
-		if(manifest.getNodeList("/manifest").getLength() != 1) {
+		if(manifest.getCount("/manifest") != 1) {
 			throw new InvalidManifestException("Must have only one <manifest> tag on root");
 		}
 
-		if(manifest.getNodeList("/manifest/plugin").getLength() != 1) {
+		if(manifest.getCount("/manifest/plugin") != 1) {
 			throw new InvalidManifestException("Must have only one <plugin> tag on manifest");
 		}
 
-		if(manifest.getNode("/manifest/plugin").getChildNodes().getLength() == 0) {
+		if(manifest.getNode("/manifest/plugin").getChildCount() == 0) {
 			throw new InvalidManifestException("No have plugin");
 		}
 
 		XmlPath node = manifest.getNode("/manifest");
-		String packageName = node.getAttributes("package");
-		String versionName = node.getAttributes("versionName");
-		int versionCode = node.getAttributes("versionCode") != null ? Integer.valueOf(node.getAttributes("versionCode")) : 0;
-		String minScannerVersion = node.getAttributes("minScannerVersion");
+		String packageName = node.getAttribute("package");
+		String versionName = node.getAttribute("versionName");
+		int versionCode = node.getAttribute("versionCode") != null ? Integer.valueOf(node.getAttribute("versionCode")) : 0;
+		String minScannerVersion = node.getAttribute("minScannerVersion");
 
 		PlugIn plugin = makePlugin(manifest);
 		Resources[] resources = makeResources(manifest);
@@ -67,12 +66,12 @@ public class ManifestReader
 
 	static private PlugIn makePlugin(@NonNull XmlPath manifest) {
 		XmlPath node = manifest.getNode("/manifest/plugin");
-		boolean enabled = !"false".equals(node.getAttributes("enabled"));
-		String label = node.getAttributes("label");
-		String icon = node.getAttributes("icon");
-		String description = node.getAttributes("description");
-		boolean useNetworkSetting = "true".equals(node.getAttributes("useNetworkSetting"));
-		boolean useConfigurationSetting = "true".equals(node.getAttributes("useConfigurationSetting"));
+		boolean enabled = !"false".equals(node.getAttribute("enabled"));
+		String label = node.getAttribute("label");
+		String icon = node.getAttribute("icon");
+		String description = node.getAttribute("description");
+		boolean useNetworkSetting = "true".equals(node.getAttribute("useNetworkSetting"));
+		boolean useConfigurationSetting = "true".equals(node.getAttribute("useConfigurationSetting"));
 
 		Component[] components =  makeComponents(manifest);
 		return new PlugIn(enabled, label, icon, description, components, useNetworkSetting, useConfigurationSetting);
@@ -80,12 +79,12 @@ public class ManifestReader
 
 	static private Component[] makeComponents(@NonNull XmlPath manifest) {
 		ArrayList<Component> components = new ArrayList<>();
-		NodeList list = manifest.getNode("/manifest/plugin").getChildNodes().getNodeList();
-		for(int i = 0; i < list.getLength(); i++) {
-			Node element = list.item(i);
-			if(element.getNodeType() == Node.ELEMENT_NODE) {
+		XmlPath list = manifest.getNodeList("/manifest/plugin/*");
+		for(int i = 0; i < list.getCount(); i++) {
+			XmlPath node = list.getNode(i);
+			if(node.getNodeType() == Node.ELEMENT_NODE) {
 				int type;
-				switch(element.getNodeName()) {
+				switch(node.getNodeName()) {
 					case "package-searcher": type = Component.TYPE_PACAKGE_SEARCHER; break;
 					case "package-searcher-linker": type = Component.TYPE_PACAKGE_SEARCHER_LINKER; break;
 					case "update-checker": type = Component.TYPE_UPDATE_CHECKER; break;
@@ -96,14 +95,13 @@ public class ManifestReader
 					case "plugin-group" : type = Component.TYPE_PLUGIN_GROUP; break;
 					default: type = Component.TYPE_UNKNWON;
 				}
-				XmlPath node = new XmlPath(element);
-				boolean enabled = !"false".equals(node.getAttributes("enabled"));
-				String label = node.getAttributes("label");
-				String icon = node.getAttributes("icon");
-				String description = node.getAttributes("description");
-				String name = node.getAttributes("name");
-				String url = node.getAttributes("url");
-				String pluginGroup = node.getAttributes("pluginGroup");
+				boolean enabled = !"false".equals(node.getAttribute("enabled"));
+				String label = node.getAttribute("label");
+				String icon = node.getAttribute("icon");
+				String description = node.getAttribute("description");
+				String name = node.getAttribute("name");
+				String url = node.getAttribute("url");
+				String pluginGroup = node.getAttribute("pluginGroup");
 
 				//Linker[] linkers = makeLinker(node);
 				String target = null;
@@ -119,21 +117,21 @@ public class ManifestReader
 
 				switch(type) {
 				case Component.TYPE_PACAKGE_SEARCHER_LINKER:
-					target = node.getAttributes("target");
-					preferLang = node.getAttributes("preferLanguage");
+					target = node.getAttribute("target");
+					preferLang = node.getAttribute("preferLanguage");
 				case Component.TYPE_PACAKGE_SEARCHER:
-					visibleToBasic = !"false".equals(node.getAttributes("visibleToBasic"));
+					visibleToBasic = !"false".equals(node.getAttribute("visibleToBasic"));
 					break;
 				case Component.TYPE_UPDATE_CHECKER_LINKER:
-					updateUrl = node.getAttributes("updateUrl");
-					periodDay = node.getAttributes("periodDay");
-					targetPackageName = node.getAttributes("targetPackageName");
+					updateUrl = node.getAttribute("updateUrl");
+					periodDay = node.getAttribute("periodDay");
+					targetPackageName = node.getAttribute("targetPackageName");
 					break;
 				case Component.TYPE_EXTERNAL_TOOL_LINKER:
-					path = node.getAttributes("path");
-					param = node.getAttributes("param");
-					like = node.getAttributes("like");
-					supportedOS = node.getAttributes("supportedOS");
+					path = node.getAttribute("path");
+					param = node.getAttribute("param");
+					like = node.getAttribute("like");
+					supportedOS = node.getAttribute("supportedOS");
 					break;
 				}
 				components.add(new Component(type, enabled, label, icon, description, name, url, /* linkers */
@@ -148,15 +146,16 @@ public class ManifestReader
 		//Log.d("makeLinker() " + component.toString());
 		ArrayList<Linker> linkers = new ArrayList<>();
 		XmlPath node = component.getChildNodes();
-		for(int i = 0; i < node.getLength(); i++) {
-			if(node.getNodeList().item(i).getNodeType() != Node.ELEMENT_NODE) continue;
-			if(!"linker".equals(node.getNodeList().item(i).getNodeName())) {
-				Log.w("this is no linker node : " + node.getNodeList().item(i).getNodeName());
+		for(int i = 0; i < node.getCount(); i++) {
+			XmlPath comp = node.getNode(i);
+			if(comp.getNodeType() != Node.ELEMENT_NODE) continue;
+			if(!"linker".equals(comp.getNodeName())) {
+				Log.w("this is no linker node : " + comp.getNodeName());
 				continue;
 			}
-			String url = node.getAttributes(i, "url");
-			String target = node.getAttributes(i, "target");
-			String preferLang = node.getAttributes(i, "preferLang");
+			String url = node.getAttribute(i, "url");
+			String target = node.getAttribute(i, "target");
+			String preferLang = node.getAttribute(i, "preferLang");
 			linkers.add(new Linker(url, target, preferLang));
 		}
 		return !linkers.isEmpty() ? linkers.toArray(new Linker[linkers.size()]) : null;
@@ -165,19 +164,20 @@ public class ManifestReader
 	private static Resources[] makeResources(XmlPath manifest) {
 		ArrayList<Resources> resources = new ArrayList<>();
 		XmlPath node = manifest.getNodeList("/manifest/resources");
-		for(int i = 0; i < node.getLength(); i++) {
-			String src = node.getAttributes(i, "src");
-			String lang = node.getAttributes(i, "lang");
+		for(int i = 0; i < node.getCount(); i++) {
+			String src = node.getAttribute(i, "src");
+			String lang = node.getAttribute(i, "lang");
 			ArrayList<StringData> datas = new ArrayList<>();
 			XmlPath child = node.getChildNodes(i);
-			
-			for(int j=0; j<child.getLength(); j++) {
-				if(child.getNodeList().item(j).getNodeType() != Node.ELEMENT_NODE) continue;
-				if(!"string".equals(child.getNodeList().item(j).getNodeName())) {
-					Log.w("this is no string node : " + child.getNodeList().item(j).getNodeName());
+
+			for(int j=0; j<child.getCount(); j++) {
+				XmlPath res = child.getNode(j);
+				if(res.getNodeType() != Node.ELEMENT_NODE) continue;
+				if(!"string".equals(res.getNodeName())) {
+					Log.w("this is no string node : " + res.getNodeName());
 					continue;
 				}
-				String name = child.getAttributes(j, "name");
+				String name = child.getAttribute(j, "name");
 				String data = child.getTextContent(j);
 				datas.add(new StringData(name, data));	
 			}
@@ -189,9 +189,9 @@ public class ManifestReader
 	private static Configuration[] makeConfigurations(XmlPath manifest) {
 		ArrayList<Configuration> configurations = new ArrayList<>();
 		XmlPath node = manifest.getNodeList("/manifest/configuration");
-		for(int i = 0; i < node.getLength(); i++) {
-			String name = node.getAttributes(i, "name");
-			String value = node.getAttributes(i, "value");
+		for(int i = 0; i < node.getCount(); i++) {
+			String name = node.getAttribute(i, "name");
+			String value = node.getAttribute(i, "value");
 			configurations.add(new Configuration(name, value));
 		}
 		return configurations.toArray(new Configuration[configurations.size()]);

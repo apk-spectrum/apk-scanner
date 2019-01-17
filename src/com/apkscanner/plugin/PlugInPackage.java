@@ -15,8 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.w3c.dom.NodeList;
-
 import com.apkscanner.plugin.manifest.Component;
 import com.apkscanner.plugin.manifest.Configuration;
 import com.apkscanner.plugin.manifest.InvalidManifestException;
@@ -366,23 +364,26 @@ public class PlugInPackage
 			}
 			if(res.src != null && !res.src.trim().isEmpty()) {
 				URI uri = getResourceUri(res.src);
-				InputStream is = null;
+
 				XmlPath resXPath = null;
 				try {
 					URLConnection conn = uri.toURL().openConnection();
 			        conn.connect();
-			        is = conn.getInputStream();
-			        resXPath = new XmlPath(is);
+			        try(InputStream is = conn.getInputStream()) {
+			        	if(is != null) resXPath = new XmlPath(is);
+			        } catch (IOException e) { }
 				} catch(IOException e) {
 					Log.e(e.getMessage());
-				} finally {
-					try {
-						if(is != null) is.close();
-					} catch (IOException e) { }
 				}
-				NodeList list = resXPath.getNodeList("/resources/string").getNodeList();
-				for(int i=0; i < list.getLength(); i++) {
-					map.put(list.item(i).getAttributes().getNamedItem("name").getNodeValue(), list.item(i).getTextContent());
+
+				if(resXPath != null) {
+					XmlPath list = resXPath.getNodeList("/resources/string");
+					for(int i=0; i < list.getCount(); i++) {
+						XmlPath node = list.getNode(i);
+						map.put(node.getAttribute("name"), node.getTextContent());
+					}
+				} else {
+					Log.w("Can not read src : " + res.src);
 				}
 			}
 			for(StringData data: res.strings) {

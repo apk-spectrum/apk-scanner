@@ -1,5 +1,6 @@
 package com.apkscanner.tool.aapt;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -292,10 +293,11 @@ public class AaptXmlTreePath
 	private String getAttrName(String id)
 	{
 		if(attrIdPath == null) {
-			InputStream xml = Resource.class.getResourceAsStream("/values/public.xml");
-			attrIdPath = new XmlPath(xml);
+			try(InputStream xml = Resource.class.getResourceAsStream("/values/public.xml")) {
+				if(xml != null) attrIdPath = new XmlPath(xml);
+			} catch (IOException e) { }
 		}
-		String name = attrIdPath.getNode("/resources/public[@id='" + id + "']").getAttributes("name");
+		String name = attrIdPath.getNode("/resources/public[@id='" + id + "']").getAttribute("name");
 		if(name == null) {
 			name = id;
 		}

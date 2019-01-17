@@ -96,11 +96,13 @@ public class PermissionGroupManager
 		if(xmlPermissions != null) {
 			XmlPath groupXPath = xmlPermissions.getNode("/manifest/permission-group[@name='" +  group + "']");
 			if(groupXPath != null) {
-				permGroup.icon = getIconPath(groupXPath.getAttributes("android:icon"));
-				permGroup.label = getInfoString(groupXPath.getAttributes("android:label"));
-				permGroup.desc = getInfoString(groupXPath.getAttributes("android:description"));
+				permGroup.icon = getIconPath(groupXPath.getAttribute("android:icon"));
+				permGroup.label = getInfoString(groupXPath.getAttribute("android:label"));
+				permGroup.desc = getInfoString(groupXPath.getAttribute("android:description"));
 				if(permGroup.label != null) permGroup.label = permGroup.label.replaceAll("\"", "");
 				if(permGroup.desc != null) permGroup.desc = permGroup.desc.replaceAll("\"", "");
+			} else {
+				permGroup.icon = getIconPath(null);
 			}
 		}
 		if(permGroup.label != null) {

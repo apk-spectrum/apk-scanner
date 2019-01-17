@@ -356,21 +356,19 @@ public class PackageInfo {
 
 		if(xmlContent.indexOf("Permission denied") <= -1) { 
 			XmlPath packagesXml = new XmlPath(xmlContent.toString());
-
-			packagesXml.getNodeList("/packages/package[@name='" + packageName + "']/sigs/cert");
+			XmlPath certs = packagesXml.getNodeList("/packages/package[@name='" + packageName + "']/sigs/cert");
 
 			ArrayList<String> sigsList = new ArrayList<String>(); 
-			int signCount = packagesXml.getLength();
+			int signCount = certs.getCount();
 			for(int i = 0; i < signCount; i++) {
-				String key = packagesXml.getAttributes(i, "key");
+				String key = certs.getAttribute(i, "key");
 
 				if(key == null || key.isEmpty()) {
-					XmlPath keyPath = new XmlPath(packagesXml);
-					String index = packagesXml.getAttributes(i, "index");
-					keyPath.getNodeList("/packages/package/sigs/cert[@index='"+index+"' and @key]");
-					int keyCount = keyPath.getLength();
+					String index = certs.getAttribute(i, "index");
+					XmlPath keyPath = packagesXml.getNodeList("/packages/package/sigs/cert[@index='"+index+"' and @key]");
+					int keyCount = keyPath.getCount();
 					for(int j=0; j < keyCount; j++) {
-						key = keyPath.getAttributes(j, "key");
+						key = keyPath.getAttribute(j, "key");
 						if(key == null || key.isEmpty()) {
 							continue;
 						}
