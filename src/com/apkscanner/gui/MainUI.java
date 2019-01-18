@@ -256,9 +256,11 @@ public class MainUI extends JFrame
 				} catch (InterruptedException | ExecutionException e) {
 					e.printStackTrace();
 				}
-				if(updaters != null && updaters.length > 0
-						&& !"true".equals(PlugInConfig.getGlobalConfiguration(PlugInConfig.CONFIG_NO_LOOK_UPDATE_POPUP))) {
-					UpdateNotificationWindow.show(MainUI.this, updaters);
+				if(updaters != null && updaters.length > 0) {
+					toolBar.setBadgeCount(updaters.length);
+					if(!"true".equals(PlugInConfig.getGlobalConfiguration(PlugInConfig.CONFIG_NO_LOOK_UPDATE_POPUP))) {
+						UpdateNotificationWindow.show(MainUI.this, updaters);
+					}
 				}
 				PlugInManager.saveProperty();
 			}

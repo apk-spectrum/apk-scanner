@@ -599,6 +599,10 @@ public class ToolBar extends JToolBar
 		}		
 	}
 
+	public void setBadgeCount(int count) {
+		((ExtensionButton)buttonMap.get(ButtonSet.ABOUT)).setBadge(count);;
+	}
+
 	public void setFlag(int flag) {
 		int preFlag = this.flag;
 		if(flag != FLAG_LAYOUT_DEVICE_CONNECTED) {
