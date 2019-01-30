@@ -1,5 +1,7 @@
 package com.apkscanner.data.apkinfo;
 
+import java.util.Arrays;
+
 public class PermissionInfo
 {
     public static final int PROTECTION_NORMAL = 0;
@@ -19,7 +21,7 @@ public class PermissionInfo
 
     public static final int PROTECTION_MASK_BASE = 0xf;
     public static final int PROTECTION_MASK_FLAGS = 0xff0;
-    
+
     public static final String[] DeprecatedPermissionList = new String[] {
     	"android.permission.BIND_CARRIER_MESSAGING_SERVICE:API level 23.\n - Use BIND_CARRIER_SERVICES instead",
     	"android.permission.GET_TASKS:API level 21.\n - No longer enforced.",
@@ -28,38 +30,68 @@ public class PermissionInfo
     	"android.permission.RESTART_PACKAGES:API level 8.\n - The restartPackage(String) API is no longer supported.",
     	"android.permission.SET_PREFERRED_APPLICATIONS:API level 7.\n - No longer useful, see addPackageToPreferred(String) for details."
     };
-    
+
 	public ResourceInfo[] descriptions = null; // "string resource"
 	public ResourceInfo[] icons = null; // "drawable resource"
 	public ResourceInfo[] labels = null; // "string resource"
 	public String name = null; // "string"
 	public String permissionGroup = null; // "string"
-	public String protectionLevel = null; /* ["normal" | "dangerous" | 
+	public String protectionLevel = null; /* ["normal" | "dangerous" |
                              "signature" | "signatureOrSystem"] */
+	public String permissionFlags = null;
+
+	public PermissionInfo() { }
+
+	public PermissionInfo(PermissionInfo info) {
+		descriptions = info.descriptions;
+		icons = info.icons;
+		labels = info.labels;
+		name = info.name;
+		permissionGroup = info.permissionGroup;
+		protectionLevel = info.protectionLevel;
+		permissionFlags = info.permissionFlags;
+	}
+
+	@Override
+	public boolean equals(Object target) {
+		if(!(target instanceof PermissionInfo)) return false;
+		PermissionInfo other = (PermissionInfo) target;
+		return stringEquals(name, other.name)
+				&& stringEquals(permissionGroup, other.permissionGroup)
+				&& stringEquals(protectionLevel, other.protectionLevel)
+				&& stringEquals(permissionFlags, other.permissionFlags)
+				&& Arrays.deepEquals(labels, other.labels)
+				&& Arrays.deepEquals(descriptions, other.descriptions)
+				&& Arrays.deepEquals(icons, other.icons);
+	}
+
+	protected boolean stringEquals(String a, String b) {
+		return ((a == null && b == null) || (a != null && a.equals(b)));
+	}
 
 	public boolean isDangerousLevel()
 	{
-		return (protectionLevel != null && protectionLevel.indexOf("dangerous") > -1) ? true : false;
+		return (protectionLevel != null && protectionLevel.contains("dangerous"));
 	}
-	
+
 	public boolean isSignatureLevel()
 	{
-		return (protectionLevel != null
-				&& protectionLevel.indexOf("signature") > -1 && protectionLevel.indexOf("ystem") == -1 && protectionLevel.indexOf("privileged") == -1) ? true : false;
+		return (protectionLevel != null && protectionLevel.contains("signature")
+				&& !protectionLevel.contains("ystem") && !protectionLevel.contains("privileged"));
 	}
-	
+
 	public boolean isSignatureOrSystemLevel()
 	{
-		return (protectionLevel != null
-				&& protectionLevel.indexOf("signature") > -1 && (protectionLevel.indexOf("ystem") > -1 || protectionLevel.indexOf("privileged") > -1)) ? true : false;
+		return (protectionLevel != null && protectionLevel.contains("signature")
+				&& (protectionLevel.contains("ystem") || protectionLevel.contains("privileged")));
 	}
 
 	public boolean isSystemLevel()
 	{
-		return (protectionLevel != null && protectionLevel.indexOf("signature") == -1
-				&& (protectionLevel.indexOf("ystem") > -1 || protectionLevel.indexOf("privileged") > -1)) ? true : false;
+		return (protectionLevel != null && !protectionLevel.contains("signature")
+				&& (protectionLevel.contains("ystem") || protectionLevel.contains("privileged")));
 	}
-	
+
 	public boolean isDeprecated()
 	{
 		for(String s: DeprecatedPermissionList) {
@@ -67,7 +99,17 @@ public class PermissionInfo
 		}
 		return false;
 	}
-	
+
+	public boolean isRemoved()
+	{
+		return permissionFlags != null && permissionFlags.contains("removed");
+	}
+
+	public boolean isCostsMoney()
+	{
+		return permissionFlags != null && permissionFlags.contains("costsMoney");
+	}
+
 	public String getDeprecatedMessage()
 	{
 		for(String s: DeprecatedPermissionList) {
@@ -75,7 +117,7 @@ public class PermissionInfo
 		}
 		return null;
 	}
-	
+
     public static int fixProtectionLevel(int level)
     {
         if (level == PROTECTION_SIGNATURE_OR_SYSTEM) {

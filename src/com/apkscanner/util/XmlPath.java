@@ -328,6 +328,7 @@ public class XmlPath {
 	}
 
 	private void setComment(Node node, String text) {
+		if(text == null) text = "";
 		Node comment = getCommentNode(node);
 		if(comment != null) {
 			comment.setTextContent(text);
@@ -456,7 +457,21 @@ public class XmlPath {
 				} else elName = part;
 
 				Node next = document.createElement(elName);
-				path.getNode().appendChild(next);
+				
+				if(attrs == null) {
+					path.getNode().appendChild(next);
+				} else {
+					XmlPath list = path.getNodeList(elName+"[" + attrs.split(" and ")[0] + "]");
+					if(list.getCount() == 0) {
+						path.getNode().appendChild(next);
+					} else {
+						Node last = list.getNodeList().item(list.getCount()-1);
+						path.getNode().insertBefore(next, last);
+						//path.getNode().
+						path.getNode().removeChild(last);
+						path.getNode().insertBefore(last, next);
+					}
+				}
 				path = new XmlPath(next);
 
 				if (attrs != null) {
@@ -508,7 +523,7 @@ public class XmlPath {
 
 			tr.transform(new DOMSource(document), result);
 		} catch (TransformerException te) {
-			Log.e(te.getMessage());
+			te.printStackTrace();
 		}
 	}
 
