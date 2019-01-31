@@ -18,21 +18,33 @@ public class PermissionManager
 
 	private Map<String, PermissionRecord> recordMap;
 	private Map<String, PermissionGroupRecord> recordGroupMap;
+	private Map<Integer, Map<String, PermissionGroupInfoExt>> cacheGroupInfo;
+
+	private int sdkVersion = -1;
 
 	static {
 		xmlPermissionDB = new XmlPath(Resource.class.getResourceAsStream("/values/PermissionsHistory.xml"));
 	}
 
 	public PermissionManager() {
-		this(null);
+		recordMap = new HashMap<>();
+		recordGroupMap = new HashMap<>();
+		cacheGroupInfo = new HashMap<>();
 	}
 
 	public PermissionManager(UsesPermissionInfo[] usesePermission) {
-		recordMap = new HashMap<>();
-		recordGroupMap = new HashMap<>();
+		this();
+		addUsesPermission(usesePermission);
+	}
+
+	public void addUsesPermission(UsesPermissionInfo[] usesePermission) {
 		if(usesePermission != null) {
 			for(UsesPermissionInfo info: usesePermission) {
 				PermissionRecord record = getPermissionRecord(info.name);
+				if(record == null) {
+					Log.e("record is null : " + info.name);
+					continue;
+				}
 				record.maxSdkVersion = info.maxSdkVersion;
 				recordMap.put(info.name, record);
 			}
@@ -43,6 +55,21 @@ public class PermissionManager
 				recordMap.put(record.name, record);
 			}
 		}
+		cacheGroupInfo.clear();
+	}
+
+	public void clearPermissions() {
+		recordMap.clear();
+		recordGroupMap.clear();
+		cacheGroupInfo.clear();
+	}
+
+	public void setSdkVersion(int sdkVersion) {
+		this.sdkVersion = sdkVersion;
+	}
+
+	public int getSdkVersion() {
+		return sdkVersion;
 	}
 
 	public PermissionRecord[] getPermissionRecords() {
@@ -84,6 +111,10 @@ public class PermissionManager
 		return group;
 	}
 
+	public PermissionInfoExt[] getPermissions() {
+		return getPermissions(sdkVersion);
+	}
+
 	public PermissionInfoExt[] getPermissions(int sdk) {
 		List<PermissionInfoExt> perms = new ArrayList<>();
 		for(PermissionRecord record: recordMap.values()) {
@@ -92,15 +123,42 @@ public class PermissionManager
 		return perms.toArray(new PermissionInfoExt[perms.size()]);
 	}
 
+	public PermissionInfoExt getPermission(String name) {
+		return getPermission(name, sdkVersion);
+	}
+
 	public PermissionInfoExt getPermission(String name, int sdk) {
 		PermissionRecord record = getPermissionRecord(name);
 		return record != null ? record.getInfomation(sdk) : null;
 	}
 
+	public PermissionGroupInfoExt getPermissionGroup(String name) {
+		return getPermissionGroup(name, sdkVersion);
+	}
+
+	public PermissionGroupInfoExt getPermissionGroup(String name, int sdk) {
+		Map<String, PermissionGroupInfoExt> groups = cacheGroupInfo.get(sdk);
+		if(groups == null) {
+			getPermissionGroups(sdk);
+			groups = cacheGroupInfo.get(sdk);
+		}
+		return groups != null ? groups.get(name) : null;
+	}
+
+	public PermissionGroupInfoExt[] getPermissionGroups() {
+		return getPermissionGroups(sdkVersion);
+	}
+
 	public PermissionGroupInfoExt[] getPermissionGroups(int sdk) {
-		Map<String, PermissionGroupInfoExt> groups = new HashMap<>();
+		Map<String, PermissionGroupInfoExt> groups = cacheGroupInfo.get(sdk);
+		if(groups != null) return groups.values().toArray(new PermissionGroupInfoExt[groups.size()]);
+		groups = new HashMap<>();
 		for(PermissionRecord record: recordMap.values()) {
 			PermissionInfoExt permInfo = (PermissionInfoExt)record.getInfomation(sdk);
+			if(permInfo == null) {
+				Log.e("permission info is null : " + record.name);
+				continue;
+			}
 			String groupName = permInfo.permissionGroup;
 			if(groupName == null || groupName.isEmpty()) groupName = "Unspecified Group";
 			PermissionGroupInfoExt groupInfo = groups.get(groupName);
@@ -117,9 +175,15 @@ public class PermissionManager
 				groupInfo.permissions = new ArrayList<>();
 				groups.put(groupInfo.name, groupInfo);
 			}
+			if(permInfo.isDangerousLevel()) groupInfo.hasDangerous = true;
 			groupInfo.permissions.add(permInfo);
 		}
+		cacheGroupInfo.put(sdk, groups);
 		return groups.values().toArray(new PermissionGroupInfoExt[groups.size()]);
+	}
+
+	public PermissionInfoExt[] getGroupPermissions(String groupName) {
+		return getGroupPermissions(groupName, sdkVersion);
 	}
 
 	public PermissionInfoExt[] getGroupPermissions(String groupName, int sdk) {
@@ -139,12 +203,16 @@ public class PermissionManager
 		return new PermissionRepository(xmlPermissionDB.getNode("/permission-history/sources"));
 	}
 
+	public ResourceInfo[] getResource(String name) {
+		return getResource(name, sdkVersion);
+	}
+
 	public static ResourceInfo[] getResource(String name, int sdk) {
 		if(name == null || name.isEmpty()) return null;
 		ResourceInfo[] resVal = null;
 		if(name.startsWith("@string/")) {
 			XmlPath resources = xmlPermissionDB.getNodeList("/permission-history/resources/*");
-			if(resources == null) return null;
+			if(resources == null) return new ResourceInfo[] { new ResourceInfo(name, null) };
 			List<ResourceInfo> list = new ArrayList<>();
 
 			String id = name.substring(8);
@@ -168,12 +236,12 @@ public class PermissionManager
 					//Log.d("value " + value + ", config " + config );
 				}
 			}
-			resVal = list.toArray(new ResourceInfo[0]);
+			resVal = list.toArray(new ResourceInfo[list.size()]);
 		} else if(name.startsWith("@drawable/")) {
 			String id = name.substring(10);
-			String path = null;
-			URL url = Resource.class.getResource("/icons/" + id + ".png");
-			if(url != null) path = url.getPath();
+			String path = "/icons/" + id + ".png";
+			URL url = Resource.class.getResource(path);
+			if(url != null) path = url.toString();
 			resVal = new ResourceInfo[] { new ResourceInfo(path, null) };
 		} else {
 			resVal = new ResourceInfo[] { new ResourceInfo(name, null) };

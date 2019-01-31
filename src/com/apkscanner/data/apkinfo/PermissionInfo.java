@@ -2,6 +2,8 @@ package com.apkscanner.data.apkinfo;
 
 import java.util.Arrays;
 
+import com.apkscanner.resource.Resource;
+
 public class PermissionInfo
 {
     public static final int PROTECTION_NORMAL = 0;
@@ -165,5 +167,13 @@ public class PermissionInfo
             protLevel += "|preinstalled";
         }
         return protLevel;
+    }
+
+    public String getLabel() {
+    	return ApkInfoHelper.getResourceValue(labels, (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
+    }
+
+    public String getDescription() {
+    	return ApkInfoHelper.getResourceValue(descriptions, (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
     }
 }

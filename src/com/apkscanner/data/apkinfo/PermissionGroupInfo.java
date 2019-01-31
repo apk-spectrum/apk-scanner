@@ -2,6 +2,8 @@ package com.apkscanner.data.apkinfo;
 
 import java.util.Arrays;
 
+import com.apkscanner.resource.Resource;
+
 public class PermissionGroupInfo
 {
 	public ResourceInfo[] descriptions = null; // "string resource"
@@ -32,4 +34,11 @@ public class PermissionGroupInfo
 		return ((a == null && b == null) || (a != null && a.equals(b)));
 	}
 
+    public String getLabel() {
+    	return ApkInfoHelper.getResourceValue(labels, (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
+    }
+
+    public String getDescription() {
+    	return ApkInfoHelper.getResourceValue(descriptions, (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
+    }
 }
