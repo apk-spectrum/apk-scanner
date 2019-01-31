@@ -202,7 +202,11 @@ public class AaptManifestReader
 	        for( int idx=0; idx < permTag.length; idx++ ){
 	        	String name = getAttrValue(permTag[idx], "name");
 	        	String maxSdk = getAttrValue(permTag[idx], "maxSdkVersion");
-	        	UsesPermissionInfo info = PermissionManager.getUsesPermissionInfo(name, maxSdk);
+	        	UsesPermissionInfo info = new UsesPermissionInfo();
+	        	info.name = name;
+	        	if(maxSdk != null && !maxSdk.isEmpty()) {
+	        		info.maxSdkVersion = Integer.parseInt(maxSdk);
+	        	}
 	        	usesPermissionList.add(info);
 	        }
 	        manifestInfo.usesPermission = usesPermissionList.toArray(new UsesPermissionInfo[0]);
@@ -215,8 +219,11 @@ public class AaptManifestReader
 	        for( int idx=0; idx < permTag.length; idx++ ){
 	        	String name = getAttrValue(permTag[idx], "name");
 	        	String maxSdk = getAttrValue(permTag[idx], "maxSdkVersion");
-
-	        	UsesPermissionInfo info = PermissionManager.getUsesPermissionInfo(name, maxSdk);
+	        	UsesPermissionInfo info = new UsesPermissionInfo();
+	        	info.name = name;
+	        	if(maxSdk != null && !maxSdk.isEmpty()) {
+	        		info.maxSdkVersion = Integer.parseInt(maxSdk);
+	        	}
 	        	usesPermissionList.add(info);
 	        }
 	        manifestInfo.usesPermissionSdk23 = usesPermissionList.toArray(new UsesPermissionInfo[0]);

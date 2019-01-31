@@ -13,7 +13,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.zip.ZipEntry;
@@ -26,8 +25,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import com.apkscanner.core.scanner.PermissionGroup;
-import com.apkscanner.core.scanner.PermissionGroupManager;
+import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
+import com.apkscanner.core.permissionmanager.PermissionManager;
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
@@ -39,7 +38,6 @@ import com.apkscanner.data.apkinfo.SupportsScreensInfo;
 import com.apkscanner.data.apkinfo.UsesConfigurationInfo;
 import com.apkscanner.data.apkinfo.UsesFeatureInfo;
 import com.apkscanner.data.apkinfo.UsesLibraryInfo;
-import com.apkscanner.data.apkinfo.UsesPermissionInfo;
 import com.apkscanner.gui.dialog.SdkVersionInfoDlg;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.util.ImageScaler;
@@ -100,7 +98,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	private String notGrantPermmissions = "";
 	private String deprecatedPermissions = "";
 
-	private PermissionGroupManager permissionGroupManager = null; 
+	private PermissionManager permissionManager;
 
 	private boolean hasSignatureLevel = false;
 	private boolean hasSystemLevel = false;
@@ -426,9 +424,10 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 
 		String permGorupImg = makePermGroup();
 
+		int groupCount = permissionManager.getPermissionGroups().length;
 		int infoHeight = 280;
-		if(permissionGroupManager.getPermGroupMap().keySet().size() > 15) infoHeight = 220;
-		else if(permissionGroupManager.getPermGroupMap().keySet().size() > 0) infoHeight = 260;
+		if(groupCount > 15) infoHeight = 220;
+		else if(groupCount > 0) infoHeight = 260;
 
 		mutiLabels = "";
 		for(String s: labels) {
@@ -633,12 +632,15 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		hasSystemLevel = false; // apkInfo.hasSystemLevel;
 		notGrantPermmissions = "";
 
-		ArrayList<UsesPermissionInfo> allPermissions = new ArrayList<UsesPermissionInfo>(); 
 		StringBuilder permissionList = new StringBuilder();
+
 		if(apkInfo.manifest.usesPermission != null && apkInfo.manifest.usesPermission.length > 0) {
+			permissionManager = new PermissionManager();
+			permissionManager.setSdkVersion(27);
+			permissionManager.addUsesPermission(apkInfo.manifest.usesPermission);
+			
 			permissionList.append("<uses-permission> [" +  apkInfo.manifest.usesPermission.length + "]\n");
-			for(UsesPermissionInfo info: apkInfo.manifest.usesPermission) {
-				allPermissions.add(info);
+			for(PermissionInfo info: permissionManager.getPermissions()) {
 				permissionList.append(info.name + " - " + info.protectionLevel);
 				if(info.isSignatureLevel()) hasSignatureLevel = true;
 				if(info.isSignatureOrSystemLevel()) hasSignatureOrSystemLevel = true;
@@ -646,9 +648,9 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 				if(((info.isSignatureLevel() || info.isSignatureOrSystemLevel()) && !(isSamsungSign || isPlatformSign)) || info.isSystemLevel()) {
 					notGrantPermmissions += info.name + " - " + info.protectionLevel + "\n";
 				}
-				if(info.maxSdkVersion != null) {
-					permissionList.append(", maxSdkVersion : " + info.maxSdkVersion);
-				}
+				//if(info.maxSdkVersion != null) {
+					//permissionList.append(", maxSdkVersion : " + info.maxSdkVersion);
+				//}
 				if(info.isDeprecated()) {
 					deprecatedPermissions += info.getDeprecatedMessage() + "\n\n";
 				}
@@ -656,12 +658,12 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			}
 		}
 		if(apkInfo.manifest.usesPermissionSdk23 != null && apkInfo.manifest.usesPermissionSdk23.length > 0) {
+			permissionManager.addUsesPermission(apkInfo.manifest.usesPermissionSdk23);
 			if(permissionList.length() > 0) {
 				permissionList.append("\n");
 			}
 			permissionList.append("<uses-permission-sdk-23> [" +  apkInfo.manifest.usesPermissionSdk23.length + "]\n");
-			for(UsesPermissionInfo info: apkInfo.manifest.usesPermissionSdk23) {
-				allPermissions.add(info);
+			for(PermissionInfo info: permissionManager.getPermissions()) {
 				permissionList.append(info.name + " - " + info.protectionLevel);
 				if(info.isSignatureLevel()) hasSignatureLevel = true;
 				if(info.isSignatureOrSystemLevel()) hasSignatureOrSystemLevel = true;
@@ -669,9 +671,9 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 				if(((info.isSignatureLevel() || info.isSignatureOrSystemLevel()) && !(isSamsungSign || isPlatformSign)) || info.isSystemLevel()) {
 					notGrantPermmissions += info.name + " - " + info.protectionLevel + "\n";
 				}
-				if(info.maxSdkVersion != null) {
-					permissionList.append(", maxSdkVersion : " + info.maxSdkVersion);
-				}
+				//if(info.maxSdkVersion != null) {
+					//permissionList.append(", maxSdkVersion : " + info.maxSdkVersion);
+				//}
 				if(info.isDeprecated()) {
 					deprecatedPermissions += info.getDeprecatedMessage() + "\n\n";
 				}
@@ -693,7 +695,6 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			}
 		}
 		allPermissionsList = permissionList.toString();
-		permissionGroupManager = new PermissionGroupManager(allPermissions.toArray(new UsesPermissionInfo[allPermissions.size()]));
 
 		StringBuilder deviceReqData = new StringBuilder();
 		if(apkInfo.manifest.compatibleScreens != null) {
@@ -770,15 +771,11 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	private String makePermGroup()
 	{
 		StringBuilder permGroup = new StringBuilder("");
-
-		Set<String> keys = permissionGroupManager.getPermGroupMap().keySet();
 		int cnt = 0;
-		for(String key: keys) {
-			PermissionGroup g = permissionGroupManager.getPermGroupMap().get(key);
-			permGroup.append(makeHyperLink("@event", makeImage(g.icon), g.permSummary, g.name, g.hasDangerous?"color:red;":null));
+		for(PermissionGroupInfoExt g: permissionManager.getPermissionGroups()) {
+			permGroup.append(makeHyperLink("@event", makeImage(g.getIconPath()), g.getSummary(), g.name, g.hasDangerous?"color:red;":null));
 			if(++cnt % 15 == 0) permGroup.append("<br/>");
 		}
-
 		return permGroup.toString();
 	}
 
@@ -882,49 +879,36 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 
 	public void showPermDetailDesc(String group)
 	{
-		PermissionGroup g = permissionGroupManager.getPermGroupMap().get(group);
-
+		PermissionGroupInfoExt g = permissionManager.getPermissionGroup(group);
+		Log.e("g " + g + ", " + group);
 		if(g == null) return;
 
-		StringBuilder body = new StringBuilder("");
+		StringBuilder body = new StringBuilder();
 		//body.append("<div id=\"perm-detail-desc\">");
 		body.append("■ ");
 		if(g.label != null) {
-			body.append(g.label + " - ");
+			body.append(g.getLabel() + " - ");
 		}
 		body.append("[" + group + "]\n");
-		if(g.desc != null) {
-			body.append(" : " + g.desc + "\n");
+		if(g.description != null) {
+			body.append(" : " + g.getDescription() + "\n");
 		}
 		body.append("------------------------------------------------------------------------------------------------------------\n\n");
 
-		for(PermissionInfo info: g.permList) {
+		for(PermissionInfo info: g.permissions) {
 			body.append("▶ ");
 			if(info.isDangerousLevel()) {
 				body.append("[DANGEROUS] ");	
 			}
 			if(info.labels != null) {
-				String label = info.labels[0].name;
-				for(ResourceInfo r: info.labels) {
-					if(r.configuration != null && r.configuration.equals(Resource.getLanguage())) {
-						label = r.name;
-						break;
-					}
-				}
-				if(label != null)
-					body.append(label + " ");
+				body.append(info.getLabel() + " ");
 			}
 			body.append("[" + info.name + "]\n");
+			String protection = info.protectionLevel;
+			if(protection == null) protection= "normal";
 			body.append(" - protectionLevel=" + info.protectionLevel + "\n");
 			if(info.descriptions != null) {
-				String description = info.descriptions[0].name;
-				for(ResourceInfo r: info.descriptions) {
-					if(r.configuration != null && r.configuration.equals(Resource.getLanguage())) {
-						description = r.name;
-						break;
-					}
-				}
-				if(description != null) body.append(" : " + description + "\n");
+				body.append(" : " + info.getDescription() + "\n");
 				body.append("\n");
 			}
 		}
