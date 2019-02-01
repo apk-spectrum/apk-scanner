@@ -42,7 +42,7 @@ public class PermissionManager
 			for(UsesPermissionInfo info: usesePermission) {
 				PermissionRecord record = getPermissionRecord(info.name);
 				if(record == null) {
-					Log.e("record is null : " + info.name);
+					Log.v("record is null : " + info.name);
 					continue;
 				}
 				record.maxSdkVersion = info.maxSdkVersion;
@@ -86,7 +86,7 @@ public class PermissionManager
 		}
 		XmlPath permission = xmlPermissionDB.getNode("/permission-history/permissions/permission[@name='" + name + "']");
 		if(permission == null) {
-			Log.e("Unknown permission : " + name);
+			Log.v("Unknown permission : " + name);
 			return null;
 		}
 		PermissionRecord perm = new PermissionRecord(permission);
@@ -98,7 +98,7 @@ public class PermissionManager
 			return recordGroupMap.get(name);
 		}
 		if(name == null || name.trim().isEmpty()) {
-			Log.e("permission name is null or empty");
+			Log.d("permission name is null or empty");
 			return null;
 		}
 		XmlPath node = xmlPermissionDB.getNode("/permission-history/permission-groups/permission-group[@name='" + name + "']");
@@ -224,6 +224,7 @@ public class PermissionManager
 					if(value == null || sdkVer == null
 							|| (sdk > 0 && Integer.parseInt(sdkVer) >= sdk)) {
 						value = strings.getTextContent(j);
+						if(value != null) value = value.replaceAll("\"", "");
 						//Log.d("sdkVer " + sdkVer + " : " + value + " , " + sdk);
 					} else {
 						//Log.d("break sdkVer " + sdkVer + " : " + value + " + " + id);

@@ -6,7 +6,6 @@ import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.PermissionGroupInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.Log;
 
 public class PermissionGroupInfoExt extends PermissionGroupInfo {
 	public int sdk;
@@ -81,9 +80,7 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo {
 
 	public ResourceInfo[] getDescriptions() {
 		if(descriptions != null) return descriptions;
-		Log.e(description);
 		descriptions = PermissionManager.getResource(description, sdk);
-		Log.e(descriptions + "");
 		return descriptions;
 	}
 
