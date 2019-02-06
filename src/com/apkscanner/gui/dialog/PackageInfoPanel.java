@@ -140,8 +140,8 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		style.append("font-size:" + font.getSize() + "pt;}");
 		style.append("#div-button a {text-decoration:none; color:black;}");
 
-		infoPanel.setStyle(style.toString());
-		sysPackInfoPanel.setStyle(style.toString());
+		infoPanel.addStyleRule(style.toString());
+		sysPackInfoPanel.addStyleRule(style.toString());
 
 		dumpsysTextArea = new JTextArea();
 		dumpsysTextArea.setEditable(false);

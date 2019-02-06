@@ -13,17 +13,19 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import javax.imageio.ImageIO;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+import javax.swing.text.html.Option;
 
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
 import com.apkscanner.core.permissionmanager.PermissionManager;
@@ -53,18 +55,20 @@ import com.apkscanner.util.FileUtil.FSStyle;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 
-public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickListener, IProgressListener
+public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickListener, IProgressListener, ListDataListener
 {
 	private static final long serialVersionUID = 6431995641984509482L;
 
-	private JHtmlEditorPane apkinform = null;
+	private static final String CARD_LODING_PAGE = "CARD_LODING_PROCESS";
+	private static final String CARD_APK_INFORMATION = "CARD_APK_INFORMATION";
+
+	private JHtmlEditorPane apkInfoPanel = null;
 	private JPanel lodingPanel = null;
 	private CardLayout cardLayout = new CardLayout();
 
 	private String mutiLabels;
 
 	private boolean wasSetData = false;
-	private long remainTime = 0;
 
 	private String[] labels = new String[] {""};
 	private String appName = "";
@@ -121,12 +125,13 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	@Override
 	public void initialize()
 	{
-		apkinform = new JHtmlEditorPane();
-		apkinform.setEditable(false);
-		apkinform.setOpaque(true);
+		apkInfoPanel = new JHtmlEditorPane();
+		apkInfoPanel.setEditable(false);
+		apkInfoPanel.setOpaque(true);
 
-		apkinform.setBackground(Color.white);
-		apkinform.setHyperlinkClickListener(this);
+		apkInfoPanel.setBackground(Color.white);
+		apkInfoPanel.setHyperlinkClickListener(this);
+		apkInfoPanel.addStyleRule(makeStyleRule());
 
 		// loding panel
 		JLabel logo = new JLabel(Resource.IMG_APK_LOGO.getImageIcon(400, 250));
@@ -141,7 +146,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		TimerLabel = new JLabel("");
 		TimerLabel.setOpaque(true);
 		TimerLabel.setBackground(Color.WHITE);
-		TimerLabel.setBorder(new EmptyBorder(0,0,50,0));		
+		TimerLabel.setBorder(new EmptyBorder(0,0,50,0));
 		TimerLabel.setHorizontalAlignment(JLabel.CENTER);
 
 		lodingPanel = new JPanel();
@@ -151,21 +156,16 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		lodingPanel.add(logo,BorderLayout.NORTH);
 		lodingPanel.add(gif,BorderLayout.CENTER);
 		lodingPanel.add(TimerLabel,BorderLayout.SOUTH);
-		lodingPanel.setVisible(true);
 
 		this.setLayout(cardLayout);
-		this.add("lodingPanel", lodingPanel);
-		this.add("apkinform", apkinform);
+		this.add(CARD_LODING_PAGE, lodingPanel);
+		this.add(CARD_APK_INFORMATION, apkInfoPanel);
 
-		updateUI();
-
-		cardLayout.show(this, "apkinform");
+		cardLayout.show(this, CARD_APK_INFORMATION);
 	}
 
-	@Override
-	public void updateUI() {
-		if(apkinform == null) return;
-
+	private String makeStyleRule()
+	{
 		//Font font = new Font("helvitica", Font.BOLD, 15);
 		JLabel label = new JLabel();
 		Font font = label.getFont();
@@ -177,82 +177,34 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		style.append("font-size:" + font.getSize() + "pt;}");
 		style.append("#basic-info a {text-decoration:none; color:black;}");
 		style.append("#perm-group a {text-decoration:none; color:#"+Integer.toHexString(label.getBackground().getRGB() & 0xFFFFFF)+";}");
-		style.append(".danger-perm {text-decoration:none; color:red;}");
 		style.append("#about {");
 		style.append("font-family:" + font.getFamily() + ";");
 		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
 		style.append("font-size:" + font.getSize() + "pt;}");
 		style.append("#about a {text-decoration:none;}");
-		style.append("#div-button { background-color: #e7e7e7; border: none; color: white; margin:1px; padding: 5px; text-align: center; text-decoration: none; display: inline-block;");
+		style.append("#create-shortcut, #associate-file { background-color: #e7e7e7; border: none; color: white; margin:1px; padding: 5px; text-align: center; text-decoration: none; display: inline-block;");
 		style.append("font-family:" + font.getFamily() + ";");
 		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
 		style.append("font-size:" + font.getSize() + "pt;}");
-		style.append("#div-button a {text-decoration:none; color:black;}");
+		style.append("#create-shortcut a, #associate-file a {text-decoration:none; color:black;}");
 		style.append("H1 {margin-top: 0px; margin-bottom: 0px;}");
 		style.append("H3 {margin-top: 5px; margin-bottom: 0px;}");
 
-		apkinform.setStyle(style.toString());
+		return style.toString();
 	}
 
 	private void showAbout()
 	{
-		StringBuilder strTabInfo = new StringBuilder("");
-		strTabInfo.append("<table>");
-		strTabInfo.append("  <tr>");
-		strTabInfo.append("    <td width=170>");
-		strTabInfo.append("      <image src=\"" + Resource.IMG_APP_ICON.getPath() + "\" width=150 height=150 />");
+		apkInfoPanel.setBody(Resource.RAW_ABUOT_HTML.getString());
+		apkInfoPanel.insertElementFirst("apkscanner-icon-td", "<image src=\"" + Resource.IMG_APP_ICON.getPath() + "\" width=\"150\" height=\"150\">");
+		apkInfoPanel.setInnerHTMLById("apkscanner-title", Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString());
+		apkInfoPanel.setOuterHTMLById("programmer-email", "<a href=\"mailto:" + Resource.STR_APP_MAKER_EMAIL.getString() + "\" title=\"" + Resource.STR_APP_MAKER_EMAIL.getString() + "\">" + Resource.STR_APP_MAKER.getString() + "</a>");
 		if(!SystemUtil.hasShortCut()){
-			strTabInfo.append("<div id=\"div-button\">");
-			strTabInfo.append(makeHyperLink("@event", Resource.STR_BTN_CREATE_SHORTCUT.getString(), null, "function-create-shortcut", null) + "<br/>");
-			strTabInfo.append("</div>");
+			apkInfoPanel.insertElementLast("apkscanner-icon-td", "<div id=\"create-shortcut\">" + makeHyperLink("@event", Resource.STR_BTN_CREATE_SHORTCUT.getString(), null, "function-create-shortcut", null) + "</div>");
 		}
 		if(!SystemUtil.isAssociatedWithFileType(".apk")) {
-			strTabInfo.append("<div id=\"div-button\">");
-			strTabInfo.append(makeHyperLink("@event", Resource.STR_BTN_ASSOC_FTYPE.getString(), null, "function-assoc-apk", null) + "<br/>");
-			strTabInfo.append("</div>");
+			apkInfoPanel.insertElementLast("apkscanner-icon-td", "<div id=\"associate-file\">" + makeHyperLink("@event", Resource.STR_BTN_ASSOC_FTYPE.getString(), null, "function-assoc-apk", null) + "</div>");
 		}
-		strTabInfo.append("    </td>");
-		strTabInfo.append("    <td>");
-		strTabInfo.append("<div id=\"about\">");
-		strTabInfo.append("  <H1>" + Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString() + "</H1>");
-		strTabInfo.append("  <H3>Using following tools</H3>");
-		strTabInfo.append("  Android Asset Packaging Tool, Android Debug Bridge, signapk<br/>");
-		//strTabInfo.append("  " + AdbWrapper.getVersion() + "<br/>");
-		strTabInfo.append("  - <a href=\"http://developer.android.com/tools/help/adb.html\" title=\"Android Developer Site\">http://developer.android.com/tools/help/adb.html</a><br/>");
-		//strTabInfo.append("  Apktool<br/>");
-		//strTabInfo.append("  Apktool " + ApkManager.getApkToolVersion() + "<br/>");
-		//strTabInfo.append("  - <a href=\"http://ibotpeaches.github.io/Apktool/\" title=\"Apktool Project Site\">http://ibotpeaches.github.io/Apktool/</a><br/>");
-		strTabInfo.append("  JD-GUI - <a href=\"http://jd.benow.ca/\" title=\"JD Project Site\">http://jd.benow.ca/</a><br/>");
-		strTabInfo.append("  JADX-GUI - <a href=\"https://github.com/skylot/jadx\" title=\"JADX Project Site\">https://github.com/skylot/jadx</a><br/>");
-		strTabInfo.append("  Bytecode Viewer - <a href=\"https://github.com/konloch/bytecode-viewer\" title=\"Bytecode Viewer Project Site\">https://github.com/konloch/bytecode-viewer</a><br/>");
-		strTabInfo.append("  dex2jar - <a href=\"https://sourceforge.net/projects/dex2jar/\" title=\"JD Project Site\">https://sourceforge.net/projects/dex2jar/</a><br/>");
-		strTabInfo.append("  <H3>Included libraries</H3>");
-		strTabInfo.append("  - <a href=\"https://android.googlesource.com/platform/tools/base/+/master/ddmlib/\" title=\"Google Git Site\">ddmlib</a>,");
-		strTabInfo.append("  <a href=\"https://github.com/google/guava\" title=\"guava Site\">guava-18.0</a>,");
-		strTabInfo.append("  <a href=\"https://github.com/java-native-access/jna\" title=\"jna Site\">jna-4.4.0</a>,");
-		strTabInfo.append("  <a href=\"https://github.com/BlackOverlord666/mslinks\" title=\"mslinks Site\">mslinks</a>,");
-		strTabInfo.append("  <a href=\"http://bobbylight.github.io/RSyntaxTextArea/\" title=\"RSyntaxTextArea Site\">rsyntaxtextarea-2.6.1</a>,<br/>");
-		strTabInfo.append("  <a href=\"https://commons.apache.org/proper/commons-cli/\" title=\"commons-cli Site\">commons-cli-1.3.1</>,");
-		strTabInfo.append("  <a href=\"https://code.google.com/archive/p/json-simple/\" title=\"json-simple Site\">json-simple-1.1.1</a>,");
-		strTabInfo.append("  <a href=\"https://bitbucket.org/luciad/webp-imageio\" title=\"luciad-webp-imageio Site\">luciad-webp-imageio</a>");
-		strTabInfo.append("  <br/><br/><hr/>");
-		strTabInfo.append("  Programmed by <a href=\"mailto:" + Resource.STR_APP_MAKER_EMAIL.getString() + "\" title=\"" + Resource.STR_APP_MAKER_EMAIL.getString() + "\">" + Resource.STR_APP_MAKER.getString() + "</a>, 2015.<br/>");
-		strTabInfo.append("  It is open source project on <a href=\"https://github.com/apk-spectrum/apk-scanner\" title=\"APK Scanner Site\">Github</a>");
-		strTabInfo.append("</div>");
-		strTabInfo.append("    </td>");
-		strTabInfo.append("  </tr>");
-		strTabInfo.append("  <tr>");
-		strTabInfo.append("    <td colspan=2>");
-		strTabInfo.append("      <hr/>");
-		strTabInfo.append("    </td>");
-		strTabInfo.append("  </tr>");
-		strTabInfo.append("</table>");
-		strTabInfo.append("<div height=10000 width=10000></div>");
-
-		apkinform.setBody(strTabInfo.toString());
-
-		lodingPanel.setVisible(false);
-		apkinform.setVisible(true);
 	}
 
 	private void removeData()
@@ -292,39 +244,11 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		wasSetData = false;
 	}
 
-	private void showProcessing()
-	{	
-		if(remainTime > 0) {
-			TimerLabel.setText("Approximate time left : "+remainTime+" sec...");
-		} else {
-			TimerLabel.setText("");
-		}
-	}
-
-	public synchronized void showProcessing(long time)
-	{
-		this.remainTime = (int)Math.round((double)time / 1000);
-
-		showProcessing();
-		Timer timer = new Timer();
-		timer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				Log.i("RemainTimeTimer run() " + remainTime);
-				if(!wasSetData) {
-					showProcessing();
-				}
-				if(wasSetData || --remainTime <= 0) cancel();
-			}
-
-		}, 0, 1000);
-	}
-
-	public synchronized void setData()
+	private void setData()
 	{
 		if(!wasSetData) return;
 
-		cardLayout.show(this, "apkinform");
+		cardLayout.show(this, CARD_APK_INFORMATION);
 
 		String sdkVersion = "";
 		if(minSdkVersion != null) {
@@ -354,7 +278,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_ILOCATION_AUTO_LAB.getString(), Resource.STR_FEATURE_ILOCATION_AUTO_DESC.getString(), "feature-install-location-auto", null));
 		} else if("preferExternal".equals(installLocation)) {
 			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_ILOCATION_EXTERNAL_LAB.getString(), Resource.STR_FEATURE_ILOCATION_EXTERNAL_DESC.getString(), "feature-install-location-external", null));
-		}  
+		}
 		feature.append("<br/>");
 
 		if(isHidden) {
@@ -421,8 +345,6 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		if(importantFeatures.length() > 0) {
 			feature.append("<br/>" + importantFeatures.substring(2));
 		}
-
-		String permGorupImg = makePermGroup();
 
 		int groupCount = permissionManager.getPermissionGroups().length;
 		int infoHeight = 280;
@@ -507,16 +429,22 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		} else {
 			strTabInfo.append("    " + Resource.STR_LABEL_NO_PERMISSION.getString());
 		}
-		strTabInfo.append("</font></td><td width=\"150px\" style=\"text-align:right;\">@SDK27</td></tr></table>");
-		strTabInfo.append("  " + permGorupImg);
+		strTabInfo.append("</font></td><td width=\"150px\" style=\"text-align:right;\"><select id=\"sdk-version\"><option value=\"27\">API Level 27</option><option value=\"28\">API Level 28</option></select></td></tr></table>");
+		strTabInfo.append("<div id=\"perm-groups\">" + makePermGroup() + "</div>");
 		strTabInfo.append("</div>");
-		strTabInfo.append("<div height=10000 width=10000></div>");
+		strTabInfo.append("<div height=10000 width=10000 id='testid'></div>");
 
-		apkinform.setBody(strTabInfo.toString());
-		//this.setLayout(new GridLayout());
+		apkInfoPanel.setBody(strTabInfo.toString());
+
+		Object object = apkInfoPanel.getElementModelById("sdk-version");
+		if(object instanceof DefaultComboBoxModel) {
+			DefaultComboBoxModel<?> model = (DefaultComboBoxModel<?>)object;
+			model.removeListDataListener(this);
+			model.addListDataListener(this);
+		}
 	}
 
-	public synchronized void onProgress(String message)
+	public void onProgress(String message)
 	{
 		//Log.i("setProgress() percent " + percent);
 
@@ -525,20 +453,20 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 
 		if(wasSetData || !lodingPanel.isVisible()) {
 			removeData();
-			cardLayout.show(this, "lodingPanel");
+			cardLayout.show(this, CARD_LODING_PAGE);
 		}
 
 		if(message != null && !message.isEmpty())
 			TimerLabel.setText(message);
-		else 
+		else
 			TimerLabel.setText("Standby for extracting.");
 		return;
 	}
 
 	@Override
-	public synchronized void setData(ApkInfo apkInfo, Status status, ITabbedRequest request)
+	public void setData(ApkInfo apkInfo, Status status, ITabbedRequest request)
 	{
-		if(apkinform == null)
+		if(apkInfoPanel == null)
 			initialize();
 
 		if(apkInfo == null) {
@@ -559,7 +487,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 
 		if(apkInfo.manifest.application.labels != null && apkInfo.manifest.application.labels.length > 0) {
 			this.appName = ApkInfoHelper.getResourceValue(apkInfo.manifest.application.labels, (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
-			
+
 			ArrayList<String> labels = new ArrayList<String>();
 			for(ResourceInfo r: apkInfo.manifest.application.labels) {
 				if(r.configuration == null || r.configuration.isEmpty() || "default".equals(r.configuration)) {
@@ -638,7 +566,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			permissionManager = new PermissionManager();
 			permissionManager.setSdkVersion(27);
 			permissionManager.addUsesPermission(apkInfo.manifest.usesPermission);
-			
+
 			permissionList.append("<uses-permission> [" +  apkInfo.manifest.usesPermission.length + "]\n");
 			for(PermissionInfo info: permissionManager.getPermissions()) {
 				permissionList.append(info.name + " - " + info.protectionLevel);
@@ -818,14 +746,18 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			SystemUtil.createShortCut();
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
-					showAbout();
+					if(SystemUtil.hasShortCut()){
+						apkInfoPanel.removeElementById("create-shortcut");
+					}
 				}
 			});
 		} else if("function-assoc-apk".equals(id)) {
 			SystemUtil.setAssociateFileType(".apk");
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
-					showAbout();
+					if(SystemUtil.isAssociatedWithFileType(".apk")) {
+						apkInfoPanel.removeElementById("associate-file");
+					}
 				}
 			});
 		} else if("file-checksum".equals(id)) {
@@ -842,6 +774,28 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		} else {
 			showPermDetailDesc(id);
 		}
+	}
+
+	@Override public void intervalAdded(ListDataEvent arg0) { }
+	@Override public void intervalRemoved(ListDataEvent arg0) { }
+	@Override
+	public void contentsChanged(ListDataEvent arg0) {
+		DefaultComboBoxModel<?> model = (DefaultComboBoxModel<?>) arg0.getSource();
+		Object item = model.getSelectedItem();
+		if(item instanceof Option) {
+			String sdkVersion = ((Option)item).getValue();
+			if(sdkVersion == null || sdkVersion.isEmpty()) sdkVersion = "-1";
+			Log.e("sdkVersion " + sdkVersion);
+			permissionManager.setSdkVersion(Integer.parseInt(sdkVersion));
+		}
+		apkInfoPanel.setOuterHTMLById("perm-groups", "<div id=\"perm-groups\">" + makePermGroup() + "</div>");
+	}
+
+	@Override
+	public void reloadResource() {
+		setName(Resource.STR_TAB_BASIC_INFO.getString());
+		setToolTipText(Resource.STR_TAB_BASIC_INFO.getString());
+		setData();
 	}
 
 	private void showDialog(String content, String title, Dimension size, Icon icon)
@@ -898,7 +852,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		for(PermissionInfo info: g.permissions) {
 			body.append("▶ ");
 			if(info.isDangerousLevel()) {
-				body.append("[DANGEROUS] ");	
+				body.append("[DANGEROUS] ");
 			}
 			if(info.labels != null) {
 				body.append(info.getLabel() + " ");
@@ -1004,12 +958,5 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		}
 
 		showDialog(feature, "Feature info", size, null);
-	}
-
-	@Override
-	public void reloadResource() {
-		setName(Resource.STR_TAB_BASIC_INFO.getString());
-		setToolTipText(Resource.STR_TAB_BASIC_INFO.getString());
-		setData();
 	}
 }

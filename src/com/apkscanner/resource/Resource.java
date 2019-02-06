@@ -1,12 +1,14 @@
 package com.apkscanner.resource;
 
 import java.awt.Font;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -591,6 +593,8 @@ public enum Resource
 	LIB_APKTOOL_JAR				(Type.LIB, "apktool.jar"),
 	LIB_ALL						(Type.LIB, "*"),
 
+	RAW_ABUOT_HTML				(Type.RAW, "/values/about.html"),
+
 	ETC_SETTINGS_FILE			(Type.ETC, "settings.txt");
 
 	public static final int INT_WINDOW_SIZE_WIDTH_MIN = 650;
@@ -617,6 +621,7 @@ public enum Resource
 		PLUGIN,
 		SECURITY,
 		PROP,
+		RAW,
 		ETC
 	}
 
@@ -764,6 +769,8 @@ public enum Resource
 		switch(type){
 		case IMAGE:
 			return getClass().getResource("/icons/" + value).toString();
+		case RAW:
+			return getClass().getResource(value).toString();
 		case BIN:
 			subPath = File.separator + "tool";
 			break;
@@ -787,8 +794,14 @@ public enum Resource
 
 	public URL getURL()
 	{
-		if(type != Type.IMAGE) return null;
-		return getClass().getResource("/icons/" + value);
+		switch(type){
+		case IMAGE:
+			return getClass().getResource("/icons/" + value);
+		case RAW:
+			return getClass().getResource(value);
+		default:
+			return null;
+		}
 	}
 
 	public ImageIcon getImageIcon()
@@ -800,31 +813,45 @@ public enum Resource
 	public ImageIcon getImageIcon(int width, int height)
 	{
 		if(type != Type.IMAGE) return null;
-		ImageIcon tempImg = new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(getURL()),width,height));
-
-		return tempImg;
+		return new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(getURL()),width,height));
 	}
 
 	public String getString()
 	{
-		if(type != Type.TEXT) return null;
-
-		String id = getValue();
-		String value = null;
-
-		if(!id.startsWith("@")) return id;
-		id = id.substring(1);
-
-		if(stringXmlPath == null) {
-			makeStringXmlPath(lang);
+		switch(type){
+		case TEXT:
+			String id = getValue();
+			String value = null;
+	
+			if(!id.startsWith("@")) return id;
+			id = id.substring(1);
+	
+			if(stringXmlPath == null) {
+				makeStringXmlPath(lang);
+			}
+	
+			for(XmlPath xPath: stringXmlPath) {
+				value = xPath.getNode("/resources/string[@name='" + id + "']").getTextContent();
+				if(value != null) break;
+			}
+	
+			return value != null ? value.replaceAll("\\\\n", "\n").replaceAll("\\\\t", "\t") : null;
+		case RAW:
+			try (InputStream is= getURL().openStream();
+				 InputStreamReader ir = new InputStreamReader(is);
+				 BufferedReader br = new BufferedReader(ir)) {
+		        StringBuilder out = new StringBuilder();
+		        String line;
+		        while ((line = br.readLine()) != null) {
+		            out.append(line);
+		        }
+		        return out.toString();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		default:
+			return null;
 		}
-
-		for(XmlPath xPath: stringXmlPath) {
-			value = xPath.getNode("/resources/string[@name='" + id + "']").getTextContent();
-			if(value != null) break;
-		}
-
-		return value != null ? value.replaceAll("\\\\n", "\n").replaceAll("\\\\t", "\t") : null;
 	}
 
 	private static void loadProperty()
@@ -832,12 +859,9 @@ public enum Resource
 		if(property == null) {
 			File file = new File(ETC_SETTINGS_FILE.getPath());
 			if(!file.exists() || file.length() == 0) return;
-			try {
-				FileReader fileReader = new FileReader(file);
+			try (FileReader fileReader = new FileReader(file)) {
 				JSONParser parser = new JSONParser();
 				property = (JSONObject)parser.parse(fileReader);
-
-				fileReader.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
