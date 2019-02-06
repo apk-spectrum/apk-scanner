@@ -1,6 +1,7 @@
 package com.apkscanner.gui.util;
 
 import java.awt.Desktop;
+import java.awt.Font;
 import java.io.IOException;
 import java.net.URI;
 
@@ -49,8 +50,22 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 
 		styleSheet = kit.getStyleSheet();
 		styleSheet.addRule(style);
+		styleSheet.addRule(makeFontStyleRule());
 		setOpaque(false);
 		setHtml(head, body);
+	}
+
+	private String makeFontStyleRule()
+	{
+		Font font = getFont();
+		StringBuilder style = new StringBuilder("body { font-family: ");
+		style.append(font.getFamily());
+		style.append("; font-weight: ");
+		style.append(font.isBold() ? "bold" : "normal");
+		style.append("; font-size: ");
+		style.append(font.getSize());
+		style.append("pt; }");
+		return style.toString();
 	}
 
 	@Override

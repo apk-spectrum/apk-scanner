@@ -2,11 +2,9 @@ package com.apkscanner.gui.dialog;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.border.EmptyBorder;
@@ -27,27 +25,11 @@ public class AboutDlg /*extends JDialog*/
 
 	static public void showAboutDialog(Component component)
 	{
-		JLabel label = new JLabel();
-		Font font = label.getFont();
-
-		// create some css from the label's font
-		StringBuilder style = new StringBuilder("#about {");
-		style.append("margin:0px;padding:0px;");
-		style.append("background-color:#"+Integer.toHexString(label.getBackground().getRGB() & 0xFFFFFF)+";");
-		style.append("font-family:" + font.getFamily() + ";");
-		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-		style.append("font-size:" + font.getSize() + "pt;}");
-		style.append("#about a {text-decoration:none;}");
-		style.append("H1 {margin-top: 0px; margin-bottom: 0px;}");
-		style.append("H3 {margin-top: 5px; margin-bottom: 0px;}");
-
 		// html content
 		JHtmlEditorPane hep = new JHtmlEditorPane();
 		hep.setEditable(false);
-		hep.setBackground(label.getBackground());
 		hep.setPreferredSize(new Dimension(400,300));
 		hep.setAlignmentY(0.0f);
-		hep.addStyleRule(style.toString());
 		hep.setBody(Resource.RAW_ABUOT_HTML.getString());
 		hep.removeElementById("apkscanner-icon-td");
 		hep.removeElementById("end-line");

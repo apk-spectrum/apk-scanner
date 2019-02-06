@@ -5,7 +5,6 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -131,7 +130,6 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 
 		apkInfoPanel.setBackground(Color.white);
 		apkInfoPanel.setHyperlinkClickListener(this);
-		apkInfoPanel.addStyleRule(makeStyleRule());
 
 		// loding panel
 		JLabel logo = new JLabel(Resource.IMG_APK_LOGO.getImageIcon(400, 250));
@@ -164,47 +162,19 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		cardLayout.show(this, CARD_APK_INFORMATION);
 	}
 
-	private String makeStyleRule()
-	{
-		//Font font = new Font("helvitica", Font.BOLD, 15);
-		JLabel label = new JLabel();
-		Font font = label.getFont();
-
-		// create some css from the label's font
-		StringBuilder style = new StringBuilder("#basic-info, #perm-group {");
-		style.append("font-family:" + font.getFamily() + ";");
-		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-		style.append("font-size:" + font.getSize() + "pt;}");
-		style.append("#basic-info a {text-decoration:none; color:black;}");
-		style.append("#perm-group a {text-decoration:none; color:#"+Integer.toHexString(label.getBackground().getRGB() & 0xFFFFFF)+";}");
-		style.append("#about {");
-		style.append("font-family:" + font.getFamily() + ";");
-		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-		style.append("font-size:" + font.getSize() + "pt;}");
-		style.append("#about a {text-decoration:none;}");
-		style.append("#create-shortcut, #associate-file { background-color: #e7e7e7; border: none; color: white; margin:1px; padding: 5px; text-align: center; text-decoration: none; display: inline-block;");
-		style.append("font-family:" + font.getFamily() + ";");
-		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-		style.append("font-size:" + font.getSize() + "pt;}");
-		style.append("#create-shortcut a, #associate-file a {text-decoration:none; color:black;}");
-		style.append("H1 {margin-top: 0px; margin-bottom: 0px;}");
-		style.append("H3 {margin-top: 5px; margin-bottom: 0px;}");
-
-		return style.toString();
-	}
-
 	private void showAbout()
 	{
-		apkInfoPanel.setBody(Resource.RAW_ABUOT_HTML.getString());
+		apkInfoPanel.setText(Resource.RAW_ABUOT_HTML.getString());
 		apkInfoPanel.insertElementFirst("apkscanner-icon-td", "<image src=\"" + Resource.IMG_APP_ICON.getPath() + "\" width=\"150\" height=\"150\">");
 		apkInfoPanel.setInnerHTMLById("apkscanner-title", Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString());
 		apkInfoPanel.setOuterHTMLById("programmer-email", "<a href=\"mailto:" + Resource.STR_APP_MAKER_EMAIL.getString() + "\" title=\"" + Resource.STR_APP_MAKER_EMAIL.getString() + "\">" + Resource.STR_APP_MAKER.getString() + "</a>");
 		if(!SystemUtil.hasShortCut()){
-			apkInfoPanel.insertElementLast("apkscanner-icon-td", "<div id=\"create-shortcut\">" + makeHyperLink("@event", Resource.STR_BTN_CREATE_SHORTCUT.getString(), null, "function-create-shortcut", null) + "</div>");
+			apkInfoPanel.insertElementLast("apkscanner-icon-td", "<div id=\"create-shortcut\" class=\"div-button\">" + makeHyperLink("@event", Resource.STR_BTN_CREATE_SHORTCUT.getString(), null, "function-create-shortcut", null) + "</div>");
 		}
 		if(!SystemUtil.isAssociatedWithFileType(".apk")) {
-			apkInfoPanel.insertElementLast("apkscanner-icon-td", "<div id=\"associate-file\">" + makeHyperLink("@event", Resource.STR_BTN_ASSOC_FTYPE.getString(), null, "function-assoc-apk", null) + "</div>");
+			apkInfoPanel.insertElementLast("apkscanner-icon-td", "<div id=\"associate-file\" class=\"div-button\">" + makeHyperLink("@event", Resource.STR_BTN_ASSOC_FTYPE.getString(), null, "function-assoc-apk", null) + "</div>");
 		}
+		//Log.d(apkInfoPanel.getText());
 	}
 
 	private void removeData()
@@ -380,12 +350,12 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		}
 
 		StringBuilder strTabInfo = new StringBuilder("");
-		strTabInfo.append("<table>");
+		strTabInfo.append("<table >");
 		strTabInfo.append("  <tr>");
-		strTabInfo.append("    <td width=170 height=" + infoHeight + ">");
+		strTabInfo.append("    <td width=170>");
 		strTabInfo.append("      <image src=\"" + iconPath + "\" width=150 height=150 />");
 		strTabInfo.append("    </td>");
-		strTabInfo.append("    <td height=" + infoHeight + ">");
+		strTabInfo.append("    <td>");
 		strTabInfo.append("      <div id=\"basic-info\">");
 		strTabInfo.append("        <font style=\"font-size:20px; color:#548235; font-weight:bold\">");
 		if(labels.length > 1) {
@@ -418,10 +388,11 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		strTabInfo.append("        </font><br/>");
 		strTabInfo.append("      </div>");
 		strTabInfo.append("    </td>");
+		strTabInfo.append("    <td height=\""+infoHeight+"\"></td>");
 		strTabInfo.append("  </tr>");
 		strTabInfo.append("</table>");
 		strTabInfo.append("<div id=\"perm-group\" style=\"text-align:left; width:480px; padding-top:5px; border-top:1px; border-left:0px; border-right:0px; border-bottom:0px; border-style:solid;\">");
-		strTabInfo.append("<table width=\"100%\" style=\"border:0px;padding:0px;margin:0px;\"><tr style=\\\"border:0px;padding:0px;margin:0px;\\\" ><td style=\\\"border:0px;padding:0px;margin:0px;\\\">");
+		strTabInfo.append("<table width=\"100%\" style=\"border:0px;padding:0px;margin:0px;\"><tr style=\"border:0px;padding:0px;margin:0px;\" ><td style=\"border:0px;padding:0px;margin:0px;\">");
 		strTabInfo.append("  <font style=\"font-size:12px;color:black;\">");
 		if(allPermissionsList != null && !allPermissionsList.isEmpty()) {
 			strTabInfo.append("    [" + Resource.STR_BASIC_PERMISSIONS.getString() + "] - ");
@@ -429,10 +400,9 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		} else {
 			strTabInfo.append("    " + Resource.STR_LABEL_NO_PERMISSION.getString());
 		}
-		strTabInfo.append("</font></td><td width=\"150px\" style=\"text-align:right;\"><select id=\"sdk-version\"><option value=\"27\">API Level 27</option><option value=\"28\">API Level 28</option></select></td></tr></table>");
+		strTabInfo.append("</font></td><td width=\"150px\" align=\"right\"><select id=\"sdk-version\"><option value=\"27\">API Level 27</option><option value=\"28\">API Level 28</option></select></td></tr></table>");
 		strTabInfo.append("<div id=\"perm-groups\">" + makePermGroup() + "</div>");
 		strTabInfo.append("</div>");
-		strTabInfo.append("<div height=10000 width=10000 id='testid'></div>");
 
 		apkInfoPanel.setBody(strTabInfo.toString());
 
