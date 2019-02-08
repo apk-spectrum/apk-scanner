@@ -1,0 +1,60 @@
+<html>
+<!-- https://www.w3.org/MarkUp/html3/Contents.html -->
+  <head>
+    <style type="text/css">
+      <!--
+        a { text-decoration: none; color: inherit }
+        table, tr, td, h1, h2, h3, h4, h5, h6 { border: 0px; padding: 0px; margin: 0px; font-weight: normal }
+        h1, h1 a { font-size: 20px; color: #548235; font-weight: bold }
+        h1 small { color: black; font-weight: normal }
+        h2, h2 a { font-size: 15px; color: #4472C4 }
+        h3, h3 a { font-size: 15px; color: #ED7E31 }
+        h4, h4 a { font-size: 12px }
+        #perm-group {
+          text-align: left;
+          width: 490px;
+          padding-top: 5px;
+          border-top: 1px;
+          border-left: 0px;
+          border-right: 0px;
+          border-bottom: 0px;
+          border-style: solid
+        }
+        #perm-group table { width: 100% }
+      -->
+    </style>
+  </head>
+  <body>
+    <table>
+      <tr>
+        <td width="170"><img id="icon"></td>
+        <td>
+          <div id="basic-info">
+            <h1 id="name"></h1>
+            <h2 id="package"></h2>
+            <h3 id="version"></h3>
+            <br/>
+            <h4 id="sdk-version"></h4>
+            <h4 id="file-size"></h4>
+            <br/>
+            <h4 id="features"></h4>
+          </div>
+        </td>
+        <td id="basic-info-height-td"></td>
+      </tr>
+    </table>
+    <div id="perm-group">
+      <table>
+        <tr>
+          <td>
+            <h4 id="perm-group-title"></h4>
+          </td>
+          <td align="right">
+            <select id="perm-group-sdks"></select>
+          </td>
+        </tr>
+      </table>
+      <div id="perm-groups"></div>
+    </div>
+  </body>
+</html>

@@ -166,7 +166,15 @@ public class PermissionManager
 				PermissionGroupRecord groupRecord = getPermissionGroupRecord(permInfo.permissionGroup);
 				if(groupRecord != null) {
 					groupInfo = groupRecord.getInfomation(sdk);
-				} else {
+					if(groupInfo != null && (groupInfo.icon == null || groupInfo.icon.trim().isEmpty())) {
+						groupInfo.icon = groupRecord.getInfomation(1000).icon;
+						Log.v("group icon is null " + groupInfo.name);
+						if(groupInfo.icon == null || groupInfo.icon.trim().isEmpty()) {
+							groupInfo.icon = "@drawable/perm_group_unknown";
+						}
+					}
+				}
+				if(groupInfo == null){
 					groupInfo = new PermissionGroupInfoExt();
 					groupInfo.name = groupName;
 					groupInfo.icon = "@drawable/perm_group_unknown";

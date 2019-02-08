@@ -593,7 +593,8 @@ public enum Resource
 	LIB_APKTOOL_JAR				(Type.LIB, "apktool.jar"),
 	LIB_ALL						(Type.LIB, "*"),
 
-	RAW_ABUOT_HTML				(Type.RAW, "/values/about.html"),
+	RAW_ABUOT_HTML				(Type.RAW, "/values/AboutLayout.html"),
+	RAW_BASIC_INFO_LAYOUT_HTML	(Type.RAW, "/values/BasicInfoLayout.html"),
 
 	ETC_SETTINGS_FILE			(Type.ETC, "settings.txt");
 

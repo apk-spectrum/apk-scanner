@@ -134,14 +134,15 @@ public class UnitRecord<T> {
 			Log.v("This SDK(" + sdk + ") version was not have permission. " + name + " added in API level "+addedSdk);
 			return null;
 		}
-		Object info = null;
+		Object info = histories[0];
 		for(int i=0; i<histories.length; i++) {
-			info = histories[i];
 			try {
-				if(sdk >= info.getClass().getField("sdk").getInt(info)) break;
+				if(sdk > histories[i].getClass().getField("sdk").getInt(histories[i])) break;
 			} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
 				e.printStackTrace();
 			}
+			info = histories[i];
+
 		}
 		/* Move into each InfoExt, because it's very slower
 		if(info != null) {

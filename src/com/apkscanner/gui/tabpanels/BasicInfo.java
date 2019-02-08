@@ -28,6 +28,7 @@ import javax.swing.text.html.Option;
 
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
 import com.apkscanner.core.permissionmanager.PermissionManager;
+import com.apkscanner.core.permissionmanager.PermissionRepository.SourceCommit;
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
@@ -349,66 +350,61 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			}
 		}
 
-		StringBuilder strTabInfo = new StringBuilder("");
-		strTabInfo.append("<table >");
-		strTabInfo.append("  <tr>");
-		strTabInfo.append("    <td width=170>");
-		strTabInfo.append("      <image src=\"" + iconPath + "\" width=150 height=150 />");
-		strTabInfo.append("    </td>");
-		strTabInfo.append("    <td>");
-		strTabInfo.append("      <div id=\"basic-info\">");
-		strTabInfo.append("        <font style=\"font-size:20px; color:#548235; font-weight:bold\">");
+		apkInfoPanel.setText(Resource.RAW_BASIC_INFO_LAYOUT_HTML.getString());
+		apkInfoPanel.setOuterHTMLById("icon", "<image src=\"" + iconPath + "\" width=\"150\" height=\"150\">");
 		if(labels.length > 1) {
-			strTabInfo.append("          " + makeHyperLink("@event", appName, mutiLabels, "other-lang", null));
-			strTabInfo.append("        </font>");
+			apkInfoPanel.setInnerHTMLById("name", makeHyperLink("@event", appName+" ", mutiLabels, "other-lang", null));
+			apkInfoPanel.insertElementLast("name", "<small>"+makeHyperLink("@event", "["+labels.length+"]", mutiLabels, "other-lang", null)+"</small>");
 		} else {
-			strTabInfo.append("          " + appName);
-			strTabInfo.append("</font> " + appLabelSearchers + "<br/>");
+			apkInfoPanel.setInnerHTMLById("name", appName);
 		}
-		if(labels.length > 1) {
-			strTabInfo.append("        <font style=\"font-size:10px;\">");
-			strTabInfo.append("          " + makeHyperLink("@event", "["+labels.length+"]", mutiLabels, "other-lang", null));
-			strTabInfo.append("</font>" + appLabelSearchers + "<br/>");
-		}
-		strTabInfo.append("        <font style=\"font-size:15px; color:#4472C4\">");
-		strTabInfo.append("          [" + packageName +"]" + packageSearchers);
-		strTabInfo.append("</font><br/>");
-		strTabInfo.append("        <font style=\"font-size:15px; color:#ED7E31\">");
-		strTabInfo.append("          " + makeHyperLink("@event", "Ver. " + versionName +" / " + (!versionCode.isEmpty() ? versionCode : "0"), "VersionName : " + versionName + "\n" + "VersionCode : " + (!versionCode.isEmpty() ? versionCode : "Unspecified"), "app-version", null));
-		strTabInfo.append("        </font><br/>");
-		strTabInfo.append("        <br/>");
-		strTabInfo.append("        <font style=\"font-size:12px\">");
-		strTabInfo.append("          @SDK Ver. " + sdkVersion + "<br/>");
-		strTabInfo.append("          " + makeHyperLink("@event", FileUtil.getFileSize(ApkSize, FSStyle.FULL), "MD5: " + checkSumMd5, "file-checksum", null));
-		strTabInfo.append("        </font>");
-		strTabInfo.append("        <br/><br/>");
-		strTabInfo.append("        <font style=\"font-size:12px\">");
-		strTabInfo.append("          [" + Resource.STR_FEATURE_LAB.getString() + "] ");
-		strTabInfo.append("          " + feature);
-		strTabInfo.append("        </font><br/>");
-		strTabInfo.append("      </div>");
-		strTabInfo.append("    </td>");
-		strTabInfo.append("    <td height=\""+infoHeight+"\"></td>");
-		strTabInfo.append("  </tr>");
-		strTabInfo.append("</table>");
-		strTabInfo.append("<div id=\"perm-group\" style=\"text-align:left; width:480px; padding-top:5px; border-top:1px; border-left:0px; border-right:0px; border-bottom:0px; border-style:solid;\">");
-		strTabInfo.append("<table width=\"100%\" style=\"border:0px;padding:0px;margin:0px;\"><tr style=\"border:0px;padding:0px;margin:0px;\" ><td style=\"border:0px;padding:0px;margin:0px;\">");
-		strTabInfo.append("  <font style=\"font-size:12px;color:black;\">");
+		apkInfoPanel.insertElementLast("name", appLabelSearchers);
+		apkInfoPanel.setInnerHTMLById("package", "[" + packageName +"]" + packageSearchers);
+		apkInfoPanel.setInnerHTMLById("version", makeHyperLink("@event", "Ver. " + versionName +" / " + (!versionCode.isEmpty() ? versionCode : "0"), "VersionName : " + versionName + "\n" + "VersionCode : " + (!versionCode.isEmpty() ? versionCode : "Unspecified"), "app-version", null));
+		apkInfoPanel.setInnerHTMLById("sdk-version", "@SDK Ver. " + sdkVersion);
+		apkInfoPanel.setInnerHTMLById("file-size", makeHyperLink("@event", FileUtil.getFileSize(ApkSize, FSStyle.FULL), "MD5: " + checkSumMd5, "file-checksum", null));
+		apkInfoPanel.setInnerHTMLById("features", "[" + Resource.STR_FEATURE_LAB.getString() + "] " + feature);
+		apkInfoPanel.setOuterHTMLById("basic-info-height-td", "<td height=\""+infoHeight+"\"></td>");
+
 		if(allPermissionsList != null && !allPermissionsList.isEmpty()) {
-			strTabInfo.append("    [" + Resource.STR_BASIC_PERMISSIONS.getString() + "] - ");
-			strTabInfo.append("    " + makeHyperLink("@event","<u>" + Resource.STR_BASIC_PERMLAB_DISPLAY.getString() + "</u>",Resource.STR_BASIC_PERMDESC_DISPLAY.getString(),"display-list", null));
+			apkInfoPanel.setInnerHTMLById("perm-group-title", "[" + Resource.STR_BASIC_PERMISSIONS.getString() + "] - " +
+					makeHyperLink("@event","<u>" + Resource.STR_BASIC_PERMLAB_DISPLAY.getString() + "</u>",Resource.STR_BASIC_PERMDESC_DISPLAY.getString(),"display-list", null));
 		} else {
-			strTabInfo.append("    " + Resource.STR_LABEL_NO_PERMISSION.getString());
+			apkInfoPanel.setInnerHTMLById("perm-group-title", Resource.STR_LABEL_NO_PERMISSION.getString());
 		}
-		strTabInfo.append("</font></td><td width=\"150px\" align=\"right\"><select id=\"sdk-version\"><option value=\"27\">API Level 27</option><option value=\"28\">API Level 28</option></select></td></tr></table>");
-		strTabInfo.append("<div id=\"perm-groups\">" + makePermGroup() + "</div>");
-		strTabInfo.append("</div>");
 
-		apkInfoPanel.setBody(strTabInfo.toString());
+		int tarSdk = targerSdkVersion != null ? targerSdkVersion : -1; 
+		int permSdk = -1;
+		boolean matchedSdk = false;
+		StringBuilder sdkOptions = new StringBuilder("<select id=\"perm-group-sdks\">");
+		for(SourceCommit sdk: PermissionManager.getPermissionRepository().sources) {
+			if(sdk.getCommitId() != null) {
+				permSdk = sdk.getSdkVersion();
+				if(!matchedSdk) matchedSdk = permSdk == tarSdk;
+				sdkOptions.append(String.format("<option value=\"%d\"%s>API Level %d</option>", permSdk
+						, permSdk == tarSdk ? " selected=\"selected\"" : "", permSdk));
+			}
+		}
+		sdkOptions.append("</select>");
+		
+		if(targerSdkVersion != null) permSdk = tarSdk;
+		permissionManager.setSdkVersion(permSdk);
+		apkInfoPanel.setOuterHTMLById("perm-groups", "<div id=\"perm-groups\">" + makePermGroup() + "</div>");
 
-		Object object = apkInfoPanel.getElementModelById("sdk-version");
+		apkInfoPanel.setOuterHTMLById("perm-group-sdks", sdkOptions.toString());
+
+		Log.e(apkInfoPanel.getText());
+
+		Object object = apkInfoPanel.getElementModelById("perm-group-sdks");
 		if(object instanceof DefaultComboBoxModel) {
 			DefaultComboBoxModel<?> model = (DefaultComboBoxModel<?>)object;
+			if(!matchedSdk) {
+				if(targerSdkVersion == null) {
+					model.setSelectedItem(model.getElementAt(model.getSize()-1));
+				} else {
+					model.setSelectedItem("API Level " + permSdk);
+				}
+			}
 			model.removeListDataListener(this);
 			model.addListDataListener(this);
 		}
@@ -746,8 +742,6 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		}
 	}
 
-	@Override public void intervalAdded(ListDataEvent arg0) { }
-	@Override public void intervalRemoved(ListDataEvent arg0) { }
 	@Override
 	public void contentsChanged(ListDataEvent arg0) {
 		DefaultComboBoxModel<?> model = (DefaultComboBoxModel<?>) arg0.getSource();
@@ -758,8 +752,11 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			Log.e("sdkVersion " + sdkVersion);
 			permissionManager.setSdkVersion(Integer.parseInt(sdkVersion));
 		}
+		//apkInfoPanel.setInnerHTMLById("perm-groups", makePermGroup());
 		apkInfoPanel.setOuterHTMLById("perm-groups", "<div id=\"perm-groups\">" + makePermGroup() + "</div>");
 	}
+	@Override public void intervalAdded(ListDataEvent arg0) { }
+	@Override public void intervalRemoved(ListDataEvent arg0) { }
 
 	@Override
 	public void reloadResource() {
@@ -775,29 +772,6 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 
 	public void showPermList()
 	{
-		/*
-		JLabel label = new JLabel();
-		Font font = label.getFont();
-
-		StringBuilder body = new StringBuilder("");
-		body.append("<div id=\"perm-list\">");
-		body.append(Permissions.replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
-		body.append("</div>");
-
-		// create some css from the label's font
-		StringBuilder style = new StringBuilder("#perm-list {");
-		style.append("font-family:" + font.getFamily() + ";");
-		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-		style.append("font-size:" + font.getSize() + "pt;}");
-		style.append("#about a {text-decoration:none;}");
-
-		// html content
-		JHtmlEditorPane descPane = new JHtmlEditorPane("", "", body.toString().replaceAll("\n", "<br/>"));
-		descPane.setStyle(style.toString());
-
-		descPane.setEditable(false);
-		descPane.setBackground(label.getBackground());
-		 */
 		showDialog(allPermissionsList, Resource.STR_BASIC_PERM_LIST_TITLE.getString(), new Dimension(500, 200), null);
 	}
 
@@ -808,7 +782,6 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		if(g == null) return;
 
 		StringBuilder body = new StringBuilder();
-		//body.append("<div id=\"perm-detail-desc\">");
 		body.append("■ ");
 		if(g.label != null) {
 			body.append(g.getLabel() + " - ");
@@ -836,26 +809,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 				body.append("\n");
 			}
 		}
-		//body.append("</div>");
 
-		/*
-		JLabel label = new JLabel();
-		Font font = label.getFont();
-
-		// create some css from the label's font
-		StringBuilder style = new StringBuilder("#perm-detail-desc {");
-		style.append("font-family:" + font.getFamily() + ";");
-		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-		style.append("font-size:" + font.getSize() + "pt;}");
-		style.append("#about a {text-decoration:none;}");
-
-		// html content
-		JHtmlEditorPane descPane = new JHtmlEditorPane("", "", body.toString().replaceAll("\n", "<br/>"));
-		descPane.setStyle(style.toString());
-
-		descPane.setEditable(false);
-		descPane.setBackground(label.getBackground());
-		 */
 		showDialog(body.toString(), Resource.STR_BASIC_PERM_DISPLAY_TITLE.getString(), new Dimension(600, 200), new ImageIcon(g.icon.replaceAll("^file:/", "")));
 	}
 

@@ -16,7 +16,7 @@ public class PermissionGroupRecord extends UnitRecord<PermissionGroupInfoExt> {
 	@Override
 	public PermissionGroupInfoExt getInfomation(int sdk) {
 		PermissionGroupInfoExt info = super.getInfomation(sdk);
-		if(info.permissions == null) {
+		if(info != null && info.permissions == null) {
 			info.permissions = Arrays.asList(manager.getGroupPermissions(name, sdk));
 			for(PermissionInfo perm: info.permissions) {
 				if(perm.isDangerousLevel()) info.hasDangerous = true;

@@ -20,6 +20,8 @@ public class PermissionRepository {
 			this.sdk = sdk;
 			this.commit = commit;
 		}
+		public int getSdkVersion() { return sdk; }
+		public String getCommitId() { return commit != null && !commit.isEmpty() ? commit : null; }
 	}
 
 	public PermissionRepository(XmlPath sourcesNode) {
