@@ -2,6 +2,7 @@ package com.apkscanner.core.scanner;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.apkscanner.data.apkinfo.ActionInfo;
 import com.apkscanner.data.apkinfo.ActivityAliasInfo;
@@ -25,6 +26,7 @@ import com.apkscanner.data.apkinfo.UsesConfigurationInfo;
 import com.apkscanner.data.apkinfo.UsesFeatureInfo;
 import com.apkscanner.data.apkinfo.UsesLibraryInfo;
 import com.apkscanner.data.apkinfo.UsesPermissionInfo;
+import com.apkscanner.data.apkinfo.UsesPermissionSdk23Info;
 import com.apkscanner.data.apkinfo.WidgetInfo;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
@@ -196,7 +198,7 @@ public class AaptManifestReader
 	{
 		// permission
         Log.i("read uses-permission");
-        ArrayList<UsesPermissionInfo> usesPermissionList = new ArrayList<UsesPermissionInfo>(); 
+        List<Object> usesPermissionList = new ArrayList<>(); 
         AaptXmlTreeNode[] permTag = manifestPath.getNodeList("/manifest/uses-permission");
         if(permTag != null && permTag.length > 0) {
 	        for( int idx=0; idx < permTag.length; idx++ ){
@@ -209,7 +211,7 @@ public class AaptManifestReader
 	        	}
 	        	usesPermissionList.add(info);
 	        }
-	        manifestInfo.usesPermission = usesPermissionList.toArray(new UsesPermissionInfo[0]);
+	        manifestInfo.usesPermission = usesPermissionList.toArray(new UsesPermissionInfo[usesPermissionList.size()]);
 	        usesPermissionList.clear();
         }
 
@@ -219,14 +221,14 @@ public class AaptManifestReader
 	        for( int idx=0; idx < permTag.length; idx++ ){
 	        	String name = getAttrValue(permTag[idx], "name");
 	        	String maxSdk = getAttrValue(permTag[idx], "maxSdkVersion");
-	        	UsesPermissionInfo info = new UsesPermissionInfo();
+	        	UsesPermissionInfo info = new UsesPermissionSdk23Info();
 	        	info.name = name;
 	        	if(maxSdk != null && !maxSdk.isEmpty()) {
 	        		info.maxSdkVersion = Integer.parseInt(maxSdk);
 	        	}
 	        	usesPermissionList.add(info);
 	        }
-	        manifestInfo.usesPermissionSdk23 = usesPermissionList.toArray(new UsesPermissionInfo[0]);
+	        manifestInfo.usesPermissionSdk23 = usesPermissionList.toArray(new UsesPermissionSdk23Info[0]);
 	        usesPermissionList.clear();
         }
         usesPermissionList = null;
