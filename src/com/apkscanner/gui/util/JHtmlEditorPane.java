@@ -12,13 +12,17 @@ import javax.swing.JEditorPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import javax.swing.text.StyleConstants;
+import javax.swing.text.View;
+import javax.swing.text.ViewFactory;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.ImageView;
 import javax.swing.text.html.StyleSheet;
 
 import com.apkscanner.util.Log;
@@ -49,7 +53,7 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 		super("text/html", null);
 		addHyperlinkListener(this);
 
-		HTMLEditorKit kit = new HTMLEditorKit();
+		HTMLEditorKit kit = new ImgBaselineHTMLEditorKit();
 		setEditorKit(kit);
 
 		styleSheet = kit.getStyleSheet();
@@ -290,5 +294,40 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 
 	private boolean stringEquals(String a, String b) {
 		return ((a == null && b == null) || (a != null && a.equals(b)));
+	}
+
+	// refer to https://stackoverflow.com/questions/46023177/set-inline-text-and-image-in-a-jeditorpane
+	class ImgBaselineHTMLEditorKit extends HTMLEditorKit {
+		private static final long serialVersionUID = 3268128657810856489L;
+
+		@Override public ViewFactory getViewFactory() {
+			return new HTMLEditorKit.HTMLFactory() {
+				@Override public View create(Element elem) {
+					View view = super.create(elem);
+					//if (view instanceof LabelView) {
+						//System.out.println(view.getAlignment(View.Y_AXIS));
+					//}
+					AttributeSet attrs = elem.getAttributes();
+					Object elementName = attrs.getAttribute(AbstractDocument.ElementNameAttribute);
+					Object o = elementName != null ? null : attrs.getAttribute(StyleConstants.NameAttribute);
+					if (o instanceof HTML.Tag) {
+						HTML.Tag kind = (HTML.Tag) o;
+						if (kind == HTML.Tag.IMG) {
+							return new ImageView(elem) {
+								@Override public float getAlignment(int axis) {
+									switch (axis) {
+									case View.Y_AXIS:
+										return .8125f; // magic number...
+									default:
+										return super.getAlignment(axis);
+									}
+								}
+							};
+						}
+					}
+					return view;
+				}
+			};
+		}
 	}
 }
