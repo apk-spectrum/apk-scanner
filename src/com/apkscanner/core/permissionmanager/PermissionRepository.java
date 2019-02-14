@@ -1,6 +1,7 @@
 package com.apkscanner.core.permissionmanager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class PermissionRepository {
 		for(int i=sourcesNode.getCount()-1; i>=0; --i) {
 			sources.add(new SourceCommit(Integer.parseInt(sourcesNode.getAttribute(i, "sdk")), sourcesNode.getAttribute(i, "commit")));
 		}
-		sources.sort(new Comparator<SourceCommit>() {
+		Collections.sort(sources, new Comparator<SourceCommit>() {
 			@Override
 			public int compare(SourceCommit arg0, SourceCommit arg1) {
 				return arg0.sdk - arg1.sdk;
@@ -63,7 +64,7 @@ public class PermissionRepository {
 			}
 		}
 		sources.add(new SourceCommit(sdk, commit));
-		sources.sort(new Comparator<SourceCommit>() {
+		Collections.sort(sources, new Comparator<SourceCommit>() {
 			@Override
 			public int compare(SourceCommit arg0, SourceCommit arg1) {
 				return arg0.sdk - arg1.sdk;
