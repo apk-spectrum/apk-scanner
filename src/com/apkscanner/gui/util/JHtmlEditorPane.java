@@ -22,7 +22,6 @@ import javax.swing.text.ViewFactory;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.ImageView;
 import javax.swing.text.html.StyleSheet;
 
 import com.apkscanner.util.Log;
@@ -303,7 +302,6 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 		@Override public ViewFactory getViewFactory() {
 			return new HTMLEditorKit.HTMLFactory() {
 				@Override public View create(Element elem) {
-					View view = super.create(elem);
 					//if (view instanceof LabelView) {
 						//System.out.println(view.getAlignment(View.Y_AXIS));
 					//}
@@ -313,7 +311,7 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 					if (o instanceof HTML.Tag) {
 						HTML.Tag kind = (HTML.Tag) o;
 						if (kind == HTML.Tag.IMG) {
-							return new ImageView(elem) {
+							return new BASE64ImageView(elem) {
 								@Override public float getAlignment(int axis) {
 									switch (axis) {
 									case View.Y_AXIS:
@@ -325,7 +323,7 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 							};
 						}
 					}
-					return view;
+					return super.create(elem);
 				}
 			};
 		}
