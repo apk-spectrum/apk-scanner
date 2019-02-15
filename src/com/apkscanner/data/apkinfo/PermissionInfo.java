@@ -10,9 +10,18 @@ public class PermissionInfo
     public static final int PROTECTION_DANGEROUS = 1;
     public static final int PROTECTION_SIGNATURE = 2;
     @Deprecated
+    /*
+     * This constant was deprecated in API level 23.
+     * Use PROTECTION_SIGNATURE|PROTECTION_FLAG_PRIVILEGED instead.
+     */
     public static final int PROTECTION_SIGNATURE_OR_SYSTEM = 3;
     public static final int PROTECTION_FLAG_PRIVILEGED = 0x10;
     @Deprecated
+    /*
+     * This constant was deprecated in API level 23.
+     * Old name for PROTECTION_FLAG_PRIVILEGED, which is now very confusing
+     * because it only applies to privileged apps, not all apps on the system image.
+     */
     public static final int PROTECTION_FLAG_SYSTEM = 0x10;
     public static final int PROTECTION_FLAG_DEVELOPMENT = 0x20;
     public static final int PROTECTION_FLAG_APPOP = 0x40;
@@ -20,9 +29,25 @@ public class PermissionInfo
     public static final int PROTECTION_FLAG_INSTALLER = 0x100;
     public static final int PROTECTION_FLAG_VERIFIER = 0x200;
     public static final int PROTECTION_FLAG_PREINSTALLED = 0x400;
+    public static final int PROTECTION_FLAG_SETUP = 0x800;
+    public static final int PROTECTION_FLAG_INSTANT = 0x1000;
+    @Deprecated
+    /*
+     * This constant was deprecated in API level 27. just existed in 26
+     * Use PROTECTION_FLAG_INSTANT instead.
+     */
+    public static final int PROTECTION_FLAG_EPHEMERAL = 0x1000;
+    public static final int PROTECTION_FLAG_RUNTIME_ONLY = 0x2000;
+    public static final int PROTECTION_FLAG_OEM = 0x4000;
+    public static final int PROTECTION_FLAG_VENDOR_PRIVILEGED = 0x8000;
+    public static final int PROTECTION_FLAG_SYSTEM_TEXT_CLASSIFIER = 0x10000;
 
     public static final int PROTECTION_MASK_BASE = 0xf;
-    public static final int PROTECTION_MASK_FLAGS = 0xff0;
+    public static final int PROTECTION_MASK_FLAGS = 0xfff0;
+
+    public static final int FLAG_COSTS_MONEY = 1<<0;
+    public static final int FLAG_REMOVED = 1<<1;
+    public static final int FLAG_INSTALLED = 1<<30;
 
     public static final String[] DeprecatedPermissionList = new String[] {
     	"android.permission.BIND_CARRIER_MESSAGING_SERVICE:API level 23.\n - Use BIND_CARRIER_SERVICES instead",
@@ -125,13 +150,19 @@ public class PermissionInfo
         if (level == PROTECTION_SIGNATURE_OR_SYSTEM) {
             level = PROTECTION_SIGNATURE | PROTECTION_FLAG_PRIVILEGED;
         }
+        if ((level & PROTECTION_FLAG_VENDOR_PRIVILEGED) != 0
+                && (level & PROTECTION_FLAG_PRIVILEGED) == 0) {
+            // 'vendorPrivileged' must be 'privileged'. If not,
+            // drop the vendorPrivileged.
+            level = level & ~PROTECTION_FLAG_VENDOR_PRIVILEGED;
+        }
         return level;
     }
 
     public static String protectionToString(int level)
     {
         String protLevel = "????";
-        switch (level&PROTECTION_MASK_BASE) {
+        switch (level & PROTECTION_MASK_BASE) {
             case PermissionInfo.PROTECTION_DANGEROUS:
                 protLevel = "dangerous";
                 break;
@@ -145,26 +176,108 @@ public class PermissionInfo
                 protLevel = "signatureOrSystem";
                 break;
         }
-        if ((level&PermissionInfo.PROTECTION_FLAG_PRIVILEGED) != 0) {
+        if ((level & PermissionInfo.PROTECTION_FLAG_PRIVILEGED) != 0) {
             protLevel += "|privileged";
         }
-        if ((level&PermissionInfo.PROTECTION_FLAG_DEVELOPMENT) != 0) {
+        if ((level & PermissionInfo.PROTECTION_FLAG_DEVELOPMENT) != 0) {
             protLevel += "|development";
         }
-        if ((level&PermissionInfo.PROTECTION_FLAG_APPOP) != 0) {
+        if ((level & PermissionInfo.PROTECTION_FLAG_APPOP) != 0) {
             protLevel += "|appop";
         }
-        if ((level&PermissionInfo.PROTECTION_FLAG_PRE23) != 0) {
+        if ((level & PermissionInfo.PROTECTION_FLAG_PRE23) != 0) {
             protLevel += "|pre23";
         }
-        if ((level&PermissionInfo.PROTECTION_FLAG_INSTALLER) != 0) {
+        if ((level & PermissionInfo.PROTECTION_FLAG_INSTALLER) != 0) {
             protLevel += "|installer";
         }
-        if ((level&PermissionInfo.PROTECTION_FLAG_VERIFIER) != 0) {
+        if ((level & PermissionInfo.PROTECTION_FLAG_VERIFIER) != 0) {
             protLevel += "|verifier";
         }
-        if ((level&PermissionInfo.PROTECTION_FLAG_PREINSTALLED) != 0) {
+        if ((level & PermissionInfo.PROTECTION_FLAG_PREINSTALLED) != 0) {
             protLevel += "|preinstalled";
+        }
+        if ((level & PermissionInfo.PROTECTION_FLAG_SETUP) != 0) {
+            protLevel += "|setup";
+        }
+        if ((level & PermissionInfo.PROTECTION_FLAG_INSTANT) != 0) {
+            protLevel += "|instant";
+        }
+        if ((level & PermissionInfo.PROTECTION_FLAG_RUNTIME_ONLY) != 0) {
+            protLevel += "|runtime";
+        }
+        if ((level & PermissionInfo.PROTECTION_FLAG_OEM) != 0) {
+            protLevel += "|oem";
+        }
+        if ((level & PermissionInfo.PROTECTION_FLAG_VENDOR_PRIVILEGED) != 0) {
+            protLevel += "|vendorPrivileged";
+        }
+        if ((level & PermissionInfo.PROTECTION_FLAG_SYSTEM_TEXT_CLASSIFIER) != 0) {
+            protLevel += "|textClassifier";
+        }
+        return protLevel;
+    }
+
+    public static int parseProtectionLevel(String level)
+    {
+        int protLevel = 0;
+        for(String flag: level.split("\\|")) {
+        	switch(flag) {
+        	case "dangerous":
+        		protLevel |= PermissionInfo.PROTECTION_DANGEROUS;
+        		break;
+        	case "normal":
+        		protLevel |= PermissionInfo.PROTECTION_NORMAL;
+        		break;
+        	case "signature":
+        		protLevel |= PermissionInfo.PROTECTION_SIGNATURE;
+        		break;
+        	case "signatureOrSystem":
+        		protLevel |= PermissionInfo.PROTECTION_SIGNATURE_OR_SYSTEM;
+        		break;
+        	case "privileged":
+        		protLevel |= PermissionInfo.PROTECTION_FLAG_PRIVILEGED;
+        		break;
+        	case "development":
+        		protLevel |= PermissionInfo.PROTECTION_FLAG_DEVELOPMENT;
+        		break;
+        	case "appop":
+        		protLevel |= PermissionInfo.PROTECTION_FLAG_APPOP;
+        		break;
+        	case "pre23":
+        		protLevel |= PermissionInfo.PROTECTION_FLAG_PRE23;
+        		break;
+        	case "installer":
+        		protLevel |= PermissionInfo.PROTECTION_FLAG_INSTALLER;
+        		break;
+        	case "verifier":
+        		protLevel |= PermissionInfo.PROTECTION_FLAG_VERIFIER;
+        		break;
+        	case "ephemeral":
+        		protLevel |= PermissionInfo.PROTECTION_FLAG_EPHEMERAL;
+        		break;
+        	case "preinstalled":
+        		protLevel |= PermissionInfo.PROTECTION_FLAG_PREINSTALLED;
+        		break;
+        	case "setup":
+        		protLevel |= PermissionInfo.PROTECTION_FLAG_SETUP;
+        		break;
+        	case "instant":
+        		protLevel |= PermissionInfo.PROTECTION_FLAG_INSTANT;
+        		break;
+        	case "runtime":
+        		protLevel |= PermissionInfo.PROTECTION_FLAG_RUNTIME_ONLY;
+        		break;
+        	case "oem":
+        		protLevel |= PermissionInfo.PROTECTION_FLAG_OEM;
+        		break;
+        	case "vendorPrivileged":
+        		protLevel |= PermissionInfo.PROTECTION_FLAG_VENDOR_PRIVILEGED;
+        		break;
+        	case "textClassifier":
+        		protLevel |= PermissionInfo.PROTECTION_FLAG_SYSTEM_TEXT_CLASSIFIER;
+        		break;
+        	}
         }
         return protLevel;
     }

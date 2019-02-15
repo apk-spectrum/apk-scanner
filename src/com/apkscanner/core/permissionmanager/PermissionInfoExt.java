@@ -11,6 +11,7 @@ public class PermissionInfoExt extends PermissionInfo {
 	public String label;
 	public String icon;
 	public String description;
+	public int protectionFlags;
 
 	public PermissionInfoExt() { }
 
@@ -23,6 +24,8 @@ public class PermissionInfoExt extends PermissionInfo {
 			label = infoExt.label;
 			icon = infoExt.icon;
 			description = infoExt.description;
+			protectionLevel = infoExt.protectionLevel;
+			protectionFlags = infoExt.protectionFlags;
 		}
 	}
 

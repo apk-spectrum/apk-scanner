@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.PermissionGroupInfo;
+import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.resource.Resource;
 
@@ -14,7 +15,7 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo {
 	public String icon;
 	public String description;
 	public List<PermissionInfoExt> permissions;
-	public boolean hasDangerous;
+	public int protectionFlags;
 
 	public PermissionGroupInfoExt() { }
 
@@ -28,7 +29,7 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo {
 			icon = infoExt.icon;
 			description = infoExt.description;
 			permissions = infoExt.permissions;
-			hasDangerous = infoExt.hasDangerous;
+			protectionFlags = infoExt.protectionFlags;
 		}
 	}
 
@@ -92,7 +93,7 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo {
 		if(icons != null) return icons;
 		return icons = PermissionManager.getResource(icon, sdk);
 	}
-	
+
 	public String getSummary() {
 		StringBuilder summary = new StringBuilder();
 		summary.append("[");
@@ -111,5 +112,9 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo {
 			}
 		}
 		return summary.toString();
+	}
+
+	public boolean hasDangerous() {
+		return (protectionFlags & PermissionInfo.PROTECTION_DANGEROUS) != 0;
 	}
 }

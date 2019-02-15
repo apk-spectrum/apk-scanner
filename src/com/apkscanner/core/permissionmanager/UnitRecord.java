@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.w3c.dom.NamedNodeMap;
 
+import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.XmlPath;
 
@@ -100,8 +101,16 @@ public class UnitRecord<T> {
 							field.set(info, PermissionManager.getResource(value, -1));
 						}
 					} catch(NoSuchFieldException | SecurityException | IllegalAccessException e) { }
-					break;
 					// */
+					break;
+				case "protectionLevel":
+					try {
+						Field field = clazz.getField("protectionFlags");
+						if(field.getType().getName().equals("int")) {
+							field.setInt(info, PermissionInfo.parseProtectionLevel(value));
+						}
+					} catch(NoSuchFieldException | SecurityException | IllegalAccessException e) { }
+					break;
 				case "action":
 					if("added".equals(value)) {
 						addedSdk = sdk;

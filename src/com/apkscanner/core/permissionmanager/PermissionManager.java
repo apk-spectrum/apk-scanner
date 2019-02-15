@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.data.apkinfo.UsesPermissionInfo;
+import com.apkscanner.data.apkinfo.UsesPermissionSdk23Info;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.XmlPath;
@@ -37,6 +38,20 @@ public class PermissionManager
 		addUsesPermission(usesePermission);
 	}
 
+	public static PermissionManager createAllPermissionManager() {
+		PermissionManager manager = new PermissionManager();
+		manager.addAllPermissions();
+		return manager;
+	}
+
+	private void addAllPermissions() {
+		XmlPath allPermissions = xmlPermissionDB.getNodeList("/permission-history/permissions/permission");
+		for(int i=allPermissions.getCount()-1; i>=0; --i) {
+			PermissionRecord record = new PermissionRecord(allPermissions.getNode(i));
+			recordMap.put(record.name, record);
+		}
+	}
+
 	public void addUsesPermission(UsesPermissionInfo[] usesePermission) {
 		if(usesePermission != null) {
 			for(UsesPermissionInfo info: usesePermission) {
@@ -46,16 +61,11 @@ public class PermissionManager
 					continue;
 				}
 				record.maxSdkVersion = info.maxSdkVersion;
+				record.sdk23 = info instanceof UsesPermissionSdk23Info;
 				recordMap.put(info.name, record);
 			}
-		} else {
-			XmlPath allPermissions = xmlPermissionDB.getNodeList("/permission-history/permissions/permission");
-			for(int i=allPermissions.getCount()-1; i>=0; --i) {
-				PermissionRecord record = new PermissionRecord(allPermissions.getNode(i));
-				recordMap.put(record.name, record);
-			}
+			cacheGroupInfo.clear();
 		}
-		cacheGroupInfo.clear();
 	}
 
 	public void clearPermissions() {
@@ -183,7 +193,7 @@ public class PermissionManager
 				groupInfo.permissions = new ArrayList<>();
 				groups.put(groupInfo.name, groupInfo);
 			}
-			if(permInfo.isDangerousLevel()) groupInfo.hasDangerous = true;
+			groupInfo.protectionFlags |= permInfo.protectionFlags;
 			groupInfo.permissions.add(permInfo);
 		}
 		cacheGroupInfo.put(sdk, groups);
