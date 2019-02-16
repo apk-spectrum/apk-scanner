@@ -42,10 +42,10 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo {
 		if(!(target instanceof PermissionGroupInfoExt)) return false;
 		PermissionGroupInfoExt other = (PermissionGroupInfoExt) target;
 		return super.equals(target)
-				&& stringEquals(label, other.label)
-				&& stringEquals(icon, other.icon)
-				&& stringEquals(description, other.description)
-				&& stringEquals(comment, other.comment);
+				&& objEquals(label, other.label)
+				&& objEquals(icon, other.icon)
+				&& objEquals(description, other.description)
+				&& objEquals(comment, other.comment);
 	}
 
 	public boolean isDeprecated() {

@@ -99,7 +99,7 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 		if(head != null && head.trim().isEmpty()) {
 			head = null;
 		}
-		if(stringEquals(this.head, head) && stringEquals(this.body, body)) {
+		if(objEquals(this.head, head) && objEquals(this.body, body)) {
 			Log.v("same content to pre");
 			return;
 		}
@@ -307,7 +307,7 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 		return String.format("<a href=\"%s\"%s>%s</a>", href, attr, text);
 	}
 
-	private boolean stringEquals(String a, String b) {
+	private boolean objEquals(Object a, Object b) {
 		return ((a == null && b == null) || (a != null && a.equals(b)));
 	}
 

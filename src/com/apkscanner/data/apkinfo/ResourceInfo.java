@@ -20,11 +20,11 @@ public class ResourceInfo
 	public boolean equals(Object target) {
 		if(!(target instanceof ResourceInfo)) return false;
 		ResourceInfo other = (ResourceInfo) target;
-		return stringEquals(name, other.name)
-				&& stringEquals(configuration, other.configuration);
+		return objEquals(name, other.name)
+				&& objEquals(configuration, other.configuration);
 	}
 
-	protected boolean stringEquals(String a, String b) {
+	protected boolean objEquals(Object a, Object b) {
 		return ((a == null && b == null) || (a != null && a.equals(b)));
 	}
 }

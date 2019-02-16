@@ -83,16 +83,16 @@ public class PermissionInfo
 	public boolean equals(Object target) {
 		if(!(target instanceof PermissionInfo)) return false;
 		PermissionInfo other = (PermissionInfo) target;
-		return stringEquals(name, other.name)
-				&& stringEquals(permissionGroup, other.permissionGroup)
-				&& stringEquals(protectionLevel, other.protectionLevel)
-				&& stringEquals(permissionFlags, other.permissionFlags)
+		return objEquals(name, other.name)
+				&& objEquals(permissionGroup, other.permissionGroup)
+				&& objEquals(protectionLevel, other.protectionLevel)
+				&& objEquals(permissionFlags, other.permissionFlags)
 				&& Arrays.deepEquals(labels, other.labels)
 				&& Arrays.deepEquals(descriptions, other.descriptions)
 				&& Arrays.deepEquals(icons, other.icons);
 	}
 
-	protected boolean stringEquals(String a, String b) {
+	protected boolean objEquals(Object a, Object b) {
 		return ((a == null && b == null) || (a != null && a.equals(b)));
 	}
 

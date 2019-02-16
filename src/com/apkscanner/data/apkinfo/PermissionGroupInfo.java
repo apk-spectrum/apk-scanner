@@ -25,13 +25,13 @@ public class PermissionGroupInfo
 	public boolean equals(Object target) {
 		if(!(target instanceof PermissionGroupInfo)) return false;
 		PermissionGroupInfo other = (PermissionGroupInfo) target;
-		return stringEquals(name, other.name)
+		return objEquals(name, other.name)
 				&& Arrays.deepEquals(labels, other.labels)
 				&& Arrays.deepEquals(descriptions, other.descriptions)
 				&& Arrays.deepEquals(icons, other.icons);
 	}
 
-	protected boolean stringEquals(String a, String b) {
+	protected boolean objEquals(Object a, Object b) {
 		return ((a == null && b == null) || (a != null && a.equals(b)));
 	}
 
