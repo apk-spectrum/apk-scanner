@@ -5,20 +5,31 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.text.Element;
 import javax.swing.text.html.Option;
+import javax.xml.bind.DatatypeConverter;
 
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
 import com.apkscanner.core.permissionmanager.PermissionManager;
@@ -609,7 +620,8 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		boolean isDanger;
 		for(PermissionGroupInfoExt g: permissionManager.getPermissionGroups()) {
 			isDanger = sdk >= 23 && g.hasDangerous();
-			permGroup.append(makeHyperLink("@event", makeImage(g.getIconPath()), g.getSummary(), g.name, isDanger ? "color:red;" : null));
+			if(cnt % 15 != 0) permGroup.append("&nbsp;");
+			permGroup.append(makeHyperLink("@event", makeImage(g.getIconPath(), g.permissions.size(), isDanger), g.getSummary(), g.name, null));
 			if(++cnt % 15 == 0) permGroup.append("<br>");
 		}
 		return permGroup.toString();
@@ -620,8 +632,56 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		return JHtmlEditorPane.makeHyperLink(href, text, title, id, style);
 	}
 
-	private String makeImage(String src)
+	private String makeImage(String src, int count, boolean isDanger)
 	{
+		BufferedImage image = null;
+		try {
+			image = ImageIO.read(new URL(src));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if(image == null) {
+			return "<img src=\"" + src + "\">";
+		}
+
+		Map<?, ?> desktopHints = (Map<?, ?>) Toolkit.getDefaultToolkit().getDesktopProperty("awt.font.desktophints");
+		Graphics2D g2 = image.createGraphics();
+		if (desktopHints != null) {
+		    g2.setRenderingHints(desktopHints);
+		} else {
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+		}
+		Font font = UIManager.getFont("Label.font");
+		if(font != null) g2.setFont(font.deriveFont(10f));
+
+		if(isDanger) {
+			g2.setColor(Color.WHITE);
+			if(isDanger) g2.fillOval(0, 0, 12, 12);
+			g2.setColor(Color.RED);
+			g2.drawString("R", 3, 10);
+		}
+
+		g2.setColor(Color.WHITE);
+		g2.fillOval(24, 24, 12, 12);
+		g2.setColor(Color.BLACK);
+		if(count < 10) {
+			g2.drawString(Integer.toString(count), 28, 34);
+		} else {
+			if(font != null) g2.setFont(font.deriveFont(9.2f));
+			g2.drawString(Integer.toString(count), 26, 34);
+		}
+
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+			ImageIO.write(image, "png", os);
+			String base64Image = DatatypeConverter.printBase64Binary(os.toByteArray());
+			if(base64Image != null) {
+				src = "data:image/png;base64, " + base64Image;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		return "<img src=\"" + src + "\">";
 	}
 
