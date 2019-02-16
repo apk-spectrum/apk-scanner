@@ -6,13 +6,15 @@
         a { text-decoration: none; color: inherit }
         table, tr, td, h1, h2, h3, h4, h5, h6 { border: 0px; padding: 0px; margin: 0px; font-weight: normal }
         h1, h1 a { font-size: 20px; color: #548235; font-weight: bold }
-        h1 small { color: black; font-weight: normal }
+        h1 font { font-size: 10px; color: black; font-weight: normal }
         h2, h2 a { font-size: 15px; color: #4472C4 }
         h3, h3 a { font-size: 15px; color: #ED7E31 }
         h4, h4 a { font-size: 12px }
+        #particular-features a { color:#ED7E31; font-weight:bold }
+        #particular-features #system-uid { color:FF0000; }
         #perm-group {
           text-align: left;
-          width: 490px;
+          width: 480px;
           padding-top: 5px;
           border-top: 1px;
           border-left: 0px;
@@ -30,11 +32,11 @@
         <td width="170"><img id="icon"></td>
         <td>
           <div id="basic-info">
-            <h1 id="name"></h1>
-            <h2 id="package"></h2>
+            <h1 id="label"></h1>
+            <h2>[<span id="package"> </span>]<span id="package-searcher">searcher</span></h2>
             <h3 id="version"></h3>
             <br/>
-            <h4 id="sdk-version"></h4>
+            <h4>@SDK Ver. <span id="sdk-version">sdk</span></h4>
             <h4 id="file-size"></h4>
             <br/>
             <h4 id="features"></h4>
