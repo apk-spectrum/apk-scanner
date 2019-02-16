@@ -161,6 +161,18 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 		}
 	}
 
+	public String getInnerText(Element elem) {
+		if(elem != null) {
+			HTMLDocument doc = (HTMLDocument)getDocument();
+			try {
+				return doc.getText(elem.getStartOffset(), elem.getEndOffset() - elem.getStartOffset());
+			} catch (BadLocationException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+
 	public void insertElementAfter(Element elem, String htmlText) {
 		HTMLDocument doc = (HTMLDocument)getDocument();
 		try {
@@ -208,6 +220,10 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 
 	public void setOuterHTMLById(String id, String htmlText) {
 		setOuterHTML(getElementById(id), htmlText);
+	}
+
+	public String getInnerText(String id) {
+		return getInnerText(getElementById(id));
 	}
 
 	public void insertElementAfter(String id, String htmlText) {
