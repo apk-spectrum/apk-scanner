@@ -197,6 +197,7 @@ public class PermissionRecorder {
 				info.sdk = sdk;
 				info.labels = getResource(info.label, repo.config, resPath);
 				info.descriptions = getResource(info.description, repo.config, resPath);
+				info.requests = getResource(info.request, repo.config, resPath);
 
 				PermissionGroupInfoExt preInfo = groupMap.get(info.name);
 				if(preInfo == null) {
@@ -244,9 +245,6 @@ public class PermissionRecorder {
 			preSdkVersion = sdk;
 
 		}
-
-		//histories.printXml(System.out);;
-		histories.saveXmlFile(new File("xmltest.xml"));
 	}
 
 	private void recordRepositoryInfo(PermissionRepository repo) {
@@ -312,6 +310,11 @@ public class PermissionRecorder {
 				node.setAttribute("description", info.description);
 				recordResource(info.description, info.descriptions, -1);
 			}
+			if(info.request != null) {
+				node.setAttribute("request", info.request);
+				recordResource(info.request, info.requests, -1);
+			}
+			if(info.priority != null) node.setAttribute("priority", info.priority.toString());
 			if(info.icon != null) node.setAttribute("icon", info.icon);
 			if(info.comment != null) {
 				node.setComment(info.comment);
@@ -413,6 +416,14 @@ public class PermissionRecorder {
 					node.setAttribute("description", lowerInfo.description);
 					recordResource(lowerInfo.description, lowerInfo.descriptions, lowerInfo.sdk);
 				}
+				if(!objEquals(lowerInfo.request, higherInfo.request) ||
+						!Arrays.deepEquals(lowerInfo.requests, higherInfo.requests)) {
+					node.setAttribute("request", lowerInfo.request);
+					recordResource(lowerInfo.request, lowerInfo.requests, lowerInfo.sdk);
+				}
+				if(!objEquals(lowerInfo.priority, higherInfo.priority)) {
+					node.setAttribute("priority", lowerInfo.priority != null ? lowerInfo.priority.toString() : null);
+				}
 				if(!objEquals(lowerInfo.icon, higherInfo.icon) ||
 						!Arrays.deepEquals(lowerInfo.icons, higherInfo.icons)) {
 					node.setAttribute("icon", lowerInfo.icon);
@@ -472,7 +483,11 @@ public class PermissionRecorder {
 		info.label = node.getAttribute("android:label");
 		info.description = node.getAttribute("android:description");
 		info.icon = node.getAttribute("android:icon");
+		info.request = node.getAttribute("android:request");
 		info.comment = node.getComment();
+		String priority = node.getAttribute("android:priority");
+		if(priority != null && !priority.isEmpty())
+			info.priority = Integer.parseInt(priority);
 		return info;
 	}
 
@@ -562,4 +577,17 @@ public class PermissionRecorder {
 	static NetworkException makeNetworkException(Exception e) {
 		return new NetworkException(e);
 	}
+
+	public void saveXmlFile(File file) {
+		//histories.printXml(System.out);;
+		histories.saveXmlFile(file);
+	}
+
+	public static void main(final String[] args) {
+		PermissionRepository repository = PermissionManager.getPermissionRepository();
+		PermissionRecorder recorder = new PermissionRecorder();
+		recorder.record(repository);
+		recorder.saveXmlFile(new File("data/PermissionsHistory.xml"));
+	}
+
 }

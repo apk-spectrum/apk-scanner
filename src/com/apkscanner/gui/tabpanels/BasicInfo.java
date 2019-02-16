@@ -215,7 +215,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 
 	private void setInfoAreaHeight(int groupCount) {
 		int infoHeight = groupCount > 15 ? 220 : (groupCount > 0 ? 260 : 280);
-		apkInfoPanel.setOuterHTMLById("basic-info-height-td", "<td height=\""+infoHeight+"\"></td>");
+		apkInfoPanel.setOuterHTMLById("basic-info-height-td", "<td id=\"basic-info-height-td\" height=\""+infoHeight+"\"></td>");
 	}
 
 	private void setPermissionList() {
@@ -605,8 +605,11 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	{
 		StringBuilder permGroup = new StringBuilder("");
 		int cnt = 0;
+		int sdk = permissionManager.getSdkVersion();
+		boolean isDanger;
 		for(PermissionGroupInfoExt g: permissionManager.getPermissionGroups()) {
-			permGroup.append(makeHyperLink("@event", makeImage(g.getIconPath()), g.getSummary(), g.name, g.hasDangerous() ? "color:red;" : null));
+			isDanger = sdk >= 23 && g.hasDangerous();
+			permGroup.append(makeHyperLink("@event", makeImage(g.getIconPath()), g.getSummary(), g.name, isDanger ? "color:red;" : null));
 			if(++cnt % 15 == 0) permGroup.append("<br>");
 		}
 		return permGroup.toString();
@@ -688,7 +691,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		if(item instanceof Option) {
 			String sdkVersion = ((Option)item).getValue();
 			if(sdkVersion == null || sdkVersion.isEmpty()) sdkVersion = "-1";
-			Log.e("sdkVersion " + sdkVersion);
+			Log.v("change sdkVersion " + sdkVersion);
 			permissionManager.setSdkVersion(Integer.parseInt(sdkVersion));
 			setPermissionList();
 		}

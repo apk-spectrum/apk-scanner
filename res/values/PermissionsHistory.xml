@@ -4898,80 +4898,89 @@
     <permission-groups>
         <!-- Used for permissions that are associated with accessing
          body or environmental sensors. -->
-        <permission-group description="@string/permgroupdesc_sensors" icon="@drawable/perm_group_sensors" label="@string/permgrouplab_sensors" name="android.permission-group.SENSORS">
+        <permission-group description="@string/permgroupdesc_sensors" icon="@drawable/perm_group_sensors" label="@string/permgrouplab_sensors" name="android.permission-group.SENSORS" priority="800" request="@string/permgrouprequest_sensors">
             <!-- Used for permissions that are associated with accessing
          camera or capturing images/video from the device. -->
-            <patch sdk="27"/>
+            <patch request="" sdk="27"/>
             <patch label="@string/permgrouplab_sensors" sdk="25"/>
             <patch description="@string/permgroupdesc_sensors" sdk="24"/>
             <patch action="added" description="@string/permgroupdesc_sensors" sdk="23"/>
         </permission-group>
         <!-- Used for permissions that are associated with accessing
      camera or capturing images/video from the device. -->
-        <permission-group description="@string/permgroupdesc_camera" icon="@drawable/perm_group_camera" label="@string/permgrouplab_camera" name="android.permission-group.CAMERA">
+        <permission-group description="@string/permgroupdesc_camera" icon="@drawable/perm_group_camera" label="@string/permgrouplab_camera" name="android.permission-group.CAMERA" priority="700" request="@string/permgrouprequest_camera">
+            <patch request="" sdk="27"/>
             <patch description="@string/permgroupdesc_camera" sdk="24"/>
             <patch description="@string/permgroupdesc_camera" sdk="23"/>
             <!-- Used for permissions that are associated with accessing
          camera or capturing images/video from the device. -->
-            <patch description="@string/permgroupdesc_camera" sdk="22"/>
+            <patch description="@string/permgroupdesc_camera" priority="350" sdk="22"/>
             <patch action="added" sdk="17"/>
         </permission-group>
         <!-- Used for permissions that are associated with accessing
          microphone audio from the device. Note that phone calls also capture audio
          but are in a separate (more visible) permission group. -->
-        <permission-group description="@string/permgroupdesc_microphone" icon="@drawable/perm_group_microphone" label="@string/permgrouplab_microphone" name="android.permission-group.MICROPHONE">
+        <permission-group description="@string/permgroupdesc_microphone" icon="@drawable/perm_group_microphone" label="@string/permgrouplab_microphone" name="android.permission-group.MICROPHONE" priority="600" request="@string/permgrouprequest_microphone">
+            <patch request="" sdk="27"/>
             <patch description="@string/permgroupdesc_microphone" sdk="25"/>
             <patch description="@string/permgroupdesc_microphone" sdk="23"/>
-            <patch description="@string/permgroupdesc_microphone" sdk="22"/>
+            <patch description="@string/permgroupdesc_microphone" priority="340" sdk="22"/>
             <patch action="added" sdk="17"/>
         </permission-group>
         <!-- Used for permissions that are associated telephony features. -->
-        <permission-group description="@string/permgroupdesc_phone" icon="@drawable/perm_group_phone_calls" label="@string/permgrouplab_phone" name="android.permission-group.PHONE">
+        <permission-group description="@string/permgroupdesc_phone" icon="@drawable/perm_group_phone_calls" label="@string/permgrouplab_phone" name="android.permission-group.PHONE" priority="500" request="@string/permgrouprequest_phone">
+            <patch request="" sdk="27"/>
             <patch description="@string/permgroupdesc_phone" sdk="25"/>
             <patch action="added" description="@string/permgroupdesc_phone" sdk="23"/>
         </permission-group>
         <!-- Used for permissions that are associated telephony features. -->
-        <permission-group description="@string/permgroupdesc_calllog" icon="@drawable/perm_group_call_log" label="@string/permgrouplab_calllog" name="android.permission-group.CALL_LOG">
+        <permission-group description="@string/permgroupdesc_calllog" icon="@drawable/perm_group_call_log" label="@string/permgrouplab_calllog" name="android.permission-group.CALL_LOG" priority="450" request="@string/permgrouprequest_calllog">
             <patch action="added" sdk="28"/>
         </permission-group>
         <!-- Used for permissions that allow accessing the device location. -->
-        <permission-group description="@string/permgroupdesc_location" icon="@drawable/perm_group_location" label="@string/permgrouplab_location" name="android.permission-group.LOCATION">
+        <permission-group description="@string/permgroupdesc_location" icon="@drawable/perm_group_location" label="@string/permgrouplab_location" name="android.permission-group.LOCATION" priority="400" request="@string/permgrouprequest_location">
+            <patch request="" sdk="27"/>
             <patch description="@string/permgroupdesc_location" sdk="24"/>
             <patch description="@string/permgroupdesc_location" sdk="23"/>
             <!-- Used for permissions that allow access to the user's current
          location. -->
-            <patch description="@string/permgroupdesc_location" label="@string/permgrouplab_location" sdk="22"/>
+            <patch description="@string/permgroupdesc_location" label="@string/permgrouplab_location" priority="330" sdk="22"/>
+            <patch priority="" sdk="16"/>
             <patch description="@string/permgroupdesc_location" icon="" sdk="15"/>
             <patch description="@string/permgroupdesc_location" sdk="3"/>
         </permission-group>
         <!-- Used for runtime permissions related to the shared external storage. -->
-        <permission-group description="@string/permgroupdesc_storage" icon="@drawable/perm_group_storage" label="@string/permgrouplab_storage" name="android.permission-group.STORAGE">
+        <permission-group description="@string/permgroupdesc_storage" icon="@drawable/perm_group_storage" label="@string/permgrouplab_storage" name="android.permission-group.STORAGE" priority="900" request="@string/permgrouprequest_storage">
+            <patch request="" sdk="27"/>
             <patch label="@string/permgrouplab_storage" sdk="26"/>
             <patch description="@string/permgroupdesc_storage" sdk="24"/>
             <patch description="@string/permgroupdesc_storage" sdk="23"/>
             <!-- Group of permissions that are related to SD card access. -->
-            <patch description="@string/permgroupdesc_storage" sdk="22"/>
-            <patch icon="" sdk="16"/>
+            <patch description="@string/permgroupdesc_storage" priority="240" sdk="22"/>
+            <patch icon="" priority="" sdk="16"/>
             <patch description="@string/permgroupdesc_storage" sdk="8"/>
             <patch action="added" sdk="4"/>
         </permission-group>
         <!-- Used for runtime permissions related to user's SMS messages. -->
-        <permission-group description="@string/permgroupdesc_sms" icon="@drawable/perm_group_sms" label="@string/permgrouplab_sms" name="android.permission-group.SMS">
+        <permission-group description="@string/permgroupdesc_sms" icon="@drawable/perm_group_sms" label="@string/permgrouplab_sms" name="android.permission-group.SMS" priority="300" request="@string/permgrouprequest_sms">
+            <patch request="" sdk="27"/>
             <patch description="@string/permgroupdesc_sms" sdk="25"/>
             <patch action="added" description="@string/permgroupdesc_sms" sdk="23"/>
         </permission-group>
         <!-- Used for runtime permissions related to user's calendar. -->
-        <permission-group description="@string/permgroupdesc_calendar" icon="@drawable/perm_group_calendar" label="@string/permgrouplab_calendar" name="android.permission-group.CALENDAR">
+        <permission-group description="@string/permgroupdesc_calendar" icon="@drawable/perm_group_calendar" label="@string/permgrouplab_calendar" name="android.permission-group.CALENDAR" priority="200" request="@string/permgrouprequest_calendar">
+            <patch request="" sdk="27"/>
             <patch description="@string/permgroupdesc_calendar" sdk="25"/>
             <patch description="@string/permgroupdesc_calendar" sdk="23"/>
             <!-- Used for permissions that provide access to the device
          calendar to create / view events.-->
-            <patch description="@string/permgroupdesc_calendar" sdk="22"/>
+            <patch description="@string/permgroupdesc_calendar" priority="290" sdk="22"/>
             <patch action="added" sdk="17"/>
         </permission-group>
         <!-- Used for runtime permissions related to contacts and profiles on this
         device. -->
-        <permission-group description="@string/permgroupdesc_contacts" icon="@drawable/perm_group_contacts" label="@string/permgrouplab_contacts" name="android.permission-group.CONTACTS">
+        <permission-group description="@string/permgroupdesc_contacts" icon="@drawable/perm_group_contacts" label="@string/permgrouplab_contacts" name="android.permission-group.CONTACTS" priority="100" request="@string/permgrouprequest_contacts">
+            <patch request="" sdk="27"/>
             <patch description="@string/permgroupdesc_contacts" sdk="24"/>
             <!-- Used for runtime permissions related to user's contacts and profile. -->
             <patch action="added" description="@string/permgroupdesc_contacts" sdk="23"/>
@@ -4980,13 +4989,14 @@
          are not permissions that should appear in third-party applications; they
          protect APIs that are intended only to be used for development
          purposes. -->
-        <permission-group description="@string/permgroupdesc_developmentTools" label="@string/permgrouplab_developmentTools" name="android.permission-group.DEVELOPMENT_TOOLS">
+        <permission-group description="@string/permgroupdesc_developmentTools" label="@string/permgrouplab_developmentTools" name="android.permission-group.DEVELOPMENT_TOOLS" priority="310">
             <patch action="removed" sdk="23"/>
             <!-- Group of permissions that are related to development features.  These
          are not permissions that should appear in normal applications; they
          protect APIs that are intended only to be used for development
          purposes. -->
             <patch sdk="17"/>
+            <patch priority="" sdk="16"/>
             <patch description="@string/permgroupdesc_developmentTools" sdk="15"/>
             <patch description="@string/permgroupdesc_developmentTools" sdk="8"/>
             <patch label="@string/permgrouplab_developmentTools" sdk="3"/>
@@ -4997,56 +5007,56 @@
          level so they don't get displayed.  This can also, however, be used
          for miscellaneous features that provide access to the operating system,
          such as writing the global system settings. -->
-        <permission-group description="@string/permgroupdesc_systemTools" icon="@drawable/perm_group_system_tools" label="@string/permgrouplab_systemTools" name="android.permission-group.SYSTEM_TOOLS">
+        <permission-group description="@string/permgroupdesc_systemTools" icon="@drawable/perm_group_system_tools" label="@string/permgrouplab_systemTools" name="android.permission-group.SYSTEM_TOOLS" priority="100">
             <patch action="removed" sdk="23"/>
-            <patch icon="" sdk="16"/>
+            <patch icon="" priority="" sdk="16"/>
             <patch description="@string/permgroupdesc_systemTools" sdk="15"/>
             <patch description="@string/permgroupdesc_systemTools" sdk="3"/>
         </permission-group>
         <!-- @Removed Used for permissions that access the sync settings or sync
          related information. -->
-        <permission-group description="@string/permgroupdesc_syncSettings" icon="@drawable/perm_group_sync_settings" label="@string/permgrouplab_syncSettings" name="android.permission-group.SYNC_SETTINGS">
+        <permission-group description="@string/permgroupdesc_syncSettings" icon="@drawable/perm_group_sync_settings" label="@string/permgrouplab_syncSettings" name="android.permission-group.SYNC_SETTINGS" priority="120">
             <patch action="removed" sdk="23"/>
             <patch action="added" sdk="17"/>
         </permission-group>
         <!-- @Removed Used for permissions that change the status bar -->
-        <permission-group description="@string/permgroupdesc_statusBar" icon="@drawable/perm_group_status_bar" label="@string/permgrouplab_statusBar" name="android.permission-group.STATUS_BAR">
+        <permission-group description="@string/permgroupdesc_statusBar" icon="@drawable/perm_group_status_bar" label="@string/permgrouplab_statusBar" name="android.permission-group.STATUS_BAR" priority="110">
             <patch action="removed" sdk="23"/>
             <patch action="added" sdk="17"/>
         </permission-group>
         <!-- @Removed Group of permissions that are related to system clock. -->
-        <permission-group description="@string/permgroupdesc_systemClock" icon="@drawable/perm_group_system_clock" label="@string/permgrouplab_systemClock" name="android.permission-group.SYSTEM_CLOCK">
+        <permission-group description="@string/permgroupdesc_systemClock" icon="@drawable/perm_group_system_clock" label="@string/permgrouplab_systemClock" name="android.permission-group.SYSTEM_CLOCK" priority="140">
             <patch action="removed" sdk="23"/>
             <patch action="added" sdk="17"/>
         </permission-group>
         <!-- @Removed Group of permissions that allow manipulation of how
          another application displays UI to the user. -->
-        <permission-group description="@string/permgroupdesc_wallpaper" icon="@drawable/perm_group_wallpaper" label="@string/permgrouplab_wallpaper" name="android.permission-group.WALLPAPER">
+        <permission-group description="@string/permgroupdesc_wallpaper" icon="@drawable/perm_group_wallpaper" label="@string/permgrouplab_wallpaper" name="android.permission-group.WALLPAPER" priority="150">
             <patch action="removed" sdk="23"/>
             <patch action="added" sdk="17"/>
         </permission-group>
         <!-- @Removed Group of permissions that allow manipulation of how
          another application displays UI to the user. -->
-        <permission-group description="@string/permgroupdesc_display" icon="@drawable/perm_group_display" label="@string/permgrouplab_display" name="android.permission-group.DISPLAY">
+        <permission-group description="@string/permgroupdesc_display" icon="@drawable/perm_group_display" label="@string/permgrouplab_display" name="android.permission-group.DISPLAY" priority="190">
             <patch action="removed" sdk="23"/>
             <patch action="added" sdk="17"/>
         </permission-group>
         <!-- @Removed Group of permissions that are related to the other applications
          installed on the system.  Examples include such as listing
          running apps, or killing background processes. -->
-        <permission-group description="@string/permgroupdesc_appInfo" icon="@drawable/perm_group_app_info" label="@string/permgrouplab_appInfo" name="android.permission-group.APP_INFO">
+        <permission-group description="@string/permgroupdesc_appInfo" icon="@drawable/perm_group_app_info" label="@string/permgrouplab_appInfo" name="android.permission-group.APP_INFO" priority="220">
             <patch action="removed" sdk="23"/>
             <patch action="added" sdk="17"/>
         </permission-group>
         <!-- @Removed Group of permissions that are related to the screenlock. -->
-        <permission-group description="@string/permgroupdesc_screenlock" icon="@drawable/perm_group_screenlock" label="@string/permgrouplab_screenlock" name="android.permission-group.SCREENLOCK">
+        <permission-group description="@string/permgroupdesc_screenlock" icon="@drawable/perm_group_screenlock" label="@string/permgrouplab_screenlock" name="android.permission-group.SCREENLOCK" priority="230">
             <patch action="removed" sdk="23"/>
             <patch action="added" description="@string/permgroupdesc_storage" label="@string/permgrouplab_storage" sdk="17"/>
         </permission-group>
         <!-- @Removed Used for permissions that are associated with accessing and modifying
          telephony state: placing calls, intercepting outgoing calls, reading
          and modifying the phone state. -->
-        <permission-group description="@string/permgroupdesc_phoneCalls" icon="@drawable/perm_group_phone_calls" label="@string/permgrouplab_phoneCalls" name="android.permission-group.PHONE_CALLS">
+        <permission-group description="@string/permgroupdesc_phoneCalls" icon="@drawable/perm_group_phone_calls" label="@string/permgrouplab_phoneCalls" name="android.permission-group.PHONE_CALLS" priority="370">
             <patch action="removed" sdk="23"/>
             <!-- Used for permissions that are associated with accessing and modifyign
          telephony state: placing calls, intercepting outgoing calls, reading
@@ -5057,34 +5067,35 @@
          and modifying the phone state.  Note that
          placing phone calls is not in this group, since that is in the
          more important "takin' yer moneys" group. -->
-            <patch icon="" sdk="16"/>
+            <patch icon="" priority="" sdk="16"/>
             <patch description="@string/permgroupdesc_phoneCalls" sdk="15"/>
         </permission-group>
         <!-- @Removed Used for permissions that provide direct access to the hardware on
          the device.  This includes audio, the camera, vibrator, etc. -->
-        <permission-group description="@string/permgroupdesc_hardwareControls" label="@string/permgrouplab_hardwareControls" name="android.permission-group.HARDWARE_CONTROLS">
+        <permission-group description="@string/permgroupdesc_hardwareControls" label="@string/permgrouplab_hardwareControls" name="android.permission-group.HARDWARE_CONTROLS" priority="260">
             <patch action="removed" sdk="23"/>
+            <patch priority="" sdk="16"/>
             <patch description="@string/permgroupdesc_hardwareControls" sdk="15"/>
             <patch description="@string/permgroupdesc_hardwareControls" sdk="3"/>
         </permission-group>
         <!-- @Removed Used for permissions that provide direct access to speaker settings
          the device. -->
-        <permission-group description="@string/permgroupdesc_audioSettings" icon="@drawable/perm_group_audio_settings" label="@string/permgrouplab_audioSettings" name="android.permission-group.AUDIO_SETTINGS">
+        <permission-group description="@string/permgroupdesc_audioSettings" icon="@drawable/perm_group_audio_settings" label="@string/permgrouplab_audioSettings" name="android.permission-group.AUDIO_SETTINGS" priority="130">
             <patch action="removed" sdk="23"/>
             <patch action="added" sdk="17"/>
         </permission-group>
         <!-- @Removed Used for permissions that provide direct access to the hardware on
          the device that has an effect on battery life.  This includes vibrator,
          flashlight,  etc. -->
-        <permission-group description="@string/permgroupdesc_affectsBattery" icon="@drawable/perm_group_affects_battery" label="@string/permgrouplab_affectsBattery" name="android.permission-group.AFFECTS_BATTERY">
+        <permission-group description="@string/permgroupdesc_affectsBattery" icon="@drawable/perm_group_affects_battery" label="@string/permgrouplab_affectsBattery" name="android.permission-group.AFFECTS_BATTERY" priority="180">
             <patch action="removed" sdk="23"/>
             <patch action="added" sdk="17"/>
         </permission-group>
         <!-- @Removed Permissions for direct access to the accounts managed
          by the Account Manager. -->
-        <permission-group description="@string/permgroupdesc_accounts" icon="@drawable/perm_group_accounts" label="@string/permgrouplab_accounts" name="android.permission-group.ACCOUNTS">
+        <permission-group description="@string/permgroupdesc_accounts" icon="@drawable/perm_group_accounts" label="@string/permgrouplab_accounts" name="android.permission-group.ACCOUNTS" priority="200">
             <patch action="removed" sdk="23"/>
-            <patch icon="" sdk="16"/>
+            <patch icon="" priority="" sdk="16"/>
             <patch description="@string/permgroupdesc_accounts" label="@string/permgrouplab_accounts" sdk="5"/>
             <!-- Permissions for direct access to Google accounts.
          Note that while right now this is only used for Google accounts,
@@ -5095,7 +5106,7 @@
             <patch description="@string/permgroupdesc_accounts" sdk="3"/>
         </permission-group>
         <!-- @Removed Used for permissions that provide access to other devices through Bluetooth.-->
-        <permission-group description="@string/permgroupdesc_bluetoothNetwork" icon="@drawable/perm_group_bluetooth" label="@string/permgrouplab_bluetoothNetwork" name="android.permission-group.BLUETOOTH_NETWORK">
+        <permission-group description="@string/permgroupdesc_bluetoothNetwork" icon="@drawable/perm_group_bluetooth" label="@string/permgrouplab_bluetoothNetwork" name="android.permission-group.BLUETOOTH_NETWORK" priority="260">
             <patch action="removed" sdk="23"/>
             <patch action="added" sdk="17"/>
         </permission-group>
@@ -5103,25 +5114,25 @@
          main permission here is internet access, but this is also an
          appropriate group for accessing or modifying any network configuration
          or other related network operations. -->
-        <permission-group description="@string/permgroupdesc_network" icon="@drawable/perm_group_network" label="@string/permgrouplab_network" name="android.permission-group.NETWORK">
+        <permission-group description="@string/permgroupdesc_network" icon="@drawable/perm_group_network" label="@string/permgrouplab_network" name="android.permission-group.NETWORK" priority="270">
             <patch action="removed" sdk="23"/>
-            <patch icon="" sdk="16"/>
+            <patch icon="" priority="" sdk="16"/>
             <patch description="@string/permgroupdesc_network" sdk="15"/>
             <patch description="@string/permgroupdesc_network" sdk="8"/>
             <patch description="@string/permgroupdesc_network" sdk="3"/>
         </permission-group>
         <!-- @Removed Used for permissions that allow requesting certain accessibility features. -->
-        <permission-group description="@string/permgroupdesc_accessibilityFeatures" icon="@drawable/perm_group_accessibility_features" label="@string/permgrouplab_accessibilityFeatures" name="android.permission-group.ACCESSIBILITY_FEATURES">
+        <permission-group description="@string/permgroupdesc_accessibilityFeatures" icon="@drawable/perm_group_accessibility_features" label="@string/permgrouplab_accessibilityFeatures" name="android.permission-group.ACCESSIBILITY_FEATURES" priority="380">
             <patch action="removed" sdk="23"/>
             <patch action="added" sdk="18"/>
         </permission-group>
         <!-- @Removed Used for permissions that provide access to the user voicemail box. -->
-        <permission-group description="@string/permgroupdesc_voicemail" icon="@drawable/perm_group_voicemail" label="@string/permgrouplab_voicemail" name="android.permission-group.VOICEMAIL">
+        <permission-group description="@string/permgroupdesc_voicemail" icon="@drawable/perm_group_voicemail" label="@string/permgrouplab_voicemail" name="android.permission-group.VOICEMAIL" priority="280">
             <patch action="removed" sdk="23"/>
             <patch action="added" sdk="17"/>
         </permission-group>
         <!-- @Removed Used for permissions that provide access to device alarms. -->
-        <permission-group description="@string/permgroupdesc_deviceAlarms" icon="@drawable/perm_group_device_alarms" label="@string/permgrouplab_deviceAlarms" name="android.permission-group.DEVICE_ALARMS">
+        <permission-group description="@string/permgroupdesc_deviceAlarms" icon="@drawable/perm_group_device_alarms" label="@string/permgrouplab_deviceAlarms" name="android.permission-group.DEVICE_ALARMS" priority="210">
             <patch action="removed" sdk="23"/>
             <!-- Used for permissions that provide access to the user voicemail box. -->
             <patch sdk="20"/>
@@ -5129,19 +5140,19 @@
         </permission-group>
         <!-- @Removed Used for permissions that provide access to the user
          bookmarks and browser history.-->
-        <permission-group description="@string/permgroupdesc_bookmarks" icon="@drawable/perm_group_bookmarks" label="@string/permgrouplab_bookmarks" name="android.permission-group.BOOKMARKS">
+        <permission-group description="@string/permgroupdesc_bookmarks" icon="@drawable/perm_group_bookmarks" label="@string/permgrouplab_bookmarks" name="android.permission-group.BOOKMARKS" priority="300">
             <patch action="removed" sdk="23"/>
             <patch action="added" sdk="17"/>
         </permission-group>
         <!-- @Removed Used for permissions that provide access to the user
          calendar to create / view events.-->
-        <permission-group description="@string/permgroupdesc_writeDictionary" icon="@drawable/perm_group_user_dictionary_write" label="@string/permgrouplab_writeDictionary" name="android.permission-group.WRITE_USER_DICTIONARY">
+        <permission-group description="@string/permgroupdesc_writeDictionary" icon="@drawable/perm_group_user_dictionary_write" label="@string/permgrouplab_writeDictionary" name="android.permission-group.WRITE_USER_DICTIONARY" priority="160">
             <patch action="removed" sdk="23"/>
             <patch action="added" sdk="17"/>
         </permission-group>
         <!-- @Removed Used for permissions that provide access to the user
          calendar to create / view events.-->
-        <permission-group description="@string/permgroupdesc_dictionary" icon="@drawable/perm_group_user_dictionary" label="@string/permgrouplab_dictionary" name="android.permission-group.USER_DICTIONARY">
+        <permission-group description="@string/permgroupdesc_dictionary" icon="@drawable/perm_group_user_dictionary" label="@string/permgrouplab_dictionary" name="android.permission-group.USER_DICTIONARY" priority="170">
             <patch action="removed" sdk="23"/>
             <patch action="added" sdk="17"/>
         </permission-group>
@@ -5149,13 +5160,13 @@
          user such as profile information.  This includes both reading and
          writing of this data (which should generally be expressed as two
          distinct permissions). -->
-        <permission-group description="@string/permgroupdesc_personalInfo" icon="@drawable/perm_group_personal_info" label="@string/permgrouplab_personalInfo" name="android.permission-group.PERSONAL_INFO">
+        <permission-group description="@string/permgroupdesc_personalInfo" icon="@drawable/perm_group_personal_info" label="@string/permgrouplab_personalInfo" name="android.permission-group.PERSONAL_INFO" priority="310">
             <patch action="removed" sdk="23"/>
             <!-- Used for permissions that provide access to the user's private data,
          such as contacts, calendar events, e-mail messages, etc.  This includes
          both reading and writing of this data (which should generally be
          expressed as two distinct permissions). -->
-            <patch description="@string/permgroupdesc_personalInfo" icon="" sdk="16"/>
+            <patch description="@string/permgroupdesc_personalInfo" icon="" priority="" sdk="16"/>
             <patch description="@string/permgroupdesc_personalInfo" sdk="10"/>
             <patch description="@string/permgroupdesc_personalInfo" label="@string/permgrouplab_personalInfo" sdk="3"/>
         </permission-group>
@@ -5163,7 +5174,7 @@
          such as contacts, call logs, social stream, etc.  This includes
          both reading and writing of this data (which should generally be
          expressed as two distinct permissions). -->
-        <permission-group description="@string/permgroupdesc_socialInfo" icon="@drawable/perm_group_social_info" label="@string/permgrouplab_socialInfo" name="android.permission-group.SOCIAL_INFO">
+        <permission-group description="@string/permgroupdesc_socialInfo" icon="@drawable/perm_group_social_info" label="@string/permgrouplab_socialInfo" name="android.permission-group.SOCIAL_INFO" priority="320">
             <patch action="removed" sdk="23"/>
             <patch action="added" sdk="17"/>
         </permission-group>
@@ -5171,9 +5182,9 @@
          on behalf of the user or intercept messages being received by the
          user.  This is primarily intended for SMS/MMS messaging, such as
          receiving or reading an MMS. -->
-        <permission-group description="@string/permgroupdesc_messages" icon="@drawable/perm_group_messages" label="@string/permgrouplab_messages" name="android.permission-group.MESSAGES">
+        <permission-group description="@string/permgroupdesc_messages" icon="@drawable/perm_group_messages" label="@string/permgrouplab_messages" name="android.permission-group.MESSAGES" priority="360">
             <patch action="removed" sdk="23"/>
-            <patch icon="" sdk="16"/>
+            <patch icon="" priority="" sdk="16"/>
             <patch description="@string/permgroupdesc_messages" sdk="15"/>
         </permission-group>
         <!-- @Removed Used for permissions that can be used to make the user spend money
@@ -6098,22 +6109,32 @@
             <string name="permgroupdesc_sensors">access sensor data about your vital signs</string>
             <string name="permgroupdesc_sensors" sdk="24">access sensor data about your vital signs</string>
             <string name="permgroupdesc_sensors" sdk="23">access sensor data about your vital signs</string>
+            <string name="permgrouprequest_sensors">Allow
+        &lt;b&gt;%1$s&lt;/b&gt; to access sensor data about your vital signs?</string>
             <string name="permgrouplab_camera">Camera</string>
             <string name="permgroupdesc_camera">take pictures and record video</string>
             <string name="permgroupdesc_camera" sdk="24">take pictures and record video</string>
             <string name="permgroupdesc_camera" sdk="23">take pictures and record video</string>
             <string name="permgroupdesc_camera" sdk="22">Direct access to camera for image or video capture.</string>
+            <string name="permgrouprequest_camera">Allow
+        &lt;b&gt;%1$s&lt;/b&gt; to take pictures and record video?</string>
             <string name="permgrouplab_microphone">Microphone</string>
             <string name="permgroupdesc_microphone">record audio</string>
             <string name="permgroupdesc_microphone" sdk="25">record audio</string>
             <string name="permgroupdesc_microphone" sdk="23">record audio</string>
             <string name="permgroupdesc_microphone" sdk="22">Direct access to the microphone to record audio.</string>
+            <string name="permgrouprequest_microphone">Allow
+        &lt;b&gt;%1$s&lt;/b&gt; to record audio?</string>
             <string name="permgrouplab_phone">Phone</string>
             <string name="permgroupdesc_phone">make and manage phone calls</string>
             <string name="permgroupdesc_phone" sdk="25">make and manage phone calls</string>
             <string name="permgroupdesc_phone" sdk="23">make and manage phone calls</string>
+            <string name="permgrouprequest_phone">Allow
+        &lt;b&gt;%1$s&lt;/b&gt; to make and manage phone calls?</string>
             <string name="permgrouplab_calllog">Call logs</string>
             <string name="permgroupdesc_calllog">read and write phone call log</string>
+            <string name="permgrouprequest_calllog">Allow
+        &lt;b&gt;%1$s&lt;/b&gt; to access your phone call logs?</string>
             <string name="permgrouplab_location">Location</string>
             <string name="permgrouplab_location" sdk="22">Your location</string>
             <string name="permgroupdesc_location">access this device\'s location</string>
@@ -6122,6 +6143,8 @@
             <string name="permgroupdesc_location" sdk="22">Monitor your physical location.</string>
             <string name="permgroupdesc_location" sdk="15">Monitor your physical location</string>
             <string name="permgroupdesc_location" sdk="3">Monitor your physical location</string>
+            <string name="permgrouprequest_location">Allow
+        &lt;b&gt;%1$s&lt;/b&gt; to access this device\'s location?</string>
             <string name="permgrouplab_storage">Storage</string>
             <string name="permgrouplab_storage" sdk="26">Storage</string>
             <string name="permgrouplab_storage" sdk="17">Storage</string>
@@ -6131,19 +6154,27 @@
             <string name="permgroupdesc_storage" sdk="22">Access the USB storage.</string>
             <string name="permgroupdesc_storage" sdk="17">Access the USB storage.</string>
             <string name="permgroupdesc_storage" sdk="8">Access the SD card.</string>
+            <string name="permgrouprequest_storage">Allow
+        &lt;b&gt;%1$s&lt;/b&gt; to access photos, media, and files on your device?</string>
             <string name="permgrouplab_sms">SMS</string>
             <string name="permgroupdesc_sms">send and view SMS messages</string>
             <string name="permgroupdesc_sms" sdk="25">send and view SMS messages</string>
             <string name="permgroupdesc_sms" sdk="23">send and view SMS messages</string>
+            <string name="permgrouprequest_sms">Allow
+        &lt;b&gt;%1$s&lt;/b&gt; to send and view SMS messages?</string>
             <string name="permgrouplab_calendar">Calendar</string>
             <string name="permgroupdesc_calendar">access your calendar</string>
             <string name="permgroupdesc_calendar" sdk="25">access your calendar</string>
             <string name="permgroupdesc_calendar" sdk="23">access your calendar</string>
             <string name="permgroupdesc_calendar" sdk="22">Direct access to calendar and events.</string>
+            <string name="permgrouprequest_calendar">Allow
+        &lt;b&gt;%1$s&lt;/b&gt; to access your calendar?</string>
             <string name="permgrouplab_contacts">Contacts</string>
             <string name="permgroupdesc_contacts">access your contacts</string>
             <string name="permgroupdesc_contacts" sdk="24">access your contacts</string>
             <string name="permgroupdesc_contacts" sdk="23">access your contacts</string>
+            <string name="permgrouprequest_contacts">Allow
+        &lt;b&gt;%1$s&lt;/b&gt; to access your contacts?</string>
             <string name="permlab_flashlight" sdk="23">control flashlight</string>
             <string name="permlab_flashlight" sdk="7">control flashlight</string>
             <string name="permdesc_flashlight" sdk="23">Allows the app to control the flashlight.</string>
@@ -8072,22 +8103,27 @@
             <string name="permgroupdesc_sensors">"생체 신호에 관한 센서 데이터에 액세스"</string>
             <string name="permgroupdesc_sensors" sdk="24">"생체 신호에 관한 센서 데이터에 접근할 수 있도록"</string>
             <string name="permgroupdesc_sensors" sdk="23">"생체 신호에 관한 센서 데이터에 액세스"</string>
+            <string name="permgrouprequest_sensors">"&lt;b&gt;%1$s&lt;/b&gt;에서 생체 신호에 관한 센서 데이터에 액세스하도록 허용하시겠습니까?"</string>
             <string name="permgrouplab_camera">"카메라"</string>
             <string name="permgroupdesc_camera">"사진 및 동영상 촬영"</string>
             <string name="permgroupdesc_camera" sdk="24">"사진 및 동영상을 촬영할 수 있도록"</string>
             <string name="permgroupdesc_camera" sdk="23">"사진 찍기 및 동영상 녹화"</string>
             <string name="permgroupdesc_camera" sdk="22">"이미지 및 동영상을 캡처하기 위해 카메라에 직접 액세스합니다."</string>
+            <string name="permgrouprequest_camera">"&lt;b&gt;%1$s&lt;/b&gt;에서 사진을 촬영하고 동영상을 녹화하도록 허용하시겠습니까?"</string>
             <string name="permgrouplab_microphone">"마이크"</string>
             <string name="permgroupdesc_microphone">"오디오 녹음"</string>
             <string name="permgroupdesc_microphone" sdk="25">"오디오를 녹음할 수 있도록"</string>
             <string name="permgroupdesc_microphone" sdk="23">"오디오 녹음"</string>
             <string name="permgroupdesc_microphone" sdk="22">"오디오를 녹음하기 위해 마이크에 직접 액세스합니다."</string>
+            <string name="permgrouprequest_microphone">"&lt;b&gt;%1$s&lt;/b&gt;에서 오디오를 녹음하도록 허용하시겠습니까?"</string>
             <string name="permgrouplab_phone">"전화"</string>
             <string name="permgroupdesc_phone">"전화 걸기 및 관리"</string>
             <string name="permgroupdesc_phone" sdk="25">"통화 상태를 관리하거나 전화를 걸 수 있도록"</string>
             <string name="permgroupdesc_phone" sdk="23">"전화 걸기 및 관리"</string>
+            <string name="permgrouprequest_phone">"&lt;b&gt;%1$s&lt;/b&gt;에서 전화를 걸고 관리하도록 허용하시겠습니까?"</string>
             <string name="permgrouplab_calllog">"통화 기록"</string>
             <string name="permgroupdesc_calllog">"통화 기록 읽고 쓰기"</string>
+            <string name="permgrouprequest_calllog">"&lt;b&gt;%1$s&lt;/b&gt;이(가) 통화 기록에 액세스하도록 허용하시겠습니까?"</string>
             <string name="permgrouplab_location">"위치"</string>
             <string name="permgrouplab_location" sdk="22">"위치"</string>
             <string name="permgroupdesc_location">"이 기기의 위치정보에 액세스"</string>
@@ -8096,6 +8132,7 @@
             <string name="permgroupdesc_location" sdk="22">"실제 위치 모니터링"</string>
             <string name="permgroupdesc_location" sdk="15">"실제 위치 모니터링"</string>
             <string name="permgroupdesc_location" sdk="3">"물리적 위치 모니터링"</string>
+            <string name="permgrouprequest_location">"&lt;b&gt;%1$s&lt;/b&gt;에서 내 기기 위치에 액세스하도록 허용하시겠습니까?"</string>
             <string name="permgrouplab_storage">"저장용량"</string>
             <string name="permgrouplab_storage" sdk="26">"저장"</string>
             <string name="permgrouplab_storage" sdk="17">"저장"</string>
@@ -8105,19 +8142,23 @@
             <string name="permgroupdesc_storage" sdk="22">"USB 저장소에 액세스합니다."</string>
             <string name="permgroupdesc_storage" sdk="17">"USB 저장소에 액세스합니다."</string>
             <string name="permgroupdesc_storage" sdk="8">"SD 카드에 액세스합니다."</string>
+            <string name="permgrouprequest_storage">"&lt;b&gt;%1$s&lt;/b&gt;에서 기기의 사진, 미디어, 파일에 액세스하도록 허용하시겠습니까.?"</string>
             <string name="permgrouplab_sms">"SMS"</string>
             <string name="permgroupdesc_sms">"SMS 메시지 전송 및 보기"</string>
             <string name="permgroupdesc_sms" sdk="25">"문자 메시지를 보내고 확인할 수 있도록"</string>
             <string name="permgroupdesc_sms" sdk="23">"SMS 메시지 전송 및 보기"</string>
+            <string name="permgrouprequest_sms">"&lt;b&gt;%1$s&lt;/b&gt;에서 SMS 메시지를 전송하고 보도록 허용하시겠습니까?"</string>
             <string name="permgrouplab_calendar">"캘린더"</string>
             <string name="permgroupdesc_calendar">"캘린더에 액세스"</string>
             <string name="permgroupdesc_calendar" sdk="25">"일정에 접근할 수 있도록"</string>
             <string name="permgroupdesc_calendar" sdk="23">"캘린더 액세스"</string>
             <string name="permgroupdesc_calendar" sdk="22">"캘린더 및 일정에 직접 액세스합니다."</string>
+            <string name="permgrouprequest_calendar">"&lt;b&gt;%1$s&lt;/b&gt;에서 내 캘린더에 액세스하도록 허용하시겠습니까?"</string>
             <string name="permgrouplab_contacts">"주소록"</string>
             <string name="permgroupdesc_contacts">"주소록에 액세스"</string>
             <string name="permgroupdesc_contacts" sdk="24">"주소록에 접근할 수 있도록"</string>
             <string name="permgroupdesc_contacts" sdk="23">"주소록 액세스"</string>
+            <string name="permgrouprequest_contacts">"&lt;b&gt;%1$s&lt;/b&gt;에서 내 연락처에 액세스하도록 허용하시겠습니까?"</string>
             <string name="permlab_flashlight" sdk="23">"카메라 플래시 제어"</string>
             <string name="permlab_flashlight" sdk="7">"손전등 제어"</string>
             <string name="permdesc_flashlight" sdk="23">"앱이 카메라 플래시를 제어할 수 있도록 허용합니다."</string>

@@ -83,10 +83,14 @@ public class UnitRecord<T> {
 					Class<?> fieldClazz = field.getType();
 					if(fieldClazz.equals(String.class)) {
 						field.set(info, value);
+					} else if(fieldClazz.equals(Integer.class)) {
+						if(value != null && !value.isEmpty()) {
+							field.set(info, Integer.parseInt(value));
+						}
 					} else if(fieldClazz.getName().equals("int")) {
 						field.setInt(info, Integer.parseInt(value));
 					} else {
-						Log.e("Unknown type " + fieldClazz.toString());
+						Log.e(name + " : Unknown type " + fieldClazz.toString());
 					}
 				} catch(NoSuchFieldException | SecurityException | IllegalAccessException e) { }
 				switch(name) {

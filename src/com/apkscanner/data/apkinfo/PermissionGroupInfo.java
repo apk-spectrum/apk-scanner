@@ -10,7 +10,7 @@ public class PermissionGroupInfo
 	public ResourceInfo[] icons = null; // "drawable resource"
 	public ResourceInfo[] labels = null; // "string resource"
     public String name = null; // "string"
-    public int priority;
+	public ResourceInfo[] requests = null; // "string resource"
 
 	public PermissionGroupInfo() { }
 
@@ -19,6 +19,7 @@ public class PermissionGroupInfo
 		icons = info.icons;
 		labels = info.labels;
 		name = info.name;
+		requests = info.requests;
 	}
 
 	@Override
@@ -28,6 +29,7 @@ public class PermissionGroupInfo
 		return objEquals(name, other.name)
 				&& Arrays.deepEquals(labels, other.labels)
 				&& Arrays.deepEquals(descriptions, other.descriptions)
+				&& Arrays.deepEquals(requests, other.requests)
 				&& Arrays.deepEquals(icons, other.icons);
 	}
 
@@ -41,5 +43,9 @@ public class PermissionGroupInfo
 
     public String getDescription() {
     	return ApkInfoHelper.getResourceValue(descriptions, (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
+    }
+
+    public String getRequest() {
+    	return ApkInfoHelper.getResourceValue(requests, (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
     }
 }

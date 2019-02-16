@@ -14,6 +14,8 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo {
 	public String label;
 	public String icon;
 	public String description;
+    public String request;
+    public Integer priority;
 	public List<PermissionInfoExt> permissions;
 	public int protectionFlags;
 
@@ -28,6 +30,8 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo {
 			label = infoExt.label;
 			icon = infoExt.icon;
 			description = infoExt.description;
+			request = infoExt.request;
+			priority = infoExt.priority;
 			permissions = infoExt.permissions;
 			protectionFlags = infoExt.protectionFlags;
 		}
@@ -45,6 +49,8 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo {
 				&& objEquals(label, other.label)
 				&& objEquals(icon, other.icon)
 				&& objEquals(description, other.description)
+				&& objEquals(request, other.request)
+				&& objEquals(priority, other.priority)
 				&& objEquals(comment, other.comment);
 	}
 

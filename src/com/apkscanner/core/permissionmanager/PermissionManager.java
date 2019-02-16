@@ -1,7 +1,10 @@
 package com.apkscanner.core.permissionmanager;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +33,13 @@ public class PermissionManager
 	private int sdkVersion = -1;
 
 	static {
-		xmlPermissionDB = new XmlPath(Resource.class.getResourceAsStream("/values/PermissionsHistory.xml"));
+		String xmlPath = Resource.getUTF8Path() + File.separator + "data" + File.separator + "PermissionsHistory.xml";
+		File xmlFile = new File(xmlPath);
+		if(xmlFile.canRead()) {
+			xmlPermissionDB = new XmlPath(xmlFile);
+		} else {
+			xmlPermissionDB = new XmlPath(Resource.class.getResourceAsStream("/values/PermissionsHistory.xml"));
+		}
 	}
 
 	public PermissionManager() {
@@ -192,43 +201,53 @@ public class PermissionManager
 
 	public PermissionGroupInfoExt[] getPermissionGroups(int sdk) {
 		Map<String, PermissionGroupInfoExt> groups = cacheGroupInfo.get(sdk);
-		if(groups != null) return groups.values().toArray(new PermissionGroupInfoExt[groups.size()]);
-		groups = new HashMap<>();
-		for(PermissionRecord record: recordMap.values()) {
-			PermissionInfoExt permInfo = (PermissionInfoExt)record.getInfomation(sdk);
-			if(permInfo == null) {
-				Log.v("permission info is null : " + record.name + " in " + sdk);
-				continue;
-			}
-			String groupName = permInfo.permissionGroup;
-			if(groupName == null || groupName.isEmpty()) groupName = "Unspecified Group";
-			PermissionGroupInfoExt groupInfo = groups.get(groupName);
-			if(groupInfo == null) {
-				PermissionGroupRecord groupRecord = getPermissionGroupRecord(permInfo.permissionGroup);
-				if(groupRecord != null) {
-					groupInfo = groupRecord.getInfomation(sdk);
-					if(groupInfo != null && (groupInfo.icon == null || groupInfo.icon.trim().isEmpty())) {
-						groupInfo.icon = groupRecord.getInfomation(1000).icon;
-						Log.v("group icon is null " + groupInfo.name);
-						if(groupInfo.icon == null || groupInfo.icon.trim().isEmpty()) {
-							groupInfo.icon = "@drawable/perm_group_unknown";
+		if(groups == null) {
+			groups = new HashMap<>();
+			for(PermissionRecord record: recordMap.values()) {
+				PermissionInfoExt permInfo = (PermissionInfoExt)record.getInfomation(sdk);
+				if(permInfo == null) {
+					Log.v("permission info is null : " + record.name + " in " + sdk);
+					continue;
+				}
+				String groupName = permInfo.permissionGroup;
+				if(groupName == null || groupName.isEmpty()) groupName = "Unspecified Group";
+				PermissionGroupInfoExt groupInfo = groups.get(groupName);
+				if(groupInfo == null) {
+					PermissionGroupRecord groupRecord = getPermissionGroupRecord(permInfo.permissionGroup);
+					if(groupRecord != null) {
+						groupInfo = groupRecord.getInfomation(sdk);
+						if(groupInfo != null && (groupInfo.icon == null || groupInfo.icon.trim().isEmpty())) {
+							groupInfo.icon = groupRecord.getInfomation(1000).icon;
+							Log.v("group icon is null " + groupInfo.name);
+							if(groupInfo.icon == null || groupInfo.icon.trim().isEmpty()) {
+								groupInfo.icon = "@drawable/perm_group_unknown";
+							}
 						}
 					}
+					if(groupInfo == null){
+						groupInfo = new PermissionGroupInfoExt();
+						groupInfo.name = groupName;
+						groupInfo.icon = "@drawable/perm_group_unknown";
+						groupInfo.icons = getResource(groupInfo.icon, -1);
+					}
+					groupInfo.permissions = new ArrayList<>();
+					groups.put(groupInfo.name, groupInfo);
 				}
-				if(groupInfo == null){
-					groupInfo = new PermissionGroupInfoExt();
-					groupInfo.name = groupName;
-					groupInfo.icon = "@drawable/perm_group_unknown";
-					groupInfo.icons = getResource(groupInfo.icon, -1);
-				}
-				groupInfo.permissions = new ArrayList<>();
-				groups.put(groupInfo.name, groupInfo);
+				groupInfo.protectionFlags |= permInfo.protectionFlags;
+				groupInfo.permissions.add(permInfo);
 			}
-			groupInfo.protectionFlags |= permInfo.protectionFlags;
-			groupInfo.permissions.add(permInfo);
+			cacheGroupInfo.put(sdk, groups);
 		}
-		cacheGroupInfo.put(sdk, groups);
-		return groups.values().toArray(new PermissionGroupInfoExt[groups.size()]);
+		PermissionGroupInfoExt[] result = groups.values().toArray(new PermissionGroupInfoExt[groups.size()]);
+		Arrays.sort(result, new Comparator<PermissionGroupInfoExt>() {
+			@Override
+			public int compare(PermissionGroupInfoExt info1, PermissionGroupInfoExt info2) {
+				int priority1 = info1.priority != null ? info1.priority : 0;
+				int priority2 = info2.priority != null ? info2.priority : 0;
+				return priority2 - priority1;
+			}
+		});
+		return result;
 	}
 
 	public PermissionInfoExt[] getGroupPermissions(String groupName) {
