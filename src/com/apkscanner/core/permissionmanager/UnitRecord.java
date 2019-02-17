@@ -18,7 +18,7 @@ public class UnitRecord<T> {
 	public final int removedSdk;
 	public final int deprecatedSdk;
 
-	private final Object[] histories;
+	final Object[] histories;
 
 	public UnitRecord(Class<T> clazz, XmlPath node) throws IllegalArgumentException {
 		if(clazz == null || node == null) {
@@ -152,6 +152,10 @@ public class UnitRecord<T> {
 			Log.v("This SDK(" + sdk + ") version was not have permission. " + name + " added in API level "+addedSdk);
 			return null;
 		}
+		if(removedSdk > -1 && sdk >= removedSdk) {
+			Log.v("This SDK(" + sdk + ") version was not have permission. " + name + " removed at API level " + removedSdk);
+			return null;
+		}
 		Object info = histories[0];
 		for(int i=0; i<histories.length; i++) {
 			try {
@@ -160,7 +164,6 @@ public class UnitRecord<T> {
 				e.printStackTrace();
 			}
 			info = histories[i];
-
 		}
 		/* Move into each InfoExt, because it's very slower
 		if(info != null) {
