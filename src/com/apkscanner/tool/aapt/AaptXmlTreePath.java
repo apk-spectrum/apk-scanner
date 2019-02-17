@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
@@ -20,6 +22,8 @@ public class AaptXmlTreePath
 	private static final int NODE_TYPE_ATTRIBUTE = 2;
 
 	private static final int DEPTH_SPACE = 2;
+
+    private static final Pattern NODE_PATTERN = Pattern.compile("/{0,2}([^/]+\\[[^\\[]+\\]|[^/]+)/?(.*)");
 
 	private AaptXmlTreeNode topNode = null;
 	private AaptXmlTreeNode[] curNodes = null;
@@ -182,15 +186,15 @@ public class AaptXmlTreePath
 	{
 		synchronized(this) {
 			if(expression.startsWith("//")) {
-				expression = "." + expression;
+				expression = "./#" + expression.substring(2);
 			} else if(expression.startsWith("/")) {
 				expression = "." + expression;
 				curNodes = new AaptXmlTreeNode[] { topNode };
 			} else if(expression.matches("^[^@\\.].*")) {
-				expression = ".//" + expression;
+				expression = "./#" + expression;
 				curNodes = new AaptXmlTreeNode[] { topNode };
 			}
-			expression = expression.replaceAll("//", "/#");
+			//expression = expression.replaceAll("//", "/#");
 			//Log.d("getNodeList() " + expression + ", curNodes " + curNodes);
 
 			if(curNodes == null)
@@ -198,25 +202,33 @@ public class AaptXmlTreePath
 
 			AaptXmlTreeNode[] curNodeList = curNodes;
 
-			for(String item: expression.split("/")) {
-				String attrCond = null;
-				if(item.matches(".*\\[.*\\]")) {
-					attrCond = item.replaceAll(".*\\[(.*)\\]", "$1");
-					item = item.replaceAll("(.*)\\[.*", "$1");
-				}
-				//Log.d("getNodeList() item : " + item + ", attrCond : " + attrCond);
-				if(item.equals(".")) {
-					//continue;
-				} else if(item.equals("..")) {
-					curNodeList = getParents(curNodeList, attrCond);
-				} else if(item.startsWith("@")) {
-					curNodeList = getHasAttrNode(curNodeList, item.substring(1));
-				} else if(item.startsWith("#")) {
-					curNodeList = suchNode(curNodeList, item.substring(1), attrCond);
-				} else {
-					curNodeList = getChilds(curNodeList, item, attrCond);
-				}
-			}
+	    	while(!expression.isEmpty()) {
+		    	Matcher macher = NODE_PATTERN.matcher(expression);
+		    	if(macher.matches()) {
+		    		String item = macher.group(1);
+		        	expression = macher.group(2);
+					String attrCond = null;
+					if(item.matches(".*\\[.*\\]")) {
+						attrCond = item.replaceAll(".*\\[(.*)\\]", "$1");
+						item = item.replaceAll("(.*)\\[.*", "$1");
+					}
+					//Log.d("getNodeList() item : " + item + ", attrCond : " + attrCond);
+					if(item.equals(".")) {
+						//continue;
+					} else if(item.equals("..")) {
+						curNodeList = getParents(curNodeList, attrCond);
+					} else if(item.startsWith("@")) {
+						curNodeList = getHasAttrNode(curNodeList, item.substring(1));
+					} else if(item.startsWith("#")) {
+						curNodeList = suchNode(curNodeList, item.substring(1), attrCond);
+					} else {
+						curNodeList = getChilds(curNodeList, item, attrCond);
+					}
+		    	} else {
+		    		Log.e("not matche " + expression);
+		    		break;
+		    	}
+	    	}
 
 			curNodes = curNodeList;
 
