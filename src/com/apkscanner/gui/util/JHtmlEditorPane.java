@@ -2,14 +2,10 @@ package com.apkscanner.gui.util;
 
 import java.awt.Desktop;
 import java.awt.Font;
-import java.awt.Window;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 import java.net.URI;
 
 import javax.swing.JEditorPane;
-import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.AbstractDocument;
@@ -60,16 +56,6 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 		styleSheet.addRule(makeFontStyleRule());
 		setOpaque(false);
 		setHtml(head, body);
-
-		addMouseMotionListener(new MouseMotionListener() {
-			@Override
-			public void mouseMoved(MouseEvent arg0) {
-				Window window = SwingUtilities.getWindowAncestor(JHtmlEditorPane.this);
-				if(window != null) window.setCursor(getCursor());
-			}
-			@Override
-			public void mouseDragged(MouseEvent arg0) { }
-		});
 	}
 
 	private String makeFontStyleRule()
