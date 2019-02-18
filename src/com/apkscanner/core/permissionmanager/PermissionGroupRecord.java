@@ -23,4 +23,14 @@ public class PermissionGroupRecord extends UnitRecord<PermissionGroupInfoExt> {
 		}
 		return info;
 	}
+
+	public String getPresentIcon() {
+		if(histories == null) return null;
+		String icon = null;
+		for(int i=0; i<histories.length; i++) {
+			icon = ((PermissionGroupInfoExt) histories[i]).icon;
+			if(icon != null) break;
+		}
+		return icon;
+	}
 }

@@ -269,7 +269,7 @@ public class PermissionManager
 					if(groupRecord != null) {
 						groupInfo = groupRecord.getInfomation(sdk);
 						if(groupInfo != null && (groupInfo.icon == null || groupInfo.icon.trim().isEmpty())) {
-							groupInfo.icon = groupRecord.getInfomation(1000).icon;
+							groupInfo.icon = groupRecord.getPresentIcon();
 							Log.v("group icon is null " + groupInfo.name);
 							if(groupInfo.icon == null || groupInfo.icon.trim().isEmpty()) {
 								groupInfo.icon = "@drawable/perm_group_unknown";
