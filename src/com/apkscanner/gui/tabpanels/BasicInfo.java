@@ -622,7 +622,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			isDanger = sdk >= 23 && g.hasDangerous();
 			if(cnt % 15 != 0) permGroup.append("&nbsp;");
 			permGroup.append(makeHyperLink("@event", makeImage(g.getIconPath(), g.permissions.size(), isDanger), g.getSummary(), g.name, null));
-			if(++cnt % 15 == 0) permGroup.append("<br>");
+			if(++cnt % 15 == 0) permGroup.append("<font style=\"font-size:1px\"><br><br></font>");
 		}
 		return permGroup.toString();
 	}
