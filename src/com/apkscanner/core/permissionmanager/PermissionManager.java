@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,10 @@ import com.apkscanner.util.XmlPath;
 
 public class PermissionManager
 {
+	public static final String GROUP_NAME_UNSPECIFIED = "Unspecified Group";
+	public static final String GROUP_NAME_REVOKED = "Revoked Group";
+	public static final String GROUP_NAME_DECLARED = "Declared Group";
+
 	private static XmlPath xmlPermissionDB;
 
 	public enum UsesPermissionTag {
@@ -231,7 +236,26 @@ public class PermissionManager
 
 	public PermissionInfo getPermission(String name, int sdk) {
 		PermissionRecord record = getPermissionRecord(name);
-		return record != null ? record.getInfomation(sdk) : null;
+		return record != null ? record.getInfomation(sdk) : declaredMap.get(name);
+	}
+
+	public RevokedPermissionInfo getRevokedPermission(String name) {
+		return getRevokedPermission(name);
+	}
+
+	public RevokedPermissionInfo getRevokedPermission(String name, int sdk) {
+		PermissionRecord record = getPermissionRecord(name);
+		if(record != null) {
+			return RevokedPermissionInfo.makeRevokedReason(record, sdk);
+		} else if(declaredMap.containsKey(name)) {
+			return RevokedPermissionInfo.makeRevokedReason(declaredMap.get(name), sdk);
+		} else if(unknownSource.containsKey(name)) {
+			return RevokedPermissionInfo.makeRevokedReason(unknownSource.get(name), sdk);
+		}
+		RevokedPermissionInfo reason = new RevokedPermissionInfo();
+		reason.name = name;
+		reason.reason = RevokedReason.UNKNOWN_REASON;
+		return reason;
 	}
 
 	public PermissionGroupInfoExt getPermissionGroup(String name) {
@@ -253,43 +277,56 @@ public class PermissionManager
 
 	public PermissionGroupInfoExt[] getPermissionGroups(int sdk) {
 		Map<String, PermissionGroupInfoExt> groups = cacheGroupInfo.get(sdk);
-		if(groups == null) {
-			groups = new HashMap<>();
-			for(PermissionRecord record: recordMap.values()) {
-				PermissionInfoExt permInfo = (PermissionInfoExt)record.getInfomation(sdk);
-				if(permInfo == null) {
-					Log.v("permission info is null : " + record.name + " in " + sdk);
-					continue;
-				}
-				String groupName = permInfo.permissionGroup;
-				if(groupName == null || groupName.isEmpty()) groupName = "Unspecified Group";
-				PermissionGroupInfoExt groupInfo = groups.get(groupName);
-				if(groupInfo == null) {
-					PermissionGroupRecord groupRecord = getPermissionGroupRecord(permInfo.permissionGroup);
-					if(groupRecord != null) {
-						groupInfo = groupRecord.getInfomation(sdk);
-						if(groupInfo != null && (groupInfo.icon == null || groupInfo.icon.trim().isEmpty())) {
-							groupInfo.icon = groupRecord.getPresentIcon();
-							Log.v("group icon is null " + groupInfo.name);
-							if(groupInfo.icon == null || groupInfo.icon.trim().isEmpty()) {
-								groupInfo.icon = "@drawable/perm_group_unknown";
-							}
+		if(groups != null) {
+			return groups.values().toArray(new PermissionGroupInfoExt[groups.size()]);
+		}
+
+		groups = new HashMap<>();
+		for(PermissionRecord record: recordMap.values()) {
+			PermissionInfo permInfo = (PermissionInfoExt)record.getInfomation(sdk);
+			String groupName = permInfo != null ? permInfo.permissionGroup : GROUP_NAME_REVOKED;
+			if(groupName == null || groupName.isEmpty()) groupName = GROUP_NAME_UNSPECIFIED;
+			PermissionGroupInfoExt groupInfo = groups.get(groupName);
+			if(groupInfo == null) {
+				PermissionGroupRecord groupRecord = getPermissionGroupRecord(groupName);
+				if(groupRecord != null) {
+					groupInfo = groupRecord.getInfomation(sdk);
+					if(groupInfo != null && (groupInfo.icon == null || groupInfo.icon.trim().isEmpty())) {
+						groupInfo.icon = groupRecord.getPresentIcon();
+						if(groupInfo.icon == null || groupInfo.icon.trim().isEmpty()) {
+							groupInfo.icon = "@drawable/perm_group_unknown";
 						}
-					}
-					if(groupInfo == null){
-						groupInfo = new PermissionGroupInfoExt();
-						groupInfo.name = groupName;
-						groupInfo.icon = "@drawable/perm_group_unknown";
 						groupInfo.icons = getResource(groupInfo.icon, -1);
 					}
 					groupInfo.permissions = new ArrayList<>();
-					groups.put(groupInfo.name, groupInfo);
 				}
-				groupInfo.protectionFlags |= permInfo.protectionFlags;
-				groupInfo.permissions.add(permInfo);
+				if(groupInfo == null) groupInfo = makeGroup(groupName);
+				groups.put(groupInfo.name, groupInfo);
 			}
-			cacheGroupInfo.put(sdk, groups);
+			if(permInfo == null) {
+				permInfo = RevokedPermissionInfo.makeRevokedReason(record, sdk);
+			} else if(permInfo instanceof PermissionInfoExt) {
+				groupInfo.protectionFlags |= ((PermissionInfoExt)permInfo).protectionFlags;
+			}
+			groupInfo.permissions.add(permInfo);
 		}
+		for(DeclaredPermissionInfo declared: declaredMap.values()) {
+			RevokedPermissionInfo reason = RevokedPermissionInfo.makeRevokedReason(declared, sdk);
+			boolean isGrant = reason.reason == RevokedReason.NO_REVOKED;
+			String groupName = isGrant ? GROUP_NAME_DECLARED : GROUP_NAME_REVOKED;
+			PermissionGroupInfoExt groupInfo = groups.get(groupName);
+			if(groupInfo == null) groupInfo = makeGroup(groupName);
+			groupInfo.permissions.add(isGrant ? declared : reason);
+			groups.put(groupInfo.name, groupInfo);
+		}
+		for(UsesPermissionInfo info: unknownSource.values()) {
+			RevokedPermissionInfo reason = RevokedPermissionInfo.makeRevokedReason(info, sdk);
+			PermissionGroupInfoExt groupInfo = groups.get(GROUP_NAME_REVOKED);
+			if(groupInfo == null) groupInfo = makeGroup(GROUP_NAME_REVOKED);
+			groupInfo.permissions.add(reason);
+			groups.put(groupInfo.name, groupInfo);
+		}
+
 		PermissionGroupInfoExt[] result = groups.values().toArray(new PermissionGroupInfoExt[groups.size()]);
 		Arrays.sort(result, new Comparator<PermissionGroupInfoExt>() {
 			@Override
@@ -299,7 +336,37 @@ public class PermissionManager
 				return priority2 - priority1;
 			}
 		});
+
+		groups = new LinkedHashMap<>();
+		for(PermissionGroupInfoExt info: result) {
+			groups.put(info.name, info);
+		}
+		cacheGroupInfo.put(sdk, groups);
+
 		return result;
+	}
+
+	private PermissionGroupInfoExt makeGroup(String name) {
+		PermissionGroupInfoExt groupInfo = new PermissionGroupInfoExt();
+		groupInfo.name = name;
+		switch(name) {
+		case GROUP_NAME_REVOKED:
+			groupInfo.priority = -1000;
+			groupInfo.icon = "@drawable/perm_group_undeclared";
+			break;
+		case GROUP_NAME_DECLARED:
+			groupInfo.priority = -200;
+			groupInfo.icon = "@drawable/perm_group_unknown";
+			break;
+		case GROUP_NAME_UNSPECIFIED:
+		default:
+			groupInfo.priority = -100;
+			groupInfo.icon = "@drawable/perm_group_unknown";
+			break;
+		}
+		groupInfo.icons = getResource(groupInfo.icon, -1);
+		groupInfo.permissions = new ArrayList<>();
+		return groupInfo;
 	}
 
 	public PermissionInfo[] getGroupPermissions(String groupName) {
@@ -321,6 +388,10 @@ public class PermissionManager
 
 	public PermissionInfo[] getDeclarePermissions() {
 		return declaredMap.values().toArray(new PermissionInfo[declaredMap.size()]);
+	}
+
+	public UsesPermissionInfo[] getUnknownSourcePermissions() {
+		return unknownSource.values().toArray(new UsesPermissionInfo[unknownSource.size()]);
 	}
 
 	public static PermissionRepository getPermissionRepository() {

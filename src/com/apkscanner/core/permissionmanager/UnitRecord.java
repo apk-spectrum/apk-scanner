@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.w3c.dom.NamedNodeMap;
 
+import com.apkscanner.core.permissionmanager.RevokedPermissionInfo.RevokedReason;
 import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.XmlPath;
@@ -148,13 +149,21 @@ public class UnitRecord<T> {
 			Log.w("No have history");
 			return null;
 		}
-		if(sdk < addedSdk) {
-			Log.v("This SDK(" + sdk + ") version was not have permission. " + name + " added in API level "+addedSdk);
-			return null;
-		}
-		if(removedSdk > -1 && sdk >= removedSdk) {
-			Log.v("This SDK(" + sdk + ") version was not have permission. " + name + " removed at API level " + removedSdk);
-			return null;
+		if(this instanceof PermissionRecord) {
+			RevokedPermissionInfo reason = RevokedPermissionInfo.makeRevokedReason(((PermissionRecord)this), sdk);
+			if(reason.reason != RevokedReason.NO_REVOKED) {
+				Log.w("revoke permission : " + name + ", reason : " + reason.reason);
+				return null;
+			}
+		} else {
+			if(sdk < addedSdk) {
+				Log.v("This SDK(" + sdk + ") version was not have permission. " + name + " added in API level "+addedSdk);
+				return null;
+			}
+			if(removedSdk > -1 && sdk >= removedSdk) {
+				Log.v("This SDK(" + sdk + ") version was not have permission. " + name + " removed at API level " + removedSdk);
+				return null;
+			}
 		}
 		Object info = histories[0];
 		for(int i=0; i<histories.length; i++) {

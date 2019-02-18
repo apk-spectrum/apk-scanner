@@ -16,7 +16,7 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo {
 	public String description;
     public String request;
     public Integer priority;
-	public List<PermissionInfoExt> permissions;
+	public List<PermissionInfo> permissions;
 	public int protectionFlags;
 
 	public PermissionGroupInfoExt() { }
@@ -110,7 +110,7 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo {
 			summary.append(getDescription());
 		}
 		if(permissions != null) {
-			for(PermissionInfoExt info : permissions) {
+			for(PermissionInfo info : permissions) {
 				String permLabel = info.getLabel();
 				if(permLabel == null) permLabel = info.name;
 				summary.append("\n - ");

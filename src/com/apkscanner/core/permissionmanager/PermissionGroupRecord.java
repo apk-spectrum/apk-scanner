@@ -2,6 +2,7 @@ package com.apkscanner.core.permissionmanager;
 
 import java.util.Arrays;
 
+import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.util.XmlPath;
 
 public class PermissionGroupRecord extends UnitRecord<PermissionGroupInfoExt> {
@@ -16,9 +17,10 @@ public class PermissionGroupRecord extends UnitRecord<PermissionGroupInfoExt> {
 	public PermissionGroupInfoExt getInfomation(int sdk) {
 		PermissionGroupInfoExt info = super.getInfomation(sdk);
 		if(info != null && info.permissions == null) {
-			info.permissions = Arrays.asList(manager.getGroupPermissions(name, sdk));
-			for(PermissionInfoExt perm: info.permissions) {
-				info.protectionFlags |= perm.protectionFlags;
+			info.permissions = Arrays.asList((PermissionInfo[]) manager.getGroupPermissions(name, sdk));
+			for(PermissionInfo perm: info.permissions) {
+				if(perm instanceof PermissionInfoExt)
+					info.protectionFlags |= ((PermissionInfoExt)perm).protectionFlags;
 			}
 		}
 		return info;
