@@ -113,6 +113,7 @@ public class DropTargetChooser extends JComponent {
 	}
 
 	public DropTargetChooser(Listener listener) {
+		setEnabled(false);
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
 		addDropTarget(DefaultTargetObject.DROPED_TARGET_APK_OPEN, Resource.STR_BTN_OPEN.getString(), Resource.STR_APP_NAME.getString(),
