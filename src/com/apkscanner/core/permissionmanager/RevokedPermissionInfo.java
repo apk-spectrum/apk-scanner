@@ -19,6 +19,12 @@ public class RevokedPermissionInfo extends PermissionInfo {
 	public boolean hasRecord;
 	public int sdk;
 
+	public RevokedPermissionInfo() { }
+
+	public RevokedPermissionInfo(PermissionInfo info) {
+		super(info);
+	}
+
 	public static RevokedPermissionInfo makeRevokedReason(PermissionRecord record, int sdk) {
 		if(record == null) return null;
 		RevokedPermissionInfo reason = new RevokedPermissionInfo();
@@ -49,7 +55,7 @@ public class RevokedPermissionInfo extends PermissionInfo {
 
 	public static RevokedPermissionInfo makeRevokedReason(DeclaredPermissionInfo declared, int sdk) {
 		if(declared == null) return null;
-		RevokedPermissionInfo reason = new RevokedPermissionInfo();
+		RevokedPermissionInfo reason = new RevokedPermissionInfo(declared);
 		reason.name = declared.name;
 		reason.reason = RevokedReason.NO_REVOKED;
 		reason.sdk = -1;

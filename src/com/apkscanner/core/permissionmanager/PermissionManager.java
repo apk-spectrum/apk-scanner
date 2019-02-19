@@ -204,7 +204,8 @@ public class PermissionManager
 				if(!declared.sdk23) continue; break;
 			default: break;
 			}
-			perms.add(declared);
+			RevokedPermissionInfo reason = RevokedPermissionInfo.makeRevokedReason(declared, sdk);
+			if(reason.reason == RevokedReason.NO_REVOKED) perms.add(declared);
 		}
 		return perms.toArray(new PermissionInfo[perms.size()]);
 	}
@@ -310,9 +311,8 @@ public class PermissionManager
 		for(DeclaredPermissionInfo declared: declaredMap.values()) {
 			RevokedPermissionInfo reason = RevokedPermissionInfo.makeRevokedReason(declared, sdk);
 			boolean isGrant = reason.reason == RevokedReason.NO_REVOKED;
-			String groupName = isGrant ? GROUP_NAME_DECLARED : GROUP_NAME_REVOKED;
-			PermissionGroupInfoExt groupInfo = groups.get(groupName);
-			if(groupInfo == null) groupInfo = makeGroup(groupName);
+			PermissionGroupInfoExt groupInfo = groups.get(GROUP_NAME_DECLARED);
+			if(groupInfo == null) groupInfo = makeGroup(GROUP_NAME_DECLARED);
 			groupInfo.permissions.add(isGrant ? declared : reason);
 			groups.put(groupInfo.name, groupInfo);
 		}
