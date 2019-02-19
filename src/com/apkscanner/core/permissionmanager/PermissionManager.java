@@ -293,9 +293,6 @@ public class PermissionManager
 					groupInfo = groupRecord.getInfomation(sdk);
 					if(groupInfo != null && (groupInfo.icon == null || groupInfo.icon.trim().isEmpty())) {
 						groupInfo.icon = groupRecord.getPresentIcon();
-						if(groupInfo.icon == null || groupInfo.icon.trim().isEmpty()) {
-							groupInfo.icon = "@drawable/perm_group_unknown";
-						}
 						groupInfo.icons = getResource(groupInfo.icon, -1);
 					}
 					groupInfo.permissions = new ArrayList<>();
@@ -352,11 +349,11 @@ public class PermissionManager
 		switch(name) {
 		case GROUP_NAME_REVOKED:
 			groupInfo.priority = -1000;
-			groupInfo.icon = "@drawable/perm_group_undeclared";
+			groupInfo.icon = "@drawable/perm_group_revoked";
 			break;
 		case GROUP_NAME_DECLARED:
 			groupInfo.priority = -200;
-			groupInfo.icon = "@drawable/perm_group_unknown";
+			groupInfo.icon = "@drawable/perm_group_declared";
 			break;
 		case GROUP_NAME_UNSPECIFIED:
 		default:

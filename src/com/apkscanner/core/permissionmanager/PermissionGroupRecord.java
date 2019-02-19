@@ -33,6 +33,22 @@ public class PermissionGroupRecord extends UnitRecord<PermissionGroupInfoExt> {
 			icon = ((PermissionGroupInfoExt) histories[i]).icon;
 			if(icon != null) break;
 		}
+		if(icon == null) {
+			switch(name) {
+			case "android.permission-group.DEVELOPMENT_TOOLS":
+				icon = "@drawable/perm_group_development_tools";
+				break;
+			case "android.permission-group.HARDWARE_CONTROLS":
+				icon = "@drawable/perm_group_hardware_controls";
+				break;
+			case "android.permission-group.COST_MONEY":
+				icon = "@drawable/perm_group_cost_money";
+				break;
+			default:
+				icon = "@drawable/perm_group_unknown";
+				break;
+			}
+		}
 		return icon;
 	}
 }
