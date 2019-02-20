@@ -37,8 +37,8 @@ import com.apkscanner.util.FileUtil.FSStyle;
 public class EasyContentsPanel extends JPanel{
 	//FlatPanel appiconpanel;
 	EasyFeatureHtmlPanel featurepanel;
-	EasyGuiToolPanel toolbarpanel;
-	
+	//EasyGuiToolPanel toolbarpanel;
+	EasyPermissionPanel permissionPanel;
 	EasysdkNotDrawPanel sdkverpanel;
 	
 	EasyFlatLabel packagepanel;
@@ -51,7 +51,7 @@ public class EasyContentsPanel extends JPanel{
 	JPanel contentsCardPanel;
 	
 	static public int WIDTH = 550;
-	static public int HEIGHT = 210;
+	static public int HEIGHT = 250;
 	
 	static private Color IconPanelcolor = new Color(220,220,220);
 	
@@ -155,10 +155,14 @@ public class EasyContentsPanel extends JPanel{
 		featurepanel = new EasyFeatureHtmlPanel();
 		innerinfopanel.add(featurepanel, BorderLayout.CENTER);
 		
-		toolbarpanel = new EasyGuiToolPanel(35, WIDTH - 80 - 160);
+		//toolbarpanel = new EasyGuiToolPanel(35, WIDTH - 80 - 160);
 		
-		innerinfopanel.add(toolbarpanel, BorderLayout.SOUTH);
+		//innerinfopanel.add(toolbarpanel, BorderLayout.SOUTH);
 		infopanel.add(innerinfopanel, BorderLayout.CENTER);
+		
+		permissionPanel = new EasyPermissionPanel();
+		infopanel.add(permissionPanel, BorderLayout.SOUTH);
+		
 		return infopanel;
 	}
 	
@@ -233,11 +237,14 @@ public class EasyContentsPanel extends JPanel{
 		featurepanel.setfeature(apkInfo);
 		((CardLayout)contentsCardPanel.getLayout()).show(contentsCardPanel,CARD_LAYOUT_APKINFO);
 		
+		//permissions
+		permissionPanel.setPermission(apkInfo);
 	}
 
 	public void clear() {
 		// TODO Auto-generated method stub
 		sdkverpanel.clear();
+		permissionPanel.clear();
 		//featurepanel.clear();
 	}
 

@@ -28,7 +28,7 @@ import com.apkscanner.gui.dialog.AboutDlg;
 import com.apkscanner.gui.dialog.LogDlg;
 import com.apkscanner.gui.easymode.contents.EasyBordPanel;
 import com.apkscanner.gui.easymode.contents.EasyContentsPanel;
-
+import com.apkscanner.gui.easymode.contents.EasyGuiToolPanel;
 import com.apkscanner.gui.easymode.contents.EasyPermissionPanel;
 import com.apkscanner.gui.easymode.core.EasyGuiAppFeatureData;
 import com.apkscanner.gui.easymode.core.ToolEntryManager;
@@ -44,12 +44,13 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 
 	private EasyBordPanel bordPanel;
 	private EasyContentsPanel contentsPanel;
-	private EasyPermissionPanel permissionPanel;
+	//private EasyPermissionPanel permissionPanel;
 	private JFrame mainframe;
 	// private boolean isinit= false;
 	private int width, height;
 	JLayeredPane layeredPane;
 	DropEffectLabel dragdroplabel;
+	EasyGuiToolPanel toolbarpanel;
 	public static MessageBoxPool messagePool;
 		
 	public EasyGuiMainPanel(JFrame mainframe, EasyLightApkScanner apkscanner) {
@@ -69,11 +70,15 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 		}
 
 		contentsPanel = new EasyContentsPanel();
-		permissionPanel = new EasyPermissionPanel();
-
+		
+//		permissionPanel = new EasyPermissionPanel();
+		
 		width = contentsPanel.WIDTH;
-		height = contentsPanel.HEIGHT + permissionPanel.HEIGHT;
-
+//		height = contentsPanel.HEIGHT + permissionPanel.HEIGHT;
+		height = contentsPanel.HEIGHT;
+		
+		toolbarpanel = new EasyGuiToolPanel(40, width);
+		
 		setLayout(new BorderLayout());
 		setBorder(new LineBorder(Color.BLACK, 0));
 
@@ -91,8 +96,9 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 		}
 
 		contentspanel.add(contentsPanel, BorderLayout.CENTER);
-		contentspanel.add(permissionPanel, BorderLayout.PAGE_END);
-
+		//contentspanel.add(permissionPanel, BorderLayout.PAGE_END);
+		contentspanel.add(toolbarpanel, BorderLayout.PAGE_START);
+		
 		contentspanel.setBounds(0, 0, width, height);
 		layeredPane.add(contentspanel, new Integer(1));
 
@@ -171,7 +177,7 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 				Resource.STR_APP_NAME.getString() + " - " + new File(apklightscanner.getApkInfo().filePath).getName());
 		Log.d(contentsPanel +"");
 		contentsPanel.setContents(apklightscanner.getApkInfo());
-		permissionPanel.setPermission(apklightscanner.getApkInfo());
+		//permissionPanel.setPermission(apklightscanner.getApkInfo());
 
 		Log.d(" UI set 시간 : " + (System.currentTimeMillis() - EasyGuiMain.UIstarttime) / 1000.0);
 	}
@@ -179,13 +185,13 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 	void showEmptyinfo() {
 		// setframetext(Resource.STR_APP_NAME.getString());
 		contentsPanel.setEmptypanel();
-		permissionPanel.setEmptypanel();
+		//permissionPanel.setEmptypanel();
 	}
 
 	private void clearApkinfopanel() {
 		// bordPanel.clear();
 		contentsPanel.clear();
-		permissionPanel.clear();
+		//permissionPanel.clear();
 	}
 
 	class GUIApkLightScannerListener implements EasyLightApkScanner.StatusListener {

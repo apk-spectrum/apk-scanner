@@ -33,7 +33,7 @@ import com.apkscanner.util.Log;
 public class EasyPermissioniconPanel extends FlatPanel implements ActionListener{
 	int HEIGHT = 35;
 	int WIDTH = 100;
-	int BUTTON_IMG_SIZE = 35-6;
+	int BUTTON_IMG_SIZE = HEIGHT-6;
 	int SHADOW_SIZE = 3;
 	
 	static private Color bordercolor = new Color(242, 242, 242);
@@ -115,10 +115,13 @@ public class EasyPermissioniconPanel extends FlatPanel implements ActionListener
 			PermissionGroup g = permissionGroupManager.getPermGroupMap().get(key);
 			// permGroup.append(makeHyperLink("@event", g.icon, g.permSummary,
 			// g.name, g.hasDangerous?"color:red;":null));
-//for(int i=0; i<11; i++) {
+for(int i=0; i<2; i++) {
 			FlatPanel permissionicon = new FlatPanel();
 			try {
 				ImageIcon imageIcon = new ImageIcon(new URL(g.icon));
+				
+				imageIcon.setImage(ImageUtils.getScaledImage(imageIcon,BUTTON_IMG_SIZE,BUTTON_IMG_SIZE));
+				
 				if (g.hasDangerous)
 					ImageUtils.setcolorImage(imageIcon, dangerouscolor);
 				EasyButton btn = new EasyButton(imageIcon);
@@ -135,11 +138,12 @@ public class EasyPermissioniconPanel extends FlatPanel implements ActionListener
 				e.printStackTrace();
 			}
 		}
-		//}
+		}
 	
-		WIDTH = scrollPane.getViewport().getWidth();
+		//WIDTH = scrollPane.getViewport().getWidth();		
+		
 		int line = (int)((HEIGHT + 1)* permissionbuttoncount / WIDTH);
-		toolbartemppanel.setPreferredSize(new Dimension(0, HEIGHT * (line+1) + ((line !=0)?SHADOW_SIZE : 0)));
+		toolbartemppanel.setPreferredSize(new Dimension(0, HEIGHT * (line+1) + ((line !=0)? SHADOW_SIZE : 0)));
 	}
 
 

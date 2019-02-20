@@ -41,7 +41,7 @@ public class EasyPermissionPanel extends JPanel {
 	static private Color dangerouscolor = new Color(181, 107, 105);
 	static private Color permissionbackgroundcolor = new Color(217, 217, 217);
 
-	static public int HEIGHT = 50;
+	static public int HEIGHT = 40;
 	static private int WIDTH = EasyContentsPanel.WIDTH;
 	static private int SHADOWSIZE = 3;
 	static private int PERMISSIONICONSIZE = HEIGHT - SHADOWSIZE * 2;
@@ -52,7 +52,7 @@ public class EasyPermissionPanel extends JPanel {
 	EasyPermissioniconPanel iconPanel;
 	
 	JPanel contentsCardPanel;
-	EasyGuiToolPanel toolpanel;
+	//EasyGuiToolPanel toolpanel;
 	FlatPanel permissiontemppanel;
 	JPanel showpermissionpanel;
 	JScrollPane scrollPane;
@@ -79,13 +79,13 @@ public class EasyPermissionPanel extends JPanel {
 	}
 
 	public void setEmptypanel() {
-		Log.d("permission toolpanel=)" + toolpanel);
+		Log.d("permission toolpanel=) emptypanel ");
 
-		if (toolpanel == null) {
-			toolpanel = new EasyGuiToolPanel(HEIGHT, EasyContentsPanel.WIDTH);
-			Log.d("permission new (toolpanel)");
-			contentsCardPanel.add(toolpanel, CARD_LAYOUT_EMPTY);
-		}
+//		if (toolpanel == null) {
+//			toolpanel = new EasyGuiToolPanel(HEIGHT, EasyContentsPanel.WIDTH);
+//			Log.d("permission new (toolpanel)");
+//			contentsCardPanel.add(toolpanel, CARD_LAYOUT_EMPTY);
+//		}
 
 		((CardLayout) contentsCardPanel.getLayout()).show(contentsCardPanel, CARD_LAYOUT_EMPTY);
 
