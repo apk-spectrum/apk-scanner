@@ -31,6 +31,7 @@ import javax.swing.text.Element;
 import javax.swing.text.html.Option;
 import javax.xml.bind.DatatypeConverter;
 
+import com.apkscanner.core.permissionmanager.DeclaredPermissionInfo;
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
 import com.apkscanner.core.permissionmanager.PermissionManager;
 import com.apkscanner.core.permissionmanager.PermissionManager.UsesPermissionTag;
@@ -82,8 +83,6 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	private boolean hasPlatformSign;
 
 	private String allPermissionsList;
-	private String notGrantPermmissions;
-	private String deprecatedPermissions;
 
 	private PermissionManager permissionManager;
 
@@ -95,6 +94,8 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 
 		initialize();
 		showAbout();
+
+		permissionManager = new PermissionManager();
 	}
 
 	@Override
@@ -207,16 +208,14 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		setSdkVersion(apkInfo.manifest.usesSdk.minSdkVersion, apkInfo.manifest.usesSdk.targetSdkVersion, apkInfo.manifest.usesSdk.maxSdkVersion);
 		setFileSize(apkInfo.filePath);
 
-		int selectSdkVer = makeSdkOptions(apkInfo.manifest.usesSdk.targetSdkVersion);
-		if(permissionManager == null) {
-			permissionManager = new PermissionManager();
-		} else {
-			permissionManager.clearPermissions();
-		}
+		permissionManager.clearPermissions();
 		permissionManager.addUsesPermission(apkInfo.manifest.usesPermission);
 		permissionManager.addUsesPermission(apkInfo.manifest.usesPermissionSdk23);
 		permissionManager.addDeclarePemission(apkInfo.manifest.permission);
-		permissionManager.setSdkVersion(selectSdkVer);
+		if(!permissionManager.isEmpty()) {
+			int selectSdkVer = makeSdkOptions(apkInfo.manifest.usesSdk.targetSdkVersion);
+			permissionManager.setSdkVersion(selectSdkVer);
+		}
 
 		setPermissionList();
 		setFeatures(apkInfo);
@@ -230,6 +229,12 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	}
 
 	private void setPermissionList() {
+		if(permissionManager.isEmpty()) {
+			apkInfoPanel.setInnerHTMLById("perm-group-title", Resource.STR_LABEL_NO_PERMISSION.getString());
+			setInfoAreaHeight(0);
+			return;
+		}
+
 		StringBuilder permissionList = new StringBuilder();
 
 		PermissionInfo[] permissions = permissionManager.getPermissions(UsesPermissionTag.UsesPermission);
@@ -237,12 +242,6 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			permissionList.append("<uses-permission> [" +  permissions.length + "]\n");
 			for(PermissionInfo info: permissions) {
 				permissionList.append(info.name + " - " + info.protectionLevel);
-				if(((info.isSignatureLevel() || info.isSignatureOrSystemLevel()) && !hasPlatformSign) || info.isSystemLevel()) {
-					notGrantPermmissions += info.name + " - " + info.protectionLevel + "\n";
-				}
-				if(info.isDeprecated()) {
-					deprecatedPermissions += info.getDeprecatedMessage() + "\n\n";
-				}
 				permissionList.append("\n");
 			}
 		}
@@ -253,12 +252,6 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			permissionList.append("<uses-permission-sdk-23> [" +  permissions.length + "]\n");
 			for(PermissionInfo info: permissions) {
 				permissionList.append(info.name + " - " + info.protectionLevel);
-				if(((info.isSignatureLevel() || info.isSignatureOrSystemLevel()) && !hasPlatformSign) || info.isSystemLevel()) {
-					notGrantPermmissions += info.name + " - " + info.protectionLevel + "\n";
-				}
-				if(info.isDeprecated()) {
-					deprecatedPermissions += info.getDeprecatedMessage() + "\n\n";
-				}
 				permissionList.append("\n");
 			}
 		}
@@ -275,12 +268,8 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		}
 		allPermissionsList = permissionList.toString();
 
-		if(!allPermissionsList.isEmpty()) {
-			apkInfoPanel.setInnerHTMLById("perm-group-title", "[" + Resource.STR_BASIC_PERMISSIONS.getString() + "] - " +
-					makeHyperLink("@event","<u>" + Resource.STR_BASIC_PERMLAB_DISPLAY.getString() + "</u>",Resource.STR_BASIC_PERMDESC_DISPLAY.getString(),"display-list", null));
-		} else {
-			apkInfoPanel.setInnerHTMLById("perm-group-title", Resource.STR_LABEL_NO_PERMISSION.getString());
-		}
+		apkInfoPanel.setInnerHTMLById("perm-group-title", "[" + Resource.STR_BASIC_PERMISSIONS.getString() + "] - " +
+				makeHyperLink("@event","<u>" + Resource.STR_BASIC_PERMLAB_DISPLAY.getString() + "</u>",Resource.STR_BASIC_PERMDESC_DISPLAY.getString(),"display-list", null));
 
 		apkInfoPanel.setOuterHTMLById("perm-groups", "<div id=\"perm-groups\">" + makePermGroup() + "</div>");
 		setInfoAreaHeight(permissionManager.getPermissionGroups().length);
@@ -470,14 +459,6 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		if(isSamsungSign) {
 			particularFeatures.append(", ");
 			particularFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_SAMSUNG_SIGN_LAB.getString(), Resource.STR_FEATURE_SAMSUNG_SIGN_DESC.getString(), "feature-samsung-sign", null));
-		}
-		if(notGrantPermmissions != null && !notGrantPermmissions.isEmpty()) {
-			particularFeatures.append(", ");
-			particularFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_REVOKE_PERM_LAB.getString(), Resource.STR_FEATURE_REVOKE_PERM_DESC.getString(), "feature-revoke-permissions", null));
-		}
-		if(deprecatedPermissions != null && !deprecatedPermissions.isEmpty()) {
-			particularFeatures.append(", ");
-			particularFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_DEPRECATED_PREM_LAB.getString(), Resource.STR_FEATURE_DEPRECATED_PREM_DESC.getString(), "feature-deprecated-perm", null));
 		}
 		if(ApkInfoHelper.isDebuggable(apkInfo)) {
 			particularFeatures.append(", ");
@@ -798,6 +779,11 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 				body.append("[DANGEROUS] ");
 			}
 			if(info.labels != null) {
+				if(info instanceof DeclaredPermissionInfo) {
+					//DeclaredPermissionInfo declared = (DeclaredPermissionInfo)info;
+					//declared.
+					//Log.e(declared.label +"");
+				}
 				body.append(info.getLabel() + " ");
 			}
 			body.append("[" + info.name + "]\n");
@@ -847,14 +833,6 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			feature = "※ " + Resource.STR_FEATURE_SAMSUNG_SIGN_DESC.getString();
 			feature += "\n\n" + certSummary;
 			size = new Dimension(500, 150);
-		} else if("feature-revoke-permissions".equals(id)) {
-			StringBuilder revokePerms = new StringBuilder("※ " + Resource.STR_FEATURE_REVOKE_PERM_DESC.getString() + "\n\n");
-			revokePerms.append(notGrantPermmissions);
-			feature = revokePerms.toString();
-			size = new Dimension(500, 200);
-		} else if("feature-deprecated-perm".equals(id)) {
-			feature = deprecatedPermissions;
-			size = new Dimension(500, 200);
 		} else if("feature-debuggable".equals(id)) {
 			feature = Resource.STR_FEATURE_DEBUGGABLE_DESC.getString();
 		} else if("feature-instrumentation".equals(id)) {

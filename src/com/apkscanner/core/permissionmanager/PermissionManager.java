@@ -124,6 +124,14 @@ public class PermissionManager
 		unknownSource.clear();
 	}
 
+	public int getCount() {
+		return recordMap.size() + declaredMap.size() + unknownSource.size();
+	}
+
+	public boolean isEmpty() {
+		return getCount() == 0;
+	}
+
 	public void setSdkVersion(int sdkVersion) {
 		this.sdkVersion = sdkVersion;
 	}
