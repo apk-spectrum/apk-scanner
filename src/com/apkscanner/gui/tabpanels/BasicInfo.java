@@ -13,7 +13,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
@@ -47,10 +46,11 @@ import com.apkscanner.data.apkinfo.SupportsScreensInfo;
 import com.apkscanner.data.apkinfo.UsesConfigurationInfo;
 import com.apkscanner.data.apkinfo.UsesFeatureInfo;
 import com.apkscanner.data.apkinfo.UsesLibraryInfo;
+import com.apkscanner.data.apkinfo.UsesSdkInfo;
 import com.apkscanner.gui.dialog.SdkVersionInfoDlg;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
-import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.JHtmlEditorPane;
+import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickEvent;
 import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.plugin.IPackageSearcher;
 import com.apkscanner.plugin.IPlugIn;
@@ -74,41 +74,25 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	private JLabel messageLabel;
 	private CardLayout cardLayout;
 
-	private String apkPath;
-	private String iconPath;
-	private String mutiLabels;
-	private String certSummary;
-	private String versionDesc;
-	private String deviceRequirements;
-	private boolean hasPlatformSign;
+	private PermissionManager permissionManager = new PermissionManager();
 
-	private String allPermissionsList;
-
-	private PermissionManager permissionManager;
-
-	public BasicInfo()
-	{
+	public BasicInfo() {
 		setName(Resource.STR_TAB_BASIC_INFO.getString());
 		setToolTipText(Resource.STR_TAB_BASIC_INFO.getString());
 		setEnabled(true);
 
 		initialize();
 		showAbout();
-
-		permissionManager = new PermissionManager();
 	}
 
 	@Override
-	public void initialize()
-	{
+	public void initialize() {
 		apkInfoPanel = new JHtmlEditorPane();
 		apkInfoPanel.setEditable(false);
 		apkInfoPanel.setOpaque(true);
-
 		apkInfoPanel.setBackground(Color.white);
-		apkInfoPanel.setHyperlinkClickListener(this);
+		apkInfoPanel.addHyperlinkClickListener(this);
 
-		// loding panel
 		JLabel logo = new JLabel(Resource.IMG_APK_LOGO.getImageIcon(400, 250));
 		logo.setOpaque(true);
 		logo.setBackground(Color.white);
@@ -116,21 +100,21 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		JLabel gif = new JLabel(Resource.IMG_WAIT_BAR.getImageIcon());
 		gif.setOpaque(true);
 		gif.setBackground(Color.white);
-		gif.setPreferredSize(new Dimension(Resource.IMG_WAIT_BAR.getImageIcon().getIconWidth(),Resource.IMG_WAIT_BAR.getImageIcon().getIconHeight()));
+		gif.setPreferredSize(new Dimension(Resource.IMG_WAIT_BAR.getImageIcon().getIconWidth(), Resource.IMG_WAIT_BAR.getImageIcon().getIconHeight()));
 
-		messageLabel = new JLabel("");
+		messageLabel = new JLabel();
 		messageLabel.setOpaque(true);
 		messageLabel.setBackground(Color.WHITE);
-		messageLabel.setBorder(new EmptyBorder(0,0,50,0));
+		messageLabel.setBorder(new EmptyBorder(0, 0, 50, 0));
 		messageLabel.setHorizontalAlignment(JLabel.CENTER);
 
 		lodingPanel = new JPanel();
 		lodingPanel.setLayout(new BorderLayout());
 		lodingPanel.setOpaque(false);
 		lodingPanel.setBackground(Color.white);
-		lodingPanel.add(logo,BorderLayout.NORTH);
-		lodingPanel.add(gif,BorderLayout.CENTER);
-		lodingPanel.add(messageLabel,BorderLayout.SOUTH);
+		lodingPanel.add(logo, BorderLayout.NORTH);
+		lodingPanel.add(gif, BorderLayout.CENTER);
+		lodingPanel.add(messageLabel, BorderLayout.SOUTH);
 
 		setLayout(cardLayout = new CardLayout());
 		add(CARD_LODING_PAGE, lodingPanel);
@@ -138,25 +122,32 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		cardLayout.show(this, CARD_APK_INFORMATION);
 	}
 
-	private void showAbout()
-	{
+	@Override
+	public void reloadResource() {
+		setName(Resource.STR_TAB_BASIC_INFO.getString());
+		setToolTipText(Resource.STR_TAB_BASIC_INFO.getString());
+	}
+
+	private void showAbout() {
 		apkInfoPanel.setText(Resource.RAW_ABUOT_HTML.getString());
-		apkInfoPanel.insertElementFirst("apkscanner-icon-td", "<img src=\"" + Resource.IMG_APP_ICON.getPath() + "\" width=\"150\" height=\"150\">");
+		apkInfoPanel.insertElementFirst("apkscanner-icon-td", String.format("<img src=\"%s\" width=\"150\" height=\"150\">", Resource.IMG_APP_ICON.getPath()));
 		apkInfoPanel.setInnerHTMLById("apkscanner-title", Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString());
-		apkInfoPanel.setOuterHTMLById("programmer-email", "<a href=\"mailto:" + Resource.STR_APP_MAKER_EMAIL.getString() + "\" title=\"" + Resource.STR_APP_MAKER_EMAIL.getString() + "\">" + Resource.STR_APP_MAKER.getString() + "</a>");
+		apkInfoPanel.setOuterHTMLById("programmer-email", String.format("<a href=\"mailto:%s\" title=\"%s\">%s</a>",
+				Resource.STR_APP_MAKER_EMAIL.getString(), Resource.STR_APP_MAKER_EMAIL.getString(), Resource.STR_APP_MAKER.getString()));
 		if(!SystemUtil.hasShortCut()){
-			apkInfoPanel.insertElementLast("apkscanner-icon-td", "<div id=\"create-shortcut\" class=\"div-button\">" + makeHyperLink("@event", Resource.STR_BTN_CREATE_SHORTCUT.getString(), null, "function-create-shortcut", null) + "</div>");
+			apkInfoPanel.insertElementLast("apkscanner-icon-td", String.format("<div id=\"create-shortcut\" class=\"div-button\">%s</div>",
+					makeHyperEvent("function-create-shortcut", Resource.STR_BTN_CREATE_SHORTCUT.getString(), null)));
 		}
 		if(!SystemUtil.isAssociatedWithFileType(".apk")) {
-			apkInfoPanel.insertElementLast("apkscanner-icon-td", "<div id=\"associate-file\" class=\"div-button\">" + makeHyperLink("@event", Resource.STR_BTN_ASSOC_FTYPE.getString(), null, "function-assoc-apk", null) + "</div>");
+			apkInfoPanel.insertElementLast("apkscanner-icon-td", String.format("<div id=\"associate-file\" class=\"div-button\">%s</div>",
+					makeHyperEvent("function-assoc-apk", Resource.STR_BTN_ASSOC_FTYPE.getString(), null)));
 		}
 	}
 
-	public void onProgress(String message)
-	{
+	public void onProgress(String message) {
 		if(lodingPanel == null) initialize();
 		if(!lodingPanel.isVisible()) {
-			apkPath = null;
+			apkInfoPanel.setText("");
 			cardLayout.show(this, CARD_LODING_PAGE);
 		}
 		if(message == null || message.isEmpty())
@@ -165,12 +156,10 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	}
 
 	@Override
-	public void setData(ApkInfo apkInfo, Status status, ITabbedRequest request)
-	{
+	public void setData(ApkInfo apkInfo, Status status, ITabbedRequest request) {
 		if(apkInfoPanel == null) initialize();
 
 		if(apkInfo == null) {
-			apkPath = null;
 			showAbout();
 			sendRequest(request, ITabbedRequest.REQUEST_SELECTED);
 			return;
@@ -179,121 +168,36 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		switch(status) {
 		case BASIC_INFO_COMPLETED:
 			setBasicInfo(apkInfo);
+			cardLayout.show(this, CARD_APK_INFORMATION);
 			sendRequest(request, ITabbedRequest.REQUEST_SELECTED);
 			break;
 		case CERT_COMPLETED:
-			if(apkPath != null && !hasPlatformSign) {
-				updateFeatureRelateSign(apkInfo);
-				if(hasPlatformSign) setPermissionList();
+			if(apkInfoPanel.getElementById("basic-info") != null) {
+				if(ApkInfoHelper.isTestPlatformSign(apkInfo) || ApkInfoHelper.isSamsungSign(apkInfo)) {
+					permissionManager.setPlatformSigned(true);
+					updateFeatureRelateSign(apkInfo);
+					setPermissionList(null);
+				}
 			}
 		default:
 		}
 	}
 
 	private void setBasicInfo(ApkInfo apkInfo) {
-		cardLayout.show(this, CARD_APK_INFORMATION);
 		apkInfoPanel.setText(Resource.RAW_BASIC_INFO_LAYOUT_HTML.getString());
-
-		apkPath = apkInfo.filePath;
-		hasPlatformSign = ApkInfoHelper.isTestPlatformSign(apkInfo)
-				|| ApkInfoHelper.isSamsungSign(apkInfo);
-		if(hasPlatformSign) {
-			certSummary = makeCertSummary(apkInfo);
-		}
-
-		setAppIcon(apkInfo.manifest.application.icons, apkInfo.tempWorkPath);
+		setAppIcon(apkInfo.manifest.application.icons);
 		setAppLabel(apkInfo.manifest.application.labels, apkInfo.manifest.packageName);
-		apkInfoPanel.setOuterHTMLById("package", apkInfo.manifest.packageName);
+		setPackageName(apkInfo.manifest.packageName);
 		setVersion(apkInfo.manifest.versionName, apkInfo.manifest.versionCode);
-		setSdkVersion(apkInfo.manifest.usesSdk.minSdkVersion, apkInfo.manifest.usesSdk.targetSdkVersion, apkInfo.manifest.usesSdk.maxSdkVersion);
+		setSdkVersion(apkInfo.manifest.usesSdk);
 		setFileSize(apkInfo.filePath);
-
-		permissionManager.clearPermissions();
-		permissionManager.addUsesPermission(apkInfo.manifest.usesPermission);
-		permissionManager.addUsesPermission(apkInfo.manifest.usesPermissionSdk23);
-		permissionManager.addDeclarePemission(apkInfo.manifest.permission);
-		if(!permissionManager.isEmpty()) {
-			int selectSdkVer = makeSdkOptions(apkInfo.manifest.usesSdk.targetSdkVersion);
-			permissionManager.setSdkVersion(selectSdkVer);
-		}
-
-		setPermissionList();
 		setFeatures(apkInfo);
-
+		setPermissionList(apkInfo);
 		setPluginSearcher();
 	}
 
-	private void setInfoAreaHeight(int groupCount) {
-		int infoHeight = groupCount > 15 ? 220 : (groupCount > 0 ? 260 : 280);
-		apkInfoPanel.setOuterHTMLById("basic-info-height-td", "<td id=\"basic-info-height-td\" height=\""+infoHeight+"\"></td>");
-	}
-
-	private void setPermissionList() {
-		if(permissionManager.isEmpty()) {
-			apkInfoPanel.setInnerHTMLById("perm-group-title", Resource.STR_LABEL_NO_PERMISSION.getString());
-			setInfoAreaHeight(0);
-			return;
-		}
-
-		StringBuilder permissionList = new StringBuilder();
-
-		PermissionInfo[] permissions = permissionManager.getPermissions(UsesPermissionTag.UsesPermission);
-		if(permissions != null && permissions.length > 0) {
-			permissionList.append("<uses-permission> [" +  permissions.length + "]\n");
-			for(PermissionInfo info: permissions) {
-				permissionList.append(info.name + " - " + info.protectionLevel);
-				permissionList.append("\n");
-			}
-		}
-
-		permissions = permissionManager.getPermissions(UsesPermissionTag.UsesPermissionSdk23);
-		if(permissions != null && permissions.length > 0) {
-			if(permissionList.length() > 0) permissionList.append("\n");
-			permissionList.append("<uses-permission-sdk-23> [" +  permissions.length + "]\n");
-			for(PermissionInfo info: permissions) {
-				permissionList.append(info.name + " - " + info.protectionLevel);
-				permissionList.append("\n");
-			}
-		}
-
-		permissions = permissionManager.getDeclarePermissions();
-		if(permissions != null && permissions.length > 0) {
-			if(permissionList.length() > 0) {
-				permissionList.append("\n");
-			}
-			permissionList.append("<permission> [" +  permissions.length + "]\n");
-			for(PermissionInfo info: permissions) {
-				permissionList.append(info.name + " - " + info.protectionLevel + "\n");
-			}
-		}
-		allPermissionsList = permissionList.toString();
-
-		apkInfoPanel.setInnerHTMLById("perm-group-title", "[" + Resource.STR_BASIC_PERMISSIONS.getString() + "] - " +
-				makeHyperLink("@event","<u>" + Resource.STR_BASIC_PERMLAB_DISPLAY.getString() + "</u>",Resource.STR_BASIC_PERMDESC_DISPLAY.getString(),"display-list", null));
-
-		apkInfoPanel.setOuterHTMLById("perm-groups", "<div id=\"perm-groups\">" + makePermGroup() + "</div>");
-		setInfoAreaHeight(permissionManager.getPermissionGroups().length);
-	}
-
-	private String makeCertSummary(ApkInfo apkInfo) {
-		StringBuilder summary = new StringBuilder();
-		if(apkInfo.certificates != null) {
-			for(String sign: apkInfo.certificates) {
-				String[] line = sign.split("\n");
-				if(line.length >= 3) {
-					summary.append(line[0]).append("\n")
-						.append(line[1]).append("\n")
-						.append(line[2]).append("\n\n");
-				} else {
-					summary.append("error\n");
-				}
-			}
-		}
-		return summary.toString();
-	}
-
-	private void setAppIcon(ResourceInfo[] icons, String tempWorkPath) {
-		iconPath = null;
+	private void setAppIcon(ResourceInfo[] icons) {
+		String iconPath = null;
 		if(icons != null && icons.length > 0) {
 			ResourceInfo[] iconList = icons;
 			for(int i=iconList.length-1; i >= 0; i--) {
@@ -302,12 +206,11 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 				if(iconPath != null) break;
 			}
 		}
-		apkInfoPanel.setOuterHTMLById("icon", "<img src=\"" + iconPath + "\" width=\"150\" height=\"150\">");
+		apkInfoPanel.setOuterHTMLById("icon", String.format("<img src=\"%s\" width=\"150\" height=\"150\">", iconPath));
 	}
 
 	private void setAppLabel(ResourceInfo[] labels, String packageName) {
 		String appName = null;
-
 		StringBuilder labelBuilder = new StringBuilder();
 		if(labels != null && labels.length > 0) {
 			appName = ApkInfoHelper.getResourceValue(labels, (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
@@ -323,150 +226,116 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 				labelBuilder.append("\n");
 			}
 		}
+		String mutiLabels = labelBuilder.toString();
 		if(appName == null) appName = packageName;
-		mutiLabels = labelBuilder.toString();
 
 		if(labels.length > 1) {
-			apkInfoPanel.setInnerHTMLById("label", makeHyperLink("@event", appName, mutiLabels, "other-lang", null));
-			apkInfoPanel.insertElementLast("label", "<font>" + makeHyperLink("@event", "&nbsp;["+labels.length+"]", mutiLabels, "other-lang", null) + "</font>");
+			apkInfoPanel.setInnerHTMLById("label", makeHyperEvent("other-lang", appName, mutiLabels));
+			apkInfoPanel.insertElementLast("label", "<font>" + makeHyperEvent("other-lang", "&nbsp;["+labels.length+"]", mutiLabels, mutiLabels) + "</font>");
 		} else {
 			apkInfoPanel.setInnerHTMLById("label", appName);
 		}
 	}
 
-	private void setVersion(String versionName, Integer versionCode) {
-		if(versionName == null) versionName = "";
-		StringBuilder text = new StringBuilder("Ver. ")
-				.append(versionName)
-				.append(" / ")
-				.append((versionCode != null ? versionCode : "0"));
-		StringBuilder descripton = new StringBuilder("VersionName : ")
-				.append(versionName)
-				.append("\n")
-				.append("VersionCode : ")
-				.append((versionCode != null ? versionCode : "Unspecified"));
-		versionDesc = descripton.toString();
-
-		apkInfoPanel.setInnerHTMLById("version", makeHyperLink("@event", text.toString(), versionDesc, "app-version", null));
+	private void setPackageName(String packageName) {
+		apkInfoPanel.setOuterHTMLById("package", packageName);
 	}
 
-	private void setSdkVersion(Integer minSdkVersion, Integer targetSdkVersion, Integer maxSdkVersion) {
+	private void setVersion(String versionName, Integer versionCode) {
+		if(versionName == null) versionName = "";
+		StringBuilder text = new StringBuilder("Ver. ").append(versionName)
+				.append(" / ").append((versionCode != null ? versionCode : "0"));
+		StringBuilder descripton = new StringBuilder("VersionName : ").append(versionName).append("\n")
+				.append("VersionCode : ").append((versionCode != null ? versionCode : "Unspecified"));
+		String versionDesc = descripton.toString();
+
+		apkInfoPanel.setInnerHTMLById("version", makeHyperEvent("app-version", text.toString(), versionDesc, versionDesc));
+	}
+
+	private void setSdkVersion(UsesSdkInfo usesSdk) {
 		StringBuilder sdkVersion = new StringBuilder();
-		if(minSdkVersion != null) {
+		if(usesSdk.minSdkVersion != null) {
 			sdkVersion.append(", ")
-				.append(makeHyperLink("@event", minSdkVersion +" (Min)", "Min SDK version", "sdk-info:" + minSdkVersion, null));
+				.append(makeHyperEvent("min-sdk-info", usesSdk.minSdkVersion +" (Min)", "Min SDK version", usesSdk.minSdkVersion));
 		}
-		if(targetSdkVersion != null) {
+		if(usesSdk.targetSdkVersion != null) {
 			sdkVersion.append(", ")
-				.append(makeHyperLink("@event", targetSdkVersion + " (Target)", "Targer SDK version", "sdk-info:" + targetSdkVersion, null));
+				.append(makeHyperEvent("target-sdk-info", usesSdk.targetSdkVersion + " (Target)", "Targer SDK version", usesSdk.targetSdkVersion));
 		}
-		if(maxSdkVersion != null) {
+		if(usesSdk.maxSdkVersion != null) {
 			sdkVersion.append(", ")
-				.append(makeHyperLink("@event", maxSdkVersion + " (Max)", "Max SDK version", "sdk-info:" + maxSdkVersion, null));
+				.append(makeHyperEvent("max-sdk-info", usesSdk.maxSdkVersion + " (Max)", "Max SDK version", usesSdk.maxSdkVersion));
 		}
 		if(sdkVersion.length() == 0) {
 			sdkVersion.append(", Unspecified");
 		}
-
 		apkInfoPanel.setOuterHTMLById("sdk-version", sdkVersion.substring(2));
-	}
-
-	private int makeSdkOptions(Integer targetSdkVersion) {
-		int tarSdk = targetSdkVersion != null ? targetSdkVersion : -1;
-		int permSdk = -1;
-		boolean matchedSdk = false;
-		StringBuilder sdkOptions = new StringBuilder("<select id=\"perm-group-sdks\">");
-		for(SourceCommit sdk: PermissionManager.getPermissionRepository().sources) {
-			if(sdk.getCommitId() != null) {
-				permSdk = sdk.getSdkVersion();
-				if(!matchedSdk) matchedSdk = permSdk == tarSdk;
-				sdkOptions.append(String.format("<option value=%d%s>API Level %d</option>", permSdk
-						, permSdk == tarSdk ? " selected" : "", permSdk));
-			}
-		}
-		sdkOptions.append("</select>");
-		apkInfoPanel.setOuterHTMLById("perm-group-sdks", sdkOptions.toString());
-
-		if(targetSdkVersion != null) permSdk = tarSdk;
-
-		Object object = apkInfoPanel.getElementModelById("perm-group-sdks");
-		if(object instanceof DefaultComboBoxModel) {
-			DefaultComboBoxModel<?> model = (DefaultComboBoxModel<?>)object;
-			if(!matchedSdk) {
-				if(targetSdkVersion == null) {
-					Option option = (Option)model.getElementAt(model.getSize()-1);
-					model.setSelectedItem(option);
-					permSdk = Integer.parseInt(option.getValue());
-				} else {
-					model.setSelectedItem("API Level " + permSdk);
-				}
-			}
-			model.removeListDataListener(this);
-			model.addListDataListener(this);
-		}
-
-		return permSdk;
 	}
 
 	private void setFileSize(String filePath) {
 		File apkFile = new File(filePath);
 		String text = FileUtil.getFileSize(apkFile.length(), FSStyle.FULL);
 		String description = "MD5: " + FileUtil.getMessageDigest(apkFile, "MD5");
-		apkInfoPanel.setInnerHTMLById("file-size", makeHyperLink("@event", text, description, "file-checksum", null));
+		apkInfoPanel.setInnerHTMLById("file-size", makeHyperEvent("file-checksum", text, description, filePath));
 	}
 
 	private void setFeatures(ApkInfo apkInfo) {
 		StringBuilder feature = new StringBuilder("[" + Resource.STR_FEATURE_LAB.getString() + "] ");
 		if("internalOnly".equals(apkInfo.manifest.installLocation)) {
-			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_ILOCATION_INTERNAL_LAB.getString(), Resource.STR_FEATURE_ILOCATION_INTERNAL_DESC.getString(), "feature-install-location-internal", null));
+			feature.append(makeHyperEvent("feature-install-location-internal", Resource.STR_FEATURE_ILOCATION_INTERNAL_LAB.getString(), Resource.STR_FEATURE_ILOCATION_INTERNAL_DESC.getString()));
 		} else if("auto".equals(apkInfo.manifest.installLocation)) {
-			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_ILOCATION_AUTO_LAB.getString(), Resource.STR_FEATURE_ILOCATION_AUTO_DESC.getString(), "feature-install-location-auto", null));
+			feature.append(makeHyperEvent("feature-install-location-auto", Resource.STR_FEATURE_ILOCATION_AUTO_LAB.getString(), Resource.STR_FEATURE_ILOCATION_AUTO_DESC.getString()));
 		} else if("preferExternal".equals(apkInfo.manifest.installLocation)) {
-			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_ILOCATION_EXTERNAL_LAB.getString(), Resource.STR_FEATURE_ILOCATION_EXTERNAL_DESC.getString(), "feature-install-location-external", null));
+			feature.append(makeHyperEvent("feature-install-location-external", Resource.STR_FEATURE_ILOCATION_EXTERNAL_LAB.getString(), Resource.STR_FEATURE_ILOCATION_EXTERNAL_DESC.getString()));
 		}
 		feature.append("<br/>");
 
 		if(ApkInfoHelper.isHidden(apkInfo)) {
-			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_HIDDEN_LAB.getString(), Resource.STR_FEATURE_HIDDEN_DESC.getString(), "feature-hidden", null));
+			feature.append(makeHyperEvent("feature-hidden", Resource.STR_FEATURE_HIDDEN_LAB.getString(), Resource.STR_FEATURE_HIDDEN_DESC.getString()));
 		} else {
-			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_LAUNCHER_LAB.getString(), Resource.STR_FEATURE_LAUNCHER_DESC.getString(), "feature-launcher", null));
+			feature.append(makeHyperEvent("feature-launcher", Resource.STR_FEATURE_LAUNCHER_LAB.getString(), Resource.STR_FEATURE_LAUNCHER_DESC.getString()));
 		}
 		if(ApkInfoHelper.isStartup(apkInfo)) {
-			feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_STARTUP_LAB.getString(), Resource.STR_FEATURE_STARTUP_DESC.getString(), "feature-startup", null));
+			feature.append(", ");
+			feature.append(makeHyperEvent("feature-startup", Resource.STR_FEATURE_STARTUP_LAB.getString(), Resource.STR_FEATURE_STARTUP_DESC.getString()));
 		}
 		String sharedUserId = apkInfo.manifest.sharedUserId;
 		if(sharedUserId != null && !sharedUserId.startsWith("android.uid.system") ) {
-			feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_SHAREDUSERID_LAB.getString(), Resource.STR_FEATURE_SHAREDUSERID_DESC.getString(), "feature-shared-user-id:" + sharedUserId, null));
+			feature.append(", ");
+			feature.append(makeHyperEvent("feature-shared-user-id", Resource.STR_FEATURE_SHAREDUSERID_LAB.getString(), Resource.STR_FEATURE_SHAREDUSERID_DESC.getString(), sharedUserId));
 		}
-		deviceRequirements = makeDeviceRequirements(apkInfo);
+		String deviceRequirements = makeDeviceRequirements(apkInfo);
 		if(deviceRequirements != null && !deviceRequirements.isEmpty()) {
-			feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_DEVICE_REQ_LAB.getString(), Resource.STR_FEATURE_DEVICE_REQ_DESC.getString(), "feature-device-requirements", null));
+			feature.append(", ");
+			feature.append(makeHyperEvent("feature-device-requirements", Resource.STR_FEATURE_DEVICE_REQ_LAB.getString(), Resource.STR_FEATURE_DEVICE_REQ_DESC.getString(), deviceRequirements));
 		}
 
 		boolean isSamsungSign = ApkInfoHelper.isSamsungSign(apkInfo);
 		boolean isPlatformSign = ApkInfoHelper.isTestPlatformSign(apkInfo);
+		String certSummary = makeCertSummary(apkInfo.certificates);
+
 		StringBuilder particularFeatures = new StringBuilder();
 		if(sharedUserId != null && sharedUserId.startsWith("android.uid.system")) {
 			particularFeatures.append(", ");
 			if(!isSamsungSign && !isPlatformSign) particularFeatures.append("<span id=\"system-uid\">");
-			particularFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_SYSTEM_UID_LAB.getString(), Resource.STR_FEATURE_SYSTEM_UID_DESC.getString(), "feature-system-user-id", null));
+			particularFeatures.append(makeHyperEvent("feature-system-user-id", Resource.STR_FEATURE_SYSTEM_UID_LAB.getString(), Resource.STR_FEATURE_SYSTEM_UID_DESC.getString()));
 			if(!isSamsungSign && !isPlatformSign) particularFeatures.append("</span>");
 		}
 		if(isPlatformSign) {
 			particularFeatures.append(", ");
-			particularFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_PLATFORM_SIGN_LAB.getString(), Resource.STR_FEATURE_PLATFORM_SIGN_DESC.getString(), "feature-platform-sign", null));
+			particularFeatures.append(makeHyperEvent("feature-platform-sign", Resource.STR_FEATURE_PLATFORM_SIGN_LAB.getString(), Resource.STR_FEATURE_PLATFORM_SIGN_DESC.getString(), certSummary));
 		}
 		if(isSamsungSign) {
 			particularFeatures.append(", ");
-			particularFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_SAMSUNG_SIGN_LAB.getString(), Resource.STR_FEATURE_SAMSUNG_SIGN_DESC.getString(), "feature-samsung-sign", null));
+			particularFeatures.append(makeHyperEvent("feature-samsung-sign", Resource.STR_FEATURE_SAMSUNG_SIGN_LAB.getString(), Resource.STR_FEATURE_SAMSUNG_SIGN_DESC.getString(), certSummary));
 		}
 		if(ApkInfoHelper.isDebuggable(apkInfo)) {
 			particularFeatures.append(", ");
-			particularFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_DEBUGGABLE_LAB.getString(), Resource.STR_FEATURE_DEBUGGABLE_DESC.getString(), "feature-debuggable", null));
+			particularFeatures.append(makeHyperEvent("feature-debuggable", Resource.STR_FEATURE_DEBUGGABLE_LAB.getString(), Resource.STR_FEATURE_DEBUGGABLE_DESC.getString()));
 		}
 		if(ApkInfoHelper.isInstrumentation(apkInfo)) {
 			particularFeatures.append(", ");
-			particularFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_INSTRUMENTATION_LAB.getString(), Resource.STR_FEATURE_INSTRUMENTATION_DESC.getString(), "feature-instrumentation", null));
+			particularFeatures.append(makeHyperEvent("feature-instrumentation", Resource.STR_FEATURE_INSTRUMENTATION_LAB.getString(), Resource.STR_FEATURE_INSTRUMENTATION_DESC.getString()));
 		}
 
 		apkInfoPanel.setInnerHTMLById("features", feature.toString());
@@ -484,10 +353,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 
 		boolean isSamsungSign = ApkInfoHelper.isSamsungSign(apkInfo);
 		boolean isPlatformSign = ApkInfoHelper.isTestPlatformSign(apkInfo);
-		hasPlatformSign = isSamsungSign || isPlatformSign;
-		if(!hasPlatformSign) return;
-
-		certSummary = makeCertSummary(apkInfo);
+		String certSummary = makeCertSummary(apkInfo.certificates);
 
 		boolean isOtherEmpty = false;
 		Element elem = apkInfoPanel.getElementById("particular-features");
@@ -499,15 +365,15 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		elem = apkInfoPanel.getElementById("system-uid");
 		if(elem != null) {
 			particularFeatures.append(", ");
-			particularFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_SYSTEM_UID_LAB.getString(), Resource.STR_FEATURE_SYSTEM_UID_DESC.getString(), "feature-system-user-id", null));
+			particularFeatures.append(makeHyperEvent("feature-system-user-id", Resource.STR_FEATURE_SYSTEM_UID_LAB.getString(), Resource.STR_FEATURE_SYSTEM_UID_DESC.getString()));
 		}
 		if(isPlatformSign) {
 			particularFeatures.append(", ");
-			particularFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_PLATFORM_SIGN_LAB.getString(), Resource.STR_FEATURE_PLATFORM_SIGN_DESC.getString(), "feature-platform-sign", null));
+			particularFeatures.append(makeHyperEvent("feature-platform-sign", Resource.STR_FEATURE_PLATFORM_SIGN_LAB.getString(), Resource.STR_FEATURE_PLATFORM_SIGN_DESC.getString(), certSummary));
 		}
 		if(isSamsungSign) {
 			particularFeatures.append(", ");
-			particularFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_SAMSUNG_SIGN_LAB.getString(), Resource.STR_FEATURE_SAMSUNG_SIGN_DESC.getString(), "feature-samsung-sign", null));
+			particularFeatures.append(makeHyperEvent("feature-samsung-sign", Resource.STR_FEATURE_SAMSUNG_SIGN_LAB.getString(), Resource.STR_FEATURE_SAMSUNG_SIGN_DESC.getString(), certSummary));
 		}
 		if(particularFeatures.length() > 0) {
 			if(elem != null) {
@@ -517,6 +383,82 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 				apkInfoPanel.insertElementFirst("particular-features",  particularFeatures.substring(2));
 			}
 		}
+	}
+
+	private void setPermissionList(ApkInfo apkInfo) {
+		if(apkInfo != null) {
+			boolean isPlatformSign = ApkInfoHelper.isTestPlatformSign(apkInfo)
+					|| ApkInfoHelper.isSamsungSign(apkInfo);
+			permissionManager.clearPermissions();
+			permissionManager.setPlatformSigned(isPlatformSign);
+			permissionManager.addUsesPermission(apkInfo.manifest.usesPermission);
+			permissionManager.addUsesPermission(apkInfo.manifest.usesPermissionSdk23);
+			permissionManager.addDeclarePemission(apkInfo.manifest.permission);
+			if(!permissionManager.isEmpty()) {
+				int selectSdkVer = makeSdkOptions(apkInfo.manifest.usesSdk.targetSdkVersion);
+				permissionManager.setSdkVersion(selectSdkVer);
+			}
+		}
+
+		int groupCount = 0;
+		if(permissionManager.isEmpty()) {
+			apkInfoPanel.setInnerHTMLById("perm-group-title", Resource.STR_LABEL_NO_PERMISSION.getString());
+		} else {
+			apkInfoPanel.setInnerHTMLById("perm-group-title", String.format("[%s] - ", Resource.STR_BASIC_PERMISSIONS.getString()) +
+					makeHyperEvent("display-list", String.format("<u>%s</u>", Resource.STR_BASIC_PERMLAB_DISPLAY.getString()), Resource.STR_BASIC_PERMDESC_DISPLAY.getString()));
+			apkInfoPanel.setOuterHTMLById("perm-groups", String.format("<div id=\"perm-groups\">%s</div>", makePermGroup()));
+			groupCount = permissionManager.getPermissionGroups().length;
+		}
+		int infoHeight = groupCount > 15 ? 220 : (groupCount > 0 ? 260 : 280);
+		apkInfoPanel.setOuterHTMLById("basic-info-height-td", String.format("<td id=\"basic-info-height-td\" height=\"%d\"></td>", infoHeight));
+	}
+
+	private void setPluginSearcher() {
+		String packageSearchers = "";
+		String appLabelSearchers = "";
+		if((boolean)Resource.PROP_VISIBLE_TO_BASIC.getData()) {
+			IPackageSearcher[] searchers = PlugInManager.getPackageSearchers();
+			if(searchers.length > 0) {
+				String defaultSearchIcon = Resource.IMG_TOOLBAR_SEARCH.getPath();
+				for(IPackageSearcher searcher: searchers) {
+					if(!searcher.isVisibleToBasic()) continue;
+					URL icon = searcher.getIconURL();
+					String iconPath = icon != null ? icon.toString() : defaultSearchIcon;
+					String tag = makeHyperEvent("PLUGIN:"+searcher.hashCode(), String.format("<img src=\"%s\" width=\"16\" height=\"16\">", iconPath), null, searcher.getActionCommand());
+					switch(searcher.getSupportType() ) {
+					case IPackageSearcher.SEARCHER_TYPE_PACKAGE_NAME:
+						packageSearchers += tag;
+						break;
+					case IPackageSearcher.SEARCHER_TYPE_APP_NAME:
+						appLabelSearchers += tag;
+						break;
+					};
+				}
+			}
+		}
+
+		apkInfoPanel.insertElementLast("label", appLabelSearchers);
+		if(!packageSearchers.isEmpty()) {
+			apkInfoPanel.setOuterHTMLById("package-searcher", packageSearchers);
+		} else {
+			apkInfoPanel.removeElementById("package-searcher");
+		}
+	}
+
+	private String makeCertSummary(String[] certificates) {
+		if(certificates == null || certificates.length == 0) return null;
+		StringBuilder summary = new StringBuilder();
+		for(String sign: certificates) {
+			String[] line = sign.split("\n");
+			if(line.length >= 3) {
+				summary.append(line[0]).append("\n")
+					.append(line[1]).append("\n")
+					.append(line[2]).append("\n\n");
+			} else {
+				summary.append("error\n");
+			}
+		}
+		return summary.toString();
 	}
 
 	private String makeDeviceRequirements(ApkInfo apkInfo) {
@@ -561,40 +503,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		return deviceReqData.toString();
 	}
 
-	private void setPluginSearcher() {
-		String packageSearchers = "";
-		String appLabelSearchers = "";
-		if((boolean)Resource.PROP_VISIBLE_TO_BASIC.getData()) {
-			IPackageSearcher[] searchers = PlugInManager.getPackageSearchers();
-			if(searchers.length > 0) {
-				String defaultSearchIcon = Resource.IMG_TOOLBAR_SEARCH.getPath();
-				for(IPackageSearcher searcher: searchers) {
-					if(!searcher.isVisibleToBasic()) continue;
-					URL icon = searcher.getIconURL();
-					String iconPath = icon != null ? icon.toString() : defaultSearchIcon;
-					String tag = makeHyperLink("@event", " <img src=\"" + iconPath + "\" width=\"16\" height=\"16\" /> ", null, "PLUGIN:"+searcher.getActionCommand(), "color:white;");
-					switch(searcher.getSupportType() ) {
-					case IPackageSearcher.SEARCHER_TYPE_PACKAGE_NAME:
-						packageSearchers += tag;
-						break;
-					case IPackageSearcher.SEARCHER_TYPE_APP_NAME:
-						appLabelSearchers += tag;
-						break;
-					};
-				}
-			}
-		}
-
-		apkInfoPanel.insertElementLast("label", appLabelSearchers);
-		if(!packageSearchers.isEmpty()) {
-			apkInfoPanel.setOuterHTMLById("package-searcher", packageSearchers);
-		} else {
-			apkInfoPanel.removeElementById("package-searcher");
-		}
-	}
-
-	private String makePermGroup()
-	{
+	private String makePermGroup() {
 		StringBuilder permGroup = new StringBuilder("");
 		int cnt = 0;
 		int sdk = permissionManager.getSdkVersion();
@@ -602,19 +511,13 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		for(PermissionGroupInfoExt g: permissionManager.getPermissionGroups()) {
 			isDanger = sdk >= 23 && g.hasDangerous();
 			if(cnt % 15 != 0) permGroup.append("&nbsp;");
-			permGroup.append(makeHyperLink("@event", makeImage(g.getIconPath(), g.permissions.size(), isDanger), g.getSummary(), g.name, null));
+			permGroup.append(makeHyperEvent("PermGroup:"+g.hashCode(), makeGroupImage(g.getIconPath(), g.permissions.size(), isDanger), g.getSummary(), g.name));
 			if(++cnt % 15 == 0) permGroup.append("<font style=\"font-size:1px\"><br><br></font>");
 		}
 		return permGroup.toString();
 	}
 
-	private String makeHyperLink(String href, String text, String title, String id, String style)
-	{
-		return JHtmlEditorPane.makeHyperLink(href, text, title, id, style);
-	}
-
-	private String makeImage(String src, int count, boolean isDanger)
-	{
+	private String makeGroupImage(String src, int count, boolean isDanger) {
 		BufferedImage image = null;
 		try {
 			image = ImageIO.read(new URL(src));
@@ -622,7 +525,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			e.printStackTrace();
 		}
 		if(image == null) {
-			return "<img src=\"" + src + "\">";
+			return String.format("<img src=\"%s\">", src);
 		}
 
 		Map<?, ?> desktopHints = (Map<?, ?>) Toolkit.getDefaultToolkit().getDesktopProperty("awt.font.desktophints");
@@ -663,66 +566,44 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			e.printStackTrace();
 		}
 
-		return "<img src=\"" + src + "\">";
+		return String.format("<img src=\"%s\">", src);
 	}
 
-	@Override
-	public void hyperlinkClick(String id)
-	{
-		//Log.i("hyperlinkClick() " + id);
-		if("other-lang".equals(id)) {
-			if(mutiLabels == null || mutiLabels.isEmpty()) return;
-			try {
-				ImageIcon icon = null;
-				if(iconPath != null && (iconPath.startsWith("jar:") || iconPath.startsWith("file:"))) {
-					icon = new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(new URL(iconPath)),32,32));
-				}
-				showDialog(mutiLabels, Resource.STR_LABEL_APP_NAME_LIST.getString(), new Dimension(300, 200), icon);
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
+	private int makeSdkOptions(Integer targetSdkVersion) {
+		int tarSdk = targetSdkVersion != null ? targetSdkVersion : -1;
+		int permSdk = -1;
+		boolean matchedSdk = false;
+		StringBuilder sdkOptions = new StringBuilder("<select id=\"perm-group-sdks\">");
+		for(SourceCommit sdk: PermissionManager.getPermissionRepository().sources) {
+			if(sdk.getCommitId() != null) {
+				permSdk = sdk.getSdkVersion();
+				if(!matchedSdk) matchedSdk = permSdk == tarSdk;
+				sdkOptions.append(String.format("<option value=%d%s>API Level %d</option>",
+						permSdk, permSdk == tarSdk ? " selected" : "", permSdk));
 			}
-		} else if("app-version".equals(id)) {
-			showDialog(versionDesc, "App version info", new Dimension(300, 50), null);
-		} else if("display-list".equals(id)) {
-			showPermList();
-		} else if(id.startsWith("sdk-info:")){
-			showSdkVersionInfo(id);
-		} else if(id.startsWith("feature-")) {
-			showFeatureInfo(id);
-		} else if("function-create-shortcut".equals(id)) {
-			SystemUtil.createShortCut();
-			EventQueue.invokeLater(new Runnable() {
-				public void run() {
-					if(SystemUtil.hasShortCut()){
-						apkInfoPanel.removeElementById("create-shortcut");
-					}
-				}
-			});
-		} else if("function-assoc-apk".equals(id)) {
-			SystemUtil.setAssociateFileType(".apk");
-			EventQueue.invokeLater(new Runnable() {
-				public void run() {
-					if(SystemUtil.isAssociatedWithFileType(".apk")) {
-						apkInfoPanel.removeElementById("associate-file");
-					}
-				}
-			});
-		} else if("file-checksum".equals(id)) {
-			File apkFile = new File(apkPath);
-			StringBuilder checksum = new StringBuilder(apkPath).append("\n")
-					.append(FileUtil.getFileSize(apkFile.length(), FSStyle.FULL))
-					.append("\n\nMD5: ").append(FileUtil.getMessageDigest(apkFile, "MD5")).append("\n")
-					.append("SHA1: ").append(FileUtil.getMessageDigest(apkFile, "SHA-1")).append("\n")
-					.append("SHA256: ").append(FileUtil.getMessageDigest(apkFile, "SHA-256"));
-			showDialog(checksum.toString(), "APK Checksum", new Dimension(650, 150), null);
-		} else if(id != null && id.startsWith("PLUGIN:")) {
-			IPlugIn plugin = PlugInManager.getPlugInByActionCommand(id.replaceAll("PLUGIN:", ""));
-			if(plugin != null) {
-				plugin.launch();
-			}
-		} else {
-			showPermDetailDesc(id);
 		}
+		sdkOptions.append("</select>");
+		apkInfoPanel.setOuterHTMLById("perm-group-sdks", sdkOptions.toString());
+
+		if(targetSdkVersion != null) permSdk = tarSdk;
+
+		Object object = apkInfoPanel.getElementModelById("perm-group-sdks");
+		if(object instanceof DefaultComboBoxModel) {
+			DefaultComboBoxModel<?> model = (DefaultComboBoxModel<?>)object;
+			if(!matchedSdk) {
+				if(targetSdkVersion == null) {
+					Option option = (Option)model.getElementAt(model.getSize()-1);
+					model.setSelectedItem(option);
+					permSdk = Integer.parseInt(option.getValue());
+				} else {
+					model.setSelectedItem("API Level " + permSdk);
+				}
+			}
+			model.removeListDataListener(this);
+			model.addListDataListener(this);
+		}
+
+		return permSdk;
 	}
 
 	@Override
@@ -734,30 +615,182 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			if(sdkVersion == null || sdkVersion.isEmpty()) sdkVersion = "-1";
 			Log.v("change sdkVersion " + sdkVersion);
 			permissionManager.setSdkVersion(Integer.parseInt(sdkVersion));
-			setPermissionList();
+			setPermissionList(null);
 		}
 	}
 	@Override public void intervalAdded(ListDataEvent evt) { }
 	@Override public void intervalRemoved(ListDataEvent evt) { }
 
+	private String makeHyperEvent(String id, String text, String title) {
+		return makeHyperEvent(id, text, title, null);
+	}
+
+	private String makeHyperEvent(String id, String text, String title, Object userData) {
+		String style = null;
+		if(id != null && id.startsWith("PLUGIN:")) style = "color:white";
+		return apkInfoPanel.makeHyperLink("@event", text, title, id, style, userData);
+	}
+
 	@Override
-	public void reloadResource() {
-		setName(Resource.STR_TAB_BASIC_INFO.getString());
-		setToolTipText(Resource.STR_TAB_BASIC_INFO.getString());
+	public void hyperlinkClick(HyperlinkClickEvent evt) {
+		String id = evt.getId();
+		switch(id) {
+		case "other-lang":
+			String mutiLabels = (String) evt.getUserData();
+			if(mutiLabels == null || mutiLabels.isEmpty()) return;
+			showDialog(mutiLabels, Resource.STR_LABEL_APP_NAME_LIST.getString(), new Dimension(300, 200), null);
+			break;
+		case "app-version":
+			String versionDesc = (String) evt.getUserData();
+			showDialog(versionDesc, "App version info", new Dimension(300, 50), null);
+			break;
+		case "display-list":
+			showPermList();
+			break;
+		case "min-sdk-info": case "target-sdk-info": case "max-sdk-info":
+			SdkVersionInfoDlg sdkDlg = new SdkVersionInfoDlg(null, Resource.STR_SDK_INFO_FILE_PATH.getString(), (Integer)evt.getUserData());
+			sdkDlg.setLocationRelativeTo(this);
+			sdkDlg.setVisible(true);
+			break;
+		case "function-create-shortcut":
+			SystemUtil.createShortCut();
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					if(SystemUtil.hasShortCut()){
+						apkInfoPanel.removeElementById("create-shortcut");
+					}
+				}
+			});
+			break;
+		case "function-assoc-apk":
+			SystemUtil.setAssociateFileType(".apk");
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					if(SystemUtil.isAssociatedWithFileType(".apk")) {
+						apkInfoPanel.removeElementById("associate-file");
+					}
+				}
+			});
+			break;
+		case "file-checksum":
+			String apkPath = (String) evt.getUserData();
+			File apkFile = new File(apkPath);
+			StringBuilder checksum = new StringBuilder(apkPath).append("\n")
+					.append(FileUtil.getFileSize(apkFile.length(), FSStyle.FULL))
+					.append("\n\nMD5: ").append(FileUtil.getMessageDigest(apkFile, "MD5")).append("\n")
+					.append("SHA1: ").append(FileUtil.getMessageDigest(apkFile, "SHA-1")).append("\n")
+					.append("SHA256: ").append(FileUtil.getMessageDigest(apkFile, "SHA-256"));
+			showDialog(checksum.toString(), "APK Checksum", new Dimension(650, 150), null);
+			break;
+		default:
+			if(id.startsWith("feature-")) {
+				showFeatureInfo(evt);
+			} else if(id.startsWith("PermGroup:")) {
+				showPermDetailDesc(evt);
+			}  else if(id.startsWith("PLUGIN:")) {
+				IPlugIn plugin = PlugInManager.getPlugInByActionCommand((String)evt.getUserData());
+				if(plugin != null) {
+					plugin.launch();
+				}
+			}else {
+				Log.w("Unknown id " + id);
+			}
+		}
 	}
 
-	private void showDialog(String content, String title, Dimension size, Icon icon)
-	{
-		MessageBoxPane.showTextAreaDialog(null, content, title, MessageBoxPane.INFORMATION_MESSAGE, icon, size);
+	private void showFeatureInfo(HyperlinkClickEvent evt) {
+		String id = evt.getId();
+		String feature = null;
+		Dimension size = new Dimension(400, 100);
+
+		switch(id) {
+		case "feature-hidden":
+			feature = Resource.STR_FEATURE_HIDDEN_DESC.getString();
+			break;
+		case "feature-launcher":
+			feature = Resource.STR_FEATURE_LAUNCHER_DESC.getString();
+			break;
+		case "feature-startup":
+			feature = Resource.STR_FEATURE_STARTUP_DESC.getString();
+			feature += "\nandroid.permission.RECEIVE_BOOT_COMPLETED";
+			break;
+		case "feature-shared-user-id":
+			feature = "sharedUserId=" + evt.getUserData() + "\n※ ";
+			feature += Resource.STR_FEATURE_SHAREDUSERID_DESC.getString();
+			break;
+		case "feature-system-user-id":
+			feature = "sharedUserId=android.uid.system\n※ ";
+			feature += Resource.STR_FEATURE_SYSTEM_UID_DESC.getString();
+			break;
+		case "feature-platform-sign":
+			feature = "※ " + Resource.STR_FEATURE_PLATFORM_SIGN_DESC.getString();
+			feature += "\n\n" + evt.getUserData();
+			size = new Dimension(500, 150);
+			break;
+		case "feature-samsung-sign":
+			feature = "※ " + Resource.STR_FEATURE_SAMSUNG_SIGN_DESC.getString();
+			feature += "\n\n" + evt.getUserData();
+			size = new Dimension(500, 150);
+			break;
+		case "feature-debuggable":
+			feature = Resource.STR_FEATURE_DEBUGGABLE_DESC.getString();
+			break;
+		case "feature-instrumentation":
+			feature = Resource.STR_FEATURE_INSTRUMENTATION_DESC.getString();
+			break;
+		case "feature-device-requirements":
+			feature = (String) evt.getUserData();
+			size = new Dimension(500, 250);
+			break;
+		case "feature-install-location-internal":
+			feature = Resource.STR_FEATURE_ILOCATION_INTERNAL_DESC.getString();
+			break;
+		case "feature-install-location-auto":
+			feature = Resource.STR_FEATURE_ILOCATION_AUTO_DESC.getString();
+			break;
+		case "feature-install-location-external":
+			feature = Resource.STR_FEATURE_ILOCATION_EXTERNAL_DESC.getString();
+			break;
+		}
+		showDialog(feature, "Feature info", size, null);
 	}
 
-	public void showPermList()
-	{
-		showDialog(allPermissionsList, Resource.STR_BASIC_PERM_LIST_TITLE.getString(), new Dimension(500, 200), null);
+	private void showPermList() {
+		StringBuilder permissionList = new StringBuilder();
+
+		PermissionInfo[] permissions = permissionManager.getPermissions(UsesPermissionTag.UsesPermission);
+		if(permissions != null && permissions.length > 0) {
+			permissionList.append("<uses-permission> [").append(permissions.length).append("]\n");
+			for(PermissionInfo info: permissions) {
+				permissionList.append(info.name).append(" - ").append(info.protectionLevel).append("\n");
+			}
+		}
+
+		permissions = permissionManager.getPermissions(UsesPermissionTag.UsesPermissionSdk23);
+		if(permissions != null && permissions.length > 0) {
+			if(permissionList.length() > 0) permissionList.append("\n");
+			permissionList.append("<uses-permission-sdk-23> [").append(permissions.length).append("]\n");
+			for(PermissionInfo info: permissions) {
+				permissionList.append(info.name).append(" - ").append(info.protectionLevel);
+				permissionList.append("\n");
+			}
+		}
+
+		permissions = permissionManager.getDeclarePermissions();
+		if(permissions != null && permissions.length > 0) {
+			if(permissionList.length() > 0) {
+				permissionList.append("\n");
+			}
+			permissionList.append("<permission> [").append(permissions.length).append("]\n");
+			for(PermissionInfo info: permissions) {
+				permissionList.append(info.name).append(" - ").append(info.protectionLevel).append("\n");
+			}
+		}
+		showDialog(permissionList.toString(), Resource.STR_BASIC_PERM_LIST_TITLE.getString(), new Dimension(500, 200), null);
 	}
 
-	public void showPermDetailDesc(String group)
-	{
+	private void showPermDetailDesc(HyperlinkClickEvent evt) {
+		String group = (String) evt.getUserData();
 		PermissionGroupInfoExt g = permissionManager.getPermissionGroup(group);
 		Log.e("g " + g + ", " + group);
 		if(g == null) return;
@@ -765,11 +798,11 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		StringBuilder body = new StringBuilder();
 		body.append("■ ");
 		if(g.label != null) {
-			body.append(g.getLabel() + " - ");
+			body.append(g.getLabel()).append(" - ");
 		}
-		body.append("[" + group + "]\n");
+		body.append("[").append(group).append("]\n");
 		if(g.description != null) {
-			body.append(" : " + g.getDescription() + "\n");
+			body.append(" : ").append(g.getDescription()).append("\n");
 		}
 		body.append("------------------------------------------------------------------------------------------------------------\n\n");
 
@@ -784,70 +817,21 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 					//declared.
 					//Log.e(declared.label +"");
 				}
-				body.append(info.getLabel() + " ");
+				body.append(info.getLabel()).append(" ");
 			}
-			body.append("[" + info.name + "]\n");
+			body.append("[").append(info.name).append("]\n");
 			String protection = info.protectionLevel;
 			if(protection == null) protection= "normal";
-			body.append(" - protectionLevel=" + info.protectionLevel + "\n");
+			body.append(" - protectionLevel=").append(info.protectionLevel).append("\n");
 			if(info.descriptions != null) {
-				body.append(" : " + info.getDescription() + "\n");
-				body.append("\n");
+				body.append(" : ").append(info.getDescription()).append("\n\n");
 			}
 		}
 
 		showDialog(body.toString(), Resource.STR_BASIC_PERM_DISPLAY_TITLE.getString(), new Dimension(600, 200), new ImageIcon(g.icon.replaceAll("^file:/", "")));
 	}
 
-	public void showSdkVersionInfo(String id)
-	{
-		if(id == null || !id.contains(":")) return;
-		SdkVersionInfoDlg sdkDlg = new SdkVersionInfoDlg(null, Resource.STR_SDK_INFO_FILE_PATH.getString(), Integer.parseInt(id.split(":")[1]));
-		sdkDlg.setLocationRelativeTo(this);
-		sdkDlg.setVisible(true);
-	}
-
-	public void showFeatureInfo(String id)
-	{
-		String feature = null;
-		Dimension size = new Dimension(400, 100);
-
-		if("feature-hidden".equals(id)) {
-			feature = Resource.STR_FEATURE_HIDDEN_DESC.getString();
-		} else if("feature-launcher".equals(id)) {
-			feature = Resource.STR_FEATURE_LAUNCHER_DESC.getString();
-		} else if("feature-startup".equals(id)) {
-			feature = Resource.STR_FEATURE_STARTUP_DESC.getString();
-			feature += "\nandroid.permission.RECEIVE_BOOT_COMPLETED";
-		} else if("feature-shared-user-id:".startsWith(id)) {
-			feature = "sharedUserId=" + id.split(":")[1] + "\n※ ";
-			feature += Resource.STR_FEATURE_SHAREDUSERID_DESC.getString();
-		} else if("feature-system-user-id".equals(id)) {
-			feature = "sharedUserId=android.uid.system\n※ ";
-			feature += Resource.STR_FEATURE_SYSTEM_UID_DESC.getString();
-		} else if("feature-platform-sign".equals(id)) {
-			feature = "※ " + Resource.STR_FEATURE_PLATFORM_SIGN_DESC.getString();
-			feature += "\n\n" + certSummary;
-			size = new Dimension(500, 150);
-		} else if("feature-samsung-sign".equals(id)) {
-			feature = "※ " + Resource.STR_FEATURE_SAMSUNG_SIGN_DESC.getString();
-			feature += "\n\n" + certSummary;
-			size = new Dimension(500, 150);
-		} else if("feature-debuggable".equals(id)) {
-			feature = Resource.STR_FEATURE_DEBUGGABLE_DESC.getString();
-		} else if("feature-instrumentation".equals(id)) {
-			feature = Resource.STR_FEATURE_INSTRUMENTATION_DESC.getString();
-		} else if("feature-device-requirements".equals(id)) {
-			feature = deviceRequirements;
-			size = new Dimension(500, 250);
-		} else if("feature-install-location-internal".equals(id)) {
-			feature = Resource.STR_FEATURE_ILOCATION_INTERNAL_DESC.getString();
-		} else if("feature-install-location-auto".equals(id)) {
-			feature = Resource.STR_FEATURE_ILOCATION_AUTO_DESC.getString();
-		} else if("feature-install-location-external".equals(id)) {
-			feature = Resource.STR_FEATURE_ILOCATION_EXTERNAL_DESC.getString();
-		}
-
-		showDialog(feature, "Feature info", size, null);
+	private void showDialog(String content, String title, Dimension size, Icon icon) {
+		MessageBoxPane.showTextAreaDialog(null, content, title, MessageBoxPane.INFORMATION_MESSAGE, icon, size);
 	}
 }

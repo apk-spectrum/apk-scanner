@@ -37,6 +37,8 @@ public class PermissionManager
 	private Map<String, DeclaredPermissionInfo> declaredMap;
 	private Map<String, UsesPermissionInfo> unknownSource;
 
+	private boolean isPlatformSigned;
+
 	private int sdkVersion = -1;
 
 	static {
@@ -116,12 +118,21 @@ public class PermissionManager
 		}
 	}
 
+	public void setPlatformSigned(boolean isPlatformSigned) {
+		this.isPlatformSigned = isPlatformSigned;
+	}
+
+	public boolean isPlatformSigned() {
+		return isPlatformSigned;
+	}
+
 	public void clearPermissions() {
 		recordMap.clear();
 		recordGroupMap.clear();
 		cacheGroupInfo.clear();
 		declaredMap.clear();
 		unknownSource.clear();
+		isPlatformSigned = false;
 	}
 
 	public int getCount() {

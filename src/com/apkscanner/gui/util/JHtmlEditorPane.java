@@ -4,6 +4,11 @@ import java.awt.Desktop;
 import java.awt.Font;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.EventObject;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.JEditorPane;
 import javax.swing.event.HyperlinkEvent;
@@ -26,17 +31,38 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 {
 	private static final long serialVersionUID = 7856109068620039501L;
 
-	private String head = null;
-	private String body = null;
+	public class HyperlinkClickEvent extends EventObject {
+		private static final long serialVersionUID = 543851556722142358L;
+		private String id;
+		private Object userData;
+
+		public HyperlinkClickEvent(String id) {
+			super(JHtmlEditorPane.this);
+			this.id = id;
+			this.userData = userDatas.get(id);
+		}
+
+		public String getId() {
+			return id;
+		}
+
+		public Object getUserData() {
+			return userData;
+		}
+	}
+
+	public abstract interface HyperlinkClickListener {
+		public abstract void hyperlinkClick(HyperlinkClickEvent event);
+	}
+
+	private String head;
+	private String body;
 
 	private String tooltip;
 	private StyleSheet styleSheet;
 
-	public abstract interface HyperlinkClickListener {
-		public abstract void hyperlinkClick(String id);
-	}
-
-	private HyperlinkClickListener hyperlinkClickListener;
+	private Map<String, Object> userDatas;
+	private List<HyperlinkClickListener> listeners;
 
 	public JHtmlEditorPane()
 	{
@@ -56,6 +82,9 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 		styleSheet.addRule(makeFontStyleRule());
 		setOpaque(false);
 		setHtml(head, body);
+
+		userDatas = new HashMap<>();
+		listeners = new ArrayList<>();
 	}
 
 	private String makeFontStyleRule()
@@ -77,6 +106,7 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 			setHtml(head, text);
 		} else {
 			super.setText(text);
+			if(userDatas != null) userDatas.clear();
 		}
 	}
 
@@ -93,6 +123,7 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 		this.body = body;
 
 		super.setText(makeHtml(head, body));
+		if(userDatas != null) userDatas.clear();
 	}
 
 	public void setHead(String head)
@@ -232,15 +263,39 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 		removeElementById(getElementById(id));
 	}
 
-	public void setHyperlinkClickListener(HyperlinkClickListener listener)
+	public void addHyperlinkClickListener(HyperlinkClickListener listener)
 	{
-		hyperlinkClickListener = listener;
+		if(listener == null) return;
+		removeHyperlinkClickListener(listener);
+		listeners.add(listener);
+	}
+
+	public void removeHyperlinkClickListener(HyperlinkClickListener listener)
+	{
+		if(listener == null) return;
+		if(!listeners.contains(listener)) {
+			listeners.remove(listener);
+		}
+	}
+
+	public HyperlinkClickListener[] getHyperlinkClickListeners()
+	{
+		return listeners.toArray(new HyperlinkClickListener[listeners.size()]);
+	}
+
+	public void setUserData(String id, Object data) {
+		userDatas.put(id, data);
+	}
+
+	private void invokeEvent(HyperlinkClickEvent evt) {
+		for(HyperlinkClickListener listener: listeners) {
+			listener.hyperlinkClick(evt);
+		}
 	}
 
 	@Override
 	public void hyperlinkUpdate(HyperlinkEvent e)
 	{
-		JEditorPane editor = (JEditorPane) e.getSource();
 		if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
 			if(e.getDescription().isEmpty()) return;
 			if(!e.getDescription().startsWith("@")) {
@@ -257,29 +312,28 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 				if (elem != null) {
 					AttributeSet attr = elem.getAttributes();
 					AttributeSet a = (AttributeSet) attr.getAttribute(HTML.Tag.A);
-					if (a != null && hyperlinkClickListener != null) {
-						hyperlinkClickListener.hyperlinkClick((String) a.getAttribute(HTML.Attribute.ID));
+					if (a != null) {
+						invokeEvent(new HyperlinkClickEvent((String) a.getAttribute(HTML.Attribute.ID)));
 					}
 				}
 			}
 		} else if (e.getEventType() == HyperlinkEvent.EventType.ENTERED) {
-			tooltip = editor.getToolTipText();
+			tooltip = getToolTipText();
 			Element elem = e.getSourceElement();
 			if (elem != null) {
 				AttributeSet attr = elem.getAttributes();
 				AttributeSet a = (AttributeSet) attr.getAttribute(HTML.Tag.A);
 				if (a != null && a.getAttribute(HTML.Attribute.TITLE) != null) {
 					String htmlToolTip = "<html><body>" + ((String) a.getAttribute(HTML.Attribute.TITLE)).replaceAll("\n", "<br/>") + "</body></html>";
-					editor.setToolTipText(htmlToolTip);
+					setToolTipText(htmlToolTip);
 				}
 			}
 		} else if (e.getEventType() == HyperlinkEvent.EventType.EXITED) {
-			editor.setToolTipText(tooltip);
+			setToolTipText(tooltip);
 		}
 	}
 
-	public static String makeHyperLink(String href, String text, String title, String id, String style)
-	{
+	public static String makeHyperLink(String href, String text, String title, String id, String style) {
 		String attr = "";
 		if(title != null) {
 			attr += String.format(" title=\"%s\"", title);
@@ -291,6 +345,18 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 			attr += String.format(" style=\"%s\"", style);
 		}
 		return String.format("<a href=\"%s\"%s>%s</a>", href, attr, text);
+	}
+
+	public String makeHyperLink(String href, String text, String title, String id, String style, Object userData)
+	{
+		if(id != null && !id.isEmpty()) {
+			if(userData != null) {
+				userDatas.put(id, userData);
+			} else if(userDatas.containsKey(id)){
+				userDatas.remove(id);
+			}
+		}
+		return makeHyperLink(href, text, title, id, style);
 	}
 
 	private boolean objEquals(Object a, Object b) {

@@ -34,7 +34,8 @@ public class AboutDlg /*extends JDialog*/
 		hep.removeElementById("apkscanner-icon-td");
 		hep.removeElementById("end-line");
 		hep.setInnerHTMLById("apkscanner-title", Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString());
-		hep.setOuterHTMLById("programmer-email", "<a href=\"mailto:" + Resource.STR_APP_MAKER_EMAIL.getString() + "\" title=\"" + Resource.STR_APP_MAKER_EMAIL.getString() + "\">" + Resource.STR_APP_MAKER.getString() + "</a>");
+		hep.setOuterHTMLById("programmer-email", String.format("<a href=\"mailto:%s\" title=\"%s\">%s</a>",
+						Resource.STR_APP_MAKER_EMAIL.getString(), Resource.STR_APP_MAKER_EMAIL.getString(), Resource.STR_APP_MAKER.getString()));
 
 		ImagePanel imagePanel = new ImagePanel(Resource.IMG_APP_ICON.getImageIcon(100,100));
 		imagePanel.setAlignmentY(0.0f);

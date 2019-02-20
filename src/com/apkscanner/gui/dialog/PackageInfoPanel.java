@@ -46,6 +46,7 @@ import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
+import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickEvent;
 import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbDeviceHelper;
@@ -109,13 +110,13 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		infoPanel.setEditable(false);
 		infoPanel.setOpaque(true);
 		infoPanel.setBackground(Color.white);
-		infoPanel.setHyperlinkClickListener(this);
+		infoPanel.addHyperlinkClickListener(this);
 
 		sysPackInfoPanel = new JHtmlEditorPane();
 		sysPackInfoPanel.setEditable(false);
 		sysPackInfoPanel.setOpaque(true);
 		sysPackInfoPanel.setBackground(Color.white);
-		sysPackInfoPanel.setHyperlinkClickListener(this);
+		sysPackInfoPanel.addHyperlinkClickListener(this);
 
 		//Font font = new Font("helvitica", Font.BOLD, 15);
 		JLabel label = new JLabel();
@@ -726,7 +727,8 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 	}
 
 	@Override
-	public void hyperlinkClick(String id) {
+	public void hyperlinkClick(HyperlinkClickEvent evt) {
+		String id = evt.getId();
 		if(id.startsWith("feature-")) {
 			showFeatureInfo(id);
 			return;
