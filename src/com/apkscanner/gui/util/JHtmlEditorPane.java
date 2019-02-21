@@ -1,21 +1,27 @@
 package com.apkscanner.gui.util;
 
-import java.awt.AlphaComposite;
 import java.awt.Desktop;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
+import java.awt.Font;
+import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.EventObject;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.JEditorPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.View;
+import javax.swing.text.ViewFactory;
 import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
@@ -25,26 +31,38 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 {
 	private static final long serialVersionUID = 7856109068620039501L;
 
-	private String head = null;
-	private String body = null;
+	public class HyperlinkClickEvent extends EventObject {
+		private static final long serialVersionUID = 543851556722142358L;
+		private String id;
+		private Object userData;
 
-	private String tooltip;
+		public HyperlinkClickEvent(String id) {
+			super(JHtmlEditorPane.this);
+			this.id = id;
+			this.userData = userDatas.get(id);
+		}
 
-	private StyleSheet ssh;
-	private Image backgroundimg = null;
-	private boolean mouseIn;
+		public String getId() {
+			return id;
+		}
 
-	private final int RADIUS = 30;
-	private int iw;
-	private int ih;
-	private int x;
-	private int y;
-
-	public abstract interface HyperlinkClickListener {
-		public abstract void hyperlinkClick(String id);
+		public Object getUserData() {
+			return userData;
+		}
 	}
 
-	private HyperlinkClickListener hyperlinkClickListener;
+	public abstract interface HyperlinkClickListener {
+		public abstract void hyperlinkClick(HyperlinkClickEvent event);
+	}
+
+	private String head;
+	private String body;
+
+	private String tooltip;
+	private StyleSheet styleSheet;
+
+	private Map<String, Object> userDatas;
+	private List<HyperlinkClickListener> listeners;
 
 	public JHtmlEditorPane()
 	{
@@ -53,124 +71,59 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 
 	public JHtmlEditorPane(String head, String style, String body)
 	{
-		super("text/html", "");
+		super("text/html", null);
 		addHyperlinkListener(this);
 
-		HTMLEditorKit kit = new HTMLEditorKit();
+		HTMLEditorKit kit = new ImgBaselineHTMLEditorKit();
 		setEditorKit(kit);
 
-		ssh = kit.getStyleSheet();
-		ssh.addRule(style);
+		styleSheet = kit.getStyleSheet();
+		styleSheet.addRule(style);
+		styleSheet.addRule(makeFontStyleRule());
 		setOpaque(false);
 		setHtml(head, body);
 
-		addMouseMotionListener(new MyMouseAdapter());
-		addMouseListener(new MyMouseAdapter());
+		userDatas = new HashMap<>();
+		listeners = new ArrayList<>();
 	}
-	public void setBackgroundImg(Image img) {
-		this.backgroundimg = img;
+
+	private String makeFontStyleRule()
+	{
+		Font font = getFont();
+		StringBuilder style = new StringBuilder("body { font-family: ");
+		style.append(font.getFamily());
+		style.append("; font-weight: ");
+		style.append(font.isBold() ? "bold" : "normal");
+		style.append("; font-size: ");
+		style.append(font.getSize());
+		style.append("pt; }");
+		return style.toString();
 	}
 
 	@Override
-	protected void paintComponent(Graphics g) {
-
-
-
-		if(backgroundimg!=null) {
-
-			//            Graphics2D g2d = (Graphics2D) g.create();
-			//
-			//            int midX = (getWidth() - iw) / 2;
-			//            int midY = (getHeight() - ih) / 2;
-			//
-			//            BufferedImage bi = new BufferedImage(getWidth(),
-			//                    getHeight(), BufferedImage.TYPE_INT_ARGB);
-			//            Graphics2D bigr = bi.createGraphics();
-			//
-			//            if (mouseIn) {
-			//                bigr.setPaint(Color.white);
-			//                bigr.fillOval(x - RADIUS, y - RADIUS, RADIUS * 2,
-			//                        RADIUS * 2);
-			//                bigr.setComposite(AlphaComposite.SrcAtop);
-			//                
-			//                bigr.drawImage(backgroundimg, midX, midY, iw, ih, this);
-			//            }
-			//
-			//            
-			//            bigr.setComposite(AlphaComposite.SrcOver.derive(1.0f));
-			//            bigr.drawImage(backgroundimg, midX, midY, iw, ih, this);
-			//            bigr.dispose();
-			//
-			//            g2d.drawImage(bi, 0, 0, getWidth(), getHeight(), this);
-			//            
-			//            g2d.dispose();
-			//            
-
-
-			super.paintComponent(g);
-
-			//doDrawing(g);
-
-
-			Graphics2D g2d = (Graphics2D) g;
-			AlphaComposite acomp = AlphaComposite.getInstance(
-					AlphaComposite.SRC_OVER, 0.2f);
-			g2d.setComposite(acomp);
-			g2d.drawImage(backgroundimg, 50, 10, null);
-
-			acomp = AlphaComposite.getInstance(
-					AlphaComposite.SRC_OVER, 1.0f);
-			g2d.setComposite(acomp);
-
-
+	public void setText(String text) {
+		if(head != null) {
+			setHtml(head, text);
+		} else {
+			super.setText(text);
+			if(userDatas != null) userDatas.clear();
 		}
-		else {
-			super.paintComponent(g);
-		}
-
-
-		//doDrawing(g);
 	}
 
-	@SuppressWarnings("unused")
-	private void doDrawing(Graphics g) {
-
-		Graphics2D g2d = (Graphics2D) g.create();
-
-		int midX = (getWidth() - iw) / 2;
-		int midY = (getHeight() - ih) / 2;
-
-		BufferedImage bi = new BufferedImage(getWidth(),
-				getHeight(), BufferedImage.TYPE_INT_ARGB);
-		Graphics2D bigr = bi.createGraphics();
-
-		if (mouseIn) {
-			//bigr.setPaint(Color.white);
-			bigr.fillOval(x - RADIUS, y - RADIUS, RADIUS * 2,
-					RADIUS * 2);
-			bigr.setComposite(AlphaComposite.SrcAtop);
-			bigr.drawImage(backgroundimg, midX, midY, iw, ih, this);
-		}
-
-		bigr.setComposite(AlphaComposite.SrcOver.derive(0.1f));
-		bigr.drawImage(backgroundimg, midX, midY, iw, ih, this);
-		bigr.dispose();
-
-		g2d.drawImage(bi, 0, 0, getWidth(), getHeight(), this);
-
-		g2d.dispose();
-	}
-
-	public void setHtml(String head, String body) 
+	public void setHtml(String head, String body)
 	{
-		if(head != null && body != null && head.equals(this.head) && body.equals(this.body)) {
+		if(head != null && head.trim().isEmpty()) {
+			head = null;
+		}
+		if(objEquals(this.head, head) && objEquals(this.body, body)) {
 			Log.v("same content to pre");
 			return;
 		}
 		this.head = head;
 		this.body = body;
 
-		setText(makeHtml(head, body));
+		super.setText(makeHtml(head, body));
+		if(userDatas != null) userDatas.clear();
 	}
 
 	public void setHead(String head)
@@ -178,9 +131,9 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 		setHtml(head, body);
 	}
 
-	public void setStyle(String style)
+	public void addStyleRule(String style)
 	{
-		ssh.addRule(style);
+		styleSheet.addRule(style);
 	}
 
 	public void setBody(String body)
@@ -190,42 +143,159 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 
 	private static String makeHtml(String head, String body)
 	{
-		return "<html><head>" + head + "</head><body>" + body + "</body></html>";
+		return head != null ? "<html><head>" + head + "</head><body>" + body + "</body></html>" : body;
 	}
 
-	public void setHyperlinkClickListener(HyperlinkClickListener listener)
+	public Element getElementById(String id) {
+		HTMLDocument doc = (HTMLDocument)getDocument();
+		return doc.getElement(id);
+	}
+
+	public Object getElementModelById(String id) {
+		Object model = null;
+		Element element = getElementById(id);
+		if(element != null) {
+			model = element.getAttributes().getAttribute(StyleConstants.ModelAttribute);
+		}
+		return model;
+	}
+
+	public void setInnerHTML(Element elem, String htmlText) {
+		HTMLDocument doc = (HTMLDocument)getDocument();
+		try {
+			doc.setInnerHTML(elem, htmlText);
+		} catch (BadLocationException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void setOuterHTML(Element elem, String htmlText) {
+		HTMLDocument doc = (HTMLDocument)getDocument();
+		try {
+			doc.setOuterHTML(elem, htmlText);
+		} catch (BadLocationException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public String getInnerText(Element elem) {
+		if(elem != null) {
+			HTMLDocument doc = (HTMLDocument)getDocument();
+			try {
+				return doc.getText(elem.getStartOffset(), elem.getEndOffset() - elem.getStartOffset());
+			} catch (BadLocationException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+
+	public void insertElementAfter(Element elem, String htmlText) {
+		HTMLDocument doc = (HTMLDocument)getDocument();
+		try {
+			doc.insertAfterEnd(elem, htmlText);
+		} catch (BadLocationException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void insertElementBefore(Element elem, String htmlText) {
+		HTMLDocument doc = (HTMLDocument)getDocument();
+		try {
+			doc.insertBeforeStart(elem, htmlText);
+		} catch (BadLocationException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void insertElementFirst(Element elem, String htmlText) {
+		HTMLDocument doc = (HTMLDocument)getDocument();
+		try {
+			doc.insertAfterStart(elem, htmlText);
+		} catch (BadLocationException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void insertElementLast(Element elem, String htmlText) {
+		HTMLDocument doc = (HTMLDocument)getDocument();
+		try {
+			doc.insertBeforeEnd(elem, htmlText);
+		} catch (BadLocationException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void removeElementById(Element elem) {
+		HTMLDocument doc = (HTMLDocument)getDocument();
+		doc.removeElement(elem);
+	}
+
+	public void setInnerHTMLById(String id, String htmlText) {
+		setInnerHTML(getElementById(id), htmlText);
+	}
+
+	public void setOuterHTMLById(String id, String htmlText) {
+		setOuterHTML(getElementById(id), htmlText);
+	}
+
+	public String getInnerText(String id) {
+		return getInnerText(getElementById(id));
+	}
+
+	public void insertElementAfter(String id, String htmlText) {
+		insertElementAfter(getElementById(id), htmlText);
+	}
+
+	public void insertElementBefore(String id, String htmlText) {
+		insertElementBefore(getElementById(id), htmlText);
+	}
+
+	public void insertElementFirst(String id, String htmlText) {
+		insertElementFirst(getElementById(id), htmlText);
+	}
+
+	public void insertElementLast(String id, String htmlText) {
+		insertElementLast(getElementById(id), htmlText);
+	}
+
+	public void removeElementById(String id) {
+		removeElementById(getElementById(id));
+	}
+
+	public void addHyperlinkClickListener(HyperlinkClickListener listener)
 	{
-		hyperlinkClickListener = listener;
+		if(listener == null) return;
+		removeHyperlinkClickListener(listener);
+		listeners.add(listener);
 	}
 
-	private class MyMouseAdapter extends MouseAdapter {
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			mouseIn = false;
-			repaint();
+	public void removeHyperlinkClickListener(HyperlinkClickListener listener)
+	{
+		if(listener == null) return;
+		if(!listeners.contains(listener)) {
+			listeners.remove(listener);
 		}
+	}
 
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			mouseIn = true;
-		}
+	public HyperlinkClickListener[] getHyperlinkClickListeners()
+	{
+		return listeners.toArray(new HyperlinkClickListener[listeners.size()]);
+	}
 
-		@Override
-		public void mouseMoved(MouseEvent e) {
+	public void setUserData(String id, Object data) {
+		userDatas.put(id, data);
+	}
 
-			x = e.getX();
-			y = e.getY();
-
-			repaint();
+	private void invokeEvent(HyperlinkClickEvent evt) {
+		for(HyperlinkClickListener listener: listeners) {
+			listener.hyperlinkClick(evt);
 		}
 	}
 
 	@Override
 	public void hyperlinkUpdate(HyperlinkEvent e)
 	{
-		JEditorPane editor = (JEditorPane) e.getSource();
-
 		if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
 			if(e.getDescription().isEmpty()) return;
 			if(!e.getDescription().startsWith("@")) {
@@ -242,29 +312,28 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 				if (elem != null) {
 					AttributeSet attr = elem.getAttributes();
 					AttributeSet a = (AttributeSet) attr.getAttribute(HTML.Tag.A);
-					if (a != null && hyperlinkClickListener != null) {
-						hyperlinkClickListener.hyperlinkClick((String) a.getAttribute(HTML.Attribute.ID));
+					if (a != null) {
+						invokeEvent(new HyperlinkClickEvent((String) a.getAttribute(HTML.Attribute.ID)));
 					}
 				}
 			}
 		} else if (e.getEventType() == HyperlinkEvent.EventType.ENTERED) {
-			tooltip = editor.getToolTipText();
+			tooltip = getToolTipText();
 			Element elem = e.getSourceElement();
 			if (elem != null) {
 				AttributeSet attr = elem.getAttributes();
 				AttributeSet a = (AttributeSet) attr.getAttribute(HTML.Tag.A);
 				if (a != null && a.getAttribute(HTML.Attribute.TITLE) != null) {
 					String htmlToolTip = "<html><body>" + ((String) a.getAttribute(HTML.Attribute.TITLE)).replaceAll("\n", "<br/>") + "</body></html>";
-					editor.setToolTipText(htmlToolTip);
+					setToolTipText(htmlToolTip);
 				}
 			}
 		} else if (e.getEventType() == HyperlinkEvent.EventType.EXITED) {
-			editor.setToolTipText(tooltip);
+			setToolTipText(tooltip);
 		}
 	}
 
-	public static String makeHyperLink(String href, String text, String title, String id, String style)
-	{
+	public static String makeHyperLink(String href, String text, String title, String id, String style) {
 		String attr = "";
 		if(title != null) {
 			attr += String.format(" title=\"%s\"", title);
@@ -275,7 +344,56 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 		if(style != null) {
 			attr += String.format(" style=\"%s\"", style);
 		}
-
 		return String.format("<a href=\"%s\"%s>%s</a>", href, attr, text);
+	}
+
+	public String makeHyperLink(String href, String text, String title, String id, String style, Object userData)
+	{
+		if(id != null && !id.isEmpty()) {
+			if(userData != null) {
+				userDatas.put(id, userData);
+			} else if(userDatas.containsKey(id)){
+				userDatas.remove(id);
+			}
+		}
+		return makeHyperLink(href, text, title, id, style);
+	}
+
+	private boolean objEquals(Object a, Object b) {
+		return ((a == null && b == null) || (a != null && a.equals(b)));
+	}
+
+	// refer to https://stackoverflow.com/questions/46023177/set-inline-text-and-image-in-a-jeditorpane
+	class ImgBaselineHTMLEditorKit extends HTMLEditorKit {
+		private static final long serialVersionUID = 3268128657810856489L;
+
+		@Override public ViewFactory getViewFactory() {
+			return new HTMLEditorKit.HTMLFactory() {
+				@Override public View create(Element elem) {
+					//if (view instanceof LabelView) {
+						//System.out.println(view.getAlignment(View.Y_AXIS));
+					//}
+					AttributeSet attrs = elem.getAttributes();
+					Object elementName = attrs.getAttribute(AbstractDocument.ElementNameAttribute);
+					Object o = elementName != null ? null : attrs.getAttribute(StyleConstants.NameAttribute);
+					if (o instanceof HTML.Tag) {
+						HTML.Tag kind = (HTML.Tag) o;
+						if (kind == HTML.Tag.IMG) {
+							return new BASE64ImageView(elem) {
+								@Override public float getAlignment(int axis) {
+									switch (axis) {
+									case View.Y_AXIS:
+										return .8125f; // magic number...
+									default:
+										return super.getAlignment(axis);
+									}
+								}
+							};
+						}
+					}
+					return super.create(elem);
+				}
+			};
+		}
 	}
 }
