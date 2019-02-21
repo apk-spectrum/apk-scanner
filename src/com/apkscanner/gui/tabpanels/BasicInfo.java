@@ -30,11 +30,11 @@ import javax.swing.text.Element;
 import javax.swing.text.html.Option;
 import javax.xml.bind.DatatypeConverter;
 
-import com.apkscanner.core.permissionmanager.DeclaredPermissionInfo;
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
 import com.apkscanner.core.permissionmanager.PermissionManager;
 import com.apkscanner.core.permissionmanager.PermissionManager.UsesPermissionTag;
 import com.apkscanner.core.permissionmanager.PermissionRepository.SourceCommit;
+import com.apkscanner.core.permissionmanager.RevokedPermissionInfo;
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
@@ -786,6 +786,18 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 				permissionList.append(info.name).append(" - ").append(info.protectionLevel).append("\n");
 			}
 		}
+
+		permissions = permissionManager.getRevokedPermissions();
+		if(permissions != null && permissions.length > 0) {
+			if(permissionList.length() > 0) {
+				permissionList.append("\n");
+			}
+			permissionList.append("<revoked> [").append(permissions.length).append("]\n");
+			for(RevokedPermissionInfo info: (RevokedPermissionInfo[])permissions) {
+				permissionList.append(info.name).append(" - ").append(info.getReasonText()).append("\n");
+			}
+		}
+
 		showDialog(permissionList.toString(), Resource.STR_BASIC_PERM_LIST_TITLE.getString(), new Dimension(500, 200), null);
 	}
 
@@ -812,17 +824,16 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 				body.append("[DANGEROUS] ");
 			}
 			if(info.labels != null) {
-				if(info instanceof DeclaredPermissionInfo) {
-					//DeclaredPermissionInfo declared = (DeclaredPermissionInfo)info;
-					//declared.
-					//Log.e(declared.label +"");
-				}
 				body.append(info.getLabel()).append(" ");
 			}
 			body.append("[").append(info.name).append("]\n");
 			String protection = info.protectionLevel;
 			if(protection == null) protection= "normal";
-			body.append(" - protectionLevel=").append(info.protectionLevel).append("\n");
+			if(info instanceof RevokedPermissionInfo) {
+				body.append(" - reason : ").append(((RevokedPermissionInfo)info).getReasonText()).append("\n");
+			} else {
+				body.append(" - protectionLevel=").append(info.protectionLevel).append("\n");
+			}
 			if(info.descriptions != null) {
 				body.append(" : ").append(info.getDescription()).append("\n\n");
 			}

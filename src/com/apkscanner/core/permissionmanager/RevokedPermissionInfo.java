@@ -25,6 +25,29 @@ public class RevokedPermissionInfo extends PermissionInfo {
 		super(info);
 	}
 
+	public String getReasonText() {
+		switch(reason) {
+		case AFTER_REMOVED:
+			return reason + ", removed in API level " + sdk;
+		case BEFORE_ADDED:
+			return reason + ", added in API level " + sdk;
+		case NO_USES:
+			return reason + ", no usesed";
+		case OVER_MAX_SDK:
+			return reason + ", over max sdk " + sdk;
+		case UNDER_SDK23:
+			return reason + ", under sdk 23";
+		case UNKNOWN_SOURCE:
+			return reason + ", unknown source";
+		case UNKNOWN_REASON:
+			return reason + ", unknown";
+		case NO_REVOKED:
+		default:
+	
+		}
+		return "";
+	}
+
 	public static RevokedPermissionInfo makeRevokedReason(PermissionRecord record, int sdk) {
 		if(record == null) return null;
 		RevokedPermissionInfo reason = new RevokedPermissionInfo();
