@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Image;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -24,6 +26,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -56,6 +59,7 @@ import com.apkscanner.gui.dialog.SettingDlg;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.util.ApkFileChooser;
+import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.plugin.IPlugIn;
@@ -199,8 +203,16 @@ public class MainUI extends JFrame
 					tabbedPanel.setData(apkScanner.getApkInfo(), Status.BASIC_INFO_COMPLETED);
 				}
 				for(IExternalTool plugin: PlugInManager.getExternalTool()) {
-					//if(!plugin.isDiffTool()) continue;
-					dropTargetChooser.addDropTarget(plugin, plugin.getLabel(), "plugin", null, new Color(0.9f,0.7f,0.3f,0.9f));
+					if(!plugin.isDiffTool()) continue;
+					Image icon = null;
+					URL iconUrl = plugin.getIconURL();
+					if(iconUrl != null) {
+						ImageIcon imageIcon = new ImageIcon(iconUrl);
+						if(imageIcon != null) {
+							icon = ImageScaler.getScaledImage(imageIcon, 64, 64);
+						}
+					}
+					dropTargetChooser.addDropTarget(plugin, plugin.getLabel(), "plugin", icon, new Color(0.9f,0.7f,0.3f,0.9f));
 				}
 			}
 		}.execute();

@@ -130,8 +130,9 @@ public class ManifestReader
 				case Component.TYPE_EXTERNAL_TOOL_LINKER:
 					path = node.getAttribute("path");
 					param = node.getAttribute("param");
-					like = node.getAttribute("like");
 					supportedOS = node.getAttribute("supportedOS");
+				case Component.TYPE_EXTERNAL_TOOL:
+					like = node.getAttribute("like");
 					break;
 				}
 				components.add(new Component(type, enabled, label, icon, description, name, url, /* linkers */
