@@ -115,7 +115,7 @@ public class EasyPermissioniconPanel extends FlatPanel implements ActionListener
 			PermissionGroup g = permissionGroupManager.getPermGroupMap().get(key);
 			// permGroup.append(makeHyperLink("@event", g.icon, g.permSummary,
 			// g.name, g.hasDangerous?"color:red;":null));
-for(int i=0; i<2; i++) {
+//for(int i=0; i<2; i++) {
 			FlatPanel permissionicon = new FlatPanel();
 			try {
 				ImageIcon imageIcon = new ImageIcon(new URL(g.icon));
@@ -138,7 +138,7 @@ for(int i=0; i<2; i++) {
 				e.printStackTrace();
 			}
 		}
-		}
+//		}
 	
 		//WIDTH = scrollPane.getViewport().getWidth();		
 		

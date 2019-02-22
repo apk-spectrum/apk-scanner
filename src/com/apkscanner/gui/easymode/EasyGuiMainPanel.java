@@ -32,7 +32,9 @@ import com.apkscanner.gui.easymode.contents.EasyGuiToolPanel;
 import com.apkscanner.gui.easymode.contents.EasyPermissionPanel;
 import com.apkscanner.gui.easymode.core.EasyGuiAppFeatureData;
 import com.apkscanner.gui.easymode.core.ToolEntryManager;
+import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.gui.easymode.util.EasyFileDrop;
+import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
@@ -79,6 +81,18 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 		
 		toolbarpanel = new EasyGuiToolPanel(40, width);
 		
+		JPanel toolpanel = new JPanel(new BorderLayout());
+		FlatPanel spreadflat = new FlatPanel();
+		spreadflat.setPreferredSize(new Dimension(40, 40));
+		spreadflat.setshadowlen(3);
+		spreadflat.setBackground(new Color(217, 217, 217));
+		
+		spreadflat.add(new EasyButton(Resource.IMG_EASY_WINDOW_SPREAD.getImageIcon(30,30)));
+		
+		toolpanel.add(toolbarpanel, BorderLayout.CENTER);
+		toolpanel.add(spreadflat, BorderLayout.EAST);
+		
+		
 		setLayout(new BorderLayout());
 		setBorder(new LineBorder(Color.BLACK, 0));
 
@@ -97,7 +111,7 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 
 		contentspanel.add(contentsPanel, BorderLayout.CENTER);
 		//contentspanel.add(permissionPanel, BorderLayout.PAGE_END);
-		contentspanel.add(toolbarpanel, BorderLayout.PAGE_START);
+		contentspanel.add(toolpanel, BorderLayout.PAGE_START);
 		
 		contentspanel.setBounds(0, 0, width, height);
 		layeredPane.add(contentspanel, new Integer(1));

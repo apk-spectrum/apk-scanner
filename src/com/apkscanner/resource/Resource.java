@@ -461,6 +461,9 @@ public enum Resource
 	IMG_EASY_WINDOW_DEVICE			(Type.IMAGE, "easy_gui_device.png"),
 	IMG_EASY_WINDOW_DRAGANDDROP			(Type.IMAGE, "easy_gui_draganddrop.png"),
 
+	//https://www.iconfinder.com/icons/686665/arrows_enlarge_expand_extend_increase_outward_resize_spread_icon
+	IMG_EASY_WINDOW_SPREAD			(Type.IMAGE, "easy_spread.png"),
+	
 	BIN_PATH					(Type.BIN, ""),
 
 	BIN_ADB_LNX					(Type.BIN, "adb", "nux"),
