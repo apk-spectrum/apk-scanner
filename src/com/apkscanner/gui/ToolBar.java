@@ -558,7 +558,7 @@ public class ToolBar extends JToolBar
 			listeners = menu.getMouseListeners();
 			if(listeners == null || listeners.length == 0) return;
 		}
-		Component[] children = menu instanceof JMenu ? 
+		Component[] children = menu instanceof JMenu ?
 				((JMenu)menu).getMenuComponents() : menu.getComponents();
 		if(children == null) return;
 		for(Component c: children) {
@@ -801,7 +801,26 @@ public class ToolBar extends JToolBar
 		IExternalTool[] tools = PlugInManager.getExternalTool();
 		if(tools == null || tools.length <= 0) return null;
 
+		if(tools.length == 1) {
+			JButton button = new JButton(tools[0].getLabel(), null);
+			button.setToolTipText(tools[0].getDescription());
+			button.setBorderPainted(false);
+			button.setOpaque(false);
+			button.setFocusable(false);
+			button.setVerticalTextPosition(JLabel.BOTTOM);
+			button.setHorizontalTextPosition(JLabel.CENTER);
+			button.setPreferredSize(new Dimension(68,65));
+			button.setActionCommand("PLUGIN:" + tools[0].getActionCommand());
+			button.addActionListener(listener);
+			button.setEnabled(hasTargetApk);
+			URL iconUrl = tools[0].getIconURL();
+			if(iconUrl != null) {
+				button.setIcon(new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(iconUrl),40,40)));
+			}
+			return button;
+		}
 		JToolBar subbar = makeSubToolBar();
+		subbar.setPreferredSize(new Dimension(90,60));
 		if(tools.length <= 3) {
 			for(IExternalTool tool: tools) {
 				subbar.add(makePlugInButtons(tool, listener));
@@ -830,7 +849,7 @@ public class ToolBar extends JToolBar
 		button.setBorderPainted(false);
 		button.setOpaque(false);
 		button.setFocusable(false);
-		button.setPreferredSize(new Dimension(68,20));
+		button.setPreferredSize(new Dimension(89,20));
 		button.setActionCommand("PLUGIN:" + plugin.getActionCommand());
 		button.addActionListener(listener);
 		button.setEnabled(hasTargetApk);
@@ -1092,8 +1111,12 @@ public class ToolBar extends JToolBar
 				buttonMap.get(bs).setEnabled(enabled);
 			}
 			if(pluginToolBar != null) {
-				for(Component c: pluginToolBar.getComponents()) {
-					c.setEnabled(enabled);
+				if(pluginToolBar instanceof JButton) {
+					pluginToolBar.setEnabled(enabled);
+				} else {
+					for(Component c: pluginToolBar.getComponents()) {
+						c.setEnabled(enabled);
+					}
 				}
 			}
 			break;
@@ -1132,8 +1155,12 @@ public class ToolBar extends JToolBar
 
 			buttonMap.get(ButtonSet.PLUGIN_EXTEND).setEnabled(enabled);
 			if(pluginToolBar != null) {
-				for(Component c: pluginToolBar.getComponents()) {
-					c.setEnabled(enabled);
+				if(pluginToolBar instanceof JButton) {
+					pluginToolBar.setEnabled(enabled);
+				} else {
+					for(Component c: pluginToolBar.getComponents()) {
+						c.setEnabled(enabled);
+					}
 				}
 			}
 		case NEED_DEVICE:
