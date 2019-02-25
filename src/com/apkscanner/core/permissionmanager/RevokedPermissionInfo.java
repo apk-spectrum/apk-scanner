@@ -5,13 +5,14 @@ import com.apkscanner.data.apkinfo.UsesPermissionInfo;
 import com.apkscanner.util.Log;
 
 public class RevokedPermissionInfo extends PermissionInfo {
-	enum RevokedReason {
+	public enum RevokedReason {
 		NO_REVOKED,
 		BEFORE_ADDED,
 		AFTER_REMOVED,
 		OVER_MAX_SDK,
 		UNDER_SDK23,
 		NO_USES,
+		NEED_PLATFORM_SIGNATURE,
 		UNKNOWN_SOURCE,
 		UNKNOWN_REASON
 	}
@@ -37,6 +38,8 @@ public class RevokedPermissionInfo extends PermissionInfo {
 			return reason + ", over max sdk " + sdk;
 		case UNDER_SDK23:
 			return reason + ", under sdk 23";
+		case NEED_PLATFORM_SIGNATURE:
+			return reason + ", need platform signature";
 		case UNKNOWN_SOURCE:
 			return reason + ", unknown source";
 		case UNKNOWN_REASON:
@@ -48,7 +51,7 @@ public class RevokedPermissionInfo extends PermissionInfo {
 		return "";
 	}
 
-	public static RevokedPermissionInfo makeRevokedReason(PermissionRecord record, int sdk) {
+	public static RevokedPermissionInfo makeRevokedReason(PermissionRecord record, int sdk, int targetSdk, boolean treatSignAsRevoked) {
 		if(record == null) return null;
 		RevokedPermissionInfo reason = new RevokedPermissionInfo();
 		reason.name = record.name;
@@ -72,6 +75,14 @@ public class RevokedPermissionInfo extends PermissionInfo {
 			Log.v("This SDK(" + sdk + ") version was not have permission. " + reason.name + " over maxsdk " + record.maxSdkVersion);
 			reason.sdk = record.maxSdkVersion;
 			reason.reason = RevokedReason.OVER_MAX_SDK;
+		} else {
+			PermissionInfoExt info = record.getInfomation(sdk);
+			if(treatSignAsRevoked && info.isSignatureLevel()
+					&& (!info.protectionLevel.contains("pre23") || targetSdk >= 23)) {
+				reason = new RevokedPermissionInfo(info);
+				reason.hasRecord = true;
+				reason.reason = RevokedReason.NEED_PLATFORM_SIGNATURE;
+			}
 		}
 		return reason;
 	}
@@ -96,7 +107,7 @@ public class RevokedPermissionInfo extends PermissionInfo {
 		return reason;
 	}
 
-	public static RevokedPermissionInfo makeRevokedReason(UsesPermissionInfo unknownSource, int sdk) {
+	public static RevokedPermissionInfo makeRevokedReason(UsesPermissionInfo unknownSource) {
 		if(unknownSource == null) return null;
 		RevokedPermissionInfo reason = new RevokedPermissionInfo();
 		reason.name = unknownSource.name;

@@ -38,6 +38,7 @@ import com.apkscanner.core.permissionmanager.PermissionManager;
 import com.apkscanner.core.permissionmanager.PermissionManager.UsesPermissionTag;
 import com.apkscanner.core.permissionmanager.PermissionRepository.SourceCommit;
 import com.apkscanner.core.permissionmanager.RevokedPermissionInfo;
+import com.apkscanner.core.permissionmanager.RevokedPermissionInfo.RevokedReason;
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
@@ -422,7 +423,12 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			apkInfoPanel.setOuterHTMLById("perm-groups", String.format("<div id=\"perm-groups\">%s</div>", makePermGroup()));
 			groupCount = permissionManager.getPermissionGroups().length;
 		}
+		setInfoAreaHeight(groupCount);
+	}
+
+	private void setInfoAreaHeight(int groupCount) {
 		int infoHeight = groupCount > 15 ? 220 : (groupCount > 0 ? 260 : 280);
+		if(apkInfoPanel.getElementById("perm-settings") != null) infoHeight -= 20;
 		apkInfoPanel.setOuterHTMLById("basic-info-height-td", String.format("<td id=\"basic-info-height-td\" height=\"%d\"></td>", infoHeight));
 	}
 
@@ -644,7 +650,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			String elemId = checkbox.getActionCommand();
 			boolean selected = evt.getStateChange() == ItemEvent.SELECTED;
 			Resource.setPropData(elemId, selected);
-			if(elemId == "treat-sign-as-revoked") {
+			if("treat-sign-as-revoked".equals(elemId)) {
 				permissionManager.setTreatSignAsRevoked(selected);
 			}
 			setPermissionList(null);
@@ -725,16 +731,23 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 				Object object = apkInfoPanel.getElementModelById(elemId);
 				if(object instanceof ToggleButtonModel) {
 					ToggleButtonModel checkbox = (ToggleButtonModel) object;
-					checkbox.setSelected((boolean) Resource.getPropData(elemId, true));
+					if("treat-sign-as-revoked".equals(elemId) && permissionManager.isPlatformSigned()) {
+						checkbox.setSelected(false);
+						checkbox.setEnabled(false);;
+					} else {
+						checkbox.setSelected((boolean) Resource.getPropData(elemId, true));
+					}
 					checkbox.setActionCommand(elemId);
 					checkbox.addItemListener(this);
 				}
 			}
+			setInfoAreaHeight(permissionManager.getPermissionGroups().length);
 			break;
 		case "close-perm-setting":
 			apkInfoPanel.removeElementById("close-perm-setting");
 			apkInfoPanel.removeElementById("perm-settings");
 			apkInfoPanel.insertElementLast("perm-group-title", makeHyperEvent("show-perm-setting", String.format("<img src=\"%s\">", Resource.IMG_PERM_MARKER_SETTING.getPath()), null));
+			setInfoAreaHeight(permissionManager.getPermissionGroups().length);
 			break;
 		default:
 			if(id.startsWith("feature-")) {
@@ -884,7 +897,11 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			String protection = info.protectionLevel;
 			if(protection == null) protection= "normal";
 			if(info instanceof RevokedPermissionInfo) {
-				body.append(" - reason : ").append(((RevokedPermissionInfo)info).getReasonText()).append("\n");
+				RevokedPermissionInfo revokeInfo = (RevokedPermissionInfo) info;
+				body.append(" - reason : ").append(revokeInfo.getReasonText()).append("\n");
+				if(RevokedReason.NEED_PLATFORM_SIGNATURE.equals(revokeInfo.reason)) {
+					body.append(" - protectionLevel=").append(info.protectionLevel).append("\n");
+				}
 			} else {
 				body.append(" - protectionLevel=").append(info.protectionLevel).append("\n");
 			}

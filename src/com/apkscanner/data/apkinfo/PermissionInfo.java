@@ -103,20 +103,19 @@ public class PermissionInfo
 
 	public boolean isSignatureLevel()
 	{
-		return (protectionLevel != null && protectionLevel.contains("signature")
-				&& !protectionLevel.contains("ystem") && !protectionLevel.contains("privileged"));
+		return (protectionLevel != null && protectionLevel.contains("signature"));
 	}
 
 	public boolean isSignatureOrSystemLevel()
 	{
-		return (protectionLevel != null && protectionLevel.contains("signature")
-				&& (protectionLevel.contains("ystem") || protectionLevel.contains("privileged")));
+		return (protectionLevel != null && (protectionLevel.contains("signatureOrSystem") || 
+					(protectionLevel.contains("signature") && protectionLevel.contains("|privileged"))));
 	}
 
 	public boolean isSystemLevel()
 	{
-		return (protectionLevel != null && !protectionLevel.contains("signature")
-				&& (protectionLevel.contains("ystem") || protectionLevel.contains("privileged")));
+		return (protectionLevel != null && (protectionLevel.contains("System")
+				|| protectionLevel.contains("|privileged")));
 	}
 
 	public boolean isDeprecated()

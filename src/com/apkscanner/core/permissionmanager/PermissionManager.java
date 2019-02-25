@@ -41,6 +41,7 @@ public class PermissionManager
 	private boolean isSignAsRevoked;
 
 	private int sdkVersion = -1;
+	private int targetSdkVersion = -1;
 
 	static {
 		String xmlPath = Resource.getUTF8Path() + File.separator + "data" + File.separator + "PermissionsHistory.xml";
@@ -121,6 +122,8 @@ public class PermissionManager
 
 	public void setPlatformSigned(boolean isPlatformSigned) {
 		this.isPlatformSigned = isPlatformSigned;
+		recordGroupMap.clear();
+		cacheGroupInfo.clear();
 	}
 
 	public boolean isPlatformSigned() {
@@ -129,9 +132,11 @@ public class PermissionManager
 
 	public void setTreatSignAsRevoked(boolean isSignAsRevoked) {
 		this.isSignAsRevoked = isSignAsRevoked;
+		recordGroupMap.clear();
+		cacheGroupInfo.clear();
 	}
 
-	public boolean isSignAsRevoked() {
+	public boolean isTreatSignAsRevoked() {
 		return isSignAsRevoked;
 	}
 
@@ -158,6 +163,14 @@ public class PermissionManager
 
 	public int getSdkVersion() {
 		return sdkVersion;
+	}
+
+	public void setTargetSdkVersion(int targetSdkVersion) {
+		this.targetSdkVersion = targetSdkVersion;
+	}
+
+	public int getTargetSdkVersion() {
+		return targetSdkVersion;
 	}
 
 	public PermissionRecord[] getPermissionRecords() {
@@ -221,6 +234,8 @@ public class PermissionManager
 				if(!record.sdk23) continue; break;
 			default: break;
 			}
+			RevokedPermissionInfo reason = makeRevokedReason(record, sdk);
+			if(reason == null || reason.reason != RevokedReason.NO_REVOKED) continue;
 			PermissionInfoExt info = record.getInfomation(sdk);
 			if(info != null) perms.add(info);
 		}
@@ -245,7 +260,7 @@ public class PermissionManager
 	public RevokedPermissionInfo[] getRevokedPermissions(int sdk) {
 		List<RevokedPermissionInfo> perms = new ArrayList<>();
 		for(PermissionRecord record: recordMap.values()) {
-			RevokedPermissionInfo reason = RevokedPermissionInfo.makeRevokedReason(record, sdk);
+			RevokedPermissionInfo reason = makeRevokedReason(record, sdk);
 			if(reason.reason != RevokedReason.NO_REVOKED) perms.add(reason);
 		}
 		for(DeclaredPermissionInfo declared: declaredMap.values()) {
@@ -253,7 +268,7 @@ public class PermissionManager
 			if(reason.reason != RevokedReason.NO_REVOKED) perms.add(reason);
 		}
 		for(UsesPermissionInfo info: unknownSource.values()) {
-			RevokedPermissionInfo reason = RevokedPermissionInfo.makeRevokedReason(info, sdk);
+			RevokedPermissionInfo reason = RevokedPermissionInfo.makeRevokedReason(info);
 			if(reason.reason != RevokedReason.NO_REVOKED) perms.add(reason);
 		}
 		return perms.toArray(new RevokedPermissionInfo[perms.size()]);
@@ -265,7 +280,9 @@ public class PermissionManager
 
 	public PermissionInfo getPermission(String name, int sdk) {
 		PermissionRecord record = getPermissionRecord(name);
-		return record != null ? record.getInfomation(sdk) : declaredMap.get(name);
+		if(record == null) return declaredMap.get(name);
+		RevokedPermissionInfo reason = makeRevokedReason(record, sdk);
+		return reason.reason != RevokedReason.NO_REVOKED ? record.getInfomation(sdk) : null;
 	}
 
 	public RevokedPermissionInfo getRevokedPermission(String name) {
@@ -275,11 +292,11 @@ public class PermissionManager
 	public RevokedPermissionInfo getRevokedPermission(String name, int sdk) {
 		PermissionRecord record = getPermissionRecord(name);
 		if(record != null) {
-			return RevokedPermissionInfo.makeRevokedReason(record, sdk);
+			return makeRevokedReason(record, sdk);
 		} else if(declaredMap.containsKey(name)) {
 			return RevokedPermissionInfo.makeRevokedReason(declaredMap.get(name), sdk);
 		} else if(unknownSource.containsKey(name)) {
-			return RevokedPermissionInfo.makeRevokedReason(unknownSource.get(name), sdk);
+			return RevokedPermissionInfo.makeRevokedReason(unknownSource.get(name));
 		}
 		RevokedPermissionInfo reason = new RevokedPermissionInfo();
 		reason.name = name;
@@ -312,9 +329,18 @@ public class PermissionManager
 
 		groups = new HashMap<>();
 		for(PermissionRecord record: recordMap.values()) {
-			PermissionInfo permInfo = (PermissionInfoExt)record.getInfomation(sdk);
-			String groupName = permInfo != null ? permInfo.permissionGroup : GROUP_NAME_REVOKED;
-			if(groupName == null || groupName.isEmpty()) groupName = GROUP_NAME_UNSPECIFIED;
+			RevokedPermissionInfo reason = makeRevokedReason(record, sdk);
+			String groupName = null;
+			PermissionInfo permInfo = null;
+			if(reason == null || reason.reason != RevokedReason.NO_REVOKED) {
+				groupName = GROUP_NAME_REVOKED;
+			} else {
+				permInfo = (PermissionInfoExt)record.getInfomation(sdk);
+				if(permInfo != null) groupName = permInfo.permissionGroup;
+				if(groupName == null || groupName.isEmpty()) {
+					groupName = GROUP_NAME_UNSPECIFIED;
+				}
+			}
 			PermissionGroupInfoExt groupInfo = groups.get(groupName);
 			if(groupInfo == null) {
 				PermissionGroupRecord groupRecord = getPermissionGroupRecord(groupName);
@@ -329,12 +355,10 @@ public class PermissionManager
 				if(groupInfo == null) groupInfo = makeGroup(groupName);
 				groups.put(groupInfo.name, groupInfo);
 			}
-			if(permInfo == null) {
-				permInfo = RevokedPermissionInfo.makeRevokedReason(record, sdk);
-			} else if(permInfo instanceof PermissionInfoExt) {
+			if(permInfo instanceof PermissionInfoExt) {
 				groupInfo.protectionFlags |= ((PermissionInfoExt)permInfo).protectionFlags;
 			}
-			groupInfo.permissions.add(permInfo);
+			groupInfo.permissions.add(permInfo != null ? permInfo : reason);
 		}
 		for(DeclaredPermissionInfo declared: declaredMap.values()) {
 			RevokedPermissionInfo reason = RevokedPermissionInfo.makeRevokedReason(declared, sdk);
@@ -345,7 +369,7 @@ public class PermissionManager
 			groups.put(groupInfo.name, groupInfo);
 		}
 		for(UsesPermissionInfo info: unknownSource.values()) {
-			RevokedPermissionInfo reason = RevokedPermissionInfo.makeRevokedReason(info, sdk);
+			RevokedPermissionInfo reason = RevokedPermissionInfo.makeRevokedReason(info);
 			PermissionGroupInfoExt groupInfo = groups.get(GROUP_NAME_REVOKED);
 			if(groupInfo == null) groupInfo = makeGroup(GROUP_NAME_REVOKED);
 			groupInfo.permissions.add(reason);
@@ -401,8 +425,9 @@ public class PermissionManager
 	public PermissionInfoExt[] getGroupPermissions(String groupName, int sdk) {
 		List<PermissionInfoExt> list = new ArrayList<>();
 		for(PermissionRecord record: recordMap.values()) {
+			RevokedPermissionInfo reason = makeRevokedReason(record, sdk);
+			if(reason == null || reason.reason != RevokedReason.NO_REVOKED) continue;
 			PermissionInfoExt info = record.getInfomation(sdk);
-			if(info == null) continue;
 			if((info.permissionGroup == null && groupName == null)
 					|| (groupName != null && groupName.equals(info.permissionGroup))) {
 				list.add(info);
@@ -417,6 +442,10 @@ public class PermissionManager
 
 	public UsesPermissionInfo[] getUnknownSourcePermissions() {
 		return unknownSource.values().toArray(new UsesPermissionInfo[unknownSource.size()]);
+	}
+
+	public RevokedPermissionInfo makeRevokedReason(PermissionRecord record, int sdk) {
+		return RevokedPermissionInfo.makeRevokedReason(record, sdk, targetSdkVersion, (!isPlatformSigned && isSignAsRevoked));
 	}
 
 	public static PermissionRepository getPermissionRepository() {
