@@ -527,6 +527,9 @@ public enum Resource
 	IMG_ASSOCIATE_APK			(Type.IMAGE, "associate.png"),
 	IMG_UNASSOCIATE_APK			(Type.IMAGE, "unassociate.png"),
 
+	IMG_PERM_MARKER_SETTING		(Type.IMAGE, "perm_marker_setting.png"),
+	IMG_PERM_MARKER_CLOSE		(Type.IMAGE, "perm_marker_close.png"),
+
 	BIN_PATH					(Type.BIN, ""),
 
 	BIN_ADB_LNX					(Type.BIN, "adb", "nux"),
@@ -587,6 +590,10 @@ public enum Resource
 	PROP_DEFAULT_LAUNCH_MODE	(Type.PROP, "default_launch_mode", Resource.STR_LAUNCH_LAUNCHER),
 	PROP_VISIBLE_TO_BASIC		(Type.PROP, "visible_to_basic", true),
 	PROP_ALWAYS_TOOLBAR_EXTENDED(Type.PROP, "always_toolbar_extended", false),
+
+	PROP_PERM_MARK_RUNTIME		(Type.PROP, "mark-runtime", true),
+	PROP_PERM_MARK_COUNT		(Type.PROP, "mark-count", true),
+	PROP_PERM_TREAT_SIGN_AS_REVOKED(Type.PROP, "treat-sign-as-revoked", true),
 
 	LIB_JSON_JAR				(Type.LIB, "json-simple-1.1.1.jar"),
 	LIB_CLI_JAR					(Type.LIB, "commons-cli-1.3.1.jar"),

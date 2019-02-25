@@ -144,7 +144,7 @@ public class MainUI extends JFrame
 		} else {
 			setSize(minSize);
 		}
-		setMinimumSize(minSize);
+		//setMinimumSize(minSize);
 		setResizable(true);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

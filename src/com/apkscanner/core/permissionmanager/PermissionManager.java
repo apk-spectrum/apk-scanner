@@ -38,6 +38,7 @@ public class PermissionManager
 	private Map<String, UsesPermissionInfo> unknownSource;
 
 	private boolean isPlatformSigned;
+	private boolean isSignAsRevoked;
 
 	private int sdkVersion = -1;
 
@@ -124,6 +125,14 @@ public class PermissionManager
 
 	public boolean isPlatformSigned() {
 		return isPlatformSigned;
+	}
+
+	public void setTreatSignAsRevoked(boolean isSignAsRevoked) {
+		this.isSignAsRevoked = isSignAsRevoked;
+	}
+
+	public boolean isSignAsRevoked() {
+		return isSignAsRevoked;
 	}
 
 	public void clearPermissions() {

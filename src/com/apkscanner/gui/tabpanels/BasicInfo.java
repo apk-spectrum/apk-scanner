@@ -9,6 +9,8 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -22,6 +24,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JToggleButton.ToggleButtonModel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListDataEvent;
@@ -62,7 +65,7 @@ import com.apkscanner.util.FileUtil.FSStyle;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 
-public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickListener, IProgressListener, ListDataListener
+public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickListener, IProgressListener, ListDataListener, ItemListener
 {
 	private static final long serialVersionUID = 6431995641984509482L;
 
@@ -391,6 +394,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 					|| ApkInfoHelper.isSamsungSign(apkInfo);
 			permissionManager.clearPermissions();
 			permissionManager.setPlatformSigned(isPlatformSign);
+			permissionManager.setTreatSignAsRevoked((boolean) Resource.PROP_PERM_TREAT_SIGN_AS_REVOKED.getData());
 			permissionManager.addUsesPermission(apkInfo.manifest.usesPermission);
 			permissionManager.addUsesPermission(apkInfo.manifest.usesPermissionSdk23);
 			permissionManager.addDeclarePemission(apkInfo.manifest.permission);
@@ -404,8 +408,17 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		if(permissionManager.isEmpty()) {
 			apkInfoPanel.setInnerHTMLById("perm-group-title", Resource.STR_LABEL_NO_PERMISSION.getString());
 		} else {
-			apkInfoPanel.setInnerHTMLById("perm-group-title", String.format("[%s] - ", Resource.STR_BASIC_PERMISSIONS.getString()) +
-					makeHyperEvent("display-list", String.format("<u>%s</u>", Resource.STR_BASIC_PERMLAB_DISPLAY.getString()), Resource.STR_BASIC_PERMDESC_DISPLAY.getString()));
+			StringBuilder titlebar = new StringBuilder();
+			titlebar.append("[").append(Resource.STR_BASIC_PERMISSIONS.getString()).append("] - ");
+			titlebar.append(makeHyperEvent("display-list", String.format("<u>%s</u>", Resource.STR_BASIC_PERMLAB_DISPLAY.getString()), Resource.STR_BASIC_PERMDESC_DISPLAY.getString()));
+			if(apkInfoPanel.getElementById("perm-settings") == null) {
+				titlebar.append(makeHyperEvent("show-perm-setting", String.format("<img src=\"%s\">", Resource.IMG_PERM_MARKER_SETTING.getPath()), null));
+			} else {
+				titlebar.append(makeHyperEvent("close-perm-setting", String.format("<img src=\"%s\">", Resource.IMG_PERM_MARKER_CLOSE.getPath()), null));
+			}
+			apkInfoPanel.removeElementById("show-perm-setting");
+			apkInfoPanel.removeElementById("close-perm-setting");
+			apkInfoPanel.setInnerHTMLById("perm-group-title", titlebar.toString());
 			apkInfoPanel.setOuterHTMLById("perm-groups", String.format("<div id=\"perm-groups\">%s</div>", makePermGroup()));
 			groupCount = permissionManager.getPermissionGroups().length;
 		}
@@ -539,21 +552,23 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		Font font = UIManager.getFont("Label.font");
 		if(font != null) g2.setFont(font.deriveFont(10f));
 
-		if(isDanger) {
+		if(isDanger && (Boolean) Resource.PROP_PERM_MARK_RUNTIME.getData()) {
 			g2.setColor(Color.WHITE);
 			if(isDanger) g2.fillOval(0, 0, 12, 12);
 			g2.setColor(Color.RED);
 			g2.drawString("R", 3, 10);
 		}
 
-		g2.setColor(Color.WHITE);
-		g2.fillOval(24, 24, 12, 12);
-		g2.setColor(Color.BLACK);
-		if(count < 10) {
-			g2.drawString(Integer.toString(count), 28, 34);
-		} else {
-			if(font != null) g2.setFont(font.deriveFont(9.2f));
-			g2.drawString(Integer.toString(count), 26, 34);
+		if((Boolean) Resource.PROP_PERM_MARK_COUNT.getData()) {
+			g2.setColor(Color.WHITE);
+			g2.fillOval(24, 24, 12, 12);
+			g2.setColor(Color.BLACK);
+			if(count < 10) {
+				g2.drawString(Integer.toString(count), 28, 34);
+			} else {
+				if(font != null) g2.setFont(font.deriveFont(9.2f));
+				g2.drawString(Integer.toString(count), 26, 34);
+			}
 		}
 
 		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
@@ -621,13 +636,28 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	@Override public void intervalAdded(ListDataEvent evt) { }
 	@Override public void intervalRemoved(ListDataEvent evt) { }
 
+	@Override
+	public void itemStateChanged(ItemEvent evt) {
+		Object source = evt.getSource();
+		if(source instanceof ToggleButtonModel) {
+			ToggleButtonModel checkbox = (ToggleButtonModel) source;
+			String elemId = checkbox.getActionCommand();
+			boolean selected = evt.getStateChange() == ItemEvent.SELECTED;
+			Resource.setPropData(elemId, selected);
+			if(elemId == "treat-sign-as-revoked") {
+				permissionManager.setTreatSignAsRevoked(selected);
+			}
+			setPermissionList(null);
+		}		
+	}
+
 	private String makeHyperEvent(String id, String text, String title) {
 		return makeHyperEvent(id, text, title, null);
 	}
 
 	private String makeHyperEvent(String id, String text, String title, Object userData) {
 		String style = null;
-		if(id != null && id.startsWith("PLUGIN:")) style = "color:white";
+		if(id != null && (id.startsWith("PLUGIN:") || id.contains("-perm-setting"))) style = "color:white";
 		return apkInfoPanel.makeHyperLink("@event", text, title, id, style, userData);
 	}
 
@@ -681,6 +711,30 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 					.append("SHA1: ").append(FileUtil.getMessageDigest(apkFile, "SHA-1")).append("\n")
 					.append("SHA256: ").append(FileUtil.getMessageDigest(apkFile, "SHA-256"));
 			showDialog(checksum.toString(), "APK Checksum", new Dimension(650, 150), null);
+			break;
+		case "show-perm-setting":
+			apkInfoPanel.removeElementById("show-perm-setting");
+			apkInfoPanel.insertElementBefore("perm-groups", "<div id=\"perm-settings\"><div>");
+			StringBuilder settings = new StringBuilder();
+			settings.append(" <input id=\"mark-runtime\" type=\"checkbox\">Mark a runtime");
+			settings.append(" <input id=\"mark-count\" type=\"checkbox\">Mark a count");
+			settings.append(" <input id=\"treat-sign-as-revoked\" type=\"checkbox\">Treat a sign level as revoked");
+			apkInfoPanel.setInnerHTMLById("perm-settings", settings.toString());
+			apkInfoPanel.insertElementLast("perm-group-title", makeHyperEvent("close-perm-setting", String.format("<img src=\"%s\">", Resource.IMG_PERM_MARKER_CLOSE.getPath()), null));
+			for(String elemId: new String[] {"mark-runtime", "mark-count", "treat-sign-as-revoked"}) {
+				Object object = apkInfoPanel.getElementModelById(elemId);
+				if(object instanceof ToggleButtonModel) {
+					ToggleButtonModel checkbox = (ToggleButtonModel) object;
+					checkbox.setSelected((boolean) Resource.getPropData(elemId, true));
+					checkbox.setActionCommand(elemId);
+					checkbox.addItemListener(this);
+				}
+			}
+			break;
+		case "close-perm-setting":
+			apkInfoPanel.removeElementById("close-perm-setting");
+			apkInfoPanel.removeElementById("perm-settings");
+			apkInfoPanel.insertElementLast("perm-group-title", makeHyperEvent("show-perm-setting", String.format("<img src=\"%s\">", Resource.IMG_PERM_MARKER_SETTING.getPath()), null));
 			break;
 		default:
 			if(id.startsWith("feature-")) {

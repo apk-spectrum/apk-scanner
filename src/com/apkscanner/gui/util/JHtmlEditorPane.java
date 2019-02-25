@@ -20,6 +20,7 @@ import javax.swing.text.Element;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
+import javax.swing.text.html.FormView;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
@@ -74,7 +75,7 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 		super("text/html", null);
 		addHyperlinkListener(this);
 
-		HTMLEditorKit kit = new ImgBaselineHTMLEditorKit();
+		HTMLEditorKit kit = new CustomHTMLEditorKit();
 		setEditorKit(kit);
 
 		styleSheet = kit.getStyleSheet();
@@ -161,6 +162,7 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 	}
 
 	public void setInnerHTML(Element elem, String htmlText) {
+		if(elem == null) return;
 		HTMLDocument doc = (HTMLDocument)getDocument();
 		try {
 			doc.setInnerHTML(elem, htmlText);
@@ -170,6 +172,7 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 	}
 
 	public void setOuterHTML(Element elem, String htmlText) {
+		if(elem == null) return;
 		HTMLDocument doc = (HTMLDocument)getDocument();
 		try {
 			doc.setOuterHTML(elem, htmlText);
@@ -179,18 +182,18 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 	}
 
 	public String getInnerText(Element elem) {
-		if(elem != null) {
-			HTMLDocument doc = (HTMLDocument)getDocument();
-			try {
-				return doc.getText(elem.getStartOffset(), elem.getEndOffset() - elem.getStartOffset());
-			} catch (BadLocationException e) {
-				e.printStackTrace();
-			}
+		if(elem == null) return null;
+		HTMLDocument doc = (HTMLDocument)getDocument();
+		try {
+			return doc.getText(elem.getStartOffset(), elem.getEndOffset() - elem.getStartOffset());
+		} catch (BadLocationException e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
 
 	public void insertElementAfter(Element elem, String htmlText) {
+		if(elem == null) return;
 		HTMLDocument doc = (HTMLDocument)getDocument();
 		try {
 			doc.insertAfterEnd(elem, htmlText);
@@ -200,6 +203,7 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 	}
 
 	public void insertElementBefore(Element elem, String htmlText) {
+		if(elem == null) return;
 		HTMLDocument doc = (HTMLDocument)getDocument();
 		try {
 			doc.insertBeforeStart(elem, htmlText);
@@ -209,6 +213,7 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 	}
 
 	public void insertElementFirst(Element elem, String htmlText) {
+		if(elem == null) return;
 		HTMLDocument doc = (HTMLDocument)getDocument();
 		try {
 			doc.insertAfterStart(elem, htmlText);
@@ -218,6 +223,7 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 	}
 
 	public void insertElementLast(Element elem, String htmlText) {
+		if(elem == null) return;
 		HTMLDocument doc = (HTMLDocument)getDocument();
 		try {
 			doc.insertBeforeEnd(elem, htmlText);
@@ -227,6 +233,7 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 	}
 
 	public void removeElementById(Element elem) {
+		if(elem == null) return;
 		HTMLDocument doc = (HTMLDocument)getDocument();
 		doc.removeElement(elem);
 	}
@@ -364,7 +371,7 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 	}
 
 	// refer to https://stackoverflow.com/questions/46023177/set-inline-text-and-image-in-a-jeditorpane
-	class ImgBaselineHTMLEditorKit extends HTMLEditorKit {
+	class CustomHTMLEditorKit extends HTMLEditorKit {
 		private static final long serialVersionUID = 3268128657810856489L;
 
 		@Override public ViewFactory getViewFactory() {
@@ -384,6 +391,17 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 									switch (axis) {
 									case View.Y_AXIS:
 										return .8125f; // magic number...
+									default:
+										return super.getAlignment(axis);
+									}
+								}
+							};
+						} else if(kind == HTML.Tag.INPUT) {
+							return new FormView(elem) {
+								@Override public float getAlignment(int axis) {
+									switch (axis) {
+									case View.Y_AXIS:
+										return .7125f; // magic number...
 									default:
 										return super.getAlignment(axis);
 									}
