@@ -332,6 +332,9 @@ they're removed before the application is published</string>
 	<string name="label_do_not_look_again">Do not show again</string>
 	<string name="label_update_list">Update List</string>
 	<string name="label_show_update_at_startup">Show update list at startup</string>
+	<string name="label_mark_a_runtime">Mark a runtime</string>
+	<string name="label_mark_a_count">Mark a count</string>
+	<string name="label_treat_sign_as_revoked">Treat a sign level as revoked</string>
 
 	<string name="msg_failure_open_apk">ERROR: Can not open the APK</string>
 	<string name="msg_no_such_apk">No such APK file</string>

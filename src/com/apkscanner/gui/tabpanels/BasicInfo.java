@@ -722,9 +722,9 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			apkInfoPanel.removeElementById("show-perm-setting");
 			apkInfoPanel.insertElementBefore("perm-groups", "<div id=\"perm-settings\"><div>");
 			StringBuilder settings = new StringBuilder();
-			settings.append(" <input id=\"mark-runtime\" type=\"checkbox\">Mark a runtime");
-			settings.append(" <input id=\"mark-count\" type=\"checkbox\">Mark a count");
-			settings.append(" <input id=\"treat-sign-as-revoked\" type=\"checkbox\">Treat a sign level as revoked");
+			settings.append(" <input id=\"mark-runtime\" type=\"checkbox\">" + Resource.STR_LABEL_MARK_A_RUNTIME.getString());
+			settings.append(" <input id=\"mark-count\" type=\"checkbox\">" + Resource.STR_LABEL_MARK_A_COUNT.getString());
+			settings.append(" <input id=\"treat-sign-as-revoked\" type=\"checkbox\">" + Resource.STR_LABEL_TREAT_SIGN_AS_REVOKED.getString());
 			apkInfoPanel.setInnerHTMLById("perm-settings", settings.toString());
 			apkInfoPanel.insertElementLast("perm-group-title", makeHyperEvent("close-perm-setting", String.format("<img src=\"%s\">", Resource.IMG_PERM_MARKER_CLOSE.getPath()), null));
 			for(String elemId: new String[] {"mark-runtime", "mark-count", "treat-sign-as-revoked"}) {

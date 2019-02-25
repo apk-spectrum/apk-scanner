@@ -360,6 +360,9 @@ public enum Resource
 	STR_LABEL_DO_NOT_LOOK_AGAIN	(Type.TEXT, "@label_do_not_look_again"),
 	STR_LABEL_UPDATE_LIST		(Type.TEXT, "@label_update_list"),
 	STR_LABEL_SHOW_UPDATE_STARTUP(Type.TEXT, "@label_show_update_at_startup"),
+	STR_LABEL_MARK_A_RUNTIME	(Type.TEXT, "@label_mark_a_runtime"),
+	STR_LABEL_MARK_A_COUNT		(Type.TEXT, "@label_mark_a_count"),
+	STR_LABEL_TREAT_SIGN_AS_REVOKED(Type.TEXT, "@label_treat_sign_as_revoked"),
 
 	STR_TREE_NODE_DEVICE 		(Type.TEXT, "@tree_node_device"),
 	STR_TREE_NODE_DISPLAYED		(Type.TEXT, "@tree_node_displayed"),

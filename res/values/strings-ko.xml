@@ -331,6 +331,9 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="label_do_not_look_again">다시 보지 않기</string>
 	<string name="label_update_list">업데이트 리스트</string>
 	<string name="label_show_update_at_startup">시작시 업데이트 목록 표시</string>
+	<string name="label_mark_a_runtime">런타임 권한 표시</string>
+	<string name="label_mark_a_count">권한 갯수 표시</string>
+	<string name="label_treat_sign_as_revoked">플랫폼 서명이 아닌 경우 서명 레벨 미승인</string>
 
 	<string name="msg_failure_open_apk">APK 파일을 열수 없습니다.</string>
 	<string name="msg_no_such_apk">APK 파일이 존재하지 않습니다.</string>
