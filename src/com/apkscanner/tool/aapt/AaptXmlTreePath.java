@@ -309,10 +309,11 @@ public class AaptXmlTreePath
 				if(xml != null) attrIdPath = new XmlPath(xml);
 			} catch (IOException e) { }
 		}
-		String name = attrIdPath.getNode("/resources/public[@id='" + id + "']").getAttribute("name");
-		if(name == null) {
-			name = id;
+		String name = null;
+		XmlPath attrNode = attrIdPath.getNode("/resources/public[@id='" + id + "']");
+		if(attrNode != null) {
+			name = attrIdPath.getNode("/resources/public[@id='" + id + "']").getAttribute("name");	
 		}
-		return name;
+		return name != null ? name : id;
 	}
 }
