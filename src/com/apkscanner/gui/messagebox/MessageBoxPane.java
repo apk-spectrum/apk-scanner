@@ -6,6 +6,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.KeyboardFocusManager;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,6 +22,7 @@ import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
+import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
 
 public class MessageBoxPane extends JOptionPane
@@ -70,13 +73,17 @@ public class MessageBoxPane extends JOptionPane
 		JDialog dialog = super.createDialog(parentComponent, title);
 		dialog.setResizable(true);
 		dialog.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
+			WindowSizeMemorizer.resizeCompoent(dialog, title);
+		} else {
+			dialog.pack();
+		}
+		WindowSizeMemorizer.registeComponent(dialog, title);
 		return dialog;
 	}
 
 	public JDialog createDialog(String title) throws HeadlessException {
-		JDialog dialog = super.createDialog(title);
-		dialog.setResizable(true);
-		return dialog;
+		return createDialog(null, title);
 	}
 
 	public static String showInputDialog(Object message)
@@ -195,7 +202,24 @@ public class MessageBoxPane extends JOptionPane
 		pane.setComponentOrientation(((parentComponent == null) ?
 				getRootFrame() : parentComponent).getComponentOrientation());
 
-		JDialog dialog = pane.createDialog(parentComponent, title);
+		final JDialog dialog = pane.createDialog(parentComponent, title);
+
+		if(message instanceof Component) {
+			((Component)message).addComponentListener(new ComponentAdapter() {
+				private int prePreferedHeight = 0;
+				@Override
+				public void componentResized(ComponentEvent arg0) {
+					Dimension size = dialog.getSize();
+					Dimension preferSize = dialog.getPreferredSize();
+					if(prePreferedHeight < preferSize.height 
+							&& size.height < preferSize.height) {
+						size.height = preferSize.height;
+						dialog.setSize(size);
+					}
+					prePreferedHeight = preferSize.height;
+				}
+			});
+		}
 
 		pane.selectInitialValue();
 		dialog.setVisible(true);

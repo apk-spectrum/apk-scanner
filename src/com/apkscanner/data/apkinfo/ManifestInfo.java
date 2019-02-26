@@ -28,7 +28,7 @@ public class ManifestInfo
 	public UsesFeatureInfo[] usesFeature = null;
 	public UsesLibraryInfo[] usesLibrary = null;
 	public UsesPermissionInfo[] usesPermission = null;
-	public UsesPermissionInfo[] usesPermissionSdk23 = null;
+	public UsesPermissionSdk23Info[] usesPermissionSdk23 = null;
 	public UsesSdkInfo usesSdk = new UsesSdkInfo();
 	
 	public Integer featureFlags = 0;

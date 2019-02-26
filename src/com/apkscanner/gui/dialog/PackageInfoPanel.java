@@ -45,6 +45,8 @@ import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.JHtmlEditorPane;
+import com.apkscanner.gui.util.WindowSizeMemorizer;
+import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickEvent;
 import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbDeviceHelper;
@@ -108,13 +110,13 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		infoPanel.setEditable(false);
 		infoPanel.setOpaque(true);
 		infoPanel.setBackground(Color.white);
-		infoPanel.setHyperlinkClickListener(this);
+		infoPanel.addHyperlinkClickListener(this);
 
 		sysPackInfoPanel = new JHtmlEditorPane();
 		sysPackInfoPanel.setEditable(false);
 		sysPackInfoPanel.setOpaque(true);
 		sysPackInfoPanel.setBackground(Color.white);
-		sysPackInfoPanel.setHyperlinkClickListener(this);
+		sysPackInfoPanel.addHyperlinkClickListener(this);
 
 		//Font font = new Font("helvitica", Font.BOLD, 15);
 		JLabel label = new JLabel();
@@ -139,8 +141,8 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		style.append("font-size:" + font.getSize() + "pt;}");
 		style.append("#div-button a {text-decoration:none; color:black;}");
 
-		infoPanel.setStyle(style.toString());
-		sysPackInfoPanel.setStyle(style.toString());
+		infoPanel.addStyleRule(style.toString());
+		sysPackInfoPanel.addStyleRule(style.toString());
 
 		dumpsysTextArea = new JTextArea();
 		dumpsysTextArea.setEditable(false);
@@ -178,7 +180,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 			tabbedPane.addTab(Resource.STR_TAB_SYS_PACAKGE_INFO.getString(), null, sysPackInfoPanel, null);
 		}
 		tabbedPane.addTab(Resource.STR_TAB_DUMPSYS.getString(), null, new JScrollPane(dumpsysTextArea), null);
-		tabbedPane.addTab(Resource.STR_TAB_CERT.getString(), null, new JScrollPane(signatureTextArea), null);
+		tabbedPane.addTab(Resource.STR_TAB_SIGNATURES.getString(), null, new JScrollPane(signatureTextArea), null);
 	}
 
 	public void setPackageInfo(PackageInfo info) {
@@ -725,7 +727,8 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 	}
 
 	@Override
-	public void hyperlinkClick(String id) {
+	public void hyperlinkClick(HyperlinkClickEvent evt) {
+		String id = evt.getId();
 		if(id.startsWith("feature-")) {
 			showFeatureInfo(id);
 			return;
@@ -759,7 +762,16 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		dialog.setResizable(true);
 		dialog.setModal(false);
 		dialog.setLayout(new BorderLayout());
-		dialog.setSize(new Dimension(500, 400));
+
+		Dimension minSize = new Dimension(500, 400);
+		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
+			WindowSizeMemorizer.resizeCompoent(dialog, minSize);
+		} else {
+			dialog.setSize(minSize);
+		}
+		//dialog.setMinimumSize(minSize);
+		WindowSizeMemorizer.registeComponent(dialog);
+
 		dialog.setLocationRelativeTo(owner);
 
 		dialog.add(this, BorderLayout.CENTER);

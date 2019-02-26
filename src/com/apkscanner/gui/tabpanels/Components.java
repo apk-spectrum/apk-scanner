@@ -20,17 +20,19 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ActivityAliasInfo;
 import com.apkscanner.data.apkinfo.ActivityInfo;
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ProviderInfo;
 import com.apkscanner.data.apkinfo.ReceiverInfo;
 import com.apkscanner.data.apkinfo.ServiceInfo;
-import com.apkscanner.gui.TabbedPanel.TabDataObject;
+import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
-public class Components extends JPanel implements TabDataObject
+public class Components extends AbstractTabbedPanel
 {
 	private static final long serialVersionUID = 8325900007802212630L;
 
@@ -44,7 +46,10 @@ public class Components extends JPanel implements TabDataObject
 	public ArrayList<Object[]> ComponentList = new ArrayList<Object[]>();
   	  
 	public Components() {
-		super(new GridLayout(1, 0));
+		setLayout(new GridLayout(1, 0));
+		setName(Resource.STR_TAB_COMPONENTS.getString());
+		setToolTipText(Resource.STR_TAB_COMPONENTS.getString());
+		setEnabled(false);
 	}
 
 	@Override
@@ -118,7 +123,7 @@ public class Components extends JPanel implements TabDataObject
 		//add(scrollPane);
 		//add(IntentPanel);
 		
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
         splitPane.setTopComponent(scrollPane);
         splitPane.setBottomComponent(IntentPanel);
 		
@@ -133,8 +138,12 @@ public class Components extends JPanel implements TabDataObject
 	}
 	
 	@Override
-	public void setData(ApkInfo apkInfo)
+	public void setData(ApkInfo apkInfo, Status status, ITabbedRequest request)
 	{
+		if(!Status.ACTIVITY_COMPLETED.equals(status)) {
+			return;
+		}
+
 		if(TableModel == null) 
 			initialize();
 		ComponentList.clear();
@@ -227,17 +236,20 @@ public class Components extends JPanel implements TabDataObject
 				//String startUp = (info.featureFlag & ActivityInfo.ACTIVITY_FEATURE_STARTUP) != 0 ? "O" : "X";
 			}
 		}
-		
+
 		//ActivityList.addAll(apkInfo.ActivityList);
 		TableModel.fireTableDataChanged();
+
+		setDataSize(ApkInfoHelper.getComponentCount(apkInfo), true, false);
+		sendRequest(request, SEND_REQUEST_CURRENT_ENABLED);
 	}
-	
-	@Override
-	public void setExtraData(ApkInfo apkInfo) { }
 	
 	@Override
 	public void reloadResource()
 	{
+		setName(Resource.STR_TAB_COMPONENTS.getString());
+		setToolTipText(Resource.STR_TAB_COMPONENTS.getString());
+
 		if(TableModel == null) return;
 		TableModel.loadResource();
 		TableModel.fireTableStructureChanged();

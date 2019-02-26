@@ -39,6 +39,14 @@ public class ApkInfoHelper
 		return isDebuggable(apkInfo);
 	}
 
+	public boolean isTestPlatformSign() {
+		return isTestPlatformSign(apkInfo);
+	}
+
+	public boolean isSamsungSign() {
+		return isSamsungSign(apkInfo);
+	}
+
 	public int getInstallLocation() {
 		return getInstallLocation(apkInfo);
 	}
@@ -79,6 +87,14 @@ public class ApkInfoHelper
 		return (apkInfo != null && apkInfo.certificates != null && apkInfo.certificates.length > 0);
 	}
 
+	public static boolean isTestPlatformSign(ApkInfo apkInfo) {
+		return (apkInfo.featureFlags & ApkInfo.APP_FEATURE_PLATFORM_SIGN) != 0;
+	}
+
+	public static boolean isSamsungSign(ApkInfo apkInfo) {
+		return (apkInfo.featureFlags & ApkInfo.APP_FEATURE_SAMSUNG_SIGN) != 0;
+	}
+
 	public static int getInstallLocation(ApkInfo apkInfo) {
 		int location = INSTALL_LOCATION_NONE;
 		if(apkInfo != null && apkInfo.manifest.installLocation != null) {
@@ -108,7 +124,7 @@ public class ApkInfoHelper
 
 	public static ComponentInfo[] getLauncherActivityList(ApkInfo apkInfo, boolean includeMain) {
 		ArrayList<ComponentInfo> launcherList = new ArrayList<ComponentInfo>();
-		ArrayList<ComponentInfo> mainList = new ArrayList<ComponentInfo>(); 
+		ArrayList<ComponentInfo> mainList = new ArrayList<ComponentInfo>();
 		if(apkInfo != null) {
 			if(apkInfo.manifest.application.activity != null) {
 				for(ActivityInfo info: apkInfo.manifest.application.activity) {

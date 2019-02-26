@@ -1,8 +1,11 @@
 package com.apkscanner.gui;
 
+import java.awt.AWTEvent;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Image;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
@@ -15,12 +18,19 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutionException;
 
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -36,6 +46,7 @@ import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ComponentInfo;
+import com.apkscanner.gui.DropTargetChooser.DefaultTargetObject;
 import com.apkscanner.gui.ToolBar.ButtonSet;
 import com.apkscanner.gui.dialog.AboutDlg;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
@@ -48,7 +59,16 @@ import com.apkscanner.gui.dialog.SettingDlg;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.util.ApkFileChooser;
-import com.apkscanner.gui.util.FileDrop;
+import com.apkscanner.gui.util.ImageScaler;
+import com.apkscanner.gui.util.WindowSizeMemorizer;
+import com.apkscanner.plugin.IExternalTool;
+import com.apkscanner.plugin.IPlugIn;
+import com.apkscanner.plugin.IUpdateChecker;
+import com.apkscanner.plugin.NetworkException;
+import com.apkscanner.plugin.PlugInConfig;
+import com.apkscanner.plugin.PlugInManager;
+import com.apkscanner.plugin.gui.NetworkErrorDialog;
+import com.apkscanner.plugin.gui.UpdateNotificationWindow;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
@@ -58,8 +78,10 @@ import com.apkscanner.tool.adb.AdbServerMonitor.IAdbDemonChangeListener;
 import com.apkscanner.tool.adb.IPackageStateListener;
 import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
-import com.apkscanner.tool.dex2jar.Dex2JarWrapper;
-import com.apkscanner.tool.jd_gui.JDGuiLauncher;
+import com.apkscanner.tool.external.BytecodeViewerLauncher;
+import com.apkscanner.tool.external.Dex2JarWrapper;
+import com.apkscanner.tool.external.JADXLauncher;
+import com.apkscanner.tool.external.JDGuiLauncher;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
@@ -75,6 +97,7 @@ public class MainUI extends JFrame
 	private TabbedPanel tabbedPanel;
 	private ToolBar toolBar;
 	private MessageBoxPool messagePool;
+	private DropTargetChooser dropTargetChooser;
 
 	public MainUI(ApkScanner scanner)
 	{
@@ -86,6 +109,9 @@ public class MainUI extends JFrame
 		if(apkScanner != null) {
 			apkScanner.setStatusListener(new ApkScannerListener());
 		}
+
+		toolbarManager.setEnabled((boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData(), 1000);
+		loadPlugIn();
 	}
 
 	public void initialize()
@@ -110,20 +136,20 @@ public class MainUI extends JFrame
 		setTitle(Resource.STR_APP_NAME.getString());
 		setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
 
-		Log.i("initialize() set bound & size");
 
-		int width = Resource.INT_WINDOW_SIZE_WIDTH_MIN;
-		int height = Resource.INT_WINDOW_SIZE_HEIGHT_MIN;
+		Log.i("initialize() set bound & size ");
+		Dimension minSize = new Dimension(Resource.INT_WINDOW_SIZE_WIDTH_MIN, Resource.INT_WINDOW_SIZE_HEIGHT_MIN);
 		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
-			width = Resource.PROP_WINDOW_WIDTH.getInt();
-			height = Resource.PROP_WINDOW_HEIGHT.getInt();
+			WindowSizeMemorizer.resizeCompoent(this, minSize);
+		} else {
+			setSize(minSize);
 		}
-
-		setBounds(0, 0, width, height);
-		setMinimumSize(new Dimension(Resource.INT_WINDOW_SIZE_WIDTH_MIN, Resource.INT_WINDOW_SIZE_HEIGHT_MIN));
+		//setMinimumSize(minSize);
 		setResizable(true);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		WindowSizeMemorizer.registeComponent(this);
 
 		UIEventHandler eventHandler = new UIEventHandler();
 
@@ -144,22 +170,113 @@ public class MainUI extends JFrame
 		// Closing event of window be delete tempFile
 		addWindowListener(eventHandler);
 
-		// Drag & Drop event processing
-		new FileDrop(this, /*dragBorder,*/ eventHandler); // end FileDrop.Listener
+		// Drag & Drop event processing panel
+		dropTargetChooser = new DropTargetChooser(eventHandler);
+		setGlassPane(dropTargetChooser);
+		dropTargetChooser.setVisible(true);
 
 		// Shortcut key event processing
 		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		ky.addKeyEventDispatcher(eventHandler);
 
 		Log.i("UI Init end");
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run()
-            {
-            	Log.v("isDispatchThread " + EventQueue.isDispatchThread());
-                toolbarManager.setEnabled((boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData());
-            }
-        }, 1000);
+	}
+
+	private void loadPlugIn() {
+        new SwingWorker<Void, Void>() {
+			@Override
+			protected Void doInBackground() throws Exception {
+				PlugInManager.loadPlugIn();
+				PlugInManager.setLang(Resource.getLanguage());
+				checkUpdated(PlugInManager.getUpdateChecker());
+				return null;
+			}
+
+			@Override
+			protected void done() {
+				toolBar.onLoadPlugin(new UIEventHandler());
+				tabbedPanel.onLoadPlugin();
+				int state = apkScanner.getStatus();
+				if( PlugInManager.getPackageSearchers().length > 0
+						&& Status.BASIC_INFO_COMPLETED.isCompleted(state)
+						&& Status.CERT_COMPLETED.isCompleted(state) ) {
+					tabbedPanel.setData(apkScanner.getApkInfo(), Status.BASIC_INFO_COMPLETED);
+				}
+				for(IExternalTool plugin: PlugInManager.getExternalTool()) {
+					if(!plugin.isDiffTool()) continue;
+					Image icon = null;
+					URL iconUrl = plugin.getIconURL();
+					if(iconUrl != null) {
+						ImageIcon imageIcon = new ImageIcon(iconUrl);
+						if(imageIcon != null) {
+							icon = ImageScaler.getScaledImage(imageIcon, 64, 64);
+						}
+					}
+					dropTargetChooser.addDropTarget(plugin, plugin.getLabel(), "plugin", icon, new Color(0.9f,0.7f,0.3f,0.9f));
+				}
+			}
+		}.execute();
+	}
+
+	private void checkUpdated(final IUpdateChecker[] updater) {
+        new SwingWorker<IUpdateChecker[], IUpdateChecker>() {
+			@Override
+			protected IUpdateChecker[] doInBackground() throws Exception {
+				ArrayList<IUpdateChecker> newUpdates = new ArrayList<>();
+				for(IUpdateChecker uc: updater) {
+					if(!uc.wasPeriodPassed()) {
+						if(uc.hasNewVersion()) {
+							newUpdates.add(uc);
+						}
+						continue;
+					}
+					try {
+						if(uc.checkNewVersion()) {
+							newUpdates.add(uc);
+						};
+					} catch (NetworkException e) {
+						publish(uc);
+						if(e.isNetworkNotFoundException()) {
+							Log.d("isNetworkNotFoundException");
+							break;
+						}
+					}
+				}
+				return newUpdates.toArray(new IUpdateChecker[newUpdates.size()]);
+			}
+
+			@Override
+			protected void process(List<IUpdateChecker> updater) {
+				ArrayList<IUpdateChecker> retryUpdates = new ArrayList<>();
+				for(IUpdateChecker uc: updater) {
+					int ret = NetworkErrorDialog.show(MainUI.this, uc);
+					switch(ret) {
+					case NetworkErrorDialog.RESULT_RETRY:
+						retryUpdates.add(uc);
+					}
+				}
+				if(!retryUpdates.isEmpty()) {
+					checkUpdated(retryUpdates.toArray(new IUpdateChecker[retryUpdates.size()]));
+				}
+			}
+
+			@Override
+			protected void done() {
+				IUpdateChecker[] updaters = null;
+				try {
+					updaters = get();
+				} catch (InterruptedException | ExecutionException e) {
+					e.printStackTrace();
+				}
+				if(updaters != null && updaters.length > 0) {
+					toolBar.setBadgeCount(updaters.length);
+					if(!"true".equals(PlugInConfig.getGlobalConfiguration(PlugInConfig.CONFIG_NO_LOOK_UPDATE_POPUP))) {
+						UpdateNotificationWindow.show(MainUI.this, updaters);
+					}
+				}
+				PlugInManager.saveProperty();
+			}
+		}.execute();
 	}
 
 	private static void setUIFont(javax.swing.plaf.FontUIResource f) {
@@ -202,7 +319,7 @@ public class MainUI extends JFrame
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					setTitle(Resource.STR_APP_NAME.getString());
-					tabbedPanel.setData(null);
+					tabbedPanel.setData(null, null);
 					messagePool.show(MessageBoxPool.MSG_FAILURE_OPEN_APK);
 				}
 			});
@@ -210,7 +327,7 @@ public class MainUI extends JFrame
 
 		@Override
 		public void onCompleted() {
-			EventQueue.invokeLater(new Runnable() { 
+			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					Log.v("ApkCore.onComplete()");
 					toolBar.setEnabledAt(ButtonSet.OPEN, true);
@@ -224,7 +341,7 @@ public class MainUI extends JFrame
 				public void run() {
 					switch(step) {
 					case 0:
-						tabbedPanel.setProgress(message);
+						tabbedPanel.onProgress(message);
 						break;
 					default:
 						Log.i(message);
@@ -239,6 +356,7 @@ public class MainUI extends JFrame
 			//Log.v("onStateChanged() "+ status);
 			if(status == Status.STANBY) {
 				Log.v("STANBY: does not UI update");
+				PlugInManager.setApkInfo(apkScanner.getApkInfo());
 				return;
 			}
 
@@ -265,40 +383,23 @@ public class MainUI extends JFrame
 			Log.i("onStateChanged() ui sync start for " + status);
 			switch(status) {
 			case BASIC_INFO_COMPLETED:
+				PlugInManager.setApkInfo(apkScanner.getApkInfo());
+
 				String apkFilePath = apkScanner.getApkInfo().filePath;
 				String title = apkFilePath.substring(apkFilePath.lastIndexOf(File.separator)+1) + " - " + Resource.STR_APP_NAME.getString();
 				setTitle(title);
 
 				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, true);
-				tabbedPanel.setData(apkScanner.getApkInfo(), 0);
-				break;
-			case WIDGET_COMPLETED:
-				tabbedPanel.setData(apkScanner.getApkInfo(), 1);
-				break;
-			case LIB_COMPLETED:
-				tabbedPanel.setData(apkScanner.getApkInfo(), 2);
-				break;
-			case RESOURCE_COMPLETED:
-				tabbedPanel.setData(apkScanner.getApkInfo(), 3);
-				break;
-			case RES_DUMP_COMPLETED:
-				tabbedPanel.setData(apkScanner.getApkInfo(), 3 + TabbedPanel.CMD_EXTRA_DATA);
-				break;
-			case ACTIVITY_COMPLETED:
-				tabbedPanel.setData(apkScanner.getApkInfo(), 4);
-				break;
-			case CERT_COMPLETED:
-				tabbedPanel.setData(apkScanner.getApkInfo(), 0 + TabbedPanel.CMD_EXTRA_DATA);
-				tabbedPanel.setData(apkScanner.getApkInfo(), 5);
-				break;
+				dropTargetChooser.setExternalToolsVisible(true);
 			default:
+				tabbedPanel.setData(apkScanner.getApkInfo(), status);
 				break;
 			}
 			Log.i("onStateChanged() ui sync end " + status);
 		}
 	}
 
-	class UIEventHandler implements ActionListener, KeyEventDispatcher, WindowListener, FileDrop.Listener
+	class UIEventHandler implements ActionListener, KeyEventDispatcher, WindowListener, DropTargetChooser.Listener
 	{
 		private void evtOpenApkFile(boolean newWindow)
 		{
@@ -310,6 +411,7 @@ public class MainUI extends JFrame
 			if(!newWindow) {
 				toolBar.setEnabledAt(ButtonSet.OPEN, false);
 				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
+				dropTargetChooser.setExternalToolsVisible(false);
 				tabbedPanel.setLodingLabel();
 
 				Thread thread = new Thread(new Runnable() {
@@ -340,9 +442,10 @@ public class MainUI extends JFrame
 
 			if(!newWindow) {
 				tabbedPanel.setLodingLabel();
-				tabbedPanel.setProgress(null);
+				tabbedPanel.onProgress(null);
 				toolBar.setEnabledAt(ButtonSet.OPEN, false);
 				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
+				dropTargetChooser.setExternalToolsVisible(false);
 
 				Thread thread = new Thread(new Runnable() {
 					public void run()
@@ -368,13 +471,13 @@ public class MainUI extends JFrame
 
 			toolBar.setEnabledAt(ButtonSet.INSTALL, false);
 
-			ApkInstallWizard wizard = new ApkInstallWizard(apkInfo.filePath, MainUI.this);			
+			ApkInstallWizard wizard = new ApkInstallWizard(apkInfo.filePath, MainUI.this);
 			wizard.start();
 
 			toolBar.setEnabledAt(ButtonSet.INSTALL, true);
 		}
 
-		private void evtShowManifest()
+		private void evtShowManifest(boolean saveAs)
 		{
 			ApkInfo apkInfo = apkScanner.getApkInfo();
 			if(apkInfo == null) {
@@ -383,9 +486,21 @@ public class MainUI extends JFrame
 			}
 
 			try {
-				String manifestPath = apkInfo.tempWorkPath + File.separator + "AndroidManifest.xml";
-				File manifestFile = new File(manifestPath); 
-				if(!manifestFile.exists()) {
+				String manifestPath = null;
+				File manifestFile = null;
+				if(!saveAs) {
+					manifestPath = apkInfo.tempWorkPath + File.separator + "AndroidManifest.xml";
+					manifestFile = new File(manifestPath);
+				} else {
+					JFileChooser jfc = ApkFileChooser.getFileChooser((String)Resource.PROP_LAST_FILE_SAVE_PATH.getData(), JFileChooser.SAVE_DIALOG, new File("AndroidManifest.xml"));
+					if(jfc.showSaveDialog(MainUI.this) != JFileChooser.APPROVE_OPTION) return;
+					manifestFile = jfc.getSelectedFile();
+					if(manifestFile == null) return;
+					Resource.PROP_LAST_FILE_SAVE_PATH.setData(manifestFile.getParentFile().getAbsolutePath());
+					manifestPath = manifestFile.getAbsolutePath();
+				}
+
+				if(saveAs || !manifestFile.exists()) {
 					if(!manifestFile.getParentFile().exists()) {
 						if(FileUtil.makeFolder(manifestFile.getParentFile().getAbsolutePath())) {
 							Log.d("sucess make folder");
@@ -394,31 +509,57 @@ public class MainUI extends JFrame
 
 					String[] convStrings = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath, new String[] {"AndroidManifest.xml"});
 					AxmlToXml a2x = new AxmlToXml(convStrings, (apkInfo != null) ? apkInfo.resourceScanner : null);
-					a2x.setMultiLinePrint(true);
+					a2x.setMultiLinePrint((boolean)Resource.PROP_PRINT_MULTILINE_ATTR.getData());
 
 					FileWriter fw = new FileWriter(new File(manifestPath));
 					fw.write(a2x.toString());
 					fw.close();
+				} else {
+					Log.e("already existed file : " + manifestPath);
 				}
 
-				SystemUtil.openEditor(manifestPath);
+				if(!saveAs) SystemUtil.openEditor(manifestPath);
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 		}
 
-		private void evtShowExplorer()
+		private void evtShowExplorer(ActionEvent e)
 		{
+			int actionType = 0;
+			if(e == null || ToolBar.ButtonSet.EXPLORER.matchActionEvent(e)) {
+				String data = (String)Resource.PROP_DEFAULT_EXPLORER.getData();
+				if(Resource.STR_EXPLORER_ARCHIVE.equals(data)) {
+					actionType = 1;
+				} else if(Resource.STR_EXPLORER_FOLDER.equals(data)) {
+					actionType = 2;
+				}
+			} else if(ToolBar.MenuItemSet.EXPLORER_ARCHIVE.matchActionEvent(e)) {
+				actionType = 1;
+			} else if(ToolBar.MenuItemSet.EXPLORER_FOLDER.matchActionEvent(e)) {
+				actionType = 2;
+			}
+
 			ApkInfo apkInfo = apkScanner.getApkInfo();
 			if(apkInfo == null) {
 				Log.e("evtShowExplorer() apkInfo is null");
 				return;
 			}
 
-			SystemUtil.openArchiveExplorer(apkInfo.filePath);
+			switch(actionType) {
+			case 1:
+				SystemUtil.openArchiveExplorer(apkInfo.filePath);
+				break;
+			case 2:
+				SystemUtil.openFileExplorer(apkInfo.filePath);
+				break;
+			default:
+				Log.e("evtShowExplorer() unknown type : " + actionType);
+				break;
+			}
 		}
 
-		private void evtOpenJDGUI()
+		private void evtOpenDecompiler(ActionEvent e)
 		{
 			ApkInfo apkInfo = apkScanner.getApkInfo();
 			if(apkInfo == null || apkInfo.filePath == null
@@ -433,37 +574,57 @@ public class MainUI extends JFrame
 				return;
 			}
 
-			toolBar.setEnabledAt(ButtonSet.OPEN_CODE, false);
-
-			String jarfileName = apkInfo.tempWorkPath + File.separator + (new File(apkInfo.filePath)).getName().replaceAll("\\.apk$", ".jar");
-			Dex2JarWrapper.convert(apkInfo.filePath, jarfileName, new Dex2JarWrapper.DexWrapperListener() {
-				@Override
-				public void onCompleted() {
-					EventQueue.invokeLater(new Runnable() {
-						public void run() {
-							toolBar.setEnabledAt(ButtonSet.OPEN_CODE, true);
-						}
-					});
+			int actionType = 0;
+			if(e == null || ToolBar.ButtonSet.OPEN_CODE.matchActionEvent(e)) {
+				String data = (String)Resource.PROP_DEFAULT_DECORDER.getData();
+				if(Resource.STR_DECORDER_JD_GUI.equals(data)) {
+					actionType = 1;
+				} else if(Resource.STR_DECORDER_JADX_GUI.equals(data)) {
+					actionType = 2;
+				} else if(Resource.STR_DECORDER_BYTECOD.equals(data)) {
+					actionType = 3;
+				} else {
+					evtPluginLaunch(data);
+					return;
 				}
+			}
+			if(actionType == 1 || ToolBar.MenuItemSet.DECODER_JD_GUI.matchActionEvent(e)) {
+				toolBar.setEnabledAt(ButtonSet.OPEN_CODE, false);
 
-				@Override
-				public void onError(final String message) {
-					Log.e("Failure: Fail Dex2Jar : " + message);
-					EventQueue.invokeLater(new Runnable() {
-						public void run() {
-							MessageBoxPool.show(MainUI.this, MessageBoxPool.MSG_FAILURE_DEX2JAR, message);
-						}
-					});
-				}
+				String jarfileName = apkInfo.tempWorkPath + File.separator + (new File(apkInfo.filePath)).getName().replaceAll("\\.apk$", ".jar");
+				Dex2JarWrapper.convert(apkInfo.filePath, jarfileName, new Dex2JarWrapper.DexWrapperListener() {
+					@Override
+					public void onCompleted() {
+						EventQueue.invokeLater(new Runnable() {
+							public void run() {
+								toolBar.setEnabledAt(ButtonSet.OPEN_CODE, true);
+							}
+						});
+					}
 
-				@Override
-				public void onSuccess(String jarFilePath) {
-					JDGuiLauncher.run(jarFilePath);
-				}
-			});
+					@Override
+					public void onError(final String message) {
+						Log.e("Failure: Fail Dex2Jar : " + message);
+						EventQueue.invokeLater(new Runnable() {
+							public void run() {
+								MessageBoxPool.show(MainUI.this, MessageBoxPool.MSG_FAILURE_DEX2JAR, message);
+							}
+						});
+					}
+
+					@Override
+					public void onSuccess(String jarFilePath) {
+						JDGuiLauncher.run(jarFilePath);
+					}
+				});
+			} else if(actionType == 2 || ToolBar.MenuItemSet.DECODER_JADX_GUI.matchActionEvent(e)) {
+				JADXLauncher.run(apkInfo.filePath);
+			} else if(actionType == 3 || ToolBar.MenuItemSet.DECODER_BYTECODE.matchActionEvent(e)) {
+				BytecodeViewerLauncher.run(apkInfo.filePath);
+			}
 		}
 
-		private void evtOpenSearchPopup() {
+		private void evtOpenSearcher(ActionEvent e) {
 			SearchDlg dialog = new SearchDlg();
 			dialog.setApkInfo(apkScanner.getApkInfo());
 
@@ -497,7 +658,7 @@ public class MainUI extends JFrame
 			toolbarManager.setEnabled((boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData());
 		}
 
-		private void evtLaunchApp(final boolean selectActivity)
+		private void evtLaunchApp(final AWTEvent e)
 		{
 			final IDevice[] devices = getInstalledDevice();
 			if(devices == null || devices.length == 0) {
@@ -510,6 +671,36 @@ public class MainUI extends JFrame
 				private String errMsg = null;
 				public void run()
 				{
+					boolean isShiftPressed = false;
+					int actionType = 0;
+					if(e instanceof ActionEvent) {
+						isShiftPressed = (e != null && (((ActionEvent) e).getModifiers() & InputEvent.SHIFT_MASK) != 0);
+						if(e == null || ToolBar.ButtonSet.LAUNCH.matchActionEvent((ActionEvent) e)) {
+							if(isShiftPressed) actionType = 2;
+						} else if(ToolBar.ButtonSet.SUB_LAUNCH.matchActionEvent((ActionEvent) e)) {
+							String data = (String)Resource.PROP_DEFAULT_LAUNCH_MODE.getData();
+							if(Resource.STR_LAUNCH_LAUNCHER.equals(data)) {
+								actionType = 1;
+							} else if(Resource.STR_LAUNCH_SELECT.equals(data)) {
+								actionType = 2;
+							}
+						} else if(ToolBar.MenuItemSet.LAUNCH_LAUNCHER.matchActionEvent((ActionEvent) e)) {
+							actionType = 1;
+							isShiftPressed = false;
+						} else if(ToolBar.MenuItemSet.LAUNCH_SELECT.matchActionEvent((ActionEvent) e)) {
+							actionType = 2;
+							isShiftPressed = false;
+						}
+					} else if(e instanceof InputEvent) {
+						isShiftPressed = (e != null && (((InputEvent) e).getModifiers() & InputEvent.SHIFT_MASK) != 0);
+						if(isShiftPressed) actionType = 2;
+					}
+
+					int activityOpt = Resource.PROP_LAUNCH_ACTIVITY_OPTION.getInt();
+					if(actionType == 2) {
+						activityOpt = Resource.INT_LAUNCH_ALWAYS_CONFIRM_ACTIVITY;
+					}
+
 					for(IDevice device: devices) {
 						Log.v("launch activity on " + device.getSerialNumber());
 
@@ -522,8 +713,7 @@ public class MainUI extends JFrame
 
 						String selectedActivity = null;
 						ComponentInfo[] activities = null;
-						int activityOpt = Resource.PROP_LAUNCH_ACTIVITY_OPTION.getInt();
-						if(!selectActivity && (activityOpt == Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY
+						if(!isShiftPressed && (activityOpt == Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY
 								|| activityOpt == Resource.INT_LAUNCH_ONLY_LAUNCHER_ACTIVITY)) {
 							activities = packageInfo.getLauncherActivityList(false);
 						}
@@ -532,7 +722,7 @@ public class MainUI extends JFrame
 							selectedActivity = activities[0].name;
 						} else {
 							activities = packageInfo.getLauncherActivityList(true);
-							if(!selectActivity && activityOpt == Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY) {
+							if(!isShiftPressed && activityOpt == Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY) {
 								if(activities != null && activities.length == 1) {
 									selectedActivity = activities[0].name;
 								}
@@ -556,11 +746,11 @@ public class MainUI extends JFrame
 									for(ComponentInfo comp: apkActivities) {
 										boolean isLauncher = ((comp.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0);
 										boolean isMain = ((comp.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0);
-										mergeList.add((isLauncher ? "[APK_LAUNCHER]": (isMain ? "[APK_MAIN]": "[APK]")) + " " + comp.name.replaceAll("^"+apkInfo.manifest.packageName, ""));										
+										mergeList.add((isLauncher ? "[APK_LAUNCHER]": (isMain ? "[APK_MAIN]": "[APK]")) + " " + comp.name.replaceAll("^"+apkInfo.manifest.packageName, ""));
 									}
 								}
 
-								if(!mergeList.isEmpty()) { 
+								if(!mergeList.isEmpty()) {
 									String selected = (String)MessageBoxPane.showInputDialog(MainUI.this, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL),
 											Resource.STR_BTN_LAUNCH.getString(), MessageBoxPane.QUESTION_MESSAGE, null, mergeList.toArray(new String[mergeList.size()]), mergeList.get(0));
 									if(selected == null) {
@@ -748,6 +938,13 @@ public class MainUI extends JFrame
 			thread.start();
 		}
 
+		private void evtPluginLaunch(String actionCommand) {
+			IPlugIn plugin = PlugInManager.getPlugInByActionCommand(actionCommand);
+			if(plugin != null) {
+				plugin.launch();
+			}
+		}
+
 		private IDevice[] getInstalledDevice() {
 			IDevice[] devices = null;
 			if(toolbarManager.isEnabled()) {
@@ -808,13 +1005,15 @@ public class MainUI extends JFrame
 			if (ToolBar.ButtonSet.OPEN.matchActionEvent(e) || ToolBar.MenuItemSet.OPEN_APK.matchActionEvent(e)) {
 				evtOpenApkFile((e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
 			} else if(ToolBar.ButtonSet.MANIFEST.matchActionEvent(e)) {
-				evtShowManifest();
-			} else if(ToolBar.ButtonSet.EXPLORER.matchActionEvent(e)) {
-				evtShowExplorer();
+				evtShowManifest((e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
+			} else if(ToolBar.ButtonSet.EXPLORER.matchActionEvent(e)
+					|| ToolBar.MenuItemSet.EXPLORER_ARCHIVE.matchActionEvent(e)
+					|| ToolBar.MenuItemSet.EXPLORER_FOLDER.matchActionEvent(e)) {
+				evtShowExplorer(e);
 			} else if(ToolBar.ButtonSet.INSTALL.matchActionEvent(e)
 					|| ToolBar.ButtonSet.INSTALL_UPDATE.matchActionEvent(e)
-					|| ToolBar.ButtonSet.INSTALL_DOWNGRADE.matchActionEvent(e) 
-					|| ToolBar.ButtonSet.SUB_INSTALL.matchActionEvent(e) 
+					|| ToolBar.ButtonSet.INSTALL_DOWNGRADE.matchActionEvent(e)
+					|| ToolBar.ButtonSet.SUB_INSTALL.matchActionEvent(e)
 					|| ToolBar.ButtonSet.SUB_INSTALL_UPDATE.matchActionEvent(e)
 					|| ToolBar.ButtonSet.SUB_INSTALL_DOWNGRADE.matchActionEvent(e)
 					|| ToolBar.MenuItemSet.INSTALL_APK.matchActionEvent(e) ) {
@@ -833,18 +1032,34 @@ public class MainUI extends JFrame
 				evtOpenPackage((e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
 			} else if(ToolBar.MenuItemSet.INSTALLED_CHECK.matchActionEvent(e)) {
 				evtShowInstalledPackageInfo();
-			} else if(ToolBar.ButtonSet.OPEN_CODE.matchActionEvent(e)) {
-				evtOpenJDGUI();
-			} else if(ToolBar.ButtonSet.SEARCH.matchActionEvent(e)) {
-				evtOpenSearchPopup();
-			} else if(ToolBar.ButtonSet.LAUNCH.matchActionEvent(e) || ToolBar.ButtonSet.SUB_LAUNCH.matchActionEvent(e)) {
-				evtLaunchApp((e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
+			} else if(ToolBar.ButtonSet.OPEN_CODE.matchActionEvent(e)
+					|| ToolBar.MenuItemSet.DECODER_JD_GUI.matchActionEvent(e)
+					|| ToolBar.MenuItemSet.DECODER_JADX_GUI.matchActionEvent(e)
+					|| ToolBar.MenuItemSet.DECODER_BYTECODE.matchActionEvent(e)) {
+				evtOpenDecompiler(e);
+			} else if(ToolBar.ButtonSet.SEARCH.matchActionEvent(e)
+					|| ToolBar.MenuItemSet.SEARCH_RESOURCE.matchActionEvent(e)) {
+				evtOpenSearcher(e);
+			} else if(ToolBar.ButtonSet.LAUNCH.matchActionEvent(e) || ToolBar.ButtonSet.SUB_LAUNCH.matchActionEvent(e)
+					|| ToolBar.MenuItemSet.LAUNCH_LAUNCHER.matchActionEvent(e)
+					|| ToolBar.MenuItemSet.LAUNCH_SELECT.matchActionEvent(e)) {
+				evtLaunchApp(e);
 			} else if(ToolBar.MenuItemSet.UNINSTALL_APK.matchActionEvent(e)) {
 				evtUninstallApp();
 			} else if(ToolBar.MenuItemSet.CLEAR_DATA.matchActionEvent(e)) {
 				evtClearData();
-			} else if(ToolBar.ButtonSet.SIGN.matchActionEvent(e) || ToolBar.ButtonSet.SUB_SIGN.matchActionEvent(e)) { 
+			} else if(ToolBar.ButtonSet.SIGN.matchActionEvent(e) || ToolBar.ButtonSet.SUB_SIGN.matchActionEvent(e)) {
 				evtSignApkFile();
+			} else if(e.getActionCommand() != null && e.getActionCommand().startsWith("PLUGIN:")) {
+				evtPluginLaunch(e.getActionCommand().replaceAll("PLUGIN:", ""));
+			} else if(ToolBar.CMD_VISIBLE_TO_BASEIC.equals(e.getActionCommand())) {
+				if(e.getSource() instanceof JCheckBoxMenuItem) {
+					JCheckBoxMenuItem ckBox = ((JCheckBoxMenuItem)e.getSource());
+					Resource.PROP_VISIBLE_TO_BASIC.setData(ckBox.isSelected());
+					tabbedPanel.reloadResource();
+				}
+			}  else if(ToolBar.CMD_VISIBLE_TO_BASEIC_CHANGED.equals(e.getActionCommand())) {
+				tabbedPanel.reloadResource();
 			} else {
 				Log.v("Unkown action : " + e);
 			}
@@ -863,9 +1078,9 @@ public class MainUI extends JFrame
 					case KeyEvent.VK_N: Launcher.run();			break;
 					case KeyEvent.VK_I: evtInstallApk(false);	break;
 					case KeyEvent.VK_T: evtShowInstalledPackageInfo();	break;
-					case KeyEvent.VK_E: evtShowExplorer();		break;
-					case KeyEvent.VK_M: evtShowManifest();		break;
-					case KeyEvent.VK_R: evtLaunchApp(false);	break;
+					case KeyEvent.VK_E: evtShowExplorer(null);		break;
+					case KeyEvent.VK_M: evtShowManifest(false);		break;
+					case KeyEvent.VK_R: evtLaunchApp(e);	break;
 					//case KeyEvent.VK_S: evtSettings();			break;
 					default: return false;
 					}
@@ -874,7 +1089,7 @@ public class MainUI extends JFrame
 					switch(e.getKeyCode()) {
 					case KeyEvent.VK_O: evtOpenApkFile(true);	break;
 					case KeyEvent.VK_P: evtOpenPackage(true);	break;
-					case KeyEvent.VK_R: evtLaunchApp(true);	break;
+					case KeyEvent.VK_R: evtLaunchApp(e);	break;
 					default: return false;
 					}
 					return true;
@@ -892,41 +1107,49 @@ public class MainUI extends JFrame
 
 		// Drag & Drop event processing
 		@Override
-		public void filesDropped(final File[] files)
+		public void filesDropped(Object dropedTarget, final File[] files)
 		{
-			Log.i("filesDropped()");
-			toolBar.setEnabledAt(ButtonSet.OPEN, false);
-			toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
-			tabbedPanel.setLodingLabel();
-
-			Thread thread = new Thread(new Runnable() {
-				public void run()
-				{
-					try {
-						apkScanner.clear(false);
-						apkScanner.openApk(files[0].getCanonicalPath());
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
+			final String[] filePaths = new String[files.length];
+			for(int i = 0; i< files.length; i++) {
+				try {
+					filePaths[i] = files[i].getCanonicalPath();
+				} catch (IOException e) {
+					e.printStackTrace();
+					return;
 				}
-			});
-			thread.setPriority(Thread.NORM_PRIORITY);
-			thread.start();
+			}
+			if(dropedTarget instanceof DefaultTargetObject) {
+				switch((DefaultTargetObject)dropedTarget) {
+				case DROPED_TARGET_APK_OPEN:
+					Log.i("filesDropped()");
+					toolBar.setEnabledAt(ButtonSet.OPEN, false);
+					toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
+					dropTargetChooser.setExternalToolsVisible(false);
+					tabbedPanel.setLodingLabel();
+
+					Thread thread = new Thread(new Runnable() {
+						public void run()
+						{
+							apkScanner.clear(false);
+							apkScanner.openApk(filePaths[0]);
+						}
+					});
+					thread.setPriority(Thread.NORM_PRIORITY);
+					thread.start();
+					break;
+				case DROPED_TARGET_NEW_WIN:
+					Launcher.run(filePaths[0]);
+					break;
+				}
+			} else if(dropedTarget instanceof IExternalTool) {
+				String apkPath = apkScanner.getApkInfo().filePath;
+				((IExternalTool) dropedTarget).launch(apkPath, filePaths[0]);
+			}
 		}
 
 		private void finished()
 		{
 			Log.v("finished()");
-
-			if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData(false)) {
-				int width = (int)getSize().getWidth();
-				int height = (int)getSize().getHeight();
-				if(Resource.PROP_WINDOW_WIDTH.getInt() != width
-						|| Resource.PROP_WINDOW_HEIGHT.getInt() != (int)getSize().getHeight()) {
-					Resource.PROP_WINDOW_WIDTH.setData(width);
-					Resource.PROP_WINDOW_HEIGHT.setData(height);
-				}
-			}
 
 			setVisible(false);
 			apkScanner.clear(true);
@@ -952,7 +1175,7 @@ public class MainUI extends JFrame
 		private String packageName;
 		private int versionCode;
 		private boolean hasSignature;
-		private boolean hasMainActivity; 
+		private boolean hasMainActivity;
 
 		public void registerEventListeners() {
 			AdbServerMonitor.addAdbDemonChangeListener(this);
@@ -990,18 +1213,29 @@ public class MainUI extends JFrame
 			}
 		}
 
+		public void setEnabled(final boolean enable, final int delayMs) {
+	        new Timer().schedule(new TimerTask() {
+	            @Override
+	            public void run()
+	            {
+	            	Log.v("isDispatchThread " + EventQueue.isDispatchThread());
+	                setEnabled(enable);
+	            }
+	        }, delayMs);
+		}
+
 		public void setApkInfo(ApkInfo info) {
 			synchronized(this) {
 				if(info != null) {
 					packageName = info.manifest.packageName;
 					versionCode = info.manifest.versionCode != null ? info.manifest.versionCode : 0;
 					hasSignature = ApkInfoHelper.isSigned(info);
-					hasMainActivity = ApkInfoHelper.getLauncherActivityList(info, true).length > 0; 
+					hasMainActivity = ApkInfoHelper.getLauncherActivityList(info, true).length > 0;
 				} else {
 					packageName = null;
 					versionCode = 0;
 					hasSignature = false;
-					hasMainActivity = false; 
+					hasMainActivity = false;
 				}
 			}
 			if(enabled) {
@@ -1057,7 +1291,7 @@ public class MainUI extends JFrame
 							hasInstalled = pkg.getApkPath() != null;
 							int packVerCode = pkg.getVersionCode();
 							if(versionCode < packVerCode) {
-								hasUpper = true;									
+								hasUpper = true;
 							} else if(versionCode > packVerCode) {
 								hasLower = true;
 							}
@@ -1104,7 +1338,7 @@ public class MainUI extends JFrame
 		}
 
 		@Override
-		public void deviceChanged(IDevice device, int changeMask) { 
+		public void deviceChanged(IDevice device, int changeMask) {
 			Log.v("deviceChanged() " + device.getName() + ", " + device.getState() + ", changeMask " + changeMask);
 			if((changeMask & IDevice.CHANGE_STATE) != 0 && device.isOnline()) {
 				applyToobarPolicy();
@@ -1140,7 +1374,7 @@ public class MainUI extends JFrame
 
 		@Override
 		public void packageInstalled(PackageInfo packageInfo) {
-			if(packageName != null && packageInfo != null 
+			if(packageName != null && packageInfo != null
 					&& packageName.equals(packageInfo.packageName)) {
 				applyToobarPolicy();
 			}
@@ -1148,7 +1382,7 @@ public class MainUI extends JFrame
 
 		@Override
 		public void packageUninstalled(PackageInfo packageInfo) {
-			if(packageName != null && packageInfo != null 
+			if(packageName != null && packageInfo != null
 					&& packageName.equals(packageInfo.packageName)) {
 				applyToobarPolicy();
 			}

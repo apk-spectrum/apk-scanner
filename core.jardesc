@@ -4,7 +4,7 @@
     <options buildIfNeeded="true" compress="true" descriptionLocation="/apk-scanner/core.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="true" saveDescription="false" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
-    <manifest generateManifest="true" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+    <manifest generateManifest="true" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
         <sealing sealJar="false">
             <packagesToSeal/>
             <packagesToUnSeal/>
@@ -12,6 +12,7 @@
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
         <javaElement handleIdentifier="=apk-scanner/src&lt;com.apkscanner.resource"/>
+        <javaElement handleIdentifier="=apk-scanner/src&lt;com.apkscanner.plugin.manifest"/>
         <javaElement handleIdentifier="=apk-scanner/src&lt;com.apkscanner.tool.jd_gui"/>
         <javaElement handleIdentifier="=apk-scanner/src&lt;com.apkscanner.tool.apktool"/>
         <javaElement handleIdentifier="=apk-scanner/src&lt;com.apkscanner.core.decompiler"/>
@@ -23,6 +24,7 @@
         <javaElement handleIdentifier="=apk-scanner/src&lt;com.apkscanner.core.signer"/>
         <javaElement handleIdentifier="=apk-scanner/src&lt;com.apkscanner.core.searcher"/>
         <javaElement handleIdentifier="=apk-scanner/src&lt;com.apkscanner.tool.aapt"/>
+        <javaElement handleIdentifier="=apk-scanner/src&lt;com.apkscanner.plugin"/>
         <javaElement handleIdentifier="=apk-scanner/src&lt;android.util"/>
         <javaElement handleIdentifier="=apk-scanner/src&lt;com.apkscanner.jna"/>
         <javaElement handleIdentifier="=apk-scanner/src&lt;com.apkscanner.util"/>

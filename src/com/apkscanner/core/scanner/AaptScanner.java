@@ -74,13 +74,13 @@ public class AaptScanner extends ApkScanner
 			return;
 		}
 
-		stateChanged(Status.STANBY);
-
 		apkInfo = new ApkInfo();
 		apkInfo.filePath = apkFile.getAbsolutePath();
 		apkInfo.fileSize = apkFile.length();
 		apkInfo.tempWorkPath = FileUtil.makeTempPath(apkInfo.filePath.substring(apkInfo.filePath.lastIndexOf(File.separator)));
 		apkInfo.resourceScanner = resourceScanner;
+
+		stateChanged(Status.STANBY);
 
 		Log.v("Temp path : " + apkInfo.tempWorkPath);
 

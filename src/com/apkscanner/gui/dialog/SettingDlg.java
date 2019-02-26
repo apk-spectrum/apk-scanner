@@ -3,7 +3,6 @@ package com.apkscanner.gui.dialog;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
@@ -17,6 +16,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.AbstractAction;
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -34,7 +36,6 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -53,13 +54,18 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileSystemView;
 
+import org.json.simple.JSONValue;
+
 import com.android.ddmlib.AdbVersion;
 import com.apkscanner.gui.TabbedPanel;
 import com.apkscanner.gui.ToolBar;
 import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.gui.util.ApkFileChooser;
+import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.jna.FileInfo;
 import com.apkscanner.jna.FileVersion;
+import com.apkscanner.plugin.PlugInManager;
+import com.apkscanner.plugin.gui.PlugInSettingPanel;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbVersionManager;
 import com.apkscanner.util.Log;
@@ -92,7 +98,7 @@ public class SettingDlg extends JDialog implements ActionListener
 	private String propFont;
 	private int propFontSize;
 	private int propFontStyle;
-	private boolean propSaveWinSize; 
+	private boolean propSaveWinSize;
 
 	private boolean propAdbShared;
 	private String propAdbPath;
@@ -100,6 +106,9 @@ public class SettingDlg extends JDialog implements ActionListener
 	private int propLaunchActivity;
 	private boolean propTryUnlock;
 	private boolean propLaunchAfInstalled;
+	private boolean propAlwaysExtendToolbar;
+
+	private String propPluginSettings;
 
 	private boolean needUpdateUI;
 
@@ -121,6 +130,7 @@ public class SettingDlg extends JDialog implements ActionListener
 	private JComboBox<String> jcbAdbPaths;
 	private JCheckBox jckEnableDeviceMonitoring;
 	private JComboBox<String> jcbLaunchOptions;
+	private JComboBox<String> jcbToolbarExtendOptions;
 	private JCheckBox jckTryUnlock;
 	private JCheckBox jckLauchAfInstalled;
 
@@ -343,7 +353,16 @@ public class SettingDlg extends JDialog implements ActionListener
 		setTitle(Resource.STR_SETTINGS_TITLE.getString());
 		setIconImage(Resource.IMG_TOOLBAR_SETTING.getImageIcon().getImage());
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setSize(new Dimension(600,420));
+
+		Dimension minSize = new Dimension(600, 420);
+		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
+			WindowSizeMemorizer.resizeCompoent(this, minSize);
+		} else {
+			setSize(minSize);
+		}
+		//setMinimumSize(minSize);
+		WindowSizeMemorizer.registeComponent(this);
+
 		setResizable(true);
 		setLocationRelativeTo(window);
 		setModal(true);
@@ -353,6 +372,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		tabbedPane.addTab(Resource.STR_TAB_SETTING_ANALYSIS.getString(), null, makeAnalysisPanel(), Resource.STR_TAB_SETTING_ANALYSIS_LAB.getString());
 		tabbedPane.addTab(Resource.STR_TAB_SETTING_DEVICE.getString(), null, makeDevicePanel(), Resource.STR_TAB_SETTING_DEVICE_LAB.getString());
 		tabbedPane.addTab(Resource.STR_TAB_SETTING_DISPLAY.getString(), null, makeDisplayPanel(), Resource.STR_TAB_SETTING_DISPLAY_LAB.getString());
+		tabbedPane.addTab(Resource.STR_TAB_SETTING_PLUGINS.getString(), null, new PlugInSettingPanel(), Resource.STR_TAB_SETTING_PLUGINS_LAB.getString());
 
 		JPanel ctrPanel = new JPanel(new FlowLayout());
 		JButton savebutton = new JButton(Resource.STR_BTN_SAVE.getString());
@@ -378,8 +398,14 @@ public class SettingDlg extends JDialog implements ActionListener
 		getRootPane().getActionMap().put("ESCAPE", new AbstractAction() {
 			private static final long serialVersionUID = -8988954049940512230L;
 			public void actionPerformed(ActionEvent e) {
+				resotreSetting();
 				dispose();
 			}
+		});
+
+		addWindowListener(new WindowAdapter() {
+			@Override public void windowClosing(WindowEvent e) { Log.v("windowClosing"); resotreSetting(); }
+			@Override public void windowClosed(WindowEvent e) { Log.v("windowClosed"); resotreSetting(); }
 		});
 	}
 
@@ -433,6 +459,10 @@ public class SettingDlg extends JDialog implements ActionListener
 		propTryUnlock = (boolean)Resource.PROP_TRY_UNLOCK_AF_LAUNCH.getData();
 
 		propLaunchAfInstalled = (boolean)Resource.PROP_LAUNCH_AF_INSTALLED.getData();
+
+		propAlwaysExtendToolbar = (boolean)Resource.PROP_ALWAYS_TOOLBAR_EXTENDED.getData();
+
+		propPluginSettings = JSONValue.toJSONString(PlugInManager.getChangedProperties());
 	}
 
 	private void saveSettings()
@@ -493,7 +523,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		}
 
 		if(propLaunchAfInstalled != jckLauchAfInstalled.isSelected()) {
-			Resource.PROP_LAUNCH_AF_INSTALLED.setData(jckLauchAfInstalled.isSelected());	
+			Resource.PROP_LAUNCH_AF_INSTALLED.setData(jckLauchAfInstalled.isSelected());
 		}
 
 		needUpdateUI = false;
@@ -521,7 +551,18 @@ public class SettingDlg extends JDialog implements ActionListener
 			needUpdateUI = true;
 		}
 		if(propSaveWinSize != jckRememberWinSize.isSelected()) {
-			Resource.PROP_SAVE_WINDOW_SIZE.setData(jckRememberWinSize.isSelected());	
+			Resource.PROP_SAVE_WINDOW_SIZE.setData(jckRememberWinSize.isSelected());
+		}
+
+		if(propAlwaysExtendToolbar != (jcbToolbarExtendOptions.getSelectedIndex() == 1)) {
+			Resource.PROP_ALWAYS_TOOLBAR_EXTENDED.setData(jcbToolbarExtendOptions.getSelectedIndex() == 1);
+			needUpdateUI = true;
+		}
+
+		String pluginSetting = JSONValue.toJSONString(PlugInManager.getChangedProperties());
+		if(propPluginSettings != null && !propPluginSettings.equals(pluginSetting)) {
+			PlugInManager.saveProperty();
+			needUpdateUI = true;
 		}
 	}
 
@@ -529,7 +570,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		JPanel panel = new JPanel(new GridBagLayout());
 		panel.setOpaque(true);
 
-		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady) 
+		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady)
 		GridBagConstraints rowHeadConst = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.NONE,new Insets(10,10,0,10),0,0);
 		GridBagConstraints contentConst = new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.WEST,GridBagConstraints.NONE,new Insets(10,0,0,0),0,0);
 
@@ -601,6 +642,31 @@ public class SettingDlg extends JDialog implements ActionListener
 		contentConst.fill = GridBagConstraints.HORIZONTAL;
 		panel.add(txtEditPane, contentConst);
 		contentConst.fill = GridBagConstraints.NONE;
+
+		rowHeadConst.gridy++;
+		contentConst.gridy++;
+
+		panel.add(new JLabel(Resource.STR_SETTINGS_TOOLBAR.getString()), rowHeadConst);
+
+		JPanel toolbarPane = new JPanel();
+		toolbarPane.setLayout(new BoxLayout(toolbarPane, BoxLayout.Y_AXIS));
+
+		jcbToolbarExtendOptions = new JComboBox<String>(
+				new String[] {
+						Resource.STR_SETTINGS_TOOLBAR_WITH_SHIFT.getString(),
+						Resource.STR_SETTINGS_TOOLBAR_WITHOUT_SHIFT.getString()
+				});
+		jcbToolbarExtendOptions.setEditable(false);
+		jcbToolbarExtendOptions.setSelectedIndex(propAlwaysExtendToolbar ? 1 : 0);
+		toolbarPane.add(jcbToolbarExtendOptions);
+
+		jckEnableDeviceMonitoring = new JCheckBox(Resource.STR_SETTINGS_ADB_MONITOR.getString());
+		jckEnableDeviceMonitoring.setSelected(propDeviceMonitoring);
+		jckEnableDeviceMonitoring.addActionListener(this);
+		jckEnableDeviceMonitoring.setAlignmentX(1);
+		toolbarPane.add(jckEnableDeviceMonitoring);
+
+		panel.add(toolbarPane, contentConst);
 
 		rowHeadConst.gridy++;
 		contentConst.gridy++;
@@ -720,7 +786,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		JPanel panel = new JPanel(new GridBagLayout());
 		panel.setOpaque(true);
 
-		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady) 
+		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady)
 		GridBagConstraints rowHeadConst = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.NONE,new Insets(5,10,0,10),0,0);
 		GridBagConstraints contentConst = new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.WEST,GridBagConstraints.NONE,new Insets(5,0,0,0),0,0);
 
@@ -746,7 +812,7 @@ public class SettingDlg extends JDialog implements ActionListener
 				}
 			}
 		};
-		jrbUseCurrentRunningVer.addActionListener(radioAction);		
+		jrbUseCurrentRunningVer.addActionListener(radioAction);
 		rbRestartAdbServer.addActionListener(radioAction);
 
 		ButtonGroup adbPolicyGroup = new ButtonGroup();
@@ -833,14 +899,6 @@ public class SettingDlg extends JDialog implements ActionListener
 		rowHeadConst.gridy++;
 		contentConst.gridy++;
 
-		jckEnableDeviceMonitoring = new JCheckBox(Resource.STR_SETTINGS_ADB_MONITOR.getString());
-		jckEnableDeviceMonitoring.setSelected(propDeviceMonitoring);
-		jckEnableDeviceMonitoring.addActionListener(this);
-
-		panel.add(jckEnableDeviceMonitoring, contentConst);
-
-		rowHeadConst.gridy++;
-		contentConst.gridy++;
 
 		panel.add(new JPanel(), contentConst);
 
@@ -1041,7 +1099,7 @@ public class SettingDlg extends JDialog implements ActionListener
 
 		previewPanel = new JPanel(new BorderLayout());
 		previewPanel.setBorder(new TitledBorder(Resource.STR_SETTINGS_THEME_PREVIEW.getString()));
-		previewPanel.setPreferredSize(new Dimension(0,170));	
+		previewPanel.setPreferredSize(new Dimension(0,170));
 
 		mPreviewFrame = new JInternalFrame(Resource.STR_APP_NAME.getString(),false,false,false,false);
 		mPreviewToolBar = new ToolBar(null);
@@ -1093,7 +1151,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		String actCommand = e.getActionCommand();
 
 		if(ACT_CMD_EDITOR_EXPLOERE.equals(actCommand)) {
-			JFileChooser jfc = new JFileChooser();										
+			JFileChooser jfc = new JFileChooser();
 			if(jfc.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
 				return;
 
@@ -1107,7 +1165,7 @@ public class SettingDlg extends JDialog implements ActionListener
 			SystemUtil.createShortCut();
 			if(SystemUtil.hasShortCut()) {
 				((JButton)e.getSource()).setVisible(false);
-			}			
+			}
 		} else if(ACT_CMD_ASSOCIATE_APK_FILE.equals(actCommand)) {
 			JButton btn = (JButton)e.getSource();
 			if(!SystemUtil.isAssociatedWithFileType(".apk")) {
@@ -1125,15 +1183,7 @@ public class SettingDlg extends JDialog implements ActionListener
 			saveSettings();
 			this.dispose();
 		} else if(ACT_CMD_EXIT.equals(actCommand)) {
-			try {
-				UIManager.setLookAndFeel(propTheme);
-			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-					| UnsupportedLookAndFeelException e1) {
-				e1.printStackTrace();
-			}
-
-			setUIFont(new javax.swing.plaf.FontUIResource(propFont, propFontStyle, propFontSize));
-
+			resotreSetting();
 			this.dispose();
 		} else if(ACT_CMD_ADD_RES_APK_FILE.equals(actCommand)) {
 			String file = ApkFileChooser.openApkFilePath(this);
@@ -1163,7 +1213,7 @@ public class SettingDlg extends JDialog implements ActionListener
 				return;
 			}
 			String path = file.getAbsolutePath();
-			
+
 			jcbAdbPaths.setSelectedItem(path);
 			if(!path.equals(jcbAdbPaths.getSelectedItem())) {
 				jcbAdbPaths.addItem(path);
@@ -1176,29 +1226,37 @@ public class SettingDlg extends JDialog implements ActionListener
 		return needUpdateUI;
 	}
 
-	public static void main(final String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				Resource.setLanguage((String)Resource.PROP_LANGUAGE.getData(SystemUtil.getUserLanguage()));
+	private void resotreSetting() {
+		Log.v("resotreSetting()");
 
-				Log.i("initialize() setLookAndFeel");
-				try {
-					UIManager.setLookAndFeel((String)Resource.PROP_CURRENT_THEME.getData());
-				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-						| UnsupportedLookAndFeelException e1) {
-					e1.printStackTrace();
-				}
-
-				Log.i("initialize() setUIFont");
-				String font = (String) Resource.PROP_BASE_FONT.getData();
-				int fontStyle = (int) Resource.PROP_BASE_FONT_STYLE.getInt();
-				int fontSize = (int) Resource.PROP_BASE_FONT_SIZE.getInt();
-				setUIFont(new javax.swing.plaf.FontUIResource(font, fontStyle, fontSize));
-
-				SettingDlg dlg = new SettingDlg(new JFrame());
-				dlg.setVisible(true);
-				System.exit(0);
+		if(!propTheme.equals(jcbTheme.getSelectedItem())) {
+			Log.v("resotre LookAndFeel");
+			try {
+				UIManager.setLookAndFeel(propTheme);
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+					| UnsupportedLookAndFeelException e1) {
+				e1.printStackTrace();
 			}
-		});
+		}
+
+		boolean needRestoreFont = false;
+		if(!propTabbedUI.equals(jcbTabbedUI.getSelectedItem())) {
+			needRestoreFont = true;
+		} else if(!propFont.equals(jcbFont.getSelectedItem())) {
+			needRestoreFont = true;
+		} else if(propFontSize != (int)jcbFontSize.getSelectedItem()) {
+			needRestoreFont = true;
+		}
+		if(needRestoreFont) {
+			Log.v("resotre Font");
+			setUIFont(new javax.swing.plaf.FontUIResource(propFont, propFontStyle, propFontSize));
+		}
+
+		String pluginSetting = JSONValue.toJSONString(PlugInManager.getChangedProperties());
+		if(propPluginSettings != null && !propPluginSettings.equals(pluginSetting)) {
+			Log.v("resotre Plugin property");
+			PlugInManager.loadPlugIn();
+			propPluginSettings = null;
+		}
 	}
 }

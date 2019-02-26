@@ -18,6 +18,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -68,6 +70,7 @@ import com.apkscanner.gui.util.FilteredTreeModel;
 import com.apkscanner.gui.util.SimpleCheckTableModel;
 import com.apkscanner.gui.util.SimpleCheckTableModel.TableRowObject;
 import com.apkscanner.gui.util.TreeNodeIconRefresher;
+import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.IPackageStateListener;
@@ -159,8 +162,16 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		setResizable(true);
 		setModal(true);
 		setLayout(new BorderLayout());
-		setSize(new Dimension(600, 400));
-		setMinimumSize(new Dimension(600, 400));
+
+		Dimension minSize = new Dimension(600, 400);
+		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
+			WindowSizeMemorizer.resizeCompoent(this, minSize);
+		} else {
+			setSize(minSize);
+		}
+		setMinimumSize(minSize);
+		WindowSizeMemorizer.registeComponent(this);
+
 		setLocationRelativeTo(window);
 
 		addWindowListener(new WindowEventHandler());
@@ -1047,6 +1058,38 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 			return null;
 		}
 
+		public class SortDefaultMutableTreeNode extends DefaultMutableTreeNode {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public SortDefaultMutableTreeNode(Object userObject) {
+				super(userObject);
+			}
+			
+			@Override
+			public void add(MutableTreeNode newChild) {
+				super.add(newChild);				
+				sort();
+			}
+
+			@SuppressWarnings("unchecked")
+			public void sort() {				
+				Collections.sort(children, compare());
+			}
+
+			private Comparator<DefaultMutableTreeNode> compare() {
+				return new Comparator<DefaultMutableTreeNode>() {
+					@Override
+					public int compare(DefaultMutableTreeNode o1, DefaultMutableTreeNode o2) {
+						return o1.getUserObject().toString().compareTo(o2.getUserObject().toString());
+					}
+				};
+			}
+		}
+	
+		
 		@Override
 		protected void process(List<Object> chunks){
 			for(Object param: chunks) {
@@ -1056,11 +1099,11 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 
 					if(dev.isOnline()) {
 						DefaultMutableTreeNode devNode = getDeviceNode(dev);
-						DefaultMutableTreeNode priv_app = new DefaultMutableTreeNode("priv-app");
-						DefaultMutableTreeNode systemapp = new DefaultMutableTreeNode("app");
+						SortDefaultMutableTreeNode priv_app = new SortDefaultMutableTreeNode("priv-app");
+						SortDefaultMutableTreeNode systemapp = new SortDefaultMutableTreeNode("app");
 						DefaultMutableTreeNode framework_app = new DefaultMutableTreeNode("framework");
 						DefaultMutableTreeNode system = new DefaultMutableTreeNode("system");
-						DefaultMutableTreeNode dataapp = new DefaultMutableTreeNode("app");
+						SortDefaultMutableTreeNode dataapp = new SortDefaultMutableTreeNode("app");
 						DefaultMutableTreeNode data = new DefaultMutableTreeNode("data");
 						DefaultMutableTreeNode displayed = new DefaultMutableTreeNode("*" + Resource.STR_TREE_NODE_DISPLAYED.getString());
 						DefaultMutableTreeNode recently = new DefaultMutableTreeNode("*" + Resource.STR_TREE_NODE_RECENTLY.getString());
@@ -1077,7 +1120,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 							DefaultMutableTreeNode temp = new DefaultMutableTreeNode(info);
 
 							if(apkPath.startsWith("/system/priv-app/")) {
-								priv_app.add(temp);		        		
+								priv_app.add(temp);
 							} else if(apkPath.startsWith("/system/app/")) {
 								systemapp.add(temp);
 							} else if(apkPath.startsWith("/system/framework/")) {
