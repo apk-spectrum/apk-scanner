@@ -43,7 +43,7 @@ public class EasyPermissionPanel extends JPanel {
 
 	static public int HEIGHT = 40;
 	static private int WIDTH = EasyContentsPanel.WIDTH;
-	static private int SHADOWSIZE = 3;
+	static private int SHADOWSIZE = 1;
 	static private int PERMISSIONICONSIZE = HEIGHT - SHADOWSIZE * 2;
 
 	private static String CARD_LAYOUT_EMPTY = "card_empty";

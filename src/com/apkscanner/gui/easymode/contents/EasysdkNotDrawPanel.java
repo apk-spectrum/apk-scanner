@@ -154,7 +154,7 @@ public class EasysdkNotDrawPanel extends FlatPanel {
 		g2.setRenderingHints(rh);
 		AffineTransform at = g2.getTransform();
 		g2.setColor(linecolor);
-		drawArrow(g2, 50, 10, 50, 160);
+		//drawArrow(g2, 50, 10, 50, 160);
 		g2.setTransform(at);
 
 	}

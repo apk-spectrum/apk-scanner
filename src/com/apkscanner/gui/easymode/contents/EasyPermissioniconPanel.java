@@ -34,7 +34,7 @@ public class EasyPermissioniconPanel extends FlatPanel implements ActionListener
 	int HEIGHT = 35;
 	int WIDTH = 100;
 	int BUTTON_IMG_SIZE = HEIGHT-6;
-	int SHADOW_SIZE = 3;
+	int SHADOW_SIZE = 2;
 	
 	static private Color bordercolor = new Color(242, 242, 242);
 	static private Color dangerouscolor = new Color(181, 107, 105);

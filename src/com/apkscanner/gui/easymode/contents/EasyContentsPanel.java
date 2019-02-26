@@ -92,7 +92,7 @@ public class EasyContentsPanel extends JPanel{
 		FlatPanel appiconpanel = new FlatPanel();		
 		appiconpanel.setBackground(sdkverPanelcolor);
 		appiconpanel.setPreferredSize(new Dimension(160, 0));
-		appiconpanel.setshadowlen(3);
+		appiconpanel.setshadowlen(1);
 		appicon = new JLabel();
 		appicon.setHorizontalAlignment(JLabel.CENTER);
 		appicon.setVerticalAlignment(JLabel.CENTER);
@@ -133,7 +133,7 @@ public class EasyContentsPanel extends JPanel{
 		//package
 		packagepanel = new EasyFlatLabel(" ", sdkverPanelcolor, packagefontcolor);
 		packagepanel.setPreferredSize(new Dimension(0, 35));		
-		packagepanel.setshadowlen(3);
+		packagepanel.setshadowlen(1);
 		packagepanel.setTextFont(new Font(getFont().getName(), Font.BOLD, 15));
 		infopanel.add(packagepanel, BorderLayout.NORTH);
 
@@ -141,7 +141,7 @@ public class EasyContentsPanel extends JPanel{
 		sdkverpanel.setBackground(sdkverPanelcolor);
 		sdkverpanel.setPreferredSize(new Dimension(80, 0));
 		
-		sdkverpanel.setshadowlen(3);
+		sdkverpanel.setshadowlen(1);
 		infopanel.add(sdkverpanel, BorderLayout.EAST);
 		
 		JPanel innerinfopanel = new JPanel(new BorderLayout());
@@ -149,7 +149,7 @@ public class EasyContentsPanel extends JPanel{
 		//version
 		ininerversionpanel = new EasyFlatLabel(" ", sdkverPanelcolor, versionfontcolor);
 		ininerversionpanel.setPreferredSize(new Dimension(0, 35));
-		ininerversionpanel.setshadowlen(3);
+		ininerversionpanel.setshadowlen(1);
 		innerinfopanel.add(ininerversionpanel, BorderLayout.NORTH);
 		
 		featurepanel = new EasyFeatureHtmlPanel();

@@ -123,7 +123,7 @@ public class EasyFeaturePanel extends FlatPanel {
 			panel = new EasyFlatLabel(title, featurebgfontcolor, featurefgfontcolor[style]);
 			// temp.setBorder(BorderFactory.createEmptyBorder(400,10,100,5));
 			panel.setPreferredSize(new Dimension(title.length() * 7, 25));
-			panel.setshadowlen(3);
+			panel.setshadowlen(1);
 			panel.setTextFont(new Font(getFont().getName(), Font.PLAIN, 15));
 			panel.setHorizontalAlignment(JTextField.CENTER);
 			panel.Addlistener();

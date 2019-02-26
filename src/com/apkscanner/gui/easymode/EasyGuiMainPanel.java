@@ -29,6 +29,7 @@ import com.apkscanner.gui.dialog.LogDlg;
 import com.apkscanner.gui.easymode.contents.EasyBordPanel;
 import com.apkscanner.gui.easymode.contents.EasyContentsPanel;
 import com.apkscanner.gui.easymode.contents.EasyGuiToolPanel;
+import com.apkscanner.gui.easymode.contents.EasyGuiToolScaleupPanel;
 import com.apkscanner.gui.easymode.contents.EasyPermissionPanel;
 import com.apkscanner.gui.easymode.core.EasyGuiAppFeatureData;
 import com.apkscanner.gui.easymode.core.ToolEntryManager;
@@ -36,6 +37,7 @@ import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.gui.easymode.util.EasyFileDrop;
 import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
+import com.apkscanner.gui.tabpanels.Resources;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
@@ -52,7 +54,7 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 	private int width, height;
 	JLayeredPane layeredPane;
 	DropEffectLabel dragdroplabel;
-	EasyGuiToolPanel toolbarpanel;
+	EasyGuiToolScaleupPanel toolbarpanel;
 	public static MessageBoxPool messagePool;
 		
 	public EasyGuiMainPanel(JFrame mainframe, EasyLightApkScanner apkscanner) {
@@ -79,19 +81,23 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 //		height = contentsPanel.HEIGHT + permissionPanel.HEIGHT;
 		height = contentsPanel.HEIGHT;
 		
-		toolbarpanel = new EasyGuiToolPanel(40, width);
+		toolbarpanel = new EasyGuiToolScaleupPanel(70, width);
 		
+//		FlatPanel spreadflat = new FlatPanel();
+//		spreadflat.setPreferredSize(new Dimension(40, 40));
+//		spreadflat.setshadowlen(3);
+//		spreadflat.setBackground(new Color(217, 217, 217));
+//		
+//		spreadflat.add(new EasyButton(Resource.IMG_EASY_WINDOW_SPREAD.getImageIcon(35,35)));
 		JPanel toolpanel = new JPanel(new BorderLayout());
-		FlatPanel spreadflat = new FlatPanel();
-		spreadflat.setPreferredSize(new Dimension(40, 40));
-		spreadflat.setshadowlen(3);
-		spreadflat.setBackground(new Color(217, 217, 217));
-		
-		spreadflat.add(new EasyButton(Resource.IMG_EASY_WINDOW_SPREAD.getImageIcon(30,30)));
-		
 		toolpanel.add(toolbarpanel, BorderLayout.CENTER);
-		toolpanel.add(spreadflat, BorderLayout.EAST);
-		
+		toolpanel.add(new EasyButton(Resource.IMG_EASY_WINDOW_SPREAD.getImageIcon(40,40)), BorderLayout.EAST);
+		//toolpanel.setBounds(0, 0, width, 45);
+
+		JPanel iconhoverpanel = new JPanel(new BorderLayout());
+		iconhoverpanel.add(toolbarpanel, BorderLayout.NORTH);
+		iconhoverpanel.setBounds(0, 0, width, 70);
+		iconhoverpanel.setOpaque(false);
 		
 		setLayout(new BorderLayout());
 		setBorder(new LineBorder(Color.BLACK, 0));
@@ -100,21 +106,21 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 		layeredPane.setPreferredSize(new Dimension(width, height));
 
 		JPanel contentspanel = new JPanel();
-
 		contentspanel.setLayout(new BorderLayout());
 		contentspanel.setBackground(maincolor);
-
 		if (EasyGuiMain.isdecoframe) {
 			bordPanel = new EasyBordPanel(mainframe);
 			add(bordPanel, BorderLayout.PAGE_START);
 		}
-
 		contentspanel.add(contentsPanel, BorderLayout.CENTER);
 		//contentspanel.add(permissionPanel, BorderLayout.PAGE_END);
-		contentspanel.add(toolpanel, BorderLayout.PAGE_START);
-		
+		JPanel dummy = new JPanel();
+		dummy.setPreferredSize(new Dimension(0, 40));
+		contentspanel.add(dummy, BorderLayout.PAGE_START);
 		contentspanel.setBounds(0, 0, width, height);
+		
 		layeredPane.add(contentspanel, new Integer(1));
+		layeredPane.add(iconhoverpanel,new Integer(2));
 
 		dragdroplabel = new DropEffectLabel(Resource.IMG_EASY_WINDOW_DRAGANDDROP.getImageIcon(100, 100));
 		// dragdroplabel = new MyJLabel(null);
@@ -123,7 +129,7 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 		// btn1.setMaximumSize(d3);
 		dragdroplabel.setBounds(0, 0, width, height);
 		dragdroplabel.setBackground(new Color(213, 134, 145, 223));
-		layeredPane.add(dragdroplabel, new Integer(2));
+		layeredPane.add(dragdroplabel, new Integer(3));
 		dragdroplabel.setVisible(false);
 		// btn1.setOpaque(true);
 

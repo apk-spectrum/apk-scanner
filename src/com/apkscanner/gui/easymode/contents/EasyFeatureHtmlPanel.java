@@ -48,7 +48,7 @@ public class EasyFeatureHtmlPanel extends FlatPanel {
 	public EasyFeatureHtmlPanel() {
 		setLayout(new BorderLayout());
 		setBackground(sdkverPanelcolor);
-		setshadowlen(3);
+		setshadowlen(1);
 
 		AppFeature = new EasyGuiAppFeatureData();
 		
@@ -67,7 +67,8 @@ public class EasyFeatureHtmlPanel extends FlatPanel {
 
 	public void setfeature(ApkInfo apkInfo) {		
 		AppFeature.setFeature(apkInfo);
-		makefeaturehtml(AppFeature);
+		//makefeaturehtml(AppFeature);
+		newmakefeaturehtml(AppFeature);
 	}
 
 	private String makeHyperLink(String href, String text, String title, String id, String style) {
@@ -159,6 +160,56 @@ public class EasyFeatureHtmlPanel extends FlatPanel {
 		//apkinform.setBody(feature.toString());
 		apkinform.setText(feature.toString());
 	}
+	
+	private void newmakefeaturehtml(EasyGuiAppFeatureData featuredata) {
+		StringBuilder feature = new StringBuilder();
+
+		feature.append("<html><p style=\'line-height: 150%;\'>");
+		//<style='line-height:0%'>
+		if(featuredata.isHidden) {
+			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_HIDDEN_LAB.getString(), Resource.STR_FEATURE_HIDDEN_DESC.getString(), "feature-hidden", null));
+		} else {
+			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_LAUNCHER_LAB.getString(), Resource.STR_FEATURE_LAUNCHER_DESC.getString(), "feature-launcher", null));
+		}
+
+		if(featuredata.sharedUserId != null && !featuredata.sharedUserId.startsWith("android.uid.system") ) {
+			feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_SHAREDUSERID_LAB.getString(), Resource.STR_FEATURE_SHAREDUSERID_DESC.getString(), "feature-shared-user-id", null));
+		}
+		
+		boolean systemSignature = false;
+		StringBuilder importantFeatures = new StringBuilder();
+		if(featuredata.sharedUserId != null && featuredata.sharedUserId.startsWith("android.uid.system")) {
+			if(featuredata.isSamsungSign || featuredata.isPlatformSign) {
+				importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
+			} else {
+				importantFeatures.append(", <font style=\"color:#FF0000; font-weight:bold\">");
+			}
+			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_SYSTEM_UID_LAB.getString(), Resource.STR_FEATURE_SYSTEM_UID_DESC.getString(), "feature-system-user-id", null));
+			importantFeatures.append("</font>");
+		}
+		if(featuredata.isPlatformSign) {
+			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
+			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_PLATFORM_SIGN_LAB.getString(), Resource.STR_FEATURE_PLATFORM_SIGN_DESC.getString(), "feature-platform-sign", null));
+			importantFeatures.append("</font>");
+			systemSignature = true;
+		}
+		if(featuredata.isSamsungSign) {
+			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
+			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_SAMSUNG_SIGN_LAB.getString(), Resource.STR_FEATURE_SAMSUNG_SIGN_DESC.getString(), "feature-samsung-sign", null));
+			importantFeatures.append("</font>");
+			systemSignature = true;
+		}
+	
+		if(importantFeatures.length() > 0) {
+			feature.append("<br/>" + importantFeatures.substring(2));
+		}
+		
+		feature.append("</p></html>");
+		
+		//apkinform.setBody(feature.toString());
+		apkinform.setText(feature.toString());
+	}
+	
 	
 	private void showDialog(String content, String title, Dimension size, Icon icon)
 	{
