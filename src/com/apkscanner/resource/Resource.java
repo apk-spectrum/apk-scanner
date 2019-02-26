@@ -31,7 +31,7 @@ import com.apkscanner.util.ZipFileUtil;
 public enum Resource
 {
 	STR_APP_NAME				(Type.TEXT, "@app_name"),
-	STR_APP_VERSION				(Type.TEXT, "2.3.5"),
+	STR_APP_VERSION				(Type.TEXT, "2.4"),
 	STR_APP_BUILD_MODE			(Type.TEXT, "eng"),
 	STR_APP_MAKER				(Type.TEXT, "jin_h.lee / sunggyu.kam"),
 	STR_APP_MAKER_EMAIL			(Type.TEXT, "jin_h.lee@samsung.com;sunggyu.kam@samsung.com"),
