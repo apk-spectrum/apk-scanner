@@ -208,9 +208,10 @@ public class ApktoolScanner extends ApkScanner
 			XmlPath xmlAndroidManifest = new XmlPath(manifestFile);
 
 			// package
-			xmlAndroidManifest.getNode("/manifest");
-			apkInfo.manifest.packageName = xmlAndroidManifest.getAttribute("package");
-			apkInfo.manifest.sharedUserId = xmlAndroidManifest.getAttribute("android:sharedUserId");
+			XmlPath node = xmlAndroidManifest.getNode("/manifest");
+			if(node == null) return;
+			apkInfo.manifest.packageName = node.getAttribute("package");
+			apkInfo.manifest.sharedUserId = node.getAttribute("android:sharedUserId");
 			/*
 			if(apkInfo.VersionCode == null || apkInfo.VersionCode.isEmpty()) {
 				apkInfo.VersionCode = xmlAndroidManifest.getAttributes("android:versionCode");
@@ -360,8 +361,11 @@ public class ApktoolScanner extends ApkScanner
 						maxImgSize = resFile.length();
 					}
 				} else {
-			        result = new XmlPath(resFile).getNode(query).getTextContent();
-			        if(result != null) break;;
+					XmlPath node = new XmlPath(resFile).getNode(query);
+					if(node != null) {
+				        result = node.getTextContent();
+				        if(result != null) break;
+					}
 				}
 			}
 	        //Log.i(">> " + result);
@@ -390,7 +394,9 @@ public class ApktoolScanner extends ApkScanner
 
 				File resFile = new File(resXmlPath + s + File.separator + fileName);
 				if(!resFile.exists()) continue;
-				String value = new XmlPath(resFile).getNode(query).getTextContent();
+				XmlPath node = new XmlPath(resFile).getNode(query);
+				if(node == null) continue;
+				String value = node.getTextContent();
 				if(value != null && value.startsWith("@")) {
 					return getMutiLang(value);
 				} else if(value != null) {
@@ -456,9 +462,8 @@ public class ApktoolScanner extends ApkScanner
 				
 				//Log.i("xmlFile " + xmlFile.getAbsolutePath());
 
-				XmlPath xpath = new XmlPath(xmlFile);
-				
-				xpath.getNode("//appwidget-provider");
+				XmlPath xpath = new XmlPath(xmlFile).getNode("//appwidget-provider");
+				if(xpath == null) continue;
 		        
 				if(Size.isEmpty() && xpath.getAttribute("android:minWidth") != null
 						&& xpath.getAttribute("android:minHeight") != null) {

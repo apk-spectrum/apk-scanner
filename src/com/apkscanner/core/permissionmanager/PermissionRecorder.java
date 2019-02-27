@@ -329,7 +329,7 @@ public class PermissionRecorder {
 
 	private void recordPermissionPatch(PermissionInfoExt lowerInfo, PermissionInfoExt higherInfo) {
 		XmlPath node = histories.getNode("/permission-history/permissions/permission[@name='" + lowerInfo.name + "']");
-		if(node.getCount() == 0) {
+		if(node == null) {
 			Log.w("No such permission node");
 			if(higherInfo == null) {
 				Log.e("permission information of higher sdk is null");
@@ -337,7 +337,7 @@ public class PermissionRecorder {
 			}
 			recordPermission(higherInfo);
 			node = histories.getNode("/permission-history/permissions/permission[@name='" + lowerInfo.name + "']");
-			if(node.getCount() == 0) {
+			if(node == null) {
 				Log.e("fail make permission node");
 				return;
 			}
@@ -383,7 +383,7 @@ public class PermissionRecorder {
 
 	private void recordPermissionGroupPatch(PermissionGroupInfoExt lowerInfo, PermissionGroupInfoExt higherInfo) {
 		XmlPath node = histories.getNode("/permission-history/permission-groups/permission-group[@name='" + lowerInfo.name + "']");
-		if(node.getCount() == 0) {
+		if(node == null) {
 			Log.w("No such permission-group node");
 			if(higherInfo == null) {
 				Log.e("permission group information of higher sdk is null");
@@ -391,7 +391,7 @@ public class PermissionRecorder {
 			}
 			recordPermissionGroup(higherInfo);
 			node = histories.getNode("/permission-history/permission-groups/permission-group[@name='" + lowerInfo.name + "']");
-			if(node.getCount() == 0) {
+			if(node == null) {
 				Log.e("fail make permission-group node");
 				return;
 			}
