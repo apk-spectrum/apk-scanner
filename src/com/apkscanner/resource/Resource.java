@@ -842,8 +842,11 @@ public enum Resource
 			}
 	
 			for(XmlPath xPath: stringXmlPath) {
-				value = xPath.getNode("/resources/string[@name='" + id + "']").getTextContent();
-				if(value != null) break;
+				XmlPath node = xPath.getNode("/resources/string[@name='" + id + "']");
+				if(node != null) {
+					value = node.getTextContent();
+					if(value != null) break;
+				}
 			}
 	
 			return value != null ? value.replaceAll("\\\\n", "\n").replaceAll("\\\\t", "\t") : null;

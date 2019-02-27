@@ -312,7 +312,7 @@ public class AaptXmlTreePath
 		String name = null;
 		XmlPath attrNode = attrIdPath.getNode("/resources/public[@id='" + id + "']");
 		if(attrNode != null) {
-			name = attrIdPath.getNode("/resources/public[@id='" + id + "']").getAttribute("name");	
+			name = attrNode.getAttribute("name");	
 		}
 		return name != null ? name : id;
 	}

@@ -449,7 +449,8 @@ public class PermissionManager
 	}
 
 	public static PermissionRepository getPermissionRepository() {
-		return new PermissionRepository(xmlPermissionDB.getNode("/permission-history/sources"));
+		XmlPath node = xmlPermissionDB.getNode("/permission-history/sources");
+		return node != null ? new PermissionRepository(node) : null;
 	}
 
 	public ResourceInfo[] getResource(String name) {
