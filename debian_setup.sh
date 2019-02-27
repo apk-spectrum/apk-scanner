@@ -1,7 +1,7 @@
 #!/bin/bash
 
 APP_PATH="/opt/APKScanner"
-APP_VERSION="2.4"
+APP_VERSION="2.4.1"
 APP_FILE="ApkScanner.jar"
 
 DEBIAN_DATA_PATH="./debian"$APP_PATH
