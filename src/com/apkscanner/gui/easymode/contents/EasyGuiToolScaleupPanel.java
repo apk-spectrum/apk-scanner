@@ -60,8 +60,8 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener{
 		
 		
 		toolbartemppanel = new JPanel();
-		FlowLayout flowlayout = new FlowLayout(FlowLayout.CENTER,0, 0);
-		flowlayout.setAlignOnBaseline(true);
+		FlowLayout flowlayout = new FlowLayout(FlowLayout.LEFT,0, 0);
+		
 		
 		add(toolbartemppanel, BorderLayout.NORTH);
 		toolbartemppanel.setLayout(flowlayout);
@@ -81,17 +81,22 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener{
 		for(ToolEntry entry : entrys) {
 			//EasyFlatLabel btn = new EasyFlatLabel(ImageUtils.getScaledImage(entry.getImage(),BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(149, 179, 215));
 			//Image img = ImageUtils.getScaledImage(entry.getImage(),BUTTON_IMG_SIZE,BUTTON_IMG_SIZE);
-			EasyToolIcon btn = new EasyToolIcon(entry.getImage(), toolbartemppanel);
-			btn.setAlignmentY(Component.TOP_ALIGNMENT);
+			EasyToolIcon btn = new EasyToolIcon(entry.getImage());
+			//btn.setAlignmentY(Component.TOP_ALIGNMENT);
 			//btn.setText("aaaa");
 			//btn.setIcon(new ImageIcon(img));
 			//btn.setPreferredSize(new Dimension(BUTTON_IMG_SIZE, BUTTON_IMG_SIZE));
 			btn.setScalesize(60);
+			btn.setAction(entry.getTitle(), this);
 			//btn.setactionCommand(entry.getTitle());
+			
 			//btn.setshadowlen(SHADOW_SIZE);
 			//btn.setTooltip(entry.getTitle());
 			//btn.setClicklistener(this);
+			
+			
 			toolbartemppanel.add(btn);
+			toolbartemppanel.updateUI();
 		}			
 	}
 
@@ -103,7 +108,6 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener{
 			EasyToolbarSettingDnDDlg dlg = new EasyToolbarSettingDnDDlg(window, true);
 			if(dlg.ischange()) {				
 				maketoolbutton();
-				//setviewportsize();
 			}
 		} else {
 			Log.d(e.getActionCommand());

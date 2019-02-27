@@ -6,6 +6,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -22,7 +24,8 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 	float scalex = 1.0f;
 	boolean entered = false;
 	Image image;
-	JPanel parent;
+	String ActionCmd = "";
+	ActionListener actionlistener = null;
 	public EasyToolIcon(int size) {
 		originalsize = size;
 	}
@@ -35,14 +38,15 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 		setPreferredSize(new Dimension(width, height));		
 	}
 
-	public EasyToolIcon(ImageIcon image2, JPanel parent) {
-		// TODO Auto-generated constructor stub
-		this(image2);
-		this.parent = parent; 
+	public void setAction(String cmd, ActionListener listener ) {
+		this.ActionCmd = cmd;
+		this.actionlistener = listener;
 	}
-
+	
 	@Override
-	public void mouseClicked(MouseEvent e) {}
+	public void mouseClicked(MouseEvent e) {		
+		actionlistener.actionPerformed(new ActionEvent(this, 0, this.ActionCmd));
+	}
 	@Override
 	public void mousePressed(MouseEvent e) {}
 	@Override
@@ -75,8 +79,8 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 	public void paintComponent(Graphics g) {
 		//super.paint(g);
 		//super.paintComponent(g);
+		Log.d("paint EasyTool");
 		Graphics2D graphics2D = (Graphics2D) g;
-		//Log.d("aaaaaaaaaaaaaaa");
 	   // Set anti-alias for text
 		graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.9f));
 		graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
