@@ -5,13 +5,18 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -55,24 +60,38 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener{
 		setBackground(toobarPanelcolor);
 		setPreferredSize(new Dimension(0, HEIGHT));
 		setOpaque(false);
+		//setLayout(new BorderLayout());
 		//setshadowlen(SHADOW_SIZE);
 		//setshadowlen(1);
 		
 		
 		toolbartemppanel = new JPanel();
-		FlowLayout flowlayout = new FlowLayout(FlowLayout.LEFT,0, 0);
-		
-		
-		add(toolbartemppanel, BorderLayout.NORTH);
+		FlowLayout flowlayout = new FlowLayout(FlowLayout.CENTER,0, 0);
+		//toolbartemppanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10)); 
 		toolbartemppanel.setLayout(flowlayout);
+		((FlowLayout) toolbartemppanel.getLayout()).setAlignOnBaseline(true);
 		
+		add(toolbartemppanel);		
 		toolbartemppanel.setOpaque(false);
-
-		btnsetting = new EasyButton(Resource.IMG_EASY_WINDOW_SETTING.getImageIcon(15, 15));
-		btnsetting.setPreferredSize(new Dimension(15, 15));
-		btnsetting.addActionListener(this);
-		add(btnsetting, BorderLayout.EAST);
 		
+		//toolbartemppanel.setAlignmentY(Component.TOP_ALIGNMENT);
+
+		//((FlowLayout) this.getLayout()).setAlignOnBaseline(true);
+		
+//		btnsetting = new EasyButton(Resource.IMG_EASY_WINDOW_SETTING.getImageIcon(15, 15));
+//		btnsetting.setPreferredSize(new Dimension(15, 35));
+//		btnsetting.addActionListener(this);		
+//		add(btnsetting);
+		
+	}
+	public void paintComponent(Graphics g) {
+		//super.paint(g);
+		super.paintComponent(g);
+		Graphics2D graphics2D = (Graphics2D) g;
+		graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		Font font = new Font("Serif", Font.BOLD, 20);
+		graphics2D.setFont(font);
+		graphics2D.drawString("Support", 100, 80);
 	}
 	
 	private void maketoolbutton() {		
@@ -87,17 +106,28 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener{
 			//btn.setIcon(new ImageIcon(img));
 			//btn.setPreferredSize(new Dimension(BUTTON_IMG_SIZE, BUTTON_IMG_SIZE));
 			btn.setScalesize(60);
+			
 			btn.setAction(entry.getTitle(), this);
+			//btn.setOpaque(true);
 			//btn.setactionCommand(entry.getTitle());
 			
 			//btn.setshadowlen(SHADOW_SIZE);
 			//btn.setTooltip(entry.getTitle());
 			//btn.setClicklistener(this);
-			
+		
 			
 			toolbartemppanel.add(btn);
 			toolbartemppanel.updateUI();
-		}			
+		}
+		btnsetting = new EasyButton(Resource.IMG_EASY_WINDOW_SETTING.getImageIcon(15, 15))        {
+            @Override
+            public int getBaseline(int width, int height) {
+                return 0;
+            }
+        };;
+		btnsetting.setPreferredSize(new Dimension(15, 30));
+		btnsetting.addActionListener(this);		
+		toolbartemppanel.add(btnsetting);
 	}
 
 	@Override
