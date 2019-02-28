@@ -17,6 +17,8 @@ import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -35,6 +37,9 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 	Image image;
 	String ActionCmd = "";
 	ActionListener actionlistener = null;
+	TimerTask task;
+	final int ANIMATION_VALUE = 3;
+	final int ANIMATION_DELAY =5;
 	public EasyToolIcon(int size) {
 		originalsize = size;
 	}
@@ -69,21 +74,37 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
     	entered = true;
+//		width = height = (int)(originalsize * scalex*2);
+//		setPreferredSize(new Dimension(width, height));
+//    	repaint();
+//    	updateUI();   	
     	
-		width = height = (int)(originalsize * scalex*2);
-		setPreferredSize(new Dimension(width, height));
-    	repaint();
-    	updateUI();
+    	final int scalefrom = (int)(originalsize * scalex*2);
+        task = new TimerTask() {        	
+            public void run() {
+        		width+=ANIMATION_VALUE;
+        		height+=ANIMATION_VALUE;
+        		setPreferredSize(new Dimension(width, height));
+            	//repaint();
+            	updateUI();
+            	if(scalefrom <= width) {
+            		this.cancel();
+            	}
+            }
+          };
+          Timer timer = new Timer();
+          timer.schedule(task, 0, ANIMATION_DELAY);
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
     	entered = false;
+    	task.cancel();
     	width = height = (int)(originalsize * scalex);
     	setPreferredSize(new Dimension(width, height));
-    	repaint();
-    	updateUI();    	
+    	//repaint();
+    	updateUI();
 	}
 
 	public void setScalesize(int i) {
@@ -98,11 +119,10 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 		Graphics2D graphics2D = (Graphics2D) g;
 	   // Set anti-alias for text
 		graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.9f));
-		graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		
+		graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);		
 		graphics2D.drawImage(image, 0, 0, width, height, this);
 		
-		Log.d(getBounds().toString());
+//		Log.d(getBounds().toString());
 		
 //	      BufferedImage myImage = ImageUtils.imageToBufferedImage(image);
 //
