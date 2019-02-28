@@ -4,35 +4,12 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Set;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import com.apkscanner.core.scanner.PermissionGroupManager;
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.data.apkinfo.PermissionGroup;
-import com.apkscanner.data.apkinfo.PermissionGroupInfo;
-import com.apkscanner.data.apkinfo.PermissionInfo;
-import com.apkscanner.data.apkinfo.UsesPermissionInfo;
-import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.gui.easymode.util.FlatPanel;
-import com.apkscanner.gui.easymode.util.ImageUtils;
-import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
 public class EasyPermissionPanel extends JPanel {

@@ -3,7 +3,6 @@ package com.apkscanner.gui.easymode.dlg;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
@@ -28,9 +27,9 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 
-import com.apkscanner.core.scanner.PermissionGroupManager;
+import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
+import com.apkscanner.core.permissionmanager.PermissionManager;
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.data.apkinfo.PermissionGroup;
 import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.gui.easymode.test.ColumnGroup;
 import com.apkscanner.gui.easymode.test.headtable.GroupableTableHeader;
@@ -68,7 +67,7 @@ public class EasyPermissionDlg extends JDialog implements ActionListener {
 		this.setLayout(new BorderLayout());
 
 		model[USES_TABLE] = new PermissionUsesTableModel();
-		makeusesPermissionRow(apkInfo, apkInfo.manifest.usesPermission, model[USES_TABLE]);
+		//makeusesPermissionRow(apkInfo, apkInfo.manifest.usesPermission, model[USES_TABLE]);
 		model[DECLARED_TABLE] = new PermissionUsesTableModel();
 		makeusesPermissionRow(apkInfo, apkInfo.manifest.permission, model[DECLARED_TABLE]);
 		tabbedpane = new JTabbedPane();
@@ -114,10 +113,11 @@ public class EasyPermissionDlg extends JDialog implements ActionListener {
 			PermissionUsesTableModel tablemodel) {
 		// TODO Auto-generated method stub
 		if (arraypermissionInfo != null) {
-			PermissionGroupManager manager = new PermissionGroupManager(arraypermissionInfo);
+			PermissionManager manager = new PermissionManager();
+			manager.addDeclarePemission(arraypermissionInfo);
 
 			for (PermissionInfo info : arraypermissionInfo) {
-				PermissionGroup group = manager.getPermissionGroup(info.permissionGroup);
+				PermissionGroupInfoExt group = manager.getPermissionGroup(info.permissionGroup);
 				try {
 					Object[] obj = new Object[tablemodel.getColumnCount()];
 					String[] permissions = info.protectionLevel.split("\\|");

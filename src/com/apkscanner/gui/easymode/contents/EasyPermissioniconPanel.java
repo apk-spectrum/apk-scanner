@@ -1,7 +1,6 @@
 package com.apkscanner.gui.easymode.contents;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -11,26 +10,25 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import com.apkscanner.core.scanner.PermissionGroupManager;
+import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
+import com.apkscanner.core.permissionmanager.PermissionManager;
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.data.apkinfo.PermissionGroup;
-import com.apkscanner.gui.easymode.EasyGuiMain;
+import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.gui.easymode.core.ToolEntryManager;
-import com.apkscanner.gui.easymode.dlg.EasyPermissionDlg;
 import com.apkscanner.gui.easymode.util.EasyButton;
-import com.apkscanner.gui.easymode.util.EasyFlatLabel;
 import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
 public class EasyPermissioniconPanel extends FlatPanel implements ActionListener{
+	private static final long serialVersionUID = -7090063544416919223L;
+
 	int HEIGHT = 35;
 	int WIDTH = 100;
 	int BUTTON_IMG_SIZE = HEIGHT-6;
@@ -45,7 +43,7 @@ public class EasyPermissioniconPanel extends FlatPanel implements ActionListener
 	EasyButton btnshowpermissiondlg;
 	
 	int permissionbuttoncount = 0;
-	PermissionGroupManager permissionGroupManager;
+	PermissionManager permissionManager;
 	
 	public EasyPermissioniconPanel(int height, int width) {
 		
@@ -77,7 +75,6 @@ public class EasyPermissioniconPanel extends FlatPanel implements ActionListener
 			public void componentShown(ComponentEvent e) {	}
 			@Override
 			public void componentResized(ComponentEvent e) {
-				// TODO Auto-generated method stub				
 				WIDTH = scrollPane.getViewport().getWidth();
 				int line = (int)((HEIGHT + 1)* permissionbuttoncount / WIDTH);
 				toolbartemppanel.setPreferredSize(new Dimension(0, HEIGHT * (line+1) + ((line !=0)?SHADOW_SIZE : 0)));
@@ -102,27 +99,32 @@ public class EasyPermissioniconPanel extends FlatPanel implements ActionListener
 	}
 	
 	public void setPermission(ApkInfo apkInfo) {
-		// TODO Auto-generated method stub
 		permissionbuttoncount = 0;
 		if (apkInfo.manifest.usesPermission == null || apkInfo.manifest.usesPermission.length < 1)
 			return;
 
 		Log.d(apkInfo.manifest.usesPermission.length + "");
-		permissionGroupManager = new PermissionGroupManager(apkInfo.manifest.usesPermission);
-		Set<String> keys = permissionGroupManager.getPermGroupMap().keySet();
-		int cnt = 0;
-		for (String key : keys) {
-			PermissionGroup g = permissionGroupManager.getPermGroupMap().get(key);
-			// permGroup.append(makeHyperLink("@event", g.icon, g.permSummary,
-			// g.name, g.hasDangerous?"color:red;":null));
-//for(int i=0; i<2; i++) {
+		boolean isPlatformSign = ApkInfoHelper.isTestPlatformSign(apkInfo)
+				|| ApkInfoHelper.isSamsungSign(apkInfo);
+		permissionManager.clearPermissions();
+		permissionManager.setPlatformSigned(isPlatformSign);
+		permissionManager.setTreatSignAsRevoked((boolean) Resource.PROP_PERM_TREAT_SIGN_AS_REVOKED.getData());
+		permissionManager.addUsesPermission(apkInfo.manifest.usesPermission);
+		permissionManager.addUsesPermission(apkInfo.manifest.usesPermissionSdk23);
+		permissionManager.addDeclarePemission(apkInfo.manifest.permission);
+		if(!permissionManager.isEmpty()) {
+			Integer selectSdkVer = apkInfo.manifest.usesSdk.targetSdkVersion;
+			permissionManager.setSdkVersion(selectSdkVer != null ? selectSdkVer : 28);
+		}
+
+		for (PermissionGroupInfoExt g : permissionManager.getPermissionGroups()) {
 			FlatPanel permissionicon = new FlatPanel();
 			try {
 				ImageIcon imageIcon = new ImageIcon(new URL(g.icon));
 				
 				imageIcon.setImage(ImageUtils.getScaledImage(imageIcon,BUTTON_IMG_SIZE,BUTTON_IMG_SIZE));
 				
-				if (g.hasDangerous)
+				if (g.hasDangerous())
 					ImageUtils.setcolorImage(imageIcon, dangerouscolor);
 				EasyButton btn = new EasyButton(imageIcon);
 				permissionicon.setPreferredSize(new Dimension(HEIGHT, HEIGHT));
@@ -130,11 +132,10 @@ public class EasyPermissioniconPanel extends FlatPanel implements ActionListener
 				permissionicon.setBackground(permissionbackgroundcolor);
 				permissionicon.add(btn);
 				btn.addActionListener(this);
-				btn.setToolTipText(key);
+				btn.setToolTipText(g.name);
 				toolbartemppanel.add(permissionicon);
 				permissionbuttoncount++;
 			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -149,13 +150,12 @@ public class EasyPermissioniconPanel extends FlatPanel implements ActionListener
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		Log.d("tool click" + e);
 		
 		if(e.getSource().equals(btnshowpermissiondlg)) {
 			ToolEntryManager.excutePermissionDlg();
 		} else {
-			ToolEntryManager.showPermDetailDesc(permissionGroupManager, ((EasyButton)e.getSource()).getToolTipText());
+			ToolEntryManager.showPermDetailDesc(permissionManager.getPermissionGroup(((EasyButton)e.getSource()).getToolTipText()));
 		}
 	}
 	

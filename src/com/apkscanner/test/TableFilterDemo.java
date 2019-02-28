@@ -1,14 +1,28 @@
 package com.apkscanner.test;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import java.awt.Dimension;
+
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
+import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableRowSorter;
-import java.awt.Dimension;
-import java.awt.Component;
  
 public class TableFilterDemo extends JPanel {
-    private boolean DEBUG = false;
+	private static final long serialVersionUID = -3549632043602744237L;
+	private boolean DEBUG = false;
     private JTable table;
     private JTextField filterText;
     private JTextField statusText;
@@ -106,7 +120,8 @@ public class TableFilterDemo extends JPanel {
  
  
     class MyTableModel extends AbstractTableModel {
-        private String[] columnNames = {"First Name",
+		private static final long serialVersionUID = 3916785891103493626L;
+		private String[] columnNames = {"First Name",
                                         "Last Name",
                                         "Sport",
                                         "# of Years",
@@ -146,7 +161,7 @@ public class TableFilterDemo extends JPanel {
          * then the last column would contain text ("true"/"false"),
          * rather than a check box.
          */
-        public Class getColumnClass(int c) {
+        public Class<?> getColumnClass(int c) {
             return getValueAt(0, c).getClass();
         }
  

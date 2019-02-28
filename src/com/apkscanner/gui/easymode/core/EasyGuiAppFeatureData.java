@@ -1,22 +1,17 @@
 package com.apkscanner.gui.easymode.core;
 
-import java.io.File;
 import java.util.ArrayList;
 
-import com.apkscanner.core.scanner.PermissionGroupManager;
+import com.apkscanner.core.permissionmanager.PermissionManager;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.CompatibleScreensInfo;
-import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.data.apkinfo.SupportsGlTextureInfo;
 import com.apkscanner.data.apkinfo.SupportsScreensInfo;
 import com.apkscanner.data.apkinfo.UsesConfigurationInfo;
 import com.apkscanner.data.apkinfo.UsesFeatureInfo;
 import com.apkscanner.data.apkinfo.UsesLibraryInfo;
 import com.apkscanner.data.apkinfo.UsesPermissionInfo;
-import com.apkscanner.gui.easymode.EasyGuiMain;
-import com.apkscanner.util.FileUtil;
-import com.apkscanner.util.Log;
 
 public class EasyGuiAppFeatureData {
 	public String installLocation = null;
@@ -35,12 +30,7 @@ public class EasyGuiAppFeatureData {
 	public boolean isPlatformSign = false;
 	public String CertSummary = "";
 
-	public String allPermissionsList = "";
-	public String signaturePermissions = "";
-	public String notGrantPermmissions = "";
-	public String deprecatedPermissions = "";
-
-	public PermissionGroupManager permissionGroupManager = null; 
+	public PermissionManager permissionGroupManager = null; 
 	public ArrayList<UsesPermissionInfo> allPermissions;
 	
 	public boolean hasSignatureLevel = false;
@@ -69,11 +59,6 @@ public class EasyGuiAppFeatureData {
 
 		isSamsungSign = false;
 		isPlatformSign = false;
-
-		allPermissionsList = "";
-		signaturePermissions = "";
-		notGrantPermmissions = "";
-		deprecatedPermissions = "";
 
 		deviceRequirements = "";
 		
@@ -113,72 +98,6 @@ public class EasyGuiAppFeatureData {
 		hasSignatureLevel = false; // apkInfo.hasSignatureLevel;
 		hasSignatureOrSystemLevel = false; // apkInfo.hasSignatureOrSystemLevel;
 		hasSystemLevel = false; // apkInfo.hasSystemLevel;
-		notGrantPermmissions = "";
-		
-		allPermissions = new ArrayList<UsesPermissionInfo>(); 
-		StringBuilder permissionList = new StringBuilder();
-		if(apkInfo.manifest.usesPermission != null && apkInfo.manifest.usesPermission.length > 0) {
-			permissionList.append("<uses-permission> [" +  apkInfo.manifest.usesPermission.length + "]\n");
-			for(UsesPermissionInfo info: apkInfo.manifest.usesPermission) {
-				allPermissions.add(info);
-				permissionList.append(info.name + " - " + info.protectionLevel);
-				if(info.isSignatureLevel()) hasSignatureLevel = true;
-				if(info.isSignatureOrSystemLevel()) hasSignatureOrSystemLevel = true;
-				if(info.isSystemLevel()) hasSystemLevel = true;
-				if(((info.isSignatureLevel() || info.isSignatureOrSystemLevel()) && !(isSamsungSign || isPlatformSign)) || info.isSystemLevel()) {
-					notGrantPermmissions += info.name + " - " + info.protectionLevel + "\n";
-				}
-				if(info.maxSdkVersion != null) {
-					permissionList.append(", maxSdkVersion : " + info.maxSdkVersion);
-				}
-				if(info.isDeprecated()) {
-					deprecatedPermissions += info.getDeprecatedMessage() + "\n\n";
-				}
-				permissionList.append("\n");
-			}
-		}
-		
-		
-		
-		if(apkInfo.manifest.usesPermissionSdk23 != null && apkInfo.manifest.usesPermissionSdk23.length > 0) {
-			if(permissionList.length() > 0) {
-				permissionList.append("\n");
-			}
-			permissionList.append("<uses-permission-sdk-23> [" +  apkInfo.manifest.usesPermissionSdk23.length + "]\n");
-			for(UsesPermissionInfo info: apkInfo.manifest.usesPermissionSdk23) {
-				allPermissions.add(info);
-				permissionList.append(info.name + " - " + info.protectionLevel);
-				if(info.isSignatureLevel()) hasSignatureLevel = true;
-				if(info.isSignatureOrSystemLevel()) hasSignatureOrSystemLevel = true;
-				if(info.isSystemLevel()) hasSystemLevel = true;
-				if(((info.isSignatureLevel() || info.isSignatureOrSystemLevel()) && !(isSamsungSign || isPlatformSign)) || info.isSystemLevel()) {
-					notGrantPermmissions += info.name + " - " + info.protectionLevel + "\n";
-				}
-				if(info.maxSdkVersion != null) {
-					permissionList.append(", maxSdkVersion : " + info.maxSdkVersion);
-				}
-				if(info.isDeprecated()) {
-					deprecatedPermissions += info.getDeprecatedMessage() + "\n\n";
-				}
-				permissionList.append("\n");
-			}
-		}
-
-		signaturePermissions = "";
-		if(apkInfo.manifest.permission != null && apkInfo.manifest.permission.length > 0) {
-			if(permissionList.length() > 0) {
-				permissionList.append("\n");
-			}
-			permissionList.append("<permission> [" +  apkInfo.manifest.permission.length + "]\n");
-			for(PermissionInfo info: apkInfo.manifest.permission) {
-				permissionList.append(info.name + " - " + info.protectionLevel + "\n");
-				if(!"normal".equals(info.protectionLevel)) {
-					signaturePermissions += info.name + " - " + info.protectionLevel + "\n";
-				}
-			}
-		}
-		allPermissionsList = permissionList.toString();
-		//permissionGroupManager = new PermissionGroupManager(allPermissions.toArray(new UsesPermissionInfo[allPermissions.size()]));
 
 		StringBuilder deviceReqData = new StringBuilder();
 		if(apkInfo.manifest.compatibleScreens != null) {

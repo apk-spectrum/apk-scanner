@@ -2,15 +2,11 @@ package com.apkscanner.gui.easymode.core;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
@@ -21,24 +17,18 @@ import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.Launcher;
-import com.apkscanner.core.scanner.ApkScanner;
-import com.apkscanner.core.scanner.PermissionGroupManager;
+import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ComponentInfo;
-import com.apkscanner.data.apkinfo.PermissionGroup;
 import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
-import com.apkscanner.gui.MainUI;
-import com.apkscanner.gui.ToolBar;
-import com.apkscanner.gui.ToolBar.ButtonSet;
 import com.apkscanner.gui.dialog.AboutDlg;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.dialog.ApkSignerWizard;
 import com.apkscanner.gui.dialog.PackageInfoPanel;
 import com.apkscanner.gui.dialog.PackageTreeDlg;
 import com.apkscanner.gui.dialog.SettingDlg;
-import com.apkscanner.gui.easymode.EasyGuiMain;
 import com.apkscanner.gui.easymode.EasyLightApkScanner;
 import com.apkscanner.gui.easymode.dlg.EasyPermissionDlg;
 import com.apkscanner.gui.easymode.dlg.EasyToolbarCertDlg;
@@ -625,24 +615,23 @@ public class ToolEntryManager {
 		wizard.setVisible(true);
 	}
 	
-	public static void showPermDetailDesc(PermissionGroupManager permissionGroupManager, String group)
+	public static void showPermDetailDesc(PermissionGroupInfoExt group)
 	{
-		PermissionGroup g = permissionGroupManager.getPermGroupMap().get(group);
-		if(g == null) return;
+		if(group == null) return;
 
 		StringBuilder body = new StringBuilder("");
 		//body.append("<div id=\"perm-detail-desc\">");
 		body.append("■ ");
-		if(g.label != null) {
-			body.append(g.label + " - ");
+		if(group.label != null) {
+			body.append(group.getLabel() + " - ");
 		}
-		body.append("[" + group + "]\n");
-		if(g.desc != null) {
-			body.append(" : " + g.desc + "\n");
+		body.append("[" + group.name + "]\n");
+		if(group.description != null) {
+			body.append(" : " + group.getDescription() + "\n");
 		}
 		body.append("------------------------------------------------------------------------------------------------------------\n\n");
 
-		for(PermissionInfo info: g.permList) {
+		for(PermissionInfo info: group.permissions) {
 			body.append("▶ ");
 			if(info.isDangerousLevel()) {
 				body.append("[DANGEROUS] ");	
@@ -673,7 +662,7 @@ public class ToolEntryManager {
 			}
 		}
 		MessageBoxPane.showTextAreaDialog(mainframe, body.toString(), Resource.STR_BASIC_PERM_DISPLAY_TITLE.getString(), 
-				MessageBoxPane.INFORMATION_MESSAGE, new ImageIcon(g.icon.replaceAll("^file:/", "")), new Dimension(600, 200));
+				MessageBoxPane.INFORMATION_MESSAGE, new ImageIcon(group.icon.replaceAll("^file:/", "")), new Dimension(600, 200));
 		
 	}
 }

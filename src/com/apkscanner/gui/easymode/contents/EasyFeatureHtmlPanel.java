@@ -3,38 +3,17 @@ package com.apkscanner.gui.easymode.contents;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.util.ArrayList;
-import java.util.Collections;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.data.apkinfo.ApkInfoHelper;
-import com.apkscanner.data.apkinfo.CompatibleScreensInfo;
-import com.apkscanner.data.apkinfo.PermissionInfo;
-import com.apkscanner.data.apkinfo.SupportsGlTextureInfo;
-import com.apkscanner.data.apkinfo.SupportsScreensInfo;
-import com.apkscanner.data.apkinfo.UsesConfigurationInfo;
-import com.apkscanner.data.apkinfo.UsesFeatureInfo;
-import com.apkscanner.data.apkinfo.UsesLibraryInfo;
-import com.apkscanner.data.apkinfo.UsesPermissionInfo;
-import com.apkscanner.gui.easymode.EasyGuiMain;
 import com.apkscanner.gui.easymode.core.EasyGuiAppFeatureData;
-import com.apkscanner.gui.easymode.util.EasyFlatLabel;
 import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
-import com.apkscanner.gui.util.JHtmlEditorPane;
-import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.Log;
 
 public class EasyFeatureHtmlPanel extends FlatPanel {
 	static private Color sdkverPanelcolor = new Color(242, 242, 242);
@@ -98,9 +77,6 @@ public class EasyFeatureHtmlPanel extends FlatPanel {
 		if(featuredata.isStartup) {
 			feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_STARTUP_LAB.getString(), Resource.STR_FEATURE_STARTUP_DESC.getString(), "feature-startup", null));
 		}
-		if(!featuredata.signaturePermissions.isEmpty()) {
-			feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_SIGNATURE_LAB.getString(), Resource.STR_FEATURE_SIGNATURE_DESC.getString(), "feature-protection-level", null));
-		}
 		if(featuredata.sharedUserId != null && !featuredata.sharedUserId.startsWith("android.uid.system") ) {
 			feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_SHAREDUSERID_LAB.getString(), Resource.STR_FEATURE_SHAREDUSERID_DESC.getString(), "feature-shared-user-id", null));
 		}
@@ -134,11 +110,6 @@ public class EasyFeatureHtmlPanel extends FlatPanel {
 		if(((featuredata.hasSignatureLevel || featuredata.hasSignatureOrSystemLevel) && !systemSignature) || featuredata.hasSystemLevel) {
 			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
 			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_REVOKE_PERM_LAB.getString(), Resource.STR_FEATURE_REVOKE_PERM_DESC.getString(), "feature-revoke-permissions", null));
-			importantFeatures.append("</font>");
-		}
-		if(featuredata.deprecatedPermissions != null && !featuredata.deprecatedPermissions.isEmpty()) {
-			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
-			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_DEPRECATED_PREM_LAB.getString(), Resource.STR_FEATURE_DEPRECATED_PREM_DESC.getString(), "feature-deprecated-perm", null));
 			importantFeatures.append("</font>");
 		}
 		if(featuredata.debuggable) {
