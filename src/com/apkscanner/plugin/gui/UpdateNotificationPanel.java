@@ -49,9 +49,14 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setBorder(new EmptyBorder(5,5,5,5));
 
-		add(new JLabel("Update List"));
+		add(new JLabel(Resource.STR_LABEL_UPDATE_LIST.getString()));
 
-		updateListModel = new DefaultTableModel(new String[] { "Name", "Package", "Cur Ver.", "New Ver.", "Last update check" }, 0) {
+		updateListModel = new DefaultTableModel(new String[] {
+				Resource.STR_COLUMN_NAME.getString(),
+				Resource.STR_COLUMN_PACKAGE.getString(),
+				Resource.STR_COLUMN_THIS_VERSION.getString(),
+				Resource.STR_COLUMN_NEW_VERSION.getString(),
+				Resource.STR_COLUMN_LAST_CHECKED_DATE.getString() }, 0) {
 			private static final long serialVersionUID = 3925202106037646345L;
 			private ArrayList<Object[]> dataList = new ArrayList<>();
 
@@ -87,7 +92,7 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 		certListPanel.setAlignmentX(0.0f);
 		add(certListPanel);
 
-		add(new JLabel("Update description"));
+		add(new JLabel(Resource.STR_LABEL_DESCRIPTION.getString()));
 
 		updateDescription = new JTextArea();
 		updateDescription.setEditable(false);
@@ -97,16 +102,16 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 
 		add(updateDescPanel);
 
-		btnLaunch = new JButton("Choose update");
+		btnLaunch = new JButton(Resource.STR_BTN_CHOOSE_UPDATE.getString());
 		btnLaunch.setActionCommand(ACT_CMD_LAUNCH);
 		btnLaunch.addActionListener(this);
 		btnLaunch.setEnabled(false);
-		
-		btnCheckUpdate = new JButton("Check update");
+
+		btnCheckUpdate = new JButton(Resource.STR_BTN_CHECK_UPDATE.getString());
 		btnCheckUpdate.setActionCommand(ACT_CMD_CHECK_UPDATE);
 		btnCheckUpdate.addActionListener(this);
 		btnCheckUpdate.setEnabled(false);
-		
+
 		JPanel btnPanel = new JPanel() {
 			private static final long serialVersionUID = -7930379247697419237L;
 			@Override
@@ -125,7 +130,7 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 
 		add(btnPanel);
 	}
-	
+
 	private Object[] makeRowObject(IUpdateChecker plugin) {
 		Map<?,?> version = plugin.getLatestVersionInfo();
 		String target = plugin.getTargetPackageName();
@@ -160,7 +165,7 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 			Log.v(rawData.toString());
 		}
 		if(desc == null) {
-			desc = "No information";
+			desc = Resource.STR_MSG_NO_UPDATE_INFO.getString();
 		}
 
 		String checkDate = "";
@@ -235,7 +240,6 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 				if(result) {
 					PlugInManager.saveProperty();
 				}
-				
 			}
 		}.execute();
 	}
@@ -250,24 +254,24 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 			if(plugin.hasNewVersion()) {
 				switch(plugin.getLaunchType()) {
 				case IUpdateChecker.TYPE_LAUNCH_OPEN_LINK:
-					btnLaunch.setText("Go to WebSite");
+					btnLaunch.setText(Resource.STR_BTN_GO_TO_WEBSITE.getString());
 					break;
 				case IUpdateChecker.TYPE_LAUNCH_DIRECT_UPDATE:
-					btnLaunch.setText("Update");
+					btnLaunch.setText(Resource.STR_BTN_UPDATE.getString());
 					break;
 				case IUpdateChecker.TYPE_LAUNCH_DOWNLOAD:
-					btnLaunch.setText("Download");
+					btnLaunch.setText(Resource.STR_BTN_DOWNLOAD.getString());
 					break;
 				}
 				btnLaunch.setEnabled(true);
 			} else {
-				btnLaunch.setText("No updated");
+				btnLaunch.setText(Resource.STR_BTN_NO_UPDATED.getString());
 				btnLaunch.setEnabled(false);
 			}
 			btnCheckUpdate.setEnabled(true);
 		} else {
 			updateDescription.setText("");
-			btnLaunch.setText("Choose update");
+			btnLaunch.setText(Resource.STR_BTN_CHOOSE_UPDATE.getString());
 			btnLaunch.setEnabled(false);
 			btnCheckUpdate.setEnabled(false);
 		}

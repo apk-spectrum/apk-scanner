@@ -36,6 +36,10 @@ public final class PlugInManager
 		return null;
 	}
 
+	public static PlugInPackage[] getPlugInPackages() {
+		return pluginPackages.toArray(new PlugInPackage[pluginPackages.size()]);
+	}
+
 	public static IUpdateChecker[] getUpdateChecker() {
 		ArrayList<IUpdateChecker> list = new ArrayList<>();
 		for(PlugInPackage pack: pluginPackages) {
@@ -156,7 +160,7 @@ public final class PlugInManager
 
 		File pluginFolder = new File(Resource.PLUGIN_PATH.getPath());
 		if(!pluginFolder.isDirectory()) {
-			Log.e("No such plugins: " + Resource.PLUGIN_PATH.getPath());
+			Log.v("No such plugins: " + Resource.PLUGIN_PATH.getPath());
 			return;
 		}
 
@@ -243,6 +247,11 @@ public final class PlugInManager
 
 	public static void saveProperty()
 	{
+		if(!new File(Resource.PLUGIN_CONF_PATH.getPath()).canWrite()) {
+			Log.v("Cann't write file : " + Resource.PLUGIN_CONF_PATH.getPath());
+			return;
+		}
+
 		String transMultiLine = JSONValue.toJSONString(getChangedProperties())
 				.replaceAll("^\\{(.*)\\}$", "{\n$1\n}")
 				.replaceAll("(\"[^\"]*\":(\"[^\"]*\")?([^\",]*)?,)", "$1\n");

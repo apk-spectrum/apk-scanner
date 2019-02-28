@@ -30,6 +30,7 @@ import javax.swing.ListCellRenderer;
 import com.apkscanner.gui.util.ImagePanel;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 import com.apkscanner.util.XmlPath;
 
 public class SdkVersionInfoDlg extends JDialog {
@@ -78,7 +79,7 @@ public class SdkVersionInfoDlg extends JDialog {
 		sdkLogoImg = new ImagePanel();
 		sdkInfoArea = new JTextArea();
 		sdkInfoArea.setEditable(false);
-		sdkVersions = new JComboBox<Integer>(new Integer[] {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27});
+		sdkVersions = new JComboBox<Integer>(new Integer[] {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28});
 		sdkVersions.setRenderer(new ListCellRenderer<Integer>() {
 			JLabel label;
 			@Override
@@ -152,18 +153,18 @@ public class SdkVersionInfoDlg extends JDialog {
 		if(xmlPath == null) {
 			return;
 		}
-		InputStream xml = Resource.class.getResourceAsStream(xmlPath);
-		sdkXmlPath = new XmlPath(xml);
-
-		int maxSdk = sdkXmlPath.getNodeList("/resources/sdk-info").getLength();
+		try(InputStream xml = Resource.class.getResourceAsStream(xmlPath)) {
+			if(xml != null) sdkXmlPath = new XmlPath(xml);
+		} catch(IOException e) { }
+		if(sdkXmlPath == null) {
+			Log.w("Can not create XmlPath, xmlPath : " + xmlPath);
+			return;
+		}
+		int maxSdk = sdkXmlPath.getCount("/resources/sdk-info");
 		int preDefMaxSdk = sdkVersions.getItemCount() - 1;
 		for(int ver = preDefMaxSdk + 1; ver <= maxSdk; ver++) {
 			sdkVersions.addItem(ver);
 		}
-
-		try {
-			xml.close();
-		} catch (IOException e) { }
 	}
 
 	public void setSdkVersion(int sdkVer) {
@@ -171,15 +172,15 @@ public class SdkVersionInfoDlg extends JDialog {
 		StringBuilder info = new StringBuilder();
 
 		if(sdkVer > 0) {
-			sdkXmlPath.getNode("/resources/sdk-info[@apiLevel='" + sdkVer + "']");
+			XmlPath sdkInfo = sdkXmlPath.getNode("/resources/sdk-info[@apiLevel='" + sdkVer + "']");
 
-			if(sdkXmlPath.getNode() != null) {
-				info.append(sdkXmlPath.getAttributes("platformVersion"));
-				info.append(" - " + sdkXmlPath.getAttributes("codeName"));
+			if(sdkInfo != null) {
+				info.append(sdkInfo.getAttribute("platformVersion"));
+				info.append(" - " + sdkInfo.getAttribute("codeName"));
 				info.append("\n\nAPI Level " + sdkVer);
-				info.append("\nBuild.VERSION_CODES." + sdkXmlPath.getAttributes("versionCode"));
+				info.append("\nBuild.VERSION_CODES." + sdkInfo.getAttribute("versionCode"));
 
-				logoIcon = new ImageIcon(Resource.class.getResource(sdkXmlPath.getAttributes("icon")));
+				logoIcon = new ImageIcon(Resource.class.getResource(sdkInfo.getAttribute("icon")));
 			} else {
 				info.append("API Level " + sdkVer);
 				info.append("\nUnknown verion.\n\nYou can look at the sdk info in the Android developer site\n");
@@ -189,13 +190,13 @@ public class SdkVersionInfoDlg extends JDialog {
 			}
 		} else {
 			XmlPath list = sdkXmlPath.getNodeList("/resources/sdk-info");
-			for(int i=0; i < list.getLength(); i++) {
+			for(int i=0; i < list.getCount(); i++) {
 				info.append("API ");
-				info.append(list.getAttributes(i, "apiLevel"));
+				info.append(list.getAttribute(i, "apiLevel"));
 				info.append(" : ");
-				info.append(list.getAttributes(i, "platformVersion"));
+				info.append(list.getAttribute(i, "platformVersion"));
 				info.append(" - ");
-				info.append(list.getAttributes(i, "codeName"));
+				info.append(list.getAttribute(i, "codeName"));
 				info.append("\n");
 			}
 			info.append("\nhttp://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels");

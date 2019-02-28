@@ -33,6 +33,16 @@ public class ExternalToolLinker extends AbstractExternalTool
 
 	@Override
 	public void launch(final String src1, final String src2) {
-		
+		if(src1 == null) return;
+		Thread t = new Thread(new Runnable() {
+			public void run()
+			{
+				String tmp1 = component.param.replaceAll("%[aA][pP][kK]_[pP][aA][tT][hH]%", src1.replaceAll("\\\\", "\\\\\\\\"));
+				String tmp2 = component.param.replaceAll("%[aA][pP][kK]_[pP][aA][tT][hH]%", src2.replaceAll("\\\\", "\\\\\\\\"));
+				ConsolCmd.exc(new String[] {component.path, tmp1, tmp2}, true);
+			}
+		});
+		t.setPriority(Thread.NORM_PRIORITY);
+		t.start();
 	}
 }

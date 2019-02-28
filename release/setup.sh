@@ -11,9 +11,9 @@ if [ "$java_ver" == "" ] || [ "$java_ver" != "$(echo $java_ver | awk '{ if($1 >=
         echo "Need JDK7..."
         echo "current version : $java_ver"
     fi
-    echo "Please retry after setup JDK7.."
-    echo "You can download the JDK7 from http://www.oracle.com/technetwork/java/javase/downloads/index.html"
-    exit
+    #echo "Please retry after setup JDK7.."
+    #echo "You can download the JDK7 from http://www.oracle.com/technetwork/java/javase/downloads/index.html"
+    #exit
 fi
 
 cat << EOF > ./APKScanner.sh
@@ -25,37 +25,30 @@ jar -xf ApkScanner.jar icons/AppIcon.png
 
 echo "{}" > settings.txt
 
-sudo chmod 755 tool/adb
-sudo chmod 755 tool/aapt
-sudo chmod 755 tool/d2j-dex2jar.sh
-sudo chmod 755 tool/d2j_invoke.sh
-sudo chmod 755 APKScanner.sh
-
 sudo rm -rf $APP_PATH
 
 sudo mkdir -p $APP_PATH
-sudo mkdir -p $APP_PATH/data
-sudo mkdir -p $APP_PATH/data/build-master-target-product-security
-sudo mkdir -p $APP_PATH/icons
-sudo mkdir -p $APP_PATH/tool
-sudo mkdir -p $APP_PATH/plugin
 if [ ! -d $APP_PATH ]; then
     echo Fail : Not create the folder : %APP_PATH%
     exit
 fi
 sudo cp -rf ./* $APP_PATH
 
+sudo chmod 755 $APP_PATH/tool/adb
+sudo chmod 755 $APP_PATH/tool/aapt
+sudo chmod 755 $APP_PATH/tool/d2j-dex2jar.sh
+sudo chmod 755 $APP_PATH/tool/d2j_invoke.sh
+sudo chmod 755 $APP_PATH/tool/jadx/bin/jadx
+sudo chmod 755 $APP_PATH/tool/jadx/bin/jadx-gui
+sudo chmod 755 $APP_PATH/APKScanner.sh
+
 sudo chmod 666 $APP_PATH/settings.txt
+sudo chmod 666 $APP_PATH/plugin/plugins.conf
+sudo chmod 666 $APP_PATH/security/trustStore.jks
 
-
-#keytool_path=$(which java)
-#keytool_path=$(readlink -f $keytool_path)
-#keytool_path=$(echo $keytool_path | sed 's/\/java$/\/keytool/')
-#if [ -x "$keytool_path" ]; then
-#    sudo ln -sf $keytool_path $APP_PATH/tool/keytool
-#else
-#    echo "keytool 을 찾을수 없습니다."
-#fi
+sudo rm -rf ./icons
+sudo rm -rf ./settings.txt
+sudo rm -rf ./APKScanner.sh
 
 cat << EOF > ./apkscanner.desktop
 [Desktop Entry]
@@ -129,6 +122,7 @@ fi
 
 if [ -e ~/.p4qt/ApplicationSettings.xml ]; then
     cat ~/.p4qt/ApplicationSettings.xml | sed '/EditorMappings/,/StringList/{/<String>apk/d; /<String>ppk/d; s/.*<\/StringList>.*/  <String>apk\|default\|\/opt\/APKScanner\/APKScanner\.sh<\/String>\n  <String>ppk\|default\|\/opt\/APKScanner\/APKScanner\.sh<\/String>\n <\/StringList>/}' > .ApplicationSettings.xml
+    chmod 666 .ApplicationSettings.xml
     mv .ApplicationSettings.xml ~/.p4qt/ApplicationSettings.xml
 fi
 

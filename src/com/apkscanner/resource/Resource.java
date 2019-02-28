@@ -1,12 +1,14 @@
 package com.apkscanner.resource;
 
 import java.awt.Font;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -29,7 +31,7 @@ import com.apkscanner.util.ZipFileUtil;
 public enum Resource
 {
 	STR_APP_NAME				(Type.TEXT, "@app_name"),
-	STR_APP_VERSION				(Type.TEXT, "2.3.5"),
+	STR_APP_VERSION				(Type.TEXT, "2.4.1"),
 	STR_APP_BUILD_MODE			(Type.TEXT, "eng"),
 	STR_APP_MAKER				(Type.TEXT, "jin_h.lee / sunggyu.kam"),
 	STR_APP_MAKER_EMAIL			(Type.TEXT, "jin_h.lee@samsung.com;sunggyu.kam@samsung.com"),
@@ -41,6 +43,11 @@ public enum Resource
 
 	STR_TITLE_INSTALL_WIZARD	(Type.TEXT, "@title_install_wizard"),
 	STR_TITLE_APK_SIGNER		(Type.TEXT, "@title_apk_signer"),
+	STR_TITLE_EDIT_CONFIG		(Type.TEXT, "@title_edit_config"),
+	STR_TITLE_NO_SUCH_NETWORK	(Type.TEXT, "@title_no_such_network"),
+	STR_TITLE_NETWORK_TIMEOUT	(Type.TEXT, "@title_network_timeout"),
+	STR_TITLE_SSL_EXCEPTION		(Type.TEXT, "@title_ssl_exception"),
+	STR_TITLE_UPDATE_LIST		(Type.TEXT, "@title_update_list"),
 
 	STR_BTN_OPEN				(Type.TEXT, "@btn_open"),
 	STR_BTN_OPEN_PACKAGE		(Type.TEXT, "@btn_open_pacakge"),
@@ -67,6 +74,7 @@ public enum Resource
 	STR_BTN_REFRESH				(Type.TEXT, "@btn_refresh"),
 	STR_BTN_ADD					(Type.TEXT, "@btn_add"),
 	STR_BTN_DEL					(Type.TEXT, "@btn_del"),
+	STR_BTN_EDIT				(Type.TEXT, "@btn_edit"),
 	STR_BTN_EXPORT				(Type.TEXT, "@btn_export"),
 	STR_BTN_OPENCODE			(Type.TEXT, "@btn_opencode"),
 	STR_BTN_OPENING_CODE		(Type.TEXT, "@btn_opening_code"),
@@ -93,11 +101,22 @@ public enum Resource
 	STR_BTN_ALLOW_TEST_PACKAGE	(Type.TEXT, "@btn_allow_test_package"),
 	STR_BTN_REBOOT_AF_PUSHED	(Type.TEXT, "@btn_reboot_after_pushed"),
 
-	STR_BTN_INSTALLED	(Type.TEXT, "@btn_installed"),
-	STR_BTN_NOT_INSTALLED	(Type.TEXT, "@btn_not_installed"),
-	STR_BTN_WAITING	(Type.TEXT, "@btn_waiting"),
-	STR_BTN_SUCCESS	(Type.TEXT, "@btn_success"),
-	STR_BTN_FAIL	(Type.TEXT, "@btn_fail"),
+	STR_BTN_INSTALLED			(Type.TEXT, "@btn_installed"),
+	STR_BTN_NOT_INSTALLED		(Type.TEXT, "@btn_not_installed"),
+	STR_BTN_WAITING				(Type.TEXT, "@btn_waiting"),
+	STR_BTN_SUCCESS				(Type.TEXT, "@btn_success"),
+	STR_BTN_FAIL				(Type.TEXT, "@btn_fail"),
+	STR_BTN_RETRY				(Type.TEXT, "@btn_retry"),
+	STR_BTN_APPLY				(Type.TEXT, "@btn_apply"),
+	STR_BTN_REMOVE				(Type.TEXT, "@btn_remove"),
+	STR_BTN_IMPORT				(Type.TEXT, "@btn_import"),
+	STR_BTN_MANAGE_CERT			(Type.TEXT, "@btn_manage_cert"),
+	STR_BTN_CHECK_UPDATE		(Type.TEXT, "@btn_check_update"),
+	STR_BTN_GO_TO_WEBSITE		(Type.TEXT, "@btn_go_to_website"),
+	STR_BTN_UPDATE				(Type.TEXT, "@btn_update"),
+	STR_BTN_DOWNLOAD			(Type.TEXT, "@btn_download"),
+	STR_BTN_NO_UPDATED			(Type.TEXT, "@btn_no_updated"),
+	STR_BTN_CHOOSE_UPDATE		(Type.TEXT, "@btn_choose_update"),
 
 	STR_BTN_OPEN_LAB			(Type.TEXT, "@btn_open_lab"),
 	STR_BTN_OPEN_PACKAGE_LAB	(Type.TEXT, "@btn_open_pacakge_lab"),
@@ -153,6 +172,8 @@ public enum Resource
 	STR_TAB_PACAKGE_INFO		(Type.TEXT, "@tab_package_info"),
 	STR_TAB_DUMPSYS				(Type.TEXT, "@tab_dumpsys"),
 	STR_TAB_SYS_PACAKGE_INFO	(Type.TEXT, "@tab_sys_package_info"),
+	STR_TAB_ABOUT				(Type.TEXT, "@tab_about"),
+	STR_TAB_UPDATE				(Type.TEXT, "@tab_update"),
 
 	STR_TAB_SETTING_GENERIC		(Type.TEXT, "@tab_setting_generic"),
 	STR_TAB_SETTING_GENERIC_LAB	(Type.TEXT, "@tab_setting_generic_lab"),
@@ -162,6 +183,8 @@ public enum Resource
 	STR_TAB_SETTING_DEVICE_LAB	(Type.TEXT, "@tab_setting_device_lab"),
 	STR_TAB_SETTING_DISPLAY		(Type.TEXT, "@tab_setting_display"),
 	STR_TAB_SETTING_DISPLAY_LAB	(Type.TEXT, "@tab_setting_display_lab"),
+	STR_TAB_SETTING_PLUGINS		(Type.TEXT, "@tab_setting_plugins"),
+	STR_TAB_SETTING_PLUGINS_LAB	(Type.TEXT, "@tab_setting_plugins_lab"),
 
 	STR_BASIC_PERMISSIONS		(Type.TEXT, "@basic_permissions"),
 	STR_BASIC_PERMLAB_DISPLAY	(Type.TEXT, "@basic_permlab_display_list"),
@@ -324,11 +347,35 @@ public enum Resource
 	STR_LABEL_SAVE_AS			(Type.TEXT, "@label_save_as"),
 	STR_LABEL_BY_PACKAGE_NAME	(Type.TEXT, "@label_by_package_name"),
 	STR_LABEL_BY_APP_LABEL		(Type.TEXT, "@label_by_app_label"),
+	STR_LABEL_PLUGINS_SETTINGS	(Type.TEXT, "@label_plugins_settings"),
+	STR_LABEL_PLUGINS_DESCRIPTION(Type.TEXT, "@label_plugins_description"),
+	STR_LABEL_PLUGIN_PACKAGE_CONFIG(Type.TEXT, "@label_plugin_pcakge_config"),
+	STR_LABEL_KEY_NAME			(Type.TEXT, "@label_key_name"),
+	STR_LABEL_KEY_VALUE			(Type.TEXT, "@label_key_value"),
+	STR_LABEL_PROXY_SETTING		(Type.TEXT, "@label_proxy_setting"),
+	STR_LABEL_TRUSTSTORE_SETTING(Type.TEXT, "@label_truststore_setting"),
+	STR_LABEL_PAC_SCRIPT_URL	(Type.TEXT, "@label_pac_script_url"),
+	STR_LABEL_ALIAS				(Type.TEXT, "@label_alias"),
+	STR_LABEL_DESCRIPTION		(Type.TEXT, "@label_description"),
+	STR_LABEL_DO_NOT_LOOK_AGAIN	(Type.TEXT, "@label_do_not_look_again"),
+	STR_LABEL_UPDATE_LIST		(Type.TEXT, "@label_update_list"),
+	STR_LABEL_SHOW_UPDATE_STARTUP(Type.TEXT, "@label_show_update_at_startup"),
+	STR_LABEL_MARK_A_RUNTIME	(Type.TEXT, "@label_mark_a_runtime"),
+	STR_LABEL_MARK_A_COUNT		(Type.TEXT, "@label_mark_a_count"),
+	STR_LABEL_TREAT_SIGN_AS_REVOKED(Type.TEXT, "@label_treat_sign_as_revoked"),
 
 	STR_TREE_NODE_DEVICE 		(Type.TEXT, "@tree_node_device"),
 	STR_TREE_NODE_DISPLAYED		(Type.TEXT, "@tree_node_displayed"),
 	STR_TREE_NODE_RECENTLY		(Type.TEXT, "@tree_node_recently"),
 	STR_TREE_NODE_RUNNING_PROC 	(Type.TEXT, "@tree_node_running"),
+	STR_TREE_NODE_PLUGINS_TOP 	(Type.TEXT, "@tree_node_plugins_top"),
+	STR_TREE_NODE_PLUGINS_TOP_DESC(Type.TEXT, "@tree_node_plugins_top_desc"),
+	STR_TREE_NODE_NO_PLUGINS 	(Type.TEXT, "@tree_node_no_plugins"),
+	STR_TREE_NODE_NO_PLUGINS_DESC(Type.TEXT, "@tree_node_no_plugins_desc"),
+	STR_TREE_NODE_NETWORK		(Type.TEXT, "@tree_node_network_setting"),
+	STR_TREE_NODE_CONFIGURATION	(Type.TEXT, "@tree_node_configurations"),
+	STR_TREE_NODE_GLOBAL_SETTING(Type.TEXT, "@tree_node_global_setting"),
+	STR_TREE_NODE_GLOBAL_SETTING_DESC(Type.TEXT, "@tree_node_global_setting_desc"),
 
 	STR_MSG_FAILURE_OPEN_APK	(Type.TEXT, "@msg_failure_open_apk"),
 	STR_MSG_NO_SUCH_APK_FILE	(Type.TEXT, "@msg_no_such_apk"),
@@ -357,6 +404,11 @@ public enum Resource
 	STR_MSG_SUCCESS_CLEAR_DATA	(Type.TEXT, "@msg_success_clear_data"),
 	STR_MSG_FAILURE_CLEAR_DATA	(Type.TEXT, "@msg_failure_clear_data"),
 	STR_MSG_WARN_UNSUPPORTED_JVM(Type.TEXT, "@msg_warn_unsupported_jvm"),
+	STR_MSG_WARN_SSL_IGNORE		(Type.TEXT, "@msg_warn_ssl_ignore"),
+	STR_MSG_NO_SUCH_NETWORK		(Type.TEXT, "@msg_no_such_network"),
+	STR_MSG_FAILURE_PROXY_ERROR	(Type.TEXT, "@msg_failure_proxy_error"),
+	STR_MSG_FAILURE_SSL_ERROR	(Type.TEXT, "@msg_failure_ssl_error"),
+	STR_MSG_NO_UPDATE_INFO		(Type.TEXT, "@msg_no_update_informations"),
 
 	STR_QUESTION_REBOOT_DEVICE	(Type.TEXT, "@question_reboot_device"),
 	STR_QUESTION_CONTINUE_INSTALL(Type.TEXT, "@question_continue_install"),
@@ -376,6 +428,28 @@ public enum Resource
 	STR_EXTENSIONS				(Type.TEXT, "@extensions"),
 	STR_EMPTY_VALUE				(Type.TEXT, "@empty_value"),
 	STR_TIMESTAMP				(Type.TEXT, "@timestamp"),
+
+	STR_PROXY_MENU_NO_PROXY		(Type.TEXT, "@proxy_menu_no_proxy"),
+	STR_PROXY_MENU_GLOBAL		(Type.TEXT, "@proxy_menu_global"),
+	STR_PROXY_MENU_SYSTEM		(Type.TEXT, "@proxy_menu_system"),
+	STR_PROXY_MENU_PAC_SCRIPT	(Type.TEXT, "@proxy_menu_pac_script"),
+	STR_PROXY_MENU_MANUAL		(Type.TEXT, "@proxy_menu_manual"),
+
+	STR_TRUSTSTORE_GLOBAL		(Type.TEXT, "@truststore_golbal"),
+	STR_TRUSTSTORE_APKSCANNER	(Type.TEXT, "@truststore_apkscanner"),
+	STR_TRUSTSTORE_JVM			(Type.TEXT, "@truststore_jvm"),
+	STR_TRUSTSTORE_MANUAL		(Type.TEXT, "@truststore_manual"),
+	STR_TRUSTSTORE_IGNORE		(Type.TEXT, "@truststore_ignore"),
+
+	STR_COLUMN_ISSUE_TO			(Type.TEXT, "@column_issued_to"),
+	STR_COLUMN_ISSUE_BY			(Type.TEXT, "@column_issued_by"),
+	STR_COLUMN_EXPIRES_ON		(Type.TEXT, "@column_expires_on"),
+	STR_COLUMN_ALIAS			(Type.TEXT, "@column_alias"),
+	STR_COLUMN_NAME				(Type.TEXT, "@column_name"),
+	STR_COLUMN_PACKAGE			(Type.TEXT, "@column_package"),
+	STR_COLUMN_THIS_VERSION		(Type.TEXT, "@column_this_version"),
+	STR_COLUMN_NEW_VERSION		(Type.TEXT, "@column_new_version"),
+	STR_COLUMN_LAST_CHECKED_DATE(Type.TEXT, "@column_last_checked_date"),
 
 	IMG_TOOLBAR_OPEN			(Type.IMAGE, "toolbar_open.png"),
 	IMG_TOOLBAR_MANIFEST		(Type.IMAGE, "toolbar_manifast.png"),
@@ -444,6 +518,10 @@ public enum Resource
 	IMG_TREE_LOADING			(Type.IMAGE, "tree_loading.gif"),
 	IMG_TREE_FAVOR				(Type.IMAGE, "tree_favor.png"),
 
+	IMG_TREE_GLOBAL_SETTING		(Type.IMAGE, "configure-2.png"),
+	IMG_TREE_NETWORK_SETTING	(Type.IMAGE, "internet-connection_manager.png"),
+	IMG_TREE_CONFIG_SETTING		(Type.IMAGE, "kservices.png"),
+
 	IMG_INSTALL_CHECK			(Type.IMAGE, "install_dlg_check.png"),
 	IMG_INSTALL_BLOCK			(Type.IMAGE, "install_dlg_block.png"),
 	IMG_INSTALL_LOADING			(Type.IMAGE, "install_dlg_loading.gif"),
@@ -464,6 +542,9 @@ public enum Resource
 	//https://www.iconfinder.com/icons/686665/arrows_enlarge_expand_extend_increase_outward_resize_spread_icon
 	IMG_EASY_WINDOW_SPREAD			(Type.IMAGE, "easy_spread.png"),
 	
+	IMG_PERM_MARKER_SETTING		(Type.IMAGE, "perm_marker_setting.png"),
+	IMG_PERM_MARKER_CLOSE		(Type.IMAGE, "perm_marker_close.png"),
+
 	BIN_PATH					(Type.BIN, ""),
 
 	BIN_ADB_LNX					(Type.BIN, "adb", "nux"),
@@ -529,10 +610,17 @@ public enum Resource
 	PROP_VISIBLE_TO_BASIC		(Type.PROP, "visible_to_basic", true),
 	PROP_ALWAYS_TOOLBAR_EXTENDED(Type.PROP, "always_toolbar_extended", false),
 
+	PROP_PERM_MARK_RUNTIME		(Type.PROP, "mark-runtime", true),
+	PROP_PERM_MARK_COUNT		(Type.PROP, "mark-count", true),
+	PROP_PERM_TREAT_SIGN_AS_REVOKED(Type.PROP, "treat-sign-as-revoked", true),
+
 	LIB_JSON_JAR				(Type.LIB, "json-simple-1.1.1.jar"),
 	LIB_CLI_JAR					(Type.LIB, "commons-cli-1.3.1.jar"),
 	LIB_APKTOOL_JAR				(Type.LIB, "apktool.jar"),
 	LIB_ALL						(Type.LIB, "*"),
+
+	RAW_ABUOT_HTML				(Type.RAW, "/values/AboutLayout.html"),
+	RAW_BASIC_INFO_LAYOUT_HTML	(Type.RAW, "/values/BasicInfoLayout.html"),
 
 	ETC_SETTINGS_FILE			(Type.ETC, "settings.txt");
 
@@ -560,6 +648,7 @@ public enum Resource
 		PLUGIN,
 		SECURITY,
 		PROP,
+		RAW,
 		ETC
 	}
 
@@ -586,10 +675,9 @@ public enum Resource
 				xmlList.add(new XmlPath(extFile));
 			}
 
-			InputStream xml = Resource.class.getResourceAsStream("/values/strings-" + lang + ".xml");
-			if(xml != null) {
-				xmlList.add(new XmlPath(xml));
-			}
+			try(InputStream xml = Resource.class.getResourceAsStream("/values/strings-" + lang + ".xml")) {
+				if(xml != null) xmlList.add(new XmlPath(xml));
+			} catch(IOException e) { }
 		}
 
 		String ext_lang_value_path = value_path + "strings.xml";
@@ -708,6 +796,8 @@ public enum Resource
 		switch(type){
 		case IMAGE:
 			return getClass().getResource("/icons/" + value).toString();
+		case RAW:
+			return getClass().getResource(value).toString();
 		case BIN:
 			subPath = File.separator + "tool";
 			break;
@@ -731,8 +821,14 @@ public enum Resource
 
 	public URL getURL()
 	{
-		if(type != Type.IMAGE) return null;
-		return getClass().getResource("/icons/" + value);
+		switch(type){
+		case IMAGE:
+			return getClass().getResource("/icons/" + value);
+		case RAW:
+			return getClass().getResource(value);
+		default:
+			return null;
+		}
 	}
 
 	public ImageIcon getImageIcon()
@@ -744,31 +840,48 @@ public enum Resource
 	public ImageIcon getImageIcon(int width, int height)
 	{
 		if(type != Type.IMAGE) return null;
-		ImageIcon tempImg = new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(getURL()),width,height));
-
-		return tempImg;
+		return new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(getURL()),width,height));
 	}
 
 	public String getString()
 	{
-		if(type != Type.TEXT) return null;
-
-		String id = getValue();
-		String value = null;
-
-		if(!id.startsWith("@")) return id;
-		id = id.substring(1);
-
-		if(stringXmlPath == null) {
-			makeStringXmlPath(lang);
+		switch(type){
+		case TEXT:
+			String id = getValue();
+			String value = null;
+	
+			if(!id.startsWith("@")) return id;
+			id = id.substring(1);
+	
+			if(stringXmlPath == null) {
+				makeStringXmlPath(lang);
+			}
+	
+			for(XmlPath xPath: stringXmlPath) {
+				XmlPath node = xPath.getNode("/resources/string[@name='" + id + "']");
+				if(node != null) {
+					value = node.getTextContent();
+					if(value != null) break;
+				}
+			}
+	
+			return value != null ? value.replaceAll("\\\\n", "\n").replaceAll("\\\\t", "\t") : null;
+		case RAW:
+			try (InputStream is= getURL().openStream();
+				 InputStreamReader ir = new InputStreamReader(is);
+				 BufferedReader br = new BufferedReader(ir)) {
+		        StringBuilder out = new StringBuilder();
+		        String line;
+		        while ((line = br.readLine()) != null) {
+		            out.append(line);
+		        }
+		        return out.toString();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		default:
+			return null;
 		}
-
-		for(XmlPath xPath: stringXmlPath) {
-			value = xPath.getNode("/resources/string[@name='" + id + "']").getTextContent();
-			if(value != null) break;
-		}
-
-		return value != null ? value.replaceAll("\\\\n", "\n").replaceAll("\\\\t", "\t") : null;
 	}
 
 	private static void loadProperty()
@@ -776,12 +889,9 @@ public enum Resource
 		if(property == null) {
 			File file = new File(ETC_SETTINGS_FILE.getPath());
 			if(!file.exists() || file.length() == 0) return;
-			try {
-				FileReader fileReader = new FileReader(file);
+			try (FileReader fileReader = new FileReader(file)) {
 				JSONParser parser = new JSONParser();
 				property = (JSONObject)parser.parse(fileReader);
-
-				fileReader.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

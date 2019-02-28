@@ -2,6 +2,7 @@ package com.apkscanner.gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.KeyEventDispatcher;
@@ -13,6 +14,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Timer;
@@ -53,7 +55,7 @@ public class ToolBar extends JToolBar
 
 	public static final int FLAG_LAYOUT_NONE = 0x00;				// Open file
 	public static final int FLAG_LAYOUT_DEVICE_CONNECTED = 0x01;	// Open package
-	public static final int FLAG_LAYOUT_INSTALLED = 0x02;			// Install 
+	public static final int FLAG_LAYOUT_INSTALLED = 0x02;			// Install
 	public static final int FLAG_LAYOUT_INSTALLED_LOWER = 0x04;		// Downgrade
 	public static final int FLAG_LAYOUT_INSTALLED_UPPER = 0x08;		// Update
 	public static final int FLAG_LAYOUT_LAUNCHER = 0x10;			// Launcher
@@ -119,7 +121,7 @@ public class ToolBar extends JToolBar
 			this(text, toolTipText, icon, keyStroke, mnemonic, false);
 			this.actionCommand += (propValue != null ? ":" + propValue : "");
 		}
-		
+
 		MenuItemSet(String text, String toolTipText, ImageIcon icon, KeyStroke keyStroke, char mnemonic, boolean extend) {
 			this.text = text;
 			this.toolTipText = toolTipText;
@@ -326,7 +328,7 @@ public class ToolBar extends JToolBar
 			return buttonMap;
 		}
 	}
-	
+
 	public class NoCloseCheckBoxMenuItem extends JCheckBoxMenuItem {
 		private static final long serialVersionUID = 4982874784585596549L;
 
@@ -483,7 +485,7 @@ public class ToolBar extends JToolBar
 		boolean alwaysExtended = (boolean)Resource.PROP_ALWAYS_TOOLBAR_EXTENDED.getData();
 		for(ButtonSet bs: ButtonSet.values()) {
 			if(bs.extension) {
-				((ExtensionButton)buttonMap.get(bs)).setArrowVisible(alwaysExtended);	
+				((ExtensionButton)buttonMap.get(bs)).setArrowVisible(alwaysExtended);
 			}
 		}
 
@@ -521,7 +523,7 @@ public class ToolBar extends JToolBar
 			private void setArrowVisible(boolean visibale) {
 				for(ButtonSet bs: ButtonSet.values()) {
 					if(bs.extension) {
-						((ExtensionButton)buttonMap.get(bs)).setArrowVisible(visibale);	
+						((ExtensionButton)buttonMap.get(bs)).setArrowVisible(visibale);
 					}
 				}
 			}
@@ -551,6 +553,23 @@ public class ToolBar extends JToolBar
 		Log.i("ToolBar.initUI() end");
 	}
 
+	private void setMouseEvent(Container menu, MouseListener[] listeners) {
+		if(listeners == null) {
+			listeners = menu.getMouseListeners();
+			if(listeners == null || listeners.length == 0) return;
+		}
+		Component[] children = menu instanceof JMenu ?
+				((JMenu)menu).getMenuComponents() : menu.getComponents();
+		if(children == null) return;
+		for(Component c: children) {
+			for(MouseListener listen: listeners)
+				c.addMouseListener(listen);
+			if(c instanceof Container) {
+				setMouseEvent((Container)c, listeners);
+			}
+		}
+	}
+
 	public void onLoadPlugin(final ActionListener listener) {
 		IExternalTool[] tools = PlugInManager.getDecorderTool();
 		if(tools.length > 0) {
@@ -564,6 +583,7 @@ public class ToolBar extends JToolBar
 			}
 			decordePopupMenu.addSeparator();
 			decordePopupMenu.add(makeSelectDefaultMenuItem());
+			setMouseEvent(decordePopupMenu, null);
 		}
 
 		IPackageSearcher[] searchers = PlugInManager.getPackageSearchers();
@@ -571,7 +591,7 @@ public class ToolBar extends JToolBar
 			searchPopupMenu.removeAll();
 			searchPopupMenu.add(menuItemMap.get(MenuItemSet.SEARCH_RESOURCE));
 			searchPopupMenu.addSeparator();
-			
+
 			searchers = PlugInManager.getPackageSearchers(IPackageSearcher.SEARCHER_TYPE_PACKAGE_NAME);
 			JMenu searchersMenu = makeSearcherSelectMenu(Resource.STR_LABEL_BY_PACKAGE_NAME.getString(), searchers, listener);
 			if(searchersMenu != null) {
@@ -591,12 +611,18 @@ public class ToolBar extends JToolBar
 			v2bMenuItem.addActionListener(listener);
 			v2bMenuItem.setSelected((boolean)Resource.PROP_VISIBLE_TO_BASIC.getData());
 			searchPopupMenu.add(v2bMenuItem);
+
+			setMouseEvent(searchPopupMenu, null);
 		}
 
 		pluginToolBar = makePluginToolBar(listener);
 		if(pluginToolBar != null) {
 			setReplacementLayout();
-		}		
+		}
+	}
+
+	public void setBadgeCount(int count) {
+		((ExtensionButton)buttonMap.get(ButtonSet.ABOUT)).setBadge(count);;
 	}
 
 	public void setFlag(int flag) {
@@ -638,7 +664,7 @@ public class ToolBar extends JToolBar
 		Icon icon = null;
 		switch(defaultPorp) {
 		case PROP_DEFAULT_DECORDER:
-			icon = Resource.IMG_TOOLBAR_OPENCODE.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize); 
+			icon = Resource.IMG_TOOLBAR_OPENCODE.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize);
 			break;
 		case PROP_DEFAULT_SEARCHER:
 			icon = Resource.IMG_TOOLBAR_SEARCH.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize);
@@ -672,7 +698,7 @@ public class ToolBar extends JToolBar
 					}
 				}
 			}
-			
+
 			@Override
 			public void popupMenuWillBecomeInvisible(PopupMenuEvent arg0) { }
 
@@ -683,10 +709,10 @@ public class ToolBar extends JToolBar
 		MouseAdapter ma = new MouseAdapter() {
 			Timer timer = new Timer();
 			TimerTask task = null;
-			
+
 			@Override
             public void mouseEntered(MouseEvent me) {
-				//Log.d("mouseEntered " + me);
+				//Log.d("mouseEntered 0x" + Integer.toHexString(me.getSource().hashCode()));
             	boolean enable = false;
             	if(button instanceof ExtensionButton) {
             		enable = ((ExtensionButton)button).getArrowVisible();
@@ -694,7 +720,7 @@ public class ToolBar extends JToolBar
             	if(enable && !me.isShiftDown() && !(boolean)Resource.PROP_ALWAYS_TOOLBAR_EXTENDED.getData()) {
 					for(ButtonSet bs: ButtonSet.values()) {
 						if(bs.extension) {
-							((ExtensionButton)buttonMap.get(bs)).setArrowVisible(false);	
+							((ExtensionButton)buttonMap.get(bs)).setArrowVisible(false);
 						}
 					}
 					return;
@@ -727,7 +753,7 @@ public class ToolBar extends JToolBar
 
 			@Override
 			public void mouseExited(MouseEvent me) {
-				//Log.d("mouseExited " + me);
+				//Log.d("mouseExited 0x" + Integer.toHexString(me.getSource().hashCode()));
 				if(popupMenu.getMousePosition() != null) return;
 				synchronized(timer) {
 					if(task != null) {
@@ -770,15 +796,34 @@ public class ToolBar extends JToolBar
 		subbar.setBorderPainted(false);
 		return subbar;
 	}
-	
+
 	private JComponent makePluginToolBar(ActionListener listener) {
 		IExternalTool[] tools = PlugInManager.getExternalTool();
 		if(tools == null || tools.length <= 0) return null;
 
+		if(tools.length == 1) {
+			JButton button = new JButton(tools[0].getLabel(), null);
+			button.setToolTipText(tools[0].getDescription());
+			button.setBorderPainted(false);
+			button.setOpaque(false);
+			button.setFocusable(false);
+			button.setVerticalTextPosition(JLabel.BOTTOM);
+			button.setHorizontalTextPosition(JLabel.CENTER);
+			button.setPreferredSize(new Dimension(68,65));
+			button.setActionCommand("PLUGIN:" + tools[0].getActionCommand());
+			button.addActionListener(listener);
+			button.setEnabled(hasTargetApk);
+			URL iconUrl = tools[0].getIconURL();
+			if(iconUrl != null) {
+				button.setIcon(new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(iconUrl),40,40)));
+			}
+			return button;
+		}
 		JToolBar subbar = makeSubToolBar();
+		subbar.setPreferredSize(new Dimension(90,60));
 		if(tools.length <= 3) {
 			for(IExternalTool tool: tools) {
-				subbar.add(makePlugInButtons(tool, listener)); 
+				subbar.add(makePlugInButtons(tool, listener));
 			}
 		} else {
 			subbar.add(makePlugInButtons(tools[0], listener));
@@ -804,7 +849,7 @@ public class ToolBar extends JToolBar
 		button.setBorderPainted(false);
 		button.setOpaque(false);
 		button.setFocusable(false);
-		button.setPreferredSize(new Dimension(68,20));
+		button.setPreferredSize(new Dimension(89,20));
 		button.setActionCommand("PLUGIN:" + plugin.getActionCommand());
 		button.addActionListener(listener);
 		button.setEnabled(hasTargetApk);
@@ -870,7 +915,7 @@ public class ToolBar extends JToolBar
 
 		return menuItem;
 	}
-	
+
 	private JMenu makeSearcherSelectMenu(final String label, final IPackageSearcher[] searchers, final ActionListener listener) {
 		final JMenu menu = new JMenu(label);
 
@@ -907,20 +952,19 @@ public class ToolBar extends JToolBar
 					}
 				}
 			}
-			
+
 			@Override
 			public void menuDeselected(MenuEvent arg0) {
-				Log.e("menuDeselected");
+				//Log.v("menuDeselected");
 			}
-			
+
 			@Override
 			public void menuCanceled(MenuEvent arg0) { }
 		});
-		
-		
+
 		menu.addSeparator();
 		menu.add(selVisible);
-		
+
 		return menu;
 	}
 
@@ -1067,8 +1111,12 @@ public class ToolBar extends JToolBar
 				buttonMap.get(bs).setEnabled(enabled);
 			}
 			if(pluginToolBar != null) {
-				for(Component c: pluginToolBar.getComponents()) {
-					c.setEnabled(enabled);
+				if(pluginToolBar instanceof JButton) {
+					pluginToolBar.setEnabled(enabled);
+				} else {
+					for(Component c: pluginToolBar.getComponents()) {
+						c.setEnabled(enabled);
+					}
 				}
 			}
 			break;
@@ -1107,8 +1155,12 @@ public class ToolBar extends JToolBar
 
 			buttonMap.get(ButtonSet.PLUGIN_EXTEND).setEnabled(enabled);
 			if(pluginToolBar != null) {
-				for(Component c: pluginToolBar.getComponents()) {
-					c.setEnabled(enabled);
+				if(pluginToolBar instanceof JButton) {
+					pluginToolBar.setEnabled(enabled);
+				} else {
+					for(Component c: pluginToolBar.getComponents()) {
+						c.setEnabled(enabled);
+					}
 				}
 			}
 		case NEED_DEVICE:

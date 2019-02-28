@@ -3,12 +3,19 @@ package com.apkscanner.gui.util;
 // http://www.java2s.com/Tutorials/Java/Swing_How_to/JButton/Extend_JButton_to_create_arrow_button.htm
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.awt.RenderingHints;
+import java.awt.Toolkit;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
 public class ExtensionButton extends JButton {
 
@@ -24,6 +31,8 @@ public class ExtensionButton extends JButton {
 	private int arrowSize=0;
 
 	private boolean arrowVisible = false;
+
+	private int badgeCount=0;
 
 	/*
   	public ExtensionButton(int direction, int arrowCount, int arrowSize) {
@@ -61,10 +70,10 @@ public class ExtensionButton extends JButton {
 			setMargin(l);
 		}
 	}
-  
+
 	/**
 	 * Returns the cardinal direction of the arrow(s).
-	 * 
+	 *
 	 * @see #setDirection(int)
 	 */
 	public int getDirection() {
@@ -73,7 +82,7 @@ public class ExtensionButton extends JButton {
 
 	/**
 	 * Sets the cardinal direction of the arrow(s).
-	 * 
+	 *
 	 * @param direction
 	 *		  the direction of the arrow(s), can be SwingConstants.NORTH,
 	 *		  SwingConstants.SOUTH, SwingConstants.WEST or SwingConstants.EAST
@@ -103,6 +112,22 @@ public class ExtensionButton extends JButton {
 		this.arrowSize = arrowSize;
 	}
 
+	public void setBadge(int count) {
+		this.badgeCount = count;
+	}
+
+	public int getBadge() {
+		return this.badgeCount;
+	}
+
+	public void incrementBadge(int increment) {
+		this.badgeCount += increment;
+	}
+
+	public void clearBadge() {
+		this.badgeCount = 0;
+	}
+
 	/*
   	public Dimension getPreferredSize() {
 		return getMinimumSize();
@@ -130,23 +155,52 @@ public class ExtensionButton extends JButton {
 		// this will paint the background
 		super.paintComponent(g);
 
-		if(!arrowVisible || !isEnabled()) return;
+		if(!isEnabled()) return;
 
 		Color oldColor = g.getColor();
 		//g.setColor(isEnabled() ? getForeground() : getForeground().brighter());
-		if(!isEnabled()) g.setColor(Color.GRAY);
+		//if(!isEnabled()) g.setColor(Color.GRAY);
 
 		// paint the arrows
 		int w = getSize().width;
 		int h = getSize().height;
-		for (int i = 0; i < arrowCount; i++) {
-			paintArrow(g,
-				(w - 5 - arrowSize * (direction == SwingConstants.EAST || direction == SwingConstants.WEST ? arrowCount : 1)) // / 2
-					+ arrowSize * (direction == SwingConstants.EAST || direction == SwingConstants.WEST ? i : 0),
-				(h - arrowSize * (direction == SwingConstants.EAST || direction == SwingConstants.WEST ? 1 : arrowCount)) / 2
-					+ arrowSize * (direction == SwingConstants.EAST || direction == SwingConstants.WEST ? 0 : i) + 1,
-				g.getColor()
-			);
+
+		if(arrowVisible) {
+			for (int i = 0; i < arrowCount; i++) {
+				paintArrow(g,
+					(w - 5 - arrowSize * (direction == SwingConstants.EAST || direction == SwingConstants.WEST ? arrowCount : 1)) // / 2
+						+ arrowSize * (direction == SwingConstants.EAST || direction == SwingConstants.WEST ? i : 0),
+					(h - arrowSize * (direction == SwingConstants.EAST || direction == SwingConstants.WEST ? 1 : arrowCount)) / 2
+						+ arrowSize * (direction == SwingConstants.EAST || direction == SwingConstants.WEST ? 0 : i) + 1,
+					g.getColor()
+				);
+			}
+		}
+		if(badgeCount > 0) {
+			int size = ((w < h ? w : h) / 4);
+			if(size > 15) size = 15;
+			else if(size < 8) size = 8;
+			if(size > w || size > h) size = (w < h ? w : h);
+			g.setColor(new Color(237, 125, 49));
+			g.fillOval(w-size-5, 5, size, size);
+			if(size > 12) {
+				Map<?, ?> desktopHints = (Map<?, ?>) Toolkit.getDefaultToolkit().getDesktopProperty("awt.font.desktophints");
+				Graphics2D g2 = (Graphics2D) g;
+				if (desktopHints != null) {
+				    g2.setRenderingHints(desktopHints);
+				} else {
+					g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+					g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+				}
+				String badge = badgeCount < 10 ? Integer.toString(badgeCount) : "!";
+				Font font = UIManager.getFont("Label.font");
+				g.setFont(font.deriveFont((float)size-3));
+				FontMetrics fm = g.getFontMetrics();
+				int bw = fm.stringWidth(badge);
+				int bh = fm.getAscent();
+				g.setColor(Color.WHITE);
+				g.drawString(badge, w-(size+bw)/2-5, (size+bh)/2 + 4);
+			}
 		}
 
 		g.setColor(oldColor);

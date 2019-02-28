@@ -208,9 +208,10 @@ public class ApktoolScanner extends ApkScanner
 			XmlPath xmlAndroidManifest = new XmlPath(manifestFile);
 
 			// package
-			xmlAndroidManifest.getNode("/manifest");
-			apkInfo.manifest.packageName = xmlAndroidManifest.getAttributes("package");
-			apkInfo.manifest.sharedUserId = xmlAndroidManifest.getAttributes("android:sharedUserId");
+			XmlPath node = xmlAndroidManifest.getNode("/manifest");
+			if(node == null) return;
+			apkInfo.manifest.packageName = node.getAttribute("package");
+			apkInfo.manifest.sharedUserId = node.getAttribute("android:sharedUserId");
 			/*
 			if(apkInfo.VersionCode == null || apkInfo.VersionCode.isEmpty()) {
 				apkInfo.VersionCode = xmlAndroidManifest.getAttributes("android:versionCode");
@@ -360,8 +361,11 @@ public class ApktoolScanner extends ApkScanner
 						maxImgSize = resFile.length();
 					}
 				} else {
-			        result = new XmlPath(resFile).getNode(query).getTextContent();
-			        if(result != null) break;;
+					XmlPath node = new XmlPath(resFile).getNode(query);
+					if(node != null) {
+				        result = node.getTextContent();
+				        if(result != null) break;
+					}
 				}
 			}
 	        //Log.i(">> " + result);
@@ -390,7 +394,9 @@ public class ApktoolScanner extends ApkScanner
 
 				File resFile = new File(resXmlPath + s + File.separator + fileName);
 				if(!resFile.exists()) continue;
-				String value = new XmlPath(resFile).getNode(query).getTextContent();
+				XmlPath node = new XmlPath(resFile).getNode(query);
+				if(node == null) continue;
+				String value = node.getTextContent();
 				if(value != null && value.startsWith("@")) {
 					return getMutiLang(value);
 				} else if(value != null) {
@@ -408,23 +414,22 @@ public class ApktoolScanner extends ApkScanner
 		
 		@SuppressWarnings("unused")
 		private void getActivityInfo(XmlPath xmlAndroidManifest, String tag) {
-	        xmlAndroidManifest.getNodeList("//"+tag);
-	        for( int idx=0; idx < xmlAndroidManifest.getLength(); idx++ ){
-	        	String name = xmlAndroidManifest.getAttributes(idx, "android:name");
+			XmlPath tagPaths = xmlAndroidManifest.getNodeList("//"+tag);
+	        for( int idx=0; idx < tagPaths.getCount(); idx++ ){
+	        	String name = tagPaths.getAttribute(idx, "android:name");
 	        	String startup = "X";
 	        	String intents = "";
 
-	        	XmlPath intentsNode = new XmlPath(xmlAndroidManifest);
-	        	intentsNode.getNodeList("//"+tag+"[@name='" + name + "']/intent-filter/action");
-	        	for( int i=0; i < intentsNode.getLength(); i++ ){
-	        		String act = intentsNode.getAttributes(i, "android:name");
-	        		if(i==0) intents += "<intent-filter> [" + intentsNode.getLength() + "]";
+	        	XmlPath intentsNode = xmlAndroidManifest.getNodeList("//"+tag+"[@name='" + name + "']/intent-filter/action");
+	        	for( int i=0; i < intentsNode.getCount(); i++ ){
+	        		String act = intentsNode.getAttribute(i, "android:name");
+	        		if(i==0) intents += "<intent-filter> [" + intentsNode.getCount() + "]";
 	        		intents += "\n" + act;
 	        		if(act.equals("android.intent.action.BOOT_COMPLETED"))
 	        			startup = "O";
 	        	}
 	        	
-	        	if(intentsNode.isNode("//"+tag+"[@name='" + name + "']/intent-filter/category[@name='android.intent.category.LAUNCHER']")) {
+	        	if(intentsNode.isNodeExisted("//"+tag+"[@name='" + name + "']/intent-filter/category[@name='android.intent.category.LAUNCHER']")) {
 	        		name += " - LAUNCHER";
 	        	}
 	        	
@@ -457,14 +462,13 @@ public class ApktoolScanner extends ApkScanner
 				
 				//Log.i("xmlFile " + xmlFile.getAbsolutePath());
 
-				XmlPath xpath = new XmlPath(xmlFile);
-				
-				xpath.getNode("//appwidget-provider");
+				XmlPath xpath = new XmlPath(xmlFile).getNode("//appwidget-provider");
+				if(xpath == null) continue;
 		        
-				if(Size.isEmpty() && xpath.getAttributes("android:minWidth") != null
-						&& xpath.getAttributes("android:minHeight") != null) {
-					String width = xpath.getAttributes("android:minWidth");
-					String Height = xpath.getAttributes("android:minHeight");
+				if(Size.isEmpty() && xpath.getAttribute("android:minWidth") != null
+						&& xpath.getAttribute("android:minHeight") != null) {
+					String width = xpath.getAttribute("android:minWidth");
+					String Height = xpath.getAttribute("android:minHeight");
 					width = getResourceInfo(width).replaceAll("^([0-9]*).*", "$1");
 					Height = getResourceInfo(Height).replaceAll("^([0-9]*).*", "$1");
 					//Size = ((Integer.parseInt(width) - 40) / 70 + 1) + " X " + ((Integer.parseInt(Height) - 40) / 70 + 1);
@@ -473,13 +477,13 @@ public class ApktoolScanner extends ApkScanner
 			    	//Log.i("Size " + Size + ", width " + width + ", height " + Height);
 				}
 				
-				if(ReSizeMode.isEmpty() && xpath.getAttributes("android:resizeMode") != null) {
-					ReSizeMode = xpath.getAttributes("android:resizeMode");
+				if(ReSizeMode.isEmpty() && xpath.getAttribute("android:resizeMode") != null) {
+					ReSizeMode = xpath.getAttribute("android:resizeMode");
 				}
 
 				if((IconPath == null || IconPath.isEmpty()) 
-						&& xpath.getAttributes("android:previewImage") != null) {
-					String icon = xpath.getAttributes("android:previewImage");
+						&& xpath.getAttribute("android:previewImage") != null) {
+					String icon = xpath.getAttribute("android:previewImage");
 					IconPath = getResourceInfo(icon);
 					//Log.i("icon " + IconPath);
 				}

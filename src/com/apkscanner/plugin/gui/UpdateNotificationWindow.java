@@ -25,29 +25,29 @@ public class UpdateNotificationWindow extends JFrame implements ActionListener
 	private static final long serialVersionUID = 8847497098166369293L;
 
 	private static final String ACT_CMD_CLOSE = "ACT_CMD_CLOSE";
-	
+
 	private static UpdateNotificationWindow frame;
 	private static UpdateNotificationPanel mainPanel;
 
 	private JCheckBox ckbNaver;
 
 	private UpdateNotificationWindow(Component parent) {
-		setTitle("Update List");
+		setTitle(Resource.STR_TITLE_UPDATE_LIST.getString());
 		setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
 		setResizable(true);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		add(mainPanel = new UpdateNotificationPanel());
-		
+
 		JPanel ctrPanel = new JPanel();
 		BoxLayout ctrLayout = new BoxLayout(ctrPanel, BoxLayout.Y_AXIS);
 		ctrPanel.setLayout(ctrLayout);
 		ctrPanel.setBorder(new EmptyBorder(5,5,5,5));
-		
-		ckbNaver = new JCheckBox("다시 보지 않기");
+
+		ckbNaver = new JCheckBox(Resource.STR_LABEL_DO_NOT_LOOK_AGAIN.getString());
 		ctrPanel.add(ckbNaver);
 
-		JButton btnClose = new JButton("Close");
+		JButton btnClose = new JButton(Resource.STR_BTN_CLOSE.getString());
 		btnClose.setActionCommand(ACT_CMD_CLOSE);
 		btnClose.addActionListener(this);
 
@@ -64,7 +64,7 @@ public class UpdateNotificationWindow extends JFrame implements ActionListener
         btnCtrPanel.add(btnClose);
 
 		ctrPanel.add(btnCtrPanel);
-		
+
 		add(ctrPanel, BorderLayout.SOUTH);
 
 		pack();

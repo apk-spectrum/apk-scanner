@@ -91,11 +91,11 @@ public class SystemUtil
 					editorPath = SystemUtil.getRealPath(cmd);
 					if(editorPath != null) {
 						if(!new File(editorPath).canExecute()) {
-							Log.w("editor can not execute : " + editorPath);
+							Log.d("editor can not execute : " + editorPath);
 							editorPath = null;
 						}
 					} else {
-						Log.w("editor is null");
+						Log.d("editor is null");
 					}
 				}
 			}
@@ -112,7 +112,7 @@ public class SystemUtil
 
 	public static void openEditor(File file) {
 		if(file == null || !file.exists()) {
-			Log.e("No such file or directory");
+			Log.d("No such file or directory");
 			return;
 		}
 
@@ -130,7 +130,7 @@ public class SystemUtil
 
 	public static void openFileExplorer(File file) {
 		if(file == null || !file.exists()) {
-			Log.e("No such file or directory");
+			Log.d("No such file or directory");
 			return;
 		}
 
@@ -149,7 +149,7 @@ public class SystemUtil
 
 	public static void openArchiveExplorer(File file) {
 		if(file == null || !file.exists()) {
-			Log.e("No such file or directory");
+			Log.d("No such file or directory");
 			return;
 		}
 
@@ -166,7 +166,7 @@ public class SystemUtil
 
 	public static void openFile(File file) {
 		if(file == null || !file.exists()) {
-			Log.e("No such file or directory");
+			Log.d("No such file or directory");
 			return;
 		}
 
@@ -207,7 +207,7 @@ public class SystemUtil
 			if(result == null || result.length <= 0
 					|| !result[0].matches(regular)
 					|| !new File(result[0]).exists()){
-				Log.e("No such file " + ((result != null && result.length > 0) ? result[0] : "- result null"));
+				Log.d("No such file " + ((result != null && result.length > 0) ? result[0] : "- result null"));
 				return null;
 			}
 			realPath = result[0];
@@ -281,7 +281,7 @@ public class SystemUtil
 		try {
 			cmd = getOpenCommand(suffix);
 		} catch(Exception e) {
-			Log.w("Failure: Can not read registry");
+			Log.d("Failure: Can not read registry");
 			e.printStackTrace();
 			return isAssociatedWithFileTypeLegacy(suffix);
 		}
@@ -337,7 +337,7 @@ public class SystemUtil
 			Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, suffix);
 			Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, suffix, "", prefixKey);
 		} catch(Exception e) {
-			Log.w("Failure: Can not write registry");
+			Log.d("Failure: Can not write registry");
 			e.printStackTrace();
 			return setAssociateFileTypeLegacy(suffix);
 		}
@@ -399,7 +399,7 @@ public class SystemUtil
 			exec(new String[] {"cmd", "/c", "assoc", suffix+"=" });
 		} catch(Exception e) {
 			e.printStackTrace();
-			Log.e("Failure: Can not delete registry");
+			Log.d("Failure: Can not delete registry");
 			unsetAssociateFileTypeLagacy(suffix);
 		}
 	}

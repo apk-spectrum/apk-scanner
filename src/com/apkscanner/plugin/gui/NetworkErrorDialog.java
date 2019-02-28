@@ -9,6 +9,7 @@ import com.apkscanner.plugin.IUpdateChecker;
 import com.apkscanner.plugin.NetworkException;
 import com.apkscanner.plugin.PlugInConfig;
 import com.apkscanner.plugin.PlugInManager;
+import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
 public class NetworkErrorDialog
@@ -39,15 +40,15 @@ public class NetworkErrorDialog
 		errPanel.setVisibleNeverLook(!force);
 		int ret = -1;
 
-		StringBuilder errMsg = new StringBuilder("Failed PlugIn: " + plugin.getName() + "\n\n");
-
+		String pluginName = plugin.getName();
+		if(pluginName == null) pluginName = "IUpdateChecker@0x" + Integer.toHexString(plugin.hashCode());
 
 		if(e.isNetworkNotFoundException()) {
 			if(!force && "true".equals(config.getConfiguration(IGNORE_NO_SUCHE_INTERFACE)))
 				return RESULT_IGNORED;
 
-			errPanel.setText("Not found network interface\n\nTry checking the network connection\n");
-			ret = showOptionDialog(parent, errPanel, "Network Error - Not found network interface");
+			errPanel.setText(Resource.STR_MSG_NO_SUCH_NETWORK.getString());
+			ret = showOptionDialog(parent, errPanel, Resource.STR_TITLE_NO_SUCH_NETWORK.getString());
 
 			if(!force) config.setConfiguration(IGNORE_NO_SUCHE_INTERFACE, errPanel.isNeverLook() ? "true" : "false");
 			PlugInManager.saveProperty();
@@ -55,12 +56,9 @@ public class NetworkErrorDialog
 			if(!force && "true".equals(config.getConfiguration(IGNORE_TIME_OUT)))
 				return RESULT_IGNORED;
 
-			errMsg.append("Network connection timed out!\n\n");
-			errMsg.append("Try checking the connection or proxy, firewall!");
-
-			errPanel.setText(errMsg.toString());
-			errPanel.add(new NetworkProxySettingPanel(plugin));
-			ret = showOptionDialog(parent, errPanel, "Network Error - Connection timed out");
+			errPanel.setText(String.format(Resource.STR_MSG_FAILURE_PROXY_ERROR.getString(), pluginName));
+			errPanel.add(new NetworkProxySettingPanel(plugin.getPlugInPackage()));
+			ret = showOptionDialog(parent, errPanel, Resource.STR_TITLE_NETWORK_TIMEOUT.getString());
 
 			if(!force) config.setConfiguration(IGNORE_TIME_OUT, errPanel.isNeverLook() ? "true" : "false");
 			PlugInManager.saveProperty();
@@ -69,12 +67,9 @@ public class NetworkErrorDialog
 			if(!force && "true".equals(config.getConfiguration(IGNORE_SSH_HANDSHAKE)))
 				return RESULT_IGNORED;
 
-			errMsg.append("Occurred SSLHandshakeException.\n\n");
-			errMsg.append("Try add a SSL certification to the trust store!");
-
-			errPanel.setText(errMsg.toString());
-			errPanel.add(new NetworkTruststoreSettingPanel(plugin));
-			ret = showOptionDialog(parent, errPanel, "Network Error - SSL Certificate Error");
+			errPanel.setText(String.format(Resource.STR_MSG_FAILURE_SSL_ERROR.getString(), pluginName));
+			errPanel.add(new NetworkTruststoreSettingPanel(plugin.getPlugInPackage()));
+			ret = showOptionDialog(parent, errPanel, Resource.STR_TITLE_SSL_EXCEPTION.getString());
 
 			if(!force) config.setConfiguration(IGNORE_SSH_HANDSHAKE, errPanel.isNeverLook() ? "true" : "false");
 			PlugInManager.saveProperty();
@@ -88,6 +83,8 @@ public class NetworkErrorDialog
 
 	private static int showOptionDialog(Component parentComponent, Object context, String title) {
 		return MessageBoxPane.showOptionDialog(parentComponent, context, title, JOptionPane.DEFAULT_OPTION,
-				MessageBoxPane.ERROR_MESSAGE, null, new String[] { "Retry",  "Close" }, "Close");
+				MessageBoxPane.ERROR_MESSAGE, null,
+				new String[] { Resource.STR_BTN_RETRY.getString(),  Resource.STR_BTN_CLOSE.getString() },
+				Resource.STR_BTN_CLOSE.getString());
 	}
 }

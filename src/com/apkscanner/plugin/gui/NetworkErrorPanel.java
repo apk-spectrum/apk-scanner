@@ -10,6 +10,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import com.apkscanner.resource.Resource;
+
 public class NetworkErrorPanel extends JPanel {
 	private static final long serialVersionUID = -67190848421501316L;
 
@@ -26,7 +28,7 @@ public class NetworkErrorPanel extends JPanel {
 		textArea.setMargin(new Insets(0,0,20,0));
 
 		naverLook = new JCheckBox();
-		naverLook.setText("Do not look again");
+		naverLook.setText(Resource.STR_LABEL_DO_NOT_LOOK_AGAIN.getString());
 		add(textArea,BorderLayout.NORTH);
 		add(naverLook,BorderLayout.SOUTH);
 	}
@@ -36,7 +38,7 @@ public class NetworkErrorPanel extends JPanel {
 	}
 
 	public void setVisibleNeverLook(boolean visible) {
-		naverLook.setVisible(visible);	
+		naverLook.setVisible(visible);
 	}
 
 	public void setText(String text) {

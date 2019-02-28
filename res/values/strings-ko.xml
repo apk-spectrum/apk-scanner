@@ -4,6 +4,11 @@
 
 	<string name="title_install_wizard">APK 설치 마법사</string>
 	<string name="title_apk_signer">APK 서명</string>
+	<string name="title_edit_config">환경변수 설정</string>
+	<string name="title_no_such_network">네트워크 오류 - 연결된 네트워크 없음</string>
+	<string name="title_network_timeout">네트워크 오류 - 연결 시간 초과</string>
+	<string name="title_ssl_exception">네트워크 오류 - SSL 오류</string>
+	<string name="title_update_list">업데이트 목록</string>
 
 	<string name="btn_open">열기</string>
 	<string name="btn_open_pacakge">패키지</string>
@@ -29,6 +34,7 @@
 	<string name="btn_cancel">취소</string>
 	<string name="btn_refresh">새로고침</string>
 	<string name="btn_del">삭제</string>
+	<string name="btn_edit">편집</string>
 	<string name="btn_add">추가</string>
 	<string name="btn_export">내보내기</string>
 	<string name="btn_opencode">소스코드</string>
@@ -61,6 +67,17 @@
     <string name="btn_waiting">처리중..</string>
     <string name="btn_success">성공</string>	
     <string name="btn_fail">실패</string>
+    <string name="btn_retry">재시도</string>
+	<string name="btn_apply">적용</string>
+	<string name="btn_remove">제거</string>
+	<string name="btn_import">가져오기</string>
+	<string name="btn_manage_cert">인증서 관리</string>
+	<string name="btn_check_update">업데이트 확인</string>
+	<string name="btn_go_to_website">웹페이지 이동</string>
+	<string name="btn_update">업데이트</string>
+	<string name="btn_download">다운로드</string>
+	<string name="btn_no_updated">업데이트 없음</string>
+	<string name="btn_choose_update">업데이트 선택하세요</string>
 
 	<string name="btn_open_lab">APK 파일에서 정보를 가져옵니다. (Ctrl+O)</string>
 	<string name="btn_open_pacakge_lab">디바이스 패키지 열기(Ctrl+P)</string>
@@ -116,6 +133,8 @@
 	<string name="tab_package_info">패키지 정보</string>
 	<string name="tab_dumpsys">덤프</string>
 	<string name="tab_sys_package_info">시스템 패키지 정보</string>
+	<string name="tab_about">정보</string>
+	<string name="tab_update">업데이트(%d)</string>
 
 	<string name="tab_setting_generic">일반</string>
 	<string name="tab_setting_generic_lab">일반 옵션</string>
@@ -125,6 +144,8 @@
 	<string name="tab_setting_device_lab">디바이스 관련 옵션</string>
 	<string name="tab_setting_display">화면</string>
 	<string name="tab_setting_display_lab">화면 옵션</string>
+	<string name="tab_setting_plugins">플러그인</string>
+	<string name="tab_setting_plugins_lab">플로그인 설정</string>
 
 	<string name="basic_permissions">권한</string>
 	<string name="basic_permlab_display_list">전체 리스트 보기</string>
@@ -297,6 +318,22 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="label_save_as">저장하기...</string>
 	<string name="label_by_package_name">패키지명으로 검색</string>
 	<string name="label_by_app_label">앱 이름으로 검색</string>
+	<string name="label_plugins_settings">플러그인 설정</string>
+	<string name="label_plugins_description">설명</string>
+	<string name="label_plugin_pcakge_config">플러그인 패키지 개별 설정</string>
+	<string name="label_key_name">이름</string>
+	<string name="label_key_value">값</string>
+	<string name="label_proxy_setting">프록시 설정</string>
+	<string name="label_truststore_setting">SSL 신뢰할수 있는 저장소 설정</string>
+	<string name="label_pac_script_url">PAC 스크립트 URL :</string>
+	<string name="label_alias">별칭 이름 :</string>
+	<string name="label_description">상세정보 :</string>
+	<string name="label_do_not_look_again">다시 보지 않기</string>
+	<string name="label_update_list">업데이트 리스트</string>
+	<string name="label_show_update_at_startup">시작시 업데이트 목록 표시</string>
+	<string name="label_mark_a_runtime">런타임 권한 표시</string>
+	<string name="label_mark_a_count">권한 갯수 표시</string>
+	<string name="label_treat_sign_as_revoked">플랫폼 서명이 아닌 경우 서명 레벨 미승인</string>
 
 	<string name="msg_failure_open_apk">APK 파일을 열수 없습니다.</string>
 	<string name="msg_no_such_apk">APK 파일이 존재하지 않습니다.</string>
@@ -325,6 +362,11 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="msg_success_clear_data">앱 데이터를 삭제 하였습니다.</string>
 	<string name="msg_failure_clear_data">앱 데이터 삭제에 실패 하였습니다.</string>
 	<string name="msg_warn_unsupported_jvm">Java 8 이상 버전이 필요합니다.</string>
+	<string name="msg_warn_ssl_ignore">경고, 이옵션은 권장하지 않습니다!\nSSL 인증서를 무시 할 경우 MITM 공격에 노출 될 수 있습니다.</string>
+	<string name="msg_no_such_network">네트워크 인터페이스를 찾을 수 없습니다.\n\n네트워크 연결 상태를 확인하세요!\n</string>
+	<string name="msg_failure_proxy_error">오류 플러그인 : %s\n\n네트워크 접속 시간 초과!\n\n프록시 설정 또는 방화벽 설정을 확인 하세요!</string>
+	<string name="msg_failure_ssl_error">오류 플러그인: %s\n\nSSLHandshakeException 오류 발생.\n\nSSL 인증서를 신뢰할수 있는 저장소에 추가 후 시도하세요!</string>
+	<string name="msg_no_update_informations">업데이트 정보 없음</string>
 
 	<string name="question_reboot_device">장치를 다시 시작 하시겠습니까?</string>
 	<string name="question_continue_install">설치를 계속 하시겠습니까?</string>
@@ -342,6 +384,14 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="tree_node_displayed">화면에 표시중인 패키지</string>
 	<string name="tree_node_recently">최근 실행된 액티비티 패키지</string>
 	<string name="tree_node_running">실행중인 프로세스 패키지</string>
+	<string name="tree_node_plugins_top">APK 스캐너 - 플러그인 설정</string>
+	<string name="tree_node_plugins_top_desc">APK 스캐너에 플러그인을 추가 하여 더욱 편리한 기능을 사용 할수 있습니다.</string>
+	<string name="tree_node_no_plugins">플러그인 없음</string>
+	<string name="tree_node_no_plugins_desc">추가된 플러그인이 없습니다.</string>
+	<string name="tree_node_network_setting">네트워크 환경 설정</string>
+	<string name="tree_node_configurations">환경변수 설정</string>
+	<string name="tree_node_global_setting">플러그인 공통 설정</string>
+	<string name="tree_node_global_setting_desc">모든 플러그인에서 공유 하여 사용하는 전역 변수 설정</string>
 
 	<string name="pattern_print_x509_cert">소유자: {0}\n발행자: {1}\n일련 번호: {2}\n적합한 시작 날짜: {3} 종료 날짜: {4}\n인증서 지문:\n\t MD5:  {5}\n\t SHA1: {6}\n\t SHA256: {7}\n서명 알고리즘 이름: {8}\n주체 공용 키 알고리즘: {9}\n버전: {10}</string>
 	<string name="with_weak">%s(약함)</string>
@@ -351,4 +401,26 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="extensions">확장: </string>
 	<string name="empty_value">(비어 있는 값)</string>
 	<string name="timestamp">시간 기록:</string>
+
+	<string name="proxy_menu_no_proxy">프록시 사용안함</string>
+	<string name="proxy_menu_global">플러그인 공통 설정 값 사용</string>
+	<string name="proxy_menu_system">시스템 프록시 설정 값 사용(가능한 경우)</string>
+	<string name="proxy_menu_pac_script">PAC 스트립트 사용</string>
+	<string name="proxy_menu_manual">프록시 직접 설정</string>
+
+	<string name="truststore_golbal">플러그인 공통 설정 값 사용</string>
+	<string name="truststore_apkscanner">APK Scanner 저장소</string>
+	<string name="truststore_jvm">JVM 저장소</string>
+	<string name="truststore_manual">직접 설정</string>
+	<string name="truststore_ignore">SSL 인증서 무시(비추천)</string>
+
+	<string name="column_issued_to">발급 대상</string>
+	<string name="column_issued_by">발급자</string>
+	<string name="column_expires_on">만료 날짜</string>
+	<string name="column_alias">이름</string>
+	<string name="column_name">이름</string>
+	<string name="column_package">패키지</string>
+	<string name="column_this_version">현재 버전</string>
+	<string name="column_new_version">새 버전</string>
+	<string name="column_last_checked_date">마지막 업데이트 확인</string>
 </resources>

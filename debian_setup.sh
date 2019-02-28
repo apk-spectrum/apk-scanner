@@ -1,7 +1,7 @@
 #!/bin/bash
 
 APP_PATH="/opt/APKScanner"
-APP_VERSION="2.3.5"
+APP_VERSION="2.4.1"
 APP_FILE="ApkScanner.jar"
 
 DEBIAN_DATA_PATH="./debian"$APP_PATH
@@ -18,7 +18,7 @@ Version: $APP_VERSION-1
 Section: utils
 Architecture: all
 Maintainer: Sunggyu Kam <sunggyu.kam@samsung.com>
-Installed-Size: 62060
+Installed-Size: 105,065,889
 Description: APK Scanner $APP_VERSION
 EOF
 cat ./debian/DEBIAN/control
@@ -50,6 +50,7 @@ cp -f "release/data/build-master-target-product-security/verity_key" "$TARGET_PA
 
 TARGET_PATH="$DEBIAN_DATA_PATH/lib/"
 mkdir -p "$TARGET_PATH"
+cp -f "release/lib/autocomplete-2.6.0.jar" "$TARGET_PATH"
 cp -f "release/lib/commons-cli-1.3.1.jar" "$TARGET_PATH"
 cp -f "release/lib/ddmlib.jar" "$TARGET_PATH"
 cp -f "release/lib/guava-18.0.jar" "$TARGET_PATH"
@@ -59,17 +60,32 @@ cp -f "release/lib/json-simple-1.1.1.jar" "$TARGET_PATH"
 cp -f "release/lib/libwebp-imageio64.so" "$TARGET_PATH"
 cp -f "release/lib/luciad-webp-imageio.jar" "$TARGET_PATH"
 cp -f "release/lib/mslinks.jar" "$TARGET_PATH"
-cp -f "release/lib/rsyntaxtextarea-2.6.1.jar" "$TARGET_PATH"
 cp -f "release/lib/rstaui-2.6.0.jar" "$TARGET_PATH"
-cp -f "release/lib/autocomplete-2.6.0.jar" "$TARGET_PATH"
+cp -f "release/lib/rsyntaxtextarea-2.6.1.jar" "$TARGET_PATH"
+
+TARGET_PATH="$DEBIAN_DATA_PATH/lib/proxy-vole"
+mkdir -p "$TARGET_PATH"
+cp -f "release/lib/proxy-vole/delight-nashorn-sandbox-0.1.11.jar" "$TARGET_PATH"
+cp -f "release/lib/proxy-vole/ini4j-0.5.4.jar" "$TARGET_PATH"
+cp -f "release/lib/proxy-vole/js-beautify-1.6.12.jar" "$TARGET_PATH"
+cp -f "release/lib/proxy-vole/proxy-vole-1.0.5.jar" "$TARGET_PATH"
+cp -f "release/lib/proxy-vole/slf4j-api-1.7.25.jar" "$TARGET_PATH"
+
+TARGET_PATH="$DEBIAN_DATA_PATH"
+cp -rf "release/plugin" "$TARGET_PATH"
+
+TARGET_PATH="$DEBIAN_DATA_PATH/security"
+mkdir -p "$TARGET_PATH"
+cp -f "release/security/trustStore.jks" "$TARGET_PATH"
 
 TARGET_PATH="$DEBIAN_DATA_PATH/tool/"
 mkdir -p "$TARGET_PATH"
 cp -f "release/tool/aapt" "$TARGET_PATH"
 cp -f "release/tool/adb" "$TARGET_PATH"
 cp -f "release/tool/apktool.jar" "$TARGET_PATH"
-cp -f "release/tool/d2j-dex2jar.sh" "$TARGET_PATH"
+cp -f "release/tool/Bytecode-Viewer.jar" "$TARGET_PATH"
 cp -f "release/tool/d2j_invoke.sh" "$TARGET_PATH"
+cp -f "release/tool/d2j-dex2jar.sh" "$TARGET_PATH"
 cp -f "release/tool/jd-gui-1.4.0.jar" "$TARGET_PATH"
 cp -f "release/tool/jd_icon_128.png" "$TARGET_PATH"
 cp -f "release/tool/libAaptNativeWrapper32.so" "$TARGET_PATH"
@@ -77,28 +93,9 @@ cp -f "release/tool/libAaptNativeWrapper64.so" "$TARGET_PATH"
 cp -f "release/tool/libc++32.so" "$TARGET_PATH"
 cp -f "release/tool/libc++64.so" "$TARGET_PATH"
 cp -f "release/tool/signapk.jar" "$TARGET_PATH"
-
-TARGET_PATH="$DEBIAN_DATA_PATH/tool/lib/"
-mkdir -p "$TARGET_PATH"
-cp -f "release/tool/lib/antlr-runtime-3.5.jar" "$TARGET_PATH"
-cp -f "release/tool/lib/asm-debug-all-4.1.jar" "$TARGET_PATH"
-cp -f "release/tool/lib/d2j-base-cmd-2.0.jar" "$TARGET_PATH"
-cp -f "release/tool/lib/d2j-jasmin-2.0.jar" "$TARGET_PATH"
-cp -f "release/tool/lib/d2j-smali-2.0.jar" "$TARGET_PATH"
-cp -f "release/tool/lib/dex-ir-2.0.jar" "$TARGET_PATH"
-cp -f "release/tool/lib/dex-reader-2.0.jar" "$TARGET_PATH"
-cp -f "release/tool/lib/dex-reader-api-2.0.jar" "$TARGET_PATH"
-cp -f "release/tool/lib/dex-tools-2.0.jar" "$TARGET_PATH"
-cp -f "release/tool/lib/dex-translator-2.0.jar" "$TARGET_PATH"
-cp -f "release/tool/lib/dex-writer-2.0.jar" "$TARGET_PATH"
-cp -f "release/tool/lib/dx-1.7.jar" "$TARGET_PATH"
-
-TARGET_PATH="$DEBIAN_DATA_PATH/tool/lib64/"
-mkdir -p "$TARGET_PATH"
-cp -f "release/tool/lib64/libc++.so" "$TARGET_PATH"
-
-TARGET_PATH="$DEBIAN_DATA_PATH/plugin/"
-mkdir -p "$TARGET_PATH"
+cp -rf "release/tool/jadx" "$TARGET_PATH"
+cp -rf "release/tool/lib" "$TARGET_PATH"
+cp -rf "release/tool/lib64" "$TARGET_PATH"
 
 ##############################
 # etc
@@ -112,6 +109,8 @@ chmod 775 $DEBIAN_DATA_PATH/APKScanner.sh
 
 echo "{}" > $DEBIAN_DATA_PATH/settings.txt
 chmod 666 $DEBIAN_DATA_PATH/settings.txt
+chmod 666 $DEBIAN_DATA_PATH/plugin/plugins.conf
+chmod 666 $DEBIAN_DATA_PATH/security/trustStore.jks
 
 mkdir -p ./debian/usr/share/applications/
 cat << EOF > ./debian/usr/share/applications/apkscanner.desktop
@@ -187,6 +186,7 @@ fi
 
 if [ -e ~/.p4qt/ApplicationSettings.xml ]; then
     cat ~/.p4qt/ApplicationSettings.xml | sed '/EditorMappings/,/StringList/{/<String>apk/d; /<String>ppk/d; s/.*<\/StringList>.*/  <String>apk\|default\|\/opt\/APKScanner\/APKScanner\.sh<\/String>\n  <String>ppk\|default\|\/opt\/APKScanner\/APKScanner\.sh<\/String>\n <\/StringList>/}' > .ApplicationSettings.xml
+    chmod 666 .ApplicationSettings.xml
     mv .ApplicationSettings.xml ~/.p4qt/ApplicationSettings.xml
 fi
 echo end postinst
