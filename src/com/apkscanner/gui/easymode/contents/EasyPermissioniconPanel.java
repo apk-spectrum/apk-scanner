@@ -106,7 +106,7 @@ public class EasyPermissioniconPanel extends FlatPanel implements ActionListener
 		Log.d(apkInfo.manifest.usesPermission.length + "");
 		boolean isPlatformSign = ApkInfoHelper.isTestPlatformSign(apkInfo)
 				|| ApkInfoHelper.isSamsungSign(apkInfo);
-		permissionManager.clearPermissions();
+		permissionManager = new PermissionManager();
 		permissionManager.setPlatformSigned(isPlatformSign);
 		permissionManager.setTreatSignAsRevoked((boolean) Resource.PROP_PERM_TREAT_SIGN_AS_REVOKED.getData());
 		permissionManager.addUsesPermission(apkInfo.manifest.usesPermission);
@@ -120,7 +120,7 @@ public class EasyPermissioniconPanel extends FlatPanel implements ActionListener
 		for (PermissionGroupInfoExt g : permissionManager.getPermissionGroups()) {
 			FlatPanel permissionicon = new FlatPanel();
 			try {
-				ImageIcon imageIcon = new ImageIcon(new URL(g.icon));
+				ImageIcon imageIcon = new ImageIcon(new URL(g.getIconPath()));
 				
 				imageIcon.setImage(ImageUtils.getScaledImage(imageIcon,BUTTON_IMG_SIZE,BUTTON_IMG_SIZE));
 				

@@ -66,10 +66,22 @@ public class EasyPermissionDlg extends JDialog implements ActionListener {
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		this.setLayout(new BorderLayout());
 
+		PermissionManager permissionManager = new PermissionManager();
+		permissionManager.setTreatSignAsRevoked((boolean) Resource.PROP_PERM_TREAT_SIGN_AS_REVOKED.getData());
+		permissionManager.addUsesPermission(apkInfo.manifest.usesPermission);
+		permissionManager.addUsesPermission(apkInfo.manifest.usesPermissionSdk23);
+		if(!permissionManager.isEmpty()) {
+			Integer selectSdkVer = apkInfo.manifest.usesSdk.targetSdkVersion;
+			permissionManager.setSdkVersion(selectSdkVer != null ? selectSdkVer : 28);
+		}
+
 		model[USES_TABLE] = new PermissionUsesTableModel();
-		//makeusesPermissionRow(apkInfo, apkInfo.manifest.usesPermission, model[USES_TABLE]);
+		makeusesPermissionRow(permissionManager, permissionManager.getPermissions(), model[USES_TABLE]);
+
+		permissionManager.clearPermissions();
+		permissionManager.addDeclarePemission(apkInfo.manifest.permission);
 		model[DECLARED_TABLE] = new PermissionUsesTableModel();
-		makeusesPermissionRow(apkInfo, apkInfo.manifest.permission, model[DECLARED_TABLE]);
+		makeusesPermissionRow(permissionManager, permissionManager.getDeclarePermissions(), model[DECLARED_TABLE]);
 		tabbedpane = new JTabbedPane();
 		int i = 0;
 		for (JTable table : permissiontable) {
@@ -109,42 +121,37 @@ public class EasyPermissionDlg extends JDialog implements ActionListener {
 		this.setVisible(true);
 	}
 
-	private void makeusesPermissionRow(ApkInfo apkInfo, PermissionInfo[] arraypermissionInfo,
+	private void makeusesPermissionRow(PermissionManager manager, PermissionInfo[] arraypermissionInfo,
 			PermissionUsesTableModel tablemodel) {
-		// TODO Auto-generated method stub
-		if (arraypermissionInfo != null) {
-			PermissionManager manager = new PermissionManager();
-			manager.addDeclarePemission(arraypermissionInfo);
+		if (arraypermissionInfo == null) return;
 
-			for (PermissionInfo info : arraypermissionInfo) {
-				PermissionGroupInfoExt group = manager.getPermissionGroup(info.permissionGroup);
-				try {
-					Object[] obj = new Object[tablemodel.getColumnCount()];
-					String[] permissions = info.protectionLevel.split("\\|");
-					int j = 0;
-					obj[j++] = new ImageIcon(new URL(group.icon)) {
-						public String toString() {
-							return "";
-						}
-					};
-					obj[j++] = info.name;
-					int i = 0;
-
-					obj[j + i++] = permissions[0];
-					String Flagstr = "";
-					for (int k = 1; k < permissions.length; k++) {
-						Flagstr += permissions[k] + ((k == permissions.length - 1) ? "" : " | ");
+		for (PermissionInfo info : arraypermissionInfo) {
+			PermissionGroupInfoExt group = manager.getPermissionGroup(info.permissionGroup);
+			try {
+				Object[] obj = new Object[tablemodel.getColumnCount()];
+				String[] permissions = info.protectionLevel.split("\\|");
+				int j = 0;
+				obj[j++] = group != null ? new ImageIcon(new URL(group.getIconPath())) {
+					public String toString() {
+						return "";
 					}
+				} : null;
+				obj[j++] = info.name;
+				int i = 0;
 
-					obj[j + i++] = Flagstr;
-
-					obj[j + i] = new Boolean(true);
-					tablemodel.add(obj);
-
-				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				obj[j + i++] = permissions[0];
+				String Flagstr = "";
+				for (int k = 1; k < permissions.length; k++) {
+					Flagstr += permissions[k] + ((k == permissions.length - 1) ? "" : " | ");
 				}
+
+				obj[j + i++] = Flagstr;
+
+				obj[j + i] = new Boolean(true);
+				tablemodel.add(obj);
+
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
 			}
 		}
 	}
