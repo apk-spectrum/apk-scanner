@@ -25,6 +25,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.apkscanner.gui.easymode.contents.EasyToolIcon.EasyToolListner;
+import com.apkscanner.gui.easymode.util.GraphicUtil;
 import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.util.Log;
 
@@ -37,9 +39,41 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 	Image image;
 	String ActionCmd = "";
 	ActionListener actionlistener = null;
-	TimerTask task;
+	AnimationTask task;
 	final int ANIMATION_VALUE = 3;
 	final int ANIMATION_DELAY =5;
+	EasyToolListner eventlistner;
+	String text ="";
+	
+	public interface EasyToolListner {
+		public static int STATE_ANIMATION_END = 0;
+		public static int STATE_ENTER = 1;
+		public static int STATE_EXIT = 2;
+		
+		void changestate(int state, EasyToolIcon easyiconlabel);
+		
+	}
+	
+	class AnimationTask extends TimerTask {
+    	EasyToolIcon toolicon;
+    	public AnimationTask(EasyToolIcon easyToolIcon) {
+			// TODO Auto-generated constructor stub
+    		this.toolicon = easyToolIcon;
+		}
+    	
+        public void run() {
+    		width+=ANIMATION_VALUE;
+    		height+=ANIMATION_VALUE;    		
+    		setPreferredSize(new Dimension(width, height));
+        	//repaint();
+        	updateUI();
+        	if(hoversize <= width) {
+        		if(eventlistner != null)eventlistner.changestate(EasyToolListner.STATE_ANIMATION_END, toolicon );
+        		this.cancel();
+        	}
+        }
+      };
+	
 	public EasyToolIcon(int size) {
 		originalsize = size;
 	}
@@ -64,6 +98,7 @@ public class EasyToolIcon extends JLabel implements MouseListener{
     
 	@Override
 	public void mouseClicked(MouseEvent e) {		
+		mouseExited(e);
 		actionlistener.actionPerformed(new ActionEvent(this, 0, this.ActionCmd));
 	}
 	@Override
@@ -74,24 +109,14 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
     	entered = true;
+    	eventlistner.changestate(EasyToolListner.STATE_ENTER, this);
 //		width = height = (int)(originalsize * scalex*2);
 //		setPreferredSize(new Dimension(width, height));
 //    	repaint();
 //    	updateUI();   	
     	
     	final int scalefrom = (int)(originalsize * scalex*2);
-        task = new TimerTask() {        	
-            public void run() {
-        		width+=ANIMATION_VALUE;
-        		height+=ANIMATION_VALUE;
-        		setPreferredSize(new Dimension(width, height));
-            	//repaint();
-            	updateUI();
-            	if(scalefrom <= width) {
-            		this.cancel();
-            	}
-            }
-          };
+        task = new AnimationTask(this);
           Timer timer = new Timer();
           timer.schedule(task, 0, ANIMATION_DELAY);
 	}
@@ -100,6 +125,7 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
     	entered = false;
+    	eventlistner.changestate(EasyToolListner.STATE_EXIT, this);
     	task.cancel();
     	width = height = (int)(originalsize * scalex);
     	setPreferredSize(new Dimension(width, height));
@@ -114,13 +140,15 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 	
 	public void paintComponent(Graphics g) {
 		//super.paint(g);
-		super.paintComponent(g);
+		//super.paintComponent(g);
 		//Log.d("paint EasyTool");
 		Graphics2D graphics2D = (Graphics2D) g;
 	   // Set anti-alias for text
 		graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.9f));
 		graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);		
 		graphics2D.drawImage(image, 0, 0, width, height, this);
+		
+
 		
 //		Log.d(getBounds().toString());
 		
@@ -154,5 +182,17 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 //	      myImage = blur.filter(myImage, null);
 //	      g1.dispose();
 //		graphics2D.drawImage(myImage, 0, 0, width, height, this);	
+	}
+
+	public void setEasyToolListner(EasyToolListner easyToolListner) {
+		// TODO Auto-generated method stub
+		this.eventlistner = easyToolListner;
+	}
+
+	public void setText(String str) {
+		text = str;
+	}
+	public String getText() {
+		return text;
 	}
 }
