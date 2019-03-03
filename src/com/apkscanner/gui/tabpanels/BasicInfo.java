@@ -751,22 +751,21 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			break;
 		default:
 			if(id.startsWith("feature-")) {
-				showFeatureInfo(evt);
+				showFeatureInfo(id, evt.getUserData());
 			} else if(id.startsWith("PermGroup:")) {
 				showPermDetailDesc(evt);
-			}  else if(id.startsWith("PLUGIN:")) {
+			} else if(id.startsWith("PLUGIN:")) {
 				IPlugIn plugin = PlugInManager.getPlugInByActionCommand((String)evt.getUserData());
 				if(plugin != null) {
 					plugin.launch();
 				}
-			}else {
+			} else {
 				Log.w("Unknown id " + id);
 			}
 		}
 	}
 
-	private void showFeatureInfo(HyperlinkClickEvent evt) {
-		String id = evt.getId();
+	private void showFeatureInfo(String id, Object userData) {
 		String feature = null;
 		Dimension size = new Dimension(400, 100);
 
@@ -782,7 +781,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			feature += "\nandroid.permission.RECEIVE_BOOT_COMPLETED";
 			break;
 		case "feature-shared-user-id":
-			feature = "sharedUserId=" + evt.getUserData() + "\n※ ";
+			feature = "sharedUserId=" + userData + "\n※ ";
 			feature += Resource.STR_FEATURE_SHAREDUSERID_DESC.getString();
 			break;
 		case "feature-system-user-id":
@@ -791,12 +790,12 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			break;
 		case "feature-platform-sign":
 			feature = "※ " + Resource.STR_FEATURE_PLATFORM_SIGN_DESC.getString();
-			feature += "\n\n" + evt.getUserData();
+			feature += "\n\n" + userData;
 			size = new Dimension(500, 150);
 			break;
 		case "feature-samsung-sign":
 			feature = "※ " + Resource.STR_FEATURE_SAMSUNG_SIGN_DESC.getString();
-			feature += "\n\n" + evt.getUserData();
+			feature += "\n\n" + userData;
 			size = new Dimension(500, 150);
 			break;
 		case "feature-debuggable":
@@ -806,7 +805,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			feature = Resource.STR_FEATURE_INSTRUMENTATION_DESC.getString();
 			break;
 		case "feature-device-requirements":
-			feature = (String) evt.getUserData();
+			feature = (String) userData;
 			size = new Dimension(500, 250);
 			break;
 		case "feature-install-location-internal":

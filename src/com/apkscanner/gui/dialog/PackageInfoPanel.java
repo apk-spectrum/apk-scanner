@@ -6,13 +6,13 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.Icon;
@@ -45,9 +45,12 @@ import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.JHtmlEditorPane;
-import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickEvent;
 import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
+import com.apkscanner.plugin.IPackageSearcher;
+import com.apkscanner.plugin.IPlugIn;
+import com.apkscanner.plugin.PlugInManager;
+import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbDeviceHelper;
 import com.apkscanner.tool.adb.PackageInfo;
@@ -118,32 +121,6 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		sysPackInfoPanel.setBackground(Color.white);
 		sysPackInfoPanel.addHyperlinkClickListener(this);
 
-		//Font font = new Font("helvitica", Font.BOLD, 15);
-		JLabel label = new JLabel();
-		Font font = label.getFont();
-
-		// create some css from the label's font
-		StringBuilder style = new StringBuilder("#basic-info, #perm-group {");
-		style.append("font-family:" + font.getFamily() + ";");
-		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-		style.append("font-size:" + font.getSize() + "pt;}");
-		style.append("#basic-info a {text-decoration:none; color:black;}");
-		style.append("#perm-group a {text-decoration:none; color:#"+Integer.toHexString(label.getBackground().getRGB() & 0xFFFFFF)+";}");
-		style.append(".danger-perm {text-decoration:none; color:red;}");
-		style.append("#about {");
-		style.append("font-family:" + font.getFamily() + ";");
-		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-		style.append("font-size:" + font.getSize() + "pt;}");
-		style.append("#about a {text-decoration:none;}");
-		style.append("#div-button { background-color: #e7e7e7; border: none; color: white; margin:1px; padding: 5px; text-align: center; text-decoration: none; display: inline-block;");
-		style.append("font-family:" + font.getFamily() + ";");
-		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-		style.append("font-size:" + font.getSize() + "pt;}");
-		style.append("#div-button a {text-decoration:none; color:black;}");
-
-		infoPanel.addStyleRule(style.toString());
-		sysPackInfoPanel.addStyleRule(style.toString());
-
 		dumpsysTextArea = new JTextArea();
 		dumpsysTextArea.setEditable(false);
 
@@ -173,16 +150,6 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		return button;
 	}
 
-	private void alignTabbedPanel(boolean hasSysPackPanel) {
-		tabbedPane.removeAll();
-		tabbedPane.addTab(Resource.STR_TAB_PACAKGE_INFO.getString(), null, infoPanel, null);
-		if(hasSysPackPanel) {
-			tabbedPane.addTab(Resource.STR_TAB_SYS_PACAKGE_INFO.getString(), null, sysPackInfoPanel, null);
-		}
-		tabbedPane.addTab(Resource.STR_TAB_DUMPSYS.getString(), null, new JScrollPane(dumpsysTextArea), null);
-		tabbedPane.addTab(Resource.STR_TAB_SIGNATURES.getString(), null, new JScrollPane(signatureTextArea), null);
-	}
-
 	public void setPackageInfo(PackageInfo info) {
 		packageInfo = info;
 
@@ -191,16 +158,16 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 
 		txtApkPath.setText(info.getApkPath());
 
-		infoPanel.setBody(getSummaryText(info, false));
+		setPacakgeData(info, false);
 		if(hasSysPack) {
-			sysPackInfoPanel.setBody(getSummaryText(info, true));
+			setPacakgeData(info, true);
 		}
 
 		setDumpsysText(info.getDumpsys());
 
 		String publicKey = null;
 		String sig = info.getSignature();
-		if(sig != null && !sig.isEmpty() 
+		if(sig != null && !sig.isEmpty()
 				&& !sig.startsWith("Permission denied")) {
 			SignatureReport sr = new SignatureReport(new Signature[] {new Signature(sig)});
 			publicKey = sr.toString();
@@ -211,18 +178,79 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		signatureTextArea.setCaretPosition(0);
 	}
 
-	private String getSummaryText(PackageInfo info, boolean isSystemPackage)
-	{
-		//String appName = "App Name";
-		String infoBlock = !isSystemPackage ? "Packages" : "Hidden system packages";
-		String suffix = isSystemPackage ? "@system" : "@active";
+	private void alignTabbedPanel(boolean hasSysPackPanel) {
+		tabbedPane.removeAll();
+		tabbedPane.addTab(Resource.STR_TAB_PACAKGE_INFO.getString(), null, infoPanel, null);
+		if(hasSysPackPanel) {
+			tabbedPane.addTab(Resource.STR_TAB_SYS_PACAKGE_INFO.getString(), null, sysPackInfoPanel, null);
+		}
+		tabbedPane.addTab(Resource.STR_TAB_DUMPSYS.getString(), null, new JScrollPane(dumpsysTextArea), null);
+		tabbedPane.addTab(Resource.STR_TAB_SIGNATURES.getString(), null, new JScrollPane(signatureTextArea), null);
+	}
 
+	private void setPacakgeData(PackageInfo info, boolean isSystemPackage)
+	{
+		JHtmlEditorPane panel = !isSystemPackage ? infoPanel : sysPackInfoPanel;
+		panel.setText(Resource.RAW_PACKAGE_INFO_LAYOUT_HTML.getString());
+
+		String infoBlock = !isSystemPackage ? "Packages" : "Hidden system packages";
 		String apkPath = !isSystemPackage ? info.getApkPath() : info.getHiddenSystemPackageValue("codePath");
 
+		if(!isSystemPackage) {
+			this.apkPath = apkPath;
+		} else {
+			this.hiddenApkPath = apkPath;
+		}
+
+		setPackageName(panel, info.packageName);
+		setVersion(panel, info.getValue(infoBlock, "versionName"), info.getValue(infoBlock, "versionCode"));
+		setSdkVersion(panel, info.getValue(infoBlock, "minSdk"), info.getValue(infoBlock, "targetSdk"), info.getValue(infoBlock, "maxSdk"));
+		setFileSize(panel, info.device, apkPath);
+		setFeatures(panel, info, isSystemPackage);
+		setInstaller(panel, info.getValue(infoBlock, "installerPackageName"), info.getValue(infoBlock, "timeStamp"), infoBlock);
+		setPluginSearcher(panel);
+	}
+
+	private void setPackageName(JHtmlEditorPane panel, String packageName) {
+		panel.setOuterHTMLById("package", packageName);
+	}
+
+	private void setVersion(JHtmlEditorPane panel, String versionName, String versionCode) {
+		if(versionName == null) versionName = "";
+		StringBuilder text = new StringBuilder("Ver. ").append(versionName)
+				.append(" / ").append((versionCode != null ? versionCode : "0"));
+		StringBuilder descripton = new StringBuilder("VersionName : ").append(versionName).append("\n")
+				.append("VersionCode : ").append((versionCode != null ? versionCode : "Unspecified"));
+		String versionDesc = descripton.toString();
+
+		panel.setInnerHTMLById("version", makeHyperEvent(panel, "app-version", text.toString(), versionDesc, versionDesc));
+	}
+
+	private void setSdkVersion(JHtmlEditorPane panel, String minSdkVersion, String targetSdkVersion, String maxSdkVersion) {
+		StringBuilder sdkVersion = new StringBuilder();
+		if(minSdkVersion != null) {
+			sdkVersion.append(", ")
+				.append(makeHyperEvent(panel, "min-sdk-info", minSdkVersion +" (Min)", "Min SDK version", minSdkVersion));
+		}
+		if(targetSdkVersion != null) {
+			sdkVersion.append(", ")
+				.append(makeHyperEvent(panel, "target-sdk-info", targetSdkVersion + " (Target)", "Targer SDK version", targetSdkVersion));
+		}
+		if(maxSdkVersion != null) {
+			sdkVersion.append(", ")
+				.append(makeHyperEvent(panel, "max-sdk-info", maxSdkVersion + " (Max)", "Max SDK version", maxSdkVersion));
+		}
+		if(sdkVersion.length() == 0) {
+			sdkVersion.append(", Unspecified");
+		}
+		panel.setOuterHTMLById("sdk-version", sdkVersion.substring(2));
+	}
+
+	private void setFileSize(JHtmlEditorPane panel, IDevice device, String apkPath) {
 		long apkSize = 0;
 		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
 		try {
-			info.device.executeShellCommand("ls -l " + apkPath, outputReceiver);
+			device.executeShellCommand("ls -l " + apkPath, outputReceiver);
 		} catch (TimeoutException | ShellCommandUnresponsiveException | IOException e) {
 			e.printStackTrace();
 		} catch (AdbCommandRejectedException e1) {
@@ -241,117 +269,78 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 				}
 			}
 		}
-		if(!isSystemPackage) {
-			this.apkPath = apkPath;
-		} else {
-			this.hiddenApkPath = apkPath;
-		}
+		String text = FileUtil.getFileSize(apkSize, FSStyle.FULL);
+		//String description = "MD5: " + FileUtil.getMessageDigest(apkFile, "MD5");
+		panel.setInnerHTMLById("file-size", makeHyperEvent(panel, "file-checksum", text, text, apkPath));
+	}
 
-		String versionName = info.getValue(infoBlock, "versionName");
-		String versionCode = info.getValue(infoBlock, "versionCode");
-
-		String temp = null;
-		String sdkVersion = "";
-		temp = info.getValue(infoBlock, "minSdk");
-		if(temp != null) {
-			sdkVersion += makeHyperLink("@event", temp +" (Min)", "Min SDK version", "minSdk" + suffix, null);
-		}
-		temp = info.getValue(infoBlock, "targetSdk");
-		if(temp != null) {
-			if(!sdkVersion.isEmpty()) {
-				sdkVersion += ", ";
-			}
-			sdkVersion += makeHyperLink("@event", temp + " (Target)", "Targer SDK version", "targetSdk" + suffix, null);
-		}
-		temp = info.getValue(infoBlock, "maxSdk");
-		if(temp != null) {
-			if(!sdkVersion.isEmpty()) {
-				sdkVersion += ", ";
-			}
-			sdkVersion += makeHyperLink("@event", temp + " (Max)", "Max SDK version", "maxSdk" + suffix, null);
-		}
-		if(sdkVersion.isEmpty()) {
-			sdkVersion += "Unspecified";
-		}
-
-		//String feature = "LAUNCHER, FLAGS<br/>";
-
-		StringBuilder feature = new StringBuilder();
+	private void setFeatures(JHtmlEditorPane panel, PackageInfo info, boolean isSystemPackage) {
+		StringBuilder feature = new StringBuilder("[" + Resource.STR_FEATURE_LAB.getString() + "] ");
+		String infoBlock = !isSystemPackage ? "Packages" : "Hidden system packages";
 
 		int state = -1;
 		String value = info.getValue(infoBlock, "enabled");
 		if(value != null && value.matches("\\d+")) {
-			state = Integer.parseInt(value);			
+			state = Integer.parseInt(value);
 		}
 		if(state < 0 || state > 1) {
 			feature.append("<font style=\"color:#ED7E31; font-weight:bold\">");
-			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_DISABLED_PACK_LAB.getString(), Resource.STR_FEATURE_DISABLED_PACK_DESC.getString(), "feature-disabled-pack" + suffix, null));
+			feature.append(makeHyperEvent(panel, "feature-disabled-pack", Resource.STR_FEATURE_DISABLED_PACK_LAB.getString(), Resource.STR_FEATURE_DISABLED_PACK_DESC.getString(), infoBlock));
 			feature.append("</font>, ");
 		}
 
 		if(isSystemPackage) {
-			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_HIDDEN_SYS_PACK_LAB.getString(), Resource.STR_FEATURE_HIDDEN_SYS_PACK_DESC.getString(), "feature-hidden-pack" + suffix, null));
+			feature.append(makeHyperEvent(panel, "feature-hidden-pack", Resource.STR_FEATURE_HIDDEN_SYS_PACK_LAB.getString(), Resource.STR_FEATURE_HIDDEN_SYS_PACK_DESC.getString(), infoBlock));
 		} else if(info.hasLauncher()) {
-			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_LAUNCHER_LAB.getString(), Resource.STR_FEATURE_LAUNCHER_DESC.getString(), "feature-launcher" + suffix, null));
+			feature.append(makeHyperEvent(panel, "feature-launcher", Resource.STR_FEATURE_LAUNCHER_LAB.getString(), Resource.STR_FEATURE_LAUNCHER_DESC.getString(), infoBlock));
 		} else {
-			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_HIDDEN_LAB.getString(), Resource.STR_FEATURE_HIDDEN_DESC.getString(), "feature-hidden" + suffix, null));
+			feature.append(makeHyperEvent(panel, "feature-hidden", Resource.STR_FEATURE_HIDDEN_LAB.getString(), Resource.STR_FEATURE_HIDDEN_DESC.getString(), infoBlock));
 		}
-		feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_FLAG_LAB.getString(), Resource.STR_FEATURE_FLAG_DESC.getString(), "feature-flags" + suffix, null));
+		feature.append(", " + makeHyperEvent(panel, "feature-flags", Resource.STR_FEATURE_FLAG_LAB.getString(), Resource.STR_FEATURE_FLAG_DESC.getString(), infoBlock));
 
-		String installer = info.getValue(infoBlock, "installerPackageName");
-		if(installer == null || installer.isEmpty()) {
+		panel.setInnerHTMLById("features", feature.toString());
+	}
+
+	private void setInstaller(JHtmlEditorPane panel, String installer, String timestamp, String infoBlock) {
+		StringBuilder installerInfo = new StringBuilder("[" + Resource.STR_FEATURE_INSTALLER_LAB.getString() + "] ");
+		if(installer == null || installer.isEmpty())
 			installer = "N/A";
-		}
-		installer += ", " + info.getValue(infoBlock, "timeStamp");
-		installer = makeHyperLink("@event", installer, "TimeStamp", "feature-timeStamp" + suffix, null);
+		installer += ", " + timestamp;
+		installerInfo.append(makeHyperEvent(panel, "feature-timeStamp", installer, "TimeStamp", infoBlock));
 
-		StringBuilder strTabInfo = new StringBuilder("");
-		strTabInfo.append("<table>");
-		strTabInfo.append("  <tr>");
-		strTabInfo.append("    <td height=100>");
-		strTabInfo.append("      <div id=\"basic-info\">");
-		//strTabInfo.append("        <font style=\"font-size:20px; color:#548235; font-weight:bold\">");
-		//strTabInfo.append("          " + appName);
-		//strTabInfo.append("        </font><br/>");
-		strTabInfo.append("        <font style=\"font-size:15px; color:#4472C4\">");
-		strTabInfo.append("          [" + info.packageName +"]");
-		strTabInfo.append("        </font><br/>");
-		strTabInfo.append("        <font style=\"font-size:15px; color:#ED7E31\">");
-		strTabInfo.append("          " + makeHyperLink("@event", "Ver. " + versionName +" / " + versionCode, "VersionName : " + versionName + "\n" + "VersionCode : " + versionCode, "app-version" + suffix, null));
-		strTabInfo.append("        </font><br/>");
-		strTabInfo.append("        <br/>");
-		strTabInfo.append("        <font style=\"font-size:12px\">");
-		strTabInfo.append("          @SDK Ver. " + sdkVersion + "<br/>");
-		strTabInfo.append("          " + FileUtil.getFileSize(apkSize, FSStyle.FULL));
-		strTabInfo.append("        </font>");
-		strTabInfo.append("        <br/><br/>");
-		strTabInfo.append("        <font style=\"font-size:12px\">");
-		strTabInfo.append("          [" + Resource.STR_FEATURE_LAB.getString() + "] ");
-		strTabInfo.append("          " + feature.toString() + "<br/>");
-		strTabInfo.append("          [" + Resource.STR_FEATURE_INSTALLER_LAB.getString() + "] ");
-		strTabInfo.append("          " + installer);
-		strTabInfo.append("        </font><br/>");
-		strTabInfo.append("      </div>");
-		strTabInfo.append("    </td>");
-		strTabInfo.append("  </tr>");
-		strTabInfo.append("</table>");
-		strTabInfo.append("<div id=\"perm-group\" style=\"text-align:left; width:300px; padding-top:5px; border-top:1px; border-left:0px; border-right:0px; border-bottom:0px; border-style:solid;\">");
-		strTabInfo.append("  <font style=\"font-size:12px;color:black;\">");
-		/*
-		if(allPermissionsList != null && !allPermissionsList.isEmpty()) {
-			strTabInfo.append("    [" + Resource.STR_BASIC_PERMISSIONS.getString() + "] - ");
-			strTabInfo.append("    " + makeHyperLink("@event","<u>" + Resource.STR_BASIC_PERMLAB_DISPLAY.getString() + "</u>",Resource.STR_BASIC_PERMDESC_DISPLAY.getString(),"display-list", null));
+		panel.setInnerHTMLById("installer", installerInfo.toString());
+	}
+
+	private void setPluginSearcher(JHtmlEditorPane panel) {
+		String packageSearchers = "";
+		//String appLabelSearchers = "";
+		if((boolean)Resource.PROP_VISIBLE_TO_BASIC.getData()) {
+			IPackageSearcher[] searchers = PlugInManager.getPackageSearchers();
+			if(searchers.length > 0) {
+				String defaultSearchIcon = Resource.IMG_TOOLBAR_SEARCH.getPath();
+				for(IPackageSearcher searcher: searchers) {
+					if(!searcher.isVisibleToBasic()) continue;
+					URL icon = searcher.getIconURL();
+					String iconPath = icon != null ? icon.toString() : defaultSearchIcon;
+					String tag = makeHyperEvent(panel, "PLUGIN:"+searcher.hashCode(), String.format("<img src=\"%s\" width=\"16\" height=\"16\">", iconPath), null, searcher.getActionCommand());
+					switch(searcher.getSupportType() ) {
+					case IPackageSearcher.SEARCHER_TYPE_PACKAGE_NAME:
+						packageSearchers += tag;
+						break;
+					case IPackageSearcher.SEARCHER_TYPE_APP_NAME:
+						//appLabelSearchers += tag;
+						break;
+					};
+				}
+			}
+		}
+
+		//panel.insertElementLast("label", appLabelSearchers);
+		if(!packageSearchers.isEmpty()) {
+			panel.setOuterHTMLById("package-searcher", packageSearchers);
 		} else {
-			strTabInfo.append("    " + Resource.STR_LABEL_NO_PERMISSION.getString());
+			panel.removeElementById("package-searcher");
 		}
-		 */
-		strTabInfo.append("  </font><br/>");
-		strTabInfo.append("  <font style=\"font-size:5px\"><br/></font>");
-		//strTabInfo.append("  " + permGorupImg);
-		strTabInfo.append("</div>");
-		strTabInfo.append("<div height=10000 width=10000></div>");
-
-		return strTabInfo.toString();
 	}
 
 	private void setDumpsysText(String[] dumpsys) {
@@ -388,91 +377,10 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		dumpsysTextArea.setCaretPosition(0);
 	}
 
-	private String makeHyperLink(String href, String text, String title, String id, String style)
-	{
-		return JHtmlEditorPane.makeHyperLink(href, text, title, id, style);
-	}
-
-	private void showDialog(String content, String title, Dimension size, Icon icon)
-	{
-		MessageBoxPane.showTextAreaDialog(null, content, title, MessageBoxPane.INFORMATION_MESSAGE, icon, size);
-	}
-
-	public void showFeatureInfo(String id)
-	{
-		String feature = null;
-
-		String[] tmp = id.split("@");
-		String infoBlock = id.indexOf("@system") > -1 ? "Hidden system packages" : "Packages";
-
-		Dimension size = new Dimension(400, 100);
-
-		if("feature-hidden".equals(tmp[0])) {
-			feature = Resource.STR_FEATURE_HIDDEN_DESC.getString();
-		} else if("feature-launcher".equals(tmp[0])) {
-			feature = Resource.STR_FEATURE_LAUNCHER_DESC.getString();
-		} else if("feature-flags".equals(tmp[0])) {
-			StringBuilder sb = new StringBuilder();
-			String temp = packageInfo.getValue(infoBlock, "flags"); 
-			if(temp != null && !temp.isEmpty()) {
-				sb.append("flags: ");
-				sb.append(temp);
-			}
-			temp = packageInfo.getValue(infoBlock, "privateFlags"); 
-			if(temp != null && !temp.isEmpty()) {
-				sb.append("\nprivateFlags: ");
-				sb.append(temp);
-			}
-			temp = packageInfo.getValue(infoBlock, "pkgFlags"); 
-			if(temp != null && !temp.isEmpty()) {
-				sb.append("\npkgFlags: ");
-				sb.append(temp);
-			}
-			feature = sb.toString();
-		} else if("feature-timeStamp".equals(tmp[0])) {
-			StringBuilder sb = new StringBuilder();
-
-			String temp = packageInfo.getValue(infoBlock, "installerPackageName");
-			if(temp == null || temp.isEmpty()) {
-				temp = "N/A";
-			}
-			sb.append("Installer: ");
-			sb.append(temp);
-			sb.append("\n");
-			temp = packageInfo.getValue(infoBlock, "timeStamp");
-			if(temp != null && !temp.isEmpty()) {
-				sb.append("\ntimeStamp: ");
-				sb.append(temp);
-			}
-			temp = packageInfo.getValue(infoBlock, "firstInstallTime"); 
-			if(temp != null && !temp.isEmpty()) {
-				sb.append("\nfirstInstallTime: ");
-				sb.append(temp);
-			}
-			temp = packageInfo.getValue(infoBlock, "lastUpdateTime"); 
-			if(temp != null && !temp.isEmpty()) {
-				sb.append("\nlastUpdateTime: ");
-				sb.append(temp);
-			}
-			feature = sb.toString();
-		} else if("feature-disabled-pack".equals(tmp[0])) {
-			StringBuilder sb = new StringBuilder();
-			int state = -1;
-			String value = packageInfo.getValue(infoBlock, "enabled");
-			if(value != null && value.matches("\\d+")) {
-				state = Integer.parseInt(value);			
-			}
-			sb.append("EnableState: ");
-			sb.append(PackageInfo.getEnabledStateToString(state));
-			String caller = packageInfo.getValue(infoBlock, "lastDisabledCaller");
-			if(caller != null) {
-				sb.append("\n\nlastDisabledCaller: ");
-				sb.append(caller);
-			}
-			feature = sb.toString();
-		}
-
-		showDialog(feature, "Feature info", size, null);
+	private String makeHyperEvent(JHtmlEditorPane panel, String id, String text, String title, Object userData) {
+		String style = null;
+		if(id != null && (id.startsWith("PLUGIN:") || id.contains("-perm-setting"))) style = "color:white";
+		return panel.makeHyperLink("@event", text, title, id, style, userData);
 	}
 
 	@Override
@@ -729,28 +637,115 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 	@Override
 	public void hyperlinkClick(HyperlinkClickEvent evt) {
 		String id = evt.getId();
-		if(id.startsWith("feature-")) {
-			showFeatureInfo(id);
-			return;
-		}
-
-		String[] tmp = id.split("@");
-		String infoBlock = id.indexOf("@system") > -1 ? "Hidden system packages" : "Packages";
-
-		if(tmp[0].endsWith("Sdk")){
-			String sdkVer = packageInfo.getValue(infoBlock, tmp[0]);
-			SdkVersionInfoDlg sdkDlg = new SdkVersionInfoDlg(null, Resource.STR_SDK_INFO_FILE_PATH.getString(), Integer.parseInt(sdkVer));
+		switch(id) {
+		case "app-version":
+			String versionDesc = (String) evt.getUserData();
+			showPopupDialog(versionDesc, "App version info", new Dimension(300, 50), null);
+			break;
+		case "min-sdk-info": case "target-sdk-info": case "max-sdk-info":
+			int sdkVersion = Integer.parseInt((String)evt.getUserData());
+			SdkVersionInfoDlg sdkDlg = new SdkVersionInfoDlg(null, Resource.STR_SDK_INFO_FILE_PATH.getString(), sdkVersion);
 			sdkDlg.setLocationRelativeTo(this);
 			sdkDlg.setVisible(true);
-		} else if("app-version".equals(tmp[0])) {
-			int versionCode = 0;
-			String verCodeTmp = packageInfo.getValue(infoBlock, "versionCode");
-			if(tmp != null && verCodeTmp.matches("\\d+")) {
-				versionCode = Integer.parseInt(verCodeTmp);
+			break;
+		default:
+			if(id.startsWith("feature-")) {
+				showFeatureInfo(id, evt.getUserData());
+			} else if(id.startsWith("PLUGIN:")) {
+				IPlugIn plugin = PlugInManager.getPlugInByActionCommand((String)evt.getUserData());
+				if(plugin != null) {
+					plugin.launch();
+				}
+			} else {
+				Log.w("Unknown id " + id);
 			}
-			String ver = "versionName : " + packageInfo.getValue(infoBlock, "versionName") + "\n" + "versionCode : " + versionCode;
-			showDialog(ver, "App version info", new Dimension(300, 50), null);
+			break;
 		}
+	}
+
+	private void showFeatureInfo(String id, Object userData) {
+		String feature = null;
+		Dimension size = new Dimension(400, 100);
+		String infoBlock = (String) userData;
+		StringBuilder sb;
+		String temp;
+		switch(id) {
+		case "feature-hidden":
+			feature = Resource.STR_FEATURE_HIDDEN_DESC.getString();
+			break;
+		case "feature-launcher":
+			feature = Resource.STR_FEATURE_LAUNCHER_DESC.getString();
+			break;
+		case "feature-flags":
+			sb = new StringBuilder();
+			temp = packageInfo.getValue(infoBlock, "flags");
+			if(temp != null && !temp.isEmpty()) {
+				sb.append("flags: ");
+				sb.append(temp);
+			}
+			temp = packageInfo.getValue(infoBlock, "privateFlags");
+			if(temp != null && !temp.isEmpty()) {
+				sb.append("\nprivateFlags: ");
+				sb.append(temp);
+			}
+			temp = packageInfo.getValue(infoBlock, "pkgFlags");
+			if(temp != null && !temp.isEmpty()) {
+				sb.append("\npkgFlags: ");
+				sb.append(temp);
+			}
+			feature = sb.toString();
+			break;
+		case "feature-timeStamp":
+			sb = new StringBuilder();
+
+			temp = packageInfo.getValue(infoBlock, "installerPackageName");
+			if(temp == null || temp.isEmpty()) {
+				temp = "N/A";
+			}
+			sb.append("Installer: ");
+			sb.append(temp);
+			sb.append("\n");
+			temp = packageInfo.getValue(infoBlock, "timeStamp");
+			if(temp != null && !temp.isEmpty()) {
+				sb.append("\ntimeStamp: ");
+				sb.append(temp);
+			}
+			temp = packageInfo.getValue(infoBlock, "firstInstallTime");
+			if(temp != null && !temp.isEmpty()) {
+				sb.append("\nfirstInstallTime: ");
+				sb.append(temp);
+			}
+			temp = packageInfo.getValue(infoBlock, "lastUpdateTime");
+			if(temp != null && !temp.isEmpty()) {
+				sb.append("\nlastUpdateTime: ");
+				sb.append(temp);
+			}
+			feature = sb.toString();
+			break;
+		case "feature-disabled-pack":
+			sb = new StringBuilder();
+			int state = -1;
+			String value = packageInfo.getValue(infoBlock, "enabled");
+			if(value != null && value.matches("\\d+")) {
+				state = Integer.parseInt(value);
+			}
+			sb.append("EnableState: ");
+			sb.append(PackageInfo.getEnabledStateToString(state));
+			String caller = packageInfo.getValue(infoBlock, "lastDisabledCaller");
+			if(caller != null) {
+				sb.append("\n\nlastDisabledCaller: ");
+				sb.append(caller);
+			}
+			feature = sb.toString();
+			break;
+		}
+
+		showPopupDialog(feature, "Feature info", size, null);
+	}
+
+	private void showPopupDialog(String content, String title, Dimension size, Icon icon)
+	{
+		MessageBoxPane.showTextAreaDialog(null, content, title, MessageBoxPane.INFORMATION_MESSAGE, icon, size);
 	}
 
 	public void showDialog(Window owner) {
