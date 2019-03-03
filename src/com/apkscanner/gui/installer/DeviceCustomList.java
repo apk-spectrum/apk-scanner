@@ -366,7 +366,7 @@ public class DeviceCustomList extends JList<DeviceListData> {
 
 					if(temp.getState() != DeviceListData.STATUS_SETTING) return;
 
-					if(!temp.getOptionsBundle().isInstalled()) { 
+					if(!temp.getOptionsBundle().isInstalled()) {
 						//temp.showstate = DeviceListData.SHOW_INSTALL_OPTION;
 						Log.e("!getOptionsBundle().isInstalled()");
 						return;

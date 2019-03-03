@@ -58,9 +58,10 @@ public class ApkInstallWizard implements IDeviceChangeListener
 	public static final int STATUS_INIT = 0;
 	public static final int STATUS_APK_VERIFY = 1;
 	public static final int STATUS_WAIT_FOR_DEVICE = 2;
-	public static final int STATUS_SET_OPTIONS = 3;
-	public static final int STATUS_INSTALLING = 4;
-	public static final int STATUS_COMPLETED = 5;
+	public static final int STATUS_SIMPLE_OPTION = 3;
+	public static final int STATUS_SET_OPTIONS = 4;
+	public static final int STATUS_INSTALLING = 5;
+	public static final int STATUS_COMPLETED = 6;
 
 	public static final int STATUS_APK_VERTIFY_ERROR = 101;
 
@@ -73,6 +74,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 	private DefaultListModel<DeviceListData> deviceListModel;
 	private UIEventHandler uiEventHandler = new UIEventHandler();
 
+	private SimpleOptionPanel simpleOptionPanel;
 	private InstallOptionPanel installOptionPanel;
 	private PackageInfoPanel pacakgeInfoPanel;
 	private JLabel errorMessageLable;
@@ -197,7 +199,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 		AdbServerMonitor.startServerAndCreateBridgeAsync();
 
 		window.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
-		
+
 		Dimension minSize = new Dimension(600, 450);
 		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
 			WindowSizeMemorizer.resizeCompoent(window, minSize);
@@ -213,11 +215,13 @@ public class ApkInstallWizard implements IDeviceChangeListener
 		deviceList = new DeviceCustomList(uiEventHandler);
 		deviceListModel = (DefaultListModel<DeviceListData>) deviceList.getModel();
 
+		simpleOptionPanel = new SimpleOptionPanel(uiEventHandler);
 		installOptionPanel = new InstallOptionPanel();
 		pacakgeInfoPanel = new PackageInfoPanel();
 		errorMessageLable = new JLabel("Please Check this APK file!", SwingConstants.CENTER);
 		errorMessageLable.setFont(new Font("Serif", Font.PLAIN, 24));
 
+		contentPanel.add(simpleOptionPanel, ContentPanel.CONTENT_SIMPLE_OPTIONS);
 		contentPanel.add(installOptionPanel, ContentPanel.CONTENT_SET_OPTIONS);
 		contentPanel.add(pacakgeInfoPanel, ContentPanel.CONTENT_PACKAGE_INFO);
 		contentPanel.add(errorMessageLable, ContentPanel.CONTENT_VERIFY_ERROR);
@@ -257,6 +261,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 		controlPanel.setStatus(status);
 
 		switch(status) {
+		case STATUS_SIMPLE_OPTION:
 		case STATUS_SET_OPTIONS:
 		case STATUS_INSTALLING:
 		case STATUS_COMPLETED:
@@ -281,6 +286,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 		case STATUS_WAIT_FOR_DEVICE:
 			revaluationDeviceState(null);
 			break;
+		case STATUS_SIMPLE_OPTION:
 		case STATUS_SET_OPTIONS:
 			break;
 		case STATUS_INSTALLING:
@@ -322,6 +328,9 @@ public class ApkInstallWizard implements IDeviceChangeListener
 				changeState(STATUS_WAIT_FOR_DEVICE);
 				break;
 			case STATUS_WAIT_FOR_DEVICE:
+				changeState(STATUS_SIMPLE_OPTION);
+				break;
+			case STATUS_SIMPLE_OPTION:
 				changeState(STATUS_SET_OPTIONS);
 				break;
 			case STATUS_SET_OPTIONS:
@@ -374,6 +383,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 					errMessage = e.getMessage();
 				}
 				if(errMessage == null) {
+					simpleOptionPanel.setApkInfo(apkInfo);
 					installOptionPanel.setApkInfo(apkInfo);
 					next();
 				} else {
@@ -425,7 +435,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 					}
 					return data;
 				}
-	
+
 				@Override
 				protected void done() {
 					DeviceListData data = null;
@@ -535,9 +545,10 @@ public class ApkInstallWizard implements IDeviceChangeListener
 						deviceList.setSelectedIndex(0);
 					}
 					if(data != null && data.equals(deviceList.getSelectedValue())) {
+						simpleOptionPanel.setOptions(((DeviceListData) data).getOptionsBundle());
 						installOptionPanel.setOptions(((DeviceListData) data).getOptionsBundle());
 						if(((DeviceListData) data).getState() != DeviceListData.STATUS_CONNECTING_DEVICE) {
-							contentPanel.show(ContentPanel.CONTENT_SET_OPTIONS);
+							contentPanel.show(ContentPanel.CONTENT_SIMPLE_OPTIONS);
 						} else {
 							contentPanel.setLoadingMessage("Reading information of device...");
 							contentPanel.show(ContentPanel.CONTENT_LOADING);
@@ -580,14 +591,14 @@ public class ApkInstallWizard implements IDeviceChangeListener
 
 		IDevice[] devices = adb.getDevices();
 		if(devices == null || devices.length == 0) {
-			if(status == STATUS_SET_OPTIONS) {
+			if(status == STATUS_SET_OPTIONS || status == STATUS_SIMPLE_OPTION) {
 				changeState(STATUS_WAIT_FOR_DEVICE);
 			}
 			return;
 		}
 
 		if(status == STATUS_WAIT_FOR_DEVICE) {
-			changeState(STATUS_SET_OPTIONS);
+			changeState(STATUS_SIMPLE_OPTION);
 		}
 
 		if(device != null) {
@@ -654,8 +665,9 @@ public class ApkInstallWizard implements IDeviceChangeListener
 
 				switch(data.getState()) {
 				case DeviceListData.STATUS_SETTING:
+					simpleOptionPanel.setOptions(data.getOptionsBundle());
 					installOptionPanel.setOptions(data.getOptionsBundle());
-					contentPanel.show(ContentPanel.CONTENT_SET_OPTIONS);
+					contentPanel.show(ContentPanel.CONTENT_SIMPLE_OPTIONS);
 					break;
 				case DeviceListData.STATUS_CONNECTING_DEVICE:
 					contentPanel.show(ContentPanel.CONTENT_CONNECTING_DEVICE);
@@ -680,33 +692,41 @@ public class ApkInstallWizard implements IDeviceChangeListener
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			String actCommand = arg0.getActionCommand();
-			if(ControlPanel.CTR_ACT_CMD_NEXT.equals(actCommand)) {
+			String actCmd = arg0.getActionCommand();
+			if(actCmd == null || actCmd.isEmpty()) return;
+			switch(actCmd) {
+			case ControlPanel.CTR_ACT_CMD_NEXT:
 				next();
-			} else if(ControlPanel.CTR_ACT_CMD_PREVIOUS.equals(actCommand)) {
+				break;
+			case ControlPanel.CTR_ACT_CMD_PREVIOUS:
 				//previous();
-			} else if(ControlPanel.CTR_ACT_CMD_CANCEL.equals(actCommand) ||
-					ControlPanel.CTR_ACT_CMD_OK.equals(actCommand)) {
+				break;
+			case ControlPanel.CTR_ACT_CMD_CANCEL:
+			case ControlPanel.CTR_ACT_CMD_OK:
 				if(wizard instanceof JFrame &&
 						((JFrame)wizard).getDefaultCloseOperation() == JFrame.EXIT_ON_CLOSE) {
 					System.exit(0);
 				} else {
 					wizard.dispose();
 				}
-			} else if(ControlPanel.CTR_ACT_CMD_RESTART.equals(actCommand)) {
+				break;
+			case ControlPanel.CTR_ACT_CMD_RESTART:
 				changeState(STATUS_INIT);
-			} else if(ToggleButtonBar.ACT_CMD_BUILD_OPTTIONS.equals(actCommand)) {
+				break;
+			case ToggleButtonBar.ACT_CMD_BUILD_OPTTIONS:
 				if(arg0.getSource() instanceof DeviceListData) {
 					DeviceListData data = (DeviceListData) arg0.getSource();
+					simpleOptionPanel.setOptions(data.getOptionsBundle());
 					installOptionPanel.setOptions(data.getOptionsBundle());
 					if(data.getState() != DeviceListData.STATUS_CONNECTING_DEVICE) {
-						contentPanel.show(ContentPanel.CONTENT_SET_OPTIONS);
+						contentPanel.show(ContentPanel.CONTENT_SIMPLE_OPTIONS);
 					} else {
 						contentPanel.setLoadingMessage("Reading information of device...");
 						contentPanel.show(ContentPanel.CONTENT_LOADING);
 					}
 				}
-			} else if(ToggleButtonBar.ACT_CMD_PACKAGE_INFO.equals(actCommand)) {
+				break;
+			case ToggleButtonBar.ACT_CMD_PACKAGE_INFO:
 				if(arg0.getSource() instanceof DeviceListData) {
 					DeviceListData data = (DeviceListData) arg0.getSource();
 					if(data != null && data.getDevice() != null && apkInfo != null && apkInfo.packageName != null) {
@@ -719,6 +739,14 @@ public class ApkInstallWizard implements IDeviceChangeListener
 						Log.v("no have device or apk package");
 					}
 				}
+				break;
+			case SimpleOptionPanel.ACT_CMD_SIMPLE_INSTALL:
+			case SimpleOptionPanel.ACT_CMD_SIMPLE_PUSH:
+				changeState(STATUS_INSTALLING);
+				break;
+			case SimpleOptionPanel.ACT_CMD_SET_ADVANCED_OPT:
+				next();
+				break;
 			}
 		}
 

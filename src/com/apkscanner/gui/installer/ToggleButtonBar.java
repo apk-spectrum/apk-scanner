@@ -32,16 +32,16 @@ public class ToggleButtonBar extends JPanel {
     public static final int OPTION_PUSH = 2;
     public static final int OPTION_IMPOSSIBLE_INSTALL = 3;
     public static final int WAITING = 4;
-    
+
     public static final int INSTALLED = 0;
     public static final int NOT_INSTALLED = 1;
-    
+
 	public static final String ACT_CMD_PACKAGE_INFO = "BUTTON_TYPE_PACAKGE_INFO";
 	public static final String ACT_CMD_BUILD_OPTTIONS = "BUTTON_TYPE_INSTALL_INFO";
 
 	DeviceListData data;
 	int status;
-	private static final Color[] ColorSet = { new Color(0x50AF49), new Color(0xFF7400), new Color(0x5CD1E5), new Color(0x8b0000), new Color(0x555555)};
+	private static final Color[] ColorSet = { new Color(0x50AF49), new Color(0xFF7400), new Color(0x5CD1E5), new Color(0x8b0000), new Color(0x8b0000), new Color(0x555555)};
 
 	private String[] installtextSet = {Resource.STR_BTN_INSTALLED.getString(), Resource.STR_BTN_NOT_INSTALLED.getString(), "", "", Resource.STR_BTN_WAITING.getString()};
 	private String[] installOptiontextSet = {"Install", Resource.STR_BTN_NO_INSTALL.getString(),
@@ -158,9 +158,9 @@ public class ToggleButtonBar extends JPanel {
 
 	@Override
 	synchronized protected void paintComponent ( Graphics g ) {
-		
+
 		OptionsBundle bundle = data.getOptionsBundle();
-		
+
 		int optType = WAITING;
 		if(data.getState() != DeviceListData.STATUS_CONNECTING_DEVICE) {
 			if(bundle.isImpossibleInstallOptions()) {
@@ -175,7 +175,7 @@ public class ToggleButtonBar extends JPanel {
 		}
 		btnoption.setBackground(ColorSet[optType]);
 		btnoption.setText(installOptiontextSet[optType]);
-		
+
 		int installedType = bundle.isInstalled() ? 0 : 1;
 
 		switch(data.getState()) {

@@ -338,7 +338,7 @@ public class InstallProgressPanel extends JPanel
 		panelDummy.setPreferredSize(new Dimension(STEPWIDTH, STEPHEIGHT));
 		panelDummy.add(progressStepPanel, BorderLayout.CENTER);
 		panelDummy.add(textStepPanel, BorderLayout.SOUTH);
-		
+
 		add(panelDummy);
 
 		// set status
@@ -421,6 +421,7 @@ public class InstallProgressPanel extends JPanel
 		case ApkInstallWizard.STATUS_WAIT_FOR_DEVICE:
 			newStatus = 2;
 			break;
+		case ApkInstallWizard.STATUS_SIMPLE_OPTION:
 		case ApkInstallWizard.STATUS_SET_OPTIONS:
 			newStatus = 3;
 			break;
