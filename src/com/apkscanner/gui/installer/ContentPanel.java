@@ -1,4 +1,4 @@
-package com.apkscanner.gui.install;
+package com.apkscanner.gui.installer;
 
 import java.awt.CardLayout;
 import java.awt.Font;
@@ -12,7 +12,6 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.util.ImagePanel;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;

@@ -1,4 +1,4 @@
-package com.apkscanner.gui.dialog;
+package com.apkscanner.gui.installer;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -43,13 +43,7 @@ import com.apkscanner.core.installer.OptionsBundle.IOptionsChangedListener;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.CompactApkInfo;
-import com.apkscanner.gui.install.ContentPanel;
-import com.apkscanner.gui.install.ControlPanel;
-import com.apkscanner.gui.install.DeviceCustomList;
-import com.apkscanner.gui.install.DeviceListData;
-import com.apkscanner.gui.install.InstallOptionPanel;
-import com.apkscanner.gui.install.InstallProgressPanel;
-import com.apkscanner.gui.install.ToggleButtonBar;
+import com.apkscanner.gui.dialog.PackageInfoPanel;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
@@ -210,7 +204,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 		} else {
 			window.setSize(minSize);
 		}
-		window.setMinimumSize(minSize);
+		//window.setMinimumSize(minSize);
 		WindowSizeMemorizer.registeComponent(window);
 
 		progressPanel = new InstallProgressPanel();

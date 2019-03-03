@@ -1,4 +1,4 @@
-package com.apkscanner.gui.install;
+package com.apkscanner.gui.installer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -9,7 +9,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
-import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 

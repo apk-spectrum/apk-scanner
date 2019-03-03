@@ -1,4 +1,4 @@
-package com.apkscanner.gui.install;
+package com.apkscanner.gui.installer;
 
 import java.awt.Color;
 

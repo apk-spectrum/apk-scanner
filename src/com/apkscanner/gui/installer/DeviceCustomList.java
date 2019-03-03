@@ -1,4 +1,4 @@
-package com.apkscanner.gui.install;
+package com.apkscanner.gui.installer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -39,7 +39,6 @@ import javax.swing.event.ListSelectionListener;
 
 import com.android.ddmlib.IDevice;
 import com.apkscanner.core.installer.OptionsBundle;
-import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 

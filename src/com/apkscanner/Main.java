@@ -15,7 +15,7 @@ import org.apache.commons.cli.ParseException;
 import com.apkscanner.core.scanner.AaptScanner;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.MainUI;
-import com.apkscanner.gui.dialog.ApkInstallWizard;
+import com.apkscanner.gui.installer.ApkInstallWizard;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.FileUtil;
