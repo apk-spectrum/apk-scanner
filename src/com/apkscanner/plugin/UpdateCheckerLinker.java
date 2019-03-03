@@ -85,8 +85,10 @@ public class UpdateCheckerLinker extends AbstractUpdateChecker
 
 			String buffer = null;
 			StringBuffer sb = new StringBuffer();
+			boolean flag = false;
 			while ((buffer = br.readLine()) != null) {
-				sb.append(buffer);
+				sb.append(flag ? "\n": "").append(buffer);
+				flag = true;
 			}
 			jsonData = sb.toString();
 			Log.v(jsonData);
