@@ -92,15 +92,15 @@ public class MainUI extends JFrame
 	private static final long serialVersionUID = -623259597186280485L;
 
 	private ApkScanner apkScanner;
-	private ToolbarManagement toolbarManager = new ToolbarManagement();
+	private ToolbarManagement toolbarManager;
 
 	private TabbedPanel tabbedPanel;
 	private ToolBar toolBar;
 	private MessageBoxPool messagePool;
 	private DropTargetChooser dropTargetChooser;
 
-	public MainUI(ApkScanner scanner)
-	{
+	public MainUI(ApkScanner scanner) {
+		toolbarManager = new ToolbarManagement();
 		messagePool = new MessageBoxPool(this);
 
 		initialize();
@@ -114,8 +114,7 @@ public class MainUI extends JFrame
 		loadPlugIn();
 	}
 
-	public void initialize()
-	{
+	public void initialize() {
 		Log.i("UI Init start");
 
 		Log.i("initialize() setLookAndFeel");
@@ -351,8 +350,7 @@ public class MainUI extends JFrame
 		}
 
 		@Override
-		public void onStateChanged(final Status status)
-		{
+		public void onStateChanged(final Status status) {
 			//Log.v("onStateChanged() "+ status);
 			if(status == Status.STANBY) {
 				Log.v("STANBY: does not UI update");
@@ -401,8 +399,7 @@ public class MainUI extends JFrame
 
 	class UIEventHandler implements ActionListener, KeyEventDispatcher, WindowListener, DropTargetChooser.Listener
 	{
-		private void evtOpenApkFile(boolean newWindow)
-		{
+		private void evtOpenApkFile(boolean newWindow) {
 			final String apkFilePath = ApkFileChooser.openApkFilePath(MainUI.this);
 			if(apkFilePath == null) {
 				Log.v("Not choose apk file");
@@ -415,8 +412,7 @@ public class MainUI extends JFrame
 				tabbedPanel.setLodingLabel();
 
 				Thread thread = new Thread(new Runnable() {
-					public void run()
-					{
+					public void run() {
 						apkScanner.clear(false);
 						apkScanner.openApk(apkFilePath);
 					}
@@ -428,8 +424,7 @@ public class MainUI extends JFrame
 			}
 		}
 
-		private void evtOpenPackage(boolean newWindow)
-		{
+		private void evtOpenPackage(boolean newWindow) {
 			PackageTreeDlg Dlg = new PackageTreeDlg(MainUI.this);
 			if(Dlg.showTreeDlg() != PackageTreeDlg.APPROVE_OPTION) {
 				Log.v("Not choose package");
@@ -448,8 +443,7 @@ public class MainUI extends JFrame
 				dropTargetChooser.setExternalToolsVisible(false);
 
 				Thread thread = new Thread(new Runnable() {
-					public void run()
-					{
+					public void run() {
 						apkScanner.clear(false);
 						apkScanner.openPackage(device, apkFilePath, frameworkRes);
 					}
@@ -461,8 +455,7 @@ public class MainUI extends JFrame
 			}
 		}
 
-		private void evtInstallApk(boolean checkPackage)
-		{
+		private void evtInstallApk(boolean checkPackage) {
 			ApkInfo apkInfo = apkScanner.getApkInfo();
 			if(apkInfo == null) {
 				Log.e("evtInstallApk() apkInfo is null");
@@ -477,8 +470,7 @@ public class MainUI extends JFrame
 			toolBar.setEnabledAt(ButtonSet.INSTALL, true);
 		}
 
-		private void evtShowManifest(boolean saveAs)
-		{
+		private void evtShowManifest(boolean saveAs) {
 			ApkInfo apkInfo = apkScanner.getApkInfo();
 			if(apkInfo == null) {
 				Log.e("evtShowManifest() apkInfo is null");
@@ -524,8 +516,7 @@ public class MainUI extends JFrame
 			}
 		}
 
-		private void evtShowExplorer(ActionEvent e)
-		{
+		private void evtShowExplorer(ActionEvent e) {
 			int actionType = 0;
 			if(e == null || ToolBar.ButtonSet.EXPLORER.matchActionEvent(e)) {
 				String data = (String)Resource.PROP_DEFAULT_EXPLORER.getData();
@@ -559,8 +550,7 @@ public class MainUI extends JFrame
 			}
 		}
 
-		private void evtOpenDecompiler(ActionEvent e)
-		{
+		private void evtOpenDecompiler(ActionEvent e) {
 			ApkInfo apkInfo = apkScanner.getApkInfo();
 			if(apkInfo == null || apkInfo.filePath == null
 					|| !new File(apkInfo.filePath).exists()) {
@@ -632,15 +622,9 @@ public class MainUI extends JFrame
 			dialog.setVisible(true);
 
 			Log.d(dialog.sName);
-
-			// (?i) <- "찾을 문자열"에 대소문자 구분을 없애고
-			// .*   <- 문자열이 행의 어디에 있든지 찾을 수 있게
-
-			//String findStr = "(?i).*" + dialog.sName + ".*";
 		}
 
-		private void evtSettings()
-		{
+		private void evtSettings() {
 			SettingDlg dlg = new SettingDlg(MainUI.this);
 			dlg.setVisible(true);
 
@@ -658,8 +642,7 @@ public class MainUI extends JFrame
 			toolbarManager.setEnabled((boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData());
 		}
 
-		private void evtLaunchApp(final AWTEvent e)
-		{
+		private void evtLaunchApp(final AWTEvent e) {
 			final IDevice[] devices = getInstalledDevice();
 			if(devices == null || devices.length == 0) {
 				Log.i("No such device of a package installed.");
@@ -669,8 +652,7 @@ public class MainUI extends JFrame
 
 			Thread thread = new Thread(new Runnable() {
 				private String errMsg = null;
-				public void run()
-				{
+				public void run() {
 					boolean isShiftPressed = false;
 					int actionType = 0;
 					if(e instanceof ActionEvent) {
@@ -806,8 +788,7 @@ public class MainUI extends JFrame
 			}
 
 			Thread thread = new Thread(new Runnable() {
-				public void run()
-				{
+				public void run() {
 					for(IDevice device: devices) {
 						Log.v("uninstall apk on " + device.getSerialNumber());
 
@@ -867,8 +848,7 @@ public class MainUI extends JFrame
 			}
 
 			Thread thread = new Thread(new Runnable() {
-				public void run()
-				{
+				public void run() {
 					for(IDevice device: devices) {
 						Log.v("clear data on " + device.getSerialNumber());
 
@@ -910,8 +890,7 @@ public class MainUI extends JFrame
 			wizard.setVisible(true);
 		}
 
-		private void evtShowInstalledPackageInfo()
-		{
+		private void evtShowInstalledPackageInfo() {
 			final IDevice[] devices = getInstalledDevice();
 			if(devices == null || devices.length == 0) {
 				Log.i("No such device of a package installed.");
@@ -920,8 +899,7 @@ public class MainUI extends JFrame
 			}
 
 			Thread thread = new Thread(new Runnable() {
-				public void run()
-				{
+				public void run() {
 					for(IDevice device: devices) {
 						final PackageInfo info = getPackageInfo(device);
 						EventQueue.invokeLater(new Runnable() {
@@ -976,8 +954,7 @@ public class MainUI extends JFrame
 			return PackageManager.getPackageInfo(device, apkScanner.getApkInfo().manifest.packageName);
 		}
 
-		private void setLanguage(String lang)
-		{
+		private void setLanguage(String lang) {
 			ApkInfo apkInfo = apkScanner.getApkInfo();
 			Resource.setLanguage(lang);
 			String title = Resource.STR_APP_NAME.getString();
@@ -1000,8 +977,7 @@ public class MainUI extends JFrame
 
 		// ToolBar event processing
 		@Override
-		public void actionPerformed(ActionEvent e)
-		{
+		public void actionPerformed(ActionEvent e) {
 			if (ToolBar.ButtonSet.OPEN.matchActionEvent(e) || ToolBar.MenuItemSet.OPEN_APK.matchActionEvent(e)) {
 				evtOpenApkFile((e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
 			} else if(ToolBar.ButtonSet.MANIFEST.matchActionEvent(e)) {
@@ -1067,8 +1043,7 @@ public class MainUI extends JFrame
 
 		// Shortcut key event processing
 		@Override
-		public boolean dispatchKeyEvent(KeyEvent e)
-		{
+		public boolean dispatchKeyEvent(KeyEvent e) {
 			if(!isFocused()) return false;
 			if (e.getID() == KeyEvent.KEY_RELEASED) {
 				if(e.getModifiers() == KeyEvent.CTRL_MASK) {
@@ -1107,8 +1082,7 @@ public class MainUI extends JFrame
 
 		// Drag & Drop event processing
 		@Override
-		public void filesDropped(Object dropedTarget, final File[] files)
-		{
+		public void filesDropped(Object dropedTarget, final File[] files) {
 			final String[] filePaths = new String[files.length];
 			for(int i = 0; i< files.length; i++) {
 				try {
@@ -1147,8 +1121,7 @@ public class MainUI extends JFrame
 			}
 		}
 
-		private void finished()
-		{
+		private void finished() {
 			Log.v("finished()");
 
 			setVisible(false);
@@ -1200,7 +1173,7 @@ public class MainUI extends JFrame
 					if(enable) {
 						AdbServerMonitor.startServerAndCreateBridgeAsync();
 						registerEventListeners();
-						//applyToobarPolicy();
+						applyToobarPolicy();
 					} else {
 						unregisterEventListeners();
 						EventQueue.invokeLater(new Runnable() {
@@ -1216,8 +1189,7 @@ public class MainUI extends JFrame
 		public void setEnabled(final boolean enable, final int delayMs) {
 	        new Timer().schedule(new TimerTask() {
 	            @Override
-	            public void run()
-	            {
+	            public void run() {
 	            	Log.v("isDispatchThread " + EventQueue.isDispatchThread());
 	                setEnabled(enable);
 	            }
