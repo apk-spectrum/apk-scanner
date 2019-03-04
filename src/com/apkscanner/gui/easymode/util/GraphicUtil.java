@@ -81,7 +81,8 @@ public class GraphicUtil {
 	    int margin = 5;
 	    int boxWidth; // = width - 2*margin
 	    int boxHeight; // = height - 2*margin;
-	    
+	    final Color backgroundcolor= new Color(0.25f,0.25f,0.25f, 0.7f);
+	    final Color foregroundcolor= new Color(0.99f,0.99f,0.99f, 0.99f);
 		Graphics2D graphics2D = (Graphics2D) page;
 		graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
@@ -97,12 +98,12 @@ public class GraphicUtil {
 	        boxHeight = getStringHeight(page,f,text) + margin *2;
 
 	 // paint the box
-	    page.setColor(new Color(64,64,64));
+	    page.setColor(backgroundcolor);
 	    page.fillRoundRect(boxLeft - boxWidth /2,boxTop,boxWidth,boxHeight, 20,20);
 	    
 	    
 	    // center a string in the box with a font-size of 32 pixels
-	    page.setColor(Color.WHITE);
+	    page.setColor(foregroundcolor);
 	    f = new Font("SansSerif",Font.BOLD,fontsize);
 	    page.setFont(f);
 	    drawCenteredString(page,text,boxLeft - boxWidth/2,boxTop,boxWidth,boxHeight);

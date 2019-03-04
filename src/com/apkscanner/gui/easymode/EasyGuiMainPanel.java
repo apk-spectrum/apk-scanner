@@ -92,7 +92,7 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 		
 		JPanel iconhoverpanel = new JPanel(new BorderLayout());
 		iconhoverpanel.add(toolbarpanel, BorderLayout.NORTH);		
-		iconhoverpanel.setBounds(0, 0, width-60, 100);
+		iconhoverpanel.setBounds(0, 0, width, 100);
 		iconhoverpanel.setOpaque(false);
 		//iconhoverpanel.setBackground(Color.CYAN);
 		
@@ -113,7 +113,7 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 		//contentspanel.add(permissionPanel, BorderLayout.PAGE_END);
 		JPanel dummy = new JPanel(new BorderLayout());
 		dummy.setPreferredSize(new Dimension(0, 40));
-		dummy.add(new EasyButton(Resource.IMG_EASY_WINDOW_SPREAD.getImageIcon(35,35)), BorderLayout.EAST);
+		//dummy.add(new EasyButton(Resource.IMG_EASY_WINDOW_SPREAD.getImageIcon(35,35)), BorderLayout.EAST);
 		contentspanel.add(dummy, BorderLayout.PAGE_START);
 		contentspanel.setBounds(0, 0, width, height);
 		

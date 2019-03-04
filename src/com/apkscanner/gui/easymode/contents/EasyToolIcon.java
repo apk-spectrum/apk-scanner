@@ -140,16 +140,14 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 	
 	public void paintComponent(Graphics g) {
 		//super.paint(g);
-		//super.paintComponent(g);
+		super.paintComponent(g);
 		//Log.d("paint EasyTool");
 		Graphics2D graphics2D = (Graphics2D) g;
 	   // Set anti-alias for text
 		graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.9f));
 		graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);		
 		graphics2D.drawImage(image, 0, 0, width, height, this);
-		
-
-		
+				
 //		Log.d(getBounds().toString());
 		
 //	      BufferedImage myImage = ImageUtils.imageToBufferedImage(image);
@@ -189,10 +187,10 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 		this.eventlistner = easyToolListner;
 	}
 
-	public void setText(String str) {
+	public void setEasyText(String str) {
 		text = str;
 	}
-	public String getText() {
+	public String getEasyText() {
 		return text;
 	}
 }

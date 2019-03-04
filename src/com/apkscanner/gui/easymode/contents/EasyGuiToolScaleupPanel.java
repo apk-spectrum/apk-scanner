@@ -54,6 +54,7 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener, E
 	boolean drawtext = false;
 	Point  tooliconlocation = new Point();
 	String iconlabel = "";
+	String defaultApk = "Detail APK";
 	
 	
 	public EasyGuiToolScaleupPanel(int height, int width) {
@@ -70,10 +71,10 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener, E
 		setBackground(toobarPanelcolor);
 		setPreferredSize(new Dimension(0, HEIGHT));
 		setOpaque(false);
-		//setLayout(new BorderLayout());
+		setLayout(new BorderLayout());
 		//setshadowlen(SHADOW_SIZE);
 		//setshadowlen(1);
-		
+		setBorder(BorderFactory.createEmptyBorder(5 , 0 , 0 , 15));
 		
 		toolbartemppanel = new JPanel();
 		FlowLayout flowlayout = new FlowLayout(FlowLayout.CENTER,0, 0);
@@ -81,9 +82,17 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener, E
 		toolbartemppanel.setLayout(flowlayout);
 		((FlowLayout) toolbartemppanel.getLayout()).setAlignOnBaseline(true);
 		toolbartemppanel.setOpaque(false);
-		add(toolbartemppanel);		
+		add(toolbartemppanel, BorderLayout.CENTER);
 		
 		
+		
+		final EasyToolIcon btn = new EasyToolIcon(Resource.IMG_EASY_WINDOW_SPREAD.getImageIcon());
+		btn.setScalesize(60);
+		
+		btn.setAction(defaultApk, this);
+		btn.setEasyToolListner(this);
+		btn.setEasyText(defaultApk);		
+		add(btn, BorderLayout.EAST);
 		
 		//toolbartemppanel.setAlignmentY(Component.TOP_ALIGNMENT);
 
@@ -125,7 +134,7 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener, E
 			btn.setScalesize(60);
 			btn.setAction(entry.getTitle(), this);
 			btn.setEasyToolListner(this);
-			btn.setText(entry.getTitle());
+			btn.setEasyText(entry.getTitle());
 			//btn.setOpaque(true);
 			//btn.setactionCommand(entry.getTitle());
 			
@@ -154,12 +163,21 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener, E
 		if(e.getSource().equals(btnsetting)) {
 			JFrame window = (JFrame) SwingUtilities.getWindowAncestor(this);
 			EasyToolbarSettingDnDDlg dlg = new EasyToolbarSettingDnDDlg(window, true);
-			if(dlg.ischange()) {				
+			if(dlg.ischange()) {
 				maketoolbutton();
 			}
 		} else {
 			Log.d(e.getActionCommand());
-			ToolEntryManager.excuteEntry(e.getActionCommand());
+			
+			final String str = e.getActionCommand();
+			Thread thread = new Thread(new Runnable() {
+				public void run()
+				{
+					ToolEntryManager.excuteEntry(str);
+				}
+			});
+			thread.setPriority(Thread.NORM_PRIORITY);
+			thread.start();			
 		}		
 	}
 
@@ -171,7 +189,7 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener, E
 			drawtext = true;
 			tooliconlocation.x = toolbartemppanel.getLocation().x + easyiconlabel.getLocation().x + (int)(easyiconlabel.getBounds().getWidth()/2);
 			//Log.d(easyiconlabel.getBounds() + "");
-			iconlabel = easyiconlabel.getText();
+			iconlabel = easyiconlabel.getEasyText();
 			updateUI();
 			break;
 		case EasyToolListner.STATE_ENTER:
