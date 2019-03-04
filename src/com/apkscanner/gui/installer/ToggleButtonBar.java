@@ -41,7 +41,7 @@ public class ToggleButtonBar extends JPanel {
 
 	DeviceListData data;
 	int status;
-	private static final Color[] ColorSet = { new Color(0x50AF49), new Color(0xFF7400), new Color(0x5CD1E5), new Color(0x8b0000), new Color(0x8b0000), new Color(0x555555)};
+	private static final Color[] ColorSet = { new Color(0x50AF49), new Color(0xFF7400), new Color(0x5CD1E5), new Color(0x8b0000), new Color(0x8b0000), new Color(0x8b0000), new Color(0x555555)};
 
 	private String[] installtextSet = {Resource.STR_BTN_INSTALLED.getString(), Resource.STR_BTN_NOT_INSTALLED.getString(), "", "", Resource.STR_BTN_WAITING.getString()};
 	private String[] installOptiontextSet = {"Install", Resource.STR_BTN_NO_INSTALL.getString(),

@@ -548,7 +548,8 @@ public class ApkInstallWizard implements IDeviceChangeListener
 						simpleOptionPanel.setOptions(((DeviceListData) data).getOptionsBundle());
 						installOptionPanel.setOptions(((DeviceListData) data).getOptionsBundle());
 						if(((DeviceListData) data).getState() != DeviceListData.STATUS_CONNECTING_DEVICE) {
-							contentPanel.show(ContentPanel.CONTENT_SIMPLE_OPTIONS);
+							contentPanel.show(status == STATUS_SIMPLE_OPTION ?
+									ContentPanel.CONTENT_SIMPLE_OPTIONS : ContentPanel.CONTENT_SET_OPTIONS);
 						} else {
 							contentPanel.setLoadingMessage("Reading information of device...");
 							contentPanel.show(ContentPanel.CONTENT_LOADING);
@@ -667,7 +668,8 @@ public class ApkInstallWizard implements IDeviceChangeListener
 				case DeviceListData.STATUS_SETTING:
 					simpleOptionPanel.setOptions(data.getOptionsBundle());
 					installOptionPanel.setOptions(data.getOptionsBundle());
-					contentPanel.show(ContentPanel.CONTENT_SIMPLE_OPTIONS);
+					contentPanel.show(status == STATUS_SIMPLE_OPTION ?
+							ContentPanel.CONTENT_SIMPLE_OPTIONS : ContentPanel.CONTENT_SET_OPTIONS);
 					break;
 				case DeviceListData.STATUS_CONNECTING_DEVICE:
 					contentPanel.show(ContentPanel.CONTENT_CONNECTING_DEVICE);
@@ -719,7 +721,8 @@ public class ApkInstallWizard implements IDeviceChangeListener
 					simpleOptionPanel.setOptions(data.getOptionsBundle());
 					installOptionPanel.setOptions(data.getOptionsBundle());
 					if(data.getState() != DeviceListData.STATUS_CONNECTING_DEVICE) {
-						contentPanel.show(ContentPanel.CONTENT_SIMPLE_OPTIONS);
+						contentPanel.show(status == STATUS_SIMPLE_OPTION ?
+								ContentPanel.CONTENT_SIMPLE_OPTIONS : ContentPanel.CONTENT_SET_OPTIONS);
 					} else {
 						contentPanel.setLoadingMessage("Reading information of device...");
 						contentPanel.show(ContentPanel.CONTENT_LOADING);
@@ -745,7 +748,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 				changeState(STATUS_INSTALLING);
 				break;
 			case SimpleOptionPanel.ACT_CMD_SET_ADVANCED_OPT:
-				next();
+				changeState(STATUS_SET_OPTIONS);
 				break;
 			}
 		}
