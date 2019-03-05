@@ -371,11 +371,11 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			particularFeatures.append(", ");
 			particularFeatures.append(makeHyperEvent("feature-system-user-id", Resource.STR_FEATURE_SYSTEM_UID_LAB.getString(), Resource.STR_FEATURE_SYSTEM_UID_DESC.getString()));
 		}
-		if(isPlatformSign) {
+		if(isPlatformSign && apkInfoPanel.getElementById("feature-platform-sign") == null) {
 			particularFeatures.append(", ");
 			particularFeatures.append(makeHyperEvent("feature-platform-sign", Resource.STR_FEATURE_PLATFORM_SIGN_LAB.getString(), Resource.STR_FEATURE_PLATFORM_SIGN_DESC.getString(), certSummary));
 		}
-		if(isSamsungSign) {
+		if(isSamsungSign && apkInfoPanel.getElementById("feature-samsung-sign") == null) {
 			particularFeatures.append(", ");
 			particularFeatures.append(makeHyperEvent("feature-samsung-sign", Resource.STR_FEATURE_SAMSUNG_SIGN_LAB.getString(), Resource.STR_FEATURE_SAMSUNG_SIGN_DESC.getString(), certSummary));
 		}
