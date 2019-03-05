@@ -34,7 +34,7 @@ public class ControlPanel extends JPanel
 		super(new BorderLayout());
 
 		btnNext = getButton(Resource.STR_BTN_INSTALL.getString(), CTR_ACT_CMD_NEXT, listener);
-		btnPre = getButton("Previous", CTR_ACT_CMD_PREVIOUS, listener);
+		btnPre = getButton(Resource.STR_BTN_PREVIOUS.getString(), CTR_ACT_CMD_PREVIOUS, listener);
 		btnOk = getButton(Resource.STR_BTN_CLOSE.getString(), CTR_ACT_CMD_OK, listener);
 		btnCancel = getButton(Resource.STR_BTN_CANCEL.getString(), CTR_ACT_CMD_CANCEL, listener);
 		btnShowLog = getButton("Show Log", CTR_ACT_CMD_SHOW_LOG, listener);
@@ -91,7 +91,7 @@ public class ControlPanel extends JPanel
 		case ApkInstallWizard.STATUS_SIMPLE_OPTION:
 			setVisibleButtons(false, false, false, true, false, false); break;
 		case ApkInstallWizard.STATUS_SET_OPTIONS:
-			setVisibleButtons(true, false, false, true, false, false); break;
+			setVisibleButtons(true, true, false, true, false, false); break;
 		case ApkInstallWizard.STATUS_INSTALLING:
 			setVisibleButtons(false, false, false, false, false, false); break;
 		case ApkInstallWizard.STATUS_COMPLETED:

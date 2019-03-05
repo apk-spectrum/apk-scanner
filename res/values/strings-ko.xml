@@ -61,7 +61,8 @@
 	<string name="btn_forward_lock">Forward lock application(-l)</string>
 	<string name="btn_allow_test_package">테스트 페키지 허용(-t)</string>
 	<string name="btn_reboot_after_pushed">완료 후 재부팅</string>
-	
+	<string name="btn_previous">이전</string>
+
 	<string name="btn_installed">설치됨</string>
     <string name="btn_not_installed">설치 안됨</string>
     <string name="btn_waiting">처리중..</string>

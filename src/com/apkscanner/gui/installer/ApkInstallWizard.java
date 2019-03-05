@@ -319,30 +319,11 @@ public class ApkInstallWizard implements IDeviceChangeListener
 	}
 
 	private void next() {
-		synchronized(this) {
-			switch(status) {
-			case STATUS_INIT:
-				changeState(STATUS_APK_VERIFY);
-				break;
-			case STATUS_APK_VERIFY:
-				changeState(STATUS_WAIT_FOR_DEVICE);
-				break;
-			case STATUS_WAIT_FOR_DEVICE:
-				changeState(STATUS_SIMPLE_OPTION);
-				break;
-			case STATUS_SIMPLE_OPTION:
-				changeState(STATUS_SET_OPTIONS);
-				break;
-			case STATUS_SET_OPTIONS:
-				changeState(STATUS_INSTALLING);
-				break;
-			case STATUS_INSTALLING:
-				changeState(STATUS_COMPLETED);
-				break;
-			default:
-				break;
-			}
-		}
+		changeState(status + 1);
+	}
+
+	private void previous() {
+		changeState(status - 1);
 	}
 
 	private void verifyApk() {
@@ -701,7 +682,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 				next();
 				break;
 			case ControlPanel.CTR_ACT_CMD_PREVIOUS:
-				//previous();
+				previous();
 				break;
 			case ControlPanel.CTR_ACT_CMD_CANCEL:
 			case ControlPanel.CTR_ACT_CMD_OK:
