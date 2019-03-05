@@ -145,7 +145,7 @@ public class DeviceCustomList extends JList<DeviceListData> {
 					IDevice device = value.getDevice();
 					OptionsBundle bundle = value.getOptionsBundle();
 
-					if(!device.isOnline() || bundle.isNoInstallOptions() || bundle.isImpossibleInstallOptions()
+					if(!device.isOnline() || bundle.isNotInstallOptions() || bundle.isImpossibleInstallOptions()
 							|| value.getState() == DeviceListData.STATUS_FAILED) {
 						isinstallIcon.setIcon(Resource.IMG_INSTALL_BLOCK.getImageIcon());
 					} else if(bundle.isInstallOptions() || bundle.isPushOptions()) {

@@ -48,7 +48,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 
 	public static final String ACT_CMD_INSTALL = Integer.toString(OptionsBundle.FLAG_OPT_INSTALL);
 	public static final String ACT_CMD_PUSH = Integer.toString(OptionsBundle.FLAG_OPT_PUSH);
-	public static final String ACT_CMD_NO_INSTALL = Integer.toString(OptionsBundle.FLAG_OPT_NO_INSTALL);
+	public static final String ACT_CMD_NO_INSTALL = Integer.toString(OptionsBundle.FLAG_OPT_NOT_INSTALL);
 
 	public static final String ACT_OPT_LAUNCH = Integer.toString(OptionsBundle.FLAG_OPT_INSTALL_LAUNCH);
 	public static final String ACT_OPT_REPLACE = Integer.toString(OptionsBundle.FLAG_OPT_INSTALL_REPLACE);
@@ -120,8 +120,8 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 						} else {
 							bundle.set(OptionsBundle.FLAG_OPT_PUSH);
 						}
-					} else if(!bundle.isBlockedFlags(OptionsBundle.FLAG_OPT_NO_INSTALL)) {
-						bundle.set(OptionsBundle.FLAG_OPT_NO_INSTALL);
+					} else if(!bundle.isBlockedFlags(OptionsBundle.FLAG_OPT_NOT_INSTALL)) {
+						bundle.set(OptionsBundle.FLAG_OPT_NOT_INSTALL);
 					}
 				}
 
@@ -141,7 +141,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 						messageId = MessageBoxPool.MSG_BLOCKED_NO_ROOT; break;
 					case OptionsBundle.BLOACKED_PUSH_CAUSE_HAS_SU_BUT_NO_ROOT:
 						messageId = MessageBoxPool.MSG_BLOCKED_NO_ROOT; break;
-					case OptionsBundle.BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_NOT_SYSTEM:
+					case OptionsBundle.BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_AND_NO_SYSTEM:
 						messageId = MessageBoxPool.MSG_BLOCKED_MISMATCH_SIGNED_NOT_SYSTEM; break;
 					case OptionsBundle.BLOACKED_CAUSE_UNKNWON: default:
 						messageId = MessageBoxPool.MSG_BLOCKED_UNKNOWN; break;

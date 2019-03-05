@@ -169,7 +169,7 @@ public class ToggleButtonBar extends JPanel {
 				optType =  OPTION_PUSH;
 			} else if(bundle.isInstallOptions()) {
 				optType =  OPTION_INSTALL;
-			} else if(bundle.isNoInstallOptions()) {
+			} else if(bundle.isNotInstallOptions()) {
 				optType =  OPTION_NO_INSTALL;
 			}
 		}

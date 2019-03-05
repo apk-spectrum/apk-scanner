@@ -8,7 +8,7 @@ import com.apkscanner.util.Log;
 public class OptionsBundle {
 	public static final int FLAG_OPT_INSTALL	 	= 0x010000;
 	public static final int FLAG_OPT_PUSH			= 0x020000;
-	public static final int FLAG_OPT_NO_INSTALL		= 0x030000;
+	public static final int FLAG_OPT_NOT_INSTALL	= 0x030000;
 
 	public static final int FLAG_OPT_INSTALL_FORWARD_LOCK	= 0x0001;
 	public static final int FLAG_OPT_INSTALL_REPLACE		= 0x0002;
@@ -32,19 +32,19 @@ public class OptionsBundle {
 
 	public static final int FLAG_OPT_HAS_EXTRADATA_MASK = FLAG_OPT_INSTALL_LAUNCH | FLAG_OPT_PUSH_LIB32 | FLAG_OPT_PUSH_LIB64 | FLAG_OPT_PUSH_SYSTEM | FLAG_OPT_PUSH_PRIVAPP | FLAG_OPT_PUSH_OTHER;
 
-	public static final int NO_BLOACKED = 0x0000;
+	public static final int NOT_BLOCKED = 0x0000;
 	public static final int BLOACKED_COMMON_CAUSE_UNSIGNED = 0x0001;
 	public static final int BLOACKED_COMMON_CAUSE_UNSUPPORTED_SDK_LEVEL = 0x0002;
 	public static final int BLOACKED_INSTALL_CAUSE_MISMATCH_SIGNED = 0x0004;
 	public static final int BLOACKED_PUSH_CAUSE_NO_ROOT = 0x0008;
 	public static final int BLOACKED_PUSH_CAUSE_HAS_SU_BUT_NO_ROOT = 0x0010;
-	public static final int BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_NOT_SYSTEM = 0x0020;
+	public static final int BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_AND_NO_SYSTEM = 0x0020;
 	public static final int BLOACKED_LAUNCH_CAUSE_NO_SUCH_ACTIVITY = 0x0040;
 	public static final int BLOACKED_CAUSE_UNKNWON = 0x8000;
 
 	public static final int BLOACKED_INSTALL_MASK = BLOACKED_COMMON_CAUSE_UNSIGNED | BLOACKED_COMMON_CAUSE_UNSUPPORTED_SDK_LEVEL | BLOACKED_INSTALL_CAUSE_MISMATCH_SIGNED;
 	public static final int BLOACKED_PUSH_MASK = BLOACKED_COMMON_CAUSE_UNSIGNED | BLOACKED_COMMON_CAUSE_UNSUPPORTED_SDK_LEVEL
-			| BLOACKED_PUSH_CAUSE_NO_ROOT | BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_NOT_SYSTEM;
+			| BLOACKED_PUSH_CAUSE_NO_ROOT | BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_AND_NO_SYSTEM;
 
 	int flag;
 	int blockedFlags;
@@ -81,20 +81,20 @@ public class OptionsBundle {
 		if(this.equals(bundle)) {
 			return true;
 		}
-		if(bundle.isNoInstallOptions()) {
-			flag |= FLAG_OPT_NO_INSTALL;
+		if(bundle.isNotInstallOptions()) {
+			flag |= FLAG_OPT_NOT_INSTALL;
 		} else if(bundle.isInstallOptions()) {
 			if((blockedFlags & FLAG_OPT_INSTALL) != 0) {
 				return false;
 			}
-			flag &= ~(FLAG_OPT_NO_INSTALL | FLAG_OPT_INSTALL_MASK);
+			flag &= ~(FLAG_OPT_NOT_INSTALL | FLAG_OPT_INSTALL_MASK);
 			flag |= FLAG_OPT_INSTALL | (bundle.flag & FLAG_OPT_INSTALL_MASK);
 			launchActivity = bundle.launchActivity;
 		} else if(bundle.isPushOptions()) {
 			if((blockedFlags & FLAG_OPT_PUSH) != 0) {
 				return false;
 			}
-			flag &= ~(FLAG_OPT_NO_INSTALL | FLAG_OPT_PUSH_MASK);
+			flag &= ~(FLAG_OPT_NOT_INSTALL | FLAG_OPT_PUSH_MASK);
 			flag |= FLAG_OPT_PUSH | (bundle.flag & FLAG_OPT_PUSH_MASK);
 			targetSystemPath = bundle.targetSystemPath;
 			lib32Arch = bundle.lib32Arch;
@@ -130,7 +130,7 @@ public class OptionsBundle {
 	}
 
 	public synchronized int getBlockedCause(int flag) {
-		int cause = NO_BLOACKED;
+		int cause = NOT_BLOCKED;
 		switch(flag) {
 		case FLAG_OPT_INSTALL:
 		case FLAG_OPT_PUSH:
@@ -148,8 +148,8 @@ public class OptionsBundle {
 				} else if(flag == FLAG_OPT_PUSH) {
 					if((blockedCause & BLOACKED_PUSH_CAUSE_NO_ROOT) == BLOACKED_PUSH_CAUSE_NO_ROOT) {
 						cause = BLOACKED_PUSH_CAUSE_NO_ROOT;
-					} else if ((blockedCause & BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_NOT_SYSTEM) == BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_NOT_SYSTEM) {
-						cause = BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_NOT_SYSTEM;
+					} else if ((blockedCause & BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_AND_NO_SYSTEM) == BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_AND_NO_SYSTEM) {
+						cause = BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_AND_NO_SYSTEM;
 					} else if ((blockedCause & BLOACKED_PUSH_CAUSE_HAS_SU_BUT_NO_ROOT) == BLOACKED_PUSH_CAUSE_HAS_SU_BUT_NO_ROOT) {
 						cause = BLOACKED_PUSH_CAUSE_HAS_SU_BUT_NO_ROOT;
 					} else {
@@ -173,7 +173,7 @@ public class OptionsBundle {
 	}
 
 	public synchronized void set(int flag, String... extraData) {
-		if((flag & blockedFlags) != 0 && flag != FLAG_OPT_NO_INSTALL) {
+		if((flag & blockedFlags) != 0 && flag != FLAG_OPT_NOT_INSTALL) {
 			Log.w(String.format("flag(0x%x) is blocked(0x%x)", flag, blockedFlags));
 			flag &= ~blockedFlags;
 		}
@@ -223,8 +223,8 @@ public class OptionsBundle {
 		switch(flag) {
 		case FLAG_OPT_INSTALL:
 		case FLAG_OPT_PUSH:
-		case FLAG_OPT_NO_INSTALL:
-			this.flag &= ~FLAG_OPT_NO_INSTALL;
+		case FLAG_OPT_NOT_INSTALL:
+			this.flag &= ~FLAG_OPT_NOT_INSTALL;
 			break;
 		case FLAG_OPT_PUSH_SYSTEM:
 		case FLAG_OPT_PUSH_PRIVAPP:
@@ -280,12 +280,12 @@ public class OptionsBundle {
 		return (flag & (FLAG_OPT_INSTALL | FLAG_OPT_PUSH)) == FLAG_OPT_PUSH;
 	}
 
-	public synchronized boolean isNoInstallOptions() {
-		return (flag & FLAG_OPT_NO_INSTALL) == FLAG_OPT_NO_INSTALL;
+	public synchronized boolean isNotInstallOptions() {
+		return (flag & FLAG_OPT_NOT_INSTALL) == FLAG_OPT_NOT_INSTALL;
 	}
 
 	public synchronized boolean isImpossibleInstallOptions() {
-		return (flag & FLAG_OPT_NO_INSTALL) == 0;
+		return (flag & FLAG_OPT_NOT_INSTALL) == 0;
 	}
 
 	public synchronized boolean isSetForwardLock() {

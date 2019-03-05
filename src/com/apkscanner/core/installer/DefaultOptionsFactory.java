@@ -78,7 +78,7 @@ public class DefaultOptionsFactory {
 								blockedCause |= OptionsBundle.BLOACKED_INSTALL_CAUSE_MISMATCH_SIGNED;
 								if(!packageInfo.isSystemApp()) {
 									blockedFlags |= OptionsBundle.FLAG_OPT_PUSH;
-									blockedCause |= OptionsBundle.BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_NOT_SYSTEM;
+									blockedCause |= OptionsBundle.BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_AND_NO_SYSTEM;
 								}
 							}
 						}

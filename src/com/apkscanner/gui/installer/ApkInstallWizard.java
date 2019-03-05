@@ -485,7 +485,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 								}
 							case OptionsBundle.FLAG_OPT_INSTALL:
 							case OptionsBundle.FLAG_OPT_PUSH:
-							case OptionsBundle.FLAG_OPT_NO_INSTALL:
+							case OptionsBundle.FLAG_OPT_NOT_INSTALL:
 								deviceList.repaint();
 								break;
 							default:
