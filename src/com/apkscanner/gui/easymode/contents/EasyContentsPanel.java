@@ -218,10 +218,9 @@ public class EasyContentsPanel extends JPanel{
 		return null;
     }
 	public void setContents(ApkInfo apkInfo) {
-
 		appicon.setIcon(getAppicon(apkInfo));
-
-		apptitlelabel.setText(apkInfo.manifest.application.labels[0].name);
+		apptitlelabel.setText((apkInfo.manifest.application.labels !=null)?apkInfo.manifest.application.labels[0].name : "");
+		
 		EasyGuiMain.UIstarttime =System.currentTimeMillis();		
 		//package
 		packagepanel.setText(apkInfo.manifest.packageName);		

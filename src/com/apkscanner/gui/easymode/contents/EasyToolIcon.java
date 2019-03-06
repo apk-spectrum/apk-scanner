@@ -36,7 +36,7 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 	int width,height;
 	float scalex = 1.0f;
 	boolean entered = false;
-	Image image;
+	BufferedImage bufferimage;
 	String ActionCmd = "";
 	ActionListener actionlistener = null;
 	AnimationTask task;
@@ -81,7 +81,8 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 
 	public EasyToolIcon(ImageIcon imageIcon, int size) {
 		// TODO Auto-generated constructor stub
-		image = imageIcon.getImage();
+		bufferimage = ImageUtils.imageToBufferedImage(imageIcon.getImage());
+		
 		width = height = originalsize = size;
 		this.addMouseListener(this);
 		setPreferredSize(new Dimension(width, height));		
@@ -166,15 +167,15 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 	
 	public void paintComponent(Graphics g) {
 		//super.paint(g);
-		super.paintComponent(g);
-		Log.d("width : " + this.getEasyText() + ":" + width);
+		//super.paintComponent(g);
+		
 		Graphics2D graphics2D = (Graphics2D) g;
 	   // Set anti-alias for text
 		
 		
 		graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.9f));
 		graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);		
-		graphics2D.drawImage(image, 0, 0, width, height, this);
+		graphics2D.drawImage(bufferimage, 0, 0, width, height, this);
 				
 //		Log.d(getBounds().toString());
 		
