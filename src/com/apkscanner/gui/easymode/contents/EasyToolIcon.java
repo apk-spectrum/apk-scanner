@@ -40,7 +40,9 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 	String ActionCmd = "";
 	ActionListener actionlistener = null;
 	AnimationTask task;
-	final int ANIMATION_VALUE = 3;
+	final int ANIMATION_UP_VALUE = 3;
+	final int ANIMATION_DOWN_VALUE = -3;
+	
 	final int ANIMATION_DELAY =5;
 	EasyToolListner eventlistner;
 	String text ="";
@@ -56,32 +58,31 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 	
 	class AnimationTask extends TimerTask {
     	EasyToolIcon toolicon;
-    	public AnimationTask(EasyToolIcon easyToolIcon) {
+    	int Animatevalue;
+    	public AnimationTask(EasyToolIcon easyToolIcon, int value) {
 			// TODO Auto-generated constructor stub
     		this.toolicon = easyToolIcon;
+    		this.Animatevalue = value;
 		}
     	
         public void run() {
-    		width+=ANIMATION_VALUE;
-    		height+=ANIMATION_VALUE;    		
+    		width+=Animatevalue;
+    		height+=Animatevalue;    		
     		setPreferredSize(new Dimension(width, height));
         	//repaint();
         	updateUI();
-        	if(hoversize <= width) {
-        		if(eventlistner != null)eventlistner.changestate(EasyToolListner.STATE_ANIMATION_END, toolicon );
+        	if(hoversize <= width || width <=originalsize) {
+        		if(eventlistner != null && entered)eventlistner.changestate(EasyToolListner.STATE_ANIMATION_END, toolicon );
         		this.cancel();
         	}
         }
       };
 	
-	public EasyToolIcon(int size) {
-		originalsize = size;
-	}
 
-	public EasyToolIcon(ImageIcon imageIcon) {
+	public EasyToolIcon(ImageIcon imageIcon, int size) {
 		// TODO Auto-generated constructor stub
 		image = imageIcon.getImage();
-		width = height = originalsize = 30;
+		width = height = originalsize = size;
 		this.addMouseListener(this);
 		setPreferredSize(new Dimension(width, height));		
 	}
@@ -98,25 +99,42 @@ public class EasyToolIcon extends JLabel implements MouseListener{
     
 	@Override
 	public void mouseClicked(MouseEvent e) {		
+		
+	}
+	@Override
+	public void mousePressed(MouseEvent e) {
+//		width = height = hoversize - 5;
+//    	setPreferredSize(new Dimension(width, height));
+//    	updateUI();
+	}
+	@Override
+	public void mouseReleased(MouseEvent e) {
 		mouseExited(e);
+		
+    	//task = new AnimationTask(this, ANIMATION_DOWN_VALUE);
+        //  Timer timer = new Timer();
+        //  timer.schedule(task, 0, ANIMATION_DELAY);
+		//if(task != null) task.cancel();
+		//width = height = originalsize;
+		setPreferredSize(new Dimension(originalsize, originalsize));
+		updateUI();
+		
 		actionlistener.actionPerformed(new ActionEvent(this, 0, this.ActionCmd));
 	}
 	@Override
-	public void mousePressed(MouseEvent e) {}
-	@Override
-	public void mouseReleased(MouseEvent e) {}
-	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
+		//Log.d("mouse Enter");
     	entered = true;
     	eventlistner.changestate(EasyToolListner.STATE_ENTER, this);
-//		width = height = (int)(originalsize * scalex*2);
+		
 //		setPreferredSize(new Dimension(width, height));
 //    	repaint();
-//    	updateUI();   	
+//    	updateUI();  	
+    	width = height = originalsize;
     	
-    	final int scalefrom = (int)(originalsize * scalex*2);
-        task = new AnimationTask(this);
+    	if(task != null) task.cancel();
+        task = new AnimationTask(this, ANIMATION_UP_VALUE);
           Timer timer = new Timer();
           timer.schedule(task, 0, ANIMATION_DELAY);
 	}
@@ -124,13 +142,21 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 	@Override
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
+		//Log.d("mouse Exit");
     	entered = false;
-    	eventlistner.changestate(EasyToolListner.STATE_EXIT, this);
-    	task.cancel();
-    	width = height = (int)(originalsize * scalex);
-    	setPreferredSize(new Dimension(width, height));
-    	//repaint();
-    	updateUI();
+    	eventlistner.changestate(EasyToolListner.STATE_EXIT, this);    	
+    	
+    	width = height = hoversize;
+    	if(task != null) task.cancel();    	
+    	task = new AnimationTask(this, ANIMATION_DOWN_VALUE);
+        Timer timer = new Timer();
+        timer.schedule(task, 0, ANIMATION_DELAY);
+    	
+//    	task.cancel();
+//    	width = height = (int)(originalsize * scalex);
+//    	setPreferredSize(new Dimension(width, height));
+//    	//repaint();
+//    	updateUI();
 	}
 
 	public void setScalesize(int i) {
@@ -141,9 +167,11 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 	public void paintComponent(Graphics g) {
 		//super.paint(g);
 		super.paintComponent(g);
-		//Log.d("paint EasyTool");
+		Log.d("width : " + this.getEasyText() + ":" + width);
 		Graphics2D graphics2D = (Graphics2D) g;
 	   // Set anti-alias for text
+		
+		
 		graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.9f));
 		graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);		
 		graphics2D.drawImage(image, 0, 0, width, height, this);

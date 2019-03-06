@@ -86,7 +86,7 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener, E
 		
 		
 		
-		final EasyToolIcon btn = new EasyToolIcon(Resource.IMG_EASY_WINDOW_SPREAD.getImageIcon());
+		final EasyToolIcon btn = new EasyToolIcon(Resource.IMG_EASY_WINDOW_SPREAD.getImageIcon(), 30);
 		btn.setScalesize(60);
 		
 		btn.setAction(defaultApk, this);
@@ -126,7 +126,7 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener, E
 		for(ToolEntry entry : entrys) {
 			//EasyFlatLabel btn = new EasyFlatLabel(ImageUtils.getScaledImage(entry.getImage(),BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(149, 179, 215));
 			//Image img = ImageUtils.getScaledImage(entry.getImage(),BUTTON_IMG_SIZE,BUTTON_IMG_SIZE);
-			final EasyToolIcon btn = new EasyToolIcon(entry.getImage());
+			final EasyToolIcon btn = new EasyToolIcon(entry.getImage(), 30);
 			//btn.setAlignmentY(Component.TOP_ALIGNMENT);
 			//btn.setText("aaaa");
 			//btn.setIcon(new ImageIcon(img));
