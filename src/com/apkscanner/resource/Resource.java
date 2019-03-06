@@ -621,6 +621,7 @@ public enum Resource
 
 	RAW_ABUOT_HTML				(Type.RAW, "/values/AboutLayout.html"),
 	RAW_BASIC_INFO_LAYOUT_HTML	(Type.RAW, "/values/BasicInfoLayout.html"),
+	RAW_PACKAGE_INFO_LAYOUT_HTML(Type.RAW, "/values/PackageInfoLayout.html"),
 
 	ETC_SETTINGS_FILE			(Type.ETC, "settings.txt");
 

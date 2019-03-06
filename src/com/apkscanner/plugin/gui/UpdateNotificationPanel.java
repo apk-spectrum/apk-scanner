@@ -249,7 +249,8 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 		if(evt.getValueIsAdjusting()) return;
 		int row = updateList.getSelectedRow();
 		if(row > -1) {
-			updateDescription.setText(""+updateListModel.getValueAt(row, 5));
+			updateDescription.setText((String) updateListModel.getValueAt(row, 5));
+			updateDescription.setCaretPosition(0);
 			IUpdateChecker plugin = (IUpdateChecker)updateListModel.getValueAt(row, 6);
 			if(plugin.hasNewVersion()) {
 				switch(plugin.getLaunchType()) {
