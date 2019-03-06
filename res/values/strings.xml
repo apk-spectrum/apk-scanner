@@ -84,6 +84,7 @@
 	<string name="btn_allow_test_package">Allow test packages(-t)</string>
 	<string name="btn_reboot_after_pushed">Reboot after pushed</string>
 	<string name="btn_previous">Previous</string>
+	<string name="btn_back">Back</string>
 
 	<string name="btn_installed">Installed</string>
 	<string name="btn_not_installed">Not installed</string>

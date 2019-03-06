@@ -101,6 +101,7 @@ public enum Resource
 	STR_BTN_ALLOW_TEST_PACKAGE	(Type.TEXT, "@btn_allow_test_package"),
 	STR_BTN_REBOOT_AF_PUSHED	(Type.TEXT, "@btn_reboot_after_pushed"),
 	STR_BTN_PREVIOUS			(Type.TEXT, "@btn_previous"),
+	STR_BTN_BACK				(Type.TEXT, "@btn_back"),
 
 	STR_BTN_INSTALLED			(Type.TEXT, "@btn_installed"),
 	STR_BTN_NOT_INSTALLED		(Type.TEXT, "@btn_not_installed"),

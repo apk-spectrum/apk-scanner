@@ -217,7 +217,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 
 		simpleOptionPanel = new SimpleOptionPanel(uiEventHandler);
 		installOptionPanel = new InstallOptionPanel();
-		pacakgeInfoPanel = new PackageInfoPanel();
+		pacakgeInfoPanel = new PackageInfoPanel(uiEventHandler);
 		errorMessageLable = new JLabel("Please Check this APK file!", SwingConstants.CENTER);
 		errorMessageLable.setFont(new Font("Serif", Font.PLAIN, 24));
 
@@ -695,6 +695,10 @@ public class ApkInstallWizard implements IDeviceChangeListener
 				break;
 			case ControlPanel.CTR_ACT_CMD_RESTART:
 				changeState(STATUS_INIT);
+				break;
+			case PackageInfoPanel.ACT_CMD_BACK:
+				contentPanel.show(status == STATUS_SIMPLE_OPTION ?
+						ContentPanel.CONTENT_SIMPLE_OPTIONS : ContentPanel.CONTENT_SET_OPTIONS);
 				break;
 			case ToggleButtonBar.ACT_CMD_BUILD_OPTTIONS:
 				if(arg0.getSource() instanceof DeviceListData) {
