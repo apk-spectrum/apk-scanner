@@ -233,7 +233,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		String mutiLabels = labelBuilder.toString();
 		if(appName == null) appName = packageName;
 
-		if(labels.length > 1) {
+		if(labels != null && labels.length > 1) {
 			apkInfoPanel.setInnerHTMLById("label", makeHyperEvent("other-lang", appName, mutiLabels));
 			apkInfoPanel.insertElementLast("label", "<font>" + makeHyperEvent("other-lang", "&nbsp;["+labels.length+"]", mutiLabels, mutiLabels) + "</font>");
 		} else {
