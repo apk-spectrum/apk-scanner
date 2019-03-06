@@ -85,6 +85,7 @@
 	<string name="btn_reboot_after_pushed">Reboot after pushed</string>
 	<string name="btn_previous">Previous</string>
 	<string name="btn_back">Back</string>
+	<string name="btn_advanced_options_lab">Advanced options</string>
 
 	<string name="btn_installed">Installed</string>
 	<string name="btn_not_installed">Not installed</string>
@@ -309,7 +310,7 @@ they're removed before the application is published</string>
 	<string name="label_push_options">Push options</string>
 	<string name="label_additional_install_options">Choose additional options:</string>
 	<string name="label_launcher_af_installed">Launcher:</string>
-	<string name="label_with_libraies">With Libraries:</string>
+	<string name="label_with_libraies">With Libraries</string>
 	<string name="label_num">No.</string>
 	<string name="label_abi">ABI</string>
 	<string name="label_destination">Destination</string>
@@ -337,6 +338,8 @@ they're removed before the application is published</string>
 	<string name="label_mark_a_runtime">Mark a runtime</string>
 	<string name="label_mark_a_count">Mark a count</string>
 	<string name="label_treat_sign_as_revoked">Treat a sign level as revoked</string>
+	<string name="label_with_below_options">With below options</string>
+	<string name="label_with_options">Options</string>
 
 	<string name="msg_failure_open_apk">ERROR: Can not open the APK</string>
 	<string name="msg_no_such_apk">No such APK file</string>

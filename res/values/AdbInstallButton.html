@@ -1,46 +1,54 @@
 <html>
 <head>
 <style type="text/css">
-h1 {
-	padding-right: 50px;
-	text-align: center
-}
 h1, h2, h3, h4, h5, h6 {
 	margin: 0;
-	width: 100%
+	text-align: center
+}
+h1 {
+	padding-right: 50px;
+}
+p {
+	margin-top: 5px;
+	margin-bottom: 3px
 }
 ul {
 	color: gray;
-	list-style-type: lower-roman;
 	margin-top: 0;
-	margin-bottom: 0;
 	margin-left: 10px;
-	width: 100%
+	margin-bottom: 0;
+	margin-right: 0;
+	list-style-type: lower-roman
 }
-#adb-push ul {
-	list-style-type: none;
-	margin-left: 0
+table, tr, td {
+	margin: 0; padding: 0; border: 0
+}
+td {
+	padding-right: 5px
+}
+#option-label {
+	text-align: center
+}
+#adb-install #option-label {
+	padding-right: 50px
 }
 </style>
 </head>
 <body>
-	<div id="adb-install"  style="width:100%">
+	<div id="adb-install">
 		<h1>ADB INSTALL</h1>
-		<p>with below options</p>
-		<ul>
-			<li>launch after installed</li>
-			<li>allow downgrade</li>
-			<li>etc</li>
-			<li>launch after installed</li>
-			<li>allow downgrade</li>
-		</ul>
+		<p id="option-label">&nbsp;</p>
+		<ul id="install-options"><li>&nbsp;</li></ul>
 	</div>
 	<div id="adb-push">
-		<h3>ADB PUSH TO /SYSTEM/APP</h3>
-		<p>with below options</p>
-		<ul>
-			<li>reboot after pushed</li>
-		</ul>
+		<h3>ADB PUSH TO <span id="syspath">&nbsp;</span></h3>
+		<!-- <p id="option-label">&nbsp;</p>  -->
+		<table>
+			<tr>
+				<td id="option-label">Options</td>
+				<td><ul id="install-options"><li>&nbsp;</li></ul></td>
+			</tr>
+		</table>
 	</div>
 </body>
 </html>

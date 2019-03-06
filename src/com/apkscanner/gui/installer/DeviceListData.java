@@ -93,9 +93,10 @@ public class DeviceListData
 
 	public String getOsVersion() {
 		if(osVersion == null || osVersion.isEmpty()) {
-			osVersion = device.getProperty(IDevice.PROP_BUILD_VERSION).trim();
-			if(osVersion != null && osVersion.isEmpty()) {
-				osVersion = null;
+			osVersion = device.getProperty(IDevice.PROP_BUILD_VERSION);
+			if(osVersion != null) {
+				osVersion = osVersion.trim();
+				if(osVersion.isEmpty()) osVersion = null;
 			}
 		}
 		return osVersion;

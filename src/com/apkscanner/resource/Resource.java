@@ -141,6 +141,7 @@ public enum Resource
 	STR_BTN_UNASSOC_FTYPE_LAB	(Type.TEXT, "@btn_unassoc_ftype_lab"),
 	STR_BTN_CREATE_SHORTCUT_LAB	(Type.TEXT, "@btn_create_shortcut_lab"),
 	STR_BTN_SELF_SEARCH_LAB		(Type.TEXT, "@btn_self_search_lab"),
+	STR_BTN_ADVANCED_OPTIONS_LAB(Type.TEXT, "@btn_advanced_options_lab"),
 
 	STR_MENU_NEW				(Type.TEXT, "@menu_new"),
 	STR_MENU_NEW_WINDOW			(Type.TEXT, "@menu_new_window"),
@@ -365,6 +366,8 @@ public enum Resource
 	STR_LABEL_MARK_A_RUNTIME	(Type.TEXT, "@label_mark_a_runtime"),
 	STR_LABEL_MARK_A_COUNT		(Type.TEXT, "@label_mark_a_count"),
 	STR_LABEL_TREAT_SIGN_AS_REVOKED(Type.TEXT, "@label_treat_sign_as_revoked"),
+	STR_LABEL_WITH_BELOW_OPTIONS(Type.TEXT, "@label_with_below_options"),
+	STR_LABEL_WITH_OPTIONS		(Type.TEXT, "@label_with_options"),
 
 	STR_TREE_NODE_DEVICE 		(Type.TEXT, "@tree_node_device"),
 	STR_TREE_NODE_DISPLAYED		(Type.TEXT, "@tree_node_displayed"),

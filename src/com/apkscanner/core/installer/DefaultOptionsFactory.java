@@ -204,9 +204,15 @@ public class DefaultOptionsFactory {
 						if(targetSystemPath.matches("^/system/(priv-)?app/[^/]*/[^/]*\\.apk")) {
 							if(abi32 != null) {
 								options.set(OptionsBundle.FLAG_OPT_PUSH_LIB32, abi32, targetSystemPath.replaceAll("[^/]*.apk$", "lib/arm/"));
+								if(options.isSetWithLib64()) {
+									options.unset(OptionsBundle.FLAG_OPT_PUSH_LIB32);
+								}
 							}
 							if(abi64 != null) {
 								options.set(OptionsBundle.FLAG_OPT_PUSH_LIB64, abi64, targetSystemPath.replaceAll("[^/]*.apk$", "lib/arm64/"));
+								if(options.isSetWithLib32()) {
+									options.unset(OptionsBundle.FLAG_OPT_PUSH_LIB32);
+								}
 							}
 						} else if(targetSystemPath.matches("^/system/(priv-)?app/[^/]*\\.apk")) {
 							String libDirectory = targetSystemPath.replaceAll(".*/([^/]*).apk$", "/data/app-lib/$1/");

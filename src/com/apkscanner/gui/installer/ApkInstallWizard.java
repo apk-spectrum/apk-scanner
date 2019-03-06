@@ -364,7 +364,6 @@ public class ApkInstallWizard implements IDeviceChangeListener
 					errMessage = e.getMessage();
 				}
 				if(errMessage == null) {
-					simpleOptionPanel.setApkInfo(apkInfo);
 					installOptionPanel.setApkInfo(apkInfo);
 					next();
 				} else {
@@ -507,7 +506,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 					data.setState(DeviceListData.STATUS_SETTING);
 					publish(data);
 				}
-
+				simpleOptionPanel.setDeviceListData(deviceDataMap.values());
 				return true;
 			}
 
@@ -526,7 +525,6 @@ public class ApkInstallWizard implements IDeviceChangeListener
 						deviceList.setSelectedIndex(0);
 					}
 					if(data != null && data.equals(deviceList.getSelectedValue())) {
-						simpleOptionPanel.setOptions(((DeviceListData) data).getOptionsBundle());
 						installOptionPanel.setOptions(((DeviceListData) data).getOptionsBundle());
 						if(((DeviceListData) data).getState() != DeviceListData.STATUS_CONNECTING_DEVICE) {
 							contentPanel.show(status == STATUS_SIMPLE_OPTION ?
@@ -616,6 +614,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 			final DeviceListData data = deviceDataMap.get(device);
 			if(data != null) {
 				deviceDataMap.remove(device);
+				simpleOptionPanel.setDeviceListData(deviceDataMap.values());
 
 				EventQueue.invokeLater(new Runnable() {
 					@Override
@@ -647,7 +646,6 @@ public class ApkInstallWizard implements IDeviceChangeListener
 
 				switch(data.getState()) {
 				case DeviceListData.STATUS_SETTING:
-					simpleOptionPanel.setOptions(data.getOptionsBundle());
 					installOptionPanel.setOptions(data.getOptionsBundle());
 					contentPanel.show(status == STATUS_SIMPLE_OPTION ?
 							ContentPanel.CONTENT_SIMPLE_OPTIONS : ContentPanel.CONTENT_SET_OPTIONS);
@@ -703,7 +701,6 @@ public class ApkInstallWizard implements IDeviceChangeListener
 			case ToggleButtonBar.ACT_CMD_BUILD_OPTTIONS:
 				if(arg0.getSource() instanceof DeviceListData) {
 					DeviceListData data = (DeviceListData) arg0.getSource();
-					simpleOptionPanel.setOptions(data.getOptionsBundle());
 					installOptionPanel.setOptions(data.getOptionsBundle());
 					if(data.getState() != DeviceListData.STATUS_CONNECTING_DEVICE) {
 						contentPanel.show(status == STATUS_SIMPLE_OPTION ?
