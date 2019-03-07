@@ -51,7 +51,7 @@ public class ApkInstaller
 			errMessage = "Options is null";
 		} else if(options.isImpossibleInstallOptions()) {
 			errMessage = "Can not install";
-		} else if(options.isNoInstallOptions()) {
+		} else if(options.isNotInstallOptions()) {
 			errMessage = "No install";
 		} else if(device == null  || !device.isOnline()) {
 			errMessage = "Device is not online";

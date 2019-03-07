@@ -70,6 +70,8 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 	private static final String ACT_CMD_UNINSTALL_PACKAGE = "ACT_CMD_UNINSTALL_PACKAGE";
 	private static final String ACT_CMD_CLEAR_DATA = "ACT_CMD_CLEAR_DATA";
 
+	public static final String ACT_CMD_BACK = "ACT_CMD_BACK";
+
 	private JDialog dialog;
 
 	private JToolBar toolBar;
@@ -95,12 +97,14 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		JSeparator separator = new JSeparator(JSeparator.VERTICAL);
 		separator.setPreferredSize(new Dimension(1,30));
 
-		toolBar.add(getToolbarButton("open", Resource.IMG_APP_ICON.getImageIcon(24, 24), null, ACT_CMD_OPEN_PACKAGE));
-		toolBar.add(getToolbarButton("save", Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_SAVE.getImageIcon(24, 24), null, ACT_CMD_SAVE_PACKAGE));
+		toolBar.add(getToolbarButton(null, Resource.IMG_APP_ICON.getImageIcon(24, 24), Resource.STR_LABEL_OPEN_WITH_SCANNER.getString(), ACT_CMD_OPEN_PACKAGE));
+		toolBar.add(getToolbarButton(null, Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_SAVE.getImageIcon(24, 24), Resource.STR_LABEL_SAVE_AS.getString(), ACT_CMD_SAVE_PACKAGE));
+
 		toolBar.add(separator);
-		toolBar.add(getToolbarButton(null, Resource.IMG_TOOLBAR_LAUNCH.getImageIcon(24, 24), null, ACT_CMD_LAUCH_PACKAGE));
-		toolBar.add(getToolbarButton("uninstall", Resource.IMG_TOOLBAR_UNINSTALL.getImageIcon(24, 24), null, ACT_CMD_UNINSTALL_PACKAGE));
-		toolBar.add(getToolbarButton("clear", Resource.IMG_TOOLBAR_CLEAR.getImageIcon(24, 24), null, ACT_CMD_CLEAR_DATA));
+
+		toolBar.add(getToolbarButton(null, Resource.IMG_TOOLBAR_LAUNCH.getImageIcon(24, 24), Resource.STR_BTN_LAUNCH_LAB.getString(), ACT_CMD_LAUCH_PACKAGE));
+		toolBar.add(getToolbarButton(null, Resource.IMG_TOOLBAR_UNINSTALL.getImageIcon(24, 24), Resource.STR_BTN_REMOVE.getString(), ACT_CMD_UNINSTALL_PACKAGE));
+		toolBar.add(getToolbarButton(null, Resource.IMG_TOOLBAR_CLEAR.getImageIcon(24, 24), Resource.STR_MENU_CLEAR_DATA.getString(), ACT_CMD_CLEAR_DATA));
 
 		add(toolBar, BorderLayout.NORTH);
 
@@ -134,6 +138,33 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		txtApkPath.setEditable(false);
 
 		add(txtApkPath, BorderLayout.SOUTH);
+	}
+
+	public PackageInfoPanel(ActionListener listener) {
+		this();
+
+		JButton button = new JButton("< " + Resource.STR_BTN_BACK.getString()) {
+			private static final long serialVersionUID = -6181050840596487317L;
+			@Override
+			public Dimension getPreferredSize() {
+				Dimension size = super.getMinimumSize();
+				size.height = 30;
+				return size;
+			}
+		};
+		button.addActionListener(listener);
+		button.setBorderPainted(false);
+		button.setOpaque(false);
+		button.setFocusable(false);
+		button.setActionCommand(ACT_CMD_BACK);
+		button.setVerticalTextPosition(JLabel.CENTER);
+		button.setHorizontalTextPosition(JLabel.CENTER);
+		button.setPreferredSize(new Dimension(40,36));
+		toolBar.add(button, 0);
+
+		JSeparator separator = new JSeparator(JSeparator.VERTICAL);
+		separator.setPreferredSize(new Dimension(1,30));
+		toolBar.add(separator, 1);
 	}
 
 	private JButton getToolbarButton(String text, Icon icon, String tooltip, String actCommand) {

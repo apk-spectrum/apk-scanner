@@ -1,4 +1,4 @@
-package com.apkscanner.gui.install;
+package com.apkscanner.gui.installer;
 
 import java.awt.Color;
 
@@ -18,7 +18,7 @@ public class DeviceListData
 	private OptionsBundle options = null;
 	private int state = STATUS_SETTING;
 	private String errorMessage;
-	
+
 	private String osVersion;
 	private String deviceName;
 	private Color circleColor;
@@ -27,7 +27,7 @@ public class DeviceListData
 		this.device = device;
 		this.options = bundle;
 	}
-	
+
 	public IDevice getDevice() {
 		return device;
 	}
@@ -64,13 +64,13 @@ public class DeviceListData
 	private String intToARGB(int i) {
 		String hex = ""+ Integer.toHexString((i>>24)&0xFF) + Integer.toHexString((i>>16)&0xFF) +
 				Integer.toHexString((i>>8)&0xFF) + Integer.toHexString(i&0xFF);
-		// Sometimes the string returned will be too short so we 
+		// Sometimes the string returned will be too short so we
 		// add zeros to pad it out, which later get removed if
 		// the length is greater than six.
 		//hex += "000000";
 		return hex.substring(0, 6);
 	}
-	
+
 	public Color getCircleColor() {
 		if(circleColor == null && getDeviceName() != null) {
 			circleColor = Color.decode("#"+intToARGB(hashCode(deviceName)));
@@ -93,9 +93,10 @@ public class DeviceListData
 
 	public String getOsVersion() {
 		if(osVersion == null || osVersion.isEmpty()) {
-			osVersion = device.getProperty(IDevice.PROP_BUILD_VERSION).trim();
-			if(osVersion != null && osVersion.isEmpty()) {
-				osVersion = null;
+			osVersion = device.getProperty(IDevice.PROP_BUILD_VERSION);
+			if(osVersion != null) {
+				osVersion = osVersion.trim();
+				if(osVersion.isEmpty()) osVersion = null;
 			}
 		}
 		return osVersion;

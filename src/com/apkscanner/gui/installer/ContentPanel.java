@@ -1,4 +1,4 @@
-package com.apkscanner.gui.install;
+package com.apkscanner.gui.installer;
 
 import java.awt.CardLayout;
 import java.awt.Font;
@@ -12,7 +12,6 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.util.ImagePanel;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
@@ -26,6 +25,7 @@ public class ContentPanel extends JPanel
 	public static final String CONTENT_CONNECTING_DEVICE = "CONTENT_CONNECTING_DEVICE";
 	public static final String CONTENT_VERIFY_ERROR = "CONTENT_VERIFY_ERROR";
 	public static final String CONTENT_WAIT_FOR_DEVICE = "CONTENT_WAIT_FOR_DEVICE";
+	public static final String CONTENT_SIMPLE_OPTIONS = "CONTENT_SIMPLE_OPTIONS";
 	public static final String CONTENT_SET_OPTIONS = "CONTENT_SET_OPTIONS";
 	public static final String CONTENT_PACKAGE_INFO = "CONTENT_PACKAGE_INFO";
 	public static final String CONTENT_INSTALLING = "CONTENT_INSTALLING";
@@ -115,6 +115,9 @@ public class ContentPanel extends JPanel
 		case ApkInstallWizard.STATUS_WAIT_FOR_DEVICE:
 			show(CONTENT_WAIT_FOR_DEVICE);
 			break;
+		case ApkInstallWizard.STATUS_SIMPLE_OPTION:
+			show(CONTENT_SIMPLE_OPTIONS);
+			break;
 		case ApkInstallWizard.STATUS_SET_OPTIONS:
 			show(CONTENT_SET_OPTIONS);
 			break;
@@ -143,7 +146,7 @@ public class ContentPanel extends JPanel
 	public void show(String name) {
 		if(CONTENT_INSTALLING.endsWith(name)) {
 			loadingMessageLable.setText("INSTALLING");
-			name = CONTENT_LOADING; 
+			name = CONTENT_LOADING;
 		} else if(CONTENT_CONNECTING_DEVICE.equals(name)) {
 			loadingMessageLable.setText("Reading information of device...");
 			name = CONTENT_LOADING;
