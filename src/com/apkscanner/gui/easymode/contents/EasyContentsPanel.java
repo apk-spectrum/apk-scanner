@@ -49,6 +49,8 @@ public class EasyContentsPanel extends JPanel{
 	JLabel appicon;
 	
 	JPanel contentsCardPanel;
+	int SHADOWSIZE = 2;
+	
 	
 	static public int WIDTH = 550;
 	static public int HEIGHT = 250;
@@ -92,7 +94,7 @@ public class EasyContentsPanel extends JPanel{
 		FlatPanel appiconpanel = new FlatPanel();		
 		appiconpanel.setBackground(sdkverPanelcolor);
 		appiconpanel.setPreferredSize(new Dimension(160, 0));
-		appiconpanel.setshadowlen(1);
+		appiconpanel.setshadowlen(SHADOWSIZE);
 		appicon = new JLabel();
 		appicon.setHorizontalAlignment(JLabel.CENTER);
 		appicon.setVerticalAlignment(JLabel.CENTER);
@@ -133,7 +135,7 @@ public class EasyContentsPanel extends JPanel{
 		//package
 		packagepanel = new EasyFlatLabel(" ", sdkverPanelcolor, packagefontcolor);
 		packagepanel.setPreferredSize(new Dimension(0, 35));		
-		packagepanel.setshadowlen(1);
+		packagepanel.setshadowlen(SHADOWSIZE);
 		packagepanel.setTextFont(new Font(getFont().getName(), Font.BOLD, 15));
 		infopanel.add(packagepanel, BorderLayout.NORTH);
 
@@ -141,7 +143,7 @@ public class EasyContentsPanel extends JPanel{
 		sdkverpanel.setBackground(sdkverPanelcolor);
 		sdkverpanel.setPreferredSize(new Dimension(80, 0));
 		
-		sdkverpanel.setshadowlen(1);
+		sdkverpanel.setshadowlen(SHADOWSIZE);
 		infopanel.add(sdkverpanel, BorderLayout.EAST);
 		
 		JPanel innerinfopanel = new JPanel(new BorderLayout());
@@ -149,10 +151,11 @@ public class EasyContentsPanel extends JPanel{
 		//version
 		ininerversionpanel = new EasyFlatLabel(" ", sdkverPanelcolor, versionfontcolor);
 		ininerversionpanel.setPreferredSize(new Dimension(0, 35));
-		ininerversionpanel.setshadowlen(1);
+		ininerversionpanel.setshadowlen(SHADOWSIZE);
 		innerinfopanel.add(ininerversionpanel, BorderLayout.NORTH);
 		
 		featurepanel = new EasyFeatureHtmlPanel();
+		featurepanel.setshadowlen(SHADOWSIZE);
 		innerinfopanel.add(featurepanel, BorderLayout.CENTER);
 		
 		//toolbarpanel = new EasyGuiToolPanel(35, WIDTH - 80 - 160);
@@ -212,10 +215,12 @@ public class EasyContentsPanel extends JPanel{
 			icon = new ImageIcon(ImageUtils.getScaledImage(new ImageIcon(ImageIO.read(new URL(iconPath))),130,130));
 			return icon;
 		} catch (IOException e) {
+			ImageIcon icon;
 			// TODO Auto-generated catch block
+			icon = Resource.IMG_WARNING.getImageIcon();
 			e.printStackTrace();
+			return icon;
 		}
-		return null;
     }
 	public void setContents(ApkInfo apkInfo) {
 		appicon.setIcon(getAppicon(apkInfo));

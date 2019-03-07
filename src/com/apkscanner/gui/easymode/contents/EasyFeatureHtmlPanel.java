@@ -27,7 +27,7 @@ public class EasyFeatureHtmlPanel extends FlatPanel {
 	public EasyFeatureHtmlPanel() {
 		setLayout(new BorderLayout());
 		setBackground(sdkverPanelcolor);
-		setshadowlen(1);
+		//setshadowlen(1);
 
 		AppFeature = new EasyGuiAppFeatureData();
 		

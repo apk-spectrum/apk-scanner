@@ -94,12 +94,12 @@ public class GraphicUtil {
 	    
 	    // find the largest dimensions of the string that can fit in the window
 	        Font f = new Font("SansSerif",Font.BOLD,fontsize);
-	        boxWidth = getStringWidth(page,f,text) + margin *2;
+	        boxWidth = getStringWidth(page,f,text) + margin *2 + 15;
 	        boxHeight = getStringHeight(page,f,text) + margin *2;
 
 	 // paint the box
 	    page.setColor(backgroundcolor);
-	    page.fillRoundRect(boxLeft - boxWidth /2,boxTop,boxWidth,boxHeight, 20,20);
+	    page.fillRoundRect(boxLeft - boxWidth /2,boxTop,boxWidth,boxHeight, 30,30);
 	    
 	    
 	    // center a string in the box with a font-size of 32 pixels

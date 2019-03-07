@@ -110,13 +110,13 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 	}
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		mouseExited(e);
-		
-    	//task = new AnimationTask(this, ANIMATION_DOWN_VALUE);
-        //  Timer timer = new Timer();
-        //  timer.schedule(task, 0, ANIMATION_DELAY);
-		//if(task != null) task.cancel();
-		//width = height = originalsize;
+		//mouseExited(e);		
+		//Log.d("release");
+		entered = false;
+    	eventlistner.changestate(EasyToolListner.STATE_EXIT, this);    	
+    	
+    	width = height = originalsize;
+    	
 		setPreferredSize(new Dimension(originalsize, originalsize));
 		updateUI();
 		
@@ -144,7 +144,8 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 		//Log.d("mouse Exit");
-    	entered = false;
+		if(entered)entered = false;
+		else return;
     	eventlistner.changestate(EasyToolListner.STATE_EXIT, this);    	
     	
     	width = height = hoversize;

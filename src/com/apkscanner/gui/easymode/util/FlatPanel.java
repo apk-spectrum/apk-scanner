@@ -41,6 +41,8 @@ public class FlatPanel extends JPanel {
     {
         super.paintComponent(gr);
         
+        if(len ==0) return;
+        
         Graphics2D g = (Graphics2D)gr;
         Rectangle2D r = new Rectangle2D.Double(len, len, getWidth() - len *2, getHeight() - len *2);
         draw(g, r, len);
@@ -52,6 +54,7 @@ public class FlatPanel extends JPanel {
 
     private static void draw(Graphics2D g, Rectangle2D r, double s)
     {
+    	
         Color c0 = new Color(100,100,100);
         Color c1 = new Color(100,100,100,0);
 

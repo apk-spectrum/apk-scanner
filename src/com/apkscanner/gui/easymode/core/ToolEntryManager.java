@@ -67,8 +67,8 @@ public class ToolEntryManager {
 
 	public static void initToolEntryManager() {
 		allEntry = new ArrayList<ToolEntry>(Arrays.asList(
-				new ToolEntry(Resource.STR_APP_NAME.getString(), "Excute Original Scanner",
-						Resource.IMG_APP_ICON.getImageIcon(100, 100)),
+//				new ToolEntry(Resource.STR_APP_NAME.getString(), "Excute Original Scanner",
+//						Resource.IMG_APP_ICON.getImageIcon(100, 100)),
 				new ToolEntry(Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OPEN_LAB.getString(),
 						Resource.IMG_TOOLBAR_OPEN.getImageIcon()),
 				new ToolEntry(Resource.STR_BTN_OPEN_PACKAGE.getString(), Resource.STR_BTN_OPEN_PACKAGE_LAB.getString(),
@@ -116,7 +116,12 @@ public class ToolEntryManager {
 	public static void refreshToolManager() {
 		ShowEntry.clear();
 		String[] toollist = Resource.PROP_EASY_GUI_TOOLBAR.getData().toString().split(",");
+		Log.d(toollist[0].length() + "");
+		
+		
+		
 		for (String str : toollist) {
+			if(str.length() !=0)
 			ShowEntry.add(allEntry.get(Integer.parseInt(str)));
 		}
 
