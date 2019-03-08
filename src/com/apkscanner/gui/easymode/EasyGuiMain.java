@@ -1,5 +1,6 @@
 package com.apkscanner.gui.easymode;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -53,14 +54,14 @@ public class EasyGuiMain extends JFrame implements WindowListener, IDeviceChange
 			setResizable(false);
 		}
 		setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
-		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);		
 		add(mainpanel); // 100 => 60
 		addWindowListener(this);
 
 		AdbServerMonitor.startServerAndCreateBridgeAsync();
 		AndroidDebugBridge.addDeviceChangeListener(this);
 
-		// frame.setResizable(true);
+		setResizable(true);
 		pack();
 
 		Point position = (Point) Resource.PROP_EASY_GUI_WINDOW_POSITION.getData();

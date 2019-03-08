@@ -61,11 +61,13 @@ public class EasyTextField extends JTextField {
 		currFontSize = this.getFont().getSize();
 		Rectangle r = getBounds();
 		
+		//Log.d(getText() + getBorder().getBorderInsets(this).left);
+		
 		r.x = 0;
 		r.y = 0;
 		
 		//for padding
-		r.width = r.width - 4;
+		r.width = r.width - getBorder().getBorderInsets(this).left -getBorder().getBorderInsets(this).right;
 		r.height = r.height; 
 		
 		int fontSize = Math.max(MIN_FONT_SIZE, currFontSize);

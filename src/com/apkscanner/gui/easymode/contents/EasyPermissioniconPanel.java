@@ -11,8 +11,10 @@ import java.awt.event.ComponentListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
@@ -21,26 +23,29 @@ import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.gui.easymode.core.ToolEntryManager;
 import com.apkscanner.gui.easymode.util.EasyButton;
+import com.apkscanner.gui.easymode.util.EasyRoundButton;
 import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.easymode.util.ImageUtils;
+import com.apkscanner.gui.easymode.util.RoundPanel;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
-public class EasyPermissioniconPanel extends FlatPanel implements ActionListener{
+public class EasyPermissioniconPanel extends RoundPanel implements ActionListener{
 	private static final long serialVersionUID = -7090063544416919223L;
 
 	int HEIGHT = 35;
 	int WIDTH = 100;
 	int BUTTON_IMG_SIZE = HEIGHT-6;
 	int SHADOW_SIZE = 2;
+	int ICON_GAP = 3;
 	
 	static private Color bordercolor = new Color(242, 242, 242);
-	static private Color dangerouscolor = new Color(181, 107, 105);
+	static private Color dangerouscolor = new Color(181, 11, 11);
 	static private Color permissionbackgroundcolor = new Color(217, 217, 217);
 	
 	JPanel toolbartemppanel;
 	JScrollPane scrollPane;	
-	EasyButton btnshowpermissiondlg;
+	EasyRoundButton btnshowpermissiondlg;
 	
 	int permissionbuttoncount = 0;
 	PermissionManager permissionManager;
@@ -51,13 +56,17 @@ public class EasyPermissioniconPanel extends FlatPanel implements ActionListener
 		BUTTON_IMG_SIZE = HEIGHT - SHADOW_SIZE * 2;
 		WIDTH = width;
 		init();
-		setPreferredSize(new Dimension(0, height));		
+		setPreferredSize(new Dimension(0, height));
 	}
 		
 	private void init() {
-		setBackground(bordercolor);
-		setPreferredSize(new Dimension(0, HEIGHT + SHADOW_SIZE * 2));
+		//setBackground(bordercolor);
+		setRoundrectColor(new Color(217, 217, 217));
 		setshadowlen(SHADOW_SIZE);
+		
+		setPreferredSize(new Dimension(0, HEIGHT + SHADOW_SIZE * 2));
+		setLayout(new BorderLayout());
+		//setshadowlen(SHADOW_SIZE);
 		
 		toolbartemppanel = new JPanel();
 		
@@ -87,10 +96,13 @@ public class EasyPermissioniconPanel extends FlatPanel implements ActionListener
 		});
 		
 		add(scrollPane, BorderLayout.CENTER);
-		toolbartemppanel.setLayout((new FlowLayout(FlowLayout.LEFT,1, 1)));
+		toolbartemppanel.setLayout((new FlowLayout(FlowLayout.LEFT, ICON_GAP, ICON_GAP)));
 		toolbartemppanel.setOpaque(false);
-
-		btnshowpermissiondlg = new EasyButton(Resource.IMG_EASY_WINDOW_SHOW_PERMISSION.getImageIcon(15, 15));
+		//toolbartemppanel.setBackground(permissionbackgroundcolor);
+		//toolbartemppanel.setRoundrectColor(permissionbackgroundcolor);
+		toolbartemppanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		
+		btnshowpermissiondlg = new EasyRoundButton(Resource.IMG_EASY_WINDOW_SHOW_PERMISSION.getImageIcon(15, 15));
 		btnshowpermissiondlg.setPreferredSize(new Dimension(15, 15));
 		btnshowpermissiondlg.addActionListener(this);
 		
@@ -118,22 +130,31 @@ public class EasyPermissioniconPanel extends FlatPanel implements ActionListener
 		}
 
 		for (PermissionGroupInfoExt g : permissionManager.getPermissionGroups()) {
-			FlatPanel permissionicon = new FlatPanel();
+			//JPanel permissionicon = new JPanel();
 			try {
 				ImageIcon imageIcon = new ImageIcon(new URL(g.getIconPath()));
 				
-				imageIcon.setImage(ImageUtils.getScaledImage(imageIcon,BUTTON_IMG_SIZE,BUTTON_IMG_SIZE));
+				//imageIcon.setImage(ImageUtils.getScaledImage(imageIcon,BUTTON_IMG_SIZE,BUTTON_IMG_SIZE));
 				
-				if (g.hasDangerous())
-					ImageUtils.setcolorImage(imageIcon, dangerouscolor);
-				EasyButton btn = new EasyButton(imageIcon);
-				permissionicon.setPreferredSize(new Dimension(HEIGHT, HEIGHT));
-				permissionicon.setshadowlen(SHADOW_SIZE);
-				permissionicon.setBackground(permissionbackgroundcolor);
-				permissionicon.add(btn);
+				//if (g.hasDangerous())
+				//	ImageUtils.setcolorImage(imageIcon, dangerouscolor);
+				ImageUtils.setcolorImage(imageIcon, Color.WHITE);
+				
+				EasyRoundButton btn = new EasyRoundButton(imageIcon);
+				btn.setPreferredSize(new Dimension(HEIGHT-SHADOW_SIZE, HEIGHT- SHADOW_SIZE));
+				//permissionicon.setshadowlen(SHADOW_SIZE);
+				//permissionicon.setBackground(permissionbackgroundcolor);
+				//permissionicon.add(btn);
+				//btn.setshadowlen(0);
 				btn.addActionListener(this);
 				btn.setToolTipText(g.name);
-				toolbartemppanel.add(permissionicon);
+				
+				if (g.hasDangerous()) {
+					btn.setBackground(dangerouscolor);
+				} else {
+					btn.setBackground(new Color(64, 64, 64));
+				}
+				toolbartemppanel.add(btn);
 				permissionbuttoncount++;
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
@@ -155,7 +176,7 @@ public class EasyPermissioniconPanel extends FlatPanel implements ActionListener
 		if(e.getSource().equals(btnshowpermissiondlg)) {
 			ToolEntryManager.excutePermissionDlg();
 		} else {
-			ToolEntryManager.showPermDetailDesc(permissionManager.getPermissionGroup(((EasyButton)e.getSource()).getToolTipText()));
+			ToolEntryManager.showPermDetailDesc(permissionManager.getPermissionGroup(((EasyRoundButton)e.getSource()).getToolTipText()));
 		}
 	}
 	

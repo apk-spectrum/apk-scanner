@@ -28,10 +28,11 @@ import com.android.ddmlib.IDevice;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.easymode.util.ImageUtils;
+import com.apkscanner.gui.easymode.util.RoundPanel;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
-public class EasysdkNotDrawPanel extends FlatPanel {
+public class EasysdkNotDrawPanel extends RoundPanel {
 	private final int ARR_SIZE = 6;	
 	 
 	private static int DEVICE_TARGET = 0;
@@ -83,7 +84,7 @@ public class EasysdkNotDrawPanel extends FlatPanel {
 //		add(makeDevicePanel(Devicecolor[DEVICE_TARGET], 23));
 //		add(makeDevicePanel(Devicecolor[DEVICE_STATE_ONLINE], 26));
 //		add(makeDevicePanel(Devicecolor[DEVICE_STATE_OFFLINE], 30));
-				
+		
 		add(Box.createVerticalStrut(10));
 	}
 	

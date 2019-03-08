@@ -18,7 +18,7 @@ public class EasyPermissionPanel extends JPanel {
 	static private Color dangerouscolor = new Color(181, 107, 105);
 	static private Color permissionbackgroundcolor = new Color(217, 217, 217);
 
-	static public int HEIGHT = 40;
+	static public int HEIGHT = 50;
 	static private int WIDTH = EasyContentsPanel.WIDTH;
 	static private int SHADOWSIZE = 1;
 	static private int PERMISSIONICONSIZE = HEIGHT - SHADOWSIZE * 2;

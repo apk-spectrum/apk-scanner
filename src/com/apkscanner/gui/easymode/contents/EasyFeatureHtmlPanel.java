@@ -12,10 +12,11 @@ import javax.swing.JLabel;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.easymode.core.EasyGuiAppFeatureData;
 import com.apkscanner.gui.easymode.util.FlatPanel;
+import com.apkscanner.gui.easymode.util.RoundPanel;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.resource.Resource;
 
-public class EasyFeatureHtmlPanel extends FlatPanel {
+public class EasyFeatureHtmlPanel extends RoundPanel {
 	static private Color sdkverPanelcolor = new Color(242, 242, 242);
 
 	static private Color []featurefgfontcolor = {new Color(121, 121, 121), new Color(237, 126, 83), Color.RED} ;
@@ -26,16 +27,17 @@ public class EasyFeatureHtmlPanel extends FlatPanel {
 	
 	public EasyFeatureHtmlPanel() {
 		setLayout(new BorderLayout());
-		setBackground(sdkverPanelcolor);
-		//setshadowlen(1);
-
+		//setBackground(new Color(217, 217, 217));
+		setRoundrectColor(new Color(217, 217, 217));
+		
+		//setshadowlen(10);
 		AppFeature = new EasyGuiAppFeatureData();
 		
 		apkinform = new JLabel();
 		//apkinform.setEditable(false);
 		apkinform.setOpaque(false);
 		apkinform.setFont(new Font(getFont().getName(), Font.BOLD, 15));
-		apkinform.setBackground(Color.white);
+		//apkinform.setBackground(Color.white);
 		apkinform.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		
 		

@@ -25,9 +25,11 @@ import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.gui.easymode.EasyGuiMain;
 import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.gui.easymode.util.EasyFlatLabel;
+import com.apkscanner.gui.easymode.util.EasyRoundLabel;
 import com.apkscanner.gui.easymode.util.EasyTextField;
 import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.easymode.util.ImageUtils;
+import com.apkscanner.gui.easymode.util.RoundPanel;
 import com.apkscanner.gui.tabpanels.Resources;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.FileUtil;
@@ -41,8 +43,8 @@ public class EasyContentsPanel extends JPanel{
 	EasyPermissionPanel permissionPanel;
 	EasysdkNotDrawPanel sdkverpanel;
 	
-	EasyFlatLabel packagepanel;
-	EasyFlatLabel ininerversionpanel;
+	EasyRoundLabel packagepanel;
+	EasyRoundLabel ininerversionpanel;
 	EasyTextField ininersizepanel;
 	EasyTextField apptitlelabel;
 	EasyGuiEmptyPanel emptypanel;
@@ -91,8 +93,10 @@ public class EasyContentsPanel extends JPanel{
 	
 	private JPanel makeapkiconPanel() {
 		//appicon
-		FlatPanel appiconpanel = new FlatPanel();		
-		appiconpanel.setBackground(sdkverPanelcolor);
+		RoundPanel appiconpanel = new RoundPanel();		
+		//appiconpanel.setBackground(sdkverPanelcolor);
+		appiconpanel.setRoundrectColor(sdkverPanelcolor);
+		
 		appiconpanel.setPreferredSize(new Dimension(160, 0));
 		appiconpanel.setshadowlen(SHADOWSIZE);
 		appicon = new JLabel();
@@ -133,24 +137,24 @@ public class EasyContentsPanel extends JPanel{
 	private JPanel makeapkinfoPanel() {
 		JPanel infopanel = new JPanel(new BorderLayout());
 		//package
-		packagepanel = new EasyFlatLabel(" ", sdkverPanelcolor, packagefontcolor);
+		packagepanel = new EasyRoundLabel(" ", new Color(217, 217, 217), packagefontcolor);
 		packagepanel.setPreferredSize(new Dimension(0, 35));		
 		packagepanel.setshadowlen(SHADOWSIZE);
 		packagepanel.setTextFont(new Font(getFont().getName(), Font.BOLD, 15));
 		infopanel.add(packagepanel, BorderLayout.NORTH);
 
 		sdkverpanel = new EasysdkNotDrawPanel();
-		sdkverpanel.setBackground(sdkverPanelcolor);
-		sdkverpanel.setPreferredSize(new Dimension(80, 0));
-		
+		sdkverpanel.setRoundrectColor(new Color(217, 217, 217));
+		sdkverpanel.setPreferredSize(new Dimension(80, 0));		
 		sdkverpanel.setshadowlen(SHADOWSIZE);
 		infopanel.add(sdkverpanel, BorderLayout.EAST);
 		
 		JPanel innerinfopanel = new JPanel(new BorderLayout());
 		
 		//version
-		ininerversionpanel = new EasyFlatLabel(" ", sdkverPanelcolor, versionfontcolor);
+		ininerversionpanel = new EasyRoundLabel(" ", new Color(217, 217, 217), versionfontcolor);
 		ininerversionpanel.setPreferredSize(new Dimension(0, 35));
+		ininerversionpanel.setTextFont(new Font(getFont().getName(), Font.BOLD, 15));
 		ininerversionpanel.setshadowlen(SHADOWSIZE);
 		innerinfopanel.add(ininerversionpanel, BorderLayout.NORTH);
 		

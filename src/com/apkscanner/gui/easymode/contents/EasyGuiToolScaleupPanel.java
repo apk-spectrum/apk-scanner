@@ -74,7 +74,7 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener, E
 		setLayout(new BorderLayout());
 		//setshadowlen(SHADOW_SIZE);
 		//setshadowlen(1);
-		setBorder(BorderFactory.createEmptyBorder(5 , 0 , 0 , 15));
+		setBorder(BorderFactory.createEmptyBorder(5 , 0 , 0 , 20));
 		
 		toolbartemppanel = new JPanel();
 		FlowLayout flowlayout = new FlowLayout(FlowLayout.CENTER,0, 0);

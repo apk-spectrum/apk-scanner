@@ -9,6 +9,9 @@ import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -36,6 +39,7 @@ import com.apkscanner.gui.easymode.core.ToolEntryManager;
 import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.gui.easymode.util.EasyFileDrop;
 import com.apkscanner.gui.easymode.util.FlatPanel;
+import com.apkscanner.gui.easymode.util.RoundPanel;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.tabpanels.Resources;
 import com.apkscanner.resource.Resource;
@@ -111,8 +115,10 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 		}
 		contentspanel.add(contentsPanel, BorderLayout.CENTER);
 		//contentspanel.add(permissionPanel, BorderLayout.PAGE_END);
-		JPanel dummy = new JPanel(new BorderLayout());
+		RoundPanel dummy = new RoundPanel(new BorderLayout());
 		dummy.setPreferredSize(new Dimension(0, 40));
+		dummy.setshadowlen(5);
+		dummy.setRoundrectColor(new Color(171,171,171));
 		//dummy.add(new EasyButton(Resource.IMG_EASY_WINDOW_SPREAD.getImageIcon(35,35)), BorderLayout.EAST);
 		contentspanel.add(dummy, BorderLayout.PAGE_START);
 		contentspanel.setBounds(0, 0, width, height);
@@ -132,6 +138,21 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 		// btn1.setOpaque(true);
 
 		add(layeredPane, BorderLayout.CENTER);
+		
+		////////////////////// test
+		
+		mainframe.setUndecorated(true);
+		setBackground(new Color(0,0,0,250));
+		
+		JPanel panel = new JPanel();
+		panel.setPreferredSize(new Dimension(0, 100));
+		panel.setBackground(new Color(0,0,0,125));
+		//panel.setOpaque(true);
+		//panel.setBackground(Color.RED);
+		add(panel, BorderLayout.SOUTH);
+				
+		//setOpaque(true);
+		//////////////////////	
 
 		new EasyFileDrop(this, dragdroplabel, new EasyFileDrop.Listener() {
 			public void filesDropped(final java.io.File[] files) {
@@ -197,7 +218,10 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 		contentsPanel.setContents(apklightscanner.getApkInfo());
 		//permissionPanel.setPermission(apklightscanner.getApkInfo());
 
-		Log.d(" UI set 시간 : " + (System.currentTimeMillis() - EasyGuiMain.UIstarttime) / 1000.0);
+		DateFormat simple = new SimpleDateFormat("HH:mm:ss:SSS"); 
+	    Date result = new Date(EasyGuiMain.UIstarttime);
+		
+		Log.d(" UI set 시간 : " + (System.currentTimeMillis() - EasyGuiMain.UIstarttime) / 1000.0 + "(start : " + simple.format(result));
 	}
 
 	void showEmptyinfo() {
@@ -242,7 +266,10 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 			
 			if (this.error == 0) {
 				showApkinfopanel();
-				Log.d("Core 시간: " + ((System.currentTimeMillis() - EasyGuiMain.corestarttime) / 1000.0));
+				
+				DateFormat simple = new SimpleDateFormat("HH:mm:ss:SSS"); 
+			    Date result = new Date(EasyGuiMain.corestarttime); 
+			    Log.d("Core 시간: " + ((System.currentTimeMillis() - EasyGuiMain.corestarttime) / 1000.0) + "(core start : " + simple.format(result));
 				mainframe.setVisible(true);
 				
 				
