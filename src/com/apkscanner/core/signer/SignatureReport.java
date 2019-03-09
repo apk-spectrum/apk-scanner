@@ -7,7 +7,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
 import java.security.CodeSigner;
 import java.security.CryptoPrimitive;
 import java.security.MessageDigest;
@@ -229,13 +231,39 @@ public class SignatureReport {
 				if (v.length == 0) {
 					out.println(Resource.STR_EMPTY_VALUE.getString());
 				} else {
-					new sun.misc.HexDumpEncoder().encodeBuffer(ext.getExtensionValue(), out);
+					printHexDump(ext.getExtensionValue(), out);
 					out.println();
 				}
 			}
 			out.println();
 		}
 	}
+
+	private static void printHexDump(byte[] dump, OutputStream out) {
+		Class<?> clazz = null;
+		Object instance = null;
+		try {
+			clazz = Class.forName("sun.security.util.HexDumpEncoder");
+			instance = clazz.getConstructor().newInstance();
+		} catch (Exception e) { }
+		if(instance == null) {
+			try {
+				clazz = Class.forName("sun.misc.HexDumpEncoder");
+				instance = clazz.getConstructor().newInstance();
+			} catch (Exception e) { }
+		}
+		if(instance == null) {
+			Log.e("No such any encoder : sun.misc.HexDumpEncoder, sun.security.util.HexDumpEncoder");
+			return;
+		}
+
+		try {
+			clazz.getMethod("encodeBuffer", byte[].class, OutputStream.class).invoke(instance, dump, out);
+		} catch (IllegalAccessException | IllegalArgumentException | SecurityException | InvocationTargetException | NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * Writes an X.509 certificate in base64 or binary encoding to an output
 	 * stream.

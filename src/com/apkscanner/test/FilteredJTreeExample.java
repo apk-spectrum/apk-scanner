@@ -21,6 +21,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreeNode;
 
 public class FilteredJTreeExample extends JFrame {
 
@@ -129,10 +130,10 @@ public class FilteredJTreeExample extends JFrame {
             }
 
             private boolean containsMatchingChild(DefaultMutableTreeNode node) {
-                @SuppressWarnings("unchecked")
-				Enumeration<DefaultMutableTreeNode> e = node.breadthFirstEnumeration();
+				@SuppressWarnings("unchecked")
+				Enumeration<TreeNode> e = node.breadthFirstEnumeration();
                 while (e.hasMoreElements()) {
-                    if (matchesFilter(e.nextElement())) {
+                    if (matchesFilter((DefaultMutableTreeNode)e.nextElement())) {
                         return true;
                     }
                 }

@@ -739,7 +739,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 		public boolean dispatchKeyEvent(KeyEvent e) {
 			if(!wizard.isFocused()) return false;
 			if (e.getID() == KeyEvent.KEY_RELEASED) {
-				if(e.getModifiers() == KeyEvent.ALT_MASK) {
+				if(e.getModifiersEx() == KeyEvent.ALT_DOWN_MASK) {
 					switch(e.getKeyCode()) {
 					case KeyEvent.VK_N:
 						//next();
@@ -751,7 +751,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 						return false;
 					}
 					return true;
-				} else if(e.getModifiers() == 0) {
+				} else if(e.getModifiersEx() == 0) {
 					switch(e.getKeyCode()) {
 					case KeyEvent.VK_F5 :
 						//contentPanel.refreshDeviceList();

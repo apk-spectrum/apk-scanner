@@ -413,9 +413,9 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			titlebar.append("[").append(Resource.STR_BASIC_PERMISSIONS.getString()).append("] - ");
 			titlebar.append(makeHyperEvent("display-list", String.format("<u>%s</u>", Resource.STR_BASIC_PERMLAB_DISPLAY.getString()), Resource.STR_BASIC_PERMDESC_DISPLAY.getString()));
 			if(apkInfoPanel.getElementById("perm-settings") == null) {
-				titlebar.append(makeHyperEvent("show-perm-setting", String.format("<img src=\"%s\">", Resource.IMG_PERM_MARKER_SETTING.getPath()), null));
+				titlebar.append(makeHyperEvent("show-perm-setting", String.format("<img src=\"%s\" width=\"16\" height=\"16\">", Resource.IMG_PERM_MARKER_SETTING.getPath()), null));
 			} else {
-				titlebar.append(makeHyperEvent("close-perm-setting", String.format("<img src=\"%s\">", Resource.IMG_PERM_MARKER_CLOSE.getPath()), null));
+				titlebar.append(makeHyperEvent("close-perm-setting", String.format("<img src=\"%s\" width=\"16\" height=\"16\">", Resource.IMG_PERM_MARKER_CLOSE.getPath()), null));
 			}
 			apkInfoPanel.removeElementById("show-perm-setting");
 			apkInfoPanel.removeElementById("close-perm-setting");
@@ -544,7 +544,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			e.printStackTrace();
 		}
 		if(image == null) {
-			return String.format("<img src=\"%s\">", src);
+			return String.format("<img src=\"%s\" width=\"36\" height=\"36\">", src);
 		}
 
 		Map<?, ?> desktopHints = (Map<?, ?>) Toolkit.getDefaultToolkit().getDesktopProperty("awt.font.desktophints");
@@ -587,7 +587,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			e.printStackTrace();
 		}
 
-		return String.format("<img src=\"%s\">", src);
+		return String.format("<img src=\"%s\" width=\"36\" height=\"36\">", src);
 	}
 
 	private int makeSdkOptions(Integer targetSdkVersion) {
@@ -726,7 +726,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			settings.append(" <input id=\"mark-count\" type=\"checkbox\">" + Resource.STR_LABEL_MARK_A_COUNT.getString());
 			settings.append(" <input id=\"treat-sign-as-revoked\" type=\"checkbox\">" + Resource.STR_LABEL_TREAT_SIGN_AS_REVOKED.getString());
 			apkInfoPanel.setInnerHTMLById("perm-settings", settings.toString());
-			apkInfoPanel.insertElementLast("perm-group-title", makeHyperEvent("close-perm-setting", String.format("<img src=\"%s\">", Resource.IMG_PERM_MARKER_CLOSE.getPath()), null));
+			apkInfoPanel.insertElementLast("perm-group-title", makeHyperEvent("close-perm-setting", String.format("<img src=\"%s\" width=\"16\" height=\"16\">", Resource.IMG_PERM_MARKER_CLOSE.getPath()), null));
 			for(String elemId: new String[] {"mark-runtime", "mark-count", "treat-sign-as-revoked"}) {
 				Object object = apkInfoPanel.getElementModelById(elemId);
 				if(object instanceof ToggleButtonModel) {
@@ -746,7 +746,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		case "close-perm-setting":
 			apkInfoPanel.removeElementById("close-perm-setting");
 			apkInfoPanel.removeElementById("perm-settings");
-			apkInfoPanel.insertElementLast("perm-group-title", makeHyperEvent("show-perm-setting", String.format("<img src=\"%s\">", Resource.IMG_PERM_MARKER_SETTING.getPath()), null));
+			apkInfoPanel.insertElementLast("perm-group-title", makeHyperEvent("show-perm-setting", String.format("<img src=\"%s\" width=\"16\" height=\"16\">", Resource.IMG_PERM_MARKER_SETTING.getPath()), null));
 			setInfoAreaHeight(permissionManager.getPermissionGroups().length);
 			break;
 		default:

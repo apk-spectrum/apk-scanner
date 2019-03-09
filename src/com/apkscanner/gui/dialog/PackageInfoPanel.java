@@ -481,7 +481,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 				};
 			}.execute();
 		} else if(ACT_CMD_LAUCH_PACKAGE.equals(actCmd)) {
-			final boolean selectActivity = (arg0.getModifiers() & InputEvent.SHIFT_MASK) != 0;
+			final boolean selectActivity = (arg0.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
 			final IDevice device = packageInfo.device;
 
 			if(!packageInfo.isEnabled()) {

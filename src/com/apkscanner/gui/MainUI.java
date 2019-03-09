@@ -656,7 +656,7 @@ public class MainUI extends JFrame
 					boolean isShiftPressed = false;
 					int actionType = 0;
 					if(e instanceof ActionEvent) {
-						isShiftPressed = (e != null && (((ActionEvent) e).getModifiers() & InputEvent.SHIFT_MASK) != 0);
+						isShiftPressed = (e != null && (((ActionEvent) e).getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0);
 						if(e == null || ToolBar.ButtonSet.LAUNCH.matchActionEvent((ActionEvent) e)) {
 							if(isShiftPressed) actionType = 2;
 						} else if(ToolBar.ButtonSet.SUB_LAUNCH.matchActionEvent((ActionEvent) e)) {
@@ -674,7 +674,7 @@ public class MainUI extends JFrame
 							isShiftPressed = false;
 						}
 					} else if(e instanceof InputEvent) {
-						isShiftPressed = (e != null && (((InputEvent) e).getModifiers() & InputEvent.SHIFT_MASK) != 0);
+						isShiftPressed = (e != null && (((InputEvent) e).getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0);
 						if(isShiftPressed) actionType = 2;
 					}
 
@@ -979,9 +979,9 @@ public class MainUI extends JFrame
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (ToolBar.ButtonSet.OPEN.matchActionEvent(e) || ToolBar.MenuItemSet.OPEN_APK.matchActionEvent(e)) {
-				evtOpenApkFile((e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
+				evtOpenApkFile((e.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0);
 			} else if(ToolBar.ButtonSet.MANIFEST.matchActionEvent(e)) {
-				evtShowManifest((e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
+				evtShowManifest((e.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0);
 			} else if(ToolBar.ButtonSet.EXPLORER.matchActionEvent(e)
 					|| ToolBar.MenuItemSet.EXPLORER_ARCHIVE.matchActionEvent(e)
 					|| ToolBar.MenuItemSet.EXPLORER_FOLDER.matchActionEvent(e)) {
@@ -1005,7 +1005,7 @@ public class MainUI extends JFrame
 			} else if(ToolBar.MenuItemSet.NEW_PACKAGE.matchActionEvent(e)) {
 				evtOpenPackage(true);
 			} else if(ToolBar.ButtonSet.OPEN_PACKAGE.matchActionEvent(e) || ToolBar.MenuItemSet.OPEN_PACKAGE.matchActionEvent(e)) {
-				evtOpenPackage((e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
+				evtOpenPackage((e.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0);
 			} else if(ToolBar.MenuItemSet.INSTALLED_CHECK.matchActionEvent(e)) {
 				evtShowInstalledPackageInfo();
 			} else if(ToolBar.ButtonSet.OPEN_CODE.matchActionEvent(e)
@@ -1046,7 +1046,7 @@ public class MainUI extends JFrame
 		public boolean dispatchKeyEvent(KeyEvent e) {
 			if(!isFocused()) return false;
 			if (e.getID() == KeyEvent.KEY_RELEASED) {
-				if(e.getModifiers() == KeyEvent.CTRL_MASK) {
+				if(e.getModifiersEx() == KeyEvent.CTRL_DOWN_MASK) {
 					switch(e.getKeyCode()) {
 					case KeyEvent.VK_O: evtOpenApkFile(false);	break;
 					case KeyEvent.VK_P: evtOpenPackage(false);	break;
@@ -1060,7 +1060,7 @@ public class MainUI extends JFrame
 					default: return false;
 					}
 					return true;
-				} else if(e.getModifiers() == (KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK)) {
+				} else if(e.getModifiersEx() == (KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK)) {
 					switch(e.getKeyCode()) {
 					case KeyEvent.VK_O: evtOpenApkFile(true);	break;
 					case KeyEvent.VK_P: evtOpenPackage(true);	break;
@@ -1068,7 +1068,7 @@ public class MainUI extends JFrame
 					default: return false;
 					}
 					return true;
-				} else if(e.getModifiers() == 0) {
+				} else if(e.getModifiersEx() == 0) {
 					switch(e.getKeyCode()) {
 					case KeyEvent.VK_F1 : AboutDlg.showAboutDialog(MainUI.this);break;
 					case KeyEvent.VK_F12: LogDlg.showLogDialog(MainUI.this);	break;

@@ -87,8 +87,8 @@ public class ToolBar extends JToolBar
 	{
 		NEW_WINDOW		(Resource.STR_MENU_NEW.getString(), null, null, null, '\0', true),
 		NEW_EMPTY		(Resource.STR_MENU_NEW_WINDOW.getString(), null, Resource.IMG_TOOLBAR_MANIFEST.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK, false), 'N'),
-		NEW_APK			(Resource.STR_MENU_NEW_APK_FILE.getString(), null, Resource.IMG_TOOLBAR_OPEN.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_MASK, false), 'O'),
-		NEW_PACKAGE		(Resource.STR_MENU_NEW_PACKAGE.getString(), null, Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_MASK, false), 'P'),
+		NEW_APK			(Resource.STR_MENU_NEW_APK_FILE.getString(), null, Resource.IMG_TOOLBAR_OPEN.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, false), 'O'),
+		NEW_PACKAGE		(Resource.STR_MENU_NEW_PACKAGE.getString(), null, Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, false), 'P'),
 		OPEN_APK		(Resource.STR_MENU_APK_FILE.getString(), null, Resource.IMG_TOOLBAR_OPEN.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK, false), 'O'),
 		OPEN_PACKAGE	(Resource.STR_MENU_PACKAGE.getString(), null, Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK, false), 'P'),
 		INSTALL_APK		(Resource.STR_MENU_INSTALL.getString(), null, Resource.IMG_TOOLBAR_INSTALL.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK, false), 'I'),
@@ -495,7 +495,7 @@ public class ToolBar extends JToolBar
 			@Override
 			public boolean dispatchKeyEvent(KeyEvent e) {
 				if (e.getID() == KeyEvent.KEY_PRESSED && !isShiftPressed) {
-					if(e.getModifiers() == KeyEvent.SHIFT_MASK) {
+					if(e.getModifiersEx() == KeyEvent.SHIFT_DOWN_MASK) {
 						isShiftPressed = true;
 						if(!(boolean)Resource.PROP_ALWAYS_TOOLBAR_EXTENDED.getData()) setArrowVisible(true);
 						setButtonText(ButtonSet.OPEN, Resource.STR_MENU_NEW.getString(), Resource.STR_BTN_OPEN_LAB.getString());
@@ -506,7 +506,7 @@ public class ToolBar extends JToolBar
 						invokeMouseEvent(e, MouseEvent.MOUSE_ENTERED);
 					}
 				} else if (e.getID() == KeyEvent.KEY_RELEASED && isShiftPressed) {
-					if(e.getModifiers() != KeyEvent.SHIFT_MASK) {
+					if(e.getModifiersEx() != KeyEvent.SHIFT_DOWN_MASK) {
 						isShiftPressed = false;
 						if(!(boolean)Resource.PROP_ALWAYS_TOOLBAR_EXTENDED.getData()) setArrowVisible(false);
 						setButtonText(ButtonSet.OPEN, Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OPEN_LAB.getString());
@@ -539,9 +539,9 @@ public class ToolBar extends JToolBar
 							p = ((JToolBar)c).getMousePosition();
 							c = ((JToolBar)c).getComponentAt(p);
 							if(c instanceof ExtensionButton) {
-								((ExtensionButton)c).dispatchEvent(new MouseEvent(c, mouseEvent, e.getWhen() + 10, e.getModifiers(), p.x, p.y, 0, false));
+								((ExtensionButton)c).dispatchEvent(new MouseEvent(c, mouseEvent, e.getWhen() + 10, e.getModifiersEx(), p.x, p.y, 0, false));
 								if(mouseEvent == MouseEvent.MOUSE_EXITED) {
-									((ExtensionButton)c).dispatchEvent(new MouseEvent(c, MouseEvent.MOUSE_ENTERED, e.getWhen() + 20, e.getModifiers(), p.x, p.y, 0, false));
+									((ExtensionButton)c).dispatchEvent(new MouseEvent(c, MouseEvent.MOUSE_ENTERED, e.getWhen() + 20, e.getModifiersEx(), p.x, p.y, 0, false));
 								}
 							}
 						}

@@ -1075,15 +1075,17 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 			}
 
 			@SuppressWarnings("unchecked")
-			public void sort() {				
+			public void sort() {
 				Collections.sort(children, compare());
 			}
 
-			private Comparator<DefaultMutableTreeNode> compare() {
-				return new Comparator<DefaultMutableTreeNode>() {
+			private Comparator<? super TreeNode> compare() {
+				return new Comparator<TreeNode>() {
 					@Override
-					public int compare(DefaultMutableTreeNode o1, DefaultMutableTreeNode o2) {
-						return o1.getUserObject().toString().compareTo(o2.getUserObject().toString());
+					public int compare(TreeNode o1, TreeNode o2) {
+						DefaultMutableTreeNode uo1 = (DefaultMutableTreeNode)o1;
+						DefaultMutableTreeNode uo2 = (DefaultMutableTreeNode)o2;
+						return uo1.getUserObject().toString().compareTo(uo2.getUserObject().toString());
 					}
 				};
 			}
