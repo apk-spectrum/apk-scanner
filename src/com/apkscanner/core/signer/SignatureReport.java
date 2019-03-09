@@ -30,9 +30,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Base64;
 import com.apkscanner.util.Log;
 
-import sun.misc.BASE64Encoder;
 import sun.security.pkcs.PKCS7;
 import sun.security.provider.X509Factory;
 import sun.security.util.DisabledAlgorithmConstraints;
@@ -96,8 +96,8 @@ public class SignatureReport {
 		Enumeration<JarEntry> entries = jf.entries();
 		Set<CodeSigner> ss = new HashSet<>();
 		byte[] buffer = new byte[8192];
-		ArrayList<X509Certificate> certList = new ArrayList<X509Certificate>(); 
-		ArrayList<X509Certificate> timestampList = new ArrayList<X509Certificate>(); 
+		ArrayList<X509Certificate> certList = new ArrayList<X509Certificate>();
+		ArrayList<X509Certificate> timestampList = new ArrayList<X509Certificate>();
 		while (entries.hasMoreElements()) {
 			JarEntry je = entries.nextElement();
 			try (InputStream is = jf.getInputStream(je)) {
@@ -124,7 +124,7 @@ public class SignatureReport {
 					}
 				}
 			} else {
-				String entryName = je.getName(); 
+				String entryName = je.getName();
 				if(entryName.startsWith("META-INF/")){
 					if(entryName.toUpperCase().endsWith(".RSA") || entryName.toUpperCase().endsWith(".DSA") || entryName.toUpperCase().endsWith(".EC")) {
 						try {
@@ -174,7 +174,7 @@ public class SignatureReport {
 	{
 		String pattern = null;
 		Object[] source = null;
-		
+
 		pattern = Resource.STR_PATTERN_PRINT_X509_CERT.getString();
         PublicKey pkey = cert.getPublicKey();
         String sigName = cert.getSigAlgName();
@@ -245,9 +245,7 @@ public class SignatureReport {
 	{
 		if (rfc) {
 			out.println(X509Factory.BEGIN_CERT);
-			//out.println(Base64.getMimeEncoder().encodeToString(cert.getEncoded()));
-			BASE64Encoder encoder = new BASE64Encoder();
-			encoder.encodeBuffer(cert.getEncoded(), out);
+			out.println(Base64.getMimeEncoder().encodeToString(cert.getEncoded()));
 			out.println(X509Factory.END_CERT);
 		} else {
 			out.write(cert.getEncoded()); // binary
@@ -260,7 +258,7 @@ public class SignatureReport {
         byte[] digest = md.digest(encCertInfo);
         return toHexString(digest);
 	}
-	
+
 
     /**
      * Converts a byte to hex digit and writes to the supplied buffer
@@ -273,7 +271,7 @@ public class SignatureReport {
         buf.append(hexChars[high]);
         buf.append(hexChars[low]);
     }
-    
+
     /**
      * Converts a byte array to hex string
      */

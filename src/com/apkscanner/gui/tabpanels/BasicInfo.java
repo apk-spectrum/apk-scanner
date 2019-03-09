@@ -31,7 +31,6 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.text.Element;
 import javax.swing.text.html.Option;
-import javax.xml.bind.DatatypeConverter;
 
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
 import com.apkscanner.core.permissionmanager.PermissionManager;
@@ -61,6 +60,7 @@ import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Base64;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.FileUtil.FSStyle;
 import com.apkscanner.util.Log;
@@ -579,7 +579,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 
 		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
 			ImageIO.write(image, "png", os);
-			String base64Image = DatatypeConverter.printBase64Binary(os.toByteArray());
+			String base64Image = Base64.getEncoder().encodeToString(os.toByteArray());
 			if(base64Image != null) {
 				src = "data:image/png;base64, " + base64Image;
 			}
@@ -654,7 +654,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 				permissionManager.setTreatSignAsRevoked(selected);
 			}
 			setPermissionList(null);
-		}		
+		}
 	}
 
 	private String makeHyperEvent(String id, String text, String title) {

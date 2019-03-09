@@ -20,10 +20,9 @@ import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.plugin.NetworkException;
 import com.apkscanner.plugin.NetworkNotFoundException;
 import com.apkscanner.plugin.NetworkSetting;
+import com.apkscanner.util.Base64;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.XmlPath;
-
-import sun.misc.BASE64Decoder;
 
 public class PermissionRecorder {
 
@@ -82,7 +81,7 @@ public class PermissionRecorder {
 		recordRepositoryInfo(repo);
 
 		String baseUrl = isAOSP ? repo.url + "/+/" : repo.url;
-		BASE64Decoder decoder = isAOSP ? new BASE64Decoder() : null;
+		Base64.Decoder decoder = isAOSP ? Base64.getDecorder() : null;
 
 		HashMap<String, PermissionInfoExt> map = new HashMap<>();
 		HashMap<String, PermissionGroupInfoExt> groupMap = new HashMap<>();
@@ -111,7 +110,7 @@ public class PermissionRecorder {
 			try {
 				rawXml = getSource(url);
 				if(rawXml != null) {
-					if(isAOSP) rawXml = new String(decoder.decodeBuffer(rawXml));
+					if(isAOSP) rawXml = new String(decoder.decode(rawXml));
 					sourcePath = new XmlPath(rawXml);
 				}
 
@@ -121,15 +120,13 @@ public class PermissionRecorder {
 					Log.v(resUrl);
 					rawResXml[j] = getSource(resUrl);
 					if(rawResXml[j] != null) {
-						if(isAOSP) rawResXml[j] = new String(decoder.decodeBuffer(rawResXml[j]));
+						if(isAOSP) rawResXml[j] = new String(decoder.decode(rawResXml[j]));
 						resPath[j] = new XmlPath(rawResXml[j]);
 					} else {
 						Log.w("rawResXml["+j+"] is null, " + resUrl );
 					}
 				}
 			} catch (NetworkException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
 				e.printStackTrace();
 			}
 
