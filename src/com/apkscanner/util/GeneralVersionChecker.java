@@ -6,18 +6,18 @@ import java.util.regex.Pattern;
 
 import com.apkscanner.annotations.NonNull;
 
-public class ApkScannerVersion {
-    public static final ApkScannerVersion UNKNOWN = new ApkScannerVersion(-1, -1, -1);
+public class GeneralVersionChecker {
+    public static final GeneralVersionChecker UNKNOWN = new GeneralVersionChecker(-1, -1, -1);
 
     /** Matches e.g. ".... 1.0.32" */
-    private static final Pattern APKSCANNER_VERSION_PATTERN = Pattern.compile(
+    private static final Pattern GENERAL_VERSION_PATTERN = Pattern.compile(
             "^[^\\d]*(\\d+)(\\.(\\d+)(\\.(\\d+))?)?.*");
 
     public final int major;
     public final int minor;
     public final int micro;
 
-    private ApkScannerVersion(int major, int minor, int micro) {
+    private GeneralVersionChecker(int major, int minor, int micro) {
         this.major = major;
         this.minor = minor;
         this.micro = micro;
@@ -28,7 +28,7 @@ public class ApkScannerVersion {
         return String.format(Locale.US, "%1$d.%2$d.%3$d", major, minor, micro);
     }
 
-    public int compareTo(ApkScannerVersion o) {
+    public int compareTo(GeneralVersionChecker o) {
         if (major != o.major) {
             return major - o.major;
         }
@@ -41,13 +41,13 @@ public class ApkScannerVersion {
     }
 
     @NonNull
-    public static ApkScannerVersion parseFrom(@NonNull String input) {
-        Matcher matcher = APKSCANNER_VERSION_PATTERN.matcher(input);
+    public static GeneralVersionChecker parseFrom(@NonNull String input) {
+        Matcher matcher = GENERAL_VERSION_PATTERN.matcher(input);
         if (matcher.matches()) {
             int major = Integer.parseInt(matcher.group(1));
             int minor = matcher.group(3) != null ? Integer.parseInt(matcher.group(3)) : 0;
             int micro = matcher.group(5) != null ? Integer.parseInt(matcher.group(5)) : 0;
-            return new ApkScannerVersion(major, minor, micro);
+            return new GeneralVersionChecker(major, minor, micro);
         } else {
             return UNKNOWN;
         }
@@ -62,7 +62,7 @@ public class ApkScannerVersion {
             return false;
         }
 
-        ApkScannerVersion version = (ApkScannerVersion) o;
+        GeneralVersionChecker version = (GeneralVersionChecker) o;
 
         if (major != version.major) {
             return false;
