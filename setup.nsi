@@ -2,13 +2,13 @@
 
 ; Define your application name
 !define PROJECTNAME "APK Scanner"
-!define PROJECTNAMEANDVERSION "APK Scanner 2.4.1"
+!define PROJECTNAMEANDVERSION "APK Scanner 2.4.2"
 
 ; Main Install settings
 Name "${PROJECTNAMEANDVERSION}"
 InstallDir "$PROGRAMFILES64\APKScanner"
 InstallDirRegKey HKLM "Software\${PROJECTNAME}" ""
-OutFile "setup.exe"
+OutFile "APKScanner.exe"
 
 ; Use compression
 SetCompressor Zlib
