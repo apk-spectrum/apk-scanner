@@ -18,9 +18,13 @@ hs_err_pid*
 
 # APK Scanner preference file
 /settings.txt
+/APKScanner.deb
+/APKScanner.exe
 /plugin/
+/plugin/plugins.conf
 /security/
 /release/security/
+/release/plugin/
 
 # p4merge
 *.orig

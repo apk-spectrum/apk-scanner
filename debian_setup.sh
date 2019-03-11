@@ -1,7 +1,7 @@
 #!/bin/bash
 
 APP_PATH="/opt/APKScanner"
-APP_VERSION="2.4.1"
+APP_VERSION="2.4.2"
 APP_FILE="ApkScanner.jar"
 
 DEBIAN_DATA_PATH="./debian"$APP_PATH
@@ -197,4 +197,5 @@ chmod 775 ./debian/DEBIAN/postinst
 # build
 ##############################
 dpkg-deb --build debian
-mv debian.deb APKScanner.deb
+mv ./debian.deb ./APKScanner.deb
+rm -rf ./debian
