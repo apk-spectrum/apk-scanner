@@ -3,9 +3,12 @@ package com.apkscanner.gui.easymode;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
+import java.awt.Paint;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -19,6 +22,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.OverlayLayout;
 import javax.swing.border.LineBorder;
 
@@ -141,15 +145,34 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 		
 		////////////////////// test
 		
-		mainframe.setUndecorated(true);
-		setBackground(new Color(0,0,0,250));
+	
+		//mainframe.setDefaultLookAndFeelDecorated(true);
+		//mainframe.getRootPane().setWindowDecorationStyle(JRootPane.FRAME);
+			
 		
-		JPanel panel = new JPanel();
-		panel.setPreferredSize(new Dimension(0, 100));
-		panel.setBackground(new Color(0,0,0,125));
-		//panel.setOpaque(true);
-		//panel.setBackground(Color.RED);
-		add(panel, BorderLayout.SOUTH);
+		
+//		JPanel panel = new JPanel() {
+//	        @Override
+//	        protected void paintComponent(Graphics g) {
+//	            super.paintComponent(g);
+//	            g.drawImage(Resource.IMG_APK_LOGO.getImageIcon().getImage(), 0, 0, getWidth(), getHeight(), this);
+//	        }
+//		};
+//		panel.setPreferredSize(new Dimension(100, 100));
+//		panel.setOpaque(false);
+//		
+//		setBackground(new Color(0,0,0,0));
+//		setOpaque(false);
+//		
+//		//add(panel);
+//		
+//		mainframe.setUndecorated(true);
+//		mainframe.setBackground(new Color(0,0,0,0));
+//		setBorder(null);
+//		
+//		//panel.setBackground(Color.RED);
+//		
+//		add(panel, BorderLayout.SOUTH);
 				
 		//setOpaque(true);
 		//////////////////////	
@@ -200,6 +223,21 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 		}
 	}
 
+    @Override
+    protected void paintComponent(Graphics g) 
+    {
+        if (g instanceof Graphics2D) {
+            final int R = 240;
+            final int G = 240;
+            final int B = 240;
+
+            Paint p = new GradientPaint(0.0f, 0.0f, new Color(R, G, B, 0), 0.0f, getHeight(), new Color(R, G, B, 255), true);
+            Graphics2D g2d = (Graphics2D)g;
+            g2d.setPaint(p);
+            g2d.fillRect(0, 0, getWidth(), getHeight());
+        }
+    }
+	
 	private void setframetext(String text) {
 		if (!EasyGuiMain.isdecoframe) {
 			mainframe.setTitle(text);

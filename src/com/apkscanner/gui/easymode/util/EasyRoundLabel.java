@@ -7,7 +7,12 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -15,17 +20,17 @@ import javax.swing.JTextField;
 
 import com.apkscanner.util.Log;
 
-public class EasyRoundLabel extends RoundPanel{
+public class EasyRoundLabel extends RoundPanel implements MouseListener{
 	
 	EasyTextField textlabel = null;
-	EasyButton button = null;
 	boolean entered = false;
-	private final Color btnhovercolor = new Color(200, 200, 200);
+	
+	private Color backgroundcolor;
 	
 	public EasyRoundLabel(String str, Color backgroundColor, Color foregroundColor) {		
 		textlabel = new EasyTextField(str);		
 		//setBackground(backgroundColor);
-		
+		this.backgroundcolor = backgroundColor; 
 		setRoundrectColor(backgroundColor);
 		//setOpaque(false);
 		textlabel.setForeground(foregroundColor);
@@ -33,27 +38,10 @@ public class EasyRoundLabel extends RoundPanel{
 		add(textlabel);
 	}
 	
-	public EasyRoundLabel(ImageIcon icon, Color backgroundColor) {
-		button = new EasyButton(icon);
-		button.setBackground(backgroundColor);
-		button.setOpaque(true);		
-		add(button);
-	}
-	public EasyRoundLabel(Image icon, Color backgroundColor) {
-		this(new ImageIcon(icon), backgroundColor);		
-	}	
-	
-	public void setactionCommand(String cmd) {
-		button.setActionCommand(cmd);
-	}
-	public void setTooltip(String str) {
-		if(button != null) button.setToolTipText(str);
-		if(textlabel != null) textlabel.setToolTipText(str);
-	}
-	
-	public void setClicklistener(ActionListener listener) {
-		button.addActionListener(listener);
-	}
+	public void AddMouselistener() {		
+		textlabel.addMouseListener(this);
+    }
+
 	private void setEasyTextField(JTextField textfield) {
 		textfield.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
 		textfield.setEditable(false);
@@ -71,30 +59,42 @@ public class EasyRoundLabel extends RoundPanel{
 	public void setHorizontalAlignment(int jtextfield) {
 		textlabel.setHorizontalAlignment(jtextfield);
 	}
-	
-	public void Addlistener() {		
-		textlabel.addMouseListener(new java.awt.event.MouseAdapter() {
-		    public void mouseEntered(java.awt.event.MouseEvent evt) {
-		    	//this.setBackground(new Color(255,255,255));
-		    	//setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
-		    	entered = true;
-		    	repaint();
-		    }
 
-		    public void mouseExited(java.awt.event.MouseEvent evt) {
-		    	//setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-		    	entered = false;
-		    	repaint();
-		    }
-		});
-    }
-	
-	public void paint(Graphics g) {
-		super.paint(g);
-		if (entered) {
-			g.setColor(btnhovercolor);
-			g.drawRect(0, 0, this.getWidth() - 3, this.getHeight() - 3);
-		}
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		StringSelection stringSelection = new StringSelection(textlabel.getText());
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		clipboard.setContents(stringSelection, null);
+		AndroidLikeToast.ShowToast("Copying to the clipboard!",this);
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+    	entered = true;
+    	setRoundrectColor(backgroundcolor.darker().darker());
+    	super.repaint();
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		entered = false;
+		setRoundrectColor(backgroundcolor);
+    	super.repaint();
 	}
 
 }

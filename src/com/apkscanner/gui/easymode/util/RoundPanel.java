@@ -10,6 +10,8 @@ import java.awt.Graphics2D;
 import java.awt.RadialGradientPaint;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.MultipleGradientPaint.CycleMethod;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -21,7 +23,9 @@ import javax.swing.JPanel;
 public class RoundPanel extends JPanel {
 	
 	int len = 7;
-	Color roundrectcolor;
+	private Color roundrectcolor;
+	
+	
 	public RoundPanel() {
 		setLayout(new BorderLayout());
 		//setBorder(BorderFactory.createEmptyBorder(0, 2, 2, 2));
@@ -45,8 +49,12 @@ public class RoundPanel extends JPanel {
 	}
 
 
+	
 	public void setRoundrectColor(Color rowundColor) {
 		roundrectcolor = rowundColor;
+	}
+	public Color getRoundrectColor() {
+		return roundrectcolor;
 	}
 	
 	public void setshadowlen(int setlen) {
@@ -65,12 +73,9 @@ public class RoundPanel extends JPanel {
         Graphics2D g = (Graphics2D)gr;
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
-        
-
-        //g.setColor(new Color(49,56,71,200));
         g.setColor(roundrectcolor);
-        //g.fill(rr);
         g.fillRoundRect(len / 2, len / 2, getWidth()-len, getHeight()-len, 20,15);
+        
     }
 
     private static void draw(Graphics2D g, Rectangle2D r, double s)
@@ -139,4 +144,5 @@ public class RoundPanel extends JPanel {
             fractions, colors, CycleMethod.NO_CYCLE));
         g.fill(new Rectangle2D.Double(x1, y1, s, s));
     }
+
 }

@@ -57,6 +57,9 @@ public class EasyContentsPanel extends JPanel{
 	static public int WIDTH = 550;
 	static public int HEIGHT = 250;
 	
+	static private int PERMISSION_HEIGHT = 46;
+	static private int PACAKGEVERSION_HEIGHT = 35;
+	
 	static private Color IconPanelcolor = new Color(220,220,220);
 	
 	static private Color labelfontcolor = new Color(84,130,53);
@@ -71,7 +74,7 @@ public class EasyContentsPanel extends JPanel{
 	static private Color ininerversiontcolor = new Color(121,121,121);
 	
 	private static String CARD_LAYOUT_EMPTY = "card_empty";
-	private static String CARD_LAYOUT_APKINFO = "card_apkinfo";
+	private static String CARD_LAYOUT_APKINFO = "card_apkinfo";	
 	
 	public EasyContentsPanel() {
 		// TODO Auto-generated constructor stub
@@ -138,14 +141,16 @@ public class EasyContentsPanel extends JPanel{
 		JPanel infopanel = new JPanel(new BorderLayout());
 		//package
 		packagepanel = new EasyRoundLabel(" ", new Color(217, 217, 217), packagefontcolor);
-		packagepanel.setPreferredSize(new Dimension(0, 35));		
+		packagepanel.setPreferredSize(new Dimension(0, PACAKGEVERSION_HEIGHT));
+		packagepanel.AddMouselistener();
 		packagepanel.setshadowlen(SHADOWSIZE);
 		packagepanel.setTextFont(new Font(getFont().getName(), Font.BOLD, 15));
+		
 		infopanel.add(packagepanel, BorderLayout.NORTH);
 
 		sdkverpanel = new EasysdkNotDrawPanel();
 		sdkverpanel.setRoundrectColor(new Color(217, 217, 217));
-		sdkverpanel.setPreferredSize(new Dimension(80, 0));		
+		sdkverpanel.setPreferredSize(new Dimension(30, 0));		
 		sdkverpanel.setshadowlen(SHADOWSIZE);
 		infopanel.add(sdkverpanel, BorderLayout.EAST);
 		
@@ -153,9 +158,10 @@ public class EasyContentsPanel extends JPanel{
 		
 		//version
 		ininerversionpanel = new EasyRoundLabel(" ", new Color(217, 217, 217), versionfontcolor);
-		ininerversionpanel.setPreferredSize(new Dimension(0, 35));
+		ininerversionpanel.setPreferredSize(new Dimension(0, PACAKGEVERSION_HEIGHT));
 		ininerversionpanel.setTextFont(new Font(getFont().getName(), Font.BOLD, 15));
 		ininerversionpanel.setshadowlen(SHADOWSIZE);
+		ininerversionpanel.AddMouselistener();
 		innerinfopanel.add(ininerversionpanel, BorderLayout.NORTH);
 		
 		featurepanel = new EasyFeatureHtmlPanel();
@@ -167,7 +173,7 @@ public class EasyContentsPanel extends JPanel{
 		//innerinfopanel.add(toolbarpanel, BorderLayout.SOUTH);
 		infopanel.add(innerinfopanel, BorderLayout.CENTER);
 		
-		permissionPanel = new EasyPermissionPanel();
+		permissionPanel = new EasyPermissionPanel(PERMISSION_HEIGHT);
 		infopanel.add(permissionPanel, BorderLayout.SOUTH);
 		
 		return infopanel;
@@ -246,7 +252,7 @@ public class EasyContentsPanel extends JPanel{
 		((CardLayout)contentsCardPanel.getLayout()).show(contentsCardPanel,CARD_LAYOUT_APKINFO);
 		
 		//permissions
-		permissionPanel.setPermission(apkInfo);
+		permissionPanel.setPermission(apkInfo);		
 	}
 
 	public void clear() {

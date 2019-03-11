@@ -16,6 +16,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
+import javax.swing.border.EmptyBorder;
 
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
 import com.apkscanner.core.permissionmanager.PermissionManager;
@@ -35,25 +36,22 @@ public class EasyPermissioniconPanel extends RoundPanel implements ActionListene
 
 	int HEIGHT = 35;
 	int WIDTH = 100;
-	int BUTTON_IMG_SIZE = HEIGHT-6;
 	int SHADOW_SIZE = 2;
-	int ICON_GAP = 3;
+	int ICON_GAP = 4;
 	
-	static private Color bordercolor = new Color(242, 242, 242);
 	static private Color dangerouscolor = new Color(181, 11, 11);
-	static private Color permissionbackgroundcolor = new Color(217, 217, 217);
+	static private Color permissionbackgroundcolor = new Color(64, 64, 64);
 	
 	JPanel toolbartemppanel;
 	JScrollPane scrollPane;	
 	EasyRoundButton btnshowpermissiondlg;
 	
 	int permissionbuttoncount = 0;
-	PermissionManager permissionManager;
+	private PermissionManager permissionManager;
 	
 	public EasyPermissioniconPanel(int height, int width) {
 		
 		HEIGHT = height - SHADOW_SIZE * 2;
-		BUTTON_IMG_SIZE = HEIGHT - SHADOW_SIZE * 2;
 		WIDTH = width;
 		init();
 		setPreferredSize(new Dimension(0, height));
@@ -61,6 +59,7 @@ public class EasyPermissioniconPanel extends RoundPanel implements ActionListene
 		
 	private void init() {
 		//setBackground(bordercolor);
+		
 		setRoundrectColor(new Color(217, 217, 217));
 		setshadowlen(SHADOW_SIZE);
 		
@@ -108,6 +107,7 @@ public class EasyPermissioniconPanel extends RoundPanel implements ActionListene
 		
 		add(btnshowpermissiondlg, BorderLayout.EAST);
 		
+		permissionManager = new PermissionManager();
 	}
 	
 	public void setPermission(ApkInfo apkInfo) {
@@ -118,7 +118,7 @@ public class EasyPermissioniconPanel extends RoundPanel implements ActionListene
 		Log.d(apkInfo.manifest.usesPermission.length + "");
 		boolean isPlatformSign = ApkInfoHelper.isTestPlatformSign(apkInfo)
 				|| ApkInfoHelper.isSamsungSign(apkInfo);
-		permissionManager = new PermissionManager();
+		permissionManager.clearPermissions();
 		permissionManager.setPlatformSigned(isPlatformSign);
 		permissionManager.setTreatSignAsRevoked((boolean) Resource.PROP_PERM_TREAT_SIGN_AS_REVOKED.getData());
 		permissionManager.addUsesPermission(apkInfo.manifest.usesPermission);
@@ -131,6 +131,7 @@ public class EasyPermissioniconPanel extends RoundPanel implements ActionListene
 
 		for (PermissionGroupInfoExt g : permissionManager.getPermissionGroups()) {
 			//JPanel permissionicon = new JPanel();
+			//for(int i=0; i< 2; i++){
 			try {
 				ImageIcon imageIcon = new ImageIcon(new URL(g.getIconPath()));
 				
@@ -141,31 +142,34 @@ public class EasyPermissioniconPanel extends RoundPanel implements ActionListene
 				ImageUtils.setcolorImage(imageIcon, Color.WHITE);
 				
 				EasyRoundButton btn = new EasyRoundButton(imageIcon);
-				btn.setPreferredSize(new Dimension(HEIGHT-SHADOW_SIZE, HEIGHT- SHADOW_SIZE));
+				
+				btn.setPreferredSize(new Dimension(HEIGHT-SHADOW_SIZE*2, HEIGHT- SHADOW_SIZE*2));
 				//permissionicon.setshadowlen(SHADOW_SIZE);
 				//permissionicon.setBackground(permissionbackgroundcolor);
 				//permissionicon.add(btn);
 				//btn.setshadowlen(0);
+				
 				btn.addActionListener(this);
 				btn.setToolTipText(g.name);
 				
 				if (g.hasDangerous()) {
 					btn.setBackground(dangerouscolor);
 				} else {
-					btn.setBackground(new Color(64, 64, 64));
+					btn.setBackground(permissionbackgroundcolor);
 				}
-				toolbartemppanel.add(btn);
+				toolbartemppanel.add(btn);				
 				permissionbuttoncount++;
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			}
 		}
-//		}
+		//}
 	
 		//WIDTH = scrollPane.getViewport().getWidth();		
 		
 		int line = (int)((HEIGHT + 1)* permissionbuttoncount / WIDTH);
 		toolbartemppanel.setPreferredSize(new Dimension(0, HEIGHT * (line+1) + ((line !=0)? SHADOW_SIZE : 0)));
+		updateUI();
 	}
 
 
