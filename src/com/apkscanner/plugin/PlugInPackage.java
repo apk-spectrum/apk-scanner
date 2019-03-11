@@ -288,7 +288,7 @@ public class PlugInPackage
 
 		        try {
 		            Class<?> clazz = loader.loadClass(className);
-		            plugin = (IPlugIn)clazz.getDeclaredConstructor(PlugInPackage.class, Component.class).newInstance(this, c);
+		            plugin = (IPlugIn)clazz.getConstructor(PlugInPackage.class, Component.class).newInstance(this, c);
 		        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 		        	Log.e("Fail loadClass : " + className + ", " + e.getMessage());
 		        } catch (IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {

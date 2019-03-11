@@ -88,6 +88,8 @@ Section $(APP_NAME) Section1
 	SetOutPath "$INSTDIR\tool\lib\"
 	File "release\tool\lib\*"
 
+	Exec '"cmd.exe" /c icacls "$INSTDIR" /grant Users:(OI)(CI)F'
+
 SectionEnd
 
 Section $(ASSOCITATE_APK) Section2

@@ -1,4 +1,4 @@
-package com.apkscanner.gui.install;
+package com.apkscanner.gui.installer;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -9,8 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -48,7 +46,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 
 	public static final String ACT_CMD_INSTALL = Integer.toString(OptionsBundle.FLAG_OPT_INSTALL);
 	public static final String ACT_CMD_PUSH = Integer.toString(OptionsBundle.FLAG_OPT_PUSH);
-	public static final String ACT_CMD_NO_INSTALL = Integer.toString(OptionsBundle.FLAG_OPT_NO_INSTALL);
+	public static final String ACT_CMD_NO_INSTALL = Integer.toString(OptionsBundle.FLAG_OPT_NOT_INSTALL);
 
 	public static final String ACT_OPT_LAUNCH = Integer.toString(OptionsBundle.FLAG_OPT_INSTALL_LAUNCH);
 	public static final String ACT_OPT_REPLACE = Integer.toString(OptionsBundle.FLAG_OPT_INSTALL_REPLACE);
@@ -98,6 +96,8 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 
 	private JButton btnDisseminate;
 
+	private boolean ignoreEvent = false;
+
 	public InstallOptionPanel() {
 		setLayout(new BorderLayout());
 
@@ -120,8 +120,8 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 						} else {
 							bundle.set(OptionsBundle.FLAG_OPT_PUSH);
 						}
-					} else if(!bundle.isBlockedFlags(OptionsBundle.FLAG_OPT_NO_INSTALL)) {
-						bundle.set(OptionsBundle.FLAG_OPT_NO_INSTALL);
+					} else if(!bundle.isBlockedFlags(OptionsBundle.FLAG_OPT_NOT_INSTALL)) {
+						bundle.set(OptionsBundle.FLAG_OPT_NOT_INSTALL);
 					}
 				}
 
@@ -141,7 +141,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 						messageId = MessageBoxPool.MSG_BLOCKED_NO_ROOT; break;
 					case OptionsBundle.BLOACKED_PUSH_CAUSE_HAS_SU_BUT_NO_ROOT:
 						messageId = MessageBoxPool.MSG_BLOCKED_NO_ROOT; break;
-					case OptionsBundle.BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_NOT_SYSTEM:
+					case OptionsBundle.BLOACKED_PUSH_CAUSE_MISMATCH_SIGNED_AND_NO_SYSTEM:
 						messageId = MessageBoxPool.MSG_BLOCKED_MISMATCH_SIGNED_NOT_SYSTEM; break;
 					case OptionsBundle.BLOACKED_CAUSE_UNKNWON: default:
 						messageId = MessageBoxPool.MSG_BLOCKED_UNKNOWN; break;
@@ -186,34 +186,6 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 
 		installOptionsPanel.add(ckLaucnApp);
 
-		installOptionsPanel.add(Box.createVerticalStrut(5));
-
-		final JPanel additionalOptionsPanel = new JPanel();
-		additionalOptionsPanel.setAlignmentX(0);
-		additionalOptionsPanel.setVisible(false);
-		additionalOptionsPanel.setLayout(new BoxLayout(additionalOptionsPanel, BoxLayout.Y_AXIS));
-
-		JLabel additionalOptionsLabel = new JLabel("▶ " + Resource.STR_LABEL_ADDITIONAL_OPTIONS.getString());
-		additionalOptionsLabel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				super.mouseClicked(arg0);
-				if(!(arg0.getSource() instanceof JLabel)) {
-					return;
-				}
-				JLabel label = (JLabel)arg0.getSource();
-				String text = label.getText();
-				if(text.startsWith("▶")) {
-					label.setText(text.replaceFirst("▶", "▼"));
-					additionalOptionsPanel.setVisible(true);
-				} else {
-					label.setText(text.replaceFirst("▼", "▶"));
-					additionalOptionsPanel.setVisible(false);
-				}
-			}
-		});
-		installOptionsPanel.add(additionalOptionsLabel);
-
 		cbLaunchActivity = new JComboBox<String>();
 		cbLaunchActivity.setActionCommand(ACT_OPT_LAUNCH);
 		cbLaunchActivity.addItemListener(this);
@@ -237,9 +209,9 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 		launcherBox.add(launcherLabel);
 		launcherBox.add(Box.createHorizontalStrut(5));
 		launcherBox.add(cbLaunchActivity);
-		additionalOptionsPanel.add(launcherBox);
+		installOptionsPanel.add(launcherBox);
 
-		//additionalOptionsPanel
+		installOptionsPanel.add(Box.createVerticalStrut(5));
 
 		ckReplace = new JCheckBox(Resource.STR_BTN_REPLACE_EXISTING_APP.getString());
 		ckReplace.setActionCommand(ACT_OPT_REPLACE);
@@ -277,9 +249,8 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 		JScrollPane emptyBorderScrollPanel = new JScrollPane(addCheckOptionsPanel);
 		emptyBorderScrollPanel.setBorder(new EmptyBorder(0,0,0,0));
 		emptyBorderScrollPanel.setAlignmentX(0);
-		additionalOptionsPanel.add(emptyBorderScrollPanel);
+		installOptionsPanel.add(emptyBorderScrollPanel);
 
-		installOptionsPanel.add(additionalOptionsPanel);
 		installOptionsPanel.add(Box.createVerticalGlue());
 
 		return installOptionsPanel;
@@ -328,7 +299,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 		ckReboot.addItemListener(this);
 		pushOptionsPanel.add(ckReboot);
 		pushOptionsPanel.add(Box.createVerticalStrut(5));
-		lbWithLibs = new JLabel(Resource.STR_LABEL_WITH_LIBRARIES.getString());
+		lbWithLibs = new JLabel(Resource.STR_LABEL_WITH_LIBRARIES.getString()+":");
 		pushOptionsPanel.add(lbWithLibs);
 		//pushOptionsPanel.add(CheckWithLib32);
 		//pushOptionsPanel.add(CheckWithLib64);
@@ -467,6 +438,7 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 
 	public void setApkInfo(CompactApkInfo apkinfo) {
 		synchronized (this) {
+			ignoreEvent = true;
 			cbLaunchActivity.removeAllItems();
 			if(apkinfo.activityList != null && apkinfo.activityList.length > 0) {
 				for(ComponentInfo c: apkinfo.activityList) {
@@ -528,11 +500,13 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 				lib32Box.setVisible(false);
 				lib64Box.setVisible(false);
 			}
+			ignoreEvent = false;
 		}
 	}
 
 	public void setOptions(OptionsBundle bundle) {
 		synchronized (this) {
+			ignoreEvent = true;
 			this.bundle = bundle;
 
 			String selectAct = null;
@@ -590,10 +564,10 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 			ckLock.setSelected(bundle.isSetForwardLock());
 			ckTestPack.setSelected(bundle.isSetAllowTestPackage());
 
-			if(cbLib32Dest.getItemCount() > 2) {
+			while(cbLib32Dest.getItemCount() > 2) {
 				cbLib32Dest.removeItemAt(2);
 			}
-			if(cbLib64Dest.getItemCount() > 2) {
+			while(cbLib64Dest.getItemCount() > 2) {
 				cbLib64Dest.removeItemAt(2);
 			}
 
@@ -613,6 +587,28 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 				txtTargetPath.setText("/system/app/unknown-1/unknown-1.apk");
 			}
 
+			if(bundle.getWithLib32ToPath() != null) {
+				cbLib32Dest.setSelectedItem(bundle.getWithLib32ToPath());
+				if(!cbLib32Dest.getSelectedItem().equals(bundle.getWithLib32ToPath())) {
+					cbLib32Dest.addItem(bundle.getWithLib32ToPath());
+					cbLib32Dest.setSelectedItem(bundle.getWithLib32ToPath());
+				}
+			} else {
+				cbLib32Dest.setSelectedIndex(cbLib32Dest.getItemCount() - 1);;
+			}
+			if(bundle.getWithLib64ToPath() != null) {
+				cbLib64Dest.setSelectedItem(bundle.getWithLib64ToPath());
+				if(!cbLib64Dest.getSelectedItem().equals(bundle.getWithLib64ToPath())) {
+					cbLib64Dest.addItem(bundle.getWithLib64ToPath());
+					cbLib64Dest.setSelectedItem(bundle.getWithLib64ToPath());
+				}
+			} else {
+				cbLib64Dest.setSelectedIndex(cbLib64Dest.getItemCount() - 1);;
+			}
+
+			cbLib32Src.setSelectedItem(bundle.getWithLib32Arch());
+			cbLib64Src.setSelectedItem(bundle.getWithLib64Arch());
+
 			if(!bundle.isSetPushToOther()) {
 				rbSystemPush.setSelected(bundle.isSetPushToSystem());
 				rbSystemPush.setEnabled(true);
@@ -629,17 +625,10 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 			ckLib32.setSelected(bundle.isSetWithLib32());
 			ckLib64.setSelected(bundle.isSetWithLib64());
 
-			if(bundle.isSetWithLib32()) {
-				cbLib32Dest.setSelectedItem(bundle.getWithLib32ToPath());
-				cbLib32Src.setSelectedItem(bundle.getWithLib32Arch());
-			}
-			if(bundle.isSetWithLib64()) {
-				cbLib64Dest.setSelectedItem(bundle.getWithLib64ToPath());
-				cbLib64Src.setSelectedItem(bundle.getWithLib64Arch());
-			}
 			refreshLibPreview();
 
 			btnDisseminate.setEnabled(!bundle.isImpossibleInstallOptions());
+			ignoreEvent = false;
 		}
 	}
 
@@ -687,6 +676,8 @@ public class InstallOptionPanel extends JPanel implements ItemListener {
 
 	@Override
 	public void itemStateChanged(ItemEvent arg0) {
+		if(ignoreEvent) return;
+
 		String actCmd = null;
 		String[] extraData = null;
 		int flag = 0;

@@ -321,9 +321,9 @@ public class Resources extends AbstractTabbedPanel {
 				}
 
 				@SuppressWarnings("unchecked")
-				Enumeration<DefaultMutableTreeNode> e = top.depthFirstEnumeration();
+				Enumeration<TreeNode> e = top.depthFirstEnumeration();
 				while (e.hasMoreElements()) {
-					DefaultMutableTreeNode node = e.nextElement();
+					DefaultMutableTreeNode node = (DefaultMutableTreeNode)e.nextElement();
 
 					if (node.getUserObject() instanceof ResourceObject) {
 
@@ -345,9 +345,9 @@ public class Resources extends AbstractTabbedPanel {
 			@Override
 			public String getImagefilePath(String findfilename) {
 				@SuppressWarnings("unchecked")
-				Enumeration<DefaultMutableTreeNode> e = top.depthFirstEnumeration();
+				Enumeration<TreeNode> e = top.depthFirstEnumeration();
 				while (e.hasMoreElements()) {
-					DefaultMutableTreeNode node = e.nextElement();
+					DefaultMutableTreeNode node = (DefaultMutableTreeNode)e.nextElement();
 
 					if (node.getUserObject() instanceof ResourceObject) {
 
@@ -1065,13 +1065,11 @@ public class Resources extends AbstractTabbedPanel {
 		textField.addFocusListener(new FocusListener() {
 			@Override
 			public void focusLost(FocusEvent arg0) {
-				// TODO Auto-generated method stub
 				((JTextField) (arg0.getSource())).setBackground(new Color(255, 255, 255));
 			}
 
 			@Override
 			public void focusGained(FocusEvent arg0) {
-				// TODO Auto-generated method stub
 				((JTextField) (arg0.getSource())).setBackground(new Color(178, 235, 244));
 			}
 		});

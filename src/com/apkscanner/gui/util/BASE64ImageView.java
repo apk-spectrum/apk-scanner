@@ -13,7 +13,8 @@ import javax.imageio.ImageIO;
 import javax.swing.text.Element;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.ImageView;
-import javax.xml.bind.DatatypeConverter;
+
+import com.apkscanner.util.Base64;
 
 // refer to https://stackoverflow.com/questions/51103717/jeditorpane-content-type-for-html-embedded-base64-images
 public class BASE64ImageView extends ImageView {
@@ -44,7 +45,7 @@ public class BASE64ImageView extends ImageView {
 		BufferedImage image = null;
 
 		if (isBase64Encoded()) {
-			byte[] b64 = DatatypeConverter.parseBase64Binary(getBASE64Image());
+			byte[] b64 = Base64.getDecorder().decode(getBASE64Image());
 			try (ByteArrayInputStream bais = new ByteArrayInputStream(b64)){
 				image = ImageIO.read(bais);
 			} catch (Throwable ex) {
@@ -83,6 +84,6 @@ public class BASE64ImageView extends ImageView {
 		if (!isBase64Encoded()) {
 			return null;
 		}
-		return src.substring(src.indexOf("base64,") + 7);
+		return src.substring(src.indexOf("base64,") + 7).trim();
 	}
 }

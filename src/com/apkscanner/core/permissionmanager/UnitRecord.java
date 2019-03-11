@@ -50,8 +50,8 @@ public class UnitRecord<T> {
 		Object info = null;
 		for (int i = 0, cnt = patchs.getCount(); i <= cnt; i++) {
 			try {
-				info = histories[i] = (i == 0) ? clazz.newInstance()
-						: clazz.getDeclaredConstructor(clazz).newInstance(info);
+				info = histories[i] = (i == 0) ? clazz.getConstructor().newInstance()
+						: clazz.getConstructor(clazz).newInstance(info);
 			} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException
 					| SecurityException e1) {
 				e1.printStackTrace();

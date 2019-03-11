@@ -1,4 +1,4 @@
-package com.apkscanner.gui.install;
+package com.apkscanner.gui.installer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -39,7 +39,6 @@ import javax.swing.event.ListSelectionListener;
 
 import com.android.ddmlib.IDevice;
 import com.apkscanner.core.installer.OptionsBundle;
-import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
@@ -146,7 +145,7 @@ public class DeviceCustomList extends JList<DeviceListData> {
 					IDevice device = value.getDevice();
 					OptionsBundle bundle = value.getOptionsBundle();
 
-					if(!device.isOnline() || bundle.isNoInstallOptions() || bundle.isImpossibleInstallOptions()
+					if(!device.isOnline() || bundle.isNotInstallOptions() || bundle.isImpossibleInstallOptions()
 							|| value.getState() == DeviceListData.STATUS_FAILED) {
 						isinstallIcon.setIcon(Resource.IMG_INSTALL_BLOCK.getImageIcon());
 					} else if(bundle.isInstallOptions() || bundle.isPushOptions()) {
@@ -367,7 +366,7 @@ public class DeviceCustomList extends JList<DeviceListData> {
 
 					if(temp.getState() != DeviceListData.STATUS_SETTING) return;
 
-					if(!temp.getOptionsBundle().isInstalled()) { 
+					if(!temp.getOptionsBundle().isInstalled()) {
 						//temp.showstate = DeviceListData.SHOW_INSTALL_OPTION;
 						Log.e("!getOptionsBundle().isInstalled()");
 						return;

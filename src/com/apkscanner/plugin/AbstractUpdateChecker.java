@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.apkscanner.plugin.manifest.Component;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.ApkScannerVersion;
+import com.apkscanner.util.GeneralVersionChecker;
 
 public abstract class AbstractUpdateChecker extends AbstractPlugIn implements IUpdateChecker
 {
@@ -90,8 +90,8 @@ public abstract class AbstractUpdateChecker extends AbstractPlugIn implements IU
 		String version = (String)latestVersionInfo.get("version");
 		String targetPackageName = getTargetPackageName();
 		if("com.apkscanner".equals(targetPackageName)) {
-			ApkScannerVersion newVer = ApkScannerVersion.parseFrom(version);
-			ApkScannerVersion oldVer = ApkScannerVersion.parseFrom(Resource.STR_APP_VERSION.getString());
+			GeneralVersionChecker newVer = GeneralVersionChecker.parseFrom(version);
+			GeneralVersionChecker oldVer = GeneralVersionChecker.parseFrom(Resource.STR_APP_VERSION.getString());
 			return newVer.compareTo(oldVer) > 0;
 		} else if ("com.android.sdk".equals(targetPackageName)) {
 			return false;

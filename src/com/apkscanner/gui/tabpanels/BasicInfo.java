@@ -31,7 +31,6 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.text.Element;
 import javax.swing.text.html.Option;
-import javax.xml.bind.DatatypeConverter;
 
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
 import com.apkscanner.core.permissionmanager.PermissionManager;
@@ -61,6 +60,7 @@ import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Base64;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.FileUtil.FSStyle;
 import com.apkscanner.util.Log;
@@ -233,7 +233,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		String mutiLabels = labelBuilder.toString();
 		if(appName == null) appName = packageName;
 
-		if(labels.length > 1) {
+		if(labels != null && labels.length > 1) {
 			apkInfoPanel.setInnerHTMLById("label", makeHyperEvent("other-lang", appName, mutiLabels));
 			apkInfoPanel.insertElementLast("label", "<font>" + makeHyperEvent("other-lang", "&nbsp;["+labels.length+"]", mutiLabels, mutiLabels) + "</font>");
 		} else {
@@ -371,11 +371,11 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			particularFeatures.append(", ");
 			particularFeatures.append(makeHyperEvent("feature-system-user-id", Resource.STR_FEATURE_SYSTEM_UID_LAB.getString(), Resource.STR_FEATURE_SYSTEM_UID_DESC.getString()));
 		}
-		if(isPlatformSign) {
+		if(isPlatformSign && apkInfoPanel.getElementById("feature-platform-sign") == null) {
 			particularFeatures.append(", ");
 			particularFeatures.append(makeHyperEvent("feature-platform-sign", Resource.STR_FEATURE_PLATFORM_SIGN_LAB.getString(), Resource.STR_FEATURE_PLATFORM_SIGN_DESC.getString(), certSummary));
 		}
-		if(isSamsungSign) {
+		if(isSamsungSign && apkInfoPanel.getElementById("feature-samsung-sign") == null) {
 			particularFeatures.append(", ");
 			particularFeatures.append(makeHyperEvent("feature-samsung-sign", Resource.STR_FEATURE_SAMSUNG_SIGN_LAB.getString(), Resource.STR_FEATURE_SAMSUNG_SIGN_DESC.getString(), certSummary));
 		}
@@ -413,9 +413,9 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			titlebar.append("[").append(Resource.STR_BASIC_PERMISSIONS.getString()).append("] - ");
 			titlebar.append(makeHyperEvent("display-list", String.format("<u>%s</u>", Resource.STR_BASIC_PERMLAB_DISPLAY.getString()), Resource.STR_BASIC_PERMDESC_DISPLAY.getString()));
 			if(apkInfoPanel.getElementById("perm-settings") == null) {
-				titlebar.append(makeHyperEvent("show-perm-setting", String.format("<img src=\"%s\">", Resource.IMG_PERM_MARKER_SETTING.getPath()), null));
+				titlebar.append(makeHyperEvent("show-perm-setting", String.format("<img src=\"%s\" width=\"16\" height=\"16\">", Resource.IMG_PERM_MARKER_SETTING.getPath()), null));
 			} else {
-				titlebar.append(makeHyperEvent("close-perm-setting", String.format("<img src=\"%s\">", Resource.IMG_PERM_MARKER_CLOSE.getPath()), null));
+				titlebar.append(makeHyperEvent("close-perm-setting", String.format("<img src=\"%s\" width=\"16\" height=\"16\">", Resource.IMG_PERM_MARKER_CLOSE.getPath()), null));
 			}
 			apkInfoPanel.removeElementById("show-perm-setting");
 			apkInfoPanel.removeElementById("close-perm-setting");
@@ -544,7 +544,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			e.printStackTrace();
 		}
 		if(image == null) {
-			return String.format("<img src=\"%s\">", src);
+			return String.format("<img src=\"%s\" width=\"36\" height=\"36\">", src);
 		}
 
 		Map<?, ?> desktopHints = (Map<?, ?>) Toolkit.getDefaultToolkit().getDesktopProperty("awt.font.desktophints");
@@ -579,7 +579,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 
 		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
 			ImageIO.write(image, "png", os);
-			String base64Image = DatatypeConverter.printBase64Binary(os.toByteArray());
+			String base64Image = Base64.getEncoder().encodeToString(os.toByteArray());
 			if(base64Image != null) {
 				src = "data:image/png;base64, " + base64Image;
 			}
@@ -587,7 +587,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			e.printStackTrace();
 		}
 
-		return String.format("<img src=\"%s\">", src);
+		return String.format("<img src=\"%s\" width=\"36\" height=\"36\">", src);
 	}
 
 	private int makeSdkOptions(Integer targetSdkVersion) {
@@ -654,7 +654,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 				permissionManager.setTreatSignAsRevoked(selected);
 			}
 			setPermissionList(null);
-		}		
+		}
 	}
 
 	private String makeHyperEvent(String id, String text, String title) {
@@ -726,7 +726,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			settings.append(" <input id=\"mark-count\" type=\"checkbox\">" + Resource.STR_LABEL_MARK_A_COUNT.getString());
 			settings.append(" <input id=\"treat-sign-as-revoked\" type=\"checkbox\">" + Resource.STR_LABEL_TREAT_SIGN_AS_REVOKED.getString());
 			apkInfoPanel.setInnerHTMLById("perm-settings", settings.toString());
-			apkInfoPanel.insertElementLast("perm-group-title", makeHyperEvent("close-perm-setting", String.format("<img src=\"%s\">", Resource.IMG_PERM_MARKER_CLOSE.getPath()), null));
+			apkInfoPanel.insertElementLast("perm-group-title", makeHyperEvent("close-perm-setting", String.format("<img src=\"%s\" width=\"16\" height=\"16\">", Resource.IMG_PERM_MARKER_CLOSE.getPath()), null));
 			for(String elemId: new String[] {"mark-runtime", "mark-count", "treat-sign-as-revoked"}) {
 				Object object = apkInfoPanel.getElementModelById(elemId);
 				if(object instanceof ToggleButtonModel) {
@@ -746,27 +746,26 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		case "close-perm-setting":
 			apkInfoPanel.removeElementById("close-perm-setting");
 			apkInfoPanel.removeElementById("perm-settings");
-			apkInfoPanel.insertElementLast("perm-group-title", makeHyperEvent("show-perm-setting", String.format("<img src=\"%s\">", Resource.IMG_PERM_MARKER_SETTING.getPath()), null));
+			apkInfoPanel.insertElementLast("perm-group-title", makeHyperEvent("show-perm-setting", String.format("<img src=\"%s\" width=\"16\" height=\"16\">", Resource.IMG_PERM_MARKER_SETTING.getPath()), null));
 			setInfoAreaHeight(permissionManager.getPermissionGroups().length);
 			break;
 		default:
 			if(id.startsWith("feature-")) {
-				showFeatureInfo(evt);
+				showFeatureInfo(id, evt.getUserData());
 			} else if(id.startsWith("PermGroup:")) {
 				showPermDetailDesc(evt);
-			}  else if(id.startsWith("PLUGIN:")) {
+			} else if(id.startsWith("PLUGIN:")) {
 				IPlugIn plugin = PlugInManager.getPlugInByActionCommand((String)evt.getUserData());
 				if(plugin != null) {
 					plugin.launch();
 				}
-			}else {
+			} else {
 				Log.w("Unknown id " + id);
 			}
 		}
 	}
 
-	private void showFeatureInfo(HyperlinkClickEvent evt) {
-		String id = evt.getId();
+	private void showFeatureInfo(String id, Object userData) {
 		String feature = null;
 		Dimension size = new Dimension(400, 100);
 
@@ -782,7 +781,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			feature += "\nandroid.permission.RECEIVE_BOOT_COMPLETED";
 			break;
 		case "feature-shared-user-id":
-			feature = "sharedUserId=" + evt.getUserData() + "\n※ ";
+			feature = "sharedUserId=" + userData + "\n※ ";
 			feature += Resource.STR_FEATURE_SHAREDUSERID_DESC.getString();
 			break;
 		case "feature-system-user-id":
@@ -791,12 +790,12 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			break;
 		case "feature-platform-sign":
 			feature = "※ " + Resource.STR_FEATURE_PLATFORM_SIGN_DESC.getString();
-			feature += "\n\n" + evt.getUserData();
+			feature += "\n\n" + userData;
 			size = new Dimension(500, 150);
 			break;
 		case "feature-samsung-sign":
 			feature = "※ " + Resource.STR_FEATURE_SAMSUNG_SIGN_DESC.getString();
-			feature += "\n\n" + evt.getUserData();
+			feature += "\n\n" + userData;
 			size = new Dimension(500, 150);
 			break;
 		case "feature-debuggable":
@@ -806,7 +805,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			feature = Resource.STR_FEATURE_INSTRUMENTATION_DESC.getString();
 			break;
 		case "feature-device-requirements":
-			feature = (String) evt.getUserData();
+			feature = (String) userData;
 			size = new Dimension(500, 250);
 			break;
 		case "feature-install-location-internal":

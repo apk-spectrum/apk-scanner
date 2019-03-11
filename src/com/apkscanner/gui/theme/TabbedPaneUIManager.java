@@ -1,6 +1,7 @@
 package com.apkscanner.gui.theme;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import javax.swing.JTabbedPane;
@@ -52,10 +53,10 @@ public class TabbedPaneUIManager {
 			for(Class<?> cls : ClassFinder.getClasses(THEMES_PACKAGE)) {
 				if(cls.isMemberClass() || cls.isInterface()) continue;
 				try {
-					if(cls.newInstance() instanceof BasicTabbedPaneUI) {
+					if(cls.getConstructor().newInstance() instanceof BasicTabbedPaneUI) {
 						infoList.add(new TabbedPaneUIInfo(cls));
 					}
-				} catch (InstantiationException | IllegalAccessException e) {
+				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 					e.printStackTrace();
 				}
 			}
@@ -79,7 +80,7 @@ public class TabbedPaneUIManager {
 			return;
 		}
 		try {
-			pane.setUI((TabbedPaneUI) Class.forName(clazz).newInstance());
+			pane.setUI((TabbedPaneUI) Class.forName(clazz).getConstructor().newInstance());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
