@@ -1,6 +1,7 @@
 package com.apkscanner.gui.easymode.contents;
 
 import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -72,7 +73,7 @@ public class EasyToolIcon extends JLabel implements MouseListener{
         	//repaint();
         	updateUI();
         	if(hoversize <= width || width <=originalsize) {
-        		if(eventlistner != null && entered)eventlistner.changestate(EasyToolListner.STATE_ANIMATION_END, toolicon );
+        		if(eventlistner != null && entered) eventlistner.changestate(EasyToolListner.STATE_ANIMATION_END, toolicon );
         		this.cancel();
         	}
         }
@@ -85,7 +86,7 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 		
 		width = height = originalsize = size;
 		this.addMouseListener(this);
-		setPreferredSize(new Dimension(width, height));		
+		setPreferredSize(new Dimension(width, height));
 	}
 
 	public void setAction(String cmd, ActionListener listener ) {
@@ -126,9 +127,9 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
 		//Log.d("mouse Enter");
-    	entered = true;
-    	eventlistner.changestate(EasyToolListner.STATE_ENTER, this);
 		
+    	entered = true;
+    	eventlistner.changestate(EasyToolListner.STATE_ENTER, this);		
 //		setPreferredSize(new Dimension(width, height));
 //    	repaint();
 //    	updateUI();  	
@@ -167,7 +168,7 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 	}
 	
 	public void paintComponent(Graphics g) {
-		//super.paint(g);
+		//super.paint(g);		
 		//super.paintComponent(g);
 		
 		Graphics2D graphics2D = (Graphics2D) g;
@@ -175,9 +176,11 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 		
 		
 		graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.9f));
-		graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);		
+		graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		graphics2D.drawImage(bufferimage, 0, 0, width, height, this);
 				
+		//super.paintComponent(g);
+		//setText("aaaaaaaaaaa");
 //		Log.d(getBounds().toString());
 		
 //	      BufferedImage myImage = ImageUtils.imageToBufferedImage(image);

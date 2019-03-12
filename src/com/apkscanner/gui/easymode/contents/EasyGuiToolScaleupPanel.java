@@ -91,9 +91,14 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener, E
 		
 		open_detail_apk_btn.setAction(Resource.STR_APP_NAME.getString(), this);
 		open_detail_apk_btn.setEasyToolListner(this);
-		open_detail_apk_btn.setEasyText(defaultApk);		
-		add(open_detail_apk_btn, BorderLayout.EAST);
-		
+		open_detail_apk_btn.setEasyText(defaultApk);
+		JPanel temp = new JPanel(new FlowLayout(FlowLayout.CENTER,0, 0));
+		((FlowLayout) temp.getLayout()).setAlignOnBaseline(true);
+		temp.setOpaque(false);
+		temp.add(open_detail_apk_btn);
+		//temp.setPreferredSize(new Dimension(30, 30));
+		add(temp, BorderLayout.EAST);
+//		add(open_detail_apk_btn, BorderLayout.LINE_END);
 		//toolbartemppanel.setAlignmentY(Component.TOP_ALIGNMENT);
 
 		//((FlowLayout) this.getLayout()).setAlignOnBaseline(true);
@@ -188,8 +193,11 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener, E
 		switch(state) {
 		case EasyToolListner.STATE_ANIMATION_END:
 			drawtext = true;
-			tooliconlocation.x = toolbartemppanel.getLocation().x + easyiconlabel.getLocation().x + (int)(easyiconlabel.getBounds().getWidth()/2);
+			tooliconlocation.x = easyiconlabel.getParent().getLocation().x + easyiconlabel.getLocation().x + (int)(easyiconlabel.getBounds().getWidth()/2);
+			
 			//Log.d(easyiconlabel.getBounds() + "");
+			//Log.d(toolbartemppanel.getLocation().x + " : " + easyiconlabel.getLocation().x);
+			
 			iconlabel = easyiconlabel.getEasyText();
 			updateUI();
 			break;
@@ -199,7 +207,6 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener, E
 			drawtext = false;
 			updateUI();
 			break;
-			
 		}
 	}
 
