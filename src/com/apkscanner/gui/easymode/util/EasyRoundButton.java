@@ -5,17 +5,22 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
+import com.apkscanner.util.Log;
+
 public class EasyRoundButton extends JButton {
 	private static final long serialVersionUID = -6927025737749969747L;
 	boolean entered = false;
-	private final Color btnhovercolor = new Color(100, 100, 100);
 	private Color originalcolor;
 	private int len = 0;
 	
@@ -42,6 +47,17 @@ public class EasyRoundButton extends JButton {
 				// setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 				entered = false;
 				repaint();
+			}
+		
+			public void mouseClicked(java.awt.event.MouseEvent evt) {
+				// TODO Auto-generated method stub
+				entered = false;
+				repaint();
+			}			
+			
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
 			}
 		});
 	}

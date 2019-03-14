@@ -39,8 +39,8 @@ public class EasyPermissioniconPanel extends RoundPanel implements ActionListene
 	int SHADOW_SIZE = 2;
 	int ICON_GAP = 4;
 	
-	static private Color dangerouscolor = new Color(181, 11, 11);
-	static private Color permissionbackgroundcolor = new Color(64, 64, 64);
+	static private Color dangerouscolor = new Color(201, 31, 31);
+	static private Color permissionbackgroundcolor = new Color(70, 70, 70);
 	
 	JPanel toolbartemppanel;
 	JScrollPane scrollPane;	
@@ -101,8 +101,10 @@ public class EasyPermissioniconPanel extends RoundPanel implements ActionListene
 		//toolbartemppanel.setRoundrectColor(permissionbackgroundcolor);
 		toolbartemppanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		
-		btnshowpermissiondlg = new EasyRoundButton(Resource.IMG_EASY_WINDOW_SHOW_PERMISSION.getImageIcon(15, 15));
-		btnshowpermissiondlg.setPreferredSize(new Dimension(15, 15));
+		btnshowpermissiondlg = new EasyRoundButton(Resource.IMG_EASY_WINDOW_SHOW_PERMISSION.getImageIcon(20, 20));
+		
+		btnshowpermissiondlg.setPreferredSize(new Dimension(25, 25));
+		btnshowpermissiondlg.setBackground(new Color(217, 217, 217));
 		btnshowpermissiondlg.addActionListener(this);
 		
 		add(btnshowpermissiondlg, BorderLayout.EAST);

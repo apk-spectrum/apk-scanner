@@ -84,7 +84,6 @@ public class EasysdkNotDrawPanel extends RoundPanel {
 //		add(makeDevicePanel(Devicecolor[DEVICE_TARGET], 23));
 //		add(makeDevicePanel(Devicecolor[DEVICE_STATE_ONLINE], 26));
 //		add(makeDevicePanel(Devicecolor[DEVICE_STATE_OFFLINE], 30));
-		
 		add(Box.createVerticalStrut(10));
 	}
 	

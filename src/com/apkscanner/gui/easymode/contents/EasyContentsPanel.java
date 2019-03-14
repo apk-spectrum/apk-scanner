@@ -68,7 +68,7 @@ public class EasyContentsPanel extends JPanel{
 	static private Color packagefontcolor = new Color(130,114,196);
 	
 	static private Color versionfontcolor = new Color(237, 126, 83);
-	static private Color sdkverPanelcolor = new Color(242,242,242);
+	static private Color sdkverPanelcolor = new Color(232,232,232);
 	
 	static private Color ininerinfotcolor = new Color(121,121,121);
 	static private Color ininerversiontcolor = new Color(121,121,121);
@@ -126,9 +126,10 @@ public class EasyContentsPanel extends JPanel{
 		//size
 		ininersizepanel = new EasyTextField(" ");
 		setEasyTextField(ininersizepanel);
-		ininersizepanel.setPreferredSize(new Dimension(0, 15));
+		ininersizepanel.setPreferredSize(new Dimension(0, 25));
 		ininersizepanel.setHorizontalAlignment(JTextField.RIGHT);		
-		ininersizepanel.setFont(new Font(getFont().getName(), Font.BOLD, 10));
+		ininersizepanel.setFont(new Font(getFont().getName(), Font.BOLD, 11));
+		
 		applabelpanel.add(ininersizepanel, BorderLayout.SOUTH);
 		
 		appiconpanel.add(applabelpanel, BorderLayout.SOUTH);

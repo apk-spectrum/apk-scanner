@@ -34,6 +34,7 @@ import com.apkscanner.gui.easymode.core.ToolEntryManager;
 import com.apkscanner.gui.easymode.dlg.EasyToolbarSettingDnDDlg;
 import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.gui.easymode.util.EasyFlatLabel;
+import com.apkscanner.gui.easymode.util.EasyRoundButton;
 import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.easymode.util.GraphicUtil;
 import com.apkscanner.gui.easymode.util.ImageUtils;
@@ -49,7 +50,7 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener, E
 	int SHADOW_SIZE = 3;
 	static private Color toobarPanelcolor = new Color(232,241,222);
 	JPanel toolbartemppanel;
-	EasyButton btnsetting;
+	EasyRoundButton btnsetting;
 	ArrayList<ToolEntry> entrys;
 	boolean drawtext = false;
 	Point  tooliconlocation = new Point();
@@ -77,7 +78,7 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener, E
 		setBorder(BorderFactory.createEmptyBorder(5 , 0 , 0 , 20));
 		
 		toolbartemppanel = new JPanel();
-		FlowLayout flowlayout = new FlowLayout(FlowLayout.CENTER,0, 0);
+		FlowLayout flowlayout = new FlowLayout(FlowLayout.CENTER, 3, 0);
 		//toolbartemppanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10)); 
 		toolbartemppanel.setLayout(flowlayout);
 		((FlowLayout) toolbartemppanel.getLayout()).setAlignOnBaseline(true);
@@ -151,13 +152,13 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener, E
 			toolbartemppanel.add(btn);
 			toolbartemppanel.updateUI();
 		}
-		btnsetting = new EasyButton(Resource.IMG_EASY_WINDOW_SETTING.getImageIcon(15, 15))        {
+		btnsetting = new EasyRoundButton(Resource.IMG_EASY_WINDOW_SETTING.getImageIcon(20, 20))        {
             @Override
             public int getBaseline(int width, int height) {
                 return 0;
             }
         };;
-		btnsetting.setPreferredSize(new Dimension(15, 30));
+		btnsetting.setPreferredSize(new Dimension(30, 30));
 		btnsetting.addActionListener(this);		
 		toolbartemppanel.add(btnsetting);
 	}

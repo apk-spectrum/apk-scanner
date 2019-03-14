@@ -73,6 +73,11 @@ public class RoundPanel extends JPanel {
         Graphics2D g = (Graphics2D)gr;
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
+        
+//        Rectangle2D r = new Rectangle2D.Double(len, len, getWidth() - len *2, getHeight() - len *2);
+//        draw(g, r, len);
+        
+        
         g.setColor(roundrectcolor);
         g.fillRoundRect(len / 2, len / 2, getWidth()-len, getHeight()-len, 20,15);
         
@@ -96,7 +101,7 @@ public class RoundPanel extends JPanel {
             new Point2D.Double(x0, y0), c0,
             new Point2D.Double(x0 - s, y0), c1));
         //g.fill(new Rectangle2D.Double(x0 - s, y0, s, h));
-        g.fillRoundRect((int)(x0 - s), (int)y0, (int)s, (int)h, 30, (int)((h-s)/2));
+        g.fillRoundRect((int)(x0 - s), (int)y0, (int)s, (int)h, 10, 10);
         //g.fillRoundRect(x, y, width, height, arcWidth, arcHeight);
         
         // Right
