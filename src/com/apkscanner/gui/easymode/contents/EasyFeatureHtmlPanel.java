@@ -49,7 +49,7 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 	public void setfeature(ApkInfo apkInfo) {		
 		AppFeature.setFeature(apkInfo);
 		//makefeaturehtml(AppFeature);
-		newmakefeaturehtml(AppFeature);
+		newmakefeaturehtml(AppFeature, apkInfo);
 	}
 
 	private String makeHyperLink(String href, String text, String title, String id, String style) {
@@ -134,11 +134,40 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 		apkinform.setText(feature.toString());
 	}
 	
-	private void newmakefeaturehtml(EasyGuiAppFeatureData featuredata) {
+	private void newmakefeaturehtml(EasyGuiAppFeatureData featuredata, ApkInfo apkInfo) {
 		StringBuilder feature = new StringBuilder();
 
 		feature.append("<html><p style=\'line-height: 150%;\'>");
 		//<style='line-height:0%'>
+		
+		//@SDK Ver. 21 (Min), 26 (Target)
+		
+		if(apkInfo.manifest.usesSdk.minSdkVersion!=null) {
+			int minsdk = apkInfo.manifest.usesSdk.minSdkVersion;			
+			//arraysdkObject.add(new sdkDrawObject(makeTextPanel("min", minsdk), minsdk));
+			feature.append("(Min) 21-5.0/Lollipop");
+			feature.append("<br/>");
+		}
+		
+		
+		
+		if(apkInfo.manifest.usesSdk.maxSdkVersion!=null) {
+			int maxsdk = apkInfo.manifest.usesSdk.maxSdkVersion;
+			feature.append("215.0 Lollipop (Max)");
+			feature.append("<br/>");
+		}
+		
+		if(apkInfo.manifest.usesSdk.targetSdkVersion!=null) {
+			int targetsdk = apkInfo.manifest.usesSdk.targetSdkVersion;
+			//arraysdkObject.add(new sdkDrawObject(makeDevicePanel(Devicecolor[DEVICE_TARGET], targetsdk), targetsdk));
+			feature.append("(Target) 26-8.0/Oreo");
+			feature.append("<br/>");
+		}
+		
+		
+		
+		
+		
 		if(featuredata.isHidden) {
 			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_HIDDEN_LAB.getString(), Resource.STR_FEATURE_HIDDEN_DESC.getString(), "feature-hidden", null));
 		} else {

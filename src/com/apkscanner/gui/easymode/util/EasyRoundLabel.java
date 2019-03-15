@@ -24,8 +24,9 @@ public class EasyRoundLabel extends RoundPanel implements MouseListener{
 	
 	EasyTextField textlabel = null;
 	boolean entered = false;
-	
 	private Color backgroundcolor;
+	boolean mouseover = false;
+	boolean clipboard = false;
 	
 	public EasyRoundLabel(String str, Color backgroundColor, Color foregroundColor) {		
 		textlabel = new EasyTextField(str);		
@@ -38,9 +39,18 @@ public class EasyRoundLabel extends RoundPanel implements MouseListener{
 		add(textlabel);
 	}
 	
-	public void AddMouselistener() {		
-		textlabel.addMouseListener(this);
-    }
+	
+	public void setMouseHoverEffect(boolean flag) {
+		mouseover = flag;
+		if(flag)textlabel.addMouseListener(this);
+		else {
+			textlabel.removeMouseListener(this);
+		}
+	}
+	
+	public void setclipboard(boolean flag) {
+		this.clipboard = flag;
+	}
 
 	private void setEasyTextField(JTextField textfield) {
 		textfield.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
@@ -63,10 +73,13 @@ public class EasyRoundLabel extends RoundPanel implements MouseListener{
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
+		
+		if(clipboard) {
 		StringSelection stringSelection = new StringSelection(textlabel.getText());
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		clipboard.setContents(stringSelection, null);
 		AndroidLikeToast.ShowToast("Copying to the clipboard!",this);
+		}
 	}
 
 	@Override
@@ -95,6 +108,12 @@ public class EasyRoundLabel extends RoundPanel implements MouseListener{
 		entered = false;
 		setRoundrectColor(backgroundcolor);
     	super.repaint();
+	}
+
+
+	public void setMouseListener(MouseListener listener) {
+		// TODO Auto-generated method stub
+		textlabel.addMouseListener(listener);
 	}
 
 }

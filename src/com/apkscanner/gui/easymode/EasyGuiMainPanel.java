@@ -10,6 +10,8 @@ import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.Paint;
 import java.awt.Toolkit;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.text.DateFormat;
@@ -49,7 +51,7 @@ import com.apkscanner.gui.tabpanels.Resources;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
-class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
+class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentListener  {
 	private static Color maincolor = new Color(249, 249, 249);
 
 	private EasyLightApkScanner apklightscanner;
@@ -64,7 +66,8 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 	DropEffectLabel dragdroplabel;
 	EasyGuiToolScaleupPanel toolbarpanel;
 	public static MessageBoxPool messagePool;
-		
+	JPanel iconhoverpanel;
+	JPanel contentspanel;	
 	public EasyGuiMainPanel(JFrame mainframe, EasyLightApkScanner apkscanner) {
 		Log.d("start EasyGuiMainPanel------------------------------------------------------------------------------------------------------------------------ ");
 		this.apklightscanner = apkscanner;
@@ -98,7 +101,7 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 //		
 //		spreadflat.add(new EasyButton(Resource.IMG_EASY_WINDOW_SPREAD.getImageIcon(35,35)));
 		
-		JPanel iconhoverpanel = new JPanel(new BorderLayout());
+		iconhoverpanel = new JPanel(new BorderLayout());
 		iconhoverpanel.add(toolbarpanel, BorderLayout.NORTH);		
 		iconhoverpanel.setBounds(0, 0, width, 100);
 		iconhoverpanel.setOpaque(false);
@@ -110,7 +113,7 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 		layeredPane = new JLayeredPane();
 		layeredPane.setPreferredSize(new Dimension(width, height));
 
-		JPanel contentspanel = new JPanel();
+		contentspanel = new JPanel();
 		contentspanel.setLayout(new BorderLayout());
 		contentspanel.setBackground(maincolor);
 		if (EasyGuiMain.isdecoframe) {
@@ -126,7 +129,7 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 		//dummy.add(new EasyButton(Resource.IMG_EASY_WINDOW_SPREAD.getImageIcon(35,35)), BorderLayout.EAST);
 		contentspanel.add(dummy, BorderLayout.PAGE_START);
 		contentspanel.setBounds(0, 0, width, height);
-		
+				
 		layeredPane.add(contentspanel, new Integer(1));
 		layeredPane.add(iconhoverpanel,new Integer(2));
 
@@ -144,7 +147,7 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 		add(layeredPane, BorderLayout.CENTER);
 		
 		////////////////////// test
-		
+		addComponentListener(this);
 	
 		//mainframe.setDefaultLookAndFeelDecorated(true);
 		//mainframe.getRootPane().setWindowDecorationStyle(JRootPane.FRAME);
@@ -354,4 +357,31 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher {
 		}
 		return false;
 	}
+
+	private void changesize() {
+		int w = getSize().width;
+		int h = getSize().height;
+				
+		toolbarpanel.setPreferredSize(new Dimension(100, w));
+		iconhoverpanel.setBounds(0, 0, w, 100);
+		layeredPane.setPreferredSize(new Dimension(w, h));
+		contentspanel.setBounds(0, 0, w, h);
+		dragdroplabel.setBounds(0, 0, w, h);
+		updateUI();
+	}
+	
+	@Override
+	public void componentResized(ComponentEvent e) {
+		// TODO Auto-generated method stub		
+		changesize();
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent e) {	}
+
+	@Override
+	public void componentShown(ComponentEvent e) {}
+
+	@Override
+	public void componentHidden(ComponentEvent e) {}
 }

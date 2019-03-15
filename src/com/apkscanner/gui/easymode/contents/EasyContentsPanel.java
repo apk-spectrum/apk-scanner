@@ -41,7 +41,7 @@ public class EasyContentsPanel extends JPanel{
 	EasyFeatureHtmlPanel featurepanel;
 	//EasyGuiToolPanel toolbarpanel;
 	EasyPermissionPanel permissionPanel;
-	EasysdkNotDrawPanel sdkverpanel;
+	EasyDevicePanel sdkverpanel;
 	
 	EasyRoundLabel packagepanel;
 	EasyRoundLabel ininerversionpanel;
@@ -62,7 +62,7 @@ public class EasyContentsPanel extends JPanel{
 	
 	static private Color IconPanelcolor = new Color(220,220,220);
 	
-	static private Color labelfontcolor = new Color(84,130,53);
+	static private Color labelfontcolor = new Color(50,186,40);
 	
 	static private Color packagePanelcolor = new Color(220,230,242);
 	static private Color packagefontcolor = new Color(130,114,196);
@@ -76,6 +76,8 @@ public class EasyContentsPanel extends JPanel{
 	private static String CARD_LAYOUT_EMPTY = "card_empty";
 	private static String CARD_LAYOUT_APKINFO = "card_apkinfo";	
 	
+	
+	EasyRoundLabel applabelpanel;
 	public EasyContentsPanel() {
 		// TODO Auto-generated constructor stub
 		Log.d("start EasyContentsPanel ");
@@ -107,21 +109,36 @@ public class EasyContentsPanel extends JPanel{
 		appicon.setVerticalAlignment(JLabel.CENTER);
 		appiconpanel.add(appicon, BorderLayout.CENTER);
 		
-		//applabel
+		//applabel		
+//		JPanel applabelpanel = new JPanel(new BorderLayout());
+//		applabelpanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+//		applabelpanel.setBackground(sdkverPanelcolor);
+//		applabelpanel.setPreferredSize(new Dimension(0, 60));
+//		applabelpanel.setOpaque(false);
+//		
+//		apptitlelabel = new EasyTextField(" ");
+//		setEasyTextField(apptitlelabel);
+//		apptitlelabel.setForeground(labelfontcolor);		
+//		apptitlelabel.setHorizontalAlignment(JTextField.CENTER);
+//		apptitlelabel.setPreferredSize(new Dimension(0, 35));
+//		apptitlelabel.setFont(new Font(getFont().getName(), Font.BOLD, 15));
+//		applabelpanel.add(apptitlelabel, BorderLayout.CENTER);
 		
-		JPanel applabelpanel = new JPanel(new BorderLayout());
-		applabelpanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-		applabelpanel.setBackground(sdkverPanelcolor);
+		JPanel templabelpanel = new JPanel(new BorderLayout());
+		templabelpanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		templabelpanel.setBackground(sdkverPanelcolor);
+		templabelpanel.setPreferredSize(new Dimension(0, 60));
+		templabelpanel.setOpaque(false);
+		
+		applabelpanel = new EasyRoundLabel(" ", sdkverPanelcolor, labelfontcolor);
 		applabelpanel.setPreferredSize(new Dimension(0, 60));
-		applabelpanel.setOpaque(false);
+		applabelpanel.setclipboard(true);
+		applabelpanel.setMouseHoverEffect(true);
 		
-		apptitlelabel = new EasyTextField(" ");
-		setEasyTextField(apptitlelabel);
-		apptitlelabel.setForeground(labelfontcolor);		
-		apptitlelabel.setHorizontalAlignment(JTextField.CENTER);
-		apptitlelabel.setPreferredSize(new Dimension(0, 35));
-		apptitlelabel.setFont(new Font(getFont().getName(), Font.BOLD, 15));
-		applabelpanel.add(apptitlelabel, BorderLayout.CENTER);
+		applabelpanel.setOpaque(false);
+		applabelpanel.setshadowlen(SHADOWSIZE);
+		applabelpanel.setTextFont(new Font(getFont().getName(), Font.BOLD, 15));
+		applabelpanel.setHorizontalAlignment(JTextField.CENTER);
 		
 		//size
 		ininersizepanel = new EasyTextField(" ");
@@ -130,9 +147,12 @@ public class EasyContentsPanel extends JPanel{
 		ininersizepanel.setHorizontalAlignment(JTextField.RIGHT);		
 		ininersizepanel.setFont(new Font(getFont().getName(), Font.BOLD, 11));
 		
-		applabelpanel.add(ininersizepanel, BorderLayout.SOUTH);
+		templabelpanel.add(ininersizepanel, BorderLayout.SOUTH);
+		templabelpanel.add(applabelpanel, BorderLayout.CENTER);
 		
-		appiconpanel.add(applabelpanel, BorderLayout.SOUTH);
+		//applabelpanel.add(ininersizepanel, BorderLayout.SOUTH);
+		
+		appiconpanel.add(templabelpanel, BorderLayout.SOUTH);
 		
 		return appiconpanel;
 	}
@@ -143,15 +163,18 @@ public class EasyContentsPanel extends JPanel{
 		//package
 		packagepanel = new EasyRoundLabel(" ", new Color(217, 217, 217), packagefontcolor);
 		packagepanel.setPreferredSize(new Dimension(0, PACAKGEVERSION_HEIGHT));
-		packagepanel.AddMouselistener();
+		packagepanel.setMouseHoverEffect(true);
+		packagepanel.setclipboard(true);
+		
 		packagepanel.setshadowlen(SHADOWSIZE);
 		packagepanel.setTextFont(new Font(getFont().getName(), Font.BOLD, 15));
 		
 		infopanel.add(packagepanel, BorderLayout.NORTH);
 
-		sdkverpanel = new EasysdkNotDrawPanel();
+		sdkverpanel = new EasyDevicePanel();
 		sdkverpanel.setRoundrectColor(new Color(217, 217, 217));
-		sdkverpanel.setPreferredSize(new Dimension(30, 0));		
+		sdkverpanel.setPreferredSize(new Dimension(30, 0));
+		
 		sdkverpanel.setshadowlen(SHADOWSIZE);
 		infopanel.add(sdkverpanel, BorderLayout.EAST);
 		
@@ -162,7 +185,10 @@ public class EasyContentsPanel extends JPanel{
 		ininerversionpanel.setPreferredSize(new Dimension(0, PACAKGEVERSION_HEIGHT));
 		ininerversionpanel.setTextFont(new Font(getFont().getName(), Font.BOLD, 15));
 		ininerversionpanel.setshadowlen(SHADOWSIZE);
-		ininerversionpanel.AddMouselistener();
+		
+		ininerversionpanel.setMouseHoverEffect(true);
+		ininerversionpanel.setclipboard(true);
+		
 		innerinfopanel.add(ininerversionpanel, BorderLayout.NORTH);
 		
 		featurepanel = new EasyFeatureHtmlPanel();
@@ -187,10 +213,10 @@ public class EasyContentsPanel extends JPanel{
 		textfield.setFont(new Font(getFont().getName(), Font.PLAIN, 15));
 	}
 	
-    @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(HEIGHT, WIDTH);
-    }
+//    @Override
+//    public Dimension getPreferredSize() {
+//        return new Dimension(HEIGHT, WIDTH);
+//    }
     
     public void setEmptypanel() {
     	Log.d("contents emptypanel=)" + emptypanel);
@@ -235,7 +261,9 @@ public class EasyContentsPanel extends JPanel{
     }
 	public void setContents(ApkInfo apkInfo) {
 		appicon.setIcon(getAppicon(apkInfo));
-		apptitlelabel.setText((apkInfo.manifest.application.labels !=null)?apkInfo.manifest.application.labels[0].name : "");
+		//apptitlelabel.setText((apkInfo.manifest.application.labels !=null)?apkInfo.manifest.application.labels[0].name : "");
+		applabelpanel.setText((apkInfo.manifest.application.labels !=null)?apkInfo.manifest.application.labels[0].name : "");
+		
 		
 		EasyGuiMain.UIstarttime =System.currentTimeMillis();		
 		//package
