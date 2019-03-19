@@ -41,7 +41,7 @@ public class EasyContentsPanel extends JPanel{
 	EasyFeatureHtmlPanel featurepanel;
 	//EasyGuiToolPanel toolbarpanel;
 	EasyPermissionPanel permissionPanel;
-	EasyDevicePanel sdkverpanel;
+	EasyDevicePanel devicepanel;
 	
 	EasyRoundLabel packagepanel;
 	EasyRoundLabel ininerversionpanel;
@@ -171,12 +171,12 @@ public class EasyContentsPanel extends JPanel{
 		
 		infopanel.add(packagepanel, BorderLayout.NORTH);
 
-		sdkverpanel = new EasyDevicePanel();
-		sdkverpanel.setRoundrectColor(new Color(217, 217, 217));
-		sdkverpanel.setPreferredSize(new Dimension(30, 0));
+		devicepanel = new EasyDevicePanel(50);
+		devicepanel.setRoundrectColor(new Color(217, 217, 217));
+		//sdkverpanel.setPreferredSize(new Dimension(50, 0));
 		
-		sdkverpanel.setshadowlen(SHADOWSIZE);
-		infopanel.add(sdkverpanel, BorderLayout.EAST);
+		devicepanel.setshadowlen(SHADOWSIZE);
+		infopanel.add(devicepanel, BorderLayout.EAST);
 		
 		JPanel innerinfopanel = new JPanel(new BorderLayout());
 		
@@ -274,7 +274,7 @@ public class EasyContentsPanel extends JPanel{
 		
 		//size
 		ininersizepanel.setText(FileUtil.getFileSize(apkInfo.fileSize, FSStyle.FULL));
-		sdkverpanel.setsdkpanel(apkInfo);		
+		devicepanel.setsdkpanel(apkInfo);		
 		
 		//feature
 		featurepanel.setfeature(apkInfo);
@@ -286,13 +286,13 @@ public class EasyContentsPanel extends JPanel{
 
 	public void clear() {
 		// TODO Auto-generated method stub
-		sdkverpanel.clear();
+		devicepanel.clear();
 		permissionPanel.clear();
 		//featurepanel.clear();
 	}
 
 	public void changeDeivce(IDevice[] devices) {
 		// TODO Auto-generated method stub
-		sdkverpanel.changeDevice(devices);
+		devicepanel.changeDevice(devices);
 	}
 }

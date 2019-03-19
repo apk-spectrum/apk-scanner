@@ -1,5 +1,6 @@
 package com.apkscanner.gui.easymode.util;
 
+import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -7,10 +8,12 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -42,7 +45,9 @@ public class EasyRoundLabel extends RoundPanel implements MouseListener{
 	
 	public void setMouseHoverEffect(boolean flag) {
 		mouseover = flag;
-		if(flag)textlabel.addMouseListener(this);
+		if(flag) {
+			textlabel.addMouseListener(this);
+		}
 		else {
 			textlabel.removeMouseListener(this);
 		}
@@ -79,6 +84,19 @@ public class EasyRoundLabel extends RoundPanel implements MouseListener{
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		clipboard.setContents(stringSelection, null);
 		AndroidLikeToast.ShowToast("Copying to the clipboard!",this);
+		//textlabel.selectAll();
+		   Robot r = null;
+		   
+		try {
+			r = new Robot();
+		} catch (AWTException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+//		    r.keyPress(KeyEvent.VK_CONTROL);
+//		    r.keyPress(KeyEvent.VK_C);
+//		    r.keyRelease(KeyEvent.VK_CONTROL);
+//		    r.keyRelease(KeyEvent.VK_C);
 		}
 	}
 

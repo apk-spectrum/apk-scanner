@@ -3,7 +3,10 @@ package com.apkscanner.gui.easymode.contents;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -11,10 +14,13 @@ import javax.swing.JLabel;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.easymode.core.EasyGuiAppFeatureData;
+import com.apkscanner.gui.easymode.util.EasyRoundLabel;
 import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.easymode.util.RoundPanel;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
+import com.apkscanner.util.XmlPath;
 
 public class EasyFeatureHtmlPanel extends RoundPanel {
 	static private Color sdkverPanelcolor = new Color(242, 242, 242);
@@ -24,26 +30,35 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 	
 	JLabel apkinform;
 	EasyGuiAppFeatureData AppFeature;
-	
+	XmlPath sdkXmlPath;
+	EasyRoundLabel launcherlabel;
 	public EasyFeatureHtmlPanel() {
 		setLayout(new BorderLayout());
+		
 		//setBackground(new Color(217, 217, 217));
 		setRoundrectColor(new Color(217, 217, 217));
-		
 		//setshadowlen(10);
 		AppFeature = new EasyGuiAppFeatureData();
+		setSdkXml(Resource.STR_SDK_INFO_FILE_PATH.getString());
 		
 		apkinform = new JLabel();
 		//apkinform.setEditable(false);
 		apkinform.setOpaque(false);
 		apkinform.setFont(new Font(getFont().getName(), Font.BOLD, 15));
 		//apkinform.setBackground(Color.white);
-		apkinform.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		apkinform.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 		
+		launcherlabel = new EasyRoundLabel(" ", new Color(217, 217, 217), Color.BLACK);
+		//label.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+		launcherlabel.setOpaque(false);
+		launcherlabel.setPreferredSize(new Dimension(0, 30));
+
 		
 		//apkinform.setHyperlinkClickListener(this);
 		
 		add(apkinform, BorderLayout.CENTER);
+		add(launcherlabel, BorderLayout.SOUTH);
+		
 	}
 
 	public void setfeature(ApkInfo apkInfo) {		
@@ -57,86 +72,32 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 		return text;
 	}
 
-	private void makefeaturehtml(EasyGuiAppFeatureData featuredata) {
-		StringBuilder feature = new StringBuilder();
-
-		feature.append("<html><p style=\'line-height: 150%;\'>");
+	public void setSdkXml(String xmlPath) {
+		if(xmlPath == null) {
+			return;
+		}
+		try(InputStream xml = Resource.class.getResourceAsStream(xmlPath)) {
+			if(xml != null) sdkXmlPath = new XmlPath(xml);
+		} catch(IOException e) { }
+		if(sdkXmlPath == null) {
+			Log.w("Can not create XmlPath, xmlPath : " + xmlPath);
+			return;
+		}
+	}
+	private String makesdkString(int sdkversion) {
+		String str = "";
+		XmlPath sdkInfo = sdkXmlPath.getNode("/resources/sdk-info[@apiLevel='" + sdkversion + "']");
+		//21-5.0/Lollipop
+		str = sdkversion + "-" + sdkInfo.getAttribute("platformVersion") + "/" + sdkInfo.getAttribute("codeName");
 		
-		if("internalOnly".equals(featuredata.installLocation)) {
-			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_ILOCATION_INTERNAL_LAB.getString(), Resource.STR_FEATURE_ILOCATION_INTERNAL_DESC.getString(), "feature-install-location-internal", null));
-		} else if("auto".equals(featuredata.installLocation)) {
-			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_ILOCATION_AUTO_LAB.getString(), Resource.STR_FEATURE_ILOCATION_AUTO_DESC.getString(), "feature-install-location-auto", null));
-		} else if("preferExternal".equals(featuredata.installLocation)) {
-			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_ILOCATION_EXTERNAL_LAB.getString(), Resource.STR_FEATURE_ILOCATION_EXTERNAL_DESC.getString(), "feature-install-location-external", null));
-		}  
-		feature.append("<br/>");
-		//<style='line-height:0%'>
-		if(featuredata.isHidden) {
-			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_HIDDEN_LAB.getString(), Resource.STR_FEATURE_HIDDEN_DESC.getString(), "feature-hidden", null));
-		} else {
-			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_LAUNCHER_LAB.getString(), Resource.STR_FEATURE_LAUNCHER_DESC.getString(), "feature-launcher", null));
-		}
-		if(featuredata.isStartup) {
-			feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_STARTUP_LAB.getString(), Resource.STR_FEATURE_STARTUP_DESC.getString(), "feature-startup", null));
-		}
-		if(featuredata.sharedUserId != null && !featuredata.sharedUserId.startsWith("android.uid.system") ) {
-			feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_SHAREDUSERID_LAB.getString(), Resource.STR_FEATURE_SHAREDUSERID_DESC.getString(), "feature-shared-user-id", null));
-		}
-		if(featuredata.deviceRequirements != null && !featuredata.deviceRequirements.isEmpty()) {
-			feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_DEVICE_REQ_LAB.getString(), Resource.STR_FEATURE_DEVICE_REQ_DESC.getString(), "feature-device-requirements", null));
-		}
-
-		boolean systemSignature = false;
-		StringBuilder importantFeatures = new StringBuilder();
-		if(featuredata.sharedUserId != null && featuredata.sharedUserId.startsWith("android.uid.system")) {
-			if(featuredata.isSamsungSign || featuredata.isPlatformSign) {
-				importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
-			} else {
-				importantFeatures.append(", <font style=\"color:#FF0000; font-weight:bold\">");
-			}
-			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_SYSTEM_UID_LAB.getString(), Resource.STR_FEATURE_SYSTEM_UID_DESC.getString(), "feature-system-user-id", null));
-			importantFeatures.append("</font>");
-		}
-		if(featuredata.isPlatformSign) {
-			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
-			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_PLATFORM_SIGN_LAB.getString(), Resource.STR_FEATURE_PLATFORM_SIGN_DESC.getString(), "feature-platform-sign", null));
-			importantFeatures.append("</font>");
-			systemSignature = true;
-		}
-		if(featuredata.isSamsungSign) {
-			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
-			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_SAMSUNG_SIGN_LAB.getString(), Resource.STR_FEATURE_SAMSUNG_SIGN_DESC.getString(), "feature-samsung-sign", null));
-			importantFeatures.append("</font>");
-			systemSignature = true;
-		}
-		if(((featuredata.hasSignatureLevel || featuredata.hasSignatureOrSystemLevel) && !systemSignature) || featuredata.hasSystemLevel) {
-			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
-			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_REVOKE_PERM_LAB.getString(), Resource.STR_FEATURE_REVOKE_PERM_DESC.getString(), "feature-revoke-permissions", null));
-			importantFeatures.append("</font>");
-		}
-		if(featuredata.debuggable) {
-			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
-			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_DEBUGGABLE_LAB.getString(), Resource.STR_FEATURE_DEBUGGABLE_DESC.getString(), "feature-debuggable", null));
-			importantFeatures.append("</font>");
-		}
-		if(featuredata.isInstrumentation) {
-			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
-			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_INSTRUMENTATION_LAB.getString(), Resource.STR_FEATURE_INSTRUMENTATION_DESC.getString(), "feature-instrumentation", null));
-			importantFeatures.append("</font>");
-		}
-		if(importantFeatures.length() > 0) {
-			feature.append("<br/>" + importantFeatures.substring(2));
-		}
-		
-		feature.append("</p></html>");
-		
-		//apkinform.setBody(feature.toString());
-		apkinform.setText(feature.toString());
+		return str;
 	}
 	
 	private void newmakefeaturehtml(EasyGuiAppFeatureData featuredata, ApkInfo apkInfo) {
 		StringBuilder feature = new StringBuilder();
 
+		
+		
 		feature.append("<html><p style=\'line-height: 150%;\'>");
 		//<style='line-height:0%'>
 		
@@ -145,37 +106,28 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 		if(apkInfo.manifest.usesSdk.minSdkVersion!=null) {
 			int minsdk = apkInfo.manifest.usesSdk.minSdkVersion;			
 			//arraysdkObject.add(new sdkDrawObject(makeTextPanel("min", minsdk), minsdk));
-			feature.append("(Min) 21-5.0/Lollipop");
-			feature.append("<br/>");
+			feature.append("(Min)" + makesdkString(minsdk));
+			feature.append(" ");
 		}
-		
-		
 		
 		if(apkInfo.manifest.usesSdk.maxSdkVersion!=null) {
 			int maxsdk = apkInfo.manifest.usesSdk.maxSdkVersion;
-			feature.append("215.0 Lollipop (Max)");
-			feature.append("<br/>");
+			feature.append("(Max)" + makesdkString(maxsdk));
+			feature.append(" ");
 		}
+
 		
 		if(apkInfo.manifest.usesSdk.targetSdkVersion!=null) {
 			int targetsdk = apkInfo.manifest.usesSdk.targetSdkVersion;
 			//arraysdkObject.add(new sdkDrawObject(makeDevicePanel(Devicecolor[DEVICE_TARGET], targetsdk), targetsdk));
-			feature.append("(Target) 26-8.0/Oreo");
+			//feature.append("<font style=\"color:#ED7E31; font-weight:bold\">");
+			feature.append("(Target)" + makesdkString(targetsdk));
 			feature.append("<br/>");
-		}
-		
-		
-		
-		
-		
-		if(featuredata.isHidden) {
-			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_HIDDEN_LAB.getString(), Resource.STR_FEATURE_HIDDEN_DESC.getString(), "feature-hidden", null));
-		} else {
-			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_LAUNCHER_LAB.getString(), Resource.STR_FEATURE_LAUNCHER_DESC.getString(), "feature-launcher", null));
 		}
 
 		if(featuredata.sharedUserId != null && !featuredata.sharedUserId.startsWith("android.uid.system") ) {
-			feature.append(", " + makeHyperLink("@event", Resource.STR_FEATURE_SHAREDUSERID_LAB.getString(), Resource.STR_FEATURE_SHAREDUSERID_DESC.getString(), "feature-shared-user-id", null));
+			feature.append("<font style=\"color:#AAAA00; font-weight:bold\">");
+			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_SHAREDUSERID_LAB.getString(), Resource.STR_FEATURE_SHAREDUSERID_DESC.getString(), "feature-shared-user-id", null));
 		}
 		
 		boolean systemSignature = false;
@@ -204,6 +156,22 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 	
 		if(importantFeatures.length() > 0) {
 			feature.append("<br/>" + importantFeatures.substring(2));
+		}
+		
+		launcherlabel.setFont(apkinform.getFont());
+		if(featuredata.isHidden) {
+			//feature.append("<font style=\"color:#ED7E31; font-weight:bold\">");
+			//feature.append(makeHyperLink("@event", Resource.STR_FEATURE_HIDDEN_LAB.getString(), Resource.STR_FEATURE_HIDDEN_DESC.getString(), "feature-hidden", null));
+			launcherlabel.setText(Resource.STR_FEATURE_HIDDEN_LAB.getString());
+			launcherlabel.setclipboard(false);
+			launcherlabel.setMouseHoverEffect(false);
+		} else {
+			//feature.append("<font style=\"color:#0055BB; font-weight:bold\">");
+			//feature.append(makeHyperLink("@event", Resource.STR_FEATURE_LAUNCHER_LAB.getString(), Resource.STR_FEATURE_LAUNCHER_DESC.getString(), "feature-launcher", null));
+			
+			launcherlabel.setText(Resource.STR_FEATURE_LAUNCHER_LAB.getString());			
+			launcherlabel.setclipboard(true);
+			launcherlabel.setMouseHoverEffect(true);			
 		}
 		
 		feature.append("</p></html>");
