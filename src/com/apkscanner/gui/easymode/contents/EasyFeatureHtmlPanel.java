@@ -10,11 +10,14 @@ import java.io.InputStream;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.easymode.core.EasyGuiAppFeatureData;
+import com.apkscanner.gui.easymode.util.EasyRoundButton;
 import com.apkscanner.gui.easymode.util.EasyRoundLabel;
 import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.easymode.util.RoundPanel;
@@ -29,47 +32,53 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 	static private Color []featurefgfontcolor = {new Color(121, 121, 121), new Color(237, 126, 83), Color.RED} ;
 	static private Color featurebgfontcolor = new Color(217, 217, 217);
 	
-	JLabel apkinform;
 	EasyGuiAppFeatureData AppFeature;
 	XmlPath sdkXmlPath;
-	EasyRoundLabel launcherlabel;
+	
 	public EasyFeatureHtmlPanel() {
-		setLayout(new BorderLayout());
-		
+		//setLayout(new BorderLayout());
+		setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
+		setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
 		//setBackground(new Color(217, 217, 217));
 		setRoundrectColor(new Color(217, 217, 217));
 		//setshadowlen(10);
 		AppFeature = new EasyGuiAppFeatureData();
 		setSdkXml(Resource.STR_SDK_INFO_FILE_PATH.getString());
 		
-		apkinform = new JLabel();
-		//apkinform.setEditable(false);
-		apkinform.setOpaque(false);
-		apkinform.setFont(new Font(getFont().getName(), Font.BOLD, 15));
-		//apkinform.setBackground(Color.white);
-		apkinform.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
-		
 		JPanel tempfeature = new JPanel(new FlowLayout());
 		tempfeature.setOpaque(false);
 		
-		launcherlabel = new EasyRoundLabel(" ", new Color(217, 217, 217), Color.BLACK);
-		//label.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
-		launcherlabel.setOpaque(false);
-		launcherlabel.setFont(new Font(getFont().getName(), Font.BOLD, 15));
-		//launcherlabel.setPreferredSize(new Dimension(200, 30));
-
-		tempfeature.add(launcherlabel);
-		//apkinform.setHyperlinkClickListener(this);
-		
-		add(apkinform, BorderLayout.CENTER);
-		add(tempfeature, BorderLayout.SOUTH);
-		
+	}
+	private void setdefaultfeature(JComponent com) {
+		com.setFont(new Font(getFont().getName(), Font.BOLD, 13));
+		com.setBorder(new EmptyBorder(5, 5, 5, 5));
+	}
+	
+	private JComponent makeFeatpanel(String str, Color background, Color foreground) {
+		EasyRoundButton btn = new EasyRoundButton(str);
+		btn.setBackground(background);
+		btn.setForeground(foreground);
+		setdefaultfeature(btn);
+		return btn;
+	}
+	private JComponent makeFeatpanel(String str, Color foreground) {
+		EasyRoundButton btn = new EasyRoundButton(str);
+		btn.setForeground(foreground);
+		setdefaultfeature(btn);
+		return btn;
+	}	
+	private JComponent makeFeatpanel(String str) {
+		EasyRoundButton btn = new EasyRoundButton(str); 
+		setdefaultfeature(btn);
+		return btn;
 	}
 
 	public void setfeature(ApkInfo apkInfo) {		
 		AppFeature.setFeature(apkInfo);
 		//makefeaturehtml(AppFeature);
+		removeAll();		
 		newmakefeaturehtml(AppFeature, apkInfo);
+		updateUI();
 	}
 
 	private String makeHyperLink(String href, String text, String title, String id, String style) {
@@ -99,11 +108,6 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 	}
 	
 	private void newmakefeaturehtml(EasyGuiAppFeatureData featuredata, ApkInfo apkInfo) {
-		StringBuilder feature = new StringBuilder();
-
-		
-		
-		feature.append("<html><p style=\'line-height: 150%;\'>");
 		//<style='line-height:0%'>
 		
 		//@SDK Ver. 21 (Min), 26 (Target)
@@ -111,14 +115,12 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 		if(apkInfo.manifest.usesSdk.minSdkVersion!=null) {
 			int minsdk = apkInfo.manifest.usesSdk.minSdkVersion;			
 			//arraysdkObject.add(new sdkDrawObject(makeTextPanel("min", minsdk), minsdk));
-			feature.append("(Min)" + makesdkString(minsdk));
-			feature.append(" ");
+			add(makeFeatpanel("(Min)" + makesdkString(minsdk)));
 		}
 		
 		if(apkInfo.manifest.usesSdk.maxSdkVersion!=null) {
 			int maxsdk = apkInfo.manifest.usesSdk.maxSdkVersion;
-			feature.append("(Max)" + makesdkString(maxsdk));
-			feature.append(" ");
+			add(makeFeatpanel("(Max)" + makesdkString(maxsdk)));	
 		}
 
 		
@@ -126,63 +128,36 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 			int targetsdk = apkInfo.manifest.usesSdk.targetSdkVersion;
 			//arraysdkObject.add(new sdkDrawObject(makeDevicePanel(Devicecolor[DEVICE_TARGET], targetsdk), targetsdk));
 			//feature.append("<font style=\"color:#ED7E31; font-weight:bold\">");
-			feature.append("(Target)" + makesdkString(targetsdk));
-			feature.append("<br/>");
+			add(makeFeatpanel("(Target)" + makesdkString(targetsdk)));
+			
 		}
 
 		if(featuredata.sharedUserId != null && !featuredata.sharedUserId.startsWith("android.uid.system") ) {
-			feature.append("<font style=\"color:#AAAA00; font-weight:bold\">");
-			feature.append(makeHyperLink("@event", Resource.STR_FEATURE_SHAREDUSERID_LAB.getString(), Resource.STR_FEATURE_SHAREDUSERID_DESC.getString(), "feature-shared-user-id", null));
+			add(makeFeatpanel(Resource.STR_FEATURE_SHAREDUSERID_LAB.getString(), new Color(0xAAAA00)));
 		}
 		
 		boolean systemSignature = false;
-		StringBuilder importantFeatures = new StringBuilder();
 		if(featuredata.sharedUserId != null && featuredata.sharedUserId.startsWith("android.uid.system")) {
 			if(featuredata.isSamsungSign || featuredata.isPlatformSign) {
-				importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
+				add(makeFeatpanel(Resource.STR_FEATURE_SYSTEM_UID_LAB.getString(), new Color(0xED7E31)));
 			} else {
-				importantFeatures.append(", <font style=\"color:#FF0000; font-weight:bold\">");
+				add(makeFeatpanel(Resource.STR_FEATURE_SYSTEM_UID_LAB.getString(), new Color(0xFF0000)));
 			}
-			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_SYSTEM_UID_LAB.getString(), Resource.STR_FEATURE_SYSTEM_UID_DESC.getString(), "feature-system-user-id", null));
-			importantFeatures.append("</font>");
 		}
 		if(featuredata.isPlatformSign) {
-			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
-			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_PLATFORM_SIGN_LAB.getString(), Resource.STR_FEATURE_PLATFORM_SIGN_DESC.getString(), "feature-platform-sign", null));
-			importantFeatures.append("</font>");
-			systemSignature = true;
+			add(makeFeatpanel(Resource.STR_FEATURE_PLATFORM_SIGN_LAB.getString(), new Color(0xED7E31)));			
 		}
-		if(featuredata.isSamsungSign) {
-			importantFeatures.append(", <font style=\"color:#ED7E31; font-weight:bold\">");
-			importantFeatures.append(makeHyperLink("@event", Resource.STR_FEATURE_SAMSUNG_SIGN_LAB.getString(), Resource.STR_FEATURE_SAMSUNG_SIGN_DESC.getString(), "feature-samsung-sign", null));
-			importantFeatures.append("</font>");
+		if(featuredata.isSamsungSign) {			
+			add(makeFeatpanel(Resource.STR_FEATURE_SAMSUNG_SIGN_LAB.getString(), new Color(0xED7E31)));
 			systemSignature = true;
-		}
-	
-		if(importantFeatures.length() > 0) {
-			feature.append("<br/>" + importantFeatures.substring(2));
 		}
 		
-		launcherlabel.setFont(apkinform.getFont());
 		if(featuredata.isHidden) {
-			//feature.append("<font style=\"color:#ED7E31; font-weight:bold\">");
-			//feature.append(makeHyperLink("@event", Resource.STR_FEATURE_HIDDEN_LAB.getString(), Resource.STR_FEATURE_HIDDEN_DESC.getString(), "feature-hidden", null));
-			launcherlabel.setText(Resource.STR_FEATURE_HIDDEN_LAB.getString());
-			launcherlabel.setclipboard(false);
-			launcherlabel.setMouseHoverEffect(false);
+			add(makeFeatpanel(Resource.STR_FEATURE_HIDDEN_LAB.getString(), new Color(0xED7E31)));			
 		} else {
-			//feature.append("<font style=\"color:#0055BB; font-weight:bold\">");
-			//feature.append(makeHyperLink("@event", Resource.STR_FEATURE_LAUNCHER_LAB.getString(), Resource.STR_FEATURE_LAUNCHER_DESC.getString(), "feature-launcher", null));
-			
-			launcherlabel.setText(Resource.STR_FEATURE_LAUNCHER_LAB.getString());			
-			launcherlabel.setclipboard(true);
-			launcherlabel.setMouseHoverEffect(true);			
+			add(makeFeatpanel(Resource.STR_FEATURE_LAUNCHER_LAB.getString(), new Color(0x0055BB)));
 		}
 		
-		feature.append("</p></html>");
-		
-		//apkinform.setBody(feature.toString());
-		apkinform.setText(feature.toString());
 	}
 	
 	

@@ -375,12 +375,12 @@ public class EasyContentsPanel extends JPanel{
 		((CardLayout)contentsCardPanel.getLayout()).show(contentsCardPanel,CARD_LAYOUT_APKINFO);
 		
 		//permissions
-		permissionPanel.setPermission(apkInfo);		
+		permissionPanel.setPermission(apkInfo);
 	}
 
 	public void clear() {
 		// TODO Auto-generated method stub
-		devicepanel.clear();
+		//devicepanel.clear();
 		permissionPanel.clear();
 		//featurepanel.clear();
 	}

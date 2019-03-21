@@ -213,7 +213,7 @@ public class EasyDevicePanel extends RoundPanel implements MouseListener, Action
 //			IDevice[] devices = AndroidDebugBridge.getBridge().getDevices();
 //			adddevices(devices);
 //		}
-		refreshpanel();
+//		refreshpanel();
 	}
 	
 	private String getDeviceName(IDevice device) {
