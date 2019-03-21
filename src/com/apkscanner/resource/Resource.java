@@ -534,8 +534,14 @@ public enum Resource
 	IMG_EASY_WINDOW_EXIT			(Type.IMAGE, "easy_gui_exit.png"),
 	IMG_EASY_WINDOW_MINI			(Type.IMAGE, "easy_gui_mini.png"),
 	IMG_EASY_WINDOW_SETTING			(Type.IMAGE, "perm_group_system_tools.png"),
-	IMG_EASY_WINDOW_SHOW_PERMISSION			(Type.IMAGE, "perm_group_user_dictionary.png"),
+	IMG_EASY_WINDOW_CLIPBOARD_ICON			(Type.IMAGE, "perm_group_user_dictionary.png"),
+	
 	IMG_EASY_WINDOW_ALLOW			(Type.IMAGE, "easy_gui_allow.png"),
+
+	//http://chittagongit.com/icon/list-icon-png-10.html
+	IMG_EASY_WINDOW_PERMISSION_ICON			(Type.IMAGE, "easy_gui_permission_icon.png"),
+	
+	//https://icon-icons.com/zh/%E5%9B%BE%E6%A0%87/%E7%94%B5%E8%AF%9D-iphone/89813#48
 	IMG_EASY_WINDOW_DEVICE			(Type.IMAGE, "easy_gui_device.png"),
 	IMG_EASY_WINDOW_DRAGANDDROP			(Type.IMAGE, "easy_gui_draganddrop.png"),
 

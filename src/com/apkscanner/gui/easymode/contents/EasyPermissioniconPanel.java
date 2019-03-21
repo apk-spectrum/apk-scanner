@@ -100,8 +100,8 @@ public class EasyPermissioniconPanel extends RoundPanel implements ActionListene
 		//toolbartemppanel.setBackground(permissionbackgroundcolor);
 		//toolbartemppanel.setRoundrectColor(permissionbackgroundcolor);
 		toolbartemppanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-		
-		btnshowpermissiondlg = new EasyRoundButton(Resource.IMG_EASY_WINDOW_SHOW_PERMISSION.getImageIcon(20, 20));
+		btnshowpermissiondlg = new EasyRoundButton(ImageUtils.setcolorImage(Resource.IMG_EASY_WINDOW_PERMISSION_ICON.getImageIcon(20, 35), permissionbackgroundcolor));
+		//btnshowpermissiondlg = new EasyRoundButton(Resource.IMG_EASY_WINDOW_PERMISSION_ICON.getImageIcon(20, 35));
 		
 		btnshowpermissiondlg.setPreferredSize(new Dimension(25, 25));
 		btnshowpermissiondlg.setBackground(new Color(217, 217, 217));

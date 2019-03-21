@@ -7,11 +7,17 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -21,15 +27,19 @@ import javax.swing.border.EmptyBorder;
 
 import com.android.ddmlib.IDevice;
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.gui.easymode.EasyGuiMain;
+import com.apkscanner.gui.easymode.util.AndroidLikeToast;
 import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.gui.easymode.util.EasyFlatLabel;
+import com.apkscanner.gui.easymode.util.EasyRoundButton;
 import com.apkscanner.gui.easymode.util.EasyRoundLabel;
 import com.apkscanner.gui.easymode.util.EasyTextField;
 import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.gui.easymode.util.RoundPanel;
+import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.tabpanels.Resources;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.FileUtil;
@@ -49,10 +59,13 @@ public class EasyContentsPanel extends JPanel{
 	EasyTextField apptitlelabel;
 	EasyGuiEmptyPanel emptypanel;
 	JLabel appicon;
-	
+	EasyRoundButton btnlabelcount;
 	JPanel contentsCardPanel;
-	int SHADOWSIZE = 2;
+	JPanel labelcountpanel;
+	String mutiLabels = "";
 	
+	
+	int SHADOWSIZE = 2;
 	
 	static public int WIDTH = 550;
 	static public int HEIGHT = 250;
@@ -77,7 +90,8 @@ public class EasyContentsPanel extends JPanel{
 	private static String CARD_LAYOUT_APKINFO = "card_apkinfo";	
 	
 	
-	EasyRoundLabel applabelpanel;
+	//EasyRoundLabel applabelpanel;
+	EasyTextField applabelpanel;
 	public EasyContentsPanel() {
 		// TODO Auto-generated constructor stub
 		Log.d("start EasyContentsPanel ");
@@ -125,20 +139,44 @@ public class EasyContentsPanel extends JPanel{
 //		applabelpanel.add(apptitlelabel, BorderLayout.CENTER);
 		
 		JPanel templabelpanel = new JPanel(new BorderLayout());
-		templabelpanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		//templabelpanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		templabelpanel.setBackground(sdkverPanelcolor);
 		templabelpanel.setPreferredSize(new Dimension(0, 60));
 		templabelpanel.setOpaque(false);
 		
-		applabelpanel = new EasyRoundLabel(" ", sdkverPanelcolor, labelfontcolor);
-		applabelpanel.setPreferredSize(new Dimension(0, 60));
-		applabelpanel.setclipboard(true);
-		applabelpanel.setMouseHoverEffect(true);
+		//applabelpanel = new EasyRoundLabel(" ", sdkverPanelcolor, labelfontcolor);
+//		//applabelpanel = new EasyRoundLabel(" ", Color.cyan, labelfontcolor);
+//		applabelpanel.setPreferredSize(new Dimension(0, 60));
+//		applabelpanel.setOpaque(false);
+//		applabelpanel.setTextFont(new Font(getFont().getName(), Font.BOLD, 15));
+//		applabelpanel.setHorizontalAlignment(JTextField.CENTER);
 		
-		applabelpanel.setOpaque(false);
-		applabelpanel.setshadowlen(SHADOWSIZE);
-		applabelpanel.setTextFont(new Font(getFont().getName(), Font.BOLD, 15));
+		JPanel labeltemp = new JPanel(new BorderLayout());
+		labeltemp.setOpaque(false);
+		applabelpanel = new EasyTextField("");
+		applabelpanel.setForeground(labelfontcolor);
+		applabelpanel.setFont(new Font(getFont().getName(), Font.BOLD, 15));
 		applabelpanel.setHorizontalAlignment(JTextField.CENTER);
+				
+		labeltemp.add(applabelpanel, BorderLayout.CENTER);
+		
+		btnlabelcount = new EasyRoundButton("");
+		btnlabelcount.setPreferredSize(new Dimension(15, 15));		
+		btnlabelcount.setBackground(Color.darkGray);
+		btnlabelcount.setForeground(Color.WHITE);
+		btnlabelcount.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				showDialog(mutiLabels, Resource.STR_LABEL_APP_NAME_LIST.getString(), new Dimension(300, 200), null);
+			}
+		});
+		labelcountpanel = new JPanel();
+		labelcountpanel.setOpaque(false);
+		
+		labelcountpanel.add(btnlabelcount);
+		labelcountpanel.setVisible(false);
+		labeltemp.add(labelcountpanel, BorderLayout.EAST);
 		
 		//size
 		ininersizepanel = new EasyTextField(" ");
@@ -148,7 +186,7 @@ public class EasyContentsPanel extends JPanel{
 		ininersizepanel.setFont(new Font(getFont().getName(), Font.BOLD, 11));
 		
 		templabelpanel.add(ininersizepanel, BorderLayout.SOUTH);
-		templabelpanel.add(applabelpanel, BorderLayout.CENTER);
+		templabelpanel.add(labeltemp, BorderLayout.CENTER);
 		
 		//applabelpanel.add(ininersizepanel, BorderLayout.SOUTH);
 		
@@ -157,14 +195,35 @@ public class EasyContentsPanel extends JPanel{
 		return appiconpanel;
 	}
 	
+	private void addClipBoardbutton(final EasyRoundLabel panel) {
+		//panel.setLayout(new BorderLayout());
+		
+		
+		EasyRoundButton btnshowpermissiondlg = new EasyRoundButton(Resource.IMG_EASY_WINDOW_CLIPBOARD_ICON.getImageIcon(20, 20));
+		
+		btnshowpermissiondlg.setPreferredSize(new Dimension(25, 25));
+		btnshowpermissiondlg.setBackground(new Color(217, 217, 217));
+		btnshowpermissiondlg.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				StringSelection stringSelection = new StringSelection(panel.getText());
+				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+				clipboard.setContents(stringSelection, null);
+				AndroidLikeToast.ShowToast("Copying to the clipboard!",panel);
+			}
+		});
+		panel.add(btnshowpermissiondlg, BorderLayout.EAST);
+		//panel.add(btnshowpermissiondlg);
+	}
 	
 	private JPanel makeapkinfoPanel() {
 		JPanel infopanel = new JPanel(new BorderLayout());
 		//package
 		packagepanel = new EasyRoundLabel(" ", new Color(217, 217, 217), packagefontcolor);
 		packagepanel.setPreferredSize(new Dimension(0, PACAKGEVERSION_HEIGHT));
-		packagepanel.setMouseHoverEffect(true);
-		packagepanel.setclipboard(true);
+		addClipBoardbutton(packagepanel);
+		//packagepanel.setMouseHoverEffect(true);
+		//packagepanel.setclipboard(true);
 		
 		packagepanel.setshadowlen(SHADOWSIZE);
 		packagepanel.setTextFont(new Font(getFont().getName(), Font.BOLD, 15));
@@ -186,8 +245,9 @@ public class EasyContentsPanel extends JPanel{
 		ininerversionpanel.setTextFont(new Font(getFont().getName(), Font.BOLD, 15));
 		ininerversionpanel.setshadowlen(SHADOWSIZE);
 		
-		ininerversionpanel.setMouseHoverEffect(true);
-		ininerversionpanel.setclipboard(true);
+		addClipBoardbutton(ininerversionpanel);
+		//ininerversionpanel.setMouseHoverEffect(true);
+		//ininerversionpanel.setclipboard(true);
 		
 		innerinfopanel.add(ininerversionpanel, BorderLayout.NORTH);
 		
@@ -259,11 +319,45 @@ public class EasyContentsPanel extends JPanel{
 			return icon;
 		}
     }
+    
+	private void showDialog(String content, String title, Dimension size, Icon icon) {
+		MessageBoxPane.showTextAreaDialog(this, content, title, MessageBoxPane.INFORMATION_MESSAGE, icon, size);
+	}
+	
+	private String setAppLabel(ResourceInfo[] labels, String packageName) {
+		String appName = null;
+		StringBuilder labelBuilder = new StringBuilder();
+		if(labels != null && labels.length > 0) {
+			appName = ApkInfoHelper.getResourceValue(labels, (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
+			if(appName != null && appName.isEmpty()) appName = null;
+
+			for(ResourceInfo r: labels) {
+				if(r.configuration == null || r.configuration.isEmpty() || "default".equals(r.configuration)) {
+					labelBuilder.append(r.name != null ? r.name : packageName);
+					if(appName == null && r.name != null) appName = r.name;
+				} else {
+					labelBuilder.append("[").append(r.configuration).append("] ").append(r.name);
+				}
+				labelBuilder.append("\n");
+			}
+		}
+		return labelBuilder.toString();
+	}
+	
 	public void setContents(ApkInfo apkInfo) {
 		appicon.setIcon(getAppicon(apkInfo));
 		//apptitlelabel.setText((apkInfo.manifest.application.labels !=null)?apkInfo.manifest.application.labels[0].name : "");
-		applabelpanel.setText((apkInfo.manifest.application.labels !=null)?apkInfo.manifest.application.labels[0].name : "");
-		
+		if(apkInfo.manifest.application.labels !=null) {
+			applabelpanel.setText(apkInfo.manifest.application.labels[0].name);
+			
+			if(apkInfo.manifest.application.labels.length > 1){
+				btnlabelcount.setText(apkInfo.manifest.application.labels.length +"");
+				mutiLabels = setAppLabel(apkInfo.manifest.application.labels, apkInfo.manifest.packageName);
+				labelcountpanel.setVisible(true);
+			} else {
+				labelcountpanel.setVisible(false);
+			}
+		}
 		
 		EasyGuiMain.UIstarttime =System.currentTimeMillis();		
 		//package

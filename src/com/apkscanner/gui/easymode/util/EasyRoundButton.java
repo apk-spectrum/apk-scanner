@@ -33,6 +33,17 @@ public class EasyRoundButton extends JButton {
 		setFocusable(false);
 		setlistener();
 	}
+
+	public EasyRoundButton(String str) {
+		// TODO Auto-generated constructor stub
+		super(str);
+		// setlistener();
+		setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		setContentAreaFilled(false);
+		setFocusable(false);
+		setlistener();
+	}
+	
 	
 	void setlistener() {
 		addMouseListener(new java.awt.event.MouseAdapter() {
@@ -44,7 +55,7 @@ public class EasyRoundButton extends JButton {
 			}
 
 			public void mouseExited(java.awt.event.MouseEvent evt) {
-				// setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+				// setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));				
 				entered = false;
 				repaint();
 			}

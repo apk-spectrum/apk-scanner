@@ -169,6 +169,7 @@ public class EasyGuiMain extends JFrame implements WindowListener, IDeviceChange
 	@Override
 	public void deviceConnected(IDevice arg0) {
 		Log.d("deviceConnected");
+		changeDeivce();
 	}
 
 	@Override

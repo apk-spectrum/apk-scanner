@@ -1,6 +1,7 @@
 package com.apkscanner.gui.easymode.util;
 
 import java.awt.AWTException;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -32,14 +33,15 @@ public class EasyRoundLabel extends RoundPanel implements MouseListener{
 	boolean clipboard = false;
 	
 	public EasyRoundLabel(String str, Color backgroundColor, Color foregroundColor) {		
-		textlabel = new EasyTextField(str);		
+		textlabel = new EasyTextField(str);
 		//setBackground(backgroundColor);
 		this.backgroundcolor = backgroundColor; 
 		setRoundrectColor(backgroundColor);
+		setLayout(new BorderLayout());
 		//setOpaque(false);
 		textlabel.setForeground(foregroundColor);
 		setEasyTextField(textlabel);
-		add(textlabel);
+		add(textlabel, BorderLayout.CENTER);
 	}
 	
 	
@@ -71,6 +73,10 @@ public class EasyRoundLabel extends RoundPanel implements MouseListener{
 		textlabel.setFont(font);
 	}
 	
+	public String getText() {
+		return textlabel.getText();
+	}
+	
 	public void setHorizontalAlignment(int jtextfield) {
 		textlabel.setHorizontalAlignment(jtextfield);
 	}
@@ -85,18 +91,18 @@ public class EasyRoundLabel extends RoundPanel implements MouseListener{
 		clipboard.setContents(stringSelection, null);
 		AndroidLikeToast.ShowToast("Copying to the clipboard!",this);
 		//textlabel.selectAll();
-		   Robot r = null;
-		   
-		try {
-			r = new Robot();
-		} catch (AWTException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-//		    r.keyPress(KeyEvent.VK_CONTROL);
-//		    r.keyPress(KeyEvent.VK_C);
-//		    r.keyRelease(KeyEvent.VK_CONTROL);
-//		    r.keyRelease(KeyEvent.VK_C);
+//		   Robot r = null;
+//		   
+//		try {
+//			r = new Robot();
+//		} catch (AWTException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+////		    r.keyPress(KeyEvent.VK_CONTROL);
+////		    r.keyPress(KeyEvent.VK_C);
+////		    r.keyRelease(KeyEvent.VK_CONTROL);
+////		    r.keyRelease(KeyEvent.VK_C);
 		}
 	}
 

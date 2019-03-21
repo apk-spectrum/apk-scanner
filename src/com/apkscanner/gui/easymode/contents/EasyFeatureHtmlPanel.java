@@ -11,6 +11,7 @@ import java.io.InputStream;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.easymode.core.EasyGuiAppFeatureData;
@@ -48,16 +49,20 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 		//apkinform.setBackground(Color.white);
 		apkinform.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 		
+		JPanel tempfeature = new JPanel(new FlowLayout());
+		tempfeature.setOpaque(false);
+		
 		launcherlabel = new EasyRoundLabel(" ", new Color(217, 217, 217), Color.BLACK);
 		//label.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
 		launcherlabel.setOpaque(false);
-		launcherlabel.setPreferredSize(new Dimension(0, 30));
+		launcherlabel.setFont(new Font(getFont().getName(), Font.BOLD, 15));
+		//launcherlabel.setPreferredSize(new Dimension(200, 30));
 
-		
+		tempfeature.add(launcherlabel);
 		//apkinform.setHyperlinkClickListener(this);
 		
 		add(apkinform, BorderLayout.CENTER);
-		add(launcherlabel, BorderLayout.SOUTH);
+		add(tempfeature, BorderLayout.SOUTH);
 		
 	}
 
