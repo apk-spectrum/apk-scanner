@@ -112,7 +112,7 @@ public class AaptNativeScanner extends ApkScanner
 				}
 			}
 		}
-		return getResourceValues(assetsHandle, resId);
+		return valses;
 	}
 
 	public ResourceInfo[] getResourceValues(String id) {

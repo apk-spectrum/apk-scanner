@@ -864,12 +864,12 @@ public class AaptManifestReader
 		//Log.d("getAttrValues() " + node + ", namespace : " + namespace + ", attr : " + attr + ", value : " + value);
 
 		while(value != null && value.startsWith("@")) {
-			if(value.matches("@0x*\\s*")) {
+			if(!value.matches("@0x[\\da-fA-F]+\\s*")) {
 				resVal = null;
 				break;
 			}
 			resVal = resourceScanner.getResourceValues(value);
-			if(resVal == null || resVal.length == 0)
+			if(resVal == null || resVal.length == 0 || value == resVal[0].name)
 				break;
 			value = resVal[0].name;
 		}
