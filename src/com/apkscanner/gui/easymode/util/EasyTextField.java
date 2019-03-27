@@ -22,7 +22,7 @@ public class EasyTextField extends JTextField {
 	public static final int MIN_FONT_SIZE = 3;
 	public static final int MAX_FONT_SIZE = 20;
 	Graphics g;
-	int currFontSize = 0;	
+	int currFontSize = 10;	
 	
 	public EasyTextField(String text) {
 //		super(text); // 20ms slow

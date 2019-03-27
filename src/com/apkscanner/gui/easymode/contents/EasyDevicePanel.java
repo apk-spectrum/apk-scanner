@@ -194,7 +194,11 @@ public class EasyDevicePanel extends RoundPanel implements MouseListener, Action
 			if(device.getState() == IDevice.DeviceState.ONLINE) {
 				name = getDeviceName(device);
 				sdkversion = device.getProperty(IDevice.PROP_BUILD_API_LEVEL);
-				nversion = Integer.parseInt(sdkversion);
+				if(sdkversion ==null) { 
+					nversion = 0;
+				} else {
+					nversion = Integer.parseInt(sdkversion);
+				}
 			} else {
 				name = "OFFLINE";
 			}
@@ -216,13 +220,27 @@ public class EasyDevicePanel extends RoundPanel implements MouseListener, Action
 //		refreshpanel();
 	}
 	
+//	private String getDeviceName(IDevice device) {
+//		String deviceName;
+//			deviceName = device.getProperty(IDevice.PROP_DEVICE_MODEL);
+//			
+//			if(deviceName != null) deviceName = deviceName.trim();
+//			if(deviceName != null && deviceName.isEmpty()) {
+//				deviceName = "";
+//			}
+//			if(deviceName == null) deviceName = "unkown";
+//		return deviceName;
+//	}
+	
 	private String getDeviceName(IDevice device) {
-		String deviceName;
+		String deviceName = null;
+		if(deviceName == null || deviceName.isEmpty()) {
 			deviceName = device.getProperty(IDevice.PROP_DEVICE_MODEL);
 			if(deviceName != null) deviceName = deviceName.trim();
 			if(deviceName != null && deviceName.isEmpty()) {
-				deviceName = "";
-			}		
+				deviceName = null;
+			}
+		}
 		return deviceName;
 	}
 

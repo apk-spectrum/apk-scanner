@@ -55,7 +55,7 @@ public class EasyContentsPanel extends JPanel{
 	
 	EasyRoundLabel packagepanel;
 	EasyRoundLabel ininerversionpanel;
-	EasyTextField ininersizepanel;
+	//EasyTextField ininersizepanel;
 	EasyTextField apptitlelabel;
 	EasyGuiEmptyPanel emptypanel;
 	JLabel appicon;
@@ -67,8 +67,8 @@ public class EasyContentsPanel extends JPanel{
 	
 	int SHADOWSIZE = 2;
 	
-	static public int WIDTH = 550;
-	static public int HEIGHT = 250;
+	static public int WIDTH = 500;
+	static public int HEIGHT = 220;
 	
 	static private int PERMISSION_HEIGHT = 46;
 	static private int PACAKGEVERSION_HEIGHT = 35;
@@ -91,7 +91,7 @@ public class EasyContentsPanel extends JPanel{
 	
 	
 	//EasyRoundLabel applabelpanel;
-	EasyTextField applabelpanel;
+	JTextField applabelpanel;
 	public EasyContentsPanel() {
 		// TODO Auto-generated constructor stub
 		Log.d("start EasyContentsPanel ");
@@ -116,7 +116,7 @@ public class EasyContentsPanel extends JPanel{
 		//appiconpanel.setBackground(sdkverPanelcolor);
 		appiconpanel.setRoundrectColor(sdkverPanelcolor);
 		
-		appiconpanel.setPreferredSize(new Dimension(160, 0));
+		appiconpanel.setPreferredSize(new Dimension(130, 0));
 		appiconpanel.setshadowlen(SHADOWSIZE);
 		appicon = new JLabel();
 		appicon.setHorizontalAlignment(JLabel.CENTER);
@@ -141,7 +141,7 @@ public class EasyContentsPanel extends JPanel{
 		JPanel templabelpanel = new JPanel(new BorderLayout());
 		//templabelpanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		templabelpanel.setBackground(sdkverPanelcolor);
-		templabelpanel.setPreferredSize(new Dimension(0, 60));
+		templabelpanel.setPreferredSize(new Dimension(0, 40));
 		templabelpanel.setOpaque(false);
 		
 		//applabelpanel = new EasyRoundLabel(" ", sdkverPanelcolor, labelfontcolor);
@@ -152,8 +152,9 @@ public class EasyContentsPanel extends JPanel{
 //		applabelpanel.setHorizontalAlignment(JTextField.CENTER);
 		
 		JPanel labeltemp = new JPanel(new BorderLayout());
-		labeltemp.setOpaque(false);
-		applabelpanel = new EasyTextField("");
+		//labeltemp.setOpaque(false);
+		labeltemp.setBackground(Color.RED);
+		applabelpanel = new JTextField("");
 		applabelpanel.setForeground(labelfontcolor);
 		applabelpanel.setFont(new Font(getFont().getName(), Font.BOLD, 15));
 		applabelpanel.setHorizontalAlignment(JTextField.CENTER);
@@ -163,7 +164,7 @@ public class EasyContentsPanel extends JPanel{
 		btnlabelcount = new EasyRoundButton("");
 		btnlabelcount.setPreferredSize(new Dimension(15, 15));		
 		btnlabelcount.setBackground(Color.darkGray);
-		btnlabelcount.setForeground(Color.WHITE);
+		btnlabelcount.setForeground(Color.WHITE);		
 		btnlabelcount.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -173,22 +174,14 @@ public class EasyContentsPanel extends JPanel{
 		});
 		labelcountpanel = new JPanel();
 		labelcountpanel.setOpaque(false);
-		
+		//labelcountpanel.setBackground(Color.blue);
 		labelcountpanel.add(btnlabelcount);
 		labelcountpanel.setVisible(false);
+		
 		labeltemp.add(labelcountpanel, BorderLayout.EAST);
 		
-		//size
-		ininersizepanel = new EasyTextField(" ");
-		setEasyTextField(ininersizepanel);
-		ininersizepanel.setPreferredSize(new Dimension(0, 25));
-		ininersizepanel.setHorizontalAlignment(JTextField.RIGHT);		
-		ininersizepanel.setFont(new Font(getFont().getName(), Font.BOLD, 11));
-		
-		templabelpanel.add(ininersizepanel, BorderLayout.SOUTH);
 		templabelpanel.add(labeltemp, BorderLayout.CENTER);
 		
-		//applabelpanel.add(ininersizepanel, BorderLayout.SOUTH);
 		
 		appiconpanel.add(templabelpanel, BorderLayout.SOUTH);
 		
@@ -309,7 +302,7 @@ public class EasyContentsPanel extends JPanel{
 		//String temppath = apkInfo.manifest.application.icons[apkInfo.manifest.application.icons.length - 1].name;
 		try {
 			ImageIcon icon;
-			icon = new ImageIcon(ImageUtils.getScaledImage(new ImageIcon(ImageIO.read(new URL(iconPath))),130,130));
+			icon = new ImageIcon(ImageUtils.getScaledImage(new ImageIcon(ImageIO.read(new URL(iconPath))),110,110));
 			return icon;
 		} catch (IOException e) {
 			ImageIcon icon;
@@ -367,7 +360,7 @@ public class EasyContentsPanel extends JPanel{
 		ininerversionpanel.setText(apkInfo.manifest.versionName + " / " + apkInfo.manifest.versionCode);
 		
 		//size
-		ininersizepanel.setText(FileUtil.getFileSize(apkInfo.fileSize, FSStyle.FULL));
+		//ininersizepanel.setText(FileUtil.getFileSize(apkInfo.fileSize, FSStyle.FULL));
 		devicepanel.setsdkpanel(apkInfo);		
 		
 		//feature

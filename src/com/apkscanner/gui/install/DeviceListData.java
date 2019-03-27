@@ -90,6 +90,7 @@ public class DeviceListData
 		}
 		return deviceName;
 	}
+	
 
 	public String getOsVersion() {
 		if(osVersion == null || osVersion.isEmpty()) {

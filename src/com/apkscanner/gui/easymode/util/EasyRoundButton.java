@@ -20,9 +20,12 @@ import com.apkscanner.util.Log;
 
 public class EasyRoundButton extends JButton {
 	private static final long serialVersionUID = -6927025737749969747L;
-	boolean entered = false;
+	private boolean entered = false;
+	private boolean isfold = true;
 	private Color originalcolor;
 	private int len = 0;
+	private String strfold;
+	private String strspread=null;
 	
 	public EasyRoundButton(ImageIcon icon) {
 		// TODO Auto-generated constructor stub
@@ -37,6 +40,19 @@ public class EasyRoundButton extends JButton {
 	public EasyRoundButton(String str) {
 		// TODO Auto-generated constructor stub
 		super(str);
+		strfold= str;
+		// setlistener();
+		setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		setContentAreaFilled(false);
+		setFocusable(false);
+		setlistener();
+	}
+	
+	public EasyRoundButton(String str, String spread) {
+		// TODO Auto-generated constructor stub
+		super(str);
+		strfold= str;
+		strspread = spread;
 		// setlistener();
 		setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		setContentAreaFilled(false);
@@ -62,8 +78,13 @@ public class EasyRoundButton extends JButton {
 		
 			public void mouseClicked(java.awt.event.MouseEvent evt) {
 				// TODO Auto-generated method stub
-				entered = false;
-				repaint();
+				//entered = false;
+				if(strspread!=null) {
+					isfold = !isfold;					
+					if(!isfold) setText(strspread);
+					else setText(strfold);
+				}
+				updateUI();
 			}			
 			
 			public void mouseReleased(MouseEvent e) {
@@ -90,19 +111,12 @@ public class EasyRoundButton extends JButton {
         Graphics2D g = (Graphics2D)gr;
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
-        
-        //Rectangle2D r = new Rectangle2D.Double(len, len, getWidth() - len *2, getHeight() - len *2);
-        //draw(g, r, len);
 
-        //Shape rr = new Rectangle2D.Double(len / 2, 0, getWidth()-len, getHeight()-len);
-        //g.setColor(new Color(49,56,71,200));
         if(entered) {
         	g.setColor(originalcolor.darker().darker());
         } else {
         	g.setColor(originalcolor);
         }
-        //g.fill(rr);
-        //g.fillRoundRect(0, 0, getWidth(), getHeight(), 13,13);
         
         g.fillRoundRect(0, 0, getWidth()-len, getHeight()-len, 13,13);
         

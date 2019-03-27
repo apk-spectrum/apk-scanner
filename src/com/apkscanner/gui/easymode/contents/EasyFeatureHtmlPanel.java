@@ -16,6 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.data.apkinfo.ApkInfoHelper;
+import com.apkscanner.data.apkinfo.ComponentInfo;
 import com.apkscanner.gui.easymode.core.EasyGuiAppFeatureData;
 import com.apkscanner.gui.easymode.util.EasyRoundButton;
 import com.apkscanner.gui.easymode.util.EasyRoundLabel;
@@ -23,8 +25,10 @@ import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.easymode.util.RoundPanel;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.XmlPath;
+import com.apkscanner.util.FileUtil.FSStyle;
 
 public class EasyFeatureHtmlPanel extends RoundPanel {
 	static private Color sdkverPanelcolor = new Color(242, 242, 242);
@@ -51,22 +55,22 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 	}
 	private void setdefaultfeature(JComponent com) {
 		com.setFont(new Font(getFont().getName(), Font.BOLD, 13));
-		com.setBorder(new EmptyBorder(5, 5, 5, 5));
+		com.setBorder(new EmptyBorder(5, 5, 5, 5));		
 	}
 	
-	private JComponent makeFeatpanel(String str, Color background, Color foreground) {
-		EasyRoundButton btn = new EasyRoundButton(str);
-		btn.setBackground(background);
+	private JComponent makeFeatpanel(String foldstr, String spreadstr, Color foreground) {
+		EasyRoundButton btn = new EasyRoundButton(foldstr, spreadstr);
 		btn.setForeground(foreground);
 		setdefaultfeature(btn);
 		return btn;
 	}
+	
 	private JComponent makeFeatpanel(String str, Color foreground) {
 		EasyRoundButton btn = new EasyRoundButton(str);
 		btn.setForeground(foreground);
 		setdefaultfeature(btn);
 		return btn;
-	}	
+	}
 	private JComponent makeFeatpanel(String str) {
 		EasyRoundButton btn = new EasyRoundButton(str); 
 		setdefaultfeature(btn);
@@ -79,11 +83,6 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 		removeAll();		
 		newmakefeaturehtml(AppFeature, apkInfo);
 		updateUI();
-	}
-
-	private String makeHyperLink(String href, String text, String title, String id, String style) {
-		//return JHtmlEditorPane.makeHyperLink(href, text, title, id, style);
-		return text;
 	}
 
 	public void setSdkXml(String xmlPath) {
@@ -102,7 +101,7 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 		String str = "";
 		XmlPath sdkInfo = sdkXmlPath.getNode("/resources/sdk-info[@apiLevel='" + sdkversion + "']");
 		//21-5.0/Lollipop
-		str = sdkversion + "-" + sdkInfo.getAttribute("platformVersion") + "/" + sdkInfo.getAttribute("codeName");
+		str = sdkversion + "-" + sdkInfo.getAttribute("platformVersion") + " / " + sdkInfo.getAttribute("codeName");
 		
 		return str;
 	}
@@ -115,12 +114,12 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 		if(apkInfo.manifest.usesSdk.minSdkVersion!=null) {
 			int minsdk = apkInfo.manifest.usesSdk.minSdkVersion;			
 			//arraysdkObject.add(new sdkDrawObject(makeTextPanel("min", minsdk), minsdk));
-			add(makeFeatpanel("(Min)" + makesdkString(minsdk)));
+			add(makeFeatpanel("(Min)" + minsdk,"(Min)" + makesdkString(minsdk), Color.BLACK));
 		}
 		
 		if(apkInfo.manifest.usesSdk.maxSdkVersion!=null) {
 			int maxsdk = apkInfo.manifest.usesSdk.maxSdkVersion;
-			add(makeFeatpanel("(Max)" + makesdkString(maxsdk)));	
+			add(makeFeatpanel("(Max)" + maxsdk,"(Min)" + makesdkString(maxsdk), Color.BLACK));				
 		}
 
 		
@@ -128,7 +127,8 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 			int targetsdk = apkInfo.manifest.usesSdk.targetSdkVersion;
 			//arraysdkObject.add(new sdkDrawObject(makeDevicePanel(Devicecolor[DEVICE_TARGET], targetsdk), targetsdk));
 			//feature.append("<font style=\"color:#ED7E31; font-weight:bold\">");
-			add(makeFeatpanel("(Target)" + makesdkString(targetsdk)));
+			//add(makeFeatpanel("(Target)" + makesdkString(targetsdk)));
+			add(makeFeatpanel("(Target)" + targetsdk,"(Target)" + makesdkString(targetsdk), Color.BLACK));
 			
 		}
 
@@ -155,11 +155,27 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 		if(featuredata.isHidden) {
 			add(makeFeatpanel(Resource.STR_FEATURE_HIDDEN_LAB.getString(), new Color(0xED7E31)));			
 		} else {
-			add(makeFeatpanel(Resource.STR_FEATURE_LAUNCHER_LAB.getString(), new Color(0x0055BB)));
+			String str="";
+			ComponentInfo[] apkActivities = ApkInfoHelper.getLauncherActivityList(apkInfo, true);
+			if (apkActivities != null && apkActivities.length > 0) {
+				for (ComponentInfo comp : apkActivities) {
+					boolean isLauncher = ((comp.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0);
+					if(isLauncher) {						
+						str += comp.name + " ";
+					}
+				}
+			}
+			add(makeFeatpanel(Resource.STR_FEATURE_LAUNCHER_LAB.getString(), str, new Color(0x0055BB)));
 		}
 		
+		if(apkInfo.fileSize!=null) {
+			String spread = FileUtil.getFileSize(apkInfo.fileSize, FSStyle.FULL);
+			String fold = FileUtil.getFileSize(apkInfo.fileSize, FSStyle.MB);
+			add(makeFeatpanel(fold, spread, Color.BLACK));
+		}		
+
+		
 	}
-	
 	
 	private void showDialog(String content, String title, Dimension size, Icon icon)
 	{
