@@ -36,7 +36,7 @@ public class MultiSpanCellTableExample extends JFrame {
 			e1.printStackTrace();
 		}
 
-		AttributiveCellTableModel ml = new AttributiveCellTableModel(10,6);
+		final AttributiveCellTableModel ml = new AttributiveCellTableModel(0,3);
 /*
 		AttributiveCellTableModel ml = new AttributiveCellTableModel(10,6) {
 			public Object getValueAt(int row, int col) { 
@@ -70,10 +70,21 @@ public class MultiSpanCellTableExample extends JFrame {
 				table.repaint();
 			}
 		});
+		JButton b_insert = new JButton("Insert");
+		b_insert.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				table.clearSelection();
+				ml.addRow(new Object[] {"a","b","c"});
+				ml.insertRow(0,new Object[] {"1","2","3"});
+				table.revalidate();
+				table.repaint();
+			}
+		});
 		JPanel p_buttons = new JPanel();
 		p_buttons.setLayout(new GridLayout(2,1));
 		p_buttons.add(b_one);
 		p_buttons.add(b_split);
+		p_buttons.add(b_insert);
 
 		Box box = new Box(BoxLayout.X_AXIS);
 		box.add(scroll);

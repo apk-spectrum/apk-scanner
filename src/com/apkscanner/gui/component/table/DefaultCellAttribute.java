@@ -157,8 +157,8 @@ implements CellAttribute ,CellSpan ,ColoredCell ,CellFont {
 	//
 	public void addColumn() {
 		int[][][] oldSpan = span;
-		int numRows    = oldSpan.length;
-		int numColumns = oldSpan[0].length;
+		int numRows    = rowSize;
+		int numColumns = columnSize++;
 		span = new int[numRows][numColumns + 1][2];
 		System.arraycopy(oldSpan,0,span,0,numRows);
 		for (int i=0;i<numRows;i++) {
@@ -169,8 +169,8 @@ implements CellAttribute ,CellSpan ,ColoredCell ,CellFont {
 
 	public void addRow() {
 		int[][][] oldSpan = span;
-		int numRows    = oldSpan.length;
-		int numColumns = oldSpan[0].length;
+		int numRows    = rowSize++;
+		int numColumns = columnSize;
 		span = new int[numRows + 1][numColumns][2];
 		System.arraycopy(oldSpan,0,span,0,numRows);
 		for (int i=0;i<numColumns;i++) {
@@ -181,13 +181,11 @@ implements CellAttribute ,CellSpan ,ColoredCell ,CellFont {
 
 	public void insertRow(int row) {
 		int[][][] oldSpan = span;
-		int numRows    = oldSpan.length;
-		int numColumns = oldSpan[0].length;
+		int numRows    = rowSize++;
+		int numColumns = columnSize;
 		span = new int[numRows + 1][numColumns][2];
-		if (0 < row) {
-			System.arraycopy(oldSpan,0,span,0,row-1);
-		}
-		System.arraycopy(oldSpan,0,span,row,numRows - row);
+		System.arraycopy(oldSpan,0,span,0,row);
+		System.arraycopy(oldSpan,row,span,row+1,numRows - row);
 		for (int i=0;i<numColumns;i++) {
 			span[row][i][CellSpan.COLUMN] = 1;
 			span[row][i][CellSpan.ROW]    = 1;

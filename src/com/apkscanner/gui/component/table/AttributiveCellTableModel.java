@@ -49,6 +49,7 @@ public class AttributiveCellTableModel extends DefaultTableModel {
 		setDataVector(data, columnNames);
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public void setDataVector(Vector newData, Vector columnNames) {
 		if (newData == null)
@@ -66,6 +67,7 @@ public class AttributiveCellTableModel extends DefaultTableModel {
 				TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT));
 	}
 
+	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void addColumn(Object columnName, Vector columnData) {
 		if (columnName == null)
@@ -89,15 +91,15 @@ public class AttributiveCellTableModel extends DefaultTableModel {
 		fireTableStructureChanged();
 	}
 
+	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void addRow(Vector rowData) {
-		Vector newData = null;
 		if (rowData == null) {
-			newData = new Vector(getColumnCount());
+			rowData = new Vector(getColumnCount());
 		} else {
 			rowData.setSize(getColumnCount());
 		}
-		dataVector.addElement(newData);
+		dataVector.addElement(rowData);
 
 		cellAtt.addRow();
 
@@ -105,6 +107,7 @@ public class AttributiveCellTableModel extends DefaultTableModel {
 				TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT));
 	}
 
+	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void insertRow(int row, Vector rowData) {
 		if (rowData == null) {
