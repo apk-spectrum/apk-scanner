@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 
@@ -14,6 +15,7 @@ import javax.swing.table.DefaultTableModel;
 public class AttributiveCellTableModel extends DefaultTableModel {
 	private static final long serialVersionUID = 287820920999697514L;
 	protected CellAttribute cellAtt;
+	protected JTable table;
 
 	public AttributiveCellTableModel() {
 		this((Vector<?>)null, 0);
@@ -49,6 +51,13 @@ public class AttributiveCellTableModel extends DefaultTableModel {
 		setDataVector(data, columnNames);
 	}
 
+	public void setTable(JTable table) {
+		this.table = table;
+		if(cellAtt instanceof CellSpan) {
+			((CellSpan)cellAtt).setTable(table);
+		}
+	}
+
 	@Override
 	@SuppressWarnings("rawtypes")
 	public void setDataVector(Vector newData, Vector columnNames) {
@@ -62,6 +71,9 @@ public class AttributiveCellTableModel extends DefaultTableModel {
 
 		cellAtt = new DefaultCellAttribute(dataVector.size(),
 				columnIdentifiers.size());
+		if(cellAtt instanceof CellSpan) {
+			((CellSpan)cellAtt).setTable(table);
+		}
 
 		newRowsAdded(new TableModelEvent(this, 0, getRowCount() - 1,
 				TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT));
@@ -100,7 +112,6 @@ public class AttributiveCellTableModel extends DefaultTableModel {
 			rowData.setSize(getColumnCount());
 		}
 		dataVector.addElement(rowData);
-
 		cellAtt.addRow();
 
 		newRowsAdded(new TableModelEvent(this, getRowCount()-1, getRowCount()-1,
@@ -115,14 +126,39 @@ public class AttributiveCellTableModel extends DefaultTableModel {
 		} else {
 			rowData.setSize(getColumnCount());
 		}
-
 		dataVector.insertElementAt(rowData, row);
-
 		cellAtt.insertRow(row);
 
 		newRowsAdded(new TableModelEvent(this, row, row,
 				TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT));
+
+		if(table != null) {
+			int[] rows = table.getSelectedRows();
+			int[] cols = table.getSelectedColumns();
+			table.setRowSelectionInterval(rows[1], rows[rows.length-1]);
+			table.setColumnSelectionInterval(cols[0], cols[cols.length-1]);
+		}
 	}
+
+	@Override
+    public void removeRow(int row) {
+		int[] rows = table != null ? table.getSelectedRows() : null;
+		int[] cols = table != null ? table.getSelectedColumns() : null;
+
+        dataVector.removeElementAt(row);
+        cellAtt.removeRow(row);
+        fireTableRowsDeleted(row, row);
+
+        if(table != null && !dataVector.isEmpty()) {
+			if(rows[0] >= dataVector.size()) {
+				rows = new int[] { dataVector.size() - 1 };
+			} else if(rows[rows.length-1] >= dataVector.size()) {
+				rows[rows.length-1] = dataVector.size() - 1;
+			}
+			table.setRowSelectionInterval(rows[0], rows[0] >= rows[rows.length-1] ? rows[0] : rows[rows.length-1] - 1);
+			table.setColumnSelectionInterval(cols[0], cols[cols.length-1]);
+		}
+    }
 
 	public CellAttribute getCellAttribute() {
 		return cellAtt;
@@ -136,6 +172,9 @@ public class AttributiveCellTableModel extends DefaultTableModel {
 			newCellAtt.setSize(new Dimension(numRows, numColumns));
 		}
 		cellAtt = newCellAtt;
+		if(cellAtt instanceof CellSpan) {
+			((CellSpan)cellAtt).setTable(table);
+		}
 		fireTableDataChanged();
 	}
 

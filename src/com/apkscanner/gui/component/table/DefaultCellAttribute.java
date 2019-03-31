@@ -4,13 +4,15 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 
+import javax.swing.JTable;
+
 /**
  * @version 1.0 11/22/98
  */
 
 public class DefaultCellAttribute
-// implements CellAttribute ,CellSpan  {
-implements CellAttribute ,CellSpan ,ColoredCell ,CellFont {
+	// implements CellAttribute ,CellSpan  {
+	implements CellAttribute, CellSpan, ColoredCell, CellFont {
 
 	//
 	// !!!! CAUTION !!!!!
@@ -22,6 +24,8 @@ implements CellAttribute ,CellSpan ,ColoredCell ,CellFont {
 	protected Color[][] foreground;             // ColoredCell
 	protected Color[][] background;             //
 	protected Font[][]  font;                   // CellFont
+
+	protected JTable table;
 
 	public DefaultCellAttribute() {
 		this(1,1);
@@ -40,7 +44,6 @@ implements CellAttribute ,CellSpan ,ColoredCell ,CellFont {
 		}
 	}
 
-
 	//
 	// CellSpan
 	//
@@ -57,6 +60,14 @@ implements CellAttribute ,CellSpan ,ColoredCell ,CellFont {
 		this.span[row][column] = span;
 	}
 
+	public int[] getAnchorPoint(int row, int column) {
+		int[] span = getSpan(row, column);
+		if(span[ROW] >= 1 && span[COLUMN] >= 1) {
+			return new int[] {row, column};
+		}
+		return new int[] {row + span[ROW], column + span[COLUMN]};
+	}
+
 	public boolean isVisible(int row, int column) {
 		if (isOutOfBounds(row, column)) return false;
 		if ((span[row][column][CellSpan.COLUMN] < 1)
@@ -64,8 +75,13 @@ implements CellAttribute ,CellSpan ,ColoredCell ,CellFont {
 		return true;
 	}
 
-	public void combine(int[] rows, int[] columns) {
-		if (isOutOfBounds(rows, columns)) return;
+	public boolean isCombined(int row, int column) {
+		int[] span = getSpan(row, column);
+		return span[ROW] != 1 || span[COLUMN] != 1;
+	}
+	
+	public boolean isPossibleCombine(int[] rows, int[] columns) {
+		if (isOutOfBounds(rows, columns)) return false;
 		int    rowSpan  = rows.length;
 		int columnSpan  = columns.length;
 		int startRow    = rows[0];
@@ -75,10 +91,19 @@ implements CellAttribute ,CellSpan ,ColoredCell ,CellFont {
 				if ((span[startRow +i][startColumn +j][CellSpan.COLUMN] != 1)
 						||(span[startRow +i][startColumn +j][CellSpan.ROW]    != 1)) {
 					//System.out.println("can't combine");
-					return ;
+					return false;
 				}
 			}
 		}
+		return true;
+	}
+
+	public void combine(int[] rows, int[] columns) {
+		if (!isPossibleCombine(rows, columns)) return;
+		int    rowSpan  = rows.length;
+		int columnSpan  = columns.length;
+		int startRow    = rows[0];
+		int startColumn = columns[0];
 		for (int i=0,ii=0;i<rowSpan;i++,ii--) {
 			for (int j=0,jj=0;j<columnSpan;j++,jj--) {
 				span[startRow +i][startColumn +j][CellSpan.COLUMN] = jj;
@@ -89,10 +114,16 @@ implements CellAttribute ,CellSpan ,ColoredCell ,CellFont {
 		span[startRow][startColumn][CellSpan.COLUMN] = columnSpan;
 		span[startRow][startColumn][CellSpan.ROW]    =    rowSpan;
 
+		if(table == null) return;
+		table.setRowSelectionInterval(startRow, startRow);
+		table.setColumnSelectionInterval(startColumn, startColumn);
 	}
 
 	public void split(int row, int column) {
 		if (isOutOfBounds(row, column)) return;
+		int[] anchor = getAnchorPoint(row, column);
+		row = anchor[ROW];
+		column = anchor[COLUMN];
 		int columnSpan = span[row][column][CellSpan.COLUMN];
 		int    rowSpan = span[row][column][CellSpan.ROW];
 		for (int i=0;i<rowSpan;i++) {
@@ -101,8 +132,16 @@ implements CellAttribute ,CellSpan ,ColoredCell ,CellFont {
 				span[row +i][column +j][CellSpan.ROW]    = 1;
 			}
 		}
+
+		if(table == null) return;
+		table.setRowSelectionInterval(row, row + rowSpan - 1);
+		table.setColumnSelectionInterval(column, column + columnSpan - 1);
 	}
 
+	@Override
+	public void setTable(JTable table) {
+		this.table = table;
+	}
 
 	//
 	// ColoredCell
@@ -180,15 +219,67 @@ implements CellAttribute ,CellSpan ,ColoredCell ,CellFont {
 	}
 
 	public void insertRow(int row) {
+		if (isOutOfBounds(row > 0 ? row-1 : row, 0)) return;
 		int[][][] oldSpan = span;
 		int numRows    = rowSize++;
 		int numColumns = columnSize;
 		span = new int[numRows + 1][numColumns][2];
+
 		System.arraycopy(oldSpan,0,span,0,row);
 		System.arraycopy(oldSpan,row,span,row+1,numRows - row);
+
 		for (int i=0;i<numColumns;i++) {
-			span[row][i][CellSpan.COLUMN] = 1;
-			span[row][i][CellSpan.ROW]    = 1;
+			if(span[row+1][i][CellSpan.ROW] < 0) {
+				span[row][i][CellSpan.COLUMN] = span[row+1][i][CellSpan.COLUMN];
+				span[row][i][CellSpan.ROW]    = span[row+1][i][CellSpan.ROW];
+				if(span[row][i][CellSpan.COLUMN] == 0) {
+					int rowSpan = span[row][i][CellSpan.ROW];
+					span[row + rowSpan][i][CellSpan.ROW]++;	
+				}
+				for(int j = row+1; j < numRows && span[j][i][CellSpan.ROW] < 0; j++) {
+					span[j][i][CellSpan.ROW]--;
+				}
+			} else {
+				span[row][i][CellSpan.COLUMN] = 1;
+				span[row][i][CellSpan.ROW]    = 1;
+			}
+		}
+	}
+
+	public void removeRow(int row) {
+		if (isOutOfBounds(row > 0 ? row-1 : row, 0)) return;
+		int[][][] oldSpan = span;
+		int numRows    = rowSize--;
+		int numColumns = columnSize;
+		span = new int[numRows-1][numColumns][2];
+
+		System.arraycopy(oldSpan,0,span,0,row);
+		System.arraycopy(oldSpan,row+1,span,row,numRows - row - 1);
+
+		for (int i=0;i<numColumns;i++) {
+			int orgSpan = oldSpan[row][i][CellSpan.ROW];
+			if(orgSpan == 1) continue;
+			if(orgSpan < 0) {
+				if(oldSpan[row][i][CellSpan.COLUMN] == 0) {
+					span[row + orgSpan][i][CellSpan.ROW]--;
+				}
+				if(row >= numRows-1) continue;
+				if(span[row][i][CellSpan.ROW] < 0) {
+					span[row][i][CellSpan.ROW]++;
+				}
+			}
+			if(row >= numRows-1) continue;
+			if(orgSpan == 0) {
+				if(span[row][i][CellSpan.COLUMN] < 0) {
+					span[row][i][CellSpan.ROW] = 0;
+				}
+			} else if(orgSpan > 1) {
+				span[row][i][CellSpan.ROW] = orgSpan - 1;
+				span[row][i][CellSpan.COLUMN] = oldSpan[row][i][CellSpan.COLUMN];
+			}
+			for(int j = row+1; j < numRows-1 && span[j][i][CellSpan.ROW] < 0; j++) {
+				span[j][i][CellSpan.ROW]++;
+			}
 		}
 	}
 
