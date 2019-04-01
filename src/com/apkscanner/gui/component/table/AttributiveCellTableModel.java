@@ -178,6 +178,11 @@ public class AttributiveCellTableModel extends DefaultTableModel {
 		fireTableDataChanged();
 	}
 
+	@Override
+    public Class<?> getColumnClass(int columnIndex) {
+		return getValueAt(0, columnIndex).getClass();
+    }
+
 	/*
 public void changeCellAttribute(int row, int column, Object command) {
 	cellAtt.changeAttribute(row, column, command);
