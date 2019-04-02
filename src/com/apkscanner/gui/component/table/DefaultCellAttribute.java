@@ -12,7 +12,7 @@ import javax.swing.JTable;
 
 public class DefaultCellAttribute
 	// implements CellAttribute ,CellSpan  {
-	implements CellAttribute, CellSpan, ColoredCell, CellFont {
+	implements CellAttribute, CellSpan, CellColor, CellFont {
 
 	//
 	// !!!! CAUTION !!!!!
@@ -28,7 +28,7 @@ public class DefaultCellAttribute
 	protected JTable table;
 
 	public DefaultCellAttribute() {
-		this(1,1);
+		this(0,0);
 	}
 
 	public DefaultCellAttribute(int numRows, int numColumns) {
@@ -44,9 +44,65 @@ public class DefaultCellAttribute
 		}
 	}
 
+	public void setSize(Dimension size) {
+		columnSize = size.width;
+		rowSize    = size.height;
+		span = new int[rowSize][columnSize][2];   // 2: COLUMN,ROW
+		foreground = new Color[rowSize][columnSize];
+		background = new Color[rowSize][columnSize];
+		font = new Font[rowSize][columnSize];
+		initValue();
+	}
+
+	protected boolean isOutOfBounds(int row, int column) {
+		if ((row    < 0)||(rowSize    <= row)
+				||(column < 0)||(columnSize <= column)) {
+			return true;
+		}
+		return false;
+	}
+
+	protected boolean isOutOfBounds(int[] rows, int[] columns) {
+		if(rows.length == 0 && columns.length == 0) return true;
+		for (int i=0;i<rows.length;i++) {
+			if ((rows[i] < 0)||(rowSize <= rows[i])) return true;
+		}
+		for (int i=0;i<columns.length;i++) {
+			if ((columns[i] < 0)||(columnSize <= columns[i])) return true;
+		}
+		return false;
+	}
+
+	protected void setValues(Object[][] target, Object value,
+			int[] rows, int[] columns) {
+		for (int i=0;i<rows.length;i++) {
+			int row = rows[i];
+			for (int j=0;j<columns.length;j++) {
+				int column = columns[j];
+				target[row][column] = value;
+			}
+		}
+	}
+
+	@Override
+	public CellSpan getCellSpan() {
+		return (CellSpan) this;
+	}
+
+	@Override
+	public CellFont getCellFont() {
+		return (CellFont) this;
+	}
+
+	@Override
+	public CellColor getCellColor() {
+		return (CellColor) this;
+	}
+
 	//
 	// CellSpan
 	//
+	@Override
 	public int[] getSpan(int row, int column) {
 		if (isOutOfBounds(row, column)) {
 			int[] ret_code = {1,1};
@@ -55,11 +111,13 @@ public class DefaultCellAttribute
 		return span[row][column];
 	}
 
+	@Override
 	public void setSpan(int[] span, int row, int column) {
 		if (isOutOfBounds(row, column)) return;
 		this.span[row][column] = span;
 	}
 
+	@Override
 	public int[] getAnchorPoint(int row, int column) {
 		int[] span = getSpan(row, column);
 		if(span[ROW] >= 1 && span[COLUMN] >= 1) {
@@ -68,6 +126,7 @@ public class DefaultCellAttribute
 		return new int[] {row + span[ROW], column + span[COLUMN]};
 	}
 
+	@Override
 	public boolean isVisible(int row, int column) {
 		if (isOutOfBounds(row, column)) return false;
 		if ((span[row][column][CellSpan.COLUMN] < 1)
@@ -75,11 +134,13 @@ public class DefaultCellAttribute
 		return true;
 	}
 
+	@Override
 	public boolean isCombined(int row, int column) {
 		int[] span = getSpan(row, column);
 		return span[ROW] != 1 || span[COLUMN] != 1;
 	}
-	
+
+	@Override
 	public boolean isPossibleCombine(int[] rows, int[] columns) {
 		if (isOutOfBounds(rows, columns)) return false;
 		int    rowSpan  = rows.length;
@@ -98,6 +159,7 @@ public class DefaultCellAttribute
 		return true;
 	}
 
+	@Override
 	public void combine(int[] rows, int[] columns) {
 		if (!isPossibleCombine(rows, columns)) return;
 		int    rowSpan  = rows.length;
@@ -119,6 +181,7 @@ public class DefaultCellAttribute
 		table.setColumnSelectionInterval(startColumn, startColumn);
 	}
 
+	@Override
 	public void split(int row, int column) {
 		if (isOutOfBounds(row, column)) return;
 		int[] anchor = getAnchorPoint(row, column);
@@ -139,6 +202,34 @@ public class DefaultCellAttribute
 	}
 
 	@Override
+	public boolean isPossibleMove(int start, int end, int to) {
+		int gap = end - start;
+		if(gap < 0 || start == to
+				|| isOutOfBounds(start, 0) || isOutOfBounds(end, 0)
+				|| isOutOfBounds(to, 0) || isOutOfBounds(to + gap, 0)) {
+			return false;
+		}
+		boolean isToDown = start < to; 
+		if(isToDown) {
+			to = end + (to - start); 
+		}
+		for(int i = 0; i < columnSize; i++) {
+			int startSpan = span[start][i][CellSpan.ROW];
+			if(startSpan < 0 || (startSpan > 1 &&
+					(start + startSpan - 1) > end)) return false;
+			int endSpan = span[end][i][CellSpan.ROW];
+			if(endSpan > 1) return false;
+			else if(endSpan < 0 && end < rowSize - 1
+					&& span[end+1][i][CellSpan.ROW] < endSpan) {
+				return false;
+			}
+			int toSpan = span[to][i][CellSpan.ROW];
+			if(toSpan < 0 || (isToDown && toSpan > 1)) return false;
+		}
+		return true;
+	}
+
+	@Override
 	public void setTable(JTable table) {
 		this.table = table;
 	}
@@ -146,26 +237,38 @@ public class DefaultCellAttribute
 	//
 	// ColoredCell
 	//
+
+	@Override
 	public Color getForeground(int row, int column) {
 		if (isOutOfBounds(row, column)) return null;
 		return foreground[row][column];
 	}
+
+	@Override
 	public void setForeground(Color color, int row, int column) {
 		if (isOutOfBounds(row, column)) return;
 		foreground[row][column] = color;
 	}
+
+	@Override
 	public void setForeground(Color color, int[] rows, int[] columns) {
 		if (isOutOfBounds(rows, columns)) return;
 		setValues(foreground, color, rows, columns);
 	}
+
+	@Override
 	public Color getBackground(int row, int column) {
 		if (isOutOfBounds(row, column)) return null;
 		return background[row][column];
 	}
+
+	@Override
 	public void setBackground(Color color, int row, int column) {
 		if (isOutOfBounds(row, column)) return;
 		background[row][column] = color;
 	}
+
+	@Override
 	public void setBackground(Color color, int[] rows, int[] columns) {
 		if (isOutOfBounds(rows, columns)) return;
 		setValues(background, color, rows, columns);
@@ -176,14 +279,19 @@ public class DefaultCellAttribute
 	//
 	// CellFont
 	//
+	@Override
 	public Font getFont(int row, int column) {
 		if (isOutOfBounds(row, column)) return null;
 		return font[row][column];
 	}
+
+	@Override
 	public void setFont(Font font, int row, int column) {
 		if (isOutOfBounds(row, column)) return;
 		this.font[row][column] = font;
 	}
+
+	@Override
 	public void setFont(Font font, int[] rows, int[] columns) {
 		if (isOutOfBounds(rows, columns)) return;
 		setValues(this.font, font, rows, columns);
@@ -194,32 +302,110 @@ public class DefaultCellAttribute
 	//
 	// CellAttribute
 	//
+	@Override
 	public void addColumn() {
 		int[][][] oldSpan = span;
 		int numRows    = rowSize;
 		int numColumns = columnSize++;
 		span = new int[numRows][numColumns + 1][2];
-		System.arraycopy(oldSpan,0,span,0,numRows);
+		//System.arraycopy(oldSpan,0,span,0,numRows);
+		for (int i=0;i<numRows;i++) {
+			System.arraycopy(oldSpan[i],0,span[i],0,numColumns);
+		}
 		for (int i=0;i<numRows;i++) {
 			span[i][numColumns][CellSpan.COLUMN] = 1;
 			span[i][numColumns][CellSpan.ROW]    = 1;
 		}
 	}
 
+	@Override
 	public void addRow() {
+		addRowCount(1);
+	}
+
+	private void addRowCount(int count) {
+		if(count <= 0) return;
 		int[][][] oldSpan = span;
-		int numRows    = rowSize++;
+		int numRows    = rowSize;
 		int numColumns = columnSize;
-		span = new int[numRows + 1][numColumns][2];
+		rowSize += count;
+		span = new int[rowSize][numColumns][2];
 		System.arraycopy(oldSpan,0,span,0,numRows);
-		for (int i=0;i<numColumns;i++) {
-			span[numRows][i][CellSpan.COLUMN] = 1;
-			span[numRows][i][CellSpan.ROW]    = 1;
+		for(int row = numRows; row < rowSize; row++) {
+			for (int i=0;i<numColumns;i++) {
+				span[row][i][CellSpan.COLUMN] = 1;
+				span[row][i][CellSpan.ROW]    = 1;
+			}
 		}
 	}
 
+	private void removeRowCount(int count) {
+		if(count <= 0) return;
+		if(count > rowSize) count = rowSize;
+		int[][][] oldSpan = span;
+		int numColumns = columnSize;
+		rowSize -= count;
+		span = new int[rowSize][numColumns][2];
+		System.arraycopy(oldSpan,0,span,0,rowSize);
+		int lastRow = rowSize - 1; 
+		if(lastRow >= 0) {
+			for (int i=0;i<numColumns;i++) {
+				int rowSpan = span[lastRow][i][CellSpan.ROW];
+				if(rowSpan == 1) continue;
+				if(rowSpan >= 0) {
+					span[lastRow][i][CellSpan.ROW] = 1;
+				} else if(span[lastRow][i][CellSpan.COLUMN] == 0) {
+					span[lastRow + rowSpan][i][CellSpan.ROW] = -rowSpan + 1;	
+				}
+			}
+		}
+	}
+
+	private void addColumnCount(int count) {
+		if(count <= 0) return;
+		int[][][] oldSpan = span;
+		int numRows    = rowSize;
+		int numColumns = columnSize;
+		columnSize += count;
+		span = new int[numRows][columnSize][2];
+		//System.arraycopy(oldSpan,0,span,0,numRows);
+		for (int i=0;i<numRows;i++) {
+			System.arraycopy(oldSpan[i],0,span[i],0,numColumns);
+		}
+		for(int col = numColumns; col < columnSize; col++) {
+			for (int i=0;i<numRows;i++) {
+				span[i][col][CellSpan.COLUMN] = 1;
+				span[i][col][CellSpan.ROW]    = 1;
+			}
+		}
+	}
+
+	private void removeColumnCount(int count) {
+		if(count <= 0) return;
+		if(count > columnSize) count = columnSize;
+		int[][][] oldSpan = span;
+		int numRows    = rowSize;
+		columnSize -= count;
+		span = new int[numRows][columnSize][2];
+		System.arraycopy(oldSpan,0,span,0,rowSize);
+		int lastCol = columnSize - 1; 
+		if(lastCol >= 0) {
+			for (int i=0;i<numRows;i++) {
+				int colSpan = span[i][lastCol][CellSpan.COLUMN];
+				if(colSpan == 1) continue;
+				if(colSpan >= 0) {
+					span[i][lastCol][CellSpan.COLUMN] = 1;
+				} else if(span[i][lastCol][CellSpan.ROW] == 0) {
+					span[i][lastCol + colSpan][CellSpan.COLUMN] = -colSpan + 1;	
+				}
+			}
+		}
+	}
+
+	@Override
 	public void insertRow(int row) {
-		if (isOutOfBounds(row > 0 ? row-1 : row, 0)) return;
+		if (row != 0 && columnSize != 0
+				&& isOutOfBounds(row > 0 ? row-1 : row, 0)) return;
 		int[][][] oldSpan = span;
 		int numRows    = rowSize++;
 		int numColumns = columnSize;
@@ -229,14 +415,14 @@ public class DefaultCellAttribute
 		System.arraycopy(oldSpan,row,span,row+1,numRows - row);
 
 		for (int i=0;i<numColumns;i++) {
-			if(span[row+1][i][CellSpan.ROW] < 0) {
+			if(row < numRows && span[row+1][i][CellSpan.ROW] < 0) {
 				span[row][i][CellSpan.COLUMN] = span[row+1][i][CellSpan.COLUMN];
 				span[row][i][CellSpan.ROW]    = span[row+1][i][CellSpan.ROW];
 				if(span[row][i][CellSpan.COLUMN] == 0) {
 					int rowSpan = span[row][i][CellSpan.ROW];
 					span[row + rowSpan][i][CellSpan.ROW]++;	
 				}
-				for(int j = row+1; j < numRows && span[j][i][CellSpan.ROW] < 0; j++) {
+				for(int j = row+1; j <= numRows && span[j][i][CellSpan.ROW] < 0; j++) {
 					span[j][i][CellSpan.ROW]--;
 				}
 			} else {
@@ -246,6 +432,7 @@ public class DefaultCellAttribute
 		}
 	}
 
+	@Override
 	public void removeRow(int row) {
 		if (isOutOfBounds(row > 0 ? row-1 : row, 0)) return;
 		int[][][] oldSpan = span;
@@ -283,55 +470,91 @@ public class DefaultCellAttribute
 		}
 	}
 
+	@Override
 	public Dimension getSize() {
 		return new Dimension(rowSize, columnSize);
 	}
 
-	public void setSize(Dimension size) {
-		columnSize = size.width;
-		rowSize    = size.height;
-		span = new int[rowSize][columnSize][2];   // 2: COLUMN,ROW
-		foreground = new Color[rowSize][columnSize];
-		background = new Color[rowSize][columnSize];
-		font = new Font[rowSize][columnSize];
-		initValue();
+
+	@Override
+	public void setRowCount(int rowCount) {
+        int old = rowSize;
+        if (old == rowCount) return;
+		if(old < rowCount) {
+			addRowCount(rowCount - old);
+		} else {
+			removeRowCount(old - rowCount);
+		}
+	}
+
+	@Override
+	public void setColumnCount(int columnCount) {
+		int old = columnSize;
+        if (old == columnCount) return;
+		if(old < columnCount) {
+			addColumnCount(columnCount - old);
+		} else {
+			removeColumnCount(old - columnCount);
+		}
+	}
+
+	@Override
+	public void moveRow(int start, int end, int to) {
+		if(!getCellSpan().isPossibleMove(start, end, to)) return;
+
+		int[][][] oldSpan = span;
+		span = new int[rowSize][columnSize][2];
+
+		if(start > to) { // to up
+			int src = 0;
+			int dest = 0;
+			int size = to;
+			//System.out.println("1 src " + src + ",dest " + dest + ", len " + size);
+			System.arraycopy(oldSpan,src,span,dest,size);
+			src = start;
+			dest += size;
+			size = end-start+1;
+			//System.out.println("2 src " + src + ",dest " + dest + ", len " + size);
+			System.arraycopy(oldSpan,src,span,dest,size);
+			src = to;
+			dest += size;
+			size = start-to;
+			//System.out.println("3 src " + src + ",dest " + dest + ", len " + size);
+			System.arraycopy(oldSpan,src,span,dest,size);
+			src = end+1;
+			dest += size;
+			size = rowSize-end-1;
+			//System.out.println("4 src " + src + ",dest " + dest + ", len " + size);
+			System.arraycopy(oldSpan,src,span,dest,size);
+		} else { // to down
+			int src = 0;
+			int dest = 0;
+			int size = start;
+			//System.out.println("1 src " + src + ",dest " + dest + ", len " + size);
+			System.arraycopy(oldSpan,src,span,dest,size);
+			src = end+1;
+			dest += size;
+			size = to-start;
+			//System.out.println("2 src " + src + ",dest " + dest + ", len " + size);
+			System.arraycopy(oldSpan,src,span,dest,size);
+			src = start;
+			dest += size;
+			size = end-start+1;
+			//System.out.println("3 src " + src + ",dest " + dest + ", len " + size);
+			System.arraycopy(oldSpan,src,span,dest,size);
+			src = end+1 + (to-start);
+			dest += size;
+			size = rowSize-src;
+			//System.out.println("4 src " + src + ",dest " + dest + ", len " + size);
+			System.arraycopy(oldSpan,src,span,dest,size);
+		}
 	}
 
 	/*
-public void changeAttribute(int row, int column, Object command) { }
-
-public void changeAttribute(int[] rows, int[] columns, Object command) { }
+	public void changeAttribute(int row, int column, Object command) { }
+	
+	public void changeAttribute(int[] rows, int[] columns, Object command) { }
 	 */
-
-	protected boolean isOutOfBounds(int row, int column) {
-		if ((row    < 0)||(rowSize    <= row)
-				||(column < 0)||(columnSize <= column)) {
-			return true;
-		}
-		return false;
-	}
-
-	protected boolean isOutOfBounds(int[] rows, int[] columns) {
-		if(rows.length == 0 && columns.length == 0) return true;
-		for (int i=0;i<rows.length;i++) {
-			if ((rows[i] < 0)||(rowSize <= rows[i])) return true;
-		}
-		for (int i=0;i<columns.length;i++) {
-			if ((columns[i] < 0)||(columnSize <= columns[i])) return true;
-		}
-		return false;
-	}
-
-	protected void setValues(Object[][] target, Object value,
-			int[] rows, int[] columns) {
-		for (int i=0;i<rows.length;i++) {
-			int row = rows[i];
-			for (int j=0;j<columns.length;j++) {
-				int column = columns[j];
-				target[row][column] = value;
-			}
-		}
-	}
 }
 /*
  * (swing1.1beta3)

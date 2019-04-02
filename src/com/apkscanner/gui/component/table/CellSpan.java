@@ -17,6 +17,7 @@ public interface CellSpan {
 	public boolean isVisible(int row, int column);
 	public boolean isCombined(int row, int column);
 	public boolean isPossibleCombine(int[] rows, int[] columns);
+	public boolean isPossibleMove(int start, int end, int to);
 
 	public void combine(int[] rows, int[] columns);
 	public void split(int row, int column);

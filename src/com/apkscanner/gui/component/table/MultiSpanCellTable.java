@@ -24,6 +24,10 @@ public class MultiSpanCellTable extends JTable {
 		getTableHeader().setReorderingAllowed(false);
 		setCellSelectionEnabled(true);
 		setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+
+		if(model instanceof AttributiveCellTableModel) {
+			((AttributiveCellTableModel)model).setTable(this);
+		}
 	}
 
 	public Rectangle getCellRect(int row, int column, boolean includeSpacing) {
@@ -32,7 +36,7 @@ public class MultiSpanCellTable extends JTable {
 				(getRowCount() <= row) || (getColumnCount() <= column)) {
 			return sRect;
 		}
-		CellSpan cellAtt = (CellSpan)((AttributiveCellTableModel)getModel()).getCellAttribute();
+		CellSpan cellAtt = ((AttributiveCellTableModel)getModel()).getCellSpan();
 		if (! cellAtt.isVisible(row,column)) {
 			int temp_row    = row;
 			int temp_column = column;
@@ -61,8 +65,6 @@ public class MultiSpanCellTable extends JTable {
 			cellFrame.width += aColumn.getWidth() + columnMargin - 1;
 		}
 
-
-
 		if (!includeSpacing) {
 			Dimension spacing = getIntercellSpacing();
 			cellFrame.setBounds(cellFrame.x +      spacing.width/2,
@@ -79,7 +81,7 @@ public class MultiSpanCellTable extends JTable {
 		if ((row <0)||(getRowCount() <= row)) return retValue;
 		int column = getColumnModel().getColumnIndexAtX(point.x);
 
-		CellSpan cellAtt = (CellSpan)((AttributiveCellTableModel)getModel()).getCellAttribute();
+		CellSpan cellAtt = ((AttributiveCellTableModel)getModel()).getCellSpan();
 
 		if (cellAtt.isVisible(row,column)) {
 			retValue[CellSpan.COLUMN] = column;
@@ -91,15 +93,13 @@ public class MultiSpanCellTable extends JTable {
 		return retValue;
 	}
 
-
 	public int rowAtPoint(Point point) {
 		return rowColumnAtPoint(point)[CellSpan.ROW];
 	}
+
 	public int columnAtPoint(Point point) {
 		return rowColumnAtPoint(point)[CellSpan.COLUMN];
 	}
-
-
 
 	public void columnSelectionChanged(ListSelectionEvent e) {
 		repaint();

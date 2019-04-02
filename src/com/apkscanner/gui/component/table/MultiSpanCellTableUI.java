@@ -13,7 +13,6 @@ import javax.swing.table.TableCellRenderer;
 /**
  * @version 1.0 11/26/98
  */
-
 public class MultiSpanCellTableUI extends BasicTableUI {
 
 	public void paint(Graphics g, JComponent c) {
@@ -46,7 +45,7 @@ public class MultiSpanCellTableUI extends BasicTableUI {
 		boolean drawn  = false;
 
 		AttributiveCellTableModel tableModel = (AttributiveCellTableModel)table.getModel();
-		CellSpan cellAtt = (CellSpan)tableModel.getCellAttribute();
+		CellSpan cellAtt = tableModel.getCellSpan();
 		int numColumns = table.getColumnCount();
 
 		for (int column = 0; column < numColumns; column++) {
@@ -68,7 +67,6 @@ public class MultiSpanCellTableUI extends BasicTableUI {
 				if (drawn) break;
 			}
 		}
-
 	}
 
 	private void paintCell(Graphics g, Rectangle cellRect, int row, int column) {
@@ -92,12 +90,6 @@ public class MultiSpanCellTableUI extends BasicTableUI {
 		else {
 			TableCellRenderer renderer = table.getCellRenderer(row, column);
 			Component component = table.prepareRenderer(renderer, row, column);
-
-			if(table.getSelectedRow() == row) {
-				//component.setBackground(Color.yellow);
-			} else {
-				//component.setBackground(Color.white);
-			}
 			if (component.getParent() == null) {
 				rendererPane.add(component);
 			}
