@@ -20,6 +20,7 @@ public class EasyGuiAppFeatureData {
 	public boolean isStartup = false;
 	public boolean debuggable = false;
 	public boolean isInstrumentation = false;
+	public boolean isnoSign = false;
 	public String sharedUserId = "";
 
 	public Long ApkSize = 0L;
@@ -74,7 +75,9 @@ public class EasyGuiAppFeatureData {
 		isStartup = ApkInfoHelper.isStartup(apkInfo);
 		isInstrumentation = ApkInfoHelper.isInstrumentation(apkInfo);
 		debuggable = ApkInfoHelper.isDebuggable(apkInfo);
-
+		isnoSign = (apkInfo.certificates ==null)? true : false;
+		
+		
 		isSamsungSign = (apkInfo.featureFlags & ApkInfo.APP_FEATURE_SAMSUNG_SIGN) != 0 ? true : false;
 		isPlatformSign = (apkInfo.featureFlags & ApkInfo.APP_FEATURE_PLATFORM_SIGN) != 0 ? true : false;
 

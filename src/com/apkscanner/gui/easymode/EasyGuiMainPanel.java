@@ -53,9 +53,11 @@ import com.apkscanner.util.Log;
 
 class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentListener  {
 	private static Color maincolor = new Color(249, 249, 249);
-
+	static private int PERMISSION_HEIGHT = 46;
+	
 	private EasyLightApkScanner apklightscanner;
-
+	EasyPermissionPanel permissionPanel;
+	
 	private EasyBordPanel bordPanel;
 	private EasyContentsPanel contentsPanel;
 	//private EasyPermissionPanel permissionPanel;
@@ -85,6 +87,9 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentLi
 		}
 
 		contentsPanel = new EasyContentsPanel();
+		
+		permissionPanel = new EasyPermissionPanel(PERMISSION_HEIGHT);
+		
 		
 //		permissionPanel = new EasyPermissionPanel();
 		
@@ -121,7 +126,8 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentLi
 			add(bordPanel, BorderLayout.PAGE_START);
 		}
 		contentspanel.add(contentsPanel, BorderLayout.CENTER);
-		//contentspanel.add(permissionPanel, BorderLayout.PAGE_END);
+		contentspanel.add(permissionPanel, BorderLayout.PAGE_END);
+		
 		RoundPanel dummy = new RoundPanel(new BorderLayout());
 		dummy.setPreferredSize(new Dimension(0, 40));
 		dummy.setshadowlen(5);
@@ -257,7 +263,7 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentLi
 				Resource.STR_APP_NAME.getString() + " - " + new File(apklightscanner.getApkInfo().filePath).getName());
 		Log.d(contentsPanel +"");
 		contentsPanel.setContents(apklightscanner.getApkInfo());
-		//permissionPanel.setPermission(apklightscanner.getApkInfo());
+		permissionPanel.setPermission(apklightscanner.getApkInfo());
 
 		DateFormat simple = new SimpleDateFormat("HH:mm:ss:SSS"); 
 	    Date result = new Date(EasyGuiMain.UIstarttime);
@@ -274,7 +280,7 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentLi
 	private void clearApkinfopanel() {
 		// bordPanel.clear();
 		contentsPanel.clear();
-		//permissionPanel.clear();
+		permissionPanel.clear();
 	}
 
 	class GUIApkLightScannerListener implements EasyLightApkScanner.StatusListener {

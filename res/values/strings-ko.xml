@@ -176,6 +176,8 @@
 	<string name="feature_startup_desc">부팅시 자동실행 가능한 권한을 사용합니다.</string>
 	<string name="feature_signature_lab">서명 권한</string>
 	<string name="feature_signature_desc">동일 서명 혹은 시스템에 포함 되어야 사용 가능하거나 기타 보호된 권한이 정의 되어있습니다.</string>
+	<string name="feature_signature_unsigned">서명없음</string>
+	<string name="feature_signature_signed">서명됨</string>
 	<string name="feature_system_user_id_lab">시스템 UID</string>
 	<string name="feature_system_user_id_desc">시스템 UID를 사용하고 있습니다.
 ※ 시스템 리소스에 접근이 가능합니다.</string>

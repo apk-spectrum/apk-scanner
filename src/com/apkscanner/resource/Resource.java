@@ -202,6 +202,9 @@ public enum Resource
 	STR_FEATURE_STARTUP_DESC	(Type.TEXT, "@feature_startup_desc"),
 	STR_FEATURE_SIGNATURE_LAB	(Type.TEXT, "@feature_signature_lab"),
 	STR_FEATURE_SIGNATURE_DESC	(Type.TEXT, "@feature_signature_desc"),
+	STR_FEATURE_SIGNATURE_UNSIGNED (Type.TEXT, "@feature_signature_unsigned"),
+	STR_FEATURE_SIGNATURE_SIGNED (Type.TEXT, "@feature_signature_signed"),
+	
 	STR_FEATURE_SYSTEM_UID_LAB  (Type.TEXT, "@feature_system_user_id_lab"),
 	STR_FEATURE_SYSTEM_UID_DESC (Type.TEXT, "@feature_system_user_id_desc"),
 	STR_FEATURE_SHAREDUSERID_LAB  (Type.TEXT, "@feature_shared_user_id_lab"),

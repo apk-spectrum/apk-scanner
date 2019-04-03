@@ -53,10 +53,7 @@ import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
-public class EasyToolbarCertDlg extends JDialog implements ActionListener {
-
-	JButton btnCert;
-
+public class EasyToolbarCertDlg extends JDialog {
 	JList<String> jlist;
 	JTextArea textArea;
 
@@ -89,10 +86,7 @@ public class EasyToolbarCertDlg extends JDialog implements ActionListener {
 		splitPane.setDividerLocation(100);
 
 		
-		btnCert = new JButton(Resource.STR_TITLE_APK_SIGNER.getString());
-		btnCert.addActionListener(this);
 		JPanel temppanel = new JPanel();
-		temppanel.add(btnCert);
 		add(temppanel, BorderLayout.SOUTH);
 		add(splitPane, BorderLayout.CENTER);
 
@@ -232,13 +226,5 @@ public class EasyToolbarCertDlg extends JDialog implements ActionListener {
 		}
 
 		jlist.setListData(labels);
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		if (e.getSource().equals(btnCert)) {
-			ToolEntryManager.excuteSinerDlg(this);
-		}
 	}
 }

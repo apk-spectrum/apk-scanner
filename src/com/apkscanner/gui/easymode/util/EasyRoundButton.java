@@ -18,6 +18,8 @@ import javax.swing.JButton;
 
 import com.apkscanner.util.Log;
 
+import javafx.scene.shape.ArcType;
+
 public class EasyRoundButton extends JButton {
 	private static final long serialVersionUID = -6927025737749969747L;
 	private boolean entered = false;
@@ -26,11 +28,18 @@ public class EasyRoundButton extends JButton {
 	private int len = 0;
 	private String strfold;
 	private String strspread=null;
+	private static int TYPE_NOMAL = 0;
+	private static int TYPE_POSSIBLE_SPREAD = 1;
+	private static int TYPE_POSSIBLE_ACTION = 2;
+	
+	
+	private int type; 
 	
 	public EasyRoundButton(ImageIcon icon) {
 		// TODO Auto-generated constructor stub
 		super(icon);
 		// setlistener();
+		type = TYPE_NOMAL;
 		setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		setContentAreaFilled(false);
 		setFocusable(false);
@@ -41,6 +50,7 @@ public class EasyRoundButton extends JButton {
 		// TODO Auto-generated constructor stub
 		super(str);
 		strfold= str;
+		type = TYPE_NOMAL;
 		// setlistener();
 		setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		setContentAreaFilled(false);
@@ -53,6 +63,14 @@ public class EasyRoundButton extends JButton {
 		super(str);
 		strfold= str;
 		strspread = spread;
+		
+		if(str.equals(spread)) {
+			type = TYPE_NOMAL;
+		} else if(spread.equals("")) {
+			type = TYPE_POSSIBLE_ACTION;
+		} else {
+			type = TYPE_POSSIBLE_SPREAD;
+		}
 		// setlistener();
 		setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		setContentAreaFilled(false);
@@ -78,8 +96,8 @@ public class EasyRoundButton extends JButton {
 		
 			public void mouseClicked(java.awt.event.MouseEvent evt) {
 				// TODO Auto-generated method stub
-				//entered = false;
-				if(strspread!=null) {
+				//entered = false;				
+				if(type == TYPE_POSSIBLE_SPREAD && strspread !=null) {
 					isfold = !isfold;					
 					if(!isfold) setText(strspread);
 					else setText(strfold);
@@ -112,13 +130,25 @@ public class EasyRoundButton extends JButton {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
-        if(entered) {
-        	g.setColor(originalcolor.darker().darker());
+        if(isfold &&  type != TYPE_NOMAL) {
+	        g.setColor(Color.GRAY);
+	        g.fillRoundRect(0, 0, getWidth(), getHeight(), 13,13);	        
+	        if(entered) {
+            	g.setColor(originalcolor.darker().darker());
+            } else {
+            	g.setColor(originalcolor);
+            }        
+            
+            if(type== TYPE_POSSIBLE_SPREAD) g.fillRoundRect(0, 0, getWidth()-2, getHeight()-len, 13,13);
+	        if(type== TYPE_POSSIBLE_ACTION) g.fillRoundRect(2, 2, getWidth()-4, getHeight()-4, 13,13);
         } else {
-        	g.setColor(originalcolor);
+        	if(entered) {
+            	g.setColor(originalcolor.darker().darker());
+            } else {
+            	g.setColor(originalcolor);
+            }        
+            g.fillRoundRect(0, 0, getWidth()-len, getHeight()-len, 13,13);
         }
-        
-        g.fillRoundRect(0, 0, getWidth()-len, getHeight()-len, 13,13);
         
         super.paintComponent(gr);
     }

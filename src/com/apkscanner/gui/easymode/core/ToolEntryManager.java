@@ -52,6 +52,8 @@ import com.apkscanner.util.ZipFileUtil;
 
 public class ToolEntryManager {
 
+	static public String TOOL_SHOW_SIGN_DLG = "tool_show_sign_dlg";
+	
 	static ArrayList<ToolEntry> ShowEntry = new ArrayList<ToolEntry>();
 	static ArrayList<ToolEntry> hideEntry = new ArrayList<ToolEntry>();
 	static public EasyLightApkScanner Apkscanner;
@@ -175,6 +177,8 @@ public class ToolEntryManager {
 			ApkInstallWizard wizard = new ApkInstallWizard(apkInfo.filePath, mainframe);
 			wizard.start();
 		} else if (cmd.equals(Resource.STR_BTN_SIGN.getString())) {
+			ToolEntryManager.excuteSinerDlg(mainframe);
+		}  else if (cmd.equals(TOOL_SHOW_SIGN_DLG)) {
 			ApkInfo apkInfo = Apkscanner.getApkInfo();
 			if (apkInfo == null) {
 				Log.e("evtInstallApk() apkInfo is null");
@@ -184,7 +188,6 @@ public class ToolEntryManager {
 
 			EasyToolbarCertDlg dlg = new EasyToolbarCertDlg(mainframe, true, apkInfo);
 			dlg = null;
-
 		} else if (cmd.equals(Resource.STR_BTN_LAUNCH.getString())) {
 			launchApp();
 		} else if (cmd.equals(Resource.STR_BTN_DEL.getString())) {
@@ -297,6 +300,12 @@ public class ToolEntryManager {
 				for (IDevice device : devices) {
 					final PackageInfo info = PackageManager.getPackageInfo(device,
 							Apkscanner.getApkInfo().manifest.packageName);
+					
+					if(info ==null) {
+						messagePool.show(MessageBoxPool.MSG_NO_SUCH_PACKAGE_DEVICE);
+						continue;
+					}
+					
 					EventQueue.invokeLater(new Runnable() {
 						public void run() {
 							PackageInfoPanel packageInfoPanel = new PackageInfoPanel();
@@ -328,6 +337,11 @@ public class ToolEntryManager {
 					PackageInfo packageInfo = PackageManager.getPackageInfo(device,
 							Apkscanner.getApkInfo().manifest.packageName);
 
+					if(packageInfo ==null) {
+						messagePool.show(MessageBoxPool.MSG_NO_SUCH_PACKAGE_DEVICE);
+						continue;
+					}
+					
 					String errMessage = PackageManager.clearData(packageInfo);
 
 					if (errMessage != null && !errMessage.isEmpty()) {
@@ -409,6 +423,11 @@ public class ToolEntryManager {
 					PackageInfo packageInfo = PackageManager.getPackageInfo(device,
 							Apkscanner.getApkInfo().manifest.packageName);
 
+					if (packageInfo == null) {
+						messagePool.show(MessageBoxPool.MSG_NO_SUCH_PACKAGE_DEVICE);			
+						continue;
+					}
+					
 					String errMessage = null;
 					if (!packageInfo.isSystemApp()) {
 						errMessage = PackageManager.uninstallPackage(packageInfo);
@@ -475,7 +494,11 @@ public class ToolEntryManager {
 
 					PackageInfo packageInfo = PackageManager.getPackageInfo(device,
 							Apkscanner.getApkInfo().manifest.packageName);
-
+					if(packageInfo == null) {
+						messagePool.show(MessageBoxPool.MSG_NO_SUCH_PACKAGE_DEVICE);
+						continue;
+					}
+					
 					if (!packageInfo.isEnabled()) {
 						messagePool.show(MessageBoxPool.MSG_DISABLED_PACKAGE,
 								device.getProperty(IDevice.PROP_DEVICE_MODEL));
@@ -606,7 +629,7 @@ public class ToolEntryManager {
 		
 	}
 
-	public static void excuteSinerDlg(JDialog dlg) {		
+	public static void excuteSinerDlg(JFrame frame) {		
 		// TODO Auto-generated method stub
 		ApkInfo apkInfo = Apkscanner.getApkInfo();
 		if(apkInfo == null || apkInfo.filePath == null
@@ -615,7 +638,7 @@ public class ToolEntryManager {
 			messagePool.show(MessageBoxPool.MSG_NO_SUCH_APK_FILE);
 			return;
 		}
-		ApkSignerWizard wizard = new ApkSignerWizard(dlg);
+		ApkSignerWizard wizard = new ApkSignerWizard(frame);
 		wizard.setApk(apkInfo.filePath);
 		wizard.setVisible(true);
 	}

@@ -179,6 +179,8 @@ Once installed, the user can move the application to either internal or external
 	<string name="feature_startup_desc">Automatically run when boot completed.</string>
 	<string name="feature_signature_lab">SIGNATURE</string>
 	<string name="feature_signature_desc">SIGNATURE</string>
+	<string name="feature_signature_unsigned">UNSIGNED</string>
+	<string name="feature_signature_signed">SIGNED</string>
 	<string name="feature_system_user_id_lab">SYSTEM_UID</string>
 	<string name="feature_system_user_id_desc">This application uses the system uid</string>
 	<string name="feature_shared_user_id_lab">SHARED_UID</string>

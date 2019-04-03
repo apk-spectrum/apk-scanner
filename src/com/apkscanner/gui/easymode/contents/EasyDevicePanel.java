@@ -19,6 +19,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,8 +32,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.android.ddmlib.AdbCommandRejectedException;
 import com.android.ddmlib.AndroidDebugBridge;
+import com.android.ddmlib.CollectingOutputReceiver;
 import com.android.ddmlib.IDevice;
+import com.android.ddmlib.ShellCommandUnresponsiveException;
+import com.android.ddmlib.TimeoutException;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.easymode.util.EasyRoundButton;
 import com.apkscanner.gui.easymode.util.EasyRoundLabel;
@@ -51,6 +56,9 @@ public class EasyDevicePanel extends RoundPanel implements MouseListener, Action
 	private static String CARD_LAYOUT_SPREAD= "card_spread";
 	private static String CARD_LAYOUT_FOLD= "card_fold";
 	
+	private static String CMD_MODEL_NAME = "ro.product.model";
+	private static String CMD_MODEL_API = "ro.build.version.release";
+	
 	private final Color linecolor = new Color(128, 100, 162);
 	private final Color textcolor = new Color(127, 127, 127);
 	
@@ -64,33 +72,23 @@ public class EasyDevicePanel extends RoundPanel implements MouseListener, Action
 	private int DEIVCE_HEIGHT = 50;
 	private int DEIVCE_SPREAD_HEIGHT = 50;
 	
-	private class sdkDrawObject implements Comparable<sdkDrawObject> {
-		public int sdkversion = 0;
+	private class sdkDrawObject {
+		public String sdkversion;
 		public JPanel panel;
 		public String devicename;
 		
-		public sdkDrawObject(JPanel panel, int version) {
+		public sdkDrawObject(JPanel panel, String version) {
 			// TODO Auto-generated constructor stub
 			this.sdkversion = version;
 			this.panel = panel;
 		}
 
-		public sdkDrawObject(JPanel panel, int version, String name) {
+		public sdkDrawObject(JPanel panel, String version, String name) {
 			// TODO Auto-generated constructor stub
 			this(panel, version);
 			this.devicename = name;
 		}
-		
-		@Override
-		public int compareTo(sdkDrawObject s) {
-			// TODO Auto-generated method stub
-            if (this.sdkversion < s.sdkversion) {
-                return -1;
-            } else if (this.sdkversion > s.sdkversion) {
-                return 1;
-            }
-            return 0;			
-		}
+
 	}
 	
 	
@@ -115,7 +113,7 @@ public class EasyDevicePanel extends RoundPanel implements MouseListener, Action
 		//add(Box.createVerticalStrut(10));
 	}
 	
-	private JPanel makeDevicePanel(Color devicecolor, int sdkversion, String devicename) {
+	private JPanel makeDevicePanel(Color devicecolor, String sdkversion, String devicename) {
 		//RoundPanel panel = new RoundPanel();
 		
 		final JPanel cardlayout = new JPanel();
@@ -189,16 +187,12 @@ public class EasyDevicePanel extends RoundPanel implements MouseListener, Action
 		for(IDevice device : devices) {
 			String name = "";
 			String sdkversion="";
-			int nversion = 0;
 			
 			if(device.getState() == IDevice.DeviceState.ONLINE) {
-				name = getDeviceName(device);
-				sdkversion = device.getProperty(IDevice.PROP_BUILD_API_LEVEL);
-				if(sdkversion ==null) { 
-					nversion = 0;
-				} else {
-					nversion = Integer.parseInt(sdkversion);
-				}
+				name = getDeviceName(IDevice.PROP_DEVICE_MODEL, device);
+				
+				sdkversion = getDeviceName(IDevice.PROP_BUILD_API_LEVEL, device);
+				
 			} else {
 				name = "OFFLINE";
 			}
@@ -206,7 +200,8 @@ public class EasyDevicePanel extends RoundPanel implements MouseListener, Action
 			arraysdkObject.add(new sdkDrawObject(
 					makeDevicePanel(
 					Devicecolor[(device.getState() == IDevice.DeviceState.ONLINE)?DEVICE_STATE_ONLINE : DEVICE_STATE_OFFLINE],
-					nversion, name), nversion, name));
+					sdkversion, name), sdkversion, name));
+
 		}
 	}
 	
@@ -232,21 +227,37 @@ public class EasyDevicePanel extends RoundPanel implements MouseListener, Action
 //		return deviceName;
 //	}
 	
-	private String getDeviceName(IDevice device) {
-		String deviceName = null;
-		if(deviceName == null || deviceName.isEmpty()) {
-			deviceName = device.getProperty(IDevice.PROP_DEVICE_MODEL);
-			if(deviceName != null) deviceName = deviceName.trim();
-			if(deviceName != null && deviceName.isEmpty()) {
-				deviceName = null;
+//	private String getDeviceName(IDevice device) {
+//		String deviceName = "";
+//		if(deviceName != null || !deviceName.isEmpty()) {
+//			deviceName = device.getProperty(IDevice.PROP_DEVICE_MODEL);
+//			deviceName = device.getProperty(IDevice.PROP_DEVICE_MODEL);
+//			if(deviceName != null) deviceName = deviceName.trim();
+//			if(deviceName != null && deviceName.isEmpty()) {
+//				deviceName = null;
+//			}
+//		}
+//		return deviceName;
+//	}
+	
+	private String getDeviceName(String prop, IDevice device) {
+		String response = "";
+		if(device != null) {
+			CollectingOutputReceiver outputReceiver = new CollectingOutputReceiver();
+			try {
+				device.executeShellCommand("getprop " + prop, outputReceiver);
+			} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
+					| IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+			response = outputReceiver.getOutput();
 		}
-		return deviceName;
+		return response;
 	}
 
-	
 	private void refreshpanel() {		
-		Collections.sort(arraysdkObject);		
+		//Collections.sort(arraysdkObject);		
 		for(sdkDrawObject obj: arraysdkObject) {			
 			add(obj.panel, cons);			
 		}
