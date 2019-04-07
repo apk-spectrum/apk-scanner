@@ -24,10 +24,6 @@ public class MultiSpanCellTable extends JTable {
 		getTableHeader().setReorderingAllowed(false);
 		setCellSelectionEnabled(true);
 		setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-
-		if(model instanceof AttributiveCellTableModel) {
-			((AttributiveCellTableModel)model).setTable(this);
-		}
 	}
 
 	public Rectangle getCellRect(int row, int column, boolean includeSpacing) {

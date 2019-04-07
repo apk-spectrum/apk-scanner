@@ -47,14 +47,23 @@ public class MultiSpanCellTableExample extends JFrame {
 				int[] columns = table.getSelectedColumns();
 				int[] rows    = table.getSelectedRows();
 				cellAtt.combine(rows, columns);
+
+				table.setRowSelectionInterval(rows[0], rows[0]);
+				table.setColumnSelectionInterval(columns[0], columns[0]);
 			}
 		});
 		final JButton b_split = new JButton("Split");
 		b_split.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int column = table.getSelectedColumn();
-				int row    = table.getSelectedRow();
+				int[] anchor = cellAtt.getAnchorPoint(table.getSelectedRow(), table.getSelectedColumn());
+				int row = anchor[CellSpan.ROW];
+				int column = anchor[CellSpan.COLUMN];
+				int[] span = cellAtt.getSpan(row, column);
+
 				cellAtt.split(row, column);
+
+				table.setRowSelectionInterval(row, row + span[CellSpan.ROW] - 1);
+				table.setColumnSelectionInterval(column, column + span[CellSpan.COLUMN] - 1);
 			}
 		});
 		final JButton b_add_row = new JButton("Add Row");
@@ -75,14 +84,35 @@ public class MultiSpanCellTableExample extends JFrame {
 				int row    = table.getSelectedRow();
 				if(row < 0) return;
 				ml.insertRow(row, new Object[] {"insert", "to", Integer.toString(row)});
+
+				int[] rows = table.getSelectedRows();
+				int[] cols = table.getSelectedColumns();
+				if(rows.length > 1 && cols.length > 0
+						&& rows[0] <= row && row <= rows[rows.length-1]) {
+					table.setRowSelectionInterval(rows[1], rows[rows.length-1]);
+					table.setColumnSelectionInterval(cols[0], cols[cols.length-1]);
+				}
 			}
 		});
 		final JButton b_remove_row = new JButton("Remove Row");
 		b_remove_row.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int row    = table.getSelectedRow();
-				if(row < 0) return;
-				ml.removeRow(row);
+				int[] rows = table != null ? table.getSelectedRows() : null;
+				int[] cols = table != null ? table.getSelectedColumns() : null;
+
+				if(rows.length <= 0) return;
+				ml.removeRow(rows[0]);
+
+				int size = ml.getRowCount();
+		        if(size > 0) {
+					if(rows[0] >= size) {
+						rows = new int[] { size - 1 };
+					} else if(rows[rows.length-1] >= size) {
+						rows[rows.length-1] = size - 1;
+					}
+					table.setRowSelectionInterval(rows[0], rows[0] >= rows[rows.length-1] ? rows[0] : rows[rows.length-1] - 1);
+					table.setColumnSelectionInterval(cols[0], cols[cols.length-1]);
+				}
 			}
 		});
 		final JButton b_increase_row_5 = new JButton("Increase Rows +5");
@@ -115,6 +145,15 @@ public class MultiSpanCellTableExample extends JFrame {
 				int[] rows = table.getSelectedRows();
 				if(rows.length <= 0 && rows[0] <= 0) return;
 				ml.moveRow(rows[0], rows[rows.length-1], rows[0] - 1);
+
+				if(table != null) {
+					int[] cols = table.getSelectedColumns();
+					if(rows.length > 0 && cols.length > 0) {
+						table.setRowSelectionInterval(rows[0] - 1, (rows[0] - 1) + (rows.length-1));
+						table.setColumnSelectionInterval(cols[0], cols[cols.length-1]);
+					}
+					table.repaint();
+				}
 			}
 		});
 		final JButton b_move_to_down = new JButton("Move rows to down");
@@ -123,6 +162,15 @@ public class MultiSpanCellTableExample extends JFrame {
 				int[] rows = table.getSelectedRows();
 				if(rows.length <= 0 && rows[rows.length-1] >= rows.length) return;
 				ml.moveRow(rows[0], rows[rows.length-1], rows[0] + 1);
+
+				if(table != null) {
+					int[] cols = table.getSelectedColumns();
+					if(rows.length > 0 && cols.length > 0) {
+						table.setRowSelectionInterval(rows[0] + 1, (rows[0] + 1) + (rows.length-1));
+						table.setColumnSelectionInterval(cols[0], cols[cols.length-1]);
+					}
+					table.repaint();
+				}
 			}
 		});
 		final JButton b_move_to_first = new JButton("Move rows to first");

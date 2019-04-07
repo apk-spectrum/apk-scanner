@@ -1,7 +1,5 @@
 package com.apkscanner.gui.component.table;
 
-import javax.swing.JTable;
-
 /**
  * @version 1.0 11/22/98
  */
@@ -21,8 +19,6 @@ public interface CellSpan {
 
 	public void combine(int[] rows, int[] columns);
 	public void split(int row, int column);
-
-	public void setTable(JTable table);
 }
 /*
  * (swing1.1beta3)

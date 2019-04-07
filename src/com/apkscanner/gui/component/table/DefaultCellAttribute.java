@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 
-import javax.swing.JTable;
-
 /**
  * @version 1.0 11/22/98
  */
@@ -24,8 +22,6 @@ public class DefaultCellAttribute
 	protected Color[][] foreground;             // ColoredCell
 	protected Color[][] background;             //
 	protected Font[][]  font;                   // CellFont
-
-	protected JTable table;
 
 	public DefaultCellAttribute() {
 		this(0,0);
@@ -108,7 +104,7 @@ public class DefaultCellAttribute
 			int[] ret_code = {1,1};
 			return ret_code;
 		}
-		return span[row][column];
+		return new int[] {span[row][column][ROW], span[row][column][COLUMN]};
 	}
 
 	@Override
@@ -175,10 +171,6 @@ public class DefaultCellAttribute
 		}
 		span[startRow][startColumn][CellSpan.COLUMN] = columnSpan;
 		span[startRow][startColumn][CellSpan.ROW]    =    rowSpan;
-
-		if(table == null) return;
-		table.setRowSelectionInterval(startRow, startRow);
-		table.setColumnSelectionInterval(startColumn, startColumn);
 	}
 
 	@Override
@@ -195,10 +187,6 @@ public class DefaultCellAttribute
 				span[row +i][column +j][CellSpan.ROW]    = 1;
 			}
 		}
-
-		if(table == null) return;
-		table.setRowSelectionInterval(row, row + rowSpan - 1);
-		table.setColumnSelectionInterval(column, column + columnSpan - 1);
 	}
 
 	@Override
@@ -227,11 +215,6 @@ public class DefaultCellAttribute
 			if(toSpan < 0 || (isToDown && toSpan > 1)) return false;
 		}
 		return true;
-	}
-
-	@Override
-	public void setTable(JTable table) {
-		this.table = table;
 	}
 
 	//
@@ -474,7 +457,6 @@ public class DefaultCellAttribute
 	public Dimension getSize() {
 		return new Dimension(rowSize, columnSize);
 	}
-
 
 	@Override
 	public void setRowCount(int rowCount) {
