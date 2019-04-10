@@ -19,6 +19,7 @@ import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -35,6 +36,7 @@ import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.gui.easymode.util.EasyFlatLabel;
 import com.apkscanner.gui.easymode.util.EasyRoundButton;
 import com.apkscanner.gui.easymode.util.EasyRoundLabel;
+import com.apkscanner.gui.easymode.util.EasyRoundLabelCount;
 import com.apkscanner.gui.easymode.util.EasyTextField;
 import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.easymode.util.ImageUtils;
@@ -73,7 +75,10 @@ public class EasyContentsPanel extends JPanel{
 	static private int PERMISSION_HEIGHT = 46;
 	static private int PACAKGEVERSION_HEIGHT = 35;
 	
-	static private Color IconPanelcolor = new Color(220,220,220);
+	//static private Color panelbackgroundcolor = new Color(217,217,217);
+	
+	
+	static private Color panelbackgroundcolor = new Color(217,217,217);
 	
 	static private Color labelfontcolor = new Color(50,186,40);
 	
@@ -91,7 +96,7 @@ public class EasyContentsPanel extends JPanel{
 	
 	
 	//EasyRoundLabel applabelpanel;
-	EasyRoundLabel applabelpanel;
+	EasyRoundLabelCount applabelpanel;
 	JPanel labeltemp;
 	public EasyContentsPanel() {
 		// TODO Auto-generated constructor stub
@@ -123,13 +128,6 @@ public class EasyContentsPanel extends JPanel{
 		appicon.setHorizontalAlignment(JLabel.CENTER);
 		appicon.setVerticalAlignment(JLabel.CENTER);
 		appiconpanel.add(appicon, BorderLayout.CENTER);
-		
-		JPanel templabelpanel = new JPanel(new BorderLayout());
-		//templabelpanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-		templabelpanel.setBackground(sdkverPanelcolor);
-		templabelpanel.setPreferredSize(new Dimension(0, 40));
-		templabelpanel.setOpaque(false);
-
 		return appiconpanel;
 	}
 	
@@ -137,7 +135,7 @@ public class EasyContentsPanel extends JPanel{
 		labeltemp = new JPanel(new BorderLayout());
 		labeltemp.setOpaque(false);
 		
-		applabelpanel = new EasyRoundLabel("", new Color(217, 217, 217), labelfontcolor);
+		applabelpanel = new EasyRoundLabelCount("", panelbackgroundcolor, labelfontcolor);
 		applabelpanel.setPreferredSize(new Dimension(0, PACAKGEVERSION_HEIGHT));
 		addClipBoardbutton(applabelpanel);
 		applabelpanel.setshadowlen(SHADOWSIZE);
@@ -160,23 +158,41 @@ public class EasyContentsPanel extends JPanel{
 			}
 		});
 		labelcountpanel = new JPanel();
-		labelcountpanel.setBackground(Color.white);
-		//labelcountpanel.setOpaque(true);
+		//labelcountpanel.setBackground(Color.white);
+		labelcountpanel.setOpaque(false);
 		//labelcountpanel.setBackground(Color.BLACK);
 		labelcountpanel.add(btnlabelcount);
 		
+		applabelpanel.addCountpanel(labelcountpanel);
+		//labeltemp.add(labelcountpanel, BorderLayout.EAST);
 		
-		labeltemp.add(labelcountpanel, BorderLayout.EAST);
 	}
 	
 	private void addClipBoardbutton(final EasyRoundLabel panel) {
 		//panel.setLayout(new BorderLayout());
+		EasyRoundButton btnshowpermissiondlg = new EasyRoundButton(Resource.IMG_EASY_WINDOW_CLIPBOARD_ICON.getImageIcon(15, 15));
 		
+		btnshowpermissiondlg.setPreferredSize(new Dimension(15, 15));
+		btnshowpermissiondlg.setBackground(panelbackgroundcolor);
+		btnshowpermissiondlg.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				StringSelection stringSelection = new StringSelection(panel.getText());
+				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+				clipboard.setContents(stringSelection, null);
+				AndroidLikeToast.ShowToast("Copying to the clipboard!",panel);
+			}
+		});
+		panel.add(btnshowpermissiondlg, BorderLayout.EAST);
+		//panel.add(btnshowpermissiondlg);
+	}
+	
+	private void addClipBoardbutton(final EasyRoundLabelCount panel) {
+		//panel.setLayout(new BorderLayout());
+		EasyRoundButton btnshowpermissiondlg = new EasyRoundButton(Resource.IMG_EASY_WINDOW_CLIPBOARD_ICON.getImageIcon(15, 15));
 		
-		EasyRoundButton btnshowpermissiondlg = new EasyRoundButton(Resource.IMG_EASY_WINDOW_CLIPBOARD_ICON.getImageIcon(20, 20));
-		
-		btnshowpermissiondlg.setPreferredSize(new Dimension(25, 25));
-		btnshowpermissiondlg.setBackground(new Color(217, 217, 217));
+		btnshowpermissiondlg.setPreferredSize(new Dimension(15, 15));
+		btnshowpermissiondlg.setBackground(panelbackgroundcolor);
 		btnshowpermissiondlg.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -195,7 +211,7 @@ public class EasyContentsPanel extends JPanel{
 		JPanel packageandlabel = new JPanel(new BorderLayout());
 		
 		//package
-		packagepanel = new EasyRoundLabel(" ", new Color(217, 217, 217), packagefontcolor);
+		packagepanel = new EasyRoundLabel(" ", panelbackgroundcolor, packagefontcolor);
 		packagepanel.setPreferredSize(new Dimension(0, PACAKGEVERSION_HEIGHT));
 		addClipBoardbutton(packagepanel);
 		packagepanel.setshadowlen(SHADOWSIZE);
@@ -208,7 +224,7 @@ public class EasyContentsPanel extends JPanel{
 		infopanel.add(packageandlabel, BorderLayout.NORTH);
 
 		devicepanel = new EasyDevicePanel(50);
-		devicepanel.setRoundrectColor(new Color(217, 217, 217));
+		devicepanel.setRoundrectColor(panelbackgroundcolor);
 		//sdkverpanel.setPreferredSize(new Dimension(50, 0));
 		
 		devicepanel.setshadowlen(SHADOWSIZE);
@@ -217,7 +233,7 @@ public class EasyContentsPanel extends JPanel{
 		JPanel innerinfopanel = new JPanel(new BorderLayout());
 		
 		//version
-		ininerversionpanel = new EasyRoundLabel(" ", new Color(217, 217, 217), versionfontcolor);
+		ininerversionpanel = new EasyRoundLabel(" ", panelbackgroundcolor, versionfontcolor);
 		ininerversionpanel.setPreferredSize(new Dimension(0, PACAKGEVERSION_HEIGHT));
 		ininerversionpanel.setTextFont(new Font(getFont().getName(), Font.BOLD, 15));
 		ininerversionpanel.setshadowlen(SHADOWSIZE);

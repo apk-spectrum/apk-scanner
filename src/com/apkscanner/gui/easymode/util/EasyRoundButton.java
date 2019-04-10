@@ -142,12 +142,20 @@ public class EasyRoundButton extends JButton {
             if(type== TYPE_POSSIBLE_SPREAD) g.fillRoundRect(0, 0, getWidth()-2, getHeight()-len, 13,13);
 	        if(type== TYPE_POSSIBLE_ACTION) g.fillRoundRect(2, 2, getWidth()-4, getHeight()-4, 13,13);
         } else {
+        	if(type== TYPE_POSSIBLE_SPREAD) {
+        		g.setColor(Color.GRAY);
+        		g.fillRoundRect(0, 0, getWidth()-2, getHeight()-len, 13,13);        	
+        	}
         	if(entered) {
             	g.setColor(originalcolor.darker().darker());
             } else {
             	g.setColor(originalcolor);
-            }        
-            g.fillRoundRect(0, 0, getWidth()-len, getHeight()-len, 13,13);
+            }
+        	if(type== TYPE_POSSIBLE_SPREAD) {
+        		g.fillRoundRect(2, 0, getWidth()-len, getHeight()-len, 13,13);
+        	} else {
+        		g.fillRoundRect(0, 0, getWidth()-len, getHeight()-len, 13,13);
+        	}
         }
         
         super.paintComponent(gr);
