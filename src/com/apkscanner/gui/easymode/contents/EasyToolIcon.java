@@ -173,46 +173,10 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 		
 		Graphics2D graphics2D = (Graphics2D) g;
 	   // Set anti-alias for text
-		
-		
 		graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.9f));
 		graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		graphics2D.drawImage(bufferimage, 0, 0, width, height, this);
-				
-		//super.paintComponent(g);
-		//setText("aaaaaaaaaaa");
-//		Log.d(getBounds().toString());
-		
-//	      BufferedImage myImage = ImageUtils.imageToBufferedImage(image);
-//
-//	      BufferedImage filteredImage = new BufferedImage(myImage.getWidth(null), myImage
-//	          .getHeight(null), BufferedImage.TYPE_INT_ARGB);
-//
-//	      Graphics g1 = filteredImage.getGraphics();
-//	      g1.drawImage(myImage, myImage.getWidth(), myImage.getHeight(), null);
-//
-//	      float weight = 1.0f;
-//	      
-//	      float[] blurKernel = { weight / 9f, weight / 9f, weight / 9f, weight / 9f, weight / 9f, weight / 9f, weight / 9f, weight / 9f, weight / 9f };
-//
-//
-//
-//		Map map = new HashMap();
-//		
-//		map.put(RenderingHints.KEY_INTERPOLATION,
-//		RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-//		
-//		map.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-//		
-//		map.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-//		
-//		RenderingHints hints = new RenderingHints(map);
-//		BufferedImageOp blur = new ConvolveOp(new Kernel(3, 3, blurKernel), ConvolveOp.EDGE_NO_OP, hints);
-//	      
-//	    //  BufferedImageOp blur = new ConvolveOp(new Kernel(3, 3, blurKernel));
-//	      myImage = blur.filter(myImage, null);
-//	      g1.dispose();
-//		graphics2D.drawImage(myImage, 0, 0, width, height, this);	
+	
 	}
 
 	public void setEasyToolListner(EasyToolListner easyToolListner) {

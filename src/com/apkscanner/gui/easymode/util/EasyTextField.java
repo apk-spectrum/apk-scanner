@@ -19,7 +19,7 @@ import com.apkscanner.gui.easymode.test.FontResizingLabel;
 import com.apkscanner.util.Log;
 
 public class EasyTextField extends JTextField {
-	public static final int MIN_FONT_SIZE = 3;
+	public static final int MIN_FONT_SIZE = 10;
 	public static final int MAX_FONT_SIZE = 20;
 	Graphics g;
 	int currFontSize = 10;	

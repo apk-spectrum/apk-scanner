@@ -97,14 +97,14 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 		
 	}
 	private void setdefaultfeature(JComponent com) {
-		com.setFont(new Font(getFont().getName(), Font.BOLD, 13));
+		com.setFont(new Font(getFont().getName(), Font.PLAIN, 13));
 		com.setBorder(new EmptyBorder(5, 5, 5, 5));		
 	}
 	
 	private JComponent makeFeatpanel(String foldstr, String spreadstr, Color foreground) {
 		EasyRoundButton btn = new EasyRoundButton(foldstr, spreadstr);
 		btn.setForeground(foreground);
-		setdefaultfeature(btn);				
+		setdefaultfeature(btn);
 		btn.addComponentListener(new ComponentListener() {
 			@Override
 			public void componentShown(ComponentEvent e) {}			
@@ -134,7 +134,7 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 	
 	public void refreshUI() {
 		mainpanel.updateUI();
-		if(mainpanel.getComponentCount() >0) {
+		if(mainpanel.getComponentCount() > 0) {
 			Component com = mainpanel.getComponent(mainpanel.getComponentCount()-1);					
 			mainpanel.setPreferredSize(new Dimension(scrollPane.getViewport().getWidth(), com.getY() + com.getHeight()));
 		} else {
@@ -149,6 +149,7 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 		mainpanel.removeAll();
 		newmakefeaturehtml(AppFeature, apkInfo);
 		updateUI();
+		refreshUI();		
 	}
 
 	public void setSdkXml(String xmlPath) {

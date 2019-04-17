@@ -59,7 +59,7 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentLi
 	EasyPermissionPanel permissionPanel;
 	
 	private EasyBordPanel bordPanel;
-	private EasyContentsPanel contentsPanel;
+	private EasyContentsPanel EasycontentsPanel;
 	//private EasyPermissionPanel permissionPanel;
 	private JFrame mainframe;
 	// private boolean isinit= false;
@@ -86,16 +86,16 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentLi
 			apklightscanner.setStatusListener(new GUIApkLightScannerListener());
 		}
 
-		contentsPanel = new EasyContentsPanel();
+		EasycontentsPanel = new EasyContentsPanel();
 		
 		permissionPanel = new EasyPermissionPanel(PERMISSION_HEIGHT);
 		
 		
 //		permissionPanel = new EasyPermissionPanel();
 		
-		width = contentsPanel.WIDTH;
+		width = EasycontentsPanel.WIDTH;
 //		height = contentsPanel.HEIGHT + permissionPanel.HEIGHT;
-		height = contentsPanel.HEIGHT;
+		height = EasycontentsPanel.HEIGHT;
 		
 		toolbarpanel = new EasyGuiToolScaleupPanel(100, width);
 		
@@ -125,7 +125,7 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentLi
 			bordPanel = new EasyBordPanel(mainframe);
 			add(bordPanel, BorderLayout.PAGE_START);
 		}
-		contentspanel.add(contentsPanel, BorderLayout.CENTER);
+		contentspanel.add(EasycontentsPanel, BorderLayout.CENTER);
 		contentspanel.add(permissionPanel, BorderLayout.PAGE_END);
 		
 		RoundPanel dummy = new RoundPanel(new BorderLayout());
@@ -261,8 +261,8 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentLi
 		EasyGuiMain.UIstarttime = System.currentTimeMillis();
 		setframetext(
 				Resource.STR_APP_NAME.getString() + " - " + new File(apklightscanner.getApkInfo().filePath).getName());
-		Log.d(contentsPanel +"");
-		contentsPanel.setContents(apklightscanner.getApkInfo());
+		Log.d(EasycontentsPanel +"");
+		EasycontentsPanel.setContents(apklightscanner.getApkInfo());
 		permissionPanel.setPermission(apklightscanner.getApkInfo());
 
 		DateFormat simple = new SimpleDateFormat("HH:mm:ss:SSS"); 
@@ -273,13 +273,13 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentLi
 
 	void showEmptyinfo() {
 		// setframetext(Resource.STR_APP_NAME.getString());
-		contentsPanel.setEmptypanel();
+		EasycontentsPanel.setEmptypanel();
 		//permissionPanel.setEmptypanel();
 	}
 
 	private void clearApkinfopanel() {
 		// bordPanel.clear();
-		contentsPanel.clear();
+		EasycontentsPanel.clear();
 		permissionPanel.clear();
 	}
 
@@ -342,7 +342,7 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentLi
 
 	public void changeDevice(IDevice[] devices) {
 		// TODO Auto-generated method stub
-		contentsPanel.changeDeivce(devices);
+		EasycontentsPanel.changeDeivce(devices);
 	}
 	
 	@Override
@@ -373,6 +373,8 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentLi
 		layeredPane.setPreferredSize(new Dimension(w, h));
 		contentspanel.setBounds(0, 0, w, h);
 		dragdroplabel.setBounds(0, 0, w, h);
+		
+		EasycontentsPanel.changesize(w -5, h - 90); // dummy 40
 		updateUI();
 	}
 	

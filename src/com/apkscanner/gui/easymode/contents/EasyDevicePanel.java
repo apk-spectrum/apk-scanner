@@ -16,6 +16,8 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
@@ -28,6 +30,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -47,7 +50,7 @@ import com.apkscanner.gui.easymode.util.RoundPanel;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
-public class EasyDevicePanel extends RoundPanel implements MouseListener, ActionListener{
+public class EasyDevicePanel extends RoundPanel implements MouseListener, ActionListener, ComponentListener{
 	 
 	private static int DEVICE_TARGET = 0;
 	private static int DEVICE_STATE_ONLINE = 1;
@@ -67,6 +70,9 @@ public class EasyDevicePanel extends RoundPanel implements MouseListener, Action
 	public ArrayList<sdkDrawObject> arraysdkObject = new ArrayList<sdkDrawObject>();
 	private Boolean isspread = false;
 	private GridBagConstraints cons;
+	JPanel devicetoolbar;
+	JComponent clickedpanel;
+	
 	private int WIDTH = 30;
 	private int SPREAD_WIDTH = 60;
 	private int DEIVCE_HEIGHT = 50;
@@ -76,7 +82,7 @@ public class EasyDevicePanel extends RoundPanel implements MouseListener, Action
 		public String sdkversion;
 		public JPanel panel;
 		public String devicename;
-		
+		public IDevice.DeviceState state;
 		public sdkDrawObject(JPanel panel, String version) {
 			// TODO Auto-generated constructor stub
 			this.sdkversion = version;
@@ -87,6 +93,11 @@ public class EasyDevicePanel extends RoundPanel implements MouseListener, Action
 			// TODO Auto-generated constructor stub
 			this(panel, version);
 			this.devicename = name;
+		}
+		public sdkDrawObject(JPanel panel, String version, String name, IDevice.DeviceState devicestate) {
+			// TODO Auto-generated constructor stub
+			this(panel, version);
+			this.state = devicestate;
 		}
 
 	}
@@ -104,6 +115,7 @@ public class EasyDevicePanel extends RoundPanel implements MouseListener, Action
 		cons.weightx = 1;
 		cons.gridx = 0;
 		
+		addComponentListener(this);
 //		setLayout(new FlowLayout(FlowLayout.CENTER));
 //		add(makeTextPanel("min", 23));
 //		add(makeTextPanel("max", 24));
@@ -140,15 +152,13 @@ public class EasyDevicePanel extends RoundPanel implements MouseListener, Action
 		panel.setMouseListener(this);
 		panel.setshadowlen(1);
 		panel.setText(devicename + " / " + sdkversion);
-		panel.setTextFont(new Font(getFont().getName(), Font.BOLD, 17));
-		
-		
+		panel.setTextFont(new Font(getFont().getName(), Font.PLAIN, 20));
+				
 		cardlayout.add(CARD_LAYOUT_FOLD, imagepanel);
 		cardlayout.add(CARD_LAYOUT_SPREAD, panel);
 		
 		((CardLayout)cardlayout.getLayout()).show(cardlayout, (isspread)?CARD_LAYOUT_SPREAD : CARD_LAYOUT_FOLD);
-		
-		
+				
 		return cardlayout;
 	}
 	
@@ -200,45 +210,10 @@ public class EasyDevicePanel extends RoundPanel implements MouseListener, Action
 			arraysdkObject.add(new sdkDrawObject(
 					makeDevicePanel(
 					Devicecolor[(device.getState() == IDevice.DeviceState.ONLINE)?DEVICE_STATE_ONLINE : DEVICE_STATE_OFFLINE],
-					sdkversion, name), sdkversion, name));
+					sdkversion, name), sdkversion, name, device.getState()));
 
 		}
 	}
-	
-	public void setsdkpanel(ApkInfo apkInfo) {		
-		// TODO Auto-generated method stub
-		
-//		if(AndroidDebugBridge.getBridge()!=null) {
-//			IDevice[] devices = AndroidDebugBridge.getBridge().getDevices();
-//			adddevices(devices);
-//		}
-//		refreshpanel();
-	}
-	
-//	private String getDeviceName(IDevice device) {
-//		String deviceName;
-//			deviceName = device.getProperty(IDevice.PROP_DEVICE_MODEL);
-//			
-//			if(deviceName != null) deviceName = deviceName.trim();
-//			if(deviceName != null && deviceName.isEmpty()) {
-//				deviceName = "";
-//			}
-//			if(deviceName == null) deviceName = "unkown";
-//		return deviceName;
-//	}
-	
-//	private String getDeviceName(IDevice device) {
-//		String deviceName = "";
-//		if(deviceName != null || !deviceName.isEmpty()) {
-//			deviceName = device.getProperty(IDevice.PROP_DEVICE_MODEL);
-//			deviceName = device.getProperty(IDevice.PROP_DEVICE_MODEL);
-//			if(deviceName != null) deviceName = deviceName.trim();
-//			if(deviceName != null && deviceName.isEmpty()) {
-//				deviceName = null;
-//			}
-//		}
-//		return deviceName;
-//	}
 	
 	private String getDeviceName(String prop, IDevice device) {
 		String response = "";
@@ -287,13 +262,19 @@ public class EasyDevicePanel extends RoundPanel implements MouseListener, Action
 
 	private void changespread() {		
 		for(sdkDrawObject obj: arraysdkObject) {
+
 			if(!isspread) {
 				setPreferredSize(new Dimension(SPREAD_WIDTH,0));
 				obj.panel.setPreferredSize(new Dimension(SPREAD_WIDTH-4,DEIVCE_SPREAD_HEIGHT-4));
-				
+				if(	obj.state == IDevice.DeviceState.ONLINE) {
+					updatetoolbarPosition();
+					devicetoolbar.setVisible(true);
+				}
+
 			} else {
 				setPreferredSize(new Dimension(WIDTH,0));
-				obj.panel.setPreferredSize(new Dimension(WIDTH-4,DEIVCE_HEIGHT-4));				
+				obj.panel.setPreferredSize(new Dimension(WIDTH-4,DEIVCE_HEIGHT-4));
+				devicetoolbar.setVisible(false);
 			}
 			((CardLayout)obj.panel.getLayout()).show(obj.panel, (!isspread)?CARD_LAYOUT_SPREAD : CARD_LAYOUT_FOLD);			
 		}
@@ -302,16 +283,27 @@ public class EasyDevicePanel extends RoundPanel implements MouseListener, Action
 		updateUI();
 	}
 	
+	public void updatetoolbarPosition() {
+		if(devicetoolbar != null && clickedpanel != null) {
+			devicetoolbar.setBounds(this.getX() - 123,this.getY()+ clickedpanel.getParent().getY()-5,150,100);
+			devicetoolbar.updateUI();
+		}
+	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
+		clickedpanel =  (EasyRoundButton)e.getSource();
 		changespread();
+
 	}
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
+
+//		clickedpanel =  (EasyRoundButton)e.getSource();
 		changespread();
+
 	}
 
 	@Override
@@ -320,7 +312,42 @@ public class EasyDevicePanel extends RoundPanel implements MouseListener, Action
 	@Override
 	public void mouseReleased(MouseEvent e) {}
 	@Override
-	public void mouseEntered(MouseEvent e) {}
+	public void mouseEntered(MouseEvent e) {
+		clickedpanel =  (JComponent) ((JComponent)e.getSource()).getParent();
+//		Log.d(""+ clickedpanel.getParent());
+		updatetoolbarPosition();
+	}
 	@Override
-	public void mouseExited(MouseEvent e) {}	
+	public void mouseExited(MouseEvent e) {}
+
+	public void setdevicetoolbar(JPanel iconhoverpanel) {
+		// TODO Auto-generated method stub
+		devicetoolbar = iconhoverpanel;
+	}
+
+	@Override
+	public void componentResized(ComponentEvent e) {
+		// TODO Auto-generated method stub
+//		devicetoolbar.setBounds(this.getX() - 250,this.getY()+ clickedpanel.getY(),200,50);
+		
+		updatetoolbarPosition();
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentShown(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentHidden(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}	
 }

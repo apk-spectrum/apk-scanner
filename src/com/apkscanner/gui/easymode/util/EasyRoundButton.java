@@ -15,6 +15,7 @@ import java.awt.geom.Rectangle2D;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.SwingUtilities;
 
 import com.apkscanner.util.Log;
 
@@ -31,6 +32,8 @@ public class EasyRoundButton extends JButton {
 	private static int TYPE_NOMAL = 0;
 	private static int TYPE_POSSIBLE_SPREAD = 1;
 	private static int TYPE_POSSIBLE_ACTION = 2;
+	
+	private static Color spreadColor = new Color(0x368AFF);
 	
 	
 	private int type; 
@@ -96,11 +99,18 @@ public class EasyRoundButton extends JButton {
 		
 			public void mouseClicked(java.awt.event.MouseEvent evt) {
 				// TODO Auto-generated method stub
-				//entered = false;				
-				if(type == TYPE_POSSIBLE_SPREAD && strspread !=null) {
-					isfold = !isfold;					
-					if(!isfold) setText(strspread);
-					else setText(strfold);
+				//entered = false;
+				if(SwingUtilities.isRightMouseButton(evt)) {
+					setclipboard();
+				} else {
+					if (type == TYPE_POSSIBLE_SPREAD && strspread != null) {
+						isfold = !isfold;						
+						if (!isfold)
+							setText(strspread);
+						else {
+							setText(strfold);							
+						}
+					}
 				}
 				updateUI();
 			}			
@@ -111,6 +121,13 @@ public class EasyRoundButton extends JButton {
 			}
 		});
 	}
+	private void setclipboard() {
+		StringSelection stringSelection = new StringSelection(getText());
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		clipboard.setContents(stringSelection, null);
+		AndroidLikeToast.ShowToast("Copying to the clipboard!", this);
+	}
+	
 	
 	public void setBackground(Color color) {
 		super.setBackground(color);
@@ -131,7 +148,7 @@ public class EasyRoundButton extends JButton {
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
         if(isfold &&  type != TYPE_NOMAL) {
-	        g.setColor(Color.GRAY);
+	        g.setColor(spreadColor);
 	        g.fillRoundRect(0, 0, getWidth(), getHeight(), 13,13);	        
 	        if(entered) {
             	g.setColor(originalcolor.darker().darker());
@@ -143,7 +160,7 @@ public class EasyRoundButton extends JButton {
 	        if(type== TYPE_POSSIBLE_ACTION) g.fillRoundRect(2, 2, getWidth()-4, getHeight()-4, 13,13);
         } else {
         	if(type== TYPE_POSSIBLE_SPREAD) {
-        		g.setColor(Color.GRAY);
+        		g.setColor(spreadColor);
         		g.fillRoundRect(0, 0, getWidth()-2, getHeight()-len, 13,13);        	
         	}
         	if(entered) {
@@ -152,7 +169,7 @@ public class EasyRoundButton extends JButton {
             	g.setColor(originalcolor);
             }
         	if(type== TYPE_POSSIBLE_SPREAD) {
-        		g.fillRoundRect(2, 0, getWidth()-len, getHeight()-len, 13,13);
+        		g.fillRoundRect(2, 0, getWidth()-2, getHeight()-len, 13,13);
         	} else {
         		g.fillRoundRect(0, 0, getWidth()-len, getHeight()-len, 13,13);
         	}

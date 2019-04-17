@@ -21,6 +21,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -66,50 +67,47 @@ public class EasyContentsPanel extends JPanel{
 	JPanel labelcountpanel;
 	String mutiLabels = "";
 	
-	
+	JPanel infopanel = new JPanel(new BorderLayout());
+	JPanel iconhoverpanel;
 	int SHADOWSIZE = 2;
 	
 	static public int WIDTH = 500;
-	static public int HEIGHT = 255;
+	static public int HEIGHT = 230;
 	
-	static private int PERMISSION_HEIGHT = 46;
 	static private int PACAKGEVERSION_HEIGHT = 35;
 	
 	//static private Color panelbackgroundcolor = new Color(217,217,217);
 	
 	
 	static private Color panelbackgroundcolor = new Color(217,217,217);
-	
 	static private Color labelfontcolor = new Color(50,186,40);
-	
-	static private Color packagePanelcolor = new Color(220,230,242);
 	static private Color packagefontcolor = new Color(130,114,196);
 	
 	static private Color versionfontcolor = new Color(237, 126, 83);
 	static private Color sdkverPanelcolor = new Color(232,232,232);
 	
-	static private Color ininerinfotcolor = new Color(121,121,121);
-	static private Color ininerversiontcolor = new Color(121,121,121);
-	
 	private static String CARD_LAYOUT_EMPTY = "card_empty";
 	private static String CARD_LAYOUT_APKINFO = "card_apkinfo";	
 	
+	JLayeredPane layeredPane;
 	
 	//EasyRoundLabel applabelpanel;
 	EasyRoundLabelCount applabelpanel;
 	JPanel labeltemp;
+	JPanel iconpanel;
 	public EasyContentsPanel() {
 		// TODO Auto-generated constructor stub
 		Log.d("start EasyContentsPanel ");
 		setLayout(new BorderLayout());		
 		setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-		setBackground(Color.WHITE);
+		//setBackground(Color.RED);
+		setOpaque(false);
 		
 		contentsCardPanel = new JPanel(new CardLayout());
 		contentsCardPanel.add(makeapkinfoPanel(), CARD_LAYOUT_APKINFO);  //3x ms
 
-		
-		add(makeapkiconPanel(), BorderLayout.WEST);
+		iconpanel = makeapkiconPanel();
+		add(iconpanel, BorderLayout.WEST);
 		add(contentsCardPanel,BorderLayout.CENTER);
 		
 		//setEmptypanel();
@@ -139,7 +137,7 @@ public class EasyContentsPanel extends JPanel{
 		applabelpanel.setPreferredSize(new Dimension(0, PACAKGEVERSION_HEIGHT));
 		addClipBoardbutton(applabelpanel);
 		applabelpanel.setshadowlen(SHADOWSIZE);
-		applabelpanel.setTextFont(new Font(getFont().getName(), Font.BOLD, 15));
+		applabelpanel.setTextFont(new Font(getFont().getName(), Font.PLAIN, 15));
 		
 		//applabelpanel.setForeground(labelfontcolor);
 		
@@ -149,6 +147,7 @@ public class EasyContentsPanel extends JPanel{
 		btnlabelcount.setPreferredSize(new Dimension(15, 15));		
 		btnlabelcount.setBackground(Color.darkGray);
 		btnlabelcount.setForeground(Color.WHITE);
+		
 		
 		btnlabelcount.addActionListener(new ActionListener() {
 			@Override
@@ -206,16 +205,15 @@ public class EasyContentsPanel extends JPanel{
 		//panel.add(btnshowpermissiondlg);
 	}
 	
-	private JPanel makeapkinfoPanel() {
-		JPanel infopanel = new JPanel(new BorderLayout());
+	private JComponent makeapkinfoPanel() {
+		infopanel = new JPanel(new BorderLayout());
 		JPanel packageandlabel = new JPanel(new BorderLayout());
-		
-		//package
+		//packagecontentsCardPanel
 		packagepanel = new EasyRoundLabel(" ", panelbackgroundcolor, packagefontcolor);
 		packagepanel.setPreferredSize(new Dimension(0, PACAKGEVERSION_HEIGHT));
 		addClipBoardbutton(packagepanel);
 		packagepanel.setshadowlen(SHADOWSIZE);
-		packagepanel.setTextFont(new Font(getFont().getName(), Font.BOLD, 15));
+		packagepanel.setTextFont(new Font(getFont().getName(), Font.PLAIN, 15));
 		
 		packageandlabel.add(packagepanel, BorderLayout.CENTER);
 		makelabelpanel();
@@ -226,16 +224,18 @@ public class EasyContentsPanel extends JPanel{
 		devicepanel = new EasyDevicePanel(50);
 		devicepanel.setRoundrectColor(panelbackgroundcolor);
 		//sdkverpanel.setPreferredSize(new Dimension(50, 0));
-		
 		devicepanel.setshadowlen(SHADOWSIZE);
 		infopanel.add(devicepanel, BorderLayout.EAST);
 		
-		JPanel innerinfopanel = new JPanel(new BorderLayout());
+
 		
+		
+		
+		JPanel innerinfopanel = new JPanel(new BorderLayout());
 		//version
 		ininerversionpanel = new EasyRoundLabel(" ", panelbackgroundcolor, versionfontcolor);
 		ininerversionpanel.setPreferredSize(new Dimension(0, PACAKGEVERSION_HEIGHT));
-		ininerversionpanel.setTextFont(new Font(getFont().getName(), Font.BOLD, 15));
+		ininerversionpanel.setTextFont(new Font(getFont().getName(), Font.PLAIN, 15));
 		ininerversionpanel.setshadowlen(SHADOWSIZE);
 		
 		addClipBoardbutton(ininerversionpanel);
@@ -252,10 +252,30 @@ public class EasyContentsPanel extends JPanel{
 		
 		//innerinfopanel.add(toolbarpanel, BorderLayout.SOUTH);
 		infopanel.add(innerinfopanel, BorderLayout.CENTER);
+		infopanel.setBounds(0, 0, WIDTH, HEIGHT);
+		infopanel.setOpaque(false);
 		
-
+		layeredPane = new JLayeredPane();
+		layeredPane.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+		layeredPane.add(infopanel,new Integer(1));
 		
-		return infopanel;
+		EasyGuiDeviceToolPanel toolbarpanel;
+		
+		toolbarpanel = new EasyGuiDeviceToolPanel(30, 100);
+		toolbarpanel.setOpaque(false);
+		
+		iconhoverpanel = new JPanel(new BorderLayout());
+		iconhoverpanel.add(toolbarpanel, BorderLayout.CENTER);		
+		iconhoverpanel.setBounds(0, 100, WIDTH, HEIGHT);
+		iconhoverpanel.setOpaque(false);
+		iconhoverpanel.setVisible(false);
+		
+		devicepanel.setdevicetoolbar(iconhoverpanel);
+		
+		//iconhoverpanel.setVisible(false);
+		layeredPane.add(iconhoverpanel,new Integer(2));
+		
+		return layeredPane;
 	}
 	
 	private void setEasyTextField(EasyTextField textfield) {
@@ -360,7 +380,7 @@ public class EasyContentsPanel extends JPanel{
 		
 		//size
 		//ininersizepanel.setText(FileUtil.getFileSize(apkInfo.fileSize, FSStyle.FULL));
-		devicepanel.setsdkpanel(apkInfo);		
+		//devicepanel.setsdkpanel(apkInfo);		
 		
 		//feature
 		featurepanel.setfeature(apkInfo);
@@ -381,5 +401,19 @@ public class EasyContentsPanel extends JPanel{
 		// TODO Auto-generated method stub
 		devicepanel.changeDevice(devices);
 		featurepanel.refreshUI();
+	}
+
+	public void changesize(int contentw, int contenth) {
+		// TODO Auto-generated method stub
+		int w = contentw;
+		int h = contenth;
+				
+		layeredPane.setPreferredSize(new Dimension(w - iconpanel.getWidth(), h));
+		infopanel.setBounds(0, 0, w - iconpanel.getWidth(), h);
+//		devicepanel.updatetoolbarPosition();
+		//iconhoverpanel.setBounds(0, 100, w - iconpanel.getWidth(), h);
+		
+		//iconhoverpanel.setBounds(0, 0, w, 100);
+		//updateUI();
 	}
 }

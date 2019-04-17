@@ -86,10 +86,10 @@ public class EasyRoundLabel extends RoundPanel implements MouseListener{
 		// TODO Auto-generated method stub
 		
 		if(clipboard) {
-		StringSelection stringSelection = new StringSelection(textlabel.getText());
-		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		clipboard.setContents(stringSelection, null);
-		AndroidLikeToast.ShowToast("Copying to the clipboard!",this);
+			StringSelection stringSelection = new StringSelection(textlabel.getText());
+			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+			clipboard.setContents(stringSelection, null);
+			AndroidLikeToast.ShowToast("Copying to the clipboard!", this);
 		//textlabel.selectAll();
 //		   Robot r = null;
 //		   
