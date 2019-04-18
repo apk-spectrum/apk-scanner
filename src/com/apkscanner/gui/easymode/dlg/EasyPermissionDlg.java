@@ -34,6 +34,7 @@ import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.gui.easymode.test.ColumnGroup;
 import com.apkscanner.gui.easymode.test.headtable.GroupableTableHeader;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 
 public class EasyPermissionDlg extends JDialog implements ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -72,6 +73,7 @@ public class EasyPermissionDlg extends JDialog implements ActionListener {
 		permissionManager.addUsesPermission(apkInfo.manifest.usesPermissionSdk23);
 		if(!permissionManager.isEmpty()) {
 			Integer selectSdkVer = apkInfo.manifest.usesSdk.targetSdkVersion;
+			sdkversion = new JLabel("@SDK " +selectSdkVer);
 			permissionManager.setSdkVersion(selectSdkVer != null ? selectSdkVer : 28);
 		}
 
@@ -80,6 +82,7 @@ public class EasyPermissionDlg extends JDialog implements ActionListener {
 
 		permissionManager.clearPermissions();
 		permissionManager.addDeclarePemission(apkInfo.manifest.permission);
+		
 		model[DECLARED_TABLE] = new PermissionUsesTableModel();
 		makeusesPermissionRow(permissionManager, permissionManager.getDeclarePermissions(), model[DECLARED_TABLE]);
 		tabbedpane = new JTabbedPane();
@@ -112,7 +115,7 @@ public class EasyPermissionDlg extends JDialog implements ActionListener {
 		JPanel temppanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
 		btngetDeviceGranted = new JButton("permission granted on device");
-		sdkversion = new JLabel("@SDK 27");
+		
 		temppanel.add(btngetDeviceGranted);
 		temppanel.add(sdkversion);
 
@@ -131,11 +134,11 @@ public class EasyPermissionDlg extends JDialog implements ActionListener {
 				Object[] obj = new Object[tablemodel.getColumnCount()];
 				String[] permissions = info.protectionLevel.split("\\|");
 				int j = 0;
-				obj[j++] = group != null ? new ImageIcon(new URL(group.getIconPath())) {
+				obj[j++] = (group != null) ? new ImageIcon(new URL(group.getIconPath())) {
 					public String toString() {
 						return "";
 					}
-				} : null;
+				} : new ImageIcon();
 				obj[j++] = info.name;
 				int i = 0;
 
@@ -146,8 +149,8 @@ public class EasyPermissionDlg extends JDialog implements ActionListener {
 				}
 
 				obj[j + i++] = Flagstr;
-
 				obj[j + i] = new Boolean(true);
+								
 				tablemodel.add(obj);
 
 			} catch (MalformedURLException e) {

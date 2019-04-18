@@ -23,7 +23,7 @@ import com.apkscanner.util.Log;
 public class DropTargetChooser extends JComponent {
 	private static final long serialVersionUID = 4972112842742444927L;
 
-	enum DefaultTargetObject {
+	public enum DefaultTargetObject {
 		DROPED_TARGET_APK_OPEN,
 		DROPED_TARGET_NEW_WIN
 	}

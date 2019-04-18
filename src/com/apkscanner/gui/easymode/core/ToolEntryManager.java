@@ -152,8 +152,11 @@ public class ToolEntryManager {
 			}
 		}
 	}
-
 	public static void excuteEntry(String cmd) {
+		excuteEntry(cmd, null);
+	}
+	
+	public static void excuteEntry(String cmd, Object obj) {
 		Log.d("Tool Click - " + cmd);
 		if (cmd.equals(Resource.STR_BTN_OPEN.getString())) {
 			final String apkFilePath = ApkFileChooser.openApkFilePath(null);
@@ -206,20 +209,22 @@ public class ToolEntryManager {
 
 			EasyToolbarCertDlg dlg = new EasyToolbarCertDlg(mainframe, true, apkInfo);
 			dlg = null;
-		} else if (cmd.equals(Resource.STR_BTN_LAUNCH.getString())) {
-			launchApp();
-		} else if (cmd.equals(Resource.STR_BTN_DEL.getString())) {
-			UninstallApp();
-		} else if (cmd.equals(Resource.STR_MENU_CLEAR_DATA.getString())) {
-			ClearData();
-		} else if (cmd.equals(Resource.STR_BTN_DETAILS_INFO.getString())) {
-			ShowInstalledPackageInfo();
 		} else if (cmd.equals(Resource.STR_BTN_OPENCODE.getString())) {
 			OpenDecompiler();
 		} else if (cmd.equals(Resource.STR_BTN_ABOUT.getString())) {
 			AboutDlg.showAboutDialog(mainframe);
 		} else if (cmd.equals(Resource.STR_BTN_SETTING.getString())) {
 			Settings();
+		} // use device tool menu
+	
+		else if (cmd.equals(Resource.STR_BTN_LAUNCH.getString())) {
+			launchApp(obj);
+		} else if (cmd.equals(Resource.STR_BTN_DEL.getString())) {
+			UninstallApp(obj);
+		} else if (cmd.equals(Resource.STR_MENU_CLEAR_DATA.getString())) {
+			ClearData(obj);
+		} else if (cmd.equals(Resource.STR_BTN_DETAILS_INFO.getString())) {
+			ShowInstalledPackageInfo(obj);
 		}
 	}
 
@@ -301,7 +306,7 @@ public class ToolEntryManager {
 		}
 	}
 
-	private static void ShowInstalledPackageInfo() {
+	private static void ShowInstalledPackageInfo(Object obj) {
 		final IDevice[] devices = AndroidDebugBridge.getBridge().getDevices();
 		if (devices == null || devices.length == 0) {
 			Log.i("No such device of a package installed.");
@@ -316,6 +321,11 @@ public class ToolEntryManager {
 		Thread thread = new Thread(new Runnable() {
 			public void run() {
 				for (IDevice device : devices) {
+					if(!(obj.equals(device))) {
+						continue;
+					}
+					Log.v("InstalledPackageInfo" + device.getSerialNumber());
+					
 					final PackageInfo info = PackageManager.getPackageInfo(device,
 							Apkscanner.getApkInfo().manifest.packageName);
 					
@@ -338,7 +348,7 @@ public class ToolEntryManager {
 		thread.start();
 	}
 
-	private static void ClearData() {
+	private static void ClearData(Object obj) {
 		messagePool = new MessageBoxPool(mainframe);
 		final IDevice[] devices = AndroidDebugBridge.getBridge().getDevices();
 		if (devices == null || devices.length == 0) {
@@ -350,8 +360,11 @@ public class ToolEntryManager {
 		Thread thread = new Thread(new Runnable() {
 			public void run() {
 				for (IDevice device : devices) {
+					
+					if(!(obj.equals(device))) {
+						continue;
+					}
 					Log.v("clear data on " + device.getSerialNumber());
-
 					PackageInfo packageInfo = PackageManager.getPackageInfo(device,
 							Apkscanner.getApkInfo().manifest.packageName);
 
@@ -424,7 +437,7 @@ public class ToolEntryManager {
 		SystemUtil.openEditor(manifestPath);
 	}
 
-	private static void UninstallApp() {
+	private static void UninstallApp(Object obj) {
 		messagePool = new MessageBoxPool(mainframe);
 		final IDevice[] devices = AndroidDebugBridge.getBridge().getDevices();
 		if (devices == null || devices.length == 0) {
@@ -436,8 +449,11 @@ public class ToolEntryManager {
 		Thread thread = new Thread(new Runnable() {
 			public void run() {
 				for (IDevice device : devices) {
+					if(!(obj.equals(device))) {
+						continue;
+					}
 					Log.v("uninstall apk on " + device.getSerialNumber());
-
+					
 					PackageInfo packageInfo = PackageManager.getPackageInfo(device,
 							Apkscanner.getApkInfo().manifest.packageName);
 
@@ -491,7 +507,7 @@ public class ToolEntryManager {
 		thread.start();
 	}
 
-	private static void launchApp() {		
+	private static void launchApp(Object obj) {		
 		final IDevice[] devices = AndroidDebugBridge.getBridge().getDevices();
 		if (devices == null || devices.length == 0) {
 			Log.i("No such device of a package installed.");
@@ -508,6 +524,9 @@ public class ToolEntryManager {
 				int activityOpt = Resource.INT_LAUNCH_ALWAYS_CONFIRM_ACTIVITY;
 
 				for (IDevice device : devices) {
+					if(!(obj.equals(device))) {
+						continue;
+					}
 					Log.v("launch activity on " + device.getSerialNumber());
 
 					PackageInfo packageInfo = PackageManager.getPackageInfo(device,

@@ -14,6 +14,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,12 +30,16 @@ import javax.swing.OverlayLayout;
 import javax.swing.border.LineBorder;
 
 import com.android.ddmlib.IDevice;
+import com.apkscanner.Launcher;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.gui.DropTargetChooser;
 import com.apkscanner.gui.MainUI;
+import com.apkscanner.gui.ToolBar.ButtonSet;
 import com.apkscanner.gui.dialog.AboutDlg;
 import com.apkscanner.gui.dialog.LogDlg;
+import com.apkscanner.gui.DropTargetChooser.DefaultTargetObject;
 import com.apkscanner.gui.easymode.contents.EasyBordPanel;
 import com.apkscanner.gui.easymode.contents.EasyContentsPanel;
 import com.apkscanner.gui.easymode.contents.EasyGuiToolPanel;
@@ -48,10 +53,11 @@ import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.easymode.util.RoundPanel;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.tabpanels.Resources;
+import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
-class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentListener  {
+class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentListener, DropTargetChooser.Listener  {
 	private static Color maincolor = new Color(249, 249, 249);
 	static private int PERMISSION_HEIGHT = 46;
 	
@@ -69,7 +75,9 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentLi
 	EasyGuiToolScaleupPanel toolbarpanel;
 	public static MessageBoxPool messagePool;
 	JPanel iconhoverpanel;
-	JPanel contentspanel;	
+	JPanel contentspanel;
+	private DropTargetChooser dropTargetChooser;
+	
 	public EasyGuiMainPanel(JFrame mainframe, EasyLightApkScanner apkscanner) {
 		Log.d("start EasyGuiMainPanel------------------------------------------------------------------------------------------------------------------------ ");
 		this.apklightscanner = apkscanner;
@@ -155,6 +163,11 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentLi
 		////////////////////// test
 		addComponentListener(this);
 	
+		// Drag & Drop event processing panel
+		dropTargetChooser = new DropTargetChooser(this);
+		mainframe.setGlassPane(dropTargetChooser);
+		dropTargetChooser.setVisible(true);
+		
 		//mainframe.setDefaultLookAndFeelDecorated(true);
 		//mainframe.getRootPane().setWindowDecorationStyle(JRootPane.FRAME);
 			
@@ -186,30 +199,30 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentLi
 		//setOpaque(true);
 		//////////////////////	
 
-		new EasyFileDrop(this, dragdroplabel, new EasyFileDrop.Listener() {
-			public void filesDropped(final java.io.File[] files) {
-				clearApkinfopanel();
-				// EasyGuiMain.corestarttime = System.currentTimeMillis();
-
-				apklightscanner.setApk(files[0].getAbsolutePath());
-
-				// layeredPane.repaint();
-			}
-
-			@Override
-			public void filesEnter() {
-				// TODO Auto-generated method stub
-				// layeredPane.add(dragdroplabel, new Integer(2));
-				dragdroplabel.setVisible(true);
-			}
-
-			@Override
-			public void filesOut() {
-				// TODO Auto-generated method stub
-				// layeredPane.remove(dragdroplabel);
-				dragdroplabel.setVisible(false);
-			}
-		});
+//		new EasyFileDrop(this, dragdroplabel, new EasyFileDrop.Listener() {
+//			public void filesDropped(final java.io.File[] files) {
+//				clearApkinfopanel();
+//				// EasyGuiMain.corestarttime = System.currentTimeMillis();
+//
+//				apklightscanner.setApk(files[0].getAbsolutePath());
+//
+//				// layeredPane.repaint();
+//			}
+//
+//			@Override
+//			public void filesEnter() {
+//				// TODO Auto-generated method stub
+//				// layeredPane.add(dragdroplabel, new Integer(2));
+//				dragdroplabel.setVisible(true);
+//			}
+//
+//			@Override
+//			public void filesOut() {
+//				// TODO Auto-generated method stub
+//				// layeredPane.remove(dragdroplabel);
+//				dragdroplabel.setVisible(false);
+//			}
+//		});
 
 		// showEmptyinfo();
 		// isinit=true;		
@@ -392,4 +405,43 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentLi
 
 	@Override
 	public void componentHidden(ComponentEvent e) {}
+
+	@Override
+	public void filesDropped(Object dropedTarget, File[] files) {
+		// TODO Auto-generated method stub
+		final String[] filePaths = new String[files.length];
+		for(int i = 0; i< files.length; i++) {
+			try {
+				filePaths[i] = files[i].getCanonicalPath();
+			} catch (IOException e) {
+				e.printStackTrace();
+				return;
+			}
+		}
+		if(dropedTarget instanceof DefaultTargetObject) {
+			switch((DefaultTargetObject)dropedTarget) {
+			case DROPED_TARGET_APK_OPEN:
+				Log.i("filesDropped()");
+				dropTargetChooser.setExternalToolsVisible(false);
+				Thread thread = new Thread(new Runnable() {
+					public void run()
+					{
+//						apkScanner.clear(false);
+//						apkScanner.openApk(filePaths[0]);
+						clearApkinfopanel();
+						apklightscanner.setApk(files[0].getAbsolutePath());
+					}
+				});
+				thread.setPriority(Thread.NORM_PRIORITY);
+				thread.start();
+				break;
+			case DROPED_TARGET_NEW_WIN:
+				Launcher.run(filePaths[0]);
+				break;
+			}
+		} else if(dropedTarget instanceof IExternalTool) {
+			String apkPath = apklightscanner.getApkInfo().filePath;
+			((IExternalTool) dropedTarget).launch(apkPath, filePaths[0]);
+		}
+	}
 }

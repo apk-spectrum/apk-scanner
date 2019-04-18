@@ -270,10 +270,10 @@ public class EasyContentsPanel extends JPanel{
 		iconhoverpanel.setOpaque(false);
 		iconhoverpanel.setVisible(false);
 		
-		devicepanel.setdevicetoolbar(iconhoverpanel);
+		devicepanel.setdevicetoolbar(toolbarpanel);
 		
 		//iconhoverpanel.setVisible(false);
-		layeredPane.add(iconhoverpanel,new Integer(2));
+		layeredPane.add(toolbarpanel,new Integer(2));
 		
 		return layeredPane;
 	}

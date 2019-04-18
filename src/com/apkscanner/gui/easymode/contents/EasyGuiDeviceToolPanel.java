@@ -28,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import com.android.ddmlib.IDevice;
 import com.apkscanner.gui.easymode.contents.EasyToolIcon.EasyToolListner;
 import com.apkscanner.gui.easymode.core.ToolEntry;
 import com.apkscanner.gui.easymode.core.ToolEntryManager;
@@ -55,6 +56,7 @@ public class EasyGuiDeviceToolPanel extends JPanel implements ActionListener, Ea
 	boolean drawtext = false;
 	Point  tooliconlocation = new Point();
 	String iconlabel = "";
+	IDevice selecteddevice;
 	
 	public EasyGuiDeviceToolPanel(int height, int width) {
 		HEIGHT = height;
@@ -100,12 +102,15 @@ public class EasyGuiDeviceToolPanel extends JPanel implements ActionListener, Ea
 			
 		}
 	}
+	public void setSelecteddevice(IDevice device) {
+		this.selecteddevice = device;
+	}
 	
 	private void maketoolbutton() {		
 		toolbartemppanel.removeAll();
 		entrys = ToolEntryManager.getDeviceToolbarList();
 		for(ToolEntry entry : entrys) {
-			//EasyFlatLabel btn = new EasyFlatLabel(ImageUtils.getScaledImage(entry.getImage(),BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(149, 179, 215));
+			//EasyFlatLabel btn = new EasEasyGuiDeviceToolPanelyFlatLabel(ImageUtils.getScaledImage(entry.getImage(),BUTTON_IMG_SIZE,BUTTON_IMG_SIZE), new Color(149, 179, 215));
 			//Image img = ImageUtils.getScaledImage(entry.getImage(),BUTTON_IMG_SIZE,BUTTON_IMG_SIZE);
 			final EasyToolIcon btn = new EasyToolIcon(entry.getImage(), 25);
 			btn.setScalesize(27);
@@ -124,8 +129,7 @@ public class EasyGuiDeviceToolPanel extends JPanel implements ActionListener, Ea
 		final String str = e.getActionCommand();
 		Thread thread = new Thread(new Runnable() {
 			public void run() {
-
-				ToolEntryManager.excuteEntry(str);
+				ToolEntryManager.excuteEntry(str, selecteddevice);
 			}
 		});
 		thread.setPriority(Thread.NORM_PRIORITY);
