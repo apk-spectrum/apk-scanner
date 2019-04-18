@@ -422,18 +422,36 @@ public class PermissionManager
 		return getGroupPermissions(groupName, sdkVersion);
 	}
 
-	public PermissionInfoExt[] getGroupPermissions(String groupName, int sdk) {
-		List<PermissionInfoExt> list = new ArrayList<>();
+	public PermissionInfo[] getGroupPermissions(String groupName, int sdk) {
+		List<PermissionInfo> list = new ArrayList<>();
+		if(GROUP_NAME_UNSPECIFIED.equals(groupName)) {
+			groupName = "";
+		}
 		for(PermissionRecord record: recordMap.values()) {
 			RevokedPermissionInfo reason = makeRevokedReason(record, sdk);
 			if(reason == null || reason.reason != RevokedReason.NO_REVOKED) continue;
 			PermissionInfoExt info = record.getInfomation(sdk);
-			if((info.permissionGroup == null && groupName == null)
+			if(((info.permissionGroup == null || info.permissionGroup.isEmpty())
+					&& (groupName == null || groupName.isEmpty()))
 					|| (groupName != null && groupName.equals(info.permissionGroup))) {
 				list.add(info);
 			}
 		}
-		return list.toArray(new PermissionInfoExt[list.size()]);
+		if(GROUP_NAME_DECLARED.contentEquals(groupName)) {
+			for(DeclaredPermissionInfo declared: declaredMap.values()) {
+				RevokedPermissionInfo reason = RevokedPermissionInfo.makeRevokedReason(declared, sdk);
+				boolean isGrant = reason.reason == RevokedReason.NO_REVOKED;
+				list.add(isGrant ? declared : reason);
+			}
+		}
+		if(GROUP_NAME_REVOKED.contentEquals(groupName)) {
+			for(UsesPermissionInfo info: unknownSource.values()) {
+				RevokedPermissionInfo reason = RevokedPermissionInfo.makeRevokedReason(info);
+				list.add(reason);
+			}
+		}
+
+		return list.toArray(new PermissionInfo[list.size()]);
 	}
 
 	public PermissionInfo[] getDeclarePermissions() {

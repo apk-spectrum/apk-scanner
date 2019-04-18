@@ -34,7 +34,6 @@ import javax.swing.text.html.Option;
 
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
 import com.apkscanner.core.permissionmanager.PermissionManager;
-import com.apkscanner.core.permissionmanager.PermissionManager.UsesPermissionTag;
 import com.apkscanner.core.permissionmanager.PermissionRepository.SourceCommit;
 import com.apkscanner.core.permissionmanager.RevokedPermissionInfo;
 import com.apkscanner.core.permissionmanager.RevokedPermissionInfo.RevokedReason;
@@ -50,6 +49,7 @@ import com.apkscanner.data.apkinfo.UsesConfigurationInfo;
 import com.apkscanner.data.apkinfo.UsesFeatureInfo;
 import com.apkscanner.data.apkinfo.UsesLibraryInfo;
 import com.apkscanner.data.apkinfo.UsesSdkInfo;
+import com.apkscanner.gui.dialog.PermissionHistoryPanel;
 import com.apkscanner.gui.dialog.SdkVersionInfoDlg;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.util.JHtmlEditorPane;
@@ -822,6 +822,11 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	}
 
 	private void showPermList() {
+		
+		PermissionHistoryPanel historyView = new PermissionHistoryPanel();
+		historyView.setPermissionManager(permissionManager);
+		historyView.showDialog(null);
+		/*
 		StringBuilder permissionList = new StringBuilder();
 
 		PermissionInfo[] permissions = permissionManager.getPermissions(UsesPermissionTag.UsesPermission);
@@ -865,6 +870,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		}
 
 		showDialog(permissionList.toString(), Resource.STR_BASIC_PERM_LIST_TITLE.getString(), new Dimension(500, 200), null);
+		*/
 	}
 
 	private void showPermDetailDesc(HyperlinkClickEvent evt) {

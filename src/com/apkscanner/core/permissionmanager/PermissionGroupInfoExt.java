@@ -8,7 +8,7 @@ import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.resource.Resource;
 
-public class PermissionGroupInfoExt extends PermissionGroupInfo {
+public class PermissionGroupInfoExt extends PermissionGroupInfo implements UnitInformation {
 	public int sdk;
 	public String comment;
 	public String label;
@@ -79,6 +79,11 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo {
     public String getDescription() {
     	return ApkInfoHelper.getResourceValue(getDescriptions(), (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
     }
+
+	@Override
+	public String getNonLocalizedDescription() {
+		return comment;
+	}
 
 	public ResourceInfo[] getLabels() {
 		if(labels != null) return labels;
