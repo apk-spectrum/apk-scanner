@@ -71,6 +71,11 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo implements UnitI
 	}
 
 	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
 	public String getLabel() {
     	return ApkInfoHelper.getResourceValue(getLabels(), (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
     }
@@ -83,6 +88,21 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo implements UnitI
 	@Override
 	public String getNonLocalizedDescription() {
 		return comment;
+	}
+
+	@Override
+	public int getApiLevel() {
+		return sdk;
+	}
+
+	@Override
+	public int getProtectionFlags() {
+		return protectionFlags;
+	}
+
+	@Override
+	public String getIcon() {
+		return icon;
 	}
 
 	public ResourceInfo[] getLabels() {

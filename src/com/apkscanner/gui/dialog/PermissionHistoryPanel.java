@@ -35,6 +35,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
+import com.apkscanner.core.permissionmanager.PermissionInfoExt;
 import com.apkscanner.core.permissionmanager.PermissionManager;
 import com.apkscanner.core.permissionmanager.PermissionRepository.SourceCommit;
 import com.apkscanner.core.permissionmanager.UnitInformation;
@@ -54,12 +55,15 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 	private JComboBox<Integer> sdkVersions;
 	private JCheckBox byGroup;
 	private JCheckBox withLable;
-	
+
 	private JTable permTable;
 	private AttributiveCellTableModel permTableModel;
 
+	private JTable historyTable;
+	private AttributiveCellTableModel historyTableModel;
+
 	private JTextArea description;
-	
+
 	//private int tableLayout = 0;
 
 	//private ArrayList<Object[]> permList = new ArrayList<Object[]>();
@@ -88,19 +92,19 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 				label.setText(value > 0 ? "API Level " + value : "API Levels");
 				return label;
 			}
-		});	
+		});
 		sdkSelectPanel.add(sdkVersions);
-		
+
 		byGroup = new JCheckBox("by Group");
 		byGroup.setSelected(true);
 		byGroup.addItemListener(this);
 		sdkSelectPanel.add(byGroup);
-		
+
 		withLable = new JCheckBox("with Label");
 		withLable.setSelected(true);
 		withLable.addItemListener(this);
 		sdkSelectPanel.add(withLable);
-		
+
 		add(sdkSelectPanel, gridConst);
 
 		JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -152,14 +156,30 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 
 		JScrollPane scroll = new JScrollPane(permTable);
 		scroll.setAutoscrolls(false);
-		
+
 		description = new JTextArea();
 		description.setEditable(false);
 		description.setLineWrap(true);
 
+		historyTableModel = new AttributiveCellTableModel() {
+			private static final long serialVersionUID = -5182372671185877580L;
+			@Override
+			public boolean isCellEditable(int row, int column) { return false; }
+		};
+		historyTableModel.setColumnIdentifiers(new String[] { "API Level", "Action", "ProtectionLevel", "PermissionGroup", "Label", "Descripton", "Comment" });
+		historyTable = new MultiSpanCellTable(historyTableModel);
+		historyTable.setCellSelectionEnabled(false);
+		historyTable.setRowSelectionAllowed(true);
+		//historyTable.setRowHeight(20);
+		historyTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		//historyTable.getSelectionModel().addListSelectionListener(this);
+
+		JScrollPane historyScroll = new JScrollPane(historyTable);
+		historyScroll.setAutoscrolls(false);
+
 		JTabbedPane extraPanel = new JTabbedPane();
 		extraPanel.addTab("Description", new JScrollPane(description));
-		extraPanel.addTab("History", new JPanel());
+		extraPanel.addTab("History", historyScroll);
 
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
 		splitPane.setTopComponent(scroll);
@@ -189,9 +209,9 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 		int row = permTable.getSelectedRow();
 		int col = permTable.getColumnModel().getColumnIndex("Name");
 		if(row < 0 || col < 0) return;
-		
+
 		String name = (String) permTableModel.getValueAt(row, col);
-		boolean isGroup = byGroup.isSelected() 
+		boolean isGroup = byGroup.isSelected()
 				&& !(permTableModel.getValueAt(row, 0) instanceof String);
 
 		UnitRecord<?> record = null;
@@ -200,11 +220,16 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 		} else {
 			record = permManager.getPermissionRecord(name);
 		}
+		setDescription(record);
+		setHistoryData(record);
+	}
+
+	private void setDescription(UnitRecord<?> record) {
 		if(record == null) {
 			description.setText("No have description");
 		} else {
 			StringBuilder sb = new StringBuilder();
-			sb.append(name);
+			sb.append(record.name);
 			sb.append("  -  Added in API level ");
 			sb.append(record.getAddedSdk());
 			if(record.getDeprecatedSdk() > 0) {
@@ -238,9 +263,49 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 			description.setText(sb.toString());
 		}
 		description.setCaretPosition(0);
-		
 	}
-	
+
+	private void setHistoryData(UnitRecord<?> record) {
+		//new String[] { "API Level", "Action", "ProtectionLevel", "PermissionGroup", "Label", "Descripton", "Comment" }
+		final String DIFF_FORMAT = "<html><body><font style=\"color:red\">%s</font></body></html>";
+		historyTableModel.setRowCount(0);
+		if(record == null) {
+			
+		} else {
+			
+			if(record.isPermissionGroupRecord()) {
+				//record.getHistories();
+			} else if(record.isPermissionRecord()) {
+				PermissionInfoExt[] histories = (PermissionInfoExt[]) record.getHistories();
+				//int preSdk = record.latestSdk;
+				boolean diff = false;
+				PermissionInfoExt preInfo = null;
+				for(PermissionInfoExt info: histories) {
+					if(preInfo != null) {
+						Vector<Object> data = new Vector<>(10);
+						int apiLevel = info.getApiLevel();
+						if(apiLevel != record.latestSdk) apiLevel++;
+						data.add(apiLevel + " ~ " + preInfo.getApiLevel());
+						data.add(preInfo.getName());
+						diff = preInfo.getProtectionFlags() != info.getProtectionFlags();
+						data.add(String.format((diff ? DIFF_FORMAT : "%s"), PermissionInfo.protectionToString(preInfo.getProtectionFlags())));
+						diff = preInfo.permissionGroup != info.permissionGroup;
+						data.add(String.format((diff ? DIFF_FORMAT : "%s"), preInfo.permissionGroup));
+						diff = preInfo.getLabel() != info.getLabel();
+						data.add(String.format((diff ? DIFF_FORMAT : "%s"), preInfo.getLabel()));
+						diff = preInfo.getDescription() != info.getDescription();
+						data.add(String.format((diff ? DIFF_FORMAT : "%s"), preInfo.getDescription()));
+						diff = preInfo.getNonLocalizedDescription() != info.getNonLocalizedDescription();
+						data.add(String.format((diff ? DIFF_FORMAT : "%s"), preInfo.getNonLocalizedDescription()));
+						historyTableModel.addRow(data);
+					}
+					preInfo = info;
+				}
+				
+			}
+		}
+	}
+
 	private void expandOrCollapse(int row) {
 		if(row < 0 || !byGroup.isSelected()) return;
 
@@ -249,7 +314,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 
 		if(oldIcon.equals(UIManager.get("Tree.expandedIcon"))) {
 			permTable.setValueAt(UIManager.get("Tree.collapsedIcon"), row++, 0);
-			while(row < permTable.getRowCount() && 
+			while(row < permTable.getRowCount() &&
 					permTableModel.getValueAt(row, 0) instanceof String) {
 				permTableModel.removeRow(row);
 			}
@@ -303,7 +368,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
         for (Object o : new String[] {"Icon", "Name", "Protection Level"}) {
         	columns.addElement(o);
         }
-        boolean isWithLabel = withLable.isSelected(); 
+        boolean isWithLabel = withLable.isSelected();
         if(isWithLabel) {
 			columns.add(2, "Label");
         }
