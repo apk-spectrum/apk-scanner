@@ -331,7 +331,7 @@ abstract public class ApkScanner
 		if(name == null || APKSCANNER_TYPE_AAPT.equalsIgnoreCase(name)) {
 			return new AaptScanner(null);
 		} else if(APKSCANNER_TYPE_AAPTLIGHT.equalsIgnoreCase(name)) {
-			return new AaptLightScanner();
+			return new AaptLightScanner(null);
 		} else if(APKSCANNER_TYPE_APKTOOL.equalsIgnoreCase(name)) {
 			return new ApktoolScanner(null);
 		}

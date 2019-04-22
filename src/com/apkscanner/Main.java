@@ -286,11 +286,18 @@ public class Main implements Runnable
 	{
 		Log.d("Easy : " + isEasyGui );
 		JFrame mainFrame = isEasyGui ? new EasyGuiMain(apkScanner) : new MainUI(apkScanner);
+				
+		
 		mainFrame.setVisible(true);
 	}
-
+	
+	static public void changeGui() {
+		
+		
+	}
+	
 	@Override
 	public void run() {
-		createAndShowGUI();
+		createAndShowGUI();		
 	}
 }

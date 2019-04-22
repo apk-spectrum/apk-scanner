@@ -88,7 +88,7 @@ public class EasyGuiMain extends JFrame implements WindowListener, IDeviceChange
 	public static void main(final String[] args) {
 		apkScanner = new EasyLightApkScanner();
 
-		new EasyGuiMain(new AaptLightScanner());
+		new EasyGuiMain(new AaptLightScanner(null));
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {

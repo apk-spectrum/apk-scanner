@@ -42,7 +42,7 @@ public class EasyLightApkScanner {
 	}
 
 	public EasyLightApkScanner() {
-		scanner = new AaptLightScanner();
+		scanner = new AaptLightScanner(null);
 		scanner.setStatusListener(new ApkLightScannerListener());
 	}
 

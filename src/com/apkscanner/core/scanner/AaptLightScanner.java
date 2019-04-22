@@ -3,6 +3,7 @@ package com.apkscanner.core.scanner;
 import java.io.File;
 
 import com.apkscanner.Launcher;
+import com.apkscanner.core.scanner.ApkScanner.StatusListener;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.resource.Resource;
@@ -13,16 +14,17 @@ import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
 
-public class AaptLightScanner extends ApkScanner {
+public class AaptLightScanner extends AaptScanner {
 
 	AaptNativeScanner resourceScanner;
 	
-	public AaptLightScanner() {
-		super(null);
+	public AaptLightScanner(StatusListener statusListener) {
+		super(statusListener);
 	}
 
 	@Override
 	public void openApk(String apkFilePath, String frameworkRes) {
+		Log.i("---aaptLightScanner---");
 		Log.i("openApk() " + apkFilePath + ", res " + frameworkRes);
 		if(apkFilePath == null) {
 			Log.e("APK file path is null");
@@ -39,6 +41,21 @@ public class AaptLightScanner extends ApkScanner {
 
 		scanningStarted();
 
+		Log.i("I: new resourceScanner...");
+		if(resourceScanner != null) {
+			resourceScanner.clear(true);
+		}
+		resourceScanner = new AaptNativeScanner(null);
+
+		Log.i("I: add asset apk");
+		resourceScanner.openApk(apkFile.getAbsolutePath(), frameworkRes);
+		if(!resourceScanner.hasAssetManager()){
+			resourceScanner = null;
+			Log.e("Failure : Can't open the AssetManager");
+			errorOccurred(ERR_CAN_NOT_ACCESS_ASSET);
+			return;
+		}
+		
 		Log.i("I: getDump AndroidManifest...");
 		String[] androidManifest = AaptNativeWrapper.Dump.getXmltree(apkFile.getAbsolutePath(), new String[] { "AndroidManifest.xml" });
 		if(androidManifest == null || androidManifest.length == 0) {
@@ -57,25 +74,15 @@ public class AaptLightScanner extends ApkScanner {
 			return;
 		}
 
-		Log.i("I: new resourceScanner...");
-		resourceScanner = new AaptNativeScanner(null);
 
-		Log.i("I: add asset apk");
-		resourceScanner.openApk(apkFile.getAbsolutePath(), frameworkRes);
-		if(!resourceScanner.hasAssetManager()){
-			resourceScanner = null;
-			Log.e("Failure : Can't open the AssetManager");
-			errorOccurred(ERR_CAN_NOT_ACCESS_ASSET);
-			return;
-		}
-
-		stateChanged(Status.STANBY);
 
 		apkInfo = new ApkInfo();
 		apkInfo.filePath = apkFile.getAbsolutePath();
 		apkInfo.fileSize = apkFile.length();
 		apkInfo.tempWorkPath = FileUtil.makeTempPath(apkInfo.filePath.substring(apkInfo.filePath.lastIndexOf(File.separator)));
 		apkInfo.resourceScanner = resourceScanner;
+
+		stateChanged(Status.STANBY);
 
 		Log.v("Temp path : " + apkInfo.tempWorkPath);
 
@@ -106,19 +113,16 @@ public class AaptLightScanner extends ApkScanner {
 		stateChanged(Status.CERT_COMPLETED);
 		Log.i("read signatures completed...");
 		
-		Log.i("I: read libraries list...");
-		apkInfo.libraries = ZipFileUtil.findFiles(apkInfo.filePath, ".so", null);
-		stateChanged(Status.LIB_COMPLETED);
+
 		
 		// Activity/Service/Receiver/provider intent-filter
 		Log.i("I: read components...");
 		manifestReader.readComponents();
 		stateChanged(Status.ACTIVITY_COMPLETED);
 
-		if(resourceScanner != null) {
-			resourceScanner.clear(true);
-		}
+
 		stateChanged(Status.ALL_COMPLETED);
+
 	}
 
 	private ResourceInfo[] changeURLpath(ResourceInfo[] icons, AaptManifestReader manifestReader) {		
@@ -156,58 +160,5 @@ public class AaptLightScanner extends ApkScanner {
 			icons = new ResourceInfo[] { new ResourceInfo(Resource.IMG_DEF_APP_ICON.getPath()) };
 		}
 		return icons;
-	}
-	
-	@Override
-	public void clear(boolean sync) {
-		if(apkInfo == null)
-			return;
-
-		if(resourceScanner != null) {
-			resourceScanner.clear(true);
-			resourceScanner = null;
-		}
-		AaptNativeScanner.lock();
-		AaptNativeWrapper.lock();
-
-		final String tmpPath = apkInfo.tempWorkPath;
-		final String apkPath = apkInfo.filePath;
-		if(sync) {
-			deleteTempPath(tmpPath, apkPath);
-			AaptNativeScanner.unlock();
-			AaptNativeWrapper.unlock();
-		} else {
-			new Thread(new Runnable() {
-				public void run()
-				{
-					deleteTempPath(tmpPath, apkPath);
-					AaptNativeScanner.unlock();
-					AaptNativeWrapper.unlock();
-				}
-			}).start();
-		}
-		apkInfo = null;	
-	}
-	
-	private void deleteTempPath(String tmpPath, String apkPath)
-	{
-		if(tmpPath != null && !tmpPath.isEmpty()) {
-			Log.i("delete Folder : "  + tmpPath);
-			FileUtil.deleteDirectory(new File(tmpPath));
-		}
-		if(apkPath != null && !apkPath.isEmpty() && apkPath.startsWith(FileUtil.getTempPath())) {
-			File parent = new File(apkPath).getParentFile();
-			Log.i("delete temp APK folder : "  + parent.getPath());
-			while(parent != null && parent.exists() && parent.getParentFile() != null 
-					&& parent.getParentFile().listFiles().length == 1 
-					&& parent.getParentFile().getAbsolutePath().length() > FileUtil.getTempPath().length()) {
-				parent = parent.getParentFile();
-			}
-			FileUtil.deleteDirectory(parent);
-			if(new File(apkPath).exists()) {
-				Log.i("failure: not delete apk file");
-				Launcher.deleteTempPath(apkPath);
-			}
-		}
-	}
+	}	
 }
