@@ -79,7 +79,7 @@ public class EasyPermissionDlg extends JDialog implements ActionListener {
 
 		model[USES_TABLE] = new PermissionUsesTableModel();
 		makeusesPermissionRow(permissionManager, permissionManager.getPermissions(), model[USES_TABLE]);
-
+		
 		permissionManager.clearPermissions();
 		permissionManager.addDeclarePemission(apkInfo.manifest.permission);
 		
