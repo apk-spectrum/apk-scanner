@@ -128,17 +128,20 @@ public class UnitRecord<T> {
 				}
 			}
 			try {
-				clazz.getField("comment").set(info, node.getComment());
-				try {
-					boolean deprecated = (Boolean)clazz.getMethod("isDeprecated").invoke(info);
-					if(isDeprecated && !deprecated) deprecatedSdk = sdk + 1;
-					isDeprecated = deprecated;
-				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | InvocationTargetException e) { }
-				try {
-					boolean removed = (Boolean)clazz.getMethod("isRemoved").invoke(info);
-					if(isRemoved && !removed) removedSdk = sdk + 1;
-					isRemoved = removed;
-				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | InvocationTargetException e) { }
+				String comment = ((i == 0) ? node : patchs.getNode(i-1)).getComment();
+				if(comment != null && !comment.equals(clazz.getField("comment").get(info))) {
+					clazz.getField("comment").set(info, comment);
+					try {
+						boolean deprecated = (Boolean)clazz.getMethod("isDeprecated").invoke(info);
+						if(isDeprecated && !deprecated) deprecatedSdk = sdk + 1;
+						isDeprecated = deprecated;
+					} catch (NoSuchMethodException | SecurityException | IllegalAccessException | InvocationTargetException e) { }
+					try {
+						boolean removed = (Boolean)clazz.getMethod("isRemoved").invoke(info);
+						if(isRemoved && !removed) removedSdk = sdk + 1;
+						isRemoved = removed;
+					} catch (NoSuchMethodException | SecurityException | IllegalAccessException | InvocationTargetException e) { }
+				}
 			} catch(NoSuchFieldException | SecurityException | IllegalAccessException e) { }
 		}
 		this.addedSdk = addedSdk;

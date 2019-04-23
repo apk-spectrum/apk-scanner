@@ -350,7 +350,9 @@ public class PermissionManager
 						groupInfo.icon = groupRecord.getPresentIcon();
 						groupInfo.icons = getResource(groupInfo.icon, -1);
 					}
-					groupInfo.permissions = new ArrayList<>();
+					if(groupInfo != null) {
+						groupInfo.permissions = new ArrayList<>();
+					}
 				}
 				if(groupInfo == null) groupInfo = makeGroup(groupName);
 				groups.put(groupInfo.name, groupInfo);

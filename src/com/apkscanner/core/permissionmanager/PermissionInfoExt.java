@@ -69,12 +69,12 @@ public class PermissionInfoExt extends PermissionInfo implements UnitInformation
 
 	@Override
 	public String getLabel() {
-    	return ApkInfoHelper.getResourceValue(getLabels(), (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
+    	return ApkInfoHelper.getResourceValue(getLabels(), Resource.getLanguage());
     }
 
 	@Override
     public String getDescription() {
-    	return ApkInfoHelper.getResourceValue(getDescriptions(), (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
+    	return ApkInfoHelper.getResourceValue(getDescriptions(), Resource.getLanguage());
     }
 
 	@Override
