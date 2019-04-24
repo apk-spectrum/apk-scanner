@@ -33,8 +33,8 @@ public class EasyRoundButton extends JButton {
 	private static int TYPE_POSSIBLE_SPREAD = 1;
 	private static int TYPE_POSSIBLE_ACTION = 2;
 	
-	private static Color spreadColor = new Color(0x368AFF);
-	
+	//private static Color spreadColor = new Color(0x368AFF);
+	private static Color spreadColor = Color.lightGray;
 	
 	private int type; 
 	

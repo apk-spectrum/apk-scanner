@@ -17,6 +17,7 @@ import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.Launcher;
+import com.apkscanner.Main;
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
@@ -30,6 +31,7 @@ import com.apkscanner.gui.dialog.PackageInfoPanel;
 import com.apkscanner.gui.dialog.PackageTreeDlg;
 import com.apkscanner.gui.dialog.SettingDlg;
 import com.apkscanner.gui.easymode.EasyLightApkScanner;
+import com.apkscanner.gui.easymode.EasyMainUI;
 import com.apkscanner.gui.easymode.dlg.EasyPermissionDlg;
 import com.apkscanner.gui.easymode.dlg.EasyToolbarCertDlg;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
@@ -166,7 +168,8 @@ public class ToolEntryManager {
 			}
 			Launcher.run(apkFilePath);
 		} else if (cmd.equals(Resource.STR_APP_NAME.getString())) {
-			Launcher.run(Apkscanner.getApkFilePath(), false);
+			//Launcher.run(Apkscanner.getApkFilePath(), false);
+			Main.changeGui();
 		} else if (cmd.equals(Resource.STR_BTN_OPEN_PACKAGE.getString())) {
 			PackageTreeDlg Dlg = new PackageTreeDlg(mainframe);
 			if (Dlg.showTreeDlg() != PackageTreeDlg.APPROVE_OPTION) {

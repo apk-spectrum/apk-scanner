@@ -65,7 +65,7 @@ public class EasyLightApkScanner {
 			public void run() {
 				try {
 					scanner.clear(true);
-					EasyGuiMain.corestarttime = System.currentTimeMillis();
+					EasyMainUI.corestarttime = System.currentTimeMillis();
 					scanner.openApk(path);
 				} catch (Exception e1) {
 					e1.printStackTrace();

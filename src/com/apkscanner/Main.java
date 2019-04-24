@@ -5,6 +5,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -14,10 +15,12 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import com.android.ddmlib.AndroidDebugBridge;
+import com.apkscanner.core.scanner.AaptLightScanner;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
-import com.apkscanner.gui.easymode.EasyGuiMain;
+import com.apkscanner.gui.easymode.EasyMainUI;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.FileUtil;
@@ -28,6 +31,7 @@ public class Main implements Runnable
 {
 	private static boolean isEasyGui;
 	private static ApkScanner apkScanner;
+	static JFrame mainFrame;
 	private static final Options allOptions = new Options();
 	private static final Options normalOptions = new Options();
 	private static final Options targetApkOptions = new Options();
@@ -40,7 +44,7 @@ public class Main implements Runnable
 			Log.enableConsoleLog(false);
 		}
 		isEasyGui = (boolean) Resource.PROP_USE_EASY_UI.getData();
-
+		
 		Log.i(Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString() + " " + Resource.STR_APP_BUILD_MODE.getString());
 		Log.i("OS : " + SystemUtil.OS);
 		Log.i("java.version : " + System.getProperty("java.version"));
@@ -285,15 +289,31 @@ public class Main implements Runnable
 	private void createAndShowGUI()
 	{
 		Log.d("Easy : " + isEasyGui );
-		JFrame mainFrame = isEasyGui ? new EasyGuiMain(apkScanner) : new MainUI(apkScanner);
-				
-		
+		mainFrame = new JFrame();
+		if(	isEasyGui) {
+			new EasyMainUI(apkScanner, mainFrame); 
+		} else {
+			new MainUI(apkScanner, mainFrame);
+		}
+
 		mainFrame.setVisible(true);
 	}
 	
 	static public void changeGui() {
+		mainFrame.getContentPane().removeAll();
 		
-		
+		MainUI mainui = new MainUI(((AaptLightScanner)apkScanner).getAaptScanner(), mainFrame);
+		mainFrame.setVisible(true);
+		//((AaptLightScanner)apkScanner).statechagedAll();
+//		try {
+//	        SwingUtilities.invokeAndWait(new Runnable() {
+//	            public void run() {
+//	        		//((AaptLightScanner)apkScanner).statechagedAll();
+//	            }
+//	        });
+//	    } catch (Exception e) {
+//	        e.printStackTrace();
+//	    }		
 	}
 	
 	@Override

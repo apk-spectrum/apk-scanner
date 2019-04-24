@@ -183,8 +183,6 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener, E
 			});
 			thread.setPriority(Thread.NORM_PRIORITY);
 			thread.start();
-			
-						
 		}
 	}
 

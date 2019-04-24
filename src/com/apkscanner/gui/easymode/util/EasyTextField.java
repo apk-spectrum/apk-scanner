@@ -14,7 +14,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import com.apkscanner.gui.easymode.EasyGuiMain;
+import com.apkscanner.gui.easymode.EasyMainUI;
 import com.apkscanner.gui.easymode.test.FontResizingLabel;
 import com.apkscanner.util.Log;
 

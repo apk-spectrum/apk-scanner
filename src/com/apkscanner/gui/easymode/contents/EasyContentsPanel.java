@@ -31,7 +31,7 @@ import com.android.ddmlib.IDevice;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ResourceInfo;
-import com.apkscanner.gui.easymode.EasyGuiMain;
+import com.apkscanner.gui.easymode.EasyMainUI;
 import com.apkscanner.gui.easymode.util.AndroidLikeToast;
 import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.gui.easymode.util.EasyFlatLabel;
@@ -80,10 +80,12 @@ public class EasyContentsPanel extends JPanel{
 	
 	
 	static private Color panelbackgroundcolor = new Color(217,217,217);
-	static private Color labelfontcolor = new Color(50,186,40);
-	static private Color packagefontcolor = new Color(130,114,196);
 	
-	static private Color versionfontcolor = new Color(237, 126, 83);
+	static private Color labelfontcolor = Color.black;
+	
+	static private Color packagefontcolor = Color.darkGray;
+	static private Color versionfontcolor = Color.darkGray;
+	
 	static private Color sdkverPanelcolor = new Color(232,232,232);
 	
 	private static String CARD_LAYOUT_EMPTY = "card_empty";
@@ -371,7 +373,7 @@ public class EasyContentsPanel extends JPanel{
 			}
 		}
 		
-		EasyGuiMain.UIstarttime =System.currentTimeMillis();		
+		EasyMainUI.UIstarttime =System.currentTimeMillis();		
 		//package
 		packagepanel.setText(apkInfo.manifest.packageName);		
 		

@@ -19,7 +19,9 @@ import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.Log;
 
-public class EasyGuiMain extends JFrame implements WindowListener, IDeviceChangeListener {
+import delight.nashornsandbox.internal.RemoveComments;
+
+public class EasyMainUI implements WindowListener, IDeviceChangeListener {
 	private static final long serialVersionUID = -9199974173720756974L;
 
 	private static EasyLightApkScanner apkScanner = null;
@@ -31,7 +33,17 @@ public class EasyGuiMain extends JFrame implements WindowListener, IDeviceChange
 	public static long UIInittime;
 	public static boolean isdecoframe = false;
 
-	public EasyGuiMain(ApkScanner aaptapkScanner) {
+	private JFrame mainframe = null;
+	
+	public EasyMainUI(ApkScanner aaptapkScanner) {
+		mainframe = new JFrame();
+		apkScanner = new EasyLightApkScanner(aaptapkScanner);
+		ToolEntryManager.initToolEntryManager();
+		InitUI();
+	}
+	
+	public EasyMainUI(ApkScanner aaptapkScanner, JFrame mainFrame) {
+		this.mainframe = mainFrame;
 		apkScanner = new EasyLightApkScanner(aaptapkScanner);
 		ToolEntryManager.initToolEntryManager();
 		InitUI();
@@ -43,52 +55,52 @@ public class EasyGuiMain extends JFrame implements WindowListener, IDeviceChange
 		UIInittime = UIstarttime = System.currentTimeMillis();
 		
 		//long framestarttime = System.currentTimeMillis();
-		setTitle(Resource.STR_APP_NAME.getString());
+		mainframe.setTitle(Resource.STR_APP_NAME.getString());
 		//Log.d(""+(System.currentTimeMillis() - framestarttime) );
 		
 		
-		mainpanel = new EasyGuiMainPanel(this, apkScanner);
+		mainpanel = new EasyGuiMainPanel(mainframe, apkScanner);
 
 		if (isdecoframe) {
 			setdecoframe();
 		} else {
-			setResizable(false);
+			mainframe.setResizable(false);
 		}
-		setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
-		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		setMinimumSize(new Dimension(300,200));
+		mainframe.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+		mainframe.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		mainframe.setMinimumSize(new Dimension(300,200));
 		
-		add(mainpanel); // 100 => 60
-		addWindowListener(this);
+		mainframe.add(mainpanel); // 100 => 60
+		mainframe.addWindowListener(this);
 
 		AdbServerMonitor.startServerAndCreateBridgeAsync();
 		AndroidDebugBridge.addDeviceChangeListener(this);
 
-		setResizable(true);
-		pack();
+		mainframe.setResizable(true);
+		mainframe.pack();
 
 		Point position = (Point) Resource.PROP_EASY_GUI_WINDOW_POSITION.getData();
 
 		if (position == null) {
-			setLocationRelativeTo(null);
+			mainframe.setLocationRelativeTo(null);
 		} else {
-			setLocation(position);
+			mainframe.setLocation(position);
 		}
 
 		if (apkScanner.getlatestError() != 0 || apkScanner.getApkFilePath() == null) {
 			Log.d("getlatestError is not 0 or args 0");
 			mainpanel.showEmptyinfo();
-			setVisible(true);
+			mainframe.setVisible(true);
 		}
 
 		Log.d("main End");
-		Log.d("init UI   : " + (System.currentTimeMillis() - EasyGuiMain.UIInittime) / 1000.0);
+		Log.d("init UI   : " + (System.currentTimeMillis() - EasyMainUI.UIInittime) / 1000.0);
 	}
 
 	public static void main(final String[] args) {
 		apkScanner = new EasyLightApkScanner();
 
-		new EasyGuiMain(new AaptLightScanner(null));
+		new EasyMainUI(new AaptLightScanner(null));
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -111,8 +123,8 @@ public class EasyGuiMain extends JFrame implements WindowListener, IDeviceChange
 	}
 
 	private void setdecoframe() {
-		setUndecorated(true);
-		com.sun.awt.AWTUtilities.setWindowOpacity(this, 1.0f);
+		mainframe.setUndecorated(true);
+		com.sun.awt.AWTUtilities.setWindowOpacity(mainframe, 1.0f);
 	}
 
 	private void changeDeivce() {
@@ -121,12 +133,19 @@ public class EasyGuiMain extends JFrame implements WindowListener, IDeviceChange
 
 	public void finished() {
 		Log.d("finished()");
-		setVisible(false);
+		mainframe.setVisible(false);
 		AndroidDebugBridge.removeDeviceChangeListener(this);
+		mainframe.removeWindowListener(this);
 		apkScanner.clear(true);
 		System.exit(0);
 	}
 
+	public void clear() {
+		Log.d("clear()");
+		AndroidDebugBridge.removeDeviceChangeListener(this);
+		mainframe.removeWindowListener(this);		
+	}
+	
 	@Override
 	public void windowOpened(WindowEvent e) {
 	}

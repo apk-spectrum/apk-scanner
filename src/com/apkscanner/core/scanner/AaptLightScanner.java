@@ -17,7 +17,7 @@ import com.apkscanner.util.ZipFileUtil;
 public class AaptLightScanner extends AaptScanner {
 
 	AaptNativeScanner resourceScanner;
-	
+	AaptManifestReader manifestReader;
 	public AaptLightScanner(StatusListener statusListener) {
 		super(statusListener);
 	}
@@ -86,7 +86,7 @@ public class AaptLightScanner extends AaptScanner {
 
 		Log.v("Temp path : " + apkInfo.tempWorkPath);
 
-		final AaptManifestReader manifestReader = new AaptManifestReader(null, apkInfo.manifest);
+		manifestReader = new AaptManifestReader(null, apkInfo.manifest);
 		manifestReader.setResourceScanner(resourceScanner);
 		manifestReader.setManifestPath(manifestPath);
 		Log.i("xmlTreeSync completed");
@@ -124,7 +124,33 @@ public class AaptLightScanner extends AaptScanner {
 		stateChanged(Status.ALL_COMPLETED);
 
 	}
+	
+	public AaptScanner getAaptScanner() {
+		Log.i("I: read libraries list...");
+		apkInfo.libraries = ZipFileUtil.findFiles(apkInfo.filePath, ".so", null);
+		//stateChanged(Status.LIB_COMPLETED);
 
+		Log.i("I: read Resource list...");
+		apkInfo.resources = ZipFileUtil.findFiles(apkInfo.filePath, null, null);
+		//stateChanged(Status.RESOURCE_COMPLETED);
+
+		Log.i("I: read aapt dump resources...");
+		apkInfo.resourcesWithValue = AaptNativeWrapper.Dump.getResources(apkInfo.filePath, true);
+		//stateChanged(Status.RES_DUMP_COMPLETED);
+		Log.i("resources completed");
+		
+		// widget
+		Log.i("I: read widgets...");
+		apkInfo.widgets = manifestReader.getWidgetList(apkInfo.filePath);
+		//stateChanged(Status.WIDGET_COMPLETED);		
+		return this;
+	}
+	public void statechagedAll() {
+		for (Status day : Status.values()) { 
+			stateChanged(day);
+		}
+	}
+	
 	private ResourceInfo[] changeURLpath(ResourceInfo[] icons, AaptManifestReader manifestReader) {		
 		if(icons != null && icons.length > 0) {
 			String urlFilePath = null;

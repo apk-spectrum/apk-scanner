@@ -129,7 +129,7 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentLi
 		contentspanel = new JPanel();
 		contentspanel.setLayout(new BorderLayout());
 		contentspanel.setBackground(maincolor);
-		if (EasyGuiMain.isdecoframe) {
+		if (EasyMainUI.isdecoframe) {
 			bordPanel = new EasyBordPanel(mainframe);
 			add(bordPanel, BorderLayout.PAGE_START);
 		}
@@ -261,7 +261,7 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentLi
     }
 	
 	private void setframetext(String text) {
-		if (!EasyGuiMain.isdecoframe) {
+		if (!EasyMainUI.isdecoframe) {
 			mainframe.setTitle(text);
 		} else {
 			bordPanel.setWindowTitle(text);
@@ -271,7 +271,7 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentLi
 	private void showApkinfopanel() {
 		Log.d("showapkinfopanel");
 		// bordPanel.setWindowTitle(apklightscanner.getApkInfo());
-		EasyGuiMain.UIstarttime = System.currentTimeMillis();
+		EasyMainUI.UIstarttime = System.currentTimeMillis();
 		setframetext(
 				Resource.STR_APP_NAME.getString() + " - " + new File(apklightscanner.getApkInfo().filePath).getName());
 		Log.d(EasycontentsPanel +"");
@@ -279,9 +279,9 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentLi
 		permissionPanel.setPermission(apklightscanner.getApkInfo());
 
 		DateFormat simple = new SimpleDateFormat("HH:mm:ss:SSS"); 
-	    Date result = new Date(EasyGuiMain.UIstarttime);
+	    Date result = new Date(EasyMainUI.UIstarttime);
 		
-		Log.d(" UI set 시간 : " + (System.currentTimeMillis() - EasyGuiMain.UIstarttime) / 1000.0 + "(start : " + simple.format(result));
+		Log.d(" UI set 시간 : " + (System.currentTimeMillis() - EasyMainUI.UIstarttime) / 1000.0 + "(start : " + simple.format(result));
 	}
 
 	void showEmptyinfo() {
@@ -328,8 +328,8 @@ class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentLi
 				showApkinfopanel();
 				
 				DateFormat simple = new SimpleDateFormat("HH:mm:ss:SSS"); 
-			    Date result = new Date(EasyGuiMain.corestarttime); 
-			    Log.d("Core 시간: " + ((System.currentTimeMillis() - EasyGuiMain.corestarttime) / 1000.0) + "(core start : " + simple.format(result));
+			    Date result = new Date(EasyMainUI.corestarttime); 
+			    Log.d("Core 시간: " + ((System.currentTimeMillis() - EasyMainUI.corestarttime) / 1000.0) + "(core start : " + simple.format(result));
 				mainframe.setVisible(true);
 				
 				
