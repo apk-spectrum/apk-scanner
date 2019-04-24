@@ -38,14 +38,14 @@ public class PermissionGroupInfo
 	}
 
     public String getLabel() {
-    	return ApkInfoHelper.getResourceValue(labels, (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
+    	return ApkInfoHelper.getResourceValue(labels, Resource.getLanguage());
     }
 
     public String getDescription() {
-    	return ApkInfoHelper.getResourceValue(descriptions, (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
+    	return ApkInfoHelper.getResourceValue(descriptions, Resource.getLanguage());
     }
 
     public String getRequest() {
-    	return ApkInfoHelper.getResourceValue(requests, (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
+    	return ApkInfoHelper.getResourceValue(requests, Resource.getLanguage());
     }
 }

@@ -86,6 +86,11 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo implements UnitI
     }
 
 	@Override
+    public String getRequest() {
+    	return ApkInfoHelper.getResourceValue(getRequests(), (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
+    }
+
+	@Override
 	public String getNonLocalizedDescription() {
 		return comment;
 	}
@@ -105,6 +110,26 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo implements UnitI
 		return icon;
 	}
 
+	@Override
+	public int getPriority() {
+		return priority;
+	}
+
+	@Override
+	public String getPermissionGroup() {
+		return name;
+	}
+
+	@Override
+	public String getProtectionLevel() {
+		return null;
+	}
+
+	@Override
+	public String getPermissionFlags() {
+		return null;
+	}
+
 	public ResourceInfo[] getLabels() {
 		if(labels != null) return labels;
 		return labels = PermissionManager.getResource(label, sdk);
@@ -112,8 +137,12 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo implements UnitI
 
 	public ResourceInfo[] getDescriptions() {
 		if(descriptions != null) return descriptions;
-		descriptions = PermissionManager.getResource(description, sdk);
-		return descriptions;
+		return descriptions = PermissionManager.getResource(description, sdk);
+	}
+
+	public ResourceInfo[] getRequests() {
+		if(requests != null) return requests;
+		return requests = PermissionManager.getResource(request, sdk);
 	}
 
 	public String getIconPath() {

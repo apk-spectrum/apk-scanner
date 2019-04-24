@@ -36,7 +36,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
-import com.apkscanner.core.permissionmanager.PermissionInfoExt;
 import com.apkscanner.core.permissionmanager.PermissionManager;
 import com.apkscanner.core.permissionmanager.PermissionRepository.SourceCommit;
 import com.apkscanner.core.permissionmanager.UnitInformation;
@@ -167,7 +166,6 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 			@Override
 			public boolean isCellEditable(int row, int column) { return false; }
 		};
-		historyTableModel.setColumnIdentifiers(new String[] { "API Level", "Action", "ProtectionLevel", "PermissionGroup", "Label", "Descripton", "Comment", "permissionFlags" });
 		historyTable = new MultiSpanCellTable(historyTableModel);
 		historyTable.setCellSelectionEnabled(false);
 		historyTable.setRowSelectionAllowed(true);
@@ -273,52 +271,70 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 		if(record == null) {
 			
 		} else {
-			if(record.isPermissionGroupRecord()) {
-				//record.getHistories();
-			} else if(record.isPermissionRecord()) {
-				PermissionInfoExt[] tmp = (PermissionInfoExt[]) record.getHistories();
-				PermissionInfoExt[] histories = Arrays.copyOf(tmp, tmp.length + 1);
-				boolean diff = false;
-				PermissionInfoExt preInfo = null;
-				for(PermissionInfoExt info: histories) {
-					if(preInfo != null) {
-						Vector<Object> data = new Vector<>(10);
-						int apiLevel = info != null ? info.getApiLevel() : record.addedSdk;
-						if(info != null && apiLevel != record.latestSdk) apiLevel++;
-						if(apiLevel == preInfo.getApiLevel()) {
-							data.add(apiLevel);
-						} else {
-							data.add(apiLevel + " ~ " + preInfo.getApiLevel());	
-						}
-						if(apiLevel == record.removedSdk) {
-							data.add(String.format(DIFF_FORMAT, "Remove"));
-						} else if(apiLevel == record.deprecatedSdk) {
-							data.add(String.format(DIFF_FORMAT, "Deprecate"));
-						} else if(apiLevel == record.addedSdk) {
-							data.add(String.format(apiLevel != 1 ? DIFF_FORMAT : "%s", "Add"));
-						} else {
-							data.add("Edit");
-						}
-						diff = info != null && preInfo.protectionLevel != info.protectionLevel;
-						data.add(String.format((diff ? DIFF_FORMAT : "%s"), preInfo.protectionLevel));
-						diff = info != null && preInfo.permissionGroup != info.permissionGroup;
-						String gname = preInfo.permissionGroup;
-						gname = gname != null ? gname.replaceAll("android.permission-group", "") : "";
-						data.add(String.format((diff ? DIFF_FORMAT : "%s"), gname));
-						diff = info != null && preInfo.getLabel() != info.getLabel();
-						data.add(String.format((diff ? DIFF_FORMAT : "%s"), preInfo.getLabel()));
-						diff = info != null && preInfo.getDescription() != info.getDescription();
-						data.add(String.format((diff ? DIFF_FORMAT : "%s"), preInfo.getDescription()));
-						diff = info != null && preInfo.getNonLocalizedDescription() != info.getNonLocalizedDescription();
-						data.add(String.format((diff ? DIFF_FORMAT : "%s"), preInfo.getNonLocalizedDescription()));
-						diff = info != null && preInfo.permissionFlags != info.permissionFlags;
-						data.add(String.format((diff ? DIFF_FORMAT : "%s"), preInfo.permissionFlags));
-						historyTableModel.addRow(data);
-					}
-					preInfo = info;
-				}
-				
+			boolean isGroupRecord = record.isPermissionGroupRecord();
+			if(isGroupRecord) {
+				historyTableModel.setColumnIdentifiers(new String[] { "API Level", "Action", "Priority", "Label", "Descripton", "Comment", "Request" });
+			} else {
+				historyTableModel.setColumnIdentifiers(new String[] { "API Level", "Action", "ProtectionLevel", "PermissionGroup", "Label", "Descripton", "Comment", "permissionFlags" });
 			}
+			
+			int sdk = permManager.getSdkVersion();
+			int selectRow = 0;
+			UnitInformation[] tmp = (UnitInformation[]) record.getHistories();
+			UnitInformation[] histories = Arrays.copyOf(tmp, tmp.length + 1);
+			boolean diff = false;
+			UnitInformation preInfo = null;
+			for(UnitInformation info: histories) {
+				if(preInfo != null) {
+					Vector<Object> data = new Vector<>(10);
+					int apiLevel = info != null ? info.getApiLevel() : record.addedSdk;
+					if(info != null && apiLevel != record.latestSdk) apiLevel++;
+					if(apiLevel == preInfo.getApiLevel()) {
+						data.add(apiLevel + (apiLevel == record.latestSdk ? " ~ Latest" : ""));
+					} else {
+						data.add(apiLevel + " ~ " + preInfo.getApiLevel());	
+					}
+					if(apiLevel <= sdk && sdk <= preInfo.getApiLevel()) {
+						selectRow = historyTableModel.getRowCount();
+					}
+					if(apiLevel == record.removedSdk) {
+						data.add(String.format(DIFF_FORMAT, "Remove"));
+					} else if(apiLevel == record.deprecatedSdk) {
+						data.add(String.format(DIFF_FORMAT, "Deprecate"));
+					} else if(apiLevel == record.addedSdk) {
+						data.add(String.format(apiLevel != 1 ? DIFF_FORMAT : "%s", "Add"));
+					} else {
+						data.add("Edit");
+					}
+					if(isGroupRecord) {
+						diff = info != null && preInfo.getPriority() != info.getPriority();
+						data.add(String.format((diff ? DIFF_FORMAT : "%s"), preInfo.getPriority()));
+					} else {
+						diff = info != null && preInfo.getProtectionLevel() != info.getProtectionLevel();
+						data.add(String.format((diff ? DIFF_FORMAT : "%s"), preInfo.getProtectionLevel()));
+						diff = info != null && preInfo.getPermissionGroup() != info.getPermissionGroup();
+						String gname = preInfo.getPermissionGroup();
+						gname = gname != null ? gname.replaceAll("android.permission-group", "") : null;
+						data.add(String.format((diff ? DIFF_FORMAT : "%s"), gname));
+					}
+					diff = info != null && preInfo.getLabel() != info.getLabel();
+					data.add(String.format((diff ? DIFF_FORMAT : "%s"), preInfo.getLabel()));
+					diff = info != null && preInfo.getDescription() != info.getDescription();
+					data.add(String.format((diff ? DIFF_FORMAT : "%s"), preInfo.getDescription()));
+					diff = info != null && preInfo.getNonLocalizedDescription() != info.getNonLocalizedDescription();
+					data.add(String.format((diff ? DIFF_FORMAT : "%s"), preInfo.getNonLocalizedDescription()));
+					if(isGroupRecord) {
+						diff = info != null && preInfo.getRequest() != info.getRequest();
+						data.add(String.format((diff ? DIFF_FORMAT : "%s"), preInfo.getRequest()));
+					} else {
+						diff = info != null && preInfo.getPermissionFlags() != info.getPermissionFlags();
+						data.add(String.format((diff ? DIFF_FORMAT : "%s"), preInfo.getPermissionFlags()));
+					}
+					historyTableModel.addRow(data);
+				}
+				preInfo = info;
+			}
+			historyTable.setRowSelectionInterval(selectRow, selectRow);
 		}
 	}
 

@@ -93,8 +93,33 @@ public class PermissionInfoExt extends PermissionInfo implements UnitInformation
 	}
 
 	@Override
+	public String getProtectionLevel() {
+		return protectionLevel;
+	}
+
+	@Override
+	public String getPermissionGroup() {
+		return permissionGroup;
+	}
+
+	@Override
+	public String getPermissionFlags() {
+		return permissionFlags;
+	}
+
+	@Override
 	public String getIcon() {
 		return icon;
+	}
+
+	@Override
+	public String getRequest() {
+		return null;
+	}
+
+	@Override
+	public int getPriority() {
+		return -1;
 	}
 
 	public ResourceInfo[] getLabels() {
