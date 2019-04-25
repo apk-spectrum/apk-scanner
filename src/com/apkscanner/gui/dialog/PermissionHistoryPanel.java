@@ -9,8 +9,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.MalformedURLException;
@@ -18,22 +21,30 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Vector;
 
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JLayer;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
+import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
 import com.apkscanner.core.permissionmanager.PermissionManager;
@@ -41,14 +52,23 @@ import com.apkscanner.core.permissionmanager.PermissionRepository.SourceCommit;
 import com.apkscanner.core.permissionmanager.UnitInformation;
 import com.apkscanner.core.permissionmanager.UnitRecord;
 import com.apkscanner.data.apkinfo.PermissionInfo;
+import com.apkscanner.gui.component.CloseableTabbedPaneLayerUI;
 import com.apkscanner.gui.component.table.AttributiveCellTableModel;
 import com.apkscanner.gui.component.table.CellSpan;
 import com.apkscanner.gui.component.table.MultiSpanCellTable;
+import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
 
 public class PermissionHistoryPanel extends JPanel implements ItemListener, ListSelectionListener {
 	private static final long serialVersionUID = -3567803690045423840L;
+
+	private static final String DIFF_FORMAT = "<html><body><font style=\"color:red\">%s</font></body></html>";
+	private static final int DIFF_PREFIX_LEN = "<html><body><font style=\"color:red\">".length();
+	private static final int DIFF_SUFFIX_LEN = "</font></body></html>".length();
+
+	private static final String[] GROUP_COLUMNS = new String[] { "API Level", "Action", "Priority", "Label", "Descripton", "Comment", "Request" };
+	private static final String[] PERM_COLUMNS = new String[] { "API Level", "Action", "ProtectionLevel", "PermissionGroup", "Label", "Descripton", "Comment", "permissionFlags" };
 
 	private JDialog dialog;
 
@@ -63,13 +83,12 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 	private AttributiveCellTableModel historyTableModel;
 
 	private JTextArea description;
+	private JTabbedPane extraTabbedPanel;
 
 	//private int tableLayout = 0;
 
-	//private ArrayList<Object[]> permList = new ArrayList<Object[]>();
-
 	private PermissionManager permManager;
-	//private boolean byGroup = false;
+	private String[] historyTableHeader;
 
 	public PermissionHistoryPanel() {
 		setLayout(new GridBagLayout());
@@ -172,17 +191,41 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 		//historyTable.setRowHeight(20);
 		historyTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		//historyTable.getSelectionModel().addListSelectionListener(this);
+		historyTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		historyTable.addMouseListener(new MouseAdapter() {
+		    public void mousePressed(MouseEvent mouseEvent) {
+		        JTable table = (JTable) mouseEvent.getSource();
+		        Point point = mouseEvent.getPoint();
+		        int row = table.rowAtPoint(point);
+		        if (row > -1 && mouseEvent.getClickCount() == 2) {
+		        	boolean withCtrl = (mouseEvent.getModifiersEx()
+		        			& (InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)) != 0;
+		        	if(table.getSelectedRow() == -1) {
+		        		if(!withCtrl) return;
+		        		table.setRowSelectionInterval(row, row);
+		        	}
+		        	TableModel model = table.getModel();
+		        	if(model instanceof DefaultTableModel) {
+		        		addDescriptionTab((Vector<?>) ((DefaultTableModel)model).getDataVector().get(row), !withCtrl);
+		        	}
+		        }
+		    }
+		});
 
 		JScrollPane historyScroll = new JScrollPane(historyTable);
 		historyScroll.setAutoscrolls(false);
 
-		JTabbedPane extraPanel = new JTabbedPane();
-		extraPanel.addTab("Description", new JScrollPane(description));
-		extraPanel.addTab("History", historyScroll);
+		extraTabbedPanel = new JTabbedPane();
+		String tabbedStyle = (String) Resource.PROP_TABBED_UI_THEME.getData();
+		extraTabbedPanel.setOpaque(true);
+		TabbedPaneUIManager.setUI(extraTabbedPanel, tabbedStyle);
+
+		extraTabbedPanel.addTab("Description", new JScrollPane(description));
+		extraTabbedPanel.addTab("History", historyScroll);
 
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
 		splitPane.setTopComponent(scroll);
-		splitPane.setBottomComponent(extraPanel);
+		splitPane.setBottomComponent(new JLayer<JTabbedPane>(extraTabbedPanel, new CloseableTabbedPaneLayerUI()));
 		splitPane.setDividerLocation(300);
 
 		add(splitPane, gridConst);
@@ -208,6 +251,8 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 		int row = permTable.getSelectedRow();
 		int col = permTable.getColumnModel().getColumnIndex("Name");
 		if(row < 0 || col < 0) return;
+
+		while(extraTabbedPanel.getTabCount() > 2) extraTabbedPanel.removeTabAt(2);
 
 		String name = (String) permTableModel.getValueAt(row, col);
 		boolean isGroup = byGroup.isSelected()
@@ -265,19 +310,24 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 	}
 
 	private void setHistoryData(UnitRecord<?> record) {
-		//new String[] { "API Level", "Action", "ProtectionLevel", "PermissionGroup", "Label", "Descripton", "Comment" }
-		final String DIFF_FORMAT = "<html><body><font style=\"color:red\">%s</font></body></html>";
 		historyTableModel.setRowCount(0);
 		if(record == null) {
-			
+
 		} else {
 			boolean isGroupRecord = record.isPermissionGroupRecord();
+			historyTableHeader = isGroupRecord ? GROUP_COLUMNS : PERM_COLUMNS;
+			historyTableModel.setColumnIdentifiers(historyTableHeader);
+
+			historyTable.getColumnModel().getColumn(1).setPreferredWidth(40);
 			if(isGroupRecord) {
-				historyTableModel.setColumnIdentifiers(new String[] { "API Level", "Action", "Priority", "Label", "Descripton", "Comment", "Request" });
+				historyTable.getColumnModel().getColumn(2).setPreferredWidth(40);
+				historyTable.getColumnModel().getColumn(3).setPreferredWidth(100);
+				historyTable.getColumnModel().getColumn(4).setPreferredWidth(200);
 			} else {
-				historyTableModel.setColumnIdentifiers(new String[] { "API Level", "Action", "ProtectionLevel", "PermissionGroup", "Label", "Descripton", "Comment", "permissionFlags" });
+				historyTable.getColumnModel().getColumn(2).setPreferredWidth(130);
+				historyTable.getColumnModel().getColumn(3).setPreferredWidth(130);
 			}
-			
+
 			int sdk = permManager.getSdkVersion();
 			int selectRow = 0;
 			UnitInformation[] tmp = (UnitInformation[]) record.getHistories();
@@ -292,7 +342,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 					if(apiLevel == preInfo.getApiLevel()) {
 						data.add(apiLevel + (apiLevel == record.latestSdk ? " ~ Latest" : ""));
 					} else {
-						data.add(apiLevel + " ~ " + preInfo.getApiLevel());	
+						data.add(apiLevel + " ~ " + preInfo.getApiLevel());
 					}
 					if(apiLevel <= sdk && sdk <= preInfo.getApiLevel()) {
 						selectRow = historyTableModel.getRowCount();
@@ -373,6 +423,42 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 					cellAtt.combine(new int[] {row}, new int[] {2,3} );
 				}
 			}
+		}
+	}
+
+	private void addDescriptionTab(Vector<?> rowData, boolean moveNewTabbed) {
+		String apiLevel = (String)rowData.get(0);
+		Component c = null;
+		for(int i = extraTabbedPanel.getTabCount() - 1; i >= 2 ; --i) {
+			if(extraTabbedPanel.getTitleAt(i).startsWith(apiLevel)) {
+				c = extraTabbedPanel.getComponentAt(i);
+				break;
+			}
+		}
+		if(c == null) {
+			JTextArea desc = new JTextArea();
+			desc.setEditable(false);
+
+			StringBuilder sb = new StringBuilder();
+			for(int i = 2; i < historyTableHeader.length; i++) {
+				sb.append("[").append(historyTableHeader[i]).append("]");
+				String data = (String) rowData.get(i);
+				if(data.startsWith("<html>")) {
+					data = data.substring(DIFF_PREFIX_LEN, data.length() - DIFF_SUFFIX_LEN);
+				}
+				sb.append(data.contains("\n") ? "\n" : " ");
+				if(historyTableHeader[i].equals("PermissionGroup") && data.startsWith(".")) {
+					sb.append("android.permission-group");
+				}
+				sb.append(data).append("\n\n");
+			}
+			desc.setText(sb.toString());
+			desc.setCaretPosition(0);
+			c = new JScrollPane(desc);
+			extraTabbedPanel.addTab(apiLevel + "  ", c);
+		}
+		if(moveNewTabbed) {
+			extraTabbedPanel.setSelectedComponent(c);
 		}
 	}
 
@@ -504,27 +590,55 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 		dialog.add(this, BorderLayout.CENTER);
 
 		dialog.setVisible(true);
-	}
 
-	/*
-	public static void main(String args[]) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					UIManager.setLookAndFeel((String)Resource.PROP_CURRENT_THEME.getData());
-				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-						| UnsupportedLookAndFeelException e1) {
-					e1.printStackTrace();
-				}
+		JRootPane root = dialog.getRootPane();
+		KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_DOWN_MASK, false);
+		root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "VK_RIGHT");
+		root.getActionMap().put("VK_RIGHT", new AbstractAction() {
+			private static final long serialVersionUID = 2511603516552791804L;
+			public void actionPerformed(ActionEvent e) {
+				int idx = extraTabbedPanel.getSelectedIndex();
+				idx = ++idx % extraTabbedPanel.getTabCount();
+				extraTabbedPanel.setSelectedIndex(idx);
+			}
+		});
 
-				PermissionHistoryPanel history = new PermissionHistoryPanel();
-				JFrame frame = new JFrame();
-				frame.add(history);
-				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				frame.pack();
-				frame.setVisible(true);
+		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.ALT_DOWN_MASK, false);
+		root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "VK_LEFT");
+		root.getActionMap().put("VK_LEFT", new AbstractAction() {
+			private static final long serialVersionUID = 7120597909260219611L;
+			public void actionPerformed(ActionEvent e) {
+				int idx = extraTabbedPanel.getSelectedIndex();
+				idx = (--idx + extraTabbedPanel.getTabCount()) % extraTabbedPanel.getTabCount();
+				extraTabbedPanel.setSelectedIndex(idx);
+			}
+		});
+
+		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK, false);
+		root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "VK_W");
+		root.getActionMap().put("VK_W", new AbstractAction() {
+			private static final long serialVersionUID = -3407532184098714138L;
+			public void actionPerformed(ActionEvent e) {
+				int idx = extraTabbedPanel.getSelectedIndex();
+				if(idx >= 2) extraTabbedPanel.removeTabAt(idx);
+			}
+		});
+
+		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK, false);
+		root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "VK_F");
+		root.getActionMap().put("VK_F", new AbstractAction() {
+			private static final long serialVersionUID = 4909455769288765820L;
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+
+		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+		root.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "ESCAPE");
+		root.getRootPane().getActionMap().put("ESCAPE", new AbstractAction() {
+			private static final long serialVersionUID = -4624295010459213905L;
+			public void actionPerformed(ActionEvent e) {
+				dialog.dispose();
 			}
 		});
 	}
-	 */
 }
