@@ -108,6 +108,8 @@ public class SettingDlg extends JDialog implements ActionListener
 	private boolean propLaunchAfInstalled;
 	private boolean propAlwaysExtendToolbar;
 
+	private boolean propEasyGui;
+	
 	private String propPluginSettings;
 
 	private boolean needUpdateUI;
@@ -127,6 +129,8 @@ public class SettingDlg extends JDialog implements ActionListener
 	private JList<String> jlFrameworkRes;
 
 	private JRadioButton jrbUseCurrentRunningVer;
+	private JRadioButton jrbEasymode;
+	
 	private JComboBox<String> jcbAdbPaths;
 	private JCheckBox jckEnableDeviceMonitoring;
 	private JComboBox<String> jcbLaunchOptions;
@@ -448,6 +452,8 @@ public class SettingDlg extends JDialog implements ActionListener
 			}
 		}
 
+		propEasyGui = (boolean)Resource.PROP_USE_EASY_UI.getData();
+		
 		propAdbShared = (boolean)Resource.PROP_ADB_POLICY_SHARED.getData();
 
 		propAdbPath = ((String)Resource.PROP_ADB_PATH.getData()).trim();
@@ -501,7 +507,11 @@ public class SettingDlg extends JDialog implements ActionListener
 		if(!propframeworkResPath.equals(resPaths)) {
 			Resource.PROP_FRAMEWORK_RES.setData(resPaths);
 		}
-
+		
+		if(propEasyGui != jrbEasymode.isSelected()) {			
+			Resource.PROP_USE_EASY_UI.setData(jrbEasymode.isSelected());
+		}
+		
 		if(propAdbShared != jrbUseCurrentRunningVer.isSelected()) {
 			Resource.PROP_ADB_POLICY_SHARED.setData(jrbUseCurrentRunningVer.isSelected());
 		}
@@ -706,6 +716,33 @@ public class SettingDlg extends JDialog implements ActionListener
 			rowHeadConst.gridy++;
 			contentConst.gridy++;
 		}
+		
+		panel.add(new JLabel("Easy mode"), rowHeadConst);
+
+		
+		JPanel selectEasyPanel = new JPanel(new GridLayout(0,1));
+		
+		JRadioButton jrbStandard = new JRadioButton("Standard mode");
+		jrbEasymode = new JRadioButton("Easy mode");
+		
+		
+		if(propEasyGui) {
+			jrbEasymode.setSelected(true);
+		} else {
+			jrbStandard.setSelected(true);
+		}
+		
+		ButtonGroup adbPolicyGroup = new ButtonGroup();
+		adbPolicyGroup.add(jrbStandard);
+		adbPolicyGroup.add(jrbEasymode);
+		
+		selectEasyPanel.add(jrbStandard);
+		selectEasyPanel.add(jrbEasymode);
+		
+		panel.add(selectEasyPanel, contentConst);
+
+		rowHeadConst.gridy++;
+		contentConst.gridy++;
 
 		rowHeadConst.gridwidth = 2;
 		rowHeadConst.weighty = 1;
