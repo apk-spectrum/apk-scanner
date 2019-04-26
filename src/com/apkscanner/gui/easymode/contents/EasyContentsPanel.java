@@ -31,7 +31,7 @@ import com.android.ddmlib.IDevice;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ResourceInfo;
-import com.apkscanner.gui.easymode.EasyMainUI;
+import com.apkscanner.gui.EasyMainUI;
 import com.apkscanner.gui.easymode.util.AndroidLikeToast;
 import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.gui.easymode.util.EasyFlatLabel;

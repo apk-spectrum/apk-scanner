@@ -3,8 +3,8 @@ package com.apkscanner;
 import javax.swing.JFrame;
 
 import com.apkscanner.core.scanner.ApkScanner;
+import com.apkscanner.gui.EasyMainUI;
 import com.apkscanner.gui.MainUI;
-import com.apkscanner.gui.easymode.EasyMainUI;
 
 public class UIController extends JFrame{
 	public static final String APKSCANNER_GUI_APKSCANNER = "APKSCANNER";

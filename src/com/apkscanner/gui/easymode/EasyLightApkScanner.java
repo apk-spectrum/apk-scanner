@@ -4,6 +4,7 @@ import com.apkscanner.core.scanner.AaptLightScanner;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.gui.EasyMainUI;
 import com.apkscanner.util.Log;
 
 public class EasyLightApkScanner {

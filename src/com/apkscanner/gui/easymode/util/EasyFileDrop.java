@@ -12,7 +12,7 @@ import java.io.Reader;
 
 import javax.swing.JLabel;
 
-import com.apkscanner.gui.easymode.EasyMainUI;
+import com.apkscanner.gui.EasyMainUI;
 import com.apkscanner.util.Log;
 
 /**
