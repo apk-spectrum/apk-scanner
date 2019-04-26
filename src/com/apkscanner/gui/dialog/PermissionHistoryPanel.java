@@ -10,6 +10,7 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -21,7 +22,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Vector;
 
-import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -31,7 +31,6 @@ import javax.swing.JLabel;
 import javax.swing.JLayer;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -53,6 +52,7 @@ import com.apkscanner.core.permissionmanager.UnitInformation;
 import com.apkscanner.core.permissionmanager.UnitRecord;
 import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.gui.component.CloseableTabbedPaneLayerUI;
+import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.gui.component.table.AttributiveCellTableModel;
 import com.apkscanner.gui.component.table.CellSpan;
 import com.apkscanner.gui.component.table.MultiSpanCellTable;
@@ -60,7 +60,7 @@ import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
 
-public class PermissionHistoryPanel extends JPanel implements ItemListener, ListSelectionListener {
+public class PermissionHistoryPanel extends JPanel implements ItemListener, ListSelectionListener, ActionListener {
 	private static final long serialVersionUID = -3567803690045423840L;
 
 	private static final String DIFF_FORMAT = "<html><body><font style=\"color:red\">%s</font></body></html>";
@@ -188,7 +188,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 		historyTable = new MultiSpanCellTable(historyTableModel);
 		historyTable.setCellSelectionEnabled(false);
 		historyTable.setRowSelectionAllowed(true);
-		//historyTable.setRowHeight(20);
+		//historyTable.setRowHeight(20);d
 		historyTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		//historyTable.getSelectionModel().addListSelectionListener(this);
 		historyTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -211,6 +211,11 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 		        }
 		    }
 		});
+		KeyStrokeAction.registerKeyStrokeActions(historyTable, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, new KeyStroke[] {
+				KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false),
+				KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK, false),
+				KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.SHIFT_DOWN_MASK, false)
+			}, this);
 
 		JScrollPane historyScroll = new JScrollPane(historyTable);
 		historyScroll.setAutoscrolls(false);
@@ -582,7 +587,6 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 		} else {
 			dialog.setSize(minSize);
 		}
-		//dialog.setMinimumSize(minSize);
 		WindowSizeMemorizer.registeComponent(dialog);
 
 		dialog.setLocationRelativeTo(owner);
@@ -591,54 +595,50 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 
 		dialog.setVisible(true);
 
-		JRootPane root = dialog.getRootPane();
-		KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_DOWN_MASK, false);
-		root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "VK_RIGHT");
-		root.getActionMap().put("VK_RIGHT", new AbstractAction() {
-			private static final long serialVersionUID = 2511603516552791804L;
-			public void actionPerformed(ActionEvent e) {
-				int idx = extraTabbedPanel.getSelectedIndex();
-				idx = ++idx % extraTabbedPanel.getTabCount();
-				extraTabbedPanel.setSelectedIndex(idx);
-			}
-		});
+		KeyStrokeAction.registerKeyStrokeActions(dialog.getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW, new KeyStroke[] {
+			KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_DOWN_MASK, false),
+			KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.ALT_DOWN_MASK, false),
+			KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK, false),
+			KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK, false),
+			KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false)
+		}, this);
+	}
 
-		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.ALT_DOWN_MASK, false);
-		root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "VK_LEFT");
-		root.getActionMap().put("VK_LEFT", new AbstractAction() {
-			private static final long serialVersionUID = 7120597909260219611L;
-			public void actionPerformed(ActionEvent e) {
-				int idx = extraTabbedPanel.getSelectedIndex();
-				idx = (--idx + extraTabbedPanel.getTabCount()) % extraTabbedPanel.getTabCount();
-				extraTabbedPanel.setSelectedIndex(idx);
-			}
-		});
-
-		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK, false);
-		root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "VK_W");
-		root.getActionMap().put("VK_W", new AbstractAction() {
-			private static final long serialVersionUID = -3407532184098714138L;
-			public void actionPerformed(ActionEvent e) {
-				int idx = extraTabbedPanel.getSelectedIndex();
-				if(idx >= 2) extraTabbedPanel.removeTabAt(idx);
-			}
-		});
-
-		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK, false);
-		root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "VK_F");
-		root.getActionMap().put("VK_F", new AbstractAction() {
-			private static final long serialVersionUID = 4909455769288765820L;
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-
-		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		root.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "ESCAPE");
-		root.getRootPane().getActionMap().put("ESCAPE", new AbstractAction() {
-			private static final long serialVersionUID = -4624295010459213905L;
-			public void actionPerformed(ActionEvent e) {
-				dialog.dispose();
-			}
-		});
+	@Override
+	public void actionPerformed(ActionEvent evt) {
+		int keycode = Integer.parseInt(evt.getActionCommand());
+		int idx;
+		switch(keycode) {
+		case KeyEvent.VK_RIGHT:
+			idx = extraTabbedPanel.getSelectedIndex();
+			idx = ++idx % extraTabbedPanel.getTabCount();
+			extraTabbedPanel.setSelectedIndex(idx);
+			break;
+		case KeyEvent.VK_LEFT:
+			idx = extraTabbedPanel.getSelectedIndex();
+			idx = (--idx + extraTabbedPanel.getTabCount()) % extraTabbedPanel.getTabCount();
+			extraTabbedPanel.setSelectedIndex(idx);
+			break;
+		case KeyEvent.VK_W:
+			idx = extraTabbedPanel.getSelectedIndex();
+			if(idx >= 2) extraTabbedPanel.removeTabAt(idx);
+			break;
+		case KeyEvent.VK_F:
+			break;
+		case KeyEvent.VK_ENTER:
+			JTable table = (JTable) evt.getSource();
+        	boolean withCtrl = (evt.getModifiers()
+        			& (ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK)) != 0;
+        	int row = table.getSelectedRow();
+        	if(row == -1) return;
+        	TableModel model = table.getModel();
+        	if(model instanceof DefaultTableModel) {
+        		addDescriptionTab((Vector<?>) ((DefaultTableModel)model).getDataVector().get(row), !withCtrl);
+        	}
+        	break;
+		case KeyEvent.VK_ESCAPE:
+			dialog.dispose();
+			break;
+		}
 	}
 }
