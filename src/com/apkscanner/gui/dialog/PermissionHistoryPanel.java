@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -19,9 +20,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Vector;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -39,25 +44,36 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
+import javax.swing.RowSorter.SortKey;
+import javax.swing.SortOrder;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterEvent.Type;
+import javax.swing.event.RowSorterListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
+import com.apkscanner.core.permissionmanager.DeclaredPermissionInfo;
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
 import com.apkscanner.core.permissionmanager.PermissionManager;
 import com.apkscanner.core.permissionmanager.PermissionRepository.SourceCommit;
+import com.apkscanner.core.permissionmanager.RevokedPermissionInfo;
 import com.apkscanner.core.permissionmanager.UnitInformation;
 import com.apkscanner.core.permissionmanager.UnitRecord;
+import com.apkscanner.data.apkinfo.PermissionGroupInfo;
 import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.gui.component.CloseableTabbedPaneLayerUI;
 import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 
 public class PermissionHistoryPanel extends JPanel implements ItemListener, ListSelectionListener, ActionListener {
 	private static final long serialVersionUID = -3567803690045423840L;
@@ -88,6 +104,8 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 
 	private PermissionManager permManager;
 	private String[] historyTableHeader;
+
+	private List<String> filterCollapseGroups = new ArrayList<>();
 
 	public PermissionHistoryPanel() {
 		setLayout(new GridBagLayout());
@@ -135,11 +153,11 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 		gridConst.weighty = 1.0f;
 		gridConst.fill = GridBagConstraints.BOTH;
 
-		permTableModel = new DefaultTableModel(0,10) {
+		permTableModel = new DefaultTableModel() {
 			private static final long serialVersionUID = -5182372671185877580L;
 			@Override
 		    public Class<?> getColumnClass(int columnIndex) {
-				return columnIndex <= 1 ? ImageIcon.class : String.class;
+				return columnIndex <= 1 ? Icon.class : String.class;
 		    }
 
 			@Override
@@ -147,7 +165,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 				return false;
 			}
 		};
-		permTableModel.setColumnIdentifiers(new String[] {"", "Icon", "Name", "Label", "Protection Level"});
+		permTableModel.setColumnIdentifiers(new String[] {"", "Icon", "Name", "Label", "Protection Level", "Data"});
 
 		permTable = new JTable(permTableModel);
 
@@ -171,6 +189,53 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 		    }
 		});
 		resizedColumnSize();
+
+		final TableRowSorter<TableModel> sorter = new TableRowSorter<>(permTable.getModel());
+		setComparator(sorter);
+		sorter.setRowFilter(new RowFilter<TableModel, Integer>() {
+			@Override
+			public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
+				if(byGroup.isSelected() && !filterCollapseGroups.isEmpty()) {
+					Object data = entry.getValue(5);
+					if(data instanceof PermissionGroupInfoExt) {
+						return true;
+					}
+					if(data instanceof RevokedPermissionInfo) {
+						RevokedPermissionInfo info = (RevokedPermissionInfo) data;
+						switch(info.source) {
+						case DECLARED:
+							return !filterCollapseGroups.contains(PermissionManager.GROUP_NAME_DECLARED);
+						case RECORD: case UNKNOWN:
+							return !filterCollapseGroups.contains(PermissionManager.GROUP_NAME_REVOKED);
+						}
+					} else if(data instanceof DeclaredPermissionInfo) {
+						return !filterCollapseGroups.contains(PermissionManager.GROUP_NAME_DECLARED);
+					}
+					PermissionInfo info = (PermissionInfo) data;
+					if(info.permissionGroup == null || info.permissionGroup.isEmpty()) {
+						return !filterCollapseGroups.contains(PermissionManager.GROUP_NAME_UNSPECIFIED);
+					}
+					return !filterCollapseGroups.contains(info.permissionGroup);
+				}
+				return true;
+			}
+		});
+
+		sorter.addRowSorterListener(new RowSorterListener() {
+			@Override
+			public void sorterChanged(RowSorterEvent e) {
+				if(e.getType() == Type.SORT_ORDER_CHANGED && byGroup.isSelected()) {
+					List<SortKey> keys = new ArrayList<SortKey>(sorter.getSortKeys());
+					if(!keys.isEmpty()) {
+						if(keys.get(0).getColumn() == 0) {
+							Log.e("filter group");
+						}
+					}
+				}
+			}
+		});
+
+		permTable.setRowSorter(sorter);
 
 		JScrollPane scroll = new JScrollPane(permTable);
 		scroll.setAutoscrolls(false);
@@ -258,11 +323,11 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 
 		while(extraTabbedPanel.getTabCount() > 2) extraTabbedPanel.removeTabAt(2);
 
-		String name = (String) permTable.getValueAt(row, col);
+		String name = permTable.getValueAt(row, col).toString();
 
-		col = permTable.getColumnModel().getColumnIndex("");
+		col = permTable.getColumnModel().getColumnIndex("Data");
 		boolean isGroup = byGroup.isSelected()
-				&& !(permTable.getValueAt(row, col) instanceof String);
+				&& permTable.getValueAt(row, col) instanceof PermissionGroupInfo;
 
 		UnitRecord<?> record = null;
 		if(isGroup) {
@@ -397,26 +462,19 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 	private void expandOrCollapse(int row) {
 		if(row < 0 || !byGroup.isSelected()) return;
 
-		int col = permTable.getColumnModel().getColumnIndex("");
-		Object oldIcon = permTable.getValueAt(row, col);
-		if(oldIcon instanceof String) return;
+		int col = permTable.getColumnModel().getColumnIndex("Name");
+		if(col < 0) return;
+		String name = permTable.getValueAt(row, col).toString();
+		col = permTable.getColumnModel().getColumnIndex("");
 
-		if(oldIcon.equals(UIManager.get("Tree.expandedIcon"))) {
-			permTable.setValueAt(UIManager.get("Tree.collapsedIcon"), row++, col);
-			while(row < permTable.getRowCount() &&
-					permTable.getValueAt(row, col) instanceof String) {
-				permTableModel.removeRow(row);
-			}
-		} else {
+		if(filterCollapseGroups.contains(name)) {
 			permTable.setValueAt(UIManager.get("Tree.expandedIcon"), row, col);
-			col = permTable.getColumnModel().getColumnIndex("Name");
-			if(col < 0) return;
-			String name = (String) permTable.getValueAt(row, col);
-			for(PermissionInfo info: permManager.getGroupPermissions(name)) {
-				row += 1;
-				permTableModel.insertRow( row, new Object[] { "", UIManager.get("Tree.leafIcon"), info.name, info.getLabel(), info.protectionLevel } );
-			}
+			filterCollapseGroups.remove(name);
+		} else {
+			permTable.setValueAt(UIManager.get("Tree.collapsedIcon"), row, col);
+			filterCollapseGroups.add(name);
 		}
+		permTableModel.fireTableDataChanged();
 	}
 
 	private void addDescriptionTab(Vector<?> rowData, boolean moveNewTabbed) {
@@ -488,7 +546,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 			column.setPreferredWidth(0);
 			column.setWidth(0);
 		}
-		
+
 		// column 1 - Icon : Group Icon
 		colIdx = colModel.getColumnIndex("Icon");
 		column = colModel.getColumn(colIdx);
@@ -518,6 +576,14 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 		colIdx = colModel.getColumnIndex("Protection Level");
 		column = colModel.getColumn(colIdx);
 		column.setPreferredWidth(250);
+
+		// column 5 - Hidden Data
+		colIdx = colModel.getColumnIndex("Data");
+		column = colModel.getColumn(colIdx);
+		column.setResizable(false);
+		column.setMinWidth(0);
+		column.setPreferredWidth(0);
+		column.setWidth(0);
 	}
 
 	private void refreshPermTable() {
@@ -525,24 +591,27 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 
 		Vector<Object> rowData = null;
 		for(PermissionGroupInfoExt g: permManager.getPermissionGroups()) {
-			ImageIcon icon = null;
+			Icon icon = null;
 			try {
 				icon = new ImageIcon(new URL(g.getIconPath()));
 			} catch (MalformedURLException e) { }
 
 			if(byGroup.isSelected()) {
 				rowData = new Vector<>(5);
-		        for (Object o : new Object[] { UIManager.get("Tree.expandedIcon"), icon, g.name, g.getLabel(), PermissionInfo.protectionToString(g.protectionFlags) }) {
-		        	rowData.addElement(o);
+				rowData.addElement(UIManager.get("Tree.expandedIcon"));
+		        for (Object o : new Object[] { icon, g.name, g.getLabel(), PermissionInfo.protectionToString(g.protectionFlags) }) {
+		        	rowData.addElement(new SortedData(o, g.priority, true));
 		        }
+		        rowData.addElement(g);
 		        permTableModel.addRow( rowData );
 			}
 
 			for(PermissionInfo info: g.permissions) {
 				rowData = new Vector<>(5);
 		        for (Object o : new Object[] {"", byGroup.isSelected() ? UIManager.get("Tree.leafIcon") : icon, info.name, info.getLabel(), info.protectionLevel }) {
-		        	rowData.addElement(o);
+		        	rowData.addElement(new SortedData(o, g.priority, false));
 		        }
+		        rowData.addElement(info);
 				permTableModel.addRow( rowData );
 			}
 		}
@@ -616,6 +685,97 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 		case KeyEvent.VK_ESCAPE:
 			dialog.dispose();
 			break;
+		}
+	}
+
+	private class SortedData implements Icon {
+		Object data;
+		int weight;
+		boolean isParent;
+
+		private SortedData(Object data, int weight, boolean isParent) {
+			this.data = data != null ? data : "";
+			this.weight = weight;
+			this.isParent = isParent;
+		}
+
+		@Override
+		public void paintIcon(Component c, Graphics g, int x, int y) {
+			if(data instanceof Icon) ((Icon)data).paintIcon(c, g, x, y);
+		}
+
+		@Override
+		public int getIconWidth() {
+			return (data instanceof Icon) ? ((Icon)data).getIconWidth() : -1;
+		}
+
+		@Override
+		public int getIconHeight() {
+			return (data instanceof Icon) ? ((Icon)data).getIconHeight() : -1;
+		}
+
+		@Override
+		public String toString() {
+			return (data != null) ? data.toString() : "";
+		}
+	}
+
+	private void setComparator(final TableRowSorter<?> sorter) {
+		sorter.setMaxSortKeys(1);
+
+		sorter.setComparator(0, new Comparator<Object>() {
+			@Override
+			public int compare(Object o1, Object o2) { return 0; }
+		});
+
+		sorter.setComparator(1, new Comparator<SortedData>() {
+			@Override
+			public int compare(SortedData o1, SortedData o2) {
+				SortOrder odrder = sorter.getSortKeys().get(0).getSortOrder();
+				if(byGroup.isSelected()) {
+					if(o1.weight == o2.weight
+							&& !((o1.data == null && o2.data == null)
+							|| (o1.data != null && o1.data.equals(o2.data)))) {
+						if(odrder == SortOrder.DESCENDING) {
+							return (o1.isParent) ? 1 : -1;
+						} else {
+							return (o1.isParent) ? -1 : 1;
+						}
+					}
+					return o1.weight - o2.weight;
+				} else {
+					return o1.data.toString().compareTo(o2.data.toString());
+				}
+			}
+		});
+
+		Comparator<?> normal = new Comparator<SortedData>() {
+			@Override
+			public int compare(SortedData o1, SortedData o2) {
+				SortOrder odrder = sorter.getSortKeys().get(0).getSortOrder();
+				if(byGroup.isSelected()) {
+					if(o1.weight == o2.weight) {
+						if(((o1.data == null && o2.data == null)
+								|| (o1.data != null && o1.data.equals(o2.data))))
+							return 0;
+						if(o1.isParent) {
+							return odrder == SortOrder.DESCENDING ? 1 : -1;
+						} else if(o2.isParent) {
+							return odrder == SortOrder.DESCENDING ? -1 : 1;
+						}
+						return o1.data.toString().compareTo(o2.data.toString());
+					}
+					if(odrder == SortOrder.DESCENDING)
+						return o1.weight - o2.weight;
+					return o2.weight - o1.weight;
+				} else {
+					return o1.data.toString().compareTo(o2.data.toString());
+				}
+			}
+		};
+
+		for(int i=2; i<permTable.getColumnCount(); i++) {
+			sorter.setComparator(i,normal);
 		}
 	}
 }

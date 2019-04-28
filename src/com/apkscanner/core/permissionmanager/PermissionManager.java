@@ -439,14 +439,14 @@ public class PermissionManager
 				list.add(info);
 			}
 		}
-		if(GROUP_NAME_DECLARED.contentEquals(groupName)) {
+		if(GROUP_NAME_DECLARED.equals(groupName)) {
 			for(DeclaredPermissionInfo declared: declaredMap.values()) {
 				RevokedPermissionInfo reason = RevokedPermissionInfo.makeRevokedReason(declared, sdk);
 				boolean isGrant = reason.reason == RevokedReason.NO_REVOKED;
 				list.add(isGrant ? declared : reason);
 			}
 		}
-		if(GROUP_NAME_REVOKED.contentEquals(groupName)) {
+		if(GROUP_NAME_REVOKED.equals(groupName)) {
 			for(UsesPermissionInfo info: unknownSource.values()) {
 				RevokedPermissionInfo reason = RevokedPermissionInfo.makeRevokedReason(info);
 				list.add(reason);
