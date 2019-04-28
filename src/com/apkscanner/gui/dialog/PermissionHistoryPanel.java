@@ -43,6 +43,8 @@ import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
@@ -53,9 +55,6 @@ import com.apkscanner.core.permissionmanager.UnitRecord;
 import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.gui.component.CloseableTabbedPaneLayerUI;
 import com.apkscanner.gui.component.KeyStrokeAction;
-import com.apkscanner.gui.component.table.AttributiveCellTableModel;
-import com.apkscanner.gui.component.table.CellSpan;
-import com.apkscanner.gui.component.table.MultiSpanCellTable;
 import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
@@ -67,8 +66,8 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 	private static final int DIFF_PREFIX_LEN = "<html><body><font style=\"color:red\">".length();
 	private static final int DIFF_SUFFIX_LEN = "</font></body></html>".length();
 
-	private static final String[] GROUP_COLUMNS = new String[] { "API Level", "Action", "Priority", "Label", "Descripton", "Comment", "Request" };
-	private static final String[] PERM_COLUMNS = new String[] { "API Level", "Action", "ProtectionLevel", "PermissionGroup", "Label", "Descripton", "Comment", "permissionFlags" };
+	private static final String[] HISTORY_GROUP_COLUMNS = new String[] { "API Level", "Action", "Priority", "Label", "Descripton", "Comment", "Request" };
+	private static final String[] HISTORY_PERM_COLUMNS = new String[] { "API Level", "Action", "ProtectionLevel", "PermissionGroup", "Label", "Descripton", "Comment", "permissionFlags" };
 
 	private JDialog dialog;
 
@@ -77,10 +76,10 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 	private JCheckBox withLable;
 
 	private JTable permTable;
-	private AttributiveCellTableModel permTableModel;
+	private DefaultTableModel permTableModel;
 
 	private JTable historyTable;
-	private AttributiveCellTableModel historyTableModel;
+	private DefaultTableModel historyTableModel;
 
 	private JTextArea description;
 	private JTabbedPane extraTabbedPanel;
@@ -136,13 +135,11 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 		gridConst.weighty = 1.0f;
 		gridConst.fill = GridBagConstraints.BOTH;
 
-		permTableModel = new AttributiveCellTableModel() {
+		permTableModel = new DefaultTableModel(0,10) {
 			private static final long serialVersionUID = -5182372671185877580L;
-
 			@Override
 		    public Class<?> getColumnClass(int columnIndex) {
-				if(columnIndex == 0) return ImageIcon.class;
-				return getValueAt(0, columnIndex).getClass();
+				return columnIndex <= 1 ? ImageIcon.class : String.class;
 		    }
 
 			@Override
@@ -150,7 +147,9 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 				return false;
 			}
 		};
-		permTable = new MultiSpanCellTable(permTableModel);
+		permTableModel.setColumnIdentifiers(new String[] {"", "Icon", "Name", "Label", "Protection Level"});
+
+		permTable = new JTable(permTableModel);
 
 		permTable.setCellSelectionEnabled(false);
 		permTable.setRowSelectionAllowed(true);
@@ -165,13 +164,13 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 		        int row = table.rowAtPoint(point);
 		        int col = table.columnAtPoint(point);
 		        if (row > -1 && table.getSelectedRow() != -1
-		        		&& (mouseEvent.getClickCount() == 2 || col == 0)) {
+		        		&& (mouseEvent.getClickCount() == 2
+		        		|| col == permTable.getColumnModel().getColumnIndex(""))) {
 	        		expandOrCollapse(row);
 		        }
 		    }
 		});
-
-		refreshPermTableStructure();
+		resizedColumnSize();
 
 		JScrollPane scroll = new JScrollPane(permTable);
 		scroll.setAutoscrolls(false);
@@ -180,12 +179,12 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 		description.setEditable(false);
 		description.setLineWrap(true);
 
-		historyTableModel = new AttributiveCellTableModel() {
+		historyTableModel = new DefaultTableModel() {
 			private static final long serialVersionUID = -5182372671185877580L;
 			@Override
 			public boolean isCellEditable(int row, int column) { return false; }
 		};
-		historyTable = new MultiSpanCellTable(historyTableModel);
+		historyTable = new JTable(historyTableModel);
 		historyTable.setCellSelectionEnabled(false);
 		historyTable.setRowSelectionAllowed(true);
 		//historyTable.setRowHeight(20);d
@@ -239,7 +238,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 	@Override
 	public void itemStateChanged(ItemEvent evt) {
 		if(evt.getSource() instanceof JCheckBox) {
-			refreshPermTableStructure();
+			resizedColumnSize();
 			refreshPermTable();
 		} else {
 			if(evt.getStateChange() != ItemEvent.SELECTED) return;
@@ -259,9 +258,11 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 
 		while(extraTabbedPanel.getTabCount() > 2) extraTabbedPanel.removeTabAt(2);
 
-		String name = (String) permTableModel.getValueAt(row, col);
+		String name = (String) permTable.getValueAt(row, col);
+
+		col = permTable.getColumnModel().getColumnIndex("");
 		boolean isGroup = byGroup.isSelected()
-				&& !(permTableModel.getValueAt(row, 0) instanceof String);
+				&& !(permTable.getValueAt(row, col) instanceof String);
 
 		UnitRecord<?> record = null;
 		if(isGroup) {
@@ -320,7 +321,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 
 		} else {
 			boolean isGroupRecord = record.isPermissionGroupRecord();
-			historyTableHeader = isGroupRecord ? GROUP_COLUMNS : PERM_COLUMNS;
+			historyTableHeader = isGroupRecord ? HISTORY_GROUP_COLUMNS : HISTORY_PERM_COLUMNS;
 			historyTableModel.setColumnIdentifiers(historyTableHeader);
 
 			historyTable.getColumnModel().getColumn(1).setPreferredWidth(40);
@@ -396,37 +397,24 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 	private void expandOrCollapse(int row) {
 		if(row < 0 || !byGroup.isSelected()) return;
 
-		Object oldIcon = permTableModel.getValueAt(row, 0);
+		int col = permTable.getColumnModel().getColumnIndex("");
+		Object oldIcon = permTable.getValueAt(row, col);
 		if(oldIcon instanceof String) return;
 
 		if(oldIcon.equals(UIManager.get("Tree.expandedIcon"))) {
-			permTable.setValueAt(UIManager.get("Tree.collapsedIcon"), row++, 0);
+			permTable.setValueAt(UIManager.get("Tree.collapsedIcon"), row++, col);
 			while(row < permTable.getRowCount() &&
-					permTableModel.getValueAt(row, 0) instanceof String) {
+					permTable.getValueAt(row, col) instanceof String) {
 				permTableModel.removeRow(row);
 			}
 		} else {
-			permTable.setValueAt(UIManager.get("Tree.expandedIcon"), row, 0);
-			int col = permTable.getColumnModel().getColumnIndex("Name");
+			permTable.setValueAt(UIManager.get("Tree.expandedIcon"), row, col);
+			col = permTable.getColumnModel().getColumnIndex("Name");
 			if(col < 0) return;
-			String name = (String) permTableModel.getValueAt(row, col);
-
-			final CellSpan cellAtt = (CellSpan) permTableModel.getCellSpan();
-			Vector<Object> rowData = new Vector<>(5);
+			String name = (String) permTable.getValueAt(row, col);
 			for(PermissionInfo info: permManager.getGroupPermissions(name)) {
 				row += 1;
-				rowData = new Vector<>(5);
-		        for (Object o : new Object[] { UIManager.get("Tree.leafIcon"), info.name, info.protectionLevel }) {
-		        	rowData.addElement(o);
-		        }
-		        if(withLable.isSelected())	rowData.add(2, info.getLabel());
-		        rowData.add(0, "");
-				permTableModel.insertRow( row, rowData );
-				//cellAtt.combine(new int[] {row, row+1}, new int[] {0} );
-				//cellAtt.combine(new int[] {row+1}, new int[] {1,2} );
-				if(withLable.isSelected() && (info.getLabel() == null || info.getLabel().isEmpty())) {
-					cellAtt.combine(new int[] {row}, new int[] {2,3} );
-				}
+				permTableModel.insertRow( row, new Object[] { "", UIManager.get("Tree.leafIcon"), info.name, info.getLabel(), info.protectionLevel } );
 			}
 		}
 	}
@@ -484,53 +472,59 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 		sdkVersions.addItemListener(this);
 	}
 
-	private void refreshPermTableStructure() {
-		permTableModel.setRowCount(0);
-		int colIdx = 0;
-		Vector<Object> columns = new Vector<Object>(5);
-        for (Object o : new String[] {"Icon", "Name", "Protection Level"}) {
-        	columns.addElement(o);
-        }
-        boolean isWithLabel = withLable.isSelected();
-        if(isWithLabel) {
-			columns.add(2, "Label");
-        }
+	private void resizedColumnSize() {
+		TableColumnModel colModel = permTable.getColumnModel();
+
+		// new String[] {"", "Icon", "Name", "Label", "Protection Level"}
+		// column 0 - "" : TreeIcon
+		int colIdx = colModel.getColumnIndex("");
+		TableColumn column = colModel.getColumn(colIdx);
+		column.setResizable(false);
+		column.setMinWidth(0);
 		if(byGroup.isSelected()) {
-			columns.add(0, "");
-			permTableModel.setColumnIdentifiers(columns);
-			permTableModel.fireTableStructureChanged();
-			permTable.getColumnModel().getColumn(colIdx).setPreferredWidth(16);
-			permTable.getColumnModel().getColumn(colIdx++).setResizable(false);
-			permTable.getColumnModel().getColumn(colIdx).setPreferredWidth(36);
-			permTable.getColumnModel().getColumn(colIdx++).setResizable(false);
-			permTable.getColumnModel().getColumn(colIdx++).setPreferredWidth(250);
-			permTable.getColumnModel().getColumn(colIdx++).setPreferredWidth(250);
-			//permTable.getColumnModel().getColumn(4).setPreferredWidth(250);
+			column.setPreferredWidth(16);
+			column.setWidth(16);
 		} else {
-			permTableModel.setColumnIdentifiers(columns);
-			permTableModel.fireTableStructureChanged();
-			permTable.getColumnModel().getColumn(colIdx).setPreferredWidth(36);
-			permTable.getColumnModel().getColumn(colIdx++).setResizable(false);
-			permTable.getColumnModel().getColumn(colIdx++).setPreferredWidth(250);
-			permTable.getColumnModel().getColumn(colIdx++).setPreferredWidth(250);
-			//permTable.getColumnModel().getColumn(3).setPreferredWidth(250);
+			column.setPreferredWidth(0);
+			column.setWidth(0);
 		}
-		if(isWithLabel) {
-			permTable.getColumnModel().getColumn(colIdx++).setPreferredWidth(250);
+		
+		// column 1 - Icon : Group Icon
+		colIdx = colModel.getColumnIndex("Icon");
+		column = colModel.getColumn(colIdx);
+		column.setPreferredWidth(36);
+		column.setResizable(false);
+
+		// column 2 - Name
+		colIdx = colModel.getColumnIndex("Name");
+		column = colModel.getColumn(colIdx);
+		column.setPreferredWidth(250);
+
+		// column 3 - Label
+		colIdx = colModel.getColumnIndex("Label");
+		column = colModel.getColumn(colIdx);
+		if(withLable.isSelected()) {
+			column.setResizable(true);
+			column.setMinWidth(15);
+			column.setPreferredWidth(250);
+		} else {
+			column.setResizable(false);
+			column.setMinWidth(0);
+			column.setPreferredWidth(0);
+			column.setWidth(0);
 		}
+
+		// column 4 - Protection Level
+		colIdx = colModel.getColumnIndex("Protection Level");
+		column = colModel.getColumn(colIdx);
+		column.setPreferredWidth(250);
 	}
 
 	private void refreshPermTable() {
-
 		permTableModel.setRowCount(0);
-		final CellSpan cellAtt = (CellSpan) permTableModel.getCellSpan();
 
-		//int sdk = manager.getSdkVersion();
 		Vector<Object> rowData = null;
 		for(PermissionGroupInfoExt g: permManager.getPermissionGroups()) {
-			//boolean isDanger = sdk >= 23 && g.hasDangerous();
-			int row = permTableModel.getRowCount();
-
 			ImageIcon icon = null;
 			try {
 				icon = new ImageIcon(new URL(g.getIconPath()));
@@ -538,35 +532,18 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 
 			if(byGroup.isSelected()) {
 				rowData = new Vector<>(5);
-		        for (Object o : new Object[] { UIManager.get("Tree.expandedIcon"), icon, g.name, PermissionInfo.protectionToString(g.protectionFlags) }) {
+		        for (Object o : new Object[] { UIManager.get("Tree.expandedIcon"), icon, g.name, g.getLabel(), PermissionInfo.protectionToString(g.protectionFlags) }) {
 		        	rowData.addElement(o);
 		        }
-		        if(withLable.isSelected()) {
-		        	rowData.add(3, g.getLabel());
-		        }
 		        permTableModel.addRow( rowData );
-				//cellAtt.combine(new int[] {row, row+1}, new int[] {0} );
-				//cellAtt.combine(new int[] {row+1}, new int[] {1,2} );
 			}
 
 			for(PermissionInfo info: g.permissions) {
-				row += 1;
 				rowData = new Vector<>(5);
-		        for (Object o : new Object[] {byGroup.isSelected() ? UIManager.get("Tree.leafIcon") : icon, info.name, info.protectionLevel }) {
+		        for (Object o : new Object[] {"", byGroup.isSelected() ? UIManager.get("Tree.leafIcon") : icon, info.name, info.getLabel(), info.protectionLevel }) {
 		        	rowData.addElement(o);
 		        }
-		        if(withLable.isSelected())	rowData.add(2, info.getLabel());
-		        if(byGroup.isSelected())	rowData.add(0, "");
 				permTableModel.addRow( rowData );
-				//cellAtt.combine(new int[] {row, row+1}, new int[] {0} );
-				//cellAtt.combine(new int[] {row+1}, new int[] {1,2} );
-				if(withLable.isSelected() && (info.getLabel() == null || info.getLabel().isEmpty())) {
-					if(!byGroup.isSelected()) {
-						cellAtt.combine(new int[] {row}, new int[] {1,2} );
-					} else {
-						cellAtt.combine(new int[] {row}, new int[] {2,3} );
-					}
-				}
 			}
 		}
 	}
