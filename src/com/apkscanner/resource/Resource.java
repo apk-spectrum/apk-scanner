@@ -551,6 +551,9 @@ public enum Resource
 	//https://www.iconfinder.com/icons/686665/arrows_enlarge_expand_extend_increase_outward_resize_spread_icon
 	IMG_EASY_WINDOW_SPREAD			(Type.IMAGE, "easy_spread.png"),
 	
+	IMG_PREVIEW_EASY			(Type.IMAGE, "preview_easymode.png"),
+	IMG_PREVIEW_ORIGINAL			(Type.IMAGE, "preview_original.png"),
+	
 	IMG_PERM_MARKER_SETTING		(Type.IMAGE, "perm_marker_setting.png"),
 	IMG_PERM_MARKER_CLOSE		(Type.IMAGE, "perm_marker_close.png"),
 

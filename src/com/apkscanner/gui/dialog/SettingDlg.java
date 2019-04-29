@@ -1,6 +1,7 @@
 package com.apkscanner.gui.dialog;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -51,6 +52,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileSystemView;
 
@@ -509,7 +512,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		}
 		
 		if(propEasyGui != jrbEasymode.isSelected()) {			
-			Resource.PROP_USE_EASY_UI.setData(jrbEasymode.isSelected());
+			Resource.PROP_USE_EASY_UI.setData(jrbEasymode.isSelected());			
 		}
 		
 		if(propAdbShared != jrbUseCurrentRunningVer.isSelected()) {
@@ -572,6 +575,9 @@ public class SettingDlg extends JDialog implements ActionListener
 		String pluginSetting = JSONValue.toJSONString(PlugInManager.getChangedProperties());
 		if(propPluginSettings != null && !propPluginSettings.equals(pluginSetting)) {
 			PlugInManager.saveProperty();
+			needUpdateUI = true;
+		}
+		if(propEasyGui != jrbEasymode.isSelected()) {
 			needUpdateUI = true;
 		}
 	}
@@ -718,28 +724,51 @@ public class SettingDlg extends JDialog implements ActionListener
 		}
 		
 		panel.add(new JLabel("Easy mode"), rowHeadConst);
-
 		
-		JPanel selectEasyPanel = new JPanel(new GridLayout(0,1));
+		JPanel selectEasyPanel = new JPanel(new GridLayout(1,2));
+		JPanel EasyPanel = new JPanel(new BorderLayout());
 		
 		JRadioButton jrbStandard = new JRadioButton("Standard mode");
 		jrbEasymode = new JRadioButton("Easy mode");
 		
+		JLabel preview = new JLabel("", JLabel.CENTER);
+		preview.setBorder( new EtchedBorder(EtchedBorder.LOWERED));
+		//preview.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+		ActionListener radioAction = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(jrbEasymode.isSelected()) {
+					preview.setIcon(Resource.IMG_PREVIEW_EASY.getImageIcon(250,150));
+				} else {
+					preview.setIcon(Resource.IMG_PREVIEW_ORIGINAL.getImageIcon(250,150));
+				}
+			}
+		};
+		jrbEasymode.addActionListener(radioAction);
+		jrbStandard.addActionListener(radioAction);
+		
 		
 		if(propEasyGui) {
 			jrbEasymode.setSelected(true);
+			preview.setIcon(Resource.IMG_PREVIEW_EASY.getImageIcon(250,150));
 		} else {
 			jrbStandard.setSelected(true);
+			preview.setIcon(Resource.IMG_PREVIEW_ORIGINAL.getImageIcon(250,150));
 		}
 		
 		ButtonGroup adbPolicyGroup = new ButtonGroup();
 		adbPolicyGroup.add(jrbStandard);
 		adbPolicyGroup.add(jrbEasymode);
 		
-		selectEasyPanel.add(jrbStandard);
-		selectEasyPanel.add(jrbEasymode);
+		GridBagConstraints c = new GridBagConstraints();
 		
-		panel.add(selectEasyPanel, contentConst);
+		selectEasyPanel.add(jrbStandard,c);
+		selectEasyPanel.add(jrbEasymode,c);
+		
+		EasyPanel.add(selectEasyPanel, BorderLayout.SOUTH);
+		EasyPanel.add(preview, BorderLayout.CENTER);
+		
+		panel.add(EasyPanel, contentConst);
 
 		rowHeadConst.gridy++;
 		contentConst.gridy++;
