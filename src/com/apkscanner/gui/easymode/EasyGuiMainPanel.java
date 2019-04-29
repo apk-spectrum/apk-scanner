@@ -274,7 +274,7 @@ public class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, Comp
 		// bordPanel.setWindowTitle(apklightscanner.getApkInfo());
 		EasyMainUI.UIstarttime = System.currentTimeMillis();
 		setframetext(
-				Resource.STR_APP_NAME.getString() + " - " + new File(apklightscanner.getApkInfo().filePath).getName());
+				new File(apklightscanner.getApkInfo().filePath).getName() + " - " + Resource.STR_APP_NAME.getString());
 		Log.d(EasycontentsPanel +"");
 		EasycontentsPanel.setContents(apklightscanner.getApkInfo());
 		permissionPanel.setPermission(apklightscanner.getApkInfo());

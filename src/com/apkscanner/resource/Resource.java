@@ -586,7 +586,8 @@ public enum Resource
 
 	SSL_TRUSTSTORE_PATH			(Type.SECURITY, "trustStore.jks"),
 
-	PROP_USE_EASY_UI			(Type.PROP, "use_easy_ui", true),
+	PROP_USE_EASY_UI			(Type.PROP, "use_easy_ui", false),
+	PROP_SKIP_STARTUP_EASY_UI_DLG			(Type.PROP, "skip_startup_easy_ui_dlg", false),
 	PROP_LANGUAGE				(Type.PROP, "language", SystemUtil.getUserLanguage()),
 	PROP_EDITOR					(Type.PROP, "editor", null /* see getDefValue() */),
 	PROP_RECENT_EDITOR			(Type.PROP, "recent_editor", ""),

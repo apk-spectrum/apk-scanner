@@ -140,7 +140,6 @@ public class ToolEntryManager {
 	public static void refreshToolManager() {
 		ShowEntry.clear();
 		String[] toollist = Resource.PROP_EASY_GUI_TOOLBAR.getData().toString().split(",");
-		Log.d(toollist[0].length() + "");
 		
 		for (String str : toollist) {
 			if(str.length() !=0)

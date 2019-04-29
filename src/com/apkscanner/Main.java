@@ -291,12 +291,27 @@ public class Main implements Runnable
 		Log.d("Easy : " + isEasyGui );
 		mainFrame = new JFrame();
 		if(	isEasyGui) {
-			new EasyMainUI(apkScanner, mainFrame); 
+			new EasyMainUI(apkScanner, mainFrame);
 		} else {
 			new MainUI(apkScanner, mainFrame);
 		}
 
 		mainFrame.setVisible(true);
+		
+		if(!(boolean) Resource.PROP_SKIP_STARTUP_EASY_UI_DLG.getData()) {
+			if(EasyMainUI.showDlgStartupEasyMode(mainFrame)) {
+				restart();
+			}
+		}		
+	}
+	
+	private void restart() {
+		if(apkScanner.getApkInfo() != null) {
+			Launcher.run(apkScanner.getApkInfo().filePath);
+		} else {
+			Launcher.run();
+		}
+		mainFrame.dispose();
 	}
 	
 	static public void changeGui() {
