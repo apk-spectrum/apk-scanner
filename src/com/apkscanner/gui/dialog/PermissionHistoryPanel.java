@@ -73,7 +73,6 @@ import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.Log;
 
 public class PermissionHistoryPanel extends JPanel implements ItemListener, ListSelectionListener, ActionListener {
 	private static final long serialVersionUID = -3567803690045423840L;
@@ -164,6 +163,20 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}
+
+			@Override
+			public Object getValueAt(int row, int column) {
+				if(byGroup.isSelected() && column == 0) {
+					Object data = super.getValueAt(row, 5);
+					if(data instanceof PermissionGroupInfoExt) {
+						if(filterCollapseGroups.contains(super.getValueAt(row, 2).toString())) {
+							return UIManager.get("Tree.collapsedIcon");
+						}
+						return UIManager.get("Tree.expandedIcon");
+					}
+				}
+				return super.getValueAt(row, column);
+			}
 		};
 		permTableModel.setColumnIdentifiers(new String[] {"", "Icon", "Name", "Label", "Protection Level", "Data"});
 
@@ -226,11 +239,21 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 			public void sorterChanged(RowSorterEvent e) {
 				if(e.getType() == Type.SORT_ORDER_CHANGED && byGroup.isSelected()) {
 					List<SortKey> keys = new ArrayList<SortKey>(sorter.getSortKeys());
-					if(!keys.isEmpty()) {
-						if(keys.get(0).getColumn() == 0) {
-							Log.e("filter group");
+					if(keys.isEmpty()) return;
+					SortKey key = keys.get(0);
+					if(key.getColumn() != 0) return;
+					switch(key.getSortOrder()) {
+					case UNSORTED: return;
+					case ASCENDING:
+						for(PermissionGroupInfoExt g: permManager.getPermissionGroups()) {
+							filterCollapseGroups.add(g.name);
 						}
+						break;
+					case DESCENDING:
+						filterCollapseGroups.clear();
+						break;
 					}
+					permTableModel.fireTableDataChanged();
 				}
 			}
 		});
@@ -468,10 +491,8 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 		col = permTable.getColumnModel().getColumnIndex("");
 
 		if(filterCollapseGroups.contains(name)) {
-			permTable.setValueAt(UIManager.get("Tree.expandedIcon"), row, col);
 			filterCollapseGroups.remove(name);
 		} else {
-			permTable.setValueAt(UIManager.get("Tree.collapsedIcon"), row, col);
 			filterCollapseGroups.add(name);
 		}
 		permTableModel.fireTableDataChanged();
@@ -598,7 +619,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 
 			if(byGroup.isSelected()) {
 				rowData = new Vector<>(5);
-				rowData.addElement(UIManager.get("Tree.expandedIcon"));
+				rowData.addElement("");
 		        for (Object o : new Object[] { icon, g.name, g.getLabel(), PermissionInfo.protectionToString(g.protectionFlags) }) {
 		        	rowData.addElement(new SortedData(o, g.priority, true));
 		        }
