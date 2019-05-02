@@ -71,6 +71,7 @@ import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.gui.component.CloseableTabbedPaneLayerUI;
 import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.gui.theme.TabbedPaneUIManager;
+import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
 
@@ -180,11 +181,17 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 		};
 		permTableModel.setColumnIdentifiers(new String[] {"", "Icon", "Name", "Label", "Protection Level", "Data"});
 
-		permTable = new JTable(permTableModel);
+		permTable = new JTable(permTableModel) {
+			private static final long serialVersionUID = -5002494238794399060L;
+			@Override
+			public int getRowHeight() {
+				return getColumnModel().getColumn(1).getWidth();
+			}
+		};
 
 		permTable.setCellSelectionEnabled(false);
 		permTable.setRowSelectionAllowed(true);
-		permTable.setRowHeight(36);
+		permTable.setRowHeight(18);
 
 		permTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		permTable.getSelectionModel().addListSelectionListener(this);
@@ -572,7 +579,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 		colIdx = colModel.getColumnIndex("Icon");
 		column = colModel.getColumn(colIdx);
 		column.setPreferredWidth(36);
-		column.setResizable(false);
+		//column.setResizable(false);
 
 		// column 2 - Name
 		colIdx = colModel.getColumnIndex("Name");
@@ -713,6 +720,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 		Object data;
 		int weight;
 		boolean isParent;
+		Icon cacheImage;
 
 		private SortedData(Object data, int weight, boolean isParent) {
 			this.data = data != null ? data : "";
@@ -722,17 +730,38 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, List
 
 		@Override
 		public void paintIcon(Component c, Graphics g, int x, int y) {
-			if(data instanceof Icon) ((Icon)data).paintIcon(c, g, x, y);
+			if(!(data instanceof Icon)) return;
+			if(data.getClass().equals(ImageIcon.class)) {
+				int size = permTable.getRowHeight();
+				if(cacheImage == null || cacheImage.getIconHeight() != size) {
+					if(((Icon)data).getIconHeight() == permTable.getRowHeight()) {
+						cacheImage = (Icon)data;
+					} else {
+						cacheImage = ImageScaler.getScaledImageIcon((ImageIcon) data, size, size, false);
+					}
+				}
+				cacheImage.paintIcon(c, g, x, y);
+			} else {
+				((Icon)data).paintIcon(c, g, x, y);
+			}
 		}
 
 		@Override
 		public int getIconWidth() {
-			return (data instanceof Icon) ? ((Icon)data).getIconWidth() : -1;
+			if(!(data instanceof Icon)) return -1;
+			if(data.getClass().equals(ImageIcon.class)) {
+				return permTable.getRowHeight();
+			}
+			return ((Icon)data).getIconWidth();
 		}
 
 		@Override
 		public int getIconHeight() {
-			return (data instanceof Icon) ? ((Icon)data).getIconHeight() : -1;
+			if(!(data instanceof Icon)) return -1;
+			if(data.getClass().equals(ImageIcon.class)) {
+				return permTable.getRowHeight();
+			}
+			return ((Icon)data).getIconHeight();
 		}
 
 		@Override
