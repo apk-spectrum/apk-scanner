@@ -6,6 +6,7 @@ import com.apkscanner.Launcher;
 import com.apkscanner.core.scanner.ApkScanner.StatusListener;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
+import com.apkscanner.gui.EasyMainUI;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AaptXmlTreeNode;
@@ -26,6 +27,8 @@ public class AaptLightScanner extends AaptScanner {
 	public void openApk(String apkFilePath, String frameworkRes) {
 		Log.i("---aaptLightScanner---");
 		Log.i("openApk() " + apkFilePath + ", res " + frameworkRes);
+		EasyMainUI.corestarttime = System.currentTimeMillis();
+		
 		if(apkFilePath == null) {
 			Log.e("APK file path is null");
 			errorOccurred(ERR_UNAVAIlABLE_PARAM);

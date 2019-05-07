@@ -4,9 +4,6 @@ import java.awt.EventQueue;
 import java.io.File;
 import java.nio.charset.Charset;
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -15,11 +12,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import com.android.ddmlib.AndroidDebugBridge;
-import com.apkscanner.core.scanner.AaptLightScanner;
 import com.apkscanner.core.scanner.ApkScanner;
-import com.apkscanner.gui.EasyMainUI;
-import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbServerMonitor;
@@ -31,7 +24,7 @@ public class Main implements Runnable
 {
 	private static boolean isEasyGui;
 	private static ApkScanner apkScanner;
-	static JFrame mainFrame;
+	static UIController uiController;
 	private static final Options allOptions = new Options();
 	private static final Options normalOptions = new Options();
 	private static final Options targetApkOptions = new Options();
@@ -72,10 +65,6 @@ public class Main implements Runnable
 					cmdType = "install";
 				} else if("d".equals(args[0]) || "delete-temp-path".equals(args[0])) {
 					cmdType = "delete-temp-path";
-				} else if("o".equals(args[0]) || "Original-Scanner".equals(args[0])) {
-					isEasyGui = false;
-				} else if("e".equals(args[0]) || "Easy-Scanner".equals(args[0])) {
-					isEasyGui = true;
 				}
 			}
 
@@ -87,10 +76,6 @@ public class Main implements Runnable
 			if(cmdType == null && !cmd.hasOption("v") && !cmd.hasOption("version")
 					&& !cmd.hasOption("h") && !cmd.hasOption("help")) {
 				cmdType = "file";
-				if(cmd.getArgList().size() > 1) {
-					cmd.getArgList().remove("o");
-					cmd.getArgList().remove("e");
-				}
 			}
 
 			if("package".equals(cmdType)) {
@@ -254,12 +239,6 @@ public class Main implements Runnable
 		opt = new Option( "i", "install", true, "install APK");
 		allOptions.addOption(opt);
 
-		opt = new Option( "o", "Original-Scanner", true, "Excute original scanner");
-		allOptions.addOption(opt);
-
-		opt = new Option( "e", "Easy-Scanner", true, "Excute Easy scanner");
-		allOptions.addOption(opt);
-
 		opt = new Option( "d", "device", true, "The serial number of device");
 		allOptions.addOption(opt);
 		targetPackageOptions.addOption(opt);
@@ -288,47 +267,7 @@ public class Main implements Runnable
 
 	private void createAndShowGUI()
 	{
-		Log.d("Easy : " + isEasyGui );
-		mainFrame = new JFrame();
-		if(	isEasyGui) {
-			new EasyMainUI(apkScanner, mainFrame);
-		} else {
-			new MainUI(apkScanner, mainFrame);
-		}
-
-		mainFrame.setVisible(true);
-		
-		if(!(boolean) Resource.PROP_SKIP_STARTUP_EASY_UI_DLG.getData()) {
-			if(EasyMainUI.showDlgStartupEasyMode(mainFrame)) {
-				restart();
-			}
-		}		
-	}
-	
-	private void restart() {
-		if(apkScanner.getApkInfo() != null) {
-			Launcher.run(apkScanner.getApkInfo().filePath);
-		} else {
-			Launcher.run();
-		}
-		mainFrame.dispose();
-	}
-	
-	static public void changeGui() {
-		mainFrame.getContentPane().removeAll();
-		
-		MainUI mainui = new MainUI(((AaptLightScanner)apkScanner).getAaptScanner(), mainFrame);
-		mainFrame.setVisible(true);
-		//((AaptLightScanner)apkScanner).statechagedAll();
-//		try {
-//	        SwingUtilities.invokeAndWait(new Runnable() {
-//	            public void run() {
-//	        		//((AaptLightScanner)apkScanner).statechagedAll();
-//	            }
-//	        });
-//	    } catch (Exception e) {
-//	        e.printStackTrace();
-//	    }		
+		uiController = new UIController(apkScanner);
 	}
 	
 	@Override

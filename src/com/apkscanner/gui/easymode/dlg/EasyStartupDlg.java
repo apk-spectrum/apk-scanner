@@ -38,10 +38,9 @@ public class EasyStartupDlg
 		body.append("<div id=\"about\">");
 		body.append("  <H1>" + "Easy GUI" + "</H1>");
 		body.append("  <H3>Feature</H3>");
-		body.append("   - Simple, Light GUI<br/>");
-		body.append("   - Fast run<br/>");
-		body.append("   - Custom Tool<br/>");
-		
+		body.append("   - Simple, Light, Fast<br/>");
+		body.append("   - Easy switching to origin<br/>");
+		body.append("   - Custom Toolbar<br/>");		
 		body.append("  <hr/>");
 		body.append("  Would you like to use Easy mode? (Can be changed in settings)");
 		body.append("</div>");
@@ -74,7 +73,7 @@ public class EasyStartupDlg
 		JCheckBox check = new JCheckBox("Don't show this again");
 		Object[] options = {check, "Yes", "No"};
 
-		int x = JOptionPane.showOptionDialog(component, aboutPanel, "Update", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		int x = JOptionPane.showOptionDialog(component, aboutPanel, "New Update", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				
 		if(check.isSelected()) {
 			Resource.PROP_SKIP_STARTUP_EASY_UI_DLG.setData(true);
@@ -84,7 +83,7 @@ public class EasyStartupDlg
 		
 		if(x != -1) {
 			boolean setgui;
-			if(options[x].equals("Yes")) {
+			if(x == 1) {
 				setgui = true;
 			} else {				
 				setgui = false;

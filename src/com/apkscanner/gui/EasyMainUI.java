@@ -10,6 +10,7 @@ import java.util.Enumeration;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
@@ -73,6 +74,14 @@ public class EasyMainUI implements WindowListener, IDeviceChangeListener {
 		setUIFont(new javax.swing.plaf.FontUIResource(propFont, propFontStyle, propFontSize));
 		//20ms
 		//Log.d("init setUIFont   : " + (System.currentTimeMillis() - aaa) / 1000.0);
+		
+		Log.i("initialize() setLookAndFeel");
+		try {
+			UIManager.setLookAndFeel((String)Resource.PROP_CURRENT_THEME.getData());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e1) {
+			e1.printStackTrace();
+		}
 		
 		mainpanel = new EasyGuiMainPanel(mainframe, apkScanner);
 

@@ -18,7 +18,9 @@ import com.android.ddmlib.IDevice;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.Launcher;
 import com.apkscanner.Main;
+import com.apkscanner.UIController;
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
+import com.apkscanner.core.scanner.AaptLightScanner;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ComponentInfo;
@@ -168,7 +170,9 @@ public class ToolEntryManager {
 			Launcher.run(apkFilePath);
 		} else if (cmd.equals(Resource.STR_APP_NAME.getString())) {
 			//Launcher.run(Apkscanner.getApkFilePath(), false);
-			Main.changeGui();
+			AaptLightScanner apkScanner = (AaptLightScanner)Apkscanner.getApkScanner();
+			UIController.changeGui(UIController.APKSCANNER_GUI_APKSCANNER, apkScanner.getAaptScanner());
+			
 		} else if (cmd.equals(Resource.STR_BTN_OPEN_PACKAGE.getString())) {
 			PackageTreeDlg Dlg = new PackageTreeDlg(mainframe);
 			if (Dlg.showTreeDlg() != PackageTreeDlg.APPROVE_OPTION) {
