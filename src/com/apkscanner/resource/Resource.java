@@ -552,6 +552,11 @@ public enum Resource
 	IMG_EASY_WINDOW_SPREAD			(Type.IMAGE, "easy_spread.png"),
 	
 	IMG_PREVIEW_EASY			(Type.IMAGE, "preview_easymode.png"),
+	IMG_PREVIEW_EASY1			(Type.IMAGE, "preview_easymode1.png"),
+	IMG_PREVIEW_EASY2			(Type.IMAGE, "preview_easymode2.png"),
+	IMG_PREVIEW_EASY3			(Type.IMAGE, "preview_easymode3.png"),
+	IMG_PREVIEW_EASY4			(Type.IMAGE, "preview_easymode4.png"),
+	
 	IMG_PREVIEW_ORIGINAL			(Type.IMAGE, "preview_original.png"),
 	
 	IMG_PERM_MARKER_SETTING		(Type.IMAGE, "perm_marker_setting.png"),

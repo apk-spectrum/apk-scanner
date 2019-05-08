@@ -2,30 +2,20 @@ package com.apkscanner.gui.easymode.dlg;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-import com.apkscanner.Launcher;
-import com.apkscanner.gui.EasyMainUI;
-import com.apkscanner.gui.messagebox.MessageBoxPane;
-import com.apkscanner.gui.theme.TabbedPaneUIManager;
-import com.apkscanner.gui.util.ImagePanel;
+import com.apkscanner.gui.easymode.test.Board;
+import com.apkscanner.gui.easymode.util.ImageSliderPanel;
 import com.apkscanner.gui.util.JHtmlEditorPane;
-import com.apkscanner.plugin.IUpdateChecker;
-import com.apkscanner.plugin.PlugInConfig;
-import com.apkscanner.plugin.PlugInManager;
-import com.apkscanner.plugin.gui.UpdateNotificationPanel;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.Log;
 
 public class EasyStartupDlg
 {
@@ -61,10 +51,15 @@ public class EasyStartupDlg
 
 		// html content
 		JHtmlEditorPane hep = new JHtmlEditorPane("", style.toString(), body.toString());
-		ImagePanel imagePanel = new ImagePanel(Resource.IMG_PREVIEW_EASY.getImageIcon());
+		ImageSliderPanel imagePanel = new ImageSliderPanel(Resource.IMG_PREVIEW_EASY.getImageIcon());
 		imagePanel.setAlignmentY(0.0f);
-		imagePanel.setBorder(new LineBorder(Color.black));
-
+		//imagePanel.setBorder(new LineBorder(Color.black));
+		imagePanel.add(Resource.IMG_PREVIEW_EASY1.getImageIcon());
+		imagePanel.add(Resource.IMG_PREVIEW_EASY2.getImageIcon());
+		imagePanel.add(Resource.IMG_PREVIEW_EASY3.getImageIcon());
+		//imagePanel.add(Resource.IMG_PREVIEW_EASY4.getImageIcon());
+		
+		
 		JPanel aboutPanel = new JPanel();
 		aboutPanel.setLayout(new BoxLayout(aboutPanel, BoxLayout.Y_AXIS));
 		aboutPanel.add(imagePanel);
@@ -73,6 +68,7 @@ public class EasyStartupDlg
 		JCheckBox check = new JCheckBox("Don't show this again");
 		Object[] options = {check, "Yes", "No"};
 
+		imagePanel.start();
 		int x = JOptionPane.showOptionDialog(component, aboutPanel, "New Update", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				
 		if(check.isSelected()) {
@@ -100,5 +96,15 @@ public class EasyStartupDlg
 		//MessageBoxPane.showMessageDialog(component, aboutPanel, "Update", MessageBoxPane.CLOSED_OPTION, null);
 	}
 
-	
+	public static void main(final String[] args) {
+		EasyStartupDlg dlg = new EasyStartupDlg();
+		JFrame frame = new JFrame();
+		
+		
+		//Board boa = new Board();
+		//frame.add(boa);
+		//frame.setVisible(true);
+		dlg.showAboutDialog(frame);
+		System.exit(0);
+	}
 }
