@@ -3,6 +3,7 @@ package com.apkscanner.core.scanner;
 import java.io.File;
 
 import com.apkscanner.Launcher;
+import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.core.scanner.ApkScanner.StatusListener;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
@@ -103,6 +104,7 @@ public class AaptLightScanner extends AaptScanner {
 		apkInfo.manifest.application.icons = changeURLpath(apkInfo.manifest.application.icons, manifestReader);
 		///////////////////////////////////////////////////////////
 		
+
 		
 		Log.i("read permissions start");
 		manifestReader.readPermissions();
@@ -116,7 +118,9 @@ public class AaptLightScanner extends AaptScanner {
 		stateChanged(Status.CERT_COMPLETED);
 		Log.i("read signatures completed...");
 		
-
+		Log.i("I: read libraries list...");
+		apkInfo.libraries = ZipFileUtil.findFiles(apkInfo.filePath, ".so", null);
+		stateChanged(Status.LIB_COMPLETED);
 		
 		// Activity/Service/Receiver/provider intent-filter
 		Log.i("I: read components...");
@@ -129,10 +133,6 @@ public class AaptLightScanner extends AaptScanner {
 	}
 	
 	public AaptScanner getAaptScanner() {
-		Log.i("I: read libraries list...");
-		apkInfo.libraries = ZipFileUtil.findFiles(apkInfo.filePath, ".so", null);
-		//stateChanged(Status.LIB_COMPLETED);
-
 		Log.i("I: read Resource list...");
 		apkInfo.resources = ZipFileUtil.findFiles(apkInfo.filePath, null, null);
 		//stateChanged(Status.RESOURCE_COMPLETED);

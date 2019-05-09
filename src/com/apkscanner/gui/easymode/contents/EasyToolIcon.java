@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -176,7 +177,7 @@ public class EasyToolIcon extends JLabel implements MouseListener{
 		graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.9f));
 		graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		graphics2D.drawImage(bufferimage, 0, 0, width, height, this);
-	
+		Toolkit.getDefaultToolkit().sync();
 	}
 
 	public void setEasyToolListner(EasyToolListner easyToolListner) {

@@ -30,14 +30,19 @@ public class ImageSliderPanel extends JPanel implements ActionListener{
 	private ArrayList<EasyRoundButton> arrayroundbutton = new ArrayList<EasyRoundButton>();
 	private AnimationTask task;
 	private NextAnimationTask NextAnimationTask;
-	private int currentviewportindex = 0;
+	private int currentviewportindex = 0; 
 	private int nextindex;
 	private int imgcount = 0;
 	private int SEEK_HEIGHT = 30;
+	
+	private int NEXT_VAL = 25;
+	private int NEXT_DEVIDE = 10;
+	
 	private JPanel seekpanel;
 	Point currentpoint;
 	BufferedImage sumImg;
-		
+	
+	
 	class AnimationTask extends TimerTask {
 		int Animatevalue;
 
@@ -60,9 +65,9 @@ public class ImageSliderPanel extends JPanel implements ActionListener{
 			
 			//Log.d(currentviewportindex + ":" +nextindex + ":" + imgcount);
 			
-			NextAnimationTask = new NextAnimationTask(currentviewportindex, nextindex, 34);
+			NextAnimationTask = new NextAnimationTask(currentviewportindex, nextindex, NEXT_VAL);
 			Timer timer = new Timer();
-			timer.schedule(NextAnimationTask, 0, 10);
+			timer.schedule(NextAnimationTask, 0, NEXT_DEVIDE);
 		}
 	};
 
@@ -200,15 +205,15 @@ public class ImageSliderPanel extends JPanel implements ActionListener{
 			
 			Log.d("start: " + currentviewportindex + "  to : " + nextindex);
 			
-			NextAnimationTask = new NextAnimationTask(currentviewportindex, nextindex, 34);
+			NextAnimationTask = new NextAnimationTask(currentviewportindex, nextindex, NEXT_VAL);
 			Timer timerb = new Timer();
-			timerb.schedule(NextAnimationTask, 0, 10);
+			timerb.schedule(NextAnimationTask, 0, NEXT_DEVIDE);
 			
 		}
 	}
 	
 	public void clean() {
-		task.cancel();
-		NextAnimationTask.cancel();
+		if(task != null) task.cancel();
+		if(NextAnimationTask != null) NextAnimationTask.cancel();
 	}
 }

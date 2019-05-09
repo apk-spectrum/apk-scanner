@@ -787,7 +787,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 					ApkInstallWizard wizard = new ApkInstallWizard("C:\\Melon.apk");
 					ret = wizard.start();
 				} else {
-					ApkInstallWizard wizard = new ApkInstallWizard("/home/leejinhyeong/Desktop/reco.apk");
+					ApkInstallWizard wizard = new ApkInstallWizard("/home/leejinhyeong/Desktop/dhome_phone_test_signed_on_sha2_20190424_local.apk");
 					ret = wizard.start();
 				}
 				if(!ret) {
