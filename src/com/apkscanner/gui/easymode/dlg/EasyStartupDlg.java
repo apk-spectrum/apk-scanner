@@ -70,7 +70,9 @@ public class EasyStartupDlg
 
 		imagePanel.start();
 		int x = JOptionPane.showOptionDialog(component, aboutPanel, "New Update", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-				
+		
+		imagePanel.clean();	
+		
 		if(check.isSelected()) {
 			Resource.PROP_SKIP_STARTUP_EASY_UI_DLG.setData(true);
 		} else {
@@ -105,6 +107,7 @@ public class EasyStartupDlg
 		//frame.add(boa);
 		//frame.setVisible(true);
 		dlg.showAboutDialog(frame);
+		
 		System.exit(0);
 	}
 }
