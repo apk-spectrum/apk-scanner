@@ -71,7 +71,7 @@ public class EasyMainUI implements WindowListener, IDeviceChangeListener {
 		String propFont = (String) Resource.PROP_BASE_FONT.getData();
 		int propFontStyle = (int)Resource.PROP_BASE_FONT_STYLE.getInt();
 		int propFontSize = (int) Resource.PROP_BASE_FONT_SIZE.getInt();
-		setUIFont(new javax.swing.plaf.FontUIResource(propFont, propFontStyle, propFontSize));
+		//setUIFont(new javax.swing.plaf.FontUIResource(propFont, propFontStyle, propFontSize));
 		//20ms
 		//Log.d("init setUIFont   : " + (System.currentTimeMillis() - aaa) / 1000.0);
 		
@@ -82,27 +82,30 @@ public class EasyMainUI implements WindowListener, IDeviceChangeListener {
 				| UnsupportedLookAndFeelException e1) {
 			e1.printStackTrace();
 		}
-		
+		Log.i("new EasyGuiMainPanel");
 		mainpanel = new EasyGuiMainPanel(mainframe, apkScanner);
 
 		if (isdecoframe) {
 			setdecoframe();
 		} else {
-			mainframe.setResizable(false);
+			mainframe.setResizable(true);
 		}
+		Log.i("setIconImage");
 		mainframe.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
 		mainframe.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		mainframe.setMinimumSize(new Dimension(300,200));
 		
+		Log.i("add(mainpanel)");
 		mainframe.add(mainpanel); // 100 => 60
+		
 		mainframe.addWindowListener(this);
 
 		AdbServerMonitor.startServerAndCreateBridgeAsync();
 		AndroidDebugBridge.addDeviceChangeListener(this);
-
-		mainframe.setResizable(true);
+		
 		mainframe.pack();
-
+		
+		Log.i("setLocationRelativeTo");
 		Point position = (Point) Resource.PROP_EASY_GUI_WINDOW_POSITION.getData();
 
 		if (position == null) {
@@ -111,7 +114,8 @@ public class EasyMainUI implements WindowListener, IDeviceChangeListener {
 			mainframe.setLocation(position);
 		}
 
-		if (apkScanner.getlatestError() != 0 || apkScanner.getApkFilePath() == null) {
+		if ((apkScanner.getlatestError() != 0 || apkScanner.getApkFilePath() == null)
+				&& !((AaptLightScanner)apkScanner.getApkScanner()).notcallcomplete) {
 			Log.d("getlatestError is not 0 or args 0");
 			mainpanel.showEmptyinfo();
 			mainframe.setVisible(true);
@@ -164,6 +168,7 @@ public class EasyMainUI implements WindowListener, IDeviceChangeListener {
 		while (keys.hasMoreElements()) {
 			Object key = keys.nextElement();
 			Object value = UIManager.get(key);
+			Log.d(key.toString());
 			if (value instanceof javax.swing.plaf.FontUIResource) {
 				if(!"InternalFrame.titleFont".equals(key)) {
 					UIManager.put(key, f);

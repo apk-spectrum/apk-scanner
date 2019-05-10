@@ -12,6 +12,8 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URL;
 
@@ -25,6 +27,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import com.android.ddmlib.IDevice;
@@ -171,39 +174,63 @@ public class EasyContentsPanel extends JPanel{
 	
 	private void addClipBoardbutton(final EasyRoundLabel panel) {
 		//panel.setLayout(new BorderLayout());
-		EasyRoundButton btnshowpermissiondlg = new EasyRoundButton(Resource.IMG_EASY_WINDOW_CLIPBOARD_ICON.getImageIcon(15, 15));
-		
-		btnshowpermissiondlg.setPreferredSize(new Dimension(15, 15));
-		btnshowpermissiondlg.setBackground(panelbackgroundcolor);
-		btnshowpermissiondlg.addActionListener(new ActionListener() {			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				StringSelection stringSelection = new StringSelection(panel.getText());
-				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-				clipboard.setContents(stringSelection, null);
-				AndroidLikeToast.ShowToast("Copying to the clipboard!",panel);
-			}
+//		EasyRoundButton btnshowpermissiondlg = new EasyRoundButton(Resource.IMG_EASY_WINDOW_CLIPBOARD_ICON.getImageIcon(15, 15));
+//		
+//		btnshowpermissiondlg.setPreferredSize(new Dimension(15, 15));
+//		btnshowpermissiondlg.setBackground(panelbackgroundcolor);
+//		btnshowpermissiondlg.addActionListener(new ActionListener() {			
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				StringSelection stringSelection = new StringSelection(panel.getText());
+//				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+//				clipboard.setContents(stringSelection, null);
+//				AndroidLikeToast.ShowToast("Copying to the clipboard!",panel);
+//			}
+//		});
+//		panel.add(btnshowpermissiondlg, BorderLayout.EAST);
+		panel.setMouseListener(new MouseAdapter() {
+		    public void mouseReleased(MouseEvent e) {
+		        if (SwingUtilities.isRightMouseButton(e)) {
+					StringSelection stringSelection = new StringSelection(panel.getText());
+					Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					clipboard.setContents(stringSelection, null);
+					AndroidLikeToast.ShowToast("Copying to the clipboard!",panel);
+		        }
+		            
+		    }
 		});
-		panel.add(btnshowpermissiondlg, BorderLayout.EAST);
+		
 		//panel.add(btnshowpermissiondlg);
 	}
 	
 	private void addClipBoardbutton(final EasyRoundLabelCount panel) {
 		//panel.setLayout(new BorderLayout());
-		EasyRoundButton btnshowpermissiondlg = new EasyRoundButton(Resource.IMG_EASY_WINDOW_CLIPBOARD_ICON.getImageIcon(15, 15));
+//		EasyRoundButton btnshowpermissiondlg = new EasyRoundButton(Resource.IMG_EASY_WINDOW_CLIPBOARD_ICON.getImageIcon(15, 15));
+//		
+//		btnshowpermissiondlg.setPreferredSize(new Dimension(15, 15));
+//		btnshowpermissiondlg.setBackground(panelbackgroundcolor);
+//		btnshowpermissiondlg.addActionListener(new ActionListener() {			
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				StringSelection stringSelection = new StringSelection(panel.getText());
+//				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+//				clipboard.setContents(stringSelection, null);
+//				AndroidLikeToast.ShowToast("Copying to the clipboard!",panel);
+//			}
+//		});
+//		panel.add(btnshowpermissiondlg, BorderLayout.EAST);
 		
-		btnshowpermissiondlg.setPreferredSize(new Dimension(15, 15));
-		btnshowpermissiondlg.setBackground(panelbackgroundcolor);
-		btnshowpermissiondlg.addActionListener(new ActionListener() {			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				StringSelection stringSelection = new StringSelection(panel.getText());
-				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-				clipboard.setContents(stringSelection, null);
-				AndroidLikeToast.ShowToast("Copying to the clipboard!",panel);
-			}
+		panel.setMouseListener(new MouseAdapter() {
+		    public void mouseReleased(MouseEvent e) {
+		        if (SwingUtilities.isRightMouseButton(e)) {
+					StringSelection stringSelection = new StringSelection(panel.getText());
+					Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					clipboard.setContents(stringSelection, null);
+					AndroidLikeToast.ShowToast("Copying to the clipboard!",panel);
+		        }
+		            
+		    }
 		});
-		panel.add(btnshowpermissiondlg, BorderLayout.EAST);
 		//panel.add(btnshowpermissiondlg);
 	}
 	

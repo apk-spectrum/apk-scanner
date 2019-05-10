@@ -5,11 +5,14 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.easymode.util.FlatPanel;
+import com.apkscanner.gui.tabpanels.Resources;
+import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
 public class EasyPermissionPanel extends JPanel {
@@ -25,6 +28,8 @@ public class EasyPermissionPanel extends JPanel {
 
 	private static String CARD_LAYOUT_EMPTY = "card_empty";
 	private static String CARD_LAYOUT_APKINFO = "card_apkinfo";
+	private static String CARD_LAYOUT_LOADING = "card_loading";
+	
 
 	EasyPermissioniconPanel iconPanel;
 	
@@ -49,7 +54,8 @@ public class EasyPermissionPanel extends JPanel {
 		
 		contentsCardPanel = new JPanel(new CardLayout());
 		contentsCardPanel.add(iconPanel, CARD_LAYOUT_APKINFO);
-
+		contentsCardPanel.add(new JLabel(Resource.IMG_TREE_LOADING.getImageIcon()), CARD_LAYOUT_LOADING);
+		
 		// setEmptypanel();
 
 		add(contentsCardPanel);
@@ -69,6 +75,19 @@ public class EasyPermissionPanel extends JPanel {
 
 	}
 
+	public void setLoadingpanel() {
+		Log.d("permission toolpanel=) emptypanel ");
+
+//		if (toolpanel == null) {
+//			toolpanel = new EasyGuiToolPanel(HEIGHT, EasyContentsPanel.WIDTH);
+//			Log.d("permission new (toolpanel)");
+//			contentsCardPanel.add(toolpanel, CARD_LAYOUT_EMPTY);
+//		}
+
+		((CardLayout) contentsCardPanel.getLayout()).show(contentsCardPanel, CARD_LAYOUT_LOADING);
+
+	}
+	
 	public void setPermission(ApkInfo apkInfo) {
 		iconPanel.setPermission(apkInfo);
 		((CardLayout) contentsCardPanel.getLayout()).show(contentsCardPanel, CARD_LAYOUT_APKINFO);

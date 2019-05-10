@@ -20,6 +20,8 @@ public class AaptLightScanner extends AaptScanner {
 
 	AaptNativeScanner resourceScanner;
 	AaptManifestReader manifestReader;
+	public boolean notcallcomplete = false;
+	
 	public AaptLightScanner(StatusListener statusListener) {
 		super(statusListener);
 	}
@@ -127,8 +129,12 @@ public class AaptLightScanner extends AaptScanner {
 		manifestReader.readComponents();
 		stateChanged(Status.ACTIVITY_COMPLETED);
 
-
-		stateChanged(Status.ALL_COMPLETED);
+		if(getStatusListener() != null) {
+			stateChanged(Status.ALL_COMPLETED);
+		} else {
+			notcallcomplete = true;
+			stateChanged(Status.ALL_COMPLETED);
+		}
 
 	}
 	

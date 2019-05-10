@@ -25,7 +25,7 @@ public class EasyLightApkScanner {
 	private StatusListener listener;
 	private int latestError = 0;
 	private String apkPath = null;
-	private Boolean isreadygui = false;
+	private Boolean isreadygui = false;	
 	private Object lock = new Object();
 
 	public EasyLightApkScanner(String path1) {
@@ -39,7 +39,7 @@ public class EasyLightApkScanner {
 
 	public EasyLightApkScanner(ApkScanner aaptlightscanner) {
 		this.scanner = aaptlightscanner;
-		this.scanner.setStatusListener(new ApkLightScannerListener());
+		this.scanner.setStatusListener(new ApkLightScannerListener());				
 	}
 
 	public EasyLightApkScanner() {
@@ -87,7 +87,14 @@ public class EasyLightApkScanner {
 			this.isreadygui = true;
 			Log.d("setReadyListener notify");
 			lock.notify();
+			if(((AaptLightScanner)scanner).notcallcomplete) {
+				Log.d("call complete");
+				listener.onCompleted();
+			}
 		}
+	}
+	public int getApkScannerstatus() {
+		return scanner.getStatus();
 	}
 
 	class ApkLightScannerListener implements ApkScanner.StatusListener {
@@ -122,6 +129,7 @@ public class EasyLightApkScanner {
 
 		@Override
 		public void onCompleted() {
+			Log.d("completed");
 			synchronized (lock) {
 				try {
 					while (!isreadygui) {

@@ -56,6 +56,7 @@ import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.tabpanels.Resources;
 import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.util.Log;
 
 public class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentListener, DropTargetChooser.Listener  {
@@ -277,8 +278,14 @@ public class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, Comp
 				new File(apklightscanner.getApkInfo().filePath).getName() + " - " + Resource.STR_APP_NAME.getString());
 		Log.d(EasycontentsPanel +"");
 		EasycontentsPanel.setContents(apklightscanner.getApkInfo());
-		permissionPanel.setPermission(apklightscanner.getApkInfo());
-
+		
+		new Thread(new Runnable() {
+			public void run() {
+				permissionPanel.setLoadingpanel();
+				permissionPanel.setPermission(apklightscanner.getApkInfo());
+			}
+		}).start();
+		
 		DateFormat simple = new SimpleDateFormat("HH:mm:ss:SSS"); 
 	    Date result = new Date(EasyMainUI.UIstarttime);
 		
@@ -287,6 +294,7 @@ public class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, Comp
 
 	public void showEmptyinfo() {
 		// setframetext(Resource.STR_APP_NAME.getString());
+		Log.d("showEmptyinfo");
 		EasycontentsPanel.setEmptypanel();
 		//permissionPanel.setEmptypanel();
 	}
@@ -368,7 +376,7 @@ public class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, Comp
 				LogDlg.showLogDialog(mainframe);				
 				break;
 			case KeyEvent.VK_F11:
-				apklightscanner.setReadyListener();		
+				//apklightscanner.setReadyListener();		
 				break;	
 				
 			default:

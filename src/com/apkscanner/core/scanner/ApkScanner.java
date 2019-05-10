@@ -77,6 +77,10 @@ abstract public class ApkScanner
 		setStatusListener(statusListener);
 	}
 
+	public StatusListener getStatusListener() {
+		return this.statusListener;
+	}
+	
 	public void setStatusListener(StatusListener statusListener)
 	{
 		synchronized(this) {
