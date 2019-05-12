@@ -69,6 +69,7 @@ public class PermissionManager
 	public static PermissionManager createAllPermissionManager() {
 		PermissionManager manager = new PermissionManager();
 		manager.addAllPermissions();
+		manager.setPlatformSigned(true);
 		return manager;
 	}
 

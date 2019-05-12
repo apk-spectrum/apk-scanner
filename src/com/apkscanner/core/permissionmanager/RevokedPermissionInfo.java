@@ -73,7 +73,7 @@ public class RevokedPermissionInfo extends PermissionInfo {
 			Log.v("This SDK(" + sdk + ") version was not have permission. " + reason.name + " removed at API level " + record.removedSdk);
 			reason.sdk = record.removedSdk;
 			reason.reason = RevokedReason.AFTER_REMOVED;
-		} else if(record.sdk23 && sdk < 23) {
+		} else if(record.sdk23 != null && record.sdk23 && sdk < 23) {
 			Log.v("This SDK(" + sdk + ") version was not have permission. " + reason.name + " is valid at sdk23 API level or later");
 			reason.reason = RevokedReason.UNDER_SDK23;
 		} else if(record.maxSdkVersion != null && sdk > record.maxSdkVersion) {
