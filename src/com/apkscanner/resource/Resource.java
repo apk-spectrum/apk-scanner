@@ -453,7 +453,13 @@ public enum Resource
 	STR_COLUMN_THIS_VERSION		(Type.TEXT, "@column_this_version"),
 	STR_COLUMN_NEW_VERSION		(Type.TEXT, "@column_new_version"),
 	STR_COLUMN_LAST_CHECKED_DATE(Type.TEXT, "@column_last_checked_date"),
-
+	
+	STR_EASY_GUI_FEATURE1		(Type.TEXT, "@easy_gui_feature1"),
+	STR_EASY_GUI_FEATURE2		(Type.TEXT, "@easy_gui_feature2"),
+	STR_EASY_GUI_FEATURE3		(Type.TEXT, "@easy_gui_feature3"),
+	STR_EASY_GUI_UES_QUESTION		(Type.TEXT, "@easy_gui_use_question"),
+	
+	
 	IMG_TOOLBAR_OPEN			(Type.IMAGE, "toolbar_open.png"),
 	IMG_TOOLBAR_MANIFEST		(Type.IMAGE, "toolbar_manifast.png"),
 	IMG_TOOLBAR_EXPLORER		(Type.IMAGE, "toolbar_explorer.png"),

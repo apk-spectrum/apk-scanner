@@ -27,12 +27,12 @@ public class EasyStartupDlg
 		StringBuilder body = new StringBuilder();
 		body.append("<div id=\"about\">");
 		body.append("  <H1>" + "Easy GUI" + "</H1>");
-		body.append("  <H3>Feature</H3>");
-		body.append("   - Simple, Light, Fast<br/>");
-		body.append("   - Easy switching to origin<br/>");
-		body.append("   - Custom Toolbar<br/>");		
+		body.append("  <H3>" + Resource.STR_FEATURE_LAB.getString() + "</H3>");
+		body.append("   - "+ Resource.STR_EASY_GUI_FEATURE1.getString() + "<br/>");
+		body.append("   - "+ Resource.STR_EASY_GUI_FEATURE2.getString() + "<br/>");
+		body.append("   - "+ Resource.STR_EASY_GUI_FEATURE3.getString() + "<br/>");
 		body.append("  <hr/>");
-		body.append("  Would you like to use Easy mode? (Can be changed in settings)");
+		body.append("  " + Resource.STR_EASY_GUI_UES_QUESTION.getString());
 		body.append("</div>");
 
 		JLabel label = new JLabel();
@@ -52,7 +52,7 @@ public class EasyStartupDlg
 		// html content
 		JHtmlEditorPane hep = new JHtmlEditorPane("", style.toString(), body.toString());
 		ImageSliderPanel imagePanel = new ImageSliderPanel(Resource.IMG_PREVIEW_EASY.getImageIcon());
-		imagePanel.setAlignmentY(0.0f);
+		//imagePanel.setAlignmentY(0.0f);
 		//imagePanel.setBorder(new LineBorder(Color.black));
 		imagePanel.add(Resource.IMG_PREVIEW_EASY1.getImageIcon());
 		imagePanel.add(Resource.IMG_PREVIEW_EASY2.getImageIcon());
@@ -65,11 +65,13 @@ public class EasyStartupDlg
 		aboutPanel.add(imagePanel);
 		aboutPanel.add(hep);
 
-		JCheckBox check = new JCheckBox("Don't show this again");
-		Object[] options = {check, "Yes", "No"};
+		JCheckBox check = new JCheckBox(Resource.STR_LABEL_DO_NOT_LOOK_AGAIN.getString());
+		Object[] options = {check, Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
 
 		imagePanel.start();
-		int x = JOptionPane.showOptionDialog(component, aboutPanel, "New Update", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		int x = JOptionPane.showOptionDialog(component, aboutPanel, 
+				Resource.STR_BTN_CHECK_UPDATE.getString(), JOptionPane.DEFAULT_OPTION, 
+				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		
 		imagePanel.clean();	
 		

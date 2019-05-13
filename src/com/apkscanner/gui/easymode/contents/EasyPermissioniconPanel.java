@@ -39,7 +39,7 @@ public class EasyPermissioniconPanel extends RoundPanel implements ActionListene
 	int SHADOW_SIZE = 2;
 	int ICON_GAP = 4;
 	
-	static private Color dangerouscolor = new Color(201, 31, 31);
+	static private Color dangerouscolor = new Color(255, 72, 72);
 	static private Color permissionbackgroundcolor = new Color(70, 70, 70);
 	
 	JPanel toolbartemppanel;

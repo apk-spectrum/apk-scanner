@@ -427,4 +427,11 @@ Refresh this package information?</string>
 	<string name="column_this_version">Cur Ver.</string>
 	<string name="column_new_version">New Ver.</string>
 	<string name="column_last_checked_date">Last Checked</string>
+	
+	<string name="easy_gui_feature1">Simple, Light, Fast</string>
+	<string name="easy_gui_feature2">Easy switching to origin</string>
+	<string name="easy_gui_feature3">Custom Toolbar</string>
+	<string name="easy_gui_use_question">Would you like to use Easy mode? (Can be changed in settings)</string>
+	
+	
 </resources>
