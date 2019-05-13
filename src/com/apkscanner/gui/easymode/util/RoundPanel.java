@@ -2,26 +2,21 @@ package com.apkscanner.gui.easymode.util;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
+
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RadialGradientPaint;
 import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.MultipleGradientPaint.CycleMethod;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 
 public class RoundPanel extends JPanel {
-	
+	private static final long serialVersionUID = -7828985011164806202L;
 	int len = 7;
 	private Color roundrectcolor;
 	
@@ -83,9 +78,9 @@ public class RoundPanel extends JPanel {
         
     }
 
-    private static void draw(Graphics2D g, Rectangle2D r, double s)
-    {
-    	
+    @SuppressWarnings("unused")
+	private static void draw(Graphics2D g, Rectangle2D r, double s)
+    {	
         Color c0 = new Color(100,100,100);
         Color c1 = new Color(100,100,100,0);
 

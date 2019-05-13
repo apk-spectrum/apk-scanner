@@ -1,12 +1,11 @@
 package com.apkscanner.gui.easymode.core;
 
 import java.io.Serializable;
-
 import javax.swing.ImageIcon;
 
-import com.apkscanner.util.Log;
 
 public class ToolEntry implements Serializable{
+	private static final long serialVersionUID = 8819359209402028535L;
 	String title  = "";
 	String description = "";	
 	ImageIcon image = null;

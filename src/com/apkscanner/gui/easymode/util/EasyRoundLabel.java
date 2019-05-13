@@ -1,31 +1,19 @@
 package com.apkscanner.gui.easymode.util;
 
-import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JTextField;
 
-import com.apkscanner.util.Log;
-
 public class EasyRoundLabel extends RoundPanel implements MouseListener{
-	
+	private static final long serialVersionUID = -1039920258235403569L;
 	EasyTextField textlabel = null;
 	boolean entered = false;
 	private Color backgroundcolor;

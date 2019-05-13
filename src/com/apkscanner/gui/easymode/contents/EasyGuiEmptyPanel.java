@@ -2,20 +2,17 @@ package com.apkscanner.gui.easymode.contents;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import com.apkscanner.gui.easymode.util.FlatPanel;
-import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.SystemUtil;
 
 public class EasyGuiEmptyPanel extends FlatPanel {
+
+	private static final long serialVersionUID = 8040522200840281878L;
 	static private Color sdkverPanelcolor = new Color(242,242,242);
 	
 	public EasyGuiEmptyPanel() {

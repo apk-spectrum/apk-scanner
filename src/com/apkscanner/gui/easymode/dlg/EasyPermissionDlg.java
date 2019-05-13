@@ -31,10 +31,9 @@ import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
 import com.apkscanner.core.permissionmanager.PermissionManager;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.PermissionInfo;
+import com.apkscanner.gui.easymode.core.GroupableTableHeader;
 import com.apkscanner.gui.easymode.test.ColumnGroup;
-import com.apkscanner.gui.easymode.test.headtable.GroupableTableHeader;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.Log;
 
 public class EasyPermissionDlg extends JDialog implements ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -51,7 +50,6 @@ public class EasyPermissionDlg extends JDialog implements ActionListener {
 
 	// ArrayList<String> protectionLevelCalumn = new ArrayList<String>();
 
-	private String apkFilePath;
 	private TableRowSorter<PermissionUsesTableModel> sorter;
 
 	// Arrays.asList(data));
@@ -89,6 +87,8 @@ public class EasyPermissionDlg extends JDialog implements ActionListener {
 		int i = 0;
 		for (JTable table : permissiontable) {
 			table = new JTable(model[i]) {
+				private static final long serialVersionUID = 458626137683547424L;
+
 				protected JTableHeader createDefaultTableHeader() {
 					return new GroupableTableHeader(columnModel);
 				}
@@ -135,6 +135,8 @@ public class EasyPermissionDlg extends JDialog implements ActionListener {
 				String[] permissions = info.protectionLevel.split("\\|");
 				int j = 0;
 				obj[j++] = (group != null) ? new ImageIcon(new URL(group.getIconPath())) {
+					private static final long serialVersionUID = -7493441835355000885L;
+
 					public String toString() {
 						return "";
 					}
@@ -199,6 +201,8 @@ public class EasyPermissionDlg extends JDialog implements ActionListener {
 	}
 
 	class TableColorRenderer extends DefaultTableCellRenderer {
+		private static final long serialVersionUID = 5620411944495295952L;
+
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
 				int row, int column) {
 			Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
@@ -223,6 +227,7 @@ public class EasyPermissionDlg extends JDialog implements ActionListener {
 	}
 
 	class PermissionUsesTableModel extends AbstractTableModel {
+		private static final long serialVersionUID = 46604533609204845L;
 		private Object[] columnNames = { "Icon", "Name", "Base", "Flag", "granted" };
 		// final String[] protectionLevelCalumn = {"Icon", "Name",
 		// "Base","Flag",
@@ -253,7 +258,7 @@ public class EasyPermissionDlg extends JDialog implements ActionListener {
 			return usesTableData.get(row)[col];
 		}
 
-		public Class getColumnClass(int c) {
+		public Class<? extends Object> getColumnClass(int c) {
 			return getValueAt(0, c).getClass();
 		}
 

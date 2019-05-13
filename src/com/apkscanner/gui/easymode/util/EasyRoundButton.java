@@ -4,22 +4,15 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Rectangle2D;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.SwingUtilities;
-
-import com.apkscanner.util.Log;
-
-import javafx.scene.shape.ArcType;
 
 public class EasyRoundButton extends JButton {
 	private static final long serialVersionUID = -6927025737749969747L;

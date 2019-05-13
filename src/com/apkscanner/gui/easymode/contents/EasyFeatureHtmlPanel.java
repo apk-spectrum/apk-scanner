@@ -10,16 +10,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
@@ -29,13 +25,8 @@ import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ComponentInfo;
 import com.apkscanner.gui.easymode.core.EasyGuiAppFeatureData;
 import com.apkscanner.gui.easymode.core.ToolEntryManager;
-import com.apkscanner.gui.easymode.dlg.EasyToolbarCertDlg;
 import com.apkscanner.gui.easymode.util.EasyRoundButton;
-import com.apkscanner.gui.easymode.util.EasyRoundLabel;
-import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.easymode.util.RoundPanel;
-import com.apkscanner.gui.messagebox.MessageBoxPane;
-import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
@@ -43,11 +34,11 @@ import com.apkscanner.util.XmlPath;
 import com.apkscanner.util.FileUtil.FSStyle;
 
 public class EasyFeatureHtmlPanel extends RoundPanel {
-	static private Color sdkverPanelcolor = new Color(242, 242, 242);
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2788545461825796983L;
 
-	static private Color []featurefgfontcolor = {new Color(121, 121, 121), new Color(237, 126, 83), Color.RED} ;
-	static private Color featurebgfontcolor = new Color(217, 217, 217);
-	
 	EasyGuiAppFeatureData AppFeature;
 	XmlPath sdkXmlPath;
 	JPanel mainpanel;
@@ -209,7 +200,7 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 			mainpanel.add(makeFeatpanel(Resource.STR_FEATURE_SHAREDUSERID_LAB.getString(), featuredata.sharedUserId, new Color(0xAAAA00)));
 		}
 		
-		boolean systemSignature = false;
+		//boolean systemSignature = false;
 		if(featuredata.sharedUserId != null && featuredata.sharedUserId.startsWith("android.uid.system")) {
 			if(featuredata.isSamsungSign || featuredata.isPlatformSign) {
 				mainpanel.add(makeFeatpanel(Resource.STR_FEATURE_SYSTEM_UID_LAB.getString(), featuredata.sharedUserId, new Color(0xED7E31)));
@@ -226,7 +217,7 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 			} 
 			if(featuredata.isSamsungSign) {
 				mainpanel.add(makeFeatpanel(Resource.STR_FEATURE_SAMSUNG_SIGN_LAB.getString(), showsignListener, new Color(0xED7E31)));
-				systemSignature = true;
+		//		systemSignature = true;
 			}
 			if(!featuredata.isPlatformSign && !featuredata.isSamsungSign) {
 				mainpanel.add(makeFeatpanel(Resource.STR_FEATURE_SIGNATURE_SIGNED.getString(), showsignListener, new Color(0x0055BB)));
@@ -237,7 +228,6 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 		if(featuredata.isHidden) {
 			mainpanel.add(makeFeatpanel(Resource.STR_FEATURE_HIDDEN_LAB.getString(), new Color(0xED7E31)));			
 		} else {
-			String str="";
 			ComponentInfo[] apkActivities = ApkInfoHelper.getLauncherActivityList(apkInfo);
 			if (apkActivities != null && apkActivities.length > 0) {
 				
@@ -271,10 +261,5 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 
 		
 	}
-	
-	private void showDialog(String content, String title, Dimension size, Icon icon)
-	{
-		MessageBoxPane.showTextAreaDialog(null, content, title, MessageBoxPane.INFORMATION_MESSAGE, icon, size);
-	}
-	
+
 }

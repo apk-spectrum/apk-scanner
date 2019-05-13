@@ -14,18 +14,14 @@ import java.net.URL;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
-import javax.swing.border.EmptyBorder;
 
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
 import com.apkscanner.core.permissionmanager.PermissionManager;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.gui.easymode.core.ToolEntryManager;
-import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.gui.easymode.util.EasyRoundButton;
-import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.gui.easymode.util.RoundPanel;
 import com.apkscanner.resource.Resource;
@@ -39,7 +35,7 @@ public class EasyPermissioniconPanel extends RoundPanel implements ActionListene
 	int SHADOW_SIZE = 2;
 	int ICON_GAP = 4;
 	
-	static private Color dangerouscolor = new Color(255, 72, 72);
+	static private Color dangerouscolor = new Color(193, 90, 90);
 	static private Color permissionbackgroundcolor = new Color(70, 70, 70);
 	
 	JPanel toolbartemppanel;

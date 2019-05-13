@@ -1,4 +1,4 @@
-package com.apkscanner.gui.easymode.test.headtable;
+package com.apkscanner.gui.easymode.core;
 
 import java.awt.Component;
 import java.awt.Dimension;

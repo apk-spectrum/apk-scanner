@@ -2,8 +2,6 @@ package com.apkscanner.gui.easymode.util;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -14,11 +12,11 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 
 public class FlatPanel extends JPanel {
-	
+
+	private static final long serialVersionUID = -4731118159767366557L;
 	int len = 7;	
 	public FlatPanel() {
 		setLayout(new BorderLayout());

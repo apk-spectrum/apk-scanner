@@ -2,7 +2,6 @@ package com.apkscanner.gui.easymode.util;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;

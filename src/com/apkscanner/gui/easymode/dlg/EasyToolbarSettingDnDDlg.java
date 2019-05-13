@@ -3,20 +3,13 @@ package com.apkscanner.gui.easymode.dlg;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Rectangle2D;
-import java.io.Serializable;
-import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -25,7 +18,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -39,14 +31,11 @@ import javax.swing.event.ListSelectionListener;
 
 import com.apkscanner.gui.easymode.core.ToolEntry;
 import com.apkscanner.gui.easymode.core.ToolEntryManager;
-import com.apkscanner.gui.easymode.test.DragAndDropTest;
-import com.apkscanner.gui.easymode.test.ReportingListTransferHandler;
 import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.Log;
 
 public class EasyToolbarSettingDnDDlg extends JDialog implements ActionListener{
-	
+	private static final long serialVersionUID = 4294238572154793279L;
 	final int HIDE_LIST_ITEM_HEIGHT = 50;
 	final int SHOW_LIST_ITEM_HEIGHT = 35; 
 	
@@ -185,7 +174,8 @@ public class EasyToolbarSettingDnDDlg extends JDialog implements ActionListener{
 //		
 //	}
 
-	class HideCellRenderer extends JLabel implements ListCellRenderer {
+	class HideCellRenderer extends JLabel implements ListCellRenderer<Object> {
+		private static final long serialVersionUID = -1167455367997909583L;
 		// private Color HIGHLIGHT_COLOR = new Color(0, 0, 128);
 		int height = 0;
 		public HideCellRenderer(int height) {
@@ -193,7 +183,7 @@ public class EasyToolbarSettingDnDDlg extends JDialog implements ActionListener{
 			setOpaque(true);
 			setIconTextGap(12);
 		}
-		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
 				boolean cellHasFocus) {			
 			ToolEntry entry = (ToolEntry) value;
 			setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
@@ -211,7 +201,8 @@ public class EasyToolbarSettingDnDDlg extends JDialog implements ActionListener{
 		}
 	}
 	
-	class ShowCellRenderer extends JLabel implements ListCellRenderer {
+	class ShowCellRenderer extends JLabel implements ListCellRenderer<Object> {
+		private static final long serialVersionUID = -8747865035780014531L;
 		// private Color HIGHLIGHT_COLOR = new Color(0, 0, 128);
 		int height = 0;
 		public ShowCellRenderer(int height) {
@@ -219,7 +210,7 @@ public class EasyToolbarSettingDnDDlg extends JDialog implements ActionListener{
 			this.height = height;
 			//setIconTextGap(12);
 		}
-		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
 				boolean cellHasFocus) {			
 			ToolEntry entry = (ToolEntry) value;
 			//Log.d("list.getHeight() : " + list.getPreferredScrollableViewportSize().getHeight());
@@ -251,7 +242,7 @@ public class EasyToolbarSettingDnDDlg extends JDialog implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getSource().equals(btnapply)) {			
-			ListModel list = showtoollist.getModel();			
+			ListModel<ToolEntry> list = showtoollist.getModel();			
 			String str = "";
 			for(int i = 0; i < list.getSize(); i++){
 				ToolEntry obj = (ToolEntry)list.getElementAt(i);

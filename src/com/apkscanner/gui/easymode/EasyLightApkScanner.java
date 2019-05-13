@@ -98,15 +98,11 @@ public class EasyLightApkScanner {
 	}
 
 	class ApkLightScannerListener implements ApkScanner.StatusListener {
-		private int error;
-
 		public ApkLightScannerListener() {
-			this.error = 0;
 		}
 
 		@Override
 		public void onStart(long estimatedTime) {
-			error = 0;
 			if (listener != null)
 				listener.onStart();
 		}
@@ -114,7 +110,6 @@ public class EasyLightApkScanner {
 		@Override
 		public void onSuccess() {
 			Log.d("onSuccess()");
-			error = 0;
 			if (listener != null)
 				listener.onSuccess();
 		}
@@ -122,7 +117,7 @@ public class EasyLightApkScanner {
 		@Override
 		public void onError(int error) {
 			Log.d("onError()" + error);
-			latestError = this.error = error;
+			latestError = error;
 			if (listener != null)
 				listener.onError(error);
 		}

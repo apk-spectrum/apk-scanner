@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.ImageIcon;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import com.android.ddmlib.AdbCommandRejectedException;
@@ -17,7 +16,6 @@ import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.Launcher;
-import com.apkscanner.Main;
 import com.apkscanner.UIController;
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
 import com.apkscanner.core.scanner.AaptLightScanner;
@@ -26,7 +24,6 @@ import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ComponentInfo;
 import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
-import com.apkscanner.gui.EasyMainUI;
 import com.apkscanner.gui.dialog.AboutDlg;
 import com.apkscanner.gui.dialog.ApkInstallWizard;
 import com.apkscanner.gui.dialog.ApkSignerWizard;
@@ -212,9 +209,7 @@ public class ToolEntryManager {
 				messagePool.show(MessageBoxPool.MSG_NO_SUCH_APK_FILE);
 				return;
 			}
-
-			EasyToolbarCertDlg dlg = new EasyToolbarCertDlg(mainframe, true, apkInfo);
-			dlg = null;
+			new EasyToolbarCertDlg(mainframe, true, apkInfo);
 		} else if (cmd.equals(Resource.STR_BTN_OPENCODE.getString())) {
 			OpenDecompiler();
 		} else if (cmd.equals(Resource.STR_BTN_ABOUT.getString())) {
@@ -526,7 +521,6 @@ public class ToolEntryManager {
 
 			public void run() {
 				boolean isShiftPressed = false;
-				int actionType = 0;
 				int activityOpt = Resource.INT_LAUNCH_ALWAYS_CONFIRM_ACTIVITY;
 
 				for (IDevice device : devices) {

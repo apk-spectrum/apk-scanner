@@ -1,4 +1,4 @@
-package com.apkscanner.gui.easymode.test.headtable;
+package com.apkscanner.gui.easymode.test;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -10,7 +10,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 
-import com.apkscanner.gui.easymode.test.ColumnGroup;
+import com.apkscanner.gui.easymode.core.GroupableTableHeader;
 
 public class GroupableHeaderExample extends JFrame {
 

@@ -1,6 +1,5 @@
 package com.apkscanner.gui.easymode.util;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;

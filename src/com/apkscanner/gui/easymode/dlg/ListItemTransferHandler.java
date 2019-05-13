@@ -1,7 +1,6 @@
 package com.apkscanner.gui.easymode.dlg;
 
 import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -13,14 +12,11 @@ import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.TransferHandler;
-import javax.swing.TransferHandler.TransferSupport;
-
-import com.apkscanner.util.Log;
 @SuppressWarnings("serial")
 public class ListItemTransferHandler extends TransferHandler {
 	protected final DataFlavor localObjectFlavor;
-	JList source = null;
-	JList target = null;
+	JList<?> source = null;
+	JList<Object> target = null;
 	protected int[] indices;
 	protected int addIndex = -1; // Location where items were added
 	protected int addCount; // Number of items added.
@@ -91,8 +87,8 @@ public class ListItemTransferHandler extends TransferHandler {
 		}
 
 		JList.DropLocation dl = (JList.DropLocation) tdl;
-		target = (JList) info.getComponent();
-		DefaultListModel listModel = (DefaultListModel) target.getModel();
+		target = (JList<Object>) info.getComponent();
+		DefaultListModel<Object> listModel = (DefaultListModel<Object>) target.getModel();
 		int max = listModel.getSize();
 		int index = dl.getIndex();
 		
@@ -136,7 +132,7 @@ public class ListItemTransferHandler extends TransferHandler {
 		
 		if (remove && indices != null) {
 			//Log.d("indices[0]: "+indices[0]);
-			DefaultListModel model = (DefaultListModel) source.getModel();
+			DefaultListModel<?> model = (DefaultListModel<?>) source.getModel();
 			if (addCount > 0 && target.equals(source)) {
 				// https://github.com/aterai/java-swing-tips/blob/master/DragSelectDropReordering/src/java/example/MainPanel.java
 				for (int i = 0; i < indices.length; i++) {

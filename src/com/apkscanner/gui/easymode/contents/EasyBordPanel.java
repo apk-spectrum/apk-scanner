@@ -26,6 +26,11 @@ import com.apkscanner.util.Log;
 
 public class EasyBordPanel extends JPanel implements ActionListener, ChangeListener {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2246253920944782832L;
+
 	EasyButton btnmini, btnexit;
 
 	int pX, pY;

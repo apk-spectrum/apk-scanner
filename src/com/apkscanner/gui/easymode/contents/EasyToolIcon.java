@@ -1,12 +1,9 @@
 package com.apkscanner.gui.easymode.contents;
 
 import java.awt.AlphaComposite;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -14,25 +11,16 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
-import java.awt.image.ConvolveOp;
-import java.awt.image.Kernel;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
-import com.apkscanner.gui.easymode.contents.EasyToolIcon.EasyToolListner;
-import com.apkscanner.gui.easymode.util.GraphicUtil;
 import com.apkscanner.gui.easymode.util.ImageUtils;
-import com.apkscanner.util.Log;
 
 public class EasyToolIcon extends JLabel implements MouseListener{
+	private static final long serialVersionUID = 5450874096009886439L;
 	int originalsize;
 	int hoversize;
 	int width,height;

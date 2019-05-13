@@ -11,20 +11,19 @@ import javax.swing.JScrollPane;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.easymode.util.FlatPanel;
-import com.apkscanner.gui.tabpanels.Resources;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
 public class EasyPermissionPanel extends JPanel {
 
+	private static final long serialVersionUID = -5959636159510953069L;
+
 	static private Color bordercolor = new Color(242, 242, 242);
-	static private Color dangerouscolor = new Color(181, 107, 105);
-	static private Color permissionbackgroundcolor = new Color(217, 217, 217);
 
 	static public int HEIGHT = 46;
-	static private int WIDTH = EasyContentsPanel.WIDTH;
-	static private int SHADOWSIZE = 1;
-	static private int PERMISSIONICONSIZE = HEIGHT - SHADOWSIZE * 2;
+	//static private int WIDTH = EasyContentsPanel.WIDTH;
+	//static private int SHADOWSIZE = 1;
+	//static private int PERMISSIONICONSIZE = HEIGHT - SHADOWSIZE * 2;
 
 	private static String CARD_LAYOUT_EMPTY = "card_empty";
 	private static String CARD_LAYOUT_APKINFO = "card_apkinfo";

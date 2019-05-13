@@ -1,6 +1,5 @@
 package com.apkscanner.gui.easymode.dlg;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 
@@ -10,19 +9,18 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.border.LineBorder;
 
-import com.apkscanner.gui.easymode.test.Board;
 import com.apkscanner.gui.easymode.util.ImageSliderPanel;
 import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.resource.Resource;
 
 public class EasyStartupDlg
 {
-	public static boolean needreStart;
 	
-	static public void showAboutDialog(Component component)
+	
+	static public boolean showAboutDialog(Component component)
 	{
+		boolean needreStart = false;
 		// html content
 		StringBuilder body = new StringBuilder();
 		body.append("<div id=\"about\">");
@@ -96,19 +94,20 @@ public class EasyStartupDlg
 		}
 		//"So many options using Object[]", "Don't forget to Tick it!",
 		//JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+		return needreStart;
 
 		//MessageBoxPane.showMessageDialog(component, aboutPanel, "Update", MessageBoxPane.CLOSED_OPTION, null);
 	}
 
 	public static void main(final String[] args) {
-		EasyStartupDlg dlg = new EasyStartupDlg();
+		//EasyStartupDlg dlg = new EasyStartupDlg();
 		JFrame frame = new JFrame();
 		
 		
 		//Board boa = new Board();
 		//frame.add(boa);
 		//frame.setVisible(true);
-		dlg.showAboutDialog(frame);
+		EasyStartupDlg.showAboutDialog(frame);
 		
 		System.exit(0);
 	}

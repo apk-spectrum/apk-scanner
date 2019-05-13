@@ -4,9 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -25,34 +24,29 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
-
 import com.android.ddmlib.IDevice;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.gui.EasyMainUI;
 import com.apkscanner.gui.easymode.util.AndroidLikeToast;
-import com.apkscanner.gui.easymode.util.EasyButton;
-import com.apkscanner.gui.easymode.util.EasyFlatLabel;
 import com.apkscanner.gui.easymode.util.EasyRoundButton;
 import com.apkscanner.gui.easymode.util.EasyRoundLabel;
 import com.apkscanner.gui.easymode.util.EasyRoundLabelCount;
 import com.apkscanner.gui.easymode.util.EasyTextField;
-import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.gui.easymode.util.RoundPanel;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
-import com.apkscanner.gui.tabpanels.Resources;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
-import com.apkscanner.util.FileUtil.FSStyle;
 
 public class EasyContentsPanel extends JPanel{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1377658950522176543L;
+
 	//FlatPanel appiconpanel;
 	EasyFeatureHtmlPanel featurepanel;
 	//EasyGuiToolPanel toolbarpanel;
@@ -305,13 +299,6 @@ public class EasyContentsPanel extends JPanel{
 		layeredPane.add(toolbarpanel,new Integer(2));
 		
 		return layeredPane;
-	}
-	
-	private void setEasyTextField(EasyTextField textfield) {
-		textfield.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
-		//textfield.setEditable(false);
-		textfield.setOpaque(false);
-		textfield.setFont(new Font(getFont().getName(), Font.PLAIN, 15));
 	}
 	
 //    @Override

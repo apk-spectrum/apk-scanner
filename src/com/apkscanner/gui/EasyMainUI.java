@@ -1,11 +1,9 @@
 package com.apkscanner.gui;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.Enumeration;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -18,7 +16,6 @@ import com.android.ddmlib.IDevice;
 import com.apkscanner.Launcher;
 import com.apkscanner.core.scanner.AaptLightScanner;
 import com.apkscanner.core.scanner.ApkScanner;
-import com.apkscanner.gui.dialog.AboutDlg;
 import com.apkscanner.gui.easymode.*;
 import com.apkscanner.gui.easymode.EasyLightApkScanner;
 import com.apkscanner.gui.easymode.core.ToolEntryManager;
@@ -27,11 +24,7 @@ import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.Log;
 
-import delight.nashornsandbox.internal.RemoveComments;
-
 public class EasyMainUI implements WindowListener, IDeviceChangeListener {
-	private static final long serialVersionUID = -9199974173720756974L;
-
 	private static EasyLightApkScanner apkScanner = null;
 	private static EasyGuiMainPanel mainpanel;
 	//private String filepath;
@@ -68,9 +61,9 @@ public class EasyMainUI implements WindowListener, IDeviceChangeListener {
 		
 		Log.i("initialize() setUIFont");
 		//long aaa = System.currentTimeMillis();
-		String propFont = (String) Resource.PROP_BASE_FONT.getData();
-		int propFontStyle = (int)Resource.PROP_BASE_FONT_STYLE.getInt();
-		int propFontSize = (int) Resource.PROP_BASE_FONT_SIZE.getInt();
+//		String propFont = (String) Resource.PROP_BASE_FONT.getData();
+//		int propFontStyle = (int)Resource.PROP_BASE_FONT_STYLE.getInt();
+//		int propFontSize = (int) Resource.PROP_BASE_FONT_SIZE.getInt();
 		//setUIFont(new javax.swing.plaf.FontUIResource(propFont, propFontStyle, propFontSize));
 		//20ms
 		//Log.d("init setUIFont   : " + (System.currentTimeMillis() - aaa) / 1000.0);
@@ -127,10 +120,7 @@ public class EasyMainUI implements WindowListener, IDeviceChangeListener {
 	}
 
 	public static boolean showDlgStartupEasyMode(JFrame frame) {
-		EasyStartupDlg dlg = new EasyStartupDlg();
-		dlg.showAboutDialog(frame);
-		
-		return dlg.needreStart;
+		return EasyStartupDlg.showAboutDialog(frame);
 	}
 	
 	public static void main(final String[] args) {
@@ -163,18 +153,18 @@ public class EasyMainUI implements WindowListener, IDeviceChangeListener {
 		com.sun.awt.AWTUtilities.setWindowOpacity(mainframe, 1.0f);
 	}
 
-	private static void setUIFont(javax.swing.plaf.FontUIResource f) {
-		Enumeration<Object> keys = UIManager.getDefaults().keys();
-		while (keys.hasMoreElements()) {
-			Object key = keys.nextElement();
-			Object value = UIManager.get(key);
-			if (value instanceof javax.swing.plaf.FontUIResource) {
-				if(!"InternalFrame.titleFont".equals(key)) {
-					UIManager.put(key, f);
-				}
-			}
-		}
-	}
+//	private static void setUIFont(javax.swing.plaf.FontUIResource f) {
+//		Enumeration<Object> keys = UIManager.getDefaults().keys();
+//		while (keys.hasMoreElements()) {
+//			Object key = keys.nextElement();
+//			Object value = UIManager.get(key);
+//			if (value instanceof javax.swing.plaf.FontUIResource) {
+//				if(!"InternalFrame.titleFont".equals(key)) {
+//					UIManager.put(key, f);
+//				}
+//			}
+//		}
+//	}
 	
 	private void changeDeivce() {
 		mainpanel.changeDevice(AndroidDebugBridge.getBridge().getDevices());

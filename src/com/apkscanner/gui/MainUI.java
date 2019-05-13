@@ -89,8 +89,6 @@ import com.apkscanner.util.ZipFileUtil;
 
 public class MainUI
 {
-	private static final long serialVersionUID = -623259597186280485L;
-
 	private ApkScanner apkScanner;
 	private ToolbarManagement toolbarManager;
 

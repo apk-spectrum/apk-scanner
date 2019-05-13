@@ -1,70 +1,56 @@
 package com.apkscanner.gui.easymode.contents;
 
-import java.awt.BasicStroke;
-import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import com.android.ddmlib.AdbCommandRejectedException;
-import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.CollectingOutputReceiver;
 import com.android.ddmlib.IDevice;
 import com.android.ddmlib.ShellCommandUnresponsiveException;
 import com.android.ddmlib.TimeoutException;
-import com.android.ddmlib.IDevice.DeviceState;
-import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.easymode.util.EasyRoundButton;
 import com.apkscanner.gui.easymode.util.EasyRoundLabel;
-import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.gui.easymode.util.RoundPanel;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.Log;
 
 public class EasyDevicePanel extends RoundPanel implements MouseListener, ActionListener, ComponentListener{
 	 
-	private static int DEVICE_TARGET = 0;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9018980741609799573L;
+
+	
 	private static int DEVICE_STATE_ONLINE = 1;
 	private static int DEVICE_STATE_OFFLINE = 2;
 
 	private static String CARD_LAYOUT_SPREAD= "card_spread";
 	private static String CARD_LAYOUT_FOLD= "card_fold";
 	
-	private static String CMD_MODEL_NAME = "ro.product.model";
-	private static String CMD_MODEL_API = "ro.build.version.release";
+	//private static String CMD_MODEL_NAME = "ro.product.model";
+	//private static String CMD_MODEL_API = "ro.build.version.release";
 	
-	private final Color linecolor = new Color(128, 100, 162);
-	private final Color textcolor = new Color(127, 127, 127);
+//	private final Color linecolor = new Color(128, 100, 162);
+//	private final Color textcolor = new Color(127, 127, 127);
 	
 	private final Color[] Devicecolor = {new Color(80, 80, 80), new Color(156, 177, 117), new Color(247, 150, 70)}; 
 	
@@ -80,21 +66,12 @@ public class EasyDevicePanel extends RoundPanel implements MouseListener, Action
 	private int DEIVCE_SPREAD_HEIGHT = 50;
 	
 	private class sdkDrawObject {
-		public String sdkversion;
 		public JPanel panel;
-		public String devicename;
 		public IDevice devicestate;
 		public sdkDrawObject(JPanel panel, String version) {
-			// TODO Auto-generated constructor stub
-			this.sdkversion = version;
 			this.panel = panel;
 		}
 
-		public sdkDrawObject(JPanel panel, String version, String name) {
-			// TODO Auto-generated constructor stub
-			this(panel, version);
-			this.devicename = name;
-		}
 		public sdkDrawObject(JPanel panel, String version, String name, IDevice devicestate) {
 			// TODO Auto-generated constructor stub
 			this(panel, version);

@@ -11,14 +11,10 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
 import javax.swing.BorderFactory;
-import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import com.apkscanner.gui.EasyMainUI;
-import com.apkscanner.gui.easymode.test.FontResizingLabel;
-import com.apkscanner.util.Log;
-
 public class EasyTextField extends JTextField {
+	private static final long serialVersionUID = -1371590479655327586L;
 	public static final int MIN_FONT_SIZE = 10;
 	public static final int MAX_FONT_SIZE = 20;
 	Graphics g;

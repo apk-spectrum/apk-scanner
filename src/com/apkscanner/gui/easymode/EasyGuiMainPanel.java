@@ -9,7 +9,6 @@ import java.awt.Graphics2D;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.Paint;
-import java.awt.Toolkit;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
@@ -20,46 +19,33 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
-import javax.swing.OverlayLayout;
 import javax.swing.border.LineBorder;
 
 import com.android.ddmlib.IDevice;
 import com.apkscanner.Launcher;
-import com.apkscanner.core.scanner.ApkScanner;
+
 import com.apkscanner.core.scanner.ApkScanner.Status;
-import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.DropTargetChooser;
 import com.apkscanner.gui.EasyMainUI;
-import com.apkscanner.gui.MainUI;
-import com.apkscanner.gui.ToolBar.ButtonSet;
-import com.apkscanner.gui.dialog.AboutDlg;
 import com.apkscanner.gui.dialog.LogDlg;
 import com.apkscanner.gui.DropTargetChooser.DefaultTargetObject;
 import com.apkscanner.gui.easymode.contents.EasyBordPanel;
 import com.apkscanner.gui.easymode.contents.EasyContentsPanel;
-import com.apkscanner.gui.easymode.contents.EasyGuiToolPanel;
 import com.apkscanner.gui.easymode.contents.EasyGuiToolScaleupPanel;
 import com.apkscanner.gui.easymode.contents.EasyPermissionPanel;
-import com.apkscanner.gui.easymode.core.EasyGuiAppFeatureData;
 import com.apkscanner.gui.easymode.core.ToolEntryManager;
-import com.apkscanner.gui.easymode.util.EasyButton;
-import com.apkscanner.gui.easymode.util.EasyFileDrop;
-import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.easymode.util.RoundPanel;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
-import com.apkscanner.gui.tabpanels.Resources;
 import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.util.Log;
 
 public class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentListener, DropTargetChooser.Listener  {
+	private static final long serialVersionUID = 4664365275666876359L;
 	private static Color maincolor = new Color(249, 249, 249);
 	static private int PERMISSION_HEIGHT = 46;
 	
@@ -103,9 +89,9 @@ public class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, Comp
 		
 //		permissionPanel = new EasyPermissionPanel();
 		
-		width = EasycontentsPanel.WIDTH;
+		width = EasyContentsPanel.WIDTH;
 //		height = contentsPanel.HEIGHT + permissionPanel.HEIGHT;
-		height = EasycontentsPanel.HEIGHT;
+		height = EasyContentsPanel.HEIGHT;
 		
 		toolbarpanel = new EasyGuiToolScaleupPanel(100, width);
 		

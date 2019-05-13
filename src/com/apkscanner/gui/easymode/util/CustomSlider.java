@@ -13,9 +13,9 @@ import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import com.apkscanner.util.Log;
 
 public class CustomSlider extends JSlider {
+	private static final long serialVersionUID = 4913084976607687539L;
 	UIDefaults d;
 
 	public CustomSlider() {
@@ -81,7 +81,7 @@ public class CustomSlider extends JSlider {
 		});
 		//this.putClientProperty("Nimbus.Overrides", d);
 		
-		UIDefaults defaults = UIManager.getLookAndFeelDefaults();
+		//UIDefaults defaults = UIManager.getLookAndFeelDefaults();
 		
 //		Log.d("" + defaults);
 //		this.putClientProperty("Nimbus.Overrides", defaults);

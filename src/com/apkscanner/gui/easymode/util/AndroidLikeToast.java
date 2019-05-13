@@ -3,11 +3,8 @@ package com.apkscanner.gui.easymode.util;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -17,8 +14,8 @@ import javax.swing.*;
  
  
 public class AndroidLikeToast extends JDialog {
- 
-    String msg;
+	private static final long serialVersionUID = 1584433476131530937L;
+	String msg;
     JFrame frame;
     // you can set the time for how long the dialog will be displayed
     public static final int LENGTH_LONG = 5000;
@@ -38,7 +35,7 @@ public class AndroidLikeToast extends JDialog {
  
             @Override
             public void componentResized(ComponentEvent e) {
-                setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 20, 20));
+                setShape(new RoundRectangle2D.Double(0, (getHeight()-20)/2, getWidth(),20 , 20, 20));
             }
         });
         setUndecorated(true);
@@ -70,7 +67,7 @@ public class AndroidLikeToast extends JDialog {
         JLabel label = new JLabel();
         label.setForeground(Color.WHITE);
         label.setText(msg);
-        label.setFont(new Font(label.getFont().getName(), Font.BOLD, 15));
+        label.setFont(new Font(label.getFont().getName(), Font.PLAIN, 15));
         add(label);
     }
     static public void ShowToast(String str, JComponent component) {

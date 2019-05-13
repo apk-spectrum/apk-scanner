@@ -2,42 +2,25 @@ package com.apkscanner.gui.easymode.contents;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 import com.apkscanner.gui.easymode.contents.EasyToolIcon.EasyToolListner;
 import com.apkscanner.gui.easymode.core.ToolEntry;
 import com.apkscanner.gui.easymode.core.ToolEntryManager;
 import com.apkscanner.gui.easymode.dlg.EasyToolbarSettingDnDDlg;
-import com.apkscanner.gui.easymode.util.EasyButton;
-import com.apkscanner.gui.easymode.util.EasyFlatLabel;
 import com.apkscanner.gui.easymode.util.EasyRoundButton;
-import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.gui.easymode.util.GraphicUtil;
-import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
@@ -153,7 +136,8 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener, E
 			toolbartemppanel.updateUI();
 		}
 		btnsetting = new EasyRoundButton(Resource.IMG_EASY_WINDOW_SETTING.getImageIcon(20, 20))        {
-            @Override
+			private static final long serialVersionUID = 2208337293930490795L;
+			@Override
             public int getBaseline(int width, int height) {
                 return 0;
             }
