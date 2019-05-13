@@ -168,7 +168,6 @@ public class EasyMainUI implements WindowListener, IDeviceChangeListener {
 		while (keys.hasMoreElements()) {
 			Object key = keys.nextElement();
 			Object value = UIManager.get(key);
-			Log.d(key.toString());
 			if (value instanceof javax.swing.plaf.FontUIResource) {
 				if(!"InternalFrame.titleFont".equals(key)) {
 					UIManager.put(key, f);

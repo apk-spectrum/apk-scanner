@@ -406,6 +406,7 @@ public class PermissionManager
 		case GROUP_NAME_DECLARED:
 			groupInfo.priority = -200;
 			groupInfo.icon = "@drawable/perm_group_declared";
+			//https://www.flaticon.com/free-icon/contract_684872#term=pencil&page=1&position=36
 			break;
 		case GROUP_NAME_UNSPECIFIED:
 		default:
