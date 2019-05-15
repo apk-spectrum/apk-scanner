@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -107,6 +108,7 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener, E
 			GraphicUtil.drawTextRoundrect(g, tooliconlocation.x, 67, 15, iconlabel);
 			
 		}
+		Toolkit.getDefaultToolkit().sync();
 	}
 	
 	private void maketoolbutton() {		

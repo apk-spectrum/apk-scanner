@@ -2,9 +2,6 @@ package com.apkscanner.core.scanner;
 
 import java.io.File;
 
-import com.apkscanner.Launcher;
-import com.apkscanner.core.scanner.ApkScanner.Status;
-import com.apkscanner.core.scanner.ApkScanner.StatusListener;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.gui.EasyMainUI;
