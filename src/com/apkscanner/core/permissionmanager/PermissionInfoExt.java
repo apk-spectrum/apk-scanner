@@ -148,4 +148,30 @@ public class PermissionInfoExt extends PermissionInfo implements UnitInformation
 		}
 		return summary.toString();
 	}
+
+	public static int parseProtectionFlags(String strLevel) {
+		int level = parseProtectionLevel(strLevel);
+		int flags = level & PROTECTION_MASK_FLAGS;
+		level = 1 << (level & PROTECTION_MASK_BASE); 
+		return level | flags;
+	}
+
+	public static String protectionFlagsToString(int flags) {
+		if(flags == 0) flags = 1;
+		StringBuilder sb = new StringBuilder();
+        if ((flags & (1 << PROTECTION_NORMAL)) != 0) {
+            sb.append("|").append(protectionToString(PROTECTION_NORMAL));
+        }
+        if ((flags & (1 << PROTECTION_DANGEROUS)) != 0) {
+            sb.append("|").append(protectionToString(PROTECTION_DANGEROUS));
+        }
+        if ((flags & (1 << PROTECTION_SIGNATURE)) != 0) {
+            sb.append("|").append(protectionToString(PROTECTION_SIGNATURE));
+        }
+        if ((flags & (1 << 3)) != 0) { /* PROTECTION_SIGNATURE_OR_SYSTEM */ 
+            sb.append("|").append(protectionToString(3));
+        }
+        sb.append(protectionToString(PROTECTION_MASK_BASE | flags));
+		return sb.substring(1);
+	}
 }

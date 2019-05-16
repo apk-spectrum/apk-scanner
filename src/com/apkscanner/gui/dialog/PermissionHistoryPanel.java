@@ -28,6 +28,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -69,6 +70,7 @@ import javax.swing.table.TableRowSorter;
 
 import com.apkscanner.core.permissionmanager.DeclaredPermissionInfo;
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
+import com.apkscanner.core.permissionmanager.PermissionInfoExt;
 import com.apkscanner.core.permissionmanager.PermissionManager;
 import com.apkscanner.core.permissionmanager.PermissionRepository.SourceCommit;
 import com.apkscanner.core.permissionmanager.RevokedPermissionInfo;
@@ -83,7 +85,6 @@ import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
-import com.apkscanner.util.Log;
 
 public class PermissionHistoryPanel extends JPanel implements ItemListener, ActionListener {
 	private static final long serialVersionUID = -3567803690045423840L;
@@ -97,10 +98,10 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 
 	private static final int IN_PACKAGE = 0;
 	private static final int ON_ANDROID = 1;
-	
+
 	private static final String ACT_CMD_IN_PACKAGE = "FILTER_IN_PACKAGE";
 	private static final String ACT_CMD_ON_ANDROID = "FILTER_ON_ANDROID";
-	
+
 	private JDialog dialog;
 
 	private JComboBox<Integer> sdkVersions;
@@ -127,9 +128,51 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 	public PermissionHistoryPanel() {
 		setLayout(new GridBagLayout());
 
-		FlowLayout layout = new FlowLayout(FlowLayout.LEFT);
-		layout.setVgap(0);
-		JPanel sdkSelectPanel = new JPanel(layout);
+		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady)
+		GridBagConstraints gridConst = new GridBagConstraints(0,0,1,1,1.0f,0,GridBagConstraints.CENTER,GridBagConstraints.HORIZONTAL,new Insets(5,5,0,5),0,0);
+		add(makeSdkSelectPanel(), gridConst);
+
+		final JComponent filterCollapsePanel = makeFilterCollapsePanel();
+		final JComponent filterExtendPanel = makeFilterExtendPanel();
+		collapseFilterLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				filterCollapsePanel.setVisible(false);
+				filterExtendPanel.setVisible(true);
+			}
+		});
+		extendFilterLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				filterCollapsePanel.setVisible(true);
+				filterExtendPanel.setVisible(false);
+			}
+		});
+
+		gridConst.gridy++;
+		gridConst.insets.top = 4;
+		gridConst.insets.bottom = 5;
+		add(filterCollapsePanel, gridConst);
+		gridConst.insets.top = 0;
+
+		gridConst.gridy++;
+		gridConst.insets.bottom = 5;
+		add(filterExtendPanel, gridConst);
+
+		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
+		splitPane.setTopComponent(new JScrollPane(permTable = new PermissionTable()));
+		splitPane.setBottomComponent(new JLayer<JTabbedPane>(extraTabbedPanel = makeExtraTabbedPanel(), new CloseableTabbedPaneLayerUI()));
+		splitPane.setDividerLocation(300);
+
+		gridConst.gridy++;
+		gridConst.weighty = 1.0f;
+		gridConst.fill = GridBagConstraints.BOTH;
+		gridConst.insets.bottom = 5;
+		add(splitPane, gridConst);
+	}
+
+	public JPanel makeSdkSelectPanel() {
+		JPanel sdkSelectPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
 		sdkSelectPanel.add(new JLabel("SDK Ver. "));
 
 		sdkVersions = new JComboBox<Integer>();
@@ -165,11 +208,10 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		sdkEastPanel.add(refer);
 		sdkOptions.add(sdkEastPanel, BorderLayout.EAST);
 
-		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady)
-		GridBagConstraints gridConst = new GridBagConstraints(0,0,1,1,1.0f,0,GridBagConstraints.CENTER,GridBagConstraints.HORIZONTAL,new Insets(5,5,0,5),0,0);
-		add(sdkOptions, gridConst);
+		return sdkOptions;
+	}
 
-		// filterCollapsePanel
+	public JComponent makeFilterCollapsePanel() {
 		final JPanel filterCollapsePanel = new JPanel();
 		filterCollapsePanel.setLayout(new BoxLayout(filterCollapsePanel, BoxLayout.X_AXIS));
 		collapseFilterLabel = new JLabel("Filter : In Package, .STORAGE, All");
@@ -178,13 +220,10 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		filterCollapsePanel.add(Box.createHorizontalGlue());
 		collapseFilterCount = new JLabel("0 Groups, 0 Permissions");
 		filterCollapsePanel.add(collapseFilterCount);
+		return filterCollapsePanel;
+	}
 
-		gridConst.gridy++;
-		gridConst.insets.top = 4;
-		gridConst.insets.bottom = 5;
-		add(filterCollapsePanel, gridConst);
-		gridConst.insets.top = 0;
-
+	public JComponent makeFilterExtendPanel() {
 		// filterExtendPanel
 		final JPanel filterExtendPanel = new JPanel();
 		filterExtendPanel.setLayout(new BoxLayout(filterExtendPanel, BoxLayout.Y_AXIS));
@@ -206,7 +245,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		onAndroid.addActionListener(this);
 		box.add(onAndroid);
 		filterExtendPanel.add(box);
-		
+
 		ButtonGroup bGroup = new ButtonGroup();
 		bGroup.add(inPackage);
 		bGroup.add(onAndroid);
@@ -230,14 +269,29 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		box.add(filterField);
 		filterExtendPanel.add(box);
 
+		ItemListener listener = new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				//if(evt.getStateChange() != ItemEvent.SELECTED) return;
+				String level = ((AbstractButton)e.getSource()).getActionCommand();;
+				if(e.getStateChange() == ItemEvent.SELECTED) {
+					permTable.setFilter(level);
+				} else {
+					permTable.clearFilter(level);
+				}
+			}
+		};
+
 		JPanel flags = new JPanel(new GridLayout(0, 5, 0, 0));
 		flags.setAlignmentX(0f);
 		flags.setBorder(new TitledBorder("Protection Levels"));
-		for(String flag: new String[] {"All", "normal", "dangerous", "signature", "signatureOrSystem"}) {
+		for(String flag: new String[] {"normal", "dangerous", "signature", "signatureOrSystem"}) {
 			JCheckBox ckBox = new JCheckBox(flag);
 			ckBox.setMinimumSize(new Dimension(0, 20));
 			ckBox.setActionCommand(flag);
 			ckBox.setToolTipText(flag);
+			ckBox.setSelected(true);
+			ckBox.addItemListener(listener);
 			flags.add(ckBox);
 		}
 		filterExtendPanel.add(flags);
@@ -250,8 +304,9 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 				"wellbeing", "documenter", "configurator", "incidentReportApprover", "appPredictor"}) {
 			JCheckBox ckBox = new JCheckBox(flag);
 			ckBox.setMinimumSize(new Dimension(0, 20));
-			ckBox.setActionCommand(flag);
+			ckBox.setActionCommand("|"+flag);
 			ckBox.setToolTipText(flag);
+			ckBox.addItemListener(listener);
 			flags.add(ckBox);
 		}
 		filterExtendPanel.add(flags);
@@ -263,28 +318,10 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		box.add(extendFilterCount);
 		filterExtendPanel.add(box);
 
-		collapseFilterLabel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				filterCollapsePanel.setVisible(false);
-				filterExtendPanel.setVisible(true);
-			}
-		});
-		extendFilterLabel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				filterCollapsePanel.setVisible(true);
-				filterExtendPanel.setVisible(false);
-			}
-		});
+		return filterExtendPanel;
+	}
 
-		gridConst.gridy++;
-		gridConst.insets.bottom = 5;
-		add(filterExtendPanel, gridConst);
-
-		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
-		splitPane.setTopComponent(new JScrollPane(permTable = new PermissionTable()));
-
+	public JTabbedPane makeExtraTabbedPanel() {
 		description = new JTextArea();
 		description.setEditable(false);
 		description.setLineWrap(true);
@@ -334,14 +371,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		extraTabbedPanel.addTab("Description", new JScrollPane(description));
 		extraTabbedPanel.addTab("History", new JScrollPane(historyTable));
 
-		splitPane.setBottomComponent(new JLayer<JTabbedPane>(extraTabbedPanel, new CloseableTabbedPaneLayerUI()));
-		splitPane.setDividerLocation(300);
-
-		gridConst.gridy++;
-		gridConst.weighty = 1.0f;
-		gridConst.fill = GridBagConstraints.BOTH;
-		gridConst.insets.bottom = 5;
-		add(splitPane, gridConst);
+		return extraTabbedPanel;
 	}
 
 	@Override
@@ -549,7 +579,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 			if(byGroup.isSelected()) {
 				rowData = new Vector<>(5);
 				rowData.addElement("");
-		        for (Object o : new Object[] { icon, g.name, g.getLabel(), PermissionInfo.protectionToString(g.protectionFlags) }) {
+		        for (Object o : new Object[] { icon, g.name, g.getLabel(), PermissionInfoExt.protectionFlagsToString(g.protectionFlags) }) {
 		        	rowData.addElement(new SortedData(o, g.priority, true, permTable));
 		        }
 		        rowData.addElement(g);
@@ -558,7 +588,9 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 
 			for(PermissionInfo info: g.permissions) {
 				rowData = new Vector<>(5);
-		        for (Object o : new Object[] {"", byGroup.isSelected() ? UIManager.get("Tree.leafIcon") : icon, info.name, info.getLabel(), info.protectionLevel }) {
+				String level = (info.protectionLevel != null && !info.protectionLevel.isEmpty())
+									? info.protectionLevel : PermissionInfo.protectionToString(0);
+		        for (Object o : new Object[] {"", byGroup.isSelected() ? UIManager.get("Tree.leafIcon") : icon, info.name, info.getLabel(), level }) {
 		        	rowData.addElement(new SortedData(o, g.priority, false, permTable));
 		        }
 		        rowData.addElement(info);
@@ -630,7 +662,6 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 	public void actionPerformed(ActionEvent evt) {
 		Object source = evt.getSource();
 		if(source instanceof JRadioButton) {
-			Log.e("" + evt.getActionCommand());
 			PermissionManager manager = null;
 			if(ACT_CMD_IN_PACKAGE.equals(evt.getActionCommand())) {
 				manager = cachePermMangers[IN_PACKAGE];
@@ -818,6 +849,32 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 			return filter.containCollapseGroup(groupName);
 		}
 
+		public void setFilter(int protectionLevel) {
+			filter.setFilter(protectionLevel);
+			((DefaultTableModel) getModel()).fireTableDataChanged();
+		}
+
+		public void clearFilter(int protectionLevel) {
+			filter.clearFilter(protectionLevel);
+			((DefaultTableModel) getModel()).fireTableDataChanged();
+		}
+
+		public void setFilter(String protectionLevel) {
+			setFilter(convertFilterLevel(protectionLevel));
+		}
+
+		public void clearFilter(String protectionLevel) {
+			clearFilter(convertFilterLevel(protectionLevel));
+		}
+
+		private int convertFilterLevel(String protectionLevel) {
+			if(!protectionLevel.startsWith("|")) {
+				return PermissionInfoExt.parseProtectionFlags(protectionLevel);
+			} else {
+				return PermissionInfo.parseProtectionLevel(protectionLevel);
+			}
+		}
+
 		@SuppressWarnings("unused")
 		public String[] getCollapseGroups() {
 			return filter.getCollapseGroups();
@@ -991,6 +1048,8 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 	public class PermissionFilter extends RowFilter<TableModel,Integer> {
 		private List<String> filterCollapseGroups = new ArrayList<>();
 		private String filterText = "";
+		private int baseFilterOut = 0;
+		private int flagFilterIn = 0;
 
 		public void setFilterText(String text) {
 			filterText = text;
@@ -1018,23 +1077,35 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 			return filterCollapseGroups.toArray(new String[filterCollapseGroups.size()]);
 		}
 
+		public void setFilter(int protectionLevel) {
+			baseFilterOut &= ~(protectionLevel & PermissionInfo.PROTECTION_MASK_BASE);
+			flagFilterIn |= (protectionLevel & PermissionInfo.PROTECTION_MASK_FLAGS);
+		}
+
+		public void clearFilter(int protectionLevel) {
+			baseFilterOut |= (protectionLevel & PermissionInfo.PROTECTION_MASK_BASE);
+			flagFilterIn &= ~(protectionLevel & PermissionInfo.PROTECTION_MASK_FLAGS);
+		}
+
 		public void clear() {
 			filterText = "";
 			filterCollapseGroups.clear();
+			baseFilterOut = 0;
+			flagFilterIn = 0;
 		}
 
 		@Override
 		public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
 			Integer id = entry.getIdentifier();
 			if(id == null) return false;
-			boolean ret = checkCollapseGroups(entry);
-			ret = ret && checkFilterWorld(entry);
+			Object data = entry.getValue(5);
+			boolean ret = checkCollapseGroups(data);
+			ret = ret && checkFilter(data);
 			return ret;
 		}
 
-		private boolean checkCollapseGroups(Entry<? extends TableModel, ? extends Integer> entry) {
+		private boolean checkCollapseGroups(Object data) {
 			if(byGroup.isSelected() && !filterCollapseGroups.isEmpty()) {
-				Object data = entry.getValue(5);
 				if(data instanceof PermissionGroupInfoExt) {
 					return true;
 				}
@@ -1057,10 +1128,8 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 			}
 			return true;
 		}
-		
-		private boolean checkFilterWorld(Entry<? extends TableModel, ? extends Integer> entry) {
-			if(filterText == null || filterText.isEmpty()) return true;
-			Object data = entry.getValue(5);
+
+		private boolean checkFilter(Object data) {
 			if(data instanceof PermissionGroupInfoExt) {
 				for(PermissionInfo info: ((PermissionGroupInfoExt) data).permissions) {
 					if(checkPermissionInfo(info)) return true;
@@ -1071,8 +1140,30 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 			}
 			return true;
 		}
-		
+
 		private boolean checkPermissionInfo(PermissionInfo info) {
+			if(baseFilterOut != 0) {
+				int protectionFlags = 0;
+				if(info instanceof PermissionInfoExt) {
+					protectionFlags = ((PermissionInfoExt)info).getProtectionFlags();
+				} else {
+					String level = info.protectionLevel;
+					if(level == null || level.isEmpty()) {
+						protectionFlags = (1 << PermissionInfo.PROTECTION_NORMAL);
+					} else {
+						protectionFlags = PermissionInfoExt.parseProtectionFlags(info.protectionLevel);
+					}
+				}
+				if((protectionFlags & baseFilterOut) != 0
+						&& (protectionFlags & flagFilterIn) == 0) {
+					return false;
+				}
+			}
+
+			if(filterText == null || filterText.isEmpty()) {
+				return true;
+			}
+
 			boolean ret = include(info.name);
 			ret = ret || include(info.permissionGroup);
 			ret = ret || include(info.protectionLevel);

@@ -175,6 +175,6 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo implements UnitI
 	}
 
 	public boolean hasDangerous() {
-		return (protectionFlags & PermissionInfo.PROTECTION_DANGEROUS) != 0;
+		return (protectionFlags & (1 << PermissionInfo.PROTECTION_DANGEROUS)) != 0;
 	}
 }

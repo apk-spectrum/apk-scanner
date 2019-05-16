@@ -43,7 +43,7 @@ public class PermissionInfo
     public static final int PROTECTION_FLAG_SYSTEM_TEXT_CLASSIFIER = 0x10000;
 
     public static final int PROTECTION_MASK_BASE = 0xf;
-    public static final int PROTECTION_MASK_FLAGS = 0xfff0;
+    public static final int PROTECTION_MASK_FLAGS = 0xffff0;
 
     public static final int FLAG_COSTS_MONEY = 1<<0;
     public static final int FLAG_REMOVED = 1<<1;
@@ -174,6 +174,9 @@ public class PermissionInfo
             case PermissionInfo.PROTECTION_SIGNATURE_OR_SYSTEM:
                 protLevel = "signatureOrSystem";
                 break;
+            case PROTECTION_MASK_BASE:
+            	protLevel = "";
+            	break;
         }
         if ((level & PermissionInfo.PROTECTION_FLAG_PRIVILEGED) != 0) {
             protLevel += "|privileged";
