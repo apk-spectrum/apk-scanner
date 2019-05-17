@@ -25,7 +25,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.AbstractButton;
@@ -85,6 +87,7 @@ import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 
 public class PermissionHistoryPanel extends JPanel implements ItemListener, ActionListener {
 	private static final long serialVersionUID = -3567803690045423840L;
@@ -121,6 +124,8 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 	private JTextArea description;
 	private JTabbedPane extraTabbedPanel;
 
+	private Map<String, JCheckBox> flagCheckBoxs = new HashMap<>();
+
 	private PermissionManager[] cachePermMangers = new PermissionManager[2];
 	private PermissionManager permManager;
 	private String[] historyTableHeader;
@@ -146,6 +151,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 			public void mouseClicked(MouseEvent e) {
 				filterCollapsePanel.setVisible(true);
 				filterExtendPanel.setVisible(false);
+				refreshFilterLabel();
 			}
 		});
 
@@ -269,6 +275,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		box.add(filterField);
 		filterExtendPanel.add(box);
 
+		final JPanel flagsPanel = new JPanel(new GridLayout(0, 5, 0, 0));
 		ItemListener listener = new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -279,13 +286,33 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 				} else {
 					permTable.clearFilter(level);
 				}
+				if(!level.startsWith("|")) {
+					permTable.clearFilter(PermissionInfo.PROTECTION_MASK_FLAGS);
+					int flag = permTable.getFilteredFlags();
+					flagsPanel.setVisible(flag != 0);
+					for(Component c: flagsPanel.getComponents()) {
+						if(!(c instanceof JCheckBox)) continue;
+						((JCheckBox)c).removeItemListener(this);
+						((JCheckBox)c).setSelected(false);
+						((JCheckBox)c).addItemListener(this);
+					}
+					flagsPanel.removeAll();
+					String filteredFlags = PermissionInfo.protectionToString(PermissionInfo.PROTECTION_MASK_BASE | flag);
+					for(String key: filteredFlags.split("\\|")) {
+						if(key.isEmpty() || !flagCheckBoxs.containsKey(key)) continue;
+						flagsPanel.add(flagCheckBoxs.get(key));
+					}
+					Log.e("getFilteredFlags " + flag);
+				}
+				refreshPermsCount();
 			}
 		};
 
 		JPanel flags = new JPanel(new GridLayout(0, 5, 0, 0));
 		flags.setAlignmentX(0f);
 		flags.setBorder(new TitledBorder("Protection Levels"));
-		for(String flag: new String[] {"normal", "dangerous", "signature", "signatureOrSystem"}) {
+		String allFlags = PermissionInfoExt.protectionFlagsToString(PermissionInfo.PROTECTION_MASK_BASE);
+		for(String flag: allFlags.split("\\|")) {
 			JCheckBox ckBox = new JCheckBox(flag);
 			ckBox.setMinimumSize(new Dimension(0, 20));
 			ckBox.setActionCommand(flag);
@@ -293,23 +320,24 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 			ckBox.setSelected(true);
 			ckBox.addItemListener(listener);
 			flags.add(ckBox);
+			flagCheckBoxs.put(flag, ckBox);
 		}
 		filterExtendPanel.add(flags);
 
-		flags = new JPanel(new GridLayout(0, 5, 0, 0));
-		flags.setAlignmentX(0f);
-		flags.setBorder(new TitledBorder("Protection Flags"));
-		for(String flag: new String[] {"privileged", "development", "appop", "pre23", "installer", "verifier",
-				"preinstalled", "setup", "instant", "runtime", "oem", "vendorPrivileged", "textClassifier",
-				"wellbeing", "documenter", "configurator", "incidentReportApprover", "appPredictor"}) {
+		flagsPanel.setVisible(false);
+		flagsPanel.setAlignmentX(0f);
+		flagsPanel.setBorder(new TitledBorder("Protection Flags"));
+		allFlags = PermissionInfo.protectionToString(PermissionInfo.PROTECTION_MASK_BASE | PermissionInfo.PROTECTION_MASK_FLAGS);
+		for(String flag: allFlags.split("\\|")) {
+			if(flag.isEmpty()) continue;
 			JCheckBox ckBox = new JCheckBox(flag);
 			ckBox.setMinimumSize(new Dimension(0, 20));
 			ckBox.setActionCommand("|"+flag);
 			ckBox.setToolTipText(flag);
 			ckBox.addItemListener(listener);
-			flags.add(ckBox);
+			flagCheckBoxs.put(flag, ckBox);
 		}
-		filterExtendPanel.add(flags);
+		filterExtendPanel.add(flagsPanel);
 
 		box = Box.createHorizontalBox();
 		box.setAlignmentX(0f);
@@ -384,6 +412,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 			int sdkLevel = (int)evt.getItem();
 			permManager.setSdkVersion(sdkLevel);
 			refreshPermTable();
+			setBaseFilter();
 		}
 	}
 
@@ -549,9 +578,11 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 			cachePermMangers[ON_ANDROID] = PermissionManager.createAllPermissionManager();
 			cachePermMangers[ON_ANDROID].setSdkVersion(manager.getSdkVersion());
 		}
-		this.permManager = manager;
+		this.permManager = manager != null ? manager : cachePermMangers[ON_ANDROID];
 		setSdkApiLevels();
 		refreshPermTable();
+		setBaseFilter();
+		refreshFilterLabel();
 	}
 
 	private void setSdkApiLevels() {
@@ -568,6 +599,8 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 	private void refreshPermTable() {
 		DefaultTableModel model = (DefaultTableModel) permTable.getModel();
 		model.setRowCount(0);
+
+		permTable.filterClear();
 
 		Vector<Object> rowData = null;
 		for(PermissionGroupInfoExt g: permManager.getPermissionGroups()) {
@@ -595,6 +628,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		        }
 		        rowData.addElement(info);
 		        model.addRow( rowData );
+
 			}
 		}
 
@@ -602,26 +636,75 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 	}
 
 	private void refreshPermsCount() {
-		int groupCount = 0;
-		int permCount = 0;
-		int colIdx = permTable.getColumnModel().getColumnIndex("Data");
-		for(int i = 0; i < permTable.getRowCount(); i++) {
-			Object data = permTable.getValueAt(i, colIdx);
-			if(data instanceof PermissionGroupInfo) {
-				groupCount++;
-			} else {
-				permCount++;
-			}
-		}
-
 		String count = null;
 		if(byGroup.isSelected()) {
-			count = String.format("%d Groups, %d Permissions", groupCount, permCount);
+			count = String.format("%d Groups, %d Permissions", permTable.getGroupCount(), permTable.getPermissionCount());
 		} else {
-			count = String.format("%d Permissions", permCount);
+			count = String.format("%d Permissions", permTable.getPermissionCount());
 		}
 		collapseFilterCount.setText(count);
 		extendFilterCount.setText(count);
+	}
+
+	private void setBaseFilter() {
+		int hasBaseLevels = 0;
+		for(PermissionGroupInfoExt g: permManager.getPermissionGroups()) {
+			for(PermissionInfo info: g.permissions) {
+		        hasBaseLevels |= (getProtectionFlags(info) & PermissionInfo.PROTECTION_MASK_BASE);
+			}
+		}
+		String allFlags = PermissionInfoExt.protectionFlagsToString(PermissionInfo.PROTECTION_MASK_BASE);
+		for(String flag: allFlags.split("\\|")) {
+			if(flag.isEmpty() || !flagCheckBoxs.containsKey(flag)) continue;
+			JCheckBox ckBox = flagCheckBoxs.get(flag);
+			int level = PermissionInfo.parseProtectionLevel(flag);
+			boolean has = (hasBaseLevels & (1 << level)) != 0;
+			ckBox.setEnabled(has);
+			ckBox.setSelected(has);
+		}
+	}
+
+	private void refreshFilterLabel() {
+		//collapseFilterLabel = new JLabel("Filter : In Package, .STORAGE, All");
+		StringBuilder label = new StringBuilder();
+		label.append("Filter").append(" : ");
+		if(permManager == cachePermMangers[ON_ANDROID]) {
+			label.append("All On Android, ");
+		} else {
+			label.append("Used In Package, ");
+		}
+
+		String filterText = permTable.getFilterText().trim();
+		if(filterText.startsWith("android.permission-group.")) {
+			filterText = filterText.replaceAll("android.permission-group.", ".");
+		}
+		if(filterText.length() > 13) {
+			filterText = filterText.substring(0, 10) + "...";
+		}
+		if(filterText.isEmpty()) {
+			filterText = "None";
+		}
+		label.append(filterText).append(", ");
+
+		String level = "";
+		boolean hasAllLevel = true;
+		String allFlags = PermissionInfoExt.protectionFlagsToString(PermissionInfo.PROTECTION_MASK_BASE);
+		for(String flag: allFlags.split("\\|")) {
+			if(flag.isEmpty() || !flagCheckBoxs.containsKey(flag)) continue;
+			JCheckBox ckBox = flagCheckBoxs.get(flag);
+			if(ckBox.isEnabled()) {
+				if(!ckBox.isSelected()) hasAllLevel = false;
+				else {
+					if(!level.isEmpty()) level += "|";
+					String tmp = ckBox.getText();
+					level += tmp.substring(0, 1).toUpperCase();
+					if(tmp.contains("OrS")) level += "S";
+				}
+			}
+		}
+		label.append(hasAllLevel ? "ALL": level);
+
+		collapseFilterLabel.setText(label.toString());
 	}
 
 	public void showDialog(Window owner) {
@@ -672,6 +755,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 				manager.setSdkVersion(permManager.getSdkVersion());
 				permManager = manager;
 				refreshPermTable();
+				setBaseFilter();
 			}
 		} else {
 			int keycode = Integer.parseInt(evt.getActionCommand());
@@ -711,10 +795,26 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		}
 	}
 
+	private int getProtectionFlags(PermissionInfo info) {
+		int protectionFlags = 0;
+		if(info instanceof PermissionInfoExt) {
+			protectionFlags = ((PermissionInfoExt)info).getProtectionFlags();
+		} else {
+			String level = info.protectionLevel;
+			if(level == null || level.isEmpty()) {
+				protectionFlags = (1 << PermissionInfo.PROTECTION_NORMAL);
+			} else {
+				protectionFlags = PermissionInfoExt.parseProtectionFlags(info.protectionLevel);
+			}
+		}
+		return protectionFlags;
+	}
+
 	private class PermissionTable extends JTable {
 		private static final long serialVersionUID = -5002494238794399060L;
 
 		private PermissionFilter filter;
+		private String filterText = "";
 
 	    public PermissionTable() {
 	        super(new PermissionTableModel());
@@ -827,12 +927,18 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		}
 
 		public void setFilterText(String text) {
+			filterText = text;
 			text = text.toUpperCase();
 			if(!text.equals(filter.getFilterText())) {
 				filter.setFilterText(!text.isEmpty() ? text : null);
+				filter.clearFilter(PermissionInfo.PROTECTION_MASK_FLAGS);
 				((DefaultTableModel) getModel()).fireTableDataChanged();
 				refreshPermsCount();
 			}
+		}
+
+		public String getFilterText() {
+			return filterText;
 		}
 
 		public void addCollapseGroup(String groupName) {
@@ -873,6 +979,18 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 			} else {
 				return PermissionInfo.parseProtectionLevel(protectionLevel);
 			}
+		}
+
+		public int getGroupCount() {
+			return filter.getGroupCount();
+		}
+
+		public int getPermissionCount() {
+			return filter.getPermissionCount();
+		}
+
+		public int getFilteredFlags() {
+			return filter.getFilteredFlags();
 		}
 
 		@SuppressWarnings("unused")
@@ -1050,6 +1168,9 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		private String filterText = "";
 		private int baseFilterOut = 0;
 		private int flagFilterIn = 0;
+		private int filteredFlags = 0;
+		private int groupCount = 0;
+		private int permCount = 0;
 
 		public void setFilterText(String text) {
 			filterText = text;
@@ -1094,13 +1215,39 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 			flagFilterIn = 0;
 		}
 
+		public int getGroupCount() {
+			return groupCount;
+		}
+
+		public int getPermissionCount() {
+			return permCount;
+		}
+
+		public int getFilteredFlags() {
+			return filteredFlags;
+		}
+
+		private void resetCount() {
+			filteredFlags = 0;
+			groupCount = 0;
+			permCount = 0;
+		}
+
 		@Override
 		public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
 			Integer id = entry.getIdentifier();
 			if(id == null) return false;
+			if(id == 0) resetCount();
 			Object data = entry.getValue(5);
-			boolean ret = checkCollapseGroups(data);
-			ret = ret && checkFilter(data);
+			boolean ret = checkFilter(data);
+			if(ret) {
+				if(data instanceof PermissionGroupInfo) groupCount++;
+				else if(data instanceof PermissionInfo) permCount++;
+			} else if(data instanceof PermissionInfo) {
+				int flags = getProtectionFlags(((PermissionInfo)data));
+				filteredFlags |= (flags & PermissionInfo.PROTECTION_MASK_FLAGS);
+			}
+			ret = ret && checkCollapseGroups(data);
 			return ret;
 		}
 
@@ -1143,17 +1290,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 
 		private boolean checkPermissionInfo(PermissionInfo info) {
 			if(baseFilterOut != 0) {
-				int protectionFlags = 0;
-				if(info instanceof PermissionInfoExt) {
-					protectionFlags = ((PermissionInfoExt)info).getProtectionFlags();
-				} else {
-					String level = info.protectionLevel;
-					if(level == null || level.isEmpty()) {
-						protectionFlags = (1 << PermissionInfo.PROTECTION_NORMAL);
-					} else {
-						protectionFlags = PermissionInfoExt.parseProtectionFlags(info.protectionLevel);
-					}
-				}
+				int protectionFlags = getProtectionFlags(info);
 				if((protectionFlags & baseFilterOut) != 0
 						&& (protectionFlags & flagFilterIn) == 0) {
 					return false;
