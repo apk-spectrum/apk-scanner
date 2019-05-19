@@ -21,7 +21,6 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton.ToggleButtonModel;
@@ -35,13 +34,10 @@ import javax.swing.text.html.Option;
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
 import com.apkscanner.core.permissionmanager.PermissionManager;
 import com.apkscanner.core.permissionmanager.PermissionRepository.SourceCommit;
-import com.apkscanner.core.permissionmanager.RevokedPermissionInfo;
-import com.apkscanner.core.permissionmanager.RevokedPermissionInfo.RevokedReason;
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.CompatibleScreensInfo;
-import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.data.apkinfo.SupportsGlTextureInfo;
 import com.apkscanner.data.apkinfo.SupportsScreensInfo;
@@ -822,100 +818,16 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	}
 
 	private void showPermList() {
-		
 		PermissionHistoryPanel historyView = new PermissionHistoryPanel();
 		historyView.setPermissionManager(permissionManager);
 		historyView.showDialog(null);
-		/*
-		StringBuilder permissionList = new StringBuilder();
-
-		PermissionInfo[] permissions = permissionManager.getPermissions(UsesPermissionTag.UsesPermission);
-		if(permissions != null && permissions.length > 0) {
-			permissionList.append("<uses-permission> [").append(permissions.length).append("]\n");
-			for(PermissionInfo info: permissions) {
-				permissionList.append(info.name).append(" - ").append(info.protectionLevel).append("\n");
-			}
-		}
-
-		permissions = permissionManager.getPermissions(UsesPermissionTag.UsesPermissionSdk23);
-		if(permissions != null && permissions.length > 0) {
-			if(permissionList.length() > 0) permissionList.append("\n");
-			permissionList.append("<uses-permission-sdk-23> [").append(permissions.length).append("]\n");
-			for(PermissionInfo info: permissions) {
-				permissionList.append(info.name).append(" - ").append(info.protectionLevel);
-				permissionList.append("\n");
-			}
-		}
-
-		permissions = permissionManager.getDeclarePermissions();
-		if(permissions != null && permissions.length > 0) {
-			if(permissionList.length() > 0) {
-				permissionList.append("\n");
-			}
-			permissionList.append("<permission> [").append(permissions.length).append("]\n");
-			for(PermissionInfo info: permissions) {
-				permissionList.append(info.name).append(" - ").append(info.protectionLevel).append("\n");
-			}
-		}
-
-		permissions = permissionManager.getRevokedPermissions();
-		if(permissions != null && permissions.length > 0) {
-			if(permissionList.length() > 0) {
-				permissionList.append("\n");
-			}
-			permissionList.append("<revoked> [").append(permissions.length).append("]\n");
-			for(RevokedPermissionInfo info: (RevokedPermissionInfo[])permissions) {
-				permissionList.append(info.name).append(" - ").append(info.getReasonText()).append("\n");
-			}
-		}
-
-		showDialog(permissionList.toString(), Resource.STR_BASIC_PERM_LIST_TITLE.getString(), new Dimension(500, 200), null);
-		*/
 	}
 
 	private void showPermDetailDesc(HyperlinkClickEvent evt) {
-		String group = (String) evt.getUserData();
-		PermissionGroupInfoExt g = permissionManager.getPermissionGroup(group);
-		Log.e("g " + g + ", " + group);
-		if(g == null) return;
-
-		StringBuilder body = new StringBuilder();
-		body.append("■ ");
-		if(g.label != null) {
-			body.append(g.getLabel()).append(" - ");
-		}
-		body.append("[").append(group).append("]\n");
-		if(g.description != null) {
-			body.append(" : ").append(g.getDescription()).append("\n");
-		}
-		body.append("------------------------------------------------------------------------------------------------------------\n\n");
-
-		for(PermissionInfo info: g.permissions) {
-			body.append("▶ ");
-			if(info.isDangerousLevel()) {
-				body.append("[DANGEROUS] ");
-			}
-			if(info.labels != null) {
-				body.append(info.getLabel()).append(" ");
-			}
-			body.append("[").append(info.name).append("]\n");
-			String protection = info.protectionLevel;
-			if(protection == null) protection= "normal";
-			if(info instanceof RevokedPermissionInfo) {
-				RevokedPermissionInfo revokeInfo = (RevokedPermissionInfo) info;
-				body.append(" - reason : ").append(revokeInfo.getReasonText()).append("\n");
-				if(RevokedReason.NEED_PLATFORM_SIGNATURE.equals(revokeInfo.reason)) {
-					body.append(" - protectionLevel=").append(info.protectionLevel).append("\n");
-				}
-			} else {
-				body.append(" - protectionLevel=").append(info.protectionLevel).append("\n");
-			}
-			if(info.descriptions != null) {
-				body.append(" : ").append(info.getDescription()).append("\n\n");
-			}
-		}
-
-		showDialog(body.toString(), Resource.STR_BASIC_PERM_DISPLAY_TITLE.getString(), new Dimension(600, 200), new ImageIcon(g.icon.replaceAll("^file:/", "")));
+		PermissionHistoryPanel historyView = new PermissionHistoryPanel();
+		historyView.setPermissionManager(permissionManager);
+		historyView.setFilterText((String) evt.getUserData());
+		historyView.showDialog(null);
 	}
 
 	private void showDialog(String content, String title, Dimension size, Icon icon) {

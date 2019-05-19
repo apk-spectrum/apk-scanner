@@ -76,6 +76,7 @@ import com.apkscanner.core.permissionmanager.PermissionInfoExt;
 import com.apkscanner.core.permissionmanager.PermissionManager;
 import com.apkscanner.core.permissionmanager.PermissionRepository.SourceCommit;
 import com.apkscanner.core.permissionmanager.RevokedPermissionInfo;
+import com.apkscanner.core.permissionmanager.RevokedPermissionInfo.RevokedSource;
 import com.apkscanner.core.permissionmanager.UnitInformation;
 import com.apkscanner.core.permissionmanager.UnitRecord;
 import com.apkscanner.data.apkinfo.PermissionGroupInfo;
@@ -115,6 +116,8 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 	private JLabel collapseFilterCount;
 	private JLabel extendFilterLabel;
 	private JLabel extendFilterCount;
+
+	private JTextField filterTextField;
 
 	private PermissionTable permTable;
 
@@ -260,10 +263,10 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		box = Box.createHorizontalBox();
 		box.setAlignmentX(0f);
 		box.add(new JLabel("Search:"));
-		final JTextField filterField = new JTextField();
-		filterField.getDocument().addDocumentListener(new DocumentListener() {
-			public void setFilter() {
-				permTable.setFilterText(filterField.getText().trim());
+		filterTextField = new JTextField();
+		filterTextField.getDocument().addDocumentListener(new DocumentListener() {
+			private void setFilter() {
+				permTable.setFilterText(filterTextField.getText().trim());
 			}
 			@Override
 			public void changedUpdate(DocumentEvent e) { setFilter(); }
@@ -272,7 +275,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 			@Override
 			public void removeUpdate(DocumentEvent e) { setFilter(); }
 		});
-		box.add(filterField);
+		box.add(filterTextField);
 		filterExtendPanel.add(box);
 
 		final JPanel flagsPanel = new JPanel(new GridLayout(0, 5, 0, 0));
@@ -582,6 +585,11 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		setSdkApiLevels();
 		refreshPermTable();
 		setBaseFilter();
+		refreshFilterLabel();
+	}
+
+	public void setFilterText(String text) {
+		filterTextField.setText(text);
 		refreshFilterLabel();
 	}
 
@@ -1299,6 +1307,29 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 
 			if(filterText == null || filterText.isEmpty()) {
 				return true;
+			}
+
+			if(PermissionManager.GROUP_NAME_DECLARED.toUpperCase().equals(filterText)) {
+				if(info instanceof DeclaredPermissionInfo) {
+					return true;
+				}
+				if(info instanceof RevokedPermissionInfo) {
+					RevokedPermissionInfo revoked = (RevokedPermissionInfo) info;
+					if(revoked.source == RevokedSource.DECLARED) {
+						return true;
+					}
+				}
+				return false;
+			} else if(PermissionManager.GROUP_NAME_REVOKED.toUpperCase().equals(filterText)) {
+				if(info instanceof RevokedPermissionInfo) {
+					RevokedPermissionInfo revoked = (RevokedPermissionInfo) info;
+					if(revoked.source != RevokedSource.DECLARED) {
+						return true;
+					}
+				}
+				return false;
+			} else if(PermissionManager.GROUP_NAME_UNSPECIFIED.toUpperCase().equals(filterText)) {
+				return info.permissionGroup == null || info.permissionGroup.isEmpty();
 			}
 
 			boolean ret = include(info.name);
