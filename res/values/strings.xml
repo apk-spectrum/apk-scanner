@@ -344,6 +344,19 @@ they're removed before the application is published</string>
 	<string name="label_treat_sign_as_revoked">Treat a sign level as revoked</string>
 	<string name="label_with_below_options">With below options</string>
 	<string name="label_with_options">Options</string>
+	<string name="label_by_group">By Group</string>
+	<string name="label_with_label">With Label</string>
+	<string name="label_reference_n_levels">Reference &amp; Levels</string>
+	<string name="label_filter">Filter</string>
+	<string name="label_used_in_package">Used permissions in Package</string>
+	<string name="label_all_on_android">All permissions on Android</string>
+	<string name="label_used_in_package_short">Used in Package</string>
+	<string name="label_all_on_android_short">All on Android</string>
+	<string name="label_group_count_format">%d Groups, %d Permissions</string>
+	<string name="label_perm_count_format">%d Permissions</string>
+	<string name="label_filter_none">None</string>
+	<string name="label_filter_all">ALL</string>
+	<string name="label_permission_info">Permission Info</string>
 
 	<string name="msg_failure_open_apk">ERROR: Can not open the APK</string>
 	<string name="msg_no_such_apk">No such APK file</string>

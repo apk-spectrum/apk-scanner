@@ -199,12 +199,12 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		});
 		sdkSelectPanel.add(sdkVersions);
 
-		byGroup = new JCheckBox("by Group");
+		byGroup = new JCheckBox(Resource.STR_LABEL_BY_GROUP.getString());
 		byGroup.setSelected(true);
 		byGroup.addItemListener(this);
 		sdkSelectPanel.add(byGroup);
 
-		withLable = new JCheckBox("with Label");
+		withLable = new JCheckBox(Resource.STR_LABEL_WITH_LABEL.getString());
 		withLable.setSelected(true);
 		withLable.addItemListener(this);
 		sdkSelectPanel.add(withLable);
@@ -212,7 +212,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		JPanel sdkOptions = new JPanel(new BorderLayout());
 		sdkOptions.add(sdkSelectPanel);
 
-		JLabel refer = new JLabel("Reference Sources");
+		JLabel refer = new JLabel(Resource.STR_LABEL_REFERENCE_N_LEVELS.getString());
 		refer.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		refer.addMouseListener(new MouseAdapter() {
 			@Override
@@ -231,11 +231,11 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 	public JComponent makeFilterCollapsePanel() {
 		final JPanel filterCollapsePanel = new JPanel();
 		filterCollapsePanel.setLayout(new BoxLayout(filterCollapsePanel, BoxLayout.X_AXIS));
-		collapseFilterLabel = new JLabel("Filter : In Package, .STORAGE, All");
+		collapseFilterLabel = new JLabel("");
 		collapseFilterLabel.setIcon((Icon) UIManager.get("Tree.collapsedIcon"));
 		filterCollapsePanel.add(collapseFilterLabel);
 		filterCollapsePanel.add(Box.createHorizontalGlue());
-		collapseFilterCount = new JLabel("0 Groups, 0 Permissions");
+		collapseFilterCount = new JLabel("");
 		filterCollapsePanel.add(collapseFilterCount);
 		return filterCollapsePanel;
 	}
@@ -249,15 +249,15 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 
 		Box box = Box.createHorizontalBox();
 		box.setAlignmentX(0f);
-		extendFilterLabel = new JLabel("Filter : ");
+		extendFilterLabel = new JLabel(Resource.STR_LABEL_FILTER.getString() + " : ");
 		extendFilterLabel.setIcon((Icon) UIManager.get("Tree.expandedIcon"));
 		extendFilterLabel.setAlignmentX(0f);
 		box.add(extendFilterLabel);
-		JRadioButton inPackage = new JRadioButton("Used permissions in Package");
+		JRadioButton inPackage = new JRadioButton(Resource.STR_LABEL_USED_IN_PACKAGE.getString());
 		inPackage.setActionCommand(ACT_CMD_IN_PACKAGE);
 		inPackage.addActionListener(this);
 		box.add(inPackage);
-		JRadioButton onAndroid = new JRadioButton("All permissions on Android");
+		JRadioButton onAndroid = new JRadioButton(Resource.STR_LABEL_ALL_ON_ANDROID.getString());
 		onAndroid.setActionCommand(ACT_CMD_ON_ANDROID);
 		onAndroid.addActionListener(this);
 		box.add(onAndroid);
@@ -270,7 +270,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 
 		box = Box.createHorizontalBox();
 		box.setAlignmentX(0f);
-		box.add(new JLabel("Search:"));
+		box.add(new JLabel(Resource.STR_LABEL_SEARCH.getString()+":"));
 		filterTextField = new JTextField();
 		filterTextField.getDocument().addDocumentListener(new DocumentListener() {
 			private void setFilter() {
@@ -353,7 +353,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		box = Box.createHorizontalBox();
 		box.setAlignmentX(0f);
 		box.add(Box.createHorizontalGlue());
-		extendFilterCount = new JLabel("0 Groups, 0 Permissions");
+		extendFilterCount = new JLabel("");
 		box.add(extendFilterCount);
 		filterExtendPanel.add(box);
 
@@ -678,9 +678,9 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 	private void refreshPermsCount() {
 		String count = null;
 		if(byGroup.isSelected()) {
-			count = String.format("%d Groups, %d Permissions", permTable.getGroupCount(), permTable.getPermissionCount());
+			count = String.format(Resource.STR_LABEL_GROUP_COUNT_FORMAT.getString(), permTable.getGroupCount(), permTable.getPermissionCount());
 		} else {
-			count = String.format("%d Permissions", permTable.getPermissionCount());
+			count = String.format(Resource.STR_LABEL_PERM_COUNT_FORMAT.getString(), permTable.getPermissionCount());
 		}
 		collapseFilterCount.setText(count);
 		extendFilterCount.setText(count);
@@ -705,13 +705,12 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 	}
 
 	private void refreshFilterLabel() {
-		//collapseFilterLabel = new JLabel("Filter : In Package, .STORAGE, All");
 		StringBuilder label = new StringBuilder();
-		label.append("Filter").append(" : ");
+		label.append(Resource.STR_LABEL_FILTER.getString()).append(" : ");
 		if(permManager == cachePermMangers[ON_ANDROID]) {
-			label.append("All On Android, ");
+			label.append(Resource.STR_LABEL_ALL_ON_ANDROID_SHORT.getString()).append(", ");
 		} else {
-			label.append("Used In Package, ");
+			label.append(Resource.STR_LABEL_USED_IN_PACKAGE_SHORT.getString()).append(", ");
 		}
 
 		String filterText = permTable.getFilterText().trim();
@@ -722,7 +721,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 			filterText = filterText.substring(0, 10) + "...";
 		}
 		if(filterText.isEmpty()) {
-			filterText = "None";
+			filterText = Resource.STR_LABEL_FILTER_NONE.getString();
 		}
 		label.append(filterText).append(", ");
 
@@ -742,7 +741,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 				}
 			}
 		}
-		label.append(hasAllLevel ? "ALL": level);
+		label.append(hasAllLevel ? Resource.STR_LABEL_FILTER_ALL.getString(): level);
 
 		collapseFilterLabel.setText(label.toString());
 	}
@@ -750,7 +749,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 	public void showDialog(Window owner) {
 		dialog = new JDialog(owner);
 
-		dialog.setTitle("Permission Info");
+		dialog.setTitle(Resource.STR_LABEL_PERMISSION_INFO.getString());
 		dialog.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		dialog.setResizable(true);

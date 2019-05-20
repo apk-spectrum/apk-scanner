@@ -344,6 +344,19 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="label_treat_sign_as_revoked">플랫폼 서명이 아닌 경우 서명 레벨 미승인</string>
 	<string name="label_with_below_options">아래 옵션으로 설치</string>
 	<string name="label_with_options">옵션</string>
+	<string name="label_by_group">그룹별 보기</string>
+	<string name="label_with_label">레이블 보기</string>
+	<string name="label_reference_n_levels">출처 및 정보</string>
+	<string name="label_filter">필터</string>
+	<string name="label_used_in_package">패키지에서 사용한 권한</string>
+	<string name="label_all_on_android">안드로이드의 모든 권한</string>
+	<string name="label_used_in_package_short">패키지 권한</string>
+	<string name="label_all_on_android_short">안드로이드 권한</string>
+	<string name="label_group_count_format">%d개 그룹, %d개 권한</string>
+	<string name="label_perm_count_format">%d개 권한</string>
+	<string name="label_filter_none">없음</string>
+	<string name="label_filter_all">전체</string>
+	<string name="label_permission_info">권한 정보</string>
 
 	<string name="msg_failure_open_apk">APK 파일을 열수 없습니다.</string>
 	<string name="msg_no_such_apk">APK 파일이 존재하지 않습니다.</string>

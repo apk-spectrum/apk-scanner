@@ -40,8 +40,10 @@ public class PermissionReferencePanel extends JPanel implements ActionListener {
 
 		referencePanel = new JHtmlEditorPane();
 		referencePanel.setEditable(false);
+		referencePanel.setOpaque(true);
 		protectLevelPanel = new JHtmlEditorPane();
 		protectLevelPanel.setEditable(false);
+		protectLevelPanel.setOpaque(true);
 		tabbedPanel.addTab("Reference", new JScrollPane(referencePanel));
 		tabbedPanel.addTab("Protection Level", new JScrollPane(protectLevelPanel));
 
@@ -116,7 +118,7 @@ public class PermissionReferencePanel extends JPanel implements ActionListener {
 	public void showDialog(Window owner) {
 		dialog = new JDialog(owner);
 
-		dialog.setTitle("Permission Reference");
+		dialog.setTitle(Resource.STR_LABEL_REFERENCE_N_LEVELS.getString());
 		dialog.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		dialog.setResizable(true);
@@ -145,7 +147,7 @@ public class PermissionReferencePanel extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Log.e("actionPerformed " + e);
+		//Log.v("actionPerformed " + e);
 		int keycode = Integer.parseInt(e.getActionCommand());
 		switch(keycode) {
 		case KeyEvent.VK_ESCAPE:
