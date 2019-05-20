@@ -402,7 +402,7 @@ public class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, Comp
 	public void componentHidden(ComponentEvent e) {}
 
 	@Override
-	public void filesDropped(Object dropedTarget, File[] files) {
+	public void filesDropped(Object dropedTarget, final File[] files) {
 		// TODO Auto-generated method stub
 		final String[] filePaths = new String[files.length];
 		for(int i = 0; i< files.length; i++) {

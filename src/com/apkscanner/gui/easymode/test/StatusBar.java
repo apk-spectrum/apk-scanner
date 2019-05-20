@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -32,23 +33,29 @@ public StatusBar() {
     leftrightPanel = new JPanel();
     leftrightPanel.setBackground(Color.WHITE);
     rightButton = new JButton("aaa");
-    rightButton.addActionListener((ActionEvent e) -> {
-        int iconsPanelStartX = iconsPanel.getX();
-        if (iconsPanelStartX < 0) {
-            Point origin = viewport.getViewPosition();
-            if (Math.abs(iconsPanelStartX) < 20) {
-                origin.x -= Math.abs(iconsPanelStartX);
-            } else {
-                origin.x -= 20;
-            }
-            viewport.setViewPosition(origin);
-        }
-    });
+    rightButton.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+	        int iconsPanelStartX = iconsPanel.getX();
+	        if (iconsPanelStartX < 0) {
+	            Point origin = viewport.getViewPosition();
+	            if (Math.abs(iconsPanelStartX) < 20) {
+	                origin.x -= Math.abs(iconsPanelStartX);
+	            } else {
+	                origin.x -= 20;
+	            }
+	            viewport.setViewPosition(origin);
+	        }
+		}
+	});
     leftButton = new JButton("aaaaa");
-    leftButton.addActionListener((ActionEvent e) -> {
-        Point origin = viewport.getViewPosition();
-        origin.x += 20;
-        viewport.setViewPosition(origin);
+    leftButton.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+	        Point origin = viewport.getViewPosition();
+	        origin.x += 20;
+	        viewport.setViewPosition(origin);
+		}
     });
     leftrightPanel.add(rightButton);
     leftrightPanel.add(leftButton);

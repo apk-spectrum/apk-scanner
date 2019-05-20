@@ -729,7 +729,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		JRadioButton jrbStandard = new JRadioButton(Resource.STR_SETTINGS_EASYMODE_OPTION_STANDARD.getString());
 		jrbEasymode = new JRadioButton(Resource.STR_SETTINGS_EASYMODE_OPTION_EASY.getString());
 		
-		JLabel preview = new JLabel("", JLabel.CENTER);
+		final JLabel preview = new JLabel("", JLabel.CENTER);
 		preview.setBorder( new EtchedBorder(EtchedBorder.LOWERED));
 		//preview.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 		ActionListener radioAction = new ActionListener() {

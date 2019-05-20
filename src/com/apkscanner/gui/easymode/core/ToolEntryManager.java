@@ -311,7 +311,7 @@ public class ToolEntryManager {
 		}
 	}
 
-	private static void ShowInstalledPackageInfo(Object obj) {
+	private static void ShowInstalledPackageInfo(final Object obj) {
 		final IDevice[] devices = AndroidDebugBridge.getBridge().getDevices();
 		if (devices == null || devices.length == 0) {
 			Log.i("No such device of a package installed.");
@@ -353,7 +353,7 @@ public class ToolEntryManager {
 		thread.start();
 	}
 
-	private static void ClearData(Object obj) {
+	private static void ClearData(final Object obj) {
 		messagePool = new MessageBoxPool(mainframe);
 		final IDevice[] devices = AndroidDebugBridge.getBridge().getDevices();
 		if (devices == null || devices.length == 0) {
@@ -442,7 +442,7 @@ public class ToolEntryManager {
 		SystemUtil.openEditor(manifestPath);
 	}
 
-	private static void UninstallApp(Object obj) {
+	private static void UninstallApp(final Object obj) {
 		messagePool = new MessageBoxPool(mainframe);
 		final IDevice[] devices = AndroidDebugBridge.getBridge().getDevices();
 		if (devices == null || devices.length == 0) {
@@ -512,7 +512,7 @@ public class ToolEntryManager {
 		thread.start();
 	}
 
-	private static void launchApp(Object obj) {		
+	private static void launchApp(final Object obj) {		
 		final IDevice[] devices = AndroidDebugBridge.getBridge().getDevices();
 		if (devices == null || devices.length == 0) {
 			Log.i("No such device of a package installed.");
