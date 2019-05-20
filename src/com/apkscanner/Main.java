@@ -13,12 +13,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import com.apkscanner.core.scanner.ApkScanner;
-<<<<<<< HEAD
-import com.apkscanner.gui.MainUI;
+
 import com.apkscanner.gui.installer.ApkInstallWizard;
-=======
-import com.apkscanner.gui.dialog.ApkInstallWizard;
->>>>>>> refs/remotes/origin/dev_easygui
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.FileUtil;
