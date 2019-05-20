@@ -25,7 +25,7 @@ import com.apkscanner.data.apkinfo.ComponentInfo;
 import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.gui.dialog.AboutDlg;
-import com.apkscanner.gui.dialog.ApkInstallWizard;
+import com.apkscanner.gui.installer.ApkInstallWizard;
 import com.apkscanner.gui.dialog.ApkSignerWizard;
 import com.apkscanner.gui.dialog.PackageInfoPanel;
 import com.apkscanner.gui.dialog.PackageTreeDlg;
