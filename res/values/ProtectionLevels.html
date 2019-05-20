@@ -1,0 +1,130 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <style type="text/css">
+      <!--
+        H1 { margin-top: 0px; margin-bottom: 0px }
+        H3 { margin-top: 5px; margin-bottom: 0px }
+        a { text-decoration: none; }
+        p { margin-top: 10px; margin-bottom: 5px }
+        ul { margin-left: 12px; }
+        #repository-info a { color: black }
+        #reference-table { margin-top: 5px; }
+        #reference-table td { text-align: center; }
+        .tr-head { border-width: 2px 0px 2px 0px; border-style: solid; border-color: #969696; }
+        .tr-odd { background-color: #EDEDED; }
+        .tr-even { background-color: white; }
+      -->
+    </style>
+  </head>
+  <body>
+  	<div id="reference">
+  	  Reference : <a href="https://developer.android.com/reference/android/R.attr#protectionLevel">https://developer.android.com/reference/android/R.attr#protectionLevel</a>
+    </div>
+    <p>■ Base permission type
+    <table class="protection-level-table">
+      <tr class="tr-head">
+        <th width="80">Constant</th>
+        <th>Description</th>
+      </tr>
+      <tr class="tr-even">
+      	 <td>normal</td>
+      	 <td>A lower-risk permission that gives an application access to isolated application-level features, with minimal risk to other applications, the system, or the user. The system automatically grants this type of permission to a requesting application at installation, without asking for the user's explicit approval (though the user always has the option to review these permissions before installing).</td>
+      </tr>
+      <tr class="tr-odd">
+      	 <td>dangerous</td>
+      	 <td>A higher-risk permission that would give a requesting application access to private user data or control over the device that can negatively impact the user. Because this type of permission introduces potential risk, the system may not automatically grant it to the requesting application. For example, any dangerous permissions requested by an application may be displayed to the user and require confirmation before proceeding, or some other approach may be taken to avoid the user automatically allowing the use of such facilities.</td>
+      </tr>
+      <tr class="tr-even">
+      	 <td>signature</td>
+      	 <td>A permission that the system is to grant only if the requesting application is signed with the same certificate as the application that declared the permission. If the certificates match, the system automatically grants the permission without notifying the user or asking for the user's explicit approval.</td>
+      </tr>
+      <tr class="tr-odd">
+      	 <td>signatureOrSystem</td>
+      	 <td>Old synonym for "signature|privileged". Deprecated in API level 23. Base permission type: a permission that the system is to grant only to packages in the Android system image or that are signed with the same certificates. Please avoid using this option, as the signature protection level should be sufficient for most needs and works regardless of exactly where applications are installed. This permission is used for certain special situations where multiple vendors have applications built in to a system image which need to share specific features explicitly because they are being built together.</td>
+      </tr>
+    </table>
+	<p>■ Additional flag from base permission type
+    <table class="protection-level-table">
+      <tr class="tr-head">
+        <th width="80">Constant</th>
+        <th>Description</th>
+      </tr>
+      <tr class="tr-odd">
+      	 <td>privileged</td>
+      	 <td>This permission can also be granted to any applications installed as privileged apps on the system image. Please avoid using this option, as the signature protection level should be sufficient for most needs and works regardless of exactly where applications are installed. This permission flag is used for certain special situations where multiple vendors have applications built in to a system image which need to share specific features explicitly because they are being built together.</td>
+      </tr>
+      <tr class="tr-even">
+      	 <td>system</td>
+      	 <td>Old synonym for "privileged". Deprecated in API level 23.</td>
+      </tr>
+      <tr class="tr-odd">
+      	 <td>development</td>
+      	 <td>This permission can also (optionally) be granted to development applications.</td>
+      </tr>
+      <tr class="tr-even">
+      	 <td>appop</td>
+      	 <td>This permission is closely associated with an app op for controlling access.</td>
+      </tr>
+      <tr class="tr-odd">
+      	 <td>pre23</td>
+      	 <td>This permission can be automatically granted to apps that target API levels below Build.VERSION_CODES.M (before runtime permissions were introduced).</td>
+      </tr>
+      <tr class="tr-even">
+      	 <td>installer</td>
+      	 <td>This permission can be automatically granted to system apps that install packages.</td>
+      </tr>
+      <tr class="tr-odd">
+      	 <td>verifier</td>
+      	 <td>This permission can be automatically granted to system apps that verify packages.</td>
+      </tr>
+      <tr class="tr-even">
+      	 <td>preinstalled</td>
+      	 <td>This permission can be automatically granted any application pre-installed on the system image (not just privileged apps).</td>
+      </tr>
+      <tr class="tr-odd">
+      	 <td>setup</td>
+      	 <td>This permission can be automatically granted to the setup wizard app</td>
+      </tr>
+      <tr class="tr-even">
+      	 <td>instant</td>
+      	 <td>This permission can be granted to instant apps</td>
+      </tr>
+      <tr class="tr-odd">
+      	 <td>runtime</td>
+      	 <td>This permission can only be granted to apps that target runtime permissions (Build.VERSION_CODES.M and above)</td>
+      </tr>
+      <tr class="tr-even">
+      	 <td>oem</td>
+      	 <td>This permission can be granted only if its protection level is signature, the requesting app resides on the OEM partition, and the OEM has white-listed the app to receive this permission by the OEM.</td>
+      </tr>
+      <tr class="tr-odd">
+      	 <td>vendorPrivileged</td>
+      	 <td>This permission can be granted to privileged apps in vendor partition.</td>
+      </tr>
+      <tr class="tr-even">
+      	 <td>textClassifier</td>
+      	 <td>This permission can be automatically granted to the system default text classifier</td>
+      </tr>
+      <tr class="tr-odd">
+      	 <td>wellbeing</td>
+      	 <td>This permission will be granted to the wellbeing app, as defined by the OEM.</td>
+      </tr>
+      <tr class="tr-even">
+      	 <td>documenter</td>
+      	 <td>This permission can be automatically granted to the document manager</td>
+      </tr>
+      <tr class="tr-odd">
+      	 <td>configurator</td>
+      	 <td>This permission automatically granted to device configurator</td>
+      </tr>
+      <tr class="tr-even">
+      	 <td>incidentReportApprover</td>
+      	 <td>This permission designates the app that will approve the sharing of incident reports.</td>
+      </tr>
+      <tr class="tr-odd">
+      	 <td>appPredictor</td>
+      	 <td>This permission can be automatically granted to the system app predictor</td>
+      </tr>
+    </table>
+  </body>
+</html>

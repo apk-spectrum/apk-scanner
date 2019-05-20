@@ -612,6 +612,8 @@ public enum Resource
 	RAW_BASIC_INFO_LAYOUT_HTML	(Type.RAW, "/values/BasicInfoLayout.html"),
 	RAW_PACKAGE_INFO_LAYOUT_HTML(Type.RAW, "/values/PackageInfoLayout.html"),
 	RAW_ADB_INSTALL_BUTTON_HTML(Type.RAW, "/values/AdbInstallButton.html"),
+	RAW_PERMISSION_REFERENCE_HTML(Type.RAW, "/values/PermissionReference.html"),
+	RAW_PROTECTION_LEVELS_HTML(Type.RAW, "/values/ProtectionLevels.html"),
 
 	ETC_SETTINGS_FILE			(Type.ETC, "settings.txt");
 

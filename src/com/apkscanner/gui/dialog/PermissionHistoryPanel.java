@@ -211,8 +211,16 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 
 		JPanel sdkOptions = new JPanel(new BorderLayout());
 		sdkOptions.add(sdkSelectPanel);
+
 		JLabel refer = new JLabel("Reference Sources");
 		refer.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		refer.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				new PermissionReferencePanel().showDialog(null);
+			}
+		});
+
 		JPanel sdkEastPanel = new JPanel();
 		sdkEastPanel.add(refer);
 		sdkOptions.add(sdkEastPanel, BorderLayout.EAST);
