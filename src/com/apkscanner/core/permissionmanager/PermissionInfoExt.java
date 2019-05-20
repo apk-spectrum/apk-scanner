@@ -5,7 +5,7 @@ import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.resource.Resource;
 
-public class PermissionInfoExt extends PermissionInfo {
+public class PermissionInfoExt extends PermissionInfo implements UnitInformation {
 	public int sdk;
 	public String comment;
 	public String label;
@@ -63,14 +63,64 @@ public class PermissionInfoExt extends PermissionInfo {
 	}
 
 	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
 	public String getLabel() {
-    	return ApkInfoHelper.getResourceValue(getLabels(), (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
+    	return ApkInfoHelper.getResourceValue(getLabels(), Resource.getLanguage());
     }
 
 	@Override
     public String getDescription() {
-    	return ApkInfoHelper.getResourceValue(getDescriptions(), (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
+    	return ApkInfoHelper.getResourceValue(getDescriptions(), Resource.getLanguage());
     }
+
+	@Override
+	public String getNonLocalizedDescription() {
+		return comment;
+	}
+
+	@Override
+	public int getApiLevel() {
+		return sdk;
+	}
+
+	@Override
+	public int getProtectionFlags() {
+		return protectionFlags;
+	}
+
+	@Override
+	public String getProtectionLevel() {
+		return protectionLevel;
+	}
+
+	@Override
+	public String getPermissionGroup() {
+		return permissionGroup;
+	}
+
+	@Override
+	public String getPermissionFlags() {
+		return permissionFlags;
+	}
+
+	@Override
+	public String getIcon() {
+		return icon;
+	}
+
+	@Override
+	public String getRequest() {
+		return null;
+	}
+
+	@Override
+	public int getPriority() {
+		return -1;
+	}
 
 	public ResourceInfo[] getLabels() {
 		if(labels != null) return labels;
@@ -97,5 +147,31 @@ public class PermissionInfoExt extends PermissionInfo {
 			summary.append("[" + name + "] : ");
 		}
 		return summary.toString();
+	}
+
+	public static int parseProtectionFlags(String strLevel) {
+		int level = parseProtectionLevel(strLevel);
+		int flags = level & PROTECTION_MASK_FLAGS;
+		level = 1 << (level & PROTECTION_MASK_BASE); 
+		return level | flags;
+	}
+
+	public static String protectionFlagsToString(int flags) {
+		if(flags == 0) flags = 1;
+		StringBuilder sb = new StringBuilder();
+        if ((flags & (1 << PROTECTION_NORMAL)) != 0) {
+            sb.append("|").append(protectionToString(PROTECTION_NORMAL));
+        }
+        if ((flags & (1 << PROTECTION_DANGEROUS)) != 0) {
+            sb.append("|").append(protectionToString(PROTECTION_DANGEROUS));
+        }
+        if ((flags & (1 << PROTECTION_SIGNATURE)) != 0) {
+            sb.append("|").append(protectionToString(PROTECTION_SIGNATURE));
+        }
+        if ((flags & (1 << 3)) != 0) { /* PROTECTION_SIGNATURE_OR_SYSTEM */ 
+            sb.append("|").append(protectionToString(3));
+        }
+        sb.append(protectionToString(PROTECTION_MASK_BASE | flags));
+		return sb.substring(1);
 	}
 }

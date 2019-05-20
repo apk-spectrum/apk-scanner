@@ -8,7 +8,7 @@ import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.resource.Resource;
 
-public class PermissionGroupInfoExt extends PermissionGroupInfo {
+public class PermissionGroupInfoExt extends PermissionGroupInfo implements UnitInformation {
 	public int sdk;
 	public String comment;
 	public String label;
@@ -71,6 +71,11 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo {
 	}
 
 	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
 	public String getLabel() {
     	return ApkInfoHelper.getResourceValue(getLabels(), (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
     }
@@ -80,6 +85,51 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo {
     	return ApkInfoHelper.getResourceValue(getDescriptions(), (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
     }
 
+	@Override
+    public String getRequest() {
+    	return ApkInfoHelper.getResourceValue(getRequests(), (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
+    }
+
+	@Override
+	public String getNonLocalizedDescription() {
+		return comment;
+	}
+
+	@Override
+	public int getApiLevel() {
+		return sdk;
+	}
+
+	@Override
+	public int getProtectionFlags() {
+		return protectionFlags;
+	}
+
+	@Override
+	public String getIcon() {
+		return icon;
+	}
+
+	@Override
+	public int getPriority() {
+		return priority;
+	}
+
+	@Override
+	public String getPermissionGroup() {
+		return name;
+	}
+
+	@Override
+	public String getProtectionLevel() {
+		return null;
+	}
+
+	@Override
+	public String getPermissionFlags() {
+		return null;
+	}
+
 	public ResourceInfo[] getLabels() {
 		if(labels != null) return labels;
 		return labels = PermissionManager.getResource(label, sdk);
@@ -87,8 +137,12 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo {
 
 	public ResourceInfo[] getDescriptions() {
 		if(descriptions != null) return descriptions;
-		descriptions = PermissionManager.getResource(description, sdk);
-		return descriptions;
+		return descriptions = PermissionManager.getResource(description, sdk);
+	}
+
+	public ResourceInfo[] getRequests() {
+		if(requests != null) return requests;
+		return requests = PermissionManager.getResource(request, sdk);
 	}
 
 	public String getIconPath() {
@@ -121,6 +175,6 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo {
 	}
 
 	public boolean hasDangerous() {
-		return (protectionFlags & PermissionInfo.PROTECTION_DANGEROUS) != 0;
+		return (protectionFlags & (1 << PermissionInfo.PROTECTION_DANGEROUS)) != 0;
 	}
 }

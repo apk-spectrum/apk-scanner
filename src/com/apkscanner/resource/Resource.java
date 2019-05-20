@@ -374,6 +374,19 @@ public enum Resource
 	STR_LABEL_TREAT_SIGN_AS_REVOKED(Type.TEXT, "@label_treat_sign_as_revoked"),
 	STR_LABEL_WITH_BELOW_OPTIONS(Type.TEXT, "@label_with_below_options"),
 	STR_LABEL_WITH_OPTIONS		(Type.TEXT, "@label_with_options"),
+	STR_LABEL_BY_GROUP			(Type.TEXT, "@label_by_group"),
+	STR_LABEL_WITH_LABEL		(Type.TEXT, "@label_with_label"),
+	STR_LABEL_REFERENCE_N_LEVELS(Type.TEXT, "@label_reference_n_levels"),
+	STR_LABEL_FILTER			(Type.TEXT, "@label_filter"),
+	STR_LABEL_USED_IN_PACKAGE	(Type.TEXT, "@label_used_in_package"),
+	STR_LABEL_ALL_ON_ANDROID	(Type.TEXT, "@label_all_on_android"),
+	STR_LABEL_USED_IN_PACKAGE_SHORT(Type.TEXT, "@label_used_in_package_short"),
+	STR_LABEL_ALL_ON_ANDROID_SHORT(Type.TEXT, "@label_all_on_android_short"),
+	STR_LABEL_GROUP_COUNT_FORMAT(Type.TEXT, "@label_group_count_format"),
+	STR_LABEL_PERM_COUNT_FORMAT	(Type.TEXT, "@label_perm_count_format"),
+	STR_LABEL_FILTER_NONE		(Type.TEXT, "@label_filter_none"),
+	STR_LABEL_FILTER_ALL		(Type.TEXT, "@label_filter_all"),
+	STR_LABEL_PERMISSION_INFO	(Type.TEXT, "@label_permission_info"),
 
 	STR_TREE_NODE_DEVICE 		(Type.TEXT, "@tree_node_device"),
 	STR_TREE_NODE_DISPLAYED		(Type.TEXT, "@tree_node_displayed"),
@@ -657,6 +670,8 @@ public enum Resource
 	RAW_BASIC_INFO_LAYOUT_HTML	(Type.RAW, "/values/BasicInfoLayout.html"),
 	RAW_PACKAGE_INFO_LAYOUT_HTML(Type.RAW, "/values/PackageInfoLayout.html"),
 	RAW_ADB_INSTALL_BUTTON_HTML(Type.RAW, "/values/AdbInstallButton.html"),
+	RAW_PERMISSION_REFERENCE_HTML(Type.RAW, "/values/PermissionReference.html"),
+	RAW_PROTECTION_LEVELS_HTML(Type.RAW, "/values/ProtectionLevels.html"),
 
 	ETC_SETTINGS_FILE			(Type.ETC, "settings.txt");
 
