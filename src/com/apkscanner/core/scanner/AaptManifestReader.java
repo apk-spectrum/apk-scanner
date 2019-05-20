@@ -215,8 +215,8 @@ public class AaptManifestReader
 	        usesPermissionList.clear();
         }
 
-        Log.i("read uses-permission-sdk23");
-        permTag = manifestPath.getNodeList("/manifest/uses-permission-sdk23");
+        Log.i("read uses-permission-sdk-23");
+        permTag = manifestPath.getNodeList("/manifest/uses-permission-sdk-23");
         if(permTag != null && permTag.length > 0) {
 	        for( int idx=0; idx < permTag.length; idx++ ){
 	        	String name = getAttrValue(permTag[idx], "name");

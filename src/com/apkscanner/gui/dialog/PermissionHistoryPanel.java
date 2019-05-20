@@ -419,44 +419,68 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		}
 	}
 
-	private void setDescription(UnitRecord<?> record) {
-		if(record == null) {
-			description.setText("No have description");
-		} else {
-			StringBuilder sb = new StringBuilder();
-			sb.append(record.name);
-			sb.append("  -  Added in API level ");
-			sb.append(record.getAddedSdk());
+	private void setDescription(UnitRecord<?> record, Object info) {
+		StringBuilder sb = new StringBuilder();
+		if(record != null) {
+			sb.append(record.name).append("  -  Added in API level ").append(record.getAddedSdk());
 			if(record.getDeprecatedSdk() > 0) {
-				sb.append(", Deprecated in API level ");
-				sb.append(record.getDeprecatedSdk());
+				sb.append(", Deprecated in API level ").append(record.getDeprecatedSdk());
 			}
 			if(record.getRemovedSdk() > 0) {
-				sb.append(", Removed in API level ");
-				sb.append(record.getRemovedSdk());
+				sb.append(", Removed in API level ").append(record.getRemovedSdk());
 			}
 
-			UnitInformation info = (UnitInformation) record.getInfomation(permManager.getSdkVersion());
-			if(info != null) {
-				String label = info.getLabel();
-				String desc = info.getDescription();
-				String comment = info.getNonLocalizedDescription();
+			if(info instanceof RevokedPermissionInfo) {
+				sb.append("\n\n[Revoked reason]\n").append(((RevokedPermissionInfo) info).getReasonText());
+			}
 
+			if(info instanceof UnitInformation) {
+				UnitInformation unitInfo = (UnitInformation) info;
+				String level = unitInfo.getProtectionLevel();
+				String label = unitInfo.getLabel();
+				String desc = unitInfo.getDescription();
+				String comment = unitInfo.getNonLocalizedDescription();
+
+				if(level != null) {
+					sb.append("\n\n[Protection Level] ").append(level);
+				}
 				if(label != null) {
-					sb.append("\n\n[Label] ");
-					sb.append(label);
+					sb.append("\n\n[Label] ").append(label);
 				}
 				if(desc != null) {
-					sb.append("\n\n[Description]\n");
-					sb.append(desc);
+					sb.append("\n\n[Description]\n").append(desc);
 				}
 				if(comment != null && !comment.trim().isEmpty()) {
-					sb.append("\n\n[Non Localized Description]\n");
-					sb.append(comment);
+					sb.append("\n\n[Non Localized Description]\n").append(comment);
 				}
 			}
-			description.setText(sb.toString());
+		} else if(info instanceof RevokedPermissionInfo) {
+			RevokedPermissionInfo revokedInfo = (RevokedPermissionInfo) info;
+			sb.append(revokedInfo.name);
+			String level = revokedInfo.protectionLevel;
+			if(level != null) {
+				sb.append("\n\n[Protection Level] ").append(level);
+			}
+			sb.append("\n\n[Revoked reason]\n").append(revokedInfo.getReasonText());
+		} else if(info instanceof PermissionInfo) {
+			PermissionInfo permInfo = (PermissionInfo) info;
+			sb.append(permInfo.name);
+			String level = permInfo.protectionLevel;
+			if(level != null) {
+				sb.append("\n\n[Protection Level] ").append(level);
+			}
+			String label = permInfo.getLabel();
+			String desc = permInfo.getDescription();
+			if(label != null) {
+				sb.append("\n\n[Label] ").append(label);
+			}
+			if(desc != null) {
+				sb.append("\n\n[Description]\n").append(desc);
+			}
+		} else {
+			sb.append("No have description");
 		}
+		description.setText(sb.toString());
 		description.setCaretPosition(0);
 	}
 
@@ -1025,8 +1049,9 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 			String name = getValueAt(row, col).toString();
 
 			col = getColumnModel().getColumnIndex("Data");
+			Object info = getValueAt(row, col);
 			boolean isGroup = byGroup.isSelected()
-					&& getValueAt(row, col) instanceof PermissionGroupInfo;
+					&& info instanceof PermissionGroupInfo;
 
 			UnitRecord<?> record = null;
 			if(isGroup) {
@@ -1034,7 +1059,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 			} else {
 				record = permManager.getPermissionRecord(name);
 			}
-			setDescription(record);
+			setDescription(record, info);
 			setHistoryData(record);
 		}
 
