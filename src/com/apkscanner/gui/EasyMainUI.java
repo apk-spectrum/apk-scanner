@@ -69,12 +69,12 @@ public class EasyMainUI implements WindowListener, IDeviceChangeListener {
 		//Log.d("init setUIFont   : " + (System.currentTimeMillis() - aaa) / 1000.0);
 		
 		Log.i("initialize() setLookAndFeel");
-		try {
-			UIManager.setLookAndFeel((String)Resource.PROP_CURRENT_THEME.getData());
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-				| UnsupportedLookAndFeelException e1) {
-			e1.printStackTrace();
-		}
+//		try {
+//			UIManager.setLookAndFeel((String)Resource.PROP_CURRENT_THEME.getData());
+//		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+//				| UnsupportedLookAndFeelException e1) {
+//			e1.printStackTrace();
+//		} //윈도우 400ms
 		Log.i("new EasyGuiMainPanel");
 		mainpanel = new EasyGuiMainPanel(mainframe, apkScanner);
 
@@ -95,23 +95,33 @@ public class EasyMainUI implements WindowListener, IDeviceChangeListener {
 
 		AdbServerMonitor.startServerAndCreateBridgeAsync();
 		AndroidDebugBridge.addDeviceChangeListener(this);
-		
+		Log.i("pack");
 		mainframe.pack();
 		
 		Log.i("setLocationRelativeTo");
-		Point position = (Point) Resource.PROP_EASY_GUI_WINDOW_POSITION.getData();
+		String setposition = (String)Resource.PROP_EASY_GUI_WINDOW_POSITION_X.getData();
 
-		if (position == null) {
+		if (setposition == null) {
 			mainframe.setLocationRelativeTo(null);
-		} else {
-			mainframe.setLocation(position);
+			Point position = mainframe.getLocation();
+			Resource.PROP_EASY_GUI_WINDOW_POSITION_X.setData(position.x+"");
+			Resource.PROP_EASY_GUI_WINDOW_POSITION_Y.setData(position.y+"");
+			Log.d(Resource.PROP_EASY_GUI_WINDOW_POSITION_X.getData() + "");
+		} else { // setLocationRelativeTo(null); 100 ms
+			int x = Integer.parseInt((String)Resource.PROP_EASY_GUI_WINDOW_POSITION_X.getData()); 
+			int y = Integer.parseInt((String)Resource.PROP_EASY_GUI_WINDOW_POSITION_Y.getData());
+			
+			mainframe.setLocation(new Point(x,y));
+//			Resource.PROP_EASY_GUI_WINDOW_POSITION_Y.getData()));
 		}
-
+		
 		if ((apkScanner.getlatestError() != 0 || apkScanner.getApkFilePath() == null)
 				&& !((AaptLightScanner)apkScanner.getApkScanner()).notcallcomplete) {
 			Log.d("getlatestError is not 0 or args 0");
 			mainpanel.showEmptyinfo();
 			mainframe.setVisible(true);
+			
+			
 		}
 
 		Log.d("main End");
@@ -123,30 +133,30 @@ public class EasyMainUI implements WindowListener, IDeviceChangeListener {
 		return EasyStartupDlg.showAboutDialog(frame);
 	}
 	
-	public static void main(final String[] args) {
-		apkScanner = new EasyLightApkScanner();
-
-		new EasyMainUI(new AaptLightScanner(null));
-
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				Thread thread = new Thread(new Runnable() {
-					public void run() {
-						apkScanner.clear(false);
-						corestarttime = System.currentTimeMillis();
-						if (args.length > 0) {
-							apkScanner.setApk(args[0]);
-						} else {
-							apkScanner.setApk("");
-						}
-					}
-				});
-				thread.setPriority(Thread.NORM_PRIORITY);
-				thread.start();
-			}
-		}); //// 70ms
-
-	}
+//	public static void main(final String[] args) {
+//		apkScanner = new EasyLightApkScanner();
+//
+//		new EasyMainUI(new AaptLightScanner(null));
+//
+//		SwingUtilities.invokeLater(new Runnable() {
+//			public void run() {
+//				Thread thread = new Thread(new Runnable() {
+//					public void run() {
+//						apkScanner.clear(false);
+//						corestarttime = System.currentTimeMillis();
+//						if (args.length > 0) {
+//							apkScanner.setApk(args[0]);
+//						} else {
+//							apkScanner.setApk("");
+//						}
+//					}
+//				});
+//				thread.setPriority(Thread.NORM_PRIORITY);
+//				thread.start();
+//			}
+//		}); //// 70ms
+//
+//	}
 
 	private void setdecoframe() {
 		mainframe.setUndecorated(true);

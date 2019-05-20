@@ -72,6 +72,7 @@ public class ToolEntryManager {
 	}
 
 	public static void initToolEntryManager() {
+		Log.i("start toolentryManager");
 		allEntry = new ArrayList<ToolEntry>(Arrays.asList(
 //				new ToolEntry(Resource.STR_APP_NAME.getString(), "Excute Original Scanner",
 //						Resource.IMG_APP_ICON.getImageIcon(100, 100)),
@@ -101,7 +102,7 @@ public class ToolEntryManager {
 						Resource.IMG_TOOLBAR_SETTING.getImageIcon()),
 				new ToolEntry(Resource.STR_BTN_ABOUT.getString(), Resource.STR_BTN_ABOUT_LAB.getString(),
 						Resource.IMG_TOOLBAR_ABOUT.getImageIcon())));
-		
+		Log.i("start deviceEntry toolEntry");
 		deviceEntry = new ArrayList<ToolEntry>(Arrays.asList(
 //				new ToolEntry(Resource.STR_APP_NAME.getString(), "Excute Original Scanner",
 //				Resource.IMG_APP_ICON.getImageIcon(100, 100)),
@@ -114,7 +115,10 @@ public class ToolEntryManager {
 		new ToolEntry(Resource.STR_BTN_DETAILS_INFO.getString(), Resource.STR_BTN_DETAILS_INFO.getString(),
 				Resource.IMG_TOOLBAR_SEARCH.getImageIcon())));
 		
+		Log.i("start MessageBoxPool");
 		messagePool = new MessageBoxPool(mainframe);
+		
+		Log.i("start refreshToolManager");
 		refreshToolManager();
 	}
 

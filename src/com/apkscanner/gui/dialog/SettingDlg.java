@@ -726,8 +726,8 @@ public class SettingDlg extends JDialog implements ActionListener
 		JPanel selectEasyPanel = new JPanel(new GridLayout(1,2));
 		JPanel EasyPanel = new JPanel(new BorderLayout());
 		
-		JRadioButton jrbStandard = new JRadioButton("Standard mode");
-		jrbEasymode = new JRadioButton("Easy mode");
+		JRadioButton jrbStandard = new JRadioButton(Resource.STR_SETTINGS_EASYMODE_OPTION_STANDARD.getString());
+		jrbEasymode = new JRadioButton(Resource.STR_SETTINGS_EASYMODE_OPTION_EASY.getString());
 		
 		JLabel preview = new JLabel("", JLabel.CENTER);
 		preview.setBorder( new EtchedBorder(EtchedBorder.LOWERED));

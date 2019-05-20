@@ -6,6 +6,7 @@ import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.EasyMainUI;
 import com.apkscanner.gui.MainUI;
 import com.apkscanner.resource.Resource;
+import com.apkscanner.util.Log;
 
 public class UIController {
 	public static final String APKSCANNER_GUI_APKSCANNER = "APKSCANNER";
@@ -19,9 +20,10 @@ public class UIController {
 
 	}
 	public UIController(ApkScanner apkScanner) {
-		
+		Log.i("start UIController");
 		boolean isEasyGui = (boolean) Resource.PROP_USE_EASY_UI.getData();
 		mainframe = new JFrame();
+		Log.i("creat frame");
 		if(	isEasyGui) {
 			new EasyMainUI(apkScanner, mainframe);
 		} else {

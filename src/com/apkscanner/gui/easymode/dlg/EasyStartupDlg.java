@@ -54,7 +54,7 @@ public class EasyStartupDlg
 		//imagePanel.setBorder(new LineBorder(Color.black));
 		imagePanel.add(Resource.IMG_PREVIEW_EASY1.getImageIcon());
 		imagePanel.add(Resource.IMG_PREVIEW_EASY2.getImageIcon());
-		imagePanel.add(Resource.IMG_PREVIEW_EASY3.getImageIcon());
+		//imagePanel.add(Resource.IMG_PREVIEW_EASY3.getImageIcon());
 		//imagePanel.add(Resource.IMG_PREVIEW_EASY4.getImageIcon());
 		
 		

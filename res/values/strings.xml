@@ -278,7 +278,9 @@ they're removed before the application is published</string>
 	<string name="settings_launch_installed">Launch after install completed</string>
 	<string name="settings_ext_toolbar_with_shift">Extend toolbar with shift key</string>
 	<string name="settings_ext_toolbar_without_shift">Always extend a toolbar</string>
-
+	<string name="settings_easymode_option_standard">Standard mode</string>
+	<string name="settings_easymode_option_easy">Easy mode</string>
+	
 	<string name="label_error">Error</string>
 	<string name="label_warning">Warning</string>
 	<string name="label_info">Information</string>

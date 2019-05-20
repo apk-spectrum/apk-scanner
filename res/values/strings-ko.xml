@@ -278,7 +278,9 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="settings_launch_installed">앱 설치 후 자동 실행</string>
 	<string name="settings_ext_toolbar_with_shift">Shift 키를 눌러 확장된 툴바 기능 사용 </string>
 	<string name="settings_ext_toolbar_without_shift">항상 확장된 툴바 기능 사용</string>
-
+	<string name="settings_easymode_option_standard">일반 모드</string>
+	<string name="settings_easymode_option_easy">간단 모드</string>
+	
 	<string name="label_error">오류</string>
 	<string name="label_warning">경고</string>
 	<string name="label_info">정보</string>

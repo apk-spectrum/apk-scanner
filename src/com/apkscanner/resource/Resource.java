@@ -307,7 +307,10 @@ public enum Resource
 	STR_SETTINGS_LAUNCH_INSTALLED(Type.TEXT, "@settings_launch_installed"),
 	STR_SETTINGS_TOOLBAR_WITH_SHIFT		(Type.TEXT, "@settings_ext_toolbar_with_shift"),
 	STR_SETTINGS_TOOLBAR_WITHOUT_SHIFT	(Type.TEXT, "@settings_ext_toolbar_without_shift"),
-
+	STR_SETTINGS_EASYMODE_OPTION_STANDARD	(Type.TEXT, "@settings_easymode_option_standard"),
+	STR_SETTINGS_EASYMODE_OPTION_EASY	(Type.TEXT, "@settings_easymode_option_easy"),
+	
+	
 	STR_LABEL_ERROR				(Type.TEXT, "@label_error"),
 	STR_LABEL_WARNING			(Type.TEXT, "@label_warning"),
 	STR_LABEL_INFO				(Type.TEXT, "@label_info"),
@@ -560,8 +563,6 @@ public enum Resource
 	IMG_PREVIEW_EASY			(Type.IMAGE, "preview_easymode.png"),
 	IMG_PREVIEW_EASY1			(Type.IMAGE, "preview_easymode1.png"),
 	IMG_PREVIEW_EASY2			(Type.IMAGE, "preview_easymode2.png"),
-	IMG_PREVIEW_EASY3			(Type.IMAGE, "preview_easymode3.png"),
-	IMG_PREVIEW_EASY4			(Type.IMAGE, "preview_easymode4.png"),
 	
 	IMG_PREVIEW_ORIGINAL			(Type.IMAGE, "preview_original.png"),
 	
@@ -626,6 +627,9 @@ public enum Resource
 
 	PROP_EASY_GUI_TOOLBAR				(Type.PROP, "easy_gui_show_button", "1,2,3,4,5"),
 	PROP_EASY_GUI_WINDOW_POSITION				(Type.PROP, "easy_gui_window_position", null),
+	
+	PROP_EASY_GUI_WINDOW_POSITION_X				(Type.PROP, "easy_gui_window_position_x", null),
+	PROP_EASY_GUI_WINDOW_POSITION_Y				(Type.PROP, "easy_gui_window_position_y", null),
 
 	PROP_DEFAULT_DECORDER		(Type.PROP, "default_decorder", Resource.STR_DECORDER_JD_GUI),
 	PROP_DEFAULT_SEARCHER		(Type.PROP, "default_searcher", Resource.STR_DEFAULT_SEARCHER),
