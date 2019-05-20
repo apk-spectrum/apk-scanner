@@ -568,6 +568,7 @@ public enum Resource
 	IMG_PREVIEW_EASY			(Type.IMAGE, "preview_easymode.png"),
 	IMG_PREVIEW_EASY1			(Type.IMAGE, "preview_easymode1.png"),
 	IMG_PREVIEW_EASY2			(Type.IMAGE, "preview_easymode2.png"),
+	IMG_PREVIEW_EASY3			(Type.IMAGE, "preview_easymode3.png"),
 	
 	IMG_PREVIEW_ORIGINAL			(Type.IMAGE, "preview_original.png"),
 	

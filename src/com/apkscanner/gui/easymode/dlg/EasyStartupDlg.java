@@ -49,11 +49,11 @@ public class EasyStartupDlg
 
 		// html content
 		JHtmlEditorPane hep = new JHtmlEditorPane("", style.toString(), body.toString());
-		ImageSliderPanel imagePanel = new ImageSliderPanel(Resource.IMG_PREVIEW_EASY.getImageIcon());
+		ImageSliderPanel imagePanel = new ImageSliderPanel(Resource.IMG_PREVIEW_EASY1.getImageIcon());
 		//imagePanel.setAlignmentY(0.0f);
 		//imagePanel.setBorder(new LineBorder(Color.black));
-		imagePanel.add(Resource.IMG_PREVIEW_EASY1.getImageIcon());
 		imagePanel.add(Resource.IMG_PREVIEW_EASY2.getImageIcon());
+		imagePanel.add(Resource.IMG_PREVIEW_EASY3.getImageIcon());
 		//imagePanel.add(Resource.IMG_PREVIEW_EASY3.getImageIcon());
 		//imagePanel.add(Resource.IMG_PREVIEW_EASY4.getImageIcon());
 		
