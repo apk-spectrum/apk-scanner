@@ -182,6 +182,8 @@ Once installed, the user can move the application to either internal or external
 	<string name="feature_startup_desc">Automatically run when boot completed.</string>
 	<string name="feature_signature_lab">SIGNATURE</string>
 	<string name="feature_signature_desc">SIGNATURE</string>
+	<string name="feature_signature_unsigned">UNSIGNED</string>
+	<string name="feature_signature_signed">SIGNED</string>
 	<string name="feature_system_user_id_lab">SYSTEM_UID</string>
 	<string name="feature_system_user_id_desc">This application uses the system uid</string>
 	<string name="feature_shared_user_id_lab">SHARED_UID</string>
@@ -279,7 +281,9 @@ they're removed before the application is published</string>
 	<string name="settings_launch_installed">Launch after install completed</string>
 	<string name="settings_ext_toolbar_with_shift">Extend toolbar with shift key</string>
 	<string name="settings_ext_toolbar_without_shift">Always extend a toolbar</string>
-
+	<string name="settings_easymode_option_standard">Standard mode</string>
+	<string name="settings_easymode_option_easy">Easy mode</string>
+	
 	<string name="label_error">Error</string>
 	<string name="label_warning">Warning</string>
 	<string name="label_info">Information</string>
@@ -430,4 +434,11 @@ Refresh this package information?</string>
 	<string name="column_this_version">Cur Ver.</string>
 	<string name="column_new_version">New Ver.</string>
 	<string name="column_last_checked_date">Last Checked</string>
+	
+	<string name="easy_gui_feature1">Simple, Light, Fast</string>
+	<string name="easy_gui_feature2">Easy switching to origin</string>
+	<string name="easy_gui_feature3">Custom Toolbar</string>
+	<string name="easy_gui_use_question">Would you like to use Easy mode? (Can be changed in settings)</string>
+	
+	
 </resources>

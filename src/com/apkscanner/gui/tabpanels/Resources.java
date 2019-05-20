@@ -264,6 +264,10 @@ public class Resources extends AbstractTabbedPanel {
 				g.setColor(getBackground());
 				g.fillRect(0, 0, getWidth(), getHeight());
 				if (getSelectionCount() > 0) {
+					if(getSelectionRows() == null) {
+						TreePath treepath = new TreePath(tree.getModel().getRoot());
+						tree.setSelectionPath(treepath);
+					}
 					for (int i : getSelectionRows()) {
 						Rectangle r = getRowBounds(i);
 						g.setColor(((DefaultTreeCellRenderer) getCellRenderer()).getBackgroundSelectionColor());
