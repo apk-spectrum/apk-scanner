@@ -20,6 +20,10 @@ import com.apkscanner.util.ZipFileUtil;
 
 abstract public class ApkScanner
 {
+	public static final String APKSCANNER_TYPE_AAPT = "AAPT";
+	public static final String APKSCANNER_TYPE_AAPTLIGHT = "AAPTLIGHT";
+	public static final String APKSCANNER_TYPE_APKTOOL = "APKTOOL";
+
 	public static final int NO_ERR = 0;
 	public static final int ERR_NO_SUCH_FILE = -1;
 	public static final int ERR_NO_SUCH_MANIFEST = -2;
@@ -73,6 +77,10 @@ abstract public class ApkScanner
 		setStatusListener(statusListener);
 	}
 
+	public StatusListener getStatusListener() {
+		return this.statusListener;
+	}
+	
 	public void setStatusListener(StatusListener statusListener)
 	{
 		synchronized(this) {
@@ -80,7 +88,7 @@ abstract public class ApkScanner
 			if(statusListener == null) return;
 
 			if(lastErrorCode != NO_ERR) {
-				statusListener.onError(lastErrorCode);
+				statusListener.onError(lastErrorCode);				
 			} else if(scanningStatus != 0) {
 				for(Status state: Status.values()) {
 					if(isCompleted(state)) {
@@ -250,7 +258,6 @@ abstract public class ApkScanner
 	protected void errorOccurred(int errorCode) {
 		synchronized (this) {
 			lastErrorCode = errorCode;
-
 			if(statusListener != null) {
 				statusListener.onError(errorCode);
 				statusListener.onCompleted();
@@ -306,7 +313,7 @@ abstract public class ApkScanner
 			return getErrorMessage(lastErrorCode);
 		}
 	}
-	
+
 	public String getErrorMessage(int errCode) {
 		switch(errCode) {
 		case NO_ERR: return null;
@@ -325,11 +332,11 @@ abstract public class ApkScanner
 	}
 
 	public static ApkScanner getInstance(String name) {
-		if(name == null || "AAPT".equalsIgnoreCase(name)) {
+		if(name == null || APKSCANNER_TYPE_AAPT.equalsIgnoreCase(name)) {
 			return new AaptScanner(null);
-		} else if("AAPTLIGHT".equalsIgnoreCase(name)) {
-			return new AaptLightScanner();
-		} else if("APKTOOL".equalsIgnoreCase(name)) {
+		} else if(APKSCANNER_TYPE_AAPTLIGHT.equalsIgnoreCase(name)) {
+			return new AaptLightScanner(null);
+		} else if(APKSCANNER_TYPE_APKTOOL.equalsIgnoreCase(name)) {
 			return new ApktoolScanner(null);
 		}
 		return new AaptScanner(null);

@@ -179,6 +179,8 @@
 	<string name="feature_startup_desc">부팅시 자동실행 가능한 권한을 사용합니다.</string>
 	<string name="feature_signature_lab">서명 권한</string>
 	<string name="feature_signature_desc">동일 서명 혹은 시스템에 포함 되어야 사용 가능하거나 기타 보호된 권한이 정의 되어있습니다.</string>
+	<string name="feature_signature_unsigned">서명없음</string>
+	<string name="feature_signature_signed">서명됨</string>
 	<string name="feature_system_user_id_lab">시스템 UID</string>
 	<string name="feature_system_user_id_desc">시스템 UID를 사용하고 있습니다.
 ※ 시스템 리소스에 접근이 가능합니다.</string>
@@ -279,7 +281,9 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="settings_launch_installed">앱 설치 후 자동 실행</string>
 	<string name="settings_ext_toolbar_with_shift">Shift 키를 눌러 확장된 툴바 기능 사용 </string>
 	<string name="settings_ext_toolbar_without_shift">항상 확장된 툴바 기능 사용</string>
-
+	<string name="settings_easymode_option_standard">일반 모드</string>
+	<string name="settings_easymode_option_easy">간단 모드</string>
+	
 	<string name="label_error">오류</string>
 	<string name="label_warning">경고</string>
 	<string name="label_info">정보</string>
@@ -429,4 +433,10 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="column_this_version">현재 버전</string>
 	<string name="column_new_version">새 버전</string>
 	<string name="column_last_checked_date">마지막 업데이트 확인</string>
+	
+	<string name="easy_gui_feature1">간단, 가벼움, 빠름</string>
+	<string name="easy_gui_feature2">이전의 ApkScanner로 빠르고, 쉬음운 전환</string>
+	<string name="easy_gui_feature3">사용자 정의 도구모음</string>
+	<string name="easy_gui_use_question">Easy GUI를 기본으로 사용하시겠습니까? (설정에서 변경가능)</string>
+	
 </resources>

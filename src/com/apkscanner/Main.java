@@ -12,10 +12,13 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import com.apkscanner.core.scanner.AaptScanner;
 import com.apkscanner.core.scanner.ApkScanner;
+<<<<<<< HEAD
 import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.installer.ApkInstallWizard;
+=======
+import com.apkscanner.gui.dialog.ApkInstallWizard;
+>>>>>>> refs/remotes/origin/dev_easygui
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.FileUtil;
@@ -24,7 +27,9 @@ import com.apkscanner.util.SystemUtil;
 
 public class Main implements Runnable
 {
-	private static final ApkScanner apkScanner = new AaptScanner(null);
+	private static boolean isEasyGui;
+	private static ApkScanner apkScanner;
+	static UIController uiController;
 	private static final Options allOptions = new Options();
 	private static final Options normalOptions = new Options();
 	private static final Options targetApkOptions = new Options();
@@ -36,7 +41,8 @@ public class Main implements Runnable
 		if("user".equalsIgnoreCase(Resource.STR_APP_BUILD_MODE.getString())) {
 			Log.enableConsoleLog(false);
 		}
-
+		isEasyGui = (boolean) Resource.PROP_USE_EASY_UI.getData();
+		
 		Log.i(Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString() + " " + Resource.STR_APP_BUILD_MODE.getString());
 		Log.i("OS : " + SystemUtil.OS);
 		Log.i("java.version : " + System.getProperty("java.version"));
@@ -67,8 +73,11 @@ public class Main implements Runnable
 				}
 			}
 
+			apkScanner = ApkScanner.getInstance(isEasyGui ? ApkScanner.APKSCANNER_TYPE_AAPTLIGHT : ApkScanner.APKSCANNER_TYPE_AAPT);
+
 			CommandLineParser parser = new DefaultParser();
 			cmd = parser.parse(allOptions, args);
+
 			if(cmdType == null && !cmd.hasOption("v") && !cmd.hasOption("version")
 					&& !cmd.hasOption("h") && !cmd.hasOption("help")) {
 				cmdType = "file";
@@ -78,7 +87,7 @@ public class Main implements Runnable
 				if(cmd.getArgs().length > 2 || cmd.getArgs().length == 0)
 					throw new ParseException("Must be just one that the package");
 			} else if("file".equals(cmdType)) {
-				if(cmd.getArgs().length > 1 /* || cmd.getArgs().length == 0 */)
+				if(cmd.getArgs().length > 1)/* || cmd.getArgs().length == 0 */
 					throw new ParseException("Must be just one that the Apk file path");
 
 				if(cmd.getArgs().length == 0)
@@ -111,11 +120,6 @@ public class Main implements Runnable
 			emptyCmd(cmd);
 			System.exit(1);
 		}
-	}
-
-	private static void createAndShowGUI() {
-		MainUI mainFrame = new MainUI(apkScanner);
-		mainFrame.setVisible(true);
 	}
 
 	static private void emptyCmd(CommandLine cmd)
@@ -266,6 +270,11 @@ public class Main implements Runnable
 		formatter.printHelp("apkscanner p[ackage] [options] [-d[evice] <serial_number>] [-f[ramework] <framework.apk>] <package>", targetPackageOptions);
 	}
 
+	private void createAndShowGUI()
+	{
+		uiController = new UIController(apkScanner);
+	}
+	
 	@Override
 	public void run() {
 		createAndShowGUI();

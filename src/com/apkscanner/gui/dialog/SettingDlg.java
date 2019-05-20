@@ -51,6 +51,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileSystemView;
 
@@ -108,6 +109,8 @@ public class SettingDlg extends JDialog implements ActionListener
 	private boolean propLaunchAfInstalled;
 	private boolean propAlwaysExtendToolbar;
 
+	private boolean propEasyGui;
+	
 	private String propPluginSettings;
 
 	private boolean needUpdateUI;
@@ -127,6 +130,8 @@ public class SettingDlg extends JDialog implements ActionListener
 	private JList<String> jlFrameworkRes;
 
 	private JRadioButton jrbUseCurrentRunningVer;
+	private JRadioButton jrbEasymode;
+	
 	private JComboBox<String> jcbAdbPaths;
 	private JCheckBox jckEnableDeviceMonitoring;
 	private JComboBox<String> jcbLaunchOptions;
@@ -354,7 +359,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		setIconImage(Resource.IMG_TOOLBAR_SETTING.getImageIcon().getImage());
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-		Dimension minSize = new Dimension(600, 420);
+		Dimension minSize = new Dimension(650, 520);
 		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
 			WindowSizeMemorizer.resizeCompoent(this, minSize);
 		} else {
@@ -448,6 +453,8 @@ public class SettingDlg extends JDialog implements ActionListener
 			}
 		}
 
+		propEasyGui = (boolean)Resource.PROP_USE_EASY_UI.getData();
+		
 		propAdbShared = (boolean)Resource.PROP_ADB_POLICY_SHARED.getData();
 
 		propAdbPath = ((String)Resource.PROP_ADB_PATH.getData()).trim();
@@ -501,7 +508,11 @@ public class SettingDlg extends JDialog implements ActionListener
 		if(!propframeworkResPath.equals(resPaths)) {
 			Resource.PROP_FRAMEWORK_RES.setData(resPaths);
 		}
-
+		
+		if(propEasyGui != jrbEasymode.isSelected()) {			
+			Resource.PROP_USE_EASY_UI.setData(jrbEasymode.isSelected());			
+		}
+		
 		if(propAdbShared != jrbUseCurrentRunningVer.isSelected()) {
 			Resource.PROP_ADB_POLICY_SHARED.setData(jrbUseCurrentRunningVer.isSelected());
 		}
@@ -562,6 +573,9 @@ public class SettingDlg extends JDialog implements ActionListener
 		String pluginSetting = JSONValue.toJSONString(PlugInManager.getChangedProperties());
 		if(propPluginSettings != null && !propPluginSettings.equals(pluginSetting)) {
 			PlugInManager.saveProperty();
+			needUpdateUI = true;
+		}
+		if(propEasyGui != jrbEasymode.isSelected()) {
 			needUpdateUI = true;
 		}
 	}
@@ -706,6 +720,56 @@ public class SettingDlg extends JDialog implements ActionListener
 			rowHeadConst.gridy++;
 			contentConst.gridy++;
 		}
+		
+		panel.add(new JLabel("Easy mode"), rowHeadConst);
+		
+		JPanel selectEasyPanel = new JPanel(new GridLayout(1,2));
+		JPanel EasyPanel = new JPanel(new BorderLayout());
+		
+		JRadioButton jrbStandard = new JRadioButton(Resource.STR_SETTINGS_EASYMODE_OPTION_STANDARD.getString());
+		jrbEasymode = new JRadioButton(Resource.STR_SETTINGS_EASYMODE_OPTION_EASY.getString());
+		
+		JLabel preview = new JLabel("", JLabel.CENTER);
+		preview.setBorder( new EtchedBorder(EtchedBorder.LOWERED));
+		//preview.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+		ActionListener radioAction = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(jrbEasymode.isSelected()) {
+					preview.setIcon(Resource.IMG_PREVIEW_EASY.getImageIcon(250,150));
+				} else {
+					preview.setIcon(Resource.IMG_PREVIEW_ORIGINAL.getImageIcon(250,150));
+				}
+			}
+		};
+		jrbEasymode.addActionListener(radioAction);
+		jrbStandard.addActionListener(radioAction);
+		
+		
+		if(propEasyGui) {
+			jrbEasymode.setSelected(true);
+			preview.setIcon(Resource.IMG_PREVIEW_EASY.getImageIcon(250,150));
+		} else {
+			jrbStandard.setSelected(true);
+			preview.setIcon(Resource.IMG_PREVIEW_ORIGINAL.getImageIcon(250,150));
+		}
+		
+		ButtonGroup adbPolicyGroup = new ButtonGroup();
+		adbPolicyGroup.add(jrbStandard);
+		adbPolicyGroup.add(jrbEasymode);
+		
+		GridBagConstraints c = new GridBagConstraints();
+		
+		selectEasyPanel.add(jrbStandard,c);
+		selectEasyPanel.add(jrbEasymode,c);
+		
+		EasyPanel.add(selectEasyPanel, BorderLayout.SOUTH);
+		EasyPanel.add(preview, BorderLayout.CENTER);
+		
+		panel.add(EasyPanel, contentConst);
+
+		rowHeadConst.gridy++;
+		contentConst.gridy++;
 
 		rowHeadConst.gridwidth = 2;
 		rowHeadConst.weighty = 1;
