@@ -891,7 +891,7 @@ public enum Resource
 	public ImageIcon getImageIcon(int width, int height)
 	{
 		if(type != Type.IMAGE) return null;
-		return new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(getURL()),width,height));
+		return ImageScaler.getScaledImageIcon(new ImageIcon(getURL()),width,height);
 	}
 
 	public String getString()

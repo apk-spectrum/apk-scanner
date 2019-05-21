@@ -815,7 +815,7 @@ public class ToolBar extends JToolBar
 			button.setEnabled(hasTargetApk);
 			URL iconUrl = tools[0].getIconURL();
 			if(iconUrl != null) {
-				button.setIcon(new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(iconUrl),40,40)));
+				button.setIcon(ImageScaler.getScaledImageIcon(new ImageIcon(iconUrl),40,40));
 			}
 			return button;
 		}
@@ -856,7 +856,7 @@ public class ToolBar extends JToolBar
 		if(plugin instanceof IExternalTool && !((IExternalTool)plugin).isDecorderTool()) {
 			URL iconUrl = plugin.getIconURL();
 			if(iconUrl != null) {
-				button.setIcon(new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(iconUrl),16,16)));
+				button.setIcon(ImageScaler.getScaledImageIcon(new ImageIcon(iconUrl),16,16));
 			}
 		}
 		return button;
@@ -869,7 +869,7 @@ public class ToolBar extends JToolBar
 			menuItem = new SearcherCheckBoxMenuItem((IPackageSearcher)plugin);
 			URL iconUrl = plugin.getIconURL();
 			if(iconUrl != null) {
-				menuItem.setIcon(new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(iconUrl),16,16)));
+				menuItem.setIcon(ImageScaler.getScaledImageIcon(new ImageIcon(iconUrl),16,16));
 			}
 			menuItem.addActionListener(listener);
 		} else {
