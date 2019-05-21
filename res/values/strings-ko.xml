@@ -448,8 +448,8 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="column_last_checked_date">마지막 업데이트 확인</string>
 	
 	<string name="easy_gui_feature1">간단, 가벼움, 빠름</string>
-	<string name="easy_gui_feature2">이전의 ApkScanner로 빠르고, 쉬음운 전환</string>
-	<string name="easy_gui_feature3">사용자 정의 도구모음</string>
+	<string name="easy_gui_feature2">이전 ApkScanner로 쉬운 전환</string>
+	<string name="easy_gui_feature3">사용자 정의 도구 모음</string>
 	<string name="easy_gui_use_question">Easy GUI를 기본으로 사용하시겠습니까? (설정에서 변경가능)</string>
 	
 </resources>
