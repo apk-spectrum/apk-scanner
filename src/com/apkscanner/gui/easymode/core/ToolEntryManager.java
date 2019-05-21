@@ -1,6 +1,5 @@
 package com.apkscanner.gui.easymode.core;
 
-import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.FileWriter;
@@ -8,7 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import com.android.ddmlib.AdbCommandRejectedException;
@@ -17,22 +15,20 @@ import com.android.ddmlib.IDevice;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.Launcher;
 import com.apkscanner.UIController;
-import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
+import com.apkscanner.core.permissionmanager.PermissionManager;
 import com.apkscanner.core.scanner.AaptLightScanner;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ComponentInfo;
-import com.apkscanner.data.apkinfo.PermissionInfo;
-import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.gui.dialog.AboutDlg;
-import com.apkscanner.gui.installer.ApkInstallWizard;
 import com.apkscanner.gui.dialog.ApkSignerWizard;
 import com.apkscanner.gui.dialog.PackageInfoPanel;
 import com.apkscanner.gui.dialog.PackageTreeDlg;
+import com.apkscanner.gui.dialog.PermissionHistoryPanel;
 import com.apkscanner.gui.dialog.SettingDlg;
 import com.apkscanner.gui.easymode.EasyLightApkScanner;
-import com.apkscanner.gui.easymode.dlg.EasyPermissionDlg;
 import com.apkscanner.gui.easymode.dlg.EasyToolbarCertDlg;
+import com.apkscanner.gui.installer.ApkInstallWizard;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.util.ApkFileChooser;
@@ -664,10 +660,10 @@ public class ToolEntryManager {
 		mainframe.dispose();
 	}
 
-	public static void excutePermissionDlg() {
-		// TODO Auto-generated method stub
-		new EasyPermissionDlg(mainframe, true, Apkscanner.getApkInfo());			
-		
+	public static void excutePermissionDlg(PermissionManager manager) {
+		PermissionHistoryPanel historyView = new PermissionHistoryPanel();
+		historyView.setPermissionManager(manager);
+		historyView.showDialog(mainframe);
 	}
 
 	public static void excuteSinerDlg(JFrame frame) {		
@@ -684,54 +680,11 @@ public class ToolEntryManager {
 		wizard.setVisible(true);
 	}
 	
-	public static void showPermDetailDesc(PermissionGroupInfoExt group)
+	public static void showPermDetailDesc(PermissionManager manager, String groupName)
 	{
-		if(group == null) return;
-
-		StringBuilder body = new StringBuilder("");
-		//body.append("<div id=\"perm-detail-desc\">");
-		body.append("■ ");
-		if(group.label != null) {
-			body.append(group.getLabel() + " - ");
-		}
-		body.append("[" + group.name + "]\n");
-		if(group.description != null) {
-			body.append(" : " + group.getDescription() + "\n");
-		}
-		body.append("------------------------------------------------------------------------------------------------------------\n\n");
-
-		for(PermissionInfo info: group.permissions) {
-			body.append("▶ ");
-			if(info.isDangerousLevel()) {
-				body.append("[DANGEROUS] ");	
-			}
-			if(info.labels != null) {
-				String label = info.labels[0].name;
-				for(ResourceInfo r: info.labels) {
-					if(r.configuration != null && r.configuration.equals(Resource.getLanguage())) {
-						label = r.name;
-						break;
-					}
-				}
-				if(label != null)
-					body.append(label + " ");
-			}
-			body.append("[" + info.name + "]\n");
-			body.append(" - protectionLevel=" + info.protectionLevel + "\n");
-			if(info.descriptions != null) {
-				String description = info.descriptions[0].name;
-				for(ResourceInfo r: info.descriptions) {
-					if(r.configuration != null && r.configuration.equals(Resource.getLanguage())) {
-						description = r.name;
-						break;
-					}
-				}
-				if(description != null) body.append(" : " + description + "\n");
-				body.append("\n");
-			}
-		}
-		MessageBoxPane.showTextAreaDialog(mainframe, body.toString(), Resource.STR_BASIC_PERM_DISPLAY_TITLE.getString(), 
-				MessageBoxPane.INFORMATION_MESSAGE, new ImageIcon(group.icon.replaceAll("^file:/", "")), new Dimension(600, 200));
-		
+		PermissionHistoryPanel historyView = new PermissionHistoryPanel();
+		historyView.setPermissionManager(manager);
+		historyView.setFilterText(groupName);
+		historyView.showDialog(mainframe);
 	}
 }

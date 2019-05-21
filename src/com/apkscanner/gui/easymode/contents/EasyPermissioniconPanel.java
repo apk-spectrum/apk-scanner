@@ -176,9 +176,9 @@ public class EasyPermissioniconPanel extends RoundPanel implements ActionListene
 		Log.d("tool click" + e);
 		
 		if(e.getSource().equals(btnshowpermissiondlg)) {
-			ToolEntryManager.excutePermissionDlg();
+			ToolEntryManager.excutePermissionDlg(permissionManager);
 		} else {
-			ToolEntryManager.showPermDetailDesc(permissionManager.getPermissionGroup(((EasyRoundButton)e.getSource()).getToolTipText()));
+			ToolEntryManager.showPermDetailDesc(permissionManager, ((EasyRoundButton)e.getSource()).getToolTipText());
 		}
 	}
 	
