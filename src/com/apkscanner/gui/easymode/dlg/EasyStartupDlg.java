@@ -64,6 +64,7 @@ public class EasyStartupDlg
 		aboutPanel.add(hep);
 
 		JCheckBox check = new JCheckBox(Resource.STR_LABEL_DO_NOT_LOOK_AGAIN.getString());
+		check.setSelected(true);
 		Object[] options = {check, Resource.STR_BTN_YES.getString(), Resource.STR_BTN_NO.getString()};
 
 		imagePanel.start();
