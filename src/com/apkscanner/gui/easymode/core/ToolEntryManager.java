@@ -167,8 +167,14 @@ public class ToolEntryManager {
 			Launcher.run(apkFilePath);
 		} else if (cmd.equals(Resource.STR_APP_NAME.getString())) {
 			//Launcher.run(Apkscanner.getApkFilePath(), false);
-			AaptLightScanner apkScanner = (AaptLightScanner)Apkscanner.getApkScanner();
-			UIController.changeGui(UIController.APKSCANNER_GUI_APKSCANNER, apkScanner.getAaptScanner());
+			
+			if(Apkscanner.getApkScanner().getApkInfo() != null) {
+				AaptLightScanner apkScanner = (AaptLightScanner)Apkscanner.getApkScanner();
+				UIController.changeGui(UIController.APKSCANNER_GUI_APKSCANNER, apkScanner.getAaptScanner());
+			} else {
+				UIController.changeGui(UIController.APKSCANNER_GUI_APKSCANNER, Apkscanner.getApkScanner());
+			}
+			
 			
 		} else if (cmd.equals(Resource.STR_BTN_OPEN_PACKAGE.getString())) {
 			PackageTreeDlg Dlg = new PackageTreeDlg(mainframe);
