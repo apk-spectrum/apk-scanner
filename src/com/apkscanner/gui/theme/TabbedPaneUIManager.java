@@ -85,4 +85,8 @@ public class TabbedPaneUIManager {
 			e.printStackTrace();
 		}
 	}
+
+	public static TabbedPaneUIInfo getUIInfo(JTabbedPane pane) {
+		return new TabbedPaneUIInfo(pane.getUI().getClass());
+	}
 }

@@ -197,7 +197,7 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 					IPlugIn plugin = (IPlugIn) userObject;
 					URL iconUrl = plugin.getIconURL();
 					if(iconUrl != null) {
-						nodeIcon = new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(iconUrl), 16, 16));
+						nodeIcon = ImageScaler.getScaledImageIcon(new ImageIcon(iconUrl), 16, 16);
 					}
 					if(plugin.getGroupName() != null) {
 						enabledCheckBox = plugin.getParantGroup().isEnabled();
@@ -211,7 +211,7 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 					PlugInPackage pluginPackage = (PlugInPackage) userObject;
 					URL iconUrl = pluginPackage.getIconURL();
 					if(iconUrl != null) {
-						nodeIcon = new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(iconUrl), 16, 16));
+						nodeIcon = ImageScaler.getScaledImageIcon(new ImageIcon(iconUrl), 16, 16);
 					}
 					nodeText = pluginPackage.getLabel() + " / " + pluginPackage.getVersionName();
 					visibledCheckBox = true;

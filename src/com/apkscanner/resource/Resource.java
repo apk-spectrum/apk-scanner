@@ -33,8 +33,8 @@ public enum Resource
 	STR_APP_NAME				(Type.TEXT, "@app_name"),
 	STR_APP_VERSION				(Type.TEXT, "2.4.3 dev"),
 	STR_APP_BUILD_MODE			(Type.TEXT, "eng"),
-	STR_APP_MAKER				(Type.TEXT, "jin_h.lee / sunggyu.kam"),
-	STR_APP_MAKER_EMAIL			(Type.TEXT, "jin_h.lee@samsung.com;sunggyu.kam@samsung.com"),
+	STR_APP_MAKER				(Type.TEXT, "Jinhyeong Lee / Sunggyu Kam"),
+	STR_APP_MAKER_EMAIL			(Type.TEXT, "jacsaldevil@gmail.com;sunggyu.kam@gmail.com"),
 
 	STR_SAMSUNG_KEY_MD5			(Type.TEXT, "D0:87:E7:29:12:FB:A0:64:CA:FA:78:DC:34:AE:A8:39"),
 	STR_SS_TEST_KEY_MD5			(Type.TEXT, "8D:DB:34:2F:2D:A5:40:84:02:D7:56:8A:F2:1E:29:F9"),
@@ -205,6 +205,9 @@ public enum Resource
 	STR_FEATURE_STARTUP_DESC	(Type.TEXT, "@feature_startup_desc"),
 	STR_FEATURE_SIGNATURE_LAB	(Type.TEXT, "@feature_signature_lab"),
 	STR_FEATURE_SIGNATURE_DESC	(Type.TEXT, "@feature_signature_desc"),
+	STR_FEATURE_SIGNATURE_UNSIGNED (Type.TEXT, "@feature_signature_unsigned"),
+	STR_FEATURE_SIGNATURE_SIGNED (Type.TEXT, "@feature_signature_signed"),
+	
 	STR_FEATURE_SYSTEM_UID_LAB  (Type.TEXT, "@feature_system_user_id_lab"),
 	STR_FEATURE_SYSTEM_UID_DESC (Type.TEXT, "@feature_system_user_id_desc"),
 	STR_FEATURE_SHAREDUSERID_LAB  (Type.TEXT, "@feature_shared_user_id_lab"),
@@ -307,7 +310,10 @@ public enum Resource
 	STR_SETTINGS_LAUNCH_INSTALLED(Type.TEXT, "@settings_launch_installed"),
 	STR_SETTINGS_TOOLBAR_WITH_SHIFT		(Type.TEXT, "@settings_ext_toolbar_with_shift"),
 	STR_SETTINGS_TOOLBAR_WITHOUT_SHIFT	(Type.TEXT, "@settings_ext_toolbar_without_shift"),
-
+	STR_SETTINGS_EASYMODE_OPTION_STANDARD	(Type.TEXT, "@settings_easymode_option_standard"),
+	STR_SETTINGS_EASYMODE_OPTION_EASY	(Type.TEXT, "@settings_easymode_option_easy"),
+	
+	
 	STR_LABEL_ERROR				(Type.TEXT, "@label_error"),
 	STR_LABEL_WARNING			(Type.TEXT, "@label_warning"),
 	STR_LABEL_INFO				(Type.TEXT, "@label_info"),
@@ -368,6 +374,19 @@ public enum Resource
 	STR_LABEL_TREAT_SIGN_AS_REVOKED(Type.TEXT, "@label_treat_sign_as_revoked"),
 	STR_LABEL_WITH_BELOW_OPTIONS(Type.TEXT, "@label_with_below_options"),
 	STR_LABEL_WITH_OPTIONS		(Type.TEXT, "@label_with_options"),
+	STR_LABEL_BY_GROUP			(Type.TEXT, "@label_by_group"),
+	STR_LABEL_WITH_LABEL		(Type.TEXT, "@label_with_label"),
+	STR_LABEL_REFERENCE_N_LEVELS(Type.TEXT, "@label_reference_n_levels"),
+	STR_LABEL_FILTER			(Type.TEXT, "@label_filter"),
+	STR_LABEL_USED_IN_PACKAGE	(Type.TEXT, "@label_used_in_package"),
+	STR_LABEL_ALL_ON_ANDROID	(Type.TEXT, "@label_all_on_android"),
+	STR_LABEL_USED_IN_PACKAGE_SHORT(Type.TEXT, "@label_used_in_package_short"),
+	STR_LABEL_ALL_ON_ANDROID_SHORT(Type.TEXT, "@label_all_on_android_short"),
+	STR_LABEL_GROUP_COUNT_FORMAT(Type.TEXT, "@label_group_count_format"),
+	STR_LABEL_PERM_COUNT_FORMAT	(Type.TEXT, "@label_perm_count_format"),
+	STR_LABEL_FILTER_NONE		(Type.TEXT, "@label_filter_none"),
+	STR_LABEL_FILTER_ALL		(Type.TEXT, "@label_filter_all"),
+	STR_LABEL_PERMISSION_INFO	(Type.TEXT, "@label_permission_info"),
 
 	STR_TREE_NODE_DEVICE 		(Type.TEXT, "@tree_node_device"),
 	STR_TREE_NODE_DISPLAYED		(Type.TEXT, "@tree_node_displayed"),
@@ -455,7 +474,13 @@ public enum Resource
 	STR_COLUMN_THIS_VERSION		(Type.TEXT, "@column_this_version"),
 	STR_COLUMN_NEW_VERSION		(Type.TEXT, "@column_new_version"),
 	STR_COLUMN_LAST_CHECKED_DATE(Type.TEXT, "@column_last_checked_date"),
-
+	
+	STR_EASY_GUI_FEATURE1		(Type.TEXT, "@easy_gui_feature1"),
+	STR_EASY_GUI_FEATURE2		(Type.TEXT, "@easy_gui_feature2"),
+	STR_EASY_GUI_FEATURE3		(Type.TEXT, "@easy_gui_feature3"),
+	STR_EASY_GUI_UES_QUESTION		(Type.TEXT, "@easy_gui_use_question"),
+	
+	
 	IMG_TOOLBAR_OPEN			(Type.IMAGE, "toolbar_open.png"),
 	IMG_TOOLBAR_MANIFEST		(Type.IMAGE, "toolbar_manifast.png"),
 	IMG_TOOLBAR_EXPLORER		(Type.IMAGE, "toolbar_explorer.png"),
@@ -535,6 +560,31 @@ public enum Resource
 	IMG_ASSOCIATE_APK			(Type.IMAGE, "associate.png"),
 	IMG_UNASSOCIATE_APK			(Type.IMAGE, "unassociate.png"),
 
+	//easy gui
+	IMG_EASY_WINDOW_EXIT			(Type.IMAGE, "easy_gui_exit.png"),
+	IMG_EASY_WINDOW_MINI			(Type.IMAGE, "easy_gui_mini.png"),
+	IMG_EASY_WINDOW_SETTING			(Type.IMAGE, "perm_group_system_tools.png"),
+	IMG_EASY_WINDOW_CLIPBOARD_ICON			(Type.IMAGE, "perm_group_user_dictionary.png"),
+	
+	IMG_EASY_WINDOW_ALLOW			(Type.IMAGE, "easy_gui_allow.png"),
+
+	//http://chittagongit.com/icon/list-icon-png-10.html
+	IMG_EASY_WINDOW_PERMISSION_ICON			(Type.IMAGE, "easy_gui_permission_icon.png"),
+	
+	//https://icon-icons.com/zh/%E5%9B%BE%E6%A0%87/%E7%94%B5%E8%AF%9D-iphone/89813#48
+	IMG_EASY_WINDOW_DEVICE			(Type.IMAGE, "easy_gui_device.png"),
+	IMG_EASY_WINDOW_DRAGANDDROP			(Type.IMAGE, "easy_gui_draganddrop.png"),
+
+	//https://www.iconfinder.com/icons/686665/arrows_enlarge_expand_extend_increase_outward_resize_spread_icon
+	IMG_EASY_WINDOW_SPREAD			(Type.IMAGE, "easy_spread.png"),
+	
+	IMG_PREVIEW_EASY			(Type.IMAGE, "preview_easymode.png"),
+	IMG_PREVIEW_EASY1			(Type.IMAGE, "preview_easymode1.png"),
+	IMG_PREVIEW_EASY2			(Type.IMAGE, "preview_easymode2.png"),
+	IMG_PREVIEW_EASY3			(Type.IMAGE, "preview_easymode3.png"),
+	
+	IMG_PREVIEW_ORIGINAL			(Type.IMAGE, "preview_original.png"),
+	
 	IMG_PERM_MARKER_SETTING		(Type.IMAGE, "perm_marker_setting.png"),
 	IMG_PERM_MARKER_CLOSE		(Type.IMAGE, "perm_marker_close.png"),
 
@@ -567,6 +617,8 @@ public enum Resource
 
 	SSL_TRUSTSTORE_PATH			(Type.SECURITY, "trustStore.jks"),
 
+	PROP_USE_EASY_UI			(Type.PROP, "use_easy_ui", false),
+	PROP_SKIP_STARTUP_EASY_UI_DLG			(Type.PROP, "skip_startup_easy_ui_dlg", false),
 	PROP_LANGUAGE				(Type.PROP, "language", SystemUtil.getUserLanguage()),
 	PROP_EDITOR					(Type.PROP, "editor", null /* see getDefValue() */),
 	PROP_RECENT_EDITOR			(Type.PROP, "recent_editor", ""),
@@ -592,6 +644,12 @@ public enum Resource
 	PROP_PK8_FILE_PATH			(Type.PROP, "last_pk8_file_path", null /* see getDefValue() */),
 	PROP_PRINT_MULTILINE_ATTR	(Type.PROP, "print_multiline_attr", true),
 
+	PROP_EASY_GUI_TOOLBAR				(Type.PROP, "easy_gui_show_button", "1,2,3,4,5,7"),
+	PROP_EASY_GUI_WINDOW_POSITION				(Type.PROP, "easy_gui_window_position", null),
+	
+	PROP_EASY_GUI_WINDOW_POSITION_X				(Type.PROP, "easy_gui_window_position_x", null),
+	PROP_EASY_GUI_WINDOW_POSITION_Y				(Type.PROP, "easy_gui_window_position_y", null),
+
 	PROP_DEFAULT_DECORDER		(Type.PROP, "default_decorder", Resource.STR_DECORDER_JD_GUI),
 	PROP_DEFAULT_SEARCHER		(Type.PROP, "default_searcher", Resource.STR_DEFAULT_SEARCHER),
 	PROP_DEFAULT_EXPLORER		(Type.PROP, "default_explorer", Resource.STR_EXPLORER_ARCHIVE),
@@ -612,6 +670,8 @@ public enum Resource
 	RAW_BASIC_INFO_LAYOUT_HTML	(Type.RAW, "/values/BasicInfoLayout.html"),
 	RAW_PACKAGE_INFO_LAYOUT_HTML(Type.RAW, "/values/PackageInfoLayout.html"),
 	RAW_ADB_INSTALL_BUTTON_HTML(Type.RAW, "/values/AdbInstallButton.html"),
+	RAW_PERMISSION_REFERENCE_HTML(Type.RAW, "/values/PermissionReference.html"),
+	RAW_PROTECTION_LEVELS_HTML(Type.RAW, "/values/ProtectionLevels.html"),
 
 	ETC_SETTINGS_FILE			(Type.ETC, "settings.txt");
 
@@ -831,7 +891,7 @@ public enum Resource
 	public ImageIcon getImageIcon(int width, int height)
 	{
 		if(type != Type.IMAGE) return null;
-		return new ImageIcon(ImageScaler.getScaledImage(new ImageIcon(getURL()),width,height));
+		return ImageScaler.getScaledImageIcon(new ImageIcon(getURL()),width,height);
 	}
 
 	public String getString()

@@ -88,7 +88,7 @@ public class Widgets extends AbstractTabbedPanel
 				e.printStackTrace();
 			}
 			if(myimageicon != null) {
-				myimageicon.setImage(ImageScaler.getMaxScaledImage(myimageicon,100,100));
+				myimageicon.setImage(ImageScaler.getMaintainAspectRatioImage(myimageicon,100,100));
 			}
 
 			String label = ApkInfoHelper.getResourceValue(apkInfo.widgets[i].lables, preferLang);

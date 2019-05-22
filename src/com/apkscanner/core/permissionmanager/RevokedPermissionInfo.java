@@ -16,6 +16,10 @@ public class RevokedPermissionInfo extends PermissionInfo {
 		UNKNOWN_SOURCE,
 		UNKNOWN_REASON
 	}
+	public enum RevokedSource {
+		RECORD, DECLARED, UNKNOWN
+	}
+	public RevokedSource source;
 	public RevokedReason reason;
 	public boolean hasRecord;
 	public int sdk;
@@ -55,6 +59,7 @@ public class RevokedPermissionInfo extends PermissionInfo {
 		if(record == null) return null;
 		RevokedPermissionInfo reason = new RevokedPermissionInfo();
 		reason.name = record.name;
+		reason.source = RevokedSource.RECORD;
 		reason.reason = RevokedReason.NO_REVOKED;
 		reason.hasRecord = true;
 		reason.sdk = -1;
@@ -68,7 +73,7 @@ public class RevokedPermissionInfo extends PermissionInfo {
 			Log.v("This SDK(" + sdk + ") version was not have permission. " + reason.name + " removed at API level " + record.removedSdk);
 			reason.sdk = record.removedSdk;
 			reason.reason = RevokedReason.AFTER_REMOVED;
-		} else if(record.sdk23 && sdk < 23) {
+		} else if(record.sdk23 != null && record.sdk23 && sdk < 23) {
 			Log.v("This SDK(" + sdk + ") version was not have permission. " + reason.name + " is valid at sdk23 API level or later");
 			reason.reason = RevokedReason.UNDER_SDK23;
 		} else if(record.maxSdkVersion != null && sdk > record.maxSdkVersion) {
@@ -81,6 +86,7 @@ public class RevokedPermissionInfo extends PermissionInfo {
 					&& (!info.protectionLevel.contains("pre23") || targetSdk >= 23)) {
 				reason = new RevokedPermissionInfo(info);
 				reason.hasRecord = true;
+				reason.source = RevokedSource.RECORD;
 				reason.reason = RevokedReason.NEED_PLATFORM_SIGNATURE;
 			}
 		}
@@ -91,18 +97,19 @@ public class RevokedPermissionInfo extends PermissionInfo {
 		if(declared == null) return null;
 		RevokedPermissionInfo reason = new RevokedPermissionInfo(declared);
 		reason.name = declared.name;
+		reason.source = RevokedSource.DECLARED;
 		reason.reason = RevokedReason.NO_REVOKED;
 		reason.sdk = -1;
-		if(declared.sdk23 && sdk < 23) {
+		if(!declared.isUsed) {
+			Log.v("This SDK(" + sdk + ") version was not have permission. " + reason.name + " is not uses");
+			reason.reason = RevokedReason.NO_USES;
+		} else if(declared.sdk23 && sdk < 23) {
 			Log.v("This SDK(" + sdk + ") version was not have permission. " + reason.name + " is valid at sdk23 API level or later");
 			reason.reason = RevokedReason.UNDER_SDK23;
 		} else if(declared.maxSdkVersion != null && sdk > declared.maxSdkVersion) {
 			Log.v("This SDK(" + sdk + ") version was not have permission. " + reason.name + " over maxsdk " + declared.maxSdkVersion);
 			reason.sdk = declared.maxSdkVersion;
 			reason.reason = RevokedReason.OVER_MAX_SDK;
-		} else if(!declared.isUsed) {
-			Log.v("This SDK(" + sdk + ") version was not have permission. " + reason.name + " is not uses");
-			reason.reason = RevokedReason.NO_USES;
 		}
 		return reason;
 	}
@@ -111,6 +118,7 @@ public class RevokedPermissionInfo extends PermissionInfo {
 		if(unknownSource == null) return null;
 		RevokedPermissionInfo reason = new RevokedPermissionInfo();
 		reason.name = unknownSource.name;
+		reason.source = RevokedSource.UNKNOWN;
 		reason.reason = RevokedReason.UNKNOWN_SOURCE;
 		return reason;
 	}

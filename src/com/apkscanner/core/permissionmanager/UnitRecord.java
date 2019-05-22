@@ -1,11 +1,11 @@
 package com.apkscanner.core.permissionmanager;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 import org.w3c.dom.NamedNodeMap;
 
-import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.XmlPath;
 
@@ -18,7 +18,7 @@ public class UnitRecord<T> {
 	public final int removedSdk;
 	public final int deprecatedSdk;
 
-	final Object[] histories;
+	final T[] histories;
 
 	public UnitRecord(Class<T> clazz, XmlPath node) throws IllegalArgumentException {
 		if(clazz == null || node == null) {
@@ -44,7 +44,10 @@ public class UnitRecord<T> {
 			Log.e("NumberFormatException for SDK version. " + e.getMessage());
 			throw e;
 		}
-		histories = new Object[patchs.getCount() + 1];
+
+		@SuppressWarnings("unchecked")
+		T[] temp = (T[]) Array.newInstance(clazz, patchs.getCount() + 1);
+		histories = temp;
 
 		boolean isDeprecated = false, isRemoved = false;
 		Object info = null;
@@ -111,7 +114,7 @@ public class UnitRecord<T> {
 					try {
 						Field field = clazz.getField("protectionFlags");
 						if(field.getType().getName().equals("int")) {
-							field.setInt(info, PermissionInfo.parseProtectionLevel(value));
+							field.setInt(info, PermissionInfoExt.parseProtectionFlags(value));
 						}
 					} catch(NoSuchFieldException | SecurityException | IllegalAccessException e) { }
 					break;
@@ -124,17 +127,20 @@ public class UnitRecord<T> {
 				}
 			}
 			try {
-				clazz.getField("comment").set(info, node.getComment());
-				try {
-					boolean deprecated = (Boolean)clazz.getMethod("isDeprecated").invoke(info);
-					if(isDeprecated && !deprecated) deprecatedSdk = sdk + 1;
-					isDeprecated = deprecated;
-				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | InvocationTargetException e) { }
-				try {
-					boolean removed = (Boolean)clazz.getMethod("isRemoved").invoke(info);
-					if(isRemoved && !removed) removedSdk = sdk + 1;
-					isRemoved = removed;
-				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | InvocationTargetException e) { }
+				String comment = ((i == 0) ? node : patchs.getNode(i-1)).getComment();
+				if(comment != null && !comment.equals(clazz.getField("comment").get(info))) {
+					clazz.getField("comment").set(info, comment);
+					try {
+						boolean deprecated = (Boolean)clazz.getMethod("isDeprecated").invoke(info);
+						if(isDeprecated && !deprecated) deprecatedSdk = sdk + 1;
+						isDeprecated = deprecated;
+					} catch (NoSuchMethodException | SecurityException | IllegalAccessException | InvocationTargetException e) { }
+					try {
+						boolean removed = (Boolean)clazz.getMethod("isRemoved").invoke(info);
+						if(isRemoved && !removed) removedSdk = sdk + 1;
+						isRemoved = removed;
+					} catch (NoSuchMethodException | SecurityException | IllegalAccessException | InvocationTargetException e) { }
+				}
 			} catch(NoSuchFieldException | SecurityException | IllegalAccessException e) { }
 		}
 		this.addedSdk = addedSdk;
@@ -142,7 +148,10 @@ public class UnitRecord<T> {
 		this.deprecatedSdk = deprecatedSdk;
 	}
 
-	@SuppressWarnings("unchecked")
+	public T[] getHistories( ) {
+		return histories;
+	}
+
 	public T getInfomation(int sdk) {
 		if(histories == null || histories.length == 0) {
 			Log.w("No have history");
@@ -156,7 +165,7 @@ public class UnitRecord<T> {
 			Log.v("This SDK(" + sdk + ") version was not have permission. " + name + " removed at API level " + removedSdk);
 			return null;
 		}
-		Object info = histories[0];
+		T info = histories[0];
 		for(int i=0; i<histories.length; i++) {
 			try {
 				if(sdk > histories[i].getClass().getField("sdk").getInt(histories[i])) break;

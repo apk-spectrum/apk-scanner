@@ -247,7 +247,14 @@ public final class PlugInManager
 
 	public static void saveProperty()
 	{
-		if(!new File(Resource.PLUGIN_CONF_PATH.getPath()).canWrite()) {
+		File file = new File(Resource.PLUGIN_CONF_PATH.getPath());
+		try {
+			if(!file.exists() && !file.createNewFile()) {
+				Log.w("Cann't create file : " + Resource.PLUGIN_CONF_PATH.getPath());
+			}
+		} catch (IOException e1) { }
+
+		if(!file.canWrite()) {
 			Log.v("Cann't write file : " + Resource.PLUGIN_CONF_PATH.getPath());
 			return;
 		}

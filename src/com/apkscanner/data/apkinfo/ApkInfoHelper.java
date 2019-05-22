@@ -122,6 +122,28 @@ public class ApkInfoHelper
 		return cnt;
 	}
 
+	public static ComponentInfo[] getLauncherActivityList(ApkInfo apkInfo) {
+		ArrayList<ComponentInfo> launcherList = new ArrayList<ComponentInfo>();
+		ArrayList<ComponentInfo> mainList = new ArrayList<ComponentInfo>();
+		if(apkInfo != null) {
+			if(apkInfo.manifest.application.activity != null) {
+				for(ActivityInfo info: apkInfo.manifest.application.activity) {
+					if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0)
+						launcherList.add(info);					
+				}
+			}
+			if(apkInfo.manifest.application.activityAlias != null) {
+				for(ActivityAliasInfo info: apkInfo.manifest.application.activityAlias) {
+						if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0)
+							launcherList.add(info);
+				}
+			}
+			launcherList.addAll(mainList);
+		}
+		return launcherList.toArray(new ComponentInfo[0]);
+	}
+	
+	
 	public static ComponentInfo[] getLauncherActivityList(ApkInfo apkInfo, boolean includeMain) {
 		ArrayList<ComponentInfo> launcherList = new ArrayList<ComponentInfo>();
 		ArrayList<ComponentInfo> mainList = new ArrayList<ComponentInfo>();

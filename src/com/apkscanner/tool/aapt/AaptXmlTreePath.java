@@ -103,8 +103,9 @@ public class AaptXmlTreePath
 					}
 					String attrData = s.substring(s.indexOf("=")+1);
 
-					if(attrData.indexOf("(Raw:") > -1) {
-						attrData = attrData.replaceAll(".*\\(Raw: \"(.*)\".*", "$1");
+					if(attrData.contains("(Raw:")) {
+						attrData = attrData.replaceAll("(.*) \\(Raw: \"(.*)\"\\).*",
+											attrData.startsWith("@0x") ? "$1" : "$2");
 						//Log.v("attrData raw : " + attrData);
 					} else if(attrData.startsWith("(type")) {
 						int t = (int)Long.parseLong(attrData.replaceAll("^\\(type 0x(.*)\\).*", "$1"), 16);
