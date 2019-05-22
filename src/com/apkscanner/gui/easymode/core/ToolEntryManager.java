@@ -164,7 +164,18 @@ public class ToolEntryManager {
 				Log.v("Not choose apk file");
 				return;
 			}
-			Launcher.run(apkFilePath);
+			if(Apkscanner.getApkScanner().getApkInfo() != null) {
+				Launcher.run(apkFilePath);
+			} else {
+				Thread thread = new Thread(new Runnable() {
+					public void run() {
+						Apkscanner.getApkScanner().clear(false);
+						Apkscanner.getApkScanner().openApk(apkFilePath);
+					}
+				});
+				thread.setPriority(Thread.NORM_PRIORITY);
+				thread.start();
+			}			
 		} else if (cmd.equals(Resource.STR_APP_NAME.getString())) {
 			//Launcher.run(Apkscanner.getApkFilePath(), false);
 			
@@ -185,7 +196,20 @@ public class ToolEntryManager {
 			final String device = Dlg.getSelectedDevice();
 			final String apkFilePath = Dlg.getSelectedApkPath();
 			final String frameworkRes = Dlg.getSelectedFrameworkRes();
-			Launcher.run(device, apkFilePath, frameworkRes);
+			if(Apkscanner.getApkScanner().getApkInfo() != null) {
+				Launcher.run(device, apkFilePath, frameworkRes);
+			} else {
+				Thread thread = new Thread(new Runnable() {
+					public void run() {
+						Apkscanner.getApkScanner().clear(false);
+						//Apkscanner.getApkScanner().openApk(apkFilePath);
+						Apkscanner.getApkScanner().openPackage(device, apkFilePath, frameworkRes);
+					}
+				});
+				thread.setPriority(Thread.NORM_PRIORITY);
+				thread.start();
+			}
+			
 		} else if (cmd.equals(Resource.STR_BTN_MANIFEST.getString())) {
 			openMenifest();
 		} else if (cmd.equals(Resource.STR_BTN_EXPLORER.getString())) {

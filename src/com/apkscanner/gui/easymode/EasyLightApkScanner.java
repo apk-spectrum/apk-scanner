@@ -19,6 +19,8 @@ public class EasyLightApkScanner {
 		public void onCompleted();
 
 		public void onStateChanged(Status status);
+
+		public void onProgress(int step, String msg);
 	}
 
 	private ApkScanner scanner;
@@ -147,11 +149,13 @@ public class EasyLightApkScanner {
 		@Override
 		public void onProgress(int step, String msg) {
 			Log.d("onProgress()" + step + ":" + msg);
+			if (listener != null)
+				listener.onProgress(step,msg);
 		}
 
 		@Override
 		public void onStateChanged(Status status) {
-			Log.d("onProgress()" + status);
+			Log.d("onStateChanged()" + status);
 			if (listener != null)
 				listener.onStateChanged(status);
 		}

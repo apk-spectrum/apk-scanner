@@ -86,7 +86,8 @@ public class EasyContentsPanel extends JPanel{
 	static private Color sdkverPanelcolor = new Color(232,232,232);
 	
 	private static String CARD_LAYOUT_EMPTY = "card_empty";
-	private static String CARD_LAYOUT_APKINFO = "card_apkinfo";	
+	private static String CARD_LAYOUT_APKINFO = "card_apkinfo";
+	private static String CARD_LAYOUT_LOADING = "card_loading";	
 	
 	JLayeredPane layeredPane;
 	
@@ -305,7 +306,13 @@ public class EasyContentsPanel extends JPanel{
 //    public Dimension getPreferredSize() {
 //        return new Dimension(HEIGHT, WIDTH);
 //    }
-    
+	public void setLoadingpanel(String msg) {
+		// TODO Auto-generated method stub
+		Log.d("setLoadingpanel");		
+		contentsCardPanel.add(new EasyGuiLoadingPanel(msg), CARD_LAYOUT_LOADING);
+		((CardLayout)contentsCardPanel.getLayout()).show(contentsCardPanel,CARD_LAYOUT_LOADING);		
+	}
+	
     public void setEmptypanel() {
     	Log.d("contents emptypanel=)" + emptypanel);
     	if(emptypanel ==null) {    		
@@ -432,4 +439,6 @@ public class EasyContentsPanel extends JPanel{
 		//iconhoverpanel.setBounds(0, 0, w, 100);
 		//updateUI();
 	}
+
+
 }

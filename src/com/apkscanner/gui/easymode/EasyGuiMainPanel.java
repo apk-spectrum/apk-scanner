@@ -3,6 +3,7 @@ package com.apkscanner.gui.easymode;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -285,6 +286,11 @@ public class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, Comp
 		//permissionPanel.setEmptypanel();
 	}
 
+	public void showloadinginfo(String msg) {
+		Log.d("showLoadinginfo");
+		EasycontentsPanel.setLoadingpanel(msg);
+	}
+	
 	private void clearApkinfopanel() {
 		// bordPanel.clear();
 		EasycontentsPanel.clear();
@@ -345,6 +351,16 @@ public class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, Comp
 			if (status.equals(Status.STANBY)) {
 
 			}
+		}
+
+		@Override
+		public void onProgress(int step, String msg) {
+			// TODO Auto-generated method stub
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					showloadinginfo(msg);
+				}
+			});
 		}
 	}
 
