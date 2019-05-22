@@ -354,8 +354,7 @@ public class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, Comp
 		}
 
 		@Override
-		public void onProgress(int step, String msg) {
-			// TODO Auto-generated method stub
+		public void onProgress(int step, final String msg) {
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					showloadinginfo(msg);

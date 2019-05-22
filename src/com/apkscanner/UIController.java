@@ -1,5 +1,7 @@
 package com.apkscanner;
 
+import java.awt.EventQueue;
+
 import javax.swing.JFrame;
 
 import com.apkscanner.core.scanner.ApkScanner;
@@ -11,15 +13,12 @@ import com.apkscanner.util.Log;
 public class UIController {
 	public static final String APKSCANNER_GUI_APKSCANNER = "APKSCANNER";
 	public static final String APKSCANNER_GUI_EASY_APKSCANNER = "EASY_APKSCANNER";
-	
+
 //	MainUI mainUI = null;
 //	EasyMainUI easymainUI = null;
 	static JFrame mainframe = null;
-	
-	public UIController() {
 
-	}
-	public UIController(ApkScanner apkScanner) {
+	public static void createAndShowGUI(ApkScanner apkScanner) {
 		Log.i("start UIController");
 		boolean isEasyGui = (boolean) Resource.PROP_USE_EASY_UI.getData();
 		mainframe = new JFrame();
@@ -31,30 +30,45 @@ public class UIController {
 		}
 
 		mainframe.setVisible(true);
-		
+
 		if(!(boolean) Resource.PROP_SKIP_STARTUP_EASY_UI_DLG.getData()) {
 			if(EasyMainUI.showDlgStartupEasyMode(mainframe)) {
 				restart(apkScanner);
 			}
 		}
 	}
-	public void show(ApkScanner scanner) {
-//		if(obj instanceof MainUI) {
-//			mainUI = (MainUI)obj;
-//		} else if(obj instanceof EasyMainUI){
-//			easymainUI = (EasyMainUI) obj;
-//		}
-	}
-	
+
 	public static void changeGui(String state, ApkScanner apkScanner) {
 		mainframe.getContentPane().removeAll();
 		if(state.equals(APKSCANNER_GUI_APKSCANNER)) {
-			new MainUI(apkScanner, mainframe);
-			mainframe.setVisible(true);	
+			if(apkScanner == null) {
+				apkScanner = ApkScanner.getInstance(ApkScanner.APKSCANNER_TYPE_AAPT);
+			} else if(!ApkScanner.APKSCANNER_TYPE_AAPT.equals(apkScanner.getScannerType())) {
+				final String apkPath = apkScanner.getApkInfo() != null ? apkScanner.getApkInfo().filePath : null;
+				apkScanner = ApkScanner.getInstance(ApkScanner.APKSCANNER_TYPE_AAPT);
+				final ApkScanner scanner = apkScanner;
+				if(apkPath != null) {
+					Thread thread = new Thread(new Runnable() {
+						public void run() {
+							scanner.openApk(apkPath);
+						}
+					});
+					thread.setPriority(Thread.NORM_PRIORITY);
+					thread.start();
+				}
+			}
+			final ApkScanner scanner = apkScanner;
+			EventQueue.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					new MainUI(scanner, mainframe);
+					mainframe.setVisible(true);
+				}
+			});
 		}
 	}
-	
-	private void restart(ApkScanner apkScanner) {
+
+	private static void restart(ApkScanner apkScanner) {
 		if(apkScanner.getApkInfo() != null) {
 			Launcher.run(apkScanner.getApkInfo().filePath);
 		} else {

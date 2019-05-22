@@ -25,7 +25,7 @@ public class Main implements Runnable
 {
 	private static boolean isEasyGui;
 	private static ApkScanner apkScanner;
-	static UIController uiController;
+
 	private static final Options allOptions = new Options();
 	private static final Options normalOptions = new Options();
 	private static final Options targetApkOptions = new Options();
@@ -38,7 +38,7 @@ public class Main implements Runnable
 			Log.enableConsoleLog(false);
 		}
 		isEasyGui = (boolean) Resource.PROP_USE_EASY_UI.getData();
-		
+
 		Log.i(Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString() + " " + Resource.STR_APP_BUILD_MODE.getString());
 		Log.i("OS : " + SystemUtil.OS);
 		Log.i("java.version : " + System.getProperty("java.version"));
@@ -266,13 +266,8 @@ public class Main implements Runnable
 		formatter.printHelp("apkscanner p[ackage] [options] [-d[evice] <serial_number>] [-f[ramework] <framework.apk>] <package>", targetPackageOptions);
 	}
 
-	private void createAndShowGUI()
-	{
-		uiController = new UIController(apkScanner);
-	}
-	
 	@Override
 	public void run() {
-		createAndShowGUI();
+		UIController.createAndShowGUI(apkScanner);
 	}
 }
