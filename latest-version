@@ -5,6 +5,7 @@
 1. Add a New easy ui mode(fast started)
 2. Add a permission history viewer.
 3. Fix bugs.
+
 Ver. 2.4.2 :\n1. Support JDK 9 and later.\n2. Improve UI of ApkInstallWizard.\n3. fix fatal if label is null.\n\n
 Ver. 2.4.1  :\n1. Update JADX-GUI 0.9.0 (2019-02-12)\n2. Fix fatal error\n\n
 Ver. 2.4  :\n1. Add JADX & Bytecode viewer tools\n2. Add SDK29 information\n3. Link Apk Compare(toolbal & dragdrop)\n4. Add PlugIn(Update checker)\n5. Fix some bugs
@@ -13,6 +14,7 @@ Ver. 2.4  :\n1. Add JADX & Bytecode viewer tools\n2. Add SDK29 information\n3. L
 1. 이지모드 추가(빠른 실행가능)
 2. 권한 히스토리 조회 및 검색 기능 추가
 3. 기타 버그 수정
+
 Ver. 2.4.2 :\n1. JDK9 이상 버전 지원.\n2. APK 설치 마법사 UI 개선.\n3. 앱이름이 없을 경우 열지 못하는 문제 수정.\n\n
 Ver. 2.4.1  :\n1. Update JADX-GUI 0.9.0 (2019-02-12)\n2. 한국어 설정 상태에서 APK 설치 불가 문제 수정\n\n
 Ver. 2.4  :\n1. 소스 디컴파일 툴 추가(JADX, ByteCode viewer)\n2. SDK 29 권한 및 정보 추가\n3. APK 컴페어 연동 기능 추가(툴바 및 드래그앤 드랍시)\n4. PlugIn 추가(업데이트 확인)\n5. 기타 버그 수정\n
