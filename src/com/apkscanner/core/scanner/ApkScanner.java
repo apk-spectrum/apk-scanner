@@ -328,7 +328,8 @@ abstract public class ApkScanner
 	}
 
 	public static ApkScanner getInstance() {
-		return getInstance(null);
+		return ApkScanner.getInstance((boolean) Resource.PROP_USE_EASY_UI.getData()
+				? ApkScanner.APKSCANNER_TYPE_AAPTLIGHT : ApkScanner.APKSCANNER_TYPE_AAPT);
 	}
 
 	public static ApkScanner getInstance(String name) {
