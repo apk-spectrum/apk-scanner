@@ -39,7 +39,6 @@ public class UIController {
 	}
 
 	public static void changeGui(String state, ApkScanner apkScanner) {
-		mainframe.getContentPane().removeAll();
 		if(state.equals(APKSCANNER_GUI_APKSCANNER)) {
 			if(apkScanner == null) {
 				apkScanner = ApkScanner.getInstance(ApkScanner.APKSCANNER_TYPE_AAPT);
@@ -61,6 +60,8 @@ public class UIController {
 			EventQueue.invokeLater(new Runnable() {
 				@Override
 				public void run() {
+					mainframe.setVisible(false);
+					mainframe.getContentPane().removeAll();
 					new MainUI(scanner, mainframe);
 					mainframe.setVisible(true);
 				}
