@@ -92,7 +92,7 @@ abstract public class ApkScanner
 			} else if(scanningStatus != 0) {
 				for(Status state: Status.values()) {
 					if(isCompleted(state)) {
-						Log.v(state + " is compleated sooner than register listener");
+						Log.e(state + " is compleated sooner than register listener");
 						statusListener.onStateChanged(state);
 					}
 				}

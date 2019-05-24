@@ -3,6 +3,8 @@ package com.apkscanner;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.EasyMainUI;
@@ -18,8 +20,8 @@ public class UIController implements Runnable {
 
 	private ApkScanner apkScanner;
 
-//	MainUI mainUI = null;
-//	EasyMainUI easymainUI = null;
+	private MainUI mainUI = null;
+	private EasyMainUI easymainUI = null;
 	private JFrame mainframe = null;
 
 	private UIController(ApkScanner apkScanner) {
@@ -51,16 +53,39 @@ public class UIController implements Runnable {
 
 	private void createAndShowGUI() {
 		Log.i("start UIController");
-		boolean isEasyGui = (boolean) Resource.PROP_USE_EASY_UI.getData();
-		mainframe = new JFrame();
+
+		Log.i("setLookAndFeel");
+		try {
+			UIManager.setLookAndFeel((String)Resource.PROP_CURRENT_THEME.getData());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e1) {
+			e1.printStackTrace();
+		}
+
+		final boolean isEasyGui = (boolean) Resource.PROP_USE_EASY_UI.getData();
+
 		Log.i("creat frame");
-		if(	isEasyGui) {
-			new EasyMainUI(apkScanner, mainframe);
+		if(isEasyGui) {
+			mainframe = easymainUI = new EasyMainUI(apkScanner);
 		} else {
-			new MainUI(apkScanner, mainframe);
+			mainframe = mainUI = new MainUI(apkScanner);
 		}
 
 		mainframe.setVisible(true);
+
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+            	synchronized(instance) {
+	                if(isEasyGui) {
+	                	if(mainUI == null) mainUI = new MainUI(null);
+	                } else {
+	                	if(easymainUI == null) easymainUI = new EasyMainUI(null);
+	                }
+            	}
+            }
+        });
+        thread.setPriority(Thread.MIN_PRIORITY);
+        thread.start();
 
 		if(!(boolean) Resource.PROP_SKIP_STARTUP_EASY_UI_DLG.getData()) {
 			if(EasyMainUI.showDlgStartupEasyMode(mainframe)) {
@@ -85,9 +110,23 @@ public class UIController implements Runnable {
 				mainframe.setVisible(false);
 				mainframe.getContentPane().removeAll();
 				if(!isEasyGui) {
-					new MainUI(apkScanner, mainframe);
+					synchronized(instance) {
+						if(mainUI == null) {
+							mainUI = new MainUI(apkScanner);
+						} else {
+							mainUI.setApkScanner(apkScanner);
+						}
+					}
+					mainframe = mainUI;
 				} else {
-					new EasyMainUI(apkScanner, mainframe);
+					synchronized(instance) {
+						if(easymainUI == null) {
+							easymainUI = new EasyMainUI(apkScanner);
+						} else {
+							easymainUI.setApkScanner(apkScanner);
+						}
+					}
+					mainframe = easymainUI;
 				}
 				mainframe.setVisible(true);
 				if(apkPath != null) {

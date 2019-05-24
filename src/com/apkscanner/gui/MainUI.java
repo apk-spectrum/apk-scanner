@@ -32,7 +32,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import com.android.ddmlib.AdbCommandRejectedException;
 import com.android.ddmlib.AdbVersion;
@@ -87,8 +86,10 @@ import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 import com.apkscanner.util.ZipFileUtil;
 
-public class MainUI
+public class MainUI extends JFrame
 {
+	private static final long serialVersionUID = -623259597186280485L;
+
 	private ApkScanner apkScanner;
 	private ToolbarManagement toolbarManager;
 
@@ -96,49 +97,29 @@ public class MainUI
 	private ToolBar toolBar;
 	private MessageBoxPool messagePool;
 	private DropTargetChooser dropTargetChooser;
-	private JFrame mainframe = null;
+
 	public MainUI(ApkScanner scanner) {
-		mainframe = new JFrame();
 		toolbarManager = new ToolbarManagement();
-		messagePool = new MessageBoxPool(mainframe);
+		messagePool = new MessageBoxPool(this);
 
 		initialize();
 
-		apkScanner = scanner;
-		if(apkScanner != null) {
-			apkScanner.setStatusListener(new ApkScannerListener());
-		}
+		setApkScanner(scanner);
 
 		toolbarManager.setEnabled((boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData(), 1000);
+
 		loadPlugIn();
 	}
 
-	public MainUI(ApkScanner scanner, JFrame mainFrame2) {
-		this.mainframe = mainFrame2;
-		toolbarManager = new ToolbarManagement();
-		messagePool = new MessageBoxPool(mainframe);
-		
-		initialize();
-		
+	public void setApkScanner(ApkScanner scanner) {
 		apkScanner = scanner;
 		if(apkScanner != null) {
 			apkScanner.setStatusListener(new ApkScannerListener());
 		}
-
-		toolbarManager.setEnabled((boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData(), 1000);
-		loadPlugIn();
 	}
 
 	public void initialize() {
 		Log.i("UI Init start");
-
-		Log.i("initialize() setLookAndFeel");
-		try {
-			UIManager.setLookAndFeel((String)Resource.PROP_CURRENT_THEME.getData());
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-				| UnsupportedLookAndFeelException e1) {
-			e1.printStackTrace();
-		}
 
 		Log.i("initialize() setUIFont");
 		String propFont = (String) Resource.PROP_BASE_FONT.getData();
@@ -147,23 +128,22 @@ public class MainUI
 		setUIFont(new javax.swing.plaf.FontUIResource(propFont, propFontStyle, propFontSize));
 
 		Log.i("initialize() set title & icon");
-		mainframe.setTitle(Resource.STR_APP_NAME.getString());
-		mainframe.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
-
+		setTitle(Resource.STR_APP_NAME.getString());
+		setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
 
 		Log.i("initialize() set bound & size ");
 		Dimension minSize = new Dimension(Resource.INT_WINDOW_SIZE_WIDTH_MIN, Resource.INT_WINDOW_SIZE_HEIGHT_MIN);
 		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
-			WindowSizeMemorizer.resizeCompoent(mainframe, minSize);
+			WindowSizeMemorizer.resizeCompoent(this, minSize);
 		} else {
-			mainframe.setSize(minSize);
+			setSize(minSize);
 		}
 		//setMinimumSize(minSize);
-		mainframe.setResizable(true);
-		mainframe.setLocationRelativeTo(null);
-		mainframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setResizable(true);
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		WindowSizeMemorizer.registeComponent(mainframe);
+		WindowSizeMemorizer.registeComponent(this);
 
 		UIEventHandler eventHandler = new UIEventHandler();
 
@@ -172,21 +152,21 @@ public class MainUI
 		toolBar = new ToolBar(eventHandler);
 		toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
 		toolBar.setEnabledAt(ButtonSet.NEED_DEVICE, false);
-		mainframe.add(toolBar, BorderLayout.NORTH);
+		add(toolBar, BorderLayout.NORTH);
 
 		Log.i("initialize() tabbedpanel init");
 		// TabPanel initialize and add
 		String tabbedStyle = (String) Resource.PROP_TABBED_UI_THEME.getData();
 		tabbedPanel = new TabbedPanel(tabbedStyle);
-		mainframe.add(tabbedPanel, BorderLayout.CENTER);
+		add(tabbedPanel, BorderLayout.CENTER);
 
 		Log.i("initialize() register event handler");
 		// Closing event of window be delete tempFile
-		mainframe.addWindowListener(eventHandler);
+		addWindowListener(eventHandler);
 
 		// Drag & Drop event processing panel
 		dropTargetChooser = new DropTargetChooser(eventHandler);
-		mainframe.setGlassPane(dropTargetChooser);
+		setGlassPane(dropTargetChooser);
 		dropTargetChooser.setVisible(true);
 
 		// Shortcut key event processing
@@ -210,11 +190,13 @@ public class MainUI
 			protected void done() {
 				toolBar.onLoadPlugin(new UIEventHandler());
 				tabbedPanel.onLoadPlugin();
-				int state = apkScanner.getStatus();
-				if( PlugInManager.getPackageSearchers().length > 0
-						&& Status.BASIC_INFO_COMPLETED.isCompleted(state)
-						&& Status.CERT_COMPLETED.isCompleted(state) ) {
-					tabbedPanel.setData(apkScanner.getApkInfo(), Status.BASIC_INFO_COMPLETED);
+				if(apkScanner != null) {
+					int state = apkScanner.getStatus();
+					if( PlugInManager.getPackageSearchers().length > 0
+							&& Status.BASIC_INFO_COMPLETED.isCompleted(state)
+							&& Status.CERT_COMPLETED.isCompleted(state) ) {
+						tabbedPanel.setData(apkScanner.getApkInfo(), Status.BASIC_INFO_COMPLETED);
+					}
 				}
 				for(IExternalTool plugin: PlugInManager.getExternalTool()) {
 					if(!plugin.isDiffTool()) continue;
@@ -263,7 +245,7 @@ public class MainUI
 			protected void process(List<IUpdateChecker> updater) {
 				ArrayList<IUpdateChecker> retryUpdates = new ArrayList<>();
 				for(IUpdateChecker uc: updater) {
-					int ret = NetworkErrorDialog.show(mainframe, uc);
+					int ret = NetworkErrorDialog.show(MainUI.this, uc);
 					switch(ret) {
 					case NetworkErrorDialog.RESULT_RETRY:
 						retryUpdates.add(uc);
@@ -285,7 +267,7 @@ public class MainUI
 				if(updaters != null && updaters.length > 0) {
 					toolBar.setBadgeCount(updaters.length);
 					if(!"true".equals(PlugInConfig.getGlobalConfiguration(PlugInConfig.CONFIG_NO_LOOK_UPDATE_POPUP))) {
-						UpdateNotificationWindow.show(mainframe, updaters);
+						UpdateNotificationWindow.show(MainUI.this, updaters);
 					}
 				}
 				PlugInManager.saveProperty();
@@ -332,7 +314,7 @@ public class MainUI
 
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
-					mainframe.setTitle(Resource.STR_APP_NAME.getString());
+					setTitle(Resource.STR_APP_NAME.getString());
 					tabbedPanel.setData(null, null);
 					messagePool.show(MessageBoxPool.MSG_FAILURE_OPEN_APK);
 				}
@@ -400,7 +382,7 @@ public class MainUI
 
 				String apkFilePath = apkScanner.getApkInfo().filePath;
 				String title = apkFilePath.substring(apkFilePath.lastIndexOf(File.separator)+1) + " - " + Resource.STR_APP_NAME.getString();
-				mainframe.setTitle(title);
+				setTitle(title);
 
 				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, true);
 				dropTargetChooser.setExternalToolsVisible(true);
@@ -415,7 +397,7 @@ public class MainUI
 	class UIEventHandler implements ActionListener, KeyEventDispatcher, WindowListener, DropTargetChooser.Listener
 	{
 		private void evtOpenApkFile(boolean newWindow) {
-			final String apkFilePath = ApkFileChooser.openApkFilePath(mainframe);
+			final String apkFilePath = ApkFileChooser.openApkFilePath(MainUI.this);
 			if(apkFilePath == null) {
 				Log.v("Not choose apk file");
 				return;
@@ -440,7 +422,7 @@ public class MainUI
 		}
 
 		private void evtOpenPackage(boolean newWindow) {
-			PackageTreeDlg Dlg = new PackageTreeDlg(mainframe);
+			PackageTreeDlg Dlg = new PackageTreeDlg(MainUI.this);
 			if(Dlg.showTreeDlg() != PackageTreeDlg.APPROVE_OPTION) {
 				Log.v("Not choose package");
 				return;
@@ -479,7 +461,7 @@ public class MainUI
 
 			toolBar.setEnabledAt(ButtonSet.INSTALL, false);
 
-			ApkInstallWizard wizard = new ApkInstallWizard(apkInfo.filePath, mainframe);
+			ApkInstallWizard wizard = new ApkInstallWizard(apkInfo.filePath, MainUI.this);
 			wizard.start();
 
 			toolBar.setEnabledAt(ButtonSet.INSTALL, true);
@@ -500,7 +482,7 @@ public class MainUI
 					manifestFile = new File(manifestPath);
 				} else {
 					JFileChooser jfc = ApkFileChooser.getFileChooser((String)Resource.PROP_LAST_FILE_SAVE_PATH.getData(), JFileChooser.SAVE_DIALOG, new File("AndroidManifest.xml"));
-					if(jfc.showSaveDialog(mainframe) != JFileChooser.APPROVE_OPTION) return;
+					if(jfc.showSaveDialog(MainUI.this) != JFileChooser.APPROVE_OPTION) return;
 					manifestFile = jfc.getSelectedFile();
 					if(manifestFile == null) return;
 					Resource.PROP_LAST_FILE_SAVE_PATH.setData(manifestFile.getParentFile().getAbsolutePath());
@@ -612,7 +594,7 @@ public class MainUI
 						Log.e("Failure: Fail Dex2Jar : " + message);
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
-								MessageBoxPool.show(mainframe, MessageBoxPool.MSG_FAILURE_DEX2JAR, message);
+								MessageBoxPool.show(MainUI.this, MessageBoxPool.MSG_FAILURE_DEX2JAR, message);
 							}
 						});
 					}
@@ -640,7 +622,7 @@ public class MainUI
 		}
 
 		private void evtSettings() {
-			SettingDlg dlg = new SettingDlg(mainframe);
+			SettingDlg dlg = new SettingDlg(MainUI.this);
 			dlg.setVisible(true);
 
 			//changed theme
@@ -748,7 +730,7 @@ public class MainUI
 								}
 
 								if(!mergeList.isEmpty()) {
-									String selected = (String)MessageBoxPane.showInputDialog(mainframe, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL),
+									String selected = (String)MessageBoxPane.showInputDialog(MainUI.this, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL),
 											Resource.STR_BTN_LAUNCH.getString(), MessageBoxPane.QUESTION_MESSAGE, null, mergeList.toArray(new String[mergeList.size()]), mergeList.get(0));
 									if(selected == null) {
 										return;
@@ -900,7 +882,7 @@ public class MainUI
 				Log.e("evtSignApkFile() apkInfo is null");
 				return;
 			}
-			ApkSignerWizard wizard = new ApkSignerWizard(mainframe);
+			ApkSignerWizard wizard = new ApkSignerWizard(MainUI.this);
 			wizard.setApk(apkInfo.filePath);
 			wizard.setVisible(true);
 		}
@@ -921,7 +903,7 @@ public class MainUI
 							public void run() {
 								PackageInfoPanel packageInfoPanel = new PackageInfoPanel();
 								packageInfoPanel.setPackageInfo(info);
-								packageInfoPanel.showDialog(mainframe);
+								packageInfoPanel.showDialog(MainUI.this);
 							}
 						});
 					}
@@ -976,7 +958,7 @@ public class MainUI
 			if(apkInfo != null) {
 				title += " - " + apkInfo.filePath.substring(apkInfo.filePath.lastIndexOf(File.separator)+1);
 			}
-			mainframe.setTitle(title);
+			setTitle(title);
 			toolBar.reloadResource();
 			tabbedPanel.reloadResource();
 		}
@@ -987,7 +969,7 @@ public class MainUI
 			} else {
 				Launcher.run();
 			}
-			mainframe.dispose();
+			dispose();
 		}
 
 		// ToolBar event processing
@@ -1012,7 +994,7 @@ public class MainUI
 			} else if(ToolBar.ButtonSet.SETTING.matchActionEvent(e)) {
 				evtSettings();
 			} else if(ToolBar.ButtonSet.ABOUT.matchActionEvent(e)) {
-				AboutDlg.showAboutDialog(mainframe);
+				AboutDlg.showAboutDialog(MainUI.this);
 			} else if(ToolBar.MenuItemSet.NEW_EMPTY.matchActionEvent(e)) {
 				Launcher.run();
 			} else if(ToolBar.MenuItemSet.NEW_APK.matchActionEvent(e)) {
@@ -1059,7 +1041,7 @@ public class MainUI
 		// Shortcut key event processing
 		@Override
 		public boolean dispatchKeyEvent(KeyEvent e) {
-			if(!mainframe.isFocused()) return false;
+			if(!isFocused()) return false;
 			if (e.getID() == KeyEvent.KEY_RELEASED) {
 				if(e.getModifiersEx() == KeyEvent.CTRL_DOWN_MASK) {
 					switch(e.getKeyCode()) {
@@ -1085,8 +1067,8 @@ public class MainUI
 					return true;
 				} else if(e.getModifiersEx() == 0) {
 					switch(e.getKeyCode()) {
-					case KeyEvent.VK_F1 : AboutDlg.showAboutDialog(mainframe);break;
-					case KeyEvent.VK_F12: LogDlg.showLogDialog(mainframe);	break;
+					case KeyEvent.VK_F1 : AboutDlg.showAboutDialog(MainUI.this);break;
+					case KeyEvent.VK_F12: LogDlg.showLogDialog(MainUI.this);	break;
 					default: return false;
 					}
 					return true;
@@ -1139,7 +1121,7 @@ public class MainUI
 		private void finished() {
 			Log.v("finished()");
 
-			mainframe.setVisible(false);
+			setVisible(false);
 			apkScanner.clear(true);
 
 			System.exit(0);
