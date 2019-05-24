@@ -21,16 +21,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ExecutionException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 
 import com.android.ddmlib.AdbCommandRejectedException;
@@ -62,12 +59,9 @@ import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.plugin.IPlugIn;
+import com.apkscanner.plugin.IPlugInEventListener;
 import com.apkscanner.plugin.IUpdateChecker;
-import com.apkscanner.plugin.NetworkException;
-import com.apkscanner.plugin.PlugInConfig;
 import com.apkscanner.plugin.PlugInManager;
-import com.apkscanner.plugin.gui.NetworkErrorDialog;
-import com.apkscanner.plugin.gui.UpdateNotificationWindow;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
@@ -86,7 +80,7 @@ import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 import com.apkscanner.util.ZipFileUtil;
 
-public class MainUI extends JFrame
+public class MainUI extends JFrame implements IPlugInEventListener
 {
 	private static final long serialVersionUID = -623259597186280485L;
 
@@ -107,8 +101,6 @@ public class MainUI extends JFrame
 		setApkScanner(scanner);
 
 		toolbarManager.setEnabled((boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData(), 1000);
-
-		loadPlugIn();
 	}
 
 	public void setApkScanner(ApkScanner scanner) {
@@ -176,103 +168,38 @@ public class MainUI extends JFrame
 		Log.i("UI Init end");
 	}
 
-	private void loadPlugIn() {
-        new SwingWorker<Void, Void>() {
-			@Override
-			protected Void doInBackground() throws Exception {
-				PlugInManager.loadPlugIn();
-				PlugInManager.setLang(Resource.getLanguage());
-				checkUpdated(PlugInManager.getUpdateChecker());
-				return null;
-			}
-
-			@Override
-			protected void done() {
-				toolBar.onLoadPlugin(new UIEventHandler());
-				tabbedPanel.onLoadPlugin();
-				if(apkScanner != null) {
-					int state = apkScanner.getStatus();
-					if( PlugInManager.getPackageSearchers().length > 0
-							&& Status.BASIC_INFO_COMPLETED.isCompleted(state)
-							&& Status.CERT_COMPLETED.isCompleted(state) ) {
-						tabbedPanel.setData(apkScanner.getApkInfo(), Status.BASIC_INFO_COMPLETED);
-					}
-				}
-				for(IExternalTool plugin: PlugInManager.getExternalTool()) {
-					if(!plugin.isDiffTool()) continue;
-					Image icon = null;
-					URL iconUrl = plugin.getIconURL();
-					if(iconUrl != null) {
-						ImageIcon imageIcon = new ImageIcon(iconUrl);
-						if(imageIcon != null) {
-							icon = ImageScaler.getScaledImage(imageIcon, 64, 64);
-						}
-					}
-					dropTargetChooser.addDropTarget(plugin, plugin.getLabel(), "plugin", icon, new Color(0.9f,0.7f,0.3f,0.9f));
+	@Override
+	public void onPluginLoaded() {
+		toolBar.onLoadPlugin(new UIEventHandler());
+		tabbedPanel.onLoadPlugin();
+		int state = apkScanner.getStatus();
+		if( PlugInManager.getPackageSearchers().length > 0
+				&& Status.BASIC_INFO_COMPLETED.isCompleted(state)
+				&& Status.CERT_COMPLETED.isCompleted(state) ) {
+			tabbedPanel.setData(apkScanner.getApkInfo(), Status.BASIC_INFO_COMPLETED);
+		}
+		for(IExternalTool plugin: PlugInManager.getExternalTool()) {
+			if(!plugin.isDiffTool()) continue;
+			Image icon = null;
+			URL iconUrl = plugin.getIconURL();
+			if(iconUrl != null) {
+				ImageIcon imageIcon = new ImageIcon(iconUrl);
+				if(imageIcon != null) {
+					icon = ImageScaler.getScaledImage(imageIcon, 64, 64);
 				}
 			}
-		}.execute();
+			dropTargetChooser.addDropTarget(plugin, plugin.getLabel(), "plugin", icon, new Color(0.9f,0.7f,0.3f,0.9f));
+		}
 	}
 
-	private void checkUpdated(final IUpdateChecker[] updater) {
-        new SwingWorker<IUpdateChecker[], IUpdateChecker>() {
-			@Override
-			protected IUpdateChecker[] doInBackground() throws Exception {
-				ArrayList<IUpdateChecker> newUpdates = new ArrayList<>();
-				for(IUpdateChecker uc: updater) {
-					if(!uc.wasPeriodPassed()) {
-						if(uc.hasNewVersion()) {
-							newUpdates.add(uc);
-						}
-						continue;
-					}
-					try {
-						if(uc.checkNewVersion()) {
-							newUpdates.add(uc);
-						};
-					} catch (NetworkException e) {
-						publish(uc);
-						if(e.isNetworkNotFoundException()) {
-							Log.d("isNetworkNotFoundException");
-							break;
-						}
-					}
-				}
-				return newUpdates.toArray(new IUpdateChecker[newUpdates.size()]);
-			}
+	@Override
+	public void onUpdated(IUpdateChecker[] plugins) {
+		toolBar.setBadgeCount(plugins.length);
+	}
 
-			@Override
-			protected void process(List<IUpdateChecker> updater) {
-				ArrayList<IUpdateChecker> retryUpdates = new ArrayList<>();
-				for(IUpdateChecker uc: updater) {
-					int ret = NetworkErrorDialog.show(MainUI.this, uc);
-					switch(ret) {
-					case NetworkErrorDialog.RESULT_RETRY:
-						retryUpdates.add(uc);
-					}
-				}
-				if(!retryUpdates.isEmpty()) {
-					checkUpdated(retryUpdates.toArray(new IUpdateChecker[retryUpdates.size()]));
-				}
-			}
-
-			@Override
-			protected void done() {
-				IUpdateChecker[] updaters = null;
-				try {
-					updaters = get();
-				} catch (InterruptedException | ExecutionException e) {
-					e.printStackTrace();
-				}
-				if(updaters != null && updaters.length > 0) {
-					toolBar.setBadgeCount(updaters.length);
-					if(!"true".equals(PlugInConfig.getGlobalConfiguration(PlugInConfig.CONFIG_NO_LOOK_UPDATE_POPUP))) {
-						UpdateNotificationWindow.show(MainUI.this, updaters);
-					}
-				}
-				PlugInManager.saveProperty();
-			}
-		}.execute();
+	@Override
+	public boolean onUpdateFailed(IUpdateChecker plugin) {
+		return false;
 	}
 
 	private static void setUIFont(javax.swing.plaf.FontUIResource f) {

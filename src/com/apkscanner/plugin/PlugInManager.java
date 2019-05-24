@@ -8,8 +8,12 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ExecutionException;
+
+import javax.swing.SwingWorker;
 
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -22,11 +26,28 @@ import com.apkscanner.util.Log;
 
 public final class PlugInManager
 {
-	private static ArrayList<PlugInPackage> pluginPackages = new ArrayList<>();
+	private static List<PlugInPackage> pluginPackages = new ArrayList<>();
 	private static ApkInfo apkinfo = null;
 	private static String lang = "";
 
+	private static List<IPlugInEventListener> eventListeners = new ArrayList<>();
+	private static final Object sLock = eventListeners;
+
 	private PlugInManager() { }
+
+	public static void addPlugInEventListener(IPlugInEventListener listener) {
+		synchronized (sLock) {
+			if (!eventListeners.contains(listener)) {
+				eventListeners.add(listener);
+			}
+		}
+	}
+
+	public static void removePlugInEventListener(IPlugInEventListener listener) {
+		synchronized (sLock) {
+			eventListeners.remove(listener);
+		}
+	}
 
 	public static PlugInPackage getPlugInPackage(String packageName) {
 		if(packageName == null || packageName.trim().isEmpty()) return null;
@@ -197,6 +218,92 @@ public final class PlugInManager
 		}
 
 		loadProperty();
+
+		IPlugInEventListener[] listenersCopy = null;
+		synchronized (sLock) {
+			listenersCopy = eventListeners.toArray(
+					new IPlugInEventListener[eventListeners.size()]);
+		}
+
+		for (IPlugInEventListener listener : listenersCopy) {
+			listener.onPluginLoaded();
+		}
+	}
+
+	public static void checkUpdated() {
+		checkUpdated(getUpdateChecker());
+	}
+
+	private static void checkUpdated(final IUpdateChecker[] updater) {
+        new SwingWorker<IUpdateChecker[], IUpdateChecker>() {
+			@Override
+			protected IUpdateChecker[] doInBackground() throws Exception {
+				ArrayList<IUpdateChecker> newUpdates = new ArrayList<>();
+				for(IUpdateChecker uc: updater) {
+					if(!uc.wasPeriodPassed()) {
+						if(uc.hasNewVersion()) {
+							newUpdates.add(uc);
+						}
+						continue;
+					}
+					try {
+						if(uc.checkNewVersion()) {
+							newUpdates.add(uc);
+						};
+					} catch (NetworkException e) {
+						publish(uc);
+						if(e.isNetworkNotFoundException()) {
+							Log.d("isNetworkNotFoundException");
+							break;
+						}
+					}
+				}
+				return newUpdates.toArray(new IUpdateChecker[newUpdates.size()]);
+			}
+
+			@Override
+			protected void process(List<IUpdateChecker> updater) {
+				IPlugInEventListener[] listenersCopy = null;
+				synchronized (sLock) {
+					listenersCopy = eventListeners.toArray(
+							new IPlugInEventListener[eventListeners.size()]);
+				}
+
+				ArrayList<IUpdateChecker> retryUpdates = new ArrayList<>();
+				for(IUpdateChecker uc: updater) {
+					for (IPlugInEventListener listener : listenersCopy) {
+						if(listener.onUpdateFailed(uc)) {
+							retryUpdates.add(uc);
+							break;
+						}
+					}
+				}
+				if(!retryUpdates.isEmpty()) {
+					checkUpdated(retryUpdates.toArray(new IUpdateChecker[retryUpdates.size()]));
+				}
+			}
+
+			@Override
+			protected void done() {
+				IUpdateChecker[] updaters = null;
+				try {
+					updaters = get();
+				} catch (InterruptedException | ExecutionException e) {
+					e.printStackTrace();
+				}
+				if(updaters != null && updaters.length > 0) {
+					IPlugInEventListener[] listenersCopy = null;
+					synchronized (sLock) {
+						listenersCopy = eventListeners.toArray(
+								new IPlugInEventListener[eventListeners.size()]);
+					}
+					for (IPlugInEventListener listener : listenersCopy) {
+						listener.onUpdated(updaters);
+					}
+				}
+				PlugInManager.saveProperty();
+			}
+		}.execute();
 	}
 
 	public static Map<String, Object> getChangedProperties() {

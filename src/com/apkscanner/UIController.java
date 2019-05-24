@@ -9,10 +9,16 @@ import javax.swing.UnsupportedLookAndFeelException;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.EasyMainUI;
 import com.apkscanner.gui.MainUI;
+import com.apkscanner.plugin.IPlugInEventListener;
+import com.apkscanner.plugin.IUpdateChecker;
+import com.apkscanner.plugin.PlugInConfig;
+import com.apkscanner.plugin.PlugInManager;
+import com.apkscanner.plugin.gui.NetworkErrorDialog;
+import com.apkscanner.plugin.gui.UpdateNotificationWindow;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
-public class UIController implements Runnable {
+public class UIController implements Runnable, IPlugInEventListener {
 	public static final String APKSCANNER_GUI_APKSCANNER = "APKSCANNER";
 	public static final String APKSCANNER_GUI_EASY_APKSCANNER = "EASY_APKSCANNER";
 
@@ -29,6 +35,16 @@ public class UIController implements Runnable {
 			apkScanner = ApkScanner.getInstance();
 		}
 		this.apkScanner = apkScanner;
+
+		PlugInManager.setLang(Resource.getLanguage());
+		PlugInManager.addPlugInEventListener(this);
+		Thread thread = new Thread(new Runnable() {
+			public void run() {
+				PlugInManager.loadPlugIn();
+			}
+		});
+		thread.setPriority(Thread.NORM_PRIORITY);
+		thread.start();
 	}
 
 	public static UIController getInstance(ApkScanner apkScanner) {
@@ -118,6 +134,7 @@ public class UIController implements Runnable {
 						}
 					}
 					mainframe = mainUI;
+					PlugInManager.addPlugInEventListener(mainUI);
 				} else {
 					synchronized(instance) {
 						if(easymainUI == null) {
@@ -148,5 +165,27 @@ public class UIController implements Runnable {
 
 	public static void changeToEasyGui() {
 		getInstance().changeGui(APKSCANNER_GUI_EASY_APKSCANNER);
+	}
+
+	@Override
+	public void onPluginLoaded() {
+		PlugInManager.checkUpdated();
+	}
+
+	@Override
+	public void onUpdated(IUpdateChecker[] plugins) {
+		if(!"true".equals(PlugInConfig.getGlobalConfiguration(PlugInConfig.CONFIG_NO_LOOK_UPDATE_POPUP))) {
+			UpdateNotificationWindow.show(mainframe, plugins);
+		}
+	}
+
+	@Override
+	public boolean onUpdateFailed(IUpdateChecker plugin) {
+		int ret = NetworkErrorDialog.show(mainframe, plugin);
+		switch(ret) {
+		case NetworkErrorDialog.RESULT_RETRY:
+			return true;
+		}
+		return false;
 	}
 }
