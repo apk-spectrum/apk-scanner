@@ -1,8 +1,12 @@
 package com.apkscanner;
 
 import java.awt.EventQueue;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JFrame;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -11,6 +15,7 @@ import com.apkscanner.gui.EasyMainUI;
 import com.apkscanner.gui.MainUI;
 import com.apkscanner.plugin.IPlugInEventListener;
 import com.apkscanner.plugin.IUpdateChecker;
+import com.apkscanner.plugin.NetworkException;
 import com.apkscanner.plugin.PlugInConfig;
 import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.plugin.gui.NetworkErrorDialog;
@@ -134,7 +139,6 @@ public class UIController implements Runnable, IPlugInEventListener {
 						}
 					}
 					mainframe = mainUI;
-					PlugInManager.addPlugInEventListener(mainUI);
 				} else {
 					synchronized(instance) {
 						if(easymainUI == null) {
@@ -169,23 +173,67 @@ public class UIController implements Runnable, IPlugInEventListener {
 
 	@Override
 	public void onPluginLoaded() {
-		PlugInManager.checkUpdated();
+		checkUpdated(PlugInManager.getUpdateChecker());
 	}
 
-	@Override
-	public void onUpdated(IUpdateChecker[] plugins) {
-		if(!"true".equals(PlugInConfig.getGlobalConfiguration(PlugInConfig.CONFIG_NO_LOOK_UPDATE_POPUP))) {
-			UpdateNotificationWindow.show(mainframe, plugins);
-		}
-	}
+	private void checkUpdated(final IUpdateChecker[] updater) {
+        new SwingWorker<IUpdateChecker[], IUpdateChecker>() {
+			@Override
+			protected IUpdateChecker[] doInBackground() throws Exception {
+				ArrayList<IUpdateChecker> newUpdates = new ArrayList<>();
+				for(IUpdateChecker uc: updater) {
+					if(!uc.wasPeriodPassed()) {
+						if(uc.hasNewVersion()) {
+							newUpdates.add(uc);
+						}
+						continue;
+					}
+					try {
+						if(uc.checkNewVersion()) {
+							newUpdates.add(uc);
+						};
+					} catch (NetworkException e) {
+						publish(uc);
+						if(e.isNetworkNotFoundException()) {
+							Log.d("isNetworkNotFoundException");
+							break;
+						}
+					}
+				}
+				return newUpdates.toArray(new IUpdateChecker[newUpdates.size()]);
+			}
 
-	@Override
-	public boolean onUpdateFailed(IUpdateChecker plugin) {
-		int ret = NetworkErrorDialog.show(mainframe, plugin);
-		switch(ret) {
-		case NetworkErrorDialog.RESULT_RETRY:
-			return true;
-		}
-		return false;
+			@Override
+			protected void process(List<IUpdateChecker> updater) {
+				ArrayList<IUpdateChecker> retryUpdates = new ArrayList<>();
+				for(IUpdateChecker uc: updater) {
+					int ret = NetworkErrorDialog.show(mainframe, uc);
+					switch(ret) {
+					case NetworkErrorDialog.RESULT_RETRY:
+						retryUpdates.add(uc);
+					}
+				}
+				if(!retryUpdates.isEmpty()) {
+					checkUpdated(retryUpdates.toArray(new IUpdateChecker[retryUpdates.size()]));
+				}
+			}
+
+			@Override
+			protected void done() {
+				IUpdateChecker[] updaters = null;
+				try {
+					updaters = get();
+				} catch (InterruptedException | ExecutionException e) {
+					e.printStackTrace();
+				}
+				if(updaters != null && updaters.length > 0) {
+					mainUI.onUpdated(updaters);
+					if(!"true".equals(PlugInConfig.getGlobalConfiguration(PlugInConfig.CONFIG_NO_LOOK_UPDATE_POPUP))) {
+						UpdateNotificationWindow.show(mainframe, updaters);
+					}
+				}
+				PlugInManager.saveProperty();
+			}
+		}.execute();
 	}
 }

@@ -101,6 +101,8 @@ public class MainUI extends JFrame implements IPlugInEventListener
 		setApkScanner(scanner);
 
 		toolbarManager.setEnabled((boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData(), 1000);
+
+		PlugInManager.addPlugInEventListener(this);
 	}
 
 	public void setApkScanner(ApkScanner scanner) {
@@ -192,14 +194,9 @@ public class MainUI extends JFrame implements IPlugInEventListener
 		}
 	}
 
-	@Override
+	//@Override
 	public void onUpdated(IUpdateChecker[] plugins) {
 		toolBar.setBadgeCount(plugins.length);
-	}
-
-	@Override
-	public boolean onUpdateFailed(IUpdateChecker plugin) {
-		return false;
 	}
 
 	private static void setUIFont(javax.swing.plaf.FontUIResource f) {

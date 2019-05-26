@@ -11,9 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
-
-import javax.swing.SwingWorker;
 
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -39,6 +36,9 @@ public final class PlugInManager
 		synchronized (sLock) {
 			if (!eventListeners.contains(listener)) {
 				eventListeners.add(listener);
+			}
+			if(!pluginPackages.isEmpty()) {
+				listener.onPluginLoaded();
 			}
 		}
 	}
@@ -177,133 +177,59 @@ public final class PlugInManager
 	}
 
 	public static void loadPlugIn() {
-		pluginPackages.clear();
-
-		File pluginFolder = new File(Resource.PLUGIN_PATH.getPath());
-		if(!pluginFolder.isDirectory()) {
-			Log.v("No such plugins: " + Resource.PLUGIN_PATH.getPath());
-			return;
-		}
-
-		File[] pluginFiles = pluginFolder.listFiles(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.endsWith(".xml") || name.endsWith(".jar");
-			}
-		});
-
-		for(File pluginFile: pluginFiles) {
-			PlugInPackage pack = null;
-			try {
-				pack = new PlugInPackage(pluginFile);
-			} catch (InvalidManifestException e) {
-				e.printStackTrace();
-			}
-			if(pack != null) {
-				String packageName = pack.getPackageName();
-				PlugInPackage oldPack = getPlugInPackage(packageName);
-				if(oldPack != null) {
-					Log.i(packageName + " was already existed a same package : " + oldPack.getPlugInUri());
-					if(oldPack.getVersionCode() < pack.getVersionCode()) {
-						Log.i("This is new version, so remove old version " + oldPack.getPlugInUri());
-						pluginPackages.remove(oldPack);
-						pluginPackages.add(pack);
-					} else {
-						Log.i("This is old version or same, so do not add package : " + pack.getPlugInUri());
-					}
-				} else {
-					pluginPackages.add(pack);
-				}
-			}
-		}
-
-		loadProperty();
-
-		IPlugInEventListener[] listenersCopy = null;
 		synchronized (sLock) {
-			listenersCopy = eventListeners.toArray(
-					new IPlugInEventListener[eventListeners.size()]);
-		}
+			pluginPackages.clear();
 
-		for (IPlugInEventListener listener : listenersCopy) {
-			listener.onPluginLoaded();
-		}
-	}
-
-	public static void checkUpdated() {
-		checkUpdated(getUpdateChecker());
-	}
-
-	private static void checkUpdated(final IUpdateChecker[] updater) {
-        new SwingWorker<IUpdateChecker[], IUpdateChecker>() {
-			@Override
-			protected IUpdateChecker[] doInBackground() throws Exception {
-				ArrayList<IUpdateChecker> newUpdates = new ArrayList<>();
-				for(IUpdateChecker uc: updater) {
-					if(!uc.wasPeriodPassed()) {
-						if(uc.hasNewVersion()) {
-							newUpdates.add(uc);
-						}
-						continue;
-					}
-					try {
-						if(uc.checkNewVersion()) {
-							newUpdates.add(uc);
-						};
-					} catch (NetworkException e) {
-						publish(uc);
-						if(e.isNetworkNotFoundException()) {
-							Log.d("isNetworkNotFoundException");
-							break;
-						}
-					}
-				}
-				return newUpdates.toArray(new IUpdateChecker[newUpdates.size()]);
+			File pluginFolder = new File(Resource.PLUGIN_PATH.getPath());
+			if(!pluginFolder.isDirectory()) {
+				Log.v("No such plugins: " + Resource.PLUGIN_PATH.getPath());
+				return;
 			}
 
-			@Override
-			protected void process(List<IUpdateChecker> updater) {
-				IPlugInEventListener[] listenersCopy = null;
-				synchronized (sLock) {
-					listenersCopy = eventListeners.toArray(
-							new IPlugInEventListener[eventListeners.size()]);
+			File[] pluginFiles = pluginFolder.listFiles(new FilenameFilter() {
+				@Override
+				public boolean accept(File dir, String name) {
+					return name.endsWith(".xml") || name.endsWith(".jar");
 				}
+			});
 
-				ArrayList<IUpdateChecker> retryUpdates = new ArrayList<>();
-				for(IUpdateChecker uc: updater) {
-					for (IPlugInEventListener listener : listenersCopy) {
-						if(listener.onUpdateFailed(uc)) {
-							retryUpdates.add(uc);
-							break;
-						}
-					}
-				}
-				if(!retryUpdates.isEmpty()) {
-					checkUpdated(retryUpdates.toArray(new IUpdateChecker[retryUpdates.size()]));
-				}
-			}
-
-			@Override
-			protected void done() {
-				IUpdateChecker[] updaters = null;
+			for(File pluginFile: pluginFiles) {
+				PlugInPackage pack = null;
 				try {
-					updaters = get();
-				} catch (InterruptedException | ExecutionException e) {
+					pack = new PlugInPackage(pluginFile);
+				} catch (InvalidManifestException e) {
 					e.printStackTrace();
 				}
-				if(updaters != null && updaters.length > 0) {
-					IPlugInEventListener[] listenersCopy = null;
-					synchronized (sLock) {
-						listenersCopy = eventListeners.toArray(
-								new IPlugInEventListener[eventListeners.size()]);
-					}
-					for (IPlugInEventListener listener : listenersCopy) {
-						listener.onUpdated(updaters);
+				if(pack != null) {
+					String packageName = pack.getPackageName();
+					PlugInPackage oldPack = getPlugInPackage(packageName);
+					if(oldPack != null) {
+						Log.i(packageName + " was already existed a same package : " + oldPack.getPlugInUri());
+						if(oldPack.getVersionCode() < pack.getVersionCode()) {
+							Log.i("This is new version, so remove old version " + oldPack.getPlugInUri());
+							pluginPackages.remove(oldPack);
+							pluginPackages.add(pack);
+						} else {
+							Log.i("This is old version or same, so do not add package : " + pack.getPlugInUri());
+						}
+					} else {
+						pluginPackages.add(pack);
 					}
 				}
-				PlugInManager.saveProperty();
 			}
-		}.execute();
+
+			loadProperty();
+
+			IPlugInEventListener[] listenersCopy = null;
+			synchronized (sLock) {
+				listenersCopy = eventListeners.toArray(
+						new IPlugInEventListener[eventListeners.size()]);
+			}
+
+			for (IPlugInEventListener listener : listenersCopy) {
+				listener.onPluginLoaded();
+			}
+		}
 	}
 
 	public static Map<String, Object> getChangedProperties() {
