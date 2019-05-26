@@ -214,8 +214,10 @@ public class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, Comp
 //		});
 
 		// showEmptyinfo();
-		// isinit=true;		
-		apklightscanner.setReadyListener();
+		// isinit=true;
+		if(apklightscanner != null) {
+			apklightscanner.setReadyListener();
+		}
 		Log.d("End EasyGuiMainPanel ------------------------------------------------------------------------------------------------------------------------");
 	}
 

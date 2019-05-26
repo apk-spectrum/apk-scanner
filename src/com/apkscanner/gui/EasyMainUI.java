@@ -34,13 +34,15 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 	public static boolean isdecoframe = false;
 
 	public EasyMainUI(ApkScanner aaptapkScanner) {
-		apkScanner = new EasyLightApkScanner(aaptapkScanner);
+		setApkScanner(aaptapkScanner);
 		ToolEntryManager.initToolEntryManager();
 		InitUI();
 	}
 
 	public void setApkScanner(ApkScanner scanner) {
-		apkScanner = new EasyLightApkScanner(scanner);
+		if(scanner != null) {
+			apkScanner = new EasyLightApkScanner(scanner);
+		}
 	}
 
 	public void InitUI() {
@@ -108,7 +110,8 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 //			Resource.PROP_EASY_GUI_WINDOW_POSITION_Y.getData()));
 		}
 
-		if ((apkScanner.getlatestError() != 0 || apkScanner.getApkFilePath() == null)
+		if (apkScanner != null &&
+				(apkScanner.getlatestError() != 0 || apkScanner.getApkFilePath() == null)
 				&& !((AaptLightScanner)apkScanner.getApkScanner()).notcallcomplete) {
 			Log.d("getlatestError is not 0 or args 0");
 			mainpanel.showEmptyinfo();

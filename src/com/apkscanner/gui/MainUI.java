@@ -174,12 +174,16 @@ public class MainUI extends JFrame implements IPlugInEventListener
 	public void onPluginLoaded() {
 		toolBar.onLoadPlugin(new UIEventHandler());
 		tabbedPanel.onLoadPlugin();
-		int state = apkScanner.getStatus();
-		if( PlugInManager.getPackageSearchers().length > 0
-				&& Status.BASIC_INFO_COMPLETED.isCompleted(state)
-				&& Status.CERT_COMPLETED.isCompleted(state) ) {
-			tabbedPanel.setData(apkScanner.getApkInfo(), Status.BASIC_INFO_COMPLETED);
+
+		if(apkScanner != null) {
+			int state = apkScanner.getStatus();
+			if( PlugInManager.getPackageSearchers().length > 0
+					&& Status.BASIC_INFO_COMPLETED.isCompleted(state)
+					&& Status.CERT_COMPLETED.isCompleted(state) ) {
+				tabbedPanel.setData(apkScanner.getApkInfo(), Status.BASIC_INFO_COMPLETED);
+			}
 		}
+
 		for(IExternalTool plugin: PlugInManager.getExternalTool()) {
 			if(!plugin.isDiffTool()) continue;
 			Image icon = null;
