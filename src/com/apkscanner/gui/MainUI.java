@@ -6,8 +6,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Image;
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -26,8 +24,10 @@ import java.util.TimerTask;
 
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
 import com.android.ddmlib.AdbCommandRejectedException;
@@ -37,6 +37,7 @@ import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.android.ddmlib.IDevice;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.Launcher;
+import com.apkscanner.UIController;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
@@ -44,6 +45,7 @@ import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ComponentInfo;
 import com.apkscanner.gui.DropTargetChooser.DefaultTargetObject;
 import com.apkscanner.gui.ToolBar.ButtonSet;
+import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.gui.dialog.AboutDlg;
 import com.apkscanner.gui.dialog.ApkSignerWizard;
 import com.apkscanner.gui.dialog.LogDlg;
@@ -164,8 +166,22 @@ public class MainUI extends JFrame implements IPlugInEventListener
 		dropTargetChooser.setVisible(true);
 
 		// Shortcut key event processing
-		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
-		ky.addKeyEventDispatcher(eventHandler);
+		KeyStrokeAction.registerKeyStrokeActions(getRootPane(), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, new KeyStroke[] {
+			KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0, false),
+			KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0, false),
+			KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false),
+			KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK, false),
+			KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK, false),
+			KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK, false),
+			KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK, false),
+			KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK, false),
+			KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK, false),
+			KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.CTRL_DOWN_MASK, false),
+			KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK, false),
+			KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true),
+			KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true),
+			KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true)
+		}, eventHandler);
 
 		Log.i("UI Init end");
 	}
@@ -322,7 +338,7 @@ public class MainUI extends JFrame implements IPlugInEventListener
 		}
 	}
 
-	class UIEventHandler implements ActionListener, KeyEventDispatcher, WindowListener, DropTargetChooser.Listener
+	class UIEventHandler implements ActionListener, WindowListener, DropTargetChooser.Listener
 	{
 		private void evtOpenApkFile(boolean newWindow) {
 			final String apkFilePath = ApkFileChooser.openApkFilePath(MainUI.this);
@@ -582,7 +598,9 @@ public class MainUI extends JFrame implements IPlugInEventListener
 					int actionType = 0;
 					if(e instanceof ActionEvent) {
 						isShiftPressed = (e != null && (((ActionEvent) e).getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0);
-						if(e == null || ToolBar.ButtonSet.LAUNCH.matchActionEvent((ActionEvent) e)) {
+						if(e.getSource() instanceof KeyStrokeAction) {
+							if(isShiftPressed) actionType = 2;
+						} else if(e == null || ToolBar.ButtonSet.LAUNCH.matchActionEvent((ActionEvent) e)) {
 							if(isShiftPressed) actionType = 2;
 						} else if(ToolBar.ButtonSet.SUB_LAUNCH.matchActionEvent((ActionEvent) e)) {
 							String data = (String)Resource.PROP_DEFAULT_LAUNCH_MODE.getData();
@@ -961,48 +979,43 @@ public class MainUI extends JFrame implements IPlugInEventListener
 				}
 			}  else if(ToolBar.CMD_VISIBLE_TO_BASEIC_CHANGED.equals(e.getActionCommand())) {
 				tabbedPanel.reloadResource();
+			} else if(e.getSource() instanceof KeyStrokeAction){
+				keyStrokeActionPerformed(e);
 			} else {
 				Log.v("Unkown action : " + e);
 			}
 		}
 
-		// Shortcut key event processing
-		@Override
-		public boolean dispatchKeyEvent(KeyEvent e) {
-			if(!isFocused()) return false;
-			if (e.getID() == KeyEvent.KEY_RELEASED) {
-				if(e.getModifiersEx() == KeyEvent.CTRL_DOWN_MASK) {
-					switch(e.getKeyCode()) {
-					case KeyEvent.VK_O: evtOpenApkFile(false);	break;
-					case KeyEvent.VK_P: evtOpenPackage(false);	break;
-					case KeyEvent.VK_N: Launcher.run();			break;
-					case KeyEvent.VK_I: evtInstallApk(false);	break;
-					case KeyEvent.VK_T: evtShowInstalledPackageInfo();	break;
-					case KeyEvent.VK_E: evtShowExplorer(null);		break;
-					case KeyEvent.VK_M: evtShowManifest(false);		break;
-					case KeyEvent.VK_R: evtLaunchApp(e);	break;
-					//case KeyEvent.VK_S: evtSettings();			break;
-					default: return false;
-					}
-					return true;
-				} else if(e.getModifiersEx() == (KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK)) {
-					switch(e.getKeyCode()) {
-					case KeyEvent.VK_O: evtOpenApkFile(true);	break;
-					case KeyEvent.VK_P: evtOpenPackage(true);	break;
-					case KeyEvent.VK_R: evtLaunchApp(e);	break;
-					default: return false;
-					}
-					return true;
-				} else if(e.getModifiersEx() == 0) {
-					switch(e.getKeyCode()) {
-					case KeyEvent.VK_F1 : AboutDlg.showAboutDialog(MainUI.this);break;
-					case KeyEvent.VK_F12: LogDlg.showLogDialog(MainUI.this);	break;
-					default: return false;
-					}
-					return true;
+		private void keyStrokeActionPerformed(ActionEvent e) {
+			KeyStrokeAction action = (KeyStrokeAction) e.getSource();
+			int modifier = action.getModifiersEx();
+			int keycode = action.getKeyStroke().getKeyCode();
+
+			if(modifier == InputEvent.CTRL_DOWN_MASK) {
+				switch(keycode) {
+				case KeyEvent.VK_O: evtOpenApkFile(false);	break;
+				case KeyEvent.VK_P: evtOpenPackage(false);	break;
+				case KeyEvent.VK_N: Launcher.run();			break;
+				case KeyEvent.VK_I: evtInstallApk(false);	break;
+				case KeyEvent.VK_T: evtShowInstalledPackageInfo();	break;
+				case KeyEvent.VK_E: evtShowExplorer(null);	break;
+				case KeyEvent.VK_M: evtShowManifest(false);	break;
+				case KeyEvent.VK_R: evtLaunchApp(e);		break;
+				//case KeyEvent.VK_S: evtSettings();			break;
+				}
+			} else if(modifier == (InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)) {
+				switch(keycode) {
+				case KeyEvent.VK_O: evtOpenApkFile(true);	break;
+				case KeyEvent.VK_P: evtOpenPackage(true);	break;
+				case KeyEvent.VK_R: evtLaunchApp(e);	break;
+				}
+			} else if(modifier == 0) {
+				switch(keycode) {
+				case KeyEvent.VK_F1 : AboutDlg.showAboutDialog(MainUI.this);break;
+				case KeyEvent.VK_F12: LogDlg.showLogDialog(MainUI.this);	break;
+				case KeyEvent.VK_ESCAPE: UIController.changeToEasyGui();	break;
 				}
 			}
-			return false;
 		}
 
 		// Drag & Drop event processing

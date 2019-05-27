@@ -2,17 +2,24 @@ package com.apkscanner.gui;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.KeyStroke;
 
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.android.ddmlib.IDevice;
-import com.apkscanner.Launcher;
+import com.apkscanner.UIController;
 import com.apkscanner.core.scanner.AaptLightScanner;
 import com.apkscanner.core.scanner.ApkScanner;
+import com.apkscanner.gui.component.KeyStrokeAction;
+import com.apkscanner.gui.dialog.LogDlg;
 import com.apkscanner.gui.easymode.EasyGuiMainPanel;
 import com.apkscanner.gui.easymode.EasyLightApkScanner;
 import com.apkscanner.gui.easymode.core.ToolEntryManager;
@@ -21,11 +28,11 @@ import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.Log;
 
-public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeListener {
+public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeListener, ActionListener {
 	private static final long serialVersionUID = -1104109718930033124L;
 
-	private static EasyLightApkScanner apkScanner = null;
-	private static EasyGuiMainPanel mainpanel;
+	private EasyLightApkScanner apkScanner = null;
+	private EasyGuiMainPanel mainpanel;
 	//private String filepath;
 
 	public static long UIstarttime;
@@ -119,6 +126,12 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 
 
 		}
+
+		KeyStrokeAction.registerKeyStrokeActions(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW, new KeyStroke[] {
+				KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0, false),
+				KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0, false),
+				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false)
+			}, this);
 
 		Log.d("main End");
 		Log.d("init UI   : " + (System.currentTimeMillis() - EasyMainUI.UIInittime) / 1000.0);
@@ -243,12 +256,16 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 
 	}
 
-	static public void restart(JFrame frame) {
-		if(apkScanner.getApkInfo() != null) {
-			Launcher.run(apkScanner.getApkInfo().filePath);
-		} else {
-			Launcher.run();
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		int keycode = Integer.parseInt(e.getActionCommand());
+		switch(keycode) {
+		case KeyEvent.VK_ESCAPE:
+			UIController.changeToMainGui();
+			break;
+		case KeyEvent.VK_F12:
+			LogDlg.showLogDialog(this);	
+			break;
 		}
-		frame.dispose();
 	}
 }

@@ -7,12 +7,9 @@ import java.awt.EventQueue;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
 import java.awt.Paint;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -28,12 +25,10 @@ import javax.swing.border.LineBorder;
 
 import com.android.ddmlib.IDevice;
 import com.apkscanner.Launcher;
-
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.gui.DropTargetChooser;
-import com.apkscanner.gui.EasyMainUI;
-import com.apkscanner.gui.dialog.LogDlg;
 import com.apkscanner.gui.DropTargetChooser.DefaultTargetObject;
+import com.apkscanner.gui.EasyMainUI;
 import com.apkscanner.gui.easymode.contents.EasyBordPanel;
 import com.apkscanner.gui.easymode.contents.EasyContentsPanel;
 import com.apkscanner.gui.easymode.contents.EasyGuiToolScaleupPanel;
@@ -45,7 +40,7 @@ import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
-public class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, ComponentListener, DropTargetChooser.Listener  {
+public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropTargetChooser.Listener  {
 	private static final long serialVersionUID = 4664365275666876359L;
 	private static Color maincolor = new Color(249, 249, 249);
 	static private int PERMISSION_HEIGHT = 46;
@@ -75,9 +70,6 @@ public class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, Comp
 		ToolEntryManager.Apkscanner = apkscanner;
 		ToolEntryManager.mainframe = mainframe;
 		messagePool = new MessageBoxPool(this.mainframe);
-
-		KeyboardFocusManager ky = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-		ky.addKeyEventDispatcher(this);
 
 		if (apklightscanner != null) {
 			apklightscanner.setStatusListener(new GUIApkLightScannerListener());
@@ -368,25 +360,6 @@ public class EasyGuiMainPanel extends JPanel implements KeyEventDispatcher, Comp
 	public void changeDevice(IDevice[] devices) {
 		// TODO Auto-generated method stub
 		EasycontentsPanel.changeDeivce(devices);
-	}
-	
-	@Override
-	public boolean dispatchKeyEvent(KeyEvent e) {
-		// TODO Auto-generated method stub
-		if (e.getID() == KeyEvent.KEY_RELEASED) {
-			switch (e.getKeyCode()) {
-			case KeyEvent.VK_F12:
-				LogDlg.showLogDialog(mainframe);				
-				break;
-			case KeyEvent.VK_F11:
-				//apklightscanner.setReadyListener();		
-				break;	
-				
-			default:
-				return false;
-			}
-		}
-		return false;
 	}
 
 	private void changesize() {

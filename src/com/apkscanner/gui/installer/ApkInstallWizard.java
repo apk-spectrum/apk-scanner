@@ -6,11 +6,10 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Frame;
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -23,9 +22,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.jar.JarFile;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
@@ -43,6 +44,7 @@ import com.apkscanner.core.installer.OptionsBundle.IOptionsChangedListener;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.CompactApkInfo;
+import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.gui.dialog.PackageInfoPanel;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
@@ -112,7 +114,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 			setModal(false);
 			addWindowListener(uiEventHandler);
 
-			initialize(this);
+			initialize(this, getRootPane());
 			setLocationRelativeTo(owner);
 		}
 	}
@@ -152,7 +154,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 			setTitle(Resource.STR_TITLE_INSTALL_WIZARD.getString());
 			setResizable(true);
 
-			initialize(this);
+			initialize(this, getRootPane());
 			setLocationRelativeTo(null);
 
 			addWindowListener(uiEventHandler);
@@ -189,7 +191,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 		if(wizard != null) wizard.setVisible(visible);
 	}
 
-	private void initialize(Window window)
+	private void initialize(Window window, JComponent compoent)
 	{
 		if(window == null) {
 			Log.e("Error: window is null");
@@ -232,8 +234,12 @@ public class ApkInstallWizard implements IDeviceChangeListener
 		window.add(controlPanel, BorderLayout.SOUTH);
 
 		// Shortcut key event processing
-		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
-		ky.addKeyEventDispatcher(uiEventHandler);
+		KeyStrokeAction.registerKeyStrokeActions(compoent, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, new KeyStroke[] {
+				KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, false),
+				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false),
+				KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.ALT_DOWN_MASK, false),
+				KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.ALT_DOWN_MASK, false)
+			}, uiEventHandler);
 	}
 
 	private void changeState(final int status) {
@@ -634,7 +640,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 		}
 	}
 
-	public class UIEventHandler implements ActionListener, KeyEventDispatcher, WindowListener, ListSelectionListener {
+	public class UIEventHandler implements ActionListener, WindowListener, ListSelectionListener {
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
 			if(e.getSource() instanceof DeviceCustomList) {
@@ -672,8 +678,8 @@ public class ApkInstallWizard implements IDeviceChangeListener
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			String actCmd = arg0.getActionCommand();
+		public void actionPerformed(ActionEvent e) {
+			String actCmd = e.getActionCommand();
 			if(actCmd == null || actCmd.isEmpty()) return;
 			switch(actCmd) {
 			case ControlPanel.CTR_ACT_CMD_NEXT:
@@ -699,8 +705,8 @@ public class ApkInstallWizard implements IDeviceChangeListener
 						ContentPanel.CONTENT_SIMPLE_OPTIONS : ContentPanel.CONTENT_SET_OPTIONS);
 				break;
 			case ToggleButtonBar.ACT_CMD_BUILD_OPTTIONS:
-				if(arg0.getSource() instanceof DeviceListData) {
-					DeviceListData data = (DeviceListData) arg0.getSource();
+				if(e.getSource() instanceof DeviceListData) {
+					DeviceListData data = (DeviceListData) e.getSource();
 					installOptionPanel.setOptions(data.getOptionsBundle());
 					if(data.getState() != DeviceListData.STATUS_CONNECTING_DEVICE) {
 						contentPanel.show(status == STATUS_SIMPLE_OPTION ?
@@ -712,8 +718,8 @@ public class ApkInstallWizard implements IDeviceChangeListener
 				}
 				break;
 			case ToggleButtonBar.ACT_CMD_PACKAGE_INFO:
-				if(arg0.getSource() instanceof DeviceListData) {
-					DeviceListData data = (DeviceListData) arg0.getSource();
+				if(e.getSource() instanceof DeviceListData) {
+					DeviceListData data = (DeviceListData) e.getSource();
 					if(data != null && data.getDevice() != null && apkInfo != null && apkInfo.packageName != null) {
 						PackageInfo info = PackageManager.getPackageInfo(data.getDevice(), apkInfo.packageName);
 						if(info != null) {
@@ -732,37 +738,34 @@ public class ApkInstallWizard implements IDeviceChangeListener
 			case SimpleOptionPanel.ACT_CMD_SET_ADVANCED_OPT:
 				changeState(STATUS_SET_OPTIONS);
 				break;
+			default:
+				if(e.getSource() instanceof KeyStrokeAction) {
+					keyStrokeActionPerformed(e);
+				}
 			}
 		}
 
-		@Override
-		public boolean dispatchKeyEvent(KeyEvent e) {
-			if(!wizard.isFocused()) return false;
-			if (e.getID() == KeyEvent.KEY_RELEASED) {
-				if(e.getModifiersEx() == KeyEvent.ALT_DOWN_MASK) {
-					switch(e.getKeyCode()) {
-					case KeyEvent.VK_N:
-						//next();
-						break;
-					case KeyEvent.VK_P:
-						//previous();
-						break;
-					default:
-						return false;
-					}
-					return true;
-				} else if(e.getModifiersEx() == 0) {
-					switch(e.getKeyCode()) {
-					case KeyEvent.VK_F5 :
-						//contentPanel.refreshDeviceList();
-						break;
-					default:
-						return false;
-					}
-					return true;
+		private void keyStrokeActionPerformed(ActionEvent e) {
+			KeyStrokeAction action = (KeyStrokeAction) e.getSource();
+			int modifier = action.getModifiersEx();
+			int keycode = action.getKeyStroke().getKeyCode();
+
+			if(modifier == InputEvent.ALT_DOWN_MASK) {
+				switch(keycode) {
+				case KeyEvent.VK_N:
+					//next();
+					break;
+				case KeyEvent.VK_P:
+					//previous();
+					break;
+				}
+			} else if(modifier == 0) {
+				switch(keycode) {
+				case KeyEvent.VK_F5:
+					//contentPanel.refreshDeviceList();
+					break;
 				}
 			}
-			return false;
 		}
 
 		// Closing event of window be delete tempFile
