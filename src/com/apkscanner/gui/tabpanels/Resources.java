@@ -1174,6 +1174,8 @@ public class Resources extends AbstractTabbedPanel {
 		if (tree == null)
 			initialize();
 
+		if(apkInfo.resources == null) return;
+
 		this.apkFilePath = apkInfo.filePath;
 		this.tempWorkPath = apkInfo.tempWorkPath;
 

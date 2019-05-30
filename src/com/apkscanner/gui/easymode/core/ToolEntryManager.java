@@ -16,6 +16,7 @@ import com.android.ddmlib.TimeoutException;
 import com.apkscanner.Launcher;
 import com.apkscanner.UIController;
 import com.apkscanner.core.permissionmanager.PermissionManager;
+import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ComponentInfo;
@@ -25,7 +26,6 @@ import com.apkscanner.gui.dialog.PackageInfoPanel;
 import com.apkscanner.gui.dialog.PackageTreeDlg;
 import com.apkscanner.gui.dialog.PermissionHistoryPanel;
 import com.apkscanner.gui.dialog.SettingDlg;
-import com.apkscanner.gui.easymode.EasyLightApkScanner;
 import com.apkscanner.gui.easymode.dlg.EasyToolbarCertDlg;
 import com.apkscanner.gui.installer.ApkInstallWizard;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
@@ -52,7 +52,7 @@ public class ToolEntryManager {
 	
 	static ArrayList<ToolEntry> ShowEntry = new ArrayList<ToolEntry>();
 	static ArrayList<ToolEntry> hideEntry = new ArrayList<ToolEntry>();
-	static public EasyLightApkScanner Apkscanner;
+	static public ApkScanner apkScanner;
 	static public JFrame mainframe = null;
 
 	static ArrayList<ToolEntry> allEntry;
@@ -163,13 +163,13 @@ public class ToolEntryManager {
 				Log.v("Not choose apk file");
 				return;
 			}
-			if(Apkscanner.getApkScanner().getApkInfo() != null) {
+			if(apkScanner.getApkInfo() != null) {
 				Launcher.run(apkFilePath);
 			} else {
 				Thread thread = new Thread(new Runnable() {
 					public void run() {
-						Apkscanner.getApkScanner().clear(false);
-						Apkscanner.getApkScanner().openApk(apkFilePath);
+						apkScanner.clear(false);
+						apkScanner.openApk(apkFilePath);
 					}
 				});
 				thread.setPriority(Thread.NORM_PRIORITY);
@@ -186,14 +186,14 @@ public class ToolEntryManager {
 			final String device = Dlg.getSelectedDevice();
 			final String apkFilePath = Dlg.getSelectedApkPath();
 			final String frameworkRes = Dlg.getSelectedFrameworkRes();
-			if(Apkscanner.getApkScanner().getApkInfo() != null) {
+			if(apkScanner.getApkInfo() != null) {
 				Launcher.run(device, apkFilePath, frameworkRes);
 			} else {
 				Thread thread = new Thread(new Runnable() {
 					public void run() {
-						Apkscanner.getApkScanner().clear(false);
+						apkScanner.clear(false);
 						//Apkscanner.getApkScanner().openApk(apkFilePath);
-						Apkscanner.getApkScanner().openPackage(device, apkFilePath, frameworkRes);
+						apkScanner.openPackage(device, apkFilePath, frameworkRes);
 					}
 				});
 				thread.setPriority(Thread.NORM_PRIORITY);
@@ -203,7 +203,7 @@ public class ToolEntryManager {
 		} else if (cmd.equals(Resource.STR_BTN_MANIFEST.getString())) {
 			openMenifest();
 		} else if (cmd.equals(Resource.STR_BTN_EXPLORER.getString())) {
-			ApkInfo apkInfo = Apkscanner.getApkInfo();
+			ApkInfo apkInfo = apkScanner.getApkInfo();
 			if (apkInfo == null) {
 				Log.e("evtShowExplorer() apkInfo is null");
 				messagePool.show(MessageBoxPool.MSG_NO_SUCH_APK_FILE);
@@ -212,7 +212,7 @@ public class ToolEntryManager {
 			}
 			SystemUtil.openArchiveExplorer(apkInfo.filePath);
 		} else if (cmd.equals(Resource.STR_BTN_INSTALL.getString())) {
-			ApkInfo apkInfo = Apkscanner.getApkInfo();
+			ApkInfo apkInfo = apkScanner.getApkInfo();
 			if (apkInfo == null) {
 				Log.e("evtInstallApk() apkInfo is null");
 				messagePool.show(MessageBoxPool.MSG_NO_SUCH_APK_FILE);
@@ -223,7 +223,7 @@ public class ToolEntryManager {
 		} else if (cmd.equals(Resource.STR_BTN_SIGN.getString())) {
 			ToolEntryManager.excuteSinerDlg(mainframe);
 		}  else if (cmd.equals(TOOL_SHOW_SIGN_DLG)) {
-			ApkInfo apkInfo = Apkscanner.getApkInfo();
+			ApkInfo apkInfo = apkScanner.getApkInfo();
 			if (apkInfo == null) {
 				Log.e("evtInstallApk() apkInfo is null");
 				messagePool.show(MessageBoxPool.MSG_NO_SUCH_APK_FILE);
@@ -267,7 +267,7 @@ public class ToolEntryManager {
 	}
 	
 	private static void OpenDecompiler() {
-		ApkInfo apkInfo = Apkscanner.getApkInfo();
+		ApkInfo apkInfo = apkScanner.getApkInfo();
 		if (apkInfo == null || apkInfo.filePath == null || !new File(apkInfo.filePath).exists()) {
 			Log.e("evtOpenJDGUI() apkInfo is null");
 			messagePool.show(MessageBoxPool.MSG_NO_SUCH_APK_FILE);
@@ -335,7 +335,7 @@ public class ToolEntryManager {
 			return;
 		}
 
-		if(Apkscanner.getApkInfo() ==null) {
+		if(apkScanner.getApkInfo() ==null) {
 			messagePool.show(MessageBoxPool.MSG_NO_SUCH_APK_FILE);
 		}
 		
@@ -348,7 +348,7 @@ public class ToolEntryManager {
 					Log.v("InstalledPackageInfo" + device.getSerialNumber());
 					
 					final PackageInfo info = PackageManager.getPackageInfo(device,
-							Apkscanner.getApkInfo().manifest.packageName);
+							apkScanner.getApkInfo().manifest.packageName);
 					
 					if(info ==null) {
 						messagePool.show(MessageBoxPool.MSG_NO_SUCH_PACKAGE_DEVICE);
@@ -387,7 +387,7 @@ public class ToolEntryManager {
 					}
 					Log.v("clear data on " + device.getSerialNumber());
 					PackageInfo packageInfo = PackageManager.getPackageInfo(device,
-							Apkscanner.getApkInfo().manifest.packageName);
+							apkScanner.getApkInfo().manifest.packageName);
 
 					if(packageInfo ==null) {
 						messagePool.show(MessageBoxPool.MSG_NO_SUCH_PACKAGE_DEVICE);
@@ -419,7 +419,7 @@ public class ToolEntryManager {
 	}
 
 	private static void openMenifest() {
-		ApkInfo apkInfo = Apkscanner.getApkInfo();
+		ApkInfo apkInfo = apkScanner.getApkInfo();
 		if (apkInfo == null) {
 			Log.e("evtShowManifest() apkInfo is null");
 			messagePool.show(MessageBoxPool.MSG_NO_SUCH_APK_FILE);			
@@ -448,7 +448,6 @@ public class ToolEntryManager {
 				fw.write(a2x.toString());
 				fw.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else {
@@ -476,7 +475,7 @@ public class ToolEntryManager {
 					Log.v("uninstall apk on " + device.getSerialNumber());
 					
 					PackageInfo packageInfo = PackageManager.getPackageInfo(device,
-							Apkscanner.getApkInfo().manifest.packageName);
+							apkScanner.getApkInfo().manifest.packageName);
 
 					if (packageInfo == null) {
 						messagePool.show(MessageBoxPool.MSG_NO_SUCH_PACKAGE_DEVICE);			
@@ -550,7 +549,7 @@ public class ToolEntryManager {
 					Log.v("launch activity on " + device.getSerialNumber());
 
 					PackageInfo packageInfo = PackageManager.getPackageInfo(device,
-							Apkscanner.getApkInfo().manifest.packageName);
+							apkScanner.getApkInfo().manifest.packageName);
 					if(packageInfo == null) {
 						messagePool.show(MessageBoxPool.MSG_NO_SUCH_PACKAGE_DEVICE);
 						continue;
@@ -579,7 +578,7 @@ public class ToolEntryManager {
 							}
 						}
 						if (selectedActivity == null) {
-							ApkInfo apkInfo = Apkscanner.getApkInfo();
+							ApkInfo apkInfo = apkScanner.getApkInfo();
 							ComponentInfo[] apkActivities = ApkInfoHelper.getLauncherActivityList(apkInfo, true);
 
 							int mergeLength = (activities != null ? activities.length : 0)
@@ -661,7 +660,6 @@ public class ToolEntryManager {
 	}
 
 	public static int findIndexFromAllEntry(ToolEntry obj) {
-		// TODO Auto-generated method stub
 		for (int i = 0; i < allEntry.size(); i++) {
 			ToolEntry entry = allEntry.get(i);
 			if (obj.title.equals(entry.title)) {
@@ -672,8 +670,8 @@ public class ToolEntryManager {
 	}
 	
 	private static void restart() {
-		if(Apkscanner.getApkInfo() != null) {
-			Launcher.run(Apkscanner.getApkInfo().filePath);
+		if(apkScanner.getApkInfo() != null) {
+			Launcher.run(apkScanner.getApkInfo().filePath);
 		} else {
 			Launcher.run();
 		}
@@ -687,8 +685,7 @@ public class ToolEntryManager {
 	}
 
 	public static void excuteSinerDlg(JFrame frame) {		
-		// TODO Auto-generated method stub
-		ApkInfo apkInfo = Apkscanner.getApkInfo();
+		ApkInfo apkInfo = apkScanner.getApkInfo();
 		if(apkInfo == null || apkInfo.filePath == null
 				|| !new File(apkInfo.filePath).exists()) {
 			Log.e("evtSignApkFile() apkInfo is null");

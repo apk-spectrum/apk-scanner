@@ -10,9 +10,11 @@ import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.apkscanner.core.scanner.AaptLightScanner;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.EasyMainUI;
 import com.apkscanner.gui.MainUI;
+import com.apkscanner.gui.easymode.dlg.EasyStartupDlg;
 import com.apkscanner.plugin.IPlugInEventListener;
 import com.apkscanner.plugin.IUpdateChecker;
 import com.apkscanner.plugin.NetworkException;
@@ -23,7 +25,7 @@ import com.apkscanner.plugin.gui.UpdateNotificationWindow;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
-public class UIController implements Runnable, IPlugInEventListener {
+public class UIController implements Runnable {
 	public static final String APKSCANNER_GUI_APKSCANNER = "APKSCANNER";
 	public static final String APKSCANNER_GUI_EASY_APKSCANNER = "EASY_APKSCANNER";
 
@@ -41,15 +43,7 @@ public class UIController implements Runnable, IPlugInEventListener {
 		}
 		this.apkScanner = apkScanner;
 
-		PlugInManager.setLang(Resource.getLanguage());
-		PlugInManager.addPlugInEventListener(this);
-		Thread thread = new Thread(new Runnable() {
-			public void run() {
-				PlugInManager.loadPlugIn();
-			}
-		});
-		thread.setPriority(Thread.NORM_PRIORITY);
-		thread.start();
+		loadPlugIn();
 	}
 
 	public static UIController getInstance(ApkScanner apkScanner) {
@@ -109,7 +103,7 @@ public class UIController implements Runnable, IPlugInEventListener {
         thread.start();
 
 		if(!(boolean) Resource.PROP_SKIP_STARTUP_EASY_UI_DLG.getData()) {
-			if(EasyMainUI.showDlgStartupEasyMode(mainframe)) {
+			if(EasyStartupDlg.showAboutDialog(mainframe)) {
 				changeGui(isEasyGui ? APKSCANNER_GUI_APKSCANNER : APKSCANNER_GUI_EASY_APKSCANNER);
 			}
 		}
@@ -119,17 +113,26 @@ public class UIController implements Runnable, IPlugInEventListener {
 		final boolean isEasyGui = APKSCANNER_GUI_EASY_APKSCANNER.equals(state);
 
 		final String apkPath = apkScanner.getApkInfo() != null ? apkScanner.getApkInfo().filePath : null;
-		if(!isEasyGui) {
-			apkScanner = ApkScanner.getInstance(ApkScanner.APKSCANNER_TYPE_AAPT);
+
+		if(apkScanner instanceof AaptLightScanner) {
+			((AaptLightScanner) apkScanner).setLightMode(isEasyGui);
 		} else {
 			apkScanner = ApkScanner.getInstance(ApkScanner.APKSCANNER_TYPE_AAPTLIGHT);
+			if(apkPath != null) {
+				Thread thread = new Thread(new Runnable() {
+					public void run() {
+						apkScanner.openApk(apkPath);
+					}
+				});
+				thread.setPriority(Thread.NORM_PRIORITY);
+				thread.start();
+			}
 		}
 
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				mainframe.setVisible(false);
-				mainframe.getContentPane().removeAll();
 				if(!isEasyGui) {
 					synchronized(instance) {
 						if(mainUI == null) {
@@ -150,15 +153,6 @@ public class UIController implements Runnable, IPlugInEventListener {
 					mainframe = easymainUI;
 				}
 				mainframe.setVisible(true);
-				if(apkPath != null) {
-					Thread thread = new Thread(new Runnable() {
-						public void run() {
-							apkScanner.openApk(apkPath);
-						}
-					});
-					thread.setPriority(Thread.NORM_PRIORITY);
-					thread.start();
-				}
 			}
 		});
 	}
@@ -171,9 +165,21 @@ public class UIController implements Runnable, IPlugInEventListener {
 		getInstance().changeGui(APKSCANNER_GUI_EASY_APKSCANNER);
 	}
 
-	@Override
-	public void onPluginLoaded() {
-		checkUpdated(PlugInManager.getUpdateChecker());
+	private void loadPlugIn() {
+		PlugInManager.setLang(Resource.getLanguage());
+		PlugInManager.addPlugInEventListener(new IPlugInEventListener() {
+			@Override
+			public void onPluginLoaded() {
+				checkUpdated(PlugInManager.getUpdateChecker());
+			}
+		});
+		Thread thread = new Thread(new Runnable() {
+			public void run() {
+				PlugInManager.loadPlugIn();
+			}
+		});
+		thread.setPriority(Thread.NORM_PRIORITY);
+		thread.start();
 	}
 
 	private void checkUpdated(final IUpdateChecker[] updater) {

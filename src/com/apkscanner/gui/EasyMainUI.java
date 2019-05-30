@@ -16,14 +16,12 @@ import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.android.ddmlib.IDevice;
 import com.apkscanner.UIController;
-import com.apkscanner.core.scanner.AaptLightScanner;
 import com.apkscanner.core.scanner.ApkScanner;
+import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.gui.dialog.LogDlg;
 import com.apkscanner.gui.easymode.EasyGuiMainPanel;
-import com.apkscanner.gui.easymode.EasyLightApkScanner;
 import com.apkscanner.gui.easymode.core.ToolEntryManager;
-import com.apkscanner.gui.easymode.dlg.EasyStartupDlg;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.Log;
@@ -31,7 +29,7 @@ import com.apkscanner.util.Log;
 public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeListener, ActionListener {
 	private static final long serialVersionUID = -1104109718930033124L;
 
-	private EasyLightApkScanner apkScanner = null;
+	private ApkScanner apkScanner = null;
 	private EasyGuiMainPanel mainpanel;
 	//private String filepath;
 
@@ -41,14 +39,16 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 	public static boolean isdecoframe = false;
 
 	public EasyMainUI(ApkScanner aaptapkScanner) {
-		setApkScanner(aaptapkScanner);
 		ToolEntryManager.initToolEntryManager();
 		InitUI();
+		setApkScanner(aaptapkScanner);
 	}
 
 	public void setApkScanner(ApkScanner scanner) {
 		if(scanner != null) {
-			apkScanner = new EasyLightApkScanner(scanner);
+			apkScanner = scanner;
+			ToolEntryManager.apkScanner = apkScanner;
+			mainpanel.setApkScanner(apkScanner);
 		}
 	}
 
@@ -78,7 +78,8 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 //			e1.printStackTrace();
 //		} //윈도우 400ms
 		Log.i("new EasyGuiMainPanel");
-		mainpanel = new EasyGuiMainPanel(this, apkScanner);
+		mainpanel = new EasyGuiMainPanel(this);
+		mainpanel.setApkScanner(apkScanner);
 
 		if (isdecoframe) {
 			setdecoframe();
@@ -118,8 +119,8 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 		}
 
 		if (apkScanner != null &&
-				(apkScanner.getlatestError() != 0 || apkScanner.getApkFilePath() == null)
-				&& !((AaptLightScanner)apkScanner.getApkScanner()).notcallcomplete) {
+				(apkScanner.getLastErrorCode() != 0 || apkScanner.getApkInfo().filePath == null)
+				&& !apkScanner.isCompleted(Status.ALL_COMPLETED)) {
 			Log.d("getlatestError is not 0 or args 0");
 			mainpanel.showEmptyinfo();
 			setVisible(true);
@@ -136,10 +137,6 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 		Log.d("main End");
 		Log.d("init UI   : " + (System.currentTimeMillis() - EasyMainUI.UIInittime) / 1000.0);
 
-	}
-
-	public static boolean showDlgStartupEasyMode(JFrame frame) {
-		return EasyStartupDlg.showAboutDialog(frame);
 	}
 
 //	public static void main(final String[] args) {
@@ -264,7 +261,7 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 			UIController.changeToMainGui();
 			break;
 		case KeyEvent.VK_F12:
-			LogDlg.showLogDialog(this);	
+			LogDlg.showLogDialog(this);
 			break;
 		}
 	}

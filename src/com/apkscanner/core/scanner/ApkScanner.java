@@ -39,9 +39,9 @@ abstract public class ApkScanner
 
 	protected ApkInfo apkInfo = null;
 
-	private StatusListener statusListener = null;
-	private int scanningStatus;
-	private int lastErrorCode;
+	protected StatusListener statusListener = null;
+	protected int scanningStatus;
+	protected int lastErrorCode;
 
 	public enum Status {
 		STANBY(0x00),
@@ -81,19 +81,27 @@ abstract public class ApkScanner
 		return this.statusListener;
 	}
 
-	public void setStatusListener(StatusListener statusListener)
+	public void setStatusListener(StatusListener statusListener) {
+		setStatusListener(statusListener, true);
+	}
+
+	public void setStatusListener(StatusListener statusListener, boolean evokeCompleted)
 	{
 		synchronized(this) {
 			this.statusListener = statusListener;
-			if(statusListener == null) return;
+			if(statusListener == null || !evokeCompleted) return;
 
 			if(lastErrorCode != NO_ERR) {
 				statusListener.onError(lastErrorCode);
 			} else if(scanningStatus != 0) {
 				for(Status state: Status.values()) {
 					if(isCompleted(state)) {
-						Log.e(state + " is compleated sooner than register listener");
+						Log.v(state + " is compleated sooner than register listener");
 						statusListener.onStateChanged(state);
+					}
+					if(Status.ALL_COMPLETED.equals(state)) {
+						statusListener.onSuccess();
+						statusListener.onCompleted();
 					}
 				}
 			}
@@ -334,7 +342,7 @@ abstract public class ApkScanner
 
 	public static ApkScanner getInstance(String name) {
 		if(name == null || APKSCANNER_TYPE_AAPT.equalsIgnoreCase(name)) {
-			return new AaptScanner(null);
+			return new AaptLightScanner(null, false);
 		} else if(APKSCANNER_TYPE_AAPTLIGHT.equalsIgnoreCase(name)) {
 			return new AaptLightScanner(null);
 		} else if(APKSCANNER_TYPE_APKTOOL.equalsIgnoreCase(name)) {

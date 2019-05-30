@@ -87,6 +87,7 @@ public class MainUI extends JFrame implements IPlugInEventListener
 	private static final long serialVersionUID = -623259597186280485L;
 
 	private ApkScanner apkScanner;
+	private int infoHashCode;
 	private ToolbarManagement toolbarManager;
 
 	private TabbedPanel tabbedPanel;
@@ -110,7 +111,9 @@ public class MainUI extends JFrame implements IPlugInEventListener
 	public void setApkScanner(ApkScanner scanner) {
 		apkScanner = scanner;
 		if(apkScanner != null) {
-			apkScanner.setStatusListener(new ApkScannerListener());
+			boolean changed = apkScanner.getApkInfo() != null
+					&& apkScanner.getApkInfo().hashCode() != infoHashCode;
+			apkScanner.setStatusListener(new ApkScannerListener(), changed);
 		}
 	}
 
@@ -330,6 +333,8 @@ public class MainUI extends JFrame implements IPlugInEventListener
 
 				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, true);
 				dropTargetChooser.setExternalToolsVisible(true);
+
+				infoHashCode = apkScanner.getApkInfo().hashCode();
 			default:
 				tabbedPanel.setData(apkScanner.getApkInfo(), status);
 				break;

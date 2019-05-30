@@ -25,6 +25,7 @@ import javax.swing.border.LineBorder;
 
 import com.android.ddmlib.IDevice;
 import com.apkscanner.Launcher;
+import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.gui.DropTargetChooser;
 import com.apkscanner.gui.DropTargetChooser.DefaultTargetObject;
@@ -45,7 +46,8 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 	private static Color maincolor = new Color(249, 249, 249);
 	static private int PERMISSION_HEIGHT = 46;
 	
-	private EasyLightApkScanner apklightscanner;
+	private ApkScanner apkScanner;
+	private int infoHashCode;
 	EasyPermissionPanel permissionPanel;
 	
 	private EasyBordPanel bordPanel;
@@ -62,18 +64,12 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 	JPanel contentspanel;
 	private DropTargetChooser dropTargetChooser;
 	
-	public EasyGuiMainPanel(JFrame mainframe, EasyLightApkScanner apkscanner) {
+	public EasyGuiMainPanel(JFrame mainframe) {
 		Log.d("start EasyGuiMainPanel------------------------------------------------------------------------------------------------------------------------ ");
-		this.apklightscanner = apkscanner;
 		this.mainframe = mainframe;
 
-		ToolEntryManager.Apkscanner = apkscanner;
 		ToolEntryManager.mainframe = mainframe;
 		messagePool = new MessageBoxPool(this.mainframe);
-
-		if (apklightscanner != null) {
-			apklightscanner.setStatusListener(new GUIApkLightScannerListener());
-		}
 
 		EasycontentsPanel = new EasyContentsPanel();
 		
@@ -192,14 +188,12 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 //
 //			@Override
 //			public void filesEnter() {
-//				// TODO Auto-generated method stub
 //				// layeredPane.add(dragdroplabel, new Integer(2));
 //				dragdroplabel.setVisible(true);
 //			}
 //
 //			@Override
 //			public void filesOut() {
-//				// TODO Auto-generated method stub
 //				// layeredPane.remove(dragdroplabel);
 //				dragdroplabel.setVisible(false);
 //			}
@@ -207,17 +201,26 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 
 		// showEmptyinfo();
 		// isinit=true;
-		if(apklightscanner != null) {
-			apklightscanner.setReadyListener();
-		}
+		//if(apkScanner != null) {
+			//apkScanner.setReadyListener();
+		//}
+
 		Log.d("End EasyGuiMainPanel ------------------------------------------------------------------------------------------------------------------------");
+	}
+
+	public void setApkScanner(ApkScanner scanner) {
+		if(scanner != null) {
+			apkScanner = scanner;
+			boolean changed = apkScanner.getApkInfo() != null
+					&& apkScanner.getApkInfo().hashCode() != infoHashCode;
+			apkScanner.setStatusListener(new GUIApkLightScannerListener(), changed);
+		}
 	}
 
 	class DropEffectLabel extends JLabel {
 		private static final long serialVersionUID = 1L;
 
 		public DropEffectLabel(ImageIcon imageIcon) {
-			// TODO Auto-generated constructor stub
 			super(imageIcon);
 		}
 
@@ -256,14 +259,14 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 		// bordPanel.setWindowTitle(apklightscanner.getApkInfo());
 		EasyMainUI.UIstarttime = System.currentTimeMillis();
 		setframetext(
-				new File(apklightscanner.getApkInfo().filePath).getName() + " - " + Resource.STR_APP_NAME.getString());
+				new File(apkScanner.getApkInfo().filePath).getName() + " - " + Resource.STR_APP_NAME.getString());
 		
-		EasycontentsPanel.setContents(apklightscanner.getApkInfo());
+		EasycontentsPanel.setContents(apkScanner.getApkInfo());
 		
 		new Thread(new Runnable() {
 			public void run() {
 				permissionPanel.setLoadingpanel();
-				permissionPanel.setPermission(apklightscanner.getApkInfo());
+				permissionPanel.setPermission(apkScanner.getApkInfo());
 			}
 		}).start();
 		
@@ -291,24 +294,23 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 		permissionPanel.clear();
 	}
 
-	class GUIApkLightScannerListener implements EasyLightApkScanner.StatusListener {
+	class GUIApkLightScannerListener implements ApkScanner.StatusListener {
 		private int error = 0;
 
 		@Override
-		public void onStart() {
-			// TODO Auto-generated method stub
+		public void onStart(long estimatedTime) {
 
 		}
 
 		@Override
 		public void onSuccess() {
-			// TODO Auto-generated method stub
+			Log.d("onSuccess()");
 			this.error = 0;
 		}
 
 		@Override
 		public void onError(int error) {
-			// TODO Auto-generated method stub
+			Log.d("onError()" + error);
 			this.error = error;
 			// showEmptyinfo();
 			messagePool.show(MessageBoxPool.MSG_FAILURE_OPEN_APK);
@@ -316,9 +318,7 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 
 		@Override
 		public void onCompleted() {
-			// TODO Auto-generated method stub
 			// if(!isinit) return;
-			
 			if (this.error == 0) {
 				showApkinfopanel();
 				
@@ -326,8 +326,9 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 			    Date result = new Date(EasyMainUI.corestarttime); 
 			    Log.d("Core 시간: " + ((System.currentTimeMillis() - EasyMainUI.corestarttime) / 1000.0) + "(core start : " + simple.format(result));
 				mainframe.setVisible(true);
-				
-				
+
+				infoHashCode = apkScanner.getApkInfo().hashCode();
+
 				////////////////////////////////////for test
 				//ToolEntryManager.excutePermissionDlg();				
 				/////////////////////////////////////for test
@@ -341,7 +342,7 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 
 		@Override
 		public void onStateChanged(Status status) {
-			// TODO Auto-generated method stub
+			Log.d("onStateChanged()" + status);
 			if (status.equals(Status.STANBY)) {
 
 			}
@@ -349,6 +350,7 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 
 		@Override
 		public void onProgress(int step, final String msg) {
+			Log.d("onProgress()" + step + ":" + msg);
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					showloadinginfo(msg);
@@ -358,7 +360,6 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 	}
 
 	public void changeDevice(IDevice[] devices) {
-		// TODO Auto-generated method stub
 		EasycontentsPanel.changeDeivce(devices);
 	}
 
@@ -378,7 +379,6 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 	
 	@Override
 	public void componentResized(ComponentEvent e) {
-		// TODO Auto-generated method stub		
 		changesize();
 	}
 
@@ -393,7 +393,6 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 
 	@Override
 	public void filesDropped(Object dropedTarget, final File[] files) {
-		// TODO Auto-generated method stub
 		final String[] filePaths = new String[files.length];
 		for(int i = 0; i< files.length; i++) {
 			try {
@@ -414,7 +413,9 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 //						apkScanner.clear(false);
 //						apkScanner.openApk(filePaths[0]);
 						clearApkinfopanel();
-						apklightscanner.setApk(files[0].getAbsolutePath());
+						apkScanner.clear(true);
+						EasyMainUI.corestarttime = System.currentTimeMillis();
+						apkScanner.openApk(files[0].getAbsolutePath());
 					}
 				});
 				thread.setPriority(Thread.NORM_PRIORITY);
@@ -425,7 +426,7 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 				break;
 			}
 		} else if(dropedTarget instanceof IExternalTool) {
-			String apkPath = apklightscanner.getApkInfo().filePath;
+			String apkPath = apkScanner.getApkInfo().filePath;
 			((IExternalTool) dropedTarget).launch(apkPath, filePaths[0]);
 		}
 	}
