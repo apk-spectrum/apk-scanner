@@ -10,6 +10,7 @@ import javax.swing.JTabbedPane;
 
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.gui.tabpanels.AbstractTabbedPanel;
 import com.apkscanner.gui.tabpanels.BasicInfo;
 import com.apkscanner.gui.tabpanels.Components;
 import com.apkscanner.gui.tabpanels.IProgressListener;
@@ -47,6 +48,15 @@ public class TabbedPanel extends JTabbedPane
 		addTab(new Signatures());
 
 		setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+	}
+
+	public void uiLoadBooster() {
+		for(int i=0; i<getTabCount(); i++) {
+			Component c = getTabComponentAt(i);
+			if(c instanceof AbstractTabbedPanel) {
+				((AbstractTabbedPanel)c).initialize();
+			}
+		}
 	}
 
 	public void onLoadPlugin() {

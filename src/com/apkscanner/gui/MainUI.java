@@ -189,6 +189,10 @@ public class MainUI extends JFrame implements IPlugInEventListener
 		Log.i("UI Init end");
 	}
 
+	public void uiLoadBooster() {
+		tabbedPanel.uiLoadBooster();
+	}
+
 	@Override
 	public void onPluginLoaded() {
 		toolBar.onLoadPlugin(new UIEventHandler());

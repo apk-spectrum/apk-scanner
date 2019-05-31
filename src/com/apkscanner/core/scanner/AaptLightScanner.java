@@ -133,19 +133,32 @@ public class AaptLightScanner extends AaptScanner {
 	public void setLightMode(boolean lightMode) {
 		if(isLightMode == lightMode) return;
 		if(isLightMode && !lightMode && getStatus() == Status.ALL_COMPLETED.value()) {
-			Log.i("I: read Resource list...");
-			apkInfo.resources = ZipFileUtil.findFiles(apkInfo.filePath, null, null);
-			stateChanged(Status.RESOURCE_COMPLETED);
-	
-			Log.i("I: read aapt dump resources...");
-			apkInfo.resourcesWithValue = AaptNativeWrapper.Dump.getResources(apkInfo.filePath, true);
-			stateChanged(Status.RES_DUMP_COMPLETED);
-			Log.i("resources completed");
-	
 			// widget
 			Log.i("I: read widgets...");
 			apkInfo.widgets = manifestReader.getWidgetList(apkInfo.filePath);
 			stateChanged(Status.WIDGET_COMPLETED);
+
+			Thread thread = new Thread(new Runnable() {
+				public void run() {
+					Log.i("I: read Resource list...");
+					apkInfo.resources = ZipFileUtil.findFiles(apkInfo.filePath, null, null);
+					stateChanged(Status.RESOURCE_COMPLETED);
+				}
+			});
+			thread.setPriority(Thread.NORM_PRIORITY);
+			thread.start();
+
+			thread = new Thread(new Runnable() {
+				public void run() {
+					Log.i("I: read aapt dump resources...");
+					apkInfo.resourcesWithValue = AaptNativeWrapper.Dump.getResources(apkInfo.filePath, true);
+					stateChanged(Status.RES_DUMP_COMPLETED);
+					Log.i("resources completed");
+				}
+			});
+			thread.setPriority(Thread.NORM_PRIORITY);
+			thread.start();
+			
 		}
 		isLightMode = lightMode;
 	}

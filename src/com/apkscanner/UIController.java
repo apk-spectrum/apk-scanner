@@ -3,6 +3,8 @@ package com.apkscanner;
 import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JFrame;
@@ -69,15 +71,10 @@ public class UIController implements Runnable {
 	private void createAndShowGUI() {
 		Log.i("start UIController");
 
-		Log.i("setLookAndFeel");
-		try {
-			UIManager.setLookAndFeel((String)Resource.PROP_CURRENT_THEME.getData());
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-				| UnsupportedLookAndFeelException e1) {
-			e1.printStackTrace();
-		}
-
 		final boolean isEasyGui = (boolean) Resource.PROP_USE_EASY_UI.getData();
+
+		Log.i("setLookAndFeel");
+		setLookAndFeel(isEasyGui);
 
 		Log.i("creat frame");
 		if(isEasyGui) {
@@ -85,22 +82,9 @@ public class UIController implements Runnable {
 		} else {
 			mainframe = mainUI = new MainUI(apkScanner);
 		}
-
 		mainframe.setVisible(true);
 
-        Thread thread = new Thread(new Runnable() {
-            public void run() {
-            	synchronized(instance) {
-	                if(isEasyGui) {
-	                	if(mainUI == null) mainUI = new MainUI(null);
-	                } else {
-	                	if(easymainUI == null) easymainUI = new EasyMainUI(null);
-	                }
-            	}
-            }
-        });
-        thread.setPriority(Thread.MIN_PRIORITY);
-        thread.start();
+		uiLoaderBooster(isEasyGui);
 
 		if(!(boolean) Resource.PROP_SKIP_STARTUP_EASY_UI_DLG.getData()) {
 			if(EasyStartupDlg.showAboutDialog(mainframe)) {
@@ -109,12 +93,59 @@ public class UIController implements Runnable {
 		}
 	}
 
+	private void setLookAndFeel(boolean useDelay) {
+		if(useDelay) {
+	        new Timer().schedule(new TimerTask() {
+	            @Override
+	            public void run() {
+	            	EventQueue.invokeLater(new Runnable() {
+	        			@Override
+	        			public void run() {
+	        				setLookAndFeel(false);
+	        				synchronized (instance) {
+		        				instance.notify();
+							}
+	        			}
+	            	});
+	            }
+	        }, 500);
+	        return;
+		}
+		try {
+			UIManager.setLookAndFeel((String)Resource.PROP_CURRENT_THEME.getData());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	private void uiLoaderBooster(final boolean isEasyGui) {
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+            	synchronized(instance) {
+	                if(isEasyGui) {
+	            		try {
+	        				instance.wait();
+	        			} catch (InterruptedException e) { }
+	                	if(mainUI == null) mainUI = new MainUI(null);
+	                	mainUI.uiLoadBooster();
+	                } else {
+	                	if(easymainUI == null) easymainUI = new EasyMainUI(null);
+	                }
+            	}
+            }
+        });
+        thread.setPriority(Thread.MIN_PRIORITY);
+        thread.start();
+	}
+
 	public void changeGui(final String state) {
 		final boolean isEasyGui = APKSCANNER_GUI_EASY_APKSCANNER.equals(state);
 
 		final String apkPath = apkScanner.getApkInfo() != null ? apkScanner.getApkInfo().filePath : null;
 
 		if(apkScanner instanceof AaptLightScanner) {
+			apkScanner.setStatusListener(null);
 			((AaptLightScanner) apkScanner).setLightMode(isEasyGui);
 		} else {
 			apkScanner = ApkScanner.getInstance(ApkScanner.APKSCANNER_TYPE_AAPTLIGHT);
