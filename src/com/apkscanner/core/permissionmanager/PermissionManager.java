@@ -383,9 +383,7 @@ public class PermissionManager
 		Arrays.sort(result, new Comparator<PermissionGroupInfoExt>() {
 			@Override
 			public int compare(PermissionGroupInfoExt info1, PermissionGroupInfoExt info2) {
-				int priority1 = info1.priority != null ? info1.priority : 0;
-				int priority2 = info2.priority != null ? info2.priority : 0;
-				return priority2 - priority1;
+				return info2.getPriority() - info1.getPriority();
 			}
 		});
 

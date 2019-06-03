@@ -541,7 +541,8 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 					}
 					if(isGroupRecord) {
 						diff = info != null && preInfo.getPriority() != info.getPriority();
-						data.add(String.format((diff ? DIFF_FORMAT : "%s"), preInfo.getPriority()));
+						String prio = preInfo.getPriority() != -1 ? Integer.toString(preInfo.getPriority()) : "null";
+						data.add(String.format((diff ? DIFF_FORMAT : "%s"), prio));
 					} else {
 						diff = info != null && preInfo.getProtectionLevel() != info.getProtectionLevel();
 						data.add(String.format((diff ? DIFF_FORMAT : "%s"), preInfo.getProtectionLevel()));
@@ -653,7 +654,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 				rowData = new Vector<>(5);
 				rowData.addElement("");
 		        for (Object o : new Object[] { icon, g.name, g.getLabel(), PermissionInfoExt.protectionFlagsToString(g.protectionFlags) }) {
-		        	rowData.addElement(new SortedData(o, g.priority, true, permTable));
+		        	rowData.addElement(new SortedData(o, g.getPriority(), true, permTable));
 		        }
 		        rowData.addElement(g);
 		        model.addRow( rowData );
@@ -664,7 +665,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 				String level = (info.protectionLevel != null && !info.protectionLevel.isEmpty())
 									? info.protectionLevel : PermissionInfo.protectionToString(0);
 		        for (Object o : new Object[] {"", byGroup.isSelected() ? UIManager.get("Tree.leafIcon") : icon, info.name, info.getLabel(), level }) {
-		        	rowData.addElement(new SortedData(o, g.priority, false, permTable));
+		        	rowData.addElement(new SortedData(o, g.getPriority(), false, permTable));
 		        }
 		        rowData.addElement(info);
 		        model.addRow( rowData );

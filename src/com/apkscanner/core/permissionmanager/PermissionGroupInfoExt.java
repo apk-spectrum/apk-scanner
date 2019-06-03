@@ -112,7 +112,7 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo implements UnitI
 
 	@Override
 	public int getPriority() {
-		return priority;
+		return priority != null ? priority : -1;
 	}
 
 	@Override
