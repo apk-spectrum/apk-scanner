@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
@@ -24,6 +25,7 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton.ToggleButtonModel;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListDataEvent;
@@ -385,41 +387,57 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		}
 	}
 
-	private void setPermissionList(ApkInfo apkInfo) {
-		if(apkInfo != null) {
-			boolean isPlatformSign = ApkInfoHelper.isTestPlatformSign(apkInfo)
-					|| ApkInfoHelper.isSamsungSign(apkInfo);
-			permissionManager.clearPermissions();
-			permissionManager.setPlatformSigned(isPlatformSign);
-			permissionManager.setTreatSignAsRevoked((boolean) Resource.PROP_PERM_TREAT_SIGN_AS_REVOKED.getData());
-			permissionManager.addUsesPermission(apkInfo.manifest.usesPermission);
-			permissionManager.addUsesPermission(apkInfo.manifest.usesPermissionSdk23);
-			permissionManager.addDeclarePemission(apkInfo.manifest.permission);
-			if(!permissionManager.isEmpty()) {
-				int selectSdkVer = makeSdkOptions(apkInfo.manifest.usesSdk.targetSdkVersion);
-				permissionManager.setSdkVersion(selectSdkVer);
+	private void setPermissionList(final ApkInfo apkInfo) {
+	    new SwingWorker<String, Void>() {
+			@Override
+			protected String doInBackground() throws Exception {
+				if(apkInfo != null) {
+					boolean isPlatformSign = ApkInfoHelper.isTestPlatformSign(apkInfo)
+							|| ApkInfoHelper.isSamsungSign(apkInfo);
+					permissionManager.clearPermissions();
+					permissionManager.setPlatformSigned(isPlatformSign);
+					permissionManager.setTreatSignAsRevoked((boolean) Resource.PROP_PERM_TREAT_SIGN_AS_REVOKED.getData());
+					permissionManager.addUsesPermission(apkInfo.manifest.usesPermission);
+					permissionManager.addUsesPermission(apkInfo.manifest.usesPermissionSdk23);
+					permissionManager.addDeclarePemission(apkInfo.manifest.permission);
+					if(!permissionManager.isEmpty()) {
+						int selectSdkVer = makeSdkOptions(apkInfo.manifest.usesSdk.targetSdkVersion);
+						permissionManager.setSdkVersion(selectSdkVer);
+					}
+				}
+				return makePermGroup();
 			}
-		}
 
-		int groupCount = 0;
-		if(permissionManager.isEmpty()) {
-			apkInfoPanel.setInnerHTMLById("perm-group-title", Resource.STR_LABEL_NO_PERMISSION.getString());
-		} else {
-			StringBuilder titlebar = new StringBuilder();
-			titlebar.append("[").append(Resource.STR_BASIC_PERMISSIONS.getString()).append("] - ");
-			titlebar.append(makeHyperEvent("display-list", String.format("<u>%s</u>", Resource.STR_BASIC_PERMLAB_DISPLAY.getString()), Resource.STR_BASIC_PERMDESC_DISPLAY.getString()));
-			if(apkInfoPanel.getElementById("perm-settings") == null) {
-				titlebar.append(makeHyperEvent("show-perm-setting", String.format("<img src=\"%s\" width=\"16\" height=\"16\">", Resource.IMG_PERM_MARKER_SETTING.getPath()), null));
-			} else {
-				titlebar.append(makeHyperEvent("close-perm-setting", String.format("<img src=\"%s\" width=\"16\" height=\"16\">", Resource.IMG_PERM_MARKER_CLOSE.getPath()), null));
-			}
-			apkInfoPanel.removeElementById("show-perm-setting");
-			apkInfoPanel.removeElementById("close-perm-setting");
-			apkInfoPanel.setInnerHTMLById("perm-group-title", titlebar.toString());
-			apkInfoPanel.setOuterHTMLById("perm-groups", String.format("<div id=\"perm-groups\">%s</div>", makePermGroup()));
-			groupCount = permissionManager.getPermissionGroups().length;
-		}
-		setInfoAreaHeight(groupCount);
+			@Override
+			protected void done() {
+				String permGroupHtml = null;
+				try {
+					permGroupHtml = get();
+				} catch (InterruptedException | ExecutionException e) {
+					e.printStackTrace();
+				}
+				int groupCount = 0;
+				if(permGroupHtml == null || permissionManager.isEmpty()) {
+					apkInfoPanel.setInnerHTMLById("perm-group-title", Resource.STR_LABEL_NO_PERMISSION.getString());
+				} else {
+					StringBuilder titlebar = new StringBuilder();
+					titlebar.append("[").append(Resource.STR_BASIC_PERMISSIONS.getString()).append("] - ");
+					titlebar.append(makeHyperEvent("display-list", String.format("<u>%s</u>", Resource.STR_BASIC_PERMLAB_DISPLAY.getString()), Resource.STR_BASIC_PERMDESC_DISPLAY.getString()));
+					if(apkInfoPanel.getElementById("perm-settings") == null) {
+						titlebar.append(makeHyperEvent("show-perm-setting", String.format("<img src=\"%s\" width=\"16\" height=\"16\">", Resource.IMG_PERM_MARKER_SETTING.getPath()), null));
+					} else {
+						titlebar.append(makeHyperEvent("close-perm-setting", String.format("<img src=\"%s\" width=\"16\" height=\"16\">", Resource.IMG_PERM_MARKER_CLOSE.getPath()), null));
+					}
+					apkInfoPanel.removeElementById("show-perm-setting");
+					apkInfoPanel.removeElementById("close-perm-setting");
+					apkInfoPanel.setInnerHTMLById("perm-group-title", titlebar.toString());
+					apkInfoPanel.setOuterHTMLById("perm-groups", String.format("<div id=\"perm-groups\">%s</div>", permGroupHtml));
+					groupCount = permissionManager.getPermissionGroups().length;
+				}
+				setInfoAreaHeight(groupCount);
+			};
+	    }.execute();
+		setInfoAreaHeight(1);
 	}
 
 	private void setInfoAreaHeight(int groupCount) {

@@ -95,10 +95,9 @@ abstract public class ApkScanner
 				statusListener.onError(lastErrorCode);
 			} else if(scanningStatus != 0) {
 				for(Status state: Status.values()) {
-					if(isCompleted(state)) {
-						Log.v(state + " is compleated sooner than register listener");
-						statusListener.onStateChanged(state);
-					}
+					if(!isCompleted(state)) continue;
+					Log.v(state + " is compleated sooner than register listener");
+					statusListener.onStateChanged(state);
 					if(Status.ALL_COMPLETED.equals(state)) {
 						statusListener.onSuccess();
 						statusListener.onCompleted();
