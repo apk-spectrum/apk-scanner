@@ -171,6 +171,7 @@ public class MainUI extends JFrame implements IPlugInEventListener
 		// Shortcut key event processing
 		KeyStrokeAction.registerKeyStrokeActions(getRootPane(), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, new KeyStroke[] {
 			KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0, false),
+			KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, false),
 			KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0, false),
 			KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false),
 			KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK, false),
@@ -1022,7 +1023,8 @@ public class MainUI extends JFrame implements IPlugInEventListener
 				switch(keycode) {
 				case KeyEvent.VK_F1 : AboutDlg.showAboutDialog(MainUI.this);break;
 				case KeyEvent.VK_F12: LogDlg.showLogDialog(MainUI.this);	break;
-				case KeyEvent.VK_ESCAPE: UIController.changeToEasyGui();	break;
+				case KeyEvent.VK_ESCAPE: break;
+				case KeyEvent.VK_F2: UIController.changeToEasyGui();	break;
 				}
 			}
 		}

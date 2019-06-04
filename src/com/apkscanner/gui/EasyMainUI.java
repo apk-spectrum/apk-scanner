@@ -38,10 +38,11 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 	public static long UIInittime;
 	public static boolean isdecoframe = false;
 
-	public EasyMainUI(ApkScanner aaptapkScanner) {
+	public EasyMainUI(ApkScanner scanner) {
+		apkScanner = scanner;
 		ToolEntryManager.initToolEntryManager();
 		InitUI();
-		setApkScanner(aaptapkScanner);
+		setApkScanner(scanner);
 	}
 
 	public void setApkScanner(ApkScanner scanner) {
@@ -119,16 +120,14 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 		}
 
 		if (apkScanner != null &&
-				(apkScanner.getLastErrorCode() != 0 || apkScanner.getApkInfo().filePath == null)
+				(apkScanner.getLastErrorCode() != 0 || apkScanner.getApkInfo() == null)
 				&& !apkScanner.isCompleted(Status.ALL_COMPLETED)) {
 			Log.d("getlatestError is not 0 or args 0");
 			mainpanel.showEmptyinfo();
-			setVisible(true);
-
-
 		}
 
 		KeyStrokeAction.registerKeyStrokeActions(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW, new KeyStroke[] {
+				KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, false),
 				KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0, false),
 				KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0, false),
 				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false)
@@ -188,7 +187,6 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 
 	public void finished() {
 		Log.d("finished()");
-		setVisible(false);
 		AndroidDebugBridge.removeDeviceChangeListener(this);
 		removeWindowListener(this);
 		apkScanner.clear(true);
@@ -258,6 +256,8 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 		int keycode = Integer.parseInt(e.getActionCommand());
 		switch(keycode) {
 		case KeyEvent.VK_ESCAPE:
+			break;
+		case KeyEvent.VK_F2:
 			UIController.changeToMainGui();
 			break;
 		case KeyEvent.VK_F12:
