@@ -96,7 +96,7 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener, E
 	}
 	public void paintComponent(Graphics g) {
 		//super.paint(g);
-		super.paintComponent(g);
+//		super.paintComponent(g);
 //		Graphics2D graphics2D = (Graphics2D) g;
 //		graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 //		Font font = new Font("Serif", Font.BOLD, 20);
