@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -26,7 +27,7 @@ import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.Log;
 
-public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeListener, ActionListener {
+public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeListener {
 	private static final long serialVersionUID = -1104109718930033124L;
 
 	private ApkScanner apkScanner = null;
@@ -128,10 +129,56 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 
 		KeyStrokeAction.registerKeyStrokeActions(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW, new KeyStroke[] {
 				KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0, false),
 				KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0, false),
 				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false)
-			}, this);
+			}, new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					int keycode = Integer.parseInt(e.getActionCommand());
+					switch(keycode) {
+					case KeyEvent.VK_ESCAPE:
+						break;
+					case KeyEvent.VK_F2:
+						UIController.changeToMainGui();
+						break;
+					case KeyEvent.VK_F12:
+						LogDlg.showLogDialog(EasyMainUI.this);
+						break;
+					}
+				}
+			}
+		);
+		
+		KeyStrokeAction.registerKeyStrokeActions(getRootPane(), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT,
+			new KeyStroke[] {
+				KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0, false),
+				KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK, false),
+				KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK, false),
+				//KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK, false),
+				KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK, false),
+				//KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK, false),
+				KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK, false),
+				KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.CTRL_DOWN_MASK, false),
+				//KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK, false),
+				//KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true),
+				//KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true),
+				//KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true)
+			},
+			new String[] {
+				Resource.STR_BTN_ABOUT.getString(),
+				Resource.STR_BTN_OPEN.getString(),
+				Resource.STR_BTN_OPEN_PACKAGE.getString(),
+				Resource.STR_BTN_INSTALL.getString(),
+				Resource.STR_BTN_EXPLORER.getString(),
+				Resource.STR_BTN_MANIFEST.getString(),
+			},
+			new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					ToolEntryManager.excuteEntry(e.getActionCommand());
+				}
+			}
+		);
 
 		Log.d("main End");
 		Log.d("init UI   : " + (System.currentTimeMillis() - EasyMainUI.UIInittime) / 1000.0);
@@ -249,20 +296,5 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 		Log.d("deviceDisconnected");
 		changeDeivce();
 
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		int keycode = Integer.parseInt(e.getActionCommand());
-		switch(keycode) {
-		case KeyEvent.VK_ESCAPE:
-			break;
-		case KeyEvent.VK_F2:
-			UIController.changeToMainGui();
-			break;
-		case KeyEvent.VK_F12:
-			LogDlg.showLogDialog(this);
-			break;
-		}
 	}
 }

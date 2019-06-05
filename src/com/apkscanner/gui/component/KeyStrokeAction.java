@@ -20,10 +20,13 @@ public class KeyStrokeAction extends AbstractAction {
 	}
 
 	public KeyStrokeAction(JComponent component, KeyStroke keyStroke, ActionListener listener) {
-		this(component, keyStroke, Integer.toString(keyStroke.getKeyCode()), listener);
+		this(component, keyStroke, null, listener);
 	}
 
 	public KeyStrokeAction(JComponent component, KeyStroke keyStroke, String actionCommand, ActionListener listener) {
+		if(actionCommand == null) {
+			actionCommand = Integer.toString(keyStroke.getKeyCode());
+		}
 		putValue(ACTION_COMMAND_KEY, actionCommand);
 		this.component = component;
 		this.keyStroke = keyStroke;
