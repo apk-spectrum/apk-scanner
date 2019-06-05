@@ -6,14 +6,18 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 
+import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.plugin.IUpdateChecker;
 import com.apkscanner.plugin.PlugInConfig;
@@ -73,6 +77,9 @@ public class UpdateNotificationWindow extends JFrame implements ActionListener
 		}
 		WindowSizeMemorizer.registeComponent(this);
 		setLocationRelativeTo(parent);
+
+		KeyStrokeAction.registerKeyStrokeAction(getRootPane(), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT,
+				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), ACT_CMD_CLOSE, this);
 	}
 
 	public static void show(Component parent, IUpdateChecker[] list) {

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -183,6 +182,10 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 			if(data == null) continue;
 			updateListModel.addRow(data);
 		}
+		int row = updateList.getSelectedRow();
+		if(row < 0) {
+			updateList.addRowSelectionInterval(0, 0);
+		}
 	}
 
 	public void updatePluginState(final IUpdateChecker plugin) {
@@ -192,27 +195,31 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 			if(plugin.equals(updateListModel.getValueAt(i, 6))) {
 				Object[] data = makeRowObject(plugin);
 				if(data == null) continue;
+				boolean selected = updateList.isRowSelected(i);
 				updateListModel.removeRow(i);
 				updateListModel.insertRow(i, makeRowObject(plugin));
 				updateListModel.fireTableDataChanged();
+				if(selected) {
+					updateList.addRowSelectionInterval(i, i);
+				}
 				break;
 			}
 		}
 	}
 
 	public void checkUpdate(final IUpdateChecker plugin) {
-        new SwingWorker<Boolean, Void>() {
+        new SwingWorker<Void, Void>() {
 			@Override
-			protected Boolean doInBackground() throws Exception {
+			protected Void doInBackground() throws Exception {
 				try {
-					return plugin.checkNewVersion();
+					plugin.checkNewVersion();
 				} catch (NetworkException e) {
 					publish();
 					if(e.isNetworkNotFoundException()) {
 						Log.d("isNetworkNotFoundException");
 					}
 				}
-				return false;
+				return null;
 			}
 
 			@Override
@@ -229,17 +236,8 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 
 			@Override
 			protected void done() {
-				Boolean result = false;
-				try {
-					result = get();
-				} catch (InterruptedException | ExecutionException e) {
-					e.printStackTrace();
-				}
-
 				updatePluginState(plugin);
-				if(result) {
-					PlugInManager.saveProperty();
-				}
+				PlugInManager.saveProperty();
 			}
 		}.execute();
 	}
@@ -266,8 +264,17 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 				}
 				btnLaunch.setEnabled(true);
 			} else {
-				btnLaunch.setText(Resource.STR_BTN_NO_UPDATED.getString());
-				btnLaunch.setEnabled(false);
+				switch(plugin.getLaunchType()) {
+				case IUpdateChecker.TYPE_LAUNCH_OPEN_LINK:
+					btnLaunch.setText(Resource.STR_BTN_GO_TO_WEBSITE.getString());
+					btnLaunch.setEnabled(true);
+					break;
+				case IUpdateChecker.TYPE_LAUNCH_DIRECT_UPDATE:
+				case IUpdateChecker.TYPE_LAUNCH_DOWNLOAD:
+					btnLaunch.setText(Resource.STR_BTN_NO_UPDATED.getString());
+					btnLaunch.setEnabled(false);
+					break;
+				}
 			}
 			btnCheckUpdate.setEnabled(true);
 		} else {
@@ -291,7 +298,7 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 				IUpdateChecker plugin = (IUpdateChecker)updateListModel.getValueAt(row, 6);
 				plugin.launch();
 			}
-			updateList.clearSelection();
+			//updateList.clearSelection();
 			break;
 		case ACT_CMD_CHECK_UPDATE:
 			row = updateList.getSelectedRow();
