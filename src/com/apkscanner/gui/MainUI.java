@@ -62,7 +62,6 @@ import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.IPlugInEventListener;
-import com.apkscanner.plugin.IUpdateChecker;
 import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
@@ -222,9 +221,8 @@ public class MainUI extends JFrame implements IPlugInEventListener
 		}
 	}
 
-	//@Override
-	public void onUpdated(IUpdateChecker[] plugins) {
-		toolBar.setBadgeCount(plugins.length);
+	public void setUpdatedBadgeCount(int count) {
+		toolBar.setBadgeCount(count);
 	}
 
 	private static void setUIFont(javax.swing.plaf.FontUIResource f) {

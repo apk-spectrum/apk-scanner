@@ -39,6 +39,8 @@ public class UIController implements Runnable {
 	private EasyMainUI easymainUI = null;
 	private JFrame mainframe = null;
 
+	private int updatedBadgeCount;
+
 	private UIController(ApkScanner apkScanner) {
 		if(apkScanner == null) {
 			apkScanner = ApkScanner.getInstance();
@@ -129,6 +131,7 @@ public class UIController implements Runnable {
 	        			} catch (InterruptedException e) { }
 	                	if(mainUI == null) mainUI = new MainUI(null);
 	                	mainUI.uiLoadBooster();
+	                	mainUI.setUpdatedBadgeCount(updatedBadgeCount);
 	                } else {
 	                	if(easymainUI == null) easymainUI = new EasyMainUI(null);
 	                }
@@ -168,6 +171,7 @@ public class UIController implements Runnable {
 					synchronized(instance) {
 						if(mainUI == null) {
 							mainUI = new MainUI(apkScanner);
+							mainUI.setUpdatedBadgeCount(updatedBadgeCount);
 						} else {
 							mainUI.setApkScanner(apkScanner);
 						}
@@ -201,13 +205,19 @@ public class UIController implements Runnable {
 		PlugInManager.addPlugInEventListener(new IPlugInEventListener() {
 			@Override
 			public void onPluginLoaded() {
-				checkUpdated(PlugInManager.getUpdateChecker());
+		        new Timer().schedule(new TimerTask() {
+		            @Override
+		            public void run() {
+		            	checkUpdated(PlugInManager.getUpdateChecker());
+		            }
+		        }, 1000);
 			}
 		});
+
 		Thread thread = new Thread(new Runnable() {
-			public void run() {
+            public void run() {
 				PlugInManager.loadPlugIn();
-			}
+            }
 		});
 		thread.setPriority(Thread.NORM_PRIORITY);
 		thread.start();
@@ -264,7 +274,8 @@ public class UIController implements Runnable {
 					e.printStackTrace();
 				}
 				if(updaters != null && updaters.length > 0) {
-					mainUI.onUpdated(updaters);
+					updatedBadgeCount = updaters.length;
+					if(mainUI != null) mainUI.setUpdatedBadgeCount(updatedBadgeCount);
 					if(!"true".equals(PlugInConfig.getGlobalConfiguration(PlugInConfig.CONFIG_NO_LOOK_UPDATE_POPUP))) {
 						UpdateNotificationWindow.show(mainframe, updaters);
 					}
