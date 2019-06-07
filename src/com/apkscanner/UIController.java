@@ -86,7 +86,9 @@ public class UIController implements Runnable {
 		}
 		mainframe.setVisible(true);
 
-		uiLoaderBooster(isEasyGui);
+		if((boolean)Resource.PROP_USE_UI_BOOSTER.getData()) {
+			uiLoaderBooster(isEasyGui);
+		}
 
 		if(!(boolean) Resource.PROP_SKIP_STARTUP_EASY_UI_DLG.getData()) {
 			if(EasyStartupDlg.showAboutDialog(mainframe)) {

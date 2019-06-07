@@ -207,7 +207,7 @@ public enum Resource
 	STR_FEATURE_SIGNATURE_DESC	(Type.TEXT, "@feature_signature_desc"),
 	STR_FEATURE_SIGNATURE_UNSIGNED (Type.TEXT, "@feature_signature_unsigned"),
 	STR_FEATURE_SIGNATURE_SIGNED (Type.TEXT, "@feature_signature_signed"),
-	
+
 	STR_FEATURE_SYSTEM_UID_LAB  (Type.TEXT, "@feature_system_user_id_lab"),
 	STR_FEATURE_SYSTEM_UID_DESC (Type.TEXT, "@feature_system_user_id_desc"),
 	STR_FEATURE_SHAREDUSERID_LAB  (Type.TEXT, "@feature_shared_user_id_lab"),
@@ -312,8 +312,12 @@ public enum Resource
 	STR_SETTINGS_TOOLBAR_WITHOUT_SHIFT	(Type.TEXT, "@settings_ext_toolbar_without_shift"),
 	STR_SETTINGS_EASYMODE_OPTION_STANDARD	(Type.TEXT, "@settings_easymode_option_standard"),
 	STR_SETTINGS_EASYMODE_OPTION_EASY	(Type.TEXT, "@settings_easymode_option_easy"),
-	
-	
+	STR_SETTINGS_USE_UI_BOOSTER	(Type.TEXT, "@settings_use_ui_booster"),
+	STR_SETTINGS_ESC_ACT_NONE	(Type.TEXT, "@settings_esc_act_none"),
+	STR_SETTINGS_ESC_ACT_CHANG_UI_MODE(Type.TEXT, "@settings_esc_act_change_ui_mode"),
+	STR_SETTINGS_ESC_ACT_EXIT	(Type.TEXT, "@settings_esc_act_exit"),
+
+
 	STR_LABEL_ERROR				(Type.TEXT, "@label_error"),
 	STR_LABEL_WARNING			(Type.TEXT, "@label_warning"),
 	STR_LABEL_INFO				(Type.TEXT, "@label_info"),
@@ -387,6 +391,10 @@ public enum Resource
 	STR_LABEL_FILTER_NONE		(Type.TEXT, "@label_filter_none"),
 	STR_LABEL_FILTER_ALL		(Type.TEXT, "@label_filter_all"),
 	STR_LABEL_PERMISSION_INFO	(Type.TEXT, "@label_permission_info"),
+	STR_LABEL_UI_MODE			(Type.TEXT, "@label_ui_mode"),
+	STR_LABEL_CHANGE_UI_SHORTKEY(Type.TEXT, "@label_change_ui_shortkey"),
+	STR_LABEL_UI_BOOSTER		(Type.TEXT, "@label_ui_booster"),
+	STR_LABEL_ESC_KEY			(Type.TEXT, "@label_esc_key"),
 
 	STR_TREE_NODE_DEVICE 		(Type.TEXT, "@tree_node_device"),
 	STR_TREE_NODE_DISPLAYED		(Type.TEXT, "@tree_node_displayed"),
@@ -474,13 +482,13 @@ public enum Resource
 	STR_COLUMN_THIS_VERSION		(Type.TEXT, "@column_this_version"),
 	STR_COLUMN_NEW_VERSION		(Type.TEXT, "@column_new_version"),
 	STR_COLUMN_LAST_CHECKED_DATE(Type.TEXT, "@column_last_checked_date"),
-	
+
 	STR_EASY_GUI_FEATURE1		(Type.TEXT, "@easy_gui_feature1"),
 	STR_EASY_GUI_FEATURE2		(Type.TEXT, "@easy_gui_feature2"),
 	STR_EASY_GUI_FEATURE3		(Type.TEXT, "@easy_gui_feature3"),
 	STR_EASY_GUI_UES_QUESTION		(Type.TEXT, "@easy_gui_use_question"),
-	
-	
+
+
 	IMG_TOOLBAR_OPEN			(Type.IMAGE, "toolbar_open.png"),
 	IMG_TOOLBAR_MANIFEST		(Type.IMAGE, "toolbar_manifast.png"),
 	IMG_TOOLBAR_EXPLORER		(Type.IMAGE, "toolbar_explorer.png"),
@@ -564,29 +572,29 @@ public enum Resource
 	IMG_EASY_WINDOW_EXIT			(Type.IMAGE, "easy_gui_exit.png"),
 	IMG_EASY_WINDOW_MINI			(Type.IMAGE, "easy_gui_mini.png"),
 	IMG_EASY_WINDOW_SETTING			(Type.IMAGE, "perm_group_system_tools.png"),
-	IMG_EASY_WINDOW_CLIPBOARD_ICON			(Type.IMAGE, "perm_group_user_dictionary.png"),
-	
+	IMG_EASY_WINDOW_CLIPBOARD_ICON	(Type.IMAGE, "perm_group_user_dictionary.png"),
+
 	IMG_EASY_WINDOW_ALLOW			(Type.IMAGE, "easy_gui_allow.png"),
 
 	//http://chittagongit.com/icon/list-icon-png-10.html
-	IMG_EASY_WINDOW_PERMISSION_ICON			(Type.IMAGE, "easy_gui_permission_icon.png"),
-	
+	IMG_EASY_WINDOW_PERMISSION_ICON	(Type.IMAGE, "easy_gui_permission_icon.png"),
+
 	//https://icon-icons.com/zh/%E5%9B%BE%E6%A0%87/%E7%94%B5%E8%AF%9D-iphone/89813#48
 	IMG_EASY_WINDOW_DEVICE			(Type.IMAGE, "easy_gui_device.png"),
-	IMG_EASY_WINDOW_DRAGANDDROP			(Type.IMAGE, "easy_gui_draganddrop.png"),
+	IMG_EASY_WINDOW_DRAGANDDROP		(Type.IMAGE, "easy_gui_draganddrop.png"),
 
 	//https://www.iconfinder.com/icons/686665/arrows_enlarge_expand_extend_increase_outward_resize_spread_icon
 	IMG_EASY_WINDOW_SPREAD			(Type.IMAGE, "easy_spread.png"),
-	
-	IMG_PREVIEW_EASY			(Type.IMAGE, "preview_easymode.png"),
-	IMG_PREVIEW_EASY1			(Type.IMAGE, "preview_easymode1.png"),
-	IMG_PREVIEW_EASY2			(Type.IMAGE, "preview_easymode2.png"),
-	IMG_PREVIEW_EASY3			(Type.IMAGE, "preview_easymode3.png"),
-	
+
+	IMG_PREVIEW_EASY				(Type.IMAGE, "preview_easymode.png"),
+	IMG_PREVIEW_EASY1				(Type.IMAGE, "preview_easymode1.png"),
+	IMG_PREVIEW_EASY2				(Type.IMAGE, "preview_easymode2.png"),
+	IMG_PREVIEW_EASY3				(Type.IMAGE, "preview_easymode3.png"),
+
 	IMG_PREVIEW_ORIGINAL			(Type.IMAGE, "preview_original.png"),
-	
-	IMG_PERM_MARKER_SETTING		(Type.IMAGE, "perm_marker_setting.png"),
-	IMG_PERM_MARKER_CLOSE		(Type.IMAGE, "perm_marker_close.png"),
+
+	IMG_PERM_MARKER_SETTING			(Type.IMAGE, "perm_marker_setting.png"),
+	IMG_PERM_MARKER_CLOSE			(Type.IMAGE, "perm_marker_close.png"),
 
 	BIN_PATH					(Type.BIN, ""),
 
@@ -617,9 +625,11 @@ public enum Resource
 
 	SSL_TRUSTSTORE_PATH			(Type.SECURITY, "trustStore.jks"),
 
-	PROP_USE_EASY_UI			(Type.PROP, "use_easy_ui", false),
-	PROP_SKIP_STARTUP_EASY_UI_DLG			(Type.PROP, "skip_startup_easy_ui_dlg", false),
 	PROP_LANGUAGE				(Type.PROP, "language", SystemUtil.getUserLanguage()),
+	PROP_USE_EASY_UI			(Type.PROP, "use_easy_ui", false),
+	PROP_SKIP_STARTUP_EASY_UI_DLG(Type.PROP, "skip_startup_easy_ui_dlg", false),
+	PROP_USE_UI_BOOSTER			(Type.PROP, "use_ui_booster", false),
+	PROP_ESC_ACTION				(Type.PROP, "use_esc_action", Resource.INT_ESC_ACT_NONE),
 	PROP_EDITOR					(Type.PROP, "editor", null /* see getDefValue() */),
 	PROP_RECENT_EDITOR			(Type.PROP, "recent_editor", ""),
 	PROP_ADB_PATH				(Type.PROP, "adb_path", ""),
@@ -646,7 +656,7 @@ public enum Resource
 
 	PROP_EASY_GUI_TOOLBAR				(Type.PROP, "easy_gui_show_button", "1,2,3,4,5,7"),
 	PROP_EASY_GUI_WINDOW_POSITION				(Type.PROP, "easy_gui_window_position", null),
-	
+
 	PROP_EASY_GUI_WINDOW_POSITION_X				(Type.PROP, "easy_gui_window_position_x", null),
 	PROP_EASY_GUI_WINDOW_POSITION_Y				(Type.PROP, "easy_gui_window_position_y", null),
 
@@ -690,6 +700,10 @@ public enum Resource
 	public static final String STR_EXPLORER_FOLDER = "folder";
 	public static final String STR_LAUNCH_LAUNCHER = "launcher";
 	public static final String STR_LAUNCH_SELECT = "select";
+
+	public static final int INT_ESC_ACT_NONE = 0;
+	public static final int INT_ESC_ACT_CHANG_UI_MODE = 1;
+	public static final int INT_ESC_ACT_EXIT = 2;
 
 	private enum Type {
 		IMAGE,
@@ -900,14 +914,14 @@ public enum Resource
 		case TEXT:
 			String id = getValue();
 			String value = null;
-	
+
 			if(!id.startsWith("@")) return id;
 			id = id.substring(1);
-	
+
 			if(stringXmlPath == null) {
 				makeStringXmlPath(lang);
 			}
-	
+
 			for(XmlPath xPath: stringXmlPath) {
 				XmlPath node = xPath.getNode("/resources/string[@name='" + id + "']");
 				if(node != null) {
@@ -915,7 +929,7 @@ public enum Resource
 					if(value != null) break;
 				}
 			}
-	
+
 			return value != null ? value.replaceAll("\\\\n", "\n").replaceAll("\\\\t", "\t") : null;
 		case RAW:
 			try (InputStream is= getURL().openStream();
@@ -1096,7 +1110,7 @@ public enum Resource
 
 		if(value == null) {
 			if(property.remove(getValue()) != null) {
-				saveProperty();				
+				saveProperty();
 			}
 		} else if(!value.equals(property.get(getValue()))) {
 			property.put(getValue(), value);

@@ -283,6 +283,10 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="settings_ext_toolbar_without_shift">항상 확장된 툴바 기능 사용</string>
 	<string name="settings_easymode_option_standard">일반 모드</string>
 	<string name="settings_easymode_option_easy">간단 모드</string>
+	<string name="settings_use_ui_booster">UI 모드 전환 부스터 사용 (추가 리소스 사용)</string>
+	<string name="settings_esc_act_none">없음</string>
+	<string name="settings_esc_act_change_ui_mode">UI 모드 전환</string>
+	<string name="settings_esc_act_exit">프로그램 종료</string>
 	
 	<string name="label_error">오류</string>
 	<string name="label_warning">경고</string>
@@ -357,6 +361,10 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="label_filter_none">없음</string>
 	<string name="label_filter_all">전체</string>
 	<string name="label_permission_info">권한 정보</string>
+	<string name="label_ui_mode">UI 모드</string>
+	<string name="label_change_ui_shortkey">* F2 키로 UI 모드 전환 가능</string>
+	<string name="label_ui_booster">UI 부스터</string>
+	<string name="label_esc_key">ESC 키</string>
 
 	<string name="msg_failure_open_apk">APK 파일을 열수 없습니다.</string>
 	<string name="msg_no_such_apk">APK 파일이 존재하지 않습니다.</string>

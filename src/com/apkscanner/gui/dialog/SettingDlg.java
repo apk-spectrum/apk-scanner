@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
-import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
@@ -60,6 +59,7 @@ import org.json.simple.JSONValue;
 import com.android.ddmlib.AdbVersion;
 import com.apkscanner.gui.TabbedPanel;
 import com.apkscanner.gui.ToolBar;
+import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
@@ -89,6 +89,8 @@ public class SettingDlg extends JDialog implements ActionListener
 	private String propStrLanguage;
 	private String propStrEditorPath;
 	private ArrayList<String> propRecentEditors;
+	private boolean propUiBooster;
+	private int propEscAction;
 
 	private String propPreferredLanguage;
 	private String propframeworkResPath;
@@ -110,7 +112,7 @@ public class SettingDlg extends JDialog implements ActionListener
 	private boolean propAlwaysExtendToolbar;
 
 	private boolean propEasyGui;
-	
+
 	private String propPluginSettings;
 
 	private boolean needUpdateUI;
@@ -125,13 +127,15 @@ public class SettingDlg extends JDialog implements ActionListener
 
 	private JComboBox<String> jcbLanguage;
 	private JComboBox<String> jcbEditors;
+	private JCheckBox jckUiBooster;
+	private JComboBox<String> jcbEscAction;
 
 	private JTextField jtbPreferLang;
 	private JList<String> jlFrameworkRes;
 
 	private JRadioButton jrbUseCurrentRunningVer;
 	private JRadioButton jrbEasymode;
-	
+
 	private JComboBox<String> jcbAdbPaths;
 	private JCheckBox jckEnableDeviceMonitoring;
 	private JComboBox<String> jcbLaunchOptions;
@@ -246,7 +250,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		public Component getListCellRendererComponent(JList<?> list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus) {
 			if(value.toString().isEmpty()) {
-				setText("default - en");
+				setText("en");
 			} else {
 				setText(value.toString());
 			}
@@ -398,15 +402,8 @@ public class SettingDlg extends JDialog implements ActionListener
 
 		getContentPane().add(contentPane);
 
-		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
-		getRootPane().getActionMap().put("ESCAPE", new AbstractAction() {
-			private static final long serialVersionUID = -8988954049940512230L;
-			public void actionPerformed(ActionEvent e) {
-				resotreSetting();
-				dispose();
-			}
-		});
+		KeyStrokeAction.registerKeyStrokeAction(getRootPane(), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT,
+				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), ACT_CMD_EXIT, this);
 
 		addWindowListener(new WindowAdapter() {
 			@Override public void windowClosing(WindowEvent e) { Log.v("windowClosing"); resotreSetting(); }
@@ -431,6 +428,10 @@ public class SettingDlg extends JDialog implements ActionListener
 			}
 		}
 
+		propUiBooster = (boolean)Resource.PROP_USE_UI_BOOSTER.getData();
+
+		propEscAction = (int)Resource.PROP_ESC_ACTION.getInt();
+
 		propTheme = (String)Resource.PROP_CURRENT_THEME.getData();
 
 		propTabbedUI = (String)Resource.PROP_TABBED_UI_THEME.getData();
@@ -454,7 +455,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		}
 
 		propEasyGui = (boolean)Resource.PROP_USE_EASY_UI.getData();
-		
+
 		propAdbShared = (boolean)Resource.PROP_ADB_POLICY_SHARED.getData();
 
 		propAdbPath = ((String)Resource.PROP_ADB_PATH.getData()).trim();
@@ -496,6 +497,14 @@ public class SettingDlg extends JDialog implements ActionListener
 			Resource.PROP_RECENT_EDITOR.setData(recentEditors.toString());
 		}
 
+		if(propUiBooster != jckUiBooster.isSelected()) {
+			Resource.PROP_USE_UI_BOOSTER.setData(jckUiBooster.isSelected());
+		}
+
+		if(propEscAction != jcbEscAction.getSelectedIndex()) {
+			 Resource.PROP_ESC_ACTION.setData(jcbEscAction.getSelectedIndex());
+		}
+
 		if(!propPreferredLanguage.equals(jtbPreferLang.getText())) {
 			Resource.PROP_PREFERRED_LANGUAGE.setData(jtbPreferLang.getText().replaceAll(" ", ""));
 		}
@@ -508,11 +517,11 @@ public class SettingDlg extends JDialog implements ActionListener
 		if(!propframeworkResPath.equals(resPaths)) {
 			Resource.PROP_FRAMEWORK_RES.setData(resPaths);
 		}
-		
-		if(propEasyGui != jrbEasymode.isSelected()) {			
-			Resource.PROP_USE_EASY_UI.setData(jrbEasymode.isSelected());			
+
+		if(propEasyGui != jrbEasymode.isSelected()) {
+			Resource.PROP_USE_EASY_UI.setData(jrbEasymode.isSelected());
 		}
-		
+
 		if(propAdbShared != jrbUseCurrentRunningVer.isSelected()) {
 			Resource.PROP_ADB_POLICY_SHARED.setData(jrbUseCurrentRunningVer.isSelected());
 		}
@@ -585,8 +594,8 @@ public class SettingDlg extends JDialog implements ActionListener
 		panel.setOpaque(true);
 
 		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady)
-		GridBagConstraints rowHeadConst = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.NONE,new Insets(10,10,0,10),0,0);
-		GridBagConstraints contentConst = new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.WEST,GridBagConstraints.NONE,new Insets(10,0,0,0),0,0);
+		GridBagConstraints rowHeadConst = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.NONE,new Insets(5,10,0,10),0,0);
+		GridBagConstraints contentConst = new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.WEST,GridBagConstraints.NONE,new Insets(5,0,0,0),0,0);
 
 		panel.add(new JLabel(Resource.STR_SETTINGS_LANGUAGE.getString()), rowHeadConst);
 
@@ -612,7 +621,6 @@ public class SettingDlg extends JDialog implements ActionListener
 			public void itemStateChanged(ItemEvent arg0) {
 				editorPath.setText(arg0.getItem().toString());
 			}
-
 		});
 
 		if(propStrEditorPath != null) {
@@ -693,8 +701,8 @@ public class SettingDlg extends JDialog implements ActionListener
 				btnShortcut.setActionCommand(ACT_CMD_CREATE_SHORTCUT);
 				btnShortcut.addActionListener(this);
 				btnShortcut.setIcon(Resource.IMG_ADD_TO_DESKTOP.getImageIcon(32,32));
-				btnShortcut.setVerticalTextPosition(JLabel.BOTTOM);
-				btnShortcut.setHorizontalTextPosition(JLabel.CENTER);
+				btnShortcut.setVerticalTextPosition(JLabel.CENTER);
+				btnShortcut.setHorizontalTextPosition(JLabel.RIGHT);
 				etcBtnPanel.add(btnShortcut);
 			}
 
@@ -710,8 +718,8 @@ public class SettingDlg extends JDialog implements ActionListener
 			}
 			btnAssociate.setActionCommand(ACT_CMD_ASSOCIATE_APK_FILE);
 			btnAssociate.addActionListener(this);
-			btnAssociate.setVerticalTextPosition(JLabel.BOTTOM);
-			btnAssociate.setHorizontalTextPosition(JLabel.CENTER);
+			btnAssociate.setVerticalTextPosition(JLabel.CENTER);
+			btnAssociate.setHorizontalTextPosition(JLabel.RIGHT);
 
 			etcBtnPanel.add(btnAssociate);
 
@@ -720,15 +728,15 @@ public class SettingDlg extends JDialog implements ActionListener
 			rowHeadConst.gridy++;
 			contentConst.gridy++;
 		}
-		
-		panel.add(new JLabel("Easy mode"), rowHeadConst);
-		
-		JPanel selectEasyPanel = new JPanel(new GridLayout(1,2));
+
+		panel.add(new JLabel(Resource.STR_LABEL_UI_MODE.getString()), rowHeadConst);
+
+		JPanel selectEasyPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
 		JPanel EasyPanel = new JPanel(new BorderLayout());
-		
+
 		JRadioButton jrbStandard = new JRadioButton(Resource.STR_SETTINGS_EASYMODE_OPTION_STANDARD.getString());
 		jrbEasymode = new JRadioButton(Resource.STR_SETTINGS_EASYMODE_OPTION_EASY.getString());
-		
+
 		final JLabel preview = new JLabel("", JLabel.CENTER);
 		preview.setBorder( new EtchedBorder(EtchedBorder.LOWERED));
 		//preview.setAlignmentX(JLabel.CENTER_ALIGNMENT);
@@ -744,8 +752,8 @@ public class SettingDlg extends JDialog implements ActionListener
 		};
 		jrbEasymode.addActionListener(radioAction);
 		jrbStandard.addActionListener(radioAction);
-		
-		
+
+
 		if(propEasyGui) {
 			jrbEasymode.setSelected(true);
 			preview.setIcon(Resource.IMG_PREVIEW_EASY.getImageIcon(250,150));
@@ -753,20 +761,55 @@ public class SettingDlg extends JDialog implements ActionListener
 			jrbStandard.setSelected(true);
 			preview.setIcon(Resource.IMG_PREVIEW_ORIGINAL.getImageIcon(250,150));
 		}
-		
+
 		ButtonGroup adbPolicyGroup = new ButtonGroup();
 		adbPolicyGroup.add(jrbStandard);
 		adbPolicyGroup.add(jrbEasymode);
-		
+
 		GridBagConstraints c = new GridBagConstraints();
-		
+
 		selectEasyPanel.add(jrbStandard,c);
 		selectEasyPanel.add(jrbEasymode,c);
-		
+		selectEasyPanel.add(new JLabel(Resource.STR_LABEL_CHANGE_UI_SHORTKEY.getString()));
+
 		EasyPanel.add(selectEasyPanel, BorderLayout.SOUTH);
 		EasyPanel.add(preview, BorderLayout.CENTER);
-		
+
 		panel.add(EasyPanel, contentConst);
+
+		rowHeadConst.gridy++;
+		contentConst.gridy++;
+
+		jckUiBooster = new JCheckBox(Resource.STR_SETTINGS_USE_UI_BOOSTER.getString());
+		jckUiBooster.setSelected(propUiBooster);
+		jckUiBooster.addActionListener(this);
+		jckUiBooster.setAlignmentX(1);
+
+		panel.add(new JLabel(Resource.STR_LABEL_UI_BOOSTER.getString()), rowHeadConst);
+		panel.add(jckUiBooster, contentConst);
+
+		rowHeadConst.gridy++;
+		contentConst.gridy++;
+
+		jcbEscAction = new JComboBox<String>();
+		jcbEscAction.setEditable(false);
+		for(int i = 0; i < 3; i++) {
+			switch(i) {
+			case Resource.INT_ESC_ACT_NONE:
+				jcbEscAction.addItem(Resource.STR_SETTINGS_ESC_ACT_NONE.getString());
+				break;
+			case Resource.INT_ESC_ACT_CHANG_UI_MODE:
+				jcbEscAction.addItem(Resource.STR_SETTINGS_ESC_ACT_CHANG_UI_MODE.getString());
+				break;
+			case Resource.INT_ESC_ACT_EXIT:
+				jcbEscAction.addItem(Resource.STR_SETTINGS_ESC_ACT_EXIT.getString());
+				break;
+			}
+		};
+		jcbEscAction.setSelectedIndex(propEscAction);
+
+		panel.add(new JLabel(Resource.STR_LABEL_ESC_KEY.getString()), rowHeadConst);
+		panel.add(jcbEscAction, contentConst);
 
 		rowHeadConst.gridy++;
 		contentConst.gridy++;

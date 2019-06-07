@@ -137,7 +137,11 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 					int keycode = Integer.parseInt(e.getActionCommand());
 					switch(keycode) {
 					case KeyEvent.VK_ESCAPE:
-						break;
+						switch((int)Resource.PROP_ESC_ACTION.getInt()) {
+						case Resource.INT_ESC_ACT_NONE: return;
+						case Resource.INT_ESC_ACT_CHANG_UI_MODE: break;
+						case Resource.INT_ESC_ACT_EXIT: dispose(); return;
+						}
 					case KeyEvent.VK_F2:
 						UIController.changeToMainGui();
 						break;
