@@ -650,7 +650,7 @@ public enum Resource
 	PROP_EASY_GUI_WINDOW_POSITION_X				(Type.PROP, "easy_gui_window_position_x", null),
 	PROP_EASY_GUI_WINDOW_POSITION_Y				(Type.PROP, "easy_gui_window_position_y", null),
 
-	PROP_DEFAULT_DECORDER		(Type.PROP, "default_decorder", Resource.STR_DECORDER_JD_GUI),
+	PROP_DEFAULT_DECORDER		(Type.PROP, "default_decorder", Resource.STR_DECORDER_JADX_GUI),
 	PROP_DEFAULT_SEARCHER		(Type.PROP, "default_searcher", Resource.STR_DEFAULT_SEARCHER),
 	PROP_DEFAULT_EXPLORER		(Type.PROP, "default_explorer", Resource.STR_EXPLORER_ARCHIVE),
 	PROP_DEFAULT_LAUNCH_MODE	(Type.PROP, "default_launch_mode", Resource.STR_LAUNCH_LAUNCHER),
@@ -1094,7 +1094,11 @@ public enum Resource
 			property = new JSONObject();
 		}
 
-		if(!value.equals(property.get(getValue()))) {
+		if(value == null) {
+			if(property.remove(getValue()) != null) {
+				saveProperty();				
+			}
+		} else if(!value.equals(property.get(getValue()))) {
 			property.put(getValue(), value);
 			saveProperty();
 		}

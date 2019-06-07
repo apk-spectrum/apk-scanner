@@ -848,6 +848,17 @@ public class Resources extends AbstractTabbedPanel {
 		if (resObj.path.toLowerCase().endsWith(".dex")) {
 			int actionType = 0;
 			String data = (String)Resource.PROP_DEFAULT_DECORDER.getData();
+			Log.v("PROP_DEFAULT_DECORDER : " + data);
+			if(data.matches(".*!.*#.*@.*")) {
+				IPlugIn plugin = PlugInManager.getPlugInByActionCommand(data);
+				if(plugin != null
+						&& plugin instanceof IExternalTool
+						&& ((IExternalTool)plugin).isDecorderTool() ) {
+					((IExternalTool)plugin).launch(resPath);
+				} else {
+					data = (String)Resource.PROP_DEFAULT_DECORDER.getDefValue();
+				}
+			}
 			if(Resource.STR_DECORDER_JD_GUI.equals(data)) {
 				actionType = 1;
 			} else if(Resource.STR_DECORDER_JADX_GUI.equals(data)) {
@@ -855,15 +866,7 @@ public class Resources extends AbstractTabbedPanel {
 			} else if(Resource.STR_DECORDER_BYTECOD.equals(data)) {
 				actionType = 3;
 			} else {
-				Log.e(data);
-				IPlugIn plugin = PlugInManager.getPlugInByActionCommand(data);
-				if(plugin != null
-						&& plugin instanceof IExternalTool
-						&& ((IExternalTool)plugin).isDecorderTool() ) {
-					((IExternalTool)plugin).launch(resPath);
-				} else {
-					actionType = 1;
-				}
+				actionType = 2;
 				return;
 			}
 

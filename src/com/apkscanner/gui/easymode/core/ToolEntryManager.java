@@ -282,6 +282,11 @@ public class ToolEntryManager {
 
 		int actionType = 0;
 		String data = (String) Resource.PROP_DEFAULT_DECORDER.getData();
+		Log.v("PROP_DEFAULT_DECORDER : " + data);
+		if(data.matches(".*!.*#.*@.*")) {
+			//if(evtPluginLaunch(data)) return;
+			data = (String)Resource.PROP_DEFAULT_DECORDER.getDefValue();
+		}
 		if (Resource.STR_DECORDER_JD_GUI.equals(data)) {
 			actionType = 1;
 		} else if (Resource.STR_DECORDER_JADX_GUI.equals(data)) {
@@ -289,8 +294,7 @@ public class ToolEntryManager {
 		} else if (Resource.STR_DECORDER_BYTECOD.equals(data)) {
 			actionType = 3;
 		} else {
-
-			return;
+			actionType = 2;
 		}
 		if (actionType == 1) {
 			String jarfileName = apkInfo.tempWorkPath + File.separator

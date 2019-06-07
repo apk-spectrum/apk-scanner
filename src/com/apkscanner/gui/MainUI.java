@@ -516,6 +516,11 @@ public class MainUI extends JFrame implements IPlugInEventListener
 			int actionType = 0;
 			if(e == null || ToolBar.ButtonSet.OPEN_CODE.matchActionEvent(e)) {
 				String data = (String)Resource.PROP_DEFAULT_DECORDER.getData();
+				Log.v("PROP_DEFAULT_DECORDER : " + data);
+				if(data.matches(".*!.*#.*@.*")) {
+					if(evtPluginLaunch(data)) return;
+					data = (String)Resource.PROP_DEFAULT_DECORDER.getDefValue();
+				}
 				if(Resource.STR_DECORDER_JD_GUI.equals(data)) {
 					actionType = 1;
 				} else if(Resource.STR_DECORDER_JADX_GUI.equals(data)) {
@@ -523,8 +528,7 @@ public class MainUI extends JFrame implements IPlugInEventListener
 				} else if(Resource.STR_DECORDER_BYTECOD.equals(data)) {
 					actionType = 3;
 				} else {
-					evtPluginLaunch(data);
-					return;
+					actionType = 2;
 				}
 			}
 			if(actionType == 1 || ToolBar.MenuItemSet.DECODER_JD_GUI.matchActionEvent(e)) {
@@ -867,11 +871,11 @@ public class MainUI extends JFrame implements IPlugInEventListener
 			thread.start();
 		}
 
-		private void evtPluginLaunch(String actionCommand) {
+		private boolean evtPluginLaunch(String actionCommand) {
 			IPlugIn plugin = PlugInManager.getPlugInByActionCommand(actionCommand);
-			if(plugin != null) {
-				plugin.launch();
-			}
+			if(plugin == null) return false;
+			plugin.launch();
+			return true;
 		}
 
 		private IDevice[] getInstalledDevice() {
