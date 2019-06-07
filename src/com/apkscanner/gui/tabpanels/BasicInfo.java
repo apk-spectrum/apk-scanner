@@ -16,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -401,11 +402,18 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 					permissionManager.addUsesPermission(apkInfo.manifest.usesPermissionSdk23);
 					permissionManager.addDeclarePemission(apkInfo.manifest.permission);
 					if(!permissionManager.isEmpty()) {
-						int selectSdkVer = makeSdkOptions(apkInfo.manifest.usesSdk.targetSdkVersion);
-						permissionManager.setSdkVersion(selectSdkVer);
+						publish((Void)null);
+						synchronized (this) { wait(); }
 					}
 				}
 				return makePermGroup();
+			}
+
+			@Override
+			protected void process(List<Void> chunks) {
+				int selectSdkVer = makeSdkOptions(apkInfo.manifest.usesSdk.targetSdkVersion);
+				permissionManager.setSdkVersion(selectSdkVer);
+				synchronized (this) { notify(); }
 			}
 
 			@Override
