@@ -1,4 +1,4 @@
-package com.apkscanner;
+package com.apkscanner.gui;
 
 import java.awt.EventQueue;
 import java.util.ArrayList;
@@ -14,8 +14,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import com.apkscanner.core.scanner.AaptLightScanner;
 import com.apkscanner.core.scanner.ApkScanner;
-import com.apkscanner.gui.EasyMainUI;
-import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.easymode.dlg.EasyStartupDlg;
 import com.apkscanner.plugin.IPlugInEventListener;
 import com.apkscanner.plugin.IUpdateChecker;

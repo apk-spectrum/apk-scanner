@@ -13,7 +13,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import com.apkscanner.core.scanner.ApkScanner;
-
+import com.apkscanner.gui.UIController;
 import com.apkscanner.gui.installer.ApkInstallWizard;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbServerMonitor;
