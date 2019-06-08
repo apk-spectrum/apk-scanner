@@ -2,10 +2,8 @@ package com.apkscanner.gui;
 
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -16,13 +14,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -43,8 +39,10 @@ import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ComponentInfo;
-import com.apkscanner.gui.DropTargetChooser.DefaultTargetObject;
 import com.apkscanner.gui.ToolBar.ButtonSet;
+import com.apkscanner.gui.component.DropTargetChooser;
+import com.apkscanner.gui.component.DropTargetChooser.DefaultTargetObject;
+import com.apkscanner.gui.component.DropTargetChooserExt;
 import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.gui.dialog.AboutDlg;
 import com.apkscanner.gui.dialog.ApkSignerWizard;
@@ -57,7 +55,6 @@ import com.apkscanner.gui.installer.ApkInstallWizard;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.gui.util.ApkFileChooser;
-import com.apkscanner.gui.util.ImageScaler;
 import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.plugin.IPlugIn;
@@ -163,7 +160,7 @@ public class MainUI extends JFrame implements IPlugInEventListener
 		addWindowListener(eventHandler);
 
 		// Drag & Drop event processing panel
-		dropTargetChooser = new DropTargetChooser(eventHandler);
+		dropTargetChooser = new DropTargetChooserExt(eventHandler);
 		setGlassPane(dropTargetChooser);
 		dropTargetChooser.setVisible(true);
 
@@ -205,19 +202,6 @@ public class MainUI extends JFrame implements IPlugInEventListener
 					&& Status.CERT_COMPLETED.isCompleted(state) ) {
 				tabbedPanel.setData(apkScanner.getApkInfo(), Status.BASIC_INFO_COMPLETED);
 			}
-		}
-
-		for(IExternalTool plugin: PlugInManager.getExternalTool()) {
-			if(!plugin.isDiffTool()) continue;
-			Image icon = null;
-			URL iconUrl = plugin.getIconURL();
-			if(iconUrl != null) {
-				ImageIcon imageIcon = new ImageIcon(iconUrl);
-				if(imageIcon != null) {
-					icon = ImageScaler.getScaledImage(imageIcon, 64, 64);
-				}
-			}
-			dropTargetChooser.addDropTarget(plugin, plugin.getLabel(), "plugin", icon, new Color(0.9f,0.7f,0.3f,0.9f));
 		}
 	}
 

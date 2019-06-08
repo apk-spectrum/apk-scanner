@@ -27,9 +27,10 @@ import com.android.ddmlib.IDevice;
 import com.apkscanner.Launcher;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.core.scanner.ApkScanner.Status;
-import com.apkscanner.gui.DropTargetChooser;
-import com.apkscanner.gui.DropTargetChooser.DefaultTargetObject;
 import com.apkscanner.gui.EasyMainUI;
+import com.apkscanner.gui.component.DropTargetChooser;
+import com.apkscanner.gui.component.DropTargetChooser.DefaultTargetObject;
+import com.apkscanner.gui.component.DropTargetChooserExt;
 import com.apkscanner.gui.easymode.contents.EasyBordPanel;
 import com.apkscanner.gui.easymode.contents.EasyContentsPanel;
 import com.apkscanner.gui.easymode.contents.EasyGuiToolScaleupPanel;
@@ -141,7 +142,7 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 		addComponentListener(this);
 	
 		// Drag & Drop event processing panel
-		dropTargetChooser = new DropTargetChooser(this);
+		dropTargetChooser = new DropTargetChooserExt(this);
 		mainframe.setGlassPane(dropTargetChooser);
 		dropTargetChooser.setVisible(true);
 		
@@ -321,23 +322,19 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 			// if(!isinit) return;
 			if (this.error == 0) {
 				showApkinfopanel();
-				
+				dropTargetChooser.setExternalToolsVisible(true);
+				infoHashCode = apkScanner.getApkInfo().hashCode();
+
 				DateFormat simple = new SimpleDateFormat("HH:mm:ss:SSS"); 
 			    Date result = new Date(EasyMainUI.corestarttime); 
 			    Log.d("Core 시간: " + ((System.currentTimeMillis() - EasyMainUI.corestarttime) / 1000.0) + "(core start : " + simple.format(result));
-				mainframe.setVisible(true);
-
-				infoHashCode = apkScanner.getApkInfo().hashCode();
 
 				////////////////////////////////////for test
 				//ToolEntryManager.excutePermissionDlg();				
 				/////////////////////////////////////for test
-				
 			} else {
 				showEmptyinfo();
-				mainframe.setVisible(true);
 			}
-
 		}
 
 		@Override
