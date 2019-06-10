@@ -481,7 +481,10 @@ public class PermissionManager
 		if(name == null || name.isEmpty()) return null;
 		ResourceInfo[] resVal = null;
 		if(name.startsWith("@string/")) {
-			XmlPath resources = xmlPermissionDB.getNodeList("/permission-history/resources/*");
+			XmlPath resources = null;
+			synchronized(xmlPermissionDB) {
+				resources = xmlPermissionDB.getNodeList("/permission-history/resources/*");
+			}
 			if(resources == null) return new ResourceInfo[] { new ResourceInfo(name, null) };
 			List<ResourceInfo> list = new ArrayList<>();
 
