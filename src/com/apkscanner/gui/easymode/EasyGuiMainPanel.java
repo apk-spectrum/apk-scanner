@@ -27,10 +27,10 @@ import com.android.ddmlib.IDevice;
 import com.apkscanner.Launcher;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.core.scanner.ApkScanner.Status;
-import com.apkscanner.gui.PlugInDropTargetChooser;
 import com.apkscanner.gui.EasyMainUI;
+import com.apkscanner.gui.PlugInDropTargetChooser;
+import com.apkscanner.gui.PlugInDropTargetChooser.DefaultTargetObject;
 import com.apkscanner.gui.component.DropTargetChooser;
-import com.apkscanner.gui.component.DropTargetChooser.DefaultTargetObject;
 import com.apkscanner.gui.easymode.contents.EasyBordPanel;
 import com.apkscanner.gui.easymode.contents.EasyContentsPanel;
 import com.apkscanner.gui.easymode.contents.EasyGuiToolScaleupPanel;
@@ -63,7 +63,7 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 	public static MessageBoxPool messagePool;
 	JPanel iconhoverpanel;
 	JPanel contentspanel;
-	private DropTargetChooser dropTargetChooser;
+	private PlugInDropTargetChooser dropTargetChooser;
 	
 	public EasyGuiMainPanel(JFrame mainframe) {
 		Log.d("start EasyGuiMainPanel------------------------------------------------------------------------------------------------------------------------ ");

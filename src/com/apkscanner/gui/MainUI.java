@@ -38,12 +38,12 @@ import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ComponentInfo;
+import com.apkscanner.gui.PlugInDropTargetChooser.DefaultTargetObject;
 import com.apkscanner.gui.ToolBar.ButtonSet;
 import com.apkscanner.gui.component.ApkFileChooser;
 import com.apkscanner.gui.component.DropTargetChooser;
 import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.gui.component.WindowSizeMemorizer;
-import com.apkscanner.gui.component.DropTargetChooser.DefaultTargetObject;
 import com.apkscanner.gui.dialog.AboutDlg;
 import com.apkscanner.gui.dialog.ApkSignerWizard;
 import com.apkscanner.gui.dialog.LogDlg;
@@ -87,7 +87,7 @@ public class MainUI extends JFrame implements IPlugInEventListener
 	private TabbedPanel tabbedPanel;
 	private ToolBar toolBar;
 	private MessageBoxPool messagePool;
-	private DropTargetChooser dropTargetChooser;
+	private PlugInDropTargetChooser dropTargetChooser;
 
 	public MainUI(ApkScanner scanner) {
 		toolbarManager = new ToolbarManagement();

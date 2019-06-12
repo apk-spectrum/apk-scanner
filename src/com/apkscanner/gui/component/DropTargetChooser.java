@@ -1,7 +1,6 @@
 package com.apkscanner.gui.component;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -16,32 +15,26 @@ import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.UIManager;
 
-import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
 public class DropTargetChooser extends JComponent {
 	private static final long serialVersionUID = 4972112842742444927L;
 
-	public enum DefaultTargetObject {
-		DROPED_TARGET_APK_OPEN,
-		DROPED_TARGET_NEW_WIN
-	}
+	protected boolean visible;
+	protected Listener listener;
+	protected FileDrop fileDropHandler;
 
-	private boolean visible;
-	private boolean externalToolVisible;
-	private Listener listener;
-	private FileDrop fileDropHandler;
-
-	class DropArea extends JComponent implements FileDrop.Listener {
+	protected class DropArea extends JComponent implements FileDrop.Listener {
 		private static final long serialVersionUID = -5908315150932591478L;
 
-		private Font font;
-		private Image image;
-		private String text;
-		private String title;
-		private Color background;
-		private Object dropTarget;
-		boolean selected;
+		public final Font font;
+		public final Image image;
+		public final String text;
+		public final String title;
+		public final Color background;
+		public final Object dropTarget;
+
+		private boolean selected;
 
 		public DropArea(Object dropTarget, String text, String title, Image image, Color background) {
 			this.dropTarget = dropTarget;
@@ -115,30 +108,20 @@ public class DropTargetChooser extends JComponent {
 		setEnabled(false);
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
-		addDropTarget(DefaultTargetObject.DROPED_TARGET_APK_OPEN, Resource.STR_BTN_OPEN.getString(), Resource.STR_APP_NAME.getString(),
-				Resource.IMG_APP_ICON.getImageIcon(64,64).getImage(), new Color(0.35546875f , 0.60546875f, 0.83203125f, 0.9f));
-		addDropTarget(DefaultTargetObject.DROPED_TARGET_NEW_WIN, Resource.STR_MENU_NEW.getString(), Resource.STR_APP_NAME.getString(),
-				Resource.IMG_TOOLBAR_MANIFEST.getImageIcon(64,64).getImage(), new Color(0.4375f, 0.67578125f, 0.27734375f, 0.9f));
-
 		fileDropHandler = new FileDrop(this, null);
 
 		this.listener = listener;
 	}
 
 	public void addDropTarget(Object dropTarget, String text, String title, Image image, Color background) {
+		addDropTarget(dropTarget, text, title, image, background, true);
+	}
+
+	protected void addDropTarget(Object dropTarget, String text, String title, Image image, Color background, boolean visible) {
 		JComponent component = new DropArea(dropTarget, text, title, image, background);
 		add(component);
 		if(fileDropHandler != null) fileDropHandler.makeDropTarget(null, component, false);
-		if(!(dropTarget instanceof DefaultTargetObject)) component.setVisible(externalToolVisible);
-	}
-
-	public void setExternalToolsVisible(boolean visible) {
-		externalToolVisible = visible;
-		for(Component c: this.getComponents()) {
-			if(!(c instanceof DropArea)) continue;
-			if(((DropArea)c).dropTarget instanceof DefaultTargetObject) continue;
-			c.setVisible(visible);
-		}
+		component.setVisible(visible);
 	}
 
     public static interface Listener {
