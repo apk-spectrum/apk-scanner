@@ -1,4 +1,4 @@
-package com.apkscanner.gui.theme.tabbedpane;
+package com.apkscanner.gui.component.tabbedpane;
 
 import java.awt.Color;
 import java.awt.FontMetrics;
@@ -14,8 +14,6 @@ import javax.swing.JComponent;
 import javax.swing.UIManager;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
-
-import com.apkscanner.gui.theme.UIThemeName;
 
 @UIThemeName("Plastic")
 

@@ -59,10 +59,10 @@ import org.json.simple.JSONValue;
 import com.android.ddmlib.AdbVersion;
 import com.apkscanner.gui.TabbedPanel;
 import com.apkscanner.gui.ToolBar;
+import com.apkscanner.gui.component.ApkFileChooser;
 import com.apkscanner.gui.component.KeyStrokeAction;
-import com.apkscanner.gui.theme.TabbedPaneUIManager;
-import com.apkscanner.gui.util.ApkFileChooser;
-import com.apkscanner.gui.util.WindowSizeMemorizer;
+import com.apkscanner.gui.component.WindowSizeMemorizer;
+import com.apkscanner.gui.component.tabbedpane.TabbedPaneUIManager;
 import com.apkscanner.jna.FileInfo;
 import com.apkscanner.jna.FileVersion;
 import com.apkscanner.plugin.PlugInManager;
@@ -435,6 +435,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		propTheme = (String)Resource.PROP_CURRENT_THEME.getData();
 
 		propTabbedUI = (String)Resource.PROP_TABBED_UI_THEME.getData();
+		propTabbedUI = propTabbedUI.replace("com.apkscanner.gui.theme.tabbedpane", TabbedPaneUIManager.THEMES_PACKAGE);
 
 		propFont = (String)Resource.PROP_BASE_FONT.getData();
 

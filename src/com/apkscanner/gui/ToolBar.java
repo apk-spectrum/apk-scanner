@@ -40,8 +40,8 @@ import javax.swing.event.MenuListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import com.apkscanner.gui.util.ExtensionButton;
-import com.apkscanner.gui.util.ImageScaler;
+import com.apkscanner.gui.component.ExtensionButton;
+import com.apkscanner.gui.component.ImageScaler;
 import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.plugin.IPackageSearcher;
 import com.apkscanner.plugin.IPlugIn;

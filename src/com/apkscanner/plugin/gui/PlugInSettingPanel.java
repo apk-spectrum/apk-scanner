@@ -39,7 +39,7 @@ import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 
-import com.apkscanner.gui.util.ImageScaler;
+import com.apkscanner.gui.component.ImageScaler;
 import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.PlugInGroup;
 import com.apkscanner.plugin.PlugInManager;

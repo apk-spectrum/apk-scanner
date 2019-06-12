@@ -1,4 +1,4 @@
-package com.apkscanner.gui.util;
+package com.apkscanner.gui.component;
 
 import java.awt.EventQueue;
 import java.awt.datatransfer.DataFlavor;

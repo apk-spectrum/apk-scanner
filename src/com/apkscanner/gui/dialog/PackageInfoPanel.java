@@ -40,17 +40,17 @@ import com.apkscanner.core.signer.Signature;
 import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ComponentInfo;
+import com.apkscanner.gui.component.ApkFileChooser;
+import com.apkscanner.gui.component.HtmlEditorPane;
+import com.apkscanner.gui.component.WindowSizeMemorizer;
+import com.apkscanner.gui.component.HtmlEditorPane.HyperlinkClickEvent;
+import com.apkscanner.gui.component.HtmlEditorPane.HyperlinkClickListener;
+import com.apkscanner.gui.component.tabbedpane.TabbedPaneUIManager;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
-import com.apkscanner.gui.theme.TabbedPaneUIManager;
-import com.apkscanner.gui.util.ApkFileChooser;
-import com.apkscanner.gui.util.JHtmlEditorPane;
-import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickEvent;
-import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.plugin.IPackageSearcher;
 import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.PlugInManager;
-import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbDeviceHelper;
 import com.apkscanner.tool.adb.PackageInfo;
@@ -76,8 +76,8 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 
 	private JToolBar toolBar;
 	private JTabbedPane tabbedPane;
-	private JHtmlEditorPane infoPanel;
-	private JHtmlEditorPane sysPackInfoPanel;
+	private HtmlEditorPane infoPanel;
+	private HtmlEditorPane sysPackInfoPanel;
 	private JTextArea dumpsysTextArea;
 	private JTextArea signatureTextArea;
 	private JTextField txtApkPath;
@@ -113,13 +113,13 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		TabbedPaneUIManager.setUI(tabbedPane, tabbedStyle);
 		tabbedPane.addChangeListener(this);
 
-		infoPanel = new JHtmlEditorPane();
+		infoPanel = new HtmlEditorPane();
 		infoPanel.setEditable(false);
 		infoPanel.setOpaque(true);
 		infoPanel.setBackground(Color.white);
 		infoPanel.addHyperlinkClickListener(this);
 
-		sysPackInfoPanel = new JHtmlEditorPane();
+		sysPackInfoPanel = new HtmlEditorPane();
 		sysPackInfoPanel.setEditable(false);
 		sysPackInfoPanel.setOpaque(true);
 		sysPackInfoPanel.setBackground(Color.white);
@@ -221,7 +221,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 
 	private void setPacakgeData(PackageInfo info, boolean isSystemPackage)
 	{
-		JHtmlEditorPane panel = !isSystemPackage ? infoPanel : sysPackInfoPanel;
+		HtmlEditorPane panel = !isSystemPackage ? infoPanel : sysPackInfoPanel;
 		panel.setText(Resource.RAW_PACKAGE_INFO_LAYOUT_HTML.getString());
 
 		String infoBlock = !isSystemPackage ? "Packages" : "Hidden system packages";
@@ -242,11 +242,11 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		setPluginSearcher(panel);
 	}
 
-	private void setPackageName(JHtmlEditorPane panel, String packageName) {
+	private void setPackageName(HtmlEditorPane panel, String packageName) {
 		panel.setOuterHTMLById("package", packageName);
 	}
 
-	private void setVersion(JHtmlEditorPane panel, String versionName, String versionCode) {
+	private void setVersion(HtmlEditorPane panel, String versionName, String versionCode) {
 		if(versionName == null) versionName = "";
 		StringBuilder text = new StringBuilder("Ver. ").append(versionName)
 				.append(" / ").append((versionCode != null ? versionCode : "0"));
@@ -257,7 +257,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		panel.setInnerHTMLById("version", makeHyperEvent(panel, "app-version", text.toString(), versionDesc, versionDesc));
 	}
 
-	private void setSdkVersion(JHtmlEditorPane panel, String minSdkVersion, String targetSdkVersion, String maxSdkVersion) {
+	private void setSdkVersion(HtmlEditorPane panel, String minSdkVersion, String targetSdkVersion, String maxSdkVersion) {
 		StringBuilder sdkVersion = new StringBuilder();
 		if(minSdkVersion != null) {
 			sdkVersion.append(", ")
@@ -277,7 +277,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		panel.setOuterHTMLById("sdk-version", sdkVersion.substring(2));
 	}
 
-	private void setFileSize(JHtmlEditorPane panel, IDevice device, String apkPath) {
+	private void setFileSize(HtmlEditorPane panel, IDevice device, String apkPath) {
 		long apkSize = 0;
 		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
 		try {
@@ -305,7 +305,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		panel.setInnerHTMLById("file-size", makeHyperEvent(panel, "file-checksum", text, text, apkPath));
 	}
 
-	private void setFeatures(JHtmlEditorPane panel, PackageInfo info, boolean isSystemPackage) {
+	private void setFeatures(HtmlEditorPane panel, PackageInfo info, boolean isSystemPackage) {
 		StringBuilder feature = new StringBuilder("[" + Resource.STR_FEATURE_LAB.getString() + "] ");
 		String infoBlock = !isSystemPackage ? "Packages" : "Hidden system packages";
 
@@ -332,7 +332,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		panel.setInnerHTMLById("features", feature.toString());
 	}
 
-	private void setInstaller(JHtmlEditorPane panel, String installer, String timestamp, String infoBlock) {
+	private void setInstaller(HtmlEditorPane panel, String installer, String timestamp, String infoBlock) {
 		StringBuilder installerInfo = new StringBuilder("[" + Resource.STR_FEATURE_INSTALLER_LAB.getString() + "] ");
 		if(installer == null || installer.isEmpty())
 			installer = "N/A";
@@ -342,7 +342,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		panel.setInnerHTMLById("installer", installerInfo.toString());
 	}
 
-	private void setPluginSearcher(JHtmlEditorPane panel) {
+	private void setPluginSearcher(HtmlEditorPane panel) {
 		String packageSearchers = "";
 		//String appLabelSearchers = "";
 		if((boolean)Resource.PROP_VISIBLE_TO_BASIC.getData()) {
@@ -408,7 +408,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		dumpsysTextArea.setCaretPosition(0);
 	}
 
-	private String makeHyperEvent(JHtmlEditorPane panel, String id, String text, String title, Object userData) {
+	private String makeHyperEvent(HtmlEditorPane panel, String id, String text, String title, Object userData) {
 		String style = null;
 		if(id != null && (id.startsWith("PLUGIN:") || id.contains("-perm-setting"))) style = "color:white";
 		return panel.makeHyperLink("@event", text, title, id, style, userData);

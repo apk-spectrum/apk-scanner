@@ -82,11 +82,11 @@ import com.apkscanner.core.permissionmanager.UnitRecord;
 import com.apkscanner.data.apkinfo.PermissionGroupInfo;
 import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
-import com.apkscanner.gui.component.CloseableTabbedPaneLayerUI;
+import com.apkscanner.gui.component.ImageScaler;
 import com.apkscanner.gui.component.KeyStrokeAction;
-import com.apkscanner.gui.theme.TabbedPaneUIManager;
-import com.apkscanner.gui.util.ImageScaler;
-import com.apkscanner.gui.util.WindowSizeMemorizer;
+import com.apkscanner.gui.component.WindowSizeMemorizer;
+import com.apkscanner.gui.component.tabbedpane.CloseableTabbedPaneLayerUI;
+import com.apkscanner.gui.component.tabbedpane.TabbedPaneUIManager;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 

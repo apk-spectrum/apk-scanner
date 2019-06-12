@@ -22,7 +22,7 @@ import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
-import com.apkscanner.gui.util.WindowSizeMemorizer;
+import com.apkscanner.gui.component.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
 
 public class MessageBoxPane extends JOptionPane

@@ -1,18 +1,16 @@
-package com.apkscanner.gui.theme;
+package com.apkscanner.gui.component.tabbedpane;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import javax.swing.JTabbedPane;
 import javax.swing.plaf.TabbedPaneUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
-import com.apkscanner.gui.theme.tabbedpane.PlasticTabbedPaneUI;
 import com.apkscanner.util.ClassFinder;
 
 public class TabbedPaneUIManager {
-	private static final String THEMES_PACKAGE = "com.apkscanner.gui.theme.tabbedpane"; 
+	public static final String THEMES_PACKAGE = "com.apkscanner.gui.component.tabbedpane"; 
 
 	public static final String DEFAULT_TABBED_UI = PlasticTabbedPaneUI.class.getName();
 
@@ -51,14 +49,9 @@ public class TabbedPaneUIManager {
 		infoList.add(new TabbedPaneUIInfo(BasicTabbedPaneUI.class));
 		try {
 			for(Class<?> cls : ClassFinder.getClasses(THEMES_PACKAGE)) {
-				if(cls.isMemberClass() || cls.isInterface()) continue;
-				try {
-					if(cls.getConstructor().newInstance() instanceof BasicTabbedPaneUI) {
-						infoList.add(new TabbedPaneUIInfo(cls));
-					}
-				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-					e.printStackTrace();
-				}
+				if(cls.isMemberClass() || cls.isInterface()
+					|| !cls.getSuperclass().equals(BasicTabbedPaneUI.class)) continue;
+				infoList.add(new TabbedPaneUIInfo(cls));
 			}
 		} catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
@@ -79,6 +72,7 @@ public class TabbedPaneUIManager {
 		if(pane == null || clazz == null || clazz.trim().isEmpty()) {
 			return;
 		}
+		clazz = clazz.replace("com.apkscanner.gui.theme.tabbedpane", THEMES_PACKAGE);
 		try {
 			pane.setUI((TabbedPaneUI) Class.forName(clazz).getConstructor().newInstance());
 		} catch (Exception e) {

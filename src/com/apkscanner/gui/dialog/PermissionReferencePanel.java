@@ -17,10 +17,10 @@ import javax.swing.KeyStroke;
 import com.apkscanner.core.permissionmanager.PermissionManager;
 import com.apkscanner.core.permissionmanager.PermissionRepository;
 import com.apkscanner.core.permissionmanager.PermissionRepository.SourceCommit;
+import com.apkscanner.gui.component.HtmlEditorPane;
 import com.apkscanner.gui.component.KeyStrokeAction;
-import com.apkscanner.gui.theme.TabbedPaneUIManager;
-import com.apkscanner.gui.util.JHtmlEditorPane;
-import com.apkscanner.gui.util.WindowSizeMemorizer;
+import com.apkscanner.gui.component.WindowSizeMemorizer;
+import com.apkscanner.gui.component.tabbedpane.TabbedPaneUIManager;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 
@@ -28,8 +28,8 @@ public class PermissionReferencePanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1224360539653858070L;
 
 	private JDialog dialog;
-	private JHtmlEditorPane referencePanel;
-	private JHtmlEditorPane protectLevelPanel;
+	private HtmlEditorPane referencePanel;
+	private HtmlEditorPane protectLevelPanel;
 
 	public PermissionReferencePanel() {
 		setLayout(new BorderLayout());
@@ -38,10 +38,10 @@ public class PermissionReferencePanel extends JPanel implements ActionListener {
 		tabbedPanel.setOpaque(true);
 		TabbedPaneUIManager.setUI(tabbedPanel, tabbedStyle);
 
-		referencePanel = new JHtmlEditorPane();
+		referencePanel = new HtmlEditorPane();
 		referencePanel.setEditable(false);
 		referencePanel.setOpaque(true);
-		protectLevelPanel = new JHtmlEditorPane();
+		protectLevelPanel = new HtmlEditorPane();
 		protectLevelPanel.setEditable(false);
 		protectLevelPanel.setOpaque(true);
 		tabbedPanel.addTab("Reference", new JScrollPane(referencePanel));
@@ -84,14 +84,14 @@ public class PermissionReferencePanel extends JPanel implements ActionListener {
 		String manifestUrl = baseUrl + "master" + manifestPath;
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("<li>Repository : ").append(JHtmlEditorPane.makeHyperLink(repo.url, isAOSP ? "AOSP" : repo.url, repo.url, null, null)).append("</li>");
-		sb.append("<li>Manifest : ").append(JHtmlEditorPane.makeHyperLink(manifestUrl, manifestPath, manifestUrl, null, null)).append("</li>");
+		sb.append("<li>Repository : ").append(HtmlEditorPane.makeHyperLink(repo.url, isAOSP ? "AOSP" : repo.url, repo.url, null, null)).append("</li>");
+		sb.append("<li>Manifest : ").append(HtmlEditorPane.makeHyperLink(manifestUrl, manifestPath, manifestUrl, null, null)).append("</li>");
 		sb.append("<li>Resources : ");
 		if(repo.config != null && repo.config.length > 0) {
 			for(String config: repo.config) {
 				String confPath = repo.resourcePath.replace("${config}", !config.equals("default") ? "-" + config : "");
 				String resUrl = baseUrl + "master" + confPath;
-				sb.append("<br/>").append(JHtmlEditorPane.makeHyperLink(resUrl, confPath, resUrl, null, null));
+				sb.append("<br/>").append(HtmlEditorPane.makeHyperLink(resUrl, confPath, resUrl, null, null));
 			}
 		} else {
 			sb.append("None");

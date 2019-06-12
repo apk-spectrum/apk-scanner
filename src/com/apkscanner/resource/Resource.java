@@ -21,8 +21,8 @@ import javax.swing.UIManager;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import com.apkscanner.gui.theme.TabbedPaneUIManager;
-import com.apkscanner.gui.util.ImageScaler;
+import com.apkscanner.gui.component.ImageScaler;
+import com.apkscanner.gui.component.tabbedpane.TabbedPaneUIManager;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 import com.apkscanner.util.XmlPath;

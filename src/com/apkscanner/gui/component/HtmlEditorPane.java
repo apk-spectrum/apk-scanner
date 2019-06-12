@@ -1,4 +1,4 @@
-package com.apkscanner.gui.util;
+package com.apkscanner.gui.component;
 
 import java.awt.Desktop;
 import java.awt.Font;
@@ -28,7 +28,7 @@ import javax.swing.text.html.StyleSheet;
 
 import com.apkscanner.util.Log;
 
-public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
+public class HtmlEditorPane extends JEditorPane implements HyperlinkListener
 {
 	private static final long serialVersionUID = 7856109068620039501L;
 
@@ -38,7 +38,7 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 		private Object userData;
 
 		public HyperlinkClickEvent(String id) {
-			super(JHtmlEditorPane.this);
+			super(HtmlEditorPane.this);
 			this.id = id;
 			this.userData = userDatas.get(id);
 		}
@@ -65,12 +65,12 @@ public class JHtmlEditorPane extends JEditorPane implements HyperlinkListener
 	private Map<String, Object> userDatas;
 	private List<HyperlinkClickListener> listeners;
 
-	public JHtmlEditorPane()
+	public HtmlEditorPane()
 	{
 		this("", "", "");
 	}
 
-	public JHtmlEditorPane(String head, String style, String body)
+	public HtmlEditorPane(String head, String style, String body)
 	{
 		super("text/html", null);
 		addHyperlinkListener(this);

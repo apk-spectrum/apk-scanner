@@ -16,7 +16,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.UIManager;
 
-import com.apkscanner.gui.util.FileDrop;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 

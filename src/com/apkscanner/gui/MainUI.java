@@ -39,10 +39,11 @@ import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ComponentInfo;
 import com.apkscanner.gui.ToolBar.ButtonSet;
+import com.apkscanner.gui.component.ApkFileChooser;
 import com.apkscanner.gui.component.DropTargetChooser;
-import com.apkscanner.gui.component.DropTargetChooser.DefaultTargetObject;
-import com.apkscanner.gui.component.DropTargetChooserExt;
 import com.apkscanner.gui.component.KeyStrokeAction;
+import com.apkscanner.gui.component.WindowSizeMemorizer;
+import com.apkscanner.gui.component.DropTargetChooser.DefaultTargetObject;
 import com.apkscanner.gui.dialog.AboutDlg;
 import com.apkscanner.gui.dialog.ApkSignerWizard;
 import com.apkscanner.gui.dialog.LogDlg;
@@ -53,8 +54,6 @@ import com.apkscanner.gui.dialog.SettingDlg;
 import com.apkscanner.gui.installer.ApkInstallWizard;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
-import com.apkscanner.gui.util.ApkFileChooser;
-import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.IPlugInEventListener;
@@ -159,7 +158,7 @@ public class MainUI extends JFrame implements IPlugInEventListener
 		addWindowListener(eventHandler);
 
 		// Drag & Drop event processing panel
-		dropTargetChooser = new DropTargetChooserExt(eventHandler);
+		dropTargetChooser = new PlugInDropTargetChooser(eventHandler);
 		setGlassPane(dropTargetChooser);
 		dropTargetChooser.setVisible(true);
 

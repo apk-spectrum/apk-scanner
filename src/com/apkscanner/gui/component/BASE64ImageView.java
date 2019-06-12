@@ -1,4 +1,4 @@
-package com.apkscanner.gui.util;
+package com.apkscanner.gui.component;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -17,7 +17,7 @@ import javax.swing.text.html.ImageView;
 import com.apkscanner.util.Base64;
 
 // refer to https://stackoverflow.com/questions/51103717/jeditorpane-content-type-for-html-embedded-base64-images
-public class BASE64ImageView extends ImageView {
+class BASE64ImageView extends ImageView {
 	private String src;
 
 	public BASE64ImageView(Element elmnt) {

@@ -9,10 +9,10 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.border.EmptyBorder;
 
+import com.apkscanner.gui.component.ImagePanel;
+import com.apkscanner.gui.component.tabbedpane.TabbedPaneUIManager;
+import com.apkscanner.gui.component.HtmlEditorPane;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
-import com.apkscanner.gui.theme.TabbedPaneUIManager;
-import com.apkscanner.gui.util.ImagePanel;
-import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.plugin.IUpdateChecker;
 import com.apkscanner.plugin.PlugInConfig;
 import com.apkscanner.plugin.PlugInManager;
@@ -26,7 +26,7 @@ public class AboutDlg /*extends JDialog*/
 	static public void showAboutDialog(Component component)
 	{
 		// html content
-		JHtmlEditorPane hep = new JHtmlEditorPane();
+		HtmlEditorPane hep = new HtmlEditorPane();
 		hep.setEditable(false);
 		hep.setPreferredSize(new Dimension(400,300));
 		hep.setAlignmentY(0.0f);

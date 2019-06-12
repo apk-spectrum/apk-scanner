@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import com.apkscanner.core.installer.OptionsBundle;
-import com.apkscanner.gui.util.JHtmlEditorPane;
+import com.apkscanner.gui.component.HtmlEditorPane;
 import com.apkscanner.resource.Resource;
 
 public class SimpleOptionPanel extends JPanel implements MouseListener, ActionListener {
@@ -26,7 +26,7 @@ public class SimpleOptionPanel extends JPanel implements MouseListener, ActionLi
 
 	private Collection<DeviceListData> deviceDataList;
 
-	private JHtmlEditorPane htmlEditor;
+	private HtmlEditorPane htmlEditor;
 	private JButton btnInstall;
 	private JButton btnPush;
 
@@ -36,7 +36,7 @@ public class SimpleOptionPanel extends JPanel implements MouseListener, ActionLi
 		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady)
 		GridBagConstraints consts = new GridBagConstraints(0,0,1,1,1.0f,1.0f,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,1,0,1),0,0);
 
-		htmlEditor = new JHtmlEditorPane();
+		htmlEditor = new HtmlEditorPane();
 		htmlEditor.setText(Resource.RAW_ADB_INSTALL_BUTTON_HTML.getString());
 		htmlEditor.removeElementById("adb-push");
 		htmlEditor.setInnerHTMLById("option-label", Resource.STR_LABEL_WITH_BELOW_OPTIONS.getString());

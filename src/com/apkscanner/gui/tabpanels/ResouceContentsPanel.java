@@ -1,4 +1,4 @@
-package com.apkscanner.gui.util;
+package com.apkscanner.gui.tabpanels;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -66,6 +66,8 @@ import org.fife.ui.rtextarea.SearchResult;
 import com.apkscanner.Launcher;
 import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.gui.component.ApkFileChooser;
+import com.apkscanner.gui.component.ImageControlPanel;
 import com.apkscanner.gui.tabpanels.Resources.ResourceObject;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;

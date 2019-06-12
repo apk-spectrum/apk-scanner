@@ -1,4 +1,4 @@
-package com.apkscanner.gui.component;
+package com.apkscanner.gui.component.tabbedpane;
 
 import java.awt.AWTEvent;
 import java.awt.Color;
@@ -16,8 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.plaf.LayerUI;
-
-import com.apkscanner.gui.theme.TabbedPaneUIManager;
 
 /* from  w  ww.jav a  2  s  .  c o  m
  * http://www.java2s.com/Tutorials/Java/Swing_How_to/JTabbedPane/Create_Closeable_JTabbedPane_alignment_of_the_close_button.htm
@@ -104,7 +102,7 @@ public class CloseableTabbedPaneLayerUI extends LayerUI<JTabbedPane> {
 		}
 	}
 
-	private Rectangle getButtonArea(JTabbedPane tabbedPane, int index) {
+	protected Rectangle getButtonArea(JTabbedPane tabbedPane, int index) {
 		Rectangle rect = tabbedPane.getBoundsAt(index);
 		Dimension d = button.getPreferredSize();
 		int x = rect.x + rect.width - d.width;

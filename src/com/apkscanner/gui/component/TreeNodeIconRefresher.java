@@ -1,4 +1,4 @@
-package com.apkscanner.gui.util;
+package com.apkscanner.gui.component;
 
 import java.awt.Image;
 import java.awt.Rectangle;

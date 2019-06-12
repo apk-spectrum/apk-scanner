@@ -1,4 +1,4 @@
-package com.apkscanner.gui.util;
+package com.apkscanner.gui.dialog;
 
 import java.util.ArrayList;
 

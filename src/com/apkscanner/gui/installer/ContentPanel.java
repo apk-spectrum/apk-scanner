@@ -12,7 +12,7 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import com.apkscanner.gui.util.ImagePanel;
+import com.apkscanner.gui.component.ImagePanel;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 

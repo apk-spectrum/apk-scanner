@@ -1,4 +1,4 @@
-package com.apkscanner.gui.util;
+package com.apkscanner.gui.tabpanels;
 
 import java.awt.Color;
 import java.awt.Component;

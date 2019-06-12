@@ -48,12 +48,12 @@ import com.apkscanner.data.apkinfo.UsesConfigurationInfo;
 import com.apkscanner.data.apkinfo.UsesFeatureInfo;
 import com.apkscanner.data.apkinfo.UsesLibraryInfo;
 import com.apkscanner.data.apkinfo.UsesSdkInfo;
+import com.apkscanner.gui.component.HtmlEditorPane;
+import com.apkscanner.gui.component.HtmlEditorPane.HyperlinkClickEvent;
+import com.apkscanner.gui.component.HtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.gui.dialog.PermissionHistoryPanel;
 import com.apkscanner.gui.dialog.SdkVersionInfoDlg;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
-import com.apkscanner.gui.util.JHtmlEditorPane;
-import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickEvent;
-import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.plugin.IPackageSearcher;
 import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.ITabbedRequest;
@@ -72,7 +72,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	private static final String CARD_LODING_PAGE = "CARD_LODING_PROCESS";
 	private static final String CARD_APK_INFORMATION = "CARD_APK_INFORMATION";
 
-	private JHtmlEditorPane apkInfoPanel;
+	private HtmlEditorPane apkInfoPanel;
 	private JPanel lodingPanel;
 	private JLabel messageLabel;
 	private CardLayout cardLayout;
@@ -90,7 +90,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 
 	@Override
 	public void initialize() {
-		apkInfoPanel = new JHtmlEditorPane();
+		apkInfoPanel = new HtmlEditorPane();
 		apkInfoPanel.setEditable(false);
 		apkInfoPanel.setOpaque(true);
 		apkInfoPanel.setBackground(Color.white);

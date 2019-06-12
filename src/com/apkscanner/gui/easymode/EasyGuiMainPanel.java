@@ -27,10 +27,10 @@ import com.android.ddmlib.IDevice;
 import com.apkscanner.Launcher;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.core.scanner.ApkScanner.Status;
+import com.apkscanner.gui.PlugInDropTargetChooser;
 import com.apkscanner.gui.EasyMainUI;
 import com.apkscanner.gui.component.DropTargetChooser;
 import com.apkscanner.gui.component.DropTargetChooser.DefaultTargetObject;
-import com.apkscanner.gui.component.DropTargetChooserExt;
 import com.apkscanner.gui.easymode.contents.EasyBordPanel;
 import com.apkscanner.gui.easymode.contents.EasyContentsPanel;
 import com.apkscanner.gui.easymode.contents.EasyGuiToolScaleupPanel;
@@ -142,7 +142,7 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 		addComponentListener(this);
 	
 		// Drag & Drop event processing panel
-		dropTargetChooser = new DropTargetChooserExt(this);
+		dropTargetChooser = new PlugInDropTargetChooser(this);
 		mainframe.setGlassPane(dropTargetChooser);
 		dropTargetChooser.setVisible(true);
 		

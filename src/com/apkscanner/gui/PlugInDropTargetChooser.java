@@ -1,4 +1,4 @@
-package com.apkscanner.gui.component;
+package com.apkscanner.gui;
 
 import java.awt.Color;
 import java.awt.Image;
@@ -6,15 +6,16 @@ import java.net.URL;
 
 import javax.swing.ImageIcon;
 
-import com.apkscanner.gui.util.ImageScaler;
+import com.apkscanner.gui.component.DropTargetChooser;
+import com.apkscanner.gui.component.ImageScaler;
 import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.plugin.IPlugInEventListener;
 import com.apkscanner.plugin.PlugInManager;
 
-public class DropTargetChooserExt extends DropTargetChooser implements IPlugInEventListener {
+public class PlugInDropTargetChooser extends DropTargetChooser implements IPlugInEventListener {
 	private static final long serialVersionUID = 333800480269221248L;
 
-	public DropTargetChooserExt(Listener listener) {
+	public PlugInDropTargetChooser(Listener listener) {
 		super(listener);
 		PlugInManager.addPlugInEventListener(this);
 	}

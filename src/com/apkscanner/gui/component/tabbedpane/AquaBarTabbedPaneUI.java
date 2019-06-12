@@ -1,10 +1,8 @@
-package com.apkscanner.gui.theme.tabbedpane;
+package com.apkscanner.gui.component.tabbedpane;
 
 import javax.swing.*;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
-
-import com.apkscanner.gui.theme.UIThemeName;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;

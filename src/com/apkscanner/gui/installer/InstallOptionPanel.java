@@ -37,7 +37,6 @@ import com.apkscanner.core.installer.OptionsBundle;
 import com.apkscanner.data.apkinfo.CompactApkInfo;
 import com.apkscanner.data.apkinfo.ComponentInfo;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
-import com.apkscanner.gui.util.ToggleButtonBarCellIcon;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 

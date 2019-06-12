@@ -18,7 +18,7 @@ import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 
 import com.apkscanner.gui.component.KeyStrokeAction;
-import com.apkscanner.gui.util.WindowSizeMemorizer;
+import com.apkscanner.gui.component.WindowSizeMemorizer;
 import com.apkscanner.plugin.IUpdateChecker;
 import com.apkscanner.plugin.PlugInConfig;
 import com.apkscanner.plugin.PlugInManager;

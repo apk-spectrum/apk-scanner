@@ -36,8 +36,8 @@ import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.gui.component.WindowSizeMemorizer;
 import com.apkscanner.gui.tabpanels.Resources;
-import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;

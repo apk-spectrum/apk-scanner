@@ -46,9 +46,9 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import com.apkscanner.core.signer.SignatureReport;
+import com.apkscanner.gui.component.ApkFileChooser;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
-import com.apkscanner.gui.util.ApkFileChooser;
 import com.apkscanner.plugin.NetworkSetting;
 import com.apkscanner.plugin.PlugInConfig;
 import com.apkscanner.plugin.PlugInPackage;

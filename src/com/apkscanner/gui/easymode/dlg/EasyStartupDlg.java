@@ -10,8 +10,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import com.apkscanner.gui.component.HtmlEditorPane;
 import com.apkscanner.gui.easymode.util.ImageSliderPanel;
-import com.apkscanner.gui.util.JHtmlEditorPane;
 import com.apkscanner.resource.Resource;
 
 public class EasyStartupDlg
@@ -48,7 +48,7 @@ public class EasyStartupDlg
 		style.append("H3 {margin-top: 5px; margin-bottom: 0px;}");
 
 		// html content
-		JHtmlEditorPane hep = new JHtmlEditorPane("", style.toString(), body.toString());
+		HtmlEditorPane hep = new HtmlEditorPane("", style.toString(), body.toString());
 		ImageSliderPanel imagePanel = new ImageSliderPanel(Resource.IMG_PREVIEW_EASY1.getImageIcon());
 		//imagePanel.setAlignmentY(0.0f);
 		//imagePanel.setBorder(new LineBorder(Color.black));

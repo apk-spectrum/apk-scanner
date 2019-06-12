@@ -25,9 +25,9 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.apkscanner.core.signer.ApkSigner;
+import com.apkscanner.gui.component.ApkFileChooser;
+import com.apkscanner.gui.component.WindowSizeMemorizer;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
-import com.apkscanner.gui.util.ApkFileChooser;
-import com.apkscanner.gui.util.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.Log;

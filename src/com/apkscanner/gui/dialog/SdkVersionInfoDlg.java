@@ -27,8 +27,8 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 
-import com.apkscanner.gui.util.ImagePanel;
-import com.apkscanner.gui.util.WindowSizeMemorizer;
+import com.apkscanner.gui.component.ImagePanel;
+import com.apkscanner.gui.component.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.XmlPath;

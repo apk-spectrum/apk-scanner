@@ -1,4 +1,4 @@
-package com.apkscanner.gui.util;
+package com.apkscanner.gui.component;
 
 // http://www.java2s.com/Tutorials/Java/Swing_How_to/JButton/Extend_JButton_to_create_arrow_button.htm
 
