@@ -87,19 +87,10 @@ public class AaptXmlTreePath
 					}
 					String attrName = s.replaceAll("^\\s*A: ([^\\(=]*).*", "$1");
 					String attrId = s.replaceAll("^\\s*A: ([^: ]*)?:([^:= ]*)?\\(([^\\(=]*)\\).*", "$3");
-					String attrRealName = null;
-					if(s.endsWith(attrId) || (attrName.startsWith(defaultNamespace+":") && !attrName.equals(":"))) {
-						attrRealName = attrName;
-						//Log.v(">>>>>>> attrName " + attrRealName);
-					} else if(attrId.matches("^0x0?1[0-9a-f]{6}")) {
-						attrRealName = defaultNamespace+":"+getAttrName(attrId);
-						//Log.v("<<<<<<< attrRealName " + attrId + ", " + attrRealName);
-					} else {
-						//Log.v("<<<<<<< attrRealName " + attrId + ", " + attrRealName);
-						attrRealName = attrName;
-					}
-					if(attrName.equals(":")) {
-						attrName = attrRealName;
+					if(attrId.matches("^0x0?1[0-9a-f]{6}")) {
+						if(attrId.equals(getAttrName(attrId))) {
+							attrName += "(" + attrId + ")";
+						}
 					}
 					String attrData = s.substring(s.indexOf("=")+1);
 
@@ -118,7 +109,7 @@ public class AaptXmlTreePath
 
 					}
 					//Log.v("attribute name : " + attrName + " = " + attrData);
-					curNode.addAttribute(attrRealName, attrData);
+					curNode.addAttribute(attrName, attrData);
 					break;
 				case NODE_TYPE_ELEMENT:
 					while(depth < curDepth) {
