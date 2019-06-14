@@ -9,6 +9,7 @@ import java.beans.*;
 
 import javax.swing.*;
 
+import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.resource.Resource;
 
 
@@ -96,13 +97,13 @@ public class ProgressBarDlg extends JFrame
         addWindowListener(windowListener);
         starttask();
         
-    	KeyStroke vk_f12 = KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0, false);
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(vk_f12, "VK_F12");
-		getRootPane().getActionMap().put("VK_F12", new AbstractAction() {
-			private static final long serialVersionUID = -5281980076592985530L;
-			public void actionPerformed(ActionEvent e) {
-				LogDlg.showLogDialog(ProgressBarDlg.this);
-		    }
+		KeyStrokeAction.registerKeyStrokeActions(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW, new KeyStroke[] {
+				KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0, false)
+			}, new AbstractAction() {
+				private static final long serialVersionUID = -5281980076592985530L;
+				public void actionPerformed(ActionEvent e) {
+					LogDlg.showLogDialog(ProgressBarDlg.this);
+			}
 		});
     }
 

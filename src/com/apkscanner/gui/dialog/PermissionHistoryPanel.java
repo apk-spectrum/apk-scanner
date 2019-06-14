@@ -396,7 +396,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		        }
 		    }
 		});
-		KeyStrokeAction.registerKeyStrokeActions(historyTable, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, new KeyStroke[] {
+		KeyStrokeAction.registerKeyStrokeActions(historyTable, JComponent.WHEN_IN_FOCUSED_WINDOW, new KeyStroke[] {
 				KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false),
 				KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK, false),
 				KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.SHIFT_DOWN_MASK, false)
@@ -818,7 +818,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 			case KeyEvent.VK_F:
 				break;
 			case KeyEvent.VK_ENTER:
-				JTable table = (JTable) evt.getSource();
+				JTable table = (JTable) ((KeyStrokeAction) source).getComponent();
 	        	boolean withCtrl = (evt.getModifiers()
 	        			& (ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK)) != 0;
 	        	int row = table.getSelectedRow();

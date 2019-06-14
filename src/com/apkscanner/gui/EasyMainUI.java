@@ -152,7 +152,7 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 			}
 		);
 		
-		KeyStrokeAction.registerKeyStrokeActions(getRootPane(), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT,
+		KeyStrokeAction.registerKeyStrokeActions(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW,
 			new KeyStroke[] {
 				KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0, false),
 				KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK, false),
@@ -178,6 +178,7 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 			new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					Log.e("e " + e.getActionCommand());
 					ToolEntryManager.excuteEntry(e.getActionCommand());
 				}
 			}

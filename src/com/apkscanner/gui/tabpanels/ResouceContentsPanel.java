@@ -31,7 +31,6 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -68,6 +67,7 @@ import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.component.ApkFileChooser;
 import com.apkscanner.gui.component.ImageControlPanel;
+import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.gui.tabpanels.Resources.ResourceObject;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
@@ -239,20 +239,20 @@ public class ResouceContentsPanel extends JPanel{
 		JScrollPane northPanelScroll = new JScrollPane(northPanel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		northPanelScroll.setBorder(new EmptyBorder(0,0,0,0));
 
-		TextViewKeyInputAction keyInputListener = new TextViewKeyInputAction();
+		TextViewKeyInputAction keyInputAction = new TextViewKeyInputAction();
 
-		ComponentkeyInput(xmltextArea,"control F", keyInputListener);
-		ComponentkeyInput(xmltextArea,"control S", keyInputListener);
-		ComponentkeyInput(xmltextArea,"F3", keyInputListener);
-		ComponentkeyInput(xmltextArea,"shift F3", keyInputListener);
+		KeyStrokeAction.registerKeyStrokeAction(xmltextArea, KeyStroke.getKeyStroke("control F"), keyInputAction);
+		KeyStrokeAction.registerKeyStrokeAction(xmltextArea, KeyStroke.getKeyStroke("control S"), keyInputAction);
+		KeyStrokeAction.registerKeyStrokeAction(xmltextArea, KeyStroke.getKeyStroke("F3"), keyInputAction);
+		KeyStrokeAction.registerKeyStrokeAction(xmltextArea, KeyStroke.getKeyStroke("shift F3"), keyInputAction);
 
-		ComponentkeyInput(textTableViewer,"control F", keyInputListener);
-		ComponentkeyInput(textTableViewer,"control S", keyInputListener);
-		ComponentkeyInput(textTableViewer,"F3", keyInputListener);
-		ComponentkeyInput(textTableViewer,"shift F3", keyInputListener);
+		KeyStrokeAction.registerKeyStrokeAction(textTableViewer, KeyStroke.getKeyStroke("control F"), keyInputAction);
+		KeyStrokeAction.registerKeyStrokeAction(textTableViewer, KeyStroke.getKeyStroke("control S"), keyInputAction);
+		KeyStrokeAction.registerKeyStrokeAction(textTableViewer, KeyStroke.getKeyStroke("F3"), keyInputAction);
+		KeyStrokeAction.registerKeyStrokeAction(textTableViewer, KeyStroke.getKeyStroke("shift F3"), keyInputAction);
 
-		ComponentkeyInput(findtextField_ResourceTable,"F3", keyInputListener);
-		ComponentkeyInput(findtextField_ResourceTable,"shift F3", keyInputListener);
+		KeyStrokeAction.registerKeyStrokeAction(findtextField_ResourceTable, KeyStroke.getKeyStroke("F3"), keyInputAction);
+		KeyStrokeAction.registerKeyStrokeAction(findtextField_ResourceTable, KeyStroke.getKeyStroke("shift F3"), keyInputAction);
 
 		add(northPanelScroll, BorderLayout.NORTH);
 		add(ContentsviewPanel, BorderLayout.CENTER);
@@ -360,7 +360,6 @@ public class ResouceContentsPanel extends JPanel{
 
 			switch (number) {
 			case "F":      /////////F key
-
 				if(arg0.getSource() instanceof JTable) {
 					EventQueue.invokeLater( new Runnable(){
 	                 public void run() {
@@ -401,12 +400,6 @@ public class ResouceContentsPanel extends JPanel{
 				break;
 			}
 		}
-	}
-
-	private void ComponentkeyInput(JComponent component, String keyStrokeAndKey, AbstractAction abstractAction) {
-        KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
-        component.getInputMap().put(keyStroke, keyStrokeAndKey);
-        component.getActionMap().put(keyStrokeAndKey, abstractAction);
 	}
 
 	private void SearchAndNext(SearchEvent.Type type, SearchContext context) {

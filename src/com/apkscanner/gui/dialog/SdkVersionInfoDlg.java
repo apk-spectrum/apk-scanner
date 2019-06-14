@@ -28,6 +28,7 @@ import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 
 import com.apkscanner.gui.component.ImagePanel;
+import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.gui.component.WindowSizeMemorizer;
 import com.apkscanner.resource.Resource;
 import com.apkscanner.util.Log;
@@ -139,12 +140,12 @@ public class SdkVersionInfoDlg extends JDialog {
 		gridConst.fill = GridBagConstraints.BOTH;
 		this.add(new JScrollPane(sdkInfoArea), gridConst);
 
-		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
-		getRootPane().getActionMap().put("ESCAPE", new AbstractAction() {
-			private static final long serialVersionUID = -8988954049940512230L;
-			public void actionPerformed(ActionEvent e) {
-				dispose();
+		KeyStrokeAction.registerKeyStrokeActions(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW, new KeyStroke[] {
+				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false)
+			}, new AbstractAction() {
+				private static final long serialVersionUID = -8988954049940512230L;
+				public void actionPerformed(ActionEvent e) {
+					dispose();
 			}
 		});
 	}

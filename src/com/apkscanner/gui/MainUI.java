@@ -163,7 +163,7 @@ public class MainUI extends JFrame implements IPlugInEventListener
 		dropTargetChooser.setVisible(true);
 
 		// Shortcut key event processing
-		KeyStrokeAction.registerKeyStrokeActions(getRootPane(), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, new KeyStroke[] {
+		KeyStrokeAction.registerKeyStrokeActions(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW, new KeyStroke[] {
 			KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0, false),
 			KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, false),
 			KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0, false),
@@ -591,7 +591,7 @@ public class MainUI extends JFrame implements IPlugInEventListener
 					boolean isShiftPressed = false;
 					int actionType = 0;
 					if(e instanceof ActionEvent) {
-						isShiftPressed = (e != null && (((ActionEvent) e).getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0);
+						isShiftPressed = (e != null && (((ActionEvent) e).getModifiers() & ActionEvent.SHIFT_MASK) != 0);
 						if(e.getSource() instanceof KeyStrokeAction) {
 							if(isShiftPressed) actionType = 2;
 						} else if(e == null || ToolBar.ButtonSet.LAUNCH.matchActionEvent((ActionEvent) e)) {
@@ -916,9 +916,9 @@ public class MainUI extends JFrame implements IPlugInEventListener
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (ToolBar.ButtonSet.OPEN.matchActionEvent(e) || ToolBar.MenuItemSet.OPEN_APK.matchActionEvent(e)) {
-				evtOpenApkFile((e.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0);
+				evtOpenApkFile((e.getModifiers() & ActionEvent.SHIFT_MASK) != 0);
 			} else if(ToolBar.ButtonSet.MANIFEST.matchActionEvent(e)) {
-				evtShowManifest((e.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0);
+				evtShowManifest((e.getModifiers() & ActionEvent.SHIFT_MASK) != 0);
 			} else if(ToolBar.ButtonSet.EXPLORER.matchActionEvent(e)
 					|| ToolBar.MenuItemSet.EXPLORER_ARCHIVE.matchActionEvent(e)
 					|| ToolBar.MenuItemSet.EXPLORER_FOLDER.matchActionEvent(e)) {
@@ -942,7 +942,7 @@ public class MainUI extends JFrame implements IPlugInEventListener
 			} else if(ToolBar.MenuItemSet.NEW_PACKAGE.matchActionEvent(e)) {
 				evtOpenPackage(true);
 			} else if(ToolBar.ButtonSet.OPEN_PACKAGE.matchActionEvent(e) || ToolBar.MenuItemSet.OPEN_PACKAGE.matchActionEvent(e)) {
-				evtOpenPackage((e.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0);
+				evtOpenPackage((e.getModifiers() & ActionEvent.SHIFT_MASK) != 0);
 			} else if(ToolBar.MenuItemSet.INSTALLED_CHECK.matchActionEvent(e)) {
 				evtShowInstalledPackageInfo();
 			} else if(ToolBar.ButtonSet.OPEN_CODE.matchActionEvent(e)

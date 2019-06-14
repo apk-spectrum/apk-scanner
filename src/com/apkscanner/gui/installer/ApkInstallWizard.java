@@ -234,7 +234,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 		window.add(controlPanel, BorderLayout.SOUTH);
 
 		// Shortcut key event processing
-		KeyStrokeAction.registerKeyStrokeActions(compoent, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, new KeyStroke[] {
+		KeyStrokeAction.registerKeyStrokeActions(compoent, JComponent.WHEN_IN_FOCUSED_WINDOW, new KeyStroke[] {
 				KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, false),
 				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false),
 				KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.ALT_DOWN_MASK, false),

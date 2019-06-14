@@ -78,7 +78,7 @@ public class UpdateNotificationWindow extends JFrame implements ActionListener
 		WindowSizeMemorizer.registeComponent(this);
 		setLocationRelativeTo(parent);
 
-		KeyStrokeAction.registerKeyStrokeAction(getRootPane(), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT,
+		KeyStrokeAction.registerKeyStrokeAction(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW,
 				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), ACT_CMD_CLOSE, this);
 	}
 

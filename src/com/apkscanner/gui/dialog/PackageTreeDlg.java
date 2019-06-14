@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 
-import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -65,6 +64,7 @@ import com.android.ddmlib.TimeoutException;
 import com.apkscanner.Launcher;
 import com.apkscanner.gui.component.ApkFileChooser;
 import com.apkscanner.gui.component.FilteredTreeModel;
+import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.gui.component.TreeNodeIconRefresher;
 import com.apkscanner.gui.component.WindowSizeMemorizer;
 import com.apkscanner.gui.dialog.SimpleCheckTableModel.TableRowObject;
@@ -175,30 +175,13 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 
 		addWindowListener(new WindowEventHandler());
 
-		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
-		getRootPane().getActionMap().put("ESCAPE", new AbstractAction() {
-			private static final long serialVersionUID = 8368291008098324014L;
-			public void actionPerformed(ActionEvent e) {
-				selDevice = null;
-				selPackage = null;
-				selApkPath = null;
-				result = CANCEL_OPTION;
+		
 
-				deviceHandler.quit();
-				dispose();
-			}
-		});
+		KeyStrokeAction.registerKeyStrokeAction(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW,
+				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), Resource.STR_BTN_CANCEL.getString(), this);
 
-		KeyStroke vk_f5 = KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, false);
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(vk_f5, "VK_F5");
-		getRootPane().getActionMap().put("VK_F5", new AbstractAction() {
-			private static final long serialVersionUID = -5281980076592985530L;
-			public void actionPerformed(ActionEvent e) {
-				refreshTreeList(false);
-			}
-		});
-
+		KeyStrokeAction.registerKeyStrokeAction(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW,
+				KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, false), Resource.STR_BTN_REFRESH.getString(), this);
 
 		top = new DefaultMutableTreeNode(Resource.STR_TREE_NODE_DEVICE.getString());
 
@@ -881,7 +864,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 
 			deviceHandler.quit();
 			dispose();
-		} else if(e.getSource() == refreshbtn) {
+		} else if(e.getActionCommand().equals(Resource.STR_BTN_REFRESH.getString())) {
 			refreshTreeList(false);
 		}
 	}
