@@ -205,7 +205,12 @@ public class Components extends AbstractTabbedPanel
 			for(ServiceInfo info: apkInfo.manifest.application.service) {
 				String startUp = (info.featureFlag & ApkInfo.APP_FEATURE_STARTUP) != 0 ? "O" : "X";
 				String enabled = (info.enabled == null) || info.enabled ? "O" : "X";
-				String exported = (info.exported == null) || info.exported ? "O" : "X";
+				String exported = null;
+				if(info.exported == null) {
+					exported = info.intentFilter != null && info.intentFilter.length > 0 ? "O" : "X";
+				} else {
+					exported = info.exported ? "O" : "X";
+				}
 				String permission = info.permission != null ? "O" : "X"; 
 				ComponentList.add(new Object[] {info.name, "service", enabled, exported, permission, startUp, info.getReport()});
 			}
