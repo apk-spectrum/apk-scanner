@@ -192,15 +192,6 @@ public class MainUI extends JFrame implements IPlugInEventListener
 	public void onPluginLoaded() {
 		toolBar.onLoadPlugin(new UIEventHandler());
 		tabbedPanel.onLoadPlugin();
-
-		if(apkScanner != null) {
-			int state = apkScanner.getStatus();
-			if( PlugInManager.getPackageSearchers().length > 0
-					&& Status.BASIC_INFO_COMPLETED.isCompleted(state)
-					&& Status.CERT_COMPLETED.isCompleted(state) ) {
-				tabbedPanel.setData(apkScanner.getApkInfo(), Status.BASIC_INFO_COMPLETED);
-			}
-		}
 	}
 
 	public void setUpdatedBadgeCount(int count) {
