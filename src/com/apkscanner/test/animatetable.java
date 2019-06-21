@@ -24,12 +24,12 @@ super("AnimatedIconTable Example");
 final Object[][] data = new Object[][] {
 
     // Here is the looking for gif pictures
-    { new ImageIcon(RImg.INSTALL_WAIT.getImageIcon().getImage()),
-        new ImageIcon(RImg.LOADING.getImageIcon().getImage()) },
+    { RImg.INSTALL_WAIT.getImageIcon(),
+        RImg.LOADING.getImageIcon() },
 
     // And here is the others pictures examples png and jpg
-    { new ImageIcon(RImg.QUESTION.getImageIcon().getImage()),
-        new ImageIcon(RImg.QUESTION.getImageIcon().getImage()) } };
+    { RImg.QUESTION.getImageIcon(),
+        RImg.QUESTION.getImageIcon() } };
 final Object[] column = new Object[] { "Example image gif and png",
     "Example image gif and jpg" };
 

@@ -363,7 +363,7 @@ public class SettingDlg extends JDialog implements ActionListener
 	private void initialize(Window window)
 	{
 		setTitle(RStr.SETTINGS_TITLE.get());
-		setIconImage(RImg.TOOLBAR_SETTING.getImageIcon().getImage());
+		setIconImage(RImg.TOOLBAR_SETTING.getImage());
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
 		Dimension minSize = new Dimension(650, 520);

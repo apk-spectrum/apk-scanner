@@ -39,7 +39,7 @@ public class UpdateNotificationWindow extends JFrame implements ActionListener
 
 	private UpdateNotificationWindow(Component parent) {
 		setTitle(RStr.TITLE_UPDATE_LIST.get());
-		setIconImage(RImg.APP_ICON.getImageIcon().getImage());
+		setIconImage(RImg.APP_ICON.getImage());
 		setResizable(true);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 

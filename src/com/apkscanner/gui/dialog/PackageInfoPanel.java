@@ -787,7 +787,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		dialog = new JDialog(owner);
 
 		dialog.setTitle("Package Info");
-		dialog.setIconImage(RImg.APP_ICON.getImageIcon().getImage());
+		dialog.setIconImage(RImg.APP_ICON.getImage());
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		dialog.setResizable(true);
 		dialog.setModal(false);

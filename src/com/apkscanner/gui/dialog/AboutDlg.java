@@ -40,7 +40,7 @@ public class AboutDlg /*extends JDialog*/
 		hep.setOuterHTMLById("programmer-email", String.format("<a href=\"mailto:%s\" title=\"%s\">%s</a>",
 						RStr.APP_MAKER_EMAIL.get(), RStr.APP_MAKER_EMAIL.get(), RStr.APP_MAKER.get()));
 
-		ImagePanel imagePanel = new ImagePanel(RImg.APP_ICON.getImageIcon(100,100));
+		ImagePanel imagePanel = new ImagePanel(RImg.APP_ICON.getImage(100,100));
 		imagePanel.setAlignmentY(0.0f);
 
 		JPanel aboutPanel = new JPanel();

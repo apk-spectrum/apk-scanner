@@ -198,7 +198,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 
 		AdbServerMonitor.startServerAndCreateBridgeAsync();
 
-		window.setIconImage(RImg.APP_ICON.getImageIcon().getImage());
+		window.setIconImage(RImg.APP_ICON.getImage());
 
 		Dimension minSize = new Dimension(600, 450);
 		if(RProp.B.SAVE_WINDOW_SIZE.get()) {

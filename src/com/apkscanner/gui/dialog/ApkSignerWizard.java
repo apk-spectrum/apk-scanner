@@ -141,7 +141,7 @@ public class ApkSignerWizard implements ActionListener {
 
 		AdbServerMonitor.startServerAndCreateBridgeAsync();
 
-		window.setIconImage(RImg.APP_ICON.getImageIcon().getImage());
+		window.setIconImage(RImg.APP_ICON.getImage());
 
 		Dimension minSize = new Dimension(400,150);
 		if(RProp.B.SAVE_WINDOW_SIZE.get()) {

@@ -1,5 +1,6 @@
 package com.apkscanner.resource;
 
+import java.awt.Image;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
@@ -134,7 +135,7 @@ public enum RImg implements ResFile<ImageIcon>
 
 	@Override
 	public String getPath() {
-		return getURL().toString();
+		return getURL().toExternalForm();
 	}
 
 	@Override
@@ -147,11 +148,51 @@ public enum RImg implements ResFile<ImageIcon>
 		return getImageIcon();
 	}
 
+	public Image getImage() {
+		return getImageIcon().getImage();
+	}
+
+	public Image getImage(int w, int h) {
+		return ImageScaler.getScaledImage(getImage(), w, h);
+	}
+
 	public ImageIcon getImageIcon() {
 		return new ImageIcon(getURL());
 	}
 
 	public ImageIcon getImageIcon(int w, int h) {
-		return ImageScaler.getScaledImageIcon(getImageIcon(), w, h);
+		return ImageScaler.getScaledImageIcon(getImage(), w, h);
+	}
+
+	public static Image getImage(String path) {
+		return getImage(RFile.getResource(path));
+	}
+
+	public static Image getImage(URL url) {
+		return getImageIcon(url).getImage();
+	}
+
+	public static Image getImage(String path, int w, int h) {
+		return getImage(RFile.getResource(path), w, h);
+	}
+
+	public static Image getImage(URL url, int w, int h) {
+		return ImageScaler.getScaledImage(getImage(url), w, h);
+	}
+
+	public static ImageIcon getImageIcon(String path) {
+		return new ImageIcon(RFile.getResource(path));
+	}
+
+	public static ImageIcon getImageIcon(URL url) {
+		return new ImageIcon(url);
+	}
+
+	public static ImageIcon getImageIcon(String path, int w, int h) {
+		return getImageIcon(RFile.getResource(path), w, h);
+	}
+
+	public static ImageIcon getImageIcon(URL url, int w, int h) {
+		return ImageScaler.getScaledImageIcon(getImageIcon(url), w, h);
 	}
 }

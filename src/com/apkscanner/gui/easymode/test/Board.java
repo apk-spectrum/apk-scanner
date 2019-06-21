@@ -34,7 +34,7 @@ public class Board extends JPanel
 
     private void loadImage() {
 
-        ImageIcon ii = new ImageIcon(RImg.ADD_TO_DESKTOP.getImageIcon().getImage());
+        ImageIcon ii = RImg.ADD_TO_DESKTOP.getImageIcon();
         star = ii.getImage();
     }
 

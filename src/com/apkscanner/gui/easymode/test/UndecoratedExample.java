@@ -39,7 +39,7 @@ public class UndecoratedExample {
 
 		public MyButton(ImageIcon icon) {
                 super();
-                icon = new ImageIcon(RImg.PERM_GROUP_PHONE_CALLS.getImageIcon(15,15).getImage());
+                icon = RImg.PERM_GROUP_PHONE_CALLS.getImageIcon(15,15);
                 image = icon.getImage();
                 imageObserver = icon.getImageObserver();
             }
@@ -59,7 +59,7 @@ public class UndecoratedExample {
         	setLayout(new FlowLayout(FlowLayout.RIGHT));
         	
         	//((FlowLayout)getLayout()).setVgap(2);
-            ImageIcon icon = new ImageIcon(RImg.PERM_GROUP_PHONE_CALLS.getImageIcon(15,15).getImage());
+            ImageIcon icon = RImg.PERM_GROUP_PHONE_CALLS.getImageIcon(15,15);
             stackLabel = new JButton(icon);
             //stackLabel.setIcon(icon);
 
@@ -70,7 +70,7 @@ public class UndecoratedExample {
             //stackLabel.addActionListener(this);
             //stackLabel.setSelected(true);
             stackLabel.setContentAreaFilled(false);
-            stackLabel.setRolloverIcon(new ImageIcon(RImg.APK_FILE_ICON.getImageIcon(15,15).getImage()));
+            stackLabel.setRolloverIcon(RImg.APK_FILE_ICON.getImageIcon(15,15));
             setBackground(new Color(230,230,230));
             
 

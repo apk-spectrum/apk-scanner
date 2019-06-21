@@ -29,9 +29,9 @@ public class PlugInDropTargetChooser extends DropTargetChooser implements IPlugI
 		super(listener);
 
 		super.addDropTarget(DefaultTargetObject.DROPED_TARGET_APK_OPEN, RStr.BTN_OPEN.get(), RStr.APP_NAME.get(),
-				RImg.APP_ICON.getImageIcon(64,64).getImage(), new Color(0.35546875f , 0.60546875f, 0.83203125f, 0.9f));
+				RImg.APP_ICON.getImage(64,64), new Color(0.35546875f , 0.60546875f, 0.83203125f, 0.9f));
 		super.addDropTarget(DefaultTargetObject.DROPED_TARGET_NEW_WIN, RStr.MENU_NEW.get(), RStr.APP_NAME.get(),
-				RImg.TOOLBAR_MANIFEST.getImageIcon(64,64).getImage(), new Color(0.4375f, 0.67578125f, 0.27734375f, 0.9f));
+				RImg.TOOLBAR_MANIFEST.getImage(64,64), new Color(0.4375f, 0.67578125f, 0.27734375f, 0.9f));
 
 		PlugInManager.addPlugInEventListener(this);
 	}

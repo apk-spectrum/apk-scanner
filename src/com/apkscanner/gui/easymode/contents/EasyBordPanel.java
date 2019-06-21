@@ -68,11 +68,11 @@ public class EasyBordPanel extends JPanel implements ActionListener, ChangeListe
 		// Turn on labels at major tick marks.
 
 		((FlowLayout) windowpanel.getLayout()).setHgap(1);
-		ImageIcon miniicon = new ImageIcon(RImg.EASY_WINDOW_MINI.getImageIcon(17, 17).getImage());
+		ImageIcon miniicon = new ImageIcon(RImg.EASY_WINDOW_MINI.getImage(17, 17));
 		btnmini = new EasyButton(miniicon);
 		btnmini.setActionCommand(CMD_WINDOW_MINI);
 
-		ImageIcon exiticon = new ImageIcon(RImg.EASY_WINDOW_EXIT.getImageIcon(17, 17).getImage());
+		ImageIcon exiticon = new ImageIcon(RImg.EASY_WINDOW_EXIT.getImage(17, 17));
 		btnexit = new EasyButton(exiticon);
 		btnexit.setActionCommand(CMD_WINDOW_EXIT);
 		// stackLabel.setIcon(icon);

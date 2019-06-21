@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -15,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -64,7 +64,7 @@ public class SdkVersionInfoDlg extends JDialog {
 	private void initialize(Window window)
 	{
 		setTitle("SDK Info");
-		setIconImage(RImg.APP_ICON.getImageIcon().getImage());
+		setIconImage(RImg.APP_ICON.getImage());
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(true);
 		setLocationRelativeTo(window);
@@ -172,7 +172,7 @@ public class SdkVersionInfoDlg extends JDialog {
 	}
 
 	public void setSdkVersion(int sdkVer) {
-		ImageIcon logoIcon = null;
+		Image logo = null;
 		StringBuilder info = new StringBuilder();
 
 		if(sdkVer > 0) {
@@ -184,13 +184,13 @@ public class SdkVersionInfoDlg extends JDialog {
 				info.append("\n\nAPI Level " + sdkVer);
 				info.append("\nBuild.VERSION_CODES." + sdkInfo.getAttribute("versionCode"));
 
-				logoIcon = new ImageIcon(RFile.getResource(sdkInfo.getAttribute("icon")));
+				logo = RImg.getImage(sdkInfo.getAttribute("icon"));
 			} else {
 				info.append("API Level " + sdkVer);
 				info.append("\nUnknown verion.\n\nYou can look at the sdk info in the Android developer site\n");
 				info.append("http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels");
 
-				logoIcon = new ImageIcon(RFile.getResource("/icons/logo/base.png"));
+				logo = RImg.getImage("/icons/logo/base.png");
 			}
 		} else {
 			XmlPath list = sdkXmlPath.getNodeList("/resources/sdk-info");
@@ -205,12 +205,12 @@ public class SdkVersionInfoDlg extends JDialog {
 			}
 			info.append("\nhttp://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels");
 
-			logoIcon = new ImageIcon(RFile.getResource("/icons/logo/base.png"));
+			logo = RImg.getImage("/icons/logo/base.png");
 		}
 
 		sdkInfoArea.setText(info.toString());
 		sdkInfoArea.setCaretPosition(0);
-		sdkLogoImg.setImage(logoIcon.getImage());
+		sdkLogoImg.setImage(logo);
 		if((int)sdkVersions.getSelectedItem() != sdkVer) {
 			sdkVersions.setSelectedItem(sdkVer);
 		}

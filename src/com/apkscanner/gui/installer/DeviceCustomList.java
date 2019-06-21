@@ -87,7 +87,7 @@ public class DeviceCustomList extends JList<DeviceListData> {
 		protected DeviceDataRenderer() {
 			super(new BorderLayout());
 
-			ii = new ImageIcon(RImg.INSTALL_LOADING.getImageIcon().getImage());
+			ii = new ImageIcon(RImg.INSTALL_LOADING.getImage());
 
 			setBorder ( BorderFactory.createEmptyBorder ( 5, 5 , 5, 5 ) );
 

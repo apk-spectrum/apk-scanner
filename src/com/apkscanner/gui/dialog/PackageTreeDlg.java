@@ -158,7 +158,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 	private void initialize(Window window)
 	{
 		setTitle(RStr.TREE_OPEN_PACKAGE.get());
-		setIconImage(RImg.USB_ICON.getImageIcon().getImage());
+		setIconImage(RImg.USB_ICON.getImage());
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(true);
 		setModal(true);

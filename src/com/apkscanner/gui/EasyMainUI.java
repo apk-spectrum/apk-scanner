@@ -91,7 +91,7 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 			setResizable(true);
 		}
 		Log.i("setIconImage");
-		setIconImage(RImg.APP_ICON.getImageIcon().getImage());
+		setIconImage(RImg.APP_ICON.getImage());
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setMinimumSize(new Dimension(300,200));
 

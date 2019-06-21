@@ -125,7 +125,7 @@ public class MainUI extends JFrame implements IPlugInEventListener
 
 		Log.i("initialize() set title & icon");
 		setTitle(RStr.APP_NAME.get());
-		setIconImage(RImg.APP_ICON.getImageIcon().getImage());
+		setIconImage(RImg.APP_ICON.getImage());
 
 		Log.i("initialize() set bound & size ");
 		Dimension minSize = new Dimension(RConst.INT_WINDOW_SIZE_WIDTH_MIN, RConst.INT_WINDOW_SIZE_HEIGHT_MIN);

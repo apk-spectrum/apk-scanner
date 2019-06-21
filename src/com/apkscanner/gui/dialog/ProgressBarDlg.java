@@ -75,7 +75,7 @@ public class ProgressBarDlg extends JFrame
     public ProgressBarDlg(Component component, WindowListener windowListener)
     {
     	setTitle("APK Scanner " + RStr.APP_VERSION.getString());
-    	setIconImage(RImg.APP_ICON.getImageIcon().getImage());
+    	setIconImage(RImg.APP_ICON.getImage());
     	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
     	try {

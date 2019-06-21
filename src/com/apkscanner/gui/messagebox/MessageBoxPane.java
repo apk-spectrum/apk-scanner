@@ -74,7 +74,7 @@ public class MessageBoxPane extends JOptionPane
 			throws HeadlessException {
 		JDialog dialog = super.createDialog(parentComponent, title);
 		dialog.setResizable(true);
-		dialog.setIconImage(RImg.APP_ICON.getImageIcon().getImage());
+		dialog.setIconImage(RImg.APP_ICON.getImage());
 		if(RProp.B.SAVE_WINDOW_SIZE.get()) {
 			WindowSizeMemorizer.resizeCompoent(dialog, title);
 		} else {

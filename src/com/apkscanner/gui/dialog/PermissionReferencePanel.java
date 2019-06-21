@@ -122,7 +122,7 @@ public class PermissionReferencePanel extends JPanel implements ActionListener {
 		dialog = new JDialog(owner);
 
 		dialog.setTitle(RStr.LABEL_REFERENCE_N_LEVELS.get());
-		dialog.setIconImage(RImg.APP_ICON.getImageIcon().getImage());
+		dialog.setIconImage(RImg.APP_ICON.getImage());
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		dialog.setResizable(true);
 

@@ -27,7 +27,6 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -163,7 +162,7 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 	    scroll.getHorizontalScrollBar().addAdjustmentListener(
                 adjustmentListener);
 
-		imageBackground = RImg.RESOURCE_BACKGROUND.getImageIcon().getImage();
+		imageBackground = RImg.RESOURCE_BACKGROUND.getImage();
 
 	}
 
@@ -175,9 +174,9 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 		Log.d(imgPath);
 		try {
 			if(imgPath.toLowerCase().endsWith(".webp")) {
-				imagepanel.setImage(new ImageIcon(ImageIO.read(new URL(imgPath))));
+				imagepanel.setImage(ImageIO.read(new URL(imgPath)));
 			} else {
-				imagepanel.setImage(new ImageIcon(new URL(imgPath)));
+				imagepanel.setImage(RImg.getImage(new URL(imgPath)));
 			}
 		} catch (IOException|NullPointerException e) {
 			//e.printStackTrace();
@@ -201,8 +200,7 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 			setBackground(Color.white);
 
 		}
-		public void setImage(ImageIcon img) {
-			Image image = img.getImage();
+		public void setImage(Image image) {
 			bi = new BufferedImage(image.getWidth(this), image.getHeight(this), BufferedImage.TYPE_INT_ARGB);
 			Graphics2D big = bi.createGraphics();
 			big.drawImage(image, 0, 0, this);
@@ -325,9 +323,9 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 	public void actionPerformed(ActionEvent arg0) {
 		boolean isWhiteMono = arg0.getActionCommand().equals("White");
 		if(isWhiteMono) {
-			imageBackground = RImg.RESOURCE_BACKGROUND.getImageIcon().getImage();
+			imageBackground = RImg.RESOURCE_BACKGROUND.getImage();
 		} else {
-			imageBackground = RImg.RESOURCE_BACKGROUND_DARK.getImageIcon().getImage();
+			imageBackground = RImg.RESOURCE_BACKGROUND_DARK.getImage();
 		}
 		repaint();
 	}
