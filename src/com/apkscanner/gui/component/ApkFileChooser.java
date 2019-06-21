@@ -7,7 +7,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import com.apkscanner.gui.messagebox.MessageBoxPool;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RProp;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 
 public class ApkFileChooser
@@ -20,7 +21,7 @@ public class ApkFileChooser
 		    public void approveSelection(){
 		        File f = getSelectedFile();
 		        if(f.exists() && getDialogType() == SAVE_DIALOG){
-		            int result = JOptionPane.showConfirmDialog(this,Resource.STR_QUESTION_SAVE_OVERWRITE.getString(),Resource.STR_LABEL_SAVE_AS.getString(),JOptionPane.YES_NO_CANCEL_OPTION);
+		            int result = JOptionPane.showConfirmDialog(this,RStr.QUESTION_SAVE_OVERWRITE.get(),RStr.LABEL_SAVE_AS.get(),JOptionPane.YES_NO_CANCEL_OPTION);
 		            switch(result){
 		                case JOptionPane.YES_OPTION:
 			    			if(!f.canWrite()) {
@@ -51,15 +52,15 @@ public class ApkFileChooser
 	
 	static public File openApkFile(Component component)
 	{
-		JFileChooser jfc = getFileChooser((String)Resource.PROP_LAST_FILE_OPEN_PATH.getData(), JFileChooser.OPEN_DIALOG, null);
-		jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(Resource.STR_LABEL_APK_FILE_DESC.getString(),"apk"));
+		JFileChooser jfc = getFileChooser(RProp.S.LAST_FILE_OPEN_PATH.get(), JFileChooser.OPEN_DIALOG, null);
+		jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(RStr.LABEL_APK_FILE_DESC.get(),"apk"));
 
 		if(jfc.showOpenDialog(component) != JFileChooser.APPROVE_OPTION)
 			return null;
 		
 		File dir = jfc.getSelectedFile();
 		if(dir != null) {
-			Resource.PROP_LAST_FILE_OPEN_PATH.setData(dir.getParentFile().getAbsolutePath());
+			RProp.LAST_FILE_OPEN_PATH.setData(dir.getParentFile().getAbsolutePath());
 		}
 		return dir;
 	}
@@ -77,8 +78,8 @@ public class ApkFileChooser
 			defaultFilePath += ".apk"; 
 		}
 
-		JFileChooser jfc = getFileChooser((String)Resource.PROP_LAST_FILE_SAVE_PATH.getData(), JFileChooser.SAVE_DIALOG, new File(defaultFilePath));
-		jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(Resource.STR_LABEL_APK_FILE_DESC.getString(),"apk"));
+		JFileChooser jfc = getFileChooser(RProp.S.LAST_FILE_SAVE_PATH.get(), JFileChooser.SAVE_DIALOG, new File(defaultFilePath));
+		jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(RStr.LABEL_APK_FILE_DESC.get(),"apk"));
 
 		if(jfc.showSaveDialog(component) != JFileChooser.APPROVE_OPTION)
 			return null;
@@ -89,7 +90,7 @@ public class ApkFileChooser
         }
 
 		if(selFile != null) {
-			Resource.PROP_LAST_FILE_SAVE_PATH.setData(selFile.getParentFile().getAbsolutePath());
+			RProp.LAST_FILE_SAVE_PATH.setData(selFile.getParentFile().getAbsolutePath());
 		}
 		return selFile;
 	}

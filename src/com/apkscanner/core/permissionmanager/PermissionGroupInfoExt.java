@@ -6,7 +6,7 @@ import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.PermissionGroupInfo;
 import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RProp;
 
 public class PermissionGroupInfoExt extends PermissionGroupInfo implements UnitInformation {
 	public int sdk;
@@ -77,17 +77,17 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo implements UnitI
 
 	@Override
 	public String getLabel() {
-    	return ApkInfoHelper.getResourceValue(getLabels(), (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
+    	return ApkInfoHelper.getResourceValue(getLabels(), RProp.S.PREFERRED_LANGUAGE.get());
     }
 
 	@Override
     public String getDescription() {
-    	return ApkInfoHelper.getResourceValue(getDescriptions(), (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
+    	return ApkInfoHelper.getResourceValue(getDescriptions(), RProp.S.PREFERRED_LANGUAGE.get());
     }
 
 	@Override
     public String getRequest() {
-    	return ApkInfoHelper.getResourceValue(getRequests(), (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
+    	return ApkInfoHelper.getResourceValue(getRequests(), RProp.S.PREFERRED_LANGUAGE.get());
     }
 
 	@Override

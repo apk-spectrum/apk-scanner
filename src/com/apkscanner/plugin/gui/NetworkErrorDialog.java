@@ -9,7 +9,7 @@ import com.apkscanner.plugin.IUpdateChecker;
 import com.apkscanner.plugin.NetworkException;
 import com.apkscanner.plugin.PlugInConfig;
 import com.apkscanner.plugin.PlugInManager;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 
 public class NetworkErrorDialog
@@ -47,8 +47,8 @@ public class NetworkErrorDialog
 			if(!force && "true".equals(config.getConfiguration(IGNORE_NO_SUCHE_INTERFACE)))
 				return RESULT_IGNORED;
 
-			errPanel.setText(Resource.STR_MSG_NO_SUCH_NETWORK.getString());
-			ret = showOptionDialog(parent, errPanel, Resource.STR_TITLE_NO_SUCH_NETWORK.getString());
+			errPanel.setText(RStr.MSG_NO_SUCH_NETWORK.get());
+			ret = showOptionDialog(parent, errPanel, RStr.TITLE_NO_SUCH_NETWORK.get());
 
 			if(!force) config.setConfiguration(IGNORE_NO_SUCHE_INTERFACE, errPanel.isNeverLook() ? "true" : "false");
 			PlugInManager.saveProperty();
@@ -56,9 +56,9 @@ public class NetworkErrorDialog
 			if(!force && "true".equals(config.getConfiguration(IGNORE_TIME_OUT)))
 				return RESULT_IGNORED;
 
-			errPanel.setText(String.format(Resource.STR_MSG_FAILURE_PROXY_ERROR.getString(), pluginName));
+			errPanel.setText(String.format(RStr.MSG_FAILURE_PROXY_ERROR.get(), pluginName));
 			errPanel.add(new NetworkProxySettingPanel(plugin.getPlugInPackage()));
-			ret = showOptionDialog(parent, errPanel, Resource.STR_TITLE_NETWORK_TIMEOUT.getString());
+			ret = showOptionDialog(parent, errPanel, RStr.TITLE_NETWORK_TIMEOUT.get());
 
 			if(!force) config.setConfiguration(IGNORE_TIME_OUT, errPanel.isNeverLook() ? "true" : "false");
 			PlugInManager.saveProperty();
@@ -67,9 +67,9 @@ public class NetworkErrorDialog
 			if(!force && "true".equals(config.getConfiguration(IGNORE_SSH_HANDSHAKE)))
 				return RESULT_IGNORED;
 
-			errPanel.setText(String.format(Resource.STR_MSG_FAILURE_SSL_ERROR.getString(), pluginName));
+			errPanel.setText(String.format(RStr.MSG_FAILURE_SSL_ERROR.get(), pluginName));
 			errPanel.add(new NetworkTruststoreSettingPanel(plugin.getPlugInPackage()));
-			ret = showOptionDialog(parent, errPanel, Resource.STR_TITLE_SSL_EXCEPTION.getString());
+			ret = showOptionDialog(parent, errPanel, RStr.TITLE_SSL_EXCEPTION.get());
 
 			if(!force) config.setConfiguration(IGNORE_SSH_HANDSHAKE, errPanel.isNeverLook() ? "true" : "false");
 			PlugInManager.saveProperty();
@@ -84,7 +84,7 @@ public class NetworkErrorDialog
 	private static int showOptionDialog(Component parentComponent, Object context, String title) {
 		return MessageBoxPane.showOptionDialog(parentComponent, context, title, JOptionPane.DEFAULT_OPTION,
 				MessageBoxPane.ERROR_MESSAGE, null,
-				new String[] { Resource.STR_BTN_RETRY.getString(),  Resource.STR_BTN_CLOSE.getString() },
-				Resource.STR_BTN_CLOSE.getString());
+				new String[] { RStr.BTN_RETRY.get(),  RStr.BTN_CLOSE.get() },
+				RStr.BTN_CLOSE.get());
 	}
 }

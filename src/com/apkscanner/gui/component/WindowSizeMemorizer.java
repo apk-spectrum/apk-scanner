@@ -10,7 +10,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
 
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RProp;
 import com.apkscanner.util.Log;
 
 public class WindowSizeMemorizer implements ComponentListener, WindowListener
@@ -112,7 +112,7 @@ public class WindowSizeMemorizer implements ComponentListener, WindowListener
 		int height = defaultSize != null ? (int)defaultSize.getHeight() : -1;
 		String key = "ws_"+ component.getClass().getName() + (id != null ? "#" + id : "");
 
-		Object data = Resource.getPropData(key+"_width");
+		Object data = RProp.getPropData(key+"_width");
 		if(data instanceof Long) {
 			width = (int)(long)data;
 		} else if(data instanceof Integer) {
@@ -121,7 +121,7 @@ public class WindowSizeMemorizer implements ComponentListener, WindowListener
 			return defaultSize;
 		}
 
-		data = Resource.getPropData(key+"_height");
+		data = RProp.getPropData(key+"_height");
 		if(data instanceof Long) {
 			height = (int)(long)data;
 		} else if(data instanceof Integer) {
@@ -141,7 +141,7 @@ public class WindowSizeMemorizer implements ComponentListener, WindowListener
 		String key = "ws_"+ component.getClass().getName() + (id != null ? "#" + id : "");
 		int state = Frame.NORMAL;
 		if(component instanceof Frame) {
-			Object data = Resource.getPropData(key+"_state");
+			Object data = RProp.getPropData(key+"_state");
 			if(data instanceof Long) {
 				state = (int)(long)data;
 			} else if(data instanceof Integer) {
@@ -176,21 +176,21 @@ public class WindowSizeMemorizer implements ComponentListener, WindowListener
 
 	private void saveComponentSize() {
 		Log.v("saveComponentSize() component:" + component.getClass().getName() + ", id:" + id + ", flag:" + flag + " / size:"+component.getSize().toString());
-		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData(false)) {
+		if(RProp.B.SAVE_WINDOW_SIZE.get()) {
 			String key = "ws_"+ component.getClass().getName() + (id != null ? "#" + id : "");
 			int state = Frame.NORMAL;
 			if(component instanceof Frame) {
 				state = ((Frame)component).getExtendedState() & Frame.MAXIMIZED_BOTH;
-				Resource.setPropData(key+"_state", state);
+				RProp.setPropData(key+"_state", state);
 			}
 			int width = (int)component.getSize().getWidth();
 			int height = (int)component.getSize().getHeight();
 
 			if((state & Frame.MAXIMIZED_HORIZ) == 0) {
-				Resource.setPropData(key+"_width", width);
+				RProp.setPropData(key+"_width", width);
 			}
 			if((state & Frame.MAXIMIZED_VERT) == 0) {
-				Resource.setPropData(key+"_height", height);
+				RProp.setPropData(key+"_height", height);
 			}
 		}
 

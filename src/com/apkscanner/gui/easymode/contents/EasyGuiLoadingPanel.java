@@ -8,7 +8,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 
 import com.apkscanner.gui.easymode.util.FlatPanel;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
 
 public class EasyGuiLoadingPanel extends FlatPanel {
 
@@ -23,7 +23,7 @@ public class EasyGuiLoadingPanel extends FlatPanel {
 		setBackground(sdkverPanelcolor);
 		JLabel scannertext = new JLabel(str);
 		scannertext.setFont(new Font(getFont().getName(), Font.BOLD, 10));
-		scannertext.setIcon(Resource.IMG_TREE_LOADING.getImageIcon());
+		scannertext.setIcon(RImg.TREE_LOADING.getImageIcon());
 		
 		//appicon.setText(strTabInfo.toString());  //delay 50ms using html
 		add(scannertext, BorderLayout.CENTER);

@@ -37,7 +37,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
 import com.apkscanner.util.FileUtil.FSStyle;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
@@ -163,7 +163,7 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 	    scroll.getHorizontalScrollBar().addAdjustmentListener(
                 adjustmentListener);
 
-		imageBackground = Resource.IMG_RESOURCE_IMG_BACKGROUND.getImageIcon().getImage();
+		imageBackground = RImg.RESOURCE_BACKGROUND.getImageIcon().getImage();
 
 	}
 
@@ -325,9 +325,9 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 	public void actionPerformed(ActionEvent arg0) {
 		boolean isWhiteMono = arg0.getActionCommand().equals("White");
 		if(isWhiteMono) {
-			imageBackground = Resource.IMG_RESOURCE_IMG_BACKGROUND.getImageIcon().getImage();
+			imageBackground = RImg.RESOURCE_BACKGROUND.getImageIcon().getImage();
 		} else {
-			imageBackground = Resource.IMG_RESOURCE_IMG_BACKGROUND_DARK.getImageIcon().getImage();
+			imageBackground = RImg.RESOURCE_BACKGROUND_DARK.getImageIcon().getImage();
 		}
 		repaint();
 	}

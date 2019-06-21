@@ -3,27 +3,27 @@ package com.apkscanner.test;
 
 
 import java.awt.BorderLayout;
- import java.awt.Component;
- import java.awt.Image;
- import java.awt.Rectangle;
- import java.awt.event.WindowAdapter;
- import java.awt.event.WindowEvent;
- import java.awt.image.ImageObserver;
- import java.util.Hashtable;
+import java.awt.Component;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.ImageObserver;
+import java.util.Hashtable;
 
 import javax.swing.Icon;
- import javax.swing.ImageIcon;
- import javax.swing.JFrame;
- import javax.swing.JScrollPane;
- import javax.swing.JTree;
- import javax.swing.UIManager;
- import javax.swing.tree.DefaultMutableTreeNode;
- import javax.swing.tree.DefaultTreeCellRenderer;
- import javax.swing.tree.DefaultTreeModel;
- import javax.swing.tree.TreeNode;
- import javax.swing.tree.TreePath;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
+import javax.swing.UIManager;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
 import com.apkscanner.util.Log;
 
 /**
@@ -59,11 +59,11 @@ public AnimatedIconTreeExample() {
      nodes[4].add(nodes[6]);
      nodes[4].add(nodes[7]);
 
-    nodes[2].setIcon(Resource.IMG_LOADING.getImageIcon());
-     nodes[3].setIcon(Resource.IMG_LOADING.getImageIcon());
-     nodes[5].setIcon(Resource.IMG_LOADING.getImageIcon());
-     nodes[6].setIcon(Resource.IMG_LOADING.getImageIcon());
-     nodes[7].setIcon(Resource.IMG_LOADING.getImageIcon());
+    nodes[2].setIcon(RImg.LOADING.getImageIcon());
+     nodes[3].setIcon(RImg.LOADING.getImageIcon());
+     nodes[5].setIcon(RImg.LOADING.getImageIcon());
+     nodes[6].setIcon(RImg.LOADING.getImageIcon());
+     nodes[7].setIcon(RImg.LOADING.getImageIcon());
 
     JTree tree = new JTree(nodes[0]);
      tree.setCellRenderer(new IconNodeRenderer());

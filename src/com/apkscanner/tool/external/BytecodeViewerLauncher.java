@@ -3,7 +3,7 @@ package com.apkscanner.tool.external;
 import java.io.File;
 
 import com.apkscanner.gui.messagebox.MessageBoxPool;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RFile;
 import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
@@ -24,7 +24,7 @@ public class BytecodeViewerLauncher {
 			public void run()
 			{
 				ConsolCmd.exc(new String[] {"java", "-version"}, true);
-				ConsolCmd.exc(new String[] {"java", "-jar", Resource.BIN_BYTECODE_VIEWER.getPath(), jarFilePath}, true);
+				ConsolCmd.exc(new String[] {"java", "-jar", RFile.BIN_BYTECODE_VIEWER.get(), jarFilePath}, true);
 			}
 		});
 		t.setPriority(Thread.NORM_PRIORITY);

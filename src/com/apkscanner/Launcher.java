@@ -5,7 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RFile;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 
@@ -110,7 +110,7 @@ public class Launcher
 		//classPathBuilder.append(File.pathSeparator);
 		//classPathBuilder.append(Resource.LIB_CLI_JAR.getPath());
 		classPathBuilder.append(File.pathSeparator);
-		classPathBuilder.append(Resource.LIB_ALL.getPath());
+		classPathBuilder.append(RFile.LIB_ALL.get());
 
 		String classPath = null;
 		try {
@@ -119,7 +119,7 @@ public class Launcher
 
 		defaultCmd.add("java");
 		defaultCmd.add("-Dfile.encoding=utf-8");
-		defaultCmd.add("-Djava.library.path="+Resource.BIN_PATH.getPath());
+		defaultCmd.add("-Djava.library.path=" + RFile.BIN_PATH.get());
 		defaultCmd.add("-cp");
 		defaultCmd.add(classPath);
 		defaultCmd.add(Main.class.getName());

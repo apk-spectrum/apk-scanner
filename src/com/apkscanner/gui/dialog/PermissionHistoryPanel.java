@@ -87,7 +87,9 @@ import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.gui.component.WindowSizeMemorizer;
 import com.apkscanner.gui.component.tabbedpane.CloseableTabbedPaneLayerUI;
 import com.apkscanner.gui.component.tabbedpane.TabbedPaneUIManager;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RProp;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 
 public class PermissionHistoryPanel extends JPanel implements ItemListener, ActionListener {
@@ -199,12 +201,12 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		});
 		sdkSelectPanel.add(sdkVersions);
 
-		byGroup = new JCheckBox(Resource.STR_LABEL_BY_GROUP.getString());
+		byGroup = new JCheckBox(RStr.LABEL_BY_GROUP.get());
 		byGroup.setSelected(true);
 		byGroup.addItemListener(this);
 		sdkSelectPanel.add(byGroup);
 
-		withLable = new JCheckBox(Resource.STR_LABEL_WITH_LABEL.getString());
+		withLable = new JCheckBox(RStr.LABEL_WITH_LABEL.get());
 		withLable.setSelected(true);
 		withLable.addItemListener(this);
 		sdkSelectPanel.add(withLable);
@@ -212,7 +214,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		JPanel sdkOptions = new JPanel(new BorderLayout());
 		sdkOptions.add(sdkSelectPanel);
 
-		JLabel refer = new JLabel(Resource.STR_LABEL_REFERENCE_N_LEVELS.getString());
+		JLabel refer = new JLabel(RStr.LABEL_REFERENCE_N_LEVELS.get());
 		refer.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		refer.addMouseListener(new MouseAdapter() {
 			@Override
@@ -249,15 +251,15 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 
 		Box box = Box.createHorizontalBox();
 		box.setAlignmentX(0f);
-		extendFilterLabel = new JLabel(Resource.STR_LABEL_FILTER.getString() + " : ");
+		extendFilterLabel = new JLabel(RStr.LABEL_FILTER.get() + " : ");
 		extendFilterLabel.setIcon((Icon) UIManager.get("Tree.expandedIcon"));
 		extendFilterLabel.setAlignmentX(0f);
 		box.add(extendFilterLabel);
-		JRadioButton inPackage = new JRadioButton(Resource.STR_LABEL_USED_IN_PACKAGE.getString());
+		JRadioButton inPackage = new JRadioButton(RStr.LABEL_USED_IN_PACKAGE.get());
 		inPackage.setActionCommand(ACT_CMD_IN_PACKAGE);
 		inPackage.addActionListener(this);
 		box.add(inPackage);
-		JRadioButton onAndroid = new JRadioButton(Resource.STR_LABEL_ALL_ON_ANDROID.getString());
+		JRadioButton onAndroid = new JRadioButton(RStr.LABEL_ALL_ON_ANDROID.get());
 		onAndroid.setActionCommand(ACT_CMD_ON_ANDROID);
 		onAndroid.addActionListener(this);
 		box.add(onAndroid);
@@ -270,7 +272,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 
 		box = Box.createHorizontalBox();
 		box.setAlignmentX(0f);
-		box.add(new JLabel(Resource.STR_LABEL_SEARCH.getString()+":"));
+		box.add(new JLabel(RStr.LABEL_SEARCH.get()+":"));
 		filterTextField = new JTextField();
 		filterTextField.getDocument().addDocumentListener(new DocumentListener() {
 			private void setFilter() {
@@ -403,7 +405,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 			}, this);
 
 		extraTabbedPanel = new JTabbedPane();
-		String tabbedStyle = (String) Resource.PROP_TABBED_UI_THEME.getData();
+		String tabbedStyle = RProp.S.TABBED_UI_THEME.get();
 		extraTabbedPanel.setOpaque(true);
 		TabbedPaneUIManager.setUI(extraTabbedPanel, tabbedStyle);
 
@@ -679,9 +681,9 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 	private void refreshPermsCount() {
 		String count = null;
 		if(byGroup.isSelected()) {
-			count = String.format(Resource.STR_LABEL_GROUP_COUNT_FORMAT.getString(), permTable.getGroupCount(), permTable.getPermissionCount());
+			count = String.format(RStr.LABEL_GROUP_COUNT_FORMAT.get(), permTable.getGroupCount(), permTable.getPermissionCount());
 		} else {
-			count = String.format(Resource.STR_LABEL_PERM_COUNT_FORMAT.getString(), permTable.getPermissionCount());
+			count = String.format(RStr.LABEL_PERM_COUNT_FORMAT.get(), permTable.getPermissionCount());
 		}
 		collapseFilterCount.setText(count);
 		extendFilterCount.setText(count);
@@ -707,11 +709,11 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 
 	private void refreshFilterLabel() {
 		StringBuilder label = new StringBuilder();
-		label.append(Resource.STR_LABEL_FILTER.getString()).append(" : ");
+		label.append(RStr.LABEL_FILTER.get()).append(" : ");
 		if(permManager == cachePermMangers[ON_ANDROID]) {
-			label.append(Resource.STR_LABEL_ALL_ON_ANDROID_SHORT.getString()).append(", ");
+			label.append(RStr.LABEL_ALL_ON_ANDROID_SHORT.get()).append(", ");
 		} else {
-			label.append(Resource.STR_LABEL_USED_IN_PACKAGE_SHORT.getString()).append(", ");
+			label.append(RStr.LABEL_USED_IN_PACKAGE_SHORT.get()).append(", ");
 		}
 
 		String filterText = permTable.getFilterText().trim();
@@ -722,7 +724,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 			filterText = filterText.substring(0, 10) + "...";
 		}
 		if(filterText.isEmpty()) {
-			filterText = Resource.STR_LABEL_FILTER_NONE.getString();
+			filterText = RStr.LABEL_FILTER_NONE.get();
 		}
 		label.append(filterText).append(", ");
 
@@ -742,7 +744,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 				}
 			}
 		}
-		label.append(hasAllLevel ? Resource.STR_LABEL_FILTER_ALL.getString(): level);
+		label.append(hasAllLevel ? RStr.LABEL_FILTER_ALL.get(): level);
 
 		collapseFilterLabel.setText(label.toString());
 	}
@@ -750,8 +752,8 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 	public void showDialog(Window owner) {
 		dialog = new JDialog(owner);
 
-		dialog.setTitle(Resource.STR_LABEL_PERMISSION_INFO.getString());
-		dialog.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+		dialog.setTitle(RStr.LABEL_PERMISSION_INFO.get());
+		dialog.setIconImage(RImg.APP_ICON.getImageIcon().getImage());
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		dialog.setResizable(true);
 
@@ -759,7 +761,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		dialog.setLayout(new BorderLayout());
 
 		Dimension minSize = new Dimension(700, 600);
-		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
+		if(RProp.B.SAVE_WINDOW_SIZE.get()) {
 			WindowSizeMemorizer.resizeCompoent(dialog, minSize);
 		} else {
 			dialog.setSize(minSize);

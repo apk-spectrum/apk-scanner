@@ -31,7 +31,10 @@ import com.apkscanner.gui.easymode.dlg.EasyToolbarCertDlg;
 import com.apkscanner.gui.installer.ApkInstallWizard;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RConst;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RProp;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.tool.adb.AdbDeviceHelper;
@@ -69,46 +72,46 @@ public class ToolEntryManager {
 	public static void initToolEntryManager() {
 		Log.i("start toolentryManager");
 		allEntry = new ArrayList<ToolEntry>(Arrays.asList(
-//				new ToolEntry(Resource.STR_APP_NAME.getString(), "Excute Original Scanner",
-//						Resource.IMG_APP_ICON.getImageIcon(100, 100)),
-				new ToolEntry(Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OPEN_LAB.getString(),
-						Resource.IMG_TOOLBAR_OPEN.getImageIcon()),
-				new ToolEntry(Resource.STR_BTN_OPEN_PACKAGE.getString(), Resource.STR_BTN_OPEN_PACKAGE_LAB.getString(),
-						Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon()),
-				new ToolEntry(Resource.STR_BTN_MANIFEST.getString(), Resource.STR_BTN_MANIFEST_LAB.getString(),
-						Resource.IMG_TOOLBAR_MANIFEST.getImageIcon()),
-				new ToolEntry(Resource.STR_BTN_EXPLORER.getString(), Resource.STR_BTN_EXPLORER_LAB.getString(),
-						Resource.IMG_TOOLBAR_EXPLORER.getImageIcon()),
-				new ToolEntry(Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_INSTALL_LAB.getString(),
-						Resource.IMG_TOOLBAR_INSTALL.getImageIcon()),
-				new ToolEntry(Resource.STR_BTN_SIGN.getString(), Resource.STR_BTN_SIGN_LAB.getString(),
-						Resource.IMG_TOOLBAR_SIGNNING.getImageIcon()),
-//				new ToolEntry(Resource.STR_BTN_LAUNCH.getString(), Resource.STR_BTN_LAUNCH_LAB.getString(),
-//						Resource.IMG_TOOLBAR_LAUNCH.getImageIcon()),
-//				new ToolEntry(Resource.STR_BTN_DEL.getString(), Resource.STR_BTN_DEL.getString(),
-//						Resource.IMG_TOOLBAR_UNINSTALL.getImageIcon()),
-//				new ToolEntry(Resource.STR_MENU_CLEAR_DATA.getString(), Resource.STR_MENU_CLEAR_DATA.getString(),
-//						Resource.IMG_TOOLBAR_CLEAR.getImageIcon()),
-//				new ToolEntry(Resource.STR_BTN_DETAILS_INFO.getString(), Resource.STR_BTN_DETAILS_INFO.getString(),
-//						Resource.IMG_TOOLBAR_SEARCH.getImageIcon()),
-				new ToolEntry(Resource.STR_BTN_OPENCODE.getString(), Resource.STR_BTN_OPENING_CODE_LAB.getString(),
-						Resource.IMG_TOOLBAR_OPENCODE.getImageIcon()),
-				new ToolEntry(Resource.STR_BTN_SETTING.getString(), Resource.STR_BTN_SETTING_LAB.getString(),
-						Resource.IMG_TOOLBAR_SETTING.getImageIcon()),
-				new ToolEntry(Resource.STR_BTN_ABOUT.getString(), Resource.STR_BTN_ABOUT_LAB.getString(),
-						Resource.IMG_TOOLBAR_ABOUT.getImageIcon())));
+//				new ToolEntry(RStr.APP_NAME.get(), "Excute Original Scanner",
+//						RImg.APP_ICON.getImageIcon(100, 100)),
+				new ToolEntry(RStr.BTN_OPEN.get(), RStr.BTN_OPEN_LAB.get(),
+						RImg.TOOLBAR_OPEN.getImageIcon()),
+				new ToolEntry(RStr.BTN_OPEN_PACKAGE.get(), RStr.BTN_OPEN_PACKAGE_LAB.get(),
+						RImg.TOOLBAR_PACKAGETREE.getImageIcon()),
+				new ToolEntry(RStr.BTN_MANIFEST.get(), RStr.BTN_MANIFEST_LAB.get(),
+						RImg.TOOLBAR_MANIFEST.getImageIcon()),
+				new ToolEntry(RStr.BTN_EXPLORER.get(), RStr.BTN_EXPLORER_LAB.get(),
+						RImg.TOOLBAR_EXPLORER.getImageIcon()),
+				new ToolEntry(RStr.BTN_INSTALL.get(), RStr.BTN_INSTALL_LAB.get(),
+						RImg.TOOLBAR_INSTALL.getImageIcon()),
+				new ToolEntry(RStr.BTN_SIGN.get(), RStr.BTN_SIGN_LAB.get(),
+						RImg.TOOLBAR_SIGNNING.getImageIcon()),
+//				new ToolEntry(RStr.BTN_LAUNCH.get(), RStr.BTN_LAUNCH_LAB.get(),
+//						RImg.TOOLBAR_LAUNCH.getImageIcon()),
+//				new ToolEntry(RStr.BTN_DEL.get(), RStr.BTN_DEL.get(),
+//						RImg.TOOLBAR_UNINSTALL.getImageIcon()),
+//				new ToolEntry(RStr.MENU_CLEAR_DATA.get(), RStr.MENU_CLEAR_DATA.get(),
+//						RImg.TOOLBAR_CLEAR.getImageIcon()),
+//				new ToolEntry(RStr.BTN_DETAILS_INFO.get(), RStr.BTN_DETAILS_INFO.get(),
+//						RImg.TOOLBAR_SEARCH.getImageIcon()),
+				new ToolEntry(RStr.BTN_OPENCODE.get(), RStr.BTN_OPENING_CODE_LAB.get(),
+						RImg.TOOLBAR_OPENCODE.getImageIcon()),
+				new ToolEntry(RStr.BTN_SETTING.get(), RStr.BTN_SETTING_LAB.get(),
+						RImg.TOOLBAR_SETTING.getImageIcon()),
+				new ToolEntry(RStr.BTN_ABOUT.get(), RStr.BTN_ABOUT_LAB.get(),
+						RImg.TOOLBAR_ABOUT.getImageIcon())));
 		Log.i("start deviceEntry toolEntry");
 		deviceEntry = new ArrayList<ToolEntry>(Arrays.asList(
-//				new ToolEntry(Resource.STR_APP_NAME.getString(), "Excute Original Scanner",
-//				Resource.IMG_APP_ICON.getImageIcon(100, 100)),
-		new ToolEntry(Resource.STR_BTN_LAUNCH.getString(), Resource.STR_BTN_LAUNCH_LAB.getString(),
-				Resource.IMG_TOOLBAR_LAUNCH.getImageIcon()),
-		new ToolEntry(Resource.STR_BTN_DEL.getString(), Resource.STR_BTN_DEL.getString(),
-				Resource.IMG_TOOLBAR_UNINSTALL.getImageIcon()),
-		new ToolEntry(Resource.STR_MENU_CLEAR_DATA.getString(), Resource.STR_MENU_CLEAR_DATA.getString(),
-				Resource.IMG_TOOLBAR_CLEAR.getImageIcon()),
-		new ToolEntry(Resource.STR_BTN_DETAILS_INFO.getString(), Resource.STR_BTN_DETAILS_INFO.getString(),
-				Resource.IMG_TOOLBAR_SEARCH.getImageIcon())));
+//				new ToolEntry(RStr.APP_NAME.get(), "Excute Original Scanner",
+//				RImg.APP_ICON.getImageIcon(100, 100)),
+		new ToolEntry(RStr.BTN_LAUNCH.get(), RStr.BTN_LAUNCH_LAB.get(),
+				RImg.TOOLBAR_LAUNCH.getImageIcon()),
+		new ToolEntry(RStr.BTN_DEL.get(), RStr.BTN_DEL.get(),
+				RImg.TOOLBAR_UNINSTALL.getImageIcon()),
+		new ToolEntry(RStr.MENU_CLEAR_DATA.get(), RStr.MENU_CLEAR_DATA.get(),
+				RImg.TOOLBAR_CLEAR.getImageIcon()),
+		new ToolEntry(RStr.BTN_DETAILS_INFO.get(), RStr.BTN_DETAILS_INFO.get(),
+				RImg.TOOLBAR_SEARCH.getImageIcon())));
 		
 		Log.i("start MessageBoxPool");
 		messagePool = new MessageBoxPool(mainframe);
@@ -137,7 +140,7 @@ public class ToolEntryManager {
 
 	public static void refreshToolManager() {
 		ShowEntry.clear();
-		String[] toollist = Resource.PROP_EASY_GUI_TOOLBAR.getData().toString().split(",");
+		String[] toollist = RProp.S.EASY_GUI_TOOLBAR.get().split(",");
 		
 		for (String str : toollist) {
 			if(str.length() !=0)
@@ -157,7 +160,7 @@ public class ToolEntryManager {
 	
 	public static void excuteEntry(String cmd, Object obj) {
 		Log.d("Tool Click - " + cmd);
-		if (cmd.equals(Resource.STR_BTN_OPEN.getString())) {
+		if (cmd.equals(RStr.BTN_OPEN.get())) {
 			final String apkFilePath = ApkFileChooser.openApkFilePath(null);
 			if (apkFilePath == null) {
 				Log.v("Not choose apk file");
@@ -175,9 +178,9 @@ public class ToolEntryManager {
 				thread.setPriority(Thread.NORM_PRIORITY);
 				thread.start();
 			}			
-		} else if (cmd.equals(Resource.STR_APP_NAME.getString())) {
+		} else if (cmd.equals(RStr.APP_NAME.get())) {
 			UIController.changeToMainGui();
-		} else if (cmd.equals(Resource.STR_BTN_OPEN_PACKAGE.getString())) {
+		} else if (cmd.equals(RStr.BTN_OPEN_PACKAGE.get())) {
 			PackageTreeDlg Dlg = new PackageTreeDlg(mainframe);
 			if (Dlg.showTreeDlg() != PackageTreeDlg.APPROVE_OPTION) {
 				Log.v("Not choose package");
@@ -200,9 +203,9 @@ public class ToolEntryManager {
 				thread.start();
 			}
 			
-		} else if (cmd.equals(Resource.STR_BTN_MANIFEST.getString())) {
+		} else if (cmd.equals(RStr.BTN_MANIFEST.get())) {
 			openMenifest();
-		} else if (cmd.equals(Resource.STR_BTN_EXPLORER.getString())) {
+		} else if (cmd.equals(RStr.BTN_EXPLORER.get())) {
 			ApkInfo apkInfo = apkScanner.getApkInfo();
 			if (apkInfo == null) {
 				Log.e("evtShowExplorer() apkInfo is null");
@@ -211,7 +214,7 @@ public class ToolEntryManager {
 				return;
 			}
 			SystemUtil.openArchiveExplorer(apkInfo.filePath);
-		} else if (cmd.equals(Resource.STR_BTN_INSTALL.getString())) {
+		} else if (cmd.equals(RStr.BTN_INSTALL.get())) {
 			ApkInfo apkInfo = apkScanner.getApkInfo();
 			if (apkInfo == null) {
 				Log.e("evtInstallApk() apkInfo is null");
@@ -220,7 +223,7 @@ public class ToolEntryManager {
 			}
 			ApkInstallWizard wizard = new ApkInstallWizard(apkInfo.filePath, mainframe);
 			wizard.start();
-		} else if (cmd.equals(Resource.STR_BTN_SIGN.getString())) {
+		} else if (cmd.equals(RStr.BTN_SIGN.get())) {
 			ToolEntryManager.excuteSinerDlg(mainframe);
 		}  else if (cmd.equals(TOOL_SHOW_SIGN_DLG)) {
 			ApkInfo apkInfo = apkScanner.getApkInfo();
@@ -230,21 +233,21 @@ public class ToolEntryManager {
 				return;
 			}
 			new EasyToolbarCertDlg(mainframe, true, apkInfo);
-		} else if (cmd.equals(Resource.STR_BTN_OPENCODE.getString())) {
+		} else if (cmd.equals(RStr.BTN_OPENCODE.get())) {
 			OpenDecompiler();
-		} else if (cmd.equals(Resource.STR_BTN_ABOUT.getString())) {
+		} else if (cmd.equals(RStr.BTN_ABOUT.get())) {
 			AboutDlg.showAboutDialog(mainframe);
-		} else if (cmd.equals(Resource.STR_BTN_SETTING.getString())) {
+		} else if (cmd.equals(RStr.BTN_SETTING.get())) {
 			Settings();
 		} // use device tool menu
 	
-		else if (cmd.equals(Resource.STR_BTN_LAUNCH.getString())) {
+		else if (cmd.equals(RStr.BTN_LAUNCH.get())) {
 			launchApp(obj);
-		} else if (cmd.equals(Resource.STR_BTN_DEL.getString())) {
+		} else if (cmd.equals(RStr.BTN_DEL.get())) {
 			UninstallApp(obj);
-		} else if (cmd.equals(Resource.STR_MENU_CLEAR_DATA.getString())) {
+		} else if (cmd.equals(RStr.MENU_CLEAR_DATA.get())) {
 			ClearData(obj);
-		} else if (cmd.equals(Resource.STR_BTN_DETAILS_INFO.getString())) {
+		} else if (cmd.equals(RStr.BTN_DETAILS_INFO.get())) {
 			ShowInstalledPackageInfo(obj);
 		}
 	}
@@ -259,9 +262,9 @@ public class ToolEntryManager {
 			restart();
 		}
 
-		String lang = (String)Resource.PROP_LANGUAGE.getData();
-		if(lang != null && Resource.getLanguage() != null
-				&& !Resource.getLanguage().equals(lang)) {
+		String lang = RProp.S.LANGUAGE.get();
+		if(lang != null && RStr.getLanguage() != null
+				&& !RStr.getLanguage().equals(lang)) {
 			restart();
 		}
 	}
@@ -281,17 +284,17 @@ public class ToolEntryManager {
 		}
 
 		int actionType = 0;
-		String data = (String) Resource.PROP_DEFAULT_DECORDER.getData();
+		String data = RProp.S.DEFAULT_DECORDER.get();
 		Log.v("PROP_DEFAULT_DECORDER : " + data);
 		if(data.matches(".*!.*#.*@.*")) {
 			//if(evtPluginLaunch(data)) return;
-			data = (String)Resource.PROP_DEFAULT_DECORDER.getDefValue();
+			data = (String)RProp.DEFAULT_DECORDER.getDefaultValue();
 		}
-		if (Resource.STR_DECORDER_JD_GUI.equals(data)) {
+		if (RConst.STR_DECORDER_JD_GUI.equals(data)) {
 			actionType = 1;
-		} else if (Resource.STR_DECORDER_JADX_GUI.equals(data)) {
+		} else if (RConst.STR_DECORDER_JADX_GUI.equals(data)) {
 			actionType = 2;
-		} else if (Resource.STR_DECORDER_BYTECOD.equals(data)) {
+		} else if (RConst.STR_DECORDER_BYTECOD.equals(data)) {
 			actionType = 3;
 		} else {
 			actionType = 2;
@@ -444,7 +447,7 @@ public class ToolEntryManager {
 			String[] convStrings = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath,
 					new String[] { "AndroidManifest.xml" });
 			AxmlToXml a2x = new AxmlToXml(convStrings, (apkInfo != null) ? apkInfo.resourceScanner : null);
-			a2x.setMultiLinePrint((boolean) Resource.PROP_PRINT_MULTILINE_ATTR.getData());
+			a2x.setMultiLinePrint(RProp.B.PRINT_MULTILINE_ATTR.get());
 
 			FileWriter fw;
 			try {
@@ -544,7 +547,7 @@ public class ToolEntryManager {
 
 			public void run() {
 				boolean isShiftPressed = false;
-				int activityOpt = Resource.INT_LAUNCH_ALWAYS_CONFIRM_ACTIVITY;
+				int activityOpt = RConst.INT_LAUNCH_ALWAYS_CONFIRM_ACTIVITY;
 
 				for (IDevice device : devices) {
 					if(!(obj.equals(device))) {
@@ -567,8 +570,8 @@ public class ToolEntryManager {
 
 					String selectedActivity = null;
 					ComponentInfo[] activities = null;
-					if (!isShiftPressed && (activityOpt == Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY
-							|| activityOpt == Resource.INT_LAUNCH_ONLY_LAUNCHER_ACTIVITY)) {
+					if (!isShiftPressed && (activityOpt == RConst.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY
+							|| activityOpt == RConst.INT_LAUNCH_ONLY_LAUNCHER_ACTIVITY)) {
 						activities = packageInfo.getLauncherActivityList(false);
 					}
 
@@ -576,7 +579,7 @@ public class ToolEntryManager {
 						selectedActivity = activities[0].name;
 					} else {
 						activities = packageInfo.getLauncherActivityList(true);
-						if (!isShiftPressed && activityOpt == Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY) {
+						if (!isShiftPressed && activityOpt == RConst.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY) {
 							if (activities != null && activities.length == 1) {
 								selectedActivity = activities[0].name;
 							}
@@ -611,7 +614,7 @@ public class ToolEntryManager {
 							if (!mergeList.isEmpty()) {
 								String selected = (String) MessageBoxPane.showInputDialog(mainframe,
 										"Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL),
-										Resource.STR_BTN_LAUNCH.getString(), MessageBoxPane.QUESTION_MESSAGE, null,
+										RStr.BTN_LAUNCH.get(), MessageBoxPane.QUESTION_MESSAGE, null,
 										mergeList.toArray(new String[mergeList.size()]), mergeList.get(0));
 								if (selected == null) {
 									return;
@@ -649,7 +652,7 @@ public class ToolEntryManager {
 								messagePool.show(MessageBoxPool.MSG_FAILURE_LAUNCH_APP, errMsg);
 							}
 						});
-					} else if ((boolean) Resource.PROP_TRY_UNLOCK_AF_LAUNCH.getData()) {
+					} else if (RProp.B.TRY_UNLOCK_AF_LAUNCH.get()) {
 						AdbDeviceHelper.tryDismissKeyguard(device);
 					}
 				}

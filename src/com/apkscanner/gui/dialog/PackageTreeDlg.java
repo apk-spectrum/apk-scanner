@@ -70,7 +70,9 @@ import com.apkscanner.gui.component.WindowSizeMemorizer;
 import com.apkscanner.gui.dialog.SimpleCheckTableModel.TableRowObject;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RProp;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.IPackageStateListener;
 import com.apkscanner.tool.adb.PackageInfo;
@@ -101,7 +103,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 	private String tmpApkPath;
 	private JTextField textSearchFilter;
 
-	private final String[] columnNames = {"", Resource.STR_LABEL_DEVICE.getString(), Resource.STR_LABEL_PATH.getString()};
+	private final String[] columnNames = {"", RStr.LABEL_DEVICE.get(), RStr.LABEL_PATH.get()};
 	private ArrayList<TableRowObject> tableListArray = new ArrayList<TableRowObject>();
 	private JTable table;
 
@@ -155,15 +157,15 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 
 	private void initialize(Window window)
 	{
-		setTitle(Resource.STR_TREE_OPEN_PACKAGE.getString());
-		setIconImage(Resource.IMG_USB_ICON.getImageIcon().getImage());
+		setTitle(RStr.TREE_OPEN_PACKAGE.get());
+		setIconImage(RImg.USB_ICON.getImageIcon().getImage());
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(true);
 		setModal(true);
 		setLayout(new BorderLayout());
 
 		Dimension minSize = new Dimension(600, 400);
-		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
+		if(RProp.B.SAVE_WINDOW_SIZE.get()) {
 			WindowSizeMemorizer.resizeCompoent(this, minSize);
 		} else {
 			setSize(minSize);
@@ -178,12 +180,12 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		
 
 		KeyStrokeAction.registerKeyStrokeAction(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW,
-				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), Resource.STR_BTN_CANCEL.getString(), this);
+				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), RStr.BTN_CANCEL.get(), this);
 
 		KeyStrokeAction.registerKeyStrokeAction(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW,
-				KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, false), Resource.STR_BTN_REFRESH.getString(), this);
+				KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, false), RStr.BTN_REFRESH.get(), this);
 
-		top = new DefaultMutableTreeNode(Resource.STR_TREE_NODE_DEVICE.getString());
+		top = new DefaultMutableTreeNode(RStr.TREE_NODE_DEVICE.get());
 
 		tree = new JTree(new FilteredTreeModel(top));
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -194,12 +196,12 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		tree.setCellRenderer(new DefaultTreeCellRenderer() {
 			private static final long serialVersionUID = 8466579635851211258L;
 
-			private final ImageIcon iconApk = Resource.IMG_TREE_APK.getImageIcon(16,16);
-			private final ImageIcon iconDevice = Resource.IMG_TREE_DEVICE.getImageIcon(16,16);
-			private final ImageIcon iconTop = Resource.IMG_TREE_TOP.getImageIcon(16,16);
-			private final ImageIcon iconFolder = Resource.IMG_TREE_FOLDER.getImageIcon();
-			private final ImageIcon iconLoading = Resource.IMG_TREE_LOADING.getImageIcon();
-			private final ImageIcon iconFavor = Resource.IMG_TREE_FAVOR.getImageIcon();
+			private final ImageIcon iconApk = RImg.TREE_APK.getImageIcon(16,16);
+			private final ImageIcon iconDevice = RImg.TREE_DEVICE.getImageIcon(16,16);
+			private final ImageIcon iconTop = RImg.TREE_TOP.getImageIcon(16,16);
+			private final ImageIcon iconFolder = RImg.TREE_FOLDER.getImageIcon();
+			private final ImageIcon iconLoading = RImg.TREE_LOADING.getImageIcon();
+			private final ImageIcon iconFavor = RImg.TREE_FAVOR.getImageIcon();
 
 			private TreeNodeIconRefresher treeIconRefresher = new TreeNodeIconRefresher(tree);
 			{
@@ -302,7 +304,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		ListPanel = makeListTable();
 		ListPanel.setVisible(false);
 
-		checkboxUseframework = new JCheckBox(Resource.STR_LABEL_USES_RESOURCE.getString());
+		checkboxUseframework = new JCheckBox(RStr.LABEL_USES_RESOURCE.get());
 		checkboxUseframework.setSelected(false);
 		checkboxUseframework.addActionListener(new ActionListener() {
 			@Override
@@ -315,16 +317,16 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 			}
 		});
 
-		JButton openbtn = new JButton(Resource.STR_BTN_OPEN.getString());		
-		refreshbtn = new JButton(Resource.STR_BTN_REFRESH.getString());
-		JButton exitbtn = new JButton(Resource.STR_BTN_CANCEL.getString());
+		JButton openbtn = new JButton(RStr.BTN_OPEN.get());		
+		refreshbtn = new JButton(RStr.BTN_REFRESH.get());
+		JButton exitbtn = new JButton(RStr.BTN_CANCEL.get());
 
 		openbtn.addActionListener(this);
 		refreshbtn.addActionListener(this);
 		exitbtn.addActionListener(this);
 
-		JLabel GifLabel = new JLabel(Resource.IMG_WAIT_BAR.getImageIcon());
-		JLabel Loading = new JLabel(Resource.STR_LABEL_LOADING.getString());
+		JLabel GifLabel = new JLabel(RImg.WAIT_BAR.getImageIcon());
+		JLabel Loading = new JLabel(RStr.LABEL_LOADING.get());
 
 		gifPanel = new JPanel();
 		gifPanel.add(Loading);
@@ -352,7 +354,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		JPanel panelsourth = new JPanel(new BorderLayout());        
 		JPanel panelsearch = new JPanel(new BorderLayout());
 
-		panelsearch.add(new JLabel(Resource.STR_LABEL_SEARCH.getString() + " : "), BorderLayout.WEST);
+		panelsearch.add(new JLabel(RStr.LABEL_SEARCH.get() + " : "), BorderLayout.WEST);
 		panelsearch.add(textSearchFilter, BorderLayout.CENTER);
 
 		panelnorth.add(textFieldapkPath,BorderLayout.NORTH);
@@ -451,7 +453,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		table.updateUI();
 
 		top.removeAllChildren();
-		top.add(new DefaultMutableTreeNode(Resource.STR_MSG_DEVICE_NOT_FOUND.getString().replace("\n", " ")));
+		top.add(new DefaultMutableTreeNode(RStr.MSG_DEVICE_NOT_FOUND.get().replace("\n", " ")));
 		tree.expandPath(new TreePath(top.getPath()));
 		tree.updateUI();
 
@@ -853,9 +855,9 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		if(e.getActionCommand().equals(Resource.STR_BTN_OPEN.getString())) {
+		if(e.getActionCommand().equals(RStr.BTN_OPEN.get())) {
 			openPackage();
-		} else if(e.getActionCommand().equals(Resource.STR_BTN_CANCEL.getString())) {
+		} else if(e.getActionCommand().equals(RStr.BTN_CANCEL.get())) {
 			//Log.i("exit");
 			selDevice = null;
 			selPackage = null;
@@ -864,7 +866,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 
 			deviceHandler.quit();
 			dispose();
-		} else if(e.getActionCommand().equals(Resource.STR_BTN_REFRESH.getString())) {
+		} else if(e.getActionCommand().equals(RStr.BTN_REFRESH.get())) {
 			refreshTreeList(false);
 		}
 	}
@@ -877,12 +879,12 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		table = new JTable();
 		//table.setPreferredScrollableViewportSize(table.getPreferredSize());
 		//table.setFillsViewportHeight(true);
-		JButton addbtn= new JButton(Resource.STR_BTN_ADD.getString());
+		JButton addbtn= new JButton(RStr.BTN_ADD.get());
 
 		addbtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser jfc = new JFileChooser();			
-				jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(Resource.STR_LABEL_APK_FILE_DESC.getString(),"apk"));							
+				jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(RStr.LABEL_APK_FILE_DESC.get(),"apk"));							
 
 				if(jfc.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
 					return;
@@ -1089,9 +1091,9 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 						DefaultMutableTreeNode system = new DefaultMutableTreeNode("system");
 						SortDefaultMutableTreeNode dataapp = new SortDefaultMutableTreeNode("app");
 						DefaultMutableTreeNode data = new DefaultMutableTreeNode("data");
-						DefaultMutableTreeNode displayed = new DefaultMutableTreeNode("*" + Resource.STR_TREE_NODE_DISPLAYED.getString());
-						DefaultMutableTreeNode recently = new DefaultMutableTreeNode("*" + Resource.STR_TREE_NODE_RECENTLY.getString());
-						DefaultMutableTreeNode running = new DefaultMutableTreeNode("*" + Resource.STR_TREE_NODE_RUNNING_PROC.getString());
+						DefaultMutableTreeNode displayed = new DefaultMutableTreeNode("*" + RStr.TREE_NODE_DISPLAYED.get());
+						DefaultMutableTreeNode recently = new DefaultMutableTreeNode("*" + RStr.TREE_NODE_RECENTLY.get());
+						DefaultMutableTreeNode running = new DefaultMutableTreeNode("*" + RStr.TREE_NODE_RUNNING_PROC.get());
 
 						data.add(dataapp);
 
@@ -1194,7 +1196,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 			}
 			node.removeAllChildren();
 			if(device.isOnline()) {
-				node.add(new DefaultMutableTreeNode("#" + Resource.STR_LABEL_LOADING.getString()));
+				node.add(new DefaultMutableTreeNode("#" + RStr.LABEL_LOADING.get()));
 
 				synchronized (eventQueue) {
 					if(!eventQueue.contains(device)) {
@@ -1205,7 +1207,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 					}
 				}
 			} else {
-				node.add(new DefaultMutableTreeNode(Resource.STR_MSG_DEVICE_UNAUTHORIZED.getString()));
+				node.add(new DefaultMutableTreeNode(RStr.MSG_DEVICE_UNAUTHORIZED.get()));
 			}
 			top.add(node);
 			tree.expandPath(new TreePath(node.getPath()));
@@ -1265,7 +1267,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 					if(node != null) {
 						top.remove(node);
 						if(top.getChildCount() == 0) {
-							top.add(new DefaultMutableTreeNode(Resource.STR_MSG_DEVICE_NOT_FOUND.getString().replace("\n", " ")));
+							top.add(new DefaultMutableTreeNode(RStr.MSG_DEVICE_NOT_FOUND.get().replace("\n", " ")));
 						}
 						tree.updateUI();
 					}
@@ -1326,52 +1328,52 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 
 						JPopupMenu menu = new JPopupMenu ();
 
-						JMenuItem menuitemOpen = new JMenuItem(Resource.STR_BTN_OPEN.getString() );                                                        
+						JMenuItem menuitemOpen = new JMenuItem(RStr.BTN_OPEN.get() );                                                        
 						menuitemOpen.addActionListener(new ActionListener(){ 
 							public void actionPerformed(ActionEvent e) {
 								openPackage();
 							}});
-						menuitemOpen.setIcon(Resource.IMG_TREE_MENU_OPEN.getImageIcon());                                                        
+						menuitemOpen.setIcon(RImg.TREE_MENU_OPEN.getImageIcon());                                                        
 						menu.add(menuitemOpen);
 
-						JMenuItem menuitemDetail = new JMenuItem(Resource.STR_BTN_DETAILS_INFO.getString() );                                                        
+						JMenuItem menuitemDetail = new JMenuItem(RStr.BTN_DETAILS_INFO.get() );                                                        
 						menuitemDetail.addActionListener(new ActionListener(){ 
 							public void actionPerformed(ActionEvent e) {
 								showDetailInfo();
 							}});
-						menuitemDetail.setIcon(Resource.IMG_TREE_APK.getImageIcon());                                                        
+						menuitemDetail.setIcon(RImg.TREE_APK.getImageIcon());                                                        
 						menu.add(menuitemDetail);
 
-						JMenuItem menuitemSave = new JMenuItem(Resource.STR_BTN_SAVE.getString() );                                                        
+						JMenuItem menuitemSave = new JMenuItem(RStr.BTN_SAVE.get() );                                                        
 						menuitemSave.addActionListener(new ActionListener(){ 
 							public void actionPerformed(ActionEvent e) {
 								pullPackage();
 							}});
-						menuitemSave.setIcon(Resource.IMG_TREE_MENU_SAVE.getImageIcon());                                                        
+						menuitemSave.setIcon(RImg.TREE_MENU_SAVE.getImageIcon());                                                        
 						menu.add(menuitemSave);
 
-						JMenuItem menuitemClear = new JMenuItem(Resource.STR_MENU_CLEAR_DATA.getString() );                                                        
+						JMenuItem menuitemClear = new JMenuItem(RStr.MENU_CLEAR_DATA.get() );                                                        
 						menuitemClear.addActionListener(new ActionListener(){ 
 							public void actionPerformed(ActionEvent e) {
 								clearData();
 							}});
-						menuitemClear.setIcon(Resource.IMG_TREE_MENU_CLEARDATA.getImageIcon());                                                        
+						menuitemClear.setIcon(RImg.TREE_MENU_CLEARDATA.getImageIcon());                                                        
 						menu.add(menuitemClear);
 
-						JMenuItem menuitemDel = new JMenuItem(Resource.STR_BTN_DEL.getString() );                                                        
+						JMenuItem menuitemDel = new JMenuItem(RStr.BTN_DEL.get() );                                                        
 						menuitemDel.addActionListener(new ActionListener(){ 
 							public void actionPerformed(ActionEvent e) {
 								removePackage();
 							}});
-						menuitemDel.setIcon(Resource.IMG_TREE_MENU_DELETE.getImageIcon());                                                        
+						menuitemDel.setIcon(RImg.TREE_MENU_DELETE.getImageIcon());                                                        
 						menu.add(menuitemDel);
 
-						JMenuItem menuitemaddframeworkres = new JMenuItem(Resource.STR_SETTINGS_RES.getString() );                                                        
+						JMenuItem menuitemaddframeworkres = new JMenuItem(RStr.SETTINGS_RES.get() );                                                        
 						menuitemaddframeworkres.addActionListener(new ActionListener(){ 
 							public void actionPerformed(ActionEvent e) {
 								addframeworkresIntree();
 							}});
-						menuitemaddframeworkres.setIcon(Resource.IMG_TREE_MENU_LINK.getImageIcon());                                                        
+						menuitemaddframeworkres.setIcon(RImg.TREE_MENU_LINK.getImageIcon());                                                        
 						menu.add(menuitemaddframeworkres);
 
 						menu.show ( tree, e.getX (), e.getY () );

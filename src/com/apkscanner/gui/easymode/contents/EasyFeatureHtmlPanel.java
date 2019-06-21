@@ -27,11 +27,12 @@ import com.apkscanner.gui.easymode.core.EasyGuiAppFeatureData;
 import com.apkscanner.gui.easymode.core.ToolEntryManager;
 import com.apkscanner.gui.easymode.util.EasyRoundButton;
 import com.apkscanner.gui.easymode.util.RoundPanel;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RFile;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.util.FileUtil;
+import com.apkscanner.util.FileUtil.FSStyle;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.XmlPath;
-import com.apkscanner.util.FileUtil.FSStyle;
 
 public class EasyFeatureHtmlPanel extends RoundPanel {
 	/**
@@ -79,7 +80,7 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 		setRoundrectColor(new Color(217, 217, 217));
 		//setshadowlen(10);
 		AppFeature = new EasyGuiAppFeatureData();
-		setSdkXml(Resource.STR_SDK_INFO_FILE_PATH.getString());
+		setSdkXml(RStr.SDK_INFO_FILE_PATH.get());
 		
 		add(scrollPane, BorderLayout.CENTER);
 		
@@ -147,7 +148,7 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 		if(xmlPath == null) {
 			return;
 		}
-		try(InputStream xml = Resource.class.getResourceAsStream(xmlPath)) {
+		try(InputStream xml = RFile.getResourceAsStream(xmlPath)) {
 			if(xml != null) sdkXmlPath = new XmlPath(xml);
 		} catch(IOException e) { }
 		if(sdkXmlPath == null) {
@@ -167,7 +168,6 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 	class ShowsignDlg implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
 			//ToolEntryManager.excuteSinerDlg(null);
 			
 			ToolEntryManager.excuteEntry(ToolEntryManager.TOOL_SHOW_SIGN_DLG);
@@ -197,36 +197,36 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 		}
 
 		if(featuredata.sharedUserId != null && !featuredata.sharedUserId.startsWith("android.uid.system") ) {
-			mainpanel.add(makeFeatpanel(Resource.STR_FEATURE_SHAREDUSERID_LAB.getString(), featuredata.sharedUserId, new Color(0xAAAA00)));
+			mainpanel.add(makeFeatpanel(RStr.FEATURE_SHAREDUSERID_LAB.get(), featuredata.sharedUserId, new Color(0xAAAA00)));
 		}
 		
 		//boolean systemSignature = false;
 		if(featuredata.sharedUserId != null && featuredata.sharedUserId.startsWith("android.uid.system")) {
 			if(featuredata.isSamsungSign || featuredata.isPlatformSign) {
-				mainpanel.add(makeFeatpanel(Resource.STR_FEATURE_SYSTEM_UID_LAB.getString(), featuredata.sharedUserId, new Color(0xED7E31)));
+				mainpanel.add(makeFeatpanel(RStr.FEATURE_SYSTEM_UID_LAB.get(), featuredata.sharedUserId, new Color(0xED7E31)));
 			} else {
-				mainpanel.add(makeFeatpanel(Resource.STR_FEATURE_SYSTEM_UID_LAB.getString(), featuredata.sharedUserId, new Color(0xFF0000)));
+				mainpanel.add(makeFeatpanel(RStr.FEATURE_SYSTEM_UID_LAB.get(), featuredata.sharedUserId, new Color(0xFF0000)));
 			}
 		}
 
 		if(featuredata.isnoSign) {
-			mainpanel.add(makeFeatpanel(Resource.STR_FEATURE_SIGNATURE_UNSIGNED.getString(), new Color(0xFF0000)));
+			mainpanel.add(makeFeatpanel(RStr.FEATURE_SIGNATURE_UNSIGNED.get(), new Color(0xFF0000)));
 		} else {
 			if(featuredata.isPlatformSign) {
-				mainpanel.add(makeFeatpanel(Resource.STR_FEATURE_PLATFORM_SIGN_LAB.getString(), showsignListener, new Color(0xED7E31)));			
+				mainpanel.add(makeFeatpanel(RStr.FEATURE_PLATFORM_SIGN_LAB.get(), showsignListener, new Color(0xED7E31)));			
 			} 
 			if(featuredata.isSamsungSign) {
-				mainpanel.add(makeFeatpanel(Resource.STR_FEATURE_SAMSUNG_SIGN_LAB.getString(), showsignListener, new Color(0xED7E31)));
+				mainpanel.add(makeFeatpanel(RStr.FEATURE_SAMSUNG_SIGN_LAB.get(), showsignListener, new Color(0xED7E31)));
 		//		systemSignature = true;
 			}
 			if(!featuredata.isPlatformSign && !featuredata.isSamsungSign) {
-				mainpanel.add(makeFeatpanel(Resource.STR_FEATURE_SIGNATURE_SIGNED.getString(), showsignListener, new Color(0x0055BB)));
+				mainpanel.add(makeFeatpanel(RStr.FEATURE_SIGNATURE_SIGNED.get(), showsignListener, new Color(0x0055BB)));
 			}
 		}
 		
 		
 		if(featuredata.isHidden) {
-			mainpanel.add(makeFeatpanel(Resource.STR_FEATURE_HIDDEN_LAB.getString(), new Color(0xED7E31)));			
+			mainpanel.add(makeFeatpanel(RStr.FEATURE_HIDDEN_LAB.get(), new Color(0xED7E31)));			
 		} else {
 			ComponentInfo[] apkActivities = ApkInfoHelper.getLauncherActivityList(apkInfo);
 			if (apkActivities != null && apkActivities.length > 0) {
@@ -247,7 +247,7 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 					strfeature = ((strfeature.length() > 0)?"(" + strfeature + ")" :"");
 					
 					mainpanel.add(makeFeatpanel(
-							Resource.STR_FEATURE_LAUNCHER_LAB.getString() + strfeature,
+							RStr.FEATURE_LAUNCHER_LAB.get() + strfeature,
 							comp.name + strfeature, new Color(0x0055BB)));
 				}
 			}

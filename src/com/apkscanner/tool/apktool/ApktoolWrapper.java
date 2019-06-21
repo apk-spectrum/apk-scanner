@@ -2,7 +2,7 @@ package com.apkscanner.tool.apktool;
 
 import java.io.File;
 
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RFile;
 import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.Log;
 
@@ -13,7 +13,7 @@ public class ApktoolWrapper {
 	static public String getApkToolVersion()
 	{
 		if(ApktoolVer == null) {
-			String apkToolPath = Resource.LIB_APKTOOL_JAR.getPath();
+			String apkToolPath = RFile.LIB_APKTOOL_JAR.get();
 			if(!(new File(apkToolPath)).exists()) {
 				Log.e("No such file : apktool.jar");
 				return null;

@@ -58,7 +58,10 @@ import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.IPlugInEventListener;
 import com.apkscanner.plugin.PlugInManager;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RConst;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RProp;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.tool.adb.AdbDeviceHelper;
@@ -97,7 +100,7 @@ public class MainUI extends JFrame implements IPlugInEventListener
 
 		setApkScanner(scanner);
 
-		toolbarManager.setEnabled((boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData(), 1000);
+		toolbarManager.setEnabled(RProp.B.ADB_DEVICE_MONITORING.get(), 1000);
 
 		PlugInManager.addPlugInEventListener(this);
 	}
@@ -115,18 +118,18 @@ public class MainUI extends JFrame implements IPlugInEventListener
 		Log.i("UI Init start");
 
 		Log.i("initialize() setUIFont");
-		String propFont = (String) Resource.PROP_BASE_FONT.getData();
-		int propFontStyle = (int)Resource.PROP_BASE_FONT_STYLE.getInt();
-		int propFontSize = (int) Resource.PROP_BASE_FONT_SIZE.getInt();
+		String propFont = RProp.S.BASE_FONT.get();
+		int propFontStyle = RProp.I.BASE_FONT_STYLE.get();
+		int propFontSize = RProp.I.BASE_FONT_SIZE.get();
 		setUIFont(new javax.swing.plaf.FontUIResource(propFont, propFontStyle, propFontSize));
 
 		Log.i("initialize() set title & icon");
-		setTitle(Resource.STR_APP_NAME.getString());
-		setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+		setTitle(RStr.APP_NAME.get());
+		setIconImage(RImg.APP_ICON.getImageIcon().getImage());
 
 		Log.i("initialize() set bound & size ");
-		Dimension minSize = new Dimension(Resource.INT_WINDOW_SIZE_WIDTH_MIN, Resource.INT_WINDOW_SIZE_HEIGHT_MIN);
-		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
+		Dimension minSize = new Dimension(RConst.INT_WINDOW_SIZE_WIDTH_MIN, RConst.INT_WINDOW_SIZE_HEIGHT_MIN);
+		if(RProp.B.SAVE_WINDOW_SIZE.get()) {
 			WindowSizeMemorizer.resizeCompoent(this, minSize);
 		} else {
 			setSize(minSize);
@@ -149,7 +152,7 @@ public class MainUI extends JFrame implements IPlugInEventListener
 
 		Log.i("initialize() tabbedpanel init");
 		// TabPanel initialize and add
-		String tabbedStyle = (String) Resource.PROP_TABBED_UI_THEME.getData();
+		String tabbedStyle = RProp.S.TABBED_UI_THEME.get();
 		tabbedPanel = new TabbedPanel(tabbedStyle);
 		add(tabbedPanel, BorderLayout.CENTER);
 
@@ -237,7 +240,7 @@ public class MainUI extends JFrame implements IPlugInEventListener
 
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
-					setTitle(Resource.STR_APP_NAME.getString());
+					setTitle(RStr.APP_NAME.get());
 					tabbedPanel.setData(null, null);
 					messagePool.show(MessageBoxPool.MSG_FAILURE_OPEN_APK);
 				}
@@ -304,7 +307,7 @@ public class MainUI extends JFrame implements IPlugInEventListener
 				PlugInManager.setApkInfo(apkScanner.getApkInfo());
 
 				String apkFilePath = apkScanner.getApkInfo().filePath;
-				String title = apkFilePath.substring(apkFilePath.lastIndexOf(File.separator)+1) + " - " + Resource.STR_APP_NAME.getString();
+				String title = apkFilePath.substring(apkFilePath.lastIndexOf(File.separator)+1) + " - " + RStr.APP_NAME.get();
 				setTitle(title);
 
 				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, true);
@@ -406,11 +409,11 @@ public class MainUI extends JFrame implements IPlugInEventListener
 					manifestPath = apkInfo.tempWorkPath + File.separator + "AndroidManifest.xml";
 					manifestFile = new File(manifestPath);
 				} else {
-					JFileChooser jfc = ApkFileChooser.getFileChooser((String)Resource.PROP_LAST_FILE_SAVE_PATH.getData(), JFileChooser.SAVE_DIALOG, new File("AndroidManifest.xml"));
+					JFileChooser jfc = ApkFileChooser.getFileChooser(RProp.S.LAST_FILE_SAVE_PATH.get(), JFileChooser.SAVE_DIALOG, new File("AndroidManifest.xml"));
 					if(jfc.showSaveDialog(MainUI.this) != JFileChooser.APPROVE_OPTION) return;
 					manifestFile = jfc.getSelectedFile();
 					if(manifestFile == null) return;
-					Resource.PROP_LAST_FILE_SAVE_PATH.setData(manifestFile.getParentFile().getAbsolutePath());
+					RProp.S.LAST_FILE_SAVE_PATH.set(manifestFile.getParentFile().getAbsolutePath());
 					manifestPath = manifestFile.getAbsolutePath();
 				}
 
@@ -423,7 +426,7 @@ public class MainUI extends JFrame implements IPlugInEventListener
 
 					String[] convStrings = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath, new String[] {"AndroidManifest.xml"});
 					AxmlToXml a2x = new AxmlToXml(convStrings, (apkInfo != null) ? apkInfo.resourceScanner : null);
-					a2x.setMultiLinePrint((boolean)Resource.PROP_PRINT_MULTILINE_ATTR.getData());
+					a2x.setMultiLinePrint(RProp.B.PRINT_MULTILINE_ATTR.get());
 
 					FileWriter fw = new FileWriter(new File(manifestPath));
 					fw.write(a2x.toString());
@@ -441,10 +444,10 @@ public class MainUI extends JFrame implements IPlugInEventListener
 		private void evtShowExplorer(ActionEvent e) {
 			int actionType = 0;
 			if(e == null || ToolBar.ButtonSet.EXPLORER.matchActionEvent(e)) {
-				String data = (String)Resource.PROP_DEFAULT_EXPLORER.getData();
-				if(Resource.STR_EXPLORER_ARCHIVE.equals(data)) {
+				String data = RProp.S.DEFAULT_EXPLORER.get();
+				if(RConst.STR_EXPLORER_ARCHIVE.equals(data)) {
 					actionType = 1;
-				} else if(Resource.STR_EXPLORER_FOLDER.equals(data)) {
+				} else if(RConst.STR_EXPLORER_FOLDER.equals(data)) {
 					actionType = 2;
 				}
 			} else if(ToolBar.MenuItemSet.EXPLORER_ARCHIVE.matchActionEvent(e)) {
@@ -488,17 +491,17 @@ public class MainUI extends JFrame implements IPlugInEventListener
 
 			int actionType = 0;
 			if(e == null || ToolBar.ButtonSet.OPEN_CODE.matchActionEvent(e)) {
-				String data = (String)Resource.PROP_DEFAULT_DECORDER.getData();
+				String data = RProp.S.DEFAULT_DECORDER.get();
 				Log.v("PROP_DEFAULT_DECORDER : " + data);
 				if(data.matches(".*!.*#.*@.*")) {
 					if(evtPluginLaunch(data)) return;
-					data = (String)Resource.PROP_DEFAULT_DECORDER.getDefValue();
+					data = (String) RProp.DEFAULT_DECORDER.getDefaultValue();
 				}
-				if(Resource.STR_DECORDER_JD_GUI.equals(data)) {
+				if(RConst.STR_DECORDER_JD_GUI.equals(data)) {
 					actionType = 1;
-				} else if(Resource.STR_DECORDER_JADX_GUI.equals(data)) {
+				} else if(RConst.STR_DECORDER_JADX_GUI.equals(data)) {
 					actionType = 2;
-				} else if(Resource.STR_DECORDER_BYTECOD.equals(data)) {
+				} else if(RConst.STR_DECORDER_BYTECOD.equals(data)) {
 					actionType = 3;
 				} else {
 					actionType = 2;
@@ -559,13 +562,13 @@ public class MainUI extends JFrame implements IPlugInEventListener
 				restart();
 			}
 
-			String lang = (String)Resource.PROP_LANGUAGE.getData();
-			if(lang != null && Resource.getLanguage() != null
-					&& !Resource.getLanguage().equals(lang)) {
+			String lang = RProp.S.LANGUAGE.get();
+			if(lang != null && RStr.getLanguage() != null
+					&& !RStr.getLanguage().equals(lang)) {
 				setLanguage(lang);
 			}
 
-			toolbarManager.setEnabled((boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData());
+			toolbarManager.setEnabled(RProp.B.ADB_DEVICE_MONITORING.get());
 		}
 
 		private void evtLaunchApp(final AWTEvent e) {
@@ -588,10 +591,10 @@ public class MainUI extends JFrame implements IPlugInEventListener
 						} else if(e == null || ToolBar.ButtonSet.LAUNCH.matchActionEvent((ActionEvent) e)) {
 							if(isShiftPressed) actionType = 2;
 						} else if(ToolBar.ButtonSet.SUB_LAUNCH.matchActionEvent((ActionEvent) e)) {
-							String data = (String)Resource.PROP_DEFAULT_LAUNCH_MODE.getData();
-							if(Resource.STR_LAUNCH_LAUNCHER.equals(data)) {
+							String data = RProp.S.DEFAULT_LAUNCH_MODE.get();
+							if(RConst.STR_LAUNCH_LAUNCHER.equals(data)) {
 								actionType = 1;
-							} else if(Resource.STR_LAUNCH_SELECT.equals(data)) {
+							} else if(RConst.STR_LAUNCH_SELECT.equals(data)) {
 								actionType = 2;
 							}
 						} else if(ToolBar.MenuItemSet.LAUNCH_LAUNCHER.matchActionEvent((ActionEvent) e)) {
@@ -606,9 +609,9 @@ public class MainUI extends JFrame implements IPlugInEventListener
 						if(isShiftPressed) actionType = 2;
 					}
 
-					int activityOpt = Resource.PROP_LAUNCH_ACTIVITY_OPTION.getInt();
+					int activityOpt = RProp.I.LAUNCH_ACTIVITY_OPTION.get();
 					if(actionType == 2) {
-						activityOpt = Resource.INT_LAUNCH_ALWAYS_CONFIRM_ACTIVITY;
+						activityOpt = RConst.INT_LAUNCH_ALWAYS_CONFIRM_ACTIVITY;
 					}
 
 					for(IDevice device: devices) {
@@ -623,8 +626,8 @@ public class MainUI extends JFrame implements IPlugInEventListener
 
 						String selectedActivity = null;
 						ComponentInfo[] activities = null;
-						if(!isShiftPressed && (activityOpt == Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY
-								|| activityOpt == Resource.INT_LAUNCH_ONLY_LAUNCHER_ACTIVITY)) {
+						if(!isShiftPressed && (activityOpt == RConst.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY
+								|| activityOpt == RConst.INT_LAUNCH_ONLY_LAUNCHER_ACTIVITY)) {
 							activities = packageInfo.getLauncherActivityList(false);
 						}
 
@@ -632,7 +635,7 @@ public class MainUI extends JFrame implements IPlugInEventListener
 							selectedActivity = activities[0].name;
 						} else {
 							activities = packageInfo.getLauncherActivityList(true);
-							if(!isShiftPressed && activityOpt == Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY) {
+							if(!isShiftPressed && activityOpt == RConst.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY) {
 								if(activities != null && activities.length == 1) {
 									selectedActivity = activities[0].name;
 								}
@@ -662,7 +665,7 @@ public class MainUI extends JFrame implements IPlugInEventListener
 
 								if(!mergeList.isEmpty()) {
 									String selected = (String)MessageBoxPane.showInputDialog(MainUI.this, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL),
-											Resource.STR_BTN_LAUNCH.getString(), MessageBoxPane.QUESTION_MESSAGE, null, mergeList.toArray(new String[mergeList.size()]), mergeList.get(0));
+											RStr.BTN_LAUNCH.get(), MessageBoxPane.QUESTION_MESSAGE, null, mergeList.toArray(new String[mergeList.size()]), mergeList.get(0));
 									if(selected == null) {
 										return;
 									}
@@ -697,7 +700,7 @@ public class MainUI extends JFrame implements IPlugInEventListener
 									messagePool.show(MessageBoxPool.MSG_FAILURE_LAUNCH_APP, errMsg);
 								}
 							});
-						} else if((boolean)Resource.PROP_TRY_UNLOCK_AF_LAUNCH.getData()) {
+						} else if(RProp.B.TRY_UNLOCK_AF_LAUNCH.get()) {
 							AdbDeviceHelper.tryDismissKeyguard(device);
 						}
 					}
@@ -884,8 +887,8 @@ public class MainUI extends JFrame implements IPlugInEventListener
 
 		private void setLanguage(String lang) {
 			ApkInfo apkInfo = apkScanner.getApkInfo();
-			Resource.setLanguage(lang);
-			String title = Resource.STR_APP_NAME.getString();
+			RStr.setLanguage(lang);
+			String title = RStr.APP_NAME.get();
 			if(apkInfo != null) {
 				title += " - " + apkInfo.filePath.substring(apkInfo.filePath.lastIndexOf(File.separator)+1);
 			}
@@ -959,7 +962,7 @@ public class MainUI extends JFrame implements IPlugInEventListener
 			} else if(ToolBar.CMD_VISIBLE_TO_BASEIC.equals(e.getActionCommand())) {
 				if(e.getSource() instanceof JCheckBoxMenuItem) {
 					JCheckBoxMenuItem ckBox = ((JCheckBoxMenuItem)e.getSource());
-					Resource.PROP_VISIBLE_TO_BASIC.setData(ckBox.isSelected());
+					RProp.VISIBLE_TO_BASIC.setData(ckBox.isSelected());
 					tabbedPanel.reloadResource();
 				}
 			}  else if(ToolBar.CMD_VISIBLE_TO_BASEIC_CHANGED.equals(e.getActionCommand())) {
@@ -999,10 +1002,10 @@ public class MainUI extends JFrame implements IPlugInEventListener
 				case KeyEvent.VK_F1 : AboutDlg.showAboutDialog(MainUI.this);break;
 				case KeyEvent.VK_F12: LogDlg.showLogDialog(MainUI.this);	break;
 				case KeyEvent.VK_ESCAPE:
-					switch((int)Resource.PROP_ESC_ACTION.getInt()) {
-					case Resource.INT_ESC_ACT_NONE: return;
-					case Resource.INT_ESC_ACT_CHANG_UI_MODE: break;
-					case Resource.INT_ESC_ACT_EXIT: dispose(); return;
+					switch(RProp.I.ESC_ACTION.get()) {
+					case RConst.INT_ESC_ACT_NONE: return;
+					case RConst.INT_ESC_ACT_CHANG_UI_MODE: break;
+					case RConst.INT_ESC_ACT_EXIT: dispose(); return;
 					}
 				case KeyEvent.VK_F2: UIController.changeToEasyGui(); break;
 				}

@@ -1,16 +1,33 @@
 package com.apkscanner.gui.dialog;
 
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowListener;
-import java.beans.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
+import javax.swing.SwingWorker;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import com.apkscanner.gui.component.KeyStrokeAction;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RStr;
 
 
 public class ProgressBarDlg extends JFrame
@@ -57,21 +74,20 @@ public class ProgressBarDlg extends JFrame
 
     public ProgressBarDlg(Component component, WindowListener windowListener)
     {
-    	setTitle("APK Scanner " + Resource.STR_APP_VERSION.getString());
-    	setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+    	setTitle("APK Scanner " + RStr.APP_VERSION.getString());
+    	setIconImage(RImg.APP_ICON.getImageIcon().getImage());
     	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
     	try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException
 				| IllegalAccessException | UnsupportedLookAndFeelException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
         JPanel panel = new JPanel();
         
-        JLabel loadingLabel = new JLabel(Resource.IMG_LOADING.getImageIcon());
+        JLabel loadingLabel = new JLabel(RImg.LOADING.getImageIcon());
         panel.add(loadingLabel);
 
         progressBar = new JProgressBar(0, 100);

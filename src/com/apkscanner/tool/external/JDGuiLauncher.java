@@ -2,7 +2,7 @@ package com.apkscanner.tool.external;
 
 import java.io.File;
 
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RFile;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 
@@ -14,6 +14,6 @@ public class JDGuiLauncher
 			Log.e("No such file : " + jarFilePath);
 			return;
 		}
-		SystemUtil.exec(new String[] {"java", "-jar", Resource.BIN_JDGUI.getPath(), jarFilePath});
+		SystemUtil.exec(new String[] {"java", "-jar", RFile.BIN_JDGUI.get(), jarFilePath});
 	}
 }

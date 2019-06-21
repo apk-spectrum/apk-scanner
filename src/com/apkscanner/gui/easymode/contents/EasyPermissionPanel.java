@@ -11,7 +11,7 @@ import javax.swing.JScrollPane;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.easymode.util.FlatPanel;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
 import com.apkscanner.util.Log;
 
 public class EasyPermissionPanel extends JPanel {
@@ -53,8 +53,8 @@ public class EasyPermissionPanel extends JPanel {
 		
 		contentsCardPanel = new JPanel(new CardLayout());
 		contentsCardPanel.add(iconPanel, CARD_LAYOUT_APKINFO);
-		contentsCardPanel.add(new JLabel(Resource.IMG_TREE_LOADING.getImageIcon()), CARD_LAYOUT_LOADING);
-		
+		contentsCardPanel.add(new JLabel(RImg.TREE_LOADING.getImageIcon()), CARD_LAYOUT_LOADING);
+
 		// setEmptypanel();
 
 		add(contentsCardPanel);

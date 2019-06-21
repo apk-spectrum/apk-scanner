@@ -8,7 +8,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import com.apkscanner.jna.ProcessPathKernel32;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RFile;
+import com.apkscanner.resource.RProp;
+import com.apkscanner.resource.RStr;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.Kernel32;
@@ -117,7 +119,7 @@ public class SystemUtil
 		}
 
 		try {
-			String editor = (String)Resource.PROP_EDITOR.getData(SystemUtil.getDefaultEditor());
+			String editor = RProp.S.EDITOR.get();
 			exec(new String[] { editor, file.getAbsolutePath() });
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -218,8 +220,8 @@ public class SystemUtil
 
 	public static void createShortCut() {
 		if(isWindows()) {
-			String filePath = Resource.getUTF8Path() + File.separator + "ApkScanner.exe";
-			String lnkPath = System.getProperty("user.home") + File.separator + "Desktop" + File.separator + Resource.STR_APP_NAME.getString() + ".lnk";
+			String filePath = RFile.getUTF8Path() + File.separator + "ApkScanner.exe";
+			String lnkPath = System.getProperty("user.home") + File.separator + "Desktop" + File.separator + RStr.APP_NAME.get() + ".lnk";
 			try {
 				ShellLink.createLink(filePath, lnkPath);
 			} catch (IOException e1) {
@@ -232,8 +234,8 @@ public class SystemUtil
 
 	public static boolean hasShortCut() {
 		if(isWindows()) {
-			String filePath = Resource.getUTF8Path() + File.separator + "ApkScanner.exe";
-			String lnkPath = System.getProperty("user.home") + File.separator + "Desktop" + File.separator + Resource.STR_APP_NAME.getString() + ".lnk";
+			String filePath = RFile.getUTF8Path() + File.separator + "ApkScanner.exe";
+			String lnkPath = System.getProperty("user.home") + File.separator + "Desktop" + File.separator + RStr.APP_NAME.get() + ".lnk";
 
 			if(!new File(lnkPath).exists()) {
 				return false;
@@ -276,7 +278,7 @@ public class SystemUtil
 		if(!isWindows()) {
 			return true;
 		}
-		String filePath = Resource.getUTF8Path() + File.separator + "ApkScanner.exe";
+		String filePath = RFile.getUTF8Path() + File.separator + "ApkScanner.exe";
 		String cmd = null;
 		try {
 			cmd = getOpenCommand(suffix);
@@ -312,7 +314,7 @@ public class SystemUtil
 			return false;
 		}
 
-		String filePath = Resource.getUTF8Path() + File.separator + "ApkScanner.exe";
+		String filePath = RFile.getUTF8Path() + File.separator + "ApkScanner.exe";
 		return cmd.startsWith(filePath);
 	}
 
@@ -320,7 +322,7 @@ public class SystemUtil
 		if(isAssociatedWithFileType(suffix)) {
 			return true;
 		}
-		String filePath = Resource.getUTF8Path() + File.separator + "ApkScanner.exe";
+		String filePath = RFile.getUTF8Path() + File.separator + "ApkScanner.exe";
 		String prefixKey = "ApkScanner"+suffix;
 		try {
 			Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\CLSID");
@@ -356,7 +358,7 @@ public class SystemUtil
 		if(isAssociatedWithFileType(suffix)) {
 			return true;
 		}
-		String filePath = Resource.getUTF8Path() + File.separator + "ApkScanner.exe";
+		String filePath = RFile.getUTF8Path() + File.separator + "ApkScanner.exe";
 		ConsolCmd.exc(new String[][] {
 			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\CLSID", "/ve", "/t", "REG_SZ", "/d", "{E88DCCE0-B7B3-11d1-A9F0-00AA0060FA31}", "/f" },
 			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\DefaultIcon", "/ve", "/t", "REG_SZ", "/d", filePath+",1", "/f" },

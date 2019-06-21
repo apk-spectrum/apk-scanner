@@ -30,7 +30,7 @@ import com.apkscanner.gui.easymode.util.EasyRoundButton;
 import com.apkscanner.gui.easymode.util.EasyRoundLabel;
 import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.gui.easymode.util.RoundPanel;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
 
 public class EasyDevicePanel extends RoundPanel implements MouseListener, ActionListener, ComponentListener{
 	 
@@ -115,14 +115,14 @@ public class EasyDevicePanel extends RoundPanel implements MouseListener, Action
 		
 		final EasyRoundLabel panel = new EasyRoundLabel(" ", devicecolor, Color.BLACK );
 		
-		EasyRoundButton imagepanel = new EasyRoundButton(ImageUtils.setcolorImage(Resource.IMG_EASY_WINDOW_DEVICE.getImageIcon(35, 35), Color.BLACK));
-		//EasyRoundButton imagepanel = new EasyRoundButton(Resource.IMG_EASY_WINDOW_DEVICE.getImageIcon(35, 35));
+		EasyRoundButton imagepanel = new EasyRoundButton(ImageUtils.setcolorImage(RImg.EASY_WINDOW_DEVICE.getImageIcon(35, 35), Color.BLACK));
+		//EasyRoundButton imagepanel = new EasyRoundButton(RImg.EASY_WINDOW_DEVICE.getImageIcon(35, 35));
 		
 		imagepanel.setOpaque(false);
 		imagepanel.setBackground(devicecolor);
 		imagepanel.addActionListener(this);
 		//imagepanel.setPreferredSize(new Dimension(WIDTH-4, DEIVCE_HEIGHT-4));
-		//minlabel.setIcon(ImageUtils.setcolorImage(Resource.IMG_EASY_WINDOW_DEVICE.getImageIcon(25, 25), devicecolor));		
+		//minlabel.setIcon(ImageUtils.setcolorImage(RImg.ASY_WINDOW_DEVICE.getImageIcon(25, 25), devicecolor));		
 				
 		//panel.setPreferredSize(new Dimension(SPREAD_WIDTH-4, DEIVCE_HEIGHT-4));
 		panel.setMouseHoverEffect(true);

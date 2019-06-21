@@ -16,7 +16,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RProp;
 
 
 /**
@@ -29,7 +29,7 @@ public class MultiSpanCellTableExample extends JFrame {
 		super( "Multi-Span Cell Example" );
 
 		try {
-			UIManager.setLookAndFeel((String)Resource.PROP_CURRENT_THEME.getData());
+			UIManager.setLookAndFeel(RProp.S.CURRENT_THEME.get());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 				| UnsupportedLookAndFeelException e1) {
 			e1.printStackTrace();

@@ -69,7 +69,9 @@ import com.apkscanner.gui.component.ApkFileChooser;
 import com.apkscanner.gui.component.ImageControlPanel;
 import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.gui.tabpanels.Resources.ResourceObject;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RProp;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.tool.external.BytecodeViewerLauncher;
@@ -149,13 +151,13 @@ public class ResouceContentsPanel extends JPanel{
 		initToolbar(toolBar, toolbarListener, "");
 
 		axmlVeiwType = VEIW_TYPE_XML;
-		isMultiLinePrint = (boolean)Resource.PROP_PRINT_MULTILINE_ATTR.getData();
+		isMultiLinePrint = RProp.B.PRINT_MULTILINE_ATTR.get();
 
 		String[] petStrings = { "XML", "ARSC"};
 		resTypeCombobox = new JComboBox<String>(petStrings);
 		resTypeCombobox.addActionListener(toolbarListener);
 
-		multiLinePrintButton = new JToggleButton(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_INDENT.getImageIcon());
+		multiLinePrintButton = new JToggleButton(RImg.RESOURCE_TEXTVIEWER_TOOLBAR_INDENT.getImageIcon());
 		multiLinePrintButton.addActionListener(toolbarListener);
 		multiLinePrintButton.setFocusPainted(false);
 		multiLinePrintButton.setSelected(isMultiLinePrint);
@@ -211,8 +213,8 @@ public class ResouceContentsPanel extends JPanel{
 
 		((CardLayout)ContentsviewPanel.getLayout()).show(ContentsviewPanel, CONTENT_INIT_VIEWER);
 
-		JButton openBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_OPEN.getImageIcon(16, 16));
-		JButton saveBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_SAVE.getImageIcon(16, 16));
+		JButton openBtn = new JButton("",RImg.RESOURCE_TEXTVIEWER_TOOLBAR_OPEN.getImageIcon(16, 16));
+		JButton saveBtn = new JButton("",RImg.RESOURCE_TEXTVIEWER_TOOLBAR_SAVE.getImageIcon(16, 16));
 		openBtn.setName(TEXTVIEWER_TOOLBAR_OPEN);
 		saveBtn.setName(TEXTVIEWER_TOOLBAR_SAVE);
 		openBtn.addActionListener(toolbarListener);
@@ -474,9 +476,9 @@ public class ResouceContentsPanel extends JPanel{
 
 	private void initToolbar(JToolBar toolbar, ToolbarActionListener toolbarListener, String Type) {
 
-		JButton FindBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_FIND.getImageIcon(16, 16));
-		JButton NextBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_NEXT.getImageIcon(16, 16));
-		JButton PrevBtn = new JButton("",Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_PREV.getImageIcon(16, 16));
+		JButton FindBtn = new JButton("",RImg.RESOURCE_TEXTVIEWER_TOOLBAR_FIND.getImageIcon(16, 16));
+		JButton NextBtn = new JButton("",RImg.RESOURCE_TEXTVIEWER_TOOLBAR_NEXT.getImageIcon(16, 16));
+		JButton PrevBtn = new JButton("",RImg.RESOURCE_TEXTVIEWER_TOOLBAR_PREV.getImageIcon(16, 16));
 
 		FindBtn.setName(TEXTVIEWER_TOOLBAR_FIND+Type);
 		NextBtn.setName(TEXTVIEWER_TOOLBAR_NEXT+Type);
@@ -518,7 +520,7 @@ public class ResouceContentsPanel extends JPanel{
 		NextBtn.addActionListener(toolbarListener);
 		PrevBtn.addActionListener(toolbarListener);
 
-		//toolbar.add(new JLabel(Resource.STR_LABEL_SEARCH.getString()));
+		//toolbar.add(new JLabel(RStr.LABEL_SEARCH.get()));
 		//toolbar.add(getNewSeparator(JSeparator.VERTICAL, new Dimension(5,16)));
 		toolbar.add(tempfield);
 		toolbar.add(FindBtn);
@@ -602,7 +604,7 @@ public class ResouceContentsPanel extends JPanel{
 				setTextContentPanel(currentSelectedObj);
 			} else if(arg0.getSource() instanceof JToggleButton) {
 				isMultiLinePrint = ((JToggleButton)(arg0.getSource())).isSelected();
-				Resource.PROP_PRINT_MULTILINE_ATTR.setData(isMultiLinePrint);
+				RProp.B.PRINT_MULTILINE_ATTR.set(isMultiLinePrint);
 				setTextContentPanel(currentSelectedObj);
 			}
 		}
@@ -669,15 +671,15 @@ public class ResouceContentsPanel extends JPanel{
 
 		public File getSaveFile(Component component, String defaultFilePath)
 		{
-			JFileChooser jfc = ApkFileChooser.getFileChooser((String)Resource.PROP_LAST_FILE_SAVE_PATH.getData(), JFileChooser.SAVE_DIALOG, new File(defaultFilePath));
-			//jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(Resource.STR_LABEL_APK_FILE_DESC.getString(),"apk"));
+			JFileChooser jfc = ApkFileChooser.getFileChooser(RProp.S.LAST_FILE_SAVE_PATH.get(), JFileChooser.SAVE_DIALOG, new File(defaultFilePath));
+			//jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(RStr.LABEL_APK_FILE_DESC.get(),"apk"));
 
 			if(jfc.showSaveDialog(component) != JFileChooser.APPROVE_OPTION)
 				return null;
 
 			File dir = jfc.getSelectedFile();
 			if(dir != null) {
-				Resource.PROP_LAST_FILE_SAVE_PATH.setData(dir.getParentFile().getAbsolutePath());
+				RProp.S.LAST_FILE_SAVE_PATH.set(dir.getParentFile().getAbsolutePath());
 			}
 			return dir;
 		}
@@ -686,13 +688,13 @@ public class ResouceContentsPanel extends JPanel{
 
     public enum ButtonSet
     {
-    	OS_SETTING			(0x01, Type.NORMAL, Resource.STR_LABEL_OPEN_WITH_SYSTEM.getString(), Resource.STR_LABEL_OPEN_WITH_SYSTEM.getString(), Resource.IMG_RESOURCE_TREE_OPEN_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-    	JD_GUI				(0x02, Type.NORMAL, Resource.STR_LABEL_OPEN_WITH_JDGUI.getString(), Resource.STR_LABEL_OPEN_WITH_JDGUI.getString(), Resource.IMG_RESOURCE_TREE_JD_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-    	JADX_GUI			(0x02, Type.NORMAL, Resource.STR_LABEL_OPEN_WITH_JADXGUI.getString(), Resource.STR_LABEL_OPEN_WITH_JADXGUI.getString(), Resource.IMG_RESOURCE_TREE_JADX_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-    	BYTECODE_VIEWER		(0x02, Type.NORMAL, Resource.STR_LABEL_OPEN_WITH_BYTECODE.getString(), Resource.STR_LABEL_OPEN_WITH_BYTECODE.getString(), Resource.IMG_RESOURCE_TREE_BCV_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-    	APK_SCANNER			(0x04, Type.NORMAL, Resource.STR_LABEL_OPEN_WITH_SCANNER.getString(), Resource.STR_LABEL_OPEN_WITH_SCANNER.getString(), Resource.IMG_APP_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-    	EXPLORER			(0x08, Type.NORMAL, Resource.STR_LABEL_OPEN_WITH_EXPLORER.getString(), Resource.STR_LABEL_OPEN_WITH_EXPLORER.getString(), Resource.IMG_TOOLBAR_EXPLORER.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-    	CHOOSE_APPLICATION	(0x10, Type.NORMAL, Resource.STR_LABEL_OPEN_WITH_CHOOSE.getString(), Resource.STR_LABEL_OPEN_WITH_CHOOSE.getString(), Resource.IMG_RESOURCE_TREE_OPEN_OTHERAPPLICATION_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize));
+    	OS_SETTING			(0x01, Type.NORMAL, RStr.LABEL_OPEN_WITH_SYSTEM.get(), RStr.LABEL_OPEN_WITH_SYSTEM.get(), RImg.RESOURCE_TREE_OPEN_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+    	JD_GUI				(0x02, Type.NORMAL, RStr.LABEL_OPEN_WITH_JDGUI.get(), RStr.LABEL_OPEN_WITH_JDGUI.get(), RImg.RESOURCE_TREE_JD_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+    	JADX_GUI			(0x02, Type.NORMAL, RStr.LABEL_OPEN_WITH_JADXGUI.get(), RStr.LABEL_OPEN_WITH_JADXGUI.get(), RImg.RESOURCE_TREE_JADX_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+    	BYTECODE_VIEWER		(0x02, Type.NORMAL, RStr.LABEL_OPEN_WITH_BYTECODE.get(), RStr.LABEL_OPEN_WITH_BYTECODE.get(), RImg.RESOURCE_TREE_BCV_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+    	APK_SCANNER			(0x04, Type.NORMAL, RStr.LABEL_OPEN_WITH_SCANNER.get(), RStr.LABEL_OPEN_WITH_SCANNER.get(), RImg.APP_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+    	EXPLORER			(0x08, Type.NORMAL, RStr.LABEL_OPEN_WITH_EXPLORER.get(), RStr.LABEL_OPEN_WITH_EXPLORER.get(), RImg.TOOLBAR_EXPLORER.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+    	CHOOSE_APPLICATION	(0x10, Type.NORMAL, RStr.LABEL_OPEN_WITH_CHOOSE.get(), RStr.LABEL_OPEN_WITH_CHOOSE.get(), RImg.RESOURCE_TREE_OPEN_OTHERAPPLICATION_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize));
 
     	private enum Type {
     		NONE, NORMAL, HOVER, EXTEND
@@ -799,12 +801,12 @@ public class ResouceContentsPanel extends JPanel{
 
 		public SelectViewPanel() {
 
-			JLabel warringLabel = new JLabel(Resource.IMG_WARNING2.getImageIcon(80,80));
+			JLabel warringLabel = new JLabel(RImg.WARNING2.getImageIcon(80,80));
 
-			JTextArea textArea = new JTextArea(Resource.STR_MSG_UNSUPPORTED_PREVIEW.getString());
+			JTextArea textArea = new JTextArea(RStr.MSG_UNSUPPORTED_PREVIEW.get());
 			textArea.setEditable(false);
 
-			openWithLabel = new JLabel(Resource.STR_LABEL_OPEN_WITH.getString());
+			openWithLabel = new JLabel(RStr.LABEL_OPEN_WITH.get());
 			openWithLabel.setBorder(new EmptyBorder(20, 10, 0, 0));
 
 			JPanel MessagePanel = new JPanel(new FlowLayout());
@@ -816,7 +818,7 @@ public class ResouceContentsPanel extends JPanel{
 	        MessagePanel.setAlignmentX(LEFT_ALIGNMENT);
 
 			buttonMap = ButtonSet.getButtonMap(this);
-			buttonMap.get(ButtonSet.JD_GUI).setDisabledIcon(Resource.IMG_RESOURCE_TREE_OPEN_JD_LOADING.getImageIcon());
+			buttonMap.get(ButtonSet.JD_GUI).setDisabledIcon(RImg.RESOURCE_TREE_OPEN_JD_LOADING.getImageIcon());
 
 			JPanel IconPanel = new JPanel(new GridBagLayout());
 			for(JButton btn: buttonMap.values()) {

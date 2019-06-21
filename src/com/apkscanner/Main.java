@@ -15,7 +15,8 @@ import org.apache.commons.cli.ParseException;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.UIController;
 import com.apkscanner.gui.installer.ApkInstallWizard;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RProp;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
@@ -30,12 +31,12 @@ public class Main
 
 	static public void main(final String[] args)
 	{
-		Resource.setLanguage((String)Resource.PROP_LANGUAGE.getData(SystemUtil.getUserLanguage()));
-		if("user".equalsIgnoreCase(Resource.STR_APP_BUILD_MODE.getString())) {
+		RStr.setLanguage(RProp.S.LANGUAGE.get());
+		if("user".equalsIgnoreCase(RStr.APP_BUILD_MODE.get())) {
 			Log.enableConsoleLog(false);
 		}
 
-		Log.i(Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString() + " " + Resource.STR_APP_BUILD_MODE.getString());
+		Log.i(RStr.APP_NAME + " " + RStr.APP_VERSION + " " + RStr.APP_BUILD_MODE);
 		Log.i("OS : " + SystemUtil.OS);
 		Log.i("java.version : " + System.getProperty("java.version"));
 		Log.i("java.specification.version : " + System.getProperty("java.specification.version"));
@@ -201,7 +202,7 @@ public class Main
 	}
 
 	static private void waitAdbServer() {
-        if(SystemUtil.isWindows() && (boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData()) {
+        if(SystemUtil.isWindows() && RProp.B.ADB_DEVICE_MONITORING.get()) {
         	//AdbServerMonitor.startServerAndCreateBridge();
         	while(AdbServerMonitor.getAndroidDebugBridge(1000) == null) {
         		Log.v("wait for adb server");
@@ -248,11 +249,11 @@ public class Main
 
 	static private void usage()
 	{
-		System.out.println(Resource.STR_APP_NAME.getString() + " " + Resource.STR_APP_VERSION.getString());
+		System.out.println(RStr.APP_NAME + " " + RStr.APP_VERSION);
 		//System.out.println("with apktool " + ApktoolWrapper.getApkToolVersion() + " (http://ibotpeaches.github.io/Apktool/)");
 		//System.out.println(" - Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)");
 		System.out.println("with Android debug bridge (http://developer.android.com/tools/help/adb.html)");
-		System.out.println("Programmed by " + Resource.STR_APP_MAKER.getString() + " <" + Resource.STR_APP_MAKER_EMAIL.getString() + ">" + ", 2015");
+		System.out.println("Programmed by " + RStr.APP_MAKER + " <" + RStr.APP_MAKER_EMAIL + ">" + ", 2015");
 		System.out.println("Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)");
 		System.out.println();
 

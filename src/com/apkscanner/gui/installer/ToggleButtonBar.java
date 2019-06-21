@@ -21,7 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import com.apkscanner.core.installer.OptionsBundle;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RStr;
 
 public class ToggleButtonBar extends JPanel {
 
@@ -43,11 +43,11 @@ public class ToggleButtonBar extends JPanel {
 	int status;
 	private static final Color[] ColorSet = { new Color(0x50AF49), new Color(0xFF7400), new Color(0x5CD1E5), new Color(0x8b0000), new Color(0x8b0000), new Color(0x8b0000), new Color(0x555555)};
 
-	private String[] installtextSet = {Resource.STR_BTN_INSTALLED.getString(), Resource.STR_BTN_NOT_INSTALLED.getString(), "", "", Resource.STR_BTN_WAITING.getString()};
-	private String[] installOptiontextSet = {"Install", Resource.STR_BTN_NO_INSTALL.getString(),
-			"Push", Resource.STR_BTN_IMPOSSIBLE_INSTALL.getString(), Resource.STR_BTN_WAITING.getString()};
+	private String[] installtextSet = {RStr.BTN_INSTALLED.get(), RStr.BTN_NOT_INSTALLED.get(), "", "", RStr.BTN_WAITING.get()};
+	private String[] installOptiontextSet = {"Install", RStr.BTN_NO_INSTALL.get(),
+			"Push", RStr.BTN_IMPOSSIBLE_INSTALL.get(), RStr.BTN_WAITING.get()};
 
-	private static final String[] installingtextSet = {Resource.STR_LABEL_INSTALLING.getString(), Resource.STR_BTN_SUCCESS.getString(), Resource.STR_BTN_FAIL.getString()};
+	private static final String[] installingtextSet = {RStr.LABEL_INSTALLING.get(), RStr.BTN_SUCCESS.get(), RStr.BTN_FAIL.get()};
 
 	AbstractButton btninstalled;
 	AbstractButton btnoption;

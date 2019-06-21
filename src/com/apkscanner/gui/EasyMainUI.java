@@ -22,7 +22,10 @@ import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.gui.dialog.LogDlg;
 import com.apkscanner.gui.easymode.EasyGuiMainPanel;
 import com.apkscanner.gui.easymode.core.ToolEntryManager;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RConst;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RProp;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.Log;
 
@@ -59,21 +62,21 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 		UIInittime = UIstarttime = System.currentTimeMillis();
 
 		//long framestarttime = System.currentTimeMillis();
-		setTitle(Resource.STR_APP_NAME.getString());
+		setTitle(RStr.APP_NAME.get());
 		//Log.d(""+(System.currentTimeMillis() - framestarttime) );
 
 		Log.i("initialize() setUIFont");
 		//long aaa = System.currentTimeMillis();
-//		String propFont = (String) Resource.PROP_BASE_FONT.getData();
-//		int propFontStyle = (int)Resource.PROP_BASE_FONT_STYLE.getInt();
-//		int propFontSize = (int) Resource.PROP_BASE_FONT_SIZE.getInt();
+//		String propFont = RProp.S.BASE_FONT.get();
+//		int propFontStyle = RProp.I.BASE_FONT_STYLE.get();
+//		int propFontSize = RProp.I.BASE_FONT_SIZE.get();
 		//setUIFont(new javax.swing.plaf.FontUIResource(propFont, propFontStyle, propFontSize));
 		//20ms
 		//Log.d("init setUIFont   : " + (System.currentTimeMillis() - aaa) / 1000.0);
 
 		Log.i("initialize() setLookAndFeel");
 //		try {
-//			UIManager.setLookAndFeel((String)Resource.PROP_CURRENT_THEME.getData());
+//			UIManager.setLookAndFeel(RProp.S.CURRENT_THEME.get());
 //		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 //				| UnsupportedLookAndFeelException e1) {
 //			e1.printStackTrace();
@@ -88,7 +91,7 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 			setResizable(true);
 		}
 		Log.i("setIconImage");
-		setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+		setIconImage(RImg.APP_ICON.getImageIcon().getImage());
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setMinimumSize(new Dimension(300,200));
 
@@ -103,20 +106,20 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 		pack();
 
 		Log.i("setLocationRelativeTo");
-		String setposition = (String)Resource.PROP_EASY_GUI_WINDOW_POSITION_X.getData();
+		int setposition = RProp.I.EASY_GUI_WINDOW_POSITION_X.get();
 
-		if (setposition == null) {
+		if (setposition == 0) {
 			setLocationRelativeTo(null);
 			Point position = getLocation();
-			Resource.PROP_EASY_GUI_WINDOW_POSITION_X.setData(position.x+"");
-			Resource.PROP_EASY_GUI_WINDOW_POSITION_Y.setData(position.y+"");
-			Log.d(Resource.PROP_EASY_GUI_WINDOW_POSITION_X.getData() + "");
+			RProp.I.EASY_GUI_WINDOW_POSITION_X.set(position.x);
+			RProp.I.EASY_GUI_WINDOW_POSITION_Y.set(position.y);
+			Log.d(RProp.I.EASY_GUI_WINDOW_POSITION_X.get() + "");
 		} else { // setLocationRelativeTo(null); 100 ms
-			int x = Integer.parseInt((String)Resource.PROP_EASY_GUI_WINDOW_POSITION_X.getData());
-			int y = Integer.parseInt((String)Resource.PROP_EASY_GUI_WINDOW_POSITION_Y.getData());
+			int x = RProp.I.EASY_GUI_WINDOW_POSITION_X.get();
+			int y = RProp.I.EASY_GUI_WINDOW_POSITION_Y.get();
 
 			setLocation(new Point(x,y));
-//			Resource.PROP_EASY_GUI_WINDOW_POSITION_Y.getData()));
+//			RProp.I.EASY_GUI_WINDOW_POSITION_Y.get()));
 		}
 
 		if (apkScanner != null &&
@@ -136,10 +139,10 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 					int keycode = Integer.parseInt(e.getActionCommand());
 					switch(keycode) {
 					case KeyEvent.VK_ESCAPE:
-						switch((int)Resource.PROP_ESC_ACTION.getInt()) {
-						case Resource.INT_ESC_ACT_NONE: return;
-						case Resource.INT_ESC_ACT_CHANG_UI_MODE: break;
-						case Resource.INT_ESC_ACT_EXIT: dispose(); return;
+						switch(RProp.I.ESC_ACTION.get()) {
+						case RConst.INT_ESC_ACT_NONE: return;
+						case RConst.INT_ESC_ACT_CHANG_UI_MODE: break;
+						case RConst.INT_ESC_ACT_EXIT: dispose(); return;
 						}
 					case KeyEvent.VK_F2:
 						UIController.changeToMainGui();
@@ -168,12 +171,12 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 				//KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true)
 			},
 			new String[] {
-				Resource.STR_BTN_ABOUT.getString(),
-				Resource.STR_BTN_OPEN.getString(),
-				Resource.STR_BTN_OPEN_PACKAGE.getString(),
-				Resource.STR_BTN_INSTALL.getString(),
-				Resource.STR_BTN_EXPLORER.getString(),
-				Resource.STR_BTN_MANIFEST.getString(),
+				RStr.BTN_ABOUT.getString(),
+				RStr.BTN_OPEN.getString(),
+				RStr.BTN_OPEN_PACKAGE.getString(),
+				RStr.BTN_INSTALL.getString(),
+				RStr.BTN_EXPLORER.getString(),
+				RStr.BTN_MANIFEST.getString(),
 			},
 			new ActionListener() {
 				@Override

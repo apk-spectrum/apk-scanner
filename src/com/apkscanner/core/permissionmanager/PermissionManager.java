@@ -15,7 +15,7 @@ import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.data.apkinfo.UsesPermissionInfo;
 import com.apkscanner.data.apkinfo.UsesPermissionSdk23Info;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RFile;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.XmlPath;
 
@@ -44,12 +44,12 @@ public class PermissionManager
 	private int targetSdkVersion = -1;
 
 	static {
-		String xmlPath = Resource.getUTF8Path() + File.separator + "data" + File.separator + "PermissionsHistory.xml";
+		String xmlPath = RFile.getUTF8Path() + File.separator + "data" + File.separator + "PermissionsHistory.xml";
 		File xmlFile = new File(xmlPath);
 		if(xmlFile.canRead()) {
 			xmlPermissionDB = new XmlPath(xmlFile);
 		} else {
-			xmlPermissionDB = new XmlPath(Resource.class.getResourceAsStream("/values/PermissionsHistory.xml"));
+			xmlPermissionDB = new XmlPath(RFile.getResourceAsStream("/values/PermissionsHistory.xml"));
 		}
 	}
 
@@ -514,7 +514,7 @@ public class PermissionManager
 		} else if(name.startsWith("@drawable/")) {
 			String id = name.substring(10);
 			String path = "/icons/" + id + ".png";
-			URL url = Resource.class.getResource(path);
+			URL url = RFile.getResource(path);
 			if(url != null) path = url.toString();
 			resVal = new ResourceInfo[] { new ResourceInfo(path, null) };
 		} else {

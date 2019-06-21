@@ -22,7 +22,8 @@ import com.apkscanner.gui.easymode.core.ToolEntryManager;
 import com.apkscanner.gui.easymode.dlg.EasyToolbarSettingDnDDlg;
 import com.apkscanner.gui.easymode.util.EasyRoundButton;
 import com.apkscanner.gui.easymode.util.GraphicUtil;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 
 public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener, EasyToolListner{
@@ -71,10 +72,10 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener, E
 		
 		
 		
-		open_detail_apk_btn = new EasyToolIcon(Resource.IMG_EASY_WINDOW_SPREAD.getImageIcon(), 30);
+		open_detail_apk_btn = new EasyToolIcon(RImg.EASY_WINDOW_SPREAD.getImageIcon(), 30);
 		open_detail_apk_btn.setScalesize(60);
 		
-		open_detail_apk_btn.setAction(Resource.STR_APP_NAME.getString(), this);
+		open_detail_apk_btn.setAction(RStr.APP_NAME.get(), this);
 		open_detail_apk_btn.setEasyToolListner(this);
 		open_detail_apk_btn.setEasyText(defaultApk);
 		JPanel temp = new JPanel(new FlowLayout(FlowLayout.CENTER,0, 0));
@@ -137,7 +138,7 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener, E
 			toolbartemppanel.add(btn);
 			toolbartemppanel.updateUI();
 		}
-		btnsetting = new EasyRoundButton(Resource.IMG_EASY_WINDOW_SETTING.getImageIcon(20, 20))        {
+		btnsetting = new EasyRoundButton(RImg.EASY_WINDOW_SETTING.getImageIcon(20, 20))        {
 			private static final long serialVersionUID = 2208337293930490795L;
 			@Override
             public int getBaseline(int width, int height) {
@@ -174,7 +175,6 @@ public class EasyGuiToolScaleupPanel extends JPanel implements ActionListener, E
 
 	@Override
 	public void changestate(int state, EasyToolIcon easyiconlabel) {
-		// TODO Auto-generated method stub
 		switch(state) {
 		case EasyToolListner.STATE_ANIMATION_END:
 			drawtext = true;

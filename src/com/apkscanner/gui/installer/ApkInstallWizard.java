@@ -48,7 +48,9 @@ import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.gui.component.WindowSizeMemorizer;
 import com.apkscanner.gui.dialog.PackageInfoPanel;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RProp;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
@@ -108,7 +110,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 		}
 
 		private void dialog_init(Component owner) {
-			setTitle(Resource.STR_TITLE_INSTALL_WIZARD.getString());
+			setTitle(RStr.TITLE_INSTALL_WIZARD.get());
 			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 			setResizable(true);
 			setModal(false);
@@ -141,17 +143,13 @@ public class ApkInstallWizard implements IDeviceChangeListener
 		private void frame_init()
 		{
 			try {
-				if(Resource.PROP_CURRENT_THEME.getData()==null) {
-					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-				} else {
-					UIManager.setLookAndFeel(Resource.PROP_CURRENT_THEME.getData().toString());
-				}
+				UIManager.setLookAndFeel(RProp.S.CURRENT_THEME.get());
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 					| UnsupportedLookAndFeelException e1) {
 				e1.printStackTrace();
 			}
 
-			setTitle(Resource.STR_TITLE_INSTALL_WIZARD.getString());
+			setTitle(RStr.TITLE_INSTALL_WIZARD.get());
 			setResizable(true);
 
 			initialize(this, getRootPane());
@@ -200,10 +198,10 @@ public class ApkInstallWizard implements IDeviceChangeListener
 
 		AdbServerMonitor.startServerAndCreateBridgeAsync();
 
-		window.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+		window.setIconImage(RImg.APP_ICON.getImageIcon().getImage());
 
 		Dimension minSize = new Dimension(600, 450);
-		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
+		if(RProp.B.SAVE_WINDOW_SIZE.get()) {
 			WindowSizeMemorizer.resizeCompoent(window, minSize);
 		} else {
 			window.setSize(minSize);
@@ -789,7 +787,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 	};
 
 	public static void main(String args[]) {
-		Resource.setLanguage((String)Resource.PROP_LANGUAGE.getData(SystemUtil.getUserLanguage()));
+		RStr.setLanguage(RProp.S.LANGUAGE.get());
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				boolean ret = false;

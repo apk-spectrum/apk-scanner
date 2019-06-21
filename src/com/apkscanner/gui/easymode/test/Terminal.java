@@ -2,17 +2,15 @@ package com.apkscanner.gui.easymode.test;
 
 import java.awt.Color;
 import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.GridLayout;
-import java.awt.Rectangle;
 import java.awt.GraphicsDevice.WindowTranslucency;
- 
-import javax.swing.ImageIcon;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
 
 public class Terminal extends JFrame{
 	 
@@ -41,7 +39,7 @@ public class Terminal extends JFrame{
         if (jContentPane == null) {
             jLabel = new JLabel();
             jLabel.setBounds(new Rectangle(0, -10, 434, 674));
-            jLabel.setIcon(Resource.IMG_ADD_TO_DESKTOP.getImageIcon());
+            jLabel.setIcon(RImg.ADD_TO_DESKTOP.getImageIcon());
             jLabel.setText("JLabel");
             jContentPane = new JPanel();
             jContentPane.setLayout(null);

@@ -38,7 +38,8 @@ import org.fife.ui.rtextarea.SearchEngine;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.component.WindowSizeMemorizer;
 import com.apkscanner.gui.tabpanels.Resources;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RProp;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.util.Log;
@@ -63,7 +64,7 @@ public class SearchDlg extends JDialog {
 		getContentPane().setLayout(null);
 		
 		Dimension minSize = new Dimension(500, 500);
-		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
+		if(RProp.B.SAVE_WINDOW_SIZE.get()) {
 			WindowSizeMemorizer.resizeCompoent(this, minSize);
 		} else {
 			setSize(minSize);
@@ -113,7 +114,7 @@ public class SearchDlg extends JDialog {
 
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
-		label = new JLabel(Resource.IMG_WAIT_BAR.getImageIcon());
+		label = new JLabel(RImg.WAIT_BAR.getImageIcon());
 		label.setVisible(false);
 		buttonPanel.add(label);
 	}

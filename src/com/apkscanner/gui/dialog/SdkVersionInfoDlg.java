@@ -30,7 +30,10 @@ import javax.swing.ListCellRenderer;
 import com.apkscanner.gui.component.ImagePanel;
 import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.gui.component.WindowSizeMemorizer;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RFile;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RProp;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.XmlPath;
 
@@ -61,7 +64,7 @@ public class SdkVersionInfoDlg extends JDialog {
 	private void initialize(Window window)
 	{
 		setTitle("SDK Info");
-		setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+		setIconImage(RImg.APP_ICON.getImageIcon().getImage());
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(true);
 		setLocationRelativeTo(window);
@@ -69,7 +72,7 @@ public class SdkVersionInfoDlg extends JDialog {
 		setLayout(new GridBagLayout());
 
 		Dimension minSize = new Dimension(550, 270);
-		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
+		if(RProp.B.SAVE_WINDOW_SIZE.get()) {
 			WindowSizeMemorizer.resizeCompoent(this, minSize);
 		} else {
 			setSize(minSize);
@@ -105,7 +108,7 @@ public class SdkVersionInfoDlg extends JDialog {
 			}
 		});
 
-		JButton btnExit = new JButton(Resource.STR_BTN_OK.getString());
+		JButton btnExit = new JButton(RStr.BTN_OK.get());
 		btnExit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -154,7 +157,7 @@ public class SdkVersionInfoDlg extends JDialog {
 		if(xmlPath == null) {
 			return;
 		}
-		try(InputStream xml = Resource.class.getResourceAsStream(xmlPath)) {
+		try(InputStream xml = RFile.getResourceAsStream(xmlPath)) {
 			if(xml != null) sdkXmlPath = new XmlPath(xml);
 		} catch(IOException e) { }
 		if(sdkXmlPath == null) {
@@ -181,13 +184,13 @@ public class SdkVersionInfoDlg extends JDialog {
 				info.append("\n\nAPI Level " + sdkVer);
 				info.append("\nBuild.VERSION_CODES." + sdkInfo.getAttribute("versionCode"));
 
-				logoIcon = new ImageIcon(Resource.class.getResource(sdkInfo.getAttribute("icon")));
+				logoIcon = new ImageIcon(RFile.getResource(sdkInfo.getAttribute("icon")));
 			} else {
 				info.append("API Level " + sdkVer);
 				info.append("\nUnknown verion.\n\nYou can look at the sdk info in the Android developer site\n");
 				info.append("http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels");
 
-				logoIcon = new ImageIcon(Resource.class.getResource("/icons/logo/base.png"));
+				logoIcon = new ImageIcon(RFile.getResource("/icons/logo/base.png"));
 			}
 		} else {
 			XmlPath list = sdkXmlPath.getNodeList("/resources/sdk-info");
@@ -202,7 +205,7 @@ public class SdkVersionInfoDlg extends JDialog {
 			}
 			info.append("\nhttp://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels");
 
-			logoIcon = new ImageIcon(Resource.class.getResource("/icons/logo/base.png"));
+			logoIcon = new ImageIcon(RFile.getResource("/icons/logo/base.png"));
 		}
 
 		sdkInfoArea.setText(info.toString());

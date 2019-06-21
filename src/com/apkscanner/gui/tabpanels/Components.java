@@ -29,7 +29,7 @@ import com.apkscanner.data.apkinfo.ProviderInfo;
 import com.apkscanner.data.apkinfo.ReceiverInfo;
 import com.apkscanner.data.apkinfo.ServiceInfo;
 import com.apkscanner.plugin.ITabbedRequest;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 
 public class Components extends AbstractTabbedPanel
@@ -47,8 +47,8 @@ public class Components extends AbstractTabbedPanel
   	  
 	public Components() {
 		setLayout(new GridLayout(1, 0));
-		setName(Resource.STR_TAB_COMPONENTS.getString());
-		setToolTipText(Resource.STR_TAB_COMPONENTS.getString());
+		setName(RStr.TAB_COMPONENTS.get());
+		setToolTipText(RStr.TAB_COMPONENTS.get());
 		setEnabled(false);
 	}
 
@@ -111,7 +111,7 @@ public class Components extends AbstractTabbedPanel
 		//scrollPane2.setPreferredSize(new Dimension(300, 500));
 		
 		IntentPanel = new JPanel();
-		IntentLabel = new JLabel(Resource.STR_ACTIVITY_LABEL_INTENT.getString());
+		IntentLabel = new JLabel(RStr.ACTIVITY_LABEL_INTENT.get());
 
 		IntentPanel.setLayout(new BorderLayout());
 
@@ -252,14 +252,14 @@ public class Components extends AbstractTabbedPanel
 	@Override
 	public void reloadResource()
 	{
-		setName(Resource.STR_TAB_COMPONENTS.getString());
-		setToolTipText(Resource.STR_TAB_COMPONENTS.getString());
+		setName(RStr.TAB_COMPONENTS.get());
+		setToolTipText(RStr.TAB_COMPONENTS.get());
 
 		if(TableModel == null) return;
 		TableModel.loadResource();
 		TableModel.fireTableStructureChanged();
 		setJTableColumnsWidth(table, 500, 62, 10, 7, 7, 7, 7);
-		IntentLabel.setText(Resource.STR_ACTIVITY_LABEL_INTENT.getString());
+		IntentLabel.setText(RStr.ACTIVITY_LABEL_INTENT.get());
 	}
 
 	public void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
@@ -288,12 +288,12 @@ public class Components extends AbstractTabbedPanel
 		public void loadResource()
 		{
 			columnNames = new String[] {
-				Resource.STR_ACTIVITY_COLUME_CLASS.getString(),
-				Resource.STR_ACTIVITY_COLUME_TYPE.getString(),
-				Resource.STR_ACTIVITY_COLUME_ENABLED.getString(),
-				Resource.STR_ACTIVITY_COLUME_EXPORT.getString(),
-				Resource.STR_ACTIVITY_COLUME_PERMISSION.getString(),
-				Resource.STR_ACTIVITY_COLUME_STARTUP.getString()
+				RStr.ACTIVITY_COLUME_CLASS.get(),
+				RStr.ACTIVITY_COLUME_TYPE.get(),
+				RStr.ACTIVITY_COLUME_ENABLED.get(),
+				RStr.ACTIVITY_COLUME_EXPORT.get(),
+				RStr.ACTIVITY_COLUME_PERMISSION.get(),
+				RStr.ACTIVITY_COLUME_STARTUP.get()
 			};
 		}
 		

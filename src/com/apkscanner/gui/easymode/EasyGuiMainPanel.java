@@ -39,7 +39,8 @@ import com.apkscanner.gui.easymode.core.ToolEntryManager;
 import com.apkscanner.gui.easymode.util.RoundPanel;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.plugin.IExternalTool;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 
 public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropTargetChooser.Listener  {
@@ -125,7 +126,7 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 		layeredPane.add(contentspanel, new Integer(1));
 		layeredPane.add(iconhoverpanel,new Integer(2));
 
-		dragdroplabel = new DropEffectLabel(Resource.IMG_EASY_WINDOW_DRAGANDDROP.getImageIcon(100, 100));
+		dragdroplabel = new DropEffectLabel(RImg.EASY_WINDOW_DRAGANDDROP.getImageIcon(100, 100));
 		// dragdroplabel = new MyJLabel(null);
 		// Dimension d3 = new Dimension(width, height);
 		// btn1.setLayout(overlay);
@@ -260,7 +261,7 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 		// bordPanel.setWindowTitle(apklightscanner.getApkInfo());
 		EasyMainUI.UIstarttime = System.currentTimeMillis();
 		setframetext(
-				new File(apkScanner.getApkInfo().filePath).getName() + " - " + Resource.STR_APP_NAME.getString());
+				new File(apkScanner.getApkInfo().filePath).getName() + " - " + RStr.APP_NAME.get());
 		
 		EasycontentsPanel.setContents(apkScanner.getApkInfo());
 		

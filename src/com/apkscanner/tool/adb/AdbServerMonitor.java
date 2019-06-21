@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import com.android.ddmlib.AdbVersion;
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.DdmPreferences;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RProp;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 import com.google.common.base.Joiner;
@@ -120,7 +120,7 @@ public final class AdbServerMonitor {
 	public static AdbServerMonitor startServerAndCreateBridge() {
 		AdbVersionManager.loadCache();
 
-		String adbPath = ((String)Resource.PROP_ADB_PATH.getData()).trim();
+		String adbPath = (RProp.S.ADB_PATH.get()).trim();
 		if(adbPath == null || adbPath.isEmpty()
 				|| !AdbVersionManager.checkAdbVersion(adbPath)) {
 			adbPath = AdbVersionManager.getAdbLastestVersionFromCache();
@@ -132,8 +132,8 @@ public final class AdbServerMonitor {
 
 		return AdbServerMonitor.startServerAndCreateBridge(
 				adbPath,
-				(boolean)Resource.PROP_ADB_POLICY_SHARED.getData(),
-				(boolean)Resource.PROP_ADB_DEVICE_MONITORING.getData());
+				RProp.B.ADB_POLICY_SHARED.get(),
+				RProp.B.ADB_DEVICE_MONITORING.get());
 	}
 
 	public static AdbServerMonitor startServerAndCreateBridge(String adbPath, boolean demonShared, boolean allowRestart) {

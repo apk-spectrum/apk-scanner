@@ -22,7 +22,8 @@ import com.apkscanner.plugin.PlugInConfig;
 import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.plugin.gui.NetworkErrorDialog;
 import com.apkscanner.plugin.gui.UpdateNotificationWindow;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RProp;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 
 public class UIController implements Runnable {
@@ -71,7 +72,7 @@ public class UIController implements Runnable {
 	private void createAndShowGUI() {
 		Log.i("start UIController");
 
-		final boolean isEasyGui = (boolean) Resource.PROP_USE_EASY_UI.getData();
+		final boolean isEasyGui = RProp.B.USE_EASY_UI.get();
 
 		Log.i("setLookAndFeel");
 		setLookAndFeel(isEasyGui);
@@ -84,11 +85,11 @@ public class UIController implements Runnable {
 		}
 		mainframe.setVisible(true);
 
-		if((boolean)Resource.PROP_USE_UI_BOOSTER.getData()) {
+		if(RProp.B.USE_UI_BOOSTER.get()) {
 			uiLoaderBooster(isEasyGui);
 		}
 
-		if(!(boolean) Resource.PROP_SKIP_STARTUP_EASY_UI_DLG.getData()) {
+		if(!RProp.B.SKIP_STARTUP_EASY_UI_DLG.get()) {
 			if(EasyStartupDlg.showAboutDialog(mainframe)) {
 				changeGui(isEasyGui ? APKSCANNER_GUI_APKSCANNER : APKSCANNER_GUI_EASY_APKSCANNER);
 			}
@@ -114,7 +115,7 @@ public class UIController implements Runnable {
 	        return;
 		}
 		try {
-			UIManager.setLookAndFeel((String)Resource.PROP_CURRENT_THEME.getData());
+			UIManager.setLookAndFeel(RProp.S.CURRENT_THEME.get());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 				| UnsupportedLookAndFeelException e1) {
 			e1.printStackTrace();
@@ -201,7 +202,7 @@ public class UIController implements Runnable {
 	}
 
 	private void loadPlugIn() {
-		PlugInManager.setLang(Resource.getLanguage());
+		PlugInManager.setLang(RStr.getLanguage());
 		PlugInManager.addPlugInEventListener(new IPlugInEventListener() {
 			@Override
 			public void onPluginLoaded() {

@@ -21,7 +21,10 @@ import com.apkscanner.gui.component.HtmlEditorPane;
 import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.gui.component.WindowSizeMemorizer;
 import com.apkscanner.gui.component.tabbedpane.TabbedPaneUIManager;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RFile;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RProp;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 
 public class PermissionReferencePanel extends JPanel implements ActionListener {
@@ -34,7 +37,7 @@ public class PermissionReferencePanel extends JPanel implements ActionListener {
 	public PermissionReferencePanel() {
 		setLayout(new BorderLayout());
 		JTabbedPane tabbedPanel = new JTabbedPane();
-		String tabbedStyle = (String) Resource.PROP_TABBED_UI_THEME.getData();
+		String tabbedStyle = RProp.S.TABBED_UI_THEME.get();
 		tabbedPanel.setOpaque(true);
 		TabbedPaneUIManager.setUI(tabbedPanel, tabbedStyle);
 
@@ -53,10 +56,10 @@ public class PermissionReferencePanel extends JPanel implements ActionListener {
 	}
 
 	private void loadData() {
-		referencePanel.setText(Resource.RAW_PERMISSION_REFERENCE_HTML.getString());
+		referencePanel.setText(RFile.RAW_PERMISSION_REFERENCE_HTML.getString());
 		referencePanel.setCaretPosition(0);
 
-		protectLevelPanel.setText(Resource.RAW_PROTECTION_LEVELS_HTML.getString());
+		protectLevelPanel.setText(RFile.RAW_PROTECTION_LEVELS_HTML.getString());
 		protectLevelPanel.setCaretPosition(0);
 
 		PermissionRepository repo = PermissionManager.getPermissionRepository();
@@ -118,8 +121,8 @@ public class PermissionReferencePanel extends JPanel implements ActionListener {
 	public void showDialog(Window owner) {
 		dialog = new JDialog(owner);
 
-		dialog.setTitle(Resource.STR_LABEL_REFERENCE_N_LEVELS.getString());
-		dialog.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+		dialog.setTitle(RStr.LABEL_REFERENCE_N_LEVELS.get());
+		dialog.setIconImage(RImg.APP_ICON.getImageIcon().getImage());
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		dialog.setResizable(true);
 
@@ -127,7 +130,7 @@ public class PermissionReferencePanel extends JPanel implements ActionListener {
 		dialog.setLayout(new BorderLayout());
 
 		Dimension minSize = new Dimension(450, 500);
-		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
+		if(RProp.B.SAVE_WINDOW_SIZE.get()) {
 			WindowSizeMemorizer.resizeCompoent(dialog, minSize);
 		} else {
 			dialog.setSize(minSize);

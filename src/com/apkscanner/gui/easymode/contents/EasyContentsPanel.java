@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -25,6 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+
 import com.android.ddmlib.IDevice;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
@@ -38,7 +38,9 @@ import com.apkscanner.gui.easymode.util.EasyTextField;
 import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.gui.easymode.util.RoundPanel;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RProp;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 
 public class EasyContentsPanel extends JPanel{
@@ -96,7 +98,6 @@ public class EasyContentsPanel extends JPanel{
 	JPanel labeltemp;
 	JPanel iconpanel;
 	public EasyContentsPanel() {
-		// TODO Auto-generated constructor stub
 		Log.d("start EasyContentsPanel ");
 		setLayout(new BorderLayout());		
 		setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
@@ -152,8 +153,7 @@ public class EasyContentsPanel extends JPanel{
 		btnlabelcount.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				showDialog(mutiLabels, Resource.STR_LABEL_APP_NAME_LIST.getString(), new Dimension(300, 200), null);
+				showDialog(mutiLabels, RStr.LABEL_APP_NAME_LIST.getString(), new Dimension(300, 200), null);
 			}
 		});
 		labelcountpanel = new JPanel();
@@ -169,7 +169,7 @@ public class EasyContentsPanel extends JPanel{
 	
 	private void addClipBoardbutton(final EasyRoundLabel panel) {
 		//panel.setLayout(new BorderLayout());
-//		EasyRoundButton btnshowpermissiondlg = new EasyRoundButton(Resource.IMG_EASY_WINDOW_CLIPBOARD_ICON.getImageIcon(15, 15));
+//		EasyRoundButton btnshowpermissiondlg = new EasyRoundButton(RImg.EASY_WINDOW_CLIPBOARD_ICON.getImageIcon(15, 15));
 //		
 //		btnshowpermissiondlg.setPreferredSize(new Dimension(15, 15));
 //		btnshowpermissiondlg.setBackground(panelbackgroundcolor);
@@ -200,7 +200,7 @@ public class EasyContentsPanel extends JPanel{
 	
 	private void addClipBoardbutton(final EasyRoundLabelCount panel) {
 		//panel.setLayout(new BorderLayout());
-//		EasyRoundButton btnshowpermissiondlg = new EasyRoundButton(Resource.IMG_EASY_WINDOW_CLIPBOARD_ICON.getImageIcon(15, 15));
+//		EasyRoundButton btnshowpermissiondlg = new EasyRoundButton(RImg.EASY_WINDOW_CLIPBOARD_ICON.getImageIcon(15, 15));
 //		
 //		btnshowpermissiondlg.setPreferredSize(new Dimension(15, 15));
 //		btnshowpermissiondlg.setBackground(panelbackgroundcolor);
@@ -307,7 +307,6 @@ public class EasyContentsPanel extends JPanel{
 //        return new Dimension(HEIGHT, WIDTH);
 //    }
 	public void setLoadingpanel(String msg) {
-		// TODO Auto-generated method stub
 		Log.d("setLoadingpanel");		
 		contentsCardPanel.add(new EasyGuiLoadingPanel(msg), CARD_LAYOUT_LOADING);
 		((CardLayout)contentsCardPanel.getLayout()).show(contentsCardPanel,CARD_LAYOUT_LOADING);		
@@ -320,8 +319,8 @@ public class EasyContentsPanel extends JPanel{
     		Log.d("contents new (EasyGuiEmptyPanel=)");
     		contentsCardPanel.add(new EasyGuiEmptyPanel(), CARD_LAYOUT_EMPTY);
     	}
-    	appicon.setIcon(Resource.IMG_APP_ICON.getImageIcon(120, 120)); //10 ms
-    	//apptitlelabel.setText(Resource.STR_APP_NAME.getString()); // 20-30ms
+    	appicon.setIcon(RImg.APP_ICON.getImageIcon(120, 120)); //10 ms
+    	//apptitlelabel.setText(Rstr.APP_NAME.get()); // 20-30ms
     	((CardLayout)contentsCardPanel.getLayout()).show(contentsCardPanel,CARD_LAYOUT_EMPTY);
     }
     private ImageIcon getAppicon(ApkInfo apkInfo) {
@@ -348,8 +347,7 @@ public class EasyContentsPanel extends JPanel{
 			return icon;
 		} catch (IOException e) {
 			ImageIcon icon;
-			// TODO Auto-generated catch block
-			icon = Resource.IMG_WARNING.getImageIcon();
+			icon = RImg.WARNING.getImageIcon();
 			e.printStackTrace();
 			return icon;
 		}
@@ -363,7 +361,7 @@ public class EasyContentsPanel extends JPanel{
 		String appName = null;
 		StringBuilder labelBuilder = new StringBuilder();
 		if(labels != null && labels.length > 0) {
-			appName = ApkInfoHelper.getResourceValue(labels, (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
+			appName = ApkInfoHelper.getResourceValue(labels, RProp.S.PREFERRED_LANGUAGE.get());
 			if(appName != null && appName.isEmpty()) appName = null;
 
 			for(ResourceInfo r: labels) {
@@ -414,20 +412,17 @@ public class EasyContentsPanel extends JPanel{
 	}
 
 	public void clear() {
-		// TODO Auto-generated method stub
 		//devicepanel.clear();
 		//permissionPanel.clear();
 		//featurepanel.clear();
 	}
 
 	public void changeDeivce(IDevice[] devices) {
-		// TODO Auto-generated method stub
 		devicepanel.changeDevice(devices);
 		featurepanel.refreshUI();
 	}
 
 	public void changesize(int contentw, int contenth) {
-		// TODO Auto-generated method stub
 		int w = contentw;
 		int h = contenth;
 				

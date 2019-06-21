@@ -22,7 +22,9 @@ import com.apkscanner.gui.component.WindowSizeMemorizer;
 import com.apkscanner.plugin.IUpdateChecker;
 import com.apkscanner.plugin.PlugInConfig;
 import com.apkscanner.plugin.PlugInManager;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RProp;
+import com.apkscanner.resource.RStr;
 
 public class UpdateNotificationWindow extends JFrame implements ActionListener
 {
@@ -36,8 +38,8 @@ public class UpdateNotificationWindow extends JFrame implements ActionListener
 	private JCheckBox ckbNaver;
 
 	private UpdateNotificationWindow(Component parent) {
-		setTitle(Resource.STR_TITLE_UPDATE_LIST.getString());
-		setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+		setTitle(RStr.TITLE_UPDATE_LIST.get());
+		setIconImage(RImg.APP_ICON.getImageIcon().getImage());
 		setResizable(true);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -48,10 +50,10 @@ public class UpdateNotificationWindow extends JFrame implements ActionListener
 		ctrPanel.setLayout(ctrLayout);
 		ctrPanel.setBorder(new EmptyBorder(5,5,5,5));
 
-		ckbNaver = new JCheckBox(Resource.STR_LABEL_DO_NOT_LOOK_AGAIN.getString());
+		ckbNaver = new JCheckBox(RStr.LABEL_DO_NOT_LOOK_AGAIN.get());
 		ctrPanel.add(ckbNaver);
 
-		JButton btnClose = new JButton(Resource.STR_BTN_CLOSE.getString());
+		JButton btnClose = new JButton(RStr.BTN_CLOSE.get());
 		btnClose.setActionCommand(ACT_CMD_CLOSE);
 		btnClose.addActionListener(this);
 
@@ -72,7 +74,7 @@ public class UpdateNotificationWindow extends JFrame implements ActionListener
 		add(ctrPanel, BorderLayout.SOUTH);
 
 		pack();
-		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
+		if(RProp.B.SAVE_WINDOW_SIZE.get()) {
 			WindowSizeMemorizer.resizeCompoent(this);
 		}
 		WindowSizeMemorizer.registeComponent(this);

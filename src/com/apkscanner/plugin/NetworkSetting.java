@@ -30,7 +30,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RFile;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 import com.github.markusbernhardt.proxy.ProxySearch;
@@ -208,7 +208,7 @@ public class NetworkSetting
 		trustStore = config.getConfiguration(PlugInConfig.CONFIG_SSL_TRUSTSTORE, APK_SCANNER_SSL_TRUSTSTORE);
 		Log.v("trustStore: " + trustStore);
 		if(APK_SCANNER_SSL_TRUSTSTORE.equals(trustStore)) {
-			trustStore = Resource.SSL_TRUSTSTORE_PATH.getPath();
+			trustStore = RFile.SSL_TRUSTSTORE_PATH.get();
 		} else if(JVM_SSL_TRUSTSTORE.equals(trustStore)) {
 			trustStore = "";
 		} else if(IGNORE_TRUSTSTORE.equals(trustStore)) {

@@ -13,7 +13,7 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
 
 public class animatetable extends JFrame {
 private static final long serialVersionUID = 1L;
@@ -24,12 +24,12 @@ super("AnimatedIconTable Example");
 final Object[][] data = new Object[][] {
 
     // Here is the looking for gif pictures
-    { new ImageIcon(Resource.IMG_INSTALL_WAIT.getImageIcon().getImage()),
-        new ImageIcon(Resource.IMG_LOADING.getImageIcon().getImage()) },
+    { new ImageIcon(RImg.INSTALL_WAIT.getImageIcon().getImage()),
+        new ImageIcon(RImg.LOADING.getImageIcon().getImage()) },
 
     // And here is the others pictures examples png and jpg
-    { new ImageIcon(Resource.IMG_QUESTION.getImageIcon().getImage()),
-        new ImageIcon(Resource.IMG_QUESTION.getImageIcon().getImage()) } };
+    { new ImageIcon(RImg.QUESTION.getImageIcon().getImage()),
+        new ImageIcon(RImg.QUESTION.getImageIcon().getImage()) } };
 final Object[] column = new Object[] { "Example image gif and png",
     "Example image gif and jpg" };
 

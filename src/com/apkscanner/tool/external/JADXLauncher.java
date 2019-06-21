@@ -3,7 +3,7 @@ package com.apkscanner.tool.external;
 import java.io.File;
 
 import com.apkscanner.gui.messagebox.MessageBoxPool;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RFile;
 import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
@@ -24,7 +24,7 @@ public class JADXLauncher {
 			public void run()
 			{
 				ConsolCmd.exc(new String[] {"java", "-version"}, true);
-				ConsolCmd.exc(new String[] {Resource.BIN_JADX_GUI.getPath(), jarFilePath}, true);
+				ConsolCmd.exc(new String[] {RFile.BIN_JADX_GUI.get(), jarFilePath}, true);
 			}
 		});
 		t.setPriority(Thread.NORM_PRIORITY);

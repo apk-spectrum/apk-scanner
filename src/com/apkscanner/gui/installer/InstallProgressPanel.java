@@ -27,7 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 
 public class InstallProgressPanel extends JPanel
@@ -47,11 +47,11 @@ public class InstallProgressPanel extends JPanel
 
 	int CurrentProgress=0;
 	private final String [] outtexts= {
-			Resource.STR_LABEL_APK_VERIFY.getString(),
-			Resource.STR_LABEL_WAIT_FOR_DEVICE.getString(),
-			Resource.STR_LABEL_APK_INSTALL_OPT.getString(),
-			Resource.STR_LABEL_APK_INSTALLING.getString(),
-			Resource.STR_LABEL_APK_INSTALL_FINISH.getString() };
+			RStr.LABEL_APK_VERIFY.get(),
+			RStr.LABEL_WAIT_FOR_DEVICE.get(),
+			RStr.LABEL_APK_INSTALL_OPT.get(),
+			RStr.LABEL_APK_INSTALLING.get(),
+			RStr.LABEL_APK_INSTALL_FINISH.get() };
 
 	private final Color[] Colorset = {new Color(222,228,228), new Color(52,152,220),new Color(46,204,114), new Color(0xFF0000)};
 	//private final Color ErrorColor = new Color(0xFF7400);

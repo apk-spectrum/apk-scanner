@@ -12,7 +12,8 @@ import com.apkscanner.gui.component.ImageScaler;
 import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.plugin.IPlugInEventListener;
 import com.apkscanner.plugin.PlugInManager;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RStr;
 
 public class PlugInDropTargetChooser extends DropTargetChooser implements IPlugInEventListener {
 	private static final long serialVersionUID = 333800480269221248L;
@@ -27,10 +28,10 @@ public class PlugInDropTargetChooser extends DropTargetChooser implements IPlugI
 	public PlugInDropTargetChooser(Listener listener) {
 		super(listener);
 
-		super.addDropTarget(DefaultTargetObject.DROPED_TARGET_APK_OPEN, Resource.STR_BTN_OPEN.getString(), Resource.STR_APP_NAME.getString(),
-				Resource.IMG_APP_ICON.getImageIcon(64,64).getImage(), new Color(0.35546875f , 0.60546875f, 0.83203125f, 0.9f));
-		super.addDropTarget(DefaultTargetObject.DROPED_TARGET_NEW_WIN, Resource.STR_MENU_NEW.getString(), Resource.STR_APP_NAME.getString(),
-				Resource.IMG_TOOLBAR_MANIFEST.getImageIcon(64,64).getImage(), new Color(0.4375f, 0.67578125f, 0.27734375f, 0.9f));
+		super.addDropTarget(DefaultTargetObject.DROPED_TARGET_APK_OPEN, RStr.BTN_OPEN.get(), RStr.APP_NAME.get(),
+				RImg.APP_ICON.getImageIcon(64,64).getImage(), new Color(0.35546875f , 0.60546875f, 0.83203125f, 0.9f));
+		super.addDropTarget(DefaultTargetObject.DROPED_TARGET_NEW_WIN, RStr.MENU_NEW.get(), RStr.APP_NAME.get(),
+				RImg.TOOLBAR_MANIFEST.getImageIcon(64,64).getImage(), new Color(0.4375f, 0.67578125f, 0.27734375f, 0.9f));
 
 		PlugInManager.addPlugInEventListener(this);
 	}

@@ -18,7 +18,7 @@ import org.json.simple.parser.JSONParser;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.plugin.manifest.InvalidManifestException;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RFile;
 import com.apkscanner.util.Log;
 
 public final class PlugInManager
@@ -180,9 +180,9 @@ public final class PlugInManager
 		synchronized (sLock) {
 			pluginPackages.clear();
 
-			File pluginFolder = new File(Resource.PLUGIN_PATH.getPath());
+			File pluginFolder = new File(RFile.PLUGIN_PATH.get());
 			if(!pluginFolder.isDirectory()) {
-				Log.v("No such plugins: " + Resource.PLUGIN_PATH.getPath());
+				Log.v("No such plugins: " + RFile.PLUGIN_PATH.get());
 				return;
 			}
 
@@ -268,7 +268,7 @@ public final class PlugInManager
 
 	public static void loadProperty()
 	{
-		File file = new File(Resource.PLUGIN_CONF_PATH.getPath());
+		File file = new File(RFile.PLUGIN_CONF_PATH.get());
 		if(!file.exists() || file.length() == 0) return;
 		try(FileReader fileReader = new FileReader(file)) {
 			JSONParser parser = new JSONParser();
@@ -280,15 +280,15 @@ public final class PlugInManager
 
 	public static void saveProperty()
 	{
-		File file = new File(Resource.PLUGIN_CONF_PATH.getPath());
+		File file = new File(RFile.PLUGIN_CONF_PATH.get());
 		try {
 			if(!file.exists() && !file.createNewFile()) {
-				Log.w("Cann't create file : " + Resource.PLUGIN_CONF_PATH.getPath());
+				Log.w("Cann't create file : " + RFile.PLUGIN_CONF_PATH.get());
 			}
 		} catch (IOException e1) { }
 
 		if(!file.canWrite()) {
-			Log.v("Cann't write file : " + Resource.PLUGIN_CONF_PATH.getPath());
+			Log.v("Cann't write file : " + RFile.PLUGIN_CONF_PATH.get());
 			return;
 		}
 
@@ -297,7 +297,7 @@ public final class PlugInManager
 				.replaceAll("(\"[^\"]*\":(\"[^\"]*\")?([^\",]*)?,)", "$1\n");
 		//.replaceAll("(\"[^\"]*\":(\"[^\"]*\")?([^\",\\[]*(\\[[^\\]]\\])?)?,)", "$1\n");
 
-		try( FileWriter fw = new FileWriter(Resource.PLUGIN_CONF_PATH.getPath());
+		try( FileWriter fw = new FileWriter(RFile.PLUGIN_CONF_PATH.get());
 			 BufferedWriter writer = new BufferedWriter(fw) ) {
 			writer.write(transMultiLine);
 		} catch (IOException e) {

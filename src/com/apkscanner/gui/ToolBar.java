@@ -46,7 +46,10 @@ import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.plugin.IPackageSearcher;
 import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.PlugInManager;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RConst;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RProp;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 
 public class ToolBar extends JToolBar
@@ -85,25 +88,25 @@ public class ToolBar extends JToolBar
 
 	public enum MenuItemSet
 	{
-		NEW_WINDOW		(Resource.STR_MENU_NEW.getString(), null, null, null, '\0', true),
-		NEW_EMPTY		(Resource.STR_MENU_NEW_WINDOW.getString(), null, Resource.IMG_TOOLBAR_MANIFEST.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK, false), 'N'),
-		NEW_APK			(Resource.STR_MENU_NEW_APK_FILE.getString(), null, Resource.IMG_TOOLBAR_OPEN.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, false), 'O'),
-		NEW_PACKAGE		(Resource.STR_MENU_NEW_PACKAGE.getString(), null, Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, false), 'P'),
-		OPEN_APK		(Resource.STR_MENU_APK_FILE.getString(), null, Resource.IMG_TOOLBAR_OPEN.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK, false), 'O'),
-		OPEN_PACKAGE	(Resource.STR_MENU_PACKAGE.getString(), null, Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK, false), 'P'),
-		INSTALL_APK		(Resource.STR_MENU_INSTALL.getString(), null, Resource.IMG_TOOLBAR_INSTALL.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK, false), 'I'),
-		UNINSTALL_APK	(Resource.STR_MENU_UNINSTALL.getString(), null, Resource.IMG_TOOLBAR_UNINSTALL.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_DOWN_MASK, false), 'U'),
-		CLEAR_DATA		(Resource.STR_MENU_CLEAR_DATA.getString(), null, Resource.IMG_TOOLBAR_CLEAR.getImageIcon(16,16), null, '\0'),
-		INSTALLED_CHECK	(Resource.STR_MENU_CHECK_INSTALLED.getString(), null, Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK, false), 'T'),
-		DECODER_JD_GUI	(Resource.STR_MENU_DECODER_JD_GUI.getString(), null, null, null, '\0', Resource.STR_DECORDER_JD_GUI),
-		DECODER_JADX_GUI(Resource.STR_MENU_DECODER_JADX_GUI.getString(), null, null, null, '\0', Resource.STR_DECORDER_JADX_GUI),
-		DECODER_BYTECODE(Resource.STR_MENU_DECODER_BYTECODE.getString(), null, null, null, '\0', Resource.STR_DECORDER_BYTECOD),
-		SEARCH_RESOURCE	(Resource.STR_MENU_SEARCH_RESOURCE.getString(), null, null, null, '\0', Resource.STR_DEFAULT_SEARCHER),
-		EXPLORER_ARCHIVE(Resource.STR_MENU_EXPLORER_ARCHIVE.getString(), null, null, null, '\0', Resource.STR_EXPLORER_ARCHIVE),
-		EXPLORER_FOLDER	(Resource.STR_MENU_EXPLORER_FOLDER.getString(), null, null, null, '\0', Resource.STR_EXPLORER_FOLDER),
-		LAUNCH_LAUNCHER	(Resource.STR_MENU_LAUNCH_LAUNCHER.getString(), null, null, null, '\0', Resource.STR_LAUNCH_LAUNCHER),
-		LAUNCH_SELECT	(Resource.STR_MENU_LAUNCH_SELECT.getString(), null, null, null, '\0', Resource.STR_LAUNCH_SELECT),
-		SELECT_DEFAULT	(Resource.STR_MENU_SELECT_DEFAULT.getString(), null, null, null, '\0');
+		NEW_WINDOW		(RStr.MENU_NEW.get(), null, null, null, '\0', true),
+		NEW_EMPTY		(RStr.MENU_NEW_WINDOW.get(), null, RImg.TOOLBAR_MANIFEST.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK, false), 'N'),
+		NEW_APK			(RStr.MENU_NEW_APK_FILE.get(), null, RImg.TOOLBAR_OPEN.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, false), 'O'),
+		NEW_PACKAGE		(RStr.MENU_NEW_PACKAGE.get(), null, RImg.TOOLBAR_PACKAGETREE.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, false), 'P'),
+		OPEN_APK		(RStr.MENU_APK_FILE.get(), null, RImg.TOOLBAR_OPEN.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK, false), 'O'),
+		OPEN_PACKAGE	(RStr.MENU_PACKAGE.get(), null, RImg.TOOLBAR_PACKAGETREE.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK, false), 'P'),
+		INSTALL_APK		(RStr.MENU_INSTALL.get(), null, RImg.TOOLBAR_INSTALL.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK, false), 'I'),
+		UNINSTALL_APK	(RStr.MENU_UNINSTALL.get(), null, RImg.TOOLBAR_UNINSTALL.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_DOWN_MASK, false), 'U'),
+		CLEAR_DATA		(RStr.MENU_CLEAR_DATA.get(), null, RImg.TOOLBAR_CLEAR.getImageIcon(16,16), null, '\0'),
+		INSTALLED_CHECK	(RStr.MENU_CHECK_INSTALLED.get(), null, RImg.TOOLBAR_PACKAGETREE.getImageIcon(16,16), KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK, false), 'T'),
+		DECODER_JD_GUI	(RStr.MENU_DECODER_JD_GUI.get(), null, null, null, '\0', RConst.STR_DECORDER_JD_GUI),
+		DECODER_JADX_GUI(RStr.MENU_DECODER_JADX_GUI.get(), null, null, null, '\0', RConst.STR_DECORDER_JADX_GUI),
+		DECODER_BYTECODE(RStr.MENU_DECODER_BYTECODE.get(), null, null, null, '\0', RConst.STR_DECORDER_BYTECOD),
+		SEARCH_RESOURCE	(RStr.MENU_SEARCH_RESOURCE.get(), null, null, null, '\0', RConst.STR_DEFAULT_SEARCHER),
+		EXPLORER_ARCHIVE(RStr.MENU_EXPLORER_ARCHIVE.get(), null, null, null, '\0', RConst.STR_EXPLORER_ARCHIVE),
+		EXPLORER_FOLDER	(RStr.MENU_EXPLORER_FOLDER.get(), null, null, null, '\0', RConst.STR_EXPLORER_FOLDER),
+		LAUNCH_LAUNCHER	(RStr.MENU_LAUNCH_LAUNCHER.get(), null, null, null, '\0', RConst.STR_LAUNCH_LAUNCHER),
+		LAUNCH_SELECT	(RStr.MENU_LAUNCH_SELECT.get(), null, null, null, '\0', RConst.STR_LAUNCH_SELECT),
+		SELECT_DEFAULT	(RStr.MENU_SELECT_DEFAULT.get(), null, null, null, '\0');
 
 		private String text = null;
 		private String toolTipText = null;
@@ -162,15 +165,15 @@ public class ToolBar extends JToolBar
 						if(DECODER_JD_GUI.matchActionEvent(e)
 							|| DECODER_JADX_GUI.matchActionEvent(e)
 							|| DECODER_BYTECODE.matchActionEvent(e)) {
-							Resource.PROP_DEFAULT_DECORDER.setData(value);
+							RProp.DEFAULT_DECORDER.setData(value);
 						} else if(LAUNCH_LAUNCHER.matchActionEvent(e)
 							|| LAUNCH_SELECT.matchActionEvent(e)) {
-							Resource.PROP_DEFAULT_LAUNCH_MODE.setData(value);
+							RProp.DEFAULT_LAUNCH_MODE.setData(value);
 						} else if(EXPLORER_ARCHIVE.matchActionEvent(e)
 							|| EXPLORER_FOLDER.matchActionEvent(e)) {
-							Resource.PROP_DEFAULT_EXPLORER.setData(value);
+							RProp.DEFAULT_EXPLORER.setData(value);
 						} else if(SEARCH_RESOURCE.matchActionEvent(e)) {
-							Resource.PROP_DEFAULT_SEARCHER.setData(value);
+							RProp.DEFAULT_SEARCHER.setData(value);
 						}
 					}
 					listener.actionPerformed(e);
@@ -196,28 +199,28 @@ public class ToolBar extends JToolBar
 
 	public enum ButtonSet
 	{
-		OPEN			(Type.NORMAL, Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OPEN_LAB.getString(), Resource.IMG_TOOLBAR_OPEN.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-		OPEN_PACKAGE	(Type.NORMAL, Resource.STR_BTN_OPEN_PACKAGE.getString(), Resource.STR_BTN_OPEN_PACKAGE_LAB.getString(), Resource.IMG_TOOLBAR_PACKAGETREE.getImageIcon(ButtonSet.IconSize,ButtonSet.IconSize)),
-		OPEN_EXTEND		(Type.EXTEND, null, Resource.IMG_TOOLBAR_OPEN_ARROW.getImageIcon(16,16)),
-		MANIFEST		(Type.NORMAL, Resource.STR_BTN_MANIFEST.getString(), Resource.STR_BTN_MANIFEST_LAB.getString(), Resource.IMG_TOOLBAR_MANIFEST.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-		EXPLORER		(Type.SUB_TOOLBAR, Resource.STR_BTN_EXPLORER.getString(), Resource.STR_BTN_EXPLORER_LAB.getString(), Resource.IMG_TOOLBAR_EXPLORER.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize), true),
-		OPEN_CODE		(Type.SUB_TOOLBAR, Resource.STR_BTN_OPENCODE.getString(), Resource.STR_BTN_OPENCODE_LAB.getString(), Resource.IMG_TOOLBAR_OPENCODE.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize), true),
-		SEARCH			(Type.SUB_TOOLBAR, Resource.STR_BTN_SEARCH.getString(), Resource.STR_BTN_SEARCH_LAB.getString(), Resource.IMG_TOOLBAR_SEARCH.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize), true),
-		PLUGIN_EXTEND	(Type.SUB_TOOLBAR, Resource.STR_BTN_MORE.getString(), Resource.STR_BTN_MORE_LAB.getString(), Resource.IMG_TOOLBAR_OPEN_ARROW.getImageIcon(16,16)),
-		INSTALL			(Type.NORMAL, Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_INSTALL_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-		INSTALL_UPDATE	(Type.NORMAL, Resource.STR_BTN_INSTALL_UPDATE.getString(), Resource.STR_BTN_INSTALL_UPDATE_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-		INSTALL_DOWNGRADE(Type.NORMAL, Resource.STR_BTN_INSTALL_DOWNGRAD.getString(), Resource.STR_BTN_INSTALL_DOWNGRAD_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-		LAUNCH			(Type.NORMAL, Resource.STR_BTN_LAUNCH.getString(), Resource.STR_BTN_LAUNCH_LAB.getString(), Resource.IMG_TOOLBAR_LAUNCH.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-		SIGN			(Type.NORMAL, Resource.STR_BTN_SIGN.getString(), Resource.STR_BTN_SIGN_LAB.getString(), Resource.IMG_TOOLBAR_SIGNNING.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-		INSTALL_EXTEND	(Type.SUB_TOOLBAR, Resource.STR_BTN_MORE.getString(), Resource.STR_BTN_MORE_LAB.getString(), Resource.IMG_TOOLBAR_OPEN_ARROW.getImageIcon(16,16)),
-		SETTING			(Type.NORMAL, Resource.STR_BTN_SETTING.getString(), Resource.STR_BTN_SETTING_LAB.getString(), Resource.IMG_TOOLBAR_SETTING.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-		ABOUT			(Type.NORMAL, Resource.STR_BTN_ABOUT.getString(), Resource.STR_BTN_ABOUT_LAB.getString(), Resource.IMG_TOOLBAR_ABOUT.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+		OPEN			(Type.NORMAL, RStr.BTN_OPEN.get(), RStr.BTN_OPEN_LAB.get(), RImg.TOOLBAR_OPEN.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+		OPEN_PACKAGE	(Type.NORMAL, RStr.BTN_OPEN_PACKAGE.get(), RStr.BTN_OPEN_PACKAGE_LAB.get(), RImg.TOOLBAR_PACKAGETREE.getImageIcon(ButtonSet.IconSize,ButtonSet.IconSize)),
+		OPEN_EXTEND		(Type.EXTEND, null, RImg.TOOLBAR_OPEN_ARROW.getImageIcon(16,16)),
+		MANIFEST		(Type.NORMAL, RStr.BTN_MANIFEST.get(), RStr.BTN_MANIFEST_LAB.get(), RImg.TOOLBAR_MANIFEST.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+		EXPLORER		(Type.SUB_TOOLBAR, RStr.BTN_EXPLORER.get(), RStr.BTN_EXPLORER_LAB.get(), RImg.TOOLBAR_EXPLORER.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize), true),
+		OPEN_CODE		(Type.SUB_TOOLBAR, RStr.BTN_OPENCODE.get(), RStr.BTN_OPENCODE_LAB.get(), RImg.TOOLBAR_OPENCODE.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize), true),
+		SEARCH			(Type.SUB_TOOLBAR, RStr.BTN_SEARCH.get(), RStr.BTN_SEARCH_LAB.get(), RImg.TOOLBAR_SEARCH.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize), true),
+		PLUGIN_EXTEND	(Type.SUB_TOOLBAR, RStr.BTN_MORE.get(), RStr.BTN_MORE_LAB.get(), RImg.TOOLBAR_OPEN_ARROW.getImageIcon(16,16)),
+		INSTALL			(Type.NORMAL, RStr.BTN_INSTALL.get(), RStr.BTN_INSTALL_LAB.get(), RImg.TOOLBAR_INSTALL.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+		INSTALL_UPDATE	(Type.NORMAL, RStr.BTN_INSTALL_UPDATE.get(), RStr.BTN_INSTALL_UPDATE_LAB.get(), RImg.TOOLBAR_INSTALL.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+		INSTALL_DOWNGRADE(Type.NORMAL, RStr.BTN_INSTALL_DOWNGRAD.get(), RStr.BTN_INSTALL_DOWNGRAD_LAB.get(), RImg.TOOLBAR_INSTALL.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+		LAUNCH			(Type.NORMAL, RStr.BTN_LAUNCH.get(), RStr.BTN_LAUNCH_LAB.get(), RImg.TOOLBAR_LAUNCH.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+		SIGN			(Type.NORMAL, RStr.BTN_SIGN.get(), RStr.BTN_SIGN_LAB.get(), RImg.TOOLBAR_SIGNNING.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+		INSTALL_EXTEND	(Type.SUB_TOOLBAR, RStr.BTN_MORE.get(), RStr.BTN_MORE_LAB.get(), RImg.TOOLBAR_OPEN_ARROW.getImageIcon(16,16)),
+		SETTING			(Type.NORMAL, RStr.BTN_SETTING.get(), RStr.BTN_SETTING_LAB.get(), RImg.TOOLBAR_SETTING.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+		ABOUT			(Type.NORMAL, RStr.BTN_ABOUT.get(), RStr.BTN_ABOUT_LAB.get(), RImg.TOOLBAR_ABOUT.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
 
-		SUB_INSTALL			(Type.SUB_TOOLBAR, Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_INSTALL_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
-		SUB_INSTALL_UPDATE	(Type.SUB_TOOLBAR, Resource.STR_BTN_INSTALL_UPDATE.getString(), Resource.STR_BTN_INSTALL_UPDATE_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
-		SUB_INSTALL_DOWNGRADE(Type.SUB_TOOLBAR, Resource.STR_BTN_INSTALL_DOWNGRAD.getString(), Resource.STR_BTN_INSTALL_DOWNGRAD_LAB.getString(), Resource.IMG_TOOLBAR_INSTALL.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
-		SUB_LAUNCH			(Type.SUB_TOOLBAR, Resource.STR_BTN_LAUNCH.getString(), Resource.STR_BTN_LAUNCH_LAB.getString(), Resource.IMG_TOOLBAR_LAUNCH.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize), true),
-		SUB_SIGN			(Type.SUB_TOOLBAR, Resource.STR_BTN_SIGN.getString(), Resource.STR_BTN_SIGN_LAB.getString(), Resource.IMG_TOOLBAR_SIGNNING.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
+		SUB_INSTALL			(Type.SUB_TOOLBAR, RStr.BTN_INSTALL.get(), RStr.BTN_INSTALL_LAB.get(), RImg.TOOLBAR_INSTALL.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
+		SUB_INSTALL_UPDATE	(Type.SUB_TOOLBAR, RStr.BTN_INSTALL_UPDATE.get(), RStr.BTN_INSTALL_UPDATE_LAB.get(), RImg.TOOLBAR_INSTALL.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
+		SUB_INSTALL_DOWNGRADE(Type.SUB_TOOLBAR, RStr.BTN_INSTALL_DOWNGRAD.get(), RStr.BTN_INSTALL_DOWNGRAD_LAB.get(), RImg.TOOLBAR_INSTALL.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
+		SUB_LAUNCH			(Type.SUB_TOOLBAR, RStr.BTN_LAUNCH.get(), RStr.BTN_LAUNCH_LAB.get(), RImg.TOOLBAR_LAUNCH.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize), true),
+		SUB_SIGN			(Type.SUB_TOOLBAR, RStr.BTN_SIGN.get(), RStr.BTN_SIGN_LAB.get(), RImg.TOOLBAR_SIGNNING.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize)),
 
 		NEED_TARGET_APK	(Type.NONE, null, null),
 		NEED_DEVICE		(Type.NONE, null, null),
@@ -477,12 +480,12 @@ public class ToolBar extends JToolBar
 
 		setReplacementLayout();
 
-		setExtensionMenu(buttonMap.get(ButtonSet.OPEN_CODE), decordePopupMenu, Resource.PROP_DEFAULT_DECORDER);
-		setExtensionMenu(buttonMap.get(ButtonSet.SEARCH), searchPopupMenu, Resource.PROP_DEFAULT_SEARCHER);
-		setExtensionMenu(buttonMap.get(ButtonSet.EXPLORER), explorerPopupMenu, Resource.PROP_DEFAULT_EXPLORER);
-		setExtensionMenu(buttonMap.get(ButtonSet.SUB_LAUNCH), launchPopupMenu, Resource.PROP_DEFAULT_LAUNCH_MODE);
+		setExtensionMenu(buttonMap.get(ButtonSet.OPEN_CODE), decordePopupMenu, RProp.DEFAULT_DECORDER);
+		setExtensionMenu(buttonMap.get(ButtonSet.SEARCH), searchPopupMenu, RProp.DEFAULT_SEARCHER);
+		setExtensionMenu(buttonMap.get(ButtonSet.EXPLORER), explorerPopupMenu, RProp.DEFAULT_EXPLORER);
+		setExtensionMenu(buttonMap.get(ButtonSet.SUB_LAUNCH), launchPopupMenu, RProp.DEFAULT_LAUNCH_MODE);
 
-		boolean alwaysExtended = (boolean)Resource.PROP_ALWAYS_TOOLBAR_EXTENDED.getData();
+		boolean alwaysExtended = RProp.B.ALWAYS_TOOLBAR_EXTENDED.get();
 		for(ButtonSet bs: ButtonSet.values()) {
 			if(bs.extension) {
 				((ExtensionButton)buttonMap.get(bs)).setArrowVisible(alwaysExtended);
@@ -497,22 +500,22 @@ public class ToolBar extends JToolBar
 				if (e.getID() == KeyEvent.KEY_PRESSED && !isShiftPressed) {
 					if(e.getModifiersEx() == KeyEvent.SHIFT_DOWN_MASK) {
 						isShiftPressed = true;
-						if(!(boolean)Resource.PROP_ALWAYS_TOOLBAR_EXTENDED.getData()) setArrowVisible(true);
-						setButtonText(ButtonSet.OPEN, Resource.STR_MENU_NEW.getString(), Resource.STR_BTN_OPEN_LAB.getString());
-						setButtonText(ButtonSet.OPEN_PACKAGE, Resource.STR_MENU_NEW.getString(), Resource.STR_BTN_OPEN_PACKAGE_LAB.getString());
-						setButtonText(ButtonSet.MANIFEST, Resource.STR_BTN_MANIFEST_SAVE_AS.getString(), Resource.STR_BTN_MANIFEST_LAB.getString());
-						setButtonText(ButtonSet.LAUNCH, Resource.STR_BTN_LAUNCH_SELECT.getString(), Resource.STR_BTN_LAUNCH_LAB.getString());
+						if(!RProp.B.ALWAYS_TOOLBAR_EXTENDED.get()) setArrowVisible(true);
+						setButtonText(ButtonSet.OPEN, RStr.MENU_NEW.get(), RStr.BTN_OPEN_LAB.get());
+						setButtonText(ButtonSet.OPEN_PACKAGE, RStr.MENU_NEW.get(), RStr.BTN_OPEN_PACKAGE_LAB.get());
+						setButtonText(ButtonSet.MANIFEST, RStr.BTN_MANIFEST_SAVE_AS.get(), RStr.BTN_MANIFEST_LAB.get());
+						setButtonText(ButtonSet.LAUNCH, RStr.BTN_LAUNCH_SELECT.get(), RStr.BTN_LAUNCH_LAB.get());
 
 						invokeMouseEvent(e, MouseEvent.MOUSE_ENTERED);
 					}
 				} else if (e.getID() == KeyEvent.KEY_RELEASED && isShiftPressed) {
 					if(e.getModifiersEx() != KeyEvent.SHIFT_DOWN_MASK) {
 						isShiftPressed = false;
-						if(!(boolean)Resource.PROP_ALWAYS_TOOLBAR_EXTENDED.getData()) setArrowVisible(false);
-						setButtonText(ButtonSet.OPEN, Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OPEN_LAB.getString());
-						setButtonText(ButtonSet.OPEN_PACKAGE, Resource.STR_BTN_OPEN_PACKAGE.getString(), Resource.STR_BTN_OPEN_PACKAGE_LAB.getString());
-						setButtonText(ButtonSet.MANIFEST, Resource.STR_BTN_MANIFEST.getString(), Resource.STR_BTN_MANIFEST_LAB.getString());
-						setButtonText(ButtonSet.LAUNCH, Resource.STR_BTN_LAUNCH.getString(), Resource.STR_BTN_LAUNCH_LAB.getString());
+						if(!RProp.B.ALWAYS_TOOLBAR_EXTENDED.get()) setArrowVisible(false);
+						setButtonText(ButtonSet.OPEN, RStr.BTN_OPEN.get(), RStr.BTN_OPEN_LAB.get());
+						setButtonText(ButtonSet.OPEN_PACKAGE, RStr.BTN_OPEN_PACKAGE.get(), RStr.BTN_OPEN_PACKAGE_LAB.get());
+						setButtonText(ButtonSet.MANIFEST, RStr.BTN_MANIFEST.get(), RStr.BTN_MANIFEST_LAB.get());
+						setButtonText(ButtonSet.LAUNCH, RStr.BTN_LAUNCH.get(), RStr.BTN_LAUNCH_LAB.get());
 
 						invokeMouseEvent(e, MouseEvent.MOUSE_EXITED);
 					}
@@ -579,7 +582,7 @@ public class ToolBar extends JToolBar
 			decordePopupMenu.add(menuItemMap.get(MenuItemSet.DECODER_BYTECODE));
 			decordePopupMenu.addSeparator();
 			for(IExternalTool tool: tools) {
-				decordePopupMenu.add(makePlugInMenuItem(tool, listener, Resource.PROP_DEFAULT_DECORDER));
+				decordePopupMenu.add(makePlugInMenuItem(tool, listener, RProp.DEFAULT_DECORDER));
 			}
 			decordePopupMenu.addSeparator();
 			decordePopupMenu.add(makeSelectDefaultMenuItem());
@@ -593,13 +596,13 @@ public class ToolBar extends JToolBar
 			searchPopupMenu.addSeparator();
 
 			searchers = PlugInManager.getPackageSearchers(IPackageSearcher.SEARCHER_TYPE_PACKAGE_NAME);
-			JMenu searchersMenu = makeSearcherSelectMenu(Resource.STR_LABEL_BY_PACKAGE_NAME.getString(), searchers, listener);
+			JMenu searchersMenu = makeSearcherSelectMenu(RStr.LABEL_BY_PACKAGE_NAME.get(), searchers, listener);
 			if(searchersMenu != null) {
 				searchPopupMenu.add(searchersMenu);
 			}
 
 			searchers = PlugInManager.getPackageSearchers(IPackageSearcher.SEARCHER_TYPE_APP_NAME);
-			searchersMenu = makeSearcherSelectMenu(Resource.STR_LABEL_BY_APP_LABEL.getString(), searchers, listener);
+			searchersMenu = makeSearcherSelectMenu(RStr.LABEL_BY_APP_LABEL.get(), searchers, listener);
 			if(searchersMenu != null) {
 				searchPopupMenu.add(searchersMenu);
 			}
@@ -607,9 +610,9 @@ public class ToolBar extends JToolBar
 			searchPopupMenu.addSeparator();
 			JCheckBoxMenuItem v2bMenuItem = new JCheckBoxMenuItem();
 			v2bMenuItem.setActionCommand(CMD_VISIBLE_TO_BASEIC);
-			v2bMenuItem.setText(Resource.STR_MENU_VISIBLE_TO_BASIC.getString());
+			v2bMenuItem.setText(RStr.MENU_VISIBLE_TO_BASIC.get());
 			v2bMenuItem.addActionListener(listener);
-			v2bMenuItem.setSelected((boolean)Resource.PROP_VISIBLE_TO_BASIC.getData());
+			v2bMenuItem.setSelected(RProp.B.VISIBLE_TO_BASIC.get());
 			searchPopupMenu.add(v2bMenuItem);
 
 			setMouseEvent(searchPopupMenu, null);
@@ -660,20 +663,20 @@ public class ToolBar extends JToolBar
 		return ((this.flag & flag) == flag);
 	}
 
-	private void setExtensionMenu(final JButton button, final JPopupMenu popupMenu, final Resource defaultPorp) {
+	private void setExtensionMenu(final JButton button, final JPopupMenu popupMenu, final RProp defaultPorp) {
 		Icon icon = null;
 		switch(defaultPorp) {
-		case PROP_DEFAULT_DECORDER:
-			icon = Resource.IMG_TOOLBAR_OPENCODE.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize);
+		case DEFAULT_DECORDER:
+			icon = RImg.TOOLBAR_OPENCODE.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize);
 			break;
-		case PROP_DEFAULT_SEARCHER:
-			icon = Resource.IMG_TOOLBAR_SEARCH.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize);
+		case DEFAULT_SEARCHER:
+			icon = RImg.TOOLBAR_SEARCH.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize);
 			break;
-		case PROP_DEFAULT_EXPLORER:
-			icon = Resource.IMG_TOOLBAR_EXPLORER.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize);
+		case DEFAULT_EXPLORER:
+			icon = RImg.TOOLBAR_EXPLORER.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize);
 			break;
-		case PROP_DEFAULT_LAUNCH_MODE:
-			icon = Resource.IMG_TOOLBAR_LAUNCH.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize);
+		case DEFAULT_LAUNCH_MODE:
+			icon = RImg.TOOLBAR_LAUNCH.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize);
 			break;
 		default:
 			break;
@@ -683,7 +686,7 @@ public class ToolBar extends JToolBar
 		popupMenu.addPopupMenuListener(new PopupMenuListener() {
 			@Override
 			public void popupMenuWillBecomeVisible(PopupMenuEvent arg0) {
-				String value = ":" + (String)defaultPorp.getData();
+				String value = ":" + defaultPorp.get();
 				for(Component c: popupMenu.getComponents()) {
 					if(c instanceof NoCloseCheckBoxMenuItem) {
 						if(CMD_SELECT_DEFAULT_MENU.equals(((JCheckBoxMenuItem)c).getActionCommand())) {
@@ -717,7 +720,7 @@ public class ToolBar extends JToolBar
             	if(button instanceof ExtensionButton) {
             		enable = ((ExtensionButton)button).getArrowVisible();
             	}
-            	if(enable && !me.isShiftDown() && !(boolean)Resource.PROP_ALWAYS_TOOLBAR_EXTENDED.getData()) {
+            	if(enable && !me.isShiftDown() && !RProp.B.ALWAYS_TOOLBAR_EXTENDED.get()) {
 					for(ButtonSet bs: ButtonSet.values()) {
 						if(bs.extension) {
 							((ExtensionButton)buttonMap.get(bs)).setArrowVisible(false);
@@ -726,7 +729,7 @@ public class ToolBar extends JToolBar
 					return;
             	}
             	if(!enable || !button.isEnabled()) return;
-            	int delayMs = (boolean)Resource.PROP_ALWAYS_TOOLBAR_EXTENDED.getData() ? 1000 : 100;
+            	int delayMs = RProp.B.ALWAYS_TOOLBAR_EXTENDED.get() ? 1000 : 100;
 				synchronized(timer) {
 					if(task != null) {
 						task.cancel();
@@ -783,7 +786,7 @@ public class ToolBar extends JToolBar
 	private JCheckBoxMenuItem makeSelectDefaultMenuItem() {
 		JCheckBoxMenuItem selDefItem = new NoCloseCheckBoxMenuItem();
 		selDefItem.setActionCommand(CMD_SELECT_DEFAULT_MENU);
-		selDefItem.setText(Resource.STR_MENU_SELECT_DEFAULT.getString());
+		selDefItem.setText(RStr.MENU_SELECT_DEFAULT.get());
 		return selDefItem;
 	}
 
@@ -862,7 +865,7 @@ public class ToolBar extends JToolBar
 		return button;
 	}
 
-	private JMenuItem makePlugInMenuItem(final IPlugIn plugin, final ActionListener listener, final Resource defaultPorp)
+	private JMenuItem makePlugInMenuItem(final IPlugIn plugin, final ActionListener listener, final RProp defaultPorp)
 	{
 		JMenuItem menuItem = null;
 		if(plugin instanceof IPackageSearcher) {
@@ -888,17 +891,17 @@ public class ToolBar extends JToolBar
 					if(isSaveDefault && defaultPorp != null) {
 						String value = e.getActionCommand().replaceAll(".*:", "");
 						switch(defaultPorp) {
-						case PROP_DEFAULT_DECORDER:
-							Resource.PROP_DEFAULT_DECORDER.setData(value);
+						case DEFAULT_DECORDER:
+							RProp.DEFAULT_DECORDER.setData(value);
 							break;
-						case PROP_DEFAULT_SEARCHER:
-							Resource.PROP_DEFAULT_SEARCHER.setData(value);
+						case DEFAULT_SEARCHER:
+							RProp.DEFAULT_SEARCHER.setData(value);
 							break;
-						case PROP_DEFAULT_EXPLORER:
-							Resource.PROP_DEFAULT_EXPLORER.setData(value);
+						case DEFAULT_EXPLORER:
+							RProp.DEFAULT_EXPLORER.setData(value);
 							break;
-						case PROP_DEFAULT_LAUNCH_MODE:
-							Resource.PROP_DEFAULT_LAUNCH_MODE.setData(value);
+						case DEFAULT_LAUNCH_MODE:
+							RProp.DEFAULT_LAUNCH_MODE.setData(value);
 							break;
 						default:
 							break;
@@ -921,8 +924,8 @@ public class ToolBar extends JToolBar
 
 		final JCheckBoxMenuItem selVisible = new NoCloseCheckBoxMenuItem();
 		//selVisible.setActionCommand(CMD_SELECT_DEFAULT_MENU);
-		selVisible.setText(Resource.STR_MENU_VISIBLE_TO_BASIC_EACH.getString());
-		selVisible.setEnabled((boolean)Resource.PROP_VISIBLE_TO_BASIC.getData());
+		selVisible.setText(RStr.MENU_VISIBLE_TO_BASIC_EACH.get());
+		selVisible.setEnabled(RProp.B.VISIBLE_TO_BASIC.get());
 		selVisible.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
@@ -946,7 +949,7 @@ public class ToolBar extends JToolBar
 				for(Component c: menu.getMenuComponents()) {
 					if(c instanceof NoCloseCheckBoxMenuItem) {
 						((JCheckBoxMenuItem)c).setSelected(false);
-						((JCheckBoxMenuItem)c).setEnabled((boolean)Resource.PROP_VISIBLE_TO_BASIC.getData());
+						((JCheckBoxMenuItem)c).setEnabled(RProp.B.VISIBLE_TO_BASIC.get());
 					} else if(c instanceof SearcherCheckBoxMenuItem) {
 						((SearcherCheckBoxMenuItem)c).setSelecteMode(false);
 					}
@@ -1060,47 +1063,47 @@ public class ToolBar extends JToolBar
 
 	public void reloadResource()
 	{
-		setButtonText(ButtonSet.OPEN, Resource.STR_BTN_OPEN.getString(), Resource.STR_BTN_OPEN_LAB.getString());
-		setButtonText(ButtonSet.OPEN_PACKAGE, Resource.STR_BTN_OPEN_PACKAGE.getString(), Resource.STR_BTN_OPEN_PACKAGE_LAB.getString());
-		setButtonText(ButtonSet.MANIFEST, Resource.STR_BTN_MANIFEST.getString(), Resource.STR_BTN_MANIFEST_LAB.getString());
-		setButtonText(ButtonSet.EXPLORER, Resource.STR_BTN_EXPLORER.getString(), Resource.STR_BTN_EXPLORER_LAB.getString());
-		setButtonText(ButtonSet.OPEN_CODE, Resource.STR_BTN_OPENCODE.getString(), Resource.STR_BTN_OPENCODE_LAB.getString());
-		setButtonText(ButtonSet.SEARCH, Resource.STR_BTN_SEARCH.getString(), Resource.STR_BTN_SEARCH_LAB.getString());
-		setButtonText(ButtonSet.PLUGIN_EXTEND, Resource.STR_BTN_MORE.getString(), Resource.STR_BTN_MORE_LAB.getString());
-		setButtonText(ButtonSet.INSTALL, Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_INSTALL_LAB.getString());
-		setButtonText(ButtonSet.INSTALL_UPDATE, Resource.STR_BTN_INSTALL_UPDATE.getString(), Resource.STR_BTN_INSTALL_UPDATE_LAB.getString());
-		setButtonText(ButtonSet.INSTALL_DOWNGRADE, Resource.STR_BTN_INSTALL_DOWNGRAD.getString(), Resource.STR_BTN_INSTALL_DOWNGRAD_LAB.getString());
-		setButtonText(ButtonSet.LAUNCH, Resource.STR_BTN_LAUNCH.getString(), Resource.STR_BTN_LAUNCH_LAB.getString());
-		setButtonText(ButtonSet.SIGN, Resource.STR_BTN_SIGN.getString(), Resource.STR_BTN_SIGN_LAB.getString());
-		setButtonText(ButtonSet.INSTALL_EXTEND, Resource.STR_BTN_MORE.getString(), Resource.STR_BTN_MORE_LAB.getString());
-		setButtonText(ButtonSet.SETTING, Resource.STR_BTN_SETTING.getString(), Resource.STR_BTN_SETTING_LAB.getString());
-		setButtonText(ButtonSet.ABOUT, Resource.STR_BTN_ABOUT.getString(), Resource.STR_BTN_ABOUT_LAB.getString());
+		setButtonText(ButtonSet.OPEN, RStr.BTN_OPEN.get(), RStr.BTN_OPEN_LAB.get());
+		setButtonText(ButtonSet.OPEN_PACKAGE, RStr.BTN_OPEN_PACKAGE.get(), RStr.BTN_OPEN_PACKAGE_LAB.get());
+		setButtonText(ButtonSet.MANIFEST, RStr.BTN_MANIFEST.get(), RStr.BTN_MANIFEST_LAB.get());
+		setButtonText(ButtonSet.EXPLORER, RStr.BTN_EXPLORER.get(), RStr.BTN_EXPLORER_LAB.get());
+		setButtonText(ButtonSet.OPEN_CODE, RStr.BTN_OPENCODE.get(), RStr.BTN_OPENCODE_LAB.get());
+		setButtonText(ButtonSet.SEARCH, RStr.BTN_SEARCH.get(), RStr.BTN_SEARCH_LAB.get());
+		setButtonText(ButtonSet.PLUGIN_EXTEND, RStr.BTN_MORE.get(), RStr.BTN_MORE_LAB.get());
+		setButtonText(ButtonSet.INSTALL, RStr.BTN_INSTALL.get(), RStr.BTN_INSTALL_LAB.get());
+		setButtonText(ButtonSet.INSTALL_UPDATE, RStr.BTN_INSTALL_UPDATE.get(), RStr.BTN_INSTALL_UPDATE_LAB.get());
+		setButtonText(ButtonSet.INSTALL_DOWNGRADE, RStr.BTN_INSTALL_DOWNGRAD.get(), RStr.BTN_INSTALL_DOWNGRAD_LAB.get());
+		setButtonText(ButtonSet.LAUNCH, RStr.BTN_LAUNCH.get(), RStr.BTN_LAUNCH_LAB.get());
+		setButtonText(ButtonSet.SIGN, RStr.BTN_SIGN.get(), RStr.BTN_SIGN_LAB.get());
+		setButtonText(ButtonSet.INSTALL_EXTEND, RStr.BTN_MORE.get(), RStr.BTN_MORE_LAB.get());
+		setButtonText(ButtonSet.SETTING, RStr.BTN_SETTING.get(), RStr.BTN_SETTING_LAB.get());
+		setButtonText(ButtonSet.ABOUT, RStr.BTN_ABOUT.get(), RStr.BTN_ABOUT_LAB.get());
 
-		setButtonText(ButtonSet.SUB_INSTALL, Resource.STR_BTN_INSTALL.getString(), Resource.STR_BTN_INSTALL_LAB.getString());
-		setButtonText(ButtonSet.SUB_INSTALL_UPDATE, Resource.STR_BTN_INSTALL_UPDATE.getString(), Resource.STR_BTN_INSTALL_UPDATE_LAB.getString());
-		setButtonText(ButtonSet.SUB_INSTALL_DOWNGRADE, Resource.STR_BTN_INSTALL_DOWNGRAD.getString(), Resource.STR_BTN_INSTALL_DOWNGRAD_LAB.getString());
-		setButtonText(ButtonSet.SUB_LAUNCH, Resource.STR_BTN_LAUNCH.getString(), Resource.STR_BTN_LAUNCH_LAB.getString());
-		setButtonText(ButtonSet.SUB_SIGN, Resource.STR_BTN_SIGN.getString(), Resource.STR_BTN_SIGN_LAB.getString());
+		setButtonText(ButtonSet.SUB_INSTALL, RStr.BTN_INSTALL.get(), RStr.BTN_INSTALL_LAB.get());
+		setButtonText(ButtonSet.SUB_INSTALL_UPDATE, RStr.BTN_INSTALL_UPDATE.get(), RStr.BTN_INSTALL_UPDATE_LAB.get());
+		setButtonText(ButtonSet.SUB_INSTALL_DOWNGRADE, RStr.BTN_INSTALL_DOWNGRAD.get(), RStr.BTN_INSTALL_DOWNGRAD_LAB.get());
+		setButtonText(ButtonSet.SUB_LAUNCH, RStr.BTN_LAUNCH.get(), RStr.BTN_LAUNCH_LAB.get());
+		setButtonText(ButtonSet.SUB_SIGN, RStr.BTN_SIGN.get(), RStr.BTN_SIGN_LAB.get());
 
-		setMenuItemText(MenuItemSet.NEW_WINDOW, Resource.STR_MENU_NEW.getString(), null);
-		setMenuItemText(MenuItemSet.NEW_EMPTY, Resource.STR_MENU_NEW_WINDOW.getString(), null);
-		setMenuItemText(MenuItemSet.NEW_APK, Resource.STR_MENU_NEW_APK_FILE.getString(), null);
-		setMenuItemText(MenuItemSet.NEW_PACKAGE, Resource.STR_MENU_NEW_PACKAGE.getString(), null);
-		setMenuItemText(MenuItemSet.OPEN_APK, Resource.STR_MENU_APK_FILE.getString(), null);
-		setMenuItemText(MenuItemSet.OPEN_PACKAGE, Resource.STR_MENU_PACKAGE.getString(), null);
-		setMenuItemText(MenuItemSet.INSTALL_APK, Resource.STR_MENU_INSTALL.getString(), null);
-		setMenuItemText(MenuItemSet.UNINSTALL_APK, Resource.STR_MENU_UNINSTALL.getString(), null);
-		setMenuItemText(MenuItemSet.CLEAR_DATA, Resource.STR_MENU_CLEAR_DATA.getString(), null);
-		setMenuItemText(MenuItemSet.INSTALLED_CHECK, Resource.STR_MENU_CHECK_INSTALLED.getString(), null);
-		setMenuItemText(MenuItemSet.DECODER_JD_GUI, Resource.STR_MENU_DECODER_JD_GUI.getString(), null);
-		setMenuItemText(MenuItemSet.DECODER_JADX_GUI, Resource.STR_MENU_DECODER_JADX_GUI.getString(), null);
-		setMenuItemText(MenuItemSet.DECODER_BYTECODE, Resource.STR_MENU_DECODER_BYTECODE.getString(), null);
-		setMenuItemText(MenuItemSet.SEARCH_RESOURCE, Resource.STR_MENU_SEARCH_RESOURCE.getString(), null);
-		setMenuItemText(MenuItemSet.EXPLORER_ARCHIVE, Resource.STR_MENU_EXPLORER_ARCHIVE.getString(), null);
-		setMenuItemText(MenuItemSet.EXPLORER_FOLDER, Resource.STR_MENU_EXPLORER_FOLDER.getString(), null);
-		setMenuItemText(MenuItemSet.LAUNCH_LAUNCHER, Resource.STR_MENU_LAUNCH_LAUNCHER.getString(), null);
-		setMenuItemText(MenuItemSet.LAUNCH_SELECT, Resource.STR_MENU_LAUNCH_SELECT.getString(), null);
-		setMenuItemText(MenuItemSet.SELECT_DEFAULT, Resource.STR_MENU_SELECT_DEFAULT.getString(), null);
+		setMenuItemText(MenuItemSet.NEW_WINDOW, RStr.MENU_NEW.get(), null);
+		setMenuItemText(MenuItemSet.NEW_EMPTY, RStr.MENU_NEW_WINDOW.get(), null);
+		setMenuItemText(MenuItemSet.NEW_APK, RStr.MENU_NEW_APK_FILE.get(), null);
+		setMenuItemText(MenuItemSet.NEW_PACKAGE, RStr.MENU_NEW_PACKAGE.get(), null);
+		setMenuItemText(MenuItemSet.OPEN_APK, RStr.MENU_APK_FILE.get(), null);
+		setMenuItemText(MenuItemSet.OPEN_PACKAGE, RStr.MENU_PACKAGE.get(), null);
+		setMenuItemText(MenuItemSet.INSTALL_APK, RStr.MENU_INSTALL.get(), null);
+		setMenuItemText(MenuItemSet.UNINSTALL_APK, RStr.MENU_UNINSTALL.get(), null);
+		setMenuItemText(MenuItemSet.CLEAR_DATA, RStr.MENU_CLEAR_DATA.get(), null);
+		setMenuItemText(MenuItemSet.INSTALLED_CHECK, RStr.MENU_CHECK_INSTALLED.get(), null);
+		setMenuItemText(MenuItemSet.DECODER_JD_GUI, RStr.MENU_DECODER_JD_GUI.get(), null);
+		setMenuItemText(MenuItemSet.DECODER_JADX_GUI, RStr.MENU_DECODER_JADX_GUI.get(), null);
+		setMenuItemText(MenuItemSet.DECODER_BYTECODE, RStr.MENU_DECODER_BYTECODE.get(), null);
+		setMenuItemText(MenuItemSet.SEARCH_RESOURCE, RStr.MENU_SEARCH_RESOURCE.get(), null);
+		setMenuItemText(MenuItemSet.EXPLORER_ARCHIVE, RStr.MENU_EXPLORER_ARCHIVE.get(), null);
+		setMenuItemText(MenuItemSet.EXPLORER_FOLDER, RStr.MENU_EXPLORER_FOLDER.get(), null);
+		setMenuItemText(MenuItemSet.LAUNCH_LAUNCHER, RStr.MENU_LAUNCH_LAUNCHER.get(), null);
+		setMenuItemText(MenuItemSet.LAUNCH_SELECT, RStr.MENU_LAUNCH_SELECT.get(), null);
+		setMenuItemText(MenuItemSet.SELECT_DEFAULT, RStr.MENU_SELECT_DEFAULT.get(), null);
 	}
 
 	public void setEnabledAt(ButtonSet buttonId, boolean enabled)
@@ -1127,10 +1130,10 @@ public class ToolBar extends JToolBar
 			break;
 		case OPEN_CODE:
 			if(!enabled && buttonId == ButtonSet.OPEN_CODE) {
-				setButtonText(ButtonSet.OPEN_CODE, Resource.STR_BTN_OPENING_CODE.getString(), Resource.STR_BTN_OPENING_CODE_LAB.getString());
-				buttonMap.get(ButtonSet.OPEN_CODE).setDisabledIcon(Resource.IMG_TOOLBAR_LOADING_OPEN_JD.getImageIcon());
+				setButtonText(ButtonSet.OPEN_CODE, RStr.BTN_OPENING_CODE.get(), RStr.BTN_OPENING_CODE_LAB.get());
+				buttonMap.get(ButtonSet.OPEN_CODE).setDisabledIcon(RImg.TOOLBAR_LOADING_OPEN_JD.getImageIcon());
 			} else {
-				setButtonText(ButtonSet.OPEN_CODE, Resource.STR_BTN_OPENCODE.getString(), Resource.STR_BTN_OPENCODE_LAB.getString());
+				setButtonText(ButtonSet.OPEN_CODE, RStr.BTN_OPENCODE.get(), RStr.BTN_OPENCODE_LAB.get());
 				buttonMap.get(ButtonSet.OPEN_CODE).setDisabledIcon(null);
 			}
 			buttonMap.get(ButtonSet.OPEN_CODE).setEnabled(enabled);

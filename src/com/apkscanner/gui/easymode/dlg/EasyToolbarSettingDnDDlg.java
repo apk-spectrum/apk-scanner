@@ -32,7 +32,7 @@ import javax.swing.event.ListSelectionListener;
 import com.apkscanner.gui.easymode.core.ToolEntry;
 import com.apkscanner.gui.easymode.core.ToolEntryManager;
 import com.apkscanner.gui.easymode.util.ImageUtils;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RProp;
 
 public class EasyToolbarSettingDnDDlg extends JDialog implements ActionListener{
 	private static final long serialVersionUID = 4294238572154793279L;
@@ -248,7 +248,7 @@ public class EasyToolbarSettingDnDDlg extends JDialog implements ActionListener{
 				ToolEntry obj = (ToolEntry)list.getElementAt(i);
 				str +=ToolEntryManager.findIndexFromAllEntry(obj) + ",";
 				}
-			Resource.PROP_EASY_GUI_TOOLBAR.setData(str);
+			RProp.S.EASY_GUI_TOOLBAR.set(str);
 			ischange = true;			
 			this.dispose();
 		} else if(e.getSource().equals(btnCancel)) {

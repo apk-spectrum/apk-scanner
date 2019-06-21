@@ -33,7 +33,8 @@ import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.gui.easymode.core.GroupableTableHeader;
 import com.apkscanner.gui.easymode.test.ColumnGroup;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RProp;
+import com.apkscanner.resource.RStr;
 
 public class EasyPermissionDlg extends JDialog implements ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -57,7 +58,7 @@ public class EasyPermissionDlg extends JDialog implements ActionListener {
 	PermissionUsesTableModel[] model = { null, null };
 
 	public EasyPermissionDlg(Frame frame, boolean modal, ApkInfo apkInfo) {
-		super(frame, Resource.STR_BASIC_PERMISSIONS.getString(), modal);
+		super(frame, RStr.BASIC_PERMISSIONS.get(), modal);
 		this.setSize(700, 700);
 		// this.setPreferredSize(new Dimension(500, 500));
 		this.setLocationRelativeTo(frame);
@@ -66,7 +67,7 @@ public class EasyPermissionDlg extends JDialog implements ActionListener {
 		this.setLayout(new BorderLayout());
 
 		PermissionManager permissionManager = new PermissionManager();
-		permissionManager.setTreatSignAsRevoked((boolean) Resource.PROP_PERM_TREAT_SIGN_AS_REVOKED.getData());
+		permissionManager.setTreatSignAsRevoked(RProp.B.PERM_TREAT_SIGN_AS_REVOKED.get());
 		permissionManager.addUsesPermission(apkInfo.manifest.usesPermission);
 		permissionManager.addUsesPermission(apkInfo.manifest.usesPermissionSdk23);
 		if(!permissionManager.isEmpty()) {
@@ -194,7 +195,6 @@ public class EasyPermissionDlg extends JDialog implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		if (e.getSource().equals(btngetDeviceGranted)) {
 
 		}

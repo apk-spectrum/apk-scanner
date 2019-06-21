@@ -28,7 +28,9 @@ import com.apkscanner.core.signer.ApkSigner;
 import com.apkscanner.gui.component.ApkFileChooser;
 import com.apkscanner.gui.component.WindowSizeMemorizer;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RProp;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
@@ -65,7 +67,7 @@ public class ApkSignerWizard implements ActionListener {
 		}
 
 		private void dialog_init(Component owner) {
-			setTitle(Resource.STR_TITLE_APK_SIGNER.getString());
+			setTitle(RStr.TITLE_APK_SIGNER.get());
 			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 			setResizable(true);
 			setModal(false);
@@ -97,17 +99,13 @@ public class ApkSignerWizard implements ActionListener {
 		private void frame_init()
 		{
 			try {
-				if(Resource.PROP_CURRENT_THEME.getData()==null) {
-					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-				} else {
-					UIManager.setLookAndFeel(Resource.PROP_CURRENT_THEME.getData().toString());
-				}
+				UIManager.setLookAndFeel(RProp.S.CURRENT_THEME.get());
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 					| UnsupportedLookAndFeelException e1) {
 				e1.printStackTrace();
 			}
 
-			setTitle(Resource.STR_TITLE_APK_SIGNER.getString());
+			setTitle(RStr.TITLE_APK_SIGNER.get());
 			setResizable(true);
 
 			initialize(this);
@@ -143,10 +141,10 @@ public class ApkSignerWizard implements ActionListener {
 
 		AdbServerMonitor.startServerAndCreateBridgeAsync();
 
-		window.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+		window.setIconImage(RImg.APP_ICON.getImageIcon().getImage());
 
 		Dimension minSize = new Dimension(400,150);
-		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
+		if(RProp.B.SAVE_WINDOW_SIZE.get()) {
 			WindowSizeMemorizer.resizeCompoent(window, minSize);
 		} else {
 			window.setSize(minSize);
@@ -165,11 +163,11 @@ public class ApkSignerWizard implements ActionListener {
 
 		txtPemFilePath = new JTextField();
 		txtPemFilePath.setEditable(false);
-		txtPemFilePath.setText((String)Resource.PROP_PEM_FILE_PATH.getData());
+		txtPemFilePath.setText(RProp.S.PEM_FILE_PATH.get());
 		window.add(txtPemFilePath, gridDataConst);
 
-		JButton btnExplorer = new JButton(Resource.STR_BTN_SELF_SEARCH.getString());
-		btnExplorer.setToolTipText(Resource.STR_BTN_SELF_SEARCH_LAB.getString());
+		JButton btnExplorer = new JButton(RStr.BTN_SELF_SEARCH.get());
+		btnExplorer.setToolTipText(RStr.BTN_SELF_SEARCH_LAB.get());
 		btnExplorer.setActionCommand(ACT_CMD_PEM_EXPLOERE);
 		btnExplorer.addActionListener(this);
 
@@ -183,11 +181,11 @@ public class ApkSignerWizard implements ActionListener {
 
 		txtPk8FilePath = new JTextField();
 		txtPk8FilePath.setEditable(false);
-		txtPk8FilePath.setText((String)Resource.PROP_PK8_FILE_PATH.getData());
+		txtPk8FilePath.setText(RProp.S.PK8_FILE_PATH.get());
 		window.add(txtPk8FilePath, gridDataConst);
 
-		btnExplorer = new JButton(Resource.STR_BTN_SELF_SEARCH.getString());
-		btnExplorer.setToolTipText(Resource.STR_BTN_SELF_SEARCH_LAB.getString());
+		btnExplorer = new JButton(RStr.BTN_SELF_SEARCH.get());
+		btnExplorer.setToolTipText(RStr.BTN_SELF_SEARCH_LAB.get());
 		btnExplorer.setActionCommand(ACT_CMD_PK8_EXPLOERE);
 		btnExplorer.addActionListener(this);
 		window.add(btnExplorer, gridButtonConst);
@@ -202,12 +200,12 @@ public class ApkSignerWizard implements ActionListener {
 		JPanel ctrBtnsPanel = new JPanel(new FlowLayout());
 
 
-		JButton btnCancel = new JButton(Resource.STR_BTN_CANCEL.getString());
+		JButton btnCancel = new JButton(RStr.BTN_CANCEL.get());
 		btnCancel.setActionCommand(ACT_CMD_CANCEL);
 		btnCancel.addActionListener(this);
 		ctrBtnsPanel.add(btnCancel);
 
-		JButton btnSign = new JButton(Resource.STR_BTN_SIGN.getString());
+		JButton btnSign = new JButton(RStr.BTN_SIGN.get());
 		btnSign.setActionCommand(ACT_CMD_SIGN_APK);
 		btnSign.addActionListener(this);
 		ctrBtnsPanel.add(btnSign);
@@ -286,8 +284,8 @@ public class ApkSignerWizard implements ActionListener {
 						e.printStackTrace();
 					}
 					if(errMessage == null || errMessage.isEmpty()) {
-						Resource.PROP_PEM_FILE_PATH.setData(pemFile.getAbsolutePath());
-						Resource.PROP_PK8_FILE_PATH.setData(pk8File.getAbsolutePath());
+						RProp.PEM_FILE_PATH.setData(pemFile.getAbsolutePath());
+						RProp.PK8_FILE_PATH.setData(pk8File.getAbsolutePath());
 						exitOrClose();
 					} else {
 						((JButton)arg0.getSource()).setEnabled(true);

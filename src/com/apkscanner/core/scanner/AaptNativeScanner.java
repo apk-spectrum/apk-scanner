@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.concurrent.Semaphore;
 
 import com.apkscanner.data.apkinfo.ResourceInfo;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RFile;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 
@@ -220,7 +220,7 @@ public class AaptNativeScanner extends ApkScanner
 
 	static {
 		String arch = System.getProperty("sun.arch.data.model");
-		String libPath = Resource.BIN_PATH.getPath();
+		String libPath = RFile.BIN_PATH.get();
 		if(SystemUtil.isWindows()) {
 			System.load(libPath + "AaptNativeWrapper" + arch + ".dll");
 		} else {
