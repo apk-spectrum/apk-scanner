@@ -709,7 +709,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			showPermList();
 			break;
 		case "min-sdk-info": case "target-sdk-info": case "max-sdk-info":
-			SdkVersionInfoDlg sdkDlg = new SdkVersionInfoDlg(null, RStr.SDK_INFO_FILE_PATH.get(), (Integer)evt.getUserData());
+			SdkVersionInfoDlg sdkDlg = new SdkVersionInfoDlg(null, (Integer)evt.getUserData());
 			sdkDlg.setLocationRelativeTo(this);
 			sdkDlg.setVisible(true);
 			break;

@@ -9,8 +9,8 @@ import java.util.zip.ZipFile;
 
 import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
-import com.apkscanner.resource.RStr;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AaptXmlTreePath;
 import com.apkscanner.tool.adb.AdbWrapper;
@@ -219,10 +219,10 @@ abstract public class ApkScanner
 					certList.add(sr.getReport(i));
 				}
 
-				if(sr.contains("MD5", RStr.SAMSUNG_KEY_MD5.get())) {
+				if(sr.contains("MD5", RConst.SAMSUNG_KEY_MD5)) {
 					apkInfo.featureFlags |= ApkInfo.APP_FEATURE_SAMSUNG_SIGN;
 				}
-				if(sr.contains("MD5", RStr.SS_TEST_KEY_MD5.get())) {
+				if(sr.contains("MD5", RConst.SS_TEST_KEY_MD5)) {
 					apkInfo.featureFlags |= ApkInfo.APP_FEATURE_PLATFORM_SIGN;
 				}
 			}

@@ -220,7 +220,7 @@ public class SystemUtil
 
 	public static void createShortCut() {
 		if(isWindows()) {
-			String filePath = RFile.getUTF8Path() + File.separator + "ApkScanner.exe";
+			String filePath = RFile.ETC_APKSCANNER_EXE.getPath();
 			String lnkPath = System.getProperty("user.home") + File.separator + "Desktop" + File.separator + RStr.APP_NAME.get() + ".lnk";
 			try {
 				ShellLink.createLink(filePath, lnkPath);
@@ -234,7 +234,7 @@ public class SystemUtil
 
 	public static boolean hasShortCut() {
 		if(isWindows()) {
-			String filePath = RFile.getUTF8Path() + File.separator + "ApkScanner.exe";
+			String filePath = RFile.ETC_APKSCANNER_EXE.getPath();
 			String lnkPath = System.getProperty("user.home") + File.separator + "Desktop" + File.separator + RStr.APP_NAME.get() + ".lnk";
 
 			if(!new File(lnkPath).exists()) {
@@ -278,7 +278,7 @@ public class SystemUtil
 		if(!isWindows()) {
 			return true;
 		}
-		String filePath = RFile.getUTF8Path() + File.separator + "ApkScanner.exe";
+		String filePath = RFile.ETC_APKSCANNER_EXE.getPath();
 		String cmd = null;
 		try {
 			cmd = getOpenCommand(suffix);
@@ -314,7 +314,7 @@ public class SystemUtil
 			return false;
 		}
 
-		String filePath = RFile.getUTF8Path() + File.separator + "ApkScanner.exe";
+		String filePath = RFile.ETC_APKSCANNER_EXE.getPath();
 		return cmd.startsWith(filePath);
 	}
 
@@ -322,7 +322,7 @@ public class SystemUtil
 		if(isAssociatedWithFileType(suffix)) {
 			return true;
 		}
-		String filePath = RFile.getUTF8Path() + File.separator + "ApkScanner.exe";
+		String filePath = RFile.ETC_APKSCANNER_EXE.getPath();
 		String prefixKey = "ApkScanner"+suffix;
 		try {
 			Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\CLSID");
@@ -358,7 +358,7 @@ public class SystemUtil
 		if(isAssociatedWithFileType(suffix)) {
 			return true;
 		}
-		String filePath = RFile.getUTF8Path() + File.separator + "ApkScanner.exe";
+		String filePath = RFile.ETC_APKSCANNER_EXE.getPath();
 		ConsolCmd.exc(new String[][] {
 			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\CLSID", "/ve", "/t", "REG_SZ", "/d", "{E88DCCE0-B7B3-11d1-A9F0-00AA0060FA31}", "/f" },
 			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\DefaultIcon", "/ve", "/t", "REG_SZ", "/d", filePath+",1", "/f" },

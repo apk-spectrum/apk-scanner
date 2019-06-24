@@ -47,17 +47,13 @@ public class SdkVersionInfoDlg extends JDialog {
 	JTextArea sdkInfoArea;
 
 	public SdkVersionInfoDlg(Window owner) {
-		this(owner, null);
+		this(owner, -1);
 	}
 
-	public SdkVersionInfoDlg(Window owner, String xmlPath) {
-		this(owner, xmlPath, -1);
-	}
-
-	public SdkVersionInfoDlg(Window owner, String xmlPath, int ver) {
+	public SdkVersionInfoDlg(Window owner, int ver) {
 		super(owner);
 		initialize(owner);
-		setSdkXml(xmlPath);
+		setSdkXml();
 		setSdkVersion(ver);
 	}
 
@@ -153,15 +149,12 @@ public class SdkVersionInfoDlg extends JDialog {
 		});
 	}
 
-	public void setSdkXml(String xmlPath) {
-		if(xmlPath == null) {
-			return;
-		}
-		try(InputStream xml = RFile.getResourceAsStream(xmlPath)) {
+	public void setSdkXml() {
+		try(InputStream xml = RFile.RAW_SDK_INFO_FILE.getResourceAsStream()) {
 			if(xml != null) sdkXmlPath = new XmlPath(xml);
 		} catch(IOException e) { }
 		if(sdkXmlPath == null) {
-			Log.w("Can not create XmlPath, xmlPath : " + xmlPath);
+			Log.w("Can not create XmlPath, xmlPath : " + RFile.RAW_SDK_INFO_FILE.getPath());
 			return;
 		}
 		int maxSdk = sdkXmlPath.getCount("/resources/sdk-info");

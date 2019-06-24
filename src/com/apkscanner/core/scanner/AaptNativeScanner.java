@@ -55,11 +55,11 @@ public class AaptNativeScanner extends ApkScanner
 
 			if(!wasSetFrameworkRes) {
 				Log.i("INFO: Didn't set the package of resources. so, set package of the default resources.");
-				String selfPath = getClass().getResource("/AndroidManifest.xml").toString();
+				String selfPath = RFile.RAW_ANDROID_MANIFEST.getPath();
 				if(selfPath.startsWith("jar:")) {
 					selfPath = selfPath.replaceAll("jar:file:(.*)!/AndroidManifest.xml", "$1");
 				} else {
-					selfPath = getClass().getResource("/").getPath();
+					selfPath = RFile.RAW_ROOT_PATH.getURL().getPath();
 				}
 
 				File jarFile = new File(selfPath);

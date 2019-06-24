@@ -679,7 +679,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 			break;
 		case "min-sdk-info": case "target-sdk-info": case "max-sdk-info":
 			int sdkVersion = Integer.parseInt((String)evt.getUserData());
-			SdkVersionInfoDlg sdkDlg = new SdkVersionInfoDlg(null, RStr.SDK_INFO_FILE_PATH.get(), sdkVersion);
+			SdkVersionInfoDlg sdkDlg = new SdkVersionInfoDlg(null, sdkVersion);
 			sdkDlg.setLocationRelativeTo(this);
 			sdkDlg.setVisible(true);
 			break;

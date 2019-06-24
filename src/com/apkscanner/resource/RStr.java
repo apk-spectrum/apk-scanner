@@ -21,11 +21,6 @@ public enum RStr implements ResString<String>
 	APP_MAKER					("Jinhyeong Lee / Sunggyu Kam"),
 	APP_MAKER_EMAIL				("jacsaldevil@gmail.com;sunggyu.kam@gmail.com"),
 
-	SAMSUNG_KEY_MD5				("D0:87:E7:29:12:FB:A0:64:CA:FA:78:DC:34:AE:A8:39"),
-	SS_TEST_KEY_MD5				("8D:DB:34:2F:2D:A5:40:84:02:D7:56:8A:F2:1E:29:F9"),
-
-	SDK_INFO_FILE_PATH			("/values/sdk-info.xml"),
-
 	TITLE_INSTALL_WIZARD		("@title_install_wizard"),
 	TITLE_APK_SIGNER			("@title_apk_signer"),
 	TITLE_EDIT_CONFIG			("@title_edit_config"),
@@ -533,7 +528,7 @@ public enum RStr implements ResString<String>
 	private static void makeStringXmlPath(String lang) {
 		ArrayList<XmlPath> xmlList = new ArrayList<XmlPath>();
 
-		String value_path = RFile.getUTF8Path() + File.separator + "data" + File.separator;
+		String value_path = RFile.DATA_PATH.getPath();
 		if(lang != null && !lang.isEmpty()) {
 			String ext_lang_value_path = value_path + "strings-" + lang + ".xml";
 			File extFile = new File(ext_lang_value_path);
@@ -541,18 +536,21 @@ public enum RStr implements ResString<String>
 				xmlList.add(new XmlPath(extFile));
 			}
 
-			try(InputStream xml = RFile.getResourceAsStream("/values/strings-" + lang + ".xml")) {
-				if(xml != null) xmlList.add(new XmlPath(xml));
-			} catch(IOException e) { }
+			RFile langRes = RFile.valueOf("RAW_STRINGS_" + lang.toUpperCase());
+			if(langRes != null) {
+				try(InputStream xml = langRes.getResourceAsStream()) {
+					if(xml != null) xmlList.add(new XmlPath(xml));
+				} catch(IOException e) { }
+			}
 		}
 
-		String ext_lang_value_path = value_path + "strings.xml";
+		String ext_lang_value_path = RFile.DATA_STRINGS_EN.getPath();
 		File extFile = new File(ext_lang_value_path);
 		if(extFile.exists()) {
 			xmlList.add(new XmlPath(extFile));
 		}
 
-		InputStream xml = RFile.getResourceAsStream("/values/strings.xml");
+		InputStream xml = RFile.RAW_STRINGS_EN.getResourceAsStream();
 		if(xml != null) {
 			xmlList.add(new XmlPath(xml));
 		}
@@ -563,7 +561,7 @@ public enum RStr implements ResString<String>
 	public static String[] getSupportedLanguages() {
 		ArrayList<String> languages = new ArrayList<String>();
 
-		String value_path = RFile.getUTF8Path() + File.separator + "data" + File.separator;
+		String value_path = RFile.DATA_PATH.getPath();
 		File valueDir = new File(value_path);
 		if(valueDir != null && valueDir.isDirectory()) {
 			for(String name: valueDir.list()) {
@@ -576,7 +574,7 @@ public enum RStr implements ResString<String>
 			}
 		}
 
-		URL resource = RFile.class.getResource("/values");
+		URL resource = RFile.RAW_VALUES_PATH.getURL();
 		String resFilePath = resource.getFile();
 		try {
 			resFilePath = URLDecoder.decode(resource.getFile(), "UTF-8");

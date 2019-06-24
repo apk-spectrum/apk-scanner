@@ -297,7 +297,7 @@ public class AaptXmlTreePath
 	private String getAttrName(String id)
 	{
 		if(attrIdPath == null) {
-			try(InputStream xml = RFile.getResourceAsStream("/values/public.xml")) {
+			try(InputStream xml = RFile.RAW_PUBLIC_XML.getResourceAsStream()) {
 				if(xml != null) attrIdPath = new XmlPath(xml);
 			} catch (IOException e) { }
 		}

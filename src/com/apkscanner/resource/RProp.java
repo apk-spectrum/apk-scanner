@@ -191,13 +191,15 @@ public enum RProp implements ResProp<Object>, ResString<Object>
 			obj = propPreferredLanguage + ";";
 			break;
 		case PEM_FILE_PATH:
+			String pem = RFile.DATA_CERT_PEM_FILE.getPath(); 
+			if(new File(pem).isFile()) {
+				obj = pem;
+			}
+			break;
 		case PK8_FILE_PATH:
-			String defPath = RFile.getUTF8Path() + File.separator +
-							"data" + File.separator +
-							"build-master-target-product-security" + File.separator +
-							(this == PEM_FILE_PATH ? "platform.x509.pem" : "platform.pk8");
-			if(new File(defPath).isFile()) {
-				obj = defPath;
+			String pk8 = RFile.DATA_CERT_PK8_FILE.getPath(); 
+			if(new File(pk8).isFile()) {
+				obj = pk8;
 			}
 			break;
 		case TABBED_UI_THEME:

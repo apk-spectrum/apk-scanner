@@ -21,6 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 
 import com.apkscanner.resource.RFile;
+import com.apkscanner.resource.RImg;
 
 /**
  * @author Mikle Garin
@@ -32,9 +33,9 @@ public class CustomListRenderer extends DefaultListCellRenderer
 	private static final long serialVersionUID = -1867006118377826954L;
 
 	//private static final ImageIcon crossIcon = new ImageIcon(Resource.class.getResource("/icons/logo/base.png"));
-    private static ImageIcon tipIcon = new ImageIcon(RFile.getResource("/icons/logo/nougat.png"));
-    private static ImageIcon tipIcon1 = new ImageIcon(RFile.getResource("/icons/logo/marshmallow.png"));
-    private static ImageIcon tipIcon2 = new ImageIcon(RFile.getResource("/icons/logo/jelly_bean.png"));
+    private static ImageIcon tipIcon = RImg.getImageIcon("/icons/logo/nougat.png");
+    private static ImageIcon tipIcon1 = RImg.getImageIcon("/icons/logo/marshmallow.png");
+    private static ImageIcon tipIcon2 = RImg.getImageIcon("/icons/logo/jelly_bean.png");
     
     
     //private static int LIST_HEIGHT = 60;

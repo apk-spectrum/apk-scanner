@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 
@@ -47,13 +48,29 @@ public enum RFile implements ResFile<String>, ResString<String>
 	LIB_APKTOOL_JAR				(Type.LIB, "apktool.jar"),
 	LIB_ALL						(Type.LIB, "*"),
 
-	RAW_ABUOT_HTML				(Type.RAW, "/values/AboutLayout.html"),
-	RAW_BASIC_INFO_LAYOUT_HTML	(Type.RAW, "/values/BasicInfoLayout.html"),
-	RAW_PACKAGE_INFO_LAYOUT_HTML(Type.RAW, "/values/PackageInfoLayout.html"),
-	RAW_ADB_INSTALL_BUTTON_HTML	(Type.RAW, "/values/AdbInstallButton.html"),
-	RAW_PERMISSION_REFERENCE_HTML(Type.RAW, "/values/PermissionReference.html"),
-	RAW_PROTECTION_LEVELS_HTML	(Type.RAW, "/values/ProtectionLevels.html"),
+	DATA_PATH					(Type.DATA, ""),
+	DATA_STRINGS_EN				(Type.DATA, "strings.xml"),
+	DATA_PERMISSIONS_HISTORY	(Type.DATA, "PermissionsHistory.xml"),
+	DATA_CERT_PEM_FILE			(Type.DATA, "build-master-target-product-security" + File.separator + "platform.x509.pem"),
+	DATA_CERT_PK8_FILE			(Type.DATA, "build-master-target-product-security" + File.separator + "platform.pk8"),
 
+	RAW_ROOT_PATH				(Type.RES_ROOT, ""),
+	RAW_ANDROID_MANIFEST		(Type.RES_ROOT, "AndroidManifest.xml"),
+
+	RAW_VALUES_PATH				(Type.RES_VALUE, ""),
+	RAW_STRINGS_EN				(Type.RES_VALUE, "strings.xml"),
+	RAW_STRINGS_KO				(Type.RES_VALUE, "strings-ko.xml"),
+	RAW_ABUOT_HTML				(Type.RES_VALUE, "AboutLayout.html"),
+	RAW_BASIC_INFO_LAYOUT_HTML	(Type.RES_VALUE, "BasicInfoLayout.html"),
+	RAW_PACKAGE_INFO_LAYOUT_HTML(Type.RES_VALUE, "PackageInfoLayout.html"),
+	RAW_ADB_INSTALL_BUTTON_HTML	(Type.RES_VALUE, "AdbInstallButton.html"),
+	RAW_PERMISSION_REFERENCE_HTML(Type.RES_VALUE, "PermissionReference.html"),
+	RAW_PROTECTION_LEVELS_HTML	(Type.RES_VALUE, "ProtectionLevels.html"),
+	RAW_PERMISSIONS_HISTORY		(Type.RES_VALUE, "PermissionsHistory.xml"),
+	RAW_PUBLIC_XML				(Type.RES_VALUE, "public.xml"),
+	RAW_SDK_INFO_FILE			(Type.RES_VALUE, "sdk-info.xml"),
+
+	ETC_APKSCANNER_EXE			(Type.ETC, "ApkScanner.exe"),
 	ETC_SETTINGS_FILE			(Type.ETC, "settings.txt"),
 	; // ENUM END
 
@@ -101,39 +118,27 @@ public enum RFile implements ResFile<String>, ResString<String>
 
 	@Override
 	public String getPath() {
-		String subPath;
-		switch(type){
-		case RAW:
-			return getClass().getResource(value).toString();
-		case BIN:
-			subPath = File.separator + "tool";
-			break;
-		case LIB:
-			subPath = File.separator + "lib";
-			break;
-		case PLUGIN:
-			subPath = File.separator + "plugin";
-			break;
-		case SECURITY:
-			subPath = File.separator + "security";
-			break;
-		case ETC:
-			subPath = "";
-			break;
-		default:
-			return null;
+		if(type == Type.RES_VALUE || type == Type.RES_ROOT) {
+			return getURL().toExternalForm();
 		}
-		return getUTF8Path() + subPath + File.separator + value;
+		return type.getPath() + File.separator + value;
 	}
 
 	@Override
 	public URL getURL() {
 		switch(type){
-		case RAW:
-			return getClass().getResource(value);
+		case RES_ROOT:
+			return getClass().getResource("/" + value);
+		case RES_VALUE:
+			return getClass().getResource("/values/" + value);
 		default:
-			return null;
+			try {
+				return new File(getPath()).toURI().toURL();
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
 		}
+		return null;
 	}
 
 	@Override
@@ -144,7 +149,7 @@ public enum RFile implements ResFile<String>, ResString<String>
 	@Override
 	public String getString() {
 		switch(type){
-		case RAW:
+		case RES_VALUE:
 			try (InputStream is= getURL().openStream();
 				 InputStreamReader ir = new InputStreamReader(is);
 				 BufferedReader br = new BufferedReader(ir)) {
@@ -162,12 +167,22 @@ public enum RFile implements ResFile<String>, ResString<String>
 		}
 	}
 
-	public java.net.URL getResource() {
-		return getClass().getResource(getPath());
+	public URL getResource() {
+		return getURL();
 	}
 
 	public InputStream getResourceAsStream() {
-		return getClass().getResourceAsStream(getPath());
+		switch(type){
+		case RES_VALUE:
+			return getClass().getResourceAsStream("/values/" + value);
+		default:
+			try {
+				return getURL().openStream();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
 	}
 
 	public static String getUTF8Path() {
@@ -182,13 +197,4 @@ public enum RFile implements ResFile<String>, ResString<String>
 
 		return resourcePath;
 	}
-
-	public static java.net.URL getResource(String path) {
-		return RFile.class.getResource(path);
-	}
-
-	public static InputStream getResourceAsStream(String path) {
-		return RFile.class.getResourceAsStream(path);
-	}
-
 }

@@ -80,7 +80,7 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 		setRoundrectColor(new Color(217, 217, 217));
 		//setshadowlen(10);
 		AppFeature = new EasyGuiAppFeatureData();
-		setSdkXml(RStr.SDK_INFO_FILE_PATH.get());
+		setSdkXml();
 		
 		add(scrollPane, BorderLayout.CENTER);
 		
@@ -144,15 +144,12 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 		refreshUI();		
 	}
 
-	public void setSdkXml(String xmlPath) {
-		if(xmlPath == null) {
-			return;
-		}
-		try(InputStream xml = RFile.getResourceAsStream(xmlPath)) {
+	public void setSdkXml() {
+		try(InputStream xml = RFile.RAW_SDK_INFO_FILE.getResourceAsStream()) {
 			if(xml != null) sdkXmlPath = new XmlPath(xml);
 		} catch(IOException e) { }
 		if(sdkXmlPath == null) {
-			Log.w("Can not create XmlPath, xmlPath : " + xmlPath);
+			Log.w("Can not create XmlPath, xmlPath : " + RFile.RAW_SDK_INFO_FILE.getPath());
 			return;
 		}
 	}
