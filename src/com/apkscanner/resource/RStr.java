@@ -1,5 +1,7 @@
 package com.apkscanner.resource;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,6 +10,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import com.apkscanner.util.Log;
 import com.apkscanner.util.XmlPath;
@@ -469,6 +472,18 @@ public enum RStr implements ResString<String>
 	EASY_GUI_UES_QUESTION		("@easy_gui_use_question"),
 	; // ENUM END
 
+	static {
+		RProp.LANGUAGE.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				setLanguage((String) evt.getNewValue());
+				fireLanguageChange((String) evt.getOldValue(), (String) evt.getNewValue());
+			}
+		});
+	}
+
+	private static List<LanguageChangeListener> listeners = new ArrayList<>();
+
 	private static String lang = null;
 	private static XmlPath[] stringXmlPath = null;
 
@@ -616,5 +631,29 @@ public enum RStr implements ResString<String>
 		languages.add(0, "");
 
 		return languages.toArray(new String[languages.size()]);
+	}
+
+	public static void addLanguageChangeListener(LanguageChangeListener listener) {
+		if(listener == null) return;
+		if(!listeners.contains(listener)) {
+			listeners.add(listener);
+		}
+	}
+
+	public static void removeLanguageChangeListener(LanguageChangeListener listener) {
+		if(listener == null) return;
+		if(listeners.contains(listener)) {
+			listeners.remove(listener);
+		}
+	}
+
+	public static LanguageChangeListener[] getLanguageChangeListener() {
+		return listeners.toArray(new LanguageChangeListener[listeners.size()]);
+	}
+
+	public static void fireLanguageChange(String oldLanguage, String newLanguage) {
+		for(LanguageChangeListener l: listeners) {
+			l.languageChange(oldLanguage, newLanguage);
+		}
 	}
 }

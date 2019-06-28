@@ -58,6 +58,7 @@ import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.IPlugInEventListener;
 import com.apkscanner.plugin.PlugInManager;
+import com.apkscanner.resource.LanguageChangeListener;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
@@ -145,7 +146,7 @@ public class MainUI extends JFrame implements IPlugInEventListener
 
 		Log.i("initialize() toolbar init");
 		// ToolBar initialize and add
-		toolBar = new ToolBar(eventHandler);
+		toolBar = new ToolBar(this, eventHandler);
 		toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
 		toolBar.setEnabledAt(ButtonSet.NEED_DEVICE, false);
 		add(toolBar, BorderLayout.NORTH);
@@ -184,6 +185,18 @@ public class MainUI extends JFrame implements IPlugInEventListener
 			KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true)
 		}, eventHandler);
 
+		RStr.addLanguageChangeListener(new LanguageChangeListener() {
+			@Override
+			public void languageChange(String oldLang, String newLang) {
+				ApkInfo apkInfo = apkScanner.getApkInfo();
+				String title = RStr.APP_NAME.get();
+				if(apkInfo != null) {
+					title += " - " + apkInfo.filePath.substring(apkInfo.filePath.lastIndexOf(File.separator)+1);
+				}
+				setTitle(title);
+				tabbedPanel.reloadResource();
+			}
+		});
 		Log.i("UI Init end");
 	}
 
@@ -193,7 +206,7 @@ public class MainUI extends JFrame implements IPlugInEventListener
 
 	@Override
 	public void onPluginLoaded() {
-		toolBar.onLoadPlugin(new UIEventHandler());
+		toolBar.onLoadPlugin(this, new UIEventHandler());
 		tabbedPanel.onLoadPlugin();
 	}
 
@@ -562,12 +575,6 @@ public class MainUI extends JFrame implements IPlugInEventListener
 				restart();
 			}
 
-			String lang = RProp.S.LANGUAGE.get();
-			if(lang != null && RStr.getLanguage() != null
-					&& !RStr.getLanguage().equals(lang)) {
-				setLanguage(lang);
-			}
-
 			toolbarManager.setEnabled(RProp.B.ADB_DEVICE_MONITORING.get());
 		}
 
@@ -883,18 +890,6 @@ public class MainUI extends JFrame implements IPlugInEventListener
 
 		private PackageInfo getPackageInfo(IDevice device) {
 			return PackageManager.getPackageInfo(device, apkScanner.getApkInfo().manifest.packageName);
-		}
-
-		private void setLanguage(String lang) {
-			ApkInfo apkInfo = apkScanner.getApkInfo();
-			RStr.setLanguage(lang);
-			String title = RStr.APP_NAME.get();
-			if(apkInfo != null) {
-				title += " - " + apkInfo.filePath.substring(apkInfo.filePath.lastIndexOf(File.separator)+1);
-			}
-			setTitle(title);
-			toolBar.reloadResource();
-			tabbedPanel.reloadResource();
 		}
 
 		private void restart() {

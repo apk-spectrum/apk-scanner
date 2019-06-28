@@ -13,6 +13,9 @@ public class RConst
 	public static final int INT_ESC_ACT_CHANG_UI_MODE= 1;
 	public static final int INT_ESC_ACT_EXIT		 = 2;
 
+	public static final int INT_TOOLBAR_ICON_SIZE		= 40;
+	public static final int INT_TOOLBAR_SUBICON_SIZE	= 16;
+
 	public static final String STR_DECORDER_JD_GUI	= "jd-gui";
 	public static final String STR_DECORDER_JADX_GUI= "jadx-gui";
 	public static final String STR_DECORDER_BYTECOD	= "Bytecode-viewer";

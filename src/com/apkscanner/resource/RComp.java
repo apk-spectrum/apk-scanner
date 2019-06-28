@@ -1,25 +1,85 @@
 package com.apkscanner.resource;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.Window;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.AbstractButton;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import com.apkscanner.util.Log;
-
-public enum RComp implements ResValue<RComp>, PropertyChangeListener
+public enum RComp implements ResValue<RComp>
 {
-	BTN_TOOLBAR_OPEN				(RStr.BTN_OPEN, RImg.TOOLBAR_OPEN.getImageIcon(40, 40) , RStr.BTN_OPEN_LAB),
+	BTN_TOOLBAR_OPEN				(RStr.BTN_OPEN, RImg.TOOLBAR_OPEN.getImageIcon(TB.IconSize, TB.IconSize), RStr.BTN_OPEN_LAB),
+	BTN_TOOLBAR_OPEN_PACKAGE		(RStr.BTN_OPEN_PACKAGE, RImg.TOOLBAR_PACKAGETREE.getImageIcon(TB.IconSize, TB.IconSize), RStr.BTN_OPEN_PACKAGE_LAB),
+	BTN_TOOLBAR_MANIFEST			(RStr.BTN_MANIFEST, RImg.TOOLBAR_MANIFEST.getImageIcon(TB.IconSize, TB.IconSize), RStr.BTN_MANIFEST_LAB),
+	BTN_TOOLBAR_EXPLORER			(RStr.BTN_EXPLORER, RImg.TOOLBAR_EXPLORER.getImageIcon(TB.SubSize, TB.SubSize), RStr.BTN_EXPLORER_LAB),
+	BTN_TOOLBAR_OPEN_CODE			(RStr.BTN_OPEN, RImg.TOOLBAR_OPEN.getImageIcon(TB.SubSize, TB.SubSize), RStr.BTN_OPEN_LAB),
+	BTN_TOOLBAR_SEARCH				(RStr.BTN_SEARCH, RImg.TOOLBAR_SEARCH.getImageIcon(TB.SubSize, TB.SubSize), RStr.BTN_SEARCH_LAB),
+	BTN_TOOLBAR_PLUGIN_EXTEND		(RStr.BTN_MORE, RImg.TOOLBAR_OPEN_ARROW.getImageIcon(TB.SubSize, TB.SubSize), RStr.BTN_MORE_LAB),
+	BTN_TOOLBAR_INSTALL				(RStr.BTN_INSTALL, RImg.TOOLBAR_INSTALL.getImageIcon(TB.IconSize, TB.IconSize), RStr.BTN_INSTALL_LAB),
+	BTN_TOOLBAR_INSTALL_UPDATE		(RStr.BTN_INSTALL_UPDATE, RImg.TOOLBAR_INSTALL.getImageIcon(TB.IconSize, TB.IconSize), RStr.BTN_INSTALL_UPDATE_LAB),
+	BTN_TOOLBAR_INSTALL_DOWNGRADE	(RStr.BTN_INSTALL_DOWNGRAD, RImg.TOOLBAR_INSTALL.getImageIcon(TB.IconSize, TB.IconSize), RStr.BTN_INSTALL_DOWNGRAD_LAB),
+	BTN_TOOLBAR_LAUNCH				(RStr.BTN_LAUNCH, RImg.TOOLBAR_LAUNCH.getImageIcon(TB.IconSize, TB.IconSize), RStr.BTN_LAUNCH_LAB),
+	BTN_TOOLBAR_SIGN				(RStr.BTN_SIGN, RImg.TOOLBAR_SIGNNING.getImageIcon(TB.IconSize, TB.IconSize), RStr.BTN_SIGN_LAB),
+	BTN_TOOLBAR_INSTALL_EXTEND		(RStr.BTN_MORE, RImg.TOOLBAR_OPEN_ARROW.getImageIcon(TB.SubSize, TB.SubSize), RStr.BTN_MORE_LAB),
+	BTN_TOOLBAR_SETTING				(RStr.BTN_SETTING, RImg.TOOLBAR_SETTING.getImageIcon(TB.IconSize, TB.IconSize), RStr.BTN_SETTING_LAB),
+	BTN_TOOLBAR_ABOUT				(RStr.BTN_ABOUT, RImg.TOOLBAR_ABOUT.getImageIcon(TB.IconSize, TB.IconSize), RStr.BTN_ABOUT_LAB),
+	BTN_TOOLBAR_SUB_INSTALL			(RStr.BTN_INSTALL, RImg.TOOLBAR_INSTALL.getImageIcon(TB.SubSize, TB.SubSize), RStr.BTN_INSTALL_LAB),
+	BTN_TOOLBAR_SUB_INSTALL_UPDATE	(RStr.BTN_INSTALL_UPDATE, RImg.TOOLBAR_INSTALL.getImageIcon(TB.SubSize, TB.SubSize), RStr.BTN_INSTALL_UPDATE_LAB),
+	BTN_TOOLBAR_SUB_INSTALL_DOWNGRADE(RStr.BTN_INSTALL_DOWNGRAD, RImg.TOOLBAR_INSTALL.getImageIcon(TB.SubSize, TB.SubSize), RStr.BTN_INSTALL_DOWNGRAD_LAB),
+	BTN_TOOLBAR_SUB_LAUNCH			(RStr.BTN_LAUNCH, RImg.TOOLBAR_LAUNCH.getImageIcon(TB.SubSize, TB.SubSize), RStr.BTN_LAUNCH_LAB),
+	BTN_TOOLBAR_SUB_SIGN			(RStr.BTN_SIGN, RImg.TOOLBAR_SIGNNING.getImageIcon(TB.SubSize, TB.SubSize), RStr.BTN_SIGN_LAB),
+
+	MENU_TOOLBAR_NEW_WINDOW			(RStr.MENU_NEW),
+	MENU_TOOLBAR_NEW_EMPTY			(RStr.MENU_NEW_WINDOW, RImg.TOOLBAR_MANIFEST.getImageIcon(TB.SubSize, TB.SubSize)),
+	MENU_TOOLBAR_NEW_APK			(RStr.MENU_NEW_APK_FILE, RImg.TOOLBAR_OPEN.getImageIcon(TB.SubSize, TB.SubSize)),
+	MENU_TOOLBAR_NEW_PACKAGE		(RStr.MENU_NEW_PACKAGE, RImg.TOOLBAR_PACKAGETREE.getImageIcon(TB.SubSize, TB.SubSize)),
+	MENU_TOOLBAR_OPEN_APK			(RStr.MENU_APK_FILE, RImg.TOOLBAR_OPEN.getImageIcon(TB.SubSize, TB.SubSize)),
+	MENU_TOOLBAR_OPEN_PACKAGE		(RStr.MENU_PACKAGE, RImg.TOOLBAR_PACKAGETREE.getImageIcon(TB.SubSize, TB.SubSize)),
+	MENU_TOOLBAR_INSTALL_APK		(RStr.MENU_INSTALL, RImg.TOOLBAR_INSTALL.getImageIcon(TB.SubSize, TB.SubSize)),
+	MENU_TOOLBAR_UNINSTALL_APK		(RStr.MENU_UNINSTALL, RImg.TOOLBAR_UNINSTALL.getImageIcon(TB.SubSize, TB.SubSize)),
+	MENU_TOOLBAR_CLEAR_DATA			(RStr.MENU_CLEAR_DATA, RImg.TOOLBAR_CLEAR.getImageIcon(TB.SubSize, TB.SubSize)),
+	MENU_TOOLBAR_INSTALLED_CHECK	(RStr.MENU_NEW, RImg.TOOLBAR_MANIFEST.getImageIcon(TB.SubSize, TB.SubSize)),
+	MENU_TOOLBAR_DECODER_JD_GUI		(RStr.MENU_DECODER_JD_GUI),
+	MENU_TOOLBAR_DECODER_JADX_GUI	(RStr.MENU_DECODER_JADX_GUI),
+	MENU_TOOLBAR_DECODER_BYTECODE	(RStr.MENU_DECODER_BYTECODE),
+	MENU_TOOLBAR_SEARCH_RESOURCE	(RStr.MENU_SEARCH_RESOURCE),
+	MENU_TOOLBAR_EXPLORER_ARCHIVE	(RStr.MENU_EXPLORER_ARCHIVE),
+	MENU_TOOLBAR_EXPLORER_FOLDER	(RStr.MENU_EXPLORER_FOLDER),
+	MENU_TOOLBAR_LAUNCH_LAUNCHER	(RStr.MENU_LAUNCH_LAUNCHER),
+	MENU_TOOLBAR_LAUNCH_SELECT		(RStr.MENU_LAUNCH_SELECT),
+	MENU_TOOLBAR_SELECT_DEFAULT		(RStr.MENU_SELECT_DEFAULT),
+	MENU_TOOLBAR_SEARCH_BY_PACKAGE	(RStr.LABEL_BY_PACKAGE_NAME),
+	MENU_TOOLBAR_SEARCH_BY_NAME		(RStr.LABEL_BY_APP_LABEL),
+	MENU_TOOLBAR_TO_BASIC_INFO		(RStr.MENU_VISIBLE_TO_BASIC_EACH),
 	; // ENUM END
+
+	private class TB {
+		private static final int IconSize = RConst.INT_TOOLBAR_ICON_SIZE;
+		private static final int SubSize = RConst.INT_TOOLBAR_SUBICON_SIZE;
+	}
+
+	private static Map<Window, Map<JComponent, RComp>> map = new HashMap<>();
+	static {
+		RStr.addLanguageChangeListener(new LanguageChangeListener() {
+			@Override
+			public void languageChange(String oldLang, String newLang) {
+				for(Entry<Window, Map<JComponent, RComp>> w: map.entrySet()) {
+					for(Entry<JComponent, RComp> e: w.getValue().entrySet()) {
+						e.getValue().applyText(e.getKey());
+					}
+				}
+			}
+		});
+	}
 
 	private RStr text, toolTipText;
 	private Icon icon;
-	private List<JComponent> list;
 
 	private RComp(RStr text) {
 		this(text, null);
@@ -89,47 +149,63 @@ public enum RComp implements ResValue<RComp>, PropertyChangeListener
 			if(toolTipText != null) {
 				comp.setToolTipText(toolTipText.getString());
 			}
-		}
-	}
-
-	public void autoReapply(JComponent c, boolean useAutoReapply) {
-		if(c == null) return;
-		if(useAutoReapply) {
-			apply(c);
-			registeReapply(c);
-		} else {
-			removeReapply(c);
-		}
-	}
-
-	public void registeReapply(JComponent c) {
-		if(list == null) {
-			list = new ArrayList<>();
-			RProp.LANGUAGE.addPropertyChangeListener(this);
-		}
-		if(!list.contains(c)) {
-			list.add(c);
-		}
-	}
-
-	public void removeReapply(JComponent c) {
-		if(list != null && list.contains(c)) {
-			list.remove(c);
-			if(list.isEmpty()) {
-				list = null;
-				RProp.LANGUAGE.removePropertyChangeListener(this);
+		} else if(c != null) {
+			if(text != null) {
+				c.setName(text.getString());
+			}
+			if(toolTipText != null) {
+				c.setToolTipText(toolTipText.getString());
 			}
 		}
 	}
 
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		if(list == null) return;
-		for(JComponent c: list) {
-			Log.e("c " + c);
-			//if(c.isValidateRoot()) {
-				applyText(c);
-			//}
+	public void autoReapply(Window window, JComponent c) {
+		autoReapply(window, c, true);
+	}
+
+	public void autoReapply(Window window, JComponent c, boolean useAutoReapply) {
+		if(c == null) return;
+		if(useAutoReapply) {
+			apply(c);
+			registeReapply(window, c);
+		} else {
+			removeReapply(window, c);
+		}
+	}
+
+	public void registeReapply(final Window window, JComponent c) {
+		if(c == null) return;
+		Map<JComponent, RComp> matchMap = map.get(window);
+		if(matchMap == null) {
+			matchMap = new HashMap<>();
+			map.put(window, matchMap);
+			if(window != null) {
+				window.addWindowListener(new WindowAdapter() {
+					@Override
+					public void windowClosing(WindowEvent e) {
+						window.removeWindowListener(this);
+						removeReapply(window, null);
+					}
+					@Override
+					public void windowClosed(WindowEvent e) {
+						window.removeWindowListener(this);
+						removeReapply(window, null);
+					}
+				});
+			}
+		}
+		matchMap.put(c, this);
+	}
+
+	public void removeReapply(Window window, JComponent c) {
+		Map<JComponent, RComp> matchMap = map.get(window);
+		if(matchMap != null) {
+			if(c != null) {
+				matchMap.remove(c);
+			}
+			if(matchMap.isEmpty() || c == null) {
+				map.remove(window);
+			}
 		}
 	}
 }
