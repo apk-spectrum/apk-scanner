@@ -16,8 +16,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-import com.apkscanner.gui.easymode.test.ColumnGroup;
-
 public class GroupableTableHeaderUI extends BasicTableHeaderUI {
 
     protected GroupableTableHeader getHeader() {

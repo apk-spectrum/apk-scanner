@@ -1,8 +1,15 @@
 package com.apkscanner.gui.easymode.test;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.OverlayLayout;
  
+@SuppressWarnings("serial")
 public class OverlayLayoutExample extends JFrame
 {
   JPanel p1;

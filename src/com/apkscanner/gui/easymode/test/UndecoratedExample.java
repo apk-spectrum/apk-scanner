@@ -22,6 +22,7 @@ import javax.swing.border.LineBorder;
 
 import com.apkscanner.resource.RImg;
 
+@SuppressWarnings("serial")
 public class UndecoratedExample {
     static JFrame frame = new JFrame();
     static class MainPanel extends JPanel {

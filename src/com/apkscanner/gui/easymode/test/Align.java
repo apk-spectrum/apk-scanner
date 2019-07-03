@@ -8,10 +8,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+@SuppressWarnings("serial")
 public class Align {
     private static final int PREF_HEIGHT = 100;
 
-    Align() {
+	Align() {
         JFrame frame = new JFrame("Align test");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

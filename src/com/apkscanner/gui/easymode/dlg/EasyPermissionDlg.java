@@ -31,8 +31,8 @@ import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
 import com.apkscanner.core.permissionmanager.PermissionManager;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.PermissionInfo;
+import com.apkscanner.gui.easymode.core.ColumnGroup;
 import com.apkscanner.gui.easymode.core.GroupableTableHeader;
-import com.apkscanner.gui.easymode.test.ColumnGroup;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 

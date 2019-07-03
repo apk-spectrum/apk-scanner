@@ -8,6 +8,7 @@ import javax.swing.JLayer;
 import javax.swing.plaf.LayerUI;
 
 
+@SuppressWarnings("serial")
 public class ZoomUI extends LayerUI<JComponent> {
 
         public double zoom = 1; // Changing this value seems to have no effect
@@ -23,7 +24,8 @@ public class ZoomUI extends LayerUI<JComponent> {
         @Override
         public void installUI(JComponent c) {
             super.installUI(c);
-            JLayer jlayer = (JLayer) c;
+            @SuppressWarnings("rawtypes")
+			JLayer jlayer = (JLayer) c;
             jlayer.setLayerEventMask(
                     AWTEvent.MOUSE_EVENT_MASK | AWTEvent.ACTION_EVENT_MASK
                     | AWTEvent.MOUSE_MOTION_EVENT_MASK
@@ -32,7 +34,8 @@ public class ZoomUI extends LayerUI<JComponent> {
 
         @Override
         public void uninstallUI(JComponent c) {
-            JLayer jlayer = (JLayer) c;
+            @SuppressWarnings("rawtypes")
+			JLayer jlayer = (JLayer) c;
             jlayer.setLayerEventMask(0);
             super.uninstallUI(c);
         }

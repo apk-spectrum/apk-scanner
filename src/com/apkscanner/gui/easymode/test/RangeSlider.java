@@ -2,6 +2,7 @@ package com.apkscanner.gui.easymode.test;
 
 import javax.swing.JSlider;
 
+@SuppressWarnings("serial")
 public class RangeSlider extends JSlider {
 
     /**

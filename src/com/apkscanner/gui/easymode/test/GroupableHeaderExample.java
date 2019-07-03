@@ -10,8 +10,10 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 
+import com.apkscanner.gui.easymode.core.ColumnGroup;
 import com.apkscanner.gui.easymode.core.GroupableTableHeader;
 
+@SuppressWarnings("serial")
 public class GroupableHeaderExample extends JFrame {
 
 	  GroupableHeaderExample() {

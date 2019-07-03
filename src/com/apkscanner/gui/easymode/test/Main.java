@@ -1,12 +1,15 @@
 package com.apkscanner.gui.easymode.test;
 
-import static java.awt.geom.AffineTransform.*;
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import javax.swing.*;
 
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+
+@SuppressWarnings("serial")
 public class Main {
-    public static void main(String args[]) {
+	public static void main(String args[]) {
         JFrame t = new JFrame();
         t.add(new JComponent() {
 

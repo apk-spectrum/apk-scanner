@@ -4,10 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Paint;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,6 +20,7 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
+@SuppressWarnings("serial")
 public class DwnWindow extends JFrame
 {
     public static void main(String... args)
@@ -96,7 +95,8 @@ public class DwnWindow extends JFrame
             public IntByReference hRgnBlur;
             public boolean fTransitionOnMaximized;
 
-            @Override
+            @SuppressWarnings({ "unchecked", "rawtypes" })
+			@Override
             protected List getFieldOrder() 
             {
                 return Arrays.asList("dwFlags", "fEnable", "hRgnBlur", "fTransitionOnMaximized");

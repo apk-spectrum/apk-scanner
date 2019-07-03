@@ -14,6 +14,7 @@ import javax.swing.Timer;
 
 import com.apkscanner.resource.RImg;
 
+@SuppressWarnings("serial")
 public class Board extends JPanel
         implements ActionListener {
 

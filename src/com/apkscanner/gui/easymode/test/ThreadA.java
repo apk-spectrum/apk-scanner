@@ -4,7 +4,8 @@ public class ThreadA {
 	
 	static Boolean lock = new Boolean(false);
 	
-    public static void main(String[] args){
+    @SuppressWarnings("static-access")
+	public static void main(String[] args){
         ThreadB b = new ThreadB(lock);
         b.start();
  
