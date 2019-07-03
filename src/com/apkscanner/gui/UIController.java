@@ -34,9 +34,11 @@ public class UIController implements Runnable {
 
 	private ApkScanner apkScanner;
 
-	private MainUI mainUI = null;
-	private EasyMainUI easymainUI = null;
-	private JFrame mainframe = null;
+	private MainUI mainUI;
+	private EasyMainUI easymainUI;
+	private JFrame mainframe;
+
+	private UiEventHandler eventHandler;
 
 	private int updatedBadgeCount;
 
@@ -45,6 +47,7 @@ public class UIController implements Runnable {
 			apkScanner = ApkScanner.getInstance();
 		}
 		this.apkScanner = apkScanner;
+		eventHandler = new UiEventHandler(apkScanner);
 
 		loadPlugIn();
 	}
@@ -76,14 +79,15 @@ public class UIController implements Runnable {
 
 		Log.i("setLookAndFeel");
 		setLookAndFeel(isEasyGui);
-
+		
 		Log.i("creat frame");
 		if(isEasyGui) {
 			mainframe = easymainUI = new EasyMainUI(apkScanner);
 		} else {
-			mainframe = mainUI = new MainUI(apkScanner);
+			mainframe = mainUI = new MainUI(apkScanner, eventHandler);
 		}
 		mainframe.setVisible(true);
+		eventHandler.registerKeyStrokeAction(mainframe.getRootPane());
 
 		if(RProp.B.USE_UI_BOOSTER.get()) {
 			uiLoaderBooster(isEasyGui);
@@ -126,15 +130,21 @@ public class UIController implements Runnable {
         Thread thread = new Thread(new Runnable() {
             public void run() {
             	synchronized(instance) {
+            		try {
+        				instance.wait();
+        			} catch (InterruptedException e) { }
 	                if(isEasyGui) {
-	            		try {
-	        				instance.wait();
-	        			} catch (InterruptedException e) { }
-	                	if(mainUI == null) mainUI = new MainUI(null);
-	                	mainUI.uiLoadBooster();
-	                	mainUI.setUpdatedBadgeCount(updatedBadgeCount);
+	                	if(mainUI == null) {
+	                		mainUI = new MainUI(null, eventHandler);
+		                	mainUI.uiLoadBooster();
+		                	mainUI.setUpdatedBadgeCount(updatedBadgeCount);
+		                	eventHandler.registerKeyStrokeAction(mainUI.getRootPane());
+	                	}
 	                } else {
-	                	if(easymainUI == null) easymainUI = new EasyMainUI(null);
+	                	if(easymainUI == null) {
+	                		easymainUI = new EasyMainUI(null);
+		                	eventHandler.registerKeyStrokeAction(easymainUI.getRootPane());
+	                	}
 	                }
             	}
             }
@@ -171,8 +181,9 @@ public class UIController implements Runnable {
 				if(!isEasyGui) {
 					synchronized(instance) {
 						if(mainUI == null) {
-							mainUI = new MainUI(apkScanner);
+							mainUI = new MainUI(apkScanner, eventHandler);
 							mainUI.setUpdatedBadgeCount(updatedBadgeCount);
+		                	eventHandler.registerKeyStrokeAction(mainUI.getRootPane());
 						} else {
 							mainUI.setApkScanner(apkScanner);
 						}
@@ -182,6 +193,7 @@ public class UIController implements Runnable {
 					synchronized(instance) {
 						if(easymainUI == null) {
 							easymainUI = new EasyMainUI(apkScanner);
+		                	eventHandler.registerKeyStrokeAction(easymainUI.getRootPane());
 						} else {
 							easymainUI.setApkScanner(apkScanner);
 						}
@@ -284,5 +296,10 @@ public class UIController implements Runnable {
 				PlugInManager.saveProperty();
 			}
 		}.execute();
+	}
+
+	public static void sendEvent(String actionCommand) {
+		UIController thiz = getInstance(); 
+		thiz.eventHandler.sendEvent(thiz.mainframe, actionCommand);
 	}
 }

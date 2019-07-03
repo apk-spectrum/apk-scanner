@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import com.apkscanner.gui.dialog.AboutDlg;
 
 @SuppressWarnings("serial")
-public class ShowAboutAction extends AbstractApkScannerAction
+public class ShowAboutAction extends AbstractUIAction
 {
 	public static final String ACTION_COMMAND = "ACT_CMD_SHOW_ABOUT";
 

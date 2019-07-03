@@ -53,7 +53,11 @@ public abstract class AbstractUpdateChecker extends AbstractPlugIn implements IU
 
 	@Override
 	public void setPeriod(long period) {
+		if(this.period == period) return;
+		long oldValue = this.period;
 		this.period = period;
+
+		firePropertyChange(PERIOD_PROPERTY, oldValue, period);
 	}
 
 	@Override
@@ -63,7 +67,12 @@ public abstract class AbstractUpdateChecker extends AbstractPlugIn implements IU
 
 	@Override
 	public void setLastUpdateDate(long lastUpdateDate) {
-		this.lastUpdateDate = lastUpdateDate > 0 ? lastUpdateDate : 0;
+		long newValue = lastUpdateDate > 0 ? lastUpdateDate : 0;
+		if(this.lastUpdateDate == newValue) return;
+		long oldValue = this.lastUpdateDate; 
+		this.lastUpdateDate = newValue;
+
+		firePropertyChange(LAST_UPDATE_CHECKED_PROPERTY, oldValue, newValue);
 	}
 
 	@Override
@@ -139,9 +148,9 @@ public abstract class AbstractUpdateChecker extends AbstractPlugIn implements IU
 			if(listeners.contains(listener)) {
 				listeners.remove(listener);
 			}
-		}		
+		}
 	}
-	
+
 	@Override
 	public Map<String, Object> getChangedProperties() {
 		Map<String, Object> data = super.getChangedProperties();

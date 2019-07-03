@@ -2,27 +2,18 @@ package com.apkscanner.gui;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.KeyStroke;
 
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.android.ddmlib.IDevice;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.core.scanner.ApkScanner.Status;
-import com.apkscanner.gui.component.KeyStrokeAction;
-import com.apkscanner.gui.dialog.LogDlg;
 import com.apkscanner.gui.easymode.EasyGuiMainPanel;
 import com.apkscanner.gui.easymode.core.ToolEntryManager;
-import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
@@ -128,64 +119,6 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 			Log.d("getlatestError is not 0 or args 0");
 			mainpanel.showEmptyinfo();
 		}
-
-		KeyStrokeAction.registerKeyStrokeActions(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW, new KeyStroke[] {
-				KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false)
-			}, new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					int keycode = Integer.parseInt(e.getActionCommand());
-					switch(keycode) {
-					case KeyEvent.VK_ESCAPE:
-						switch(RProp.I.ESC_ACTION.get()) {
-						case RConst.INT_ESC_ACT_NONE: return;
-						case RConst.INT_ESC_ACT_CHANG_UI_MODE: break;
-						case RConst.INT_ESC_ACT_EXIT: dispose(); return;
-						}
-					case KeyEvent.VK_F2:
-						UIController.changeToMainGui();
-						break;
-					case KeyEvent.VK_F12:
-						LogDlg.showLogDialog(EasyMainUI.this);
-						break;
-					}
-				}
-			}
-		);
-		
-		KeyStrokeAction.registerKeyStrokeActions(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW,
-			new KeyStroke[] {
-				KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK, false),
-				//KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK, false),
-				//KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.CTRL_DOWN_MASK, false),
-				//KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK, false),
-				//KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true),
-				//KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true),
-				//KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true)
-			},
-			new String[] {
-				RStr.BTN_ABOUT.getString(),
-				RStr.BTN_OPEN.getString(),
-				RStr.BTN_OPEN_PACKAGE.getString(),
-				RStr.BTN_INSTALL.getString(),
-				RStr.BTN_EXPLORER.getString(),
-				RStr.BTN_MANIFEST.getString(),
-			},
-			new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Log.e("e " + e.getActionCommand());
-					ToolEntryManager.excuteEntry(e.getActionCommand());
-				}
-			}
-		);
 
 		Log.d("main End");
 		Log.d("init UI   : " + (System.currentTimeMillis() - EasyMainUI.UIInittime) / 1000.0);

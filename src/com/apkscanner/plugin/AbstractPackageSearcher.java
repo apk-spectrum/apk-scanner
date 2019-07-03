@@ -38,7 +38,10 @@ public abstract class AbstractPackageSearcher extends AbstractPlugIn implements 
 
 	@Override
 	public void setVisibleToBasic(boolean visible) {
+		if(visibleToBasic == visible) return;
 		visibleToBasic = visible;
+
+		firePropertyChange(VISIBLE_PROPERTY, !visible, visible);
 	}
 
 	@Override

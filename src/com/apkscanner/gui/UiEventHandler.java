@@ -30,6 +30,7 @@ import com.apkscanner.gui.action.DeviceLaunchMainAction;
 import com.apkscanner.gui.action.DeviceShowInstalledPackageAction;
 import com.apkscanner.gui.action.DeviceUninstallAppAction;
 import com.apkscanner.gui.action.EscKeyAction;
+import com.apkscanner.gui.action.ExitAction;
 import com.apkscanner.gui.action.InstallApkAction;
 import com.apkscanner.gui.action.NewWindowAction;
 import com.apkscanner.gui.action.OpenApkAction;
@@ -70,6 +71,7 @@ public class UiEventHandler extends ActionEventHandler implements WindowListener
 	public static final String ACT_CMD_SHOW_INSTALLED_PACKAGE_INFO = DeviceShowInstalledPackageAction.ACTION_COMMAND;
 	public static final String ACT_CMD_UNINSTALL_APP			= DeviceUninstallAppAction.ACTION_COMMAND;
 	public static final String ACT_CMD_ESC_KEY_EVENT			= EscKeyAction.ACTION_COMMAND;
+	public static final String ACT_CMD_EXIT						= ExitAction.ACTION_COMMAND;
 	public static final String ACT_CMD_INSTALL_APK				= InstallApkAction.ACTION_COMMAND;
 	public static final String ACT_CMD_NEW_WINDOW				= NewWindowAction.ACTION_COMMAND;
 	public static final String ACT_CMD_OPEN_APK					= OpenApkAction.ACTION_COMMAND;
@@ -134,6 +136,7 @@ public class UiEventHandler extends ActionEventHandler implements WindowListener
 				KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK, false),
 				KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.CTRL_DOWN_MASK, false),
 				KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK, false),
+				KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK, false),
 				KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true),
 				KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true),
 				KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true)
@@ -151,6 +154,7 @@ public class UiEventHandler extends ActionEventHandler implements WindowListener
 				ACT_CMD_SHOW_EXPLORER,
 				ACT_CMD_SHOW_MANIFEST,
 				ACT_CMD_LAUNCH_APP,
+				ACT_CMD_EXIT,
 				ACT_CMD_OPEN_APK,
 				ACT_CMD_OPEN_PACKAGE,
 				ACT_CMD_LAUNCH_CHOOSE_APP

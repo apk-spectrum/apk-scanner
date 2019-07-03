@@ -2,6 +2,8 @@ package com.apkscanner.gui.component;
 
 import java.awt.Desktop;
 import java.awt.Font;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JEditorPane;
+import javax.swing.KeyStroke;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.AbstractDocument;
@@ -74,6 +77,8 @@ public class HtmlEditorPane extends JEditorPane implements HyperlinkListener
 	{
 		super("text/html", null);
 		addHyperlinkListener(this);
+		getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK, false), "none");
+		getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, false), "none");
 
 		HTMLEditorKit kit = new CustomHTMLEditorKit();
 		setEditorKit(kit);
@@ -232,7 +237,7 @@ public class HtmlEditorPane extends JEditorPane implements HyperlinkListener
 		}
 	}
 
-	public void removeElementById(Element elem) {
+	public void removeElement(Element elem) {
 		if(elem == null) return;
 		HTMLDocument doc = (HTMLDocument)getDocument();
 		doc.removeElement(elem);
@@ -267,7 +272,10 @@ public class HtmlEditorPane extends JEditorPane implements HyperlinkListener
 	}
 
 	public void removeElementById(String id) {
-		removeElementById(getElementById(id));
+		Element e;
+		while((e = getElementById(id)) != null) {
+			removeElement(e);
+		}
 	}
 
 	public void addHyperlinkClickListener(HyperlinkClickListener listener)

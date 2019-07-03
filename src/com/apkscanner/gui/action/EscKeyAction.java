@@ -9,7 +9,7 @@ import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
 
 @SuppressWarnings("serial")
-public class EscKeyAction extends AbstractApkScannerAction
+public class EscKeyAction extends AbstractUIAction
 {
 	public static final String ACTION_COMMAND = "ACT_CMD_ESC_KEY_EVENT";
 

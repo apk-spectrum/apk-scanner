@@ -20,7 +20,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 
-import com.apkscanner.resource.RFile;
 import com.apkscanner.resource.RImg;
 
 /**

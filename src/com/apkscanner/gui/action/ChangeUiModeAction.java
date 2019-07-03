@@ -7,7 +7,7 @@ import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.UIController;
 
 @SuppressWarnings("serial")
-public class ChangeUiModeAction extends AbstractApkScannerAction
+public class ChangeUiModeAction extends AbstractUIAction
 {
 	public static final String ACTION_COMMAND = "ACT_CMD_CHANGE_UI_MODE";
 

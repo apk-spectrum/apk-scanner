@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import com.apkscanner.gui.dialog.LogDlg;
 
 @SuppressWarnings("serial")
-public class ShowLogsAction extends AbstractApkScannerAction
+public class ShowLogsAction extends AbstractUIAction
 {
 	public static final String ACTION_COMMAND = "ACT_CMD_SHOW_LOGS";
 
@@ -14,10 +14,10 @@ public class ShowLogsAction extends AbstractApkScannerAction
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		evtShowAbout(getWindow(e));
+		evtShowLogs(getWindow(e));
 	}
 
-	private void evtShowAbout(Window owner) {
+	private void evtShowLogs(Window owner) {
 		LogDlg.showLogDialog(owner);
 	}
 }

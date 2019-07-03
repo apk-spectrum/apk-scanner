@@ -23,8 +23,10 @@ import com.apkscanner.plugin.IExtraComponent;
 import com.apkscanner.plugin.ITabbedComponent;
 import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.plugin.PlugInManager;
+import com.apkscanner.resource.LanguageChangeListener;
+import com.apkscanner.resource.RStr;
 
-public class TabbedPanel extends JTabbedPane
+public class TabbedPanel extends JTabbedPane implements LanguageChangeListener
 {
 	private static final long serialVersionUID = -5500517956616692675L;
 
@@ -48,6 +50,8 @@ public class TabbedPanel extends JTabbedPane
 		addTab(new Signatures());
 
 		setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+
+		RStr.addLanguageChangeListener(this);
 	}
 
 	public void uiLoadBooster() {
@@ -184,5 +188,10 @@ public class TabbedPanel extends JTabbedPane
 				setTitleAt(i, tabbed.getTitle());
 			}
 		}
+	}
+
+	@Override
+	public void languageChange(String oldLang, String newLang) {
+		reloadResource();
 	}
 }

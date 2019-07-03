@@ -12,6 +12,8 @@ import java.awt.Toolkit;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -68,7 +70,8 @@ import com.apkscanner.util.FileUtil.FSStyle;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 
-public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickListener, IProgressListener, ListDataListener, ItemListener
+public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickListener, IProgressListener,
+		ListDataListener, ItemListener, PropertyChangeListener
 {
 	private static final long serialVersionUID = 6431995641984509482L;
 
@@ -89,6 +92,8 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 
 		initialize();
 		showAbout();
+
+		RProp.VISIBLE_TO_BASIC.addPropertyChangeListener(this);
 	}
 
 	@Override
@@ -132,6 +137,12 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	public void reloadResource() {
 		setName(RStr.TAB_BASIC_INFO.get());
 		setToolTipText(RStr.TAB_BASIC_INFO.get());
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		Log.v("Change property : " + evt);
+		setPluginSearcher();
 	}
 
 	private void showAbout() {
@@ -462,30 +473,32 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		String appLabelSearchers = "";
 		if(RProp.B.VISIBLE_TO_BASIC.get()) {
 			IPackageSearcher[] searchers = PlugInManager.getPackageSearchers();
-			if(searchers.length > 0) {
-				String defaultSearchIcon = RImg.TOOLBAR_SEARCH.getPath();
-				for(IPackageSearcher searcher: searchers) {
-					if(!searcher.isVisibleToBasic()) continue;
-					URL icon = searcher.getIconURL();
-					String iconPath = icon != null ? icon.toString() : defaultSearchIcon;
-					String tag = makeHyperEvent("PLUGIN:"+searcher.hashCode(), String.format("<img src=\"%s\" width=\"16\" height=\"16\">", iconPath), null, searcher.getActionCommand());
-					switch(searcher.getSupportType() ) {
-					case IPackageSearcher.SEARCHER_TYPE_PACKAGE_NAME:
-						packageSearchers += tag;
-						break;
-					case IPackageSearcher.SEARCHER_TYPE_APP_NAME:
-						appLabelSearchers += tag;
-						break;
-					};
-				}
+			String defaultSearchIcon = RImg.TOOLBAR_SEARCH.getPath();
+			for(IPackageSearcher searcher: searchers) {
+				searcher.addPropertyChangeListener(this);
+				if(!searcher.isVisibleToBasic()) continue;
+				URL icon = searcher.getIconURL();
+				String iconPath = icon != null ? icon.toString() : defaultSearchIcon;
+				String tag = makeHyperEvent("PLUGIN:"+searcher.hashCode(), String.format("<img src=\"%s\" width=\"16\" height=\"16\">", iconPath), null, searcher.getActionCommand());
+				switch(searcher.getSupportType() ) {
+				case IPackageSearcher.SEARCHER_TYPE_PACKAGE_NAME:
+					packageSearchers += tag;
+					break;
+				case IPackageSearcher.SEARCHER_TYPE_APP_NAME:
+					appLabelSearchers += tag;
+					break;
+				};
 			}
 		}
 
-		apkInfoPanel.insertElementLast("label", appLabelSearchers);
+		apkInfoPanel.removeElementById("name-searcher");
+		if(!appLabelSearchers.isEmpty()) {
+			apkInfoPanel.insertElementLast("label", String.format("<span id=\"name-searcher\">%s</span>", appLabelSearchers));
+		}
 		if(!packageSearchers.isEmpty()) {
-			apkInfoPanel.setOuterHTMLById("package-searcher", packageSearchers);
+			apkInfoPanel.setOuterHTMLById("package-searcher", String.format("<span id=\"package-searcher\">%s</span>", packageSearchers));
 		} else {
-			apkInfoPanel.removeElementById("package-searcher");
+			apkInfoPanel.setOuterHTMLById("package-searcher", "<span id=\"package-searcher\">&nbsp;</span>");
 		}
 	}
 

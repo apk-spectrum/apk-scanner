@@ -191,13 +191,13 @@ public enum RProp implements ResProp<Object>, ResString<Object>
 			obj = propPreferredLanguage + ";";
 			break;
 		case PEM_FILE_PATH:
-			String pem = RFile.DATA_CERT_PEM_FILE.getPath(); 
+			String pem = RFile.DATA_CERT_PEM_FILE.getPath();
 			if(new File(pem).isFile()) {
 				obj = pem;
 			}
 			break;
 		case PK8_FILE_PATH:
-			String pk8 = RFile.DATA_CERT_PK8_FILE.getPath(); 
+			String pk8 = RFile.DATA_CERT_PK8_FILE.getPath();
 			if(new File(pk8).isFile()) {
 				obj = pk8;
 			}
