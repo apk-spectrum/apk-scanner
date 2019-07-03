@@ -71,7 +71,6 @@ import com.apkscanner.gui.dialog.SimpleCheckTableModel.TableRowObject;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.resource.RImg;
-import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.IPackageStateListener;
@@ -109,7 +108,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 
 	private DeviceHandler deviceHandler;
 
-	// Must be accessing to pullingNodes in EventDispatchThread 
+	// Must be accessing to pullingNodes in EventDispatchThread
 	private ArrayList<TreeNode> pullingNodes = new ArrayList<TreeNode>();
 
 	public class FrameworkTableObject implements TableRowObject {
@@ -164,20 +163,15 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		setModal(true);
 		setLayout(new BorderLayout());
 
-		Dimension minSize = new Dimension(600, 400);
-		if(RProp.B.SAVE_WINDOW_SIZE.get()) {
-			WindowSizeMemorizer.resizeCompoent(this, minSize);
-		} else {
-			setSize(minSize);
-		}
-		setMinimumSize(minSize);
-		WindowSizeMemorizer.registeComponent(this);
+		Dimension size = new Dimension(600, 400);
+		WindowSizeMemorizer.apply(this, size);
+		setMinimumSize(size);
 
 		setLocationRelativeTo(window);
 
 		addWindowListener(new WindowEventHandler());
 
-		
+
 
 		KeyStrokeAction.registerKeyStrokeAction(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW,
 				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), RStr.BTN_CANCEL.get(), this);
@@ -313,11 +307,11 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 					ListPanel.setVisible(true);
 				} else {
 					ListPanel.setVisible(false);
-				}    
+				}
 			}
 		});
 
-		JButton openbtn = new JButton(RStr.BTN_OPEN.get());		
+		JButton openbtn = new JButton(RStr.BTN_OPEN.get());
 		refreshbtn = new JButton(RStr.BTN_REFRESH.get());
 		JButton exitbtn = new JButton(RStr.BTN_CANCEL.get());
 
@@ -339,19 +333,19 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 
 		JPanel ButtonPanelEast = new JPanel();
 		ButtonPanelEast.add(openbtn);
-		ButtonPanelEast.add(exitbtn);     
+		ButtonPanelEast.add(exitbtn);
 
 		JPanel ButtonPanel = new JPanel(new BorderLayout());
 		ButtonPanel.add(ButtonPanelWest, BorderLayout.WEST);
-		ButtonPanel.add(ButtonPanelEast, BorderLayout.EAST);     
+		ButtonPanel.add(ButtonPanelEast, BorderLayout.EAST);
 
 		Dimension minimumSize = new Dimension(100, 50);
 		treeView.setMinimumSize(minimumSize);
 
 		//Add the split pane to this panel.
 		//add(splitPane);
-		JPanel panelnorth = new JPanel(new BorderLayout());                
-		JPanel panelsourth = new JPanel(new BorderLayout());        
+		JPanel panelnorth = new JPanel(new BorderLayout());
+		JPanel panelsourth = new JPanel(new BorderLayout());
 		JPanel panelsearch = new JPanel(new BorderLayout());
 
 		panelsearch.add(new JLabel(RStr.LABEL_SEARCH.get() + " : "), BorderLayout.WEST);
@@ -428,7 +422,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 			Log.w("not node!");
 			return ;
 		}
-		PackageInfo tempObject = ((PackageInfo)node.getUserObject()); 		
+		PackageInfo tempObject = ((PackageInfo)node.getUserObject());
 
 		IDevice device = getCurrentSelectedDevice();
 		//		for(deviceNode = node ; deviceNode.getUserObject() instanceof DeviceStatus==false; deviceNode = ((DefaultMutableTreeNode)deviceNode.getParent())) { }
@@ -588,7 +582,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 			return;
 		}
 
-		PackageInfo tempObject = ((PackageInfo)node.getUserObject()); 
+		PackageInfo tempObject = ((PackageInfo)node.getUserObject());
 
 		Log.i(tempObject.packageName);
 		Log.i(tempObject.getLabel());
@@ -667,7 +661,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		}
 
 		IDevice device = getCurrentSelectedDevice();
-		final PackageInfo packageInfo = ((PackageInfo)node.getUserObject()); 
+		final PackageInfo packageInfo = ((PackageInfo)node.getUserObject());
 
 		Log.i("clearData :" + device.getSerialNumber()  +","+ packageInfo.packageName);
 		new SwingWorker<String, Object> () {
@@ -706,7 +700,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		}
 
 		IDevice device = getCurrentSelectedDevice();
-		PackageInfo tempObject = ((PackageInfo)node.getUserObject()); 
+		PackageInfo tempObject = ((PackageInfo)node.getUserObject());
 
 		Log.i("remove :" + device.getSerialNumber()  +","+ tempObject.getCodePath());
 		boolean run = uninstallApk(device, tempObject);
@@ -736,7 +730,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 			return ;
 		}
 
-		PackageInfo info = ((PackageInfo)node.getUserObject()); 
+		PackageInfo info = ((PackageInfo)node.getUserObject());
 		PackageInfoPanel packageInfoPanel = new PackageInfoPanel();
 		packageInfoPanel.setPackageInfo(info);
 		packageInfoPanel.showDialog(this);
@@ -777,7 +771,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 			return;
 		}
 
-		final PackageInfo packageInfo = (PackageInfo) node.getUserObject(); 
+		final PackageInfo packageInfo = (PackageInfo) node.getUserObject();
 
 		Log.i(packageInfo.packageName);
 		Log.i(packageInfo.getLabel());
@@ -883,8 +877,8 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 
 		addbtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser jfc = new JFileChooser();			
-				jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(RStr.LABEL_APK_FILE_DESC.get(),"apk"));							
+				JFileChooser jfc = new JFileChooser();
+				jfc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(RStr.LABEL_APK_FILE_DESC.get(),"apk"));
 
 				if(jfc.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
 					return;
@@ -996,7 +990,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 					devPack.device = device;
 					devPack.packages = PackageManager.getPackageList(device);
 
-					if(devPack.packages != null && devPack.packages.length > 0) { 
+					if(devPack.packages != null && devPack.packages.length > 0) {
 						String[] pkgs = PackageManager.getRecentlyActivityPackages(device);
 						ArrayList<PackageInfo> list = new ArrayList<PackageInfo>(pkgs.length);
 						for(String name: pkgs) {
@@ -1027,7 +1021,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 									if(info.isCurrentFocus) {
 										list.add(0, obj);
 									} else {
-										list.add(obj);	
+										list.add(obj);
 									}
 								}
 							}
@@ -1044,17 +1038,17 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 
 		public class SortDefaultMutableTreeNode extends DefaultMutableTreeNode {
 			/**
-			 * 
+			 *
 			 */
 			private static final long serialVersionUID = 1L;
 
 			public SortDefaultMutableTreeNode(Object userObject) {
 				super(userObject);
 			}
-			
+
 			@Override
 			public void add(MutableTreeNode newChild) {
-				super.add(newChild);				
+				super.add(newChild);
 				sort();
 			}
 
@@ -1074,8 +1068,8 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 				};
 			}
 		}
-	
-		
+
+
 		@Override
 		protected void process(List<Object> chunks){
 			for(Object param: chunks) {
@@ -1098,7 +1092,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 						data.add(dataapp);
 
 						for(PackageInfo info: devPack.packages) {
-							String apkPath = info.getApkPath(); 
+							String apkPath = info.getApkPath();
 							if(apkPath == null || apkPath.isEmpty()) {
 								continue;
 							}
@@ -1162,7 +1156,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		public void quit() {
 			quit = true;
 			synchronized (eventQueue) {
-				eventQueue.notifyAll();	
+				eventQueue.notifyAll();
 			}
 			unregisterEventListeners();
 		}
@@ -1180,7 +1174,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		private DefaultMutableTreeNode getDeviceNode(IDevice device) {
 			for(int i = 0; i < top.getChildCount(); i++) {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode)top.getChildAt(i);
-				if(node.getUserObject() instanceof IDevice 
+				if(node.getUserObject() instanceof IDevice
 						&& device.equals(node.getUserObject())) {
 					return node;
 				}
@@ -1224,7 +1218,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		}
 
 		@Override
-		public void deviceChanged(final IDevice device, int changeMask) { 
+		public void deviceChanged(final IDevice device, int changeMask) {
 			Log.v("deviceChanged() " + device.getSerialNumber() + ", " + device.getState() + ", changeMask " + changeMask);
 			if((changeMask & IDevice.CHANGE_STATE) != 0 && device.isOnline()) {
 				EventQueue.invokeLater(new Runnable() {
@@ -1293,7 +1287,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 
 	class WindowEventHandler extends WindowAdapter {
 		@Override
-		public void windowOpened(WindowEvent e) {		
+		public void windowOpened(WindowEvent e) {
 			textSearchFilter.requestFocus();
 		}
 
@@ -1308,7 +1302,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		}
 	}
 
-	class MouseEventHandler extends MouseAdapter { 
+	class MouseEventHandler extends MouseAdapter {
 		@Override
 		public void mousePressed(MouseEvent e) {
 			int selRow = tree.getRowForLocation(e.getX(), e.getY());
@@ -1328,58 +1322,58 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 
 						JPopupMenu menu = new JPopupMenu ();
 
-						JMenuItem menuitemOpen = new JMenuItem(RStr.BTN_OPEN.get() );                                                        
-						menuitemOpen.addActionListener(new ActionListener(){ 
+						JMenuItem menuitemOpen = new JMenuItem(RStr.BTN_OPEN.get() );
+						menuitemOpen.addActionListener(new ActionListener(){
 							public void actionPerformed(ActionEvent e) {
 								openPackage();
 							}});
-						menuitemOpen.setIcon(RImg.TREE_MENU_OPEN.getImageIcon());                                                        
+						menuitemOpen.setIcon(RImg.TREE_MENU_OPEN.getImageIcon());
 						menu.add(menuitemOpen);
 
-						JMenuItem menuitemDetail = new JMenuItem(RStr.BTN_DETAILS_INFO.get() );                                                        
-						menuitemDetail.addActionListener(new ActionListener(){ 
+						JMenuItem menuitemDetail = new JMenuItem(RStr.BTN_DETAILS_INFO.get() );
+						menuitemDetail.addActionListener(new ActionListener(){
 							public void actionPerformed(ActionEvent e) {
 								showDetailInfo();
 							}});
-						menuitemDetail.setIcon(RImg.TREE_APK.getImageIcon());                                                        
+						menuitemDetail.setIcon(RImg.TREE_APK.getImageIcon());
 						menu.add(menuitemDetail);
 
-						JMenuItem menuitemSave = new JMenuItem(RStr.BTN_SAVE.get() );                                                        
-						menuitemSave.addActionListener(new ActionListener(){ 
+						JMenuItem menuitemSave = new JMenuItem(RStr.BTN_SAVE.get() );
+						menuitemSave.addActionListener(new ActionListener(){
 							public void actionPerformed(ActionEvent e) {
 								pullPackage();
 							}});
-						menuitemSave.setIcon(RImg.TREE_MENU_SAVE.getImageIcon());                                                        
+						menuitemSave.setIcon(RImg.TREE_MENU_SAVE.getImageIcon());
 						menu.add(menuitemSave);
 
-						JMenuItem menuitemClear = new JMenuItem(RStr.MENU_CLEAR_DATA.get() );                                                        
-						menuitemClear.addActionListener(new ActionListener(){ 
+						JMenuItem menuitemClear = new JMenuItem(RStr.MENU_CLEAR_DATA.get() );
+						menuitemClear.addActionListener(new ActionListener(){
 							public void actionPerformed(ActionEvent e) {
 								clearData();
 							}});
-						menuitemClear.setIcon(RImg.TREE_MENU_CLEARDATA.getImageIcon());                                                        
+						menuitemClear.setIcon(RImg.TREE_MENU_CLEARDATA.getImageIcon());
 						menu.add(menuitemClear);
 
-						JMenuItem menuitemDel = new JMenuItem(RStr.BTN_DEL.get() );                                                        
-						menuitemDel.addActionListener(new ActionListener(){ 
+						JMenuItem menuitemDel = new JMenuItem(RStr.BTN_DEL.get() );
+						menuitemDel.addActionListener(new ActionListener(){
 							public void actionPerformed(ActionEvent e) {
 								removePackage();
 							}});
-						menuitemDel.setIcon(RImg.TREE_MENU_DELETE.getImageIcon());                                                        
+						menuitemDel.setIcon(RImg.TREE_MENU_DELETE.getImageIcon());
 						menu.add(menuitemDel);
 
-						JMenuItem menuitemaddframeworkres = new JMenuItem(RStr.SETTINGS_RES.get() );                                                        
-						menuitemaddframeworkres.addActionListener(new ActionListener(){ 
+						JMenuItem menuitemaddframeworkres = new JMenuItem(RStr.SETTINGS_RES.get() );
+						menuitemaddframeworkres.addActionListener(new ActionListener(){
 							public void actionPerformed(ActionEvent e) {
 								addframeworkresIntree();
 							}});
-						menuitemaddframeworkres.setIcon(RImg.TREE_MENU_LINK.getImageIcon());                                                        
+						menuitemaddframeworkres.setIcon(RImg.TREE_MENU_LINK.getImageIcon());
 						menu.add(menuitemaddframeworkres);
 
 						menu.show ( tree, e.getX (), e.getY () );
 					}
 				}
-				else if(e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {                    	
+				else if(e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
 					openPackage();
 				}
 			}

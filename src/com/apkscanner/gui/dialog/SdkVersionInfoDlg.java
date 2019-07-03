@@ -32,7 +32,6 @@ import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.gui.component.WindowSizeMemorizer;
 import com.apkscanner.resource.RFile;
 import com.apkscanner.resource.RImg;
-import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.XmlPath;
@@ -67,14 +66,7 @@ public class SdkVersionInfoDlg extends JDialog {
 		setModal(true);
 		setLayout(new GridBagLayout());
 
-		Dimension minSize = new Dimension(550, 270);
-		if(RProp.B.SAVE_WINDOW_SIZE.get()) {
-			WindowSizeMemorizer.resizeCompoent(this, minSize);
-		} else {
-			setSize(minSize);
-		}
-		//setMinimumSize(minSize);
-		WindowSizeMemorizer.registeComponent(this);
+		WindowSizeMemorizer.apply(this, new Dimension(550, 270));
 
 		sdkLogoImg = new ImagePanel();
 		sdkInfoArea = new JTextArea();
@@ -112,7 +104,7 @@ public class SdkVersionInfoDlg extends JDialog {
 			}
 		});
 
-		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady) 
+		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady)
 		GridBagConstraints gridConst = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE,new Insets(10,10,0,10),0,0);
 
 		gridConst.fill = GridBagConstraints.HORIZONTAL;

@@ -760,13 +760,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		dialog.setModal(false);
 		dialog.setLayout(new BorderLayout());
 
-		Dimension minSize = new Dimension(700, 600);
-		if(RProp.B.SAVE_WINDOW_SIZE.get()) {
-			WindowSizeMemorizer.resizeCompoent(dialog, minSize);
-		} else {
-			dialog.setSize(minSize);
-		}
-		WindowSizeMemorizer.registeComponent(dialog);
+		WindowSizeMemorizer.apply(dialog, new Dimension(700, 600));
 
 		dialog.setLocationRelativeTo(owner);
 

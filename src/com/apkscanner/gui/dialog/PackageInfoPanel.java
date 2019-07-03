@@ -793,14 +793,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		dialog.setModal(false);
 		dialog.setLayout(new BorderLayout());
 
-		Dimension minSize = new Dimension(500, 400);
-		if(RProp.B.SAVE_WINDOW_SIZE.get()) {
-			WindowSizeMemorizer.resizeCompoent(dialog, minSize);
-		} else {
-			dialog.setSize(minSize);
-		}
-		//dialog.setMinimumSize(minSize);
-		WindowSizeMemorizer.registeComponent(dialog);
+		WindowSizeMemorizer.apply(dialog, new Dimension(500, 400));
 
 		dialog.setLocationRelativeTo(owner);
 

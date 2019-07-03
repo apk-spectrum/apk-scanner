@@ -24,7 +24,6 @@ import javax.swing.UIManager;
 
 import com.apkscanner.gui.component.WindowSizeMemorizer;
 import com.apkscanner.resource.RImg;
-import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 
 public class MessageBoxPane extends JOptionPane
@@ -75,12 +74,8 @@ public class MessageBoxPane extends JOptionPane
 		JDialog dialog = super.createDialog(parentComponent, title);
 		dialog.setResizable(true);
 		dialog.setIconImage(RImg.APP_ICON.getImage());
-		if(RProp.B.SAVE_WINDOW_SIZE.get()) {
-			WindowSizeMemorizer.resizeCompoent(dialog, title);
-		} else {
-			dialog.pack();
-		}
-		WindowSizeMemorizer.registeComponent(dialog, title);
+		dialog.pack();
+		WindowSizeMemorizer.apply(dialog, title);
 		return dialog;
 	}
 

@@ -200,14 +200,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 
 		window.setIconImage(RImg.APP_ICON.getImage());
 
-		Dimension minSize = new Dimension(600, 450);
-		if(RProp.B.SAVE_WINDOW_SIZE.get()) {
-			WindowSizeMemorizer.resizeCompoent(window, minSize);
-		} else {
-			window.setSize(minSize);
-		}
-		//window.setMinimumSize(minSize);
-		WindowSizeMemorizer.registeComponent(window);
+		WindowSizeMemorizer.apply(window, new Dimension(600, 450));
 
 		progressPanel = new InstallProgressPanel();
 		controlPanel = new ControlPanel(uiEventHandler);

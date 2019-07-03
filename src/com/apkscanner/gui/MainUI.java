@@ -85,20 +85,10 @@ public class MainUI extends JFrame implements IPlugInEventListener, LanguageChan
 		setIconImage(RImg.APP_ICON.getImage());
 
 		Log.i("initialize() set bound & size ");
-		Dimension minSize = new Dimension(RConst.INT_WINDOW_SIZE_WIDTH_MIN, RConst.INT_WINDOW_SIZE_HEIGHT_MIN);
-		if(RProp.B.SAVE_WINDOW_SIZE.get()) {
-			WindowSizeMemorizer.resizeCompoent(this, minSize);
-		} else {
-			setSize(minSize);
-		}
-		//setMinimumSize(minSize);
+		WindowSizeMemorizer.apply(this, new Dimension(RConst.INT_WINDOW_SIZE_WIDTH_MIN, RConst.INT_WINDOW_SIZE_HEIGHT_MIN));
 		setResizable(true);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		WindowSizeMemorizer.registeComponent(this);
-
-		//UIEventHandler eventHandler = new UIEventHandler();
 
 		Log.i("initialize() toolbar init");
 		// ToolBar initialize and add

@@ -124,14 +124,14 @@ public class ApkSignerWizard implements ActionListener {
 	public ApkSignerWizard(JFrame owner) {
 		if(owner != null)
 			wizard = new ApkInstallWizardDialog(owner);
-		else 
+		else
 			wizard = new ApkInstallWizardFrame(owner);
 	}
 
 	public ApkSignerWizard(JDialog owner) {
 		if(owner != null)
 			wizard = new ApkInstallWizardDialog(owner);
-		else 
+		else
 			wizard = new ApkInstallWizardFrame(owner);
 	}
 
@@ -143,18 +143,13 @@ public class ApkSignerWizard implements ActionListener {
 
 		window.setIconImage(RImg.APP_ICON.getImage());
 
-		Dimension minSize = new Dimension(400,150);
-		if(RProp.B.SAVE_WINDOW_SIZE.get()) {
-			WindowSizeMemorizer.resizeCompoent(window, minSize);
-		} else {
-			window.setSize(minSize);
-		}
-		window.setMinimumSize(minSize);
-		WindowSizeMemorizer.registeComponent(window);
+		Dimension size = new Dimension(400,150);
+		WindowSizeMemorizer.apply(window, size);
+		window.setMinimumSize(size);
 
 		window.setLayout(new GridBagLayout());
 
-		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady) 
+		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady)
 		GridBagConstraints gridHeadConst = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE,new Insets(5,5,5,5),0,0);
 		GridBagConstraints gridDataConst = new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.CENTER,GridBagConstraints.HORIZONTAL,new Insets(0,0,0,0),0,0);
 		GridBagConstraints gridButtonConst = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE,new Insets(5,5,5,5),0,0);

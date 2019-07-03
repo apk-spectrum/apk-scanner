@@ -23,7 +23,6 @@ import com.apkscanner.plugin.IUpdateChecker;
 import com.apkscanner.plugin.PlugInConfig;
 import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.resource.RImg;
-import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 
 public class UpdateNotificationWindow extends JFrame implements ActionListener
@@ -74,10 +73,7 @@ public class UpdateNotificationWindow extends JFrame implements ActionListener
 		add(ctrPanel, BorderLayout.SOUTH);
 
 		pack();
-		if(RProp.B.SAVE_WINDOW_SIZE.get()) {
-			WindowSizeMemorizer.resizeCompoent(this);
-		}
-		WindowSizeMemorizer.registeComponent(this);
+		WindowSizeMemorizer.apply(this);
 		setLocationRelativeTo(parent);
 
 		KeyStrokeAction.registerKeyStrokeAction(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW,

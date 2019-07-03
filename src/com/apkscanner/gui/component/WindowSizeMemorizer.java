@@ -20,7 +20,7 @@ public class WindowSizeMemorizer implements ComponentListener, WindowListener
 	static public final int MEMORIZE_TYPE_AUTO_UNREGISTE = 0x80;
 
 	static private ArrayList<WindowSizeMemorizer> components = new ArrayList<WindowSizeMemorizer>();
-	
+
 	private Component component;
 	private String id;
 	private int flag;
@@ -73,7 +73,7 @@ public class WindowSizeMemorizer implements ComponentListener, WindowListener
 					}
 				}
 			}
-		}		
+		}
 	}
 
 	public WindowSizeMemorizer(Component component, String id, int flag) {
@@ -97,17 +97,17 @@ public class WindowSizeMemorizer implements ComponentListener, WindowListener
 	static public Dimension getCompoentSize(Component component) {
 		return getCompoentSize(component, null, null);
 	}
-	
+
 	static public Dimension getCompoentSize(Component component, String id) {
 		return getCompoentSize(component, id, null);
 	}
-	
+
 	static public Dimension getCompoentSize(Component component, Dimension defaultSize) {
 		return getCompoentSize(component, null, defaultSize);
 	}
 
 	static public Dimension getCompoentSize(Component component, String id, Dimension defaultSize) {
-		if(component == null) return defaultSize;
+		if(component == null || !RProp.B.SAVE_WINDOW_SIZE.get()) return defaultSize;
 		int width = defaultSize != null ? (int)defaultSize.getWidth() : -1;
 		int height = defaultSize != null ? (int)defaultSize.getHeight() : -1;
 		String key = "ws_"+ component.getClass().getName() + (id != null ? "#" + id : "");
@@ -118,7 +118,7 @@ public class WindowSizeMemorizer implements ComponentListener, WindowListener
 		} else if(data instanceof Integer) {
 			width = (int)data;
 		} else if(data == null) {
-			return defaultSize;
+			width =  defaultSize.width;
 		}
 
 		data = RProp.getPropData(key+"_height");
@@ -127,7 +127,7 @@ public class WindowSizeMemorizer implements ComponentListener, WindowListener
 		} else if(data instanceof Integer) {
 			height = (int)data;
 		} else if(data == null) {
-			return defaultSize;
+			height = defaultSize.height;
 		}
 
 		return new Dimension(width,height);
@@ -154,11 +154,11 @@ public class WindowSizeMemorizer implements ComponentListener, WindowListener
 	static public void resizeCompoent(Component component) {
 		resizeCompoent(component, null, null);
 	}
-	
+
 	static public void resizeCompoent(Component component, String id) {
 		resizeCompoent(component, id, null);
 	}
-	
+
 	static public void resizeCompoent(Component component, Dimension defaultSize) {
 		resizeCompoent(component, null, defaultSize);
 	}
@@ -172,6 +172,23 @@ public class WindowSizeMemorizer implements ComponentListener, WindowListener
 			int state = getCompoentState(component, id);
 			((Frame)component).setExtendedState(state);
 		}
+	}
+
+	static public void apply(Component component) {
+		apply(component, null, null);
+	}
+
+	static public void apply(Component component, String id) {
+		apply(component, id, null);
+	}
+
+	static public void apply(Component component, Dimension defaultSize) {
+		apply(component, null, defaultSize);
+	}
+
+	static public void apply(Component component, String id, Dimension defaultSize) {
+		resizeCompoent(component, id, defaultSize);
+		registeComponent(component, id);
 	}
 
 	private void saveComponentSize() {

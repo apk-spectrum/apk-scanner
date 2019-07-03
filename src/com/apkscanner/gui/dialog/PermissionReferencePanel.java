@@ -129,13 +129,7 @@ public class PermissionReferencePanel extends JPanel implements ActionListener {
 		dialog.setModal(false);
 		dialog.setLayout(new BorderLayout());
 
-		Dimension minSize = new Dimension(450, 500);
-		if(RProp.B.SAVE_WINDOW_SIZE.get()) {
-			WindowSizeMemorizer.resizeCompoent(dialog, minSize);
-		} else {
-			dialog.setSize(minSize);
-		}
-		WindowSizeMemorizer.registeComponent(dialog);
+		WindowSizeMemorizer.apply(dialog, new Dimension(450, 500));
 
 		dialog.setLocationRelativeTo(owner);
 
