@@ -39,12 +39,12 @@ public class Components extends AbstractTabbedPanel
 	private JTextArea textArea;
 	private JPanel IntentPanel;
 	private JLabel IntentLabel;
-	
-	private MyTableModel TableModel = null; 
+
+	private MyTableModel TableModel = null;
 	private JTable table = null;
-  
+
 	public ArrayList<Object[]> ComponentList = new ArrayList<Object[]>();
-  	  
+
 	public Components() {
 		setLayout(new GridLayout(1, 0));
 		setName(RStr.TAB_COMPONENTS.get());
@@ -62,7 +62,7 @@ public class Components extends AbstractTabbedPanel
 			public Component prepareRenderer(TableCellRenderer tcr, int row, int column) {
 			 Component c = super.prepareRenderer(tcr, row, column);
 			 Color temp = null;
-			 
+
 			 if(isRowSelected(row)) {
 		          //c.setForeground(getSelectionForeground());
 		          c.setBackground(Color.GRAY);
@@ -90,7 +90,7 @@ public class Components extends AbstractTabbedPanel
 		};
 
 		ListSelectionModel cellSelectionModel = table.getSelectionModel();
-    
+
 		cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				if(ComponentList == null) return;
@@ -100,7 +100,7 @@ public class Components extends AbstractTabbedPanel
 				}
 			}
 		});
-	
+
 		setJTableColumnsWidth(table, 500, 62, 10, 7, 7, 7, 7);
 		//Create the scroll pane and add the table to it.
 		JScrollPane scrollPane = new JScrollPane(table);
@@ -109,7 +109,7 @@ public class Components extends AbstractTabbedPanel
 		textArea.setEditable(false);
 		JScrollPane scrollPane2 = new JScrollPane(textArea);
 		//scrollPane2.setPreferredSize(new Dimension(300, 500));
-		
+
 		IntentPanel = new JPanel();
 		IntentLabel = new JLabel(RStr.ACTIVITY_LABEL_INTENT.get());
 
@@ -122,21 +122,21 @@ public class Components extends AbstractTabbedPanel
 		//Add the scroll pane to this panel.
 		//add(scrollPane);
 		//add(IntentPanel);
-		
+
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
         splitPane.setTopComponent(scrollPane);
         splitPane.setBottomComponent(IntentPanel);
-		
+
         Dimension minimumSize = new Dimension(100, 50);
         scrollPane.setMinimumSize(minimumSize);
         IntentPanel.setMinimumSize(minimumSize);
         splitPane.setDividerLocation(200);
         //splitPane.setPreferredSize(new Dimension(500, 500));
-        
-        
+
+
         add(splitPane);
 	}
-	
+
 	@Override
 	public void setData(ApkInfo apkInfo, Status status, ITabbedRequest request)
 	{
@@ -144,10 +144,10 @@ public class Components extends AbstractTabbedPanel
 			return;
 		}
 
-		if(TableModel == null) 
+		if(TableModel == null)
 			initialize();
 		ComponentList.clear();
-		
+
 		if(apkInfo.manifest.application.activity != null) {
 			for(ActivityInfo info: apkInfo.manifest.application.activity) {
 				String type = null;
@@ -163,7 +163,12 @@ public class Components extends AbstractTabbedPanel
 				}
 				String startUp = (info.featureFlag & ApkInfo.APP_FEATURE_STARTUP) != 0 ? "O" : "X";
 				String enabled = (info.enabled == null) || info.enabled ? "O" : "X";
-				String exported = (info.exported == null) || info.exported ? "O" : "X";
+				String exported = null;
+				if(info.exported == null) {
+					exported = info.intentFilter != null && info.intentFilter.length > 0 ? "O" : "X";
+				} else {
+					exported = info.exported ? "O" : "X";
+				}
 				String permission = info.permission != null ? "O" : "X";
 				if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
 					ComponentList.add(0, new Object[] {info.name, type, enabled, exported, permission, startUp, info.getReport()});
@@ -187,9 +192,14 @@ public class Components extends AbstractTabbedPanel
 				}
 				String startUp = (info.featureFlag & ApkInfo.APP_FEATURE_STARTUP) != 0 ? "O" : "X";
 				String enabled = (info.enabled == null) || info.enabled ? "O" : "X";
-				String exported = (info.exported == null) || info.exported ? "O" : "X";
+				String exported = null;
+				if(info.exported == null) {
+					exported = info.intentFilter != null && info.intentFilter.length > 0 ? "O" : "X";
+				} else {
+					exported = info.exported ? "O" : "X";
+				}
 				String permission = info.permission != null ? "O" : "X";
-				if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0) { 
+				if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
 					int i = 0;
 					for(;i<ComponentList.size();i++) {
 						String t = (String)((Object[])ComponentList.get(i))[1];
@@ -211,7 +221,7 @@ public class Components extends AbstractTabbedPanel
 				} else {
 					exported = info.exported ? "O" : "X";
 				}
-				String permission = info.permission != null ? "O" : "X"; 
+				String permission = info.permission != null ? "O" : "X";
 				ComponentList.add(new Object[] {info.name, "service", enabled, exported, permission, startUp, info.getReport()});
 			}
 		}
@@ -219,8 +229,13 @@ public class Components extends AbstractTabbedPanel
 			for(ReceiverInfo info: apkInfo.manifest.application.receiver) {
 				String startUp = (info.featureFlag & ApkInfo.APP_FEATURE_STARTUP) != 0 ? "O" : "X";
 				String enabled = (info.enabled == null) || info.enabled ? "O" : "X";
-				String exported = (info.exported == null) || info.exported ? "O" : "X";
-				String permission = info.permission != null ? "O" : "X"; 
+				String exported = null;
+				if(info.exported == null) {
+					exported = info.intentFilter != null && info.intentFilter.length > 0 ? "O" : "X";
+				} else {
+					exported = info.exported ? "O" : "X";
+				}
+				String permission = info.permission != null ? "O" : "X";
 				ComponentList.add(new Object[] {info.name, "receiver", enabled, exported, permission, startUp, info.getReport()});
 			}
 		}
@@ -228,10 +243,17 @@ public class Components extends AbstractTabbedPanel
 			for(ProviderInfo info: apkInfo.manifest.application.provider) {
 				String startUp = "X";
 				String enabled = (info.enabled == null) || info.enabled ? "O" : "X";
-				String exported = (info.exported == null) || info.exported ? "O" : "X";
+				String exported = null;
+				if(info.exported == null) {
+					Integer target = apkInfo.manifest.usesSdk.targetSdkVersion;
+					if(target == null) target = apkInfo.manifest.usesSdk.minSdkVersion;
+					exported = (target == null || target < 17) ? "O" : "X";
+				} else {
+					exported = info.exported ? "O" : "X";
+				}
 				String permission = "X";
 				if(info.permission != null || (info.readPermission != null && info.writePermission != null)) {
-					permission = "R/W"; 
+					permission = "R/W";
 				} else if(info.readPermission != null) {
 					permission = "Read";
 				} else if(info.writePermission != null) {
@@ -248,7 +270,7 @@ public class Components extends AbstractTabbedPanel
 		setDataSize(ApkInfoHelper.getComponentCount(apkInfo), true, false);
 		sendRequest(request, SEND_REQUEST_CURRENT_ENABLED);
 	}
-	
+
 	@Override
 	public void reloadResource()
 	{
@@ -268,7 +290,7 @@ public class Components extends AbstractTabbedPanel
 		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
 			total += percentages[i];
 		}
-	 
+
 		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
 			TableColumn column = table.getColumnModel().getColumn(i);
 			column.setPreferredWidth((int)(tablePreferredWidth * (percentages[i] / total)));
@@ -296,7 +318,7 @@ public class Components extends AbstractTabbedPanel
 				RStr.ACTIVITY_COLUME_STARTUP.get()
 			};
 		}
-		
+
 		public int getColumnCount() {
 			return columnNames.length;
 		}
