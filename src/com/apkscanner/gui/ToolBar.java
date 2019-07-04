@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
+import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -214,14 +215,15 @@ public class ToolBar extends JToolBar
 			}
 
 			private void invokeMouseEvent(KeyEvent e, int mouseEvent) {
-				Point p = ToolBar.this.getMousePosition();
+				Point p = MouseInfo.getPointerInfo().getLocation();
+				SwingUtilities.convertPointFromScreen(p, ToolBar.this);
 				if(p != null) {
 					Component c = ToolBar.this.getComponentAt(p);
 					if(c != null) {
 						if(c instanceof ExtensionButton) {
 							((ExtensionButton)c).dispatchEvent(new MouseEvent(c, mouseEvent, e.getWhen() + 10, 0, p.x, p.y, 0, false));
 						} else if(c instanceof JToolBar) {
-							p = ((JToolBar)c).getMousePosition();
+							p = SwingUtilities.convertPoint(ToolBar.this, p, (JToolBar)c);
 							c = ((JToolBar)c).getComponentAt(p);
 							if(c instanceof ExtensionButton) {
 								((ExtensionButton)c).dispatchEvent(new MouseEvent(c, mouseEvent, e.getWhen() + 10, e.getModifiersEx(), p.x, p.y, 0, false));
