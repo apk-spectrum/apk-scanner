@@ -34,7 +34,7 @@ public enum RFile implements ResFile<String>, ResString<String>
 	BIN_JADX_WIN				(Type.BIN, "jadx\\bin\\jadx-gui.bat", "win"),
 	BIN_JADX_GUI				(Type.BIN, new RFile[]{ BIN_JADX_WIN, BIN_JADX_LNX }),
 
-	BIN_BYTECODE_VIEWER			(Type.BIN, "Bytecode-Viewer.jar"),
+	BIN_BYTECODE_VIEWER			(Type.BIN, "Bytecode-Viewer-2.9.22.jar"),
 
 	BIN_SIGNAPK					(Type.BIN, "signapk.jar"),
 
