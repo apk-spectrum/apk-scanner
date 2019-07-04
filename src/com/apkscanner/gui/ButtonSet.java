@@ -11,6 +11,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
 import com.apkscanner.gui.component.ExtensionButton;
 import com.apkscanner.resource.RComp;
@@ -118,7 +119,9 @@ public enum ButtonSet
 			button.setToolTipText(toolTipText);
 		}
 		button.addActionListener(listener);
-		button.setBorderPainted(false);
+		if(!"Windows".equals(UIManager.getLookAndFeel().getName())) {
+			button.setBorderPainted(false);
+		}
 		button.setOpaque(false);
 		button.setFocusable(false);
 		button.setActionCommand(actionCommand);

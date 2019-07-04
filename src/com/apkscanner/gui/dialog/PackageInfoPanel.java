@@ -27,6 +27,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.SwingWorker;
+import javax.swing.UIManager;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -157,7 +158,9 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 			}
 		};
 		button.addActionListener(listener);
-		button.setBorderPainted(false);
+		if(!"Windows".equals(UIManager.getLookAndFeel().getName())) {
+			button.setBorderPainted(false);
+		}
 		button.setOpaque(false);
 		button.setFocusable(false);
 		button.setActionCommand(ACT_CMD_BACK);
@@ -175,7 +178,9 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		JButton button = new JButton(icon);
 		button.setToolTipText(tooltip);
 		button.addActionListener(this);
-		button.setBorderPainted(false);
+		if(!"Windows".equals(UIManager.getLookAndFeel().getName())) {
+			button.setBorderPainted(false);
+		}
 		button.setOpaque(false);
 		button.setFocusable(false);
 		button.setActionCommand(actCommand);

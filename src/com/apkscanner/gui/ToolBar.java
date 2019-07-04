@@ -32,6 +32,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
@@ -482,7 +483,9 @@ public class ToolBar extends JToolBar
 		subbar.setOpaque(false);
 		subbar.setFloatable(false);
 		subbar.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-		subbar.setBorderPainted(false);
+		if(!"Windows".equals(UIManager.getLookAndFeel().getName())) {
+			subbar.setBorderPainted(false);
+		}
 		return subbar;
 	}
 
@@ -493,7 +496,9 @@ public class ToolBar extends JToolBar
 		if(tools.length == 1) {
 			JButton button = new JButton(tools[0].getLabel(), null);
 			button.setToolTipText(tools[0].getDescription());
-			button.setBorderPainted(false);
+			if(!"Windows".equals(UIManager.getLookAndFeel().getName())) {
+				button.setBorderPainted(false);
+			}
 			button.setOpaque(false);
 			button.setFocusable(false);
 			button.setVerticalTextPosition(JLabel.BOTTOM);
@@ -535,7 +540,9 @@ public class ToolBar extends JToolBar
 	private JButton makePlugInButtons(final IPlugIn plugin, final ActionListener listener) {
 		JButton button = new JButton(plugin.getLabel(), null);
 		button.setToolTipText(plugin.getDescription());
-		button.setBorderPainted(false);
+		if(!"Windows".equals(UIManager.getLookAndFeel().getName())) {
+			button.setBorderPainted(false);
+		}
 		button.setOpaque(false);
 		button.setFocusable(false);
 		button.setPreferredSize(new Dimension(89,20));
