@@ -2,7 +2,7 @@ package com.apkscanner.gui.easymode.test;
 
 public class ThreadA {
 	
-	static Boolean lock = new Boolean(false);
+	static Boolean lock = Boolean.FALSE;
 	
     @SuppressWarnings("static-access")
 	public static void main(String[] args){

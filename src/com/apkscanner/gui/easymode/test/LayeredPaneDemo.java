@@ -73,7 +73,7 @@ public class LayeredPaneDemo extends JPanel
         for (int i = 0; i < layerStrings.length; i++) {
             JLabel label = createColoredLabel(layerStrings[i],
                                               layerColors[i], origin);
-            layeredPane.add(label, new Integer(i));
+            layeredPane.add(label, Integer.valueOf(i));
             origin.x += offset;
             origin.y += offset;
         }
@@ -90,7 +90,7 @@ public class LayeredPaneDemo extends JPanel
             dukeLabel.setOpaque(true);
             dukeLabel.setBackground(Color.BLACK);
         }
-        layeredPane.add(dukeLabel, new Integer(2), 0);
+        layeredPane.add(dukeLabel, Integer.valueOf(2), 0);
  
         //Add control pane and layered pane to this JPanel.
         add(Box.createRigidArea(new Dimension(0, 10)));

@@ -152,7 +152,7 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 
 	private void setdecoframe() {
 		setUndecorated(true);
-		com.sun.awt.AWTUtilities.setWindowOpacity(this, 1.0f);
+		//com.sun.awt.AWTUtilities.setWindowOpacity(this, 1.0f);
 	}
 
 //	private static void setUIFont(javax.swing.plaf.FontUIResource f) {

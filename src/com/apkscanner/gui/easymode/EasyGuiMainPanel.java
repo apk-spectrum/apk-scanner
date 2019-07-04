@@ -123,8 +123,8 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 		contentspanel.add(dummy, BorderLayout.PAGE_START);
 		contentspanel.setBounds(0, 0, width, height);
 				
-		layeredPane.add(contentspanel, new Integer(1));
-		layeredPane.add(iconhoverpanel,new Integer(2));
+		layeredPane.add(contentspanel, Integer.valueOf(1));
+		layeredPane.add(iconhoverpanel, Integer.valueOf(2));
 
 		dragdroplabel = new DropEffectLabel(RImg.EASY_WINDOW_DRAGANDDROP.getImageIcon(100, 100));
 		// dragdroplabel = new MyJLabel(null);
@@ -133,7 +133,7 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 		// btn1.setMaximumSize(d3);
 		dragdroplabel.setBounds(0, 0, width, height);
 		dragdroplabel.setBackground(new Color(213, 134, 145, 223));
-		layeredPane.add(dragdroplabel, new Integer(3));
+		layeredPane.add(dragdroplabel, Integer.valueOf(3));
 		dragdroplabel.setVisible(false);
 		// btn1.setOpaque(true);
 

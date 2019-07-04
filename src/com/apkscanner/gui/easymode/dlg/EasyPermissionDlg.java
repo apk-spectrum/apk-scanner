@@ -152,7 +152,7 @@ public class EasyPermissionDlg extends JDialog implements ActionListener {
 				}
 
 				obj[j + i++] = Flagstr;
-				obj[j + i] = new Boolean(true);
+				obj[j + i] = Boolean.TRUE;
 								
 				tablemodel.add(obj);
 

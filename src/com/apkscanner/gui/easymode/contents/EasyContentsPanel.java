@@ -281,7 +281,7 @@ public class EasyContentsPanel extends JPanel{
 		
 		layeredPane = new JLayeredPane();
 		layeredPane.setPreferredSize(new Dimension(WIDTH, HEIGHT));
-		layeredPane.add(infopanel,new Integer(1));
+		layeredPane.add(infopanel, Integer.valueOf(1));
 		
 		EasyGuiDeviceToolPanel toolbarpanel;
 		
@@ -297,7 +297,7 @@ public class EasyContentsPanel extends JPanel{
 		devicepanel.setdevicetoolbar(toolbarpanel);
 		
 		//iconhoverpanel.setVisible(false);
-		layeredPane.add(toolbarpanel,new Integer(2));
+		layeredPane.add(toolbarpanel, Integer.valueOf(2));
 		
 		return layeredPane;
 	}
