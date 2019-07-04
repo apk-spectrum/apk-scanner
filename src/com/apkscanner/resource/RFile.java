@@ -24,7 +24,7 @@ public enum RFile implements ResFile<String>, ResString<String>
 	BIN_AAPT_WIN				(Type.BIN, "aapt.exe", "win"),
 	BIN_AAPT					(Type.BIN, new RFile[]{ BIN_AAPT_WIN, BIN_AAPT_LNX }),
 
-	BIN_JDGUI					(Type.BIN, "jd-gui-1.4.0.jar"),
+	BIN_JDGUI					(Type.BIN, "jd-gui-1.6.2.jar"),
 
 	BIN_DEX2JAR_LNX				(Type.BIN, "d2j-dex2jar.sh", "nux"),
 	BIN_DEX2JAR_WIN				(Type.BIN, "d2j-dex2jar.bat", "win"),
