@@ -28,6 +28,8 @@ public class SystemUtil
 {
 	public static final String OS = System.getProperty("os.name").toLowerCase();
 
+	private static final Object lock = OS;
+
 	public static boolean isWindows() {
 		return OS.indexOf("win") > -1;
 	}
@@ -255,23 +257,25 @@ public class SystemUtil
 	}
 
 	public static String getOpenCommand(String suffix) throws Exception {
-		if(!isWindows() || !Advapi32Util.registryKeyExists(WinReg.HKEY_CLASSES_ROOT, suffix)) {
-			return null;
-		}
+		synchronized(lock) {
+			if(!isWindows() || !Advapi32Util.registryKeyExists(WinReg.HKEY_CLASSES_ROOT, suffix)) {
+				return null;
+			}
 
-		String ftypeKey = null;
-		if(suffix.startsWith(".") && Advapi32Util.registryValueExists(WinReg.HKEY_CLASSES_ROOT, suffix, "")) {
-			ftypeKey = Advapi32Util.registryGetStringValue(WinReg.HKEY_CLASSES_ROOT, suffix, "");
-		} else {
-			ftypeKey = suffix;
-		}
-		ftypeKey += "\\Shell\\Open\\Command";
+			String ftypeKey = null;
+			if(suffix.startsWith(".") && Advapi32Util.registryValueExists(WinReg.HKEY_CLASSES_ROOT, suffix, "")) {
+				ftypeKey = Advapi32Util.registryGetStringValue(WinReg.HKEY_CLASSES_ROOT, suffix, "");
+			} else {
+				ftypeKey = suffix;
+			}
+			ftypeKey += "\\Shell\\Open\\Command";
 
-		if(!Advapi32Util.registryKeyExists(WinReg.HKEY_CLASSES_ROOT, ftypeKey)
-				|| !Advapi32Util.registryValueExists(WinReg.HKEY_CLASSES_ROOT, ftypeKey, "")) {
-			return null;
+			if(!Advapi32Util.registryKeyExists(WinReg.HKEY_CLASSES_ROOT, ftypeKey)
+					|| !Advapi32Util.registryValueExists(WinReg.HKEY_CLASSES_ROOT, ftypeKey, "")) {
+				return null;
+			}
+			return Advapi32Util.registryGetStringValue(WinReg.HKEY_CLASSES_ROOT, ftypeKey, "");
 		}
-		return Advapi32Util.registryGetStringValue(WinReg.HKEY_CLASSES_ROOT, ftypeKey, "");
 	}
 
 	public static boolean isAssociatedWithFileType(String suffix) {
@@ -325,19 +329,21 @@ public class SystemUtil
 		String filePath = RFile.ETC_APKSCANNER_EXE.getPath();
 		String prefixKey = "ApkScanner"+suffix;
 		try {
-			Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\CLSID");
-			Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\CLSID", "", "{E88DCCE0-B7B3-11d1-A9F0-00AA0060FA31}");
-			Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\DefaultIcon");
-			Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\DefaultIcon", "", filePath+",1");
-			Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\OpenWithProgids");
-			Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\OpenWithProgids", "CompressedFolder", "");
-			Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Open\\Command");
-			Advapi32Util.registrySetExpandableStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Open\\Command", "", "\""+filePath+"\" \"%1\"");
-			Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Install\\Command");
-			Advapi32Util.registrySetExpandableStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Install\\Command", "", "\""+filePath+"\" install \"%1\"");
+			synchronized(lock) {
+				Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\CLSID");
+				Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\CLSID", "", "{E88DCCE0-B7B3-11d1-A9F0-00AA0060FA31}");
+				Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\DefaultIcon");
+				Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\DefaultIcon", "", filePath+",1");
+				Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\OpenWithProgids");
+				Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\OpenWithProgids", "CompressedFolder", "");
+				Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Open\\Command");
+				Advapi32Util.registrySetExpandableStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Open\\Command", "", "\""+filePath+"\" \"%1\"");
+				Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Install\\Command");
+				Advapi32Util.registrySetExpandableStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Install\\Command", "", "\""+filePath+"\" install \"%1\"");
 
-			Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, suffix);
-			Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, suffix, "", prefixKey);
+				Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, suffix);
+				Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, suffix, "", prefixKey);
+			}
 		} catch(Exception e) {
 			Log.d("Failure: Can not write registry");
 			e.printStackTrace();
@@ -372,13 +378,15 @@ public class SystemUtil
 	}
 
 	private static void registryDeleteKeyRecursive(HKEY root, String key) {
-		if(!Advapi32Util.registryKeyExists(root, key)) {
-			return;
+		synchronized(lock) {
+			if(!Advapi32Util.registryKeyExists(root, key)) {
+				return;
+			}
+			for(String subkey: Advapi32Util.registryGetKeys(root, key)) {
+				registryDeleteKeyRecursive(root, key + "\\" + subkey);
+			}
+			Advapi32Util.registryDeleteKey(root, key);
 		}
-		for(String subkey: Advapi32Util.registryGetKeys(root, key)) {
-			registryDeleteKeyRecursive(root, key + "\\" + subkey);
-		}
-		Advapi32Util.registryDeleteKey(root, key);
 	}
 
 	public static void unsetAssociateFileType(String suffix) {
@@ -388,11 +396,13 @@ public class SystemUtil
 
 		try {
 			String ftypeKey = null;
-			if(Advapi32Util.registryValueExists(WinReg.HKEY_CLASSES_ROOT, suffix, "")) {
-				ftypeKey = Advapi32Util.registryGetStringValue(WinReg.HKEY_CLASSES_ROOT, suffix, "");
-				Advapi32Util.registryDeleteValue(WinReg.HKEY_CLASSES_ROOT, suffix, "");
-			} else {
-				ftypeKey = suffix + "\\Shell\\Open\\Command";
+			synchronized(lock) {
+				if(Advapi32Util.registryValueExists(WinReg.HKEY_CLASSES_ROOT, suffix, "")) {
+					ftypeKey = Advapi32Util.registryGetStringValue(WinReg.HKEY_CLASSES_ROOT, suffix, "");
+					Advapi32Util.registryDeleteValue(WinReg.HKEY_CLASSES_ROOT, suffix, "");
+				} else {
+					ftypeKey = suffix + "\\Shell\\Open\\Command";
+				}
 			}
 			registryDeleteKeyRecursive(WinReg.HKEY_CLASSES_ROOT, ftypeKey);
 
@@ -454,30 +464,32 @@ public class SystemUtil
 		ArrayList<String> list = new ArrayList<String>();
 
 		if(SystemUtil.isWindows()) {
-			Kernel32 kernel32 = (Kernel32) Native.loadLibrary(Kernel32.class, W32APIOptions.DEFAULT_OPTIONS);
-			Tlhelp32.PROCESSENTRY32.ByReference processEntry = new Tlhelp32.PROCESSENTRY32.ByReference();
-			WinNT.HANDLE processSnapshot = 
-					kernel32.CreateToolhelp32Snapshot(Tlhelp32.TH32CS_SNAPPROCESS, new WinDef.DWORD(0));
-			try {
+			synchronized(lock) {
+				Kernel32 kernel32 = (Kernel32) Native.loadLibrary(Kernel32.class, W32APIOptions.DEFAULT_OPTIONS);
+				Tlhelp32.PROCESSENTRY32.ByReference processEntry = new Tlhelp32.PROCESSENTRY32.ByReference();
+				WinNT.HANDLE processSnapshot =
+						kernel32.CreateToolhelp32Snapshot(Tlhelp32.TH32CS_SNAPPROCESS, new WinDef.DWORD(0));
+				try {
 
-				while (kernel32.Process32Next(processSnapshot, processEntry)) {
-					// looks for a specific process
-					if (imageName == null || Native.toString(processEntry.szExeFile).equalsIgnoreCase(imageName)) {
-						//System.out.print(processEntry.th32ProcessID + "\t" + Native.toString(processEntry.szExeFile) + "\t");
-						WinNT.HANDLE moduleSnapshot = kernel32.CreateToolhelp32Snapshot(Tlhelp32.TH32CS_SNAPMODULE, processEntry.th32ProcessID);
-						try {
-							ProcessPathKernel32.MODULEENTRY32.ByReference me = new ProcessPathKernel32.MODULEENTRY32.ByReference();
-							ProcessPathKernel32.INSTANCE.Module32First(moduleSnapshot, me);
-							list.add(me.szExePath());
-						}
-						finally {
-							kernel32.CloseHandle(moduleSnapshot);
+					while (kernel32.Process32Next(processSnapshot, processEntry)) {
+						// looks for a specific process
+						if (imageName == null || Native.toString(processEntry.szExeFile).equalsIgnoreCase(imageName)) {
+							//System.out.print(processEntry.th32ProcessID + "\t" + Native.toString(processEntry.szExeFile) + "\t");
+							WinNT.HANDLE moduleSnapshot = kernel32.CreateToolhelp32Snapshot(Tlhelp32.TH32CS_SNAPMODULE, processEntry.th32ProcessID);
+							try {
+								ProcessPathKernel32.MODULEENTRY32.ByReference me = new ProcessPathKernel32.MODULEENTRY32.ByReference();
+								ProcessPathKernel32.INSTANCE.Module32First(moduleSnapshot, me);
+								list.add(me.szExePath());
+							}
+							finally {
+								kernel32.CloseHandle(moduleSnapshot);
+							}
 						}
 					}
 				}
-			} 
-			finally {
-				kernel32.CloseHandle(processSnapshot);
+				finally {
+					kernel32.CloseHandle(processSnapshot);
+				}
 			}
 		} else if(SystemUtil.isLinux()) {
 			String[] uid = ConsolCmd.exc(new String[] { "id", "-ur" });
@@ -503,5 +515,5 @@ public class SystemUtil
 		GeneralVersionChecker minVer = GeneralVersionChecker.parseFrom(minVersion);
 		return jvmVer.compareTo(minVer) >= 0;
 	}
-	
+
 }
