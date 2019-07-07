@@ -356,16 +356,16 @@ public class ToolBar extends JToolBar
 		Icon icon = null;
 		switch(defaultPorp) {
 		case DEFAULT_DECORDER:
-			icon = RImg.TOOLBAR_OPENCODE.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize);
+			icon = RImg.TOOLBAR_OPENCODE.getImageIcon(ButtonSet.SUBICON_SIZE, ButtonSet.SUBICON_SIZE);
 			break;
 		case DEFAULT_SEARCHER:
-			icon = RImg.TOOLBAR_SEARCH.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize);
+			icon = RImg.TOOLBAR_SEARCH.getImageIcon(ButtonSet.SUBICON_SIZE, ButtonSet.SUBICON_SIZE);
 			break;
 		case DEFAULT_EXPLORER:
-			icon = RImg.TOOLBAR_EXPLORER.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize);
+			icon = RImg.TOOLBAR_EXPLORER.getImageIcon(ButtonSet.SUBICON_SIZE, ButtonSet.SUBICON_SIZE);
 			break;
 		case DEFAULT_LAUNCH_MODE:
-			icon = RImg.TOOLBAR_LAUNCH.getImageIcon(ButtonSet.SubIconSize, ButtonSet.SubIconSize);
+			icon = RImg.TOOLBAR_LAUNCH.getImageIcon(ButtonSet.SUBICON_SIZE, ButtonSet.SUBICON_SIZE);
 			break;
 		default:
 			break;

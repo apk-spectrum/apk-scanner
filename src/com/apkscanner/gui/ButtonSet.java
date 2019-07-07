@@ -36,11 +36,11 @@ public enum ButtonSet
 	SETTING			(Type.NORMAL, RComp.BTN_TOOLBAR_SETTING, UiEventHandler.ACT_CMD_OPEN_SETTINGS),
 	ABOUT			(Type.NORMAL, RComp.BTN_TOOLBAR_ABOUT, UiEventHandler.ACT_CMD_SHOW_ABOUT),
 
-	SUB_INSTALL			(Type.SUB_TOOLBAR, RComp.BTN_TOOLBAR_SUB_INSTALL, UiEventHandler.ACT_CMD_INSTALL_APK),
-	SUB_INSTALL_UPDATE	(Type.SUB_TOOLBAR, RComp.BTN_TOOLBAR_SUB_INSTALL_UPDATE, UiEventHandler.ACT_CMD_INSTALL_APK),
-	SUB_INSTALL_DOWNGRADE(Type.SUB_TOOLBAR,RComp.BTN_TOOLBAR_SUB_INSTALL_DOWNGRADE, UiEventHandler.ACT_CMD_INSTALL_APK),
-	SUB_LAUNCH			(Type.SUB_TOOLBAR, RComp.BTN_TOOLBAR_SUB_LAUNCH, UiEventHandler.ACT_CMD_LAUNCH_APP, true),
-	SUB_SIGN			(Type.SUB_TOOLBAR, RComp.BTN_TOOLBAR_SUB_SIGN, UiEventHandler.ACT_CMD_SIGN_APK),
+	SUB_INSTALL			(Type.SUB_TOOLBAR, RComp.BTN_TOOLBAR_INSTALL, UiEventHandler.ACT_CMD_INSTALL_APK),
+	SUB_INSTALL_UPDATE	(Type.SUB_TOOLBAR, RComp.BTN_TOOLBAR_INSTALL_UPDATE, UiEventHandler.ACT_CMD_INSTALL_APK),
+	SUB_INSTALL_DOWNGRADE(Type.SUB_TOOLBAR,RComp.BTN_TOOLBAR_INSTALL_DOWNGRADE, UiEventHandler.ACT_CMD_INSTALL_APK),
+	SUB_LAUNCH			(Type.SUB_TOOLBAR, RComp.BTN_TOOLBAR_LAUNCH, UiEventHandler.ACT_CMD_LAUNCH_APP, true),
+	SUB_SIGN			(Type.SUB_TOOLBAR, RComp.BTN_TOOLBAR_SIGN, UiEventHandler.ACT_CMD_SIGN_APK),
 
 	NEED_TARGET_APK	(Type.NONE, (String) null, null),
 	NEED_DEVICE		(Type.NONE, (String) null, null),
@@ -50,7 +50,8 @@ public enum ButtonSet
 		NONE, NORMAL, HOVER, EXTEND, SUB_TOOLBAR
 	}
 
-	static final int SubIconSize = 16;
+	static final int ICON_SIZE = 40;
+	static final int SUBICON_SIZE = 16;
 
 	Type type = null;
 	RComp res = null;
@@ -113,6 +114,11 @@ public enum ButtonSet
 		ExtensionButton button = new ExtensionButton();
 		if(res != null) {
 			res.autoReapply(owner, button);
+			RImg img = res.getImageRes();
+			if(img != null) {
+				int size = type == Type.SUB_TOOLBAR ? SUBICON_SIZE : ICON_SIZE;
+				button.setIcon(img.getImageIcon(size, size));
+			}
 		} else {
 			button.setText(text);
 			button.setIcon(icon);
