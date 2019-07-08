@@ -315,7 +315,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 						if(key.isEmpty() || !flagCheckBoxs.containsKey(key)) continue;
 						flagsPanel.add(flagCheckBoxs.get(key));
 					}
-					Log.e("getFilteredFlags " + flag);
+					Log.v("getFilteredFlags " + flag);
 				}
 				refreshPermsCount();
 			}
@@ -1358,7 +1358,8 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 				}
 				return false;
 			} else if(PermissionManager.GROUP_NAME_UNSPECIFIED.toUpperCase().equals(filterText)) {
-				return info.permissionGroup == null || info.permissionGroup.isEmpty();
+				return !(info instanceof RevokedPermissionInfo) && !(info instanceof DeclaredPermissionInfo)
+						&&(info.permissionGroup == null || info.permissionGroup.isEmpty());
 			}
 
 			boolean ret = include(info.name);
