@@ -130,7 +130,10 @@ public enum RFile implements ResFile<String>, ResString<String>
 		case RES_ROOT:
 			return getClass().getResource("/" + value);
 		case RES_VALUE:
-			return getClass().getResource("/values/" + value);
+			if(value == null || value.isEmpty())
+				return getClass().getResource("/values");
+			else
+				return getClass().getResource("/values/" + value);
 		default:
 			try {
 				return new File(getPath()).toURI().toURL();
