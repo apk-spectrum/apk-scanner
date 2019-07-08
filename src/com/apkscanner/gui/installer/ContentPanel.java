@@ -12,8 +12,8 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import com.apkscanner.gui.util.ImagePanel;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.gui.component.ImagePanel;
+import com.apkscanner.resource.RImg;
 import com.apkscanner.util.Log;
 
 public class ContentPanel extends JPanel
@@ -43,9 +43,9 @@ public class ContentPanel extends JPanel
 		loadingMessageLable = new JLabel("");
 		loadingMessageLable.setAlignmentX(0.5f);
 		lodingPanel.setLayout(new BoxLayout(lodingPanel, BoxLayout.Y_AXIS));
-		lodingPanel.add(new ImagePanel(Resource.IMG_APK_LOGO.getImageIcon(340,220)));
+		lodingPanel.add(new ImagePanel(RImg.APK_LOGO.getImage(340,220)));
 		lodingPanel.add(loadingMessageLable);
-		lodingPanel.add(new ImagePanel(Resource.IMG_WAIT_BAR.getImageIcon()));
+		lodingPanel.add(new ImagePanel(RImg.WAIT_BAR.getImage()));
 
 		Font font = getFont();
 
@@ -67,7 +67,7 @@ public class ContentPanel extends JPanel
 		successMessageLable.setFont(new Font(font.getName(), Font.BOLD, 20));
 		successPanel.setLayout(new BoxLayout(successPanel, BoxLayout.Y_AXIS));
 		successPanel.add(Box.createVerticalGlue());
-		successPanel.add(new ImagePanel(Resource.IMG_RESULT_SUCCESS.getImageIcon(75,75)));
+		successPanel.add(new ImagePanel(RImg.RESULT_SUCCESS.getImage(75,75)));
 		successPanel.add(Box.createVerticalStrut(20));
 		successPanel.add(successMessageLable);
 		successPanel.add(Box.createVerticalGlue());
@@ -75,7 +75,7 @@ public class ContentPanel extends JPanel
 		JPanel failPanel = new JPanel();
 		failPanel.setLayout(new BoxLayout(failPanel, BoxLayout.Y_AXIS));
 		failPanel.add(Box.createVerticalGlue());
-		failPanel.add(new ImagePanel(Resource.IMG_RESULT_FAIL.getImageIcon(75,75)));
+		failPanel.add(new ImagePanel(RImg.RESULT_FAIL.getImage(75,75)));
 		failPanel.add(Box.createVerticalStrut(20));
 		failPanel.add(failMessageLable);
 		failPanel.add(Box.createVerticalStrut(10));

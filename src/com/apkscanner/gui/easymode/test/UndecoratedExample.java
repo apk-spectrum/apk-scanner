@@ -1,14 +1,28 @@
 package com.apkscanner.gui.easymode.test;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.ImageObserver;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
 
+@SuppressWarnings("serial")
 public class UndecoratedExample {
     static JFrame frame = new JFrame();
     static class MainPanel extends JPanel {
@@ -26,7 +40,7 @@ public class UndecoratedExample {
 
 		public MyButton(ImageIcon icon) {
                 super();
-                icon = new ImageIcon(Resource.IMG_PERM_GROUP_PHONE_CALLS.getImageIcon(15,15).getImage());
+                icon = RImg.PERM_GROUP_PHONE_CALLS.getImageIcon(15,15);
                 image = icon.getImage();
                 imageObserver = icon.getImageObserver();
             }
@@ -46,7 +60,7 @@ public class UndecoratedExample {
         	setLayout(new FlowLayout(FlowLayout.RIGHT));
         	
         	//((FlowLayout)getLayout()).setVgap(2);
-            ImageIcon icon = new ImageIcon(Resource.IMG_PERM_GROUP_PHONE_CALLS.getImageIcon(15,15).getImage());
+            ImageIcon icon = RImg.PERM_GROUP_PHONE_CALLS.getImageIcon(15,15);
             stackLabel = new JButton(icon);
             //stackLabel.setIcon(icon);
 
@@ -57,7 +71,7 @@ public class UndecoratedExample {
             //stackLabel.addActionListener(this);
             //stackLabel.setSelected(true);
             stackLabel.setContentAreaFilled(false);
-            stackLabel.setRolloverIcon(new ImageIcon(Resource.IMG_APK_FILE_ICON.getImageIcon(15,15).getImage()));
+            stackLabel.setRolloverIcon(RImg.APK_FILE_ICON.getImageIcon(15,15));
             setBackground(new Color(230,230,230));
             
 

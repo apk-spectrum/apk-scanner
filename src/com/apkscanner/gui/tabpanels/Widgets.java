@@ -20,9 +20,10 @@ import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ResourceInfo;
-import com.apkscanner.gui.util.ImageScaler;
+import com.apkscanner.gui.component.ImageScaler;
 import com.apkscanner.plugin.ITabbedRequest;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RProp;
+import com.apkscanner.resource.RStr;
 
 /**
  * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for
@@ -38,8 +39,8 @@ public class Widgets extends AbstractTabbedPanel
 
 	public Widgets() {
 		setLayout(new GridLayout(1, 0));
-		setName(Resource.STR_TAB_WIDGETS.getString());
-		setToolTipText(Resource.STR_TAB_WIDGETS.getString());
+		setName(RStr.TAB_WIDGETS.get());
+		setToolTipText(RStr.TAB_WIDGETS.get());
 		setEnabled(false);
 	}
 
@@ -73,7 +74,7 @@ public class Widgets extends AbstractTabbedPanel
 		if(apkInfo.widgets == null) return;
 		if(TableModel == null) initialize();
 
-		String preferLang = (String)Resource.PROP_PREFERRED_LANGUAGE.getData("");
+		String preferLang = RProp.S.PREFERRED_LANGUAGE.get();
 		for(int i=0; i< apkInfo.widgets.length; i++) {
 			ImageIcon myimageicon = null;
 			try {
@@ -109,8 +110,8 @@ public class Widgets extends AbstractTabbedPanel
 	@Override
 	public void reloadResource()
 	{
-		setName(Resource.STR_TAB_WIDGETS.getString());
-		setToolTipText(Resource.STR_TAB_WIDGETS.getString());
+		setName(RStr.TAB_WIDGETS.get());
+		setToolTipText(RStr.TAB_WIDGETS.get());
 
 		if(TableModel == null) return;
 		TableModel.loadResource();
@@ -146,11 +147,11 @@ public class Widgets extends AbstractTabbedPanel
 		public void loadResource()
 		{
 			columnNames = new String[] {
-				Resource.STR_WIDGET_COLUMN_IMAGE.getString(),
-				Resource.STR_WIDGET_COLUMN_LABEL.getString(),
-				Resource.STR_WIDGET_COLUMN_SIZE.getString(),
-				Resource.STR_WIDGET_COLUMN_ACTIVITY.getString(),
-				Resource.STR_WIDGET_COLUMN_TYPE.getString(),
+				RStr.WIDGET_COLUMN_IMAGE.get(),
+				RStr.WIDGET_COLUMN_LABEL.get(),
+				RStr.WIDGET_COLUMN_SIZE.get(),
+				RStr.WIDGET_COLUMN_ACTIVITY.get(),
+				RStr.WIDGET_COLUMN_TYPE.get(),
 			};
 		}
 

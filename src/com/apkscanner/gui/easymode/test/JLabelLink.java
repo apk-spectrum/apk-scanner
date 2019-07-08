@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
+@SuppressWarnings("serial")
 public class JLabelLink extends JFrame {
 
 	private static final String LABEL_TEXT = "For further information visit:";

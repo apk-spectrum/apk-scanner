@@ -8,8 +8,6 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-import com.apkscanner.gui.easymode.test.ColumnGroup;
-
 @SuppressWarnings("serial")
 public class GroupableTableHeader extends JTableHeader {
 

@@ -2,7 +2,6 @@ package com.apkscanner.gui.easymode.contents;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
@@ -20,7 +19,6 @@ import com.apkscanner.gui.easymode.core.ToolEntry;
 import com.apkscanner.gui.easymode.core.ToolEntryManager;
 import com.apkscanner.gui.easymode.util.GraphicUtil;
 import com.apkscanner.gui.easymode.util.RoundPanel;
-import com.apkscanner.util.Log;
 
 public class EasyGuiDeviceToolPanel extends JPanel implements ActionListener, EasyToolListner{
 	private static final long serialVersionUID = 4941481653470088827L;
@@ -35,17 +33,23 @@ public class EasyGuiDeviceToolPanel extends JPanel implements ActionListener, Ea
 	Point  tooliconlocation = new Point();
 	String iconlabel = "";
 	IDevice selecteddevice;
-	
+
+	private ActionListener actionListener;
+
 	public EasyGuiDeviceToolPanel(int height, int width) {
 		HEIGHT = height;
 		BUTTON_IMG_SIZE = 35;
 		WIDTH = width;
 		init();
-		
-		setPreferredSize(new Dimension(0, height));		
+
+		setPreferredSize(new Dimension(0, height));
 		maketoolbutton();
 	}
-		
+
+	public void setActionListener(ActionListener listener) {
+		actionListener = listener;
+	}
+
 	private void init() {
 		//setBackground(toobarPanelcolor);
 		//setRoundrectColor(Color.LIGHT_GRAY);
@@ -55,21 +59,22 @@ public class EasyGuiDeviceToolPanel extends JPanel implements ActionListener, Ea
 		//setshadowlen(SHADOW_SIZE);
 		//setshadowlen(1);
 		setBorder(BorderFactory.createEmptyBorder(5 , 0 , 0 , 20));
-		
+
 		RoundPanel roundpanel = new RoundPanel();
 		roundpanel.setPreferredSize(new Dimension(0,45));
 		roundpanel.setOpaque(false);
 		roundpanel.setRoundrectColor(Color.LIGHT_GRAY);
 		toolbartemppanel = new JPanel();
 		FlowLayout flowlayout = new FlowLayout(FlowLayout.CENTER, 3, 4);
-		//toolbartemppanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10)); 
+		//toolbartemppanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
 		toolbartemppanel.setLayout(flowlayout);
 		((FlowLayout) toolbartemppanel.getLayout()).setAlignOnBaseline(true);
 		toolbartemppanel.setOpaque(false);
-		
-		roundpanel.add(toolbartemppanel, BorderLayout.NORTH);		
-		add(toolbartemppanel, BorderLayout.NORTH);		
+
+		roundpanel.add(toolbartemppanel, BorderLayout.NORTH);
+		add(toolbartemppanel, BorderLayout.NORTH);
 	}
+
 	public void paintComponent(Graphics g) {
 		//super.paint(g);
 		super.paintComponent(g);
@@ -77,14 +82,19 @@ public class EasyGuiDeviceToolPanel extends JPanel implements ActionListener, Ea
 			//int textwidth = iconlabel.length() * 20;
 			//GraphicUtil.drawRoundrectText(g, tooliconlocation.x - textwidth/2, 70, textwidth, 30, iconlabel);
 			GraphicUtil.drawTextRoundrect(g, tooliconlocation.x, 38, 10, iconlabel);
-			
+
 		}
 	}
+
 	public void setSelecteddevice(IDevice device) {
 		this.selecteddevice = device;
 	}
-	
-	private void maketoolbutton() {		
+
+	public IDevice getSelecteddevice() {
+		return selecteddevice;
+	}
+
+	private void maketoolbutton() {
 		toolbartemppanel.removeAll();
 		entrys = ToolEntryManager.getDeviceToolbarList();
 		for(ToolEntry entry : entrys) {
@@ -92,40 +102,32 @@ public class EasyGuiDeviceToolPanel extends JPanel implements ActionListener, Ea
 			//Image img = ImageUtils.getScaledImage(entry.getImage(),BUTTON_IMG_SIZE,BUTTON_IMG_SIZE);
 			final EasyToolIcon btn = new EasyToolIcon(entry.getImage(), 25);
 			btn.setScalesize(27);
-			btn.setAction(entry.getTitle(), this);
+			btn.setAction(entry.getActionCommand(), this);
 			btn.setEasyToolListner(this);
 			btn.setEasyText(entry.getTitle());
 
 			toolbartemppanel.add(btn);
 			toolbartemppanel.updateUI();
-		}		
+		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Log.d(e.getActionCommand());
-		final String str = e.getActionCommand();
-		Thread thread = new Thread(new Runnable() {
-			public void run() {
-				ToolEntryManager.excuteEntry(str, selecteddevice);
-			}
-		});
-		thread.setPriority(Thread.NORM_PRIORITY);
-		thread.start();			
-		
+		if(actionListener == null) return;
+		e.setSource(this);
+		actionListener.actionPerformed(e);
 	}
 
 	@Override
 	public void changestate(int state, EasyToolIcon easyiconlabel) {
-		// TODO Auto-generated method stub
 		switch(state) {
 		case EasyToolListner.STATE_ANIMATION_END:
 			drawtext = true;
 			tooliconlocation.x = easyiconlabel.getParent().getLocation().x + easyiconlabel.getLocation().x + (int)(easyiconlabel.getBounds().getWidth()/2);
-			
+
 			//Log.d(easyiconlabel.getBounds() + "");
 			//Log.d(toolbartemppanel.getLocation().x + " : " + easyiconlabel.getLocation().x);
-			
+
 			iconlabel = easyiconlabel.getEasyText();
 			updateUI();
 			break;

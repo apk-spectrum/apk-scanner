@@ -283,6 +283,10 @@ they're removed before the application is published</string>
 	<string name="settings_ext_toolbar_without_shift">Always extend a toolbar</string>
 	<string name="settings_easymode_option_standard">Standard mode</string>
 	<string name="settings_easymode_option_easy">Easy mode</string>
+	<string name="settings_use_ui_booster">Use UI booster for mode changing (Use more resource)</string>
+	<string name="settings_esc_act_none">None</string>
+	<string name="settings_esc_act_change_ui_mode">Chang UI Mode</string>
+	<string name="settings_esc_act_exit">Exit Application</string>
 	
 	<string name="label_error">Error</string>
 	<string name="label_warning">Warning</string>
@@ -357,6 +361,10 @@ they're removed before the application is published</string>
 	<string name="label_filter_none">None</string>
 	<string name="label_filter_all">ALL</string>
 	<string name="label_permission_info">Permission Info</string>
+	<string name="label_ui_mode">UI Mode</string>
+	<string name="label_change_ui_shortkey">* Change the UI mode by F2 key</string>
+	<string name="label_ui_booster">UI Booster</string>
+	<string name="label_esc_key">ESC Key</string>
 
 	<string name="msg_failure_open_apk">ERROR: Can not open the APK</string>
 	<string name="msg_no_such_apk">No such APK file</string>

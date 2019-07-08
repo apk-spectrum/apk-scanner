@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RFile;
 import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
@@ -149,7 +149,7 @@ public class ApktoolScanner extends ApkScanner
 		
 		private boolean solveAPK(String APKFilePath, String solvePath)
 		{
-			String apkToolPath = Resource.LIB_APKTOOL_JAR.getPath();
+			String apkToolPath = RFile.LIB_APKTOOL_JAR.get();
 			Log.i("apkToolPath : " + apkToolPath);
 
 			if(!(new File(apkToolPath)).exists()) {

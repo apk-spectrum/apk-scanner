@@ -2,7 +2,7 @@ package com.apkscanner.data.apkinfo;
 
 import java.util.Arrays;
 
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RProp;
 
 public class PermissionInfo
 {
@@ -285,10 +285,10 @@ public class PermissionInfo
     }
 
     public String getLabel() {
-    	return ApkInfoHelper.getResourceValue(labels, (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
+    	return ApkInfoHelper.getResourceValue(labels, RProp.S.PREFERRED_LANGUAGE.get());
     }
 
     public String getDescription() {
-    	return ApkInfoHelper.getResourceValue(descriptions, (String)Resource.PROP_PREFERRED_LANGUAGE.getData(""));
+    	return ApkInfoHelper.getResourceValue(descriptions, RProp.S.PREFERRED_LANGUAGE.get());
     }
 }

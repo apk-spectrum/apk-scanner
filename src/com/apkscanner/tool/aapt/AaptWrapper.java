@@ -3,7 +3,7 @@ package com.apkscanner.tool.aapt;
 import java.io.File;
 import java.util.ArrayList;
 
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RFile;
 import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.Log;
 
@@ -107,7 +107,7 @@ public class AaptWrapper
 		synchronized(initSync) {
 			cmd = aaptCmd;
 			if(cmd == null) {
-				cmd = Resource.BIN_AAPT.getPath();
+				cmd = RFile.BIN_AAPT.get();
 
 				if(!(new File(cmd)).exists()) {
 					Log.e("no such aapt tool" + aaptCmd);

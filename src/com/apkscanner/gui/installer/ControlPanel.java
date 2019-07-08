@@ -9,7 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 
 public class ControlPanel extends JPanel
@@ -33,10 +33,10 @@ public class ControlPanel extends JPanel
 	public ControlPanel(ActionListener listener) {
 		super(new BorderLayout());
 
-		btnNext = getButton(Resource.STR_BTN_INSTALL.getString(), CTR_ACT_CMD_NEXT, listener);
-		btnPre = getButton(Resource.STR_BTN_PREVIOUS.getString(), CTR_ACT_CMD_PREVIOUS, listener);
-		btnOk = getButton(Resource.STR_BTN_CLOSE.getString(), CTR_ACT_CMD_OK, listener);
-		btnCancel = getButton(Resource.STR_BTN_CANCEL.getString(), CTR_ACT_CMD_CANCEL, listener);
+		btnNext = getButton(RStr.BTN_INSTALL.get(), CTR_ACT_CMD_NEXT, listener);
+		btnPre = getButton(RStr.BTN_PREVIOUS.get(), CTR_ACT_CMD_PREVIOUS, listener);
+		btnOk = getButton(RStr.BTN_CLOSE.get(), CTR_ACT_CMD_OK, listener);
+		btnCancel = getButton(RStr.BTN_CANCEL.get(), CTR_ACT_CMD_CANCEL, listener);
 		btnShowLog = getButton("Show Log", CTR_ACT_CMD_SHOW_LOG, listener);
 		btnRestart = getButton("Restart", CTR_ACT_CMD_RESTART, listener);
 

@@ -14,8 +14,10 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import com.apkscanner.core.installer.OptionsBundle;
-import com.apkscanner.gui.util.JHtmlEditorPane;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.gui.component.HtmlEditorPane;
+import com.apkscanner.resource.RFile;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RStr;
 
 public class SimpleOptionPanel extends JPanel implements MouseListener, ActionListener {
 	private static final long serialVersionUID = -1856410346702035872L;
@@ -26,7 +28,7 @@ public class SimpleOptionPanel extends JPanel implements MouseListener, ActionLi
 
 	private Collection<DeviceListData> deviceDataList;
 
-	private JHtmlEditorPane htmlEditor;
+	private HtmlEditorPane htmlEditor;
 	private JButton btnInstall;
 	private JButton btnPush;
 
@@ -36,19 +38,19 @@ public class SimpleOptionPanel extends JPanel implements MouseListener, ActionLi
 		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady)
 		GridBagConstraints consts = new GridBagConstraints(0,0,1,1,1.0f,1.0f,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,1,0,1),0,0);
 
-		htmlEditor = new JHtmlEditorPane();
-		htmlEditor.setText(Resource.RAW_ADB_INSTALL_BUTTON_HTML.getString());
+		htmlEditor = new HtmlEditorPane();
+		htmlEditor.setText(RFile.RAW_ADB_INSTALL_BUTTON_HTML.getString());
 		htmlEditor.removeElementById("adb-push");
-		htmlEditor.setInnerHTMLById("option-label", Resource.STR_LABEL_WITH_BELOW_OPTIONS.getString());
+		htmlEditor.setInnerHTMLById("option-label", RStr.LABEL_WITH_BELOW_OPTIONS.get());
 		StringBuilder options = new StringBuilder();
-		options.append("<li>").append(Resource.STR_BTN_REPLACE_EXISTING_APP.getString()).append("</li>");
-		options.append("<li>").append(Resource.STR_BTN_ALLOW_DOWNGRADE.getString()).append("</li>");
+		options.append("<li>").append(RStr.BTN_REPLACE_EXISTING_APP.get()).append("</li>");
+		options.append("<li>").append(RStr.BTN_ALLOW_DOWNGRADE.get()).append("</li>");
 		htmlEditor.setInnerHTMLById("install-options", options.toString());
 
 		btnInstall = new JButton(htmlEditor.getText());
 		btnInstall.setHorizontalAlignment(SwingConstants.CENTER);
 		btnInstall.setHorizontalTextPosition(SwingConstants.RIGHT);
-		btnInstall.setIcon(Resource.IMG_TOOLBAR_INSTALL.getImageIcon());;
+		btnInstall.setIcon(RImg.TOOLBAR_INSTALL.getImageIcon());;
 		btnInstall.setIconTextGap(20);
 		btnInstall.addActionListener(listener);
 		btnInstall.addMouseListener(this);
@@ -58,9 +60,9 @@ public class SimpleOptionPanel extends JPanel implements MouseListener, ActionLi
 		consts.gridy++;
 		consts.weighty = 0.2f;
 
-		htmlEditor.setText(Resource.RAW_ADB_INSTALL_BUTTON_HTML.getString());
+		htmlEditor.setText(RFile.RAW_ADB_INSTALL_BUTTON_HTML.getString());
 		htmlEditor.removeElementById("adb-install");
-		htmlEditor.setInnerHTMLById("option-label", Resource.STR_LABEL_WITH_OPTIONS.getString());
+		htmlEditor.setInnerHTMLById("option-label", RStr.LABEL_WITH_OPTIONS.get());
 		htmlEditor.setOuterHTMLById("syspath", "<span id=\"syspath\">/SYSTEM/(APP or PRIV-APP)</span>");
 
 		btnPush = new JButton(htmlEditor.getText());
@@ -72,7 +74,7 @@ public class SimpleOptionPanel extends JPanel implements MouseListener, ActionLi
 		consts.gridy++;
 		consts.weighty = 0.0f;
 		JButton btnAdvanced = new JButton(String.format("<html><body><h3 style=\"font-weight: normal;\">%s</h3></body></html>"
-													, Resource.STR_BTN_ADVANCED_OPTIONS_LAB.getString()));
+													, RStr.BTN_ADVANCED_OPTIONS_LAB.get()));
 		btnAdvanced.addActionListener(this);
 		btnAdvanced.addActionListener(listener);
 		btnAdvanced.setActionCommand(ACT_CMD_SET_ADVANCED_OPT);
@@ -100,7 +102,7 @@ public class SimpleOptionPanel extends JPanel implements MouseListener, ActionLi
 
 		if(bundle.isSetLaunch()) {
 			StringBuilder opt = new StringBuilder();
-			opt.append("<li id=\"launch-af-installed\">").append(Resource.STR_BTN_LAUNCH_AF_INSTALLED.getString()).append("<br>")
+			opt.append("<li id=\"launch-af-installed\">").append(RStr.BTN_LAUNCH_AF_INSTALLED.get()).append("<br>")
 				.append(bundle.getLaunchActivity()).append("</li>");
 			htmlEditor.setText(btnInstall.getText());
 			if(htmlEditor.getElementById("launch-af-installed") != null) {
@@ -125,9 +127,9 @@ public class SimpleOptionPanel extends JPanel implements MouseListener, ActionLi
 				htmlEditor.setOuterHTMLById("syspath", "<span id=\"syspath\">/SYSTEM/PRIV-APP</span>");
 			}
 			StringBuilder opt = new StringBuilder();
-			opt.append("<li>").append(Resource.STR_BTN_REBOOT_AF_PUSHED.getString()).append("</li>");
+			opt.append("<li>").append(RStr.BTN_REBOOT_AF_PUSHED.get()).append("</li>");
 			if(bundle.isSetWithLib32() || bundle.isSetWithLib64()) {
-				opt.append("<li>").append(Resource.STR_LABEL_WITH_LIBRARIES.getString()).append("(");
+				opt.append("<li>").append(RStr.LABEL_WITH_LIBRARIES.get()).append("(");
 				if(bundle.isSetWithLib64()) {
 					opt.append(bundle.getWithLib64Arch()).append(" > ").append(bundle.getWithLib64ToPath());
 				} else {

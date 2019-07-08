@@ -9,7 +9,8 @@ import java.util.zip.ZipFile;
 
 import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RConst;
+import com.apkscanner.resource.RProp;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AaptXmlTreePath;
 import com.apkscanner.tool.adb.AdbWrapper;
@@ -39,9 +40,9 @@ abstract public class ApkScanner
 
 	protected ApkInfo apkInfo = null;
 
-	private StatusListener statusListener = null;
-	private int scanningStatus;
-	private int lastErrorCode;
+	protected StatusListener statusListener = null;
+	protected int scanningStatus;
+	protected int lastErrorCode;
 
 	public enum Status {
 		STANBY(0x00),
@@ -81,19 +82,26 @@ abstract public class ApkScanner
 		return this.statusListener;
 	}
 
-	public void setStatusListener(StatusListener statusListener)
+	public void setStatusListener(StatusListener statusListener) {
+		setStatusListener(statusListener, true);
+	}
+
+	public void setStatusListener(StatusListener statusListener, boolean evokeCompleted)
 	{
 		synchronized(this) {
 			this.statusListener = statusListener;
-			if(statusListener == null) return;
+			if(statusListener == null || !evokeCompleted) return;
 
 			if(lastErrorCode != NO_ERR) {
 				statusListener.onError(lastErrorCode);
 			} else if(scanningStatus != 0) {
 				for(Status state: Status.values()) {
-					if(isCompleted(state)) {
-						Log.v(state + " is compleated sooner than register listener");
-						statusListener.onStateChanged(state);
+					if(!isCompleted(state)) continue;
+					Log.v(state + " is compleated sooner than register listener");
+					statusListener.onStateChanged(state);
+					if(Status.ALL_COMPLETED.equals(state)) {
+						statusListener.onSuccess();
+						statusListener.onCompleted();
 					}
 				}
 			}
@@ -102,7 +110,7 @@ abstract public class ApkScanner
 
 	public void openApk(final String apkFilePath)
 	{
-		openApk(apkFilePath, (String)Resource.PROP_FRAMEWORK_RES.getData());
+		openApk(apkFilePath, RProp.S.FRAMEWORK_RES.get());
 	}
 
 	abstract public void openApk(final String apkFilePath, String frameworkRes);
@@ -119,7 +127,7 @@ abstract public class ApkScanner
 		tempApkFilePath = FileUtil.makeTempPath(tempApkFilePath)+".apk";
 
 		if(framework == null) {
-			framework = (String)Resource.PROP_FRAMEWORK_RES.getData();
+			framework = RProp.S.FRAMEWORK_RES.get();
 		}
 
 		String frameworkRes = "";
@@ -211,10 +219,10 @@ abstract public class ApkScanner
 					certList.add(sr.getReport(i));
 				}
 
-				if(sr.contains("MD5", Resource.STR_SAMSUNG_KEY_MD5.getString())) {
+				if(sr.contains("MD5", RConst.SAMSUNG_KEY_MD5)) {
 					apkInfo.featureFlags |= ApkInfo.APP_FEATURE_SAMSUNG_SIGN;
 				}
-				if(sr.contains("MD5", Resource.STR_SS_TEST_KEY_MD5.getString())) {
+				if(sr.contains("MD5", RConst.SS_TEST_KEY_MD5)) {
 					apkInfo.featureFlags |= ApkInfo.APP_FEATURE_PLATFORM_SIGN;
 				}
 			}
@@ -328,12 +336,13 @@ abstract public class ApkScanner
 	}
 
 	public static ApkScanner getInstance() {
-		return getInstance(null);
+		return ApkScanner.getInstance(RProp.B.USE_EASY_UI.get()
+				? ApkScanner.APKSCANNER_TYPE_AAPTLIGHT : ApkScanner.APKSCANNER_TYPE_AAPT);
 	}
 
 	public static ApkScanner getInstance(String name) {
 		if(name == null || APKSCANNER_TYPE_AAPT.equalsIgnoreCase(name)) {
-			return new AaptScanner(null);
+			return new AaptLightScanner(null, false);
 		} else if(APKSCANNER_TYPE_AAPTLIGHT.equalsIgnoreCase(name)) {
 			return new AaptLightScanner(null);
 		} else if(APKSCANNER_TYPE_APKTOOL.equalsIgnoreCase(name)) {

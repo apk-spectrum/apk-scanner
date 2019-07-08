@@ -17,31 +17,34 @@ import javax.swing.KeyStroke;
 import com.apkscanner.core.permissionmanager.PermissionManager;
 import com.apkscanner.core.permissionmanager.PermissionRepository;
 import com.apkscanner.core.permissionmanager.PermissionRepository.SourceCommit;
+import com.apkscanner.gui.component.HtmlEditorPane;
 import com.apkscanner.gui.component.KeyStrokeAction;
-import com.apkscanner.gui.theme.TabbedPaneUIManager;
-import com.apkscanner.gui.util.JHtmlEditorPane;
-import com.apkscanner.gui.util.WindowSizeMemorizer;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.gui.component.WindowSizeMemorizer;
+import com.apkscanner.gui.component.tabbedpane.TabbedPaneUIManager;
+import com.apkscanner.resource.RFile;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RProp;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 
 public class PermissionReferencePanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1224360539653858070L;
 
 	private JDialog dialog;
-	private JHtmlEditorPane referencePanel;
-	private JHtmlEditorPane protectLevelPanel;
+	private HtmlEditorPane referencePanel;
+	private HtmlEditorPane protectLevelPanel;
 
 	public PermissionReferencePanel() {
 		setLayout(new BorderLayout());
 		JTabbedPane tabbedPanel = new JTabbedPane();
-		String tabbedStyle = (String) Resource.PROP_TABBED_UI_THEME.getData();
+		String tabbedStyle = RProp.S.TABBED_UI_THEME.get();
 		tabbedPanel.setOpaque(true);
 		TabbedPaneUIManager.setUI(tabbedPanel, tabbedStyle);
 
-		referencePanel = new JHtmlEditorPane();
+		referencePanel = new HtmlEditorPane();
 		referencePanel.setEditable(false);
 		referencePanel.setOpaque(true);
-		protectLevelPanel = new JHtmlEditorPane();
+		protectLevelPanel = new HtmlEditorPane();
 		protectLevelPanel.setEditable(false);
 		protectLevelPanel.setOpaque(true);
 		tabbedPanel.addTab("Reference", new JScrollPane(referencePanel));
@@ -53,10 +56,10 @@ public class PermissionReferencePanel extends JPanel implements ActionListener {
 	}
 
 	private void loadData() {
-		referencePanel.setText(Resource.RAW_PERMISSION_REFERENCE_HTML.getString());
+		referencePanel.setText(RFile.RAW_PERMISSION_REFERENCE_HTML.getString());
 		referencePanel.setCaretPosition(0);
 
-		protectLevelPanel.setText(Resource.RAW_PROTECTION_LEVELS_HTML.getString());
+		protectLevelPanel.setText(RFile.RAW_PROTECTION_LEVELS_HTML.getString());
 		protectLevelPanel.setCaretPosition(0);
 
 		PermissionRepository repo = PermissionManager.getPermissionRepository();
@@ -84,14 +87,14 @@ public class PermissionReferencePanel extends JPanel implements ActionListener {
 		String manifestUrl = baseUrl + "master" + manifestPath;
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("<li>Repository : ").append(JHtmlEditorPane.makeHyperLink(repo.url, isAOSP ? "AOSP" : repo.url, repo.url, null, null)).append("</li>");
-		sb.append("<li>Manifest : ").append(JHtmlEditorPane.makeHyperLink(manifestUrl, manifestPath, manifestUrl, null, null)).append("</li>");
+		sb.append("<li>Repository : ").append(HtmlEditorPane.makeHyperLink(repo.url, isAOSP ? "AOSP" : repo.url, repo.url, null, null)).append("</li>");
+		sb.append("<li>Manifest : ").append(HtmlEditorPane.makeHyperLink(manifestUrl, manifestPath, manifestUrl, null, null)).append("</li>");
 		sb.append("<li>Resources : ");
 		if(repo.config != null && repo.config.length > 0) {
 			for(String config: repo.config) {
 				String confPath = repo.resourcePath.replace("${config}", !config.equals("default") ? "-" + config : "");
 				String resUrl = baseUrl + "master" + confPath;
-				sb.append("<br/>").append(JHtmlEditorPane.makeHyperLink(resUrl, confPath, resUrl, null, null));
+				sb.append("<br/>").append(HtmlEditorPane.makeHyperLink(resUrl, confPath, resUrl, null, null));
 			}
 		} else {
 			sb.append("None");
@@ -118,21 +121,15 @@ public class PermissionReferencePanel extends JPanel implements ActionListener {
 	public void showDialog(Window owner) {
 		dialog = new JDialog(owner);
 
-		dialog.setTitle(Resource.STR_LABEL_REFERENCE_N_LEVELS.getString());
-		dialog.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+		dialog.setTitle(RStr.LABEL_REFERENCE_N_LEVELS.get());
+		dialog.setIconImage(RImg.APP_ICON.getImage());
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		dialog.setResizable(true);
 
 		dialog.setModal(false);
 		dialog.setLayout(new BorderLayout());
 
-		Dimension minSize = new Dimension(450, 500);
-		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
-			WindowSizeMemorizer.resizeCompoent(dialog, minSize);
-		} else {
-			dialog.setSize(minSize);
-		}
-		WindowSizeMemorizer.registeComponent(dialog);
+		WindowSizeMemorizer.apply(dialog, new Dimension(450, 500));
 
 		dialog.setLocationRelativeTo(owner);
 

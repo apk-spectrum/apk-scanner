@@ -1,8 +1,6 @@
 package com.apkscanner.gui.tabpanels;
 
 import java.awt.BorderLayout;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -22,10 +20,10 @@ import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.plugin.ITabbedRequest;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 
-public class Signatures extends AbstractTabbedPanel implements ComponentListener
+public class Signatures extends AbstractTabbedPanel
 {
 	private static final long serialVersionUID = 4333997417315260023L;
 
@@ -38,8 +36,8 @@ public class Signatures extends AbstractTabbedPanel implements ComponentListener
 	private String apkFilePath;
 
 	public Signatures() {
-		setName(Resource.STR_TAB_SIGNATURES.getString());
-		setToolTipText(Resource.STR_TAB_SIGNATURES.getString());
+		setName(RStr.TAB_SIGNATURES.get());
+		setToolTipText(RStr.TAB_SIGNATURES.get());
 		setEnabled(false);
 	}
 
@@ -172,8 +170,8 @@ public class Signatures extends AbstractTabbedPanel implements ComponentListener
 	@Override
 	public void reloadResource()
 	{
-		setName(Resource.STR_TAB_SIGNATURES.getString());
-		setToolTipText(Resource.STR_TAB_SIGNATURES.getString());
+		setName(RStr.TAB_SIGNATURES.get());
+		setToolTipText(RStr.TAB_SIGNATURES.get());
 
 		if(jlist == null) return;
 
@@ -190,13 +188,13 @@ public class Signatures extends AbstractTabbedPanel implements ComponentListener
 		if(mCertList.length > 1) {
 			listSize++;
 			labels = new String[listSize];
-			labels[0] = Resource.STR_CERT_SUMMURY.getString();
+			labels[0] = RStr.CERT_SUMMURY.get();
 			for(; i <= mCertList.length; i++) {
-				labels[i] = Resource.STR_CERT_CERTIFICATE.getString() + "[" + i + "]";
+				labels[i] = RStr.CERT_CERTIFICATE.get() + "[" + i + "]";
 			}
 		} else if (mCertList.length == 1) {
 			labels = new String[listSize];
-			labels[0] = Resource.STR_CERT_CERTIFICATE.getString() + "[1]";
+			labels[0] = RStr.CERT_CERTIFICATE.get() + "[1]";
 		} else {
 			labels = new String[listSize];
 		}
@@ -208,26 +206,6 @@ public class Signatures extends AbstractTabbedPanel implements ComponentListener
 		}
 
 		jlist.setListData(labels);
-	}
-
-	@Override
-	public void componentResized(ComponentEvent e) {
-
-	}
-
-	@Override
-	public void componentMoved(ComponentEvent e) {
-
-	}
-
-	@Override
-	public void componentShown(ComponentEvent e) {
-
-	}
-
-	@Override
-	public void componentHidden(ComponentEvent e) {
-
 	}
 }
 

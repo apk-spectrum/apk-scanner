@@ -1,10 +1,15 @@
 package com.apkscanner.gui.easymode.test;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import javax.swing.*;
- 
+import java.awt.GridLayout;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class ListDnD {
     ReportingListTransferHandler arrayListHandler =
                          new ReportingListTransferHandler();
@@ -15,8 +20,8 @@ public class ListDnD {
         panel.add(getListComponent2("right"));
         return panel;
     }
- 
-    private JScrollPane getListComponent(String s) {
+
+	private JScrollPane getListComponent(String s) {
         DefaultListModel model = new DefaultListModel();
         for(int j = 0; j < 3; j++)
             model.addElement(s + " " + (j+1));

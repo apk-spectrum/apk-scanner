@@ -12,7 +12,7 @@ import com.android.ddmlib.ShellCommandUnresponsiveException;
 import com.android.ddmlib.SyncException;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.data.apkinfo.CompactApkInfo;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RProp;
 import com.apkscanner.tool.adb.AdbDeviceHelper;
 import com.apkscanner.tool.adb.AdbDeviceHelper.CommandRejectedException;
 import com.apkscanner.tool.adb.PackageManager;
@@ -108,7 +108,7 @@ public class ApkInstaller
 								errMessage = sb.toString();
 								Log.e(errMessage);
 							}
-						} else if((boolean)Resource.PROP_TRY_UNLOCK_AF_LAUNCH.getData()) {
+						} else if(RProp.B.TRY_UNLOCK_AF_LAUNCH.get()) {
 							AdbDeviceHelper.tryDismissKeyguard(device);
 						}
 					}

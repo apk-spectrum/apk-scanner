@@ -7,12 +7,14 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
 
+@SuppressWarnings("serial")
 public class Board extends JPanel
         implements ActionListener {
 
@@ -33,7 +35,7 @@ public class Board extends JPanel
 
     private void loadImage() {
 
-        ImageIcon ii = new ImageIcon(Resource.IMG_ADD_TO_DESKTOP.getImageIcon().getImage());
+        ImageIcon ii = RImg.ADD_TO_DESKTOP.getImageIcon();
         star = ii.getImage();
     }
 

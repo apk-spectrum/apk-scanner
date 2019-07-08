@@ -8,7 +8,7 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RFile;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.XmlPath;
 
@@ -87,19 +87,10 @@ public class AaptXmlTreePath
 					}
 					String attrName = s.replaceAll("^\\s*A: ([^\\(=]*).*", "$1");
 					String attrId = s.replaceAll("^\\s*A: ([^: ]*)?:([^:= ]*)?\\(([^\\(=]*)\\).*", "$3");
-					String attrRealName = null;
-					if(s.endsWith(attrId) || (attrName.startsWith(defaultNamespace+":") && !attrName.equals(":"))) {
-						attrRealName = attrName;
-						//Log.v(">>>>>>> attrName " + attrRealName);
-					} else if(attrId.matches("^0x0?1[0-9a-f]{6}")) {
-						attrRealName = defaultNamespace+":"+getAttrName(attrId);
-						//Log.v("<<<<<<< attrRealName " + attrId + ", " + attrRealName);
-					} else {
-						//Log.v("<<<<<<< attrRealName " + attrId + ", " + attrRealName);
-						attrRealName = attrName;
-					}
-					if(attrName.equals(":")) {
-						attrName = attrRealName;
+					if(attrId.matches("^0x0?1[0-9a-f]{6}")) {
+						if(attrId.equals(getAttrName(attrId))) {
+							attrName += "(" + attrId + ")";
+						}
 					}
 					String attrData = s.substring(s.indexOf("=")+1);
 
@@ -118,7 +109,7 @@ public class AaptXmlTreePath
 
 					}
 					//Log.v("attribute name : " + attrName + " = " + attrData);
-					curNode.addAttribute(attrRealName, attrData);
+					curNode.addAttribute(attrName, attrData);
 					break;
 				case NODE_TYPE_ELEMENT:
 					while(depth < curDepth) {
@@ -306,7 +297,7 @@ public class AaptXmlTreePath
 	private String getAttrName(String id)
 	{
 		if(attrIdPath == null) {
-			try(InputStream xml = Resource.class.getResourceAsStream("/values/public.xml")) {
+			try(InputStream xml = RFile.RAW_PUBLIC_XML.getResourceAsStream()) {
 				if(xml != null) attrIdPath = new XmlPath(xml);
 			} catch (IOException e) { }
 		}

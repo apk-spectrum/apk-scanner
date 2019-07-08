@@ -22,7 +22,7 @@ public abstract class AbstractExtraComponent extends AbstractPlugIn implements I
 
 	@Override
 	public void initialize() {
-		if(tabbedComponent != null) return; 
+		if(tabbedComponent != null) return;
 		tabbedComponent = new javax.swing.JPanel();
 	}
 

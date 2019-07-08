@@ -10,11 +10,11 @@ import java.awt.RadialGradientPaint;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+
 
 public class RectangularGradientTest
 {
@@ -41,7 +41,7 @@ public class RectangularGradientTest
     }
 }
 
-
+@SuppressWarnings("serial")
 class RectangularGradientTestPanel extends JPanel
 {
     @Override

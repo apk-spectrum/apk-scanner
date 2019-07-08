@@ -17,7 +17,7 @@ import org.json.simple.parser.JSONParser;
 
 import com.android.ddmlib.AdbVersion;
 import com.android.ddmlib.AndroidDebugBridge;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RFile;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
@@ -115,7 +115,7 @@ public class AdbVersionManager implements Comparator<String> {
 			getAdbVersion(runPath, true);
 		}
 		getAdbVersion(SystemUtil.getRealPath(SystemUtil.isWindows() ? "adb.exe" : "adb"), true);
-		getAdbVersion(Resource.BIN_ADB.getPath(), true);
+		getAdbVersion(RFile.BIN_ADB.get(), true);
 	}
 
 	public static String[] getAdbListFromCache() {

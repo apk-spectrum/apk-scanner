@@ -1,15 +1,23 @@
 package com.apkscanner.gui;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
 
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.gui.component.KeyStrokeAction;
+import com.apkscanner.gui.component.tabbedpane.TabbedPaneUIManager;
+import com.apkscanner.gui.tabpanels.AbstractTabbedPanel;
 import com.apkscanner.gui.tabpanels.BasicInfo;
 import com.apkscanner.gui.tabpanels.Components;
 import com.apkscanner.gui.tabpanels.IProgressListener;
@@ -17,13 +25,14 @@ import com.apkscanner.gui.tabpanels.Libraries;
 import com.apkscanner.gui.tabpanels.Resources;
 import com.apkscanner.gui.tabpanels.Signatures;
 import com.apkscanner.gui.tabpanels.Widgets;
-import com.apkscanner.gui.theme.TabbedPaneUIManager;
 import com.apkscanner.plugin.IExtraComponent;
 import com.apkscanner.plugin.ITabbedComponent;
 import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.plugin.PlugInManager;
+import com.apkscanner.resource.LanguageChangeListener;
+import com.apkscanner.resource.RStr;
 
-public class TabbedPanel extends JTabbedPane
+public class TabbedPanel extends JTabbedPane implements LanguageChangeListener, ActionListener
 {
 	private static final long serialVersionUID = -5500517956616692675L;
 
@@ -47,6 +56,48 @@ public class TabbedPanel extends JTabbedPane
 		addTab(new Signatures());
 
 		setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+
+		KeyStrokeAction.registerKeyStrokeActions(this, JComponent.WHEN_IN_FOCUSED_WINDOW, new KeyStroke[] {
+				KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_DOWN_MASK, false),
+				KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.ALT_DOWN_MASK, false)
+			}, this);
+
+		RStr.addLanguageChangeListener(this);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent evt) {
+		int keycode = Integer.parseInt(evt.getActionCommand());
+		int idx = getSelectedIndex();
+		int count = getTabCount();
+		int preIdx = idx;
+		switch(keycode) {
+		case KeyEvent.VK_RIGHT:
+			do {
+				idx = ++idx % count;
+			} while(!isEnabledAt(idx) && idx != preIdx);
+			if(idx != preIdx) {
+				setSelectedIndex(idx);
+			}
+			break;
+		case KeyEvent.VK_LEFT:
+			do {
+				idx = (--idx + count) % count;
+			} while(!isEnabledAt(idx) && idx != preIdx);
+			if(idx != preIdx) {
+				setSelectedIndex(idx);
+			}
+			break;
+		}
+	}
+
+	public void uiLoadBooster() {
+		for(int i=0; i<getTabCount(); i++) {
+			Component c = getTabComponentAt(i);
+			if(c instanceof AbstractTabbedPanel) {
+				((AbstractTabbedPanel)c).initialize();
+			}
+		}
 	}
 
 	public void onLoadPlugin() {
@@ -174,5 +225,10 @@ public class TabbedPanel extends JTabbedPane
 				setTitleAt(i, tabbed.getTitle());
 			}
 		}
+	}
+
+	@Override
+	public void languageChange(String oldLang, String newLang) {
+		reloadResource();
 	}
 }

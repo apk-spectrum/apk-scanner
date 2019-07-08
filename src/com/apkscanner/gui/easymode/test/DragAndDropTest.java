@@ -87,6 +87,7 @@ public class DragAndDropTest {
 	}
 }
 
+@SuppressWarnings("serial")
 class Thumbnail implements Serializable {
 	public final String name;
 	public final Icon icon;
@@ -157,7 +158,7 @@ class ListItemTransferHandler extends TransferHandler {
 		return MOVE; // COPY_OR_MOVE;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public boolean importData(TransferSupport info) {
 		TransferHandler.DropLocation tdl = info.getDropLocation();
@@ -198,6 +199,7 @@ class ListItemTransferHandler extends TransferHandler {
 		cleanup(c, action == MOVE);
 	}
 
+	@SuppressWarnings("rawtypes")
 	private void cleanup(JComponent c, boolean remove) {
 		if (remove && indices != null) {
 			if (addCount > 0) {

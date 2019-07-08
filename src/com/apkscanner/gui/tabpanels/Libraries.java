@@ -12,7 +12,7 @@ import javax.swing.table.TableColumn;
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.plugin.ITabbedRequest;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.FileUtil.FSStyle;
 import com.apkscanner.util.ZipFileUtil;
@@ -33,8 +33,8 @@ public class Libraries extends AbstractTabbedPanel
 	public Libraries()
 	{
 		setLayout(new GridLayout(1, 0));
-		setName(Resource.STR_TAB_LIBRARIES.getString());
-		setToolTipText(Resource.STR_TAB_LIBRARIES.getString());
+		setName(RStr.TAB_LIBRARIES.get());
+		setToolTipText(RStr.TAB_LIBRARIES.get());
 		setEnabled(false);
 	}
 	
@@ -74,8 +74,8 @@ public class Libraries extends AbstractTabbedPanel
 	@Override
 	public void reloadResource()
 	{
-		setName(Resource.STR_TAB_LIBRARIES.getString());
-		setToolTipText(Resource.STR_TAB_LIBRARIES.getString());
+		setName(RStr.TAB_LIBRARIES.get());
+		setToolTipText(RStr.TAB_LIBRARIES.get());
 
 		if(mMyTableModel == null) return;
 		mMyTableModel.loadResource();
@@ -130,10 +130,10 @@ public class Libraries extends AbstractTabbedPanel
 		public void loadResource()
 		{
 			columnNames = new String[] {
-				Resource.STR_LIB_COLUMN_INDEX.getString(),
-				Resource.STR_LIB_COLUMN_PATH.getString(),
-				Resource.STR_LIB_COLUMN_SIZE.getString(),
-				Resource.STR_LIB_COLUMN_COMPRESS.getString()
+				RStr.LIB_COLUMN_INDEX.get(),
+				RStr.LIB_COLUMN_PATH.get(),
+				RStr.LIB_COLUMN_SIZE.get(),
+				RStr.LIB_COLUMN_COMPRESS.get()
 			};
 		}
 

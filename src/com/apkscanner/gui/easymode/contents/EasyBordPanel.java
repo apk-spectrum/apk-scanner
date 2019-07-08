@@ -21,7 +21,8 @@ import javax.swing.event.ChangeListener;
 
 import com.apkscanner.gui.easymode.util.CustomSlider;
 import com.apkscanner.gui.easymode.util.EasyButton;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 
 public class EasyBordPanel extends JPanel implements ActionListener, ChangeListener {
@@ -54,7 +55,7 @@ public class EasyBordPanel extends JPanel implements ActionListener, ChangeListe
 		this.frame = mainframe;
 
 		windowpanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		maintitle = new JLabel(Resource.STR_APP_NAME.getString(), SwingConstants.CENTER);
+		maintitle = new JLabel(RStr.APP_NAME.get(), SwingConstants.CENTER);
 		maintitle.setOpaque(false);
 		maintitle.setFont(new Font(getFont().getName(), Font.BOLD, 15));
 		maintitle.setForeground(bordertitlecolor);
@@ -67,11 +68,11 @@ public class EasyBordPanel extends JPanel implements ActionListener, ChangeListe
 		// Turn on labels at major tick marks.
 
 		((FlowLayout) windowpanel.getLayout()).setHgap(1);
-		ImageIcon miniicon = new ImageIcon(Resource.IMG_EASY_WINDOW_MINI.getImageIcon(17, 17).getImage());
+		ImageIcon miniicon = new ImageIcon(RImg.EASY_WINDOW_MINI.getImage(17, 17));
 		btnmini = new EasyButton(miniicon);
 		btnmini.setActionCommand(CMD_WINDOW_MINI);
 
-		ImageIcon exiticon = new ImageIcon(Resource.IMG_EASY_WINDOW_EXIT.getImageIcon(17, 17).getImage());
+		ImageIcon exiticon = new ImageIcon(RImg.EASY_WINDOW_EXIT.getImage(17, 17));
 		btnexit = new EasyButton(exiticon);
 		btnexit.setActionCommand(CMD_WINDOW_EXIT);
 		// stackLabel.setIcon(icon);

@@ -36,9 +36,9 @@ import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.gui.component.WindowSizeMemorizer;
 import com.apkscanner.gui.tabpanels.Resources;
-import com.apkscanner.gui.util.WindowSizeMemorizer;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.util.Log;
@@ -61,18 +61,11 @@ public class SearchDlg extends JDialog {
 		setTitle("Input Dialog");
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
-		
-		Dimension minSize = new Dimension(500, 500);
-		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
-			WindowSizeMemorizer.resizeCompoent(this, minSize);
-		} else {
-			setSize(minSize);
-		}
-		//setMinimumSize(minSize);
-		WindowSizeMemorizer.registeComponent(this);
+
+		WindowSizeMemorizer.apply(this, new Dimension(500, 500));
 
 		setLayout(new BorderLayout());
-		// Create Input 
+		// Create Input
 		name = new JTextField();
 
 		name.addActionListener(new ActionListener() {
@@ -83,7 +76,7 @@ public class SearchDlg extends JDialog {
 		});
 
 		//name.setBounds(57, 36, 175, 20);
-		getContentPane().add(name,BorderLayout.NORTH);		
+		getContentPane().add(name,BorderLayout.NORTH);
 		getContentPane().add(makeTable(),BorderLayout.CENTER);
 
 		JPanel buttonPanel = new JPanel();
@@ -113,7 +106,7 @@ public class SearchDlg extends JDialog {
 
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
-		label = new JLabel(Resource.IMG_WAIT_BAR.getImageIcon());
+		label = new JLabel(RImg.WAIT_BAR.getImageIcon());
 		label.setVisible(false);
 		buttonPanel.add(label);
 	}
@@ -133,7 +126,7 @@ public class SearchDlg extends JDialog {
 	private JPanel makeTable() {
 		allTableModel = new AllTableModel(data);
 		JPanel panel = new JPanel(new BorderLayout());
-		allTable = new CustomTable(allTableModel); 
+		allTable = new CustomTable(allTableModel);
 
 		allTable.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent me) {
@@ -141,9 +134,9 @@ public class SearchDlg extends JDialog {
 				Point p = me.getPoint();
 				int row = table.rowAtPoint(p);
 				if (me.getClickCount() == 2) {
-					// your valueChanged overridden method 
+					// your valueChanged overridden method
 					Log.d("click : " + row + "  file : " +(data.get(row)).path + "   line : " + (data.get(row)).line);
-					//ImageResource.setTreeFocus((data.get(row)).path, (data.get(row)).line);		        	
+					//ImageResource.setTreeFocus((data.get(row)).path, (data.get(row)).line);
 					Resources.TreeFocusChanger changer = Resources.getTreeFocuschanger();
 					if(changer!=null) {
 						changer.setTreeFocus((data.get(row)).path, (data.get(row)).line, name.getText());
@@ -184,7 +177,7 @@ public class SearchDlg extends JDialog {
 				Log.d("null");
 			} else {
 				Log.d("not null");
-			}            	
+			}
 			return m_tooltip;
 		}
 
@@ -251,7 +244,7 @@ public class SearchDlg extends JDialog {
 
 			label = new JLabel();
 			textView.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
-			textView.setCodeFoldingEnabled(true);				
+			textView.setCodeFoldingEnabled(true);
 			textView.setEditable(false);
 
 			m_panel.add(BorderLayout.CENTER, sp);
@@ -266,7 +259,7 @@ public class SearchDlg extends JDialog {
 			context.setMatchCase(false);
 			context.setMarkAll(true);
 			context.setSearchFor(str);
-			context.setWholeWord(false);            
+			context.setWholeWord(false);
 			//org.fife.ui.rtextarea.SearchResult result =
 			SearchEngine.find(textView, context);
 
@@ -285,7 +278,7 @@ public class SearchDlg extends JDialog {
 		public void setTipText(String tipText) {
 			if (tipText != null && !tipText.isEmpty()) {
 				textView.setText(tipText);
-				textView.setCaretPosition(0);            	
+				textView.setCaretPosition(0);
 
 			} else {
 				super.setTipText(tipText);
@@ -298,7 +291,7 @@ public class SearchDlg extends JDialog {
 
 		new Thread(new Runnable() {
 			public void run()
-			{	
+			{
 				String findStr =name.getText();
 
 				String[] filelist = apkinfo.resources;
@@ -322,7 +315,7 @@ public class SearchDlg extends JDialog {
 
 
 						//temp = sb.toString();
-					} else if(filelist[i].endsWith(".txt") || filelist[i].endsWith(".mk") 
+					} else if(filelist[i].endsWith(".txt") || filelist[i].endsWith(".mk")
 							|| filelist[i].endsWith(".html") || filelist[i].endsWith(".js") || filelist[i].endsWith(".css") || filelist[i].endsWith(".json")
 							|| filelist[i].endsWith(".props") || filelist[i].endsWith(".properties")) {
 						ZipFile zipFile = null;
@@ -377,7 +370,7 @@ public class SearchDlg extends JDialog {
 									data.add(new TableData(data.size(),filelist[i],lineNumber,line));
 								}
 
-								lineNumber++; 
+								lineNumber++;
 							}
 							allTableModel.fireTableDataChanged();
 						} catch (IOException e) {
@@ -424,10 +417,10 @@ public class SearchDlg extends JDialog {
 		}
 		public int getLine() {
 			return line;
-		}	    
+		}
 		public String getfindString() {
 			return findstring;
-		}	    
+		}
 	}
 
 	class AllTableModel extends AbstractTableModel {

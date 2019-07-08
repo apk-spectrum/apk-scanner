@@ -3,11 +3,8 @@ package com.apkscanner.core.scanner;
 import java.io.File;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.gui.EasyMainUI;
-import com.apkscanner.resource.Resource;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
-import com.apkscanner.tool.aapt.AaptXmlTreeNode;
 import com.apkscanner.tool.aapt.AaptXmlTreePath;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
@@ -15,16 +12,24 @@ import com.apkscanner.util.ZipFileUtil;
 
 public class AaptLightScanner extends AaptScanner {
 
-	AaptNativeScanner resourceScanner;
-	AaptManifestReader manifestReader;
-	public boolean notcallcomplete = false;
-	
+	private boolean isLightMode;
+
 	public AaptLightScanner(StatusListener statusListener) {
+		this(statusListener, true);
+	}
+
+	public AaptLightScanner(StatusListener statusListener, boolean lightMode) {
 		super(statusListener);
+		isLightMode = lightMode;
 	}
 
 	@Override
 	public void openApk(String apkFilePath, String frameworkRes) {
+		if(!isLightMode) {
+			super.openApk(apkFilePath, frameworkRes);
+			return;
+		}
+
 		Log.i("---aaptLightScanner---");
 		Log.i("openApk() " + apkFilePath + ", res " + frameworkRes);
 		EasyMainUI.corestarttime = System.currentTimeMillis();
@@ -77,8 +82,6 @@ public class AaptLightScanner extends AaptScanner {
 			return;
 		}
 
-
-
 		apkInfo = new ApkInfo();
 		apkInfo.filePath = apkFile.getAbsolutePath();
 		apkInfo.fileSize = apkFile.length();
@@ -102,9 +105,7 @@ public class AaptLightScanner extends AaptScanner {
 		// for easy gui
 		apkInfo.manifest.application.icons = changeURLpath(apkInfo.manifest.application.icons, manifestReader);
 		///////////////////////////////////////////////////////////
-		
 
-		
 		Log.i("read permissions start");
 		manifestReader.readPermissions();
 		Log.i("read permissions completed");
@@ -126,71 +127,39 @@ public class AaptLightScanner extends AaptScanner {
 		manifestReader.readComponents();
 		stateChanged(Status.ACTIVITY_COMPLETED);
 
-		if(getStatusListener() != null) {
-			stateChanged(Status.ALL_COMPLETED);
-		} else {
-			notcallcomplete = true;
-			stateChanged(Status.ALL_COMPLETED);
-		}
-
+		stateChanged(Status.ALL_COMPLETED);
 	}
-	
-	public AaptScanner getAaptScanner() {
-		Log.i("I: read Resource list...");
-		apkInfo.resources = ZipFileUtil.findFiles(apkInfo.filePath, null, null);
-		//stateChanged(Status.RESOURCE_COMPLETED);
 
-		Log.i("I: read aapt dump resources...");
-		apkInfo.resourcesWithValue = AaptNativeWrapper.Dump.getResources(apkInfo.filePath, true);
-		//stateChanged(Status.RES_DUMP_COMPLETED);
-		Log.i("resources completed");
-		
-		// widget
-		Log.i("I: read widgets...");
-		apkInfo.widgets = manifestReader.getWidgetList(apkInfo.filePath);
-		//stateChanged(Status.WIDGET_COMPLETED);		
-		return this;
-	}
-	public void statechagedAll() {
-		for (Status day : Status.values()) { 
-			stateChanged(day);
-		}
-	}
-	
-	private ResourceInfo[] changeURLpath(ResourceInfo[] icons, AaptManifestReader manifestReader) {		
-		if(icons != null && icons.length > 0) {
-			String urlFilePath = null;
-			urlFilePath = apkInfo.filePath.replaceAll("#", "%23");
+	public void setLightMode(boolean lightMode) {
+		if(isLightMode == lightMode) return;
+		if(isLightMode && !lightMode && getStatus() == Status.ALL_COMPLETED.value()) {
+			// widget
+			Log.i("I: read widgets...");
+			apkInfo.widgets = manifestReader.getWidgetList(apkInfo.filePath);
+			stateChanged(Status.WIDGET_COMPLETED);
 
-			String jarPath = "jar:file:" + urlFilePath + "!/";
-			for(ResourceInfo r: icons) {
-				if(r.name == null) {
-					r.name = Resource.IMG_DEF_APP_ICON.getPath();
-				} else if(r.name.endsWith(".qmg")) {
-					r.name = Resource.IMG_QMG_IMAGE_ICON.getPath();
-				} else if(r.name.endsWith(".xml")) {
-					Log.w("image resource is xml : " + r.name);
-					String[] iconXml = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath, new String[] { r.name });
-					AaptXmlTreePath iconXmlPath = new AaptXmlTreePath();
-					iconXmlPath.createAaptXmlTree(iconXml);
-					AaptXmlTreeNode iconNode = iconXmlPath.getNode("//item[@"+iconXmlPath.getAndroidNamespaceTag()+":drawable]");
-					if(iconNode != null) {
-						icons = manifestReader.getAttrResourceValues(iconNode, ":drawable", iconXmlPath.getAndroidNamespaceTag());
-						if(icons == null || icons.length == 0) {
-							icons = new ResourceInfo[] { new ResourceInfo(Resource.IMG_DEF_APP_ICON.getPath()) };
-						} else {
-							for(ResourceInfo r2: icons) {
-								r2.name = jarPath + r2.name;
-							}
-						}
-					}
-				} else {
-					r.name = jarPath + r.name;
+			Thread thread = new Thread(new Runnable() {
+				public void run() {
+					Log.i("I: read Resource list...");
+					apkInfo.resources = ZipFileUtil.findFiles(apkInfo.filePath, null, null);
+					stateChanged(Status.RESOURCE_COMPLETED);
 				}
-			}
-		} else {
-			icons = new ResourceInfo[] { new ResourceInfo(Resource.IMG_DEF_APP_ICON.getPath()) };
+			});
+			thread.setPriority(Thread.NORM_PRIORITY);
+			thread.start();
+
+			thread = new Thread(new Runnable() {
+				public void run() {
+					Log.i("I: read aapt dump resources...");
+					apkInfo.resourcesWithValue = AaptNativeWrapper.Dump.getResources(apkInfo.filePath, true);
+					stateChanged(Status.RES_DUMP_COMPLETED);
+					Log.i("resources completed");
+				}
+			});
+			thread.setPriority(Thread.NORM_PRIORITY);
+			thread.start();
+			
 		}
-		return icons;
-	}	
+		isLightMode = lightMode;
+	}
 }

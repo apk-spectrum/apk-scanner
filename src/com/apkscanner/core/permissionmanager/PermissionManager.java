@@ -15,7 +15,8 @@ import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.data.apkinfo.UsesPermissionInfo;
 import com.apkscanner.data.apkinfo.UsesPermissionSdk23Info;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RFile;
+import com.apkscanner.resource.RImg;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.XmlPath;
 
@@ -44,12 +45,12 @@ public class PermissionManager
 	private int targetSdkVersion = -1;
 
 	static {
-		String xmlPath = Resource.getUTF8Path() + File.separator + "data" + File.separator + "PermissionsHistory.xml";
+		String xmlPath = RFile.DATA_PERMISSIONS_HISTORY.getPath();
 		File xmlFile = new File(xmlPath);
 		if(xmlFile.canRead()) {
 			xmlPermissionDB = new XmlPath(xmlFile);
 		} else {
-			xmlPermissionDB = new XmlPath(Resource.class.getResourceAsStream("/values/PermissionsHistory.xml"));
+			xmlPermissionDB = new XmlPath(RFile.RAW_PERMISSIONS_HISTORY.getResourceAsStream());
 		}
 	}
 
@@ -383,9 +384,7 @@ public class PermissionManager
 		Arrays.sort(result, new Comparator<PermissionGroupInfoExt>() {
 			@Override
 			public int compare(PermissionGroupInfoExt info1, PermissionGroupInfoExt info2) {
-				int priority1 = info1.priority != null ? info1.priority : 0;
-				int priority2 = info2.priority != null ? info2.priority : 0;
-				return priority2 - priority1;
+				return info2.getPriority() - info1.getPriority();
 			}
 		});
 
@@ -483,7 +482,10 @@ public class PermissionManager
 		if(name == null || name.isEmpty()) return null;
 		ResourceInfo[] resVal = null;
 		if(name.startsWith("@string/")) {
-			XmlPath resources = xmlPermissionDB.getNodeList("/permission-history/resources/*");
+			XmlPath resources = null;
+			synchronized(xmlPermissionDB) {
+				resources = xmlPermissionDB.getNodeList("/permission-history/resources/*");
+			}
 			if(resources == null) return new ResourceInfo[] { new ResourceInfo(name, null) };
 			List<ResourceInfo> list = new ArrayList<>();
 
@@ -512,8 +514,8 @@ public class PermissionManager
 			resVal = list.toArray(new ResourceInfo[list.size()]);
 		} else if(name.startsWith("@drawable/")) {
 			String id = name.substring(10);
-			String path = "/icons/" + id + ".png";
-			URL url = Resource.class.getResource(path);
+			String path = id;
+			URL url = RImg.valueOf(id.toUpperCase()).getURL();
 			if(url != null) path = url.toString();
 			resVal = new ResourceInfo[] { new ResourceInfo(path, null) };
 		} else {

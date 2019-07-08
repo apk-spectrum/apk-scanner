@@ -1,5 +1,7 @@
 package com.apkscanner.plugin;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -13,6 +15,8 @@ public abstract class AbstractPlugIn implements IPlugIn
 	protected PlugInPackage pluginPackage;
 	protected Component component;
 	protected boolean enabled;
+
+	private PropertyChangeSupport pcs;
 
 	public AbstractPlugIn(PlugInPackage pluginPackage, Component component) {
 		this.pluginPackage = pluginPackage;
@@ -55,9 +59,9 @@ public abstract class AbstractPlugIn implements IPlugIn
 
 	@Override
 	public URL getIconURL() {
-		if(component.icon != null) { 
+		if(component.icon != null) {
 			try {
-				URI uri = pluginPackage.getResourceUri(component.icon); 
+				URI uri = pluginPackage.getResourceUri(component.icon);
 				return uri != null ? uri.toURL() : pluginPackage.getIconURL();
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
@@ -74,13 +78,15 @@ public abstract class AbstractPlugIn implements IPlugIn
 
 	@Override
 	public String getDescription() {
-		String desc = pluginPackage.getResourceString(component.description); 
+		String desc = pluginPackage.getResourceString(component.description);
 		return desc != null ? desc : pluginPackage.getDescription();
 	}
 
 	@Override
-	public void setEnabled(boolean enable) {
-		this.enabled = enable;
+	public void setEnabled(boolean enabled) {
+		if(this.enabled == enabled) return;
+		this.enabled = enabled;
+		firePropertyChange(ENABLED_PROPERTY, !enabled, enabled);
 	}
 
 	@Override
@@ -104,16 +110,16 @@ public abstract class AbstractPlugIn implements IPlugIn
 	@Override
 	public int getType() {
 		if(this instanceof IPackageSearcher) {
-			return PLUGIN_TPYE_PACKAGE_SEARCHER; 
+			return PLUGIN_TPYE_PACKAGE_SEARCHER;
 		}
 		if(this instanceof IUpdateChecker) {
-			return PLUGIN_TPYE_UPDATE_CHECKER; 
+			return PLUGIN_TPYE_UPDATE_CHECKER;
 		}
 		if(this instanceof IExternalTool) {
-			return PLUGIN_TPYE_EXTERNAL_TOOL; 
+			return PLUGIN_TPYE_EXTERNAL_TOOL;
 		}
 		if(this instanceof IExtraComponent) {
-			return PLUGIN_TPYE_EXTRA_COMPONENT; 
+			return PLUGIN_TPYE_EXTRA_COMPONENT;
 		}
 		return PLUGIN_TPYE_UNKNOWN;
 	}
@@ -170,4 +176,37 @@ public abstract class AbstractPlugIn implements IPlugIn
 	public int hashCode() {
 		return component.hashCode();
 	}
+
+	protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+		if(pcs == null) return;
+		pcs.firePropertyChange(propertyName, oldValue, newValue);
+    }
+
+	@Override
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+    	if(listener == null) return;
+    	if(pcs == null) pcs = new PropertyChangeSupport(this);
+    	else pcs.removePropertyChangeListener(listener);
+    	pcs.addPropertyChangeListener(listener);
+    }
+
+	@Override
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+    	if(pcs == null) return;
+    	pcs.removePropertyChangeListener(listener);
+    }
+
+	@Override
+    public void addPropertyChangeListener(String prop, PropertyChangeListener listener) {
+    	if(prop == null || listener == null) return;
+    	if(pcs == null) pcs = new PropertyChangeSupport(this);
+    	pcs.addPropertyChangeListener(prop, listener);
+    }
+
+	@Override
+    public void removePropertyChangeListener(String prop, PropertyChangeListener listener) {
+    	if(pcs == null) return;
+    	pcs.removePropertyChangeListener(prop, listener);
+    	if(pcs.getPropertyChangeListeners().length == 0) pcs = null;
+    }
 }

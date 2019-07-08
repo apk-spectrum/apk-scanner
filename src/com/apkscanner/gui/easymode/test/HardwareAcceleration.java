@@ -7,7 +7,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferStrategy;
- 
+
+
+@SuppressWarnings("serial")
 public class HardwareAcceleration extends JFrame {
  
     public static void main(String[] args) {

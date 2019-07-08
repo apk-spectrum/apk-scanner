@@ -1,16 +1,30 @@
 package com.apkscanner.gui.easymode.test;
 
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.accessibility.*;
- 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
  
 /* 
  * LayeredPaneDemo.java requires
  * images/dukeWaveRed.gif. 
  */
+@SuppressWarnings("serial")
 public class LayeredPaneDemo extends JPanel
                              implements ActionListener,
                                         MouseMotionListener {
@@ -24,7 +38,8 @@ public class LayeredPaneDemo extends JPanel
     private JLayeredPane layeredPane;
     private JLabel dukeLabel;
     private JCheckBox onTop;
-    private JComboBox layerList;
+    @SuppressWarnings("rawtypes")
+	private JComboBox layerList;
  
     //Action commands
     private static String ON_TOP_COMMAND = "ontop";
@@ -58,7 +73,7 @@ public class LayeredPaneDemo extends JPanel
         for (int i = 0; i < layerStrings.length; i++) {
             JLabel label = createColoredLabel(layerStrings[i],
                                               layerColors[i], origin);
-            layeredPane.add(label, new Integer(i));
+            layeredPane.add(label, Integer.valueOf(i));
             origin.x += offset;
             origin.y += offset;
         }
@@ -75,7 +90,7 @@ public class LayeredPaneDemo extends JPanel
             dukeLabel.setOpaque(true);
             dukeLabel.setBackground(Color.BLACK);
         }
-        layeredPane.add(dukeLabel, new Integer(2), 0);
+        layeredPane.add(dukeLabel, Integer.valueOf(2), 0);
  
         //Add control pane and layered pane to this JPanel.
         add(Box.createRigidArea(new Dimension(0, 10)));
@@ -111,7 +126,8 @@ public class LayeredPaneDemo extends JPanel
     }
  
     //Create the control pane for the top of the frame.
-    private JPanel createControlPanel() {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	private JPanel createControlPanel() {
         onTop = new JCheckBox("Top Position in Layer");
         onTop.setSelected(true);
         onTop.setActionCommand(ON_TOP_COMMAND);

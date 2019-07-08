@@ -58,14 +58,16 @@ import javax.swing.tree.TreeSelectionModel;
 import com.apkscanner.Launcher;
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.gui.util.FilteredTreeModel;
-import com.apkscanner.gui.util.ImageScaler;
-import com.apkscanner.gui.util.ResouceContentsPanel;
+import com.apkscanner.gui.component.FilteredTreeModel;
+import com.apkscanner.gui.component.ImageScaler;
 import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.plugin.PlugInManager;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RConst;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RProp;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.external.BytecodeViewerLauncher;
 import com.apkscanner.tool.external.Dex2JarWrapper;
@@ -103,7 +105,7 @@ public class Resources extends AbstractTabbedPanel {
 
 	static public TreeFocusChanger treefocuschanger;
 
-	ImageIcon Animateimageicon = Resource.IMG_RESOURCE_TREE_OPEN_JD.getImageIcon();
+	ImageIcon Animateimageicon = RImg.RESOURCE_TREE_OPEN_JD.getImageIcon();
 	NodeImageObserver ImageObserver;
 
 	private static final String RESOURCE_TREE_TOOLBAR_BUTTON_FIND = "TREE FIND";
@@ -248,8 +250,8 @@ public class Resources extends AbstractTabbedPanel {
 	}
 
 	public Resources() {
-		setName(Resource.STR_TAB_RESOURCES.getString());
-		setToolTipText(Resource.STR_TAB_RESOURCES.getString());
+		setName(RStr.TAB_RESOURCES.get());
+		setToolTipText(RStr.TAB_RESOURCES.get());
 		setEnabled(false);
 	}
 
@@ -426,9 +428,9 @@ public class Resources extends AbstractTabbedPanel {
 
 	class ResouceTreeCellRenderer extends DefaultTreeCellRenderer implements FocusListener {
 		private static final long serialVersionUID = 6248791058116909814L;
-		// private ImageIcon iconApk = Resource.IMG_TREE_APK.getImageIcon();
+		// private ImageIcon iconApk = RImg.TREE_APK.getImageIcon();
 		// private ImageIcon iconFolder =
-		// Resource.IMG_TREE_FOLDER.getImageIcon();
+		// RImg.TREE_FOLDER.getImageIcon();
 
 		@Override
 		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded,
@@ -440,7 +442,7 @@ public class Resources extends AbstractTabbedPanel {
 			((JLabel) c).setBackground(Color.RED);
 
 			if (nodo == top) {
-				setIcon(Resource.IMG_APK_FILE_ICON.getImageIcon());
+				setIcon(RImg.APK_FILE_ICON.getImageIcon());
 				return c;
 			}
 
@@ -472,11 +474,11 @@ public class Resources extends AbstractTabbedPanel {
 					case ResourceObject.ATTR_AXML:
 					case ResourceObject.ATTR_XML:
 						// tempImage =
-						// ImageScaler.getScaledImage(Resource.IMG_RESOURCE_TREE_XML.getImageIcon(),16,16);
+						// ImageScaler.getScaledImage(RImg.RESOURCE_TREE_XML.getImageIcon(),16,16);
 						break;
 					case ResourceObject.ATTR_QMG:
 						// tempImage =
-						// ImageScaler.getScaledImage(Resource.IMG_QMG_IMAGE_ICON.getImageIcon(),32,32);
+						// ImageScaler.getScaledImage(RImg.QMG_IMAGE_ICON.getImageIcon(),32,32);
 						break;
 					case ResourceObject.ATTR_TXT:
 						break;
@@ -536,7 +538,7 @@ public class Resources extends AbstractTabbedPanel {
 				Log.v("getIcon " + suffix);
 				Image tempImage = null;
 				if ("FOLDER".equals(suffix)) {
-					tempImage = ImageScaler.getScaledImage(Resource.IMG_TREE_FOLDER.getImageIcon(), 16, 16);
+					tempImage = ImageScaler.getScaledImage(RImg.TREE_FOLDER.getImageIcon(), 16, 16);
 					/*
 					 * UIDefaults defaults = UIManager.getDefaults( ); Icon
 					 * computerIcon = defaults.getIcon( "FileView.computerIcon"
@@ -550,14 +552,14 @@ public class Resources extends AbstractTabbedPanel {
 					 * icon = folderIcon;
 					 */
 				} else if (".xml".equals(suffix)) {
-					tempImage = ImageScaler.getScaledImage(Resource.IMG_RESOURCE_TREE_XML.getImageIcon(), 16, 16);
+					tempImage = ImageScaler.getScaledImage(RImg.RESOURCE_TREE_XML.getImageIcon(), 16, 16);
 					// } else if(".qmg".equals(suffix)) {
 					// tempImage =
-					// ImageScaler.getScaledImage(Resource.IMG_QMG_IMAGE_ICON.getImageIcon(),32,32);
+					// ImageScaler.getScaledImage(RImg.QMG_IMAGE_ICON.getImageIcon(),32,32);
 				} else if (".dex".equals(suffix)) {
-					icon = Resource.IMG_RESOURCE_TREE_CODE.getImageIcon();
+					icon = RImg.RESOURCE_TREE_CODE.getImageIcon();
 				} else if (".arsc".equals(suffix)) {
-					icon = Resource.IMG_RESOURCE_TREE_ARSC.getImageIcon();
+					icon = RImg.RESOURCE_TREE_ARSC.getImageIcon();
 				} else {
 					try {
 						File file = File.createTempFile("icon", suffix);
@@ -847,23 +849,26 @@ public class Resources extends AbstractTabbedPanel {
 
 		if (resObj.path.toLowerCase().endsWith(".dex")) {
 			int actionType = 0;
-			String data = (String)Resource.PROP_DEFAULT_DECORDER.getData();
-			if(Resource.STR_DECORDER_JD_GUI.equals(data)) {
-				actionType = 1;
-			} else if(Resource.STR_DECORDER_JADX_GUI.equals(data)) {
-				actionType = 2;
-			} else if(Resource.STR_DECORDER_BYTECOD.equals(data)) {
-				actionType = 3;
-			} else {
-				Log.e(data);
+			String data = RProp.S.DEFAULT_DECORDER.get();
+			Log.v("PROP_DEFAULT_DECORDER : " + data);
+			if(data.matches(".*!.*#.*@.*")) {
 				IPlugIn plugin = PlugInManager.getPlugInByActionCommand(data);
 				if(plugin != null
 						&& plugin instanceof IExternalTool
 						&& ((IExternalTool)plugin).isDecorderTool() ) {
 					((IExternalTool)plugin).launch(resPath);
 				} else {
-					actionType = 1;
+					data = (String) RProp.DEFAULT_DECORDER.getDefaultValue();
 				}
+			}
+			if(RConst.STR_DECORDER_JD_GUI.equals(data)) {
+				actionType = 1;
+			} else if(RConst.STR_DECORDER_JADX_GUI.equals(data)) {
+				actionType = 2;
+			} else if(RConst.STR_DECORDER_BYTECOD.equals(data)) {
+				actionType = 3;
+			} else {
+				actionType = 2;
 				return;
 			}
 
@@ -1078,8 +1083,8 @@ public class Resources extends AbstractTabbedPanel {
 			}
 		});
 
-		findicon = new JButton(Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_FIND.getImageIcon(16, 16));
-		refreshicon = new JButton(Resource.IMG_RESOURCE_TREE_TOOLBAR_REFRESH.getImageIcon(16, 16));
+		findicon = new JButton(RImg.RESOURCE_TEXTVIEWER_TOOLBAR_FIND.getImageIcon(16, 16));
+		refreshicon = new JButton(RImg.RESOURCE_TREE_TOOLBAR_REFRESH.getImageIcon(16, 16));
 
 		findicon.setPreferredSize(new Dimension(22, 22));
 		refreshicon.setPreferredSize(new Dimension(22, 22));
@@ -1174,6 +1179,8 @@ public class Resources extends AbstractTabbedPanel {
 		if (tree == null)
 			initialize();
 
+		if(apkInfo.resources == null) return;
+
 		this.apkFilePath = apkInfo.filePath;
 		this.tempWorkPath = apkInfo.tempWorkPath;
 
@@ -1208,7 +1215,7 @@ public class Resources extends AbstractTabbedPanel {
 
 	@Override
 	public void reloadResource() {
-		setName(Resource.STR_TAB_RESOURCES.getString());
-		setToolTipText(Resource.STR_TAB_RESOURCES.getString());
+		setName(RStr.TAB_RESOURCES.get());
+		setToolTipText(RStr.TAB_RESOURCES.get());
 	}
 }

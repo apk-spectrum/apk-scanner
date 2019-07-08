@@ -21,7 +21,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 
 public class EasyToolbarCertDlg extends JDialog {
@@ -35,7 +35,7 @@ public class EasyToolbarCertDlg extends JDialog {
 	private String apkFilePath;
 
 	public EasyToolbarCertDlg(Frame frame, boolean modal, ApkInfo apkInfo) {
-		super(frame, Resource.STR_TAB_SIGNATURES.getString(), modal);
+		super(frame, RStr.TAB_SIGNATURES.get(), modal);
 		this.setSize(500, 500);
 		// this.setPreferredSize(new Dimension(500, 500));
 		this.setLocationRelativeTo(frame);
@@ -180,13 +180,13 @@ public class EasyToolbarCertDlg extends JDialog {
 		if (mCertList.length > 1) {
 			listSize++;
 			labels = new String[listSize];
-			labels[0] = Resource.STR_CERT_SUMMURY.getString();
+			labels[0] = RStr.CERT_SUMMURY.get();
 			for (; i <= mCertList.length; i++) {
-				labels[i] = Resource.STR_CERT_CERTIFICATE.getString() + "[" + i + "]";
+				labels[i] = RStr.CERT_CERTIFICATE.get() + "[" + i + "]";
 			}
 		} else if (mCertList.length == 1) {
 			labels = new String[listSize];
-			labels[0] = Resource.STR_CERT_CERTIFICATE.getString() + "[1]";
+			labels[0] = RStr.CERT_CERTIFICATE.get() + "[1]";
 		} else {
 			labels = new String[listSize];
 		}

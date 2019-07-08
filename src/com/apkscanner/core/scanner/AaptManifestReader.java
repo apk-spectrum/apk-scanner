@@ -28,7 +28,7 @@ import com.apkscanner.data.apkinfo.UsesLibraryInfo;
 import com.apkscanner.data.apkinfo.UsesPermissionInfo;
 import com.apkscanner.data.apkinfo.UsesPermissionSdk23Info;
 import com.apkscanner.data.apkinfo.WidgetInfo;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AaptXmlTreeNode;
 import com.apkscanner.tool.aapt.AaptXmlTreePath;
@@ -420,7 +420,7 @@ public class AaptManifestReader
 				for(ResourceInfo r: iconPaths) {
 					if(r.name != null) {
 						if(r.name.endsWith("qmg")) {
-							r.name = Resource.IMG_QMG_IMAGE_ICON.getPath();
+							r.name = RImg.QMG_IMAGE_ICON.getPath();
 						} else {
 							r.name = jarPath + r.name;
 						}

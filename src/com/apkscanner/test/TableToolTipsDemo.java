@@ -99,15 +99,15 @@ public class TableToolTipsDemo extends JPanel {
                                         "Vegetarian"};
         private Object[][] data = {
         {"Kathy", "Smith",
-         "Snowboarding", new Integer(5), new Boolean(false)},
+         "Snowboarding", Integer.valueOf(5), Boolean.FALSE},
         {"John", "Doe",
-         "Rowing", new Integer(3), new Boolean(true)},
+         "Rowing", Integer.valueOf(3), Boolean.TRUE},
         {"Sue", "Black",
-         "Knitting", new Integer(2), new Boolean(false)},
+         "Knitting", Integer.valueOf(2), Boolean.FALSE},
         {"Jane", "White",
-         "Speed reading", new Integer(20), new Boolean(true)},
+         "Speed reading", Integer.valueOf(20), Boolean.TRUE},
         {"Joe", "Brown",
-         "Pool", new Integer(10), new Boolean(false)}
+         "Pool", Integer.valueOf(10), Boolean.FALSE}
         };
  
         public int getColumnCount() {

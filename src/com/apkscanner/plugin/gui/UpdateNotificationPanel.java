@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -29,7 +28,7 @@ import com.apkscanner.plugin.IUpdateChecker;
 import com.apkscanner.plugin.NetworkException;
 import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.plugin.PlugInPackage;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 
 public class UpdateNotificationPanel extends JPanel implements ListSelectionListener, ActionListener
@@ -49,14 +48,14 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setBorder(new EmptyBorder(5,5,5,5));
 
-		add(new JLabel(Resource.STR_LABEL_UPDATE_LIST.getString()));
+		add(new JLabel(RStr.LABEL_UPDATE_LIST.get()));
 
 		updateListModel = new DefaultTableModel(new String[] {
-				Resource.STR_COLUMN_NAME.getString(),
-				Resource.STR_COLUMN_PACKAGE.getString(),
-				Resource.STR_COLUMN_THIS_VERSION.getString(),
-				Resource.STR_COLUMN_NEW_VERSION.getString(),
-				Resource.STR_COLUMN_LAST_CHECKED_DATE.getString() }, 0) {
+				RStr.COLUMN_NAME.get(),
+				RStr.COLUMN_PACKAGE.get(),
+				RStr.COLUMN_THIS_VERSION.get(),
+				RStr.COLUMN_NEW_VERSION.get(),
+				RStr.COLUMN_LAST_CHECKED_DATE.get() }, 0) {
 			private static final long serialVersionUID = 3925202106037646345L;
 			private ArrayList<Object[]> dataList = new ArrayList<>();
 
@@ -92,7 +91,7 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 		certListPanel.setAlignmentX(0.0f);
 		add(certListPanel);
 
-		add(new JLabel(Resource.STR_LABEL_DESCRIPTION.getString()));
+		add(new JLabel(RStr.LABEL_DESCRIPTION.get()));
 
 		updateDescription = new JTextArea();
 		updateDescription.setEditable(false);
@@ -102,12 +101,12 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 
 		add(updateDescPanel);
 
-		btnLaunch = new JButton(Resource.STR_BTN_CHOOSE_UPDATE.getString());
+		btnLaunch = new JButton(RStr.BTN_CHOOSE_UPDATE.get());
 		btnLaunch.setActionCommand(ACT_CMD_LAUNCH);
 		btnLaunch.addActionListener(this);
 		btnLaunch.setEnabled(false);
 
-		btnCheckUpdate = new JButton(Resource.STR_BTN_CHECK_UPDATE.getString());
+		btnCheckUpdate = new JButton(RStr.BTN_CHECK_UPDATE.get());
 		btnCheckUpdate.setActionCommand(ACT_CMD_CHECK_UPDATE);
 		btnCheckUpdate.addActionListener(this);
 		btnCheckUpdate.setEnabled(false);
@@ -140,8 +139,8 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 		String curVer = "";
 
 		if("com.apkscanner".equals(target)) {
-			label = Resource.STR_APP_NAME.getString();
-			curVer = Resource.STR_APP_VERSION.getString();
+			label = RStr.APP_NAME.get();
+			curVer = RStr.APP_VERSION.get();
 		} else {
 			PlugInPackage pack = PlugInManager.getPlugInPackage(target);
 			label = pack.getLabel();
@@ -165,7 +164,7 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 			Log.v(rawData.toString());
 		}
 		if(desc == null) {
-			desc = Resource.STR_MSG_NO_UPDATE_INFO.getString();
+			desc = RStr.MSG_NO_UPDATE_INFO.get();
 		}
 
 		String checkDate = "";
@@ -183,6 +182,10 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 			if(data == null) continue;
 			updateListModel.addRow(data);
 		}
+		int row = updateList.getSelectedRow();
+		if(row < 0) {
+			updateList.addRowSelectionInterval(0, 0);
+		}
 	}
 
 	public void updatePluginState(final IUpdateChecker plugin) {
@@ -192,27 +195,31 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 			if(plugin.equals(updateListModel.getValueAt(i, 6))) {
 				Object[] data = makeRowObject(plugin);
 				if(data == null) continue;
+				boolean selected = updateList.isRowSelected(i);
 				updateListModel.removeRow(i);
 				updateListModel.insertRow(i, makeRowObject(plugin));
 				updateListModel.fireTableDataChanged();
+				if(selected) {
+					updateList.addRowSelectionInterval(i, i);
+				}
 				break;
 			}
 		}
 	}
 
 	public void checkUpdate(final IUpdateChecker plugin) {
-        new SwingWorker<Boolean, Void>() {
+        new SwingWorker<Void, Void>() {
 			@Override
-			protected Boolean doInBackground() throws Exception {
+			protected Void doInBackground() throws Exception {
 				try {
-					return plugin.checkNewVersion();
+					plugin.checkNewVersion();
 				} catch (NetworkException e) {
 					publish();
 					if(e.isNetworkNotFoundException()) {
 						Log.d("isNetworkNotFoundException");
 					}
 				}
-				return false;
+				return null;
 			}
 
 			@Override
@@ -229,17 +236,8 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 
 			@Override
 			protected void done() {
-				Boolean result = false;
-				try {
-					result = get();
-				} catch (InterruptedException | ExecutionException e) {
-					e.printStackTrace();
-				}
-
 				updatePluginState(plugin);
-				if(result) {
-					PlugInManager.saveProperty();
-				}
+				PlugInManager.saveProperty();
 			}
 		}.execute();
 	}
@@ -255,24 +253,33 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 			if(plugin.hasNewVersion()) {
 				switch(plugin.getLaunchType()) {
 				case IUpdateChecker.TYPE_LAUNCH_OPEN_LINK:
-					btnLaunch.setText(Resource.STR_BTN_GO_TO_WEBSITE.getString());
+					btnLaunch.setText(RStr.BTN_GO_TO_WEBSITE.get());
 					break;
 				case IUpdateChecker.TYPE_LAUNCH_DIRECT_UPDATE:
-					btnLaunch.setText(Resource.STR_BTN_UPDATE.getString());
+					btnLaunch.setText(RStr.BTN_UPDATE.get());
 					break;
 				case IUpdateChecker.TYPE_LAUNCH_DOWNLOAD:
-					btnLaunch.setText(Resource.STR_BTN_DOWNLOAD.getString());
+					btnLaunch.setText(RStr.BTN_DOWNLOAD.get());
 					break;
 				}
 				btnLaunch.setEnabled(true);
 			} else {
-				btnLaunch.setText(Resource.STR_BTN_NO_UPDATED.getString());
-				btnLaunch.setEnabled(false);
+				switch(plugin.getLaunchType()) {
+				case IUpdateChecker.TYPE_LAUNCH_OPEN_LINK:
+					btnLaunch.setText(RStr.BTN_GO_TO_WEBSITE.get());
+					btnLaunch.setEnabled(true);
+					break;
+				case IUpdateChecker.TYPE_LAUNCH_DIRECT_UPDATE:
+				case IUpdateChecker.TYPE_LAUNCH_DOWNLOAD:
+					btnLaunch.setText(RStr.BTN_NO_UPDATED.get());
+					btnLaunch.setEnabled(false);
+					break;
+				}
 			}
 			btnCheckUpdate.setEnabled(true);
 		} else {
 			updateDescription.setText("");
-			btnLaunch.setText(Resource.STR_BTN_CHOOSE_UPDATE.getString());
+			btnLaunch.setText(RStr.BTN_CHOOSE_UPDATE.get());
 			btnLaunch.setEnabled(false);
 			btnCheckUpdate.setEnabled(false);
 		}
@@ -291,7 +298,7 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 				IUpdateChecker plugin = (IUpdateChecker)updateListModel.getValueAt(row, 6);
 				plugin.launch();
 			}
-			updateList.clearSelection();
+			//updateList.clearSelection();
 			break;
 		case ACT_CMD_CHECK_UPDATE:
 			row = updateList.getSelectedRow();

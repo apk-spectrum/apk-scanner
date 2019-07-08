@@ -2,7 +2,7 @@ package com.apkscanner.tool.external;
 
 import java.io.File;
 
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RFile;
 import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
@@ -40,10 +40,10 @@ public class Dex2JarWrapper
 
 				Log.i("Start DEX2JAR");
 				if(SystemUtil.isWindows()) {
-					cmdLog = ConsolCmd.exc(new String[] {Resource.BIN_DEX2JAR.getPath(), 
+					cmdLog = ConsolCmd.exc(new String[] {RFile.BIN_DEX2JAR.get(), 
 							dexFilePath, "-o", toJarFilePath});
 				} else if(SystemUtil.isLinux()) {
-					cmdLog = ConsolCmd.exc(new String[] {"sh", Resource.BIN_DEX2JAR.getPath(), 
+					cmdLog = ConsolCmd.exc(new String[] {"sh", RFile.BIN_DEX2JAR.get(), 
 							dexFilePath, "-o", toJarFilePath});				
 				} else {
 					Log.e("Unknown OS : " + SystemUtil.OS);

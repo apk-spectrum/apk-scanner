@@ -3,6 +3,7 @@ package com.apkscanner.gui.easymode.test;
 import java.awt.*;
 import javax.swing.*;
 
+@SuppressWarnings("serial")
 public class DisplayDifferentFonts extends JComponent {
    String[] differentFonts;
    Font[] font;

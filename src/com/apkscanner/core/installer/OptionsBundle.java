@@ -2,7 +2,7 @@ package com.apkscanner.core.installer;
 
 import java.util.ArrayList;
 
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RProp;
 import com.apkscanner.util.Log;
 
 public class OptionsBundle {
@@ -260,7 +260,7 @@ public class OptionsBundle {
 
 	public synchronized void clear() {
 		flag = FLAG_OPT_INSTALL | FLAG_OPT_INSTALL_REPLACE | FLAG_OPT_INSTALL_DOWNGRADE;
-		if((boolean)Resource.PROP_LAUNCH_AF_INSTALLED.getData()) {
+		if(RProp.B.LAUNCH_AF_INSTALLED.get()) {
 			flag |= FLAG_OPT_INSTALL_LAUNCH;
 		}
 

@@ -8,6 +8,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -17,16 +18,36 @@ import org.json.simple.parser.JSONParser;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.plugin.manifest.InvalidManifestException;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RFile;
 import com.apkscanner.util.Log;
 
 public final class PlugInManager
 {
-	private static ArrayList<PlugInPackage> pluginPackages = new ArrayList<>();
+	private static List<PlugInPackage> pluginPackages = new ArrayList<>();
 	private static ApkInfo apkinfo = null;
 	private static String lang = "";
 
+	private static List<IPlugInEventListener> eventListeners = new ArrayList<>();
+	private static final Object sLock = eventListeners;
+
 	private PlugInManager() { }
+
+	public static void addPlugInEventListener(IPlugInEventListener listener) {
+		synchronized (sLock) {
+			if (!eventListeners.contains(listener)) {
+				eventListeners.add(listener);
+			}
+			if(!pluginPackages.isEmpty()) {
+				listener.onPluginLoaded();
+			}
+		}
+	}
+
+	public static void removePlugInEventListener(IPlugInEventListener listener) {
+		synchronized (sLock) {
+			eventListeners.remove(listener);
+		}
+	}
 
 	public static PlugInPackage getPlugInPackage(String packageName) {
 		if(packageName == null || packageName.trim().isEmpty()) return null;
@@ -156,47 +177,59 @@ public final class PlugInManager
 	}
 
 	public static void loadPlugIn() {
-		pluginPackages.clear();
+		synchronized (sLock) {
+			pluginPackages.clear();
 
-		File pluginFolder = new File(Resource.PLUGIN_PATH.getPath());
-		if(!pluginFolder.isDirectory()) {
-			Log.v("No such plugins: " + Resource.PLUGIN_PATH.getPath());
-			return;
-		}
-
-		File[] pluginFiles = pluginFolder.listFiles(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.endsWith(".xml") || name.endsWith(".jar");
+			File pluginFolder = new File(RFile.PLUGIN_PATH.get());
+			if(!pluginFolder.isDirectory()) {
+				Log.v("No such plugins: " + RFile.PLUGIN_PATH.get());
+				return;
 			}
-		});
 
-		for(File pluginFile: pluginFiles) {
-			PlugInPackage pack = null;
-			try {
-				pack = new PlugInPackage(pluginFile);
-			} catch (InvalidManifestException e) {
-				e.printStackTrace();
-			}
-			if(pack != null) {
-				String packageName = pack.getPackageName();
-				PlugInPackage oldPack = getPlugInPackage(packageName);
-				if(oldPack != null) {
-					Log.i(packageName + " was already existed a same package : " + oldPack.getPlugInUri());
-					if(oldPack.getVersionCode() < pack.getVersionCode()) {
-						Log.i("This is new version, so remove old version " + oldPack.getPlugInUri());
-						pluginPackages.remove(oldPack);
-						pluginPackages.add(pack);
+			File[] pluginFiles = pluginFolder.listFiles(new FilenameFilter() {
+				@Override
+				public boolean accept(File dir, String name) {
+					return name.endsWith(".xml") || name.endsWith(".jar");
+				}
+			});
+
+			for(File pluginFile: pluginFiles) {
+				PlugInPackage pack = null;
+				try {
+					pack = new PlugInPackage(pluginFile);
+				} catch (InvalidManifestException e) {
+					e.printStackTrace();
+				}
+				if(pack != null) {
+					String packageName = pack.getPackageName();
+					PlugInPackage oldPack = getPlugInPackage(packageName);
+					if(oldPack != null) {
+						Log.i(packageName + " was already existed a same package : " + oldPack.getPlugInUri());
+						if(oldPack.getVersionCode() < pack.getVersionCode()) {
+							Log.i("This is new version, so remove old version " + oldPack.getPlugInUri());
+							pluginPackages.remove(oldPack);
+							pluginPackages.add(pack);
+						} else {
+							Log.i("This is old version or same, so do not add package : " + pack.getPlugInUri());
+						}
 					} else {
-						Log.i("This is old version or same, so do not add package : " + pack.getPlugInUri());
+						pluginPackages.add(pack);
 					}
-				} else {
-					pluginPackages.add(pack);
 				}
 			}
-		}
 
-		loadProperty();
+			loadProperty();
+
+			IPlugInEventListener[] listenersCopy = null;
+			synchronized (sLock) {
+				listenersCopy = eventListeners.toArray(
+						new IPlugInEventListener[eventListeners.size()]);
+			}
+
+			for (IPlugInEventListener listener : listenersCopy) {
+				listener.onPluginLoaded();
+			}
+		}
 	}
 
 	public static Map<String, Object> getChangedProperties() {
@@ -235,7 +268,7 @@ public final class PlugInManager
 
 	public static void loadProperty()
 	{
-		File file = new File(Resource.PLUGIN_CONF_PATH.getPath());
+		File file = new File(RFile.PLUGIN_CONF_PATH.get());
 		if(!file.exists() || file.length() == 0) return;
 		try(FileReader fileReader = new FileReader(file)) {
 			JSONParser parser = new JSONParser();
@@ -247,15 +280,15 @@ public final class PlugInManager
 
 	public static void saveProperty()
 	{
-		File file = new File(Resource.PLUGIN_CONF_PATH.getPath());
+		File file = new File(RFile.PLUGIN_CONF_PATH.get());
 		try {
 			if(!file.exists() && !file.createNewFile()) {
-				Log.w("Cann't create file : " + Resource.PLUGIN_CONF_PATH.getPath());
+				Log.w("Cann't create file : " + RFile.PLUGIN_CONF_PATH.get());
 			}
 		} catch (IOException e1) { }
 
 		if(!file.canWrite()) {
-			Log.v("Cann't write file : " + Resource.PLUGIN_CONF_PATH.getPath());
+			Log.v("Cann't write file : " + RFile.PLUGIN_CONF_PATH.get());
 			return;
 		}
 
@@ -264,7 +297,7 @@ public final class PlugInManager
 				.replaceAll("(\"[^\"]*\":(\"[^\"]*\")?([^\",]*)?,)", "$1\n");
 		//.replaceAll("(\"[^\"]*\":(\"[^\"]*\")?([^\",\\[]*(\\[[^\\]]\\])?)?,)", "$1\n");
 
-		try( FileWriter fw = new FileWriter(Resource.PLUGIN_CONF_PATH.getPath());
+		try( FileWriter fw = new FileWriter(RFile.PLUGIN_CONF_PATH.get());
 			 BufferedWriter writer = new BufferedWriter(fw) ) {
 			writer.write(transMultiLine);
 		} catch (IOException e) {

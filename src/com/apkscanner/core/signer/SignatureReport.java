@@ -31,7 +31,7 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Base64;
 import com.apkscanner.util.Log;
 
@@ -140,7 +140,7 @@ public class SignatureReport {
 		}
 		jf.close();
 		if (ss.isEmpty() && certificates == null) {
-			Log.w(Resource.STR_NOT_A_SINGED_JAR_FILE.getString());
+			Log.w(RStr.NOT_A_SINGED_JAR_FILE.get());
 		}
 		if(!certList.isEmpty()) {
 			certificates = certList.toArray(new X509Certificate[certList.size()]);
@@ -154,16 +154,16 @@ public class SignatureReport {
         if (DISABLED_CHECK.permits(SIG_PRIMITIVE_SET, alg, null)) {
             return alg;
         } else {
-            return String.format(Resource.STR_WITH_WEAK.getString(), alg);
+            return String.format(RStr.WITH_WEAK.get(), alg);
         }
     }
 
     private static String withWeak(PublicKey key) {
         if (DISABLED_CHECK.permits(SIG_PRIMITIVE_SET, key)) {
-            return String.format(Resource.STR_KEY_BIT.getString(),
+            return String.format(RStr.KEY_BIT.get(),
                     KeyUtil.getKeySize(key), key.getAlgorithm());
         } else {
-            return String.format(Resource.STR_KEY_BIT_WEAK.getString(),
+            return String.format(RStr.KEY_BIT_WEAK.get(),
                     KeyUtil.getKeySize(key), key.getAlgorithm());
         }
     }
@@ -177,7 +177,7 @@ public class SignatureReport {
 		String pattern = null;
 		Object[] source = null;
 
-		pattern = Resource.STR_PATTERN_PRINT_X509_CERT.getString();
+		pattern = RStr.PATTERN_PRINT_X509_CERT.get();
         PublicKey pkey = cert.getPublicKey();
         String sigName = cert.getSigAlgName();
         // No need to warn about sigalg of a trust anchor
@@ -208,7 +208,7 @@ public class SignatureReport {
 			CertificateExtensions exts = (CertificateExtensions)
 					certInfo.get(X509CertInfo.EXTENSIONS);
 			if (exts != null) {
-				printExtensions(Resource.STR_EXTENSIONS.getString(), exts, out);
+				printExtensions(RStr.EXTENSIONS.get(), exts, out);
 			}
 		}
 	}
@@ -229,7 +229,7 @@ public class SignatureReport {
 			if (ext.getClass() == Extension.class) {
 				byte[] v = ext.getExtensionValue();
 				if (v.length == 0) {
-					out.println(Resource.STR_EMPTY_VALUE.getString());
+					out.println(RStr.EMPTY_VALUE.get());
 				} else {
 					printHexDump(ext.getExtensionValue(), out);
 					out.println();
@@ -441,7 +441,7 @@ public class SignatureReport {
 		}
 		if(timestamp != null) {
 			sb.append("\n");
-			sb.append(Resource.STR_TIMESTAMP.getString());
+			sb.append(RStr.TIMESTAMP.get());
 			sb.append("\n");
 			for(X509Certificate cert: timestamp) {
 				sb.append(getReport(cert));

@@ -1,16 +1,19 @@
 package com.apkscanner.gui.easymode.test;
 
-import java.util.*;
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.datatransfer.*;
-import java.awt.dnd.*;
-import javax.swing.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JComponent;
+import javax.swing.JList;
+import javax.swing.TransferHandler;
 
 import com.apkscanner.util.Log;
 
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial", "rawtypes", "unchecked"})
 public class ReportingListTransferHandler extends TransferHandler {
     DataFlavor localArrayListFlavor, serialArrayListFlavor;
     String localArrayListType = DataFlavor.javaJVMLocalObjectMimeType +
@@ -152,7 +155,8 @@ public class ReportingListTransferHandler extends TransferHandler {
         return false;
     }
 
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     protected Transferable createTransferable(JComponent c) {
         if (c instanceof JList) {
             source = (JList)c;
@@ -185,10 +189,8 @@ public class ReportingListTransferHandler extends TransferHandler {
     }
 
     public class ReportingListTransferable implements Transferable {
-        @SuppressWarnings("unchecked")
 		ArrayList data;
 
-        @SuppressWarnings("unchecked")
 		public ReportingListTransferable(ArrayList alist) {
             data = alist;
         }

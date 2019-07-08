@@ -2,7 +2,11 @@ package com.apkscanner.plugin;
 
 import java.util.Map;
 
-public interface IUpdateChecker extends IPlugIn {
+public interface IUpdateChecker extends IPlugIn
+{
+	public static final String PERIOD_PROPERTY = "period";
+	public static final String LAST_UPDATE_CHECKED_PROPERTY = "lastUpdateDate";
+
 	public static final int TYPE_LAUNCH_OPEN_LINK = 0;
 	public static final int TYPE_LAUNCH_DIRECT_UPDATE = 1;
 	public static final int TYPE_LAUNCH_DOWNLOAD = 2;

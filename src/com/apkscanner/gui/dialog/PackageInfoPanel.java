@@ -27,6 +27,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.SwingWorker;
+import javax.swing.UIManager;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -40,18 +41,22 @@ import com.apkscanner.core.signer.Signature;
 import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ComponentInfo;
+import com.apkscanner.gui.component.ApkFileChooser;
+import com.apkscanner.gui.component.HtmlEditorPane;
+import com.apkscanner.gui.component.HtmlEditorPane.HyperlinkClickEvent;
+import com.apkscanner.gui.component.HtmlEditorPane.HyperlinkClickListener;
+import com.apkscanner.gui.component.WindowSizeMemorizer;
+import com.apkscanner.gui.component.tabbedpane.TabbedPaneUIManager;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
-import com.apkscanner.gui.theme.TabbedPaneUIManager;
-import com.apkscanner.gui.util.ApkFileChooser;
-import com.apkscanner.gui.util.JHtmlEditorPane;
-import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickEvent;
-import com.apkscanner.gui.util.JHtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.plugin.IPackageSearcher;
 import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.PlugInManager;
-import com.apkscanner.gui.util.WindowSizeMemorizer;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RConst;
+import com.apkscanner.resource.RFile;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RProp;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.tool.adb.AdbDeviceHelper;
 import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
@@ -76,8 +81,8 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 
 	private JToolBar toolBar;
 	private JTabbedPane tabbedPane;
-	private JHtmlEditorPane infoPanel;
-	private JHtmlEditorPane sysPackInfoPanel;
+	private HtmlEditorPane infoPanel;
+	private HtmlEditorPane sysPackInfoPanel;
 	private JTextArea dumpsysTextArea;
 	private JTextArea signatureTextArea;
 	private JTextField txtApkPath;
@@ -97,29 +102,29 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		JSeparator separator = new JSeparator(JSeparator.VERTICAL);
 		separator.setPreferredSize(new Dimension(1,30));
 
-		toolBar.add(getToolbarButton(null, Resource.IMG_APP_ICON.getImageIcon(24, 24), Resource.STR_LABEL_OPEN_WITH_SCANNER.getString(), ACT_CMD_OPEN_PACKAGE));
-		toolBar.add(getToolbarButton(null, Resource.IMG_RESOURCE_TEXTVIEWER_TOOLBAR_SAVE.getImageIcon(24, 24), Resource.STR_LABEL_SAVE_AS.getString(), ACT_CMD_SAVE_PACKAGE));
+		toolBar.add(getToolbarButton(null, RImg.APP_ICON.getImageIcon(24, 24), RStr.LABEL_OPEN_WITH_SCANNER.get(), ACT_CMD_OPEN_PACKAGE));
+		toolBar.add(getToolbarButton(null, RImg.RESOURCE_TEXTVIEWER_TOOLBAR_SAVE.getImageIcon(24, 24), RStr.LABEL_SAVE_AS.get(), ACT_CMD_SAVE_PACKAGE));
 
 		toolBar.add(separator);
 
-		toolBar.add(getToolbarButton(null, Resource.IMG_TOOLBAR_LAUNCH.getImageIcon(24, 24), Resource.STR_BTN_LAUNCH_LAB.getString(), ACT_CMD_LAUCH_PACKAGE));
-		toolBar.add(getToolbarButton(null, Resource.IMG_TOOLBAR_UNINSTALL.getImageIcon(24, 24), Resource.STR_BTN_REMOVE.getString(), ACT_CMD_UNINSTALL_PACKAGE));
-		toolBar.add(getToolbarButton(null, Resource.IMG_TOOLBAR_CLEAR.getImageIcon(24, 24), Resource.STR_MENU_CLEAR_DATA.getString(), ACT_CMD_CLEAR_DATA));
+		toolBar.add(getToolbarButton(null, RImg.TOOLBAR_LAUNCH.getImageIcon(24, 24), RStr.BTN_LAUNCH_LAB.get(), ACT_CMD_LAUCH_PACKAGE));
+		toolBar.add(getToolbarButton(null, RImg.TOOLBAR_UNINSTALL.getImageIcon(24, 24), RStr.BTN_REMOVE.get(), ACT_CMD_UNINSTALL_PACKAGE));
+		toolBar.add(getToolbarButton(null, RImg.TOOLBAR_CLEAR.getImageIcon(24, 24), RStr.MENU_CLEAR_DATA.get(), ACT_CMD_CLEAR_DATA));
 
 		add(toolBar, BorderLayout.NORTH);
 
-		String tabbedStyle = (String) Resource.PROP_TABBED_UI_THEME.getData();
+		String tabbedStyle = RProp.S.TABBED_UI_THEME.get();
 		tabbedPane = new JTabbedPane();
 		TabbedPaneUIManager.setUI(tabbedPane, tabbedStyle);
 		tabbedPane.addChangeListener(this);
 
-		infoPanel = new JHtmlEditorPane();
+		infoPanel = new HtmlEditorPane();
 		infoPanel.setEditable(false);
 		infoPanel.setOpaque(true);
 		infoPanel.setBackground(Color.white);
 		infoPanel.addHyperlinkClickListener(this);
 
-		sysPackInfoPanel = new JHtmlEditorPane();
+		sysPackInfoPanel = new HtmlEditorPane();
 		sysPackInfoPanel.setEditable(false);
 		sysPackInfoPanel.setOpaque(true);
 		sysPackInfoPanel.setBackground(Color.white);
@@ -143,7 +148,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 	public PackageInfoPanel(ActionListener listener) {
 		this();
 
-		JButton button = new JButton("< " + Resource.STR_BTN_BACK.getString()) {
+		JButton button = new JButton("< " + RStr.BTN_BACK.get()) {
 			private static final long serialVersionUID = -6181050840596487317L;
 			@Override
 			public Dimension getPreferredSize() {
@@ -153,7 +158,9 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 			}
 		};
 		button.addActionListener(listener);
-		button.setBorderPainted(false);
+		if(!"Windows".equals(UIManager.getLookAndFeel().getName())) {
+			button.setBorderPainted(false);
+		}
 		button.setOpaque(false);
 		button.setFocusable(false);
 		button.setActionCommand(ACT_CMD_BACK);
@@ -171,7 +178,9 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		JButton button = new JButton(icon);
 		button.setToolTipText(tooltip);
 		button.addActionListener(this);
-		button.setBorderPainted(false);
+		if(!"Windows".equals(UIManager.getLookAndFeel().getName())) {
+			button.setBorderPainted(false);
+		}
 		button.setOpaque(false);
 		button.setFocusable(false);
 		button.setActionCommand(actCommand);
@@ -211,18 +220,18 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 
 	private void alignTabbedPanel(boolean hasSysPackPanel) {
 		tabbedPane.removeAll();
-		tabbedPane.addTab(Resource.STR_TAB_PACAKGE_INFO.getString(), null, infoPanel, null);
+		tabbedPane.addTab(RStr.TAB_PACAKGE_INFO.get(), null, infoPanel, null);
 		if(hasSysPackPanel) {
-			tabbedPane.addTab(Resource.STR_TAB_SYS_PACAKGE_INFO.getString(), null, sysPackInfoPanel, null);
+			tabbedPane.addTab(RStr.TAB_SYS_PACAKGE_INFO.get(), null, sysPackInfoPanel, null);
 		}
-		tabbedPane.addTab(Resource.STR_TAB_DUMPSYS.getString(), null, new JScrollPane(dumpsysTextArea), null);
-		tabbedPane.addTab(Resource.STR_TAB_SIGNATURES.getString(), null, new JScrollPane(signatureTextArea), null);
+		tabbedPane.addTab(RStr.TAB_DUMPSYS.get(), null, new JScrollPane(dumpsysTextArea), null);
+		tabbedPane.addTab(RStr.TAB_SIGNATURES.get(), null, new JScrollPane(signatureTextArea), null);
 	}
 
 	private void setPacakgeData(PackageInfo info, boolean isSystemPackage)
 	{
-		JHtmlEditorPane panel = !isSystemPackage ? infoPanel : sysPackInfoPanel;
-		panel.setText(Resource.RAW_PACKAGE_INFO_LAYOUT_HTML.getString());
+		HtmlEditorPane panel = !isSystemPackage ? infoPanel : sysPackInfoPanel;
+		panel.setText(RFile.RAW_PACKAGE_INFO_LAYOUT_HTML.getString());
 
 		String infoBlock = !isSystemPackage ? "Packages" : "Hidden system packages";
 		String apkPath = !isSystemPackage ? info.getApkPath() : info.getHiddenSystemPackageValue("codePath");
@@ -242,11 +251,11 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		setPluginSearcher(panel);
 	}
 
-	private void setPackageName(JHtmlEditorPane panel, String packageName) {
+	private void setPackageName(HtmlEditorPane panel, String packageName) {
 		panel.setOuterHTMLById("package", packageName);
 	}
 
-	private void setVersion(JHtmlEditorPane panel, String versionName, String versionCode) {
+	private void setVersion(HtmlEditorPane panel, String versionName, String versionCode) {
 		if(versionName == null) versionName = "";
 		StringBuilder text = new StringBuilder("Ver. ").append(versionName)
 				.append(" / ").append((versionCode != null ? versionCode : "0"));
@@ -257,7 +266,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		panel.setInnerHTMLById("version", makeHyperEvent(panel, "app-version", text.toString(), versionDesc, versionDesc));
 	}
 
-	private void setSdkVersion(JHtmlEditorPane panel, String minSdkVersion, String targetSdkVersion, String maxSdkVersion) {
+	private void setSdkVersion(HtmlEditorPane panel, String minSdkVersion, String targetSdkVersion, String maxSdkVersion) {
 		StringBuilder sdkVersion = new StringBuilder();
 		if(minSdkVersion != null) {
 			sdkVersion.append(", ")
@@ -277,7 +286,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		panel.setOuterHTMLById("sdk-version", sdkVersion.substring(2));
 	}
 
-	private void setFileSize(JHtmlEditorPane panel, IDevice device, String apkPath) {
+	private void setFileSize(HtmlEditorPane panel, IDevice device, String apkPath) {
 		long apkSize = 0;
 		SimpleOutputReceiver outputReceiver = new SimpleOutputReceiver();
 		try {
@@ -305,8 +314,8 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		panel.setInnerHTMLById("file-size", makeHyperEvent(panel, "file-checksum", text, text, apkPath));
 	}
 
-	private void setFeatures(JHtmlEditorPane panel, PackageInfo info, boolean isSystemPackage) {
-		StringBuilder feature = new StringBuilder("[" + Resource.STR_FEATURE_LAB.getString() + "] ");
+	private void setFeatures(HtmlEditorPane panel, PackageInfo info, boolean isSystemPackage) {
+		StringBuilder feature = new StringBuilder("[" + RStr.FEATURE_LAB.get() + "] ");
 		String infoBlock = !isSystemPackage ? "Packages" : "Hidden system packages";
 
 		int state = -1;
@@ -316,24 +325,24 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		}
 		if(state < 0 || state > 1) {
 			feature.append("<font style=\"color:#ED7E31; font-weight:bold\">");
-			feature.append(makeHyperEvent(panel, "feature-disabled-pack", Resource.STR_FEATURE_DISABLED_PACK_LAB.getString(), Resource.STR_FEATURE_DISABLED_PACK_DESC.getString(), infoBlock));
+			feature.append(makeHyperEvent(panel, "feature-disabled-pack", RStr.FEATURE_DISABLED_PACK_LAB.get(), RStr.FEATURE_DISABLED_PACK_DESC.get(), infoBlock));
 			feature.append("</font>, ");
 		}
 
 		if(isSystemPackage) {
-			feature.append(makeHyperEvent(panel, "feature-hidden-pack", Resource.STR_FEATURE_HIDDEN_SYS_PACK_LAB.getString(), Resource.STR_FEATURE_HIDDEN_SYS_PACK_DESC.getString(), infoBlock));
+			feature.append(makeHyperEvent(panel, "feature-hidden-pack", RStr.FEATURE_HIDDEN_SYS_PACK_LAB.get(), RStr.FEATURE_HIDDEN_SYS_PACK_DESC.get(), infoBlock));
 		} else if(info.hasLauncher()) {
-			feature.append(makeHyperEvent(panel, "feature-launcher", Resource.STR_FEATURE_LAUNCHER_LAB.getString(), Resource.STR_FEATURE_LAUNCHER_DESC.getString(), infoBlock));
+			feature.append(makeHyperEvent(panel, "feature-launcher", RStr.FEATURE_LAUNCHER_LAB.get(), RStr.FEATURE_LAUNCHER_DESC.get(), infoBlock));
 		} else {
-			feature.append(makeHyperEvent(panel, "feature-hidden", Resource.STR_FEATURE_HIDDEN_LAB.getString(), Resource.STR_FEATURE_HIDDEN_DESC.getString(), infoBlock));
+			feature.append(makeHyperEvent(panel, "feature-hidden", RStr.FEATURE_HIDDEN_LAB.get(), RStr.FEATURE_HIDDEN_DESC.get(), infoBlock));
 		}
-		feature.append(", " + makeHyperEvent(panel, "feature-flags", Resource.STR_FEATURE_FLAG_LAB.getString(), Resource.STR_FEATURE_FLAG_DESC.getString(), infoBlock));
+		feature.append(", " + makeHyperEvent(panel, "feature-flags", RStr.FEATURE_FLAG_LAB.get(), RStr.FEATURE_FLAG_DESC.get(), infoBlock));
 
 		panel.setInnerHTMLById("features", feature.toString());
 	}
 
-	private void setInstaller(JHtmlEditorPane panel, String installer, String timestamp, String infoBlock) {
-		StringBuilder installerInfo = new StringBuilder("[" + Resource.STR_FEATURE_INSTALLER_LAB.getString() + "] ");
+	private void setInstaller(HtmlEditorPane panel, String installer, String timestamp, String infoBlock) {
+		StringBuilder installerInfo = new StringBuilder("[" + RStr.FEATURE_INSTALLER_LAB.get() + "] ");
 		if(installer == null || installer.isEmpty())
 			installer = "N/A";
 		installer += ", " + timestamp;
@@ -342,13 +351,13 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		panel.setInnerHTMLById("installer", installerInfo.toString());
 	}
 
-	private void setPluginSearcher(JHtmlEditorPane panel) {
+	private void setPluginSearcher(HtmlEditorPane panel) {
 		String packageSearchers = "";
 		//String appLabelSearchers = "";
-		if((boolean)Resource.PROP_VISIBLE_TO_BASIC.getData()) {
+		if(RProp.B.VISIBLE_TO_BASIC.get()) {
 			IPackageSearcher[] searchers = PlugInManager.getPackageSearchers();
 			if(searchers.length > 0) {
-				String defaultSearchIcon = Resource.IMG_TOOLBAR_SEARCH.getPath();
+				String defaultSearchIcon = RImg.TOOLBAR_SEARCH.getPath();
 				for(IPackageSearcher searcher: searchers) {
 					if(!searcher.isVisibleToBasic()) continue;
 					URL icon = searcher.getIconURL();
@@ -408,7 +417,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		dumpsysTextArea.setCaretPosition(0);
 	}
 
-	private String makeHyperEvent(JHtmlEditorPane panel, String id, String text, String title, Object userData) {
+	private String makeHyperEvent(HtmlEditorPane panel, String id, String text, String title, Object userData) {
 		String style = null;
 		if(id != null && (id.startsWith("PLUGIN:") || id.contains("-perm-setting"))) style = "color:white";
 		return panel.makeHyperLink("@event", text, title, id, style, userData);
@@ -495,9 +504,9 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 				{
 					String selectedActivity = null;
 					ComponentInfo[] activities = null;
-					int activityOpt = Resource.PROP_LAUNCH_ACTIVITY_OPTION.getInt();
-					if(!selectActivity && (activityOpt == Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY
-							|| activityOpt == Resource.INT_LAUNCH_ONLY_LAUNCHER_ACTIVITY)) {
+					int activityOpt = RProp.I.LAUNCH_ACTIVITY_OPTION.get();
+					if(!selectActivity && (activityOpt == RConst.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY
+							|| activityOpt == RConst.INT_LAUNCH_ONLY_LAUNCHER_ACTIVITY)) {
 						activities = packageInfo.getLauncherActivityList(false);
 					}
 
@@ -505,7 +514,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 						selectedActivity = activities[0].name;
 					} else {
 						activities = packageInfo.getLauncherActivityList(true);
-						if(!selectActivity && activityOpt == Resource.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY) {
+						if(!selectActivity && activityOpt == RConst.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY) {
 							if(activities != null && activities.length == 1) {
 								selectedActivity = activities[0].name;
 							}
@@ -518,7 +527,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 								items[i] = (isLauncher ? "[LAUNCHER]": (isMain ? "[MAIN]": "")) + " " + activities[i].name.replaceAll("^"+packageInfo.packageName, "");
 							}
 							String selected = (String)MessageBoxPane.showInputDialog(PackageInfoPanel.this, "Select Activity for " + device.getProperty(IDevice.PROP_DEVICE_MODEL),
-									Resource.STR_BTN_LAUNCH.getString(), MessageBoxPane.QUESTION_MESSAGE, null, items, items[0]);
+									RStr.BTN_LAUNCH.get(), MessageBoxPane.QUESTION_MESSAGE, null, items, items[0]);
 							if(selected == null) {
 								return;
 							}
@@ -556,7 +565,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 								MessageBoxPool.show(PackageInfoPanel.this, MessageBoxPool.MSG_FAILURE_LAUNCH_APP, errMsg);
 							}
 						});
-					} else if((boolean)Resource.PROP_TRY_UNLOCK_AF_LAUNCH.getData()) {
+					} else if(RProp.B.TRY_UNLOCK_AF_LAUNCH.get()) {
 						AdbDeviceHelper.tryDismissKeyguard(device);
 					}
 				}
@@ -675,7 +684,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 			break;
 		case "min-sdk-info": case "target-sdk-info": case "max-sdk-info":
 			int sdkVersion = Integer.parseInt((String)evt.getUserData());
-			SdkVersionInfoDlg sdkDlg = new SdkVersionInfoDlg(null, Resource.STR_SDK_INFO_FILE_PATH.getString(), sdkVersion);
+			SdkVersionInfoDlg sdkDlg = new SdkVersionInfoDlg(null, sdkVersion);
 			sdkDlg.setLocationRelativeTo(this);
 			sdkDlg.setVisible(true);
 			break;
@@ -702,10 +711,10 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		String temp;
 		switch(id) {
 		case "feature-hidden":
-			feature = Resource.STR_FEATURE_HIDDEN_DESC.getString();
+			feature = RStr.FEATURE_HIDDEN_DESC.get();
 			break;
 		case "feature-launcher":
-			feature = Resource.STR_FEATURE_LAUNCHER_DESC.getString();
+			feature = RStr.FEATURE_LAUNCHER_DESC.get();
 			break;
 		case "feature-flags":
 			sb = new StringBuilder();
@@ -783,20 +792,13 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		dialog = new JDialog(owner);
 
 		dialog.setTitle("Package Info");
-		dialog.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+		dialog.setIconImage(RImg.APP_ICON.getImage());
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		dialog.setResizable(true);
 		dialog.setModal(false);
 		dialog.setLayout(new BorderLayout());
 
-		Dimension minSize = new Dimension(500, 400);
-		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
-			WindowSizeMemorizer.resizeCompoent(dialog, minSize);
-		} else {
-			dialog.setSize(minSize);
-		}
-		//dialog.setMinimumSize(minSize);
-		WindowSizeMemorizer.registeComponent(dialog);
+		WindowSizeMemorizer.apply(dialog, new Dimension(500, 400));
 
 		dialog.setLocationRelativeTo(owner);
 

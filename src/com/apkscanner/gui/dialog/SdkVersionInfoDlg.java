@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -15,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -27,9 +27,12 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 
-import com.apkscanner.gui.util.ImagePanel;
-import com.apkscanner.gui.util.WindowSizeMemorizer;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.gui.component.ImagePanel;
+import com.apkscanner.gui.component.KeyStrokeAction;
+import com.apkscanner.gui.component.WindowSizeMemorizer;
+import com.apkscanner.resource.RFile;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.XmlPath;
 
@@ -43,38 +46,27 @@ public class SdkVersionInfoDlg extends JDialog {
 	JTextArea sdkInfoArea;
 
 	public SdkVersionInfoDlg(Window owner) {
-		this(owner, null);
+		this(owner, -1);
 	}
 
-	public SdkVersionInfoDlg(Window owner, String xmlPath) {
-		this(owner, xmlPath, -1);
-	}
-
-	public SdkVersionInfoDlg(Window owner, String xmlPath, int ver) {
+	public SdkVersionInfoDlg(Window owner, int ver) {
 		super(owner);
 		initialize(owner);
-		setSdkXml(xmlPath);
+		setSdkXml();
 		setSdkVersion(ver);
 	}
 
 	private void initialize(Window window)
 	{
 		setTitle("SDK Info");
-		setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+		setIconImage(RImg.APP_ICON.getImage());
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(true);
 		setLocationRelativeTo(window);
 		setModal(true);
 		setLayout(new GridBagLayout());
 
-		Dimension minSize = new Dimension(550, 270);
-		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
-			WindowSizeMemorizer.resizeCompoent(this, minSize);
-		} else {
-			setSize(minSize);
-		}
-		//setMinimumSize(minSize);
-		WindowSizeMemorizer.registeComponent(this);
+		WindowSizeMemorizer.apply(this, new Dimension(550, 270));
 
 		sdkLogoImg = new ImagePanel();
 		sdkInfoArea = new JTextArea();
@@ -104,7 +96,7 @@ public class SdkVersionInfoDlg extends JDialog {
 			}
 		});
 
-		JButton btnExit = new JButton(Resource.STR_BTN_OK.getString());
+		JButton btnExit = new JButton(RStr.BTN_OK.get());
 		btnExit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -112,7 +104,7 @@ public class SdkVersionInfoDlg extends JDialog {
 			}
 		});
 
-		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady) 
+		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady)
 		GridBagConstraints gridConst = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE,new Insets(10,10,0,10),0,0);
 
 		gridConst.fill = GridBagConstraints.HORIZONTAL;
@@ -139,25 +131,22 @@ public class SdkVersionInfoDlg extends JDialog {
 		gridConst.fill = GridBagConstraints.BOTH;
 		this.add(new JScrollPane(sdkInfoArea), gridConst);
 
-		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
-		getRootPane().getActionMap().put("ESCAPE", new AbstractAction() {
-			private static final long serialVersionUID = -8988954049940512230L;
-			public void actionPerformed(ActionEvent e) {
-				dispose();
+		KeyStrokeAction.registerKeyStrokeActions(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW, new KeyStroke[] {
+				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false)
+			}, new AbstractAction() {
+				private static final long serialVersionUID = -8988954049940512230L;
+				public void actionPerformed(ActionEvent e) {
+					dispose();
 			}
 		});
 	}
 
-	public void setSdkXml(String xmlPath) {
-		if(xmlPath == null) {
-			return;
-		}
-		try(InputStream xml = Resource.class.getResourceAsStream(xmlPath)) {
+	public void setSdkXml() {
+		try(InputStream xml = RFile.RAW_SDK_INFO_FILE.getResourceAsStream()) {
 			if(xml != null) sdkXmlPath = new XmlPath(xml);
 		} catch(IOException e) { }
 		if(sdkXmlPath == null) {
-			Log.w("Can not create XmlPath, xmlPath : " + xmlPath);
+			Log.w("Can not create XmlPath, xmlPath : " + RFile.RAW_SDK_INFO_FILE.getPath());
 			return;
 		}
 		int maxSdk = sdkXmlPath.getCount("/resources/sdk-info");
@@ -168,7 +157,7 @@ public class SdkVersionInfoDlg extends JDialog {
 	}
 
 	public void setSdkVersion(int sdkVer) {
-		ImageIcon logoIcon = null;
+		Image logo = null;
 		StringBuilder info = new StringBuilder();
 
 		if(sdkVer > 0) {
@@ -180,13 +169,13 @@ public class SdkVersionInfoDlg extends JDialog {
 				info.append("\n\nAPI Level " + sdkVer);
 				info.append("\nBuild.VERSION_CODES." + sdkInfo.getAttribute("versionCode"));
 
-				logoIcon = new ImageIcon(Resource.class.getResource(sdkInfo.getAttribute("icon")));
+				logo = RImg.getImage(sdkInfo.getAttribute("icon"));
 			} else {
 				info.append("API Level " + sdkVer);
 				info.append("\nUnknown verion.\n\nYou can look at the sdk info in the Android developer site\n");
 				info.append("http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels");
 
-				logoIcon = new ImageIcon(Resource.class.getResource("/icons/logo/base.png"));
+				logo = RImg.getImage("/icons/logo/base.png");
 			}
 		} else {
 			XmlPath list = sdkXmlPath.getNodeList("/resources/sdk-info");
@@ -201,12 +190,12 @@ public class SdkVersionInfoDlg extends JDialog {
 			}
 			info.append("\nhttp://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels");
 
-			logoIcon = new ImageIcon(Resource.class.getResource("/icons/logo/base.png"));
+			logo = RImg.getImage("/icons/logo/base.png");
 		}
 
 		sdkInfoArea.setText(info.toString());
 		sdkInfoArea.setCaretPosition(0);
-		sdkLogoImg.setImage(logoIcon.getImage());
+		sdkLogoImg.setImage(logo);
 		if((int)sdkVersions.getSelectedItem() != sdkVer) {
 			sdkVersions.setSelectedItem(sdkVer);
 		}

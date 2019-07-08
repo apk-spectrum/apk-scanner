@@ -6,19 +6,24 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 
-import com.apkscanner.gui.util.WindowSizeMemorizer;
+import com.apkscanner.gui.component.KeyStrokeAction;
+import com.apkscanner.gui.component.WindowSizeMemorizer;
 import com.apkscanner.plugin.IUpdateChecker;
 import com.apkscanner.plugin.PlugInConfig;
 import com.apkscanner.plugin.PlugInManager;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RStr;
 
 public class UpdateNotificationWindow extends JFrame implements ActionListener
 {
@@ -32,8 +37,8 @@ public class UpdateNotificationWindow extends JFrame implements ActionListener
 	private JCheckBox ckbNaver;
 
 	private UpdateNotificationWindow(Component parent) {
-		setTitle(Resource.STR_TITLE_UPDATE_LIST.getString());
-		setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
+		setTitle(RStr.TITLE_UPDATE_LIST.get());
+		setIconImage(RImg.APP_ICON.getImage());
 		setResizable(true);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -44,10 +49,10 @@ public class UpdateNotificationWindow extends JFrame implements ActionListener
 		ctrPanel.setLayout(ctrLayout);
 		ctrPanel.setBorder(new EmptyBorder(5,5,5,5));
 
-		ckbNaver = new JCheckBox(Resource.STR_LABEL_DO_NOT_LOOK_AGAIN.getString());
+		ckbNaver = new JCheckBox(RStr.LABEL_DO_NOT_LOOK_AGAIN.get());
 		ctrPanel.add(ckbNaver);
 
-		JButton btnClose = new JButton(Resource.STR_BTN_CLOSE.getString());
+		JButton btnClose = new JButton(RStr.BTN_CLOSE.get());
 		btnClose.setActionCommand(ACT_CMD_CLOSE);
 		btnClose.addActionListener(this);
 
@@ -68,11 +73,11 @@ public class UpdateNotificationWindow extends JFrame implements ActionListener
 		add(ctrPanel, BorderLayout.SOUTH);
 
 		pack();
-		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
-			WindowSizeMemorizer.resizeCompoent(this);
-		}
-		WindowSizeMemorizer.registeComponent(this);
+		WindowSizeMemorizer.apply(this);
 		setLocationRelativeTo(parent);
+
+		KeyStrokeAction.registerKeyStrokeAction(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW,
+				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), ACT_CMD_CLOSE, this);
 	}
 
 	public static void show(Component parent, IUpdateChecker[] list) {

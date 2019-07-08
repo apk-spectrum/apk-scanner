@@ -1,14 +1,37 @@
 package com.apkscanner.gui.easymode.test;
 
-import java.awt.*;
-import java.awt.datatransfer.*;
-import java.awt.dnd.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
-import javax.activation.*;
-import javax.swing.*;
-import javax.swing.text.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.EventQueue;
+import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DragSource;
+import java.awt.dnd.DragSourceDragEvent;
+import java.awt.dnd.DragSourceMotionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.activation.ActivationDataFlavor;
+import javax.activation.DataHandler;
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JWindow;
+import javax.swing.SwingUtilities;
+import javax.swing.TransferHandler;
+import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 
 public class DragTest3 {
 	public JComponent makeUI() {
@@ -56,6 +79,7 @@ public class DragTest3 {
 	}
 }
 
+@SuppressWarnings("serial")
 class DragPanel extends JPanel {
 	public DragPanel() {
 		super();
@@ -76,6 +100,7 @@ class Handler extends MouseAdapter {
 	}
 }
 
+@SuppressWarnings("serial")
 class LabelTransferHandler extends TransferHandler {
 	private final DataFlavor localObjectFlavor;
 	private final JLabel label = new JLabel() {

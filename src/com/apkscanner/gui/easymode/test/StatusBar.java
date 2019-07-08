@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JViewport;
 
+@SuppressWarnings("serial")
 public class StatusBar extends JFrame {
 private final JPanel statusBar; 
 private final JPanel leftrightPanel;

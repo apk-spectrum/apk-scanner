@@ -4,6 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 import static java.awt.GraphicsDevice.WindowTranslucency.*;
  
+@SuppressWarnings("serial")
 public class TranslucentWindowDemo extends JFrame {
     public TranslucentWindowDemo() {
         super("TranslucentWindow");

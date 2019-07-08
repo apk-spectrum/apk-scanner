@@ -15,16 +15,18 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
 import com.apkscanner.core.permissionmanager.PermissionManager;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
-import com.apkscanner.gui.easymode.core.ToolEntryManager;
+import com.apkscanner.gui.dialog.PermissionHistoryPanel;
 import com.apkscanner.gui.easymode.util.EasyRoundButton;
 import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.gui.easymode.util.RoundPanel;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RProp;
 import com.apkscanner.util.Log;
 
 public class EasyPermissioniconPanel extends RoundPanel implements ActionListener{
@@ -96,8 +98,8 @@ public class EasyPermissioniconPanel extends RoundPanel implements ActionListene
 		//toolbartemppanel.setBackground(permissionbackgroundcolor);
 		//toolbartemppanel.setRoundrectColor(permissionbackgroundcolor);
 		toolbartemppanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-		btnshowpermissiondlg = new EasyRoundButton(ImageUtils.setcolorImage(Resource.IMG_EASY_WINDOW_PERMISSION_ICON.getImageIcon(20, 35), permissionbackgroundcolor));
-		//btnshowpermissiondlg = new EasyRoundButton(Resource.IMG_EASY_WINDOW_PERMISSION_ICON.getImageIcon(20, 35));
+		btnshowpermissiondlg = new EasyRoundButton(ImageUtils.setcolorImage(RImg.EASY_WINDOW_PERMISSION_ICON.getImageIcon(20, 35), permissionbackgroundcolor));
+		//btnshowpermissiondlg = new EasyRoundButton(RImg.EASY_WINDOW_PERMISSION_ICON.getImageIcon(20, 35));
 		
 		btnshowpermissiondlg.setPreferredSize(new Dimension(25, 25));
 		btnshowpermissiondlg.setBackground(new Color(217, 217, 217));
@@ -118,7 +120,7 @@ public class EasyPermissioniconPanel extends RoundPanel implements ActionListene
 				|| ApkInfoHelper.isSamsungSign(apkInfo);
 		permissionManager.clearPermissions();
 		permissionManager.setPlatformSigned(isPlatformSign);
-		permissionManager.setTreatSignAsRevoked((boolean) Resource.PROP_PERM_TREAT_SIGN_AS_REVOKED.getData());
+		permissionManager.setTreatSignAsRevoked(RProp.B.PERM_TREAT_SIGN_AS_REVOKED.get());
 		permissionManager.addUsesPermission(apkInfo.manifest.usesPermission);
 		permissionManager.addUsesPermission(apkInfo.manifest.usesPermissionSdk23);
 		permissionManager.addDeclarePemission(apkInfo.manifest.permission);
@@ -170,18 +172,17 @@ public class EasyPermissioniconPanel extends RoundPanel implements ActionListene
 		updateUI();
 	}
 
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Log.d("tool click" + e);
-		
-		if(e.getSource().equals(btnshowpermissiondlg)) {
-			ToolEntryManager.excutePermissionDlg(permissionManager);
-		} else {
-			ToolEntryManager.showPermDetailDesc(permissionManager, ((EasyRoundButton)e.getSource()).getToolTipText());
+		PermissionHistoryPanel historyView = new PermissionHistoryPanel();
+		historyView.setPermissionManager(permissionManager);
+		if(!e.getSource().equals(btnshowpermissiondlg)) {
+			historyView.setFilterText(((EasyRoundButton)e.getSource()).getToolTipText());
 		}
+		historyView.showDialog(SwingUtilities.getWindowAncestor(this));
 	}
-	
+
 	public void clear() {
 		toolbartemppanel.removeAll();
 	}

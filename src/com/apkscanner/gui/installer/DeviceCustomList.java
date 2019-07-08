@@ -39,7 +39,7 @@ import javax.swing.event.ListSelectionListener;
 
 import com.android.ddmlib.IDevice;
 import com.apkscanner.core.installer.OptionsBundle;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.resource.RImg;
 import com.apkscanner.util.Log;
 
 public class DeviceCustomList extends JList<DeviceListData> {
@@ -87,7 +87,7 @@ public class DeviceCustomList extends JList<DeviceListData> {
 		protected DeviceDataRenderer() {
 			super(new BorderLayout());
 
-			ii = new ImageIcon(Resource.IMG_INSTALL_LOADING.getImageIcon().getImage());
+			ii = new ImageIcon(RImg.INSTALL_LOADING.getImage());
 
 			setBorder ( BorderFactory.createEmptyBorder ( 5, 5 , 5, 5 ) );
 
@@ -95,7 +95,7 @@ public class DeviceCustomList extends JList<DeviceListData> {
 			tagPanel = new ToggleButtonBar(ApkInstallWizard.STATUS_INSTALLING, actionlistener);
 
 			JPanel Iconpanel = new JPanel(new BorderLayout());
-			isinstallIcon = new JLabel(Resource.IMG_INSTALL_BLOCK.getImageIcon());
+			isinstallIcon = new JLabel(RImg.INSTALL_BLOCK.getImageIcon());
 
 			Iconpanel.setBackground(Color.WHITE);
 
@@ -147,9 +147,9 @@ public class DeviceCustomList extends JList<DeviceListData> {
 
 					if(!device.isOnline() || bundle.isNotInstallOptions() || bundle.isImpossibleInstallOptions()
 							|| value.getState() == DeviceListData.STATUS_FAILED) {
-						isinstallIcon.setIcon(Resource.IMG_INSTALL_BLOCK.getImageIcon());
+						isinstallIcon.setIcon(RImg.INSTALL_BLOCK.getImageIcon());
 					} else if(bundle.isInstallOptions() || bundle.isPushOptions()) {
-						isinstallIcon.setIcon(Resource.IMG_INSTALL_CHECK.getImageIcon());
+						isinstallIcon.setIcon(RImg.INSTALL_CHECK.getImageIcon());
 					}
 				}
 			}

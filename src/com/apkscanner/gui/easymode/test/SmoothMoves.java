@@ -59,6 +59,7 @@ import javax.swing.Timer;
  * 
  * @author Chet
  */
+@SuppressWarnings("serial")
 public class SmoothMoves extends JComponent implements ActionListener, KeyListener {
 
   /** image holds the graphics we render for each animating object */

@@ -22,8 +22,9 @@ import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
-import com.apkscanner.gui.util.WindowSizeMemorizer;
-import com.apkscanner.resource.Resource;
+import com.apkscanner.gui.component.WindowSizeMemorizer;
+import com.apkscanner.resource.RImg;
+import com.apkscanner.resource.RStr;
 
 public class MessageBoxPane extends JOptionPane
 {
@@ -72,13 +73,9 @@ public class MessageBoxPane extends JOptionPane
 			throws HeadlessException {
 		JDialog dialog = super.createDialog(parentComponent, title);
 		dialog.setResizable(true);
-		dialog.setIconImage(Resource.IMG_APP_ICON.getImageIcon().getImage());
-		if((boolean)Resource.PROP_SAVE_WINDOW_SIZE.getData()) {
-			WindowSizeMemorizer.resizeCompoent(dialog, title);
-		} else {
-			dialog.pack();
-		}
-		WindowSizeMemorizer.registeComponent(dialog, title);
+		dialog.setIconImage(RImg.APP_ICON.getImage());
+		dialog.pack();
+		WindowSizeMemorizer.apply(dialog, title);
 		return dialog;
 	}
 
@@ -276,22 +273,22 @@ public class MessageBoxPane extends JOptionPane
 	}
 	
 	public static void showInfomation(Component parentComponent, Object message) {
-		showMessageDialog(parentComponent, message, Resource.STR_LABEL_INFO.getString(), INFORMATION_MESSAGE, null);
+		showMessageDialog(parentComponent, message, RStr.LABEL_INFO.get(), INFORMATION_MESSAGE, null);
 	}
 
 	public static void showWarring(Component parentComponent, Object message) {
-		showMessageDialog(parentComponent, message, Resource.STR_LABEL_WARNING.getString(), WARNING_MESSAGE, null);
+		showMessageDialog(parentComponent, message, RStr.LABEL_WARNING.get(), WARNING_MESSAGE, null);
 	}
 
 	public static void showError(Component parentComponent, Object message) {
-		showMessageDialog(parentComponent, message, Resource.STR_LABEL_ERROR.getString(), ERROR_MESSAGE, null);
+		showMessageDialog(parentComponent, message, RStr.LABEL_ERROR.get(), ERROR_MESSAGE, null);
 	}
 
 	public static int showQuestion(Component parentComponent, Object message, int optionType) {
-		return showConfirmDialog(parentComponent, message, Resource.STR_LABEL_QUESTION.getString(), optionType, QUESTION_MESSAGE, null);
+		return showConfirmDialog(parentComponent, message, RStr.LABEL_QUESTION.get(), optionType, QUESTION_MESSAGE, null);
 	}
 
 	public static void showPlain(Component parentComponent, Object message) {
-		showMessageDialog(parentComponent, message, Resource.STR_APP_NAME.getString(), PLAIN_MESSAGE, null);
+		showMessageDialog(parentComponent, message, RStr.APP_NAME.get(), PLAIN_MESSAGE, null);
 	}
 }
