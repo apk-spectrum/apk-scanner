@@ -6,9 +6,9 @@ import java.awt.event.ActionEvent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
-import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.installer.ApkInstallWizard;
+import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.util.Log;
 
 @SuppressWarnings("serial")
@@ -24,15 +24,10 @@ public class InstallApkAction extends AbstractApkScannerAction
 	}
 
 	private void evtInstallApk(Window window) {
-		ApkScanner scanner = getApkScanner();
-		if(scanner == null) {
-			Log.e("evtInstallApk() apkScanner is null");
-			return;
-		}
-
-		ApkInfo apkInfo = scanner.getApkInfo();
+		ApkInfo apkInfo = getApkInfo();
 		if(apkInfo == null) {
 			Log.e("evtInstallApk() apkInfo is null");
+			MessageBoxPool.show(window, MessageBoxPool.MSG_NO_SUCH_APK_FILE);
 			return;
 		}
 

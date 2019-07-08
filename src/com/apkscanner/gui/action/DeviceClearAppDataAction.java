@@ -5,8 +5,8 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 
 import com.android.ddmlib.IDevice;
-import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.gui.easymode.contents.EasyGuiDeviceToolPanel;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
@@ -21,31 +21,41 @@ public class DeviceClearAppDataAction extends AbstractDeviceAction
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		evtClearData(getWindow(e));
+		IDevice device = null;
+		if(e.getSource() instanceof EasyGuiDeviceToolPanel) {
+			device = ((EasyGuiDeviceToolPanel) e.getSource()).getSelecteddevice();
+		}
+
+		evtClearData(getWindow(e), device);
 	}
 
-	private void evtClearData(final Window owner) {
-		final ApkScanner scanner = getApkScanner();
-		if(scanner == null) return;
-
-		final ApkInfo apkInfo = scanner.getApkInfo();
+	private void evtClearData(final Window owner, final IDevice target) {
+		final ApkInfo apkInfo = getApkInfo();
 		if(apkInfo == null) return;
 
-		final String packagName = apkInfo.manifest.packageName;
-
-		final IDevice[] devices = getInstalledDevice(packagName);
-		if(devices == null || devices.length == 0) {
-			Log.i("No such device of a package installed.");
-			MessageBoxPool.show(owner, MessageBoxPool.MSG_NO_SUCH_PACKAGE_DEVICE);
-			return;
-		}
+		final String packageName = apkInfo.manifest.packageName;
 
 		Thread thread = new Thread(new Runnable() {
 			public void run() {
+				IDevice[] devices = null;
+				if(target == null) {
+					devices = getInstalledDevice(packageName);
+				} else {
+					if(getPackageInfo(target, packageName) != null) {
+						devices =  new IDevice[] { target };
+					}
+				}
+
+				if(devices == null || devices.length == 0) {
+					Log.i("No such device of a package installed.");
+					MessageBoxPool.show(owner, MessageBoxPool.MSG_NO_SUCH_PACKAGE_DEVICE);
+					return;
+				}
+
 				for(IDevice device: devices) {
 					Log.v("clear data on " + device.getSerialNumber());
 
-					PackageInfo packageInfo = getPackageInfo(device, packagName);
+					PackageInfo packageInfo = getPackageInfo(device, packageName);
 
 					String errMessage = PackageManager.clearData(packageInfo);
 

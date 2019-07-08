@@ -7,9 +7,9 @@ import java.io.FileWriter;
 
 import javax.swing.JFileChooser;
 
-import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.component.ApkFileChooser;
+import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
@@ -31,12 +31,10 @@ public class ShowManifestAction extends AbstractApkScannerAction
 	}
 
 	private void evtShowManifest(Window owner, boolean saveAs) {
-		ApkScanner scanner = getApkScanner();
-		if(scanner == null) return;
-
-		ApkInfo apkInfo = scanner.getApkInfo();
+		ApkInfo apkInfo = getApkInfo();
 		if(apkInfo == null) {
 			Log.e("evtShowManifest() apkInfo is null");
+			MessageBoxPool.show(owner, MessageBoxPool.MSG_NO_SUCH_APK_FILE);
 			return;
 		}
 

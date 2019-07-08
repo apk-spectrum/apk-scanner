@@ -9,6 +9,7 @@ import com.android.ddmlib.IDevice;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ComponentInfo;
+import com.apkscanner.gui.easymode.contents.EasyGuiDeviceToolPanel;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.resource.RConst;
@@ -29,18 +30,23 @@ public class DeviceLaunchAppAction extends AbstractDeviceAction
 	public void actionPerformed(ActionEvent e) {
 		boolean withShift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
 
+		IDevice device = null;
+		if(e.getSource() instanceof EasyGuiDeviceToolPanel) {
+			device = ((EasyGuiDeviceToolPanel) e.getSource()).getSelecteddevice();
+		}
+
 		String data = RProp.S.DEFAULT_LAUNCH_MODE.get();
 		int activityOpt = RProp.I.LAUNCH_ACTIVITY_OPTION.get();
 		if(withShift || RConst.STR_LAUNCH_SELECT.equals(data)
 				|| activityOpt == RConst.INT_LAUNCH_ALWAYS_CONFIRM_ACTIVITY) {
-			evtLaunchByChooseApp(getWindow(e));
+			evtLaunchByChooseApp(getWindow(e), device);
 		} else {
-			evtLaunchApp(getWindow(e), activityOpt);
+			evtLaunchApp(getWindow(e), device, activityOpt);
 		}
 	}
 
-	protected void evtLaunchApp(final Window owner, final int option) {
-		Log.e("" + option);
+	protected void evtLaunchApp(final Window owner, final IDevice target, final int option) {
+		Log.v("activityOpt: " + option);
 		final ApkInfo apkInfo = getApkInfo();
 		if(apkInfo == null) return;
 
@@ -48,7 +54,15 @@ public class DeviceLaunchAppAction extends AbstractDeviceAction
 			public void run() {
 				String packageName = apkInfo.manifest.packageName;
 
-				final IDevice[] devices = getInstalledDevice(packageName);
+				IDevice[] devices = null;
+				if(target == null) {
+					devices = getInstalledDevice(packageName);
+				} else {
+					if(getPackageInfo(target, packageName) != null) {
+						devices =  new IDevice[] { target };
+					}
+				}
+
 				if(devices == null || devices.length == 0) {
 					Log.i("No such device of a package installed.");
 					MessageBoxPool.show(owner, MessageBoxPool.MSG_NO_SUCH_PACKAGE_DEVICE);
@@ -92,7 +106,7 @@ public class DeviceLaunchAppAction extends AbstractDeviceAction
 		thread.start();
 	}
 
-	protected void evtLaunchByChooseApp(final Window owner) {
+	protected void evtLaunchByChooseApp(final Window owner, final IDevice target) {
 		final ApkInfo apkInfo = getApkInfo();
 		if(apkInfo == null) return;
 
@@ -100,7 +114,15 @@ public class DeviceLaunchAppAction extends AbstractDeviceAction
 			public void run() {
 				String packageName = apkInfo.manifest.packageName;
 
-				IDevice[] devices = getInstalledDevice(packageName);
+				IDevice[] devices = null;
+				if(target == null) {
+					devices = getInstalledDevice(packageName);
+				} else {
+					if(getPackageInfo(target, packageName) != null) {
+						devices =  new IDevice[] { target };
+					}
+				}
+
 				if(devices == null || devices.length == 0) {
 					Log.i("No such device of a package installed.");
 					MessageBoxPool.show(owner, MessageBoxPool.MSG_NO_SUCH_PACKAGE_DEVICE);

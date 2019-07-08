@@ -5,7 +5,6 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
-import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.plugin.IPlugIn;
@@ -32,13 +31,11 @@ public class OpenDecompilerAction extends AbstractApkScannerAction
 	}
 
 	private void evtOpenDecompiler(final Window owner) {
-		ApkScanner scanner = getApkScanner();
-		if(scanner == null) return;
-
-		ApkInfo apkInfo = scanner.getApkInfo();
+		ApkInfo apkInfo = getApkInfo();
 		if(apkInfo == null || apkInfo.filePath == null
 				|| !new File(apkInfo.filePath).exists()) {
 			Log.e("evtOpenJDGUI() apkInfo is null");
+			MessageBoxPool.show(owner, MessageBoxPool.MSG_NO_SUCH_APK_FILE);
 			return;
 		}
 

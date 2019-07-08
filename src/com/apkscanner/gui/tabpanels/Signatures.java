@@ -1,8 +1,6 @@
 package com.apkscanner.gui.tabpanels;
 
 import java.awt.BorderLayout;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -25,7 +23,7 @@ import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 
-public class Signatures extends AbstractTabbedPanel implements ComponentListener
+public class Signatures extends AbstractTabbedPanel
 {
 	private static final long serialVersionUID = 4333997417315260023L;
 
@@ -208,26 +206,6 @@ public class Signatures extends AbstractTabbedPanel implements ComponentListener
 		}
 
 		jlist.setListData(labels);
-	}
-
-	@Override
-	public void componentResized(ComponentEvent e) {
-
-	}
-
-	@Override
-	public void componentMoved(ComponentEvent e) {
-
-	}
-
-	@Override
-	public void componentShown(ComponentEvent e) {
-
-	}
-
-	@Override
-	public void componentHidden(ComponentEvent e) {
-
 	}
 }
 

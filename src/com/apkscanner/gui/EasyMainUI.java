@@ -2,8 +2,6 @@ package com.apkscanner.gui;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
 import javax.swing.JFrame;
 
@@ -20,7 +18,7 @@ import com.apkscanner.resource.RStr;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.Log;
 
-public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeListener {
+public class EasyMainUI extends JFrame implements IDeviceChangeListener {
 	private static final long serialVersionUID = -1104109718930033124L;
 
 	private ApkScanner apkScanner = null;
@@ -32,10 +30,10 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 	public static long UIInittime;
 	public static boolean isdecoframe = false;
 
-	public EasyMainUI(ApkScanner scanner) {
+	public EasyMainUI(ApkScanner scanner, UiEventHandler eventHandler) {
 		apkScanner = scanner;
-		ToolEntryManager.initToolEntryManager();
-		InitUI();
+		ToolEntryManager.initToolEntryManager(eventHandler);
+		InitUI(eventHandler);
 		setApkScanner(scanner);
 	}
 
@@ -47,33 +45,15 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 		}
 	}
 
-	public void InitUI() {
+	public void InitUI(UiEventHandler eventHandler) {
 		Log.d("main start");
 
 		UIInittime = UIstarttime = System.currentTimeMillis();
 
-		//long framestarttime = System.currentTimeMillis();
 		setTitle(RStr.APP_NAME.get());
-		//Log.d(""+(System.currentTimeMillis() - framestarttime) );
 
-		Log.i("initialize() setUIFont");
-		//long aaa = System.currentTimeMillis();
-//		String propFont = RProp.S.BASE_FONT.get();
-//		int propFontStyle = RProp.I.BASE_FONT_STYLE.get();
-//		int propFontSize = RProp.I.BASE_FONT_SIZE.get();
-		//setUIFont(new javax.swing.plaf.FontUIResource(propFont, propFontStyle, propFontSize));
-		//20ms
-		//Log.d("init setUIFont   : " + (System.currentTimeMillis() - aaa) / 1000.0);
-
-		Log.i("initialize() setLookAndFeel");
-//		try {
-//			UIManager.setLookAndFeel(RProp.S.CURRENT_THEME.get());
-//		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-//				| UnsupportedLookAndFeelException e1) {
-//			e1.printStackTrace();
-//		} //윈도우 400ms
 		Log.i("new EasyGuiMainPanel");
-		mainpanel = new EasyGuiMainPanel(this);
+		mainpanel = new EasyGuiMainPanel(this, eventHandler);
 		mainpanel.setApkScanner(apkScanner);
 
 		if (isdecoframe) {
@@ -89,7 +69,7 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 		Log.i("add(mainpanel)");
 		add(mainpanel); // 100 => 60
 
-		addWindowListener(this);
+		addWindowListener(eventHandler);
 
 		AdbServerMonitor.startServerAndCreateBridgeAsync();
 		AndroidDebugBridge.addDeviceChangeListener(this);
@@ -125,97 +105,13 @@ public class EasyMainUI extends JFrame implements WindowListener, IDeviceChangeL
 
 	}
 
-//	public static void main(final String[] args) {
-//		apkScanner = new EasyLightApkScanner();
-//
-//		new EasyMainUI(new AaptLightScanner(null));
-//
-//		SwingUtilities.invokeLater(new Runnable() {
-//			public void run() {
-//				Thread thread = new Thread(new Runnable() {
-//					public void run() {
-//						apkScanner.clear(false);
-//						corestarttime = System.currentTimeMillis();
-//						if (args.length > 0) {
-//							apkScanner.setApk(args[0]);
-//						} else {
-//							apkScanner.setApk("");
-//						}
-//					}
-//				});
-//				thread.setPriority(Thread.NORM_PRIORITY);
-//				thread.start();
-//			}
-//		}); //// 70ms
-//
-//	}
-
 	private void setdecoframe() {
 		setUndecorated(true);
 		//com.sun.awt.AWTUtilities.setWindowOpacity(this, 1.0f);
 	}
 
-//	private static void setUIFont(javax.swing.plaf.FontUIResource f) {
-//		Enumeration<Object> keys = UIManager.getDefaults().keys();
-//		while (keys.hasMoreElements()) {
-//			Object key = keys.nextElement();
-//			Object value = UIManager.get(key);
-//			if (value instanceof javax.swing.plaf.FontUIResource) {
-//				if(!"InternalFrame.titleFont".equals(key)) {
-//					UIManager.put(key, f);
-//				}
-//			}
-//		}
-//	}
-
 	private void changeDeivce() {
 		mainpanel.changeDevice(AndroidDebugBridge.getBridge().getDevices());
-	}
-
-	public void finished() {
-		Log.d("finished()");
-		AndroidDebugBridge.removeDeviceChangeListener(this);
-		removeWindowListener(this);
-		apkScanner.clear(true);
-		System.exit(0);
-	}
-
-	public void clear() {
-		Log.d("clear()");
-		AndroidDebugBridge.removeDeviceChangeListener(this);
-		removeWindowListener(this);
-	}
-
-	@Override
-	public void windowOpened(WindowEvent e) {
-	}
-
-	@Override
-	public void windowClosing(WindowEvent e) {
-		Log.d("window closing");
-		finished();
-	}
-
-	@Override
-	public void windowClosed(WindowEvent e) {
-		Log.d("window closed");
-		finished();
-	}
-
-	@Override
-	public void windowIconified(WindowEvent e) {
-	}
-
-	@Override
-	public void windowDeiconified(WindowEvent e) {
-	}
-
-	@Override
-	public void windowActivated(WindowEvent e) {
-	}
-
-	@Override
-	public void windowDeactivated(WindowEvent e) {
 	}
 
 	@Override

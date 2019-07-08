@@ -1,9 +1,10 @@
 package com.apkscanner.gui.action;
 
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 
-import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.util.Log;
@@ -18,16 +19,20 @@ public class ShowExplorerAction extends AbstractApkScannerAction
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		evtShowExplorer();
+		boolean withShift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+		evtShowExplorer(getWindow(e), withShift);
 	}
 
-	private void evtShowExplorer() {
-		ApkScanner scanner = getApkScanner();
-		if(scanner == null) return;
-
-		ApkInfo apkInfo = scanner.getApkInfo();
+	private void evtShowExplorer(Window owner, boolean withShift) {
+		ApkInfo apkInfo = getApkInfo();
 		if(apkInfo == null) {
 			Log.e("evtShowExplorer() apkInfo is null");
+			MessageBoxPool.show(owner, MessageBoxPool.MSG_NO_SUCH_APK_FILE);
+			return;
+		}
+
+		if(withShift) {
+			SystemUtil.openFileExplorer(apkInfo.filePath);
 			return;
 		}
 

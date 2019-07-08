@@ -6,9 +6,9 @@ import java.io.File;
 
 import javax.swing.JFrame;
 
-import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.dialog.ApkSignerWizard;
+import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.util.Log;
 
 @SuppressWarnings("serial")
@@ -24,13 +24,11 @@ public class SignApkAction extends AbstractApkScannerAction
 	}
 
 	private void evtSignApkFile(Window owner) {
-		ApkScanner scanner = getApkScanner();
-		if(scanner == null) return;
-
-		ApkInfo apkInfo = scanner.getApkInfo();
+		ApkInfo apkInfo = getApkInfo();
 		if(apkInfo == null || apkInfo.filePath == null
 				|| !new File(apkInfo.filePath).exists()) {
 			Log.e("evtSignApkFile() apkInfo is null");
+			MessageBoxPool.show(owner, MessageBoxPool.MSG_NO_SUCH_APK_FILE);
 			return;
 		}
 		ApkSignerWizard wizard = new ApkSignerWizard((JFrame)owner);

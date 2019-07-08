@@ -29,6 +29,7 @@ import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.gui.EasyMainUI;
 import com.apkscanner.gui.PlugInDropTargetChooser;
+import com.apkscanner.gui.UiEventHandler;
 import com.apkscanner.gui.PlugInDropTargetChooser.DefaultTargetObject;
 import com.apkscanner.gui.component.DropTargetChooser;
 import com.apkscanner.gui.easymode.contents.EasyBordPanel;
@@ -47,11 +48,11 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 	private static final long serialVersionUID = 4664365275666876359L;
 	private static Color maincolor = new Color(249, 249, 249);
 	static private int PERMISSION_HEIGHT = 46;
-	
+
 	private ApkScanner apkScanner;
 	private int infoHashCode;
 	EasyPermissionPanel permissionPanel;
-	
+
 	private EasyBordPanel bordPanel;
 	private EasyContentsPanel EasycontentsPanel;
 	//private EasyPermissionPanel permissionPanel;
@@ -65,40 +66,40 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 	JPanel iconhoverpanel;
 	JPanel contentspanel;
 	private PlugInDropTargetChooser dropTargetChooser;
-	
-	public EasyGuiMainPanel(JFrame mainframe) {
+
+	public EasyGuiMainPanel(JFrame mainframe, UiEventHandler eventHandler) {
 		Log.d("start EasyGuiMainPanel------------------------------------------------------------------------------------------------------------------------ ");
 		this.mainframe = mainframe;
 
 		ToolEntryManager.mainframe = mainframe;
 		messagePool = new MessageBoxPool(this.mainframe);
 
-		EasycontentsPanel = new EasyContentsPanel();
-		
+		EasycontentsPanel = new EasyContentsPanel(eventHandler);
+
 		permissionPanel = new EasyPermissionPanel(PERMISSION_HEIGHT);
-		
-		
+
+
 //		permissionPanel = new EasyPermissionPanel();
-		
+
 		width = EasyContentsPanel.WIDTH;
 //		height = contentsPanel.HEIGHT + permissionPanel.HEIGHT;
 		height = EasyContentsPanel.HEIGHT;
-		
-		toolbarpanel = new EasyGuiToolScaleupPanel(100, width);
-		
+
+		toolbarpanel = new EasyGuiToolScaleupPanel(100, width, eventHandler);
+
 //		FlatPanel spreadflat = new FlatPanel();
 //		spreadflat.setPreferredSize(new Dimension(40, 40));
 //		spreadflat.setshadowlen(3);
 //		spreadflat.setBackground(new Color(217, 217, 217));
-//		
+//
 //		spreadflat.add(new EasyButton(Resource.IMG_EASY_WINDOW_SPREAD.getImageIcon(35,35)));
-		
+
 		iconhoverpanel = new JPanel(new BorderLayout());
-		iconhoverpanel.add(toolbarpanel, BorderLayout.NORTH);		
+		iconhoverpanel.add(toolbarpanel, BorderLayout.NORTH);
 		iconhoverpanel.setBounds(0, 0, width, 100);
 		iconhoverpanel.setOpaque(false);
 		//iconhoverpanel.setBackground(Color.CYAN);
-		
+
 		setLayout(new BorderLayout());
 		setBorder(new LineBorder(Color.BLACK, 0));
 
@@ -114,7 +115,7 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 		}
 		contentspanel.add(EasycontentsPanel, BorderLayout.CENTER);
 		contentspanel.add(permissionPanel, BorderLayout.PAGE_END);
-		
+
 		RoundPanel dummy = new RoundPanel(new BorderLayout());
 		dummy.setPreferredSize(new Dimension(0, 40));
 		dummy.setshadowlen(5);
@@ -122,7 +123,7 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 		//dummy.add(new EasyButton(Resource.IMG_EASY_WINDOW_SPREAD.getImageIcon(35,35)), BorderLayout.EAST);
 		contentspanel.add(dummy, BorderLayout.PAGE_START);
 		contentspanel.setBounds(0, 0, width, height);
-				
+
 		layeredPane.add(contentspanel, Integer.valueOf(1));
 		layeredPane.add(iconhoverpanel, Integer.valueOf(2));
 
@@ -138,74 +139,14 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 		// btn1.setOpaque(true);
 
 		add(layeredPane, BorderLayout.CENTER);
-		
+
 		////////////////////// test
 		addComponentListener(this);
-	
+
 		// Drag & Drop event processing panel
 		dropTargetChooser = new PlugInDropTargetChooser(this);
 		mainframe.setGlassPane(dropTargetChooser);
 		dropTargetChooser.setVisible(true);
-		
-		//mainframe.setDefaultLookAndFeelDecorated(true);
-		//mainframe.getRootPane().setWindowDecorationStyle(JRootPane.FRAME);
-			
-		
-		
-//		JPanel panel = new JPanel() {
-//	        @Override
-//	        protected void paintComponent(Graphics g) {
-//	            super.paintComponent(g);
-//	            g.drawImage(Resource.IMG_APK_LOGO.getImageIcon().getImage(), 0, 0, getWidth(), getHeight(), this);
-//	        }
-//		};
-//		panel.setPreferredSize(new Dimension(100, 100));
-//		panel.setOpaque(false);
-//		
-//		setBackground(new Color(0,0,0,0));
-//		setOpaque(false);
-//		
-//		//add(panel);
-//		
-//		mainframe.setUndecorated(true);
-//		mainframe.setBackground(new Color(0,0,0,0));
-//		setBorder(null);
-//		
-//		//panel.setBackground(Color.RED);
-//		
-//		add(panel, BorderLayout.SOUTH);
-				
-		//setOpaque(true);
-		//////////////////////	
-
-//		new EasyFileDrop(this, dragdroplabel, new EasyFileDrop.Listener() {
-//			public void filesDropped(final java.io.File[] files) {
-//				clearApkinfopanel();
-//				// EasyGuiMain.corestarttime = System.currentTimeMillis();
-//
-//				apklightscanner.setApk(files[0].getAbsolutePath());
-//
-//				// layeredPane.repaint();
-//			}
-//
-//			@Override
-//			public void filesEnter() {
-//				// layeredPane.add(dragdroplabel, new Integer(2));
-//				dragdroplabel.setVisible(true);
-//			}
-//
-//			@Override
-//			public void filesOut() {
-//				// layeredPane.remove(dragdroplabel);
-//				dragdroplabel.setVisible(false);
-//			}
-//		});
-
-		// showEmptyinfo();
-		// isinit=true;
-		//if(apkScanner != null) {
-			//apkScanner.setReadyListener();
-		//}
 
 		Log.d("End EasyGuiMainPanel ------------------------------------------------------------------------------------------------------------------------");
 	}
@@ -234,7 +175,7 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 	}
 
     @Override
-    protected void paintComponent(Graphics g) 
+    protected void paintComponent(Graphics g)
     {
         if (g instanceof Graphics2D) {
             final int R = 240;
@@ -247,7 +188,7 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
             g2d.fillRect(0, 0, getWidth(), getHeight());
         }
     }
-	
+
 	private void setframetext(String text) {
 		if (!EasyMainUI.isdecoframe) {
 			mainframe.setTitle(text);
@@ -262,19 +203,19 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 		EasyMainUI.UIstarttime = System.currentTimeMillis();
 		setframetext(
 				new File(apkScanner.getApkInfo().filePath).getName() + " - " + RStr.APP_NAME.get());
-		
+
 		EasycontentsPanel.setContents(apkScanner.getApkInfo());
-		
+
 		new Thread(new Runnable() {
 			public void run() {
 				permissionPanel.setLoadingpanel();
 				permissionPanel.setPermission(apkScanner.getApkInfo());
 			}
 		}).start();
-		
-		DateFormat simple = new SimpleDateFormat("HH:mm:ss:SSS"); 
+
+		DateFormat simple = new SimpleDateFormat("HH:mm:ss:SSS");
 	    Date result = new Date(EasyMainUI.UIstarttime);
-		
+
 		Log.d(" UI set 시간 : " + (System.currentTimeMillis() - EasyMainUI.UIstarttime) / 1000.0 + "(start : " + simple.format(result));
 	}
 
@@ -289,7 +230,7 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 		Log.d("showLoadinginfo");
 		EasycontentsPanel.setLoadingpanel(msg);
 	}
-	
+
 	private void clearApkinfopanel() {
 		// bordPanel.clear();
 		EasycontentsPanel.clear();
@@ -326,12 +267,12 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 				dropTargetChooser.setExternalToolsVisible(true);
 				infoHashCode = apkScanner.getApkInfo().hashCode();
 
-				DateFormat simple = new SimpleDateFormat("HH:mm:ss:SSS"); 
-			    Date result = new Date(EasyMainUI.corestarttime); 
+				DateFormat simple = new SimpleDateFormat("HH:mm:ss:SSS");
+			    Date result = new Date(EasyMainUI.corestarttime);
 			    Log.d("Core 시간: " + ((System.currentTimeMillis() - EasyMainUI.corestarttime) / 1000.0) + "(core start : " + simple.format(result));
 
 				////////////////////////////////////for test
-				//ToolEntryManager.excutePermissionDlg();				
+				//ToolEntryManager.excutePermissionDlg();
 				/////////////////////////////////////for test
 			} else {
 				showEmptyinfo();
@@ -364,17 +305,17 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 	private void changesize() {
 		int w = getSize().width;
 		int h = getSize().height;
-				
+
 		toolbarpanel.setPreferredSize(new Dimension(100, w));
 		iconhoverpanel.setBounds(0, 0, w, 100);
 		layeredPane.setPreferredSize(new Dimension(w, h));
 		contentspanel.setBounds(0, 0, w, h);
 		dragdroplabel.setBounds(0, 0, w, h);
-		
+
 		EasycontentsPanel.changesize(w -5, h - 90); // dummy 40
 		updateUI();
 	}
-	
+
 	@Override
 	public void componentResized(ComponentEvent e) {
 		changesize();

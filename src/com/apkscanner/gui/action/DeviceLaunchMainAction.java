@@ -13,6 +13,6 @@ public class DeviceLaunchMainAction extends DeviceLaunchAppAction
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		evtLaunchApp(getWindow(e), RConst.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY);
+		evtLaunchApp(getWindow(e), null, RConst.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY);
 	}
 }

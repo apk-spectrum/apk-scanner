@@ -15,12 +15,13 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
 import com.apkscanner.core.permissionmanager.PermissionManager;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
-import com.apkscanner.gui.easymode.core.ToolEntryManager;
+import com.apkscanner.gui.dialog.PermissionHistoryPanel;
 import com.apkscanner.gui.easymode.util.EasyRoundButton;
 import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.gui.easymode.util.RoundPanel;
@@ -171,18 +172,17 @@ public class EasyPermissioniconPanel extends RoundPanel implements ActionListene
 		updateUI();
 	}
 
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Log.d("tool click" + e);
-		
-		if(e.getSource().equals(btnshowpermissiondlg)) {
-			ToolEntryManager.excutePermissionDlg(permissionManager);
-		} else {
-			ToolEntryManager.showPermDetailDesc(permissionManager, ((EasyRoundButton)e.getSource()).getToolTipText());
+		PermissionHistoryPanel historyView = new PermissionHistoryPanel();
+		historyView.setPermissionManager(permissionManager);
+		if(!e.getSource().equals(btnshowpermissiondlg)) {
+			historyView.setFilterText(((EasyRoundButton)e.getSource()).getToolTipText());
 		}
+		historyView.showDialog(SwingUtilities.getWindowAncestor(this));
 	}
-	
+
 	public void clear() {
 		toolbartemppanel.removeAll();
 	}

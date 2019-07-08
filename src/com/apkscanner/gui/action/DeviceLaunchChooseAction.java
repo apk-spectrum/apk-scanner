@@ -11,6 +11,6 @@ public class DeviceLaunchChooseAction extends DeviceLaunchAppAction
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		evtLaunchByChooseApp(getWindow(e));
+		evtLaunchByChooseApp(getWindow(e), null);
 	}
 }

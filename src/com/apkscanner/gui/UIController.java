@@ -82,7 +82,7 @@ public class UIController implements Runnable {
 		
 		Log.i("creat frame");
 		if(isEasyGui) {
-			mainframe = easymainUI = new EasyMainUI(apkScanner);
+			mainframe = easymainUI = new EasyMainUI(apkScanner, eventHandler);
 		} else {
 			mainframe = mainUI = new MainUI(apkScanner, eventHandler);
 		}
@@ -142,7 +142,7 @@ public class UIController implements Runnable {
 	                	}
 	                } else {
 	                	if(easymainUI == null) {
-	                		easymainUI = new EasyMainUI(null);
+	                		easymainUI = new EasyMainUI(null, eventHandler);
 		                	eventHandler.registerKeyStrokeAction(easymainUI.getRootPane());
 	                	}
 	                }
@@ -192,7 +192,7 @@ public class UIController implements Runnable {
 				} else {
 					synchronized(instance) {
 						if(easymainUI == null) {
-							easymainUI = new EasyMainUI(apkScanner);
+							easymainUI = new EasyMainUI(apkScanner, eventHandler);
 		                	eventHandler.registerKeyStrokeAction(easymainUI.getRootPane());
 						} else {
 							easymainUI.setApkScanner(apkScanner);
