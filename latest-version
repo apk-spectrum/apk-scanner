@@ -1,18 +1,42 @@
 {
-  "version":"2.5",
+  "version":"2.6",
   "description":{
-    "en":"Ver.2.5 :
+    "en":"Ver. 2.6 :
+1.Improve a starting speed.
+2.Assign a shortcut key for changing UI Mode(F2).
+3.Improve a chnaging speed UI.
+ * Settings > Generic > UI Booster > check
+4.Possiable assign to ESC key action.
+ * Settings > Generic > ESC key > None/Change UI mode/Exit
+5.Fix an error for components info(Activity name, exported)
+6.Update tools : JADX(1.0.0), JD-GUI(1.4.0), ByteCode-Viewer(2.9.22)
+7.Fix bugs.
+
+Ver. 2.5 :
 1. Add a New easy ui mode(fast started)
 2. Add a permission history viewer.
 3. Fix bugs.
+
 Ver. 2.4.2 :\n1. Support JDK 9 and later.\n2. Improve UI of ApkInstallWizard.\n3. fix fatal if label is null.\n\n
 Ver. 2.4.1  :\n1. Update JADX-GUI 0.9.0 (2019-02-12)\n2. Fix fatal error\n\n
 Ver. 2.4  :\n1. Add JADX & Bytecode viewer tools\n2. Add SDK29 information\n3. Link Apk Compare(toolbal & dragdrop)\n4. Add PlugIn(Update checker)\n5. Fix some bugs
 ",
-    "ko":"Ver. 2.5 :
+    "ko":"Ver. 2.6 :
+1.실행 속도 개선
+2.UI Mode 변경 단축키 추가(F2)
+3.UI 모드 전환 속도 개선
+ * 설정 > 일반 > UI 부스터 > 사용
+4.ESC key 동작 선택
+ * 설정 > 일반 > 없음/모드전환/종료
+5.컴포넌트 정보에서 오류 수정(Activity name, exported)
+6.JADX(1.0.0), JD-GUI(1.4.0), ByteCode-Viewer(2.9.22) 업데이트
+7.기타 버그 수정
+
+Ver. 2.5 :
 1. 이지모드 추가(빠른 실행가능)
 2. 권한 히스토리 조회 및 검색 기능 추가
 3. 기타 버그 수정
+
 Ver. 2.4.2 :\n1. JDK9 이상 버전 지원.\n2. APK 설치 마법사 UI 개선.\n3. 앱이름이 없을 경우 열지 못하는 문제 수정.\n\n
 Ver. 2.4.1  :\n1. Update JADX-GUI 0.9.0 (2019-02-12)\n2. 한국어 설정 상태에서 APK 설치 불가 문제 수정\n\n
 Ver. 2.4  :\n1. 소스 디컴파일 툴 추가(JADX, ByteCode viewer)\n2. SDK 29 권한 및 정보 추가\n3. APK 컴페어 연동 기능 추가(툴바 및 드래그앤 드랍시)\n4. PlugIn 추가(업데이트 확인)\n5. 기타 버그 수정\n
