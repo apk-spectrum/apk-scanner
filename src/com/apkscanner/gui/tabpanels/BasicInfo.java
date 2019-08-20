@@ -688,7 +688,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			String elemId = checkbox.getActionCommand();
 			boolean selected = evt.getStateChange() == ItemEvent.SELECTED;
 			RProp.setPropData(elemId, selected);
-			if("treat-sign-as-revoked".equals(elemId)) {
+			if(RProp.PERM_TREAT_SIGN_AS_REVOKED.name().equals(elemId)) {
 				permissionManager.setTreatSignAsRevoked(selected);
 			}
 			setPermissionList(null);
@@ -760,18 +760,21 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			apkInfoPanel.removeElementById("show-perm-setting");
 			apkInfoPanel.insertElementBefore("perm-groups", "<div id=\"perm-settings\"><div>");
 			StringBuilder settings = new StringBuilder();
-			settings.append(" <input id=\"mark-runtime\" type=\"checkbox\">" + RStr.LABEL_MARK_A_RUNTIME.get());
-			settings.append(" <input id=\"mark-count\" type=\"checkbox\">" + RStr.LABEL_MARK_A_COUNT.get());
-			settings.append(" <input id=\"treat-sign-as-revoked\" type=\"checkbox\">" + RStr.LABEL_TREAT_SIGN_AS_REVOKED.get());
+			settings.append(" <input id=\"PERM_MARK_RUNTIME\" type=\"checkbox\">");
+			settings.append(RStr.LABEL_MARK_A_RUNTIME.get());
+			settings.append(" <input id=\"PERM_MARK_COUNT\" type=\"checkbox\">");
+			settings.append(RStr.LABEL_MARK_A_COUNT.get());
+			settings.append(" <input id=\"PERM_TREAT_SIGN_AS_REVOKED\" type=\"checkbox\">");
+			settings.append(RStr.LABEL_TREAT_SIGN_AS_REVOKED.get());
 			apkInfoPanel.setInnerHTMLById("perm-settings", settings.toString());
 			apkInfoPanel.insertElementLast("perm-group-title", makeHyperEvent("close-perm-setting", String.format("<img src=\"%s\" width=\"16\" height=\"16\">", RImg.PERM_MARKER_CLOSE.getPath()), null));
-			for(String elemId: new String[] {"mark-runtime", "mark-count", "treat-sign-as-revoked"}) {
+			for(String elemId: new String[] {RProp.PERM_MARK_RUNTIME.name(), RProp.PERM_MARK_COUNT.name(), RProp.PERM_TREAT_SIGN_AS_REVOKED.name()}) {
 				Object object = apkInfoPanel.getElementModelById(elemId);
 				if(object instanceof ToggleButtonModel) {
 					ToggleButtonModel checkbox = (ToggleButtonModel) object;
-					if("treat-sign-as-revoked".equals(elemId) && permissionManager.isPlatformSigned()) {
+					if(RProp.PERM_TREAT_SIGN_AS_REVOKED.name().equals(elemId) && permissionManager.isPlatformSigned()) {
 						checkbox.setSelected(false);
-						checkbox.setEnabled(false);;
+						checkbox.setEnabled(false);
 					} else {
 						checkbox.setSelected((boolean) RProp.getPropData(elemId, true));
 					}
