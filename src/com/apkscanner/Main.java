@@ -204,12 +204,15 @@ public class Main
 	static private void waitAdbServer() {
         if(SystemUtil.isWindows() && RProp.B.ADB_DEVICE_MONITORING.get()) {
         	//AdbServerMonitor.startServerAndCreateBridge();
+        	UIController ui = UIController.getInstance();
+       		ui.showAdbServerLodingDlg(true);
         	while(AdbServerMonitor.getAndroidDebugBridge(1000) == null) {
         		Log.v("wait for adb server");
         		try {
-					Thread.sleep(1000);
+					Thread.sleep(100);
 				} catch (InterruptedException e) { }
         	};
+        	ui.showAdbServerLodingDlg(false);
         }
 	}
 

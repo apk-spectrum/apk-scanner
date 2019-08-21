@@ -1,13 +1,18 @@
 package com.apkscanner.gui;
 
+import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -22,6 +27,7 @@ import com.apkscanner.plugin.PlugInConfig;
 import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.plugin.gui.NetworkErrorDialog;
 import com.apkscanner.plugin.gui.UpdateNotificationWindow;
+import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
@@ -37,6 +43,7 @@ public class UIController implements Runnable {
 	private MainUI mainUI;
 	private EasyMainUI easymainUI;
 	private JFrame mainframe;
+	private JDialog lodingDlg;
 
 	private UiEventHandler eventHandler;
 
@@ -79,7 +86,7 @@ public class UIController implements Runnable {
 
 		Log.i("setLookAndFeel");
 		setLookAndFeel(isEasyGui);
-		
+
 		Log.i("creat frame");
 		if(isEasyGui) {
 			mainframe = easymainUI = new EasyMainUI(apkScanner, eventHandler);
@@ -151,6 +158,48 @@ public class UIController implements Runnable {
         });
         thread.setPriority(Thread.MIN_PRIORITY);
         thread.start();
+	}
+
+	public void showAdbServerLodingDlg(final boolean visible) {
+		Log.v("showAdbServerLodingDlg() " + visible);
+
+    	EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				if(lodingDlg == null && visible) {
+					lodingDlg = new JDialog(mainframe, true);
+					lodingDlg.setSize(mainframe.getSize());
+					lodingDlg.setEnabled(false);
+					lodingDlg.setUndecorated(true);
+					lodingDlg.setLocationRelativeTo(mainframe);
+					lodingDlg.setBackground(new Color(255,255,255,192));
+					JLabel lodingLable = new JLabel("Waiting for ADB Server.", RImg.RESOURCE_TREE_OPEN_JD_LOADING.getImageIcon(), SwingConstants.CENTER);
+					Font font = lodingLable.getFont();
+					lodingLable.setFont(font.deriveFont(Font.BOLD, 20.0f));
+					lodingLable.setHorizontalTextPosition(JLabel.CENTER);
+					lodingLable.setVerticalTextPosition(JLabel.BOTTOM);
+					lodingDlg.add(lodingLable);
+				}
+
+				if(visible) {
+			        new Timer().schedule(new TimerTask() {
+			            @Override
+			            public void run() {
+			            	EventQueue.invokeLater(new Runnable() {
+			        			@Override
+			        			public void run() {
+			        				if(lodingDlg == null) return;
+			        				lodingDlg.setVisible(true);
+			        			}
+			            	});
+			            }
+			        }, 100);
+				} else if(lodingDlg != null) {
+					lodingDlg.dispose();
+					lodingDlg = null;
+				}
+			}
+    	});
 	}
 
 	public void changeGui(final String state) {
@@ -299,7 +348,7 @@ public class UIController implements Runnable {
 	}
 
 	public static void sendEvent(String actionCommand) {
-		UIController thiz = getInstance(); 
+		UIController thiz = getInstance();
 		thiz.eventHandler.sendEvent(thiz.mainframe, actionCommand);
 	}
 }
