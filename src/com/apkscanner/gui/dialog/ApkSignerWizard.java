@@ -31,7 +31,6 @@ import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 
@@ -138,8 +137,6 @@ public class ApkSignerWizard implements ActionListener {
 	private void initialize(Window window)
 	{
 		if(window == null) return;
-
-		AdbServerMonitor.startServerAndCreateBridgeAsync();
 
 		window.setIconImage(RImg.APP_ICON.getImage());
 
