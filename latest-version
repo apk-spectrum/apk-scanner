@@ -1,7 +1,10 @@
 {
-  "version":"2.6",
+  "version":"2.6.1",
   "description":{
-    "en":"Ver. 2.6 :
+    "en":"Ver. 2.6.1 :
+1.Fix bugs
+
+Ver. 2.6 :
 1.Improve a starting speed.
 2.Assign a shortcut key for changing UI Mode(F2).
 3.Improve a chnaging speed UI.
@@ -21,7 +24,10 @@ Ver. 2.4.2 :\n1. Support JDK 9 and later.\n2. Improve UI of ApkInstallWizard.\n3
 Ver. 2.4.1  :\n1. Update JADX-GUI 0.9.0 (2019-02-12)\n2. Fix fatal error\n\n
 Ver. 2.4  :\n1. Add JADX & Bytecode viewer tools\n2. Add SDK29 information\n3. Link Apk Compare(toolbal & dragdrop)\n4. Add PlugIn(Update checker)\n5. Fix some bugs
 ",
-    "ko":"Ver. 2.6 :
+    "ko":"Ver. 2.6.1 :
+1.버그 수정
+
+Ver. 2.6 :
 1.실행 속도 개선
 2.UI Mode 변경 단축키 추가(F2)
 3.UI 모드 전환 속도 개선
