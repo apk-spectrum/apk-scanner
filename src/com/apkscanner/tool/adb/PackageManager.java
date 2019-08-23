@@ -577,6 +577,10 @@ public class PackageManager {
 	}
 
 	public static String getCurrentFocusPackage(IDevice device, boolean force) {
+		// Q OS not supported.
+		if(device.getApiLevel() >= 29) { 
+			return null;
+		}
 		if(force || !focusPackageCache.containsKey(device)) {
 			getCurrentlyDisplayedPackages(device);
 		}
