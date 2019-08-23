@@ -23,6 +23,11 @@ public abstract class AbstractDeviceAction extends AbstractApkScannerAction
 			devices = PackageManager.getInstalledDevices(packageName);
 		} else {
 			AndroidDebugBridge adb = AdbServerMonitor.getAndroidDebugBridge();
+			if(adb == null) {
+				Log.w("adb not connected");
+				return null;
+			}
+
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {

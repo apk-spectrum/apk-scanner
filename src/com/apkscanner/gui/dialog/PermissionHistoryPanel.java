@@ -315,7 +315,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 						if(key.isEmpty() || !flagCheckBoxs.containsKey(key)) continue;
 						flagsPanel.add(flagCheckBoxs.get(key));
 					}
-					Log.v("getFilteredFlags " + flag);
+					Log.v("getFilteredFlags 0x" + Integer.toHexString(flag));
 				}
 				refreshPermsCount();
 			}
@@ -419,14 +419,13 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 	public void itemStateChanged(ItemEvent evt) {
 		if(evt.getSource() instanceof JCheckBox) {
 			permTable.resizedColumnSize();
-			refreshPermTable();
 		} else {
 			if(evt.getStateChange() != ItemEvent.SELECTED) return;
 			int sdkLevel = (int)evt.getItem();
 			permManager.setSdkVersion(sdkLevel);
-			refreshPermTable();
-			setBaseFilter();
 		}
+		refreshPermTable();
+		setBaseFilter();
 	}
 
 	private void setDescription(UnitRecord<?> record, Object info) {

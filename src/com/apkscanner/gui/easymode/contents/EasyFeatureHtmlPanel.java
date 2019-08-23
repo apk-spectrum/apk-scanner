@@ -158,12 +158,19 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 	}
 	private String makesdkString(int sdkversion) {
 		String str = "";
+		
 		XmlPath sdkInfo = sdkXmlPath.getNode("/resources/sdk-info[@apiLevel='" + sdkversion + "']");
+				
+		if(sdkInfo == null ) {
+			str = sdkversion + "-" + "unknown" + " / " + "unknown";
+		} else {
+			str = sdkversion + "-" + sdkInfo.getAttribute("platformVersion") + " / " + sdkInfo.getAttribute("codeName");
+		}
+		
 		//21-5.0/Lollipop
-		str = sdkversion + "-" + sdkInfo.getAttribute("platformVersion") + " / " + sdkInfo.getAttribute("codeName");
-
 		return str;
 	}
+
 
 	class ShowsignDlg implements ActionListener {
 		@Override
