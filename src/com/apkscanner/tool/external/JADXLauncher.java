@@ -7,10 +7,15 @@ import com.apkscanner.resource.RFile;
 import com.apkscanner.util.ConsolCmd;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
+import com.apkscanner.util.ConsolCmd.ConsoleOutputObserver;
 
-public class JADXLauncher {
-	static public void run(final String jarFilePath)
-	{
+public class JADXLauncher
+{
+	static public void run(final String jarFilePath) {
+		run(jarFilePath, null);
+	}
+
+	static public void run(final String jarFilePath, final ConsoleOutputObserver observer) {
 		if(jarFilePath == null || !(new File(jarFilePath).isFile())) {
 			Log.e("No such file : " + jarFilePath);
 			return;
@@ -19,12 +24,12 @@ public class JADXLauncher {
 		if(!SystemUtil.checkJvmVersion("1.8")) {
 			MessageBoxPool.show(null, MessageBoxPool.MSG_WARN_UNSUPPORTED_JVM, "");
 		}
-		
+
 		Thread t = new Thread(new Runnable() {
 			public void run()
 			{
-				ConsolCmd.exc(new String[] {"java", "-version"}, true);
-				ConsolCmd.exc(new String[] {RFile.BIN_JADX_GUI.get(), jarFilePath}, true);
+				ConsolCmd.exc(new String[] {"java", "-version"}, true, observer);
+				ConsolCmd.exc(new String[] {RFile.BIN_JADX_GUI.get(), jarFilePath}, true, observer);
 			}
 		});
 		t.setPriority(Thread.NORM_PRIORITY);

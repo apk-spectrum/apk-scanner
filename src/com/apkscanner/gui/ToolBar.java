@@ -48,6 +48,7 @@ import com.apkscanner.plugin.IPackageSearcher;
 import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.resource.RComp;
+import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
@@ -372,6 +373,7 @@ public class ToolBar extends JToolBar
 		};
 		final Icon defIcon = icon;
 
+		popupMenu.putClientProperty(RConst.MENU_OWNER_KEY, button);
 		popupMenu.addPopupMenuListener(new PopupMenuListener() {
 			@Override
 			public void popupMenuWillBecomeVisible(PopupMenuEvent arg0) {
