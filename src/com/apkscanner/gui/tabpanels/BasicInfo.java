@@ -195,6 +195,11 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 					updateFeatureRelateSign(apkInfo);
 					setPermissionList(null);
 				}
+				if(apkInfo.signatureScheme != null) {
+					apkInfoPanel.setOuterHTMLById("signature-scheme", ", " + 
+						makeHyperEvent("signature-scheme", apkInfo.signatureScheme, 
+							"APK Signature " + apkInfo.signatureScheme, apkInfo.signatureScheme));
+				}
 			}
 		default:
 		}
@@ -305,6 +310,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		} else if("preferExternal".equals(apkInfo.manifest.installLocation)) {
 			feature.append(makeHyperEvent("feature-install-location-external", RStr.FEATURE_ILOCATION_EXTERNAL_LAB.get(), RStr.FEATURE_ILOCATION_EXTERNAL_DESC.get()));
 		}
+		feature.append("<span id=\"signature-scheme\">&nbsp;</span>");
 		feature.append("<br/>");
 
 		if(ApkInfoHelper.isHidden(apkInfo)) {
@@ -789,6 +795,10 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			apkInfoPanel.removeElementById("perm-settings");
 			apkInfoPanel.insertElementLast("perm-group-title", makeHyperEvent("show-perm-setting", String.format("<img src=\"%s\" width=\"16\" height=\"16\">", RImg.PERM_MARKER_SETTING.getPath()), null));
 			setInfoAreaHeight(permissionManager.getPermissionGroups().length);
+			break;
+		case "signature-scheme":
+			String signScheme = "APK Signature " + ((String) evt.getUserData());
+			showDialog(signScheme, signScheme, new Dimension(300, 50), null);
 			break;
 		default:
 			if(id.startsWith("feature-")) {

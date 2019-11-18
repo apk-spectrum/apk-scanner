@@ -41,8 +41,13 @@ public class SignatureReport {
 	private static final String BEGIN_CERT = "-----BEGIN CERTIFICATE-----";
 	private static final String END_CERT = "-----END CERTIFICATE-----";
 
+	public static final String SIGNATURE_SCHEME_V1 = "Scheme v1";
+	public static final String SIGNATURE_SCHEME_V2 = "Scheme v2";
+	public static final String SIGNATURE_SCHEME_V3 = "Scheme v3";
+
 	private X509Certificate[] certificates;
 	private X509Certificate[] timestamp;
+	private String signScheme;
 
     //private static final DisabledAlgorithmConstraints DISABLED_CHECK =
     //        new DisabledAlgorithmConstraints(
@@ -78,7 +83,18 @@ public class SignatureReport {
 		ApkVerifier verifier = new ApkVerifier.Builder(file).build();
 		try {
 			Result result = verifier.verify();
-			certificates = result.getSignerCertificates().toArray(new X509Certificate[0]);
+			if(result.isVerified()) {
+				certificates = result.getSignerCertificates().toArray(new X509Certificate[0]);
+				if(result.isVerifiedUsingV3Scheme()) {
+					signScheme = SIGNATURE_SCHEME_V3;
+				} else if(result.isVerifiedUsingV2Scheme()) {
+					signScheme = SIGNATURE_SCHEME_V2;
+				} else if(result.isVerifiedUsingV1Scheme()) {
+					signScheme = SIGNATURE_SCHEME_V1;
+				}
+			} else {
+				Log.w("Fail to verify signature");
+			}
 		} catch (NoSuchAlgorithmException | IllegalStateException | IOException | ApkFormatException e) {
 			e.printStackTrace();
 		}
@@ -155,6 +171,10 @@ public class SignatureReport {
 		if(!timestampList.isEmpty()) {
 			timestamp = timestampList.toArray(new X509Certificate[timestampList.size()]);
 		}
+	}
+
+	public String getSignatureScheme() {
+		return signScheme;
 	}
 
 	public interface Length { public int length(); }
@@ -390,6 +410,9 @@ public class SignatureReport {
 		PrintStream ps = new PrintStream(bufferStream);
 		try {
 			printX509Cert(cert, ps);
+			if(signScheme != null) {
+				ps.println("\n* APK Signature " + signScheme);
+			}
 			if(rfc) {
 				dumpCert(cert, ps);
 			}

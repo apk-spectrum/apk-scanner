@@ -197,6 +197,8 @@ abstract public class ApkScanner
 			certList.add(sr.getReport(i));
 		}
 
+		apkInfo.signatureScheme = sr.getSignatureScheme();
+
 		if(sr.contains("MD5", RConst.SAMSUNG_KEY_MD5)) {
 			apkInfo.featureFlags |= ApkInfo.APP_FEATURE_SAMSUNG_SIGN;
 		}
