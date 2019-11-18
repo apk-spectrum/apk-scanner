@@ -121,15 +121,10 @@ public class AaptLightScanner extends AaptScanner {
 				Log.i("read signatures completed...");
 			}
 		}).start();
-		
-		new Thread(new Runnable() {
-			public void run() {
-				Log.i("I: read libraries list...");
-				apkInfo.libraries = ZipFileUtil.findFiles(apkInfo.filePath, ".so", null);
-				stateChanged(Status.LIB_COMPLETED);				
-			}
-		}).start();
-		
+
+		Log.i("I: read libraries list...");
+		apkInfo.libraries = ZipFileUtil.findFiles(apkInfo.filePath, ".so", null);
+		stateChanged(Status.LIB_COMPLETED);				
 
 		// Activity/Service/Receiver/provider intent-filter
 		Log.i("I: read components...");

@@ -192,9 +192,21 @@ abstract public class ApkScanner
 		ArrayList<String> certList = new ArrayList<String>();
 		ArrayList<String> certFiles = new ArrayList<String>();
 
+		SignatureReport sr = new SignatureReport(new File(apkInfo.filePath));
+		for(int i = 0; i < sr.getSize(); i ++) {
+			certList.add(sr.getReport(i));
+		}
+
+		if(sr.contains("MD5", RConst.SAMSUNG_KEY_MD5)) {
+			apkInfo.featureFlags |= ApkInfo.APP_FEATURE_SAMSUNG_SIGN;
+		}
+		if(sr.contains("MD5", RConst.SS_TEST_KEY_MD5)) {
+			apkInfo.featureFlags |= ApkInfo.APP_FEATURE_PLATFORM_SIGN;
+		}
+
 		String[] certFilePaths = ZipFileUtil.findFiles(apkInfo.filePath, null, "^META-INF/.*");
 
-		if(certFilePaths == null) {
+		if(certList.isEmpty() && certFilePaths == null) {
 			Log.e("No such folder : META-INFO/");
 			return null;
 		}
@@ -212,18 +224,6 @@ abstract public class ApkScanner
 				if(!s.toUpperCase().endsWith(".RSA") && !s.toUpperCase().endsWith(".DSA") && !s.toUpperCase().endsWith(".EC") ) {
 					certFiles.add(s);
 					continue;
-				}
-				is = zf.getInputStream(entry);
-				SignatureReport sr = new SignatureReport(is);
-				for(int i = 0; i < sr.getSize(); i ++) {
-					certList.add(sr.getReport(i));
-				}
-
-				if(sr.contains("MD5", RConst.SAMSUNG_KEY_MD5)) {
-					apkInfo.featureFlags |= ApkInfo.APP_FEATURE_SAMSUNG_SIGN;
-				}
-				if(sr.contains("MD5", RConst.SS_TEST_KEY_MD5)) {
-					apkInfo.featureFlags |= ApkInfo.APP_FEATURE_PLATFORM_SIGN;
 				}
 			}
 		} catch (IOException e) {

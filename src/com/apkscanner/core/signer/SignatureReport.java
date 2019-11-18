@@ -3,8 +3,6 @@ package com.apkscanner.core.signer;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -13,6 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.security.CodeSigner;
 import java.security.CryptoPrimitive;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.Timestamp;
 import java.security.cert.Certificate;
@@ -31,6 +30,9 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import com.android.apksig.ApkVerifier;
+import com.android.apksig.ApkVerifier.Result;
+import com.android.apksig.apk.ApkFormatException;
 import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Base64;
 import com.apkscanner.util.Log;
@@ -79,8 +81,14 @@ public class SignatureReport {
 		}
 	}
 
-	public SignatureReport(File file) throws FileNotFoundException {
-		this(new FileInputStream(file));
+	public SignatureReport(File file) {
+		ApkVerifier verifier = new ApkVerifier.Builder(file).build();
+		try {
+			Result result = verifier.verify();
+			certificates = result.getSignerCertificates().toArray(new X509Certificate[0]);
+		} catch (NoSuchAlgorithmException | IllegalStateException | IOException | ApkFormatException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public SignatureReport(InputStream inputStream) {
