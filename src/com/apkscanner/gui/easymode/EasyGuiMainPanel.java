@@ -263,14 +263,17 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 		public void onCompleted() {
 			// if(!isinit) return;
 			if (this.error == 0) {
-				showApkinfopanel();
-				dropTargetChooser.setExternalToolsVisible(true);
-				infoHashCode = apkScanner.getApkInfo().hashCode();
-
-				DateFormat simple = new SimpleDateFormat("HH:mm:ss:SSS");
-			    Date result = new Date(EasyMainUI.corestarttime);
-			    Log.d("Core 시간: " + ((System.currentTimeMillis() - EasyMainUI.corestarttime) / 1000.0) + "(core start : " + simple.format(result));
-
+				boolean changed = apkScanner.getApkInfo() != null
+						&& apkScanner.getApkInfo().hashCode() != infoHashCode;
+				if(changed) {
+					showApkinfopanel();
+					dropTargetChooser.setExternalToolsVisible(true);
+					infoHashCode = apkScanner.getApkInfo().hashCode();
+	
+					DateFormat simple = new SimpleDateFormat("HH:mm:ss:SSS");
+				    Date result = new Date(EasyMainUI.corestarttime);
+				    Log.d("Core 시간: " + ((System.currentTimeMillis() - EasyMainUI.corestarttime) / 1000.0) + "(core start : " + simple.format(result));
+				}
 				////////////////////////////////////for test
 				//ToolEntryManager.excutePermissionDlg();
 				/////////////////////////////////////for test

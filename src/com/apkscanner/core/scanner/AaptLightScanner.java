@@ -113,14 +113,12 @@ public class AaptLightScanner extends AaptScanner {
 		Log.i("read basic info completed");
 		stateChanged(Status.BASIC_INFO_COMPLETED);
 
-		new Thread(new Runnable() {
-			public void run() {
-				Log.i("read signatures...");
-				apkInfo.certificates = solveCert();
-				stateChanged(Status.CERT_COMPLETED);
-				Log.i("read signatures completed...");
-			}
-		}).start();
+		
+		Log.i("read signatures...");
+		apkInfo.certificates = solveCert();
+		stateChanged(Status.CERT_COMPLETED);
+		Log.i("read signatures completed...");
+		
 
 		Log.i("I: read libraries list...");
 		apkInfo.libraries = ZipFileUtil.findFiles(apkInfo.filePath, ".so", null);
