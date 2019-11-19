@@ -197,8 +197,8 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 				}
 				if(apkInfo.signatureScheme != null) {
 					apkInfoPanel.setOuterHTMLById("signature-scheme", ", " + 
-						makeHyperEvent("signature-scheme", apkInfo.signatureScheme, 
-							"APK Signature " + apkInfo.signatureScheme, apkInfo.signatureScheme));
+						makeHyperEvent("signature-scheme", "Scheme " + apkInfo.signatureScheme, 
+							"APK Signature Scheme " + apkInfo.signatureScheme, apkInfo.signatureScheme));
 				}
 			}
 		default:
@@ -797,7 +797,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			setInfoAreaHeight(permissionManager.getPermissionGroups().length);
 			break;
 		case "signature-scheme":
-			String signScheme = "APK Signature " + ((String) evt.getUserData());
+			String signScheme = "APK Signature Scheme " + ((String) evt.getUserData());
 			showDialog(signScheme, signScheme, new Dimension(300, 50), null);
 			break;
 		default:

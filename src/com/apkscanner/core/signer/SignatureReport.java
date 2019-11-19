@@ -41,9 +41,9 @@ public class SignatureReport {
 	private static final String BEGIN_CERT = "-----BEGIN CERTIFICATE-----";
 	private static final String END_CERT = "-----END CERTIFICATE-----";
 
-	public static final String SIGNATURE_SCHEME_V1 = "Scheme v1";
-	public static final String SIGNATURE_SCHEME_V2 = "Scheme v2";
-	public static final String SIGNATURE_SCHEME_V3 = "Scheme v3";
+	public static final String SIGNATURE_SCHEME_V1 = "v1";
+	public static final String SIGNATURE_SCHEME_V2 = "v2";
+	public static final String SIGNATURE_SCHEME_V3 = "v3";
 
 	private X509Certificate[] certificates;
 	private X509Certificate[] timestamp;
@@ -411,7 +411,7 @@ public class SignatureReport {
 		try {
 			printX509Cert(cert, ps);
 			if(signScheme != null) {
-				ps.println("\n* APK Signature " + signScheme);
+				ps.println("\n* APK Signature Scheme " + signScheme);
 			}
 			if(rfc) {
 				dumpCert(cert, ps);
