@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
-import java.util.jar.JarFile;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
@@ -338,7 +337,7 @@ public class ApkInstallWizard implements IDeviceChangeListener
 
 				signatureReport = null;
 				try {
-					signatureReport = new SignatureReport(new JarFile(apkFilePath, true));
+					signatureReport = new SignatureReport(new File(apkFilePath));
 				} catch (Exception e) { }
 				if(signatureReport == null || signatureReport.getSize() == 0) {
 					Log.e("Fail APK Virify");

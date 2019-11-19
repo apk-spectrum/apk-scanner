@@ -220,15 +220,16 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 		if(featuredata.isnoSign) {
 			mainpanel.add(makeFeatpanel(RStr.FEATURE_SIGNATURE_UNSIGNED.get(), new Color(0xFF0000)));
 		} else {
+			String scheme = "(" + apkInfo.signatureScheme + ")";
 			if(featuredata.isPlatformSign) {
-				mainpanel.add(makeFeatpanel(RStr.FEATURE_PLATFORM_SIGN_LAB.get(), showsignListener, new Color(0xED7E31)));
+				mainpanel.add(makeFeatpanel(RStr.FEATURE_PLATFORM_SIGN_LAB.get() + scheme, showsignListener, new Color(0xED7E31)));
 			}
 			if(featuredata.isSamsungSign) {
-				mainpanel.add(makeFeatpanel(RStr.FEATURE_SAMSUNG_SIGN_LAB.get(), showsignListener, new Color(0xED7E31)));
+				mainpanel.add(makeFeatpanel(RStr.FEATURE_SAMSUNG_SIGN_LAB.get() + scheme, showsignListener, new Color(0xED7E31)));
 		//		systemSignature = true;
 			}
 			if(!featuredata.isPlatformSign && !featuredata.isSamsungSign) {
-				mainpanel.add(makeFeatpanel(RStr.FEATURE_SIGNATURE_SIGNED.get(), showsignListener, new Color(0x0055BB)));
+				mainpanel.add(makeFeatpanel(RStr.FEATURE_SIGNATURE_SIGNED.get() + scheme, showsignListener, new Color(0x0055BB)));
 			}
 		}
 

@@ -33,4 +33,5 @@ https://android.googlesource.com/platform/frameworks/base/+/master/core/java/and
     <sdk-info apiLevel="26" platformVersion="Android 8.0" versionCode="O" codeName="Oreo" icon="/icons/logo/oreo.png"/>
     <sdk-info apiLevel="27" platformVersion="Android 8.1" versionCode="O_MR1" codeName="O MR1" icon="/icons/logo/oreo.png"/>
     <sdk-info apiLevel="28" platformVersion="Android 9" versionCode="P" codeName="Pie" icon="/icons/logo/pie.png"/>
+    <sdk-info apiLevel="29" platformVersion="Android 10" versionCode="Q" codeName="Android 10" icon="/icons/logo/q.png"/>
 </resources>

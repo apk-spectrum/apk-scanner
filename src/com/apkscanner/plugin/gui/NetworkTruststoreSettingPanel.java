@@ -24,6 +24,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import javax.naming.InvalidNameException;
+import javax.naming.ldap.LdapName;
+import javax.naming.ldap.Rdn;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -55,8 +58,6 @@ import com.apkscanner.plugin.PlugInPackage;
 import com.apkscanner.resource.RFile;
 import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
-
-import sun.security.x509.X500Name;
 
 public class NetworkTruststoreSettingPanel extends JPanel implements ActionListener, ListSelectionListener
 {
@@ -436,16 +437,24 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 
 		String subCn = null;
 		String issCn = null;
+		LdapName ldapDN = null;
 		try {
-			subCn = X500Name.asX500Name(cert.getSubjectX500Principal()).getCommonName();
-			if(subCn == null) {
-				subCn = X500Name.asX500Name(cert.getSubjectX500Principal()).getOrganizationalUnit();
+			ldapDN = new LdapName(cert.getSubjectX500Principal().getName());
+			for(Rdn rdn: ldapDN.getRdns()) {
+				if (rdn.getType().toUpperCase().equals("CN")) {
+					subCn = (String) rdn.getValue();
+					break;
+				}
 			}
-			issCn = X500Name.asX500Name(cert.getIssuerX500Principal()).getCommonName();
-			if(issCn == null) {
-				issCn = X500Name.asX500Name(cert.getIssuerX500Principal()).getOrganizationalUnit();
+
+			ldapDN = new LdapName(cert.getIssuerX500Principal().getName());
+			for(Rdn rdn: ldapDN.getRdns()) {
+				if (rdn.getType().toUpperCase().equals("CN")) {
+					issCn = (String) rdn.getValue();
+					break;
+				}
 			}
-		} catch (IOException e) {
+		} catch (InvalidNameException e) {
 			e.printStackTrace();
 		}
 		if(subCn == null) subCn = "null";

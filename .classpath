@@ -19,5 +19,6 @@
 	<classpathentry kind="lib" path="lib/proxy-vole/js-beautify-1.6.12.jar"/>
 	<classpathentry kind="lib" path="lib/proxy-vole/proxy-vole-1.0.5.jar"/>
 	<classpathentry kind="lib" path="lib/proxy-vole/slf4j-api-1.7.25.jar"/>
+	<classpathentry kind="lib" path="lib/apksig-3.5.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

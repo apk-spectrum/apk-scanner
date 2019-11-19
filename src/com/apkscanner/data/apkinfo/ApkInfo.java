@@ -36,6 +36,7 @@ public class ApkInfo
 	public String[] libraries = null;
 	public String[] certificates = null;
 	public String[] certFiles = null;
+	public String signatureScheme = null;
 
 	public String[] resourcesWithValue = null;
 	public AaptNativeScanner resourceScanner = null;

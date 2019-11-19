@@ -76,31 +76,35 @@ public class PermissionManager
 
 	private void addAllPermissions() {
 		XmlPath allPermissions = xmlPermissionDB.getNodeList("/permission-history/permissions/permission");
-		for(int i=allPermissions.getCount()-1; i>=0; --i) {
-			PermissionRecord record = new PermissionRecord(allPermissions.getNode(i));
-			recordMap.put(record.name, record);
+		synchronized(recordMap) {
+			for(int i=allPermissions.getCount()-1; i>=0; --i) {
+				PermissionRecord record = new PermissionRecord(allPermissions.getNode(i));
+				recordMap.put(record.name, record);
+			}
 		}
 	}
 
 	public void addUsesPermission(UsesPermissionInfo[] usesePermission) {
 		if(usesePermission != null && usesePermission.length > 0) {
-			for(UsesPermissionInfo info: usesePermission) {
-				PermissionRecord record = getPermissionRecord(info.name);
-				if(record == null) {
-					Log.v("record is null : " + info.name);
-					if(declaredMap.containsKey(info.name)) {
-						DeclaredPermissionInfo declared = declaredMap.get(info.name);
-						declared.isUsed = true;
-						declared.sdk23 = info instanceof UsesPermissionSdk23Info;
-						declared.maxSdkVersion = info.maxSdkVersion;
-					} else {
-						unknownSource.put(info.name, info);
+			synchronized(recordMap) {
+				for(UsesPermissionInfo info: usesePermission) {
+					PermissionRecord record = getPermissionRecord(info.name);
+					if(record == null) {
+						Log.v("record is null : " + info.name);
+						if(declaredMap.containsKey(info.name)) {
+							DeclaredPermissionInfo declared = declaredMap.get(info.name);
+							declared.isUsed = true;
+							declared.sdk23 = info instanceof UsesPermissionSdk23Info;
+							declared.maxSdkVersion = info.maxSdkVersion;
+						} else {
+							unknownSource.put(info.name, info);
+						}
+						continue;
 					}
-					continue;
+					record.maxSdkVersion = info.maxSdkVersion;
+					record.sdk23 = info instanceof UsesPermissionSdk23Info;
+					recordMap.put(info.name, record);
 				}
-				record.maxSdkVersion = info.maxSdkVersion;
-				record.sdk23 = info instanceof UsesPermissionSdk23Info;
-				recordMap.put(info.name, record);
 			}
 			cacheGroupInfo.clear();
 		}
@@ -143,12 +147,14 @@ public class PermissionManager
 	}
 
 	public void clearPermissions() {
-		recordMap.clear();
-		recordGroupMap.clear();
-		cacheGroupInfo.clear();
-		declaredMap.clear();
-		unknownSource.clear();
-		isPlatformSigned = false;
+		synchronized(recordMap) {
+			recordMap.clear();
+			recordGroupMap.clear();
+			cacheGroupInfo.clear();
+			declaredMap.clear();
+			unknownSource.clear();
+			isPlatformSigned = false;
+		}
 	}
 
 	public int getCount() {
@@ -176,12 +182,16 @@ public class PermissionManager
 	}
 
 	public PermissionRecord[] getPermissionRecords() {
-		return recordMap.values().toArray(new PermissionRecord[recordMap.size()]);
+		synchronized(recordMap) {
+			return recordMap.values().toArray(new PermissionRecord[recordMap.size()]);
+		}
 	}
 
 	public PermissionRecord getPermissionRecord(String name) {
-		if(recordMap.containsKey(name)) {
-			return (PermissionRecord) recordMap.get(name);
+		synchronized(recordMap) {
+			if(recordMap.containsKey(name)) {
+				return (PermissionRecord) recordMap.get(name);
+			}
 		}
 		if(name == null || name.trim().isEmpty()) {
 			Log.e("permission name is null or empty");
@@ -228,18 +238,20 @@ public class PermissionManager
 
 	public PermissionInfo[] getPermissions(int sdk, UsesPermissionTag tag) {
 		List<PermissionInfo> perms = new ArrayList<>();
-		for(PermissionRecord record: recordMap.values()) {
-			switch(tag) {
-			case UsesPermission:
-				if(record.sdk23) continue; break;
-			case UsesPermissionSdk23:
-				if(!record.sdk23) continue; break;
-			default: break;
+		synchronized(recordMap) {
+			for(PermissionRecord record: recordMap.values()) {
+				switch(tag) {
+				case UsesPermission:
+					if(record.sdk23) continue; break;
+				case UsesPermissionSdk23:
+					if(!record.sdk23) continue; break;
+				default: break;
+				}
+				RevokedPermissionInfo reason = makeRevokedReason(record, sdk);
+				if(reason == null || reason.reason != RevokedReason.NO_REVOKED) continue;
+				PermissionInfoExt info = record.getInfomation(sdk);
+				if(info != null) perms.add(info);
 			}
-			RevokedPermissionInfo reason = makeRevokedReason(record, sdk);
-			if(reason == null || reason.reason != RevokedReason.NO_REVOKED) continue;
-			PermissionInfoExt info = record.getInfomation(sdk);
-			if(info != null) perms.add(info);
 		}
 		for(DeclaredPermissionInfo declared: declaredMap.values()) {
 			switch(tag) {
@@ -261,9 +273,11 @@ public class PermissionManager
 
 	public RevokedPermissionInfo[] getRevokedPermissions(int sdk) {
 		List<RevokedPermissionInfo> perms = new ArrayList<>();
-		for(PermissionRecord record: recordMap.values()) {
-			RevokedPermissionInfo reason = makeRevokedReason(record, sdk);
-			if(reason.reason != RevokedReason.NO_REVOKED) perms.add(reason);
+		synchronized(recordMap) {
+			for(PermissionRecord record: recordMap.values()) {
+				RevokedPermissionInfo reason = makeRevokedReason(record, sdk);
+				if(reason.reason != RevokedReason.NO_REVOKED) perms.add(reason);
+			}
 		}
 		for(DeclaredPermissionInfo declared: declaredMap.values()) {
 			RevokedPermissionInfo reason = RevokedPermissionInfo.makeRevokedReason(declared, sdk);
@@ -329,40 +343,42 @@ public class PermissionManager
 			return groups.values().toArray(new PermissionGroupInfoExt[groups.size()]);
 		}
 
-		groups = new HashMap<>();
-		for(PermissionRecord record: recordMap.values()) {
-			RevokedPermissionInfo reason = makeRevokedReason(record, sdk);
-			String groupName = null;
-			PermissionInfo permInfo = null;
-			if(reason == null || reason.reason != RevokedReason.NO_REVOKED) {
-				groupName = GROUP_NAME_REVOKED;
-			} else {
-				permInfo = (PermissionInfoExt)record.getInfomation(sdk);
-				if(permInfo != null) groupName = permInfo.permissionGroup;
-				if(groupName == null || groupName.isEmpty()) {
-					groupName = GROUP_NAME_UNSPECIFIED;
-				}
-			}
-			PermissionGroupInfoExt groupInfo = groups.get(groupName);
-			if(groupInfo == null) {
-				PermissionGroupRecord groupRecord = getPermissionGroupRecord(groupName);
-				if(groupRecord != null) {
-					groupInfo = groupRecord.getInfomation(sdk);
-					if(groupInfo != null && (groupInfo.icon == null || groupInfo.icon.trim().isEmpty())) {
-						groupInfo.icon = groupRecord.getPresentIcon();
-						groupInfo.icons = getResource(groupInfo.icon, -1);
-					}
-					if(groupInfo != null) {
-						groupInfo.permissions = new ArrayList<>();
+		synchronized(recordMap) {
+			groups = new HashMap<>();
+			for(PermissionRecord record: recordMap.values()) {
+				RevokedPermissionInfo reason = makeRevokedReason(record, sdk);
+				String groupName = null;
+				PermissionInfo permInfo = null;
+				if(reason == null || reason.reason != RevokedReason.NO_REVOKED) {
+					groupName = GROUP_NAME_REVOKED;
+				} else {
+					permInfo = (PermissionInfoExt)record.getInfomation(sdk);
+					if(permInfo != null) groupName = permInfo.permissionGroup;
+					if(groupName == null || groupName.isEmpty()) {
+						groupName = GROUP_NAME_UNSPECIFIED;
 					}
 				}
-				if(groupInfo == null) groupInfo = makeGroup(groupName);
-				groups.put(groupInfo.name, groupInfo);
+				PermissionGroupInfoExt groupInfo = groups.get(groupName);
+				if(groupInfo == null) {
+					PermissionGroupRecord groupRecord = getPermissionGroupRecord(groupName);
+					if(groupRecord != null) {
+						groupInfo = groupRecord.getInfomation(sdk);
+						if(groupInfo != null && (groupInfo.icon == null || groupInfo.icon.trim().isEmpty())) {
+							groupInfo.icon = groupRecord.getPresentIcon();
+							groupInfo.icons = getResource(groupInfo.icon, -1);
+						}
+						if(groupInfo != null) {
+							groupInfo.permissions = new ArrayList<>();
+						}
+					}
+					if(groupInfo == null) groupInfo = makeGroup(groupName);
+					groups.put(groupInfo.name, groupInfo);
+				}
+				if(permInfo instanceof PermissionInfoExt) {
+					groupInfo.protectionFlags |= ((PermissionInfoExt)permInfo).protectionFlags;
+				}
+				groupInfo.permissions.add(permInfo != null ? permInfo : reason);
 			}
-			if(permInfo instanceof PermissionInfoExt) {
-				groupInfo.protectionFlags |= ((PermissionInfoExt)permInfo).protectionFlags;
-			}
-			groupInfo.permissions.add(permInfo != null ? permInfo : reason);
 		}
 		for(DeclaredPermissionInfo declared: declaredMap.values()) {
 			RevokedPermissionInfo reason = RevokedPermissionInfo.makeRevokedReason(declared, sdk);
@@ -430,14 +446,16 @@ public class PermissionManager
 		if(GROUP_NAME_UNSPECIFIED.equals(groupName)) {
 			groupName = "";
 		}
-		for(PermissionRecord record: recordMap.values()) {
-			RevokedPermissionInfo reason = makeRevokedReason(record, sdk);
-			if(reason == null || reason.reason != RevokedReason.NO_REVOKED) continue;
-			PermissionInfoExt info = record.getInfomation(sdk);
-			if(((info.permissionGroup == null || info.permissionGroup.isEmpty())
-					&& (groupName == null || groupName.isEmpty()))
-					|| (groupName != null && groupName.equals(info.permissionGroup))) {
-				list.add(info);
+		synchronized(recordMap) {
+			for(PermissionRecord record: recordMap.values()) {
+				RevokedPermissionInfo reason = makeRevokedReason(record, sdk);
+				if(reason == null || reason.reason != RevokedReason.NO_REVOKED) continue;
+				PermissionInfoExt info = record.getInfomation(sdk);
+				if(((info.permissionGroup == null || info.permissionGroup.isEmpty())
+						&& (groupName == null || groupName.isEmpty()))
+						|| (groupName != null && groupName.equals(info.permissionGroup))) {
+					list.add(info);
+				}
 			}
 		}
 		if(GROUP_NAME_DECLARED.equals(groupName)) {

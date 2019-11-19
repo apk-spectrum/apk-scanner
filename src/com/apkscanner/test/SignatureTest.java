@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -14,11 +14,9 @@ import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
 
-import sun.security.pkcs.PKCS7;
-
 public class SignatureTest {
 	static Signature[] mSignatures;
-	
+
 	public static void main(String[] args) throws Exception {
 		Log.e(">>>>> 1");
 		mSignatures = new Signature[1];
@@ -33,13 +31,15 @@ public class SignatureTest {
 
 		System.err.println("-----------------------------------");
 
-		
-		PKCS7 p7 = new PKCS7(new FileInputStream("C:\\Users\\admin\\Desktop\\어치\\CERT.RSA"));
+		//PKCS7 p7 = new PKCS7();
 		//PKCS7 p7 = new PKCS7(new FileInputStream("C:\\CERT.RSA"));
-		X509Certificate[] ttt = p7.getCertificates();
-		System.out.println(ttt.length);
-		
+		//X509Certificate[] ttt = p7.getCertificates();
 		//st = new SignatureTest(ttt);
+
+		CertificateFactory cf = CertificateFactory.getInstance("X509");
+		X509Certificate[] ttt = cf.generateCertificates(new FileInputStream("D:\\apks\\CERT.RSA")).toArray(new X509Certificate[0]);
+
+		System.out.println(ttt.length);
 
 		for(int i = 0; i < ttt.length; i++) {
 			System.out.println("-------------- " + i);
@@ -49,8 +49,7 @@ public class SignatureTest {
 			System.out.println(Integer.toHexString(System.identityHashCode(ttt[i].getSignature())));
 			System.out.println(ttt[i].getIssuerDN().getName());
 			System.out.println(ttt[i].getIssuerX500Principal().toString());
-			
-			
+
 	        byte[] sig = ttt[i].getEncoded();
 	        final int N = sig.length;
 	        final int N2 = N*2;
@@ -64,18 +63,18 @@ public class SignatureTest {
 	        }
 			System.out.println(new String(text));
 		}
-		Log.e(">>>>> 3");
-		
-		
-		report = new SignatureReport(new File("C:\\CERT.RSA"));
-		Log.i(report.toString());
-		
-		Log.e(">>>>> 4");
-		new SignatureReport(new JarFile("C:\\Melon.apk", true));
-		Log.e(">>>>> 5");
-		
 
-		String filePath = "C:\\Melon.apk";
+		Log.e(">>>>> 3");
+
+		//report = new SignatureReport(new File("D:\\apks\\CERT.RSA"));
+		//Log.i(report.toString());
+
+		Log.e(">>>>> 4");
+		report = new SignatureReport(new File("D:\\apks\\BillLetter_v_01.08.apk"));
+		Log.i(report.toString());
+		Log.e(">>>>> 5");
+
+		String filePath = "D:\\apks\\BillLetter_v_01.08.apk";
 		String[] certFilePaths = ZipFileUtil.findFiles(filePath, null, "^META-INF/.*");
 
 		if(certFilePaths == null) {
@@ -118,8 +117,6 @@ public class SignatureTest {
 			}
 		}
 		Log.e(">>>>> 6");
-		
-	}
-	
 
+	}
 }

@@ -3,16 +3,13 @@ package com.apkscanner.core.signer;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintStream;
-import java.lang.reflect.InvocationTargetException;
 import java.security.CodeSigner;
-import java.security.CryptoPrimitive;
+import java.security.Key;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.Timestamp;
 import java.security.cert.Certificate;
@@ -20,41 +17,44 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.DSAKey;
+import java.security.interfaces.DSAParams;
+import java.security.interfaces.ECKey;
+import java.security.interfaces.RSAKey;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import com.android.apksig.ApkVerifier;
+import com.android.apksig.ApkVerifier.Result;
+import com.android.apksig.apk.ApkFormatException;
 import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Base64;
 import com.apkscanner.util.Log;
 
-import sun.security.pkcs.PKCS7;
-import sun.security.provider.X509Factory;
-import sun.security.util.DisabledAlgorithmConstraints;
-import sun.security.util.KeyUtil;
-import sun.security.x509.CertificateExtensions;
-import sun.security.x509.Extension;
-import sun.security.x509.X509CertImpl;
-import sun.security.x509.X509CertInfo;
-
 public class SignatureReport {
+
+	private static final String BEGIN_CERT = "-----BEGIN CERTIFICATE-----";
+	private static final String END_CERT = "-----END CERTIFICATE-----";
+
+	public static final String SIGNATURE_SCHEME_V1 = "v1";
+	public static final String SIGNATURE_SCHEME_V2 = "v2";
+	public static final String SIGNATURE_SCHEME_V3 = "v3";
 
 	private X509Certificate[] certificates;
 	private X509Certificate[] timestamp;
+	private String signScheme;
 
-    private static final DisabledAlgorithmConstraints DISABLED_CHECK =
-            new DisabledAlgorithmConstraints(
-                    DisabledAlgorithmConstraints.PROPERTY_CERTPATH_DISABLED_ALGS);
+    //private static final DisabledAlgorithmConstraints DISABLED_CHECK =
+    //        new DisabledAlgorithmConstraints(
+    //                DisabledAlgorithmConstraints.PROPERTY_CERTPATH_DISABLED_ALGS);
 
-    private static final Set<CryptoPrimitive> SIG_PRIMITIVE_SET = Collections
-            .unmodifiableSet(EnumSet.of(CryptoPrimitive.SIGNATURE));
+    //private static final Set<CryptoPrimitive> SIG_PRIMITIVE_SET = Collections
+    //        .unmodifiableSet(EnumSet.of(CryptoPrimitive.SIGNATURE));
 
 	private boolean rfc = false;
 
@@ -79,16 +79,36 @@ public class SignatureReport {
 		}
 	}
 
-	public SignatureReport(File file) throws FileNotFoundException {
-		this(new FileInputStream(file));
+	public SignatureReport(File file) {
+		ApkVerifier verifier = new ApkVerifier.Builder(file).build();
+		try {
+			Result result = verifier.verify();
+			if(result.isVerified()) {
+				certificates = result.getSignerCertificates().toArray(new X509Certificate[0]);
+				if(result.isVerifiedUsingV3Scheme()) {
+					signScheme = SIGNATURE_SCHEME_V3;
+				} else if(result.isVerifiedUsingV2Scheme()) {
+					signScheme = SIGNATURE_SCHEME_V2;
+				} else if(result.isVerifiedUsingV1Scheme()) {
+					signScheme = SIGNATURE_SCHEME_V1;
+				}
+			} else {
+				Log.w("Fail to verify signature");
+			}
+		} catch (NoSuchAlgorithmException | IllegalStateException | IOException | ApkFormatException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public SignatureReport(InputStream inputStream) {
-		PKCS7 p7;
+		//PKCS7 p7;
 		try {
-			p7 = new PKCS7(inputStream);
-			certificates = p7.getCertificates();
-		} catch (IOException e) {
+			//p7 = new PKCS7(inputStream);
+			//certificates = p7.getCertificates();
+			certificates = new X509Certificate[1];
+			CertificateFactory cf = CertificateFactory.getInstance("X509");
+			certificates = cf.generateCertificates(inputStream).toArray(new X509Certificate[0]);
+		} catch (CertificateException e) {
 			e.printStackTrace();
 		}
 	}
@@ -130,7 +150,10 @@ public class SignatureReport {
 				if(entryName.startsWith("META-INF/")){
 					if(entryName.toUpperCase().endsWith(".RSA") || entryName.toUpperCase().endsWith(".DSA") || entryName.toUpperCase().endsWith(".EC")) {
 						try {
-							certificates = new PKCS7(jf.getInputStream(je)).getCertificates();
+							//certificates = new PKCS7(jf.getInputStream(je)).getCertificates();
+							//certificates = new X509Certificate[1];
+							CertificateFactory cf = CertificateFactory.getInstance("X509");
+							certificates = cf.generateCertificates(jf.getInputStream(je)).toArray(new X509Certificate[0]);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
@@ -150,22 +173,83 @@ public class SignatureReport {
 		}
 	}
 
-    private static String withWeak(String alg) {
-        if (DISABLED_CHECK.permits(SIG_PRIMITIVE_SET, alg, null)) {
-            return alg;
-        } else {
-            return String.format(RStr.WITH_WEAK.get(), alg);
+	public String getSignatureScheme() {
+		return signScheme;
+	}
+
+	public interface Length { public int length(); }
+
+    /**
+     * Returns the key size of the given key object in bits.
+     *
+     * @param key the key object, cannot be null
+     * @return the key size of the given key object in bits, or -1 if the
+     *       key size is not accessible
+     */
+    public static final int getKeySize(Key key) {
+        int size = -1;
+
+        if (key instanceof Length) {
+            try {
+                Length ruler = (Length)key;
+                size = ruler.length();
+            } catch (UnsupportedOperationException usoe) {
+                // ignore the exception
+            }
+
+            if (size >= 0) {
+                return size;
+            }
         }
+
+        // try to parse the length from key specification
+        /*
+        if (key instanceof SecretKey) {
+            SecretKey sk = (SecretKey)key;
+            String format = sk.getFormat();
+            if ("RAW".equals(format) && sk.getEncoded() != null) {
+                size = (sk.getEncoded().length * 8);
+            }   // Otherwise, it may be a unextractable key of PKCS#11, or
+                // a key we are not able to handle.
+        } else
+        */
+        if (key instanceof RSAKey) {
+            RSAKey pubk = (RSAKey)key;
+            size = pubk.getModulus().bitLength();
+        } else if (key instanceof ECKey) {
+            ECKey pubk = (ECKey)key;
+            size = pubk.getParams().getOrder().bitLength();
+        } else if (key instanceof DSAKey) {
+            DSAKey pubk = (DSAKey)key;
+            DSAParams params = pubk.getParams();    // params can be null
+            size = (params != null) ? params.getP().bitLength() : -1;
+        }
+        /*
+        else if (key instanceof DHKey) {
+            DHKey pubk = (DHKey)key;
+            size = pubk.getParams().getP().bitLength();
+        }   // Otherwise, it may be a unextractable key of PKCS#11, or
+            // a key we are not able to handle.
+         */
+        return size;
+    }
+
+    private static String withWeak(String alg) {
+        //if (DISABLED_CHECK.permits(SIG_PRIMITIVE_SET, alg, null)) {
+            return alg;
+        //} else {
+        //    return String.format(RStr.WITH_WEAK.get(), alg);
+        //}
     }
 
     private static String withWeak(PublicKey key) {
-        if (DISABLED_CHECK.permits(SIG_PRIMITIVE_SET, key)) {
+        //if (DISABLED_CHECK.permits(SIG_PRIMITIVE_SET, key)) {
             return String.format(RStr.KEY_BIT.get(),
-                    KeyUtil.getKeySize(key), key.getAlgorithm());
-        } else {
-            return String.format(RStr.KEY_BIT_WEAK.get(),
-                    KeyUtil.getKeySize(key), key.getAlgorithm());
-        }
+                    getKeySize(key), key.getAlgorithm());
+        //} else {
+        //    return String.format(RStr.KEY_BIT_WEAK.get(),
+        //            KeyUtil.getKeySize(key), key.getAlgorithm());
+        //}
     }
 
 	/**
@@ -200,19 +284,22 @@ public class SignatureReport {
 		MessageFormat form = new MessageFormat(pattern);
 		out.println(form.format(source));
 
+		/*
 		if (cert instanceof X509CertImpl) {
 			X509CertImpl impl = (X509CertImpl)cert;
 			X509CertInfo certInfo = (X509CertInfo)impl.get(X509CertImpl.NAME
 					+ "." +
 					X509CertImpl.INFO);
+			// sun package
 			CertificateExtensions exts = (CertificateExtensions)
 					certInfo.get(X509CertInfo.EXTENSIONS);
 			if (exts != null) {
 				printExtensions(RStr.EXTENSIONS.get(), exts, out);
 			}
 		}
+		*/
 	}
-
+/*
 	private static void printExtensions(String title, CertificateExtensions exts, PrintStream out)
 			throws Exception {
 		int extnum = 0;
@@ -263,6 +350,7 @@ public class SignatureReport {
 			e.printStackTrace();
 		}
 	}
+*/
 
 	/**
 	 * Writes an X.509 certificate in base64 or binary encoding to an output
@@ -272,9 +360,9 @@ public class SignatureReport {
 			throws IOException, CertificateException
 	{
 		if (rfc) {
-			out.println(X509Factory.BEGIN_CERT);
+			out.println(BEGIN_CERT);
 			out.println(Base64.getMimeEncoder().encodeToString(cert.getEncoded()));
-			out.println(X509Factory.END_CERT);
+			out.println(END_CERT);
 		} else {
 			out.write(cert.getEncoded()); // binary
 		}
@@ -322,6 +410,9 @@ public class SignatureReport {
 		PrintStream ps = new PrintStream(bufferStream);
 		try {
 			printX509Cert(cert, ps);
+			if(signScheme != null) {
+				ps.println("\n* APK Signature Scheme " + signScheme);
+			}
 			if(rfc) {
 				dumpCert(cert, ps);
 			}

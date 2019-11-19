@@ -118,6 +118,7 @@ public class EasyPermissioniconPanel extends RoundPanel implements ActionListene
 		Log.d(apkInfo.manifest.usesPermission.length + "");
 		boolean isPlatformSign = ApkInfoHelper.isTestPlatformSign(apkInfo)
 				|| ApkInfoHelper.isSamsungSign(apkInfo);
+		clear();
 		permissionManager.clearPermissions();
 		permissionManager.setPlatformSigned(isPlatformSign);
 		permissionManager.setTreatSignAsRevoked(RProp.B.PERM_TREAT_SIGN_AS_REVOKED.get());
