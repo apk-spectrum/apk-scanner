@@ -1,7 +1,7 @@
 #!/bin/bash
 
 APP_PATH="/opt/APKScanner"
-APP_VERSION="2.6"
+APP_VERSION="2.7"
 APP_FILE="ApkScanner.jar"
 
 DEBIAN_DATA_PATH="./debian"$APP_PATH
@@ -50,6 +50,7 @@ cp -f "release/data/build-master-target-product-security/verity_key" "$TARGET_PA
 
 TARGET_PATH="$DEBIAN_DATA_PATH/lib/"
 mkdir -p "$TARGET_PATH"
+cp -f "release/lib/apksig-3.5.0.jar" "$TARGET_PATH"
 cp -f "release/lib/autocomplete-2.6.0.jar" "$TARGET_PATH"
 cp -f "release/lib/commons-cli-1.3.1.jar" "$TARGET_PATH"
 cp -f "release/lib/ddmlib.jar" "$TARGET_PATH"
