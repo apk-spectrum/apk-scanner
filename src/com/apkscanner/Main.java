@@ -54,7 +54,10 @@ public class Main
 				if(!"p".equals(args[0]) && !"package".equals(args[0])
 						&& "i".equals(args[0]) && "install".equals(args[0])
 						&& "d".equals(args[0]) && "delete-temp-path".equals(args[0])
-						&& !args[0].startsWith("-") && !args[0].endsWith(".apk") && !args[0].endsWith(".ppk")) {
+						&& !args[0].startsWith("-")
+						&& !args[0].endsWith(".apk")
+						&& !args[0].endsWith(".ppk")
+						&& !args[0].endsWith(".apex")) {
 					throw new ParseException("Missing argument for option: " + args[0]);
 				}
 				if("p".equals(args[0]) || "package".equals(args[0])) {

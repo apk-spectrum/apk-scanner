@@ -301,7 +301,7 @@ they're removed before the application is published</string>
 	<string name="label_no_permission">No permissions</string>
 	<string name="label_search">Search</string>
 	<string name="label_loading">Loading...</string>
-	<string name="label_apk_file_description">Android Package(.apk)</string>
+	<string name="label_apk_file_description">Android Package(.apk | .apex)</string>
 	<string name="label_device">Device</string>
 	<string name="label_path">Path</string>
 	<string name="label_uses_resource">Uses framework resource files</string>
