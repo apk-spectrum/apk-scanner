@@ -49,7 +49,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.fife.rsta.ui.search.FindDialog;
 import org.fife.rsta.ui.search.SearchEvent;
@@ -69,6 +68,7 @@ import com.apkscanner.gui.component.ApkFileChooser;
 import com.apkscanner.gui.component.ImageControlPanel;
 import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.gui.tabpanels.Resources.ResourceObject;
+import com.apkscanner.gui.tabpanels.Resources.ResourceType;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
@@ -76,6 +76,7 @@ import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.tool.external.BytecodeViewerLauncher;
 import com.apkscanner.tool.external.Dex2JarWrapper;
+import com.apkscanner.tool.external.ImgExtractorWrapper;
 import com.apkscanner.tool.external.JADXLauncher;
 import com.apkscanner.tool.external.JDGuiLauncher;
 import com.apkscanner.util.FileUtil;
@@ -613,7 +614,11 @@ public class ResouceContentsPanel extends JPanel{
 	    	String resPath = null;
 	    	File resFile = null;
 	    	if(type == EXPORT_TYPE_OPEN) {
-				resPath = apkinfo.tempWorkPath + File.separator + currentSelectedObj.path.replace("/", File.separator);
+	    		if(currentSelectedObj.type == ResourceType.LOCAL) {
+	    			resPath = currentSelectedObj.path;
+	    		} else {
+	    			resPath = apkinfo.tempWorkPath + File.separator + currentSelectedObj.path.replace("/", File.separator);
+	    		}
 				resFile = new File(resPath);
 	    	} else {
 	    		resFile = getSaveFile(null, currentSelectedObj.path.replace("/", File.separator));
@@ -639,7 +644,7 @@ public class ResouceContentsPanel extends JPanel{
 				if(type == EXPORT_TYPE_OPEN) {
 					resPath += ".txt";
 				}
-			} else {
+			} else if(currentSelectedObj.type != ResourceType.LOCAL) {
 				ZipFileUtil.unZip(apkinfo.filePath, currentSelectedObj.path, resPath);
 			}
 
@@ -664,8 +669,15 @@ public class ResouceContentsPanel extends JPanel{
 				}
 			}
 
-			if(type == EXPORT_TYPE_OPEN) {
+			switch(type) {
+			case EXPORT_TYPE_OPEN:
 				SystemUtil.openArchiveExplorer(resPath);
+				break;
+			case EXPORT_TYPE_SAVE:
+				if(currentSelectedObj.type == ResourceType.LOCAL) {
+					FileUtil.copy(currentSelectedObj.path, resPath);
+				}
+				break;
 			}
 	    }
 
@@ -846,9 +858,13 @@ public class ResouceContentsPanel extends JPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-
-			String resPath = apkinfo.tempWorkPath + File.separator + currentSelectedObj.path.replace("/", File.separator);
-			ZipFileUtil.unZip(apkinfo.filePath, currentSelectedObj.path, resPath);
+			String resPath = null;
+			if(currentSelectedObj.type == ResourceType.LOCAL) {
+				resPath = currentSelectedObj.path;
+			} else {
+				resPath = apkinfo.tempWorkPath + File.separator + currentSelectedObj.path.replace("/", File.separator);
+				ZipFileUtil.unZip(apkinfo.filePath, currentSelectedObj.path, resPath);
+			}
 
 			if (ButtonSet.OS_SETTING.matchActionEvent(e)) {
 				SystemUtil.openFile(resPath);
@@ -930,8 +946,6 @@ public class ResouceContentsPanel extends JPanel{
 
     private void setTextContentPanel(ResourceObject obj) {
     	String content = null;
-		ZipFile zipFile = null;
-		InputStream is = null;
 
 		switch(obj.attr) {
 		case ResourceObject.ATTR_AXML:
@@ -954,49 +968,36 @@ public class ResouceContentsPanel extends JPanel{
 			resTypeSep.setVisible(false);
 			resTypeCombobox.setVisible(false);
 			multiLinePrintButton.setVisible(false);
-			try {
-				zipFile = new ZipFile(apkinfo.filePath);
-				ZipEntry entry = zipFile.getEntry(obj.path);
-				byte[] buffer = new byte[(int) entry.getSize()];
-				is = zipFile.getInputStream(entry);
-				is.read(buffer);
+			byte[] buffer = null;
+			if(obj.type == ResourceType.LOCAL) {
+				buffer = FileUtil.readData(obj.path);
+			} else {
+				buffer = ZipFileUtil.readData(apkinfo.filePath, obj.path);
+			}
+			if(buffer != null) {
 				content = new String(buffer);
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				if(is != null) {
-					try {
-						is.close();
-					} catch (IOException e) { }
-				}
-				if(zipFile != null) {
-					try {
-						zipFile.close();
-					} catch (IOException e) { }
-				}
 			}
 			break;
 		case ResourceObject.ATTR_CERT:
-			try {
-				zipFile = new ZipFile(apkinfo.filePath);
+			try(ZipFile zipFile = new ZipFile(apkinfo.filePath)) {
 				ZipEntry entry = zipFile.getEntry(obj.path);
-				is = zipFile.getInputStream(entry);
-				SignatureReport sr = new SignatureReport(is);
-				content = sr.toString();
+				if(entry != null) {
+					try(InputStream is = zipFile.getInputStream(entry)) {
+						SignatureReport sr = new SignatureReport(is);
+						content = sr.toString();
+					}
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
-			} finally {
-				if(is != null) {
-					try {
-						is.close();
-					} catch (IOException e) { }
-				}
-				if(zipFile != null) {
-					try {
-						zipFile.close();
-					} catch (IOException e) { }
-				}
 			}
+			break;
+		case ResourceObject.ATTR_FS_IMG:
+			String imgPath = apkinfo.tempWorkPath + File.separator + obj.path.replace("/", File.separator);
+			if(!new File(imgPath).exists()) {
+				ZipFileUtil.unZip(apkinfo.filePath, obj.path, imgPath);
+			}
+			content = ImgExtractorWrapper.getSuperblockInfo(imgPath);
+			content += ImgExtractorWrapper.getLsInfo(imgPath);
 			break;
 		case ResourceObject.ATTR_ETC:
 			if("resources.arsc".equals(obj.path)) {
@@ -1068,44 +1069,38 @@ public class ResouceContentsPanel extends JPanel{
         }
     }
 
-    public void selectContent(JTree tree) {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode)
-                tree.getLastSelectedPathComponent();
-        if(node == null) return;
+    public void selectContent(Object userData) {
+    	if(!(userData instanceof ResourceObject))  return;
 
-        ResourceObject CurrentresObj = null;
-		if(node.getUserObject() instanceof ResourceObject) {
-			CurrentresObj = (ResourceObject)node.getUserObject();
-		}
+    	ResourceObject resObj = (ResourceObject) userData;
 
-		if(CurrentresObj != null && CurrentresObj == currentSelectedObj) {
-			Log.v("select same object");
-			Log.d("" +node.getPath().toString());
+		if(resObj.equals(currentSelectedObj)) {
+			Log.v("select same object " + currentSelectedObj.toString());
 			return;
 		}
+		currentSelectedObj = resObj;
 
-		if(CurrentresObj == null || CurrentresObj.isFolder) {
+		if(resObj == null || resObj.isFolder) {
 			//htmlViewer.setText("");
 			//((CardLayout)contentPanel.getLayout()).show(contentPanel, CONTENT_HTML_VIEWER);
 			//FilePathtextField.setText("folder");
 		} else {
-			currentSelectedObj = CurrentresObj;
-			switch(CurrentresObj.attr) {
+			switch(resObj.attr) {
 			case ResourceObject.ATTR_IMG:
-				drawImageOnPanel(CurrentresObj);
+				drawImageOnPanel(resObj);
 				break;
 			case ResourceObject.ATTR_QMG:
 			case ResourceObject.ATTR_AXML:
 			case ResourceObject.ATTR_XML:
 			case ResourceObject.ATTR_TXT:
 			case ResourceObject.ATTR_CERT:
-			    setTextContentPanel(CurrentresObj);
+			    setTextContentPanel(resObj);
 				break;
 			default:
-			    setTextContentPanel(CurrentresObj);
+			    setTextContentPanel(resObj);
 				break;
 			}
-			FilePathtextField.setText(CurrentresObj.path);
+			FilePathtextField.setText(resObj.path);
 		}
     }
 

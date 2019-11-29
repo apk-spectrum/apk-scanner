@@ -14,8 +14,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.regex.PatternSyntaxException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -42,6 +40,7 @@ import com.apkscanner.resource.RImg;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.ZipFileUtil;
 
 public class SearchDlg extends JDialog {
 	private static final long serialVersionUID = 6109952065388761951L;
@@ -318,20 +317,10 @@ public class SearchDlg extends JDialog {
 					} else if(filelist[i].endsWith(".txt") || filelist[i].endsWith(".mk")
 							|| filelist[i].endsWith(".html") || filelist[i].endsWith(".js") || filelist[i].endsWith(".css") || filelist[i].endsWith(".json")
 							|| filelist[i].endsWith(".props") || filelist[i].endsWith(".properties")) {
-						ZipFile zipFile = null;
-						try {
-							zipFile = new ZipFile(apkinfo.filePath);
-						} catch (IOException e) {
-							e.printStackTrace();
+						byte[] buffer = ZipFileUtil.readData(apkinfo.filePath, filelist[i]);
+						if(buffer != null) {
+							temp = new String(buffer);
 						}
-						ZipEntry entry = zipFile.getEntry(filelist[i]);
-						byte[] buffer = new byte[(int) entry.getSize()];
-						try {
-							zipFile.getInputStream(entry).read(buffer);
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-						temp = new String(buffer);
 					} else if("resources.arsc".equals(filelist[i])) {
 						String[] lines = apkinfo.resourcesWithValue;
 						if(lines == null) {

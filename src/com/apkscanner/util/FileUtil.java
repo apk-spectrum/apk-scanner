@@ -1,7 +1,13 @@
 package com.apkscanner.util;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -13,6 +19,35 @@ import com.apkscanner.resource.RStr;
 
 public class FileUtil
 {
+	public static byte[] readData(String filePath)
+	{
+		if(filePath == null) return null;
+		File f = new File(filePath);
+		byte[] buffer = new byte[(int) f.length()];
+		try(InputStream is = new FileInputStream(filePath)) {
+			is.read(buffer);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return buffer;
+	}
+
+	public static void copy(String src, String dest) {
+	    try (
+		  InputStream in = new BufferedInputStream(new FileInputStream(src));
+		  OutputStream out = new BufferedOutputStream(new FileOutputStream(dest))) {
+
+			byte[] buffer = new byte[1024];
+			int lengthRead;
+			while ((lengthRead = in.read(buffer)) > 0) {
+				out.write(buffer, 0, lengthRead);
+				out.flush();
+			}
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+		}
+	}
+
 	public static ArrayList<String> findFiles(File f, String subffix, String filterRegex)
 	{
 		ArrayList<String> tempList = new ArrayList<String>();
@@ -28,35 +63,35 @@ public class FileUtil
 			if (list[i].isDirectory()) {
 				tempList.addAll(findFiles(list[i], subffix, filterRegex));
 			} else {
-				if(list[i].getName().endsWith(subffix)) {					
+				if(list[i].getName().endsWith(subffix)) {
 					tempList.add(list[i].getAbsolutePath());
-				}		    	  
+				}
 			}
 		}
 		return tempList;
 	}
-	
+
 	public static String getTempPath()
 	{
 		String tempPath = SystemUtil.getTemporaryPath();
 		if(!tempPath.endsWith(File.separator)) tempPath += File.separator;
 		tempPath += "ApkScanner";
-		
+
 		return tempPath;
 	}
-	
+
 	public static String makeTempPath(String apkFilePath)
 	{
 		String tempPath = getTempPath();
 
 		tempPath += apkFilePath.substring(apkFilePath.indexOf(File.separator),apkFilePath.lastIndexOf(".")).replaceAll("#", "");
-		
+
 		if((new File(tempPath)).exists()) {
 			int n;
 			for(n=1; (new File(tempPath+"_"+n)).exists(); n++) ;
 			tempPath += "_" + n;
 		}
-		
+
 		return tempPath;
 	}
 
@@ -87,7 +122,7 @@ public class FileUtil
 			for (File file : files) {
 				if (file.isDirectory()) {
 					deleteDirectory(file);
-				} else {            	
+				} else {
 					file.delete();
 				}
 			}
@@ -113,20 +148,20 @@ public class FileUtil
 	    }
 
 	    static FSStyle fromValue(int value)
-	    { 
-	        for (FSStyle my: FSStyle.values()) { 
-	            if (my.value == value) { 
-	                return my; 
-	            } 
-	        } 
-	        return null; 
-	    } 
-	    
+	    {
+	        for (FSStyle my: FSStyle.values()) {
+	            if (my.value == value) {
+	                return my;
+	            }
+	        }
+	        return null;
+	    }
+
 	    public int getValue()
 	    {
 	        return value;
 	    }
-	    
+
 		public String toString()
 		{
 			String unit = null;
@@ -153,7 +188,7 @@ public class FileUtil
 		double LengthbyUnit = (double) length;
 		int Unit = 0;
 		String strUnit = null;
-		
+
 		switch(style) {
 		case BYTES: case KB: case MB: case GB: case TB:
 			Unit = style.getValue();
@@ -181,7 +216,7 @@ public class FileUtil
 		} else {
 			df = new DecimalFormat("#,##0.00");
 		}
-		
+
 		StringBuilder result = new StringBuilder(df.format(LengthbyUnit).length());
 		result.append(df.format(LengthbyUnit) + strUnit);
 
@@ -192,7 +227,7 @@ public class FileUtil
 
 		return result.toString();
 	}
-	
+
 
     /**
      * Converts a byte to hex digit and writes to the supplied buffer
@@ -213,7 +248,7 @@ public class FileUtil
         StringBuffer buf = new StringBuffer();
         int len = block.length;
         for (int i = 0; i < len; i++) {
-             byte2hex(block[i], buf);	
+             byte2hex(block[i], buf);
              if (i < len-1) {
                  buf.append(":");
              }

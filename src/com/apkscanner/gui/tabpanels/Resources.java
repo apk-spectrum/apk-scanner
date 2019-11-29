@@ -25,6 +25,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.ImageObserver;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
@@ -45,7 +47,10 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -71,6 +76,7 @@ import com.apkscanner.resource.RStr;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.external.BytecodeViewerLauncher;
 import com.apkscanner.tool.external.Dex2JarWrapper;
+import com.apkscanner.tool.external.ImgExtractorWrapper;
 import com.apkscanner.tool.external.JADXLauncher;
 import com.apkscanner.tool.external.JDGuiLauncher;
 import com.apkscanner.util.FileUtil;
@@ -113,7 +119,7 @@ public class Resources extends AbstractTabbedPanel {
 
 	public enum ResourceType {
 		ANIMATOR(0), ANIM(1), COLOR(2), DRAWABLE(3), MIPMAP(4), LAYOUT(5), MENU(6), RAW(7), VALUES(8), XML(9), ASSET(
-				10), METAINF(11), ETC(12), COUNT(13);
+				10), METAINF(11), ETC(12), LOCAL(13), COUNT(14);
 
 		private int type;
 
@@ -146,7 +152,8 @@ public class Resources extends AbstractTabbedPanel {
 		public static final int ATTR_QMG = 4;
 		public static final int ATTR_TXT = 5;
 		public static final int ATTR_CERT = 6;
-		public static final int ATTR_ETC = 7;
+		public static final int ATTR_FS_IMG = 7;
+		public static final int ATTR_ETC = 8;
 
 		public String label;
 		public Boolean isFolder;
@@ -156,6 +163,18 @@ public class Resources extends AbstractTabbedPanel {
 		public int attr;
 		public int childCount;
 		public Boolean isLoading;
+
+		public ResourceObject(File file) {
+			label = file.getName();
+			path = file.getAbsolutePath();
+			isFolder = file.isDirectory();
+
+			type = ResourceType.LOCAL;
+			isLoading = false;
+			childCount = 0;
+
+			setAttr();
+		}
 
 		public ResourceObject(String path, boolean isFolder) {
 			this.path = path;
@@ -194,6 +213,18 @@ public class Resources extends AbstractTabbedPanel {
 					config = path.replaceAll("res/" + type.toString() + "-([^/]*)/.*", "$1");
 			}
 
+			setAttr();
+
+			if (isFolder) {
+				label = getOnlyFoldername(path);
+			} else {
+				label = getOnlyFilename(path);
+			}
+
+			childCount = 0;
+		}
+		
+		private void setAttr() {
 			String extension = path.replaceAll(".*/", "").replaceAll(".*\\.", ".").toLowerCase();
 
 			if (extension.endsWith(".xml")) {
@@ -208,34 +239,27 @@ public class Resources extends AbstractTabbedPanel {
 				attr = ATTR_QMG;
 			} else if (extension.endsWith(".txt") || extension.endsWith(".mk") || extension.endsWith(".html")
 					|| extension.endsWith(".js") || extension.endsWith(".css") || extension.endsWith(".json")
-					|| extension.endsWith(".props") || extension.endsWith(".properties")
-					|| extension.endsWith(".mf") || extension.endsWith(".sf")) {
+					|| extension.endsWith(".props") || extension.endsWith(".properties") || extension.endsWith(".policy")
+					|| extension.endsWith(".mf") || extension.endsWith(".sf") || extension.endsWith(".rc")) {
 				attr = ATTR_TXT;
 			} else if(extension.endsWith(".rsa") || extension.endsWith(".dsa") || extension.endsWith(".ec")) {
 				attr = ATTR_CERT;
+			} else if(extension.endsWith(".img")) {
+				attr = ATTR_FS_IMG;
 			} else {
 				attr = ATTR_ETC;
 			}
-
-			if (isFolder) {
-				label = getOnlyFoldername(path);
-			} else {
-				label = getOnlyFilename(path);
-			}
-
-			childCount = 0;
 		}
 
 		@Override
 		public String toString() {
 			String str = null;
 			if (childCount > 0) {
-				str = this.label + " (" + childCount + ")";
-				;
-			} else if (this.config != null) {
-				str = this.label + " (" + this.config + ")";
+				str = label + " (" + childCount + ")";
+			} else if (config != null && !config.isEmpty()) {
+				str = label + " (" + config + ")";
 			} else {
-				str = this.label;
+				str = label;
 			}
 			return str;
 		}
@@ -338,7 +362,7 @@ public class Resources extends AbstractTabbedPanel {
 							TreePath treepath = new TreePath(node.getPath());
 							tree.setSelectionPath(treepath);
 							tree.scrollPathToVisible(treepath);
-							contentPanel.selectContent(tree);
+							contentPanel.selectContent(temp);
 							contentPanel.selectContentAndLine(tree, line, string);
 							return;
 						}
@@ -449,7 +473,9 @@ public class Resources extends AbstractTabbedPanel {
 			if (nodo.getUserObject() instanceof ResourceObject) {
 				ResourceObject tempObject = (ResourceObject) nodo.getUserObject();
 
-				if (!tempObject.isFolder) {
+				if(tempObject.isFolder && tempObject.type == ResourceType.LOCAL) {
+					setIcon(getFileIcon("FOLDER"));
+				} else if (!tempObject.isFolder) {
 					ResourceObject temp = (ResourceObject) nodo.getUserObject();
 					String urlFilePath = null;
 					urlFilePath = apkFilePath.replaceAll("#", "%23");
@@ -535,7 +561,7 @@ public class Resources extends AbstractTabbedPanel {
 		private Icon getFileIcon(String suffix) {
 			Icon icon = fileIcon.get(suffix);
 			if (icon == null) {
-				Log.v("getIcon " + suffix);
+				//Log.v("getIcon " + suffix);
 				Image tempImage = null;
 				if ("FOLDER".equals(suffix)) {
 					tempImage = ImageScaler.getScaledImage(RImg.TREE_FOLDER.getImageIcon(), 16, 16);
@@ -669,7 +695,7 @@ public class Resources extends AbstractTabbedPanel {
 		return ret;
 	}
 
-	private void setTreeForm(Boolean mode) {
+	private void setTreeForm() {
 		Thread thread = new Thread(new Runnable() {
 			public void run()
 			{
@@ -701,8 +727,15 @@ public class Resources extends AbstractTabbedPanel {
 										continue;
 
 									ResourceObject resObj = new ResourceObject(nameList[i], false);
+									DefaultMutableTreeNode node = new DefaultMutableTreeNode(resObj);
+
 									if (nameList[i].indexOf("/") == -1) {
-										topFiles.add(new DefaultMutableTreeNode(resObj));
+										topFiles.add(node);
+										if(nameList[i].equals("apex_payload.img")) {
+											ResourceObject obj = new ResourceObject("Loading...", false);
+											obj.isLoading = true;
+											node.add(new DefaultMutableTreeNode(obj));
+										}
 										continue;
 									}
 
@@ -728,10 +761,10 @@ public class Resources extends AbstractTabbedPanel {
 											findnode.add(new DefaultMutableTreeNode(new ResourceObject(obj.path, false)));
 											((ResourceObject) findnode.getUserObject()).childCount++;
 										}
-										findnode.add(new DefaultMutableTreeNode(resObj));
+										findnode.add(node);
 										((ResourceObject) findnode.getUserObject()).childCount++;
 									} else {
-										typeNode.add(new DefaultMutableTreeNode(resObj));
+										typeNode.add(node);
 									}
 								}
 							}
@@ -758,7 +791,7 @@ public class Resources extends AbstractTabbedPanel {
 							if(manifest != null) {
 								TreePath treepath = new TreePath(manifest.getPath());
 								tree.setSelectionPath(treepath);
-								contentPanel.selectContent(tree);
+								contentPanel.selectContent(manifest.getUserObject());
 							}
 						}
 					});
@@ -810,39 +843,46 @@ public class Resources extends AbstractTabbedPanel {
 
 		final ResourceObject resObj = (ResourceObject) node.getUserObject();
 
-		Log.d("" + resObj.isFolder);
-
-		String resPath = tempWorkPath + File.separator + resObj.path.replace("/", File.separator);
-		File resFile = new File(resPath);
-		if (!resFile.exists()) {
-			if (!resFile.getParentFile().exists()) {
-				if (FileUtil.makeFolder(resFile.getParentFile().getAbsolutePath())) {
-					Log.i("sucess make folder : " + resFile.getParentFile().getAbsolutePath());
+		String resPath = null;
+		if(resObj.type == ResourceType.LOCAL) {
+			resPath = resObj.path;
+		} else {
+			resPath = tempWorkPath + File.separator + resObj.path.replace("/", File.separator);
+			File resFile = new File(resPath);
+			if (!resFile.exists()) {
+				if (!resFile.getParentFile().exists()) {
+					if (FileUtil.makeFolder(resFile.getParentFile().getAbsolutePath())) {
+						Log.i("sucess make folder : " + resFile.getParentFile().getAbsolutePath());
+					}
 				}
 			}
-		}
 
-		if (resObj != null && !resObj.isFolder) {
-			String[] convStrings = null;
-			if (resObj.attr == ResourceObject.ATTR_AXML) {
-				convStrings = AaptNativeWrapper.Dump.getXmltree(apkFilePath, new String[] { resObj.path });
-			} else if ("resources.arsc".equals(resObj.path)) {
-				convStrings = resourcesWithValue;
-				resPath += ".txt";
-			} else {
-				ZipFileUtil.unZip(apkFilePath, resObj.path, resPath);
-			}
+			if (resObj != null && !resObj.isFolder) {
+				String[] convStrings = null;
+				if (resObj.attr == ResourceObject.ATTR_AXML) {
+					convStrings = AaptNativeWrapper.Dump.getXmltree(apkFilePath, new String[] { resObj.path });
+				} else if ("resources.arsc".equals(resObj.path)) {
+					convStrings = resourcesWithValue;
+					resPath += ".txt";
+				} else {
+					ZipFileUtil.unZip(apkFilePath, resObj.path, resPath);
+				}
 
-			if (convStrings != null) {
-				StringBuilder sb = new StringBuilder();
-				for (String s : convStrings)
-					sb.append(s + "\n");
-				try {
-					FileWriter fw = new FileWriter(new File(resPath));
-					fw.write(sb.toString());
-					fw.close();
-				} catch (IOException e) {
-					e.printStackTrace();
+				if (convStrings != null) {
+					StringBuilder sb = new StringBuilder();
+					for (String s : convStrings)
+						sb.append(s + "\n");
+					try {
+						FileWriter fw = new FileWriter(new File(resPath));
+						fw.write(sb.toString());
+						fw.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				
+				if (resObj.attr == ResourceObject.ATTR_FS_IMG) {
+					
 				}
 			}
 		}
@@ -914,6 +954,8 @@ public class Resources extends AbstractTabbedPanel {
 			Log.i("dex file");
 		} else if (resObj.path.toLowerCase().endsWith(".apk")) {
 			Launcher.run(resPath);
+		} else if (resObj.attr == ResourceObject.ATTR_FS_IMG) {
+			
 		} else {
 			SystemUtil.openFile(resPath);
 		}
@@ -967,7 +1009,8 @@ public class Resources extends AbstractTabbedPanel {
 				if (e.getButton() == MouseEvent.BUTTON1) {
 					TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
 					if (selPath != null) {
-						contentPanel.selectContent(tree);
+						DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath.getLastPathComponent();
+						contentPanel.selectContent(node.getUserObject());
 					}
 				}
 			}
@@ -986,10 +1029,77 @@ public class Resources extends AbstractTabbedPanel {
 		tree.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent ke) {
 				// if(ke.getKeyCode() == KeyEvent.VK_ENTER) {
-				contentPanel.selectContent(tree);
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+				contentPanel.selectContent(node.getUserObject());
 				// }
 			}
 		});
+
+		tree.addTreeExpansionListener(new TreeExpansionListener() {
+			@Override
+			public void treeExpanded(TreeExpansionEvent event) {
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) event.getPath().getLastPathComponent();
+				if (node.getUserObject() instanceof ResourceObject) {
+					ResourceObject resObj = (ResourceObject) node.getUserObject();
+					if(resObj.attr == ResourceObject.ATTR_FS_IMG && resObj.config == null) {
+						resObj.config = "";
+						loadFsImg(node);
+					}
+				}
+			}
+
+			@Override
+			public void treeCollapsed(TreeExpansionEvent event) { }
+		});
+	}
+
+	private void loadFsImg(final DefaultMutableTreeNode node) {
+		final ResourceObject resObj = (ResourceObject) node.getUserObject();
+
+		new SwingWorker<String, Void>() {
+			@Override
+			protected String doInBackground() throws Exception {
+				String imgPath = tempWorkPath + File.separator + resObj.path.replace("/", File.separator);
+				String extPath = imgPath + "_";
+				if(!new File(imgPath).exists()) {
+					ZipFileUtil.unZip(apkFilePath, resObj.path, imgPath);
+				}
+				ImgExtractorWrapper.extracte(imgPath, extPath);
+				return extPath;
+			}
+
+			@Override
+			protected void done() {
+				String topPath = null;
+				try {
+					topPath = get();
+				} catch (InterruptedException | ExecutionException e) {
+					e.printStackTrace();
+				}
+				if(topPath == null || topPath.isEmpty()) return;
+				File root = new File(topPath);
+				if(!root.exists() || !root.isDirectory()) return;
+
+				node.removeAllChildren();
+				addNodes(node, root);
+				tree.updateUI();
+			}
+
+			private void addNodes(DefaultMutableTreeNode node, File dir) {
+				for(File c: dir.listFiles(new FileFilter() {
+						@Override public boolean accept(File f) { return f.isDirectory(); }
+					})) {
+					DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(new ResourceObject(c));
+					node.add(childNode);
+					addNodes(childNode, c);
+				}
+				for(File c: dir.listFiles(new FileFilter() {
+						@Override public boolean accept(File f) { return !f.isDirectory(); }
+					})) {
+					node.add(new DefaultMutableTreeNode(new ResourceObject(c)));
+				}
+			}
+		}.execute();
 	}
 
 	private void expandTree(final JTree tree) {
@@ -1186,7 +1296,7 @@ public class Resources extends AbstractTabbedPanel {
 
 		nameList = apkInfo.resources;
 		contentPanel.setData(apkInfo);
-		setTreeForm(false);
+		setTreeForm();
 
 		setDataSize(apkInfo.resources.length, true, false);
 		sendRequest(request, SEND_REQUEST_CURRENT_ENABLED);

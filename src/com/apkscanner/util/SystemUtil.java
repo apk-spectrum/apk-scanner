@@ -1,10 +1,7 @@
 package com.apkscanner.util;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import com.apkscanner.jna.ProcessPathKernel32;
@@ -207,7 +204,7 @@ public class SystemUtil
 				regular = "^/.*";
 			}
 
-			String[] result = ConsolCmd.exc(new String[] {cmd, path}, true, null);
+			String[] result = ConsolCmd.exec(new String[] {cmd, path}, true, null);
 			if(result == null || result.length <= 0
 					|| !result[0].matches(regular)
 					|| !new File(result[0]).exists()){
@@ -296,7 +293,7 @@ public class SystemUtil
 
 	private static boolean isAssociatedWithFileTypeLegacy(String suffix) {
 		Log.i("isAssociatedWithFileTypeLegacy()");
-		String[] output = ConsolCmd.exc(new String[] {"cmd", "/c", "assoc", suffix});
+		String[] output = ConsolCmd.exec(new String[] {"cmd", "/c", "assoc", suffix});
 		if(output == null || output.length == 0
 				|| !output[0].startsWith(suffix+"=")) {
 			return false;
@@ -307,7 +304,7 @@ public class SystemUtil
 			return false;
 		}
 
-		output = ConsolCmd.exc(new String[] {"cmd", "/c", "ftype", ftype});
+		output = ConsolCmd.exec(new String[] {"cmd", "/c", "ftype", ftype});
 		if(output == null || output.length == 0
 				|| !output[0].startsWith(ftype+"=")) {
 			return false;
@@ -365,7 +362,7 @@ public class SystemUtil
 			return true;
 		}
 		String filePath = RFile.ETC_APKSCANNER_EXE.getPath();
-		ConsolCmd.exc(new String[][] {
+		ConsolCmd.exec(new String[][] {
 			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\CLSID", "/ve", "/t", "REG_SZ", "/d", "{E88DCCE0-B7B3-11d1-A9F0-00AA0060FA31}", "/f" },
 			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\DefaultIcon", "/ve", "/t", "REG_SZ", "/d", filePath+",1", "/f" },
 			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\OpenWithProgids", "/v", "CompressedFolder", "/t", "REG_SZ", "/f" },
@@ -421,7 +418,7 @@ public class SystemUtil
 		if(!isAssociatedWithFileType(suffix)) {
 			return;
 		}
-		ConsolCmd.exc(new String[][] {
+		ConsolCmd.exec(new String[][] {
 			{"cmd", "/c", "reg", "add", "HKCR\\"+suffix, "/ve", "/t", "REG_SZ", "/d", "", "/f" },
 			{"cmd", "/c", "reg", "delete", "HKCR\\ApkScanner"+suffix, "/f" },
 			{"cmd", "/c", "assoc", suffix+"=" },
@@ -434,30 +431,7 @@ public class SystemUtil
 
 	public static boolean exec(String[] cmd)
 	{
-		try {
-			final Process process = new ProcessBuilder(cmd).redirectErrorStream(true).start();
-			new Thread(new Runnable() {
-				public void run()
-				{
-					InputStream inputStream = process.getInputStream();
-					InputStreamReader inputStreamReader = new InputStreamReader(inputStream/*, encoding*/);
-					BufferedReader stdOut = new BufferedReader(inputStreamReader);
-					try {
-						while (stdOut.readLine() != null);
-						stdOut.close();
-						inputStreamReader.close();
-						inputStream.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					process.destroy();
-				}
-			}).start();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
+		return ConsolCmd.exec(cmd) != null;
 	}
 
 	public static String[] getRunningProcessFullPath(String imageName) {
@@ -492,15 +466,15 @@ public class SystemUtil
 				}
 			}
 		} else if(SystemUtil.isLinux()) {
-			String[] uid = ConsolCmd.exc(new String[] { "id", "-ur" });
+			String[] uid = ConsolCmd.exec(new String[] { "id", "-ur" });
 			String[] cout = null;
 			if(uid != null && uid.length > 0 && !uid[0].isEmpty()) {
-				cout = ConsolCmd.exc(new String[] { "pgrep", "-x", "-U", uid[0], imageName });
+				cout = ConsolCmd.exec(new String[] { "pgrep", "-x", "-U", uid[0], imageName });
 			} else {
-				cout = ConsolCmd.exc(new String[] { "pgrep", "-x", imageName });
+				cout = ConsolCmd.exec(new String[] { "pgrep", "-x", imageName });
 			}
 			for(String pid: cout) {
-				String[] process = ConsolCmd.exc(new String[] { "readlink", "/proc/"+pid+"/exe" });
+				String[] process = ConsolCmd.exec(new String[] { "readlink", "/proc/"+pid+"/exe" });
 				if(process != null && process.length > 0) {
 					list.add(process[0]);
 				}

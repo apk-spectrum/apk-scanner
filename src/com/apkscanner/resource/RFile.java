@@ -38,6 +38,8 @@ public enum RFile implements ResFile<String>, ResString<String>
 
 	BIN_SIGNAPK					(Type.BIN, "signapk.jar"),
 
+	BIN_IMG_EXTRACTOR_WIN		(Type.BIN, "ImgExtractor.exe", "win"),
+
 	PLUGIN_PATH					(Type.PLUGIN, ""),
 	PLUGIN_CONF_PATH			(Type.PLUGIN, "plugins.conf"),
 

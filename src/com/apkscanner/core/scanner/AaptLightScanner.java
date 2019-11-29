@@ -88,6 +88,8 @@ public class AaptLightScanner extends AaptScanner {
 		apkInfo.tempWorkPath = FileUtil.makeTempPath(apkInfo.filePath.substring(apkInfo.filePath.lastIndexOf(File.separator)));
 		apkInfo.resourceScanner = resourceScanner;
 
+		setType();
+
 		stateChanged(Status.STANBY);
 
 		Log.v("Temp path : " + apkInfo.tempWorkPath);
@@ -115,7 +117,7 @@ public class AaptLightScanner extends AaptScanner {
 
 		
 		Log.i("read signatures...");
-		apkInfo.certificates = solveCert();
+		solveCert();
 		stateChanged(Status.CERT_COMPLETED);
 		Log.i("read signatures completed...");
 		

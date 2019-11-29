@@ -81,6 +81,8 @@ public class AaptScanner extends ApkScanner
 		apkInfo.tempWorkPath = FileUtil.makeTempPath(apkInfo.filePath.substring(apkInfo.filePath.lastIndexOf(File.separator)));
 		apkInfo.resourceScanner = resourceScanner;
 
+		setType();
+
 		stateChanged(Status.STANBY);
 
 		Log.v("Temp path : " + apkInfo.tempWorkPath);
@@ -106,7 +108,7 @@ public class AaptScanner extends ApkScanner
 		new Thread(new Runnable() {
 			public void run() {
 				Log.i("read signatures...");
-				apkInfo.certificates = solveCert();
+				solveCert();
 				stateChanged(Status.CERT_COMPLETED);
 				Log.i("read signatures completed...");
 			}
@@ -143,8 +145,8 @@ public class AaptScanner extends ApkScanner
 		apkInfo.widgets = manifestReader.getWidgetList(apkInfo.filePath);
 		stateChanged(Status.WIDGET_COMPLETED);
 	}
-	
-	protected ResourceInfo[] changeURLpath(ResourceInfo[] icons, AaptManifestReader manifestReader) {		
+
+	protected ResourceInfo[] changeURLpath(ResourceInfo[] icons, AaptManifestReader manifestReader) {
 		if(icons != null && icons.length > 0) {
 			String urlFilePath = null;
 			urlFilePath = apkInfo.filePath.replaceAll("#", "%23");
@@ -190,8 +192,8 @@ public class AaptScanner extends ApkScanner
 		if(apkPath != null && !apkPath.isEmpty() && apkPath.startsWith(FileUtil.getTempPath())) {
 			File parent = new File(apkPath).getParentFile();
 			Log.i("delete temp APK folder : "  + parent.getPath());
-			while(parent != null && parent.exists() && parent.getParentFile() != null 
-					&& parent.getParentFile().listFiles().length == 1 
+			while(parent != null && parent.exists() && parent.getParentFile() != null
+					&& parent.getParentFile().listFiles().length == 1
 					&& parent.getParentFile().getAbsolutePath().length() > FileUtil.getTempPath().length()) {
 				parent = parent.getParentFile();
 			}
