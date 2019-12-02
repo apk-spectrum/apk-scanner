@@ -11,10 +11,10 @@ import javax.swing.table.TableColumn;
 
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.resource.RStr;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.FileUtil.FSStyle;
+import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
 
 /**
@@ -29,35 +29,36 @@ public class Libraries extends AbstractTabbedPanel
 	private JTable table;
 
 	private String apkFilePath;
-	
+
 	public Libraries()
 	{
 		setLayout(new GridLayout(1, 0));
 		setName(RStr.TAB_LIBRARIES.get());
 		setToolTipText(RStr.TAB_LIBRARIES.get());
-		setEnabled(false);
+		setTabbedEnabled(false);
 	}
-	
+
 	@Override
 	public void initialize()
 	{
+		Log.e("initialize");
 		mMyTableModel = new MyTableModel();
 		table = new JTable(mMyTableModel);
-		
+
 		//table.setPreferredScrollableViewportSize(new Dimension(500, 70));
-		
+
 		setJTableColumnsWidth(table, 500, 1, 59, 30, 10);
-		
+
 		//Create the scroll pane and add the table to it.
-		
+
 		JScrollPane scrollPane = new JScrollPane(table);
-		
+
 		//Add the scroll pane to this panel.
 		add(scrollPane);
 	}
-  
+
 	@Override
-	public void setData(ApkInfo apkInfo, Status status, ITabbedRequest request)
+	public void setData(ApkInfo apkInfo, Status status)
 	{
 		if(!Status.LIB_COMPLETED.equals(status)) {
 			return;
@@ -68,7 +69,10 @@ public class Libraries extends AbstractTabbedPanel
 		mMyTableModel.setData(apkInfo.libraries);
 
 		setDataSize(apkInfo.libraries.length, true, false);
-		sendRequest(request, SEND_REQUEST_CURRENT_ENABLED);
+		sendRequest(SEND_REQUEST_CURRENT_ENABLED);
+
+		setTabbedVisible(apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX);
+		sendRequest(SEND_REQUEST_CURRENT_VISIBLE);
 	}
 
 	@Override
@@ -76,6 +80,7 @@ public class Libraries extends AbstractTabbedPanel
 	{
 		setName(RStr.TAB_LIBRARIES.get());
 		setToolTipText(RStr.TAB_LIBRARIES.get());
+		sendRequest(SEND_REQUEST_CHANGE_TITLE);
 
 		if(mMyTableModel == null) return;
 		mMyTableModel.loadResource();
@@ -89,25 +94,25 @@ public class Libraries extends AbstractTabbedPanel
 		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
 		    total += percentages[i];
 		}
- 
+
 		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
 			TableColumn column = table.getColumnModel().getColumn(i);
 			column.setPreferredWidth((int)(tablePreferredWidth * (percentages[i] / total)));
 		}
 	}
-  
+
 	class MyTableModel extends AbstractTableModel {
 		private static final long serialVersionUID = 8403482180817388452L;
 
 		private String[] columnNames = { "Index", "Path", "Size"};
-		
+
 		private ArrayList<Object[]> data = new ArrayList<Object[]>();
-		
-		public MyTableModel() 
+
+		public MyTableModel()
 		{
 			loadResource();
 		}
-				
+
 		public void setData(String[] libList)
 		{
 			data.clear();
@@ -116,9 +121,9 @@ public class Libraries extends AbstractTabbedPanel
 			for(int i=0; i< libList.length; i++) {
 				long size = ZipFileUtil.getFileSize(apkFilePath, libList[i]);
 				long compressed = ZipFileUtil.getCompressedSize(apkFilePath, libList[i]);
-				Object[] temp = { 
+				Object[] temp = {
 						i+1,
-						libList[i], 
+						libList[i],
 						FileUtil.getFileSize(size, FSStyle.FULL),
 						String.format("%.2f", ((float)(size - compressed) / (float)size) * 100f) + " %"
 				};
@@ -140,19 +145,19 @@ public class Libraries extends AbstractTabbedPanel
 		public int getColumnCount() {
 			return columnNames.length;
 		}
-	
+
 		public int getRowCount() {
 			return data.size();
 		}
-	
+
 		public String getColumnName(int col) {
 			return columnNames[col];
 		}
-	
-		public Object getValueAt(int row, int col) {    	
+
+		public Object getValueAt(int row, int col) {
 			return data.get(row)[col];
 		}
-	
+
 	    /*
 	     * JTable uses this method to determine the default renderer/ editor for
 	     * each cell. If we didn't implement this method, then the last column
@@ -161,7 +166,7 @@ public class Libraries extends AbstractTabbedPanel
 		public Class<? extends Object> getColumnClass(int c) {
 			return getValueAt(0, c).getClass();
 		}
-	
+
 	    /*
 	     * Don't need to implement this method unless your table's editable.
 	     */
@@ -172,7 +177,7 @@ public class Libraries extends AbstractTabbedPanel
 				return true;
 			} else return false;
 		}
-	
+
 	    /*
 	     * Don't need to implement this method unless your table's data can
 	     * change.
@@ -181,12 +186,12 @@ public class Libraries extends AbstractTabbedPanel
 			data.get(row)[col] = value;
 			fireTableCellUpdated(row, col);
 		}
-	
+
 		@SuppressWarnings("unused")
 		private void printDebugData() {
 			int numRows = getRowCount();
 			int numCols = getColumnCount();
-		
+
 			for (int i = 0; i < numRows; i++) {
 				System.out.print("    row " + i + ":");
 				for (int j = 0; j < numCols; j++) {

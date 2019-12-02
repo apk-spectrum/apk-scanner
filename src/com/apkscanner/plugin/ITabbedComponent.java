@@ -14,10 +14,20 @@ public abstract interface ITabbedComponent
 	public void initialize();
 	public void reloadResource();
 
+	public boolean isTabbedVisible();
+	public boolean isTabbedEnabled();
+
+	public void setTabbedEnabled(boolean enabled);
+	public void setTabbedVisible(boolean enabled);
+
 	public String getTitle();
 	public String getToolTip();
 	public Icon getIcon();
+	public int getPriority();
 
-	public void setData(ApkInfo apkInfo, Status status, ITabbedRequest request);
+	public void setData(ApkInfo apkInfo, Status status);
 	public void clearData();
+
+	public void setPriority(int priority);
+	public void setTabbedRequest(ITabbedRequest request);
 }

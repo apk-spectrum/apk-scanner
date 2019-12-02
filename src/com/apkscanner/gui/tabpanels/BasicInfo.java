@@ -58,7 +58,6 @@ import com.apkscanner.gui.dialog.SdkVersionInfoDlg;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.plugin.IPackageSearcher;
 import com.apkscanner.plugin.IPlugIn;
-import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.resource.RFile;
 import com.apkscanner.resource.RImg;
@@ -88,7 +87,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	public BasicInfo() {
 		setName(RStr.TAB_BASIC_INFO.get());
 		setToolTipText(RStr.TAB_BASIC_INFO.get());
-		setEnabled(true);
+		setTabbedEnabled(true);
 
 		initialize();
 		showAbout();
@@ -137,6 +136,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	public void reloadResource() {
 		setName(RStr.TAB_BASIC_INFO.get());
 		setToolTipText(RStr.TAB_BASIC_INFO.get());
+		sendRequest(SEND_REQUEST_CHANGE_TITLE);
 	}
 
 	@Override
@@ -173,20 +173,23 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	}
 
 	@Override
-	public void setData(ApkInfo apkInfo, Status status, ITabbedRequest request) {
+	public void setData(ApkInfo apkInfo, Status status) {
 		if(apkInfoPanel == null) initialize();
 
 		if(apkInfo == null) {
 			showAbout();
-			sendRequest(request, ITabbedRequest.REQUEST_SELECTED);
+			sendRequest(SEND_REQUEST_SELECTED);
 			return;
 		}
 
 		switch(status) {
 		case BASIC_INFO_COMPLETED:
+			setName(apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX ?
+					RStr.TAB_BASIC_INFO.get() : RStr.TAB_APEX_INFO.get());
 			setBasicInfo(apkInfo);
 			cardLayout.show(this, CARD_APK_INFORMATION);
-			sendRequest(request, ITabbedRequest.REQUEST_SELECTED);
+			sendRequest(SEND_REQUEST_CHANGE_TITLE);
+			sendRequest(SEND_REQUEST_SELECTED);
 			break;
 		case CERT_COMPLETED:
 			if(apkInfoPanel.getElementById("basic-info") != null) {
@@ -196,8 +199,8 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 					setPermissionList(null);
 				}
 				if(apkInfo.signatureScheme != null) {
-					apkInfoPanel.setOuterHTMLById("signature-scheme", ", " + 
-						makeHyperEvent("signature-scheme", "Scheme " + apkInfo.signatureScheme, 
+					apkInfoPanel.setOuterHTMLById("signature-scheme", ", " +
+						makeHyperEvent("signature-scheme", "Scheme " + apkInfo.signatureScheme,
 							"APK Signature Scheme " + apkInfo.signatureScheme, apkInfo.signatureScheme));
 				}
 			}

@@ -11,12 +11,26 @@ import com.apkscanner.util.Log;
 
 public abstract class AbstractTabbedPanel extends JPanel implements ITabbedComponent {
 	private static final long serialVersionUID = -5636023017306297012L;
-	
+
+	public static final int SEND_REQUEST_NONE = ITabbedRequest.REQUEST_NONE;
+	public static final int SEND_REQUEST_VISIBLE = ITabbedRequest.REQUEST_VISIBLE;
+	public static final int SEND_REQUEST_INVISIBLE = ITabbedRequest.REQUEST_INVISIBLE;
+	public static final int SEND_REQUEST_ENABLED = ITabbedRequest.REQUEST_ENABLED;
+	public static final int SEND_REQUEST_DISABLED = ITabbedRequest.REQUEST_DISABLED;
+	public static final int SEND_REQUEST_SELECTED = ITabbedRequest.REQUEST_SELECTED;
+	public static final int SEND_REQUEST_CHANGE_TITLE = ITabbedRequest.REQUEST_CHANGE_TITLE;
+
 	public static final int SEND_REQUEST_CURRENT_ENABLED = 100;
 	public static final int SEND_REQUEST_CURRENT_VISIBLE = 101;
 
 	private Icon icon;
 	private int dataSize = -1;
+	private int priority = -1;
+
+	private boolean visible = true;
+	private boolean enabled = true;
+
+	private ITabbedRequest tabbedRequest;
 
 	@Override
 	public Component getComponent() {
@@ -38,6 +52,16 @@ public abstract class AbstractTabbedPanel extends JPanel implements ITabbedCompo
 		return icon;
 	}
 
+	@Override
+	public int getPriority() {
+		return priority;
+	}
+
+	@Override
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+
 	public void setIcon(Icon icon) {
 		this.icon = icon;
 	}
@@ -46,10 +70,30 @@ public abstract class AbstractTabbedPanel extends JPanel implements ITabbedCompo
 		dataSize = size;
 	}
 
+	@Override
+	public boolean isTabbedVisible() {
+		return visible;
+	}
+
+	@Override
+	public boolean isTabbedEnabled() {
+		return enabled;
+	}
+
+	@Override
+	public void setTabbedEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	@Override
+	public void setTabbedVisible(boolean visible) {
+		this.visible = visible;
+	}
+
 	protected void setDataSize(int size, boolean chageEnabled, boolean changeVisible) {
 		dataSize = size;
-		if(chageEnabled) setEnabled(dataSize > 0);
-		if(changeVisible) setVisible(dataSize > 0);
+		if(chageEnabled) setTabbedEnabled(dataSize > 0);
+		if(changeVisible) setTabbedVisible(dataSize > 0);
 	}
 
 	@Override
@@ -57,23 +101,37 @@ public abstract class AbstractTabbedPanel extends JPanel implements ITabbedCompo
 		setDataSize(-1, true, false);
 	}
 
-	protected void sendRequest(ITabbedRequest handler, int request) {
+	@Override
+	public void setTabbedRequest(ITabbedRequest request) {
+		tabbedRequest = request;
+	}
+
+	protected void sendRequest(int request) {
 		switch(request) {
-		case ITabbedRequest.REQUEST_VISIBLE:	setVisible(true); break;
-		case ITabbedRequest.REQUEST_INVISIBLE:	setVisible(false); break;
-		case ITabbedRequest.REQUEST_ENABLED:	setEnabled(true); break;
-		case ITabbedRequest.REQUEST_DISABLED:	setEnabled(false); break;
-		case ITabbedRequest.REQUEST_SELECTED:	break;
+		case SEND_REQUEST_VISIBLE:
+			setTabbedVisible(true);
+			break;
+		case SEND_REQUEST_INVISIBLE:
+			setTabbedVisible(false);
+			break;
+		case SEND_REQUEST_ENABLED:
+			setTabbedEnabled(true);
+			break;
+		case SEND_REQUEST_DISABLED:
+			setTabbedEnabled(false);
+			break;
 		case SEND_REQUEST_CURRENT_ENABLED:
-			request = isEnabled() ? ITabbedRequest.REQUEST_ENABLED : ITabbedRequest.REQUEST_DISABLED;
+			request = isTabbedEnabled() ? ITabbedRequest.REQUEST_ENABLED : ITabbedRequest.REQUEST_DISABLED;
 			break;
 		case SEND_REQUEST_CURRENT_VISIBLE:
-			request = isVisible() ? ITabbedRequest.REQUEST_VISIBLE : ITabbedRequest.REQUEST_INVISIBLE;
+			request = isTabbedVisible() ? ITabbedRequest.REQUEST_VISIBLE : ITabbedRequest.REQUEST_INVISIBLE;
+			break;
+		case SEND_REQUEST_SELECTED:
+		case SEND_REQUEST_CHANGE_TITLE:
 			break;
 		default:
 			Log.w("unknown request : " + request);
-			return;
 		}
-		if(handler != null) handler.onRequest(request);
+		if(tabbedRequest != null) tabbedRequest.onRequest(request);
 	}
 }

@@ -21,9 +21,9 @@ import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.gui.component.ImageScaler;
-import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
+import com.apkscanner.util.Log;
 
 /**
  * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for
@@ -41,12 +41,13 @@ public class Widgets extends AbstractTabbedPanel
 		setLayout(new GridLayout(1, 0));
 		setName(RStr.TAB_WIDGETS.get());
 		setToolTipText(RStr.TAB_WIDGETS.get());
-		setEnabled(false);
+		setTabbedEnabled(false);
 	}
 
 	@Override
 	public void initialize()
 	{
+		Log.e("Widgets");
 		TableModel = new MyTableModel();
 		table = new JTable(TableModel);
 
@@ -63,7 +64,7 @@ public class Widgets extends AbstractTabbedPanel
 	}
 
 	@Override
-	public void setData(ApkInfo apkInfo, Status status, ITabbedRequest request)
+	public void setData(ApkInfo apkInfo, Status status)
 	{
 		if(!Status.WIDGET_COMPLETED.equals(status)) {
 			return;
@@ -104,7 +105,10 @@ public class Widgets extends AbstractTabbedPanel
 		}
 
 		setDataSize(apkInfo.widgets.length, true, false);
-		sendRequest(request, SEND_REQUEST_CURRENT_ENABLED);
+		sendRequest(SEND_REQUEST_CURRENT_ENABLED);
+
+		setTabbedVisible(apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX);
+		sendRequest(SEND_REQUEST_CURRENT_VISIBLE);
 	}
 
 	@Override
@@ -112,6 +116,7 @@ public class Widgets extends AbstractTabbedPanel
 	{
 		setName(RStr.TAB_WIDGETS.get());
 		setToolTipText(RStr.TAB_WIDGETS.get());
+		sendRequest(SEND_REQUEST_CHANGE_TITLE);
 
 		if(TableModel == null) return;
 		TableModel.loadResource();

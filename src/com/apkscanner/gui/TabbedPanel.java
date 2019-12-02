@@ -5,9 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
@@ -25,6 +23,7 @@ import com.apkscanner.gui.tabpanels.Libraries;
 import com.apkscanner.gui.tabpanels.Resources;
 import com.apkscanner.gui.tabpanels.Signatures;
 import com.apkscanner.gui.tabpanels.Widgets;
+import com.apkscanner.plugin.AbstractTabbedRequest;
 import com.apkscanner.plugin.IExtraComponent;
 import com.apkscanner.plugin.ITabbedComponent;
 import com.apkscanner.plugin.ITabbedRequest;
@@ -36,8 +35,6 @@ public class TabbedPanel extends JTabbedPane implements LanguageChangeListener, 
 {
 	private static final long serialVersionUID = -5500517956616692675L;
 
-	private ArrayList<ITabbedRequest> tabbedRequestHandler = new ArrayList<>();
-	private HashMap<ITabbedComponent, ITabbedRequest> invisibleTabbeds = new HashMap<>();
 	private HashMap<Component, ITabbedComponent> componentMap = new HashMap<>();
 
 	public TabbedPanel() {
@@ -92,8 +89,8 @@ public class TabbedPanel extends JTabbedPane implements LanguageChangeListener, 
 	}
 
 	public void uiLoadBooster() {
-		for(int i=0; i<getTabCount(); i++) {
-			Component c = getTabComponentAt(i);
+		for(ITabbedComponent tabbed: componentMap.values()) {
+			Component c = tabbed.getComponent();
 			if(c instanceof AbstractTabbedPanel) {
 				((AbstractTabbedPanel)c).initialize();
 			}
@@ -107,61 +104,77 @@ public class TabbedPanel extends JTabbedPane implements LanguageChangeListener, 
 		}
 	}
 
-	public void addTab(final ITabbedComponent tabbed) {
-		if(tabbed == null) return;
-		if(!tabbed.getComponent().isVisible()) {
-			addInvisibleTab(tabbed);
-			return;
-		}
-		componentMap.put(tabbed.getComponent(), tabbed);
-
-		int idx = getTabCount();
-		addTab(tabbed.getTitle(), tabbed.getIcon(), tabbed.getComponent(), tabbed.getToolTip());
-
-		setEnabledAt(idx, tabbed.getComponent().isEnabled());
-		reindexing();
-
-		for(int i = tabbedRequestHandler.size(); i < getTabCount(); i++) {
-			final int tabIndex = i;
-			tabbedRequestHandler.add(new ITabbedRequest() {
-				@Override
-				public boolean onRequestVisible(boolean visible) {
-					if(!visible) {
-						addInvisibleTab(componentMap.get(getComponentAt(tabIndex)));
-						removeTabAt(tabIndex);
-						reindexing();
-					}
-					return true; 	
-				}
-
-				@Override
-				public boolean onRequestEnabled(boolean enable) {
-					ITabbedComponent tabbed = componentMap.get(getComponentAt(tabIndex));
-					setEnabledAt(tabIndex, enable);
-					setTitleAt(tabIndex, tabbed.getTitle());
-					setToolTipTextAt(tabIndex, tabbed.getToolTip());
-					return true;
-				}
-			});
-		}
+	public void addTab(ITabbedComponent tabbed) {
+		addTab(tabbed, tabbed.getPriority());
 	}
 
-	public void addInvisibleTab(final ITabbedComponent tabbed) {
-		if(tabbed == null) return;
-		if(tabbed.getComponent().isVisible()) {
-			addTab(tabbed);
-			return;
+	public void addTab(ITabbedComponent tabbedComp, int priority) {
+		if(tabbedComp == null) return;
+
+		componentMap.put(tabbedComp.getComponent(), tabbedComp);
+
+		if(priority == -1) {
+			priority = getTabCount();
+			tabbedComp.setPriority(priority);
 		}
-		invisibleTabbeds.put(tabbed, new ITabbedRequest() {
+
+		ITabbedRequest request = new AbstractTabbedRequest(tabbedComp) {
 			@Override
 			public boolean onRequestVisible(boolean visible) {
-				if(visible) {
-					addTab(tabbed);
-					invisibleTabbeds.remove(tabbed);
+				ITabbedComponent tabbed = getTabbedComponent();
+				Component c = tabbed.getComponent();
+				int idx = indexOfComponent(c);
+				boolean oldVisible = idx > -1;
+				if(oldVisible == visible) return false;
+				if(!visible) {
+					removeTabAt(idx);
+				} else {
+					int priority = tabbed.getPriority();
+					for(idx = 0; idx < getTabCount(); idx++) {
+						ITabbedComponent tabbedComp = componentMap.get(getComponentAt(idx));
+						if(priority <= tabbedComp.getPriority()) {
+							break;
+						}
+					}
+					insertTab(tabbed.getTitle(), tabbed.getIcon(), c, tabbed.getToolTip(), idx);
+					setEnabledAt(idx, tabbed.isTabbedEnabled());
 				}
-				return true; 	
+				reindexing();
+				return true;
 			}
-		});
+
+			@Override
+			public boolean onRequestEnabled(boolean enabled) {
+				ITabbedComponent tabbed = getTabbedComponent();
+				int idx = indexOfComponent(tabbed.getComponent());
+				if(idx == -1) return false;
+				setEnabledAt(idx, enabled);
+				setTitleAt(idx, tabbed.getTitle());
+				setToolTipTextAt(idx, tabbed.getToolTip());
+				return true;
+			}
+
+			@Override
+			public boolean onRequestChangeTitle() {
+				ITabbedComponent tabbed = getTabbedComponent();
+				int idx = indexOfComponent(tabbed.getComponent());
+				if(idx == -1) return false;
+				setTitleAt(idx, tabbed.getTitle());
+				setToolTipTextAt(idx, tabbed.getToolTip());
+				return true;
+			}
+
+			@Override
+			public boolean onRequestSelected() {
+				ITabbedComponent tabbed = getTabbedComponent();
+				int idx = indexOfComponent(tabbed.getComponent());
+				if(idx == -1) return false;
+				setSelectedIndex(idx);
+				return false;
+			}
+		};
+		tabbedComp.setTabbedRequest(request);
+		request.onRequestVisible(tabbedComp.isTabbedVisible());
 	}
 
 	public void reindexing() {
@@ -180,49 +193,40 @@ public class TabbedPanel extends JTabbedPane implements LanguageChangeListener, 
 
 	public void reloadResource()
 	{
-		for(int i = 0; i < getTabCount(); i++) {
-			ITabbedComponent tabbed = componentMap.get(getComponentAt(i));
-			tabbed.reloadResource();
-			setTitleAt(i, tabbed.getTitle());
-			setToolTipTextAt(i, tabbed.getToolTip());
-		}
-		for(ITabbedComponent tabbed: invisibleTabbeds.keySet()) {
+		for(ITabbedComponent tabbed: componentMap.values()) {
 			tabbed.reloadResource();
 		}
 	}
 
 	public void setData(ApkInfo apkInfo, Status status)
 	{
-		for(int i = 0; i < getTabCount(); i++) {
-			ITabbedComponent tabbed = componentMap.get(getComponentAt(i));
-			tabbed.setData(apkInfo, status, tabbedRequestHandler.get(i));
-		}
-		for(Entry<ITabbedComponent, ITabbedRequest> entry: invisibleTabbeds.entrySet()) {
-			entry.getKey().setData(apkInfo, status, entry.getValue());
+		for(ITabbedComponent tabbed: componentMap.values()) {
+			tabbed.setData(apkInfo, status);
 		}
 	}
 
 	public void onProgress(String message)
 	{
-		for(int i = 0; i < getTabCount(); i++) {
-			ITabbedComponent tabbed = componentMap.get(getComponentAt(i));
+		for(ITabbedComponent tabbed: componentMap.values()) {
 			if(tabbed instanceof IProgressListener) {
-				((IProgressListener)tabbed).onProgress(message);		
+				((IProgressListener)tabbed).onProgress(message);
 			}
 		}
 	}
 
 	public void setLodingLabel()
 	{
-		for(int i = 0; i < getTabCount(); i++) {
-			ITabbedComponent tabbed = componentMap.get(getComponentAt(i));
+		for(ITabbedComponent tabbed: componentMap.values()) {
+			int idx = indexOfComponent(tabbed.getComponent());
 			if(tabbed instanceof IProgressListener) {
 				((IProgressListener)tabbed).onProgress(null);
-				setSelectedIndex(i);
+				if(idx != -1) setSelectedIndex(idx);
 			} else {
 				tabbed.clearData();
-				setEnabledAt(i, false);
-				setTitleAt(i, tabbed.getTitle());
+				if(idx != -1) {
+					setEnabledAt(idx, false);
+					setTitleAt(idx, tabbed.getTitle());
+				}
 			}
 		}
 	}

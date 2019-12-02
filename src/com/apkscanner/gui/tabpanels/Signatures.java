@@ -15,7 +15,6 @@ import javax.swing.event.ListSelectionListener;
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
-import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
@@ -35,7 +34,7 @@ public class Signatures extends AbstractTabbedPanel
 	public Signatures() {
 		setName(RStr.TAB_SIGNATURES.get());
 		setToolTipText(RStr.TAB_SIGNATURES.get());
-		setEnabled(false);
+		setTabbedEnabled(false);
 	}
 
 	@Override
@@ -55,7 +54,7 @@ public class Signatures extends AbstractTabbedPanel
 		splitPane.setRightComponent(scrollPane2);
 		splitPane.setDividerLocation(100);
 
-		add(splitPane);        
+		add(splitPane);
 
 		ListSelectionListener listSelectionListener = new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent listSelectionEvent) {
@@ -111,7 +110,7 @@ public class Signatures extends AbstractTabbedPanel
 	}
 
 	@Override
-	public void setData(ApkInfo apkInfo, Status status, ITabbedRequest request)
+	public void setData(ApkInfo apkInfo, Status status)
 	{
 		if(!Status.CERT_COMPLETED.equals(status)) {
 			return;
@@ -140,7 +139,7 @@ public class Signatures extends AbstractTabbedPanel
 		jlist.setSelectedIndex(0);
 
 		setDataSize(ApkInfoHelper.isSigned(apkInfo) ? apkInfo.certificates.length : 0, true, false);
-		sendRequest(request, SEND_REQUEST_CURRENT_ENABLED);
+		sendRequest(SEND_REQUEST_CURRENT_ENABLED);
 	}
 
 	@Override
@@ -148,6 +147,7 @@ public class Signatures extends AbstractTabbedPanel
 	{
 		setName(RStr.TAB_SIGNATURES.get());
 		setToolTipText(RStr.TAB_SIGNATURES.get());
+		sendRequest(SEND_REQUEST_CHANGE_TITLE);
 
 		if(jlist == null) return;
 

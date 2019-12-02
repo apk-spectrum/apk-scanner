@@ -150,6 +150,7 @@ public enum RStr implements ResString<String>
 	MENU_VISIBLE_TO_BASIC_EACH	("@menu_visible_to_basic_each"),
 
 	TAB_BASIC_INFO				("@tab_basic_info"),
+	TAB_APEX_INFO				("@tab_apex_info"),
 	TAB_WIDGETS					("@tab_widgets"),
 	TAB_LIBRARIES				("@tab_libraries"),
 	TAB_RESOURCES				("@tab_resources"),

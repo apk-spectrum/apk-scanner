@@ -3,7 +3,6 @@ package com.apkscanner.gui.tabpanels;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
@@ -44,7 +43,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.SwingWorker;
@@ -67,7 +65,6 @@ import com.apkscanner.gui.component.FilteredTreeModel;
 import com.apkscanner.gui.component.ImageScaler;
 import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.plugin.IPlugIn;
-import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RImg;
@@ -223,7 +220,7 @@ public class Resources extends AbstractTabbedPanel {
 
 			childCount = 0;
 		}
-		
+
 		private void setAttr() {
 			String extension = path.replaceAll(".*/", "").replaceAll(".*\\.", ".").toLowerCase();
 
@@ -276,7 +273,7 @@ public class Resources extends AbstractTabbedPanel {
 	public Resources() {
 		setName(RStr.TAB_RESOURCES.get());
 		setToolTipText(RStr.TAB_RESOURCES.get());
-		setEnabled(false);
+		setTabbedEnabled(false);
 	}
 
 	private void makeTreeForm() {
@@ -338,17 +335,7 @@ public class Resources extends AbstractTabbedPanel {
 			@Override
 			public void setTreeFocus(String path, int line, String string) {
 				Log.d("path : " + path + ", " + Resources.this.getParent());
-				Container parent = (Resources.this.getParent());
-				if(parent instanceof JTabbedPane) {
-					JTabbedPane tabbed = (JTabbedPane)parent;
-					int c = tabbed.getComponentCount();
-					for(int i = 0; i<c; i++) {
-						if(tabbed.getComponent(i).equals(Resources.this)) {
-							tabbed.setSelectedIndex(i);
-							break;
-						}
-					}
-				}
+				sendRequest(SEND_REQUEST_SELECTED);
 
 				@SuppressWarnings("unchecked")
 				Enumeration<TreeNode> e = top.depthFirstEnumeration();
@@ -880,9 +867,9 @@ public class Resources extends AbstractTabbedPanel {
 						e.printStackTrace();
 					}
 				}
-				
+
 				if (resObj.attr == ResourceObject.ATTR_FS_IMG) {
-					
+
 				}
 			}
 		}
@@ -955,7 +942,7 @@ public class Resources extends AbstractTabbedPanel {
 		} else if (resObj.path.toLowerCase().endsWith(".apk")) {
 			Launcher.run(resPath);
 		} else if (resObj.attr == ResourceObject.ATTR_FS_IMG) {
-			
+
 		} else {
 			SystemUtil.openFile(resPath);
 		}
@@ -1278,7 +1265,7 @@ public class Resources extends AbstractTabbedPanel {
 	}
 
 	@Override
-	public void setData(ApkInfo apkInfo, Status status, ITabbedRequest request) {
+	public void setData(ApkInfo apkInfo, Status status) {
 		if(!Status.RESOURCE_COMPLETED.equals(status)) {
 			if(Status.RES_DUMP_COMPLETED.equals(status)) {
 				setExtraData(apkInfo);
@@ -1299,7 +1286,7 @@ public class Resources extends AbstractTabbedPanel {
 		setTreeForm();
 
 		setDataSize(apkInfo.resources.length, true, false);
-		sendRequest(request, SEND_REQUEST_CURRENT_ENABLED);
+		sendRequest(SEND_REQUEST_CURRENT_ENABLED);
 	}
 
 	public void setExtraData(ApkInfo apkInfo) {
@@ -1327,5 +1314,6 @@ public class Resources extends AbstractTabbedPanel {
 	public void reloadResource() {
 		setName(RStr.TAB_RESOURCES.get());
 		setToolTipText(RStr.TAB_RESOURCES.get());
+		sendRequest(SEND_REQUEST_CHANGE_TITLE);
 	}
 }

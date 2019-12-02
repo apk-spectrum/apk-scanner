@@ -28,7 +28,6 @@ import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ProviderInfo;
 import com.apkscanner.data.apkinfo.ReceiverInfo;
 import com.apkscanner.data.apkinfo.ServiceInfo;
-import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 
@@ -49,7 +48,7 @@ public class Components extends AbstractTabbedPanel
 		setLayout(new GridLayout(1, 0));
 		setName(RStr.TAB_COMPONENTS.get());
 		setToolTipText(RStr.TAB_COMPONENTS.get());
-		setEnabled(false);
+		setTabbedEnabled(false);
 	}
 
 	@Override
@@ -138,7 +137,7 @@ public class Components extends AbstractTabbedPanel
 	}
 
 	@Override
-	public void setData(ApkInfo apkInfo, Status status, ITabbedRequest request)
+	public void setData(ApkInfo apkInfo, Status status)
 	{
 		if(!Status.ACTIVITY_COMPLETED.equals(status)) {
 			return;
@@ -268,7 +267,10 @@ public class Components extends AbstractTabbedPanel
 		TableModel.fireTableDataChanged();
 
 		setDataSize(ApkInfoHelper.getComponentCount(apkInfo), true, false);
-		sendRequest(request, SEND_REQUEST_CURRENT_ENABLED);
+		sendRequest(SEND_REQUEST_CURRENT_ENABLED);
+
+		setTabbedVisible(apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX);
+		sendRequest(SEND_REQUEST_CURRENT_VISIBLE);
 	}
 
 	@Override
@@ -276,6 +278,7 @@ public class Components extends AbstractTabbedPanel
 	{
 		setName(RStr.TAB_COMPONENTS.get());
 		setToolTipText(RStr.TAB_COMPONENTS.get());
+		sendRequest(SEND_REQUEST_CHANGE_TITLE);
 
 		if(TableModel == null) return;
 		TableModel.loadResource();
