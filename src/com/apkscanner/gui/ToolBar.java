@@ -781,11 +781,8 @@ public class ToolBar extends JToolBar
 			break;
 		case NEED_TARGET_APK:
 			hasTargetApk = enabled;
-			buttonMap.get(ButtonSet.MANIFEST).setEnabled(enabled);
-			buttonMap.get(ButtonSet.EXPLORER).setEnabled(enabled);
 			buttonMap.get(ButtonSet.OPEN_CODE).setEnabled(enabled);
 			buttonMap.get(ButtonSet.SEARCH).setEnabled(enabled);
-			buttonMap.get(ButtonSet.INSTALL).setEnabled(enabled);
 			buttonMap.get(ButtonSet.INSTALL_EXTEND).setEnabled(enabled);
 			buttonMap.get(ButtonSet.INSTALL_DOWNGRADE).setEnabled(enabled);
 			buttonMap.get(ButtonSet.INSTALL_UPDATE).setEnabled(enabled);
@@ -807,6 +804,11 @@ public class ToolBar extends JToolBar
 					}
 				}
 			}
+		case NEED_TARGET_APEX:
+			buttonMap.get(ButtonSet.MANIFEST).setEnabled(enabled);
+			buttonMap.get(ButtonSet.EXPLORER).setEnabled(enabled);
+			buttonMap.get(ButtonSet.INSTALL).setEnabled(enabled);
+
 		case NEED_DEVICE:
 			if(buttonId == ButtonSet.NEED_DEVICE) hasDevice = enabled;
 			enabled = hasDevice && hasTargetApk;

@@ -146,6 +146,7 @@ public class MainUI extends JFrame implements IPlugInEventListener, LanguageChan
 
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
+					toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
 					tabbedPanel.setLodingLabel();
 				}
 			});
@@ -198,9 +199,12 @@ public class MainUI extends JFrame implements IPlugInEventListener, LanguageChan
 		@Override
 		public void onStateChanged(final Status status) {
 			//Log.v("onStateChanged() "+ status);
+
+			ApkInfo apkInfo = apkScanner.getApkInfo();
+
 			if(status == Status.STANBY) {
 				Log.v("STANBY: does not UI update");
-				PlugInManager.setApkInfo(apkScanner.getApkInfo());
+				PlugInManager.setApkInfo(apkInfo);
 				return;
 			}
 
@@ -220,25 +224,29 @@ public class MainUI extends JFrame implements IPlugInEventListener, LanguageChan
 
 			switch(status) {
 			case ACTIVITY_COMPLETED: case CERT_COMPLETED:
-				toolbarManager.setApkInfo(apkScanner.getApkInfo());
+				toolbarManager.setApkInfo(apkInfo);
 			default: break;
 			}
 
 			Log.i("onStateChanged() ui sync start for " + status);
 			switch(status) {
 			case BASIC_INFO_COMPLETED:
-				PlugInManager.setApkInfo(apkScanner.getApkInfo());
+				PlugInManager.setApkInfo(apkInfo);
 
-				String apkFilePath = apkScanner.getApkInfo().filePath;
+				String apkFilePath = apkInfo.filePath;
 				String title = apkFilePath.substring(apkFilePath.lastIndexOf(File.separator)+1) + " - " + RStr.APP_NAME.get();
 				setTitle(title);
 
-				toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, true);
+				if(apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX) {
+					toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, true);
+				} else {
+					toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APEX, true);
+				}
 				dropTargetChooser.setExternalToolsVisible(true);
 
-				infoHashCode = apkScanner.getApkInfo().hashCode();
+				infoHashCode = apkInfo.hashCode();
 			default:
-				tabbedPanel.setData(apkScanner.getApkInfo(), status);
+				tabbedPanel.setData(apkInfo, status);
 				break;
 			}
 			Log.i("onStateChanged() ui sync end " + status);

@@ -43,6 +43,7 @@ public enum ButtonSet
 	SUB_SIGN			(Type.SUB_TOOLBAR, RComp.BTN_TOOLBAR_SIGN, UiEventHandler.ACT_CMD_SIGN_APK),
 
 	NEED_TARGET_APK	(Type.NONE, (String) null, null),
+	NEED_TARGET_APEX(Type.NONE, (String) null, null),
 	NEED_DEVICE		(Type.NONE, (String) null, null),
 	ALL				(Type.NONE, (String) null, null);
 
