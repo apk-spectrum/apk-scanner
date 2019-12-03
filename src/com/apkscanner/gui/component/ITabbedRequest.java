@@ -1,4 +1,4 @@
-package com.apkscanner.plugin;
+package com.apkscanner.gui.component;
 
 public interface ITabbedRequest {
 	public static final int REQUEST_NONE = 0;

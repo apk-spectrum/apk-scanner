@@ -5,8 +5,8 @@ import java.awt.Component;
 import javax.swing.Icon;
 import javax.swing.JPanel;
 
-import com.apkscanner.plugin.ITabbedComponent;
-import com.apkscanner.plugin.ITabbedRequest;
+import com.apkscanner.gui.component.ITabbedComponent;
+import com.apkscanner.gui.component.ITabbedRequest;
 import com.apkscanner.util.Log;
 
 public abstract class AbstractTabbedPanel extends JPanel implements ITabbedComponent {
@@ -47,6 +47,13 @@ public abstract class AbstractTabbedPanel extends JPanel implements ITabbedCompo
 		return super.getToolTipText();
 	}
 
+	public void setTitle(String title, String toolTip) {
+		setName(title);
+		setToolTipText(toolTip);
+		if(tabbedRequest != null)
+			tabbedRequest.onRequestChangeTitle();
+	}
+
 	@Override
 	public Icon getIcon() {
 		return icon;
@@ -83,15 +90,26 @@ public abstract class AbstractTabbedPanel extends JPanel implements ITabbedCompo
 	@Override
 	public void setTabbedEnabled(boolean enabled) {
 		this.enabled = enabled;
+		if(tabbedRequest != null)
+			tabbedRequest.onRequestEnabled(enabled);
 	}
 
 	@Override
 	public void setTabbedVisible(boolean visible) {
 		this.visible = visible;
+		if(tabbedRequest != null)
+			tabbedRequest.onRequestVisible(visible);
+	}
+
+	public void setSeletected() {
+		if(tabbedRequest != null)
+			tabbedRequest.onRequestSelected();
 	}
 
 	protected void setDataSize(int size, boolean chageEnabled, boolean changeVisible) {
+		if(dataSize == size) return;
 		dataSize = size;
+		sendRequest(SEND_REQUEST_CHANGE_TITLE);
 		if(chageEnabled) setTabbedEnabled(dataSize > 0);
 		if(changeVisible) setTabbedVisible(dataSize > 0);
 	}
@@ -110,21 +128,21 @@ public abstract class AbstractTabbedPanel extends JPanel implements ITabbedCompo
 		switch(request) {
 		case SEND_REQUEST_VISIBLE:
 			setTabbedVisible(true);
-			break;
+			return;
 		case SEND_REQUEST_INVISIBLE:
 			setTabbedVisible(false);
-			break;
+			return;
 		case SEND_REQUEST_ENABLED:
 			setTabbedEnabled(true);
-			break;
+			return;
 		case SEND_REQUEST_DISABLED:
 			setTabbedEnabled(false);
-			break;
+			return;
 		case SEND_REQUEST_CURRENT_ENABLED:
-			request = isTabbedEnabled() ? ITabbedRequest.REQUEST_ENABLED : ITabbedRequest.REQUEST_DISABLED;
+			request = isTabbedEnabled() ? SEND_REQUEST_ENABLED : SEND_REQUEST_DISABLED;
 			break;
 		case SEND_REQUEST_CURRENT_VISIBLE:
-			request = isTabbedVisible() ? ITabbedRequest.REQUEST_VISIBLE : ITabbedRequest.REQUEST_INVISIBLE;
+			request = isTabbedVisible() ? SEND_REQUEST_VISIBLE : SEND_REQUEST_INVISIBLE;
 			break;
 		case SEND_REQUEST_SELECTED:
 		case SEND_REQUEST_CHANGE_TITLE:

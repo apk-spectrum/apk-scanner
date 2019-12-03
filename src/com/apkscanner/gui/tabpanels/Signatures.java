@@ -32,8 +32,7 @@ public class Signatures extends AbstractTabbedPanel
 	private String apkFilePath;
 
 	public Signatures() {
-		setName(RStr.TAB_SIGNATURES.get());
-		setToolTipText(RStr.TAB_SIGNATURES.get());
+		setTitle(RStr.TAB_SIGNATURES.get(), RStr.TAB_SIGNATURES.get());
 		setTabbedEnabled(false);
 	}
 
@@ -139,15 +138,12 @@ public class Signatures extends AbstractTabbedPanel
 		jlist.setSelectedIndex(0);
 
 		setDataSize(ApkInfoHelper.isSigned(apkInfo) ? apkInfo.certificates.length : 0, true, false);
-		sendRequest(SEND_REQUEST_CURRENT_ENABLED);
 	}
 
 	@Override
 	public void reloadResource()
 	{
-		setName(RStr.TAB_SIGNATURES.get());
-		setToolTipText(RStr.TAB_SIGNATURES.get());
-		sendRequest(SEND_REQUEST_CHANGE_TITLE);
+		setTitle(RStr.TAB_SIGNATURES.get(), RStr.TAB_SIGNATURES.get());
 
 		if(jlist == null) return;
 

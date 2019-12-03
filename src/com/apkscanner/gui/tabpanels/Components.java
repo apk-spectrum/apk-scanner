@@ -46,8 +46,7 @@ public class Components extends AbstractTabbedPanel
 
 	public Components() {
 		setLayout(new GridLayout(1, 0));
-		setName(RStr.TAB_COMPONENTS.get());
-		setToolTipText(RStr.TAB_COMPONENTS.get());
+		setTitle(RStr.TAB_COMPONENTS.get(), RStr.TAB_COMPONENTS.get());
 		setTabbedEnabled(false);
 	}
 
@@ -267,18 +266,13 @@ public class Components extends AbstractTabbedPanel
 		TableModel.fireTableDataChanged();
 
 		setDataSize(ApkInfoHelper.getComponentCount(apkInfo), true, false);
-		sendRequest(SEND_REQUEST_CURRENT_ENABLED);
-
 		setTabbedVisible(apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX);
-		sendRequest(SEND_REQUEST_CURRENT_VISIBLE);
 	}
 
 	@Override
 	public void reloadResource()
 	{
-		setName(RStr.TAB_COMPONENTS.get());
-		setToolTipText(RStr.TAB_COMPONENTS.get());
-		sendRequest(SEND_REQUEST_CHANGE_TITLE);
+		setTitle(RStr.TAB_COMPONENTS.get(), RStr.TAB_COMPONENTS.get());
 
 		if(TableModel == null) return;
 		TableModel.loadResource();

@@ -5,7 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
@@ -13,6 +14,9 @@ import javax.swing.KeyStroke;
 
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.gui.component.DefaultTabbedRequest;
+import com.apkscanner.gui.component.ITabbedComponent;
+import com.apkscanner.gui.component.ITabbedRequest;
 import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.gui.component.tabbedpane.TabbedPaneUIManager;
 import com.apkscanner.gui.tabpanels.AbstractTabbedPanel;
@@ -23,10 +27,7 @@ import com.apkscanner.gui.tabpanels.Libraries;
 import com.apkscanner.gui.tabpanels.Resources;
 import com.apkscanner.gui.tabpanels.Signatures;
 import com.apkscanner.gui.tabpanels.Widgets;
-import com.apkscanner.plugin.AbstractTabbedRequest;
 import com.apkscanner.plugin.IExtraComponent;
-import com.apkscanner.plugin.ITabbedComponent;
-import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.resource.LanguageChangeListener;
 import com.apkscanner.resource.RStr;
@@ -35,7 +36,7 @@ public class TabbedPanel extends JTabbedPane implements LanguageChangeListener, 
 {
 	private static final long serialVersionUID = -5500517956616692675L;
 
-	private HashMap<Component, ITabbedComponent> componentMap = new HashMap<>();
+	private List<ITabbedComponent> components = new ArrayList<>();
 
 	public TabbedPanel() {
 		this(null);
@@ -89,7 +90,7 @@ public class TabbedPanel extends JTabbedPane implements LanguageChangeListener, 
 	}
 
 	public void uiLoadBooster() {
-		for(ITabbedComponent tabbed: componentMap.values()) {
+		for(ITabbedComponent tabbed: components) {
 			Component c = tabbed.getComponent();
 			if(c instanceof AbstractTabbedPanel) {
 				((AbstractTabbedPanel)c).initialize();
@@ -111,103 +112,34 @@ public class TabbedPanel extends JTabbedPane implements LanguageChangeListener, 
 	public void addTab(ITabbedComponent tabbedComp, int priority) {
 		if(tabbedComp == null) return;
 
-		componentMap.put(tabbedComp.getComponent(), tabbedComp);
+		components.add(tabbedComp);
 
 		if(priority == -1) {
 			priority = getTabCount();
 			tabbedComp.setPriority(priority);
 		}
 
-		ITabbedRequest request = new AbstractTabbedRequest(tabbedComp) {
-			@Override
-			public boolean onRequestVisible(boolean visible) {
-				ITabbedComponent tabbed = getTabbedComponent();
-				Component c = tabbed.getComponent();
-				int idx = indexOfComponent(c);
-				boolean oldVisible = idx > -1;
-				if(oldVisible == visible) return false;
-				if(!visible) {
-					removeTabAt(idx);
-				} else {
-					int priority = tabbed.getPriority();
-					for(idx = 0; idx < getTabCount(); idx++) {
-						ITabbedComponent tabbedComp = componentMap.get(getComponentAt(idx));
-						if(priority <= tabbedComp.getPriority()) {
-							break;
-						}
-					}
-					insertTab(tabbed.getTitle(), tabbed.getIcon(), c, tabbed.getToolTip(), idx);
-					setEnabledAt(idx, tabbed.isTabbedEnabled());
-				}
-				reindexing();
-				return true;
-			}
-
-			@Override
-			public boolean onRequestEnabled(boolean enabled) {
-				ITabbedComponent tabbed = getTabbedComponent();
-				int idx = indexOfComponent(tabbed.getComponent());
-				if(idx == -1) return false;
-				setEnabledAt(idx, enabled);
-				setTitleAt(idx, tabbed.getTitle());
-				setToolTipTextAt(idx, tabbed.getToolTip());
-				return true;
-			}
-
-			@Override
-			public boolean onRequestChangeTitle() {
-				ITabbedComponent tabbed = getTabbedComponent();
-				int idx = indexOfComponent(tabbed.getComponent());
-				if(idx == -1) return false;
-				setTitleAt(idx, tabbed.getTitle());
-				setToolTipTextAt(idx, tabbed.getToolTip());
-				return true;
-			}
-
-			@Override
-			public boolean onRequestSelected() {
-				ITabbedComponent tabbed = getTabbedComponent();
-				int idx = indexOfComponent(tabbed.getComponent());
-				if(idx == -1) return false;
-				setSelectedIndex(idx);
-				return false;
-			}
-		};
-		tabbedComp.setTabbedRequest(request);
+		ITabbedRequest request = new DefaultTabbedRequest(this, tabbedComp);
 		request.onRequestVisible(tabbedComp.isTabbedVisible());
-	}
-
-	public void reindexing() {
-		for(int i = 0; i < getTabCount(); i++) {
-			String tooltip = getToolTipTextAt(i);
-			if(tooltip != null && !tooltip.isEmpty()) {
-				tooltip = tooltip.replaceAll("\\s\\(Alt\\+\\d\\)$", "");
-				if(i < 10) {
-					tooltip += " (Alt+" + (i<9 ? i+1 : 0) + ")";
-					setMnemonicAt(i, (i<9 ? KeyEvent.VK_1 + i : KeyEvent.VK_0));
-				}
-			}
-			setToolTipTextAt(i, tooltip);
-		}
 	}
 
 	public void reloadResource()
 	{
-		for(ITabbedComponent tabbed: componentMap.values()) {
+		for(ITabbedComponent tabbed: components) {
 			tabbed.reloadResource();
 		}
 	}
 
 	public void setData(ApkInfo apkInfo, Status status)
 	{
-		for(ITabbedComponent tabbed: componentMap.values()) {
+		for(ITabbedComponent tabbed: components) {
 			tabbed.setData(apkInfo, status);
 		}
 	}
 
 	public void onProgress(String message)
 	{
-		for(ITabbedComponent tabbed: componentMap.values()) {
+		for(ITabbedComponent tabbed: components) {
 			if(tabbed instanceof IProgressListener) {
 				((IProgressListener)tabbed).onProgress(message);
 			}
@@ -216,7 +148,7 @@ public class TabbedPanel extends JTabbedPane implements LanguageChangeListener, 
 
 	public void setLodingLabel()
 	{
-		for(ITabbedComponent tabbed: componentMap.values()) {
+		for(ITabbedComponent tabbed: components) {
 			int idx = indexOfComponent(tabbed.getComponent());
 			if(tabbed instanceof IProgressListener) {
 				((IProgressListener)tabbed).onProgress(null);

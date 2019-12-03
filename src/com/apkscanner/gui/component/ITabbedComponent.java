@@ -1,4 +1,4 @@
-package com.apkscanner.plugin;
+package com.apkscanner.gui.component;
 
 import java.awt.Component;
 

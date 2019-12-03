@@ -85,8 +85,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	private PermissionManager permissionManager = new PermissionManager();
 
 	public BasicInfo() {
-		setName(RStr.TAB_BASIC_INFO.get());
-		setToolTipText(RStr.TAB_BASIC_INFO.get());
+		setTitle(RStr.TAB_BASIC_INFO.get(), RStr.TAB_BASIC_INFO.get());
 		setTabbedEnabled(true);
 
 		initialize();
@@ -134,9 +133,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 
 	@Override
 	public void reloadResource() {
-		setName(RStr.TAB_BASIC_INFO.get());
-		setToolTipText(RStr.TAB_BASIC_INFO.get());
-		sendRequest(SEND_REQUEST_CHANGE_TITLE);
+		setTitle(RStr.TAB_BASIC_INFO.get(), RStr.TAB_BASIC_INFO.get());
 	}
 
 	@Override
@@ -178,18 +175,18 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 
 		if(apkInfo == null) {
 			showAbout();
-			sendRequest(SEND_REQUEST_SELECTED);
+			setSeletected();
 			return;
 		}
 
 		switch(status) {
 		case BASIC_INFO_COMPLETED:
-			setName(apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX ?
-					RStr.TAB_BASIC_INFO.get() : RStr.TAB_APEX_INFO.get());
+			String title = apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX ?
+					RStr.TAB_BASIC_INFO.get() : RStr.TAB_APEX_INFO.get();
+			setTitle(title, title);
 			setBasicInfo(apkInfo);
 			cardLayout.show(this, CARD_APK_INFORMATION);
-			sendRequest(SEND_REQUEST_CHANGE_TITLE);
-			sendRequest(SEND_REQUEST_SELECTED);
+			setSeletected();
 			break;
 		case CERT_COMPLETED:
 			if(apkInfoPanel.getElementById("basic-info") != null) {

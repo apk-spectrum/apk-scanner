@@ -271,8 +271,7 @@ public class Resources extends AbstractTabbedPanel {
 	}
 
 	public Resources() {
-		setName(RStr.TAB_RESOURCES.get());
-		setToolTipText(RStr.TAB_RESOURCES.get());
+		setTitle(RStr.TAB_RESOURCES.get(), RStr.TAB_RESOURCES.get());
 		setTabbedEnabled(false);
 	}
 
@@ -335,7 +334,7 @@ public class Resources extends AbstractTabbedPanel {
 			@Override
 			public void setTreeFocus(String path, int line, String string) {
 				Log.d("path : " + path + ", " + Resources.this.getParent());
-				sendRequest(SEND_REQUEST_SELECTED);
+				setSeletected();
 
 				@SuppressWarnings("unchecked")
 				Enumeration<TreeNode> e = top.depthFirstEnumeration();
@@ -1286,7 +1285,6 @@ public class Resources extends AbstractTabbedPanel {
 		setTreeForm();
 
 		setDataSize(apkInfo.resources.length, true, false);
-		sendRequest(SEND_REQUEST_CURRENT_ENABLED);
 	}
 
 	public void setExtraData(ApkInfo apkInfo) {
@@ -1312,8 +1310,6 @@ public class Resources extends AbstractTabbedPanel {
 
 	@Override
 	public void reloadResource() {
-		setName(RStr.TAB_RESOURCES.get());
-		setToolTipText(RStr.TAB_RESOURCES.get());
-		sendRequest(SEND_REQUEST_CHANGE_TITLE);
+		setTitle(RStr.TAB_RESOURCES.get(), RStr.TAB_RESOURCES.get());
 	}
 }

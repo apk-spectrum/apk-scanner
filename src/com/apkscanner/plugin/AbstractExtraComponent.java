@@ -5,6 +5,7 @@ import java.net.URL;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import com.apkscanner.gui.component.ITabbedRequest;
 import com.apkscanner.plugin.manifest.Component;
 import com.apkscanner.util.Log;
 
@@ -87,11 +88,15 @@ public abstract class AbstractExtraComponent extends AbstractPlugIn implements I
 	@Override
 	public void setTabbedEnabled(boolean enabled) {
 		this.enabled = enabled;
+		if(tabbedRequest != null)
+			tabbedRequest.onRequestEnabled(enabled);
 	}
 
 	@Override
 	public void setTabbedVisible(boolean visible) {
 		this.visible = visible;
+		if(tabbedRequest != null)
+			tabbedRequest.onRequestVisible(visible);
 	}
 
 	@Override
@@ -103,16 +108,16 @@ public abstract class AbstractExtraComponent extends AbstractPlugIn implements I
 		switch(request) {
 		case SEND_REQUEST_VISIBLE:
 			setTabbedVisible(true);
-			break;
+			return;
 		case SEND_REQUEST_INVISIBLE:
 			setTabbedVisible(false);
-			break;
+			return;
 		case SEND_REQUEST_ENABLED:
 			setTabbedEnabled(true);
-			break;
+			return;
 		case SEND_REQUEST_DISABLED:
 			setTabbedEnabled(false);
-			break;
+			return;
 		case SEND_REQUEST_CURRENT_ENABLED:
 			request = isTabbedEnabled() ? ITabbedRequest.REQUEST_ENABLED : ITabbedRequest.REQUEST_DISABLED;
 			break;

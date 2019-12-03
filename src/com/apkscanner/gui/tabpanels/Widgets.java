@@ -23,7 +23,6 @@ import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.gui.component.ImageScaler;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.Log;
 
 /**
  * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for
@@ -39,15 +38,13 @@ public class Widgets extends AbstractTabbedPanel
 
 	public Widgets() {
 		setLayout(new GridLayout(1, 0));
-		setName(RStr.TAB_WIDGETS.get());
-		setToolTipText(RStr.TAB_WIDGETS.get());
+		setTitle(RStr.TAB_WIDGETS.get(), RStr.TAB_WIDGETS.get());
 		setTabbedEnabled(false);
 	}
 
 	@Override
 	public void initialize()
 	{
-		Log.e("Widgets");
 		TableModel = new MyTableModel();
 		table = new JTable(TableModel);
 
@@ -105,18 +102,13 @@ public class Widgets extends AbstractTabbedPanel
 		}
 
 		setDataSize(apkInfo.widgets.length, true, false);
-		sendRequest(SEND_REQUEST_CURRENT_ENABLED);
-
 		setTabbedVisible(apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX);
-		sendRequest(SEND_REQUEST_CURRENT_VISIBLE);
 	}
 
 	@Override
 	public void reloadResource()
 	{
-		setName(RStr.TAB_WIDGETS.get());
-		setToolTipText(RStr.TAB_WIDGETS.get());
-		sendRequest(SEND_REQUEST_CHANGE_TITLE);
+		setTitle(RStr.TAB_WIDGETS.get(), RStr.TAB_WIDGETS.get());
 
 		if(TableModel == null) return;
 		TableModel.loadResource();

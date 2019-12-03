@@ -14,7 +14,6 @@ import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.resource.RStr;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.FileUtil.FSStyle;
-import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
 
 /**
@@ -33,15 +32,13 @@ public class Libraries extends AbstractTabbedPanel
 	public Libraries()
 	{
 		setLayout(new GridLayout(1, 0));
-		setName(RStr.TAB_LIBRARIES.get());
-		setToolTipText(RStr.TAB_LIBRARIES.get());
+		setTitle(RStr.TAB_LIBRARIES.get(), RStr.TAB_LIBRARIES.get());
 		setTabbedEnabled(false);
 	}
 
 	@Override
 	public void initialize()
 	{
-		Log.e("initialize");
 		mMyTableModel = new MyTableModel();
 		table = new JTable(mMyTableModel);
 
@@ -69,18 +66,13 @@ public class Libraries extends AbstractTabbedPanel
 		mMyTableModel.setData(apkInfo.libraries);
 
 		setDataSize(apkInfo.libraries.length, true, false);
-		sendRequest(SEND_REQUEST_CURRENT_ENABLED);
-
 		setTabbedVisible(apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX);
-		sendRequest(SEND_REQUEST_CURRENT_VISIBLE);
 	}
 
 	@Override
 	public void reloadResource()
 	{
-		setName(RStr.TAB_LIBRARIES.get());
-		setToolTipText(RStr.TAB_LIBRARIES.get());
-		sendRequest(SEND_REQUEST_CHANGE_TITLE);
+		setTitle(RStr.TAB_LIBRARIES.get(), RStr.TAB_LIBRARIES.get());
 
 		if(mMyTableModel == null) return;
 		mMyTableModel.loadResource();

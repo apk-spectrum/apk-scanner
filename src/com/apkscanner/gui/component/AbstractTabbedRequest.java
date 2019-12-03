@@ -1,6 +1,6 @@
-package com.apkscanner.plugin;
+package com.apkscanner.gui.component;
 
-public class AbstractTabbedRequest implements ITabbedRequest
+public abstract class AbstractTabbedRequest implements ITabbedRequest
 {
 	protected ITabbedComponent tabbedComp;
 
