@@ -17,6 +17,7 @@ import java.beans.PropertyChangeListener;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +69,7 @@ import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.FileUtil.FSStyle;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
+import com.apkscanner.util.XmlPath;
 
 public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickListener, IProgressListener,
 		ListDataListener, ItemListener, PropertyChangeListener
@@ -206,16 +208,26 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	}
 
 	private void setBasicInfo(ApkInfo apkInfo) {
-		apkInfoPanel.setText(RFile.RAW_BASIC_INFO_LAYOUT_HTML.getString());
-		setAppIcon(apkInfo.manifest.application.icons);
-		setAppLabel(apkInfo.manifest.application.labels, apkInfo.manifest.packageName);
-		setPackageName(apkInfo.manifest.packageName);
-		setVersion(apkInfo.manifest.versionName, apkInfo.manifest.versionCode);
-		setSdkVersion(apkInfo.manifest.usesSdk);
-		setFileSize(apkInfo.filePath);
-		setFeatures(apkInfo);
-		setPermissionList(apkInfo);
-		setPluginSearcher();
+		if(apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX) {
+			apkInfoPanel.setText(RFile.RAW_BASIC_INFO_LAYOUT_HTML.getString());
+			setAppIcon(apkInfo.manifest.application.icons);
+			setAppLabel(apkInfo.manifest.application.labels, apkInfo.manifest.packageName);
+			setPackageName(apkInfo.manifest.packageName);
+			setVersion(apkInfo.manifest.versionName, apkInfo.manifest.versionCode);
+			setSdkVersion(apkInfo.manifest.usesSdk);
+			setFileSize(apkInfo.filePath);
+			setFeatures(apkInfo);
+			setPermissionList(apkInfo);
+			setPluginSearcher();
+		} else {
+			apkInfoPanel.setText(RFile.RAW_APEX_INFO_LAYOUT_HTML.getString());
+			setPlatformIcon(apkInfo.manifest.usesSdk.targetSdkVersion);
+			setAppLabel(apkInfo.manifest.application.labels, apkInfo.manifest.packageName);
+			setPackageName(apkInfo.manifest.packageName);
+			setApexVersion(apkInfo.manifest.versionName, apkInfo.manifest.versionCode);
+			setSdkVersion(apkInfo.manifest.usesSdk);
+			setFileSize(apkInfo.filePath);
+		}
 	}
 
 	private void setAppIcon(ResourceInfo[] icons) {
@@ -227,6 +239,21 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 				iconPath = iconList[i].name;
 				if(iconPath != null) break;
 			}
+		}
+		apkInfoPanel.setOuterHTMLById("icon", String.format("<img src=\"%s\" width=\"150\" height=\"150\">", iconPath));
+	}
+
+	private void setPlatformIcon(int apiLevel) {
+		String iconPath = null;
+		try(InputStream xml = RFile.RAW_SDK_INFO_FILE.getResourceAsStream()) {
+			XmlPath sdkXmlPath = new XmlPath(xml);
+			XmlPath sdkInfo = sdkXmlPath.getNode("/resources/sdk-info[@apiLevel='" + apiLevel + "']");
+			if(sdkInfo != null) {
+				iconPath = getClass().getResource(sdkInfo.getAttribute("icon")).toExternalForm();
+			}
+		} catch(IOException e) { }
+		if(iconPath == null) {
+			iconPath = getClass().getResource("/icons/logo/base.png").toExternalForm();
 		}
 		apkInfoPanel.setOuterHTMLById("icon", String.format("<img src=\"%s\" width=\"150\" height=\"150\">", iconPath));
 	}
@@ -269,6 +296,16 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 				.append(" / ").append((versionCode != null ? versionCode : "0"));
 		StringBuilder descripton = new StringBuilder("VersionName : ").append(versionName).append("\n")
 				.append("VersionCode : ").append((versionCode != null ? versionCode : "Unspecified"));
+		String versionDesc = descripton.toString();
+
+		apkInfoPanel.setInnerHTMLById("version", makeHyperEvent("app-version", text.toString(), versionDesc, versionDesc));
+	}
+
+	private void setApexVersion(String versionName, Integer versionCode) {
+		if(versionName == null) versionName = "";
+		StringBuilder text = new StringBuilder("Ver. ").append((versionCode != null ? versionCode : versionName));
+		StringBuilder descripton = new StringBuilder("AndroidManifest:versionCode : ").append(versionName).append("\n")
+				.append("apex_manifest:version : ").append((versionCode != null ? versionCode : ""));
 		String versionDesc = descripton.toString();
 
 		apkInfoPanel.setInnerHTMLById("version", makeHyperEvent("app-version", text.toString(), versionDesc, versionDesc));

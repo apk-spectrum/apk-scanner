@@ -2,6 +2,10 @@ package com.apkscanner.core.scanner;
 
 import java.io.File;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import com.apkscanner.Launcher;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
@@ -102,6 +106,8 @@ public class AaptScanner extends ApkScanner
 
 		apkInfo.manifest.application.icons = changeURLpath(apkInfo.manifest.application.icons, manifestReader);
 
+		readApexInfo();
+
 		Log.i("read basic info completed");
 		stateChanged(Status.BASIC_INFO_COMPLETED);
 
@@ -144,6 +150,30 @@ public class AaptScanner extends ApkScanner
 		Log.i("I: read widgets...");
 		apkInfo.widgets = manifestReader.getWidgetList(apkInfo.filePath);
 		stateChanged(Status.WIDGET_COMPLETED);
+	}
+
+	protected void readApexInfo() {
+		if(apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX) return;
+
+		apkInfo.manifest.application.labels = new ResourceInfo[1];
+		apkInfo.manifest.application.labels[0] = new ResourceInfo(apkInfo.manifest.packageName);
+
+		byte[] rawData = ZipFileUtil.readData(apkInfo.filePath, "apex_manifest.json");
+		if(rawData != null) {
+			try {
+				JSONObject apexManifest = (JSONObject)(new JSONParser()).parse(new String(rawData));
+				apkInfo.manifest.packageName = (String) apexManifest.get("name");
+				apkInfo.manifest.versionName = apkInfo.manifest.versionCode.toString(); 
+				Object data = apexManifest.get("version");
+				if(data instanceof Long) {
+					apkInfo.manifest.versionCode = (int)(long)data;
+				} else if(data instanceof Integer) {
+					apkInfo.manifest.versionCode = (int)data;
+				}
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	protected ResourceInfo[] changeURLpath(ResourceInfo[] icons, AaptManifestReader manifestReader) {

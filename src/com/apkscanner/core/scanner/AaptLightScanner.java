@@ -112,6 +112,8 @@ public class AaptLightScanner extends AaptScanner {
 		manifestReader.readPermissions();
 		Log.i("read permissions completed");
 
+		readApexInfo();
+
 		Log.i("read basic info completed");
 		stateChanged(Status.BASIC_INFO_COMPLETED);
 
