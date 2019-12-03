@@ -98,10 +98,16 @@ public class TabbedPanel extends JTabbedPane implements LanguageChangeListener, 
 		}
 	}
 
-	public void onLoadPlugin() {
+	public void onLoadPlugin(ApkInfo apkInfo, int status) {
 		for(final IExtraComponent plugin: PlugInManager.getExtraComponenet()) {
 			plugin.initialize();
 			addTab(plugin);
+			for(Status state: Status.values()) {
+				if((state.value() != 0
+						&& (status & state.value()) == state.value())) {
+					plugin.setData(apkInfo, state);
+				}
+			}
 		}
 	}
 

@@ -107,7 +107,7 @@ public class MainUI extends JFrame implements IPlugInEventListener, LanguageChan
 	@Override
 	public void onPluginLoaded() {
 		toolBar.onLoadPlugin();
-		tabbedPanel.onLoadPlugin();
+		tabbedPanel.onLoadPlugin(apkScanner.getApkInfo(), apkScanner.getStatus());
 	}
 
 	@Override
