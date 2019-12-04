@@ -327,6 +327,7 @@ public enum RStr implements ResString<String>
 	LABEL_OPEN_WITH_EXPLORER	("@label_open_with_explorer"),
 	LABEL_OPEN_WITH_SCANNER		("@label_open_with_apkscanner"),
 	LABEL_OPEN_WITH_CHOOSE		("@label_open_with_choose"),
+	LABEL_OPEN_TO_TEXTVIEWER	("@label_open_to_textviewer"),
 	LABEL_HOW_TO_INSTALL		("@label_how_to_install"),
 	LABEL_INSTALL_OPTIONS		("@label_install_options"),
 	LABEL_PUSH_OPTIONS			("@label_push_options"),

@@ -237,7 +237,8 @@ public class Resources extends AbstractTabbedPanel {
 			} else if (extension.endsWith(".txt") || extension.endsWith(".mk") || extension.endsWith(".html")
 					|| extension.endsWith(".js") || extension.endsWith(".css") || extension.endsWith(".json")
 					|| extension.endsWith(".props") || extension.endsWith(".properties") || extension.endsWith(".policy")
-					|| extension.endsWith(".mf") || extension.endsWith(".sf") || extension.endsWith(".rc")) {
+					|| extension.endsWith(".mf") || extension.endsWith(".sf") || extension.endsWith(".rc")
+					|| extension.endsWith(".version") || extension.endsWith(".default")) {
 				attr = ATTR_TXT;
 			} else if(extension.endsWith(".rsa") || extension.endsWith(".dsa") || extension.endsWith(".ec")) {
 				attr = ATTR_CERT;

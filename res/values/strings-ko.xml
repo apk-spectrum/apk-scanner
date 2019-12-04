@@ -314,6 +314,7 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="label_open_with_explorer">탐색기</string>
 	<string name="label_open_with_apkscanner">APK 스캐너</string>
 	<string name="label_open_with_choose">연결 프로그램 선택</string>
+	<string name="label_open_to_textviewer">텍스트로 보기</string>
 	<string name="label_how_to_install">설치 방법</string>
 	<string name="label_install_options">Install 옵션</string>
 	<string name="label_push_options">Push 옵션</string>

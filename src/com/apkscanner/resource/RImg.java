@@ -36,6 +36,7 @@ public enum RImg implements ResFile<URL>
 	RESOURCE_TREE_OPEN_ICON		("resource_tab_open.png"),
 	RESOURCE_TREE_OPEN_OTHERAPPLICATION_ICON ("resource_tab_otherapplication.png"),
 	RESOURCE_TREE_OPEN_JD_LOADING("Loading_openJD_80_80.gif"),
+	RESOURCE_TREE_OPEN_TO_TEXT	("resource_tab_open_to_textviewer.png"),
 	RESOURCE_TREE_TOOLBAR_REFRESH("resource_tab_tree_toolbar_refresh.png"),
 
 	RESOURCE_TEXTVIEWER_TOOLBAR_OPEN ("ResourceTab_TextViewer_toolbar_open.png"),

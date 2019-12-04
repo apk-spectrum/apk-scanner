@@ -314,6 +314,7 @@ they're removed before the application is published</string>
 	<string name="label_open_with_explorer">Explorer</string>
 	<string name="label_open_with_apkscanner">APK Scanner</string>
 	<string name="label_open_with_choose">Other</string>
+	<string name="label_open_to_textviewer">By Textviewer</string>
 	<string name="label_how_to_install">How to install</string>
 	<string name="label_install_options">Install options</string>
 	<string name="label_push_options">Push options</string>

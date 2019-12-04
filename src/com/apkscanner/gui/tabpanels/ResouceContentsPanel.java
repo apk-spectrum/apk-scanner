@@ -706,7 +706,8 @@ public class ResouceContentsPanel extends JPanel{
     	BYTECODE_VIEWER		(0x02, Type.NORMAL, RStr.LABEL_OPEN_WITH_BYTECODE.get(), RStr.LABEL_OPEN_WITH_BYTECODE.get(), RImg.RESOURCE_TREE_BCV_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
     	APK_SCANNER			(0x04, Type.NORMAL, RStr.LABEL_OPEN_WITH_SCANNER.get(), RStr.LABEL_OPEN_WITH_SCANNER.get(), RImg.APP_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
     	EXPLORER			(0x08, Type.NORMAL, RStr.LABEL_OPEN_WITH_EXPLORER.get(), RStr.LABEL_OPEN_WITH_EXPLORER.get(), RImg.TOOLBAR_EXPLORER.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
-    	CHOOSE_APPLICATION	(0x10, Type.NORMAL, RStr.LABEL_OPEN_WITH_CHOOSE.get(), RStr.LABEL_OPEN_WITH_CHOOSE.get(), RImg.RESOURCE_TREE_OPEN_OTHERAPPLICATION_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize));
+    	OPEN_TO_TEXTVIEWER	(0x10, Type.NORMAL, RStr.LABEL_OPEN_TO_TEXTVIEWER.get(), RStr.LABEL_OPEN_TO_TEXTVIEWER.get(), RImg.RESOURCE_TREE_OPEN_TO_TEXT.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize)),
+    	CHOOSE_APPLICATION	(0x20, Type.NORMAL, RStr.LABEL_OPEN_WITH_CHOOSE.get(), RStr.LABEL_OPEN_WITH_CHOOSE.get(), RImg.RESOURCE_TREE_OPEN_OTHERAPPLICATION_ICON.getImageIcon(ButtonSet.IconSize, ButtonSet.IconSize));
 
     	private enum Type {
     		NONE, NORMAL, HOVER, EXTEND
@@ -809,7 +810,8 @@ public class ResouceContentsPanel extends JPanel{
 		public final static int SELECT_VIEW_ICON_JD_OPEN = 0x02;
 		public final static int SELECT_VIEW_ICON_SCANNER_OPEN = 0x04;
 		public final static int SELECT_VIEW_ICON_EXPLORER = 0x08;
-		public final static int SELECT_VIEW_ICON_CHOOSE_APPLICATION = 0x10;
+		public final static int SELECT_VIEW_ICON_TEXTVIEWER = 0x10;
+		public final static int SELECT_VIEW_ICON_CHOOSE_APPLICATION = 0x20;
 
 		public SelectViewPanel() {
 
@@ -859,6 +861,12 @@ public class ResouceContentsPanel extends JPanel{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String resPath = null;
+
+			if (ButtonSet.OPEN_TO_TEXTVIEWER.matchActionEvent(e)) {
+				setTextContentPanel(currentSelectedObj, ResourceObject.ATTR_TXT);
+				return;
+			}
+
 			if(currentSelectedObj.type == ResourceType.LOCAL) {
 				resPath = currentSelectedObj.path;
 			} else {
@@ -944,10 +952,16 @@ public class ResouceContentsPanel extends JPanel{
 		}
 	}
 
-    private void setTextContentPanel(ResourceObject obj) {
+	private void setTextContentPanel(ResourceObject obj) {
+		setTextContentPanel(obj, -1);
+	}
+
+    private void setTextContentPanel(ResourceObject obj, int attribute) {
     	String content = null;
 
-		switch(obj.attr) {
+    	if (attribute == -1) attribute = obj.attr;
+
+		switch(attribute) {
 		case ResourceObject.ATTR_AXML:
 			String[] xmlbuffer = AaptNativeWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {obj.path});
 			resTypeSep.setVisible(true);
@@ -1025,9 +1039,9 @@ public class ResouceContentsPanel extends JPanel{
 			} else if(obj.path.endsWith(".qmg")) {
 				selectPanel.setMenu(0);
 			} else {
-				selectPanel.setMenu(SelectViewPanel.SELECT_VIEW_ICON_OPEN | SelectViewPanel.SELECT_VIEW_ICON_CHOOSE_APPLICATION);
+				selectPanel.setMenu(SelectViewPanel.SELECT_VIEW_ICON_OPEN | SelectViewPanel.SELECT_VIEW_ICON_TEXTVIEWER
+						| SelectViewPanel.SELECT_VIEW_ICON_CHOOSE_APPLICATION);
 			}
-
 			break;
 		}
 
