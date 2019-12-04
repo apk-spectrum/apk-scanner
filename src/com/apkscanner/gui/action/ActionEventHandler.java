@@ -33,9 +33,7 @@ abstract public class ActionEventHandler implements ActionListener
 
 	public void removeAction(AbstractUIAction action) {
 		if(action == null) return;
-		if(actionMap.containsKey(action.getActionCommand())) {
-			actionMap.remove(action.getActionCommand(), action);
-		}
+		removeAction(action.getActionCommand());
 	}
 
 	public void removeAction(String actionCommand) {

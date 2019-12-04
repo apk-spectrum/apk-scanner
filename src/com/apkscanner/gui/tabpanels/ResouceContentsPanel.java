@@ -263,7 +263,6 @@ public class ResouceContentsPanel extends JPanel{
 
 	private FindDialog getFindDialog() {
 		if(finddlg == null) {
-			SwingUtilities.getRoot(this);
 			JFrame window = (JFrame) SwingUtilities.getWindowAncestor(this);
 			finddlg = new FindDialog(window, new SearchListener() {
 				@Override
