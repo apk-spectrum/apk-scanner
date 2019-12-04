@@ -14,15 +14,14 @@ public class Launcher
 {
 	static private ArrayList<String> defaultCmd;
 
-	static public boolean run()
+	static public void run()
 	{
-		return SystemUtil.exec(getDefaultCmd());
+		SystemUtil.exec(getDefaultCmd());
 	}
 
-	static public boolean run(String apkFilePath, boolean easyScanner)
+	static public void run(String apkFilePath, boolean easyScanner)
 	{
-		if(apkFilePath == null)
-			return false;
+		if(apkFilePath == null) return;
 
 		ArrayList<String> cmd = new ArrayList<String>(getDefaultCmd());
 		if(!easyScanner) {
@@ -36,24 +35,22 @@ public class Launcher
 			Log.d(str);
 		}
 
-		return SystemUtil.exec(cmd);
+		SystemUtil.exec(cmd);
 	}
 
-	static public boolean run(String apkFilePath)
+	static public void run(String apkFilePath)
 	{
-		if(apkFilePath == null)
-			return false;
+		if(apkFilePath == null) return;
 
 		ArrayList<String> cmd = new ArrayList<String>(getDefaultCmd());
 		cmd.add(apkFilePath);
 		Log.d(""+ cmd.toArray().toString());
-		return SystemUtil.exec(cmd);
+		SystemUtil.exec(cmd);
 	}
 
-	static public boolean run(String devSerialNum, String devApkFilePath, String frameworkRes)
+	static public void run(String devSerialNum, String devApkFilePath, String frameworkRes)
 	{
-		if(devApkFilePath == null)
-			return false;
+		if(devApkFilePath == null) return;
 
 		ArrayList<String> cmd = new ArrayList<String>(getDefaultCmd());
 		cmd.add("package");
@@ -70,31 +67,29 @@ public class Launcher
 
 		cmd.add(devApkFilePath);
 
-		return SystemUtil.exec(cmd);
+		SystemUtil.exec(cmd);
 	}
 
-	static public boolean install(String apkFilePath)
+	static public void install(String apkFilePath)
 	{
-		if(apkFilePath == null)
-			return false;
+		if(apkFilePath == null) return;
 
 		ArrayList<String> cmd = new ArrayList<String>(getDefaultCmd());
 		cmd.add("install");
 		cmd.add(apkFilePath);
 
-		return SystemUtil.exec(cmd);
+		SystemUtil.exec(cmd);
 	}
 
-	static public boolean deleteTempPath(String path)
+	static public void deleteTempPath(String path)
 	{
-		if(path == null)
-			return false;
+		if(path == null) return;
 
 		ArrayList<String> cmd = new ArrayList<String>(getDefaultCmd());
 		cmd.add("delete-temp-path");
 		cmd.add(path);
 
-		return SystemUtil.exec(cmd);
+		SystemUtil.exec(cmd);
 	}
 
 	static private ArrayList<String> getDefaultCmd()

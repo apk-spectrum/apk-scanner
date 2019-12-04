@@ -425,13 +425,19 @@ public class SystemUtil
 		});
 	}
 
-	public static boolean exec(ArrayList<String> cmd) {
-		return exec(cmd.toArray(new String[0]));
+	public static void exec(ArrayList<String> cmd) {
+		exec(cmd.toArray(new String[0]));
 	}
 
-	public static boolean exec(String[] cmd)
+	public static void exec(final String[] cmd)
 	{
-		return ConsolCmd.exec(cmd) != null;
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				ConsolCmd.exec(cmd);
+			}
+		});
+		t.setPriority(Thread.NORM_PRIORITY);
+		t.start();
 	}
 
 	public static String[] getRunningProcessFullPath(String imageName) {
