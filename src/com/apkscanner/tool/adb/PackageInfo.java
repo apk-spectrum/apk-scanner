@@ -93,7 +93,7 @@ public class PackageInfo {
 
 		return apkPath;
 	}
-	
+
 	public String getRealApkPath() {
 		String realPath = apkPath;
 		if(!realPath.endsWith(".apk")) {
@@ -175,7 +175,7 @@ public class PackageInfo {
 		int state = -1;
 		String value = getValue("enabled");
 		if(value != null && value.matches("\\d+")) {
-			state = Integer.parseInt(value);			
+			state = Integer.parseInt(value);
 		}
 
 		return getEnabledStateToString(state);
@@ -227,14 +227,14 @@ public class PackageInfo {
 					break;
 				}
 			}
-			if(line.indexOf(" " + key + "=") > -1) {
+			if(line.contains(" " + key + "=")) {
 				value = line.replaceAll(".*\\s+" + key + "=(\\d+-\\d+-\\d+\\s+\\d+:\\d+:\\d+|[^\\[][^\\s\\{]*(\\{[^\\}]*\\})?|\\[[^\\]]*\\]).*", "$1");
 				if(!line.equals(value)) {
 					value = value.trim();
 					break;
 				}
 				value = null;
-			} else if(line.indexOf(" " + key + ":") > -1) {
+			} else if(line.contains(" " + key + ":")) {
 				value = line.replaceAll(".*\\s+" + key + ":\\s*(.*)", "$1");
 				if(!line.equals(value)) {
 					value = value.trim();
@@ -255,8 +255,8 @@ public class PackageInfo {
 	}
 
 	public boolean isSystemApp() {
-		return (apkPath != null && apkPath.matches("^/system/.*")) 
-				|| (codePath != null && codePath.matches("^/system/.*")); 
+		return (apkPath != null && apkPath.matches("^/system/.*"))
+				|| (codePath != null && codePath.matches("^/system/.*"));
 	}
 
 	public boolean hasLauncher() {
@@ -285,7 +285,7 @@ public class PackageInfo {
 				}
 			}
 
-			if(line.indexOf(" filter ") > -1) {
+			if(line.contains(" filter ")) {
 				String name = line.replaceAll("\\s*[0-9a-f]+\\s" + packageName + "/(\\S+)\\sfilter\\s[0-9a-f]+", "$1");
 				if(!line.equals(name)) {
 					curComp = components.get(name);
@@ -300,11 +300,11 @@ public class PackageInfo {
 				continue;
 			}
 
-			if(line.indexOf("Action: \"android.intent.action.MAIN\"") > -1) {
+			if(line.contains("Action: \"android.intent.action.MAIN\"")) {
 				curComp.featureFlag |= ApkInfo.APP_FEATURE_MAIN;
-			} else if(line.indexOf("Category: \"android.intent.category.LAUNCHER\"") > -1) {
+			} else if(line.contains("Category: \"android.intent.category.LAUNCHER\"")) {
 				curComp.featureFlag |= ApkInfo.APP_FEATURE_LAUNCHER;
-			} else if(line.indexOf("Category: \"android.intent.category.DEFAULT\"") > -1) {
+			} else if(line.contains("Category: \"android.intent.category.DEFAULT\"")) {
 				curComp.featureFlag |= ApkInfo.APP_FEATURE_DEFAULT;
 			}
 		}
@@ -354,11 +354,11 @@ public class PackageInfo {
 			xmlContent.append(s);
 		}
 
-		if(xmlContent.indexOf("Permission denied") <= -1) { 
+		if(xmlContent.indexOf("Permission denied") <= -1) {
 			XmlPath packagesXml = new XmlPath(xmlContent.toString());
 			XmlPath certs = packagesXml.getNodeList("/packages/package[@name='" + packageName + "']/sigs/cert");
 
-			ArrayList<String> sigsList = new ArrayList<String>(); 
+			ArrayList<String> sigsList = new ArrayList<String>();
 			int signCount = certs.getCount();
 			for(int i = 0; i < signCount; i++) {
 				String key = certs.getAttribute(i, "key");

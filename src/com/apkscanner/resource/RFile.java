@@ -98,7 +98,7 @@ public enum RFile implements ResFile<String>, ResString<String>
 
 		this.type = type;
 		for(RFile r: cfgResources) {
-			if(SystemUtil.OS.indexOf(r.os) > -1) {
+			if(SystemUtil.OS.contains(r.os)) {
 				this.value = r.value;
 				this.os = r.os;
 				break;

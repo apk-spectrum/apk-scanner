@@ -329,7 +329,7 @@ public class SearchDlg extends JDialog {
 						}
 
 						for(int n = 0; n < lines.length; n++) {
-							if (lines[n].indexOf(findStr) !=-1) {
+							if (lines[n].contains(findStr)) {
 								data.add(new TableData(data.size(),filelist[i],n,lines[n]));
 							}
 						}
@@ -354,7 +354,7 @@ public class SearchDlg extends JDialog {
 							while ((line = reader.readLine()) != null) {
 								//String line = scanner.nextLine();
 								// process the line
-								if (line.indexOf(findStr) !=-1)  {
+								if (line.contains(findStr))  {
 									//System.out.format("%3d: %s%n", lineNumber, line);
 									data.add(new TableData(data.size(),filelist[i],lineNumber,line));
 								}

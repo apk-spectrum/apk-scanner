@@ -280,7 +280,7 @@ public class PackageManager {
 
 		try {
 			errMessage = device.installPackage(localApkPath, reinstall, extraArgs);
-			if(errMessage == null || errMessage.isEmpty() || errMessage.indexOf("Success") > -1) {
+			if(errMessage == null || errMessage.isEmpty() || errMessage.contains("Success")) {
 				packageInstalled(new PackageInfo(device, packageName));
 			}
 		} catch (InstallException e) {
@@ -604,7 +604,7 @@ public class PackageManager {
 			if(line.startsWith("  taskId=")) {
 				String pkg = line.replaceAll("  taskId=[0-9]*:\\s([^/]*)/.*", "$1").trim(); 
 				if(pkg != null && !pkg.isEmpty() && !pkg.equals(line)) {
-					if(pkg.indexOf(" ") == -1 && !pkgList.contains(pkg)) {
+					if(!pkg.contains(" ") && !pkgList.contains(pkg)) {
 						if(line.indexOf("visible=true") >= 0)
 							pkgList.add(0, pkg);
 						else
@@ -645,7 +645,7 @@ public class PackageManager {
 			if(line.startsWith("    taskId=")) {
 				String pkg = line.replaceAll("    taskId=[0-9]*:\\s([^/]*)/.*", "$1").trim(); 
 				if(pkg != null && !pkg.isEmpty() && !pkg.equals(line)) {
-					if(pkg.indexOf(" ") == -1 && !pkgList.contains(pkg)) {
+					if(!pkg.contains(" ") && !pkgList.contains(pkg)) {
 						pkgList.add(0, pkg);
 					} else {
 						Log.w("Unknown pkg - " + pkg);

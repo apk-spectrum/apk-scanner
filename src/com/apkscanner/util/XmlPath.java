@@ -205,7 +205,7 @@ public class XmlPath {
 		NamedNodeMap attrs = null;
 		if(node == null || (attrs = node.getAttributes()) == null) return null;
 		if(attrs.getNamedItem(name) == null) {
-			if(name.indexOf(":") == -1) return null;
+			if(!name.contains(":")) return null;
 			String shortName = name.substring(name.indexOf(":"));
 			//Log.i("getAttributes() shortName " + shortName);
 			for(int i=0; i < attrs.getLength(); i++) {

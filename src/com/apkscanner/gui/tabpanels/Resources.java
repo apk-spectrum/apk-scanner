@@ -375,7 +375,7 @@ public class Resources extends AbstractTabbedPanel {
 						if (!temp.path.toLowerCase().endsWith(".png"))
 							continue;
 
-						if (temp.path.indexOf(findfilename) != -1) {
+						if (temp.path.contains(findfilename)) {
 							return temp.path;
 						}
 					} else {
@@ -506,7 +506,7 @@ public class Resources extends AbstractTabbedPanel {
 						setIcon(icon);
 					} else {
 						String suffix = tempObject.path.replaceAll(".*/", "");
-						if (suffix.indexOf(".") > -1) {
+						if (suffix.contains(".")) {
 							suffix = suffix.replaceAll(".*\\.", ".");
 						} else {
 							suffix = "";
@@ -595,12 +595,12 @@ public class Resources extends AbstractTabbedPanel {
 	}
 
 	private static String getOnlyFilename(String str) {
-		String separator = (str.indexOf(File.separator) > -1) ? separator = File.separator : "/";
+		String separator = str.contains(File.separator) ? separator = File.separator : "/";
 		return str.substring(str.lastIndexOf(separator) + 1, str.length());
 	}
 
 	private static String getOnlyFoldername(String str) {
-		String separator = (str.indexOf(File.separator) > -1) ? separator = File.separator : "/";
+		String separator = str.contains(File.separator) ? separator = File.separator : "/";
 		return str.substring(0, str.lastIndexOf(separator));
 	}
 
@@ -716,7 +716,7 @@ public class Resources extends AbstractTabbedPanel {
 									ResourceObject resObj = new ResourceObject(nameList[i], false);
 									DefaultMutableTreeNode node = new DefaultMutableTreeNode(resObj);
 
-									if (nameList[i].indexOf("/") == -1) {
+									if (!nameList[i].contains("/")) {
 										topFiles.add(node);
 										if(nameList[i].equals("apex_payload.img")) {
 											ResourceObject obj = new ResourceObject("Loading...", false);

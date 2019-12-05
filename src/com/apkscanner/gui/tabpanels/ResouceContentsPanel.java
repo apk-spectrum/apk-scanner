@@ -314,7 +314,7 @@ public class ResouceContentsPanel extends JPanel{
 				String str = ""+textTableViewer.getModel().getValueAt(i, 0);
 				str = str.toLowerCase();
 
-				if(str.indexOf(textFieldstr) != -1) {
+				if(str.contains(textFieldstr)) {
 					textTableViewer.getSelectionModel().addSelectionInterval(i, i);
 					findflag = true;
 					break;
@@ -329,7 +329,7 @@ public class ResouceContentsPanel extends JPanel{
 			to = 0;
 			for(i=selectindex-1; i >= to; i--) {
 				String str = ""+textTableViewer.getModel().getValueAt(i, 0);
-				if(str.indexOf(textFieldstr) != -1) {
+				if(str.contains(textFieldstr)) {
 					textTableViewer.getSelectionModel().addSelectionInterval(i, i);
 					findflag = true;
 					break;

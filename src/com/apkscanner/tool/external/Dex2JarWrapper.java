@@ -61,7 +61,7 @@ public class Dex2JarWrapper
 				{
 					sb.append(s+"\n");
 					Log.i("DEX2JAR Log : "+ s);
-					if(s.indexOf("Can not find classes.dex") > -1) {
+					if(s.contains("Can not find classes.dex")) {
 						successed = false;
 					}
 				}

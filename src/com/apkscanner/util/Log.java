@@ -150,7 +150,7 @@ public class Log {
 			String head = String.format("%s %03d %c ", dateFormat.format(new Date(rec.getMillis())), rec.getThreadID(),
 					Level.getAcronym(rec.getLevel()));
 			String msg = rec.getMessage();
-			if (msg.indexOf("\n") > -1) {
+			if (msg.contains("\n")) {
 				String tag = String.format("%" + msg.indexOf(":") + "s", "") + ": ";
 				msg = msg.replaceAll("\n", "\n" + head + tag);
 			}

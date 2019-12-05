@@ -631,7 +631,7 @@ public class SettingDlg extends JDialog implements ActionListener
 			try {
 				for(String suffix: new String[]{".txt", "txtfile", "textfile", ".xml", ".log"}) {
 					String cmdLine = SystemUtil.getOpenCommand(suffix);
-					if(cmdLine != null && cmdLine.indexOf("%1") >= 0) {
+					if(cmdLine != null && cmdLine.contains("%1")) {
 						String cmd = cmdLine.replaceAll("\"?(.*\\.[eE][xX][eE])\"?.*", "$1");
 						if(!cmd.equals(cmdLine)) {
 							String path = SystemUtil.getRealPath(cmd);

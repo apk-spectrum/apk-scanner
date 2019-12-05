@@ -28,23 +28,23 @@ public class SystemUtil
 	private static final Object lock = OS;
 
 	public static boolean isWindows() {
-		return OS.indexOf("win") > -1;
+		return OS.contains("win");
 	}
 
 	public static boolean isLinux() {
-		return OS.indexOf("nux") > -1;
+		return OS.contains("nux");
 	}
 
 	public static boolean isUnix() {
-		return (OS.indexOf("nix") > -1 || OS.indexOf("nux") > -1 || OS.indexOf("aix") >-1 );
+		return (OS.contains("nix") || OS.contains("nux") || OS.contains("aix"));
 	}
 
 	public static boolean isMac() {
-		return OS.indexOf("mac") > -1;
+		return OS.contains("mac");
 	}
 
 	public static boolean isSolaris() {
-		return OS.indexOf("sunos") > -1;
+		return OS.contains("sunos");
 	}
 
 	public static String getUserLanguage() {
@@ -86,7 +86,7 @@ public class SystemUtil
 		if(isWindows()) {
 			String editorPath = null;
 			String cmdLine = SystemUtil.getOpenCommand(".txt");
-			if(cmdLine != null && cmdLine.indexOf("%1") >= 0) {
+			if(cmdLine != null && cmdLine.contains("%1")) {
 				String cmd = cmdLine.replaceAll("\"?(.*\\.[eE][xX][eE])\"?.*", "$1");
 				if(!cmd.equals(cmdLine)) {
 					editorPath = SystemUtil.getRealPath(cmd);
@@ -183,7 +183,7 @@ public class SystemUtil
 
 		String realPath = null;
 
-		if(path.indexOf(File.separator) > -1) {
+		if(path.contains(File.separator)) {
 			if(path.startsWith("%")) {
 				String env = path.replaceAll("^%(.*)%.*", "$1");
 				if(!env.equals(path)) {
