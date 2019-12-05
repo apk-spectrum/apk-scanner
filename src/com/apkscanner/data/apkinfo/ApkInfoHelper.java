@@ -142,16 +142,17 @@ public class ApkInfoHelper
 		}
 		return launcherList.toArray(new ComponentInfo[0]);
 	}
-	
-	
+
 	public static ComponentInfo[] getLauncherActivityList(ApkInfo apkInfo, boolean includeMain) {
 		ArrayList<ComponentInfo> launcherList = new ArrayList<ComponentInfo>();
 		ArrayList<ComponentInfo> mainList = new ArrayList<ComponentInfo>();
 		if(apkInfo != null) {
 			if(apkInfo.manifest.application.activity != null) {
 				for(ActivityInfo info: apkInfo.manifest.application.activity) {
-					if((info.enabled == null || info.enabled) &&
-							(info.exported == null || info.exported) &&
+					Boolean exported = info.exported;
+					if(exported == null)
+						exported = info.intentFilter != null && info.intentFilter.length > 0;
+					if((info.enabled == null || info.enabled) && exported &&
 							(info.permission == null || info.permission.isEmpty())/* &&
 							(info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0*/) {
 						if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0)
@@ -164,8 +165,10 @@ public class ApkInfoHelper
 			}
 			if(apkInfo.manifest.application.activityAlias != null) {
 				for(ActivityAliasInfo info: apkInfo.manifest.application.activityAlias) {
-					if((info.enabled == null || info.enabled) &&
-							(info.exported == null || info.exported) &&
+					Boolean exported = info.exported;
+					if(exported == null)
+						exported = info.intentFilter != null && info.intentFilter.length > 0;
+					if((info.enabled == null || info.enabled) && exported &&
 							(info.permission == null || info.permission.isEmpty())/* &&
 							(info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0*/) {
 						if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0)

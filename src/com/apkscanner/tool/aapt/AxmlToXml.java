@@ -10,6 +10,10 @@ public class AxmlToXml {
 	
 	private boolean isMultiLinePrint = false;
 
+	public AxmlToXml(AaptNativeScanner resourceScanner) {
+		this.resourceScanner = resourceScanner;
+	}
+
 	public AxmlToXml(String[] axml, AaptNativeScanner resourceScanner) {
 		this.resourceScanner = resourceScanner;
 		
@@ -258,7 +262,7 @@ public class AxmlToXml {
 		
 		return xml.toString();
 	}
-	
+
 	public String toString()
 	{
 		if(axmlPath == null) return null;
@@ -271,5 +275,9 @@ public class AxmlToXml {
 		xml.append(makeNodeXml(topNode, axmlPath.getAndroidNamespaceTag(), ""));
 		
 		return xml.toString();
+	}
+
+	public String convertToText(AaptXmlTreeNode node, String namespace) {
+		return makeNodeXml(node, namespace, "");
 	}
 }

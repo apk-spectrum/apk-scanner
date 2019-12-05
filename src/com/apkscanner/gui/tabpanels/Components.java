@@ -12,13 +12,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rtextarea.RTextScrollPane;
 
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ActivityAliasInfo;
@@ -35,7 +38,7 @@ public class Components extends AbstractTabbedPanel
 {
 	private static final long serialVersionUID = 8325900007802212630L;
 
-	private JTextArea textArea;
+	private RSyntaxTextArea xmltextArea;
 	private JPanel IntentPanel;
 	private JLabel IntentLabel;
 
@@ -93,8 +96,8 @@ public class Components extends AbstractTabbedPanel
 			public void valueChanged(ListSelectionEvent e) {
 				if(ComponentList == null) return;
 				if(table.getSelectedRow() > -1) {
-					textArea.setText((String) ComponentList.get(table.getSelectedRow())[6]);
-					textArea.setCaretPosition(0);
+					xmltextArea.setText((String) ComponentList.get(table.getSelectedRow())[6]);
+					xmltextArea.setCaretPosition(0);
 				}
 			}
 		});
@@ -103,10 +106,22 @@ public class Components extends AbstractTabbedPanel
 		//Create the scroll pane and add the table to it.
 		JScrollPane scrollPane = new JScrollPane(table);
 
-		textArea = new JTextArea();
-		textArea.setEditable(false);
-		JScrollPane scrollPane2 = new JScrollPane(textArea);
-		//scrollPane2.setPreferredSize(new Dimension(300, 500));
+		
+		xmltextArea  = new RSyntaxTextArea();
+		//xmltextArea.createToolTip();
+
+		JPanel textAreaPanel = new JPanel(new BorderLayout());
+
+		xmltextArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
+		xmltextArea.setCodeFoldingEnabled(true);
+		xmltextArea.setMarkOccurrences(true);
+		xmltextArea.setEditable(false);
+		RTextScrollPane sp = new RTextScrollPane(xmltextArea);
+
+		textAreaPanel.add(sp);
+
+		//ErrorStrip errorStrip = new ErrorStrip(xmltextArea);
+		//textAreaPanel.add(errorStrip,BorderLayout.LINE_END);
 
 		IntentPanel = new JPanel();
 		IntentLabel = new JLabel(RStr.ACTIVITY_LABEL_INTENT.get());
@@ -115,7 +130,7 @@ public class Components extends AbstractTabbedPanel
 
 		//IntentLabel.setPreferredSize(new Dimension(300, 100));
 		IntentPanel.add(IntentLabel, BorderLayout.NORTH);
-		IntentPanel.add(scrollPane2, BorderLayout.CENTER);
+		IntentPanel.add(textAreaPanel, BorderLayout.CENTER);
 
 		//Add the scroll pane to this panel.
 		//add(scrollPane);
@@ -169,9 +184,9 @@ public class Components extends AbstractTabbedPanel
 				}
 				String permission = info.permission != null ? "O" : "X";
 				if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
-					ComponentList.add(0, new Object[] {info.name, type, enabled, exported, permission, startUp, info.getReport()});
+					ComponentList.add(0, new Object[] {info.name, type, enabled, exported, permission, startUp, info.xmlString});
 				} else {
-					ComponentList.add(new Object[] {info.name, type, enabled, exported, permission, startUp, info.getReport()});
+					ComponentList.add(new Object[] {info.name, type, enabled, exported, permission, startUp, info.xmlString});
 				}
 			}
 		}
@@ -203,9 +218,9 @@ public class Components extends AbstractTabbedPanel
 						String t = (String)((Object[])ComponentList.get(i))[1];
 						if(t == null || !t.equals("launcher")) break;
 					}
-					ComponentList.add(i, new Object[] {info.name, type, enabled, exported, permission, startUp, info.getReport()});
+					ComponentList.add(i, new Object[] {info.name, type, enabled, exported, permission, startUp, info.xmlString});
 				} else {
-					ComponentList.add(new Object[] {info.name, type, enabled, exported, permission, startUp, info.getReport()});
+					ComponentList.add(new Object[] {info.name, type, enabled, exported, permission, startUp, info.xmlString});
 				}
 			}
 		}
@@ -220,7 +235,7 @@ public class Components extends AbstractTabbedPanel
 					exported = info.exported ? "O" : "X";
 				}
 				String permission = info.permission != null ? "O" : "X";
-				ComponentList.add(new Object[] {info.name, "service", enabled, exported, permission, startUp, info.getReport()});
+				ComponentList.add(new Object[] {info.name, "service", enabled, exported, permission, startUp, info.xmlString});
 			}
 		}
 		if(apkInfo.manifest.application.receiver != null) {
@@ -234,7 +249,7 @@ public class Components extends AbstractTabbedPanel
 					exported = info.exported ? "O" : "X";
 				}
 				String permission = info.permission != null ? "O" : "X";
-				ComponentList.add(new Object[] {info.name, "receiver", enabled, exported, permission, startUp, info.getReport()});
+				ComponentList.add(new Object[] {info.name, "receiver", enabled, exported, permission, startUp, info.xmlString});
 			}
 		}
 		if(apkInfo.manifest.application.provider != null) {
@@ -257,7 +272,7 @@ public class Components extends AbstractTabbedPanel
 				} else if(info.writePermission != null) {
 					permission = "Write";
 				}
-				ComponentList.add(new Object[] {info.name, "provider", enabled, exported, permission, startUp, info.getReport()});
+				ComponentList.add(new Object[] {info.name, "provider", enabled, exported, permission, startUp, info.xmlString});
 				//String startUp = (info.featureFlag & ActivityInfo.ACTIVITY_FEATURE_STARTUP) != 0 ? "O" : "X";
 			}
 		}
