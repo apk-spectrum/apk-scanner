@@ -230,6 +230,7 @@ public enum RStr implements ResString<String>
 	WIDGET_COLUMN_LABEL			("@widget_column_label"),
 	WIDGET_COLUMN_SIZE			("@widget_column_size"),
 	WIDGET_COLUMN_ACTIVITY		("@widget_column_activity"),
+	WIDGET_COLUMN_ENABLED		("@widget_column_enabled"),
 	WIDGET_COLUMN_TYPE			("@widget_column_type"),
 	WIDGET_RESIZE_MODE			("@widget_resize_mode"),
 	WIDGET_HORIZONTAL			("@widget_horizontal"),

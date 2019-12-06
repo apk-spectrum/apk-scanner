@@ -218,6 +218,7 @@ they're removed before the application is published</string>
 	<string name="widget_column_label">Label</string>
 	<string name="widget_column_size">Size</string>
 	<string name="widget_column_activity">Class</string>
+	<string name="widget_column_enabled">Enabled</string>
 	<string name="widget_column_type">Type</string>
 	<string name="widget_resize_mode">ReSizeMode</string>
 	<string name="widget_horizontal">horizontal</string>

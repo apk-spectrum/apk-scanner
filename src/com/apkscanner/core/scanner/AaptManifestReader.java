@@ -263,6 +263,7 @@ public class AaptManifestReader
         	if(widget.name != null && widget.name.startsWith(".")) {
         		widget.name = manifestInfo.packageName + widget.name;
         	}
+        	widget.enabled = getAttrBooleanValue(widgetTag[idx], "enabled");
 
         	AaptXmlTreeNode[] meta = widgetTag[idx].getNodeList("meta-data");
         	String resource = null;

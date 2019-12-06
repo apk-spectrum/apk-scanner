@@ -20,6 +20,7 @@ import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ResourceInfo;
+import com.apkscanner.data.apkinfo.WidgetInfo;
 import com.apkscanner.gui.component.ImageScaler;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
@@ -32,7 +33,7 @@ public class Widgets extends AbstractTabbedPanel
 {
 	private static final long serialVersionUID = 4881638983501664860L;
 
-	private MyTableModel TableModel = null;
+	private MyTableModel tableModel = null;
 	private JTable table = null;
 	private ArrayList<Object[]> arrWidgets = new ArrayList<Object[]>();
 
@@ -45,38 +46,28 @@ public class Widgets extends AbstractTabbedPanel
 	@Override
 	public void initialize()
 	{
-		TableModel = new MyTableModel();
-		table = new JTable(TableModel);
-
-		setJTableColumnsWidth(table, 500, 20,15,17,60,10);
-
-		//Create the scroll pane and add the table to it.
-
+		table = new JTable(tableModel = new MyTableModel());
 		table.setDefaultRenderer(String.class, new MultiLineCellRenderer());
 
-		JScrollPane scrollPane = new JScrollPane(table);
+		setJTableColumnsWidth(table, 500, 20, 15, 17, 60, 3, 10);
 
-		//Add the scroll pane to this panel.
-		add(scrollPane);
+		add(new JScrollPane(table));
 	}
 
 	@Override
 	public void setData(ApkInfo apkInfo, Status status)
 	{
-		if(!Status.WIDGET_COMPLETED.equals(status)) {
-			return;
-		}
+		if(!Status.WIDGET_COMPLETED.equals(status)) return;
 
-		//table.setPreferredScrollableViewportSize(new Dimension(500, 70));
 		arrWidgets.clear();
 		if(apkInfo.widgets == null) return;
-		if(TableModel == null) initialize();
+		if(tableModel == null) initialize();
 
 		String preferLang = RProp.S.PREFERRED_LANGUAGE.get();
-		for(int i=0; i< apkInfo.widgets.length; i++) {
+		for(WidgetInfo w: apkInfo.widgets) {
 			ImageIcon myimageicon = null;
 			try {
-				ResourceInfo[] icons = apkInfo.widgets[i].icons;
+				ResourceInfo[] icons = w.icons;
 				String icon = icons[icons.length-1].name;
 				if(icon.toLowerCase().endsWith(".webp")) {
 					myimageicon = new ImageIcon(ImageIO.read(new URL(icon)));
@@ -90,13 +81,14 @@ public class Widgets extends AbstractTabbedPanel
 				myimageicon.setImage(ImageScaler.getMaintainAspectRatioImage(myimageicon,100,100));
 			}
 
-			String label = ApkInfoHelper.getResourceValue(apkInfo.widgets[i].lables, preferLang);
+			String label = ApkInfoHelper.getResourceValue(w.lables, preferLang);
 			if(label == null) label = ApkInfoHelper.getResourceValue(apkInfo.manifest.application.labels, preferLang);
-			Object[] temp = { myimageicon , label, apkInfo.widgets[i].size, apkInfo.widgets[i].name, apkInfo.widgets[i].type};
+			String enabled = (w.enabled == null || w.enabled) ? "O" : "X";
+			Object[] temp = { myimageicon , label, w.size, w.name, enabled, w.type};
 			arrWidgets.add(temp);
 		}
 
-		TableModel.fireTableDataChanged();
+		tableModel.fireTableDataChanged();
 		for(int i=0; i< arrWidgets.size(); i++) {
 			table.setRowHeight(i, 100);
 		}
@@ -110,9 +102,9 @@ public class Widgets extends AbstractTabbedPanel
 	{
 		setTitle(RStr.TAB_WIDGETS.get(), RStr.TAB_WIDGETS.get());
 
-		if(TableModel == null) return;
-		TableModel.loadResource();
-		TableModel.fireTableStructureChanged();
+		if(tableModel == null) return;
+		tableModel.loadResource();
+		tableModel.fireTableStructureChanged();
 		setJTableColumnsWidth(table, 500, 20,15,17,60,10);
 		for(int i=0; i< arrWidgets.size(); i++) {
 			table.setRowHeight(i, 100);
@@ -141,13 +133,13 @@ public class Widgets extends AbstractTabbedPanel
 			loadResource();
 		}
 
-		public void loadResource()
-		{
+		public void loadResource() {
 			columnNames = new String[] {
 				RStr.WIDGET_COLUMN_IMAGE.get(),
 				RStr.WIDGET_COLUMN_LABEL.get(),
 				RStr.WIDGET_COLUMN_SIZE.get(),
 				RStr.WIDGET_COLUMN_ACTIVITY.get(),
+				RStr.WIDGET_COLUMN_ENABLED.get(),
 				RStr.WIDGET_COLUMN_TYPE.get(),
 			};
 		}
@@ -196,21 +188,6 @@ public class Widgets extends AbstractTabbedPanel
 			arrWidgets.get(row)[col] = value;
 			fireTableCellUpdated(row, col);
 		}
-
-		@SuppressWarnings("unused")
-		private void printDebugData() {
-			int numRows = getRowCount();
-			int numCols = getColumnCount();
-
-			for (int i = 0; i < numRows; i++) {
-				System.out.print("    row " + i + ":");
-				for (int j = 0; j < numCols; j++) {
-					System.out.print("  " + arrWidgets.get(i)[j]);
-				}
-				System.out.println();
-			}
-			System.out.println("--------------------------");
-		}
 	}
 
 	class MultiLineCellRenderer extends JTextArea implements TableCellRenderer {
@@ -224,25 +201,11 @@ public class Widgets extends AbstractTabbedPanel
 
 		public Component getTableCellRendererComponent(JTable table, Object value,
 				boolean isSelected, boolean hasFocus, int row, int column) {
-
 			if (isSelected) {
-				//setForeground(table.getSelectionForeground());
 				setBackground(Color.LIGHT_GRAY);
 			} else {
-				//setForeground(table.getForeground());
 				setBackground(Color.WHITE);
 			}
-			/*
-			if (hasFocus) {
-				setBorder(UIManager.getBorder("Table.focusCellHighlightBorder"));
-				if (table.isCellEditable(row, column)) {
-					setForeground(UIManager.getColor("Table.focusCellForeground"));
-					setBackground(UIManager.getColor("Table.focusCellBackground"));
-				}
-			} else {
-				setBorder(new EmptyBorder(1, 2, 1, 2));
-			}
-			*/
 			setFont(table.getFont());
 			setText((value == null) ? "" : value.toString());
 			return this;
