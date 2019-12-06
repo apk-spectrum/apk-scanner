@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -28,6 +29,7 @@ import com.apkscanner.data.apkinfo.ActivityAliasInfo;
 import com.apkscanner.data.apkinfo.ActivityInfo;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
+import com.apkscanner.data.apkinfo.ComponentInfo;
 import com.apkscanner.data.apkinfo.ProviderInfo;
 import com.apkscanner.data.apkinfo.ReceiverInfo;
 import com.apkscanner.data.apkinfo.ServiceInfo;
@@ -39,13 +41,13 @@ public class Components extends AbstractTabbedPanel
 	private static final long serialVersionUID = 8325900007802212630L;
 
 	private RSyntaxTextArea xmltextArea;
-	private JPanel IntentPanel;
-	private JLabel IntentLabel;
+	private JPanel intentPanel;
+	private JLabel intentLabel;
 
-	private MyTableModel TableModel = null;
+	private MyTableModel tableModel = null;
 	private JTable table = null;
 
-	public ArrayList<Object[]> ComponentList = new ArrayList<Object[]>();
+	public ArrayList<Object[]> componentList = new ArrayList<Object[]>();
 
 	public Components() {
 		setLayout(new GridLayout(1, 0));
@@ -56,8 +58,8 @@ public class Components extends AbstractTabbedPanel
 	@Override
 	public void initialize()
 	{
-		TableModel = new MyTableModel();
-		table = new JTable(TableModel) {
+		tableModel = new MyTableModel();
+		table = new JTable(tableModel) {
 			private static final long serialVersionUID = 1340713167587523626L;
 
 			public Component prepareRenderer(TableCellRenderer tcr, int row, int column) {
@@ -68,7 +70,7 @@ public class Components extends AbstractTabbedPanel
 		          //c.setForeground(getSelectionForeground());
 		          c.setBackground(Color.GRAY);
 		        }else{
-		        	String type = (String) ComponentList.get(row)[1];
+		        	String type = (String) componentList.get(row)[1];
 					if("activity".equals(type) || "main".equals(type)) {
 						temp = new Color(0xB7F0B1);
 					} else if("launcher".equals(type)) {
@@ -94,9 +96,9 @@ public class Components extends AbstractTabbedPanel
 
 		cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
-				if(ComponentList == null) return;
+				if(componentList == null) return;
 				if(table.getSelectedRow() > -1) {
-					xmltextArea.setText((String) ComponentList.get(table.getSelectedRow())[6]);
+					xmltextArea.setText((String) componentList.get(table.getSelectedRow())[6]);
 					xmltextArea.setCaretPosition(0);
 				}
 			}
@@ -106,7 +108,7 @@ public class Components extends AbstractTabbedPanel
 		//Create the scroll pane and add the table to it.
 		JScrollPane scrollPane = new JScrollPane(table);
 
-		
+
 		xmltextArea  = new RSyntaxTextArea();
 		//xmltextArea.createToolTip();
 
@@ -123,14 +125,14 @@ public class Components extends AbstractTabbedPanel
 		//ErrorStrip errorStrip = new ErrorStrip(xmltextArea);
 		//textAreaPanel.add(errorStrip,BorderLayout.LINE_END);
 
-		IntentPanel = new JPanel();
-		IntentLabel = new JLabel(RStr.ACTIVITY_LABEL_INTENT.get());
+		intentPanel = new JPanel();
+		intentLabel = new JLabel(RStr.ACTIVITY_LABEL_INTENT.get());
 
-		IntentPanel.setLayout(new BorderLayout());
+		intentPanel.setLayout(new BorderLayout());
 
 		//IntentLabel.setPreferredSize(new Dimension(300, 100));
-		IntentPanel.add(IntentLabel, BorderLayout.NORTH);
-		IntentPanel.add(textAreaPanel, BorderLayout.CENTER);
+		intentPanel.add(intentLabel, BorderLayout.NORTH);
+		intentPanel.add(textAreaPanel, BorderLayout.CENTER);
 
 		//Add the scroll pane to this panel.
 		//add(scrollPane);
@@ -138,11 +140,11 @@ public class Components extends AbstractTabbedPanel
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
         splitPane.setTopComponent(scrollPane);
-        splitPane.setBottomComponent(IntentPanel);
+        splitPane.setBottomComponent(intentPanel);
 
         Dimension minimumSize = new Dimension(100, 50);
         scrollPane.setMinimumSize(minimumSize);
-        IntentPanel.setMinimumSize(minimumSize);
+        intentPanel.setMinimumSize(minimumSize);
         splitPane.setDividerLocation(200);
         //splitPane.setPreferredSize(new Dimension(500, 500));
 
@@ -153,135 +155,114 @@ public class Components extends AbstractTabbedPanel
 	@Override
 	public void setData(ApkInfo apkInfo, Status status)
 	{
-		if(!Status.ACTIVITY_COMPLETED.equals(status)) {
-			return;
-		}
+		if(!Status.ACTIVITY_COMPLETED.equals(status)) return;
 
-		if(TableModel == null)
-			initialize();
-		ComponentList.clear();
+		if(tableModel == null) initialize();
 
-		if(apkInfo.manifest.application.activity != null) {
-			for(ActivityInfo info: apkInfo.manifest.application.activity) {
-				String type = null;
-				if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0 && (info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
-					type = "launcher";
-				} else if((info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
-					type = "main";
-				} else if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
-					Log.w("set launcher flag, but not main");
-					type = "activity";
-				} else {
-					type = "activity";
-				}
-				String startUp = (info.featureFlag & ApkInfo.APP_FEATURE_STARTUP) != 0 ? "O" : "X";
-				String enabled = (info.enabled == null) || info.enabled ? "O" : "X";
-				String exported = null;
-				if(info.exported == null) {
-					exported = info.intentFilter != null && info.intentFilter.length > 0 ? "O" : "X";
-				} else {
-					exported = info.exported ? "O" : "X";
-				}
-				String permission = info.permission != null ? "O" : "X";
-				if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
-					ComponentList.add(0, new Object[] {info.name, type, enabled, exported, permission, startUp, info.xmlString});
-				} else {
-					ComponentList.add(new Object[] {info.name, type, enabled, exported, permission, startUp, info.xmlString});
+		componentList.clear();
+
+		add(apkInfo.manifest.application.activity, apkInfo);
+		add(apkInfo.manifest.application.activityAlias, apkInfo);
+		add(apkInfo.manifest.application.service, apkInfo);
+		add(apkInfo.manifest.application.receiver, apkInfo);
+		add(apkInfo.manifest.application.provider, apkInfo);
+
+		componentList.sort(new Comparator<Object[]>() {
+			@Override
+			public int compare(Object[] o1, Object[] o2) {
+				int type = getTypePriority(o1[1]) - getTypePriority(o2[1]);
+				if(type != 0) return type;
+				return ((String)o1[0]).compareTo((String)o2[0]);
+			}
+
+			private int getTypePriority(Object type) {
+				switch((String) type) {
+				case "launcher":		return 0;
+				case "launcher-alias":	return 1;
+				case "main":			return 2;
+				case "activity":		return 3;
+				case "main-alias":		return 4;
+				case "activity-alias":	return 5;
+				case "service":			return 6;
+				case "receiver":		return 7;
+				case "provider":		return 8;
+				default:				return 9;
 				}
 			}
-		}
-		if(apkInfo.manifest.application.activityAlias != null) {
-			for(ActivityAliasInfo info: apkInfo.manifest.application.activityAlias) {
-				String type = null;
-				if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0 && (info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
-					type = "launcher-alias";
-				} else if((info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
-					type = "main-alias";
-				} else if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
-					Log.w("set launcher flag, but not main");
-					type = "activity-alias";
-				} else {
-					type = "activity-alias";
-				}
-				String startUp = (info.featureFlag & ApkInfo.APP_FEATURE_STARTUP) != 0 ? "O" : "X";
-				String enabled = (info.enabled == null) || info.enabled ? "O" : "X";
-				String exported = null;
-				if(info.exported == null) {
-					exported = info.intentFilter != null && info.intentFilter.length > 0 ? "O" : "X";
-				} else {
-					exported = info.exported ? "O" : "X";
-				}
-				String permission = info.permission != null ? "O" : "X";
-				if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
-					int i = 0;
-					for(;i<ComponentList.size();i++) {
-						String t = (String)((Object[])ComponentList.get(i))[1];
-						if(t == null || !t.equals("launcher")) break;
-					}
-					ComponentList.add(i, new Object[] {info.name, type, enabled, exported, permission, startUp, info.xmlString});
-				} else {
-					ComponentList.add(new Object[] {info.name, type, enabled, exported, permission, startUp, info.xmlString});
-				}
-			}
-		}
-		if(apkInfo.manifest.application.service != null) {
-			for(ServiceInfo info: apkInfo.manifest.application.service) {
-				String startUp = (info.featureFlag & ApkInfo.APP_FEATURE_STARTUP) != 0 ? "O" : "X";
-				String enabled = (info.enabled == null) || info.enabled ? "O" : "X";
-				String exported = null;
-				if(info.exported == null) {
-					exported = info.intentFilter != null && info.intentFilter.length > 0 ? "O" : "X";
-				} else {
-					exported = info.exported ? "O" : "X";
-				}
-				String permission = info.permission != null ? "O" : "X";
-				ComponentList.add(new Object[] {info.name, "service", enabled, exported, permission, startUp, info.xmlString});
-			}
-		}
-		if(apkInfo.manifest.application.receiver != null) {
-			for(ReceiverInfo info: apkInfo.manifest.application.receiver) {
-				String startUp = (info.featureFlag & ApkInfo.APP_FEATURE_STARTUP) != 0 ? "O" : "X";
-				String enabled = (info.enabled == null) || info.enabled ? "O" : "X";
-				String exported = null;
-				if(info.exported == null) {
-					exported = info.intentFilter != null && info.intentFilter.length > 0 ? "O" : "X";
-				} else {
-					exported = info.exported ? "O" : "X";
-				}
-				String permission = info.permission != null ? "O" : "X";
-				ComponentList.add(new Object[] {info.name, "receiver", enabled, exported, permission, startUp, info.xmlString});
-			}
-		}
-		if(apkInfo.manifest.application.provider != null) {
-			for(ProviderInfo info: apkInfo.manifest.application.provider) {
-				String startUp = "X";
-				String enabled = (info.enabled == null) || info.enabled ? "O" : "X";
-				String exported = null;
-				if(info.exported == null) {
+		});
+
+		tableModel.fireTableDataChanged();
+		table.getSelectionModel().setSelectionInterval(0, 0);
+
+		setDataSize(ApkInfoHelper.getComponentCount(apkInfo), true, false);
+		setTabbedVisible(apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX);
+	}
+
+	private void add(ComponentInfo[] infoList, ApkInfo apkInfo) {
+		if(infoList == null) return;
+
+		for(ComponentInfo info: infoList) {
+			String type = getType(info);
+			String startUp = !(info instanceof ProviderInfo)
+					&& (info.featureFlag & ApkInfo.APP_FEATURE_STARTUP) != 0 ? "O" : "X";
+			String enabled = (info.enabled == null) || info.enabled ? "O" : "X";
+			String exported = null;
+			if(info.exported == null) {
+				if(info instanceof ProviderInfo) {
 					Integer target = apkInfo.manifest.usesSdk.targetSdkVersion;
 					if(target == null) target = apkInfo.manifest.usesSdk.minSdkVersion;
 					exported = (target == null || target < 17) ? "O" : "X";
 				} else {
-					exported = info.exported ? "O" : "X";
+					exported = info.intentFilter != null && info.intentFilter.length > 0 ? "O" : "X";
 				}
-				String permission = "X";
-				if(info.permission != null || (info.readPermission != null && info.writePermission != null)) {
-					permission = "R/W";
-				} else if(info.readPermission != null) {
-					permission = "Read";
-				} else if(info.writePermission != null) {
-					permission = "Write";
-				}
-				ComponentList.add(new Object[] {info.name, "provider", enabled, exported, permission, startUp, info.xmlString});
-				//String startUp = (info.featureFlag & ActivityInfo.ACTIVITY_FEATURE_STARTUP) != 0 ? "O" : "X";
+			} else {
+				exported = info.exported ? "O" : "X";
 			}
+			String permission = null;
+			if(info instanceof ProviderInfo) {
+				ProviderInfo pInfo = (ProviderInfo) info;
+				if(info.permission != null || (pInfo.readPermission != null && pInfo.writePermission != null)) {
+					permission = "R/W";
+				} else if(pInfo.readPermission != null) {
+					permission = "Read";
+				} else if(pInfo.writePermission != null) {
+					permission = "Write";
+				} else {
+					permission = "X";
+				}
+			} else {
+				permission = info.permission != null ? "O" : "X";
+			}
+			componentList.add(new Object[] {info.name, type, enabled, exported, permission, startUp, info.xmlString});
 		}
+	}
 
-		//ActivityList.addAll(apkInfo.ActivityList);
-		TableModel.fireTableDataChanged();
-
-		setDataSize(ApkInfoHelper.getComponentCount(apkInfo), true, false);
-		setTabbedVisible(apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX);
+	private String getType(ComponentInfo info) {
+		String type = null;
+		if(info instanceof ActivityInfo || info instanceof ActivityAliasInfo) {
+			if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0 && (info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
+				type = "launcher";
+			} else if((info.featureFlag & ApkInfo.APP_FEATURE_MAIN) != 0) {
+				type = "main";
+			} else if((info.featureFlag & ApkInfo.APP_FEATURE_LAUNCHER) != 0) {
+				Log.w("set launcher flag, but not main");
+				type = "activity";
+			} else {
+				type = "activity";
+			}
+			if(info instanceof ActivityAliasInfo) {
+				type += "-alias";
+			}
+		} else if(info instanceof ServiceInfo) {
+			type = "service";
+		} else if(info instanceof ReceiverInfo) {
+			type = "receiver";
+		} else if(info instanceof ProviderInfo) {
+			type = "provider";
+		} else {
+			type = "unknown";
+		}
+		return type;
 	}
 
 	@Override
@@ -289,11 +270,11 @@ public class Components extends AbstractTabbedPanel
 	{
 		setTitle(RStr.TAB_COMPONENTS.get(), RStr.TAB_COMPONENTS.get());
 
-		if(TableModel == null) return;
-		TableModel.loadResource();
-		TableModel.fireTableStructureChanged();
+		if(tableModel == null) return;
+		tableModel.loadResource();
+		tableModel.fireTableStructureChanged();
 		setJTableColumnsWidth(table, 500, 62, 10, 7, 7, 7, 7);
-		IntentLabel.setText(RStr.ACTIVITY_LABEL_INTENT.get());
+		intentLabel.setText(RStr.ACTIVITY_LABEL_INTENT.get());
 	}
 
 	public void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
@@ -336,7 +317,7 @@ public class Components extends AbstractTabbedPanel
 		}
 
 		public int getRowCount() {
-			return ComponentList.size();
+			return componentList.size();
 		}
 
 		public String getColumnName(int col) {
@@ -344,7 +325,7 @@ public class Components extends AbstractTabbedPanel
 		}
 
 		public Object getValueAt(int row, int col) {
-			return ComponentList.get(row)[col];
+			return componentList.get(row)[col];
 		}
 
 		/*

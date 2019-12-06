@@ -5,8 +5,6 @@ public class ServiceInfo extends ComponentInfo
 	public Boolean isolatedProcess = null;
 	public String process = null; // "string"
 
-	public IntentFilterInfo[] intentFilter = null;
-
 	public String getReport()
 	{
 		StringBuilder report = new StringBuilder();

@@ -4,8 +4,6 @@ public class ActivityAliasInfo extends ComponentInfo
 {
 	public String targetActivity = null; // "string"
 
-	public IntentFilterInfo[] intentFilter = null;
-
 	public String getReport()
 	{
 		StringBuilder report = new StringBuilder();

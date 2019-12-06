@@ -10,6 +10,8 @@ public class ComponentInfo {
 
 	public MetaDataInfo[] metaData = null;
 
+	public IntentFilterInfo[] intentFilter = null;
+
 	public Integer featureFlag = 0;
 
 	public String xmlString;

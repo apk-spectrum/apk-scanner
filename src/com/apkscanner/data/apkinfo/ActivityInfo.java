@@ -43,8 +43,6 @@ public class ActivityInfo extends ComponentInfo
 	                                       "stateAlwaysVisible", "adjustUnspecified",
 	                                       "adjustResize", "adjustPan"] */
 
-	public IntentFilterInfo[] intentFilter = null;
-
 	public String getReport()
 	{
 		StringBuilder report = new StringBuilder();
