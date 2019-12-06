@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -40,6 +41,12 @@ public class ZipFileUtil
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		tempList.sort(new Comparator<String>() {
+			@Override
+			public int compare(String o1, String o2) {
+				return o1.compareToIgnoreCase(o2);
+			}
+		});
 
 		return tempList.toArray(new String[tempList.size()]);
 	}
