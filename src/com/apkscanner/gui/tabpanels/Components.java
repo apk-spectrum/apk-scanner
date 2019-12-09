@@ -96,7 +96,7 @@ public class Components extends AbstractTabbedPanel
 
 		cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
-				if(componentList == null) return;
+				if(componentList == null || componentList.isEmpty()) return;
 				if(table.getSelectedRow() > -1) {
 					xmltextArea.setText((String) componentList.get(table.getSelectedRow())[6]);
 					xmltextArea.setCaretPosition(0);
@@ -172,7 +172,7 @@ public class Components extends AbstractTabbedPanel
 			public int compare(Object[] o1, Object[] o2) {
 				int type = getTypePriority(o1[1]) - getTypePriority(o2[1]);
 				if(type != 0) return type;
-				return ((String)o1[0]).compareTo((String)o2[0]);
+				return ((String)o1[0]).compareToIgnoreCase((String)o2[0]);
 			}
 
 			private int getTypePriority(Object type) {

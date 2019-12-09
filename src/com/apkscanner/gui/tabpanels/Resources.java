@@ -24,7 +24,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.ImageObserver;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -114,161 +113,10 @@ public class Resources extends AbstractTabbedPanel {
 	private static final String RESOURCE_TREE_TOOLBAR_BUTTON_FIND = "TREE FIND";
 	private static final String RESOURCE_TREE_TOOLBAR_BUTTON_REFRESH = "TREE REFRESH";
 
-	public enum ResourceType {
-		ANIMATOR(0), ANIM(1), COLOR(2), DRAWABLE(3), MIPMAP(4), LAYOUT(5), MENU(6), RAW(7), VALUES(8), XML(9), ASSET(
-				10), METAINF(11), ETC(12), LOCAL(13), COUNT(14);
-
-		private int type;
-
-		ResourceType(int type) {
-			this.type = type;
-		}
-
-		public int getInt() {
-			return type;
-		}
-
-		public String toString() {
-			if(this.equals(METAINF))
-				return "META-INF";
-			else
-				return super.toString().toLowerCase();
-		}
-	}
-
 	static public abstract interface TreeFocusChanger {
 		public void setTreeFocus(String path, int line, String string);
 
 		public String getImagefilePath(String findfilename);
-	}
-
-	public static class ResourceObject {
-		public static final int ATTR_AXML = 1;
-		public static final int ATTR_XML = 2;
-		public static final int ATTR_IMG = 3;
-		public static final int ATTR_QMG = 4;
-		public static final int ATTR_TXT = 5;
-		public static final int ATTR_CERT = 6;
-		public static final int ATTR_FS_IMG = 7;
-		public static final int ATTR_ETC = 8;
-
-		public String label;
-		public Boolean isFolder;
-		public String path;
-		public String config;
-		public ResourceType type;
-		public int attr;
-		public int childCount;
-		public Boolean isLoading;
-
-		public ResourceObject(File file) {
-			label = file.getName();
-			path = file.getAbsolutePath();
-			isFolder = file.isDirectory();
-
-			type = ResourceType.LOCAL;
-			isLoading = false;
-			childCount = 0;
-
-			setAttr();
-		}
-
-		public ResourceObject(String path, boolean isFolder) {
-			this.path = path;
-			this.isFolder = isFolder;
-			this.isLoading = false;
-			if (path.startsWith("res/animator")) {
-				type = ResourceType.ANIMATOR;
-			} else if (path.startsWith("res/anim")) {
-				type = ResourceType.ANIM;
-			} else if (path.startsWith("res/color")) {
-				type = ResourceType.COLOR;
-			} else if (path.startsWith("res/drawable")) {
-				type = ResourceType.DRAWABLE;
-			} else if (path.startsWith("res/mipmap")) {
-				type = ResourceType.MIPMAP;
-			} else if (path.startsWith("res/layout")) {
-				type = ResourceType.LAYOUT;
-			} else if (path.startsWith("res/menu")) {
-				type = ResourceType.MENU;
-			} else if (path.startsWith("res/raw")) {
-				type = ResourceType.RAW;
-			} else if (path.startsWith("res/values")) {
-				type = ResourceType.VALUES;
-			} else if (path.startsWith("res/xml")) {
-				type = ResourceType.XML;
-			} else if (path.startsWith("assets")) {
-				type = ResourceType.ASSET;
-			} else if(path.startsWith("META-INF")) {
-				type = ResourceType.METAINF;
-			} else {
-				type = ResourceType.ETC;
-			}
-
-			if (type.getInt() <= ResourceType.XML.getInt()) {
-				if (path.startsWith("res/" + type.toString() + "-"))
-					config = path.replaceAll("res/" + type.toString() + "-([^/]*)/.*", "$1");
-			}
-
-			setAttr();
-
-			if (isFolder) {
-				label = getOnlyFoldername(path);
-			} else {
-				label = getOnlyFilename(path);
-			}
-
-			childCount = 0;
-		}
-
-		private void setAttr() {
-			String extension = path.replaceAll(".*/", "").replaceAll(".*\\.", ".").toLowerCase();
-
-			if (extension.endsWith(".xml")) {
-				if (path.startsWith("res/") || path.equals("AndroidManifest.xml"))
-					attr = ATTR_AXML;
-				else
-					attr = ATTR_XML;
-			} else if (extension.endsWith(".png") || extension.endsWith(".jpg") || extension.endsWith(".gif")
-					|| extension.endsWith(".bmp") || extension.endsWith(".webp")) {
-				attr = ATTR_IMG;
-			} else if (extension.endsWith(".qmg")) {
-				attr = ATTR_QMG;
-			} else if (extension.endsWith(".txt") || extension.endsWith(".mk") || extension.endsWith(".html")
-					|| extension.endsWith(".js") || extension.endsWith(".css") || extension.endsWith(".json")
-					|| extension.endsWith(".props") || extension.endsWith(".properties") || extension.endsWith(".policy")
-					|| extension.endsWith(".mf") || extension.endsWith(".sf") || extension.endsWith(".rc")
-					|| extension.endsWith(".version") || extension.endsWith(".default")) {
-				attr = ATTR_TXT;
-			} else if(extension.endsWith(".rsa") || extension.endsWith(".dsa") || extension.endsWith(".ec")) {
-				attr = ATTR_CERT;
-			} else if(extension.endsWith(".img")) {
-				attr = ATTR_FS_IMG;
-			} else {
-				attr = ATTR_ETC;
-			}
-		}
-
-		@Override
-		public String toString() {
-			String str = null;
-			if (childCount > 0) {
-				str = label + " (" + childCount + ")";
-			} else if (config != null && !config.isEmpty()) {
-				str = label + " (" + config + ")";
-			} else {
-				str = label;
-			}
-			return str;
-		}
-
-		public void setLoadingState(Boolean state) {
-			isLoading = state;
-		}
-
-		public Boolean getLoadingState() {
-			return isLoading;
-		}
 	}
 
 	public Resources() {
@@ -393,19 +241,7 @@ public class Resources extends AbstractTabbedPanel {
 		return treefocuschanger;
 	}
 
-	/*
-	static private class Node extends DefaultMutableTreeNode {
-		public Node(Object userObject) {
-			super(userObject);
-		}
-
-		public boolean isLeaf() {
-			return false;
-		}
-	}
-	 */
-
-	DefaultMutableTreeNode createFilteredTree(DefaultMutableTreeNode parent, String filter) {
+	private DefaultMutableTreeNode createFilteredTree(DefaultMutableTreeNode parent, String filter) {
 		int c = parent.getChildCount();
 		DefaultMutableTreeNode fparent = new DefaultMutableTreeNode(parent.getUserObject());
 		String temp;
@@ -460,7 +296,7 @@ public class Resources extends AbstractTabbedPanel {
 			if (nodo.getUserObject() instanceof ResourceObject) {
 				ResourceObject tempObject = (ResourceObject) nodo.getUserObject();
 
-				if(tempObject.isFolder && tempObject.type == ResourceType.LOCAL) {
+				if(tempObject.isFolder) {
 					setIcon(getFileIcon("FOLDER"));
 				} else if (!tempObject.isFolder) {
 					ResourceObject temp = (ResourceObject) nodo.getUserObject();
@@ -512,21 +348,16 @@ public class Resources extends AbstractTabbedPanel {
 							suffix = "";
 						}
 						if (temp.getLoadingState()) {
-
 							if (ImageObserver == null) {
 								ImageObserver = new NodeImageObserver(tree);
 								Animateimageicon.setImageObserver(ImageObserver);
 								ImageObserver.setnode(nodo);
 								ImageObserver.setDrawFlag(true);
 							}
-
 							setIcon(Animateimageicon);
-
 						} else {
 							setIcon(getFileIcon(suffix));
-
 						}
-
 					}
 				}
 			} else {
@@ -594,13 +425,14 @@ public class Resources extends AbstractTabbedPanel {
 		}
 	}
 
-	private static String getOnlyFilename(String str) {
+	static String getOnlyFilename(String str) {
 		String separator = str.contains(File.separator) ? separator = File.separator : "/";
 		return str.substring(str.lastIndexOf(separator) + 1, str.length());
 	}
 
-	private static String getOnlyFoldername(String str) {
+	static String getOnlyFoldername(String str) {
 		String separator = str.contains(File.separator) ? separator = File.separator : "/";
+		if(!str.contains(separator)) return str;
 		return str.substring(0, str.lastIndexOf(separator));
 	}
 
@@ -687,19 +519,14 @@ public class Resources extends AbstractTabbedPanel {
 			public void run()
 			{
 				try {
-					final ArrayList<DefaultMutableTreeNode> topFiles = new ArrayList<DefaultMutableTreeNode>();
-
 					EventQueue.invokeAndWait(new Runnable() {
 						public void run() {
 							tree.removeAll();
 
-							top = new DefaultMutableTreeNode(getOnlyFilename(apkFilePath));
-							// FilteredTreeModel model = new FilteredTreeModel(new
-							// DefaultTreeModel(top));
+							top = new ResourceNode(getOnlyFilename(apkFilePath));
 							tree.setModel(new DefaultTreeModel(top));
 
 							eachTypeNodes = new DefaultMutableTreeNode[ResourceType.COUNT.getInt()];
-
 						}
 					});
 
@@ -714,10 +541,10 @@ public class Resources extends AbstractTabbedPanel {
 										continue;
 
 									ResourceObject resObj = new ResourceObject(nameList[i], false);
-									DefaultMutableTreeNode node = new DefaultMutableTreeNode(resObj);
+									DefaultMutableTreeNode node = new ResourceNode(resObj);
 
 									if (!nameList[i].contains("/")) {
-										topFiles.add(node);
+										top.add(node);
 										if(nameList[i].equals("apex_payload.img")) {
 											ResourceObject obj = new ResourceObject("Loading...", false);
 											obj.isLoading = true;
@@ -729,11 +556,9 @@ public class Resources extends AbstractTabbedPanel {
 									DefaultMutableTreeNode typeNode = eachTypeNodes[resObj.type.getInt()];
 
 									if (typeNode == null) {
-										typeNode = new DefaultMutableTreeNode(resObj.type.toString());
+										typeNode = new ResourceNode(new ResourceObject(resObj.type.toString(), true));
 										eachTypeNodes[resObj.type.getInt()] = typeNode;
-										if (resObj.type != ResourceType.ETC) {
-											top.add(typeNode);
-										}
+										top.add(typeNode);
 									}
 
 									DefaultMutableTreeNode findnode = null;
@@ -745,7 +570,7 @@ public class Resources extends AbstractTabbedPanel {
 									if (findnode != null) {
 										if (findnode.getChildCount() == 0) {
 											ResourceObject obj = (ResourceObject) findnode.getUserObject();
-											findnode.add(new DefaultMutableTreeNode(new ResourceObject(obj.path, false)));
+											findnode.add(new ResourceNode(new ResourceObject(obj.path, false)));
 											((ResourceObject) findnode.getUserObject()).childCount++;
 										}
 										findnode.add(node);
@@ -761,24 +586,16 @@ public class Resources extends AbstractTabbedPanel {
 
 					EventQueue.invokeAndWait(new Runnable() {
 						public void run() {
-							if (eachTypeNodes[ResourceType.ETC.getInt()] != null) {
-								top.add(eachTypeNodes[ResourceType.ETC.getInt()]);
-							}
-
-							DefaultMutableTreeNode manifest = null;
-							for (DefaultMutableTreeNode node : topFiles) {
-								top.add(node);
-								if("AndroidManifest.xml".equals(((ResourceObject) node.getUserObject()).path)) {
-									manifest = node;
-								}
-							}
-
 							expandOrCollapsePath(tree, new TreePath(top.getPath()), 1, 0, true);
 
-							if(manifest != null) {
-								TreePath treepath = new TreePath(manifest.getPath());
-								tree.setSelectionPath(treepath);
-								contentPanel.selectContent(manifest.getUserObject());
+							for(DefaultMutableTreeNode node = (DefaultMutableTreeNode) top.getFirstChild();
+									node != null; node = node.getNextSibling()) {
+								if("AndroidManifest.xml".equals(node.toString())) {
+									TreePath treepath = new TreePath(node.getPath());
+									tree.setSelectionPath(treepath);
+									contentPanel.selectContent(node.getUserObject());
+									break;
+								}
 							}
 						}
 					});
@@ -810,12 +627,8 @@ public class Resources extends AbstractTabbedPanel {
 		}
 		if (expand) {
 			tree.expandPath(treePath);
-			// System.err.println("Path expanded at level
-			// "+currentLevel+"-"+treePath);
 		} else {
 			tree.collapsePath(treePath);
-			// System.err.println("Path collapsed at level
-			// "+currentLevel+"-"+treePath);
 		}
 	}
 
@@ -875,7 +688,6 @@ public class Resources extends AbstractTabbedPanel {
 		}
 
 		if (resObj.path.toLowerCase().endsWith(".dex")) {
-			int actionType = 0;
 			String data = RProp.S.DEFAULT_DECORDER.get();
 			Log.v("PROP_DEFAULT_DECORDER : " + data);
 			if(data.matches(".*!.*#.*@.*")) {
@@ -888,19 +700,9 @@ public class Resources extends AbstractTabbedPanel {
 					data = (String) RProp.DEFAULT_DECORDER.getDefaultValue();
 				}
 			}
-			if(RConst.STR_DECORDER_JD_GUI.equals(data)) {
-				actionType = 1;
-			} else if(RConst.STR_DECORDER_JADX_GUI.equals(data)) {
-				actionType = 2;
-			} else if(RConst.STR_DECORDER_BYTECOD.equals(data)) {
-				actionType = 3;
-			} else {
-				actionType = 2;
-				return;
-			}
 
-			switch(actionType) {
-			case 1:
+			switch(data) {
+			case RConst.STR_DECORDER_JD_GUI:
 				if (resObj.getLoadingState() == false) {
 					resObj.setLoadingState(true);
 
@@ -931,10 +733,10 @@ public class Resources extends AbstractTabbedPanel {
 					});
 				}
 				break;
-			case 2:
+			case RConst.STR_DECORDER_JADX_GUI:
 				JADXLauncher.run(resPath);
 				break;
-			case 3:
+			case RConst.STR_DECORDER_BYTECOD:
 				BytecodeViewerLauncher.run(resPath);
 				break;
 			}
@@ -1041,11 +843,10 @@ public class Resources extends AbstractTabbedPanel {
 	}
 
 	private void loadFsImg(final DefaultMutableTreeNode node) {
-		final ResourceObject resObj = (ResourceObject) node.getUserObject();
-
 		new SwingWorker<String, Void>() {
 			@Override
 			protected String doInBackground() throws Exception {
+				ResourceObject resObj = (ResourceObject) node.getUserObject();
 				String imgPath = tempWorkPath + File.separator + resObj.path.replace("/", File.separator);
 				String extPath = imgPath + "_";
 				if(!new File(imgPath).exists()) {
@@ -1073,17 +874,12 @@ public class Resources extends AbstractTabbedPanel {
 			}
 
 			private void addNodes(DefaultMutableTreeNode node, File dir) {
-				for(File c: dir.listFiles(new FileFilter() {
-						@Override public boolean accept(File f) { return f.isDirectory(); }
-					})) {
-					DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(new ResourceObject(c));
+				for(File c: dir.listFiles()) {
+					DefaultMutableTreeNode childNode = new ResourceNode(new ResourceObject(c));
 					node.add(childNode);
-					addNodes(childNode, c);
-				}
-				for(File c: dir.listFiles(new FileFilter() {
-						@Override public boolean accept(File f) { return !f.isDirectory(); }
-					})) {
-					node.add(new DefaultMutableTreeNode(new ResourceObject(c)));
+					if(c.isDirectory()) {
+						addNodes(childNode, c);
+					}
 				}
 			}
 		}.execute();

@@ -67,8 +67,6 @@ import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.component.ApkFileChooser;
 import com.apkscanner.gui.component.ImageControlPanel;
 import com.apkscanner.gui.component.KeyStrokeAction;
-import com.apkscanner.gui.tabpanels.Resources.ResourceObject;
-import com.apkscanner.gui.tabpanels.Resources.ResourceType;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
