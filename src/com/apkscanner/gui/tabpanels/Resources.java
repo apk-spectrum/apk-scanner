@@ -8,7 +8,6 @@ import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -22,23 +21,16 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import javax.imageio.ImageIO;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -48,7 +40,6 @@ import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
-import javax.swing.filechooser.FileSystemView;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -61,7 +52,6 @@ import com.apkscanner.Launcher;
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.component.FilteredTreeModel;
-import com.apkscanner.gui.component.ImageScaler;
 import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.PlugInManager;
@@ -103,12 +93,7 @@ public class Resources extends AbstractTabbedPanel {
 
 	ResouceTreeCellRenderer renderer;
 
-	private HashMap<String, Icon> fileIcon = new HashMap<String, Icon>();
-
 	static public TreeFocusChanger treefocuschanger;
-
-	ImageIcon Animateimageicon = RImg.RESOURCE_TREE_OPEN_JD.getImageIcon();
-	NodeImageObserver ImageObserver;
 
 	private static final String RESOURCE_TREE_TOOLBAR_BUTTON_FIND = "TREE FIND";
 	private static final String RESOURCE_TREE_TOOLBAR_BUTTON_REFRESH = "TREE REFRESH";
@@ -275,93 +260,22 @@ public class Resources extends AbstractTabbedPanel {
 
 	class ResouceTreeCellRenderer extends DefaultTreeCellRenderer implements FocusListener {
 		private static final long serialVersionUID = 6248791058116909814L;
-		// private ImageIcon iconApk = RImg.TREE_APK.getImageIcon();
-		// private ImageIcon iconFolder =
-		// RImg.TREE_FOLDER.getImageIcon();
 
 		@Override
 		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded,
 				boolean isLeaf, int row, boolean focused) {
 			Component c = super.getTreeCellRendererComponent(tree, value, selected, expanded, isLeaf, row, focused);
-			DefaultMutableTreeNode nodo = (DefaultMutableTreeNode) value;
 
-			// ((JLabel)c).setOpaque(true);
-			((JLabel) c).setBackground(Color.RED);
-
-			if (nodo == top) {
-				setIcon(RImg.APK_FILE_ICON.getImageIcon());
-				return c;
-			}
-
-			if (nodo.getUserObject() instanceof ResourceObject) {
-				ResourceObject tempObject = (ResourceObject) nodo.getUserObject();
-
-				if(tempObject.isFolder) {
-					setIcon(getFileIcon("FOLDER"));
-				} else if (!tempObject.isFolder) {
-					ResourceObject temp = (ResourceObject) nodo.getUserObject();
-					String urlFilePath = null;
-					urlFilePath = apkFilePath.replaceAll("#", "%23");
-					String jarPath = "jar:file:" + urlFilePath + "!/";
-					Icon icon = null;
-
-					switch (temp.attr) {
-					case ResourceObject.ATTR_IMG:
-						try {
-							Image tempImage = null;
-							if(temp.path.toLowerCase().endsWith(".webp")) {
-								tempImage = ImageScaler.getScaledImage(new ImageIcon(ImageIO.read(new URL(jarPath + temp.path))), 32, 32);
-							} else {
-								tempImage = ImageScaler.getScaledImage(new ImageIcon(new URL(jarPath + temp.path)), 32, 32);
-							}
-							icon = new ImageIcon(tempImage);
-							tempImage.flush();
-						} catch (IOException|NullPointerException e1) {
-							//e1.printStackTrace();
-						}
-						break;
-					case ResourceObject.ATTR_AXML:
-					case ResourceObject.ATTR_XML:
-						// tempImage =
-						// ImageScaler.getScaledImage(RImg.RESOURCE_TREE_XML.getImageIcon(),16,16);
-						break;
-					case ResourceObject.ATTR_QMG:
-						// tempImage =
-						// ImageScaler.getScaledImage(RImg.QMG_IMAGE_ICON.getImageIcon(),32,32);
-						break;
-					case ResourceObject.ATTR_TXT:
-						break;
-					case ResourceObject.ATTR_CERT:
-						break;
-					case ResourceObject.ATTR_ETC:
-						break;
-					default:
-					}
-
-					if (icon != null) {
-						setIcon(icon);
-					} else {
-						String suffix = tempObject.path.replaceAll(".*/", "");
-						if (suffix.contains(".")) {
-							suffix = suffix.replaceAll(".*\\.", ".");
-						} else {
-							suffix = "";
-						}
-						if (temp.getLoadingState()) {
-							if (ImageObserver == null) {
-								ImageObserver = new NodeImageObserver(tree);
-								Animateimageicon.setImageObserver(ImageObserver);
-								ImageObserver.setnode(nodo);
-								ImageObserver.setDrawFlag(true);
-							}
-							setIcon(Animateimageicon);
-						} else {
-							setIcon(getFileIcon(suffix));
-						}
-					}
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+			if (node.getUserObject() instanceof ResourceObject) {
+				ResourceObject resObj = (ResourceObject) node.getUserObject();
+				if(resObj.getLoadingState()) {
+					setIcon(resObj.getIconWithObserver(tree));
+				} else {
+					setIcon(resObj.getIcon());
 				}
 			} else {
-				setIcon(getFileIcon("FOLDER"));
+				setIcon(SystemUtil.getExtensionIcon(ResourceObject.getExtension(node.toString())));
 			}
 			return c;
 		}
@@ -376,53 +290,6 @@ public class Resources extends AbstractTabbedPanel {
 			e.getComponent().repaint();
 		}
 
-		private Icon getFileIcon(String suffix) {
-			Icon icon = fileIcon.get(suffix);
-			if (icon == null) {
-				//Log.v("getIcon " + suffix);
-				Image tempImage = null;
-				if ("FOLDER".equals(suffix)) {
-					tempImage = ImageScaler.getScaledImage(RImg.TREE_FOLDER.getImageIcon(), 16, 16);
-					/*
-					 * UIDefaults defaults = UIManager.getDefaults( ); Icon
-					 * computerIcon = defaults.getIcon( "FileView.computerIcon"
-					 * ); Icon floppyIcon = defaults.getIcon(
-					 * "FileView.floppyDriveIcon" ); Icon diskIcon =
-					 * defaults.getIcon( "FileView.hardDriveIcon" ); Icon
-					 * fileIcon = defaults.getIcon( "FileView.fileIcon" ); Icon
-					 * folderIcon = defaults.getIcon( "FileView.directoryIcon"
-					 * );
-					 *
-					 * icon = folderIcon;
-					 */
-				} else if (".xml".equals(suffix)) {
-					tempImage = ImageScaler.getScaledImage(RImg.RESOURCE_TREE_XML.getImageIcon(), 16, 16);
-					// } else if(".qmg".equals(suffix)) {
-					// tempImage =
-					// ImageScaler.getScaledImage(RImg.QMG_IMAGE_ICON.getImageIcon(),32,32);
-				} else if (".dex".equals(suffix)) {
-					icon = RImg.RESOURCE_TREE_CODE.getImageIcon();
-				} else if (".arsc".equals(suffix)) {
-					icon = RImg.RESOURCE_TREE_ARSC.getImageIcon();
-				} else {
-					try {
-						File file = File.createTempFile("icon", suffix);
-						FileSystemView view = FileSystemView.getFileSystemView();
-						icon = view.getSystemIcon(file);
-						file.delete();
-					} catch (IOException ioe) {
-					}
-				}
-				if (tempImage != null) {
-					icon = new ImageIcon(tempImage);
-					tempImage.flush();
-				}
-				if (icon != null) {
-					fileIcon.put(suffix, icon);
-				}
-			}
-			return icon;
-		}
 	}
 
 	static String getOnlyFilename(String str) {
@@ -523,7 +390,7 @@ public class Resources extends AbstractTabbedPanel {
 						public void run() {
 							tree.removeAll();
 
-							top = new ResourceNode(getOnlyFilename(apkFilePath));
+							top = new ResourceNode(new ResourceObject(apkFilePath, false));
 							tree.setModel(new DefaultTreeModel(top));
 
 							eachTypeNodes = new DefaultMutableTreeNode[ResourceType.COUNT.getInt()];
@@ -547,8 +414,8 @@ public class Resources extends AbstractTabbedPanel {
 										top.add(node);
 										if(nameList[i].equals("apex_payload.img")) {
 											ResourceObject obj = new ResourceObject("Loading...", false);
-											obj.isLoading = true;
 											node.add(new DefaultMutableTreeNode(obj));
+											obj.setLoadingState(true);
 										}
 										continue;
 									}
@@ -571,10 +438,8 @@ public class Resources extends AbstractTabbedPanel {
 										if (findnode.getChildCount() == 0) {
 											ResourceObject obj = (ResourceObject) findnode.getUserObject();
 											findnode.add(new ResourceNode(new ResourceObject(obj.path, false)));
-											((ResourceObject) findnode.getUserObject()).childCount++;
 										}
 										findnode.add(node);
-										((ResourceObject) findnode.getUserObject()).childCount++;
 									} else {
 										typeNode.add(node);
 									}
@@ -708,15 +573,6 @@ public class Resources extends AbstractTabbedPanel {
 
 					tree.repaint();
 					Dex2JarWrapper.convert(resPath, new Dex2JarWrapper.DexWrapperListener() {
-						private void resetUI() {
-							resObj.setLoadingState(false);
-
-							Animateimageicon.setImageObserver(null);
-							ImageObserver.setDrawFlag(false);
-							ImageObserver = null;
-							tree.repaint();
-						}
-
 						@Override
 						public void onError(String message) {
 						}
@@ -728,7 +584,7 @@ public class Resources extends AbstractTabbedPanel {
 
 						@Override
 						public void onCompleted() {
-							resetUI();
+							resObj.setLoadingState(false);
 						}
 					});
 				}
@@ -750,47 +606,10 @@ public class Resources extends AbstractTabbedPanel {
 		}
 	}
 
-	public class NodeImageObserver implements ImageObserver {
-		JTree tree;
-		DefaultTreeModel model;
-		TreeNode node;
-		Boolean StopFlag;
-
-		NodeImageObserver(JTree tree) {
-			this.tree = tree;
-			this.model = (DefaultTreeModel) tree.getModel();
-			StopFlag = true;
-		}
-
-		public void setDrawFlag(Boolean state) {
-			StopFlag = state;
-		}
-
-		public void setnode(TreeNode node) {
-			this.node = node;
-		}
-
-		public boolean imageUpdate(Image img, int flags, int x, int y, int w, int h) {
-
-			if (!StopFlag)
-				return false;
-
-			if ((flags & (FRAMEBITS | ALLBITS)) != 0) {
-				TreePath path = new TreePath(model.getPathToRoot(node));
-				Rectangle rect = tree.getPathBounds(path);
-				if (rect != null) {
-					tree.repaint(rect);
-				}
-			}
-
-			return (flags & (ALLBITS | ABORT)) == 0;
-		}
-
-	}
-
 	private void TreeInit() {
 
 		renderer = new ResouceTreeCellRenderer();
+
 		tree.setCellRenderer(renderer);
 		tree.addFocusListener(renderer);
 		tree.addMouseListener(new MouseAdapter() {
@@ -830,8 +649,7 @@ public class Resources extends AbstractTabbedPanel {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) event.getPath().getLastPathComponent();
 				if (node.getUserObject() instanceof ResourceObject) {
 					ResourceObject resObj = (ResourceObject) node.getUserObject();
-					if(resObj.attr == ResourceObject.ATTR_FS_IMG && resObj.config == null) {
-						resObj.config = "";
+					if(resObj.attr == ResourceObject.ATTR_FS_IMG) {
 						loadFsImg(node);
 					}
 				}

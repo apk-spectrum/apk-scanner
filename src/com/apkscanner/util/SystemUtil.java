@@ -1,11 +1,19 @@
 package com.apkscanner.util;
 
+import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.filechooser.FileSystemView;
+
+import com.apkscanner.gui.component.ImageScaler;
 import com.apkscanner.jna.ProcessPathKernel32;
 import com.apkscanner.resource.RFile;
+import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 import com.sun.jna.Native;
@@ -24,8 +32,11 @@ import mslinks.ShellLinkException;
 public class SystemUtil
 {
 	public static final String OS = System.getProperty("os.name").toLowerCase();
+	public static final String FOLDER_ICON = "FOLDER";
 
 	private static final Object lock = OS;
+	private static final HashMap<String, Icon> cacheIcon = new HashMap<String, Icon>();
+
 
 	public static boolean isWindows() {
 		return OS.contains("win");
@@ -496,4 +507,51 @@ public class SystemUtil
 		return jvmVer.compareTo(minVer) >= 0;
 	}
 
+	public static Icon getExtensionIcon(String suffix) {
+		Icon icon = cacheIcon.get(suffix);
+		if (icon != null) return icon;
+
+		//Log.v("getIcon " + suffix);
+		Image tempImage = null;
+		if (FOLDER_ICON.equals(suffix)) {
+			tempImage = ImageScaler.getScaledImage(RImg.TREE_FOLDER.getImageIcon(), 16, 16);
+			/*
+			 * UIDefaults defaults = UIManager.getDefaults( ); Icon
+			 * computerIcon = defaults.getIcon( "FileView.computerIcon"
+			 * ); Icon floppyIcon = defaults.getIcon(
+			 * "FileView.floppyDriveIcon" ); Icon diskIcon =
+			 * defaults.getIcon( "FileView.hardDriveIcon" ); Icon
+			 * fileIcon = defaults.getIcon( "FileView.fileIcon" ); Icon
+			 * folderIcon = defaults.getIcon( "FileView.directoryIcon"
+			 * );
+			 *
+			 * icon = folderIcon;
+			 */
+		} else if (".xml".equals(suffix)) {
+			tempImage = ImageScaler.getScaledImage(RImg.RESOURCE_TREE_XML.getImageIcon(), 16, 16);
+			// } else if(".qmg".equals(suffix)) {
+			// tempImage =
+			// ImageScaler.getScaledImage(RImg.QMG_IMAGE_ICON.getImageIcon(),32,32);
+		} else if (".dex".equals(suffix)) {
+			icon = RImg.RESOURCE_TREE_CODE.getImageIcon();
+		} else if (".arsc".equals(suffix)) {
+			icon = RImg.RESOURCE_TREE_ARSC.getImageIcon();
+		} else {
+			try {
+				File file = File.createTempFile("icon", suffix);
+				FileSystemView view = FileSystemView.getFileSystemView();
+				icon = view.getSystemIcon(file);
+				file.delete();
+			} catch (IOException ioe) {
+			}
+		}
+		if (tempImage != null) {
+			icon = new ImageIcon(tempImage);
+			tempImage.flush();
+		}
+		if (icon != null) {
+			cacheIcon.put(suffix, icon);
+		}
+		return icon;
+	}
 }

@@ -27,25 +27,31 @@ public class ResourceNode extends SortedMutableTreeNode
 			} else if(o2 instanceof DefaultMutableTreeNode) {
 				return 1;
 			}
-			if(o1.isLeaf() != o2.isLeaf()) {
-				//return o1.isLeaf() ? 1 : -1;
-			}
 			return o1.toString().compareToIgnoreCase(o2.toString());
 		}
 	};
 
 	public ResourceNode() {
-    	super(null);
-    	setComparator(nodeComparator);
+    	this(null);
     }
 
     public ResourceNode(Object userObject) {
-    	super(userObject);
-    	setComparator(nodeComparator);
+    	this(userObject, true);
     }
 
     public ResourceNode(Object userObject, boolean allowsChildren) {
         super(userObject, allowsChildren);
         setComparator(nodeComparator);
+    	if(userObject instanceof ResourceObject) {
+    		((ResourceObject) userObject).setNode(this);
+    	}
+    }
+
+    @Override
+    public void setUserObject(Object userObject) {
+    	super.setUserObject(userObject);
+    	if(userObject instanceof ResourceObject) {
+    		((ResourceObject) userObject).setNode(this);
+    	}
     }
 }
