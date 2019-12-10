@@ -17,7 +17,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -75,8 +75,8 @@ public class ToolBar extends JToolBar
 	private boolean hasTargetApk = false;
 	private boolean hasDevice = false;
 
-	private HashMap<ButtonSet, JButton> buttonMap;
-	private HashMap<MenuItemSet, JMenuItem> menuItemMap;
+	private Map<ButtonSet, JButton> buttonMap;
+	private Map<MenuItemSet, JMenuItem> menuItemMap;
 	private JPopupMenu openPopupMenu;
 	private JPopupMenu installPopupMenu;
 	private JPopupMenu pluginPopupMenu;
@@ -169,12 +169,7 @@ public class ToolBar extends JToolBar
 		setExtensionMenu(buttonMap.get(ButtonSet.EXPLORER), explorerPopupMenu, RProp.DEFAULT_EXPLORER);
 		setExtensionMenu(buttonMap.get(ButtonSet.SUB_LAUNCH), launchPopupMenu, RProp.DEFAULT_LAUNCH_MODE);
 
-		boolean alwaysExtended = RProp.B.ALWAYS_TOOLBAR_EXTENDED.get();
-		for(ButtonSet bs: ButtonSet.values()) {
-			if(bs.extension) {
-				((ExtensionButton)buttonMap.get(bs)).setArrowVisible(alwaysExtended);
-			}
-		}
+		ButtonSet.setArrowVisible(buttonMap, RProp.B.ALWAYS_TOOLBAR_EXTENDED.get());
 
 		KeyboardFocusManager ky=KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		ky.addKeyEventDispatcher(new KeyEventDispatcher() {
@@ -184,7 +179,7 @@ public class ToolBar extends JToolBar
 				if (e.getID() == KeyEvent.KEY_PRESSED && !isShiftPressed) {
 					if(e.getModifiersEx() == KeyEvent.SHIFT_DOWN_MASK) {
 						isShiftPressed = true;
-						if(!RProp.B.ALWAYS_TOOLBAR_EXTENDED.get()) setArrowVisible(true);
+						if(!RProp.B.ALWAYS_TOOLBAR_EXTENDED.get()) ButtonSet.setArrowVisible(buttonMap, true);
 						setButtonText(ButtonSet.OPEN, RStr.MENU_NEW.get(), RStr.BTN_OPEN_LAB.get());
 						setButtonText(ButtonSet.OPEN_PACKAGE, RStr.MENU_NEW.get(), RStr.BTN_OPEN_PACKAGE_LAB.get());
 						setButtonText(ButtonSet.MANIFEST, RStr.BTN_MANIFEST_SAVE_AS.get(), RStr.BTN_MANIFEST_LAB.get());
@@ -195,7 +190,7 @@ public class ToolBar extends JToolBar
 				} else if (e.getID() == KeyEvent.KEY_RELEASED && isShiftPressed) {
 					if(e.getModifiersEx() != KeyEvent.SHIFT_DOWN_MASK) {
 						isShiftPressed = false;
-						if(!RProp.B.ALWAYS_TOOLBAR_EXTENDED.get()) setArrowVisible(false);
+						if(!RProp.B.ALWAYS_TOOLBAR_EXTENDED.get()) ButtonSet.setArrowVisible(buttonMap, false);
 						setButtonText(ButtonSet.OPEN, RStr.BTN_OPEN.get(), RStr.BTN_OPEN_LAB.get());
 						setButtonText(ButtonSet.OPEN_PACKAGE, RStr.BTN_OPEN_PACKAGE.get(), RStr.BTN_OPEN_PACKAGE_LAB.get());
 						setButtonText(ButtonSet.MANIFEST, RStr.BTN_MANIFEST.get(), RStr.BTN_MANIFEST_LAB.get());
@@ -205,14 +200,6 @@ public class ToolBar extends JToolBar
 					}
 				}
 				return false;
-			}
-
-			private void setArrowVisible(boolean visibale) {
-				for(ButtonSet bs: ButtonSet.values()) {
-					if(bs.extension) {
-						((ExtensionButton)buttonMap.get(bs)).setArrowVisible(visibale);
-					}
-				}
 			}
 
 			private void invokeMouseEvent(KeyEvent e, int mouseEvent) {
@@ -412,11 +399,7 @@ public class ToolBar extends JToolBar
             		enable = ((ExtensionButton)button).getArrowVisible();
             	}
             	if(enable && !me.isShiftDown() && !RProp.B.ALWAYS_TOOLBAR_EXTENDED.get()) {
-					for(ButtonSet bs: ButtonSet.values()) {
-						if(bs.extension) {
-							((ExtensionButton)buttonMap.get(bs)).setArrowVisible(false);
-						}
-					}
+            		ButtonSet.setArrowVisible(buttonMap, false);
 					return;
             	}
             	if(!enable || !button.isEnabled()) return;

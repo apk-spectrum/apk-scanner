@@ -1,8 +1,7 @@
 package com.apkscanner.gui.action;
 
+import java.awt.Component;
 import java.awt.Window;
-
-import javax.swing.JButton;
 
 @SuppressWarnings("serial")
 public class OpenDecodeJADXGUIAction extends OpenDecompilerAction
@@ -11,8 +10,9 @@ public class OpenDecodeJADXGUIAction extends OpenDecompilerAction
 
 	public OpenDecodeJADXGUIAction(ActionEventHandler h) { super(h); }
 
-	protected void evtOpenDecompiler(final Window owner, final JButton button) {
+	@Override
+	protected void evtOpenDecompiler(final Window owner, final Component comp) {
 		if(!hasCode(owner)) return;
-		launchJadxGui(owner, button);
+		launchJadxGui(owner, comp);
 	}
 }

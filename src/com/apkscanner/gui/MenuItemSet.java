@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
@@ -145,9 +146,9 @@ enum MenuItemSet
 		return menuItem;
 	}
 
-	static HashMap<MenuItemSet, JMenuItem> getButtonMap(Window owner, ActionListener listener)
+	static Map<MenuItemSet, JMenuItem> getButtonMap(Window owner, ActionListener listener)
 	{
-		HashMap<MenuItemSet, JMenuItem> menuItemMap = new HashMap<MenuItemSet, JMenuItem>();
+		Map<MenuItemSet, JMenuItem> menuItemMap = new HashMap<MenuItemSet, JMenuItem>();
 		for(MenuItemSet bs: values()) {
 			menuItemMap.put(bs, bs.getMenuItem(owner, listener));
 		}

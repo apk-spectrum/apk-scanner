@@ -1,5 +1,7 @@
 package com.apkscanner.resource;
 
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -19,6 +21,7 @@ public enum RComp implements ResValue<RComp>
 	BTN_TOOLBAR_MANIFEST			(RStr.BTN_MANIFEST, RImg.TOOLBAR_MANIFEST, RStr.BTN_MANIFEST_LAB),
 	BTN_TOOLBAR_EXPLORER			(RStr.BTN_EXPLORER, RImg.TOOLBAR_EXPLORER, RStr.BTN_EXPLORER_LAB),
 	BTN_TOOLBAR_OPEN_CODE			(RStr.BTN_OPENCODE, RImg.TOOLBAR_OPENCODE, RStr.BTN_OPENCODE_LAB),
+	BTN_TOOLBAR_OPEN_CODE_LODING	(RStr.BTN_OPENING_CODE, RImg.TOOLBAR_LOADING_OPEN_JD, RStr.BTN_OPENING_CODE_LAB),
 	BTN_TOOLBAR_SEARCH				(RStr.BTN_SEARCH, RImg.TOOLBAR_SEARCH, RStr.BTN_SEARCH_LAB),
 	BTN_TOOLBAR_PLUGIN_EXTEND		(RStr.BTN_MORE, RImg.TOOLBAR_OPEN_ARROW, RStr.BTN_MORE_LAB),
 	BTN_TOOLBAR_INSTALL				(RStr.BTN_INSTALL, RImg.TOOLBAR_INSTALL, RStr.BTN_INSTALL_LAB),
@@ -55,13 +58,13 @@ public enum RComp implements ResValue<RComp>
 	; // ENUM END
 
 
-	private static Map<Window, Map<JComponent, RComp>> map = new HashMap<>();
+	private static Map<Window, Map<Component, RComp>> map = new HashMap<>();
 	static {
 		RStr.addLanguageChangeListener(new LanguageChangeListener() {
 			@Override
 			public void languageChange(String oldLang, String newLang) {
-				for(Entry<Window, Map<JComponent, RComp>> w: map.entrySet()) {
-					for(Entry<JComponent, RComp> e: w.getValue().entrySet()) {
+				for(Entry<Window, Map<Component, RComp>> w: map.entrySet()) {
+					for(Entry<Component, RComp> e: w.getValue().entrySet()) {
 						e.getValue().applyText(e.getKey());
 					}
 				}
@@ -72,6 +75,7 @@ public enum RComp implements ResValue<RComp>
 	private RStr text, toolTipText;
 	private RImg image;
 	private Icon icon;
+	private Dimension iconSize;
 
 	private RComp(RStr text) {
 		this(text, (Icon) null, null);
@@ -112,7 +116,9 @@ public enum RComp implements ResValue<RComp>
 	}
 
 	public Icon getIcon() {
-		return image != null ? image.getImageIcon() : icon;
+		if(image == null) return icon;
+		if(iconSize == null) return image.getImageIcon();
+		return image.getImageIcon(iconSize.width, iconSize.height);
 	}
 
 	public String getToolTipText() {
@@ -123,65 +129,62 @@ public enum RComp implements ResValue<RComp>
 		return image;
 	}
 
-	public void apply(JComponent c) {
+	public void setImageSize(Dimension iconSize) {
+		this.iconSize = iconSize;
+	}
+
+	public void apply(Component c) {
 		applyText(c);
-		if(c instanceof AbstractButton) {
-			AbstractButton comp = (AbstractButton) c;
-			if(icon != null) {
-				comp.setIcon(icon);
-			}
-		} else if(c instanceof JLabel) {
-			JLabel comp = (JLabel) c;
-			if(icon != null) {
-				comp.setIcon(icon);
+		applyIcon(c);
+	}
+
+	public void applyIcon(Component c) {
+		Icon icon = getIcon();
+		if(icon != null) {
+			if(c instanceof AbstractButton) {
+				if(c.isEnabled()) {
+					((AbstractButton) c).setIcon(icon);
+				} else {
+					((AbstractButton) c).setDisabledIcon(icon);
+				}
+			} else if(c instanceof JLabel) {
+				((JLabel) c).setIcon(icon);
 			}
 		}
 	}
 
-	public void applyText(JComponent c) {
-		if(c instanceof AbstractButton) {
-			AbstractButton comp = (AbstractButton) c;
-			if(text != null) {
-				comp.setText(text.getString());
-			}
-			if(toolTipText != null) {
-				comp.setToolTipText(toolTipText.getString());
-			}
-		} else if(c instanceof JLabel) {
-			JLabel comp = (JLabel) c;
-			if(text != null) {
-				comp.setText(text.getString());
-			}
-			if(toolTipText != null) {
-				comp.setToolTipText(toolTipText.getString());
-			}
-		} else if(c != null) {
-			if(text != null) {
+	public void applyText(Component c) {
+		if(text != null) {
+			if(c instanceof AbstractButton) {
+				((AbstractButton) c).setText(text.getString());
+			} else if(c instanceof JLabel) {
+				((JLabel) c).setText(text.getString());
+			} else {
 				c.setName(text.getString());
 			}
-			if(toolTipText != null) {
-				c.setToolTipText(toolTipText.getString());
-			}
+		}
+		if(c instanceof JComponent && toolTipText != null) {
+			((JComponent)c).setToolTipText(toolTipText.getString());
 		}
 	}
 
-	public void autoReapply(Window window, JComponent c) {
+	public void autoReapply(Window window, Component c) {
 		autoReapply(window, c, true);
 	}
 
-	public void autoReapply(Window window, JComponent c, boolean useAutoReapply) {
+	public void autoReapply(Window window, Component c, boolean useAutoReapply) {
 		if(c == null) return;
+		apply(c);
 		if(useAutoReapply) {
-			apply(c);
 			registeReapply(window, c);
 		} else {
 			removeReapply(window, c);
 		}
 	}
 
-	public void registeReapply(final Window window, JComponent c) {
+	public void registeReapply(final Window window, Component c) {
 		if(c == null) return;
-		Map<JComponent, RComp> matchMap = map.get(window);
+		Map<Component, RComp> matchMap = map.get(window);
 		if(matchMap == null) {
 			matchMap = new HashMap<>();
 			map.put(window, matchMap);
@@ -199,12 +202,14 @@ public enum RComp implements ResValue<RComp>
 					}
 				});
 			}
+		} else {
+			if(matchMap.containsKey(c)) matchMap.remove(c);
 		}
 		matchMap.put(c, this);
 	}
 
-	public void removeReapply(Window window, JComponent c) {
-		Map<JComponent, RComp> matchMap = map.get(window);
+	public void removeReapply(Window window, Component c) {
+		Map<Component, RComp> matchMap = map.get(window);
 		if(matchMap != null) {
 			if(c != null) {
 				matchMap.remove(c);
