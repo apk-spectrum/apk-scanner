@@ -12,7 +12,7 @@ public class ImgExtractorWrapper
 	{
 		List<String> list = new ArrayList<>();
 
-		String[] result = ConsolCmd.exec(new String[] {RFile.BIN_IMG_EXTRACTOR_WIN.get(), imgFilePath, outFolderPath, "-i"}, true);
+		String[] result = ConsolCmd.exec(new String[] {RFile.BIN_IMG_EXTRACTOR_WIN.get(), imgFilePath, outFolderPath, "-i"}, false);
 
 		if(result != null) {
 			boolean start = false;
@@ -32,7 +32,7 @@ public class ImgExtractorWrapper
 	{
 		String info = null;
 
-		String[] result = ConsolCmd.exec(new String[] {RFile.BIN_IMG_EXTRACTOR_WIN.get(), imgFilePath, "-s"}, true);
+		String[] result = ConsolCmd.exec(new String[] {RFile.BIN_IMG_EXTRACTOR_WIN.get(), imgFilePath, "-s"}, false);
 
 		if(result != null) {
 			StringBuilder sb = new StringBuilder();
@@ -55,7 +55,7 @@ public class ImgExtractorWrapper
 	{
 		String info = null;
 
-		String[] result = ConsolCmd.exec(new String[] {RFile.BIN_IMG_EXTRACTOR_WIN.get(), imgFilePath, "-l"}, true);
+		String[] result = ConsolCmd.exec(new String[] {RFile.BIN_IMG_EXTRACTOR_WIN.get(), imgFilePath, "-l"}, false);
 
 		if(result != null) {
 			StringBuilder sb = new StringBuilder();

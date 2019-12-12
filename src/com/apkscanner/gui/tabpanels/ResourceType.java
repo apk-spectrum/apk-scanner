@@ -14,9 +14,10 @@ public enum ResourceType
 	XML(9),
 	ASSET(10),
 	METAINF(11),
-	ETC(12),
-	LOCAL(13),
-	COUNT(14);
+	ROOTRES(12),
+	ETC(13),
+	LOCAL(14),
+	COUNT(15);
 
 	private int type;
 
@@ -53,15 +54,30 @@ public enum ResourceType
 			return ASSET;
 		} else if(path.startsWith("META-INF")) {
 			return METAINF;
+		} else if(!path.contains("/")) {
+			return ROOTRES;
 		} else {
 			return ETC;
 		}
 	}
 
+	public boolean isMultiConfigType() {
+		switch(this) {
+		case ASSET: case METAINF: case ROOTRES: case ETC:
+			return false;
+		default:
+			return true;
+		}
+	}
+
 	public String toString() {
-		if(this.equals(METAINF))
+		switch(this) {
+		case METAINF:
 			return "META-INF";
-		else
+		case ROOTRES:
+			return "";
+		default:
 			return super.toString().toLowerCase();
+		}
 	}
 }

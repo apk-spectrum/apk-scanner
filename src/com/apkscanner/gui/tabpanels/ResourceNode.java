@@ -48,10 +48,35 @@ public class ResourceNode extends SortedMutableTreeNode
     }
 
     @Override
+    public void add(MutableTreeNode newChild) {
+    	super.add(newChild);
+    	if(newChild instanceof DefaultMutableTreeNode) {
+    		DefaultMutableTreeNode node = (DefaultMutableTreeNode) newChild; 
+    		Object uo = node.getUserObject();
+	    	if(uo instanceof ResourceObject) {
+				if(((ResourceObject) uo).attr == ResourceObject.ATTR_FS_IMG) {
+					ResourceObject obj = new ResourceObject("Loading...");
+					node.add(new DefaultMutableTreeNode(obj));
+					obj.setLoadingState(true);
+				}
+	    	}
+    	}
+    }
+
+    @Override
     public void setUserObject(Object userObject) {
     	super.setUserObject(userObject);
     	if(userObject instanceof ResourceObject) {
     		((ResourceObject) userObject).setNode(this);
     	}
+    }
+
+    @Override
+    public Object clone() {
+    	ResourceNode newNode = (ResourceNode) super.clone();
+    	if(userObject instanceof ResourceObject) {
+    		newNode.setUserObject(((ResourceObject) userObject).clone());
+    	}
+    	return newNode;
     }
 }

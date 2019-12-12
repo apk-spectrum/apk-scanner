@@ -42,7 +42,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -82,7 +81,7 @@ import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
 import com.apkscanner.util.ZipFileUtil;
 
-public class ResouceContentsPanel extends JPanel{
+public class ResourceContentsPanel extends JPanel{
 	private static final long serialVersionUID = -934921813626224616L;
 
 	public static final String CONTENT_IMAGE_VIEWER = "ImageViewer";
@@ -127,7 +126,7 @@ public class ResouceContentsPanel extends JPanel{
 	private JSeparator resTypeSep;
 	private JToggleButton multiLinePrintButton;
 	private JScrollPane textTableScroll;
-	public ResouceContentsPanel() {
+	public ResourceContentsPanel() {
 
 		xmltextArea  = new RSyntaxTextArea();
 		//xmltextArea.createToolTip();
@@ -1054,7 +1053,7 @@ public class ResouceContentsPanel extends JPanel{
 		}
     }
 
-    public void selectContentAndLine(JTree tree, int line, String Findstr) {
+    public void selectContentAndLine(int line, String Findstr) {
 
         if("resources.arsc".equals(currentSelectedObj.path)) {
 	        textTableViewer.getSelectionModel().clearSelection();

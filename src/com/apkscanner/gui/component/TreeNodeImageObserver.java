@@ -13,7 +13,7 @@ public class TreeNodeImageObserver implements ImageObserver {
 	protected JTree tree;
 	protected DefaultMutableTreeNode node;
 	protected ImageIcon icon;
-	protected Boolean stopFlag;
+	protected boolean stopFlag;
 
 	public TreeNodeImageObserver(JTree tree, DefaultMutableTreeNode node, ImageIcon icon) {
 		this.tree = tree;
@@ -35,6 +35,8 @@ public class TreeNodeImageObserver implements ImageObserver {
 	}
 
 	public boolean imageUpdate(Image img, int flags, int x, int y, int w, int h) {
+		if(node == null) return false;
+
 		if ((flags & (FRAMEBITS | ALLBITS)) != 0) {
 			TreePath path = new TreePath(node.getPath());
 			Rectangle rect = tree.getPathBounds(path);

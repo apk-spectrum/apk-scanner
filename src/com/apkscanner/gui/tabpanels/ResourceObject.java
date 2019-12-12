@@ -16,7 +16,8 @@ import com.apkscanner.gui.component.TreeNodeImageObserver;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.util.SystemUtil;
 
-public class ResourceObject {
+public class ResourceObject implements Cloneable
+{
 	public static final int ATTR_AXML = 1;
 	public static final int ATTR_XML = 2;
 	public static final int ATTR_IMG = 3;
@@ -33,20 +34,12 @@ public class ResourceObject {
 	public final ResourceType type;
 	public final int attr;
 
-	private boolean isLoading;
-	private Icon icon;
-	private DefaultMutableTreeNode node;
+	transient private boolean isLoading;
+	transient private Icon icon;
+	transient private DefaultMutableTreeNode node;
 
-	public ResourceObject(File file) {
-		label = file.getName();
-		path = file.getAbsolutePath();
-		isFolder = file.isDirectory();
-
-		type = ResourceType.LOCAL;
-		attr = getAttr(path);
-		config = null;
-
-		isLoading = false;
+	public ResourceObject(String path) {
+		this(path, false);
 	}
 
 	public ResourceObject(String path, boolean isFolder) {
@@ -65,10 +58,26 @@ public class ResourceObject {
 		}
 
 		if (isFolder) {
-			label = Resources.getOnlyFoldername(path);
+			label = getFolderName();
 		} else {
-			label = Resources.getOnlyFilename(path);
+			label = getFileName();
 		}
+	}
+
+	public ResourceObject(File file) {
+		label = file.getName();
+		path = file.getAbsolutePath();
+		isFolder = file.isDirectory();
+
+		type = ResourceType.LOCAL;
+		attr = getAttr(path);
+		config = null;
+
+		isLoading = false;
+	}
+
+	public ResourceObject(ResourceType type) {
+		this(type.toString(), true);
 	}
 
 	void setNode(DefaultMutableTreeNode node) {
@@ -109,7 +118,7 @@ public class ResourceObject {
 	public String toString() {
 		String str = null;
 		int childCount = 0;
-		if(node != null /* && !isFolder */)
+		if(node != null && !node.isRoot() /* && !isFolder */)
 			childCount = node.getChildCount();
 		if (childCount > 0) {
 			str = label + " (" + childCount + ")";
@@ -177,13 +186,13 @@ public class ResourceObject {
 			image.setImageObserver(new TreeNodeImageObserver(tree, node, image) {
 				public void stop() {
 					stopFlag = true;
-					if(node.getUserObject() instanceof ResourceObject) {
+					if(node != null && node.getUserObject() instanceof ResourceObject) {
 						((ResourceObject)node.getUserObject()).setLoadingState(false);
 					}
 				}
 
 				protected boolean isStop() {
-					if(node.getUserObject() instanceof ResourceObject) {
+					if(node != null && node.getUserObject() instanceof ResourceObject) {
 						stopFlag = !((ResourceObject)node.getUserObject()).getLoadingState();
 					}
 					return stopFlag;
@@ -191,6 +200,10 @@ public class ResourceObject {
 			});
 		}
 		return icon;
+	}
+
+	public boolean isRootRes() {
+		return (path != null && !path.contains("/"));
 	}
 
 	public void setLoadingState(boolean state) {
@@ -211,5 +224,31 @@ public class ResourceObject {
 			suffix = "";
 		}
 		return suffix.toLowerCase();
+	}
+
+	public String getFileName() {
+		String separator = path.contains(File.separator) ? separator = File.separator : "/";
+		return path.substring(path.lastIndexOf(separator) + 1, path.length());
+	}
+
+	public String getFolderName() {
+		String separator = path.contains(File.separator) ? separator = File.separator : "/";
+		if(!path.contains(separator)) return path;
+		return path.substring(0, path.lastIndexOf(separator));
+	}
+
+	@Override
+	protected Object clone() {
+		ResourceObject resObj;
+		try {
+			resObj = (ResourceObject)super.clone();
+			resObj.node = null;
+			resObj.icon = null;
+			resObj.isLoading = false;
+		} catch (CloneNotSupportedException e) {
+            // Won't happen because we implement Cloneable
+            throw new Error(e.toString());
+		}
+		return resObj;
 	}
 }

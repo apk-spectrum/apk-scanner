@@ -2,21 +2,13 @@ package com.apkscanner.gui.tabpanels;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
 import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -24,10 +16,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
@@ -35,23 +24,19 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
-import javax.swing.JTree;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
 
 import com.apkscanner.Launcher;
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.gui.component.FilteredTreeModel;
 import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.PlugInManager;
@@ -73,25 +58,16 @@ import com.apkscanner.util.ZipFileUtil;
 public class Resources extends AbstractTabbedPanel {
 	private static final long serialVersionUID = -934921813626224616L;
 
-	private ResouceContentsPanel contentPanel;
+	private ResourceTree resTree;
+	private ResourceContentsPanel contentPanel;
 
-	private String[] nameList = null;
 	private String apkFilePath = null;
 	private String tempWorkPath = null;
-	// private String appIconPath = null;
 	private String[] resourcesWithValue = null;
 
-	private JTree tree;
-	private DefaultMutableTreeNode top;
-	private DefaultMutableTreeNode[] eachTypeNodes;
-
-	private FilteredTreeModel filteredModel;
 	private JTextField textField;
 	JButton findicon;
 	JButton refreshicon;
-	//private Boolean isFilter = false;
-
-	ResouceTreeCellRenderer renderer;
 
 	static public TreeFocusChanger treefocuschanger;
 
@@ -100,7 +76,6 @@ public class Resources extends AbstractTabbedPanel {
 
 	static public abstract interface TreeFocusChanger {
 		public void setTreeFocus(String path, int line, String string);
-
 		public String getImagefilePath(String findfilename);
 	}
 
@@ -109,81 +84,26 @@ public class Resources extends AbstractTabbedPanel {
 		setTabbedEnabled(false);
 	}
 
-	private void makeTreeForm() {
-		top = new DefaultMutableTreeNode("Loading...");
-
-		tree = new JTree(new DefaultTreeModel(top)) {
-			private static final long serialVersionUID = 2164035864213808434L;
-
-			@Override
-			public void paintComponent(Graphics g) {
-				g.setColor(getBackground());
-				g.fillRect(0, 0, getWidth(), getHeight());
-				if (getSelectionCount() > 0) {
-					if(getSelectionRows() == null) {
-						TreePath treepath = new TreePath(tree.getModel().getRoot());
-						tree.setSelectionPath(treepath);
-					}
-					for (int i : getSelectionRows()) {
-						Rectangle r = getRowBounds(i);
-						g.setColor(((DefaultTreeCellRenderer) getCellRenderer()).getBackgroundSelectionColor());
-						// g.setColor(Color.BLUE);
-						g.fillRect(0, r.y, getWidth(), r.height);
-					}
-				}
-				super.paintComponent(g);
-				if (getLeadSelectionPath() != null) {
-					Rectangle r = getRowBounds(getRowForPath(getLeadSelectionPath()));
-					g.setColor(hasFocus()
-							? ((DefaultTreeCellRenderer) getCellRenderer()).getBackgroundSelectionColor().darker()
-									: ((DefaultTreeCellRenderer) getCellRenderer()).getBackgroundSelectionColor());
-					// g.setColor(Color.RED);
-					g.drawRect(0, r.y, getWidth() - 1, r.height - 1);
-				}
-			}
-		};
-
-		tree.setUI(new javax.swing.plaf.basic.BasicTreeUI() {
-			@Override
-			public Rectangle getPathBounds(JTree tree, TreePath path) {
-				if (tree != null && treeState != null) {
-					return getPathBounds(path, tree.getInsets(), new Rectangle());
-				}
-				return null;
-			}
-
-			private Rectangle getPathBounds(TreePath path, Insets insets, Rectangle bounds) {
-				bounds = treeState.getBounds(path, bounds);
-				if (bounds != null) {
-					bounds.width = tree.getWidth();
-					bounds.y += insets.top;
-				}
-				return bounds;
-			}
-		});
-
-		tree.setOpaque(false);
-
+	private void makeTreeFocusChanger() {
 		treefocuschanger = new TreeFocusChanger() {
 			@Override
 			public void setTreeFocus(String path, int line, String string) {
-				Log.d("path : " + path + ", " + Resources.this.getParent());
+				Log.v("path : " + path + ", line " + line + ", text " + string);
 				setSeletected();
 
+				DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) resTree.getModel().getRoot();
+
 				@SuppressWarnings("unchecked")
-				Enumeration<TreeNode> e = top.depthFirstEnumeration();
+				Enumeration<TreeNode> e = rootNode.depthFirstEnumeration();
 				while (e.hasMoreElements()) {
 					DefaultMutableTreeNode node = (DefaultMutableTreeNode)e.nextElement();
-
 					if (node.getUserObject() instanceof ResourceObject) {
-
 						ResourceObject temp = (ResourceObject) node.getUserObject();
 						if (temp.path.equals(path)) {
 							TreePath treepath = new TreePath(node.getPath());
-							tree.setSelectionPath(treepath);
-							tree.scrollPathToVisible(treepath);
-							contentPanel.selectContent(temp);
-							contentPanel.selectContentAndLine(tree, line, string);
+							resTree.setSelectionPath(treepath);
+							resTree.scrollPathToVisible(treepath);
+							contentPanel.selectContentAndLine(line, string);
 							return;
 						}
 					} else {
@@ -194,13 +114,13 @@ public class Resources extends AbstractTabbedPanel {
 
 			@Override
 			public String getImagefilePath(String findfilename) {
+				DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) resTree.getModel().getRoot();
+
 				@SuppressWarnings("unchecked")
-				Enumeration<TreeNode> e = top.depthFirstEnumeration();
+				Enumeration<TreeNode> e = rootNode.depthFirstEnumeration();
 				while (e.hasMoreElements()) {
 					DefaultMutableTreeNode node = (DefaultMutableTreeNode)e.nextElement();
-
 					if (node.getUserObject() instanceof ResourceObject) {
-
 						ResourceObject temp = (ResourceObject) node.getUserObject();
 
 						if (temp.isFolder)
@@ -218,287 +138,14 @@ public class Resources extends AbstractTabbedPanel {
 				return null;
 			}
 		};
-
-		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 	}
 
 	static public TreeFocusChanger getTreeFocuschanger() {
 		return treefocuschanger;
 	}
 
-	private DefaultMutableTreeNode createFilteredTree(DefaultMutableTreeNode parent, String filter) {
-		int c = parent.getChildCount();
-		DefaultMutableTreeNode fparent = new DefaultMutableTreeNode(parent.getUserObject());
-		String temp;
-
-		if (parent.getUserObject() instanceof ResourceObject) {
-			temp = ((ResourceObject) (parent.getUserObject())).label;
-		} else {
-			temp = top.toString();
-		}
-		temp = temp.toLowerCase();
-
-		boolean matches = false;
-		String[] pattern = filter.toLowerCase().split(";");
-		for(String p: pattern) {
-			if(temp.contains(p)) {
-				matches = true;
-				break;
-			}
-		}
-
-		for (int i = 0; i < c; ++i) {
-			DefaultMutableTreeNode n = (DefaultMutableTreeNode) parent.getChildAt(i);
-			DefaultMutableTreeNode f = createFilteredTree(n, filter);
-			if (f != null) {
-				fparent.add(f);
-				matches = true;
-			}
-		}
-		return matches ? fparent : null;
-	}
-
-	class ResouceTreeCellRenderer extends DefaultTreeCellRenderer implements FocusListener {
-		private static final long serialVersionUID = 6248791058116909814L;
-
-		@Override
-		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded,
-				boolean isLeaf, int row, boolean focused) {
-			Component c = super.getTreeCellRendererComponent(tree, value, selected, expanded, isLeaf, row, focused);
-
-			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-			if (node.getUserObject() instanceof ResourceObject) {
-				ResourceObject resObj = (ResourceObject) node.getUserObject();
-				if(resObj.getLoadingState()) {
-					setIcon(resObj.getIconWithObserver(tree));
-				} else {
-					setIcon(resObj.getIcon());
-				}
-			} else {
-				setIcon(SystemUtil.getExtensionIcon(ResourceObject.getExtension(node.toString())));
-			}
-			return c;
-		}
-
-		@Override
-		public void focusGained(FocusEvent e) {
-			e.getComponent().repaint();
-		}
-
-		@Override
-		public void focusLost(FocusEvent e) {
-			e.getComponent().repaint();
-		}
-
-	}
-
-	static String getOnlyFilename(String str) {
-		String separator = str.contains(File.separator) ? separator = File.separator : "/";
-		return str.substring(str.lastIndexOf(separator) + 1, str.length());
-	}
-
-	static String getOnlyFoldername(String str) {
-		String separator = str.contains(File.separator) ? separator = File.separator : "/";
-		if(!str.contains(separator)) return str;
-		return str.substring(0, str.lastIndexOf(separator));
-	}
-
-	private final List<DefaultMutableTreeNode> getSearchNodes(DefaultMutableTreeNode root) {
-		List<DefaultMutableTreeNode> searchNodes = new ArrayList<DefaultMutableTreeNode>();
-
-		Enumeration<?> e = root.preorderEnumeration();
-		while (e.hasMoreElements()) {
-			searchNodes.add((DefaultMutableTreeNode) e.nextElement());
-		}
-		return searchNodes;
-	}
-
-	public final DefaultMutableTreeNode findNode(String searchString) {
-
-		List<DefaultMutableTreeNode> searchNodes = getSearchNodes((DefaultMutableTreeNode) tree.getModel().getRoot());
-		DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-
-		DefaultMutableTreeNode foundNode = null;
-		int bookmark = -1;
-
-		if (currentNode != null) {
-			for (int index = 0; index < searchNodes.size(); index++) {
-				if (searchNodes.get(index) == currentNode) {
-					bookmark = index;
-					break;
-				}
-			}
-		}
-
-		for (int index = bookmark + 1; index < searchNodes.size(); index++) {
-			if (searchNodes.get(index).toString().toLowerCase().contains(searchString.toLowerCase())) {
-				foundNode = searchNodes.get(index);
-				break;
-			}
-		}
-
-		if (foundNode == null) {
-			for (int index = 0; index <= bookmark; index++) {
-				if (searchNodes.get(index).toString().toLowerCase().contains(searchString.toLowerCase())) {
-					foundNode = searchNodes.get(index);
-					break;
-				}
-			}
-		}
-		return foundNode;
-	}
-
-	public final DefaultMutableTreeNode findNode(DefaultMutableTreeNode node, String string, boolean ignoreCase,
-			boolean recursively) {
-		DefaultMutableTreeNode ret = null;
-		if (node == null) {
-			node = (DefaultMutableTreeNode) tree.getModel().getRoot();
-			if (node == null)
-				return null;
-		}
-
-		DefaultMutableTreeNode childNode = null;
-		if (node.getChildCount() > 0) {
-			childNode = (DefaultMutableTreeNode) node.getFirstChild();
-		}
-		while (childNode != null) {
-			ResourceObject resObj = null;
-			if (childNode.getUserObject() instanceof ResourceObject) {
-				resObj = (ResourceObject) childNode.getUserObject();
-			}
-			if (resObj.label.equals(string) || (ignoreCase && resObj.label.equalsIgnoreCase(string))) {
-				ret = childNode;
-				break;
-			}
-			if (recursively && childNode.getDepth() > 0) {
-				ret = findNode(childNode, string, ignoreCase, recursively);
-				if (ret != null)
-					break;
-			}
-			childNode = childNode.getNextSibling();
-		}
-
-		return ret;
-	}
-
-	private void setTreeForm() {
-		Thread thread = new Thread(new Runnable() {
-			public void run()
-			{
-				try {
-					EventQueue.invokeAndWait(new Runnable() {
-						public void run() {
-							tree.removeAll();
-
-							top = new ResourceNode(new ResourceObject(apkFilePath, false));
-							tree.setModel(new DefaultTreeModel(top));
-
-							eachTypeNodes = new DefaultMutableTreeNode[ResourceType.COUNT.getInt()];
-						}
-					});
-
-					final int CHUNK_SIZE = 30;
-					for (int chunk = 0; chunk < nameList.length; chunk += CHUNK_SIZE) {
-						final int start = chunk;
-						EventQueue.invokeAndWait(new Runnable() {
-							public void run() {
-								for (int i = start; i < start + CHUNK_SIZE && i < nameList.length; i++) {
-									if (nameList[i].endsWith("/") || nameList[i].startsWith("lib/")
-											/*|| this.nameList[i].startsWith("META-INF/")*/)
-										continue;
-
-									ResourceObject resObj = new ResourceObject(nameList[i], false);
-									DefaultMutableTreeNode node = new ResourceNode(resObj);
-
-									if (!nameList[i].contains("/")) {
-										top.add(node);
-										if(nameList[i].equals("apex_payload.img")) {
-											ResourceObject obj = new ResourceObject("Loading...", false);
-											node.add(new DefaultMutableTreeNode(obj));
-											obj.setLoadingState(true);
-										}
-										continue;
-									}
-
-									DefaultMutableTreeNode typeNode = eachTypeNodes[resObj.type.getInt()];
-
-									if (typeNode == null) {
-										typeNode = new ResourceNode(new ResourceObject(resObj.type.toString(), true));
-										eachTypeNodes[resObj.type.getInt()] = typeNode;
-										top.add(typeNode);
-									}
-
-									DefaultMutableTreeNode findnode = null;
-									if (resObj.type != ResourceType.ETC) {
-										String fileName = getOnlyFilename(nameList[i]);
-										findnode = findNode(typeNode, fileName, false, false);
-									}
-
-									if (findnode != null) {
-										if (findnode.getChildCount() == 0) {
-											ResourceObject obj = (ResourceObject) findnode.getUserObject();
-											findnode.add(new ResourceNode(new ResourceObject(obj.path, false)));
-										}
-										findnode.add(node);
-									} else {
-										typeNode.add(node);
-									}
-								}
-							}
-						});
-						Thread.yield();
-					}
-
-					EventQueue.invokeAndWait(new Runnable() {
-						public void run() {
-							expandOrCollapsePath(tree, new TreePath(top.getPath()), 1, 0, true);
-
-							for(DefaultMutableTreeNode node = (DefaultMutableTreeNode) top.getFirstChild();
-									node != null; node = node.getNextSibling()) {
-								if("AndroidManifest.xml".equals(node.toString())) {
-									TreePath treepath = new TreePath(node.getPath());
-									tree.setSelectionPath(treepath);
-									contentPanel.selectContent(node.getUserObject());
-									break;
-								}
-							}
-						}
-					});
-				} catch (InvocationTargetException | InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		});
-		thread.setPriority(Thread.NORM_PRIORITY);
-		thread.start();
-	}
-
-	public static void expandOrCollapsePath(JTree tree, TreePath treePath, int level, int currentLevel,
-			boolean expand) {
-		// System.err.println("Exp level "+currentLevel+", exp="+expand);
-		if (expand && level <= currentLevel && level > 0)
-			return;
-
-		TreeNode treeNode = (TreeNode) treePath.getLastPathComponent();
-		TreeModel treeModel = tree.getModel();
-		if (treeModel.getChildCount(treeNode) >= 0) {
-			for (int i = 0; i < treeModel.getChildCount(treeNode); i++) {
-				TreeNode n = (TreeNode) treeModel.getChild(treeNode, i);
-				TreePath path = treePath.pathByAddingChild(n);
-				expandOrCollapsePath(tree, path, level, currentLevel + 1, expand);
-			}
-			if (!expand && currentLevel < level)
-				return;
-		}
-		if (expand) {
-			tree.expandPath(treePath);
-		} else {
-			tree.collapsePath(treePath);
-		}
-	}
-
 	private void openContent() {
-		final DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+		final DefaultMutableTreeNode node = (DefaultMutableTreeNode) resTree.getLastSelectedPathComponent();
 		if (node == null || !(node.getUserObject() instanceof ResourceObject)) {
 			return;
 		}
@@ -571,7 +218,7 @@ public class Resources extends AbstractTabbedPanel {
 				if (resObj.getLoadingState() == false) {
 					resObj.setLoadingState(true);
 
-					tree.repaint();
+					resTree.repaint();
 					Dex2JarWrapper.convert(resPath, new Dex2JarWrapper.DexWrapperListener() {
 						@Override
 						public void onError(String message) {
@@ -606,27 +253,12 @@ public class Resources extends AbstractTabbedPanel {
 		}
 	}
 
-	private void TreeInit() {
-
-		renderer = new ResouceTreeCellRenderer();
-
-		tree.setCellRenderer(renderer);
-		tree.addFocusListener(renderer);
-		tree.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent e) {
-				if (e.getButton() == MouseEvent.BUTTON1) {
-					TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
-					if (selPath != null) {
-						DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath.getLastPathComponent();
-						contentPanel.selectContent(node.getUserObject());
-					}
-				}
-			}
-
+	private void treeInit() {
+		resTree.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
-					TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+					TreePath selPath = resTree.getPathForLocation(e.getX(), e.getY());
 					if (selPath != null) {
 						openContent();
 					}
@@ -634,16 +266,7 @@ public class Resources extends AbstractTabbedPanel {
 			}
 		});
 
-		tree.addKeyListener(new KeyAdapter() {
-			public void keyReleased(KeyEvent ke) {
-				// if(ke.getKeyCode() == KeyEvent.VK_ENTER) {
-				DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-				contentPanel.selectContent(node.getUserObject());
-				// }
-			}
-		});
-
-		tree.addTreeExpansionListener(new TreeExpansionListener() {
+		resTree.addTreeExpansionListener(new TreeExpansionListener() {
 			@Override
 			public void treeExpanded(TreeExpansionEvent event) {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) event.getPath().getLastPathComponent();
@@ -657,6 +280,15 @@ public class Resources extends AbstractTabbedPanel {
 
 			@Override
 			public void treeCollapsed(TreeExpansionEvent event) { }
+		});
+
+		resTree.addTreeSelectionListener(new TreeSelectionListener() {
+			@Override
+			public void valueChanged(TreeSelectionEvent e) {
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) resTree.getLastSelectedPathComponent();
+				if(node == null) return;
+				contentPanel.selectContent(node.getUserObject());
+			}
 		});
 	}
 
@@ -688,7 +320,7 @@ public class Resources extends AbstractTabbedPanel {
 
 				node.removeAllChildren();
 				addNodes(node, root);
-				tree.updateUI();
+				resTree.updateUI();
 			}
 
 			private void addNodes(DefaultMutableTreeNode node, File dir) {
@@ -701,39 +333,6 @@ public class Resources extends AbstractTabbedPanel {
 				}
 			}
 		}.execute();
-	}
-
-	private void expandTree(final JTree tree) {
-		for (int i = 0; i < tree.getRowCount(); i++) {
-			tree.expandRow(i);
-		}
-	}
-
-	@SuppressWarnings("unused")
-	private void makefilter(String temp) {
-		filteredModel = (FilteredTreeModel) tree.getModel();
-		filteredModel.setFilter(temp);
-		filteredModel.reload();
-
-		expandTree(tree);
-		forselectionTree();
-	}
-
-	@SuppressWarnings("unused")
-	private void forselectionTree() {
-		DefaultMutableTreeNode currentNode = top.getNextNode();
-		/*
-		 * do { if(currentNode.getLevel()==3 &&
-		 * filteredModel.getChildCount(currentNode) > 0) {
-		 *
-		 * TreePath temptreePath = new
-		 * TreePath(((DefaultMutableTreeNode)(filteredModel.getChild(
-		 * currentNode, 0))).getPath());
-		 *
-		 * tree.setSelectionPath(temptreePath);
-		 * tree.scrollPathToVisible(temptreePath); return; } currentNode =
-		 * currentNode.getNextNode(); } while (currentNode != null);
-		 */
 	}
 
 	class TreeFindFildListener implements ActionListener {
@@ -752,25 +351,17 @@ public class Resources extends AbstractTabbedPanel {
 				} else if (temp.getName().equals(RESOURCE_TREE_TOOLBAR_BUTTON_REFRESH)) {
 					searchTree("");
 				}
-				tree.repaint();
+				resTree.repaint();
 			}
-
 		}
 
 		void searchTree(String str) {
-
 			if(str.length() > 0) {
 				refreshicon.setEnabled(true);
-				//isFilter = true;
-
 			} else {
 				refreshicon.setEnabled(false);
-				//isFilter = false;
-
 			}
-
-			tree.setModel(new DefaultTreeModel(createFilteredTree(top, str)));
-			tree.repaint();
+			resTree.searchTree(str);
 		}
 	}
 
@@ -778,8 +369,10 @@ public class Resources extends AbstractTabbedPanel {
 	public void initialize() {
 		this.setLayout(new GridLayout(1, 1));
 
-		makeTreeForm();
-		TreeInit();
+
+		resTree = new ResourceTree();
+		treeInit();
+		makeTreeFocusChanger();
 
 		textField = new JTextField("");
 		textField.addFocusListener(new FocusListener() {
@@ -844,31 +437,12 @@ public class Resources extends AbstractTabbedPanel {
 		treeNaviScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		treeNaviScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 		treeNaviScroll.setBorder(new EmptyBorder(0,0,0,0));
-		// End Tree navigator ----------
-
-		JScrollPane treeScroll = new JScrollPane(tree);
-		//treeScroll.setPreferredSize(new Dimension(300, 400));
-		treeScroll.repaint();
-
-		AdjustmentListener adjustmentListener = new AdjustmentListener() {
-			@Override
-			public void adjustmentValueChanged(AdjustmentEvent e) {
-				tree.repaint();
-			}
-		};
-		treeScroll.getVerticalScrollBar().addAdjustmentListener(adjustmentListener);
-		treeScroll.getHorizontalScrollBar().addAdjustmentListener(adjustmentListener);
 
 		JPanel TreePanel = new JPanel(new BorderLayout());
 		TreePanel.add(treeNaviScroll, BorderLayout.NORTH);
-		TreePanel.add(treeScroll, BorderLayout.CENTER);
+		TreePanel.add(new JScrollPane(resTree), BorderLayout.CENTER);
 
-		// imageViewerPanel = new ImageControlPanel();
-		// imageViewerPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5,
-		// 5));
-		// imageViewerPanel.setBackground(Color.BLACK);
-
-		contentPanel = new ResouceContentsPanel();
+		contentPanel = new ResourceContentsPanel();
 
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
 		splitPane.setLeftComponent(TreePanel);
@@ -887,19 +461,19 @@ public class Resources extends AbstractTabbedPanel {
 			return;
 		}
 
-		if (tree == null)
+		if (resTree == null)
 			initialize();
 
-		if(apkInfo.resources == null) return;
+		if(apkInfo.resources == null)
+			return;
 
-		this.apkFilePath = apkInfo.filePath;
-		this.tempWorkPath = apkInfo.tempWorkPath;
-
-		nameList = apkInfo.resources;
+		resTree.addTreeNodes(apkInfo.filePath, apkInfo.resources);
 		contentPanel.setData(apkInfo);
-		setTreeForm();
 
 		setDataSize(apkInfo.resources.length, true, false);
+
+		apkFilePath = apkInfo.filePath;
+		tempWorkPath = apkInfo.tempWorkPath;
 	}
 
 	public void setExtraData(ApkInfo apkInfo) {
@@ -908,14 +482,7 @@ public class Resources extends AbstractTabbedPanel {
 			if (contentPanel == null)
 				return;
 			contentPanel.setData(apkInfo);
-			// if(apkInfo.manifest.application.icons != null &&
-			// apkInfo.manifest.application.icons.length > 0) {
-			// appIconPath =
-			// apkInfo.manifest.application.icons[apkInfo.manifest.application.icons.length
-			// - 1].name;
-			// }
 		} else {
-			// appIconPath = null;
 			resourcesWithValue = null;
 			if (contentPanel == null)
 				return;
