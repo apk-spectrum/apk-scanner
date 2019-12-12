@@ -142,10 +142,12 @@ public enum RComp implements ResValue<RComp>
 		Icon icon = getIcon();
 		if(icon != null) {
 			if(c instanceof AbstractButton) {
+				AbstractButton btn = (AbstractButton) c;
 				if(c.isEnabled()) {
-					((AbstractButton) c).setIcon(icon);
+					btn.setIcon(icon);
+					btn.setDisabledIcon(null);
 				} else {
-					((AbstractButton) c).setDisabledIcon(icon);
+					btn.setDisabledIcon(icon);
 				}
 			} else if(c instanceof JLabel) {
 				((JLabel) c).setIcon(icon);

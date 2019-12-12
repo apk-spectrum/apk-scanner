@@ -752,16 +752,6 @@ public class ToolBar extends JToolBar
 			buttonMap.get(ButtonSet.OPEN_PACKAGE).setEnabled(enabled);
 			buttonMap.get(ButtonSet.OPEN_EXTEND).setEnabled(enabled);
 			break;
-		case OPEN_CODE:
-			if(!enabled && buttonId == ButtonSet.OPEN_CODE) {
-				setButtonText(ButtonSet.OPEN_CODE, RStr.BTN_OPENING_CODE.get(), RStr.BTN_OPENING_CODE_LAB.get());
-				buttonMap.get(ButtonSet.OPEN_CODE).setDisabledIcon(RImg.TOOLBAR_LOADING_OPEN_JD.getImageIcon());
-			} else {
-				setButtonText(ButtonSet.OPEN_CODE, RStr.BTN_OPENCODE.get(), RStr.BTN_OPENCODE_LAB.get());
-				buttonMap.get(ButtonSet.OPEN_CODE).setDisabledIcon(null);
-			}
-			buttonMap.get(ButtonSet.OPEN_CODE).setEnabled(enabled);
-			break;
 		case NEED_TARGET_APK:
 			hasTargetApk = enabled;
 			buttonMap.get(ButtonSet.OPEN_CODE).setEnabled(enabled);

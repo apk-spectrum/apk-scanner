@@ -25,7 +25,7 @@ public enum ButtonSet
 	OPEN_EXTEND		(Type.EXTEND, null, RImg.TOOLBAR_OPEN_ARROW.getImageIcon(16,16)),
 	MANIFEST		(Type.NORMAL, RComp.BTN_TOOLBAR_MANIFEST, UiEventHandler.ACT_CMD_SHOW_MANIFEST),
 	EXPLORER		(Type.SUB_TOOLBAR, RComp.BTN_TOOLBAR_EXPLORER, UiEventHandler.ACT_CMD_SHOW_EXPLORER, true),
-	OPEN_CODE		(Type.SUB_TOOLBAR, RComp.BTN_TOOLBAR_OPEN_CODE, RComp.BTN_TOOLBAR_OPEN_CODE_LODING, UiEventHandler.ACT_CMD_OPEN_DECOMPILER, true),
+	OPEN_CODE		(Type.SUB_TOOLBAR, RComp.BTN_TOOLBAR_OPEN_CODE, UiEventHandler.ACT_CMD_OPEN_DECOMPILER, true),
 	SEARCH			(Type.SUB_TOOLBAR, RComp.BTN_TOOLBAR_SEARCH, UiEventHandler.ACT_CMD_OPEN_SEARCHER, true),
 	PLUGIN_EXTEND	(Type.SUB_TOOLBAR, RComp.BTN_TOOLBAR_PLUGIN_EXTEND, null, true),
 	INSTALL			(Type.NORMAL, RComp.BTN_TOOLBAR_INSTALL, UiEventHandler.ACT_CMD_INSTALL_APK),
@@ -142,10 +142,11 @@ public enum ButtonSet
 			@Override
 			public void setEnabled(boolean enabled) {
 				super.setEnabled(enabled);
-				if(disabledRes == null) return;
-				if(enabled) {
-					res.autoReapply(owner, this);
-				} else {
+				if(enabled && res != null) {
+					if(ButtonSet.this.equals(OPEN_CODE)) {
+						res.autoReapply(owner, this);
+					}
+				} else if(!enabled && disabledRes != null) {
 					disabledRes.autoReapply(owner, this);
 				}
 			}

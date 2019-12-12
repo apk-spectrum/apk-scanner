@@ -8,11 +8,13 @@ import java.io.File;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.PlugInManager;
+import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.tool.external.BytecodeViewerLauncher;
@@ -155,6 +157,10 @@ public class OpenDecompilerAction extends AbstractApkScannerAction
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				comp.setEnabled(enabled);
+				if(!enabled) {
+					Window window = SwingUtilities.getWindowAncestor(comp);
+					RComp.BTN_TOOLBAR_OPEN_CODE_LODING.autoReapply(window, comp);
+				}
 			}
 		});
 	}
