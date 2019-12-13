@@ -46,8 +46,6 @@ public class OpenDecompilerAction extends AbstractApkScannerAction
 	}
 
 	protected void evtOpenDecompiler(final Window owner, final Component comp) {
-		if(!hasCode(owner)) return;
-
 		String data = RProp.S.DEFAULT_DECORDER.get();
 		Log.v("PROP_DEFAULT_DECORDER : " + data);
 
@@ -87,11 +85,31 @@ public class OpenDecompilerAction extends AbstractApkScannerAction
 		return true;
 	}
 
+	protected String getTargetPath(Window owner, Component comp) {
+		String target = (String) handler.getData(Integer.toString(comp.hashCode()));
+		if(target == null) {
+			if(!hasCode(owner)) return null;
+			ApkInfo apkInfo = getApkInfo();
+			if(apkInfo != null) {
+				target = apkInfo.filePath;
+			}
+		}
+		return target;
+	}
+
 	protected void launchJdGui(final Window owner, final Component comp) {
+		String targetPath = getTargetPath(owner, comp);
+		if(targetPath == null) return;
+
 		ApkInfo apkInfo = getApkInfo();
+		String jarfileName = targetPath;
+		if(!jarfileName.startsWith(apkInfo.tempWorkPath)) {
+			jarfileName = apkInfo.tempWorkPath + File.separator + (new File(targetPath)).getName();
+		}
+		jarfileName = jarfileName.replaceAll("\\.(apk|dex)$", ".jar");
+
 		setComponentEnabled(comp, false);
-		String jarfileName = apkInfo.tempWorkPath + File.separator + (new File(apkInfo.filePath)).getName().replaceAll("\\.apk$", ".jar");
-		Dex2JarWrapper.convert(apkInfo.filePath, jarfileName, comp == null
+		Dex2JarWrapper.convert(targetPath, jarfileName, comp == null
 				? null : new Dex2JarWrapper.DexWrapperListener() {
 			@Override
 			public void onCompleted() {
@@ -116,9 +134,10 @@ public class OpenDecompilerAction extends AbstractApkScannerAction
 	}
 
 	protected void launchJadxGui(final Window owner, final Component comp) {
-		ApkInfo apkInfo = getApkInfo();
+		String targetPath = getTargetPath(owner, comp);
+		if(targetPath == null) return;
 		setComponentEnabled(comp, false);
-		JADXLauncher.run(apkInfo.filePath, comp == null
+		JADXLauncher.run(getTargetPath(owner, comp), comp == null
 				? null : new ConsoleOutputObserver() {
 			@Override
 			public boolean ConsolOutput(String output) {
@@ -131,9 +150,10 @@ public class OpenDecompilerAction extends AbstractApkScannerAction
 	}
 
 	protected void launchByteCodeViewer(final Window owner, final Component comp) {
-		ApkInfo apkInfo = getApkInfo();
+		String targetPath = getTargetPath(owner, comp);
+		if(targetPath == null) return;
 		setComponentEnabled(comp, false);
-		BytecodeViewerLauncher.run(apkInfo.filePath, comp == null
+		BytecodeViewerLauncher.run(targetPath, comp == null
 				? null : new ConsoleOutputObserver() {
 			@Override
 			public boolean ConsolOutput(String output) {

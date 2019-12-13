@@ -5,10 +5,17 @@ import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Enumeration;
 
 import javax.swing.JTree;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
 import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -18,6 +25,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import com.apkscanner.gui.UiEventHandler;
 import com.apkscanner.util.SystemUtil;
 
 public class ResourceTree extends JTree {
@@ -25,7 +33,7 @@ public class ResourceTree extends JTree {
 
 	private DefaultMutableTreeNode rootNode;
 
-	public ResourceTree() {
+	public ResourceTree(final ActionListener listener) {
 		super(new DefaultTreeModel(new DefaultMutableTreeNode()));
 		rootNode = (DefaultMutableTreeNode) getModel().getRoot();
 
@@ -71,6 +79,34 @@ public class ResourceTree extends JTree {
 				}
 				return bounds;
 			}
+		});
+
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+					if (getPathForLocation(e.getX(), e.getY()) == null) return;
+					listener.actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED,
+							UiEventHandler.ACT_CMD_OPEN_RESOURCE_FILE, e.getWhen(), e.getModifiers()));
+				}
+			}
+		});
+
+		addTreeExpansionListener(new TreeExpansionListener() {
+			@Override
+			public void treeExpanded(TreeExpansionEvent event) {
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) event.getPath().getLastPathComponent();
+				if (node.getUserObject() instanceof ResourceObject) {
+					ResourceObject resObj = (ResourceObject) node.getUserObject();
+					if(resObj.attr == ResourceObject.ATTR_FS_IMG) {
+						listener.actionPerformed(new ActionEvent(event, ActionEvent.ACTION_PERFORMED,
+								UiEventHandler.ACT_CMD_LOAD_FS_IMG_FILE, System.currentTimeMillis(), 0));
+					}
+				}
+			}
+
+			@Override
+			public void treeCollapsed(TreeExpansionEvent event) { }
 		});
 	}
 
@@ -239,6 +275,26 @@ public class ResourceTree extends JTree {
 		} else {
 			collapsePath(treePath);
 		}
+	}
+
+	public boolean setSelectNodeByPath(String path) {
+		DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) getModel().getRoot();
+
+		@SuppressWarnings("unchecked")
+		Enumeration<TreeNode> e = rootNode.depthFirstEnumeration();
+		while (e.hasMoreElements()) {
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode)e.nextElement();
+			if (node.getUserObject() instanceof ResourceObject) {
+				ResourceObject temp = (ResourceObject) node.getUserObject();
+				if (temp.path.equals(path)) {
+					TreePath treepath = new TreePath(node.getPath());
+					setSelectionPath(treepath);
+					scrollPathToVisible(treepath);
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override

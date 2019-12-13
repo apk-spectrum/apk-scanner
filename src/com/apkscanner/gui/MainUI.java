@@ -84,7 +84,7 @@ public class MainUI extends JFrame implements IPlugInEventListener, LanguageChan
 		Log.i("initialize() tabbedpanel init");
 		// TabPanel initialize and add
 		String tabbedStyle = RProp.S.TABBED_UI_THEME.get();
-		tabbedPanel = new TabbedPanel(tabbedStyle);
+		tabbedPanel = new TabbedPanel(tabbedStyle, eventHandler);
 		add(tabbedPanel, BorderLayout.CENTER);
 
 		Log.i("initialize() register event handler");

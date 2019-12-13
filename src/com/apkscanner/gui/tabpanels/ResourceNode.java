@@ -1,5 +1,6 @@
 package com.apkscanner.gui.tabpanels;
 
+import java.io.File;
 import java.util.Comparator;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -47,6 +48,21 @@ public class ResourceNode extends SortedMutableTreeNode
     	}
     }
 
+    public void add(File files) {
+    	if(files.isDirectory()) {
+			for(File c: files.listFiles()) {
+				ResourceNode childNode = new ResourceNode(new ResourceObject(c));
+				add(childNode);
+				if(c.isDirectory()) {
+					childNode.add(c);
+				}
+			}
+    	} else {
+    		ResourceNode childNode = new ResourceNode(new ResourceObject(files));
+    		add(childNode);
+    	}
+    }
+
     @Override
     public void add(MutableTreeNode newChild) {
     	super.add(newChild);
@@ -56,7 +72,7 @@ public class ResourceNode extends SortedMutableTreeNode
 	    	if(uo instanceof ResourceObject) {
 				if(((ResourceObject) uo).attr == ResourceObject.ATTR_FS_IMG) {
 					ResourceObject obj = new ResourceObject("Loading...");
-					node.add(new DefaultMutableTreeNode(obj));
+					node.add(new ResourceNode(obj));
 					obj.setLoadingState(true);
 				}
 	    	}

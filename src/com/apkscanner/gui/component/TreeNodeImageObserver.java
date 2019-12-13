@@ -31,9 +31,10 @@ public class TreeNodeImageObserver implements ImageObserver {
 	}
 
 	protected boolean isStop() {
-		return stopFlag;
+		return stopFlag || !tree.getModel().getRoot().equals(node.getRoot());
 	}
 
+	@Override
 	public boolean imageUpdate(Image img, int flags, int x, int y, int w, int h) {
 		if(node == null) return false;
 

@@ -38,18 +38,14 @@ public class TabbedPanel extends JTabbedPane implements LanguageChangeListener, 
 
 	private List<ITabbedComponent> components = new ArrayList<>();
 
-	public TabbedPanel() {
-		this(null);
-	}
-
-	public TabbedPanel(String themeClazz) {
+	public TabbedPanel(String themeClazz, ActionListener listener) {
 		setOpaque(true);
 		TabbedPaneUIManager.setUI(this, themeClazz);
 
 		addTab(new BasicInfo());
 		addTab(new Widgets());
 		addTab(new Libraries());
-		addTab(new Resources());
+		addTab(new Resources(listener));
 		addTab(new Components());
 		addTab(new Signatures());
 

@@ -1207,7 +1207,7 @@ public class SettingDlg extends JDialog implements ActionListener
 
 		mPreviewFrame = new JInternalFrame(RStr.APP_NAME.get(),false,false,false,false);
 		mPreviewToolBar = new ToolBar(this, null);
-		mPreviewTabbedPanel = new TabbedPanel(propTabbedUI);
+		mPreviewTabbedPanel = new TabbedPanel(propTabbedUI, null);
 		mPreviewFrame.setFrameIcon(RImg.APP_ICON.getImageIcon(16,16));
 		mPreviewFrame.getContentPane().add(mPreviewToolBar, BorderLayout.NORTH);
 		mPreviewFrame.getContentPane().add(mPreviewTabbedPanel, BorderLayout.CENTER);

@@ -33,6 +33,7 @@ import com.apkscanner.gui.action.EditEasyToolbarAction;
 import com.apkscanner.gui.action.EscKeyAction;
 import com.apkscanner.gui.action.ExitAction;
 import com.apkscanner.gui.action.InstallApkAction;
+import com.apkscanner.gui.action.LoadResTreeImgFileAction;
 import com.apkscanner.gui.action.NewWindowAction;
 import com.apkscanner.gui.action.OpenApkAction;
 import com.apkscanner.gui.action.OpenApkToNewAction;
@@ -42,6 +43,7 @@ import com.apkscanner.gui.action.OpenDecodeJDGUIAction;
 import com.apkscanner.gui.action.OpenDecompilerAction;
 import com.apkscanner.gui.action.OpenPackageAction;
 import com.apkscanner.gui.action.OpenPackageToNewAction;
+import com.apkscanner.gui.action.OpenResTreeFileAction;
 import com.apkscanner.gui.action.OpenSearcherAction;
 import com.apkscanner.gui.action.OpenSettingsAction;
 import com.apkscanner.gui.action.ShowAboutAction;
@@ -95,6 +97,8 @@ public class UiEventHandler extends ActionEventHandler implements WindowListener
 	public static final String ACT_CMD_SHOW_LOGS				= ShowLogsAction.ACTION_COMMAND;
 	public static final String ACT_CMD_SHOW_MANIFEST			= ShowManifestAction.ACTION_COMMAND;
 	public static final String ACT_CMD_SIGN_APK					= SignApkAction.ACTION_COMMAND;
+	public static final String ACT_CMD_OPEN_RESOURCE_FILE		= OpenResTreeFileAction.ACTION_COMMAND;
+	public static final String ACT_CMD_LOAD_FS_IMG_FILE			= LoadResTreeImgFileAction.ACTION_COMMAND;
 
 	public UiEventHandler(ApkScanner apkScanner) {
 		setApkScanner(apkScanner);

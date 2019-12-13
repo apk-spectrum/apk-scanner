@@ -179,25 +179,29 @@ public class ResourceObject implements Cloneable
 		return (icon != null) ? icon : SystemUtil.getExtensionIcon(getExtension(path));
 	}
 
-	public Icon getIconWithObserver(JTree tree) {
+	public Icon getIconWithObserver(final JTree tree) {
 		Icon icon = getIcon();
 		if(icon instanceof ImageIcon) {
 			ImageIcon image = (ImageIcon) icon;
-			image.setImageObserver(new TreeNodeImageObserver(tree, node, image) {
-				public void stop() {
-					stopFlag = true;
-					if(node != null && node.getUserObject() instanceof ResourceObject) {
-						((ResourceObject)node.getUserObject()).setLoadingState(false);
+			if(!(image.getImageObserver() instanceof TreeNodeImageObserver)) {
+				image.setImageObserver(new TreeNodeImageObserver(tree, node, image) {
+					@Override
+					public void stop() {
+						super.stop();
+						if(node != null && node.getUserObject() instanceof ResourceObject) {
+							((ResourceObject)node.getUserObject()).setLoadingState(false);
+						}
 					}
-				}
 
-				protected boolean isStop() {
-					if(node != null && node.getUserObject() instanceof ResourceObject) {
-						stopFlag = !((ResourceObject)node.getUserObject()).getLoadingState();
+					@Override
+					protected boolean isStop() {
+						if(node != null && node.getUserObject() instanceof ResourceObject) {
+							stopFlag = !((ResourceObject)node.getUserObject()).getLoadingState();
+						}
+						return super.isStop();
 					}
-					return stopFlag;
-				}
-			});
+				});
+			}
 		}
 		return icon;
 	}
@@ -209,7 +213,13 @@ public class ResourceObject implements Cloneable
 	public void setLoadingState(boolean state) {
 		if(isLoading == state) return;
 		isLoading = state;
-		icon = null;
+		if(icon instanceof ImageIcon) {
+			ImageIcon image = (ImageIcon) icon;
+			if(image.getImageObserver() != null) {
+				image.setImageObserver(null);
+				icon = null;
+			}
+		}
 	}
 
 	public boolean getLoadingState() {
