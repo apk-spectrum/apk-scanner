@@ -225,9 +225,18 @@ public class AaptManifestReader
 	        	}
 	        	info.name = getAttrValue(permTag[idx], "name");
 	        	info.permissionGroup = getAttrValue(permTag[idx], "permissionGroup");
-	        	Integer level = getAttrIntegerValue(permTag[idx], "protectionLevel");
-	        	if(level != null) {
-	        		info.protectionLevel = PermissionInfo.protectionToString(level);
+	        	String protectionLevel = getAttrValue(permTag[idx], "protectionLevel");
+	        	if(protectionLevel != null) {
+	        		try {
+	        			int level;
+		        		if(protectionLevel.startsWith("0x")) {
+		        			level = Integer.parseInt(protectionLevel.substring(2), 16);
+		        		} else {
+		        			level = Integer.parseInt(protectionLevel);
+		        		}
+		        		protectionLevel = PermissionInfo.protectionToString(level);
+	        		} catch (NumberFormatException e) { }
+	        		info.protectionLevel = protectionLevel;
 	        	}
 	        	permissionList.add(info);
 	        }
