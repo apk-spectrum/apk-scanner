@@ -2,56 +2,39 @@ package com.apkscanner.gui.tabpanels;
 
 
 import java.awt.GridLayout;
-import java.util.ArrayList;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
 
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RStr;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.FileUtil.FSStyle;
 import com.apkscanner.util.ZipFileUtil;
 
-/**
- * TableToolTipsDemo is just like TableDemo except that it sets up tool tips for
- * both cells and column headers.
- */
 public class Libraries extends AbstractTabbedPanel
 {
 	private static final long serialVersionUID = -8985157400085276691L;
 
-	private MyTableModel mMyTableModel = null;
-	private JTable table;
-
-	private String apkFilePath;
+	private SimpleTableModel tableModel;
 
 	public Libraries()
 	{
 		setLayout(new GridLayout(1, 0));
-		setTitle(RStr.TAB_LIBRARIES.get(), RStr.TAB_LIBRARIES.get());
+		setTitle(RComp.TABBED_LIBRARIES);
 		setTabbedEnabled(false);
 	}
 
 	@Override
 	public void initialize()
 	{
-		mMyTableModel = new MyTableModel();
-		table = new JTable(mMyTableModel);
+		JTable table = new JTable(tableModel = new LibTableModel(),
+				new SimpleTableColumnModel(5, 295, 150, 50));
+		table.setAutoCreateColumnsFromModel(true);
 
-		//table.setPreferredScrollableViewportSize(new Dimension(500, 70));
-
-		setJTableColumnsWidth(table, 500, 1, 59, 30, 10);
-
-		//Create the scroll pane and add the table to it.
-
-		JScrollPane scrollPane = new JScrollPane(table);
-
-		//Add the scroll pane to this panel.
-		add(scrollPane);
+		add(new JScrollPane(table));
 	}
 
 	@Override
@@ -60,62 +43,34 @@ public class Libraries extends AbstractTabbedPanel
 		if(!Status.LIB_COMPLETED.equals(status)) {
 			return;
 		}
-		if(mMyTableModel == null)
+
+		if(tableModel == null)
 			initialize();
-		apkFilePath = apkInfo.filePath;
-		mMyTableModel.setData(apkInfo.libraries);
+		tableModel.setData(apkInfo);
 
 		setDataSize(apkInfo.libraries.length, true, false);
 		setTabbedVisible(apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX);
 	}
 
-	@Override
-	public void reloadResource()
-	{
-		setTitle(RStr.TAB_LIBRARIES.get(), RStr.TAB_LIBRARIES.get());
-
-		if(mMyTableModel == null) return;
-		mMyTableModel.loadResource();
-		mMyTableModel.fireTableStructureChanged();
-		setJTableColumnsWidth(table, 500, 1, 59, 30, 10);
-	}
-
-	public static void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
-												double... percentages) {
-		double total = 0;
-		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
-		    total += percentages[i];
-		}
-
-		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
-			TableColumn column = table.getColumnModel().getColumn(i);
-			column.setPreferredWidth((int)(tablePreferredWidth * (percentages[i] / total)));
-		}
-	}
-
-	class MyTableModel extends AbstractTableModel {
+	class LibTableModel extends SimpleTableModel {
 		private static final long serialVersionUID = 8403482180817388452L;
 
-		private String[] columnNames = { "Index", "Path", "Size"};
-
-		private ArrayList<Object[]> data = new ArrayList<Object[]>();
-
-		public MyTableModel()
-		{
-			loadResource();
+		LibTableModel() {
+			super(RStr.LIB_COLUMN_INDEX, RStr.LIB_COLUMN_PATH,
+					RStr.LIB_COLUMN_SIZE, RStr.LIB_COLUMN_COMPRESS);
 		}
 
-		public void setData(String[] libList)
-		{
+		@Override
+		public void setData(ApkInfo apkInfo) {
 			data.clear();
-			if(libList == null) return;
+			if(apkInfo.libraries == null) return;
 
-			for(int i=0; i< libList.length; i++) {
-				long size = ZipFileUtil.getFileSize(apkFilePath, libList[i]);
-				long compressed = ZipFileUtil.getCompressedSize(apkFilePath, libList[i]);
+			for(int i=0; i< apkInfo.libraries.length; i++) {
+				long size = ZipFileUtil.getFileSize(apkInfo.filePath, apkInfo.libraries[i]);
+				long compressed = ZipFileUtil.getCompressedSize(apkInfo.filePath, apkInfo.libraries[i]);
 				Object[] temp = {
 						i+1,
-						libList[i],
+						apkInfo.libraries[i],
 						FileUtil.getFileSize(size, FSStyle.FULL),
 						String.format("%.2f", ((float)(size - compressed) / (float)size) * 100f) + " %"
 				};
@@ -124,74 +79,7 @@ public class Libraries extends AbstractTabbedPanel
 			fireTableDataChanged();
 		}
 
-		public void loadResource()
-		{
-			columnNames = new String[] {
-				RStr.LIB_COLUMN_INDEX.get(),
-				RStr.LIB_COLUMN_PATH.get(),
-				RStr.LIB_COLUMN_SIZE.get(),
-				RStr.LIB_COLUMN_COMPRESS.get()
-			};
-		}
-
-		public int getColumnCount() {
-			return columnNames.length;
-		}
-
-		public int getRowCount() {
-			return data.size();
-		}
-
-		public String getColumnName(int col) {
-			return columnNames[col];
-		}
-
-		public Object getValueAt(int row, int col) {
-			return data.get(row)[col];
-		}
-
-	    /*
-	     * JTable uses this method to determine the default renderer/ editor for
-	     * each cell. If we didn't implement this method, then the last column
-	     * would contain text ("true"/"false"), rather than a check box.
-	     */
-		public Class<? extends Object> getColumnClass(int c) {
-			return getValueAt(0, c).getClass();
-		}
-
-	    /*
-	     * Don't need to implement this method unless your table's editable.
-	     */
-		public boolean isCellEditable(int row, int col) {
-			//Note that the data/cell address is constant,
-			//no matter where the cell appears onscreen.
-			if(col>0) {
-				return true;
-			} else return false;
-		}
-
-	    /*
-	     * Don't need to implement this method unless your table's data can
-	     * change.
-	     */
-		public void setValueAt(Object value, int row, int col) {
-			data.get(row)[col] = value;
-			fireTableCellUpdated(row, col);
-		}
-
-		@SuppressWarnings("unused")
-		private void printDebugData() {
-			int numRows = getRowCount();
-			int numCols = getColumnCount();
-
-			for (int i = 0; i < numRows; i++) {
-				System.out.print("    row " + i + ":");
-				for (int j = 0; j < numCols; j++) {
-					System.out.print("  " + data.get(i)[j]);
-				}
-				System.out.println();
-			}
-			System.out.println("--------------------------");
-		}
+		@Override
+		public boolean isCellEditable(int row, int col) { return col > 0; }
 	}
 }

@@ -1,7 +1,6 @@
 package com.apkscanner.gui;
 
 import java.awt.Dimension;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -131,7 +130,7 @@ public enum ButtonSet
 		return actionCommand.equals(e.getActionCommand());
 	}
 
-	private JButton getButton(final Window owner, ActionListener listener)
+	private JButton set(ActionListener listener)
 	{
 		if(type == Type.NONE) {
 			return null;
@@ -144,10 +143,10 @@ public enum ButtonSet
 				super.setEnabled(enabled);
 				if(enabled && res != null) {
 					if(ButtonSet.this.equals(OPEN_CODE)) {
-						res.autoReapply(owner, this);
+						res.set(this);
 					}
 				} else if(!enabled && disabledRes != null) {
-					disabledRes.autoReapply(owner, this);
+					disabledRes.set(this);
 				}
 			}
 
@@ -159,7 +158,7 @@ public enum ButtonSet
 		if(res != null) {
 			int size = type == Type.SUB_TOOLBAR ? SUBICON_SIZE : ICON_SIZE;
 			res.setImageSize(new Dimension(size, size));
-			res.autoReapply(owner, button);
+			res.set(button);
 		} else {
 			button.setText(text);
 			button.setIcon(icon);
@@ -203,11 +202,11 @@ public enum ButtonSet
 		return button;
 	}
 
-	static Map<ButtonSet, JButton> getButtonMap(Window owner, ActionListener listener)
+	static Map<ButtonSet, JButton> getButtonMap(ActionListener listener)
 	{
 		Map<ButtonSet, JButton> buttonMap = new HashMap<ButtonSet, JButton>();
 		for(ButtonSet bs: values()) {
-			buttonMap.put(bs, bs.getButton(owner, listener));
+			buttonMap.put(bs, bs.set(listener));
 		}
 		return buttonMap;
 	}

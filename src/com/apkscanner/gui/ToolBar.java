@@ -9,7 +9,6 @@ import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.MouseInfo;
 import java.awt.Point;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -88,13 +87,13 @@ public class ToolBar extends JToolBar
 
 	private ActionListener listener;
 
-	public ToolBar(Window owner, ActionListener listener)
+	public ToolBar(ActionListener listener)
 	{
 		this.listener = listener;
-		initUI(owner, listener);
+		initUI(listener);
 	}
 
-	public final void initUI(Window owner, ActionListener listener)
+	public final void initUI(ActionListener listener)
 	{
 		Log.i("ToolBar.initUI() start");
 		setOpaque(true);
@@ -112,7 +111,7 @@ public class ToolBar extends JToolBar
 		launchPopupMenu = new JPopupMenu();
 
 		Log.i("ToolBar.initUI() MenuItemSet init");
-		menuItemMap = MenuItemSet.getButtonMap(owner, listener);
+		menuItemMap = MenuItemSet.getButtonMap(listener);
 
 		JMenuItem SubMenu = openPopupMenu.add((JMenu)menuItemMap.get(MenuItemSet.NEW_WINDOW));
 		SubMenu.add(menuItemMap.get(MenuItemSet.NEW_EMPTY));
@@ -124,7 +123,7 @@ public class ToolBar extends JToolBar
 		explorerPopupMenu.add(menuItemMap.get(MenuItemSet.EXPLORER_ARCHIVE));
 		explorerPopupMenu.add(menuItemMap.get(MenuItemSet.EXPLORER_FOLDER));
 		explorerPopupMenu.addSeparator();
-		explorerPopupMenu.add(makeSelectDefaultMenuItem(owner));
+		explorerPopupMenu.add(makeSelectDefaultMenuItem());
 
 		installPopupMenu.add(menuItemMap.get(MenuItemSet.UNINSTALL_APK));
 		installPopupMenu.add(menuItemMap.get(MenuItemSet.CLEAR_DATA));
@@ -133,18 +132,18 @@ public class ToolBar extends JToolBar
 		launchPopupMenu.add(menuItemMap.get(MenuItemSet.LAUNCH_LAUNCHER));
 		launchPopupMenu.add(menuItemMap.get(MenuItemSet.LAUNCH_SELECT));
 		launchPopupMenu.addSeparator();
-		launchPopupMenu.add(makeSelectDefaultMenuItem(owner));
+		launchPopupMenu.add(makeSelectDefaultMenuItem());
 
 		decordePopupMenu.add(menuItemMap.get(MenuItemSet.DECODER_JD_GUI));
 		decordePopupMenu.add(menuItemMap.get(MenuItemSet.DECODER_JADX_GUI));
 		decordePopupMenu.add(menuItemMap.get(MenuItemSet.DECODER_BYTECODE));
 		decordePopupMenu.addSeparator();
-		decordePopupMenu.add(makeSelectDefaultMenuItem(owner));
+		decordePopupMenu.add(makeSelectDefaultMenuItem());
 
 		searchPopupMenu.add(menuItemMap.get(MenuItemSet.SEARCH_RESOURCE));
 
 		Log.i("ToolBar.initUI() ButtonSet init");
-		buttonMap = ButtonSet.getButtonMap(owner, listener);
+		buttonMap = ButtonSet.getButtonMap(listener);
 		buttonMap.get(ButtonSet.OPEN).setPreferredSize(new Dimension(55,65));
 		buttonMap.get(ButtonSet.OPEN_PACKAGE).setPreferredSize(new Dimension(55,65));
 
@@ -246,7 +245,6 @@ public class ToolBar extends JToolBar
 	}
 
 	public void onLoadPlugin() {
-		Window owner = SwingUtilities.getWindowAncestor(this);
 		IExternalTool[] tools = PlugInManager.getDecorderTool();
 		if(tools.length > 0) {
 			decordePopupMenu.removeAll();
@@ -258,7 +256,7 @@ public class ToolBar extends JToolBar
 				decordePopupMenu.add(makePlugInMenuItem(tool, listener, RProp.DEFAULT_DECORDER));
 			}
 			decordePopupMenu.addSeparator();
-			decordePopupMenu.add(makeSelectDefaultMenuItem(owner));
+			decordePopupMenu.add(makeSelectDefaultMenuItem());
 			setMouseEvent(decordePopupMenu, null);
 		}
 
@@ -269,20 +267,20 @@ public class ToolBar extends JToolBar
 			searchPopupMenu.addSeparator();
 
 			searchers = PlugInManager.getPackageSearchers(IPackageSearcher.SEARCHER_TYPE_PACKAGE_NAME);
-			JMenu searchersMenu = makeSearcherSelectMenu(owner, RComp.MENU_TOOLBAR_SEARCH_BY_PACKAGE, searchers, listener);
+			JMenu searchersMenu = makeSearcherSelectMenu(RComp.MENU_TOOLBAR_SEARCH_BY_PACKAGE, searchers, listener);
 			if(searchersMenu != null) {
 				searchPopupMenu.add(searchersMenu);
 			}
 
 			searchers = PlugInManager.getPackageSearchers(IPackageSearcher.SEARCHER_TYPE_APP_NAME);
-			searchersMenu = makeSearcherSelectMenu(owner, RComp.MENU_TOOLBAR_SEARCH_BY_NAME, searchers, listener);
+			searchersMenu = makeSearcherSelectMenu(RComp.MENU_TOOLBAR_SEARCH_BY_NAME, searchers, listener);
 			if(searchersMenu != null) {
 				searchPopupMenu.add(searchersMenu);
 			}
 
 			searchPopupMenu.addSeparator();
 			final JCheckBoxMenuItem v2bMenuItem = new JCheckBoxMenuItem();
-			RComp.MENU_TOOLBAR_TO_BASIC_INFO.autoReapply(owner, v2bMenuItem);
+			RComp.MENU_TOOLBAR_TO_BASIC_INFO.set(v2bMenuItem);
 			v2bMenuItem.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -457,10 +455,10 @@ public class ToolBar extends JToolBar
 		}
 	}
 
-	private JCheckBoxMenuItem makeSelectDefaultMenuItem(Window owner) {
+	private JCheckBoxMenuItem makeSelectDefaultMenuItem() {
 		JCheckBoxMenuItem selDefItem = new NoCloseCheckBoxMenuItem();
 		selDefItem.setActionCommand(CMD_SELECT_DEFAULT_MENU);
-		RComp.MENU_TOOLBAR_SELECT_DEFAULT.autoReapply(owner, selDefItem);
+		RComp.MENU_TOOLBAR_SELECT_DEFAULT.set(selDefItem);
 		return selDefItem;
 	}
 
@@ -599,13 +597,13 @@ public class ToolBar extends JToolBar
 		return menuItem;
 	}
 
-	private JMenu makeSearcherSelectMenu(Window owner, final RComp res, final IPackageSearcher[] searchers, final ActionListener listener) {
+	private JMenu makeSearcherSelectMenu(final RComp res, final IPackageSearcher[] searchers, final ActionListener listener) {
 		final JMenu menu = new JMenu();
-		res.autoReapply(owner, menu);
+		res.set(menu);
 
 		final JCheckBoxMenuItem selVisible = new NoCloseCheckBoxMenuItem();
 		//selVisible.setActionCommand(CMD_SELECT_DEFAULT_MENU);
-		RComp.MENU_TOOLBAR_TO_BASIC_INFO.autoReapply(owner, selVisible);
+		RComp.MENU_TOOLBAR_TO_BASIC_INFO.set(selVisible);
 		selVisible.setEnabled(RProp.B.VISIBLE_TO_BASIC.get());
 		selVisible.addActionListener(new ActionListener() {
 			@Override

@@ -252,7 +252,7 @@ public enum RStr implements ResString<String>
 	ACTIVITY_TYPE_ACTIVITY		("@activity_type_activity"),
 	ACTIVITY_TYPE_SERVICE		("@activity_type_service"),
 	ACTIVITY_TYPE_RECEIVER		("@activity_type_receiver"),
-	ACTIVITY_LABEL_INTENT		("@activity_label_intent_filter"),
+	ACTIVITY_LABEL_XML			("@activity_label_xml"),
 
 	CERT_SUMMURY				("@cert_summury"),
 	CERT_CERTIFICATE			("@cert_certificate"),

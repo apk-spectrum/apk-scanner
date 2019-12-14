@@ -3,6 +3,8 @@ package com.apkscanner.resource;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Window;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashMap;
@@ -13,6 +15,7 @@ import javax.swing.AbstractButton;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 public enum RComp implements ResValue<RComp>
 {
@@ -55,16 +58,28 @@ public enum RComp implements ResValue<RComp>
 	MENU_TOOLBAR_SEARCH_BY_PACKAGE	(RStr.LABEL_BY_PACKAGE_NAME),
 	MENU_TOOLBAR_SEARCH_BY_NAME		(RStr.LABEL_BY_APP_LABEL),
 	MENU_TOOLBAR_TO_BASIC_INFO		(RStr.MENU_VISIBLE_TO_BASIC_EACH),
+
+	TABBED_BASIC_INFO				(RStr.TAB_BASIC_INFO, RStr.TAB_BASIC_INFO),
+	TABBED_APEX_INFO				(RStr.TAB_APEX_INFO, RStr.TAB_APEX_INFO),
+	TABBED_WIDGET					(RStr.TAB_WIDGETS, RStr.TAB_WIDGETS),
+	TABBED_LIBRARIES				(RStr.TAB_LIBRARIES, RStr.TAB_LIBRARIES),
+	TABBED_RESOURCES				(RStr.TAB_RESOURCES, RStr.TAB_RESOURCES),
+	TABBED_COMPONENTS				(RStr.TAB_COMPONENTS, RStr.TAB_COMPONENTS),
+	TABBED_SIGNATURES				(RStr.TAB_SIGNATURES, RStr.TAB_SIGNATURES),
+
+	LABEL_XML_CONSTRUCTION			(RStr.ACTIVITY_LABEL_XML),
 	; // ENUM END
 
+	public static final String RCOMP_SET_TEXT_KEY = "RcompApplyText";
+	public static final String RCOMP_SET_ICON_KEY = "RcompApplyIcon";
 
 	private static Map<Window, Map<Component, RComp>> map = new HashMap<>();
 	static {
 		RStr.addLanguageChangeListener(new LanguageChangeListener() {
 			@Override
 			public void languageChange(String oldLang, String newLang) {
-				for(Entry<Window, Map<Component, RComp>> w: map.entrySet()) {
-					for(Entry<Component, RComp> e: w.getValue().entrySet()) {
+				for(Map<Component, RComp> w: map.values()) {
+					for(Entry<Component, RComp> e: w.entrySet()) {
 						e.getValue().applyText(e.getKey());
 					}
 				}
@@ -81,12 +96,20 @@ public enum RComp implements ResValue<RComp>
 		this(text, (Icon) null, null);
 	}
 
+	private RComp(RStr text, RStr toolTipText) {
+		this(text, (Icon) null, toolTipText);
+	}
+
+	private RComp(RStr text, RImg image) {
+		this(text, image, null);
+	}
+
 	private RComp(RStr text, Icon icon) {
 		this(text, icon, null);
 	}
 
-	private RComp(RStr text, RImg image) {
-		this(text, (Icon) null, null);
+	private RComp(RStr text, RImg image, RStr toolTipText) {
+		this(text, (Icon) null, toolTipText);
 		this.image = image;
 	}
 
@@ -94,11 +117,6 @@ public enum RComp implements ResValue<RComp>
 		this.text = text;
 		this.icon = icon;
 		this.toolTipText = toolTipText;
-	}
-
-	private RComp(RStr text, RImg image, RStr toolTipText) {
-		this(text, (Icon) null, toolTipText);
-		this.image = image;
 	}
 
 	@Override
@@ -139,23 +157,25 @@ public enum RComp implements ResValue<RComp>
 	}
 
 	public void applyIcon(Component c) {
+		if(c == null) return;
 		Icon icon = getIcon();
-		if(icon != null) {
-			if(c instanceof AbstractButton) {
-				AbstractButton btn = (AbstractButton) c;
-				if(c.isEnabled()) {
-					btn.setIcon(icon);
-					btn.setDisabledIcon(null);
-				} else {
-					btn.setDisabledIcon(icon);
-				}
-			} else if(c instanceof JLabel) {
-				((JLabel) c).setIcon(icon);
+		if(icon == null) return;
+		if(c instanceof AbstractButton) {
+			AbstractButton btn = (AbstractButton) c;
+			if(c.isEnabled()) {
+				btn.setIcon(icon);
+				btn.setDisabledIcon(null);
+			} else {
+				btn.setDisabledIcon(icon);
 			}
+		} else if(c instanceof JLabel) {
+			((JLabel) c).setIcon(icon);
 		}
+		c.firePropertyChange(RCOMP_SET_ICON_KEY, 0, 1);
 	}
 
 	public void applyText(Component c) {
+		if(c == null || (text == null && toolTipText == null)) return;
 		if(text != null) {
 			if(c instanceof AbstractButton) {
 				((AbstractButton) c).setText(text.getString());
@@ -168,24 +188,22 @@ public enum RComp implements ResValue<RComp>
 		if(c instanceof JComponent && toolTipText != null) {
 			((JComponent)c).setToolTipText(toolTipText.getString());
 		}
+		c.firePropertyChange(RCOMP_SET_TEXT_KEY, 0, 1);
 	}
 
-	public void autoReapply(Window window, Component c) {
-		autoReapply(window, c, true);
-	}
-
-	public void autoReapply(Window window, Component c, boolean useAutoReapply) {
-		if(c == null) return;
+	public void set(Component c) {
 		apply(c);
-		if(useAutoReapply) {
-			registeReapply(window, c);
-		} else {
-			removeReapply(window, c);
-		}
+		register(c);
 	}
 
-	public void registeReapply(final Window window, Component c) {
+	public void register(Component c) {
 		if(c == null) return;
+		register(SwingUtilities.getWindowAncestor(c), c);
+	}
+
+	public void register(final Window window, final Component c) {
+		if(c == null) return;
+
 		Map<Component, RComp> matchMap = map.get(window);
 		if(matchMap == null) {
 			matchMap = new HashMap<>();
@@ -195,12 +213,12 @@ public enum RComp implements ResValue<RComp>
 					@Override
 					public void windowClosing(WindowEvent e) {
 						window.removeWindowListener(this);
-						removeReapply(window, null);
+						unregister(window, null);
 					}
 					@Override
 					public void windowClosed(WindowEvent e) {
 						window.removeWindowListener(this);
-						removeReapply(window, null);
+						unregister(window, null);
 					}
 				});
 			}
@@ -208,9 +226,25 @@ public enum RComp implements ResValue<RComp>
 			if(matchMap.containsKey(c)) matchMap.remove(c);
 		}
 		matchMap.put(c, this);
+
+		if(window == null) {
+			c.addHierarchyListener(new HierarchyListener() {
+				@Override
+				public void hierarchyChanged(HierarchyEvent e) {
+					if(e.getID() != HierarchyEvent.HIERARCHY_CHANGED)
+						return;
+					Window win = SwingUtilities.getWindowAncestor(c);
+					if(win != null) {
+						unregister(null, c);
+						register(win, c);
+						c.removeHierarchyListener(this);
+					}
+				}
+			});
+		}
 	}
 
-	public void removeReapply(Window window, Component c) {
+	public void unregister(Window window, Component c) {
 		Map<Component, RComp> matchMap = map.get(window);
 		if(matchMap != null) {
 			if(c != null) {

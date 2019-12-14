@@ -60,6 +60,7 @@ import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.plugin.IPackageSearcher;
 import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.PlugInManager;
+import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RFile;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
@@ -87,7 +88,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	private PermissionManager permissionManager = new PermissionManager();
 
 	public BasicInfo() {
-		setTitle(RStr.TAB_BASIC_INFO.get(), RStr.TAB_BASIC_INFO.get());
+		setTitle(RComp.TABBED_BASIC_INFO);
 		setTabbedEnabled(true);
 
 		initialize();
@@ -134,13 +135,9 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	}
 
 	@Override
-	public void reloadResource() {
-		setTitle(RStr.TAB_BASIC_INFO.get(), RStr.TAB_BASIC_INFO.get());
-	}
-
-	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		Log.v("Change property : " + evt);
+		super.propertyChange(evt);
 		setPluginSearcher();
 	}
 
@@ -183,9 +180,9 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 
 		switch(status) {
 		case BASIC_INFO_COMPLETED:
-			String title = apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX ?
-					RStr.TAB_BASIC_INFO.get() : RStr.TAB_APEX_INFO.get();
-			setTitle(title, title);
+			RComp res = apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX ?
+					RComp.TABBED_BASIC_INFO : RComp.TABBED_APEX_INFO;
+			res.set(this);
 			setBasicInfo(apkInfo);
 			cardLayout.show(this, CARD_APK_INFORMATION);
 			setSeletected();
@@ -512,6 +509,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	}
 
 	private void setPluginSearcher() {
+		if(apkInfoPanel == null) return;
 		String packageSearchers = "";
 		String appLabelSearchers = "";
 		if(RProp.B.VISIBLE_TO_BASIC.get()) {
@@ -533,7 +531,6 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 				};
 			}
 		}
-
 		apkInfoPanel.removeElementById("name-searcher");
 		if(!appLabelSearchers.isEmpty()) {
 			apkInfoPanel.insertElementLast("label", String.format("<span id=\"name-searcher\">%s</span>", appLabelSearchers));

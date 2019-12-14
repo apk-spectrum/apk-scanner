@@ -240,7 +240,7 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="activity_type_activity">액티비티</string>
 	<string name="activity_type_service">서비스</string>
 	<string name="activity_type_receiver">리시버</string>
-	<string name="activity_label_intent_filter">XML 구문</string>
+	<string name="activity_label_xml">XML 구문</string>
 
 	<string name="cert_summury">요약</string>
 	<string name="cert_certificate">서명</string>

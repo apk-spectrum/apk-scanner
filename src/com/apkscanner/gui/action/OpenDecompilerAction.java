@@ -8,7 +8,6 @@ import java.io.File;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
@@ -178,8 +177,7 @@ public class OpenDecompilerAction extends AbstractApkScannerAction
 			public void run() {
 				comp.setEnabled(enabled);
 				if(!enabled) {
-					Window window = SwingUtilities.getWindowAncestor(comp);
-					RComp.BTN_TOOLBAR_OPEN_CODE_LODING.autoReapply(window, comp);
+					RComp.BTN_TOOLBAR_OPEN_CODE_LODING.set(comp);
 				}
 			}
 		});

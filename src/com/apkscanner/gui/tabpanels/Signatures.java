@@ -1,9 +1,6 @@
 package com.apkscanner.gui.tabpanels;
 
 import java.awt.BorderLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.JList;
 import javax.swing.JScrollPane;
@@ -15,11 +12,11 @@ import javax.swing.event.ListSelectionListener;
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
+import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
 
-public class Signatures extends AbstractTabbedPanel
+public class Signatures extends AbstractTabbedPanel implements ListSelectionListener
 {
 	private static final long serialVersionUID = 4333997417315260023L;
 
@@ -32,7 +29,7 @@ public class Signatures extends AbstractTabbedPanel
 	private String apkFilePath;
 
 	public Signatures() {
-		setTitle(RStr.TAB_SIGNATURES.get(), RStr.TAB_SIGNATURES.get());
+		setTitle(RComp.TABBED_SIGNATURES);
 		setTabbedEnabled(false);
 	}
 
@@ -42,70 +39,17 @@ public class Signatures extends AbstractTabbedPanel
 		setLayout(new BorderLayout());
 
 		jlist = new JList<String>();
-		JScrollPane scrollPane1 = new JScrollPane(jlist);
+		jlist.addListSelectionListener(this);
 
 		textArea = new JTextArea();
 		textArea.setEditable(false);
-		final JScrollPane scrollPane2 = new JScrollPane(textArea);
 
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
-		splitPane.setLeftComponent(scrollPane1);
-		splitPane.setRightComponent(scrollPane2);
+		splitPane.setLeftComponent(new JScrollPane(jlist));
+		splitPane.setRightComponent(new JScrollPane(textArea));
 		splitPane.setDividerLocation(100);
 
 		add(splitPane);
-
-		ListSelectionListener listSelectionListener = new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent listSelectionEvent) {
-				if(mCertList == null) return;
-				if(jlist.getSelectedIndex() > -1) {
-					if(jlist.getSelectedIndex() == 0) {
-						if(mCertList.length > 1) {
-							textArea.setText(mCertSummary);
-						} else {
-							textArea.setText(mCertList[0]);
-						}
-					} else if(mCertList.length > 1 && jlist.getSelectedIndex() <= mCertList.length) {
-						textArea.setText(mCertList[jlist.getSelectedIndex()-1]);
-					} else {
-						String fileName = jlist.getSelectedValue();
-						String entryPath = null;
-
-						for(String path: mCertFiles) {
-							if(path.endsWith("/" + fileName)) {
-								Log.i("Select cert file : " + path);
-								entryPath = path;
-								break;
-							}
-						}
-						byte[] buffer = ZipFileUtil.readData(apkFilePath, entryPath);
-						if(buffer != null) {
-							textArea.setText(new String(buffer));
-						} else {
-							textArea.setText("fail read file : " + fileName);
-						}
-					}
-					textArea.setCaretPosition(0);
-				}
-				//textArea.requestFocus();
-			}
-		};
-		jlist.addListSelectionListener(listSelectionListener);
-
-		MouseListener mouseListener = new MouseAdapter() {
-			@SuppressWarnings("unchecked")
-			public void mouseClicked(MouseEvent mouseEvent) {
-				JList<String> theList = (JList<String>) mouseEvent.getSource();
-				if (mouseEvent.getClickCount() == 2) {
-					int index = theList.locationToIndex(mouseEvent.getPoint());
-					if (index >= 0) {
-						//Object o = theList.getModel().getElementAt(index);
-						//Log.i("Double-clicked on: " + o.toString());
-					}
-				}
-			}
-		};
-		jlist.addMouseListener(mouseListener);
 	}
 
 	@Override
@@ -133,19 +77,6 @@ public class Signatures extends AbstractTabbedPanel
 				}
 			}
 		}
-
-		reloadResource();
-		jlist.setSelectedIndex(0);
-
-		setDataSize(ApkInfoHelper.isSigned(apkInfo) ? apkInfo.certificates.length : 0, true, false);
-	}
-
-	@Override
-	public void reloadResource()
-	{
-		setTitle(RStr.TAB_SIGNATURES.get(), RStr.TAB_SIGNATURES.get());
-
-		if(jlist == null) return;
 
 		jlist.removeAll();
 		if(mCertList == null) return;
@@ -178,6 +109,44 @@ public class Signatures extends AbstractTabbedPanel
 		}
 
 		jlist.setListData(labels);
+		jlist.setSelectedIndex(0);
+
+		setDataSize(ApkInfoHelper.isSigned(apkInfo) ? apkInfo.certificates.length : 0, true, false);
+	}
+
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+		if(mCertList == null || e.getValueIsAdjusting()
+				|| jlist.getSelectedIndex() < 0)
+			return;
+
+		if(jlist.getSelectedIndex() == 0) {
+			if(mCertList.length > 1) {
+				textArea.setText(mCertSummary);
+			} else {
+				textArea.setText(mCertList[0]);
+			}
+		} else if(mCertList.length > 1 && jlist.getSelectedIndex() <= mCertList.length) {
+			textArea.setText(mCertList[jlist.getSelectedIndex()-1]);
+		} else {
+			String fileName = jlist.getSelectedValue();
+			String entryPath = null;
+
+			for(String path: mCertFiles) {
+				if(path.endsWith("/" + fileName)) {
+					//Log.v("Select cert file : " + path);
+					entryPath = path;
+					break;
+				}
+			}
+			byte[] buffer = ZipFileUtil.readData(apkFilePath, entryPath);
+			if(buffer != null) {
+				textArea.setText(new String(buffer));
+			} else {
+				textArea.setText("fail read file : " + fileName);
+			}
+		}
+		textArea.setCaretPosition(0);
 	}
 }
 

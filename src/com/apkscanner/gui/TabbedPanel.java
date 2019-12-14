@@ -29,10 +29,8 @@ import com.apkscanner.gui.tabpanels.Signatures;
 import com.apkscanner.gui.tabpanels.Widgets;
 import com.apkscanner.plugin.IExtraComponent;
 import com.apkscanner.plugin.PlugInManager;
-import com.apkscanner.resource.LanguageChangeListener;
-import com.apkscanner.resource.RStr;
 
-public class TabbedPanel extends JTabbedPane implements LanguageChangeListener, ActionListener
+public class TabbedPanel extends JTabbedPane implements ActionListener
 {
 	private static final long serialVersionUID = -5500517956616692675L;
 
@@ -55,8 +53,6 @@ public class TabbedPanel extends JTabbedPane implements LanguageChangeListener, 
 				KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_DOWN_MASK, false),
 				KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.ALT_DOWN_MASK, false)
 			}, this);
-
-		RStr.addLanguageChangeListener(this);
 	}
 
 	@Override
@@ -125,13 +121,6 @@ public class TabbedPanel extends JTabbedPane implements LanguageChangeListener, 
 		request.onRequestVisible(tabbedComp.isTabbedVisible());
 	}
 
-	public void reloadResource()
-	{
-		for(ITabbedComponent tabbed: components) {
-			tabbed.reloadResource();
-		}
-	}
-
 	public void setData(ApkInfo apkInfo, Status status)
 	{
 		for(ITabbedComponent tabbed: components) {
@@ -163,10 +152,5 @@ public class TabbedPanel extends JTabbedPane implements LanguageChangeListener, 
 				}
 			}
 		}
-	}
-
-	@Override
-	public void languageChange(String oldLang, String newLang) {
-		reloadResource();
 	}
 }

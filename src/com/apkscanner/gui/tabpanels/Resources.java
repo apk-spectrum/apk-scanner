@@ -24,8 +24,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RImg;
-import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 
 public class Resources extends AbstractTabbedPanel {
@@ -50,7 +50,7 @@ public class Resources extends AbstractTabbedPanel {
 	}
 
 	public Resources(ActionListener listener) {
-		setTitle(RStr.TAB_RESOURCES.get(), RStr.TAB_RESOURCES.get());
+		setTitle(RComp.TABBED_RESOURCES);
 		setTabbedEnabled(false);
 
 		this.listener = listener;
@@ -193,7 +193,7 @@ public class Resources extends AbstractTabbedPanel {
 		splitPane.setRightComponent(contentPanel);
 		splitPane.setDividerLocation(200);
 
-		this.add(splitPane);
+		add(splitPane);
 	}
 
 	@Override
@@ -217,10 +217,5 @@ public class Resources extends AbstractTabbedPanel {
 		contentPanel.setData(apkInfo);
 
 		setDataSize(apkInfo.resources.length, true, false);
-	}
-
-	@Override
-	public void reloadResource() {
-		setTitle(RStr.TAB_RESOURCES.get(), RStr.TAB_RESOURCES.get());
 	}
 }

@@ -240,7 +240,7 @@ they're removed before the application is published</string>
 	<string name="activity_type_activity">activity</string>
 	<string name="activity_type_service">service</string>
 	<string name="activity_type_receiver">receiver</string>
-	<string name="activity_label_intent_filter">XML Construction</string>
+	<string name="activity_label_xml">XML Construction</string>
 
 	<string name="cert_summury">Summary</string>
 	<string name="cert_certificate">Signature</string>

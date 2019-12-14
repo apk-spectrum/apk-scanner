@@ -12,7 +12,6 @@ public abstract interface ITabbedComponent
 	public Component getComponent();
 
 	public void initialize();
-	public void reloadResource();
 
 	public boolean isTabbedVisible();
 	public boolean isTabbedEnabled();

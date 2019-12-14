@@ -1,15 +1,18 @@
 package com.apkscanner.gui.tabpanels;
 
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.Icon;
 import javax.swing.JPanel;
 
 import com.apkscanner.gui.component.ITabbedComponent;
 import com.apkscanner.gui.component.ITabbedRequest;
+import com.apkscanner.resource.RComp;
 import com.apkscanner.util.Log;
 
-public abstract class AbstractTabbedPanel extends JPanel implements ITabbedComponent {
+public abstract class AbstractTabbedPanel extends JPanel implements ITabbedComponent, PropertyChangeListener {
 	private static final long serialVersionUID = -5636023017306297012L;
 
 	public static final int SEND_REQUEST_NONE = ITabbedRequest.REQUEST_NONE;
@@ -32,6 +35,10 @@ public abstract class AbstractTabbedPanel extends JPanel implements ITabbedCompo
 
 	private ITabbedRequest tabbedRequest;
 
+	{
+		addPropertyChangeListener(RComp.RCOMP_SET_TEXT_KEY, this);
+	}
+
 	@Override
 	public Component getComponent() {
 		return this;
@@ -50,8 +57,13 @@ public abstract class AbstractTabbedPanel extends JPanel implements ITabbedCompo
 	public void setTitle(String title, String toolTip) {
 		setName(title);
 		setToolTipText(toolTip);
+
 		if(tabbedRequest != null)
 			tabbedRequest.onRequestChangeTitle();
+	}
+
+	public void setTitle(RComp res) {
+		if(res != null) res.set(this);
 	}
 
 	@Override
@@ -122,6 +134,15 @@ public abstract class AbstractTabbedPanel extends JPanel implements ITabbedCompo
 	@Override
 	public void setTabbedRequest(ITabbedRequest request) {
 		tabbedRequest = request;
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		if(!RComp.RCOMP_SET_TEXT_KEY.equals(evt.getPropertyName()))
+			return;
+
+		if(tabbedRequest != null)
+			tabbedRequest.onRequestChangeTitle();
 	}
 
 	protected void sendRequest(int request) {

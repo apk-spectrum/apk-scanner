@@ -74,7 +74,7 @@ public class MainUI extends JFrame implements IPlugInEventListener, LanguageChan
 
 		Log.i("initialize() toolbar init");
 		// ToolBar initialize and add
-		toolBar = new ToolBar(this, eventHandler);
+		toolBar = new ToolBar(eventHandler);
 		toolBar.setEnabledAt(ButtonSet.NEED_TARGET_APK, false);
 		toolBar.setEnabledAt(ButtonSet.NEED_DEVICE, false);
 		add(toolBar, BorderLayout.NORTH);
