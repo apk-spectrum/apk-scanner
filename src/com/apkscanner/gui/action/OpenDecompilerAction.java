@@ -6,11 +6,14 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.gui.component.ExtensionButton;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
+import com.apkscanner.gui.tabpanels.ResourceObject;
 import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.resource.RComp;
@@ -85,7 +88,15 @@ public class OpenDecompilerAction extends AbstractApkScannerAction
 	}
 
 	protected String getTargetPath(Window owner, Component comp) {
+		// from OpenResTreeFileAction
 		String target = (String) handler.getData(Integer.toString(comp.hashCode()));
+
+		// from SelectViewPanel
+		if(target == null && comp instanceof JComponent) {
+			ResourceObject resObj = (ResourceObject)((JComponent)comp).getClientProperty(ResourceObject.class);
+			target = uncompressRes(resObj);
+		}
+
 		if(target == null) {
 			if(!hasCode(owner)) return null;
 			ApkInfo apkInfo = getApkInfo();
@@ -114,7 +125,7 @@ public class OpenDecompilerAction extends AbstractApkScannerAction
 			public void onCompleted() {
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
-						if(comp != null) comp.setEnabled(true);
+						setComponentEnabled(comp, true);
 					}
 				});
 			}
@@ -176,8 +187,10 @@ public class OpenDecompilerAction extends AbstractApkScannerAction
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				comp.setEnabled(enabled);
-				if(!enabled) {
-					RComp.BTN_TOOLBAR_OPEN_CODE_LODING.set(comp);
+				if(comp instanceof ExtensionButton) {
+					if(!enabled) {
+						RComp.BTN_TOOLBAR_OPEN_CODE_LODING.set(comp);
+					}
 				}
 			}
 		});

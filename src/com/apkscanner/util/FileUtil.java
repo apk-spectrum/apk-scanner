@@ -2,6 +2,7 @@ package com.apkscanner.util;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -24,8 +25,15 @@ public class FileUtil
 		if(filePath == null) return null;
 		File f = new File(filePath);
 		byte[] buffer = new byte[(int) f.length()];
-		try(InputStream is = new FileInputStream(filePath)) {
-			is.read(buffer);
+		try(InputStream is = new FileInputStream(filePath);
+			ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+			int nRead;
+			byte[] data = new byte[1024];
+			while ((nRead = is.read(data, 0, data.length)) != -1) {
+				os.write(data, 0, nRead);
+		    }
+			os.flush();
+			buffer = os.toByteArray();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

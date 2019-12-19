@@ -87,7 +87,7 @@ public class ResourceTree extends JTree {
 				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
 					if (getPathForLocation(e.getX(), e.getY()) == null) return;
 					listener.actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED,
-							UiEventHandler.ACT_CMD_OPEN_RESOURCE_FILE, e.getWhen(), e.getModifiers()));
+							UiEventHandler.ACT_CMD_OPEN_RESOURCE_TREE_FILE, e.getWhen(), e.getModifiers()));
 				}
 			}
 		});

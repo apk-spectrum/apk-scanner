@@ -35,7 +35,7 @@ import org.fife.ui.rtextarea.SearchEngine;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.component.WindowSizeMemorizer;
-import com.apkscanner.gui.tabpanels.Resources;
+import com.apkscanner.gui.tabpanels.ResContentFocusChanger;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AxmlToXml;
@@ -54,8 +54,10 @@ public class SearchDlg extends JDialog {
 	ImageIcon Loading;
 	JLabel label;
 	static String hoverFilePath;
+	
+	private ResContentFocusChanger changer;
 
-	public SearchDlg() {
+	public SearchDlg(ResContentFocusChanger changer) {
 		setBounds(100, 100, 500, 500);
 		setTitle("Input Dialog");
 		setLocationRelativeTo(null);
@@ -108,6 +110,8 @@ public class SearchDlg extends JDialog {
 		label = new JLabel(RImg.WAIT_BAR.getImageIcon());
 		label.setVisible(false);
 		buttonPanel.add(label);
+
+		this.changer = changer;
 	}
 
 	public void setJTableColumnsWidth(JTable table, int tablePreferredWidth, double... percentages) {
@@ -136,10 +140,8 @@ public class SearchDlg extends JDialog {
 					// your valueChanged overridden method
 					Log.d("click : " + row + "  file : " +(data.get(row)).path + "   line : " + (data.get(row)).line);
 					//ImageResource.setTreeFocus((data.get(row)).path, (data.get(row)).line);
-					Resources.TreeFocusChanger changer = Resources.getTreeFocuschanger();
 					if(changer!=null) {
-						changer.setTreeFocus((data.get(row)).path, (data.get(row)).line, name.getText());
-
+						changer.setResContentFocus((data.get(row)).path, (data.get(row)).line, name.getText());
 					} else {
 						Log.d("TreeFocusChanger = null");
 					}

@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.dialog.SearchDlg;
+import com.apkscanner.gui.tabpanels.ResContentFocusChanger;
 import com.apkscanner.util.Log;
 
 @SuppressWarnings("serial")
@@ -23,7 +24,9 @@ public class OpenSearcherAction extends AbstractApkScannerAction
 		ApkScanner scanner = getApkScanner();
 		if(scanner == null) return;
 
-		SearchDlg dialog = new SearchDlg();
+		ResContentFocusChanger changer = (ResContentFocusChanger) handler.getData(ResContentFocusChanger.class);
+
+		SearchDlg dialog = new SearchDlg(changer);
 		dialog.setApkInfo(scanner.getApkInfo());
 		dialog.setModal(false);
 		dialog.setVisible(true);

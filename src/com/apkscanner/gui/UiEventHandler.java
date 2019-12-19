@@ -43,9 +43,14 @@ import com.apkscanner.gui.action.OpenDecodeJDGUIAction;
 import com.apkscanner.gui.action.OpenDecompilerAction;
 import com.apkscanner.gui.action.OpenPackageAction;
 import com.apkscanner.gui.action.OpenPackageToNewAction;
+import com.apkscanner.gui.action.OpenResFileAction;
+import com.apkscanner.gui.action.OpenResFileApkScannerAction;
+import com.apkscanner.gui.action.OpenResFileArchiveExplorerAction;
+import com.apkscanner.gui.action.OpenResFileSystemSetAction;
 import com.apkscanner.gui.action.OpenResTreeFileAction;
 import com.apkscanner.gui.action.OpenSearcherAction;
 import com.apkscanner.gui.action.OpenSettingsAction;
+import com.apkscanner.gui.action.SaveResFileAction;
 import com.apkscanner.gui.action.ShowAboutAction;
 import com.apkscanner.gui.action.ShowCertDlgAction;
 import com.apkscanner.gui.action.ShowExplorerAction;
@@ -97,8 +102,14 @@ public class UiEventHandler extends ActionEventHandler implements WindowListener
 	public static final String ACT_CMD_SHOW_LOGS				= ShowLogsAction.ACTION_COMMAND;
 	public static final String ACT_CMD_SHOW_MANIFEST			= ShowManifestAction.ACTION_COMMAND;
 	public static final String ACT_CMD_SIGN_APK					= SignApkAction.ACTION_COMMAND;
-	public static final String ACT_CMD_OPEN_RESOURCE_FILE		= OpenResTreeFileAction.ACTION_COMMAND;
 	public static final String ACT_CMD_LOAD_FS_IMG_FILE			= LoadResTreeImgFileAction.ACTION_COMMAND;
+	public static final String ACT_CMD_OPEN_RESOURCE_TREE_FILE	= OpenResTreeFileAction.ACTION_COMMAND;
+	public static final String ACT_CMD_OPEN_RESOURCE_FILE_APK_SCANNER = OpenResFileApkScannerAction.ACTION_COMMAND;
+	public static final String ACT_CMD_OPEN_RESOURCE_FILE_SYSTEM_SET  = OpenResFileSystemSetAction.ACTION_COMMAND;
+	public static final String ACT_CMD_OPEN_RESOURCE_FILE_ARCHIVE	  = OpenResFileArchiveExplorerAction.ACTION_COMMAND;
+	public static final String ACT_CMD_OPEN_RESOURCE_FILE			  = OpenResFileAction.ACTION_COMMAND;
+	public static final String ACT_CMD_SAVE_RESOURCE_FILE			  = SaveResFileAction.ACTION_COMMAND;
+
 
 	public UiEventHandler(ApkScanner apkScanner) {
 		setApkScanner(apkScanner);

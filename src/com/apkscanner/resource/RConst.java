@@ -26,4 +26,7 @@ public class RConst
 	public static final String SS_TEST_KEY_MD5 = "8D:DB:34:2F:2D:A5:40:84:02:D7:56:8A:F2:1E:29:F9";
 
 	public static final String MENU_OWNER_KEY = "MENU_OWNER_KEY";
+
+	public static final String AXML_VEIWER_TYPE_XML	 = "XML";
+	public static final String AXML_VEIWER_TYPE_ARSC = "ARSC";
 }

@@ -1,5 +1,6 @@
 package com.apkscanner.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -114,9 +115,15 @@ public class ZipFileUtil
 		try(ZipFile zipFile = new ZipFile(zipFilePath)) {
 			ZipEntry entry = zipFile.getEntry(srcPath);
 			if(entry != null) {
-				buffer = new byte[(int) entry.getSize()];
-				try(InputStream is = zipFile.getInputStream(entry)) {
-					is.read(buffer);
+				try(InputStream is = zipFile.getInputStream(entry);
+					ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+					int nRead;
+					byte[] data = new byte[1024];
+					while ((nRead = is.read(data, 0, data.length)) != -1) {
+						os.write(data, 0, nRead);
+				    }
+					os.flush();
+					buffer = os.toByteArray();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

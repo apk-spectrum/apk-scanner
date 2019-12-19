@@ -85,41 +85,37 @@ public class ResourceObject implements Cloneable
 	}
 
 	private int getAttr(String path) {
-		int attr = 0;
-		String extension = path.replaceAll(".*/", "").replaceAll(".*\\.", ".").toLowerCase();
-
-		if (extension.endsWith(".xml")) {
+		String extension = path.replaceAll(".*/", "").replaceAll(".*\\.", ".");
+		switch(extension.toLowerCase()) {
+		case ".xml":
 			if (path.startsWith("res/") || path.equals("AndroidManifest.xml"))
-				attr = ATTR_AXML;
+				return ATTR_AXML;
 			else
-				attr = ATTR_XML;
-		} else if (extension.endsWith(".png") || extension.endsWith(".jpg") || extension.endsWith(".gif")
-				|| extension.endsWith(".bmp") || extension.endsWith(".webp")) {
-			attr = ATTR_IMG;
-		} else if (extension.endsWith(".qmg")) {
-			attr = ATTR_QMG;
-		} else if (extension.endsWith(".txt") || extension.endsWith(".mk") || extension.endsWith(".html")
-				|| extension.endsWith(".js") || extension.endsWith(".css") || extension.endsWith(".json")
-				|| extension.endsWith(".props") || extension.endsWith(".properties") || extension.endsWith(".policy")
-				|| extension.endsWith(".mf") || extension.endsWith(".sf") || extension.endsWith(".rc")
-				|| extension.endsWith(".version") || extension.endsWith(".default")) {
-			attr = ATTR_TXT;
-		} else if(extension.endsWith(".rsa") || extension.endsWith(".dsa") || extension.endsWith(".ec")) {
-			attr = ATTR_CERT;
-		} else if(extension.endsWith(".img")) {
-			attr = ATTR_FS_IMG;
-		} else {
-			attr = ATTR_ETC;
+				return ATTR_XML;
+		case ".png": case ".jpg": case ".gif": case ".bmp": case ".webp":
+			return ATTR_IMG;
+		case ".rsa": case ".dsa": case ".ec":
+			return ATTR_CERT;
+		case ".img":
+			return ATTR_FS_IMG;
+		case ".txt": case ".mk": case ".html": case ".htm": case ".js": case ".css":  case ".json":
+		case ".props": case ".properties":  case ".policy": case ".rc": case ".mf": case ".sf":
+		case ".version": case ".default": case ".sql": case ".list": case ".ini": case ".inf":
+		case ".pro": case ".dtd": case ".xsd": case ".svg": case ".pem": case ".csv":
+			return ATTR_TXT;
+		default:
+			return ATTR_ETC;
 		}
-		return attr;
 	}
 
 	@Override
 	public String toString() {
 		String str = null;
 		int childCount = 0;
-		if(node != null && !node.isRoot() /* && !isFolder */)
+		if(node != null && !node.isRoot() /* && !isFolder */
+				&& attr != ATTR_FS_IMG)
 			childCount = node.getChildCount();
+
 		if (childCount > 0) {
 			str = label + " (" + childCount + ")";
 		} else if (config != null && !config.isEmpty()) {
@@ -174,6 +170,7 @@ public class ResourceObject implements Cloneable
 		case ATTR_ETC:
 		case ATTR_FS_IMG:
 		default:
+			break;
 		}
 
 		return (icon != null) ? icon : SystemUtil.getExtensionIcon(getExtension(path));
