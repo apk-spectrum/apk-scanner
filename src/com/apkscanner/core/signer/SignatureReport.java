@@ -101,6 +101,11 @@ public class SignatureReport {
 	}
 
 	public SignatureReport(InputStream inputStream) {
+		this(inputStream, null);
+	}
+
+	public SignatureReport(InputStream inputStream, String signScheme) {
+		this.signScheme = signScheme;
 		//PKCS7 p7;
 		try {
 			//p7 = new PKCS7(inputStream);
@@ -413,6 +418,7 @@ public class SignatureReport {
 			if(signScheme != null) {
 				ps.println("\n* APK Signature Scheme " + signScheme);
 			}
+			ps.println();
 			if(rfc) {
 				dumpCert(cert, ps);
 			}
@@ -527,7 +533,7 @@ public class SignatureReport {
 		StringBuilder sb = new StringBuilder();
 		if(certificates != null) {
 			for(X509Certificate cert: certificates) {
-				sb.append(getReport(cert));
+				sb.append(getReport(cert)).append("\n");
 			}
 		}
 		if(timestamp != null) {
@@ -535,7 +541,7 @@ public class SignatureReport {
 			sb.append(RStr.TIMESTAMP.get());
 			sb.append("\n");
 			for(X509Certificate cert: timestamp) {
-				sb.append(getReport(cert));
+				sb.append(getReport(cert)).append("\n");
 			}
 		}
 		return sb.toString();

@@ -1,7 +1,11 @@
 package com.apkscanner.core.scanner;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.ApkInfo;
@@ -213,10 +217,30 @@ abstract public class ApkScanner
 			return;
 		}
 
+		certList.clear();
 		for (String s : certFilePaths) {
 			String ext = s.toUpperCase();
-			if(!ext.endsWith(".RSA") && !ext.endsWith(".DSA") && !ext.endsWith(".EC") ) {
+			if(ext.endsWith(".MF") || ext.endsWith(".SF")) {
 				certFiles.add(s);
+			} else if(ext.endsWith(".RSA") || ext.endsWith(".DSA") || ext.endsWith(".EC")) {
+				try(ZipFile zipFile = new ZipFile(apkInfo.filePath)) {
+					ZipEntry entry = zipFile.getEntry(s);
+					if(entry != null) {
+						try(InputStream is = zipFile.getInputStream(entry)) {
+							sr = new SignatureReport(is, apkInfo.signatureScheme);
+							for(int i = 0; i < sr.getSize(); i ++) {
+								certList.add(sr.getReport(i));
+							}
+							if(!certList.isEmpty()) {
+								apkInfo.certificates = certList.toArray(new String[certList.size()]);
+							}
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 
