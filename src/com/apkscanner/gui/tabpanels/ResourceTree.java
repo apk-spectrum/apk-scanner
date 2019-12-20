@@ -111,7 +111,9 @@ public class ResourceTree extends JTree {
 	}
 
 	public void addTreeNodes(final String apkFilePath, final String[] resList) {
-		rootNode = new ResourceNode(new ResourceObject(new File(apkFilePath)));
+		final ResourceObject rootResObj = new ResourceObject(new File(apkFilePath));
+		rootResObj.setLoadingState(true);
+		rootNode = new ResourceNode(rootResObj);
 
 		final DefaultMutableTreeNode[] typeNodes =
 				new DefaultMutableTreeNode[ResourceType.COUNT.getInt()];
@@ -161,6 +163,8 @@ public class ResourceTree extends JTree {
 
 					EventQueue.invokeAndWait(new Runnable() {
 						public void run() {
+							rootResObj.setLoadingState(false);
+
 							expandOrCollapsePath(new TreePath(rootNode.getPath()), 1, 0, true);
 
 							for(DefaultMutableTreeNode node = (DefaultMutableTreeNode) rootNode.getFirstChild();
