@@ -57,12 +57,11 @@ public class TabbedPanel extends JTabbedPane implements ActionListener
 
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		int keycode = Integer.parseInt(evt.getActionCommand());
 		int idx = getSelectedIndex();
 		int count = getTabCount();
 		int preIdx = idx;
-		switch(keycode) {
-		case KeyEvent.VK_RIGHT:
+		switch(evt.getActionCommand()) {
+		case "alt pressed RIGHT":
 			do {
 				idx = ++idx % count;
 			} while(!isEnabledAt(idx) && idx != preIdx);
@@ -70,7 +69,7 @@ public class TabbedPanel extends JTabbedPane implements ActionListener
 				setSelectedIndex(idx);
 			}
 			break;
-		case KeyEvent.VK_LEFT:
+		case "alt pressed LEFT":
 			do {
 				idx = (--idx + count) % count;
 			} while(!isEnabledAt(idx) && idx != preIdx);

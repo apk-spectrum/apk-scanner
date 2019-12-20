@@ -7,12 +7,12 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -115,8 +115,7 @@ public class ProgressBarDlg extends JFrame
         
 		KeyStrokeAction.registerKeyStrokeActions(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW, new KeyStroke[] {
 				KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0, false)
-			}, new AbstractAction() {
-				private static final long serialVersionUID = -5281980076592985530L;
+			}, new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					LogDlg.showLogDialog(ProgressBarDlg.this);
 			}

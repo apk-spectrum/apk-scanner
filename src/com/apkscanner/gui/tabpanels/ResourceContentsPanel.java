@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -366,42 +365,35 @@ public class ResourceContentsPanel extends JPanel implements ActionListener
 			}
 		} else if(evt.getSource() instanceof KeyStrokeAction) {
 			KeyStrokeAction keyAction = (KeyStrokeAction) evt.getSource();
-			String keyStroke = KeyEvent.getKeyText( keyAction.getKeyStroke().getKeyCode() );
-			String number = keyStroke.substring(0);
-			int funcKey = keyAction.getModifiers();
-
 			JComponent comp = keyAction.getComponent();
-			switch (number) {
-			case "F":	  /////////F key
+			switch (keyAction.getKeyStroke().toString()) {
+			case "ctrl pressed F":	  /////////F key
 				if(comp instanceof JTable) {
 					resToolbar.setFocusFindTextField();
 				} else {
 					getFindDialog().setVisible(true);
 				}
-
 				break;
-			case "S":	  /////////S key
+			case "ctrl pressed S":	  /////////S key
 				comp.putClientProperty(ResourceObject.class, currentSelectedObj);
 				listener.actionPerformed(new ActionEvent(comp, ActionEvent.ACTION_PERFORMED,
 						UiEventHandler.ACT_CMD_SAVE_RESOURCE_FILE, evt.getWhen(), evt.getModifiers()));
 				break;
-			case "F3":	  /////////F3
+			case "pressed F3":	  /////////F3
 				if(CONTENT_TABLE_VIEWER.equals(currentContentViewer)) {
-					if(funcKey==1) {
-						findNextTable(false);
-					} else {
-						findNextTable(true);
-					}
+					findNextTable(true);
 				} else {
-					if(funcKey==1) {
-						Log.d("shift F3 Key");
-						getFindDialog().getSearchContext().setSearchForward(false);
-						searchAndNext(SearchEvent.Type.FIND, getFindDialog().getSearchContext());
-					} else {
-						Log.d("F3 Key");
-						getFindDialog().getSearchContext().setSearchForward(true);
-						searchAndNext(SearchEvent.Type.FIND, getFindDialog().getSearchContext());
-					}
+					Log.d("F3 Key");
+					getFindDialog().getSearchContext().setSearchForward(true);
+					searchAndNext(SearchEvent.Type.FIND, getFindDialog().getSearchContext());
+				}
+				break;
+			case "shift pressed F3":	  /////////F3
+				if(CONTENT_TABLE_VIEWER.equals(currentContentViewer)) {
+					findNextTable(false);
+				} else {
+					getFindDialog().getSearchContext().setSearchForward(false);
+					searchAndNext(SearchEvent.Type.FIND, getFindDialog().getSearchContext());
 				}
 				break;
 			default:

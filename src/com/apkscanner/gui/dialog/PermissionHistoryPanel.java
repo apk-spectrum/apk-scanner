@@ -793,26 +793,25 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 				setBaseFilter();
 			}
 		} else {
-			int keycode = Integer.parseInt(evt.getActionCommand());
 			int idx;
-			switch(keycode) {
-			case KeyEvent.VK_RIGHT:
+			switch(evt.getActionCommand()) {
+			case "alt pressed RIGHT":
 				idx = extraTabbedPanel.getSelectedIndex();
 				idx = ++idx % extraTabbedPanel.getTabCount();
 				extraTabbedPanel.setSelectedIndex(idx);
 				break;
-			case KeyEvent.VK_LEFT:
+			case "alt pressed LEFT":
 				idx = extraTabbedPanel.getSelectedIndex();
 				idx = (--idx + extraTabbedPanel.getTabCount()) % extraTabbedPanel.getTabCount();
 				extraTabbedPanel.setSelectedIndex(idx);
 				break;
-			case KeyEvent.VK_W:
+			case "ctrl pressed W":
 				idx = extraTabbedPanel.getSelectedIndex();
 				if(idx >= 2) extraTabbedPanel.removeTabAt(idx);
 				break;
-			case KeyEvent.VK_F:
+			case "ctrl pressed F":
 				break;
-			case KeyEvent.VK_ENTER:
+			case "ctrl pressed ENTER":
 				JTable table = (JTable) ((KeyStrokeAction) source).getComponent();
 	        	boolean withCtrl = (evt.getModifiers()
 	        			& (ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK)) != 0;
@@ -823,7 +822,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 	        		addDescriptionTab((Vector<?>) ((DefaultTableModel)model).getDataVector().get(row), !withCtrl);
 	        	}
 	        	break;
-			case KeyEvent.VK_ESCAPE:
+			case "pressed ESCAPE":
 				dialog.dispose();
 				break;
 			}
