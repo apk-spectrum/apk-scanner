@@ -231,16 +231,15 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="lib_column_size">크기</string>
 	<string name="lib_column_compressibility">압축률</string>
 
-	<string name="activity_column_class">클래스</string>
-	<string name="activity_column_type">종류</string>
-	<string name="activity_column_startup">스타트업</string>
-	<string name="activity_column_enabled">상태</string>
-	<string name="activity_column_export">외부공개</string>
-	<string name="activity_column_permission">권한</string>
-	<string name="activity_type_activity">액티비티</string>
-	<string name="activity_type_service">서비스</string>
-	<string name="activity_type_receiver">리시버</string>
-	<string name="activity_label_xml">XML 구문</string>
+	<string name="component_column_class">클래스</string>
+	<string name="component_column_type">종류</string>
+	<string name="component_column_startup">스타트업</string>
+	<string name="component_column_enabled">상태</string>
+	<string name="component_column_export">외부공개</string>
+	<string name="component_column_permission">권한</string>
+	<string name="component_label_xml">XML 구문</string>
+	<string name="component_filter_prompt_xml">XML 구문에서 검색</string>
+	<string name="component_filter_prompt_name">클래스 이름 검색</string>
 
 	<string name="cert_summury">요약</string>
 	<string name="cert_certificate">서명</string>

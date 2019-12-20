@@ -29,4 +29,7 @@ public class RConst
 
 	public static final String AXML_VEIWER_TYPE_XML	 = "XML";
 	public static final String AXML_VEIWER_TYPE_ARSC = "ARSC";
+
+	public static final String COMPONENT_FILTER_TYPE_XML = "XML";
+	public static final String COMPONENT_FILTER_TYPE_CLASS = "CLASS";
 }

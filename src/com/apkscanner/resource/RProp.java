@@ -48,6 +48,7 @@ public enum RProp implements ResProp<Object>, ResString<Object>
 	PK8_FILE_PATH,				/* see getDefualtValue() */
 	PRINT_MULTILINE_ATTR		(true),
 	AXML_VIEWER_TYPE			(RConst.AXML_VEIWER_TYPE_XML),
+	COMP_FILTER_TYPE			(RConst.COMPONENT_FILTER_TYPE_XML),
 
 	EASY_GUI_TOOLBAR			("1,2,3,4,5,7"),
 
@@ -117,6 +118,7 @@ public enum RProp implements ResProp<Object>, ResString<Object>
 		DEFAULT_EXPLORER,
 		DEFAULT_LAUNCH_MODE,
 		AXML_VIEWER_TYPE,
+		COMP_FILTER_TYPE,
 		; // ENUM END
 
 		@Override

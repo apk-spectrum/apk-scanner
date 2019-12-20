@@ -4,22 +4,39 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
 import java.util.Comparator;
 
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
+import org.fife.ui.rtextarea.SearchContext;
+import org.fife.ui.rtextarea.SearchEngine;
 
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ActivityAliasInfo;
@@ -30,7 +47,12 @@ import com.apkscanner.data.apkinfo.ComponentInfo;
 import com.apkscanner.data.apkinfo.ProviderInfo;
 import com.apkscanner.data.apkinfo.ReceiverInfo;
 import com.apkscanner.data.apkinfo.ServiceInfo;
+import com.apkscanner.gui.component.KeyStrokeAction;
+import com.apkscanner.gui.component.TextPrompt;
+import com.apkscanner.gui.component.TextPrompt.Show;
 import com.apkscanner.resource.RComp;
+import com.apkscanner.resource.RConst;
+import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 
@@ -44,9 +66,10 @@ public class Components extends AbstractTabbedPanel
 
 	private JTable table;
 	private SimpleTableModel tableModel;
+	private JTextField textField;
 
 	public Components() {
-		setLayout(new GridLayout(1, 0));
+		setLayout(new BorderLayout());
 		setTitle(RComp.TABBED_COMPONENTS);
 		setTabbedEnabled(false);
 	}
@@ -62,15 +85,14 @@ public class Components extends AbstractTabbedPanel
 				Color temp = null;
 
 				if(isRowSelected(row)) {
-					//c.setForeground(getSelectionForeground());
 					c.setBackground(Color.GRAY);
-				}else{
-					String type = (String) tableModel.getValueAt(row, 1);
+				} else {
+					String type = (String) tableModel.getValueAt(convertRowIndexToModel(row), 1);
 					if("activity".equals(type) || "main".equals(type)) {
 						temp = new Color(0xB7F0B1);
-					} else if("launcher".equals(type)) {
+					} else if("launcher".equals(type) || "launcher-alias".equals(type)) {
 						temp = new Color(0x5D9657);
-					} else if("activity-alias".equals(type)) {
+					} else if("activity-alias".equals(type) || "main-alias".equals(type)) {
 						temp = new Color(0x96E2E2);
 					} else if("service".equals(type)) {
 						temp = new Color(0xB2CCFF);
@@ -87,15 +109,37 @@ public class Components extends AbstractTabbedPanel
 			}
 		};
 		table.setAutoCreateColumnsFromModel(true);
+		table.setRowSorter(new TableRowSorter<TableModel>(tableModel) {
+			{
+				setRowFilter(new RowFilter<TableModel, Integer>() {
+					@Override
+					public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
+						String fileType = RProp.S.COMP_FILTER_TYPE.get();
+						int targetCol = RConst.COMPONENT_FILTER_TYPE_XML.equals(fileType) ? 6 : 0;
+
+						String filterText = textField.getText().trim();
+						String data = (String) tableModel.getValueAt(entry.getIdentifier(), targetCol);
+
+						return data.toLowerCase().contains(filterText.toLowerCase());
+					}
+				});
+				for(int i=0; i<6; i++) setSortable(i, false);
+			}
+		});
 
 		ListSelectionModel cellSelectionModel = table.getSelectionModel();
-
 		cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				if(tableModel.getRowCount() == 0) return;
 				if(table.getSelectedRow() > -1) {
-					xmltextArea.setText((String) tableModel.getValueAt(table.getSelectedRow(), 6));
+					int row = table.convertRowIndexToModel(table.getSelectedRow());
+					xmltextArea.setText((String) tableModel.getValueAt(row, 6));
 					xmltextArea.setCaretPosition(0);
+
+					String text = textField.getText().trim();
+					SearchEngine.markAll(xmltextArea, new SearchContext(text, false));
+				} else {
+					xmltextArea.setText("");
 				}
 			}
 		});
@@ -129,9 +173,90 @@ public class Components extends AbstractTabbedPanel
         Dimension minimumSize = new Dimension(100, 50);
         scrollPane.setMinimumSize(minimumSize);
         intentPanel.setMinimumSize(minimumSize);
-        splitPane.setDividerLocation(200);
+        splitPane.setDividerLocation(150);
+        splitPane.setResizeWeight(0.5);
 
-        add(splitPane);
+        textField = new JTextField();
+        textField.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void removeUpdate(DocumentEvent e) { setFilter(); }
+
+			@Override
+			public void insertUpdate(DocumentEvent e) { setFilter(); }
+
+			@Override
+			public void changedUpdate(DocumentEvent e) { setFilter(); }
+
+			private void setFilter() {
+				int row = table.getSelectedRow();
+				String curClass = null;
+				if(row > -1) curClass = (String) tableModel
+								.getValueAt(table.convertRowIndexToModel(row), 0);
+				tableModel.fireTableDataChanged();
+				if(curClass != null) {
+					int col = table.convertColumnIndexToView(0);
+					for(row = 0; row < table.getRowCount(); row++) {
+						if(curClass.equals(table.getValueAt(row, col))) {
+							table.setRowSelectionInterval(row, row);
+							break;
+						}
+					}
+				}
+				if(table.getSelectedRow() == -1 && table.getRowCount() > 0) {
+					table.setRowSelectionInterval(0, 0);
+				}
+			}
+		});
+		textField.addFocusListener(new FocusListener() {
+			@Override
+			public void focusLost(FocusEvent evt) {
+				textField.setBackground(new Color(255, 255, 255));
+			}
+
+			@Override
+			public void focusGained(FocusEvent evt) {
+				textField.setBackground(new Color(178, 235, 244));
+			}
+		});
+
+		KeyStrokeAction.registerKeyStrokeAction(textField, JComponent.WHEN_FOCUSED,
+				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				textField.setText("");
+			}
+		});
+
+		final TextPrompt tp7 = new TextPrompt(null, textField, Show.FOCUS_LOST);
+		tp7.setForeground( Color.DARK_GRAY );
+		tp7.changeAlpha(0.5f);
+		tp7.changeStyle(Font.BOLD + Font.ITALIC);
+
+		String[] petStrings = { RConst.COMPONENT_FILTER_TYPE_XML, RConst.COMPONENT_FILTER_TYPE_CLASS };
+		final JComboBox<String> filterTypeCombobox = new JComboBox<>(petStrings);
+		filterTypeCombobox.setActionCommand("ACT_CMD_FILTER");
+		filterTypeCombobox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String fileType = filterTypeCombobox.getSelectedItem().toString();
+				RProp.S.COMP_FILTER_TYPE.set(fileType);
+
+				RComp res = RConst.COMPONENT_FILTER_TYPE_XML.equals(fileType)
+						? RComp.COMPONENT_FILTER_PROMPT_XML : RComp.COMPONENT_FILTER_PROMPT_NAME;
+				res.set(tp7);
+
+				textField.setText(textField.getText());
+			}
+		});
+		filterTypeCombobox.setSelectedItem(RProp.S.COMP_FILTER_TYPE.get());
+
+		JPanel filterPanel = new JPanel(new BorderLayout(1, 0));
+		filterPanel.setBorder(new EmptyBorder(0, 0, 2, 0));
+		filterPanel.add(filterTypeCombobox, BorderLayout.WEST);
+		filterPanel.add(textField, BorderLayout.CENTER);
+
+		add(filterPanel, BorderLayout.NORTH);
+        add(splitPane, BorderLayout.CENTER);
 	}
 
 	@Override
@@ -152,12 +277,12 @@ public class Components extends AbstractTabbedPanel
 		private static final long serialVersionUID = 5291910634830167294L;
 
 		CompTableModel() {
-			super(	RStr.ACTIVITY_COLUME_CLASS,
-					RStr.ACTIVITY_COLUME_TYPE,
-					RStr.ACTIVITY_COLUME_ENABLED,
-					RStr.ACTIVITY_COLUME_EXPORT,
-					RStr.ACTIVITY_COLUME_PERMISSION,
-					RStr.ACTIVITY_COLUME_STARTUP );
+			super(	RStr.COMPONENT_COLUME_CLASS,
+					RStr.COMPONENT_COLUME_TYPE,
+					RStr.COMPONENT_COLUME_ENABLED,
+					RStr.COMPONENT_COLUME_EXPORT,
+					RStr.COMPONENT_COLUME_PERMISSION,
+					RStr.COMPONENT_COLUME_STARTUP );
 		}
 
 		@Override
@@ -263,8 +388,5 @@ public class Components extends AbstractTabbedPanel
 			}
 			return type;
 		}
-
-		@Override
-		public boolean isCellEditable(int row, int col) { return true; }
 	}
 }

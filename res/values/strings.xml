@@ -231,16 +231,15 @@ they're removed before the application is published</string>
 	<string name="lib_column_size">Size</string>
 	<string name="lib_column_compressibility">Compressibility</string>
 
-	<string name="activity_column_class">Class</string>
-	<string name="activity_column_type">Type</string>
-	<string name="activity_column_startup">Startup</string>
-	<string name="activity_column_enabled">Enabled</string>
-	<string name="activity_column_export">Export</string>
-	<string name="activity_column_permission">Permission</string>
-	<string name="activity_type_activity">activity</string>
-	<string name="activity_type_service">service</string>
-	<string name="activity_type_receiver">receiver</string>
-	<string name="activity_label_xml">XML Construction</string>
+	<string name="component_column_class">Class</string>
+	<string name="component_column_type">Type</string>
+	<string name="component_column_startup">Startup</string>
+	<string name="component_column_enabled">Enabled</string>
+	<string name="component_column_export">Export</string>
+	<string name="component_column_permission">Permission</string>
+	<string name="component_label_xml">XML Construction</string>
+	<string name="component_filter_prompt_xml">Filter by XML Construction</string>
+	<string name="component_filter_prompt_name">Filter by Class name</string>
 
 	<string name="cert_summury">Summary</string>
 	<string name="cert_certificate">Signature</string>
