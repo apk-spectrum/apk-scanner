@@ -409,6 +409,7 @@ public class SignatureReport {
     }
 
 	public String getReport(X509Certificate cert) {
+		if(cert == null) return "Unknown certificate format";
 		Log.v(Integer.toHexString(cert.hashCode()));
 
 		ByteArrayOutputStream bufferStream = new ByteArrayOutputStream();

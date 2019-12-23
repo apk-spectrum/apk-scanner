@@ -94,7 +94,7 @@ public class ResourceObject implements Cloneable
 				return ATTR_XML;
 		case ".png": case ".jpg": case ".gif": case ".bmp": case ".webp":
 			return ATTR_IMG;
-		case ".rsa": case ".dsa": case ".ec":
+		case ".rsa": case ".dsa": case ".ec": case ".der":
 			return ATTR_CERT;
 		case ".img":
 			return ATTR_FS_IMG;
