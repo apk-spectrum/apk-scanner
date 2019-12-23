@@ -121,19 +121,20 @@ public class OpenDecompilerAction extends AbstractApkScannerAction
 		setComponentEnabled(comp, false);
 		Dex2JarWrapper.convert(targetPath, jarfileName, comp == null
 				? null : new Dex2JarWrapper.DexWrapperListener() {
+			private boolean completed;
 			@Override
 			public void onCompleted() {
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						setComponentEnabled(comp, true);
-					}
-				});
+				if(completed) return;
+				setComponentEnabled(comp, true);
+				completed = true;
 			}
 
 			@Override
 			public void onError(final String message) {
+				if(completed) return;
 				Log.e("Failure: Fail Dex2Jar : " + message);
 				setComponentEnabled(comp, true);
+				completed = true;
 			}
 
 			@Override
@@ -149,10 +150,14 @@ public class OpenDecompilerAction extends AbstractApkScannerAction
 		setComponentEnabled(comp, false);
 		JADXLauncher.run(getTargetPath(owner, comp), comp == null
 				? null : new ConsoleOutputObserver() {
+			private boolean completed;
 			@Override
 			public boolean ConsolOutput(String output) {
-				if(output.startsWith("INFO")) {
+				if(completed) return true;
+				if(output.startsWith("INFO")
+						|| output.equals("JADXLauncher Completed")) {
 					setComponentEnabled(comp, true);
+					completed = true;
 				}
 				return true;
 			}
@@ -165,10 +170,14 @@ public class OpenDecompilerAction extends AbstractApkScannerAction
 		setComponentEnabled(comp, false);
 		BytecodeViewerLauncher.run(targetPath, comp == null
 				? null : new ConsoleOutputObserver() {
+			private boolean completed;
 			@Override
 			public boolean ConsolOutput(String output) {
-				if(output.startsWith("Start up") || output.startsWith("I:")) {
+				if(completed) return true;
+				if(output.startsWith("Start up") || output.startsWith("I:")
+						|| output.equals("BytecodeViewerLauncher Completed")) {
 					setComponentEnabled(comp, true);
+					completed = true;
 				}
 				return true;
 			}

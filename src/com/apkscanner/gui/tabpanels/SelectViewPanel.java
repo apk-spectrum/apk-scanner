@@ -188,7 +188,7 @@ public class SelectViewPanel extends JPanel implements ActionListener
 
 	public void setMenu(ResourceObject resObj) {
 		this.resObj = resObj;
-		if(resObj.path.endsWith(".dex")) {
+		if(resObj.path.endsWith(".dex") || resObj.path.endsWith(".jar")) {
 			setMenu(  SelectViewPanel.SELECT_VIEW_ICON_JD_OPEN
 					| SelectViewPanel.SELECT_VIEW_ICON_CHOOSE_APPLICATION );
 		} else if(resObj.path.endsWith(".apk")) {

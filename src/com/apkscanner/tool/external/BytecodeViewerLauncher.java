@@ -30,6 +30,9 @@ public class BytecodeViewerLauncher
 			{
 				ConsolCmd.exec(new String[] {"java", "-version"}, true, observer);
 				ConsolCmd.exec(new String[] {"java", "-jar", RFile.BIN_BYTECODE_VIEWER.get(), jarFilePath}, true, observer);
+				if(observer != null) {
+					observer.ConsolOutput("BytecodeViewerLauncher Completed");
+				}
 			}
 		});
 		t.setPriority(Thread.NORM_PRIORITY);
