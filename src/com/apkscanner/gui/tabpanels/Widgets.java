@@ -80,26 +80,26 @@ public class Widgets extends AbstractTabbedPanel
 
 			String preferLang = RProp.S.PREFERRED_LANGUAGE.get();
 			for(WidgetInfo w: apkInfo.widgets) {
-				ImageIcon myimageicon = null;
+				ImageIcon previewImage = null;
 				try {
 					ResourceInfo[] icons = w.icons;
 					String icon = icons[icons.length-1].name;
 					if(icon.toLowerCase().endsWith(".webp")) {
-						myimageicon = new ImageIcon(ImageIO.read(new URL(icon)));
+						previewImage = new ImageIcon(ImageIO.read(new URL(icon)));
 					} else {
-						myimageicon = new ImageIcon(new URL(icon));
+						previewImage = new ImageIcon(new URL(icon));
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				if(myimageicon != null) {
-					myimageicon.setImage(ImageScaler.getMaintainAspectRatioImage(myimageicon,100,100));
+				if(previewImage != null) {
+					previewImage.setImage(ImageScaler.getMaintainAspectRatioImage(previewImage,100,100));
 				}
 
 				String label = ApkInfoHelper.getResourceValue(w.lables, preferLang);
 				if(label == null) label = ApkInfoHelper.getResourceValue(apkInfo.manifest.application.labels, preferLang);
 				String enabled = (w.enabled == null || w.enabled) ? "O" : "X";
-				Object[] temp = { myimageicon , label, w.size, w.name, enabled, w.type};
+				Object[] temp = { previewImage , label, w.size, w.name, enabled, w.type};
 				data.add(temp);
 			}
 
