@@ -13,6 +13,7 @@ import com.apkscanner.gui.tabpanels.ResourceNode;
 import com.apkscanner.gui.tabpanels.ResourceObject;
 import com.apkscanner.tool.external.ImgExtractorWrapper;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.SystemUtil;
 import com.apkscanner.util.ZipFileUtil;
 
 @SuppressWarnings("serial")
@@ -51,7 +52,11 @@ public class LoadResTreeImgFileAction extends AbstractApkScannerAction
 						if(!new File(imgPath).exists()) {
 							ZipFileUtil.unZip(apkInfo.filePath, resObj.path, imgPath);
 						}
-						ImgExtractorWrapper.extracte(imgPath, extPath);
+						if(SystemUtil.isWindows()) {
+							ImgExtractorWrapper.extracte(imgPath, extPath);
+						} else {
+
+						}
 						return extPath;
 					}
 

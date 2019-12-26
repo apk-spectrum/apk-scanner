@@ -49,6 +49,7 @@ import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.tool.external.ImgExtractorWrapper;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.SystemUtil;
 import com.apkscanner.util.ZipFileUtil;
 
 public class ResourceContentsPanel extends JPanel implements ActionListener
@@ -503,8 +504,12 @@ public class ResourceContentsPanel extends JPanel implements ActionListener
 			if(!new File(imgPath).exists()) {
 				ZipFileUtil.unZip(apkInfo.filePath, resObj.path, imgPath);
 			}
-			content = ImgExtractorWrapper.getSuperblockInfo(imgPath);
-			content += ImgExtractorWrapper.getLsInfo(imgPath);
+			if(SystemUtil.isWindows()) {
+				content = ImgExtractorWrapper.getSuperblockInfo(imgPath);
+				content += ImgExtractorWrapper.getLsInfo(imgPath);
+			} else {
+				content = "Not Supported in linux";
+			}
 			break;
 		default:
 			content = "This type is unsupported by preview.";

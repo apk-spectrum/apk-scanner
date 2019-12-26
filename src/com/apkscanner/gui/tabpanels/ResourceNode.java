@@ -7,6 +7,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
 import com.apkscanner.gui.component.SortedMutableTreeNode;
+import com.apkscanner.util.SystemUtil;
 
 public class ResourceNode extends SortedMutableTreeNode
 {
@@ -71,9 +72,14 @@ public class ResourceNode extends SortedMutableTreeNode
     		Object uo = node.getUserObject();
 	    	if(uo instanceof ResourceObject) {
 				if(((ResourceObject) uo).attr == ResourceObject.ATTR_FS_IMG) {
-					ResourceObject obj = new ResourceObject("Loading...");
+					ResourceObject obj;
+					if(SystemUtil.isWindows()) {
+						obj = new ResourceObject("Loading...");
+						obj.setLoadingState(true);
+					} else {
+						obj = new ResourceObject("Not Supported in linux");
+					}
 					node.add(new ResourceNode(obj));
-					obj.setLoadingState(true);
 				}
 	    	}
     	}
