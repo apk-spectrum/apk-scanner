@@ -2,7 +2,9 @@ package com.apkscanner.core.scanner;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import com.apkscanner.data.apkinfo.ActionInfo;
 import com.apkscanner.data.apkinfo.ActivityAliasInfo;
@@ -18,6 +20,7 @@ import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.data.apkinfo.PermissionTreeInfo;
 import com.apkscanner.data.apkinfo.ProviderInfo;
 import com.apkscanner.data.apkinfo.ReceiverInfo;
+import com.apkscanner.data.apkinfo.ResourceEntry;
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.data.apkinfo.ServiceInfo;
 import com.apkscanner.data.apkinfo.SupportsGlTextureInfo;
@@ -29,12 +32,12 @@ import com.apkscanner.data.apkinfo.UsesPermissionInfo;
 import com.apkscanner.data.apkinfo.UsesPermissionSdk23Info;
 import com.apkscanner.data.apkinfo.WidgetInfo;
 import com.apkscanner.resource.RImg;
-import com.apkscanner.resource.RProp;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AaptXmlTreeNode;
 import com.apkscanner.tool.aapt.AaptXmlTreePath;
 import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.SystemUtil;
 
 public class AaptManifestReader
 {
@@ -78,7 +81,6 @@ public class AaptManifestReader
 	public void setResourceScanner(AaptNativeScanner scanner) {
 		this.resourceScanner = scanner;
 		a2xml = new AxmlToXml(resourceScanner);
-		a2xml.setMultiLinePrint(RProp.B.PRINT_MULTILINE_ATTR.get());
 	}
 
 	public void readBasicInfo()
@@ -245,99 +247,91 @@ public class AaptManifestReader
 		AaptXmlTreeNode[] widgetTag = manifestPath.getNodeList("/manifest/application/receiver/"
         		+ "meta-data[@" + namespace + "name='android.appwidget.provider']/..");
 
+		Entry<String, ResourceInfo[]> resSet = null;
         for( int idx=0; idx < widgetTag.length; idx++ ){
         	WidgetInfo widget = new WidgetInfo();
         	widget.icons = manifestInfo.application.icons;
         	widget.type = "Normal";
-        	widget.lables = getAttrResourceValues(widgetTag[idx], "label");
+
+        	resSet = getAttrResourceEntry(widgetTag[idx], "label");
+        	widget.resourceMap.put("label", resSet);
+        	widget.labels = resSet.getValue();
+
         	widget.name = getAttrValue(widgetTag[idx], "name");
         	if(widget.name != null && widget.name.startsWith(".")) {
         		widget.name = manifestInfo.packageName + widget.name;
         	}
         	widget.enabled = getAttrBooleanValue(widgetTag[idx], "enabled");
 
+        	resSet = null;
         	AaptXmlTreeNode[] meta = widgetTag[idx].getNodeList("meta-data");
-        	String resource = null;
         	for(AaptXmlTreeNode m: meta) {
         		if("android.appwidget.provider".equals(getAttrValue(m, "name"))) {
-        			resource = m.getAttribute(namespace + "resource");
-        			if(resource != null) break;
+                	resSet = getAttrResourceEntry(m, "resource");
+        			if(resSet.getKey() != null)  {
+                    	widget.resourceMap.put("meta-data/resource", resSet);
+        				widget.xmlMetaData = a2xml.convertToText(m, namespace);
+        				readWidgetResourceInfo(apkFilePath, widget, resSet.getValue());
+        				break;
+        			}
         		}
         	}
-
-        	if(resource != null) {
-	        	Object[] extraInfo = getWidgetInfo(apkFilePath, getResourceValues(resource));
-	        	if(extraInfo[0] != null) {
-	        		widget.icons = (ResourceInfo[]) extraInfo[0];
-	        	}
-	        	if(extraInfo[1] != null) {
-	        		widget.size = (String) extraInfo[1];
-	        	}
-        	} else {
-        		widget.size = "Unknown";
-        	}
+        	widget.xmlString = a2xml.convertToText(widgetTag[idx], namespace);
         	widgetList.add(widget);
         }
 
-        widgetTag = manifestPath.getNodeList("/manifest/application/activity/intent-filter/"
-        		+ "category[@" + namespace + "name='android.intent.category.LAUNCHER']/../"
-        		+ "action[@" + namespace + "name='android.intent.action.MAIN']/../../"
-        		+ "meta-data[@" + namespace + "name='android.app.shortcuts']");
+        widgetTag = SystemUtil.joinArray(
+    		manifestPath.getNodeList("/manifest/application/activity/intent-filter/"
+            		+ "category[@" + namespace + "name='android.intent.category.LAUNCHER']/../"
+            		+ "action[@" + namespace + "name='android.intent.action.MAIN']/../../"
+            		+ "meta-data[@" + namespace + "name='android.app.shortcuts']"),
+    		manifestPath.getNodeList("/manifest/application/activity-alias/intent-filter/"
+            		+ "category[@" + namespace + "name='android.intent.category.LAUNCHER']/../"
+            		+ "action[@" + namespace + "name='android.intent.action.MAIN']/../../"
+            		+ "meta-data[@" + namespace + "name='android.app.shortcuts']")
+    		);
         for(AaptXmlTreeNode node: widgetTag) {
-        	WidgetInfo[] shorcuts = getLuncherShortCuts(apkFilePath, getAttrResourceValues(node, "resource"));
+        	WidgetInfo[] shorcuts = getLuncherShortCuts(apkFilePath, getAttrValue(node, "resource"));
         	if(shorcuts != null) {
         		for(WidgetInfo w: shorcuts) {
-        			if(w.name == null || w.name.isEmpty()) {
-        				w.name = getAttrValue(node.getParent(), "name");
-        			}
+       				w.name = getAttrValue(node.getParent(), "name");
+        	    	if(w.name != null && w.name.startsWith("."))
+        	    		w.name = manifestInfo.packageName + w.name;
+        	    	w.xmlMetaData = a2xml.convertToText(node, namespace);
+                	w.xmlString = a2xml.convertToText(node.getParent(), namespace);
         			widgetList.add(w);
         		}
         	}
         }
 
-        widgetTag = manifestPath.getNodeList("/manifest/application/activity-alias/intent-filter/"
-        		+ "category[@" + namespace + "name='android.intent.category.LAUNCHER']/../"
-        		+ "action[@" + namespace + "name='android.intent.action.MAIN']/../../"
-        		+ "meta-data[@" + namespace + "name='android.app.shortcuts']");
+        widgetTag = SystemUtil.joinArray(
+        	manifestPath.getNodeList("/manifest/application/activity/intent-filter/"
+        		+ "action[@" + namespace + "name='android.intent.action.CREATE_SHORTCUT']/../.."),
+            manifestPath.getNodeList("/manifest/application/activity-alias/intent-filter/"
+            		+ "action[@" + namespace + "name='android.intent.action.CREATE_SHORTCUT']/../..")
+        	);
         for(AaptXmlTreeNode node: widgetTag) {
-        	WidgetInfo[] shorcuts = getLuncherShortCuts(apkFilePath, getAttrResourceValues(node, "resource"));
-        	if(shorcuts != null) {
-        		for(WidgetInfo w: shorcuts) {
-        			if(w.name == null || w.name.isEmpty()) {
-        				w.name = getAttrValue(node.getParent(), "name");
-        			}
-        			widgetList.add(w);
-        		}
-        	}
+        	WidgetInfo widget = getActivityShortCut(node);
+        	widget.xmlString = a2xml.convertToText(node, namespace);
+        	widgetList.add(widget);
         }
 
-        widgetTag = manifestPath.getNodeList("/manifest/application/activity/intent-filter/"
-        		+ "action[@" + namespace + "name='android.intent.action.CREATE_SHORTCUT']/../..");
-        for(AaptXmlTreeNode node: widgetTag) {
-        	widgetList.add(getActivityShortCut(node));
-        }
-
-        widgetTag = manifestPath.getNodeList("/manifest/application/activity-alias/intent-filter/"
-        		+ "action[@" + namespace + "name='android.intent.action.CREATE_SHORTCUT']/../..");
-        for(AaptXmlTreeNode node: widgetTag) {
-        	widgetList.add(getActivityShortCut(node));
-        }
-
-		return widgetList.toArray(new WidgetInfo[0]);
+		return widgetList.toArray(new WidgetInfo[widgetList.size()]);
 	}
 
-	private Object[] getWidgetInfo(String apkFilePath, ResourceInfo[] widgetRes)
+	private void readWidgetResourceInfo(String apkFilePath, WidgetInfo widget, ResourceInfo[] resources)
 	{
-		List<ResourceInfo> iconResList = new ArrayList<>();
-		List<String> previewIds = new ArrayList<>();
-		String widgetSize = null;
-
-		if(widgetRes == null || widgetRes.length <= 0
+		if(resources == null || resources.length <= 0
 				|| apkFilePath == null || !(new File(apkFilePath)).exists()) {
-			return new Object[] { null, null };
+    		widget.size = "Unknown";
+			return;
 		}
 
-		for(ResourceInfo r: widgetRes) {
+		String widgetSize = null;
+		List<ResourceInfo> iconResList = new ArrayList<>();
+		List<String> previewIds = new ArrayList<>();
+
+		for(ResourceInfo r: resources) {
 			if(r.name == null || r.name.isEmpty()) continue;
 
 			String[] wdgXml = AaptNativeWrapper.Dump.getXmltree(apkFilePath, new String[] { r.name });
@@ -391,15 +385,23 @@ public class AaptManifestReader
 				}
 			}
 
-			String preview = getAttrValue(widgetNode, "previewImage", widgetNamespace);
-			if(preview != null && !previewIds.contains(preview)) {
-				previewIds.add(preview);
-				ResourceInfo[] iconPaths = getResourceValues(preview);
-				if(iconPaths != null) {
+			Entry<String, ResourceInfo[]> resSet = null;
+			resSet = getAttrResourceEntry(widgetNode, "initialLayout", widgetNamespace);
+			if(resSet.getKey() != null && resSet.getValue() != null) {
+				widget.resourceMap.put(r.name + "/initialLayout", resSet);
+			}
+
+			resSet = getAttrResourceEntry(widgetNode, "previewImage", widgetNamespace);
+			if(resSet.getKey() != null && resSet.getValue() != null) {
+				widget.resourceMap.put(r.name + "/previewImage", resSet);
+				if(!previewIds.contains(resSet.getKey())) {
+					previewIds.add(resSet.getKey());
 					String urlFilePath = apkFilePath.replaceAll("#", "%23");
 					String jarPath = "jar:file:" + urlFilePath + "!/";
-					for(ResourceInfo icon: iconPaths) {
+					for(ResourceInfo icon: resSet.getValue()) {
 						if(icon.name != null && !icon.name.isEmpty()) {
+							if(icon.name.startsWith("@")) continue;
+							icon = icon.clone();
 							if(icon.name.endsWith("qmg")) {
 								icon.name = RImg.QMG_IMAGE_ICON.getPath();
 							} else {
@@ -412,84 +414,119 @@ public class AaptManifestReader
 			}
 		}
 
-		ResourceInfo[] iconList = null;
 		if(iconResList.size() > 0)
-			iconList = iconResList.toArray(new ResourceInfo[iconResList.size()]);
-		if(widgetSize == null)
-			widgetSize = "Unknown";
+			widget.icons = iconResList.toArray(new ResourceInfo[iconResList.size()]);
 
-		return new Object[] { iconList, widgetSize };
+		widget.size = widgetSize != null ? widgetSize : "Unknown";
 	}
 
-	private WidgetInfo[] getLuncherShortCuts(String apkFilePath, ResourceInfo[] shortcutRes) {
+	private WidgetInfo[] getLuncherShortCuts(String apkFilePath, String shortcutResId) {
+		ResourceInfo[] shortcutRes = getResourceValues(shortcutResId);
 		if(shortcutRes == null || shortcutRes.length <= 0) {
 			return null;
 		}
 
+		WidgetInfo[] widgets = null;
+		HashMap<String, Entry<String, ResourceInfo[]>> resourceMap = new HashMap<>();
+		resourceMap.put("meta-data/resource", getAttrResourceEntry(shortcutResId));
+
 		ResourceInfo xmlRes = null;
 		for(ResourceInfo r: shortcutRes) {
 			if(r == null || r.name == null || r.name.isEmpty()) continue;
+
+			String[] wdgXml = AaptNativeWrapper.Dump.getXmltree(apkFilePath, new String[] { r.name });
+			AaptXmlTreePath widgetTree = new AaptXmlTreePath(wdgXml);
+			String widgetNamespace = widgetTree.getAndroidNamespaceTag() + ":";
+			Log.v("widgetNamespace : " + widgetNamespace);
+
+			AaptXmlTreeNode[] shortcuts = widgetTree.getNodeList("/shortcuts/shortcut");
+			if(shortcuts == null || shortcuts.length <= 0) {
+				Log.w("no such shortcut" + r.name);
+				continue;
+			}
+
+			Entry<String, ResourceInfo[]> resSet = null;
+
+			ResourceInfo[] shortcutIds = new ResourceInfo[shortcuts.length];
+			resourceMap.put(r.name + "/shortcuts", new ResourceEntry(r.name + "/shortcuts", shortcutIds));
+
+			WidgetInfo[] shortcutList = new WidgetInfo[shortcuts.length];
+			for(int i = 0; i < shortcuts.length; i++) {
+				WidgetInfo widget = shortcutList[i] = new WidgetInfo(resourceMap);
+				widget.type = "Shortcut";
+		    	widget.size = "1 X 1";
+				widget.enabled = getAttrBooleanValue(shortcuts[i], "enabled", widgetNamespace);
+				widget.shortcutId = getAttrValue(shortcuts[i], "shortcutId", widgetNamespace);
+				if(widget.shortcutId == null || widget.shortcutId.isEmpty()) {
+					widget.shortcutId = "Shortcut [" + Integer.toString(i) + "]";
+				}
+				widget.mapId = r.name + "/" + widget.shortcutId + "/";
+				shortcutIds[i] = new ResourceInfo(widget.mapId, widget.shortcutId);
+				String shortcutXml = a2xml.convertToText(shortcuts[i], widgetNamespace);
+				widget.resourceMap.put(widget.mapId + "xml", new ResourceEntry(shortcutXml, null));
+
+				resSet = getAttrResourceEntry(shortcuts[i], "icon", widgetNamespace);
+				widget.icons = resSet != null ? resSet.getValue() : null;
+				if(widget.icons != null) {
+					widget.icons = widget.icons.clone();
+					for(int j=0; j<widget.icons.length; j++)
+						widget.icons[j] = widget.icons[j].clone();
+					widget.resourceMap.put(widget.mapId + "icon", resSet);
+					String urlFilePath = apkFilePath.replaceAll("#", "%23");
+					String jarPath = "jar:file:" + urlFilePath + "!/";
+					for(ResourceInfo icon: widget.icons) {
+						if(icon.name != null && !icon.name.isEmpty()) {
+							if(icon.name.endsWith("qmg")) {
+								icon.name = RImg.QMG_IMAGE_ICON.getPath();
+							} else {
+								icon.name = jarPath + icon.name;
+							}
+						}
+					}
+				}
+				if(widget.icons == null)
+					widget.icons = manifestInfo.application.icons;
+
+				resSet = getAttrResourceEntry(shortcuts[i], "shortcutDisabledMessage", widgetNamespace);
+				if(resSet.getValue() != null) {
+					widget.labels = resSet.getValue();
+					widget.resourceMap.put(widget.mapId + "shortcutDisabledMessage", resSet);
+				}
+
+				resSet = getAttrResourceEntry(shortcuts[i], "shortcutShortLabel", widgetNamespace);
+				if(resSet.getValue() != null) {
+					widget.labels = resSet.getValue();
+					widget.resourceMap.put(widget.mapId + "shortcutShortLabel", resSet);
+				}
+
+				resSet = getAttrResourceEntry(shortcuts[i], "shortcutLongLabel", widgetNamespace);
+				if(resSet.getValue() != null) {
+					widget.labels = resSet.getValue();
+					widget.resourceMap.put(widget.mapId + "shortcutLongLabel", resSet);
+				}
+
+		    	if(widget.labels == null) {
+		    		widget.labels = manifestInfo.application.labels;
+		    	}
+				widget.resourceMap.put(widget.mapId + "label", resSet);
+
+		    	AaptXmlTreeNode[] intentNodes = shortcuts[i].getNodeList("intent");
+		    	if(intentNodes != null) {
+		        	for(AaptXmlTreeNode intent: intentNodes) {
+		        		widget.tartget = getAttrValue(intent, "targetClass", widgetNamespace);
+		        		if(widget.tartget != null) break;
+		        	}
+		    	}
+			}
+
 			if(xmlRes == null || getV(xmlRes.configuration) < getV(r.configuration)) {
 				xmlRes = r;
+				widgets = shortcutList;
 			}
 		}
 		Log.v("getLuncherShortCuts() " + xmlRes.configuration + ", " + xmlRes.name);
 
-		String[] wdgXml = AaptNativeWrapper.Dump.getXmltree(apkFilePath, new String[] { xmlRes.name });
-		AaptXmlTreePath widgetTree = new AaptXmlTreePath(wdgXml);
-		String widgetNamespace = widgetTree.getAndroidNamespaceTag() + ":";
-		Log.v("widgetNamespace : " + widgetNamespace);
-
-		AaptXmlTreeNode[] shortcuts = widgetTree.getNodeList("/shortcuts/shortcut");
-		if(shortcuts == null || shortcuts.length <= 0) {
-			Log.w("no such shortcut" + xmlRes.name);
-			return null;
-		}
-
-		WidgetInfo[] shortcutList = new WidgetInfo[shortcuts.length];
-		for(int i = 0; i < shortcuts.length; i++) {
-			WidgetInfo widget = new WidgetInfo();
-			shortcutList[i] = widget;
-
-			widget.type = "Shortcut";
-	    	widget.size = "1 X 1";
-			widget.enabled = getAttrBooleanValue(shortcuts[i], "enabled", widgetNamespace);
-
-			widget.icons = getAttrResourceValues(shortcuts[i], "icon", widgetNamespace);
-			if(widget.icons != null) {
-				String urlFilePath = apkFilePath.replaceAll("#", "%23");
-				String jarPath = "jar:file:" + urlFilePath + "!/";
-				for(ResourceInfo icon: widget.icons) {
-					if(icon.name != null && !icon.name.isEmpty()) {
-						if(icon.name.endsWith("qmg")) {
-							icon.name = RImg.QMG_IMAGE_ICON.getPath();
-						} else {
-							icon.name = jarPath + icon.name;
-						}
-					}
-				}
-			}
-			if(widget.icons == null)
-				widget.icons = manifestInfo.application.icons;
-
-			widget.lables = getAttrResourceValues(shortcuts[i], "shortcutLongLabel", widgetNamespace);
-	    	if(widget.lables == null)
-	    		widget.lables = getAttrResourceValues(shortcuts[i], "shortcutShortLabel", widgetNamespace);
-	    	if(widget.lables == null)
-	    		widget.lables = manifestInfo.application.labels;
-
-	    	AaptXmlTreeNode[] intentNodes = shortcuts[i].getNodeList("intent");
-	    	if(intentNodes != null) {
-	        	for(AaptXmlTreeNode intent: intentNodes) {
-	        		widget.name = getAttrValue(intent, "targetClass", widgetNamespace);
-	        		if(widget.name != null) break;
-	        	}
-	    	}
-	    	if(widget.name != null && widget.name.startsWith("."))
-	    		widget.name = manifestInfo.packageName + widget.name;
-		}
-
-		return shortcutList;
+		return widgets;
 	}
 
 	private int getV(String config) {
@@ -501,9 +538,11 @@ public class AaptManifestReader
     	WidgetInfo widget = new WidgetInfo();
     	widget.icons = manifestInfo.application.icons;
     	widget.type = "Shortcut";
-    	widget.lables = getAttrResourceValues(node, "label");
-    	if(widget.lables == null)
-    		widget.lables = manifestInfo.application.labels;
+    	Entry<String, ResourceInfo[]> resSet = getAttrResourceEntry(node, "label");
+    	widget.resourceMap.put("label", resSet);
+    	widget.labels = resSet.getValue();
+    	if(widget.labels == null)
+    		widget.labels = manifestInfo.application.labels;
     	widget.name = getAttrValue(node, "name");
     	if(widget.name != null && widget.name.startsWith("."))
     		widget.name = manifestInfo.packageName + widget.name;
@@ -943,7 +982,23 @@ public class AaptManifestReader
     	return result;
 	}
 
-	private ResourceInfo[] getAttrResourceValues(AaptXmlTreeNode node, String attr)
+	public Entry<String, ResourceInfo[]> getAttrResourceEntry(String id)
+	{
+		return new ResourceEntry(getResourceName(id), getResourceValues(id));
+	}
+
+	public Entry<String, ResourceInfo[]> getAttrResourceEntry(AaptXmlTreeNode node, String attr)
+	{
+		return getAttrResourceEntry(node, attr, namespace);
+	}
+
+	public Entry<String, ResourceInfo[]> getAttrResourceEntry(AaptXmlTreeNode node, String attr, String namespace)
+	{
+		String id = getAttrValue(node, attr, namespace);
+		return new ResourceEntry(getResourceName(id), getResourceValues(id));
+	}
+
+	public ResourceInfo[] getAttrResourceValues(AaptXmlTreeNode node, String attr)
 	{
 		return getAttrResourceValues(node, attr, namespace);
 	}
@@ -970,5 +1025,9 @@ public class AaptManifestReader
 			resVal = new ResourceInfo[] { new ResourceInfo(id, null) };
 		}
 		return resVal;
+	}
+
+	public String getResourceName(String id) {
+		return resourceScanner.getResourceName(id);
 	}
 }

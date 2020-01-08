@@ -33,6 +33,7 @@ public class ResourceObject implements Cloneable
 	public final String config;
 	public final ResourceType type;
 	public final int attr;
+	public final String data;
 
 	transient private boolean isLoading;
 	transient private Icon icon;
@@ -62,6 +63,7 @@ public class ResourceObject implements Cloneable
 		} else {
 			label = getFileName();
 		}
+		data = null;
 	}
 
 	public ResourceObject(File file) {
@@ -74,10 +76,27 @@ public class ResourceObject implements Cloneable
 		config = null;
 
 		isLoading = false;
+		data = null;
 	}
 
 	public ResourceObject(ResourceType type) {
 		this(type.toString(), true);
+	}
+
+	public ResourceObject(String label, String path, String data) {
+		this(label, path, null, data);
+	}
+
+	public ResourceObject(String label, String path, String config, String data) {
+		this.label = label;
+		this.path = path;
+		this.config = config;
+		this.data = data;
+
+		isFolder = false;
+		type = ResourceType.DATA;
+		attr = ATTR_XML;
+		isLoading = false;
 	}
 
 	void setNode(DefaultMutableTreeNode node) {
@@ -173,7 +192,8 @@ public class ResourceObject implements Cloneable
 			break;
 		}
 
-		return (icon != null) ? icon : SystemUtil.getExtensionIcon(getExtension(path));
+		return (icon != null) ? icon : SystemUtil.getExtensionIcon(
+				getExtension(path.startsWith("@") ? ".arsc" : path));
 	}
 
 	public Icon getIconWithObserver(final JTree tree) {

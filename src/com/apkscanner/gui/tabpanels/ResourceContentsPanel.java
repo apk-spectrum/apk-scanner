@@ -45,7 +45,6 @@ import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
-import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.tool.external.ImgExtractorWrapper;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
@@ -147,6 +146,7 @@ public class ResourceContentsPanel extends JPanel implements ActionListener
 
 		// Toobar
 		resToolbar = new ResourceToolBarPanel(this);
+		resToolbar.setVisibleSaveTools(listener != null);
 		JScrollPane northPanelScroll = new JScrollPane(resToolbar, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		northPanelScroll.setBorder(new EmptyBorder(0,0,0,0));
 
@@ -358,7 +358,7 @@ public class ResourceContentsPanel extends JPanel implements ActionListener
 				break;
 			case ResourceToolBarPanel.TEXTVIEWER_TOOLBAR_OPEN:
 			case ResourceToolBarPanel.TEXTVIEWER_TOOLBAR_SAVE:
-				if(currentSelectedObj == null) return;
+				if(currentSelectedObj == null || listener == null) return;
 				JComponent comp = (JComponent) evt.getSource();
 				comp.putClientProperty(ResourceObject.class, currentSelectedObj);
 				listener.actionPerformed(evt);
@@ -376,6 +376,7 @@ public class ResourceContentsPanel extends JPanel implements ActionListener
 				}
 				break;
 			case "ctrl pressed S":	  /////////S key
+				if(listener == null) return;
 				comp.putClientProperty(ResourceObject.class, currentSelectedObj);
 				listener.actionPerformed(new ActionEvent(comp, ActionEvent.ACTION_PERFORMED,
 						UiEventHandler.ACT_CMD_SAVE_RESOURCE_FILE, evt.getWhen(), evt.getModifiers()));
@@ -461,13 +462,12 @@ public class ResourceContentsPanel extends JPanel implements ActionListener
 
 		if (attr == -1) attr = resObj.attr;
 
+		String path = resObj.path;
 		switch(attr) {
 		case ResourceObject.ATTR_AXML:
 			String[] xmlbuffer = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath, new String[] {resObj.path});
 			if(RConst.AXML_VEIWER_TYPE_XML.equals(RProp.S.AXML_VIEWER_TYPE.get())) {
-				AxmlToXml a2x = new AxmlToXml(xmlbuffer, (apkInfo != null) ? apkInfo.resourceScanner : null);
-				a2x.setMultiLinePrint(RProp.B.PRINT_MULTILINE_ATTR.get());
-				content = a2x.toString();
+				content = apkInfo.a2xConvert.convertToText(xmlbuffer);
 			} else {
 				StringBuilder sb = new StringBuilder();
 				for(String s: xmlbuffer) sb.append(s+"\n");
@@ -477,7 +477,10 @@ public class ResourceContentsPanel extends JPanel implements ActionListener
 		case ResourceObject.ATTR_XML:
 		case ResourceObject.ATTR_TXT:
 			byte[] buffer = null;
-			if(resObj.type == ResourceType.LOCAL) {
+			if(resObj.type == ResourceType.DATA) {
+				content = resObj.data;
+				path = ".xml";
+			} else if(resObj.type == ResourceType.LOCAL) {
 				buffer = FileUtil.readData(resObj.path);
 			} else {
 				buffer = ZipFileUtil.readData(apkInfo.filePath, resObj.path);
@@ -515,7 +518,7 @@ public class ResourceContentsPanel extends JPanel implements ActionListener
 			content = "This type is unsupported by preview.";
 		}
 
-		xmltextArea.setSyntaxEditingStyle(getSyntaxStyle(resObj.path));
+		xmltextArea.setSyntaxEditingStyle(getSyntaxStyle(path));
 		xmltextArea.setText(content);
 		xmltextArea.setCaretPosition(0);
 		setContentViewPanel(CONTENT_SYNTAX_TEXT_VIEWER);

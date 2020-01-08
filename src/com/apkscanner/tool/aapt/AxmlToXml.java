@@ -1,33 +1,50 @@
 package com.apkscanner.tool.aapt;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import com.apkscanner.core.scanner.AaptNativeScanner;
 import com.apkscanner.data.apkinfo.PermissionInfo;
+import com.apkscanner.resource.RProp;
 
-public class AxmlToXml {
-	
-	private AaptXmlTreePath axmlPath;
+public class AxmlToXml
+{
 	private AaptNativeScanner resourceScanner;
-	
-	private boolean isMultiLinePrint = false;
+	private boolean isMultiLinePrint;
 
 	public AxmlToXml(AaptNativeScanner resourceScanner) {
 		this.resourceScanner = resourceScanner;
+		isMultiLinePrint = RProp.B.PRINT_MULTILINE_ATTR.get();
+		RProp.addPropertyChangeListener(RProp.PRINT_MULTILINE_ATTR, new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				isMultiLinePrint = RProp.B.PRINT_MULTILINE_ATTR.get();
+			}
+		});
 	}
 
-	public AxmlToXml(String[] axml, AaptNativeScanner resourceScanner) {
-		this.resourceScanner = resourceScanner;
-		
-		axmlPath = new AaptXmlTreePath();
-		axmlPath.createAaptXmlTree(axml);
-	}
-	
-	public AxmlToXml(AaptXmlTreePath axmlPath, AaptNativeScanner resourceScanner) {
-		this.resourceScanner = resourceScanner;
-		this.axmlPath = axmlPath;
-	}
-	
 	public void setMultiLinePrint(boolean isMultiLinePrint) {
 		this.isMultiLinePrint = isMultiLinePrint;
+	}
+
+	public String convertToText(String[] axml) {
+		if(axml == null) return null;
+		return convertToText(new AaptXmlTreePath(axml));
+	}
+
+	public String convertToText(AaptXmlTreePath axmlPath) {
+		if(axmlPath == null) return null;
+
+		AaptXmlTreeNode topNode = axmlPath.getNode("/*");
+		if(topNode == null) return null;
+
+		StringBuilder xml = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"?>\r\n");
+		xml.append(makeNodeXml(topNode, axmlPath.getAndroidNamespaceTag(), ""));
+		return xml.toString();
+	}
+
+	public String convertToText(AaptXmlTreeNode node, String namespace) {
+		return makeNodeXml(node, namespace, "");
 	}
 
 	private String makeNodeXml(AaptXmlTreeNode node, String namespace, String depthSpace)
@@ -53,7 +70,7 @@ public class AxmlToXml {
 			xml.append(" ");
 			xml.append(name);
 			xml.append("=\"");
-			
+
 			// /android/frameworks/base/core/res/res/values/attrs.xml
 			// /android/frameworks/base/core/res/res/values/attrs_manifest.xml
 			String val = resourceScanner.getResourceName(node.getAttribute(name));
@@ -80,9 +97,9 @@ public class AxmlToXml {
 	        		val = "";
 	        		if((iVal & 0x00800001) == 0x00800001) {
 	        			if((iVal & 0x7) == 0x7 || (iVal & 0x6) == 0) {
-	        				val += "|unknown"; 
+	        				val += "|unknown";
 	        			} else if((iVal & 0x3) == 0x3) {
-	        				val += "|start"; 
+	        				val += "|start";
 	        			} else if((iVal & 0x5) == 0x5) {
 	        				val += "|end";
 	        			}
@@ -259,25 +276,7 @@ public class AxmlToXml {
 		} else {
 			xml.append("/>\r\n");
 		}
-		
-		return xml.toString();
-	}
 
-	public String toString()
-	{
-		if(axmlPath == null) return null;
-		
-		AaptXmlTreeNode topNode = axmlPath.getNode("/*");
-		if(topNode == null) return null;
-		
-		StringBuilder xml = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"?>\r\n");
-		
-		xml.append(makeNodeXml(topNode, axmlPath.getAndroidNamespaceTag(), ""));
-		
 		return xml.toString();
-	}
-
-	public String convertToText(AaptXmlTreeNode node, String namespace) {
-		return makeNodeXml(node, namespace, "");
 	}
 }

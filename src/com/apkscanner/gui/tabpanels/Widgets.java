@@ -10,9 +10,15 @@ import java.util.Objects;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.data.apkinfo.ApkInfo;
@@ -24,11 +30,16 @@ import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 
-public class Widgets extends AbstractTabbedPanel
+public class Widgets extends AbstractTabbedPanel implements TreeSelectionListener, ListSelectionListener
 {
 	private static final long serialVersionUID = 4881638983501664860L;
 
+	private JTable table;
 	private SimpleTableModel tableModel;
+	private ResourceTree resTree;
+	private ResourceContentsPanel contentPanel;
+
+	private String apkFilePath;
 
 	public Widgets() {
 		setLayout(new GridLayout(1, 0));
@@ -39,13 +50,33 @@ public class Widgets extends AbstractTabbedPanel
 	@Override
 	public void initialize()
 	{
-		JTable table = new JTable(tableModel = new WidgetTableModel(),
+		table = new JTable(tableModel = new WidgetTableModel(),
 				new SimpleTableColumnModel(100, 60, 68, 240, 15, 40));
 		table.setAutoCreateColumnsFromModel(true);
 		table.setDefaultRenderer(String.class, new MultiLineCellRenderer());
 		table.setRowHeight(100);
+		table.getSelectionModel().addListSelectionListener(this);
 
-		add(new JScrollPane(table));
+		resTree = new ResourceTree(null);
+		resTree.addTreeSelectionListener(this);
+		//resTree.setRootVisible(false);
+
+		contentPanel = new ResourceContentsPanel(null);
+
+		JSplitPane resPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
+		resPane.setLeftComponent(new JScrollPane(resTree));
+		resPane.setRightComponent(contentPanel);
+		resPane.setDividerLocation(200);
+
+		JScrollPane scrollPane = new JScrollPane(table);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, scrollPane, resPane);
+        splitPane.setOneTouchExpandable(true);
+        splitPane.setDividerSize(15);
+        splitPane.setDividerLocation(230);
+        splitPane.setResizeWeight(0.5);
+
+		add(splitPane);
 	}
 
 	@Override
@@ -56,6 +87,11 @@ public class Widgets extends AbstractTabbedPanel
 		if(tableModel == null)
 			initialize();
 		tableModel.setData(apkInfo);
+		contentPanel.setData(apkInfo);
+
+		if(tableModel.getRowCount() > 0) {
+			table.addRowSelectionInterval(0, 0);
+		}
 
 		setDataSize(apkInfo.widgets.length, true, false);
 		setTabbedVisible(apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX);
@@ -78,6 +114,8 @@ public class Widgets extends AbstractTabbedPanel
 			data.clear();
 			if(apkInfo.widgets == null) return;
 
+			apkFilePath = apkInfo.filePath;
+
 			String preferLang = RProp.S.PREFERRED_LANGUAGE.get();
 			for(WidgetInfo w: apkInfo.widgets) {
 				ImageIcon previewImage = null;
@@ -96,10 +134,10 @@ public class Widgets extends AbstractTabbedPanel
 					previewImage.setImage(ImageScaler.getMaintainAspectRatioImage(previewImage,100,100));
 				}
 
-				String label = ApkInfoHelper.getResourceValue(w.lables, preferLang);
+				String label = ApkInfoHelper.getResourceValue(w.labels, preferLang);
 				if(label == null) label = ApkInfoHelper.getResourceValue(apkInfo.manifest.application.labels, preferLang);
 				String enabled = (w.enabled == null || w.enabled) ? "O" : "X";
-				Object[] temp = { previewImage , label, w.size, w.name, enabled, w.type};
+				Object[] temp = { previewImage , label, w.size, w.tartget != null ? w.tartget : w.name, enabled, w.type, w };
 				data.add(temp);
 			}
 
@@ -129,6 +167,26 @@ public class Widgets extends AbstractTabbedPanel
 			setFont(table.getFont());
 			setText(Objects.toString(value, ""));
 			return this;
+		}
+	}
+
+	@Override
+	public void valueChanged(TreeSelectionEvent e) {
+		if(!e.isAddedPath()) return;
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+				resTree.getLastSelectedPathComponent();
+		if(node == null) return;
+		contentPanel.selectContent(node.getUserObject());
+	}
+
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+		if(e.getValueIsAdjusting()) return;
+		if(tableModel.getRowCount() == 0) return;
+		if(table.getSelectedRow() > -1) {
+			int row = table.convertRowIndexToModel(table.getSelectedRow());
+			WidgetInfo info = (WidgetInfo) tableModel.getValueAt(row, 6);
+			resTree.addTreeNodes(apkFilePath, info);
 		}
 	}
 }

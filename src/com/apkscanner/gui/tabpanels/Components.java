@@ -167,14 +167,16 @@ public class Components extends AbstractTabbedPanel
 
 		JScrollPane scrollPane = new JScrollPane(table);
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
+        splitPane.setDividerSize(15);
+        splitPane.setOneTouchExpandable(true);
         splitPane.setTopComponent(scrollPane);
         splitPane.setBottomComponent(intentPanel);
+        splitPane.setDividerLocation(170);
+        splitPane.setResizeWeight(0.5);
 
         Dimension minimumSize = new Dimension(100, 50);
         scrollPane.setMinimumSize(minimumSize);
         intentPanel.setMinimumSize(minimumSize);
-        splitPane.setDividerLocation(150);
-        splitPane.setResizeWeight(0.5);
 
         textField = new JTextField();
         textField.getDocument().addDocumentListener(new DocumentListener() {

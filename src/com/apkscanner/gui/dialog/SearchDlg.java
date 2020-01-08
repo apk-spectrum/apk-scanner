@@ -38,7 +38,6 @@ import com.apkscanner.gui.component.WindowSizeMemorizer;
 import com.apkscanner.gui.tabpanels.ResContentFocusChanger;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
-import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
 
@@ -54,7 +53,7 @@ public class SearchDlg extends JDialog {
 	ImageIcon Loading;
 	JLabel label;
 	static String hoverFilePath;
-	
+
 	private ResContentFocusChanger changer;
 
 	public SearchDlg(ResContentFocusChanger changer) {
@@ -208,13 +207,12 @@ public class SearchDlg extends JDialog {
 
 					String[] xmlbuffer = AaptNativeWrapper.Dump.getXmltree(apkinfo.filePath,
 							new String[] { hoverFilePath });
-					AxmlToXml a2x = new AxmlToXml(xmlbuffer, (apkinfo != null) ? apkinfo.resourceScanner : null);
 					// StringBuilder sb = new StringBuilder();
 					// for(String s: xmlbuffer) sb.append(s+"\n");
 
 					// this.setLabelText(getValueAt(row, 1).toString());
 
-					toolTipText = a2x.toString();
+					toolTipText = apkinfo.a2xConvert.convertToText(xmlbuffer);
 					if(m_tooltip !=null) {
 						setMarkString(name.getText());
 						setLabelText(hoverFilePath);
@@ -309,10 +307,9 @@ public class SearchDlg extends JDialog {
 						//						for(String s: xmlbuffer) sb.append(s+"\n");
 
 						String[] xmlbuffer = AaptNativeWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {filelist[i]});
-						AxmlToXml a2x = new AxmlToXml(xmlbuffer, (apkinfo != null) ? apkinfo.resourceScanner : null);
 						//StringBuilder sb = new StringBuilder();
 						//for(String s: xmlbuffer) sb.append(s+"\n");
-						temp = a2x.toString();
+						temp = apkinfo.a2xConvert.convertToText(xmlbuffer);
 
 
 						//temp = sb.toString();

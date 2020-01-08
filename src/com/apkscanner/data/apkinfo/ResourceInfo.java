@@ -1,6 +1,6 @@
 package com.apkscanner.data.apkinfo;
 
-public class ResourceInfo
+public class ResourceInfo implements Cloneable
 {
 	public String name;
 	public String configuration;
@@ -26,5 +26,15 @@ public class ResourceInfo
 
 	protected boolean objEquals(Object a, Object b) {
 		return ((a == null && b == null) || (a != null && a.equals(b)));
+	}
+
+	@Override
+	public ResourceInfo clone() {
+		try {
+			return (ResourceInfo) super.clone();
+		} catch (CloneNotSupportedException e) {
+            // Won't happen because we implement Cloneable
+            throw new Error(e.toString());
+		}
 	}
 }

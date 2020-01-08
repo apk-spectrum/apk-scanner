@@ -17,7 +17,8 @@ public enum ResourceType
 	ROOTRES(12),
 	ETC(13),
 	LOCAL(14),
-	COUNT(15);
+	DATA(15),
+	COUNT(16);
 
 	private int type;
 

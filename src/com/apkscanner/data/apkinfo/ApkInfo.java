@@ -1,6 +1,6 @@
 package com.apkscanner.data.apkinfo;
 
-import com.apkscanner.core.scanner.AaptNativeScanner;
+import com.apkscanner.tool.aapt.AxmlToXml;
 
 public class ApkInfo
 {
@@ -45,5 +45,6 @@ public class ApkInfo
 	public String signatureScheme = null;
 
 	public String[] resourcesWithValue = null;
-	public AaptNativeScanner resourceScanner = null;
+
+	public AxmlToXml a2xConvert;
 }

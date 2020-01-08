@@ -12,7 +12,6 @@ import com.apkscanner.gui.tabpanels.ResourceType;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
-import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
@@ -83,14 +82,11 @@ public abstract class AbstractApkScannerAction extends AbstractUIAction
 			if (convStrings != null) {
 				try (FileWriter fw = new FileWriter(new File(destPath))) {
 					if(convAxml2Xml) {
-						AxmlToXml a2x = new AxmlToXml(convStrings, (apkInfo != null) ? apkInfo.resourceScanner : null);
-						a2x.setMultiLinePrint(RProp.B.PRINT_MULTILINE_ATTR.get());
-						fw.write(a2x.toString());
+						fw.write(apkInfo.a2xConvert.convertToText(convStrings));
 					} else {
 						for (String s : convStrings)
 							fw.write(s + System.lineSeparator());
 					}
-					
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

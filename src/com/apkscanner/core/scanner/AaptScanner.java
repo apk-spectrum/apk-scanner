@@ -13,6 +13,7 @@ import com.apkscanner.resource.RImg;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AaptXmlTreeNode;
 import com.apkscanner.tool.aapt.AaptXmlTreePath;
+import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
@@ -83,7 +84,7 @@ public class AaptScanner extends ApkScanner
 		apkInfo.filePath = apkFile.getAbsolutePath();
 		apkInfo.fileSize = apkFile.length();
 		apkInfo.tempWorkPath = FileUtil.makeTempPath(apkInfo.filePath.substring(apkInfo.filePath.lastIndexOf(File.separator)));
-		apkInfo.resourceScanner = resourceScanner;
+		apkInfo.a2xConvert = new AxmlToXml(resourceScanner);
 
 		setType();
 
@@ -163,7 +164,7 @@ public class AaptScanner extends ApkScanner
 			try {
 				JSONObject apexManifest = (JSONObject)(new JSONParser()).parse(new String(rawData));
 				apkInfo.manifest.packageName = (String) apexManifest.get("name");
-				apkInfo.manifest.versionName = apkInfo.manifest.versionCode.toString(); 
+				apkInfo.manifest.versionName = apkInfo.manifest.versionCode.toString();
 				Object data = apexManifest.get("version");
 				if(data instanceof Long) {
 					apkInfo.manifest.versionCode = (int)(long)data;

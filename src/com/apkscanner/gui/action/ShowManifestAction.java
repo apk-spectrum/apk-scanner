@@ -12,7 +12,6 @@ import com.apkscanner.gui.component.ApkFileChooser;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
-import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
@@ -61,11 +60,8 @@ public class ShowManifestAction extends AbstractApkScannerAction
 				}
 
 				String[] convStrings = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath, new String[] {"AndroidManifest.xml"});
-				AxmlToXml a2x = new AxmlToXml(convStrings, (apkInfo != null) ? apkInfo.resourceScanner : null);
-				a2x.setMultiLinePrint(RProp.B.PRINT_MULTILINE_ATTR.get());
-
 				FileWriter fw = new FileWriter(new File(manifestPath));
-				fw.write(a2x.toString());
+				fw.write(apkInfo.a2xConvert.convertToText(convStrings));
 				fw.close();
 			} else {
 				Log.e("already existed file : " + manifestPath);

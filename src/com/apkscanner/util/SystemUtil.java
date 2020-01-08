@@ -3,6 +3,7 @@ package com.apkscanner.util;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -554,4 +555,23 @@ public class SystemUtil
 		}
 		return icon;
 	}
+
+    @SuppressWarnings("unchecked")
+	public static <T> T[] joinArray(T[]... arrays) {
+        int length = 0;
+        for (T[] array : arrays) {
+            length += array.length;
+        }
+
+        //T[] result = new T[length];
+        final T[] result = (T[]) Array.newInstance(arrays[0].getClass().getComponentType(), length);
+
+        int offset = 0;
+        for (T[] array : arrays) {
+            System.arraycopy(array, 0, result, offset, array.length);
+            offset += array.length;
+        }
+
+        return result;
+    }
 }

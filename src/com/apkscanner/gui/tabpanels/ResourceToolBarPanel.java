@@ -39,6 +39,7 @@ public class ResourceToolBarPanel extends JPanel {
 
 	private JToolBar textTools;
 	private JToolBar xmllTools;
+	private JToolBar saveTools;
 	private JTextField filePathtextField;
 	private JTextField findtextField;
 	private JComboBox<String> resTypeCombobox;
@@ -59,17 +60,17 @@ public class ResourceToolBarPanel extends JPanel {
 		openBtn.setFocusPainted(false);
 		saveBtn.setFocusPainted(false);
 
-		JToolBar extrTools = new JToolBar("");
-		extrTools.add(openBtn);
-		extrTools.add(saveBtn);
-		extrTools.add(getNewSeparator());
-		extrTools.setFloatable(false);
-		extrTools.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
+		saveTools = new JToolBar("");
+		saveTools.add(openBtn);
+		saveTools.add(saveBtn);
+		saveTools.add(getNewSeparator());
+		saveTools.setFloatable(false);
+		saveTools.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
+		saveTools.setVisible(listener != null);
 
 		filePathtextField = new JTextField("");
 		filePathtextField.setEditable(false);
 		filePathtextField.setBackground(Color.WHITE);
-
 
 		JButton findBtn = new JButton("", RImg.RESOURCE_TEXTVIEWER_TOOLBAR_FIND.getImageIcon(16, 16));
 		JButton nextBtn = new JButton("", RImg.RESOURCE_TEXTVIEWER_TOOLBAR_NEXT.getImageIcon(16, 16));
@@ -125,7 +126,7 @@ public class ResourceToolBarPanel extends JPanel {
 				} else if(RConst.AXML_VEIWER_TYPE_ARSC.equals(fileType)) {
 					multiLinePrintButton.setEnabled(false);
 				}
-				listener.actionPerformed(e);	
+				listener.actionPerformed(e);
 			}
 		});
 
@@ -158,7 +159,7 @@ public class ResourceToolBarPanel extends JPanel {
 		textTools.add(xmllTools);
 
 		add(filePathtextField, BorderLayout.CENTER);
-		add(extrTools, BorderLayout.WEST);
+		add(saveTools, BorderLayout.WEST);
 		add(textTools, BorderLayout.SOUTH);
 
 		KeyStrokeAction.registerKeyStrokeAction(findtextField, KeyStroke.getKeyStroke("F3"), listener);
@@ -172,6 +173,9 @@ public class ResourceToolBarPanel extends JPanel {
 		}
 		setResPath(resObj.path);
 		findtextField.setText("");
+
+		filePathtextField.setVisible(resObj.type != ResourceType.DATA
+				|| resObj.path.startsWith("@"));
 
 		switch(resObj.attr) {
 		case ResourceObject.ATTR_AXML:
@@ -196,6 +200,10 @@ public class ResourceToolBarPanel extends JPanel {
 
 	public void setResPath(String path) {
 		filePathtextField.setText(path);
+	}
+
+	public void setVisibleSaveTools(boolean visible) {
+		saveTools.setVisible(visible);
 	}
 
 	public void setVisibleTextTools(boolean visible) {

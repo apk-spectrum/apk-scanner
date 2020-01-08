@@ -6,6 +6,7 @@ import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.EasyMainUI;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AaptXmlTreePath;
+import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.ZipFileUtil;
@@ -33,7 +34,7 @@ public class AaptLightScanner extends AaptScanner {
 		Log.i("---aaptLightScanner---");
 		Log.i("openApk() " + apkFilePath + ", res " + frameworkRes);
 		EasyMainUI.corestarttime = System.currentTimeMillis();
-		
+
 		if(apkFilePath == null) {
 			Log.e("APK file path is null");
 			errorOccurred(ERR_UNAVAIlABLE_PARAM);
@@ -63,7 +64,7 @@ public class AaptLightScanner extends AaptScanner {
 			errorOccurred(ERR_CAN_NOT_ACCESS_ASSET);
 			return;
 		}
-		
+
 		Log.i("I: getDump AndroidManifest...");
 		String[] androidManifest = AaptNativeWrapper.Dump.getXmltree(apkFile.getAbsolutePath(), new String[] { "AndroidManifest.xml" });
 		if(androidManifest == null || androidManifest.length == 0) {
@@ -86,7 +87,7 @@ public class AaptLightScanner extends AaptScanner {
 		apkInfo.filePath = apkFile.getAbsolutePath();
 		apkInfo.fileSize = apkFile.length();
 		apkInfo.tempWorkPath = FileUtil.makeTempPath(apkInfo.filePath.substring(apkInfo.filePath.lastIndexOf(File.separator)));
-		apkInfo.resourceScanner = resourceScanner;
+		apkInfo.a2xConvert = new AxmlToXml(resourceScanner);
 
 		setType();
 
@@ -102,7 +103,7 @@ public class AaptLightScanner extends AaptScanner {
 		Log.i("I: read basic info...");
 		manifestReader.readBasicInfo();
 		Log.i("readBasicInfo() completed");
-		
+
 		//2018. 10. 26		//////////////////////////////////////////
 		// for easy gui
 		apkInfo.manifest.application.icons = changeURLpath(apkInfo.manifest.application.icons, manifestReader);
@@ -117,16 +118,16 @@ public class AaptLightScanner extends AaptScanner {
 		Log.i("read basic info completed");
 		stateChanged(Status.BASIC_INFO_COMPLETED);
 
-		
+
 		Log.i("read signatures...");
 		solveCert();
 		stateChanged(Status.CERT_COMPLETED);
 		Log.i("read signatures completed...");
-		
+
 
 		Log.i("I: read libraries list...");
 		apkInfo.libraries = ZipFileUtil.findFiles(apkInfo.filePath, ".so", null);
-		stateChanged(Status.LIB_COMPLETED);				
+		stateChanged(Status.LIB_COMPLETED);
 
 		// Activity/Service/Receiver/provider intent-filter
 		Log.i("I: read components...");
@@ -164,7 +165,7 @@ public class AaptLightScanner extends AaptScanner {
 			});
 			thread.setPriority(Thread.NORM_PRIORITY);
 			thread.start();
-			
+
 		}
 		isLightMode = lightMode;
 	}

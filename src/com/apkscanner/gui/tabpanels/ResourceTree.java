@@ -11,7 +11,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.Map.Entry;
 
 import javax.swing.JTree;
 import javax.swing.event.TreeExpansionEvent;
@@ -20,11 +23,14 @@ import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import com.apkscanner.data.apkinfo.ResourceInfo;
+import com.apkscanner.data.apkinfo.WidgetInfo;
 import com.apkscanner.gui.UiEventHandler;
 import com.apkscanner.util.SystemUtil;
 
@@ -84,6 +90,7 @@ public class ResourceTree extends JTree {
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				if(listener == null) return;
 				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
 					if (getPathForLocation(e.getX(), e.getY()) == null) return;
 					listener.actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED,
@@ -95,6 +102,7 @@ public class ResourceTree extends JTree {
 		addTreeExpansionListener(new TreeExpansionListener() {
 			@Override
 			public void treeExpanded(TreeExpansionEvent event) {
+				if(listener == null) return;
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) event.getPath().getLastPathComponent();
 				if (node.getUserObject() instanceof ResourceObject) {
 					ResourceObject resObj = (ResourceObject) node.getUserObject();
@@ -185,6 +193,148 @@ public class ResourceTree extends JTree {
 		});
 		thread.setPriority(Thread.NORM_PRIORITY);
 		thread.start();
+	}
+
+	public void addTreeNodes(final String apkFilePath, final WidgetInfo widgetInfo) {
+		ResourceObject resObj = new ResourceObject(widgetInfo.name, ".xml", widgetInfo.xmlString);
+		DefaultMutableTreeNode node = new DefaultMutableTreeNode(resObj);
+		((DefaultTreeModel)getModel()).setRoot(rootNode = node);
+
+		TreePath treepath = new TreePath(rootNode.getPath());
+
+		node = makeLabelNode("Label", widgetInfo.resourceMap.get("label"));
+		if(node != null) rootNode.add(node);
+/*
+		if(widgetInfo.mapId != null) {
+			DefaultMutableTreeNode labelNode = new DefaultMutableTreeNode();
+			node = makeLabelNode("Long Label", widgetInfo.resourceMap.get(widgetInfo.mapId + "shortcutLongLabel"));
+			if(node != null) labelNode.add(node);
+			node = makeLabelNode("Short Label", widgetInfo.resourceMap.get(widgetInfo.mapId + "shortcutShortLabel"));
+			if(node != null) labelNode.add(node);
+			node = makeLabelNode("Disabled Message", widgetInfo.resourceMap.get(widgetInfo.mapId + "shortcutDisabledMessage"));
+			if(node != null) labelNode.add(node);
+			if(!labelNode.isLeaf()) {
+				ResourceObject labelObj = (ResourceObject) ((DefaultMutableTreeNode) labelNode.getChildAt(0)).getUserObject();
+				labelNode.setUserObject(new ResourceObject("Labels", labelObj.path, labelObj.config, labelObj.data));
+				rootNode.add(labelNode);
+			}
+		}
+*/
+		Entry<String, ResourceInfo[]> resource = null;
+		resource = widgetInfo.resourceMap.get("meta-data/resource");
+		if(widgetInfo.xmlMetaData != null && resource != null && resource.getValue() != null) {
+			resObj = new ResourceObject("META-DATA", resource.getKey(), widgetInfo.xmlMetaData);
+			rootNode.add(node = new ResourceNode(resObj));
+			TreePath metaDatPath = new TreePath(node.getPath());
+			for(ResourceInfo res: resource.getValue()) {
+				DefaultMutableTreeNode resNode = new ResourceNode(new ResourceObject(res.name));
+				node.add(resNode);
+
+				Entry<String, ResourceInfo[]> resSet = null;
+				DefaultMutableTreeNode resChildNode = null;
+
+				if(widgetInfo.resourceMap.containsKey(res.name + "/initialLayout")) {
+					resSet = widgetInfo.resourceMap.get(res.name + "/initialLayout");
+					resChildNode = null;
+					for(ResourceInfo layoutRes: resSet.getValue()) {
+						if(resChildNode == null) {
+							resChildNode = new ResourceNode(new ResourceObject(layoutRes.name));
+							resNode.add(resChildNode);
+						} else {
+							if(resChildNode.isLeaf()) {
+								resChildNode.add((MutableTreeNode) resChildNode.clone());
+							}
+							resChildNode.add(new ResourceNode(new ResourceObject(layoutRes.name)));
+						}
+					}
+				}
+
+				if(widgetInfo.resourceMap.containsKey(res.name + "/previewImage")) {
+					resSet = widgetInfo.resourceMap.get(res.name + "/previewImage");
+					resChildNode = null;
+					for(ResourceInfo iconRes: resSet.getValue()) {
+						if(resChildNode == null) {
+							resChildNode = new ResourceNode(new ResourceObject(iconRes.name));
+							resNode.add(resChildNode);
+						} else {
+							if(resChildNode.isLeaf()) {
+								resChildNode.add((MutableTreeNode) resChildNode.clone());
+							}
+							resChildNode.add(new ResourceNode(new ResourceObject(iconRes.name)));
+						}
+					}
+				}
+
+				if(widgetInfo.resourceMap.containsKey(res.name + "/shortcuts")) {
+					ResourceInfo[] shortcuts = widgetInfo.resourceMap.get(res.name + "/shortcuts").getValue();
+					if(shortcuts == null || shortcuts.length == 0) continue;
+					List<TreePath> shortCutPath = new ArrayList<>();
+					for(ResourceInfo shortcut: shortcuts) {
+						String xmlString = widgetInfo.resourceMap.get(shortcut.name + "xml").getKey();
+						DefaultMutableTreeNode shortcutNode = new ResourceNode(new ResourceObject(shortcut.configuration, ".xml", xmlString));
+						resNode.add(shortcutNode);
+
+						DefaultMutableTreeNode shortcutResNode = null;
+						shortcutResNode = makeLabelNode("Long Label", widgetInfo.resourceMap.get(shortcut.name + "shortcutLongLabel"));
+						if(shortcutResNode != null) shortcutNode.add(shortcutResNode);
+						shortcutResNode = makeLabelNode("Short Label", widgetInfo.resourceMap.get(shortcut.name + "shortcutShortLabel"));
+						if(shortcutResNode != null) shortcutNode.add(shortcutResNode);
+						shortcutResNode = makeLabelNode("Disabled Label", widgetInfo.resourceMap.get(shortcut.name + "shortcutDisabledMessage"));
+						if(shortcutResNode != null) shortcutNode.add(shortcutResNode);
+
+						if(widgetInfo.resourceMap.containsKey(shortcut.name + "icon")) {
+							resSet = widgetInfo.resourceMap.get(shortcut.name + "icon");
+							resChildNode = null;
+							for(ResourceInfo iconRes: resSet.getValue()) {
+								if(resChildNode == null) {
+									resChildNode = new ResourceNode(new ResourceObject(iconRes.name));
+									shortcutNode.add(resChildNode);
+								} else {
+									if(resChildNode.isLeaf()) {
+										resChildNode.add((MutableTreeNode) resChildNode.clone());
+									}
+									resChildNode.add(new ResourceNode(new ResourceObject(iconRes.name)));
+								}
+							}
+						}
+
+						if(widgetInfo.shortcutId.equals(shortcut.configuration)) {
+							shortCutPath.add(new TreePath(shortcutNode.getPath()));
+						}
+					}
+
+					if(!shortCutPath.isEmpty()) {
+						treepath = shortCutPath.get(0);
+						for(TreePath path: shortCutPath)
+							expandPath(path);
+					}
+				}
+			}
+			expandPath(metaDatPath);
+		}
+
+		//expandOrCollapsePath(new TreePath(rootNode.getPath()), 2, 0, true);
+
+		setSelectionPath(treepath);
+	}
+
+	private DefaultMutableTreeNode makeLabelNode(String nodeName, Entry<String, ResourceInfo[]> resSet) {
+		if(resSet == null || resSet.getValue() == null || resSet.getValue().length == 0) {
+			return null;
+		}
+		StringBuilder labelBuilder = new StringBuilder();
+		for(ResourceInfo r: resSet.getValue()) {
+			if(r.configuration == null || r.configuration.isEmpty() || "default".equals(r.configuration)) {
+				labelBuilder.append(r.name != null ? r.name : "No such label");
+			} else {
+				labelBuilder.append("[").append(r.configuration).append("] ").append(r.name);
+			}
+			labelBuilder.append("\n");
+		}
+		ResourceObject resObj = new ResourceObject(nodeName, resSet.getKey(),
+				resSet.getKey().replace("string/", ""), labelBuilder.toString().trim());
+		ResourceNode node = new ResourceNode(resObj);
+		return node;
 	}
 
 	public final DefaultMutableTreeNode findNode(DefaultMutableTreeNode node, String string, boolean ignoreCase,
