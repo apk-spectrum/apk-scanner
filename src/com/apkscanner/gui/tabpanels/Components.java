@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
+import java.util.Collections;
 import java.util.Comparator;
 
 import javax.swing.JComboBox;
@@ -297,7 +298,7 @@ public class Components extends AbstractTabbedPanel
 			add(apkInfo.manifest.application.receiver, apkInfo);
 			add(apkInfo.manifest.application.provider, apkInfo);
 
-			data.sort(new Comparator<Object[]>() {
+			Collections.sort(data, new Comparator<Object[]>() {
 				@Override
 				public int compare(Object[] o1, Object[] o2) {
 					int type = getTypePriority(o1[1]) - getTypePriority(o2[1]);
