@@ -44,6 +44,8 @@
 	<string name="btn_assoc_ftype">APK 파일 연결</string>
 	<string name="btn_unassoc_ftype">APK 파일 연결해제</string>
 	<string name="btn_create_shortcut">바탕화면에 바로가기 생성</string>
+	<string name="btn_show_permissions">권한 정보 확인</string>
+	<string name="btn_show_sdk_info">SDK 정보 확인</string>
     <string name="btn_self_search">찾아보기...</string>
 	<string name="btn_details_info">상세 패키지정보</string>
 	<string name="btn_to_install">Install</string>

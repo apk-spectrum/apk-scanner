@@ -119,6 +119,9 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 	private JLabel extendFilterLabel;
 	private JLabel extendFilterCount;
 
+	private JRadioButton inPackage;
+	private JRadioButton onAndroid;
+
 	private JTextField filterTextField;
 
 	private PermissionTable permTable;
@@ -255,11 +258,11 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		extendFilterLabel.setIcon((Icon) UIManager.get("Tree.expandedIcon"));
 		extendFilterLabel.setAlignmentX(0f);
 		box.add(extendFilterLabel);
-		JRadioButton inPackage = new JRadioButton(RStr.LABEL_USED_IN_PACKAGE.get());
+		inPackage = new JRadioButton(RStr.LABEL_USED_IN_PACKAGE.get());
 		inPackage.setActionCommand(ACT_CMD_IN_PACKAGE);
 		inPackage.addActionListener(this);
 		box.add(inPackage);
-		JRadioButton onAndroid = new JRadioButton(RStr.LABEL_ALL_ON_ANDROID.get());
+		onAndroid = new JRadioButton(RStr.LABEL_ALL_ON_ANDROID.get());
 		onAndroid.setActionCommand(ACT_CMD_ON_ANDROID);
 		onAndroid.addActionListener(this);
 		box.add(onAndroid);
@@ -615,7 +618,12 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 			cachePermMangers[ON_ANDROID] = PermissionManager.createAllPermissionManager();
 			cachePermMangers[ON_ANDROID].setSdkVersion(manager.getSdkVersion());
 		}
-		this.permManager = manager != null ? manager : cachePermMangers[ON_ANDROID];
+
+		boolean hasPerms = manager != null && !manager.isEmpty();
+		inPackage.setEnabled(hasPerms);
+		inPackage.setSelected(hasPerms);
+		onAndroid.setSelected(!hasPerms);
+		this.permManager = hasPerms ? manager : cachePermMangers[ON_ANDROID];
 		setSdkApiLevels();
 		refreshPermTable();
 		setBaseFilter();
@@ -634,7 +642,12 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 			if(sdk.getCommitId() == null) continue;
 			sdkVersions.addItem(sdk.getSdkVersion());
 		}
-		sdkVersions.setSelectedItem(permManager.getSdkVersion());
+		if(permManager.getSdkVersion() > 0) {
+			sdkVersions.setSelectedItem(permManager.getSdkVersion());
+		} else {
+			sdkVersions.setSelectedIndex(sdkVersions.getItemCount() - 1);
+			permManager.setSdkVersion(sdkVersions.getSelectedIndex());
+		}
 		sdkVersions.addItemListener(this);
 	}
 

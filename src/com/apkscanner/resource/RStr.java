@@ -66,6 +66,8 @@ public enum RStr implements ResString<String>
 	BTN_ASSOC_FTYPE				("@btn_assoc_ftype"),
 	BTN_UNASSOC_FTYPE			("@btn_unassoc_ftype"),
 	BTN_CREATE_SHORTCUT			("@btn_create_shortcut"),
+	BTN_SHOW_PERMISSIONS		("@btn_show_permissions"),
+	BTN_SHOW_SDK_INFO			("@btn_show_sdk_info"),
 	BTN_SELF_SEARCH				("@btn_self_search"),
 	BTN_DETAILS_INFO			("@btn_details_info"),
 	BTN_TO_INSTALL				("@btn_to_install"),

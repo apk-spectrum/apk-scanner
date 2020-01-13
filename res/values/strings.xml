@@ -44,6 +44,8 @@
 	<string name="btn_assoc_ftype">Associate .apk file</string>
 	<string name="btn_unassoc_ftype">Unassociate .apk file</string>
 	<string name="btn_create_shortcut">Create Shortcut on Desktop</string>
+	<string name="btn_show_permissions">Show Permissions</string>
+	<string name="btn_show_sdk_info">Show SDK information</string>
 	<string name="btn_self_search">Search...</string>
 
 	<string name="btn_open_lab">Open APK file (Ctrl+O)</string>

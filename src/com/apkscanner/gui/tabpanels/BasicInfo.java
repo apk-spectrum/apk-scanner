@@ -29,6 +29,7 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton.ToggleButtonModel;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
@@ -155,6 +156,10 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			apkInfoPanel.insertElementLast("apkscanner-icon-td", String.format("<div id=\"associate-file\" class=\"div-button\">%s</div>",
 					makeHyperEvent("function-assoc-apk", RStr.BTN_ASSOC_FTYPE.get(), null)));
 		}
+		apkInfoPanel.insertElementLast("apkscanner-icon-td", String.format("<div class=\"div-button\">%s</div>",
+				makeHyperEvent("function-show-permission", RStr.BTN_SHOW_PERMISSIONS.get(), null)));
+		apkInfoPanel.insertElementLast("apkscanner-icon-td", String.format("<div class=\"div-button\">%s</div>",
+				makeHyperEvent("function-show-sdk-info", RStr.BTN_SHOW_SDK_INFO.get(), null, Integer.valueOf(-1))));
 	}
 
 	public void onProgress(String message) {
@@ -758,11 +763,12 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			String versionDesc = (String) evt.getUserData();
 			showDialog(versionDesc, "App version info", new Dimension(300, 50), null);
 			break;
-		case "display-list":
+		case "display-list": case "function-show-permission":
 			showPermList();
 			break;
+		case "function-show-sdk-info":
 		case "min-sdk-info": case "target-sdk-info": case "max-sdk-info":
-			SdkVersionInfoDlg sdkDlg = new SdkVersionInfoDlg(null, (Integer)evt.getUserData());
+			SdkVersionInfoDlg sdkDlg = new SdkVersionInfoDlg(SwingUtilities.getWindowAncestor(this), (Integer)evt.getUserData());
 			sdkDlg.setLocationRelativeTo(this);
 			sdkDlg.setVisible(true);
 			break;
@@ -909,17 +915,18 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	private void showPermList() {
 		PermissionHistoryPanel historyView = new PermissionHistoryPanel();
 		historyView.setPermissionManager(permissionManager);
-		historyView.showDialog(null);
+		historyView.showDialog(SwingUtilities.getWindowAncestor(this));
 	}
 
 	private void showPermDetailDesc(HyperlinkClickEvent evt) {
 		PermissionHistoryPanel historyView = new PermissionHistoryPanel();
 		historyView.setPermissionManager(permissionManager);
 		historyView.setFilterText((String) evt.getUserData());
-		historyView.showDialog(null);
+		historyView.showDialog(SwingUtilities.getWindowAncestor(this));
 	}
 
 	private void showDialog(String content, String title, Dimension size, Icon icon) {
-		MessageBoxPane.showTextAreaDialog(null, content, title, MessageBoxPane.INFORMATION_MESSAGE, icon, size);
+		MessageBoxPane.showTextAreaDialog(SwingUtilities.getWindowAncestor(this),
+				content, title, MessageBoxPane.INFORMATION_MESSAGE, icon, size);
 	}
 }
