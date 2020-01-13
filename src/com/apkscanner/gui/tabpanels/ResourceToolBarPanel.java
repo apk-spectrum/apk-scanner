@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.net.URI;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -166,35 +167,35 @@ public class ResourceToolBarPanel extends JPanel {
 		KeyStrokeAction.registerKeyStrokeAction(findtextField, KeyStroke.getKeyStroke("shift F3"), listener);
 	}
 
-	public void setToolbarPolicy(ResourceObject resObj) {
+	public void setToolbarPolicy(TreeNodeData resObj) {
 		if(resObj == null) {
 			setResPath("");
 			return;
 		}
-		setResPath(resObj.path);
+		String path = resObj.getPath();
+
+		setResPath(path);
 		findtextField.setText("");
 
-		filePathtextField.setVisible(resObj.type != ResourceType.DATA
-				|| resObj.path.startsWith("@"));
+		URI resUri = resObj.getURI();
+		filePathtextField.setVisible(resUri != null && resUri.isAbsolute());
 
-		switch(resObj.attr) {
-		case ResourceObject.ATTR_AXML:
-		case ResourceObject.ATTR_XML:
-		case ResourceObject.ATTR_TXT:
-		case ResourceObject.ATTR_CERT:
+		switch(resObj.getDataType()) {
+		case TreeNodeData.DATA_TYPE_TEXT:
+		case TreeNodeData.DATA_TYPE_CERTIFICATION:
 			setVisibleTextTools(true);
-			setVisibleAXmlTools(resObj.attr == ResourceObject.ATTR_AXML);
+			setVisibleAXmlTools(path.equals("AndroidManifest.xml")
+					|| path.startsWith("res/"));
 			break;
-		case ResourceObject.ATTR_ETC:
-			if("resources.arsc".equals(resObj.path)) {
+		case TreeNodeData.DATA_TYPE_IMAGE:
+			setVisibleTextTools(false);
+			break;
+		default:
+			if("resources.arsc".equals(path)) {
 				setVisibleTextTools(true);
 				setVisibleAXmlTools(false);
 				break;
 			}
-		case ResourceObject.ATTR_IMG:
-		default:
-			setVisibleTextTools(false);
-			break;
 		}
 	}
 

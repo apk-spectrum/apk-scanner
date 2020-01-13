@@ -20,11 +20,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
@@ -37,9 +33,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import com.apkscanner.resource.RImg;
-import com.apkscanner.util.FileUtil.FSStyle;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.ZipFileUtil;
 
 public class ImageControlPanel extends JPanel implements ActionListener{
 	private static final long serialVersionUID = -391185152837196160L;
@@ -166,21 +159,8 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 
 	}
 
-	public void setImage(String apkFilePath, String imgPath) throws MalformedURLException {
-		Filesize = ZipFileUtil.getFileSize(apkFilePath, imgPath, FSStyle.SHORT);
-
-		String urlFilePath = apkFilePath.replaceAll("#", "%23");
-		imgPath = "jar:file:" + urlFilePath + "!/" + imgPath;
-		Log.d(imgPath);
-		try {
-			if(imgPath.toLowerCase().endsWith(".webp")) {
-				imagepanel.setImage(ImageIO.read(new URL(imgPath)));
-			} else {
-				imagepanel.setImage(RImg.getImage(new URL(imgPath)));
-			}
-		} catch (IOException|NullPointerException e) {
-			//e.printStackTrace();
-		}
+	public void setImage(Image image) {
+		imagepanel.setImage(image);
 		repaint();
 	}
 

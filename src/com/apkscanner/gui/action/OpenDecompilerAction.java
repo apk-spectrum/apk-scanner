@@ -13,7 +13,7 @@ import javax.swing.JPopupMenu;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.component.ExtensionButton;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
-import com.apkscanner.gui.tabpanels.ResourceObject;
+import com.apkscanner.gui.tabpanels.TreeNodeData;
 import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.resource.RComp;
@@ -93,7 +93,7 @@ public class OpenDecompilerAction extends AbstractApkScannerAction
 
 		// from SelectViewPanel
 		if(target == null && comp instanceof JComponent) {
-			ResourceObject resObj = (ResourceObject)((JComponent)comp).getClientProperty(ResourceObject.class);
+			TreeNodeData resObj = (TreeNodeData)((JComponent)comp).getClientProperty(TreeNodeData.class);
 			target = uncompressRes(resObj);
 		}
 

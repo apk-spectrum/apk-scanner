@@ -19,9 +19,9 @@ public class ResourceNode extends SortedMutableTreeNode
 			if(o1 instanceof DefaultMutableTreeNode && o2 instanceof DefaultMutableTreeNode) {
 				Object obj1 = ((DefaultMutableTreeNode) o1).getUserObject();
 				Object obj2 = ((DefaultMutableTreeNode) o2).getUserObject();
-				if(obj1 instanceof ResourceObject && obj2 instanceof ResourceObject) {
-					if(((ResourceObject) obj1).isFolder != ((ResourceObject) obj2).isFolder) {
-						return ((ResourceObject) obj1).isFolder ? -1 : 1;
+				if(obj1 instanceof TreeNodeData && obj2 instanceof TreeNodeData) {
+					if(((TreeNodeData) obj1).isFolder() != ((TreeNodeData) obj2).isFolder()) {
+						return ((TreeNodeData) obj1).isFolder() ? -1 : 1;
 					}
 				}
 			} else if(o1 instanceof DefaultMutableTreeNode) {
@@ -44,22 +44,22 @@ public class ResourceNode extends SortedMutableTreeNode
     public ResourceNode(Object userObject, boolean allowsChildren) {
         super(userObject, allowsChildren);
         setComparator(nodeComparator);
-    	if(userObject instanceof ResourceObject) {
-    		((ResourceObject) userObject).setNode(this);
+    	if(userObject instanceof DefaultNodeData) {
+    		((DefaultNodeData) userObject).setNode(this);
     	}
     }
 
     public void add(File files) {
     	if(files.isDirectory()) {
 			for(File c: files.listFiles()) {
-				ResourceNode childNode = new ResourceNode(new ResourceObject(c));
+				ResourceNode childNode = new ResourceNode(new DefaultNodeData(c));
 				add(childNode);
 				if(c.isDirectory()) {
 					childNode.add(c);
 				}
 			}
     	} else {
-    		ResourceNode childNode = new ResourceNode(new ResourceObject(files));
+    		ResourceNode childNode = new ResourceNode(new DefaultNodeData(files));
     		add(childNode);
     	}
     }
@@ -70,14 +70,14 @@ public class ResourceNode extends SortedMutableTreeNode
     	if(newChild instanceof DefaultMutableTreeNode) {
     		DefaultMutableTreeNode node = (DefaultMutableTreeNode) newChild; 
     		Object uo = node.getUserObject();
-	    	if(uo instanceof ResourceObject) {
-				if(((ResourceObject) uo).attr == ResourceObject.ATTR_FS_IMG) {
-					ResourceObject obj;
+	    	if(uo instanceof TreeNodeData) {
+				if(".img".equals(((TreeNodeData) uo).getExtension())) {
+					DefaultNodeData obj;
 					if(SystemUtil.isWindows()) {
-						obj = new ResourceObject("Loading...");
+						obj = new DefaultNodeData("Loading...");
 						obj.setLoadingState(true);
 					} else {
-						obj = new ResourceObject("Not Supported in linux");
+						obj = new DefaultNodeData("Not Supported in linux");
 					}
 					node.add(new ResourceNode(obj));
 				}
@@ -88,16 +88,16 @@ public class ResourceNode extends SortedMutableTreeNode
     @Override
     public void setUserObject(Object userObject) {
     	super.setUserObject(userObject);
-    	if(userObject instanceof ResourceObject) {
-    		((ResourceObject) userObject).setNode(this);
+    	if(userObject instanceof DefaultNodeData) {
+    		((DefaultNodeData) userObject).setNode(this);
     	}
     }
 
     @Override
     public Object clone() {
     	ResourceNode newNode = (ResourceNode) super.clone();
-    	if(userObject instanceof ResourceObject) {
-    		newNode.setUserObject(((ResourceObject) userObject).clone());
+    	if(userObject instanceof DefaultNodeData) {
+    		newNode.setUserObject(((DefaultNodeData) userObject).clone());
     	}
     	return newNode;
     }

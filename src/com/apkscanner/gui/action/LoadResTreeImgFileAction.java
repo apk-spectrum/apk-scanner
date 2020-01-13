@@ -10,7 +10,7 @@ import javax.swing.event.TreeExpansionEvent;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.tabpanels.ResourceNode;
-import com.apkscanner.gui.tabpanels.ResourceObject;
+import com.apkscanner.gui.tabpanels.TreeNodeData;
 import com.apkscanner.tool.external.ImgExtractorWrapper;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
@@ -40,17 +40,17 @@ public class LoadResTreeImgFileAction extends AbstractApkScannerAction
 			return;
 		}
 
-		if (node.getUserObject() instanceof ResourceObject) {
-			ResourceObject resObj = (ResourceObject) node.getUserObject();
-			if(resObj.attr == ResourceObject.ATTR_FS_IMG) {
+		if (node.getUserObject() instanceof TreeNodeData) {
+			TreeNodeData resObj = (TreeNodeData) node.getUserObject();
+			if(".img".equals(resObj.getExtension())) {
 				new SwingWorker<String, Void>() {
 					@Override
 					protected String doInBackground() throws Exception {
-						ResourceObject resObj = (ResourceObject) node.getUserObject();
-						String imgPath = apkInfo.tempWorkPath + File.separator + resObj.path.replace("/", File.separator);
+						TreeNodeData resObj = (TreeNodeData) node.getUserObject();
+						String imgPath = apkInfo.tempWorkPath + File.separator + resObj.getPath().replace("/", File.separator);
 						String extPath = imgPath + "_";
 						if(!new File(imgPath).exists()) {
-							ZipFileUtil.unZip(apkInfo.filePath, resObj.path, imgPath);
+							ZipFileUtil.unZip(apkInfo.filePath, resObj.getPath(), imgPath);
 						}
 						if(SystemUtil.isWindows()) {
 							ImgExtractorWrapper.extracte(imgPath, extPath);

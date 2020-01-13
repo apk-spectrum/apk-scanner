@@ -12,15 +12,14 @@ public enum ResourceType
 	RAW(7),
 	VALUES(8),
 	XML(9),
-	ASSET(10),
-	METAINF(11),
-	ROOTRES(12),
-	ETC(13),
-	LOCAL(14),
-	DATA(15),
-	COUNT(16);
+	FONT(10),
+	ASSET(11),
+	METAINF(12),
+	ROOTRES(13),
+	ETC(14),
+	COUNT(15);
 
-	private int type;
+	private final int type;
 
 	ResourceType(int type) {
 		this.type = type;
@@ -51,6 +50,8 @@ public enum ResourceType
 			return VALUES;
 		} else if (path.startsWith("res/xml")) {
 			return XML;
+		} else if (path.startsWith("res/font")) {
+			return FONT;
 		} else if (path.startsWith("assets")) {
 			return ASSET;
 		} else if(path.startsWith("META-INF")) {

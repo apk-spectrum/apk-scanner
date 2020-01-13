@@ -23,7 +23,6 @@ import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -32,6 +31,8 @@ import javax.swing.tree.TreeSelectionModel;
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.data.apkinfo.WidgetInfo;
 import com.apkscanner.gui.UiEventHandler;
+import com.apkscanner.gui.component.SortedMutableTreeNode;
+import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.SystemUtil;
 
 public class ResourceTree extends JTree {
@@ -54,15 +55,14 @@ public class ResourceTree extends JTree {
 				Component c = super.getTreeCellRendererComponent(tree, value, selected, expanded, isLeaf, row, focused);
 
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-				if (node.getUserObject() instanceof ResourceObject) {
-					ResourceObject resObj = (ResourceObject) node.getUserObject();
-					if(resObj.getLoadingState()) {
-						setIcon(resObj.getIconWithObserver(tree));
-					} else {
-						setIcon(resObj.getIcon());
-					}
+				Object resObj = node.getUserObject();
+				if (resObj instanceof DefaultNodeData) {
+					setIcon(((DefaultNodeData) resObj).getIcon(tree));
+				} else if(resObj instanceof TreeNodeData) {
+					setIcon(((TreeNodeData) resObj).getIcon());
 				} else {
-					setIcon(SystemUtil.getExtensionIcon(ResourceObject.getExtension(node.toString())));
+					String suffix = FileUtil.getSuffix(node.toString());
+					setIcon(SystemUtil.getExtensionIcon(suffix));
 				}
 				return c;
 			}
@@ -104,9 +104,9 @@ public class ResourceTree extends JTree {
 			public void treeExpanded(TreeExpansionEvent event) {
 				if(listener == null) return;
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) event.getPath().getLastPathComponent();
-				if (node.getUserObject() instanceof ResourceObject) {
-					ResourceObject resObj = (ResourceObject) node.getUserObject();
-					if(resObj.attr == ResourceObject.ATTR_FS_IMG) {
+				if (node.getUserObject() instanceof TreeNodeData) {
+					TreeNodeData resObj = (TreeNodeData) node.getUserObject();
+					if(".img".equals(resObj.getExtension())) {
 						listener.actionPerformed(new ActionEvent(event, ActionEvent.ACTION_PERFORMED,
 								UiEventHandler.ACT_CMD_LOAD_FS_IMG_FILE, System.currentTimeMillis(), 0));
 					}
@@ -119,7 +119,8 @@ public class ResourceTree extends JTree {
 	}
 
 	public void addTreeNodes(final String apkFilePath, final String[] resList) {
-		final ResourceObject rootResObj = new ResourceObject(new File(apkFilePath));
+		File apkFile = new File(apkFilePath);
+		final DefaultNodeData rootResObj = new DefaultNodeData(apkFile);
 		rootResObj.setLoadingState(true);
 		rootNode = new ResourceNode(rootResObj);
 
@@ -128,6 +129,8 @@ public class ResourceTree extends JTree {
 		typeNodes[ResourceType.ROOTRES.getInt()] = rootNode;
 
 		((DefaultTreeModel)getModel()).setRoot(rootNode);
+
+		final String uriPath = "jar:" + apkFile.toURI().toString().replaceAll("#", "%23") + "!/";
 
 		Thread thread = new Thread(new Runnable() {
 			public void run() {
@@ -138,22 +141,23 @@ public class ResourceTree extends JTree {
 						EventQueue.invokeAndWait(new Runnable() {
 							public void run() {
 								for (int i = start; i < start + CHUNK_SIZE && i < resList.length; i++) {
-									if (resList[i].endsWith("/") || resList[i].startsWith("lib/")
-											/*|| this.nameList[i].startsWith("META-INF/")*/) continue;
+									if (resList[i].endsWith("/") || resList[i].startsWith("lib/")) continue;
 
-									ResourceObject resObj = new ResourceObject(resList[i]);
+									ResourceObject resObj = new ResourceObject(uriPath + resList[i]);
 									DefaultMutableTreeNode node = new ResourceNode(resObj);
 
-									DefaultMutableTreeNode parentNode = typeNodes[resObj.type.getInt()];
+									ResourceType resType = resObj.getResourceType();
+
+									DefaultMutableTreeNode parentNode = typeNodes[resType.getInt()];
 									if (parentNode == null) {
-										Object typeObj = new ResourceObject(resObj.type);
+										Object typeObj = new ResourceObject(resType);
 										parentNode = new ResourceNode(typeObj);
-										typeNodes[resObj.type.getInt()] = parentNode;
+										typeNodes[resType.getInt()] = parentNode;
 
 										rootNode.add(parentNode);
 									}
 
-									if (resObj.type.isMultiConfigType()) {
+									if (resType.isMultiConfigType()) {
 										DefaultMutableTreeNode findnode = findNode(parentNode, resObj.getFileName(), false, false);
 										if (findnode != null) {
 											if (findnode.isLeaf()) {
@@ -196,7 +200,7 @@ public class ResourceTree extends JTree {
 	}
 
 	public void addTreeNodes(final String apkFilePath, final WidgetInfo widgetInfo) {
-		ResourceObject resObj = new ResourceObject(widgetInfo.name, ".xml", widgetInfo.xmlString);
+		TreeNodeData resObj = new UserNodeData(widgetInfo.name, ".xml", widgetInfo.xmlString);
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode(resObj);
 		((DefaultTreeModel)getModel()).setRoot(rootNode = node);
 
@@ -204,30 +208,17 @@ public class ResourceTree extends JTree {
 
 		node = makeLabelNode("Label", widgetInfo.resourceMap.get("label"));
 		if(node != null) rootNode.add(node);
-/*
-		if(widgetInfo.mapId != null) {
-			DefaultMutableTreeNode labelNode = new DefaultMutableTreeNode();
-			node = makeLabelNode("Long Label", widgetInfo.resourceMap.get(widgetInfo.mapId + "shortcutLongLabel"));
-			if(node != null) labelNode.add(node);
-			node = makeLabelNode("Short Label", widgetInfo.resourceMap.get(widgetInfo.mapId + "shortcutShortLabel"));
-			if(node != null) labelNode.add(node);
-			node = makeLabelNode("Disabled Message", widgetInfo.resourceMap.get(widgetInfo.mapId + "shortcutDisabledMessage"));
-			if(node != null) labelNode.add(node);
-			if(!labelNode.isLeaf()) {
-				ResourceObject labelObj = (ResourceObject) ((DefaultMutableTreeNode) labelNode.getChildAt(0)).getUserObject();
-				labelNode.setUserObject(new ResourceObject("Labels", labelObj.path, labelObj.config, labelObj.data));
-				rootNode.add(labelNode);
-			}
-		}
-*/
+
+		final String uriPath = "jar:" + new File(apkFilePath).toURI().toString().replaceAll("#", "%23") + "!/";
+
 		Entry<String, ResourceInfo[]> resource = null;
 		resource = widgetInfo.resourceMap.get("meta-data/resource");
 		if(widgetInfo.xmlMetaData != null && resource != null && resource.getValue() != null) {
-			resObj = new ResourceObject("META-DATA", resource.getKey(), widgetInfo.xmlMetaData);
+			resObj = new UserNodeData("META-DATA", resource.getKey(), widgetInfo.xmlMetaData);
 			rootNode.add(node = new ResourceNode(resObj));
 			TreePath metaDatPath = new TreePath(node.getPath());
 			for(ResourceInfo res: resource.getValue()) {
-				DefaultMutableTreeNode resNode = new ResourceNode(new ResourceObject(res.name));
+				DefaultMutableTreeNode resNode = new DefaultMutableTreeNode(new WidgetResData(uriPath + res.name));
 				node.add(resNode);
 
 				Entry<String, ResourceInfo[]> resSet = null;
@@ -238,14 +229,11 @@ public class ResourceTree extends JTree {
 					resChildNode = null;
 					for(ResourceInfo layoutRes: resSet.getValue()) {
 						if(resChildNode == null) {
-							resChildNode = new ResourceNode(new ResourceObject(layoutRes.name));
+							resChildNode = new SortedMutableTreeNode(new WidgetResData("Initial Layout",
+									resSet.getKey().replaceAll("@.*/", "@"), uriPath + layoutRes.name));
 							resNode.add(resChildNode);
-						} else {
-							if(resChildNode.isLeaf()) {
-								resChildNode.add((MutableTreeNode) resChildNode.clone());
-							}
-							resChildNode.add(new ResourceNode(new ResourceObject(layoutRes.name)));
 						}
+						resChildNode.add(new DefaultMutableTreeNode(new WidgetResData(uriPath + layoutRes.name)));
 					}
 				}
 
@@ -254,14 +242,11 @@ public class ResourceTree extends JTree {
 					resChildNode = null;
 					for(ResourceInfo iconRes: resSet.getValue()) {
 						if(resChildNode == null) {
-							resChildNode = new ResourceNode(new ResourceObject(iconRes.name));
+							resChildNode = new SortedMutableTreeNode(new WidgetResData("Preview Image",
+									resSet.getKey().replaceAll("@.*/", "@"), uriPath + iconRes.name));
 							resNode.add(resChildNode);
-						} else {
-							if(resChildNode.isLeaf()) {
-								resChildNode.add((MutableTreeNode) resChildNode.clone());
-							}
-							resChildNode.add(new ResourceNode(new ResourceObject(iconRes.name)));
 						}
+						resChildNode.add(new DefaultMutableTreeNode(new WidgetResData(uriPath + iconRes.name)));
 					}
 				}
 
@@ -271,7 +256,7 @@ public class ResourceTree extends JTree {
 					List<TreePath> shortCutPath = new ArrayList<>();
 					for(ResourceInfo shortcut: shortcuts) {
 						String xmlString = widgetInfo.resourceMap.get(shortcut.name + "xml").getKey();
-						DefaultMutableTreeNode shortcutNode = new ResourceNode(new ResourceObject(shortcut.configuration, ".xml", xmlString));
+						DefaultMutableTreeNode shortcutNode = new DefaultMutableTreeNode(new UserNodeData(shortcut.configuration, ".xml", xmlString));
 						resNode.add(shortcutNode);
 
 						DefaultMutableTreeNode shortcutResNode = null;
@@ -287,14 +272,11 @@ public class ResourceTree extends JTree {
 							resChildNode = null;
 							for(ResourceInfo iconRes: resSet.getValue()) {
 								if(resChildNode == null) {
-									resChildNode = new ResourceNode(new ResourceObject(iconRes.name));
+									resChildNode = new SortedMutableTreeNode(new WidgetResData("Icon",
+											resSet.getKey().replaceAll("@.*/", "@"), uriPath + iconRes.name));
 									shortcutNode.add(resChildNode);
-								} else {
-									if(resChildNode.isLeaf()) {
-										resChildNode.add((MutableTreeNode) resChildNode.clone());
-									}
-									resChildNode.add(new ResourceNode(new ResourceObject(iconRes.name)));
 								}
+								resChildNode.add(new DefaultMutableTreeNode(new WidgetResData(uriPath + iconRes.name)));
 							}
 						}
 
@@ -313,8 +295,6 @@ public class ResourceTree extends JTree {
 			expandPath(metaDatPath);
 		}
 
-		//expandOrCollapsePath(new TreePath(rootNode.getPath()), 2, 0, true);
-
 		setSelectionPath(treepath);
 	}
 
@@ -331,8 +311,8 @@ public class ResourceTree extends JTree {
 			}
 			labelBuilder.append("\n");
 		}
-		ResourceObject resObj = new ResourceObject(nodeName, resSet.getKey(),
-				resSet.getKey().replace("string/", ""), labelBuilder.toString().trim());
+		UserNodeData resObj = new UserNodeData(nodeName, resSet.getKey(),
+				resSet.getKey().replaceAll("@.*/", "@"), labelBuilder.toString().trim());
 		ResourceNode node = new ResourceNode(resObj);
 		return node;
 	}
@@ -351,11 +331,11 @@ public class ResourceTree extends JTree {
 			childNode = (DefaultMutableTreeNode) node.getFirstChild();
 		}
 		while (childNode != null) {
-			ResourceObject resObj = null;
-			if (childNode.getUserObject() instanceof ResourceObject) {
-				resObj = (ResourceObject) childNode.getUserObject();
+			TreeNodeData resObj = null;
+			if (childNode.getUserObject() instanceof TreeNodeData) {
+				resObj = (TreeNodeData) childNode.getUserObject();
 			}
-			if (resObj.label.equals(string) || (ignoreCase && resObj.label.equalsIgnoreCase(string))) {
+			if (resObj.getLabel().equals(string) || (ignoreCase && resObj.getLabel().equalsIgnoreCase(string))) {
 				ret = childNode;
 				break;
 			}
@@ -380,8 +360,8 @@ public class ResourceTree extends JTree {
 		DefaultMutableTreeNode fparent = (DefaultMutableTreeNode) parent.clone();
 		String temp;
 
-		if (parent.getUserObject() instanceof ResourceObject) {
-			temp = ((ResourceObject) (parent.getUserObject())).label;
+		if (parent.getUserObject() instanceof TreeNodeData) {
+			temp = ((TreeNodeData) (parent.getUserObject())).getLabel();
 		} else {
 			temp = parent.toString();
 		}
@@ -438,9 +418,9 @@ public class ResourceTree extends JTree {
 		Enumeration<TreeNode> e = rootNode.depthFirstEnumeration();
 		while (e.hasMoreElements()) {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)e.nextElement();
-			if (node.getUserObject() instanceof ResourceObject) {
-				ResourceObject temp = (ResourceObject) node.getUserObject();
-				if (temp.path.equals(path)) {
+			if (node.getUserObject() instanceof TreeNodeData) {
+				TreeNodeData temp = (TreeNodeData) node.getUserObject();
+				if (temp.getPath().equals(path)) {
 					TreePath treepath = new TreePath(node.getPath());
 					setSelectionPath(treepath);
 					scrollPathToVisible(treepath);

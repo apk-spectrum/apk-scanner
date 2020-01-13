@@ -23,8 +23,7 @@ public class FileUtil
 	public static byte[] readData(String filePath)
 	{
 		if(filePath == null) return null;
-		File f = new File(filePath);
-		byte[] buffer = new byte[(int) f.length()];
+		byte[] buffer = null;
 		try(InputStream is = new FileInputStream(filePath);
 			ByteArrayOutputStream os = new ByteArrayOutputStream()) {
 			int nRead;
@@ -236,6 +235,9 @@ public class FileUtil
 		return result.toString();
 	}
 
+	public static String getSuffix(String path) {
+		return path.replaceAll("(.*/)?(.*(\\.\\w+)|.*)+", "$3").toLowerCase();
+	}
 
     /**
      * Converts a byte to hex digit and writes to the supplied buffer

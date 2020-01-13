@@ -2,15 +2,10 @@ package com.apkscanner.gui.tabpanels;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.Objects;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -36,20 +31,12 @@ import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 import org.fife.ui.rtextarea.SearchResult;
 
-import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.UiEventHandler;
 import com.apkscanner.gui.action.ActionEventHandler;
 import com.apkscanner.gui.component.ImageControlPanel;
 import com.apkscanner.gui.component.KeyStrokeAction;
-import com.apkscanner.resource.RConst;
-import com.apkscanner.resource.RProp;
-import com.apkscanner.tool.aapt.AaptNativeWrapper;
-import com.apkscanner.tool.external.ImgExtractorWrapper;
-import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
-import com.apkscanner.util.SystemUtil;
-import com.apkscanner.util.ZipFileUtil;
 
 public class ResourceContentsPanel extends JPanel implements ActionListener
 {
@@ -74,7 +61,7 @@ public class ResourceContentsPanel extends JPanel implements ActionListener
 	private FindDialog finddlg;
 
 	private ApkInfo apkInfo;
-	private ResourceObject currentSelectedObj;
+	private TreeNodeData currentSelectedObj;
 
 	private ActionListener listener;
 	private String currentContentViewer;
@@ -125,7 +112,7 @@ public class ResourceContentsPanel extends JPanel implements ActionListener
 				private static final long serialVersionUID = 7778558784965803320L;
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					setTextContentPanel(currentSelectedObj, ResourceObject.ATTR_TXT);
+					setTextContentPanel(currentSelectedObj);
 					resToolbar.setVisibleTextTools(true);
 					resToolbar.setVisibleAXmlTools(false);
 				}
@@ -360,7 +347,7 @@ public class ResourceContentsPanel extends JPanel implements ActionListener
 			case ResourceToolBarPanel.TEXTVIEWER_TOOLBAR_SAVE:
 				if(currentSelectedObj == null || listener == null) return;
 				JComponent comp = (JComponent) evt.getSource();
-				comp.putClientProperty(ResourceObject.class, currentSelectedObj);
+				comp.putClientProperty(TreeNodeData.class, currentSelectedObj);
 				listener.actionPerformed(evt);
 				break;
 			}
@@ -377,7 +364,7 @@ public class ResourceContentsPanel extends JPanel implements ActionListener
 				break;
 			case "ctrl pressed S":	  /////////S key
 				if(listener == null) return;
-				comp.putClientProperty(ResourceObject.class, currentSelectedObj);
+				comp.putClientProperty(TreeNodeData.class, currentSelectedObj);
 				listener.actionPerformed(new ActionEvent(comp, ActionEvent.ACTION_PERFORMED,
 						UiEventHandler.ACT_CMD_SAVE_RESOURCE_FILE, evt.getWhen(), evt.getModifiers()));
 				break;
@@ -406,11 +393,11 @@ public class ResourceContentsPanel extends JPanel implements ActionListener
 	}
 
 	public void selectContent(Object userData) {
-		if(!(userData instanceof ResourceObject)) return;
+		if(!(userData instanceof TreeNodeData)) return;
 
-		ResourceObject resObj = (ResourceObject) userData;
+		TreeNodeData resObj = (TreeNodeData) userData;
 
-		if(resObj.isFolder) return;
+		if(resObj.isFolder()) return;
 
 		if(resObj.equals(currentSelectedObj)) {
 			Log.v("select same object " + currentSelectedObj.toString());
@@ -420,112 +407,67 @@ public class ResourceContentsPanel extends JPanel implements ActionListener
 
 		resToolbar.setToolbarPolicy(resObj);
 
-		switch(resObj.attr) {
-		case ResourceObject.ATTR_IMG:
+		switch(resObj.getDataType()) {
+		case TreeNodeData.DATA_TYPE_IMAGE:
 			drawImageOnPanel(resObj);
 			break;
-		case ResourceObject.ATTR_AXML:
-		case ResourceObject.ATTR_XML:
-		case ResourceObject.ATTR_TXT:
-		case ResourceObject.ATTR_CERT:
-		case ResourceObject.ATTR_FS_IMG:
+		case TreeNodeData.DATA_TYPE_TEXT:
+		case TreeNodeData.DATA_TYPE_CERTIFICATION:
 			setTextContentPanel(resObj);
 			break;
-		case ResourceObject.ATTR_ETC:
-			if("resources.arsc".equals(resObj.path)) {
+		case TreeNodeData.DATA_TYPE_UNKNOWN:
+		default:
+			switch(resObj.getExtension()) {
+			case ".arsc":
 				setTextTablePanel(resObj);
 				break;
+			case ".img":
+				setTextContentPanel(resObj);
+				break;
+			default:
+				setSelectViewPanel(resObj);
 			}
-		default:
-			setSelectViewPanel(resObj);
 			break;
 		}
 		revalidate();
 	}
 
-	private void drawImageOnPanel(ResourceObject resObj) {
-		try {
-			imageViewerPanel.setImage(apkInfo.filePath, resObj.path);
-			imageViewerPanel.repaint();
+	private void drawImageOnPanel(TreeNodeData resObj) {
+		if(resObj.getDataType() != TreeNodeData.DATA_TYPE_IMAGE) return;
+		Object data = resObj.getData();
+		if(data instanceof Image) {
+			imageViewerPanel.setImage((Image) data);
 			setContentViewPanel(CONTENT_IMAGE_VIEWER);
-		} catch (MalformedURLException e1) {
-			e1.printStackTrace();
 		}
 	}
 
-	private void setTextContentPanel(ResourceObject resObj) {
-		setTextContentPanel(resObj, -1);
-	}
+	private void setTextContentPanel(TreeNodeData resObj) {
+		Object data = null;
+		if(resObj instanceof ResourceObject) {
+			data = ((ResourceObject) resObj).getData(apkInfo.a2xConvert);
+		} else {
+			data = resObj.getData();
+		}
 
-	private void setTextContentPanel(ResourceObject resObj, int attr) {
 		String content = null;
-
-		if (attr == -1) attr = resObj.attr;
-
-		String path = resObj.path;
-		switch(attr) {
-		case ResourceObject.ATTR_AXML:
-			String[] xmlbuffer = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath, new String[] {resObj.path});
-			if(RConst.AXML_VEIWER_TYPE_XML.equals(RProp.S.AXML_VIEWER_TYPE.get())) {
-				content = apkInfo.a2xConvert.convertToText(xmlbuffer);
+		if(data != null) {
+			if(data instanceof byte[]) {
+				content = new String((byte[]) data);
 			} else {
-				StringBuilder sb = new StringBuilder();
-				for(String s: xmlbuffer) sb.append(s+"\n");
-				content = sb.toString();
+				content = data.toString();
 			}
-			break;
-		case ResourceObject.ATTR_XML:
-		case ResourceObject.ATTR_TXT:
-			byte[] buffer = null;
-			if(resObj.type == ResourceType.DATA) {
-				content = resObj.data;
-				path = ".xml";
-			} else if(resObj.type == ResourceType.LOCAL) {
-				buffer = FileUtil.readData(resObj.path);
-			} else {
-				buffer = ZipFileUtil.readData(apkInfo.filePath, resObj.path);
-			}
-			if(buffer != null) {
-				content = new String(buffer);
-			}
-			break;
-		case ResourceObject.ATTR_CERT:
-			try(ZipFile zipFile = new ZipFile(apkInfo.filePath)) {
-				ZipEntry entry = zipFile.getEntry(resObj.path);
-				if(entry != null) {
-					try(InputStream is = zipFile.getInputStream(entry)) {
-						SignatureReport sr = new SignatureReport(is);
-						content = sr.toString();
-					}
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			break;
-		case ResourceObject.ATTR_FS_IMG:
-			String imgPath = apkInfo.tempWorkPath + File.separator + resObj.path.replace("/", File.separator);
-			if(!new File(imgPath).exists()) {
-				ZipFileUtil.unZip(apkInfo.filePath, resObj.path, imgPath);
-			}
-			if(SystemUtil.isWindows()) {
-				content = ImgExtractorWrapper.getSuperblockInfo(imgPath);
-				content += ImgExtractorWrapper.getLsInfo(imgPath);
-			} else {
-				content = "Not Supported in linux";
-			}
-			break;
-		default:
+		} else {
 			content = "This type is unsupported by preview.";
 		}
 
-		xmltextArea.setSyntaxEditingStyle(getSyntaxStyle(path));
+		xmltextArea.setSyntaxEditingStyle(getSyntaxStyle(resObj.getExtension()));
 		xmltextArea.setText(content);
 		xmltextArea.setCaretPosition(0);
 		setContentViewPanel(CONTENT_SYNTAX_TEXT_VIEWER);
 	}
 
-	private void setTextTablePanel(ResourceObject resObj) {
-		if(!"resources.arsc".equals(resObj.path))
+	private void setTextTablePanel(TreeNodeData resObj) {
+		if(!"resources.arsc".equals(resObj.getPath()))
 			return;
 
 		final String[] data = (apkInfo.resourcesWithValue != null)
@@ -557,15 +499,13 @@ public class ResourceContentsPanel extends JPanel implements ActionListener
 		setContentViewPanel(CONTENT_TABLE_VIEWER);
 	}
 
-	private void setSelectViewPanel(ResourceObject resObj) {
+	private void setSelectViewPanel(TreeNodeData resObj) {
 		selectPanel.setMenu(resObj);
 		setContentViewPanel(CONTENT_SELECT_VIEWER);
 	}
 
-	private String getSyntaxStyle(String path) {
-		String extension = path.replaceAll(".*/", "").replaceAll(".*\\.", ".");
-
-		switch(extension.toLowerCase()) {
+	private String getSyntaxStyle(String suffix) {
+		switch(suffix.toLowerCase()) {
 		case ".as": return SyntaxConstants.SYNTAX_STYLE_ACTIONSCRIPT;
 		case ".asm": return SyntaxConstants.SYNTAX_STYLE_ASSEMBLER_X86;
 		//case ".": return SyntaxConstants.SYNTAX_STYLE_BBCODE;
@@ -618,7 +558,7 @@ public class ResourceContentsPanel extends JPanel implements ActionListener
 	}
 
 	public void selectContentAndLine(int line, String Findstr) {
-		if("resources.arsc".equals(currentSelectedObj.path)) {
+		if("resources.arsc".equals(currentSelectedObj.getPath())) {
 			textTableViewer.getSelectionModel().clearSelection();
 			textTableViewer.getSelectionModel().addSelectionInterval(line, line);
 

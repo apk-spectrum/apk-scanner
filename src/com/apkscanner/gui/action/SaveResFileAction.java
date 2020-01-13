@@ -8,8 +8,8 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 
 import com.apkscanner.gui.component.ApkFileChooser;
-import com.apkscanner.gui.tabpanels.ResourceObject;
-import com.apkscanner.gui.tabpanels.ResourceType;
+import com.apkscanner.gui.tabpanels.DefaultNodeData;
+import com.apkscanner.gui.tabpanels.TreeNodeData;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.util.FileUtil;
 
@@ -23,16 +23,16 @@ public class SaveResFileAction extends AbstractApkScannerAction
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		final JComponent comp = (JComponent) e.getSource();
-		final ResourceObject resObj = (ResourceObject) comp.getClientProperty(ResourceObject.class);
-		if(resObj.isFolder || resObj.getLoadingState()) return;
+		final DefaultNodeData resObj = (DefaultNodeData) comp.getClientProperty(TreeNodeData.class);
+		if(resObj.isFolder() || resObj.getLoadingState()) return;
 
-		File destFile = getSaveFile(null, resObj.path.replace("/", File.separator));
+		File destFile = getSaveFile(null, resObj.getPath().replace("/", File.separator));
 		if(destFile == null) return;
 		String destPath = destFile.getAbsolutePath();
 
-		if(resObj.type == ResourceType.LOCAL) {
-			destPath = resObj.path;
-			FileUtil.copy(resObj.path, destPath);
+		if(resObj.getURI() != null
+				&& "file".equals(resObj.getURI().getScheme())) {
+			FileUtil.copy(resObj.getPath(), destPath);
 		} else {
 			destPath = uncompressRes(resObj, destPath);
 		}

@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.JComponent;
 
-import com.apkscanner.gui.tabpanels.ResourceObject;
+import com.apkscanner.gui.tabpanels.TreeNodeData;
 import com.apkscanner.util.SystemUtil;
 
 @SuppressWarnings("serial")
@@ -17,9 +17,9 @@ public class OpenResFileArchiveExplorerAction extends AbstractApkScannerAction
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		JComponent comp = (JComponent) e.getSource();
-		ResourceObject resObj = (ResourceObject) comp.getClientProperty(ResourceObject.class);
+		TreeNodeData resObj = (TreeNodeData) comp.getClientProperty(TreeNodeData.class);
 
-		if(resObj== null || resObj.isFolder) return;
+		if(resObj== null || resObj.isFolder()) return;
 
 		String resPath = uncompressRes(resObj);
 		SystemUtil.openArchiveExplorer(resPath);

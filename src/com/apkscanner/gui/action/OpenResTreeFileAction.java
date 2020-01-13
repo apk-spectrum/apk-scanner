@@ -8,7 +8,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.apkscanner.Launcher;
 import com.apkscanner.gui.UiEventHandler;
-import com.apkscanner.gui.tabpanels.ResourceObject;
+import com.apkscanner.gui.tabpanels.DefaultNodeData;
 import com.apkscanner.util.SystemUtil;
 
 @SuppressWarnings("serial")
@@ -22,14 +22,15 @@ public class OpenResTreeFileAction extends AbstractApkScannerAction
 	public void actionPerformed(ActionEvent e) {
 		final JTree resTree = (JTree) e.getSource();
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) resTree.getLastSelectedPathComponent();
-		if (node == null || !node.isLeaf() || !(node.getUserObject() instanceof ResourceObject)) {
+		if (node == null || !node.isLeaf() || !(node.getUserObject() instanceof DefaultNodeData)) {
 			return;
 		}
-		final ResourceObject resObj = (ResourceObject) node.getUserObject();
-		if(resObj.isFolder || resObj.getLoadingState()) return;
+		final DefaultNodeData resObj = (DefaultNodeData) node.getUserObject();
+		if(resObj.isFolder() || resObj.getLoadingState()) return;
 
 		final String resPath = uncompressRes(resObj);
-		if (resPath.toLowerCase().endsWith(".dex")) {
+		switch(resObj.getExtension()) {
+		case ".dex":
 			Component c;
 			handler.sendEvent(c = new Component() {
 				{
@@ -43,10 +44,13 @@ public class OpenResTreeFileAction extends AbstractApkScannerAction
 				}
 			}, UiEventHandler.ACT_CMD_OPEN_DECOMPILER);
 			handler.putData(Integer.toString(c.hashCode()), null);
-		} else if (resObj.path.toLowerCase().endsWith(".apk")) {
+			break;
+		case ".apk":
 			Launcher.run(resPath);
-		} else {
+			break;
+		default:
 			SystemUtil.openFile(resPath);
+			break;
 		}
 	}
 }

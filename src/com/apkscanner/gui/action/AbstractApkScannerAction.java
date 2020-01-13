@@ -7,8 +7,7 @@ import java.io.IOException;
 
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.gui.tabpanels.ResourceObject;
-import com.apkscanner.gui.tabpanels.ResourceType;
+import com.apkscanner.gui.tabpanels.TreeNodeData;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
@@ -41,15 +40,17 @@ public abstract class AbstractApkScannerAction extends AbstractUIAction
 		return (Window) handler.getData(OWNER_WINDOW_KEY);
 	}
 
-	protected String uncompressRes(ResourceObject resObj) {
+	protected String uncompressRes(TreeNodeData resObj) {
 		return uncompressRes(resObj, null);
 	}
 
-	protected String uncompressRes(ResourceObject resObj, String destPath) {
-		if(resObj == null || resObj.isFolder) return null;
+	protected String uncompressRes(TreeNodeData resObj, String destPath) {
+		if(resObj == null || resObj.isFolder()) return null;
 
-		if(resObj.type == ResourceType.LOCAL) {
-			destPath = resObj.path;
+		String path = resObj.getPath();
+		if(resObj.getURI() != null
+				&& "file".equals(resObj.getURI().getScheme())) {
+			destPath = resObj.getPath();
 		} else {
 			ApkInfo apkInfo = getApkInfo();
 			if(apkInfo == null) {
@@ -58,7 +59,7 @@ public abstract class AbstractApkScannerAction extends AbstractUIAction
 			}
 
 			if(destPath == null) {
-				destPath = apkInfo.tempWorkPath + File.separator + resObj.path.replace("/", File.separator);
+				destPath = apkInfo.tempWorkPath + File.separator + path.replace("/", File.separator);
 			}
 			File destFile = new File(destPath);
 			if (!destFile.exists() && !destFile.getParentFile().exists()) {
@@ -69,14 +70,15 @@ public abstract class AbstractApkScannerAction extends AbstractUIAction
 
 			boolean convAxml2Xml = false;
 			String[] convStrings = null;
-			if (resObj.attr == ResourceObject.ATTR_AXML) {
-				convStrings = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath, new String[] { resObj.path });
+			if (path.equals("AndroidManifest.xml")
+					|| path.startsWith("res/")) {
+				convStrings = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath, new String[] { path });
 				convAxml2Xml = RConst.AXML_VEIWER_TYPE_XML.equals(RProp.S.AXML_VIEWER_TYPE.get());
-			} else if ("resources.arsc".equals(resObj.path)) {
+			} else if ("resources.arsc".equals(path)) {
 				convStrings = apkInfo.resourcesWithValue;
 				destPath += ".txt";
 			} else {
-				ZipFileUtil.unZip(apkInfo.filePath, resObj.path, destPath);
+				ZipFileUtil.unZip(apkInfo.filePath, path, destPath);
 			}
 
 			if (convStrings != null) {

@@ -41,7 +41,7 @@ public class SelectViewPanel extends JPanel implements ActionListener
 	private HashMap<ButtonSet, JButton> buttonMap;
 	private JLabel openWithLabel;
 
-	private ResourceObject resObj;
+	private TreeNodeData resObj;
 	private ActionListener listener;
 
 	public enum ButtonSet {
@@ -186,28 +186,33 @@ public class SelectViewPanel extends JPanel implements ActionListener
 		buttonMap.get(ButtonSet.CHOOSE_APPLICATION).setVisible(false);
 	}
 
-	public void setMenu(ResourceObject resObj) {
+	public void setMenu(TreeNodeData resObj) {
 		this.resObj = resObj;
-		if(resObj.path.endsWith(".dex") || resObj.path.endsWith(".jar")) {
+		switch(resObj.getExtension()) {
+		case ".dex": case ".jar":
 			setMenu(  SelectViewPanel.SELECT_VIEW_ICON_JD_OPEN
 					| SelectViewPanel.SELECT_VIEW_ICON_CHOOSE_APPLICATION );
-		} else if(resObj.path.endsWith(".apk")) {
+			break;
+		case ".apk":
 			setMenu(  SelectViewPanel.SELECT_VIEW_ICON_SCANNER_OPEN
 					| SelectViewPanel.SELECT_VIEW_ICON_CHOOSE_APPLICATION
 					| SelectViewPanel.SELECT_VIEW_ICON_EXPLORER );
-		} else if(resObj.path.endsWith(".qmg")) {
+			break;
+		case ".qmg":
 			setMenu(  SelectViewPanel.SELECT_VIEW_NONE );
-		} else {
+			break;
+		default:
 			setMenu(  SelectViewPanel.SELECT_VIEW_ICON_OPEN
 					| SelectViewPanel.SELECT_VIEW_ICON_TEXTVIEWER
 					| SelectViewPanel.SELECT_VIEW_ICON_CHOOSE_APPLICATION );
+			break;
 		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		JComponent comp = (JComponent) e.getSource();
-		comp.putClientProperty(ResourceObject.class, resObj);
+		comp.putClientProperty(TreeNodeData.class, resObj);
 		listener.actionPerformed(e);
 	}
 }
