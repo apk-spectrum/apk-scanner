@@ -21,6 +21,7 @@ import com.apkscanner.gui.component.TreeNodeImageObserver;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.SystemUtil;
+import com.apkscanner.util.URITool;
 
 public class DefaultNodeData implements TreeNodeData, Cloneable
 {
@@ -58,14 +59,8 @@ public class DefaultNodeData implements TreeNodeData, Cloneable
 		this.uri = uri;
 		String path = null;
 		if(uri != null) {
-			if("jar".equals(uri.getScheme())) {
-				uri = URI.create(uri.getSchemeSpecificPart());
-				path = uri.getPath();
-				if(path.contains("!/"))
-					path = path.split("!/", 2)[1];
-			} else {
-				path = uri.getPath();
-			}
+			path = URITool.getJarEntryPath(uri);
+			if(path == null) path = uri.getPath();
 		}
 		if(path != null && path.endsWith("/")) {
 			path = path.substring(0, path.length() - 1);

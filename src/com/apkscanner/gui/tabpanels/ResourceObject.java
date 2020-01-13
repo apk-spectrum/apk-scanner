@@ -10,6 +10,7 @@ import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.tool.external.ImgExtractorWrapper;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.SystemUtil;
+import com.apkscanner.util.URITool;
 import com.apkscanner.util.ZipFileUtil;
 
 public class ResourceObject extends DefaultNodeData implements Cloneable
@@ -73,16 +74,7 @@ public class ResourceObject extends DefaultNodeData implements Cloneable
 		if ((path.startsWith("res/") && path.endsWith(".xml"))
 				|| path.equals("AndroidManifest.xml")
 				|| path.endsWith(".img")) {
-			URI uri = getURI();
-			if(uri != null) {
-				if("jar".equals(uri.getScheme())) {
-					uri = URI.create(uri.getSchemeSpecificPart());
-					apkPath = uri.getPath();
-					if(apkPath.contains("!/"))
-						apkPath = apkPath.split("!/", 2)[0];
-					apkPath = new File(apkPath).getAbsolutePath();
-				}
-			}
+			apkPath = URITool.getJarPath(getURI());
 		}
 
 		if(apkPath != null) {

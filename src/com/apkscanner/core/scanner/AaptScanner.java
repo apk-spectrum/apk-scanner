@@ -16,6 +16,7 @@ import com.apkscanner.tool.aapt.AaptXmlTreePath;
 import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.URITool;
 import com.apkscanner.util.ZipFileUtil;
 
 public class AaptScanner extends ApkScanner
@@ -179,10 +180,7 @@ public class AaptScanner extends ApkScanner
 
 	protected ResourceInfo[] changeURLpath(ResourceInfo[] icons, AaptManifestReader manifestReader) {
 		if(icons != null && icons.length > 0) {
-			String urlFilePath = null;
-			urlFilePath = apkInfo.filePath.replaceAll("#", "%23");
-
-			String jarPath = "jar:file:" + urlFilePath + "!/";
+			String jarPath = "jar:" + new File(apkInfo.filePath).toURI() + "!/";
 			for(ResourceInfo r: icons) {
 				if(r.name == null) {
 					r.name = RImg.DEF_APP_ICON.getPath();
@@ -200,12 +198,12 @@ public class AaptScanner extends ApkScanner
 							icons = new ResourceInfo[] { new ResourceInfo(RImg.DEF_APP_ICON.getPath()) };
 						} else {
 							for(ResourceInfo r2: icons) {
-								r2.name = jarPath + r2.name;
+								r2.name = jarPath + URITool.encodeURI(r2.name);
 							}
 						}
 					}
 				} else {
-					r.name = jarPath + r.name;
+					r.name = jarPath + URITool.encodeURI(r.name);
 				}
 			}
 		} else {

@@ -38,6 +38,7 @@ import com.apkscanner.tool.aapt.AaptXmlTreePath;
 import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
+import com.apkscanner.util.URITool;
 
 public class AaptManifestReader
 {
@@ -396,8 +397,7 @@ public class AaptManifestReader
 				widget.resourceMap.put(r.name + "/previewImage", resSet);
 				if(!previewIds.contains(resSet.getKey())) {
 					previewIds.add(resSet.getKey());
-					String urlFilePath = apkFilePath.replaceAll("#", "%23");
-					String jarPath = "jar:file:" + urlFilePath + "!/";
+					String jarPath = "jar:" + new File(apkFilePath).toURI() + "!/";
 					for(ResourceInfo icon: resSet.getValue()) {
 						if(icon.name != null && !icon.name.isEmpty()) {
 							if(icon.name.startsWith("@")) continue;
@@ -405,7 +405,7 @@ public class AaptManifestReader
 							if(icon.name.endsWith("qmg")) {
 								icon.name = RImg.QMG_IMAGE_ICON.getPath();
 							} else {
-								icon.name = jarPath + icon.name;
+								icon.name = jarPath + URITool.encodeURI(icon.name);
 							}
 							iconResList.add(icon);
 						}
@@ -472,14 +472,13 @@ public class AaptManifestReader
 					for(int j=0; j<widget.icons.length; j++)
 						widget.icons[j] = widget.icons[j].clone();
 					widget.resourceMap.put(widget.mapId + "icon", resSet);
-					String urlFilePath = apkFilePath.replaceAll("#", "%23");
-					String jarPath = "jar:file:" + urlFilePath + "!/";
+					String jarPath = "jar:" + new File(apkFilePath).toURI() + "!/";
 					for(ResourceInfo icon: widget.icons) {
 						if(icon.name != null && !icon.name.isEmpty()) {
 							if(icon.name.endsWith("qmg")) {
 								icon.name = RImg.QMG_IMAGE_ICON.getPath();
 							} else {
-								icon.name = jarPath + icon.name;
+								icon.name = jarPath + URITool.encodeURI(icon.name);
 							}
 						}
 					}
