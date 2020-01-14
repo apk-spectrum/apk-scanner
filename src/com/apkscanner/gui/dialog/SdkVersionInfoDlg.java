@@ -15,7 +15,6 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -133,8 +132,7 @@ public class SdkVersionInfoDlg extends JDialog {
 
 		KeyStrokeAction.registerKeyStrokeActions(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW, new KeyStroke[] {
 				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false)
-			}, new AbstractAction() {
-				private static final long serialVersionUID = -8988954049940512230L;
+			}, new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					dispose();
 			}

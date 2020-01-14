@@ -17,7 +17,7 @@ import com.apkscanner.util.Log;
 abstract public class ActionEventHandler implements ActionListener
 {
 	protected Map<String, Action> actionMap = new HashMap<>();
-	protected Map<String, Object> dataMap;
+	protected Map<Object, Object> dataMap;
 
 	public void addAction(AbstractUIAction action) {
 		addAction(action.getActionCommand(), action);
@@ -33,9 +33,7 @@ abstract public class ActionEventHandler implements ActionListener
 
 	public void removeAction(AbstractUIAction action) {
 		if(action == null) return;
-		if(actionMap.containsKey(action.getActionCommand())) {
-			actionMap.remove(action.getActionCommand(), action);
-		}
+		removeAction(action.getActionCommand());
 	}
 
 	public void removeAction(String actionCommand) {
@@ -61,11 +59,11 @@ abstract public class ActionEventHandler implements ActionListener
 		action.actionPerformed(new ActionEvent(c, ActionEvent.ACTION_PERFORMED, actionCommand));
 	}
 
-	public Object getData(String key) {
+	public Object getData(Object key) {
 		return dataMap != null ? dataMap.get(key) : null;
 	}
 
-	public void putData(String key, Object value) {
+	public void putData(Object key, Object value) {
 		if(dataMap == null) {
 			dataMap = new HashMap<>();
 		}

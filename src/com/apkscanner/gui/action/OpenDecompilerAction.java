@@ -1,23 +1,24 @@
 package com.apkscanner.gui.action;
 
+import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
-import javax.swing.Icon;
-import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.gui.component.ExtensionButton;
 import com.apkscanner.gui.messagebox.MessageBoxPool;
+import com.apkscanner.gui.tabpanels.TreeNodeData;
 import com.apkscanner.plugin.IPlugIn;
 import com.apkscanner.plugin.PlugInManager;
+import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RConst;
-import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
-import com.apkscanner.resource.RStr;
 import com.apkscanner.tool.external.BytecodeViewerLauncher;
 import com.apkscanner.tool.external.Dex2JarWrapper;
 import com.apkscanner.tool.external.JADXLauncher;
@@ -31,10 +32,6 @@ public class OpenDecompilerAction extends AbstractApkScannerAction
 {
 	public static final String ACTION_COMMAND = "ACT_CMD_OPEN_DECOMPILER";
 
-	private String orgText;
-	private String orgTooltip;
-	private Icon orgIcon;
-
 	public OpenDecompilerAction(ActionEventHandler h) { super(h); }
 
 	@Override
@@ -47,12 +44,10 @@ public class OpenDecompilerAction extends AbstractApkScannerAction
 			}
 		}
 		evtOpenDecompiler(getWindow(e),
-				source instanceof JButton ? (JButton)source : null);
+				source instanceof Component ? (Component)source : null);
 	}
 
-	protected void evtOpenDecompiler(final Window owner, final JButton button) {
-		if(!hasCode(owner)) return;
-
+	protected void evtOpenDecompiler(final Window owner, final Component comp) {
 		String data = RProp.S.DEFAULT_DECORDER.get();
 		Log.v("PROP_DEFAULT_DECORDER : " + data);
 
@@ -63,13 +58,13 @@ public class OpenDecompilerAction extends AbstractApkScannerAction
 
 		switch(data) {
 		case RConst.STR_DECORDER_JD_GUI:
-			launchJdGui(owner, button);
+			launchJdGui(owner, comp);
 			break;
 		case RConst.STR_DECORDER_JADX_GUI:
-			launchJadxGui(owner, button);
+			launchJadxGui(owner, comp);
 			break;
 		case RConst.STR_DECORDER_BYTECOD:
-			launchByteCodeViewer(owner, button);
+			launchByteCodeViewer(owner, comp);
 			break;
 		default:
 		}
@@ -92,28 +87,54 @@ public class OpenDecompilerAction extends AbstractApkScannerAction
 		return true;
 	}
 
-	protected void launchJdGui(final Window owner, final JButton button) {
+	protected String getTargetPath(Window owner, Component comp) {
+		// from OpenResTreeFileAction
+		String target = (String) handler.getData(Integer.toString(comp.hashCode()));
+
+		// from SelectViewPanel
+		if(target == null && comp instanceof JComponent) {
+			TreeNodeData resObj = (TreeNodeData)((JComponent)comp).getClientProperty(TreeNodeData.class);
+			target = uncompressRes(resObj);
+		}
+
+		if(target == null) {
+			if(!hasCode(owner)) return null;
+			ApkInfo apkInfo = getApkInfo();
+			if(apkInfo != null) {
+				target = apkInfo.filePath;
+			}
+		}
+		return target;
+	}
+
+	protected void launchJdGui(final Window owner, final Component comp) {
+		String targetPath = getTargetPath(owner, comp);
+		if(targetPath == null) return;
+
 		ApkInfo apkInfo = getApkInfo();
-		setButtonEnabled(button, false);
-		String jarfileName = apkInfo.tempWorkPath + File.separator + (new File(apkInfo.filePath)).getName().replaceAll("\\.apk$", ".jar");
-		Dex2JarWrapper.convert(apkInfo.filePath, jarfileName, new Dex2JarWrapper.DexWrapperListener() {
+		String jarfileName = targetPath;
+		if(!jarfileName.startsWith(apkInfo.tempWorkPath)) {
+			jarfileName = apkInfo.tempWorkPath + File.separator + (new File(targetPath)).getName();
+		}
+		jarfileName = jarfileName.replaceAll("\\.(apk|dex)$", ".jar");
+
+		setComponentEnabled(comp, false);
+		Dex2JarWrapper.convert(targetPath, jarfileName, comp == null
+				? null : new Dex2JarWrapper.DexWrapperListener() {
+			private boolean completed;
 			@Override
 			public void onCompleted() {
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						setButtonEnabled(button, true);
-					}
-				});
+				if(completed) return;
+				setComponentEnabled(comp, true);
+				completed = true;
 			}
 
 			@Override
 			public void onError(final String message) {
+				if(completed) return;
 				Log.e("Failure: Fail Dex2Jar : " + message);
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						MessageBoxPool.show(owner, MessageBoxPool.MSG_FAILURE_DEX2JAR, message);
-					}
-				});
+				setComponentEnabled(comp, true);
+				completed = true;
 			}
 
 			@Override
@@ -123,36 +144,40 @@ public class OpenDecompilerAction extends AbstractApkScannerAction
 		});
 	}
 
-	protected void launchJadxGui(final Window owner, final JButton button) {
-		ApkInfo apkInfo = getApkInfo();
-		setButtonEnabled(button, false);
-		JADXLauncher.run(apkInfo.filePath, new ConsoleOutputObserver() {
+	protected void launchJadxGui(final Window owner, final Component comp) {
+		String targetPath = getTargetPath(owner, comp);
+		if(targetPath == null) return;
+		setComponentEnabled(comp, false);
+		JADXLauncher.run(getTargetPath(owner, comp), comp == null
+				? null : new ConsoleOutputObserver() {
+			private boolean completed;
 			@Override
 			public boolean ConsolOutput(String output) {
-				if(output.startsWith("INFO")) {
-					EventQueue.invokeLater(new Runnable() {
-						public void run() {
-							setButtonEnabled(button, true);
-						}
-					});
+				if(completed) return true;
+				if(output.startsWith("INFO")
+						|| output.equals("JADXLauncher Completed")) {
+					setComponentEnabled(comp, true);
+					completed = true;
 				}
 				return true;
 			}
 		});
 	}
 
-	protected void launchByteCodeViewer(final Window owner, final JButton button) {
-		ApkInfo apkInfo = getApkInfo();
-		setButtonEnabled(button, false);
-		BytecodeViewerLauncher.run(apkInfo.filePath, new ConsoleOutputObserver() {
+	protected void launchByteCodeViewer(final Window owner, final Component comp) {
+		String targetPath = getTargetPath(owner, comp);
+		if(targetPath == null) return;
+		setComponentEnabled(comp, false);
+		BytecodeViewerLauncher.run(targetPath, comp == null
+				? null : new ConsoleOutputObserver() {
+			private boolean completed;
 			@Override
 			public boolean ConsolOutput(String output) {
-				if(output.startsWith("Start up") || output.startsWith("I:")) {
-					EventQueue.invokeLater(new Runnable() {
-						public void run() {
-							setButtonEnabled(button, true);
-						}
-					});
+				if(completed) return true;
+				if(output.startsWith("Start up") || output.startsWith("I:")
+						|| output.equals("BytecodeViewerLauncher Completed")) {
+					setComponentEnabled(comp, true);
+					completed = true;
 				}
 				return true;
 			}
@@ -166,22 +191,17 @@ public class OpenDecompilerAction extends AbstractApkScannerAction
 		return true;
 	}
 
-	protected void setButtonEnabled(JButton button, boolean enabled) {
-		if(button == null) return;
-
-		if(enabled) {
-			button.setText(orgText);
-			button.setToolTipText(orgTooltip);
-			button.setDisabledIcon(orgIcon);
-		} else {
-			orgText = button.getText();
-			orgTooltip = button.getToolTipText();
-			orgIcon = button.getDisabledIcon();
-
-			button.setText(RStr.BTN_OPENING_CODE.get());
-			button.setToolTipText(RStr.BTN_OPENING_CODE_LAB.get());
-			button.setDisabledIcon(RImg.TOOLBAR_LOADING_OPEN_JD.getImageIcon());
-		}
-		button.setEnabled(enabled);
+	protected void setComponentEnabled(final Component comp, final boolean enabled) {
+		if(comp == null) return;
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				comp.setEnabled(enabled);
+				if(comp instanceof ExtensionButton) {
+					if(!enabled) {
+						RComp.BTN_TOOLBAR_OPEN_CODE_LODING.set(comp);
+					}
+				}
+			}
+		});
 	}
 }

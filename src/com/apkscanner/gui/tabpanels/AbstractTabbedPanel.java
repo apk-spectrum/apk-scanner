@@ -1,22 +1,43 @@
 package com.apkscanner.gui.tabpanels;
 
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.Icon;
 import javax.swing.JPanel;
 
-import com.apkscanner.plugin.ITabbedComponent;
-import com.apkscanner.plugin.ITabbedRequest;
+import com.apkscanner.gui.component.ITabbedComponent;
+import com.apkscanner.gui.component.ITabbedRequest;
+import com.apkscanner.resource.RComp;
 import com.apkscanner.util.Log;
 
-public abstract class AbstractTabbedPanel extends JPanel implements ITabbedComponent {
+public abstract class AbstractTabbedPanel extends JPanel implements ITabbedComponent, PropertyChangeListener {
 	private static final long serialVersionUID = -5636023017306297012L;
-	
+
+	public static final int SEND_REQUEST_NONE = ITabbedRequest.REQUEST_NONE;
+	public static final int SEND_REQUEST_VISIBLE = ITabbedRequest.REQUEST_VISIBLE;
+	public static final int SEND_REQUEST_INVISIBLE = ITabbedRequest.REQUEST_INVISIBLE;
+	public static final int SEND_REQUEST_ENABLED = ITabbedRequest.REQUEST_ENABLED;
+	public static final int SEND_REQUEST_DISABLED = ITabbedRequest.REQUEST_DISABLED;
+	public static final int SEND_REQUEST_SELECTED = ITabbedRequest.REQUEST_SELECTED;
+	public static final int SEND_REQUEST_CHANGE_TITLE = ITabbedRequest.REQUEST_CHANGE_TITLE;
+
 	public static final int SEND_REQUEST_CURRENT_ENABLED = 100;
 	public static final int SEND_REQUEST_CURRENT_VISIBLE = 101;
 
 	private Icon icon;
 	private int dataSize = -1;
+	private int priority = -1;
+
+	private boolean visible = true;
+	private boolean enabled = true;
+
+	private ITabbedRequest tabbedRequest;
+
+	{
+		addPropertyChangeListener(RComp.RCOMP_SET_TEXT_KEY, this);
+	}
 
 	@Override
 	public Component getComponent() {
@@ -33,9 +54,31 @@ public abstract class AbstractTabbedPanel extends JPanel implements ITabbedCompo
 		return super.getToolTipText();
 	}
 
+	public void setTitle(String title, String toolTip) {
+		setName(title);
+		setToolTipText(toolTip);
+
+		if(tabbedRequest != null)
+			tabbedRequest.onRequestChangeTitle();
+	}
+
+	public void setTitle(RComp res) {
+		if(res != null) res.set(this);
+	}
+
 	@Override
 	public Icon getIcon() {
 		return icon;
+	}
+
+	@Override
+	public int getPriority() {
+		return priority;
+	}
+
+	@Override
+	public void setPriority(int priority) {
+		this.priority = priority;
 	}
 
 	public void setIcon(Icon icon) {
@@ -46,10 +89,41 @@ public abstract class AbstractTabbedPanel extends JPanel implements ITabbedCompo
 		dataSize = size;
 	}
 
+	@Override
+	public boolean isTabbedVisible() {
+		return visible;
+	}
+
+	@Override
+	public boolean isTabbedEnabled() {
+		return enabled;
+	}
+
+	@Override
+	public void setTabbedEnabled(boolean enabled) {
+		this.enabled = enabled;
+		if(tabbedRequest != null)
+			tabbedRequest.onRequestEnabled(enabled);
+	}
+
+	@Override
+	public void setTabbedVisible(boolean visible) {
+		this.visible = visible;
+		if(tabbedRequest != null)
+			tabbedRequest.onRequestVisible(visible);
+	}
+
+	public void setSeletected() {
+		if(tabbedRequest != null)
+			tabbedRequest.onRequestSelected();
+	}
+
 	protected void setDataSize(int size, boolean chageEnabled, boolean changeVisible) {
+		if(dataSize == size) return;
 		dataSize = size;
-		if(chageEnabled) setEnabled(dataSize > 0);
-		if(changeVisible) setVisible(dataSize > 0);
+		sendRequest(SEND_REQUEST_CHANGE_TITLE);
+		if(chageEnabled) setTabbedEnabled(dataSize > 0);
+		if(changeVisible) setTabbedVisible(dataSize > 0);
 	}
 
 	@Override
@@ -57,23 +131,46 @@ public abstract class AbstractTabbedPanel extends JPanel implements ITabbedCompo
 		setDataSize(-1, true, false);
 	}
 
-	protected void sendRequest(ITabbedRequest handler, int request) {
+	@Override
+	public void setTabbedRequest(ITabbedRequest request) {
+		tabbedRequest = request;
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		if(!RComp.RCOMP_SET_TEXT_KEY.equals(evt.getPropertyName()))
+			return;
+
+		if(tabbedRequest != null)
+			tabbedRequest.onRequestChangeTitle();
+	}
+
+	protected void sendRequest(int request) {
 		switch(request) {
-		case ITabbedRequest.REQUEST_VISIBLE:	setVisible(true); break;
-		case ITabbedRequest.REQUEST_INVISIBLE:	setVisible(false); break;
-		case ITabbedRequest.REQUEST_ENABLED:	setEnabled(true); break;
-		case ITabbedRequest.REQUEST_DISABLED:	setEnabled(false); break;
-		case ITabbedRequest.REQUEST_SELECTED:	break;
+		case SEND_REQUEST_VISIBLE:
+			setTabbedVisible(true);
+			return;
+		case SEND_REQUEST_INVISIBLE:
+			setTabbedVisible(false);
+			return;
+		case SEND_REQUEST_ENABLED:
+			setTabbedEnabled(true);
+			return;
+		case SEND_REQUEST_DISABLED:
+			setTabbedEnabled(false);
+			return;
 		case SEND_REQUEST_CURRENT_ENABLED:
-			request = isEnabled() ? ITabbedRequest.REQUEST_ENABLED : ITabbedRequest.REQUEST_DISABLED;
+			request = isTabbedEnabled() ? SEND_REQUEST_ENABLED : SEND_REQUEST_DISABLED;
 			break;
 		case SEND_REQUEST_CURRENT_VISIBLE:
-			request = isVisible() ? ITabbedRequest.REQUEST_VISIBLE : ITabbedRequest.REQUEST_INVISIBLE;
+			request = isTabbedVisible() ? SEND_REQUEST_VISIBLE : SEND_REQUEST_INVISIBLE;
+			break;
+		case SEND_REQUEST_SELECTED:
+		case SEND_REQUEST_CHANGE_TITLE:
 			break;
 		default:
 			Log.w("unknown request : " + request);
-			return;
 		}
-		if(handler != null) handler.onRequest(request);
+		if(tabbedRequest != null) tabbedRequest.onRequest(request);
 	}
 }

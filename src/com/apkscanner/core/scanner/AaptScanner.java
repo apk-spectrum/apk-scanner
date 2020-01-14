@@ -2,6 +2,10 @@ package com.apkscanner.core.scanner;
 
 import java.io.File;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import com.apkscanner.Launcher;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
@@ -9,8 +13,10 @@ import com.apkscanner.resource.RImg;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
 import com.apkscanner.tool.aapt.AaptXmlTreeNode;
 import com.apkscanner.tool.aapt.AaptXmlTreePath;
+import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.URITool;
 import com.apkscanner.util.ZipFileUtil;
 
 public class AaptScanner extends ApkScanner
@@ -79,7 +85,9 @@ public class AaptScanner extends ApkScanner
 		apkInfo.filePath = apkFile.getAbsolutePath();
 		apkInfo.fileSize = apkFile.length();
 		apkInfo.tempWorkPath = FileUtil.makeTempPath(apkInfo.filePath.substring(apkInfo.filePath.lastIndexOf(File.separator)));
-		apkInfo.resourceScanner = resourceScanner;
+		apkInfo.a2xConvert = new AxmlToXml(resourceScanner);
+
+		setType();
 
 		stateChanged(Status.STANBY);
 
@@ -100,13 +108,15 @@ public class AaptScanner extends ApkScanner
 
 		apkInfo.manifest.application.icons = changeURLpath(apkInfo.manifest.application.icons, manifestReader);
 
+		readApexInfo();
+
 		Log.i("read basic info completed");
 		stateChanged(Status.BASIC_INFO_COMPLETED);
 
 		new Thread(new Runnable() {
 			public void run() {
 				Log.i("read signatures...");
-				apkInfo.certificates = solveCert();
+				solveCert();
 				stateChanged(Status.CERT_COMPLETED);
 				Log.i("read signatures completed...");
 			}
@@ -143,13 +153,34 @@ public class AaptScanner extends ApkScanner
 		apkInfo.widgets = manifestReader.getWidgetList(apkInfo.filePath);
 		stateChanged(Status.WIDGET_COMPLETED);
 	}
-	
-	protected ResourceInfo[] changeURLpath(ResourceInfo[] icons, AaptManifestReader manifestReader) {		
-		if(icons != null && icons.length > 0) {
-			String urlFilePath = null;
-			urlFilePath = apkInfo.filePath.replaceAll("#", "%23");
 
-			String jarPath = "jar:file:" + urlFilePath + "!/";
+	protected void readApexInfo() {
+		if(apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX) return;
+
+		apkInfo.manifest.application.labels = new ResourceInfo[1];
+		apkInfo.manifest.application.labels[0] = new ResourceInfo(apkInfo.manifest.packageName);
+
+		byte[] rawData = ZipFileUtil.readData(apkInfo.filePath, "apex_manifest.json");
+		if(rawData != null) {
+			try {
+				JSONObject apexManifest = (JSONObject)(new JSONParser()).parse(new String(rawData));
+				apkInfo.manifest.packageName = (String) apexManifest.get("name");
+				apkInfo.manifest.versionName = apkInfo.manifest.versionCode.toString();
+				Object data = apexManifest.get("version");
+				if(data instanceof Long) {
+					apkInfo.manifest.versionCode = (int)(long)data;
+				} else if(data instanceof Integer) {
+					apkInfo.manifest.versionCode = (int)data;
+				}
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	protected ResourceInfo[] changeURLpath(ResourceInfo[] icons, AaptManifestReader manifestReader) {
+		if(icons != null && icons.length > 0) {
+			String jarPath = "jar:" + new File(apkInfo.filePath).toURI() + "!/";
 			for(ResourceInfo r: icons) {
 				if(r.name == null) {
 					r.name = RImg.DEF_APP_ICON.getPath();
@@ -167,12 +198,12 @@ public class AaptScanner extends ApkScanner
 							icons = new ResourceInfo[] { new ResourceInfo(RImg.DEF_APP_ICON.getPath()) };
 						} else {
 							for(ResourceInfo r2: icons) {
-								r2.name = jarPath + r2.name;
+								r2.name = jarPath + URITool.encodeURI(r2.name);
 							}
 						}
 					}
 				} else {
-					r.name = jarPath + r.name;
+					r.name = jarPath + URITool.encodeURI(r.name);
 				}
 			}
 		} else {
@@ -190,8 +221,8 @@ public class AaptScanner extends ApkScanner
 		if(apkPath != null && !apkPath.isEmpty() && apkPath.startsWith(FileUtil.getTempPath())) {
 			File parent = new File(apkPath).getParentFile();
 			Log.i("delete temp APK folder : "  + parent.getPath());
-			while(parent != null && parent.exists() && parent.getParentFile() != null 
-					&& parent.getParentFile().listFiles().length == 1 
+			while(parent != null && parent.exists() && parent.getParentFile() != null
+					&& parent.getParentFile().listFiles().length == 1
 					&& parent.getParentFile().getAbsolutePath().length() > FileUtil.getTempPath().length()) {
 				parent = parent.getParentFile();
 			}

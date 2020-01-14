@@ -631,7 +631,7 @@ public class SettingDlg extends JDialog implements ActionListener
 			try {
 				for(String suffix: new String[]{".txt", "txtfile", "textfile", ".xml", ".log"}) {
 					String cmdLine = SystemUtil.getOpenCommand(suffix);
-					if(cmdLine != null && cmdLine.indexOf("%1") >= 0) {
+					if(cmdLine != null && cmdLine.contains("%1")) {
 						String cmd = cmdLine.replaceAll("\"?(.*\\.[eE][xX][eE])\"?.*", "$1");
 						if(!cmd.equals(cmdLine)) {
 							String path = SystemUtil.getRealPath(cmd);
@@ -1206,8 +1206,8 @@ public class SettingDlg extends JDialog implements ActionListener
 		previewPanel.setPreferredSize(new Dimension(0,170));
 
 		mPreviewFrame = new JInternalFrame(RStr.APP_NAME.get(),false,false,false,false);
-		mPreviewToolBar = new ToolBar(this, null);
-		mPreviewTabbedPanel = new TabbedPanel(propTabbedUI);
+		mPreviewToolBar = new ToolBar(null);
+		mPreviewTabbedPanel = new TabbedPanel(propTabbedUI, null);
 		mPreviewFrame.setFrameIcon(RImg.APP_ICON.getImageIcon(16,16));
 		mPreviewFrame.getContentPane().add(mPreviewToolBar, BorderLayout.NORTH);
 		mPreviewFrame.getContentPane().add(mPreviewTabbedPanel, BorderLayout.CENTER);

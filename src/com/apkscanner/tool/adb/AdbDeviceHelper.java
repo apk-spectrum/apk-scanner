@@ -401,7 +401,7 @@ public class AdbDeviceHelper {
 		}
 		String[] result = outputReceiver.getOutput();
 		for(String output: result) {
-			if(output.indexOf("uid=0") > -1) {
+			if(output.contains("uid=0")) {
 				isRoot = true;
 			}
 		}
@@ -455,7 +455,7 @@ public class AdbDeviceHelper {
 		String shResult = shResultBuilder.toString().trim();
 
 		boolean islocked = false;
-		if(shResult.indexOf("mShowingLockscreen=true") > -1) {
+		if(shResult.contains("mShowingLockscreen=true")) {
 			islocked = true;
 		}
 		return islocked;
@@ -487,7 +487,7 @@ public class AdbDeviceHelper {
 		String shResult = shResultBuilder.toString().trim();
 
 		Dimension size = null;
-		if(shResult.indexOf("Physical size:") > -1) {
+		if(shResult.contains("Physical size:")) {
 			String strSize = shResult.replaceAll(".*Physical size:\\s*(\\d+[xX]\\d+).*", "$1");
 			if(!strSize.equals(shResult)) {
 				String[] temp = strSize.split("[xX]");
@@ -551,7 +551,7 @@ public class AdbDeviceHelper {
 		}
 		String shResult = shResultBuilder.toString().trim();
 
-		return shResult.toLowerCase().indexOf("mactive=true") > -1;
+		return shResult.toLowerCase().contains("mactive=true");
 	}
 
 	public static String[] launchActivity(IDevice device, String activity) {

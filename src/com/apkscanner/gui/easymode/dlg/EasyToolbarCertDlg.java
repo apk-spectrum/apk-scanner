@@ -6,10 +6,6 @@ import java.awt.Frame;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import javax.swing.JDialog;
 import javax.swing.JList;
@@ -23,6 +19,7 @@ import javax.swing.event.ListSelectionListener;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.ZipFileUtil;
 
 public class EasyToolbarCertDlg extends JDialog {
 	private static final long serialVersionUID = 412416259548061790L;
@@ -86,32 +83,9 @@ public class EasyToolbarCertDlg extends JDialog {
 								break;
 							}
 						}
-						if (apkFilePath != null && entryPath != null) {
-							ZipFile zipFile = null;
-							InputStream is = null;
-							try {
-								zipFile = new ZipFile(apkFilePath);
-								ZipEntry entry = zipFile.getEntry(entryPath);
-								byte[] buffer = new byte[(int) entry.getSize()];
-								is = zipFile.getInputStream(entry);
-								is.read(buffer);
-								textArea.setText(new String(buffer));
-							} catch (IOException e) {
-								e.printStackTrace();
-							} finally {
-								if (is != null) {
-									try {
-										is.close();
-									} catch (IOException e) {
-									}
-								}
-								if (zipFile != null) {
-									try {
-										zipFile.close();
-									} catch (IOException e) {
-									}
-								}
-							}
+						byte[] buffer = ZipFileUtil.readData(apkFilePath, entryPath);
+						if(buffer != null) {
+							textArea.setText(new String(buffer));
 						} else {
 							textArea.setText("fail read file : " + fileName);
 						}

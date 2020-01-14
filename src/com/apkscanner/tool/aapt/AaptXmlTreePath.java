@@ -281,7 +281,7 @@ public class AaptXmlTreePath
 
 	private boolean checkAttrCond(AaptXmlTreeNode node, String attrCond)
 	{
-		if(attrCond == null || attrCond.trim().isEmpty() || attrCond.indexOf("=") < 0)
+		if(attrCond == null || attrCond.trim().isEmpty() || !attrCond.contains("="))
 			return true;
 
 		String cond[] = attrCond.split("=");

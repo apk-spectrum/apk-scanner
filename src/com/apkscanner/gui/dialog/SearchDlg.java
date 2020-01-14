@@ -14,8 +14,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.regex.PatternSyntaxException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -37,11 +35,11 @@ import org.fife.ui.rtextarea.SearchEngine;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.component.WindowSizeMemorizer;
-import com.apkscanner.gui.tabpanels.Resources;
+import com.apkscanner.gui.tabpanels.ResContentFocusChanger;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
-import com.apkscanner.tool.aapt.AxmlToXml;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.ZipFileUtil;
 
 public class SearchDlg extends JDialog {
 	private static final long serialVersionUID = 6109952065388761951L;
@@ -56,7 +54,9 @@ public class SearchDlg extends JDialog {
 	JLabel label;
 	static String hoverFilePath;
 
-	public SearchDlg() {
+	private ResContentFocusChanger changer;
+
+	public SearchDlg(ResContentFocusChanger changer) {
 		setBounds(100, 100, 500, 500);
 		setTitle("Input Dialog");
 		setLocationRelativeTo(null);
@@ -109,6 +109,8 @@ public class SearchDlg extends JDialog {
 		label = new JLabel(RImg.WAIT_BAR.getImageIcon());
 		label.setVisible(false);
 		buttonPanel.add(label);
+
+		this.changer = changer;
 	}
 
 	public void setJTableColumnsWidth(JTable table, int tablePreferredWidth, double... percentages) {
@@ -137,10 +139,8 @@ public class SearchDlg extends JDialog {
 					// your valueChanged overridden method
 					Log.d("click : " + row + "  file : " +(data.get(row)).path + "   line : " + (data.get(row)).line);
 					//ImageResource.setTreeFocus((data.get(row)).path, (data.get(row)).line);
-					Resources.TreeFocusChanger changer = Resources.getTreeFocuschanger();
 					if(changer!=null) {
-						changer.setTreeFocus((data.get(row)).path, (data.get(row)).line, name.getText());
-
+						changer.setResContentFocus((data.get(row)).path, (data.get(row)).line, name.getText());
 					} else {
 						Log.d("TreeFocusChanger = null");
 					}
@@ -207,13 +207,12 @@ public class SearchDlg extends JDialog {
 
 					String[] xmlbuffer = AaptNativeWrapper.Dump.getXmltree(apkinfo.filePath,
 							new String[] { hoverFilePath });
-					AxmlToXml a2x = new AxmlToXml(xmlbuffer, (apkinfo != null) ? apkinfo.resourceScanner : null);
 					// StringBuilder sb = new StringBuilder();
 					// for(String s: xmlbuffer) sb.append(s+"\n");
 
 					// this.setLabelText(getValueAt(row, 1).toString());
 
-					toolTipText = a2x.toString();
+					toolTipText = apkinfo.a2xConvert.convertToText(xmlbuffer);
 					if(m_tooltip !=null) {
 						setMarkString(name.getText());
 						setLabelText(hoverFilePath);
@@ -308,30 +307,19 @@ public class SearchDlg extends JDialog {
 						//						for(String s: xmlbuffer) sb.append(s+"\n");
 
 						String[] xmlbuffer = AaptNativeWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {filelist[i]});
-						AxmlToXml a2x = new AxmlToXml(xmlbuffer, (apkinfo != null) ? apkinfo.resourceScanner : null);
 						//StringBuilder sb = new StringBuilder();
 						//for(String s: xmlbuffer) sb.append(s+"\n");
-						temp = a2x.toString();
+						temp = apkinfo.a2xConvert.convertToText(xmlbuffer);
 
 
 						//temp = sb.toString();
 					} else if(filelist[i].endsWith(".txt") || filelist[i].endsWith(".mk")
 							|| filelist[i].endsWith(".html") || filelist[i].endsWith(".js") || filelist[i].endsWith(".css") || filelist[i].endsWith(".json")
 							|| filelist[i].endsWith(".props") || filelist[i].endsWith(".properties")) {
-						ZipFile zipFile = null;
-						try {
-							zipFile = new ZipFile(apkinfo.filePath);
-						} catch (IOException e) {
-							e.printStackTrace();
+						byte[] buffer = ZipFileUtil.readData(apkinfo.filePath, filelist[i]);
+						if(buffer != null) {
+							temp = new String(buffer);
 						}
-						ZipEntry entry = zipFile.getEntry(filelist[i]);
-						byte[] buffer = new byte[(int) entry.getSize()];
-						try {
-							zipFile.getInputStream(entry).read(buffer);
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-						temp = new String(buffer);
 					} else if("resources.arsc".equals(filelist[i])) {
 						String[] lines = apkinfo.resourcesWithValue;
 						if(lines == null) {
@@ -340,7 +328,7 @@ public class SearchDlg extends JDialog {
 						}
 
 						for(int n = 0; n < lines.length; n++) {
-							if (lines[n].indexOf(findStr) !=-1) {
+							if (lines[n].contains(findStr)) {
 								data.add(new TableData(data.size(),filelist[i],n,lines[n]));
 							}
 						}
@@ -365,7 +353,7 @@ public class SearchDlg extends JDialog {
 							while ((line = reader.readLine()) != null) {
 								//String line = scanner.nextLine();
 								// process the line
-								if (line.indexOf(findStr) !=-1)  {
+								if (line.contains(findStr))  {
 									//System.out.format("%3d: %s%n", lineNumber, line);
 									data.add(new TableData(data.size(),filelist[i],lineNumber,line));
 								}

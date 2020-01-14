@@ -44,6 +44,8 @@
 	<string name="btn_assoc_ftype">APK 파일 연결</string>
 	<string name="btn_unassoc_ftype">APK 파일 연결해제</string>
 	<string name="btn_create_shortcut">바탕화면에 바로가기 생성</string>
+	<string name="btn_show_permissions">권한 정보 확인</string>
+	<string name="btn_show_sdk_info">SDK 정보 확인</string>
     <string name="btn_self_search">찾아보기...</string>
 	<string name="btn_details_info">상세 패키지정보</string>
 	<string name="btn_to_install">Install</string>
@@ -128,6 +130,7 @@
 	<string name="menu_visible_to_basic_each">개별 검색 기능 표시 선택</string>
 
 	<string name="tab_basic_info">APK 정보</string>
+	<string name="tab_apex_info">APEX 정보</string>
 	<string name="tab_widgets">위젯</string>
 	<string name="tab_libraries">라이브러리</string>
 	<string name="tab_resources">리소스</string>
@@ -217,6 +220,7 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="widget_column_label">이름</string>
 	<string name="widget_column_size">크기</string>
 	<string name="widget_column_activity">클래스</string>
+	<string name="widget_column_enabled">상태</string>
 	<string name="widget_column_type">종류</string>
 	<string name="widget_resize_mode">크기조정가능</string>
 	<string name="widget_horizontal">가로</string>
@@ -229,16 +233,15 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="lib_column_size">크기</string>
 	<string name="lib_column_compressibility">압축률</string>
 
-	<string name="activity_column_class">클래스</string>
-	<string name="activity_column_type">종류</string>
-	<string name="activity_column_startup">스타트업</string>
-	<string name="activity_column_enabled">상태</string>
-	<string name="activity_column_export">외부공개</string>
-	<string name="activity_column_permission">권한</string>
-	<string name="activity_type_activity">액티비티</string>
-	<string name="activity_type_service">서비스</string>
-	<string name="activity_type_receiver">리시버</string>
-	<string name="activity_label_intent_filter">인텐트 필터</string>
+	<string name="component_column_class">클래스</string>
+	<string name="component_column_type">종류</string>
+	<string name="component_column_startup">스타트업</string>
+	<string name="component_column_enabled">상태</string>
+	<string name="component_column_export">외부공개</string>
+	<string name="component_column_permission">권한</string>
+	<string name="component_label_xml">XML 구문</string>
+	<string name="component_filter_prompt_xml">XML 구문에서 검색</string>
+	<string name="component_filter_prompt_name">클래스 이름 검색</string>
 
 	<string name="cert_summury">요약</string>
 	<string name="cert_certificate">서명</string>
@@ -301,7 +304,7 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="label_no_permission">앱에서 사용중인 권한이 없습니다.</string>
 	<string name="label_search">검색</string>
 	<string name="label_loading">로딩...</string>
-	<string name="label_apk_file_description">안드로이드 패키지(.apk)</string>
+	<string name="label_apk_file_description">안드로이드 패키지(.apk | .apex)</string>
 	<string name="label_device">디바이스</string>
 	<string name="label_path">경로</string>
 	<string name="label_uses_resource">프레임워크 리소스 파일 사용</string>
@@ -313,6 +316,7 @@ eng 바이너리 또는 PBS user 바이너리에 사용 됩니다.</string>
 	<string name="label_open_with_explorer">탐색기</string>
 	<string name="label_open_with_apkscanner">APK 스캐너</string>
 	<string name="label_open_with_choose">연결 프로그램 선택</string>
+	<string name="label_open_to_textviewer">텍스트로 보기</string>
 	<string name="label_how_to_install">설치 방법</string>
 	<string name="label_install_options">Install 옵션</string>
 	<string name="label_push_options">Push 옵션</string>

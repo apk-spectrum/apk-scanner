@@ -27,7 +27,7 @@ import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
 
-public class PermissionReferencePanel extends JPanel implements ActionListener {
+public class PermissionReferencePanel extends JPanel {
 	private static final long serialVersionUID = 1224360539653858070L;
 
 	private JDialog dialog;
@@ -139,17 +139,10 @@ public class PermissionReferencePanel extends JPanel implements ActionListener {
 
 		KeyStrokeAction.registerKeyStrokeActions(dialog.getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW, new KeyStroke[] {
 			KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false)
-		}, this);
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		//Log.v("actionPerformed " + e);
-		int keycode = Integer.parseInt(e.getActionCommand());
-		switch(keycode) {
-		case KeyEvent.VK_ESCAPE:
-			dialog.dispose();
-			break;
-		}
+		}, new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dialog.dispose();
+			}
+		});
 	}
 }

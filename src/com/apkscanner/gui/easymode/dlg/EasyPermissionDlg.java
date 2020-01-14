@@ -214,9 +214,9 @@ public class EasyPermissionDlg extends JDialog implements ActionListener {
 
 			String str = table.getModel().getValueAt(convertrow, 2).toString();
 
-			if (str.indexOf("dangerous") > -1) {
+			if (str.contains("dangerous")) {
 				c.setForeground(Color.RED);
-			} else if (str.indexOf("signature") > -1) {
+			} else if (str.contains("signature")) {
 				c.setForeground(Color.BLUE);
 			} else {
 				c.setForeground(Color.BLACK);

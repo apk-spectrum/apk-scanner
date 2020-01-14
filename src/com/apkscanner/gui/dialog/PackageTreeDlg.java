@@ -18,8 +18,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -65,6 +63,7 @@ import com.apkscanner.Launcher;
 import com.apkscanner.gui.component.ApkFileChooser;
 import com.apkscanner.gui.component.FilteredTreeModel;
 import com.apkscanner.gui.component.KeyStrokeAction;
+import com.apkscanner.gui.component.SortedMutableTreeNode;
 import com.apkscanner.gui.component.TreeNodeIconRefresher;
 import com.apkscanner.gui.component.WindowSizeMemorizer;
 import com.apkscanner.gui.dialog.SimpleCheckTableModel.TableRowObject;
@@ -1036,40 +1035,6 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 			return null;
 		}
 
-		public class SortDefaultMutableTreeNode extends DefaultMutableTreeNode {
-			/**
-			 *
-			 */
-			private static final long serialVersionUID = 1L;
-
-			public SortDefaultMutableTreeNode(Object userObject) {
-				super(userObject);
-			}
-
-			@Override
-			public void add(MutableTreeNode newChild) {
-				super.add(newChild);
-				sort();
-			}
-
-			@SuppressWarnings("unchecked")
-			public void sort() {
-				Collections.sort(children, compare());
-			}
-
-			private Comparator<? super TreeNode> compare() {
-				return new Comparator<TreeNode>() {
-					@Override
-					public int compare(TreeNode o1, TreeNode o2) {
-						DefaultMutableTreeNode uo1 = (DefaultMutableTreeNode)o1;
-						DefaultMutableTreeNode uo2 = (DefaultMutableTreeNode)o2;
-						return uo1.getUserObject().toString().compareTo(uo2.getUserObject().toString());
-					}
-				};
-			}
-		}
-
-
 		@Override
 		protected void process(List<Object> chunks){
 			for(Object param: chunks) {
@@ -1079,11 +1044,11 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 
 					if(dev.isOnline()) {
 						DefaultMutableTreeNode devNode = getDeviceNode(dev);
-						SortDefaultMutableTreeNode priv_app = new SortDefaultMutableTreeNode("priv-app");
-						SortDefaultMutableTreeNode systemapp = new SortDefaultMutableTreeNode("app");
+						DefaultMutableTreeNode priv_app = new SortedMutableTreeNode("priv-app");
+						DefaultMutableTreeNode systemapp = new SortedMutableTreeNode("app");
 						DefaultMutableTreeNode framework_app = new DefaultMutableTreeNode("framework");
 						DefaultMutableTreeNode system = new DefaultMutableTreeNode("system");
-						SortDefaultMutableTreeNode dataapp = new SortDefaultMutableTreeNode("app");
+						DefaultMutableTreeNode dataapp = new SortedMutableTreeNode("app");
 						DefaultMutableTreeNode data = new DefaultMutableTreeNode("data");
 						DefaultMutableTreeNode displayed = new DefaultMutableTreeNode("*" + RStr.TREE_NODE_DISPLAYED.get());
 						DefaultMutableTreeNode recently = new DefaultMutableTreeNode("*" + RStr.TREE_NODE_RECENTLY.get());

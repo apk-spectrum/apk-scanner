@@ -44,6 +44,8 @@
 	<string name="btn_assoc_ftype">Associate .apk file</string>
 	<string name="btn_unassoc_ftype">Unassociate .apk file</string>
 	<string name="btn_create_shortcut">Create Shortcut on Desktop</string>
+	<string name="btn_show_permissions">Show Permissions</string>
+	<string name="btn_show_sdk_info">Show SDK information</string>
 	<string name="btn_self_search">Search...</string>
 
 	<string name="btn_open_lab">Open APK file (Ctrl+O)</string>
@@ -128,6 +130,7 @@
 	<string name="menu_visible_to_basic_each">Select each searcher</string>
 
 	<string name="tab_basic_info">APK Info</string>
+	<string name="tab_apex_info">APEX Info</string>
 	<string name="tab_widgets">Widgets</string>
 	<string name="tab_libraries">Libraries</string>
 	<string name="tab_resources">Resources</string>
@@ -217,6 +220,7 @@ they're removed before the application is published</string>
 	<string name="widget_column_label">Label</string>
 	<string name="widget_column_size">Size</string>
 	<string name="widget_column_activity">Class</string>
+	<string name="widget_column_enabled">Enabled</string>
 	<string name="widget_column_type">Type</string>
 	<string name="widget_resize_mode">ReSizeMode</string>
 	<string name="widget_horizontal">horizontal</string>
@@ -229,16 +233,15 @@ they're removed before the application is published</string>
 	<string name="lib_column_size">Size</string>
 	<string name="lib_column_compressibility">Compressibility</string>
 
-	<string name="activity_column_class">Class</string>
-	<string name="activity_column_type">Type</string>
-	<string name="activity_column_startup">Startup</string>
-	<string name="activity_column_enabled">Enabled</string>
-	<string name="activity_column_export">Export</string>
-	<string name="activity_column_permission">Permission</string>
-	<string name="activity_type_activity">activity</string>
-	<string name="activity_type_service">service</string>
-	<string name="activity_type_receiver">receiver</string>
-	<string name="activity_label_intent_filter">Intent filter</string>
+	<string name="component_column_class">Class</string>
+	<string name="component_column_type">Type</string>
+	<string name="component_column_startup">Startup</string>
+	<string name="component_column_enabled">Enabled</string>
+	<string name="component_column_export">Export</string>
+	<string name="component_column_permission">Permission</string>
+	<string name="component_label_xml">XML Construction</string>
+	<string name="component_filter_prompt_xml">Filter by XML Construction</string>
+	<string name="component_filter_prompt_name">Filter by Class name</string>
 
 	<string name="cert_summury">Summary</string>
 	<string name="cert_certificate">Signature</string>
@@ -301,7 +304,7 @@ they're removed before the application is published</string>
 	<string name="label_no_permission">No permissions</string>
 	<string name="label_search">Search</string>
 	<string name="label_loading">Loading...</string>
-	<string name="label_apk_file_description">Android Package(.apk)</string>
+	<string name="label_apk_file_description">Android Package(.apk | .apex)</string>
 	<string name="label_device">Device</string>
 	<string name="label_path">Path</string>
 	<string name="label_uses_resource">Uses framework resource files</string>
@@ -313,6 +316,7 @@ they're removed before the application is published</string>
 	<string name="label_open_with_explorer">Explorer</string>
 	<string name="label_open_with_apkscanner">APK Scanner</string>
 	<string name="label_open_with_choose">Other</string>
+	<string name="label_open_to_textviewer">By Textviewer</string>
 	<string name="label_how_to_install">How to install</string>
 	<string name="label_install_options">Install options</string>
 	<string name="label_push_options">Push options</string>

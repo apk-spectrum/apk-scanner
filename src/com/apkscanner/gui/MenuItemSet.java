@@ -1,12 +1,12 @@
 package com.apkscanner.gui;
 
 import java.awt.Component;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
@@ -91,7 +91,7 @@ enum MenuItemSet
 		return actionCommand.equals(e.getActionCommand());
 	}
 
-	private JMenuItem getMenuItem(Window owner, final ActionListener listener)
+	private JMenuItem getMenuItem(final ActionListener listener)
 	{
 		JMenuItem menuItem = null;
 		if(!extend) {
@@ -102,7 +102,7 @@ enum MenuItemSet
 		}
 
 		if(res != null) {
-			res.autoReapply(owner, menuItem);
+			res.set(menuItem);
 		} else {
 			menuItem.setText(text);
 			menuItem.setIcon(icon);
@@ -145,11 +145,11 @@ enum MenuItemSet
 		return menuItem;
 	}
 
-	static HashMap<MenuItemSet, JMenuItem> getButtonMap(Window owner, ActionListener listener)
+	static Map<MenuItemSet, JMenuItem> getButtonMap(ActionListener listener)
 	{
-		HashMap<MenuItemSet, JMenuItem> menuItemMap = new HashMap<MenuItemSet, JMenuItem>();
+		Map<MenuItemSet, JMenuItem> menuItemMap = new HashMap<MenuItemSet, JMenuItem>();
 		for(MenuItemSet bs: values()) {
-			menuItemMap.put(bs, bs.getMenuItem(owner, listener));
+			menuItemMap.put(bs, bs.getMenuItem(listener));
 		}
 		return menuItemMap;
 	}

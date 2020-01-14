@@ -100,6 +100,7 @@ cat << EOF > ./vnd.android.package-archive.xml
     <comment xml:lang="zh_TW">Android 套件</comment>
     <sub-class-of type="application/x-java-archive"/>
     <glob pattern="*.apk"/>
+    <glob pattern="*.apex"/>
   </mime-type>
 </mime-info>
 EOF
@@ -121,7 +122,7 @@ EOF
 fi
 
 if [ -e ~/.p4qt/ApplicationSettings.xml ]; then
-    cat ~/.p4qt/ApplicationSettings.xml | sed '/EditorMappings/,/StringList/{/<String>apk/d; /<String>ppk/d; s/.*<\/StringList>.*/  <String>apk\|default\|\/opt\/APKScanner\/APKScanner\.sh<\/String>\n  <String>ppk\|default\|\/opt\/APKScanner\/APKScanner\.sh<\/String>\n <\/StringList>/}' > .ApplicationSettings.xml
+    cat ~/.p4qt/ApplicationSettings.xml | sed '/EditorMappings/,/StringList/{/<String>apk/d; /<String>ppk/d; /<String>apex/d; s/.*<\/StringList>.*/  <String>apk\|default\|\/opt\/APKScanner\/APKScanner\.sh<\/String>\n  <String>ppk\|default\|\/opt\/APKScanner\/APKScanner\.sh<\/String>\n  <String>apex\|default\|\/opt\/APKScanner\/APKScanner\.sh<\/String>\n <\/StringList>/}' > .ApplicationSettings.xml
     chmod 666 .ApplicationSettings.xml
     mv .ApplicationSettings.xml ~/.p4qt/ApplicationSettings.xml
 fi

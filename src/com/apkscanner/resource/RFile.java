@@ -38,6 +38,8 @@ public enum RFile implements ResFile<String>, ResString<String>
 
 	BIN_SIGNAPK					(Type.BIN, "signapk.jar"),
 
+	BIN_IMG_EXTRACTOR_WIN		(Type.BIN, "ImgExtractor.exe", "win"),
+
 	PLUGIN_PATH					(Type.PLUGIN, ""),
 	PLUGIN_CONF_PATH			(Type.PLUGIN, "plugins.conf"),
 
@@ -61,6 +63,7 @@ public enum RFile implements ResFile<String>, ResString<String>
 	RAW_STRINGS_EN				(Type.RES_VALUE, "strings.xml"),
 	RAW_STRINGS_KO				(Type.RES_VALUE, "strings-ko.xml"),
 	RAW_ABUOT_HTML				(Type.RES_VALUE, "AboutLayout.html"),
+	RAW_APEX_INFO_LAYOUT_HTML	(Type.RES_VALUE, "ApexInfoLayout.html"),
 	RAW_BASIC_INFO_LAYOUT_HTML	(Type.RES_VALUE, "BasicInfoLayout.html"),
 	RAW_PACKAGE_INFO_LAYOUT_HTML(Type.RES_VALUE, "PackageInfoLayout.html"),
 	RAW_ADB_INSTALL_BUTTON_HTML	(Type.RES_VALUE, "AdbInstallButton.html"),
@@ -95,7 +98,7 @@ public enum RFile implements ResFile<String>, ResString<String>
 
 		this.type = type;
 		for(RFile r: cfgResources) {
-			if(SystemUtil.OS.indexOf(r.os) > -1) {
+			if(SystemUtil.OS.contains(r.os)) {
 				this.value = r.value;
 				this.os = r.os;
 				break;

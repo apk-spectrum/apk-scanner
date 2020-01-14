@@ -104,8 +104,10 @@ Section $(ASSOCITATE_APK) Section2
     WriteRegExpandStr HKCR "ApkScanner.apk\Shell\Open\Command" "" "$\"$INSTDIR\ApkScanner.exe$\" $\"%1$\""
     WriteRegExpandStr HKCR "ApkScanner.apk\Shell\Install\Command" "" "$\"$INSTDIR\ApkScanner.exe$\" install $\"%1$\""
     WriteRegStr HKCR ".apk" "" "ApkScanner.apk"
+    WriteRegStr HKCR ".apex" "" "ApkScanner.apk"
 
     Exec '"cmd.exe" /c assoc .apk=ApkScanner.apk'
+    Exec '"cmd.exe" /c assoc .apex=ApkScanner.apk'
 
 SectionEnd
 
@@ -201,6 +203,14 @@ Section Uninstall
 		WriteRegStr HKCR ".apk" "" ""
     	ExecWait '"cmd.exe" /c assoc .apk=.apk'
     	Exec '"cmd.exe" /c assoc .apk='
+	${EndIf}
+
+	ReadRegStr $associate HKCR .apex ""
+	DetailPrint "Associate .apex: $associate"
+	${If} $associate == "ApkScanner.apk"
+		WriteRegStr HKCR ".apex" "" ""
+    	ExecWait '"cmd.exe" /c assoc .apex=.apex'
+    	Exec '"cmd.exe" /c assoc .apex='
 	${EndIf}
 
 SectionEnd

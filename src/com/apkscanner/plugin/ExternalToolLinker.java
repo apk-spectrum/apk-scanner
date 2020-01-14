@@ -24,7 +24,7 @@ public class ExternalToolLinker extends AbstractExternalTool
 			public void run()
 			{
 				String tmp = component.param.replaceAll("%[aA][pP][kK]_[pP][aA][tT][hH]%", src.replaceAll("\\\\", "\\\\\\\\"));
-				ConsolCmd.exc(new String[] {component.path, tmp}, true);
+				ConsolCmd.exec(new String[] {component.path, tmp}, true);
 			}
 		});
 		t.setPriority(Thread.NORM_PRIORITY);
@@ -39,7 +39,7 @@ public class ExternalToolLinker extends AbstractExternalTool
 			{
 				String tmp1 = component.param.replaceAll("%[aA][pP][kK]_[pP][aA][tT][hH]%", src1.replaceAll("\\\\", "\\\\\\\\"));
 				String tmp2 = component.param.replaceAll("%[aA][pP][kK]_[pP][aA][tT][hH]%", src2.replaceAll("\\\\", "\\\\\\\\"));
-				ConsolCmd.exc(new String[] {component.path, tmp1, tmp2}, true);
+				ConsolCmd.exec(new String[] {component.path, tmp1, tmp2}, true);
 			}
 		});
 		t.setPriority(Thread.NORM_PRIORITY);

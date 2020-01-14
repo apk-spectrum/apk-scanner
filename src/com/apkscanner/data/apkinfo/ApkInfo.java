@@ -1,6 +1,6 @@
 package com.apkscanner.data.apkinfo;
 
-import com.apkscanner.core.scanner.AaptNativeScanner;
+import com.apkscanner.tool.aapt.AxmlToXml;
 
 public class ApkInfo
 {
@@ -13,12 +13,18 @@ public class ApkInfo
 
 	public static final int APP_FEATURE_PLATFORM_SIGN = 0x100;
 	public static final int APP_FEATURE_SAMSUNG_SIGN = 0x200;
-	
+
 	public static final int APP_FEATURE_HAS_SIGNATURE = 0x10000;
 	public static final int APP_FEATURE_HAS_SIGNATUREORSYSTEM = 0x10000;
 	public static final int APP_FEATURE_HAS_SYSTEM = 0x10000;
-	
+
+	public static final int PACKAGE_TYPE_UNKNOWN = 0;
+	public static final int PACKAGE_TYPE_APK = 1;
+	public static final int PACKAGE_TYPE_APEX = 2;
+
 	// common
+	public int type = PACKAGE_TYPE_UNKNOWN;
+
 	public String filePath = null;
 	public Long fileSize = null;
 	public String tempWorkPath = null;
@@ -27,9 +33,9 @@ public class ApkInfo
 
 	public Integer permissionProtectionLevel = 0;
 	public Integer usesPermissionProtectionLevel = 0;
-	
+
 	public final ManifestInfo manifest = new ManifestInfo();
-	
+
 	public WidgetInfo[] widgets = null;
 	public String[] resources = null;
 	public String[] xmls = null;
@@ -39,5 +45,6 @@ public class ApkInfo
 	public String signatureScheme = null;
 
 	public String[] resourcesWithValue = null;
-	public AaptNativeScanner resourceScanner = null;
+
+	public AxmlToXml a2xConvert;
 }

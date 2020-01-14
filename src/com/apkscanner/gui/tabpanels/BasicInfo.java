@@ -17,6 +17,7 @@ import java.beans.PropertyChangeListener;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton.ToggleButtonModel;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
@@ -58,8 +60,8 @@ import com.apkscanner.gui.dialog.SdkVersionInfoDlg;
 import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.plugin.IPackageSearcher;
 import com.apkscanner.plugin.IPlugIn;
-import com.apkscanner.plugin.ITabbedRequest;
 import com.apkscanner.plugin.PlugInManager;
+import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RFile;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
@@ -69,6 +71,7 @@ import com.apkscanner.util.FileUtil;
 import com.apkscanner.util.FileUtil.FSStyle;
 import com.apkscanner.util.Log;
 import com.apkscanner.util.SystemUtil;
+import com.apkscanner.util.XmlPath;
 
 public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickListener, IProgressListener,
 		ListDataListener, ItemListener, PropertyChangeListener
@@ -86,9 +89,8 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	private PermissionManager permissionManager = new PermissionManager();
 
 	public BasicInfo() {
-		setName(RStr.TAB_BASIC_INFO.get());
-		setToolTipText(RStr.TAB_BASIC_INFO.get());
-		setEnabled(true);
+		setTitle(RComp.TABBED_BASIC_INFO);
+		setTabbedEnabled(true);
 
 		initialize();
 		showAbout();
@@ -134,14 +136,9 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	}
 
 	@Override
-	public void reloadResource() {
-		setName(RStr.TAB_BASIC_INFO.get());
-		setToolTipText(RStr.TAB_BASIC_INFO.get());
-	}
-
-	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		Log.v("Change property : " + evt);
+		super.propertyChange(evt);
 		setPluginSearcher();
 	}
 
@@ -159,6 +156,10 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			apkInfoPanel.insertElementLast("apkscanner-icon-td", String.format("<div id=\"associate-file\" class=\"div-button\">%s</div>",
 					makeHyperEvent("function-assoc-apk", RStr.BTN_ASSOC_FTYPE.get(), null)));
 		}
+		apkInfoPanel.insertElementLast("apkscanner-icon-td", String.format("<div class=\"div-button\">%s</div>",
+				makeHyperEvent("function-show-permission", RStr.BTN_SHOW_PERMISSIONS.get(), null)));
+		apkInfoPanel.insertElementLast("apkscanner-icon-td", String.format("<div class=\"div-button\">%s</div>",
+				makeHyperEvent("function-show-sdk-info", RStr.BTN_SHOW_SDK_INFO.get(), null, Integer.valueOf(-1))));
 	}
 
 	public void onProgress(String message) {
@@ -173,20 +174,23 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	}
 
 	@Override
-	public void setData(ApkInfo apkInfo, Status status, ITabbedRequest request) {
+	public void setData(ApkInfo apkInfo, Status status) {
 		if(apkInfoPanel == null) initialize();
 
 		if(apkInfo == null) {
 			showAbout();
-			sendRequest(request, ITabbedRequest.REQUEST_SELECTED);
+			setSeletected();
 			return;
 		}
 
 		switch(status) {
 		case BASIC_INFO_COMPLETED:
+			RComp res = apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX ?
+					RComp.TABBED_BASIC_INFO : RComp.TABBED_APEX_INFO;
+			res.set(this);
 			setBasicInfo(apkInfo);
 			cardLayout.show(this, CARD_APK_INFORMATION);
-			sendRequest(request, ITabbedRequest.REQUEST_SELECTED);
+			setSeletected();
 			break;
 		case CERT_COMPLETED:
 			if(apkInfoPanel.getElementById("basic-info") != null) {
@@ -196,8 +200,8 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 					setPermissionList(null);
 				}
 				if(apkInfo.signatureScheme != null) {
-					apkInfoPanel.setOuterHTMLById("signature-scheme", ", " + 
-						makeHyperEvent("signature-scheme", "Scheme " + apkInfo.signatureScheme, 
+					apkInfoPanel.setOuterHTMLById("signature-scheme", ", " +
+						makeHyperEvent("signature-scheme", "Scheme " + apkInfo.signatureScheme,
 							"APK Signature Scheme " + apkInfo.signatureScheme, apkInfo.signatureScheme));
 				}
 			}
@@ -206,16 +210,26 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	}
 
 	private void setBasicInfo(ApkInfo apkInfo) {
-		apkInfoPanel.setText(RFile.RAW_BASIC_INFO_LAYOUT_HTML.getString());
-		setAppIcon(apkInfo.manifest.application.icons);
-		setAppLabel(apkInfo.manifest.application.labels, apkInfo.manifest.packageName);
-		setPackageName(apkInfo.manifest.packageName);
-		setVersion(apkInfo.manifest.versionName, apkInfo.manifest.versionCode);
-		setSdkVersion(apkInfo.manifest.usesSdk);
-		setFileSize(apkInfo.filePath);
-		setFeatures(apkInfo);
-		setPermissionList(apkInfo);
-		setPluginSearcher();
+		if(apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX) {
+			apkInfoPanel.setText(RFile.RAW_BASIC_INFO_LAYOUT_HTML.getString());
+			setAppIcon(apkInfo.manifest.application.icons);
+			setAppLabel(apkInfo.manifest.application.labels, apkInfo.manifest.packageName);
+			setPackageName(apkInfo.manifest.packageName);
+			setVersion(apkInfo.manifest.versionName, apkInfo.manifest.versionCode);
+			setSdkVersion(apkInfo.manifest.usesSdk);
+			setFileSize(apkInfo.filePath);
+			setFeatures(apkInfo);
+			setPermissionList(apkInfo);
+			setPluginSearcher();
+		} else {
+			apkInfoPanel.setText(RFile.RAW_APEX_INFO_LAYOUT_HTML.getString());
+			setPlatformIcon(apkInfo.manifest.usesSdk.targetSdkVersion);
+			setAppLabel(apkInfo.manifest.application.labels, apkInfo.manifest.packageName);
+			setPackageName(apkInfo.manifest.packageName);
+			setApexVersion(apkInfo.manifest.versionName, apkInfo.manifest.versionCode);
+			setSdkVersion(apkInfo.manifest.usesSdk);
+			setFileSize(apkInfo.filePath);
+		}
 	}
 
 	private void setAppIcon(ResourceInfo[] icons) {
@@ -227,6 +241,21 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 				iconPath = iconList[i].name;
 				if(iconPath != null) break;
 			}
+		}
+		apkInfoPanel.setOuterHTMLById("icon", String.format("<img src=\"%s\" width=\"150\" height=\"150\">", iconPath));
+	}
+
+	private void setPlatformIcon(int apiLevel) {
+		String iconPath = null;
+		try(InputStream xml = RFile.RAW_SDK_INFO_FILE.getResourceAsStream()) {
+			XmlPath sdkXmlPath = new XmlPath(xml);
+			XmlPath sdkInfo = sdkXmlPath.getNode("/resources/sdk-info[@apiLevel='" + apiLevel + "']");
+			if(sdkInfo != null) {
+				iconPath = getClass().getResource(sdkInfo.getAttribute("icon")).toExternalForm();
+			}
+		} catch(IOException e) { }
+		if(iconPath == null) {
+			iconPath = getClass().getResource("/icons/logo/base.png").toExternalForm();
 		}
 		apkInfoPanel.setOuterHTMLById("icon", String.format("<img src=\"%s\" width=\"150\" height=\"150\">", iconPath));
 	}
@@ -269,6 +298,16 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 				.append(" / ").append((versionCode != null ? versionCode : "0"));
 		StringBuilder descripton = new StringBuilder("VersionName : ").append(versionName).append("\n")
 				.append("VersionCode : ").append((versionCode != null ? versionCode : "Unspecified"));
+		String versionDesc = descripton.toString();
+
+		apkInfoPanel.setInnerHTMLById("version", makeHyperEvent("app-version", text.toString(), versionDesc, versionDesc));
+	}
+
+	private void setApexVersion(String versionName, Integer versionCode) {
+		if(versionName == null) versionName = "";
+		StringBuilder text = new StringBuilder("Ver. ").append((versionCode != null ? versionCode : versionName));
+		StringBuilder descripton = new StringBuilder("AndroidManifest:versionCode : ").append(versionName).append("\n")
+				.append("apex_manifest:version : ").append((versionCode != null ? versionCode : ""));
 		String versionDesc = descripton.toString();
 
 		apkInfoPanel.setInnerHTMLById("version", makeHyperEvent("app-version", text.toString(), versionDesc, versionDesc));
@@ -475,6 +514,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	}
 
 	private void setPluginSearcher() {
+		if(apkInfoPanel == null) return;
 		String packageSearchers = "";
 		String appLabelSearchers = "";
 		if(RProp.B.VISIBLE_TO_BASIC.get()) {
@@ -496,7 +536,6 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 				};
 			}
 		}
-
 		apkInfoPanel.removeElementById("name-searcher");
 		if(!appLabelSearchers.isEmpty()) {
 			apkInfoPanel.insertElementLast("label", String.format("<span id=\"name-searcher\">%s</span>", appLabelSearchers));
@@ -724,11 +763,12 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			String versionDesc = (String) evt.getUserData();
 			showDialog(versionDesc, "App version info", new Dimension(300, 50), null);
 			break;
-		case "display-list":
+		case "display-list": case "function-show-permission":
 			showPermList();
 			break;
+		case "function-show-sdk-info":
 		case "min-sdk-info": case "target-sdk-info": case "max-sdk-info":
-			SdkVersionInfoDlg sdkDlg = new SdkVersionInfoDlg(null, (Integer)evt.getUserData());
+			SdkVersionInfoDlg sdkDlg = new SdkVersionInfoDlg(SwingUtilities.getWindowAncestor(this), (Integer)evt.getUserData());
 			sdkDlg.setLocationRelativeTo(this);
 			sdkDlg.setVisible(true);
 			break;
@@ -875,17 +915,18 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	private void showPermList() {
 		PermissionHistoryPanel historyView = new PermissionHistoryPanel();
 		historyView.setPermissionManager(permissionManager);
-		historyView.showDialog(null);
+		historyView.showDialog(SwingUtilities.getWindowAncestor(this));
 	}
 
 	private void showPermDetailDesc(HyperlinkClickEvent evt) {
 		PermissionHistoryPanel historyView = new PermissionHistoryPanel();
 		historyView.setPermissionManager(permissionManager);
 		historyView.setFilterText((String) evt.getUserData());
-		historyView.showDialog(null);
+		historyView.showDialog(SwingUtilities.getWindowAncestor(this));
 	}
 
 	private void showDialog(String content, String title, Dimension size, Icon icon) {
-		MessageBoxPane.showTextAreaDialog(null, content, title, MessageBoxPane.INFORMATION_MESSAGE, icon, size);
+		MessageBoxPane.showTextAreaDialog(SwingUtilities.getWindowAncestor(this),
+				content, title, MessageBoxPane.INFORMATION_MESSAGE, icon, size);
 	}
 }

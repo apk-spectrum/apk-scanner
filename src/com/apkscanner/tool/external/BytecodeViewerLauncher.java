@@ -28,8 +28,11 @@ public class BytecodeViewerLauncher
 		Thread t = new Thread(new Runnable() {
 			public void run()
 			{
-				ConsolCmd.exc(new String[] {"java", "-version"}, true, observer);
-				ConsolCmd.exc(new String[] {"java", "-jar", RFile.BIN_BYTECODE_VIEWER.get(), jarFilePath}, true, observer);
+				ConsolCmd.exec(new String[] {"java", "-version"}, true, observer);
+				ConsolCmd.exec(new String[] {"java", "-jar", RFile.BIN_BYTECODE_VIEWER.get(), jarFilePath}, true, observer);
+				if(observer != null) {
+					observer.ConsolOutput("BytecodeViewerLauncher Completed");
+				}
 			}
 		});
 		t.setPriority(Thread.NORM_PRIORITY);

@@ -117,8 +117,6 @@ public class WindowSizeMemorizer implements ComponentListener, WindowListener
 			width = (int)(long)data;
 		} else if(data instanceof Integer) {
 			width = (int)data;
-		} else if(data == null) {
-			width =  defaultSize.width;
 		}
 
 		data = RProp.getPropData(key+"_height");
@@ -126,8 +124,6 @@ public class WindowSizeMemorizer implements ComponentListener, WindowListener
 			height = (int)(long)data;
 		} else if(data instanceof Integer) {
 			height = (int)data;
-		} else if(data == null) {
-			height = defaultSize.height;
 		}
 
 		return new Dimension(width,height);

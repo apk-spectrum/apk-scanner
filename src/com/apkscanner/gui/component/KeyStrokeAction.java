@@ -22,7 +22,7 @@ public class KeyStrokeAction extends AbstractAction {
 
 	public KeyStrokeAction(JComponent component, KeyStroke keyStroke, String actionCommand, ActionListener listener) {
 		if(actionCommand == null) {
-			actionCommand = Integer.toString(keyStroke.getKeyCode());
+			actionCommand = keyStroke.toString();
 		}
 		putValue(ACTION_COMMAND_KEY, actionCommand);
 		this.component = component;

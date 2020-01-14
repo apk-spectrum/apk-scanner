@@ -728,33 +728,17 @@ public class ApkInstallWizard implements IDeviceChangeListener
 			case SimpleOptionPanel.ACT_CMD_SET_ADVANCED_OPT:
 				changeState(STATUS_SET_OPTIONS);
 				break;
+			case "alt pressed N":
+				//next();
+				break;
+			case "alt pressed P":
+				//previous();
+				break;
+			case "pressed F5":
+				//contentPanel.refreshDeviceList();
+				break;
 			default:
-				if(e.getSource() instanceof KeyStrokeAction) {
-					keyStrokeActionPerformed(e);
-				}
-			}
-		}
-
-		private void keyStrokeActionPerformed(ActionEvent e) {
-			KeyStrokeAction action = (KeyStrokeAction) e.getSource();
-			int modifier = action.getModifiersEx();
-			int keycode = action.getKeyStroke().getKeyCode();
-
-			if(modifier == InputEvent.ALT_DOWN_MASK) {
-				switch(keycode) {
-				case KeyEvent.VK_N:
-					//next();
-					break;
-				case KeyEvent.VK_P:
-					//previous();
-					break;
-				}
-			} else if(modifier == 0) {
-				switch(keycode) {
-				case KeyEvent.VK_F5:
-					//contentPanel.refreshDeviceList();
-					break;
-				}
+				break;
 			}
 		}
 

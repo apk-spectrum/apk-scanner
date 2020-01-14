@@ -40,10 +40,10 @@ public class Dex2JarWrapper
 
 				Log.i("Start DEX2JAR");
 				if(SystemUtil.isWindows()) {
-					cmdLog = ConsolCmd.exc(new String[] {RFile.BIN_DEX2JAR.get(), 
+					cmdLog = ConsolCmd.exec(new String[] {RFile.BIN_DEX2JAR.get(), 
 							dexFilePath, "-o", toJarFilePath});
 				} else if(SystemUtil.isLinux()) {
-					cmdLog = ConsolCmd.exc(new String[] {"sh", RFile.BIN_DEX2JAR.get(), 
+					cmdLog = ConsolCmd.exec(new String[] {"sh", RFile.BIN_DEX2JAR.get(), 
 							dexFilePath, "-o", toJarFilePath});				
 				} else {
 					Log.e("Unknown OS : " + SystemUtil.OS);
@@ -61,7 +61,7 @@ public class Dex2JarWrapper
 				{
 					sb.append(s+"\n");
 					Log.i("DEX2JAR Log : "+ s);
-					if(s.indexOf("Can not find classes.dex") > -1) {
+					if(s.contains("Can not find classes.dex")) {
 						successed = false;
 					}
 				}

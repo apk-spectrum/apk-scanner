@@ -181,20 +181,24 @@ abstract public class ApkScanner
 		return apkInfo;
 	}
 
-	protected String[] solveCert()
+	protected void solveCert()
 	{
 		if(!(new File(apkInfo.filePath)).exists()) {
 			Log.e("No such apk file");
-			return null;
+			return;
 		}
 
-		//String certPath = apkInfo.tempWorkPath + File.separator + "META-INF";
 		ArrayList<String> certList = new ArrayList<String>();
 		ArrayList<String> certFiles = new ArrayList<String>();
 
 		SignatureReport sr = new SignatureReport(new File(apkInfo.filePath));
 		for(int i = 0; i < sr.getSize(); i ++) {
 			certList.add(sr.getReport(i));
+		}
+
+		apkInfo.certificates = null;
+		if(!certList.isEmpty()) {
+			apkInfo.certificates = certList.toArray(new String[certList.size()]);
 		}
 
 		apkInfo.signatureScheme = sr.getSignatureScheme();
@@ -210,49 +214,56 @@ abstract public class ApkScanner
 
 		if(certList.isEmpty() && certFilePaths == null) {
 			Log.e("No such folder : META-INFO/");
-			return null;
+			return;
 		}
 
-		ZipFile zf = null;
-		InputStream is = null;
-		try {
-			zf = new ZipFile(apkInfo.filePath);
-			for (String s : certFilePaths) {
-				ZipEntry entry = zf.getEntry(s);
-				if(entry == null || entry.isDirectory()) {
-					Log.w("entry was no file " + s);
-					continue;
+		certList.clear();
+		for (String s : certFilePaths) {
+			String ext = s.toUpperCase();
+			if(ext.endsWith(".MF") || ext.endsWith(".SF")) {
+				certFiles.add(s);
+			} else if(ext.endsWith(".RSA") || ext.endsWith(".DSA") || ext.endsWith(".EC")) {
+				try(ZipFile zipFile = new ZipFile(apkInfo.filePath)) {
+					ZipEntry entry = zipFile.getEntry(s);
+					if(entry != null) {
+						try(InputStream is = zipFile.getInputStream(entry)) {
+							sr = new SignatureReport(is, apkInfo.signatureScheme);
+							for(int i = 0; i < sr.getSize(); i ++) {
+								certList.add(sr.getReport(i));
+							}
+							if(!certList.isEmpty()) {
+								apkInfo.certificates = certList.toArray(new String[certList.size()]);
+							}
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-				if(!s.toUpperCase().endsWith(".RSA") && !s.toUpperCase().endsWith(".DSA") && !s.toUpperCase().endsWith(".EC") ) {
-					certFiles.add(s);
-					continue;
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if(zf != null) {
-				try {
-					zf.close();
-				} catch (IOException e) {}
-			}
-			if(is != null) {
-				try {
-					is.close();
-				} catch (IOException e) { }
 			}
 		}
 
 		apkInfo.certFiles = null;
 		if(!certFiles.isEmpty()) {
-			apkInfo.certFiles = certFiles.toArray(new String[0]);
+			apkInfo.certFiles = certFiles.toArray(new String[certFiles.size()]);
 		}
+	}
 
-		if(certList.isEmpty()) {
-			return null;
+	protected void setType() {
+		setType(apkInfo.filePath);
+	}
+
+	protected void setType(String fileName) {
+		if(fileName == null) return;
+		fileName = fileName.toLowerCase();
+		if(fileName.endsWith(".apk")) {
+			apkInfo.type = ApkInfo.PACKAGE_TYPE_APK;
+		} else if(fileName.endsWith(".apex")) {
+			apkInfo.type = ApkInfo.PACKAGE_TYPE_APEX;
+		} else {
+			apkInfo.type = ApkInfo.PACKAGE_TYPE_UNKNOWN;
 		}
-
-		return certList.toArray(new String[0]);
 	}
 
 	protected void scanningStarted() {
@@ -347,8 +358,6 @@ abstract public class ApkScanner
 			return new AaptLightScanner(null, false);
 		} else if(APKSCANNER_TYPE_AAPTLIGHT.equalsIgnoreCase(name)) {
 			return new AaptLightScanner(null);
-		} else if(APKSCANNER_TYPE_APKTOOL.equalsIgnoreCase(name)) {
-			return new ApktoolScanner(null);
 		}
 		return new AaptScanner(null);
 	}
@@ -358,8 +367,6 @@ abstract public class ApkScanner
 			return APKSCANNER_TYPE_AAPT;
 		} else if(this.getClass().equals(AaptLightScanner.class)) {
 			return APKSCANNER_TYPE_AAPTLIGHT;
-		} else if(this.getClass().equals(ApktoolScanner.class)) {
-			return APKSCANNER_TYPE_APKTOOL;
 		}
 		return APKSCANNER_TYPE_AAPT;
 	}

@@ -4,8 +4,6 @@ public class ReceiverInfo extends ComponentInfo
 {
 	public String process = null; // "string"
 
-	public IntentFilterInfo[] intentFilter = null;
-
 	public String getReport()
 	{
 		StringBuilder report = new StringBuilder();

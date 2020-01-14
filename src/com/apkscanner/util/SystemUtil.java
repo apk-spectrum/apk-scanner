@@ -1,14 +1,20 @@
 package com.apkscanner.util;
 
-import java.io.BufferedReader;
+import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.filechooser.FileSystemView;
+
+import com.apkscanner.gui.component.ImageScaler;
 import com.apkscanner.jna.ProcessPathKernel32;
 import com.apkscanner.resource.RFile;
+import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 import com.sun.jna.Native;
@@ -27,27 +33,30 @@ import mslinks.ShellLinkException;
 public class SystemUtil
 {
 	public static final String OS = System.getProperty("os.name").toLowerCase();
+	public static final String FOLDER_ICON = "FOLDER";
 
 	private static final Object lock = OS;
+	private static final HashMap<String, Icon> cacheIcon = new HashMap<String, Icon>();
+
 
 	public static boolean isWindows() {
-		return OS.indexOf("win") > -1;
+		return OS.contains("win");
 	}
 
 	public static boolean isLinux() {
-		return OS.indexOf("nux") > -1;
+		return OS.contains("nux");
 	}
 
 	public static boolean isUnix() {
-		return (OS.indexOf("nix") > -1 || OS.indexOf("nux") > -1 || OS.indexOf("aix") >-1 );
+		return (OS.contains("nix") || OS.contains("nux") || OS.contains("aix"));
 	}
 
 	public static boolean isMac() {
-		return OS.indexOf("mac") > -1;
+		return OS.contains("mac");
 	}
 
 	public static boolean isSolaris() {
-		return OS.indexOf("sunos") > -1;
+		return OS.contains("sunos");
 	}
 
 	public static String getUserLanguage() {
@@ -89,7 +98,7 @@ public class SystemUtil
 		if(isWindows()) {
 			String editorPath = null;
 			String cmdLine = SystemUtil.getOpenCommand(".txt");
-			if(cmdLine != null && cmdLine.indexOf("%1") >= 0) {
+			if(cmdLine != null && cmdLine.contains("%1")) {
 				String cmd = cmdLine.replaceAll("\"?(.*\\.[eE][xX][eE])\"?.*", "$1");
 				if(!cmd.equals(cmdLine)) {
 					editorPath = SystemUtil.getRealPath(cmd);
@@ -186,7 +195,7 @@ public class SystemUtil
 
 		String realPath = null;
 
-		if(path.indexOf(File.separator) > -1) {
+		if(path.contains(File.separator)) {
 			if(path.startsWith("%")) {
 				String env = path.replaceAll("^%(.*)%.*", "$1");
 				if(!env.equals(path)) {
@@ -207,7 +216,7 @@ public class SystemUtil
 				regular = "^/.*";
 			}
 
-			String[] result = ConsolCmd.exc(new String[] {cmd, path}, true, null);
+			String[] result = ConsolCmd.exec(new String[] {cmd, path}, true, null);
 			if(result == null || result.length <= 0
 					|| !result[0].matches(regular)
 					|| !new File(result[0]).exists()){
@@ -296,7 +305,7 @@ public class SystemUtil
 
 	private static boolean isAssociatedWithFileTypeLegacy(String suffix) {
 		Log.i("isAssociatedWithFileTypeLegacy()");
-		String[] output = ConsolCmd.exc(new String[] {"cmd", "/c", "assoc", suffix});
+		String[] output = ConsolCmd.exec(new String[] {"cmd", "/c", "assoc", suffix});
 		if(output == null || output.length == 0
 				|| !output[0].startsWith(suffix+"=")) {
 			return false;
@@ -307,7 +316,7 @@ public class SystemUtil
 			return false;
 		}
 
-		output = ConsolCmd.exc(new String[] {"cmd", "/c", "ftype", ftype});
+		output = ConsolCmd.exec(new String[] {"cmd", "/c", "ftype", ftype});
 		if(output == null || output.length == 0
 				|| !output[0].startsWith(ftype+"=")) {
 			return false;
@@ -365,7 +374,7 @@ public class SystemUtil
 			return true;
 		}
 		String filePath = RFile.ETC_APKSCANNER_EXE.getPath();
-		ConsolCmd.exc(new String[][] {
+		ConsolCmd.exec(new String[][] {
 			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\CLSID", "/ve", "/t", "REG_SZ", "/d", "{E88DCCE0-B7B3-11d1-A9F0-00AA0060FA31}", "/f" },
 			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\DefaultIcon", "/ve", "/t", "REG_SZ", "/d", filePath+",1", "/f" },
 			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\OpenWithProgids", "/v", "CompressedFolder", "/t", "REG_SZ", "/f" },
@@ -421,43 +430,26 @@ public class SystemUtil
 		if(!isAssociatedWithFileType(suffix)) {
 			return;
 		}
-		ConsolCmd.exc(new String[][] {
+		ConsolCmd.exec(new String[][] {
 			{"cmd", "/c", "reg", "add", "HKCR\\"+suffix, "/ve", "/t", "REG_SZ", "/d", "", "/f" },
 			{"cmd", "/c", "reg", "delete", "HKCR\\ApkScanner"+suffix, "/f" },
 			{"cmd", "/c", "assoc", suffix+"=" },
 		});
 	}
 
-	public static boolean exec(ArrayList<String> cmd) {
-		return exec(cmd.toArray(new String[0]));
+	public static void exec(ArrayList<String> cmd) {
+		exec(cmd.toArray(new String[0]));
 	}
 
-	public static boolean exec(String[] cmd)
+	public static void exec(final String[] cmd)
 	{
-		try {
-			final Process process = new ProcessBuilder(cmd).redirectErrorStream(true).start();
-			new Thread(new Runnable() {
-				public void run()
-				{
-					InputStream inputStream = process.getInputStream();
-					InputStreamReader inputStreamReader = new InputStreamReader(inputStream/*, encoding*/);
-					BufferedReader stdOut = new BufferedReader(inputStreamReader);
-					try {
-						while (stdOut.readLine() != null);
-						stdOut.close();
-						inputStreamReader.close();
-						inputStream.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					process.destroy();
-				}
-			}).start();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				ConsolCmd.exec(cmd);
+			}
+		});
+		t.setPriority(Thread.NORM_PRIORITY);
+		t.start();
 	}
 
 	public static String[] getRunningProcessFullPath(String imageName) {
@@ -492,15 +484,15 @@ public class SystemUtil
 				}
 			}
 		} else if(SystemUtil.isLinux()) {
-			String[] uid = ConsolCmd.exc(new String[] { "id", "-ur" });
+			String[] uid = ConsolCmd.exec(new String[] { "id", "-ur" });
 			String[] cout = null;
 			if(uid != null && uid.length > 0 && !uid[0].isEmpty()) {
-				cout = ConsolCmd.exc(new String[] { "pgrep", "-x", "-U", uid[0], imageName });
+				cout = ConsolCmd.exec(new String[] { "pgrep", "-x", "-U", uid[0], imageName });
 			} else {
-				cout = ConsolCmd.exc(new String[] { "pgrep", "-x", imageName });
+				cout = ConsolCmd.exec(new String[] { "pgrep", "-x", imageName });
 			}
 			for(String pid: cout) {
-				String[] process = ConsolCmd.exc(new String[] { "readlink", "/proc/"+pid+"/exe" });
+				String[] process = ConsolCmd.exec(new String[] { "readlink", "/proc/"+pid+"/exe" });
 				if(process != null && process.length > 0) {
 					list.add(process[0]);
 				}
@@ -516,4 +508,70 @@ public class SystemUtil
 		return jvmVer.compareTo(minVer) >= 0;
 	}
 
+	public static Icon getExtensionIcon(String suffix) {
+		Icon icon = cacheIcon.get(suffix);
+		if (icon != null) return icon;
+
+		//Log.v("getIcon " + suffix);
+		Image tempImage = null;
+		if (FOLDER_ICON.equals(suffix)) {
+			tempImage = ImageScaler.getScaledImage(RImg.TREE_FOLDER.getImageIcon(), 16, 16);
+			/*
+			 * UIDefaults defaults = UIManager.getDefaults( ); Icon
+			 * computerIcon = defaults.getIcon( "FileView.computerIcon"
+			 * ); Icon floppyIcon = defaults.getIcon(
+			 * "FileView.floppyDriveIcon" ); Icon diskIcon =
+			 * defaults.getIcon( "FileView.hardDriveIcon" ); Icon
+			 * fileIcon = defaults.getIcon( "FileView.fileIcon" ); Icon
+			 * folderIcon = defaults.getIcon( "FileView.directoryIcon"
+			 * );
+			 *
+			 * icon = folderIcon;
+			 */
+		} else if (".xml".equals(suffix)) {
+			tempImage = ImageScaler.getScaledImage(RImg.RESOURCE_TREE_XML.getImageIcon(), 16, 16);
+			// } else if(".qmg".equals(suffix)) {
+			// tempImage =
+			// ImageScaler.getScaledImage(RImg.QMG_IMAGE_ICON.getImageIcon(),32,32);
+		} else if (".dex".equals(suffix)) {
+			icon = RImg.RESOURCE_TREE_CODE.getImageIcon();
+		} else if (".arsc".equals(suffix)) {
+			icon = RImg.RESOURCE_TREE_ARSC.getImageIcon();
+		} else {
+			try {
+				File file = File.createTempFile("icon", suffix);
+				FileSystemView view = FileSystemView.getFileSystemView();
+				icon = view.getSystemIcon(file);
+				file.delete();
+			} catch (IOException ioe) {
+			}
+		}
+		if (tempImage != null) {
+			icon = new ImageIcon(tempImage);
+			tempImage.flush();
+		}
+		if (icon != null) {
+			cacheIcon.put(suffix, icon);
+		}
+		return icon;
+	}
+
+    @SuppressWarnings("unchecked")
+	public static <T> T[] joinArray(T[]... arrays) {
+        int length = 0;
+        for (T[] array : arrays) {
+            length += array.length;
+        }
+
+        //T[] result = new T[length];
+        final T[] result = (T[]) Array.newInstance(arrays[0].getClass().getComponentType(), length);
+
+        int offset = 0;
+        for (T[] array : arrays) {
+            System.arraycopy(array, 0, result, offset, array.length);
+            offset += array.length;
+        }
+
+        return result;
+    }
 }

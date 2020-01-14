@@ -146,7 +146,7 @@ public class ZipUtils {
             while ((zentry = zis.getNextEntry()) != null) {
                 String fileNameToUnzip = zentry.getName();                
                 //if(fileNameToUnzip.endsWith(".png") &&  fileNameToUnzip.indexOf("res/") >= 0) {
-                if(fileNameToUnzip.indexOf(findFile) >= 0) {
+                if(fileNameToUnzip.contains(findFile)) {
                 	File subDir = new File(targetDir +"/"+ fileNameToUnzip);                	
                     if (subDir.getParentFile() != null && !subDir.getParentFile().exists()) {                    	
                     	subDir.getParentFile().mkdirs();

@@ -18,7 +18,7 @@ public class ApktoolWrapper {
 				Log.e("No such file : apktool.jar");
 				return null;
 			}
-			String[] result = ConsolCmd.exc(new String[] {"java", "-jar", apkToolPath, "--version"}, false);
+			String[] result = ConsolCmd.exec(new String[] {"java", "-jar", apkToolPath, "--version"}, false);
 	
 			return result[0];
 		}
