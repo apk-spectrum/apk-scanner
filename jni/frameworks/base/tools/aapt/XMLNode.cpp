@@ -71,7 +71,7 @@ static const String16 RESOURCES_PREFIX_AUTO_PACKAGE(RESOURCES_AUTO_PACKAGE_NAMES
 static const String16 RESOURCES_PRV_PREFIX(RESOURCES_ROOT_PRV_NAMESPACE);
 static const String16 RESOURCES_TOOLS_NAMESPACE("http://schemas.android.com/tools");
 
-String16 getNamespaceResourcePackage(String16 appPackage, String16 namespaceUri, bool* outIsPublic)
+String16 getNamespaceResourcePackage(const String16& appPackage, const String16& namespaceUri, bool* outIsPublic)
 {
     //printf("%s starts with %s?\n", String8(namespaceUri).string(),
     //       String8(RESOURCES_PREFIX).string());
@@ -102,7 +102,7 @@ String16 getNamespaceResourcePackage(String16 appPackage, String16 namespaceUri,
 
 status_t hasSubstitutionErrors(const char* fileName,
                                ResXMLTree* inXml,
-                               String16 str16)
+                               const String16& str16)
 {
     const char16_t* str = str16.string();
     const char16_t* p = str;
@@ -697,6 +697,12 @@ const Vector<sp<XMLNode> >& XMLNode::getChildren() const
     return mChildren;
 }
 
+
+Vector<sp<XMLNode> >& XMLNode::getChildren()
+{
+    return mChildren;
+}
+
 const String8& XMLNode::getFilename() const
 {
     return mFilename;
@@ -719,6 +725,18 @@ const XMLNode::attribute_entry* XMLNode::getAttribute(const String16& ns,
     }
 
     return NULL;
+}
+
+bool XMLNode::removeAttribute(const String16& ns, const String16& name)
+{
+    for (size_t i = 0; i < mAttributes.size(); i++) {
+        const attribute_entry& ae(mAttributes.itemAt(i));
+        if (ae.ns == ns && ae.name == name) {
+            removeAttribute(i);
+            return true;
+        }
+    }
+    return false;
 }
 
 XMLNode::attribute_entry* XMLNode::editAttribute(const String16& ns,
