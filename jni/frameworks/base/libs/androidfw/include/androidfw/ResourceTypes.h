@@ -38,6 +38,9 @@
 
 namespace android {
 
+constexpr const static uint32_t kIdmapMagic = 0x504D4449u;
+constexpr const static uint32_t kIdmapCurrentVersion = 0x00000001u;
+
 /**
  * In C++11, char16_t is defined as *at least* 16 bits. We do a lot of
  * casting on raw data and expect char16_t to be exactly 16 bits.
@@ -231,7 +234,9 @@ enum {
     RES_TABLE_PACKAGE_TYPE      = 0x0200,
     RES_TABLE_TYPE_TYPE         = 0x0201,
     RES_TABLE_TYPE_SPEC_TYPE    = 0x0202,
-    RES_TABLE_LIBRARY_TYPE      = 0x0203
+    RES_TABLE_LIBRARY_TYPE      = 0x0203,
+    RES_TABLE_OVERLAYABLE_TYPE  = 0x0204,
+    RES_TABLE_OVERLAYABLE_POLICY_TYPE = 0x0205,
 };
 
 /**
@@ -535,6 +540,9 @@ private:
     uint32_t                    mStringPoolSize;    // number of uint16_t
     const uint32_t*             mStyles;
     uint32_t                    mStylePoolSize;    // number of uint32_t
+
+    const char* stringDecodeAt(size_t idx, const uint8_t* str, const size_t encLen,
+                               size_t* outLen) const;
 };
 
 /**
@@ -543,15 +551,15 @@ private:
  */
 class StringPoolRef {
 public:
-    StringPoolRef();
-    StringPoolRef(const ResStringPool* pool, uint32_t index);
+ StringPoolRef() = default;
+ StringPoolRef(const ResStringPool* pool, uint32_t index);
 
-    const char* string8(size_t* outLen) const;
-    const char16_t* string16(size_t* outLen) const;
+ const char* string8(size_t* outLen) const;
+ const char16_t* string16(size_t* outLen) const;
 
 private:
-    const ResStringPool*        mPool;
-    uint32_t                    mIndex;
+ const ResStringPool* mPool = nullptr;
+ uint32_t mIndex = 0u;
 };
 
 /** ********************************************************************
@@ -685,7 +693,7 @@ class ResXMLTree;
 class ResXMLParser
 {
 public:
-    ResXMLParser(const ResXMLTree& tree);
+    explicit ResXMLParser(const ResXMLTree& tree);
 
     enum event_code_t {
         BAD_DOCUMENT = -1,
@@ -774,6 +782,9 @@ public:
     void getPosition(ResXMLPosition* pos) const;
     void setPosition(const ResXMLPosition& pos);
 
+    void setSourceResourceId(const uint32_t resId);
+    uint32_t getSourceResourceId() const;
+
 private:
     friend class ResXMLTree;
     
@@ -783,6 +794,7 @@ private:
     event_code_t                mEventCode;
     const ResXMLTree_node*      mCurNode;
     const void*                 mCurExt;
+    uint32_t                    mSourceResourceId;
 };
 
 class DynamicRefTable;
@@ -793,7 +805,12 @@ class DynamicRefTable;
 class ResXMLTree : public ResXMLParser
 {
 public:
-    ResXMLTree(const DynamicRefTable* dynamicRefTable);
+    /**
+     * Creates a ResXMLTree with the specified DynamicRefTable for run-time package id translation.
+     * The tree stores a clone of the specified DynamicRefTable, so any changes to the original
+     * DynamicRefTable will not affect this tree after instantiation.
+     **/
+    explicit ResXMLTree(const DynamicRefTable* dynamicRefTable);
     ResXMLTree();
     ~ResXMLTree();
 
@@ -808,7 +825,7 @@ private:
 
     status_t validateNode(const ResXMLTree_node* node) const;
 
-    const DynamicRefTable* const mDynamicRefTable;
+    std::unique_ptr<const DynamicRefTable> mDynamicRefTable;
 
     status_t                    mError;
     void*                       mOwnedData;
@@ -891,9 +908,10 @@ struct ResTable_package
 // - a 8 char variant code prefixed by a 'v'
 //
 // each separated by a single char separator, which sums up to a total of 24
-// chars, (25 include the string terminator) rounded up to 28 to be 4 byte
-// aligned.
-#define RESTABLE_MAX_LOCALE_LEN 28
+// chars, (25 include the string terminator). Numbering system specificator,
+// if present, can add up to 14 bytes (-u-nu-xxxxxxxx), giving 39 bytes,
+// or 40 bytes to make it 4 bytes aligned.
+#define RESTABLE_MAX_LOCALE_LEN 40
 
 
 /**
@@ -1179,6 +1197,10 @@ struct ResTable_config
     // tried but could not compute a script.
     bool localeScriptWasComputed;
 
+    // The value of BCP 47 Unicode extension for key 'nu' (numbering system).
+    // Varies in length from 3 to 8 chars. Zero-filled value.
+    char localeNumberingSystem[8];
+
     void copyFromDeviceNoSwap(const ResTable_config& o);
     
     void copyFromDtoH(const ResTable_config& o);
@@ -1256,9 +1278,9 @@ struct ResTable_config
     // variants, it will be a modified bcp47 tag: b+en+Latn+US.
     void appendDirLocale(String8& str) const;
 
-    // Sets the values of language, region, script and variant to the
-    // well formed BCP-47 locale contained in |in|. The input locale is
-    // assumed to be valid and no validation is performed.
+    // Sets the values of language, region, script, variant and numbering
+    // system to the well formed BCP 47 locale contained in |in|.
+    // The input locale is assumed to be valid and no validation is performed.
     void setBcp47Locale(const char* in);
 
     inline void clearLocale() {
@@ -1266,6 +1288,7 @@ struct ResTable_config
         localeScriptWasComputed = false;
         memset(localeScript, 0, sizeof(localeScript));
         memset(localeVariant, 0, sizeof(localeVariant));
+        memset(localeNumberingSystem, 0, sizeof(localeNumberingSystem));
     }
 
     inline void computeScript() {
@@ -1294,6 +1317,9 @@ struct ResTable_config
     // with respect to their locales, a negative integer if |o| is more specific
     // and 0 if they're equally specific.
     int isLocaleMoreSpecificThan(const ResTable_config &o) const;
+
+    // Returns an integer representng the imporance score of the configuration locale.
+    int getImportanceScoreOfLocale() const;
 
     // Return true if 'this' is a better locale match than 'o' for the
     // 'requested' configuration. Similar to isBetterThan(), this assumes that
@@ -1331,9 +1357,9 @@ struct ResTable_typeSpec
     // Number of uint32_t entry configuration masks that follow.
     uint32_t entryCount;
 
-    enum {
+    enum : uint32_t {
         // Additional flag indicating an entry is public.
-        SPEC_PUBLIC = 0x40000000
+        SPEC_PUBLIC = 0x40000000u,
     };
 };
 
@@ -1583,6 +1609,87 @@ struct ResTable_lib_entry
     uint16_t packageName[128];
 };
 
+/**
+ * Specifies the set of resources that are explicitly allowed to be overlaid by RROs.
+ */
+struct ResTable_overlayable_header
+{
+  struct ResChunk_header header;
+
+  // The name of the overlayable set of resources that overlays target.
+  uint16_t name[256];
+
+ // The component responsible for enabling and disabling overlays targeting this chunk.
+  uint16_t actor[256];
+};
+
+/**
+ * Holds a list of resource ids that are protected from being overlaid by a set of policies. If
+ * the overlay fulfils at least one of the policies, then the overlay can overlay the list of
+ * resources.
+ */
+struct ResTable_overlayable_policy_header
+{
+  struct ResChunk_header header;
+
+  enum PolicyFlags : uint32_t {
+    // Any overlay can overlay these resources.
+    POLICY_PUBLIC = 0x00000001,
+
+    // The overlay must reside of the system partition or must have existed on the system partition
+    // before an upgrade to overlay these resources.
+    POLICY_SYSTEM_PARTITION = 0x00000002,
+
+    // The overlay must reside of the vendor partition or must have existed on the vendor partition
+    // before an upgrade to overlay these resources.
+    POLICY_VENDOR_PARTITION = 0x00000004,
+
+    // The overlay must reside of the product partition or must have existed on the product
+    // partition before an upgrade to overlay these resources.
+    POLICY_PRODUCT_PARTITION = 0x00000008,
+
+    // The overlay must be signed with the same signature as the actor of the target resource,
+    // which can be separate or the same as the target package with the resource.
+    POLICY_SIGNATURE = 0x00000010,
+
+    // The overlay must reside of the odm partition or must have existed on the odm
+    // partition before an upgrade to overlay these resources.
+    POLICY_ODM_PARTITION = 0x00000020,
+
+    // The overlay must reside of the oem partition or must have existed on the oem
+    // partition before an upgrade to overlay these resources.
+    POLICY_OEM_PARTITION = 0x00000040,
+  };
+  uint32_t policy_flags;
+
+  // The number of ResTable_ref that follow this header.
+  uint32_t entry_count;
+};
+
+struct alignas(uint32_t) Idmap_header {
+  // Always 0x504D4449 ('IDMP')
+  uint32_t magic;
+
+  uint32_t version;
+
+  uint32_t target_crc32;
+  uint32_t overlay_crc32;
+
+  uint8_t target_path[256];
+  uint8_t overlay_path[256];
+
+  uint16_t target_package_id;
+  uint16_t type_count;
+} __attribute__((packed));
+
+struct alignas(uint32_t) IdmapEntry_header {
+  uint16_t target_type_id;
+  uint16_t overlay_type_id;
+  uint16_t entry_count;
+  uint16_t entry_id_offset;
+  uint32_t entries[0];
+} __attribute__((packed));
+
 class AssetManager2;
 
 /**
@@ -1611,6 +1718,9 @@ public:
     status_t addMapping(const String16& packageName, uint8_t packageId);
 
     void addMapping(uint8_t buildPackageId, uint8_t runtimePackageId);
+
+    // Creates a new clone of the reference table
+    std::unique_ptr<DynamicRefTable> clone() const;
 
     // Performs the actual conversion of build-time resource ID to run-time
     // resource ID.
@@ -1658,19 +1768,31 @@ public:
 
     struct resource_name
     {
-        const char16_t* package;
+        const char16_t* package = NULL;
         size_t packageLen;
-        const char16_t* type;
-        const char* type8;
+        const char16_t* type = NULL;
+        const char* type8 = NULL;
         size_t typeLen;
-        const char16_t* name;
-        const char* name8;
+        const char16_t* name = NULL;
+        const char* name8 = NULL;
         size_t nameLen;
     };
 
     bool getResourceName(uint32_t resID, bool allowUtf8, resource_name* outName) const;
 
     bool getResourceFlags(uint32_t resID, uint32_t* outFlags) const;
+
+    /**
+     * Returns whether or not the package for the given resource has been dynamically assigned.
+     * If the resource can't be found, returns 'false'.
+     */
+    bool isResourceDynamic(uint32_t resID) const;
+
+    /**
+     * Returns whether or not the given package has been dynamically assigned.
+     * If the package can't be found, returns 'false'.
+     */
+    bool isPackageDynamic(uint8_t packageID) const;
 
     /**
      * Retrieve the value of a resource.  If the resource is found, returns a
@@ -1748,7 +1870,7 @@ public:
 
     class Theme {
     public:
-        Theme(const ResTable& table);
+        explicit Theme(const ResTable& table);
         ~Theme();
 
         inline const ResTable& getResTable() const { return mTable; }
@@ -1935,7 +2057,7 @@ public:
     // Return value: on success: NO_ERROR; caller is responsible for free-ing
     // outData (using free(3)). On failure, any status_t value other than
     // NO_ERROR; the caller should not free outData.
-    status_t createIdmap(const ResTable& overlay,
+    status_t createIdmap(const ResTable& targetResTable,
             uint32_t targetCrc, uint32_t overlayCrc,
             const char* targetPath, const char* overlayPath,
             void** outData, size_t* outSize) const;
@@ -1989,6 +2111,7 @@ private:
             bool appAsLib, const int32_t cookie, bool copyData, bool isSystemAsset=false);
 
     ssize_t getResourcePackageIndex(uint32_t resID) const;
+    ssize_t getResourcePackageIndexFromPackage(uint8_t packageID) const;
 
     status_t getEntry(
         const PackageGroup* packageGroup, int typeIndex, int entryIndex,
