@@ -68,7 +68,7 @@ public class ResourceNode extends SortedMutableTreeNode
     public void add(MutableTreeNode newChild) {
     	super.add(newChild);
     	if(newChild instanceof DefaultMutableTreeNode) {
-    		DefaultMutableTreeNode node = (DefaultMutableTreeNode) newChild; 
+    		DefaultMutableTreeNode node = (DefaultMutableTreeNode) newChild;
     		Object uo = node.getUserObject();
 	    	if(uo instanceof TreeNodeData) {
 				if(".img".equals(((TreeNodeData) uo).getExtension())) {
@@ -77,7 +77,7 @@ public class ResourceNode extends SortedMutableTreeNode
 						obj = new DefaultNodeData("Loading...");
 						obj.setLoadingState(true);
 					} else {
-						obj = new DefaultNodeData("Not Supported in linux");
+						obj = new DefaultNodeData("Not Supported in " + SystemUtil.OS);
 					}
 					node.add(new ResourceNode(obj));
 				}

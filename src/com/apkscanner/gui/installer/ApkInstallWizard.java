@@ -54,7 +54,6 @@ import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
 import com.apkscanner.util.Log;
-import com.apkscanner.util.SystemUtil;
 
 public class ApkInstallWizard implements IDeviceChangeListener
 {
@@ -761,23 +760,4 @@ public class ApkInstallWizard implements IDeviceChangeListener
 		@Override public void windowActivated(WindowEvent e) { }
 		@Override public void windowDeactivated(WindowEvent e) { }
 	};
-
-	public static void main(String args[]) {
-		RStr.setLanguage(RProp.S.LANGUAGE.get());
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				boolean ret = false;
-				if(SystemUtil.isWindows()) {
-					ApkInstallWizard wizard = new ApkInstallWizard("C:\\Melon.apk");
-					ret = wizard.start();
-				} else {
-					ApkInstallWizard wizard = new ApkInstallWizard("/home/leejinhyeong/Desktop/reco.apk");
-					ret = wizard.start();
-				}
-				if(!ret) {
-					System.exit(1);
-				}
-			}
-		});
-	}
 }

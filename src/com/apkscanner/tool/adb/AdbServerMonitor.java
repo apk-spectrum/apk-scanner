@@ -326,8 +326,8 @@ public final class AdbServerMonitor {
 		String processName = null;
 		if(SystemUtil.isWindows()) {
 			processName = "adb.exe";
-		} else if(SystemUtil.isLinux()) {
-			processName = "adb"; 
+		} else if(SystemUtil.isLinux() || SystemUtil.isMac()) {
+			processName = "adb";
 		} else {
 			Log.e("Unknown OS " + SystemUtil.OS);
 		}
@@ -455,7 +455,7 @@ public final class AdbServerMonitor {
 
 						if(!isConnected){
 							Log.e("Failure: startAdb");
-							mAdbServerMonitor.adbDemonDisconnected();	
+							mAdbServerMonitor.adbDemonDisconnected();
 						}
 					} else {
 						AndroidDebugBridge.disconnectBridge();
@@ -479,7 +479,7 @@ public final class AdbServerMonitor {
 		}
 
 		private boolean isConnected(AndroidDebugBridge adb) {
-			return (adb != null) && adb.isConnected() 
+			return (adb != null) && adb.isConnected()
 					&& (adb.getConnectionAttemptCount() == 0) /*&& (adb.getRestartAttemptCount() == 0)*/;
 		}
 

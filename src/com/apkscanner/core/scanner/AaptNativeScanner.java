@@ -222,10 +222,13 @@ public class AaptNativeScanner extends ApkScanner
 		String arch = System.getProperty("sun.arch.data.model");
 		String libPath = RFile.BIN_PATH.get();
 		if(SystemUtil.isWindows()) {
-			System.load(libPath + "AaptNativeWrapper" + arch + ".dll");
-		} else {
-			System.load(libPath + "libc++" + arch + ".so");
-			System.load(libPath + "libAaptNativeWrapper" + arch + ".so");
+			System.load(libPath + "windows\\AaptNativeWrapper" + arch + ".dll");
+		} else if(SystemUtil.isLinux()) {
+			System.load(libPath + "linux/libc++" + arch + ".so");
+			System.load(libPath + "linux/libAaptNativeWrapper" + arch + ".so");
+		} else if(SystemUtil.isMac()) {
+			System.load(libPath + "darwin/libc++" + arch + ".dylib");
+			System.load(libPath + "darwin/libAaptNativeWrapper" + arch + ".dylib");
 		}
 	}
 }

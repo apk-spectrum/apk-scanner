@@ -23,6 +23,6 @@ public class OpenResFileAction extends AbstractApkScannerAction
 
 		String resPath = uncompressRes(resObj);
 
-		SystemUtil.openArchiveExplorer(resPath);
+		SystemUtil.openFile(resPath);
 	}
 }

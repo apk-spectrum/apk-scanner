@@ -2,7 +2,6 @@ package com.apkscanner.gui.dialog;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -32,7 +31,6 @@ import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
-import com.apkscanner.util.SystemUtil;
 
 public class ApkSignerWizard implements ActionListener {
 
@@ -225,20 +223,6 @@ public class ApkSignerWizard implements ActionListener {
 			return;
 		}
 		this.apkFilePath = apkFilePath;
-	}
-
-	public static void main(String args[]) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				ApkSignerWizard wizard = new ApkSignerWizard();
-				if(SystemUtil.isWindows()) {
-					wizard.setApk("C:\\Melon.apk");
-				} else {  //for linux
-					wizard.setApk("/home/leejinhyeong/Desktop/reco.apk");
-				}
-				wizard.setVisible(true);
-			}
-		});
 	}
 
 	@Override
