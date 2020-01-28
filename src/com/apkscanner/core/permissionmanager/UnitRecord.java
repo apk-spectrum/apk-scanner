@@ -6,8 +6,8 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.w3c.dom.NamedNodeMap;
 
-import com.apkscanner.util.Log;
-import com.apkscanner.util.XmlPath;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.XmlPath;
 
 public class UnitRecord<T> {
 	public final Class<T> clazz;

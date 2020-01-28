@@ -12,18 +12,27 @@ import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
-import com.apkscanner.tool.aapt.AaptXmlTreePath;
 import com.apkscanner.tool.adb.AdbWrapper;
-import com.apkscanner.util.ConsolCmd.ConsoleOutputObserver;
-import com.apkscanner.util.FileUtil;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.ZipFileUtil;
+import com.apkspectrum.util.ConsolCmd.ConsoleOutputObserver;
+import com.apkspectrum.util.FileUtil;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.ZipFileUtil;
 
 abstract public class ApkScanner
 {
 	public static final String APKSCANNER_TYPE_AAPT = "AAPT";
 	public static final String APKSCANNER_TYPE_AAPTLIGHT = "AAPTLIGHT";
 	public static final String APKSCANNER_TYPE_APKTOOL = "APKTOOL";
+
+	public static final int STATUS_STANBY = 0x00;
+	public static final int STATUS_BASIC_INFO_COMPLETED = 0x01;
+	public static final int STATUS_WIDGET_COMPLETED = 0x02;
+	public static final int STATUS_LIB_COMPLETED = 0x04;
+	public static final int STATUS_RESOURCE_COMPLETED = 0x08;
+	public static final int STATUS_RES_DUMP_COMPLETED = 0x10;
+	public static final int STATUS_ACTIVITY_COMPLETED = 0x20;
+	public static final int STATUS_CERT_COMPLETED = 0x40;
+	public static final int STATUS_ALL_COMPLETED = 0x7F;
 
 	public static final int NO_ERR = 0;
 	public static final int ERR_NO_SUCH_FILE = -1;
@@ -44,25 +53,6 @@ abstract public class ApkScanner
 	protected int scanningStatus;
 	protected int lastErrorCode;
 
-	public enum Status {
-		STANBY(0x00),
-		BASIC_INFO_COMPLETED(0x01),
-		WIDGET_COMPLETED(0x02),
-		LIB_COMPLETED(0x04),
-		RESOURCE_COMPLETED(0x08),
-		RES_DUMP_COMPLETED(0x10),
-		ACTIVITY_COMPLETED(0x20),
-		CERT_COMPLETED(0x40),
-		ALL_COMPLETED(0x7F);
-
-		int value;
-		Status(int value) { this.value = value; }
-		public int value() { return value; }
-		public boolean isCompleted(int statusFlag) {
-			return (statusFlag & value) == value;
-		}
-	}
-
 	public interface StatusListener
 	{
 		public void onStart(long estimatedTime);
@@ -70,7 +60,7 @@ abstract public class ApkScanner
 		public void onError(int error);
 		public void onCompleted();
 		public void onProgress(int step, String msg);
-		public void onStateChanged(Status status);
+		public void onStateChanged(int status);
 	}
 
 	public ApkScanner(StatusListener statusListener)
@@ -95,14 +85,14 @@ abstract public class ApkScanner
 			if(lastErrorCode != NO_ERR) {
 				statusListener.onError(lastErrorCode);
 			} else if(scanningStatus != 0) {
-				for(Status state: Status.values()) {
+				for(int state = 1; (state & STATUS_ALL_COMPLETED) != 0; state <<= 1) {
 					if(!isCompleted(state)) continue;
 					Log.v(state + " is compleated sooner than register listener");
 					statusListener.onStateChanged(state);
-					if(Status.ALL_COMPLETED.equals(state)) {
-						statusListener.onSuccess();
-						statusListener.onCompleted();
-					}
+				}
+				if(isCompleted(STATUS_ALL_COMPLETED)) {
+					statusListener.onSuccess();
+					statusListener.onCompleted();
 				}
 			}
 		}
@@ -286,20 +276,20 @@ abstract public class ApkScanner
 		}
 	}
 
-	protected void stateChanged(Status status) {
+	protected void stateChanged(int status) {
 		synchronized (this) {
-			if(status == Status.STANBY) {
+			if(status == STATUS_STANBY) {
 				scanningStatus = 0;
 			} else {
-				scanningStatus |= status.value();
+				scanningStatus |= status;
 			}
 
 			if(statusListener != null) {
 				statusListener.onStateChanged(status);
 
-				if(scanningStatus == Status.ALL_COMPLETED.value()) {
+				if(scanningStatus == STATUS_ALL_COMPLETED) {
 					Log.i("I: completed... ");
-					statusListener.onStateChanged(Status.ALL_COMPLETED);
+					statusListener.onStateChanged(STATUS_ALL_COMPLETED);
 					statusListener.onSuccess();
 					statusListener.onCompleted();
 				}
@@ -313,13 +303,13 @@ abstract public class ApkScanner
 
 	public boolean isScanning() {
 		synchronized (this) {
-			return (lastErrorCode == NO_ERR && scanningStatus != 0 && scanningStatus != Status.ALL_COMPLETED.value());
+			return (lastErrorCode == NO_ERR && scanningStatus != 0 && scanningStatus != STATUS_ALL_COMPLETED);
 		}
 	}
 
-	public boolean isCompleted(Status status) {
+	public boolean isCompleted(int status) {
 		synchronized (this) {
-			return (status.value() != 0 && (scanningStatus & status.value()) == status.value());
+			return (status != 0 && (scanningStatus & status) == status);
 		}
 	}
 

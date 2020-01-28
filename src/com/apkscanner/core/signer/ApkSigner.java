@@ -1,7 +1,7 @@
 package com.apkscanner.core.signer;
 
 import com.apkscanner.resource.RFile;
-import com.apkscanner.util.ConsolCmd;
+import com.apkspectrum.util.ConsolCmd;
 
 public class ApkSigner {
 

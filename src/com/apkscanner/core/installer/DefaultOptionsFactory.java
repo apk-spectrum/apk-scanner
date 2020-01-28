@@ -14,7 +14,7 @@ import com.apkscanner.tool.adb.AdbDeviceHelper;
 import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
 import com.apkscanner.tool.adb.SimpleOutputReceiver;
-import com.apkscanner.util.Log;
+import com.apkspectrum.util.Log;
 
 public class DefaultOptionsFactory {
 	private CompactApkInfo apkInfo;

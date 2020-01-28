@@ -3,7 +3,7 @@ package com.apkscanner.core.permissionmanager;
 import java.util.Arrays;
 
 import com.apkscanner.data.apkinfo.PermissionInfo;
-import com.apkscanner.util.XmlPath;
+import com.apkspectrum.util.XmlPath;
 
 public class PermissionGroupRecord extends UnitRecord<PermissionGroupInfoExt> {
 	private PermissionManager manager;

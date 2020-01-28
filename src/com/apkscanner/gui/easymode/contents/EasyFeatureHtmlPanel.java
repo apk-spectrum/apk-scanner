@@ -32,10 +32,10 @@ import com.apkscanner.gui.easymode.util.EasyRoundButton;
 import com.apkscanner.gui.easymode.util.RoundPanel;
 import com.apkscanner.resource.RFile;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.FileUtil;
-import com.apkscanner.util.FileUtil.FSStyle;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.XmlPath;
+import com.apkspectrum.util.FileUtil;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.XmlPath;
+import com.apkspectrum.util.FileUtil.FSStyle;
 
 public class EasyFeatureHtmlPanel extends RoundPanel {
 	/**

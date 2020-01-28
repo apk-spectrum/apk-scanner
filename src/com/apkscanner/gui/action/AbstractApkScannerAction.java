@@ -11,9 +11,9 @@ import com.apkscanner.gui.tabpanels.TreeNodeData;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
-import com.apkscanner.util.FileUtil;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.ZipFileUtil;
+import com.apkspectrum.util.FileUtil;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.ZipFileUtil;
 
 @SuppressWarnings("serial")
 public abstract class AbstractApkScannerAction extends AbstractUIAction

@@ -1,6 +1,6 @@
 package com.apkscanner.data.apkinfo;
 
-import com.apkscanner.tool.aapt.AxmlToXml;
+import com.apkscanner.core.scanner.AxmlToXml;
 
 public class ApkInfo
 {

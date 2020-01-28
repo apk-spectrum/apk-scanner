@@ -14,7 +14,7 @@ import com.android.ddmlib.IDevice;
 import com.android.ddmlib.IShellOutputReceiver;
 import com.android.ddmlib.ShellCommandUnresponsiveException;
 import com.android.ddmlib.TimeoutException;
-import com.apkscanner.util.Log;
+import com.apkspectrum.util.Log;
 
 public class AdbDeviceHelper {
 

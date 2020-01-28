@@ -33,12 +33,9 @@ import com.apkscanner.data.apkinfo.UsesPermissionSdk23Info;
 import com.apkscanner.data.apkinfo.WidgetInfo;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
-import com.apkscanner.tool.aapt.AaptXmlTreeNode;
-import com.apkscanner.tool.aapt.AaptXmlTreePath;
-import com.apkscanner.tool.aapt.AxmlToXml;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.SystemUtil;
-import com.apkscanner.util.URITool;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.SystemUtil;
+import com.apkspectrum.util.URITool;
 
 public class AaptManifestReader
 {

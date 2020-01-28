@@ -11,21 +11,21 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.gui.component.ExtensionButton;
-import com.apkscanner.gui.messagebox.MessageBoxPool;
+import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.tabpanels.TreeNodeData;
-import com.apkscanner.plugin.IPlugIn;
-import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
-import com.apkscanner.tool.external.BytecodeViewerLauncher;
-import com.apkscanner.tool.external.Dex2JarWrapper;
-import com.apkscanner.tool.external.JADXLauncher;
-import com.apkscanner.tool.external.JDGuiLauncher;
-import com.apkscanner.util.ConsolCmd.ConsoleOutputObserver;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.ZipFileUtil;
+import com.apkscanner.tool.BytecodeViewerLauncher;
+import com.apkscanner.tool.Dex2JarWrapper;
+import com.apkscanner.tool.JADXLauncher;
+import com.apkscanner.tool.JDGuiLauncher;
+import com.apkspectrum.plugin.IPlugIn;
+import com.apkspectrum.plugin.PlugInManager;
+import com.apkspectrum.swing.ExtensionButton;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.ZipFileUtil;
+import com.apkspectrum.util.ConsolCmd.ConsoleOutputObserver;
 
 @SuppressWarnings("serial")
 public class OpenDecompilerAction extends AbstractApkScannerAction

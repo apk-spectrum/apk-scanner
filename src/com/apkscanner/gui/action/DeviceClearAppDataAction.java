@@ -6,11 +6,11 @@ import java.awt.event.ActionEvent;
 
 import com.android.ddmlib.IDevice;
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.easymode.contents.EasyGuiDeviceToolPanel;
-import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
-import com.apkscanner.util.Log;
+import com.apkspectrum.util.Log;
 
 @SuppressWarnings("serial")
 public class DeviceClearAppDataAction extends AbstractDeviceAction

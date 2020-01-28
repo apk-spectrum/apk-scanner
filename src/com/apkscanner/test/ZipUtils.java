@@ -20,7 +20,7 @@ import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
-import com.apkscanner.util.Log;
+import com.apkspectrum.util.Log;
 
 //import org.apache.commons.lang.StringUtils;
 

@@ -27,7 +27,7 @@ import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.gui.easymode.util.RoundPanel;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
-import com.apkscanner.util.Log;
+import com.apkspectrum.util.Log;
 
 public class EasyPermissioniconPanel extends RoundPanel implements ActionListener{
 	private static final long serialVersionUID = -7090063544416919223L;

@@ -9,18 +9,18 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.border.EmptyBorder;
 
-import com.apkscanner.gui.component.HtmlEditorPane;
-import com.apkscanner.gui.component.ImagePanel;
-import com.apkscanner.gui.component.tabbedpane.TabbedPaneUIManager;
-import com.apkscanner.gui.messagebox.MessageBoxPane;
-import com.apkscanner.plugin.IUpdateChecker;
-import com.apkscanner.plugin.PlugInConfig;
-import com.apkscanner.plugin.PlugInManager;
-import com.apkscanner.plugin.gui.UpdateNotificationPanel;
 import com.apkscanner.resource.RFile;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
+import com.apkspectrum.plugin.IUpdateChecker;
+import com.apkspectrum.plugin.PlugInConfig;
+import com.apkspectrum.plugin.PlugInManager;
+import com.apkspectrum.plugin.gui.UpdateNotificationPanel;
+import com.apkspectrum.swing.HtmlEditorPane;
+import com.apkspectrum.swing.ImagePanel;
+import com.apkspectrum.swing.tabbedpaneui.MessageBoxPane;
+import com.apkspectrum.swing.tabbedpaneui.TabbedPaneUIManager;
 
 public class AboutDlg /*extends JDialog*/
 {

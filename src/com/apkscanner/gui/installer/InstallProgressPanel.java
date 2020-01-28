@@ -28,7 +28,7 @@ import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.Log;
+import com.apkspectrum.util.Log;
 
 public class InstallProgressPanel extends JPanel
 {

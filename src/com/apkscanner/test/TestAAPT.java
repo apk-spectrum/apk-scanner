@@ -17,7 +17,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 
-import com.apkscanner.util.Log;
+import com.apkspectrum.util.Log;
 
 import javax.swing.JPanel;
 

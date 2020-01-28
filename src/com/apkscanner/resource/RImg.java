@@ -5,7 +5,7 @@ import java.net.URL;
 
 import javax.swing.ImageIcon;
 
-import com.apkscanner.gui.component.ImageScaler;
+import com.apkspectrum.swing.ImageScaler;
 
 public enum RImg implements ResFile<URL>
 {

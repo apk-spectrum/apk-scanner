@@ -59,21 +59,21 @@ import org.json.simple.JSONValue;
 import com.android.ddmlib.AdbVersion;
 import com.apkscanner.gui.TabbedPanel;
 import com.apkscanner.gui.ToolBar;
-import com.apkscanner.gui.component.ApkFileChooser;
-import com.apkscanner.gui.component.KeyStrokeAction;
-import com.apkscanner.gui.component.WindowSizeMemorizer;
-import com.apkscanner.gui.component.tabbedpane.TabbedPaneUIManager;
-import com.apkscanner.jna.FileInfo;
-import com.apkscanner.jna.FileVersion;
-import com.apkscanner.plugin.PlugInManager;
-import com.apkscanner.plugin.gui.PlugInSettingPanel;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 import com.apkscanner.tool.adb.AdbVersionManager;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.SystemUtil;
+import com.apkspectrum.jna.FileInfo;
+import com.apkspectrum.jna.FileVersion;
+import com.apkspectrum.plugin.PlugInManager;
+import com.apkspectrum.plugin.gui.PlugInSettingPanel;
+import com.apkspectrum.swing.ApkFileChooser;
+import com.apkspectrum.swing.KeyStrokeAction;
+import com.apkspectrum.swing.WindowSizeMemorizer;
+import com.apkspectrum.swing.tabbedpaneui.TabbedPaneUIManager;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.SystemUtil;
 
 public class SettingDlg extends JDialog implements ActionListener
 {

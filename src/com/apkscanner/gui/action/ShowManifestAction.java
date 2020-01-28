@@ -8,13 +8,13 @@ import java.io.FileWriter;
 import javax.swing.JFileChooser;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.gui.component.ApkFileChooser;
-import com.apkscanner.gui.messagebox.MessageBoxPool;
+import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
-import com.apkscanner.util.FileUtil;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.SystemUtil;
+import com.apkspectrum.swing.ApkFileChooser;
+import com.apkspectrum.util.FileUtil;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.SystemUtil;
 
 @SuppressWarnings("serial")
 public class ShowManifestAction extends AbstractApkScannerAction

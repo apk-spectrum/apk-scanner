@@ -41,7 +41,7 @@ import javax.swing.text.html.Option;
 import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
 import com.apkscanner.core.permissionmanager.PermissionManager;
 import com.apkscanner.core.permissionmanager.PermissionRepository.SourceCommit;
-import com.apkscanner.core.scanner.ApkScanner.Status;
+import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.CompatibleScreensInfo;
@@ -52,26 +52,26 @@ import com.apkscanner.data.apkinfo.UsesConfigurationInfo;
 import com.apkscanner.data.apkinfo.UsesFeatureInfo;
 import com.apkscanner.data.apkinfo.UsesLibraryInfo;
 import com.apkscanner.data.apkinfo.UsesSdkInfo;
-import com.apkscanner.gui.component.HtmlEditorPane;
-import com.apkscanner.gui.component.HtmlEditorPane.HyperlinkClickEvent;
-import com.apkscanner.gui.component.HtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.gui.dialog.PermissionHistoryPanel;
 import com.apkscanner.gui.dialog.SdkVersionInfoDlg;
-import com.apkscanner.gui.messagebox.MessageBoxPane;
-import com.apkscanner.plugin.IPackageSearcher;
-import com.apkscanner.plugin.IPlugIn;
-import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RFile;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.Base64;
-import com.apkscanner.util.FileUtil;
-import com.apkscanner.util.FileUtil.FSStyle;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.SystemUtil;
-import com.apkscanner.util.XmlPath;
+import com.apkspectrum.plugin.IPackageSearcher;
+import com.apkspectrum.plugin.IPlugIn;
+import com.apkspectrum.plugin.PlugInManager;
+import com.apkspectrum.swing.HtmlEditorPane;
+import com.apkspectrum.swing.HtmlEditorPane.HyperlinkClickEvent;
+import com.apkspectrum.swing.HtmlEditorPane.HyperlinkClickListener;
+import com.apkspectrum.swing.tabbedpaneui.MessageBoxPane;
+import com.apkspectrum.util.Base64;
+import com.apkspectrum.util.FileUtil;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.SystemUtil;
+import com.apkspectrum.util.XmlPath;
+import com.apkspectrum.util.FileUtil.FSStyle;
 
 public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickListener, IProgressListener,
 		ListDataListener, ItemListener, PropertyChangeListener
@@ -174,7 +174,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	}
 
 	@Override
-	public void setData(ApkInfo apkInfo, Status status) {
+	public void setData(ApkInfo apkInfo, int status) {
 		if(apkInfoPanel == null) initialize();
 
 		if(apkInfo == null) {
@@ -184,7 +184,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		}
 
 		switch(status) {
-		case BASIC_INFO_COMPLETED:
+		case ApkScanner.STATUS_BASIC_INFO_COMPLETED:
 			RComp res = apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX ?
 					RComp.TABBED_BASIC_INFO : RComp.TABBED_APEX_INFO;
 			res.set(this);
@@ -192,7 +192,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			cardLayout.show(this, CARD_APK_INFORMATION);
 			setSeletected();
 			break;
-		case CERT_COMPLETED:
+		case ApkScanner.STATUS_CERT_COMPLETED:
 			if(apkInfoPanel.getElementById("basic-info") != null) {
 				if(ApkInfoHelper.isTestPlatformSign(apkInfo) || ApkInfoHelper.isSamsungSign(apkInfo)) {
 					permissionManager.setPlatformSigned(true);

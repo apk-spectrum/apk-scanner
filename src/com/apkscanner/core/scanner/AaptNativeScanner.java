@@ -5,8 +5,8 @@ import java.util.concurrent.Semaphore;
 
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.resource.RFile;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.SystemUtil;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.SystemUtil;
 
 public class AaptNativeScanner extends ApkScanner
 {

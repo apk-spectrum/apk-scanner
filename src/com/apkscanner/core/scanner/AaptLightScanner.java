@@ -3,13 +3,10 @@ package com.apkscanner.core.scanner;
 import java.io.File;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.gui.EasyMainUI;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
-import com.apkscanner.tool.aapt.AaptXmlTreePath;
-import com.apkscanner.tool.aapt.AxmlToXml;
-import com.apkscanner.util.FileUtil;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.ZipFileUtil;
+import com.apkspectrum.util.FileUtil;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.ZipFileUtil;
 
 public class AaptLightScanner extends AaptScanner {
 
@@ -33,7 +30,6 @@ public class AaptLightScanner extends AaptScanner {
 
 		Log.i("---aaptLightScanner---");
 		Log.i("openApk() " + apkFilePath + ", res " + frameworkRes);
-		EasyMainUI.corestarttime = System.currentTimeMillis();
 
 		if(apkFilePath == null) {
 			Log.e("APK file path is null");
@@ -91,7 +87,7 @@ public class AaptLightScanner extends AaptScanner {
 
 		setType();
 
-		stateChanged(Status.STANBY);
+		stateChanged(STATUS_STANBY);
 
 		Log.v("Temp path : " + apkInfo.tempWorkPath);
 
@@ -116,40 +112,40 @@ public class AaptLightScanner extends AaptScanner {
 		readApexInfo();
 
 		Log.i("read basic info completed");
-		stateChanged(Status.BASIC_INFO_COMPLETED);
+		stateChanged(STATUS_BASIC_INFO_COMPLETED);
 
 
 		Log.i("read signatures...");
 		solveCert();
-		stateChanged(Status.CERT_COMPLETED);
+		stateChanged(STATUS_CERT_COMPLETED);
 		Log.i("read signatures completed...");
 
 
 		Log.i("I: read libraries list...");
 		apkInfo.libraries = ZipFileUtil.findFiles(apkInfo.filePath, ".so", null);
-		stateChanged(Status.LIB_COMPLETED);
+		stateChanged(STATUS_LIB_COMPLETED);
 
 		// Activity/Service/Receiver/provider intent-filter
 		Log.i("I: read components...");
 		manifestReader.readComponents();
-		stateChanged(Status.ACTIVITY_COMPLETED);
+		stateChanged(STATUS_ACTIVITY_COMPLETED);
 
-		stateChanged(Status.ALL_COMPLETED);
+		stateChanged(STATUS_ALL_COMPLETED);
 	}
 
 	public void setLightMode(boolean lightMode) {
 		if(isLightMode == lightMode) return;
-		if(isLightMode && !lightMode && getStatus() == Status.ALL_COMPLETED.value()) {
+		if(isLightMode && !lightMode && getStatus() == STATUS_ALL_COMPLETED) {
 			// widget
 			Log.i("I: read widgets...");
 			apkInfo.widgets = manifestReader.getWidgetList(apkInfo.filePath);
-			stateChanged(Status.WIDGET_COMPLETED);
+			stateChanged(STATUS_WIDGET_COMPLETED);
 
 			Thread thread = new Thread(new Runnable() {
 				public void run() {
 					Log.i("I: read Resource list...");
 					apkInfo.resources = ZipFileUtil.findFiles(apkInfo.filePath, null, null);
-					stateChanged(Status.RESOURCE_COMPLETED);
+					stateChanged(STATUS_RESOURCE_COMPLETED);
 				}
 			});
 			thread.setPriority(Thread.NORM_PRIORITY);
@@ -159,7 +155,7 @@ public class AaptLightScanner extends AaptScanner {
 				public void run() {
 					Log.i("I: read aapt dump resources...");
 					apkInfo.resourcesWithValue = AaptNativeWrapper.Dump.getResources(apkInfo.filePath, true);
-					stateChanged(Status.RES_DUMP_COMPLETED);
+					stateChanged(STATUS_RES_DUMP_COMPLETED);
 					Log.i("resources completed");
 				}
 			});

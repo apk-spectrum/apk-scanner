@@ -34,12 +34,12 @@ import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.gui.component.WindowSizeMemorizer;
 import com.apkscanner.gui.tabpanels.ResContentFocusChanger;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.ZipFileUtil;
+import com.apkspectrum.swing.WindowSizeMemorizer;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.ZipFileUtil;
 
 public class SearchDlg extends JDialog {
 	private static final long serialVersionUID = 6109952065388761951L;

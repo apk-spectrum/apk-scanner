@@ -7,8 +7,8 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 
 import com.apkscanner.resource.RFile;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.SystemUtil;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.SystemUtil;
 
 public class Launcher
 {

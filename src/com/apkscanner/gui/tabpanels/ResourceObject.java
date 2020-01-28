@@ -3,15 +3,15 @@ package com.apkscanner.gui.tabpanels;
 import java.io.File;
 import java.net.URI;
 
+import com.apkscanner.core.scanner.AxmlToXml;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
+import com.apkscanner.tool.ImgExtractorWrapper;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
-import com.apkscanner.tool.aapt.AxmlToXml;
-import com.apkscanner.tool.external.ImgExtractorWrapper;
-import com.apkscanner.util.FileUtil;
-import com.apkscanner.util.SystemUtil;
-import com.apkscanner.util.URITool;
-import com.apkscanner.util.ZipFileUtil;
+import com.apkspectrum.util.FileUtil;
+import com.apkspectrum.util.SystemUtil;
+import com.apkspectrum.util.URITool;
+import com.apkspectrum.util.ZipFileUtil;
 
 public class ResourceObject extends DefaultNodeData implements Cloneable
 {

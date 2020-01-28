@@ -4,8 +4,8 @@ import java.awt.event.ActionEvent;
 
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.SystemUtil;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.SystemUtil;
 
 @SuppressWarnings("serial")
 public class ShowExplorerFolderAction extends AbstractApkScannerAction

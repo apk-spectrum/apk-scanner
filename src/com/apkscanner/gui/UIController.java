@@ -20,17 +20,17 @@ import javax.swing.UnsupportedLookAndFeelException;
 import com.apkscanner.core.scanner.AaptLightScanner;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.easymode.dlg.EasyStartupDlg;
-import com.apkscanner.plugin.IPlugInEventListener;
-import com.apkscanner.plugin.IUpdateChecker;
-import com.apkscanner.plugin.NetworkException;
-import com.apkscanner.plugin.PlugInConfig;
-import com.apkscanner.plugin.PlugInManager;
-import com.apkscanner.plugin.gui.NetworkErrorDialog;
-import com.apkscanner.plugin.gui.UpdateNotificationWindow;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.Log;
+import com.apkspectrum.plugin.IPlugInEventListener;
+import com.apkspectrum.plugin.IUpdateChecker;
+import com.apkspectrum.plugin.NetworkException;
+import com.apkspectrum.plugin.PlugInConfig;
+import com.apkspectrum.plugin.PlugInManager;
+import com.apkspectrum.plugin.gui.NetworkErrorDialog;
+import com.apkspectrum.plugin.gui.UpdateNotificationWindow;
+import com.apkspectrum.util.Log;
 
 public class UIController implements Runnable {
 	public static final String APKSCANNER_GUI_APKSCANNER = "APKSCANNER";

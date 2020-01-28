@@ -31,10 +31,10 @@ import javax.swing.tree.TreeSelectionModel;
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.data.apkinfo.WidgetInfo;
 import com.apkscanner.gui.UiEventHandler;
-import com.apkscanner.gui.component.SortedMutableTreeNode;
-import com.apkscanner.util.FileUtil;
-import com.apkscanner.util.SystemUtil;
-import com.apkscanner.util.URITool;
+import com.apkspectrum.swing.SortedMutableTreeNode;
+import com.apkspectrum.util.FileUtil;
+import com.apkspectrum.util.SystemUtil;
+import com.apkspectrum.util.URITool;
 
 public class ResourceTree extends JTree {
 	private static final long serialVersionUID = 3376111906679444249L;

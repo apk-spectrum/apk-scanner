@@ -6,13 +6,13 @@ import java.awt.GridLayout;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import com.apkscanner.core.scanner.ApkScanner.Status;
+import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.FileUtil;
-import com.apkscanner.util.FileUtil.FSStyle;
-import com.apkscanner.util.ZipFileUtil;
+import com.apkspectrum.util.FileUtil;
+import com.apkspectrum.util.FileUtil.FSStyle;
+import com.apkspectrum.util.ZipFileUtil;
 import com.google.common.base.Objects;
 
 public class Libraries extends AbstractTabbedPanel
@@ -39,9 +39,9 @@ public class Libraries extends AbstractTabbedPanel
 	}
 
 	@Override
-	public void setData(ApkInfo apkInfo, Status status)
+	public void setData(ApkInfo apkInfo, int status)
 	{
-		if(!Status.LIB_COMPLETED.equals(status)) {
+		if(ApkScanner.STATUS_LIB_COMPLETED != status) {
 			return;
 		}
 

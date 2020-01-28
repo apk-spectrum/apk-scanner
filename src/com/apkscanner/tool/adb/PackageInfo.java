@@ -11,8 +11,8 @@ import com.android.ddmlib.TimeoutException;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ComponentInfo;
 import com.apkscanner.tool.adb.SimpleOutputReceiver;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.XmlPath;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.XmlPath;
 
 public class PackageInfo {
 

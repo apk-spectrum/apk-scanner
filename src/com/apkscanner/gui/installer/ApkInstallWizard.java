@@ -43,17 +43,17 @@ import com.apkscanner.core.installer.OptionsBundle.IOptionsChangedListener;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.data.apkinfo.CompactApkInfo;
-import com.apkscanner.gui.component.KeyStrokeAction;
-import com.apkscanner.gui.component.WindowSizeMemorizer;
+import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.dialog.PackageInfoPanel;
-import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
-import com.apkscanner.util.Log;
+import com.apkspectrum.swing.KeyStrokeAction;
+import com.apkspectrum.swing.WindowSizeMemorizer;
+import com.apkspectrum.util.Log;
 
 public class ApkInstallWizard implements IDeviceChangeListener
 {

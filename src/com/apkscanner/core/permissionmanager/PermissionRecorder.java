@@ -17,12 +17,12 @@ import javax.xml.xpath.XPathException;
 
 import com.apkscanner.core.permissionmanager.PermissionRepository.SourceCommit;
 import com.apkscanner.data.apkinfo.ResourceInfo;
-import com.apkscanner.plugin.NetworkException;
-import com.apkscanner.plugin.NetworkNotFoundException;
-import com.apkscanner.plugin.NetworkSetting;
-import com.apkscanner.util.Base64;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.XmlPath;
+import com.apkspectrum.plugin.NetworkException;
+import com.apkspectrum.plugin.NetworkNotFoundException;
+import com.apkspectrum.plugin.NetworkSetting;
+import com.apkspectrum.util.Base64;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.XmlPath;
 
 public class PermissionRecorder {
 

@@ -16,12 +16,12 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.apkscanner.core.signer.SignatureReport;
-import com.apkscanner.gui.component.ImageScaler;
-import com.apkscanner.gui.component.TreeNodeImageObserver;
 import com.apkscanner.resource.RImg;
-import com.apkscanner.util.FileUtil;
-import com.apkscanner.util.SystemUtil;
-import com.apkscanner.util.URITool;
+import com.apkspectrum.swing.ImageScaler;
+import com.apkspectrum.swing.TreeNodeImageObserver;
+import com.apkspectrum.util.FileUtil;
+import com.apkspectrum.util.SystemUtil;
+import com.apkspectrum.util.URITool;
 
 public class DefaultNodeData implements TreeNodeData, Cloneable
 {

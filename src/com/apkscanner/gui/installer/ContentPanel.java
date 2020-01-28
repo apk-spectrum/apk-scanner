@@ -12,9 +12,9 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import com.apkscanner.gui.component.ImagePanel;
 import com.apkscanner.resource.RImg;
-import com.apkscanner.util.Log;
+import com.apkspectrum.swing.ImagePanel;
+import com.apkspectrum.util.Log;
 
 public class ContentPanel extends JPanel
 {

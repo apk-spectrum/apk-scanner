@@ -17,8 +17,8 @@ import com.apkscanner.data.apkinfo.UsesPermissionInfo;
 import com.apkscanner.data.apkinfo.UsesPermissionSdk23Info;
 import com.apkscanner.resource.RFile;
 import com.apkscanner.resource.RImg;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.XmlPath;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.XmlPath;
 
 public class PermissionManager
 {

@@ -39,7 +39,7 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 
-import com.apkscanner.core.scanner.ApkScanner.Status;
+import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.data.apkinfo.ActivityAliasInfo;
 import com.apkscanner.data.apkinfo.ActivityInfo;
 import com.apkscanner.data.apkinfo.ApkInfo;
@@ -48,14 +48,14 @@ import com.apkscanner.data.apkinfo.ComponentInfo;
 import com.apkscanner.data.apkinfo.ProviderInfo;
 import com.apkscanner.data.apkinfo.ReceiverInfo;
 import com.apkscanner.data.apkinfo.ServiceInfo;
-import com.apkscanner.gui.component.KeyStrokeAction;
-import com.apkscanner.gui.component.TextPrompt;
-import com.apkscanner.gui.component.TextPrompt.Show;
 import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.Log;
+import com.apkspectrum.swing.KeyStrokeAction;
+import com.apkspectrum.swing.TextPrompt;
+import com.apkspectrum.swing.TextPrompt.Show;
+import com.apkspectrum.util.Log;
 
 public class Components extends AbstractTabbedPanel
 {
@@ -263,9 +263,9 @@ public class Components extends AbstractTabbedPanel
 	}
 
 	@Override
-	public void setData(ApkInfo apkInfo, Status status)
+	public void setData(ApkInfo apkInfo, int status)
 	{
-		if(!Status.ACTIVITY_COMPLETED.equals(status)) return;
+		if(ApkScanner.STATUS_ACTIVITY_COMPLETED != status) return;
 
 		if(tableModel == null)
 			initialize();

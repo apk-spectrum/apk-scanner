@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
 import com.apkscanner.resource.RFile;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.SystemUtil;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.SystemUtil;
 
 public class AaptNativeWrapper {
 

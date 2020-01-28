@@ -7,11 +7,11 @@ import java.io.File;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 
-import com.apkscanner.gui.component.ApkFileChooser;
 import com.apkscanner.gui.tabpanels.DefaultNodeData;
 import com.apkscanner.gui.tabpanels.TreeNodeData;
 import com.apkscanner.resource.RProp;
-import com.apkscanner.util.FileUtil;
+import com.apkspectrum.swing.ApkFileChooser;
+import com.apkspectrum.util.FileUtil;
 
 @SuppressWarnings("serial")
 public class SaveResFileAction extends AbstractApkScannerAction

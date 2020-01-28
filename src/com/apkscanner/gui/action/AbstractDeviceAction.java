@@ -8,7 +8,7 @@ import com.apkscanner.resource.RProp;
 import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
-import com.apkscanner.util.Log;
+import com.apkspectrum.util.Log;
 
 @SuppressWarnings("serial")
 public abstract class AbstractDeviceAction extends AbstractApkScannerAction

@@ -1,6 +1,6 @@
 package com.apkscanner.core.permissionmanager;
 
-import com.apkscanner.util.XmlPath;
+import com.apkspectrum.util.XmlPath;
 
 public class PermissionRecord extends UnitRecord<PermissionInfoExt>  {
 	public Integer maxSdkVersion;

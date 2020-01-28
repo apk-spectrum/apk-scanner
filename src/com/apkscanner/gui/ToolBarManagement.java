@@ -18,7 +18,7 @@ import com.apkscanner.tool.adb.IPackageStateListener;
 import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
 import com.apkscanner.tool.adb.AdbServerMonitor.IAdbDemonChangeListener;
-import com.apkscanner.util.Log;
+import com.apkspectrum.util.Log;
 
 class ToolBarManagement implements IDeviceChangeListener, IAdbDemonChangeListener, IPackageStateListener
 {

@@ -20,15 +20,15 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import com.apkscanner.core.scanner.ApkScanner.Status;
+import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.data.apkinfo.WidgetInfo;
-import com.apkscanner.gui.component.ImageScaler;
 import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
+import com.apkspectrum.swing.ImageScaler;
 
 public class Widgets extends AbstractTabbedPanel implements TreeSelectionListener, ListSelectionListener
 {
@@ -80,9 +80,9 @@ public class Widgets extends AbstractTabbedPanel implements TreeSelectionListene
 	}
 
 	@Override
-	public void setData(ApkInfo apkInfo, Status status)
+	public void setData(ApkInfo apkInfo, int status)
 	{
-		if(!Status.WIDGET_COMPLETED.equals(status)) return;
+		if(ApkScanner.STATUS_WIDGET_COMPLETED != status) return;
 
 		if(tableModel == null)
 			initialize();

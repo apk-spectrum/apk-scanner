@@ -6,13 +6,13 @@ import java.util.Arrays;
 import javax.swing.JFrame;
 
 import com.apkscanner.core.scanner.ApkScanner;
+import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.UiEventHandler;
-import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.Log;
+import com.apkspectrum.util.Log;
 
 public class ToolEntryManager {
 

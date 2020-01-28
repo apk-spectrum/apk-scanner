@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 
 import com.apkscanner.resource.RFile;
-import com.apkscanner.util.ConsolCmd;
-import com.apkscanner.util.Log;
+import com.apkspectrum.util.ConsolCmd;
+import com.apkspectrum.util.Log;
 
 public class AaptWrapper
 {

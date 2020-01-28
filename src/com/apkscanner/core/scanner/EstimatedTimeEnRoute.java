@@ -5,7 +5,7 @@ import java.io.File;
 import org.json.simple.JSONArray;
 
 import com.apkscanner.resource.RProp;
-import com.apkscanner.util.ZipFileUtil;
+import com.apkspectrum.util.ZipFileUtil;
 
 public class EstimatedTimeEnRoute
 {

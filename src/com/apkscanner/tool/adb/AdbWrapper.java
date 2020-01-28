@@ -6,10 +6,10 @@ import java.util.concurrent.TimeUnit;
 import com.android.ddmlib.AdbVersion;
 import com.apkscanner.resource.RFile;
 import com.apkscanner.resource.RProp;
-import com.apkscanner.util.ConsolCmd;
-import com.apkscanner.util.ConsolCmd.ConsoleOutputObserver;
-import com.apkscanner.util.FileUtil;
-import com.apkscanner.util.Log;
+import com.apkspectrum.util.ConsolCmd;
+import com.apkspectrum.util.FileUtil;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.ConsolCmd.ConsoleOutputObserver;
 import com.google.common.util.concurrent.Uninterruptibles;
 
 public class AdbWrapper

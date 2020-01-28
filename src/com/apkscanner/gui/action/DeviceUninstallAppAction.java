@@ -9,12 +9,12 @@ import com.android.ddmlib.AdbCommandRejectedException;
 import com.android.ddmlib.IDevice;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.easymode.contents.EasyGuiDeviceToolPanel;
-import com.apkscanner.gui.messagebox.MessageBoxPane;
-import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.tool.adb.PackageInfo;
 import com.apkscanner.tool.adb.PackageManager;
-import com.apkscanner.util.Log;
+import com.apkspectrum.swing.tabbedpaneui.MessageBoxPane;
+import com.apkspectrum.util.Log;
 
 @SuppressWarnings("serial")
 public class DeviceUninstallAppAction extends AbstractDeviceAction

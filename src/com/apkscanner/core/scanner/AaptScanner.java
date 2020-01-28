@@ -11,13 +11,10 @@ import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.tool.aapt.AaptNativeWrapper;
-import com.apkscanner.tool.aapt.AaptXmlTreeNode;
-import com.apkscanner.tool.aapt.AaptXmlTreePath;
-import com.apkscanner.tool.aapt.AxmlToXml;
-import com.apkscanner.util.FileUtil;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.URITool;
-import com.apkscanner.util.ZipFileUtil;
+import com.apkspectrum.util.FileUtil;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.URITool;
+import com.apkspectrum.util.ZipFileUtil;
 
 public class AaptScanner extends ApkScanner
 {
@@ -89,7 +86,7 @@ public class AaptScanner extends ApkScanner
 
 		setType();
 
-		stateChanged(Status.STANBY);
+		stateChanged(STATUS_STANBY);
 
 		Log.v("Temp path : " + apkInfo.tempWorkPath);
 
@@ -111,13 +108,13 @@ public class AaptScanner extends ApkScanner
 		readApexInfo();
 
 		Log.i("read basic info completed");
-		stateChanged(Status.BASIC_INFO_COMPLETED);
+		stateChanged(STATUS_BASIC_INFO_COMPLETED);
 
 		new Thread(new Runnable() {
 			public void run() {
 				Log.i("read signatures...");
 				solveCert();
-				stateChanged(Status.CERT_COMPLETED);
+				stateChanged(STATUS_CERT_COMPLETED);
 				Log.i("read signatures completed...");
 			}
 		}).start();
@@ -126,11 +123,11 @@ public class AaptScanner extends ApkScanner
 			public void run() {
 				Log.i("I: read libraries list...");
 				apkInfo.libraries = ZipFileUtil.findFiles(apkInfo.filePath, ".so", null);
-				stateChanged(Status.LIB_COMPLETED);
+				stateChanged(STATUS_LIB_COMPLETED);
 
 				Log.i("I: read Resource list...");
 				apkInfo.resources = ZipFileUtil.findFiles(apkInfo.filePath, null, null);
-				stateChanged(Status.RESOURCE_COMPLETED);
+				stateChanged(STATUS_RESOURCE_COMPLETED);
 			}
 		}).start();
 
@@ -138,7 +135,7 @@ public class AaptScanner extends ApkScanner
 			public void run() {
 				Log.i("I: read aapt dump resources...");
 				apkInfo.resourcesWithValue = AaptNativeWrapper.Dump.getResources(apkInfo.filePath, true);
-				stateChanged(Status.RES_DUMP_COMPLETED);
+				stateChanged(STATUS_RES_DUMP_COMPLETED);
 				Log.i("resources completed");
 			}
 		}).start();
@@ -146,12 +143,12 @@ public class AaptScanner extends ApkScanner
 		// Activity/Service/Receiver/provider intent-filter
 		Log.i("I: read components...");
 		manifestReader.readComponents();
-		stateChanged(Status.ACTIVITY_COMPLETED);
+		stateChanged(STATUS_ACTIVITY_COMPLETED);
 
 		// widget
 		Log.i("I: read widgets...");
 		apkInfo.widgets = manifestReader.getWidgetList(apkInfo.filePath);
-		stateChanged(Status.WIDGET_COMPLETED);
+		stateChanged(STATUS_WIDGET_COMPLETED);
 	}
 
 	protected void readApexInfo() {

@@ -7,13 +7,13 @@ import java.net.URL;
 
 import javax.swing.ImageIcon;
 
-import com.apkscanner.gui.component.DropTargetChooser;
-import com.apkscanner.gui.component.ImageScaler;
-import com.apkscanner.plugin.IExternalTool;
-import com.apkscanner.plugin.IPlugInEventListener;
-import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RStr;
+import com.apkspectrum.plugin.IExternalTool;
+import com.apkspectrum.plugin.IPlugInEventListener;
+import com.apkspectrum.plugin.PlugInManager;
+import com.apkspectrum.swing.DropTargetChooser;
+import com.apkspectrum.swing.ImageScaler;
 
 public class PlugInDropTargetChooser extends DropTargetChooser implements IPlugInEventListener {
 	private static final long serialVersionUID = 333800480269221248L;

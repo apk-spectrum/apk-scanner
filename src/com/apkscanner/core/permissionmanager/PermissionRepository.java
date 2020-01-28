@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.apkscanner.util.XmlPath;
+import com.apkspectrum.util.XmlPath;
 
 public class PermissionRepository {
 	public final String url;

@@ -14,10 +14,10 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
-import com.apkscanner.gui.component.NoCloseCheckBoxMenuItem;
 import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
+import com.apkspectrum.swing.NoCloseCheckBoxMenuItem;
 
 enum MenuItemSet
 {

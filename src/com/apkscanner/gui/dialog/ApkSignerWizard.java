@@ -24,13 +24,13 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.apkscanner.core.signer.ApkSigner;
-import com.apkscanner.gui.component.ApkFileChooser;
-import com.apkscanner.gui.component.WindowSizeMemorizer;
-import com.apkscanner.gui.messagebox.MessageBoxPool;
+import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.Log;
+import com.apkspectrum.swing.ApkFileChooser;
+import com.apkspectrum.swing.WindowSizeMemorizer;
+import com.apkspectrum.util.Log;
 
 public class ApkSignerWizard implements ActionListener {
 

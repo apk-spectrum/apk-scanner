@@ -15,11 +15,11 @@ import com.apkscanner.data.apkinfo.CompactApkInfo;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.tool.adb.AdbDeviceHelper;
 import com.apkscanner.tool.adb.AdbDeviceHelper.CommandRejectedException;
+import com.apkspectrum.util.FileUtil;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.ZipFileUtil;
 import com.apkscanner.tool.adb.PackageManager;
 import com.apkscanner.tool.adb.SimpleOutputReceiver;
-import com.apkscanner.util.FileUtil;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.ZipFileUtil;
 
 public class ApkInstaller
 {

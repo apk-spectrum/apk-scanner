@@ -17,15 +17,15 @@ import javax.swing.KeyStroke;
 import com.apkscanner.core.permissionmanager.PermissionManager;
 import com.apkscanner.core.permissionmanager.PermissionRepository;
 import com.apkscanner.core.permissionmanager.PermissionRepository.SourceCommit;
-import com.apkscanner.gui.component.HtmlEditorPane;
-import com.apkscanner.gui.component.KeyStrokeAction;
-import com.apkscanner.gui.component.WindowSizeMemorizer;
-import com.apkscanner.gui.component.tabbedpane.TabbedPaneUIManager;
 import com.apkscanner.resource.RFile;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.Log;
+import com.apkspectrum.swing.HtmlEditorPane;
+import com.apkspectrum.swing.KeyStrokeAction;
+import com.apkspectrum.swing.WindowSizeMemorizer;
+import com.apkspectrum.swing.tabbedpaneui.TabbedPaneUIManager;
+import com.apkspectrum.util.Log;
 
 public class PermissionReferencePanel extends JPanel {
 	private static final long serialVersionUID = 1224360539653858070L;

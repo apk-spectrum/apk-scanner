@@ -12,8 +12,8 @@ import com.android.ddmlib.AdbVersion;
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.DdmPreferences;
 import com.apkscanner.resource.RProp;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.SystemUtil;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.SystemUtil;
 import com.google.common.base.Joiner;
 import com.google.common.util.concurrent.Uninterruptibles;
 

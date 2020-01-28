@@ -17,7 +17,7 @@ import com.android.ddmlib.SyncException;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.tool.adb.AdbDeviceHelper.CommandRejectedException;
-import com.apkscanner.util.Log;
+import com.apkspectrum.util.Log;
 
 
 public class PackageManager {

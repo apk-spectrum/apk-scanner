@@ -11,8 +11,8 @@ import java.util.zip.ZipFile;
 
 import com.apkscanner.core.signer.Signature;
 import com.apkscanner.core.signer.SignatureReport;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.ZipFileUtil;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.ZipFileUtil;
 
 public class SignatureTest {
 	static Signature[] mSignatures;

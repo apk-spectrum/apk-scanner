@@ -3,7 +3,7 @@ package com.apkscanner.core.installer;
 import java.util.ArrayList;
 
 import com.apkscanner.resource.RProp;
-import com.apkscanner.util.Log;
+import com.apkspectrum.util.Log;
 
 public class OptionsBundle {
 	public static final int FLAG_OPT_INSTALL	 	= 0x010000;

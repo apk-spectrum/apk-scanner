@@ -6,9 +6,9 @@ import java.awt.event.ActionEvent;
 import javax.swing.JFrame;
 
 import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.easymode.dlg.EasyToolbarCertDlg;
-import com.apkscanner.gui.messagebox.MessageBoxPool;
-import com.apkscanner.util.Log;
+import com.apkspectrum.util.Log;
 
 @SuppressWarnings("serial")
 public class ShowCertDlgAction extends AbstractApkScannerAction

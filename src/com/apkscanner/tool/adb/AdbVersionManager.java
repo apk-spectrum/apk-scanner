@@ -18,9 +18,9 @@ import org.json.simple.parser.JSONParser;
 import com.android.ddmlib.AdbVersion;
 import com.android.ddmlib.AndroidDebugBridge;
 import com.apkscanner.resource.RFile;
-import com.apkscanner.util.FileUtil;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.SystemUtil;
+import com.apkspectrum.util.FileUtil;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.SystemUtil;
 import com.google.common.util.concurrent.ListenableFuture;
 
 public class AdbVersionManager implements Comparator<String> {

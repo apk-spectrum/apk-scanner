@@ -33,8 +33,8 @@ import com.android.apksig.ApkVerifier;
 import com.android.apksig.ApkVerifier.Result;
 import com.android.apksig.apk.ApkFormatException;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.Base64;
-import com.apkscanner.util.Log;
+import com.apkspectrum.util.Base64;
+import com.apkspectrum.util.Log;
 
 public class SignatureReport {
 

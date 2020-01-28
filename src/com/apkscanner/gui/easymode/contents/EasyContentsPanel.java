@@ -37,11 +37,11 @@ import com.apkscanner.gui.easymode.util.EasyRoundLabelCount;
 import com.apkscanner.gui.easymode.util.EasyTextField;
 import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.gui.easymode.util.RoundPanel;
-import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.Log;
+import com.apkspectrum.swing.tabbedpaneui.MessageBoxPane;
+import com.apkspectrum.util.Log;
 
 public class EasyContentsPanel extends JPanel
 {
