@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -437,8 +438,8 @@ public class SystemUtil
 		});
 	}
 
-	public static void exec(ArrayList<String> cmd) {
-		exec(cmd.toArray(new String[0]));
+	public static void exec(List<String> cmd) {
+		exec(cmd.toArray(new String[cmd.size()]));
 	}
 
 	public static void exec(final String[] cmd)
@@ -453,7 +454,7 @@ public class SystemUtil
 	}
 
 	public static String[] getRunningProcessFullPath(String imageName) {
-		ArrayList<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<String>();
 
 		if(SystemUtil.isWindows()) {
 			synchronized(lock) {
