@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import com.android.ddmlib.AdbVersion;
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.DdmPreferences;
-import com.apkscanner.resource.RProp;
+import com.apkspectrum.resource.RProp;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 import com.google.common.base.Joiner;

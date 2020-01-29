@@ -25,7 +25,6 @@ import javax.swing.border.LineBorder;
 
 import com.android.ddmlib.IDevice;
 import com.apkscanner.Launcher;
-import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.EasyMainUI;
 import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.PlugInDropTargetChooser;
@@ -39,6 +38,7 @@ import com.apkscanner.gui.easymode.core.ToolEntryManager;
 import com.apkscanner.gui.easymode.util.RoundPanel;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RStr;
+import com.apkspectrum.core.scanner.ApkScanner;
 import com.apkspectrum.plugin.IExternalTool;
 import com.apkspectrum.swing.DropTargetChooser;
 import com.apkspectrum.util.Log;

@@ -17,7 +17,6 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import com.apkscanner.Launcher;
-import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.PlugInDropTargetChooser.DefaultTargetObject;
 import com.apkscanner.gui.action.AbstractApkScannerAction;
 import com.apkscanner.gui.action.AbstractUIAction;
@@ -59,6 +58,7 @@ import com.apkscanner.gui.action.ShowExplorerFolderAction;
 import com.apkscanner.gui.action.ShowLogsAction;
 import com.apkscanner.gui.action.ShowManifestAction;
 import com.apkscanner.gui.action.SignApkAction;
+import com.apkspectrum.core.scanner.ApkScanner;
 import com.apkspectrum.plugin.IExternalTool;
 import com.apkspectrum.plugin.IPlugIn;
 import com.apkspectrum.plugin.PlugInManager;

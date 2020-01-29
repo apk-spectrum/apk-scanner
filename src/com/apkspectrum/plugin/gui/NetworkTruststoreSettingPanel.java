@@ -48,7 +48,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
-import com.apkscanner.core.signer.SignatureReport;
+import com.apkspectrum.core.signer.SignatureReport;
 import com.apkspectrum.plugin.NetworkSetting;
 import com.apkspectrum.plugin.PlugInConfig;
 import com.apkspectrum.plugin.PlugInPackage;

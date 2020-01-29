@@ -10,7 +10,6 @@ import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.tabpanels.TreeNodeData;
 import com.apkscanner.resource.RComp;
@@ -20,6 +19,7 @@ import com.apkscanner.tool.BytecodeViewerLauncher;
 import com.apkscanner.tool.Dex2JarWrapper;
 import com.apkscanner.tool.JADXLauncher;
 import com.apkscanner.tool.JDGuiLauncher;
+import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.plugin.IPlugIn;
 import com.apkspectrum.plugin.PlugInManager;
 import com.apkspectrum.swing.ExtensionButton;

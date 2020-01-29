@@ -15,8 +15,8 @@ import com.android.ddmlib.NullOutputReceiver;
 import com.android.ddmlib.ShellCommandUnresponsiveException;
 import com.android.ddmlib.SyncException;
 import com.android.ddmlib.TimeoutException;
-import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.tool.adb.AdbDeviceHelper.CommandRejectedException;
+import com.apkspectrum.core.scanner.ApkScanner;
 import com.apkspectrum.util.Log;
 
 

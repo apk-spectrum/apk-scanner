@@ -28,9 +28,9 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import com.apkscanner.data.apkinfo.ResourceInfo;
-import com.apkscanner.data.apkinfo.WidgetInfo;
 import com.apkscanner.gui.UiEventHandler;
+import com.apkspectrum.data.apkinfo.ResourceInfo;
+import com.apkspectrum.data.apkinfo.WidgetInfo;
 import com.apkspectrum.swing.SortedMutableTreeNode;
 import com.apkspectrum.util.FileUtil;
 import com.apkspectrum.util.SystemUtil;

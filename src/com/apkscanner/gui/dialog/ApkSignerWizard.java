@@ -23,11 +23,11 @@ import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import com.apkscanner.core.signer.ApkSigner;
 import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
+import com.apkspectrum.core.signer.ApkSigner;
 import com.apkspectrum.swing.ApkFileChooser;
 import com.apkspectrum.swing.WindowSizeMemorizer;
 import com.apkspectrum.util.Log;

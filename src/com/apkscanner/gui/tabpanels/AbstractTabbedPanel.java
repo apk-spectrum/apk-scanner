@@ -7,8 +7,8 @@ import java.beans.PropertyChangeListener;
 import javax.swing.Icon;
 import javax.swing.JPanel;
 
-import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.resource.RComp;
+import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.swing.ITabbedComponent;
 import com.apkspectrum.swing.ITabbedRequest;
 import com.apkspectrum.util.Log;

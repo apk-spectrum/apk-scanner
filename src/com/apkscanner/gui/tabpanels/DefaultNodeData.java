@@ -15,8 +15,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import com.apkscanner.core.signer.SignatureReport;
 import com.apkscanner.resource.RImg;
+import com.apkspectrum.core.signer.SignatureReport;
 import com.apkspectrum.swing.ImageScaler;
 import com.apkspectrum.swing.TreeNodeImageObserver;
 import com.apkspectrum.util.FileUtil;

@@ -8,9 +8,9 @@ import com.android.ddmlib.AdbCommandRejectedException;
 import com.android.ddmlib.IDevice;
 import com.android.ddmlib.ShellCommandUnresponsiveException;
 import com.android.ddmlib.TimeoutException;
-import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.data.apkinfo.ComponentInfo;
 import com.apkscanner.tool.adb.SimpleOutputReceiver;
+import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.data.apkinfo.ComponentInfo;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.XmlPath;
 

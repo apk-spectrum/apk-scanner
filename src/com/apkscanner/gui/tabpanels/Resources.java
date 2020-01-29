@@ -22,11 +22,11 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import com.apkscanner.core.scanner.ApkScanner;
-import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.action.ActionEventHandler;
 import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RImg;
+import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.util.Log;
 
 public class Resources extends AbstractTabbedPanel implements TreeSelectionListener

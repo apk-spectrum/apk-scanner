@@ -9,8 +9,8 @@ import java.security.cert.X509Certificate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import com.apkscanner.core.signer.Signature;
-import com.apkscanner.core.signer.SignatureReport;
+import com.apkspectrum.core.signer.Signature;
+import com.apkspectrum.core.signer.SignatureReport;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.ZipFileUtil;
 

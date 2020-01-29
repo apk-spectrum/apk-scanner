@@ -3,10 +3,10 @@ package com.apkscanner.gui.action;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 
-import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
+import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 

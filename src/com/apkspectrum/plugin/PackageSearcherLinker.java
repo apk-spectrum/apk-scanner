@@ -5,7 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 
-import com.apkscanner.data.apkinfo.ApkInfoHelper;
+import com.apkspectrum.data.apkinfo.ApkInfoHelper;
 import com.apkspectrum.plugin.manifest.Component;
 
 public class PackageSearcherLinker extends AbstractPackageSearcher

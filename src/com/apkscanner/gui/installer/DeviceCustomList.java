@@ -38,8 +38,8 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionListener;
 
 import com.android.ddmlib.IDevice;
-import com.apkscanner.core.installer.OptionsBundle;
 import com.apkscanner.resource.RImg;
+import com.apkspectrum.core.installer.OptionsBundle;
 import com.apkspectrum.util.Log;
 
 public class DeviceCustomList extends JList<DeviceListData> {

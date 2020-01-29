@@ -12,8 +12,6 @@ import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 
-import com.apkscanner.core.scanner.ApkScanner;
-import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.tabpanels.AbstractTabbedPanel;
 import com.apkscanner.gui.tabpanels.BasicInfo;
 import com.apkscanner.gui.tabpanels.Components;
@@ -22,6 +20,8 @@ import com.apkscanner.gui.tabpanels.Libraries;
 import com.apkscanner.gui.tabpanels.Resources;
 import com.apkscanner.gui.tabpanels.Signatures;
 import com.apkscanner.gui.tabpanels.Widgets;
+import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.plugin.IExtraComponent;
 import com.apkspectrum.plugin.PlugInManager;
 import com.apkspectrum.swing.DefaultTabbedRequest;

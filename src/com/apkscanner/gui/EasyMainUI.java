@@ -8,13 +8,13 @@ import javax.swing.JFrame;
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.android.ddmlib.IDevice;
-import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.easymode.EasyGuiMainPanel;
 import com.apkscanner.gui.easymode.core.ToolEntryManager;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 import com.apkscanner.tool.adb.AdbServerMonitor;
+import com.apkspectrum.core.scanner.ApkScanner;
 import com.apkspectrum.util.Log;
 
 public class EasyMainUI extends JFrame implements IDeviceChangeListener {

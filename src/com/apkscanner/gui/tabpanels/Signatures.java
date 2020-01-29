@@ -9,11 +9,11 @@ import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.apkscanner.core.scanner.ApkScanner;
-import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RStr;
+import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.data.apkinfo.ApkInfoHelper;
 import com.apkspectrum.util.ZipFileUtil;
 
 public class Signatures extends AbstractTabbedPanel implements ListSelectionListener

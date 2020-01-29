@@ -6,10 +6,10 @@ import java.awt.GridLayout;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import com.apkscanner.core.scanner.ApkScanner;
-import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RStr;
+import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.util.FileUtil;
 import com.apkspectrum.util.FileUtil.FSStyle;
 import com.apkspectrum.util.ZipFileUtil;

@@ -17,7 +17,7 @@ import org.json.simple.parser.JSONParser;
 
 import com.android.ddmlib.AdbVersion;
 import com.android.ddmlib.AndroidDebugBridge;
-import com.apkscanner.resource.RFile;
+import com.apkspectrum.resource.RFile;
 import com.apkspectrum.util.FileUtil;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;

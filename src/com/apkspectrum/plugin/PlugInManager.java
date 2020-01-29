@@ -16,7 +16,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 
-import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.plugin.manifest.InvalidManifestException;
 import com.apkspectrum.resource.RFile;
 import com.apkspectrum.util.Log;

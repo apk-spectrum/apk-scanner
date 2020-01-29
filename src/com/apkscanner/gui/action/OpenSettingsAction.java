@@ -4,8 +4,8 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 
 import com.apkscanner.Launcher;
-import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.dialog.SettingDlg;
+import com.apkspectrum.core.scanner.ApkScanner;
 
 @SuppressWarnings("serial")
 public class OpenSettingsAction extends AbstractApkScannerAction

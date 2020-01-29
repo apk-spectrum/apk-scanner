@@ -16,8 +16,8 @@ import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.resource.RStr;
+import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.ZipFileUtil;
 

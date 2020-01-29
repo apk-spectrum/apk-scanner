@@ -17,16 +17,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
-import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
-import com.apkscanner.core.permissionmanager.PermissionManager;
-import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.data.apkinfo.ApkInfoHelper;
 import com.apkscanner.gui.dialog.PermissionHistoryPanel;
 import com.apkscanner.gui.easymode.util.EasyRoundButton;
 import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.gui.easymode.util.RoundPanel;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
+import com.apkspectrum.core.permissionmanager.PermissionGroupInfoExt;
+import com.apkspectrum.core.permissionmanager.PermissionManager;
+import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.data.apkinfo.ApkInfoHelper;
 import com.apkspectrum.util.Log;
 
 public class EasyPermissioniconPanel extends RoundPanel implements ActionListener{

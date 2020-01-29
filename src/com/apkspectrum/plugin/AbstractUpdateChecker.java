@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
-import com.apkscanner.resource.RStr;
 import com.apkspectrum.plugin.manifest.Component;
+import com.apkspectrum.resource.RStr;
 import com.apkspectrum.util.GeneralVersionChecker;
 
 public abstract class AbstractUpdateChecker extends AbstractPlugIn implements IUpdateChecker

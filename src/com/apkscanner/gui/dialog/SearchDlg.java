@@ -33,11 +33,11 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 
-import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.tabpanels.ResContentFocusChanger;
 import com.apkscanner.resource.RImg;
-import com.apkscanner.tool.aapt.AaptNativeWrapper;
+import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.swing.WindowSizeMemorizer;
+import com.apkspectrum.tool.aapt.AaptNativeWrapper;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.ZipFileUtil;
 

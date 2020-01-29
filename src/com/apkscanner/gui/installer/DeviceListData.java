@@ -3,7 +3,7 @@ package com.apkscanner.gui.installer;
 import java.awt.Color;
 
 import com.android.ddmlib.IDevice;
-import com.apkscanner.core.installer.OptionsBundle;
+import com.apkspectrum.core.installer.OptionsBundle;
 
 public class DeviceListData
 {

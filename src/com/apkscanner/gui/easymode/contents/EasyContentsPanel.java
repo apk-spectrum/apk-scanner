@@ -26,9 +26,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import com.android.ddmlib.IDevice;
-import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.data.apkinfo.ApkInfoHelper;
-import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.gui.EasyMainUI;
 import com.apkscanner.gui.easymode.util.AndroidLikeToast;
 import com.apkscanner.gui.easymode.util.EasyRoundButton;
@@ -40,6 +37,9 @@ import com.apkscanner.gui.easymode.util.RoundPanel;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
+import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.data.apkinfo.ApkInfoHelper;
+import com.apkspectrum.data.apkinfo.ResourceInfo;
 import com.apkspectrum.swing.tabbedpaneui.MessageBoxPane;
 import com.apkspectrum.util.Log;
 

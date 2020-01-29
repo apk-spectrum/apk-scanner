@@ -20,8 +20,8 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import com.apkscanner.core.installer.OptionsBundle;
 import com.apkscanner.resource.RStr;
+import com.apkspectrum.core.installer.OptionsBundle;
 
 public class ToggleButtonBar extends JPanel {
 

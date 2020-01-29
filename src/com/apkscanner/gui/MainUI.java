@@ -10,13 +10,13 @@ import java.util.Enumeration;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
-import com.apkscanner.core.scanner.ApkScanner;
-import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.resource.LanguageChangeListener;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
+import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.plugin.IPlugInEventListener;
 import com.apkspectrum.plugin.PlugInManager;
 import com.apkspectrum.swing.WindowSizeMemorizer;

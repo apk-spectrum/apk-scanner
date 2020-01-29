@@ -1,6 +1,6 @@
 package com.apkspectrum.plugin;
 
-import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.plugin.manifest.Component;
 import com.apkspectrum.util.ConsolCmd;
 

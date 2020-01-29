@@ -6,9 +6,9 @@ import java.awt.event.ActionEvent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
-import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.installer.ApkInstallWizard;
+import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.util.Log;
 
 @SuppressWarnings("serial")

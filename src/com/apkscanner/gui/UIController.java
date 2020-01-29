@@ -17,12 +17,12 @@ import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import com.apkscanner.core.scanner.AaptLightScanner;
-import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.easymode.dlg.EasyStartupDlg;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
+import com.apkspectrum.core.scanner.AaptLightScanner;
+import com.apkspectrum.core.scanner.ApkScanner;
 import com.apkspectrum.plugin.IPlugInEventListener;
 import com.apkspectrum.plugin.IUpdateChecker;
 import com.apkspectrum.plugin.NetworkException;

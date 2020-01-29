@@ -30,7 +30,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-import com.apkscanner.resource.RFile;
+import com.apkspectrum.resource.RFile;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 import com.github.markusbernhardt.proxy.ProxySearch;

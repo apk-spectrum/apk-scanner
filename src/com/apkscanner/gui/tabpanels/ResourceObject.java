@@ -3,11 +3,11 @@ package com.apkscanner.gui.tabpanels;
 import java.io.File;
 import java.net.URI;
 
-import com.apkscanner.core.scanner.AxmlToXml;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.tool.ImgExtractorWrapper;
-import com.apkscanner.tool.aapt.AaptNativeWrapper;
+import com.apkspectrum.core.scanner.AxmlToXml;
+import com.apkspectrum.tool.aapt.AaptNativeWrapper;
 import com.apkspectrum.util.FileUtil;
 import com.apkspectrum.util.SystemUtil;
 import com.apkspectrum.util.URITool;

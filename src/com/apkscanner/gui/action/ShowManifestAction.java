@@ -7,11 +7,11 @@ import java.io.FileWriter;
 
 import javax.swing.JFileChooser;
 
-import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.resource.RProp;
-import com.apkscanner.tool.aapt.AaptNativeWrapper;
+import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.swing.ApkFileChooser;
+import com.apkspectrum.tool.aapt.AaptNativeWrapper;
 import com.apkspectrum.util.FileUtil;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;

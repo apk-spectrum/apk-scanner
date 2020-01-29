@@ -31,9 +31,9 @@ import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 import org.fife.ui.rtextarea.SearchResult;
 
-import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.UiEventHandler;
 import com.apkscanner.gui.action.ActionEventHandler;
+import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.swing.ImageControlPanel;
 import com.apkspectrum.swing.KeyStrokeAction;
 import com.apkspectrum.util.Log;
