@@ -92,7 +92,7 @@ public class ResourceObject extends DefaultNodeData implements Cloneable
 					data = ImgExtractorWrapper.getSuperblockInfo(imgPath);
 					data += ImgExtractorWrapper.getLsInfo(imgPath);
 				} else {
-					data = "Not Supported in linux";
+					data = "Not Supported in " + SystemUtil.OS;
 				}
 				return data;
 			}

@@ -20,13 +20,10 @@
 #define O_BINARY 0
 #endif
 
-// SSIZE: mingw does not have signed size_t == ssize_t.
 // STATUST: mingw does seem to redefine UNKNOWN_ERROR from our enum value, so a cast is necessary.
 #if !defined(_WIN32)
-#  define SSIZE(x) x
 #  define STATUST(x) x
 #else
-#  define SSIZE(x) (signed size_t)x
 #  define STATUST(x) (status_t)x
 #endif
 
@@ -71,7 +68,7 @@ static const String16 RESOURCES_PREFIX_AUTO_PACKAGE(RESOURCES_AUTO_PACKAGE_NAMES
 static const String16 RESOURCES_PRV_PREFIX(RESOURCES_ROOT_PRV_NAMESPACE);
 static const String16 RESOURCES_TOOLS_NAMESPACE("http://schemas.android.com/tools");
 
-String16 getNamespaceResourcePackage(String16 appPackage, String16 namespaceUri, bool* outIsPublic)
+String16 getNamespaceResourcePackage(const String16& appPackage, const String16& namespaceUri, bool* outIsPublic)
 {
     //printf("%s starts with %s?\n", String8(namespaceUri).string(),
     //       String8(RESOURCES_PREFIX).string());
@@ -102,7 +99,7 @@ String16 getNamespaceResourcePackage(String16 appPackage, String16 namespaceUri,
 
 status_t hasSubstitutionErrors(const char* fileName,
                                ResXMLTree* inXml,
-                               String16 str16)
+                               const String16& str16)
 {
     const char16_t* str = str16.string();
     const char16_t* p = str;
@@ -481,9 +478,9 @@ void printXMLBlock(ResXMLTree* block)
                 if (value.dataType == Res_value::TYPE_NULL) {
                     printf("=(null)");
                 } else if (value.dataType == Res_value::TYPE_REFERENCE) {
-                    printf("=@0x%x", (int)value.data);
+                    printf("=@0x%08x", (int)value.data);
                 } else if (value.dataType == Res_value::TYPE_ATTRIBUTE) {
-                    printf("=?0x%x", (int)value.data);
+                    printf("=?0x%08x", (int)value.data);
                 } else if (value.dataType == Res_value::TYPE_STRING) {
                     printf("=\"%s\"",
                             ResTable::normalizeForOutput(String8(block->getAttributeStringValue(i,
@@ -697,6 +694,12 @@ const Vector<sp<XMLNode> >& XMLNode::getChildren() const
     return mChildren;
 }
 
+
+Vector<sp<XMLNode> >& XMLNode::getChildren()
+{
+    return mChildren;
+}
+
 const String8& XMLNode::getFilename() const
 {
     return mFilename;
@@ -719,6 +722,18 @@ const XMLNode::attribute_entry* XMLNode::getAttribute(const String16& ns,
     }
 
     return NULL;
+}
+
+bool XMLNode::removeAttribute(const String16& ns, const String16& name)
+{
+    for (size_t i = 0; i < mAttributes.size(); i++) {
+        const attribute_entry& ae(mAttributes.itemAt(i));
+        if (ae.ns == ns && ae.name == name) {
+            removeAttribute(i);
+            return true;
+        }
+    }
+    return false;
 }
 
 XMLNode::attribute_entry* XMLNode::editAttribute(const String16& ns,
@@ -1412,7 +1427,7 @@ status_t XMLNode::collect_attr_strings(StringPool* outPool,
                 idx = outPool->add(attr.name);
                 if (kIsDebug) {
                     printf("Adding attr %s (resid 0x%08x) to pool: idx=%zd\n",
-                            String8(attr.name).string(), id, SSIZE(idx));
+                            String8(attr.name).string(), id, idx);
                 }
                 if (id != 0) {
                     while ((ssize_t)outResIds->size() <= idx) {
@@ -1423,7 +1438,7 @@ status_t XMLNode::collect_attr_strings(StringPool* outPool,
             }
             attr.namePoolIdx = idx;
             if (kIsDebug) {
-                printf("String %s offset=0x%08zd\n", String8(attr.name).string(), SSIZE(idx));
+                printf("String %s offset=0x%08zd\n", String8(attr.name).string(), idx);
             }
         }
     }

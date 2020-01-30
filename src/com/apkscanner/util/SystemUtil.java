@@ -72,6 +72,8 @@ public class SystemUtil
 			return "explorer";
 		} else if(isLinux()) {
 			return "file-roller";
+		} else if(isMac()) {
+			return "open";
 		}
 		throw new Exception("Unknown OS : " + OS);
 	}
@@ -81,6 +83,8 @@ public class SystemUtil
 			return "explorer";
 		} else if(isLinux()) {
 			return "nautilus";
+		} else if(isMac()) {
+			return "open";
 		}
 		throw new Exception("Unknown OS : " + OS);
 	}
@@ -90,6 +94,8 @@ public class SystemUtil
 			return "explorer";
 		} else if(isLinux()) {
 			return "xdg-open";
+		} else if(isMac()) {
+			return "open";
 		}
 		throw new Exception("Unknown OS : " + OS);
 	}
@@ -115,6 +121,8 @@ public class SystemUtil
 			return editorPath != null ? editorPath : "notepad";
 		} else if(isLinux()) {
 			return "gedit";
+		} else if(isMac()) {
+			return "open";
 		}
 		throw new Exception("Unknown OS : " + OS);
 	}
@@ -131,7 +139,11 @@ public class SystemUtil
 
 		try {
 			String editor = RProp.S.EDITOR.get();
-			exec(new String[] { editor, file.getAbsolutePath() });
+			if(isMac() && "open".contentEquals(editor)) {
+				exec(new String[] { editor, "-t", file.getAbsolutePath() });
+			} else {
+				exec(new String[] { editor, file.getAbsolutePath() });
+			}
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
@@ -147,7 +159,12 @@ public class SystemUtil
 			return;
 		}
 
-		String openPath = String.format((isWindows() && file.isFile())? "/select,\"%s\"" : "%s", file.getAbsolutePath());
+		String openPath = file.getAbsolutePath();
+		if(isWindows() && file.isFile()) {
+			openPath = String.format("/select,\"%s\"", openPath);
+		} else if(isMac() && file.isFile()) {
+			openPath = file.getParent();
+		}
 
 		try {
 			exec(new String[] {getFileExplorer(), openPath});
@@ -211,7 +228,7 @@ public class SystemUtil
 			if(isWindows()) {
 				cmd = "where";
 				regular = "^[A-Z]:\\\\.*";
-			} else if(isLinux()) {
+			} else if(isLinux() || isMac()) {
 				cmd = "which";
 				regular = "^/.*";
 			}
@@ -239,6 +256,8 @@ public class SystemUtil
 				e1.printStackTrace();
 			}
 		} else if(isLinux()) {
+
+		} else if(isMac()) {
 
 		}
 	}
@@ -497,6 +516,8 @@ public class SystemUtil
 					list.add(process[0]);
 				}
 			}
+		} else if(SystemUtil.isMac()) {
+
 		}
 
 		return list.toArray(new String[list.size()]);

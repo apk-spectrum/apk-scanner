@@ -34,7 +34,8 @@ public abstract class AbstractExternalTool extends AbstractPlugIn implements IEx
 	public boolean isSupoortedOS() {
 		return  component.supportedOS == null || component.supportedOS.isEmpty()
 			|| (SystemUtil.isWindows() && "windows".equals(component.supportedOS))
-			|| (SystemUtil.isLinux() && "linux".equals(component.supportedOS));
+			|| (SystemUtil.isLinux() && "linux".equals(component.supportedOS))
+			|| (SystemUtil.isMac() && "darwin".equals(component.supportedOS));
 	}
 
 	@Override

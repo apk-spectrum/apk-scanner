@@ -16,29 +16,33 @@ public enum RFile implements ResFile<String>, ResString<String>
 {
 	BIN_PATH					(Type.BIN, ""),
 
-	BIN_ADB_LNX					(Type.BIN, "adb", "nux"),
-	BIN_ADB_WIN					(Type.BIN, "adb.exe", "win"),
-	BIN_ADB						(Type.BIN, new RFile[]{ BIN_ADB_WIN, BIN_ADB_LNX }),
+	BIN_ADB_LNX					(Type.BIN, "linux/adb", "nux"),
+	BIN_ADB_MAC					(Type.BIN, "darwin/adb", "mac"),
+	BIN_ADB_WIN					(Type.BIN, "windows\\adb.exe", "win"),
+	BIN_ADB						(Type.BIN, new RFile[]{ BIN_ADB_WIN, BIN_ADB_LNX, BIN_ADB_MAC }),
 
-	BIN_AAPT_LNX				(Type.BIN, "aapt", "nux"),
-	BIN_AAPT_WIN				(Type.BIN, "aapt.exe", "win"),
-	BIN_AAPT					(Type.BIN, new RFile[]{ BIN_AAPT_WIN, BIN_AAPT_LNX }),
+	BIN_AAPT_LNX				(Type.BIN, "linux/aapt", "nux"),
+	BIN_AAPT_MAC				(Type.BIN, "darwin/darwin/aapt", "mac"),
+	BIN_AAPT_WIN				(Type.BIN, "windows\\aapt.exe", "win"),
+	BIN_AAPT					(Type.BIN, new RFile[]{ BIN_AAPT_WIN, BIN_AAPT_LNX, BIN_AAPT_MAC }),
 
 	BIN_JDGUI					(Type.BIN, "jd-gui-1.6.2.jar"),
 
-	BIN_DEX2JAR_LNX				(Type.BIN, "d2j-dex2jar.sh", "nux"),
-	BIN_DEX2JAR_WIN				(Type.BIN, "d2j-dex2jar.bat", "win"),
-	BIN_DEX2JAR					(Type.BIN, new RFile[]{ BIN_DEX2JAR_WIN, BIN_DEX2JAR_LNX }),
+	BIN_DEX2JAR_LNX				(Type.BIN, "dex2jar/d2j-dex2jar.sh", "nux"),
+	BIN_DEX2JAR_MAC				(Type.BIN, "dex2jar/d2j-dex2jar.sh", "mac"),
+	BIN_DEX2JAR_WIN				(Type.BIN, "dex2jar\\d2j-dex2jar.bat", "win"),
+	BIN_DEX2JAR					(Type.BIN, new RFile[]{ BIN_DEX2JAR_WIN, BIN_DEX2JAR_LNX, BIN_DEX2JAR_MAC }),
 
 	BIN_JADX_LNX				(Type.BIN, "jadx/bin/jadx-gui", "nux"),
+	BIN_JADX_MAC				(Type.BIN, "jadx/bin/jadx-gui", "mac"),
 	BIN_JADX_WIN				(Type.BIN, "jadx\\bin\\jadx-gui.bat", "win"),
-	BIN_JADX_GUI				(Type.BIN, new RFile[]{ BIN_JADX_WIN, BIN_JADX_LNX }),
+	BIN_JADX_GUI				(Type.BIN, new RFile[]{ BIN_JADX_WIN, BIN_JADX_LNX, BIN_JADX_MAC }),
 
 	BIN_BYTECODE_VIEWER			(Type.BIN, "Bytecode-Viewer-2.9.22.jar"),
 
 	BIN_SIGNAPK					(Type.BIN, "signapk.jar"),
 
-	BIN_IMG_EXTRACTOR_WIN		(Type.BIN, "ImgExtractor.exe", "win"),
+	BIN_IMG_EXTRACTOR_WIN		(Type.BIN, "windows\\ImgExtractor.exe", "win"),
 
 	PLUGIN_PATH					(Type.PLUGIN, ""),
 	PLUGIN_CONF_PATH			(Type.PLUGIN, "plugins.conf"),
