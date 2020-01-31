@@ -2,8 +2,6 @@ package com.apkscanner.gui.tabpanels;
 
 import javax.swing.Icon;
 
-import com.apkspectrum.util.SystemUtil;
-
 public class UserNodeData extends DefaultNodeData implements Cloneable
 {
 	public final String config;
@@ -31,7 +29,7 @@ public class UserNodeData extends DefaultNodeData implements Cloneable
 
 	@Override
 	public Icon getIcon() {
-		return icon != null ? icon : (icon = SystemUtil.getExtensionIcon(".arsc"));
+		return icon != null ? icon : (icon = ResourceTree.getExtensionIcon(".arsc"));
 	}
 
 	@Override

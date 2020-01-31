@@ -1,6 +1,5 @@
 package com.apkspectrum.resource;
 
-import java.awt.Font;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.BufferedWriter;
@@ -14,7 +13,6 @@ import javax.swing.UIManager;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import com.apkspectrum.swing.tabbedpaneui.TabbedPaneUIManager;
 import com.apkspectrum.util.SystemUtil;
 
 public enum _RProp implements ResProp<Object>, ResString<Object>
@@ -22,66 +20,30 @@ public enum _RProp implements ResProp<Object>, ResString<Object>
 	LANGUAGE					(SystemUtil.getUserLanguage()),
 	USE_EASY_UI					(false),
 	SKIP_STARTUP_EASY_UI_DLG	(false),
-	USE_UI_BOOSTER				(false),
-	ESC_ACTION					(_RConst.INT_ESC_ACT_NONE),
 	EDITOR,						/* see getDefualtValue() */
-	RECENT_EDITOR				(""),
 	ADB_PATH					(""),
 	ADB_POLICY_SHARED			(true),
 	ADB_DEVICE_MONITORING		(true),
-	LAUNCH_ACTIVITY_OPTION		(_RConst.INT_LAUNCH_LAUNCHER_OR_MAIN_ACTIVITY),
 	TRY_UNLOCK_AF_LAUNCH		(true),
 	LAUNCH_AF_INSTALLED			(true),
-	RECENT_ADB_INFO				(""),
 	FRAMEWORK_RES				(""),
 	LAST_FILE_OPEN_PATH			(""),
 	LAST_FILE_SAVE_PATH			(""),
-	SOVE_LEAD_TIME,
 	CURRENT_THEME				(UIManager.getSystemLookAndFeelClassName()),
-	TABBED_UI_THEME,			/* see getDefualtValue() */
 	SAVE_WINDOW_SIZE			(false),
-	BASE_FONT					(""),
-	BASE_FONT_SIZE				(12),
-	BASE_FONT_STYLE				(Font.PLAIN),
 	PREFERRED_LANGUAGE,			/* see getDefualtValue() */
-	PEM_FILE_PATH,				/* see getDefualtValue() */
-	PK8_FILE_PATH,				/* see getDefualtValue() */
 	PRINT_MULTILINE_ATTR		(true),
-	AXML_VIEWER_TYPE			(_RConst.AXML_VEIWER_TYPE_XML),
-	COMP_FILTER_TYPE			(_RConst.COMPONENT_FILTER_TYPE_XML),
-
-	EASY_GUI_TOOLBAR			("1,2,3,4,5,7"),
-
-	EASY_GUI_WINDOW_POSITION_X	(null),
-	EASY_GUI_WINDOW_POSITION_Y	(null),
-
-	DEFAULT_DECORDER			(_RConst.STR_DECORDER_JADX_GUI),
-	DEFAULT_SEARCHER			(_RConst.STR_DEFAULT_SEARCHER),
-	DEFAULT_EXPLORER			(_RConst.STR_EXPLORER_ARCHIVE),
-	DEFAULT_LAUNCH_MODE			(_RConst.STR_LAUNCH_LAUNCHER),
-	VISIBLE_TO_BASIC			(true),
-	ALWAYS_TOOLBAR_EXTENDED		(false),
-
-	PERM_MARK_RUNTIME			(true),
-	PERM_MARK_COUNT				(true),
-	PERM_TREAT_SIGN_AS_REVOKED	(true),
 	; // ENUM END
 
 	public enum B implements ResProp<Boolean> {
 		USE_EASY_UI,
 		SKIP_STARTUP_EASY_UI_DLG,
-		USE_UI_BOOSTER,
 		ADB_POLICY_SHARED,
 		ADB_DEVICE_MONITORING,
 		TRY_UNLOCK_AF_LAUNCH,
 		LAUNCH_AF_INSTALLED,
 		SAVE_WINDOW_SIZE,
 		PRINT_MULTILINE_ATTR,
-		VISIBLE_TO_BASIC,
-		ALWAYS_TOOLBAR_EXTENDED,
-		PERM_MARK_RUNTIME,
-		PERM_MARK_COUNT,
-		PERM_TREAT_SIGN_AS_REVOKED,
 		; // ENUM END
 
 		@Override
@@ -97,28 +59,13 @@ public enum _RProp implements ResProp<Object>, ResString<Object>
 
 	public enum S implements ResProp<String> {
 		LANGUAGE,
-		SKIP_STARTUP_EASY_UI_DLG,
 		EDITOR,
-		RECENT_EDITOR,
 		ADB_PATH,
-		RECENT_ADB_INFO,
 		FRAMEWORK_RES,
 		LAST_FILE_OPEN_PATH,
 		LAST_FILE_SAVE_PATH,
-		SOVE_LEAD_TIME,
 		CURRENT_THEME,
-		TABBED_UI_THEME,
-		BASE_FONT,
 		PREFERRED_LANGUAGE,
-		PEM_FILE_PATH,
-		PK8_FILE_PATH,
-		EASY_GUI_TOOLBAR,
-		DEFAULT_DECORDER,
-		DEFAULT_SEARCHER,
-		DEFAULT_EXPLORER,
-		DEFAULT_LAUNCH_MODE,
-		AXML_VIEWER_TYPE,
-		COMP_FILTER_TYPE,
 		; // ENUM END
 
 		@Override
@@ -133,12 +80,7 @@ public enum _RProp implements ResProp<Object>, ResString<Object>
 	}
 
 	public enum I implements ResProp<Integer> {
-		ESC_ACTION,
-		LAUNCH_ACTIVITY_OPTION,
-		BASE_FONT_STYLE,
-		BASE_FONT_SIZE,
-		EASY_GUI_WINDOW_POSITION_X,
-		EASY_GUI_WINDOW_POSITION_Y,
+		// EMPTY
 		; // ENUM END
 
 		@Override
@@ -194,20 +136,6 @@ public enum _RProp implements ResProp<Object>, ResString<Object>
 			}
 			obj = propPreferredLanguage + ";";
 			break;
-		case PEM_FILE_PATH:
-			String pem = _RFile.DATA_CERT_PEM_FILE.getPath();
-			if(new File(pem).isFile()) {
-				obj = pem;
-			}
-			break;
-		case PK8_FILE_PATH:
-			String pk8 = _RFile.DATA_CERT_PK8_FILE.getPath();
-			if(new File(pk8).isFile()) {
-				obj = pk8;
-			}
-			break;
-		case TABBED_UI_THEME:
-			return TabbedPaneUIManager.DEFAULT_TABBED_UI;
 		default:
 			break;
 		};

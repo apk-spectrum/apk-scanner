@@ -49,16 +49,9 @@ public enum _RFile implements ResFile<String>, ResString<String>
 
 	SSL_TRUSTSTORE_PATH			(Type.SECURITY, "trustStore.jks"),
 
-	LIB_JSON_JAR				(Type.LIB, "json-simple-1.1.1.jar"),
-	LIB_CLI_JAR					(Type.LIB, "commons-cli-1.3.1.jar"),
-	LIB_APKTOOL_JAR				(Type.LIB, "apktool.jar"),
-	LIB_ALL						(Type.LIB, "*"),
-
 	DATA_PATH					(Type.DATA, ""),
 	DATA_STRINGS_EN				(Type.DATA, "strings.xml"),
 	DATA_PERMISSIONS_HISTORY	(Type.DATA, "PermissionsHistory.xml"),
-	DATA_CERT_PEM_FILE			(Type.DATA, "build-master-target-product-security" + File.separator + "platform.x509.pem"),
-	DATA_CERT_PK8_FILE			(Type.DATA, "build-master-target-product-security" + File.separator + "platform.pk8"),
 
 	RAW_ROOT_PATH				(Type.RES_ROOT, ""),
 	RAW_ANDROID_MANIFEST		(Type.RES_ROOT, "AndroidManifest.xml"),
@@ -66,18 +59,14 @@ public enum _RFile implements ResFile<String>, ResString<String>
 	RAW_VALUES_PATH				(Type.RES_VALUE, ""),
 	RAW_STRINGS_EN				(Type.RES_VALUE, "strings.xml"),
 	RAW_STRINGS_KO				(Type.RES_VALUE, "strings-ko.xml"),
-	RAW_ABUOT_HTML				(Type.RES_VALUE, "AboutLayout.html"),
-	RAW_APEX_INFO_LAYOUT_HTML	(Type.RES_VALUE, "ApexInfoLayout.html"),
-	RAW_BASIC_INFO_LAYOUT_HTML	(Type.RES_VALUE, "BasicInfoLayout.html"),
-	RAW_PACKAGE_INFO_LAYOUT_HTML(Type.RES_VALUE, "PackageInfoLayout.html"),
-	RAW_ADB_INSTALL_BUTTON_HTML	(Type.RES_VALUE, "AdbInstallButton.html"),
-	RAW_PERMISSION_REFERENCE_HTML(Type.RES_VALUE, "PermissionReference.html"),
-	RAW_PROTECTION_LEVELS_HTML	(Type.RES_VALUE, "ProtectionLevels.html"),
-	RAW_PERMISSIONS_HISTORY		(Type.RES_VALUE, "PermissionsHistory.xml"),
-	RAW_PUBLIC_XML				(Type.RES_VALUE, "public.xml"),
-	RAW_SDK_INFO_FILE			(Type.RES_VALUE, "sdk-info.xml"),
 
-	ETC_APKSCANNER_EXE			(Type.ETC, "ApkScanner.exe"),
+	RAW_PUBLIC_XML				(Type.RES_VALUE, "public.xml"),
+	RAW_PERMISSIONS_HISTORY		(Type.RES_VALUE, "PermissionsHistory.xml"),
+
+	RAW_SDK_INFO_FILE			(Type.RES_VALUE, "sdk-info.xml"),
+	RAW_PROTECTION_LEVELS_HTML	(Type.RES_VALUE, "ProtectionLevels.html"),
+	RAW_PERMISSION_REFERENCE_HTML(Type.RES_VALUE, "PermissionReference.html"),
+
 	ETC_SETTINGS_FILE			(Type.ETC, "settings.txt"),
 	; // ENUM END
 

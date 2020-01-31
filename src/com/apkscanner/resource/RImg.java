@@ -5,10 +5,10 @@ import java.net.URL;
 
 import javax.swing.ImageIcon;
 
-import com.apkspectrum.resource.ResFile;
+import com.apkspectrum.resource.ResImage;
 import com.apkspectrum.swing.ImageScaler;
 
-public enum RImg implements ResFile<URL>
+public enum RImg implements ResImage<URL>
 {
 	TOOLBAR_OPEN				("toolbar_open.png"),
 	TOOLBAR_MANIFEST			("toolbar_manifast.png"),
@@ -189,10 +189,12 @@ public enum RImg implements ResFile<URL>
 		return getURL();
 	}
 
+	@Override
 	public Image getImage() {
 		return getImageIcon().getImage();
 	}
 
+	@Override
 	public Image getImage(int w, int h) {
 		return ImageScaler.getScaledImage(getImage(), w, h);
 	}

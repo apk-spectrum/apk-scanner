@@ -20,7 +20,6 @@ import javax.swing.border.EmptyBorder;
 import com.apkspectrum.plugin.IUpdateChecker;
 import com.apkspectrum.plugin.PlugInConfig;
 import com.apkspectrum.plugin.PlugInManager;
-import com.apkspectrum.resource._RImg;
 import com.apkspectrum.resource._RStr;
 import com.apkspectrum.swing.KeyStrokeAction;
 import com.apkspectrum.swing.WindowSizeMemorizer;
@@ -38,7 +37,7 @@ public class UpdateNotificationWindow extends JFrame implements ActionListener
 
 	private UpdateNotificationWindow(Component parent) {
 		setTitle(_RStr.TITLE_UPDATE_LIST.get());
-		setIconImage(_RImg.APP_ICON.getImage());
+		setIconImage(PlugInManager.getAppImage().getImage());
 		setResizable(true);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 

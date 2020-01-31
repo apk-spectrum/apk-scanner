@@ -18,6 +18,8 @@ import org.json.simple.parser.JSONParser;
 
 import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.plugin.manifest.InvalidManifestException;
+import com.apkspectrum.resource.Res;
+import com.apkspectrum.resource.ResImage;
 import com.apkspectrum.resource._RFile;
 import com.apkspectrum.util.Log;
 
@@ -30,7 +32,35 @@ public final class PlugInManager
 	private static List<IPlugInEventListener> eventListeners = new ArrayList<>();
 	private static final Object sLock = eventListeners;
 
+	protected static String appPackageName;
+	protected static String appVersion;
+	protected static Res<String> appName;
+	protected static ResImage<?> appIcon;
+
 	private PlugInManager() { }
+
+	public static void setAppPackage(String appPackageName, String appVerseion, Res<String> appName, ResImage<?> appIcon) {
+		PlugInManager.appPackageName = appPackageName;
+		PlugInManager.appVersion = appVerseion;
+		PlugInManager.appName = appName;
+		PlugInManager.appIcon = appIcon;
+	}
+
+	public static String getAppPackage() {
+		return appPackageName;
+	}
+
+	public static String getAppVersion() {
+		return appVersion;
+	}
+
+	public static String getAppTitle() {
+		return appName != null ? appName.get() : null;
+	}
+
+	public static ResImage<?> getAppImage() {
+		return appIcon;
+	}
 
 	public static void addPlugInEventListener(IPlugInEventListener listener) {
 		synchronized (sLock) {

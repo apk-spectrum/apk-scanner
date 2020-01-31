@@ -188,7 +188,7 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 						break;
 					case TREE_NODE_TOP_PLUGINS:
 						nodeText = _RStr.TREE_NODE_PLUGINS_TOP.get();
-						nodeIcon = _RImg.APP_ICON.getImageIcon(16, 16);
+						nodeIcon = PlugInManager.getAppImage().getImageIcon(16, 16);
 						break;
 					case TREE_NODE_NO_PLUGINS:
 						nodeText = _RStr.TREE_NODE_NO_PLUGINS.get();

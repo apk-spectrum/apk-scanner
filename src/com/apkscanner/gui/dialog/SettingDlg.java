@@ -60,6 +60,7 @@ import com.android.ddmlib.AdbVersion;
 import com.apkscanner.gui.TabbedPanel;
 import com.apkscanner.gui.ToolBar;
 import com.apkscanner.resource.RConst;
+import com.apkscanner.resource.RFile;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
@@ -691,8 +692,10 @@ public class SettingDlg extends JDialog implements ActionListener
 		contentConst.gridy++;
 
 		if(SystemUtil.isWindows()) {
+			String exePath = RFile.ETC_APKSCANNER_EXE.getPath();
+
 			JPanel etcBtnPanel = new JPanel();
-			if(!SystemUtil.hasShortCut()) {
+			if(!SystemUtil.hasShortCut(exePath, RStr.APP_NAME.get())) {
 				JButton btnShortcut = new JButton(RStr.BTN_CREATE_SHORTCUT.get());
 				btnShortcut.setToolTipText(RStr.BTN_CREATE_SHORTCUT_LAB.get());
 				btnShortcut.setActionCommand(ACT_CMD_CREATE_SHORTCUT);
@@ -704,7 +707,7 @@ public class SettingDlg extends JDialog implements ActionListener
 			}
 
 			JButton btnAssociate = new JButton();
-			if(!SystemUtil.isAssociatedWithFileType(".apk")) {
+			if(!SystemUtil.isAssociatedWithFileType(".apk", exePath)) {
 				btnAssociate.setText(RStr.BTN_ASSOC_FTYPE.get());
 				btnAssociate.setToolTipText(RStr.BTN_ASSOC_FTYPE_LAB.get());
 				btnAssociate.setIcon(RImg.ASSOCIATE_APK.getImageIcon(32,32));
@@ -1266,19 +1269,22 @@ public class SettingDlg extends JDialog implements ActionListener
 				jcbEditors.setSelectedItem(path);
 			}
 		} else if(ACT_CMD_CREATE_SHORTCUT.equals(actCommand)) {
-			SystemUtil.createShortCut();
-			if(SystemUtil.hasShortCut()) {
+			String exePath = RFile.ETC_APKSCANNER_EXE.getPath();
+			String shortCutName = RStr.APP_NAME.get();
+			SystemUtil.createShortCut(exePath, shortCutName);
+			if(SystemUtil.hasShortCut(exePath, shortCutName)) {
 				((JButton)e.getSource()).setVisible(false);
 			}
 		} else if(ACT_CMD_ASSOCIATE_APK_FILE.equals(actCommand)) {
+			String exePath = RFile.ETC_APKSCANNER_EXE.getPath();
 			JButton btn = (JButton)e.getSource();
-			if(!SystemUtil.isAssociatedWithFileType(".apk")) {
-				SystemUtil.setAssociateFileType(".apk");
+			if(!SystemUtil.isAssociatedWithFileType(".apk", exePath)) {
+				SystemUtil.setAssociateFileType(".apk", exePath);
 				btn.setText(RStr.BTN_UNASSOC_FTYPE.get());
 				btn.setToolTipText(RStr.BTN_UNASSOC_FTYPE_LAB.get());
 				btn.setIcon(RImg.UNASSOCIATE_APK.getImageIcon(32,32));
 			} else {
-				SystemUtil.unsetAssociateFileType(".apk");
+				SystemUtil.unsetAssociateFileType(".apk", exePath);
 				btn.setText(RStr.BTN_ASSOC_FTYPE.get());
 				btn.setToolTipText(RStr.BTN_ASSOC_FTYPE_LAB.get());
 				btn.setIcon(RImg.ASSOCIATE_APK.getImageIcon(32,32));

@@ -68,10 +68,10 @@ import com.apkspectrum.swing.HtmlEditorPane.HyperlinkClickEvent;
 import com.apkspectrum.swing.HtmlEditorPane.HyperlinkClickListener;
 import com.apkspectrum.util.Base64;
 import com.apkspectrum.util.FileUtil;
+import com.apkspectrum.util.FileUtil.FSStyle;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 import com.apkspectrum.util.XmlPath;
-import com.apkspectrum.util.FileUtil.FSStyle;
 
 public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickListener, IProgressListener,
 		ListDataListener, ItemListener, PropertyChangeListener
@@ -143,16 +143,17 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	}
 
 	private void showAbout() {
+		String exePath = RFile.ETC_APKSCANNER_EXE.getPath();
 		apkInfoPanel.setText(RFile.RAW_ABUOT_HTML.getString());
 		apkInfoPanel.insertElementFirst("apkscanner-icon-td", String.format("<img src=\"%s\" width=\"150\" height=\"150\">", RImg.APP_ICON.getPath()));
 		apkInfoPanel.setInnerHTMLById("apkscanner-title", RStr.APP_NAME.get() + " " + RStr.APP_VERSION.get());
 		apkInfoPanel.setOuterHTMLById("programmer-email", String.format("<a href=\"mailto:%s\" title=\"%s\">%s</a>",
 				RStr.APP_MAKER_EMAIL.get(), RStr.APP_MAKER_EMAIL.get(), RStr.APP_MAKER.get()));
-		if(!SystemUtil.hasShortCut()){
+		if(!SystemUtil.hasShortCut(exePath, RStr.APP_NAME.get())){
 			apkInfoPanel.insertElementLast("apkscanner-icon-td", String.format("<div id=\"create-shortcut\" class=\"div-button\">%s</div>",
 					makeHyperEvent("function-create-shortcut", RStr.BTN_CREATE_SHORTCUT.get(), null)));
 		}
-		if(!SystemUtil.isAssociatedWithFileType(".apk")) {
+		if(!SystemUtil.isAssociatedWithFileType(".apk", exePath)) {
 			apkInfoPanel.insertElementLast("apkscanner-icon-td", String.format("<div id=\"associate-file\" class=\"div-button\">%s</div>",
 					makeHyperEvent("function-assoc-apk", RStr.BTN_ASSOC_FTYPE.get(), null)));
 		}
@@ -241,6 +242,11 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 				iconPath = iconList[i].name;
 				if(iconPath != null) break;
 			}
+		}
+		if(iconPath == null) {
+			iconPath = RImg.DEF_APP_ICON.getPath();
+		} else if(iconPath.toLowerCase().endsWith(".qmg")) {
+			iconPath = RImg.QMG_IMAGE_ICON.getPath();
 		}
 		apkInfoPanel.setOuterHTMLById("icon", String.format("<img src=\"%s\" width=\"150\" height=\"150\">", iconPath));
 	}
@@ -773,20 +779,20 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			sdkDlg.setVisible(true);
 			break;
 		case "function-create-shortcut":
-			SystemUtil.createShortCut();
+			SystemUtil.createShortCut(RFile.ETC_APKSCANNER_EXE.getPath(), RStr.APP_NAME.get());
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
-					if(SystemUtil.hasShortCut()){
+					if(SystemUtil.hasShortCut(RFile.ETC_APKSCANNER_EXE.getPath(), RStr.APP_NAME.get())){
 						apkInfoPanel.removeElementById("create-shortcut");
 					}
 				}
 			});
 			break;
 		case "function-assoc-apk":
-			SystemUtil.setAssociateFileType(".apk");
+			SystemUtil.setAssociateFileType(".apk", RFile.ETC_APKSCANNER_EXE.getPath());
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
-					if(SystemUtil.isAssociatedWithFileType(".apk")) {
+					if(SystemUtil.isAssociatedWithFileType(".apk", RFile.ETC_APKSCANNER_EXE.getPath())) {
 						apkInfoPanel.removeElementById("associate-file");
 					}
 				}

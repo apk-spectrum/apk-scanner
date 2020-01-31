@@ -263,6 +263,7 @@ public class UIController implements Runnable {
 	}
 
 	private void loadPlugIn() {
+		PlugInManager.setAppPackage("com.apkscanner", RStr.APP_VERSION.get(), RStr.APP_NAME, RImg.APP_ICON);
 		PlugInManager.setLang(RStr.getLanguage());
 		PlugInManager.addPlugInEventListener(new IPlugInEventListener() {
 			@Override

@@ -138,9 +138,9 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 		String label = target;
 		String curVer = "";
 
-		if("com.apkscanner".equals(target)) {
-			label = _RStr.APP_NAME.get();
-			curVer = _RStr.APP_VERSION.get();
+		if(PlugInManager.getAppPackage().equals(target)) {
+			label = PlugInManager.getAppTitle();
+			curVer = PlugInManager.getAppVersion();
 		} else {
 			PlugInPackage pack = PlugInManager.getPlugInPackage(target);
 			label = pack.getLabel();

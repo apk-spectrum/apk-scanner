@@ -1,23 +1,13 @@
 package com.apkspectrum.util;
 
-import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.filechooser.FileSystemView;
-
 import com.apkspectrum.jna.ProcessPathKernel32;
-import com.apkspectrum.resource._RFile;
-import com.apkspectrum.resource._RImg;
 import com.apkspectrum.resource._RProp;
-import com.apkspectrum.resource._RStr;
-import com.apkspectrum.swing.ImageScaler;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.Kernel32;
@@ -34,11 +24,8 @@ import mslinks.ShellLinkException;
 public class SystemUtil
 {
 	public static final String OS = System.getProperty("os.name").toLowerCase();
-	public static final String FOLDER_ICON = "FOLDER";
 
 	private static final Object lock = OS;
-	private static final HashMap<String, Icon> cacheIcon = new HashMap<String, Icon>();
-
 
 	public static boolean isWindows() {
 		return OS.contains("win");
@@ -230,12 +217,11 @@ public class SystemUtil
 		return realPath;
 	}
 
-	public static void createShortCut() {
+	public static void createShortCut(String exePath, String shortCutName) {
 		if(isWindows()) {
-			String filePath = _RFile.ETC_APKSCANNER_EXE.getPath();
-			String lnkPath = System.getProperty("user.home") + File.separator + "Desktop" + File.separator + _RStr.APP_NAME.get() + ".lnk";
+			String lnkPath = System.getProperty("user.home") + File.separator + "Desktop" + File.separator + shortCutName + ".lnk";
 			try {
-				ShellLink.createLink(filePath, lnkPath);
+				ShellLink.createLink(exePath, lnkPath);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
@@ -244,10 +230,9 @@ public class SystemUtil
 		}
 	}
 
-	public static boolean hasShortCut() {
+	public static boolean hasShortCut(String exePath, String shortCutName) {
 		if(isWindows()) {
-			String filePath = _RFile.ETC_APKSCANNER_EXE.getPath();
-			String lnkPath = System.getProperty("user.home") + File.separator + "Desktop" + File.separator + _RStr.APP_NAME.get() + ".lnk";
+			String lnkPath = System.getProperty("user.home") + File.separator + "Desktop" + File.separator + shortCutName + ".lnk";
 
 			if(!new File(lnkPath).exists()) {
 				return false;
@@ -256,7 +241,7 @@ public class SystemUtil
 				String pathToExistingFile = new ShellLink(lnkPath).resolveTarget();
 				Log.v("pathToExistingFile " + pathToExistingFile);
 				if(pathToExistingFile == null || !new File(pathToExistingFile).exists()
-						|| !pathToExistingFile.equals(filePath)) {
+						|| !pathToExistingFile.equals(exePath)) {
 					return false;
 				}
 			} catch (IOException | ShellLinkException e) {
@@ -288,23 +273,22 @@ public class SystemUtil
 		}
 	}
 
-	public static boolean isAssociatedWithFileType(String suffix) {
+	public static boolean isAssociatedWithFileType(String suffix, String exePath) {
 		if(!isWindows()) {
 			return true;
 		}
-		String filePath = _RFile.ETC_APKSCANNER_EXE.getPath();
 		String cmd = null;
 		try {
 			cmd = getOpenCommand(suffix);
 		} catch(Exception e) {
 			Log.d("Failure: Can not read registry");
 			e.printStackTrace();
-			return isAssociatedWithFileTypeLegacy(suffix);
+			return isAssociatedWithFileTypeLegacy(suffix, exePath);
 		}
-		return cmd != null && cmd.replaceAll("\"?(.*)", "$1").startsWith(filePath);
+		return cmd != null && cmd.replaceAll("\"?(.*)", "$1").startsWith(exePath);
 	}
 
-	private static boolean isAssociatedWithFileTypeLegacy(String suffix) {
+	private static boolean isAssociatedWithFileTypeLegacy(String suffix, String exePath) {
 		Log.i("isAssociatedWithFileTypeLegacy()");
 		String[] output = ConsolCmd.exec(new String[] {"cmd", "/c", "assoc", suffix});
 		if(output == null || output.length == 0
@@ -328,28 +312,26 @@ public class SystemUtil
 			return false;
 		}
 
-		String filePath = _RFile.ETC_APKSCANNER_EXE.getPath();
-		return cmd.startsWith(filePath);
+		return cmd.startsWith(exePath);
 	}
 
-	public static boolean setAssociateFileType(String suffix) {
-		if(isAssociatedWithFileType(suffix)) {
+	public static boolean setAssociateFileType(String suffix, String exePath) {
+		if(isAssociatedWithFileType(suffix, exePath)) {
 			return true;
 		}
-		String filePath = _RFile.ETC_APKSCANNER_EXE.getPath();
 		String prefixKey = "ApkScanner"+suffix;
 		try {
 			synchronized(lock) {
 				Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\CLSID");
 				Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\CLSID", "", "{E88DCCE0-B7B3-11d1-A9F0-00AA0060FA31}");
 				Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\DefaultIcon");
-				Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\DefaultIcon", "", filePath+",1");
+				Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\DefaultIcon", "", exePath+",1");
 				Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\OpenWithProgids");
 				Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\OpenWithProgids", "CompressedFolder", "");
 				Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Open\\Command");
-				Advapi32Util.registrySetExpandableStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Open\\Command", "", "\""+filePath+"\" \"%1\"");
+				Advapi32Util.registrySetExpandableStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Open\\Command", "", "\""+exePath+"\" \"%1\"");
 				Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Install\\Command");
-				Advapi32Util.registrySetExpandableStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Install\\Command", "", "\""+filePath+"\" install \"%1\"");
+				Advapi32Util.registrySetExpandableStringValue(WinReg.HKEY_CLASSES_ROOT, prefixKey+"\\Shell\\Install\\Command", "", "\""+exePath+"\" install \"%1\"");
 
 				Advapi32Util.registryCreateKey(WinReg.HKEY_CLASSES_ROOT, suffix);
 				Advapi32Util.registrySetStringValue(WinReg.HKEY_CLASSES_ROOT, suffix, "", prefixKey);
@@ -357,10 +339,10 @@ public class SystemUtil
 		} catch(Exception e) {
 			Log.d("Failure: Can not write registry");
 			e.printStackTrace();
-			return setAssociateFileTypeLegacy(suffix);
+			return setAssociateFileTypeLegacy(suffix, exePath);
 		}
 
-		if(!isAssociatedWithFileType(suffix)) {
+		if(!isAssociatedWithFileType(suffix, exePath)) {
 			return false;
 		}
 
@@ -369,22 +351,21 @@ public class SystemUtil
 		return true;
 	}
 
-	private static boolean setAssociateFileTypeLegacy(String suffix) {
+	private static boolean setAssociateFileTypeLegacy(String suffix, String exePath) {
 		Log.i("setAssociateFileTypeLegacy()");
-		if(isAssociatedWithFileType(suffix)) {
+		if(isAssociatedWithFileType(suffix, exePath)) {
 			return true;
 		}
-		String filePath = _RFile.ETC_APKSCANNER_EXE.getPath();
 		ConsolCmd.exec(new String[][] {
 			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\CLSID", "/ve", "/t", "REG_SZ", "/d", "{E88DCCE0-B7B3-11d1-A9F0-00AA0060FA31}", "/f" },
-			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\DefaultIcon", "/ve", "/t", "REG_SZ", "/d", filePath+",1", "/f" },
+			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\DefaultIcon", "/ve", "/t", "REG_SZ", "/d", exePath+",1", "/f" },
 			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\OpenWithProgids", "/v", "CompressedFolder", "/t", "REG_SZ", "/f" },
-			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\Shell\\Open\\Command", "/ve", "/t", "REG_EXPAND_SZ", "/d", filePath+" \\\"%1\\\"", "/f" },
-			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\Shell\\Install\\Command", "/ve", "/t", "REG_EXPAND_SZ", "/d", filePath+" install \\\"%1\\\"", "/f" },
+			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\Shell\\Open\\Command", "/ve", "/t", "REG_EXPAND_SZ", "/d", exePath+" \\\"%1\\\"", "/f" },
+			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\Shell\\Install\\Command", "/ve", "/t", "REG_EXPAND_SZ", "/d", exePath+" install \\\"%1\\\"", "/f" },
 			{"cmd", "/c", "reg", "add", "HKCR\\"+suffix, "/ve", "/t", "REG_SZ", "/d", "ApkScanner"+suffix, "/f" },
 			{"cmd", "/c", "assoc", suffix+"=ApkScanner"+suffix },
 		});
-		return isAssociatedWithFileType(suffix);
+		return isAssociatedWithFileType(suffix, exePath);
 	}
 
 	private static void registryDeleteKeyRecursive(HKEY root, String key) {
@@ -399,8 +380,8 @@ public class SystemUtil
 		}
 	}
 
-	public static void unsetAssociateFileType(String suffix) {
-		if(!isWindows() || !isAssociatedWithFileType(suffix)) {
+	public static void unsetAssociateFileType(String suffix, String exePath) {
+		if(!isWindows() || !isAssociatedWithFileType(suffix, exePath)) {
 			return;
 		}
 
@@ -422,13 +403,13 @@ public class SystemUtil
 		} catch(Exception e) {
 			e.printStackTrace();
 			Log.d("Failure: Can not delete registry");
-			unsetAssociateFileTypeLagacy(suffix);
+			unsetAssociateFileTypeLagacy(suffix, exePath);
 		}
 	}
 
-	private static void unsetAssociateFileTypeLagacy(String suffix) {
+	private static void unsetAssociateFileTypeLagacy(String suffix, String exePath) {
 		Log.i("unsetAssociateFileTypeLagacy()");
-		if(!isAssociatedWithFileType(suffix)) {
+		if(!isAssociatedWithFileType(suffix, exePath)) {
 			return;
 		}
 		ConsolCmd.exec(new String[][] {
@@ -507,54 +488,6 @@ public class SystemUtil
 		GeneralVersionChecker jvmVer = GeneralVersionChecker.parseFrom(System.getProperty("java.specification.version"));
 		GeneralVersionChecker minVer = GeneralVersionChecker.parseFrom(minVersion);
 		return jvmVer.compareTo(minVer) >= 0;
-	}
-
-	public static Icon getExtensionIcon(String suffix) {
-		Icon icon = cacheIcon.get(suffix);
-		if (icon != null) return icon;
-
-		//Log.v("getIcon " + suffix);
-		Image tempImage = null;
-		if (FOLDER_ICON.equals(suffix)) {
-			tempImage = ImageScaler.getScaledImage(_RImg.TREE_FOLDER.getImageIcon(), 16, 16);
-			/*
-			 * UIDefaults defaults = UIManager.getDefaults( ); Icon
-			 * computerIcon = defaults.getIcon( "FileView.computerIcon"
-			 * ); Icon floppyIcon = defaults.getIcon(
-			 * "FileView.floppyDriveIcon" ); Icon diskIcon =
-			 * defaults.getIcon( "FileView.hardDriveIcon" ); Icon
-			 * fileIcon = defaults.getIcon( "FileView.fileIcon" ); Icon
-			 * folderIcon = defaults.getIcon( "FileView.directoryIcon"
-			 * );
-			 *
-			 * icon = folderIcon;
-			 */
-		} else if (".xml".equals(suffix)) {
-			tempImage = ImageScaler.getScaledImage(_RImg.RESOURCE_TREE_XML.getImageIcon(), 16, 16);
-			// } else if(".qmg".equals(suffix)) {
-			// tempImage =
-			// ImageScaler.getScaledImage(RImg.QMG_IMAGE_ICON.getImageIcon(),32,32);
-		} else if (".dex".equals(suffix)) {
-			icon = _RImg.RESOURCE_TREE_CODE.getImageIcon();
-		} else if (".arsc".equals(suffix)) {
-			icon = _RImg.RESOURCE_TREE_ARSC.getImageIcon();
-		} else {
-			try {
-				File file = File.createTempFile("icon", suffix);
-				FileSystemView view = FileSystemView.getFileSystemView();
-				icon = view.getSystemIcon(file);
-				file.delete();
-			} catch (IOException ioe) {
-			}
-		}
-		if (tempImage != null) {
-			icon = new ImageIcon(tempImage);
-			tempImage.flush();
-		}
-		if (icon != null) {
-			cacheIcon.put(suffix, icon);
-		}
-		return icon;
 	}
 
     @SuppressWarnings("unchecked")

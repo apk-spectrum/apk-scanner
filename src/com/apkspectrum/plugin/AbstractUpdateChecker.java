@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.Map;
 
 import com.apkspectrum.plugin.manifest.Component;
-import com.apkspectrum.resource._RStr;
 import com.apkspectrum.util.GeneralVersionChecker;
 
 public abstract class AbstractUpdateChecker extends AbstractPlugIn implements IUpdateChecker
@@ -69,7 +68,7 @@ public abstract class AbstractUpdateChecker extends AbstractPlugIn implements IU
 	public void setLastUpdateDate(long lastUpdateDate) {
 		long newValue = lastUpdateDate > 0 ? lastUpdateDate : 0;
 		if(this.lastUpdateDate == newValue) return;
-		long oldValue = this.lastUpdateDate; 
+		long oldValue = this.lastUpdateDate;
 		this.lastUpdateDate = newValue;
 
 		firePropertyChange(LAST_UPDATE_CHECKED_PROPERTY, oldValue, newValue);
@@ -98,9 +97,9 @@ public abstract class AbstractUpdateChecker extends AbstractPlugIn implements IU
 
 		String version = (String)latestVersionInfo.get("version");
 		String targetPackageName = getTargetPackageName();
-		if("com.apkscanner".equals(targetPackageName)) {
+		if(PlugInManager.getAppPackage().equals(targetPackageName)) {
 			GeneralVersionChecker newVer = GeneralVersionChecker.parseFrom(version);
-			GeneralVersionChecker oldVer = GeneralVersionChecker.parseFrom(_RStr.APP_VERSION.get());
+			GeneralVersionChecker oldVer = GeneralVersionChecker.parseFrom(PlugInManager.getAppVersion());
 			return newVer.compareTo(oldVer) > 0;
 		} else if ("com.android.sdk".equals(targetPackageName)) {
 			return false;

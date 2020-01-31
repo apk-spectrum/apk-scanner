@@ -21,6 +21,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.apkscanner.resource.RComp;
+import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 import com.apkspectrum.core.scanner.ApkScanner;
@@ -122,8 +123,12 @@ public class Widgets extends AbstractTabbedPanel implements TreeSelectionListene
 				try {
 					ResourceInfo[] icons = w.icons;
 					String icon = icons[icons.length-1].name;
-					if(icon.toLowerCase().endsWith(".webp")) {
-						previewImage = new ImageIcon(ImageIO.read(new URL(icon)));
+					if(icon == null) {
+						previewImage = RImg.DEF_APP_ICON.getImageIcon(); 
+					} else if(icon.toLowerCase().endsWith(".webp")) {
+						previewImage = new ImageIcon(ImageIO.read(new URL(icon))); 
+					} else if(icon.toLowerCase().endsWith(".qmg")) {
+						previewImage = RImg.QMG_IMAGE_ICON.getImageIcon();
 					} else {
 						previewImage = new ImageIcon(new URL(icon));
 					}

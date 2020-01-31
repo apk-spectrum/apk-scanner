@@ -20,7 +20,6 @@ import com.apkspectrum.core.signer.SignatureReport;
 import com.apkspectrum.swing.ImageScaler;
 import com.apkspectrum.swing.TreeNodeImageObserver;
 import com.apkspectrum.util.FileUtil;
-import com.apkspectrum.util.SystemUtil;
 import com.apkspectrum.util.URITool;
 
 public class DefaultNodeData implements TreeNodeData, Cloneable
@@ -143,7 +142,7 @@ public class DefaultNodeData implements TreeNodeData, Cloneable
 		if(getLoadingState()) {
 			icon = RImg.RESOURCE_TREE_OPEN_JD.getImageIcon();
 		} else if(isFolder) {
-			icon = SystemUtil.getExtensionIcon(SystemUtil.FOLDER_ICON);
+			icon = ResourceTree.getExtensionIcon(ResourceTree.FOLDER_ICON);
 		}
 		if(dataType == DATA_TYPE_IMAGE) {
 			try {
@@ -163,7 +162,7 @@ public class DefaultNodeData implements TreeNodeData, Cloneable
 			}
 		}
 		if(icon == null) {
-			icon = SystemUtil.getExtensionIcon(getExtension());
+			icon = ResourceTree.getExtensionIcon(getExtension());
 		}
 
 		return icon;

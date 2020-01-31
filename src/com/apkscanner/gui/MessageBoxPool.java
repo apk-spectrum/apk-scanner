@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.util.HashMap;
 
+import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RStr;
 import com.apkspectrum.swing.MessageBoxPane;
 
@@ -42,6 +43,7 @@ public class MessageBoxPool {
 
 	public MessageBoxPool(Component parentComponent) {
 		this.parentComponent = parentComponent;
+		MessageBoxPane.setDialogIcon(RImg.APP_ICON.getImage());
 	}
 
 	public static MessageBoxPool getMessageBoxPool(Component parentComponent) {

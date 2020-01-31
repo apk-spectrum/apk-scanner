@@ -31,7 +31,6 @@ import com.apkspectrum.data.apkinfo.UsesLibraryInfo;
 import com.apkspectrum.data.apkinfo.UsesPermissionInfo;
 import com.apkspectrum.data.apkinfo.UsesPermissionSdk23Info;
 import com.apkspectrum.data.apkinfo.WidgetInfo;
-import com.apkspectrum.resource._RImg;
 import com.apkspectrum.tool.aapt.AaptNativeWrapper;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
@@ -399,11 +398,7 @@ public class AaptManifestReader
 						if(icon.name != null && !icon.name.isEmpty()) {
 							if(icon.name.startsWith("@")) continue;
 							icon = icon.clone();
-							if(icon.name.endsWith("qmg")) {
-								icon.name = _RImg.QMG_IMAGE_ICON.getPath();
-							} else {
-								icon.name = jarPath + URITool.encodeURI(icon.name);
-							}
+							icon.name = jarPath + URITool.encodeURI(icon.name);
 							iconResList.add(icon);
 						}
 					}
@@ -472,11 +467,7 @@ public class AaptManifestReader
 					String jarPath = "jar:" + new File(apkFilePath).toURI() + "!/";
 					for(ResourceInfo icon: widget.icons) {
 						if(icon.name != null && !icon.name.isEmpty()) {
-							if(icon.name.endsWith("qmg")) {
-								icon.name = _RImg.QMG_IMAGE_ICON.getPath();
-							} else {
-								icon.name = jarPath + URITool.encodeURI(icon.name);
-							}
+							icon.name = jarPath + URITool.encodeURI(icon.name);
 						}
 					}
 				}

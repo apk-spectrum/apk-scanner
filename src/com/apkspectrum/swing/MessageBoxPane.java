@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
+import java.awt.Image;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -22,12 +23,13 @@ import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
-import com.apkspectrum.resource._RImg;
 import com.apkspectrum.resource._RStr;
 
 public class MessageBoxPane extends JOptionPane
 {
 	private static final long serialVersionUID = 4947402878882910721L;
+
+	private static Image icon = null;
 
 	public MessageBoxPane() {
 		this("MessageBoxPane message");
@@ -68,11 +70,15 @@ public class MessageBoxPane extends JOptionPane
 		setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, backwardKeys);
 	}
 
+	public static void setDialogIcon(Image icon) {
+		MessageBoxPane.icon = icon;
+	}
+
 	public JDialog createDialog(Component parentComponent, String title)
 			throws HeadlessException {
 		JDialog dialog = super.createDialog(parentComponent, title);
 		dialog.setResizable(true);
-		dialog.setIconImage(_RImg.APP_ICON.getImage());
+		if(icon != null) dialog.setIconImage(icon);
 		dialog.pack();
 		WindowSizeMemorizer.apply(dialog, title);
 		return dialog;
@@ -288,6 +294,6 @@ public class MessageBoxPane extends JOptionPane
 	}
 
 	public static void showPlain(Component parentComponent, Object message) {
-		showMessageDialog(parentComponent, message, _RStr.APP_NAME.get(), PLAIN_MESSAGE, null);
+		showMessageDialog(parentComponent, message, _RStr.LABEL_INFO.get(), PLAIN_MESSAGE, null);
 	}
 }
