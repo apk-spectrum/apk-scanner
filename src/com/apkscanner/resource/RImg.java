@@ -25,8 +25,6 @@ public enum RImg implements ResImage<URL>
 	TOOLBAR_UNINSTALL			("toolbar_uninstall.png"),
 	TOOLBAR_CLEAR				("toolbar_clear.png"),
 
-	RESOURCE_BACKGROUND			("resource_tap_image_background.jpg"),
-	RESOURCE_BACKGROUND_DARK	("resource_tap_image_background_dark.jpg"),
 	RESOURCE_TREE_XML			("resource_tab_tree_xml.gif"),
 	RESOURCE_TREE_CODE			("resource_tab_tree_code.png"),
 	RESOURCE_TREE_ARSC			("resource_tab_tree_arsc.png"),
@@ -76,10 +74,6 @@ public enum RImg implements ResImage<URL>
 	TREE_FOLDER					("tree_icon_folder.png"),
 	TREE_LOADING				("tree_loading.gif"),
 	TREE_FAVOR					("tree_favor.png"),
-
-	TREE_GLOBAL_SETTING			("configure-2.png"),
-	TREE_NETWORK_SETTING		("internet-connection_manager.png"),
-	TREE_CONFIG_SETTING			("kservices.png"),
 
 	INSTALL_CHECK				("install_dlg_check.png"),
 	INSTALL_BLOCK				("install_dlg_block.png"),

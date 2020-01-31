@@ -58,7 +58,6 @@ public enum RFile implements ResFile<String>, ResString<String>
 
 	DATA_PATH					(Type.DATA, ""),
 	DATA_STRINGS_EN				(Type.DATA, "strings.xml"),
-	DATA_PERMISSIONS_HISTORY	(Type.DATA, "PermissionsHistory.xml"),
 	DATA_CERT_PEM_FILE			(Type.DATA, "build-master-target-product-security" + File.separator + "platform.x509.pem"),
 	DATA_CERT_PK8_FILE			(Type.DATA, "build-master-target-product-security" + File.separator + "platform.pk8"),
 
@@ -130,7 +129,7 @@ public enum RFile implements ResFile<String>, ResString<String>
 		if(type == Type.RES_VALUE || type == Type.RES_ROOT) {
 			return getURL().toExternalForm();
 		}
-		return type.getPath() + File.separator + value;
+		return getUTF8Path() + value;
 	}
 
 	@Override
@@ -197,9 +196,10 @@ public enum RFile implements ResFile<String>, ResString<String>
 		return null;
 	}
 
-	public static String getUTF8Path() {
+	private String getUTF8Path() {
 		String resourcePath = RFile.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-		resourcePath = (new File(resourcePath)).getParentFile().getPath();
+		resourcePath = (new File(resourcePath)).getParentFile().getPath()
+				+ File.separator + type.getValue() + File.separator;
 
 		try {
 			resourcePath = URLDecoder.decode(resourcePath, "UTF-8");
