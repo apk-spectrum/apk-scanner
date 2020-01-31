@@ -136,8 +136,8 @@ cc_library_host_shared {
     defaults: ["aapt_defaults"],
     srcs: [
     	"Main.cpp",
-    	"com_apkscanner_core_scanner_AaptNativeScanner.cpp",
-    	"com_apkscanner_tool_aapt_AaptNativeWrapper.cpp"
+    	"com_apkspectrum_core_scanner_AaptNativeScanner.cpp",
+    	"com_apkspectrum_tool_aapt_AaptNativeWrapper.cpp"
     ],
     use_version_lib: true,
     static_libs: ["libaapt"],

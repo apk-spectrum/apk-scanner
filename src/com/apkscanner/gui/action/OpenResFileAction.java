@@ -6,7 +6,7 @@ import javax.swing.JComponent;
 
 import com.apkscanner.gui.tabpanels.DefaultNodeData;
 import com.apkscanner.gui.tabpanels.TreeNodeData;
-import com.apkscanner.util.SystemUtil;
+import com.apkspectrum.util.SystemUtil;
 
 @SuppressWarnings("serial")
 public class OpenResFileAction extends AbstractApkScannerAction

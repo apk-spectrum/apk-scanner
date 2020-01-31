@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
 import com.apkscanner.resource.RProp;
-import com.apkscanner.tool.adb.AdbServerMonitor;
-import com.apkscanner.tool.adb.PackageInfo;
-import com.apkscanner.tool.adb.PackageManager;
-import com.apkscanner.util.Log;
+import com.apkspectrum.tool.adb.AdbServerMonitor;
+import com.apkspectrum.tool.adb.PackageInfo;
+import com.apkspectrum.tool.adb.PackageManager;
+import com.apkspectrum.util.Log;
 
 @SuppressWarnings("serial")
 public abstract class AbstractDeviceAction extends AbstractApkScannerAction

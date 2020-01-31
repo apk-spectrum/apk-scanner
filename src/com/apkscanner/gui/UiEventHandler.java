@@ -17,7 +17,6 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import com.apkscanner.Launcher;
-import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.PlugInDropTargetChooser.DefaultTargetObject;
 import com.apkscanner.gui.action.AbstractApkScannerAction;
 import com.apkscanner.gui.action.AbstractUIAction;
@@ -59,13 +58,14 @@ import com.apkscanner.gui.action.ShowExplorerFolderAction;
 import com.apkscanner.gui.action.ShowLogsAction;
 import com.apkscanner.gui.action.ShowManifestAction;
 import com.apkscanner.gui.action.SignApkAction;
-import com.apkscanner.gui.component.DropTargetChooser;
-import com.apkscanner.gui.component.KeyStrokeAction;
-import com.apkscanner.plugin.IExternalTool;
-import com.apkscanner.plugin.IPlugIn;
-import com.apkscanner.plugin.PlugInManager;
-import com.apkscanner.util.ClassFinder;
-import com.apkscanner.util.Log;
+import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.plugin.IExternalTool;
+import com.apkspectrum.plugin.IPlugIn;
+import com.apkspectrum.plugin.PlugInManager;
+import com.apkspectrum.swing.DropTargetChooser;
+import com.apkspectrum.swing.KeyStrokeAction;
+import com.apkspectrum.util.ClassFinder;
+import com.apkspectrum.util.Log;
 
 public class UiEventHandler extends ActionEventHandler implements WindowListener, DropTargetChooser.Listener
 {

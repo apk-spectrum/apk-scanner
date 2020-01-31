@@ -10,7 +10,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 
-import com.apkscanner.util.SystemUtil;
+import com.apkspectrum.resource.ResFile;
+import com.apkspectrum.resource.ResString;
+import com.apkspectrum.util.SystemUtil;
 
 public enum RFile implements ResFile<String>, ResString<String>
 {

@@ -26,14 +26,14 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 
-import com.apkscanner.gui.component.ImagePanel;
-import com.apkscanner.gui.component.KeyStrokeAction;
-import com.apkscanner.gui.component.WindowSizeMemorizer;
 import com.apkscanner.resource.RFile;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.XmlPath;
+import com.apkspectrum.swing.ImagePanel;
+import com.apkspectrum.swing.KeyStrokeAction;
+import com.apkspectrum.swing.WindowSizeMemorizer;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.XmlPath;
 
 public class SdkVersionInfoDlg extends JDialog {
 	private static final long serialVersionUID = -2587104139198073626L;

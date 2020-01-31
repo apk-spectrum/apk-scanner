@@ -12,15 +12,15 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.UIController;
 import com.apkscanner.gui.installer.ApkInstallWizard;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.tool.adb.AdbServerMonitor;
-import com.apkscanner.util.FileUtil;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.SystemUtil;
+import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.tool.adb.AdbServerMonitor;
+import com.apkspectrum.util.FileUtil;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.SystemUtil;
 
 public class Main
 {

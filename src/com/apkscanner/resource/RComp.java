@@ -17,6 +17,9 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
+import com.apkspectrum.resource.LanguageChangeListener;
+import com.apkspectrum.resource.ResValue;
+
 public enum RComp implements ResValue<RComp>
 {
 	BTN_TOOLBAR_OPEN				(RStr.BTN_OPEN, RImg.TOOLBAR_OPEN, RStr.BTN_OPEN_LAB),

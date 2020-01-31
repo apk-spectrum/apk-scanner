@@ -6,8 +6,8 @@ import java.util.Comparator;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
-import com.apkscanner.gui.component.SortedMutableTreeNode;
-import com.apkscanner.util.SystemUtil;
+import com.apkspectrum.swing.SortedMutableTreeNode;
+import com.apkspectrum.util.SystemUtil;
 
 public class ResourceNode extends SortedMutableTreeNode
 {

@@ -26,9 +26,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import com.android.ddmlib.IDevice;
-import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.data.apkinfo.ApkInfoHelper;
-import com.apkscanner.data.apkinfo.ResourceInfo;
 import com.apkscanner.gui.EasyMainUI;
 import com.apkscanner.gui.easymode.util.AndroidLikeToast;
 import com.apkscanner.gui.easymode.util.EasyRoundButton;
@@ -37,11 +34,14 @@ import com.apkscanner.gui.easymode.util.EasyRoundLabelCount;
 import com.apkscanner.gui.easymode.util.EasyTextField;
 import com.apkscanner.gui.easymode.util.ImageUtils;
 import com.apkscanner.gui.easymode.util.RoundPanel;
-import com.apkscanner.gui.messagebox.MessageBoxPane;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.Log;
+import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.data.apkinfo.ApkInfoHelper;
+import com.apkspectrum.data.apkinfo.ResourceInfo;
+import com.apkspectrum.swing.MessageBoxPane;
+import com.apkspectrum.util.Log;
 
 public class EasyContentsPanel extends JPanel
 {
@@ -330,29 +330,33 @@ public class EasyContentsPanel extends JPanel
 		if(apkInfo.manifest.application.icons != null && apkInfo.manifest.application.icons.length > 0) {
 			ResourceInfo[] iconList = apkInfo.manifest.application.icons;
 			for(int i=iconList.length-1; i >= 0; i--) {
-				if(iconList[i].name.endsWith(".xml")) continue;
 				iconPath = iconList[i].name;
+				if(iconPath == null || iconPath.endsWith(".xml")) continue;
 				if(iconPath.toLowerCase().endsWith(".webp")) {
 					iconPath = ImageUtils.covertWebp2Png(iconPath, apkInfo.tempWorkPath);
 				}
 				if(iconPath != null) {
-					Log.d("icon Path is null");
+					Log.d("icon Path is " + iconPath);
 					break;
 				}
 			}
 		}
 		//appicon set
 		//String temppath = apkInfo.manifest.application.icons[apkInfo.manifest.application.icons.length - 1].name;
-		try {
-			ImageIcon icon;
-			icon = new ImageIcon(ImageUtils.getScaledImage(new ImageIcon(ImageIO.read(new URL(iconPath))),110,110));
-			return icon;
-		} catch (IOException e) {
-			ImageIcon icon;
-			icon = RImg.WARNING.getImageIcon();
-			e.printStackTrace();
-			return icon;
+		ImageIcon icon;
+		if(iconPath == null) {
+			icon = RImg.DEF_APP_ICON.getImageIcon(110, 110);
+		} else if(iconPath.toLowerCase().endsWith(".qmg")) {
+			icon = RImg.QMG_IMAGE_ICON.getImageIcon(110, 110);
+		} else {
+			try {
+				icon = new ImageIcon(ImageUtils.getScaledImage(new ImageIcon(ImageIO.read(new URL(iconPath))),110,110));
+			} catch (IOException e) {
+				Log.e(e.getMessage());
+				icon = RImg.DEF_APP_ICON.getImageIcon();
+			}
 		}
+		return icon;
     }
 
 	private void showDialog(String content, String title, Dimension size, Icon icon) {

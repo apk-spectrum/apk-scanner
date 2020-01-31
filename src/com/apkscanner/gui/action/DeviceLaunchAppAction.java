@@ -6,18 +6,18 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
 import com.android.ddmlib.IDevice;
-import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.data.apkinfo.ApkInfoHelper;
-import com.apkscanner.data.apkinfo.ComponentInfo;
+import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.easymode.contents.EasyGuiDeviceToolPanel;
-import com.apkscanner.gui.messagebox.MessageBoxPane;
-import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.tool.adb.AdbDeviceHelper;
-import com.apkscanner.tool.adb.PackageInfo;
-import com.apkscanner.util.Log;
+import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.data.apkinfo.ApkInfoHelper;
+import com.apkspectrum.data.apkinfo.ComponentInfo;
+import com.apkspectrum.swing.MessageBoxPane;
+import com.apkspectrum.tool.adb.AdbDeviceHelper;
+import com.apkspectrum.tool.adb.PackageInfo;
+import com.apkspectrum.util.Log;
 
 @SuppressWarnings("serial")
 public class DeviceLaunchAppAction extends AbstractDeviceAction

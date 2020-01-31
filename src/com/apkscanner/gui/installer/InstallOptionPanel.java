@@ -33,12 +33,12 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-import com.apkscanner.core.installer.OptionsBundle;
-import com.apkscanner.data.apkinfo.CompactApkInfo;
-import com.apkscanner.data.apkinfo.ComponentInfo;
-import com.apkscanner.gui.messagebox.MessageBoxPool;
+import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.Log;
+import com.apkspectrum.core.installer.OptionsBundle;
+import com.apkspectrum.data.apkinfo.CompactApkInfo;
+import com.apkspectrum.data.apkinfo.ComponentInfo;
+import com.apkspectrum.util.Log;
 
 public class InstallOptionPanel extends JPanel implements ItemListener {
 	private static final long serialVersionUID = 2307623568442307145L;

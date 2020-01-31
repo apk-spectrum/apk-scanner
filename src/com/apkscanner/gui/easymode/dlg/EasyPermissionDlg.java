@@ -27,14 +27,14 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 
-import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
-import com.apkscanner.core.permissionmanager.PermissionManager;
-import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.data.apkinfo.PermissionInfo;
 import com.apkscanner.gui.easymode.core.ColumnGroup;
 import com.apkscanner.gui.easymode.core.GroupableTableHeader;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
+import com.apkspectrum.core.permissionmanager.PermissionGroupInfoExt;
+import com.apkspectrum.core.permissionmanager.PermissionManager;
+import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.data.apkinfo.PermissionInfo;
 
 public class EasyPermissionDlg extends JDialog implements ActionListener {
 	private static final long serialVersionUID = 1L;

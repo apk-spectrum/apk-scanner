@@ -5,15 +5,15 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import com.apkscanner.core.scanner.ApkScanner;
-import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.tabpanels.TreeNodeData;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
-import com.apkscanner.tool.aapt.AaptNativeWrapper;
-import com.apkscanner.util.FileUtil;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.ZipFileUtil;
+import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.tool.aapt.AaptNativeWrapper;
+import com.apkspectrum.util.FileUtil;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.ZipFileUtil;
 
 @SuppressWarnings("serial")
 public abstract class AbstractApkScannerAction extends AbstractUIAction

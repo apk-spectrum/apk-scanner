@@ -12,9 +12,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.apkscanner.util.Log;
-import com.apkscanner.util.XmlPath;
-import com.apkscanner.util.ZipFileUtil;
+import com.apkspectrum.resource.LanguageChangeListener;
+import com.apkspectrum.resource.ResString;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.XmlPath;
+import com.apkspectrum.util.ZipFileUtil;
 
 public enum RStr implements ResString<String>
 {

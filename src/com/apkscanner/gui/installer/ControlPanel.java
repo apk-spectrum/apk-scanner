@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.Log;
+import com.apkspectrum.util.Log;
 
 public class ControlPanel extends JPanel
 {

@@ -7,8 +7,8 @@ package com.apkscanner.test;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.apkscanner.jna.FileInfo;
-import com.apkscanner.jna.FileVersion;
+import com.apkspectrum.jna.FileInfo;
+import com.apkspectrum.jna.FileVersion;
 
 /**
  *

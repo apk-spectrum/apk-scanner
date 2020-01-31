@@ -9,10 +9,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.resource.RImg;
-import com.apkscanner.util.Log;
+import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.util.Log;
 
 public class EasyPermissionPanel extends JPanel {
 

@@ -19,7 +19,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import com.apkscanner.util.Log;
+import com.apkspectrum.util.Log;
 
 public class ImageSliderPanel extends JPanel implements ActionListener{
 	private static final long serialVersionUID = 2003631789889579741L;

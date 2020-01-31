@@ -22,12 +22,12 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import com.apkscanner.core.scanner.ApkScanner.Status;
-import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.action.ActionEventHandler;
 import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RImg;
-import com.apkscanner.util.Log;
+import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.util.Log;
 
 public class Resources extends AbstractTabbedPanel implements TreeSelectionListener
 {
@@ -120,9 +120,9 @@ public class Resources extends AbstractTabbedPanel implements TreeSelectionListe
 	}
 
 	@Override
-	public void setData(ApkInfo apkInfo, Status status) {
-		if(!Status.RESOURCE_COMPLETED.equals(status)) {
-			if(Status.RES_DUMP_COMPLETED.equals(status)
+	public void setData(ApkInfo apkInfo, int status) {
+		if(ApkScanner.STATUS_RESOURCE_COMPLETED != status) {
+			if(ApkScanner.STATUS_RES_DUMP_COMPLETED == status
 					&& contentPanel != null) {
 				contentPanel.setData(apkInfo);
 			}

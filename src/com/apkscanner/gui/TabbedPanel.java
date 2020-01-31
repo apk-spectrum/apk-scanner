@@ -12,13 +12,6 @@ import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 
-import com.apkscanner.core.scanner.ApkScanner.Status;
-import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.gui.component.DefaultTabbedRequest;
-import com.apkscanner.gui.component.ITabbedComponent;
-import com.apkscanner.gui.component.ITabbedRequest;
-import com.apkscanner.gui.component.KeyStrokeAction;
-import com.apkscanner.gui.component.tabbedpane.TabbedPaneUIManager;
 import com.apkscanner.gui.tabpanels.AbstractTabbedPanel;
 import com.apkscanner.gui.tabpanels.BasicInfo;
 import com.apkscanner.gui.tabpanels.Components;
@@ -27,14 +20,21 @@ import com.apkscanner.gui.tabpanels.Libraries;
 import com.apkscanner.gui.tabpanels.Resources;
 import com.apkscanner.gui.tabpanels.Signatures;
 import com.apkscanner.gui.tabpanels.Widgets;
-import com.apkscanner.plugin.IExtraComponent;
-import com.apkscanner.plugin.PlugInManager;
+import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.plugin.IExtraComponent;
+import com.apkspectrum.plugin.PlugInManager;
+import com.apkspectrum.swing.DefaultTabbedRequest;
+import com.apkspectrum.swing.ITabbedComponent;
+import com.apkspectrum.swing.ITabbedRequest;
+import com.apkspectrum.swing.KeyStrokeAction;
+import com.apkspectrum.swing.tabbedpaneui.TabbedPaneUIManager;
 
 public class TabbedPanel extends JTabbedPane implements ActionListener
 {
 	private static final long serialVersionUID = -5500517956616692675L;
 
-	private List<ITabbedComponent> components = new ArrayList<>();
+	private List<ITabbedComponent<ApkInfo>> components = new ArrayList<>();
 
 	public TabbedPanel(String themeClazz, ActionListener listener) {
 		setOpaque(true);
@@ -81,7 +81,7 @@ public class TabbedPanel extends JTabbedPane implements ActionListener
 	}
 
 	public void uiLoadBooster() {
-		for(ITabbedComponent tabbed: components) {
+		for(ITabbedComponent<?> tabbed: components) {
 			Component c = tabbed.getComponent();
 			if(c instanceof AbstractTabbedPanel) {
 				((AbstractTabbedPanel)c).initialize();
@@ -89,24 +89,27 @@ public class TabbedPanel extends JTabbedPane implements ActionListener
 		}
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void onLoadPlugin(ApkInfo apkInfo, int status) {
 		for(final IExtraComponent plugin: PlugInManager.getExtraComponenet()) {
 			plugin.initialize();
 			addTab(plugin);
-			for(Status state: Status.values()) {
-				if((state.value() != 0
-						&& (status & state.value()) == state.value())) {
+			for(int state = 1; (state & ApkScanner.STATUS_ALL_COMPLETED) != 0; state <<= 1) {
+				if((state != 0 && (status & state) == state)) {
 					plugin.setData(apkInfo, state);
 				}
+			}
+			if(status == ApkScanner.STATUS_ALL_COMPLETED) {
+				plugin.setData(apkInfo, ApkScanner.STATUS_ALL_COMPLETED);
 			}
 		}
 	}
 
-	public void addTab(ITabbedComponent tabbed) {
+	public void addTab(ITabbedComponent<ApkInfo> tabbed) {
 		addTab(tabbed, tabbed.getPriority());
 	}
 
-	public void addTab(ITabbedComponent tabbedComp, int priority) {
+	public void addTab(ITabbedComponent<ApkInfo> tabbedComp, int priority) {
 		if(tabbedComp == null) return;
 
 		components.add(tabbedComp);
@@ -120,16 +123,16 @@ public class TabbedPanel extends JTabbedPane implements ActionListener
 		request.onRequestVisible(tabbedComp.isTabbedVisible());
 	}
 
-	public void setData(ApkInfo apkInfo, Status status)
+	public void setData(ApkInfo apkInfo, int status)
 	{
-		for(ITabbedComponent tabbed: components) {
+		for(ITabbedComponent<ApkInfo> tabbed: components) {
 			tabbed.setData(apkInfo, status);
 		}
 	}
 
 	public void onProgress(String message)
 	{
-		for(ITabbedComponent tabbed: components) {
+		for(ITabbedComponent<ApkInfo> tabbed: components) {
 			if(tabbed instanceof IProgressListener) {
 				((IProgressListener)tabbed).onProgress(message);
 			}
@@ -138,7 +141,7 @@ public class TabbedPanel extends JTabbedPane implements ActionListener
 
 	public void setLodingLabel()
 	{
-		for(ITabbedComponent tabbed: components) {
+		for(ITabbedComponent<ApkInfo> tabbed: components) {
 			int idx = indexOfComponent(tabbed.getComponent());
 			if(tabbed instanceof IProgressListener) {
 				((IProgressListener)tabbed).onProgress(null);
