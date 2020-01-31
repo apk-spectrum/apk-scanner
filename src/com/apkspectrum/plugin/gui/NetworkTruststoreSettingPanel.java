@@ -52,10 +52,10 @@ import com.apkspectrum.core.signer.SignatureReport;
 import com.apkspectrum.plugin.NetworkSetting;
 import com.apkspectrum.plugin.PlugInConfig;
 import com.apkspectrum.plugin.PlugInPackage;
-import com.apkspectrum.resource.RFile;
-import com.apkspectrum.resource.RStr;
+import com.apkspectrum.resource._RFile;
+import com.apkspectrum.resource._RStr;
 import com.apkspectrum.swing.ApkFileChooser;
-import com.apkspectrum.swing.tabbedpaneui.MessageBoxPane;
+import com.apkspectrum.swing.MessageBoxPane;
 import com.apkspectrum.util.Log;
 
 public class NetworkTruststoreSettingPanel extends JPanel implements ActionListener, ListSelectionListener
@@ -103,15 +103,15 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 		setOpaque(false);
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-		Border title = new TitledBorder(RStr.LABEL_TRUSTSTORE_SETTING.get());
+		Border title = new TitledBorder(_RStr.LABEL_TRUSTSTORE_SETTING.get());
 		Border padding = new EmptyBorder(5,5,5,5);
 		setBorder(new CompoundBorder(title, padding));
 
 		String[] trustStoreList = new String[] {
-			RStr.TRUSTSTORE_APKSCANNER.get(),
-			RStr.TRUSTSTORE_JVM.get(),
-			RStr.TRUSTSTORE_MANUAL.get(),
-			RStr.TRUSTSTORE_IGNORE.get()
+			_RStr.TRUSTSTORE_APKSCANNER.get(),
+			_RStr.TRUSTSTORE_JVM.get(),
+			_RStr.TRUSTSTORE_MANUAL.get(),
+			_RStr.TRUSTSTORE_IGNORE.get()
 		};
 		trustStoreTypeMap = new HashMap<>();
 		trustStoreTypeMap.put(trustStoreList[0], TRUSTSTORE_TYPE_APKSCANNER);
@@ -149,7 +149,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 
 						switch(type) {
 						case TRUSTSTORE_TYPE_APKSCANNER:
-							path = RFile.SSL_TRUSTSTORE_PATH.get();
+							path = _RFile.SSL_TRUSTSTORE_PATH.get();
 							store = NetworkSetting.APK_SCANNER_SSL_TRUSTSTORE;
 							break;
 						case TRUSTSTORE_TYPE_JVM:
@@ -160,7 +160,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 							path = pluginConfig.getConfiguration(PlugInConfig.CONFIG_SSL_TRUSTSTORE);
 							if(!new File(path).canRead()) {
 								//Log.e(path);
-								File file = getKeyStoreFile(NetworkTruststoreSettingPanel.this, RFile.SSL_TRUSTSTORE_PATH.get());
+								File file = getKeyStoreFile(NetworkTruststoreSettingPanel.this, _RFile.SSL_TRUSTSTORE_PATH.get());
 								if(file != null) {
 									path = file.getAbsolutePath();
 								}
@@ -172,7 +172,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 							visible = false;
 							store = NetworkSetting.IGNORE_TRUSTSTORE;
 							ignore = true;
-							desciprtion = RStr.MSG_WARN_SSL_IGNORE.get();
+							desciprtion = _RStr.MSG_WARN_SSL_IGNORE.get();
 							break;
 						}
 
@@ -222,10 +222,10 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 		if(!simple) mgmtPanel.add(Box.createRigidArea(new Dimension(0,5)));
 
 		certListModel = new DefaultTableModel(new String[] {
-				RStr.COLUMN_ISSUE_TO.get(),
-				RStr.COLUMN_ISSUE_BY.get(),
-				RStr.COLUMN_EXPIRES_ON.get(),
-				RStr.COLUMN_ALIAS.get()
+				_RStr.COLUMN_ISSUE_TO.get(),
+				_RStr.COLUMN_ISSUE_BY.get(),
+				_RStr.COLUMN_EXPIRES_ON.get(),
+				_RStr.COLUMN_ALIAS.get()
 			}, 0);
 		certList = new JTable(certListModel);
 		certList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -237,11 +237,11 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 		if(!simple) mgmtPanel.add(certListPanel);
 
 
-		JButton importBtn = new JButton(RStr.BTN_IMPORT.get());
+		JButton importBtn = new JButton(_RStr.BTN_IMPORT.get());
 		importBtn.setActionCommand(ACT_CMD_IMPORT);
 		importBtn.addActionListener(this);
 
-		JButton removeBtn = new JButton(RStr.BTN_REMOVE.get());
+		JButton removeBtn = new JButton(_RStr.BTN_REMOVE.get());
 		removeBtn.setActionCommand(ACT_CMD_REMOVE);
 		removeBtn.addActionListener(this);
 
@@ -282,7 +282,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 		if(!simple) add(Box.createRigidArea(new Dimension(0,5)));
 
 		if(simple) {
-			JButton detailTruststore = new JButton(RStr.BTN_MANAGE_CERT.get());
+			JButton detailTruststore = new JButton(_RStr.BTN_MANAGE_CERT.get());
 			detailTruststore.setActionCommand(ACT_CMD_DETAIL);
 			detailTruststore.addActionListener(this);
 			add(detailTruststore);
@@ -337,13 +337,13 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 		descScroll.setPreferredSize(new Dimension(400, 150));
 
 		confirmForm.setLayout(new BoxLayout(confirmForm, BoxLayout.Y_AXIS));
-		confirmForm.add(new JLabel(RStr.LABEL_ALIAS.get()));
+		confirmForm.add(new JLabel(_RStr.LABEL_ALIAS.get()));
 		confirmForm.add(aliasField);
-		confirmForm.add(new JLabel(RStr.LABEL_DESCRIPTION.get()));
+		confirmForm.add(new JLabel(_RStr.LABEL_DESCRIPTION.get()));
 		confirmForm.add(descScroll);
 
 		do {
-			int confirm = MessageBoxPane.showConfirmDialog(this, confirmForm, RStr.LABEL_QUESTION.get(),
+			int confirm = MessageBoxPane.showConfirmDialog(this, confirmForm, _RStr.LABEL_QUESTION.get(),
 					JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null);
 			if(confirm == JOptionPane.OK_OPTION) {
 				alias = aliasField.getText().trim();
@@ -538,7 +538,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 			if(row > -1) {
 				//need confirm popup
 				int ret = MessageBoxPane.showConfirmDialog(this, "Warning. Other applications and systems may be affected."
-						+ " continue deleting? ", RStr.LABEL_QUESTION.get(),
+						+ " continue deleting? ", _RStr.LABEL_QUESTION.get(),
 						JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null);
 				Log.e(" " + ret + " , " + MessageBoxPane.OK_OPTION + ", " + MessageBoxPane.NO_OPTION);
 				if(ret == JOptionPane.OK_OPTION) {
@@ -554,7 +554,7 @@ public class NetworkTruststoreSettingPanel extends JPanel implements ActionListe
 		case ACT_CMD_DETAIL:
 			JPanel trustPanel = new NetworkTruststoreSettingPanel(pluginConfig);
 			trustPanel.setPreferredSize(new Dimension(500, trustPanel.getPreferredSize().height));
-			MessageBoxPane.showMessageDialog(null, trustPanel, RStr.LABEL_TRUSTSTORE_SETTING.get(), JOptionPane.DEFAULT_OPTION);
+			MessageBoxPane.showMessageDialog(null, trustPanel, _RStr.LABEL_TRUSTSTORE_SETTING.get(), JOptionPane.DEFAULT_OPTION);
 			break;
 		}
 	}

@@ -6,7 +6,7 @@ import com.apkspectrum.data.apkinfo.ApkInfoHelper;
 import com.apkspectrum.data.apkinfo.PermissionGroupInfo;
 import com.apkspectrum.data.apkinfo.PermissionInfo;
 import com.apkspectrum.data.apkinfo.ResourceInfo;
-import com.apkspectrum.resource.RProp;
+import com.apkspectrum.resource._RProp;
 
 public class PermissionGroupInfoExt extends PermissionGroupInfo implements UnitInformation {
 	public int sdk;
@@ -77,17 +77,17 @@ public class PermissionGroupInfoExt extends PermissionGroupInfo implements UnitI
 
 	@Override
 	public String getLabel() {
-    	return ApkInfoHelper.getResourceValue(getLabels(), RProp.S.PREFERRED_LANGUAGE.get());
+    	return ApkInfoHelper.getResourceValue(getLabels(), _RProp.S.PREFERRED_LANGUAGE.get());
     }
 
 	@Override
     public String getDescription() {
-    	return ApkInfoHelper.getResourceValue(getDescriptions(), RProp.S.PREFERRED_LANGUAGE.get());
+    	return ApkInfoHelper.getResourceValue(getDescriptions(), _RProp.S.PREFERRED_LANGUAGE.get());
     }
 
 	@Override
     public String getRequest() {
-    	return ApkInfoHelper.getResourceValue(getRequests(), RProp.S.PREFERRED_LANGUAGE.get());
+    	return ApkInfoHelper.getResourceValue(getRequests(), _RProp.S.PREFERRED_LANGUAGE.get());
     }
 
 	@Override

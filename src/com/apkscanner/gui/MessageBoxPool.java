@@ -5,7 +5,7 @@ import java.awt.Dimension;
 import java.util.HashMap;
 
 import com.apkscanner.resource.RStr;
-import com.apkspectrum.swing.tabbedpaneui.MessageBoxPane;
+import com.apkspectrum.swing.MessageBoxPane;
 
 public class MessageBoxPool {
 	public static final int MSG_NO_SUCH_APK_FILE = 1;

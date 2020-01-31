@@ -4,7 +4,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import com.apkspectrum.data.apkinfo.PermissionInfo;
-import com.apkspectrum.resource.RProp;
+import com.apkspectrum.resource._RProp;
 
 public class AxmlToXml
 {
@@ -13,11 +13,11 @@ public class AxmlToXml
 
 	public AxmlToXml(AaptNativeScanner resourceScanner) {
 		this.resourceScanner = resourceScanner;
-		isMultiLinePrint = RProp.B.PRINT_MULTILINE_ATTR.get();
-		RProp.addPropertyChangeListener(RProp.PRINT_MULTILINE_ATTR, new PropertyChangeListener() {
+		isMultiLinePrint = _RProp.B.PRINT_MULTILINE_ATTR.get();
+		_RProp.addPropertyChangeListener(_RProp.PRINT_MULTILINE_ATTR, new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				isMultiLinePrint = RProp.B.PRINT_MULTILINE_ATTR.get();
+				isMultiLinePrint = _RProp.B.PRINT_MULTILINE_ATTR.get();
 			}
 		});
 	}

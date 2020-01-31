@@ -27,8 +27,8 @@ import javax.swing.table.DefaultTableModel;
 
 import com.apkspectrum.plugin.PlugInConfig;
 import com.apkspectrum.plugin.PlugInPackage;
-import com.apkspectrum.resource.RStr;
-import com.apkspectrum.swing.tabbedpaneui.MessageBoxPane;
+import com.apkspectrum.resource._RStr;
+import com.apkspectrum.swing.MessageBoxPane;
 import com.apkspectrum.util.Log;
 
 public class ConfigurationsSettingPanel extends JPanel implements ActionListener {
@@ -48,11 +48,11 @@ public class ConfigurationsSettingPanel extends JPanel implements ActionListener
 	public ConfigurationsSettingPanel(PlugInPackage pluginPackage) {
 		setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
 
-		Border title = new TitledBorder(RStr.LABEL_PLUGIN_PACKAGE_CONFIG.get());
+		Border title = new TitledBorder(_RStr.LABEL_PLUGIN_PACKAGE_CONFIG.get());
 		Border padding = new EmptyBorder(5,5,5,5);
 		setBorder(new CompoundBorder(title, padding));
 
-		confListModel = new DefaultTableModel(new String[] { RStr.LABEL_KEY_NAME.get(), RStr.LABEL_KEY_VALUE.get() }, 0) {
+		confListModel = new DefaultTableModel(new String[] { _RStr.LABEL_KEY_NAME.get(), _RStr.LABEL_KEY_VALUE.get() }, 0) {
 			private static final long serialVersionUID = 3057965543770313319L;
 			@Override
 		    public boolean isCellEditable(int row, int column) {
@@ -66,17 +66,17 @@ public class ConfigurationsSettingPanel extends JPanel implements ActionListener
 		confList.getColumnModel().getColumn(1).setPreferredWidth(500);
 
 		JPanel ctrPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JButton btn = new JButton(RStr.BTN_ADD.get());
+		JButton btn = new JButton(_RStr.BTN_ADD.get());
 		btn.setActionCommand(ACT_CMD_ADD);
 		btn.addActionListener(this);
 		ctrPanel.add(btn);
 
-		btn = new JButton(RStr.BTN_EDIT.get());
+		btn = new JButton(_RStr.BTN_EDIT.get());
 		btn.setActionCommand(ACT_CMD_EDIT);
 		btn.addActionListener(this);
 		ctrPanel.add(btn);
 
-		btn = new JButton(RStr.BTN_DEL.get());
+		btn = new JButton(_RStr.BTN_DEL.get());
 		btn.setActionCommand(ACT_CMD_REMOVE);
 		btn.addActionListener(this);
 		ctrPanel.add(btn);
@@ -91,14 +91,14 @@ public class ConfigurationsSettingPanel extends JPanel implements ActionListener
 		GridBagConstraints gridHeadConst = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE,new Insets(5,5,5,5),0,0);
 		GridBagConstraints gridDataConst = new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.CENTER,GridBagConstraints.HORIZONTAL,new Insets(0,0,0,0),0,0);
 
-		confSetPane.add(new JLabel(RStr.LABEL_KEY_NAME.get() + ": "), gridHeadConst);
+		confSetPane.add(new JLabel(_RStr.LABEL_KEY_NAME.get() + ": "), gridHeadConst);
 		keyField = new JTextField(30);
         confSetPane.add(keyField, gridDataConst);
 
         gridHeadConst.gridy++;
         gridDataConst.gridy++;
 
-        confSetPane.add(new JLabel(RStr.LABEL_KEY_VALUE.get() + ": "), gridHeadConst);
+        confSetPane.add(new JLabel(_RStr.LABEL_KEY_VALUE.get() + ": "), gridHeadConst);
 		valueField = new JTextField(30);
         confSetPane.add(valueField, gridDataConst);
 
@@ -143,7 +143,7 @@ public class ConfigurationsSettingPanel extends JPanel implements ActionListener
 			Component parent = SwingUtilities.getWindowAncestor(this);
 			do {
 				repeat = false;
-				int ret = MessageBoxPane.showConfirmDialog(parent, confSetPane, RStr.TITLE_EDIT_CONFIG.get(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+				int ret = MessageBoxPane.showConfirmDialog(parent, confSetPane, _RStr.TITLE_EDIT_CONFIG.get(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 				if(ret == JOptionPane.OK_OPTION) {
 					String newKey = keyField.getText().trim();
 					String newValue = valueField.getText().trim();

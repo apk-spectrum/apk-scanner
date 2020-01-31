@@ -3,7 +3,7 @@ package com.apkspectrum.core.permissionmanager;
 import com.apkspectrum.data.apkinfo.ApkInfoHelper;
 import com.apkspectrum.data.apkinfo.PermissionInfo;
 import com.apkspectrum.data.apkinfo.ResourceInfo;
-import com.apkspectrum.resource.RStr;
+import com.apkspectrum.resource._RStr;
 
 public class PermissionInfoExt extends PermissionInfo implements UnitInformation {
 	public int sdk;
@@ -69,12 +69,12 @@ public class PermissionInfoExt extends PermissionInfo implements UnitInformation
 
 	@Override
 	public String getLabel() {
-    	return ApkInfoHelper.getResourceValue(getLabels(), RStr.getLanguage());
+    	return ApkInfoHelper.getResourceValue(getLabels(), _RStr.getLanguage());
     }
 
 	@Override
     public String getDescription() {
-    	return ApkInfoHelper.getResourceValue(getDescriptions(), RStr.getLanguage());
+    	return ApkInfoHelper.getResourceValue(getDescriptions(), _RStr.getLanguage());
     }
 
 	@Override

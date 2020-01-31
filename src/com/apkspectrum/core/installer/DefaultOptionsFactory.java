@@ -7,13 +7,13 @@ import com.android.ddmlib.AdbCommandRejectedException;
 import com.android.ddmlib.IDevice;
 import com.android.ddmlib.ShellCommandUnresponsiveException;
 import com.android.ddmlib.TimeoutException;
-import com.apkscanner.tool.adb.AdbDeviceHelper;
-import com.apkscanner.tool.adb.PackageInfo;
-import com.apkscanner.tool.adb.PackageManager;
-import com.apkscanner.tool.adb.SimpleOutputReceiver;
 import com.apkspectrum.core.signer.SignatureReport;
 import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.data.apkinfo.CompactApkInfo;
+import com.apkspectrum.tool.adb.AdbDeviceHelper;
+import com.apkspectrum.tool.adb.PackageInfo;
+import com.apkspectrum.tool.adb.PackageManager;
+import com.apkspectrum.tool.adb.SimpleOutputReceiver;
 import com.apkspectrum.util.Log;
 
 public class DefaultOptionsFactory {

@@ -32,7 +32,7 @@ import java.util.jar.JarFile;
 import com.android.apksig.ApkVerifier;
 import com.android.apksig.ApkVerifier.Result;
 import com.android.apksig.apk.ApkFormatException;
-import com.apkspectrum.resource.RStr;
+import com.apkspectrum.resource._RStr;
 import com.apkspectrum.util.Base64;
 import com.apkspectrum.util.Log;
 
@@ -168,7 +168,7 @@ public class SignatureReport {
 		}
 		jf.close();
 		if (ss.isEmpty() && certificates == null) {
-			Log.w(RStr.NOT_A_SINGED_JAR_FILE.get());
+			Log.w(_RStr.NOT_A_SINGED_JAR_FILE.get());
 		}
 		if(!certList.isEmpty()) {
 			certificates = certList.toArray(new X509Certificate[certList.size()]);
@@ -249,7 +249,7 @@ public class SignatureReport {
 
     private static String withWeak(PublicKey key) {
         //if (DISABLED_CHECK.permits(SIG_PRIMITIVE_SET, key)) {
-            return String.format(RStr.KEY_BIT.get(),
+            return String.format(_RStr.KEY_BIT.get(),
                     getKeySize(key), key.getAlgorithm());
         //} else {
         //    return String.format(RStr.KEY_BIT_WEAK.get(),
@@ -266,7 +266,7 @@ public class SignatureReport {
 		String pattern = null;
 		Object[] source = null;
 
-		pattern = RStr.PATTERN_PRINT_X509_CERT.get();
+		pattern = _RStr.PATTERN_PRINT_X509_CERT.get();
         PublicKey pkey = cert.getPublicKey();
         String sigName = cert.getSigAlgName();
         // No need to warn about sigalg of a trust anchor
@@ -539,7 +539,7 @@ public class SignatureReport {
 		}
 		if(timestamp != null) {
 			sb.append("\n");
-			sb.append(RStr.TIMESTAMP.get());
+			sb.append(_RStr.TIMESTAMP.get());
 			sb.append("\n");
 			for(X509Certificate cert: timestamp) {
 				sb.append(getReport(cert)).append("\n");

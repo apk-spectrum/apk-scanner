@@ -15,8 +15,8 @@ import com.apkspectrum.data.apkinfo.PermissionInfo;
 import com.apkspectrum.data.apkinfo.ResourceInfo;
 import com.apkspectrum.data.apkinfo.UsesPermissionInfo;
 import com.apkspectrum.data.apkinfo.UsesPermissionSdk23Info;
-import com.apkspectrum.resource.RFile;
-import com.apkspectrum.resource.RImg;
+import com.apkspectrum.resource._RFile;
+import com.apkspectrum.resource._RImg;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.XmlPath;
 
@@ -45,12 +45,12 @@ public class PermissionManager
 	private int targetSdkVersion = -1;
 
 	static {
-		String xmlPath = RFile.DATA_PERMISSIONS_HISTORY.getPath();
+		String xmlPath = _RFile.DATA_PERMISSIONS_HISTORY.getPath();
 		File xmlFile = new File(xmlPath);
 		if(xmlFile.canRead()) {
 			xmlPermissionDB = new XmlPath(xmlFile);
 		} else {
-			xmlPermissionDB = new XmlPath(RFile.RAW_PERMISSIONS_HISTORY.getResourceAsStream());
+			xmlPermissionDB = new XmlPath(_RFile.RAW_PERMISSIONS_HISTORY.getResourceAsStream());
 		}
 	}
 
@@ -533,7 +533,7 @@ public class PermissionManager
 		} else if(name.startsWith("@drawable/")) {
 			String id = name.substring(10);
 			String path = id;
-			URL url = RImg.valueOf(id.toUpperCase()).getURL();
+			URL url = _RImg.valueOf(id.toUpperCase()).getURL();
 			if(url != null) path = url.toString();
 			resVal = new ResourceInfo[] { new ResourceInfo(path, null) };
 		} else {

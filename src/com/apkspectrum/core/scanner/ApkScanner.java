@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import com.apkscanner.tool.adb.AdbWrapper;
 import com.apkspectrum.core.signer.SignatureReport;
 import com.apkspectrum.data.apkinfo.ApkInfo;
-import com.apkspectrum.resource.RConst;
-import com.apkspectrum.resource.RProp;
+import com.apkspectrum.resource._RConst;
+import com.apkspectrum.resource._RProp;
 import com.apkspectrum.tool.aapt.AaptNativeWrapper;
+import com.apkspectrum.tool.adb.AdbWrapper;
 import com.apkspectrum.util.ConsolCmd.ConsoleOutputObserver;
 import com.apkspectrum.util.FileUtil;
 import com.apkspectrum.util.Log;
@@ -100,7 +100,7 @@ abstract public class ApkScanner
 
 	public void openApk(final String apkFilePath)
 	{
-		openApk(apkFilePath, RProp.S.FRAMEWORK_RES.get());
+		openApk(apkFilePath, _RProp.S.FRAMEWORK_RES.get());
 	}
 
 	abstract public void openApk(final String apkFilePath, String frameworkRes);
@@ -117,7 +117,7 @@ abstract public class ApkScanner
 		tempApkFilePath = FileUtil.makeTempPath(tempApkFilePath)+".apk";
 
 		if(framework == null) {
-			framework = RProp.S.FRAMEWORK_RES.get();
+			framework = _RProp.S.FRAMEWORK_RES.get();
 		}
 
 		String frameworkRes = "";
@@ -193,10 +193,10 @@ abstract public class ApkScanner
 
 		apkInfo.signatureScheme = sr.getSignatureScheme();
 
-		if(sr.contains("MD5", RConst.SAMSUNG_KEY_MD5)) {
+		if(sr.contains("MD5", _RConst.SAMSUNG_KEY_MD5)) {
 			apkInfo.featureFlags |= ApkInfo.APP_FEATURE_SAMSUNG_SIGN;
 		}
-		if(sr.contains("MD5", RConst.SS_TEST_KEY_MD5)) {
+		if(sr.contains("MD5", _RConst.SS_TEST_KEY_MD5)) {
 			apkInfo.featureFlags |= ApkInfo.APP_FEATURE_PLATFORM_SIGN;
 		}
 
@@ -339,7 +339,7 @@ abstract public class ApkScanner
 	}
 
 	public static ApkScanner getInstance() {
-		return ApkScanner.getInstance(RProp.B.USE_EASY_UI.get()
+		return ApkScanner.getInstance(_RProp.B.USE_EASY_UI.get()
 				? ApkScanner.APKSCANNER_TYPE_AAPTLIGHT : ApkScanner.APKSCANNER_TYPE_AAPT);
 	}
 

@@ -32,7 +32,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
-import com.apkspectrum.resource.RImg;
+import com.apkspectrum.resource._RImg;
 
 public class ImageControlPanel extends JPanel implements ActionListener{
 	private static final long serialVersionUID = -391185152837196160L;
@@ -155,7 +155,7 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 	    scroll.getHorizontalScrollBar().addAdjustmentListener(
                 adjustmentListener);
 
-		imageBackground = RImg.RESOURCE_BACKGROUND.getImage();
+		imageBackground = _RImg.RESOURCE_BACKGROUND.getImage();
 
 	}
 
@@ -303,9 +303,9 @@ public class ImageControlPanel extends JPanel implements ActionListener{
 	public void actionPerformed(ActionEvent arg0) {
 		boolean isWhiteMono = arg0.getActionCommand().equals("White");
 		if(isWhiteMono) {
-			imageBackground = RImg.RESOURCE_BACKGROUND.getImage();
+			imageBackground = _RImg.RESOURCE_BACKGROUND.getImage();
 		} else {
-			imageBackground = RImg.RESOURCE_BACKGROUND_DARK.getImage();
+			imageBackground = _RImg.RESOURCE_BACKGROUND_DARK.getImage();
 		}
 		repaint();
 	}

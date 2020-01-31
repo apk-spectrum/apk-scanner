@@ -11,13 +11,13 @@ import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
 import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.apkscanner.resource.RProp;
-import com.apkscanner.tool.adb.AdbServerMonitor;
-import com.apkscanner.tool.adb.IPackageStateListener;
-import com.apkscanner.tool.adb.PackageInfo;
-import com.apkscanner.tool.adb.PackageManager;
-import com.apkscanner.tool.adb.AdbServerMonitor.IAdbDemonChangeListener;
 import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.data.apkinfo.ApkInfoHelper;
+import com.apkspectrum.tool.adb.AdbServerMonitor;
+import com.apkspectrum.tool.adb.IPackageStateListener;
+import com.apkspectrum.tool.adb.PackageInfo;
+import com.apkspectrum.tool.adb.PackageManager;
+import com.apkspectrum.tool.adb.AdbServerMonitor.IAdbDemonChangeListener;
 import com.apkspectrum.util.Log;
 
 class ToolBarManagement implements IDeviceChangeListener, IAdbDemonChangeListener, IPackageStateListener

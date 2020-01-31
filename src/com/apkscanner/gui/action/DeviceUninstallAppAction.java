@@ -10,10 +10,10 @@ import com.android.ddmlib.IDevice;
 import com.android.ddmlib.TimeoutException;
 import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.easymode.contents.EasyGuiDeviceToolPanel;
-import com.apkscanner.tool.adb.PackageInfo;
-import com.apkscanner.tool.adb.PackageManager;
 import com.apkspectrum.data.apkinfo.ApkInfo;
-import com.apkspectrum.swing.tabbedpaneui.MessageBoxPane;
+import com.apkspectrum.swing.MessageBoxPane;
+import com.apkspectrum.tool.adb.PackageInfo;
+import com.apkspectrum.tool.adb.PackageManager;
 import com.apkspectrum.util.Log;
 
 @SuppressWarnings("serial")

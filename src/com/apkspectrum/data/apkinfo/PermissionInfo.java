@@ -2,7 +2,7 @@ package com.apkspectrum.data.apkinfo;
 
 import java.util.Arrays;
 
-import com.apkspectrum.resource.RProp;
+import com.apkspectrum.resource._RProp;
 
 public class PermissionInfo
 {
@@ -285,10 +285,10 @@ public class PermissionInfo
     }
 
     public String getLabel() {
-    	return ApkInfoHelper.getResourceValue(labels, RProp.S.PREFERRED_LANGUAGE.get());
+    	return ApkInfoHelper.getResourceValue(labels, _RProp.S.PREFERRED_LANGUAGE.get());
     }
 
     public String getDescription() {
-    	return ApkInfoHelper.getResourceValue(descriptions, RProp.S.PREFERRED_LANGUAGE.get());
+    	return ApkInfoHelper.getResourceValue(descriptions, _RProp.S.PREFERRED_LANGUAGE.get());
     }
 }

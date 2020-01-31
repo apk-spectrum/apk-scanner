@@ -15,7 +15,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import com.apkspectrum.resource.RStr;
+import com.apkspectrum.resource._RStr;
 
 
 public class FileUtil
@@ -173,11 +173,11 @@ public class FileUtil
 		{
 			String unit = null;
 			switch(this) {
-			case BYTES: unit = RStr.FILE_SIZE_BYTES.get(); break;
-			case KB: unit = RStr.FILE_SIZE_KB.get(); break;
-			case MB: unit = RStr.FILE_SIZE_MB.get(); break;
-			case GB: unit = RStr.FILE_SIZE_GB.get(); break;
-			case TB: unit = RStr.FILE_SIZE_TB.get(); break;
+			case BYTES: unit = _RStr.FILE_SIZE_BYTES.get(); break;
+			case KB: unit = _RStr.FILE_SIZE_KB.get(); break;
+			case MB: unit = _RStr.FILE_SIZE_MB.get(); break;
+			case GB: unit = _RStr.FILE_SIZE_GB.get(); break;
+			case TB: unit = _RStr.FILE_SIZE_TB.get(); break;
 			default: break;
 			}
 			return unit;

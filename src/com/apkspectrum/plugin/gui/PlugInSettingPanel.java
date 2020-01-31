@@ -43,8 +43,8 @@ import com.apkspectrum.plugin.IPlugIn;
 import com.apkspectrum.plugin.PlugInGroup;
 import com.apkspectrum.plugin.PlugInManager;
 import com.apkspectrum.plugin.PlugInPackage;
-import com.apkspectrum.resource.RImg;
-import com.apkspectrum.resource.RStr;
+import com.apkspectrum.resource._RImg;
+import com.apkspectrum.resource._RStr;
 import com.apkspectrum.swing.ImageScaler;
 import com.apkspectrum.util.Log;
 
@@ -175,23 +175,23 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 					nodeText = (String)userObject;
 					switch((String)userObject) {
 					case TREE_NODE_NETWORK_SETTING:
-						nodeText = RStr.TREE_NODE_NETWORK.get();
-						nodeIcon = RImg.TREE_NETWORK_SETTING.getImageIcon(16, 16);
+						nodeText = _RStr.TREE_NODE_NETWORK.get();
+						nodeIcon = _RImg.TREE_NETWORK_SETTING.getImageIcon(16, 16);
 						break;
 					case TREE_NODE_CONFIGURATION_SETTING:
-						nodeText = RStr.TREE_NODE_CONFIGURATION.get();
-						nodeIcon = RImg.TREE_CONFIG_SETTING.getImageIcon(16, 16);
+						nodeText = _RStr.TREE_NODE_CONFIGURATION.get();
+						nodeIcon = _RImg.TREE_CONFIG_SETTING.getImageIcon(16, 16);
 						break;
 					case TREE_NODE_GLOBAL_SETTINGS:
-						nodeText = RStr.TREE_NODE_GLOBAL_SETTING.get();
-						nodeIcon = RImg.TREE_GLOBAL_SETTING.getImageIcon(16, 16);
+						nodeText = _RStr.TREE_NODE_GLOBAL_SETTING.get();
+						nodeIcon = _RImg.TREE_GLOBAL_SETTING.getImageIcon(16, 16);
 						break;
 					case TREE_NODE_TOP_PLUGINS:
-						nodeText = RStr.TREE_NODE_PLUGINS_TOP.get();
-						nodeIcon = RImg.APP_ICON.getImageIcon(16, 16);
+						nodeText = _RStr.TREE_NODE_PLUGINS_TOP.get();
+						nodeIcon = _RImg.APP_ICON.getImageIcon(16, 16);
 						break;
 					case TREE_NODE_NO_PLUGINS:
-						nodeText = RStr.TREE_NODE_NO_PLUGINS.get();
+						nodeText = _RStr.TREE_NODE_NO_PLUGINS.get();
 						break;
 					}
 				} else if(userObject instanceof IPlugIn) {
@@ -276,7 +276,7 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 		JPanel pluginTreePanel = new JPanel();
 		pluginTreePanel.setLayout(new BoxLayout(pluginTreePanel, BoxLayout.Y_AXIS));
 
-		Border title = new TitledBorder(RStr.LABEL_PLUGINS_SETTINGS.get());
+		Border title = new TitledBorder(_RStr.LABEL_PLUGINS_SETTINGS.get());
 		Border padding = new EmptyBorder(5,5,5,5);
 		pluginTreePanel.setBorder(new CompoundBorder(title, padding));
 
@@ -299,7 +299,7 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 		JPanel pluginDescPanel = new JPanel();
 		pluginDescPanel.setLayout(new BoxLayout(pluginDescPanel, BoxLayout.Y_AXIS));
 
-		JLabel label = new JLabel(RStr.LABEL_PLUGINS_DESCRIPTION.get());
+		JLabel label = new JLabel(_RStr.LABEL_PLUGINS_DESCRIPTION.get());
 		label.setAlignmentX(0);
 
 		description = new JTextArea();
@@ -446,13 +446,13 @@ public class PlugInSettingPanel extends JPanel implements TreeSelectionListener 
 				confSettingPanel.setPluginPackage((PlugInPackage) userObject);
 				break;
 			case TREE_NODE_GLOBAL_SETTINGS:
-				description.setText(RStr.TREE_NODE_GLOBAL_SETTING_DESC.get());
+				description.setText(_RStr.TREE_NODE_GLOBAL_SETTING_DESC.get());
 				break;
 			case TREE_NODE_TOP_PLUGINS:
-				description.setText(RStr.TREE_NODE_PLUGINS_TOP_DESC.get());
+				description.setText(_RStr.TREE_NODE_PLUGINS_TOP_DESC.get());
 				break;
 			case TREE_NODE_NO_PLUGINS:
-				description.setText(RStr.TREE_NODE_NO_PLUGINS_DESC.get());
+				description.setText(_RStr.TREE_NODE_NO_PLUGINS_DESC.get());
 				break;
 			default:
 				Log.v("Unknown string node : " + userObject);;

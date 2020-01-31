@@ -13,10 +13,10 @@ import javax.swing.ImageIcon;
 import javax.swing.filechooser.FileSystemView;
 
 import com.apkspectrum.jna.ProcessPathKernel32;
-import com.apkspectrum.resource.RFile;
-import com.apkspectrum.resource.RImg;
-import com.apkspectrum.resource.RProp;
-import com.apkspectrum.resource.RStr;
+import com.apkspectrum.resource._RFile;
+import com.apkspectrum.resource._RImg;
+import com.apkspectrum.resource._RProp;
+import com.apkspectrum.resource._RStr;
 import com.apkspectrum.swing.ImageScaler;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Advapi32Util;
@@ -131,7 +131,7 @@ public class SystemUtil
 		}
 
 		try {
-			String editor = RProp.S.EDITOR.get();
+			String editor = _RProp.S.EDITOR.get();
 			exec(new String[] { editor, file.getAbsolutePath() });
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -232,8 +232,8 @@ public class SystemUtil
 
 	public static void createShortCut() {
 		if(isWindows()) {
-			String filePath = RFile.ETC_APKSCANNER_EXE.getPath();
-			String lnkPath = System.getProperty("user.home") + File.separator + "Desktop" + File.separator + RStr.APP_NAME.get() + ".lnk";
+			String filePath = _RFile.ETC_APKSCANNER_EXE.getPath();
+			String lnkPath = System.getProperty("user.home") + File.separator + "Desktop" + File.separator + _RStr.APP_NAME.get() + ".lnk";
 			try {
 				ShellLink.createLink(filePath, lnkPath);
 			} catch (IOException e1) {
@@ -246,8 +246,8 @@ public class SystemUtil
 
 	public static boolean hasShortCut() {
 		if(isWindows()) {
-			String filePath = RFile.ETC_APKSCANNER_EXE.getPath();
-			String lnkPath = System.getProperty("user.home") + File.separator + "Desktop" + File.separator + RStr.APP_NAME.get() + ".lnk";
+			String filePath = _RFile.ETC_APKSCANNER_EXE.getPath();
+			String lnkPath = System.getProperty("user.home") + File.separator + "Desktop" + File.separator + _RStr.APP_NAME.get() + ".lnk";
 
 			if(!new File(lnkPath).exists()) {
 				return false;
@@ -292,7 +292,7 @@ public class SystemUtil
 		if(!isWindows()) {
 			return true;
 		}
-		String filePath = RFile.ETC_APKSCANNER_EXE.getPath();
+		String filePath = _RFile.ETC_APKSCANNER_EXE.getPath();
 		String cmd = null;
 		try {
 			cmd = getOpenCommand(suffix);
@@ -328,7 +328,7 @@ public class SystemUtil
 			return false;
 		}
 
-		String filePath = RFile.ETC_APKSCANNER_EXE.getPath();
+		String filePath = _RFile.ETC_APKSCANNER_EXE.getPath();
 		return cmd.startsWith(filePath);
 	}
 
@@ -336,7 +336,7 @@ public class SystemUtil
 		if(isAssociatedWithFileType(suffix)) {
 			return true;
 		}
-		String filePath = RFile.ETC_APKSCANNER_EXE.getPath();
+		String filePath = _RFile.ETC_APKSCANNER_EXE.getPath();
 		String prefixKey = "ApkScanner"+suffix;
 		try {
 			synchronized(lock) {
@@ -374,7 +374,7 @@ public class SystemUtil
 		if(isAssociatedWithFileType(suffix)) {
 			return true;
 		}
-		String filePath = RFile.ETC_APKSCANNER_EXE.getPath();
+		String filePath = _RFile.ETC_APKSCANNER_EXE.getPath();
 		ConsolCmd.exec(new String[][] {
 			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\CLSID", "/ve", "/t", "REG_SZ", "/d", "{E88DCCE0-B7B3-11d1-A9F0-00AA0060FA31}", "/f" },
 			{"cmd", "/c", "reg", "add", "HKCR\\ApkScanner"+suffix+"\\DefaultIcon", "/ve", "/t", "REG_SZ", "/d", filePath+",1", "/f" },
@@ -516,7 +516,7 @@ public class SystemUtil
 		//Log.v("getIcon " + suffix);
 		Image tempImage = null;
 		if (FOLDER_ICON.equals(suffix)) {
-			tempImage = ImageScaler.getScaledImage(RImg.TREE_FOLDER.getImageIcon(), 16, 16);
+			tempImage = ImageScaler.getScaledImage(_RImg.TREE_FOLDER.getImageIcon(), 16, 16);
 			/*
 			 * UIDefaults defaults = UIManager.getDefaults( ); Icon
 			 * computerIcon = defaults.getIcon( "FileView.computerIcon"
@@ -530,14 +530,14 @@ public class SystemUtil
 			 * icon = folderIcon;
 			 */
 		} else if (".xml".equals(suffix)) {
-			tempImage = ImageScaler.getScaledImage(RImg.RESOURCE_TREE_XML.getImageIcon(), 16, 16);
+			tempImage = ImageScaler.getScaledImage(_RImg.RESOURCE_TREE_XML.getImageIcon(), 16, 16);
 			// } else if(".qmg".equals(suffix)) {
 			// tempImage =
 			// ImageScaler.getScaledImage(RImg.QMG_IMAGE_ICON.getImageIcon(),32,32);
 		} else if (".dex".equals(suffix)) {
-			icon = RImg.RESOURCE_TREE_CODE.getImageIcon();
+			icon = _RImg.RESOURCE_TREE_CODE.getImageIcon();
 		} else if (".arsc".equals(suffix)) {
-			icon = RImg.RESOURCE_TREE_ARSC.getImageIcon();
+			icon = _RImg.RESOURCE_TREE_ARSC.getImageIcon();
 		} else {
 			try {
 				File file = File.createTempFile("icon", suffix);

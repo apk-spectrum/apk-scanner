@@ -28,7 +28,7 @@ import com.apkspectrum.plugin.IUpdateChecker;
 import com.apkspectrum.plugin.NetworkException;
 import com.apkspectrum.plugin.PlugInManager;
 import com.apkspectrum.plugin.PlugInPackage;
-import com.apkspectrum.resource.RStr;
+import com.apkspectrum.resource._RStr;
 import com.apkspectrum.util.Log;
 
 public class UpdateNotificationPanel extends JPanel implements ListSelectionListener, ActionListener
@@ -48,14 +48,14 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setBorder(new EmptyBorder(5,5,5,5));
 
-		add(new JLabel(RStr.LABEL_UPDATE_LIST.get()));
+		add(new JLabel(_RStr.LABEL_UPDATE_LIST.get()));
 
 		updateListModel = new DefaultTableModel(new String[] {
-				RStr.COLUMN_NAME.get(),
-				RStr.COLUMN_PACKAGE.get(),
-				RStr.COLUMN_THIS_VERSION.get(),
-				RStr.COLUMN_NEW_VERSION.get(),
-				RStr.COLUMN_LAST_CHECKED_DATE.get() }, 0) {
+				_RStr.COLUMN_NAME.get(),
+				_RStr.COLUMN_PACKAGE.get(),
+				_RStr.COLUMN_THIS_VERSION.get(),
+				_RStr.COLUMN_NEW_VERSION.get(),
+				_RStr.COLUMN_LAST_CHECKED_DATE.get() }, 0) {
 			private static final long serialVersionUID = 3925202106037646345L;
 			private ArrayList<Object[]> dataList = new ArrayList<>();
 
@@ -91,7 +91,7 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 		certListPanel.setAlignmentX(0.0f);
 		add(certListPanel);
 
-		add(new JLabel(RStr.LABEL_DESCRIPTION.get()));
+		add(new JLabel(_RStr.LABEL_DESCRIPTION.get()));
 
 		updateDescription = new JTextArea();
 		updateDescription.setEditable(false);
@@ -101,12 +101,12 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 
 		add(updateDescPanel);
 
-		btnLaunch = new JButton(RStr.BTN_CHOOSE_UPDATE.get());
+		btnLaunch = new JButton(_RStr.BTN_CHOOSE_UPDATE.get());
 		btnLaunch.setActionCommand(ACT_CMD_LAUNCH);
 		btnLaunch.addActionListener(this);
 		btnLaunch.setEnabled(false);
 
-		btnCheckUpdate = new JButton(RStr.BTN_CHECK_UPDATE.get());
+		btnCheckUpdate = new JButton(_RStr.BTN_CHECK_UPDATE.get());
 		btnCheckUpdate.setActionCommand(ACT_CMD_CHECK_UPDATE);
 		btnCheckUpdate.addActionListener(this);
 		btnCheckUpdate.setEnabled(false);
@@ -139,8 +139,8 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 		String curVer = "";
 
 		if("com.apkscanner".equals(target)) {
-			label = RStr.APP_NAME.get();
-			curVer = RStr.APP_VERSION.get();
+			label = _RStr.APP_NAME.get();
+			curVer = _RStr.APP_VERSION.get();
 		} else {
 			PlugInPackage pack = PlugInManager.getPlugInPackage(target);
 			label = pack.getLabel();
@@ -164,7 +164,7 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 			Log.v(rawData.toString());
 		}
 		if(desc == null) {
-			desc = RStr.MSG_NO_UPDATE_INFO.get();
+			desc = _RStr.MSG_NO_UPDATE_INFO.get();
 		}
 
 		String checkDate = "";
@@ -253,25 +253,25 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 			if(plugin.hasNewVersion()) {
 				switch(plugin.getLaunchType()) {
 				case IUpdateChecker.TYPE_LAUNCH_OPEN_LINK:
-					btnLaunch.setText(RStr.BTN_GO_TO_WEBSITE.get());
+					btnLaunch.setText(_RStr.BTN_GO_TO_WEBSITE.get());
 					break;
 				case IUpdateChecker.TYPE_LAUNCH_DIRECT_UPDATE:
-					btnLaunch.setText(RStr.BTN_UPDATE.get());
+					btnLaunch.setText(_RStr.BTN_UPDATE.get());
 					break;
 				case IUpdateChecker.TYPE_LAUNCH_DOWNLOAD:
-					btnLaunch.setText(RStr.BTN_DOWNLOAD.get());
+					btnLaunch.setText(_RStr.BTN_DOWNLOAD.get());
 					break;
 				}
 				btnLaunch.setEnabled(true);
 			} else {
 				switch(plugin.getLaunchType()) {
 				case IUpdateChecker.TYPE_LAUNCH_OPEN_LINK:
-					btnLaunch.setText(RStr.BTN_GO_TO_WEBSITE.get());
+					btnLaunch.setText(_RStr.BTN_GO_TO_WEBSITE.get());
 					btnLaunch.setEnabled(true);
 					break;
 				case IUpdateChecker.TYPE_LAUNCH_DIRECT_UPDATE:
 				case IUpdateChecker.TYPE_LAUNCH_DOWNLOAD:
-					btnLaunch.setText(RStr.BTN_NO_UPDATED.get());
+					btnLaunch.setText(_RStr.BTN_NO_UPDATED.get());
 					btnLaunch.setEnabled(false);
 					break;
 				}
@@ -279,7 +279,7 @@ public class UpdateNotificationPanel extends JPanel implements ListSelectionList
 			btnCheckUpdate.setEnabled(true);
 		} else {
 			updateDescription.setText("");
-			btnLaunch.setText(RStr.BTN_CHOOSE_UPDATE.get());
+			btnLaunch.setText(_RStr.BTN_CHOOSE_UPDATE.get());
 			btnLaunch.setEnabled(false);
 			btnCheckUpdate.setEnabled(false);
 		}

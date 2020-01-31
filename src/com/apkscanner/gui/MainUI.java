@@ -10,7 +10,6 @@ import java.util.Enumeration;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
-import com.apkscanner.resource.LanguageChangeListener;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
@@ -19,6 +18,7 @@ import com.apkspectrum.core.scanner.ApkScanner;
 import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.plugin.IPlugInEventListener;
 import com.apkspectrum.plugin.PlugInManager;
+import com.apkspectrum.resource.LanguageChangeListener;
 import com.apkspectrum.swing.WindowSizeMemorizer;
 import com.apkspectrum.util.Log;
 

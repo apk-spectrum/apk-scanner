@@ -7,9 +7,9 @@ import java.awt.event.ActionEvent;
 import com.android.ddmlib.IDevice;
 import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.easymode.contents.EasyGuiDeviceToolPanel;
-import com.apkscanner.tool.adb.PackageInfo;
-import com.apkscanner.tool.adb.PackageManager;
 import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.tool.adb.PackageInfo;
+import com.apkspectrum.tool.adb.PackageManager;
 import com.apkspectrum.util.Log;
 
 @SuppressWarnings("serial")

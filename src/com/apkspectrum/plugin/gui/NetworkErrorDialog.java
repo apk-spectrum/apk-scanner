@@ -8,8 +8,8 @@ import com.apkspectrum.plugin.IUpdateChecker;
 import com.apkspectrum.plugin.NetworkException;
 import com.apkspectrum.plugin.PlugInConfig;
 import com.apkspectrum.plugin.PlugInManager;
-import com.apkspectrum.resource.RStr;
-import com.apkspectrum.swing.tabbedpaneui.MessageBoxPane;
+import com.apkspectrum.resource._RStr;
+import com.apkspectrum.swing.MessageBoxPane;
 import com.apkspectrum.util.Log;
 
 public class NetworkErrorDialog
@@ -47,8 +47,8 @@ public class NetworkErrorDialog
 			if(!force && "true".equals(config.getConfiguration(IGNORE_NO_SUCHE_INTERFACE)))
 				return RESULT_IGNORED;
 
-			errPanel.setText(RStr.MSG_NO_SUCH_NETWORK.get());
-			ret = showOptionDialog(parent, errPanel, RStr.TITLE_NO_SUCH_NETWORK.get());
+			errPanel.setText(_RStr.MSG_NO_SUCH_NETWORK.get());
+			ret = showOptionDialog(parent, errPanel, _RStr.TITLE_NO_SUCH_NETWORK.get());
 
 			if(!force) config.setConfiguration(IGNORE_NO_SUCHE_INTERFACE, errPanel.isNeverLook() ? "true" : "false");
 			PlugInManager.saveProperty();
@@ -56,9 +56,9 @@ public class NetworkErrorDialog
 			if(!force && "true".equals(config.getConfiguration(IGNORE_TIME_OUT)))
 				return RESULT_IGNORED;
 
-			errPanel.setText(String.format(RStr.MSG_FAILURE_PROXY_ERROR.get(), pluginName));
+			errPanel.setText(String.format(_RStr.MSG_FAILURE_PROXY_ERROR.get(), pluginName));
 			errPanel.add(new NetworkProxySettingPanel(plugin.getPlugInPackage()));
-			ret = showOptionDialog(parent, errPanel, RStr.TITLE_NETWORK_TIMEOUT.get());
+			ret = showOptionDialog(parent, errPanel, _RStr.TITLE_NETWORK_TIMEOUT.get());
 
 			if(!force) config.setConfiguration(IGNORE_TIME_OUT, errPanel.isNeverLook() ? "true" : "false");
 			PlugInManager.saveProperty();
@@ -67,9 +67,9 @@ public class NetworkErrorDialog
 			if(!force && "true".equals(config.getConfiguration(IGNORE_SSH_HANDSHAKE)))
 				return RESULT_IGNORED;
 
-			errPanel.setText(String.format(RStr.MSG_FAILURE_SSL_ERROR.get(), pluginName));
+			errPanel.setText(String.format(_RStr.MSG_FAILURE_SSL_ERROR.get(), pluginName));
 			errPanel.add(new NetworkTruststoreSettingPanel(plugin.getPlugInPackage()));
-			ret = showOptionDialog(parent, errPanel, RStr.TITLE_SSL_EXCEPTION.get());
+			ret = showOptionDialog(parent, errPanel, _RStr.TITLE_SSL_EXCEPTION.get());
 
 			if(!force) config.setConfiguration(IGNORE_SSH_HANDSHAKE, errPanel.isNeverLook() ? "true" : "false");
 			PlugInManager.saveProperty();
@@ -84,7 +84,7 @@ public class NetworkErrorDialog
 	private static int showOptionDialog(Component parentComponent, Object context, String title) {
 		return MessageBoxPane.showOptionDialog(parentComponent, context, title, JOptionPane.DEFAULT_OPTION,
 				MessageBoxPane.ERROR_MESSAGE, null,
-				new String[] { RStr.BTN_RETRY.get(),  RStr.BTN_CLOSE.get() },
-				RStr.BTN_CLOSE.get());
+				new String[] { _RStr.BTN_RETRY.get(),  _RStr.BTN_CLOSE.get() },
+				_RStr.BTN_CLOSE.get());
 	}
 }

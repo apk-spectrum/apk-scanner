@@ -26,7 +26,7 @@ import javax.swing.border.TitledBorder;
 
 import com.apkspectrum.plugin.PlugInConfig;
 import com.apkspectrum.plugin.PlugInPackage;
-import com.apkspectrum.resource.RStr;
+import com.apkspectrum.resource._RStr;
 
 public class NetworkProxySettingPanel extends JPanel implements ActionListener
 {
@@ -51,16 +51,16 @@ public class NetworkProxySettingPanel extends JPanel implements ActionListener
 		setOpaque(false);
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-		Border title = new TitledBorder(RStr.LABEL_PROXY_SETTING.get());
+		Border title = new TitledBorder(_RStr.LABEL_PROXY_SETTING.get());
 		Border padding = new EmptyBorder(5,5,5,5);
 		setBorder(new CompoundBorder(title, padding));
 
 		String[] proxyMethods = new String[] {
-			RStr.PROXY_MENU_NO_PROXY.get(),
-			RStr.PROXY_MENU_GLOBAL.get(),
-			RStr.PROXY_MENU_SYSTEM.get(),
-			RStr.PROXY_MENU_PAC_SCRIPT.get(),
-			RStr.PROXY_MENU_MANUAL.get()
+			_RStr.PROXY_MENU_NO_PROXY.get(),
+			_RStr.PROXY_MENU_GLOBAL.get(),
+			_RStr.PROXY_MENU_SYSTEM.get(),
+			_RStr.PROXY_MENU_PAC_SCRIPT.get(),
+			_RStr.PROXY_MENU_MANUAL.get()
 		};
 		methodCardMap = new HashMap<>(proxyMethods.length);
 		methodCardMap.put(proxyMethods[0], CARD_NO_PROXY);
@@ -122,7 +122,7 @@ public class NetworkProxySettingPanel extends JPanel implements ActionListener
 
 		add(Box.createRigidArea(new Dimension(0,5)));
 
-		JButton applyBtn = new JButton(RStr.BTN_APPLY.get());
+		JButton applyBtn = new JButton(_RStr.BTN_APPLY.get());
 		applyBtn.setAlignmentX(1.0f);
 		applyBtn.setActionCommand(ACT_CMD_APPLY);
 		applyBtn.addActionListener(this);
@@ -186,7 +186,7 @@ public class NetworkProxySettingPanel extends JPanel implements ActionListener
 		JPanel pacFilds = new JPanel();
 		pacFilds.setLayout(new BoxLayout(pacFilds, BoxLayout.Y_AXIS));
 		pacFilds.add(Box.createRigidArea(new Dimension(0,10)));
-		pacFilds.add(new JLabel(RStr.LABEL_PAC_SCRIPT_URL.get()));
+		pacFilds.add(new JLabel(_RStr.LABEL_PAC_SCRIPT_URL.get()));
 		pacFilds.add(Box.createRigidArea(new Dimension(0,5)));
 		pacFilds.add(pacUrl = new JTextField());
 		return pacFilds;
@@ -198,7 +198,7 @@ public class NetworkProxySettingPanel extends JPanel implements ActionListener
 		if(pluginPackage == null && scannerIdx > -1) {
 			methods.removeItemAt(scannerIdx);
 		} else if(pluginPackage != null && scannerIdx == -1) {
-			methods.insertItemAt(RStr.PROXY_MENU_GLOBAL.get(), 1);
+			methods.insertItemAt(_RStr.PROXY_MENU_GLOBAL.get(), 1);
 		}
 
 		boolean useGlobalConfig = "true".equals(pluginConfig.getConfiguration(PlugInConfig.CONFIG_USE_GLOBAL_PROXIES, "true"));

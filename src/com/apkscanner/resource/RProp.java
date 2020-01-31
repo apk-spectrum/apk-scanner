@@ -14,6 +14,8 @@ import javax.swing.UIManager;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import com.apkspectrum.resource.ResProp;
+import com.apkspectrum.resource.ResString;
 import com.apkspectrum.swing.tabbedpaneui.TabbedPaneUIManager;
 import com.apkspectrum.util.SystemUtil;
 

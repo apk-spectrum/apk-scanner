@@ -8,7 +8,7 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.apkspectrum.resource.RFile;
+import com.apkspectrum.resource._RFile;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.XmlPath;
 
@@ -297,7 +297,7 @@ public class AaptXmlTreePath
 	private String getAttrName(String id)
 	{
 		if(attrIdPath == null) {
-			try(InputStream xml = RFile.RAW_PUBLIC_XML.getResourceAsStream()) {
+			try(InputStream xml = _RFile.RAW_PUBLIC_XML.getResourceAsStream()) {
 				if(xml != null) attrIdPath = new XmlPath(xml);
 			} catch (IOException e) { }
 		}

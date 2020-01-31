@@ -2,7 +2,7 @@ package com.apkspectrum.core.installer;
 
 import java.util.ArrayList;
 
-import com.apkspectrum.resource.RProp;
+import com.apkspectrum.resource._RProp;
 import com.apkspectrum.util.Log;
 
 public class OptionsBundle {
@@ -260,7 +260,7 @@ public class OptionsBundle {
 
 	public synchronized void clear() {
 		flag = FLAG_OPT_INSTALL | FLAG_OPT_INSTALL_REPLACE | FLAG_OPT_INSTALL_DOWNGRADE;
-		if(RProp.B.LAUNCH_AF_INSTALLED.get()) {
+		if(_RProp.B.LAUNCH_AF_INSTALLED.get()) {
 			flag |= FLAG_OPT_INSTALL_LAUNCH;
 		}
 

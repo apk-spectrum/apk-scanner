@@ -19,7 +19,7 @@ import com.apkspectrum.plugin.PlugInManager;
 import com.apkspectrum.plugin.gui.UpdateNotificationPanel;
 import com.apkspectrum.swing.HtmlEditorPane;
 import com.apkspectrum.swing.ImagePanel;
-import com.apkspectrum.swing.tabbedpaneui.MessageBoxPane;
+import com.apkspectrum.swing.MessageBoxPane;
 import com.apkspectrum.swing.tabbedpaneui.TabbedPaneUIManager;
 
 public class AboutDlg /*extends JDialog*/

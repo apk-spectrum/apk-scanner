@@ -7,7 +7,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import com.apkscanner.resource.RStr;
-import com.apkspectrum.swing.tabbedpaneui.MessageBoxPane;
+import com.apkspectrum.swing.MessageBoxPane;
 import com.apkspectrum.util.Log;
 
 public class LogDlg

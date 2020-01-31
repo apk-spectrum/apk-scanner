@@ -3,7 +3,7 @@ package com.apkspectrum.tool.aapt;
 import java.io.File;
 import java.util.ArrayList;
 
-import com.apkspectrum.resource.RFile;
+import com.apkspectrum.resource._RFile;
 import com.apkspectrum.util.ConsolCmd;
 import com.apkspectrum.util.Log;
 
@@ -107,7 +107,7 @@ public class AaptWrapper
 		synchronized(initSync) {
 			cmd = aaptCmd;
 			if(cmd == null) {
-				cmd = RFile.BIN_AAPT.get();
+				cmd = _RFile.BIN_AAPT.get();
 
 				if(!(new File(cmd)).exists()) {
 					Log.e("no such aapt tool" + aaptCmd);

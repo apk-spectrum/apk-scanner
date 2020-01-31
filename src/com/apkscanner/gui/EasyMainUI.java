@@ -13,8 +13,8 @@ import com.apkscanner.gui.easymode.core.ToolEntryManager;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.tool.adb.AdbServerMonitor;
 import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.tool.adb.AdbServerMonitor;
 import com.apkspectrum.util.Log;
 
 public class EasyMainUI extends JFrame implements IDeviceChangeListener {

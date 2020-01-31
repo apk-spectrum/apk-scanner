@@ -41,9 +41,6 @@ import com.apkscanner.gui.dialog.PackageInfoPanel;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.tool.adb.AdbServerMonitor;
-import com.apkscanner.tool.adb.PackageInfo;
-import com.apkscanner.tool.adb.PackageManager;
 import com.apkspectrum.core.installer.ApkInstaller;
 import com.apkspectrum.core.installer.DefaultOptionsFactory;
 import com.apkspectrum.core.installer.OptionsBundle;
@@ -53,6 +50,9 @@ import com.apkspectrum.core.signer.SignatureReport;
 import com.apkspectrum.data.apkinfo.CompactApkInfo;
 import com.apkspectrum.swing.KeyStrokeAction;
 import com.apkspectrum.swing.WindowSizeMemorizer;
+import com.apkspectrum.tool.adb.AdbServerMonitor;
+import com.apkspectrum.tool.adb.PackageInfo;
+import com.apkspectrum.tool.adb.PackageManager;
 import com.apkspectrum.util.Log;
 
 public class ApkInstallWizard implements IDeviceChangeListener

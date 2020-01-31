@@ -2,7 +2,7 @@ package com.apkspectrum.data.apkinfo;
 
 import java.util.Arrays;
 
-import com.apkspectrum.resource.RStr;
+import com.apkspectrum.resource._RStr;
 
 public class PermissionGroupInfo
 {
@@ -38,14 +38,14 @@ public class PermissionGroupInfo
 	}
 
     public String getLabel() {
-    	return ApkInfoHelper.getResourceValue(labels, RStr.getLanguage());
+    	return ApkInfoHelper.getResourceValue(labels, _RStr.getLanguage());
     }
 
     public String getDescription() {
-    	return ApkInfoHelper.getResourceValue(descriptions, RStr.getLanguage());
+    	return ApkInfoHelper.getResourceValue(descriptions, _RStr.getLanguage());
     }
 
     public String getRequest() {
-    	return ApkInfoHelper.getResourceValue(requests, RStr.getLanguage());
+    	return ApkInfoHelper.getResourceValue(requests, _RStr.getLanguage());
     }
 }

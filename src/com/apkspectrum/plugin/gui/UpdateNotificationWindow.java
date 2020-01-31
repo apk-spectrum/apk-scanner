@@ -20,8 +20,8 @@ import javax.swing.border.EmptyBorder;
 import com.apkspectrum.plugin.IUpdateChecker;
 import com.apkspectrum.plugin.PlugInConfig;
 import com.apkspectrum.plugin.PlugInManager;
-import com.apkspectrum.resource.RImg;
-import com.apkspectrum.resource.RStr;
+import com.apkspectrum.resource._RImg;
+import com.apkspectrum.resource._RStr;
 import com.apkspectrum.swing.KeyStrokeAction;
 import com.apkspectrum.swing.WindowSizeMemorizer;
 
@@ -37,8 +37,8 @@ public class UpdateNotificationWindow extends JFrame implements ActionListener
 	private JCheckBox ckbNaver;
 
 	private UpdateNotificationWindow(Component parent) {
-		setTitle(RStr.TITLE_UPDATE_LIST.get());
-		setIconImage(RImg.APP_ICON.getImage());
+		setTitle(_RStr.TITLE_UPDATE_LIST.get());
+		setIconImage(_RImg.APP_ICON.getImage());
 		setResizable(true);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -49,10 +49,10 @@ public class UpdateNotificationWindow extends JFrame implements ActionListener
 		ctrPanel.setLayout(ctrLayout);
 		ctrPanel.setBorder(new EmptyBorder(5,5,5,5));
 
-		ckbNaver = new JCheckBox(RStr.LABEL_DO_NOT_LOOK_AGAIN.get());
+		ckbNaver = new JCheckBox(_RStr.LABEL_DO_NOT_LOOK_AGAIN.get());
 		ctrPanel.add(ckbNaver);
 
-		JButton btnClose = new JButton(RStr.BTN_CLOSE.get());
+		JButton btnClose = new JButton(_RStr.BTN_CLOSE.get());
 		btnClose.setActionCommand(ACT_CMD_CLOSE);
 		btnClose.addActionListener(this);
 

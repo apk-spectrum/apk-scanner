@@ -3,7 +3,7 @@ package com.apkspectrum.tool.aapt;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
-import com.apkspectrum.resource.RFile;
+import com.apkspectrum.resource._RFile;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 
@@ -120,7 +120,7 @@ public class AaptNativeWrapper {
 
 	static {
 		String arch = System.getProperty("sun.arch.data.model");
-		String libPath = RFile.BIN_PATH.get();
+		String libPath = _RFile.BIN_PATH.get();
 		if(SystemUtil.isWindows()) {
 			System.load(libPath + "windows\\AaptNativeWrapper" + arch + ".dll");
 		} else if (SystemUtil.isLinux()){

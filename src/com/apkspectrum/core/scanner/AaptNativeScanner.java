@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.concurrent.Semaphore;
 
 import com.apkspectrum.data.apkinfo.ResourceInfo;
-import com.apkspectrum.resource.RFile;
+import com.apkspectrum.resource._RFile;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 
@@ -55,11 +55,11 @@ public class AaptNativeScanner extends ApkScanner
 
 			if(!wasSetFrameworkRes) {
 				Log.i("INFO: Didn't set the package of resources. so, set package of the default resources.");
-				String selfPath = RFile.RAW_ANDROID_MANIFEST.getPath();
+				String selfPath = _RFile.RAW_ANDROID_MANIFEST.getPath();
 				if(selfPath.startsWith("jar:")) {
 					selfPath = selfPath.replaceAll("jar:file:(.*)!/AndroidManifest.xml", "$1");
 				} else {
-					selfPath = RFile.RAW_ROOT_PATH.getURL().getPath();
+					selfPath = _RFile.RAW_ROOT_PATH.getURL().getPath();
 				}
 
 				File jarFile = new File(selfPath);
@@ -220,7 +220,7 @@ public class AaptNativeScanner extends ApkScanner
 
 	static {
 		String arch = System.getProperty("sun.arch.data.model");
-		String libPath = RFile.BIN_PATH.get();
+		String libPath = _RFile.BIN_PATH.get();
 		if(SystemUtil.isWindows()) {
 			Log.e(libPath + "windows\\AaptNativeWrapper" + arch + ".dll");
 			System.load(libPath + "windows\\AaptNativeWrapper" + arch + ".dll");

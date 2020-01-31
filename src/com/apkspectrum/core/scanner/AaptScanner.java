@@ -8,7 +8,7 @@ import org.json.simple.parser.ParseException;
 
 import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.data.apkinfo.ResourceInfo;
-import com.apkspectrum.resource.RImg;
+import com.apkspectrum.resource._RImg;
 import com.apkspectrum.tool.aapt.AaptNativeWrapper;
 import com.apkspectrum.util.FileUtil;
 import com.apkspectrum.util.Launcher;
@@ -180,9 +180,9 @@ public class AaptScanner extends ApkScanner
 			String jarPath = "jar:" + new File(apkInfo.filePath).toURI() + "!/";
 			for(ResourceInfo r: icons) {
 				if(r.name == null) {
-					r.name = RImg.DEF_APP_ICON.getPath();
+					r.name = _RImg.DEF_APP_ICON.getPath();
 				} else if(r.name.endsWith(".qmg")) {
-					r.name = RImg.QMG_IMAGE_ICON.getPath();
+					r.name = _RImg.QMG_IMAGE_ICON.getPath();
 				} else if(r.name.endsWith(".xml")) {
 					Log.w("image resource is xml : " + r.name);
 					String[] iconXml = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath, new String[] { r.name });
@@ -192,7 +192,7 @@ public class AaptScanner extends ApkScanner
 					if(iconNode != null) {
 						icons = manifestReader.getAttrResourceValues(iconNode, ":drawable", iconXmlPath.getAndroidNamespaceTag());
 						if(icons == null || icons.length == 0) {
-							icons = new ResourceInfo[] { new ResourceInfo(RImg.DEF_APP_ICON.getPath()) };
+							icons = new ResourceInfo[] { new ResourceInfo(_RImg.DEF_APP_ICON.getPath()) };
 						} else {
 							for(ResourceInfo r2: icons) {
 								r2.name = jarPath + URITool.encodeURI(r2.name);
@@ -204,7 +204,7 @@ public class AaptScanner extends ApkScanner
 				}
 			}
 		} else {
-			icons = new ResourceInfo[] { new ResourceInfo(RImg.DEF_APP_ICON.getPath()) };
+			icons = new ResourceInfo[] { new ResourceInfo(_RImg.DEF_APP_ICON.getPath()) };
 		}
 		return icons;
 	}
