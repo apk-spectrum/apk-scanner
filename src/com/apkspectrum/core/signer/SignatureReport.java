@@ -9,7 +9,6 @@ import java.io.PrintStream;
 import java.security.CodeSigner;
 import java.security.Key;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.Timestamp;
 import java.security.cert.Certificate;
@@ -29,9 +28,6 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import com.android.apksig.ApkVerifier;
-import com.android.apksig.ApkVerifier.Result;
-import com.android.apksig.apk.ApkFormatException;
 import com.apkspectrum.resource._RStr;
 import com.apkspectrum.util.Base64;
 import com.apkspectrum.util.Log;
@@ -45,9 +41,9 @@ public class SignatureReport {
 	public static final String SIGNATURE_SCHEME_V2 = "v2";
 	public static final String SIGNATURE_SCHEME_V3 = "v3";
 
-	private X509Certificate[] certificates;
-	private X509Certificate[] timestamp;
-	private String signScheme;
+	protected X509Certificate[] certificates;
+	protected X509Certificate[] timestamp;
+	protected String signScheme;
 
     //private static final DisabledAlgorithmConstraints DISABLED_CHECK =
     //        new DisabledAlgorithmConstraints(
@@ -56,7 +52,7 @@ public class SignatureReport {
     //private static final Set<CryptoPrimitive> SIG_PRIMITIVE_SET = Collections
     //        .unmodifiableSet(EnumSet.of(CryptoPrimitive.SIGNATURE));
 
-	private boolean rfc = false;
+	protected boolean rfc = false;
 
 	public SignatureReport() {
 
@@ -79,25 +75,8 @@ public class SignatureReport {
 		}
 	}
 
-	public SignatureReport(File file) {
-		ApkVerifier verifier = new ApkVerifier.Builder(file).build();
-		try {
-			Result result = verifier.verify();
-			if(result.isVerified()) {
-				certificates = result.getSignerCertificates().toArray(new X509Certificate[0]);
-				if(result.isVerifiedUsingV3Scheme()) {
-					signScheme = SIGNATURE_SCHEME_V3;
-				} else if(result.isVerifiedUsingV2Scheme()) {
-					signScheme = SIGNATURE_SCHEME_V2;
-				} else if(result.isVerifiedUsingV1Scheme()) {
-					signScheme = SIGNATURE_SCHEME_V1;
-				}
-			} else {
-				Log.w("Fail to verify signature");
-			}
-		} catch (NoSuchAlgorithmException | IllegalStateException | IOException | ApkFormatException e) {
-			e.printStackTrace();
-		}
+	public SignatureReport(File file) throws Exception {
+		this(new JarFile(file));
 	}
 
 	public SignatureReport(InputStream inputStream) {

@@ -8,6 +8,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import com.apkspectrum.core.signer.SignatureReport;
+import com.apkspectrum.core.signer.SignatureReportByApksig;
 import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.resource._RConst;
 import com.apkspectrum.resource._RProp;
@@ -16,6 +17,7 @@ import com.apkspectrum.tool.adb.AdbWrapper;
 import com.apkspectrum.util.ConsolCmd.ConsoleOutputObserver;
 import com.apkspectrum.util.FileUtil;
 import com.apkspectrum.util.Log;
+import com.apkspectrum.util.SystemUtil;
 import com.apkspectrum.util.ZipFileUtil;
 
 abstract public class ApkScanner
@@ -181,23 +183,26 @@ abstract public class ApkScanner
 		ArrayList<String> certList = new ArrayList<String>();
 		ArrayList<String> certFiles = new ArrayList<String>();
 
-		SignatureReport sr = new SignatureReport(new File(apkInfo.filePath));
-		for(int i = 0; i < sr.getSize(); i ++) {
-			certList.add(sr.getReport(i));
+		SignatureReport sr = null;
+		if(SystemUtil.checkJvmVersion("1.8")) {
+			sr = new SignatureReportByApksig(new File(apkInfo.filePath));
+
+			for(int i = 0; i < sr.getSize(); i ++) {
+				certList.add(sr.getReport(i));
+			}
+			apkInfo.signatureScheme = sr.getSignatureScheme();
+
+			if(sr.contains("MD5", _RConst.SAMSUNG_KEY_MD5)) {
+				apkInfo.featureFlags |= ApkInfo.APP_FEATURE_SAMSUNG_SIGN;
+			}
+			if(sr.contains("MD5", _RConst.SS_TEST_KEY_MD5)) {
+				apkInfo.featureFlags |= ApkInfo.APP_FEATURE_PLATFORM_SIGN;
+			}
 		}
 
 		apkInfo.certificates = null;
 		if(!certList.isEmpty()) {
 			apkInfo.certificates = certList.toArray(new String[certList.size()]);
-		}
-
-		apkInfo.signatureScheme = sr.getSignatureScheme();
-
-		if(sr.contains("MD5", _RConst.SAMSUNG_KEY_MD5)) {
-			apkInfo.featureFlags |= ApkInfo.APP_FEATURE_SAMSUNG_SIGN;
-		}
-		if(sr.contains("MD5", _RConst.SS_TEST_KEY_MD5)) {
-			apkInfo.featureFlags |= ApkInfo.APP_FEATURE_PLATFORM_SIGN;
 		}
 
 		String[] certFilePaths = ZipFileUtil.findFiles(apkInfo.filePath, null, "^META-INF/.*");

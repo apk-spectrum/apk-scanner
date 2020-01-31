@@ -47,6 +47,7 @@ import com.apkspectrum.core.installer.OptionsBundle;
 import com.apkspectrum.core.installer.OptionsBundle.IOptionsChangedListener;
 import com.apkspectrum.core.scanner.ApkScanner;
 import com.apkspectrum.core.signer.SignatureReport;
+import com.apkspectrum.core.signer.SignatureReportByApksig;
 import com.apkspectrum.data.apkinfo.CompactApkInfo;
 import com.apkspectrum.swing.KeyStrokeAction;
 import com.apkspectrum.swing.WindowSizeMemorizer;
@@ -54,6 +55,7 @@ import com.apkspectrum.tool.adb.AdbServerMonitor;
 import com.apkspectrum.tool.adb.PackageInfo;
 import com.apkspectrum.tool.adb.PackageManager;
 import com.apkspectrum.util.Log;
+import com.apkspectrum.util.SystemUtil;
 
 public class ApkInstallWizard implements IDeviceChangeListener
 {
@@ -336,7 +338,11 @@ public class ApkInstallWizard implements IDeviceChangeListener
 
 				signatureReport = null;
 				try {
-					signatureReport = new SignatureReport(new File(apkFilePath));
+					if(SystemUtil.checkJvmVersion("1.8")) {
+						signatureReport = new SignatureReportByApksig(new File(apkFilePath));
+					} else {
+						signatureReport = new SignatureReport(new File(apkFilePath));
+					}
 				} catch (Exception e) { }
 				if(signatureReport == null || signatureReport.getSize() == 0) {
 					Log.e("Fail APK Virify");

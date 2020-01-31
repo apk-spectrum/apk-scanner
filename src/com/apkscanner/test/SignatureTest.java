@@ -11,6 +11,7 @@ import java.util.zip.ZipFile;
 
 import com.apkspectrum.core.signer.Signature;
 import com.apkspectrum.core.signer.SignatureReport;
+import com.apkspectrum.core.signer.SignatureReportByApksig;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.ZipFileUtil;
 
@@ -70,7 +71,7 @@ public class SignatureTest {
 		//Log.i(report.toString());
 
 		Log.e(">>>>> 4");
-		report = new SignatureReport(new File("D:\\apks\\BillLetter_v_01.08.apk"));
+		report = new SignatureReportByApksig(new File("D:\\apks\\BillLetter_v_01.08.apk"));
 		Log.i(report.toString());
 		Log.e(">>>>> 5");
 
