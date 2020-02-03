@@ -1,29 +1,20 @@
 <resources>
 	<string name="app_name">APK Scanner</string>
-	<string name="app_version">Ver. </string>
 
 	<string name="title_install_wizard">APK Install Wizard</string>
 	<string name="title_apk_signer">APK Signer</string>
-	<string name="title_edit_config">Configuration Setting</string>
-	<string name="title_no_such_network">Network Error - Not found network interface</string>
-	<string name="title_network_timeout">Network Error - Connection timed out</string>
-	<string name="title_ssl_exception">Network Error - SSL Certificate Error</string>
-	<string name="title_update_list">Update List</string>
 
 	<string name="btn_open">Open</string>
 	<string name="btn_open_pacakge">Package</string>
 	<string name="btn_manifest">Manifest</string>
 	<string name="btn_manifest_save">Save as...</string>
 	<string name="btn_explorer">Explorer</string>
-	<string name="btn_unpack">Decompile</string>
-	<string name="btn_pack">Recompile</string>
 	<string name="btn_install">Install</string>
 	<string name="btn_install_downgrad">Downgrade</string>
 	<string name="btn_install_update">Update</string>
 	<string name="btn_launch">Launch</string>
 	<string name="btn_launch_select_launcher">Select Launcher</string>
 	<string name="btn_sign">Sign</string>
-	<string name="btn_push">Push</string>
 	<string name="btn_setting">Setting</string>
 	<string name="btn_about">About</string>
 	<string name="btn_save">Save</string>
@@ -33,10 +24,8 @@
 	<string name="btn_no">No</string>
 	<string name="btn_cancel">Cancel</string>
 	<string name="btn_refresh">Refresh</string>
-	<string name="btn_del">Del</string>
-	<string name="btn_edit">Edit</string>
 	<string name="btn_add">Add</string>
-	<string name="btn_export">Export</string>
+	<string name="btn_del">Del</string>
 	<string name="btn_opencode">Source</string>
 	<string name="btn_opening_code">Decoding...</string>
 	<string name="btn_search">Search</string>
@@ -47,13 +36,10 @@
 	<string name="btn_show_permissions">Show Permissions</string>
 	<string name="btn_show_sdk_info">Show SDK information</string>
 	<string name="btn_self_search">Search...</string>
-
 	<string name="btn_open_lab">Open APK file (Ctrl+O)</string>
 	<string name="btn_open_pacakge_lab">Open package(Ctrl+P)</string>
 	<string name="btn_manifest_lab">Show AndroidManifest.xml (Ctrl+M)</string>
 	<string name="btn_explorer_lab">Open APK file into Explorer. (Ctrl+E)</string>
-	<string name="btn_unpack_lab">Decompile</string>
-	<string name="btn_pack_lab">Recompile</string>
 	<string name="btn_install_lab">Install APK to the connected device (Ctrl+I)</string>
 	<string name="btn_install_downgrad_lab">Downgrade APK (Ctrl+I)</string>
 	<string name="btn_install_update_lab">Update APK (Ctrl+I)</string>
@@ -94,18 +80,9 @@
 	<string name="btn_waiting">Waiting...</string>
 	<string name="btn_success">Success</string>
 	<string name="btn_fail">Fail</string>
-	<string name="btn_retry">Retry</string>
-	<string name="btn_apply">Apply</string>
 	<string name="btn_remove">Remove</string>
-	<string name="btn_import">Import</string>
-	<string name="btn_manage_cert">Manage certificates</string>
 	<string name="btn_check_update">Check update</string>
-	<string name="btn_go_to_website">Go to WebSite</string>
-	<string name="btn_update">Update</string>
-	<string name="btn_download">Download</string>
-	<string name="btn_no_updated">No updated</string>
-	<string name="btn_choose_update">Choose update</string>
-	
+
 	<string name="menu_new">New Window...</string>
 	<string name="menu_new_window">New window(N)</string>
 	<string name="menu_new_apk_file">Open APK file to new window(O)</string>
@@ -119,14 +96,12 @@
 	<string name="menu_decorder_jd_gui">JD-GUI</string>
 	<string name="menu_decorder_jadx_gui">JADX-GUI</string>
 	<string name="menu_decorder_bytecode_viewer">Bytecode Viewer</string>
-	<string name="menu_decorder_jeb">JEB Decompiler</string>
 	<string name="menu_search_resource">Search to resources</string>
 	<string name="menu_explorer_archive">In APK Archive</string>
 	<string name="menu_explorer_folder">On APK folder</string>
 	<string name="menu_launch_lanucher">Launch to launcher activity</string>
 	<string name="menu_launch_select">Select to main activity</string>
 	<string name="menu_select_default">Select default action</string>
-	<string name="menu_visible_to_basic">Display searchers to Basic info</string>
 	<string name="menu_visible_to_basic_each">Select each searcher</string>
 
 	<string name="tab_basic_info">APK Info</string>
@@ -156,12 +131,8 @@
 	<string name="basic_permissions">Permissions</string>
 	<string name="basic_permlab_display_list">Display the entire list</string>
 	<string name="basic_permdesc_display_list">Show the list of all permissions.</string>
-	<string name="basic_perm_list_title">Permissions list</string>
-	<string name="basic_perm_display_title">Permissions description</string>
-	<string name="basic_create_shortcut">Create shortcut on desktop</string>
 
 	<string name="feature_lab">Feature</string>
-	<string name="feature_desc">Feature or function of the App</string>
 	<string name="feature_install_location_internal_only_lab">Install Location : Internal Only</string>
 	<string name="feature_install_location_internal_only_desc">The application must be installed on the internal device storage only.
 If this is set, the application will never be installed on the external storage.
@@ -183,8 +154,6 @@ Once installed, the user can move the application to either internal or external
 	<string name="feature_hidden_desc">Launcher icon is not exist.</string>
 	<string name="feature_startup_lab">START_UP</string>
 	<string name="feature_startup_desc">Automatically run when boot completed.</string>
-	<string name="feature_signature_lab">SIGNATURE</string>
-	<string name="feature_signature_desc">SIGNATURE</string>
 	<string name="feature_signature_unsigned">UNSIGNED</string>
 	<string name="feature_signature_signed">SIGNED</string>
 	<string name="feature_system_user_id_lab">SYSTEM_UID</string>
@@ -195,10 +164,6 @@ Once installed, the user can move the application to either internal or external
 	<string name="feature_platform_sign_desc">This application to be sign by platform signature(google test-key).</string>
 	<string name="feature_samsung_sign_lab">SAMSUNG SIGN</string>
 	<string name="feature_samsung_sign_desc">This application to be sign by samsung signature.</string>
-	<string name="feature_revoke_permissions_lab">SYSTEM PERMISSIONS</string>
-	<string name="feature_revoke_permissions_desc">Need platform sign or priv-app</string>
-	<string name="feature_deprecated_prem_lab">Deprecated Permissions</string>
-	<string name="feature_deprecated_prem_desc">uses deprecated permissions</string>
 	<string name="feature_debuggable_lab">DEBUGGABLE</string>
 	<string name="feature_debuggable_desc">Whether or not the application can be debugged,
 even when running on a device in user mode. </string>
@@ -210,7 +175,6 @@ they're removed before the application is published</string>
 	<string name="feature_flag_lab">FLAGS</string>
 	<string name="feature_flag_desc">FLAGS of package</string>
 	<string name="feature_installer_lab">Installer</string>
-	<string name="feature_installer_desc">Installer and time stamp</string>
 	<string name="feature_hidden_system_package_lab">SYSTEM PACKAGE</string>
 	<string name="feature_hidden_system_package_desc">Hidden system package</string>
 	<string name="feature_disabled_package_lab">DISABLED</string>
@@ -246,19 +210,12 @@ they're removed before the application is published</string>
 	<string name="cert_summury">Summary</string>
 	<string name="cert_certificate">Signature</string>
 
-	<string name="file_size_Bytes">Bytes</string>
-	<string name="file_size_KB">KB</string>
-	<string name="file_size_MB">MB</string>
-	<string name="file_size_GB">GB</string>
-	<string name="file_size_TB">TB</string>
-
 	<string name="tree_open_package">Open</string>
 
 	<string name="settings_title">Settings</string>
 	<string name="settings_editor">Editor</string>
 	<string name="settings_toolbar">Toolbar</string>
 	<string name="settings_res">Framework-res</string>
-	<string name="settings_check_installed">Check installed</string>
 	<string name="settings_language">Language</string>
 	<string name="settings_remember_window_size">Remember window size</string>
 	<string name="settings_theme">Theme</string>
@@ -290,16 +247,13 @@ they're removed before the application is published</string>
 	<string name="settings_esc_act_none">None</string>
 	<string name="settings_esc_act_change_ui_mode">Chang UI Mode</string>
 	<string name="settings_esc_act_exit">Exit Application</string>
-	
+
 	<string name="label_error">Error</string>
 	<string name="label_warning">Warning</string>
 	<string name="label_info">Information</string>
 	<string name="label_question">Question</string>
 	<string name="label_log">Log</string>
 	<string name="label_installing">Installing..</string>
-	<string name="label_uninstalling">Uninstalling..</string>
-	<string name="label_sel_device">Select Device</string>
-	<string name="label_device_list">Device list</string>
 	<string name="label_app_name_list">App name list</string>
 	<string name="label_no_permission">No permissions</string>
 	<string name="label_search">Search</string>
@@ -320,7 +274,6 @@ they're removed before the application is published</string>
 	<string name="label_how_to_install">How to install</string>
 	<string name="label_install_options">Install options</string>
 	<string name="label_push_options">Push options</string>
-	<string name="label_additional_install_options">Choose additional options:</string>
 	<string name="label_launcher_af_installed">Launcher:</string>
 	<string name="label_with_libraies">With Libraries</string>
 	<string name="label_num">No.</string>
@@ -334,18 +287,7 @@ they're removed before the application is published</string>
 	<string name="label_save_as">Save As...</string>
 	<string name="label_by_package_name">By Package Name</string>
 	<string name="label_by_app_label">By App Label</string>
-	<string name="label_plugins_settings">PlugIn Settings</string>
-	<string name="label_plugins_description">Descriptions</string>
-	<string name="label_plugin_pcakge_config">Plugin Packge Configurations</string>
-	<string name="label_key_name">Name</string>
-	<string name="label_key_value">Value</string>
-	<string name="label_proxy_setting">Proxy Setting</string>
-	<string name="label_truststore_setting">SSL Trust Store Settings</string>
-	<string name="label_pac_script_url">PAC script URL :</string>
-	<string name="label_alias">Alias :</string>
-	<string name="label_description">Description :</string>
 	<string name="label_do_not_look_again">Do not show again</string>
-	<string name="label_update_list">Update List</string>
 	<string name="label_show_update_at_startup">Show update list at startup</string>
 	<string name="label_mark_a_runtime">Mark a runtime</string>
 	<string name="label_mark_a_count">Mark a count</string>
@@ -370,44 +312,31 @@ they're removed before the application is published</string>
 	<string name="label_ui_booster">UI Booster</string>
 	<string name="label_esc_key">ESC Key</string>
 
+	<string name="tree_node_device">Device</string>
+	<string name="tree_node_displayed">Currently Displayed Packages</string>
+	<string name="tree_node_recently">Recently Activity Packages</string>
+	<string name="tree_node_running">Currently Running Process Packages</string>
+
 	<string name="msg_failure_open_apk">ERROR: Can not open the APK</string>
 	<string name="msg_no_such_apk">No such APK file</string>
 	<string name="msg_device_not_found">Device not found! Please check device.</string>
-	<string name="msg_already_installed">This package was already installed.</string>
-	<string name="msg_no_such_package">No such package.</string>
 	<string name="msg_no_such_launcher">No such launcher activity.</string>
 	<string name="msg_no_such_package_device">No such device of a package installed.</string>
 	<string name="msg_no_such_classes_dex">No such classes.dex in an APK file.</string>
 	<string name="msg_failure_launch_app">Did not launch.</string>
-	<string name="msg_failure_installed">App did not install.</string>
 	<string name="msg_failure_uninstalled">App did not remove.</string>
-	<string name="msg_failure_pull_apk">Did not pull APK.</string>
 	<string name="msg_failure_dex2jar">Can't covert to jar</string>
-	<string name="msg_success_installed">Install success...</string>
 	<string name="msg_success_removed">Remove success!</string>
 	<string name="msg_success_pull_apk">Success pull apk!</string>
-	<string name="msg_success_pulled">Success pull APK file.</string>
 	<string name="msg_failure_pulled">Failure pull APK file.</string>
 	<string name="msg_device_unauthorized">Device unauthorized.
 Please check the confirmation dialog on your device.</string>
-	<string name="msg_device_unknown">device unknown</string>
-	<string name="msg_cannot_run_root">adbd cannot run as root in production builds</string>
 	<string name="msg_unsupported_preview">This type doesn't support a preview.</string>
 	<string name="msg_cannot_write_file">Can not write file.</string>
 	<string name="msg_disabled_package">Can not launch, This package was disabled.</string>
 	<string name="msg_success_clear_data">Success clear data.</string>
 	<string name="msg_failure_clear_data">Fail clear data.</string>
-	<string name="msg_warn_unsupported_jvm">Ensure you have installed Java 8 64-bit version</string>
-	<string name="msg_warn_ssl_ignore">Warning, This option is not recommended!\nBecause, It's makes opens the connection to potential MITM attacks.</string>
-	<string name="msg_no_such_network">Not found network interface\n\nTry checking the network connection\n</string>
-	<string name="msg_failure_proxy_error">Failed PlugIn: %s\n\nNetwork connection timed out!\n\nTry checking the connection or proxy, firewall!</string>
-	<string name="msg_failure_ssl_error">Failed PlugIn: %s\n\nOccurred SSLHandshakeException.\n\nTry add a SSL certification to the trust store!</string>
-	<string name="msg_no_update_informations">No information</string>
 
-	<string name="question_reboot_device">Restart device now?</string>
-	<string name="question_continue_install">Continue install?</string>
-	<string name="question_push_or_install">Push or Install?</string>
-	<string name="question_open_or_install">Open or Install?</string>
 	<string name="question_save_overwrite">Overwrite file?</string>
 	<string name="question_pack_info_close">Success uninstall package.
 Close this windows?</string>
@@ -416,54 +345,8 @@ Refresh this package information?</string>
 	<string name="question_remove_system_apk">It's system app, continues remove?</string>
 	<string name="question_removed_reboot">remove successful, need reboot, now?</string>
 
-	<string name="tree_node_device">Device</string>
-	<string name="tree_node_displayed">Currently Displayed Packages</string>
-	<string name="tree_node_recently">Recently Activity Packages</string>
-	<string name="tree_node_running">Currently Running Process Packages</string>
-	<string name="tree_node_plugins_top">APK Scanner Plugins</string>
-	<string name="tree_node_plugins_top_desc">APK Scanner Plugins</string>
-	<string name="tree_node_no_plugins">No plugins</string>
-	<string name="tree_node_no_plugins_desc">No plugins</string>
-	<string name="tree_node_network_setting">Network Setting</string>
-	<string name="tree_node_configurations">Configurations Setting</string>
-	<string name="tree_node_global_setting">Common Settings for PlugIns</string>
-	<string name="tree_node_global_setting_desc">Common Settings for PlugIns</string>
-
-	<string name="pattern_print_x509_cert">Owner: {0}\nIssuer: {1}\nSerial number: {2}\nValid from: {3} until: {4}\nCertificate fingerprints:\n\t MD5:  {5}\n\t SHA1: {6}\n\t SHA256: {7}\nSignature algorithm name: {8}\nSubject Public Key Algorithm: {9}\nVersion: {10}</string>
-	<string name="with_weak">%s (weak)</string>
-	<string name="key_bit">%d-bit %s key</string>
-	<string name="key_bit_weak">%d-bit %s key (weak)</string>
-	<string name="not_a_singed_jar_file">Not a signed jar file</string>
-	<string name="extensions">Extensions: </string>
-	<string name="empty_value">(Empty value)</string>
-	<string name="timestamp">Timestamp:</string>
-
-	<string name="proxy_menu_no_proxy">No proxy</string>
-	<string name="proxy_menu_global">Use proxy of plugins</string>
-	<string name="proxy_menu_system">Use proxy of system(If possible)</string>
-	<string name="proxy_menu_pac_script">Use PAC script(.pac) by URL</string>
-	<string name="proxy_menu_manual">Manual proxy</string>
-
-	<string name="truststore_golbal">Common Truststore of Pluings</string>
-	<string name="truststore_apkscanner">TrustStore of APK Scanner</string>
-	<string name="truststore_jvm">TrustStore of JVM</string>
-	<string name="truststore_manual">Manual</string>
-	<string name="truststore_ignore">Ignore(Not recommended)</string>
-
-	<string name="column_issued_to">Issued To</string>
-	<string name="column_issued_by">Issued By</string>
-	<string name="column_expires_on">Expires On</string>
-	<string name="column_alias">Alias Name</string>
-	<string name="column_name">Name</string>
-	<string name="column_package">Package</string>
-	<string name="column_this_version">Cur Ver.</string>
-	<string name="column_new_version">New Ver.</string>
-	<string name="column_last_checked_date">Last Checked</string>
-	
 	<string name="easy_gui_feature1">Simple, Light, Fast</string>
 	<string name="easy_gui_feature2">Easy switching to origin</string>
 	<string name="easy_gui_feature3">Custom Toolbar</string>
 	<string name="easy_gui_use_question">Would you like to use Easy mode? (Can be changed in settings)</string>
-	
-	
 </resources>

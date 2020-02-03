@@ -21,6 +21,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 
 import com.apkscanner.resource.RImg;
+import com.apkspectrum.resource._RImg;
 
 @SuppressWarnings("serial")
 public class UndecoratedExample {
@@ -40,7 +41,7 @@ public class UndecoratedExample {
 
 		public MyButton(ImageIcon icon) {
                 super();
-                icon = RImg.PERM_GROUP_PHONE_CALLS.getImageIcon(15,15);
+                icon = _RImg.PERM_GROUP_PHONE_CALLS.getImageIcon(15,15);
                 image = icon.getImage();
                 imageObserver = icon.getImageObserver();
             }
@@ -60,7 +61,7 @@ public class UndecoratedExample {
         	setLayout(new FlowLayout(FlowLayout.RIGHT));
         	
         	//((FlowLayout)getLayout()).setVgap(2);
-            ImageIcon icon = RImg.PERM_GROUP_PHONE_CALLS.getImageIcon(15,15);
+            ImageIcon icon = _RImg.PERM_GROUP_PHONE_CALLS.getImageIcon(15,15);
             stackLabel = new JButton(icon);
             //stackLabel.setIcon(icon);
 

@@ -26,9 +26,9 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 
-import com.apkscanner.resource.RFile;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RStr;
+import com.apkspectrum.resource._RFile;
 import com.apkspectrum.swing.ImagePanel;
 import com.apkspectrum.swing.KeyStrokeAction;
 import com.apkspectrum.swing.WindowSizeMemorizer;
@@ -140,11 +140,11 @@ public class SdkVersionInfoDlg extends JDialog {
 	}
 
 	public void setSdkXml() {
-		try(InputStream xml = RFile.RAW_SDK_INFO_FILE.getResourceAsStream()) {
+		try(InputStream xml = _RFile.RAW_SDK_INFO_FILE.getResourceAsStream()) {
 			if(xml != null) sdkXmlPath = new XmlPath(xml);
 		} catch(IOException e) { }
 		if(sdkXmlPath == null) {
-			Log.w("Can not create XmlPath, xmlPath : " + RFile.RAW_SDK_INFO_FILE.getPath());
+			Log.w("Can not create XmlPath, xmlPath : " + _RFile.RAW_SDK_INFO_FILE.getPath());
 			return;
 		}
 		int maxSdk = sdkXmlPath.getCount("/resources/sdk-info");

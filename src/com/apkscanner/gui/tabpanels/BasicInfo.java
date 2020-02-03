@@ -62,10 +62,11 @@ import com.apkspectrum.data.apkinfo.UsesSdkInfo;
 import com.apkspectrum.plugin.IPackageSearcher;
 import com.apkspectrum.plugin.IPlugIn;
 import com.apkspectrum.plugin.PlugInManager;
+import com.apkspectrum.resource._RFile;
 import com.apkspectrum.swing.HtmlEditorPane;
-import com.apkspectrum.swing.MessageBoxPane;
 import com.apkspectrum.swing.HtmlEditorPane.HyperlinkClickEvent;
 import com.apkspectrum.swing.HtmlEditorPane.HyperlinkClickListener;
+import com.apkspectrum.swing.MessageBoxPane;
 import com.apkspectrum.util.Base64;
 import com.apkspectrum.util.FileUtil;
 import com.apkspectrum.util.FileUtil.FSStyle;
@@ -253,7 +254,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 
 	private void setPlatformIcon(int apiLevel) {
 		String iconPath = null;
-		try(InputStream xml = RFile.RAW_SDK_INFO_FILE.getResourceAsStream()) {
+		try(InputStream xml = _RFile.RAW_SDK_INFO_FILE.getResourceAsStream()) {
 			XmlPath sdkXmlPath = new XmlPath(xml);
 			XmlPath sdkInfo = sdkXmlPath.getNode("/resources/sdk-info[@apiLevel='" + apiLevel + "']");
 			if(sdkInfo != null) {
