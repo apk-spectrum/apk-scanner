@@ -86,8 +86,8 @@ public enum RImg implements ResImage<URL>
 	//easy gui
 	EASY_WINDOW_EXIT			("easy_gui_exit.png"),
 	EASY_WINDOW_MINI			("easy_gui_mini.png"),
-	EASY_WINDOW_SETTING			("perm_group_system_tools.png"),
-	EASY_WINDOW_CLIPBOARD_ICON	("perm_group_user_dictionary.png"),
+	EASY_WINDOW_SETTING			("easy_gui_setting.png"),
+	EASY_WINDOW_CLIPBOARD_ICON	("easy_gui_clipboard.png"),
 
 	EASY_WINDOW_ALLOW			("easy_gui_allow.png"),
 
