@@ -39,19 +39,19 @@ import javax.swing.event.MenuListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import com.apkscanner.gui.component.ExtensionButton;
-import com.apkscanner.gui.component.ImageScaler;
-import com.apkscanner.gui.component.NoCloseCheckBoxMenuItem;
-import com.apkscanner.plugin.IExternalTool;
-import com.apkscanner.plugin.IPackageSearcher;
-import com.apkscanner.plugin.IPlugIn;
-import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.Log;
+import com.apkspectrum.plugin.IExternalTool;
+import com.apkspectrum.plugin.IPackageSearcher;
+import com.apkspectrum.plugin.IPlugIn;
+import com.apkspectrum.plugin.PlugInManager;
+import com.apkspectrum.swing.ExtensionButton;
+import com.apkspectrum.swing.ImageScaler;
+import com.apkspectrum.swing.NoCloseCheckBoxMenuItem;
+import com.apkspectrum.util.Log;
 
 public class ToolBar extends JToolBar
 {

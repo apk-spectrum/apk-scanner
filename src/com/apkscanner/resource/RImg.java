@@ -5,9 +5,10 @@ import java.net.URL;
 
 import javax.swing.ImageIcon;
 
-import com.apkscanner.gui.component.ImageScaler;
+import com.apkspectrum.resource.ResImage;
+import com.apkspectrum.swing.ImageScaler;
 
-public enum RImg implements ResFile<URL>
+public enum RImg implements ResImage<URL>
 {
 	TOOLBAR_OPEN				("toolbar_open.png"),
 	TOOLBAR_MANIFEST			("toolbar_manifast.png"),
@@ -24,8 +25,6 @@ public enum RImg implements ResFile<URL>
 	TOOLBAR_UNINSTALL			("toolbar_uninstall.png"),
 	TOOLBAR_CLEAR				("toolbar_clear.png"),
 
-	RESOURCE_BACKGROUND			("resource_tap_image_background.jpg"),
-	RESOURCE_BACKGROUND_DARK	("resource_tap_image_background_dark.jpg"),
 	RESOURCE_TREE_XML			("resource_tab_tree_xml.gif"),
 	RESOURCE_TREE_CODE			("resource_tab_tree_code.png"),
 	RESOURCE_TREE_ARSC			("resource_tab_tree_arsc.png"),
@@ -76,10 +75,6 @@ public enum RImg implements ResFile<URL>
 	TREE_LOADING				("tree_loading.gif"),
 	TREE_FAVOR					("tree_favor.png"),
 
-	TREE_GLOBAL_SETTING			("configure-2.png"),
-	TREE_NETWORK_SETTING		("internet-connection_manager.png"),
-	TREE_CONFIG_SETTING			("kservices.png"),
-
 	INSTALL_CHECK				("install_dlg_check.png"),
 	INSTALL_BLOCK				("install_dlg_block.png"),
 	INSTALL_LOADING				("install_dlg_loading.gif"),
@@ -91,8 +86,8 @@ public enum RImg implements ResFile<URL>
 	//easy gui
 	EASY_WINDOW_EXIT			("easy_gui_exit.png"),
 	EASY_WINDOW_MINI			("easy_gui_mini.png"),
-	EASY_WINDOW_SETTING			("perm_group_system_tools.png"),
-	EASY_WINDOW_CLIPBOARD_ICON	("perm_group_user_dictionary.png"),
+	EASY_WINDOW_SETTING			("easy_gui_setting.png"),
+	EASY_WINDOW_CLIPBOARD_ICON	("easy_gui_clipboard.png"),
 
 	EASY_WINDOW_ALLOW			("easy_gui_allow.png"),
 
@@ -112,46 +107,6 @@ public enum RImg implements ResFile<URL>
 	PREVIEW_EASY3				("preview_easymode3.png"),
 
 	PREVIEW_ORIGINAL			("preview_original.png"),
-
-	PERM_GROUP_ACCESSIBILITY_FEATURES	("perm_group_accessibility_features.png"),
-	PERM_GROUP_ACCOUNTS					("perm_group_accounts.png"),
-	PERM_GROUP_AFFECTS_BATTERY			("perm_group_affects_battery.png"),
-	PERM_GROUP_APP_INFO					("perm_group_app_info.png"),
-	PERM_GROUP_AUDIO_SETTINGS			("perm_group_audio_settings.png"),
-	PERM_GROUP_BLUETOOTH				("perm_group_bluetooth.png"),
-	PERM_GROUP_BOOKMARKS				("perm_group_bookmarks.png"),
-	PERM_GROUP_CALENDAR					("perm_group_calendar.png"),
-	PERM_GROUP_CALL_LOG					("perm_group_call_log.png"),
-	PERM_GROUP_CAMERA					("perm_group_camera.png"),
-	PERM_GROUP_CONTACTS					("perm_group_contacts.png"),
-	PERM_GROUP_COST_MONEY				("perm_group_cost_money.png"),
-	PERM_GROUP_DECLARED					("perm_group_declared.png"),
-	PERM_GROUP_DEVELOPMENT_TOOLS		("perm_group_development_tools.png"),
-	PERM_GROUP_DEVICE_ALARMS			("perm_group_device_alarms.png"),
-	PERM_GROUP_DISPLAY					("perm_group_display.png"),
-	PERM_GROUP_HARDWARE_CONTROLS		("perm_group_hardware_controls.png"),
-	PERM_GROUP_LOCATION					("perm_group_location.png"),
-	PERM_GROUP_MESSAGES					("perm_group_messages.png"),
-	PERM_GROUP_MICROPHONE				("perm_group_microphone.png"),
-	PERM_GROUP_NETWORK					("perm_group_network.png"),
-	PERM_GROUP_PERSONAL_INFO			("perm_group_personal_info.png"),
-	PERM_GROUP_PHONE_CALLS				("perm_group_phone_calls.png"),
-	PERM_GROUP_REVOKED					("perm_group_revoked.png"),
-	PERM_GROUP_SCREENLOCK				("perm_group_screenlock.png"),
-	PERM_GROUP_SENSORS					("perm_group_sensors.png"),
-	PERM_GROUP_SHORTRANGE_NETWORK		("perm_group_shortrange_network.png"),
-	PERM_GROUP_SMS						("perm_group_sms.png"),
-	PERM_GROUP_SOCIAL_INFO				("perm_group_social_info.png"),
-	PERM_GROUP_STATUS_BAR				("perm_group_status_bar.png"),
-	PERM_GROUP_STORAGE					("perm_group_storage.png"),
-	PERM_GROUP_SYNC_SETTINGS			("perm_group_sync_settings.png"),
-	PERM_GROUP_SYSTEM_CLOCK				("perm_group_system_clock.png"),
-	PERM_GROUP_SYSTEM_TOOLS				("perm_group_system_tools.png"),
-	PERM_GROUP_UNKNOWN					("perm_group_unknown.png"),
-	PERM_GROUP_USER_DICTIONARY			("perm_group_user_dictionary.png"),
-	PERM_GROUP_USER_DICTIONARY_WRITE	("perm_group_user_dictionary_write.png"),
-	PERM_GROUP_VOICEMAIL				("perm_group_voicemail.png"),
-	PERM_GROUP_WALLPAPER				("perm_group_wallpaper.png"),
 
 	PERM_MARKER_SETTING			("perm_marker_setting.png"),
 	PERM_MARKER_CLOSE			("perm_marker_close.png"),
@@ -188,10 +143,12 @@ public enum RImg implements ResFile<URL>
 		return getURL();
 	}
 
+	@Override
 	public Image getImage() {
 		return getImageIcon().getImage();
 	}
 
+	@Override
 	public Image getImage(int w, int h) {
 		return ImageScaler.getScaledImage(getImage(), w, h);
 	}

@@ -16,7 +16,7 @@ import java.util.zip.ZipFile;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
-import com.apkscanner.util.FileUtil;
+import com.apkspectrum.util.FileUtil;
 
 public class ImageUtils {
 

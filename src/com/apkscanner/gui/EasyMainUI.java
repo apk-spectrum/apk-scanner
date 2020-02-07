@@ -8,15 +8,14 @@ import javax.swing.JFrame;
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.android.ddmlib.IDevice;
-import com.apkscanner.core.scanner.ApkScanner;
-import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.gui.easymode.EasyGuiMainPanel;
 import com.apkscanner.gui.easymode.core.ToolEntryManager;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.tool.adb.AdbServerMonitor;
-import com.apkscanner.util.Log;
+import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.tool.adb.AdbServerMonitor;
+import com.apkspectrum.util.Log;
 
 public class EasyMainUI extends JFrame implements IDeviceChangeListener {
 	private static final long serialVersionUID = -1104109718930033124L;
@@ -95,7 +94,7 @@ public class EasyMainUI extends JFrame implements IDeviceChangeListener {
 
 		if (apkScanner != null &&
 				(apkScanner.getLastErrorCode() != 0 || apkScanner.getApkInfo() == null)
-				&& !apkScanner.isCompleted(Status.ALL_COMPLETED)) {
+				&& !apkScanner.isCompleted(ApkScanner.STATUS_ALL_COMPLETED)) {
 			Log.d("getlatestError is not 0 or args 0");
 			mainpanel.showEmptyinfo();
 		}

@@ -6,10 +6,10 @@ import java.awt.event.ActionEvent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
-import com.apkscanner.data.apkinfo.ApkInfo;
+import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.installer.ApkInstallWizard;
-import com.apkscanner.gui.messagebox.MessageBoxPool;
-import com.apkscanner.util.Log;
+import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.util.Log;
 
 @SuppressWarnings("serial")
 public class InstallApkAction extends AbstractApkScannerAction

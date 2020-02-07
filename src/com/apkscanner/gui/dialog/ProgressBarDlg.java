@@ -25,9 +25,9 @@ import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RStr;
+import com.apkspectrum.swing.KeyStrokeAction;
 
 
 public class ProgressBarDlg extends JFrame

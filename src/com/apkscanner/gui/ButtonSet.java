@@ -13,9 +13,9 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
-import com.apkscanner.gui.component.ExtensionButton;
 import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RImg;
+import com.apkspectrum.swing.ExtensionButton;
 
 public enum ButtonSet
 {

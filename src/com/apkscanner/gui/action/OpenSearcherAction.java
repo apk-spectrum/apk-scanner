@@ -3,10 +3,10 @@ package com.apkscanner.gui.action;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 
-import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.dialog.SearchDlg;
 import com.apkscanner.gui.tabpanels.ResContentFocusChanger;
-import com.apkscanner.util.Log;
+import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.util.Log;
 
 @SuppressWarnings("serial")
 public class OpenSearcherAction extends AbstractApkScannerAction

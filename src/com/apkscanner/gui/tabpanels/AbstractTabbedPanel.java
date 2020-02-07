@@ -7,12 +7,13 @@ import java.beans.PropertyChangeListener;
 import javax.swing.Icon;
 import javax.swing.JPanel;
 
-import com.apkscanner.gui.component.ITabbedComponent;
-import com.apkscanner.gui.component.ITabbedRequest;
 import com.apkscanner.resource.RComp;
-import com.apkscanner.util.Log;
+import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.swing.ITabbedComponent;
+import com.apkspectrum.swing.ITabbedRequest;
+import com.apkspectrum.util.Log;
 
-public abstract class AbstractTabbedPanel extends JPanel implements ITabbedComponent, PropertyChangeListener {
+public abstract class AbstractTabbedPanel extends JPanel implements ITabbedComponent<ApkInfo>, PropertyChangeListener {
 	private static final long serialVersionUID = -5636023017306297012L;
 
 	public static final int SEND_REQUEST_NONE = ITabbedRequest.REQUEST_NONE;

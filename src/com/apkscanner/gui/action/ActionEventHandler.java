@@ -12,7 +12,7 @@ import java.util.Map;
 import javax.swing.Action;
 import javax.swing.SwingUtilities;
 
-import com.apkscanner.util.Log;
+import com.apkspectrum.util.Log;
 
 abstract public class ActionEventHandler implements ActionListener
 {

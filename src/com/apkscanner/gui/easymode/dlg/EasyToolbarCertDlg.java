@@ -16,10 +16,10 @@ import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.ZipFileUtil;
+import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.ZipFileUtil;
 
 public class EasyToolbarCertDlg extends JDialog {
 	private static final long serialVersionUID = 412416259548061790L;

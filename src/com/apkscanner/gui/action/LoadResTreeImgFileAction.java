@@ -8,13 +8,13 @@ import javax.swing.JTree;
 import javax.swing.SwingWorker;
 import javax.swing.event.TreeExpansionEvent;
 
-import com.apkscanner.data.apkinfo.ApkInfo;
 import com.apkscanner.gui.tabpanels.ResourceNode;
 import com.apkscanner.gui.tabpanels.TreeNodeData;
-import com.apkscanner.tool.external.ImgExtractorWrapper;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.SystemUtil;
-import com.apkscanner.util.ZipFileUtil;
+import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.tool.ImgExtractorWrapper;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.SystemUtil;
+import com.apkspectrum.util.ZipFileUtil;
 
 @SuppressWarnings("serial")
 public class LoadResTreeImgFileAction extends AbstractApkScannerAction

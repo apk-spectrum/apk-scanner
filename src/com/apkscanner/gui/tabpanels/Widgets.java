@@ -20,15 +20,16 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import com.apkscanner.core.scanner.ApkScanner.Status;
-import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.data.apkinfo.ApkInfoHelper;
-import com.apkscanner.data.apkinfo.ResourceInfo;
-import com.apkscanner.data.apkinfo.WidgetInfo;
-import com.apkscanner.gui.component.ImageScaler;
 import com.apkscanner.resource.RComp;
+import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
+import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.data.apkinfo.ApkInfoHelper;
+import com.apkspectrum.data.apkinfo.ResourceInfo;
+import com.apkspectrum.data.apkinfo.WidgetInfo;
+import com.apkspectrum.swing.ImageScaler;
 
 public class Widgets extends AbstractTabbedPanel implements TreeSelectionListener, ListSelectionListener
 {
@@ -80,9 +81,9 @@ public class Widgets extends AbstractTabbedPanel implements TreeSelectionListene
 	}
 
 	@Override
-	public void setData(ApkInfo apkInfo, Status status)
+	public void setData(ApkInfo apkInfo, int status)
 	{
-		if(!Status.WIDGET_COMPLETED.equals(status)) return;
+		if(ApkScanner.STATUS_WIDGET_COMPLETED != status) return;
 
 		if(tableModel == null)
 			initialize();
@@ -122,8 +123,12 @@ public class Widgets extends AbstractTabbedPanel implements TreeSelectionListene
 				try {
 					ResourceInfo[] icons = w.icons;
 					String icon = icons[icons.length-1].name;
-					if(icon.toLowerCase().endsWith(".webp")) {
-						previewImage = new ImageIcon(ImageIO.read(new URL(icon)));
+					if(icon == null) {
+						previewImage = RImg.DEF_APP_ICON.getImageIcon(); 
+					} else if(icon.toLowerCase().endsWith(".webp")) {
+						previewImage = new ImageIcon(ImageIO.read(new URL(icon))); 
+					} else if(icon.toLowerCase().endsWith(".qmg")) {
+						previewImage = RImg.QMG_IMAGE_ICON.getImageIcon();
 					} else {
 						previewImage = new ImageIcon(new URL(icon));
 					}

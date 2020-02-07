@@ -3,6 +3,7 @@ package com.apkscanner.gui.tabpanels;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -10,15 +11,20 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -28,16 +34,21 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import com.apkscanner.data.apkinfo.ResourceInfo;
-import com.apkscanner.data.apkinfo.WidgetInfo;
 import com.apkscanner.gui.UiEventHandler;
-import com.apkscanner.gui.component.SortedMutableTreeNode;
-import com.apkscanner.util.FileUtil;
-import com.apkscanner.util.SystemUtil;
-import com.apkscanner.util.URITool;
+import com.apkscanner.resource.RImg;
+import com.apkspectrum.data.apkinfo.ResourceInfo;
+import com.apkspectrum.data.apkinfo.WidgetInfo;
+import com.apkspectrum.swing.ImageScaler;
+import com.apkspectrum.swing.SortedMutableTreeNode;
+import com.apkspectrum.util.FileUtil;
+import com.apkspectrum.util.URITool;
 
-public class ResourceTree extends JTree {
+public class ResourceTree extends JTree
+{
 	private static final long serialVersionUID = 3376111906679444249L;
+
+	public static final String FOLDER_ICON = "FOLDER";
+	private static final HashMap<String, Icon> cacheIcon = new HashMap<String, Icon>();
 
 	private DefaultMutableTreeNode rootNode;
 
@@ -63,7 +74,7 @@ public class ResourceTree extends JTree {
 					setIcon(((TreeNodeData) resObj).getIcon());
 				} else {
 					String suffix = FileUtil.getSuffix(node.toString());
-					setIcon(SystemUtil.getExtensionIcon(suffix));
+					setIcon(getExtensionIcon(suffix));
 				}
 				return c;
 			}
@@ -457,5 +468,53 @@ public class ResourceTree extends JTree {
 			// g.setColor(Color.RED);
 			g.drawRect(0, r.y, getWidth() - 1, r.height - 1);
 		}
+	}
+
+	public static Icon getExtensionIcon(String suffix) {
+		Icon icon = cacheIcon.get(suffix);
+		if (icon != null) return icon;
+
+		//Log.v("getIcon " + suffix);
+		Image tempImage = null;
+		if (FOLDER_ICON.equals(suffix)) {
+			tempImage = ImageScaler.getScaledImage(RImg.TREE_FOLDER.getImageIcon(), 16, 16);
+			/*
+			 * UIDefaults defaults = UIManager.getDefaults( ); Icon
+			 * computerIcon = defaults.getIcon( "FileView.computerIcon"
+			 * ); Icon floppyIcon = defaults.getIcon(
+			 * "FileView.floppyDriveIcon" ); Icon diskIcon =
+			 * defaults.getIcon( "FileView.hardDriveIcon" ); Icon
+			 * fileIcon = defaults.getIcon( "FileView.fileIcon" ); Icon
+			 * folderIcon = defaults.getIcon( "FileView.directoryIcon"
+			 * );
+			 *
+			 * icon = folderIcon;
+			 */
+		} else if (".xml".equals(suffix)) {
+			tempImage = ImageScaler.getScaledImage(RImg.RESOURCE_TREE_XML.getImageIcon(), 16, 16);
+			// } else if(".qmg".equals(suffix)) {
+			// tempImage =
+			// ImageScaler.getScaledImage(RImg.QMG_IMAGE_ICON.getImageIcon(),32,32);
+		} else if (".dex".equals(suffix)) {
+			icon = RImg.RESOURCE_TREE_CODE.getImageIcon();
+		} else if (".arsc".equals(suffix)) {
+			icon = RImg.RESOURCE_TREE_ARSC.getImageIcon();
+		} else {
+			try {
+				File file = File.createTempFile("icon", suffix);
+				FileSystemView view = FileSystemView.getFileSystemView();
+				icon = view.getSystemIcon(file);
+				file.delete();
+			} catch (IOException ioe) {
+			}
+		}
+		if (tempImage != null) {
+			icon = new ImageIcon(tempImage);
+			tempImage.flush();
+		}
+		if (icon != null) {
+			cacheIcon.put(suffix, icon);
+		}
+		return icon;
 	}
 }

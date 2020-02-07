@@ -35,25 +35,27 @@ import javax.swing.event.ListSelectionListener;
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.android.ddmlib.IDevice;
-import com.apkscanner.core.installer.ApkInstaller;
-import com.apkscanner.core.installer.DefaultOptionsFactory;
-import com.apkscanner.core.installer.OptionsBundle;
-import com.apkscanner.core.installer.OptionsBundle.IOptionsChangedListener;
-import com.apkscanner.core.scanner.ApkScanner;
-import com.apkscanner.core.signer.SignatureReport;
-import com.apkscanner.data.apkinfo.CompactApkInfo;
-import com.apkscanner.gui.component.KeyStrokeAction;
-import com.apkscanner.gui.component.WindowSizeMemorizer;
+import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.dialog.PackageInfoPanel;
-import com.apkscanner.gui.messagebox.MessageBoxPool;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.tool.adb.AdbServerMonitor;
-import com.apkscanner.tool.adb.PackageInfo;
-import com.apkscanner.tool.adb.PackageManager;
-import com.apkscanner.util.Log;
+import com.apkspectrum.core.installer.ApkInstaller;
+import com.apkspectrum.core.installer.DefaultOptionsFactory;
+import com.apkspectrum.core.installer.OptionsBundle;
+import com.apkspectrum.core.installer.OptionsBundle.IOptionsChangedListener;
+import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.core.signer.SignatureReport;
+import com.apkspectrum.core.signer.SignatureReportByApksig;
+import com.apkspectrum.data.apkinfo.CompactApkInfo;
+import com.apkspectrum.swing.KeyStrokeAction;
+import com.apkspectrum.swing.WindowSizeMemorizer;
+import com.apkspectrum.tool.adb.AdbServerMonitor;
+import com.apkspectrum.tool.adb.PackageInfo;
+import com.apkspectrum.tool.adb.PackageManager;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.SystemUtil;
 
 public class ApkInstallWizard implements IDeviceChangeListener
 {
@@ -336,7 +338,11 @@ public class ApkInstallWizard implements IDeviceChangeListener
 
 				signatureReport = null;
 				try {
-					signatureReport = new SignatureReport(new File(apkFilePath));
+					if(SystemUtil.checkJvmVersion("1.8")) {
+						signatureReport = new SignatureReportByApksig(new File(apkFilePath));
+					} else {
+						signatureReport = new SignatureReport(new File(apkFilePath));
+					}
 				} catch (Exception e) { }
 				if(signatureReport == null || signatureReport.getSize() == 0) {
 					Log.e("Fail APK Virify");

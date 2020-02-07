@@ -14,8 +14,10 @@ import javax.swing.UIManager;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import com.apkscanner.gui.component.tabbedpane.TabbedPaneUIManager;
-import com.apkscanner.util.SystemUtil;
+import com.apkspectrum.resource.ResProp;
+import com.apkspectrum.resource.ResString;
+import com.apkspectrum.swing.tabbedpaneui.TabbedPaneUIManager;
+import com.apkspectrum.util.SystemUtil;
 
 public enum RProp implements ResProp<Object>, ResString<Object>
 {

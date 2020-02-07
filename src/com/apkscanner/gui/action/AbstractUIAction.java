@@ -9,8 +9,8 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.SwingUtilities;
 
-import com.apkscanner.gui.component.KeyStrokeAction;
-import com.apkscanner.util.Log;
+import com.apkspectrum.swing.KeyStrokeAction;
+import com.apkspectrum.util.Log;
 
 @SuppressWarnings("serial")
 public abstract class AbstractUIAction extends AbstractAction

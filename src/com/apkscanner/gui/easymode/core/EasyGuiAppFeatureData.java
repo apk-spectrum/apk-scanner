@@ -2,16 +2,16 @@ package com.apkscanner.gui.easymode.core;
 
 import java.util.ArrayList;
 
-import com.apkscanner.core.permissionmanager.PermissionManager;
-import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.data.apkinfo.ApkInfoHelper;
-import com.apkscanner.data.apkinfo.CompatibleScreensInfo;
-import com.apkscanner.data.apkinfo.SupportsGlTextureInfo;
-import com.apkscanner.data.apkinfo.SupportsScreensInfo;
-import com.apkscanner.data.apkinfo.UsesConfigurationInfo;
-import com.apkscanner.data.apkinfo.UsesFeatureInfo;
-import com.apkscanner.data.apkinfo.UsesLibraryInfo;
-import com.apkscanner.data.apkinfo.UsesPermissionInfo;
+import com.apkspectrum.core.permissionmanager.PermissionManager;
+import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.data.apkinfo.ApkInfoHelper;
+import com.apkspectrum.data.apkinfo.CompatibleScreensInfo;
+import com.apkspectrum.data.apkinfo.SupportsGlTextureInfo;
+import com.apkspectrum.data.apkinfo.SupportsScreensInfo;
+import com.apkspectrum.data.apkinfo.UsesConfigurationInfo;
+import com.apkspectrum.data.apkinfo.UsesFeatureInfo;
+import com.apkspectrum.data.apkinfo.UsesLibraryInfo;
+import com.apkspectrum.data.apkinfo.UsesPermissionInfo;
 
 public class EasyGuiAppFeatureData {
 	public String installLocation = null;

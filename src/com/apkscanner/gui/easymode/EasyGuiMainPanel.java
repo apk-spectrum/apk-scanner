@@ -25,24 +25,23 @@ import javax.swing.border.LineBorder;
 
 import com.android.ddmlib.IDevice;
 import com.apkscanner.Launcher;
-import com.apkscanner.core.scanner.ApkScanner;
-import com.apkscanner.core.scanner.ApkScanner.Status;
 import com.apkscanner.gui.EasyMainUI;
+import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.PlugInDropTargetChooser;
 import com.apkscanner.gui.UiEventHandler;
 import com.apkscanner.gui.PlugInDropTargetChooser.DefaultTargetObject;
-import com.apkscanner.gui.component.DropTargetChooser;
 import com.apkscanner.gui.easymode.contents.EasyBordPanel;
 import com.apkscanner.gui.easymode.contents.EasyContentsPanel;
 import com.apkscanner.gui.easymode.contents.EasyGuiToolScaleupPanel;
 import com.apkscanner.gui.easymode.contents.EasyPermissionPanel;
 import com.apkscanner.gui.easymode.core.ToolEntryManager;
 import com.apkscanner.gui.easymode.util.RoundPanel;
-import com.apkscanner.gui.messagebox.MessageBoxPool;
-import com.apkscanner.plugin.IExternalTool;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.Log;
+import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.plugin.IExternalTool;
+import com.apkspectrum.swing.DropTargetChooser;
+import com.apkspectrum.util.Log;
 
 public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropTargetChooser.Listener  {
 	private static final long serialVersionUID = 4664365275666876359L;
@@ -242,7 +241,7 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 
 		@Override
 		public void onStart(long estimatedTime) {
-
+			EasyMainUI.corestarttime = System.currentTimeMillis();
 		}
 
 		@Override
@@ -283,9 +282,9 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 		}
 
 		@Override
-		public void onStateChanged(Status status) {
+		public void onStateChanged(int status) {
 			Log.d("onStateChanged()" + status);
-			if (status.equals(Status.STANBY)) {
+			if (status == ApkScanner.STATUS_STANBY) {
 
 			}
 		}

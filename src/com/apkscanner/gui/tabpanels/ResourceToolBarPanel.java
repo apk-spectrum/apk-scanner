@@ -22,10 +22,10 @@ import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 
 import com.apkscanner.gui.UiEventHandler;
-import com.apkscanner.gui.component.KeyStrokeAction;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
+import com.apkspectrum.swing.KeyStrokeAction;
 
 public class ResourceToolBarPanel extends JPanel {
 	private static final long serialVersionUID = 5458329057300067564L;

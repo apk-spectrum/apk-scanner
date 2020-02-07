@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
-import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.resource.LanguageChangeListener;
 import com.apkscanner.resource.RStr;
+import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.resource.LanguageChangeListener;
 
 public abstract class SimpleTableModel extends AbstractTableModel
 {

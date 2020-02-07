@@ -38,40 +38,41 @@ import javax.swing.event.ListDataListener;
 import javax.swing.text.Element;
 import javax.swing.text.html.Option;
 
-import com.apkscanner.core.permissionmanager.PermissionGroupInfoExt;
-import com.apkscanner.core.permissionmanager.PermissionManager;
-import com.apkscanner.core.permissionmanager.PermissionRepository.SourceCommit;
-import com.apkscanner.core.scanner.ApkScanner.Status;
-import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.data.apkinfo.ApkInfoHelper;
-import com.apkscanner.data.apkinfo.CompatibleScreensInfo;
-import com.apkscanner.data.apkinfo.ResourceInfo;
-import com.apkscanner.data.apkinfo.SupportsGlTextureInfo;
-import com.apkscanner.data.apkinfo.SupportsScreensInfo;
-import com.apkscanner.data.apkinfo.UsesConfigurationInfo;
-import com.apkscanner.data.apkinfo.UsesFeatureInfo;
-import com.apkscanner.data.apkinfo.UsesLibraryInfo;
-import com.apkscanner.data.apkinfo.UsesSdkInfo;
-import com.apkscanner.gui.component.HtmlEditorPane;
-import com.apkscanner.gui.component.HtmlEditorPane.HyperlinkClickEvent;
-import com.apkscanner.gui.component.HtmlEditorPane.HyperlinkClickListener;
 import com.apkscanner.gui.dialog.PermissionHistoryPanel;
 import com.apkscanner.gui.dialog.SdkVersionInfoDlg;
-import com.apkscanner.gui.messagebox.MessageBoxPane;
-import com.apkscanner.plugin.IPackageSearcher;
-import com.apkscanner.plugin.IPlugIn;
-import com.apkscanner.plugin.PlugInManager;
 import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RFile;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.Base64;
-import com.apkscanner.util.FileUtil;
-import com.apkscanner.util.FileUtil.FSStyle;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.SystemUtil;
-import com.apkscanner.util.XmlPath;
+import com.apkspectrum.core.permissionmanager.PermissionGroupInfoExt;
+import com.apkspectrum.core.permissionmanager.PermissionManager;
+import com.apkspectrum.core.permissionmanager.PermissionRepository.SourceCommit;
+import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.data.apkinfo.ApkInfoHelper;
+import com.apkspectrum.data.apkinfo.CompatibleScreensInfo;
+import com.apkspectrum.data.apkinfo.ResourceInfo;
+import com.apkspectrum.data.apkinfo.SupportsGlTextureInfo;
+import com.apkspectrum.data.apkinfo.SupportsScreensInfo;
+import com.apkspectrum.data.apkinfo.UsesConfigurationInfo;
+import com.apkspectrum.data.apkinfo.UsesFeatureInfo;
+import com.apkspectrum.data.apkinfo.UsesLibraryInfo;
+import com.apkspectrum.data.apkinfo.UsesSdkInfo;
+import com.apkspectrum.plugin.IPackageSearcher;
+import com.apkspectrum.plugin.IPlugIn;
+import com.apkspectrum.plugin.PlugInManager;
+import com.apkspectrum.resource._RFile;
+import com.apkspectrum.swing.HtmlEditorPane;
+import com.apkspectrum.swing.HtmlEditorPane.HyperlinkClickEvent;
+import com.apkspectrum.swing.HtmlEditorPane.HyperlinkClickListener;
+import com.apkspectrum.swing.MessageBoxPane;
+import com.apkspectrum.util.Base64;
+import com.apkspectrum.util.FileUtil;
+import com.apkspectrum.util.FileUtil.FSStyle;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.SystemUtil;
+import com.apkspectrum.util.XmlPath;
 
 public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickListener, IProgressListener,
 		ListDataListener, ItemListener, PropertyChangeListener
@@ -143,16 +144,17 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	}
 
 	private void showAbout() {
+		String exePath = RFile.ETC_APKSCANNER_EXE.getPath();
 		apkInfoPanel.setText(RFile.RAW_ABUOT_HTML.getString());
 		apkInfoPanel.insertElementFirst("apkscanner-icon-td", String.format("<img src=\"%s\" width=\"150\" height=\"150\">", RImg.APP_ICON.getPath()));
 		apkInfoPanel.setInnerHTMLById("apkscanner-title", RStr.APP_NAME.get() + " " + RStr.APP_VERSION.get());
 		apkInfoPanel.setOuterHTMLById("programmer-email", String.format("<a href=\"mailto:%s\" title=\"%s\">%s</a>",
 				RStr.APP_MAKER_EMAIL.get(), RStr.APP_MAKER_EMAIL.get(), RStr.APP_MAKER.get()));
-		if(!SystemUtil.hasShortCut()){
+		if(!SystemUtil.hasShortCut(exePath, RStr.APP_NAME.get())){
 			apkInfoPanel.insertElementLast("apkscanner-icon-td", String.format("<div id=\"create-shortcut\" class=\"div-button\">%s</div>",
 					makeHyperEvent("function-create-shortcut", RStr.BTN_CREATE_SHORTCUT.get(), null)));
 		}
-		if(!SystemUtil.isAssociatedWithFileType(".apk")) {
+		if(!SystemUtil.isAssociatedWithFileType(".apk", exePath)) {
 			apkInfoPanel.insertElementLast("apkscanner-icon-td", String.format("<div id=\"associate-file\" class=\"div-button\">%s</div>",
 					makeHyperEvent("function-assoc-apk", RStr.BTN_ASSOC_FTYPE.get(), null)));
 		}
@@ -174,7 +176,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 	}
 
 	@Override
-	public void setData(ApkInfo apkInfo, Status status) {
+	public void setData(ApkInfo apkInfo, int status) {
 		if(apkInfoPanel == null) initialize();
 
 		if(apkInfo == null) {
@@ -184,7 +186,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		}
 
 		switch(status) {
-		case BASIC_INFO_COMPLETED:
+		case ApkScanner.STATUS_BASIC_INFO_COMPLETED:
 			RComp res = apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX ?
 					RComp.TABBED_BASIC_INFO : RComp.TABBED_APEX_INFO;
 			res.set(this);
@@ -192,7 +194,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			cardLayout.show(this, CARD_APK_INFORMATION);
 			setSeletected();
 			break;
-		case CERT_COMPLETED:
+		case ApkScanner.STATUS_CERT_COMPLETED:
 			if(apkInfoPanel.getElementById("basic-info") != null) {
 				if(ApkInfoHelper.isTestPlatformSign(apkInfo) || ApkInfoHelper.isSamsungSign(apkInfo)) {
 					permissionManager.setPlatformSigned(true);
@@ -242,12 +244,17 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 				if(iconPath != null) break;
 			}
 		}
+		if(iconPath == null) {
+			iconPath = RImg.DEF_APP_ICON.getPath();
+		} else if(iconPath.toLowerCase().endsWith(".qmg")) {
+			iconPath = RImg.QMG_IMAGE_ICON.getPath();
+		}
 		apkInfoPanel.setOuterHTMLById("icon", String.format("<img src=\"%s\" width=\"150\" height=\"150\">", iconPath));
 	}
 
 	private void setPlatformIcon(int apiLevel) {
 		String iconPath = null;
-		try(InputStream xml = RFile.RAW_SDK_INFO_FILE.getResourceAsStream()) {
+		try(InputStream xml = _RFile.RAW_SDK_INFO_FILE.getResourceAsStream()) {
 			XmlPath sdkXmlPath = new XmlPath(xml);
 			XmlPath sdkInfo = sdkXmlPath.getNode("/resources/sdk-info[@apiLevel='" + apiLevel + "']");
 			if(sdkInfo != null) {
@@ -773,20 +780,20 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			sdkDlg.setVisible(true);
 			break;
 		case "function-create-shortcut":
-			SystemUtil.createShortCut();
+			SystemUtil.createShortCut(RFile.ETC_APKSCANNER_EXE.getPath(), RStr.APP_NAME.get());
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
-					if(SystemUtil.hasShortCut()){
+					if(SystemUtil.hasShortCut(RFile.ETC_APKSCANNER_EXE.getPath(), RStr.APP_NAME.get())){
 						apkInfoPanel.removeElementById("create-shortcut");
 					}
 				}
 			});
 			break;
 		case "function-assoc-apk":
-			SystemUtil.setAssociateFileType(".apk");
+			SystemUtil.setAssociateFileType(".apk", RFile.ETC_APKSCANNER_EXE.getPath());
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
-					if(SystemUtil.isAssociatedWithFileType(".apk")) {
+					if(SystemUtil.isAssociatedWithFileType(".apk", RFile.ETC_APKSCANNER_EXE.getPath())) {
 						apkInfoPanel.removeElementById("associate-file");
 					}
 				}

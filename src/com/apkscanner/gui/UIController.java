@@ -23,21 +23,21 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.apkscanner.Launcher;
-import com.apkscanner.core.scanner.AaptLightScanner;
-import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.easymode.dlg.EasyStartupDlg;
-import com.apkscanner.plugin.IPlugInEventListener;
-import com.apkscanner.plugin.IUpdateChecker;
-import com.apkscanner.plugin.NetworkException;
-import com.apkscanner.plugin.PlugInConfig;
-import com.apkscanner.plugin.PlugInManager;
-import com.apkscanner.plugin.gui.NetworkErrorDialog;
-import com.apkscanner.plugin.gui.UpdateNotificationWindow;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.SystemUtil;
+import com.apkspectrum.core.scanner.AaptLightScanner;
+import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.plugin.IPlugInEventListener;
+import com.apkspectrum.plugin.IUpdateChecker;
+import com.apkspectrum.plugin.NetworkException;
+import com.apkspectrum.plugin.PlugInConfig;
+import com.apkspectrum.plugin.PlugInManager;
+import com.apkspectrum.plugin.gui.NetworkErrorDialog;
+import com.apkspectrum.plugin.gui.UpdateNotificationWindow;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.SystemUtil;
 
 public class UIController implements Runnable, InvocationHandler {
 	public static final String APKSCANNER_GUI_APKSCANNER = "APKSCANNER";
@@ -271,6 +271,7 @@ public class UIController implements Runnable, InvocationHandler {
 	}
 
 	private void loadPlugIn() {
+		PlugInManager.setAppPackage("com.apkscanner", RStr.APP_VERSION.get(), RStr.APP_NAME, RImg.APP_ICON);
 		PlugInManager.setLang(RStr.getLanguage());
 		PlugInManager.addPlugInEventListener(new IPlugInEventListener() {
 			@Override

@@ -2,23 +2,26 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="res"/>
+	<classpathentry kind="src" path="raw"/>
+	<classpathentry kind="src" path="core/src"/>
+	<classpathentry kind="src" path="core/res"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/json-simple-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-cli-1.3.1.jar"/>
 	<classpathentry kind="lib" path="lib/rsyntaxtextarea-2.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/rstaui-2.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/autocomplete-2.6.0.jar"/>
-	<classpathentry kind="lib" path="lib/ddmlib.jar"/>
-	<classpathentry kind="lib" path="lib/guava-18.0.jar"/>
-	<classpathentry kind="lib" path="lib/mslinks.jar"/>
-	<classpathentry kind="lib" path="lib/jna-platform-4.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jna-4.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/luciad-webp-imageio.jar"/>
-	<classpathentry kind="lib" path="lib/proxy-vole/delight-nashorn-sandbox-0.1.11.jar"/>
-	<classpathentry kind="lib" path="lib/proxy-vole/ini4j-0.5.4.jar"/>
-	<classpathentry kind="lib" path="lib/proxy-vole/js-beautify-1.6.12.jar"/>
-	<classpathentry kind="lib" path="lib/proxy-vole/proxy-vole-1.0.5.jar"/>
-	<classpathentry kind="lib" path="lib/proxy-vole/slf4j-api-1.7.25.jar"/>
-	<classpathentry kind="lib" path="lib/apksig-3.5.0.jar"/>
+	<classpathentry kind="lib" path="core/lib/json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="core/lib/ddmlib.jar"/>
+	<classpathentry kind="lib" path="core/lib/guava-18.0.jar"/>
+	<classpathentry kind="lib" path="core/lib/mslinks.jar"/>
+	<classpathentry kind="lib" path="core/lib/jna-platform-4.4.0.jar"/>
+	<classpathentry kind="lib" path="core/lib/jna-4.4.0.jar"/>
+	<classpathentry kind="lib" path="core/lib/proxy-vole/delight-nashorn-sandbox-0.1.11.jar"/>
+	<classpathentry kind="lib" path="core/lib/proxy-vole/ini4j-0.5.4.jar"/>
+	<classpathentry kind="lib" path="core/lib/proxy-vole/js-beautify-1.6.12.jar"/>
+	<classpathentry kind="lib" path="core/lib/proxy-vole/proxy-vole-1.0.5.jar"/>
+	<classpathentry kind="lib" path="core/lib/proxy-vole/slf4j-api-1.7.25.jar"/>
+	<classpathentry kind="lib" path="core/lib/apksig-3.5.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

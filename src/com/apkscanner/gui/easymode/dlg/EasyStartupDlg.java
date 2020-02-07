@@ -10,11 +10,11 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import com.apkscanner.gui.component.HtmlEditorPane;
 import com.apkscanner.gui.easymode.util.ImageSliderPanel;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
+import com.apkspectrum.swing.HtmlEditorPane;
 
 public class EasyStartupDlg
 {

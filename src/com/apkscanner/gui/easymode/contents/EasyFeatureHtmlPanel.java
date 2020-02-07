@@ -23,19 +23,19 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
-import com.apkscanner.data.apkinfo.ApkInfo;
-import com.apkscanner.data.apkinfo.ApkInfoHelper;
-import com.apkscanner.data.apkinfo.ComponentInfo;
 import com.apkscanner.gui.easymode.core.EasyGuiAppFeatureData;
 import com.apkscanner.gui.easymode.dlg.EasyToolbarCertDlg;
 import com.apkscanner.gui.easymode.util.EasyRoundButton;
 import com.apkscanner.gui.easymode.util.RoundPanel;
-import com.apkscanner.resource.RFile;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.FileUtil;
-import com.apkscanner.util.FileUtil.FSStyle;
-import com.apkscanner.util.Log;
-import com.apkscanner.util.XmlPath;
+import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.data.apkinfo.ApkInfoHelper;
+import com.apkspectrum.data.apkinfo.ComponentInfo;
+import com.apkspectrum.resource._RFile;
+import com.apkspectrum.util.FileUtil;
+import com.apkspectrum.util.FileUtil.FSStyle;
+import com.apkspectrum.util.Log;
+import com.apkspectrum.util.XmlPath;
 
 public class EasyFeatureHtmlPanel extends RoundPanel {
 	/**
@@ -148,11 +148,11 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 	}
 
 	public void setSdkXml() {
-		try(InputStream xml = RFile.RAW_SDK_INFO_FILE.getResourceAsStream()) {
+		try(InputStream xml = _RFile.RAW_SDK_INFO_FILE.getResourceAsStream()) {
 			if(xml != null) sdkXmlPath = new XmlPath(xml);
 		} catch(IOException e) { }
 		if(sdkXmlPath == null) {
-			Log.w("Can not create XmlPath, xmlPath : " + RFile.RAW_SDK_INFO_FILE.getPath());
+			Log.w("Can not create XmlPath, xmlPath : " + _RFile.RAW_SDK_INFO_FILE.getPath());
 			return;
 		}
 	}

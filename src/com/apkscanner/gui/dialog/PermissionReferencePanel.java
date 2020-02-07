@@ -14,18 +14,18 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 
-import com.apkscanner.core.permissionmanager.PermissionManager;
-import com.apkscanner.core.permissionmanager.PermissionRepository;
-import com.apkscanner.core.permissionmanager.PermissionRepository.SourceCommit;
-import com.apkscanner.gui.component.HtmlEditorPane;
-import com.apkscanner.gui.component.KeyStrokeAction;
-import com.apkscanner.gui.component.WindowSizeMemorizer;
-import com.apkscanner.gui.component.tabbedpane.TabbedPaneUIManager;
-import com.apkscanner.resource.RFile;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
-import com.apkscanner.util.Log;
+import com.apkspectrum.core.permissionmanager.PermissionManager;
+import com.apkspectrum.core.permissionmanager.PermissionRepository;
+import com.apkspectrum.core.permissionmanager.PermissionRepository.SourceCommit;
+import com.apkspectrum.resource._RFile;
+import com.apkspectrum.swing.HtmlEditorPane;
+import com.apkspectrum.swing.KeyStrokeAction;
+import com.apkspectrum.swing.WindowSizeMemorizer;
+import com.apkspectrum.swing.tabbedpaneui.TabbedPaneUIManager;
+import com.apkspectrum.util.Log;
 
 public class PermissionReferencePanel extends JPanel {
 	private static final long serialVersionUID = 1224360539653858070L;
@@ -56,10 +56,10 @@ public class PermissionReferencePanel extends JPanel {
 	}
 
 	private void loadData() {
-		referencePanel.setText(RFile.RAW_PERMISSION_REFERENCE_HTML.getString());
+		referencePanel.setText(_RFile.RAW_PERMISSION_REFERENCE_HTML.getString());
 		referencePanel.setCaretPosition(0);
 
-		protectLevelPanel.setText(RFile.RAW_PROTECTION_LEVELS_HTML.getString());
+		protectLevelPanel.setText(_RFile.RAW_PROTECTION_LEVELS_HTML.getString());
 		protectLevelPanel.setCaretPosition(0);
 
 		PermissionRepository repo = PermissionManager.getPermissionRepository();
