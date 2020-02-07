@@ -117,7 +117,7 @@ public class EasyToolIcon extends JLabel implements MouseListener
 			EventQueue.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					actionlistener.actionPerformed(new ActionEvent(EasyToolIcon.this, ActionEvent.ACTION_PERFORMED, ActionCmd, e.getWhen(), e.getModifiers()));
+					actionlistener.actionPerformed(new ActionEvent(EasyToolIcon.this, ActionEvent.ACTION_PERFORMED, ActionCmd, e.getWhen(), e.getModifiersEx()));
 				}
 			});
 		}

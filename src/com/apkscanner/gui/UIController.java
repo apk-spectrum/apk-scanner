@@ -363,7 +363,7 @@ public class UIController implements Runnable, InvocationHandler {
 
 	private void initMacApplication() {
 		if(!SystemUtil.isMac()) return;
-		boolean isJdk9 = SystemUtil.checkJvmVersion("1.9");
+		boolean isJdk9 = SystemUtil.checkJvmVersion("9");
 	    try {
 	        final Class<?> applicationClass = Class.forName(isJdk9 ? "java.awt.Desktop" : "com.apple.eawt.Application");
 	        final Class<?> openFilesHandlerClass = Class.forName(isJdk9 ? "java.awt.desktop.OpenFilesHandler" : "com.apple.eawt.OpenFilesHandler");
@@ -391,7 +391,7 @@ public class UIController implements Runnable, InvocationHandler {
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		if (method.getName().equals("openFiles")) {
-			boolean isJdk9 = SystemUtil.checkJvmVersion("1.9");
+			boolean isJdk9 = SystemUtil.checkJvmVersion("9");
 			final Class<?> openFilesEventClass = Class.forName(isJdk9 ? "java.awt.desktop.FilesEvent" : "com.apple.eawt.AppEvent$OpenFilesEvent");
 			final Method getFiles = openFilesEventClass.getMethod("getFiles");
 			Object e = args[0];

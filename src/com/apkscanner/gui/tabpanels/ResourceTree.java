@@ -106,7 +106,7 @@ public class ResourceTree extends JTree
 				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
 					if (getPathForLocation(e.getX(), e.getY()) == null) return;
 					listener.actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED,
-							UiEventHandler.ACT_CMD_OPEN_RESOURCE_TREE_FILE, e.getWhen(), e.getModifiers()));
+							UiEventHandler.ACT_CMD_OPEN_RESOURCE_TREE_FILE, e.getWhen(), e.getModifiersEx()));
 				}
 			}
 		});
@@ -427,7 +427,7 @@ public class ResourceTree extends JTree
 		DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) getModel().getRoot();
 
 		@SuppressWarnings("unchecked")
-		Enumeration<TreeNode> e = rootNode.depthFirstEnumeration();
+		Enumeration<TreeNode> e = (Enumeration<TreeNode>)(Enumeration<?>) rootNode.depthFirstEnumeration();
 		while (e.hasMoreElements()) {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)e.nextElement();
 			if (node.getUserObject() instanceof TreeNodeData) {

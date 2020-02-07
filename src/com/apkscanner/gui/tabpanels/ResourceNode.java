@@ -5,6 +5,7 @@ import java.util.Comparator;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 import com.apkspectrum.swing.SortedMutableTreeNode;
 import com.apkspectrum.util.SystemUtil;
@@ -13,9 +14,9 @@ public class ResourceNode extends SortedMutableTreeNode
 {
 	private static final long serialVersionUID = -7644917198175319373L;
 
-	private static final Comparator<? super MutableTreeNode> nodeComparator = new Comparator<MutableTreeNode>() {
+	private static final Comparator<? super TreeNode> nodeComparator = new Comparator<TreeNode>() {
 		@Override
-		public int compare(MutableTreeNode o1, MutableTreeNode o2) {
+		public int compare(TreeNode o1, TreeNode o2) {
 			if(o1 instanceof DefaultMutableTreeNode && o2 instanceof DefaultMutableTreeNode) {
 				Object obj1 = ((DefaultMutableTreeNode) o1).getUserObject();
 				Object obj2 = ((DefaultMutableTreeNode) o2).getUserObject();
