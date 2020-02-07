@@ -4,7 +4,6 @@ import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -58,6 +57,7 @@ import com.apkscanner.gui.action.ShowExplorerFolderAction;
 import com.apkscanner.gui.action.ShowLogsAction;
 import com.apkscanner.gui.action.ShowManifestAction;
 import com.apkscanner.gui.action.SignApkAction;
+import com.apkscanner.resource.RConst;
 import com.apkspectrum.core.scanner.ApkScanner;
 import com.apkspectrum.plugin.IExternalTool;
 import com.apkspectrum.plugin.IPlugIn;
@@ -143,22 +143,22 @@ public class UiEventHandler extends ActionEventHandler implements WindowListener
 		// Shortcut key event processing
 		KeyStrokeAction.registerKeyStrokeActions(c, JComponent.WHEN_IN_FOCUSED_WINDOW,
 			new KeyStroke[] {
-				KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.CTRL_DOWN_MASK, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true),
-				KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true),
-				KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true)
+				KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0),
+				KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0),
+				KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0),
+				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+				KeyStroke.getKeyStroke(KeyEvent.VK_O, RConst.CTRL_MASK),
+				KeyStroke.getKeyStroke(KeyEvent.VK_P, RConst.CTRL_MASK),
+				KeyStroke.getKeyStroke(KeyEvent.VK_N, RConst.CTRL_MASK),
+				KeyStroke.getKeyStroke(KeyEvent.VK_I, RConst.CTRL_MASK),
+				KeyStroke.getKeyStroke(KeyEvent.VK_T, RConst.CTRL_MASK),
+				KeyStroke.getKeyStroke(KeyEvent.VK_E, RConst.CTRL_MASK),
+				KeyStroke.getKeyStroke(KeyEvent.VK_M, RConst.CTRL_MASK),
+				KeyStroke.getKeyStroke(KeyEvent.VK_R, RConst.CTRL_MASK),
+				KeyStroke.getKeyStroke(KeyEvent.VK_W, RConst.CTRL_MASK),
+				KeyStroke.getKeyStroke(KeyEvent.VK_O, RConst.CTRL_SHIFT_MASK),
+				KeyStroke.getKeyStroke(KeyEvent.VK_P, RConst.CTRL_SHIFT_MASK),
+				KeyStroke.getKeyStroke(KeyEvent.VK_R, RConst.CTRL_SHIFT_MASK)
 			},
 			new String[] {
 				ACT_CMD_SHOW_ABOUT,

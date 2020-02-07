@@ -114,7 +114,7 @@ public class ProgressBarDlg extends JFrame
         starttask();
         
 		KeyStrokeAction.registerKeyStrokeActions(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW, new KeyStroke[] {
-				KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0, false)
+				KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0)
 			}, new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					LogDlg.showLogDialog(ProgressBarDlg.this);

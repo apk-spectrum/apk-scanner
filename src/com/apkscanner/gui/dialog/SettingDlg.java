@@ -400,7 +400,7 @@ public class SettingDlg extends JDialog implements ActionListener
 		getContentPane().add(contentPane);
 
 		KeyStrokeAction.registerKeyStrokeAction(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW,
-				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), ACT_CMD_EXIT, this);
+				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), ACT_CMD_EXIT, this);
 
 		addWindowListener(new WindowAdapter() {
 			@Override public void windowClosing(WindowEvent e) { Log.v("windowClosing"); resotreSetting(); }

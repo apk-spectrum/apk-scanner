@@ -5,6 +5,7 @@ import java.awt.CardLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.Objects;
 
 import javax.swing.AbstractAction;
@@ -33,6 +34,7 @@ import org.fife.ui.rtextarea.SearchResult;
 
 import com.apkscanner.gui.UiEventHandler;
 import com.apkscanner.gui.action.ActionEventHandler;
+import com.apkscanner.resource.RConst;
 import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.swing.ImageControlPanel;
 import com.apkspectrum.swing.KeyStrokeAction;
@@ -47,6 +49,11 @@ public class ResourceContentsPanel extends JPanel implements ActionListener
 	public static final String CONTENT_TABLE_VIEWER = "TableViewer";
 	public static final String CONTENT_SELECT_VIEWER = "SelectViewer";
 	public static final String CONTENT_INIT_VIEWER = "InitViewer";
+
+	protected static final String ACT_CMD_FIND = "ACT_CMD_FIND";
+	protected static final String ACT_CMD_FIND_NEXT = "ACT_CMD_FIND_NEXT";
+	protected static final String ACT_CMD_FIND_PREV = "ACT_CMD_FIND_PREV";
+	protected static final String ACT_CMD_SAVE = "ACT_CMD_SAVE";
 
 	private ResourceToolBarPanel resToolbar;
 
@@ -140,15 +147,15 @@ public class ResourceContentsPanel extends JPanel implements ActionListener
 		add(northPanelScroll, BorderLayout.NORTH);
 		add(contentsviewPanel, BorderLayout.CENTER);
 
-		KeyStrokeAction.registerKeyStrokeAction(xmltextArea, KeyStroke.getKeyStroke("control F"), this);
-		KeyStrokeAction.registerKeyStrokeAction(xmltextArea, KeyStroke.getKeyStroke("control S"), this);
-		KeyStrokeAction.registerKeyStrokeAction(xmltextArea, KeyStroke.getKeyStroke("F3"), this);
-		KeyStrokeAction.registerKeyStrokeAction(xmltextArea, KeyStroke.getKeyStroke("shift F3"), this);
+		KeyStrokeAction.registerKeyStrokeAction(xmltextArea, KeyStroke.getKeyStroke(KeyEvent.VK_F, RConst.CTRL_MASK), ACT_CMD_FIND, this);
+		KeyStrokeAction.registerKeyStrokeAction(xmltextArea, KeyStroke.getKeyStroke(KeyEvent.VK_S, RConst.CTRL_MASK), ACT_CMD_SAVE, this);
+		KeyStrokeAction.registerKeyStrokeAction(xmltextArea, KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0), ACT_CMD_FIND_NEXT, this);
+		KeyStrokeAction.registerKeyStrokeAction(xmltextArea, KeyStroke.getKeyStroke(KeyEvent.VK_F3, RConst.SHIFT_MASK), ACT_CMD_FIND_PREV, this);
 
-		KeyStrokeAction.registerKeyStrokeAction(textTableViewer, KeyStroke.getKeyStroke("control F"), this);
-		KeyStrokeAction.registerKeyStrokeAction(textTableViewer, KeyStroke.getKeyStroke("control S"), this);
-		KeyStrokeAction.registerKeyStrokeAction(textTableViewer, KeyStroke.getKeyStroke("F3"), this);
-		KeyStrokeAction.registerKeyStrokeAction(textTableViewer, KeyStroke.getKeyStroke("shift F3"), this);
+		KeyStrokeAction.registerKeyStrokeAction(textTableViewer, KeyStroke.getKeyStroke(KeyEvent.VK_F, RConst.CTRL_MASK), ACT_CMD_FIND, this);
+		KeyStrokeAction.registerKeyStrokeAction(textTableViewer, KeyStroke.getKeyStroke(KeyEvent.VK_S, RConst.CTRL_MASK), ACT_CMD_SAVE, this);
+		KeyStrokeAction.registerKeyStrokeAction(textTableViewer, KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0), ACT_CMD_FIND_NEXT, this);
+		KeyStrokeAction.registerKeyStrokeAction(textTableViewer, KeyStroke.getKeyStroke(KeyEvent.VK_F3, RConst.SHIFT_MASK), ACT_CMD_FIND_PREV, this);
 	}
 
 	public void setContentViewPanel(String viewName) {
@@ -300,8 +307,9 @@ public class ResourceContentsPanel extends JPanel implements ActionListener
 
 	@Override
 	public void actionPerformed(ActionEvent evt) {
+		String actCmd = evt.getActionCommand();
 		if(evt.getSource() instanceof JComponent) {
-			switch(evt.getActionCommand()) {
+			switch(actCmd) {
 			case ResourceToolBarPanel.TEXTVIEWER_TOOLBAR_FIND:
 				if(CONTENT_SYNTAX_TEXT_VIEWER.equals(currentContentViewer)) {
 					getFindDialog().setVisible(true);
@@ -354,21 +362,21 @@ public class ResourceContentsPanel extends JPanel implements ActionListener
 		} else if(evt.getSource() instanceof KeyStrokeAction) {
 			KeyStrokeAction keyAction = (KeyStrokeAction) evt.getSource();
 			JComponent comp = keyAction.getComponent();
-			switch (keyAction.getKeyStroke().toString()) {
-			case "ctrl pressed F":	  /////////F key
+			switch (actCmd) {
+			case ACT_CMD_FIND:	  /////////F key
 				if(comp instanceof JTable) {
 					resToolbar.setFocusFindTextField();
 				} else {
 					getFindDialog().setVisible(true);
 				}
 				break;
-			case "ctrl pressed S":	  /////////S key
+			case ACT_CMD_SAVE:	  /////////S key
 				if(listener == null) return;
 				comp.putClientProperty(TreeNodeData.class, currentSelectedObj);
 				listener.actionPerformed(new ActionEvent(comp, ActionEvent.ACTION_PERFORMED,
 						UiEventHandler.ACT_CMD_SAVE_RESOURCE_FILE, evt.getWhen(), evt.getModifiers()));
 				break;
-			case "pressed F3":	  /////////F3
+			case ACT_CMD_FIND_NEXT:	  /////////F3
 				if(CONTENT_TABLE_VIEWER.equals(currentContentViewer)) {
 					findNextTable(true);
 				} else {
@@ -377,7 +385,7 @@ public class ResourceContentsPanel extends JPanel implements ActionListener
 					searchAndNext(SearchEvent.Type.FIND, getFindDialog().getSearchContext());
 				}
 				break;
-			case "shift pressed F3":	  /////////F3
+			case ACT_CMD_FIND_PREV:	  /////////F3
 				if(CONTENT_TABLE_VIEWER.equals(currentContentViewer)) {
 					findNextTable(false);
 				} else {

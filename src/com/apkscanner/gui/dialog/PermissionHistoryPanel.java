@@ -14,7 +14,6 @@ import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -70,6 +69,7 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
@@ -77,11 +77,11 @@ import com.apkspectrum.core.permissionmanager.DeclaredPermissionInfo;
 import com.apkspectrum.core.permissionmanager.PermissionGroupInfoExt;
 import com.apkspectrum.core.permissionmanager.PermissionInfoExt;
 import com.apkspectrum.core.permissionmanager.PermissionManager;
+import com.apkspectrum.core.permissionmanager.PermissionRepository.SourceCommit;
 import com.apkspectrum.core.permissionmanager.RevokedPermissionInfo;
+import com.apkspectrum.core.permissionmanager.RevokedPermissionInfo.RevokedSource;
 import com.apkspectrum.core.permissionmanager.UnitInformation;
 import com.apkspectrum.core.permissionmanager.UnitRecord;
-import com.apkspectrum.core.permissionmanager.PermissionRepository.SourceCommit;
-import com.apkspectrum.core.permissionmanager.RevokedPermissionInfo.RevokedSource;
 import com.apkspectrum.data.apkinfo.PermissionGroupInfo;
 import com.apkspectrum.data.apkinfo.PermissionInfo;
 import com.apkspectrum.data.apkinfo.ResourceInfo;
@@ -389,7 +389,7 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		        int row = table.rowAtPoint(point);
 		        if (row > -1 && mouseEvent.getClickCount() == 2) {
 		        	boolean withCtrl = (mouseEvent.getModifiersEx()
-		        			& (InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)) != 0;
+		        			& RConst.CTRL_SHIFT_MASK) != 0;
 		        	if(table.getSelectedRow() == -1) {
 		        		if(!withCtrl) return;
 		        		table.setRowSelectionInterval(row, row);
@@ -402,9 +402,9 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		    }
 		});
 		KeyStrokeAction.registerKeyStrokeActions(historyTable, JComponent.WHEN_IN_FOCUSED_WINDOW, new KeyStroke[] {
-				KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.SHIFT_DOWN_MASK, false)
+				KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
+				KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, RConst.CTRL_MASK),
+				KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, RConst.SHIFT_MASK)
 			}, this);
 
 		extraTabbedPanel = new JTabbedPane();
@@ -781,11 +781,11 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
 		dialog.setVisible(true);
 
 		KeyStrokeAction.registerKeyStrokeActions(dialog.getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW, new KeyStroke[] {
-			KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_DOWN_MASK, false),
-			KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.ALT_DOWN_MASK, false),
-			KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK, false),
-			KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK, false),
-			KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false)
+			KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, RConst.ALT_MASK),
+			KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, RConst.ALT_MASK),
+			KeyStroke.getKeyStroke(KeyEvent.VK_W, RConst.CTRL_MASK),
+			KeyStroke.getKeyStroke(KeyEvent.VK_F, RConst.CTRL_MASK),
+			KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0)
 		}, this);
 	}
 

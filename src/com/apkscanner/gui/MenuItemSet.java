@@ -3,7 +3,6 @@ package com.apkscanner.gui;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,15 +21,15 @@ import com.apkspectrum.swing.NoCloseCheckBoxMenuItem;
 enum MenuItemSet
 {
 	NEW_WINDOW		(RComp.MENU_TOOLBAR_NEW_WINDOW, null, null, '\0', true),
-	NEW_EMPTY		(RComp.MENU_TOOLBAR_NEW_EMPTY, UiEventHandler.ACT_CMD_NEW_WINDOW, KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK, false), 'N'),
-	NEW_APK			(RComp.MENU_TOOLBAR_NEW_APK, UiEventHandler.ACT_CMD_OPEN_APK_TO_NEW, KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, false), 'O'),
-	NEW_PACKAGE		(RComp.MENU_TOOLBAR_NEW_PACKAGE, UiEventHandler.ACT_CMD_OPEN_PACKAGE_TO_NEW, KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, false), 'P'),
-	OPEN_APK		(RComp.MENU_TOOLBAR_OPEN_APK, UiEventHandler.ACT_CMD_OPEN_APK, KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK, false), 'O'),
-	OPEN_PACKAGE	(RComp.MENU_TOOLBAR_OPEN_PACKAGE, UiEventHandler.ACT_CMD_OPEN_PACKAGE, KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK, false), 'P'),
-	INSTALL_APK		(RComp.MENU_TOOLBAR_INSTALL_APK, UiEventHandler.ACT_CMD_INSTALL_APK, KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK, false), 'I'),
-	UNINSTALL_APK	(RComp.MENU_TOOLBAR_UNINSTALL_APK, UiEventHandler.ACT_CMD_UNINSTALL_APP, KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_DOWN_MASK, false), 'U'),
+	NEW_EMPTY		(RComp.MENU_TOOLBAR_NEW_EMPTY, UiEventHandler.ACT_CMD_NEW_WINDOW, KeyStroke.getKeyStroke(KeyEvent.VK_N, RConst.CTRL_MASK), 'N'),
+	NEW_APK			(RComp.MENU_TOOLBAR_NEW_APK, UiEventHandler.ACT_CMD_OPEN_APK_TO_NEW, KeyStroke.getKeyStroke(KeyEvent.VK_O, RConst.CTRL_SHIFT_MASK), 'O'),
+	NEW_PACKAGE		(RComp.MENU_TOOLBAR_NEW_PACKAGE, UiEventHandler.ACT_CMD_OPEN_PACKAGE_TO_NEW, KeyStroke.getKeyStroke(KeyEvent.VK_P, RConst.CTRL_SHIFT_MASK), 'P'),
+	OPEN_APK		(RComp.MENU_TOOLBAR_OPEN_APK, UiEventHandler.ACT_CMD_OPEN_APK, KeyStroke.getKeyStroke(KeyEvent.VK_O, RConst.CTRL_MASK), 'O'),
+	OPEN_PACKAGE	(RComp.MENU_TOOLBAR_OPEN_PACKAGE, UiEventHandler.ACT_CMD_OPEN_PACKAGE, KeyStroke.getKeyStroke(KeyEvent.VK_P, RConst.CTRL_MASK), 'P'),
+	INSTALL_APK		(RComp.MENU_TOOLBAR_INSTALL_APK, UiEventHandler.ACT_CMD_INSTALL_APK, KeyStroke.getKeyStroke(KeyEvent.VK_I, RConst.CTRL_MASK), 'I'),
+	UNINSTALL_APK	(RComp.MENU_TOOLBAR_UNINSTALL_APK, UiEventHandler.ACT_CMD_UNINSTALL_APP, KeyStroke.getKeyStroke(KeyEvent.VK_U, RConst.CTRL_MASK), 'U'),
 	CLEAR_DATA		(RComp.MENU_TOOLBAR_CLEAR_DATA, UiEventHandler.ACT_CMD_CLEAR_APP_DATA, null, '\0'),
-	INSTALLED_CHECK	(RComp.MENU_TOOLBAR_INSTALLED_CHECK, UiEventHandler.ACT_CMD_SHOW_INSTALLED_PACKAGE_INFO, KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK, false), 'T'),
+	INSTALLED_CHECK	(RComp.MENU_TOOLBAR_INSTALLED_CHECK, UiEventHandler.ACT_CMD_SHOW_INSTALLED_PACKAGE_INFO, KeyStroke.getKeyStroke(KeyEvent.VK_T, RConst.CTRL_MASK), 'T'),
 	DECODER_JD_GUI	(RComp.MENU_TOOLBAR_DECODER_JD_GUI, UiEventHandler.ACT_CMD_OPEN_DECOMPILER_JDGUI, null, '\0', RConst.STR_DECORDER_JD_GUI),
 	DECODER_JADX_GUI(RComp.MENU_TOOLBAR_DECODER_JADX_GUI, UiEventHandler.ACT_CMD_OPEN_DECOMPILER_JADXGUI, null, '\0', RConst.STR_DECORDER_JADX_GUI),
 	DECODER_BYTECODE(RComp.MENU_TOOLBAR_DECODER_BYTECODE, UiEventHandler.ACT_CMD_OPEN_DECOMPILER_BYTECODE, null, '\0', RConst.STR_DECORDER_BYTECOD),

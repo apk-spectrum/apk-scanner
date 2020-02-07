@@ -9,7 +9,6 @@ import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -38,6 +37,7 @@ import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
 import com.android.ddmlib.IDevice;
 import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.dialog.PackageInfoPanel;
+import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
@@ -226,10 +226,10 @@ public class ApkInstallWizard implements IDeviceChangeListener
 
 		// Shortcut key event processing
 		KeyStrokeAction.registerKeyStrokeActions(compoent, JComponent.WHEN_IN_FOCUSED_WINDOW, new KeyStroke[] {
-				KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.ALT_DOWN_MASK, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.ALT_DOWN_MASK, false)
+				KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0),
+				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+				KeyStroke.getKeyStroke(KeyEvent.VK_N, RConst.ALT_MASK),
+				KeyStroke.getKeyStroke(KeyEvent.VK_P, RConst.ALT_MASK)
 			}, uiEventHandler);
 	}
 

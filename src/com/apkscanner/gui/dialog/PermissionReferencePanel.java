@@ -138,7 +138,7 @@ public class PermissionReferencePanel extends JPanel {
 		dialog.setVisible(true);
 
 		KeyStrokeAction.registerKeyStrokeActions(dialog.getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW, new KeyStroke[] {
-			KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false)
+			KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0)
 		}, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dialog.dispose();

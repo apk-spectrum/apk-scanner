@@ -223,7 +223,7 @@ public class Components extends AbstractTabbedPanel
 		});
 
 		KeyStrokeAction.registerKeyStrokeAction(textField, JComponent.WHEN_FOCUSED,
-				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), new ActionListener() {
+				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				textField.setText("");

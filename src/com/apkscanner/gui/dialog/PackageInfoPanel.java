@@ -9,7 +9,6 @@ import java.awt.FlowLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -490,7 +489,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 				};
 			}.execute();
 		} else if(ACT_CMD_LAUCH_PACKAGE.equals(actCmd)) {
-			final boolean selectActivity = (arg0.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
+			final boolean selectActivity = (arg0.getModifiers() & RConst.SHIFT_MASK) != 0;
 			final IDevice device = packageInfo.device;
 
 			if(!packageInfo.isEnabled()) {

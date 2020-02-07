@@ -173,10 +173,10 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 
 
 		KeyStrokeAction.registerKeyStrokeAction(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW,
-				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), RStr.BTN_CANCEL.get(), this);
+				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), RStr.BTN_CANCEL.get(), this);
 
 		KeyStrokeAction.registerKeyStrokeAction(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW,
-				KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, false), RStr.BTN_REFRESH.get(), this);
+				KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), RStr.BTN_REFRESH.get(), this);
 
 		top = new DefaultMutableTreeNode(RStr.TREE_NODE_DEVICE.get());
 

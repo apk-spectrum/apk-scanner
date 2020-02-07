@@ -131,7 +131,7 @@ public class SdkVersionInfoDlg extends JDialog {
 		this.add(new JScrollPane(sdkInfoArea), gridConst);
 
 		KeyStrokeAction.registerKeyStrokeActions(getRootPane(), JComponent.WHEN_IN_FOCUSED_WINDOW, new KeyStroke[] {
-				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false)
+				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0)
 			}, new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					dispose();

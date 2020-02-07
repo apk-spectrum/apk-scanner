@@ -176,7 +176,7 @@ public class ToolBar extends JToolBar
 			@Override
 			public boolean dispatchKeyEvent(KeyEvent e) {
 				if (e.getID() == KeyEvent.KEY_PRESSED && !isShiftPressed) {
-					if(e.getModifiersEx() == KeyEvent.SHIFT_DOWN_MASK) {
+					if(e.getModifiersEx() == RConst.SHIFT_MASK) {
 						isShiftPressed = true;
 						if(!RProp.B.ALWAYS_TOOLBAR_EXTENDED.get()) ButtonSet.setArrowVisible(buttonMap, true);
 						setButtonText(ButtonSet.OPEN, RStr.MENU_NEW.get(), RStr.BTN_OPEN_LAB.get());
@@ -187,7 +187,7 @@ public class ToolBar extends JToolBar
 						invokeMouseEvent(e, MouseEvent.MOUSE_ENTERED);
 					}
 				} else if (e.getID() == KeyEvent.KEY_RELEASED && isShiftPressed) {
-					if(e.getModifiersEx() != KeyEvent.SHIFT_DOWN_MASK) {
+					if(e.getModifiersEx() != RConst.SHIFT_MASK) {
 						isShiftPressed = false;
 						if(!RProp.B.ALWAYS_TOOLBAR_EXTENDED.get()) ButtonSet.setArrowVisible(buttonMap, false);
 						setButtonText(ButtonSet.OPEN, RStr.BTN_OPEN.get(), RStr.BTN_OPEN_LAB.get());
