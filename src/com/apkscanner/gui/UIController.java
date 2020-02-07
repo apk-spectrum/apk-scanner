@@ -3,6 +3,11 @@ package com.apkscanner.gui;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Image;
+import java.io.File;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -17,6 +22,7 @@ import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.apkscanner.Launcher;
 import com.apkscanner.core.scanner.AaptLightScanner;
 import com.apkscanner.core.scanner.ApkScanner;
 import com.apkscanner.gui.easymode.dlg.EasyStartupDlg;
@@ -31,8 +37,9 @@ import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 import com.apkscanner.util.Log;
+import com.apkscanner.util.SystemUtil;
 
-public class UIController implements Runnable {
+public class UIController implements Runnable, InvocationHandler {
 	public static final String APKSCANNER_GUI_APKSCANNER = "APKSCANNER";
 	public static final String APKSCANNER_GUI_EASY_APKSCANNER = "EASY_APKSCANNER";
 
@@ -56,6 +63,7 @@ public class UIController implements Runnable {
 		this.apkScanner = apkScanner;
 		eventHandler = new UiEventHandler(apkScanner);
 
+		initMacApplication();
 		loadPlugIn();
 	}
 
@@ -350,5 +358,66 @@ public class UIController implements Runnable {
 	public static void sendEvent(String actionCommand) {
 		UIController thiz = getInstance();
 		thiz.eventHandler.sendEvent(thiz.mainframe, actionCommand);
+	}
+
+	private void initMacApplication() {
+		if(!SystemUtil.isMac()) return;
+		boolean isJdk9 = SystemUtil.checkJvmVersion("1.9");
+	    try {
+	        final Class<?> applicationClass = Class.forName(isJdk9 ? "java.awt.Desktop" : "com.apple.eawt.Application");
+	        final Class<?> openFilesHandlerClass = Class.forName(isJdk9 ? "java.awt.desktop.OpenFilesHandler" : "com.apple.eawt.OpenFilesHandler");
+	        final Method getApplication = applicationClass.getMethod(isJdk9 ? "getDesktop" : "getApplication");
+	        final Object application = getApplication.invoke(null);
+	        final Method setOpenFileHandler = applicationClass.getMethod("setOpenFileHandler", openFilesHandlerClass);
+	        final ClassLoader openFilesHandlerClassLoader = openFilesHandlerClass.getClassLoader();
+	        final Object openFilesHandlerObject = Proxy.newProxyInstance(openFilesHandlerClassLoader,
+	        		new Class<?>[] { openFilesHandlerClass }, this);
+	        setOpenFileHandler.invoke(application, openFilesHandlerObject);
+	    } catch (Exception e) {
+	        Log.e("Exception adding OS X file open handler");
+	    }
+	    try {
+	        final Class<?> applicationClass = Class.forName("com.apple.eawt.Application");
+	        final Method getApplication = applicationClass.getMethod("getApplication");
+	        final Object application = getApplication.invoke(null);
+	        final Method setDockIconImage = applicationClass.getMethod("setDockIconImage", Image.class);
+	        setDockIconImage.invoke(application, RImg.APP_ICON.getImage());
+	    } catch (Exception e) {
+	        Log.e("Exception change OS X icon");
+	    }
+	}
+
+	@Override
+	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+		if (method.getName().equals("openFiles")) {
+			boolean isJdk9 = SystemUtil.checkJvmVersion("1.9");
+			final Class<?> openFilesEventClass = Class.forName(isJdk9 ? "java.awt.desktop.FilesEvent" : "com.apple.eawt.AppEvent$OpenFilesEvent");
+			final Method getFiles = openFilesEventClass.getMethod("getFiles");
+			Object e = args[0];
+			try {
+				@SuppressWarnings("unchecked")
+				final List<File> ff = (List<File>) getFiles.invoke(e);
+				boolean isEmpty = apkScanner.getStatus() == 0;
+                for (final File file : ff){
+                    if(isEmpty) {
+        				Thread thread = new Thread(new Runnable() {
+        					public void run() {
+        						apkScanner.openApk(file.getAbsolutePath());
+        					}
+        				});
+        				thread.setPriority(Thread.NORM_PRIORITY);
+        				thread.start();
+        				isEmpty = false;
+                    } else {
+                    	Launcher.run(file.getAbsolutePath());
+                    }
+                }
+			} catch (RuntimeException ee) {
+				throw ee;
+			} catch (Exception ee) {
+				throw new RuntimeException(ee);
+			}
+		}
+		return null;
 	}
 }
