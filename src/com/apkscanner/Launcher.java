@@ -121,6 +121,9 @@ public class Launcher
 		} catch (UnsupportedEncodingException e1) { }
 
 		defaultCmd.add("java");
+		if(SystemUtil.isMac()) {
+			defaultCmd.add("-Xdock:name=APK Scanner");
+		}
 		defaultCmd.add("-Dfile.encoding=utf-8");
 		defaultCmd.add("-Djava.library.path=" + RFile.BIN_PATH.get());
 		defaultCmd.add("-cp");

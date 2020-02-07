@@ -2,7 +2,6 @@ package com.apkscanner.gui.component;
 
 import java.awt.Desktop;
 import java.awt.Font;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.URI;
@@ -29,6 +28,7 @@ import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
+import com.apkscanner.resource.RConst;
 import com.apkscanner.util.Log;
 
 public class HtmlEditorPane extends JEditorPane implements HyperlinkListener
@@ -77,8 +77,8 @@ public class HtmlEditorPane extends JEditorPane implements HyperlinkListener
 	{
 		super("text/html", null);
 		addHyperlinkListener(this);
-		getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK, false), "none");
-		getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, false), "none");
+		getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_T, RConst.CTRL_MASK), "none");
+		getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_T, RConst.CTRL_SHIFT_MASK), "none");
 
 		HTMLEditorKit kit = new CustomHTMLEditorKit();
 		setEditorKit(kit);
