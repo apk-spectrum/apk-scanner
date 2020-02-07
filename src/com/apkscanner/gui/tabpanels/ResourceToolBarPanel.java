@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
 import java.net.URI;
 
 import javax.swing.JButton;
@@ -163,8 +164,8 @@ public class ResourceToolBarPanel extends JPanel {
 		add(saveTools, BorderLayout.WEST);
 		add(textTools, BorderLayout.SOUTH);
 
-		KeyStrokeAction.registerKeyStrokeAction(findtextField, KeyStroke.getKeyStroke("F3"), listener);
-		KeyStrokeAction.registerKeyStrokeAction(findtextField, KeyStroke.getKeyStroke("shift F3"), listener);
+		KeyStrokeAction.registerKeyStrokeAction(findtextField, KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0), ResourceContentsPanel.ACT_CMD_FIND_NEXT, listener);
+		KeyStrokeAction.registerKeyStrokeAction(findtextField, KeyStroke.getKeyStroke(KeyEvent.VK_F3, RConst.SHIFT_MASK), ResourceContentsPanel.ACT_CMD_FIND_PREV, listener);
 	}
 
 	public void setToolbarPolicy(TreeNodeData resObj) {

@@ -3,7 +3,6 @@ package com.apkscanner.gui;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +28,7 @@ import com.apkscanner.gui.tabpanels.Signatures;
 import com.apkscanner.gui.tabpanels.Widgets;
 import com.apkscanner.plugin.IExtraComponent;
 import com.apkscanner.plugin.PlugInManager;
+import com.apkscanner.resource.RConst;
 
 public class TabbedPanel extends JTabbedPane implements ActionListener
 {
@@ -50,8 +50,8 @@ public class TabbedPanel extends JTabbedPane implements ActionListener
 		setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 
 		KeyStrokeAction.registerKeyStrokeActions(this, JComponent.WHEN_IN_FOCUSED_WINDOW, new KeyStroke[] {
-				KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_DOWN_MASK, false),
-				KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.ALT_DOWN_MASK, false)
+				KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, RConst.ALT_MASK),
+				KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, RConst.ALT_MASK)
 			}, this);
 	}
 

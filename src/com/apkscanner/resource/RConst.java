@@ -1,5 +1,8 @@
 package com.apkscanner.resource;
 
+import java.awt.Toolkit;
+import java.awt.event.InputEvent;
+
 public class RConst
 {
 	public static final int INT_WINDOW_SIZE_WIDTH_MIN	= 650;
@@ -32,4 +35,10 @@ public class RConst
 
 	public static final String COMPONENT_FILTER_TYPE_XML = "XML";
 	public static final String COMPONENT_FILTER_TYPE_CLASS = "CLASS";
+
+	public static final int CTRL_MASK = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+	public static final int ALT_MASK = InputEvent.ALT_DOWN_MASK;
+	public static final int SHIFT_MASK = InputEvent.SHIFT_DOWN_MASK;
+	public static final int CTRL_SHIFT_MASK = CTRL_MASK | SHIFT_MASK;
+	public static final int ALT_SHIFT_MASK = ALT_MASK | SHIFT_MASK;
 }
