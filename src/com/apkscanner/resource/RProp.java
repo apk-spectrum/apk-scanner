@@ -95,6 +95,16 @@ public enum RProp implements ResProp<Object>, ResString<Object>
 		public void set(Boolean data) {
 			RProp.valueOf(name()).setData(data);
 		}
+
+		@Override
+		public void addPropertyChangeListener(PropertyChangeListener listener) {
+			RProp.valueOf(name()).addPropertyChangeListener(listener);
+		}
+
+		@Override
+		public void removePropertyChangeListener(PropertyChangeListener listener) {
+			RProp.valueOf(name()).removePropertyChangeListener(listener);
+		}
 	}
 
 	public enum S implements ResProp<String> {
@@ -132,6 +142,16 @@ public enum RProp implements ResProp<Object>, ResString<Object>
 		public void set(String data) {
 			RProp.valueOf(name()).setData(data);
 		}
+
+		@Override
+		public void addPropertyChangeListener(PropertyChangeListener listener) {
+			RProp.valueOf(name()).addPropertyChangeListener(listener);
+		}
+
+		@Override
+		public void removePropertyChangeListener(PropertyChangeListener listener) {
+			RProp.valueOf(name()).removePropertyChangeListener(listener);
+		}
 	}
 
 	public enum I implements ResProp<Integer> {
@@ -151,6 +171,16 @@ public enum RProp implements ResProp<Object>, ResString<Object>
 		@Override
 		public void set(Integer data) {
 			RProp.valueOf(name()).setData(data);
+		}
+
+		@Override
+		public void addPropertyChangeListener(PropertyChangeListener listener) {
+			RProp.valueOf(name()).addPropertyChangeListener(listener);
+		}
+
+		@Override
+		public void removePropertyChangeListener(PropertyChangeListener listener) {
+			RProp.valueOf(name()).removePropertyChangeListener(listener);
 		}
 	}
 
