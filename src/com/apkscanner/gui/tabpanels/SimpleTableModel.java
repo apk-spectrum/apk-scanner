@@ -52,7 +52,7 @@ public abstract class SimpleTableModel extends AbstractTableModel
 
 	@Override
 	public Class<? extends Object> getColumnClass(int c) {
-		return getRowCount() > 0 ? getValueAt(0, c).getClass() : Object.class;
+		return getRowCount() > 0 && getValueAt(0, c) != null ? getValueAt(0, c).getClass() : Object.class;
 	}
 
 	@Override
