@@ -101,6 +101,8 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 
 	@Override
 	public void initialize() {
+		if(apkInfoPanel != null) return;
+
 		apkInfoPanel = new HtmlEditorPane();
 		apkInfoPanel.setEditable(false);
 		apkInfoPanel.setOpaque(true);
