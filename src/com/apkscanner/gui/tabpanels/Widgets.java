@@ -122,7 +122,11 @@ public class Widgets extends AbstractTabbedPanel implements TreeSelectionListene
 				ImageIcon previewImage = null;
 				try {
 					ResourceInfo[] icons = w.icons;
-					String icon = icons[icons.length-1].name;
+					String icon = null; //icons[icons.length-1].name;
+					for(int i=icons.length-1; i>=0; --i) {
+						icon = icons[i].name;
+						if(icon != null && !icon.toLowerCase().endsWith(".xml")) break;
+					}
 					if(icon == null) {
 						previewImage = RImg.DEF_APP_ICON.getImageIcon(); 
 					} else if(icon.toLowerCase().endsWith(".webp")) {

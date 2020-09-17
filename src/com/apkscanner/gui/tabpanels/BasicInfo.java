@@ -101,6 +101,8 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 
 	@Override
 	public void initialize() {
+		if(apkInfoPanel != null) return;
+
 		apkInfoPanel = new HtmlEditorPane();
 		apkInfoPanel.setEditable(false);
 		apkInfoPanel.setOpaque(true);
@@ -239,7 +241,8 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		if(icons != null && icons.length > 0) {
 			ResourceInfo[] iconList = icons;
 			for(int i=iconList.length-1; i >= 0; i--) {
-				if(iconList[i].name.endsWith(".xml")) continue;
+				if(iconList[i] == null || iconList[i].name == null
+					|| iconList[i].name.endsWith(".xml")) continue;
 				iconPath = iconList[i].name;
 				if(iconPath != null) break;
 			}

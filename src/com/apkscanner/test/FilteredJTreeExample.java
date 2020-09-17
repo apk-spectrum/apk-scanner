@@ -131,7 +131,7 @@ public class FilteredJTreeExample extends JFrame {
 
             private boolean containsMatchingChild(DefaultMutableTreeNode node) {
 				@SuppressWarnings("unchecked")
-				Enumeration<TreeNode> e = node.breadthFirstEnumeration();
+				Enumeration<TreeNode> e = (Enumeration<TreeNode>)(Enumeration<?>) node.breadthFirstEnumeration();
                 while (e.hasMoreElements()) {
                     if (matchesFilter((DefaultMutableTreeNode)e.nextElement())) {
                         return true;
