@@ -186,7 +186,7 @@ public class ResourceToolBarPanel extends JPanel {
 		case TreeNodeData.DATA_TYPE_CERTIFICATION:
 			setVisibleTextTools(true);
 			setVisibleAXmlTools(path.equals("AndroidManifest.xml")
-					|| path.startsWith("res/"));
+					|| (path.startsWith("res/") && path.endsWith(".xml")));
 			break;
 		case TreeNodeData.DATA_TYPE_IMAGE:
 			setVisibleTextTools(false);

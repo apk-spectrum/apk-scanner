@@ -301,7 +301,7 @@ public class SearchDlg extends JDialog {
 				for(int i=0; i<filelist.length; i++) {
 					if(filelist[i].endsWith(".png")) continue;
 
-					if(filelist[i].startsWith("res/") || filelist[i].equals("AndroidManifest.xml")) {
+					if((filelist[i].startsWith("res/") && filelist[i].endsWith(".xml")) || filelist[i].equals("AndroidManifest.xml")) {
 						//						String[] xmlbuffer = AaptWrapper.Dump.getXmltree(apkinfo.filePath, new String[] {filelist[i]});
 						//						StringBuilder sb = new StringBuilder();
 						//						for(String s: xmlbuffer) sb.append(s+"\n");
