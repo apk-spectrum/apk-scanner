@@ -64,6 +64,26 @@ public class EasyGuiAppFeatureData {
 		deviceRequirements = "";
 		
 	}
+	public void setCertFeature(ApkInfo apkInfo) {
+		
+		isnoSign = (apkInfo.certificates == null)? true : false;
+		
+		isSamsungSign = (apkInfo.featureFlags & ApkInfo.APP_FEATURE_SAMSUNG_SIGN) != 0 ? true : false;
+		isPlatformSign = (apkInfo.featureFlags & ApkInfo.APP_FEATURE_PLATFORM_SIGN) != 0 ? true : false;
+
+		CertSummary = ""; // apkInfo.CertSummary;
+		if(apkInfo.certificates != null) {
+			for(String sign: apkInfo.certificates) {
+				String[] line = sign.split("\n");
+				if(line.length >= 3) {
+					CertSummary += line[0] + "\n" + line[1] + "\n" + line[2] + "\n\n";
+				} else {
+					CertSummary += "error\n";
+				}
+			}
+		}
+	}
+	
 	
 	public void setFeature(ApkInfo apkInfo) {
 		

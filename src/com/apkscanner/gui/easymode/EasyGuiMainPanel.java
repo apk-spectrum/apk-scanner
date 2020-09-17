@@ -286,6 +286,8 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 			Log.d("onStateChanged()" + status);
 			if (status == ApkScanner.STATUS_STANBY) {
 
+			} else if(status == ApkScanner.STATUS_CERT_COMPLETED) {
+				EasycontentsPanel.setsignfeature(apkScanner.getApkInfo());				
 			}
 		}
 
