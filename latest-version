@@ -1,7 +1,14 @@
 {
-  "version":"2.8",
+  "version":"2.9",
   "description":{
-    "en":"ver. 2.8 :
+    "en":"Ver. 2.9 :
+1. Add information for Android-11(R OS)
+2. Fix fatal error on Java8u261 32bit
+3. Fix don't work the tabbed of widgets.
+4. Update tools to latest version(jd-gui,dex2jar,jadx,bytecode).
+5. Fix bugs.
+
+Ver. 2.8 :
 1. Support for the APEX format
 2. Support to be try open for unknown file by textviewer.
 3. Sort for information to each tabbed.
@@ -38,7 +45,14 @@ Ver. 2.4.2 :\n1. Support JDK 9 and later.\n2. Improve UI of ApkInstallWizard.\n3
 Ver. 2.4.1  :\n1. Update JADX-GUI 0.9.0 (2019-02-12)\n2. Fix fatal error\n\n
 Ver. 2.4  :\n1. Add JADX & Bytecode viewer tools\n2. Add SDK29 information\n3. Link Apk Compare(toolbal & dragdrop)\n4. Add PlugIn(Update checker)\n5. Fix some bugs
 ",
-    "ko":"ver. 2.8 :
+    "ko":"Ver. 2.9 :
+1. Android-11(R OS) 정보 추가
+2. Java 1.8u261 32비트 설치시 동작하지 않는 문제 수정
+3. 일부 APK에서 위젯탭 동작하지 않는 문제 수정
+4. 외부 디컴파일 도구 업데이트(jd-gui,dex2jar,jadx,bytecode).
+5. 기타 버그 수정.
+
+Ver. 2.8 :
 1. APEX 파일 형식 지원
 2. 알 수 없는 리소스 형식에 대해 텍스트로 열어 보기 지원.
 3. 각 탭의 정보 정렬 및 개선.

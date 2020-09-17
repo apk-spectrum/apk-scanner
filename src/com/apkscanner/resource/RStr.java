@@ -21,7 +21,7 @@ import com.apkspectrum.util.ZipFileUtil;
 public enum RStr implements ResString<String>
 {
 	APP_NAME					("@app_name"),
-	APP_VERSION					("2.8.1"),
+	APP_VERSION					("2.9.1"),
 	APP_BUILD_MODE				("eng"),
 	APP_MAKER					("Jinhyeong Lee / Sunggyu Kam"),
 	APP_MAKER_EMAIL				("jacsaldevil@gmail.com;sunggyu.kam@gmail.com"),

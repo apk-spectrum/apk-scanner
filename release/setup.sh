@@ -34,10 +34,10 @@ if [ ! -d $APP_PATH ]; then
 fi
 sudo cp -rf ./* $APP_PATH
 
-sudo chmod 755 $APP_PATH/tool/adb
-sudo chmod 755 $APP_PATH/tool/aapt
-sudo chmod 755 $APP_PATH/tool/d2j-dex2jar.sh
-sudo chmod 755 $APP_PATH/tool/d2j_invoke.sh
+sudo chmod 755 $APP_PATH/tool/linux/adb
+sudo chmod 755 $APP_PATH/tool/linux/aapt
+sudo chmod 755 $APP_PATH/tool/dex2jar/d2j-dex2jar.sh
+sudo chmod 755 $APP_PATH/tool/dex2jar/d2j_invoke.sh
 sudo chmod 755 $APP_PATH/tool/jadx/bin/jadx
 sudo chmod 755 $APP_PATH/tool/jadx/bin/jadx-gui
 sudo chmod 755 $APP_PATH/APKScanner.sh
