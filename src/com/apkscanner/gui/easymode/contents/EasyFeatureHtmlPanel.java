@@ -48,6 +48,8 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 	JPanel mainpanel;
 	JScrollPane scrollPane;
 	ApkInfo mapkInfo;
+	ShowsignDlg showsignListener;
+	
 	public EasyFeatureHtmlPanel() {
 		setLayout(new BorderLayout());
 
@@ -63,7 +65,9 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 		scrollPane.setBorder(null);
 		scrollPane.setOpaque(false);
 		scrollPane.getViewport().setOpaque(false);
-
+		
+		showsignListener = new ShowsignDlg();
+		
 		scrollPane.addComponentListener(new ComponentListener() {
 			@Override
 			public void componentShown(ComponentEvent e) {	}
@@ -182,11 +186,33 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 		}
 	}
 
+	//20. 09. 17 
+	// 서명 thread 밖으로 빼면서 오픈 시간 딜레이
+	private void addfeatureforsign(EasyGuiAppFeatureData featuredata, ApkInfo apkInfo) {
+		featuredata.setCertFeature(apkInfo);
+		
+		if(featuredata.isnoSign) {
+			mainpanel.add(makeFeatpanel(RStr.FEATURE_SIGNATURE_UNSIGNED.get(), new Color(0xFF0000)));
+		} else {
+			String scheme = "(" + apkInfo.signatureScheme + ")";
+			if(featuredata.isPlatformSign) {
+				mainpanel.add(makeFeatpanel(RStr.FEATURE_PLATFORM_SIGN_LAB.get() + scheme, showsignListener, new Color(0xED7E31)));
+			}
+			if(featuredata.isSamsungSign) {
+				mainpanel.add(makeFeatpanel(RStr.FEATURE_SAMSUNG_SIGN_LAB.get() + scheme, showsignListener, new Color(0xED7E31)));
+		//		systemSignature = true;
+			}
+			if(!featuredata.isPlatformSign && !featuredata.isSamsungSign) {
+				mainpanel.add(makeFeatpanel(RStr.FEATURE_SIGNATURE_SIGNED.get() + scheme, showsignListener, new Color(0x0055BB)));
+			}
+		}
+	}
+	
 	private void newmakefeaturehtml(EasyGuiAppFeatureData featuredata, ApkInfo apkInfo) {
 		//<style='line-height:0%'>
 
 		//@SDK Ver. 21 (Min), 26 (Target)
-		ShowsignDlg showsignListener = new ShowsignDlg();
+		
 
 		if(apkInfo.manifest.usesSdk.minSdkVersion!=null) {
 			int minsdk = apkInfo.manifest.usesSdk.minSdkVersion;
@@ -217,21 +243,8 @@ public class EasyFeatureHtmlPanel extends RoundPanel {
 			}
 		}
 
-		if(featuredata.isnoSign) {
-			mainpanel.add(makeFeatpanel(RStr.FEATURE_SIGNATURE_UNSIGNED.get(), new Color(0xFF0000)));
-		} else {
-			String scheme = "(" + apkInfo.signatureScheme + ")";
-			if(featuredata.isPlatformSign) {
-				mainpanel.add(makeFeatpanel(RStr.FEATURE_PLATFORM_SIGN_LAB.get() + scheme, showsignListener, new Color(0xED7E31)));
-			}
-			if(featuredata.isSamsungSign) {
-				mainpanel.add(makeFeatpanel(RStr.FEATURE_SAMSUNG_SIGN_LAB.get() + scheme, showsignListener, new Color(0xED7E31)));
-		//		systemSignature = true;
-			}
-			if(!featuredata.isPlatformSign && !featuredata.isSamsungSign) {
-				mainpanel.add(makeFeatpanel(RStr.FEATURE_SIGNATURE_SIGNED.get() + scheme, showsignListener, new Color(0x0055BB)));
-			}
-		}
+
+		addfeatureforsign(featuredata, apkInfo);
 
 
 		if(featuredata.isHidden) {

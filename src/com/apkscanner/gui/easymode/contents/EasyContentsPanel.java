@@ -416,7 +416,11 @@ public class EasyContentsPanel extends JPanel
 		//permissions
 		//permissionPanel.setPermission(apkInfo);
 	}
-
+	public void setsignfeature(ApkInfo apkInfo) {
+		featurepanel.setfeature(apkInfo);
+	}
+	
+	
 	public void clear() {
 		//devicepanel.clear();
 		//permissionPanel.clear();
