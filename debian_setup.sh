@@ -18,7 +18,7 @@ Version: $APP_VERSION-1
 Section: utils
 Architecture: all
 Maintainer: Sunggyu Kam <sunggyu.kam@samsung.com>
-Installed-Size: 157,130,534
+Installed-Size: 105,280,814
 Description: APK Scanner $APP_VERSION
 EOF
 cat ./debian/DEBIAN/control

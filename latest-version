@@ -4,9 +4,10 @@
     "en":"Ver. 2.9 :
 1. Add information for Android-11(R OS)
 2. Fix fatal error on Java8u261 32bit
-3. Fix don't work the tabbed of widgets.
-4. Update tools to latest version(jd-gui,dex2jar,jadx,bytecode).
-5. Fix bugs.
+3. Improve performance at opening with EasyUI.
+4. Fix don't work the tabbed of widgets.
+5. Update tools to latest version(jd-gui,dex2jar,jadx,bytecode).
+6. Fix bugs.
 
 Ver. 2.8 :
 1. Support for the APEX format
@@ -48,6 +49,7 @@ Ver. 2.4  :\n1. Add JADX & Bytecode viewer tools\n2. Add SDK29 information\n3. L
     "ko":"Ver. 2.9 :
 1. Android-11(R OS) 정보 추가
 2. Java 1.8u261 32비트 설치시 동작하지 않는 문제 수정
+3. EasyUI 속도 개선.
 3. 일부 APK에서 위젯탭 동작하지 않는 문제 수정
 4. 외부 디컴파일 도구 업데이트(jd-gui,dex2jar,jadx,bytecode).
 5. 기타 버그 수정.
