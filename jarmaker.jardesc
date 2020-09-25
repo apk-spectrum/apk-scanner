@@ -11,7 +11,10 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=apk-scanner/core\/src"/>
+        <javaElement handleIdentifier="=apk-scanner/core\/res"/>
         <javaElement handleIdentifier="=apk-scanner/src"/>
         <javaElement handleIdentifier="=apk-scanner/res"/>
+        <javaElement handleIdentifier="=apk-scanner/raw"/>
     </selectedElements>
 </jardesc>

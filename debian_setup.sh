@@ -1,7 +1,7 @@
 #!/bin/bash
 
 APP_PATH="/opt/APKScanner"
-APP_VERSION="2.8"
+APP_VERSION="2.9"
 APP_FILE="ApkScanner.jar"
 
 DEBIAN_DATA_PATH="./debian"$APP_PATH
@@ -18,7 +18,7 @@ Version: $APP_VERSION-1
 Section: utils
 Architecture: all
 Maintainer: Sunggyu Kam <sunggyu.kam@samsung.com>
-Installed-Size: 157,130,534
+Installed-Size: 105,280,814
 Description: APK Scanner $APP_VERSION
 EOF
 cat ./debian/DEBIAN/control
@@ -58,11 +58,18 @@ cp -f "release/lib/guava-18.0.jar" "$TARGET_PATH"
 cp -f "release/lib/jna-4.4.0.jar" "$TARGET_PATH"
 cp -f "release/lib/jna-platform-4.4.0.jar" "$TARGET_PATH"
 cp -f "release/lib/json-simple-1.1.1.jar" "$TARGET_PATH"
-cp -f "release/lib/libwebp-imageio64.so" "$TARGET_PATH"
 cp -f "release/lib/luciad-webp-imageio.jar" "$TARGET_PATH"
 cp -f "release/lib/mslinks.jar" "$TARGET_PATH"
 cp -f "release/lib/rstaui-2.6.0.jar" "$TARGET_PATH"
 cp -f "release/lib/rsyntaxtextarea-2.6.1.jar" "$TARGET_PATH"
+
+TARGET_PATH="$DEBIAN_DATA_PATH/lib/lib/"
+mkdir -p "$TARGET_PATH"
+cp -f "release/lib/lib/libwebp-imageio.so" "$TARGET_PATH"
+
+TARGET_PATH="$DEBIAN_DATA_PATH/lib/lib64/"
+mkdir -p "$TARGET_PATH"
+cp -f "release/lib/lib64/libwebp-imageio.so" "$TARGET_PATH"
 
 TARGET_PATH="$DEBIAN_DATA_PATH/lib/proxy-vole"
 mkdir -p "$TARGET_PATH"
@@ -81,22 +88,13 @@ cp -f "release/security/trustStore.jks" "$TARGET_PATH"
 
 TARGET_PATH="$DEBIAN_DATA_PATH/tool/"
 mkdir -p "$TARGET_PATH"
-cp -f "release/tool/aapt" "$TARGET_PATH"
-cp -f "release/tool/adb" "$TARGET_PATH"
-cp -f "release/tool/apktool.jar" "$TARGET_PATH"
 cp -f "release/tool/Bytecode-Viewer-2.9.22.jar" "$TARGET_PATH"
-cp -f "release/tool/d2j_invoke.sh" "$TARGET_PATH"
-cp -f "release/tool/d2j-dex2jar.sh" "$TARGET_PATH"
-cp -f "release/tool/jd-gui-1.6.2.jar" "$TARGET_PATH"
+cp -f "release/tool/jd-gui-1.6.6.jar" "$TARGET_PATH"
 cp -f "release/tool/jd_icon_128.png" "$TARGET_PATH"
-cp -f "release/tool/libAaptNativeWrapper32.so" "$TARGET_PATH"
-cp -f "release/tool/libAaptNativeWrapper64.so" "$TARGET_PATH"
-cp -f "release/tool/libc++32.so" "$TARGET_PATH"
-cp -f "release/tool/libc++64.so" "$TARGET_PATH"
 cp -f "release/tool/signapk.jar" "$TARGET_PATH"
+cp -rf "release/tool/dex2jar" "$TARGET_PATH"
 cp -rf "release/tool/jadx" "$TARGET_PATH"
-cp -rf "release/tool/lib" "$TARGET_PATH"
-cp -rf "release/tool/lib64" "$TARGET_PATH"
+cp -rf "release/tool/linux" "$TARGET_PATH"
 
 ##############################
 # etc

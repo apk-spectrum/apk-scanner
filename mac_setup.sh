@@ -37,7 +37,7 @@ ${JAVA_HOME}/bin/javapackager \
   -title "APK Scanner" \
   -vendor "APK Spectrum" \
   -Bicon=AppIcon.icns \
-  -Bmac.CFBundleVersion=2.9.1 \
+  -Bmac.CFBundleVersion=2.9 \
   -Bmac.CFBundleIdentifier=com.apkscanner \
   -Bmac.category=developer-tools \
   -v
@@ -45,14 +45,15 @@ ${JAVA_HOME}/bin/javapackager \
 # (2b) copy *all* resource files into the ".app" directory
 cp Info.plist "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/"
 cp ApkIcon.icns "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Resources"
-cp -R data "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/"
+cp -R release/data "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/"
 mkdir -p "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/lib/lib64"
-cp -R lib/proxy-vole "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/lib/proxy-vole/"
-cp -R lib/lib64/*.dylib "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/lib/lib64"
-cp -R lib/*.jar "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/lib/"
-cp -R security "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/"
-cp -R tool "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/"
+cp -R release/lib/proxy-vole "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/lib/proxy-vole/"
+cp -R release/lib/lib64/*.dylib "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/lib/lib64"
+cp -R release/lib/*.jar "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/lib/"
+cp -R release/security "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/"
+cp -R release/tool "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/"
 rm -rf "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/tool/linux"
 rm -rf "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/tool/windows"
 mkdir -p "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/plugin"
 touch "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/plugin/plugins.conf"
+cp -R release/plugin "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/"

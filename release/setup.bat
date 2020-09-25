@@ -65,6 +65,14 @@ if not exist "%APP_PATH%\lib" (
      echo Create folder : %APP_PATH%\lib
      mkdir "%APP_PATH%\lib"
 )
+if not exist "%APP_PATH%\lib\lib" (
+     echo Create folder : %APP_PATH%\lib\lib
+     mkdir "%APP_PATH%\lib\lib"
+)
+if not exist "%APP_PATH%\lib\lib64" (
+     echo Create folder : %APP_PATH%\lib\lib64
+     mkdir "%APP_PATH%\lib\lib64"
+)
 if not exist "%APP_PATH%\lib\proxy-vole" (
      echo Create folder : %APP_PATH%\lib\proxy-vole
      mkdir "%APP_PATH%\lib\proxy-vole"
@@ -81,6 +89,14 @@ if not exist "%APP_PATH%\tool" (
      echo Create folder : %APP_PATH%\tool
      mkdir "%APP_PATH%\tool"
 )
+if not exist "%APP_PATH%\tool\dex2jar" (
+     echo Create folder : %APP_PATH%\tool\dex2jar
+     mkdir "%APP_PATH%\tool\dex2jar"
+)
+if not exist "%APP_PATH%\tool\dex2jar\lib" (
+     echo Create folder : %APP_PATH%\tool\dex2jar\lib
+     mkdir "%APP_PATH%\tool\dex2jar\lib"
+)
 if not exist "%APP_PATH%\tool\jadx" (
      echo Create folder : %APP_PATH%\tool\jadx
      mkdir "%APP_PATH%\tool\jadx"
@@ -93,9 +109,9 @@ if not exist "%APP_PATH%\tool\jadx\lib" (
      echo Create folder : %APP_PATH%\tool\jadx\lib
      mkdir "%APP_PATH%\tool\jadx\lib"
 )
-if not exist "%APP_PATH%\tool\lib" (
-     echo Create folder : %APP_PATH%\tool\lib
-     mkdir "%APP_PATH%\tool\lib"
+if not exist "%APP_PATH%\tool\windows" (
+     echo Create folder : %APP_PATH%\tool\windows
+     mkdir "%APP_PATH%\tool\windows"
 )
 if not exist "%APP_PATH%" (
     echo Fail : No created a folder : %APP_PATH%
@@ -107,13 +123,17 @@ copy /Y "%SRC_PATH%\ApkScanner.exe" "%APP_PATH%"
 copy /Y "%SRC_PATH%\ApkScanner.jar" "%APP_PATH%"
 copy /Y "%SRC_PATH%\data\build-master-target-product-security\*" "%APP_PATH%\data\build-master-target-product-security"
 copy /Y "%SRC_PATH%\lib\*" "%APP_PATH%\lib"
+copy /Y "%SRC_PATH%\lib\lib\*.dll" "%APP_PATH%\lib\lib"
+copy /Y "%SRC_PATH%\lib\lib64\*.dll" "%APP_PATH%\lib\lib64"
 copy /Y "%SRC_PATH%\plugin\*" "%APP_PATH%\plugin"
 copy /Y "%SRC_PATH%\security\*" "%APP_PATH%\security"
 copy /Y "%SRC_PATH%\tool\*" "%APP_PATH%\tool"
+copy /Y "%SRC_PATH%\tool\dex2jar\*" "%APP_PATH%\tool\dex2jar"
+copy /Y "%SRC_PATH%\tool\dex2jar\lib\*" "%APP_PATH%\tool\dex2jar\lib"
 copy /Y "%SRC_PATH%\tool\jadx\*" "%APP_PATH%\tool\jadx"
 copy /Y "%SRC_PATH%\tool\jadx\bin\*" "%APP_PATH%\tool\jadx\bin"
 copy /Y "%SRC_PATH%\tool\jadx\lib\*" "%APP_PATH%\tool\jadx\lib"
-copy /Y "%SRC_PATH%\tool\lib\*" "%APP_PATH%\tool\lib"
+copy /Y "%SRC_PATH%\tool\windows\*" "%APP_PATH%\tool\windows"
 
 
 rem --- Launch APK Scanner  ---

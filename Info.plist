@@ -29,7 +29,7 @@
   <key>LSApplicationCategoryType</key>
   <string>developer-tools</string>
   <key>CFBundleVersion</key>
-  <string>2.8.0</string>
+  <string>2.9.0</string>
   <key>NSHumanReadableCopyright</key>
   <string>Copyright (C) 2015</string>
   <key>NSHighResolutionCapable</key>
