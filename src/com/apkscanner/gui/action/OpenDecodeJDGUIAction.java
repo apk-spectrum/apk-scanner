@@ -3,6 +3,8 @@ package com.apkscanner.gui.action;
 import java.awt.Component;
 import java.awt.Window;
 
+import com.apkspectrum.swing.ActionEventHandler;
+
 @SuppressWarnings("serial")
 public class OpenDecodeJDGUIAction extends OpenDecompilerAction
 {

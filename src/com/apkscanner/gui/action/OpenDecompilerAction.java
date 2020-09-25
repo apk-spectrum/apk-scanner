@@ -18,6 +18,7 @@ import com.apkscanner.resource.RProp;
 import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.plugin.IPlugIn;
 import com.apkspectrum.plugin.PlugInManager;
+import com.apkspectrum.swing.ActionEventHandler;
 import com.apkspectrum.swing.ExtensionButton;
 import com.apkspectrum.tool.BytecodeViewerLauncher;
 import com.apkspectrum.tool.Dex2JarWrapper;

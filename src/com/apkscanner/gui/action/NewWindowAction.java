@@ -3,6 +3,7 @@ package com.apkscanner.gui.action;
 import java.awt.event.ActionEvent;
 
 import com.apkscanner.Launcher;
+import com.apkspectrum.swing.AbstractUIAction;
 
 @SuppressWarnings("serial")
 public class NewWindowAction extends AbstractUIAction

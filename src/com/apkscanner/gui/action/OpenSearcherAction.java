@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import com.apkscanner.gui.dialog.SearchDlg;
 import com.apkscanner.gui.tabpanels.ResContentFocusChanger;
 import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.swing.ActionEventHandler;
 import com.apkspectrum.util.Log;
 
 @SuppressWarnings("serial")

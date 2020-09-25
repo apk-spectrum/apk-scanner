@@ -3,6 +3,7 @@ package com.apkscanner.gui.action;
 import java.awt.event.ActionEvent;
 
 import com.apkscanner.resource.RConst;
+import com.apkspectrum.swing.ActionEventHandler;
 
 @SuppressWarnings("serial")
 public class DeviceLaunchMainAction extends DeviceLaunchAppAction

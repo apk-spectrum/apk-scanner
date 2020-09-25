@@ -2,6 +2,8 @@ package com.apkscanner.gui.action;
 
 import java.awt.event.ActionEvent;
 
+import com.apkspectrum.swing.ActionEventHandler;
+
 @SuppressWarnings("serial")
 public class OpenApkToNewAction extends OpenApkAction
 {

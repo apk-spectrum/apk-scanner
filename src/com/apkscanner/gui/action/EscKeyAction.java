@@ -7,6 +7,8 @@ import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.UIController;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
+import com.apkspectrum.swing.AbstractUIAction;
+import com.apkspectrum.swing.ActionEventHandler;
 
 @SuppressWarnings("serial")
 public class EscKeyAction extends AbstractUIAction

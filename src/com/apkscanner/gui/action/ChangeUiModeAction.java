@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 
 import com.apkscanner.gui.MainUI;
 import com.apkscanner.gui.UIController;
+import com.apkspectrum.swing.AbstractUIAction;
+import com.apkspectrum.swing.ActionEventHandler;
 
 @SuppressWarnings("serial")
 public class ChangeUiModeAction extends AbstractUIAction

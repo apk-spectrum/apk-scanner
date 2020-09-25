@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
 import com.apkscanner.resource.RProp;
+import com.apkspectrum.swing.ActionEventHandler;
 import com.apkspectrum.tool.adb.AdbServerMonitor;
 import com.apkspectrum.tool.adb.PackageInfo;
 import com.apkspectrum.tool.adb.PackageManager;

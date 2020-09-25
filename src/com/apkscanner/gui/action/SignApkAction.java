@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.dialog.ApkSignerWizard;
 import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.swing.ActionEventHandler;
 import com.apkspectrum.util.Log;
 
 @SuppressWarnings("serial")

@@ -6,6 +6,7 @@ import javax.swing.JComponent;
 
 import com.apkscanner.gui.tabpanels.DefaultNodeData;
 import com.apkscanner.gui.tabpanels.TreeNodeData;
+import com.apkspectrum.swing.ActionEventHandler;
 import com.apkspectrum.util.SystemUtil;
 
 @SuppressWarnings("serial")

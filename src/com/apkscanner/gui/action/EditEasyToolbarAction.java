@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JFrame;
 
 import com.apkscanner.gui.easymode.dlg.EasyToolbarSettingDnDDlg;
+import com.apkspectrum.swing.AbstractUIAction;
 
 @SuppressWarnings("serial")
 public class EditEasyToolbarAction extends AbstractUIAction

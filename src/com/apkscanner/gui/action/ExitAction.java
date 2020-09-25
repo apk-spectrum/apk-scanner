@@ -3,6 +3,9 @@ package com.apkscanner.gui.action;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 
+import com.apkspectrum.swing.AbstractUIAction;
+import com.apkspectrum.swing.ActionEventHandler;
+
 @SuppressWarnings("serial")
 public class ExitAction extends AbstractUIAction
 {
