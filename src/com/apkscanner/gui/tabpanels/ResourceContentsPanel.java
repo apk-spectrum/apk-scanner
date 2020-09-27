@@ -115,7 +115,7 @@ public class ResourceContentsPanel extends JPanel implements ActionListener
 
 		// CONTENT_SELECT_VIEWER
 		if(listener instanceof ActionEventHandler) {
-			((ActionEventHandler)listener).addAction(SelectViewPanel.ACT_CMD_OPEN_WITH_TEXTVIEWER, new AbstractAction() {
+			((ActionEventHandler)listener).addActionListener(SelectViewPanel.ACT_CMD_OPEN_WITH_TEXTVIEWER, new AbstractAction() {
 				private static final long serialVersionUID = 7778558784965803320L;
 				@Override
 				public void actionPerformed(ActionEvent e) {

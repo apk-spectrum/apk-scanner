@@ -3,14 +3,12 @@ package com.apkscanner.gui;
 import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 
-import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -58,13 +56,9 @@ import com.apkscanner.gui.action.SignApkAction;
 import com.apkscanner.resource.RConst;
 import com.apkspectrum.core.scanner.ApkScanner;
 import com.apkspectrum.plugin.IExternalTool;
-import com.apkspectrum.plugin.IPlugIn;
-import com.apkspectrum.plugin.PlugInManager;
-import com.apkspectrum.swing.AbstractUIAction;
 import com.apkspectrum.swing.ActionEventHandler;
 import com.apkspectrum.swing.DropTargetChooser;
 import com.apkspectrum.swing.KeyStrokeAction;
-import com.apkspectrum.util.ClassFinder;
 import com.apkspectrum.util.Log;
 
 public class UiEventHandler extends ActionEventHandler implements WindowListener, DropTargetChooser.Listener
@@ -110,33 +104,9 @@ public class UiEventHandler extends ActionEventHandler implements WindowListener
 	public static final String ACT_CMD_OPEN_RESOURCE_FILE			  = OpenResFileAction.ACTION_COMMAND;
 	public static final String ACT_CMD_SAVE_RESOURCE_FILE			  = SaveResFileAction.ACTION_COMMAND;
 
-
 	public UiEventHandler(ApkScanner apkScanner) {
+		super(AbstractApkScannerAction.class.getPackage());
 		setApkScanner(apkScanner);
-		loadAllActions();
-	}
-
-	private void loadAllActions() {
-		try {
-			for(Class<?> cls : ClassFinder.getClasses(AbstractUIAction.class.getPackage().getName())) {
-				if(cls.isMemberClass() || cls.isInterface()
-					|| !AbstractUIAction.class.isAssignableFrom(cls)) continue;
-				AbstractUIAction action = null;
-				try {
-					action = (AbstractUIAction) cls.getDeclaredConstructor(ActionEventHandler.class).newInstance(this);
-				} catch (Exception e) { }
-				if(action == null) {
-					try {
-						action = (AbstractUIAction) cls.getDeclaredConstructor().newInstance();
-					} catch (Exception e1) { }
-				}
-				if(action != null) {
-					addAction(action);
-				}
-			}
-		} catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public void registerKeyStrokeAction(JComponent c) {
@@ -194,25 +164,6 @@ public class UiEventHandler extends ActionEventHandler implements WindowListener
 
 	public ApkScanner getApkScanner() {
 		return (ApkScanner) getData(APK_SCANNER_KEY);
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		String actCmd = e.getActionCommand();
-		if(actCmd != null) {
-			Action act = actionMap.get(actCmd);
-			if(act != null) {
-				act.actionPerformed(e);
-				return;
-			}
-
-			IPlugIn plugin = PlugInManager.getPlugInByActionCommand(actCmd);
-			if(plugin != null) {
-				plugin.launch();
-				return;
-			}
-		}
-		Log.e("Unknown action command : " + actCmd);
 	}
 
 	// Drag & Drop event processing
