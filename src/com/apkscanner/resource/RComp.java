@@ -18,9 +18,11 @@ import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
 import com.apkspectrum.resource.LanguageChangeListener;
-import com.apkspectrum.resource.ResValue;
+import com.apkspectrum.resource.ResComp;
+import com.apkspectrum.resource.ResImage;
+import com.apkspectrum.resource.ResString;
 
-public enum RComp implements ResValue<RComp>
+public enum RComp implements ResComp<Object>
 {
 	BTN_TOOLBAR_OPEN				(RStr.BTN_OPEN, RImg.TOOLBAR_OPEN, RStr.BTN_OPEN_LAB),
 	BTN_TOOLBAR_OPEN_PACKAGE		(RStr.BTN_OPEN_PACKAGE, RImg.TOOLBAR_PACKAGETREE, RStr.BTN_OPEN_PACKAGE_LAB),
@@ -85,9 +87,6 @@ public enum RComp implements ResValue<RComp>
 	COMPONENT_FILTER_PROMPT_NAME	(RStr.COMPONENT_FILTER_PROMPT_NAME),
 	; // ENUM END
 
-	public static final String RCOMP_SET_TEXT_KEY = "RcompApplyText";
-	public static final String RCOMP_SET_ICON_KEY = "RcompApplyIcon";
-
 	private static Map<Window, Map<Component, RComp>> map = new HashMap<>();
 	static {
 		RStr.addLanguageChangeListener(new LanguageChangeListener() {
@@ -102,41 +101,36 @@ public enum RComp implements ResValue<RComp>
 		});
 	}
 
-	private RStr text, toolTipText;
-	private RImg image;
+	private ResString<?> text, toolTipText;
+	private ResImage<?> image;
 	private Icon icon;
 	private Dimension iconSize;
 
-	private RComp(RStr text) {
+	private RComp(ResString<?> text) {
 		this(text, (Icon) null, null);
 	}
 
-	private RComp(RStr text, RStr toolTipText) {
+	private RComp(ResString<?> text, ResString<?> toolTipText) {
 		this(text, (Icon) null, toolTipText);
 	}
 
-	private RComp(RStr text, RImg image) {
+	private RComp(ResString<?> text, ResImage<?> image) {
 		this(text, image, null);
 	}
 
-	private RComp(RStr text, Icon icon) {
+	private RComp(ResString<?> text, Icon icon) {
 		this(text, icon, null);
 	}
 
-	private RComp(RStr text, RImg image, RStr toolTipText) {
+	private RComp(ResString<?> text, ResImage<?> image, ResString<?> toolTipText) {
 		this(text, (Icon) null, toolTipText);
 		this.image = image;
 	}
 
-	private RComp(RStr text, Icon icon, RStr toolTipText) {
+	private RComp(ResString<?> text, Icon icon, ResString<?> toolTipText) {
 		this.text = text;
 		this.icon = icon;
 		this.toolTipText = toolTipText;
-	}
-
-	@Override
-	public String getValue() {
-		return text != null ? text.getValue() : null;
 	}
 
 	@Override
@@ -144,34 +138,34 @@ public enum RComp implements ResValue<RComp>
 		return this;
 	}
 
+	@Override
 	public String getText() {
 		return text != null ? text.getString() : null;
 	}
 
+	@Override
 	public Icon getIcon() {
 		if(image == null) return icon;
 		if(iconSize == null) return image.getImageIcon();
 		return image.getImageIcon(iconSize.width, iconSize.height);
 	}
 
+	@Override
 	public String getToolTipText() {
 		return toolTipText != null ? toolTipText.getString() : null;
 	}
 
-	public RImg getImageRes() {
-		return image;
-	}
-
-	public void setImageSize(Dimension iconSize) {
+	@Override
+	public void setIconSize(Dimension iconSize) {
 		this.iconSize = iconSize;
 	}
 
-	public void apply(Component c) {
+	private void apply(Component c) {
 		applyText(c);
 		applyIcon(c);
 	}
 
-	public void applyIcon(Component c) {
+	private void applyIcon(Component c) {
 		if(c == null) return;
 		Icon icon = getIcon();
 		if(icon == null) return;
@@ -189,7 +183,7 @@ public enum RComp implements ResValue<RComp>
 		c.firePropertyChange(RCOMP_SET_ICON_KEY, 0, 1);
 	}
 
-	public void applyText(Component c) {
+	private void applyText(Component c) {
 		if(c == null || (text == null && toolTipText == null)) return;
 		if(text != null) {
 			if(c instanceof AbstractButton) {
@@ -206,17 +200,18 @@ public enum RComp implements ResValue<RComp>
 		c.firePropertyChange(RCOMP_SET_TEXT_KEY, 0, 1);
 	}
 
+	@Override
 	public void set(Component c) {
 		apply(c);
 		register(c);
 	}
 
-	public void register(Component c) {
+	private void register(Component c) {
 		if(c == null) return;
 		register(SwingUtilities.getWindowAncestor(c), c);
 	}
 
-	public void register(final Window window, final Component c) {
+	private void register(final Window window, final Component c) {
 		if(c == null) return;
 
 		Map<Component, RComp> matchMap = map.get(window);
@@ -259,7 +254,7 @@ public enum RComp implements ResValue<RComp>
 		}
 	}
 
-	public void unregister(Window window, Component c) {
+	private void unregister(Window window, Component c) {
 		Map<Component, RComp> matchMap = map.get(window);
 		if(matchMap != null) {
 			if(c != null) {

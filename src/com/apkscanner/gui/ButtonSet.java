@@ -157,7 +157,7 @@ public enum ButtonSet
 		};
 		if(res != null) {
 			int size = type == Type.SUB_TOOLBAR ? SUBICON_SIZE : ICON_SIZE;
-			res.setImageSize(new Dimension(size, size));
+			res.setIconSize(new Dimension(size, size));
 			res.set(button);
 		} else {
 			button.setText(text);

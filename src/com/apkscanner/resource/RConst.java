@@ -2,7 +2,7 @@ package com.apkscanner.resource;
 
 import com.apkspectrum.resource._RConst;
 
-public class RConst extends _RConst
+public interface RConst extends _RConst
 {
 	public static final int INT_WINDOW_SIZE_WIDTH_MIN	= 650;
 	public static final int INT_WINDOW_SIZE_HEIGHT_MIN	= 490;

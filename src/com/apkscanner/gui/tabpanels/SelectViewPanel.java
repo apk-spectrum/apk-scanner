@@ -83,7 +83,7 @@ public class SelectViewPanel extends JPanel implements ActionListener
 			this.res = res;
 			this.disabledRes = disabledRes;
 			this.actionCommand = actCommand != null ? actCommand : getClass().getName()+"."+this.toString();
-			res.setImageSize(new Dimension(IconSize, IconSize));
+			res.setIconSize(new Dimension(IconSize, IconSize));
 		}
 
 		public boolean matchActionEvent(ActionEvent e)

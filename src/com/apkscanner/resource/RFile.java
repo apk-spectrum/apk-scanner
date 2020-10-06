@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 
@@ -14,7 +15,7 @@ import com.apkspectrum.resource.ResFile;
 import com.apkspectrum.resource.ResString;
 import com.apkspectrum.util.SystemUtil;
 
-public enum RFile implements ResFile<String>, ResString<String>
+public enum RFile implements ResFile<File>, ResString<File>
 {
 	BIN_PATH					(Type.BIN, ""),
 
@@ -110,8 +111,13 @@ public enum RFile implements ResFile<String>, ResString<String>
 	}
 
 	@Override
-	public String get() {
-		return getPath();
+	public File get() {
+		try {
+			return new File(getURL().toURI());
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override
