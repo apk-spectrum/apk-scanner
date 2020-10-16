@@ -28,6 +28,7 @@ import javax.swing.ListCellRenderer;
 
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RStr;
+import com.apkspectrum.resource.DefaultResImage;
 import com.apkspectrum.resource._RFile;
 import com.apkspectrum.swing.ImagePanel;
 import com.apkspectrum.swing.KeyStrokeAction;
@@ -167,13 +168,13 @@ public class SdkVersionInfoDlg extends JDialog {
 				info.append("\n\nAPI Level " + sdkVer);
 				info.append("\nBuild.VERSION_CODES." + sdkInfo.getAttribute("versionCode"));
 
-				logo = RImg.getImage(sdkInfo.getAttribute("icon"));
+				logo = DefaultResImage.getImage(sdkInfo.getAttribute("icon"));
 			} else {
 				info.append("API Level " + sdkVer);
 				info.append("\nUnknown verion.\n\nYou can look at the sdk info in the Android developer site\n");
 				info.append("http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels");
 
-				logo = RImg.getImage("/icons/logo/base.png");
+				logo = DefaultResImage.getImage("/icons/logo/base.png");
 			}
 		} else {
 			XmlPath list = sdkXmlPath.getNodeList("/resources/sdk-info");
@@ -188,7 +189,7 @@ public class SdkVersionInfoDlg extends JDialog {
 			}
 			info.append("\nhttp://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels");
 
-			logo = RImg.getImage("/icons/logo/base.png");
+			logo = DefaultResImage.getImage("/icons/logo/base.png");
 		}
 
 		sdkInfoArea.setText(info.toString());

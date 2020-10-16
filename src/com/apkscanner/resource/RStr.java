@@ -1,22 +1,8 @@
 package com.apkscanner.resource;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
+import com.apkspectrum.resource.DefaultResString;
 import com.apkspectrum.resource.LanguageChangeListener;
 import com.apkspectrum.resource.ResString;
-import com.apkspectrum.util.Log;
-import com.apkspectrum.util.XmlPath;
-import com.apkspectrum.util.ZipFileUtil;
 
 public enum RStr implements ResString<String>
 {
@@ -362,188 +348,55 @@ public enum RStr implements ResString<String>
 	EASY_GUI_UES_QUESTION		("@easy_gui_use_question"),
 	; // ENUM END
 
-	static {
-		RProp.LANGUAGE.addPropertyChangeListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				setLanguage((String) evt.getNewValue());
-				fireLanguageChange((String) evt.getOldValue(), (String) evt.getNewValue());
-			}
-		});
-	}
-
-	private static List<LanguageChangeListener> listeners = new ArrayList<>();
-
-	private static String lang = null;
-	private static XmlPath[] stringXmlPath = null;
-
-	private String value;
+	private DefaultResString res;
 
 	private RStr(String value) {
-		this.value = value;
+		res = new DefaultResString(value);
 	}
 
 	@Override
 	public String getValue() {
-		return value;
+		return res.getValue();
 	}
 
 	@Override
 	public String get() {
-		return getString();
+		return res.get();
 	}
 
 	@Override
 	public String toString() {
-		return getString();
+		return res.toString();
 	}
 
 	@Override
 	public String getString() {
-		String id = getValue();
-		String value = null;
-
-		if(!id.startsWith("@")) return id;
-		id = id.substring(1);
-
-		if(stringXmlPath == null) {
-			makeStringXmlPath(lang);
-		}
-
-		for(XmlPath xPath: stringXmlPath) {
-			XmlPath node = xPath.getNode("/resources/string[@name='" + id + "']");
-			if(node != null) {
-				value = node.getTextContent();
-				if(value != null) break;
-			}
-		}
-
-		return value != null ? value.replaceAll("\\\\n", "\n").replaceAll("\\\\t", "\t") : null;
+		return res.getString();
 	}
 
 	public static void setLanguage(String l) {
-		if(lang != l) makeStringXmlPath(l);
-		lang = l;
+		DefaultResString.setLanguage(l);
 	}
 
 	public static String getLanguage() {
-		return lang;
-	}
-
-	private static void makeStringXmlPath(String lang) {
-		ArrayList<XmlPath> xmlList = new ArrayList<XmlPath>();
-
-		String value_path = RFile.DATA_PATH.getPath();
-		if(lang != null && !lang.isEmpty()) {
-			String ext_lang_value_path = value_path + "strings-" + lang + ".xml";
-			File extFile = new File(ext_lang_value_path);
-			if(extFile.exists()) {
-				xmlList.add(new XmlPath(extFile));
-			}
-
-			RFile langRes = RFile.valueOf("RAW_STRINGS_" + lang.toUpperCase());
-			if(langRes != null) {
-				try(InputStream xml = langRes.getResourceAsStream()) {
-					if(xml != null) xmlList.add(new XmlPath(xml));
-				} catch(IOException e) { }
-			}
-		}
-
-		String ext_lang_value_path = RFile.DATA_STRINGS_EN.getPath();
-		File extFile = new File(ext_lang_value_path);
-		if(extFile.exists()) {
-			xmlList.add(new XmlPath(extFile));
-		}
-
-		InputStream xml = RFile.RAW_STRINGS_EN.getResourceAsStream();
-		if(xml != null) {
-			xmlList.add(new XmlPath(xml));
-		}
-
-		stringXmlPath = xmlList.toArray(new XmlPath[0]);
+		return DefaultResString.getLanguage();
 	}
 
 	public static String[] getSupportedLanguages() {
-		ArrayList<String> languages = new ArrayList<String>();
-
-		String value_path = RFile.DATA_PATH.getPath();
-		File valueDir = new File(value_path);
-		if(valueDir != null && valueDir.isDirectory()) {
-			for(String name: valueDir.list()) {
-				if(name.startsWith("strings-") && name.endsWith(".xml")) {
-					name = name.substring(8,name.length()-4);
-					if(!languages.contains(name)) {
-						languages.add(name);
-					}
-				}
-			}
-		}
-
-		URL resource = RFile.RAW_VALUES_PATH.getURL();
-		String resFilePath = resource.getFile();
-		try {
-			resFilePath = URLDecoder.decode(resource.getFile(), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-
-		if("file".equals(resource.getProtocol())) {
-			valueDir = new File(resFilePath);
-			if(valueDir != null && valueDir.isDirectory()) {
-				for(String name: valueDir.list()) {
-					if(name.startsWith("strings-") && name.endsWith(".xml")) {
-						name = name.substring(8,name.length()-4);
-						if(!languages.contains(name)) {
-							languages.add(name);
-						}
-					}
-				}
-			}
-		} else if("jar".equals(resource.getProtocol())) {
-			String[] jarPath = resFilePath.split("!");
-			if(jarPath != null && jarPath.length == 2) {
-				String[] list = ZipFileUtil.findFiles(jarPath[0].substring(5), ".xml", "^"+jarPath[1].substring(1) + "/.*");
-				for(String name : list) {
-					if(name.startsWith("values/strings-") && name.endsWith(".xml")) {
-						name = name.substring(15,name.length()-4);
-						if(!languages.contains(name)) {
-							languages.add(name);
-						}
-					}
-				}
-
-			}
-		} else {
-			Log.e("Unknown protocol " + resource);
-		}
-
-		Collections.sort(languages);
-		languages.add(0, "");
-
-		return languages.toArray(new String[languages.size()]);
+		return DefaultResString.getSupportedLanguages();
 	}
 
-	public static void addLanguageChangeListener(LanguageChangeListener listener) {
-		if(listener == null) return;
-		if(!listeners.contains(listener)) {
-			listeners.add(listener);
-		}
+	public static void addLanguageChangeListener(
+			LanguageChangeListener listener) {
+		DefaultResString.addLanguageChangeListener(listener);
 	}
 
-	public static void removeLanguageChangeListener(LanguageChangeListener listener) {
-		if(listener == null) return;
-		if(listeners.contains(listener)) {
-			listeners.remove(listener);
-		}
+	public static void removeLanguageChangeListener(
+			LanguageChangeListener listener) {
+		DefaultResString.removeLanguageChangeListener(listener);
 	}
 
 	public static LanguageChangeListener[] getLanguageChangeListener() {
-		return listeners.toArray(new LanguageChangeListener[listeners.size()]);
-	}
-
-	public static void fireLanguageChange(String oldLanguage, String newLanguage) {
-		for(LanguageChangeListener l: listeners) {
-			l.languageChange(oldLanguage, newLanguage);
-		}
+		return DefaultResString.getLanguageChangeListener();
 	}
 }

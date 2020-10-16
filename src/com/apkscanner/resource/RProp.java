@@ -2,24 +2,16 @@ package com.apkscanner.resource;
 
 import java.awt.Font;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 
 import javax.swing.UIManager;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-
+import com.apkspectrum.resource.DefaultResProp;
 import com.apkspectrum.resource.ResProp;
-import com.apkspectrum.resource.ResString;
 import com.apkspectrum.swing.tabbedpaneui.TabbedPaneUIManager;
 import com.apkspectrum.util.SystemUtil;
 
-public enum RProp implements ResProp<Object>, ResString<Object>
+public enum RProp implements ResProp<Object>
 {
 	LANGUAGE					(SystemUtil.getUserLanguage()),
 	USE_EASY_UI					(false),
@@ -97,6 +89,11 @@ public enum RProp implements ResProp<Object>, ResString<Object>
 		}
 
 		@Override
+		public String getValue() {
+			return RProp.valueOf(name()).getValue();
+		}
+
+		@Override
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			RProp.valueOf(name()).addPropertyChangeListener(listener);
 		}
@@ -144,6 +141,11 @@ public enum RProp implements ResProp<Object>, ResString<Object>
 		}
 
 		@Override
+		public String getValue() {
+			return RProp.valueOf(name()).getValue();
+		}
+
+		@Override
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			RProp.valueOf(name()).addPropertyChangeListener(listener);
 		}
@@ -174,6 +176,11 @@ public enum RProp implements ResProp<Object>, ResString<Object>
 		}
 
 		@Override
+		public String getValue() {
+			return RProp.valueOf(name()).getValue();
+		}
+
+		@Override
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			RProp.valueOf(name()).addPropertyChangeListener(listener);
 		}
@@ -184,41 +191,29 @@ public enum RProp implements ResProp<Object>, ResString<Object>
 		}
 	}
 
-	private static JSONObject property;
-	private static PropertyChangeSupport pcs;
-
-	static {
-		loadProperty();
-		if(property == null) property = new JSONObject();
-		pcs = new PropertyChangeSupport(property);
-	}
-
-	private String value;
-	private Object defValue;
+	private DefaultResProp res;
 
 	private RProp() {
-		this(null);
+		res = new DefaultResProp(name(), getDefaultValue());
 	}
 
 	private RProp(Object defValue) {
-		this.value = name();
-		this.defValue = defValue;
+		res = new DefaultResProp(name(), defValue);
 	}
 
 	public Object getDefaultValue() {
-		Object obj = null;
-		if(defValue != null) {
-			return defValue;
-		}
-		switch(this) {
-		case EDITOR:
+		Object obj = res != null ? res.getDefaultValue() : null;
+		if(obj != null) return obj;
+
+		switch(name()) {
+		case "EDITOR":
 			try {
 				obj = SystemUtil.getDefaultEditor();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			break;
-		case PREFERRED_LANGUAGE:
+		case "PREFERRED_LANGUAGE":
 			String propPreferredLanguage = SystemUtil.getUserLanguage();
 			String propStrLanguage = (String) LANGUAGE.getData();
 			if(!propPreferredLanguage.equals(propStrLanguage) && !"en".equals(propPreferredLanguage)) {
@@ -226,175 +221,108 @@ public enum RProp implements ResProp<Object>, ResString<Object>
 			}
 			obj = propPreferredLanguage + ";";
 			break;
-		case PEM_FILE_PATH:
+		case "PEM_FILE_PATH":
 			String pem = RFile.DATA_CERT_PEM_FILE.getPath();
 			if(new File(pem).isFile()) {
 				obj = pem;
 			}
 			break;
-		case PK8_FILE_PATH:
+		case "PK8_FILE_PATH":
 			String pk8 = RFile.DATA_CERT_PK8_FILE.getPath();
 			if(new File(pk8).isFile()) {
 				obj = pk8;
 			}
 			break;
-		case TABBED_UI_THEME:
-			return TabbedPaneUIManager.DEFAULT_TABBED_UI;
+		case "TABBED_UI_THEME":
+			obj = TabbedPaneUIManager.DEFAULT_TABBED_UI;
+			break;
 		default:
 			break;
 		};
-		defValue = obj;
+
+		if(res != null && obj != null) res.setDefaultValue(obj);
 		return obj;
 	}
 
 	@Override
 	public String getValue() {
-		return value;
+		return res.getValue();
 	}
 
 	@Override
 	public String toString() {
-		return getString();
-	}
-
-	@Override
-	public String getString() {
-		return String.valueOf(getData());
+		return res.toString();
 	}
 
 	@Override
 	public Object get() {
-		return getData();
+		return res.get();
 	}
 
 	@Override
 	public void set(Object data) {
-		setData(data);
+		res.set(data);
+	}
+
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		res.addPropertyChangeListener(listener);
+	}
+
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		res.removePropertyChangeListener(listener);
 	}
 
 	public Object getData() {
-		return getPropData(getValue(), getDefaultValue());
+		return res.getData();
 	}
 
 	public Object getData(Object ref) {
-		Object result = getData();
-		return result != null ? result : ref;
+		return res.getData(ref);
+	}
+
+	public String getString() {
+		return res.getString();
 	}
 
 	public int getInt() {
-		return getInt(0);
+		return res.getInt();
 	}
 
 	public int getInt(int ref) {
-		Object data = getData(ref);
-		if(data == null) return ref;
-
-		int ret = ref;
-		if(data instanceof Long) {
-			ret = (int)(long)data;
-		} else if(data instanceof Integer) {
-			ret = (int)data;
-		}
-
-		return ret;
+		return res.getInt(ref);
 	}
 
 	public boolean getBoolean() {
-		return getBoolean(false);
+		return res.getBoolean();
 	}
 
 	public boolean getBoolean(boolean ref) {
-		Object data = getData();
-		if(data == null) return ref;
-
-		boolean ret = false;
-		if(data instanceof Boolean) {
-			ret = (Boolean)data;
-		} else if(data instanceof String) {
-			ret = "true".equalsIgnoreCase((String)data);
-		} else if(data instanceof Integer) {
-			ret = (Integer)data != 0;
-		} else {
-			ret = !String.valueOf(data).isEmpty();
-		}
-
-		return ret;
+		return res.getBoolean();
 	}
 
 	public void setData(Object data) {
-		setPropData(getValue(), data);
+		res.setData(data);
 	}
 
 	public static Object getPropData(String key) {
-		return getPropData(key, null);
+		return DefaultResProp.getPropData(key);
 	}
 
 	public static Object getPropData(String key, Object ref) {
-		Object data = property != null ? property.get(key) : ref;
-		return data != null ? data : ref;
+		return DefaultResProp.getPropData(key, ref);
 	}
 
-	@SuppressWarnings("unchecked")
 	public static void setPropData(String key, Object data) {
-		Object old = null;
-		if(data == null) {
-			old = property.remove(key);
-			if(old != null) {
-				saveProperty();
-				pcs.firePropertyChange(key, old, data);
-			}
-			return;
-		}
-		old = property.get(key);
-		if(!data.equals(old)) {
-			property.put(key, data);
-			saveProperty();
-			pcs.firePropertyChange(key, old, data);
-		}
+		DefaultResProp.setPropData(key, data);
 	}
 
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-    	addPropertyChangeListener(this, listener);
+    public static void addPropertyChangeListener(ResProp<?> prop, PropertyChangeListener listener) {
+    	DefaultResProp.addPropertyChangeListener(prop, listener);
     }
 
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-    	removePropertyChangeListener(this, listener);
+    public static void removePropertyChangeListener(ResProp<?> prop, PropertyChangeListener listener) {
+    	DefaultResProp.removePropertyChangeListener(prop, listener);
     }
-
-    public static void addPropertyChangeListener(RProp prop, PropertyChangeListener listener) {
-    	pcs.addPropertyChangeListener(prop != null ? prop.getValue() : null, listener);
-    }
-
-    public static void removePropertyChangeListener(RProp prop, PropertyChangeListener listener) {
-    	pcs.removePropertyChangeListener(prop != null ? prop.getValue() : null, listener);
-    }
-
-	private static void loadProperty() {
-		if(property == null) {
-			File file = new File(RFile.ETC_SETTINGS_FILE.getPath());
-			if(!file.exists() || file.length() == 0) return;
-			try (FileReader fileReader = new FileReader(file)) {
-				JSONParser parser = new JSONParser();
-				property = (JSONObject)parser.parse(fileReader);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	private static void saveProperty() {
-		if(property == null) return;
-
-		String transMultiLine = property.toJSONString()
-				.replaceAll("^\\{(.*)\\}$", "{\n$1\n}")
-				.replaceAll("(\"[^\"]*\":(\"[^\"]*\")?([^\",]*)?,)", "$1\n");
-		//.replaceAll("(\"[^\"]*\":(\"[^\"]*\")?([^\",\\[]*(\\[[^\\]]\\])?)?,)", "$1\n");
-
-		try( FileWriter fw = new FileWriter(RFile.ETC_SETTINGS_FILE.getPath());
-			BufferedWriter writer = new BufferedWriter(fw) ) {
-			writer.write(transMultiLine);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 }

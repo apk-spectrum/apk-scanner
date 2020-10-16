@@ -1,21 +1,12 @@
 package com.apkscanner.resource;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLDecoder;
 
+import com.apkspectrum.resource.DefaultResFile;
 import com.apkspectrum.resource.ResFile;
-import com.apkspectrum.resource.ResString;
-import com.apkspectrum.util.SystemUtil;
+import com.apkspectrum.resource._RFile;
 
-public enum RFile implements ResFile<File>, ResString<File>
+public enum RFile implements ResFile<File>
 {
 	BIN_PATH					(Type.BIN, ""),
 
@@ -40,136 +31,61 @@ public enum RFile implements ResFile<File>, ResString<File>
 	ETC_SETTINGS_FILE			(Type.ETC, "settings.txt"),
 	; // ENUM END
 
-	private String value;
-	private Type type;
-	private String os;
+	private DefaultResFile res;
 
 	private RFile(Type type, String value) {
-		this(type, value, null);
+		res = new DefaultResFile(type, value);
 	}
 
 	private RFile(Type type, String value, String os) {
-		this.type = type;
-		this.value = value;
-		this.os = os;
+		res = new DefaultResFile(type, value, os);
 	}
 
-	private RFile(Type type, RFile[] cfgResources) {
-		if(cfgResources == null | cfgResources.length == 0) {
-			throw new IllegalArgumentException();
-		}
-
-		this.type = type;
-		for(RFile r: cfgResources) {
-			if(SystemUtil.OS.contains(r.os)) {
-				this.value = r.value;
-				this.os = r.os;
-				break;
-			}
-		}
-		if(this.value == null || os == null) {
-			throw new IllegalArgumentException();
-		}
+	private RFile(Type type, _RFile[] cfgResources) {
+		res = new DefaultResFile(type, cfgResources);
 	}
 
 	@Override
 	public String getValue() {
-		return value;
+		return res.getValue();
+	}
+
+	@Override
+	public String getConfiguration() {
+		return res.getConfiguration();
 	}
 
 	@Override
 	public String toString() {
-		return getPath();
+		return res.toString();
 	}
 
 	@Override
 	public String getPath() {
-		if(type == Type.RES_VALUE || type == Type.RES_ROOT) {
-			return getURL().toExternalForm();
-		}
-		return getUTF8Path() + value;
+		return res.getPath();
 	}
 
 	@Override
-	public URL getURL() {
-		switch(type){
-		case RES_ROOT:
-			return getClass().getResource("/" + value);
-		case RES_VALUE:
-			if(value == null || value.isEmpty())
-				return getClass().getResource("/values");
-			else
-				return getClass().getResource("/values/" + value);
-		default:
-			try {
-				return new File(getPath()).toURI().toURL();
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			}
-		}
-		return null;
+	public java.net.URL getURL() {
+		return res.getURL();
 	}
 
 	@Override
-	public File get() {
-		try {
-			return new File(getURL().toURI());
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-		return null;
+	public java.io.File get() {
+		return res.get();
 	}
 
 	@Override
+	public java.net.URL getResource() {
+		return res.getResource();
+	}
+
+	@Override
+	public java.io.InputStream getResourceAsStream() {
+		return res.getResourceAsStream();
+	}
+
 	public String getString() {
-		switch(type){
-		case RES_VALUE:
-			try (InputStream is= getURL().openStream();
-				 InputStreamReader ir = new InputStreamReader(is);
-				 BufferedReader br = new BufferedReader(ir)) {
-		        StringBuilder out = new StringBuilder();
-		        String line;
-		        while ((line = br.readLine()) != null) {
-		            out.append(line);
-		        }
-		        return out.toString();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		default:
-			return null;
-		}
-	}
-
-	public URL getResource() {
-		return getURL();
-	}
-
-	public InputStream getResourceAsStream() {
-		switch(type){
-		case RES_VALUE:
-			return getClass().getResourceAsStream("/values/" + value);
-		default:
-			try {
-				return getURL().openStream();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return null;
-	}
-
-	private String getUTF8Path() {
-		String resourcePath = RFile.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-		resourcePath = (new File(resourcePath)).getParentFile().getPath()
-				+ File.separator + type.getValue() + File.separator;
-
-		try {
-			resourcePath = URLDecoder.decode(resourcePath, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-
-		return resourcePath;
+		return res.getString();
 	}
 }

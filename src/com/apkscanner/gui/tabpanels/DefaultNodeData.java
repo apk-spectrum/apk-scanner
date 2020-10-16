@@ -17,6 +17,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.apkscanner.resource.RImg;
 import com.apkspectrum.core.signer.SignatureReport;
+import com.apkspectrum.resource.DefaultResImage;
 import com.apkspectrum.swing.ImageScaler;
 import com.apkspectrum.swing.TreeNodeImageObserver;
 import com.apkspectrum.util.FileUtil;
@@ -254,7 +255,7 @@ public class DefaultNodeData implements TreeNodeData, Cloneable
 				}
 				return null;
 			} else {
-				return RImg.getImage(getURL());
+				return DefaultResImage.getImage(getURL());
 			}
 		case DATA_TYPE_CERTIFICATION:
 			try {
