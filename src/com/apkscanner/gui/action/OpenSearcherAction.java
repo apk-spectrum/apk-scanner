@@ -25,7 +25,7 @@ public class OpenSearcherAction extends AbstractApkScannerAction
 		ApkScanner scanner = getApkScanner();
 		if(scanner == null) return;
 
-		ResContentFocusChanger changer = (ResContentFocusChanger) handler.getData(ResContentFocusChanger.class);
+		ResContentFocusChanger changer = (ResContentFocusChanger) handler.getData("ResContentFocusChanger");
 
 		SearchDlg dialog = new SearchDlg(changer);
 		dialog.setApkInfo(scanner.getApkInfo());

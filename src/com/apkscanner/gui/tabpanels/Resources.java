@@ -51,7 +51,7 @@ public class Resources extends AbstractTabbedPanel implements TreeSelectionListe
 
 		this.listener = listener;
 		if(listener instanceof ActionEventHandler) {
-			((ActionEventHandler) listener).putData(ResContentFocusChanger.class, new ResContentFocusChanger() {
+			((ActionEventHandler) listener).putData("ResContentFocusChanger", new ResContentFocusChanger() {
 				@Override
 				public void setResContentFocus(String path, int line, String string) {
 					Log.v("path : " + path + ", line " + line + ", text " + string);
