@@ -59,8 +59,8 @@ import com.apkspectrum.data.apkinfo.UsesConfigurationInfo;
 import com.apkspectrum.data.apkinfo.UsesFeatureInfo;
 import com.apkspectrum.data.apkinfo.UsesLibraryInfo;
 import com.apkspectrum.data.apkinfo.UsesSdkInfo;
-import com.apkspectrum.plugin.IPackageSearcher;
-import com.apkspectrum.plugin.IPlugIn;
+import com.apkspectrum.plugin.PackageSearcher;
+import com.apkspectrum.plugin.PlugIn;
 import com.apkspectrum.plugin.PlugInManager;
 import com.apkspectrum.resource._RFile;
 import com.apkspectrum.swing.HtmlEditorPane;
@@ -528,19 +528,19 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		String packageSearchers = "";
 		String appLabelSearchers = "";
 		if(RProp.B.VISIBLE_TO_BASIC.get()) {
-			IPackageSearcher[] searchers = PlugInManager.getPackageSearchers();
+			PackageSearcher[] searchers = PlugInManager.getPackageSearchers();
 			String defaultSearchIcon = RImg.TOOLBAR_SEARCH.getPath();
-			for(IPackageSearcher searcher: searchers) {
+			for(PackageSearcher searcher: searchers) {
 				searcher.addPropertyChangeListener(this);
 				if(!searcher.isVisibleToBasic()) continue;
 				URL icon = searcher.getIconURL();
 				String iconPath = icon != null ? icon.toString() : defaultSearchIcon;
 				String tag = makeHyperEvent("PLUGIN:"+searcher.hashCode(), String.format("<img src=\"%s\" width=\"16\" height=\"16\">", iconPath), null, searcher.getActionCommand());
 				switch(searcher.getSupportType() ) {
-				case IPackageSearcher.SEARCHER_TYPE_PACKAGE_NAME:
+				case PackageSearcher.SEARCHER_TYPE_PACKAGE_NAME:
 					packageSearchers += tag;
 					break;
-				case IPackageSearcher.SEARCHER_TYPE_APP_NAME:
+				case PackageSearcher.SEARCHER_TYPE_APP_NAME:
 					appLabelSearchers += tag;
 					break;
 				};
@@ -856,7 +856,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			} else if(id.startsWith("PermGroup:")) {
 				showPermDetailDesc(evt);
 			} else if(id.startsWith("PLUGIN:")) {
-				IPlugIn plugin = PlugInManager.getPlugInByActionCommand((String)evt.getUserData());
+				PlugIn plugin = PlugInManager.getPlugInByActionCommand((String)evt.getUserData());
 				if(plugin != null) {
 					plugin.launch();
 				}

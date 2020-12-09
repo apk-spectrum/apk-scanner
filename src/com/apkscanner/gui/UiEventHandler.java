@@ -55,13 +55,14 @@ import com.apkscanner.gui.action.ShowManifestAction;
 import com.apkscanner.gui.action.SignApkAction;
 import com.apkscanner.resource.RConst;
 import com.apkspectrum.core.scanner.ApkScanner;
-import com.apkspectrum.plugin.IExternalTool;
-import com.apkspectrum.swing.ActionEventHandler;
+import com.apkspectrum.plugin.ExternalTool;
+import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.swing.DropTargetChooser;
 import com.apkspectrum.swing.KeyStrokeAction;
 import com.apkspectrum.util.Log;
 
-public class UiEventHandler extends ActionEventHandler implements WindowListener, DropTargetChooser.Listener
+public class UiEventHandler extends ApkActionEventHandler
+	implements WindowListener, DropTargetChooser.Listener
 {
 	public static final String APK_SCANNER_KEY	= AbstractApkScannerAction.APK_SCANNER_KEY;
 	public static final String OWNER_WINDOW_KEY	= AbstractApkScannerAction.OWNER_WINDOW_KEY;
@@ -199,12 +200,12 @@ public class UiEventHandler extends ActionEventHandler implements WindowListener
 				Launcher.run(filePaths[0]);
 				break;
 			}
-		} else if(dropedTarget instanceof IExternalTool) {
+		} else if(dropedTarget instanceof ExternalTool) {
 			final ApkScanner scanner = getApkScanner();
 			if(scanner == null) return;
 
 			String apkPath = scanner.getApkInfo().filePath;
-			((IExternalTool) dropedTarget).launch(apkPath, filePaths[0]);
+			((ExternalTool) dropedTarget).launch(apkPath, filePaths[0]);
 		}
 	}
 

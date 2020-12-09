@@ -10,7 +10,7 @@ import javax.swing.JFileChooser;
 import com.apkscanner.gui.tabpanels.DefaultNodeData;
 import com.apkscanner.gui.tabpanels.TreeNodeData;
 import com.apkscanner.resource.RProp;
-import com.apkspectrum.swing.ActionEventHandler;
+import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.swing.ApkFileChooser;
 import com.apkspectrum.util.FileUtil;
 
@@ -19,7 +19,7 @@ public class SaveResFileAction extends AbstractApkScannerAction
 {
 	public static final String ACTION_COMMAND = "ACT_CMD_SAVE_RESOURCE_FILE";
 
-	public SaveResFileAction(ActionEventHandler h) { super(h); }
+	public SaveResFileAction(ApkActionEventHandler h) { super(h); }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

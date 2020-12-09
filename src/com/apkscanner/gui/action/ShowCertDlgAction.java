@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.easymode.dlg.EasyToolbarCertDlg;
 import com.apkspectrum.data.apkinfo.ApkInfo;
-import com.apkspectrum.swing.ActionEventHandler;
+import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.util.Log;
 
 @SuppressWarnings("serial")
@@ -16,7 +16,7 @@ public class ShowCertDlgAction extends AbstractApkScannerAction
 {
 	public static final String ACTION_COMMAND = "ACT_CMD_SHOW_SIGN_DLG";
 
-	public ShowCertDlgAction(ActionEventHandler h) { super(h); }
+	public ShowCertDlgAction(ApkActionEventHandler h) { super(h); }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

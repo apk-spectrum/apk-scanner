@@ -28,8 +28,8 @@ import com.apkscanner.Launcher;
 import com.apkscanner.gui.EasyMainUI;
 import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.PlugInDropTargetChooser;
-import com.apkscanner.gui.UiEventHandler;
 import com.apkscanner.gui.PlugInDropTargetChooser.DefaultTargetObject;
+import com.apkscanner.gui.UiEventHandler;
 import com.apkscanner.gui.easymode.contents.EasyBordPanel;
 import com.apkscanner.gui.easymode.contents.EasyContentsPanel;
 import com.apkscanner.gui.easymode.contents.EasyGuiToolScaleupPanel;
@@ -39,7 +39,7 @@ import com.apkscanner.gui.easymode.util.RoundPanel;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RStr;
 import com.apkspectrum.core.scanner.ApkScanner;
-import com.apkspectrum.plugin.IExternalTool;
+import com.apkspectrum.plugin.ExternalTool;
 import com.apkspectrum.swing.DropTargetChooser;
 import com.apkspectrum.util.Log;
 
@@ -368,9 +368,9 @@ public class EasyGuiMainPanel extends JPanel implements ComponentListener, DropT
 				Launcher.run(filePaths[0]);
 				break;
 			}
-		} else if(dropedTarget instanceof IExternalTool) {
+		} else if(dropedTarget instanceof ExternalTool) {
 			String apkPath = apkScanner.getApkInfo().filePath;
-			((IExternalTool) dropedTarget).launch(apkPath, filePaths[0]);
+			((ExternalTool) dropedTarget).launch(apkPath, filePaths[0]);
 		}
 	}
 }

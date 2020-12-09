@@ -9,7 +9,7 @@ import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.dialog.PackageInfoPanel;
 import com.apkscanner.gui.easymode.contents.EasyGuiDeviceToolPanel;
 import com.apkspectrum.data.apkinfo.ApkInfo;
-import com.apkspectrum.swing.ActionEventHandler;
+import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.tool.adb.PackageInfo;
 import com.apkspectrum.util.Log;
 
@@ -18,7 +18,7 @@ public class DeviceShowInstalledPackageAction extends AbstractDeviceAction
 {
 	public static final String ACTION_COMMAND = "ACT_CMD_SHOW_INSTALLED_PACKAGE_INFO";
 
-	public DeviceShowInstalledPackageAction(ActionEventHandler h) { super(h); }
+	public DeviceShowInstalledPackageAction(ApkActionEventHandler h) { super(h); }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

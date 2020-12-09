@@ -8,17 +8,14 @@ import java.io.File;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ExecutionException;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -29,13 +26,9 @@ import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 import com.apkspectrum.core.scanner.AaptLightScanner;
 import com.apkspectrum.core.scanner.ApkScanner;
-import com.apkspectrum.plugin.IPlugInEventListener;
-import com.apkspectrum.plugin.IUpdateChecker;
-import com.apkspectrum.plugin.NetworkException;
-import com.apkspectrum.plugin.PlugInConfig;
+import com.apkspectrum.plugin.PlugInEventAdapter;
 import com.apkspectrum.plugin.PlugInManager;
-import com.apkspectrum.plugin.gui.NetworkErrorDialog;
-import com.apkspectrum.plugin.gui.UpdateNotificationWindow;
+import com.apkspectrum.plugin.UpdateChecker;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 
@@ -62,9 +55,9 @@ public class UIController implements Runnable, InvocationHandler {
 		}
 		this.apkScanner = apkScanner;
 		eventHandler = new UiEventHandler(apkScanner);
+		PlugInManager.setActionEventHandler(eventHandler);
 
 		initMacApplication();
-		loadPlugIn();
 	}
 
 	public static UIController getInstance(ApkScanner apkScanner) {
@@ -85,6 +78,7 @@ public class UIController implements Runnable, InvocationHandler {
 			return;
 		}
 		createAndShowGUI();
+		loadPlugIn();
 	}
 
 	private void createAndShowGUI() {
@@ -273,15 +267,18 @@ public class UIController implements Runnable, InvocationHandler {
 	private void loadPlugIn() {
 		PlugInManager.setAppPackage("com.apkscanner", RStr.APP_VERSION.get(), RStr.APP_NAME, RImg.APP_ICON);
 		PlugInManager.setLang(RStr.getLanguage());
-		PlugInManager.addPlugInEventListener(new IPlugInEventListener() {
+		PlugInManager.addPlugInEventListener(new PlugInEventAdapter() {
 			@Override
 			public void onPluginLoaded() {
-		        new Timer().schedule(new TimerTask() {
-		            @Override
-		            public void run() {
-		            	checkUpdated(PlugInManager.getUpdateChecker());
-		            }
-		        }, 1000);
+		        PlugInManager.checkForUpdatesWithUI(mainframe, 1000);
+			}
+
+			@Override
+			public void onPluginUpdated(UpdateChecker[] list) {
+				if(list != null && list.length > 0) {
+					updatedBadgeCount = list.length;
+					if(mainUI != null) mainUI.setUpdatedBadgeCount(updatedBadgeCount);
+				}
 			}
 		});
 
@@ -292,68 +289,6 @@ public class UIController implements Runnable, InvocationHandler {
 		});
 		thread.setPriority(Thread.NORM_PRIORITY);
 		thread.start();
-	}
-
-	private void checkUpdated(final IUpdateChecker[] updater) {
-        new SwingWorker<IUpdateChecker[], IUpdateChecker>() {
-			@Override
-			protected IUpdateChecker[] doInBackground() throws Exception {
-				ArrayList<IUpdateChecker> newUpdates = new ArrayList<>();
-				for(IUpdateChecker uc: updater) {
-					if(!uc.wasPeriodPassed()) {
-						if(uc.hasNewVersion()) {
-							newUpdates.add(uc);
-						}
-						continue;
-					}
-					try {
-						if(uc.checkNewVersion()) {
-							newUpdates.add(uc);
-						};
-					} catch (NetworkException e) {
-						publish(uc);
-						if(e.isNetworkNotFoundException()) {
-							Log.d("isNetworkNotFoundException");
-							break;
-						}
-					}
-				}
-				return newUpdates.toArray(new IUpdateChecker[newUpdates.size()]);
-			}
-
-			@Override
-			protected void process(List<IUpdateChecker> updater) {
-				ArrayList<IUpdateChecker> retryUpdates = new ArrayList<>();
-				for(IUpdateChecker uc: updater) {
-					int ret = NetworkErrorDialog.show(mainframe, uc);
-					switch(ret) {
-					case NetworkErrorDialog.RESULT_RETRY:
-						retryUpdates.add(uc);
-					}
-				}
-				if(!retryUpdates.isEmpty()) {
-					checkUpdated(retryUpdates.toArray(new IUpdateChecker[retryUpdates.size()]));
-				}
-			}
-
-			@Override
-			protected void done() {
-				IUpdateChecker[] updaters = null;
-				try {
-					updaters = get();
-				} catch (InterruptedException | ExecutionException e) {
-					e.printStackTrace();
-				}
-				if(updaters != null && updaters.length > 0) {
-					updatedBadgeCount = updaters.length;
-					if(mainUI != null) mainUI.setUpdatedBadgeCount(updatedBadgeCount);
-					if(!"true".equals(PlugInConfig.getGlobalConfiguration(PlugInConfig.CONFIG_NO_LOOK_UPDATE_POPUP))) {
-						UpdateNotificationWindow.show(mainframe, updaters);
-					}
-				}
-				PlugInManager.saveProperty();
-			}
-		}.execute();
 	}
 
 	public static void sendEvent(String actionCommand) {

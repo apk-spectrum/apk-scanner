@@ -7,7 +7,7 @@ import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
 import com.apkspectrum.data.apkinfo.ApkInfo;
-import com.apkspectrum.swing.ActionEventHandler;
+import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 
@@ -16,7 +16,7 @@ public class ShowExplorerAction extends AbstractApkScannerAction
 {
 	public static final String ACTION_COMMAND = "ACT_CMD_SHOW_EXPLORER";
 
-	public ShowExplorerAction(ActionEventHandler h) { super(h); }
+	public ShowExplorerAction(ApkActionEventHandler h) { super(h); }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

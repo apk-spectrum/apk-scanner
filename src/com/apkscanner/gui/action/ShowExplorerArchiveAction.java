@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 
 import com.apkspectrum.core.scanner.ApkScanner;
 import com.apkspectrum.data.apkinfo.ApkInfo;
-import com.apkspectrum.swing.ActionEventHandler;
+import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 
@@ -13,7 +13,7 @@ public class ShowExplorerArchiveAction extends AbstractApkScannerAction
 {
 	public static final String ACTION_COMMAND = "ACT_CMD_SHOW_EXPLORER_ARCHIVE";
 
-	public ShowExplorerArchiveAction(ActionEventHandler h) { super(h); }
+	public ShowExplorerArchiveAction(ApkActionEventHandler h) { super(h); }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

@@ -6,7 +6,7 @@ import javax.swing.JComponent;
 
 import com.apkscanner.gui.tabpanels.DefaultNodeData;
 import com.apkscanner.gui.tabpanels.TreeNodeData;
-import com.apkspectrum.swing.ActionEventHandler;
+import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.util.SystemUtil;
 
 @SuppressWarnings("serial")
@@ -14,7 +14,7 @@ public class OpenResFileAction extends AbstractApkScannerAction
 {
 	public static final String ACTION_COMMAND = "ACT_CMD_OPEN_RESOURCE_FILE";
 
-	public OpenResFileAction(ActionEventHandler h) { super(h); }
+	public OpenResFileAction(ApkActionEventHandler h) { super(h); }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

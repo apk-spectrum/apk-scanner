@@ -9,7 +9,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import com.apkscanner.Launcher;
 import com.apkscanner.gui.UiEventHandler;
 import com.apkscanner.gui.tabpanels.DefaultNodeData;
-import com.apkspectrum.swing.ActionEventHandler;
+import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.util.SystemUtil;
 
 @SuppressWarnings("serial")
@@ -17,7 +17,7 @@ public class OpenResTreeFileAction extends AbstractApkScannerAction
 {
 	public static final String ACTION_COMMAND = "ACT_CMD_OPEN_RESOURCE_TREE_FILE";
 
-	public OpenResTreeFileAction(ActionEventHandler h) { super(h); }
+	public OpenResTreeFileAction(ApkActionEventHandler h) { super(h); }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

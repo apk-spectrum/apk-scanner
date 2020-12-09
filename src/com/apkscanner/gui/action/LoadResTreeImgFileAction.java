@@ -11,7 +11,7 @@ import javax.swing.event.TreeExpansionEvent;
 import com.apkscanner.gui.tabpanels.ResourceNode;
 import com.apkscanner.gui.tabpanels.TreeNodeData;
 import com.apkspectrum.data.apkinfo.ApkInfo;
-import com.apkspectrum.swing.ActionEventHandler;
+import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.tool.ImgExtractorWrapper;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
@@ -22,7 +22,7 @@ public class LoadResTreeImgFileAction extends AbstractApkScannerAction
 {
 	public static final String ACTION_COMMAND = "ACT_CMD_LOAD_FS_IMG_FILE";
 
-	public LoadResTreeImgFileAction(ActionEventHandler h) { super(h); }
+	public LoadResTreeImgFileAction(ApkActionEventHandler h) { super(h); }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

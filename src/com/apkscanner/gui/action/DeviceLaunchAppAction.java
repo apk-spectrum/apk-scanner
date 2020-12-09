@@ -14,7 +14,7 @@ import com.apkscanner.resource.RStr;
 import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.data.apkinfo.ApkInfoHelper;
 import com.apkspectrum.data.apkinfo.ComponentInfo;
-import com.apkspectrum.swing.ActionEventHandler;
+import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.swing.MessageBoxPane;
 import com.apkspectrum.tool.adb.AdbDeviceHelper;
 import com.apkspectrum.tool.adb.PackageInfo;
@@ -25,7 +25,7 @@ public class DeviceLaunchAppAction extends AbstractDeviceAction
 {
 	public static final String ACTION_COMMAND = "ACT_CMD_LAUNCH_APP";
 
-	public DeviceLaunchAppAction(ActionEventHandler h) { super(h); }
+	public DeviceLaunchAppAction(ApkActionEventHandler h) { super(h); }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

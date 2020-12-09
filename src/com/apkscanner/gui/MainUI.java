@@ -16,13 +16,13 @@ import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 import com.apkspectrum.core.scanner.ApkScanner;
 import com.apkspectrum.data.apkinfo.ApkInfo;
-import com.apkspectrum.plugin.IPlugInEventListener;
+import com.apkspectrum.plugin.PlugInEventAdapter;
 import com.apkspectrum.plugin.PlugInManager;
 import com.apkspectrum.resource.LanguageChangeListener;
 import com.apkspectrum.swing.WindowSizeMemorizer;
 import com.apkspectrum.util.Log;
 
-public class MainUI extends JFrame implements IPlugInEventListener, LanguageChangeListener
+public class MainUI extends JFrame implements LanguageChangeListener
 {
 	private static final long serialVersionUID = -623259597186280485L;
 
@@ -38,7 +38,19 @@ public class MainUI extends JFrame implements IPlugInEventListener, LanguageChan
 	public MainUI(ApkScanner scanner, UiEventHandler eventHandler) {
 		initialize(eventHandler);
 		setApkScanner(scanner);
-		PlugInManager.addPlugInEventListener(this);
+		PlugInManager.addPlugInEventListener(new PlugInEventAdapter() {
+			@Override
+			public void onPluginLoaded() {
+				ApkInfo apkInfo = null;
+				int status = ApkScanner.STATUS_STANBY;
+				if(apkScanner != null) {
+					apkInfo = apkScanner.getApkInfo();
+					status = apkScanner.getStatus();
+				}
+				tabbedPanel.onLoadPlugin(apkInfo, status);
+				toolBar.onLoadPlugin();
+			}
+		});
 	}
 
 	public void setApkScanner(ApkScanner scanner) {
@@ -100,18 +112,6 @@ public class MainUI extends JFrame implements IPlugInEventListener, LanguageChan
 
 	public void uiLoadBooster() {
 		tabbedPanel.uiLoadBooster();
-	}
-
-	@Override
-	public void onPluginLoaded() {
-		ApkInfo apkInfo = null;
-		int status = ApkScanner.STATUS_STANBY;
-		if(apkScanner != null) {
-			apkInfo = apkScanner.getApkInfo();
-			status = apkScanner.getStatus();
-		}
-		tabbedPanel.onLoadPlugin(apkInfo, status);
-		toolBar.onLoadPlugin();
 	}
 
 	@Override
@@ -208,7 +208,6 @@ public class MainUI extends JFrame implements IPlugInEventListener, LanguageChan
 
 			if(status == ApkScanner.STATUS_STANBY) {
 				Log.v("STANBY: does not UI update");
-				PlugInManager.setApkInfo(apkInfo);
 				return;
 			}
 
@@ -235,8 +234,6 @@ public class MainUI extends JFrame implements IPlugInEventListener, LanguageChan
 			Log.i("onStateChanged() ui sync start for " + status);
 			switch(status) {
 			case ApkScanner.STATUS_BASIC_INFO_COMPLETED:
-				PlugInManager.setApkInfo(apkInfo);
-
 				String apkFilePath = apkInfo.filePath;
 				String title = apkFilePath.substring(apkFilePath.lastIndexOf(File.separator)+1) + " - " + RStr.APP_NAME.get();
 				setTitle(title);

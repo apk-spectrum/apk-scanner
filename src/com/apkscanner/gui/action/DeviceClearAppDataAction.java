@@ -8,7 +8,7 @@ import com.android.ddmlib.IDevice;
 import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.easymode.contents.EasyGuiDeviceToolPanel;
 import com.apkspectrum.data.apkinfo.ApkInfo;
-import com.apkspectrum.swing.ActionEventHandler;
+import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.tool.adb.PackageInfo;
 import com.apkspectrum.tool.adb.PackageManager;
 import com.apkspectrum.util.Log;
@@ -18,7 +18,7 @@ public class DeviceClearAppDataAction extends AbstractDeviceAction
 {
 	public static final String ACTION_COMMAND = "ACT_CMD_CLEAR_APP_DATA";
 
-	public DeviceClearAppDataAction(ActionEventHandler h) { super(h); }
+	public DeviceClearAppDataAction(ApkActionEventHandler h) { super(h); }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

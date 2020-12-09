@@ -11,7 +11,7 @@ import com.android.ddmlib.TimeoutException;
 import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.easymode.contents.EasyGuiDeviceToolPanel;
 import com.apkspectrum.data.apkinfo.ApkInfo;
-import com.apkspectrum.swing.ActionEventHandler;
+import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.swing.MessageBoxPane;
 import com.apkspectrum.tool.adb.PackageInfo;
 import com.apkspectrum.tool.adb.PackageManager;
@@ -22,7 +22,7 @@ public class DeviceUninstallAppAction extends AbstractDeviceAction
 {
 	public static final String ACTION_COMMAND = "ACT_CMD_UNINSTALL_APP";
 
-	public DeviceUninstallAppAction(ActionEventHandler h) { super(h); }
+	public DeviceUninstallAppAction(ApkActionEventHandler h) { super(h); }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

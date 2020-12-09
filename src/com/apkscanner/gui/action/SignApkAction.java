@@ -9,7 +9,7 @@ import javax.swing.JFrame;
 import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.dialog.ApkSignerWizard;
 import com.apkspectrum.data.apkinfo.ApkInfo;
-import com.apkspectrum.swing.ActionEventHandler;
+import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.util.Log;
 
 @SuppressWarnings("serial")
@@ -17,7 +17,7 @@ public class SignApkAction extends AbstractApkScannerAction
 {
 	public static final String ACTION_COMMAND = "ACT_CMD_SIGN_APK";
 
-	public SignApkAction(ActionEventHandler h) { super(h); }
+	public SignApkAction(ApkActionEventHandler h) { super(h); }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

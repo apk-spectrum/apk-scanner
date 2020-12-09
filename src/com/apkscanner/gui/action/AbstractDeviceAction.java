@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
 import com.apkscanner.resource.RProp;
-import com.apkspectrum.swing.ActionEventHandler;
+import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.tool.adb.AdbServerMonitor;
 import com.apkspectrum.tool.adb.PackageInfo;
 import com.apkspectrum.tool.adb.PackageManager;
@@ -16,7 +16,7 @@ public abstract class AbstractDeviceAction extends AbstractApkScannerAction
 {
 	public AbstractDeviceAction() { }
 
-	public AbstractDeviceAction(ActionEventHandler h) { super(h); }
+	public AbstractDeviceAction(ApkActionEventHandler h) { super(h); }
 
 	protected IDevice[] getInstalledDevice(String packageName) {
 		IDevice[] devices = null;

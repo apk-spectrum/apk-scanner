@@ -6,14 +6,14 @@ import java.awt.event.ActionEvent;
 import com.apkscanner.Launcher;
 import com.apkscanner.gui.dialog.SettingDlg;
 import com.apkspectrum.core.scanner.ApkScanner;
-import com.apkspectrum.swing.ActionEventHandler;
+import com.apkspectrum.swing.ApkActionEventHandler;
 
 @SuppressWarnings("serial")
 public class OpenSettingsAction extends AbstractApkScannerAction
 {
 	public static final String ACTION_COMMAND = "ACT_CMD_OPEN_SETTINGS";
 
-	public OpenSettingsAction(ActionEventHandler h) { super(h); }
+	public OpenSettingsAction(ApkActionEventHandler h) { super(h); }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

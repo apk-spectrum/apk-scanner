@@ -10,7 +10,7 @@ import javax.swing.JFileChooser;
 import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.resource.RProp;
 import com.apkspectrum.data.apkinfo.ApkInfo;
-import com.apkspectrum.swing.ActionEventHandler;
+import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.swing.ApkFileChooser;
 import com.apkspectrum.tool.aapt.AaptNativeWrapper;
 import com.apkspectrum.util.FileUtil;
@@ -22,7 +22,7 @@ public class ShowManifestAction extends AbstractApkScannerAction
 {
 	public static final String ACTION_COMMAND = "ACT_CMD_SHOW_MANIFEST";
 
-	public ShowManifestAction(ActionEventHandler h) { super(h); }
+	public ShowManifestAction(ApkActionEventHandler h) { super(h); }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

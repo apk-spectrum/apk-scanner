@@ -46,24 +46,24 @@ import com.apkspectrum.core.signer.Signature;
 import com.apkspectrum.core.signer.SignatureReport;
 import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.data.apkinfo.ComponentInfo;
-import com.apkspectrum.plugin.IPackageSearcher;
-import com.apkspectrum.plugin.IPlugIn;
+import com.apkspectrum.plugin.PackageSearcher;
+import com.apkspectrum.plugin.PlugIn;
 import com.apkspectrum.plugin.PlugInManager;
 import com.apkspectrum.swing.ApkFileChooser;
 import com.apkspectrum.swing.HtmlEditorPane;
-import com.apkspectrum.swing.MessageBoxPane;
-import com.apkspectrum.swing.WindowSizeMemorizer;
 import com.apkspectrum.swing.HtmlEditorPane.HyperlinkClickEvent;
 import com.apkspectrum.swing.HtmlEditorPane.HyperlinkClickListener;
+import com.apkspectrum.swing.MessageBoxPane;
+import com.apkspectrum.swing.WindowSizeMemorizer;
 import com.apkspectrum.swing.tabbedpaneui.TabbedPaneUIManager;
 import com.apkspectrum.tool.adb.AdbDeviceHelper;
 import com.apkspectrum.tool.adb.PackageInfo;
 import com.apkspectrum.tool.adb.PackageManager;
 import com.apkspectrum.tool.adb.SimpleOutputReceiver;
 import com.apkspectrum.util.FileUtil;
+import com.apkspectrum.util.FileUtil.FSStyle;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
-import com.apkspectrum.util.FileUtil.FSStyle;
 
 public class PackageInfoPanel extends JPanel implements ActionListener, HyperlinkClickListener, ChangeListener{
 	private static final long serialVersionUID = -2600940167326680123L;
@@ -354,19 +354,19 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 		String packageSearchers = "";
 		//String appLabelSearchers = "";
 		if(RProp.B.VISIBLE_TO_BASIC.get()) {
-			IPackageSearcher[] searchers = PlugInManager.getPackageSearchers();
+			PackageSearcher[] searchers = PlugInManager.getPackageSearchers();
 			if(searchers.length > 0) {
 				String defaultSearchIcon = RImg.TOOLBAR_SEARCH.getPath();
-				for(IPackageSearcher searcher: searchers) {
+				for(PackageSearcher searcher: searchers) {
 					if(!searcher.isVisibleToBasic()) continue;
 					URL icon = searcher.getIconURL();
 					String iconPath = icon != null ? icon.toString() : defaultSearchIcon;
 					String tag = makeHyperEvent(panel, "PLUGIN:"+searcher.hashCode(), String.format("<img src=\"%s\" width=\"16\" height=\"16\">", iconPath), null, searcher.getActionCommand());
 					switch(searcher.getSupportType() ) {
-					case IPackageSearcher.SEARCHER_TYPE_PACKAGE_NAME:
+					case PackageSearcher.SEARCHER_TYPE_PACKAGE_NAME:
 						packageSearchers += tag;
 						break;
-					case IPackageSearcher.SEARCHER_TYPE_APP_NAME:
+					case PackageSearcher.SEARCHER_TYPE_APP_NAME:
 						//appLabelSearchers += tag;
 						break;
 					};
@@ -691,7 +691,7 @@ public class PackageInfoPanel extends JPanel implements ActionListener, Hyperlin
 			if(id.startsWith("feature-")) {
 				showFeatureInfo(id, evt.getUserData());
 			} else if(id.startsWith("PLUGIN:")) {
-				IPlugIn plugin = PlugInManager.getPlugInByActionCommand((String)evt.getUserData());
+				PlugIn plugin = PlugInManager.getPlugInByActionCommand((String)evt.getUserData());
 				if(plugin != null) {
 					plugin.launch();
 				}

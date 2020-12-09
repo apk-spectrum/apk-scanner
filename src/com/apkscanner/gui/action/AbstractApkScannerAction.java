@@ -12,6 +12,7 @@ import com.apkspectrum.core.scanner.ApkScanner;
 import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.swing.AbstractUIAction;
 import com.apkspectrum.swing.ActionEventHandler;
+import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.tool.aapt.AaptNativeWrapper;
 import com.apkspectrum.util.FileUtil;
 import com.apkspectrum.util.Log;
@@ -25,7 +26,21 @@ public abstract class AbstractApkScannerAction extends AbstractUIAction
 
 	public AbstractApkScannerAction() { }
 
-	public AbstractApkScannerAction(ActionEventHandler h) { super(h); }
+	public AbstractApkScannerAction(ApkActionEventHandler h) { super(h); }
+
+	@Override
+	public ApkActionEventHandler getHandler() {
+		return (ApkActionEventHandler) super.getHandler();
+	}
+
+	@Override
+	public void setHandler(ActionEventHandler h) {
+		if(!(h instanceof ApkActionEventHandler)) {
+			Log.w("The event handler must be type ApkActionEventHandler.");
+			return;
+		}
+		super.setHandler(h);
+	}
 
 	protected ApkScanner getApkScanner() {
 		if(handler == null) return null;
@@ -61,34 +76,38 @@ public abstract class AbstractApkScannerAction extends AbstractUIAction
 			}
 
 			if(destPath == null) {
-				destPath = apkInfo.tempWorkPath + File.separator + path.replace("/", File.separator);
+				destPath = apkInfo.tempWorkPath + File.separator
+						+ path.replace("/", File.separator);
 			}
 			File destFile = new File(destPath);
 			if (!destFile.exists() && !destFile.getParentFile().exists()) {
-				if (FileUtil.makeFolder(destFile.getParentFile().getAbsolutePath())) {
-					Log.i("sucess make folder : " + destFile.getParentFile().getAbsolutePath());
+				String newFolder = destFile.getParentFile().getAbsolutePath();
+				if (FileUtil.makeFolder(newFolder)) {
+					Log.i("sucess make folder : " + newFolder);
 				}
 			}
 
 			boolean convAxml2Xml = false;
-			String[] convStrings = null;
+			String[] convStr = null;
 			if (path.equals("AndroidManifest.xml")
 					|| (path.startsWith("res/") && path.endsWith(".xml"))) {
-				convStrings = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath, new String[] { path });
-				convAxml2Xml = RConst.AXML_VEIWER_TYPE_XML.equals(RProp.S.AXML_VIEWER_TYPE.get());
+				convStr = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath,
+														new String[] { path });
+				convAxml2Xml = RConst.AXML_VEIWER_TYPE_XML.equals(
+												RProp.S.AXML_VIEWER_TYPE.get());
 			} else if ("resources.arsc".equals(path)) {
-				convStrings = apkInfo.resourcesWithValue;
+				convStr = apkInfo.resourcesWithValue;
 				destPath += ".txt";
 			} else {
 				ZipFileUtil.unZip(apkInfo.filePath, path, destPath);
 			}
 
-			if (convStrings != null) {
+			if (convStr != null) {
 				try (FileWriter fw = new FileWriter(new File(destPath))) {
 					if(convAxml2Xml) {
-						fw.write(apkInfo.a2xConvert.convertToText(convStrings));
+						fw.write(apkInfo.a2xConvert.convertToText(convStr));
 					} else {
-						for (String s : convStrings)
+						for (String s : convStr)
 							fw.write(s + System.lineSeparator());
 					}
 				} catch (IOException e) {

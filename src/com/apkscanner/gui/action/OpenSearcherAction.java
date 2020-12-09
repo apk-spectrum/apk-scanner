@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import com.apkscanner.gui.dialog.SearchDlg;
 import com.apkscanner.gui.tabpanels.ResContentFocusChanger;
 import com.apkspectrum.core.scanner.ApkScanner;
-import com.apkspectrum.swing.ActionEventHandler;
+import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.util.Log;
 
 @SuppressWarnings("serial")
@@ -14,7 +14,7 @@ public class OpenSearcherAction extends AbstractApkScannerAction
 {
 	public static final String ACTION_COMMAND = "ACT_CMD_OPEN_SEARCHER";
 
-	public OpenSearcherAction(ActionEventHandler h) { super(h); }
+	public OpenSearcherAction(ApkActionEventHandler h) { super(h); }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

@@ -13,9 +13,9 @@ import com.apkscanner.resource.RFile;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
-import com.apkspectrum.plugin.IUpdateChecker;
 import com.apkspectrum.plugin.PlugInConfig;
 import com.apkspectrum.plugin.PlugInManager;
+import com.apkspectrum.plugin.UpdateChecker;
 import com.apkspectrum.plugin.gui.UpdateNotificationPanel;
 import com.apkspectrum.swing.HtmlEditorPane;
 import com.apkspectrum.swing.ImagePanel;
@@ -55,9 +55,9 @@ public class AboutDlg /*extends JDialog*/
 
 		TabbedPaneUIManager.setUI(tabbed, RProp.S.TABBED_UI_THEME.get());
 
-		IUpdateChecker[] updator = PlugInManager.getUpdateChecker();
+		UpdateChecker[] updator = PlugInManager.getUpdateChecker();
 		int possibleCnt = 0;
-		for(IUpdateChecker plugin: updator) {
+		for(UpdateChecker plugin: updator) {
 			if(plugin.hasNewVersion()) {
 				possibleCnt++;
 			}

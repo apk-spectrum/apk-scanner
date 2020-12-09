@@ -16,24 +16,24 @@ import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
 import com.apkspectrum.data.apkinfo.ApkInfo;
-import com.apkspectrum.plugin.IPlugIn;
+import com.apkspectrum.plugin.PlugIn;
 import com.apkspectrum.plugin.PlugInManager;
-import com.apkspectrum.swing.ActionEventHandler;
+import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.swing.ExtensionButton;
 import com.apkspectrum.tool.BytecodeViewerLauncher;
 import com.apkspectrum.tool.Dex2JarWrapper;
 import com.apkspectrum.tool.JADXLauncher;
 import com.apkspectrum.tool.JDGuiLauncher;
+import com.apkspectrum.util.ConsolCmd.ConsoleOutputObserver;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.ZipFileUtil;
-import com.apkspectrum.util.ConsolCmd.ConsoleOutputObserver;
 
 @SuppressWarnings("serial")
 public class OpenDecompilerAction extends AbstractApkScannerAction
 {
 	public static final String ACTION_COMMAND = "ACT_CMD_OPEN_DECOMPILER";
 
-	public OpenDecompilerAction(ActionEventHandler h) { super(h); }
+	public OpenDecompilerAction(ApkActionEventHandler h) { super(h); }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -186,7 +186,7 @@ public class OpenDecompilerAction extends AbstractApkScannerAction
 	}
 
 	protected boolean evtPluginLaunch(String actionCommand) {
-		IPlugIn plugin = PlugInManager.getPlugInByActionCommand(actionCommand);
+		PlugIn plugin = PlugInManager.getPlugInByActionCommand(actionCommand);
 		if(plugin == null) return false;
 		plugin.launch();
 		return true;

@@ -22,7 +22,7 @@ import com.apkscanner.gui.tabpanels.Widgets;
 import com.apkscanner.resource.RConst;
 import com.apkspectrum.core.scanner.ApkScanner;
 import com.apkspectrum.data.apkinfo.ApkInfo;
-import com.apkspectrum.plugin.IExtraComponent;
+import com.apkspectrum.plugin.ExtraComponent;
 import com.apkspectrum.plugin.PlugInManager;
 import com.apkspectrum.swing.DefaultTabbedRequest;
 import com.apkspectrum.swing.ITabbedComponent;
@@ -49,10 +49,12 @@ public class TabbedPanel extends JTabbedPane implements ActionListener
 
 		setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 
-		KeyStrokeAction.registerKeyStrokeActions(this, JComponent.WHEN_IN_FOCUSED_WINDOW, new KeyStroke[] {
-				KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, RConst.ALT_MASK),
-				KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, RConst.ALT_MASK)
-			}, this);
+		KeyStrokeAction.registerKeyStrokeActions(this,
+				JComponent.WHEN_IN_FOCUSED_WINDOW,
+				new KeyStroke[] {
+					KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, RConst.ALT_MASK),
+					KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, RConst.ALT_MASK)
+				}, this);
 	}
 
 	@Override
@@ -91,10 +93,11 @@ public class TabbedPanel extends JTabbedPane implements ActionListener
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void onLoadPlugin(ApkInfo apkInfo, int status) {
-		for(final IExtraComponent plugin: PlugInManager.getExtraComponenet()) {
+		for(final ExtraComponent plugin: PlugInManager.getExtraComponenet()) {
 			plugin.initialize();
 			addTab(plugin);
-			for(int state = 1; (state & ApkScanner.STATUS_ALL_COMPLETED) != 0; state <<= 1) {
+			for(int state = 1; (state & ApkScanner.STATUS_ALL_COMPLETED) != 0;
+					state <<= 1) {
 				if((state != 0 && (status & state) == state)) {
 					plugin.setData(apkInfo, state);
 				}

@@ -5,7 +5,7 @@ import java.awt.event.ActionEvent;
 
 import com.apkscanner.Launcher;
 import com.apkspectrum.core.scanner.ApkScanner;
-import com.apkspectrum.swing.ActionEventHandler;
+import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.swing.ApkFileChooser;
 import com.apkspectrum.util.Log;
 
@@ -14,7 +14,7 @@ public class OpenApkAction extends AbstractApkScannerAction
 {
 	public static final String ACTION_COMMAND = "ACT_CMD_OPEN_APK";
 
-	public OpenApkAction(ActionEventHandler h) {
+	public OpenApkAction(ApkActionEventHandler h) {
 		super(h);
 	}
 
