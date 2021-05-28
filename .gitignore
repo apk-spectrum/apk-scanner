@@ -33,3 +33,6 @@ hs_err_pid*
 .DS_Store
 /bundles/
 /*.app.*
+
+# vscode
+/.vscode
