@@ -13,7 +13,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -75,7 +74,7 @@ import com.apkspectrum.util.SystemUtil;
 import com.apkspectrum.util.XmlPath;
 
 public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickListener, IProgressListener,
-		ListDataListener, ItemListener, PropertyChangeListener
+		ListDataListener, ItemListener
 {
 	private static final long serialVersionUID = 6431995641984509482L;
 

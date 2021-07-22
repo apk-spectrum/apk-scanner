@@ -2,7 +2,7 @@ package com.apkscanner.gui.tabpanels;
 
 import javax.swing.Icon;
 
-public class UserNodeData extends DefaultNodeData implements Cloneable
+public class UserNodeData extends DefaultNodeData
 {
 	public final String config;
 	protected Object data;

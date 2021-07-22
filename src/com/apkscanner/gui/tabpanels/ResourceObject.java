@@ -13,7 +13,7 @@ import com.apkspectrum.util.SystemUtil;
 import com.apkspectrum.util.URITool;
 import com.apkspectrum.util.ZipFileUtil;
 
-public class ResourceObject extends DefaultNodeData implements Cloneable
+public class ResourceObject extends DefaultNodeData
 {
 	protected String config;
 	protected ResourceType type;
