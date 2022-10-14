@@ -53,6 +53,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
+                    <finalName>ApkScanner</finalName>
                     <archive>
                         <manifest>
                             <mainClass>com.apkscanner.Main</mainClass>
@@ -75,7 +76,7 @@
                         </goals>
                         <configuration>
                             <outputDirectory>${basedir}/target</outputDirectory>
-                            <resources>          
+                            <resources>
                                 <resource>
                                     <directory>${basedir}</directory>
                                     <includes>
@@ -83,8 +84,11 @@
                                         <include>plugin/</include>
                                     </includes>
                                 </resource>
-                            </resources>              
-                        </configuration>            
+                                <resource>
+                                    <directory>${basedir}/release</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
