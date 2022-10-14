@@ -13,8 +13,15 @@ hs_err_pid*
 
 # eclipse
 /bin/
+/.classpath
 /.project
 /.settings
+
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
 # APK Scanner preference file
 /settings.txt
