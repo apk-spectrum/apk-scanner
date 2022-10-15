@@ -71,7 +71,6 @@ public class EasyRoundLabel extends RoundPanel implements MouseListener{
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 		if(clipboard) {
 			StringSelection stringSelection = new StringSelection(textlabel.getText());
@@ -84,7 +83,6 @@ public class EasyRoundLabel extends RoundPanel implements MouseListener{
 //		try {
 //			r = new Robot();
 //		} catch (AWTException e1) {
-//			// TODO Auto-generated catch block
 //			e1.printStackTrace();
 //		}
 ////		    r.keyPress(KeyEvent.VK_CONTROL);
@@ -96,19 +94,16 @@ public class EasyRoundLabel extends RoundPanel implements MouseListener{
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
     	entered = true;
     	setRoundrectColor(backgroundcolor.darker().darker());
     	super.repaint();
@@ -116,7 +111,6 @@ public class EasyRoundLabel extends RoundPanel implements MouseListener{
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
 		entered = false;
 		setRoundrectColor(backgroundcolor);
     	super.repaint();
@@ -124,7 +118,6 @@ public class EasyRoundLabel extends RoundPanel implements MouseListener{
 
 
 	public void setMouseListener(MouseListener listener) {
-		// TODO Auto-generated method stub
 		textlabel.addMouseListener(listener);
 	}
 

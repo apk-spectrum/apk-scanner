@@ -68,7 +68,6 @@ public class EasyDevicePanel extends RoundPanel implements MouseListener, Action
 		}
 
 		public sdkDrawObject(JPanel panel, String version, String name, IDevice devicestate) {
-			// TODO Auto-generated constructor stub
 			this(panel, version);
 			this.devicestate = devicestate;
 		}
@@ -196,7 +195,6 @@ public class EasyDevicePanel extends RoundPanel implements MouseListener, Action
 				device.executeShellCommand("getprop " + prop, outputReceiver);
 			} catch (TimeoutException | AdbCommandRejectedException | ShellCommandUnresponsiveException
 					| IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			response = outputReceiver.getOutput();

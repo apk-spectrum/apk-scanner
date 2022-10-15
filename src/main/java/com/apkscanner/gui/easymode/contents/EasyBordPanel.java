@@ -156,7 +156,6 @@ public class EasyBordPanel extends JPanel implements ActionListener, ChangeListe
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		if (e.getActionCommand() == CMD_WINDOW_EXIT) {
 
 			// System.exit(0);
@@ -171,20 +170,17 @@ public class EasyBordPanel extends JPanel implements ActionListener, ChangeListe
 	}
 
 	public void clear() {
-		// TODO Auto-generated method stub
 		this.maintitle.setText("");
 	}
 
 	@Override
 	public void stateChanged(ChangeEvent e) {
-		// TODO Auto-generated method stub
 		JSlider source = (JSlider) e.getSource();
 		int fps = (int) source.getValue();
 		opacity = (0.1f + ((float) fps / (float) 115));
 		try {
 			frame.setOpacity(opacity);
 		} catch (java.awt.IllegalComponentStateException ea) {
-			// TODO Auto-generated catch block
 			// ea.printStackTrace();
 		}
 	}

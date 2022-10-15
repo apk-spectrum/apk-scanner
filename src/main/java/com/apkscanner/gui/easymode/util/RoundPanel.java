@@ -34,7 +34,6 @@ public class RoundPanel extends JPanel {
 	
 	
 	public RoundPanel(BorderLayout borderLayout) {
-		// TODO Auto-generated constructor stub
 		this();
 		setLayout(borderLayout);
 		//setBorder(BorderFactory.createEmptyBorder(0, 2, 2, 2));

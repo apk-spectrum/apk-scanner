@@ -22,28 +22,28 @@ public class EasyRoundLabelCount extends RoundPanel implements MouseListener{
 	boolean mouseover = false;
 	boolean clipboard = false;
 	JPanel countpanel;
-	
-	public EasyRoundLabelCount(String str, Color backgroundColor, Color foregroundColor) {		
+
+	public EasyRoundLabelCount(String str, Color backgroundColor, Color foregroundColor) {
 		textlabel = new EasyTextField(str);
 		//setBackground(backgroundColor);
-		this.backgroundcolor = backgroundColor; 
+		this.backgroundcolor = backgroundColor;
 		setRoundrectColor(backgroundColor);
 		setLayout(new BorderLayout());
 		//setOpaque(false);
 		textlabel.setForeground(foregroundColor);
 		setEasyTextField(textlabel);
-		
-		
+
+
 		countpanel = new JPanel(new BorderLayout());
 		countpanel.setOpaque(false);
-		countpanel.add(textlabel);		
+		countpanel.add(textlabel);
 		add(countpanel, BorderLayout.CENTER);
 	}
 	public void addCountpanel(JComponent com) {
 		//countpanel.add(com);
 		countpanel.add(com, BorderLayout.WEST);
 	}
-	
+
 	public void setMouseHoverEffect(boolean flag) {
 		mouseover = flag;
 		if(flag) {
@@ -53,7 +53,7 @@ public class EasyRoundLabelCount extends RoundPanel implements MouseListener{
 			textlabel.removeMouseListener(this);
 		}
 	}
-	
+
 	public void setclipboard(boolean flag) {
 		this.clipboard = flag;
 	}
@@ -68,22 +68,21 @@ public class EasyRoundLabelCount extends RoundPanel implements MouseListener{
 	public void setText(String str) {
 		textlabel.setText(str);
 	}
-	
+
 	public void setTextFont(Font font) {
 		textlabel.setFont(font);
 	}
-	
+
 	public String getText() {
 		return textlabel.getText();
 	}
-	
+
 	public void setHorizontalAlignment(int jtextfield) {
 		textlabel.setHorizontalAlignment(jtextfield);
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub		
 		if(clipboard) {
 			StringSelection stringSelection = new StringSelection(textlabel.getText());
 			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -94,19 +93,16 @@ public class EasyRoundLabelCount extends RoundPanel implements MouseListener{
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
     	entered = true;
     	setRoundrectColor(backgroundcolor.darker().darker());
     	super.repaint();
@@ -114,7 +110,6 @@ public class EasyRoundLabelCount extends RoundPanel implements MouseListener{
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
 		entered = false;
 		setRoundrectColor(backgroundcolor);
     	super.repaint();
@@ -122,7 +117,6 @@ public class EasyRoundLabelCount extends RoundPanel implements MouseListener{
 
 
 	public void setMouseListener(MouseListener listener) {
-		// TODO Auto-generated method stub
 		textlabel.addMouseListener(listener);
 	}
 

@@ -27,7 +27,7 @@ import javax.swing.filechooser.FileSystemView;
 
 public class BufferedImageMouseDrag extends JFrame {
 	private static final long serialVersionUID = 7175463633946262949L;
-	
+
 	DisplayCanvas canvas;
 
 	public BufferedImageMouseDrag() throws IOException {
@@ -74,19 +74,19 @@ class DisplayCanvas extends JPanel implements MouseListener{
             }
 
         });
-		
-		
-		
-		
+
+
+
+
 		Icon icon;
 		File file = File.createTempFile("icon", "html");
         FileSystemView view = FileSystemView.getFileSystemView();
         icon = view.getSystemIcon(file);
-		
-        
-        
+
+
+
         Image image = ((ImageIcon)icon).getImage();
-        
+
 		MediaTracker mt = new MediaTracker(this);
 		mt.addImage(image, 1);
 		try {
@@ -104,14 +104,14 @@ class DisplayCanvas extends JPanel implements MouseListener{
 		Graphics2D big = bi.createGraphics();
 		big.drawImage(image, 0, 0, this);
 	}
-	
+
 	public void setImage(ImageIcon img) {
 		Image image = img.getImage();
-		
+
 		bi = new BufferedImage(image.getWidth(this), image.getHeight(this), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D big = bi.createGraphics();
-		big.drawImage(image, 0, 0, this);		
-	}	
+		big.drawImage(image, 0, 0, this);
+	}
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -120,7 +120,7 @@ class DisplayCanvas extends JPanel implements MouseListener{
 		AffineTransform at = new AffineTransform();
         at.scale(scale, scale);
         at.translate(x, y);
-        
+
 		g2D.drawImage(bi, at, this);
 	}
 
@@ -134,32 +134,27 @@ class DisplayCanvas extends JPanel implements MouseListener{
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 		oldx = arg0.getX();
-		oldy = arg0.getY();	
-		
+		oldy = arg0.getY();
+
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
+
 	}
 }

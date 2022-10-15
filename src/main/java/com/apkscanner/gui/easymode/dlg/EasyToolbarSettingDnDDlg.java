@@ -109,7 +109,6 @@ public class EasyToolbarSettingDnDDlg extends JDialog implements ActionListener{
                  new ListSelectionListener() {
 					@Override
 					public void valueChanged(ListSelectionEvent e) {
-						// TODO Auto-generated method stub
 						//ListSelectionModel lsm = (ListSelectionModel)e.getSource();
 						if(showtoollist.getSelectedValue() != null){
 							description.setText("*" + showtoollist.getSelectedValue().getTitle() + " : " + showtoollist.getSelectedValue().getDescription());
@@ -240,7 +239,6 @@ public class EasyToolbarSettingDnDDlg extends JDialog implements ActionListener{
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		if(e.getSource().equals(btnapply)) {			
 			ListModel<ToolEntry> list = showtoollist.getModel();			
 			String str = "";

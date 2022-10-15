@@ -31,7 +31,6 @@ public class JnaFileInfoTest
     	try {
 			new FileVersion("C:\\Program Files (x86)\\IDM Computer Solutions\\UltraEdit\\Uedit32.exe");
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
         

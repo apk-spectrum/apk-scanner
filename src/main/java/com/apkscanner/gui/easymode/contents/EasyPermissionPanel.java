@@ -42,7 +42,6 @@ public class EasyPermissionPanel extends JPanel {
 	int permissionbuttoncount = 0;
 
 	public EasyPermissionPanel(int height) {
-		// TODO Auto-generated constructor stub
 		Log.d("start EasyPermissionPanel ");
 		setLayout(new BorderLayout());
 		setBackground(bordercolor);
@@ -94,7 +93,6 @@ public class EasyPermissionPanel extends JPanel {
 	}
 
 	public void clear() {
-		// TODO Auto-generated method stub
 		iconPanel.clear();
 	}
 }

@@ -46,7 +46,6 @@ public class ImageSliderPanel extends JPanel implements ActionListener{
 		int Animatevalue;
 
 		public AnimationTask() {
-			// TODO Auto-generated constructor stub			
 		}
 
 		public void run() {
@@ -78,7 +77,6 @@ public class ImageSliderPanel extends JPanel implements ActionListener{
 		int interval;
 
 		public NextAnimationTask(int current, int next, int value) {
-			// TODO Auto-generated constructor stub
 			this.Animatevalue = value;
 			nextindex = next;
 			interval = (next * getWidth() - current * getWidth()) / value ;
@@ -192,7 +190,6 @@ public class ImageSliderPanel extends JPanel implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		if(e.getSource() instanceof EasyRoundButton) {
 			nextindex = Integer.parseInt(e.getActionCommand());
 			task.cancel();

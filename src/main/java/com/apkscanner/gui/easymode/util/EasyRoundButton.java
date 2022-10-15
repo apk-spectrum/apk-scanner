@@ -32,7 +32,6 @@ public class EasyRoundButton extends JButton {
 	private int type; 
 	
 	public EasyRoundButton(ImageIcon icon) {
-		// TODO Auto-generated constructor stub
 		super(icon);
 		// setlistener();
 		type = TYPE_NOMAL;
@@ -43,7 +42,6 @@ public class EasyRoundButton extends JButton {
 	}
 
 	public EasyRoundButton(String str) {
-		// TODO Auto-generated constructor stub
 		super(str);
 		strfold= str;
 		type = TYPE_NOMAL;
@@ -55,7 +53,6 @@ public class EasyRoundButton extends JButton {
 	}
 	
 	public EasyRoundButton(String str, String spread) {
-		// TODO Auto-generated constructor stub
 		super(str);
 		strfold= str;
 		strspread = spread;
@@ -91,7 +88,6 @@ public class EasyRoundButton extends JButton {
 			}
 		
 			public void mouseClicked(java.awt.event.MouseEvent evt) {
-				// TODO Auto-generated method stub
 				//entered = false;
 				if(SwingUtilities.isRightMouseButton(evt)) {
 					setclipboard();
@@ -109,7 +105,6 @@ public class EasyRoundButton extends JButton {
 			}			
 			
 			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
 				
 			}
 		});

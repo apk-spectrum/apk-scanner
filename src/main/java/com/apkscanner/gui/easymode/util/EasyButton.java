@@ -13,7 +13,6 @@ public class EasyButton extends JButton {
 	private final Color btnhovercolor = new Color(140, 140, 140);
 
 	public EasyButton(ImageIcon icon) {
-		// TODO Auto-generated constructor stub
 		super(icon);
 		// setlistener();
 		setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
