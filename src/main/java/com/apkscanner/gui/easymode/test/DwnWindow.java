@@ -82,7 +82,7 @@ public class DwnWindow extends JFrame
 
     public static interface Dwmapi extends StdCallLibrary
     {
-        Dwmapi INSTANCE = (Dwmapi)Native.loadLibrary("Dwmapi", Dwmapi.class, W32APIOptions.UNICODE_OPTIONS);
+        Dwmapi INSTANCE = (Dwmapi) Native.load("Dwmapi", Dwmapi.class, W32APIOptions.UNICODE_OPTIONS);
 
         int DWM_BB_ENABLE = 0x00000001;
 

@@ -99,6 +99,7 @@ public class SimpleOptionPanel extends JPanel implements MouseListener, ActionLi
 				if(!hasPriveApp) hasPriveApp = path.startsWith("/system/priv-app/");
 			}
 		}
+		if (bundle == null) return;
 
 		if(bundle.isSetLaunch()) {
 			StringBuilder opt = new StringBuilder();

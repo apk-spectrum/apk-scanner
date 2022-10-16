@@ -114,7 +114,7 @@ public class TextAreaDemo extends JFrame
         }
          
         int pos = ev.getOffset();
-        String content = null;
+        String content = "";
         try {
             content = textArea.getText(0, pos + 1);
         } catch (BadLocationException e) {

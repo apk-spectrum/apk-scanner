@@ -343,13 +343,12 @@ public class ResourceTree extends JTree
 			childNode = (DefaultMutableTreeNode) node.getFirstChild();
 		}
 		while (childNode != null) {
-			TreeNodeData resObj = null;
 			if (childNode.getUserObject() instanceof TreeNodeData) {
-				resObj = (TreeNodeData) childNode.getUserObject();
-			}
-			if (resObj.getLabel().equals(string) || (ignoreCase && resObj.getLabel().equalsIgnoreCase(string))) {
-				ret = childNode;
-				break;
+				TreeNodeData resObj = (TreeNodeData) childNode.getUserObject();
+				if (resObj.getLabel().equals(string) || (ignoreCase && resObj.getLabel().equalsIgnoreCase(string))) {
+					ret = childNode;
+					break;
+				}
 			}
 			if (recursively && childNode.getDepth() > 0) {
 				ret = findNode(childNode, string, ignoreCase, recursively);

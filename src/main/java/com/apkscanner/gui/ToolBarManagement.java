@@ -146,7 +146,7 @@ class ToolBarManagement implements IDeviceChangeListener, IAdbDemonChangeListene
 				}
 			});
 
-			if(hasDevice && packageName != null) {
+			if(adb != null && hasDevice && packageName != null) {
 				boolean hasInstalled = false;
 				boolean hasLower = false;
 				boolean hasUpper = false;

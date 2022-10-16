@@ -1,6 +1,7 @@
 package com.apkscanner.test;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.AndroidDebugBridge.IDeviceChangeListener;
@@ -11,7 +12,7 @@ public class Main_test {
     public static void main(String[] args) throws IOException {
         AndroidDebugBridge.init(false);
 
-        AndroidDebugBridge debugBridge = AndroidDebugBridge.createBridge("/home/leejinhyeong/Desktop/android-sdk/platform-tools/adb", true);
+        AndroidDebugBridge debugBridge = AndroidDebugBridge.createBridge(10, TimeUnit.SECONDS);
         if (debugBridge == null) {
             System.err.println("Invalid ADB location.");
             System.exit(1);

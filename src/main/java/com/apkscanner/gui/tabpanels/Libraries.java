@@ -99,8 +99,10 @@ public class Libraries extends AbstractTabbedPanel
 				data.add(temp);
 			}
 			if(preDir != null) {
+				String path = dir;
+				if (path != null) path = path.substring(4);
 				data.add(preIdx, new Object[] {
-						"Arch", dir.substring(4) + " (" + num + ")",
+						"Arch", path + " (" + num + ")",
 						FileUtil.getFileSize(dirSize, FSStyle.FULL),
 						String.format("%.2f", ((float)(dirSize - dirCompressed) / (float)dirSize) * 100f) + " %"
 				});

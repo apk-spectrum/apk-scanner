@@ -72,19 +72,18 @@ public class TestAAPT extends JDialog{
 		for(int j=0; j<1; j++) {
 			try {
 				arrayImageFromfile = ZipUtils.unimagezipfromfile(new File("/home/leejinhyeong/Desktop/PMApplication-release.apk"), new File("/home/leejinhyeong/Desktop/"), "ic_launcher_hoppin.png", false);
+				//Log.d(""+ arrayImageFromfile.size());
 				
+				for(int i=0;i<arrayImageFromfile.size(); i++ ) {
+					JLabel panel = new JLabel();
+					panel.setIcon(new ImageIcon(arrayImageFromfile.get(i)));
+					mainpanel.add(panel);
+				}
+				
+				arrayImageFromfile.clear();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			//Log.d(""+ arrayImageFromfile.size());
-			
-			for(int i=0;i<arrayImageFromfile.size(); i++ ) {
-				JLabel panel = new JLabel();
-				panel.setIcon(new ImageIcon(arrayImageFromfile.get(i)));
-				mainpanel.add(panel);
-			}
-			
-			arrayImageFromfile.clear();
 		}
 		Log.d("end file image");
 		

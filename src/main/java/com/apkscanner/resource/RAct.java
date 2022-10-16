@@ -69,7 +69,6 @@ public enum RAct implements ResAction<ResAction<?>>
 		String cmd = (String) a.getValue(javax.swing.Action.ACTION_COMMAND_KEY);
 		if(cmd == null) return;
 		ResAction<?> res = valueOf(cmd);
-		if(res == null) return;
-		res.set(a);
+		if(res != null) res.set(a);
 	}
 }

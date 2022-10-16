@@ -128,7 +128,7 @@ public class ResourceToolBarPanel extends JPanel {
 				} else if(RConst.AXML_VEIWER_TYPE_ARSC.equals(fileType)) {
 					multiLinePrintButton.setEnabled(false);
 				}
-				listener.actionPerformed(e);
+				if (listener != null) listener.actionPerformed(e);
 			}
 		});
 
@@ -138,7 +138,7 @@ public class ResourceToolBarPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				RProp.B.PRINT_MULTILINE_ATTR.set(multiLinePrintButton.isSelected());
-				listener.actionPerformed(e);
+				if (listener != null) listener.actionPerformed(e);
 			}
 		});
 		multiLinePrintButton.setFocusPainted(false);
