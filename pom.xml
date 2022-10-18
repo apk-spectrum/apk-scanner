@@ -4,12 +4,10 @@
     <parent>
         <groupId>com.apkspectrum</groupId>
         <artifactId>core</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>2.10.0-SNAPSHOT</version>
         <relativePath>core</relativePath>
     </parent>
-    <groupId>com.apkspectrum</groupId>
     <artifactId>scanner</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>scanner</name>
     <description>APK Scanner</description>
     <properties>
