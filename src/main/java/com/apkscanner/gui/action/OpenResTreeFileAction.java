@@ -12,9 +12,10 @@ import com.apkscanner.gui.tabpanels.DefaultNodeData;
 import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.util.SystemUtil;
 
-@SuppressWarnings("serial")
 public class OpenResTreeFileAction extends AbstractApkScannerAction
 {
+	private static final long serialVersionUID = 67201753731111548L;
+
 	public static final String ACTION_COMMAND = "ACT_CMD_OPEN_RESOURCE_TREE_FILE";
 
 	public OpenResTreeFileAction(ApkActionEventHandler h) { super(h); }
@@ -34,6 +35,8 @@ public class OpenResTreeFileAction extends AbstractApkScannerAction
 		case ".dex":
 			Component c;
 			handler.sendEvent(c = new Component() {
+				private static final long serialVersionUID = -3083310123984167508L;
+
 				{
 					handler.putData(Integer.toString(hashCode()), resPath);
 				}

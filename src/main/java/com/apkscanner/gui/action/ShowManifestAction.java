@@ -17,9 +17,10 @@ import com.apkspectrum.util.FileUtil;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 
-@SuppressWarnings("serial")
 public class ShowManifestAction extends AbstractApkScannerAction
 {
+	private static final long serialVersionUID = 5554614631873501903L;
+
 	public static final String ACTION_COMMAND = "ACT_CMD_SHOW_MANIFEST";
 
 	public ShowManifestAction(ApkActionEventHandler h) { super(h); }

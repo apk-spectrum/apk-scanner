@@ -28,9 +28,10 @@ import com.apkspectrum.util.ConsolCmd.ConsoleOutputObserver;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.ZipFileUtil;
 
-@SuppressWarnings("serial")
 public class OpenDecompilerAction extends AbstractApkScannerAction
 {
+	private static final long serialVersionUID = 5308482918292029836L;
+
 	public static final String ACTION_COMMAND = "ACT_CMD_OPEN_DECOMPILER";
 
 	public OpenDecompilerAction(ApkActionEventHandler h) { super(h); }

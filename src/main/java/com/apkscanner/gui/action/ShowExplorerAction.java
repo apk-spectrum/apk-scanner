@@ -11,9 +11,10 @@ import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 
-@SuppressWarnings("serial")
 public class ShowExplorerAction extends AbstractApkScannerAction
 {
+	private static final long serialVersionUID = -7740786805770928444L;
+
 	public static final String ACTION_COMMAND = "ACT_CMD_SHOW_EXPLORER";
 
 	public ShowExplorerAction(ApkActionEventHandler h) { super(h); }

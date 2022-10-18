@@ -41,10 +41,11 @@ public class RectangularGradientTest
     }
 }
 
-@SuppressWarnings("serial")
 class RectangularGradientTestPanel extends JPanel
 {
-    @Override
+    private static final long serialVersionUID = 2726591667713468669L;
+
+	@Override
     protected void paintComponent(Graphics gr)
     {
         super.paintComponent(gr);

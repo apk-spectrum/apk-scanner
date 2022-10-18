@@ -13,9 +13,11 @@ import javax.swing.TransferHandler;
 
 import com.apkspectrum.util.Log;
 
-@SuppressWarnings({"serial", "rawtypes", "unchecked"})
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class ReportingListTransferHandler extends TransferHandler {
-    DataFlavor localArrayListFlavor, serialArrayListFlavor;
+    private static final long serialVersionUID = 105066218565624860L;
+
+	DataFlavor localArrayListFlavor, serialArrayListFlavor;
     String localArrayListType = DataFlavor.javaJVMLocalObjectMimeType +
                                 ";class=java.util.ArrayList";
     JList source = null;

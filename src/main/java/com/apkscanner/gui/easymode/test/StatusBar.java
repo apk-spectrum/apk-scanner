@@ -12,8 +12,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JViewport;
 
-@SuppressWarnings("serial")
 public class StatusBar extends JFrame {
+private static final long serialVersionUID = 1564165742861752330L;
+
 private final JPanel statusBar; 
 private final JPanel leftrightPanel;
 private final JPanel myPane;

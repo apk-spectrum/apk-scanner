@@ -4,9 +4,10 @@ import java.awt.*;
 import javax.swing.*;
 import static java.awt.GraphicsDevice.WindowTranslucency.*;
  
-@SuppressWarnings("serial")
 public class TranslucentWindowDemo extends JFrame {
-    public TranslucentWindowDemo() {
+    private static final long serialVersionUID = 1517300569988781985L;
+
+	public TranslucentWindowDemo() {
         super("TranslucentWindow");
         setLayout(new GridBagLayout());
  

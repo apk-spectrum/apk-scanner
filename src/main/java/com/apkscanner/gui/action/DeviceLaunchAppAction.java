@@ -20,9 +20,10 @@ import com.apkspectrum.tool.adb.AdbDeviceHelper;
 import com.apkspectrum.tool.adb.PackageInfo;
 import com.apkspectrum.util.Log;
 
-@SuppressWarnings("serial")
 public class DeviceLaunchAppAction extends AbstractDeviceAction
 {
+	private static final long serialVersionUID = -5280023450341526022L;
+
 	public static final String ACTION_COMMAND = "ACT_CMD_LAUNCH_APP";
 
 	public DeviceLaunchAppAction(ApkActionEventHandler h) { super(h); }

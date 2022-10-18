@@ -12,9 +12,10 @@ import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.util.Log;
 
-@SuppressWarnings("serial")
 public class InstallApkAction extends AbstractApkScannerAction
 {
+	private static final long serialVersionUID = 6109198169080472765L;
+
 	public static final String ACTION_COMMAND = "ACT_CMD_INSTALL_APK";
 
 	public InstallApkAction(ApkActionEventHandler h) { super(h); }

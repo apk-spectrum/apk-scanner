@@ -23,18 +23,20 @@ import javax.swing.border.LineBorder;
 import com.apkscanner.resource.RImg;
 import com.apkspectrum.resource._RImg;
 
-@SuppressWarnings("serial")
+
 public class UndecoratedExample {
     static JFrame frame = new JFrame();
     static class MainPanel extends JPanel {
+        private static final long serialVersionUID = -738578708435529100L;
 
-        @Override
+		@Override
         public Dimension getPreferredSize() {
             return new Dimension(510, 250);
         }
     }
 
 	static public class MyButton extends JButton {
+		private static final long serialVersionUID = -3110743542595946912L;
 
 		Image image;
 		ImageObserver imageObserver;
@@ -53,8 +55,9 @@ public class UndecoratedExample {
 	}
 
     static class BorderPanel extends JPanel {
+    	private static final long serialVersionUID = 9027209933412390193L;
 
-    	JButton stackLabel;
+		JButton stackLabel;
         int pX, pY;
 
         public BorderPanel() {
@@ -106,7 +109,9 @@ public class UndecoratedExample {
     }
 
     static class OutsidePanel extends JPanel {
-        public OutsidePanel() {
+        private static final long serialVersionUID = 7536723251557777813L;
+
+		public OutsidePanel() {
             setLayout(new BorderLayout());
             add(new MainPanel(), BorderLayout.CENTER);
             add(new BorderPanel(), BorderLayout.PAGE_START);

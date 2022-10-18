@@ -2,10 +2,10 @@ package com.apkscanner.gui.easymode.test;
 
 import javax.swing.JSlider;
 
-@SuppressWarnings("serial")
 public class RangeSlider extends JSlider {
+    private static final long serialVersionUID = -4357087104772856695L;
 
-    /**
+	/**
      * Constructs a RangeSlider with default minimum and maximum values of 0
      * and 100.
      */

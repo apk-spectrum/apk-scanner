@@ -12,9 +12,10 @@ import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.util.Log;
 
-@SuppressWarnings("serial")
 public class SignApkAction extends AbstractApkScannerAction
 {
+	private static final long serialVersionUID = 5083283219636726549L;
+
 	public static final String ACTION_COMMAND = "ACT_CMD_SIGN_APK";
 
 	public SignApkAction(ApkActionEventHandler h) { super(h); }

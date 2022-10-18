@@ -8,9 +8,10 @@ import com.apkscanner.gui.UIController;
 import com.apkspectrum.swing.AbstractUIAction;
 import com.apkspectrum.swing.ActionEventHandler;
 
-@SuppressWarnings("serial")
 public class ChangeUiModeAction extends AbstractUIAction
 {
+	private static final long serialVersionUID = 7503167002833066842L;
+
 	public static final String ACTION_COMMAND = "ACT_CMD_CHANGE_UI_MODE";
 
 	public ChangeUiModeAction(ActionEventHandler h) { super(h); }

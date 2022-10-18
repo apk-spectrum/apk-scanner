@@ -5,9 +5,10 @@ import java.awt.Window;
 
 import com.apkspectrum.swing.ApkActionEventHandler;
 
-@SuppressWarnings("serial")
 public class OpenDecodeByteCodeAction extends OpenDecompilerAction
 {
+	private static final long serialVersionUID = -859511095714425836L;
+
 	public static final String ACTION_COMMAND = "ACT_CMD_OPEN_DECOMPILER_BYTECODE";
 
 	public OpenDecodeByteCodeAction(ApkActionEventHandler h) { super(h); }

@@ -15,8 +15,8 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-@SuppressWarnings("serial")
 public class JLabelLink extends JFrame {
+	private static final long serialVersionUID = -6360838217845106502L;
 
 	private static final String LABEL_TEXT = "For further information visit:";
 	private static final String A_VALID_LINK = "http://stackoverflow.com";

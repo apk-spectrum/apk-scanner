@@ -13,9 +13,10 @@ import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.tool.adb.PackageInfo;
 import com.apkspectrum.util.Log;
 
-@SuppressWarnings("serial")
 public class DeviceShowInstalledPackageAction extends AbstractDeviceAction
 {
+	private static final long serialVersionUID = 6376356715566831040L;
+
 	public static final String ACTION_COMMAND = "ACT_CMD_SHOW_INSTALLED_PACKAGE_INFO";
 
 	public DeviceShowInstalledPackageAction(ApkActionEventHandler h) { super(h); }

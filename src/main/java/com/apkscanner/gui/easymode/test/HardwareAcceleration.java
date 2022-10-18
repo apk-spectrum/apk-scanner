@@ -8,11 +8,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferStrategy;
 
-
-@SuppressWarnings("serial")
 public class HardwareAcceleration extends JFrame {
- 
-    public static void main(String[] args) {
+    private static final long serialVersionUID = 9101279457165111191L;
+
+	public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {

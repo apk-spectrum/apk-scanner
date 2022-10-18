@@ -9,9 +9,9 @@ import java.util.Map;
 import javax.swing.*;
 import javax.swing.event.*;
 
-@SuppressWarnings("serial")
 public class ColorTransition extends JPanel {
-
+   private static final long serialVersionUID = 7986734931115858501L;
+   
    private static final int TRANSITION_DELAY = 30;
    private static final int PREF_W = 800;
    private static final int PREF_H = 600;
@@ -54,6 +54,7 @@ public class ColorTransition extends JPanel {
    }
 
    private class ButtonAction extends AbstractAction {
+      private static final long serialVersionUID = -3637982471235084769L;
 
       public ButtonAction(String name) {
          super(name);

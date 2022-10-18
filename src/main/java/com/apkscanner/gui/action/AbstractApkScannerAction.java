@@ -18,9 +18,10 @@ import com.apkspectrum.util.FileUtil;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.ZipFileUtil;
 
-@SuppressWarnings("serial")
 public abstract class AbstractApkScannerAction extends AbstractUIAction
 {
+	private static final long serialVersionUID = 1253023042147726776L;
+
 	public static final String APK_SCANNER_KEY = "APK_SCANNER_KEY";
 	public static final String OWNER_WINDOW_KEY = "WINDOW_KEY";
 

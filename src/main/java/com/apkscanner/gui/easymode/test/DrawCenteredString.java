@@ -13,9 +13,9 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-@SuppressWarnings("serial")
 public class DrawCenteredString extends JComponent {
-   
+   private static final long serialVersionUID = 9179877989360043135L;
+
    public static void main(String[] args) {
       JComponent myGraphics = new DrawCenteredString(); // Your class name goes here!
       launch(myGraphics, 500, 300); // Set the initial dimensions here!

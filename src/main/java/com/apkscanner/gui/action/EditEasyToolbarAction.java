@@ -8,9 +8,10 @@ import javax.swing.JFrame;
 import com.apkscanner.gui.easymode.dlg.EasyToolbarSettingDnDDlg;
 import com.apkspectrum.swing.AbstractUIAction;
 
-@SuppressWarnings("serial")
 public class EditEasyToolbarAction extends AbstractUIAction
 {
+	private static final long serialVersionUID = 9107709537919105382L;
+
 	public static final String ACTION_COMMAND = "ACT_CMD_EDIT_EASY_TOOLBAR";
 
 	@Override

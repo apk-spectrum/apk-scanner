@@ -17,9 +17,10 @@ import com.apkspectrum.tool.adb.PackageInfo;
 import com.apkspectrum.tool.adb.PackageManager;
 import com.apkspectrum.util.Log;
 
-@SuppressWarnings("serial")
 public class DeviceUninstallAppAction extends AbstractDeviceAction
 {
+	private static final long serialVersionUID = 2488899223414835422L;
+
 	public static final String ACTION_COMMAND = "ACT_CMD_UNINSTALL_APP";
 
 	public DeviceUninstallAppAction(ApkActionEventHandler h) { super(h); }

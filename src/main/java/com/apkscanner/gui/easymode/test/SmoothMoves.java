@@ -59,10 +59,10 @@ import javax.swing.Timer;
  * 
  * @author Chet
  */
-@SuppressWarnings("serial")
 public class SmoothMoves extends JComponent implements ActionListener, KeyListener {
+  private static final long serialVersionUID = 6440713076510109941L;
 
-  /** image holds the graphics we render for each animating object */
+/** image holds the graphics we render for each animating object */
   BufferedImage image = null;
 
   static int imageW = 100;

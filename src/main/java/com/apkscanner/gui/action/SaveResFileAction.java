@@ -14,9 +14,10 @@ import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.swing.ApkFileChooser;
 import com.apkspectrum.util.FileUtil;
 
-@SuppressWarnings("serial")
 public class SaveResFileAction extends AbstractApkScannerAction
 {
+	private static final long serialVersionUID = 2163419156607838570L;
+
 	public static final String ACTION_COMMAND = "ACT_CMD_SAVE_RESOURCE_FILE";
 
 	public SaveResFileAction(ApkActionEventHandler h) { super(h); }

@@ -9,9 +9,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.OverlayLayout;
  
-@SuppressWarnings("serial")
 public class OverlayLayoutExample extends JFrame
 {
+  private static final long serialVersionUID = -2575512211487896539L;
+
   JPanel p1;
   JButton btn1, btn2, btn3;
   public OverlayLayoutExample()

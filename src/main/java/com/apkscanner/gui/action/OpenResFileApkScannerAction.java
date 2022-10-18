@@ -8,9 +8,10 @@ import com.apkscanner.Launcher;
 import com.apkscanner.gui.tabpanels.TreeNodeData;
 import com.apkspectrum.swing.ApkActionEventHandler;
 
-@SuppressWarnings("serial")
 public class OpenResFileApkScannerAction extends AbstractApkScannerAction
 {
+	private static final long serialVersionUID = -7557580374362000167L;
+
 	public static final String ACTION_COMMAND = "ACT_CMD_OPEN_RESOURCE_FILE_APK_SCANNER";
 
 	public OpenResFileApkScannerAction(ApkActionEventHandler h) { super(h); }

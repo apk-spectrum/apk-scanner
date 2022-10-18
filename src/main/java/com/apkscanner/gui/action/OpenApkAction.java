@@ -9,9 +9,10 @@ import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.swing.ApkFileChooser;
 import com.apkspectrum.util.Log;
 
-@SuppressWarnings("serial")
 public class OpenApkAction extends AbstractApkScannerAction
 {
+	private static final long serialVersionUID = 2760350430817651512L;
+
 	public static final String ACTION_COMMAND = "ACT_CMD_OPEN_APK";
 
 	public OpenApkAction(ApkActionEventHandler h) {

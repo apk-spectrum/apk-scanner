@@ -13,9 +13,10 @@ import com.apkspectrum.tool.adb.PackageInfo;
 import com.apkspectrum.tool.adb.PackageManager;
 import com.apkspectrum.util.Log;
 
-@SuppressWarnings("serial")
 public class DeviceClearAppDataAction extends AbstractDeviceAction
 {
+	private static final long serialVersionUID = -7583791561158425804L;
+
 	public static final String ACTION_COMMAND = "ACT_CMD_CLEAR_APP_DATA";
 
 	public DeviceClearAppDataAction(ApkActionEventHandler h) { super(h); }

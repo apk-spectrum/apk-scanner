@@ -11,9 +11,10 @@ import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.util.Log;
 
-@SuppressWarnings("serial")
 public class ShowCertDlgAction extends AbstractApkScannerAction
 {
+	private static final long serialVersionUID = 5613724659485408407L;
+
 	public static final String ACTION_COMMAND = "ACT_CMD_SHOW_SIGN_DLG";
 
 	public ShowCertDlgAction(ApkActionEventHandler h) { super(h); }

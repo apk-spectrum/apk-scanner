@@ -8,7 +8,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-@SuppressWarnings("serial")
 public class Align {
     private static final int PREF_HEIGHT = 100;
 
@@ -25,7 +24,9 @@ public class Align {
         bg.add(left);
 
         JPanel right = new JPanel() {
-            @Override
+            private static final long serialVersionUID = 4811265060819408565L;
+
+			@Override
             public int getBaseline(int width, int height) {
                 return 100;
             }

@@ -8,9 +8,10 @@ import com.apkscanner.gui.dialog.SettingDlg;
 import com.apkspectrum.core.scanner.ApkScanner;
 import com.apkspectrum.swing.ApkActionEventHandler;
 
-@SuppressWarnings("serial")
 public class OpenSettingsAction extends AbstractApkScannerAction
 {
+	private static final long serialVersionUID = 8082677456478099417L;
+
 	public static final String ACTION_COMMAND = "ACT_CMD_OPEN_SETTINGS";
 
 	public OpenSettingsAction(ApkActionEventHandler h) { super(h); }

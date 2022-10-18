@@ -8,9 +8,10 @@ import com.apkscanner.gui.tabpanels.TreeNodeData;
 import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.util.SystemUtil;
 
-@SuppressWarnings("serial")
 public class OpenResFileSystemSetAction extends AbstractApkScannerAction
 {
+	private static final long serialVersionUID = -2877998240453851882L;
+
 	public static final String ACTION_COMMAND = "ACT_CMD_OPEN_RESOURCE_FILE_SYSTEM_SET";
 
 	public OpenResFileSystemSetAction(ApkActionEventHandler h) { super(h); }

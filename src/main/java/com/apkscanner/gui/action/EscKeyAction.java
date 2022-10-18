@@ -10,9 +10,10 @@ import com.apkscanner.resource.RProp;
 import com.apkspectrum.swing.AbstractUIAction;
 import com.apkspectrum.swing.ActionEventHandler;
 
-@SuppressWarnings("serial")
 public class EscKeyAction extends AbstractUIAction
 {
+	private static final long serialVersionUID = -4340296782463728001L;
+
 	public static final String ACTION_COMMAND = "ACT_CMD_ESC_KEY_EVENT";
 
 	public EscKeyAction(ActionEventHandler h) { super(h); }

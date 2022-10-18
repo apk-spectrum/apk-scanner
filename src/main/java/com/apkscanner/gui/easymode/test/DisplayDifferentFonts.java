@@ -3,8 +3,9 @@ package com.apkscanner.gui.easymode.test;
 import java.awt.*;
 import javax.swing.*;
 
-@SuppressWarnings("serial")
 public class DisplayDifferentFonts extends JComponent {
+   private static final long serialVersionUID = -8219013563323954697L;
+
    String[] differentFonts;
    Font[] font;
    static final int IN = 15;

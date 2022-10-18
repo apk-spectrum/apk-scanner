@@ -23,9 +23,9 @@ import javax.swing.JPanel;
 
 import java.awt.Dimension;
 
-@SuppressWarnings("serial")
 public class TestAAPT extends JDialog{
-	
+	private static final long serialVersionUID = 8467234117034743102L;
+
 	TestAAPT () {
 		
 		JPanel mainpanel = new JPanel();

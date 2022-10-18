@@ -13,10 +13,10 @@ import javax.swing.table.TableColumnModel;
 import com.apkscanner.gui.easymode.core.ColumnGroup;
 import com.apkscanner.gui.easymode.core.GroupableTableHeader;
 
-@SuppressWarnings("serial")
 public class GroupableHeaderExample extends JFrame {
+	  private static final long serialVersionUID = 6474653917478457374L;
 
-	  GroupableHeaderExample() {
+	GroupableHeaderExample() {
 	    super( "Groupable Header Example" );
 
 	    DefaultTableModel dm = new DefaultTableModel();
@@ -26,6 +26,8 @@ public class GroupableHeaderExample extends JFrame {
 	    new Object[]{"SNo.","1","2","Native","2","3"});
 
 	    JTable table = new JTable( dm ) {
+	      private static final long serialVersionUID = -3086589208762924946L;
+
 	      protected JTableHeader createDefaultTableHeader() {
 	          return new GroupableTableHeader(columnModel);
 	      }

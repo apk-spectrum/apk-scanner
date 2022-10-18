@@ -7,11 +7,10 @@ import javax.swing.JComponent;
 import javax.swing.JLayer;
 import javax.swing.plaf.LayerUI;
 
-
-@SuppressWarnings("serial")
 public class ZoomUI extends LayerUI<JComponent> {
+        private static final long serialVersionUID = -9175708480685386829L;
 
-        public double zoom = 1; // Changing this value seems to have no effect
+		public double zoom = 1; // Changing this value seems to have no effect
 
         @Override
         public void paint(Graphics g, JComponent c) {

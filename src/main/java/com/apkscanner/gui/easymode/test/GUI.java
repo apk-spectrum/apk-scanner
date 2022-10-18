@@ -9,9 +9,10 @@ import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-@SuppressWarnings("serial")
 public class GUI extends JFrame {
-    protected GUI() {
+    private static final long serialVersionUID = -15518721720944851L;
+
+	protected GUI() {
         super("Simple Rearrangeable List");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //createPanel();

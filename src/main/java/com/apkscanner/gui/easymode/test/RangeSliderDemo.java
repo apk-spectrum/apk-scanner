@@ -18,10 +18,10 @@ import javax.swing.event.ChangeListener;
 /**
  * Demo application panel to display a range slider.
  */
-@SuppressWarnings("serial")
 public class RangeSliderDemo extends JPanel {
+    private static final long serialVersionUID = 709572625677072875L;
 
-    private JLabel rangeSliderLabel1 = new JLabel();
+	private JLabel rangeSliderLabel1 = new JLabel();
     private JLabel rangeSliderValue1 = new JLabel();
     private JLabel rangeSliderLabel2 = new JLabel();
     private JLabel rangeSliderValue2 = new JLabel();

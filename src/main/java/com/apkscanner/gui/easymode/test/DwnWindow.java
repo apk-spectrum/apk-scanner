@@ -20,10 +20,11 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
-@SuppressWarnings("serial")
 public class DwnWindow extends JFrame
 {
-    public static void main(String... args)
+    private static final long serialVersionUID = -2122500610839438970L;
+
+	public static void main(String... args)
     throws Exception
     {
         setDefaultLookAndFeelDecorated(true);
@@ -55,7 +56,9 @@ public class DwnWindow extends JFrame
 
     private static class TranslucentPanel extends JPanel
     {
-        @Override
+        private static final long serialVersionUID = -1721547383746541596L;
+
+		@Override
         protected void paintComponent(Graphics g) 
         {
         	//super.paintComponent(g);

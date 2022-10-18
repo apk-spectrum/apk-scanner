@@ -24,11 +24,12 @@ import javax.swing.JPanel;
  * LayeredPaneDemo.java requires
  * images/dukeWaveRed.gif. 
  */
-@SuppressWarnings("serial")
 public class LayeredPaneDemo extends JPanel
                              implements ActionListener,
                                         MouseMotionListener {
-    private String[] layerStrings = { "Yellow (0)", "Magenta (1)",
+    private static final long serialVersionUID = 5913413069355291670L;
+
+	private String[] layerStrings = { "Yellow (0)", "Magenta (1)",
                                       "Cyan (2)",   "Red (3)",
                                       "Green (4)" };
     private Color[] layerColors = { Color.yellow, Color.magenta,

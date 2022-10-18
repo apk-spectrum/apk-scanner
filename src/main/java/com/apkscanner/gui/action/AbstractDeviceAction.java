@@ -11,9 +11,10 @@ import com.apkspectrum.tool.adb.PackageInfo;
 import com.apkspectrum.tool.adb.PackageManager;
 import com.apkspectrum.util.Log;
 
-@SuppressWarnings("serial")
 public abstract class AbstractDeviceAction extends AbstractApkScannerAction
 {
+	private static final long serialVersionUID = -3154408732895909335L;
+
 	public AbstractDeviceAction() { }
 
 	public AbstractDeviceAction(ApkActionEventHandler h) { super(h); }

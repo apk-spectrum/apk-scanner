@@ -17,9 +17,10 @@ import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 import com.apkspectrum.util.ZipFileUtil;
 
-@SuppressWarnings("serial")
 public class LoadResTreeImgFileAction extends AbstractApkScannerAction
 {
+	private static final long serialVersionUID = 1864080885901000326L;
+
 	public static final String ACTION_COMMAND = "ACT_CMD_LOAD_FS_IMG_FILE";
 
 	public LoadResTreeImgFileAction(ApkActionEventHandler h) { super(h); }

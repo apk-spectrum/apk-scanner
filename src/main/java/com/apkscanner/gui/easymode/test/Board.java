@@ -14,11 +14,11 @@ import javax.swing.Timer;
 
 import com.apkscanner.resource.RImg;
 
-@SuppressWarnings("serial")
 public class Board extends JPanel
         implements ActionListener {
+    private static final long serialVersionUID = 8502148593071877683L;
 
-    private final int B_WIDTH = 350;
+	private final int B_WIDTH = 350;
     private final int B_HEIGHT = 350;
     private final int INITIAL_X = -40;
     private final int INITIAL_Y = -40;

@@ -12,8 +12,10 @@ import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.TransferHandler;
-@SuppressWarnings("serial")
+
 public class ListItemTransferHandler extends TransferHandler {
+	private static final long serialVersionUID = -6479731731134550643L;
+
 	protected final DataFlavor localObjectFlavor;
 	JList<?> source = null;
 	JList<Object> target = null;

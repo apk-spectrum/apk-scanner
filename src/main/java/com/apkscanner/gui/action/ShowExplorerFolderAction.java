@@ -8,9 +8,10 @@ import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 
-@SuppressWarnings("serial")
 public class ShowExplorerFolderAction extends AbstractApkScannerAction
 {
+	private static final long serialVersionUID = 7631745631480656014L;
+
 	public static final String ACTION_COMMAND = "ACT_CMD_SHOW_EXPLORER_FOLDER";
 
 	public ShowExplorerFolderAction(ApkActionEventHandler h) { super(h); }

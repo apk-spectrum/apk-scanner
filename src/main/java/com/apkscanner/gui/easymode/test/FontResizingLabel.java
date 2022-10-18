@@ -6,10 +6,10 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
 // Improved version of http://java-sl.com/tip_adapt_label_font_size.html
-
-@SuppressWarnings("serial")
 public class FontResizingLabel extends JLabel {
-    public static final int MIN_FONT_SIZE=3;
+    private static final long serialVersionUID = -7659503471621773815L;
+
+	public static final int MIN_FONT_SIZE=3;
     public static final int MAX_FONT_SIZE=240;
     Graphics g;
     int currFontSize = 0;

@@ -87,8 +87,9 @@ public class DragAndDropTest {
 	}
 }
 
-@SuppressWarnings("serial")
 class Thumbnail implements Serializable {
+	private static final long serialVersionUID = -6262132799347406683L;
+
 	public final String name;
 	public final Icon icon;
 
@@ -100,8 +101,9 @@ class Thumbnail implements Serializable {
 
 // @camickr already suggested above.
 // https://docs.oracle.com/javase/tutorial/uiswing/dnd/dropmodedemo.html
-@SuppressWarnings("serial")
 class ListItemTransferHandler extends TransferHandler {
+	private static final long serialVersionUID = -3639428239766624579L;
+
 	protected final DataFlavor localObjectFlavor;
 	protected int[] indices;
 	protected int addIndex = -1; // Location where items were added
