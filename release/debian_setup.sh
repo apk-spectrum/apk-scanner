@@ -21,10 +21,14 @@ rm -rf "${DEBIAN_PATH}"
 ##############################
 mkdir -p "${DEBIAN_DATA_PATH}"
 cp -f "${RELEASE_DIR}/${APP_FILE}" "${DEBIAN_DATA_PATH}"
-cp -f "src/main/resources/icons/AppIcon.png" "${DEBIAN_DATA_PATH}"
+cp -f "../src/main/resources/icons/AppIcon.png" "${DEBIAN_DATA_PATH}"
 cp -rf "${RELEASE_DIR}/data" "${DEBIAN_DATA_PATH}"
 cp -rf "${RELEASE_DIR}/lib" "${DEBIAN_DATA_PATH}"
+if [ -e "${RELEASE_DIR}/plugin" ]; then
 cp -rf "${RELEASE_DIR}/plugin" "${DEBIAN_DATA_PATH}"
+else
+mkdir -p "${DEBIAN_DATA_PATH}/plugin"
+fi
 cp -rf "${RELEASE_DIR}/security" "${DEBIAN_DATA_PATH}"
 cp -rf "${RELEASE_DIR}/tool" "${DEBIAN_DATA_PATH}"
 rm -rf "${DEBIAN_DATA_PATH}/tool/darwin"

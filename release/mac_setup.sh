@@ -51,6 +51,9 @@ cp -R "${RELEASE_DIR}/security" "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents
 cp -R "${RELEASE_DIR}/tool" "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/"
 rm -rf "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/tool/linux"
 rm -rf "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/tool/windows"
-mkdir -p "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/plugin"
+if [ -e plugins ]; then
 cp -R "${RELEASE_DIR}/plugin" "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/"
 rm -f "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/plugin/plugins.conf"
+else
+mkdir -p "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/plugin"
+fi
