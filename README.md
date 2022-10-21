@@ -14,34 +14,87 @@ It is a tool to dramatically streamline APK management. [(more..)](https://apk-s
 ![](https://github.com/apk-spectrum/apk-scanner/blob/gh-pages/img/manual/apk-scanner-launch-img.png)
 
 ## Build
-This repository have .project and .class files for be build by eclipse.[(more..)](https://github.com/apk-spectrum/apk-scanner/wiki/2.-How-to-build-by-eclipse)  
+This project uses the Maven. And include the Maven Wrapper (MVNW).  
+> [Windows]  
+> \> .\mvnw.cmd compile   
+>  
+> [Ubuntu or Mac]  
+> $ ./mvnw compile  
+
+You can build on IDE such as VSCODE or ECLIPSE.  
 
 ### Requirements
-JDK (7 or 8).  
-Eclipse with git plugin
+JDK 8 or later  
+If using VSCode with "Extension Pack for Java"  
 
-### Create Eclipse project  
-1. source code download  
-> git clone https://github.com/apk-spectrum/apk-scanner  
+### Open a project in IDE
+1. source code download with submodule  
+> git clone **--recurse-submodule** https://github.com/apk-spectrum/apk-scanner  
 
-2. import Eclipse project  
-> Eclipse > File > Import > Git > Project from Git  
-> \> Existing local repository > add "your project path" > <b>Import existing Eclipse projects</b>  
+2. Open project  
 
-3. Run Configuration, Main Class : <b>com.apkscanner.Main</b>  
+by VSCODE)  
+> VSCODE > File > Open Folder > Select "apk-scanner path"  
+> \> Wait open the "JAVA PROJECTS" into the EXPLORER side bar > more(…) > Clean Workspace > Reload and delete  
+>  
+> Run Configuration)  
+> Run and Debug(Ctrl + Shift + D) > "create a launch.json file" > Java > Select "Launch Main" in combobox  
+> \> Run > Start Debugging(F5) or Run Without Debugginng(Ctrl + F5)  
+```
+Set JVM Options)  
+Add line below into each configuration of launch.json  
+"vmArgs": ["-Dfile.encoding=UTF-8"]  
+OR  
+Add this line below into your user setting json file  
+"java.debug.settings.vmArgs": "-Dfile.encoding=UTF-8"  
+```
+
+by ECLIPSE)  
+> Eclipse > File > Open Projects from File System... > Directory... > Select "apk-scanner path" > Finish  
+> \> Right click in Project Explorer > Maven > Update Project...(Alt + F5) > OK  
+>  
+> Run Configuration)  
+> Run > Run As > Java Application(Alt+Shift+X, J) > Select a "Main - com.apkscanner" > OK  
+
+## Package
+```
+[Windows]
+Requirements : NSIS - https://nsis.sourceforge.io/Download
+
+> mvnw.cmd package
+> cd target
+> "c:\Program Files (x86)\NSIS\makensis.exe" setup.nsi
+
+Output : APKScanner_install.exe
+```
+
+```
+[Ubuntu]  
+$ ./mvnw package  
+$ cd target  
+$ ./debian_setup.sh  
+
+Output : APKScanner.deb
+```
+
+```
+[MacOS]  
+$ ./mvnw package  
+$ cd target  
+$ ./mac_setup.sh  
+
+Output : "bundles/APK Scanner.app"
+```
 
 ## Setup & Launch  
-Supported OS : Windows7/10, Linux Ubuntu 10.04/12.04/14.04  
-※ Based on verified OS version.  
+Supported OS : Windows10, Linux Ubuntu 18.04, macOS Catalina(10.15.7)  
+※ Based on tested OS version.  
 
 ### Setup  
 
 #### for Windows  
 ##### Using SetupWizard  
 1. Launch APKScanner_xxx_win_setup.exe  
-##### Using compressed file  
-1. Uncompress APKScanner_xxx_legacy.tar.gz  
-2. Launch setup.bat (right click > Run as administrator)  
 ##### Using portable  
 1. Uncompress APKScanner_xxx_win_portable.zip  
 2. Launch ApkScanner.exe  
@@ -49,10 +102,6 @@ Supported OS : Windows7/10, Linux Ubuntu 10.04/12.04/14.04
 #### for Linux (ubuntu)  
 ##### Using Debian installer  
 $ sudo dpkg -i APKScanner_xxx_linux_setup.deb  
-##### Using compressed file  
-$ tar -xvf APKScanner_xxx_legacy.tar.gz  
-$ cd APKScanner  
-$ ./setup.sh  
 
 ### Launch
 1. Double click to an APK File on the explorer.  
@@ -69,7 +118,7 @@ JD-GUI [![Software License](https://img.shields.io/badge/license-GPLv3-brightgre
 dex2jar [![Software License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0)  
 \- https://sourceforge.net/projects/dex2jar/  
 
-#### External JAR Libraries  
+#### External Dependency Libraries  
 ddmlib [![Software License](https://img.shields.io/badge/license-Attribution%202.5-brightgreen.svg)](https://developer.android.com/license.html)  
 \- https://android.googlesource.com/platform/tools/base/+/master/ddmlib/  
 guava [![Software License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)](https://github.com/google/guava/blob/master/COPYING)  
