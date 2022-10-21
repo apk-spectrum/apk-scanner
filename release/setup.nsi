@@ -5,7 +5,7 @@
 
 ; Define your application name
 !define PROJECTNAME "APK Scanner"
-!define PROJECTNAMEANDVERSION "APK Scanner 2.9"
+!define PROJECTNAMEANDVERSION "APK Scanner 2.10"
 
 ; Main Install settings
 Name "${PROJECTNAMEANDVERSION}"

@@ -37,7 +37,7 @@ ${JAVA_HOME}/bin/javapackager \
   -title "APK Scanner" \
   -vendor "APK Spectrum" \
   -Bicon=AppIcon.icns \
-  -Bmac.CFBundleVersion=2.9 \
+  -Bmac.CFBundleVersion=2.10 \
   -Bmac.CFBundleIdentifier=com.apkscanner \
   -Bmac.category=developer-tools \
   -v

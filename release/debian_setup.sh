@@ -1,7 +1,7 @@
 #!/bin/bash
 
 APP_PATH="/opt/APKScanner"
-APP_VERSION="2.9"
+APP_VERSION="2.10"
 APP_FILE="ApkScanner.jar"
 
 RELEASE_DIR=.
