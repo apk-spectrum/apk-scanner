@@ -1,7 +1,11 @@
 {
-  "version":"2.9",
+  "version":"2.10",
   "description":{
-    "en":"Ver. 2.9 :
+    "en":"Ver. 2.10 :
+1. Update information of Android S,T
+2. Fix errors
+
+Ver. 2.9 :
 1. Add information for Android-11(R OS)
 2. Fix fatal error on Java8u261 32bit
 3. Improve performance at opening with EasyUI.
@@ -46,7 +50,11 @@ Ver. 2.4.2 :\n1. Support JDK 9 and later.\n2. Improve UI of ApkInstallWizard.\n3
 Ver. 2.4.1  :\n1. Update JADX-GUI 0.9.0 (2019-02-12)\n2. Fix fatal error\n\n
 Ver. 2.4  :\n1. Add JADX & Bytecode viewer tools\n2. Add SDK29 information\n3. Link Apk Compare(toolbal & dragdrop)\n4. Add PlugIn(Update checker)\n5. Fix some bugs
 ",
-    "ko":"Ver. 2.9 :
+    "ko":"Ver. 2.10 :
+1. Android12/13 정보 추가
+2. 기타버그 수정
+
+Ver. 2.9 :
 1. Android-11(R OS) 정보 추가
 2. Java 1.8u261 32비트 설치시 동작하지 않는 문제 수정
 3. EasyUI 속도 개선.
