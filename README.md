@@ -58,13 +58,27 @@ by ECLIPSE)
 
 ## Package
 ```
-[Windows]
-Requirements : NSIS - https://nsis.sourceforge.io/Download
+[Windows]  
+Requirements : NSIS 3 or later - https://nsis.sourceforge.io/Download  
 
-> mvnw.cmd package
-> cd target
-> "c:\Program Files (x86)\NSIS\makensis.exe" setup.nsi
+> mvnw.cmd package  
+> cd target  
+> "c:\Program Files (x86)\NSIS\makensis.exe" /INPUTCHARSET UTF8 setup.nsi  
+  
+: on Ubuntu  
+Requirements : NSIS  
+  $ sudo apt update && sudo apt install -y nsis  
 
+$ ./mvnw package  
+$ cd target  
+
+# > by NSIS 3 or later  
+$ makensis -INPUTCHARSET UTF8 setup.nsi  
+
+# > by NSIS 2.x  
+$ iconv -c --from-code=UTF-8 --to-code=EUC-KR --output=setup-kr.nsi setup.nsi  
+$ makensis setup-kr.nsi  
+  
 Output : APKScanner_install.exe
 ```
 
