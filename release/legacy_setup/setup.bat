@@ -33,7 +33,7 @@ set java_ver=%java_ver:"=%
 set java_ver=%java_ver:~,3%
 
 rem --- Need Java 1.7 ---
-if not "%java_ver%" GEQ "1.7" (
+if not "%java_ver%" GEQ "1.8" (
     echo Need JDK7...
     echo current version : %java_ver%
 rem     goto nosuch_java
@@ -64,18 +64,6 @@ if not exist "%APP_PATH%\data\build-master-target-product-security" (
 if not exist "%APP_PATH%\lib" (
      echo Create folder : %APP_PATH%\lib
      mkdir "%APP_PATH%\lib"
-)
-if not exist "%APP_PATH%\lib\lib" (
-     echo Create folder : %APP_PATH%\lib\lib
-     mkdir "%APP_PATH%\lib\lib"
-)
-if not exist "%APP_PATH%\lib\lib64" (
-     echo Create folder : %APP_PATH%\lib\lib64
-     mkdir "%APP_PATH%\lib\lib64"
-)
-if not exist "%APP_PATH%\lib\proxy-vole" (
-     echo Create folder : %APP_PATH%\lib\proxy-vole
-     mkdir "%APP_PATH%\lib\proxy-vole"
 )
 if not exist "%APP_PATH%\plugin" (
      echo Create folder : %APP_PATH%\plugin
@@ -123,8 +111,6 @@ copy /Y "%SRC_PATH%\ApkScanner.exe" "%APP_PATH%"
 copy /Y "%SRC_PATH%\ApkScanner.jar" "%APP_PATH%"
 copy /Y "%SRC_PATH%\data\build-master-target-product-security\*" "%APP_PATH%\data\build-master-target-product-security"
 copy /Y "%SRC_PATH%\lib\*" "%APP_PATH%\lib"
-copy /Y "%SRC_PATH%\lib\lib\*.dll" "%APP_PATH%\lib\lib"
-copy /Y "%SRC_PATH%\lib\lib64\*.dll" "%APP_PATH%\lib\lib64"
 copy /Y "%SRC_PATH%\plugin\*" "%APP_PATH%\plugin"
 copy /Y "%SRC_PATH%\security\*" "%APP_PATH%\security"
 copy /Y "%SRC_PATH%\tool\*" "%APP_PATH%\tool"
