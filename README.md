@@ -97,7 +97,7 @@ $ ./mvnw package
 $ cd target  
 $ ./mac_setup.sh  
 
-Output : "bundles/APK Scanner.app"
+Output : "bundles/APK Scanner-1.0.dmg"
 ```
 
 ## Setup & Launch  
