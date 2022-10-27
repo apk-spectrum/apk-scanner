@@ -1,0 +1,29 @@
+*       text=auto
+
+# binaries
+*.pk8   binary
+*.pem   binary
+*.exe   binary
+
+# images
+*.icns  binary
+*.ico   binary
+*.png   binary
+*.gif   binary
+*.jpg   binary
+*.svg   text
+
+*.java   text diff=java
+*.html   text diff=html
+
+*.plist text eol=lf
+
+*.nsi   text eol=crlf
+
+*.sh    text eol=lf
+*.bat   text eol=crlf
+
+mvnw    text eol=lf
+*.cmd   text eol=crlf
+
+*.mk    text eol=lf
