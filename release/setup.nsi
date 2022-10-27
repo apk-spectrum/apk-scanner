@@ -3,15 +3,25 @@
 ; Define release path
 !define RELEASE_DIR "."
 
+!ifdef FILE_VERSION
+!define _FILE_VERSION_ "_${FILE_VERSION}_"
+!else
+!define _FILE_VERSION_ "_"
+!endif
+
+!ifndef APP_VERSION
+!define APP_VERSION "2.10-SNAPSHOT"
+!endif
+
 ; Define your application name
 !define PROJECTNAME "APK Scanner"
-!define PROJECTNAMEANDVERSION "APK Scanner 2.10"
+!define PROJECTNAMEANDVERSION "APK Scanner ${APP_VERSION}"
 
 ; Main Install settings
 Name "${PROJECTNAMEANDVERSION}"
 InstallDir "$PROGRAMFILES64\APKScanner"
 InstallDirRegKey HKLM "Software\${PROJECTNAME}" ""
-OutFile "APKScanner_install.exe"
+OutFile "APKScanner${_FILE_VERSION_}win_setup.exe"
 
 ; Use compression
 SetCompressor Zlib

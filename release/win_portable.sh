@@ -1,7 +1,14 @@
 #!/bin/bash
 
+if [ -n "${FILE_VERSION}" ]; then
+  FILE_VERSION="${FILE_VERSION}_"
+fi
+
 if [[ $OSTYPE == 'darwin'* ]]; then
-RELEASE_DIR=`pwd`/`dirname "$0"`
+RELEASE_DIR=`dirname "$0"`
+if [[ $RELEASE_DIR != '/'* ]]; then
+RELEASE_DIR=`pwd`/${RELEASE_DIR}
+fi
 else
 RELEASE_DIR=$(dirname $(readlink -f $0))
 fi
@@ -28,9 +35,9 @@ rm -rf "${OUT_DIR}/tool/linux"
 rm -f "${OUT_DIR}/plugin/plugins.conf"
 
 cd "${OUT_DIR}"
-zip -r "${RELEASE_DIR}/APKScanner_win_portable.zip" *
+zip -r "${RELEASE_DIR}/APKScanner_${FILE_VERSION}win_portable.zip" *
 cd -
 
 rm -rf "${OUT_DIR}"
 
-echo output : "${RELEASE_DIR}/APKScanner_win_portable.zip"
+echo output : "${RELEASE_DIR}/APKScanner_${FILE_VERSION}win_portable.zip"

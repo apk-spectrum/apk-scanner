@@ -1,7 +1,14 @@
 #!/bin/bash
 
+if [ -n "${FILE_VERSION}" ]; then
+  FILE_VERSION="${FILE_VERSION}_"
+fi
+
 if [[ $OSTYPE == 'darwin'* ]]; then
-RELEASE_DIR=`pwd`/`dirname "$0"`
+RELEASE_DIR=`dirname "$0"`
+if [[ $RELEASE_DIR != '/'* ]]; then
+RELEASE_DIR=`pwd`/${RELEASE_DIR}
+fi
 else
 RELEASE_DIR=$(dirname $(readlink -f $0))
 fi
@@ -28,9 +35,9 @@ cp -r "${RELEASE_DIR}/tool" "${OUT_DIR}"
 rm -f "${OUT_DIR}/plugin/plugins.conf"
 
 cd "${RELEASE_DIR}"
-tar -zcvf "APKScanner_legacy.tar.gz" "APKScanner"
+tar -zcvf "APKScanner_${FILE_VERSION}legacy.tar.gz" "APKScanner"
 cd -
 
 rm -rf "${OUT_DIR}"
 
-echo output : "${RELEASE_DIR}/APKScanner_legacy.tar.gz"
+echo output : "${RELEASE_DIR}/APKScanner_${FILE_VERSION}legacy.tar.gz"

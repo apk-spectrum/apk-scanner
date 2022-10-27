@@ -4,6 +4,10 @@
 
 cd
 
+if not "%FILE_VERSION%" == "" (
+set FILE_VERSION=%FILE_VERSION%_
+)
+
 set RELEASE_DIR=%~dp0.
 set OUT_DIR="%RELEASE_DIR%\portable"
 
@@ -35,12 +39,12 @@ del /F "%OUT_DIR%\plugin\plugins.conf"
 
 pushd .
 cd "%OUT_DIR%"
-tar.exe -a -c -f "%RELEASE_DIR%\APKScanner_win_portable.zip" *
+tar.exe -a -c -f "%RELEASE_DIR%\APKScanner_%FILE_VERSION%win_portable.zip" *
 popd
 
 rem --- Remove an existed folder ---
 rmdir /s /q "%OUT_DIR%"
 
-echo output : "%RELEASE_DIR%\APKScanner_win_portable.zip"
+echo output : "%RELEASE_DIR%\APKScanner_%FILE_VERSION%win_portable.zip"
 
-pause
+if %SKIP_PAUSE% == "" ( pause )
