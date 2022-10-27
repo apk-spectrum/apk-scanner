@@ -18,7 +18,7 @@ This project uses the Maven. And include the Maven Wrapper (MVNW).
 > [Windows]  
 > \> .\mvnw.cmd compile   
 >  
-> [Ubuntu or Mac]  
+> [Ubuntu/Mac]  
 > $ ./mvnw compile  
 
 You can build on IDE such as VSCODE or ECLIPSE.  
@@ -56,34 +56,89 @@ by ECLIPSE)
 > Run Configuration)  
 > Run > Run As > Java Application(Alt+Shift+X, J) > Select a "Main - com.apkscanner" > OK  
 
-## Package
+## Package  
+### 1. maven package  
+> [Windows]  
+> \> .\mvnw.cmd package  
+>  
+> [Ubuntu/Mac]  
+> $ ./mvnw package  
+>  
+> Output : target/APKScanner.jar
+  
+### 2. Make an installer or archive  
 ```
-[Windows]
-Requirements : NSIS - https://nsis.sourceforge.io/Download
+[ALL Platform on Ubuntu/Mac]  
+Requirements : NSIS, dpkg  
+  Ubuntu :  
+    $ sudo apt update && sudo apt install -y nsis  
+  MacOS :  
+    $ sudo brew install makensis dpkg  
 
-> mvnw.cmd package
-> cd target
-> "c:\Program Files (x86)\NSIS\makensis.exe" setup.nsi
+$ target/package.sh 2.x.x v2xxxx_r1_yyyymmdd  
+OR  
+$ APP_VERSION=2.x.x FILE_VERSION=v2xxxx_r1_yyyymmdd target/package.sh  
 
-Output : APKScanner_install.exe
+Output :  
+target/APKScanner_v2xxxx_r1_yyyymmdd_win_setup.exe  
+target/APKScanner_v2xxxx_r1_yyyymmdd_win_portable.zip  
+target/APKScanner_v2xxxx_r1_yyyymmdd_ubuntu_setup.deb  
+target/APKScanner_v2xxxx_r1_yyyymmdd_mac.dmg [Only on Mac]  
+
+[Windows]  
+Requirements : NSIS 3 or later - https://nsis.sourceforge.io/Download  
+  
+> .\target\package.bat 2.x.x v2xxxx_r1_yyyymmdd  
+  
+Output :  
+target/APKScanner_v2xxxx_r1_yyyymmdd_win_setup.exe  
+target/APKScanner_v2xxxx_r1_yyyymmdd_win_portable.zip  
+```  
+  
+```
+[Windows Installer]  
+: on Windows10  
+Requirements : NSIS 3 or later - https://nsis.sourceforge.io/Download  
+
+> .\target\win_setup.bat
+  
+: on Ubuntu/Mac  
+Requirements : NSIS  
+  Ubuntu :  
+    $ sudo apt update && sudo apt install -y nsis  
+  MacOS :  
+    $ sudo brew install makensis  
+ 
+$ target/win_setup.sh  
+   
+Output : target/APKScanner_win_setup.exe
 ```
 
 ```
-[Ubuntu]  
-$ ./mvnw package  
-$ cd target  
-$ ./debian_setup.sh  
-
-Output : APKScanner.deb
+[Windows portable archive]  
+: on Ubuntu/Mac  
+$ target/win_portable.sh  
+  
+: on Windows10
+> target\win_portable.bat  
+  
+Output : target/APKScanner_win_portable.zip  
 ```
 
 ```
-[MacOS]  
-$ ./mvnw package  
-$ cd target  
-$ ./mac_setup.sh  
+[Ubuntu debian package]  
+: on Ubuntu/Mac  
+$ target/debian_setup.sh  
+  
+Output : target/APKScanner_ubuntu_setup.deb
+```
 
-Output : "bundles/APK Scanner.app"
+```
+[MacOS DMG image]  
+: on Mac  
+$ target/mac_setup.sh  
+  
+Output : target/APKScanner_mac.dmg
 ```
 
 ## Setup & Launch  

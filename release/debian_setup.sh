@@ -1,10 +1,30 @@
 #!/bin/bash
 
+if [[ -z `which dpkg-deb` ]]; then
+    echo "No such dpkg-deb."
+    echo "Please install the dpkg by below command."
+    if [[ $OSTYPE == 'darwin'* ]]; then
+        echo "$ brew install dpkg"
+    fi
+    exit 1;
+fi
+
 APP_PATH="/opt/APKScanner"
-APP_VERSION="2.10"
+APP_VERSION=${APP_VERSION:-"2.10-SNAPSHOT"}
 APP_FILE="ApkScanner.jar"
 
-RELEASE_DIR=.
+if [ -n "${FILE_VERSION}" ]; then
+  FILE_VERSION="${FILE_VERSION}_"
+fi
+
+if [[ $OSTYPE == 'darwin'* ]]; then
+RELEASE_DIR=`dirname "$0"`
+if [[ $RELEASE_DIR != '/'* ]]; then
+RELEASE_DIR=`pwd`/${RELEASE_DIR}
+fi
+else
+RELEASE_DIR=$(dirname $(readlink -f $0))
+fi
 DEBIAN_PATH="${RELEASE_DIR}/debian"
 DEBIAN_DATA_PATH="${DEBIAN_PATH}${APP_PATH}"
 DEBIAN_CTRL_PATH="${DEBIAN_PATH}/DEBIAN"
@@ -21,7 +41,7 @@ rm -rf "${DEBIAN_PATH}"
 ##############################
 mkdir -p "${DEBIAN_DATA_PATH}"
 cp -f "${RELEASE_DIR}/${APP_FILE}" "${DEBIAN_DATA_PATH}"
-cp -f "../src/main/resources/icons/AppIcon.png" "${DEBIAN_DATA_PATH}"
+cp -f "${RELEASE_DIR}/../src/main/resources/icons/AppIcon.png" "${DEBIAN_DATA_PATH}"
 cp -rf "${RELEASE_DIR}/data" "${DEBIAN_DATA_PATH}"
 cp -rf "${RELEASE_DIR}/lib" "${DEBIAN_DATA_PATH}"
 if [ -e "${RELEASE_DIR}/plugin" ]; then
@@ -169,10 +189,10 @@ chmod 775 "${DEBIAN_CTRL_PATH}/postinst"
 ##############################
 # Build package for Debian
 ##############################
-dpkg-deb --build "${DEBIAN_PATH}" "${RELEASE_DIR}/APKScanner.deb"
+dpkg-deb --build "${DEBIAN_PATH}" "${RELEASE_DIR}/APKScanner_${FILE_VERSION}ubuntu_setup.deb"
 
 
 ##############################
 # Clear workspace for Debian
 ##############################
-# rm -rf "${DEBIAN_PATH}"
+rm -rf "${DEBIAN_PATH}"

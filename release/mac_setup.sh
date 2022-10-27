@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # purpose: this script creates a signed ".app" application directory for the
 #          ACME application
@@ -12,10 +12,25 @@
 # see this URL for details about the `javapackager` command:
 # https://docs.oracle.com/javase/8/docs/technotes/tools/unix/javapackager.html
 
+if [[ $OSTYPE != 'darwin'* ]]; then
+echo "This script support only MacOS"
+exit 1;
+fi
+
+if [ -n "${FILE_VERSION}" ]; then
+  FILE_VERSION="${FILE_VERSION}_"
+fi
+
 # necessary variables
 JAVA_HOME=`/usr/libexec/java_home -v 1.8`
-RELEASE_DIR=.
-APP_DIR_NAME="Apk Scanner.app"
+
+export RELEASE_DIR=`dirname "$0"`
+if [[ $RELEASE_DIR != '/'* ]]; then
+export RELEASE_DIR=`pwd`/${RELEASE_DIR}
+fi
+export APP_DIR_NAME="Apk Scanner.app"
+
+mkdir -p "${RELEASE_DIR}/plugin"
 
 # javapackager command notes:
 #   - `-native image` creates a ".app" file (as opposed to DMG or other)
@@ -27,33 +42,32 @@ APP_DIR_NAME="Apk Scanner.app"
 #     "./release/bundles/ACME.app" directory.
 ${JAVA_HOME}/bin/javapackager \
   -deploy -Bruntime=${JAVA_HOME} \
-  -native image \
+  -native dmg \
   -outdir "${RELEASE_DIR}" \
   -outfile "${APP_DIR_NAME}" \
   -srcdir "${RELEASE_DIR}" \
-  -srcfiles ApkScanner.jar \
+  -srcfiles ApkScanner.jar:data:lib:security:tool:plugin \
   -appclass com.apkscanner.Main \
   -name "APK Scanner" \
   -title "APK Scanner" \
   -vendor "APK Spectrum" \
-  -Bicon=AppIcon.icns \
-  -Bmac.CFBundleVersion=2.10 \
-  -Bmac.CFBundleIdentifier=com.apkscanner \
-  -Bmac.category=developer-tools \
+  -Bicon="${RELEASE_DIR}/AppIcon.icns" \
+  -BdropinResourcesRoot="${RELEASE_DIR}" \
   -v
 
+
+## if native is image, use below commands.
 # (2b) copy *all* resource files into the ".app" directory
-cp Info.plist "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/"
-cp ApkIcon.icns "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Resources"
-cp -R "${RELEASE_DIR}/data" "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/"
-cp -R "${RELEASE_DIR}/lib" "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/"
-cp -R "${RELEASE_DIR}/security" "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/"
-cp -R "${RELEASE_DIR}/tool" "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/"
-rm -rf "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/tool/linux"
-rm -rf "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/tool/windows"
-if [ -e plugins ]; then
-cp -R "${RELEASE_DIR}/plugin" "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/"
-rm -f "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/plugin/plugins.conf"
-else
-mkdir -p "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/plugin"
-fi
+# cp ApkIcon.icns "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Resources"
+
+# rm -rf "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/tool/linux"
+# rm -rf "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/tool/windows"
+# if [ -e plugin/plugins.conf ]; then
+# rm -f "${RELEASE_DIR}/bundles/${APP_DIR_NAME}/Contents/Java/plugin/plugins.conf"
+# fi
+
+mv "${RELEASE_DIR}/bundles/APK Scanner-1.0.dmg" "${RELEASE_DIR}/APKScanner_${FILE_VERSION}mac.dmg"
+
+echo output : "${RELEASE_DIR}/APKScanner_${FILE_VERSION}mac.dmg"
+
+rm -rf "${RELEASE_DIR}/bundles"

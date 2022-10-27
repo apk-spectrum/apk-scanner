@@ -6,13 +6,13 @@ APP_FILE="ApkScanner.jar"
 # java 버전 확인
 java_ver=$(java -version 2>&1 | sed '1!{d}; /^java version/!d; s/java version \"\([0-9].[0-9]\).*\"/\1/')
 
-if [ "$java_ver" == "" ] || [ "$java_ver" != "$(echo $java_ver | awk '{ if($1 >= 1.7) { print $1 } }')" ]; then
+if [ "$java_ver" == "" ] || [ "$java_ver" != "$(echo $java_ver | awk '{ if($1 >= 1.8) { print $1 } }')" ]; then
     if [ "$java_ver" != "" ]; then
-        echo "Need JDK7..."
+        echo "Need JDK8..."
         echo "current version : $java_ver"
     fi
-    #echo "Please retry after setup JDK7.."
-    #echo "You can download the JDK7 from http://www.oracle.com/technetwork/java/javase/downloads/index.html"
+    #echo "Please retry after setup JDK8.."
+    #echo "You can download the JDK8 from http://www.oracle.com/technetwork/java/javase/downloads/index.html"
     #exit
 fi
 

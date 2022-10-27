@@ -3,15 +3,25 @@
 ; Define release path
 !define RELEASE_DIR "."
 
+!ifdef FILE_VERSION
+!define _FILE_VERSION_ "_${FILE_VERSION}_"
+!else
+!define _FILE_VERSION_ "_"
+!endif
+
+!ifndef APP_VERSION
+!define APP_VERSION "2.10-SNAPSHOT"
+!endif
+
 ; Define your application name
 !define PROJECTNAME "APK Scanner"
-!define PROJECTNAMEANDVERSION "APK Scanner 2.10"
+!define PROJECTNAMEANDVERSION "APK Scanner ${APP_VERSION}"
 
 ; Main Install settings
 Name "${PROJECTNAMEANDVERSION}"
 InstallDir "$PROGRAMFILES64\APKScanner"
 InstallDirRegKey HKLM "Software\${PROJECTNAME}" ""
-OutFile "APKScanner_install.exe"
+OutFile "APKScanner${_FILE_VERSION_}win_setup.exe"
 
 ; Use compression
 SetCompressor Zlib
@@ -37,21 +47,21 @@ SetCompressor Zlib
 !insertmacro MUI_RESERVEFILE_LANGDLL
 
 LangString APP_NAME ${LANG_ENGLISH} "APK Scanner"
-LangString APP_NAME ${LANG_KOREAN} "APK ½ºÄ³³Ê"
+LangString APP_NAME ${LANG_KOREAN} "APK ìŠ¤ìºë„ˆ"
 LangString APP_NAME_DESC ${LANG_ENGLISH} "APK Scanner"
-LangString APP_NAME_DESC ${LANG_KOREAN} "APK ½ºÄ³³Ê"
+LangString APP_NAME_DESC ${LANG_KOREAN} "APK ìŠ¤ìºë„ˆ"
 LangString ASSOCITATE_APK ${LANG_ENGLISH} "Associate APK File"
-LangString ASSOCITATE_APK ${LANG_KOREAN} "APKÆÄÀÏ ¿¬°á"
+LangString ASSOCITATE_APK ${LANG_KOREAN} "APKíŒŒì¼ ì—°ê²°"
 LangString ASSOCITATE_APK_DESC ${LANG_ENGLISH} "Associate APK File. Open apk file by double click."
-LangString ASSOCITATE_APK_DESC ${LANG_KOREAN} "APKÆÄÀÏ ¿¬°áÇÕ´Ï´Ù. APK ÆÄÀÏÀ» ´õºíÅ¬¸¯ÇÏ¿© ºĞ¼® ÇÒ¼ö ÀÖ½À´Ï´Ù."
+LangString ASSOCITATE_APK_DESC ${LANG_KOREAN} "APKíŒŒì¼ ì—°ê²°í•©ë‹ˆë‹¤. APK íŒŒì¼ì„ ë”ë¸”í´ë¦­í•˜ì—¬ ë¶„ì„ í• ìˆ˜ ìˆìŠµë‹ˆë‹¤."
 LangString ADD_STARTMENU ${LANG_ENGLISH} "Start Menu Shortcuts"
-LangString ADD_STARTMENU ${LANG_KOREAN} "½ÃÀÛ¸Ş´º¿¡ Ãß°¡"
+LangString ADD_STARTMENU ${LANG_KOREAN} "ì‹œì‘ë©”ë‰´ì— ì¶”ê°€"
 LangString ADD_STARTMENU_DESC ${LANG_ENGLISH} "Start Menu Shortcuts"
-LangString ADD_STARTMENU_DESC ${LANG_KOREAN} "½ÃÀÛ¸Ş´º¿¡ ¹Ù·Î°¡±â ¾ÆÀÌÄÜÀ» Ãß°¡ ÇÕ´Ï´Ù."
+LangString ADD_STARTMENU_DESC ${LANG_KOREAN} "ì‹œì‘ë©”ë‰´ì— ë°”ë¡œê°€ê¸° ì•„ì´ì½˜ì„ ì¶”ê°€ í•©ë‹ˆë‹¤."
 LangString ADD_DESKTOP ${LANG_ENGLISH} "Desktop Shortcut"
-LangString ADD_DESKTOP ${LANG_KOREAN} "¹ÙÅÁÈ­¸é¿¡ Ãß°¡"
+LangString ADD_DESKTOP ${LANG_KOREAN} "ë°”íƒ•í™”ë©´ì— ì¶”ê°€"
 LangString ADD_DESKTOP_DESC ${LANG_ENGLISH} "Desktop Shortcut"
-LangString ADD_DESKTOP_DESC ${LANG_KOREAN} "¹ÙÅÁÈ­¸é¿¡ ¹Ù·Î°¡±â ¾ÆÀÌÄÜÀ» Ãß°¡ ÇÕ´Ï´Ù."
+LangString ADD_DESKTOP_DESC ${LANG_KOREAN} "ë°”íƒ•í™”ë©´ì— ë°”ë¡œê°€ê¸° ì•„ì´ì½˜ì„ ì¶”ê°€ í•©ë‹ˆë‹¤."
 
 Section $(APP_NAME) Section1
 
