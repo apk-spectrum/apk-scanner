@@ -1,3 +1,6 @@
 [submodule "core"]
 	path = core
 	url = ../apk-spectrum-core
+[submodule "plugin"]
+	path = plugin
+	url = ../apk-spectrum-plugin
