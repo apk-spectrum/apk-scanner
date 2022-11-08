@@ -79,11 +79,25 @@
                                     <directory>${basedir}</directory>
                                     <includes>
                                         <include>data/</include>
-                                        <include>plugin/</include>
                                     </includes>
                                 </resource>
                                 <resource>
                                     <directory>${basedir}/release</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-plugin</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/plugin</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/plugin/target</directory>
                                 </resource>
                             </resources>
                         </configuration>
