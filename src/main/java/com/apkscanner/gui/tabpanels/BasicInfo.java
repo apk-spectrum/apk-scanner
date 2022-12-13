@@ -526,6 +526,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		if(apkInfoPanel == null) return;
 		String packageSearchers = "";
 		String appLabelSearchers = "";
+		String hashSearchers = "";
 		if(RProp.B.VISIBLE_TO_BASIC.get()) {
 			PackageSearcher[] searchers = PlugInManager.getPackageSearchers();
 			String defaultSearchIcon = RImg.TOOLBAR_SEARCH.getPath();
@@ -542,6 +543,9 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 				case PackageSearcher.SEARCHER_TYPE_APP_NAME:
 					appLabelSearchers += tag;
 					break;
+				case PackageSearcher.SEARCHER_TYPE_PACKAGE_HASH:
+					hashSearchers += tag;
+					break;
 				};
 			}
 		}
@@ -553,6 +557,9 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 			apkInfoPanel.setOuterHTMLById("package-searcher", String.format("<span id=\"package-searcher\">%s</span>", packageSearchers));
 		} else {
 			apkInfoPanel.setOuterHTMLById("package-searcher", "<span id=\"package-searcher\">&nbsp;</span>");
+		}
+      		if(!hashSearchers.isEmpty()) {
+			apkInfoPanel.insertElementLast("file-size", String.format("<span id=\"hash-searcher\">%s</span>", hashSearchers));
 		}
 	}
 
