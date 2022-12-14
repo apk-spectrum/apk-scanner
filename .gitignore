@@ -27,8 +27,6 @@ target/
 /settings.txt
 /APKScanner.deb
 /APKScanner.exe
-/plugin/
-/plugin/plugins.conf
 /security/
 
 # p4merge
