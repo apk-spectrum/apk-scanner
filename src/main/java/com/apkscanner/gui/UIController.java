@@ -77,8 +77,8 @@ public class UIController implements Runnable, InvocationHandler {
 			EventQueue.invokeLater(this);
 			return;
 		}
-		createAndShowGUI();
 		loadPlugIn();
+		createAndShowGUI();
 	}
 
 	private void createAndShowGUI() {
