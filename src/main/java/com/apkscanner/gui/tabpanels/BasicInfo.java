@@ -558,7 +558,7 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		} else {
 			apkInfoPanel.setOuterHTMLById("package-searcher", "<span id=\"package-searcher\">&nbsp;</span>");
 		}
-      		if(!hashSearchers.isEmpty()) {
+		if(!hashSearchers.isEmpty()) {
 			apkInfoPanel.insertElementLast("file-size", String.format("<span id=\"hash-searcher\">%s</span>", hashSearchers));
 		}
 	}
