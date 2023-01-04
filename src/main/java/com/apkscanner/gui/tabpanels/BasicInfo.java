@@ -60,6 +60,7 @@ import com.apkspectrum.data.apkinfo.UsesLibraryInfo;
 import com.apkspectrum.data.apkinfo.UsesSdkInfo;
 import com.apkspectrum.plugin.PackageSearcher;
 import com.apkspectrum.plugin.PlugIn;
+import com.apkspectrum.plugin.PlugInEventAdapter;
 import com.apkspectrum.plugin.PlugInManager;
 import com.apkspectrum.resource._RFile;
 import com.apkspectrum.swing.HtmlEditorPane;
@@ -96,6 +97,13 @@ public class BasicInfo extends AbstractTabbedPanel implements HyperlinkClickList
 		showAbout();
 
 		RProp.VISIBLE_TO_BASIC.addPropertyChangeListener(this);
+
+		PlugInManager.addPlugInEventListener(new PlugInEventAdapter() {
+			@Override
+			public void onPluginLoaded() {
+				setPluginSearcher();
+			}
+		});
 	}
 
 	@Override
