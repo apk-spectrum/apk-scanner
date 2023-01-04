@@ -56,6 +56,9 @@ by ECLIPSE)
 > Run Configuration)  
 > Run > Run As > Java Application(Alt+Shift+X, J) > Select a "Main - com.apkscanner" > OK  
 
+## Show log for debugging  
+> Press <b>F12</b> key on main window focused.
+
 ## Package  
 ### 1. maven package  
 > [Windows]  
