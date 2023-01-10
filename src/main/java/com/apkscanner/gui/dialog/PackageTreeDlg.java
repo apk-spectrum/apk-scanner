@@ -18,8 +18,11 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 
@@ -469,32 +472,33 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 
 	}
 
-	public static void expandOrCollapsePath (JTree tree,TreePath treePath,int level,int currentLevel,boolean expand) {
-		//      System.err.println("Exp level "+currentLevel+", exp="+expand);
-		if (expand && level<=currentLevel && level>0) return;
+	public static void expandOrCollapsePath(JTree tree, TreePath treePath,
+			int level, int curLevel, boolean expand, List<String> exclude) {
+		if (expand && level <= curLevel && level > 0) return;
 
-		TreeNode treeNode = ( TreeNode ) treePath.getLastPathComponent();
+		TreeNode treeNode = (TreeNode) treePath.getLastPathComponent();
 		TreeModel treeModel=tree.getModel();
+
 		int childCnt = treeModel.getChildCount(treeNode);
-		if ( childCnt > 0 ) {
-			for ( int i = 0; i < childCnt; i++  ) {
-				TreeNode n = ( TreeNode )treeModel.getChild(treeNode, i);
-				if(((DefaultMutableTreeNode) n).getUserObject() instanceof PackageInfo) {
-					return;
-				}
-				TreePath path = treePath.pathByAddingChild( n );
-				expandOrCollapsePath(tree,path,level,currentLevel+1,expand);
+		if (childCnt == 0) return;
+
+		for (int i = 0; i < childCnt; i++) {
+			DefaultMutableTreeNode node = null;
+			node = (DefaultMutableTreeNode) treeModel.getChild(treeNode, i);
+			if (node.getUserObject() instanceof PackageInfo) return;
+
+			if (exclude != null && exclude.contains(node.getUserObject())) {
+				continue;
 			}
-			if (!expand && currentLevel<level) return;
-		} else {
-			return;
+
+			TreePath path = treePath.pathByAddingChild(node);
+			expandOrCollapsePath(tree, path, level, curLevel+1, expand, exclude);
 		}
+
 		if (expand) {
-			tree.expandPath( treePath );
-			//         System.err.println("Path expanded at level "+currentLevel+"-"+treePath);
-		} else {
+			tree.expandPath(treePath);
+		} else if (curLevel >= level) {
 			tree.collapsePath(treePath);
-			//         System.err.println("Path collapsed at level "+currentLevel+"-"+treePath);
 		}
 	}
 
@@ -543,18 +547,19 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		}
 	}
 
-	private void setFilter(){
+	private void setFilter() {
 		String filter = textSearchFilter.getText().trim();
 
 		FilteredTreeModel filteredModel = (FilteredTreeModel) tree.getModel();
 		filteredModel.setFilter(filter);
 
-		if(!filter.isEmpty()) {
+		if (!filter.isEmpty()) {
 			expandAll(tree);
 			forSelectionTree(filteredModel);
 		} else {
 			collapseAll(tree);
-			expandOrCollapsePath(tree, new TreePath(top.getPath()),3,0, true);
+			TreePath path = new TreePath(top.getPath());
+			expandOrCollapsePath(tree, path, 3, 0, true, Arrays.asList("apex"));
 		}
 	}
 
@@ -944,17 +949,18 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		});
 	}
 
-	class DeviceHandler extends SwingWorker<Object, Object> implements IDeviceChangeListener, IPackageStateListener {
-		private boolean quit;
-		Queue<IDevice> eventQueue = new LinkedList<IDevice>();
+	private class DevicePackageInfo {
+		IDevice device;
+		PackageInfo[] packages;
+		PackageInfo[] displayedPackages;
+		PackageInfo[] recentPackages;
+		PackageInfo[] runningPackages;
+	}
 
-		class DevicePackageInfo {
-			IDevice device;
-			PackageInfo[] packages;
-			PackageInfo[] displayedPackages;
-			PackageInfo[] recentPackages;
-			PackageInfo[] runningPackages;
-		}
+	private class DeviceHandler extends SwingWorker<Object, DevicePackageInfo>
+			implements IDeviceChangeListener, IPackageStateListener {
+		private volatile boolean quit;
+		Queue<IDevice> devQueue = new LinkedList<IDevice>();
 
 		public DeviceHandler() {
 			AdbServerMonitor.startServerAndCreateBridgeAsync();
@@ -964,164 +970,171 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		@Override
 		protected Object doInBackground() throws Exception {
 			boolean isWakeUp = false;
-			while(!quit) {
-				IDevice device = null;
-				synchronized (eventQueue) {
-					if(eventQueue.isEmpty()) {
+			while (!quit) {
+				IDevice dev = null;
+				synchronized (devQueue) {
+					if (devQueue.isEmpty()) {
 						Log.v("Event queue is empty");
 						setRefreshBtnVisible(true);
-						eventQueue.wait();
-						if(quit) break;
+						devQueue.wait();
+						if (quit) break;
 						isWakeUp = true;
 					}
-					device = eventQueue.poll();
-					if(device != null && isWakeUp) {
+					dev = devQueue.poll();
+					if (dev != null && isWakeUp) {
 						isWakeUp = false;
 						setRefreshBtnVisible(false);
 					}
 				}
+				if (dev == null) continue;
 
-				if(device != null) {
-					Log.v("start scanning device " + device);
+				Log.v("start scanning device " + dev);
 
-					DevicePackageInfo devPack = new DevicePackageInfo();
+				DevicePackageInfo devPack = new DevicePackageInfo();
 
-					devPack.device = device;
-					devPack.packages = PackageManager.getPackageList(device);
+				devPack.device = dev;
+				devPack.packages = PackageManager.getPackageList(dev);
 
-					if(devPack.packages != null && devPack.packages.length > 0) {
-						String[] pkgs = PackageManager.getRecentlyActivityPackages(device);
-						ArrayList<PackageInfo> list = new ArrayList<PackageInfo>(pkgs.length);
-						for(String name: pkgs) {
-							for(PackageInfo obj: devPack.packages) {
-								if(obj.packageName.equals(name)) {
-									list.add(obj);
-								}
+				if(devPack.packages == null || devPack.packages.length == 0) {
+					continue;
+				}
+
+				List<String> recently = PackageManager.getRecentlyActivityPackages(dev);
+				List<PackageInfo> recentlyPackages = new ArrayList<>(recently.size());
+
+				List<String> running = PackageManager.getCurrentlyRunningPackages(dev);
+				List<PackageInfo> runningPackages = new ArrayList<>(running.size());
+
+				List<WindowStateInfo> winStates = PackageManager.getCurrentlyDisplayedPackages(dev);
+				List<PackageInfo> displayedPackages = new ArrayList<>(winStates.size());
+
+				for (PackageInfo obj: devPack.packages) {
+					if (recently.contains(obj.packageName)) {
+						recentlyPackages.add(obj);
+					}
+					if (running.contains(obj.packageName)) {
+						runningPackages.add(obj);
+					}
+					for (WindowStateInfo info: winStates) {
+						if (obj.packageName.equals(info.packageName)
+								&& !displayedPackages.contains(obj)) {
+							if (info.isCurrentFocus) {
+								displayedPackages.add(0, obj);
+							} else {
+								displayedPackages.add(obj);
 							}
 						}
-						devPack.recentPackages = list.toArray(new PackageInfo[list.size()]);
-
-						pkgs = PackageManager.getCurrentlyRunningPackages(device);
-						list = new ArrayList<PackageInfo>(pkgs.length);
-						for(String name: pkgs) {
-							for(PackageInfo obj: devPack.packages) {
-								if(obj.packageName.equals(name)) {
-									list.add(obj);
-								}
-							}
-						}
-						devPack.runningPackages = list.toArray(new PackageInfo[list.size()]);
-
-						WindowStateInfo[] winStates = PackageManager.getCurrentlyDisplayedPackages(device);
-						list = new ArrayList<PackageInfo>(pkgs.length);
-						for(WindowStateInfo info: winStates) {
-							for(PackageInfo obj: devPack.packages) {
-								if(obj.packageName.equals(info.packageName) && !list.contains(obj)) {
-									if(info.isCurrentFocus) {
-										list.add(0, obj);
-									} else {
-										list.add(obj);
-									}
-								}
-							}
-						}
-						devPack.displayedPackages = list.toArray(new PackageInfo[list.size()]);
-
-						publish(devPack);
 					}
 				}
+
+				devPack.recentPackages = recentlyPackages.toArray(
+						new PackageInfo[recentlyPackages.size()]);
+				devPack.runningPackages = runningPackages.toArray(
+						new PackageInfo[runningPackages.size()]);
+				devPack.displayedPackages = displayedPackages.toArray(
+						new PackageInfo[displayedPackages.size()]);
+
+				publish(devPack);
 			}
 			Log.v("doInBackground() Quit");
 			return null;
 		}
 
 		@Override
-		protected void process(List<Object> chunks){
-			for(Object param: chunks) {
-				if(param instanceof DevicePackageInfo) {
-					DevicePackageInfo devPack = (DevicePackageInfo)param;
-					IDevice dev = devPack.device;
+		protected void process(List<DevicePackageInfo> chunks) {
+			chunks.stream().filter(e -> e.device.isOnline())
+				  .forEach(this::addPackageNode);
+		}
 
-					if(dev.isOnline()) {
-						DefaultMutableTreeNode devNode = getDeviceNode(dev);
-						DefaultMutableTreeNode priv_app = new SortedMutableTreeNode("priv-app");
-						DefaultMutableTreeNode systemapp = new SortedMutableTreeNode("app");
-						DefaultMutableTreeNode framework_app = new DefaultMutableTreeNode("framework");
-						DefaultMutableTreeNode system = new DefaultMutableTreeNode("system");
-						DefaultMutableTreeNode dataapp = new SortedMutableTreeNode("app");
-						DefaultMutableTreeNode data = new DefaultMutableTreeNode("data");
-						DefaultMutableTreeNode displayed = new DefaultMutableTreeNode("*" + RStr.TREE_NODE_DISPLAYED.get());
-						DefaultMutableTreeNode recently = new DefaultMutableTreeNode("*" + RStr.TREE_NODE_RECENTLY.get());
-						DefaultMutableTreeNode running = new DefaultMutableTreeNode("*" + RStr.TREE_NODE_RUNNING_PROC.get());
+		public void addPackageNode(DevicePackageInfo devPack) {
+			DefaultMutableTreeNode devNode = getDeviceNode(devPack.device);
+			devNode.removeAllChildren();
 
-						data.add(dataapp);
+			Map<String, DefaultMutableTreeNode> cache = new HashMap<>();
+			for (PackageInfo info: devPack.packages) {
+				String apkPath = info.getApkPath();
+				if (apkPath == null || apkPath.isEmpty()) continue;
+				apkPath = apkPath.substring(0, apkPath.lastIndexOf("/"));
 
-						for(PackageInfo info: devPack.packages) {
-							String apkPath = info.getApkPath();
-							if(apkPath == null || apkPath.isEmpty()) {
-								continue;
-							}
-
-							DefaultMutableTreeNode temp = new DefaultMutableTreeNode(info);
-
-							if(apkPath.startsWith("/system/priv-app/")) {
-								priv_app.add(temp);
-							} else if(apkPath.startsWith("/system/app/")) {
-								systemapp.add(temp);
-							} else if(apkPath.startsWith("/system/framework/")) {
-								framework_app.add(temp);
-
-								FrameworkTableObject tableObject = new FrameworkTableObject(false, dev.getProperty(IDevice.PROP_DEVICE_MODEL), dev.getSerialNumber(), apkPath);
-
-								if(apkPath.startsWith("/system/framework/framework-res.apk") || apkPath.startsWith("/system/framework/twframework-res.apk")) {
-									tableObject.buse = true;
-								}
-
-								tableListArray.add(tableObject);
-							} else if(apkPath.startsWith("/data/app/")) {
-								dataapp.add(temp);
+				DefaultMutableTreeNode node = new DefaultMutableTreeNode(info);
+				DefaultMutableTreeNode parent = cache.get(apkPath);
+				if (parent == null) {
+					parent = devNode;
+					for (String dir: apkPath.split("/")) {
+						if (dir.isEmpty()) continue;
+						DefaultMutableTreeNode dirNode = null;
+						for(int i = 0; i < parent.getChildCount(); i++) {
+							DefaultMutableTreeNode tmp = null;
+							tmp = (DefaultMutableTreeNode) parent.getChildAt(i);
+							if (dir.equals(tmp.getUserObject())) {
+								dirNode = tmp;
+								break;
 							}
 						}
-
-						if(priv_app.getChildCount() > 0) system.add(priv_app);
-						if(systemapp.getChildCount() > 0) system.add(systemapp);
-						if(framework_app.getChildCount() > 0) system.add(framework_app);
-
-						for(PackageInfo obj: devPack.displayedPackages) {
-							displayed.add(new DefaultMutableTreeNode(obj));
+						if (dirNode == null) {
+							dirNode = new DefaultMutableTreeNode(dir);
+							parent.add(dirNode);
 						}
-
-						for(PackageInfo obj: devPack.recentPackages) {
-							recently.add(new DefaultMutableTreeNode(obj));
-						}
-
-						for(PackageInfo obj: devPack.runningPackages) {
-							running.add(new DefaultMutableTreeNode(obj));
-						}
-
-						devNode.removeAllChildren();
-						if(displayed.getChildCount() > 0) devNode.add(displayed);
-						if(recently.getChildCount() > 0) devNode.add(recently);
-						if(running.getChildCount() > 0) devNode.add(running);
-						if(system.getChildCount() > 0) devNode.add(system);
-						if(dataapp.getChildCount() > 0) devNode.add(data);
-
-						//expandOrCollapsePath(tree, new TreePath(devNode.getPath()),3,0, true);
-						tree.updateUI();
-						setFilter();
-
-						table.setModel(new SimpleCheckTableModel(columnNames, tableListArray));
-						table.setPreferredScrollableViewportSize(new Dimension(0,80));
-						setJTableColumnsWidth(table,550,10,120,410);
+						parent = dirNode;
 					}
+					cache.put(apkPath, parent);
+				}
+				parent.add(node);
+
+				if (apkPath.equals("/system/framework")) {
+					apkPath = info.getApkPath();
+					FrameworkTableObject tableObject = new FrameworkTableObject(
+						false,
+						devPack.device.getProperty(IDevice.PROP_DEVICE_MODEL),
+						devPack.device.getSerialNumber(),
+						apkPath
+					);
+
+					if (apkPath.endsWith("framework-res.apk")) {
+						tableObject.buse = true;
+					}
+
+					tableListArray.add(tableObject);
 				}
 			}
+
+			DefaultMutableTreeNode node = null;
+			if (devPack.displayedPackages.length > 0) {
+				node = new DefaultMutableTreeNode("*" + RStr.TREE_NODE_DISPLAYED.get());
+				for (PackageInfo info: devPack.displayedPackages) {
+					node.add(new DefaultMutableTreeNode(info));
+				}
+				devNode.add(node);
+			}
+
+			if (devPack.recentPackages.length > 0) {
+				node = new DefaultMutableTreeNode("*" + RStr.TREE_NODE_RECENTLY.get());
+				for (PackageInfo obj: devPack.recentPackages) {
+					node.add(new DefaultMutableTreeNode(obj));
+				}
+				devNode.add(node);
+			}
+
+			if (devPack.runningPackages.length > 0) {
+				node = new DefaultMutableTreeNode("*" + RStr.TREE_NODE_RUNNING_PROC.get());
+				for (PackageInfo info: devPack.runningPackages) {
+					node.add(new DefaultMutableTreeNode(info));
+				}
+				devNode.add(node);
+			}
+
+			tree.updateUI();
+			setFilter();
+
+			table.setModel(new SimpleCheckTableModel(columnNames, tableListArray));
+			table.setPreferredScrollableViewportSize(new Dimension(0, 80));
+			setJTableColumnsWidth(table, 550, 10, 120, 410);
 		}
 
 		public void quit() {
 			quit = true;
-			synchronized (eventQueue) {
-				eventQueue.notifyAll();
+			synchronized (devQueue) {
+				devQueue.notifyAll();
 			}
 			unregisterEventListeners();
 		}
@@ -1151,16 +1164,16 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 			DefaultMutableTreeNode node = getDeviceNode(device);
 			if(node == null) {
 				removeNoDeviceNodes();
-				node = new DefaultMutableTreeNode(device);
+				node = new SortedMutableTreeNode(device);
 			}
 			node.removeAllChildren();
 			if(device.isOnline()) {
 				node.add(new DefaultMutableTreeNode("#" + RStr.LABEL_LOADING.get()));
 
-				synchronized (eventQueue) {
-					if(!eventQueue.contains(device)) {
-						eventQueue.add(device);
-						eventQueue.notifyAll();
+				synchronized (devQueue) {
+					if(!devQueue.contains(device)) {
+						devQueue.add(device);
+						devQueue.notifyAll();
 					} else {
 						Log.v("Added device to event queue : " + device.getSerialNumber());
 					}
@@ -1184,7 +1197,8 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 
 		@Override
 		public void deviceChanged(final IDevice device, int changeMask) {
-			Log.v("deviceChanged() " + device.getSerialNumber() + ", " + device.getState() + ", changeMask " + changeMask);
+			Log.v("deviceChanged() " + device.getSerialNumber()
+					+ ", " + device.getState() + ", changeMask " + changeMask);
 			if((changeMask & IDevice.CHANGE_STATE) != 0 && device.isOnline()) {
 				EventQueue.invokeLater(new Runnable() {
 					@Override
@@ -1198,7 +1212,8 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 
 		@Override
 		public void deviceConnected(final IDevice device) {
-			Log.v("deviceConnected() " + device.getSerialNumber() + ", " + device.getState());
+			Log.v("deviceConnected() " + device.getSerialNumber()
+					 + ", " + device.getState());
 
 			EventQueue.invokeLater(new Runnable() {
 				@Override
@@ -1213,9 +1228,9 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		public void deviceDisconnected(final IDevice device) {
 			Log.v("deviceDisconnected() " + device.getSerialNumber() + ", " + device.getState());
 
-			synchronized (eventQueue) {
-				if(eventQueue.contains(device)) {
-					eventQueue.remove(device);
+			synchronized (devQueue) {
+				if(devQueue.contains(device)) {
+					devQueue.remove(device);
 				}
 			}
 
@@ -1226,7 +1241,8 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 					if(node != null) {
 						top.remove(node);
 						if(top.getChildCount() == 0) {
-							top.add(new DefaultMutableTreeNode(RStr.MSG_DEVICE_NOT_FOUND.get().replace("\n", " ")));
+							String msg = RStr.MSG_DEVICE_NOT_FOUND.get().replace("\n", " ");
+							top.add(new DefaultMutableTreeNode(msg));
 						}
 						tree.updateUI();
 					}
@@ -1235,19 +1251,13 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 		}
 
 		@Override
-		public void packageInstalled(PackageInfo packageInfo) {
-
-		}
+		public void packageInstalled(PackageInfo packageInfo) { }
 
 		@Override
-		public void packageUninstalled(PackageInfo packageInfo) {
-
-		}
+		public void packageUninstalled(PackageInfo packageInfo) { }
 
 		@Override
-		public void enableStateChanged(PackageInfo packageInfo) {
-
-		}
+		public void enableStateChanged(PackageInfo packageInfo) { }
 	}
 
 	class WindowEventHandler extends WindowAdapter {
