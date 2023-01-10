@@ -1072,7 +1072,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 							}
 						}
 						if (dirNode == null) {
-							dirNode = new DefaultMutableTreeNode(dir);
+							dirNode = new SortedMutableTreeNode(dir);
 							parent.add(dirNode);
 						}
 						parent = dirNode;
@@ -1100,7 +1100,7 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 
 			DefaultMutableTreeNode node = null;
 			if (devPack.displayedPackages.length > 0) {
-				node = new DefaultMutableTreeNode("*" + RStr.TREE_NODE_DISPLAYED.get());
+				node = new SortedMutableTreeNode("*" + RStr.TREE_NODE_DISPLAYED.get());
 				for (PackageInfo info: devPack.displayedPackages) {
 					node.add(new DefaultMutableTreeNode(info));
 				}
@@ -1108,15 +1108,15 @@ public class PackageTreeDlg extends JDialog implements TreeSelectionListener, Ac
 			}
 
 			if (devPack.recentPackages.length > 0) {
-				node = new DefaultMutableTreeNode("*" + RStr.TREE_NODE_RECENTLY.get());
-				for (PackageInfo obj: devPack.recentPackages) {
-					node.add(new DefaultMutableTreeNode(obj));
+				node = new SortedMutableTreeNode("*" + RStr.TREE_NODE_RECENTLY.get());
+				for (PackageInfo info: devPack.recentPackages) {
+					node.add(new DefaultMutableTreeNode(info));
 				}
 				devNode.add(node);
 			}
 
 			if (devPack.runningPackages.length > 0) {
-				node = new DefaultMutableTreeNode("*" + RStr.TREE_NODE_RUNNING_PROC.get());
+				node = new SortedMutableTreeNode("*" + RStr.TREE_NODE_RUNNING_PROC.get());
 				for (PackageInfo info: devPack.runningPackages) {
 					node.add(new DefaultMutableTreeNode(info));
 				}
