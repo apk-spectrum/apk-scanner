@@ -1,4 +1,4 @@
-//necessary imports
+// necessary imports
 package com.apkscanner.test;
 
 import java.awt.Color;
@@ -26,44 +26,45 @@ import javax.swing.JPanel;
 import javax.swing.filechooser.FileSystemView;
 
 public class BufferedImageMouseDrag extends JFrame {
-	private static final long serialVersionUID = 7175463633946262949L;
+    private static final long serialVersionUID = 7175463633946262949L;
 
-	DisplayCanvas canvas;
+    DisplayCanvas canvas;
 
-	public BufferedImageMouseDrag() throws IOException {
-		super();
-		Container container = getContentPane();
+    public BufferedImageMouseDrag() throws IOException {
+        super();
+        Container container = getContentPane();
 
-		canvas = new DisplayCanvas();
-		container.add(canvas);
+        canvas = new DisplayCanvas();
+        container.add(canvas);
 
-		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				System.exit(0);
-			}
-		});
-		setSize(450, 400);
-		setVisible(true);
-	}
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+        });
+        setSize(450, 400);
+        setVisible(true);
+    }
 
-	public static void main(String arg[]) throws IOException {
-		new BufferedImageMouseDrag();
-	}
+    public static void main(String arg[]) throws IOException {
+        new BufferedImageMouseDrag();
+    }
 }
 
-class DisplayCanvas extends JPanel implements MouseListener{
-	private static final long serialVersionUID = 7625164968963236657L;
 
-	int x, y;
-	int oldx,oldy;
-	private float scale = 1;
-	BufferedImage bi;
+class DisplayCanvas extends JPanel implements MouseListener {
+    private static final long serialVersionUID = 7625164968963236657L;
 
-	DisplayCanvas() throws IOException {
-		setBackground(Color.white);
-		setSize(450, 400);
-		addMouseMotionListener(new MouseMotionHandler());
-		addMouseListener(this);
+    int x, y;
+    int oldx, oldy;
+    private float scale = 1;
+    BufferedImage bi;
+
+    DisplayCanvas() throws IOException {
+        setBackground(Color.white);
+        setSize(450, 400);
+        addMouseMotionListener(new MouseMotionHandler());
+        addMouseListener(this);
         addMouseWheelListener(new MouseAdapter() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
@@ -75,86 +76,82 @@ class DisplayCanvas extends JPanel implements MouseListener{
 
         });
 
-
-
-
-		Icon icon;
-		File file = File.createTempFile("icon", "html");
+        Icon icon;
+        File file = File.createTempFile("icon", "html");
         FileSystemView view = FileSystemView.getFileSystemView();
         icon = view.getSystemIcon(file);
 
+        Image image = ((ImageIcon) icon).getImage();
 
+        MediaTracker mt = new MediaTracker(this);
+        mt.addImage(image, 1);
+        try {
+            mt.waitForAll();
+        } catch (Exception e) {
+            System.out.println("Exception while loading image.");
+        }
 
-        Image image = ((ImageIcon)icon).getImage();
+        if (image.getWidth(this) == -1) {
+            System.out.println("no gif file");
+            System.exit(0);
+        }
 
-		MediaTracker mt = new MediaTracker(this);
-		mt.addImage(image, 1);
-		try {
-			mt.waitForAll();
-		} catch (Exception e) {
-			System.out.println("Exception while loading image.");
-		}
+        bi = new BufferedImage(image.getWidth(this), image.getHeight(this),
+                BufferedImage.TYPE_INT_ARGB);
+        Graphics2D big = bi.createGraphics();
+        big.drawImage(image, 0, 0, this);
+    }
 
-		if (image.getWidth(this) == -1) {
-			System.out.println("no gif file");
-			System.exit(0);
-		}
+    public void setImage(ImageIcon img) {
+        Image image = img.getImage();
 
-		bi = new BufferedImage(image.getWidth(this), image.getHeight(this), BufferedImage.TYPE_INT_ARGB);
-		Graphics2D big = bi.createGraphics();
-		big.drawImage(image, 0, 0, this);
-	}
+        bi = new BufferedImage(image.getWidth(this), image.getHeight(this),
+                BufferedImage.TYPE_INT_ARGB);
+        Graphics2D big = bi.createGraphics();
+        big.drawImage(image, 0, 0, this);
+    }
 
-	public void setImage(ImageIcon img) {
-		Image image = img.getImage();
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2D = (Graphics2D) g;
 
-		bi = new BufferedImage(image.getWidth(this), image.getHeight(this), BufferedImage.TYPE_INT_ARGB);
-		Graphics2D big = bi.createGraphics();
-		big.drawImage(image, 0, 0, this);
-	}
-
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		Graphics2D g2D = (Graphics2D) g;
-
-		AffineTransform at = new AffineTransform();
+        AffineTransform at = new AffineTransform();
         at.scale(scale, scale);
         at.translate(x, y);
 
-		g2D.drawImage(bi, at, this);
-	}
+        g2D.drawImage(bi, at, this);
+    }
 
-	class MouseMotionHandler extends MouseMotionAdapter {
-		public void mouseDragged(MouseEvent e) {
-			x = e.getX()- oldx;
-			y = e.getY()- oldy;
-			repaint();
-		}
-	}
+    class MouseMotionHandler extends MouseMotionAdapter {
+        public void mouseDragged(MouseEvent e) {
+            x = e.getX() - oldx;
+            y = e.getY() - oldy;
+            repaint();
+        }
+    }
 
-	@Override
-	public void mouseClicked(MouseEvent arg0) {
-	}
+    @Override
+    public void mouseClicked(MouseEvent arg0) {}
 
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
+    @Override
+    public void mouseEntered(MouseEvent arg0) {
 
-	}
+    }
 
-	@Override
-	public void mouseExited(MouseEvent arg0) {
+    @Override
+    public void mouseExited(MouseEvent arg0) {
 
-	}
+    }
 
-	@Override
-	public void mousePressed(MouseEvent arg0) {
-		oldx = arg0.getX();
-		oldy = arg0.getY();
+    @Override
+    public void mousePressed(MouseEvent arg0) {
+        oldx = arg0.getX();
+        oldy = arg0.getY();
 
-	}
+    }
 
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
+    @Override
+    public void mouseReleased(MouseEvent arg0) {
 
-	}
+    }
 }

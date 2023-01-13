@@ -26,80 +26,80 @@ import com.apkscanner.resource.RStr;
 import com.apkspectrum.util.Log;
 
 public class EasyBordPanel extends JPanel implements ActionListener, ChangeListener {
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2246253920944782832L;
 
-	EasyButton btnmini, btnexit;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2246253920944782832L;
 
-	int pX, pY;
-	JFrame frame;
-	JPanel windowpanel;
-	JLabel maintitle;
-	CustomSlider alphaslider;
-	float opacity;
+    EasyButton btnmini, btnexit;
 
-	static private Color bordercolor = new Color(230, 230, 230);
-	static private Color bordertitlecolor = new Color(119, 119, 119);
+    int pX, pY;
+    JFrame frame;
+    JPanel windowpanel;
+    JLabel maintitle;
+    CustomSlider alphaslider;
+    float opacity;
 
-	static private String CMD_WINDOW_EXIT = "window_exit";
-	static private String CMD_WINDOW_MINI = "window_mini";
+    static private Color bordercolor = new Color(230, 230, 230);
+    static private Color bordertitlecolor = new Color(119, 119, 119);
 
-	public EasyBordPanel(JFrame mainframe) {
-		Log.d("start EasyBordPanel ");
-		setLayout(new BorderLayout());
-		this.setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 3));
+    static private String CMD_WINDOW_EXIT = "window_exit";
+    static private String CMD_WINDOW_MINI = "window_mini";
 
-		this.frame = mainframe;
+    public EasyBordPanel(JFrame mainframe) {
+        Log.d("start EasyBordPanel ");
+        setLayout(new BorderLayout());
+        this.setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 3));
 
-		windowpanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		maintitle = new JLabel(RStr.APP_NAME.get(), SwingConstants.CENTER);
-		maintitle.setOpaque(false);
-		maintitle.setFont(new Font(getFont().getName(), Font.BOLD, 15));
-		maintitle.setForeground(bordertitlecolor);
-		windowpanel.setOpaque(false);
+        this.frame = mainframe;
 
-		alphaslider = new CustomSlider();
-		alphaslider.addChangeListener(this);
-		opacity = 1.0f;
-		alphaslider.setValue(100);
-		// Turn on labels at major tick marks.
+        windowpanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        maintitle = new JLabel(RStr.APP_NAME.get(), SwingConstants.CENTER);
+        maintitle.setOpaque(false);
+        maintitle.setFont(new Font(getFont().getName(), Font.BOLD, 15));
+        maintitle.setForeground(bordertitlecolor);
+        windowpanel.setOpaque(false);
 
-		((FlowLayout) windowpanel.getLayout()).setHgap(1);
-		ImageIcon miniicon = new ImageIcon(RImg.EASY_WINDOW_MINI.getImage(17, 17));
-		btnmini = new EasyButton(miniicon);
-		btnmini.setActionCommand(CMD_WINDOW_MINI);
+        alphaslider = new CustomSlider();
+        alphaslider.addChangeListener(this);
+        opacity = 1.0f;
+        alphaslider.setValue(100);
+        // Turn on labels at major tick marks.
 
-		ImageIcon exiticon = new ImageIcon(RImg.EASY_WINDOW_EXIT.getImage(17, 17));
-		btnexit = new EasyButton(exiticon);
-		btnexit.setActionCommand(CMD_WINDOW_EXIT);
-		// stackLabel.setIcon(icon);
+        ((FlowLayout) windowpanel.getLayout()).setHgap(1);
+        ImageIcon miniicon = new ImageIcon(RImg.EASY_WINDOW_MINI.getImage(17, 17));
+        btnmini = new EasyButton(miniicon);
+        btnmini.setActionCommand(CMD_WINDOW_MINI);
 
-		btnmini.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-		btnexit.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-		// stackLabel.setBorderPainted( false );
-		// stackLabel.setContentAreaFilled( false )
-		// stackLabel.setFocusPainted(false);
-		// stackLabel.addActionListener(this);
-		// stackLabel.setSelected(true);
-		btnmini.setContentAreaFilled(false);
-		btnexit.setContentAreaFilled(false);
-		// stackLabel.setRolloverIcon(new
-		// ImageIcon(Resource.IMG_APK_FILE_ICON.getImageIcon(15,15).getImage()));
-		setBackground(bordercolor);
+        ImageIcon exiticon = new ImageIcon(RImg.EASY_WINDOW_EXIT.getImage(17, 17));
+        btnexit = new EasyButton(exiticon);
+        btnexit.setActionCommand(CMD_WINDOW_EXIT);
+        // stackLabel.setIcon(icon);
 
-		windowpanel.add(alphaslider);
-		windowpanel.add(btnmini);
-		windowpanel.add(btnexit);
+        btnmini.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        btnexit.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        // stackLabel.setBorderPainted( false );
+        // stackLabel.setContentAreaFilled( false )
+        // stackLabel.setFocusPainted(false);
+        // stackLabel.addActionListener(this);
+        // stackLabel.setSelected(true);
+        btnmini.setContentAreaFilled(false);
+        btnexit.setContentAreaFilled(false);
+        // stackLabel.setRolloverIcon(new
+        // ImageIcon(Resource.IMG_APK_FILE_ICON.getImageIcon(15,15).getImage()));
+        setBackground(bordercolor);
 
-		add(windowpanel, BorderLayout.EAST);
-		add(maintitle, BorderLayout.CENTER);
-		// add(icon, BorderLayout.WEST);
+        windowpanel.add(alphaslider);
+        windowpanel.add(btnmini);
+        windowpanel.add(btnexit);
 
-		btnmini.addActionListener(this);
-		btnexit.addActionListener(this);
+        add(windowpanel, BorderLayout.EAST);
+        add(maintitle, BorderLayout.CENTER);
+        // add(icon, BorderLayout.WEST);
+
+        btnmini.addActionListener(this);
+        btnexit.addActionListener(this);
 
 //        addMouseListener(new MouseAdapter() {
 //            public void mousePressed(MouseEvent me) {
@@ -126,62 +126,63 @@ public class EasyBordPanel extends JPanel implements ActionListener, ChangeListe
 //            }
 //        });
 
-		MouseAdapter ma = new MouseAdapter() {
-			int lastX, lastY;
+        MouseAdapter ma = new MouseAdapter() {
+            int lastX, lastY;
 
-			@Override
-			public void mousePressed(MouseEvent e) {
-				lastX = e.getXOnScreen();
-				lastY = e.getYOnScreen();
-			}
+            @Override
+            public void mousePressed(MouseEvent e) {
+                lastX = e.getXOnScreen();
+                lastY = e.getYOnScreen();
+            }
 
-			@Override
-			public void mouseDragged(MouseEvent e) {
-				int x = e.getXOnScreen();
-				int y = e.getYOnScreen();
-				// Log.d("x =" + x + " aaaaa : " + (frame.getLocation().x + x - lastX));
-				// Move frame by the mouse delta
-				frame.setLocation(frame.getLocation().x + x - lastX, frame.getLocation().y + y - lastY);
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                int x = e.getXOnScreen();
+                int y = e.getYOnScreen();
+                // Log.d("x =" + x + " aaaaa : " + (frame.getLocation().x + x - lastX));
+                // Move frame by the mouse delta
+                frame.setLocation(frame.getLocation().x + x - lastX,
+                        frame.getLocation().y + y - lastY);
 
-				// frame.setLocation(1500,500);
+                // frame.setLocation(1500,500);
 
-				lastX = x;
-				lastY = y;
-			}
-		};
-		addMouseListener(ma);
-		addMouseMotionListener(ma);
-		Log.d("End EasyBordPanel ");
-	}
+                lastX = x;
+                lastY = y;
+            }
+        };
+        addMouseListener(ma);
+        addMouseMotionListener(ma);
+        Log.d("End EasyBordPanel ");
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand() == CMD_WINDOW_EXIT) {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getActionCommand() == CMD_WINDOW_EXIT) {
 
-			// System.exit(0);
-			frame.dispose();
-		} else if (e.getActionCommand() == CMD_WINDOW_MINI) {
-			frame.setState(JFrame.ICONIFIED);
-		}
-	}
+            // System.exit(0);
+            frame.dispose();
+        } else if (e.getActionCommand() == CMD_WINDOW_MINI) {
+            frame.setState(JFrame.ICONIFIED);
+        }
+    }
 
-	public void setWindowTitle(String str) {
-		this.maintitle.setText(str);
-	}
+    public void setWindowTitle(String str) {
+        this.maintitle.setText(str);
+    }
 
-	public void clear() {
-		this.maintitle.setText("");
-	}
+    public void clear() {
+        this.maintitle.setText("");
+    }
 
-	@Override
-	public void stateChanged(ChangeEvent e) {
-		JSlider source = (JSlider) e.getSource();
-		int fps = (int) source.getValue();
-		opacity = (0.1f + ((float) fps / (float) 115));
-		try {
-			frame.setOpacity(opacity);
-		} catch (java.awt.IllegalComponentStateException ea) {
-			// ea.printStackTrace();
-		}
-	}
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        JSlider source = (JSlider) e.getSource();
+        int fps = (int) source.getValue();
+        opacity = (0.1f + ((float) fps / (float) 115));
+        try {
+            frame.setOpacity(opacity);
+        } catch (java.awt.IllegalComponentStateException ea) {
+            // ea.printStackTrace();
+        }
+    }
 }

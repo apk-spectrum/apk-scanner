@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class CharsetTest {
-	@SuppressWarnings("rawtypes")
-	public void printCharsetList() {
+    @SuppressWarnings("rawtypes")
+    public void printCharsetList() {
 
         Map map = Charset.availableCharsets();
         Set set = map.entrySet();
@@ -24,36 +24,32 @@ public class CharsetTest {
                 System.out.println("\t" + it2.next());
             }
         }
-		
-		Map availcs = Charset.availableCharsets();
-		Set keys = availcs.keySet();
-		for(Iterator iter = keys.iterator();iter.hasNext();)
-		{
-			String key = (String) iter.next();
-			System.out.println(key);
-		}
-		
-		FileWriter filewriter;
-		try {
-			filewriter = new FileWriter("out");
-			String encname = filewriter.getEncoding();
-			filewriter.close();
-			System.out.println("default charset is: " + encname);
-			
-			Charset charset1 = Charset.forName("ms949");
-			Charset charset2 = Charset.forName("x-windows-949");
-			System.out.println("charset1 : " + charset1);
-			if(charset1.equals(charset2))
-			{
-				System.out.println("Cp1252/windows-1252 equal");
-			}
-			else 
-			{
-				System.out.println("Cp1252/windows-1252 unequal");
-			}
-		} catch (IOException e2) {
-			e2.printStackTrace();
-		}
 
-	}
+        Map availcs = Charset.availableCharsets();
+        Set keys = availcs.keySet();
+        for (Iterator iter = keys.iterator(); iter.hasNext();) {
+            String key = (String) iter.next();
+            System.out.println(key);
+        }
+
+        FileWriter filewriter;
+        try {
+            filewriter = new FileWriter("out");
+            String encname = filewriter.getEncoding();
+            filewriter.close();
+            System.out.println("default charset is: " + encname);
+
+            Charset charset1 = Charset.forName("ms949");
+            Charset charset2 = Charset.forName("x-windows-949");
+            System.out.println("charset1 : " + charset1);
+            if (charset1.equals(charset2)) {
+                System.out.println("Cp1252/windows-1252 equal");
+            } else {
+                System.out.println("Cp1252/windows-1252 unequal");
+            }
+        } catch (IOException e2) {
+            e2.printStackTrace();
+        }
+
+    }
 }

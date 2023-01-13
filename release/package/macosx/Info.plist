@@ -48,7 +48,7 @@
     <key>LSItemContentTypes</key>
     <array>
      <string>vnd.android.package</string>
-	 <string>vnd.android.pony.express.package</string>
+     <string>vnd.android.pony.express.package</string>
     </array>
    </dict>
   </array>

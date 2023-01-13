@@ -8,29 +8,30 @@ import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 
-public class ShowExplorerFolderAction extends AbstractApkScannerAction
-{
-	private static final long serialVersionUID = 7631745631480656014L;
+public class ShowExplorerFolderAction extends AbstractApkScannerAction {
+    private static final long serialVersionUID = 7631745631480656014L;
 
-	public static final String ACTION_COMMAND = "ACT_CMD_SHOW_EXPLORER_FOLDER";
+    public static final String ACTION_COMMAND = "ACT_CMD_SHOW_EXPLORER_FOLDER";
 
-	public ShowExplorerFolderAction(ApkActionEventHandler h) { super(h); }
+    public ShowExplorerFolderAction(ApkActionEventHandler h) {
+        super(h);
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		evtShowExplorerFolder();
-	}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        evtShowExplorerFolder();
+    }
 
-	private void evtShowExplorerFolder() {
-		ApkScanner scanner = getApkScanner();
-		if(scanner == null) return;
+    private void evtShowExplorerFolder() {
+        ApkScanner scanner = getApkScanner();
+        if (scanner == null) return;
 
-		ApkInfo apkInfo = scanner.getApkInfo();
-		if(apkInfo == null) {
-			Log.e("evtShowExplorer() apkInfo is null");
-			return;
-		}
+        ApkInfo apkInfo = scanner.getApkInfo();
+        if (apkInfo == null) {
+            Log.e("evtShowExplorer() apkInfo is null");
+            return;
+        }
 
-		SystemUtil.openFileExplorer(apkInfo.filePath);
-	}
+        SystemUtil.openFileExplorer(apkInfo.filePath);
+    }
 }

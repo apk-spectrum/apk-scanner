@@ -12,7 +12,8 @@ public class FrameComponent extends JComponent {
 
     @Override
     public boolean contains(int x, int y) {
-        return x < insets.left || y < insets.top || getHeight() - y < insets.bottom || getWidth() - x < insets.right;
+        return x < insets.left || y < insets.top || getHeight() - y < insets.bottom
+                || getWidth() - x < insets.right;
     }
 
     public FrameComponent(Insets insets) {

@@ -40,8 +40,7 @@ public class ColumnGroup {
     }
 
     /**
-     * @param column
-     *            TableColumn
+     * @param column TableColumn
      */
     public List<ColumnGroup> getColumnGroups(TableColumn column) {
         if (!contains(column)) {
@@ -87,8 +86,10 @@ public class ColumnGroup {
         if (renderer == null) {
             renderer = table.getTableHeader().getDefaultRenderer();
         }
-        Component comp = renderer.getTableCellRendererComponent(table, getHeaderValue() == null || getHeaderValue().trim().isEmpty() ? " "
-                : getHeaderValue(), false, false, -1, -1);
+        Component comp = renderer.getTableCellRendererComponent(table,
+                getHeaderValue() == null || getHeaderValue().trim().isEmpty() ? " "
+                        : getHeaderValue(),
+                false, false, -1, -1);
         int height = comp.getPreferredSize().height;
         int width = 0;
         for (ColumnGroup columnGroup : groups) {

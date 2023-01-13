@@ -30,132 +30,125 @@ import com.apkspectrum.swing.ITabbedRequest;
 import com.apkspectrum.swing.KeyStrokeAction;
 import com.apkspectrum.swing.tabbedpaneui.TabbedPaneUIManager;
 
-public class TabbedPanel extends JTabbedPane implements ActionListener
-{
-	private static final long serialVersionUID = -5500517956616692675L;
+public class TabbedPanel extends JTabbedPane implements ActionListener {
+    private static final long serialVersionUID = -5500517956616692675L;
 
-	private List<ITabbedComponent<ApkInfo>> components = new ArrayList<>();
+    private List<ITabbedComponent<ApkInfo>> components = new ArrayList<>();
 
-	public TabbedPanel(String themeClazz, ActionListener listener) {
-		setOpaque(true);
-		TabbedPaneUIManager.setUI(this, themeClazz);
+    public TabbedPanel(String themeClazz, ActionListener listener) {
+        setOpaque(true);
+        TabbedPaneUIManager.setUI(this, themeClazz);
 
-		addTab(new BasicInfo());
-		addTab(new Widgets());
-		addTab(new Libraries());
-		addTab(new Resources(listener));
-		addTab(new Components());
-		addTab(new Signatures());
+        addTab(new BasicInfo());
+        addTab(new Widgets());
+        addTab(new Libraries());
+        addTab(new Resources(listener));
+        addTab(new Components());
+        addTab(new Signatures());
 
-		setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+        setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 
-		KeyStrokeAction.registerKeyStrokeActions(this,
-				JComponent.WHEN_IN_FOCUSED_WINDOW,
-				new KeyStroke[] {
-					KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, RConst.ALT_MASK),
-					KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, RConst.ALT_MASK)
-				}, this);
-	}
+        KeyStrokeAction.registerKeyStrokeActions(this, JComponent.WHEN_IN_FOCUSED_WINDOW,
+                new KeyStroke[] {KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, RConst.ALT_MASK),
+                        KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, RConst.ALT_MASK)},
+                this);
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent evt) {
-		int idx = getSelectedIndex();
-		int count = getTabCount();
-		int preIdx = idx;
-		switch(evt.getActionCommand()) {
-		case "alt pressed RIGHT":
-			do {
-				idx = ++idx % count;
-			} while(!isEnabledAt(idx) && idx != preIdx);
-			if(idx != preIdx) {
-				setSelectedIndex(idx);
-			}
-			break;
-		case "alt pressed LEFT":
-			do {
-				idx = (--idx + count) % count;
-			} while(!isEnabledAt(idx) && idx != preIdx);
-			if(idx != preIdx) {
-				setSelectedIndex(idx);
-			}
-			break;
-		}
-	}
+    @Override
+    public void actionPerformed(ActionEvent evt) {
+        int idx = getSelectedIndex();
+        int count = getTabCount();
+        int preIdx = idx;
+        switch (evt.getActionCommand()) {
+            case "alt pressed RIGHT":
+                do {
+                    idx = ++idx % count;
+                } while (!isEnabledAt(idx) && idx != preIdx);
+                if (idx != preIdx) {
+                    setSelectedIndex(idx);
+                }
+                break;
+            case "alt pressed LEFT":
+                do {
+                    idx = (--idx + count) % count;
+                } while (!isEnabledAt(idx) && idx != preIdx);
+                if (idx != preIdx) {
+                    setSelectedIndex(idx);
+                }
+                break;
+        }
+    }
 
-	public void uiLoadBooster() {
-		for(ITabbedComponent<?> tabbed: components) {
-			Component c = tabbed.getComponent();
-			if(c instanceof AbstractTabbedPanel) {
-				((AbstractTabbedPanel)c).initialize();
-			}
-		}
-	}
+    public void uiLoadBooster() {
+        for (ITabbedComponent<?> tabbed : components) {
+            Component c = tabbed.getComponent();
+            if (c instanceof AbstractTabbedPanel) {
+                ((AbstractTabbedPanel) c).initialize();
+            }
+        }
+    }
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void onLoadPlugin(ApkInfo apkInfo, int status) {
-		for(final ExtraComponent plugin: PlugInManager.getExtraComponenet()) {
-			plugin.initialize();
-			addTab(plugin);
-			for(int state = 1; (state & ApkScanner.STATUS_ALL_COMPLETED) != 0;
-					state <<= 1) {
-				if((state != 0 && (status & state) == state)) {
-					plugin.setData(apkInfo, state);
-				}
-			}
-			if(status == ApkScanner.STATUS_ALL_COMPLETED) {
-				plugin.setData(apkInfo, ApkScanner.STATUS_ALL_COMPLETED);
-			}
-		}
-	}
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public void onLoadPlugin(ApkInfo apkInfo, int status) {
+        for (final ExtraComponent plugin : PlugInManager.getExtraComponenet()) {
+            plugin.initialize();
+            addTab(plugin);
+            for (int state = 1; (state & ApkScanner.STATUS_ALL_COMPLETED) != 0; state <<= 1) {
+                if ((state != 0 && (status & state) == state)) {
+                    plugin.setData(apkInfo, state);
+                }
+            }
+            if (status == ApkScanner.STATUS_ALL_COMPLETED) {
+                plugin.setData(apkInfo, ApkScanner.STATUS_ALL_COMPLETED);
+            }
+        }
+    }
 
-	public void addTab(ITabbedComponent<ApkInfo> tabbed) {
-		addTab(tabbed, tabbed.getPriority());
-	}
+    public void addTab(ITabbedComponent<ApkInfo> tabbed) {
+        addTab(tabbed, tabbed.getPriority());
+    }
 
-	public void addTab(ITabbedComponent<ApkInfo> tabbedComp, int priority) {
-		if(tabbedComp == null) return;
+    public void addTab(ITabbedComponent<ApkInfo> tabbedComp, int priority) {
+        if (tabbedComp == null) return;
 
-		components.add(tabbedComp);
+        components.add(tabbedComp);
 
-		if(priority == -1) {
-			priority = getTabCount();
-			tabbedComp.setPriority(priority);
-		}
+        if (priority == -1) {
+            priority = getTabCount();
+            tabbedComp.setPriority(priority);
+        }
 
-		ITabbedRequest request = new DefaultTabbedRequest(this, tabbedComp);
-		request.onRequestVisible(tabbedComp.isTabbedVisible());
-	}
+        ITabbedRequest request = new DefaultTabbedRequest(this, tabbedComp);
+        request.onRequestVisible(tabbedComp.isTabbedVisible());
+    }
 
-	public void setData(ApkInfo apkInfo, int status)
-	{
-		for(ITabbedComponent<ApkInfo> tabbed: components) {
-			tabbed.setData(apkInfo, status);
-		}
-	}
+    public void setData(ApkInfo apkInfo, int status) {
+        for (ITabbedComponent<ApkInfo> tabbed : components) {
+            tabbed.setData(apkInfo, status);
+        }
+    }
 
-	public void onProgress(String message)
-	{
-		for(ITabbedComponent<ApkInfo> tabbed: components) {
-			if(tabbed instanceof IProgressListener) {
-				((IProgressListener)tabbed).onProgress(message);
-			}
-		}
-	}
+    public void onProgress(String message) {
+        for (ITabbedComponent<ApkInfo> tabbed : components) {
+            if (tabbed instanceof IProgressListener) {
+                ((IProgressListener) tabbed).onProgress(message);
+            }
+        }
+    }
 
-	public void setLodingLabel()
-	{
-		for(ITabbedComponent<ApkInfo> tabbed: components) {
-			int idx = indexOfComponent(tabbed.getComponent());
-			if(tabbed instanceof IProgressListener) {
-				((IProgressListener)tabbed).onProgress(null);
-				if(idx != -1) setSelectedIndex(idx);
-			} else {
-				tabbed.clearData();
-				if(idx != -1) {
-					setEnabledAt(idx, false);
-					setTitleAt(idx, tabbed.getTitle());
-				}
-			}
-		}
-	}
+    public void setLodingLabel() {
+        for (ITabbedComponent<ApkInfo> tabbed : components) {
+            int idx = indexOfComponent(tabbed.getComponent());
+            if (tabbed instanceof IProgressListener) {
+                ((IProgressListener) tabbed).onProgress(null);
+                if (idx != -1) setSelectedIndex(idx);
+            } else {
+                tabbed.clearData();
+                if (idx != -1) {
+                    setEnabledAt(idx, false);
+                    setTitleAt(idx, tabbed.getTitle());
+                }
+            }
+        }
+    }
 }

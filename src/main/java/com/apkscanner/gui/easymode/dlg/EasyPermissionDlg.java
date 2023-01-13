@@ -37,238 +37,241 @@ import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.data.apkinfo.PermissionInfo;
 
 public class EasyPermissionDlg extends JDialog implements ActionListener {
-	private static final long serialVersionUID = 1L;
-	private final int USES_TABLE = 0;
-	private final int DECLARED_TABLE = 1;
-	private final String[] subname = { "Uses", "Declared" };
+    private static final long serialVersionUID = 1L;
+    private final int USES_TABLE = 0;
+    private final int DECLARED_TABLE = 1;
+    private final String[] subname = {"Uses", "Declared"};
 
-	JButton btngetDeviceGranted;
-	JLabel sdkversion;
+    JButton btngetDeviceGranted;
+    JLabel sdkversion;
 
-	JTabbedPane tabbedpane;
+    JTabbedPane tabbedpane;
 
-	private JTable[] permissiontable = { null, null };
+    private JTable[] permissiontable = {null, null};
 
-	// ArrayList<String> protectionLevelCalumn = new ArrayList<String>();
+    // ArrayList<String> protectionLevelCalumn = new ArrayList<String>();
 
-	private TableRowSorter<PermissionUsesTableModel> sorter;
+    private TableRowSorter<PermissionUsesTableModel> sorter;
 
-	// Arrays.asList(data));
+    // Arrays.asList(data));
 
-	PermissionUsesTableModel[] model = { null, null };
+    PermissionUsesTableModel[] model = {null, null};
 
-	public EasyPermissionDlg(Frame frame, boolean modal, ApkInfo apkInfo) {
-		super(frame, RStr.BASIC_PERMISSIONS.get(), modal);
-		this.setSize(700, 700);
-		// this.setPreferredSize(new Dimension(500, 500));
-		this.setLocationRelativeTo(frame);
-		this.setMinimumSize(new Dimension(500, 500));
-		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		this.setLayout(new BorderLayout());
+    public EasyPermissionDlg(Frame frame, boolean modal, ApkInfo apkInfo) {
+        super(frame, RStr.BASIC_PERMISSIONS.get(), modal);
+        this.setSize(700, 700);
+        // this.setPreferredSize(new Dimension(500, 500));
+        this.setLocationRelativeTo(frame);
+        this.setMinimumSize(new Dimension(500, 500));
+        this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        this.setLayout(new BorderLayout());
 
-		PermissionManager permissionManager = new PermissionManager();
-		permissionManager.setTreatSignAsRevoked(RProp.B.PERM_TREAT_SIGN_AS_REVOKED.get());
-		permissionManager.addUsesPermission(apkInfo.manifest.usesPermission);
-		permissionManager.addUsesPermission(apkInfo.manifest.usesPermissionSdk23);
-		if(!permissionManager.isEmpty()) {
-			Integer selectSdkVer = apkInfo.manifest.usesSdk.targetSdkVersion;
-			sdkversion = new JLabel("@SDK " +selectSdkVer);
-			permissionManager.setSdkVersion(selectSdkVer != null ? selectSdkVer : 28);
-		}
+        PermissionManager permissionManager = new PermissionManager();
+        permissionManager.setTreatSignAsRevoked(RProp.B.PERM_TREAT_SIGN_AS_REVOKED.get());
+        permissionManager.addUsesPermission(apkInfo.manifest.usesPermission);
+        permissionManager.addUsesPermission(apkInfo.manifest.usesPermissionSdk23);
+        if (!permissionManager.isEmpty()) {
+            Integer selectSdkVer = apkInfo.manifest.usesSdk.targetSdkVersion;
+            sdkversion = new JLabel("@SDK " + selectSdkVer);
+            permissionManager.setSdkVersion(selectSdkVer != null ? selectSdkVer : 28);
+        }
 
-		model[USES_TABLE] = new PermissionUsesTableModel();
-		makeusesPermissionRow(permissionManager, permissionManager.getPermissions(), model[USES_TABLE]);
-		
-		permissionManager.clearPermissions();
-		permissionManager.addDeclarePemission(apkInfo.manifest.permission);
-		
-		model[DECLARED_TABLE] = new PermissionUsesTableModel();
-		makeusesPermissionRow(permissionManager, permissionManager.getDeclarePermissions(), model[DECLARED_TABLE]);
-		tabbedpane = new JTabbedPane();
-		int i = 0;
-		for (JTable table : permissiontable) {
-			table = new JTable(model[i]) {
-				private static final long serialVersionUID = 458626137683547424L;
+        model[USES_TABLE] = new PermissionUsesTableModel();
+        makeusesPermissionRow(permissionManager, permissionManager.getPermissions(),
+                model[USES_TABLE]);
 
-				protected JTableHeader createDefaultTableHeader() {
-					return new GroupableTableHeader(columnModel);
-				}
-			};
-			sorter = new TableRowSorter<PermissionUsesTableModel>(model[i]);
+        permissionManager.clearPermissions();
+        permissionManager.addDeclarePemission(apkInfo.manifest.permission);
 
-			makeProtectionColumn(table);
-			table.setRowSorter(sorter);
-			table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-			table.setRowHeight(36);
-			table.setDefaultRenderer(String.class, new TableColorRenderer());
-			setColumnWidths(table, 36, 350);
-			JScrollPane scrollPane = new JScrollPane(table);
+        model[DECLARED_TABLE] = new PermissionUsesTableModel();
+        makeusesPermissionRow(permissionManager, permissionManager.getDeclarePermissions(),
+                model[DECLARED_TABLE]);
+        tabbedpane = new JTabbedPane();
+        int i = 0;
+        for (JTable table : permissiontable) {
+            table = new JTable(model[i]) {
+                private static final long serialVersionUID = 458626137683547424L;
 
-			tabbedpane.addTab(subname[i] + "(" + table.getRowCount() + ")", null, scrollPane, subname[i]);
-			if (table.getRowCount() == 0) {
-				tabbedpane.setEnabledAt(i, false);
-			}
-			i++;
-		}
+                protected JTableHeader createDefaultTableHeader() {
+                    return new GroupableTableHeader(columnModel);
+                }
+            };
+            sorter = new TableRowSorter<PermissionUsesTableModel>(model[i]);
 
-		add(tabbedpane, BorderLayout.CENTER);
+            makeProtectionColumn(table);
+            table.setRowSorter(sorter);
+            table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+            table.setRowHeight(36);
+            table.setDefaultRenderer(String.class, new TableColorRenderer());
+            setColumnWidths(table, 36, 350);
+            JScrollPane scrollPane = new JScrollPane(table);
 
-		JPanel temppanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            tabbedpane.addTab(subname[i] + "(" + table.getRowCount() + ")", null, scrollPane,
+                    subname[i]);
+            if (table.getRowCount() == 0) {
+                tabbedpane.setEnabledAt(i, false);
+            }
+            i++;
+        }
 
-		btngetDeviceGranted = new JButton("permission granted on device");
-		
-		temppanel.add(btngetDeviceGranted);
-		temppanel.add(sdkversion);
+        add(tabbedpane, BorderLayout.CENTER);
 
-		add(temppanel, BorderLayout.NORTH);
+        JPanel temppanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
-		this.setVisible(true);
-	}
+        btngetDeviceGranted = new JButton("permission granted on device");
 
-	private void makeusesPermissionRow(PermissionManager manager, PermissionInfo[] arraypermissionInfo,
-			PermissionUsesTableModel tablemodel) {
-		if (arraypermissionInfo == null) return;
+        temppanel.add(btngetDeviceGranted);
+        temppanel.add(sdkversion);
 
-		for (PermissionInfo info : arraypermissionInfo) {
-			PermissionGroupInfoExt group = manager.getPermissionGroup(info.permissionGroup);
-			try {
-				Object[] obj = new Object[tablemodel.getColumnCount()];
-				String[] permissions = info.protectionLevel.split("\\|");
-				int j = 0;
-				obj[j++] = (group != null) ? new ImageIcon(new URL(group.getIconPath())) {
-					private static final long serialVersionUID = -7493441835355000885L;
+        add(temppanel, BorderLayout.NORTH);
 
-					public String toString() {
-						return "";
-					}
-				} : new ImageIcon();
-				obj[j++] = info.name;
-				int i = 0;
+        this.setVisible(true);
+    }
 
-				obj[j + i++] = permissions[0];
-				String Flagstr = "";
-				for (int k = 1; k < permissions.length; k++) {
-					Flagstr += permissions[k] + ((k == permissions.length - 1) ? "" : " | ");
-				}
+    private void makeusesPermissionRow(PermissionManager manager,
+            PermissionInfo[] arraypermissionInfo, PermissionUsesTableModel tablemodel) {
+        if (arraypermissionInfo == null) return;
 
-				obj[j + i++] = Flagstr;
-				obj[j + i] = Boolean.TRUE;
-								
-				tablemodel.add(obj);
+        for (PermissionInfo info : arraypermissionInfo) {
+            PermissionGroupInfoExt group = manager.getPermissionGroup(info.permissionGroup);
+            try {
+                Object[] obj = new Object[tablemodel.getColumnCount()];
+                String[] permissions = info.protectionLevel.split("\\|");
+                int j = 0;
+                obj[j++] = (group != null) ? new ImageIcon(new URL(group.getIconPath())) {
+                    private static final long serialVersionUID = -7493441835355000885L;
 
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+                    public String toString() {
+                        return "";
+                    }
+                } : new ImageIcon();
+                obj[j++] = info.name;
+                int i = 0;
 
-	public void setColumnWidths(JTable table, int... widths) {
-		TableColumnModel columnModel = table.getColumnModel();
-		for (int i = 0; i < widths.length; i++) {
-			if (i < columnModel.getColumnCount()) {
-				switch (i) {
-				case 0:
-					columnModel.getColumn(i).setMaxWidth(widths[i]);
-					break;
-				default:
+                obj[j + i++] = permissions[0];
+                String Flagstr = "";
+                for (int k = 1; k < permissions.length; k++) {
+                    Flagstr += permissions[k] + ((k == permissions.length - 1) ? "" : " | ");
+                }
 
-				}
-				columnModel.getColumn(i).setMinWidth(widths[i]);
-				columnModel.getColumn(i).setWidth(widths[i]);
-			} else
-				break;
-		}
-	}
+                obj[j + i++] = Flagstr;
+                obj[j + i] = Boolean.TRUE;
 
-	private void makeProtectionColumn(JTable table) {
-		final int START_PROTECTION_INDEX = 2;
-		TableColumnModel cm = table.getColumnModel();
-		ColumnGroup g_protection = new ColumnGroup("Protection Level");
+                tablemodel.add(obj);
 
-		for (int i = 0; i < 2; i++) {
-			g_protection.add(cm.getColumn(START_PROTECTION_INDEX + i));
-		}
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-		GroupableTableHeader header = (GroupableTableHeader) table.getTableHeader();
-		header.addColumnGroup(g_protection);
-	}
+    public void setColumnWidths(JTable table, int... widths) {
+        TableColumnModel columnModel = table.getColumnModel();
+        for (int i = 0; i < widths.length; i++) {
+            if (i < columnModel.getColumnCount()) {
+                switch (i) {
+                    case 0:
+                        columnModel.getColumn(i).setMaxWidth(widths[i]);
+                        break;
+                    default:
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource().equals(btngetDeviceGranted)) {
+                }
+                columnModel.getColumn(i).setMinWidth(widths[i]);
+                columnModel.getColumn(i).setWidth(widths[i]);
+            } else
+                break;
+        }
+    }
 
-		}
-	}
+    private void makeProtectionColumn(JTable table) {
+        final int START_PROTECTION_INDEX = 2;
+        TableColumnModel cm = table.getColumnModel();
+        ColumnGroup g_protection = new ColumnGroup("Protection Level");
 
-	class TableColorRenderer extends DefaultTableCellRenderer {
-		private static final long serialVersionUID = 5620411944495295952L;
+        for (int i = 0; i < 2; i++) {
+            g_protection.add(cm.getColumn(START_PROTECTION_INDEX + i));
+        }
 
-		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
-				int row, int column) {
-			Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        GroupableTableHeader header = (GroupableTableHeader) table.getTableHeader();
+        header.addColumnGroup(g_protection);
+    }
 
-			// CustomExcel temp =
-			// table.gettabletableModel.getTableDataList().get(table.convertRowIndexToModel(row));
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource().equals(btngetDeviceGranted)) {
 
-			int convertrow = table.convertRowIndexToModel(row);
+        }
+    }
 
-			String str = table.getModel().getValueAt(convertrow, 2).toString();
+    class TableColorRenderer extends DefaultTableCellRenderer {
+        private static final long serialVersionUID = 5620411944495295952L;
 
-			if (str.contains("dangerous")) {
-				c.setForeground(Color.RED);
-			} else if (str.contains("signature")) {
-				c.setForeground(Color.BLUE);
-			} else {
-				c.setForeground(Color.BLACK);
-			}
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                boolean isSelected, boolean hasFocus, int row, int column) {
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus,
+                    row, column);
 
-			return c;
-		}
-	}
+            // CustomExcel temp =
+            // table.gettabletableModel.getTableDataList().get(table.convertRowIndexToModel(row));
 
-	class PermissionUsesTableModel extends AbstractTableModel {
-		private static final long serialVersionUID = 46604533609204845L;
-		private Object[] columnNames = { "Icon", "Name", "Base", "Flag", "granted" };
-		// final String[] protectionLevelCalumn = {"Icon", "Name",
-		// "Base","Flag",
-		// "granted"};
-		ArrayList<Object[]> usesTableData = new ArrayList<Object[]>();
+            int convertrow = table.convertRowIndexToModel(row);
 
-		PermissionUsesTableModel() {
-		}
+            String str = table.getModel().getValueAt(convertrow, 2).toString();
 
-		public int getColumnCount() {
-			return columnNames.length;
-		}
+            if (str.contains("dangerous")) {
+                c.setForeground(Color.RED);
+            } else if (str.contains("signature")) {
+                c.setForeground(Color.BLUE);
+            } else {
+                c.setForeground(Color.BLACK);
+            }
 
-		public void add(Object[] obj) {
-			usesTableData.add(obj);
-		}
+            return c;
+        }
+    }
 
-		public int getRowCount() {
-			return usesTableData.size();
-		}
+    class PermissionUsesTableModel extends AbstractTableModel {
+        private static final long serialVersionUID = 46604533609204845L;
+        private Object[] columnNames = {"Icon", "Name", "Base", "Flag", "granted"};
+        // final String[] protectionLevelCalumn = {"Icon", "Name",
+        // "Base","Flag",
+        // "granted"};
+        ArrayList<Object[]> usesTableData = new ArrayList<Object[]>();
 
-		public String getColumnName(int col) {
-			return columnNames[col].toString();
-		}
+        PermissionUsesTableModel() {}
 
-		public Object getValueAt(int row, int col) {
+        public int getColumnCount() {
+            return columnNames.length;
+        }
 
-			return usesTableData.get(row)[col];
-		}
+        public void add(Object[] obj) {
+            usesTableData.add(obj);
+        }
 
-		public Class<? extends Object> getColumnClass(int c) {
-			return getValueAt(0, c).getClass();
-		}
+        public int getRowCount() {
+            return usesTableData.size();
+        }
 
-		public boolean isCellEditable(int row, int col) {
-			return false;
-		}
+        public String getColumnName(int col) {
+            return columnNames[col].toString();
+        }
 
-		public void setValueAt(Object value, int row, int col) {
-			usesTableData.get(row)[col] = value;
-			fireTableCellUpdated(row, col);
-		}
-	}
+        public Object getValueAt(int row, int col) {
+
+            return usesTableData.get(row)[col];
+        }
+
+        public Class<? extends Object> getColumnClass(int c) {
+            return getValueAt(0, c).getClass();
+        }
+
+        public boolean isCellEditable(int row, int col) {
+            return false;
+        }
+
+        public void setValueAt(Object value, int row, int col) {
+            usesTableData.get(row)[col] = value;
+            fireTableCellUpdated(row, col);
+        }
+    }
 }

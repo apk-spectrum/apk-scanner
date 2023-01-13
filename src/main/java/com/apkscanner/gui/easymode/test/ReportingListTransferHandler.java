@@ -17,13 +17,13 @@ import com.apkspectrum.util.Log;
 public class ReportingListTransferHandler extends TransferHandler {
     private static final long serialVersionUID = 105066218565624860L;
 
-	DataFlavor localArrayListFlavor, serialArrayListFlavor;
-    String localArrayListType = DataFlavor.javaJVMLocalObjectMimeType +
-                                ";class=java.util.ArrayList";
+    DataFlavor localArrayListFlavor, serialArrayListFlavor;
+    String localArrayListType =
+            DataFlavor.javaJVMLocalObjectMimeType + ";class=java.util.ArrayList";
     JList source = null;
     int[] indices = null;
-    int addIndex = -1; //Location where items were added
-    int addCount = 0;  //Number of items added
+    int addIndex = -1; // Location where items were added
+    int addCount = 0; // Number of items added
 
     public ReportingListTransferHandler() {
         try {
@@ -31,13 +31,12 @@ public class ReportingListTransferHandler extends TransferHandler {
         } catch (ClassNotFoundException e) {
             sayIt("unable to create data flavor");
         }
-        serialArrayListFlavor = new DataFlavor(ArrayList.class,
-                                              "ArrayList");
+        serialArrayListFlavor = new DataFlavor(ArrayList.class, "ArrayList");
     }
 
-    //@SuppressWarnings("unchecked")
+    // @SuppressWarnings("unchecked")
     @Override
-	public boolean importData(JComponent c, Transferable t) {
+    public boolean importData(JComponent c, Transferable t) {
         JList target = null;
         ArrayList alist = null;
         if (!canImport(c, t.getTransferDataFlavors())) {
@@ -45,11 +44,11 @@ public class ReportingListTransferHandler extends TransferHandler {
             return false;
         }
         try {
-            target = (JList)c;
+            target = (JList) c;
             if (hasLocalArrayListFlavor(t.getTransferDataFlavors())) {
-                alist = (ArrayList)t.getTransferData(localArrayListFlavor);
+                alist = (ArrayList) t.getTransferData(localArrayListFlavor);
             } else if (hasSerialArrayListFlavor(t.getTransferDataFlavors())) {
-                alist = (ArrayList)t.getTransferData(serialArrayListFlavor);
+                alist = (ArrayList) t.getTransferData(serialArrayListFlavor);
             } else {
                 return false;
             }
@@ -63,27 +62,27 @@ public class ReportingListTransferHandler extends TransferHandler {
 
         sayIt("got the target");
 
-        //At this point we use the same code to retrieve the data
-        //locally or serially.
+        // At this point we use the same code to retrieve the data
+        // locally or serially.
 
-        //We'll drop at the current selected index.
+        // We'll drop at the current selected index.
         int index = target.getSelectedIndex();
 
 
-        //Prevent user from dropping data back on itself.
+        // Prevent user from dropping data back on itself.
         if (source.equals(target)) {
-            if (indices != null && index >= indices[0] - 1 &&
-                  index <= indices[indices.length - 1]) {
+            if (indices != null && index >= indices[0] - 1
+                    && index <= indices[indices.length - 1]) {
                 indices = null;
                 return true;
             }
         }
 
-        DefaultListModel listModel = (DefaultListModel)target.getModel();
+        DefaultListModel listModel = (DefaultListModel) target.getModel();
         int max = listModel.getSize();
         System.out.printf("index = %d  max = %d%n", index, max);
         if (index < 0) {
-            index = max; 
+            index = max;
         } else {
             index++;
             if (index > max) {
@@ -92,7 +91,7 @@ public class ReportingListTransferHandler extends TransferHandler {
         }
         addIndex = index;
         addCount = alist.size();
-        for (int i=0; i < alist.size(); i++) {
+        for (int i = 0; i < alist.size(); i++) {
             listModel.add(index++, alist.get(i));
         }
         return true;
@@ -101,21 +100,20 @@ public class ReportingListTransferHandler extends TransferHandler {
     @Override
     protected void exportDone(JComponent c, Transferable data, int action) {
         if ((action == MOVE) && (indices != null)) {
-            DefaultListModel model = (DefaultListModel)source.getModel();
+            DefaultListModel model = (DefaultListModel) source.getModel();
 
-           sayIt("source name: "+source.getName());
-            //If we are moving items around in the same list, we
-            //need to adjust the indices accordingly since those
-            //after the insertion point have moved.
+            sayIt("source name: " + source.getName());
+            // If we are moving items around in the same list, we
+            // need to adjust the indices accordingly since those
+            // after the insertion point have moved.
             if (addCount > 0) {
                 for (int i = 0; i < indices.length; i++) {
-                    if (indices[i] > addIndex &&
-                        indices[i] + addCount < model.getSize()) {
+                    if (indices[i] > addIndex && indices[i] + addCount < model.getSize()) {
                         indices[i] += addCount;
                     }
                 }
             }
-            for (int i = indices.length -1; i >= 0; i--)
+            for (int i = indices.length - 1; i >= 0; i--)
                 model.remove(indices[i]);
         }
         indices = null;
@@ -151,29 +149,33 @@ public class ReportingListTransferHandler extends TransferHandler {
 
     @Override
     public boolean canImport(JComponent c, DataFlavor[] flavors) {
-        if (hasLocalArrayListFlavor(flavors))  { return true; }
-        if (hasSerialArrayListFlavor(flavors)) { return true; }
+        if (hasLocalArrayListFlavor(flavors)) {
+            return true;
+        }
+        if (hasSerialArrayListFlavor(flavors)) {
+            return true;
+        }
         sayIt("checking flavor...");
         return false;
     }
 
     @SuppressWarnings("deprecation")
-	@Override
+    @Override
     protected Transferable createTransferable(JComponent c) {
         if (c instanceof JList) {
-            source = (JList)c;
+            source = (JList) c;
             indices = source.getSelectedIndices();
             Object[] values = source.getSelectedValues();
             if (values == null || values.length == 0) {
                 sayIt("null values or 0 length");
                 return null;
             }
-            //String -> Object
+            // String -> Object
             ArrayList<Object> alist = new ArrayList<Object>(values.length);
             for (int i = 0; i < values.length; i++) {
                 Object o = values[i];
-                //String str = o.toString();
-                //if (str == null) str = "";
+                // String str = o.toString();
+                // if (str == null) str = "";
                 alist.add(o);
             }
             return new ReportingListTransferable(alist);
@@ -185,20 +187,19 @@ public class ReportingListTransferHandler extends TransferHandler {
     public int getSourceActions(JComponent c) {
         return COPY_OR_MOVE;
     }
-    
-    private void sayIt(String s){
+
+    private void sayIt(String s) {
         Log.d(s);
     }
 
     public class ReportingListTransferable implements Transferable {
-		ArrayList data;
+        ArrayList data;
 
-		public ReportingListTransferable(ArrayList alist) {
+        public ReportingListTransferable(ArrayList alist) {
             data = alist;
         }
 
-        public Object getTransferData(DataFlavor flavor)
-                                 throws UnsupportedFlavorException {
+        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
             if (!isDataFlavorSupported(flavor)) {
                 throw new UnsupportedFlavorException(flavor);
             }
@@ -206,8 +207,7 @@ public class ReportingListTransferHandler extends TransferHandler {
         }
 
         public DataFlavor[] getTransferDataFlavors() {
-            return new DataFlavor[] { localArrayListFlavor,
-                                      serialArrayListFlavor };
+            return new DataFlavor[] {localArrayListFlavor, serialArrayListFlavor};
         }
 
         public boolean isDataFlavorSupported(DataFlavor flavor) {

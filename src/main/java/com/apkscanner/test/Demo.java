@@ -23,13 +23,16 @@ public class Demo {
     private void createAndShowGUI() {
 
         JXTabbedPane tabbedPane = new JXTabbedPane(JTabbedPane.LEFT);
-        AbstractTabRenderer renderer = (AbstractTabRenderer)tabbedPane.getTabRenderer();
+        AbstractTabRenderer renderer = (AbstractTabRenderer) tabbedPane.getTabRenderer();
         renderer.setPrototypeText("This text is a prototype");
         renderer.setHorizontalTextAlignment(SwingConstants.LEADING);
 
-        tabbedPane.addTab("Short", UIManager.getIcon("OptionPane.informationIcon"), createEmptyPanel(), "Information tool tip");
-        tabbedPane.addTab("Long text", UIManager.getIcon("OptionPane.warningIcon"), createEmptyPanel(), "Warning tool tip");
-        tabbedPane.addTab("This is a really long text", UIManager.getIcon("OptionPane.errorIcon"), createEmptyPanel(), "Error tool tip");
+        tabbedPane.addTab("Short", UIManager.getIcon("OptionPane.informationIcon"),
+                createEmptyPanel(), "Information tool tip");
+        tabbedPane.addTab("Long text", UIManager.getIcon("OptionPane.warningIcon"),
+                createEmptyPanel(), "Warning tool tip");
+        tabbedPane.addTab("This is a really long text", UIManager.getIcon("OptionPane.errorIcon"),
+                createEmptyPanel(), "Error tool tip");
 
         JFrame frame = new JFrame("Demo");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -43,14 +46,13 @@ public class Demo {
         JPanel dummyPanel = new JPanel() {
 
             /**
-			 * 
-			 */
-			private static final long serialVersionUID = 658005226727359429L;
+             * 
+             */
+            private static final long serialVersionUID = 658005226727359429L;
 
-			@Override
+            @Override
             public Dimension getPreferredSize() {
-                return isPreferredSizeSet() ?
-                            super.getPreferredSize() : new Dimension(400, 300);
+                return isPreferredSizeSet() ? super.getPreferredSize() : new Dimension(400, 300);
             }
 
         };
@@ -69,10 +71,10 @@ public class Demo {
     class JXTabbedPane extends JTabbedPane {
 
         /**
-		 * 
-		 */
-		private static final long serialVersionUID = 88526244902072208L;
-		private ITabRenderer tabRenderer = new DefaultTabRenderer();
+         * 
+         */
+        private static final long serialVersionUID = 88526244902072208L;
+        private ITabRenderer tabRenderer = new DefaultTabRenderer();
 
         public JXTabbedPane() {
             super();
@@ -115,7 +117,8 @@ public class Demo {
 
     interface ITabRenderer {
 
-        public Component getTabRendererComponent(JTabbedPane tabbedPane, String text, Icon icon, int tabIndex);
+        public Component getTabRendererComponent(JTabbedPane tabbedPane, String text, Icon icon,
+                int tabIndex);
 
     }
 
@@ -170,14 +173,16 @@ public class Demo {
             propertyChangeSupport.addPropertyChangeListener(listener);
         }
 
-        public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+        public void addPropertyChangeListener(String propertyName,
+                PropertyChangeListener listener) {
             propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
         }
 
         protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
             PropertyChangeListener[] listeners = getPropertyChangeListeners();
             for (int i = listeners.length - 1; i >= 0; i--) {
-                listeners[i].propertyChange(new PropertyChangeEvent(this, propertyName, oldValue, newValue));
+                listeners[i].propertyChange(
+                        new PropertyChangeEvent(this, propertyName, oldValue, newValue));
             }
         }
     }
@@ -188,11 +193,13 @@ public class Demo {
 
         public DefaultTabRenderer() {
             super();
-            prototypeComponent = generateRendererComponent(getPrototypeText(), getPrototypeIcon(), getHorizontalTextAlignment());
+            prototypeComponent = generateRendererComponent(getPrototypeText(), getPrototypeIcon(),
+                    getHorizontalTextAlignment());
             addPropertyChangeListener(this);
         }
 
-        private Component generateRendererComponent(String text, Icon icon, int horizontalTabTextAlignmen) {
+        private Component generateRendererComponent(String text, Icon icon,
+                int horizontalTabTextAlignmen) {
             JPanel rendererComponent = new JPanel(new GridBagLayout());
             rendererComponent.setOpaque(false);
 
@@ -205,18 +212,20 @@ public class Demo {
             c.weightx = 1;
             rendererComponent.add(new JLabel(text, horizontalTabTextAlignmen), c);
 
-            
-            
+
+
             return rendererComponent;
         }
 
         @Override
-        public Component getTabRendererComponent(JTabbedPane tabbedPane, String text, Icon icon, int tabIndex) {
-            Component rendererComponent = generateRendererComponent(text, icon, getHorizontalTextAlignment());
+        public Component getTabRendererComponent(JTabbedPane tabbedPane, String text, Icon icon,
+                int tabIndex) {
+            Component rendererComponent =
+                    generateRendererComponent(text, icon, getHorizontalTextAlignment());
             int prototypeWidth = prototypeComponent.getPreferredSize().width;
             int prototypeHeight = prototypeComponent.getPreferredSize().height;
             rendererComponent.setPreferredSize(new Dimension(prototypeWidth, prototypeHeight));
-            
+
             return rendererComponent;
         }
 
@@ -224,7 +233,8 @@ public class Demo {
         public void propertyChange(PropertyChangeEvent evt) {
             String propertyName = evt.getPropertyName();
             if ("prototypeText".equals(propertyName) || "prototypeIcon".equals(propertyName)) {
-                this.prototypeComponent = generateRendererComponent(getPrototypeText(), getPrototypeIcon(), getHorizontalTextAlignment());
+                this.prototypeComponent = generateRendererComponent(getPrototypeText(),
+                        getPrototypeIcon(), getHorizontalTextAlignment());
             }
         }
     }
