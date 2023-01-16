@@ -16,11 +16,11 @@ import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 import com.apkspectrum.core.scanner.ApkScanner;
 import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.plugin.PlugInEventAdapter;
 import com.apkspectrum.plugin.PlugInManager;
 import com.apkspectrum.resource.LanguageChangeListener;
 import com.apkspectrum.swing.WindowSizeMemorizer;
-import com.apkspectrum.util.Log;
 
 public class MainUI extends JFrame implements LanguageChangeListener {
     private static final long serialVersionUID = -623259597186280485L;

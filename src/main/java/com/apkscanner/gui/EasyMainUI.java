@@ -14,8 +14,8 @@ import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.tool.adb.AdbServerMonitor;
-import com.apkspectrum.util.Log;
 
 public class EasyMainUI extends JFrame implements IDeviceChangeListener {
     private static final long serialVersionUID = -1104109718930033124L;

@@ -85,12 +85,12 @@ import com.apkspectrum.core.permissionmanager.UnitRecord;
 import com.apkspectrum.data.apkinfo.PermissionGroupInfo;
 import com.apkspectrum.data.apkinfo.PermissionInfo;
 import com.apkspectrum.data.apkinfo.ResourceInfo;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.swing.ImageScaler;
 import com.apkspectrum.swing.KeyStrokeAction;
 import com.apkspectrum.swing.WindowSizeMemorizer;
 import com.apkspectrum.swing.tabbedpaneui.CloseableTabbedPaneLayerUI;
 import com.apkspectrum.swing.tabbedpaneui.TabbedPaneUIManager;
-import com.apkspectrum.util.Log;
 
 public class PermissionHistoryPanel extends JPanel implements ItemListener, ActionListener {
     private static final long serialVersionUID = -3567803690045423840L;

@@ -38,7 +38,7 @@ import com.apkscanner.resource.RStr;
 import com.apkspectrum.core.installer.OptionsBundle;
 import com.apkspectrum.data.apkinfo.CompactApkInfo;
 import com.apkspectrum.data.apkinfo.ComponentInfo;
-import com.apkspectrum.util.Log;
+import com.apkspectrum.logback.Log;
 
 public class InstallOptionPanel extends JPanel implements ItemListener {
     private static final long serialVersionUID = 2307623568442307145L;

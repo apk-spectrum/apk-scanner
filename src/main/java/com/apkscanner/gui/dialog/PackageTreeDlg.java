@@ -67,6 +67,7 @@ import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.dialog.SimpleCheckTableModel.TableRowObject;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RStr;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.swing.ApkFileChooser;
 import com.apkspectrum.swing.FilteredTreeModel;
 import com.apkspectrum.swing.KeyStrokeAction;
@@ -79,7 +80,6 @@ import com.apkspectrum.tool.adb.IPackageStateListener;
 import com.apkspectrum.tool.adb.PackageInfo;
 import com.apkspectrum.tool.adb.PackageManager;
 import com.apkspectrum.tool.adb.WindowStateInfo;
-import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 
 public class PackageTreeDlg extends JDialog implements TreeSelectionListener, ActionListener {

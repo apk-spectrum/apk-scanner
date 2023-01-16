@@ -8,10 +8,10 @@ import com.android.ddmlib.IDevice;
 import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.easymode.contents.EasyGuiDeviceToolPanel;
 import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.tool.adb.PackageInfo;
 import com.apkspectrum.tool.adb.PackageManager;
-import com.apkspectrum.util.Log;
 
 public class DeviceClearAppDataAction extends AbstractDeviceAction {
     private static final long serialVersionUID = -7583791561158425804L;

@@ -66,6 +66,7 @@ import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 import com.apkspectrum.jna.FileInfo;
 import com.apkspectrum.jna.FileVersion;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.plugin.PlugInManager;
 import com.apkspectrum.plugin.gui.PlugInSettingPanel;
 import com.apkspectrum.swing.ApkFileChooser;
@@ -73,7 +74,6 @@ import com.apkspectrum.swing.KeyStrokeAction;
 import com.apkspectrum.swing.WindowSizeMemorizer;
 import com.apkspectrum.swing.tabbedpaneui.TabbedPaneUIManager;
 import com.apkspectrum.tool.adb.AdbVersionManager;
-import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 
 public class SettingDlg extends JDialog implements ActionListener {

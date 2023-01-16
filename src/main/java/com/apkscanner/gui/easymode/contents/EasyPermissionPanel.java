@@ -12,7 +12,7 @@ import javax.swing.JScrollPane;
 import com.apkscanner.gui.easymode.util.FlatPanel;
 import com.apkscanner.resource.RImg;
 import com.apkspectrum.data.apkinfo.ApkInfo;
-import com.apkspectrum.util.Log;
+import com.apkspectrum.logback.Log;
 
 public class EasyPermissionPanel extends JPanel {
 

@@ -15,7 +15,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.ExpandVetoException;
 
-import com.apkspectrum.util.Log;
+import com.apkspectrum.logback.Log;
 
 public class DynamicTreeLoading extends JFrame {
     private static final long serialVersionUID = 4549528078290137966L;

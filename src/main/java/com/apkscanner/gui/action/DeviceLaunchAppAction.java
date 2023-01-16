@@ -14,11 +14,11 @@ import com.apkscanner.resource.RStr;
 import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.data.apkinfo.ApkInfoHelper;
 import com.apkspectrum.data.apkinfo.ComponentInfo;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.swing.MessageBoxPane;
 import com.apkspectrum.tool.adb.AdbDeviceHelper;
 import com.apkspectrum.tool.adb.PackageInfo;
-import com.apkspectrum.util.Log;
 
 public class DeviceLaunchAppAction extends AbstractDeviceAction {
     private static final long serialVersionUID = -5280023450341526022L;

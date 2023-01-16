@@ -9,9 +9,9 @@ import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.dialog.PackageInfoPanel;
 import com.apkscanner.gui.easymode.contents.EasyGuiDeviceToolPanel;
 import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.tool.adb.PackageInfo;
-import com.apkspectrum.util.Log;
 
 public class DeviceShowInstalledPackageAction extends AbstractDeviceAction {
     private static final long serialVersionUID = 6376356715566831040L;

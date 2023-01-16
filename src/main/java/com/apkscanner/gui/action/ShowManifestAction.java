@@ -10,11 +10,11 @@ import javax.swing.JFileChooser;
 import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.resource.RProp;
 import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.swing.ApkFileChooser;
 import com.apkspectrum.tool.aapt.AaptNativeWrapper;
 import com.apkspectrum.util.FileUtil;
-import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 
 public class ShowManifestAction extends AbstractApkScannerAction {

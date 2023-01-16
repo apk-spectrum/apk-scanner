@@ -13,8 +13,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import com.apkscanner.resource.RImg;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.swing.ImagePanel;
-import com.apkspectrum.util.Log;
 
 public class ContentPanel extends JPanel {
     private static final long serialVersionUID = -680173960208954055L;

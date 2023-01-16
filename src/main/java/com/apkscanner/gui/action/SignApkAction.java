@@ -9,8 +9,8 @@ import javax.swing.JFrame;
 import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.dialog.ApkSignerWizard;
 import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.swing.ApkActionEventHandler;
-import com.apkspectrum.util.Log;
 
 public class SignApkAction extends AbstractApkScannerAction {
     private static final long serialVersionUID = 5083283219636726549L;

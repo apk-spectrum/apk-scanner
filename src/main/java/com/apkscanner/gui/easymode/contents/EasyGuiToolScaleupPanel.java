@@ -23,7 +23,7 @@ import com.apkscanner.gui.easymode.util.EasyRoundButton;
 import com.apkscanner.gui.easymode.util.GraphicUtil;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
-import com.apkspectrum.util.Log;
+import com.apkspectrum.logback.Log;
 
 public class EasyGuiToolScaleupPanel extends JPanel
         implements EasyToolListner, PropertyChangeListener {

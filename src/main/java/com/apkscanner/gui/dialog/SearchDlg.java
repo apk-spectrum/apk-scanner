@@ -36,9 +36,9 @@ import org.fife.ui.rtextarea.SearchEngine;
 import com.apkscanner.gui.tabpanels.ResContentFocusChanger;
 import com.apkscanner.resource.RImg;
 import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.swing.WindowSizeMemorizer;
 import com.apkspectrum.tool.aapt.AaptNativeWrapper;
-import com.apkspectrum.util.Log;
 import com.apkspectrum.util.ZipFileUtil;
 
 public class SearchDlg extends JDialog {

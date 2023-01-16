@@ -4,8 +4,8 @@ import java.awt.event.ActionEvent;
 
 import com.apkspectrum.core.scanner.ApkScanner;
 import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.swing.ApkActionEventHandler;
-import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 
 public class ShowExplorerFolderAction extends AbstractApkScannerAction {

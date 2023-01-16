@@ -11,11 +11,11 @@ import com.android.ddmlib.TimeoutException;
 import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.gui.easymode.contents.EasyGuiDeviceToolPanel;
 import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.swing.MessageBoxPane;
 import com.apkspectrum.tool.adb.PackageInfo;
 import com.apkspectrum.tool.adb.PackageManager;
-import com.apkspectrum.util.Log;
 
 public class DeviceUninstallAppAction extends AbstractDeviceAction {
     private static final long serialVersionUID = 2488899223414835422L;

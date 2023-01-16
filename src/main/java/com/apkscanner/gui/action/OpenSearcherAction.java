@@ -6,8 +6,8 @@ import java.awt.event.ActionEvent;
 import com.apkscanner.gui.dialog.SearchDlg;
 import com.apkscanner.gui.tabpanels.ResContentFocusChanger;
 import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.swing.ApkActionEventHandler;
-import com.apkspectrum.util.Log;
 
 public class OpenSearcherAction extends AbstractApkScannerAction {
     private static final long serialVersionUID = 5550241766806453264L;

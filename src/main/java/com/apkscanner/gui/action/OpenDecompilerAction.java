@@ -16,6 +16,7 @@ import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
 import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.plugin.PlugIn;
 import com.apkspectrum.plugin.PlugInManager;
 import com.apkspectrum.swing.ApkActionEventHandler;
@@ -25,7 +26,6 @@ import com.apkspectrum.tool.Dex2JarWrapper;
 import com.apkspectrum.tool.JADXLauncher;
 import com.apkspectrum.tool.JDGuiLauncher;
 import com.apkspectrum.util.ConsolCmd.ConsoleOutputObserver;
-import com.apkspectrum.util.Log;
 import com.apkspectrum.util.ZipFileUtil;
 
 public class OpenDecompilerAction extends AbstractApkScannerAction {

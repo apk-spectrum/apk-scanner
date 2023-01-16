@@ -52,10 +52,10 @@ import com.apkspectrum.data.apkinfo.ComponentInfo;
 import com.apkspectrum.data.apkinfo.ProviderInfo;
 import com.apkspectrum.data.apkinfo.ReceiverInfo;
 import com.apkspectrum.data.apkinfo.ServiceInfo;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.swing.KeyStrokeAction;
 import com.apkspectrum.swing.TextPrompt;
 import com.apkspectrum.swing.TextPrompt.Show;
-import com.apkspectrum.util.Log;
 
 public class Components extends AbstractTabbedPanel {
     private static final long serialVersionUID = 8325900007802212630L;

@@ -10,12 +10,12 @@ import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
 import com.apkspectrum.core.scanner.ApkScanner;
 import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.swing.AbstractUIAction;
 import com.apkspectrum.swing.ActionEventHandler;
 import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.tool.aapt.AaptNativeWrapper;
 import com.apkspectrum.util.FileUtil;
-import com.apkspectrum.util.Log;
 import com.apkspectrum.util.ZipFileUtil;
 
 public abstract class AbstractApkScannerAction extends AbstractUIAction {

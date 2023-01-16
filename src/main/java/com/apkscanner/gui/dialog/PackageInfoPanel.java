@@ -46,6 +46,7 @@ import com.apkspectrum.core.signer.Signature;
 import com.apkspectrum.core.signer.SignatureReport;
 import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.data.apkinfo.ComponentInfo;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.plugin.PackageSearcher;
 import com.apkspectrum.plugin.PlugIn;
 import com.apkspectrum.plugin.PlugInManager;
@@ -62,7 +63,6 @@ import com.apkspectrum.tool.adb.PackageManager;
 import com.apkspectrum.tool.adb.SimpleOutputReceiver;
 import com.apkspectrum.util.FileUtil;
 import com.apkspectrum.util.FileUtil.FSStyle;
-import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 
 public class PackageInfoPanel extends JPanel

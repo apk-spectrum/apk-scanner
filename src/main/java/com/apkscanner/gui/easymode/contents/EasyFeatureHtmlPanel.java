@@ -31,10 +31,10 @@ import com.apkscanner.resource.RStr;
 import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.data.apkinfo.ApkInfoHelper;
 import com.apkspectrum.data.apkinfo.ComponentInfo;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.resource._RFile;
 import com.apkspectrum.util.FileUtil;
 import com.apkspectrum.util.FileUtil.FSStyle;
-import com.apkspectrum.util.Log;
 import com.apkspectrum.util.XmlPath;
 
 public class EasyFeatureHtmlPanel extends RoundPanel {

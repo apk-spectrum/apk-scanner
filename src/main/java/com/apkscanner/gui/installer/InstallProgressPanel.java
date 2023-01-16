@@ -28,7 +28,7 @@ import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
 import com.apkscanner.resource.RStr;
-import com.apkspectrum.util.Log;
+import com.apkspectrum.logback.Log;
 
 public class InstallProgressPanel extends JPanel {
     private static final long serialVersionUID = 6145481552592676895L;

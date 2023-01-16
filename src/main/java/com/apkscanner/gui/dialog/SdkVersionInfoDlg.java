@@ -28,12 +28,12 @@ import javax.swing.ListCellRenderer;
 
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RStr;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.resource.DefaultResImage;
 import com.apkspectrum.resource._RFile;
 import com.apkspectrum.swing.ImagePanel;
 import com.apkspectrum.swing.KeyStrokeAction;
 import com.apkspectrum.swing.WindowSizeMemorizer;
-import com.apkspectrum.util.Log;
 import com.apkspectrum.util.XmlPath;
 
 public class SdkVersionInfoDlg extends JDialog {

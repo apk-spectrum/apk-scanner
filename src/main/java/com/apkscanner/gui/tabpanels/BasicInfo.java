@@ -58,6 +58,7 @@ import com.apkspectrum.data.apkinfo.UsesConfigurationInfo;
 import com.apkspectrum.data.apkinfo.UsesFeatureInfo;
 import com.apkspectrum.data.apkinfo.UsesLibraryInfo;
 import com.apkspectrum.data.apkinfo.UsesSdkInfo;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.plugin.PackageSearcher;
 import com.apkspectrum.plugin.PlugIn;
 import com.apkspectrum.plugin.PlugInEventAdapter;
@@ -70,7 +71,6 @@ import com.apkspectrum.swing.MessageBoxPane;
 import com.apkspectrum.util.Base64;
 import com.apkspectrum.util.FileUtil;
 import com.apkspectrum.util.FileUtil.FSStyle;
-import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 import com.apkspectrum.util.XmlPath;
 

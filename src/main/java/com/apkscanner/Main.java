@@ -17,9 +17,9 @@ import com.apkscanner.gui.installer.ApkInstallWizard;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.tool.adb.AdbServerMonitor;
 import com.apkspectrum.util.FileUtil;
-import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 
 public class Main {

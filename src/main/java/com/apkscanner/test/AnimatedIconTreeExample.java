@@ -22,7 +22,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import com.apkscanner.resource.RImg;
-import com.apkspectrum.util.Log;
+import com.apkspectrum.logback.Log;
 
 /**
  * @version 1.0 06/20/99

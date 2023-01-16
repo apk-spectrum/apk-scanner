@@ -28,9 +28,9 @@ import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 import com.apkspectrum.core.signer.ApkSigner;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.swing.ApkFileChooser;
 import com.apkspectrum.swing.WindowSizeMemorizer;
-import com.apkspectrum.util.Log;
 
 public class ApkSignerWizard implements ActionListener {
 

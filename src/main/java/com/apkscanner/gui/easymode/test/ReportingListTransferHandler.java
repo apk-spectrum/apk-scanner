@@ -11,7 +11,7 @@ import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.TransferHandler;
 
-import com.apkspectrum.util.Log;
+import com.apkspectrum.logback.Log;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class ReportingListTransferHandler extends TransferHandler {

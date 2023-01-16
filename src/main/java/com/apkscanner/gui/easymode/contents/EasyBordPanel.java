@@ -23,7 +23,7 @@ import com.apkscanner.gui.easymode.util.CustomSlider;
 import com.apkscanner.gui.easymode.util.EasyButton;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RStr;
-import com.apkspectrum.util.Log;
+import com.apkspectrum.logback.Log;
 
 public class EasyBordPanel extends JPanel implements ActionListener, ChangeListener {
 

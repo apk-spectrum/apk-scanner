@@ -40,7 +40,7 @@ import javax.swing.event.ListSelectionListener;
 import com.android.ddmlib.IDevice;
 import com.apkscanner.resource.RImg;
 import com.apkspectrum.core.installer.OptionsBundle;
-import com.apkspectrum.util.Log;
+import com.apkspectrum.logback.Log;
 
 public class DeviceCustomList extends JList<DeviceListData> {
     private static final long serialVersionUID = 4647130365982201484L;

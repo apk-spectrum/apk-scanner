@@ -39,9 +39,9 @@ import com.apkscanner.gui.easymode.util.RoundPanel;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RStr;
 import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.plugin.ExternalTool;
 import com.apkspectrum.swing.DropTargetChooser;
-import com.apkspectrum.util.Log;
 
 public class EasyGuiMainPanel extends JPanel
         implements ComponentListener, DropTargetChooser.Listener {

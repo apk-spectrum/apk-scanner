@@ -26,10 +26,10 @@ import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 import com.apkspectrum.core.scanner.AaptLightScanner;
 import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.plugin.PlugInEventAdapter;
 import com.apkspectrum.plugin.PlugInManager;
 import com.apkspectrum.plugin.UpdateChecker;
-import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 
 public class UIController implements Runnable, InvocationHandler {

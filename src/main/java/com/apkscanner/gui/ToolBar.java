@@ -44,6 +44,7 @@ import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.plugin.ExternalTool;
 import com.apkspectrum.plugin.PackageSearcher;
 import com.apkspectrum.plugin.PlugIn;
@@ -51,7 +52,6 @@ import com.apkspectrum.plugin.PlugInManager;
 import com.apkspectrum.swing.ExtensionButton;
 import com.apkspectrum.swing.NoCloseCheckBoxMenuItem;
 import com.apkspectrum.swing.UIAction;
-import com.apkspectrum.util.Log;
 
 public class ToolBar extends JToolBar {
     private static final long serialVersionUID = 894134416480807167L;

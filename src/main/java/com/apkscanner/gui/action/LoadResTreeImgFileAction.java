@@ -11,9 +11,9 @@ import javax.swing.event.TreeExpansionEvent;
 import com.apkscanner.gui.tabpanels.ResourceNode;
 import com.apkscanner.gui.tabpanels.TreeNodeData;
 import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.swing.ApkActionEventHandler;
 import com.apkspectrum.tool.ImgExtractorWrapper;
-import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 import com.apkspectrum.util.ZipFileUtil;
 

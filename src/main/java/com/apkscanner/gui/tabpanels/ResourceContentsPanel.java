@@ -35,10 +35,10 @@ import org.fife.ui.rtextarea.SearchResult;
 import com.apkscanner.gui.UiEventHandler;
 import com.apkscanner.resource.RConst;
 import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.swing.ActionEventHandler;
 import com.apkspectrum.swing.ImageControlPanel;
 import com.apkspectrum.swing.KeyStrokeAction;
-import com.apkspectrum.util.Log;
 
 public class ResourceContentsPanel extends JPanel implements ActionListener {
     private static final long serialVersionUID = -934921813626224616L;

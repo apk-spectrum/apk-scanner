@@ -6,8 +6,8 @@ import java.awt.event.ActionEvent;
 import com.apkscanner.Launcher;
 import com.apkscanner.gui.dialog.PackageTreeDlg;
 import com.apkspectrum.core.scanner.ApkScanner;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.swing.ApkActionEventHandler;
-import com.apkspectrum.util.Log;
 
 public class OpenPackageAction extends AbstractApkScannerAction {
     private static final long serialVersionUID = 7804901664854984928L;

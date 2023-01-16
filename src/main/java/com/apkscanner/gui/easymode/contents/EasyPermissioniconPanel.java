@@ -27,7 +27,7 @@ import com.apkspectrum.core.permissionmanager.PermissionGroupInfoExt;
 import com.apkspectrum.core.permissionmanager.PermissionManager;
 import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.data.apkinfo.ApkInfoHelper;
-import com.apkspectrum.util.Log;
+import com.apkspectrum.logback.Log;
 
 public class EasyPermissioniconPanel extends RoundPanel implements ActionListener {
     private static final long serialVersionUID = -7090063544416919223L;

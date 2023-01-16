@@ -9,9 +9,9 @@ import javax.swing.JPanel;
 
 import com.apkscanner.resource.RComp;
 import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.swing.ITabbedComponent;
 import com.apkspectrum.swing.ITabbedRequest;
-import com.apkspectrum.util.Log;
 
 public abstract class AbstractTabbedPanel extends JPanel
         implements ITabbedComponent<ApkInfo>, PropertyChangeListener {

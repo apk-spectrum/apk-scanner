@@ -7,8 +7,8 @@ import com.apkscanner.gui.MessageBoxPool;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
 import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.swing.ApkActionEventHandler;
-import com.apkspectrum.util.Log;
 import com.apkspectrum.util.SystemUtil;
 
 public class ShowExplorerAction extends AbstractApkScannerAction {

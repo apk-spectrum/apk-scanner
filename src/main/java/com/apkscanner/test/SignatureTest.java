@@ -12,7 +12,7 @@ import java.util.zip.ZipFile;
 import com.apkspectrum.core.signer.Signature;
 import com.apkspectrum.core.signer.SignatureReport;
 import com.apkspectrum.core.signer.SignatureReportByApksig;
-import com.apkspectrum.util.Log;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.util.ZipFileUtil;
 
 public class SignatureTest {

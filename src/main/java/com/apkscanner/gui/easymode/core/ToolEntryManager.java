@@ -12,7 +12,7 @@ import com.apkscanner.resource.RImg;
 import com.apkscanner.resource.RProp;
 import com.apkscanner.resource.RStr;
 import com.apkspectrum.core.scanner.ApkScanner;
-import com.apkspectrum.util.Log;
+import com.apkspectrum.logback.Log;
 
 public class ToolEntryManager {
 

@@ -26,8 +26,8 @@ import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RImg;
 import com.apkspectrum.core.scanner.ApkScanner;
 import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.swing.ActionEventHandler;
-import com.apkspectrum.util.Log;
 
 public class Resources extends AbstractTabbedPanel implements TreeSelectionListener {
     private static final long serialVersionUID = -934921813626224616L;

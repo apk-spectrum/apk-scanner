@@ -13,7 +13,7 @@ import javax.swing.JToolTip;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 
-import com.apkspectrum.util.Log;
+import com.apkspectrum.logback.Log;
 
 public class CustomTooltipSample extends JFrame {
     /**

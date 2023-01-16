@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import com.android.apksig.ApkVerifier;
 import com.android.apksig.ApkVerifier.Result;
 import com.android.apksig.apk.ApkFormatException;
-import com.apkspectrum.util.Log;
+import com.apkspectrum.logback.Log;
 
 public class signerTest {
 

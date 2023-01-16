@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
 import com.apkscanner.resource.RStr;
-import com.apkspectrum.util.Log;
+import com.apkspectrum.logback.Log;
 
 public class ControlPanel extends JPanel {
     private static final long serialVersionUID = 5959656550868421305L;
