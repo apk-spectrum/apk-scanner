@@ -2,6 +2,7 @@ package com.apkscanner;
 
 import java.awt.EventQueue;
 import java.io.File;
+import java.io.PrintStream;
 import java.nio.charset.Charset;
 
 import org.apache.commons.cli.CommandLine;
@@ -28,6 +29,8 @@ public class Main {
     private static final Options targetApkOptions = new Options();
     private static final Options targetPackageOptions = new Options();
 
+    private static final PrintStream systemOut = System.out;
+
     static public void main(final String[] args) {
         RStr.setLanguage(RProp.S.LANGUAGE.get());
         if ("user".equalsIgnoreCase(RStr.APP_BUILD_MODE.get())) {
@@ -47,8 +50,8 @@ public class Main {
         createOpstions();
 
         CommandLine cmd = null;
-        String cmdType = null;
         try {
+            String cmdType = null;
             if (args.length > 0) {
                 if (!"p".equals(args[0]) && !"package".equals(args[0]) && "i".equals(args[0])
                         && "install".equals(args[0]) && "d".equals(args[0])
@@ -251,16 +254,16 @@ public class Main {
     }
 
     static private void usage() {
-        System.out.println(RStr.APP_NAME + " " + RStr.APP_VERSION);
-        // System.out.println("with apktool " + ApktoolWrapper.getApkToolVersion() + "
+        systemOut.println(RStr.APP_NAME + " " + RStr.APP_VERSION);
+        // systemOut.println("with apktool " + ApktoolWrapper.getApkToolVersion() + "
         // (http://ibotpeaches.github.io/Apktool/)");
-        // System.out.println(" - Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)");
-        System.out.println(
+        // systemOut.println(" - Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)");
+        systemOut.println(
                 "with Android debug bridge (http://developer.android.com/tools/help/adb.html)");
-        System.out.println(
+        systemOut.println(
                 "Programmed by " + RStr.APP_MAKER + " <" + RStr.APP_MAKER_EMAIL + ">" + ", 2015");
-        System.out.println("Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)");
-        System.out.println();
+        systemOut.println("Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)");
+        systemOut.println();
 
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("apkscanner ", normalOptions);
