@@ -11,7 +11,7 @@ import javax.swing.table.TableColumnModel;
 public class GroupableTableHeader extends JTableHeader {
     private static final long serialVersionUID = -3411849042833954584L;
 
-	@SuppressWarnings("unused")
+    @SuppressWarnings("unused")
     private static final String uiClassID = "GroupableTableHeaderUI";
 
     protected List<ColumnGroup> columnGroups = new ArrayList<ColumnGroup>();

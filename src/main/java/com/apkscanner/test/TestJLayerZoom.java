@@ -13,7 +13,6 @@ import javax.swing.WindowConstants;
 
 
 
-
 public class TestJLayerZoom {
 
     public static void main(String args[]) {

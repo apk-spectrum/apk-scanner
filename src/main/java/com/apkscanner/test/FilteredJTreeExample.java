@@ -26,10 +26,10 @@ import javax.swing.tree.TreeNode;
 public class FilteredJTreeExample extends JFrame {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -6121065743985727828L;
-	private JPanel contentPane;
+     * 
+     */
+    private static final long serialVersionUID = -6121065743985727828L;
+    private JPanel contentPane;
     private JTextField textField;
 
     /**
@@ -62,10 +62,10 @@ public class FilteredJTreeExample extends JFrame {
         JPanel panel = new JPanel();
         contentPane.add(panel, BorderLayout.NORTH);
         GridBagLayout gbl_panel = new GridBagLayout();
-        gbl_panel.columnWidths = new int[]{34, 116, 0};
-        gbl_panel.rowHeights = new int[]{22, 0};
-        gbl_panel.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-        gbl_panel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+        gbl_panel.columnWidths = new int[] {34, 116, 0};
+        gbl_panel.rowHeights = new int[] {22, 0};
+        gbl_panel.columnWeights = new double[] {0.0, 1.0, Double.MIN_VALUE};
+        gbl_panel.rowWeights = new double[] {0.0, Double.MIN_VALUE};
         panel.setLayout(gbl_panel);
 
         JLabel lblFilter = new JLabel("Filter:");
@@ -100,27 +100,26 @@ public class FilteredJTreeExample extends JFrame {
 
         tree.setCellRenderer(new DefaultTreeCellRenderer() {
             /**
-			 * 
-			 */
-			private static final long serialVersionUID = 1741304831874120632L;
-			private JLabel lblNull = new JLabel();
+             * 
+             */
+            private static final long serialVersionUID = 1741304831874120632L;
+            private JLabel lblNull = new JLabel();
 
             @Override
-            public Component getTreeCellRendererComponent(JTree tree, Object value,
-                    boolean arg2, boolean arg3, boolean arg4, int arg5, boolean arg6) {
+            public Component getTreeCellRendererComponent(JTree tree, Object value, boolean arg2,
+                    boolean arg3, boolean arg4, int arg5, boolean arg6) {
 
-                Component c = super.getTreeCellRendererComponent(tree, value, arg2, arg3, arg4, arg5, arg6);
+                Component c = super.getTreeCellRendererComponent(tree, value, arg2, arg3, arg4,
+                        arg5, arg6);
 
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
                 if (matchesFilter(node)) {
                     c.setForeground(Color.BLACK);
                     return c;
-                }
-                else if (containsMatchingChild(node)) {
+                } else if (containsMatchingChild(node)) {
                     c.setForeground(Color.GRAY);
                     return c;
-                }
-                else {
+                } else {
                     return lblNull;
                 }
             }
@@ -130,10 +129,11 @@ public class FilteredJTreeExample extends JFrame {
             }
 
             private boolean containsMatchingChild(DefaultMutableTreeNode node) {
-				@SuppressWarnings("unchecked")
-				Enumeration<TreeNode> e = (Enumeration<TreeNode>)(Enumeration<?>) node.breadthFirstEnumeration();
+                @SuppressWarnings("unchecked")
+                Enumeration<TreeNode> e =
+                        (Enumeration<TreeNode>) (Enumeration<?>) node.breadthFirstEnumeration();
                 while (e.hasMoreElements()) {
-                    if (matchesFilter((DefaultMutableTreeNode)e.nextElement())) {
+                    if (matchesFilter((DefaultMutableTreeNode) e.nextElement())) {
                         return true;
                     }
                 }

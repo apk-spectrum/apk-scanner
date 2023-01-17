@@ -112,8 +112,8 @@ fi
 if [ -e ~/.local/share/applications/mimeapps.list ]; then
 cp -f ~/.local/share/applications/mimeapps.list ~/.local/share/applications/mimeapps_old.list
 cat ~/.local/share/applications/mimeapps_old.list \
-	| sed '/application\/vnd\.android\.package-archive\=/d;/^$/d' \
-	| sed 's/^\s*\[.*\]\s*$/&\napplication\/vnd.android.package-archive=apkscanner.desktop;/' > ~/.local/share/applications/mimeapps.list
+    | sed '/application\/vnd\.android\.package-archive\=/d;/^$/d' \
+    | sed 's/^\s*\[.*\]\s*$/&\napplication\/vnd.android.package-archive=apkscanner.desktop;/' > ~/.local/share/applications/mimeapps.list
 else
 cat << EOF > ~/.local/share/applications/mimeapps.list
 [Added Associations]

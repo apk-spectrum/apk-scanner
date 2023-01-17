@@ -30,9 +30,7 @@ public class AddComponentsAtRuntime {
         f.add(getCheckBoxPanel(), "South");
         f.setLocation(200, 200);
         f.pack();
-        
-        
-        
+
         f.setVisible(true);
     }
 
@@ -99,6 +97,6 @@ public class AddComponentsAtRuntime {
 
     public static void main(String[] args) {
         @SuppressWarnings("unused")
-		AddComponentsAtRuntime makingChanges = new AddComponentsAtRuntime();
+        AddComponentsAtRuntime makingChanges = new AddComponentsAtRuntime();
     }
 }

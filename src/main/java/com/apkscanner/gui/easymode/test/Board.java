@@ -14,11 +14,10 @@ import javax.swing.Timer;
 
 import com.apkscanner.resource.RImg;
 
-public class Board extends JPanel
-        implements ActionListener {
+public class Board extends JPanel implements ActionListener {
     private static final long serialVersionUID = 8502148593071877683L;
 
-	private final int B_WIDTH = 350;
+    private final int B_WIDTH = 350;
     private final int B_HEIGHT = 350;
     private final int INITIAL_X = -40;
     private final int INITIAL_Y = -40;
@@ -45,10 +44,10 @@ public class Board extends JPanel
         setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
 
         loadImage();
-        
+
         x = INITIAL_X;
         y = INITIAL_Y;
-        
+
         timer = new Timer(DELAY, this);
         timer.start();
     }
@@ -73,7 +72,6 @@ public class Board extends JPanel
         y += 1;
 
         if (y > B_HEIGHT) {
-
             y = INITIAL_Y;
             x = INITIAL_X;
         }

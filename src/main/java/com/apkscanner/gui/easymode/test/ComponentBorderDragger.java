@@ -64,22 +64,18 @@ public class ComponentBorderDragger implements MouseMotionListener {
 
         if ((direction & EAST) == EAST) {
             int newWidth;
-            newWidth = Math.max(minSize.width, width + newPoint.x
-                    - basePoint.x);
+            newWidth = Math.max(minSize.width, width + newPoint.x - basePoint.x);
             width = newWidth;
         }
         if ((direction & SOUTH) == SOUTH) {
             int novoAlto;
-            novoAlto = Math.max(minSize.height, height + newPoint.y
-                    - basePoint.y);
+            novoAlto = Math.max(minSize.height, height + newPoint.y - basePoint.y);
             height = novoAlto;
         }
         if ((direction & WEST) == WEST) {
             int newWidth, newX;
-            newWidth = Math.max(minSize.width, width - newPoint.x
-                    + basePoint.x);
-            newX = Math.min(x + width - minSize.width, x + newPoint.x
-                    - basePoint.x);
+            newWidth = Math.max(minSize.width, width - newPoint.x + basePoint.x);
+            newX = Math.min(x + width - minSize.width, x + newPoint.x - basePoint.x);
 
             // Changing coordenates of new base point to refer to the new component position
             newBasePointX -= newX - x;
@@ -88,10 +84,8 @@ public class ComponentBorderDragger implements MouseMotionListener {
         }
         if ((direction & NORTH) == NORTH) {
             int newHeigth, newY;
-            newHeigth = Math.max(minSize.height, height - newPoint.y
-                    + basePoint.y);
-            newY = Math.min(y + height - minSize.height, y + newPoint.y
-                    - basePoint.y);
+            newHeigth = Math.max(minSize.height, height - newPoint.y + basePoint.y);
+            newY = Math.min(y + height - minSize.height, y + newPoint.y - basePoint.y);
             // Changing coordenates of new base point to refer to the new component position
             newBasePointY -= newY - y;
             y = newY;

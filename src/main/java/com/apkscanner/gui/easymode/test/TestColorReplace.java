@@ -10,7 +10,8 @@ public class TestColorReplace {
 
     public static void main(String[] args) {
         try {
-            BufferedImage img = colorImage(ImageIO.read(new File(System.getProperty("user.dir") + "/res/icons/perm_group_storage.png")));
+            BufferedImage img = colorImage(ImageIO.read(new File(
+                    System.getProperty("user.dir") + "/res/icons/perm_group_storage.png")));
             ImageIO.write(img, "png", new File("/home/leejinhyeong/Desktop/Test.png"));
         } catch (IOException ex) {
             ex.printStackTrace();

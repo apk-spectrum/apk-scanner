@@ -65,45 +65,45 @@ LangString ADD_DESKTOP_DESC ${LANG_KOREAN} "바탕화면에 바로가기 아이�
 
 Section $(APP_NAME) Section1
 
-	; Set Section properties
-	SectionIn RO
-	SetOverwrite on
+    ; Set Section properties
+    SectionIn RO
+    SetOverwrite on
 
-	; Delete legacy files
-	Delete "$INSTDIR\uninstall.exe"
-	Delete "$INSTDIR\APKInfoDlg.jar"
-	Delete "$INSTDIR\lib\lib\*"
-	Delete "$INSTDIR\lib\lib64\*"
-	Delete "$INSTDIR\lib\proxy-vole\*"
-	RMDir "$INSTDIR\lib\proxy-vole\"
-	RMDir "$INSTDIR\lib\lib64\"
-	RMDir "$INSTDIR\lib\lib\"
+    ; Delete legacy files
+    Delete "$INSTDIR\uninstall.exe"
+    Delete "$INSTDIR\APKInfoDlg.jar"
+    Delete "$INSTDIR\lib\lib\*"
+    Delete "$INSTDIR\lib\lib64\*"
+    Delete "$INSTDIR\lib\proxy-vole\*"
+    RMDir "$INSTDIR\lib\proxy-vole\"
+    RMDir "$INSTDIR\lib\lib64\"
+    RMDir "$INSTDIR\lib\lib\"
 
-	; Set Section Files and Shortcuts
-	SetOutPath "$INSTDIR"
-	File "${RELEASE_DIR}\ApkScanner.jar"
-	File "${RELEASE_DIR}\ApkScanner.exe"
-	SetOutPath "$INSTDIR\data"
-	File /r "${RELEASE_DIR}\data\*"
-	SetOutPath "$INSTDIR\lib"
-	File /r "${RELEASE_DIR}\lib\*"
-	SetOutPath "$INSTDIR\plugin"
-	File /NONFATAL /r /x plugins.conf "${RELEASE_DIR}\plugin\*"
-	SetOutPath "$INSTDIR\security"
-	File /r "${RELEASE_DIR}\security\*"
-	SetOutPath "$INSTDIR\tool"
-	File /r /x linux /x darwin "${RELEASE_DIR}\tool\*"
+    ; Set Section Files and Shortcuts
+    SetOutPath "$INSTDIR"
+    File "${RELEASE_DIR}\ApkScanner.jar"
+    File "${RELEASE_DIR}\ApkScanner.exe"
+    SetOutPath "$INSTDIR\data"
+    File /r "${RELEASE_DIR}\data\*"
+    SetOutPath "$INSTDIR\lib"
+    File /r "${RELEASE_DIR}\lib\*"
+    SetOutPath "$INSTDIR\plugin"
+    File /NONFATAL /r /x plugins.conf "${RELEASE_DIR}\plugin\*"
+    SetOutPath "$INSTDIR\security"
+    File /r "${RELEASE_DIR}\security\*"
+    SetOutPath "$INSTDIR\tool"
+    File /r /x linux /x darwin "${RELEASE_DIR}\tool\*"
 
-	Exec '"cmd.exe" /c icacls "$INSTDIR" /grant Users:(OI)(CI)F'
+    Exec '"cmd.exe" /c icacls "$INSTDIR" /grant Users:(OI)(CI)F'
 
 SectionEnd
 
 Section $(ASSOCITATE_APK) Section2
 
-	; Set Section properties
-	SetOverwrite on
+    ; Set Section properties
+    SetOverwrite on
 
-	; Set Section Files and Shortcuts
+    ; Set Section Files and Shortcuts
     WriteRegStr HKCR "ApkScanner.apk\CLSID" "" "{E88DCCE0-B7B3-11d1-A9F0-00AA0060FA31}"
     WriteRegStr HKCR "ApkScanner.apk\DefaultIcon" "" "$INSTDIR\ApkScanner.exe,1"
     WriteRegStr HKCR "ApkScanner.apk\OpenWithProgids" "CompressedFolder" ""
@@ -119,88 +119,88 @@ SectionEnd
 
 Section $(ADD_STARTMENU) Section3
 
-	; Set Section properties
-	SetOverwrite on
+    ; Set Section properties
+    SetOverwrite on
 
-	; Set Section Files and Shortcuts
-	CreateDirectory "$SMPROGRAMS\APK Scanner"
-	CreateShortCut "$SMPROGRAMS\APK Scanner\$(APP_NAME).lnk" "$INSTDIR\ApkScanner.exe"
-	CreateShortCut "$SMPROGRAMS\APK Scanner\Uninstall.lnk" "$INSTDIR\uninstall.exe"
+    ; Set Section Files and Shortcuts
+    CreateDirectory "$SMPROGRAMS\APK Scanner"
+    CreateShortCut "$SMPROGRAMS\APK Scanner\$(APP_NAME).lnk" "$INSTDIR\ApkScanner.exe"
+    CreateShortCut "$SMPROGRAMS\APK Scanner\Uninstall.lnk" "$INSTDIR\uninstall.exe"
 
 SectionEnd
 
 Section $(ADD_DESKTOP) Section4
 
-	; Set Section properties
-	SetOverwrite on
+    ; Set Section properties
+    SetOverwrite on
 
-	; Set Section Files and Shortcuts
-	CreateShortCut "$DESKTOP\$(APP_NAME).lnk" "$INSTDIR\ApkScanner.exe"
+    ; Set Section Files and Shortcuts
+    CreateShortCut "$DESKTOP\$(APP_NAME).lnk" "$INSTDIR\ApkScanner.exe"
 
 SectionEnd
 
 Section -FinishSection
 
-	WriteRegStr HKLM "Software\${PROJECTNAME}" "" "$INSTDIR"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROJECTNAME}" "DisplayName" "${PROJECTNAME}"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROJECTNAME}" "UninstallString" "$INSTDIR\uninstall.exe"
-	WriteUninstaller "$INSTDIR\uninstall.exe"
+    WriteRegStr HKLM "Software\${PROJECTNAME}" "" "$INSTDIR"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROJECTNAME}" "DisplayName" "${PROJECTNAME}"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROJECTNAME}" "UninstallString" "$INSTDIR\uninstall.exe"
+    WriteUninstaller "$INSTDIR\uninstall.exe"
 
 SectionEnd
 
 ; Modern install component descriptions
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-	!insertmacro MUI_DESCRIPTION_TEXT ${Section1} $(APP_NAME_DESC)
-	!insertmacro MUI_DESCRIPTION_TEXT ${Section2} $(ASSOCITATE_APK_DESC)
-	!insertmacro MUI_DESCRIPTION_TEXT ${Section3} $(ADD_STARTMENU_DESC)
-	!insertmacro MUI_DESCRIPTION_TEXT ${Section4} $(ADD_DESKTOP_DESC)
+    !insertmacro MUI_DESCRIPTION_TEXT ${Section1} $(APP_NAME_DESC)
+    !insertmacro MUI_DESCRIPTION_TEXT ${Section2} $(ASSOCITATE_APK_DESC)
+    !insertmacro MUI_DESCRIPTION_TEXT ${Section3} $(ADD_STARTMENU_DESC)
+    !insertmacro MUI_DESCRIPTION_TEXT ${Section4} $(ADD_DESKTOP_DESC)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;Uninstall section
 Section Uninstall
 
-	;Remove from registry...
-	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROJECTNAME}"
-	DeleteRegKey HKLM "SOFTWARE\${PROJECTNAME}"
+    ;Remove from registry...
+    DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROJECTNAME}"
+    DeleteRegKey HKLM "SOFTWARE\${PROJECTNAME}"
 
-	DeleteRegKey HKCR "ApkScanner.apk"
+    DeleteRegKey HKCR "ApkScanner.apk"
 
-	; Delete self
-	Delete "$INSTDIR\uninstall.exe"
+    ; Delete self
+    Delete "$INSTDIR\uninstall.exe"
 
-	; Delete Shortcuts
-	Delete "$SMPROGRAMS\APK Scanner\$(APP_NAME).lnk"
-	Delete "$SMPROGRAMS\APK Scanner\Uninstall.lnk"
-	Delete "$DESKTOP\$(APP_NAME).lnk"
+    ; Delete Shortcuts
+    Delete "$SMPROGRAMS\APK Scanner\$(APP_NAME).lnk"
+    Delete "$SMPROGRAMS\APK Scanner\Uninstall.lnk"
+    Delete "$DESKTOP\$(APP_NAME).lnk"
 
-	; Clean up APK Scanner
-	; Remove remaining directories
-	RMDir "$SMPROGRAMS\APK Scanner"
-	RMDir /r /REBOOTOK "$INSTDIR"
+    ; Clean up APK Scanner
+    ; Remove remaining directories
+    RMDir "$SMPROGRAMS\APK Scanner"
+    RMDir /r /REBOOTOK "$INSTDIR"
 
-	Var /GLOBAL associate
-	ReadRegStr $associate HKCR .apk ""
-	DetailPrint "Associate .apk: $associate"
-	${If} $associate == "ApkScanner.apk"
-		WriteRegStr HKCR ".apk" "" ""
-    	ExecWait '"cmd.exe" /c assoc .apk=.apk'
-    	Exec '"cmd.exe" /c assoc .apk='
-	${EndIf}
+    Var /GLOBAL associate
+    ReadRegStr $associate HKCR .apk ""
+    DetailPrint "Associate .apk: $associate"
+    ${If} $associate == "ApkScanner.apk"
+        WriteRegStr HKCR ".apk" "" ""
+        ExecWait '"cmd.exe" /c assoc .apk=.apk'
+        Exec '"cmd.exe" /c assoc .apk='
+    ${EndIf}
 
-	ReadRegStr $associate HKCR .apex ""
-	DetailPrint "Associate .apex: $associate"
-	${If} $associate == "ApkScanner.apk"
-		WriteRegStr HKCR ".apex" "" ""
-    	ExecWait '"cmd.exe" /c assoc .apex=.apex'
-    	Exec '"cmd.exe" /c assoc .apex='
-	${EndIf}
+    ReadRegStr $associate HKCR .apex ""
+    DetailPrint "Associate .apex: $associate"
+    ${If} $associate == "ApkScanner.apk"
+        WriteRegStr HKCR ".apex" "" ""
+        ExecWait '"cmd.exe" /c assoc .apex=.apex'
+        Exec '"cmd.exe" /c assoc .apex='
+    ${EndIf}
 
 SectionEnd
 
 ; On initialization
 Function .onInit
 
-	!insertmacro MUI_LANGDLL_DISPLAY
+    !insertmacro MUI_LANGDLL_DISPLAY
 
 FunctionEnd
 

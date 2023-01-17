@@ -31,257 +31,281 @@ import com.apkscanner.resource.RStr;
 import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.data.apkinfo.ApkInfoHelper;
 import com.apkspectrum.data.apkinfo.ComponentInfo;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.resource._RFile;
 import com.apkspectrum.util.FileUtil;
 import com.apkspectrum.util.FileUtil.FSStyle;
-import com.apkspectrum.util.Log;
 import com.apkspectrum.util.XmlPath;
 
 public class EasyFeatureHtmlPanel extends RoundPanel {
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 2788545461825796983L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 2788545461825796983L;
 
-	EasyGuiAppFeatureData AppFeature;
-	XmlPath sdkXmlPath;
-	JPanel mainpanel;
-	JScrollPane scrollPane;
-	ApkInfo mapkInfo;
-	ShowsignDlg showsignListener;
-	
-	public EasyFeatureHtmlPanel() {
-		setLayout(new BorderLayout());
+    EasyGuiAppFeatureData AppFeature;
+    XmlPath sdkXmlPath;
+    JPanel mainpanel;
+    JScrollPane scrollPane;
+    ApkInfo mapkInfo;
+    ShowsignDlg showsignListener;
 
-		mainpanel = new JPanel();
-		mainpanel.setOpaque(false);
-		mainpanel.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
+    public EasyFeatureHtmlPanel() {
+        setLayout(new BorderLayout());
 
-		scrollPane = new JScrollPane(mainpanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		//scrollPane.setPreferredSize(new Dimension(getWidth(), getHeight()));
-		scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(15, 0));
-		//scrollPane.getVerticalScrollBar().setUnitIncrement(HEIGHT+1);
+        mainpanel = new JPanel();
+        mainpanel.setOpaque(false);
+        mainpanel.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
 
-		scrollPane.setBorder(null);
-		scrollPane.setOpaque(false);
-		scrollPane.getViewport().setOpaque(false);
-		
-		showsignListener = new ShowsignDlg();
-		
-		scrollPane.addComponentListener(new ComponentListener() {
-			@Override
-			public void componentShown(ComponentEvent e) {	}
-			@Override
-			public void componentResized(ComponentEvent e) {
-				refreshUI();
-			}
-			@Override
-			public void componentMoved(ComponentEvent e) {}
-			@Override
-			public void componentHidden(ComponentEvent e) {}
-		});
+        scrollPane = new JScrollPane(mainpanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        // scrollPane.setPreferredSize(new Dimension(getWidth(), getHeight()));
+        scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(15, 0));
+        // scrollPane.getVerticalScrollBar().setUnitIncrement(HEIGHT+1);
 
+        scrollPane.setBorder(null);
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false);
 
-		setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
-		//setBackground(new Color(217, 217, 217));
-		setRoundrectColor(new Color(217, 217, 217));
-		//setshadowlen(10);
-		AppFeature = new EasyGuiAppFeatureData();
-		setSdkXml();
+        showsignListener = new ShowsignDlg();
 
-		add(scrollPane, BorderLayout.CENTER);
+        scrollPane.addComponentListener(new ComponentListener() {
+            @Override
+            public void componentShown(ComponentEvent e) {}
 
-		JPanel tempfeature = new JPanel(new FlowLayout());
-		tempfeature.setOpaque(false);
+            @Override
+            public void componentResized(ComponentEvent e) {
+                refreshUI();
+            }
 
-	}
-	private void setdefaultfeature(JComponent com) {
-		com.setFont(new Font(getFont().getName(), Font.PLAIN, 13));
-		com.setBorder(new EmptyBorder(5, 5, 5, 5));
-	}
+            @Override
+            public void componentMoved(ComponentEvent e) {}
 
-	private JComponent makeFeatpanel(String foldstr, String spreadstr, Color foreground) {
-		EasyRoundButton btn = new EasyRoundButton(foldstr, spreadstr);
-		btn.setForeground(foreground);
-		setdefaultfeature(btn);
-		btn.addComponentListener(new ComponentListener() {
-			@Override
-			public void componentShown(ComponentEvent e) {}
-			@Override
-			public void componentResized(ComponentEvent e) {
-				refreshUI();
-			}
-			@Override
-			public void componentMoved(ComponentEvent e) {}
-			@Override
-			public void componentHidden(ComponentEvent e) {}
-		});
-		return btn;
-	}
-
-	private JComponent makeFeatpanel(String str, Color foreground) {
-		return makeFeatpanel(str,str,foreground);
-	}
-
-	private JComponent makeFeatpanel(String str, ActionListener listner, Color foreground) {
-
-		JComponent btn = makeFeatpanel(str, "", foreground);
-		((JButton)btn).addActionListener(listner);
-		return btn;
-
-	}
-
-	public void refreshUI() {
-		mainpanel.updateUI();
-		if(mainpanel.getComponentCount() > 0) {
-			Component com = mainpanel.getComponent(mainpanel.getComponentCount()-1);
-			mainpanel.setPreferredSize(new Dimension(scrollPane.getViewport().getWidth(), com.getY() + com.getHeight()));
-		} else {
-			mainpanel.setPreferredSize(new Dimension(scrollPane.getViewport().getWidth(), scrollPane.getViewport().getHeight()));
-		}
-	}
-
-	public void setfeature(ApkInfo apkInfo) {
-		mapkInfo = apkInfo;
-		AppFeature.setFeature(apkInfo);
-		//makefeaturehtml(AppFeature);
-		mainpanel.removeAll();
-		newmakefeaturehtml(AppFeature, apkInfo);
-		updateUI();
-		refreshUI();
-	}
-
-	public void setSdkXml() {
-		try(InputStream xml = _RFile.RAW_SDK_INFO_FILE.getResourceAsStream()) {
-			if(xml != null) sdkXmlPath = new XmlPath(xml);
-		} catch(IOException e) { }
-		if(sdkXmlPath == null) {
-			Log.w("Can not create XmlPath, xmlPath : " + _RFile.RAW_SDK_INFO_FILE.getPath());
-			return;
-		}
-	}
-	private String makesdkString(int sdkversion) {
-		String str = "";
-		
-		XmlPath sdkInfo = sdkXmlPath.getNode("/resources/sdk-info[@apiLevel='" + sdkversion + "']");
-				
-		if(sdkInfo == null ) {
-			str = sdkversion + "-" + "unknown" + " / " + "unknown";
-		} else {
-			str = sdkversion + "-" + sdkInfo.getAttribute("platformVersion") + " / " + sdkInfo.getAttribute("codeName");
-		}
-		
-		//21-5.0/Lollipop
-		return str;
-	}
+            @Override
+            public void componentHidden(ComponentEvent e) {}
+        });
 
 
-	class ShowsignDlg implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			//ToolEntryManager.excuteSinerDlg(null);
-			//ToolEntryManager.excuteEntry(ToolEntryManager.TOOL_SHOW_SIGN_DLG);
-			Window window = SwingUtilities.getWindowAncestor((Component) e.getSource());
-			new EasyToolbarCertDlg((JFrame) window, true, mapkInfo);
-		}
-	}
+        setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
+        // setBackground(new Color(217, 217, 217));
+        setRoundrectColor(new Color(217, 217, 217));
+        // setshadowlen(10);
+        AppFeature = new EasyGuiAppFeatureData();
+        setSdkXml();
 
-	//20. 09. 17 
-	// 서명 thread 밖으로 빼면서 오픈 시간 딜레이
-	private void addfeatureforsign(EasyGuiAppFeatureData featuredata, ApkInfo apkInfo) {
-		featuredata.setCertFeature(apkInfo);
-		
-		if(featuredata.isnoSign) {
-			mainpanel.add(makeFeatpanel(RStr.FEATURE_SIGNATURE_UNSIGNED.get(), new Color(0xFF0000)));
-		} else {
-			String scheme = "(" + apkInfo.signatureScheme + ")";
-			if(featuredata.isPlatformSign) {
-				mainpanel.add(makeFeatpanel(RStr.FEATURE_PLATFORM_SIGN_LAB.get() + scheme, showsignListener, new Color(0xED7E31)));
-			}
-			if(featuredata.isSamsungSign) {
-				mainpanel.add(makeFeatpanel(RStr.FEATURE_SAMSUNG_SIGN_LAB.get() + scheme, showsignListener, new Color(0xED7E31)));
-		//		systemSignature = true;
-			}
-			if(!featuredata.isPlatformSign && !featuredata.isSamsungSign) {
-				mainpanel.add(makeFeatpanel(RStr.FEATURE_SIGNATURE_SIGNED.get() + scheme, showsignListener, new Color(0x0055BB)));
-			}
-		}
-	}
-	
-	private void newmakefeaturehtml(EasyGuiAppFeatureData featuredata, ApkInfo apkInfo) {
-		//<style='line-height:0%'>
+        add(scrollPane, BorderLayout.CENTER);
 
-		//@SDK Ver. 21 (Min), 26 (Target)
-		
+        JPanel tempfeature = new JPanel(new FlowLayout());
+        tempfeature.setOpaque(false);
 
-		if(apkInfo.manifest.usesSdk.minSdkVersion!=null) {
-			int minsdk = apkInfo.manifest.usesSdk.minSdkVersion;
-			//arraysdkObject.add(new sdkDrawObject(makeTextPanel("min", minsdk), minsdk));
-			mainpanel.add(makeFeatpanel("(Min)" + minsdk,"(Min)" + makesdkString(minsdk), Color.BLACK));
-		}
+    }
 
-		if(apkInfo.manifest.usesSdk.maxSdkVersion!=null) {
-			int maxsdk = apkInfo.manifest.usesSdk.maxSdkVersion;
-			mainpanel.add(makeFeatpanel("(Max)" + maxsdk,"(Max)" + makesdkString(maxsdk), Color.BLACK));
-		}
+    private void setdefaultfeature(JComponent com) {
+        com.setFont(new Font(getFont().getName(), Font.PLAIN, 13));
+        com.setBorder(new EmptyBorder(5, 5, 5, 5));
+    }
 
-		if(apkInfo.manifest.usesSdk.targetSdkVersion!=null) {
-			int targetsdk = apkInfo.manifest.usesSdk.targetSdkVersion;
-			mainpanel.add(makeFeatpanel("(Target)" + targetsdk,"(Target)" + makesdkString(targetsdk), Color.BLACK));
-		}
+    private JComponent makeFeatpanel(String foldstr, String spreadstr, Color foreground) {
+        EasyRoundButton btn = new EasyRoundButton(foldstr, spreadstr);
+        btn.setForeground(foreground);
+        setdefaultfeature(btn);
+        btn.addComponentListener(new ComponentListener() {
+            @Override
+            public void componentShown(ComponentEvent e) {}
 
-		if(featuredata.sharedUserId != null && !featuredata.sharedUserId.startsWith("android.uid.system") ) {
-			mainpanel.add(makeFeatpanel(RStr.FEATURE_SHAREDUSERID_LAB.get(), featuredata.sharedUserId, new Color(0xAAAA00)));
-		}
+            @Override
+            public void componentResized(ComponentEvent e) {
+                refreshUI();
+            }
 
-		//boolean systemSignature = false;
-		if(featuredata.sharedUserId != null && featuredata.sharedUserId.startsWith("android.uid.system")) {
-			if(featuredata.isSamsungSign || featuredata.isPlatformSign) {
-				mainpanel.add(makeFeatpanel(RStr.FEATURE_SYSTEM_UID_LAB.get(), featuredata.sharedUserId, new Color(0xED7E31)));
-			} else {
-				mainpanel.add(makeFeatpanel(RStr.FEATURE_SYSTEM_UID_LAB.get(), featuredata.sharedUserId, new Color(0xFF0000)));
-			}
-		}
+            @Override
+            public void componentMoved(ComponentEvent e) {}
 
+            @Override
+            public void componentHidden(ComponentEvent e) {}
+        });
+        return btn;
+    }
 
-		addfeatureforsign(featuredata, apkInfo);
+    private JComponent makeFeatpanel(String str, Color foreground) {
+        return makeFeatpanel(str, str, foreground);
+    }
 
+    private JComponent makeFeatpanel(String str, ActionListener listner, Color foreground) {
 
-		if(featuredata.isHidden) {
-			mainpanel.add(makeFeatpanel(RStr.FEATURE_HIDDEN_LAB.get(), new Color(0xED7E31)));
-		} else {
-			ComponentInfo[] apkActivities = ApkInfoHelper.getLauncherActivityList(apkInfo);
-			if (apkActivities != null && apkActivities.length > 0) {
+        JComponent btn = makeFeatpanel(str, "", foreground);
+        ((JButton) btn).addActionListener(listner);
+        return btn;
 
-				for (ComponentInfo comp : apkActivities) {
-					String strfeature = "";
-					if(comp.enabled != null && !comp.enabled) {
-						strfeature += "disabled";
-					}
-					if(comp.exported != null && !comp.exported) {
-						if(strfeature.length() > 0) strfeature +=",";
-						strfeature += "not exported";
-					}
-					if(comp.permission != null && !comp.permission.isEmpty()) {
-						if(strfeature.length() > 0) strfeature +=",";
-						strfeature += "not empty";
-					}
-					strfeature = ((strfeature.length() > 0)?"(" + strfeature + ")" :"");
+    }
 
-					mainpanel.add(makeFeatpanel(
-							RStr.FEATURE_LAUNCHER_LAB.get() + strfeature,
-							comp.name + strfeature, new Color(0x0055BB)));
-				}
-			}
-		}
+    public void refreshUI() {
+        mainpanel.updateUI();
+        if (mainpanel.getComponentCount() > 0) {
+            Component com = mainpanel.getComponent(mainpanel.getComponentCount() - 1);
+            mainpanel.setPreferredSize(new Dimension(scrollPane.getViewport().getWidth(),
+                    com.getY() + com.getHeight()));
+        } else {
+            mainpanel.setPreferredSize(new Dimension(scrollPane.getViewport().getWidth(),
+                    scrollPane.getViewport().getHeight()));
+        }
+    }
 
-		if(apkInfo.fileSize!=null) {
-			String spread = FileUtil.getFileSize(apkInfo.fileSize, FSStyle.FULL);
-			String fold = FileUtil.getFileSize(apkInfo.fileSize, FSStyle.MB);
-			mainpanel.add(makeFeatpanel(fold, spread, Color.BLACK));
-		}
+    public void setfeature(ApkInfo apkInfo) {
+        mapkInfo = apkInfo;
+        AppFeature.setFeature(apkInfo);
+        // makefeaturehtml(AppFeature);
+        mainpanel.removeAll();
+        newmakefeaturehtml(AppFeature, apkInfo);
+        updateUI();
+        refreshUI();
+    }
+
+    public void setSdkXml() {
+        try (InputStream xml = _RFile.RAW_SDK_INFO_FILE.getResourceAsStream()) {
+            if (xml != null) sdkXmlPath = new XmlPath(xml);
+        } catch (IOException e) {
+        }
+        if (sdkXmlPath == null) {
+            Log.w("Can not create XmlPath, xmlPath : " + _RFile.RAW_SDK_INFO_FILE.getPath());
+            return;
+        }
+    }
+
+    private String makesdkString(int sdkversion) {
+        String str = "";
+
+        XmlPath sdkInfo = sdkXmlPath.getNode("/resources/sdk-info[@apiLevel='" + sdkversion + "']");
+
+        if (sdkInfo == null) {
+            str = sdkversion + "-" + "unknown" + " / " + "unknown";
+        } else {
+            str = sdkversion + "-" + sdkInfo.getAttribute("platformVersion") + " / "
+                    + sdkInfo.getAttribute("codeName");
+        }
+
+        // 21-5.0/Lollipop
+        return str;
+    }
 
 
-	}
+    class ShowsignDlg implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // ToolEntryManager.excuteSinerDlg(null);
+            // ToolEntryManager.excuteEntry(ToolEntryManager.TOOL_SHOW_SIGN_DLG);
+            Window window = SwingUtilities.getWindowAncestor((Component) e.getSource());
+            new EasyToolbarCertDlg((JFrame) window, true, mapkInfo);
+        }
+    }
+
+    // 20. 09. 17
+    // 서명 thread 밖으로 빼면서 오픈 시간 딜레이
+    private void addfeatureforsign(EasyGuiAppFeatureData featuredata, ApkInfo apkInfo) {
+        featuredata.setCertFeature(apkInfo);
+
+        if (featuredata.isnoSign) {
+            mainpanel
+                    .add(makeFeatpanel(RStr.FEATURE_SIGNATURE_UNSIGNED.get(), new Color(0xFF0000)));
+        } else {
+            String scheme = "(" + apkInfo.signatureScheme + ")";
+            if (featuredata.isPlatformSign) {
+                mainpanel.add(makeFeatpanel(RStr.FEATURE_PLATFORM_SIGN_LAB.get() + scheme,
+                        showsignListener, new Color(0xED7E31)));
+            }
+            if (featuredata.isSamsungSign) {
+                mainpanel.add(makeFeatpanel(RStr.FEATURE_SAMSUNG_SIGN_LAB.get() + scheme,
+                        showsignListener, new Color(0xED7E31)));
+                // systemSignature = true;
+            }
+            if (!featuredata.isPlatformSign && !featuredata.isSamsungSign) {
+                mainpanel.add(makeFeatpanel(RStr.FEATURE_SIGNATURE_SIGNED.get() + scheme,
+                        showsignListener, new Color(0x0055BB)));
+            }
+        }
+    }
+
+    private void newmakefeaturehtml(EasyGuiAppFeatureData featuredata, ApkInfo apkInfo) {
+        // <style='line-height:0%'>
+
+        // @SDK Ver. 21 (Min), 26 (Target)
+
+
+        if (apkInfo.manifest.usesSdk.minSdkVersion != null) {
+            int minsdk = apkInfo.manifest.usesSdk.minSdkVersion;
+            // arraysdkObject.add(new sdkDrawObject(makeTextPanel("min", minsdk), minsdk));
+            mainpanel.add(
+                    makeFeatpanel("(Min)" + minsdk, "(Min)" + makesdkString(minsdk), Color.BLACK));
+        }
+
+        if (apkInfo.manifest.usesSdk.maxSdkVersion != null) {
+            int maxsdk = apkInfo.manifest.usesSdk.maxSdkVersion;
+            mainpanel.add(
+                    makeFeatpanel("(Max)" + maxsdk, "(Max)" + makesdkString(maxsdk), Color.BLACK));
+        }
+
+        if (apkInfo.manifest.usesSdk.targetSdkVersion != null) {
+            int targetsdk = apkInfo.manifest.usesSdk.targetSdkVersion;
+            mainpanel.add(makeFeatpanel("(Target)" + targetsdk,
+                    "(Target)" + makesdkString(targetsdk), Color.BLACK));
+        }
+
+        if (featuredata.sharedUserId != null
+                && !featuredata.sharedUserId.startsWith("android.uid.system")) {
+            mainpanel.add(makeFeatpanel(RStr.FEATURE_SHAREDUSERID_LAB.get(),
+                    featuredata.sharedUserId, new Color(0xAAAA00)));
+        }
+
+        // boolean systemSignature = false;
+        if (featuredata.sharedUserId != null
+                && featuredata.sharedUserId.startsWith("android.uid.system")) {
+            if (featuredata.isSamsungSign || featuredata.isPlatformSign) {
+                mainpanel.add(makeFeatpanel(RStr.FEATURE_SYSTEM_UID_LAB.get(),
+                        featuredata.sharedUserId, new Color(0xED7E31)));
+            } else {
+                mainpanel.add(makeFeatpanel(RStr.FEATURE_SYSTEM_UID_LAB.get(),
+                        featuredata.sharedUserId, new Color(0xFF0000)));
+            }
+        }
+
+
+        addfeatureforsign(featuredata, apkInfo);
+
+
+        if (featuredata.isHidden) {
+            mainpanel.add(makeFeatpanel(RStr.FEATURE_HIDDEN_LAB.get(), new Color(0xED7E31)));
+        } else {
+            ComponentInfo[] apkActivities = ApkInfoHelper.getLauncherActivityList(apkInfo);
+            if (apkActivities != null && apkActivities.length > 0) {
+
+                for (ComponentInfo comp : apkActivities) {
+                    String strfeature = "";
+                    if (comp.enabled != null && !comp.enabled) {
+                        strfeature += "disabled";
+                    }
+                    if (comp.exported != null && !comp.exported) {
+                        if (strfeature.length() > 0) strfeature += ",";
+                        strfeature += "not exported";
+                    }
+                    if (comp.permission != null && !comp.permission.isEmpty()) {
+                        if (strfeature.length() > 0) strfeature += ",";
+                        strfeature += "not empty";
+                    }
+                    strfeature = ((strfeature.length() > 0) ? "(" + strfeature + ")" : "");
+
+                    mainpanel.add(makeFeatpanel(RStr.FEATURE_LAUNCHER_LAB.get() + strfeature,
+                            comp.name + strfeature, new Color(0x0055BB)));
+                }
+            }
+        }
+
+        if (apkInfo.fileSize != null) {
+            String spread = FileUtil.getFileSize(apkInfo.fileSize, FSStyle.FULL);
+            String fold = FileUtil.getFileSize(apkInfo.fileSize, FSStyle.MB);
+            mainpanel.add(makeFeatpanel(fold, spread, Color.BLACK));
+        }
+
+
+    }
 
 }

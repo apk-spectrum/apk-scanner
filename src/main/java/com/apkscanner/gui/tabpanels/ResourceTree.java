@@ -43,477 +43,504 @@ import com.apkspectrum.swing.SortedMutableTreeNode;
 import com.apkspectrum.util.FileUtil;
 import com.apkspectrum.util.URITool;
 
-public class ResourceTree extends JTree
-{
-	private static final long serialVersionUID = 3376111906679444249L;
+public class ResourceTree extends JTree {
+    private static final long serialVersionUID = 3376111906679444249L;
 
-	public static final String FOLDER_ICON = "FOLDER";
-	private static final HashMap<String, Icon> cacheIcon = new HashMap<String, Icon>();
+    public static final String FOLDER_ICON = "FOLDER";
+    private static final HashMap<String, Icon> cacheIcon = new HashMap<String, Icon>();
 
-	private DefaultMutableTreeNode rootNode;
+    private DefaultMutableTreeNode rootNode;
 
-	public ResourceTree(final ActionListener listener) {
-		super(new DefaultTreeModel(new DefaultMutableTreeNode()));
-		rootNode = (DefaultMutableTreeNode) getModel().getRoot();
+    public ResourceTree(final ActionListener listener) {
+        super(new DefaultTreeModel(new DefaultMutableTreeNode()));
+        rootNode = (DefaultMutableTreeNode) getModel().getRoot();
 
-		setOpaque(false);
-		getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        setOpaque(false);
+        getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
-		setCellRenderer(new DefaultTreeCellRenderer() {
-			private static final long serialVersionUID = 6248791058116909814L;
-			@Override
-			public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded,
-					boolean isLeaf, int row, boolean focused) {
-				Component c = super.getTreeCellRendererComponent(tree, value, selected, expanded, isLeaf, row, focused);
+        setCellRenderer(new DefaultTreeCellRenderer() {
+            private static final long serialVersionUID = 6248791058116909814L;
 
-				DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-				Object resObj = node.getUserObject();
-				if (resObj instanceof DefaultNodeData) {
-					setIcon(((DefaultNodeData) resObj).getIcon(tree));
-				} else if(resObj instanceof TreeNodeData) {
-					setIcon(((TreeNodeData) resObj).getIcon());
-				} else {
-					String suffix = FileUtil.getSuffix(node.toString());
-					setIcon(getExtensionIcon(suffix));
-				}
-				return c;
-			}
-		});
+            @Override
+            public Component getTreeCellRendererComponent(JTree tree, Object value,
+                    boolean selected, boolean expanded, boolean isLeaf, int row, boolean focused) {
+                Component c = super.getTreeCellRendererComponent(tree, value, selected, expanded,
+                        isLeaf, row, focused);
 
-		setUI(new BasicTreeUI() {
-			@Override
-			public Rectangle getPathBounds(JTree tree, TreePath path) {
-				if (tree != null && treeState != null) {
-					return getPathBounds(path, tree.getInsets(), new Rectangle());
-				}
-				return null;
-			}
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+                Object resObj = node.getUserObject();
+                if (resObj instanceof DefaultNodeData) {
+                    setIcon(((DefaultNodeData) resObj).getIcon(tree));
+                } else if (resObj instanceof TreeNodeData) {
+                    setIcon(((TreeNodeData) resObj).getIcon());
+                } else {
+                    String suffix = FileUtil.getSuffix(node.toString());
+                    setIcon(getExtensionIcon(suffix));
+                }
+                return c;
+            }
+        });
 
-			private Rectangle getPathBounds(TreePath path, Insets insets, Rectangle bounds) {
-				bounds = treeState.getBounds(path, bounds);
-				if (bounds != null) {
-					bounds.width = tree.getWidth();
-					bounds.y += insets.top;
-				}
-				return bounds;
-			}
-		});
+        setUI(new BasicTreeUI() {
+            @Override
+            public Rectangle getPathBounds(JTree tree, TreePath path) {
+                if (tree != null && treeState != null) {
+                    return getPathBounds(path, tree.getInsets(), new Rectangle());
+                }
+                return null;
+            }
 
-		addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if(listener == null) return;
-				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
-					if (getPathForLocation(e.getX(), e.getY()) == null) return;
-					listener.actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED,
-							UiEventHandler.ACT_CMD_OPEN_RESOURCE_TREE_FILE, e.getWhen(), e.getModifiersEx()));
-				}
-			}
-		});
+            private Rectangle getPathBounds(TreePath path, Insets insets, Rectangle bounds) {
+                bounds = treeState.getBounds(path, bounds);
+                if (bounds != null) {
+                    bounds.width = tree.getWidth();
+                    bounds.y += insets.top;
+                }
+                return bounds;
+            }
+        });
 
-		addTreeExpansionListener(new TreeExpansionListener() {
-			@Override
-			public void treeExpanded(TreeExpansionEvent event) {
-				if(listener == null) return;
-				DefaultMutableTreeNode node = (DefaultMutableTreeNode) event.getPath().getLastPathComponent();
-				if (node.getUserObject() instanceof TreeNodeData) {
-					TreeNodeData resObj = (TreeNodeData) node.getUserObject();
-					if(".img".equals(resObj.getExtension())) {
-						listener.actionPerformed(new ActionEvent(event, ActionEvent.ACTION_PERFORMED,
-								UiEventHandler.ACT_CMD_LOAD_FS_IMG_FILE, System.currentTimeMillis(), 0));
-					}
-				}
-			}
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (listener == null) return;
+                if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+                    if (getPathForLocation(e.getX(), e.getY()) == null) return;
+                    listener.actionPerformed(
+                            new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED,
+                                    UiEventHandler.ACT_CMD_OPEN_RESOURCE_TREE_FILE, e.getWhen(),
+                                    e.getModifiersEx()));
+                }
+            }
+        });
 
-			@Override
-			public void treeCollapsed(TreeExpansionEvent event) { }
-		});
-	}
+        addTreeExpansionListener(new TreeExpansionListener() {
+            @Override
+            public void treeExpanded(TreeExpansionEvent event) {
+                if (listener == null) return;
+                DefaultMutableTreeNode node =
+                        (DefaultMutableTreeNode) event.getPath().getLastPathComponent();
+                if (node.getUserObject() instanceof TreeNodeData) {
+                    TreeNodeData resObj = (TreeNodeData) node.getUserObject();
+                    if (".img".equals(resObj.getExtension())) {
+                        listener.actionPerformed(
+                                new ActionEvent(event, ActionEvent.ACTION_PERFORMED,
+                                        UiEventHandler.ACT_CMD_LOAD_FS_IMG_FILE,
+                                        System.currentTimeMillis(), 0));
+                    }
+                }
+            }
 
-	public void addTreeNodes(final String apkFilePath, final String[] resList) {
-		File apkFile = new File(apkFilePath);
-		final DefaultNodeData rootResObj = new DefaultNodeData(apkFile);
-		rootResObj.setLoadingState(true);
-		rootNode = new ResourceNode(rootResObj);
+            @Override
+            public void treeCollapsed(TreeExpansionEvent event) {}
+        });
+    }
 
-		final DefaultMutableTreeNode[] typeNodes =
-				new DefaultMutableTreeNode[ResourceType.COUNT.getInt()];
-		typeNodes[ResourceType.ROOTRES.getInt()] = rootNode;
+    public void addTreeNodes(final String apkFilePath, final String[] resList) {
+        File apkFile = new File(apkFilePath);
+        final DefaultNodeData rootResObj = new DefaultNodeData(apkFile);
+        rootResObj.setLoadingState(true);
+        rootNode = new ResourceNode(rootResObj);
 
-		((DefaultTreeModel)getModel()).setRoot(rootNode);
+        final DefaultMutableTreeNode[] typeNodes =
+                new DefaultMutableTreeNode[ResourceType.COUNT.getInt()];
+        typeNodes[ResourceType.ROOTRES.getInt()] = rootNode;
 
-		final String uriPath = "jar:" + apkFile.toURI() + "!/";
+        ((DefaultTreeModel) getModel()).setRoot(rootNode);
 
-		Thread thread = new Thread(new Runnable() {
-			public void run() {
-				try {
-					final int CHUNK_SIZE = 30;
-					for (int chunk = 0; chunk < resList.length; chunk += CHUNK_SIZE) {
-						final int start = chunk;
-						EventQueue.invokeAndWait(new Runnable() {
-							public void run() {
-								for (int i = start; i < start + CHUNK_SIZE && i < resList.length; i++) {
-									if (resList[i].endsWith("/") || resList[i].startsWith("lib/")) continue;
+        final String uriPath = "jar:" + apkFile.toURI() + "!/";
 
-									ResourceObject resObj = new ResourceObject(uriPath + URITool.encodeURI(resList[i]));
-									DefaultMutableTreeNode node = new ResourceNode(resObj);
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    final int CHUNK_SIZE = 30;
+                    for (int chunk = 0; chunk < resList.length; chunk += CHUNK_SIZE) {
+                        final int start = chunk;
+                        EventQueue.invokeAndWait(new Runnable() {
+                            public void run() {
+                                for (int i = start; i < start + CHUNK_SIZE
+                                        && i < resList.length; i++) {
+                                    if (resList[i].endsWith("/") || resList[i].startsWith("lib/"))
+                                        continue;
 
-									ResourceType resType = resObj.getResourceType();
+                                    ResourceObject resObj = new ResourceObject(
+                                            uriPath + URITool.encodeURI(resList[i]));
+                                    DefaultMutableTreeNode node = new ResourceNode(resObj);
 
-									DefaultMutableTreeNode parentNode = typeNodes[resType.getInt()];
-									if (parentNode == null) {
-										Object typeObj = new ResourceObject(resType);
-										parentNode = new ResourceNode(typeObj);
-										typeNodes[resType.getInt()] = parentNode;
+                                    ResourceType resType = resObj.getResourceType();
 
-										rootNode.add(parentNode);
-									}
+                                    DefaultMutableTreeNode parentNode = typeNodes[resType.getInt()];
+                                    if (parentNode == null) {
+                                        Object typeObj = new ResourceObject(resType);
+                                        parentNode = new ResourceNode(typeObj);
+                                        typeNodes[resType.getInt()] = parentNode;
 
-									if (resType.isMultiConfigType()) {
-										DefaultMutableTreeNode findnode = findNode(parentNode, resObj.getFileName(), false, false);
-										if (findnode != null) {
-											if (findnode.isLeaf()) {
-												findnode.add((DefaultMutableTreeNode) findnode.clone());
-											}
-											parentNode = findnode;
-										}
-									}
-									parentNode.add(node);
-								}
-							}
-						});
-						Thread.yield();
-					}
+                                        rootNode.add(parentNode);
+                                    }
 
-					EventQueue.invokeAndWait(new Runnable() {
-						public void run() {
-							rootResObj.setLoadingState(false);
+                                    if (resType.isMultiConfigType()) {
+                                        DefaultMutableTreeNode findnode = findNode(parentNode,
+                                                resObj.getFileName(), false, false);
+                                        if (findnode != null) {
+                                            if (findnode.isLeaf()) {
+                                                findnode.add(
+                                                        (DefaultMutableTreeNode) findnode.clone());
+                                            }
+                                            parentNode = findnode;
+                                        }
+                                    }
+                                    parentNode.add(node);
+                                }
+                            }
+                        });
+                        Thread.yield();
+                    }
 
-							expandOrCollapsePath(new TreePath(rootNode.getPath()), 1, 0, true);
+                    EventQueue.invokeAndWait(new Runnable() {
+                        public void run() {
+                            rootResObj.setLoadingState(false);
 
-							for(DefaultMutableTreeNode node = (DefaultMutableTreeNode) rootNode.getFirstChild();
-									node != null; node = node.getNextSibling()) {
-								if("AndroidManifest.xml".equals(node.toString())) {
-									TreePath treepath = new TreePath(node.getPath());
-									setSelectionPath(treepath);
-									//scrollPathToVisible(treepath);
-									break;
-								}
-							}
-						}
-					});
-				} catch (InvocationTargetException | InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		});
-		thread.setPriority(Thread.NORM_PRIORITY);
-		thread.start();
-	}
+                            expandOrCollapsePath(new TreePath(rootNode.getPath()), 1, 0, true);
 
-	public void addTreeNodes(final String apkFilePath, final WidgetInfo widgetInfo) {
-		TreeNodeData resObj = new UserNodeData(widgetInfo.name, ".xml", widgetInfo.xmlString);
-		DefaultMutableTreeNode node = new DefaultMutableTreeNode(resObj);
-		((DefaultTreeModel)getModel()).setRoot(rootNode = node);
+                            for (DefaultMutableTreeNode node = (DefaultMutableTreeNode) rootNode
+                                    .getFirstChild(); node != null; node = node.getNextSibling()) {
+                                if ("AndroidManifest.xml".equals(node.toString())) {
+                                    TreePath treepath = new TreePath(node.getPath());
+                                    setSelectionPath(treepath);
+                                    // scrollPathToVisible(treepath);
+                                    break;
+                                }
+                            }
+                        }
+                    });
+                } catch (InvocationTargetException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.setPriority(Thread.NORM_PRIORITY);
+        thread.start();
+    }
 
-		TreePath treepath = new TreePath(rootNode.getPath());
+    public void addTreeNodes(final String apkFilePath, final WidgetInfo widgetInfo) {
+        TreeNodeData resObj = new UserNodeData(widgetInfo.name, ".xml", widgetInfo.xmlString);
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode(resObj);
+        ((DefaultTreeModel) getModel()).setRoot(rootNode = node);
 
-		node = makeLabelNode("Label", widgetInfo.resourceMap.get("label"));
-		if(node != null) rootNode.add(node);
+        TreePath treepath = new TreePath(rootNode.getPath());
 
-		final String uriPath = "jar:" + new File(apkFilePath).toURI() + "!/";
+        node = makeLabelNode("Label", widgetInfo.resourceMap.get("label"));
+        if (node != null) rootNode.add(node);
 
-		Entry<String, ResourceInfo[]> resource = null;
-		resource = widgetInfo.resourceMap.get("meta-data/resource");
-		if(widgetInfo.xmlMetaData != null && resource != null && resource.getValue() != null) {
-			resObj = new UserNodeData("META-DATA", resource.getKey(), widgetInfo.xmlMetaData);
-			rootNode.add(node = new ResourceNode(resObj));
-			TreePath metaDatPath = new TreePath(node.getPath());
-			for(ResourceInfo res: resource.getValue()) {
-				DefaultMutableTreeNode resNode = new DefaultMutableTreeNode(new WidgetResData(uriPath + URITool.encodeURI(res.name)));
-				node.add(resNode);
+        final String uriPath = "jar:" + new File(apkFilePath).toURI() + "!/";
 
-				Entry<String, ResourceInfo[]> resSet = null;
-				DefaultMutableTreeNode resChildNode = null;
+        Entry<String, ResourceInfo[]> resource = null;
+        resource = widgetInfo.resourceMap.get("meta-data/resource");
+        if (widgetInfo.xmlMetaData != null && resource != null && resource.getValue() != null) {
+            resObj = new UserNodeData("META-DATA", resource.getKey(), widgetInfo.xmlMetaData);
+            rootNode.add(node = new ResourceNode(resObj));
+            TreePath metaDatPath = new TreePath(node.getPath());
+            for (ResourceInfo res : resource.getValue()) {
+                DefaultMutableTreeNode resNode = new DefaultMutableTreeNode(
+                        new WidgetResData(uriPath + URITool.encodeURI(res.name)));
+                node.add(resNode);
 
-				if(widgetInfo.resourceMap.containsKey(res.name + "/initialLayout")) {
-					resSet = widgetInfo.resourceMap.get(res.name + "/initialLayout");
-					resChildNode = null;
-					for(ResourceInfo layoutRes: resSet.getValue()) {
-						if(resChildNode == null) {
-							resChildNode = new SortedMutableTreeNode(new WidgetResData("Initial Layout",
-									resSet.getKey().replaceAll("@.*/", "@"), uriPath + URITool.encodeURI(layoutRes.name)));
-							resNode.add(resChildNode);
-						}
-						resChildNode.add(new DefaultMutableTreeNode(new WidgetResData(uriPath + URITool.encodeURI(layoutRes.name))));
-					}
-				}
+                Entry<String, ResourceInfo[]> resSet = null;
+                DefaultMutableTreeNode resChildNode = null;
 
-				if(widgetInfo.resourceMap.containsKey(res.name + "/previewImage")) {
-					resSet = widgetInfo.resourceMap.get(res.name + "/previewImage");
-					resChildNode = null;
-					for(ResourceInfo iconRes: resSet.getValue()) {
-						if(resChildNode == null) {
-							resChildNode = new SortedMutableTreeNode(new WidgetResData("Preview Image",
-									resSet.getKey().replaceAll("@.*/", "@"), uriPath + URITool.encodeURI(iconRes.name)));
-							resNode.add(resChildNode);
-						}
-						resChildNode.add(new DefaultMutableTreeNode(new WidgetResData(uriPath + URITool.encodeURI(iconRes.name))));
-					}
-				}
+                if (widgetInfo.resourceMap.containsKey(res.name + "/initialLayout")) {
+                    resSet = widgetInfo.resourceMap.get(res.name + "/initialLayout");
+                    resChildNode = null;
+                    for (ResourceInfo layoutRes : resSet.getValue()) {
+                        if (resChildNode == null) {
+                            resChildNode =
+                                    new SortedMutableTreeNode(new WidgetResData("Initial Layout",
+                                            resSet.getKey().replaceAll("@.*/", "@"),
+                                            uriPath + URITool.encodeURI(layoutRes.name)));
+                            resNode.add(resChildNode);
+                        }
+                        resChildNode.add(new DefaultMutableTreeNode(
+                                new WidgetResData(uriPath + URITool.encodeURI(layoutRes.name))));
+                    }
+                }
 
-				if(widgetInfo.resourceMap.containsKey(res.name + "/shortcuts")) {
-					ResourceInfo[] shortcuts = widgetInfo.resourceMap.get(res.name + "/shortcuts").getValue();
-					if(shortcuts == null || shortcuts.length == 0) continue;
-					List<TreePath> shortCutPath = new ArrayList<>();
-					for(ResourceInfo shortcut: shortcuts) {
-						String xmlString = widgetInfo.resourceMap.get(shortcut.name + "xml").getKey();
-						DefaultMutableTreeNode shortcutNode = new DefaultMutableTreeNode(new UserNodeData(shortcut.configuration, ".xml", xmlString));
-						resNode.add(shortcutNode);
+                if (widgetInfo.resourceMap.containsKey(res.name + "/previewImage")) {
+                    resSet = widgetInfo.resourceMap.get(res.name + "/previewImage");
+                    resChildNode = null;
+                    for (ResourceInfo iconRes : resSet.getValue()) {
+                        if (resChildNode == null) {
+                            resChildNode =
+                                    new SortedMutableTreeNode(new WidgetResData("Preview Image",
+                                            resSet.getKey().replaceAll("@.*/", "@"),
+                                            uriPath + URITool.encodeURI(iconRes.name)));
+                            resNode.add(resChildNode);
+                        }
+                        resChildNode.add(new DefaultMutableTreeNode(
+                                new WidgetResData(uriPath + URITool.encodeURI(iconRes.name))));
+                    }
+                }
 
-						DefaultMutableTreeNode shortcutResNode = null;
-						shortcutResNode = makeLabelNode("Long Label", widgetInfo.resourceMap.get(shortcut.name + "shortcutLongLabel"));
-						if(shortcutResNode != null) shortcutNode.add(shortcutResNode);
-						shortcutResNode = makeLabelNode("Short Label", widgetInfo.resourceMap.get(shortcut.name + "shortcutShortLabel"));
-						if(shortcutResNode != null) shortcutNode.add(shortcutResNode);
-						shortcutResNode = makeLabelNode("Disabled Label", widgetInfo.resourceMap.get(shortcut.name + "shortcutDisabledMessage"));
-						if(shortcutResNode != null) shortcutNode.add(shortcutResNode);
+                if (widgetInfo.resourceMap.containsKey(res.name + "/shortcuts")) {
+                    ResourceInfo[] shortcuts =
+                            widgetInfo.resourceMap.get(res.name + "/shortcuts").getValue();
+                    if (shortcuts == null || shortcuts.length == 0) continue;
+                    List<TreePath> shortCutPath = new ArrayList<>();
+                    for (ResourceInfo shortcut : shortcuts) {
+                        String xmlString =
+                                widgetInfo.resourceMap.get(shortcut.name + "xml").getKey();
+                        DefaultMutableTreeNode shortcutNode = new DefaultMutableTreeNode(
+                                new UserNodeData(shortcut.configuration, ".xml", xmlString));
+                        resNode.add(shortcutNode);
 
-						if(widgetInfo.resourceMap.containsKey(shortcut.name + "icon")) {
-							resSet = widgetInfo.resourceMap.get(shortcut.name + "icon");
-							resChildNode = null;
-							for(ResourceInfo iconRes: resSet.getValue()) {
-								if(resChildNode == null) {
-									resChildNode = new SortedMutableTreeNode(new WidgetResData("Icon",
-											resSet.getKey().replaceAll("@.*/", "@"), uriPath + URITool.encodeURI(iconRes.name)));
-									shortcutNode.add(resChildNode);
-								}
-								resChildNode.add(new DefaultMutableTreeNode(new WidgetResData(uriPath + URITool.encodeURI(iconRes.name))));
-							}
-						}
+                        DefaultMutableTreeNode shortcutResNode = null;
+                        shortcutResNode = makeLabelNode("Long Label",
+                                widgetInfo.resourceMap.get(shortcut.name + "shortcutLongLabel"));
+                        if (shortcutResNode != null) shortcutNode.add(shortcutResNode);
+                        shortcutResNode = makeLabelNode("Short Label",
+                                widgetInfo.resourceMap.get(shortcut.name + "shortcutShortLabel"));
+                        if (shortcutResNode != null) shortcutNode.add(shortcutResNode);
+                        shortcutResNode = makeLabelNode("Disabled Label", widgetInfo.resourceMap
+                                .get(shortcut.name + "shortcutDisabledMessage"));
+                        if (shortcutResNode != null) shortcutNode.add(shortcutResNode);
 
-						if(widgetInfo.shortcutId.equals(shortcut.configuration)) {
-							shortCutPath.add(new TreePath(shortcutNode.getPath()));
-						}
-					}
+                        if (widgetInfo.resourceMap.containsKey(shortcut.name + "icon")) {
+                            resSet = widgetInfo.resourceMap.get(shortcut.name + "icon");
+                            resChildNode = null;
+                            for (ResourceInfo iconRes : resSet.getValue()) {
+                                if (resChildNode == null) {
+                                    resChildNode =
+                                            new SortedMutableTreeNode(new WidgetResData("Icon",
+                                                    resSet.getKey().replaceAll("@.*/", "@"),
+                                                    uriPath + URITool.encodeURI(iconRes.name)));
+                                    shortcutNode.add(resChildNode);
+                                }
+                                resChildNode.add(new DefaultMutableTreeNode(new WidgetResData(
+                                        uriPath + URITool.encodeURI(iconRes.name))));
+                            }
+                        }
 
-					if(!shortCutPath.isEmpty()) {
-						treepath = shortCutPath.get(0);
-						for(TreePath path: shortCutPath)
-							expandPath(path);
-					}
-				}
-			}
-			expandPath(metaDatPath);
-		}
+                        if (widgetInfo.shortcutId.equals(shortcut.configuration)) {
+                            shortCutPath.add(new TreePath(shortcutNode.getPath()));
+                        }
+                    }
 
-		setSelectionPath(treepath);
-	}
+                    if (!shortCutPath.isEmpty()) {
+                        treepath = shortCutPath.get(0);
+                        for (TreePath path : shortCutPath)
+                            expandPath(path);
+                    }
+                }
+            }
+            expandPath(metaDatPath);
+        }
 
-	private DefaultMutableTreeNode makeLabelNode(String nodeName, Entry<String, ResourceInfo[]> resSet) {
-		if(resSet == null || resSet.getValue() == null || resSet.getValue().length == 0) {
-			return null;
-		}
-		StringBuilder labelBuilder = new StringBuilder();
-		for(ResourceInfo r: resSet.getValue()) {
-			if(r.configuration == null || r.configuration.isEmpty() || "default".equals(r.configuration)) {
-				labelBuilder.append(r.name != null ? r.name : "No such label");
-			} else {
-				labelBuilder.append("[").append(r.configuration).append("] ").append(r.name);
-			}
-			labelBuilder.append("\n");
-		}
-		UserNodeData resObj = new UserNodeData(nodeName, resSet.getKey(),
-				resSet.getKey().replaceAll("@.*/", "@"), labelBuilder.toString().trim());
-		ResourceNode node = new ResourceNode(resObj);
-		return node;
-	}
+        setSelectionPath(treepath);
+    }
 
-	public final DefaultMutableTreeNode findNode(DefaultMutableTreeNode node, String string, boolean ignoreCase,
-			boolean recursively) {
-		DefaultMutableTreeNode ret = null;
-		if (node == null) {
-			node = (DefaultMutableTreeNode) getModel().getRoot();
-			if (node == null)
-				return null;
-		}
+    private DefaultMutableTreeNode makeLabelNode(String nodeName,
+            Entry<String, ResourceInfo[]> resSet) {
+        if (resSet == null || resSet.getValue() == null || resSet.getValue().length == 0) {
+            return null;
+        }
+        StringBuilder labelBuilder = new StringBuilder();
+        for (ResourceInfo r : resSet.getValue()) {
+            if (r.configuration == null || r.configuration.isEmpty()
+                    || "default".equals(r.configuration)) {
+                labelBuilder.append(r.name != null ? r.name : "No such label");
+            } else {
+                labelBuilder.append("[").append(r.configuration).append("] ").append(r.name);
+            }
+            labelBuilder.append("\n");
+        }
+        UserNodeData resObj = new UserNodeData(nodeName, resSet.getKey(),
+                resSet.getKey().replaceAll("@.*/", "@"), labelBuilder.toString().trim());
+        ResourceNode node = new ResourceNode(resObj);
+        return node;
+    }
 
-		DefaultMutableTreeNode childNode = null;
-		if (node.getChildCount() > 0) {
-			childNode = (DefaultMutableTreeNode) node.getFirstChild();
-		}
-		while (childNode != null) {
-			if (childNode.getUserObject() instanceof TreeNodeData) {
-				TreeNodeData resObj = (TreeNodeData) childNode.getUserObject();
-				if (resObj.getLabel().equals(string) || (ignoreCase && resObj.getLabel().equalsIgnoreCase(string))) {
-					ret = childNode;
-					break;
-				}
-			}
-			if (recursively && childNode.getDepth() > 0) {
-				ret = findNode(childNode, string, ignoreCase, recursively);
-				if (ret != null)
-					break;
-			}
-			childNode = childNode.getNextSibling();
-		}
+    public final DefaultMutableTreeNode findNode(DefaultMutableTreeNode node, String string,
+            boolean ignoreCase, boolean recursively) {
+        DefaultMutableTreeNode ret = null;
+        if (node == null) {
+            node = (DefaultMutableTreeNode) getModel().getRoot();
+            if (node == null) return null;
+        }
 
-		return ret;
-	}
+        DefaultMutableTreeNode childNode = null;
+        if (node.getChildCount() > 0) {
+            childNode = (DefaultMutableTreeNode) node.getFirstChild();
+        }
+        while (childNode != null) {
+            if (childNode.getUserObject() instanceof TreeNodeData) {
+                TreeNodeData resObj = (TreeNodeData) childNode.getUserObject();
+                if (resObj.getLabel().equals(string)
+                        || (ignoreCase && resObj.getLabel().equalsIgnoreCase(string))) {
+                    ret = childNode;
+                    break;
+                }
+            }
+            if (recursively && childNode.getDepth() > 0) {
+                ret = findNode(childNode, string, ignoreCase, recursively);
+                if (ret != null) break;
+            }
+            childNode = childNode.getNextSibling();
+        }
 
-	public void searchTree(String str) {
-		((DefaultTreeModel) getModel()).setRoot(createFilteredTree(rootNode, str));
-		repaint();
-	}
+        return ret;
+    }
 
-	private DefaultMutableTreeNode createFilteredTree(DefaultMutableTreeNode parent, String filter) {
-		int c = parent.getChildCount();
-		DefaultMutableTreeNode fparent = (DefaultMutableTreeNode) parent.clone();
-		String temp;
+    public void searchTree(String str) {
+        ((DefaultTreeModel) getModel()).setRoot(createFilteredTree(rootNode, str));
+        repaint();
+    }
 
-		if (parent.getUserObject() instanceof TreeNodeData) {
-			temp = ((TreeNodeData) (parent.getUserObject())).getLabel();
-		} else {
-			temp = parent.toString();
-		}
-		temp = temp.toLowerCase();
+    private DefaultMutableTreeNode createFilteredTree(DefaultMutableTreeNode parent,
+            String filter) {
+        int c = parent.getChildCount();
+        DefaultMutableTreeNode fparent = (DefaultMutableTreeNode) parent.clone();
+        String temp;
 
-		boolean matches = false;
-		String[] pattern = filter.toLowerCase().split(";");
-		for(String p: pattern) {
-			if(temp.contains(p)) {
-				matches = true;
-				break;
-			}
-		}
+        if (parent.getUserObject() instanceof TreeNodeData) {
+            temp = ((TreeNodeData) (parent.getUserObject())).getLabel();
+        } else {
+            temp = parent.toString();
+        }
+        temp = temp.toLowerCase();
 
-		for (int i = 0; i < c; ++i) {
-			DefaultMutableTreeNode n = (DefaultMutableTreeNode) parent.getChildAt(i);
-			DefaultMutableTreeNode f = createFilteredTree(n, filter);
-			if (f != null) {
-				fparent.add(f);
-				matches = true;
-			}
-		}
-		return matches ? fparent : null;
-	}
+        boolean matches = false;
+        String[] pattern = filter.toLowerCase().split(";");
+        for (String p : pattern) {
+            if (temp.contains(p)) {
+                matches = true;
+                break;
+            }
+        }
 
-	public void expandOrCollapsePath(TreePath treePath, int level, int currentLevel,
-			boolean expand) {
-		// System.err.println("Exp level "+currentLevel+", exp="+expand);
-		if (expand && level <= currentLevel && level > 0)
-			return;
+        for (int i = 0; i < c; ++i) {
+            DefaultMutableTreeNode n = (DefaultMutableTreeNode) parent.getChildAt(i);
+            DefaultMutableTreeNode f = createFilteredTree(n, filter);
+            if (f != null) {
+                fparent.add(f);
+                matches = true;
+            }
+        }
+        return matches ? fparent : null;
+    }
 
-		TreeNode treeNode = (TreeNode) treePath.getLastPathComponent();
-		TreeModel treeModel = getModel();
-		if (treeModel.getChildCount(treeNode) >= 0) {
-			for (int i = 0; i < treeModel.getChildCount(treeNode); i++) {
-				TreeNode n = (TreeNode) treeModel.getChild(treeNode, i);
-				TreePath path = treePath.pathByAddingChild(n);
-				expandOrCollapsePath(path, level, currentLevel + 1, expand);
-			}
-			if (!expand && currentLevel < level)
-				return;
-		}
-		if (expand) {
-			expandPath(treePath);
-		} else {
-			collapsePath(treePath);
-		}
-	}
+    public void expandOrCollapsePath(TreePath treePath, int level, int currentLevel,
+            boolean expand) {
+        // System.err.println("Exp level "+currentLevel+", exp="+expand);
+        if (expand && level <= currentLevel && level > 0) return;
 
-	public boolean setSelectNodeByPath(String path) {
-		DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) getModel().getRoot();
+        TreeNode treeNode = (TreeNode) treePath.getLastPathComponent();
+        TreeModel treeModel = getModel();
+        if (treeModel.getChildCount(treeNode) >= 0) {
+            for (int i = 0; i < treeModel.getChildCount(treeNode); i++) {
+                TreeNode n = (TreeNode) treeModel.getChild(treeNode, i);
+                TreePath path = treePath.pathByAddingChild(n);
+                expandOrCollapsePath(path, level, currentLevel + 1, expand);
+            }
+            if (!expand && currentLevel < level) return;
+        }
+        if (expand) {
+            expandPath(treePath);
+        } else {
+            collapsePath(treePath);
+        }
+    }
 
-		@SuppressWarnings("unchecked")
-		Enumeration<TreeNode> e = (Enumeration<TreeNode>)(Enumeration<?>) rootNode.depthFirstEnumeration();
-		while (e.hasMoreElements()) {
-			DefaultMutableTreeNode node = (DefaultMutableTreeNode)e.nextElement();
-			if (node.getUserObject() instanceof TreeNodeData) {
-				TreeNodeData temp = (TreeNodeData) node.getUserObject();
-				if (temp.getPath().equals(path)) {
-					TreePath treepath = new TreePath(node.getPath());
-					setSelectionPath(treepath);
-					scrollPathToVisible(treepath);
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    public boolean setSelectNodeByPath(String path) {
+        DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) getModel().getRoot();
 
-	@Override
-	public void paintComponent(Graphics g) {
-		g.setColor(getBackground());
-		g.fillRect(0, 0, getWidth(), getHeight());
-		if (getSelectionCount() > 0) {
-			if(getSelectionRows() == null) {
-				TreePath treepath = new TreePath(getModel().getRoot());
-				setSelectionPath(treepath);
-			}
-			for (int i : getSelectionRows()) {
-				Rectangle r = getRowBounds(i);
-				g.setColor(((DefaultTreeCellRenderer) getCellRenderer()).getBackgroundSelectionColor());
-				// g.setColor(Color.BLUE);
-				g.fillRect(0, r.y, getWidth(), r.height);
-			}
-		}
-		super.paintComponent(g);
-		if (getLeadSelectionPath() != null) {
-			Rectangle r = getRowBounds(getRowForPath(getLeadSelectionPath()));
-			g.setColor(hasFocus()
-					? ((DefaultTreeCellRenderer) getCellRenderer()).getBackgroundSelectionColor().darker()
-							: ((DefaultTreeCellRenderer) getCellRenderer()).getBackgroundSelectionColor());
-			// g.setColor(Color.RED);
-			g.drawRect(0, r.y, getWidth() - 1, r.height - 1);
-		}
-	}
+        @SuppressWarnings("unchecked")
+        Enumeration<TreeNode> e =
+                (Enumeration<TreeNode>) (Enumeration<?>) rootNode.depthFirstEnumeration();
+        while (e.hasMoreElements()) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.nextElement();
+            if (node.getUserObject() instanceof TreeNodeData) {
+                TreeNodeData temp = (TreeNodeData) node.getUserObject();
+                if (temp.getPath().equals(path)) {
+                    TreePath treepath = new TreePath(node.getPath());
+                    setSelectionPath(treepath);
+                    scrollPathToVisible(treepath);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-	public static Icon getExtensionIcon(String suffix) {
-		Icon icon = cacheIcon.get(suffix);
-		if (icon != null) return icon;
+    @Override
+    public void paintComponent(Graphics g) {
+        g.setColor(getBackground());
+        g.fillRect(0, 0, getWidth(), getHeight());
+        if (getSelectionCount() > 0) {
+            if (getSelectionRows() == null) {
+                TreePath treepath = new TreePath(getModel().getRoot());
+                setSelectionPath(treepath);
+            }
+            for (int i : getSelectionRows()) {
+                Rectangle r = getRowBounds(i);
+                g.setColor(((DefaultTreeCellRenderer) getCellRenderer())
+                        .getBackgroundSelectionColor());
+                // g.setColor(Color.BLUE);
+                g.fillRect(0, r.y, getWidth(), r.height);
+            }
+        }
+        super.paintComponent(g);
+        if (getLeadSelectionPath() != null) {
+            Rectangle r = getRowBounds(getRowForPath(getLeadSelectionPath()));
+            g.setColor(hasFocus()
+                    ? ((DefaultTreeCellRenderer) getCellRenderer()).getBackgroundSelectionColor()
+                            .darker()
+                    : ((DefaultTreeCellRenderer) getCellRenderer()).getBackgroundSelectionColor());
+            // g.setColor(Color.RED);
+            g.drawRect(0, r.y, getWidth() - 1, r.height - 1);
+        }
+    }
 
-		//Log.v("getIcon " + suffix);
-		Image tempImage = null;
-		if (FOLDER_ICON.equals(suffix)) {
-			tempImage = ImageScaler.getScaledImage(RImg.TREE_FOLDER.getImageIcon(), 16, 16);
-			/*
-			 * UIDefaults defaults = UIManager.getDefaults( ); Icon
-			 * computerIcon = defaults.getIcon( "FileView.computerIcon"
-			 * ); Icon floppyIcon = defaults.getIcon(
-			 * "FileView.floppyDriveIcon" ); Icon diskIcon =
-			 * defaults.getIcon( "FileView.hardDriveIcon" ); Icon
-			 * fileIcon = defaults.getIcon( "FileView.fileIcon" ); Icon
-			 * folderIcon = defaults.getIcon( "FileView.directoryIcon"
-			 * );
-			 *
-			 * icon = folderIcon;
-			 */
-		} else if (".xml".equals(suffix)) {
-			tempImage = ImageScaler.getScaledImage(RImg.RESOURCE_TREE_XML.getImageIcon(), 16, 16);
-			// } else if(".qmg".equals(suffix)) {
-			// tempImage =
-			// ImageScaler.getScaledImage(RImg.QMG_IMAGE_ICON.getImageIcon(),32,32);
-		} else if (".dex".equals(suffix)) {
-			icon = RImg.RESOURCE_TREE_CODE.getImageIcon();
-		} else if (".arsc".equals(suffix)) {
-			icon = RImg.RESOURCE_TREE_ARSC.getImageIcon();
-		} else {
-			try {
-				File file = File.createTempFile("icon", suffix);
-				FileSystemView view = FileSystemView.getFileSystemView();
-				icon = view.getSystemIcon(file);
-				file.delete();
-			} catch (IOException ioe) {
-			}
-		}
-		if (tempImage != null) {
-			icon = new ImageIcon(tempImage);
-			tempImage.flush();
-		}
-		if (icon != null) {
-			cacheIcon.put(suffix, icon);
-		}
-		return icon;
-	}
+    public static Icon getExtensionIcon(String suffix) {
+        Icon icon = cacheIcon.get(suffix);
+        if (icon != null) return icon;
+
+        // Log.v("getIcon " + suffix);
+        Image tempImage = null;
+        if (FOLDER_ICON.equals(suffix)) {
+            tempImage = ImageScaler.getScaledImage(RImg.TREE_FOLDER.getImageIcon(), 16, 16);
+            /*
+             * UIDefaults defaults = UIManager.getDefaults( ); Icon computerIcon = defaults.getIcon(
+             * "FileView.computerIcon" ); Icon floppyIcon = defaults.getIcon(
+             * "FileView.floppyDriveIcon" ); Icon diskIcon = defaults.getIcon(
+             * "FileView.hardDriveIcon" ); Icon fileIcon = defaults.getIcon( "FileView.fileIcon" );
+             * Icon folderIcon = defaults.getIcon( "FileView.directoryIcon" );
+             *
+             * icon = folderIcon;
+             */
+        } else if (".xml".equals(suffix)) {
+            tempImage = ImageScaler.getScaledImage(RImg.RESOURCE_TREE_XML.getImageIcon(), 16, 16);
+            // } else if(".qmg".equals(suffix)) {
+            // tempImage =
+            // ImageScaler.getScaledImage(RImg.QMG_IMAGE_ICON.getImageIcon(),32,32);
+        } else if (".dex".equals(suffix)) {
+            icon = RImg.RESOURCE_TREE_CODE.getImageIcon();
+        } else if (".arsc".equals(suffix)) {
+            icon = RImg.RESOURCE_TREE_ARSC.getImageIcon();
+        } else {
+            try {
+                File file = File.createTempFile("icon", suffix);
+                FileSystemView view = FileSystemView.getFileSystemView();
+                icon = view.getSystemIcon(file);
+                file.delete();
+            } catch (IOException ioe) {
+            }
+        }
+        if (tempImage != null) {
+            icon = new ImageIcon(tempImage);
+            tempImage.flush();
+        }
+        if (icon != null) {
+            cacheIcon.put(suffix, icon);
+        }
+        return icon;
+    }
 }

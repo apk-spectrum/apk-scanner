@@ -20,82 +20,85 @@ import com.apkspectrum.util.FileUtil;
 
 public class ImageUtils {
 
-	public static BufferedImage imageToBufferedImage(Image im) {
-		BufferedImage bi = new BufferedImage(im.getWidth(null), im.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-		Graphics bg = bi.getGraphics();
-		bg.drawImage(im, 0, 0, null);
-		bg.dispose();
-		return bi;
-	}
-	
-	public static BufferedImage joinBufferedImage(BufferedImage img1, BufferedImage img2) {
-		int offset = 0;
-		int width = img1.getWidth() + img2.getWidth() + offset;
-		int height = Math.max(img1.getHeight(), img2.getHeight()) + offset;
-		BufferedImage newImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2 = newImage.createGraphics();
-		Color oldColor = g2.getColor();
-		g2.setPaint(Color.BLACK);
-		g2.fillRect(0, 0, width, height);
-		g2.setColor(oldColor);
-		g2.drawImage(img1, null, 0, 0);
-		g2.drawImage(img2, null, img1.getWidth() + offset, 0);
-		g2.dispose();
-		return newImage;
-	}
-
-	public static String covertWebp2Png(final String imagePath, final String tempPath) {
-		String[] path = imagePath.split("!");
-		String convetPath = imagePath;
-		String apkPath = path[0].replaceAll("^(jar:)?file:", "");
-		try(ZipFile zipFile = new ZipFile(apkPath)) {
-			ZipEntry entry = zipFile.getEntry(path[1].replaceAll("^/", ""));
-			if(entry != null) {
-				try(InputStream is = zipFile.getInputStream(entry)) {
-					//String tempPath = FileUtil.makeTempPath(apkPath.substring(apkPath.lastIndexOf(File.separator)));
-					FileUtil.makeFolder(tempPath);
-					String tempImg = tempPath + File.separator + path[1].replaceAll(".*/", "") + ".png";
-					File out = new File(tempImg);
-					
-					BufferedImage image = ImageIO.read(is);
-					ImageIO.write(image, "png", out);
-					if(out.exists()) {
-						convetPath = "file:"+out.getAbsolutePath();
-					}
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return convetPath;
-	}
-
-    public static Image getScaledImage(ImageIcon temp, int w, int h)
-    {
-		Image srcImg = temp.getImage();
-		BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2 = resizedImg.createGraphics();
-		g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		g2.drawImage(srcImg, 0, 0, w, h, null);
-		g2.dispose();
-		//srcImg.flush();
-		return resizedImg;
+    public static BufferedImage imageToBufferedImage(Image im) {
+        BufferedImage bi = new BufferedImage(im.getWidth(null), im.getHeight(null),
+                BufferedImage.TYPE_INT_ARGB);
+        Graphics bg = bi.getGraphics();
+        bg.drawImage(im, 0, 0, null);
+        bg.dispose();
+        return bi;
     }
-	
-	public static BufferedImage readImageFromFile(File file) throws IOException {
-		return ImageIO.read(file);
-	}
 
-	public static void writeImageToPNG(File file, BufferedImage bufferedImage) throws IOException {
-		ImageIO.write(bufferedImage, "png", file);
-	}
+    public static BufferedImage joinBufferedImage(BufferedImage img1, BufferedImage img2) {
+        int offset = 0;
+        int width = img1.getWidth() + img2.getWidth() + offset;
+        int height = Math.max(img1.getHeight(), img2.getHeight()) + offset;
+        BufferedImage newImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = newImage.createGraphics();
+        Color oldColor = g2.getColor();
+        g2.setPaint(Color.BLACK);
+        g2.fillRect(0, 0, width, height);
+        g2.setColor(oldColor);
+        g2.drawImage(img1, null, 0, 0);
+        g2.drawImage(img2, null, img1.getWidth() + offset, 0);
+        g2.dispose();
+        return newImage;
+    }
 
-	public static void writeImageToJPG(File file, BufferedImage bufferedImage) throws IOException {
-		ImageIO.write(bufferedImage, "jpg", file);
-	}
-	
-	public static ImageIcon setcolorImage(ImageIcon icon, Color color) {
-		BufferedImage image = imageToBufferedImage(icon.getImage());
+    public static String covertWebp2Png(final String imagePath, final String tempPath) {
+        String[] path = imagePath.split("!");
+        String convetPath = imagePath;
+        String apkPath = path[0].replaceAll("^(jar:)?file:", "");
+        try (ZipFile zipFile = new ZipFile(apkPath)) {
+            ZipEntry entry = zipFile.getEntry(path[1].replaceAll("^/", ""));
+            if (entry != null) {
+                try (InputStream is = zipFile.getInputStream(entry)) {
+                    // String tempPath =
+                    // FileUtil.makeTempPath(apkPath.substring(apkPath.lastIndexOf(File.separator)));
+                    FileUtil.makeFolder(tempPath);
+                    String tempImg =
+                            tempPath + File.separator + path[1].replaceAll(".*/", "") + ".png";
+                    File out = new File(tempImg);
+
+                    BufferedImage image = ImageIO.read(is);
+                    ImageIO.write(image, "png", out);
+                    if (out.exists()) {
+                        convetPath = "file:" + out.getAbsolutePath();
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return convetPath;
+    }
+
+    public static Image getScaledImage(ImageIcon temp, int w, int h) {
+        Image srcImg = temp.getImage();
+        BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = resizedImg.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.drawImage(srcImg, 0, 0, w, h, null);
+        g2.dispose();
+        // srcImg.flush();
+        return resizedImg;
+    }
+
+    public static BufferedImage readImageFromFile(File file) throws IOException {
+        return ImageIO.read(file);
+    }
+
+    public static void writeImageToPNG(File file, BufferedImage bufferedImage) throws IOException {
+        ImageIO.write(bufferedImage, "png", file);
+    }
+
+    public static void writeImageToJPG(File file, BufferedImage bufferedImage) throws IOException {
+        ImageIO.write(bufferedImage, "jpg", file);
+    }
+
+    public static ImageIcon setcolorImage(ImageIcon icon, Color color) {
+        BufferedImage image = imageToBufferedImage(icon.getImage());
         int width = image.getWidth();
         int height = image.getHeight();
         WritableRaster raster = image.getRaster();

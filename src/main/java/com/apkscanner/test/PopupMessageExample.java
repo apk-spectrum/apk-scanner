@@ -38,10 +38,12 @@ public class PopupMessageExample {
             public void run() {
                 try {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+                        | UnsupportedLookAndFeelException ex) {
                     ex.printStackTrace();
                 }
-                new PopupMessageBuilder().withDelay(10000).withMessage("Hello, this is a fading message").show();
+                new PopupMessageBuilder().withDelay(10000)
+                        .withMessage("Hello, this is a fading message").show();
             }
         });
     }
@@ -53,10 +55,11 @@ public class PopupMessageExample {
         private String message;
 
         private long startTime;
-        //private Timer fadeTimer;
+        // private Timer fadeTimer;
 
-        
+
         JWindow frame;
+
         public PopupMessageBuilder at(Point p) {
             this.location = p;
             return this;
@@ -74,7 +77,7 @@ public class PopupMessageExample {
 
         public PopupMessageBuilder show() {
 
-        	frame = new JWindow();
+            frame = new JWindow();
             frame.setOpacity(0f);
             frame.setBackground(new Color(0, 0, 0, 0));
             BackgroundPane pane = new BackgroundPane();
@@ -88,7 +91,7 @@ public class PopupMessageExample {
             }
             frame.setVisible(true);
             frame.setAlwaysOnTop(true);
-            
+
             new FadeTimer(frame, 1000, 0f, 1f, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -112,25 +115,26 @@ public class PopupMessageExample {
         }
 
         public void dispose() {
-        	frame.dispose();
+            frame.dispose();
         }
-        
+
         public class FadeTimer extends Timer implements ActionListener {
 
             /**
-			 * 
-			 */
-			private static final long serialVersionUID = 4546123210581924146L;
-			private final float startAt;
+             * 
+             */
+            private static final long serialVersionUID = 4546123210581924146L;
+            private final float startAt;
             private final float endAt;
             private final int duration;
-            //private long startTimer;
+            // private long startTimer;
 
             private ActionListener endListener;
 
             private Window window;
 
-            public FadeTimer(Window window, int duration, float startAt, float endAt, ActionListener endListener) {
+            public FadeTimer(Window window, int duration, float startAt, float endAt,
+                    ActionListener endListener) {
                 super(5, null);
                 addActionListener(this);
                 this.duration = duration;
@@ -156,7 +160,8 @@ public class PopupMessageExample {
                     opacity = endAt;
                     ((Timer) e.getSource()).stop();
                     if (endListener != null) {
-                        endListener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "stopped"));
+                        endListener.actionPerformed(
+                                new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "stopped"));
                     }
                 } else {
                     float progress = (float) lapsed / (float) duration;
@@ -172,10 +177,10 @@ public class PopupMessageExample {
         public class BackgroundPane extends JPanel {
 
             /**
-			 * 
-			 */
-			private static final long serialVersionUID = 27094827930732975L;
-			private MessagePane messagePane;
+             * 
+             */
+            private static final long serialVersionUID = 27094827930732975L;
+            private MessagePane messagePane;
 
             public BackgroundPane() {
                 setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -193,20 +198,27 @@ public class PopupMessageExample {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 Graphics2D g2d = (Graphics2D) g.create();
-                g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-                g2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
-                g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-                g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-                LinearGradientPaint glp = new LinearGradientPaint(
-                                new Point(0, 0),
-                                new Point(0, getHeight()),
-                                new float[]{0f, 1f},
-                                new Color[]{Color.GRAY, Color.BLACK});
-                RoundRectangle2D frame = new RoundRectangle2D.Float(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
+                g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
+                        RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON);
+                g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,
+                        RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+                g2d.setRenderingHint(RenderingHints.KEY_DITHERING,
+                        RenderingHints.VALUE_DITHER_ENABLE);
+                g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+                        RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                        RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
+                        RenderingHints.VALUE_RENDER_QUALITY);
+                g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
+                        RenderingHints.VALUE_STROKE_PURE);
+                LinearGradientPaint glp =
+                        new LinearGradientPaint(new Point(0, 0), new Point(0, getHeight()),
+                                new float[] {0f, 1f}, new Color[] {Color.GRAY, Color.BLACK});
+                RoundRectangle2D frame =
+                        new RoundRectangle2D.Float(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
                 g2d.setPaint(glp);
                 g2d.fill(frame);
                 g2d.setColor(Color.WHITE);
@@ -218,24 +230,25 @@ public class PopupMessageExample {
         public class MessagePane extends JPanel {
 
             /**
-			 * 
-			 */
-			private static final long serialVersionUID = 553830274361457410L;
-			private JLabel label;
-        	RSyntaxTextArea xmltextArea;
+             * 
+             */
+            private static final long serialVersionUID = 553830274361457410L;
+            private JLabel label;
+            RSyntaxTextArea xmltextArea;
+
             public MessagePane() {
                 setOpaque(false);
                 label = new JLabel();
                 label.setForeground(Color.WHITE);
                 setLayout(new GridBagLayout());
-                
-        		xmltextArea = new RSyntaxTextArea(20, 60);
-        		xmltextArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
-        		xmltextArea.setCodeFoldingEnabled(true);				
-        		xmltextArea.setEditable(false);		
-        		RTextScrollPane sp = new RTextScrollPane(xmltextArea);
-                
-        		
+
+                xmltextArea = new RSyntaxTextArea(20, 60);
+                xmltextArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
+                xmltextArea.setCodeFoldingEnabled(true);
+                xmltextArea.setEditable(false);
+                RTextScrollPane sp = new RTextScrollPane(xmltextArea);
+
+
                 add(sp);
             }
 

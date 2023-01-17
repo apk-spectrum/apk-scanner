@@ -13,70 +13,74 @@ import javax.swing.JToolTip;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 
-import com.apkspectrum.util.Log;
+import com.apkspectrum.logback.Log;
 
 public class CustomTooltipSample extends JFrame {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -7602921155022505902L;
-	private CustomLabel m_label;
-    
+     * 
+     */
+    private static final long serialVersionUID = -7602921155022505902L;
+    private CustomLabel m_label;
+
     public CustomTooltipSample() {
         setTitle("Custom tooltip sample");
         setSize(300, 200);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         m_label = new CustomLabel("My Label");
-        m_label.setToolTipText("Yo, I am a tooltip with components!"); // activate tooltips for this component
+        m_label.setToolTipText("Yo, I am a tooltip with components!"); // activate tooltips for this
+                                                                       // component
         add(m_label);
     }
-    
+
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 JFrame frame = new CustomTooltipSample();
                 frame.setVisible(true);
             }
         });
     }
-    
+
     private static class CustomLabel extends RSyntaxTextArea {
         /**
-		 * 
-		 */
-		private static final long serialVersionUID = -2693163416771997690L;
-		private CustomTooltip m_tooltip;
-        
+         * 
+         */
+        private static final long serialVersionUID = -2693163416771997690L;
+        private CustomTooltip m_tooltip;
+
         public CustomLabel(String text) {
             super(text);
         }
-        
-        @Override public JToolTip createToolTip() {
-        	Log.d("aaa");
+
+        @Override
+        public JToolTip createToolTip() {
+            Log.d("aaa");
             if (m_tooltip == null) {
                 m_tooltip = new CustomTooltip();
                 m_tooltip.setComponent(this);
             }
             return m_tooltip;
         }
+
         public String getToolTipText(MouseEvent e) {
-        	String str = null;
-        	
-        	str = "bbbbbbbbbbb";
-        	
-        	return str;        	
+            String str = null;
+
+            str = "bbbbbbbbbbb";
+
+            return str;
         }
     }
-    
+
     private static class CustomTooltip extends JToolTip {
         /**
-		 * 
-		 */
-		private static final long serialVersionUID = -8826248801147475337L;
-		private JLabel m_label;
+         * 
+         */
+        private static final long serialVersionUID = -8826248801147475337L;
+        private JLabel m_label;
         private JButton m_button;
         private JPanel m_panel;
-        
+
         public CustomTooltip() {
             super();
             m_label = new JLabel();
@@ -88,11 +92,13 @@ public class CustomTooltipSample extends JFrame {
             add(m_panel);
         }
 
-        @Override public Dimension getPreferredSize() {
+        @Override
+        public Dimension getPreferredSize() {
             return m_panel.getPreferredSize();
         }
 
-        @Override public void setTipText(String tipText) {
+        @Override
+        public void setTipText(String tipText) {
             if (tipText != null && !tipText.isEmpty()) {
                 m_label.setText(tipText);
             } else {

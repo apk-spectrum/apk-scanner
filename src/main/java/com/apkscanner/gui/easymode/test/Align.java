@@ -11,7 +11,7 @@ import javax.swing.SwingUtilities;
 public class Align {
     private static final int PREF_HEIGHT = 100;
 
-	Align() {
+    Align() {
         JFrame frame = new JFrame("Align test");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -26,7 +26,7 @@ public class Align {
         JPanel right = new JPanel() {
             private static final long serialVersionUID = 4811265060819408565L;
 
-			@Override
+            @Override
             public int getBaseline(int width, int height) {
                 return 100;
             }

@@ -16,6 +16,7 @@ import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RConst;
 import com.apkscanner.resource.RProp;
 import com.apkspectrum.data.apkinfo.ApkInfo;
+import com.apkspectrum.logback.Log;
 import com.apkspectrum.plugin.PlugIn;
 import com.apkspectrum.plugin.PlugInManager;
 import com.apkspectrum.swing.ApkActionEventHandler;
@@ -25,185 +26,185 @@ import com.apkspectrum.tool.Dex2JarWrapper;
 import com.apkspectrum.tool.JADXLauncher;
 import com.apkspectrum.tool.JDGuiLauncher;
 import com.apkspectrum.util.ConsolCmd.ConsoleOutputObserver;
-import com.apkspectrum.util.Log;
 import com.apkspectrum.util.ZipFileUtil;
 
-public class OpenDecompilerAction extends AbstractApkScannerAction
-{
-	private static final long serialVersionUID = 5308482918292029836L;
+public class OpenDecompilerAction extends AbstractApkScannerAction {
+    private static final long serialVersionUID = 5308482918292029836L;
 
-	public static final String ACTION_COMMAND = "ACT_CMD_OPEN_DECOMPILER";
+    public static final String ACTION_COMMAND = "ACT_CMD_OPEN_DECOMPILER";
 
-	public OpenDecompilerAction(ApkActionEventHandler h) { super(h); }
+    public OpenDecompilerAction(ApkActionEventHandler h) {
+        super(h);
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		Object source = e.getSource();
-		if(source instanceof JMenuItem) {
-			source = ((JMenuItem)source).getParent();
-			if(source instanceof JPopupMenu) {
-				source = ((JPopupMenu) source).getClientProperty(RConst.MENU_OWNER_KEY);
-			}
-		}
-		evtOpenDecompiler(getWindow(e),
-				source instanceof Component ? (Component)source : null);
-	}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Object source = e.getSource();
+        if (source instanceof JMenuItem) {
+            source = ((JMenuItem) source).getParent();
+            if (source instanceof JPopupMenu) {
+                source = ((JPopupMenu) source).getClientProperty(RConst.MENU_OWNER_KEY);
+            }
+        }
+        evtOpenDecompiler(getWindow(e), source instanceof Component ? (Component) source : null);
+    }
 
-	protected void evtOpenDecompiler(final Window owner, final Component comp) {
-		String data = RProp.S.DEFAULT_DECORDER.get();
-		Log.v("PROP_DEFAULT_DECORDER : " + data);
+    protected void evtOpenDecompiler(final Window owner, final Component comp) {
+        String data = RProp.S.DEFAULT_DECORDER.get();
+        Log.v("PROP_DEFAULT_DECORDER : " + data);
 
-		if(data.matches(".*!.*#.*@.*")) {
-			if(evtPluginLaunch(data)) return;
-			data = (String) RProp.DEFAULT_DECORDER.getDefaultValue();
-		}
+        if (data.matches(".*!.*#.*@.*")) {
+            if (evtPluginLaunch(data)) return;
+            data = (String) RProp.DEFAULT_DECORDER.getDefaultValue();
+        }
 
-		switch(data) {
-		case RConst.STR_DECORDER_JD_GUI:
-			launchJdGui(owner, comp);
-			break;
-		case RConst.STR_DECORDER_JADX_GUI:
-			launchJadxGui(owner, comp);
-			break;
-		case RConst.STR_DECORDER_BYTECOD:
-			launchByteCodeViewer(owner, comp);
-			break;
-		default:
-		}
-	}
+        switch (data) {
+            case RConst.STR_DECORDER_JD_GUI:
+                launchJdGui(owner, comp);
+                break;
+            case RConst.STR_DECORDER_JADX_GUI:
+                launchJadxGui(owner, comp);
+                break;
+            case RConst.STR_DECORDER_BYTECOD:
+                launchByteCodeViewer(owner, comp);
+                break;
+            default:
+        }
+    }
 
-	protected boolean hasCode(final Window owner) {
-		ApkInfo apkInfo = getApkInfo();
-		if(apkInfo == null || apkInfo.filePath == null
-				|| !new File(apkInfo.filePath).exists()) {
-			Log.e("evtOpenDecompiler() apkInfo is null");
-			MessageBoxPool.show(owner, MessageBoxPool.MSG_NO_SUCH_APK_FILE);
-			return false;
-		}
+    protected boolean hasCode(final Window owner) {
+        ApkInfo apkInfo = getApkInfo();
+        if (apkInfo == null || apkInfo.filePath == null || !new File(apkInfo.filePath).exists()) {
+            Log.e("evtOpenDecompiler() apkInfo is null");
+            MessageBoxPool.show(owner, MessageBoxPool.MSG_NO_SUCH_APK_FILE);
+            return false;
+        }
 
-		if(!ZipFileUtil.exists(apkInfo.filePath, "classes.dex")) {
-			Log.e("No such file : classes.dex");
-			MessageBoxPool.show(owner, MessageBoxPool.MSG_NO_SUCH_CLASSES_DEX);
-			return false;
-		}
-		return true;
-	}
+        if (!ZipFileUtil.exists(apkInfo.filePath, "classes.dex")) {
+            Log.e("No such file : classes.dex");
+            MessageBoxPool.show(owner, MessageBoxPool.MSG_NO_SUCH_CLASSES_DEX);
+            return false;
+        }
+        return true;
+    }
 
-	protected String getTargetPath(Window owner, Component comp) {
-		// from OpenResTreeFileAction
-		String target = (String) handler.getData(Integer.toString(comp.hashCode()));
+    protected String getTargetPath(Window owner, Component comp) {
+        // from OpenResTreeFileAction
+        String target = (String) handler.getData(Integer.toString(comp.hashCode()));
 
-		// from SelectViewPanel
-		if(target == null && comp instanceof JComponent) {
-			TreeNodeData resObj = (TreeNodeData)((JComponent)comp).getClientProperty(TreeNodeData.class);
-			target = uncompressRes(resObj);
-		}
+        // from SelectViewPanel
+        if (target == null && comp instanceof JComponent) {
+            TreeNodeData resObj =
+                    (TreeNodeData) ((JComponent) comp).getClientProperty(TreeNodeData.class);
+            target = uncompressRes(resObj);
+        }
 
-		if(target == null) {
-			if(!hasCode(owner)) return null;
-			ApkInfo apkInfo = getApkInfo();
-			if(apkInfo != null) {
-				target = apkInfo.filePath;
-			}
-		}
-		return target;
-	}
+        if (target == null) {
+            if (!hasCode(owner)) return null;
+            ApkInfo apkInfo = getApkInfo();
+            if (apkInfo != null) {
+                target = apkInfo.filePath;
+            }
+        }
+        return target;
+    }
 
-	protected void launchJdGui(final Window owner, final Component comp) {
-		String targetPath = getTargetPath(owner, comp);
-		if(targetPath == null) return;
+    protected void launchJdGui(final Window owner, final Component comp) {
+        String targetPath = getTargetPath(owner, comp);
+        if (targetPath == null) return;
 
-		ApkInfo apkInfo = getApkInfo();
-		String jarfileName = targetPath;
-		if(!jarfileName.startsWith(apkInfo.tempWorkPath)) {
-			jarfileName = apkInfo.tempWorkPath + File.separator + (new File(targetPath)).getName();
-		}
-		jarfileName = jarfileName.replaceAll("\\.(apk|dex)$", ".jar");
+        ApkInfo apkInfo = getApkInfo();
+        String jarfileName = targetPath;
+        if (!jarfileName.startsWith(apkInfo.tempWorkPath)) {
+            jarfileName = apkInfo.tempWorkPath + File.separator + (new File(targetPath)).getName();
+        }
+        jarfileName = jarfileName.replaceAll("\\.(apk|dex)$", ".jar");
 
-		setComponentEnabled(comp, false);
-		Dex2JarWrapper.convert(targetPath, jarfileName, comp == null
-				? null : new Dex2JarWrapper.DexWrapperListener() {
-			private boolean completed;
-			@Override
-			public void onCompleted() {
-				if(completed) return;
-				setComponentEnabled(comp, true);
-				completed = true;
-			}
+        setComponentEnabled(comp, false);
+        Dex2JarWrapper.convert(targetPath, jarfileName,
+                comp == null ? null : new Dex2JarWrapper.DexWrapperListener() {
+                    private boolean completed;
 
-			@Override
-			public void onError(final String message) {
-				if(completed) return;
-				Log.e("Failure: Fail Dex2Jar : " + message);
-				setComponentEnabled(comp, true);
-				completed = true;
-			}
+                    @Override
+                    public void onCompleted() {
+                        if (completed) return;
+                        setComponentEnabled(comp, true);
+                        completed = true;
+                    }
 
-			@Override
-			public void onSuccess(String jarFilePath) {
-				JDGuiLauncher.run(jarFilePath);
-			}
-		});
-	}
+                    @Override
+                    public void onError(final String message) {
+                        if (completed) return;
+                        Log.e("Failure: Fail Dex2Jar : " + message);
+                        setComponentEnabled(comp, true);
+                        completed = true;
+                    }
 
-	protected void launchJadxGui(final Window owner, final Component comp) {
-		String targetPath = getTargetPath(owner, comp);
-		if(targetPath == null) return;
-		setComponentEnabled(comp, false);
-		JADXLauncher.run(getTargetPath(owner, comp), comp == null
-				? null : new ConsoleOutputObserver() {
-			private boolean completed;
-			@Override
-			public boolean ConsolOutput(String output) {
-				if(completed) return true;
-				if(output.startsWith("INFO")
-						|| output.equals("JADXLauncher Completed")) {
-					setComponentEnabled(comp, true);
-					completed = true;
-				}
-				return true;
-			}
-		});
-	}
+                    @Override
+                    public void onSuccess(String jarFilePath) {
+                        JDGuiLauncher.run(jarFilePath);
+                    }
+                });
+    }
 
-	protected void launchByteCodeViewer(final Window owner, final Component comp) {
-		String targetPath = getTargetPath(owner, comp);
-		if(targetPath == null) return;
-		setComponentEnabled(comp, false);
-		BytecodeViewerLauncher.run(targetPath, comp == null
-				? null : new ConsoleOutputObserver() {
-			private boolean completed;
-			@Override
-			public boolean ConsolOutput(String output) {
-				if(completed) return true;
-				if(output.startsWith("Start up") || output.startsWith("I:")
-						|| output.equals("BytecodeViewerLauncher Completed")) {
-					setComponentEnabled(comp, true);
-					completed = true;
-				}
-				return true;
-			}
-		});
-	}
+    protected void launchJadxGui(final Window owner, final Component comp) {
+        String targetPath = getTargetPath(owner, comp);
+        if (targetPath == null) return;
+        setComponentEnabled(comp, false);
+        JADXLauncher.run(getTargetPath(owner, comp),
+                comp == null ? null : new ConsoleOutputObserver() {
+                    private boolean completed;
 
-	protected boolean evtPluginLaunch(String actionCommand) {
-		PlugIn plugin = PlugInManager.getPlugInByActionCommand(actionCommand);
-		if(plugin == null) return false;
-		plugin.launch();
-		return true;
-	}
+                    @Override
+                    public boolean ConsolOutput(String output) {
+                        if (completed) return true;
+                        if (output.startsWith("INFO") || output.equals("JADXLauncher Completed")) {
+                            setComponentEnabled(comp, true);
+                            completed = true;
+                        }
+                        return true;
+                    }
+                });
+    }
 
-	protected void setComponentEnabled(final Component comp, final boolean enabled) {
-		if(comp == null) return;
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				comp.setEnabled(enabled);
-				if(comp instanceof ExtensionButton) {
-					if(!enabled) {
-						RComp.BTN_TOOLBAR_OPEN_CODE_LODING.set(comp);
-					}
-				}
-			}
-		});
-	}
+    protected void launchByteCodeViewer(final Window owner, final Component comp) {
+        String targetPath = getTargetPath(owner, comp);
+        if (targetPath == null) return;
+        setComponentEnabled(comp, false);
+        BytecodeViewerLauncher.run(targetPath, comp == null ? null : new ConsoleOutputObserver() {
+            private boolean completed;
+
+            @Override
+            public boolean ConsolOutput(String output) {
+                if (completed) return true;
+                if (output.startsWith("Start up") || output.startsWith("I:")
+                        || output.equals("BytecodeViewerLauncher Completed")) {
+                    setComponentEnabled(comp, true);
+                    completed = true;
+                }
+                return true;
+            }
+        });
+    }
+
+    protected boolean evtPluginLaunch(String actionCommand) {
+        PlugIn plugin = PlugInManager.getPlugInByActionCommand(actionCommand);
+        if (plugin == null) return false;
+        plugin.launch();
+        return true;
+    }
+
+    protected void setComponentEnabled(final Component comp, final boolean enabled) {
+        if (comp == null) return;
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                comp.setEnabled(enabled);
+                if (comp instanceof ExtensionButton) {
+                    if (!enabled) {
+                        RComp.BTN_TOOLBAR_OPEN_CODE_LODING.set(comp);
+                    }
+                }
+            }
+        });
+    }
 }

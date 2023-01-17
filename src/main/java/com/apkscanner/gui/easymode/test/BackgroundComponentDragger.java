@@ -21,8 +21,8 @@ public class BackgroundComponentDragger implements MouseMotionListener {
     @Override
     public void mouseDragged(MouseEvent e) {
         Point currentFramePosition = controlledComponent.getLocation();
-        Point newFramePosition = new Point(currentFramePosition.x + e.getX()
-                - originPoint.x, currentFramePosition.y + e.getY() - originPoint.y);
+        Point newFramePosition = new Point(currentFramePosition.x + e.getX() - originPoint.x,
+                currentFramePosition.y + e.getY() - originPoint.y);
         controlledComponent.setLocation(newFramePosition);
     }
 

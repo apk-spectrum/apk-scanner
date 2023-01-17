@@ -16,12 +16,13 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
 /**
-* @see http://stackoverflow.com/a/10491290/230513
-*/
+ * @see http://stackoverflow.com/a/10491290/230513
+ */
 public class ProgressBarTest extends JPanel {
 
-	private static final long serialVersionUID = 8727572613016196274L;
-	private JTable table = new JTable(new TestModel());
+    private static final long serialVersionUID = 8727572613016196274L;
+    private JTable table = new JTable(new TestModel());
+
     public ProgressBarTest() {
         table.getColumnModel().getColumn(0).setCellRenderer(new TestCellRenderer());
         table.setPreferredScrollableViewportSize(new Dimension(320, 120));
@@ -30,9 +31,9 @@ public class ProgressBarTest extends JPanel {
 
     private class TestModel extends AbstractTableModel {
 
-		private static final long serialVersionUID = 6474883623897291715L;
+        private static final long serialVersionUID = 6474883623897291715L;
 
-		@Override
+        @Override
         public int getRowCount() {
             return 4;
         }
@@ -65,8 +66,8 @@ public class ProgressBarTest extends JPanel {
         }
 
         @Override
-        public Component getTableCellRendererComponent(JTable table,
-            Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                boolean isSelected, boolean hasFocus, int row, int column) {
             return bar;
         }
 
