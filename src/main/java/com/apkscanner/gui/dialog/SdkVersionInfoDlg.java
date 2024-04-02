@@ -32,6 +32,7 @@ import com.apkspectrum.logback.Log;
 import com.apkspectrum.resource.DefaultResImage;
 import com.apkspectrum.resource._RFile;
 import com.apkspectrum.swing.ImagePanel;
+import com.apkspectrum.swing.ImageScaler;
 import com.apkspectrum.swing.KeyStrokeAction;
 import com.apkspectrum.swing.WindowSizeMemorizer;
 import com.apkspectrum.util.XmlPath;
@@ -203,7 +204,7 @@ public class SdkVersionInfoDlg extends JDialog {
 
         sdkInfoArea.setText(info.toString());
         sdkInfoArea.setCaretPosition(0);
-        sdkLogoImg.setImage(logo);
+        sdkLogoImg.setImage(ImageScaler.getScaledImage(logo, 150, 150));
         if ((int) sdkVersions.getSelectedItem() != sdkVer) {
             sdkVersions.setSelectedItem(sdkVer);
         }
