@@ -1,0 +1,355 @@
+<resources>
+	<string name="app_name">APK 扫描器</string>
+
+	<string name="title_install_wizard">APK 安装向导</string>
+	<string name="title_apk_signer">APK 签名器</string>
+
+	<string name="btn_open">打开</string>
+	<string name="btn_open_pacakge">软件包</string>
+	<string name="btn_manifest">清单</string>
+	<string name="btn_manifest_save">保存</string>
+	<string name="btn_explorer">浏览</string>
+	<string name="btn_install">安装</string>
+	<string name="btn_install_downgrad">降级</string>
+	<string name="btn_install_update">更新</string>
+	<string name="btn_launch">启动</string>
+	<string name="btn_launch_select_launcher">选择启动器</string>
+	<string name="btn_sign">签名</string>
+	<string name="btn_setting">设置</string>
+	<string name="btn_about">关于</string>
+	<string name="btn_save">保存</string>
+	<string name="btn_close">关闭</string>
+	<string name="btn_ok">确定</string>
+	<string name="btn_yes">确定</string>
+	<string name="btn_no">取消</string>
+	<string name="btn_cancel">取消</string>
+	<string name="btn_refresh">刷新</string>
+	<string name="btn_add">添加</string>
+	<string name="btn_del">删除</string>
+	<string name="btn_opencode">源代码</string>
+	<string name="btn_opening_code">解码...</string>
+	<string name="btn_search">搜索</string>
+	<string name="btn_more">更多</string>
+	<string name="btn_assoc_ftype">关联 APK文件</string>
+	<string name="btn_unassoc_ftype">取消关联 APK文件</string>
+	<string name="btn_create_shortcut">创建桌面快捷方式</string>
+	<string name="btn_show_permissions">显示权限信息</string>
+	<string name="btn_show_sdk_info">显示 SDK信息</string>
+	<string name="btn_self_search">搜索……</string>
+	<string name="btn_open_lab">打开 APK文件 (Ctrl+O)</string>
+	<string name="btn_open_pacakge_lab">打开软件包 (Ctrl+P)</string>
+	<string name="btn_manifest_lab">查看 AndroidManifest.xml (Ctrl+M)</string>
+	<string name="btn_explorer_lab">查看APK压缩文件。 (Ctrl+E)</string>
+	<string name="btn_install_lab">在连接的设备上安装 APK。 (Ctrl+I)</string>
+	<string name="btn_install_downgrad_lab">降级 APK (Ctrl+I)</string>
+	<string name="btn_install_update_lab">升级 APK (Ctrl+I)</string>
+	<string name="btn_launch_lab">启动应用程序</string>
+	<string name="btn_sign_lab">签名 APK</string>
+	<string name="btn_setting_lab">更改设置（编辑器、语言等）。</string>
+	<string name="btn_about_lab">关于 APK 扫描器 (F1)</string>
+	<string name="btn_opencode_lab">通过JD-GUI显示源代码。</string>
+	<string name="btn_opening_code_lab">转换源代码。</string>
+	<string name="btn_search_lab">搜索资源</string>
+	<string name="btn_more_lab">显示更多</string>
+	<string name="btn_assoc_ftype_lab">关联 APK文件</string>
+	<string name="btn_unassoc_ftype_lab">取消关联 APK文件</string>
+	<string name="btn_create_shortcut_lab">创建桌面快捷方式</string>
+	<string name="btn_self_search_lab">搜索……</string>
+	<string name="btn_details_info">详细信息</string>
+	<string name="btn_to_install">安装</string>
+	<string name="btn_to_cannot_install">安装失败</string>
+	<string name="btn_to_push">推送</string>
+	<string name="btn_to_cannot_push">推送失败</string>
+	<string name="btn_no_install">未安装</string>
+	<string name="btn_impossible_install">安装失败</string>
+	<string name="btn_apply_all_models">应用到所有机型</string>
+	<string name="btn_launch_after_installed">安装后启动</string>
+	<string name="btn_replace_existing_app">允许替换现有的应用程序 (-r)</string>
+	<string name="btn_allow_downgrade">允许版本代码降级 (-d)</string>
+	<string name="btn_install_on_sdcard">安装在 SD卡上 (-s)</string>
+	<string name="btn_grant_runtime_perm">授予所有运行时权限 (-g)</string>
+	<string name="btn_forward_lock">前向锁定应用程序 (-l)</string>
+	<string name="btn_allow_test_package">允许测试软件包 (-t)</string>
+	<string name="btn_reboot_after_pushed">完成后重新启动</string>
+	<string name="btn_previous">上一步</string>
+	<string name="btn_back">返回</string>
+	<string name="btn_advanced_options_lab">高级选项</string>
+
+	<string name="btn_installed">已安装</string>
+	<string name="btn_not_installed">未安装</string>
+	<string name="btn_waiting">请稍等...</string>
+	<string name="btn_success">成功</string>
+	<string name="btn_fail">失败</string>
+	<string name="btn_remove">移除</string>
+	<string name="btn_check_update">检查更新</string>
+
+	<string name="menu_new">在新窗口中打开</string>
+	<string name="menu_new_window">打开新窗口 (N)</string>
+	<string name="menu_new_apk_file">在新窗口中打开 APK文件 (O)</string>
+	<string name="menu_new_package">在新窗口中打开一个软件包 (P)</string>
+	<string name="menu_apk_file">打开 APK文件 (O)</string>
+	<string name="menu_package">打开一个软件包 (P)</string>
+	<string name="menu_install">安装 (I)</string>
+	<string name="menu_uninstall">卸载 (U)</string>
+	<string name="menu_clear_data">清除数据（包括缓存）</string>
+	<string name="menu_check_installed">检查已安装的版本信息 (T)</string>
+	<string name="menu_decorder_jd_gui">JD-GUI</string>
+	<string name="menu_decorder_jadx_gui">JADX-GUI</string>
+	<string name="menu_decorder_bytecode_viewer">Bytecode Viewer</string>
+	<string name="menu_search_resource">资源搜索</string>
+	<string name="menu_explorer_archive">查看 APK压缩文件</string>
+	<string name="menu_explorer_folder">打开 APK文件的位置</string>
+	<string name="menu_launch_lanucher">启动启动器活动</string>
+	<string name="menu_launch_select">启动选择活动</string>
+	<string name="menu_select_default">设置为默认</string>
+	<string name="menu_visible_to_basic_each">选择所有搜索功能可见</string>
+
+	<string name="tab_basic_info">APK 信息</string>
+	<string name="tab_apex_info">APEX 信息</string>
+	<string name="tab_widgets">小部件</string>
+	<string name="tab_libraries">运行库</string>
+	<string name="tab_resources">资源</string>
+	<string name="tab_components">组件</string>
+	<string name="tab_signatures">签名</string>
+	<string name="tab_package_info">软件包信息</string>
+	<string name="tab_dumpsys">转储信息</string>
+	<string name="tab_sys_package_info">系统软件包信息</string>
+	<string name="tab_about">关于</string>
+	<string name="tab_update">更新(%d)</string>
+
+	<string name="tab_setting_generic">通用</string>
+	<string name="tab_setting_generic_lab">设置通用选项</string>
+	<string name="tab_setting_analysis">分析</string>
+	<string name="tab_setting_analysis_lab">设置分析选项</string>
+	<string name="tab_setting_device">设备</string>
+	<string name="tab_setting_device_lab">设备特定选项</string>
+	<string name="tab_setting_display">显示</string>
+	<string name="tab_setting_display_lab">设置显示选项</string>
+	<string name="tab_setting_plugins">插件</string>
+	<string name="tab_setting_plugins_lab">设置插件选项</string>
+
+	<string name="basic_permissions">权限</string>
+	<string name="basic_permlab_display_list">查看完整列表</string>
+	<string name="basic_permdesc_display_list">显示所有权限列表。</string>
+
+	<string name="feature_lab">功能</string>
+	<string name="feature_install_location_internal_only_lab">安装位置：仅内部储存空间</string>
+	<string name="feature_install_location_internal_only_desc">应用程序必须安装在内部储存空间。
+如果设置此项，应用程序将不会被安装在外部存储设备上。
+如果内部存储空间已满，系统将不安装该应用程序。
+这也是没有定义 android:installLocation时的默认行为。</string>
+	<string name="feature_install_location_auto_lab">安装位置：自动</string>
+	<string name="feature_install_location_auto_desc">应用程序可以安装在外部存储设备上，但系统默认将应用程序安装在内部存储空间。
+默认情况下，应用程序会被安装到内部存储空间。
+如果内部存储空间已满，系统将安装到外部存储设备。
+一旦安装完毕，用户可以通过系统设置将应用程序移动到外部或内部存储设备。</string>
+	<string name="feature_install_location_prefer_external_lab">安装位置：首选外部存储空间</string>
+	<string name="feature_install_location_prefer_external_desc">应用程序更首选安装在外部存储设备（SD卡）上。不保证系统会履行该请求。
+无法保证系统会满足此请求。
+如果外部储存设备不可用或已满，应用程序可能会被安装在内部存储空间。
+一旦安装完毕，用户可以通过系统设置将应用程序移至外部或内部存储设备。</string>
+	<string name="feature_launcher_lab">启动器</string>
+	<string name="feature_launcher_desc">应用程序图标已存在。</string>
+	<string name="feature_hidden_lab">隐藏应用程序</string>
+	<string name="feature_hidden_desc">应用程序图标不存在。</string>
+	<string name="feature_startup_lab">启动时运行</string>
+	<string name="feature_startup_desc">开机后自动运行</string>
+	<string name="feature_signature_unsigned">未签名</string>
+	<string name="feature_signature_signed">已签名</string>
+	<string name="feature_system_user_id_lab">系统用户ID</string>
+	<string name="feature_system_user_id_desc">应用程序使用系统用户 ID。</string>
+	<string name="feature_shared_user_id_lab">共享用户 ID</string>
+	<string name="feature_shared_user_id_desc">应用程序使用一个共享用户 ID。</string>
+	<string name="feature_platform_sign_lab">平台签名</string>
+	<string name="feature_platform_sign_desc">此应用程序通过平台签名（google test-key）签署。</string>
+	<string name="feature_samsung_sign_lab">三星签名</string>
+	<string name="feature_samsung_sign_desc">此应用程序由三星签名签署。</string>
+    <string name="feature_revoke_permissions_lab">权限警告</string>
+    <string name="feature_revoke_permissions_desc">您使用的权限需要平台签名或必须安装在系统（priv-app）上才能使用。
+※ 如果包含 pre23级别，则在 SDK23之前的版本中将自动获得批准。</string>
+	<string name="feature_debuggable_lab">调试模式</string>
+	<string name="feature_debuggable_desc">无论应用程序是否可以调试，
+即使在用户模式下的设备上运行时也是如此。</string>
+	<string name="feature_instrumentation_lab">插桩</string>
+	<string name="feature_instrumentation_desc">在应用程序运行时提供分析和其他信息的插桩类。
+它们在应用程序发布之前被删除</string>
+	<string name="feature_device_requirements_lab">设备要求</string>
+	<string name="feature_device_requirements_desc">应用安装到设备的要求</string>
+	<string name="feature_flag_lab">标签</string>
+	<string name="feature_flag_desc">软件包标签属性</string>
+	<string name="feature_installer_lab">软件安装程序</string>
+	<string name="feature_hidden_system_package_lab">系统软件包</string>
+	<string name="feature_hidden_system_package_desc">隐藏系统软件包</string>
+	<string name="feature_disabled_package_lab">已禁用</string>
+	<string name="feature_disabled_package_desc">已禁用的软件包</string>
+
+	<string name="widget_column_image">图像</string>
+	<string name="widget_column_label">标签</string>
+	<string name="widget_column_size">大小</string>
+	<string name="widget_column_activity">活动</string>
+	<string name="widget_column_enabled">状态</string>
+	<string name="widget_column_type">类型</string>
+	<string name="widget_resize_mode">可调整大小</string>
+	<string name="widget_horizontal">宽度</string>
+	<string name="widget_vertical">高度</string>
+	<string name="widget_type_nomal">正常</string>
+	<string name="widget_type_shortcut">快捷键</string>
+
+	<string name="lib_column_index">索引</string>
+	<string name="lib_column_path">路径</string>
+	<string name="lib_column_size">大小</string>
+	<string name="lib_column_compressibility">压缩率</string>
+
+	<string name="component_column_class">类</string>
+	<string name="component_column_type">类型</string>
+	<string name="component_column_startup">启动</string>
+	<string name="component_column_enabled">状态</string>
+	<string name="component_column_export">导出</string>
+	<string name="component_column_permission">权限</string>
+	<string name="component_label_xml">XML语法</string>
+	<string name="component_filter_prompt_xml">用 XML语法搜索</string>
+	<string name="component_filter_prompt_name">按类名搜索</string>
+
+	<string name="cert_summury">摘要</string>
+	<string name="cert_certificate">签名</string>
+
+	<string name="tree_open_package">打开</string>
+
+	<string name="settings_title">设置</string>
+	<string name="settings_editor">编辑器</string>
+	<string name="settings_toolbar">工具条</string>
+	<string name="settings_res">框架资源</string>
+	<string name="settings_language">语言</string>
+	<string name="settings_remember_window_size">记住窗口尺寸</string>
+	<string name="settings_theme">主题</string>
+	<string name="settings_tabbed_ui">标签外观</string>
+	<string name="settings_font">字体</string>
+	<string name="settings_theme_font">主题字体</string>
+	<string name="settings_theme_preview">预览</string>
+	<string name="settings_preferred_language">首选语言</string>
+	<string name="settings_preferred_example">示例 en-rUS;en-rGB;en;</string>
+	<string name="settings_adb_policy">ADB策略</string>
+	<string name="settings_adb_shared">使用运行中的 ADB版本</string>
+	<string name="settings_adb_restart">用选定的 ADB版本重新启动</string>
+	<string name="settings_adb_path">路径</string>
+	<string name="settings_adb_auto_selected">自动 - 最新版本</string>
+	<string name="settings_adb_shared_lab">*如果当前没有运行的 ADB版本，或者是不支持的版本，将使用所选的 ADB运行。</string>
+	<string name="settings_adb_restart_lab">* 如果当前运行的 ADB版本不同，则用选定的 ADB版本重新启动。</string>
+	<string name="settings_adb_monitor">允许检测设备连接 - 提供一个动态工具栏</string>
+	<string name="settings_launch_option">启动选项</string>
+	<string name="settings_launcher_only">自动 - 只有一个启动器</string>
+	<string name="settings_launcher_or_main">自动--启动器与主活动相同</string>
+	<string name="settings_launcher_confirm">始终确认目标活动</string>
+	<string name="settings_try_unlock">启动应用程序后尝试解锁锁屏。如果有必要，要求用户进行认证。</string>
+	<string name="settings_launch_installed">安装后自动启动</string>
+	<string name="settings_ext_toolbar_with_shift">按 Shift键使用扩展工具栏功能</string>
+	<string name="settings_ext_toolbar_without_shift">始终使用扩展工具栏功能</string>
+	<string name="settings_easymode_option_standard">标准模式</string>
+	<string name="settings_easymode_option_easy">简单模式</string>
+	<string name="settings_use_ui_booster">使用界面模式切换器（使用额外资源）</string>
+	<string name="settings_esc_act_none">无</string>
+	<string name="settings_esc_act_change_ui_mode">改变界面模式</string>
+	<string name="settings_esc_act_exit">退出程序</string>
+
+	<string name="label_error">错误</string>
+	<string name="label_warning">警告</string>
+	<string name="label_info">信息</string>
+	<string name="label_question">问题</string>
+	<string name="label_log">日志</string>
+	<string name="label_installing">安装...</string>
+	<string name="label_app_name_list">应用程序名称列表</string>
+	<string name="label_no_permission">该应用没有使用任何权限</string>
+	<string name="label_search">搜索</string>
+	<string name="label_loading">正在加载...</string>
+	<string name="label_apk_file_description">Android软件包（.apk | .apex）</string>
+	<string name="label_device">设备</string>
+	<string name="label_path">路径</string>
+	<string name="label_uses_resource">使用框架资源文件</string>
+	<string name="label_open_with">打开方式</string>
+	<string name="label_open_with_system">打开</string>
+	<string name="label_open_with_jdgui">JD-GUI</string>
+	<string name="label_open_with_jadxgui">JADX-GUI</string>
+	<string name="label_open_with_bytecode_viewer">Bytecode Viewer</string>
+	<string name="label_open_with_explorer">资源管理器</string>
+	<string name="label_open_with_apkscanner">APK 扫描器</string>
+	<string name="label_open_with_choose">其他</string>
+	<string name="label_open_to_textviewer">以文本形式查看</string>
+	<string name="label_how_to_install">如何安装</string>
+	<string name="label_install_options">安装选项</string>
+	<string name="label_push_options">推送选项</string>
+	<string name="label_launcher_af_installed">启动器：</string>
+	<string name="label_with_libraies">带有库</string>
+	<string name="label_num">No.</string>
+	<string name="label_abi">ABI</string>
+	<string name="label_destination">目标路径</string>
+	<string name="label_apk_verify">APK确认</string>
+	<string name="label_wait_for_device">检测设备</string>
+	<string name="label_apk_install_option">选项</string>
+	<string name="label_apk_installing">安装中</string>
+	<string name="label_apk_install_finish">完成</string>
+	<string name="label_save_as">另存为...</string>
+	<string name="label_by_package_name">按软件包名称搜索</string>
+	<string name="label_by_app_label">按应用程序名称搜索</string>
+	<string name="label_do_not_look_again">不再显示</string>
+	<string name="label_show_update_at_startup">启动时显示更新列表</string>
+	<string name="label_mark_a_runtime">标记运行库权限</string>
+	<string name="label_mark_a_count">标记权限的数量</string>
+	<string name="label_treat_sign_as_revoked">如果不是平台签名，则将签名级别视为已撤销</string>
+	<string name="label_with_below_options">用下面的选项进行安装</string>
+	<string name="label_with_options">选项</string>
+	<string name="label_by_group">按组查看</string>
+	<string name="label_with_label">按标签查看</string>
+	<string name="label_reference_n_levels">参考和级别</string>
+	<string name="label_filter">过滤器</string>
+	<string name="label_used_in_package">软件包中使用的权限</string>
+	<string name="label_all_on_android">Android中所有权限</string>
+	<string name="label_used_in_package_short">软件包中使用的权限</string>
+	<string name="label_all_on_android_short">Android中所有权限</string>
+	<string name="label_group_count_format">%d 组, %d 权限</string>
+	<string name="label_perm_count_format">%d 权限</string>
+	<string name="label_filter_none">无</string>
+	<string name="label_filter_all">所有</string>
+	<string name="label_permission_info">权限信息</string>
+	<string name="label_ui_mode">界面模式</string>
+	<string name="label_change_ui_shortkey">* F2键改变界面模式</string>
+	<string name="label_ui_booster">界面模式切换器</string>
+	<string name="label_esc_key">ESC键</string>
+
+	<string name="tree_node_device">设备</string>
+	<string name="tree_node_displayed">目前显示软件包</string>
+	<string name="tree_node_recently">最近运行软件包</string>
+	<string name="tree_node_running">正在运行软件包</string>
+
+	<string name="msg_failure_open_apk">错误：无法打开此 APK文件</string>
+	<string name="msg_no_such_apk">未找到此 APK文件</string>
+	<string name="msg_device_not_found">未找到设备，请检查您的连接。</string>
+	<string name="msg_no_such_launcher">未找到此启动器。</string>
+	<string name="msg_no_such_package_device">没有设备安装了此软件包。</string>
+	<string name="msg_no_such_classes_dex">APK文件中不存在 classes.dex文件。</string>
+	<string name="msg_failure_launch_app">启动应用程序失败。</string>
+	<string name="msg_failure_uninstalled">应用程序卸载失败。</string>
+	<string name="msg_failure_dex2jar">转换 jar文件失败</string>
+	<string name="msg_success_removed">应用程序卸载成功。</string>
+	<string name="msg_success_pull_apk">应用程序拉取成功。</string>
+	<string name="msg_failure_pulled">应用程序拉取失败。</string>
+	<string name="msg_device_unauthorized">设备未经授权。
+    请检查您的设备是否允许进行 USB调试。</string>
+	<string name="msg_unsupported_preview">此文件不支持预览。</string>
+	<string name="msg_cannot_write_file">该文件不能被覆盖。</string>
+	<string name="msg_disabled_package">无法运行，因为软件包被禁用。</string>
+	<string name="msg_success_clear_data">清除应用程序数据成功。</string>
+	<string name="msg_failure_clear_data">清除应用程序数据失败。</string>
+
+	<string name="question_save_overwrite">确定覆盖此文件？</string>
+	<string name="question_pack_info_close">卸载软件包成功。
+确定关闭此窗口？</string>
+	<string name="question_pack_info_refresh">卸载软件包成功。
+    确定刷新软件包的信息？</string>
+	<string name="question_remove_system_apk">将要删除一个系统应用，确定继续？</string>
+	<string name="question_removed_reboot">已经删除了一个系统应用，现在重新启动？</string>
+
+	<string name="easy_gui_feature1">简单、轻便、快速</string>
+	<string name="easy_gui_feature2">轻松切换到之前的 Apk 扫描器</string>
+	<string name="easy_gui_feature3">自定义工具栏</string>
+	<string name="easy_gui_use_question">想默认使用简单模式吗？ (可以在设置中更改)</string>
+</resources>
