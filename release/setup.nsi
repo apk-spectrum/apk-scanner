@@ -10,7 +10,7 @@
 !endif
 
 !ifndef APP_VERSION
-!define APP_VERSION "2.11-SNAPSHOT"
+!define APP_VERSION "2.12-SNAPSHOT"
 !endif
 
 ; Define your application name

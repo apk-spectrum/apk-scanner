@@ -1,7 +1,10 @@
 {
-  "version":"2.11",
+  "version":"2.12",
   "description":{
-    "en":"Ver. 2.11 :
+    "en":"Ver. 2.12 :
+1. Update platform(U) information.(by Marcelo Carvalho Diez)
+
+Ver. 2.11 :
 1. Support a MAC's M1/M2
 2. Update sdk tools
 3. Update extra tools.
@@ -56,7 +59,10 @@ Ver. 2.4.2 :\n1. Support JDK 9 and later.\n2. Improve UI of ApkInstallWizard.\n3
 Ver. 2.4.1  :\n1. Update JADX-GUI 0.9.0 (2019-02-12)\n2. Fix fatal error\n\n
 Ver. 2.4  :\n1. Add JADX & Bytecode viewer tools\n2. Add SDK29 information\n3. Link Apk Compare(toolbal & dragdrop)\n4. Add PlugIn(Update checker)\n5. Fix some bugs
 ",
-    "ko":"Ver. 2.11 :
+    "ko":"Ver. 2.12 :
+1. Update platform(U) information.(by Marcelo Carvalho Diez)
+
+Ver. 2.11 :
 1. MAC의 M1/M2 CPU 지원
 2. SDK툴 업데이트
 3. 외부 툴 업데이트
