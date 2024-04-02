@@ -44,24 +44,33 @@ SetCompressor Zlib
 ; Set languages (first is default language)
 !insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_LANGUAGE "Korean"
+!insertmacro MUI_LANGUAGE "SimpChinese"
 !insertmacro MUI_RESERVEFILE_LANGDLL
 
 LangString APP_NAME ${LANG_ENGLISH} "APK Scanner"
 LangString APP_NAME ${LANG_KOREAN} "APK 스캐너"
+LangString APP_NAME ${LANG_SIMPCHINESE} "APK 扫描器"
 LangString APP_NAME_DESC ${LANG_ENGLISH} "APK Scanner"
 LangString APP_NAME_DESC ${LANG_KOREAN} "APK 스캐너"
+LangString APP_NAME_DESC ${LANG_SIMPCHINESE} "APK 扫描器"
 LangString ASSOCITATE_APK ${LANG_ENGLISH} "Associate APK File"
 LangString ASSOCITATE_APK ${LANG_KOREAN} "APK파일 연결"
+LangString ASSOCITATE_APK ${LANG_SIMPCHINESE} "关联 APK 文件"
 LangString ASSOCITATE_APK_DESC ${LANG_ENGLISH} "Associate APK File. Open apk file by double click."
 LangString ASSOCITATE_APK_DESC ${LANG_KOREAN} "APK파일 연결합니다. APK 파일을 더블클릭하여 분석 할수 있습니다."
+LangString ASSOCITATE_APK_DESC ${LANG_SIMPCHINESE} "关联 APK 文件。双击打开 APK 文件。"
 LangString ADD_STARTMENU ${LANG_ENGLISH} "Start Menu Shortcuts"
 LangString ADD_STARTMENU ${LANG_KOREAN} "시작메뉴에 추가"
+LangString ADD_STARTMENU ${LANG_SIMPCHINESE} "开始菜单快捷方式"
 LangString ADD_STARTMENU_DESC ${LANG_ENGLISH} "Start Menu Shortcuts"
 LangString ADD_STARTMENU_DESC ${LANG_KOREAN} "시작메뉴에 바로가기 아이콘을 추가 합니다."
+LangString ADD_STARTMENU_DESC ${LANG_SIMPCHINESE} "创建开始菜单快捷方式"
 LangString ADD_DESKTOP ${LANG_ENGLISH} "Desktop Shortcut"
 LangString ADD_DESKTOP ${LANG_KOREAN} "바탕화면에 추가"
+LangString ADD_DESKTOP ${LANG_SIMPCHINESE} "桌面快捷方式"
 LangString ADD_DESKTOP_DESC ${LANG_ENGLISH} "Desktop Shortcut"
 LangString ADD_DESKTOP_DESC ${LANG_KOREAN} "바탕화면에 바로가기 아이콘을 추가 합니다."
+LangString ADD_DESKTOP_DESC ${LANG_SIMPCHINESE} "创建桌面快捷方式"
 
 Section $(APP_NAME) Section1
 
