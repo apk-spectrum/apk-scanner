@@ -10,7 +10,7 @@ if [[ -z `which dpkg-deb` ]]; then
 fi
 
 APP_PATH="/opt/APKScanner"
-APP_VERSION=${APP_VERSION:-"2.12-SNAPSHOT"}
+APP_VERSION=${APP_VERSION:-"2.13-SNAPSHOT"}
 APP_FILE="ApkScanner.jar"
 
 if [ -n "${FILE_VERSION}" ]; then
