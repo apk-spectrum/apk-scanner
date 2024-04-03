@@ -259,7 +259,6 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
         final JPanel filterExtendPanel = new JPanel();
         filterExtendPanel.setLayout(new BoxLayout(filterExtendPanel, BoxLayout.Y_AXIS));
         filterExtendPanel.setVisible(false);
-        filterExtendPanel.setPreferredSize(new Dimension(0, 20));
 
         Box box = Box.createHorizontalBox();
         box.setAlignmentX(0f);
@@ -350,7 +349,6 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
                 PermissionInfoExt.protectionFlagsToString(PermissionInfo.PROTECTION_MASK_BASE);
         for (String flag : allFlags.split("\\|")) {
             JCheckBox ckBox = new JCheckBox(flag);
-            ckBox.setMinimumSize(new Dimension(0, 20));
             ckBox.setActionCommand(flag);
             ckBox.setToolTipText(flag);
             ckBox.setSelected(true);
@@ -368,7 +366,6 @@ public class PermissionHistoryPanel extends JPanel implements ItemListener, Acti
         for (String flag : allFlags.split("\\|")) {
             if (flag.isEmpty()) continue;
             JCheckBox ckBox = new JCheckBox(flag);
-            ckBox.setMinimumSize(new Dimension(0, 20));
             ckBox.setActionCommand("|" + flag);
             ckBox.setToolTipText(flag);
             ckBox.addItemListener(listener);
