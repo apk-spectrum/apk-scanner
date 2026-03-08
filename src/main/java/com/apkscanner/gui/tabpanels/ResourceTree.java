@@ -1,6 +1,7 @@
 package com.apkscanner.gui.tabpanels;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -24,11 +25,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
+import javax.swing.event.TreeWillExpandListener;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -51,6 +54,8 @@ public class ResourceTree extends JTree {
 
     private DefaultMutableTreeNode rootNode;
 
+    private boolean isExpanding = false;
+
     public ResourceTree(final ActionListener listener) {
         super(new DefaultTreeModel(new DefaultMutableTreeNode()));
         rootNode = (DefaultMutableTreeNode) getModel().getRoot();
@@ -67,17 +72,28 @@ public class ResourceTree extends JTree {
                 Component c = super.getTreeCellRendererComponent(tree, value, selected, expanded,
                         isLeaf, row, focused);
 
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-                Object resObj = node.getUserObject();
-                if (resObj instanceof DefaultNodeData) {
-                    setIcon(((DefaultNodeData) resObj).getIcon(tree));
-                } else if (resObj instanceof TreeNodeData) {
-                    setIcon(((TreeNodeData) resObj).getIcon());
-                } else {
-                    String suffix = FileUtil.getSuffix(node.toString());
-                    setIcon(getExtensionIcon(suffix));
+                if (!isExpanding) {
+                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+                    Object resObj = node.getUserObject();
+                    if (resObj instanceof DefaultNodeData) {
+                        setIcon(((DefaultNodeData) resObj).getIcon(tree));
+                    } else if (resObj instanceof TreeNodeData) {
+                        setIcon(((TreeNodeData) resObj).getIcon());
+                    } else {
+                        String suffix = FileUtil.getSuffix(node.toString());
+                        setIcon(getExtensionIcon(suffix));
+                    }
                 }
                 return c;
+            }
+
+            @Override
+            public Dimension getPreferredSize() {
+                Dimension size = super.getPreferredSize();
+                if(size != null) {
+                    size = new Dimension(size.width + getIcon().getIconWidth(), size.height);
+                }
+                return size;
             }
         });
 
@@ -114,9 +130,20 @@ public class ResourceTree extends JTree {
             }
         });
 
+        addTreeWillExpandListener(new TreeWillExpandListener() {
+            @Override
+            public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
+                isExpanding = true;
+            }
+
+            @Override
+            public void treeWillCollapse(TreeExpansionEvent event) throws ExpandVetoException {}
+        });
+
         addTreeExpansionListener(new TreeExpansionListener() {
             @Override
             public void treeExpanded(TreeExpansionEvent event) {
+                isExpanding = false;
                 if (listener == null) return;
                 DefaultMutableTreeNode node =
                         (DefaultMutableTreeNode) event.getPath().getLastPathComponent();

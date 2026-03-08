@@ -1,6 +1,5 @@
 package com.apkscanner.gui.tabpanels;
 
-import java.awt.Image;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -8,11 +7,15 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
+import javax.swing.SwingWorker;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.apkscanner.resource.RImg;
@@ -33,6 +36,10 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
     transient protected boolean isLoading;
     transient protected Icon icon;
     transient protected DefaultMutableTreeNode node;
+
+    static transient protected Queue<DefaultNodeData> iconQueue = new ConcurrentLinkedQueue<>();
+    static transient boolean isIconLoading;
+    transient protected Icon loadedIcon;
 
     public DefaultNodeData(String label) {
         this(label, (URI) null);
@@ -174,28 +181,68 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
             icon = ResourceTree.getExtensionIcon(ResourceTree.FOLDER_ICON);
         }
         if (dataType == DATA_TYPE_IMAGE) {
-            try {
-                URL url = getURL();
-                if (url != null) {
-                    Image tempImage = null;
-                    if (path.toLowerCase().endsWith(".webp")) {
-                        tempImage = ImageScaler.getScaledImage(new ImageIcon(ImageIO.read(url)), 32,
-                                32);
-                    } else {
-                        tempImage = ImageScaler.getScaledImage(new ImageIcon(url), 32, 32);
-                    }
-                    icon = new ImageIcon(tempImage);
-                    tempImage.flush();
-                }
-            } catch (IOException | NullPointerException e1) {
-                // e1.printStackTrace();
+            URL url = getURL();
+            if (url != null) {
+                icon = RImg.TREE_LOADING.getImageIcon();
+                setLoadingState(true);
+                loadImage();
             }
         }
         if (icon == null) {
             icon = ResourceTree.getExtensionIcon(getExtension());
         }
-
         return icon;
+    }
+
+    private void loadImage() {
+        synchronized (iconQueue) {
+            iconQueue.add(this);
+            if (isIconLoading) return;
+            isIconLoading = true;
+        }
+        new SwingWorker<Void, DefaultNodeData>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                while (true) {
+                    DefaultNodeData node = null;
+                    synchronized (iconQueue) {
+                        node = iconQueue.poll();
+                        if (node == null) {
+                            isIconLoading = false;
+                            break;
+                        }
+                    }
+                    URL url = node.getURL();
+                    if (url == null) continue;
+                    try {
+                        ImageIcon icon = null;
+                        if (node.path.toLowerCase().endsWith(".webp")) {
+                            icon = new ImageIcon(ImageIO.read(url));
+                        } else {
+                            icon = new ImageIcon(url);
+                        }
+                        if (icon.getIconWidth() <= 0 || icon.getIconHeight() <= 0) {
+                            node.loadedIcon = ResourceTree.getExtensionIcon(node.getExtension());
+                        } else {
+                            node.loadedIcon = ImageScaler.getScaledImageIcon(icon, 32, 32);
+                        }
+                        publish(node);
+                    } catch (IOException | NullPointerException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            protected void process(List<DefaultNodeData> chunks) {
+                if (chunks != null) {
+                    for (DefaultNodeData node: chunks) {
+                        node.setLoadingState(false);
+                    }
+                }
+            }
+        }.execute();
     }
 
     public Icon getIcon(final JTree tree) {
@@ -226,7 +273,8 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
             ImageIcon image = (ImageIcon) icon;
             if (image.getImageObserver() != null) {
                 image.setImageObserver(null);
-                icon = null;
+                icon = loadedIcon;
+                loadedIcon = null;
             }
         }
     }

@@ -121,7 +121,7 @@ public class Widgets extends AbstractTabbedPanel
                         icon = icons[i].name;
                         if (icon != null && !icon.toLowerCase().endsWith(".xml")) break;
                     }
-                    if (icon == null) {
+                    if (icon == null || icon.toLowerCase().endsWith(".xml")) {
                         previewImage = RImg.DEF_APP_ICON.getImageIcon();
                     } else if (icon.toLowerCase().endsWith(".webp")) {
                         previewImage = new ImageIcon(ImageIO.read(new URL(icon)));

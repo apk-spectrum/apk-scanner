@@ -380,9 +380,28 @@ public class BasicInfo extends AbstractTabbedPanel
     private void setFileSize(String filePath) {
         File apkFile = new File(filePath);
         String text = FileUtil.getFileSize(apkFile.length(), FSStyle.FULL);
-        String description = "MD5: " + FileUtil.getMessageDigest(apkFile, "MD5");
+        String description = "MD5: calculating... ";
         apkInfoPanel.setInnerHTMLById("file-size",
                 makeHyperEvent("file-checksum", text, description, filePath));
+        new SwingWorker<String, Void>() {
+            @Override
+            protected String doInBackground() throws Exception {
+                return FileUtil.getMessageDigest(apkFile, "MD5");
+            }
+
+            @Override
+            protected void done() {
+                String md5 = "MD5: ";
+                try {
+                    md5 += get();
+                } catch (InterruptedException | ExecutionException e) {
+                    Log.e("{}: {}", e.getClass().getSimpleName(), e.getMessage());
+                    md5 += "Checksum calculation failed.";
+                }
+                apkInfoPanel.setInnerHTMLById("file-size",
+                        makeHyperEvent("file-checksum", text, md5, filePath));
+            }
+        }.execute();
     }
 
     private void setFeatures(ApkInfo apkInfo) {
