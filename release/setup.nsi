@@ -79,7 +79,7 @@ Section $(APP_NAME) Section1
     SetOverwrite on
 
     ; Kill ADB Server
-    ExecWait '"cmd.exe" /c $INSTDIR\tool\windows\adb.exe kill-server'
+    ExecWait '"cmd.exe" /c "$INSTDIR\tool\windows\adb.exe" kill-server'
 
     ; Delete legacy files
     Delete "$INSTDIR\uninstall.exe"
