@@ -228,6 +228,10 @@ public class BasicInfo extends AbstractTabbedPanel
                                         apkInfo.signatureScheme));
                     }
                 }
+                break;
+            case ApkScanner.STATUS_ALL_COMPLETED:
+                setFileSize(apkInfo.filePath, true);
+                break;
             default:
         }
     }
@@ -240,7 +244,7 @@ public class BasicInfo extends AbstractTabbedPanel
             setPackageName(apkInfo.manifest.packageName);
             setVersion(apkInfo.manifest.versionName, apkInfo.manifest.versionCode);
             setSdkVersion(apkInfo.manifest.usesSdk);
-            setFileSize(apkInfo.filePath);
+            setFileSize(apkInfo.filePath, false);
             setFeatures(apkInfo);
             setPermissionList(apkInfo);
             setPluginSearcher();
@@ -251,7 +255,7 @@ public class BasicInfo extends AbstractTabbedPanel
             setPackageName(apkInfo.manifest.packageName);
             setApexVersion(apkInfo.manifest.versionName, apkInfo.manifest.versionCode);
             setSdkVersion(apkInfo.manifest.usesSdk);
-            setFileSize(apkInfo.filePath);
+            setFileSize(apkInfo.filePath, false);
         }
     }
 
@@ -377,12 +381,13 @@ public class BasicInfo extends AbstractTabbedPanel
         apkInfoPanel.setOuterHTMLById("sdk-version", sdkVersion.substring(2));
     }
 
-    private void setFileSize(String filePath) {
+    private void setFileSize(String filePath, boolean calcMd5) {
         File apkFile = new File(filePath);
         String text = FileUtil.getFileSize(apkFile.length(), FSStyle.FULL);
-        String description = "MD5: calculating... ";
+        String description = "MD5: " + (calcMd5 ? "Calculating..." : "Waiting...");
         apkInfoPanel.setInnerHTMLById("file-size",
                 makeHyperEvent("file-checksum", text, description, filePath));
+        if (!calcMd5) return;
         new SwingWorker<String, Void>() {
             @Override
             protected String doInBackground() throws Exception {
