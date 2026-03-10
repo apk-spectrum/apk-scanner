@@ -70,7 +70,8 @@ public class ResourceObject extends DefaultNodeData {
 
     public Object getData() {
         String apkPath = null;
-        if ((path.startsWith("res/") && path.endsWith(".xml")) || path.equals("AndroidManifest.xml")
+        if ((path.startsWith("res/") && !path.startsWith("res/raw/")
+                && path.endsWith(".xml")) || path.equals("AndroidManifest.xml")
                 || path.endsWith(".img")) {
             apkPath = URITool.getJarPath(getURI());
         }

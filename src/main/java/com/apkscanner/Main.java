@@ -45,8 +45,9 @@ public class Main {
         Log.i("REPOSITORY : " + RStr.APP_SOURCE_HOST + "/" + RStr.APP_SOURCE_REPOSITORY);
         Log.i("MEMBERS : " + RStr.APP_MEMBERS);
         Log.i("MEMBERS_URL : " + RStr.APP_MEMBERS_URL);
-        Log.i("CONTRIBUTORS : " + RStr.APP_CONTRIBUTORS);
-        Log.i("CONTRIBUTORS_URL : " + RStr.APP_CONTRIBUTORS_URL);
+        Log.i("CONTRIBUTORS : " + RStr.APP_CONTRIBUTORS + " / " + RStr.APP_CONTRIBUTORS_URL);
+        Log.i("        CORE : " + RStr.APP_CORE_CONTRIBUTORS + " / " + RStr.APP_CORE_CONTRIBUTORS_URL);
+        Log.i("      PLUGIN : " + RStr.APP_PLUGIN_CONTRIBUTORS + " / " + RStr.APP_PLUGIN_CONTRIBUTORS_URL);
         Log.i("OS : " + SystemUtil.OS);
         Log.i("java.version : " + System.getProperty("java.version"));
         Log.i("java.specification.version : " + System.getProperty("java.specification.version"));

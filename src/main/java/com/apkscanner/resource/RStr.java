@@ -21,6 +21,10 @@ public enum RStr implements ResString<String> {
     APP_MEMBERS_URL                 ("@app_members_url"),
     APP_CONTRIBUTORS                ("@app_contributors"),
     APP_CONTRIBUTORS_URL            ("@app_contributors_url"),
+    APP_CORE_CONTRIBUTORS           ("@app_core_contributors"),
+    APP_CORE_CONTRIBUTORS_URL       ("@app_core_contributors_url"),
+    APP_PLUGIN_CONTRIBUTORS         ("@app_plugin_contributors"),
+    APP_PLUGIN_CONTRIBUTORS_URL     ("@app_plugin_contributors_url"),
 
     TITLE_INSTALL_WIZARD            ("@title_install_wizard"),
     TITLE_APK_SIGNER                ("@title_apk_signer"),

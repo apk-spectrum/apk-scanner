@@ -23,10 +23,14 @@
         <app.source.host>https://github.com</app.source.host>
         <app.source.repository>apk-spectrum/apk-scanner</app.source.repository>
         <app.release.url></app.release.url>
-        <app.members>sunggyu-kam, jacsaldevil</app.members>
+        <app.members>apk-spectrum</app.members>
         <app.members.url>https://github.com/orgs/apk-spectrum/people</app.members.url>
-        <app.contributors>ryu-s-r, YorkWaugh</app.contributors>
+        <app.contributors>apk-spectrum</app.contributors>
         <app.contributors.url>https://github.com/apk-spectrum/apk-scanner/graphs/contributors</app.contributors.url>
+        <app.core.contributors>apk-spectrum</app.core.contributors>
+        <app.core.contributors.url>https://github.com/apk-spectrum/apk-spectrum-core/graphs/contributors</app.core.contributors.url>
+        <app.plugin.contributors>apk-spectrum</app.plugin.contributors>
+        <app.plugin.contributors.url>https://github.com/apk-spectrum/apk-spectrum-plugin/graphs/contributors</app.plugin.contributors.url>
     </properties>
     <scm>
         <url>${app.source.host}/${app.source.repository}</url>

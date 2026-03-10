@@ -90,8 +90,8 @@ public abstract class AbstractApkScannerAction extends AbstractUIAction {
 
             boolean convAxml2Xml = false;
             String[] convStr = null;
-            if (path.equals("AndroidManifest.xml")
-                    || (path.startsWith("res/") && path.endsWith(".xml"))) {
+            if ((path.startsWith("res/") && !path.startsWith("res/raw/")
+                    && path.endsWith(".xml")) || path.equals("AndroidManifest.xml")) {
                 convStr = AaptNativeWrapper.Dump.getXmltree(apkInfo.filePath, new String[] {path});
                 convAxml2Xml = RConst.AXML_VEIWER_TYPE_XML.equals(RProp.S.AXML_VIEWER_TYPE.get());
             } else if ("resources.arsc".equals(path)) {

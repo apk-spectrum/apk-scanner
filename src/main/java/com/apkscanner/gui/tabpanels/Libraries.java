@@ -2,9 +2,11 @@ package com.apkscanner.gui.tabpanels;
 
 
 import java.awt.GridLayout;
-
+import java.util.List;
+import java.util.function.Consumer;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingWorker;
 
 import com.apkscanner.resource.RComp;
 import com.apkscanner.resource.RStr;
@@ -59,8 +61,30 @@ public class Libraries extends AbstractTabbedPanel {
         @Override
         public void setData(ApkInfo apkInfo) {
             data.clear();
-            if (apkInfo.libraries == null) return;
+            if (apkInfo.libraries == null) {
+                fireTableDataChanged();
+                return;
+            }
+            new SwingWorker<Void, Void>() {
+                @Override
+                protected Void doInBackground() throws Exception {
+                    fillData(apkInfo, chunks -> this.publish((Void) chunks));
+                    return null;
+                }
 
+                @Override
+                protected void process(List<Void> chunks) {
+                    fireTableDataChanged();
+                }
+
+                @Override
+                protected void done() {
+                    fireTableDataChanged();
+                }
+            }.execute();
+        }
+
+        private void fillData(ApkInfo apkInfo, Consumer<Void> publish) {
             String dir = null, preDir = null;
             long dirSize = 0, dirCompressed = 0, totalSize = 0, totalCompressed = 0;
             int preIdx = 0, num = 0;
@@ -91,6 +115,9 @@ public class Libraries extends AbstractTabbedPanel {
                         String.format("%.2f", ((float) (size - compressed) / (float) size) * 100f)
                                 + " %"};
                 data.add(temp);
+                if (num % 10 == 0) {
+                    publish.accept(null);
+                }
             }
             if (preDir != null) {
                 String path = dir;
@@ -112,7 +139,6 @@ public class Libraries extends AbstractTabbedPanel {
                                 + " %"});
                 data.add(1, new Object[] {"", "", "", ""});
             }
-            fireTableDataChanged();
         }
 
         @Override

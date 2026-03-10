@@ -452,8 +452,17 @@ public class ResourceContentsPanel extends JPanel implements ActionListener {
         if (resObj.getDataType() != TreeNodeData.DATA_TYPE_IMAGE) return;
         Object data = resObj.getData();
         if (data instanceof Image) {
-            imageViewerPanel.setImage((Image) data);
-            setContentViewPanel(CONTENT_IMAGE_VIEWER);
+            try {
+                imageViewerPanel.setImage((Image) data);
+                setContentViewPanel(CONTENT_IMAGE_VIEWER);
+            } catch (IllegalArgumentException e) {
+                Log.e("{}", e.getMessage());
+                String msg = "This file is in an unsupported format.";
+                xmltextArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_NONE);
+                xmltextArea.setText(msg);
+                xmltextArea.setCaretPosition(0);
+                setContentViewPanel(CONTENT_SYNTAX_TEXT_VIEWER);
+            }
         }
     }
 

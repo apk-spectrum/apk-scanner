@@ -15,6 +15,10 @@
     <string name="app_members_url">${app.members.url}</string>
     <string name="app_contributors">${app.contributors}</string>
     <string name="app_contributors_url">${app.contributors.url}</string>
+    <string name="app_core_contributors">${app.core.contributors}</string>
+    <string name="app_core_contributors_url">${app.core.contributors.url}</string>
+    <string name="app_plugin_contributors">${app.plugin.contributors}</string>
+    <string name="app_plugin_contributors_url">${app.plugin.contributors.url}</string>
 
     <string name="title_install_wizard">APK Install Wizard</string>
     <string name="title_apk_signer">APK Signer</string>

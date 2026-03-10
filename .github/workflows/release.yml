@@ -27,6 +27,10 @@ jobs:
       app_members_url: ${{ steps.repo_info.outputs.app_members_url }}
       app_contributors: ${{ steps.repo_info.outputs.app_contributors }}
       app_contributors_url: ${{ steps.repo_info.outputs.app_contributors_url }}
+      core_contributors: ${{ steps.submodule_info.outputs.core_contributors }}
+      core_contributors_url: ${{ steps.submodule_info.outputs.core_contributors_url }}
+      plugin_contributors: ${{ steps.submodule_info.outputs.plugin_contributors }}
+      plugin_contributors_url: ${{ steps.submodule_info.outputs.plugin_contributors_url }}
     steps:
       - name: Get build ID and URL
         run: |
@@ -62,8 +66,6 @@ jobs:
           # Determine build type
           if [[ $GITHUB_EVENT_NAME == release ]]; then
             build_type="release"
-            echo "Build type: $build_type"
-            echo "build_type=$build_type" >> $GITHUB_OUTPUT
 
             # Release URL for release events
             release_url=$(jq -r '.release.html_url' "$GITHUB_EVENT_PATH")
@@ -71,24 +73,20 @@ jobs:
             echo "release_url=$release_url" >> $GITHUB_OUTPUT
           elif [[ $GITHUB_REF == refs/tags/* ]]; then
             build_type="tag"
-            echo "Build type: $build_type"
-            echo "build_type=$build_type" >> $GITHUB_OUTPUT
           else
             build_type="push"
-            echo "Build type: $build_type"
-            echo "build_type=$build_type" >> $GITHUB_OUTPUT
           fi
+          echo "Build type: $build_type"
+          echo "build_type=$build_type" >> $GITHUB_OUTPUT
 
           # Determine build mode
           if [[ $GITHUB_EVENT_NAME == release ]] || [[ $GITHUB_REF == refs/heads/release ]] || [[ $GITHUB_REF == refs/tags/* ]]; then
             build_mode="user"
-            echo "Build mode: $build_mode"
-            echo "build_mode=$build_mode" >> $GITHUB_OUTPUT
           else
             build_mode="eng"
-            echo "Build mode: $build_mode"
-            echo "build_mode=$build_mode" >> $GITHUB_OUTPUT
           fi
+          echo "Build mode: $build_mode"
+          echo "build_mode=$build_mode" >> $GITHUB_OUTPUT
 
           # Determine file version
           date=$(date -u +"%Y%m%d")
@@ -102,25 +100,19 @@ jobs:
               else
                 file_version="${tag_name}.tag_${date}"
               fi
-              echo "File version: $file_version"
-              echo "file_version=$file_version" >> $GITHUB_OUTPUT
             else
               # Tag does not contain APP_VERSION
               file_version="v${APP_VERSION}_${tag_name}.tag_${date}"
-              echo "File version: $file_version"
-              echo "file_version=$file_version" >> $GITHUB_OUTPUT
             fi
           elif [[ $GITHUB_REF == refs/heads/release ]]; then
             # Release branch
             file_version="v${APP_VERSION}_RC-${short_commit_id}_${date}"
-            echo "File version: $file_version"
-            echo "file_version=$file_version" >> $GITHUB_OUTPUT
           else
             # Other branches
             file_version="v${APP_VERSION}_${branch_name}-${short_commit_id}_${date}"
-            echo "File version: $file_version"
-            echo "file_version=$file_version" >> $GITHUB_OUTPUT
           fi
+          echo "File version: $file_version"
+          echo "file_version=$file_version" >> $GITHUB_OUTPUT
 
       - name: Extract repository information
         id: repo_info
@@ -192,6 +184,87 @@ jobs:
           echo "app_contributors=$app_contributors" >> $GITHUB_OUTPUT
           echo "app_contributors_url=$app_contributors_url" >> $GITHUB_OUTPUT
 
+      - uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            .gitmodules
+          sparse-checkout-cone-mode: false
+
+      - name: Extract submodule repository information
+        id: submodule_info
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Function to extract submodule path from .gitmodules
+          extract_submodule_path() {
+            local submodule_name=$1
+            # Extract URL from .gitmodules file
+            local submodule_url=$(grep -A 2 "\[submodule \"$submodule_name\"\]" .gitmodules | grep "url =" | cut -d'=' -f2 | xargs)
+
+            # Handle relative URLs (starting with ../)
+            if [[ $submodule_url == "../"* ]]; then
+              # Extract parent repository owner
+              repo_owner=$(echo "$GITHUB_REPOSITORY" | cut -d'/' -f1)
+              # Remove ../ prefix to get repo name
+              local repo_name=${submodule_url#../}
+              # Return full path "$repo_owner/$repo_name"
+              echo "$repo_owner/$repo_name"
+            fi
+          }
+
+          # Function to get contributors for a repository
+          get_contributors() {
+            local full_path=$1
+            local api_url=""
+
+            # Construct API URL using same host
+            api_url="$GITHUB_API_URL/repos/$full_path/contributors?per_page=100"
+
+            # Get contributors from GitHub API
+            local contributors=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3+json" "$api_url" 2>/dev/null)
+            # Check if the response is valid JSON and contains contributors
+            if echo "$contributors" | jq -e 'type == "array" and length > 0' >/dev/null 2>&1; then
+              # Extract contributor logins and join with commas
+              echo "$contributors" | jq -r 'map(select(.type == "User")) | map(.login) | join(",")'
+            fi
+          }
+
+          # Extract core submodule contributors
+          core_contributors=""
+          core_contributors_url=""
+
+          # Get core submodule path
+          core_path=$(extract_submodule_path "core")
+          if [[ -n "$core_path" ]]; then
+            core_contributors=$(get_contributors "$core_path")
+            core_contributors_url="$GITHUB_SERVER_URL/$core_path/graphs/contributors"
+          fi
+
+          # Extract plugin submodule contributors
+          plugin_contributors=""
+          plugin_contributors_url=""
+
+          # Get plugin submodule path
+          plugin_path=$(extract_submodule_path "plugin")
+          if [[ -n "$plugin_path" ]]; then
+            plugin_contributors=$(get_contributors "$plugin_path")
+            plugin_contributors_url="$GITHUB_SERVER_URL/$plugin_path/graphs/contributors"
+          fi
+
+          # Output information
+          echo "Core path: $core_path"
+          echo "Core contributors: $core_contributors"
+          echo "Core contributors URL: $core_contributors_url"
+          echo "Plugin path: $plugin_path"
+          echo "Plugin contributors: $plugin_contributors"
+          echo "Plugin contributors URL: $plugin_contributors_url"
+
+          # Set outputs
+          echo "core_contributors=$core_contributors" >> $GITHUB_OUTPUT
+          echo "core_contributors_url=$core_contributors_url" >> $GITHUB_OUTPUT
+          echo "plugin_contributors=$plugin_contributors" >> $GITHUB_OUTPUT
+          echo "plugin_contributors_url=$plugin_contributors_url" >> $GITHUB_OUTPUT
+
   build:
     runs-on: ubuntu-latest
     needs: build-var
@@ -207,15 +280,19 @@ jobs:
       APP_MEMBERS_URL: ${{ needs.build-var.outputs.app_members_url }}
       APP_CONTRIBUTORS: ${{ needs.build-var.outputs.app_contributors }}
       APP_CONTRIBUTORS_URL: ${{ needs.build-var.outputs.app_contributors_url }}
+      CORE_CONTRIBUTORS: ${{ needs.build-var.outputs.core_contributors }}
+      CORE_CONTRIBUTORS_URL: ${{ needs.build-var.outputs.core_contributors_url }}
+      PLUGIN_CONTRIBUTORS: ${{ needs.build-var.outputs.plugin_contributors }}
+      PLUGIN_CONTRIBUTORS_URL: ${{ needs.build-var.outputs.plugin_contributors_url }}
     steps:
       - name: Set up JDK 1.8
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 8.0.402+6
 
       - name: Check out repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: 'recursive'
 
@@ -242,11 +319,16 @@ jobs:
           -Dapp.members.url="${{ env.APP_MEMBERS_URL }}"
           -Dapp.contributors="${{ env.APP_CONTRIBUTORS }}"
           -Dapp.contributors.url="${{ env.APP_CONTRIBUTORS_URL }}"
+          -Dapp.core.contributors="${{ env.CORE_CONTRIBUTORS }}"
+          -Dapp.core.contributors.url="${{ env.CORE_CONTRIBUTORS_URL }}"
+          -Dapp.plugin.contributors="${{ env.PLUGIN_CONTRIBUTORS }}"
+          -Dapp.plugin.contributors.url="${{ env.PLUGIN_CONTRIBUTORS_URL }}"
+
       - name: Create tarball with preserved permissions
         run: tar -czf target.tar.gz target
 
       - name: Upload output
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: target
           path: target.tar.gz
@@ -265,59 +347,48 @@ jobs:
         run: brew install makensis dpkg
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: .
 
       - name: Extract tarball with preserved permissions
-        run: tar -xzvf ./target/target.tar.gz
+        run: tar -xzvf ./target.tar.gz
 
       - name: Packaging
         run: target/package.sh
 
       - name: Upload output - Windows Installer
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: APKScanner_${{ env.FILE_VERSION }}_win_setup.exe
           path: target/APKScanner_${{ env.FILE_VERSION }}_win_setup.exe
 
       - name: Upload output - Windows Portable
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: APKScanner_${{ env.FILE_VERSION }}_win_portable.zip
           path: target/APKScanner_${{ env.FILE_VERSION }}_win_portable.zip
 
       - name: Upload output - Ubuntu Package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: APKScanner_${{ env.FILE_VERSION }}_ubuntu_setup.deb
           path: target/APKScanner_${{ env.FILE_VERSION }}_ubuntu_setup.deb
 
       - name: Upload output - MacOS Package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: APKScanner_${{ env.FILE_VERSION }}_mac.dmg
           path: target/APKScanner_${{ env.FILE_VERSION }}_mac.dmg
 
-  upload-to-release:
-    needs: [build-var, packaging-installer]
-    runs-on: ubuntu-latest
-    if: github.event_name == 'release'
-    env:
-      FILE_VERSION: ${{ needs.build-var.outputs.file_version }}
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: .
-
       - name: Upload to Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
+        if: github.event_name == 'release'
         with:
           files: |
-            ./APKScanner_${{ env.FILE_VERSION }}_win_setup.exe/APKScanner_${{ env.FILE_VERSION }}_win_setup.exe
-            ./APKScanner_${{ env.FILE_VERSION }}_win_portable.zip/APKScanner_${{ env.FILE_VERSION }}_win_portable.zip
-            ./APKScanner_${{ env.FILE_VERSION }}_ubuntu_setup.deb/APKScanner_${{ env.FILE_VERSION }}_ubuntu_setup.deb
-            ./APKScanner_${{ env.FILE_VERSION }}_mac.dmg/APKScanner_${{ env.FILE_VERSION }}_mac.dmg
+            target/APKScanner_${{ env.FILE_VERSION }}_win_setup.exe
+            target/APKScanner_${{ env.FILE_VERSION }}_win_portable.zip
+            target/APKScanner_${{ env.FILE_VERSION }}_ubuntu_setup.deb
+            target/APKScanner_${{ env.FILE_VERSION }}_mac.dmg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

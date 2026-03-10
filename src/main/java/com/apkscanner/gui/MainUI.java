@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Enumeration;
 
 import javax.swing.JFrame;
@@ -213,16 +212,12 @@ public class MainUI extends JFrame implements LanguageChangeListener {
 
             if (!EventQueue.isDispatchThread()) {
                 Log.v("onStateChanged() This task is not EDT. Invoke to EDT for " + status);
-                try {
-                    EventQueue.invokeAndWait(new Runnable() {
-                        public void run() {
-                            onStateChanged(status);
-                        }
-                    });
-                    return;
-                } catch (InvocationTargetException | InterruptedException e) {
-                    e.printStackTrace();
-                }
+                EventQueue.invokeLater(new Runnable() {
+                    public void run() {
+                        onStateChanged(status);
+                    }
+                });
+                return;
             }
 
             switch (status) {
