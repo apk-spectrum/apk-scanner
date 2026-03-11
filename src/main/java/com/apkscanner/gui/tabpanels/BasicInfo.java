@@ -265,7 +265,8 @@ public class BasicInfo extends AbstractTabbedPanel
             ResourceInfo[] iconList = icons;
             for (int i = iconList.length - 1; i >= 0; i--) {
                 if (iconList[i] == null || iconList[i].name == null
-                        || iconList[i].name.endsWith(".xml"))
+                        || iconList[i].name.endsWith(".xml")
+                        || iconList[i].name.startsWith("@0x"))
                     continue;
                 iconPath = iconList[i].name;
                 if (iconPath != null) break;
