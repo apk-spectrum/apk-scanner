@@ -3,6 +3,7 @@ package com.apkscanner.gui.tabpanels;
 
 import java.awt.GridLayout;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -15,7 +16,6 @@ import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.util.FileUtil;
 import com.apkspectrum.util.FileUtil.FSStyle;
 import com.apkspectrum.util.ZipFileUtil;
-import com.google.common.base.Objects;
 
 public class Libraries extends AbstractTabbedPanel {
     private static final long serialVersionUID = -8985157400085276691L;
@@ -90,7 +90,7 @@ public class Libraries extends AbstractTabbedPanel {
             int preIdx = 0, num = 0;
             for (String lib : apkInfo.libraries) {
                 dir = lib.substring(0, lib.lastIndexOf("/"));
-                if (!Objects.equal(dir, preDir)) {
+                if (!Objects.equals(dir, preDir)) {
                     if (preDir != null) {
                         data.add(preIdx, new Object[] {"Arch",
                                 preDir.substring(4) + " (" + num + ")",

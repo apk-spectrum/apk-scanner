@@ -24,7 +24,7 @@ import com.apkspectrum.resource.DefaultResImage;
 import com.apkspectrum.swing.ImageScaler;
 import com.apkspectrum.swing.TreeNodeImageObserver;
 import com.apkspectrum.util.FileUtil;
-import com.apkspectrum.util.URITool;
+import com.apkspectrum.util.JarURI;
 
 public class DefaultNodeData implements TreeNodeData, Cloneable {
     protected String label;
@@ -65,8 +65,10 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
         this.uri = uri;
         String path = null;
         if (uri != null) {
-            path = URITool.getJarEntryPath(uri);
-            if (path == null) path = uri.getPath();
+            if (uri.getScheme() != null) {
+                path = JarURI.create(uri).getEntryPath();
+            }
+            if (path == null || path.isEmpty()) path = uri.getPath();
         }
         if (path != null && path.endsWith("/")) {
             path = path.substring(0, path.length() - 1);

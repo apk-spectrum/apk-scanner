@@ -12,11 +12,12 @@ public enum ResourceType {
     VALUES(8),
     XML(9),
     FONT(10),
-    ASSET(11),
-    METAINF(12),
-    ROOTRES(13),
-    ETC(14),
-    COUNT(15);
+    RES(11),
+    ASSET(12),
+    METAINF(13),
+    ROOTRES(14),
+    ETC(15),
+    COUNT(16);
 
     private final int type;
 
@@ -51,6 +52,8 @@ public enum ResourceType {
             return XML;
         } else if (path.startsWith("res/font")) {
             return FONT;
+        } else if (path.startsWith("res/")) {
+            return RES;
         } else if (path.startsWith("assets")) {
             return ASSET;
         } else if (path.startsWith("META-INF")) {
@@ -68,6 +71,7 @@ public enum ResourceType {
             case METAINF:
             case ROOTRES:
             case ETC:
+            case RES:
                 return false;
             default:
                 return true;

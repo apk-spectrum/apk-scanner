@@ -10,20 +10,21 @@ import com.apkspectrum.tool.ImgExtractorWrapper;
 import com.apkspectrum.tool.aapt.AaptNativeWrapper;
 import com.apkspectrum.util.FileUtil;
 import com.apkspectrum.util.SystemUtil;
-import com.apkspectrum.util.URITool;
+import com.apkspectrum.util.JarURI;
 import com.apkspectrum.util.ZipFileUtil;
 
 public class ResourceObject extends DefaultNodeData {
     protected String config;
     protected ResourceType type;
+    protected String symbolic;
+
+    public ResourceObject(String uriPath) {
+        this(URI.create(uriPath));
+    }
 
     public ResourceObject(URI uri) {
         super(uri);
         initValue();
-    }
-
-    public ResourceObject(String uriPath) {
-        this(URI.create(uriPath));
     }
 
     private ResourceObject(String uriPath, boolean isFolder) {
@@ -73,7 +74,7 @@ public class ResourceObject extends DefaultNodeData {
         if ((path.startsWith("res/") && !path.startsWith("res/raw/")
                 && path.endsWith(".xml")) || path.equals("AndroidManifest.xml")
                 || path.endsWith(".img")) {
-            apkPath = URITool.getJarPath(getURI());
+            apkPath = JarURI.create(getURI()).getJarFilePath();
         }
 
         if (apkPath != null) {

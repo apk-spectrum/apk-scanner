@@ -44,7 +44,7 @@ import com.apkspectrum.data.apkinfo.WidgetInfo;
 import com.apkspectrum.swing.ImageScaler;
 import com.apkspectrum.swing.SortedMutableTreeNode;
 import com.apkspectrum.util.FileUtil;
-import com.apkspectrum.util.URITool;
+import com.apkspectrum.util.JarURI;
 
 public class ResourceTree extends JTree {
     private static final long serialVersionUID = 3376111906679444249L;
@@ -175,7 +175,7 @@ public class ResourceTree extends JTree {
 
         ((DefaultTreeModel) getModel()).setRoot(rootNode);
 
-        final String uriPath = "jar:" + apkFile.toURI() + "!/";
+        JarURI jarUri = new JarURI(apkFile);
 
         Thread thread = new Thread(new Runnable() {
             public void run() {
@@ -191,7 +191,7 @@ public class ResourceTree extends JTree {
                                         continue;
 
                                     ResourceObject resObj = new ResourceObject(
-                                            uriPath + URITool.encodeURI(resList[i]));
+                                            jarUri.toString(resList[i]));
                                     DefaultMutableTreeNode node = new ResourceNode(resObj);
 
                                     ResourceType resType = resObj.getResourceType();
@@ -259,7 +259,7 @@ public class ResourceTree extends JTree {
         node = makeLabelNode("Label", widgetInfo.resourceMap.get("label"));
         if (node != null) rootNode.add(node);
 
-        final String uriPath = "jar:" + new File(apkFilePath).toURI() + "!/";
+        JarURI jarUri = new JarURI(apkFilePath);
 
         Entry<String, ResourceInfo[]> resource = null;
         resource = widgetInfo.resourceMap.get("meta-data/resource");
@@ -269,7 +269,7 @@ public class ResourceTree extends JTree {
             TreePath metaDatPath = new TreePath(node.getPath());
             for (ResourceInfo res : resource.getValue()) {
                 DefaultMutableTreeNode resNode = new DefaultMutableTreeNode(
-                        new WidgetResData(uriPath + URITool.encodeURI(res.name)));
+                        new WidgetResData(jarUri.toString(res.name)));
                 node.add(resNode);
 
                 Entry<String, ResourceInfo[]> resSet = null;
@@ -283,11 +283,11 @@ public class ResourceTree extends JTree {
                             resChildNode =
                                     new SortedMutableTreeNode(new WidgetResData("Initial Layout",
                                             resSet.getKey().replaceAll("@.*/", "@"),
-                                            uriPath + URITool.encodeURI(layoutRes.name)));
+                                            jarUri.toString(layoutRes.name)));
                             resNode.add(resChildNode);
                         }
                         resChildNode.add(new DefaultMutableTreeNode(
-                                new WidgetResData(uriPath + URITool.encodeURI(layoutRes.name))));
+                                new WidgetResData(jarUri.toString(layoutRes.name))));
                     }
                 }
 
@@ -299,11 +299,11 @@ public class ResourceTree extends JTree {
                             resChildNode =
                                     new SortedMutableTreeNode(new WidgetResData("Preview Image",
                                             resSet.getKey().replaceAll("@.*/", "@"),
-                                            uriPath + URITool.encodeURI(iconRes.name)));
+                                            jarUri.toString(iconRes.name)));
                             resNode.add(resChildNode);
                         }
                         resChildNode.add(new DefaultMutableTreeNode(
-                                new WidgetResData(uriPath + URITool.encodeURI(iconRes.name))));
+                                new WidgetResData(jarUri.toString(iconRes.name))));
                     }
                 }
 
@@ -338,11 +338,11 @@ public class ResourceTree extends JTree {
                                     resChildNode =
                                             new SortedMutableTreeNode(new WidgetResData("Icon",
                                                     resSet.getKey().replaceAll("@.*/", "@"),
-                                                    uriPath + URITool.encodeURI(iconRes.name)));
+                                                    jarUri.toString(iconRes.name)));
                                     shortcutNode.add(resChildNode);
                                 }
                                 resChildNode.add(new DefaultMutableTreeNode(new WidgetResData(
-                                        uriPath + URITool.encodeURI(iconRes.name))));
+                                        jarUri.toString(iconRes.name))));
                             }
                         }
 
