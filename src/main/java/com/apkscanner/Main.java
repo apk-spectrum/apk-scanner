@@ -8,10 +8,10 @@ import java.nio.charset.Charset;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.help.HelpFormatter;
 
 import com.apkscanner.gui.UIController;
 import com.apkscanner.gui.installer.ApkInstallWizard;
@@ -156,8 +156,8 @@ public class Main {
 
     static private void solvePackage(CommandLine cmd) {
         final String apkPath = cmd.getArgs()[1];
-        final String fwResPath = cmd.getOptionValue("famework", null);
-        final String devSerialNum = cmd.getOptionValue("device", null);
+        final String fwResPath = cmd.getOptionValue("famework", (String) null);
+        final String devSerialNum = cmd.getOptionValue("device", (String) null);
 
         Log.v("solvePackage() " + apkPath + ", " + fwResPath + ", " + devSerialNum);
 
@@ -275,11 +275,15 @@ public class Main {
         systemOut.println("Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)");
         systemOut.println();
 
-        HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("apkscanner ", normalOptions);
-        formatter.printHelp("apkscanner [options] <app_path>", targetApkOptions);
-        formatter.printHelp(
-                "apkscanner p[ackage] [options] [-d[evice] <serial_number>] [-f[ramework] <framework.apk>] <package>",
-                targetPackageOptions);
+        HelpFormatter formatter = HelpFormatter.builder().get();
+        try {
+            formatter.printHelp("apkscanner ", null, normalOptions, null, false);
+            formatter.printHelp("apkscanner [options] <app_path>", null, targetApkOptions, null, false);
+            formatter.printHelp(
+                    "apkscanner p[ackage] [options] [-d[evice] <serial_number>] [-f[ramework] <framework.apk>] <package>",
+                    null, targetPackageOptions, null, false);
+        } catch (java.io.IOException e) {
+            throw new RuntimeException("Failed to print usage", e);
+        }
     }
 }
