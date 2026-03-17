@@ -42,6 +42,7 @@ import com.apkspectrum.data.apkinfo.ApkInfoHelper;
 import com.apkspectrum.data.apkinfo.ResourceInfo;
 import com.apkspectrum.logback.Log;
 import com.apkspectrum.swing.MessageBoxPane;
+import com.apkspectrum.util.JarURI;
 
 public class EasyContentsPanel extends JPanel
 {
@@ -332,13 +333,8 @@ public class EasyContentsPanel extends JPanel
             for(int i=iconList.length-1; i >= 0; i--) {
                 iconPath = iconList[i].name;
                 if(iconPath == null || iconPath.endsWith(".xml")) continue;
-                if(iconPath.toLowerCase().endsWith(".webp")) {
-                    iconPath = ImageUtils.covertWebp2Png(iconPath, apkInfo.tempWorkPath);
-                }
-                if(iconPath != null) {
-                    Log.d("icon Path is " + iconPath);
-                    break;
-                }
+                Log.d("icon Path is " + iconPath);
+                break;
             }
         }
         //appicon set
@@ -350,7 +346,8 @@ public class EasyContentsPanel extends JPanel
             icon = RImg.QMG_IMAGE_ICON.getImageIcon(110, 110);
         } else {
             try {
-                icon = new ImageIcon(ImageUtils.getScaledImage(new ImageIcon(ImageIO.read(new URL(iconPath))),110,110));
+                URL url = JarURI.toURL(apkInfo.filePath, iconPath);
+                icon = new ImageIcon(ImageUtils.getScaledImage(new ImageIcon(ImageIO.read(url)),110,110));
             } catch (IOException e) {
                 Log.e(e.getMessage());
                 icon = RImg.DEF_APP_ICON.getImageIcon();

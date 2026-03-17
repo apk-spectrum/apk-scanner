@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Objects;
 
 import javax.imageio.ImageIO;
@@ -30,6 +29,7 @@ import com.apkspectrum.data.apkinfo.ApkInfoHelper;
 import com.apkspectrum.data.apkinfo.ResourceInfo;
 import com.apkspectrum.data.apkinfo.WidgetInfo;
 import com.apkspectrum.swing.ImageScaler;
+import com.apkspectrum.util.JarURI;
 
 public class Widgets extends AbstractTabbedPanel
         implements TreeSelectionListener, ListSelectionListener {
@@ -110,6 +110,7 @@ public class Widgets extends AbstractTabbedPanel
             if (apkInfo.widgets == null) return;
 
             apkFilePath = apkInfo.filePath;
+            JarURI jarURI = new JarURI(apkFilePath);
 
             String preferLang = RProp.S.PREFERRED_LANGUAGE.get();
             for (WidgetInfo w : apkInfo.widgets) {
@@ -124,11 +125,11 @@ public class Widgets extends AbstractTabbedPanel
                     if (icon == null || icon.toLowerCase().endsWith(".xml")) {
                         previewImage = RImg.DEF_APP_ICON.getImageIcon();
                     } else if (icon.toLowerCase().endsWith(".webp")) {
-                        previewImage = new ImageIcon(ImageIO.read(new URL(icon)));
+                        previewImage = new ImageIcon(ImageIO.read(jarURI.toURL(icon)));
                     } else if (icon.toLowerCase().endsWith(".qmg")) {
                         previewImage = RImg.QMG_IMAGE_ICON.getImageIcon();
                     } else {
-                        previewImage = new ImageIcon(new URL(icon));
+                        previewImage = new ImageIcon(jarURI.toURL(icon));
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

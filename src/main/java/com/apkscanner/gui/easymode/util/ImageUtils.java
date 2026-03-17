@@ -9,14 +9,9 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-
-import com.apkspectrum.util.FileUtil;
 
 public class ImageUtils {
 
@@ -43,34 +38,6 @@ public class ImageUtils {
         g2.drawImage(img2, null, img1.getWidth() + offset, 0);
         g2.dispose();
         return newImage;
-    }
-
-    public static String covertWebp2Png(final String imagePath, final String tempPath) {
-        String[] path = imagePath.split("!");
-        String convetPath = imagePath;
-        String apkPath = path[0].replaceAll("^(jar:)?file:", "");
-        try (ZipFile zipFile = new ZipFile(apkPath)) {
-            ZipEntry entry = zipFile.getEntry(path[1].replaceAll("^/", ""));
-            if (entry != null) {
-                try (InputStream is = zipFile.getInputStream(entry)) {
-                    // String tempPath =
-                    // FileUtil.makeTempPath(apkPath.substring(apkPath.lastIndexOf(File.separator)));
-                    FileUtil.makeFolder(tempPath);
-                    String tempImg =
-                            tempPath + File.separator + path[1].replaceAll(".*/", "") + ".png";
-                    File out = new File(tempImg);
-
-                    BufferedImage image = ImageIO.read(is);
-                    ImageIO.write(image, "png", out);
-                    if (out.exists()) {
-                        convetPath = "file:" + out.getAbsolutePath();
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return convetPath;
     }
 
     public static Image getScaledImage(ImageIcon temp, int w, int h) {

@@ -71,6 +71,7 @@ import com.apkspectrum.swing.MessageBoxPane;
 import com.apkspectrum.util.Base64;
 import com.apkspectrum.util.FileUtil;
 import com.apkspectrum.util.FileUtil.FSStyle;
+import com.apkspectrum.util.JarURI;
 import com.apkspectrum.util.SystemUtil;
 import com.apkspectrum.util.XmlPath;
 
@@ -239,7 +240,7 @@ public class BasicInfo extends AbstractTabbedPanel
     private void setBasicInfo(ApkInfo apkInfo) {
         if (apkInfo.type != ApkInfo.PACKAGE_TYPE_APEX) {
             apkInfoPanel.setText(RFile.RAW_BASIC_INFO_LAYOUT_HTML.getString());
-            setAppIcon(apkInfo.manifest.application.icons);
+            setAppIcon(apkInfo.filePath, apkInfo.manifest.application.icons);
             setAppLabel(apkInfo.manifest.application.labels, apkInfo.manifest.packageName);
             setPackageName(apkInfo.manifest.packageName);
             setVersion(apkInfo.manifest.versionName, apkInfo.manifest.versionCode);
@@ -259,7 +260,7 @@ public class BasicInfo extends AbstractTabbedPanel
         }
     }
 
-    private void setAppIcon(ResourceInfo[] icons) {
+    private void setAppIcon(String filePath, ResourceInfo[] icons) {
         String iconPath = null;
         if (icons != null && icons.length > 0) {
             ResourceInfo[] iconList = icons;
@@ -276,6 +277,8 @@ public class BasicInfo extends AbstractTabbedPanel
             iconPath = RImg.DEF_APP_ICON.getPath();
         } else if (iconPath.toLowerCase().endsWith(".qmg")) {
             iconPath = RImg.QMG_IMAGE_ICON.getPath();
+        } else {
+            iconPath = JarURI.toString(filePath, iconPath);
         }
         apkInfoPanel.setOuterHTMLById("icon",
                 String.format("<img src=\"%s\" width=\"150\" height=\"150\">", iconPath));

@@ -74,7 +74,7 @@ public class ResourceObject extends DefaultNodeData {
         if ((path.startsWith("res/") && !path.startsWith("res/raw/")
                 && path.endsWith(".xml")) || path.equals("AndroidManifest.xml")
                 || path.endsWith(".img")) {
-            apkPath = JarURI.create(getURI()).getJarFilePath();
+            apkPath = JarURI.create(getURI()).getJarPath();
         }
 
         if (apkPath != null) {
