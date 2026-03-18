@@ -34,6 +34,7 @@ import org.fife.ui.rtextarea.SearchResult;
 
 import com.apkscanner.gui.UiEventHandler;
 import com.apkscanner.resource.RConst;
+import com.apkscanner.resource.RProp;
 import com.apkspectrum.data.apkinfo.ApkInfo;
 import com.apkspectrum.logback.Log;
 import com.apkspectrum.swing.ActionEventHandler;
@@ -467,11 +468,19 @@ public class ResourceContentsPanel extends JPanel implements ActionListener {
     }
 
     private void setTextContentPanel(TreeNodeData resObj) {
-        Object data = null;
-        if (resObj instanceof ResourceObject) {
-            data = ((ResourceObject) resObj).getData(apkInfo.a2xConvert);
-        } else {
-            data = resObj.getData();
+        Object data = resObj.getData();
+        if (resObj instanceof ResourceNodeData && data instanceof String[]) {
+            String ext = ((ResourceNodeData) resObj).getExtension();
+            String[] xmlbuffer = (String[]) data;
+            if (RConst.AXML_VEIWER_TYPE_XML.equals(RProp.S.AXML_VIEWER_TYPE.get())
+                    && ".xml".equals(ext)) {
+                data = apkInfo.a2xConvert.convertToText(xmlbuffer);
+            } else {
+                StringBuilder sb = new StringBuilder();
+                for (String s : xmlbuffer)
+                    sb.append(s + "\n");
+                data = sb.toString().trim();
+            }
         }
 
         String content = null;

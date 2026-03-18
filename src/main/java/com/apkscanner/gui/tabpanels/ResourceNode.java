@@ -52,14 +52,14 @@ public class ResourceNode extends SortedMutableTreeNode {
     public void add(File files) {
         if (files.isDirectory()) {
             for (File c : files.listFiles()) {
-                ResourceNode childNode = new ResourceNode(new DefaultNodeData(c));
+                ResourceNode childNode = new ResourceNode(new FileNodeData(c));
                 add(childNode);
                 if (c.isDirectory()) {
                     childNode.add(c);
                 }
             }
         } else {
-            ResourceNode childNode = new ResourceNode(new DefaultNodeData(files));
+            ResourceNode childNode = new ResourceNode(new FileNodeData(files));
             add(childNode);
         }
     }

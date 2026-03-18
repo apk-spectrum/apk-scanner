@@ -1,7 +1,5 @@
 package com.apkscanner.gui.tabpanels;
 
-import javax.swing.Icon;
-
 public class UserNodeData extends DefaultNodeData {
     public final String config;
     protected Object data;
@@ -11,10 +9,10 @@ public class UserNodeData extends DefaultNodeData {
     }
 
     public UserNodeData(String label, String path, String config, Object data) {
-        super(label, null);
-        this.path = path;
+        super(label);
         this.config = config;
         this.data = data;
+        setIcon(ResourceTree.getExtensionIcon(".arsc"));
     }
 
     public void setData(Object data) {
@@ -24,11 +22,6 @@ public class UserNodeData extends DefaultNodeData {
     @Override
     public String getExtension() {
         return ".xml";
-    }
-
-    @Override
-    public Icon getIcon() {
-        return icon != null ? icon : (icon = ResourceTree.getExtensionIcon(".arsc"));
     }
 
     @Override

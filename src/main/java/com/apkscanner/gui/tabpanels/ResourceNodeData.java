@@ -1,38 +1,39 @@
 package com.apkscanner.gui.tabpanels;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 
-import com.apkscanner.resource.RConst;
-import com.apkscanner.resource.RProp;
-import com.apkspectrum.core.scanner.AxmlToXml;
 import com.apkspectrum.tool.ImgExtractorWrapper;
 import com.apkspectrum.tool.aapt.AaptNativeWrapper;
 import com.apkspectrum.util.FileUtil;
-import com.apkspectrum.util.SystemUtil;
 import com.apkspectrum.util.JarURI;
+import com.apkspectrum.util.SystemUtil;
 import com.apkspectrum.util.ZipFileUtil;
 
-public class ResourceObject extends DefaultNodeData {
+public class ResourceNodeData extends DefaultNodeData {
     protected String config;
     protected ResourceType type;
     protected String symbolic;
 
-    public ResourceObject(String uriPath) {
-        this(URI.create(uriPath));
-    }
+    private JarURI jarURI;
 
-    public ResourceObject(URI uri) {
-        super(uri);
+    public ResourceNodeData(JarURI jarURI) {
+        super(jarURI.getEntryName(), jarURI.getEntryPath(), jarURI.isDirectory());
+        this.jarURI = jarURI;
         initValue();
     }
 
-    private ResourceObject(String uriPath, boolean isFolder) {
-        super(URI.create(uriPath), isFolder);
+    public ResourceNodeData(String label, String config, JarURI jarURI) {
+        super(label, jarURI.getEntryPath(), jarURI.isDirectory());
+        this.jarURI = jarURI;
         initValue();
+        this.config = config;
     }
 
     private void initValue() {
+        String path = getPath();
         type = ResourceType.getType(path);
 
         if (type.getInt() <= ResourceType.XML.getInt()
@@ -43,41 +44,50 @@ public class ResourceObject extends DefaultNodeData {
         }
     }
 
-    public ResourceObject(ResourceType type) {
-        this(type.toString(), true);
-    }
-
     public ResourceType getResourceType() {
         return type;
+    }
+
+    @Override
+    public URI getURI() {
+        return jarURI.toURI();
+    }
+
+    @Override
+    public URL getURL() {
+        try {
+            return jarURI.toURL();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
     public String toString() {
         String str = null;
         int childCount = 0;
-        if (node != null && !node.isRoot() /* && !isFolder */
+        if (getNode() != null && getNode().getParent() != null /* && !isFolder */
                 && !".img".equals(getExtension()))
-            childCount = node.getChildCount();
+            childCount = getNode().getChildCount();
 
         if (childCount > 0) {
-            str = label + " (" + childCount + ")";
+            str = getLabel() + " (" + childCount + ")";
         } else if (config != null && !config.isEmpty()) {
-            str = label + " (" + config + ")";
+            str = getLabel() + " (" + config + ")";
         } else {
-            str = label;
+            str = getLabel();
         }
         return str;
     }
 
     public Object getData() {
-        String apkPath = null;
+        String path = getPath();
         if ((path.startsWith("res/") && !path.startsWith("res/raw/")
                 && path.endsWith(".xml")) || path.equals("AndroidManifest.xml")
                 || path.endsWith(".img")) {
-            apkPath = JarURI.create(getURI()).getJarPath();
-        }
+            String apkPath = jarURI.getJarAbsolutePath();
 
-        if (apkPath != null) {
             switch (getExtension()) {
                 case ".xml":
                     return AaptNativeWrapper.Dump.getXmltree(apkPath, new String[] {path});
@@ -101,22 +111,5 @@ public class ResourceObject extends DefaultNodeData {
         }
 
         return super.getData();
-    }
-
-    public Object getData(AxmlToXml a2xConvert) {
-        Object data = getData();
-        if (data instanceof String[]) {
-            String[] xmlbuffer = (String[]) data;
-            if (RConst.AXML_VEIWER_TYPE_XML.equals(RProp.S.AXML_VIEWER_TYPE.get())
-                    && ".xml".equals(getExtension())) {
-                return a2xConvert.convertToText(xmlbuffer);
-            } else {
-                StringBuilder sb = new StringBuilder();
-                for (String s : xmlbuffer)
-                    sb.append(s + "\n");
-                return sb.toString().trim();
-            }
-        }
-        return data;
     }
 }

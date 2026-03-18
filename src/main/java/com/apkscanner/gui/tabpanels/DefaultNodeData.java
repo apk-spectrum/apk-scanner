@@ -17,6 +17,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.SwingWorker;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 import com.apkscanner.resource.RImg;
 import com.apkspectrum.core.signer.SignatureReport;
@@ -24,72 +25,44 @@ import com.apkspectrum.resource.DefaultResImage;
 import com.apkspectrum.swing.ImageScaler;
 import com.apkspectrum.swing.TreeNodeImageObserver;
 import com.apkspectrum.util.FileUtil;
-import com.apkspectrum.util.JarURI;
+
+import lombok.NonNull;
 
 public class DefaultNodeData implements TreeNodeData, Cloneable {
-    protected String label;
-    protected URI uri;
-    protected String path;
-    protected boolean isFolder;
-    protected int dataType;
+    private String label;
+    private String path;
+    private boolean isFolder;
+    private int dataType;
 
-    transient protected boolean isLoading;
-    transient protected Icon icon;
-    transient protected DefaultMutableTreeNode node;
+    private transient boolean isLoading;
+    private transient Icon icon;
+    private transient DefaultMutableTreeNode node;
 
     static transient protected Queue<DefaultNodeData> iconQueue = new ConcurrentLinkedQueue<>();
     static transient boolean isIconLoading;
-    transient protected Icon loadedIcon;
+    private transient Icon loadedIcon;
 
-    public DefaultNodeData(String label) {
-        this(label, (URI) null);
+    public DefaultNodeData(@NonNull String label) {
+        this(label, label, false);
     }
 
-    public DefaultNodeData(URI uri) {
-        this(null, uri);
+    public DefaultNodeData(@NonNull String label, boolean isFolder) {
+        this(label, label, isFolder);
     }
 
-    public DefaultNodeData(String label, URI uri) {
-        this(label, uri, uri != null && uri.toString().endsWith("/"));
+    public DefaultNodeData(@NonNull String label, @NonNull String path) {
+        this(label, path, path.endsWith("/"));
     }
 
-    public DefaultNodeData(String label, boolean isFolder) {
-        this(label, (URI) null, isFolder);
-    }
-
-    public DefaultNodeData(URI uri, boolean isFolder) {
-        this(null, uri, isFolder);
-    }
-
-    public DefaultNodeData(String label, URI uri, boolean isFolder) {
-        this.uri = uri;
-        String path = null;
-        if (uri != null) {
-            if (uri.getScheme() != null) {
-                path = JarURI.create(uri).getEntryPath();
-            }
-            if (path == null || path.isEmpty()) path = uri.getPath();
-        }
-        if (path != null && path.endsWith("/")) {
-            path = path.substring(0, path.length() - 1);
-        }
+    public DefaultNodeData(@NonNull String label, @NonNull String path, boolean isFolder) {
+        this.label = label;
         this.path = path;
-        this.label = label != null ? label : getFileName();
         this.isFolder = isFolder;
         this.dataType = checkDataType();
     }
 
-    public DefaultNodeData(File file) {
-        this.uri = file.toURI();
-        this.path = file.getAbsolutePath();
-        this.label = file.getName();
-        this.isFolder = file.isDirectory();
-        this.dataType = checkDataType();
-    }
-
-    private int checkDataType() {
-        String extension = getExtension();
-        switch (extension.toLowerCase()) {
+    protected int checkDataType() {
+        switch (getExtension().toLowerCase()) {
             case ".png":
             case ".jpg":
             case ".gif":
@@ -140,22 +113,24 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
 
     @Override
     public URI getURI() {
-        return uri;
+        return getPath() != null ? URI.create(getPath()) : null;
     }
 
     public URL getURL() {
-        if (uri == null) return null;
-        try {
-            return uri.toURL();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+        URI uri = getURI();
+        if (uri != null) {
+            try {
+                return uri.toURL();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
 
     @Override
     public String getPath() {
-        return path;
+        return path != null ? path : getLabel();
     }
 
     @Override
@@ -183,8 +158,8 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
             icon = ResourceTree.getExtensionIcon(ResourceTree.FOLDER_ICON);
         }
         if (dataType == DATA_TYPE_IMAGE) {
-            URL url = getURL();
-            if (url != null) {
+            URI uri = getURI();
+            if (uri != null) {
                 icon = RImg.TREE_LOADING.getImageIcon();
                 setLoadingState(true);
                 loadImage();
@@ -194,6 +169,10 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
             icon = ResourceTree.getExtensionIcon(getExtension());
         }
         return icon;
+    }
+
+    public void setIcon(Icon icon) {
+        this.icon = icon;
     }
 
     private void loadImage() {
@@ -214,11 +193,12 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
                             break;
                         }
                     }
-                    URL url = node.getURL();
+
+                    URL url = node.getURI().toURL();
                     if (url == null) continue;
                     try {
                         ImageIcon icon = null;
-                        if (node.path.toLowerCase().endsWith(".webp")) {
+                        if (node.getPath().toLowerCase().endsWith(".webp")) {
                             icon = new ImageIcon(ImageIO.read(url));
                         } else {
                             icon = new ImageIcon(url);
@@ -264,8 +244,12 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
         return icon;
     }
 
-    void setNode(DefaultMutableTreeNode node) {
+    public void setNode(DefaultMutableTreeNode node) {
         this.node = node;
+    }
+
+    public TreeNode getNode() {
+        return node;
     }
 
     public void setLoadingState(boolean state) {
@@ -286,17 +270,20 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
     }
 
     public String getExtension() {
+        String path = getPath();
         if (path == null) return "";
         return FileUtil.getSuffix(path);
     }
 
     public String getFileName() {
+        String path = getPath();
         if (path == null) return null;
         String separator = path.contains(File.separator) ? separator = File.separator : "/";
         return path.substring(path.lastIndexOf(separator) + 1, path.length());
     }
 
     public String getFolderName() {
+        String path = getPath();
         if (path == null) return null;
         String separator = path.contains(File.separator) ? separator = File.separator : "/";
         if (!path.contains(separator)) return path;
@@ -304,6 +291,7 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
     }
 
     public byte[] getBytes() {
+        URI uri = getURI();
         if (uri == null || uri.getScheme() == null) return null;
 
         byte[] buffer = null;
