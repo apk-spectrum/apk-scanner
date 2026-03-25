@@ -9,14 +9,19 @@ public class UserNodeData extends DefaultNodeData {
     }
 
     public UserNodeData(String label, String path, String config, Object data) {
-        super(label);
+        super(label, path);
         this.config = config;
         this.data = data;
-        setIcon(ResourceTree.getExtensionIcon(".arsc"));
+        setIcon(icons.getIcon(".arsc"));
     }
 
     public void setData(Object data) {
         this.data = data;
+    }
+
+    @Override
+    public Object getData() {
+        return data;
     }
 
     @Override
@@ -27,11 +32,6 @@ public class UserNodeData extends DefaultNodeData {
     @Override
     public int getDataType() {
         return DATA_TYPE_TEXT;
-    }
-
-    @Override
-    public Object getData() {
-        return data;
     }
 
     @Override

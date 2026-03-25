@@ -19,7 +19,6 @@ import javax.swing.SwingWorker;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 
-import com.apkscanner.resource.RImg;
 import com.apkspectrum.core.signer.SignatureReport;
 import com.apkspectrum.resource.DefaultResImage;
 import com.apkspectrum.swing.ImageScaler;
@@ -27,7 +26,9 @@ import com.apkspectrum.swing.TreeNodeImageObserver;
 import com.apkspectrum.util.FileUtil;
 
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class DefaultNodeData implements TreeNodeData, Cloneable {
     private String label;
     private String path;
@@ -38,23 +39,26 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
     private transient Icon icon;
     private transient DefaultMutableTreeNode node;
 
-    static transient protected Queue<DefaultNodeData> iconQueue = new ConcurrentLinkedQueue<>();
-    static transient boolean isIconLoading;
+    protected static final ResourceTreeIcons icons = ResourceTreeIcons.getDefaultSet();
+
+    private static final Queue<DefaultNodeData> loadingQueue =
+            new ConcurrentLinkedQueue<>();
+    private static transient boolean isIconLoading;
     private transient Icon loadedIcon;
 
     public DefaultNodeData(@NonNull String label) {
-        this(label, label, false);
+        this(label, null, false);
     }
 
     public DefaultNodeData(@NonNull String label, boolean isFolder) {
-        this(label, label, isFolder);
+        this(label, null, isFolder);
     }
 
-    public DefaultNodeData(@NonNull String label, @NonNull String path) {
-        this(label, path, path.endsWith("/"));
+    public DefaultNodeData(@NonNull String label, String path) {
+        this(label, path, path != null && path.endsWith("/"));
     }
 
-    public DefaultNodeData(@NonNull String label, @NonNull String path, boolean isFolder) {
+    public DefaultNodeData(@NonNull String label, String path, boolean isFolder) {
         this.label = label;
         this.path = path;
         this.isFolder = isFolder;
@@ -62,7 +66,7 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
     }
 
     protected int checkDataType() {
-        switch (getExtension().toLowerCase()) {
+        switch (getExtension()) {
             case ".png":
             case ".jpg":
             case ".gif":
@@ -73,6 +77,7 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
             case ".dsa":
             case ".ec":
             case ".der":
+            case ".pem":
                 return DATA_TYPE_CERTIFICATION;
             case ".xml":
             case ".txt":
@@ -98,7 +103,6 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
             case ".dtd":
             case ".xsd":
             case ".svg":
-            case ".pem":
             case ".csv":
                 return DATA_TYPE_TEXT;
             default:
@@ -112,25 +116,8 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
     }
 
     @Override
-    public URI getURI() {
-        return getPath() != null ? URI.create(getPath()) : null;
-    }
-
-    public URL getURL() {
-        URI uri = getURI();
-        if (uri != null) {
-            try {
-                return uri.toURL();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }
-
-    @Override
     public String getPath() {
-        return path != null ? path : getLabel();
+        return path;
     }
 
     @Override
@@ -149,24 +136,42 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
     }
 
     @Override
+    public URI getURI() {
+        try {
+            return getPath() != null ? URI.create(getPath()) : null;
+        } catch (IllegalArgumentException e) {
+            log.error("{}: class {}", e.getMessage(), this.getClass().getSimpleName());
+        }
+        return null;
+    }
+
+    public URL getURL() {
+        URI uri = getURI();
+        if (uri != null && uri.isAbsolute()) {
+            try {
+                return uri.toURL();
+            } catch (MalformedURLException e) {
+                log.error("{}: class {}", e.getMessage(), this.getClass().getSimpleName());
+            }
+        }
+        return null;
+    }
+
+    @Override
     public Icon getIcon() {
         if (icon != null) return icon;
 
-        if (getLoadingState()) {
-            icon = RImg.RESOURCE_TREE_OPEN_JD.getImageIcon();
-        } else if (isFolder) {
-            icon = ResourceTree.getExtensionIcon(ResourceTree.FOLDER_ICON);
-        }
-        if (dataType == DATA_TYPE_IMAGE) {
-            URI uri = getURI();
-            if (uri != null) {
-                icon = RImg.TREE_LOADING.getImageIcon();
-                setLoadingState(true);
-                loadImage();
-            }
+        if (dataType == DATA_TYPE_IMAGE && getURL() != null) {
+            setLoadingState(true);
+            setIcon(icons.getIcon(ResourceTreeIcons.LOADING_ICON));
+            loadImage();
+        } else if (getLoadingState()) {
+            setIcon(icons.getIcon(ResourceTreeIcons.PROCESSING_ICON));
+        } else if (isFolder()) {
+            setIcon(icons.getIcon(ResourceTreeIcons.FOLDER_ICON));
         }
         if (icon == null) {
-            icon = ResourceTree.getExtensionIcon(getExtension());
+            setIcon(icons.getIcon(getExtension()));
         }
         return icon;
     }
@@ -176,8 +181,8 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
     }
 
     private void loadImage() {
-        synchronized (iconQueue) {
-            iconQueue.add(this);
+        synchronized (loadingQueue) {
+            loadingQueue.add(this);
             if (isIconLoading) return;
             isIconLoading = true;
         }
@@ -185,32 +190,38 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
             @Override
             protected Void doInBackground() throws Exception {
                 while (true) {
-                    DefaultNodeData node = null;
-                    synchronized (iconQueue) {
-                        node = iconQueue.poll();
-                        if (node == null) {
+                    DefaultNodeData nodeData = null;
+                    synchronized (loadingQueue) {
+                        nodeData = loadingQueue.poll();
+                        if (nodeData == null) {
+                            if (!loadingQueue.isEmpty()) {
+                                log.warn("Won't happen because the queue wasn't add null object.");
+                                continue;
+                            }
                             isIconLoading = false;
                             break;
                         }
                     }
 
-                    URL url = node.getURI().toURL();
-                    if (url == null) continue;
                     try {
+                        URL url = nodeData.getURL();
+                        if (url == null) continue;
+
                         ImageIcon icon = null;
-                        if (node.getPath().toLowerCase().endsWith(".webp")) {
-                            icon = new ImageIcon(ImageIO.read(url));
+                        if (".webp".equals(nodeData.getExtension())) {
+                            icon = new ImageIcon(ImageIO.read(url), url.toExternalForm());
                         } else {
                             icon = new ImageIcon(url);
                         }
                         if (icon.getIconWidth() <= 0 || icon.getIconHeight() <= 0) {
-                            node.loadedIcon = ResourceTree.getExtensionIcon(node.getExtension());
+                            nodeData.loadedIcon = icons.getIcon(nodeData.getExtension());
                         } else {
-                            node.loadedIcon = ImageScaler.getScaledImageIcon(icon, 32, 32);
+                            nodeData.loadedIcon = ImageScaler.getScaledImageIcon(icon, 32, 32);
                         }
-                        publish(node);
-                    } catch (IOException | NullPointerException e1) {
-                        e1.printStackTrace();
+                    } catch (Exception e) {
+                        log.error(e.getMessage(), e);
+                    } finally {
+                        publish(nodeData);
                     }
                 }
                 return null;
@@ -219,8 +230,8 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
             @Override
             protected void process(List<DefaultNodeData> chunks) {
                 if (chunks != null) {
-                    for (DefaultNodeData node: chunks) {
-                        node.setLoadingState(false);
+                    for (DefaultNodeData nodeData: chunks) {
+                        if (nodeData != null) nodeData.setLoadingState(false);
                     }
                 }
             }
@@ -252,17 +263,21 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
         return node;
     }
 
-    public void setLoadingState(boolean state) {
-        if (isLoading == state) return;
-        isLoading = state;
+    public void setLoadingState(boolean isLoading) {
+        if (this.isLoading == isLoading) return;
         if (icon instanceof ImageIcon) {
             ImageIcon image = (ImageIcon) icon;
             if (image.getImageObserver() != null) {
                 image.setImageObserver(null);
-                icon = loadedIcon;
-                loadedIcon = null;
             }
         }
+        if (!isLoading && loadedIcon != null) {
+            setIcon(loadedIcon);
+            loadedIcon = null;
+        } else {
+            setIcon(null);
+        }
+        this.isLoading = isLoading;
     }
 
     public boolean getLoadingState() {
@@ -272,63 +287,42 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
     public String getExtension() {
         String path = getPath();
         if (path == null) return "";
-        return FileUtil.getSuffix(path);
+        return FileUtil.getSuffix(path).toLowerCase();
     }
 
     public String getFileName() {
         String path = getPath();
         if (path == null) return null;
         String separator = path.contains(File.separator) ? separator = File.separator : "/";
-        return path.substring(path.lastIndexOf(separator) + 1, path.length());
+        return path.substring(path.lastIndexOf(separator) + 1);
     }
 
     public String getFolderName() {
         String path = getPath();
         if (path == null) return null;
         String separator = path.contains(File.separator) ? separator = File.separator : "/";
-        if (!path.contains(separator)) return path;
+        if (!path.contains(separator)) return "";
         return path.substring(0, path.lastIndexOf(separator));
-    }
-
-    public byte[] getBytes() {
-        URI uri = getURI();
-        if (uri == null || uri.getScheme() == null) return null;
-
-        byte[] buffer = null;
-        try (InputStream is = uri.toURL().openStream();
-                ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-            int nRead;
-            byte[] data = new byte[1024];
-            while ((nRead = is.read(data, 0, data.length)) != -1) {
-                os.write(data, 0, nRead);
-            }
-            os.flush();
-            buffer = os.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return buffer;
     }
 
     @Override
     public Object getData() {
         switch (dataType) {
             case DATA_TYPE_IMAGE:
-                if (getPath().toLowerCase().endsWith(".webp")) {
+                if (".webp".equals(getExtension())) {
                     try {
                         return ImageIO.read(getURL());
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        log.error(e.getMessage(), e);
                     }
                     return null;
-                } else {
-                    return DefaultResImage.getImage(getURL());
                 }
+                return DefaultResImage.getImage(getURL());
             case DATA_TYPE_CERTIFICATION:
                 try {
                     return new SignatureReport(getURL().openStream()).toString();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);
                 }
                 return null;
             case DATA_TYPE_TEXT:
@@ -339,6 +333,26 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
         }
     }
 
+    private byte[] getBytes() {
+        URL url = getURL();
+        if (url == null) return null;
+
+        byte[] buffer = null;
+        try (InputStream is = url.openStream();
+                ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+            int nRead;
+            byte[] data = new byte[1024];
+            while ((nRead = is.read(data, 0, data.length)) != -1) {
+                os.write(data, 0, nRead);
+            }
+            os.flush();
+            buffer = os.toByteArray();
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+        return buffer;
+    }
+
     @Override
     protected DefaultNodeData clone() {
         DefaultNodeData resObj;
@@ -347,6 +361,7 @@ public class DefaultNodeData implements TreeNodeData, Cloneable {
             resObj.node = null;
             resObj.icon = null;
             resObj.isLoading = false;
+            resObj.loadedIcon = null;
         } catch (CloneNotSupportedException e) {
             // Won't happen because we implement Cloneable
             throw new Error(e.toString());
